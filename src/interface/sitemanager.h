@@ -37,6 +37,7 @@ protected:
 	virtual void OnSelChanging(wxTreeEvent& event);
 	virtual void OnSelChanged(wxTreeEvent& event);
 	virtual void OnLogontypeSelChanged(wxCommandEvent& event);
+	virtual void OnRemoteDirBrowse(wxCommandEvent& event);
 	
 	COptions* m_pOptions;
 };

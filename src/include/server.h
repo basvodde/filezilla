@@ -23,6 +23,13 @@ enum LogonType
 	INTERACTIVE
 };
 
+enum PasvMode
+{
+	MODE_DEFAULT,
+	MODE_ACTIVE,
+	MODE_PASSIVE
+};
+
 class CServerPath;
 class CServer
 {
@@ -44,8 +51,10 @@ public:
 	enum LogonType GetLogonType() const;
 	wxString GetUser() const;
 	wxString GetPass() const;
+	int GetTimezoneOffset() const;
+	enum PasvMode GetPasvMode() const;
+	bool AllowMultipleConnections() const;
 	
-
 	// Return true if URL could be parsed correctly, false otherwise.
 	// If parsing fails, pError is filled with the reason and the CServer instance may be left an undefined state.
 	bool ParseUrl(wxString host, unsigned int, wxString user, wxString pass, wxString &error, CServerPath &path);
@@ -60,6 +69,10 @@ public:
 	bool operator==(const CServer &op) const;
 	bool operator!=(const CServer &op) const;
 
+	bool SetTimezoneOffset(int minutes);	
+	void SetPasvMode(enum PasvMode pasvMode);
+	void AllowMultipleConnections(bool allow);
+
 protected:
 	enum ServerProtocol m_protocol;
 	enum ServerType m_type;
@@ -68,6 +81,9 @@ protected:
 	enum LogonType m_logonType;
 	wxString m_user;
 	wxString m_pass;
+	int m_timezoneOffset;
+	enum PasvMode m_pasvMode;
+	bool m_allowMultipleConnections;
 };
 
 #endif

@@ -16,6 +16,7 @@ EVT_TREE_END_LABEL_EDIT(XRCID("ID_SITETREE"), CSiteManager::OnEndLabelEdit)
 EVT_TREE_SEL_CHANGING(XRCID("ID_SITETREE"), CSiteManager::OnSelChanging)
 EVT_TREE_SEL_CHANGED(XRCID("ID_SITETREE"), CSiteManager::OnSelChanged)
 EVT_COMBOBOX(XRCID("ID_LOGONTYPE"), CSiteManager::OnLogontypeSelChanged)
+EVT_BUTTON(XRCID("ID_BROWSE"), CSiteManager::OnRemoteDirBrowse)
 END_EVENT_TABLE()
 
 class CSiteManagerItemData : public wxTreeItemData
@@ -32,6 +33,8 @@ public:
 
 	CServer m_server;
 	wxString m_comments;
+	wxString m_localDir;
+	CServerPath m_remoteDir;
 };
 
 CSiteManager::CSiteManager(COptions* pOptions)
@@ -48,6 +51,10 @@ bool CSiteManager::Create(wxWindow* parent)
 	GetSizer()->SetSizeHints(this);
 	
 	Load();
+
+	XRCCTRL(*this, "ID_TRANSFERMODE_DEFAULT", wxRadioButton)->Update();
+	XRCCTRL(*this, "ID_TRANSFERMODE_ACTIVE", wxRadioButton)->Update();
+	XRCCTRL(*this, "ID_TRANSFERMODE_PASSIVE", wxRadioButton)->Update();
 		
 	return TRUE;
 }
@@ -164,6 +171,14 @@ bool CSiteManager::Load(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 			if (comments)
 				data->m_comments = m_pOptions->ConvLocal(comments->Value());
 			
+			TiXmlText* localDir = handle.FirstChildElement("LocalDir").FirstChild().Text();
+			if (localDir)
+				data->m_localDir = m_pOptions->ConvLocal(localDir->Value());
+			
+			TiXmlText* remoteDir = handle.FirstChildElement("RemoteDir").FirstChild().Text();
+			if (remoteDir)
+				data->m_remoteDir.SetSafePath(m_pOptions->ConvLocal(remoteDir->Value()));
+			
 			pTree->AppendItem(treeId, name, -1, -1, data);
 		}
 	}
@@ -223,10 +238,25 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 			TiXmlNode* pNode = pElement->InsertEndChild(TiXmlElement("Server"));
 			m_pOptions->SetServer(pNode->ToElement(), data->m_server);
 
-			TiXmlNode* sub = pNode->InsertEndChild(TiXmlElement("Comments"));
+			TiXmlNode* sub;
+
+			// Save comments
+			sub = pNode->InsertEndChild(TiXmlElement("Comments"));
 			char* comments = m_pOptions->ConvUTF8(data->m_comments);
 			sub->InsertEndChild(TiXmlText(comments));
 			delete [] comments;
+
+			// Save local dir
+			sub = pNode->InsertEndChild(TiXmlElement("LocalDir"));
+			char* localDir = m_pOptions->ConvUTF8(data->m_localDir);
+			sub->InsertEndChild(TiXmlText(localDir));
+			delete [] localDir;
+
+			// Save remote dir
+			sub = pNode->InsertEndChild(TiXmlElement("RemoteDir"));
+			char* remoteDir = m_pOptions->ConvUTF8(data->m_remoteDir.GetSafePath());
+			sub->InsertEndChild(TiXmlText(remoteDir));
+			delete [] remoteDir;
 
 			pNode->InsertEndChild(TiXmlText(utf8));
 			delete [] utf8;
@@ -428,6 +458,15 @@ void CSiteManager::OnSelChanged(wxTreeEvent& event)
 		XRCCTRL(*this, "ID_USER", wxTextCtrl)->SetValue(_T(""));
 		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->SetValue(_T(""));
 		XRCCTRL(*this, "ID_COMMENTS", wxTextCtrl)->SetValue(_T(""));
+		
+		XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->SetValue(_("Default"));
+		XRCCTRL(*this, "ID_LOCALDIR", wxTextCtrl)->SetValue(_T(""));
+		XRCCTRL(*this, "ID_REMOTEDIR", wxTextCtrl)->SetValue(_T(""));
+		XRCCTRL(*this, "ID_TIMEZONE_HOURS", wxSpinCtrl)->SetValue(0);
+		XRCCTRL(*this, "ID_TIMEZONE_MINUTES", wxSpinCtrl)->SetValue(0);
+
+		XRCCTRL(*this, "ID_TRANSFERMODE_DEFAULT", wxRadioButton)->SetValue(true);
+		XRCCTRL(*this, "ID_ALLOWMULTIPLE", wxCheckBox)->SetValue(true);
 	}
 	else
 	{
@@ -472,6 +511,38 @@ void CSiteManager::OnSelChanged(wxTreeEvent& event)
 		XRCCTRL(*this, "ID_USER", wxTextCtrl)->SetValue(data->m_server.GetUser());
 		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->SetValue(data->m_server.GetPass());
 		XRCCTRL(*this, "ID_COMMENTS", wxTextCtrl)->SetValue(data->m_comments);
+
+		switch (data->m_server.GetType())
+		{
+		case UNIX:
+			XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->SetValue(_("Unix"));
+			break;
+		case DOS:
+			XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->SetValue(_("Dos"));
+			break;
+		case MVS:
+			XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->SetValue(_("MVS"));
+			break;
+		case VMS:
+			XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->SetValue(_("VMS"));
+			break;
+		default:
+			XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->SetValue(_("Default"));
+			break;
+		}
+		XRCCTRL(*this, "ID_LOCALDIR", wxTextCtrl)->SetValue(data->m_localDir);
+		XRCCTRL(*this, "ID_REMOTEDIR", wxTextCtrl)->SetValue(data->m_remoteDir.GetPath());
+		XRCCTRL(*this, "ID_TIMEZONE_HOURS", wxSpinCtrl)->SetValue(data->m_server.GetTimezoneOffset() / 60);
+		XRCCTRL(*this, "ID_TIMEZONE_MINUTES", wxSpinCtrl)->SetValue(data->m_server.GetTimezoneOffset() % 60);
+
+		enum PasvMode pasvMode = data->m_server.GetPasvMode();
+		if (pasvMode == MODE_ACTIVE)
+			XRCCTRL(*this, "ID_TRANSFERMODE_ACTIVE", wxRadioButton)->SetValue(true);
+		else if (pasvMode == MODE_PASSIVE)
+			XRCCTRL(*this, "ID_TRANSFERMODE_PASSIVE", wxRadioButton)->SetValue(true);
+		else
+			XRCCTRL(*this, "ID_TRANSFERMODE_DEFAULT", wxRadioButton)->SetValue(true);
+		XRCCTRL(*this, "ID_ALLOWMULTIPLE", wxCheckBox)->SetValue(data->m_server.AllowMultipleConnections());
 	}
 }
 
@@ -580,6 +651,34 @@ bool CSiteManager::UpdateServer()
 	
 	data->m_comments = XRCCTRL(*this, "ID_COMMENTS", wxTextCtrl)->GetValue();
 
+	wxString serverType = XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->GetValue();
+	if (serverType == _("Unix"))
+		data->m_server.SetType(UNIX);
+	else if (serverType == _("Dos"))
+		data->m_server.SetType(DOS);
+	else if (serverType == _("VMS"))
+		data->m_server.SetType(VMS);
+	else if (serverType == _("MVS"))
+		data->m_server.SetType(MVS);
+	else
+		data->m_server.SetType(DEFAULT);
+	
+	data->m_localDir = XRCCTRL(*this, "ID_LOCALDIR", wxTextCtrl)->GetValue();
+	data->m_remoteDir = CServerPath();
+	data->m_remoteDir.SetType(data->m_server.GetType());
+	data->m_remoteDir.SetPath(XRCCTRL(*this, "ID_REMOTEDIR", wxTextCtrl)->GetValue());
+	data->m_server.SetTimezoneOffset(XRCCTRL(*this, "ID_TIMEZONE_HOURS", wxSpinCtrl)->GetValue() * 60 + 
+									 XRCCTRL(*this, "ID_TIMEZONE_MINUTES", wxSpinCtrl)->GetValue());
+
+	if (XRCCTRL(*this, "ID_TRANSFERMODE_ACTIVE", wxRadioButton)->GetValue())
+		data->m_server.SetPasvMode(MODE_ACTIVE);
+	else if (XRCCTRL(*this, "ID_TRANSFERMODE_PASSIVE", wxRadioButton)->GetValue())
+		data->m_server.SetPasvMode(MODE_PASSIVE);
+	else
+		data->m_server.SetPasvMode(MODE_DEFAULT);
+
+	data->m_server.AllowMultipleConnections(XRCCTRL(*this, "ID_ALLOWMULTIPLE", wxCheckBox)->GetValue() != 0);
+
 	return true;
 }
 
@@ -600,4 +699,25 @@ bool CSiteManager::GetServer(CServer &server)
 	server = data->m_server;
 
 	return true;
+}
+
+void CSiteManager::OnRemoteDirBrowse(wxCommandEvent& event)
+{
+	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
+	if (!pTree)
+		return;
+
+	wxTreeItemId item = pTree->GetSelection();
+	if (!item.IsOk())
+		return;
+
+	CSiteManagerItemData* data = reinterpret_cast<CSiteManagerItemData* >(pTree->GetItemData(item));
+	if (!data)
+		return;
+
+	wxDirDialog dlg(this, _("Choose the default local directory"), XRCCTRL(*this, "ID_LOCALDIR", wxTextCtrl)->GetValue(), wxDD_NEW_DIR_BUTTON);
+	if (dlg.ShowModal() == wxID_OK)
+	{
+		XRCCTRL(*this, "ID_LOCALDIR", wxTextCtrl)->SetValue(dlg.GetPath());
+	}
 }

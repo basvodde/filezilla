@@ -185,9 +185,9 @@ bool CServerPath::SetPath(wxString &newPath, bool isFile)
 	case DOS:
 		// Check for starting drive letter
 		path.Replace(_T("\\"), _T("/"));
-		pos = path.Find(_T("/"));
-		if (pos <= 2 || path.c_str()[1] != ':' ||
-			!(path.c_str()[0] >= 'A' && path.c_str()[0] <= 'Z') || (path.c_str()[0] >= 'a' && path.c_str()[0] <= 'z'))
+		pos = path.Find('/');
+		if (pos != 2 || path.c_str()[1] != ':' ||
+			!((path.c_str()[0] >= 'A' && path.c_str()[0] <= 'Z') || (path.c_str()[0] >= 'a' && path.c_str()[0] <= 'z')))
 		{
 			m_bEmpty = true;
 			return false;
@@ -366,9 +366,10 @@ bool CServerPath::SetSafePath(wxString path)
 
 	while (path != _T(""))
 	{
-		if (path.c_str()[0] != ' ')
+		pos = path.Find(' ');
+		if (pos < 1)
 			return false;
-
+		
 		if (!path.Left(pos).ToULong(&len))
 			return false;
 		path = path.Mid(pos + 1);

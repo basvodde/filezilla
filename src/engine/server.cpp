@@ -6,6 +6,9 @@ CServer::CServer()
 	m_protocol = FTP;
 	m_type = DEFAULT;
 	m_logonType = ANONYMOUS;
+	m_timezoneOffset = 0;
+	m_allowMultipleConnections = true;
+	m_pasvMode = MODE_DEFAULT;
 }
 
 bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString pass, wxString &error, CServerPath &path)
@@ -171,6 +174,9 @@ CServer& CServer::operator=(const CServer &op)
 	m_logonType = op.m_logonType;
 	m_user = op.m_user;
 	m_pass = op.m_pass;
+	m_timezoneOffset = op.m_timezoneOffset;
+	m_pasvMode = op.m_pasvMode;
+	m_allowMultipleConnections = op.m_allowMultipleConnections;
 
 	return *this;
 }
@@ -194,6 +200,12 @@ bool CServer::operator==(const CServer &op) const
 		else if (m_pass != op.m_pass)
 			return false;
 	}
+	else if (m_timezoneOffset != op.m_timezoneOffset)
+		return false;
+	else if (m_pasvMode != op.m_pasvMode)
+		return false;
+	else if (m_allowMultipleConnections != op.m_allowMultipleConnections)
+		return false;
 
 	return true;
 }
@@ -273,4 +285,39 @@ bool CServer::SetUser(wxString user, wxString pass /*=_T("")*/)
 		m_pass = _T("");
 
 	return true;
+}
+
+bool CServer::SetTimezoneOffset(int minutes)
+{
+	if (minutes > (60 * 13) || minutes < (-60 * 30))
+		return false;
+
+	m_timezoneOffset = minutes;
+
+	return true;
+}
+
+int CServer::GetTimezoneOffset() const
+{
+	return m_timezoneOffset;
+}
+
+enum PasvMode CServer::GetPasvMode() const
+{
+	return m_pasvMode;
+}
+
+void CServer::SetPasvMode(enum PasvMode pasvMode)
+{
+	m_pasvMode = pasvMode;
+}
+
+void CServer::AllowMultipleConnections(bool allow)
+{
+	m_allowMultipleConnections = allow;
+}
+
+bool CServer::AllowMultipleConnections() const
+{
+	return m_allowMultipleConnections;
 }

@@ -536,7 +536,7 @@ Would you like to replace the file</label>
                           <object class="wxBoxSizer">
                             <orient>wxHORIZONTAL</orient>
                             <object class="sizeritem">
-                              <object class="wxSpinCtrl">
+                              <object class="wxSpinCtrl" name="ID_TIMEZONE_HOURS">
                                 <value>0</value>
                                 <min>-24</min>
                                 <max>24</max>
@@ -553,10 +553,10 @@ Would you like to replace the file</label>
                             <object class="sizeritem">
                               <flag>wxRIGHT|wxLEFT</flag>
                               <border>5</border>
-                              <object class="wxSpinCtrl">
+                              <object class="wxSpinCtrl" name="ID_TIMEZONE_MINUTES">
                                 <value>0</value>
-                                <min>-60</min>
-                                <max>60</max>
+                                <min>-59</min>
+                                <max>59</max>
                                 <size>50,-1</size>
                               </object>
                             </object>
@@ -590,6 +590,8 @@ Would you like to replace the file</label>
                             <object class="sizeritem">
                               <object class="wxRadioButton" name="ID_TRANSFERMODE_DEFAULT">
                                 <label>D&amp;efault</label>
+                                <style>wxRB_GROUP</style>
+                                <value>1</value>
                               </object>
                             </object>
                             <object class="sizeritem">

@@ -371,14 +371,52 @@ void COptions::SetServer(TiXmlElement *node, const CServer& server)
 		delete [] utf8;
 		node->InsertEndChild(element);
 
-		element = TiXmlElement("Pass");
-		utf8 = ConvUTF8(server.GetPass());
-		if (!utf8)
-			return;
-		element.InsertEndChild(TiXmlText(utf8));
-		delete [] utf8;
-		node->InsertEndChild(element);
+		if (server.GetLogonType() == NORMAL)
+		{
+			element = TiXmlElement("Pass");
+			utf8 = ConvUTF8(server.GetPass());
+			if (!utf8)
+				return;
+			element.InsertEndChild(TiXmlText(utf8));
+			delete [] utf8;
+			node->InsertEndChild(element);
+		}
 	}
+
+	element = TiXmlElement("TimezoneOffset");
+	utf8 = ConvUTF8(wxString::Format(_T("%d"), server.GetTimezoneOffset()));
+	if (!utf8)
+		return;
+	element.InsertEndChild(TiXmlText(utf8));
+	delete [] utf8;
+	node->InsertEndChild(element);
+
+	element = TiXmlElement("PasvMode");
+	switch (server.GetPasvMode())
+	{
+	case MODE_PASSIVE:
+		utf8 = ConvUTF8(_T("MODE_PASSIVE"));
+		break;
+	case MODE_ACTIVE:
+		utf8 = ConvUTF8(_T("MODE_ACTIVE"));
+		break;
+	default:
+		utf8 = ConvUTF8(_T("MODE_DEFAULT"));
+		break;
+	}
+	if (!utf8)
+		return;
+	element.InsertEndChild(TiXmlText(utf8));
+	delete [] utf8;
+	node->InsertEndChild(element);
+
+	element = TiXmlElement("AllowMultipleConnections");
+	utf8 = ConvUTF8(wxString::Format(_T("%d"), server.AllowMultipleConnections() ? 1 : 0));
+	if (!utf8)
+		return;
+	element.InsertEndChild(TiXmlText(utf8));
+	delete [] utf8;
+	node->InsertEndChild(element);
 }
 
 bool COptions::GetServer(TiXmlElement *node, CServer& server)
@@ -436,15 +474,49 @@ bool COptions::GetServer(TiXmlElement *node, CServer& server)
 		if (!user)
 			return false;
 	
-		text = handle.FirstChildElement("Pass").FirstChild().Text();
 		wxString pass;
-		if (text)
-			pass = ConvLocal(text->Value());
+		if ((long)NORMAL == logonType)
+		{
+			text = handle.FirstChildElement("Pass").FirstChild().Text();
+			if (text)
+				pass = ConvLocal(text->Value());
+		}
 		
 		server = CServer((enum ServerProtocol)protocol, (enum ServerType)type, host, port, user, pass);
 	}
 	else
 		server = CServer((enum ServerProtocol)protocol, (enum ServerType)type, host, port);
+
+	text = handle.FirstChildElement("TimezoneOffset").FirstChild().Text();
+	if (text)
+	{
+		long timezoneOffset = 0;
+		if (!ConvLocal(text->Value()).ToLong(&timezoneOffset))
+			return false;
+		if (!server.SetTimezoneOffset(timezoneOffset))
+			return false;
+	}
+	
+	text = handle.FirstChildElement("PasvMode").FirstChild().Text();
+	if (text)
+	{
+		wxString pasvMode = ConvLocal(text->Value());
+		if (pasvMode == _T("MODE_PASSIVE"))
+			server.SetPasvMode(MODE_PASSIVE);
+		else if (pasvMode == _T("MODE_ACTIVE"))
+			server.SetPasvMode(MODE_ACTIVE);
+		else
+			server.SetPasvMode(MODE_DEFAULT);
+	}
+	
+	text = handle.FirstChildElement("AllowMultipleConnections").FirstChild().Text();
+	if (text)
+	{
+		long allowMultipleConnections = 0;
+		if (!ConvLocal(text->Value()).ToLong(&allowMultipleConnections))
+			return false;
+		server.AllowMultipleConnections(allowMultipleConnections != 0);
+	}
 	
 	return true;
 }
