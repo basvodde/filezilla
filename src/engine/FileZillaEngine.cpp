@@ -58,9 +58,6 @@ int CFileZillaEngine::Command(const CCommand &command)
 	if (command.GetId() != cmd_cancel && IsBusy())
 		return FZ_REPLY_BUSY;
 
-	if (!m_pCurrentCommand && command.GetId() != cmd_cancel)
-		m_pCurrentCommand = command.Clone();
-
 	m_bIsInCommand = true;
 
 	int res = FZ_REPLY_INTERNALERROR;
@@ -109,6 +106,8 @@ int CFileZillaEngine::Connect(const CConnectCommand &command)
 
 	if (m_pControlSocket)
 		delete m_pControlSocket;
+
+	m_pCurrentCommand = command.Clone();
 	switch (command.GetServer().GetProtocol())
 	{
 	case FTP:
@@ -184,6 +183,7 @@ int CFileZillaEngine::Disconnect(const CDisconnectCommand &command)
 	if (!IsConnected())
 		return FZ_REPLY_OK;
 
+	m_pCurrentCommand = command.Clone();
 	int res = m_pControlSocket->Disconnect();
 	if (res == FZ_REPLY_OK)
 	{
