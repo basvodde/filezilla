@@ -1162,8 +1162,7 @@ int CFtpControlSocket::FileTransferParseResponse()
 					error = true;
 				break;
 			}
-			pData->port = number; //add ms byte of server socket
-			pData->port += 256 * number;
+			pData->port += 256 * number; //add ms byte of server socket
 			pData->host = temp.Left(i);
 			pData->host.Replace(_T(","), _T("."));
 		}
@@ -1448,6 +1447,11 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 			cmd = _T("TYPE A");
 		break;
 	case filetransfer_port_pasv:
+		if (m_pTransferSocket)
+		{
+			LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("m_pTransferSocket != 0"));
+			delete m_pTransferSocket;
+		}
 		m_pTransferSocket = new CTransferSocket(m_pEngine, this, pData->download ? download : upload);
 		if (pData->bPasv)
 		{
