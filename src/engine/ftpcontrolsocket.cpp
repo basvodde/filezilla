@@ -81,7 +81,6 @@ CFtpControlSocket::CFtpControlSocket(CFileZillaEngine *pEngine) : CControlSocket
 
 CFtpControlSocket::~CFtpControlSocket()
 {
-	delete m_pCurOpData;
 }
 
 #define BUFFERSIZE 4096
