@@ -49,7 +49,7 @@ END_EVENT_TABLE()
 #endif
 
 CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState, CCommandQueue *pCommandQueue, CQueueView* pQueue)
-	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER)
+	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER | wxLC_EDIT_LABELS)
 {
 	m_pState = pState;
 	m_pCommandQueue = pCommandQueue;
@@ -835,6 +835,26 @@ void CRemoteListView::OnMenuDelete(wxCommandEvent& event)
 
 void CRemoteListView::OnMenuRename(wxCommandEvent& event)
 {
+	if (!m_pCommandQueue->Idle() || IsBusy())
+	{
+		wxBell();
+		return;
+	}
+
+	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	if (item <= 0)
+	{
+		wxBell();
+		return;
+	}
+
+	if (GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1)
+	{
+		wxBell();
+		return;
+	}
+
+	EditLabel(item);
 }
 
 bool CRemoteListView::NextOperation()
@@ -963,6 +983,11 @@ void CRemoteListView::OnChar(wxKeyEvent& event)
 		OnMenuDelete(tmp);
 		return;
 	}
+	else if (code == WXK_F2)
+	{
+		wxCommandEvent tmp;
+		OnMenuRename(tmp);
+	}
 	else if (code > 32 && code < 300 && !event.HasModifiers())
 	{
 		// Keyboard navigation within items
@@ -976,7 +1001,7 @@ void CRemoteListView::OnChar(wxKeyEvent& event)
 		m_lastKeyPress = now;
 
 		wxChar tmp[2];
-#ifdef wxUSE_UNICODE
+#if wxUSE_UNICODE
 		tmp[0] = event.GetUnicodeKey();
 #else
 		tmp[0] = code;

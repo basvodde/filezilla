@@ -997,7 +997,7 @@ void CLocalListView::OnChar(wxKeyEvent& event)
 		m_lastKeyPress = now;
 
 		wxChar tmp[2];
-#ifdef wxUSE_UNICODE
+#if wxUSE_UNICODE
 		tmp[0] = event.GetUnicodeKey();
 #else
 		tmp[0] = code;

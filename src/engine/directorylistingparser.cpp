@@ -55,7 +55,7 @@ public:
 
 		if (!type)
 		{
-#ifdef wxUSE_UNICODE
+#if wxUSE_UNICODE
 			char *buffer = new char[m_len + 1];
 			buffer[m_len] = 0;
 			memcpy(buffer, m_pToken, m_len);
@@ -78,7 +78,7 @@ public:
 			while (m_pToken[pos] >= '0' && m_pToken[pos] <= '9')
 				pos--;
 
-#ifdef wxUSE_UNICODE
+#if wxUSE_UNICODE
 			char *buffer = new char[pos + 2];
 			buffer[pos + 1] = 0;
 			memcpy(buffer, m_pToken, pos + 1);
@@ -101,7 +101,7 @@ public:
 			while (m_pToken[len] >= '0' && m_pToken[len] <= '9')
 				len++;
 
-#ifdef wxUSE_UNICODE
+#if wxUSE_UNICODE
 			char *buffer = new char[len + 1];
 			buffer[len] = 0;
 			memcpy(buffer, m_pToken, len);
