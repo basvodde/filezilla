@@ -27,6 +27,13 @@ enum NotificationId
 	nId_active // sent if data gets either received or sent
 };
 
+// Async request IDs
+enum RequestId
+{
+	reqId_fileexists,
+	reqId_interactiveLogin
+};
+
 class CNotification
 {
 public:
@@ -68,11 +75,6 @@ public:
 
 protected:
 	CDirectoryListing *pDirectoryListing;
-};
-
-enum RequestId
-{
-	reqId_fileexists
 };
 
 class CAsyncRequestNotification : public CNotification
@@ -118,6 +120,18 @@ public:
 	enum OverwriteAction overwriteAction;
 	
 	wxString newName; //Will contain the new filename if overwriteAction is rename
+};
+
+class CInteractiveLoginNotification : public CAsyncRequestNotification
+{
+public:
+	CInteractiveLoginNotification();
+	virtual ~CInteractiveLoginNotification();
+	virtual enum RequestId GetRequestID() const;
+
+	bool passwordSet;
+	CServer server;
+	wxString challenge;
 };
 
 class CActiveNotification : public CNotification

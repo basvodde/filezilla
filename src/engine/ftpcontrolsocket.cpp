@@ -41,6 +41,36 @@ enum filetransferStates
 	filetransfer_waitsocket
 };
 
+class CLogonOpData : public COpData
+{
+public:
+	CLogonOpData()
+	{
+		logonSequencePos = 0;
+		logonType = 0;
+		nCommand = 0;
+
+		opId = cmd_connect;
+		
+		waitChallenge = false;
+		gotPassword = false;
+		waitAsyncRequest = false;
+
+	}
+
+	virtual ~CLogonOpData()
+	{
+	}
+
+	int logonSequencePos;
+	int logonType;
+	int nCommand; // Next command to send in the current logon sequence
+
+	wxString challenge; // Used for interactive logons
+	bool waitChallenge;
+	bool waitAsyncRequest;
+	bool gotPassword;
+};
 
 CFtpControlSocket::CFtpControlSocket(CFileZillaEngine *pEngine) : CControlSocket(pEngine)
 {
@@ -92,15 +122,25 @@ void CFtpControlSocket::OnReceive(wxSocketEvent &event)
 
 			LogMessage(Response, m_ReceiveBuffer);
 				
+			if (GetCurrentCommandId() == cmd_connect && reinterpret_cast<CLogonOpData *>(m_pCurOpData)->waitChallenge)
+			{
+				wxString& challenge = reinterpret_cast<CLogonOpData *>(m_pCurOpData)->challenge;
+				if (challenge != _T(""))
+#ifdef __WXMSW__
+					challenge += _T("\r\n");
+#else
+					challenge += _T("\n");
+#endif
+				challenge += m_ReceiveBuffer;
+			}
 			//Check for multi-line responses
 			if (m_ReceiveBuffer.Len() > 3)
 			{
 				if (m_MultilineResponseCode != _T(""))
 				{
-					if (m_ReceiveBuffer.Left(4) != m_MultilineResponseCode)
- 						m_ReceiveBuffer.Empty();
-					else // end of multi-line found
+					if (m_ReceiveBuffer.Left(4) == m_MultilineResponseCode)
 					{
+						// end of multi-line found
 						m_MultilineResponseCode.Clear();
 						ParseResponse();
 					}
@@ -116,7 +156,7 @@ void CFtpControlSocket::OnReceive(wxSocketEvent &event)
 					ParseResponse();
 				}
 			}
-			
+
 			m_ReceiveBuffer.clear();
 		}
 		else
@@ -134,6 +174,7 @@ void CFtpControlSocket::OnReceive(wxSocketEvent &event)
 void CFtpControlSocket::OnConnect(wxSocketEvent &event)
 {
 	LogMessage(Status, _("Connection established, waiting for welcome message..."));
+	Logon();
 }
 
 void CFtpControlSocket::ParseResponse()
@@ -142,7 +183,7 @@ void CFtpControlSocket::ParseResponse()
 	switch (commandId)
 	{
 	case cmd_connect:
-		Logon();
+		LogonParseResponse();
 		break;
 	case cmd_list:
 		ListParseResponse();
@@ -158,31 +199,28 @@ void CFtpControlSocket::ParseResponse()
 	}
 }
 
-class CLogonOpData : public COpData
+int CFtpControlSocket::Logon()
 {
-public:
-	CLogonOpData()
+	if (m_pCurOpData)
 	{
-		logonSequencePos = 0;
-		logonType = 0;
-
-		opId = cmd_connect;
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("deleting nonzero pData"));
+		delete m_pCurOpData;
 	}
+	m_pCurOpData = new CLogonOpData;
+	
+	return FZ_REPLY_WOULDBLOCK;
+}
 
-	virtual ~CLogonOpData()
-	{
-	}
-
-	int logonSequencePos;
-	int logonType;
-};
-
-bool CFtpControlSocket::Logon()
+int CFtpControlSocket::LogonParseResponse()
 {
 	if (!m_pCurOpData)
-		m_pCurOpData = new CLogonOpData;
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("LogonParseResponse without m_pCurOpData called"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_INTERNALERROR;
+	}
 
-	CLogonOpData *pData = (CLogonOpData *)(m_pCurOpData);
+	CLogonOpData *pData = reinterpret_cast<CLogonOpData *>(m_pCurOpData);
 
 	const int LO = -2, ER = -1;
 	const int NUMLOGIN = 9; // currently supports 9 different login sequences
@@ -202,34 +240,32 @@ bool CFtpControlSocket::Logon()
 		{10,LO,3,11,LO,6,2,LO,ER} // USER remoteID@fireID@remotehost
 	};
 
-	int nCommand = 0;
 	int code = GetReplyCode();
 	if (code != 2 && code != 3)
 	{
 		DoClose(FZ_REPLY_DISCONNECTED);
-		return false;
+		return FZ_REPLY_DISCONNECTED;
 	}
 	if (!pData->opState)
 	{
 		pData->opState = 1;
-		nCommand = logonseq[pData->logonType][0];
+		pData->nCommand = logonseq[pData->logonType][0];
 	}
 	else if (pData->opState == 1)
 	{
+		pData->waitChallenge = false;
 		pData->logonSequencePos = logonseq[pData->logonType][pData->logonSequencePos + code - 1];
 
 		switch(pData->logonSequencePos)
 		{
 		case ER: // ER means summat has gone wrong
 			DoClose();
-			return false;
+			return FZ_REPLY_ERROR;
 		case LO: //LO means we are logged on
 			pData->opState = 2;
-			Send(_T("SYST"));
-			return false;
 		}
 
-		nCommand = logonseq[pData->logonType][pData->logonSequencePos];
+		pData->nCommand = logonseq[pData->logonType][pData->logonSequencePos];
 	}
 	else if (pData->opState == 2)
 	{
@@ -244,20 +280,68 @@ bool CFtpControlSocket::Logon()
 		return true;
 	}
 
-	switch (nCommand)
+	return LogonSend();
+}
+
+int CFtpControlSocket::LogonSend()
+{
+	if (!m_pCurOpData)
 	{
-	case 0:
-		Send(_T("USER ") + m_pCurrentServer->GetUser());
-		break;
-	case 1:
-		Send(_T("PASS ") + m_pCurrentServer->GetPass());
-		break;
-	default:
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("LogonParseResponse without m_pCurOpData called"));
 		ResetOperation(FZ_REPLY_INTERNALERROR);
-		break;
+		return FZ_REPLY_INTERNALERROR;
 	}
 
-	return false;
+	CLogonOpData *pData = reinterpret_cast<CLogonOpData *>(m_pCurOpData);
+
+	bool res;
+	switch (pData->opState)
+	{
+	case 2:
+		res = Send(_T("SYST"));
+		break;
+	case 1:
+		switch (pData->nCommand)
+		{
+		case 0:
+			res = Send(_T("USER ") + m_pCurrentServer->GetUser());
+
+			if (m_pCurrentServer->GetLogonType() == INTERACTIVE)
+			{
+				pData->waitChallenge = true;
+				pData->challenge = _T("");
+			}
+			break;
+		case 1:
+			if (pData->challenge != _T(""))
+			{
+				CInteractiveLoginNotification *pNotification = new CInteractiveLoginNotification;
+				pNotification->server = *m_pCurrentServer;
+				pNotification->challenge = pData->challenge;
+				pNotification->requestNumber = m_pEngine->GetNextAsyncRequestNumber();
+				pData->waitAsyncRequest = true;
+				pData->challenge = _T("");
+				m_pEngine->AddNotification(pNotification);
+
+				return FZ_REPLY_WOULDBLOCK;
+			}
+
+			res = Send(_T("PASS ") + m_pCurrentServer->GetPass());
+			break;
+		default:
+			ResetOperation(FZ_REPLY_INTERNALERROR);
+			res = false;
+			break;
+		}
+		break;
+	default:
+		return FZ_REPLY_ERROR;
+	}
+
+	if (!res)
+		return FZ_REPLY_ERROR;
+
+	return FZ_REPLY_WOULDBLOCK;
 }
 
 int CFtpControlSocket::GetReplyCode() const
@@ -667,7 +751,7 @@ int CFtpControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
 	case cmd_list:
 		return ListSend(prevResult);
 	case cmd_connect:
-		return Logon();
+		return LogonSend();
 	case cmd_private:
 		return ChangeDirSend();
 	case cmd_transfer:
@@ -1628,7 +1712,7 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 		{
 			if (!m_pCurOpData || m_pCurOpData->opId != cmd_transfer)
 			{
-				LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("No or invalid operation in progress, ignoring request reply"), pNotification->GetRequestID());
+				LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("No or invalid operation in progress, ignoring request reply %f"), pNotification->GetRequestID());
 				return false;
 			}
 	
@@ -1636,10 +1720,9 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 
 			if (!pData->waitAsyncRequest)
 			{
-				LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Not waiting for request reply, ignoring request reply"), pNotification->GetRequestID());
+				LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Not waiting for request reply, ignoring request reply %d"), pNotification->GetRequestID());
 				return false;
 			}
-
 			pData->waitAsyncRequest = false;
 			
 			CFileExistsNotification *pFileExistsNotification = reinterpret_cast<CFileExistsNotification *>(pNotification);
@@ -1748,6 +1831,34 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 				ResetOperation(FZ_REPLY_INTERNALERROR);
 				return false;
 			}
+		}
+		break;
+	case reqId_interactiveLogin:
+		{
+			if (!m_pCurOpData || m_pCurOpData->opId != cmd_connect)
+			{
+				LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("No or invalid operation in progress, ignoring request reply %d"), pNotification->GetRequestID());
+				return false;
+			}
+	
+			CLogonOpData* pData = static_cast<CLogonOpData*>(m_pCurOpData);
+
+			if (!pData->waitAsyncRequest)
+			{
+				LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Not waiting for request reply, ignoring request reply %d"), pNotification->GetRequestID());
+				return false;
+			}
+			pData->waitAsyncRequest = false;
+
+			CInteractiveLoginNotification *pInteractiveLoginNotification = reinterpret_cast<CInteractiveLoginNotification *>(pNotification);
+			if (!pInteractiveLoginNotification->passwordSet)
+			{
+				ResetOperation(FZ_REPLY_CANCELED);
+				return false;
+			}
+			m_pCurrentServer->SetUser(m_pCurrentServer->GetUser(), pInteractiveLoginNotification->server.GetPass());
+			pData->gotPassword = true;
+			SendNextCommand();
 		}
 		break;
 	default:

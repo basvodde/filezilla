@@ -114,6 +114,16 @@ void CAsyncRequestQueue::ProcessNextRequest()
 			entry.pEngine->SetAsyncRequestReply(entry.pNotification);
 			delete pNotification;
 		}
+		else if (entry.pNotification->GetRequestID() == reqId_interactiveLogin)
+		{
+			CInteractiveLoginNotification* pNotification = reinterpret_cast<CInteractiveLoginNotification*>(entry.pNotification);
+
+			if (m_pMainFrame->GetPassword(pNotification->server, _T(""), pNotification->challenge))
+				pNotification->passwordSet = true;
+
+			entry.pEngine->SetAsyncRequestReply(pNotification);
+			delete pNotification;
+		}
 
 		m_requestList.pop_front();
 	}

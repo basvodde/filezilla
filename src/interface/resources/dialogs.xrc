@@ -722,6 +722,21 @@ Would you like to replace the file</label>
         <border>5</border>
       </object>
       <object class="sizeritem">
+        <object class="wxStaticText" name="ID_CHALLENGELABEL">
+          <label>Challenge:</label>
+        </object>
+        <flag>wxTOP|wxLEFT|wxRIGHT</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxTextCtrl" name="ID_CHALLENGE">
+          <size>-1,50</size>
+          <style>wxTE_MULTILINE|wxTE_READONLY</style>
+        </object>
+        <flag>wxALL|wxGROW</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
         <object class="wxBoxSizer">
           <orient>wxHORIZONTAL</orient>
           <object class="sizeritem">
@@ -734,6 +749,7 @@ Would you like to replace the file</label>
             <object class="wxTextCtrl" name="ID_PASSWORD">
               <size>150,-1</size>
               <style>wxTE_PASSWORD</style>
+              <focused>1</focused>
             </object>
             <flag>wxLEFT</flag>
             <border>5</border>

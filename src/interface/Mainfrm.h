@@ -19,6 +19,8 @@ public:
 	CMainFrame();
 	virtual ~CMainFrame();
 
+	bool GetPassword(CServer &server, wxString name = _T(""), wxString challenge = _T(""));
+
 protected:
 	bool CreateMenus();
 	bool CreateQuickconnectBar();
@@ -44,8 +46,6 @@ protected:
 	CRemoteListView *m_pRemoteListView;
 	CLed *m_pRecvLed, *m_pSendLed;
 	wxTimer m_sendLedTimer, m_recvLedTimer;
-
-	bool GetPassword(CServer &server, wxString name = "");
 
 	wxTimer m_transferStatusTimer;
 

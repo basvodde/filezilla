@@ -1,3 +1,4 @@
 resourcesdir = $(pkgdatadir)/resources/16x16
 
-dist_resources_DATA = file.png folder.png
+dist_resources_DATA = file.png folder.png folderclosed.png server.png \
+		sitemanager.png

@@ -92,6 +92,20 @@ enum RequestId CFileExistsNotification::GetRequestID() const
 	return reqId_fileexists;
 }
 
+CInteractiveLoginNotification::CInteractiveLoginNotification()
+{
+	passwordSet = false;
+}
+
+CInteractiveLoginNotification::~CInteractiveLoginNotification()
+{
+}
+
+enum RequestId CInteractiveLoginNotification::GetRequestID() const
+{
+	return reqId_interactiveLogin;
+}
+
 CActiveNotification::CActiveNotification(bool recv)
 {
 	m_recv = recv;

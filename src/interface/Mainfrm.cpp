@@ -186,13 +186,6 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 	{
 		wxSize barSize = m_pQuickconnectBar->GetSize();
 		m_pQuickconnectBar->SetSize(0, 0, clientSize.GetWidth(), barSize.GetHeight());
-
-		wxButton *pButton = XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_OK", wxButton);
-		wxSize buttonSize = pButton->GetSize();
-		wxPoint position = pButton->GetPosition();
-		wxButton *pDropdownButton = XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_DROPDOWN", wxButton);
-		wxSize dropdownSize = pDropdownButton->GetSize();
-		pDropdownButton->SetSize(-1, position.y, dropdownSize.GetWidth(), buttonSize.GetHeight());
 	}
 	if (m_pTopSplitter)
 	{
@@ -728,7 +721,7 @@ void CMainFrame::OnSiteManager(wxCommandEvent& event)
 	}
 }
 
-bool CMainFrame::GetPassword(CServer &server, wxString name /*=""*/)
+bool CMainFrame::GetPassword(CServer &server, wxString name /*=_T("")*/, wxString challenge /*=_T("")*/)
 {
 	wxDialog pwdDlg;
 	wxXmlResource::Get()->LoadDialog(&pwdDlg, this, _T("ID_ENTERPASSWORD"));
@@ -739,6 +732,17 @@ bool CMainFrame::GetPassword(CServer &server, wxString name /*=""*/)
 	}
 	else
 		XRCCTRL(pwdDlg, "ID_NAME", wxStaticText)->SetLabel(name);
+	if (challenge == _T(""))
+	{
+		pwdDlg.GetSizer()->Show(XRCCTRL(pwdDlg, "ID_CHALLENGELABEL", wxStaticText), false, true);
+		pwdDlg.GetSizer()->Show(XRCCTRL(pwdDlg, "ID_CHALLENGE", wxTextCtrl), false, true);
+	}
+	else
+	{
+		XRCCTRL(pwdDlg, "ID_CHALLENGE", wxTextCtrl)->SetLabel(challenge);
+		pwdDlg.GetSizer()->Show(XRCCTRL(pwdDlg, "ID_REMEMBER", wxCheckBox), false, true);
+		XRCCTRL(pwdDlg, "ID_CHALLENGE", wxTextCtrl)->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+	}
 	XRCCTRL(pwdDlg, "ID_HOST", wxStaticText)->SetLabel(server.FormatHost());
 	XRCCTRL(pwdDlg, "ID_USER", wxStaticText)->SetLabel(server.GetUser());
 	XRCCTRL(pwdDlg, "wxID_OK", wxButton)->SetId(wxID_OK);

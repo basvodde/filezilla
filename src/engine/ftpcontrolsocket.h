@@ -42,7 +42,9 @@ protected:
 
 	int GetReplyCode() const;
 
-	bool Logon();
+	int Logon();
+	int LogonParseResponse();
+	int LogonSend();
 
 	int CheckOverwriteFile();
 
