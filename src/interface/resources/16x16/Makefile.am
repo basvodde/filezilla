@@ -2,7 +2,8 @@ resourcesdir = $(pkgdatadir)/resources/16x16
 
 dist_resources_DATA = file.png folder.png folderclosed.png server.png \
 		sitemanager.png processqueue.png cancel.png disconnect.png \
-		reconnect.png refresh.png
+		reconnect.png refresh.png download.png downloadadd.png \
+		upload.png uploadadd.png
 
 if MACAPPBUNDLE
 mac-copy-resources: $(dist_resources_DATA)
