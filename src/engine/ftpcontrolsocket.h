@@ -16,7 +16,11 @@ protected:
 	virtual int ResetOperation(int nErrorCode);
 
 	virtual bool List(CServerPath path = CServerPath(), wxString subDir = _T(""));
+	virtual bool ListParseResponse();
+	virtual bool ListSend();
 	bool ParsePwdReply(wxString reply);
+
+	bool ChangeDir(CServerPath path = CServerPath(), wxString subDir = _T(""));
 
 	virtual void OnConnect(wxSocketEvent &event);
 	virtual void OnReceive(wxSocketEvent &event);

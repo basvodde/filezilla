@@ -104,7 +104,7 @@ void CFtpControlSocket::ParseResponse()
 		Logon();
 		break;
 	case cmd_list:
-		List();
+		ListParseResponse();
 		break;
 	default:
 		break;
@@ -118,6 +118,8 @@ public:
 	{
 		logonSequencePos = 0;
 		logonType = 0;
+
+		opId = cmd_connect;
 	}
 
 	virtual ~CLogonOpData()
@@ -160,12 +162,12 @@ void CFtpControlSocket::Logon()
 		DoClose(FZ_REPLY_DISCONNECTED);
 		return;
 	}
-	if (!m_nOpState)
+	if (!pData->opState)
 	{
-		m_nOpState = 1;
+		pData->opState = 1;
 		nCommand = logonseq[pData->logonType][0];
 	}
-	else if (m_nOpState == 1)
+	else if (pData->opState == 1)
 	{
 		pData->logonSequencePos = logonseq[pData->logonType][pData->logonSequencePos + code - 1];
 
@@ -175,14 +177,14 @@ void CFtpControlSocket::Logon()
 			DoClose();
 			return;
 		case LO: //LO means we are logged on
-			m_nOpState = 2;
+			pData->opState = 2;
 			Send(_T("SYST"));
 			return;
 		}
 
 		nCommand = logonseq[pData->logonType][pData->logonSequencePos];
 	}
-	else if (m_nOpState == 2)
+	else if (pData->opState == 2)
 	{
 		LogMessage(Status, _("Connected"));
 		ResetOperation(FZ_REPLY_OK);
@@ -228,6 +230,7 @@ class CListOpData : public COpData
 public:
 	CListOpData()
 	{
+		opId = cmd_list;
 	}
 
 	virtual ~CListOpData()
@@ -264,186 +267,51 @@ enum listStates
 
 bool CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/)
 {
-	CListOpData *pData = static_cast<CListOpData *>(m_pCurOpData);
-	if (m_nOpState != list_init)
-	{
-		int code = GetReplyCode();
-		bool error = false;
-		switch (m_nOpState)
-		{
-		case list_pwd:
-			if (code != 2 && code != 3)
-				error = true;
-			else if (ParsePwdReply(m_ReceiveBuffer))
-				m_nOpState = list_port_pasv;
-			else
-				error = true;
-			break;
-		case list_cwd:
-			if (code != 2 && code != 3)
-				error = true;
-			else
-				m_nOpState = list_pwd_cwd;
-			break;
-		case list_pwd_cwd:
-			if (code != 2 && code != 3)
-				error = true;
-			else if (ParsePwdReply(m_ReceiveBuffer))
-				if (pData->subDir == _T(""))
-					m_nOpState = list_port_pasv;
-				else
-					m_nOpState = list_cwd_subdir;
-			else
-				error = true;
-			break;
-		case list_cwd_subdir:
-			if (code != 2 && code != 3)
-				error = true;
-			else
-				m_nOpState = list_pwd_subdir;
-			break;
-		case list_pwd_subdir:
-			if (code != 2 && code != 3)
-				error = true;
-			else if (ParsePwdReply(m_ReceiveBuffer))
-				m_nOpState = list_port_pasv;
-			else
-				error = true;
-			break;
-		case list_port_pasv:
-			if (code != 2 && code != 3)
-			{
-				if (pData->bTriedPasv)
-					if (pData->bTriedActive)
-						error = true;
-					else
-						pData->bPasv = false;
-				else
-					pData->bPasv = true;
-				break;
-			}
-			if (pData->bPasv)
-			{
-				int i, j;
-				i = m_ReceiveBuffer.Find(_T("("));
-				j = m_ReceiveBuffer.Find(_T(")"));
-				if (i == -1 || j == -1)
-				{
-					if (!pData->bTriedActive)
-						pData->bPasv = false;
-					else
-						error = true;
-					break;
-				}
+	LogMessage(Status, _("Retrieving directory listing..."));
 
-				wxString temp = m_ReceiveBuffer.Mid(i+1,(j-i)-1);
-				i = temp.Find(',', true);
-				long number;
-				if (i == -1 || !temp.Mid(i + 1).ToLong(&number))
-				{
-					if (!pData->bTriedActive)
-						pData->bPasv = false;
-					else
-						error = true;
-					break;
-				}
-				pData->port = number; //get ls byte of server socket
-				temp = temp.Left(i);
-				i = temp.Find(',', true);
-				if (i == -1 || !temp.Mid(i + 1).ToLong(&number))
-				{
-					if (!pData->bTriedActive)
-						pData->bPasv = false;
-					else
-						error = true;
-					break;
-				}
-				pData->port = number; //add ms byte of server socket
-				pData->port += 256 * number;
-				pData->host = temp.Left(i);
-				pData->host.Replace(_T(","), _T("."));
-			}
-			m_nOpState = list_type;
-			break;
-		case list_type:
-			// Don't check error code here, we can live perfectly without it
-			m_nOpState = list_list;
-			break;
-		case list_list:
-			if (code != 1)
-				error = true;
-			else
-				m_nOpState = list_waitfinish;
-			break;
-		case list_waitlistpre:
-			if (code != 1)
-				error = true;
-			else
-				m_nOpState = list_waitlist;
-			break;
-		case list_waitfinish:
-			if (code != 2 && code != 3)
-				error = true;
-			else
-				m_nOpState = list_waitsocket;
-			break;
-		case list_waitlist:
-			if (code != 2 && code != 3)
-				error = true;
-			else
-			{
-				m_pTransferSocket->m_pDirectoryListingParser->Parse(m_CurrentPath);
-				ResetOperation(FZ_REPLY_OK);
-				return true;
-			}
-			break;
-		}
-		if (error)
-		{
-			ResetOperation(FZ_REPLY_ERROR);
-			return false;
-		}
+	CListOpData *pData = static_cast<CListOpData *>(m_pCurOpData);
+	if (pData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("deleting nonzero pData"));
+		delete pData;
+	}
+	pData = new CListOpData;
+	m_pCurOpData = pData;
+	pData->path = path;
+	pData->subDir = subDir;
+		
+	pData->bPasv = m_pEngine->GetOptions()->GetOptionVal(OPTION_USEPASV);
+	pData->bTriedPasv = pData->bTriedActive = false;
+
+	if (path.IsEmpty())
+	{
+		if (m_CurrentPath.IsEmpty())
+			pData->opState = list_pwd;
+		else
+			pData->opState = list_port_pasv;
 	}
 	else
 	{
-		LogMessage(Status, _("Retrieving directory listing..."));
-
-		if (pData)
-		{
-			LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("deleting nonzero pData"));
-			delete pData;
-		}
-		pData = new CListOpData;
-		m_pCurOpData = pData;
-		pData->path = path;
-		pData->subDir = subDir;
-		
-		pData->bPasv = m_pEngine->GetOptions()->GetOptionVal(OPTION_USEPASV);
-		pData->bTriedPasv = pData->bTriedActive = false;
-
-		if (path.IsEmpty())
-		{
-			if (m_CurrentPath.IsEmpty())
-				m_nOpState = list_pwd;
-			else
-				m_nOpState = list_port_pasv;
-		}
+		if (m_CurrentPath != path)
+			pData->opState = list_cwd;
 		else
 		{
-			if (m_CurrentPath != path)
-				m_nOpState = list_cwd;
+			if (subDir == _T(""))
+				pData->opState = list_port_pasv;
 			else
-			{
-				if (subDir == _T(""))
-					m_nOpState = list_port_pasv;
-				else
-					m_nOpState = list_cwd_subdir;
-			}
+				pData->opState = list_cwd_subdir;
 		}
 	}
 
+	return ListSend();
+}
+
+bool CFtpControlSocket::ListSend()
+{
+	CListOpData *pData = static_cast<CListOpData *>(m_pCurOpData);
+
 	wxString cmd;
-	switch (m_nOpState)
+	switch (pData->opState)
 	{
 	case list_pwd:
 	case list_pwd_cwd:
@@ -531,6 +399,155 @@ bool CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDi
 	return true;
 }
 
+bool CFtpControlSocket::ListParseResponse()
+{
+	if (!m_pCurOpData)
+		return false;
+
+	CListOpData *pData = static_cast<CListOpData *>(m_pCurOpData);
+	if (pData->opState == list_init)
+		return false;
+
+	int code = GetReplyCode();
+	bool error = false;
+	switch (pData->opState)
+	{
+	case list_pwd:
+		if (code != 2 && code != 3)
+			error = true;
+		else if (ParsePwdReply(m_ReceiveBuffer))
+			pData->opState = list_port_pasv;
+		else
+			error = true;
+		break;
+	case list_cwd:
+		if (code != 2 && code != 3)
+			error = true;
+		else
+			pData->opState = list_pwd_cwd;
+		break;
+	case list_pwd_cwd:
+		if (code != 2 && code != 3)
+			error = true;
+		else if (ParsePwdReply(m_ReceiveBuffer))
+			if (pData->subDir == _T(""))
+				pData->opState = list_port_pasv;
+			else
+				pData->opState = list_cwd_subdir;
+		else
+			error = true;
+		break;
+	case list_cwd_subdir:
+		if (code != 2 && code != 3)
+			error = true;
+		else
+			pData->opState = list_pwd_subdir;
+		break;
+	case list_pwd_subdir:
+		if (code != 2 && code != 3)
+			error = true;
+		else if (ParsePwdReply(m_ReceiveBuffer))
+			pData->opState = list_port_pasv;
+		else
+			error = true;
+		break;
+	case list_port_pasv:
+		if (code != 2 && code != 3)
+		{
+			if (pData->bTriedPasv)
+				if (pData->bTriedActive)
+					error = true;
+				else
+					pData->bPasv = false;
+			else
+				pData->bPasv = true;
+			break;
+		}
+		if (pData->bPasv)
+		{
+			int i, j;
+			i = m_ReceiveBuffer.Find(_T("("));
+			j = m_ReceiveBuffer.Find(_T(")"));
+			if (i == -1 || j == -1)
+			{
+				if (!pData->bTriedActive)
+					pData->bPasv = false;
+				else
+					error = true;
+				break;
+			}
+
+			wxString temp = m_ReceiveBuffer.Mid(i+1,(j-i)-1);
+			i = temp.Find(',', true);
+			long number;
+			if (i == -1 || !temp.Mid(i + 1).ToLong(&number))
+			{
+				if (!pData->bTriedActive)
+					pData->bPasv = false;
+				else
+					error = true;
+				break;
+			}
+			pData->port = number; //get ls byte of server socket
+			temp = temp.Left(i);
+			i = temp.Find(',', true);
+			if (i == -1 || !temp.Mid(i + 1).ToLong(&number))
+			{
+				if (!pData->bTriedActive)
+					pData->bPasv = false;
+				else
+					error = true;
+				break;
+			}
+			pData->port = number; //add ms byte of server socket
+			pData->port += 256 * number;
+			pData->host = temp.Left(i);
+			pData->host.Replace(_T(","), _T("."));
+		}
+		pData->opState = list_type;
+		break;
+	case list_type:
+		// Don't check error code here, we can live perfectly without it
+		pData->opState = list_list;
+		break;
+	case list_list:
+		if (code != 1)
+			error = true;
+		else
+			pData->opState = list_waitfinish;
+		break;
+	case list_waitlistpre:
+		if (code != 1)
+			error = true;
+		else
+			pData->opState = list_waitlist;
+		break;
+	case list_waitfinish:
+		if (code != 2 && code != 3)
+			error = true;
+		else
+			pData->opState = list_waitsocket;
+		break;
+	case list_waitlist:
+		if (code != 2 && code != 3)
+			error = true;
+		else
+		{
+			m_pTransferSocket->m_pDirectoryListingParser->Parse(m_CurrentPath);
+			ResetOperation(FZ_REPLY_OK);
+			return true;
+		}
+		break;
+	}
+	if (error)
+	{
+		ResetOperation(FZ_REPLY_ERROR);
+		return false;
+	}
+
+	return ListSend();
+}
+
 bool CFtpControlSocket::ParsePwdReply(wxString reply)
 {
 	CListOpData *pData = static_cast<CListOpData *>(m_pCurOpData);
@@ -583,18 +600,24 @@ void CFtpControlSocket::TransferEnd(int reason)
 
 	if (GetCurrentCommandId() == cmd_list)
 	{
-		if (m_nOpState < list_list || m_nOpState == list_waitlist || m_nOpState == list_waitlistpre)
+		if (!m_pCurOpData)
+			return;
+			
+		CListOpData *pData = static_cast<CListOpData *>(m_pCurOpData);
+		if (pData->opState < list_list || pData->opState == list_waitlist || pData->opState == list_waitlistpre)
 		{
 			LogMessage(Debug_Info, __TFILE__, __LINE__, _T("Call to TransferEnd at unusual time"));
 			ResetOperation(FZ_REPLY_ERROR);
+			return;
 		}
-		switch (m_nOpState)
+
+		switch (pData->opState)
 		{
 		case list_list:
-			m_nOpState = list_waitlistpre;
+			pData->opState = list_waitlistpre;
 			break;
 		case list_waitfinish:
-			m_nOpState = list_waitlist;
+			pData->opState = list_waitlist;
 			break;
 		case list_waitsocket:
 			m_pTransferSocket->m_pDirectoryListingParser->Parse(m_CurrentPath);

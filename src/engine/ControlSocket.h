@@ -9,6 +9,11 @@ class COpData
 public:
 	COpData();
 	virtual ~COpData();
+
+	int opState;
+	enum Command opId;
+
+	COpData *pNextOpData;
 };
 
 class CControlSocket : protected wxEvtHandler, public wxSocketClient, public CLogging

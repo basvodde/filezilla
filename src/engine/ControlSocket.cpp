@@ -14,10 +14,15 @@ END_EVENT_TABLE();
 
 COpData::COpData()
 {
+	opId = cmd_none;
+	opState = 0;
+
+	pNextOpData = 0;
 }
 
 COpData::~COpData()
 {
+	delete [] pNextOpData;
 }
 
 CControlSocket::CControlSocket(CFileZillaEngine *pEngine)
@@ -25,7 +30,6 @@ CControlSocket::CControlSocket(CFileZillaEngine *pEngine)
 {
 	m_pEngine = pEngine;
 	m_pCurOpData = 0;
-	m_nOpState = 0;
 	m_pSendBuffer = 0;
 	m_nSendBufferLen = 0;
 	m_pCurrentServer = 0;
@@ -166,6 +170,9 @@ void CControlSocket::OnSocketEvent(wxSocketEvent &event)
 
 enum Command CControlSocket::GetCurrentCommandId() const
 {
+	if (m_pCurOpData)
+		return m_pCurOpData->opId;
+
 	return m_pEngine->GetCurrentCommandId();
 }
 
@@ -176,7 +183,6 @@ int CControlSocket::ResetOperation(int nErrorCode)
 		delete m_pCurOpData;
 		m_pCurOpData = 0;
 	}
-	m_nOpState = 0;
 
 	if (nErrorCode != FZ_REPLY_OK)
 	{
