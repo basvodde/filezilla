@@ -1,6 +1,6 @@
 AC_INIT(FileZilla, 2.9, tim.kosse@gmx.de)
 AC_CONFIG_AUX_DIR(config)
-AM_INIT_AUTOMAKE(filezilla, 2.9)
+AM_INIT_AUTOMAKE(dist-bzip2 dist-zip)
 
 AC_CANONICAL_HOST
 
@@ -116,4 +116,4 @@ AC_SUBST(EXPAT_LIB)
 AC_SUBST(PNG_LIB)
 AC_SUBST(ZLIB_LIB)
 
-AC_OUTPUT(Makefile src/Makefile src/engine/Makefile src/interface/Makefile src/interface/resources/Makefile)
+AC_OUTPUT(Makefile src/Makefile src/engine/Makefile src/interface/Makefile src/interface/resources/Makefile src/include/Makefile)

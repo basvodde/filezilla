@@ -8,12 +8,12 @@ INCLUDES = -I../include
 bin_PROGRAMS = filezilla
 
 # the application source, library search path, and link libraries
-filezilla_SOURCES = FileZilla.cpp LocalListView.cpp LocalListView.h \
-			LocalTreeView.cpp LocalTreeView.h Mainfrm.cpp \
-			Mainfrm.h Options.cpp Options.h QueueView.cpp \
-			QueueView.h RemoteListView.cpp RemoteListView.h \
-			RemoteTreeView.cpp RemoteTreeView.h \
-			StatusView.cpp StatusView.h
+filezilla_SOURCES = FileZilla.cpp LocalListView.cpp LocalTreeView.cpp \
+			Mainfrm.cpp Options.cpp QueueView.cpp \
+			RemoteListView.cpp RemoteTreeView.cpp StatusView.cpp \
+			LocalListView.h Mainfrm.h QueueView.h \
+			RemoteTreeView.h LocalTreeView.h Options.h \
+			RemoteListView.h StatusView.h
 
 filezilla_LDFLAGS = ../engine/libengine.a
 filezilla_LDFLAGS += $(WX_LIBS) $(WX_XRC_LIBS)

@@ -1,1 +1,1 @@
-SUBDIRS = engine interface .
+SUBDIRS = include engine interface .
