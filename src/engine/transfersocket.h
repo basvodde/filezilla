@@ -48,6 +48,8 @@ protected:
 	bool m_bActive;
 
 	enum TransferMode m_transferMode;
+
+	char *m_pTransferBuffer;
 };
 
 #endif

@@ -78,6 +78,9 @@ int CFileZillaEngine::Command(const CCommand &command)
 	case cmd_list:
 		res = List(reinterpret_cast<const CListCommand &>(command));
 		break;
+	case cmd_transfer:
+		res = FileTransfer(reinterpret_cast<const CFileTransferCommand &>(command));
+		break;
 	default:
 		return FZ_REPLY_SYNTAXERROR;
 	}
@@ -231,10 +234,7 @@ int CFileZillaEngine::List(const CListCommand &command)
 		return FZ_REPLY_BUSY;
 
 	m_pCurrentCommand = command.Clone();
-	if (!m_pControlSocket->List(command.GetPath(), command.GetSubDir()))
-		return FZ_REPLY_ERROR;
-	else
-		return FZ_REPLY_WOULDBLOCK;
+	return m_pControlSocket->List(command.GetPath(), command.GetSubDir());
 }
 
 void CFileZillaEngine::OnEngineEvent(wxFzEngineEvent &event)
@@ -288,4 +288,16 @@ bool CFileZillaEngine::SendEvent(enum EngineNotificationType eventType, int data
 COptionsBase *CFileZillaEngine::GetOptions() const
 {
 	return m_pOptions;
+}
+
+int CFileZillaEngine::FileTransfer(const CFileTransferCommand &command)
+{
+	if (!IsConnected())
+		return FZ_REPLY_NOTCONNECTED;
+
+	if (IsBusy())
+		return FZ_REPLY_BUSY;
+
+	m_pCurrentCommand = command.Clone();
+	return m_pControlSocket->FileTransfer(command.GetLocalFile(), command.GetRemotePath(), command.GetRemoteFile(), command.Download());
 }

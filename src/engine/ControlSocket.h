@@ -26,7 +26,8 @@ public:
 	virtual int ContinueConnect();
 	virtual int Disconnect();
 	virtual void Cancel();
-	virtual bool List(CServerPath path = CServerPath(), wxString subDir = _T("")) = 0;
+	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T("")) = 0;
+	virtual int FileTransfer(const wxString localFile, const CServerPath &remotePath, const wxString &remoteFile, bool download) = 0;
 
 	enum Command GetCurrentCommandId() const;
 

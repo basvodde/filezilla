@@ -105,3 +105,54 @@ CCommand *CListCommand::Clone() const
 {
 	return new CListCommand(m_path, m_subDir);
 }
+
+CFileTransferCommand::CFileTransferCommand()
+{
+}
+
+CFileTransferCommand::CFileTransferCommand(const wxString &localFile, const CServerPath& remotePath, const wxString &remoteFile, bool download)
+{
+	m_localFile = localFile;
+	m_remotePath = remotePath;
+	m_remoteFile = remoteFile;
+	m_download = download;
+}
+
+CFileTransferCommand::~CFileTransferCommand()
+{
+}
+
+enum Command CFileTransferCommand::GetId() const
+{
+	return cmd_transfer;
+}
+
+bool CFileTransferCommand::IsChainable() const
+{
+	return false;
+}
+
+CCommand* CFileTransferCommand::Clone() const
+{
+	return new CFileTransferCommand(m_localFile, m_remotePath, m_remoteFile, m_download);
+}
+
+wxString CFileTransferCommand::GetLocalFile() const
+{
+	return m_localFile;
+}
+
+CServerPath CFileTransferCommand::GetRemotePath() const
+{
+	return m_remotePath;
+}
+
+wxString CFileTransferCommand::GetRemoteFile() const
+{
+	return m_remoteFile;
+}
+
+bool CFileTransferCommand::Download() const
+{
+	return m_download;
+}

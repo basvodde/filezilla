@@ -7,6 +7,7 @@
 class CTransferSocket;
 class CFtpControlSocket : public CControlSocket
 {
+	friend CTransferSocket;
 public:
 	CFtpControlSocket(CFileZillaEngine *pEngine);
 	virtual ~CFtpControlSocket();
@@ -15,13 +16,17 @@ public:
 protected:
 	virtual int ResetOperation(int nErrorCode);
 
-	virtual bool List(CServerPath path = CServerPath(), wxString subDir = _T(""));
-	bool ListParseResponse();
-	bool ListSend();
+	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T(""));
+	int ListParseResponse();
+	int ListSend();
 
-	bool ChangeDir(CServerPath path = CServerPath(), wxString subDir = _T(""));
-	bool ChangeDirParseResponse();
-	bool ChangeDirSend();
+	int ChangeDir(CServerPath path = CServerPath(), wxString subDir = _T(""));
+	int ChangeDirParseResponse();
+	int ChangeDirSend();
+
+	virtual int FileTransfer(const wxString localFile, const CServerPath &remotePath, const wxString &remoteFile, bool download);
+	int FileTransferParseResponse();
+	int FileTransferSend();
 
 	bool ParsePwdReply(wxString reply);
 
@@ -31,7 +36,7 @@ protected:
 	virtual bool Send(wxString str);
 
 	void ParseResponse();
-	bool SendNextCommand();
+	int SendNextCommand();
 
 	int GetReplyCode() const;
 
@@ -42,5 +47,35 @@ protected:
 
 	CTransferSocket *m_pTransferSocket;
 };
+
+class CFileTransferOpData : public COpData
+{
+public:
+	CFileTransferOpData();
+	virtual ~CFileTransferOpData();
+
+	// Transfer data
+	wxString localFile, remoteFile;
+	CServerPath remotePath;
+	bool download;
+
+	bool bPasv;
+	bool bTriedPasv;
+	bool bTriedActive;
+
+	bool binary;
+
+	int port;
+	wxString host;
+
+	bool tryAbsolutePath;
+
+	bool resume;
+
+	wxLongLong totalSize, leftSize;
+
+	wxFile *pFile;
+};
+
 
 #endif

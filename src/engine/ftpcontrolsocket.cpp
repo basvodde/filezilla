@@ -2,6 +2,9 @@
 #include "ftpcontrolsocket.h"
 #include "transfersocket.h"
 #include "directorylistingparser.h"
+#include "directorycache.h"
+
+#include <wx/file.h>
 
 CFtpControlSocket::CFtpControlSocket(CFileZillaEngine *pEngine) : CControlSocket(pEngine)
 {
@@ -40,7 +43,7 @@ void CFtpControlSocket::OnReceive(wxSocketEvent &event)
 		return;
 	}
 
-	for (int i=0; i < numread; i++)
+	for (int i = 0; i < numread; i++)
 	{
 		if (buffer[i] == '\r' ||
 			buffer[i] == '\n' ||
@@ -108,6 +111,9 @@ void CFtpControlSocket::ParseResponse()
 		break;
 	case cmd_private:
 		ChangeDirParseResponse();
+		break;
+	case cmd_transfer:
+		FileTransferParseResponse();
 		break;
 	default:
 		break;
@@ -248,6 +254,9 @@ public:
 
 	int port;
 	wxString host;
+
+	CServerPath path;
+	wxString subDir;
 };
 
 enum listStates
@@ -262,7 +271,7 @@ enum listStates
 	list_waitsocket
 };
 
-bool CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/)
+int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/)
 {
 	LogMessage(Status, _("Retrieving directory listing..."));
 
@@ -279,13 +288,17 @@ bool CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDi
 	pData->bTriedPasv = pData->bTriedActive = false;
 	pData->opState = list_port_pasv;
 
-	if (!ChangeDir(path, subDir))
-		return false;
+	pData->path = path;
+	pData->subDir = subDir;
+
+	int res = ChangeDir(path, subDir);
+	if (res != FZ_REPLY_OK)
+		return res;
 
 	return ListSend();
 }
 
-bool CFtpControlSocket::ListSend()
+int CFtpControlSocket::ListSend()
 {
 	CListOpData *pData = static_cast<CListOpData *>(m_pCurOpData);
 
@@ -308,7 +321,7 @@ bool CFtpControlSocket::ListSend()
 				{
 					LogMessage(::Error, _("Failed to create listening socket for active mode transfer, trying passive mode"));
 					ResetOperation(FZ_REPLY_ERROR);
-					return false;
+					return FZ_REPLY_ERROR;
 				}
 				pData->bTriedActive = true;
 				pData->bTriedPasv = true;
@@ -331,7 +344,7 @@ bool CFtpControlSocket::ListSend()
 			{
 				LogMessage(::Error, _("Could not establish connection to server"));
 				ResetOperation(FZ_REPLY_ERROR);
-				return false;
+				return FZ_REPLY_ERROR;
 			}
 		}
 
@@ -346,23 +359,23 @@ bool CFtpControlSocket::ListSend()
 	default:
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("invalid opstate"));
 		ResetOperation(FZ_REPLY_INTERNALERROR);
-		return false;
+		return FZ_REPLY_ERROR;
 	}
 	if (cmd != _T(""))
 		if (!Send(cmd))
-			return false;
+			return FZ_REPLY_ERROR;
 
-	return false;
+	return FZ_REPLY_WOULDBLOCK;
 }
 
-bool CFtpControlSocket::ListParseResponse()
+int CFtpControlSocket::ListParseResponse()
 {
 	if (!m_pCurOpData)
-		return false;
+		return FZ_REPLY_ERROR;
 
 	CListOpData *pData = static_cast<CListOpData *>(m_pCurOpData);
 	if (pData->opState == list_init)
-		return false;
+		return FZ_REPLY_ERROR;
 
 	int code = GetReplyCode();
 	bool error = false;
@@ -450,16 +463,26 @@ bool CFtpControlSocket::ListParseResponse()
 			error = true;
 		else
 		{
-			m_pTransferSocket->m_pDirectoryListingParser->Parse(m_CurrentPath);
+			CDirectoryListing *pListing = m_pTransferSocket->m_pDirectoryListingParser->Parse(m_CurrentPath);
+
+			CDirectoryCache cache;
+			cache.Store(*pListing, *m_pCurrentServer, pData->path, pData->subDir);
+			
+			CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing);
+			m_pEngine->AddNotification(pNotification);
+
 			ResetOperation(FZ_REPLY_OK);
-			return true;
+			return FZ_REPLY_OK;
 		}
 		break;
+	default:
+		LogMessage(Debug_Warning, __TFILE__, __LINE__, _T("Unknown op state"));
+		error = true;
 	}
 	if (error)
 	{
 		ResetOperation(FZ_REPLY_ERROR);
-		return false;
+		return FZ_REPLY_ERROR;
 	}
 
 	return ListSend();
@@ -500,7 +523,13 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 	delete m_pTransferSocket;
 	m_pTransferSocket = 0;
 
+	bool next = false;
 	if (nErrorCode == FZ_REPLY_OK && m_pCurOpData->pNextOpData)
+		next = true;
+	else if (nErrorCode == FZ_REPLY_ERROR && m_pCurOpData->pNextOpData && m_pCurOpData->pNextOpData->opId == cmd_transfer)
+		next = true;
+	
+	if (next)
 	{
 		COpData *pNext = m_pCurOpData->pNextOpData;
 		m_pCurOpData->pNextOpData = 0;
@@ -510,6 +539,572 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 	}
 
 	return CControlSocket::ResetOperation(nErrorCode);
+}
+
+int CFtpControlSocket::SendNextCommand()
+{
+	if (!m_pCurOpData)
+	{
+		LogMessage(Debug_Warning, __TFILE__, __LINE__, _T("SendNextCommand called without active operation"));
+		ResetOperation(FZ_REPLY_ERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	switch (m_pCurOpData->opId)
+	{
+	case cmd_list:
+		return ListSend();
+	case cmd_connect:
+		return Logon();
+	case cmd_private:
+		return ChangeDirSend();
+	case cmd_transfer:
+		return FileTransferSend();
+	}
+	LogMessage(Debug_Warning, __TFILE__, __LINE__, _T("Unknown operation in SendNextCommand"));
+	ResetOperation(FZ_REPLY_ERROR);
+
+	return FZ_REPLY_ERROR;
+}
+
+class CChangeDirOpData : public COpData
+{
+public:
+	CChangeDirOpData()
+	{
+		opId = cmd_private;
+	}
+
+	virtual ~CChangeDirOpData()
+	{
+	}
+
+	CServerPath path;
+	wxString subDir;
+
+};
+
+enum cwdStates
+{
+	cwd_init = 0,
+	cwd_pwd,
+	cwd_cwd,
+	cwd_pwd_cwd,
+	cwd_cwd_subdir,
+	cwd_pwd_subdir
+};
+
+int CFtpControlSocket::ChangeDir(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/)
+{
+	enum cwdStates state = cwd_init;
+
+	if (path.IsEmpty())
+	{
+		if (m_CurrentPath.IsEmpty())
+			state = cwd_pwd;
+		else
+			return FZ_REPLY_OK;
+	}
+	else
+	{
+		if (m_CurrentPath != path)
+			state = cwd_cwd;
+		else
+		{
+			if (subDir == _T(""))
+				return FZ_REPLY_OK;
+			else
+				state = cwd_cwd_subdir;
+		}
+	}
+
+	CChangeDirOpData *pData = new CChangeDirOpData;
+	pData->pNextOpData = m_pCurOpData;
+	pData->opState = state;
+	pData->path = path;
+	pData->subDir = subDir;
+
+	m_pCurOpData = pData;
+
+	return ChangeDirSend();
+}
+
+int CFtpControlSocket::ChangeDirParseResponse()
+{
+	if (!m_pCurOpData)
+	{
+		ResetOperation(FZ_REPLY_ERROR);
+		return FZ_REPLY_ERROR;
+	}
+	CChangeDirOpData *pData = static_cast<CChangeDirOpData *>(m_pCurOpData);
+
+	int code = GetReplyCode();
+	bool error = false;
+	switch (pData->opState)
+	{
+	case cwd_pwd:
+		if (code != 2 && code != 3)
+			error = true;
+		else if (ParsePwdReply(m_ReceiveBuffer))
+		{
+			ResetOperation(FZ_REPLY_OK);
+			return FZ_REPLY_OK;
+		}
+		else
+			error = true;
+		break;
+	case cwd_cwd:
+		if (code != 2 && code != 3)
+			error = true;
+		else
+			pData->opState = cwd_pwd_cwd;
+		break;
+	case cwd_pwd_cwd:
+		if (code != 2 && code != 3)
+			error = true;
+		else if (ParsePwdReply(m_ReceiveBuffer))
+			if (pData->subDir == _T(""))
+			{
+				ResetOperation(FZ_REPLY_OK);
+				return FZ_REPLY_OK;
+			}
+			else
+				pData->opState = cwd_cwd_subdir;
+		else
+			error = true;
+		break;
+	case cwd_cwd_subdir:
+		if (code != 2 && code != 3)
+			error = true;
+		else
+			pData->opState = cwd_pwd_subdir;
+		break;
+	case cwd_pwd_subdir:
+		if (code != 2 && code != 3)
+			error = true;
+		else if (ParsePwdReply(m_ReceiveBuffer))
+		{
+			ResetOperation(FZ_REPLY_OK);
+			return FZ_REPLY_OK;
+		}
+		else
+			error = true;
+		break;
+	}
+
+	if (error)
+	{
+		ResetOperation(FZ_REPLY_ERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	return ChangeDirSend();
+}
+
+int CFtpControlSocket::ChangeDirSend()
+{
+	if (!m_pCurOpData)
+	{
+		ResetOperation(FZ_REPLY_ERROR);
+		return FZ_REPLY_ERROR;
+	}
+	CChangeDirOpData *pData = static_cast<CChangeDirOpData *>(m_pCurOpData);
+
+	wxString cmd;
+	switch (pData->opState)
+	{
+	case cwd_pwd:
+	case cwd_pwd_cwd:
+	case cwd_pwd_subdir:
+		cmd = _T("PWD");
+		cmd = _T("PWD");
+		cmd = _T("PWD");
+		break;
+	case cwd_cwd:
+		cmd = _T("CWD ") + pData->path.GetPath();
+		m_CurrentPath.Clear();
+		break;
+	case cwd_cwd_subdir:
+		if (pData->subDir == _T(""))
+		{
+			ResetOperation(FZ_REPLY_INTERNALERROR);
+			return FZ_REPLY_ERROR;
+		}
+		else if (pData->subDir == _T(".."))
+			cmd = _T("CDUP");
+		else
+			cmd = _T("CWD ") + pData->subDir;
+		m_CurrentPath.Clear();
+		break;
+	}
+
+	if (cmd != _T(""))
+		if (!Send(cmd))
+			return FZ_REPLY_ERROR;
+
+	return FZ_REPLY_WOULDBLOCK;
+}
+
+CFileTransferOpData::CFileTransferOpData()
+{
+	opId = cmd_transfer;
+	pFile = 0;
+	resume = false;
+	totalSize = leftSize = -1;
+	tryAbsolutePath = false;
+	bTriedPasv = bTriedActive = false;
+}
+
+CFileTransferOpData::~CFileTransferOpData()
+{
+	delete pFile;
+}
+
+enum filetransferStates
+{
+	filetransfer_init = 0,
+	filetransfer_waitcwd,
+	filetransfer_waitlist,
+	filetransfer_size,
+	filetransfer_mdtm,
+	filetransfer_type,
+	filetransfer_port_pasv,
+	filetransfer_rest,
+	filetransfer_transfer,
+	filetransfer_waitfinish,
+	filetransfer_waittransferpre,
+	filetransfer_waittransfer,
+	filetransfer_waitsocket
+};
+
+int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath &remotePath, const wxString &remoteFile, bool download)
+{
+	LogMessage(Status, _("Retrieving directory listing..."));
+
+	if (m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("deleting nonzero pData"));
+		delete m_pCurOpData;
+	}
+	
+	CFileTransferOpData *pData = new CFileTransferOpData;
+	m_pCurOpData = pData;
+
+	pData->localFile = localFile;
+	pData->remotePath = remotePath;
+	pData->remoteFile = remoteFile;
+	pData->download = download;
+			
+	pData->bPasv = m_pEngine->GetOptions()->GetOptionVal(OPTION_USEPASV);
+	pData->opState = filetransfer_type;
+
+	int res = ChangeDir(remotePath);
+	if (res != FZ_REPLY_OK)
+		return res;
+
+	return FileTransferSend();
+}
+
+int CFtpControlSocket::FileTransferParseResponse()
+{
+	if (!m_pCurOpData)
+		return FZ_REPLY_ERROR;
+
+	CFileTransferOpData *pData = static_cast<CFileTransferOpData *>(m_pCurOpData);
+	if (pData->opState == list_init)
+		return FZ_REPLY_ERROR;
+
+	int code = GetReplyCode();
+	bool error = false;
+	switch (pData->opState)
+	{
+	case filetransfer_type:
+		if (code == 2 || code == 3)
+			pData->opState = filetransfer_port_pasv;
+		else
+			error = true;
+		break;
+	case filetransfer_port_pasv:
+		if (code != 2 && code != 3)
+		{
+			if (pData->bTriedPasv)
+				if (pData->bTriedActive)
+					error = true;
+				else
+					pData->bPasv = false;
+			else
+				pData->bPasv = true;
+			break;
+		}
+
+		if (pData->bPasv)
+		{
+			int i, j;
+			i = m_ReceiveBuffer.Find(_T("("));
+			j = m_ReceiveBuffer.Find(_T(")"));
+			if (i == -1 || j == -1)
+			{
+				if (!pData->bTriedActive)
+					pData->bPasv = false;
+				else
+					error = true;
+				break;
+			}
+
+			wxString temp = m_ReceiveBuffer.Mid(i+1,(j-i)-1);
+			i = temp.Find(',', true);
+			long number;
+			if (i == -1 || !temp.Mid(i + 1).ToLong(&number))
+			{
+				if (!pData->bTriedActive)
+					pData->bPasv = false;
+				else
+					error = true;
+				break;
+			}
+			pData->port = number; //get ls byte of server socket
+			temp = temp.Left(i);
+			i = temp.Find(',', true);
+			if (i == -1 || !temp.Mid(i + 1).ToLong(&number))
+			{
+				if (!pData->bTriedActive)
+					pData->bPasv = false;
+				else
+					error = true;
+				break;
+			}
+			pData->port = number; //add ms byte of server socket
+			pData->port += 256 * number;
+			pData->host = temp.Left(i);
+			pData->host.Replace(_T(","), _T("."));
+		}
+
+		if (pData->resume && pData->download)
+			pData->opState = filetransfer_rest;
+		else
+			pData->opState = filetransfer_transfer;
+
+		pData->pFile = new wxFile;
+		if (pData->download)
+		{
+			if (pData->resume)
+			{
+				if (!pData->pFile->Open(pData->localFile, wxFile::write_append))
+				{
+					LogMessage(::Error, _("Failed to \"%s\" for appending / writing"), pData->localFile);
+					error = true;
+				}
+			}
+			else
+			{
+				if (!pData->pFile->Open(pData->localFile, wxFile::write))
+				{
+					LogMessage(::Error, _("Failed to \"%s\" for writing"), pData->localFile);
+					error = true;
+				}
+			}
+
+			wxString remotefile = pData->remoteFile;
+
+			CDirectoryListing listing;
+			CDirectoryCache cache;
+			bool found = cache.Lookup(listing, *m_pCurrentServer, m_CurrentPath);
+			if (found)
+			{
+				for (int i = 0; i < listing.m_entryCount; i++)
+				{
+					if (listing.m_pEntries[i].name == remotefile)
+					{
+						wxLongLong size = listing.m_pEntries[i].size;
+						if (size >= 0)
+							pData->totalSize = size;
+					}
+				}
+			}
+			
+			pData->leftSize = pData->totalSize;
+		}
+		else
+		{
+			if (!pData->pFile->Open(pData->localFile, wxFile::read))
+			{
+				LogMessage(::Error, _("Failed to \"%s\" for reading"), pData->localFile);
+				error = true;
+			}
+			
+			pData->totalSize = pData->leftSize = pData->pFile->Length();
+			if (pData->resume)
+			{
+				wxString remotefile = pData->remoteFile;
+
+				CDirectoryListing listing;
+				CDirectoryCache cache;
+				bool found = cache.Lookup(listing, *m_pCurrentServer, m_CurrentPath);
+				if (found)
+				{
+					for (int i = 0; i < listing.m_entryCount; i++)
+					{
+						wxLongLong size = listing.m_pEntries[i].size;
+						if (listing.m_pEntries[i].name == remotefile && size >= 0)
+						{
+							pData->leftSize -= size;
+							break;
+						}
+					}
+					wxFileOffset offset = pData->totalSize - pData->leftSize;
+					if (pData->pFile->Seek(offset, wxFromStart) == wxInvalidOffset)
+					{
+						LogMessage(::Error, _("Could not seek to offset %s withing file"), offset.ToString());
+						error = true;
+					}
+				}
+			}
+		}
+		break;
+	case filetransfer_rest:
+		if (code == 3 || code == 2)
+		{
+			if (pData->pFile->Seek(0, wxFromEnd) == wxInvalidOffset)
+			{
+				LogMessage(::Error, _("Could not seek to end of file"));
+				error = true;
+				break;
+			}
+			pData->opState = filetransfer_transfer;
+			pData->leftSize = pData->totalSize - pData->pFile->Length();
+		}
+		else
+			error = true;
+		break;
+	case filetransfer_transfer:
+		if (code != 1)
+			error = true;
+		else
+			pData->opState = filetransfer_waitfinish;
+		break;
+	case filetransfer_waittransferpre:
+		if (code != 1)
+			error = true;
+		else
+			pData->opState = filetransfer_waittransfer;
+		break;
+	case filetransfer_waitfinish:
+		if (code != 2 && code != 3)
+			error = true;
+		else
+			pData->opState = filetransfer_waitsocket;
+		break;
+	case filetransfer_waittransfer:
+		if (code != 2 && code != 3)
+			error = true;
+		else
+		{
+			ResetOperation(FZ_REPLY_OK);
+			return FZ_REPLY_OK;
+		}
+		break;
+	default:
+		LogMessage(Debug_Warning, __TFILE__, __LINE__, _T("Unknown op state"));
+		error = true;
+		break;
+	}
+
+	if (error)
+	{
+		ResetOperation(FZ_REPLY_ERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	return FileTransferSend();
+}
+
+int CFtpControlSocket::FileTransferSend()
+{
+	if (!m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	CFileTransferOpData *pData = static_cast<CFileTransferOpData *>(m_pCurOpData);
+	if (pData->opState == filetransfer_waitcwd)
+	{
+		pData->opState = filetransfer_type;
+	}
+	else if (pData->opState == filetransfer_waitlist)
+		pData->opState = filetransfer_type;
+
+	wxString cmd;
+	switch (pData->opState)
+	{
+	case filetransfer_type:
+		if (pData->binary)
+			cmd = _T("TYPE I");
+		else
+			cmd = _T("TYPE A");
+		break;
+	case filetransfer_port_pasv:
+		m_pTransferSocket = new CTransferSocket(m_pEngine, this, pData->download ? download : upload);
+		if (pData->bPasv)
+		{
+			pData->bTriedPasv = true;
+			cmd = _T("PASV");
+		}
+		else
+		{
+			wxString port = m_pTransferSocket->SetupActiveTransfer();
+			if (port == _T(""))
+			{
+				if (pData->bTriedPasv)
+				{
+					LogMessage(::Error, _("Failed to create listening socket for active mode transfer, trying passive mode"));
+					ResetOperation(FZ_REPLY_ERROR);
+					return FZ_REPLY_ERROR;
+				}
+				pData->bTriedActive = true;
+				pData->bTriedPasv = true;
+				pData->bPasv = true;
+				cmd = _T("PASV");
+			}
+			else
+				cmd = _T("PORT " + port);
+		}
+		break;
+	case filetransfer_rest:
+		if (!pData->pFile)
+		{
+			LogMessage(::Debug_Warning, _("Can't sent REST command, can't get local file length since pData->pFile is null"));
+			ResetOperation(FZ_REPLY_INTERNALERROR);
+			return FZ_REPLY_ERROR;
+		}
+		cmd = _T("REST ") + pData->pFile->Length().ToString();
+		break;
+	case filetransfer_transfer:
+		cmd = pData->download ? _T("RETR ") : _T("STOR ");
+		if (pData->tryAbsolutePath)
+			cmd += pData->remotePath.GetPath();
+		cmd += pData->remoteFile;
+
+		if (pData->bPasv)
+		{
+			if (!m_pTransferSocket->SetupPassiveTransfer(pData->host, pData->port))
+			{
+				LogMessage(::Error, _("Could not establish passive connection to server"));
+				ResetOperation(FZ_REPLY_ERROR);
+				return FZ_REPLY_ERROR;
+			}
+		}
+
+		m_pTransferSocket->SetActive();
+		break;
+	}
+
+	if (cmd != _T(""))
+		if (!Send(cmd))
+			return FZ_REPLY_ERROR;
+
+	return FZ_REPLY_WOULDBLOCK;
 }
 
 void CFtpControlSocket::TransferEnd(int reason)
@@ -542,216 +1137,52 @@ void CFtpControlSocket::TransferEnd(int reason)
 			pData->opState = list_waitlist;
 			break;
 		case list_waitsocket:
-			m_pTransferSocket->m_pDirectoryListingParser->Parse(m_CurrentPath);
-			ResetOperation(FZ_REPLY_OK);
+			{
+				CDirectoryListing *pListing = m_pTransferSocket->m_pDirectoryListingParser->Parse(m_CurrentPath);
+
+				CDirectoryCache cache;
+				cache.Store(*pListing, *m_pCurrentServer, pData->path, pData->subDir);
+	
+				CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing);
+				m_pEngine->AddNotification(pNotification);
+
+				ResetOperation(FZ_REPLY_OK);
+			}
 			break;
 		default:
 			LogMessage(Debug_Warning, __TFILE__, __LINE__, _T("Unknown op state"));
 			ResetOperation(FZ_REPLY_ERROR);
 		}
 	}
-}
-
-bool CFtpControlSocket::SendNextCommand()
-{
-	if (!m_pCurOpData)
+	else if (GetCurrentCommandId() == cmd_transfer)
 	{
-		LogMessage(Debug_Warning, __TFILE__, __LINE__, _T("SendNextCommand called without active operation"));
-		ResetOperation(FZ_REPLY_ERROR);
-		return false;
-	}
-
-	switch (m_pCurOpData->opId)
-	{
-	case cmd_list:
-		return ListSend();
-	case cmd_connect:
-		return Logon();
-	case cmd_private:
-		return ChangeDirSend();
-	}
-	LogMessage(Debug_Warning, __TFILE__, __LINE__, _T("Unknown operation in SendNextCommand"));
-	ResetOperation(FZ_REPLY_ERROR);
-
-	return false;
-}
-
-class CChangeDirOpData : public COpData
-{
-public:
-	CChangeDirOpData()
-	{
-		opId = cmd_private;
-	}
-
-	virtual ~CChangeDirOpData()
-	{
-	}
-
-	CServerPath path;
-	wxString subDir;
-
-};
-
-enum cwdStates
-{
-	cwd_init = 0,
-	cwd_pwd,
-	cwd_cwd,
-	cwd_pwd_cwd,
-	cwd_cwd_subdir,
-	cwd_pwd_subdir
-};
-
-bool CFtpControlSocket::ChangeDir(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/)
-{
-	enum cwdStates state = cwd_init;
-
-	if (path.IsEmpty())
-	{
-		if (m_CurrentPath.IsEmpty())
-			state = cwd_pwd;
-		else
-			return true;
-	}
-	else
-	{
-		if (m_CurrentPath != path)
-			state = cwd_cwd;
-		else
+		if (!m_pCurOpData)
+			return;
+			
+		CFileTransferOpData *pData = static_cast<CFileTransferOpData *>(m_pCurOpData);
+		if (pData->opState < filetransfer_transfer || pData->opState == filetransfer_waittransfer || pData->opState == filetransfer_waittransferpre)
 		{
-			if (subDir == _T(""))
-				return true;
-			else
-				state = cwd_cwd_subdir;
+			LogMessage(Debug_Info, __TFILE__, __LINE__, _T("Call to TransferEnd at unusual time"));
+			ResetOperation(FZ_REPLY_ERROR);
+			return;
 		}
-	}
 
-	CChangeDirOpData *pData = new CChangeDirOpData;
-	pData->pNextOpData = m_pCurOpData;
-	pData->opState = state;
-	pData->path = path;
-	pData->subDir = subDir;
-
-	m_pCurOpData = pData;
-
-	ChangeDirSend();
-
-	return false;
-}
-
-bool CFtpControlSocket::ChangeDirParseResponse()
-{
-	if (!m_pCurOpData)
-	{
-		ResetOperation(FZ_REPLY_ERROR);
-		return false;
-	}
-	CChangeDirOpData *pData = static_cast<CChangeDirOpData *>(m_pCurOpData);
-
-	int code = GetReplyCode();
-	bool error = false;
-	switch (pData->opState)
-	{
-	case cwd_pwd:
-		if (code != 2 && code != 3)
-			error = true;
-		else if (ParsePwdReply(m_ReceiveBuffer))
+		switch (pData->opState)
 		{
-			ResetOperation(FZ_REPLY_OK);
-			return true;
-		}
-		else
-			error = true;
-		break;
-	case cwd_cwd:
-		if (code != 2 && code != 3)
-			error = true;
-		else
-			pData->opState = cwd_pwd_cwd;
-		break;
-	case cwd_pwd_cwd:
-		if (code != 2 && code != 3)
-			error = true;
-		else if (ParsePwdReply(m_ReceiveBuffer))
-			if (pData->subDir == _T(""))
+		case filetransfer_transfer:
+			pData->opState = filetransfer_waittransferpre;
+			break;
+		case filetransfer_waitfinish:
+			pData->opState = filetransfer_waittransfer;
+			break;
+		case filetransfer_waitsocket:
 			{
 				ResetOperation(FZ_REPLY_OK);
-				return true;
 			}
-			else
-				pData->opState = cwd_cwd_subdir;
-		else
-			error = true;
-		break;
-	case cwd_cwd_subdir:
-		if (code != 2 && code != 3)
-			error = true;
-		else
-			pData->opState = cwd_pwd_subdir;
-		break;
-	case cwd_pwd_subdir:
-		if (code != 2 && code != 3)
-			error = true;
-		else if (ParsePwdReply(m_ReceiveBuffer))
-		{
-			ResetOperation(FZ_REPLY_OK);
-			return true;
-		}
-		else
-			error = true;
-		break;
-	}
-
-	if (error)
-	{
-		ResetOperation(FZ_REPLY_ERROR);
-		return false;
-	}
-
-	return ChangeDirSend();
-}
-
-bool CFtpControlSocket::ChangeDirSend()
-{
-	if (!m_pCurOpData)
-	{
-		ResetOperation(FZ_REPLY_ERROR);
-		return false;
-	}
-	CChangeDirOpData *pData = static_cast<CChangeDirOpData *>(m_pCurOpData);
-
-	wxString cmd;
-	switch (pData->opState)
-	{
-	case cwd_pwd:
-	case cwd_pwd_cwd:
-	case cwd_pwd_subdir:
-		cmd = _T("PWD");
-		cmd = _T("PWD");
-		cmd = _T("PWD");
-		break;
-	case cwd_cwd:
-		cmd = _T("CWD ") + pData->path.GetPath();
-		m_CurrentPath.Clear();
-		break;
-	case cwd_cwd_subdir:
-		if (pData->subDir == _T(""))
-		{
+			break;
+		default:
+			LogMessage(Debug_Warning, __TFILE__, __LINE__, _T("Unknown op state"));
 			ResetOperation(FZ_REPLY_INTERNALERROR);
-			return false;
 		}
-		else if (pData->subDir == _T(".."))
-			cmd = _T("CDUP");
-		else
-			cmd = _T("CWD ") + pData->subDir;
-		m_CurrentPath.Clear();
-		break;
 	}
-
-	if (cmd != _T(""))
-		if (!Send(cmd))
-			return false;
-
-	return false;
 }

@@ -3,6 +3,8 @@
 #include "ftpcontrolsocket.h"
 #include "directorylistingparser.h"
 
+#include <wx/file.h>
+
 BEGIN_EVENT_TABLE(CTransferSocket, wxEvtHandler)
 	EVT_SOCKET(wxID_ANY, CTransferSocket::OnSocketEvent)
 END_EVENT_TABLE();
@@ -26,6 +28,8 @@ CTransferSocket::CTransferSocket(CFileZillaEngine *pEngine, CFtpControlSocket *p
 		m_pDirectoryListingParser = 0;
 
 	m_transferMode = transferMode;
+
+	m_pTransferBuffer = 0;
 }
 
 CTransferSocket::~CTransferSocket()
@@ -36,6 +40,8 @@ CTransferSocket::~CTransferSocket()
 		delete m_pSocket;
 
 	delete m_pDirectoryListingParser;
+	
+	delete [] m_pTransferBuffer;
 }
 
 wxString CTransferSocket::SetupActiveTransfer()
@@ -138,6 +144,49 @@ void CTransferSocket::OnReceive()
 				TransferEnd(0);
 			else if (numread < 0)
 				TransferEnd(1);
+		}
+	}
+	else if (m_transferMode == download)
+	{
+		CFileTransferOpData *pData = static_cast<CFileTransferOpData *>(m_pControlSocket->m_pCurOpData);
+		if (!m_pTransferBuffer)
+			m_pTransferBuffer = new char[4096];
+
+		m_pSocket->Read(m_pTransferBuffer, 4096);
+		if (m_pSocket->Error())
+		{
+			int error = m_pSocket->LastError();
+			if (error == wxSOCKET_NOERROR)
+				TransferEnd(0);
+			else if (error != wxSOCKET_WOULDBLOCK)
+				TransferEnd(1);
+			return;
+		}
+		int numread = m_pSocket->LastCount();
+
+		if (numread > 0)
+		{
+			if (pData->leftSize > 0)
+			{
+				if (pData->leftSize > numread)
+					pData->leftSize -= numread;
+				else
+					pData->leftSize = 0;
+			}
+			if (pData->pFile->Write(m_pTransferBuffer, numread) != numread)
+			{
+				wxLongLong free;
+				if (wxGetDiskSpace(pData->localFile, 0, &free))
+				{
+					if (free == 0)
+						m_pControlSocket->LogMessage(::Error, _("Can't write data to file, disk is full."));
+					else
+						m_pControlSocket->LogMessage(::Error, _("Can't write data to file."));
+				}
+				else
+					m_pControlSocket->LogMessage(::Error, _("Can't write data to file."));
+				TransferEnd(1);
+			}
 		}
 	}
 }

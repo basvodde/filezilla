@@ -77,6 +77,7 @@ public:
 	CListCommand();
 	CListCommand(CServerPath path, wxString subDir = _T(""));
 	virtual ~CListCommand();
+	
 	virtual enum Command GetId() const;
 	virtual bool IsChainable() const;
 	virtual CCommand *Clone() const;
@@ -89,5 +90,27 @@ protected:
 	wxString m_subDir;
 };
 
-#endif
+class CFileTransferCommand : public CCommand
+{
+public:
+	CFileTransferCommand();
+	CFileTransferCommand(const wxString &localFile, const CServerPath& remotePath, const wxString &remoteFile, bool download);
+	virtual ~CFileTransferCommand();
 
+	virtual enum Command GetId() const;
+	virtual bool IsChainable() const;
+	virtual CCommand *Clone() const;
+
+	wxString GetLocalFile() const;
+	CServerPath GetRemotePath() const;
+	wxString GetRemoteFile() const;
+	bool Download() const;
+
+protected:
+	wxString m_localFile;
+	CServerPath m_remotePath;
+	wxString m_remoteFile;
+	bool m_download;
+};
+
+#endif

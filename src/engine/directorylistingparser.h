@@ -9,7 +9,7 @@ public:
 	CDirectoryListingParser(CFileZillaEngine *pEngine);
 	~CDirectoryListingParser();
 
-	bool Parse(const CServerPath &path);
+	CDirectoryListing* Parse(const CServerPath &path);
 
 	void AddData(char *pData, int len);
 

@@ -33,7 +33,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
     EVT_SPLITTER_SASH_POS_CHANGED(wxID_ANY, CMainFrame::OnSplitterSashPosChanged) 
 	EVT_CLOSE(CMainFrame::OnClose)
 END_EVENT_TABLE()
-
+#include <wx/file.h>
 CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
 {
 	SetSizeHints(250, 250);
@@ -53,7 +53,14 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 
 	m_pState = new CState();
 
-	m_pStatusBar = CreateStatusBar(7);	
+	m_pStatusBar = CreateStatusBar(8, wxST_SIZEGRIP);
+	int array[8];
+	for (int i = 1; i < 6; i++)
+		array[i] = wxSB_NORMAL;
+	array[0] = wxSB_FLAT;
+	array[6] = wxSB_FLAT;
+	array[7] = wxSB_FLAT;
+	m_pStatusBar->SetStatusStyles(8, array);
 
 	CreateToolBar();
 	CreateMenus();
@@ -113,7 +120,6 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_pState->SetLocalListView(m_pLocalListView);
 	m_pState->SetRemoteListView(m_pRemoteListView);
 	m_pState->SetLocalDir(wxGetCwd());
-
 }
 
 CMainFrame::~CMainFrame()
@@ -240,7 +246,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 }
 
 void CMainFrame::OnQuickconnect(wxCommandEvent &event)
-{
+{	
 	if (!m_pQuickconnectBar)
 		return;
 
@@ -274,6 +280,7 @@ void CMainFrame::OnQuickconnect(wxCommandEvent &event)
 	switch (protocol)
 	{
 	//TODO: If not ftp, add protocol to host
+	case FTP:
 	default:
 		// do nothing
 		break;
@@ -293,6 +300,7 @@ void CMainFrame::OnQuickconnect(wxCommandEvent &event)
 
 	m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
 	m_pCommandQueue->ProcessCommand(new CListCommand());
+	m_pCommandQueue->ProcessCommand(new CFileTransferCommand("c:\\test.txt", CServerPath("/"), "test.txt", true));
 }
 
 void CMainFrame::OnEngineEvent(wxEvent &event)
