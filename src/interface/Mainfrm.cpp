@@ -24,6 +24,7 @@ CMainFrame::CMainFrame()
 
 	m_pStatusBar = NULL;
     m_pMenuBar = NULL;
+	m_pQuickconnectBar = NULL;
 	m_pTopSplitter = NULL;
 	m_pBottomSplitter = NULL;
 	m_pViewSplitter = NULL;
@@ -32,7 +33,9 @@ CMainFrame::CMainFrame()
 
 	m_pStatusBar = CreateStatusBar(7);
 
+	CreateToolBar();
 	CreateMenus();
+	CreateQuickconnectBar();
 
 	m_ViewSplitterSashPos = 0.5;
 
@@ -66,9 +69,6 @@ CMainFrame::CMainFrame()
 	wxSize size = m_pBottomSplitter->GetClientSize();
 	m_pBottomSplitter->SetSashPosition(size.GetHeight() - 100);
 
-	CreateToolBar(wxTB_FLAT);
-
-
 	m_pEngine = new CFileZillaEngine();
 	m_pEngine->Init(this);
 }
@@ -90,6 +90,29 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 	wxSize size = m_pBottomSplitter->GetClientSize();
 	
 	wxFrame::OnSize(event);
+
+	wxSize clientSize = GetClientSize();
+	if (m_pQuickconnectBar)
+	{
+		m_pQuickconnectBar->SetSize(0, 0, clientSize.GetWidth(), -1);
+
+		wxButton *pButton = XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_OK", wxButton);
+		wxSize buttonSize = pButton->GetSize();
+		wxPoint position = pButton->GetPosition();
+		wxButton *pDropdownButton = XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_DROPDOWN", wxButton);
+        wxSize dropdownSize = pDropdownButton->GetSize();
+		pDropdownButton->SetSize(-1, position.y, dropdownSize.GetWidth(), buttonSize.GetHeight());
+	}
+	if (m_pTopSplitter)
+	{
+		if (!m_pQuickconnectBar)
+			m_pTopSplitter->SetSize(clientSize.GetWidth(), clientSize.GetHeight());
+		else
+		{
+			wxSize panelSize = m_pQuickconnectBar->GetSize();
+			m_pTopSplitter->SetSize(0, panelSize.GetHeight(), clientSize.GetWidth(), clientSize.GetHeight() - panelSize.GetHeight());
+		}
+	}
 	
 	wxSize size2 = m_pBottomSplitter->GetClientSize();
 	m_pBottomSplitter->SetSashPosition(size2.GetHeight() - size.GetHeight() + pos);
@@ -131,10 +154,27 @@ bool CMainFrame::CreateMenus()
 	m_pMenuBar = wxXmlResource::Get()->LoadMenuBar(_T("ID_MENUBAR"));
 	if (!m_pMenuBar)
 	{
-		wxLogError(_T("Cannot load main menu from resource file"));
+		wxLogError(_("Cannot load main menu from resource file"));
 	}
 	SetMenuBar(m_pMenuBar);
 
+	return true;
+}
+
+bool CMainFrame::CreateQuickconnectBar()
+{
+	if (m_pQuickconnectBar)
+	{
+		delete m_pQuickconnectBar;
+	}
+
+	m_pQuickconnectBar = wxXmlResource::Get()->LoadPanel(this, _T("ID_QUICKCONNECTBAR"));
+
+	if (!m_pQuickconnectBar)
+	{
+		wxLogError(_("Cannot load Quickconnect bar from resource file"));
+	}
+	
 	return true;
 }
 

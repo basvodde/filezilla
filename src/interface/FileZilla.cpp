@@ -17,19 +17,20 @@ IMPLEMENT_APP(CFileZillaApp)
 
 bool CFileZillaApp::OnInit()
 {
+	wxImage::AddHandler(new wxPNGHandler());
     wxLocale::AddCatalogLookupPathPrefix(_T("../../locales"));
 	m_locale.Init(wxLANGUAGE_GERMAN);
 	m_locale.AddCatalog(_T("filezilla"));
 
-	//TODO: If ! ressources found...
+	//TODO: If ! resources found...
 	if (0)
 	{
-		wxString msg = wxString::Format(_("Could not load ressource files for FileZilla from \"%s\", closing FileZilla"), "asdf");
+		wxString msg = wxString::Format(_("Could not load resource files for FileZilla from \"%s\", closing FileZilla"), "asdf");
 		wxMessageBox(msg, _("FileZilla Error"), wxOK | wxICON_ERROR);
 	}
 	
 	wxXmlResource::Get()->InitAllHandlers();
-	wxXmlResource::Get()->Load("../interface/ressources/*.xrc");
+	wxXmlResource::Get()->Load("../interface/resources/*.xrc");
 
 	wxFrame *frame = new CMainFrame();
 	SetTopWindow(frame);

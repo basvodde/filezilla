@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<resource version="2.3.0.1" xmlns="http://www.wxwindows.org/wxxrc">
+    <object class="wxPanel" name="ID_QUICKCONNECTBAR">
+        <size>-1,-1</size>
+        <object class="wxBoxSizer">
+
+            <orient>wxVERTICAL</orient>
+            <object class="sizeritem">
+                <flag>wxGROW</flag>
+
+                <border>0</border>
+                <object class="wxStaticLine" name="wxID_STATIC">
+                    <size>-1,-1</size>
+                    <style>wxLI_HORIZONTAL</style>
+                </object>
+            </object>
+            <object class="sizeritem">
+                <border>0</border>
+                <object class="wxFlexGridSizer">
+                    <cols>10</cols>
+                    <rows>1</rows>
+                    <vgap>0</vgap>
+                    <hgap>0</hgap>
+                    <object class="sizeritem">
+                        <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM</flag>
+                        <border>5</border>
+                        <object class="wxStaticLine" name="wxID_STATIC">
+                            <size>-1,-1</size>
+                            <style>wxLI_VERTICAL</style>
+                        </object>
+                    </object>
+                    <object class="sizeritem">
+                        <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM|wxADJUST_MINSIZE</flag>
+                        <border>5</border>
+                        <object class="wxStaticText" name="wxID_STATIC">
+                            <size>-1,-1</size>
+                            <style></style>
+                            <label>&amp;Host:</label>
+                        </object>
+                    </object>
+                    <object class="sizeritem">
+                        <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                        <border>5</border>
+                        <object class="wxTextCtrl" name="ID_QUICKCONNECT_HOST">
+                            <size>-1,-1</size>
+                            <style></style>
+                            <value></value>
+                        </object>
+                    </object>
+                    <object class="sizeritem">
+                        <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM|wxADJUST_MINSIZE</flag>
+                        <border>5</border>
+                        <object class="wxStaticText" name="wxID_STATIC">
+                            <size>-1,-1</size>
+                            <style></style>
+                            <label>&amp;Username:</label>
+                        </object>
+                    </object>
+                    <object class="sizeritem">
+                        <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                        <border>5</border>
+                        <object class="wxTextCtrl" name="ID_QUICKCONNECT_USER">
+                            <size>-1,-1</size>
+                            <style></style>
+                            <value></value>
+                        </object>
+                    </object>
+                    <object class="sizeritem">
+                        <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM|wxADJUST_MINSIZE</flag>
+                        <border>5</border>
+                        <object class="wxStaticText" name="wxID_STATIC">
+                            <size>-1,-1</size>
+                            <style></style>
+                            <label>Pass&amp;word:</label>
+                        </object>
+                    </object>
+                    <object class="sizeritem">
+                        <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                        <border>5</border>
+                        <object class="wxTextCtrl" name="ID_QUICKCONNECT_PASS">
+                            <size>-1,-1</size>
+                            <style></style>
+                            <value></value>
+                        </object>
+                    </object>
+                    <object class="sizeritem">
+                        <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM|wxADJUST_MINSIZE</flag>
+                        <border>5</border>
+                        <object class="wxStaticText" name="wxID_STATIC">
+                            <size>-1,-1</size>
+                            <style></style>
+                            <label>&amp;Port:</label>
+                        </object>
+                    </object>
+                    <object class="sizeritem">
+                        <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                        <border>5</border>
+                        <object class="wxTextCtrl" name="ID_QUICKCONNECT_PORT">
+                            <size>-1,-1</size>
+                            <style></style>
+                            <value></value>
+                        </object>
+                    </object>
+                    <object class="sizeritem">
+                        <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                        <border>0</border>
+                        <object class="wxBoxSizer">
+                            <orient>wxHORIZONTAL</orient>
+                            <object class="sizeritem">
+                                <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                                <border>0</border>
+                                <object class="wxButton" name="ID_QUICKCONNECT_OK">
+                                    <size>-1,-1</size>
+                                    <style></style>
+                                    <label>&amp;Quickconnect</label>
+                                    <default>1</default>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                                <border>0</border>
+                                <object class="wxBitmapButton" name="ID_QUICKCONNECT_DROPDOWN">
+                                    <size>-1,-1</size>
+                                    <style>wxBU_AUTODRAW</style>
+                                    <bitmap>dropdown.png</bitmap>
+                                </object>
+                            </object>
+                        </object>
+                    </object>
+                </object>
+            </object>
+        </object>
+    </object>
+</resource>

@@ -14,9 +14,11 @@ public:
     virtual ~CMainFrame();
 protected:
 	bool CreateMenus();
+	bool CreateQuickconnectBar();
 
     wxStatusBar *m_pStatusBar;
     wxMenuBar	*m_pMenuBar;
+	wxPanel	*m_pQuickconnectBar;
 	wxSplitterWindow *m_pTopSplitter;
 	wxSplitterWindow *m_pBottomSplitter;
 	wxSplitterWindow *m_pViewSplitter;
