@@ -83,6 +83,7 @@ void CStatusLineCtrl::OnPaint(wxPaintEvent& event)
 	if (!m_pStatus)
 	{
 		dc.DrawText(m_statusText, 50, h);
+		paintDc.Blit(0, 0, rect.GetWidth(), rect.GetHeight(), &dc, 0, 0);
 		return;
 	}
 
