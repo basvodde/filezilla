@@ -139,3 +139,20 @@ bool CDirectoryCache::Lookup(CDirectoryListing &listing, const CServer &server, 
 	return false;
 }
 
+CDirectoryCache::CCacheEntry& CDirectoryCache::CCacheEntry::operator=(const CDirectoryCache::CCacheEntry &a)
+{
+	listing = a.listing;
+	server = a.server;
+	createTime = a.createTime;
+	parents = a.parents;
+
+	return *this;
+}
+
+CDirectoryCache::CCacheEntry::CCacheEntry(const CDirectoryCache::CCacheEntry &entry)
+{
+	listing = entry.listing;
+	server = entry.server;
+	createTime = entry.createTime;
+	parents = entry.parents;
+}

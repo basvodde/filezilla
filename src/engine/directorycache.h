@@ -28,6 +28,9 @@ protected:
 	class CCacheEntry
 	{
 	public:
+		CCacheEntry() { };
+		CCacheEntry(const CCacheEntry &entry);
+		~CCacheEntry() { };
 		CDirectoryListing listing;
 		CServer server;
 		wxDateTime createTime;
@@ -37,6 +40,8 @@ protected:
 			wxString subDir;
 		} t_parent;
 		std::list<t_parent> parents;
+
+		CCacheEntry& operator=(const CCacheEntry &a);
 	};
 
 	typedef std::list<CCacheEntry::t_parent>::iterator tParentsIter;
