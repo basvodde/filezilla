@@ -28,11 +28,11 @@ bool CFileZillaApp::OnInit()
 
 	InitSettingsDir();
 
-#ifdef _DEBUG
+#ifndef _DEBUG
 	wxMessageBox(_T("This software is still alpha software in early development, don't expect anything to work\r\n\
 DO NOT post bugreports,\r\n\
 DO NOT use it in production environments,\r\n\
-DO NOT distrubute it,\r\n\
+DO NOT distribute it,\r\n\
 DO NOT complain about it\r\n\
 USE AT OWN RISK"), _T("Important Information"));
 #endif

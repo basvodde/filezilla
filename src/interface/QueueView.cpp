@@ -1475,7 +1475,7 @@ void CQueueView::SaveQueue()
 		wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
 	}
 
-	delete pDocument;
+	delete pDocument->GetDocument();
 }
 
 void CQueueView::LoadQueue()
@@ -1497,7 +1497,7 @@ void CQueueView::LoadQueue()
 	TiXmlElement* pQueue = pDocument->FirstChildElement("Queue");
 	if (!pQueue)
 	{
-		delete pDocument;
+		delete pDocument->GetDocument();
 		return;
 	}
 
@@ -1559,7 +1559,7 @@ void CQueueView::LoadQueue()
 		wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
 	}
 
-	delete pDocument;
+	delete pDocument->GetDocument();
 
 	SetItemCount(m_itemCount);
 	UpdateQueueSize();

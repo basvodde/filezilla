@@ -145,7 +145,14 @@ TiXmlElement* GetXmlFile(wxFileName file)
 			return 0;
 		}
 
-		return pXmlDocument->FirstChildElement("FileZilla3");
+		TiXmlElement* pElement = pXmlDocument->FirstChildElement("FileZilla3");
+		if (!pElement)
+		{
+			delete pXmlDocument;
+			return 0;
+		}
+		else
+			return pElement;
 	}
 	else
 	{
