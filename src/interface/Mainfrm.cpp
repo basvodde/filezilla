@@ -26,7 +26,7 @@
 #define TRANSFERSTATUS_TIMER_ID wxID_HIGHEST + 3
 
 static const int statbarWidths[7] = {
-#ifdef __WXMSE__
+#ifdef __WXMSW__
 	-2, 100, 90, -1, 150, -1, 41
 #else
 	-2, 100, 90, -1, 150, -1, 50
@@ -141,13 +141,13 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_pRemoteSplitter = new wxSplitterWindow(m_pViewSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
 	m_pRemoteSplitter->SetMinimumPaneSize(20);
 
+	m_pStatusView = new CStatusView(m_pTopSplitter, -1);
+	m_pQueueView = new CQueueView(m_pBottomSplitter, -1, this);
 	m_pLocalTreeView = new CLocalTreeView(m_pLocalSplitter, -1);
-	m_pLocalListView = new CLocalListView(m_pLocalSplitter, -1, m_pState, m_pCommandQueue);
+	m_pLocalListView = new CLocalListView(m_pLocalSplitter, -1, m_pState, m_pQueueView);
 	m_pRemoteTreeView = new CRemoteTreeView(m_pRemoteSplitter, -1);
 	m_pRemoteListView = new CRemoteListView(m_pRemoteSplitter, -1, m_pState, m_pCommandQueue);
-	m_pStatusView = new CStatusView(m_pTopSplitter, -1);
-	m_pQueueView = new CQueueView(m_pBottomSplitter, -1);
-
+	
 	m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter, 100);
 	m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueueView, 100);
 	m_pViewSplitter->SplitVertically(m_pLocalSplitter, m_pRemoteSplitter);

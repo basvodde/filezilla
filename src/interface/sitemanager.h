@@ -58,6 +58,7 @@ protected:
 	virtual void OnLogontypeSelChanged(wxCommandEvent& event);
 	virtual void OnRemoteDirBrowse(wxCommandEvent& event);
 	virtual void OnItemActivated(wxTreeEvent& event);
+	virtual void OnLimitMultipleConnectionsChanged(wxCommandEvent& event);
 	
 	COptions* m_pOptions;
 };

@@ -16,6 +16,9 @@ public:
 	bool SetRemoteDir(const CDirectoryListing *m_pDirectoryListing);
 	const CDirectoryListing *GetRemoteDir() const;
 	const CServerPath GetRemotePath() const;
+	
+	const CServer* GetServer() const;
+	void SetServer(CServer* server);
 
 	void SetLocalListView(CLocalListView *pLocalListView);
 	void SetRemoteListView(CRemoteListView *pRemoteListView);
@@ -28,6 +31,7 @@ protected:
 
 	CLocalListView *m_pLocalListView;
 	CRemoteListView *m_pRemoteListView;
+	CServer* m_pServer;
 };
 
 #endif

@@ -7,7 +7,7 @@ CServer::CServer()
 	m_type = DEFAULT;
 	m_logonType = ANONYMOUS;
 	m_timezoneOffset = 0;
-	m_allowMultipleConnections = true;
+	m_maximumMultipleConnections = 0;
 	m_pasvMode = MODE_DEFAULT;
 }
 
@@ -174,7 +174,7 @@ CServer& CServer::operator=(const CServer &op)
 	m_pass = op.m_pass;
 	m_timezoneOffset = op.m_timezoneOffset;
 	m_pasvMode = op.m_pasvMode;
-	m_allowMultipleConnections = op.m_allowMultipleConnections;
+	m_maximumMultipleConnections = op.m_maximumMultipleConnections;
 
 	return *this;
 }
@@ -206,8 +206,8 @@ bool CServer::operator==(const CServer &op) const
 		return false;
 	else if (m_pasvMode != op.m_pasvMode)
 		return false;
-	else if (m_allowMultipleConnections != op.m_allowMultipleConnections)
-		return false;
+
+	// Do not compare number of allowed multiple connections
 
 	return true;
 }
@@ -310,14 +310,14 @@ void CServer::SetPasvMode(enum PasvMode pasvMode)
 	m_pasvMode = pasvMode;
 }
 
-void CServer::AllowMultipleConnections(bool allow)
+void CServer::MaximumMultipleConnections(int maximumMultipleConnections)
 {
-	m_allowMultipleConnections = allow;
+	m_maximumMultipleConnections = maximumMultipleConnections;
 }
 
-bool CServer::AllowMultipleConnections() const
+int CServer::MaximumMultipleConnections() const
 {
-	return m_allowMultipleConnections;
+	return m_maximumMultipleConnections;
 }
 
 wxString CServer::FormatHost() const
@@ -327,4 +327,16 @@ wxString CServer::FormatHost() const
 		host += wxString::Format(_T(":%d"), m_port);
 
 	return host;
+}
+
+wxString CServer::FormatServer() const
+{
+	wxString server = m_host;
+	if (m_port != 21)
+		server += wxString::Format(_T(":%d"), m_port);
+
+	if (m_logonType != ANONYMOUS)
+		server = GetUser() + _T("@") + server;
+
+	return server;
 }

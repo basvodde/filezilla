@@ -18,6 +18,7 @@ EVT_TREE_SEL_CHANGED(XRCID("ID_SITETREE"), CSiteManager::OnSelChanged)
 EVT_COMBOBOX(XRCID("ID_LOGONTYPE"), CSiteManager::OnLogontypeSelChanged)
 EVT_BUTTON(XRCID("ID_BROWSE"), CSiteManager::OnRemoteDirBrowse)
 EVT_TREE_ITEM_ACTIVATED(XRCID("ID_SITETREE"), CSiteManager::OnItemActivated)
+EVT_CHECKBOX(XRCID("ID_LIMITMULTIPLE"), CSiteManager::OnLimitMultipleConnectionsChanged)
 END_EVENT_TABLE()
 
 CSiteManager::CSiteManager(COptions* pOptions)
@@ -482,7 +483,8 @@ void CSiteManager::OnSelChanged(wxTreeEvent& event)
 		XRCCTRL(*this, "ID_TIMEZONE_MINUTES", wxSpinCtrl)->SetValue(0);
 
 		XRCCTRL(*this, "ID_TRANSFERMODE_DEFAULT", wxRadioButton)->SetValue(true);
-		XRCCTRL(*this, "ID_ALLOWMULTIPLE", wxCheckBox)->SetValue(true);
+		XRCCTRL(*this, "ID_LIMITMULTIPLE", wxCheckBox)->SetValue(false);
+		XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->SetValue(1);
 	}
 	else
 	{
@@ -558,7 +560,19 @@ void CSiteManager::OnSelChanged(wxTreeEvent& event)
 			XRCCTRL(*this, "ID_TRANSFERMODE_PASSIVE", wxRadioButton)->SetValue(true);
 		else
 			XRCCTRL(*this, "ID_TRANSFERMODE_DEFAULT", wxRadioButton)->SetValue(true);
-		XRCCTRL(*this, "ID_ALLOWMULTIPLE", wxCheckBox)->SetValue(data->m_server.AllowMultipleConnections());
+
+		int maxMultiple = data->m_server.MaximumMultipleConnections();
+		XRCCTRL(*this, "ID_LIMITMULTIPLE", wxCheckBox)->SetValue(maxMultiple != 0);
+		if (maxMultiple != 0)
+		{
+			XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->Enable(true);
+			XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->SetValue(maxMultiple);
+		}
+		else
+		{
+			XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->Enable(false);
+			XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->SetValue(1);
+		}
 	}
 }
 
@@ -693,7 +707,12 @@ bool CSiteManager::UpdateServer()
 	else
 		data->m_server.SetPasvMode(MODE_DEFAULT);
 
-	data->m_server.AllowMultipleConnections(XRCCTRL(*this, "ID_ALLOWMULTIPLE", wxCheckBox)->GetValue() != 0);
+	if (XRCCTRL(*this, "ID_LIMITMULTIPLE", wxCheckBox)->GetValue())
+	{
+		data->m_server.MaximumMultipleConnections(XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->GetValue());
+	}
+	else
+		data->m_server.MaximumMultipleConnections(0);
 
 	return true;
 }
@@ -743,4 +762,9 @@ void CSiteManager::OnItemActivated(wxTreeEvent& event)
 {
 	wxCommandEvent cmdEvent;
 	OnConnect(cmdEvent);
+}
+
+void CSiteManager::OnLimitMultipleConnectionsChanged(wxCommandEvent& event)
+{
+	XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->Enable(event.IsChecked());
 }

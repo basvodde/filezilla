@@ -21,7 +21,8 @@ struct t_Option
 
 static const t_Option options[OPTIONS_NUM] =
 {
-	"Use Pasv mode", number, _T("1")
+	"Use Pasv mode", number, _T("1"),
+	"Number of Transfers", number, _T("2")
 };
 
 COptions::COptions()
@@ -410,8 +411,8 @@ void COptions::SetServer(TiXmlElement *node, const CServer& server)
 	delete [] utf8;
 	node->InsertEndChild(element);
 
-	element = TiXmlElement("AllowMultipleConnections");
-	utf8 = ConvUTF8(wxString::Format(_T("%d"), server.AllowMultipleConnections() ? 1 : 0));
+	element = TiXmlElement("MaximumMultipleConnections");
+	utf8 = ConvUTF8(wxString::Format(_T("%d"), server.MaximumMultipleConnections()));
 	if (!utf8)
 		return;
 	element.InsertEndChild(TiXmlText(utf8));
@@ -517,13 +518,12 @@ bool COptions::GetServer(TiXmlElement *node, CServer& server)
 			server.SetPasvMode(MODE_DEFAULT);
 	}
 	
-	text = handle.FirstChildElement("AllowMultipleConnections").FirstChild().Text();
+	text = handle.FirstChildElement("MaximumMultipleConnections").FirstChild().Text();
 	if (text)
 	{
-		long allowMultipleConnections = 0;
-		if (!ConvLocal(text->Value()).ToLong(&allowMultipleConnections))
-			return false;
-		server.AllowMultipleConnections(allowMultipleConnections != 0);
+		unsigned long maximumMultipleConnections = 0;
+		if (ConvLocal(text->Value()).ToULong(&maximumMultipleConnections) && maximumMultipleConnections <= 10)
+			server.MaximumMultipleConnections(maximumMultipleConnections);
 	}
 	
 	return true;

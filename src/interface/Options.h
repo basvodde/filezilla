@@ -1,7 +1,9 @@
 #ifndef __OPTIONS_H__
 #define __OPTIONS_H_
 
-#define OPTIONS_NUM OPTIONS_ENGINE_NUM
+#define OPTIONS_NUM OPTIONS_ENGINE_NUM + 1
+
+#define OPTION_NUMTRANSFERS (OPTIONS_ENGINE_NUM + 1)
 
 struct t_OptionsCache
 {

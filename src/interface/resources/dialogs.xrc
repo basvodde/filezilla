@@ -616,11 +616,35 @@ Would you like to replace the file</label>
                           <border>5</border>
                         </object>
                         <object class="sizeritem">
-                          <object class="wxCheckBox" name="ID_ALLOWMULTIPLE">
-                            <label>Server allows &amp;multiple connections</label>
+                          <object class="wxCheckBox" name="ID_LIMITMULTIPLE">
+                            <label>&amp;Limit number of simultaneous connections</label>
                           </object>
-                          <flag>wxALL</flag>
+                          <flag>wxTOP|wxLEFT|wxRIGHT</flag>
                           <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxBoxSizer">
+                            <orient>wxHORIZONTAL</orient>
+                            <object class="sizeritem">
+                              <object class="wxStaticText">
+                                <label>&amp;Maximum number of connections:</label>
+                              </object>
+                              <flag>wxLEFT|wxALIGN_CENTRE_VERTICAL</flag>
+                              <border>8</border>
+                            </object>
+                            <object class="sizeritem">
+                              <flag>wxALL</flag>
+                              <border>5</border>
+                              <object class="wxSpinCtrl" name="ID_MAXMULTIPLE">
+                                <value>0</value>
+                                <min>1</min>
+                                <max>10</max>
+                                <size>50,-1</size>
+                              </object>
+                            </object>
+                          </object>
+                          <flag>wxLEFT|wxRIGHT</flag>
+                          <border>14</border>
                         </object>
                       </object>
                     </object>

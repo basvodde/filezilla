@@ -7,13 +7,15 @@ CState::CState()
 {
 	m_pLocalListView = 0;
 	m_pRemoteListView = 0;
-	
+
 	m_pDirectoryListing = 0;
+	m_pServer = 0;
 }
 
 CState::~CState()
 {
 	delete m_pDirectoryListing;
+	delete m_pServer;
 }
 
 wxString CState::GetLocalDir() const
@@ -127,4 +129,18 @@ void CState::RefreshLocal()
 {
 	if (m_pLocalListView)
 		m_pLocalListView->DisplayDir(m_localDir);
+}
+
+void CState::SetServer(CServer* server)
+{
+	delete m_pServer;
+	if (server)
+		m_pServer = new CServer(*server);
+	else
+		m_pServer = 0;
+}
+
+const CServer* CState::GetServer() const
+{
+	return m_pServer;
 }

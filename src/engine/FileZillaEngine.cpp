@@ -167,6 +167,7 @@ void CFileZillaEngine::AddNotification(CNotification *pNotification)
 	if (bSend)
 	{
 		wxFzEvent evt(wxID_ANY);
+		evt.SetEventObject(this);
 		wxPostEvent(m_pEventHandler, evt);
 	}
 }

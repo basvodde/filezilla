@@ -20,6 +20,7 @@ public:
 	virtual ~CMainFrame();
 
 	bool GetPassword(CServer &server, wxString name = _T(""), wxString challenge = _T(""));
+	COptions *m_pOptions;
 
 protected:
 	bool CreateMenus();
@@ -75,7 +76,6 @@ protected:
 
 	CFileZillaEngine *m_pEngine;
 	CCommandQueue *m_pCommandQueue;
-	COptions *m_pOptions;
 	CAsyncRequestQueue *m_pAsyncRequestQueue;
 
 #ifdef __WXMSW__

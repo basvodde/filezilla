@@ -1,7 +1,7 @@
 #include "FileZilla.h"
 #include "LocalListView.h"
 #include "state.h"
-#include "commandqueue.h"
+#include "QueueView.h"
 
 #ifdef __WXMSW__
 #include <shellapi.h>
@@ -29,11 +29,11 @@ END_EVENT_TABLE()
 	};
 #endif
 
-CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, CCommandQueue *pCommandQueue)
+CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView *pQueue)
 	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxLC_VIRTUAL | wxLC_REPORT | wxSUNKEN_BORDER)
 {
 	m_pState = pState;
-	m_pCommandQueue = pCommandQueue;
+	m_pQueue = pQueue;
 
 	m_pImageList = 0;
 	InsertColumn(0, _("Filename"));
@@ -375,8 +375,16 @@ void CLocalListView::OnItemActivated(wxListEvent &event)
 				wxBell();
 				return;
 			}
+
+			const CServer* pServer = m_pState->GetServer();
+			if (!pServer)
+			{
+				wxBell();
+				return;
+			}
 			wxFileName fn(m_dir, data->name);
-			m_pCommandQueue->ProcessCommand(new CFileTransferCommand(fn.GetFullPath(), path, data->name, false));
+
+			m_pQueue->QueueFile(false, false, fn.GetFullPath(), data->name, path, *pServer, data->size);
 		}
 	}
 }

@@ -53,7 +53,7 @@ public:
 	wxString GetPass() const;
 	int GetTimezoneOffset() const;
 	enum PasvMode GetPasvMode() const;
-	bool AllowMultipleConnections() const;
+	int MaximumMultipleConnections() const;
 	
 	// Return true if URL could be parsed correctly, false otherwise.
 	// If parsing fails, pError is filled with the reason and the CServer instance may be left an undefined state.
@@ -71,9 +71,10 @@ public:
 
 	bool SetTimezoneOffset(int minutes);	
 	void SetPasvMode(enum PasvMode pasvMode);
-	void AllowMultipleConnections(bool allow);
+	void MaximumMultipleConnections(int maximum);
 
 	wxString FormatHost() const;
+	wxString FormatServer() const;
 
 protected:
 	enum ServerProtocol m_protocol;
@@ -85,7 +86,7 @@ protected:
 	wxString m_pass;
 	int m_timezoneOffset;
 	enum PasvMode m_pasvMode;
-	bool m_allowMultipleConnections;
+	int m_maximumMultipleConnections;
 };
 
 #endif
