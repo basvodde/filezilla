@@ -1,4 +1,4 @@
-SUBDIRS = resources
+SUBDIRS = resources .
 INCLUDES = -I../include
 #########################################################################
 # APPLICATION SECTION
@@ -23,5 +23,8 @@ filezilla_LDFLAGS += $(EXPAT_LIB)
 filezilla_LDFLAGS += $(PNG_LIB)
 filezilla_LDFLAGS += $(ZLIB_LIB)
 filezilla_LDFLAGS += $(IDN_LIB)
+if USE_RESOURCEFILE
+  filezilla_LDFLAGS += resources/filezilla.o
+endif
 
 dist_noinst_DATA = interface.vcproj

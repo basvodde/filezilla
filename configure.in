@@ -11,7 +11,7 @@ AC_PROG_LIBTOOL
 
 AC_CACHE_SAVE
 
-CPPFLAGS="$CPPFLAGS -Wall -g -fexceptions"
+CFLAGS="$CFLAGS -Wall -g -fexceptions"
 CXXFLAGS="$CXXFLAGS -Wall -g -fexceptions"
 
 WXCONFIG=wx-config
@@ -107,10 +107,17 @@ if test "x$host_os" = "xcygwin" -o "x$host_os" = "xmingw32"; then
 			)
 		)
 	fi
-	if wx-config --cxxflags | grep __WXMSW__; then
+	if wx-config --cppflags | grep __WXMSW__; then
 		if ! wx-config --libs | grep -e -lcomctl32; then
 			WX_LIBS="$WX_LIBS -lrpcrt4 -loleaut32 -lole32 -luuid -lwinspool -lwinmm -lshell32 -lcomctl32 -lcomdlg32 -ladvapi32 -lwsock32 -lgdi32"
 		fi
+		if windres --version; then
+                  use_resourcefile=true
+                else
+                  use_resourcefile=false
+                fi
+
+                AM_CONDITIONAL(USE_RESOURCEFILE, test x$use_resourcefile = xtrue)
 	fi
 else
 	EXPAT_LIB=
