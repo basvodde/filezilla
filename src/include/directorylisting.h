@@ -26,6 +26,8 @@ public:
 		int hour;
 		int minute;
 	} time;
+
+	bool unsure; // May be true on cached items if any changes were made to the file
 };
 
 class CDirectoryListing

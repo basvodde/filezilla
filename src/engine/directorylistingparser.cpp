@@ -105,6 +105,8 @@ public:
 			m_str[type] = str;
 			return str;
 		}
+
+		return _T("");
 	}
 
 	bool IsNumeric()
@@ -150,16 +152,56 @@ public:
 		return m_rightNumeric == Yes;
 	}
 
-	int Find(char chr) const
+	int Find(const wxChar *chr, int start = 0) const
+	{
+		if (!chr)
+			return -1;
+		
+		for (int i = start; i < m_len; i++)
+		{
+			for (int c = 0; chr[c]; c++)
+			{
+				if (m_pToken[i] == chr[c])
+					return i;
+			}
+		}
+		return -1;
+	}
+	
+	int Find(char chr, int start = 0) const
 	{
 		if (!m_pToken)
 			return -1;
 
-		for (int i = 0; i < m_len; i++)
+		for (int i = start; i < m_len; i++)
 			if (m_pToken[i] == chr)
 				return i;
 		
 		return -1;
+	}
+
+	wxLongLong GetNumber(unsigned int start, int len)
+	{
+		if (len == -1)
+			len = m_len - start;
+		if (len < 1)
+			return -1;
+
+		if (start + len > m_len)
+			return -1;
+
+		if (m_pToken[start] < '0' || m_pToken[start] > '9')
+			return -1;
+
+		wxLongLong number = 0;
+		for (int i = start; i < (start + len); i++)
+		{
+			if (m_pToken[i] < '0' || m_pToken[i] > '9')
+				break;
+			number *= 10;
+			number += m_pToken[i] - '0';
+		}
+		return number;
 	}
 
 	wxLongLong GetNumber()
@@ -223,9 +265,9 @@ public:
 		m_parsePos = 0;
 	}
 	
-	bool GetToken(unsigned int n, CToken &token, int type = 0)
+	bool GetToken(unsigned int n, CToken &token, bool toEnd = false)
 	{
-		if (!type)
+		if (!toEnd)
 		{
 			if (m_Tokens.size() > n)
 			{
@@ -301,6 +343,11 @@ protected:
 };
 
 static char data[][100]={
+
+	// UNIX style listings
+	// -------------------
+
+	// Most common format
 	"-rw-r--r--   1 root     other        531 Jan 29 03:26 unix time",
 	"dr-xr-xr-x   2 root     other        512 Apr  8  1994 d unix year",
 	"-r-xr-xr-x   2 root                  512 Apr  8  1994 unix nogroup",
@@ -330,36 +377,16 @@ static char data[][100]={
 	"-rw-r--r--   1 root 531 Jan 29 03:26 README5",
 	"-rw-r--r--   1 group domain user 531 Jan 29 03:26 README6",
 
-	/* EPLF directory listings */
-	"+i8388621.48594,m825718503,r,s280,\teplf test 1.file",
-	"+i8388621.50690,m824255907,/,\teplf test 2.dir",
-	"+i8388621.48598,m824253270,r,s612,\teplf test 3.file",
+	/* aligned directory listing with too long size */
+	"-r-xr-xr-x longowner longgroup123456 Feb 12 17:20 long size test1",
 
-	/* MSDOS type listing used by IIS */
-	"04-27-00  12:09PM       <DIR>          DOS dir 1",
-	"04-14-00  03:47PM                  589 DOS file 1",
-
-	/* Another type of MSDOS style listings */
-	"2002-09-02  18:48       <DIR>          DOS dir 2",
-	"2002-09-02  19:06                9,730 DOS file 2",
-
-	/* Numerical Unix style format */
-	"0100644   500  101   12345    123456789       filename",
-
-	/* This one is used by SSH-2.0-VShell_2_1_2_143, this is the old VShell format */
-	"206876  Apr 04, 2000 21:06 VShell (old)",
-	"0  Dec 12, 2002 02:13 VShell (old) Dir/",
+	/* short directory listing with month name */
+	"-r-xr-xr-x 2 owner group 4512 01-jun-99 shortdate with monthname",
 
 	/* This type of directory listings is sent by some newer versions of VShell
 	 * both year and time in one line is uncommon.
 	 */
 	"-rwxr-xr-x    1 user group        9 Oct 08, 2002 09:47 VShell (new)",
-
-	/* Next ones come from an OS/2 server. The server obviously isn't Y2K aware */
-	"36611      A    04-23-103   10:57  OS2 test1.file",
-	" 1123      A    07-14-99   12:37  OS2 test2.file",
-	"    0 DIR       02-11-103   16:15  OS2 test1.dir",
-	" 1123 DIR  A    10-05-100   23:38  OS2 test2.dir",
 
 	/* Some servers send localized date formats, here the German one: */
 	"dr-xr-xr-x   2 root     other      2235 26. Juli, 20:10 datetest1 (ger)",
@@ -370,6 +397,34 @@ static char data[][100]={
 	/* Here a Japanese one: */
 	"-rw-r--r--   1 root       sys           8473  4\x8c\x8e 18\x93\xfa 2003\x94\x4e datatest1 (jap)",
 
+	/* the following format is sent by the Connect:Enterprise server by Sterling Commerce */
+	"-C--E-----FTP B BCC3I1       7670  1294495 Jan 13 07:42 ConEnt file",
+	"-C--E-----FTS B BCC3I1       7670  1294495 Jan 13 07:42 ConEnt file2",
+
+	"-AR--M----TCP B ceunix      17570  2313708 Mar 29 08:56 ALL_SHORT1.zip",
+
+	// EPLF style listings
+	// -------------------
+
+	/* EPLF directory listings */
+	"+i8388621.48594,m825718503,r,s280,\teplf test 1.file",
+	"+i8388621.50690,m824255907,/,\teplf test 2.dir",
+	"+i8388621.48598,m824253270,r,s612,\teplf test 3.file",
+
+	// DOS style listings
+	// ------------------
+
+	/* MSDOS type listing used by IIS */
+	"04-27-00  12:09PM       <DIR>          DOS dir 1",
+	"04-14-00  03:47PM                  589 DOS file 1",
+
+	/* Another type of MSDOS style listings */
+	"2002-09-02  18:48       <DIR>          DOS dir 2",
+	"2002-09-02  19:06                9,730 DOS file 2",
+
+	// VMS style listings
+	// ------------------
+
 	/* two different VMS style listings */
 	"vms_dir_1.DIR;1  1 19-NOV-2001 21:41 [root,root] (RWE,RWE,RE,RE)",
 	"vms_file_3;1       155   2-JUL-2003 10:30:13.64",
@@ -378,20 +433,26 @@ static char data[][100]={
 	"VMS_file_1;1\r\n170774/170775     24-APR-2003 08:16:15  [FTP_CLIENT,SCOT]      (RWED,RWED,RE,)",
 	"VMS_file_2;1\r\n10			     2-JUL-2003 10:30:08.59  [FTP_CLIENT,SCOT]      (RWED,RWED,RE,)",
 
+
+	// Miscellaneous formats
+	// ---------------------
+
+	/* Numerical Unix style format */
+	"0100644   500  101   12345    123456789       filename",
+
+	/* This one is used by SSH-2.0-VShell_2_1_2_143, this is the old VShell format */
+	"206876  Apr 04, 2000 21:06 VShell (old)",
+	"0  Dec 12, 2002 02:13 VShell (old) Dir/",
+
+	/* Next ones come from an OS/2 server. The server obviously isn't Y2K aware */
+	"36611      A    04-23-103   10:57  OS2 test1.file",
+	" 1123      A    07-14-99   12:37  OS2 test2.file",
+	"    0 DIR       02-11-103   16:15  OS2 test1.dir",
+	" 1123 DIR  A    10-05-100   23:38  OS2 test2.dir",
+
 	/* IBM AS/400 style listing */
 	"QSYS            77824 02/23/00 15:09:55 *DIR IBM Dir1/",
 
-	/* aligned directory listing with too long size */
-	"-r-xr-xr-x longowner longgroup123456 Feb 12 17:20 long size test1",
-
-	/* short directory listing with month name */
-	"-r-xr-xr-x 2 owner group 4512 01-jun-99 shortdate with monthname",
-
-	/* the following format is sent by the Connect:Enterprise server by Sterling Commerce */
-	"-C--E-----FTP B BCC3I1       7670  1294495 Jan 13 07:42 ConEnt file",
-	"-C--E-----FTS B BCC3I1       7670  1294495 Jan 13 07:42 ConEnt file2",
-
-	"-AR--M----TCP B ceunix      17570  2313708 Mar 29 08:56 ALL_SHORT1.zip",
 	""};
 
 CDirectoryListingParser::CDirectoryListingParser()
@@ -522,18 +583,18 @@ CDirectoryListingParser::CDirectoryListingParser()
 	m_MonthNamesMap[_T("out")] = 10;
 
 	//Japanese month names
-	m_MonthNamesMap[_T("1\x8c\x8e")] = 1;
-	m_MonthNamesMap[_T("2\x8c\x8e")] = 2;
-	m_MonthNamesMap[_T("3\x8c\x8e")] = 3;
-	m_MonthNamesMap[_T("4\x8c\x8e")] = 4;
-	m_MonthNamesMap[_T("5\x8c\x8e")] = 5;
-	m_MonthNamesMap[_T("6\x8c\x8e")] = 6;
-	m_MonthNamesMap[_T("7\x8c\x8e")] = 7;
-	m_MonthNamesMap[_T("8\x8c\x8e")] = 8;
-	m_MonthNamesMap[_T("9\x8c\x8e")] = 9;
-	m_MonthNamesMap[_T("10\x8c\x8e")] = 10;
-	m_MonthNamesMap[_T("11\x8c\x8e")] = 11;
-	m_MonthNamesMap[_T("12\x8c\x8e")] = 12;
+	m_MonthNamesMap[_T("1\x9c\x9e")] = 1;
+	m_MonthNamesMap[_T("2\x9c\x9e")] = 2;
+	m_MonthNamesMap[_T("3\x9c\x9e")] = 3;
+	m_MonthNamesMap[_T("4\x9c\x9e")] = 4;
+	m_MonthNamesMap[_T("5\x9c\x9e")] = 5;
+	m_MonthNamesMap[_T("6\x9c\x9e")] = 6;
+	m_MonthNamesMap[_T("7\x9c\x9e")] = 7;
+	m_MonthNamesMap[_T("8\x9c\x9e")] = 8;
+	m_MonthNamesMap[_T("9\x9c\x9e")] = 9;
+	m_MonthNamesMap[_T("10\x9c\x9e")] = 10;
+	m_MonthNamesMap[_T("11\x9c\x9e")] = 11;
+	m_MonthNamesMap[_T("12\x9c\x9e")] = 12;
 
 	//There are more languages and thus month 
 	//names, but as long as knowbody reports a 
@@ -579,7 +640,7 @@ CDirectoryListingParser::~CDirectoryListingParser()
 
 bool CDirectoryListingParser::Parse()
 {
-	int i = 40;
+	int i = 44;
 	bool res;
 	while (*data[++i])
 	{
@@ -593,6 +654,18 @@ bool CDirectoryListingParser::ParseLine(CLine *pLine)
 {
 	CDirentry entry;
 	bool res = ParseAsUnix(pLine, entry);
+	if (!res)
+		res = ParseAsDos(pLine, entry);
+	if (!res)
+		res = ParseAsEplf(pLine, entry);
+	if (!res)
+		res = ParseAsVms(pLine, entry);
+	if (!res)
+		res = ParseOther(pLine, entry);
+	if (!res)
+		res = ParseAsIbm(pLine, entry);
+
+	entry.unsure = false;
 
 	return res;
 }
@@ -681,89 +754,9 @@ bool CDirectoryListingParser::ParseAsUnix(CLine *pLine, CDirentry &entry)
 			entry.ownerGroup += token.GetString(1);
 		}
 
-		// Get the month date field
-		wxString dateMonth;
-		if (!pLine->GetToken(++index, token))
-			continue;
-		dateMonth = token.GetString();
-
-		// Get day field
-		if (!pLine->GetToken(++index, token))
+		if (!ParseUnixDateTime(pLine, index, entry))
 			continue;
 
-		int dateDay;
-
-		// Check for non-numeric day
-		if (!token.IsNumeric() && !token.IsLeftNumeric())
-		{
-			if (!dateMonth.IsNumber())
-				continue;
-			unsigned long tmp;
-			dateMonth.ToULong(&tmp);
-			dateDay = tmp;
-			dateMonth = token.GetString();
-		}
-		else
-			dateDay = token.GetNumber().GetLo();
-
-		if (dateDay < 1 || dateDay > 31)
-			continue;
-		entry.date.day = dateDay;
-
-		// Check month name
-		dateMonth.MakeLower();
-		std::map<wxString, int>::iterator iter = m_MonthNamesMap.find(dateMonth);
-		if (iter == m_MonthNamesMap.end())
-			continue;
-		entry.date.month = iter->second;
-
-		// Get time/year field
-		if (!pLine->GetToken(++index, token))
-			continue;
-
-		int pos = token.Find(':');
-		if (pos == -1)
-			pos = token.Find('.');
-		if (pos == -1)
-			pos = token.Find('-');
-
-		if (pos != -1)
-		{
-			// token is a time
-			if (!pos || pos == (token.GetLength() - 1))
-				continue;
-
-			wxString str = token.GetString();
-			long hour, minute;
-			if (!str.Left(pos).ToLong(&hour))
-				continue;
-			if (!str.Mid(pos + 1).ToLong(&minute))
-				continue;
-
-			if (hour < 0 || hour > 23)
-				continue;
-			if (minute < 0 || minute > 59)
-				continue;
-
-			entry.hasTime = true;
-			entry.time.hour = hour;
-			entry.time.minute = minute;
-		}
-		else
-		{
-			// token is a year
-			if (!token.IsNumeric())
-				continue;
-
-			wxLongLong year = token.GetNumber();
-			if (year > 3000)
-				continue;
-			if (year < 1000)
-				year += 1900;
-
-			entry.date.year = year.GetLo();
-			entry.hasTime = false;
-		}
 		// Get the filename
 		if (!pLine->GetToken(++index, token, 1))
 			continue;
@@ -777,11 +770,732 @@ bool CDirectoryListingParser::ParseAsUnix(CLine *pLine, CDirentry &entry)
 			chr == '*')
 			entry.name.RemoveLast();
 
-		entry.hasDate = true;
-		
 		return true;
 	}
 	while (--numOwnerGroup);
 
 	return false;
+}
+
+bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDirentry &entry)
+{
+	CToken token;
+
+	// Get the month date field
+	wxString dateMonth;
+	if (!pLine->GetToken(++index, token))
+		return false;
+
+	entry.date.year = 0;
+	entry.date.month = 0;
+	entry.date.day = 0;
+	entry.time.hour = 0;
+	entry.time.minute = 0;
+
+	// Some servers use the following date formats:
+	// 26-05 2002, 2002-10-14, 01-jun-99
+	// slashes instead of dashes are also possible
+	int pos = token.Find("-/");
+	if (pos != -1)
+	{
+		int pos2 = token.Find("-/", pos + 1);
+		if (pos2 == -1)
+		{
+			// something like 26-05 2002
+			int day = token.GetNumber(pos + 1, token.GetLength() - pos - 1).GetLo();
+			if (day < 1 || day > 31)
+				return false;
+			entry.date.day = day;
+			dateMonth = token.GetString().Left(pos);
+		}
+		else if (!ParseShortDate(token, entry))
+			return false;
+	}
+	else
+		dateMonth = token.GetString();
+
+	bool bHasYearAndTime = false;
+	if (!entry.date.day)
+	{
+		// Get day field
+		if (!pLine->GetToken(++index, token))
+			return false;
+	
+		int dateDay;
+	
+		// Check for non-numeric day
+		if (!token.IsNumeric() && !token.IsLeftNumeric())
+		{
+			if (dateMonth.Right(1) == _T("."))
+				dateMonth.RemoveLast();
+			if (!dateMonth.IsNumber())
+				return false;
+			unsigned long tmp;
+			dateMonth.ToULong(&tmp);
+			dateDay = tmp;
+			dateMonth = token.GetString();
+		}
+		else
+		{
+			dateDay = token.GetNumber().GetLo();
+			if (token[token.GetLength() - 1] == ',')
+				bHasYearAndTime = true;
+		}
+
+		if (dateDay < 1 || dateDay > 31)
+			return false;
+		entry.date.day = dateDay;
+	}
+
+	if (!entry.date.month)
+	{
+		// Check month name
+		if (dateMonth.Right(1) == _T(",") || dateMonth.Right(1) == _T("."))
+			dateMonth.RemoveLast();
+		dateMonth.MakeLower();
+		std::map<wxString, int>::iterator iter = m_MonthNamesMap.find(dateMonth);
+		if (iter == m_MonthNamesMap.end())
+			return false;
+		entry.date.month = iter->second;
+	}
+
+	// Get time/year field
+	if (!pLine->GetToken(++index, token))
+		return false;
+
+	pos = token.Find(":.-");
+	if (pos != -1)
+	{
+		// token is a time
+		if (!pos || pos == (token.GetLength() - 1))
+			return false;
+
+		wxString str = token.GetString();
+		long hour, minute;
+		if (!str.Left(pos).ToLong(&hour))
+			return false;
+		if (!str.Mid(pos + 1).ToLong(&minute))
+			return false;
+
+		if (hour < 0 || hour > 23)
+			return false;
+		if (minute < 0 || minute > 59)
+			return false;
+
+		entry.hasTime = true;
+		entry.time.hour = hour;
+		entry.time.minute = minute;
+
+		// Some servers use times only for files nweer than 6 months,
+		int year = wxDateTime::Now().GetYear();
+		int now = wxDateTime::Now().GetDay() + 31 * wxDateTime::Now().GetMonth();
+		int file = entry.date.month * 31 + entry.date.day;
+		if (now > file)
+			entry.date.year = year;
+		else
+			entry.date.year = year - 1;
+	}
+	else if (!entry.date.year)
+	{
+		// token is a year
+		if (!token.IsNumeric() && !token.IsLeftNumeric())
+			return false;
+
+		wxLongLong year = token.GetNumber();
+		if (year > 3000)
+			return false;
+		if (year < 1000)
+			year += 1900;
+
+		entry.date.year = year.GetLo();
+
+		if (bHasYearAndTime)
+		{
+			if (!pLine->GetToken(++index, token))
+				return false;
+
+			if (token.Find(':') == 2 && token.GetLength() == 5 && token.IsLeftNumeric() && token.IsRightNumeric())
+			{
+				int pos = token.Find(':');
+				// token is a time
+				if (!pos || pos == (token.GetLength() - 1))
+					return false;
+
+				wxString str = token.GetString();
+				long hour, minute;
+				if (!str.Left(pos).ToLong(&hour))
+					return false;
+				if (!str.Mid(pos + 1).ToLong(&minute))
+					return false;
+
+				if (hour < 0 || hour > 23)
+					return false;
+				if (minute < 0 || minute > 59)
+					return false;
+
+				entry.hasTime = true;
+				entry.time.hour = hour;
+				entry.time.minute = minute;
+			}
+			else
+			{
+				entry.hasTime = false;
+				index--;
+			}
+		}
+		else
+			entry.hasTime = false;
+	}
+
+	entry.hasDate = true;
+
+	return true;
+}
+
+bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry)
+{
+	if (token.GetLength() < 1)
+		return false;
+
+	bool gotYear = false;
+	bool gotMonth = false;
+	bool gotDay = false;
+
+	int value = 0;
+
+	int pos = token.Find("-./");
+	if (pos < 1)
+		return false;
+
+	if (pos == 4)
+	{
+		// Seems to be yyyy-mm-dd
+		wxLongLong year = token.GetNumber(0, pos);
+		if (year < 1900 || year > 3000)
+			return false;
+		entry.date.year = year.GetLo();
+		gotYear = true;
+	}
+	else if (pos <= 2)
+	{
+		wxLongLong value = token.GetNumber(0, pos);
+		if (token[pos] == '.')
+		{
+			// Maybe dd.mm.yyyy
+			if (value < 1900 || value > 3000)
+				return false;
+			entry.date.day = value.GetLo();
+			gotDay = true;
+		}
+		else
+		{
+			// Detect mm-dd-yyyy or mm/dd/yyyy and
+			// dd-mm-yyyy or dd/mm/yyyy
+			if (value < 1)
+				return false;
+			if (value > 12)
+			{
+				if (value > 31)
+					return false;
+
+				entry.date.day = value.GetLo();
+				gotDay = true;
+			}
+			else
+			{
+				entry.date.month = value.GetLo();
+				gotMonth = true;
+			}
+		}			
+	}
+	else
+		return false;
+
+	int pos2 = token.Find("-./", pos + 1);
+	if (pos2 == -1 || (pos2 - pos) == 1)
+		return false;
+	if (pos2 == (token.GetLength() - 1))
+		return false;
+
+	// If we already got the month and the second field is not numeric, 
+	// change old month into day and use new token as month
+	if (token[pos + 1] < '0' || token[pos + 1] > '9' && gotMonth)
+	{
+		if (gotDay)
+			return false;
+
+		gotDay = true;
+		gotMonth = false;
+		entry.date.day = entry.date.month;
+	}
+
+	if (gotYear || gotDay)
+	{
+		// Month field in yyyy-mm-dd or dd-mm-yyyy
+		// Check month name
+		wxString dateMonth = token.GetString().Mid(pos + 1, pos2 - pos - 1);
+		dateMonth.MakeLower();
+		std::map<wxString, int>::iterator iter = m_MonthNamesMap.find(dateMonth);
+		if (iter == m_MonthNamesMap.end())
+			return false;
+		entry.date.month = iter->second;
+		gotMonth = true;
+
+	}
+	else
+	{
+		wxLongLong value = token.GetNumber(pos + 1, pos2 - pos - 1);
+		// Day field in mm-dd-yyyy
+		if (value < 1 || value > 31)
+			return false;
+		entry.date.day = value.GetLo();
+		gotDay = true;
+	}
+
+	value = token.GetNumber(pos2 + 1, token.GetLength() - pos2 - 1).GetLo();
+	if (gotYear)
+	{
+		// Day field in yyy-mm-dd
+		if (!value || value > 31)
+			return false;
+		entry.date.day = value;
+		gotDay = true;
+	}
+	else
+	{
+		if (value < 0)
+			return false;
+
+		if (value < 50)
+			value += 2000;
+		else if (value < 1000)
+			value += 1900;
+		entry.date.year = value;
+
+		gotYear = true;
+	}
+
+	entry.hasDate = true;
+
+	if (!gotMonth || !gotDay || !gotYear)
+		return false;
+		
+	return true;
+}
+
+bool CDirectoryListingParser::ParseAsDos(CLine *pLine, CDirentry &entry)
+{
+	int index = 0;
+	CToken token;
+
+	// Get first token, has to be a valid date
+	if (!pLine->GetToken(index, token))
+		return false;
+
+	if (!ParseShortDate(token, entry))
+		return false;
+
+	// Extract time
+	if (!pLine->GetToken(++index, token))
+		return false;
+
+	if (!ParseTime(token, entry))
+		return false;
+
+	// If next token is <DIR>, entry is a directory
+	// else, it should be the filesize.
+	if (!pLine->GetToken(++index, token))
+		return false;
+
+	if (token.GetString() == _T("<DIR>"))
+	{
+		entry.dir = true;
+		entry.size = -1;
+	}
+	else if (token.IsNumeric() || token.IsLeftNumeric())
+	{
+		// Convert size, filter out separators
+		int size = 0;
+		int len = token.GetLength();
+		for (int i = 0; i < len; i++)
+		{
+			char chr = token[i];
+			if (chr == ',' || chr == '.')
+				continue;
+			if (chr < '0' || chr > '9')
+				return false;
+
+			size *= 10;
+			size += chr - '0';
+		}
+		entry.size = size;
+	}
+	else
+		return false;
+
+	// Extract filename
+	if (!pLine->GetToken(++index, token, true))
+		return false;
+	entry.name = token.GetString();
+	
+	return true;
+}
+
+bool CDirectoryListingParser::ParseTime(CToken &token, CDirentry &entry)
+{
+	int pos = token.Find(':');
+	if (pos < 1 || pos >= (token.GetLength() - 1))
+		return false;
+
+	wxLongLong hour = token.GetNumber(0, pos);
+	if (hour < 0 || hour > 23)
+		return false;
+
+	wxLongLong minute = token.GetNumber(pos + 1, -1);
+	if (minute < 0 || minute > 59)
+		return false;
+
+	// Convert to 24h format
+	if (!token.IsRightNumeric())
+	{
+		if (token[token.GetLength() - 2] == 'P')
+		{
+			if (hour < 12)
+				hour += 12;
+		}
+		else
+			if (hour == 12)
+				hour = 0;
+	}
+
+	entry.time.hour = hour.GetLo();
+	entry.time.minute = minute.GetLo();
+	entry.hasTime = true;
+
+	return true;
+}
+
+bool CDirectoryListingParser::ParseAsEplf(CLine *pLine, CDirentry &entry)
+{
+	CToken token;
+	if (!pLine->GetToken(0, token, true))
+		return false;
+
+	if (token[0] != '+')
+		return false;
+
+	int pos = token.Find('\t');
+	if (pos == -1 || pos == (token.GetLength() - 1))
+		return false;
+
+	entry.name = token.GetString().Mid(pos + 1);
+
+	entry.dir = false;
+	entry.link = false;
+	entry.hasDate = false;
+	entry.hasTime = false;
+	entry.size = -1;
+	
+	int fact = 1;
+	int separator = token.Find(',', fact);
+	while (separator != -1 && separator < (pos - 1))
+	{
+		int len = separator - fact;
+		char type = token[fact];
+
+		if (type == '/')
+			entry.dir = true;
+		else if (type == 's')
+			entry.size = token.GetNumber(fact + 1, len - 1);
+		else if (type == 'm')
+		{
+			wxLongLong number = token.GetNumber(fact + 1, len - 1);
+			if (number < 0)
+				return false;
+			wxDateTime dateTime(number);
+			entry.date.year = dateTime.GetYear();
+			entry.date.month = dateTime.GetMonth();
+			entry.date.day = dateTime.GetDay();
+			entry.time.hour = dateTime.GetHour();
+			entry.time.minute = dateTime.GetMinute();
+
+			entry.hasTime = true;
+			entry.hasDate = true;
+		}
+		else if (type == 'u' && len > 2 && token[fact + 1] == 'p')
+			entry.permissions = token.GetString().Mid(fact + 2, len - 2);
+
+		fact = separator + 1;
+		separator = token.Find(',', fact);
+	}
+
+	return true;
+}
+
+bool CDirectoryListingParser::ParseAsVms(CLine *pLine, CDirentry &entry)
+{
+	CToken token;
+	int index = 0;
+
+	if (!pLine->GetToken(index, token))
+		return false;
+
+	int pos = token.Find(';');
+	if (pos == -1)
+		return false;
+
+	if (pos > 4 && token.GetString().Mid(pos - 4, 4) == _T(".DIR"))
+	{
+		entry.dir = true;
+		entry.name = token.GetString().Left(pos - 4) + token.GetString().Mid(pos);
+	}
+	else
+	{
+		entry.dir = false;
+		entry.name = token.GetString();
+	}
+
+	// Get size
+	if (!pLine->GetToken(++index, token))
+		return false;
+
+	if (!token.IsNumeric() && !token.IsLeftNumeric())
+		return false;
+
+	entry.size = token.GetNumber();
+
+	// Get date
+	if (!pLine->GetToken(++index, token))
+		return false;
+
+	if (!ParseShortDate(token, entry))
+		return false;
+
+	// Get time
+	if (!pLine->GetToken(++index, token))
+		return false;
+
+	if (!ParseTime(token, entry))
+		return false;
+
+	// Owner / group
+	if (pLine->GetToken(++index, token))
+	{
+		int len = token.GetLength();
+		if (len > 2 && token[0] == '(' && token[len - 1] == ')')
+			entry.permissions = token.GetString().Mid(1, len - 2);
+		else
+			entry.permissions = token.GetString();
+	}
+
+	return true;
+}
+
+bool CDirectoryListingParser::ParseAsIbm(CLine *pLine, CDirentry &entry)
+{
+	int index = 0;
+	CToken token;
+
+	// Get owner
+	if (!pLine->GetToken(index, token))
+		return false;
+
+	entry.ownerGroup = token.GetString();
+
+	// Get size
+	if (!pLine->GetToken(++index, token))
+		return false;
+
+	if (!token.IsNumeric())
+		return false;
+
+	entry.size = token.GetNumber();
+
+	// Get date
+	if (!pLine->GetToken(++index, token))
+		return false;
+
+	if (!ParseShortDate(token, entry))
+		return false;
+
+	// Get time
+	if (!pLine->GetToken(++index, token))
+		return false;
+
+	if (!ParseTime(token, entry))
+		return false;
+
+	// Get filename
+	if (!pLine->GetToken(index + 2, token, 1))
+		return false;
+	
+	entry.name = token.GetString();
+	if (token[token.GetLength() - 1] == '/')
+	{
+		entry.name.RemoveLast();
+		entry.dir = true;
+	}
+	else
+		entry.dir = false;
+
+	return true;
+}
+
+bool CDirectoryListingParser::ParseOther(CLine *pLine, CDirentry &entry)
+{
+	int index = 0;
+	CToken firstToken;
+
+	if (!pLine->GetToken(index, firstToken))
+		return false;
+
+	if (!firstToken.IsNumeric())
+		return false;
+
+	// Possible formats: Numerical unix, VShell or OS/2
+
+	CToken token;
+	if (!pLine->GetToken(++index, token))
+		return false;
+
+	// If token is a number, than it's the numerical Unix style format,
+	// else it's the VShell or OS/2 format
+	if (token.IsNumeric())
+	{
+		entry.permissions = firstToken.GetString();
+
+		entry.ownerGroup += token.GetString();
+
+		if (!pLine->GetToken(++index, token))
+			return false;
+
+		entry.ownerGroup += _T(" ") + token.GetString();
+
+		// Get size
+		if (!pLine->GetToken(++index, token))
+			return false;
+
+		if (!token.IsNumeric())
+			return false;
+
+		entry.size = token.GetNumber();
+
+		// Get date/time
+		if (!pLine->GetToken(++index, token))
+			return false;
+
+		wxLongLong number = token.GetNumber();
+		if (number < 0)
+			return false;
+		wxDateTime dateTime(number);
+		entry.date.year = dateTime.GetYear();
+		entry.date.month = dateTime.GetMonth();
+		entry.date.day = dateTime.GetDay();
+		entry.time.hour = dateTime.GetHour();
+		entry.time.minute = dateTime.GetMinute();
+
+		entry.hasTime = true;
+		entry.hasDate = true;
+
+		// Get filename
+		if (!pLine->GetToken(++index, token, true))
+			return false;
+
+		entry.name = token.GetString();
+	}
+	else
+	{
+		// VShell or OS/2 style format
+		entry.size = firstToken.GetNumber();
+
+		// Get date
+		wxString dateMonth = token.GetString();
+		dateMonth.MakeLower();
+		std::map<wxString, int>::const_iterator iter = m_MonthNamesMap.find(dateMonth);
+		if (iter == m_MonthNamesMap.end())
+		{
+			entry.dir = false;
+			do
+			{
+				if (token.GetString() == _T("DIR"))
+					entry.dir = true;
+				else if (token.Find("-/.") != -1)
+					break;
+
+				if (!pLine->GetToken(++index, token))
+					return false;
+			} while (true);
+
+			if (!ParseShortDate(token, entry))
+				return false;
+
+			// Get time
+			if (!pLine->GetToken(++index, token))
+				return false;
+
+			if (!ParseTime(token, entry))
+				return false;
+
+			// Get filename
+			if (!pLine->GetToken(++index, token, true))
+				return false;
+
+			entry.name = token.GetString();
+		}
+		else
+		{
+			entry.date.month = iter->second;
+
+			// Get day
+			if (!pLine->GetToken(++index, token))
+				return false;
+
+			if (!token.IsNumeric() && !token.IsLeftNumeric())
+				return false;
+
+			wxLongLong day = token.GetNumber();
+			if (day < 0 || day > 31)
+				return false;
+			entry.date.day = day.GetLo();
+
+			// Get Year
+			if (!pLine->GetToken(++index, token))
+				return false;
+
+			if (!token.IsNumeric())
+				return false;
+
+			wxLongLong year = token.GetNumber();
+			if (year < 50)
+				year += 2000;
+			else if (year < 1000)
+				year += 1900;
+			entry.date.year = year.GetLo();
+
+			entry.hasDate = true;
+
+			// Get time
+			if (!pLine->GetToken(++index, token))
+				return false;
+
+			if (!ParseTime(token, entry))
+				return false;
+
+			// Get filename
+			if (!pLine->GetToken(++index, token, 1))
+				return false;
+
+			entry.name = token.GetString();
+			char chr = token[token.GetLength() - 1];
+			if (chr == '/' || chr == '\\')
+			{
+				entry.dir = true;
+				entry.name.RemoveLast();
+			}
+			else
+				entry.dir = false;
+		}
+	}
+
+	return true;
 }
