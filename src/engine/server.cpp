@@ -82,7 +82,7 @@ bool CServer::ParseUrl(wxString host, int port, wxString user, wxString pass, wx
 		long tmp;
 		if (!host.Mid(pos + 1).ToLong(&tmp) || tmp < 1 || tmp > 65535)
 		{
-			error = _("Invalid port given. The port has to be a value from 1 to 65536.");
+			error = _("Invalid port given. The port has to be a value from 1 to 65535.");
 			return false;
 		}
 		port = tmp;
@@ -159,4 +159,22 @@ CServer& CServer::operator=(const CServer &op)
 	m_Pass = op.m_Pass;
 
 	return *this;
+}
+
+bool CServer::operator==(const CServer &op) const
+{
+	if (m_Protocol != op.m_Protocol)
+		return false;
+	else if (m_Type != op.m_Type)
+		return false;
+	else if (m_Host != op.m_Host)
+		return false;
+	else if (m_Port != op.m_Port)
+		return false;
+	else if (m_User != op.m_User)
+		return false;
+	else if (m_Pass != op.m_Pass)
+		return false;
+
+	return true;
 }

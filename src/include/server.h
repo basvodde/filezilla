@@ -41,6 +41,7 @@ public:
 	void SetUser(wxString user, wxString pass = _T(""));
 
 	CServer& operator=(const CServer &op);
+	bool operator==(const CServer &op) const;
 
 protected:
 	ServerProtocol m_Protocol;
