@@ -25,7 +25,7 @@
 				AdditionalIncludeDirectories="../include/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				StringPooling="TRUE"
-				RuntimeLibrary="2"
+				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="TRUE"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="FileZilla.h"
@@ -39,7 +39,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wxmsw.lib wxxrc.lib wsock32.lib odbc32.lib odbccp32.lib comctl32.lib ..\lib\engine.lib"
+				AdditionalDependencies="libidn.a wxmsw.lib wxxrc.lib wsock32.lib odbc32.lib odbccp32.lib comctl32.lib ..\lib\engine.lib"
 				OutputFile="../bin/FileZilla.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -92,7 +92,7 @@
 				AdditionalIncludeDirectories="../include/"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;__WXDEBUG__"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				BufferSecurityCheck="TRUE"
 				EnableFunctionLevelLinking="TRUE"
 				UsePrecompiledHeader="2"
@@ -108,7 +108,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib wxmswd.lib wxxrcd.lib ..\lib\engine_debug.lib"
+				AdditionalDependencies="libidn.a odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib wxmswd.lib wxxrcd.lib ..\lib\engine_debug.lib"
 				OutputFile="../bin/FileZilla_dbg.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"

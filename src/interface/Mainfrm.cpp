@@ -19,6 +19,8 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_FZ_NOTIFICATION(wxID_ANY, CMainFrame::OnEngineEvent)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_DISCONNECT"), CMainFrame::OnUpdateToolbarDisconnect)
 	EVT_TOOL(XRCID("ID_TOOLBAR_DISCONNECT"), CMainFrame::OnDisconnect)
+	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_CANCEL"), CMainFrame::OnUpdateToolbarCancel)
+	EVT_TOOL(XRCID("ID_TOOLBAR_CANCEL"), CMainFrame::OnCancel)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame() : wxFrame(NULL, -1, "FileZilla", wxDefaultPosition, wxSize(900, 750))
@@ -36,7 +38,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, "FileZilla", wxDefaultPosition, wxS
 	m_pRemoteSplitter = NULL;
 	m_bInitDone = false;
 
-	m_pStatusBar = CreateStatusBar(7);
+	m_pStatusBar = CreateStatusBar(7);	
 
 	CreateToolBar();
 	CreateMenus();
@@ -242,8 +244,14 @@ void CMainFrame::OnQuickconnect(wxCommandEvent &event)
 
 	host = server.GetHost();
 	ServerProtocol protocol = server.GetProtocol();
+	switch (protocol)
+	{
 	//TODO: If not ftp, add protocol to host
-
+	default:
+		// do nothing
+		break;
+	}
+	
 	XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_HOST"), wxTextCtrl)->SetValue(host);
 	XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_PORT"), wxTextCtrl)->SetValue(wxString::Format(_T("%d"), server.GetPort()));
 	XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_USER"), wxTextCtrl)->SetValue(server.GetUser());
@@ -279,6 +287,8 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 				m_CommandList.pop_front();
 			}
 			ProcessNextCommand();
+			break;
+		default:
 			break;
 		}
 		delete pNotification;
@@ -363,7 +373,12 @@ void CMainFrame::ProcessNextCommand()
 			}
 		}
 		else
+		{
+			delete pCommand;
+			m_CommandList.pop_front();
+
 			wxBell();
+		}
 	}
 }
 
@@ -382,4 +397,17 @@ void CMainFrame::Cancel()
 	m_CommandList.clear();
 	m_CommandList.push_back(pCommand);
 	m_pEngine->Command(CCancelCommand());
+}
+
+void CMainFrame::OnUpdateToolbarCancel(wxUpdateUIEvent& event)
+{
+	event.Enable(m_pEngine && m_pEngine->IsBusy());
+}
+
+void CMainFrame::OnCancel(wxCommandEvent& event)
+{
+	if (!m_pEngine)
+		return;
+
+	Cancel();
 }

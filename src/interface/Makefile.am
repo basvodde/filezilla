@@ -20,3 +20,5 @@ filezilla_LDFLAGS += $(WX_LIBS) $(WX_XRC_LIBS)
 filezilla_LDFLAGS += $(EXPAT_LIB)
 filezilla_LDFLAGS += $(PNG_LIB)
 filezilla_LDFLAGS += $(ZLIB_LIB)
+filezilla_LDFLAGS += $(IDN_LIB)
+

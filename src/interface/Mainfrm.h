@@ -48,6 +48,8 @@ protected:
 	void OnEngineEvent(wxEvent &event);
 	void OnUpdateToolbarDisconnect(wxUpdateUIEvent& event);
 	void OnDisconnect(wxCommandEvent &event);
+	void OnUpdateToolbarCancel(wxUpdateUIEvent& event);
+	void OnCancel(wxCommandEvent &event);
 
 	float m_ViewSplitterSashPos;
 	bool m_bInitDone;
