@@ -45,22 +45,22 @@ bool CFileZillaApp::LoadResourceFiles()
 	pathList.Add(_T("/usr/share/filezilla/"));
 #endif
 
-	wxString wxPath = "";
+	wxString wxPath;
 	for (wxPathList::Node *node = pathList.GetFirst(); node; node = node->GetNext())
 	{
 		wxString cur = node->GetData();
-		if (wxFileExists(cur + "/resources/menus.xrc"))
+		if (wxFileExists(cur + _T("/resources/menus.xrc")))
 			wxPath = cur;
-		else if (wxFileExists(cur + "/share/filezilla/resources/menus.xrc"))
-			wxPath = cur + "/share/filezilla";
-		else if (wxFileExists(cur + "/../resources/menus.xrc"))
-			wxPath = cur + "/..";
-		else if (wxFileExists(cur + "/../share/filezilla/resources/menus.xrc"))
-			wxPath = cur + "/../share/filezilla";
-		else if (wxFileExists(cur + "/filezilla/resources/menus.xrc"))
-			wxPath = cur + "/filezilla";
+		else if (wxFileExists(cur + _T("/share/filezilla/resources/menus.xrc")))
+			wxPath = cur + _T("/share/filezilla");
+		else if (wxFileExists(cur + _T("/../resources/menus.xrc")))
+			wxPath = cur + _T("/..");
+		else if (wxFileExists(cur + _T("/../share/filezilla/resources/menus.xrc")))
+			wxPath = cur + _T("/../share/filezilla");
+		else if (wxFileExists(cur + _T("/filezilla/resources/menus.xrc")))
+			wxPath = cur + _T("/filezilla");
 
-		if (wxPath != "")
+		if (wxPath != _T(""))
 			break;
 	}
 	
@@ -69,7 +69,7 @@ bool CFileZillaApp::LoadResourceFiles()
 	m_locale.Init(wxLANGUAGE_GERMAN);
 	m_locale.AddCatalog(_T("filezilla"));
 	
-	if (wxPath == "")
+	if (wxPath == _T(""))
 	{
 		wxString msg = _("Could not find the resource files for FileZilla, closing FileZilla.\nYou can set the data directory of FileZilla using the '--datadir <custompath>' commandline option or by setting the FZ_DATADIR environment variable.");
 		wxMessageBox(msg, _("FileZilla Error"), wxOK | wxICON_ERROR);
@@ -77,7 +77,7 @@ bool CFileZillaApp::LoadResourceFiles()
 	}
 	
 	wxXmlResource::Get()->InitAllHandlers();
-	wxXmlResource::Get()->Load(wxPath + "/resources/*.xrc");
+	wxXmlResource::Get()->Load(wxPath + _T("/resources/*.xrc"));
 
 	return true;
 }

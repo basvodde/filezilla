@@ -258,12 +258,12 @@ wxString CControlSocket::ConvertDomainName(wxString domain)
 	if (idna_to_ascii_8z(utf8, &output, IDNA_ALLOW_UNASSIGNED))
 	{
 		delete [] utf8;
-		LogMessage(::Debug_Warning, "Could not convert domain name");
+		LogMessage(::Debug_Warning, _T("Could not convert domain name"));
 		return domain;
 	}
 	delete [] utf8;
 
-	wxString result = output;
+	wxString result = wxConvCurrent->cMB2WX(output);
 	free(output);
 	return result;
 }

@@ -73,3 +73,4 @@ void CState::SetLocalListView(CLocalListView *pLocalListView)
 {
 	m_pLocalListView = pLocalListView;
 }
+

@@ -10,8 +10,11 @@
 #include <wx/xrc/xmlres.h>
 #include <wx/image.h>
 #include <wx/sysopt.h>
+#include <wx/dir.h>
 
 #include <list>
+#include <vector>
+#include <map>
 
 #include "optionsbase.h"
 #include "logging.h"

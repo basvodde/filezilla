@@ -12,7 +12,7 @@
 #endif
 
 BEGIN_EVENT_TABLE(CLocalListView, wxListCtrl)
-	EVT_LIST_ITEM_ACTIVATED(wxID_ANY, OnItemActivated)
+	EVT_LIST_ITEM_ACTIVATED(wxID_ANY, CLocalListView::OnItemActivated)
 END_EVENT_TABLE()
 
 CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState)
@@ -320,7 +320,7 @@ wxString CLocalListView::GetType(wxString name, bool dir)
 		}
 	}
 #else
-	type = dir ? _("File"), _("Folder");
+	type = dir ? _("File") : _("Folder");
 #endif
 	return type;
 }

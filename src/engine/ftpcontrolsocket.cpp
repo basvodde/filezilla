@@ -14,7 +14,7 @@ CFtpControlSocket::~CFtpControlSocket()
 #define BUFFERSIZE 4096
 void CFtpControlSocket::OnReceive(wxSocketEvent &event)
 {
-	LogMessage(__FILE__, __LINE__, this, Debug_Verbose, _T("OnReceive()"));
+	LogMessage(__TFILE__, __LINE__, this, Debug_Verbose, _T("OnReceive()"));
 
 	char *buffer = new char[BUFFERSIZE];
 	Read(buffer, BUFFERSIZE);
@@ -64,7 +64,7 @@ void CFtpControlSocket::OnReceive(wxSocketEvent &event)
 				else if (m_ReceiveBuffer.GetChar(3) == '-')
 				{
 					// DDD<SP> is the end of a multi-line response
-					m_MultilineResponseCode = m_ReceiveBuffer.Left(3)+' ';
+					m_MultilineResponseCode = m_ReceiveBuffer.Left(3) + _T(" ");
 				}
 				else
 				{
@@ -178,10 +178,10 @@ void CFtpControlSocket::Logon()
 	switch (nCommand)
 	{
 	case 0:
-		Send("USER " + m_pCurrentServer->GetUser());
+		Send(_T("USER ") + m_pCurrentServer->GetUser());
 		break;
 	case 1:
-		Send("PASS " + m_pCurrentServer->GetPass());
+		Send(_T("PASS ") + m_pCurrentServer->GetPass());
 		break;
 	default:
 		ResetOperation(FZ_REPLY_INTERNALERROR);
@@ -204,6 +204,8 @@ int CFtpControlSocket::GetReplyCode() const
 bool CFtpControlSocket::Send(wxString str)
 {
 	LogMessage(Command, str);
-	str += "\r\n";
-	return CControlSocket::Send(str, str.Length());
+	str += _T("\r\n");
+	wxCharBuffer buffer = wxConvCurrent->cWX2MB(str);
+	int len = strlen(buffer);
+	return CControlSocket::Send(buffer, len);
 }

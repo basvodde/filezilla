@@ -26,7 +26,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_SPLITTER_SASH_POS_CHANGED(wxID_ANY, CMainFrame::OnSplitterSashPosChanged) 
 END_EVENT_TABLE()
 
-CMainFrame::CMainFrame() : wxFrame(NULL, -1, "FileZilla", wxDefaultPosition, wxSize(900, 750))
+CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
 {
 	SetSizeHints(250, 250);
 
@@ -232,10 +232,10 @@ void CMainFrame::OnQuickconnect(wxCommandEvent &event)
 	if (!m_pEngine)
 		return;
 
-	wxString host = XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_HOST"), wxTextCtrl)->GetValue();
-	wxString user = XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_USER"), wxTextCtrl)->GetValue();
-	wxString pass = XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_PASS"), wxTextCtrl)->GetValue();
-	wxString port = XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_PORT"), wxTextCtrl)->GetValue();
+	wxString host = XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_HOST", wxTextCtrl)->GetValue();
+	wxString user = XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_USER", wxTextCtrl)->GetValue();
+	wxString pass = XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_PASS", wxTextCtrl)->GetValue();
+	wxString port = XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_PORT", wxTextCtrl)->GetValue();
 	
 	long numericPort = -1;
 	if (port != _T(""))
@@ -264,10 +264,10 @@ void CMainFrame::OnQuickconnect(wxCommandEvent &event)
 		break;
 	}
 	
-	XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_HOST"), wxTextCtrl)->SetValue(host);
-	XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_PORT"), wxTextCtrl)->SetValue(wxString::Format(_T("%d"), server.GetPort()));
-	XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_USER"), wxTextCtrl)->SetValue(server.GetUser());
-	XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_PASS"), wxTextCtrl)->SetValue(server.GetPass());
+	XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_HOST", wxTextCtrl)->SetValue(host);
+	XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetValue(wxString::Format(_T("%d"), server.GetPort()));
+	XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_USER", wxTextCtrl)->SetValue(server.GetUser());
+	XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_PASS", wxTextCtrl)->SetValue(server.GetPass());
 
 	if (m_pEngine->IsConnected() || m_pEngine->IsBusy())
 	{
