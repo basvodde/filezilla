@@ -222,7 +222,10 @@ void CMainFrame::OnQuickconnect(wxCommandEvent &event)
 	CServerPath path;
 	if (!server.ParseUrl(host, numericPort, user, pass, error, path))
 	{
-		wxMessageBox(_("Could not parse server address:\n"), _("FileZilla Error"), wxICON_EXCLAMATION);
+		wxString msg = _("Could not parse server address:");
+		msg += _T("\n");
+		msg += error;
+		wxMessageBox(msg, _("FileZilla Error"), wxICON_EXCLAMATION);
 		return;
 	}
 
