@@ -81,8 +81,19 @@ filezilla.pot: resources.h $(srcdir)/../src/include/*.h $(srcdir)/../src/engine/
 
 # create filezilla.pot.new from the source files
 	($(XGETTEXT) $(XGETTEXT_ARGS) -o $@.new resources.h)
+
+# fix charset declaration in newly create file to avoid warnings in next step
+	@cat $@.new | sed -e "s/^\"Content-Type: .*$$/\"Content-Type: text\\/plain; charset=UTF-8\\\\n\"/" > $@.new~
+	@mv $@.new~ $@.new  
+
 	(find $(srcdir)/../src -name "*.h" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o $@.new)
+
+# fix charset declaration in newly create file to avoid warnings in next step
+	cat $@.new | sed -e "s/^\"Content-Type: .*$$/\"Content-Type: text\\/plain; charset=UTF-8\\\\n\"/" > $@.new~
+	@mv $@.new~ $@.new  
+
 	(find $(srcdir)/../src -name "*.cpp" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o $@.new)
+
 
 	if [ -f $@ ]; then \
 		touch $@; \
