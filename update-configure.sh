@@ -38,7 +38,10 @@ while test $# != 0; do
   shift
 done
 rm -f update-configure.stamp
-touch -r$FILENAME update-configure.stamp 2>/dev/null
+if test -e $FILENAME
+then
+  touch -r$FILENAME update-configure.stamp 2>/dev/null
+fi
 if test x$NO_DOWNLOAD != xyes; then
   echo "*** Downloading $URL"
   if wget -N $URL; then :; else
@@ -57,7 +60,7 @@ if test ! -e $FILENAME; then
   exit 2
 fi 
 
-if test x$FORCE_REBUILD = xyes -o $FILENAME -nt update-configure.stamp; then
+if test x$FORCE_REBUILD = xyes -o ! -f update-configure.stamp -o $FILENAME -nt update-configure.stamp; then
   echo "*** Extracting $FILENAME"   
   tar $TAR_OPTIONS $FILENAME
   if test $? -ne 0; then
