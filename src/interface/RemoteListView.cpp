@@ -1103,7 +1103,7 @@ void CRemoteListView::OnEndLabelEdit(wxListEvent& event)
 
 	wxString newFile = event.GetLabel();
 
-	if (newFile == "")
+	if (newFile == _T(""))
 		return;
 
 	CServerPath newPath = m_pDirectoryListing->path;
