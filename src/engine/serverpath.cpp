@@ -565,3 +565,11 @@ bool CServerPath::operator==(const CServerPath &op) const
 
 	return true;			
 }
+
+bool CServerPath::operator!=(const CServerPath &op) const
+{
+	if (!this)
+		return false;
+
+	return !(*this == op);
+}

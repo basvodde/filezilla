@@ -405,10 +405,10 @@ void CMainFrame::ProcessNextCommand()
 		}
 		else
 		{
+			wxBell();
+			
 			delete pCommand;
 			m_CommandList.pop_front();
-
-			wxBell();
 		}
 	}
 }

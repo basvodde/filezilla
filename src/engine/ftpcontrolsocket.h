@@ -4,14 +4,19 @@
 #include "logging_private.h"
 #include "ControlSocket.h"
 
+class CTransferSocket;
 class CFtpControlSocket : public CControlSocket
 {
 public:
 	CFtpControlSocket(CFileZillaEngine *pEngine);
 	virtual ~CFtpControlSocket();
+	virtual void TransferEnd(int reason);
 
 protected:
-	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T(""));
+	virtual int ResetOperation(int nErrorCode);
+
+	virtual bool List(CServerPath path = CServerPath(), wxString subDir = _T(""));
+	bool ParsePwdReply(wxString reply);
 
 	virtual void OnConnect(wxSocketEvent &event);
 	virtual void OnReceive(wxSocketEvent &event);
@@ -25,6 +30,8 @@ protected:
 
 	wxString m_ReceiveBuffer;
 	wxString m_MultilineResponseCode;
+
+	CTransferSocket *m_pTransferSocket;
 };
 
 #endif

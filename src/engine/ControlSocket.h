@@ -21,11 +21,13 @@ public:
 	virtual int ContinueConnect();
 	virtual int Disconnect();
 	virtual void Cancel();
-	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T("")) = 0;
+	virtual bool List(CServerPath path = CServerPath(), wxString subDir = _T("")) = 0;
 
 	enum Command GetCurrentCommandId() const;
 
 	int DoClose(int nErrorCode = FZ_REPLY_DISCONNECTED);
+
+	virtual void TransferEnd(int reason) = 0;
 	
 protected:
 	virtual void OnSocketEvent(wxSocketEvent &event);

@@ -11,9 +11,10 @@ public:
 
 	bool Parse();
 
-protected:
+	void AddData(char *pData, int len);
 
-	CFileZillaEngine *m_pEngine;
+protected:
+	CLine *GetLine();
 	bool ParseLine(CLine *pLine, std::list<CDirentry> &entryList);
 
 	bool ParseAsUnix(CLine *pLine, CDirentry &entry);
@@ -28,7 +29,21 @@ protected:
 	bool ParseShortDate(CToken &token, CDirentry &entry);
 	bool ParseTime(CToken &token, CDirentry &entry);
 
+	CFileZillaEngine *m_pEngine;
+
 	std::map<wxString, int> m_MonthNamesMap;
+
+	struct t_list
+	{
+		char *p;
+		int len;
+	};
+	int startOffset;
+
+	std::list<t_list> m_DataList;
+
+	CLine *curLine;
+	CLine *prevLine;
 };
 
 #endif

@@ -9,10 +9,11 @@
 class wxFzEngineEvent : public wxEvent
 {
 public:
-	wxFzEngineEvent(int id, enum EngineNotificationType eventType);
+	wxFzEngineEvent(int id, enum EngineNotificationType eventType, int data = 0);
 	virtual wxEvent *Clone() const;
 
 	enum EngineNotificationType m_eventType;
+	int data;
 };
 
 extern const wxEventType fzEVT_ENGINE_NOTIFICATION;

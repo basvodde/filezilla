@@ -264,6 +264,17 @@ public:
 
 		m_parsePos = 0;
 	}
+
+	~CLine()
+	{
+		delete [] m_pLine;
+
+		std::vector<CToken *>::iterator iter;
+		for (iter = m_Tokens.begin(); iter != m_Tokens.end(); iter++)
+			delete *iter;
+		for (iter = m_LineEndTokens.begin(); iter != m_LineEndTokens.end(); iter++)
+			delete *iter;
+	}
 	
 	bool GetToken(unsigned int n, CToken &token, bool toEnd = false)
 	{
@@ -459,6 +470,8 @@ CDirectoryListingParser::CDirectoryListingParser(CFileZillaEngine *pEngine)
 {
 	m_pEngine = pEngine;
 
+	startOffset = 0;
+
 	//Fill the month names map
 
 	//English month names
@@ -638,19 +651,23 @@ CDirectoryListingParser::CDirectoryListingParser(CFileZillaEngine *pEngine)
 
 CDirectoryListingParser::~CDirectoryListingParser()
 {
+	for (std::list<t_list>::iterator iter = m_DataList.begin(); iter != m_DataList.end(); iter++)
+		delete [] iter->p;
 }
 
 bool CDirectoryListingParser::Parse()
 {
-	int ii = -1;
-	bool res;
-
 	std::list<CDirentry> entryList;
-	while (*data[++ii])
+
+	while (true)
 	{
-		CLine line(data[ii], strlen(data[ii]));
-		res = ParseLine(&line, entryList);
-	}
+		CLine *pLine = GetLine();
+		if (!pLine)
+			break;
+		
+		bool res = ParseLine(pLine, entryList);
+		delete pLine;
+	};
 
 	CDirectoryListing *pListing = new CDirectoryListing;
 	pListing->m_entryCount = entryList.size();
@@ -1519,4 +1536,109 @@ bool CDirectoryListingParser::ParseOther(CLine *pLine, CDirentry &entry)
 	}
 
 	return true;
+}
+
+void CDirectoryListingParser::AddData(char *pData, int len)
+{
+	t_list item;
+	item.p = pData;
+	item.len = len;
+
+	m_DataList.push_back(item);
+}
+
+CLine *CDirectoryListingParser::GetLine()
+{
+	if (m_DataList.empty())
+		return 0;
+	
+	std::list<t_list>::iterator iter = m_DataList.begin();
+	int len = iter->len;
+	while (iter->p[startOffset]=='\r' || iter->p[startOffset]=='\n' || iter->p[startOffset]==' ' || iter->p[startOffset]=='\t')
+	{
+		startOffset++;
+		if (startOffset >= len)
+		{
+			delete [] iter->p;
+			iter++;
+			if (iter == m_DataList.end())
+			{
+				m_DataList.clear();
+				return 0;
+			}
+			len = iter->len;
+			startOffset = 0;
+		}
+	}
+	m_DataList.erase(m_DataList.begin(), iter);
+	iter = m_DataList.begin();
+
+	int startpos = startOffset;
+	int reslen = 0;
+
+	int emptylen = 0;
+
+	while ((iter->p[startOffset] != '\n') && (iter->p[startOffset] != '\r'))
+	{
+		if (iter->p[startOffset] != ' ' && iter->p[startOffset] != '\t')
+		{
+			reslen += emptylen + 1;
+			emptylen = 0;
+		}
+		else
+			emptylen++;
+		
+		startOffset++;
+		if (startOffset >= len)
+		{
+			iter++;
+			if (iter == m_DataList.end())
+				break;
+			len = iter->len;
+			startOffset = 0;
+		}
+	}
+	
+	char *res = new char[reslen];
+	CLine *line = new CLine(res, reslen);
+
+	int respos = 0;
+
+	std::list<t_list>::iterator i = m_DataList.begin();
+	while (i != iter && reslen)
+	{
+		int copylen = i->len - startpos;
+		if (copylen > reslen)
+			copylen = reslen;
+		memcpy(&res[respos], &i->p[startpos], copylen);
+		reslen -= copylen;
+		respos += i->len - startpos;
+		startpos = 0;
+
+		delete [] i->p;
+		i++;
+	}
+	while (i != iter)
+	{
+		delete [] i->p;
+		i++;
+	}
+	if (iter != m_DataList.end() && reslen)
+	{
+		int copylen = startOffset-startpos;
+		if (copylen>reslen)
+			copylen=reslen;
+		memcpy(&res[respos], &iter->p[startpos], copylen);
+		if (reslen >= iter->len)
+		{
+			delete [] iter->p;
+			m_DataList.erase(m_DataList.begin(), ++iter);
+		}
+		else
+			m_DataList.erase(m_DataList.begin(), iter);
+	}
+	else
+		m_DataList.erase(m_DataList.begin(), iter);
+
+	return line;
 }

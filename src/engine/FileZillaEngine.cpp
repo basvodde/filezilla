@@ -14,9 +14,10 @@
 
 const wxEventType fzEVT_ENGINE_NOTIFICATION = wxNewEventType();
 
-wxFzEngineEvent::wxFzEngineEvent(int id, enum EngineNotificationType eventType) : wxEvent(id, fzEVT_ENGINE_NOTIFICATION)
+wxFzEngineEvent::wxFzEngineEvent(int id, enum EngineNotificationType eventType, int data /*=0*/) : wxEvent(id, fzEVT_ENGINE_NOTIFICATION)
 {
 	m_eventType = eventType;
+	wxFzEngineEvent::data = data;
 }
 
 wxEvent *wxFzEngineEvent::Clone() const
@@ -27,13 +28,14 @@ wxEvent *wxFzEngineEvent::Clone() const
 BEGIN_EVENT_TABLE(CFileZillaEngine, wxEvtHandler)
 	EVT_FZ_ENGINE_NOTIFICATION(wxID_ANY, CFileZillaEngine::OnEngineEvent)
 END_EVENT_TABLE();
-#include "directorylistingparser.h"
+
 CFileZillaEngine::CFileZillaEngine()
 {
 	m_pEventHandler = 0;
 	m_pControlSocket = 0;
 	m_pCurrentCommand = 0;
 	m_bIsInCommand = false;
+	m_nControlSocketError = 0;
 }
 
 CFileZillaEngine::~CFileZillaEngine()
@@ -46,9 +48,11 @@ CFileZillaEngine::~CFileZillaEngine()
 		delete *iter;
 }
 
-int CFileZillaEngine::Init(wxEvtHandler *pEventHandler)
+int CFileZillaEngine::Init(wxEvtHandler *pEventHandler, COptionsBase *pOptions)
 {
 	m_pEventHandler = pEventHandler;
+	m_pOptions = pOptions;
+
 	return FZ_REPLY_OK;
 }
 
@@ -82,6 +86,13 @@ int CFileZillaEngine::Command(const CCommand &command)
 		ResetOperation(res);
 
 	m_bIsInCommand = false;
+	
+	if (command.GetId() != cmd_disconnect)
+		res |= m_nControlSocketError;
+	else if (res & FZ_REPLY_DISCONNECTED)
+		res = FZ_REPLY_OK;
+	m_nControlSocketError = 0;
+	
 	return res;
 }
 
@@ -163,12 +174,17 @@ enum Command CFileZillaEngine::GetCurrentCommandId() const
 
 int CFileZillaEngine::ResetOperation(int nErrorCode)
 {
-	if (!m_bIsInCommand && m_pCurrentCommand)
+	if (m_pCurrentCommand)
 	{
-		COperationNotification *notification = new COperationNotification();
-		notification->nReplyCode = nErrorCode;
-		notification->commandId = m_pCurrentCommand->GetId();
-		AddNotification(notification);
+		if (!m_bIsInCommand)
+		{
+			COperationNotification *notification = new COperationNotification();
+			notification->nReplyCode = nErrorCode;
+			notification->commandId = m_pCurrentCommand->GetId();
+			AddNotification(notification);
+		}
+		else
+			m_nControlSocketError |= nErrorCode;
 	}
 
 	delete m_pCurrentCommand;
@@ -215,9 +231,10 @@ int CFileZillaEngine::List(const CListCommand &command)
 		return FZ_REPLY_BUSY;
 
 	m_pCurrentCommand = command.Clone();
-	int res = m_pControlSocket->List(command.GetPath(), command.GetSubDir());
-
-	return res;
+	if (!m_pControlSocket->List(command.GetPath(), command.GetSubDir()))
+		return FZ_REPLY_ERROR;
+	else
+		return FZ_REPLY_WOULDBLOCK;
 }
 
 void CFileZillaEngine::OnEngineEvent(wxFzEngineEvent &event)
@@ -252,16 +269,23 @@ void CFileZillaEngine::OnEngineEvent(wxFzEngineEvent &event)
 			m_HostResolverThreads.clear();
 			m_HostResolverThreads = remaining;
 		}
-			
 		break;
+	case engineTransferEnd:
+		if (m_pControlSocket)
+			m_pControlSocket->TransferEnd(event.data);
 	default:
 		break;
 	}
 }
 
-bool CFileZillaEngine::SendEvent(enum EngineNotificationType eventType)
+bool CFileZillaEngine::SendEvent(enum EngineNotificationType eventType, int data /*=0*/)
 {
-	wxFzEngineEvent evt(wxID_ANY, eventType);
+	wxFzEngineEvent evt(wxID_ANY, eventType, data);
 	wxPostEvent(this, evt);
 	return true;
+}
+
+COptionsBase *CFileZillaEngine::GetOptions() const
+{
+	return m_pOptions;
 }

@@ -32,6 +32,7 @@ public:
 	bool IsParentOf(const CServerPath &path, bool cmpNoCase) const;
 
 	bool operator==(const CServerPath &op) const;
+	bool operator!=(const CServerPath &op) const;
 
 protected:
 	bool m_bEmpty;

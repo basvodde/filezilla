@@ -123,7 +123,7 @@ int CControlSocket::ContinueConnect()
 	if (!m_pEngine->m_HostResolverThreads.front()->Successful())
 	{
 		LogMessage(::Error, _("Invalid hostname or host not found"));
-		return ResetOperation(FZ_REPLY_CRITICALERROR);
+		return ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_CRITICALERROR);
 	}
 
 	wxIPV4address addr = m_pEngine->m_HostResolverThreads.front()->m_Address;
@@ -180,8 +180,17 @@ int CControlSocket::ResetOperation(int nErrorCode)
 
 	if (nErrorCode != FZ_REPLY_OK)
 	{
-		if (GetCurrentCommandId() == cmd_connect)
+		if (nErrorCode & FZ_REPLY_CRITICALERROR)
+			LogMessage(::Error, _("Critical error"));
+		switch (GetCurrentCommandId())
+		{
+		case cmd_connect:
 			LogMessage(::Error, _("Could not connect to server"));
+			break;
+		case cmd_list:
+			LogMessage(::Error, _("Failed to retrieve directory listing"));
+			break;
+		}
 	}
 
 	return m_pEngine->ResetOperation(nErrorCode);
