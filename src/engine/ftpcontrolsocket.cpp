@@ -83,7 +83,7 @@ void CFtpControlSocket::OnReceive(wxSocketEvent &event)
 		}
 	}
 
-	delete buffer;
+	delete [] buffer;
 }
 
 void CFtpControlSocket::OnConnect(wxSocketEvent &event)

@@ -36,7 +36,7 @@ void CLogging::LogMessage(wxString SourceFile, int nSourceLine, void *pInstance,
 	wxString text = wxString::FormatV(msgFormat, ap);
 	va_end(ap);
 
-	wxString msg = wxString::Format(_T("%s(%d): %s   caller=0x%08x"), SourceFile, nSourceLine, text, (int)this);
+	wxString msg = wxString::Format(_T("%s(%d): %s   caller=0x%08x"), SourceFile.c_str(), nSourceLine, text.c_str(), (int)this);
 
 	CLogmsgNotification *notification = new CLogmsgNotification;
 	notification->msgType = nMessageType;
