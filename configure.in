@@ -1,6 +1,6 @@
 AC_INIT(FileZilla, 2.9, tim.kosse@gmx.de)
 AC_CONFIG_AUX_DIR(config)
-AM_INIT_AUTOMAKE(dist-bzip2 dist-zip)
+AM_INIT_AUTOMAKE([dist-bzip2 dist-zip])
 
 AC_CANONICAL_HOST
 
@@ -14,44 +14,28 @@ AC_CACHE_SAVE
 CFLAGS="$CFLAGS -Wall -g -fexceptions"
 CXXFLAGS="$CXXFLAGS -Wall -g -fexceptions"
 
-WXCONFIG=wx-config
-AC_ARG_WITH(wx-config,
-[[  --with-wx-config=FILE     Use the given path to wx-config when determining
-                            wxWidgets configuration; defaults to "wx-config"]],
-[
-    if test "$withval" != "yes" -a "$withval" != ""; then
-        WXCONFIG=$withval
-    fi
-])
+AM_OPTIONS_WXCONFIG
 
-wxversion=0
+AM_PATH_WXCONFIG(2.5.1, wxWin=1, , [core,xrc,net])
+if test "$wxWin" != 1; then
+	AC_MSG_ERROR([
+        	wxWindows must be installed on your system
+		but wx-config script couldn't be found.
 
-AC_DEFUN([WXTEST],
-[
-	AC_REQUIRE([AC_PROG_AWK])
-	AC_MSG_CHECKING([wxWidgets version])
-	if wxversion=`$WXCONFIG --version`; then
-		AC_MSG_RESULT([$wxversion])
-	else
-		AC_MSG_RESULT([not found])
-		AC_MSG_ERROR([wxWidgets is required. Try --with-wx-config.])
-	fi])
-
-# Call WXTEST func
-WXTEST
+		Please check that wx-config is in path, the directory
+		where wxWindows libraries are installed (returned by
+		'wx-config --libs' command) is in LD_LIBRARY_PATH or
+		equivalent variable and wxWindows version is 2.3.4 or above.
+	])
+fi
 
 AC_CACHE_SAVE
 
-# Verify minimus requires
-vers=`echo $wxversion | $AWK 'BEGIN { FS = "."; } { printf "% d", ($1 * 1000 + $2) * 1000 + $3;}'`
-if test -n "$vers" && test "$vers" -ge 2005001; then
-	WX_CPPFLAGS="`$WXCONFIG --cppflags`"
-	WX_CXXFLAGS="`$WXCONFIG --cxxflags | sed -e 's/-fno-exceptions//'`"
-	WX_LIBS="`$WXCONFIG --libs`"
-	WX_XRC_LIBS="`$WXCONFIG --libs=xrc`"
-else
-	AC_MSG_ERROR([wxWidgets 2.5.1 or newer is required])
-fi
+CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
+CXXFLAGS="$CXXFLAGS $WX_CXXFLAGS_ONLY"
+CFLAGS="$CFLAGS $WX_CFLAGS_ONLY"
+
+LDFLAGS="$LDFLAGS $WX_LIBS"
 
 if test "x$host_os" = "xmingw32"; then
 	if test ! `$WXCONFIG --libs | grep -e '-l(wx)?zlib'`; then
@@ -144,7 +128,6 @@ CXXFLAGS="$CXXFLAGS $WX_CXXFLAGS"
 CATALOGS_TO_INSTALL="install-filezilla-catalogs"
 
 AC_SUBST(WX_LIBS)
-AC_SUBST(WX_XRC_LIBS)
 AC_SUBST(EXPAT_LIB)
 AC_SUBST(PNG_LIB)
 AC_SUBST(ZLIB_LIB)
