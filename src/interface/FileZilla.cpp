@@ -47,9 +47,10 @@ bool CFileZillaApp::LoadResourceFiles()
 #endif
 
 	wxString wxPath;
-	for (wxPathList::Node *node = pathList.GetFirst(); node; node = node->GetNext())
+
+	for (wxPathList::const_iterator node = pathList.begin(); node != pathList.end(); node++)
 	{
-		wxString cur = node->GetData();
+		wxString cur = *node;
 		if (wxFileExists(cur + _T("/resources/menus.xrc")))
 			wxPath = cur;
 		else if (wxFileExists(cur + _T("/share/filezilla/resources/menus.xrc")))
