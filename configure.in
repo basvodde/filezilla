@@ -44,6 +44,23 @@ CXXFLAGS="$CXXFLAGS $WX_CXXFLAGS_ONLY"
 CFLAGS="$CFLAGS $WX_CFLAGS_ONLY"
 LIBS="$LIBS $WX_LIBS"
 
+# Small function to filter the flags for windres,
+# so that only includes and defines are passed to windres.
+parseflags() {
+	WINDRESFLAGS=""
+	for opt in "$@"
+	do
+		case "$opt" in
+		-I*)
+			WINDRESFLAGS="$WINDRESFLAGS --include-dir=${opt#-I}"
+			;;
+		-D*)
+			WINDRESFLAGS="$WINDRESFLAGS $opt"
+			;;
+		esac
+	done
+}
+
 WINDRESFLAGS=
 use_resourcefile=
 if echo $host_os | grep "cygwin\|mingw"; then
@@ -52,10 +69,8 @@ if echo $host_os | grep "cygwin\|mingw"; then
                   use_resourcefile=true
                 fi
 	fi
-	# I hate Quadrigraphs
-	# fixme: hardcoded -mthreads removal is no solution, I need a real 
-        # filter for defines and include paths
-	WINDRESFLAGS=`echo $CPPFLAGS | sed 's/\(^\|@<:@ @:>@\)-mthreads\($\|@<:@ @:>@\)/ /g'`
+
+	parseflags $CPPFLAGS
 fi
 
 AM_CONDITIONAL(USE_RESOURCEFILE, test x$use_resourcefile = xtrue)
