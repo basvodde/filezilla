@@ -12,6 +12,18 @@ wxEvent *wxFzEvent::Clone() const
 	return new wxFzEvent(*this);
 }
 
+CNotification::CNotification()
+{
+}
+
+CNotification::~CNotification()
+{
+}
+
+CLogmsgNotification::CLogmsgNotification()
+{
+}
+
 CLogmsgNotification::~CLogmsgNotification()
 {
 }
@@ -19,6 +31,10 @@ CLogmsgNotification::~CLogmsgNotification()
 enum NotificationId CLogmsgNotification::GetID() const
 {
 	return nId_logmsg;
+}
+
+COperationNotification::COperationNotification()
+{
 }
 
 COperationNotification::~COperationNotification()

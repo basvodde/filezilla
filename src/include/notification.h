@@ -27,12 +27,15 @@ enum NotificationId
 class CNotification
 {
 public:
+	CNotification();
+	virtual ~CNotification();
 	virtual enum NotificationId GetID() const = 0;
 };
 
 class CLogmsgNotification : public CNotification
 {
 public:
+	CLogmsgNotification();
 	virtual ~CLogmsgNotification();
 	virtual enum NotificationId GetID() const;
 
@@ -43,6 +46,7 @@ public:
 class COperationNotification : public CNotification
 {
 public:
+	COperationNotification();
 	virtual ~COperationNotification();
 	virtual enum NotificationId GetID() const;
 	
