@@ -36,14 +36,13 @@ public:
 	CDirectoryListing();
 	~CDirectoryListing();
 
-
 	unsigned int m_entryCount;
 
 	CServerPath path;
-
 	CDirentry *m_pEntries;
-
 	CDirectoryListing& operator=(const CDirectoryListing &a);
+
+	bool m_hasUnsureEntries;
 };
 
 #endif

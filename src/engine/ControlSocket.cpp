@@ -258,6 +258,8 @@ int CControlSocket::DoClose(int nErrorCode /*=FZ_REPLY_DISCONNECTED*/)
 	
 	m_onConnectCalled = false;
 
+	m_pEngine->m_lastListDir.Clear();
+
 	return nErrorCode;
 }
 
@@ -405,3 +407,9 @@ const CServer* CControlSocket::GetCurrentServer() const
 	return m_pCurrentServer;
 }
 
+void CControlSocket::SendDirectoryListing(CDirectoryListing* pListing)
+{
+	CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing);
+	m_pEngine->AddNotification(pNotification);
+	m_pEngine->m_lastListDir = pListing->path;
+}

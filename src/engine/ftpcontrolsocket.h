@@ -18,7 +18,7 @@ public:
 protected:
 	virtual int ResetOperation(int nErrorCode);
 
-	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T(""));
+	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T(""), bool refresh = false);
 	int ListParseResponse();
 	int ListSend(int prevResult = FZ_REPLY_OK);
 

@@ -29,7 +29,7 @@ public:
 	virtual int ContinueConnect();
 	virtual int Disconnect();
 	virtual void Cancel();
-	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T("")) = 0;
+	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T(""), bool refresh = false) = 0;
 	virtual int FileTransfer(const wxString localFile, const CServerPath &remotePath, const wxString &remoteFile, bool download) = 0;
 	virtual int RawCommand(const wxString& command = _T("")) = 0;
 	virtual int Delete(const CServerPath& path = CServerPath(), const wxString& file = _T("")) = 0;
@@ -57,6 +57,8 @@ protected:
 	virtual void OnClose(wxSocketEvent &event);
 	virtual int ResetOperation(int nErrorCode);
 	virtual bool Send(const char *buffer, int len);
+
+	void SendDirectoryListing(CDirectoryListing* pListing);
 
 	wxString ConvertDomainName(wxString domain);
 

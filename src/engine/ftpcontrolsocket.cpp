@@ -394,6 +394,7 @@ public:
 
 	CServerPath path;
 	wxString subDir;
+	bool refresh;
 
 	int transferEndReason;
 };
@@ -411,7 +412,7 @@ enum listStates
 	list_waitsocket
 };
 
-int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/)
+int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/, bool refresh /*=false*/)
 {
 	LogMessage(Status, _("Retrieving directory listing..."));
 
@@ -441,6 +442,7 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 		path.SetType(m_pCurrentServer->GetType());
 	pData->path = path;
 	pData->subDir = subDir;
+	pData->refresh = refresh;
 
 	int res = ChangeDir(path, subDir);
 	if (res != FZ_REPLY_OK)
@@ -472,6 +474,23 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 			ResetOperation(prevResult);
 			return FZ_REPLY_ERROR;
 		}
+
+		if (!pData->refresh)
+		{
+			// Do a cache lookup now that we know the correct directory
+			CDirectoryListing *pListing = new CDirectoryListing;
+			CDirectoryCache cache;
+			bool found = cache.Lookup(*pListing, *m_pCurrentServer, m_CurrentPath);
+			if (found && !pListing->m_hasUnsureEntries)
+			{
+				SendDirectoryListing(pListing);
+				ResetOperation(FZ_REPLY_OK);
+				return FZ_REPLY_OK;
+			}
+			else
+				delete pListing;
+		}
+				
 		pData->opState = list_type;
 	}
 
@@ -633,8 +652,7 @@ int CFtpControlSocket::ListParseResponse()
 			CDirectoryCache cache;
 			cache.Store(*pListing, *m_pCurrentServer, pData->path, pData->subDir);
 			
-			CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing);
-			m_pEngine->AddNotification(pNotification);
+			SendDirectoryListing(pListing);
 
 			ResetOperation(FZ_REPLY_OK);
 			return FZ_REPLY_OK;
@@ -672,8 +690,7 @@ int CFtpControlSocket::ListParseResponse()
 			CDirectoryCache cache;
 			cache.Store(*pListing, *m_pCurrentServer, pData->path, pData->subDir);
 			
-			CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing);
-			m_pEngine->AddNotification(pNotification);
+			SendDirectoryListing(pListing);
 
 			ResetOperation(FZ_REPLY_OK);
 			return FZ_REPLY_OK;
@@ -1593,8 +1610,7 @@ void CFtpControlSocket::TransferEnd(int reason)
 					CDirectoryCache cache;
 					cache.Store(*pListing, *m_pCurrentServer, pData->path, pData->subDir);
 	
-					CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing);
-					m_pEngine->AddNotification(pNotification);
+					SendDirectoryListing(pListing);
 
 					ResetOperation(FZ_REPLY_OK);
 				}

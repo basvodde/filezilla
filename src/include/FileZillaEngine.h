@@ -78,6 +78,9 @@ protected:
 	static int m_activeStatusSend;
 	static int m_activeStatusRecv;
 
+	// Remember last path used in a dirlisting.
+	CServerPath m_lastListDir;
+
 	DECLARE_EVENT_TABLE();
 };
 

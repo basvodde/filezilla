@@ -4,6 +4,7 @@ CDirectoryListing::CDirectoryListing()
 {
 	m_pEntries = 0;
 	m_entryCount = 0;
+	m_hasUnsureEntries = false;
 }
 
 CDirectoryListing::~CDirectoryListing()

@@ -274,6 +274,7 @@ int CFileZillaEngine::List(const CListCommand &command)
 	
 				if (i == pListing->m_entryCount)
 				{
+					m_lastListDir = pListing->path;
 					CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing);
 					AddNotification(pNotification);
 					return FZ_REPLY_OK;
@@ -286,7 +287,7 @@ int CFileZillaEngine::List(const CListCommand &command)
 		return FZ_REPLY_BUSY;
 
 	m_pCurrentCommand = command.Clone();
-	return m_pControlSocket->List(command.GetPath(), command.GetSubDir());
+	return m_pControlSocket->List(command.GetPath(), command.GetSubDir(), command.Refresh());
 }
 
 void CFileZillaEngine::OnEngineEvent(wxFzEngineEvent &event)
