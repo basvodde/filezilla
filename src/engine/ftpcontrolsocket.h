@@ -30,6 +30,8 @@ protected:
 	int FileTransferParseResponse();
 	int FileTransferSend(int prevResult = FZ_REPLY_OK);
 
+	virtual int RawCommand(const wxString& command = _T(""));
+
 	bool ParsePwdReply(wxString reply);
 
 	virtual void OnConnect(wxSocketEvent &event);

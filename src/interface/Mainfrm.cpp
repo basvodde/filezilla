@@ -279,6 +279,17 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	{
 		OnSiteManager(event);
 	}
+	else if (event.GetId() == XRCID("ID_MENU_SERVER_CMD"))
+	{
+		if (!m_pEngine || !m_pEngine->IsConnected() || m_pEngine->IsBusy() || !m_pCommandQueue->Idle())
+			return;
+
+		wxTextEntryDialog dlg(this, _("Please enter raw FTP command.\nUsing raw ftp commands will clear the directory cache."), _("Enter custom command"));
+		if (dlg.ShowModal() != wxID_OK)
+			return;
+
+		m_pCommandQueue->ProcessCommand(new CRawCommand(dlg.GetValue()));		
+	}
 	event.Skip();
 }
 

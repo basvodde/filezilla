@@ -24,6 +24,7 @@ public:
 	bool Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path);
 	bool Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, wxString subDir);
 	bool InvalidateFile(wxString filename, const CServer &server, const CServerPath &path);
+	void InvalidateServer(const CServer& server);
 
 protected:
 

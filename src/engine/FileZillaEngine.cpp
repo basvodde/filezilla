@@ -88,6 +88,9 @@ int CFileZillaEngine::Command(const CCommand &command)
 	case cmd_transfer:
 		res = FileTransfer(reinterpret_cast<const CFileTransferCommand &>(command));
 		break;
+	case cmd_raw:
+		res = RawCommand(reinterpret_cast<const CRawCommand&>(command));
+		break;
 	default:
 		return FZ_REPLY_SYNTAXERROR;
 	}
@@ -412,4 +415,19 @@ bool CFileZillaEngine::GetTransferStatus(CTransferStatus &status, bool &changed)
 	}
 
 	return m_pControlSocket->GetTransferStatus(status, changed);
+}
+
+int CFileZillaEngine::RawCommand(const CRawCommand& command)
+{
+	if (!IsConnected())
+		return FZ_REPLY_NOTCONNECTED;
+
+	if (IsBusy())
+		return FZ_REPLY_BUSY;
+
+	if (command.GetCommand() == _T(""))
+		return FZ_REPLY_SYNTAXERROR;
+
+	m_pCurrentCommand = command.Clone();
+	return m_pControlSocket->RawCommand(command.GetCommand());
 }

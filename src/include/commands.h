@@ -116,4 +116,21 @@ protected:
 	bool m_download;
 };
 
+class CRawCommand : public CCommand
+{
+public:
+	CRawCommand();
+	CRawCommand(const wxString &command);
+	virtual ~CRawCommand();
+
+	virtual enum Command GetId() const;
+	virtual bool IsChainable() const;
+	virtual CCommand *Clone() const;
+
+	wxString GetCommand() const;
+
+protected:
+	wxString m_command;
+};
+
 #endif

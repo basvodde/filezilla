@@ -191,3 +191,15 @@ bool CDirectoryCache::InvalidateFile(wxString filename, const CServer &server, c
 
 	return true;
 }
+
+void CDirectoryCache::InvalidateServer(const CServer& server)
+{
+	std::list<CCacheEntry> newCache;
+	for (tCacheIter iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
+	{
+		const CCacheEntry &entry = *iter;
+		if (entry.server != server)
+			newCache.push_back(entry);
+	}
+	m_CacheList = newCache;
+}

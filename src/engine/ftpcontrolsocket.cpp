@@ -194,6 +194,9 @@ void CFtpControlSocket::ParseResponse()
 	case cmd_transfer:
 		FileTransferParseResponse();
 		break;
+	case cmd_raw:
+		RawCommand();
+		break;
 	default:
 		break;
 	}
@@ -1868,4 +1871,24 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 	}
 
 	return true;
+}
+
+int CFtpControlSocket::RawCommand(const wxString& command /*=_T("")*/)
+{
+	if (command != _T(""))
+	{
+		if (!Send(command))
+			return FZ_REPLY_ERROR;
+		
+		return FZ_REPLY_WOULDBLOCK;
+	}
+
+	CDirectoryCache cache;
+	cache.InvalidateServer(*m_pCurrentServer);
+
+	int code = GetReplyCode();
+	if (code == 2 || code == 3)
+		return ResetOperation(FZ_REPLY_OK);
+	else
+		return ResetOperation(FZ_REPLY_ERROR);
 }

@@ -163,3 +163,33 @@ bool CFileTransferCommand::Download() const
 {
 	return m_download;
 }
+
+CRawCommand::CRawCommand(const wxString &command)
+{
+	m_command = command;
+}
+
+CRawCommand::~CRawCommand()
+{
+}
+
+enum Command CRawCommand::GetId() const
+{
+	return cmd_raw;
+}
+
+bool CRawCommand::IsChainable() const
+{
+	return false;
+}
+
+CCommand *CRawCommand::Clone() const
+{
+	return new CRawCommand(GetCommand());
+}
+
+wxString CRawCommand::GetCommand() const
+{
+	return m_command;
+}
+

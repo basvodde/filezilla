@@ -1,23 +1,30 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <resource version="2.3.0.1" xmlns="http://www.wxwindows.org/wxxrc">
-    <object class="wxMenuBar" name="ID_MENUBAR">
-        <object class="wxMenu">
-            <label>_File</label>
-            <object class="wxMenuItem" name="ID_MENU_FILE_SITEMANAGER">
-                <label>_Site Manager</label>
-                <help>Opens the Site Manager</help>
-            </object>
-            <object class="wxMenuItem" name="ID_MENU_FILE_EXIT">
-                <label>E_xit</label>
-                <help>Close FileZilla</help>
-            </object>
-        </object>
-        <object class="wxMenu">
-            <label>_Edit</label>
-            <object class="wxMenuItem" name="ID_MENU_EDIT_SETTINGS">
-                <label>_Settings</label>
-                <help>Open the settings dialog of FileZilla</help>
-            </object>
-        </object>
+  <object class="wxMenuBar" name="ID_MENUBAR">
+    <object class="wxMenu">
+      <label>_File</label>
+      <object class="wxMenuItem" name="ID_MENU_FILE_SITEMANAGER">
+        <label>_Site Manager</label>
+        <help>Opens the Site Manager</help>
+      </object>
+      <object class="wxMenuItem" name="ID_MENU_FILE_EXIT">
+        <label>E_xit</label>
+        <help>Close FileZilla</help>
+      </object>
     </object>
+    <object class="wxMenu">
+      <label>_Edit</label>
+      <object class="wxMenuItem" name="ID_MENU_EDIT_SETTINGS">
+        <label>_Settings</label>
+        <help>Open the settings dialog of FileZilla</help>
+      </object>
+    </object>
+    <object class="wxMenu" name="ID_MENU_SERVER">
+      <label>&amp;Server</label>
+      <object class="wxMenuItem" name="ID_MENU_SERVER_CMD">
+        <label>Enter &amp;custom command</label>
+        <help>Send custom command to the server otherwise not available</help>
+      </object>
+    </object>
+  </object>
 </resource>
