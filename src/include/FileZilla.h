@@ -13,6 +13,7 @@
 #include "optionsbase.h"
 #include "logging.h"
 #include "server.h"
+#include "serverpath.h"
 #include "commands.h"
 #include "FileZillaEngine.h"
 

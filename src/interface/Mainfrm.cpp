@@ -15,6 +15,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
     EVT_SIZE(CMainFrame::OnSize)
 	EVT_SPLITTER_SASH_POS_CHANGED(-1, CMainFrame::OnViewSplitterPosChanged)
 	EVT_MENU(wxID_ANY, CMainFrame::OnMenuHandler)
+	EVT_BUTTON(XRCID("ID_QUICKCONNECT_OK"), CMainFrame::OnQuickconnect)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame() : wxFrame(NULL, -1, "FileZilla", wxDefaultPosition, wxSize(900, 750))
@@ -199,4 +200,39 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		Close();
 	}
 	event.Skip();
+}
+
+void CMainFrame::OnQuickconnect(wxCommandEvent &event)
+{
+	if (!m_pQuickconnectBar)
+		return;
+
+	wxString host = XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_HOST"), wxTextCtrl)->GetValue();
+	wxString user = XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_USER"), wxTextCtrl)->GetValue();
+	wxString pass = XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_PASS"), wxTextCtrl)->GetValue();
+	wxString port = XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_PORT"), wxTextCtrl)->GetValue();
+	
+	long numericPort = -1;
+	if (port != _T(""))
+		port.ToLong(&numericPort);
+	
+	CServer server;
+	wxString error;
+
+	CServerPath path;
+	if (!server.ParseUrl(host, numericPort, user, pass, error, path))
+	{
+		wxMessageBox(_("Could not parse server address:\n"), _("FileZilla Error"), wxICON_EXCLAMATION);
+		return;
+	}
+
+	host = server.GetHost();
+	ServerProtocol protocol = server.GetProtocol();
+	//TODO: If not ftp, add protocol to host
+
+	XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_HOST"), wxTextCtrl)->SetValue(host);
+	XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_PORT"), wxTextCtrl)->SetValue(wxString::Format(_T("%d"), server.GetPort()));
+	XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_USER"), wxTextCtrl)->SetValue(server.GetUser());
+	XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_PASS"), wxTextCtrl)->SetValue(server.GetPass());
+
 }
