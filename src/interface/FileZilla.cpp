@@ -9,12 +9,18 @@ class CFileZillaApp : public wxApp
 {
 public:
 	virtual bool OnInit();
+protected:
+	wxLocale m_locale;
 };
 
 IMPLEMENT_APP(CFileZillaApp)
 
 bool CFileZillaApp::OnInit()
 {
+    wxLocale::AddCatalogLookupPathPrefix(_T("../../locales"));
+	m_locale.Init(wxLANGUAGE_GERMAN);
+	m_locale.AddCatalog(_T("filezilla"));
+
 	//TODO: If ! ressources found...
 	if (0)
 	{
