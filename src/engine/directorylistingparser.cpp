@@ -59,7 +59,9 @@ public:
 			char *buffer = new char[m_len + 1];
 			buffer[m_len] = 0;
 			memcpy(buffer, m_pToken, m_len);
-			wxString str = wxConvCurrent->cMB2WX(buffer);
+			wxString str = wxConvLocal.cMB2WX(buffer);
+			if (str == _T(""))
+				str = wxConvLibc.cMB2WX(buffer);
 			delete [] buffer;
 #else
 			wxString str(m_pToken, m_len);
@@ -80,7 +82,9 @@ public:
 			char *buffer = new char[pos + 2];
 			buffer[pos + 1] = 0;
 			memcpy(buffer, m_pToken, pos + 1);
-			wxString str = wxConvCurrent->cMB2WX(buffer);
+			wxString str = wxConvLocal.cMB2WX(buffer);
+			if (str == _T(""))
+				str = wxConvLibc.cMB2WX(buffer);
 			delete [] buffer;
 #else
 			wxString str(m_pToken, pos + 1);
@@ -101,7 +105,9 @@ public:
 			char *buffer = new char[len + 1];
 			buffer[len] = 0;
 			memcpy(buffer, m_pToken, len);
-			wxString str = wxConvCurrent->cMB2WX(buffer);
+			wxString str = wxConvLocal.cMB2WX(buffer);
+			if (str == _T(""))
+				str = wxConvLibc.cMB2WX(buffer);
 			delete [] buffer;
 #else
 			wxString str(m_pToken, len);
