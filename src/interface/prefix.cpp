@@ -43,13 +43,9 @@
 #include <string.h>
 #include "prefix.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-
-#undef NULL
-#define NULL null; //Changed from ((void *) 0) to avoide compile error
+#ifndef NULL
+#define NULL 0; //Changed from ((void *) 0) to avoide compile error
+#endif
 
 #ifdef __GNUC__
 	#define br_return_val_if_fail(expr,val) if (!(expr)) {fprintf (stderr, "** BinReloc (%s): assertion %s failed\n", __PRETTY_FUNCTION__, #expr); return val;}
@@ -439,11 +435,6 @@ br_extract_prefix (const char *path)
 
 	return result;
 }
-
-
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 
 #endif /* ENABLE_BINRELOC */
 

@@ -19,10 +19,6 @@
 
 #ifdef ENABLE_BINRELOC
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
 /* WARNING, BEFORE YOU MODIFY PREFIX.C:
  *
  * If you make changes to any of the functions in prefix.c, you MUST
@@ -106,11 +102,6 @@ char *br_prepend_prefix	(void *symbol, char *path);
 char *br_strcat	(const char *str1, const char *str2);
 char *br_extract_dir	(const char *path);
 char *br_extract_prefix(const char *path);
-
-
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 
 #endif /* ENABLE_BINRELOC */
 
