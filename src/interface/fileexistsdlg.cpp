@@ -1,13 +1,15 @@
 #include "FileZilla.h"
 #include "fileexistsdlg.h"
 
-BEGIN_EVENT_TABLE( CFileExistsDlg, wxDialog )
+BEGIN_EVENT_TABLE(CFileExistsDlg, wxDialog)
+EVT_BUTTON(XRCID("wxID_OK"), CFileExistsDlg::OnOK)
+EVT_BUTTON(XRCID("wxID_CANCEL"), CFileExistsDlg::OnCancel)
 END_EVENT_TABLE()
 
 CFileExistsDlg::CFileExistsDlg(CFileExistsNotification *pNotification)
 {
 	m_pNotification = pNotification;
-	m_pAction = 0;
+	m_pAction1 = m_pAction2 = m_pAction3 = m_pAction4 = m_pAction5 = 0;
 	m_action = 0;
 }
 
@@ -25,8 +27,11 @@ bool CFileExistsDlg::Create(wxWindow* parent)
 void CFileExistsDlg::CreateControls()
 {	
 	wxXmlResource::Get()->LoadDialog(this, GetParent(), _T("ID_FILEEXISTSDLG"));
-	if (FindWindow(XRCID("ID_ACTION1")))
-		 m_pAction = wxDynamicCast(FindWindow(XRCID("ID_ACTION1")), wxRadioButton);
+	m_pAction1 = wxDynamicCast(FindWindow(XRCID("ID_ACTION1")), wxRadioButton);
+	m_pAction2 = wxDynamicCast(FindWindow(XRCID("ID_ACTION2")), wxRadioButton);
+	m_pAction3 = wxDynamicCast(FindWindow(XRCID("ID_ACTION3")), wxRadioButton);
+	m_pAction4 = wxDynamicCast(FindWindow(XRCID("ID_ACTION4")), wxRadioButton);
+	m_pAction5 = wxDynamicCast(FindWindow(XRCID("ID_ACTION5")), wxRadioButton);
 
 	if (m_pNotification->download)
 	{
@@ -225,10 +230,20 @@ void CFileExistsDlg::LoadIcon(int id, const wxString &file)
 
 void CFileExistsDlg::OnOK(wxCommandEvent& event)
 {
-	if (m_pAction)
-		m_action = m_pAction->GetValue();
+	if (m_pAction1 && m_pAction1->GetValue())
+		m_action = 0;
+	else if (m_pAction2 && m_pAction2->GetValue())
+		m_action = 1;
+	else if (m_pAction3 && m_pAction3->GetValue())
+		m_action = 2;
+	else if (m_pAction4 && m_pAction4->GetValue())
+		m_action = 3;
+	else if (m_pAction5 && m_pAction5->GetValue())
+		m_action = 4;
 	else
 		m_action = 0;
+	
+	EndModal(wxID_OK);
 }
 
 int CFileExistsDlg::GetAction() const
@@ -239,4 +254,5 @@ int CFileExistsDlg::GetAction() const
 void CFileExistsDlg::OnCancel(wxCommandEvent& event)
 {
 	m_action = 4;
+	EndModal(wxID_CANCEL);
 }

@@ -24,7 +24,7 @@ protected:
 	void LoadIcon(int id, const wxString &file);
 
 	CFileExistsNotification *m_pNotification;
-	wxRadioButton* m_pAction;
+	wxRadioButton *m_pAction1, *m_pAction2, *m_pAction3, *m_pAction4, *m_pAction5;
 	int m_action;
 };
 

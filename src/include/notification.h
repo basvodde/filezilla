@@ -104,6 +104,7 @@ public:
 	wxLongLong remoteSize;
 	wxDateTime remoteTime;
 
+	// overwriteAction will be set by the request handler
 	enum OverwriteAction
 	{
 		overwrite,
@@ -111,7 +112,11 @@ public:
 		resume,
 		rename,
 		skip
-	} overwriteAction;
+	};
+	 
+	enum OverwriteAction overwriteAction;
+	
+	wxString newName; //Will contain the new filename if overwriteAction is rename
 };
 
 #endif

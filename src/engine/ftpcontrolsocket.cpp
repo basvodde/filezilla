@@ -1577,8 +1577,113 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 			}
 
 			pData->waitAsyncRequest = false;
+			
+			CFileExistsNotification *pFileExistsNotification = reinterpret_cast<CFileExistsNotification *>(pNotification);
+			switch (pFileExistsNotification->overwriteAction)
+			{
+			case CFileExistsNotification::overwrite:
+				SendNextCommand();
+				break;
+			case CFileExistsNotification::overwriteNewer:
+				if (!pFileExistsNotification->localTime.IsValid() || !pFileExistsNotification->remoteTime.IsValid())
+					SendNextCommand();
+				else if (pFileExistsNotification->download && pFileExistsNotification->localTime.IsEarlierThan(pFileExistsNotification->remoteTime))
+					SendNextCommand();
+				else if (!pFileExistsNotification->download && pFileExistsNotification->localTime.IsLaterThan(pFileExistsNotification->remoteTime))
+					SendNextCommand();
+				else
+				{
+					if (pData->download)
+					{
+						wxString filename = pData->remotePath.GetPath() + pData->remoteFile;
+						LogMessage(Status, _("Skipping download of %s"), filename.c_str());
+					}
+					else
+					{
+						LogMessage(Status, _("Skipping upload of %s"), pData->localFile.c_str());
+					}
+					ResetOperation(FZ_REPLY_OK);
+				}
+				break;
+			case CFileExistsNotification::resume:
+				if (pData->download && pFileExistsNotification->localSize != -1)
+					pData->resume = true;
+				else if (pData->download && pFileExistsNotification->remoteSize != -1)
+					pData->resume = true;
+				SendNextCommand();
+				break;
+			case CFileExistsNotification::rename:
+				if (pData->download)
+				{
+					wxFileName fn = pData->localFile;
+					fn.SetFullName(pFileExistsNotification->newName);
+					pData->localFile = fn.GetFullPath();
 
-			SendNextCommand();
+					if (CheckOverwriteFile() == FZ_REPLY_OK)
+						SendNextCommand();
+				}
+				else
+				{
+					pData->remoteFile = pFileExistsNotification->newName;
+					
+					CDirectoryListing listing;
+					CDirectoryCache cache;
+					bool found = cache.Lookup(listing, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath);
+					if (!found)
+					{
+						pData->opState = filetransfer_size;
+						SendNextCommand();
+					}
+					else
+					{
+						bool differentCase = false;
+						bool found = false;
+						for (unsigned int i = 0; i < listing.m_entryCount; i++)
+						{
+							if (!listing.m_pEntries[i].name.CmpNoCase(pData->remoteFile))
+							{
+								if (listing.m_pEntries[i].name != pData->remoteFile)
+									differentCase = true;
+								else
+								{
+									found = true;
+									break;
+								}
+							}
+						}
+						if (found)
+						{
+							if (CheckOverwriteFile() == FZ_REPLY_OK)
+								SendNextCommand();
+						}
+						else if (differentCase)
+						{
+							pData->opState = filetransfer_size;
+							SendNextCommand();
+						}
+						else
+							SendNextCommand();
+					}
+
+				}
+				break;
+			case CFileExistsNotification::skip:
+				if (pData->download)
+				{
+					wxString filename = pData->remotePath.GetPath() + pData->remoteFile;
+					LogMessage(Status, _("Skipping download of %s"), filename.c_str());
+				}
+				else
+				{
+					LogMessage(Status, _("Skipping upload of %s"), pData->localFile.c_str());
+				}
+				ResetOperation(FZ_REPLY_OK);
+				break;
+			default:
+				LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Unknown file exists action: %d"), pFileExistsNotification->overwriteAction);
+				ResetOperation(FZ_REPLY_INTERNALERROR);
+				return false;
+			}
 		}
 		break;
 	default:
