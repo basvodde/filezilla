@@ -769,7 +769,7 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 		if (!pData->download && pData->opState >= filetransfer_transfer)
 		{
 			CDirectoryCache cache;
-			cache.InvalidateFile(*m_pCurrentServer, pData->remotePath, pData->remoteFile, (nErrorCode == FZ_REPLY_OK) ? pData->fileSize : -1);
+			cache.InvalidateFile(*m_pCurrentServer, pData->remotePath, pData->remoteFile, false, (nErrorCode == FZ_REPLY_OK) ? pData->fileSize : -1);
 
 			m_pEngine->ResendModifiedListings();
 		}
@@ -2169,6 +2169,10 @@ int CFtpControlSocket::MkdirParseResponse()
 				ResetOperation(FZ_REPLY_INTERNALERROR);
 				return FZ_REPLY_ERROR;
 			}
+			CDirectoryCache cache;
+			cache.InvalidateFile(*m_pCurrentServer, pData->currentPath, pData->segments.front(), true);
+			m_pEngine->ResendModifiedListings();
+
 			pData->currentPath.AddSegment(pData->segments.front());
 			pData->segments.pop_front();
 

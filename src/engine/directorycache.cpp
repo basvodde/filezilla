@@ -159,7 +159,7 @@ CDirectoryCache::CCacheEntry::CCacheEntry(const CDirectoryCache::CCacheEntry &en
 	parents = entry.parents;
 }
 
-bool CDirectoryCache::InvalidateFile(const CServer &server, const CServerPath &path, const wxString& filename, int size /*=-1*/)
+bool CDirectoryCache::InvalidateFile(const CServer &server, const CServerPath &path, const wxString& filename, bool dir /*=false*/, int size /*=-1*/)
 {
 	for (tCacheIter iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
 	{
@@ -186,7 +186,7 @@ bool CDirectoryCache::InvalidateFile(const CServer &server, const CServerPath &p
 			listing[entry.listing.m_entryCount].hasDate = false;
 			listing[entry.listing.m_entryCount].hasTime = false;
 			listing[entry.listing.m_entryCount].size = size;
-			listing[entry.listing.m_entryCount].dir = 0;
+			listing[entry.listing.m_entryCount].dir = dir;
 			listing[entry.listing.m_entryCount].link = 0;
 			listing[entry.listing.m_entryCount].unsure = true;
 			entry.listing.m_entryCount++;
