@@ -1463,9 +1463,35 @@ int CFtpControlSocket::CheckOverwriteFile()
 		return FZ_REPLY_ERROR;
 	}
 
-	// FIXME: Add checks here
-
 	CFileTransferOpData *pData = static_cast<CFileTransferOpData *>(m_pCurOpData);
+
+	if (pData->download)
+	{
+		if (!wxFile::Exists(pData->localFile))
+			return FZ_REPLY_OK;
+	}
+
+	CDirectoryListing listing;
+	CDirectoryCache cache;
+	bool foundListing = cache.Lookup(listing, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath);
+
+	bool found = false;
+	if (!pData->download)
+	{
+		if (foundListing)
+		{
+			for (unsigned int i = 0; i < listing.m_entryCount; i++)
+			{
+				if (listing.m_pEntries[i].name == pData->remoteFile)
+				{
+					found = true;
+					break;
+				}
+			}
+		}
+		if (!found && pData->fileSize == -1 && !pData->fileTime.IsValid())
+			return FZ_REPLY_OK;
+	}
 
 	CFileExistsNotification *pNotification = new CFileExistsNotification;
 
@@ -1493,10 +1519,7 @@ int CFtpControlSocket::CheckOverwriteFile()
 	if (pData->fileTime.IsValid())
 		pNotification->remoteTime = pData->fileTime;
 
-	CDirectoryListing listing;
-	CDirectoryCache cache;
-	bool found = cache.Lookup(listing, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath);
-	if (found)
+	if (foundListing)
 	{
 		for (unsigned int i = 0; i < listing.m_entryCount; i++)
 		{
@@ -1552,7 +1575,6 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 				LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Not waiting for request reply, ignoring request reply"), pNotification->GetRequestID());
 				return false;
 			}
-
 
 			pData->waitAsyncRequest = false;
 
