@@ -8,13 +8,13 @@ install-data-local: @CATALOGS_TO_INSTALL@
 
 install-filezilla-catalogs: allmo
 	for i in @FILEZILLA_LINGUAS@ ; do \
-	    $(mkinstalldirs) $(DESTDIR)$(localesdir)/$$i ; \
-	    $(INSTALL_DATA) $$i.mo $(DESTDIR)$(localesdir)/$$i/filezilla.mo ; \
+	  $(mkinstalldirs) $(DESTDIR)$(localesdir)/$$i ; \
+	  $(INSTALL_DATA) $$i.mo $(DESTDIR)$(localesdir)/$$i/filezilla.mo ; \
 	done
 
 uninstall-local:
 	for i in @FILEZILLA_LINGUAS@ ; do \
-	    rm $(DESTDIR)$(localesdir)/$$i/filezilla.mo ; \
+	  rm $(DESTDIR)$(localesdir)/$$i/filezilla.mo ; \
 	done
 
 
@@ -23,8 +23,8 @@ uninstall-local:
 
 #install-wxstd-catalogs:
 #	for i in $(WXWIN_LINGUAS) ; do \
-#	    $(mkinstalldirs) $(DESTDIR)$(localesdir)/$$i ; \
-#	    $(INSTALL_DATA) wxwin/$$i.mo $(DESTDIR)$(localesdir)/$$i/filezilla-wxstd.mo ; \
+#	  $(mkinstalldirs) $(DESTDIR)$(localesdir)/$$i ; \
+#	  $(INSTALL_DATA) wxwin/$$i.mo $(DESTDIR)$(localesdir)/$$i/filezilla-wxstd.mo ; \
 #	done
 
 
@@ -54,7 +54,7 @@ XGETTEXT_ARGS=-C -k_ -kwxGetTranslation -kwxTRANSLATE -s -j
 	file=$@; \
 	cat $(srcdir)/$${file%.po.new}.po > $@
 	if [ ! -f $@ ]; then \
-		exit 1; \
+	  exit 1; \
 	fi
 	$(MSGMERGE) -U $@ filezilla.pot
 	@if [ -f $@~ ]; then rm $@~; fi
@@ -96,10 +96,10 @@ filezilla.pot: resources.h $(srcdir)/../src/include/*.h $(srcdir)/../src/engine/
 
 
 	if [ -f $@ ]; then \
-		touch $@; \
-		$(MSGMERGE) -U $@ $@.new; \
+	  touch $@; \
+	  $(MSGMERGE) -U $@ $@.new; \
 	else \
-		mv $@.new $@; \
+	  mv $@.new $@; \
 	fi;
 
 	@if [ -f $@.pot~ ]; then rm $@~; fi
@@ -118,22 +118,37 @@ allmo: allpo
 stats: allpo
 	@ALLTOTAL=0 ALLTR=0 ALLFZ=0 ALLUT=0; \
 	for i in @FILEZILLA_LINGUAS@; do \
-		if [ -f $$i.mo~ ]; then rm $$i.mo~; fi; \
-		res=`LC_ALL="en_EN" $(MSGFMT) -o $$i.mo~ "$(srcdir)/$$i.po" 2>&1`; \
-		if [ -f $$i.mo~ ]; then rm $$i.mo~; fi; \
-		TR=`echo $$res | sed -e 's/^[^0-9]*\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+/\\1/'`; \
-		FZ=`echo $$res | sed -e 's/^[^0-9]*\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+/\\2/'`; \
-		UT=`echo $$res | sed -e 's/^[^0-9]*\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+/\\3/'`; \
-		ALLTR=`expr $$ALLTR + $$TR`; \
-		ALLFZ=`expr $$ALLFZ + $$FZ`; \
-		ALLUT=`expr $$ALLUT + $$UT`; \
-		TOTAL=`expr $$TR + $$FZ + $$UT`; \
-		echo "\"$$i\" => \"`expr 100 "*" $$TR / $$TOTAL`%\", $$TR of $$TOTAL strings translated, $$FZ fuzzy, $$UT untranslated"; \
+	  if [ -f $$i.mo~ ]; then rm $$i.mo~; fi; \
+	  res=`LC_ALL="en_EN" $(MSGFMT) -o $$i.mo~ "$(srcdir)/$$i.po" 2>&1`; \
+	  if [ -f $$i.mo~ ]; then rm $$i.mo~; fi; \
+	  TR=`echo $$res | sed -e 's/^[^0-9]*\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+/\\1/'`; \
+	  FZ=`echo $$res | sed -e 's/^[^0-9]*\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+/\\2/'`; \
+	  UT=`echo $$res | sed -e 's/^[^0-9]*\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+/\\3/'`; \
+	  ALLTR=`expr $$ALLTR + $$TR`; \
+	  ALLFZ=`expr $$ALLFZ + $$FZ`; \
+	  ALLUT=`expr $$ALLUT + $$UT`; \
+	  TOTAL=`expr $$TR + $$FZ + $$UT`; \
+	  echo "\"$$i\" => \"`expr 100 "*" $$TR / $$TOTAL`%\", $$TR of $$TOTAL strings translated, $$FZ fuzzy, $$UT untranslated"; \
 	done; \
 	ALLTOTAL=`expr $$ALLTR + $$ALLFZ + $$ALLUT`; \
 	echo "---------------------------------------"; \
 	echo " ALL => \"`expr 100 "*" $$ALLTR / $$ALLTOTAL`%\", $$ALLTR of $$ALLTOTAL strings translated, $$ALLFZ fuzzy, $$ALLUT untranslated"; \
 	echo $$TOTAL;
+
+
+# on the Mac copy the .mo files into the application bundle
+if MACAPPBUNDLE
+
+noinst_DATA = $(top_builddir)/FileZilla.app/Contents/SharedSupport/locales
+
+$(top_builddir)/FileZilla.app/Contents/SharedSupport/locales: allmo
+	mkdir -p $(top_builddir)/FileZilla.app/Contents/SharedSupport/locales
+	for i in @FILEZILLA_LINGUAS@ ; do \
+	  mkdir -p $(top_builddir)/FileZilla.app/Contents/SharedSupport/locales/$$i; \
+	  cp -f $$i.mo $(top_builddir)/FileZilla.app/Contents/SharedSupport/locales/$$i/filezilla.mo; \
+	done
+
+endif
 
 all: allmo
 
