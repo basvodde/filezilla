@@ -6,6 +6,7 @@
 #include "StatusView.h"
 #include "QueueView.h"
 #include "Mainfrm.h"
+#include "state.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -21,6 +22,8 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_TOOL(XRCID("ID_TOOLBAR_DISCONNECT"), CMainFrame::OnDisconnect)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_CANCEL"), CMainFrame::OnUpdateToolbarCancel)
 	EVT_TOOL(XRCID("ID_TOOLBAR_CANCEL"), CMainFrame::OnCancel)
+	EVT_SPLITTER_SASH_POS_CHANGING(wxID_ANY, CMainFrame::OnSplitterSashPosChanging) 
+	EVT_SPLITTER_SASH_POS_CHANGED(wxID_ANY, CMainFrame::OnSplitterSashPosChanged) 
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame() : wxFrame(NULL, -1, "FileZilla", wxDefaultPosition, wxSize(900, 750))
@@ -38,6 +41,8 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, "FileZilla", wxDefaultPosition, wxS
 	m_pRemoteSplitter = NULL;
 	m_bInitDone = false;
 
+	m_pState = new CState();
+
 	m_pStatusBar = CreateStatusBar(7);	
 
 	CreateToolBar();
@@ -52,7 +57,11 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, "FileZilla", wxDefaultPosition, wxS
 	long style = wxSP_3DBORDER | wxSP_LIVE_UPDATE;
 #endif
 
-	m_pTopSplitter = new wxSplitterWindow(this, -1, wxDefaultPosition, wxDefaultSize, style);
+	wxSize clientSize = GetClientSize();
+	if (m_pBottomSplitter)
+		clientSize.SetHeight(clientSize.GetHeight() - m_pBottomSplitter->GetSize().GetHeight());
+
+	m_pTopSplitter = new wxSplitterWindow(this, -1, wxDefaultPosition, clientSize, style);
 	m_pTopSplitter->SetMinimumPaneSize(20);
 
 	m_pBottomSplitter = new wxSplitterWindow(m_pTopSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
@@ -68,7 +77,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, "FileZilla", wxDefaultPosition, wxS
 	m_pRemoteSplitter->SetMinimumPaneSize(20);
 
 	m_pLocalTreeView = new CLocalTreeView(m_pLocalSplitter, -1);
-	m_pLocalListView = new CLocalListView(m_pLocalSplitter, -1);
+	m_pLocalListView = new CLocalListView(m_pLocalSplitter, -1, m_pState);
 	m_pRemoteTreeView = new CRemoteTreeView(m_pRemoteSplitter, -1);
 	m_pRemoteListView = new CRemoteListView(m_pRemoteSplitter, -1);
 	m_pStatusView = new CStatusView(m_pTopSplitter, -1);
@@ -80,10 +89,16 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, "FileZilla", wxDefaultPosition, wxS
 	m_pLocalSplitter->SplitHorizontally(m_pLocalTreeView, m_pLocalListView);
 	m_pRemoteSplitter->SplitHorizontally(m_pRemoteTreeView, m_pRemoteListView);
 	wxSize size = m_pBottomSplitter->GetClientSize();
-	m_pBottomSplitter->SetSashPosition(size.GetHeight() - 100);
+	m_pBottomSplitter->SetSashPosition(size.GetHeight() - 140);
 
 	m_pEngine = new CFileZillaEngine();
 	m_pEngine->Init(this);
+
+	Layout();
+
+	m_pState->SetLocalListView(m_pLocalListView);
+	m_pState->SetLocalDir(_T("d:\\cvsroot\\FileZilla 3\\src\\interface\\"));
+
 }
 
 CMainFrame::~CMainFrame()
@@ -98,10 +113,7 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 {
 	float ViewSplitterSashPos = m_ViewSplitterSashPos;
 	if (!m_pBottomSplitter)
-	{
-		event.Skip();
 		return;
-	}
 
 	int pos = m_pBottomSplitter->GetSashPosition();
 	wxSize size = m_pBottomSplitter->GetClientSize();
@@ -410,4 +422,42 @@ void CMainFrame::OnCancel(wxCommandEvent& event)
 		return;
 
 	Cancel();
+}
+
+void CMainFrame::OnSplitterSashPosChanging(wxSplitterEvent& event)
+{
+	if (event.GetEventObject() == m_pBottomSplitter)
+	{
+		if (!m_pRemoteSplitter || !m_pLocalSplitter)
+			return;
+
+		if (event.GetSashPosition() < 43)
+			event.SetSashPosition(43);
+	}
+}
+
+void CMainFrame::OnSplitterSashPosChanged(wxSplitterEvent& event)
+{
+	if (event.GetEventObject() == m_pBottomSplitter)
+	{
+		if (!m_pRemoteSplitter || !m_pLocalSplitter)
+			return;
+
+		if (event.GetSashPosition() < 43)
+			event.SetSashPosition(43);
+
+		int delta = event.GetSashPosition() - m_pBottomSplitter->GetSashPosition();
+
+		int newSize = m_pRemoteSplitter->GetClientSize().GetHeight() - m_pRemoteSplitter->GetSashPosition() + delta;
+		if (newSize < 0)
+			event.Veto();
+		else if (newSize < 20)
+			m_pRemoteSplitter->SetSashPosition(m_pRemoteSplitter->GetSashPosition() - 20 + newSize);
+				
+		newSize = m_pLocalSplitter->GetClientSize().GetHeight() - m_pLocalSplitter->GetSashPosition() + delta;
+		if (newSize < 0)
+			event.Veto();
+		else if (newSize < 20)
+			m_pLocalSplitter->SetSashPosition(m_pLocalSplitter->GetSashPosition() - 20 + newSize);
+	}
 }

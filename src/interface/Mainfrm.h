@@ -7,6 +7,7 @@ class CLocalTreeView;
 class CLocalListView;
 class CRemoteTreeView;
 class CRemoteListView;
+class CState;
 
 class CMainFrame : public wxFrame
 {
@@ -50,12 +51,16 @@ protected:
 	void OnDisconnect(wxCommandEvent &event);
 	void OnUpdateToolbarCancel(wxUpdateUIEvent& event);
 	void OnCancel(wxCommandEvent &event);
+	void OnSplitterSashPosChanging(wxSplitterEvent &event);
+	void OnSplitterSashPosChanged(wxSplitterEvent &event);
 
 	float m_ViewSplitterSashPos;
 	bool m_bInitDone;
 
 	CFileZillaEngine *m_pEngine;
 	std::list<CCommand *> m_CommandList;
+
+	CState *m_pState;
 
 	DECLARE_EVENT_TABLE()
 };

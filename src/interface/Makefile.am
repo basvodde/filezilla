@@ -11,9 +11,10 @@ bin_PROGRAMS = filezilla
 filezilla_SOURCES = FileZilla.cpp LocalListView.cpp LocalTreeView.cpp \
 			Mainfrm.cpp Options.cpp QueueView.cpp \
 			RemoteListView.cpp RemoteTreeView.cpp StatusView.cpp \
+			state.cpp \
 			LocalListView.h Mainfrm.h QueueView.h \
 			RemoteTreeView.h LocalTreeView.h Options.h \
-			RemoteListView.h StatusView.h
+			RemoteListView.h StatusView.h state.h
 
 filezilla_LDFLAGS = ../engine/libengine.a
 filezilla_LDFLAGS += $(WX_LIBS) $(WX_XRC_LIBS)
