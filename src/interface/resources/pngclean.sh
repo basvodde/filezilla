@@ -5,7 +5,7 @@
 
 # Settings
 PNGCRUSH=pngcrush
-PNGCRUSH_OPTIONS="-brute -reduce -rem gAMA -rem tIME -rem pHYs -rem cHRM"
+PNGCRUSH_OPTIONS="-brute -reduce -rem gAMA -rem tIME -rem pHYs -rem cHRM -rem bKGD"
 
 FILES=`find -name "*.png"`
 
