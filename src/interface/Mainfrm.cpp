@@ -38,7 +38,6 @@ static const int statbarWidths[6] = {
 
 BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_SIZE(CMainFrame::OnSize)
-	EVT_SPLITTER_SASH_POS_CHANGED(-1, CMainFrame::OnViewSplitterPosChanged)
 	EVT_MENU(wxID_ANY, CMainFrame::OnMenuHandler)
 	EVT_BUTTON(XRCID("ID_QUICKCONNECT_OK"), CMainFrame::OnQuickconnect)
 	EVT_FZ_NOTIFICATION(wxID_ANY, CMainFrame::OnEngineEvent)
@@ -116,8 +115,6 @@ CMainFrame::CMainFrame(COptions* pOptions) : wxFrame(NULL, -1, _T("FileZilla"), 
 	CreateToolBar();
 	CreateQuickconnectBar();
 
-	m_ViewSplitterSashPos = 0.5;
-
 	m_pEngine = new CFileZillaEngine();
 	m_pEngine->Init(this, m_pOptions);
 	
@@ -130,17 +127,17 @@ CMainFrame::CMainFrame(COptions* pOptions) : wxFrame(NULL, -1, _T("FileZilla"), 
 #endif
 
 	wxSize clientSize = GetClientSize();
-	if (m_pBottomSplitter)
-		clientSize.SetHeight(clientSize.GetHeight() - m_pBottomSplitter->GetSize().GetHeight());
 
 	m_pTopSplitter = new wxSplitterWindow(this, -1, wxDefaultPosition, clientSize, style);
 	m_pTopSplitter->SetMinimumPaneSize(20);
 
 	m_pBottomSplitter = new wxSplitterWindow(m_pTopSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
 	m_pBottomSplitter->SetMinimumPaneSize(20);
+	m_pBottomSplitter->SetSashGravity(1.0);
 
 	m_pViewSplitter = new wxSplitterWindow(m_pBottomSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
 	m_pViewSplitter->SetMinimumPaneSize(20);
+	m_pViewSplitter->SetSashGravity(0.5);
 
 	m_pLocalSplitter = new wxSplitterWindow(m_pViewSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
 	m_pLocalSplitter->SetMinimumPaneSize(20);
@@ -183,13 +180,9 @@ CMainFrame::~CMainFrame()
 
 void CMainFrame::OnSize(wxSizeEvent &event)
 {
-	float ViewSplitterSashPos = m_ViewSplitterSashPos;
 	if (!m_pBottomSplitter)
 		return;
 
-	int pos = m_pBottomSplitter->GetSashPosition();
-	wxSize size = m_pBottomSplitter->GetClientSize();
-	
 	wxFrame::OnSize(event);
 
 	wxSize clientSize = GetClientSize();
@@ -208,38 +201,6 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 			m_pTopSplitter->SetSize(0, panelSize.GetHeight(), clientSize.GetWidth(), clientSize.GetHeight() - panelSize.GetHeight());
 		}
 	}
-	wxSize size2 = m_pBottomSplitter->GetClientSize();
-
-	if (m_bInitDone)
-		m_pBottomSplitter->SetSashPosition(size2.GetHeight() - size.GetHeight() + pos);
-	else
-		m_bInitDone = true;
-
-	m_ViewSplitterSashPos = ViewSplitterSashPos;
-
-	if (m_pViewSplitter)
-	{
-		size = m_pViewSplitter->GetClientSize();
-		int pos = static_cast<int>(size.GetWidth() * m_ViewSplitterSashPos);
-		if (pos < 20)
-			pos = 20;
-		else if (pos > size.GetWidth() - 20)
-			pos = size.GetWidth() - 20;
-		m_pViewSplitter->SetSashPosition(pos);
-	}
-}
-
-void CMainFrame::OnViewSplitterPosChanged(wxSplitterEvent &event)
-{
-	if (event.GetEventObject() != m_pViewSplitter)
-	{
-		event.Skip();
-		return;
-	}
-
-	wxSize size = m_pViewSplitter->GetClientSize();
-	int pos = m_pViewSplitter->GetSashPosition();
-	m_ViewSplitterSashPos = pos / (float)size.GetWidth();
 }
 
 bool CMainFrame::CreateMenus()
