@@ -9,6 +9,8 @@ AC_PROG_INSTALL
 AC_LIBTOOL_DLOPEN
 AC_PROG_LIBTOOL
 
+AC_CACHE_SAVE
+
 CPPFLAGS="$CPPFLAGS -Wall -g -fexceptions"
 CXXFLAGS="$CPPFLAGS -Wall -g -fexceptions"
 
@@ -38,6 +40,8 @@ AC_DEFUN([WXTEST],
 # Call WXTEST func
 WXTEST
 
+AC_CACHE_SAVE
+
 # Verify minimus requires
 vers=`echo $wxversion | $AWK 'BEGIN { FS = "."; } { printf "% d", ($1 * 1000 + $2) * 1000 + $3;}'`
 if test -n "$vers" && test "$vers" -ge 2005001; then
@@ -50,23 +54,6 @@ else
 fi
 
 if test "x$host_os" = "xmingw32"; then
-	if test ! `$WXCONFIG --libs | grep -e '-l(wx)?png'`; then
-		AC_ARG_WITH(png-lib,
-		[[  --with-png-lib=FILE     Use the given path to the (wx)png library.]],
-		[
-			if test "$withval" != "yes" -a "$withval" != ""; then
-				PNG_LIB=$withval
-			fi
-		])
-		if test "x$PNG_LIB" = "x"; then
-			AC_CHECK_LIB(wxpng, png_create_read_struct, PNG_LIB="-lwxpng",
-				AC_CHECK_LIB(png, png_create_read_struct, PNG_LIB="-lpng",
-					AC_MSG_ERROR([png library not found. Try using --with-png-lib=FILE to specify the library path. The library source is included in the wxWidgets source in the src/png/ directory.])
-				)
-			)
-		fi
-	fi
-	
 	if test ! `$WXCONFIG --libs | grep -e '-l(wx)?zlib'`; then
 		AC_ARG_WITH(zlib-lib,
 		[[  --with-zlib-lib=FILE     Use the given path to the (wx)zlib library.]],
@@ -76,10 +63,27 @@ if test "x$host_os" = "xmingw32"; then
 			fi
 		])
 		if test "x$ZLIB_LIB" = "x"; then
-			AC_CHECK_LIB(wxzlib, zlib_version, ZLIB_LIB="-lwxzlib",
-				AC_CHECK_LIB(zlib, zlib_version, ZLIB_LIB="-lzlib",
+			AC_CHECK_LIB(wxzlib, zlibVersion, ZLIB_LIB="-lwxzlib",
+				AC_CHECK_LIB(zlib, zlibVersion, ZLIB_LIB="-lzlib",
 					AC_MSG_ERROR([zlib library not found. Try using --with-zlib-lib=FILE to specify the library path. The library source is included in the wxWidgets source in the src/zlib/ directory.])
 				)
+			)
+		fi
+	fi
+
+	if test ! `$WXCONFIG --libs | grep -e '-l(wx)?png'`; then
+		AC_ARG_WITH(png-lib,
+		[[  --with-png-lib=FILE     Use the given path to the (wx)png library.]],
+		[
+			if test "$withval" != "yes" -a "$withval" != ""; then
+				PNG_LIB=$withval
+			fi
+		])
+		if test "x$PNG_LIB" = "x"; then
+			AC_CHECK_LIB(wxpng, png_create_info_struct, PNG_LIB="-lwxpng",
+				AC_CHECK_LIB(png, png_create_info_struct, PNG_LIB="-lpng",
+					AC_MSG_ERROR([png library not found. Try using --with-png-lib=FILE to specify the library path. The library source is included in the wxWidgets source in the src/png/ directory.]), $ZLIB_LIB
+				), $ZLIB_LIB
 			)
 		fi
 	fi
@@ -107,6 +111,21 @@ else
 	EXPAT_LIB=
 fi
 
+AC_ARG_WITH(expat-lib,
+[[  --with-idn-lib=FILE     Use the given path to the idn library.]],
+[
+	if test "$withval" != "yes" -a "$withval" != ""; then
+		EXPAT_IDN=$withval
+	fi
+])
+
+if test "x$IDN_LIB" = "x"; then
+	AC_CHECK_LIB(idn, idna_to_ascii_8z, IDN_LIB="-lidn",
+		AC_MSG_ERROR([GNU libidn not found. Try using --with-idn-lib=FILE to specify the library path.])
+	)
+fi
+
+
 CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
 CXXFLAGS="$CXXFLAGS $WX_CPPFLAGS"
 
@@ -115,5 +134,6 @@ AC_SUBST(WX_XRC_LIBS)
 AC_SUBST(EXPAT_LIB)
 AC_SUBST(PNG_LIB)
 AC_SUBST(ZLIB_LIB)
+AC_SUBST(IDN_LIB)
 
 AC_OUTPUT(Makefile src/Makefile src/engine/Makefile src/interface/Makefile src/interface/resources/Makefile src/include/Makefile)

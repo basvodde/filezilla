@@ -99,6 +99,8 @@ void CFtpControlSocket::ParseResponse()
 	case cmd_connect:
 		Logon();
 		break;
+	default:
+		break;
 	}
 }
 
