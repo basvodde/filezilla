@@ -13,11 +13,11 @@ libengine_a_SOURCES = FileZillaEngine.cpp ControlSocket.cpp commands.cpp \
 			ftpcontrolsocket.cpp server.cpp serverpath.cpp \
 			logging.cpp notification.cpp asynchostresolver.cpp \
                         directorylistingparser.cpp directorylisting.cpp \
-			directorycache.cpp
+			directorycache.cpp transfersocket.cpp
 
 noinst_HEADERS = asynchostresolver.h ControlSocket.h \
 			engine_private.h ftpcontrolsocket.h \
 			logging_private.h directorylistingparser.h \
-			directorycache.h
+			directorycache.h transfersocket.h
 
 dist_noinst_DATA = engine.vcproj
