@@ -2,6 +2,7 @@
 #include "state.h"
 #include "LocalListView.h"
 #include "RemoteListView.h"
+#include "viewheader.h"
 
 CState::CState()
 {
@@ -10,6 +11,7 @@ CState::CState()
 
 	m_pDirectoryListing = 0;
 	m_pServer = 0;
+	m_pLocalViewHeader = 0;
 }
 
 CState::~CState()
@@ -75,6 +77,9 @@ bool CState::SetLocalDir(wxString dir)
 
 	if (m_pLocalListView)
 		m_pLocalListView->DisplayDir(m_localDir);
+
+	if (m_pLocalViewHeader)
+		m_pLocalViewHeader->SetDir(m_localDir);
 
 	return true;
 }

@@ -16,6 +16,8 @@ public:
 
 	void SetLabel(const wxString& label);
 
+	virtual void CopyDataFrom(CViewHeader* pHeader);
+
 protected:
 	CComboBoxEx* m_pComboBox;
 	bool m_alreadyInPaint;
@@ -33,6 +35,29 @@ protected:
 	wxString m_label;
 	int m_cbOffset;
 	int m_labelHeight;
+};
+
+class CState;
+class CLocalViewHeader : public CViewHeader
+{
+public:
+	CLocalViewHeader(wxWindow* pParent, CState* pState);
+	void SetDir(wxString dir);
+
+protected:
+	CState* m_pState;
+
+	wxString m_oldValue;
+
+	DECLARE_EVENT_TABLE();
+	void OnTextChanged(wxCommandEvent& event);
+	void OnTextEnter(wxCommandEvent& event);
+};
+
+class CRemoteViewHeader : public CViewHeader
+{
+public:
+	CRemoteViewHeader(wxWindow* pParent);
 };
 
 #endif //__VIEWHEADER_H__

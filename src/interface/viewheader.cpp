@@ -1,5 +1,6 @@
 #include "FileZilla.h"
 #include "viewheader.h"
+#include "state.h"
 
 #ifdef __WXMSW__
 #include "wx/msw/uxtheme.h"
@@ -226,4 +227,119 @@ void CViewHeader::Reparent(CViewHeader** pViewHeader, wxWindow* parent)
 #else
 #error CViewHeader::Reparent unimplemented
 #endif
+}
+
+void CViewHeader::CopyDataFrom(CViewHeader* pHeader)
+{
+	m_label = pHeader->m_label;
+	m_cbOffset = pHeader->m_cbOffset;
+	m_labelHeight = pHeader->m_labelHeight;
+}
+
+BEGIN_EVENT_TABLE(CLocalViewHeader, CViewHeader)
+EVT_TEXT(wxID_ANY, CLocalViewHeader::OnTextChanged)
+EVT_TEXT_ENTER(wxID_ANY, CLocalViewHeader::OnTextEnter)
+END_EVENT_TABLE()
+
+CLocalViewHeader::CLocalViewHeader(wxWindow* pParent, CState* pState)
+	: CViewHeader(pParent, _("Local site:"))
+{
+	m_pState = pState;
+	m_pState->SetLocalViewHeader(this);
+	SetDir(m_pState->GetLocalDir());
+}
+
+void CLocalViewHeader::OnTextChanged(wxCommandEvent& event)
+{
+	wxString str = m_pComboBox->GetValue();
+	if (str == _T("") || str.Right(1) == _T("/"))
+	{
+		m_oldValue = str;
+		return;
+	}
+#ifdef __WXMSW__
+	if (str.Right(1) == _T("\\"))
+	{
+		m_oldValue = str;
+		return;
+	}
+#endif
+
+	if (str == m_oldValue)
+		return;
+
+	if (str.Left(m_oldValue.Length()) != m_oldValue)
+	{
+		m_oldValue = str;
+		return;
+	}
+
+	wxFileName fn(str);
+	if (!fn.IsOk())
+	{
+		m_oldValue = str;
+		return;
+	}
+	wxDir dir(fn.GetPath());
+	wxString name = fn.GetFullName();
+	if (!dir.IsOpened() || name == _T(""))
+	{
+		m_oldValue = str;
+		return;
+	}
+	wxString found;
+	if (!dir.GetFirst(&found, name + _T("*"), wxDIR_DIRS))
+	{
+		m_oldValue = str;
+		return;
+	}
+
+	wxString tmp;
+	if (dir.GetNext(&tmp))
+	{
+		m_oldValue = str;
+		return;
+	}
+
+#ifdef __WXMSW__
+	if (found.Left(name.Length()).CmpNoCase(name))
+#else
+	if (found.Left(name.Length()) != name)
+#endif
+	{
+		m_oldValue = str;
+		return;
+	}
+
+#ifdef __WXMSW__
+	m_pComboBox->SetValue(str + found.Mid(name.Length()) + _T("\\"));
+#else
+	m_pComboBox->SetValue(str + found.Mid(name.Length()) + _T("/"));
+#endif
+	m_pComboBox->SetSelection(str.Length(), m_pComboBox->GetValue().Length() + 1);
+
+	m_oldValue = str;
+}
+
+void CLocalViewHeader::OnTextEnter(wxCommandEvent& event)
+{
+	wxString dir = m_pComboBox->GetValue();
+	if (!wxDir::Exists(dir))
+	{
+		wxBell();
+		return;
+	}
+	
+	m_pState->SetLocalDir(dir);
+}
+
+void CLocalViewHeader::SetDir(wxString dir)
+{
+	m_pComboBox->SetValue(dir);
+	m_pComboBox->SetSelection(m_pComboBox->GetValue().Length(), m_pComboBox->GetValue().Length());
+}
+
+CRemoteViewHeader::CRemoteViewHeader(wxWindow* pParent)
+	: CViewHeader(pParent, _("Remote site:"))
+{
 }

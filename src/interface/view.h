@@ -9,6 +9,7 @@ public:
 
 	void SetWindow(wxWindow* pWnd) { m_pWnd = pWnd; }
 	void SetHeader(CViewHeader* pWnd);
+	CViewHeader* GetHeader() { return m_pHeader; }
 	CViewHeader* DetachHeader();
 
 protected:
