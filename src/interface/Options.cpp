@@ -32,16 +32,16 @@ COptions::COptions()
 	if (wxFileExists(file.GetFullPath()))
 	{
 		m_pXmlDocument = new TiXmlDocument();
-		if (!m_pXmlDocument->LoadFile(file.GetFullPath()))
+		if (!m_pXmlDocument->LoadFile(file.GetFullPath().mb_str()))
 		{
-			wxString msg = wxString::Format(_("Could not load \"%s\", make sure the file is valid.\nFor this session, default settings will be used and any changes to the settings are not persistent."), file.GetFullPath());
+			wxString msg = wxString::Format(_("Could not load \"%s\", make sure the file is valid.\nFor this session, default settings will be used and any changes to the settings are not persistent."), file.GetFullPath().c_str());
 			wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
 			m_allowSave = false;
 			return;
 		}
 		if (!m_pXmlDocument->FirstChildElement("FileZilla3"))
 		{
-			wxString msg = wxString::Format(_("Could not load \"%s\", make sure the file is valid.\nFor this session, default settings will be used and any changes to the settings are not persistent."), file.GetFullPath());
+			wxString msg = wxString::Format(_("Could not load \"%s\", make sure the file is valid.\nFor this session, default settings will be used and any changes to the settings are not persistent."), file.GetFullPath().c_str());
 			wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
 			m_allowSave = false;
 			return;
@@ -51,7 +51,7 @@ COptions::COptions()
 	else
 	{
 		CreateNewXmlDocument();
-		m_pXmlDocument->SaveFile(file.GetFullPath());
+		m_pXmlDocument->SaveFile(file.GetFullPath().mb_str());
 		m_allowSave = true;
 	}
 }
@@ -129,7 +129,7 @@ bool COptions::SetOption(unsigned int nID, int value)
 	{
 		extern wxString dataPath;
 		wxFileName file = wxFileName(dataPath, _T("filezilla.xml"));
-		m_pXmlDocument->SaveFile(file.GetFullPath());
+		m_pXmlDocument->SaveFile(file.GetFullPath().mb_str());
 	}
 
 	return true;
@@ -153,7 +153,7 @@ bool COptions::SetOption(unsigned int nID, wxString value)
 	{
 		extern wxString dataPath;
 		wxFileName file = wxFileName(dataPath, _T("filezilla.xml"));
-		m_pXmlDocument->SaveFile(file.GetFullPath());
+		m_pXmlDocument->SaveFile(file.GetFullPath().mb_str());
 	}
 
 	return true;
@@ -207,7 +207,7 @@ void COptions::SetXmlValue(unsigned int nID, wxString value)
 	else
 	{
 		TiXmlNode *node = 0;
-		while (node = settings->IterateChildren("Setting", node))
+		while ((node = settings->IterateChildren("Setting", node)))
 		{
 			TiXmlElement *setting = node->ToElement();
 			if (!setting)
@@ -250,7 +250,7 @@ bool COptions::GetXmlValue(unsigned int nID, wxString &value)
 	}
 
 	TiXmlNode *node = 0;
-	while (node = settings->IterateChildren("Setting", node))
+	while ((node = settings->IterateChildren("Setting", node)))
 	{
 		TiXmlElement *setting = node->ToElement();
 		if (!setting)
@@ -263,10 +263,9 @@ bool COptions::GetXmlValue(unsigned int nID, wxString &value)
 			continue;
 
 		TiXmlNode *text = setting->FirstChild();
-		if (!text || text->Type() != TiXmlNode::NodeType::TEXT)
+		if (!text || !text->ToText())
 			return false;
 		
-		const char *utf8 = text->Value();
 		value = wxString(wxConvUTF8.cMB2WC(text->Value()), *wxConvCurrent);
 
 		return true;
