@@ -19,6 +19,7 @@ public:
 enum NotificationId
 {
 	nId_logmsg, // notification about new messages for the message log
+	nId_operation, // operation reply codes
 	nId_connection, // connection information: connects, disconnects, timeouts etc..
 	nId_transfers // transfer information: bytes transferes, transfer speed and such
 };
@@ -36,6 +37,14 @@ public:
 
 	wxString msg;
 	enum MessageType msgType;
+};
+
+class COperationNotification : public CNotification
+{
+public:
+	virtual enum NotificationId GetID() const;
+	
+	int nReplyCode;
 };
 
 #endif

@@ -16,3 +16,8 @@ enum NotificationId CLogmsgNotification::GetID() const
 {
 	return nId_logmsg;
 }
+
+enum NotificationId COperationNotification::GetID() const
+{
+	return nId_operation;
+}
