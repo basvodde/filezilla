@@ -40,7 +40,6 @@ uninstall-local:
 MSGFMT=msgfmt --verbose
 MSGMERGE=msgmerge
 XGETTEXT=xgettext
-XARGS=xargs
 
 # common xgettext args: C++ syntax, use the specified macro names as markers
 XGETTEXT_ARGS=-C -k_ -kwxGetTranslation -kwxTRANSLATE -s -j
@@ -79,21 +78,12 @@ filezilla.pot: resources.h $(srcdir)/../src/include/*.h $(srcdir)/../src/engine/
 	@rm -f $@.new
 	@touch $@.new
 
-# create filezilla.pot.new from the source files
-	($(XGETTEXT) $(XGETTEXT_ARGS) -o $@.new resources.h)
+	FILES="resources.h `find $(srcdir)/../src -name '*.h' -o -name '*.cpp'`"; \
+	($(XGETTEXT) $(XGETTEXT_ARGS) -o $@.new $$FILES)
 
-# fix charset declaration in newly create file to avoid warnings in next step
-	@cat $@.new | sed -e "s/^\"Content-Type: .*$$/\"Content-Type: text\\/plain; charset=UTF-8\\\\n\"/" > $@.new~
-	@mv $@.new~ $@.new  
-
-	(find $(srcdir)/../src -name "*.h" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o $@.new)
-
-# fix charset declaration in newly create file to avoid warnings in next step
+# change charset declaration in template file to UTF-8
 	cat $@.new | sed -e "s/^\"Content-Type: .*$$/\"Content-Type: text\\/plain; charset=UTF-8\\\\n\"/" > $@.new~
 	@mv $@.new~ $@.new  
-
-	(find $(srcdir)/../src -name "*.cpp" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o $@.new)
-
 
 	if [ -f $@ ]; then \
 	  touch $@; \
@@ -119,7 +109,7 @@ stats: allpo
 	@ALLTOTAL=0 ALLTR=0 ALLFZ=0 ALLUT=0; \
 	for i in @FILEZILLA_LINGUAS@; do \
 	  if [ -f $$i.mo~ ]; then rm $$i.mo~; fi; \
-	  res=`LC_ALL="en_EN" $(MSGFMT) -o $$i.mo~ "$(srcdir)/$$i.po" 2>&1`; \
+	  res=`LC_ALL="en_EN" $(MSGFMT) -o $$i.mo~ "$$i.po.new" 2>&1`; \
 	  if [ -f $$i.mo~ ]; then rm $$i.mo~; fi; \
 	  TR=`echo $$res | sed -e 's/^[^0-9]*\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+/\\1/'`; \
 	  FZ=`echo $$res | sed -e 's/^[^0-9]*\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+/\\2/'`; \
