@@ -1,5 +1,24 @@
 #! /bin/sh
 
+while test $# != 0; do
+  case $1 in 
+  -[cC])
+    no_check=1
+    ;;
+  -[hH]|-help|--help)
+    echo "Usage: $0 [-c] "
+    echo "-c        Do not check if the required tools are available"
+    echo "-h --help This message"
+    exit
+    ;;
+  *)
+    echo "$0: Unknown option $1"
+    $0 --help
+    exit 1
+  esac
+  shift
+done
+
 echo -e " --- FileZilla 3 autogen script ---\n"
 echo -e "\033[1mHINT:\033[0m If this script fails, try \033[1m./update-configure.sh\033[0m\n"
 
@@ -65,7 +84,7 @@ version_check()
 	[ -z "$pkg_micro" ] && pkg_micro=0
 
 	WRONG=
-	if [ -z $MAJOR ]; then
+	if [ -z "$MAJOR" ]; then
 		echo "found $pkg_version, ok."
 		return 0
 	fi
@@ -96,18 +115,30 @@ version_check()
 	fi
 }
 
-echo "2 Checking required tools... "
+checkTools()
+{
+	N=$1
 
-echo -n "2.1 "; version_check automake 1 7 0 1
-if [ x$? = x2 ]; then
-	WANT_AUTOMAKE=1.7
-	export WANT_AUTOMAKE
-	version_check automake 1 7 0 2
-fi
+	if [ ! -z "$no_check" ]; then
+		echo "$N. Checking required tools... skipped"
+		return 0
+	fi
 
-echo -n "2.2 "; version_check aclocal
-echo -n "2.3 "; version_check autoconf 2 5
-echo -n "2.4 "; version_check libtoolize 1 4
+	echo "$N. Checking required tools... "
+
+	echo -n "$N.1 "; version_check automake 1 7 0 1
+	if [ x$? = x2 ]; then
+		WANT_AUTOMAKE=1.7
+		export WANT_AUTOMAKE
+		version_check automake 1 7 0 2
+	fi
+
+	echo -n "$N.2 "; version_check aclocal
+	echo -n "$N.3 "; version_check autoconf 2 5
+	echo -n "$N.4 "; version_check libtoolize 1 4
+}
+
+checkTools 2
 
 echo "3. Creating configure and friends... "
 if [ ! -e config ]
