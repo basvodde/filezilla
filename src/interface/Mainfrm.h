@@ -53,6 +53,7 @@ protected:
 	void OnCancel(wxCommandEvent &event);
 	void OnSplitterSashPosChanging(wxSplitterEvent &event);
 	void OnSplitterSashPosChanged(wxSplitterEvent &event);
+	void OnClose(wxCloseEvent &event);
 
 	float m_ViewSplitterSashPos;
 	bool m_bInitDone;

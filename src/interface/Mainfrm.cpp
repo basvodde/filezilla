@@ -23,7 +23,8 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_CANCEL"), CMainFrame::OnUpdateToolbarCancel)
 	EVT_TOOL(XRCID("ID_TOOLBAR_CANCEL"), CMainFrame::OnCancel)
 	EVT_SPLITTER_SASH_POS_CHANGING(wxID_ANY, CMainFrame::OnSplitterSashPosChanging) 
-	EVT_SPLITTER_SASH_POS_CHANGED(wxID_ANY, CMainFrame::OnSplitterSashPosChanged) 
+    EVT_SPLITTER_SASH_POS_CHANGED(wxID_ANY, CMainFrame::OnSplitterSashPosChanged) 
+	EVT_CLOSE(CMainFrame::OnClose)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
@@ -414,7 +415,8 @@ void CMainFrame::Cancel()
 	}
 	m_CommandList.clear();
 	m_CommandList.push_back(pCommand);
-	m_pEngine->Command(CCancelCommand());
+	if (m_pEngine)
+		m_pEngine->Command(CCancelCommand());
 }
 
 void CMainFrame::OnUpdateToolbarCancel(wxUpdateUIEvent& event)
@@ -424,10 +426,11 @@ void CMainFrame::OnUpdateToolbarCancel(wxUpdateUIEvent& event)
 
 void CMainFrame::OnCancel(wxCommandEvent& event)
 {
-	if (!m_pEngine)
+	if (!m_pEngine || !m_pEngine->IsBusy())
 		return;
 
-	Cancel();
+	if (wxMessageBox(_("Realy cancel current operation?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) == wxYES)
+		Cancel();
 }
 
 void CMainFrame::OnSplitterSashPosChanging(wxSplitterEvent& event)
@@ -466,4 +469,10 @@ void CMainFrame::OnSplitterSashPosChanged(wxSplitterEvent& event)
 		else if (newSize < 20)
 			m_pLocalSplitter->SetSashPosition(m_pLocalSplitter->GetSashPosition() - 20 + newSize);
 	}
+}
+
+void CMainFrame::OnClose(wxCloseEvent &event)
+{
+	Cancel();
+	Destroy();
 }
