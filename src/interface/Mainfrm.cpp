@@ -22,13 +22,14 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, "FileZilla", wxDefaultPosition, wxS
 	SetSizeHints(250, 250);
 
 	m_pStatusBar = NULL;
-    m_pMenuBar = NULL;
+	m_pMenuBar = NULL;
 	m_pQuickconnectBar = NULL;
 	m_pTopSplitter = NULL;
 	m_pBottomSplitter = NULL;
 	m_pViewSplitter = NULL;
 	m_pLocalSplitter = NULL;
 	m_pRemoteSplitter = NULL;
+	m_bInitDone = false;
 
 	m_pStatusBar = CreateStatusBar(7);
 
@@ -61,7 +62,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, "FileZilla", wxDefaultPosition, wxS
 	m_pQueueView = new CQueueView(m_pBottomSplitter, -1);
 
 	m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter, 100);
-	m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueueView);
+	m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueueView, 100);
 	m_pViewSplitter->SplitVertically(m_pLocalSplitter, m_pRemoteSplitter);
 	m_pLocalSplitter->SplitHorizontally(m_pLocalTreeView, m_pLocalListView);
 	m_pRemoteSplitter->SplitHorizontally(m_pRemoteTreeView, m_pRemoteListView);
@@ -93,13 +94,14 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 	wxSize clientSize = GetClientSize();
 	if (m_pQuickconnectBar)
 	{
-		m_pQuickconnectBar->SetSize(0, 0, clientSize.GetWidth(), -1);
+		wxSize barSize = m_pQuickconnectBar->GetSize();
+		m_pQuickconnectBar->SetSize(0, 0, clientSize.GetWidth(), barSize.GetHeight());
 
 		wxButton *pButton = XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_OK", wxButton);
 		wxSize buttonSize = pButton->GetSize();
 		wxPoint position = pButton->GetPosition();
 		wxButton *pDropdownButton = XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_DROPDOWN", wxButton);
-        wxSize dropdownSize = pDropdownButton->GetSize();
+		wxSize dropdownSize = pDropdownButton->GetSize();
 		pDropdownButton->SetSize(-1, position.y, dropdownSize.GetWidth(), buttonSize.GetHeight());
 	}
 	if (m_pTopSplitter)
@@ -112,16 +114,19 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 			m_pTopSplitter->SetSize(0, panelSize.GetHeight(), clientSize.GetWidth(), clientSize.GetHeight() - panelSize.GetHeight());
 		}
 	}
-	
 	wxSize size2 = m_pBottomSplitter->GetClientSize();
-	m_pBottomSplitter->SetSashPosition(size2.GetHeight() - size.GetHeight() + pos);
+
+	if (m_bInitDone)
+		m_pBottomSplitter->SetSashPosition(size2.GetHeight() - size.GetHeight() + pos);
+	else
+		m_bInitDone = true;
 
 	m_ViewSplitterSashPos = ViewSplitterSashPos;
 
 	if (m_pViewSplitter)
 	{
 		size = m_pViewSplitter->GetClientSize();
-		int pos = size.GetWidth() * m_ViewSplitterSashPos;
+		int pos = static_cast<int>(size.GetWidth() * m_ViewSplitterSashPos);
 		if (pos < 20)
 			pos = 20;
 		else if (pos > size.GetWidth() - 20)

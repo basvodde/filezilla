@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __STATUSVIEW_H__
+#define __STATUSVIEW_H__
 
 class CStatusView :	public wxWindow
 {
@@ -16,3 +17,6 @@ protected:
 
 	DECLARE_EVENT_TABLE();
 };
+
+#endif
+

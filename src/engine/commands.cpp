@@ -1,5 +1,9 @@
 #include "FileZilla.h"
 
+CCommand::~CCommand()
+{
+}
+
 CConnectCommand::CConnectCommand(const CServer &server)
 {
 	m_Server = server;

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __OPTIONS_H__
+#define __OPTIONS_H_
 
 class COptions : public COptionsBase
 {
@@ -12,3 +13,5 @@ public:
 	virtual bool SetOption(int nID, int value);
 	virtual bool SetOption(int nID, wxString value);
 };
+
+#endif

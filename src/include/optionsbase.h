@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __OPTIONSBASE_H__
+#define __OPTIONSBASE_H__
 
 #define OPTIONS_ENGINE_NUM = 1
 
@@ -13,3 +14,5 @@ public:
 	virtual bool SetOption(int nID, int value) = 0;
 	virtual bool SetOption(int nID, wxString value) = 0;
 };
+
+#endif

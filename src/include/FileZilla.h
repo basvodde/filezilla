@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __FILEZILLA_H__
+#define __FILEZILLA_H__
 
 #include "config.h"
 
@@ -14,3 +15,5 @@
 #include "server.h"
 #include "commands.h"
 #include "FileZillaEngine.h"
+
+#endif

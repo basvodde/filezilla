@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __COMMANDS_H__
+#define __COMMANDS_H__
 
 enum Command
 {
@@ -28,6 +29,7 @@ enum Command
 class CCommand
 {
 public:
+	virtual ~CCommand();
 	virtual enum Command GetId() const = 0;
 	virtual bool IsChainable() const = 0;
 };
@@ -56,3 +58,6 @@ public:
 	virtual enum Command GetId() const;
 	virtual bool IsChainable() const;
 };
+
+#endif
+

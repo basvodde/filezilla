@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __SERVER_H__
+#define __SERVER_H__
 
 enum ServerProtocol
 {
@@ -25,3 +26,5 @@ protected:
 	wxString m_User;
 	wxString m_Pass;
 };
+
+#endif

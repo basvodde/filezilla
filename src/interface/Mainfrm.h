@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __MAINFRM_H__
+#define __MAINFRM_H__
 
 class CStatusView;
 class CQueueView;
@@ -38,8 +39,12 @@ protected:
 	void OnMenuHandler(wxCommandEvent &event);
 
 	float m_ViewSplitterSashPos;
+	bool m_bInitDone;
 
 	CFileZillaEngine *m_pEngine;
 
 	DECLARE_EVENT_TABLE()
 };
+
+#endif
+

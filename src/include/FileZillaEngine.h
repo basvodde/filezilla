@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __FILEZILLAENGINE_H__
+#define __FILEZILLAENGINE_H__
 
 class CControlSocket;
 class CFileZillaEngine  
@@ -15,3 +16,5 @@ protected:
 	wxEvtHandler *m_pEventHandler;
 	CControlSocket *m_pControlSocket;
 };
+
+#endif
