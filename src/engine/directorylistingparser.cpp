@@ -577,7 +577,7 @@ CDirectoryListingParser::CDirectoryListingParser(CFileZillaEngine *pEngine, enum
 	
 	//French month names
 	m_MonthNamesMap[_T("janv")] = 1;
-	m_MonthNamesMap[_T("f\xe9""b")] = 1;
+	m_MonthNamesMap[_T("f\xe9")_T("b")] = 1;
 	m_MonthNamesMap[_T("f\xe9v")] = 2;
 	m_MonthNamesMap[_T("fev")] = 2;
 	m_MonthNamesMap[_T("f\xe9vr")] = 2;
@@ -589,7 +589,7 @@ CDirectoryListingParser::CDirectoryListingParser(CFileZillaEngine *pEngine, enum
 	m_MonthNamesMap[_T("ao\xfb")] = 8;
 	m_MonthNamesMap[_T("ao\xfbt")] = 8;
 	m_MonthNamesMap[_T("aout")] = 8;
-	m_MonthNamesMap[_T("d\xe9""c")] = 12;
+	m_MonthNamesMap[_T("d\xe9")_T("c")] = 12;
 	m_MonthNamesMap[_T("dec")] = 12;
 	
 	//Italian month names
