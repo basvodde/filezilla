@@ -251,10 +251,10 @@ void CTransferSocket::OnSend()
 		{
 			if (pData->pFile)
 			{
+				wxFileOffset numread;
 #ifndef __WXMSW__
 				// Again, on  non-Windows systems perform ascii file conversion. This
 				// time we add CRs
-				wxFileOffset numread;
 				if (!m_binaryMode)
 				{
 					int numToRead = (BUFFERSIZE - m_transferBufferPos) / 2;
@@ -278,6 +278,7 @@ void CTransferSocket::OnSend()
 					numread = p - (m_pTransferBuffer + m_transferBufferPos);
 				}
 				else
+#endif
 				{
 					numread = pData->pFile->Read(m_pTransferBuffer + m_transferBufferPos, BUFFERSIZE - m_transferBufferPos);
 					if (numread < BUFFERSIZE - m_transferBufferPos)
@@ -286,7 +287,7 @@ void CTransferSocket::OnSend()
 						pData->pFile = 0;
 					}
 				}
-#endif
+
 				if (numread > 0)
 					m_transferBufferPos += numread;
 				
