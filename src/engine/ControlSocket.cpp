@@ -1,5 +1,5 @@
 #include "filezilla.h"
-#include "controlsocket.h"
+#include "ControlSocket.h"
 
 CControlSocket::CControlSocket()
 {

@@ -10,14 +10,14 @@ class CRemoteListView;
 class CMainFrame : public wxFrame
 {
 public:
-    CMainFrame();
-    virtual ~CMainFrame();
+	CMainFrame();
+	virtual ~CMainFrame();
 protected:
 	bool CreateMenus();
 	bool CreateQuickconnectBar();
 
-    wxStatusBar *m_pStatusBar;
-    wxMenuBar	*m_pMenuBar;
+	wxStatusBar *m_pStatusBar;
+	wxMenuBar	*m_pMenuBar;
 	wxPanel	*m_pQuickconnectBar;
 	wxSplitterWindow *m_pTopSplitter;
 	wxSplitterWindow *m_pBottomSplitter;
@@ -33,7 +33,7 @@ protected:
 	CRemoteListView *m_pRemoteListView;
 
 	// Event handlers
-    void OnSize(wxSizeEvent& event);
+	void OnSize(wxSizeEvent& event);
 	void OnViewSplitterPosChanged(wxSplitterEvent& event);
 	void OnMenuHandler(wxCommandEvent &event);
 

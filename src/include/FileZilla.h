@@ -6,9 +6,8 @@
 #include <wx/splitter.h>
 #include <wx/wxhtml.h>
 #include <wx/socket.h>
-#include <wx/xml/xml.h>
 #include <wx/xrc/xmlres.h>
-#include <wx/image.h>
+// #include <wx/xml/xml.h>
 
 #include "optionsbase.h"
 #include "logging.h"

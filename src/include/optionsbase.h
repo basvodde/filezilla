@@ -6,6 +6,7 @@
 
 class COptionsBase
 {
+public:
 	virtual int GetOptionVal(int nID) = 0;
 	virtual wxString GetOption(int nID) = 0;
 

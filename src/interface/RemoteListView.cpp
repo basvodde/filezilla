@@ -1,5 +1,5 @@
 #include "filezilla.h"
-#include "Remotelistview.h"
+#include "RemoteListView.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -1,5 +1,5 @@
 #include "filezilla.h"
-#include "options.h"
+#include "Options.h"
 
 COptions::COptions()
 {

@@ -5,7 +5,7 @@
 #include "RemoteListView.h"
 #include "StatusView.h"
 #include "QueueView.h"
-#include "mainfrm.h"
+#include "Mainfrm.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -14,11 +14,10 @@
 BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
     EVT_SIZE(CMainFrame::OnSize)
 	EVT_SPLITTER_SASH_POS_CHANGED(-1, CMainFrame::OnViewSplitterPosChanged)
-	EVT_MENU(wxID_ANY, OnMenuHandler)
+	EVT_MENU(wxID_ANY, CMainFrame::OnMenuHandler)
 END_EVENT_TABLE()
 
-CMainFrame::CMainFrame()
-    : wxFrame(NULL, -1, "FileZilla", wxDefaultPosition, wxSize(900, 750))
+CMainFrame::CMainFrame() : wxFrame(NULL, -1, "FileZilla", wxDefaultPosition, wxSize(900, 750))
 {
 	SetSizeHints(250, 250);
 

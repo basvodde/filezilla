@@ -1,5 +1,5 @@
 #include "filezilla.h"
-#include "queueview.h"
+#include "QueueView.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

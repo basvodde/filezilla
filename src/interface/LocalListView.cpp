@@ -1,5 +1,5 @@
 #include "filezilla.h"
-#include "locallistview.h"
+#include "LocalListView.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

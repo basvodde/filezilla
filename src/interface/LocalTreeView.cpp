@@ -1,5 +1,5 @@
 #include "filezilla.h"
-#include "localtreeview.h"
+#include "LocalTreeView.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -18,7 +18,7 @@ IMPLEMENT_APP(CFileZillaApp)
 bool CFileZillaApp::OnInit()
 {
 	wxImage::AddHandler(new wxPNGHandler());
-    wxLocale::AddCatalogLookupPathPrefix(_T("../../locales"));
+	wxLocale::AddCatalogLookupPathPrefix(_T("../../locales"));
 	m_locale.Init(wxLANGUAGE_GERMAN);
 	m_locale.AddCatalog(_T("filezilla"));
 
@@ -31,7 +31,6 @@ bool CFileZillaApp::OnInit()
 	
 	wxXmlResource::Get()->InitAllHandlers();
 	wxXmlResource::Get()->Load("../interface/resources/*.xrc");
-
 	wxFrame *frame = new CMainFrame();
 	SetTopWindow(frame);
 	frame->Show(true);
