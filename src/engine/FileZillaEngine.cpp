@@ -228,7 +228,6 @@ void CFileZillaEngine::OnEngineEvent(wxFzEngineEvent &event)
 						if (GetCurrentCommandId() == cmd_connect)
 							m_pControlSocket->ContinueConnect();
 					}
-					Sleep(100);
 					(*iter)->Wait();
 					(*iter)->Delete();
 					delete *iter;					
