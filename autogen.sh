@@ -82,7 +82,7 @@ version_check()
 	fi
 
 	if [ ! -z "$WRONG" ]; then
-		if [ x$SILENT == x1 ]; then
+		if [ x$SILENT = x1 ]; then
 			return 2;
 		fi
 		echo -e "\033[1mfound $pkg_version, not ok !\033[0m"
@@ -99,7 +99,7 @@ version_check()
 echo "2 Checking required tools... "
 
 echo -n "2.1 "; version_check automake 1 7 0 1
-if [ x$? == x2 ]; then
+if [ x$? = x2 ]; then
 	WANT_AUTOMAKE=1.7
 	export WANT_AUTOMAKE
 	version_check automake 1 7 0 2
