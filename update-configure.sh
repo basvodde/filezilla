@@ -44,6 +44,14 @@ while test $# != 0; do
   shift
 done
 if test x$NO_DOWNLOAD != xyes; then
+  
+  OS=`uname`
+  if test x$OS = xFreeBSD; then
+    WGET="fetch -m"
+  else
+    WGET="wget -N"
+  fi
+
   rm -f update-configure.stamp
   if test -e $FILENAME
   then
