@@ -4,7 +4,8 @@ resourcesdir = $(pkgdatadir)/resources
 
 dist_resources_DATA = menus.xrc quickconnectbar.xrc dropdown.png \
 		disconnect.png toolbar.xrc cancel.png \
-		empty.xpm up.xpm down.xpm filezilla.xpm
+		empty.xpm up.xpm down.xpm filezilla.xpm \
+		file.png
 
 if USE_RESOURCEFILE
 noinst_DATA = filezilla.o

@@ -29,115 +29,115 @@ void CFileExistsDlg::CreateControls()
 
 	if (m_pNotification->download)
 	{
-		wxWindow *pWnd;
+		wxStaticText *pStatText;
 		
-		pWnd = FindWindow(XRCID("ID_FILE1_NAME"));
-		if (pWnd)
-			pWnd->SetTitle(m_pNotification->localFile);
+		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE1_NAME")));
+		if (pStatText)
+			pStatText->SetLabel(m_pNotification->localFile);
 		
-		pWnd = FindWindow(XRCID("ID_FILE1_SIZE"));
-		if (pWnd)
+		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE1_SIZE")));
+		if (pStatText)
 		{
 			if (m_pNotification->localSize != -1)
-				pWnd->SetTitle(m_pNotification->localSize.ToString() + _T(" ") + _("bytes"));
+				pStatText->SetLabel(m_pNotification->localSize.ToString() + _T(" ") + _("bytes"));
 			else
-				pWnd->SetTitle(_("Size unknown"));
+				pStatText->SetLabel(_("Size unknown"));
 		}
 		
-		pWnd = FindWindow(XRCID("ID_FILE1_TIME"));
-		if (pWnd)
+		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE1_TIME")));
+		if (pStatText)
 		{
 			if (m_pNotification->localTime.IsValid())
-				pWnd->SetTitle(m_pNotification->localTime.Format());
+				pStatText->SetLabel(m_pNotification->localTime.Format());
 			else
-				pWnd->SetTitle(_("Date/time unknown"));
+				pStatText->SetLabel(_("Date/time unknown"));
 		}
 
 		LoadIcon(XRCID("ID_FILE1_ICON"), m_pNotification->localFile);
 
-		pWnd = FindWindow(XRCID("ID_FILE2_NAME"));
-		if (pWnd)
-			pWnd->SetTitle(m_pNotification->remotePath.GetPath() + m_pNotification->remoteFile);
+		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE2_NAME")));
+		if (pStatText)
+			pStatText->SetLabel(m_pNotification->remotePath.GetPath() + m_pNotification->remoteFile);
 		
-		pWnd = FindWindow(XRCID("ID_FILE2_SIZE"));
-		if (pWnd)
+		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE2_SIZE")));
+		if (pStatText)
 		{
 			if (m_pNotification->remoteSize != -1)
-				pWnd->SetTitle(m_pNotification->remoteSize.ToString() + _T(" ") + _("bytes"));
+				pStatText->SetLabel(m_pNotification->remoteSize.ToString() + _T(" ") + _("bytes"));
 			else
-				pWnd->SetTitle(_("Size unknown"));
+				pStatText->SetLabel(_("Size unknown"));
 		}
 		
-		pWnd = FindWindow(XRCID("ID_FILE2_TIME"));
-		if (pWnd)
+		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE2_TIME")));
+		if (pStatText)
 		{
 			if (m_pNotification->remoteTime.IsValid())
-				pWnd->SetTitle(m_pNotification->remoteTime.Format());
+				pStatText->SetLabel(m_pNotification->remoteTime.Format());
 			else
-				pWnd->SetTitle(_("Date/time unknown"));
+				pStatText->SetLabel(_("Date/time unknown"));
 		}
 
-		LoadIcon(XRCID("ID_FILE2_ICON"), "c:\\programme\\filezilla\\filezilla.exe");//m_pNotification->remoteFile);
+		LoadIcon(XRCID("ID_FILE2_ICON"), m_pNotification->remoteFile);
 
-		pWnd = FindWindow(XRCID("ID_UPDOWNONLY"));
-		if (pWnd)
-			pWnd->SetTitle(_("A&pply only to downloads"));
+		wxCheckBox *pCheckBox = reinterpret_cast<wxCheckBox *>(FindWindow(XRCID("ID_UPDOWNONLY")));
+		if (pCheckBox)
+			pCheckBox->SetLabel(_("A&pply only to downloads"));
 	}
 	else
 	{
-		wxWindow *pWnd;
+		wxWindow *pStatText;
 
-		pWnd = FindWindow(XRCID("ID_FILE1_NAME"));
-		if (pWnd)
-			pWnd->SetTitle(m_pNotification->remotePath.GetPath() + m_pNotification->remoteFile);
+		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE1_NAME")));
+		if (pStatText)
+			pStatText->SetLabel(m_pNotification->remotePath.GetPath() + m_pNotification->remoteFile);
 		
-		pWnd = FindWindow(XRCID("ID_FILE1_SIZE"));
-		if (pWnd)
+		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE1_SIZE")));
+		if (pStatText)
 		{
 			if (m_pNotification->remoteSize != -1)
-				pWnd->SetTitle(m_pNotification->remoteSize.ToString() + _T(" ") + _("bytes"));
+				pStatText->SetLabel(m_pNotification->remoteSize.ToString() + _T(" ") + _("bytes"));
 			else
-				pWnd->SetTitle(_("Size unknown"));
+				pStatText->SetLabel(_("Size unknown"));
 		}
 		
-		pWnd = FindWindow(XRCID("ID_FILE1_TIME"));
-		if (pWnd)
+		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE1_TIME")));
+		if (pStatText)
 		{
 			if (m_pNotification->remoteTime.IsValid())
-				pWnd->SetTitle(m_pNotification->remoteTime.Format());
+				pStatText->SetLabel(m_pNotification->remoteTime.Format());
 			else
-				pWnd->SetTitle(_("Date/time unknown"));
+				pStatText->SetLabel(_("Date/time unknown"));
 		}
 
-		LoadIcon(XRCID("ID_FILE1_ICON"), m_pNotification->remoteFile);
+		//LoadIcon(XRCID("ID_FILE1_ICON"), m_pNotification->remoteFile);
 
-		pWnd = FindWindow(XRCID("ID_FILE2_NAME"));
-		if (pWnd)
-			pWnd->SetTitle(m_pNotification->localFile);
+		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE2_NAME")));
+		if (pStatText)
+			pStatText->SetLabel(m_pNotification->localFile);
 		
-		pWnd = FindWindow(XRCID("ID_FILE2_SIZE"));
-		if (pWnd)
+		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE2_SIZE")));
+		if (pStatText)
 		{
 			if (m_pNotification->localSize != -1)
-				pWnd->SetTitle(m_pNotification->localSize.ToString() + _T(" ") + _("bytes"));
+				pStatText->SetLabel(m_pNotification->localSize.ToString() + _T(" ") + _("bytes"));
 			else
-				pWnd->SetTitle(_("Size unknown"));
+				pStatText->SetLabel(_("Size unknown"));
 		}
 		
-		pWnd = FindWindow(XRCID("ID_FILE2_TIME"));
-		if (pWnd)
+		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE2_TIME")));
+		if (pStatText)
 		{
 			if (m_pNotification->localTime.IsValid())
-				pWnd->SetTitle(m_pNotification->localTime.Format());
+				pStatText->SetLabel(m_pNotification->localTime.Format());
 			else
-				pWnd->SetTitle(_("Date/time unknown"));
+				pStatText->SetLabel(_("Date/time unknown"));
 		}
 
 		LoadIcon(XRCID("ID_FILE2_ICON"), m_pNotification->localFile);
 
-		pWnd = FindWindow(XRCID("ID_UPDOWNONLY"));
-		if (pWnd)
-			pWnd->SetTitle(_("A&pply only to uploads"));
+		wxCheckBox *pCheckBox = reinterpret_cast<wxCheckBox *>(FindWindow(XRCID("ID_UPDOWNONLY")));
+		if (pCheckBox)
+			pCheckBox->SetLabel(_("A&pply only to uploads"));
 	}
 }
 

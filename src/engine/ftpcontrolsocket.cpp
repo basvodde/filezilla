@@ -53,7 +53,7 @@ void CFtpControlSocket::OnReceive(wxSocketEvent &event)
 			if (m_ReceiveBuffer == _T(""))
 				continue;
 
-            LogMessage(Response, m_ReceiveBuffer);
+			LogMessage(Response, m_ReceiveBuffer);
 				
 			//Check for multi-line responses
 			if (m_ReceiveBuffer.Len() > 3)
@@ -801,10 +801,12 @@ enum filetransferStates
 
 int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath &remotePath, const wxString &remoteFile, bool download)
 {
+	LogMessage(__TFILE__, __LINE__, this, Debug_Verbose, _T("FileTransfer()"));
+
 	if (download)
 	{
 		wxString filename = remotePath.GetPath() + remoteFile;
-        LogMessage(Status, _("Starting download of %s"), filename.c_str());
+		LogMessage(Status, _("Starting download of %s"), filename.c_str());
 	}
 	else
 	{
@@ -854,6 +856,8 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 
 int CFtpControlSocket::FileTransferParseResponse()
 {
+	LogMessage(__TFILE__, __LINE__, this, Debug_Verbose, _T("FileTransferParseResponse()"));
+
 	if (!m_pCurOpData)
 		return FZ_REPLY_ERROR;
 
@@ -866,6 +870,7 @@ int CFtpControlSocket::FileTransferParseResponse()
 	switch (pData->opState)
 	{
 	case filetransfer_size:
+		pData->opState = filetransfer_mdtm;
 		if (m_ReceiveBuffer.Left(4) == _T("213 ") && m_ReceiveBuffer.Length() > 4)
 		{
 			wxString str = m_ReceiveBuffer.Mid(4);
@@ -883,7 +888,6 @@ int CFtpControlSocket::FileTransferParseResponse()
 			if (!*buf)
 				pData->totalSize = size;
 		}
-		pData->fileSize = filetransfer_mdtm;
 		break;
 	case filetransfer_mdtm:
 		pData->opState = filetransfer_type;
@@ -1124,6 +1128,8 @@ int CFtpControlSocket::FileTransferParseResponse()
 
 int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 {
+	LogMessage(__TFILE__, __LINE__, this, Debug_Verbose, _T("FileTransferSend()"));
+
 	if (!m_pCurOpData)
 	{
 		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
