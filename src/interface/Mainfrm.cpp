@@ -65,6 +65,8 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_LOCALTREEVIEW"), CMainFrame::OnUpdateToggleLocalTreeView)
 	EVT_TOOL(XRCID("ID_TOOLBAR_REMOTETREEVIEW"), CMainFrame::OnToggleRemoteTreeView)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_REMOTETREEVIEW"), CMainFrame::OnUpdateToggleRemoteTreeView)
+	EVT_TOOL(XRCID("ID_TOOLBAR_QUEUEVIEW"), CMainFrame::OnToggleQueueView)
+	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_QUEUEVIEW"), CMainFrame::OnUpdateToggleQueueView)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame(COptions* pOptions) : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
@@ -909,7 +911,16 @@ void CMainFrame::OnToggleLogView(wxCommandEvent& event)
 	}
 	else
 	{
+		// Sometimes m_pQueueView resizes instead of m_bViewSplitter, save original value
+		wxRect rect = m_pBottomSplitter->GetClientSize();
+		int queueSplitterPos = rect.GetHeight() - m_pBottomSplitter->GetSashPosition();
 		m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter, m_lastLogViewSplitterPos);
+
+		// Restore previous queue size
+		rect = m_pBottomSplitter->GetClientSize();
+		if (queueSplitterPos != (rect.GetHeight() - m_pBottomSplitter->GetSashPosition())) 
+			m_pBottomSplitter->SetSashPosition(rect.GetHeight() - queueSplitterPos);
+
 		ApplySplitterConstraints();
 	}
 }
@@ -978,4 +989,28 @@ void CMainFrame::OnToggleRemoteTreeView(wxCommandEvent& event)
 void CMainFrame::OnUpdateToggleRemoteTreeView(wxUpdateUIEvent& event)
 {
 	event.Check(m_pRemoteSplitter && m_pRemoteSplitter->IsSplit());
+}
+
+void CMainFrame::OnToggleQueueView(wxCommandEvent& event)
+{
+	if (!m_pBottomSplitter)
+		return;
+
+	if (m_pBottomSplitter->IsSplit())
+	{
+		wxRect rect = m_pBottomSplitter->GetClientSize();
+		m_lastQueueSplitterPos = rect.GetHeight() - m_pBottomSplitter->GetSashPosition();
+		m_pBottomSplitter->Unsplit(m_pQueueView);
+	}
+	else
+	{
+		wxRect rect = m_pBottomSplitter->GetClientSize();
+		m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueueView, rect.GetHeight() - m_lastQueueSplitterPos);
+		ApplySplitterConstraints();
+	}
+}
+
+void CMainFrame::OnUpdateToggleQueueView(wxUpdateUIEvent& event)
+{
+	event.Check(m_pBottomSplitter && m_pBottomSplitter->IsSplit());
 }

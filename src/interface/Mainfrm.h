@@ -97,6 +97,8 @@ protected:
 	void OnUpdateToggleLocalTreeView(wxUpdateUIEvent& event);
 	void OnToggleRemoteTreeView(wxCommandEvent& event);
 	void OnUpdateToggleRemoteTreeView(wxUpdateUIEvent& event);
+	void OnToggleQueueView(wxCommandEvent& event);
+	void OnUpdateToggleQueueView(wxUpdateUIEvent& event);
 
 	float m_ViewSplitterSashPos;
 	bool m_bInitDone;
