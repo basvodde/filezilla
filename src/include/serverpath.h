@@ -41,6 +41,8 @@ public:
 	// always use absolute filenames including the full path
 	wxString FormatFilename(const wxString &filename, bool omitPath = false) const;
 
+	bool AddSegment(const wxString& segment);
+
 protected:
 	bool m_bEmpty;
 	ServerType m_type;

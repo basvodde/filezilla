@@ -805,3 +805,12 @@ int CServerPath::CmpNoCase(const CServerPath &op) const
 	
 	return 0;
 }
+
+bool CServerPath::AddSegment(const wxString& segment)
+{
+	if (IsEmpty())
+		return false;
+
+	// TODO: Check for invalid characters
+	m_Segments.push_back(segment);
+}

@@ -27,19 +27,26 @@ enum ItemState
 	ItemState_Error
 };
 
+struct t_newEntry
+{
+	wxString localFile;
+	wxString remoteFile;
+	wxLongLong size;
+};
+
 class CQueueItem
 {
 public:
 	virtual ~CQueueItem();
 
-	void Expand(bool recursive);
+	int Expand(bool recursive = false);
 	void Collapse(bool recursive);
-	bool IsExpanded() const;
+	bool IsExpanded() const { return m_expanded; }
 
 	virtual void SetPriority(enum QueuePriority priority);
 
 	void AddChild(CQueueItem* pItem);
-	unsigned int GetVisibleCount() const;
+	unsigned int GetVisibleCount() const { return m_visibleOffspring; }
 	CQueueItem* GetChild(unsigned int item);
 	CQueueItem* GetParent() { return m_parent; }
 	const CQueueItem* GetParent() const { return m_parent; }
@@ -95,10 +102,39 @@ protected:
 class CFolderItem : public CQueueItem
 {
 public:
+	CFolderItem(CServerItem* parent, bool queued, bool download, const wxString& localPath, const CServerPath& remotePath);
+	virtual ~CFolderItem() { delete m_pDir; }
 
 	virtual enum QueueItemType GetType() const { return QueueItemType_Folder; }
+	wxString GetLocalPath() const { return m_localPath; }
+	CServerPath GetRemotePath() const { return m_remotePath; }
+	bool Download() const { return m_download; }
+	bool Queued() const { return m_queued; }
+	int GetCount() const { return m_count; }
+
+	wxString m_statusMessage;
+
+	bool m_queued;
+
+	int m_count;
+
+	struct t_dirPair
+	{
+		wxString localPath;
+		CServerPath remotePath;
+	};
+	std::list<t_dirPair> m_dirsToCheck;
+
+	wxString m_currentLocalPath;
+	CServerPath m_currentRemotePath;
+
+	// Upload members
+	wxDir* m_pDir;
 
 protected:
+	wxString m_localPath;
+	CServerPath m_remotePath;
+	bool m_download;
 };
 
 class CStatusItem : public CQueueItem
@@ -159,14 +195,17 @@ protected:
 
 class CMainFrame;
 class CStatusLineCtrl;
+class CFolderProcessingThread;
 class CQueueView : public wxListCtrl
 {
+	friend class CFolderProcessingThread;
 public:
 	CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame);
 	virtual ~CQueueView();
 	
 	bool QueueFile(bool queueOnly, bool download, const wxString& localFile, const wxString& remoteFile,
 				const CServerPath& remotePath, const CServer& server, wxLongLong size);
+	bool QueueFiles(const std::list<t_newEntry> &entryList, bool queueOnly, bool download, const CServerPath& remotePath, const CServer& server);
 	bool QueueFolder(bool queueOnly, bool download, const wxString& localPath, const CServerPath& remotePath, const CServer& server);
 	
 	bool IsEmpty() const;
@@ -194,10 +233,11 @@ public:
 	};
 
 protected:
+
 	bool TryStartNextTransfer();
-
-	std::vector<t_EngineData> m_engineData;
-
+	bool ProcessFolderItems(int type = -1);
+	void ProcessUploadFolderItems();
+	
 	virtual wxString OnGetItemText(long item, long column) const;
 	virtual int OnGetItemImage(long item) const;
 
@@ -213,12 +253,21 @@ protected:
 	void CheckQueueState();
 	bool IncreaseErrorCount(t_EngineData& engineData);
 	void UpdateStatusLinePositions();
-
 	void UpdateQueueSize();
 
-	std::vector<CServerItem*> m_serverList;
-	
+	std::vector<t_EngineData> m_engineData;
+	std::vector<CServerItem*> m_serverList;	
 	std::list<CStatusLineCtrl*> m_statusLineList;
+	
+	/*
+	 * List of queued folders used to populate the queue.
+	 * Index 0 for downloads, index 1 for uploads.
+	 * For each type, only the first one can be active at any given time.
+	 */
+	std::list<CFolderItem*> m_queuedFolders[2];
+
+	CFolderProcessingThread *m_pFolderProcessingThread;
+	
 	/*
 	 * Don't update status line positions if m_waitStatusLineUpdate is true.
 	 * This assures we are updating the status line positions only once,
@@ -236,6 +285,7 @@ protected:
 	DECLARE_EVENT_TABLE();
 
 	void OnEngineEvent(wxEvent &event);
+	void OnFolderThreadComplete(wxEvent& event);
 };
 
 #endif

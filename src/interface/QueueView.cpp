@@ -9,9 +9,134 @@
 #define new DEBUG_NEW
 #endif
 
+const wxEventType fzEVT_FOLDERTHREAD_COMPLETE = wxNewEventType();
+
+class CFolderThreadCompleteEvent : public wxEvent
+{
+public:
+	CFolderThreadCompleteEvent(int id) : wxEvent(id, fzEVT_FOLDERTHREAD_COMPLETE)
+	{
+	}
+
+	virtual wxEvent *CFolderThreadCompleteEvent::Clone() const
+	{
+		return new CFolderThreadCompleteEvent(*this);
+	}
+};
+
 BEGIN_EVENT_TABLE(CQueueView, wxListCtrl)
 EVT_FZ_NOTIFICATION(wxID_ANY, CQueueView::OnEngineEvent)
+EVT_CUSTOM(fzEVT_FOLDERTHREAD_COMPLETE, wxID_ANY, CQueueView::OnFolderThreadComplete)
 END_EVENT_TABLE()
+
+class CFolderItem;
+class CFolderProcessingThread : public wxThread
+{
+public:
+	CFolderProcessingThread(CQueueView* pOwner, CFolderItem* pFolderItem) : wxThread(wxTHREAD_JOINABLE) { 
+		m_pOwner = pOwner;
+		m_pFolderItem = pFolderItem;
+	}
+	~CFolderProcessingThread() { }
+
+protected:
+
+	ExitCode Entry()
+	{
+		wxMutexGuiEnter();
+		wxASSERT(m_pFolderItem->GetTopLevelItem() && m_pFolderItem->GetTopLevelItem()->GetType() == QueueItemType_Server);
+		const CServerItem* pServerItem = reinterpret_cast<CServerItem*>(m_pFolderItem->GetTopLevelItem());
+		wxMutexGuiLeave();
+
+		wxASSERT(pServerItem);
+		wxASSERT(!m_pFolderItem->Download());
+
+		while (!TestDestroy())
+		{
+			bool found;
+			wxString file;
+			if (!m_pFolderItem->m_pDir)
+			{
+				if (!m_pFolderItem->m_dirsToCheck.empty())
+				{
+					m_pFolderItem->Expand(false);
+		
+					const CFolderItem::t_dirPair& pair = m_pFolderItem->m_dirsToCheck.front();
+
+					m_pFolderItem->m_pDir = new wxDir(pair.localPath);
+					m_pFolderItem->m_currentLocalPath = pair.localPath;
+					m_pFolderItem->m_currentRemotePath = pair.remotePath;
+					m_pFolderItem->m_dirsToCheck.pop_front();
+
+					found = m_pFolderItem->m_pDir->GetFirst(&file);
+				}
+				else
+				{
+					CFolderThreadCompleteEvent evt(wxID_ANY);
+					wxPostEvent(m_pOwner, evt);
+					return 0;
+				}
+			}
+			else
+				found = m_pFolderItem->m_pDir->GetNext(&file);
+
+			std::list<t_newEntry> entryList;
+			while (found && !TestDestroy())
+			{
+				t_newEntry entry;
+				wxFileName fn(m_pFolderItem->m_currentLocalPath, file);
+				entry.localFile = fn.GetFullPath();
+				entry.remoteFile = fn.GetFullName();
+	
+				wxStructStat buf;
+				int result;
+				result = wxStat(entry.localFile, &buf);
+
+				if (fn.DirExists())
+				{	
+					CFolderItem::t_dirPair pair;
+					pair.localPath = entry.localFile;
+					pair.remotePath = m_pFolderItem->m_currentRemotePath;
+					pair.remotePath.AddSegment(entry.remoteFile);
+					m_pFolderItem->m_dirsToCheck.push_back(pair);
+				}
+				else
+				{
+					entry.size = result ? -1 : buf.st_size;
+					entryList.push_back(entry);
+				}
+
+				if (entryList.size() == 50)
+				{
+					m_pFolderItem->m_count += 50;
+
+					wxMutexGuiEnter();
+					m_pOwner->QueueFiles(entryList, m_pFolderItem->Queued(), m_pFolderItem->Download(), m_pFolderItem->m_currentRemotePath, pServerItem->GetServer());
+					entryList.clear();
+					m_pFolderItem->m_statusMessage = wxString::Format(_("%d files added to queue"), m_pFolderItem->GetCount());
+
+					wxMutexGuiLeave();
+				}
+
+				found = m_pFolderItem->m_pDir->GetNext(&file);
+			}
+			if (!found && !entryList.empty())
+			{
+				wxMutexGuiEnter();
+				m_pOwner->QueueFiles(entryList, m_pFolderItem->Queued(), m_pFolderItem->Download(), m_pFolderItem->m_currentRemotePath, pServerItem->GetServer());
+				entryList.clear();
+				wxMutexGuiLeave();
+			}
+			delete m_pFolderItem->m_pDir;
+			m_pFolderItem->m_pDir = 0;
+		}
+
+		return 0;
+	}
+
+	CQueueView* m_pOwner;
+	CFolderItem* m_pFolderItem;
+};
 
 CQueueItem::CQueueItem()
 {
@@ -25,11 +150,6 @@ CQueueItem::~CQueueItem()
 	std::vector<CQueueItem*>::iterator iter;
 	for (iter = m_children.begin(); iter != m_children.end(); iter++)
 		delete *iter;
-}
-
-bool CQueueItem::IsExpanded() const
-{
-	return m_expanded;
 }
 
 void CQueueItem::SetPriority(enum QueuePriority priority)
@@ -53,11 +173,6 @@ void CQueueItem::AddChild(CQueueItem* item)
 			parent = parent->GetParent();
 		}
 	}
-}
-
-unsigned int CQueueItem::GetVisibleCount() const
-{
-	return m_visibleOffspring;
 }
 
 CQueueItem* CQueueItem::GetChild(unsigned int item)
@@ -185,6 +300,23 @@ int CQueueItem::GetItemIndex() const
 	}
 
 	return index + pParent->GetItemIndex();
+}
+
+int CQueueItem::Expand(bool recursive /*=false*/)
+{
+	if (m_expanded)
+		return 0;
+
+	wxASSERT(m_visibleOffspring == 0);
+	m_visibleOffspring += m_children.size();
+	for (std::vector<CQueueItem*>::iterator iter = m_children.begin(); iter != m_children.end(); iter++)
+	{
+		if (recursive)
+			(*iter)->Expand(true);
+		m_visibleOffspring += (*iter)->GetVisibleCount();
+	}
+
+	return m_visibleOffspring;
 }
 
 CFileItem::CFileItem(CServerItem* parent, bool queued, bool download, const wxString& localFile,
@@ -342,6 +474,24 @@ void CServerItem::QueueImmediateFiles()
 	}
 }
 
+CFolderItem::CFolderItem(CServerItem* parent, bool queued, bool download, const wxString& localPath, const CServerPath& remotePath)
+{
+	m_parent = parent;
+
+	m_download = download;
+	m_localPath = localPath;
+	m_remotePath = remotePath;
+	m_queued = queued;
+	m_expanded = false;
+	m_count = 0;
+	m_pDir = 0;
+
+	t_dirPair pair;
+	pair.localPath = localPath;
+	pair.remotePath = remotePath;
+	m_dirsToCheck.push_back(pair);
+}
+
 wxLongLong CServerItem::GetTotalSize(bool& partialSizeInfo) const
 {
 	wxLongLong totalSize = 0;
@@ -378,6 +528,7 @@ CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame)
 	m_activeMode = 0;
 	m_quit = false;
 	m_waitStatusLineUpdate = false;
+	m_pFolderProcessingThread = 0;
 	
 	InsertColumn(0, _("Server / Local file"), wxLIST_FORMAT_LEFT, 150);
 	InsertColumn(1, _("Direction"), wxLIST_FORMAT_CENTER, 60);
@@ -430,6 +581,13 @@ CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame)
 
 CQueueView::~CQueueView()
 {
+	if (m_pFolderProcessingThread)
+	{
+		m_pFolderProcessingThread->Delete();
+		m_pFolderProcessingThread->Wait();
+		delete m_pFolderProcessingThread;
+	}
+
 	for (std::vector<CServerItem*>::iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
 		delete *iter;
 
@@ -438,7 +596,8 @@ CQueueView::~CQueueView()
 }
 
 bool CQueueView::QueueFile(bool queueOnly, bool download, const wxString& localFile, 
-						   const wxString& remoteFile, const CServerPath& remotePath, const CServer& server, wxLongLong size)
+						   const wxString& remoteFile, const CServerPath& remotePath,
+						   const CServer& server, wxLongLong size)
 {
 	CServerItem* item = GetServerItem(server);
 	if (!item)
@@ -538,6 +697,34 @@ wxString CQueueView::OnGetItemText(long item, long column) const
 				break;
 			case 5:
 				return pFileItem->m_statusMessage;
+			default:
+				break;
+			}
+		}
+		break;
+	case QueueItemType_Folder:
+		{
+			CFolderItem* pFolderItem = reinterpret_cast<CFolderItem*>(pItem);
+			switch (column)
+			{
+			case 0:
+				return _T("  ") + pFolderItem->GetLocalPath();
+			case 1:
+				if (pFolderItem->Download())
+					if (pFolderItem->Queued())
+						return _T("<--");
+					else
+						return _T("<<--");
+				else
+					if (pFolderItem->Queued())
+						return _T("-->");
+					else
+						return _T("-->>");
+				break;
+			case 2:
+				return pFolderItem->GetRemotePath().GetPath();
+			case 5:
+				return pFolderItem->m_statusMessage;
 			default:
 				break;
 			}
@@ -757,7 +944,7 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 
 	int replyCode = pNotification->nReplyCode;
 
-	if (replyCode & FZ_REPLY_CANCELED)
+	if ((replyCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)
 	{
 		ResetEngine(engineData, false);
 		return;
@@ -784,7 +971,6 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 	case t_EngineData::transfer:
 		if (replyCode == FZ_REPLY_OK)
 		{
-			CQueueItem* pItem = engineData.pItem;
 			ResetEngine(engineData, true);
 			return;
 		}
@@ -875,6 +1061,8 @@ void CQueueView::RemoveItem(CQueueItem* item)
 		m_itemCount -= count;
 		SetItemCount(m_itemCount);
 	}
+
+	Refresh(false);
 
 	UpdateStatusLinePositions();
 }
@@ -1099,4 +1287,118 @@ void CQueueView::UpdateQueueSize()
 	else
 		queueSize.Printf(_("Queue: %s%d bytes"), partialSizeInfo ? _T(">") : _T(""), totalSize.GetLo());
 	pStatusBar->SetStatusText(queueSize, 4);
+}
+
+bool CQueueView::QueueFolder(bool queueOnly, bool download, const wxString& localPath, const CServerPath& remotePath, const CServer& server)
+{
+	CServerItem* item = GetServerItem(server);
+	if (!item)
+	{
+		item = new CServerItem(server);
+		m_serverList.push_back(item);
+		m_itemCount++;
+	}
+
+	CFolderItem* folderItem = new CFolderItem(item, queueOnly, download, localPath, remotePath);
+	item->AddChild(folderItem);
+
+	if (item->IsExpanded())
+		m_itemCount++;
+
+	folderItem->m_statusMessage = _("Waiting");
+
+	SetItemCount(m_itemCount);
+
+	m_queuedFolders[download ? 0 : 1].push_back(folderItem);
+
+	ProcessFolderItems();
+
+	return true;
+}
+
+bool CQueueView::ProcessFolderItems(int type /*=-1*/)
+{
+	if (type == -1)
+	{
+		while (ProcessFolderItems(0));
+		ProcessUploadFolderItems();
+
+		return true;
+	}
+
+	return false;
+}
+
+void CQueueView::ProcessUploadFolderItems()
+{
+	if (m_queuedFolders[1].empty())
+		return;
+
+	if (m_pFolderProcessingThread)
+		return;
+
+	CFolderItem* pItem = m_queuedFolders[1].front();
+
+	if (pItem->Queued())
+		pItem->m_statusMessage = _("Scanning for files to add to queue");
+	else
+		pItem->m_statusMessage = _("Scanning for files to upload");
+	m_pFolderProcessingThread = new CFolderProcessingThread(this, pItem);
+	m_pFolderProcessingThread->Create();
+	m_pFolderProcessingThread->Run();
+
+	Refresh(false);
+}
+
+void CQueueView::OnFolderThreadComplete(wxEvent& event)
+{
+	wxASSERT(!m_queuedFolders[1].empty());
+	CFolderItem* pItem = m_queuedFolders[1].front();
+	m_queuedFolders[1].pop_front();
+
+	RemoveItem(pItem);
+	
+	m_pFolderProcessingThread->Delete();
+	m_pFolderProcessingThread->Wait();
+	delete m_pFolderProcessingThread;
+	m_pFolderProcessingThread = 0;
+
+	ProcessUploadFolderItems();
+}
+
+bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOnly, bool download, const CServerPath& remotePath, const CServer& server)
+{
+	CServerItem* item = GetServerItem(server);
+	if (!item)
+	{
+		item = new CServerItem(server);
+		m_serverList.push_back(item);
+		m_itemCount++;
+	}
+
+	for (std::list<t_newEntry>::const_iterator iter = entryList.begin(); iter != entryList.end(); iter++)
+	{
+		const t_newEntry& entry = *iter;
+
+		CFileItem* fileItem = new CFileItem(item, queueOnly, download, entry.localFile, entry.remoteFile, remotePath, entry.size);
+		item->AddChild(fileItem);
+		item->AddFileItemToList(fileItem);
+
+		if (item->IsExpanded())
+			m_itemCount++;
+	}
+
+	SetItemCount(m_itemCount);
+
+	if (!m_activeMode && !queueOnly)
+		m_activeMode = 1;
+
+	m_waitStatusLineUpdate = true;
+	while (TryStartNextTransfer());
+	m_waitStatusLineUpdate = false;
+	UpdateStatusLinePositions();
+
+	UpdateQueueSize();
+
+	return true;
 }

@@ -763,26 +763,30 @@ void CLocalListView::OnMenuUpload(wxCommandEvent& event)
 			m_pState->SetLocalDir(data->name);
 		else
 		{
+			const CServer* pServer = m_pState->GetServer();
+			if (!pServer)
+			{
+				wxBell();
+				return;
+			}
+
+			CServerPath path = m_pState->GetRemotePath();
+			if (path.IsEmpty())
+			{
+				wxBell();
+				return;
+			}
+
 			if (data->dir)
 			{
-				// TODO: Dir uploading
+				path.ChangePath(data->name);
+
+				wxFileName fn(m_dir, _T(""));
+				fn.AppendDir(data->name);
+				m_pQueue->QueueFolder(event.GetId() == XRCID("ID_ADDTOQUEUE"), false, fn.GetPath(), path, *pServer);
 			}
 			else
 			{
-				const CServer* pServer = m_pState->GetServer();
-				if (!pServer)
-				{
-					wxBell();
-					return;
-				}
-
-				CServerPath path = m_pState->GetRemotePath();
-				if (path.IsEmpty())
-				{
-					wxBell();
-					return;
-				}
-
 				wxFileName fn(m_dir, data->name);
 
 				m_pQueue->QueueFile(event.GetId() == XRCID("ID_ADDTOQUEUE"), false, fn.GetFullPath(), data->name, path, *pServer, data->size);
