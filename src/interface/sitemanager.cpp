@@ -625,8 +625,8 @@ void CSiteManager::OnLogontypeSelChanged(wxCommandEvent& event)
 	if (!data)
 		return;
 
-	XRCCTRL(*this, "ID_USER", wxTextCtrl)->Enable(XRCCTRL(*this, "ID_LOGONTYPE", wxComboBox)->GetValue() != _("Anonymous"));
-	XRCCTRL(*this, "ID_PASS", wxTextCtrl)->Enable(XRCCTRL(*this, "ID_LOGONTYPE", wxComboBox)->GetValue() == _("Normal"));
+	XRCCTRL(*this, "ID_USER", wxTextCtrl)->Enable(event.GetString() != _("Anonymous"));
+	XRCCTRL(*this, "ID_PASS", wxTextCtrl)->Enable(event.GetString() == _("Normal"));
 }
 
 bool CSiteManager::UpdateServer()
