@@ -313,7 +313,7 @@ void CMainFrame::OnQuickconnect(wxCommandEvent &event)
 	wxString pass = XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_PASS", wxTextCtrl)->GetValue();
 	wxString port = XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_PORT", wxTextCtrl)->GetValue();
 	
-	long numericPort = -1;
+	long numericPort = 0;
 	if (port != _T(""))
 		port.ToLong(&numericPort);
 	
