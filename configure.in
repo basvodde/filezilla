@@ -111,11 +111,11 @@ else
 	EXPAT_LIB=
 fi
 
-AC_ARG_WITH(expat-lib,
+AC_ARG_WITH(idn-lib,
 [[  --with-idn-lib=FILE     Use the given path to the idn library.]],
 [
 	if test "$withval" != "yes" -a "$withval" != ""; then
-		EXPAT_IDN=$withval
+		IDN_LIB=$withval
 	fi
 ])
 

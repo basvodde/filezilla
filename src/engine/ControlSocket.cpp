@@ -2,22 +2,14 @@
 #include "logging_private.h"
 #include "ControlSocket.h"
 #include <idna.h>
+#include "asynchostresolver.h"
 
-const wxEventType fzEVT_ENGINE_NOTIFICATION = wxNewEventType();
-
-wxFzEngineEvent::wxFzEngineEvent(int id, enum EngineNotificationType eventType) : wxEvent(id, fzEVT_ENGINE_NOTIFICATION)
-{
-	m_eventType = eventType;
-}
-
-wxEvent *wxFzEngineEvent::Clone() const
-{
-	return new wxFzEngineEvent(*this);
-}
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
 
 BEGIN_EVENT_TABLE(CControlSocket, wxEvtHandler)
 	EVT_SOCKET(wxID_ANY, CControlSocket::OnSocketEvent)
-	EVT_FZ_ENGINE_NOTIFICATION(wxID_ANY, CControlSocket::OnEngineEvent)
 END_EVENT_TABLE();
 
 COpData::COpData()
@@ -27,7 +19,6 @@ COpData::COpData()
 COpData::~COpData()
 {
 }
-
 
 CControlSocket::CControlSocket(CFileZillaEngine *pEngine)
 	: wxSocketClient(wxSOCKET_NOWAIT), CLogging(pEngine)
@@ -102,16 +93,41 @@ void CControlSocket::OnClose(wxSocketEvent &event)
 int CControlSocket::Connect(const CServer &server)
 {
 	LogMessage(Status, _("Connecting to %s:%d..."), server.GetHost().c_str(), server.GetPort());
-	wxIPV4address addr;
-	if (!addr.Hostname(ConvertDomainName(server.GetHost())))
+
+	CAsyncHostResolver *resolver = new CAsyncHostResolver(m_pEngine, ConvertDomainName(server.GetHost()));
+	if (!m_pEngine->m_HostResolverThreads.empty())
+		m_pEngine->m_HostResolverThreads.front()->SetObsolete();
+	
+	m_pEngine->m_HostResolverThreads.push_front(resolver);
+	resolver->Create();
+	resolver->Run();
+
+	m_pCurrentServer = new CServer(server);
+
+	return FZ_REPLY_WOULDBLOCK;
+}
+
+int CControlSocket::ContinueConnect()
+{
+	LogMessage(__TFILE__, __LINE__, this, Debug_Verbose, _T("ContinueConnect() cmd=%d, m_pEngine=%d, m_pCurrentServer=%d"), GetCurrentCommandId(), m_pEngine, m_pCurrentServer);
+	if (GetCurrentCommandId() != cmd_connect ||
+		m_pEngine->m_HostResolverThreads.empty() ||
+		!m_pEngine->m_HostResolverThreads.front()->Done() ||
+		m_pEngine->m_HostResolverThreads.front()->Obsolete() ||
+		!m_pCurrentServer)
+	{
+		LogMessage(Debug_Warning, _T("Invalid context for call to ContinueConnect()"));
+		return DoClose(FZ_REPLY_INTERNALERROR);
+	}
+	
+	if (!m_pEngine->m_HostResolverThreads.front()->Successful())
 	{
 		LogMessage(::Error, _("Invalid hostname or host not found"));
 		return ResetOperation(FZ_REPLY_CRITICALERROR);
 	}
 
-	addr.Service(server.GetPort());
-
-	m_pCurrentServer = new CServer(server);
+	wxIPV4address addr = m_pEngine->m_HostResolverThreads.front()->m_Address;
+	addr.Service(m_pCurrentServer->GetPort());
 
 	bool res = wxSocketClient::Connect(addr, false);
 
@@ -252,28 +268,14 @@ wxString CControlSocket::ConvertDomainName(wxString domain)
 	return result;
 }
 
-bool CControlSocket::SendEvent(enum EngineNotificationType eventType)
+void CControlSocket::Cancel()
 {
-	wxFzEngineEvent evt(wxID_ANY, eventType);
-	wxPostEvent(this, evt);
-	return true;
-}
-
-void CControlSocket::OnEngineEvent(wxFzEngineEvent &event)
-{
-	switch (event.m_eventType)
+	if (GetCurrentCommandId() != cmd_none)
 	{
-	case engineCancel:
-		if (GetCurrentCommandId() != cmd_none)
-		{
-			if (GetCurrentCommandId() == cmd_connect)
-				DoClose(FZ_REPLY_CANCELED);
-			else
-				ResetOperation(FZ_REPLY_CANCELED);
-			LogMessage(::Error, _("Interrupted by user"));
-		}
-		break;
-	default:
-		break;
+		if (GetCurrentCommandId() == cmd_connect)
+			DoClose(FZ_REPLY_CANCELED);
+		else
+			ResetOperation(FZ_REPLY_CANCELED);
+		LogMessage(::Error, _("Interrupted by user"));
 	}
 }

@@ -11,6 +11,9 @@ INCLUDES = -I../include
 # lib_LIBRARIES = libengine.a
 libengine_a_SOURCES = FileZillaEngine.cpp ControlSocket.cpp commands.cpp \
 			ftpcontrolsocket.cpp server.cpp serverpath.cpp \
-			logging.cpp notification.cpp \
-			ControlSocket.h ftpcontrolsocket.h logging_private.h
+			logging.cpp notification.cpp asynchostresolver.cpp
+
+noinst_HEADERS = asynchostresolver.h ControlSocket.h \
+			engine_private.h ftpcontrolsocket.h \
+			logging_private.h
 

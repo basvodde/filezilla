@@ -3,7 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "FileZilla.h"
-#include "FileZillaEngine.h"
+#include "engine_private.h"
 #include "logging_private.h"
 #include "ControlSocket.h"
 #include "ftpcontrolsocket.h"
@@ -12,9 +12,21 @@
 #define new DEBUG_NEW
 #endif
 
-//////////////////////////////////////////////////////////////////////
-// Konstruktion/Destruktion
-//////////////////////////////////////////////////////////////////////
+const wxEventType fzEVT_ENGINE_NOTIFICATION = wxNewEventType();
+
+wxFzEngineEvent::wxFzEngineEvent(int id, enum EngineNotificationType eventType) : wxEvent(id, fzEVT_ENGINE_NOTIFICATION)
+{
+	m_eventType = eventType;
+}
+
+wxEvent *wxFzEngineEvent::Clone() const
+{
+	return new wxFzEngineEvent(*this);
+}
+
+BEGIN_EVENT_TABLE(CFileZillaEngine, wxEvtHandler)
+	EVT_FZ_ENGINE_NOTIFICATION(wxID_ANY, CFileZillaEngine::OnEngineEvent)
+END_EVENT_TABLE();
 
 CFileZillaEngine::CFileZillaEngine()
 {
@@ -95,6 +107,8 @@ int CFileZillaEngine::Connect(const CConnectCommand &command)
 	if (IsConnected())
 		return FZ_REPLY_ALREADYCONNECTED;
 
+	if (m_pControlSocket)
+		delete m_pControlSocket;
 	switch (command.GetServer().GetProtocol())
 	{
 	case FTP:
@@ -159,6 +173,9 @@ int CFileZillaEngine::ResetOperation(int nErrorCode)
 	delete m_pCurrentCommand;
 	m_pCurrentCommand = 0;
 
+	if (!m_HostResolverThreads.empty())
+		m_HostResolverThreads.front()->SetObsolete();
+
 	return nErrorCode;
 }
 
@@ -182,7 +199,54 @@ int CFileZillaEngine::Cancel(const CCancelCommand &command)
 	if (!IsBusy())
 		return FZ_REPLY_WOULDBLOCK;
 
-	m_pControlSocket->SendEvent(engineCancel);
+	SendEvent(engineCancel);
 
 	return FZ_REPLY_WOULDBLOCK;
+}
+
+void CFileZillaEngine::OnEngineEvent(wxFzEngineEvent &event)
+{
+	switch (event.m_eventType)
+	{
+	case engineCancel:
+		if (!IsBusy())
+			break;
+
+		m_pControlSocket->Cancel();
+		break;
+	case engineHostresolve:
+		{
+			std::list<CAsyncHostResolver *> remaining;
+			for (std::list<CAsyncHostResolver *>::iterator iter = m_HostResolverThreads.begin(); iter != m_HostResolverThreads.end(); iter++)
+			{
+				if (!(*iter)->Done())
+					remaining.push_back(*iter);
+				else
+				{
+					if (!(*iter)->Obsolete())
+					{
+						if (GetCurrentCommandId() == cmd_connect)
+							m_pControlSocket->ContinueConnect();
+					}
+					Sleep(100);
+					(*iter)->Wait();
+					(*iter)->Delete();
+					delete *iter;					
+				}
+			}
+			m_HostResolverThreads.clear();
+			m_HostResolverThreads = remaining;
+		}
+			
+		break;
+	default:
+		break;
+	}
+}
+
+bool CFileZillaEngine::SendEvent(enum EngineNotificationType eventType)
+{
+	wxFzEngineEvent evt(wxID_ANY, eventType);
+	wxPostEvent(this, evt);
+	return true;
 }

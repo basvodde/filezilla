@@ -183,6 +183,9 @@ void CFtpControlSocket::Logon()
 	case 1:
 		Send("PASS " + m_pCurrentServer->GetPass());
 		break;
+	default:
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		break;
 	}
 
 }
