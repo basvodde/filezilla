@@ -13,8 +13,11 @@ dist_resources_DATA = menus.xrc quickconnectbar.xrc dropdown.png \
 if USE_RESOURCEFILE
 noinst_DATA = filezilla.o
 
-filezilla.o:
-	windres $(WINDRESFLAGS) filezilla.rc filezilla.o
+filezilla.o: filezilla.rc
+	if [ -f $@~ ]; then rm $@~; fi
+	windres $(WINDRESFLAGS) filezilla.rc $@~
+	if [ -f $@ ]; them rm $@; fi
+	mv $@~ $@
 endif
 
 
