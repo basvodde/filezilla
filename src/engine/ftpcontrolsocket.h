@@ -34,6 +34,8 @@ protected:
 
 	virtual int Delete(const CServerPath& path = CServerPath(), const wxString& file = _T(""));
 	
+	virtual int RemoveDir(const CServerPath& path = CServerPath(), const wxString& subDir = _T(""));
+	
 	bool ParsePwdReply(wxString reply);
 
 	virtual void OnConnect(wxSocketEvent &event);

@@ -93,7 +93,7 @@ protected:
 		wxString localDir;
 	};
 	std::list<t_newDir> m_dirsToVisit;
-	bool stopRecursiveOperation;
+	std::list<t_newDir> m_dirsToDelete;
 
 	DECLARE_EVENT_TABLE()
 	void OnItemActivated(wxListEvent &event);

@@ -33,6 +33,7 @@ public:
 	virtual int FileTransfer(const wxString localFile, const CServerPath &remotePath, const wxString &remoteFile, bool download) = 0;
 	virtual int RawCommand(const wxString& command = _T("")) = 0;
 	virtual int Delete(const CServerPath& path = CServerPath(), const wxString& file = _T("")) = 0;
+	virtual int RemoveDir(const CServerPath& path = CServerPath(), const wxString& subDir = _T("")) = 0;
 
 	enum Command GetCurrentCommandId() const;
 

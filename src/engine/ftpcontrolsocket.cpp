@@ -199,6 +199,9 @@ void CFtpControlSocket::ParseResponse()
 	case cmd_delete:
 		Delete();
 		break;
+	case cmd_removedir:
+		RemoveDir();
+		break;
 	default:
 		ResetOperation(FZ_REPLY_INTERNALERROR);
 		break;
@@ -763,7 +766,7 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 		if (!pData->download && pData->opState >= filetransfer_transfer)
 		{
 			CDirectoryCache cache;
-			cache.InvalidateFile(pData->remoteFile, *m_pCurrentServer, pData->remotePath, (nErrorCode == FZ_REPLY_OK) ? pData->fileSize : -1);
+			cache.InvalidateFile(*m_pCurrentServer, pData->remotePath, pData->remoteFile, (nErrorCode == FZ_REPLY_OK) ? pData->fileSize : -1);
 
 			m_pEngine->ResendModifiedListings();
 		}
@@ -2002,7 +2005,60 @@ int CFtpControlSocket::Delete(const CServerPath& path /*=CServerPath()*/, const 
 
 	CDeleteOpData *pData = static_cast<CDeleteOpData *>(m_pCurOpData);
 	CDirectoryCache cache;
-	cache.RemoveFile(pData->file, *m_pCurrentServer, pData->path);
+	cache.RemoveFile(*m_pCurrentServer, pData->path, pData->file);
+	m_pEngine->ResendModifiedListings();
+
+	return ResetOperation(FZ_REPLY_OK);
+}
+
+int CFtpControlSocket::RemoveDir(const CServerPath& path /*=CServerPath()*/, const wxString& subDir /*=_T("")*/)
+{
+	class CRemoveDirOpData : public COpData
+	{
+	public:
+		CRemoveDirOpData() { opId = cmd_removedir; }
+		virtual ~CRemoveDirOpData() { }
+
+		CServerPath path;
+		wxString subDir;
+	};
+
+	if (!path.IsEmpty())
+	{
+		wxASSERT(!m_pCurOpData);
+		CRemoveDirOpData *pData = new CRemoveDirOpData();
+		m_pCurOpData = pData;
+		pData->path = path;
+		pData->subDir = subDir;
+
+		CServerPath path = pData->path;
+		
+		if (!path.AddSegment(subDir))
+		{
+			LogMessage(::Error, wxString::Format(_T("Path cannot be constructed for folder %s and subdir %s"), path.GetPath().c_str(), subDir.c_str()));
+			return FZ_REPLY_ERROR;
+		}
+
+		if (!Send(_T("RMD ") + path.GetPath()))
+			return FZ_REPLY_ERROR;
+
+		return FZ_REPLY_WOULDBLOCK;
+	}
+
+	int code = GetReplyCode();
+	if (code != 2 && code != 3)
+		return ResetOperation(FZ_REPLY_ERROR);
+
+	if (!m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	CRemoveDirOpData *pData = static_cast<CRemoveDirOpData *>(m_pCurOpData);
+	CDirectoryCache cache;
+	cache.RemoveDir(*m_pCurrentServer, pData->path, pData->subDir);
 	m_pEngine->ResendModifiedListings();
 
 	return ResetOperation(FZ_REPLY_OK);

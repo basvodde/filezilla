@@ -782,6 +782,7 @@ void CRemoteListView::OnMenuDelete(wxCommandEvent& event)
 				dirToVisit.subdir = name;
 				m_dirsToVisit.push_back(dirToVisit);
 				m_startDir = m_pDirectoryListing->path;
+				m_dirsToDelete.push_front(dirToVisit);
 			}
 		}
 		else
@@ -801,6 +802,13 @@ bool CRemoteListView::NextOperation()
 
 	if (m_dirsToVisit.empty())
 	{
+		if (m_operationMode == recursive_delete)
+		{
+			// Remove visited directories
+			for (std::list<t_newDir>::const_iterator iter = m_dirsToDelete.begin(); iter != m_dirsToDelete.end(); iter++)
+				m_pCommandQueue->ProcessCommand(new CRemoveDirCommand(iter->parent, iter->subdir));
+	
+		}
 		StopRecursiveOperation();
 		m_pCommandQueue->ProcessCommand(new CListCommand(m_startDir));
 		return false;
@@ -853,6 +861,8 @@ void CRemoteListView::ProcessDirectoryListing()
 			dirToVisit.subdir = entry.name;
 			dirToVisit.localDir = fn.GetFullPath();
 			m_dirsToVisit.push_back(dirToVisit);
+			if (m_operationMode == recursive_delete)
+				m_dirsToDelete.push_front(dirToVisit);
 		}
 		else
 		{
@@ -892,4 +902,5 @@ void CRemoteListView::StopRecursiveOperation()
 	m_operationMode = recursive_none;
 	m_dirsToVisit.clear();
 	m_visitedDirs.clear();
+	m_dirsToDelete.clear();
 }

@@ -159,7 +159,7 @@ CDirectoryCache::CCacheEntry::CCacheEntry(const CDirectoryCache::CCacheEntry &en
 	parents = entry.parents;
 }
 
-bool CDirectoryCache::InvalidateFile(wxString filename, const CServer &server, const CServerPath &path, int size /*=-1*/)
+bool CDirectoryCache::InvalidateFile(const CServer &server, const CServerPath &path, const wxString& filename, int size /*=-1*/)
 {
 	for (tCacheIter iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
 	{
@@ -200,7 +200,7 @@ bool CDirectoryCache::InvalidateFile(wxString filename, const CServer &server, c
 	return true;
 }
 
-bool CDirectoryCache::RemoveFile(wxString filename, const CServer &server, const CServerPath &path)
+bool CDirectoryCache::RemoveFile(const CServer &server, const CServerPath &path, const wxString& filename)
 {
 	for (tCacheIter iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
 	{
@@ -217,7 +217,6 @@ bool CDirectoryCache::RemoveFile(wxString filename, const CServer &server, const
 		
 		if (matchCase)
 		{
-			CDirentry *listing = new CDirentry[entry.listing.m_entryCount + 1];
 			unsigned int i;
 			for (i = 0; i < entry.listing.m_entryCount; i++)
 				if (entry.listing.m_pEntries[i].name == filename)
@@ -274,4 +273,46 @@ bool CDirectoryCache::HasChanged(CTimeEx since, const CServer &server, const CSe
 	}
 
 	return false;
+}
+
+void CDirectoryCache::RemoveDir(const CServer& server, const CServerPath& path, const wxString& filename)
+{
+	// TODO: This is not 100% foolproof and my not work properly
+	// Perhaps just throw away the complete cache?
+
+	CServerPath absolutePath = path;
+	if (!absolutePath.AddSegment(filename))
+		absolutePath.Clear();
+
+	std::list<CCacheEntry> newList;
+	for (tCacheIter iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
+	{
+		CCacheEntry &entry = *iter;
+		if (entry.server != server)
+		{
+			// Don't delet eitems from different server
+			newList.push_back(*iter);
+			continue;
+		}
+
+		// Delete exact matches and subdirs
+		if (!absolutePath.IsEmpty() && (entry.listing.path == absolutePath || absolutePath.IsParentOf(entry.listing.path, true)))
+			continue;
+
+		tParentsIter parentsIter;
+		for (parentsIter = entry.parents.begin(); parentsIter != entry.parents.end(); parentsIter++)
+		{
+			const CCacheEntry::t_parent &parent = *parentsIter;
+			if (parent.path == path && parent.subDir == filename)
+				break;
+		}
+		if (parentsIter != entry.parents.end())
+			continue;
+
+		newList.push_back(*iter);
+	}
+	
+	m_CacheList = newList;
+
+	RemoveFile(server, path, filename);
 }

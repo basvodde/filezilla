@@ -115,6 +115,9 @@ int CFileZillaEngine::Command(const CCommand &command)
 	case cmd_delete:
 		res = Delete(reinterpret_cast<const CDeleteCommand&>(command));
 		break;
+	case cmd_removedir:
+		res = RemoveDir(reinterpret_cast<const CRemoveDirCommand&>(command));
+		break;
 	default:
 		return FZ_REPLY_SYNTAXERROR;
 	}
@@ -505,4 +508,20 @@ void CFileZillaEngine::ResendModifiedListings()
 		CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing);
 		pEngine->AddNotification(pNotification);
 	}
+}
+
+int CFileZillaEngine::RemoveDir(const CRemoveDirCommand& command)
+{
+	if (!IsConnected())
+		return FZ_REPLY_NOTCONNECTED;
+
+	if (IsBusy())
+		return FZ_REPLY_BUSY;
+
+	if (command.GetPath().IsEmpty() ||
+		command.GetSubDir() == _T(""))
+		return FZ_REPLY_SYNTAXERROR;
+
+	m_pCurrentCommand = command.Clone();
+	return m_pControlSocket->RemoveDir(command.GetPath(), command.GetSubDir());
 }
