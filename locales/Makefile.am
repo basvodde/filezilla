@@ -68,7 +68,7 @@ XGETTEXT_ARGS=-C -k_ -kwxGetTranslation -kwxTRANSLATE -s -j
 resources.h: $(srcdir)/../src/interface/resources/*.xrc
 	@if [ -f $@~ ]; then rm $@~; fi
 
-	wxrc -g -e $(srcdir)/../src/interface/resources/*.xrc > $@~ || exit 1
+	@WXRC@ -g -e $(srcdir)/../src/interface/resources/*.xrc > $@~ || exit 1
 
 # strip strings not marked for translation (enclosed in <>)
 	cat $@~ | sed "s/_(\"<.*>\")\;//" > $@

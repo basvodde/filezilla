@@ -13,7 +13,7 @@ nodist_noinst_DATA = filezilla.o
 
 filezilla.o: $(srcdir)/filezilla.rc
 	@if [ -f $@~ ]; then rm $@~; fi
-	windres --include-dir=$(srcdir) $(WINDRESFLAGS) $(srcdir)/filezilla.rc $@~
+	@WINDRES@ --include-dir=$(srcdir) $(WINDRESFLAGS) $(srcdir)/filezilla.rc $@~
 	@if [ -f $@ ]; then rm $@; fi
 	mv $@~ $@
 endif

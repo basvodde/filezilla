@@ -63,17 +63,26 @@ parseflags() {
 
 WINDRESFLAGS=
 use_resourcefile=
+AC_MSG_CHECKING([whether to use windres])
 if echo $host_os | grep "cygwin\|mingw" > /dev/null 2>&1; then
-        if wx-config --cppflags | grep __WXMSW__ > /dev/null 2>&1; then
-		if windres --version > /dev/null 2>&1; then
-                  use_resourcefile=true
-                fi
+        if echo $WX_CPPFLAGS | grep __WXMSW__ > /dev/null 2>&1; then
+		AC_MSG_RESULT([yes])
+		AC_PATH_PROG([WINDRES], [windres --version])
+		if test "x$WINDRES" = "x"; then
+			AC_MSG_ERROR([windres could not be found, please make sure this program is within your path.])
+		fi
+                use_resourcefile=true
+                parseflags $CPPFLAGS
+	else
+		AC_MSG_RESULT([no])
 	fi
-
-	parseflags $CPPFLAGS
+else
+	AC_MSG_RESULT([no])
 fi
-
+AC_SUBST(WINDRES)
+AC_SUBST(WINDRESFLAGS)
 AM_CONDITIONAL(USE_RESOURCEFILE, test x$use_resourcefile = xtrue)
+
 AM_CONDITIONAL(MACAPPBUNDLE, echo $WX_CPPFLAGS | grep __WXMAC__)
 
 AC_CHECK_HEADER(idna.h,, 
@@ -154,7 +163,6 @@ AC_SUBST(CATALOGS_TO_INSTALL)
 AC_SUBST(FILEZILLA_LINGUAS)
 AC_SUBST(FILEZILLA_LINGUAS_PO)
 AC_SUBST(FILEZILLA_LINGUAS_PO_NEW)
-AC_SUBST(WINDRESFLAGS)
 
 AC_CONFIG_FILES(Makefile src/Makefile src/engine/Makefile src/tinyxml/Makefile
 src/interface/Makefile src/interface/resources/Makefile src/include/Makefile
