@@ -285,7 +285,25 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	{
 		CSiteManager dlg(m_pOptions);
 		dlg.Create(this);
-		dlg.ShowModal();
+		int res = dlg.ShowModal();
+		if (res == wxID_YES)
+		{
+			CServer server;
+			if (!dlg.GetServer(server))
+				return;
+
+			if (m_pEngine->IsConnected() || m_pEngine->IsBusy())
+			{
+				if (wxMessageBox(_("Break current connection?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) != wxYES)
+					return;
+				m_pCommandQueue->Cancel();
+			}
+
+			m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
+			m_pCommandQueue->ProcessCommand(new CListCommand());
+
+			m_pOptions->SetServer(_T("Settings/LastServer"), server);
+		}
 	}
 	event.Skip();
 }

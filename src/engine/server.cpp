@@ -2,15 +2,15 @@
 
 CServer::CServer()
 {
-	m_Port = 21;
-	m_Protocol = FTP;
-	m_Type = DEFAULT;
+	m_port = 21;
+	m_protocol = FTP;
+	m_type = DEFAULT;
 	m_logonType = ANONYMOUS;
 }
 
-bool CServer::ParseUrl(wxString host, int port, wxString user, wxString pass, wxString &error, CServerPath &path)
+bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString pass, wxString &error, CServerPath &path)
 {
-	m_Type = DEFAULT;
+	m_type = DEFAULT;
 
 	if (host == _T(""))
 	{
@@ -26,7 +26,7 @@ bool CServer::ParseUrl(wxString host, int port, wxString user, wxString pass, wx
 		if (protocol.Left(3) == _T("fz_"))
 			protocol = protocol.Mid(3);
 		if (protocol == _T("ftp"))
-			m_Protocol = FTP;
+			m_protocol = FTP;
 		else
 		{
 			error = _("Invalid protocol specified. Only valid protocol is ftp:// at the moment.");
@@ -34,7 +34,7 @@ bool CServer::ParseUrl(wxString host, int port, wxString user, wxString pass, wx
 		}
 	}
 	else
-		m_Protocol = FTP;
+		m_protocol = FTP;
 
 	pos = host.Find('@');
 	if (pos != -1)
@@ -94,7 +94,7 @@ bool CServer::ParseUrl(wxString host, int port, wxString user, wxString pass, wx
 	{
 		if (port == -1)
 		{
-			if (m_Protocol == FTP)
+			if (m_protocol == FTP)
 				port = 21;
 			else
 				port = 21;
@@ -112,11 +112,11 @@ bool CServer::ParseUrl(wxString host, int port, wxString user, wxString pass, wx
 		return false;
 	}
 
-	m_Host = host;
-	m_Port = port;
-	m_User = user;
-	m_Pass = pass;
-	if (m_User == _T("") || m_User == _T("anonymous"))
+	m_host = host;
+	m_port = port;
+	m_user = user;
+	m_pass = pass;
+	if (m_user == _T("") || m_user == _T("anonymous"))
 		m_logonType = ANONYMOUS;
 	else
 		m_logonType = NORMAL;
@@ -126,22 +126,22 @@ bool CServer::ParseUrl(wxString host, int port, wxString user, wxString pass, wx
 
 ServerProtocol CServer::GetProtocol() const
 {
-	return m_Protocol;
+	return m_protocol;
 }
 
 ServerType CServer::GetType() const
 {
-	return m_Type;
+	return m_type;
 }
 
 wxString CServer::GetHost() const
 {
-	return m_Host;
+	return m_host;
 }
 
-int CServer::GetPort() const
+unsigned int CServer::GetPort() const
 {
-	return m_Port;
+	return m_port;
 }
 
 wxString CServer::GetUser() const
@@ -149,47 +149,49 @@ wxString CServer::GetUser() const
 	if (m_logonType == ANONYMOUS)
 		return _T("anonymous");
 	
-	return m_User;
+	return m_user;
 }
 
 wxString CServer::GetPass() const
 {
 	if (m_logonType == ANONYMOUS)
 		return _T("anon@localhost");
+	else if (m_logonType != NORMAL)
+		return _T("");
 	
-	return m_Pass;
+	return m_pass;
 }
 
 CServer& CServer::operator=(const CServer &op)
 {
-	m_Protocol = op.m_Protocol;
-	m_Type = op.m_Type;
-	m_Host = op.m_Host;
-	m_Port = op.m_Port;
+	m_protocol = op.m_protocol;
+	m_type = op.m_type;
+	m_host = op.m_host;
+	m_port = op.m_port;
 	m_logonType = op.m_logonType;
-	m_User = op.m_User;
-	m_Pass = op.m_Pass;
+	m_user = op.m_user;
+	m_pass = op.m_pass;
 
 	return *this;
 }
 
 bool CServer::operator==(const CServer &op) const
 {
-	if (m_Protocol != op.m_Protocol)
+	if (m_protocol != op.m_protocol)
 		return false;
-	else if (m_Type != op.m_Type)
+	else if (m_type != op.m_type)
 		return false;
-	else if (m_Host != op.m_Host)
+	else if (m_host != op.m_host)
 		return false;
-	else if (m_Port != op.m_Port)
+	else if (m_port != op.m_port)
 		return false;
 	else if (m_logonType != op.m_logonType)
 		return false;
 	else if (m_logonType != ANONYMOUS)
 	{
-		if (m_User != op.m_User)
+		if (m_user != op.m_user)
 			return false;
-		else if (m_Pass != op.m_Pass)
+		else if (m_pass != op.m_pass)
 			return false;
 	}
 
@@ -201,32 +203,74 @@ bool CServer::operator!=(const CServer &op) const
 	return !(*this == op);
 }
 
-CServer::CServer(enum ServerProtocol protocol, enum ServerType type, wxString host, int port, wxString user, wxString pass /*=_T("")*/)
+CServer::CServer(enum ServerProtocol protocol, enum ServerType type, wxString host, unsigned int port, wxString user, wxString pass /*=_T("")*/)
 {
-	m_Protocol = protocol;
-	m_Type = type;
-	m_Host = host;
-	m_Port = port;
+	m_protocol = protocol;
+	m_type = type;
+	m_host = host;
+	m_port = port;
 	m_logonType = NORMAL;
-	m_User = user;
-	m_Pass = pass;
+	m_user = user;
+	m_pass = pass;
 }
 
-CServer::CServer(enum ServerProtocol protocol, enum ServerType type, wxString host, int port)
+CServer::CServer(enum ServerProtocol protocol, enum ServerType type, wxString host, unsigned int port)
 {
-	m_Protocol = protocol;
-	m_Type = type;
-	m_Host = host;
-	m_Port = port;
+	m_protocol = protocol;
+	m_type = type;
+	m_host = host;
+	m_port = port;
 	m_logonType = ANONYMOUS;
 }
 
 void CServer::SetType(enum ServerType type)
 {
-	m_Type = type;
+	m_type = type;
 }
 
 enum LogonType CServer::GetLogonType() const
 {
 	return m_logonType;
+}
+
+void CServer::SetLogonType(enum LogonType logonType)
+{
+	m_logonType = logonType;
+}
+
+void CServer::SetProtocol(enum ServerProtocol serverProtocol)
+{
+	m_protocol = serverProtocol;
+}
+
+bool CServer::SetHost(wxString host, unsigned int port)
+{
+	if (host == _T(""))
+		return false;
+
+	if (port < 1 || port > 65535)
+		return false;
+
+	m_host = host;
+	m_port = port;
+	
+	return true;
+}
+
+bool CServer::SetUser(wxString user, wxString pass /*=_T("")*/)
+{
+	if (m_logonType == ANONYMOUS)
+		return true;
+
+	if (user == _T(""))
+		return false;
+
+	m_user = user;
+
+	if (m_logonType == NORMAL)
+		m_pass = pass;
+	else
+		m_pass = _T("");
+
+	return true;
 }

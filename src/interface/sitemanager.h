@@ -17,21 +17,26 @@ public:
 	/// Creates the controls and sizers
 	void CreateControls();
 	
-	void DisplayServer(const CServer &server);
-	void GetServer(CServer &server);
+	bool GetServer(CServer &server);
 	
 protected:
 	bool Verify();
+	bool UpdateServer();
 	bool Load(TiXmlElement *pElement = 0, wxTreeItemId treeId = wxTreeItemId());
 	bool Save(TiXmlElement *pElement = 0, wxTreeItemId treeId = wxTreeItemId());
 	
 	virtual void OnOK(wxCommandEvent& event);
 	virtual void OnCancel(wxCommandEvent& event);
+	virtual void OnConnect(wxCommandEvent& event);
+	virtual void OnNewSite(wxCommandEvent& event);
 	virtual void OnNewFolder(wxCommandEvent& event);
 	virtual void OnRename(wxCommandEvent& event);
 	virtual void OnDelete(wxCommandEvent& event);
 	virtual void OnBeginLabelEdit(wxTreeEvent& event);
 	virtual void OnEndLabelEdit(wxTreeEvent& event);
+	virtual void OnSelChanging(wxTreeEvent& event);
+	virtual void OnSelChanged(wxTreeEvent& event);
+	virtual void OnLogontypeSelChanged(wxCommandEvent& event);
 	
 	COptions* m_pOptions;
 };
