@@ -101,6 +101,9 @@ int CFileZillaEngine::Command(const CCommand &command)
 	case cmd_raw:
 		res = RawCommand(reinterpret_cast<const CRawCommand&>(command));
 		break;
+	case cmd_delete:
+		res = Delete(reinterpret_cast<const CDeleteCommand&>(command));
+		break;
 	default:
 		return FZ_REPLY_SYNTAXERROR;
 	}
@@ -444,4 +447,20 @@ int CFileZillaEngine::RawCommand(const CRawCommand& command)
 
 	m_pCurrentCommand = command.Clone();
 	return m_pControlSocket->RawCommand(command.GetCommand());
+}
+
+int CFileZillaEngine::Delete(const CDeleteCommand& command)
+{
+	if (!IsConnected())
+		return FZ_REPLY_NOTCONNECTED;
+
+	if (IsBusy())
+		return FZ_REPLY_BUSY;
+
+	if (command.GetPath().IsEmpty() ||
+		command.GetFile() == _T(""))
+		return FZ_REPLY_SYNTAXERROR;
+
+	m_pCurrentCommand = command.Clone();
+	return m_pControlSocket->Delete(command.GetPath(), command.GetFile());
 }

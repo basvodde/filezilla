@@ -674,6 +674,12 @@ void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
 
 void CRemoteListView::OnMenuDownload(wxCommandEvent& event)
 {
+	if (!m_pCommandQueue->Idle() || IsBusy())
+	{
+		wxBell();
+		return;
+	}
+
 	long item = -1;
 	while (true)
 	{
@@ -686,12 +692,6 @@ void CRemoteListView::OnMenuDownload(wxCommandEvent& event)
 
 		if (!IsItemValid(item))
 			return;
-
-		if (m_fileData[m_indexMapping[item]].pDirEntry->dir && IsBusy())
-		{
-			wxBell();
-			return;
-		}
 	}
 
 	item = -1;
@@ -701,8 +701,7 @@ void CRemoteListView::OnMenuDownload(wxCommandEvent& event)
 		if (item == -1)
 			break;
 
-		wxString name;
-		name = m_fileData[m_indexMapping[item]].pDirEntry->name;
+		wxString name = m_fileData[m_indexMapping[item]].pDirEntry->name;
 
 		const CServer* pServer = m_pState->GetServer();
 		if (!pServer)
@@ -743,6 +742,52 @@ void CRemoteListView::OnMenuMkdir(wxCommandEvent& event)
 
 void CRemoteListView::OnMenuDelete(wxCommandEvent& event)
 {
+	if (!m_pCommandQueue->Idle() || IsBusy())
+	{
+		wxBell();
+		return;
+	}
+
+	long item = -1;
+	while (true)
+	{
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		if (item == -1)
+			break;
+
+		if (!item)
+			return;
+
+		if (!IsItemValid(item))
+			return;
+	}
+
+	item = -1;
+	while (true)
+	{
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		if (item == -1)
+			break;
+
+		wxString name = m_fileData[m_indexMapping[item]].pDirEntry->name;
+
+		if (m_fileData[m_indexMapping[item]].pDirEntry->dir)
+		{
+			CServerPath remotePath = m_pDirectoryListing->path;
+			if (remotePath.AddSegment(name))
+			{
+				m_operationMode = recursive_delete;
+				t_newDir dirToVisit;
+				dirToVisit.parent = m_pDirectoryListing->path;
+				dirToVisit.subdir = name;
+				m_dirsToVisit.push_back(dirToVisit);
+				m_startDir = m_pDirectoryListing->path;
+			}
+		}
+		else
+			m_pCommandQueue->ProcessCommand(new CDeleteCommand(m_pDirectoryListing->path, name));
+	}
+	NextOperation();
 }
 
 void CRemoteListView::OnMenuRename(wxCommandEvent& event)
@@ -753,8 +798,7 @@ bool CRemoteListView::NextOperation()
 {
 	if (m_dirsToVisit.empty())
 	{
-		m_operationMode = recursive_none;
-		m_visitedDirs.clear();
+		StopRecursiveOperation();
 		m_pCommandQueue->ProcessCommand(new CListCommand(m_startDir));
 		return false;
 	}
@@ -774,9 +818,7 @@ void CRemoteListView::ProcessDirectoryListing()
 
 	if (!m_pDirectoryListing)
 	{
-		m_operationMode = recursive_none;
-		m_dirsToVisit.clear();
-		m_visitedDirs.clear();
+		StopRecursiveOperation();
 		return;
 	}
 
@@ -811,8 +853,21 @@ void CRemoteListView::ProcessDirectoryListing()
 		}
 		else
 		{
-			wxFileName fn(dir.localDir, entry.name);
-			m_pQueue->QueueFile(m_operationMode == recursive_addtoqueue, true, fn.GetFullPath(), entry.name, m_pDirectoryListing->path, *pServer, entry.size);
+			switch (m_operationMode)
+			{
+			case recursive_addtoqueue:
+			case recursive_download:
+				{
+					wxFileName fn(dir.localDir, entry.name);
+					m_pQueue->QueueFile(m_operationMode == recursive_addtoqueue, true, fn.GetFullPath(), entry.name, m_pDirectoryListing->path, *pServer, entry.size);
+				}
+				break;
+			case recursive_delete:
+				m_pCommandQueue->ProcessCommand(new CDeleteCommand(m_pDirectoryListing->path, entry.name));
+				break;
+			default:
+				break;
+			}
 		}
 	}
 
@@ -827,4 +882,11 @@ void CRemoteListView::ListingFailed()
 	wxASSERT(!m_dirsToVisit.empty());
 
 	NextOperation();
+}
+
+void CRemoteListView::StopRecursiveOperation()
+{
+	m_operationMode = recursive_none;
+	m_dirsToVisit.clear();
+	m_visitedDirs.clear();
 }

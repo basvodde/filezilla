@@ -364,9 +364,10 @@ void CLocalListView::OnItemActivated(wxListEvent &event)
 	int count = 0;
 	bool back = false;
 
+	int item = -1;
 	while (true)
 	{
-		int item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 		if (item == -1)
 			break;
 
@@ -388,7 +389,7 @@ void CLocalListView::OnItemActivated(wxListEvent &event)
 		return;
 	}
 
-	int item = event.GetIndex();
+	item = event.GetIndex();
 	
 	t_fileData *data = GetData(item);
 	if (!data)

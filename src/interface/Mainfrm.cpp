@@ -466,7 +466,10 @@ void CMainFrame::OnCancel(wxCommandEvent& event)
 		return;
 
 	if (wxMessageBox(_("Really cancel current operation?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) == wxYES)
+	{
 		m_pCommandQueue->Cancel();
+		GetRemoteListView()->StopRecursiveOperation();
+	}
 }
 
 void CMainFrame::OnSplitterSashPosChanging(wxSplitterEvent& event)

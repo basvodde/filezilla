@@ -28,7 +28,7 @@ public:
 	void SetDirectoryListing(CDirectoryListing *pDirectoryListing);
 	void ListingFailed();
 
-	bool StopRecursiveOperation();
+	void StopRecursiveOperation();
 	bool IsBusy() const { return m_operationMode != recursive_none; }
 
 protected:

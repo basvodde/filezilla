@@ -31,56 +31,46 @@ enum Command
 #define FZ_REPLY_BUSY			(0x0100 | FZ_REPLY_ERROR)
 #define FZ_REPLY_ALREADYCONNECTED	(0x0200 | FZ_REPLY_ERROR) // Will be returned by connect if already connected
 
+// Small macro to simplify command class declaration
+// Basically all this macro does, is to declare the class and add the required
+// standard functions to it.
+#define DECLARE_COMMAND(name, id, chainable) \
+	class name : public CCommand \
+	{ \
+	public: \
+		virtual enum Command GetId() const { return id; } \
+		virtual bool IsChainable() const { return chainable; } \
+		virtual CCommand* Clone() const { return new name(*this); }
+
 class CCommand
 {
 public:
-	CCommand();
-	virtual ~CCommand();
+	CCommand() { }
+	virtual ~CCommand() { }
 	virtual enum Command GetId() const = 0;
 	virtual bool IsChainable() const = 0;
 	virtual CCommand *Clone() const = 0;
 };
 
-class CConnectCommand : public CCommand
-{
-public:
+DECLARE_COMMAND(CConnectCommand, cmd_connect, false)
 	CConnectCommand(const CServer &server);
-	virtual ~CConnectCommand();
-	virtual enum Command GetId() const;
-	virtual bool IsChainable() const;
-	virtual CCommand *Clone() const;
+	virtual ~CConnectCommand() { }
 
 	const CServer GetServer() const;
 protected:
 	CServer m_Server;
 };
 
-class CDisconnectCommand : public CCommand
-{
-public:
-	virtual enum Command GetId() const;
-	virtual bool IsChainable() const;
-	virtual CCommand *Clone() const;
+DECLARE_COMMAND(CDisconnectCommand, cmd_disconnect, false)
 };
 
-class CCancelCommand : public CCommand
-{
-public:
-	virtual enum Command GetId() const;
-	virtual bool IsChainable() const;
-	virtual CCommand *Clone() const;
+DECLARE_COMMAND(CCancelCommand, cmd_cancel, false)
 };
 
-class CListCommand : public CCommand
-{
-public:
+DECLARE_COMMAND(CListCommand, cmd_list, false)
 	CListCommand(bool refresh = false);
 	CListCommand(CServerPath path, wxString subDir = _T(""), bool refresh = false);
-	virtual ~CListCommand();
-	
-	virtual enum Command GetId() const;
-	virtual bool IsChainable() const;
-	virtual CCommand *Clone() const;
+	virtual ~CListCommand() { }
 	
 	CServerPath GetPath() const;
 	wxString GetSubDir() const;
@@ -93,16 +83,10 @@ protected:
 	bool m_refresh;
 };
 
-class CFileTransferCommand : public CCommand
-{
-public:
+DECLARE_COMMAND(CFileTransferCommand, cmd_transfer, false)
 	CFileTransferCommand();
 	CFileTransferCommand(const wxString &localFile, const CServerPath& remotePath, const wxString &remoteFile, bool download);
-	virtual ~CFileTransferCommand();
-
-	virtual enum Command GetId() const;
-	virtual bool IsChainable() const;
-	virtual CCommand *Clone() const;
+	virtual ~CFileTransferCommand() { }
 
 	wxString GetLocalFile() const;
 	CServerPath GetRemotePath() const;
@@ -116,21 +100,28 @@ protected:
 	bool m_download;
 };
 
-class CRawCommand : public CCommand
-{
-public:
+DECLARE_COMMAND(CRawCommand, cmd_raw, false)
 	CRawCommand();
 	CRawCommand(const wxString &command);
-	virtual ~CRawCommand();
-
-	virtual enum Command GetId() const;
-	virtual bool IsChainable() const;
-	virtual CCommand *Clone() const;
+	virtual ~CRawCommand() { }
 
 	wxString GetCommand() const;
 
 protected:
 	wxString m_command;
+};
+
+DECLARE_COMMAND(CDeleteCommand, cmd_delete, true)
+	CDeleteCommand(const CServerPath& path, wxString file);
+	virtual ~CDeleteCommand() { }
+
+	CServerPath GetPath() const { return m_path; }
+	wxString GetFile() const { return m_file; }
+
+protected:
+
+	CServerPath m_path;
+	wxString m_file;
 };
 
 #endif

@@ -53,6 +53,7 @@ protected:
 	int List(const CListCommand &command);
 	int FileTransfer(const CFileTransferCommand &command);
 	int RawCommand(const CRawCommand& command);
+	int Delete(const CDeleteCommand& command);
 
 	int ResetOperation(int nErrorCode);
 	

@@ -196,7 +196,11 @@ void CFtpControlSocket::ParseResponse()
 	case cmd_raw:
 		RawCommand();
 		break;
+	case cmd_delete:
+		Delete();
+		break;
 	default:
+		ResetOperation(FZ_REPLY_INTERNALERROR);
 		break;
 	}
 }
@@ -1929,4 +1933,55 @@ int CFtpControlSocket::RawCommand(const wxString& command /*=_T("")*/)
 		return ResetOperation(FZ_REPLY_OK);
 	else
 		return ResetOperation(FZ_REPLY_ERROR);
+}
+
+int CFtpControlSocket::Delete(const CServerPath& path /*=CServerPath()*/, const wxString& file /*=_T("")*/)
+{
+	class CDeleteOpData : public COpData
+	{
+	public:
+		CDeleteOpData() { opId = cmd_delete; }
+		virtual ~CDeleteOpData() { }
+
+		CServerPath path;
+		wxString file;
+	};
+
+	if (!path.IsEmpty())
+	{
+		wxASSERT(!m_pCurOpData);
+		CDeleteOpData *pData = new CDeleteOpData();
+		m_pCurOpData = pData;
+		pData->path = path;
+		pData->file = file;
+
+		wxString filename = path.FormatFilename(file);
+		if (filename == _T(""))
+		{
+			LogMessage(::Error, wxString::Format(_T("Filename cannot be constructed for folder %s and filename %s"), path.GetPath().c_str(), file.c_str()));
+			return FZ_REPLY_ERROR;
+		}
+
+		if (!Send(_T("DELE ") + filename))
+			return FZ_REPLY_ERROR;
+
+		return FZ_REPLY_WOULDBLOCK;
+	}
+
+	int code = GetReplyCode();
+	if (code != 2 && code != 3)
+		return ResetOperation(FZ_REPLY_ERROR);
+
+	if (!m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	CDeleteOpData *pData = static_cast<CDeleteOpData *>(m_pCurOpData);
+	CDirectoryCache cache;
+	cache.InvalidateFile(pData->file, *m_pCurrentServer, pData->path);	
+
+	return ResetOperation(FZ_REPLY_OK);
 }

@@ -106,7 +106,7 @@ bool CCommandQueue::Cancel()
 
 void CCommandQueue::Finish(COperationNotification *pNotification)
 {
-	if (pNotification->nReplyCode && FZ_REPLY_DISCONNECTED)
+	if (pNotification->nReplyCode & FZ_REPLY_DISCONNECTED)
 		m_pMainFrame->GetState()->SetServer(0);
 
 	if (m_CommandList.empty())

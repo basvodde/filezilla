@@ -32,6 +32,8 @@ protected:
 
 	virtual int RawCommand(const wxString& command = _T(""));
 
+	virtual int Delete(const CServerPath& path = CServerPath(), const wxString& file = _T(""));
+	
 	bool ParsePwdReply(wxString reply);
 
 	virtual void OnConnect(wxSocketEvent &event);
