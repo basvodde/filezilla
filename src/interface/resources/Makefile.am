@@ -11,12 +11,12 @@ dist_resources_DATA = menus.xrc quickconnectbar.xrc dropdown.png \
 		refresh.png leds.png
 
 if USE_RESOURCEFILE
-noinst_DATA = filezilla.o
+nodist_noinst_DATA = filezilla.o
 
-filezilla.o: filezilla.rc
-	if [ -f $@~ ]; then rm $@~; fi
-	windres $(WINDRESFLAGS) filezilla.rc $@~
-	if [ -f $@ ]; then rm $@; fi
+filezilla.o: $(srcdir)/filezilla.rc
+	@if [ -f $@~ ]; then rm $@~; fi
+	windres -I $(srcdir) $(WINDRESFLAGS) $(srcdir)/filezilla.rc $@~
+	@if [ -f $@ ]; then rm $@; fi
 	mv $@~ $@
 endif
 
