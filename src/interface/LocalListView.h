@@ -83,6 +83,8 @@ protected:
 	void OnMenuDelete(wxCommandEvent& event);
 	void OnMenuRename(wxCommandEvent& event);
 	void OnChar(wxKeyEvent& event);
+	void OnBeginLabelEdit(wxListEvent& event);
+	void OnEndLabelEdit(wxListEvent& event);
 };
 
 #endif

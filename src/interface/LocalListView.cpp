@@ -24,6 +24,8 @@ BEGIN_EVENT_TABLE(CLocalListView, wxListCtrl)
 	EVT_MENU(XRCID("ID_DELETE"), CLocalListView::OnMenuDelete)
 	EVT_MENU(XRCID("ID_RENAME"), CLocalListView::OnMenuRename)
 	EVT_CHAR(CLocalListView::OnChar)
+	EVT_LIST_BEGIN_LABEL_EDIT(wxID_ANY, CLocalListView::OnBeginLabelEdit)
+	EVT_LIST_END_LABEL_EDIT(wxID_ANY, CLocalListView::OnEndLabelEdit)
 END_EVENT_TABLE()
 
 #ifdef __WXMSW__
@@ -47,7 +49,7 @@ END_EVENT_TABLE()
 #endif
 
 CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView *pQueue)
-	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER)
+	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER | wxLC_EDIT_LABELS)
 {
 	m_pState = pState;
 	m_pQueue = pQueue;
@@ -947,6 +949,20 @@ void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 
 void CLocalListView::OnMenuRename(wxCommandEvent& event)
 {
+	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	if (item <= 0)
+	{
+		wxBell();
+		return;
+	}
+
+	if (GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1)
+	{
+		wxBell();
+		return;
+	}
+
+	EditLabel(item);
 }
 
 void CLocalListView::OnChar(wxKeyEvent& event)
@@ -962,6 +978,11 @@ void CLocalListView::OnChar(wxKeyEvent& event)
 
 		wxCommandEvent tmp;
 		OnMenuDelete(tmp);
+	}
+	else if (code == WXK_F2)
+	{
+		wxCommandEvent tmp;
+		OnMenuRename(tmp);
 	}
 	else if (code > 32 && code < 300 && !event.HasModifiers())
 	{
@@ -1055,4 +1076,83 @@ int CLocalListView::FindItemWithPrefix(const wxString& prefix, int start)
 			return i % GetItemCount();
 	}
 	return -1;
+}
+
+void CLocalListView::OnBeginLabelEdit(wxListEvent& event)
+{
+	if (event.GetIndex() == 0)
+	{
+		event.Veto();
+		return;
+	}
+}
+
+void CLocalListView::OnEndLabelEdit(wxListEvent& event)
+{
+	if (event.GetLabel() == _T(""))
+		return;
+
+	wxString newname = event.GetLabel();
+#ifdef __WXMSW__
+	newname = newname.Left(255);
+
+	if ((newname.Find('/') != -1) || 
+		(newname.Find('\\') != -1) ||
+		(newname.Find(':') != -1) ||
+		(newname.Find('*') != -1) ||
+		(newname.Find('?') != -1) || 
+		(newname.Find('"') != -1) ||
+		(newname.Find('<') != -1) ||
+		(newname.Find('>') != -1) ||
+		(newname.Find('|') != -1))
+	{
+		wxMessageBox(_("Filenames may not contain any of the following characters: / \\ : * ? \" < > |"), _("Invalid filename"), wxICON_EXCLAMATION);
+		event.Veto();
+		return;
+	}
+	
+	SHFILEOPSTRUCT op;
+	memset(&op, 0, sizeof(op));
+
+	wxString dir = m_dir;
+	if (dir.Right(1) != _T("\\") && dir.Right(1) != _T("/"))
+		dir += _T("\\");
+	wxString from = dir + m_fileData[m_indexMapping[event.GetItem()]].name + _T(" ");
+	from.SetChar(from.Length() - 1, '\0');
+	op.pFrom = from;
+	wxString to = dir + newname + _T(" ");
+	to.SetChar(to.Length()-1, '\0');
+	op.pTo = to;
+	op.hwnd = (HWND)GetHandle();
+	op.wFunc = FO_RENAME;
+	op.fFlags = FOF_ALLOWUNDO;
+	if (SHFileOperation(&op))
+		event.Veto();
+	else
+	{
+		m_fileData[m_indexMapping[event.GetItem()]].name = newname;
+		return;
+	}
+#else
+	if ((newname.Find('/') != -1) || 
+		(newname.Find('*') != -1) ||
+		(newname.Find('?') != -1) || 
+		(newname.Find('<') != -1) ||
+		(newname.Find('>') != -1) ||
+		(newname.Find('|') != -1))
+	{
+		wxMessageBox(_("Filenames may not contain any of the following characters: / * ? < > |"), _("Invalid filename"), wxICON_EXCLAMATION);
+		event.Veto();
+		return;
+	}
+
+	wxString dir = m_dir;
+	if (dir.Right(1) != _T("\\") && dir.Right(1) != _T("/"))
+		dir += _T("\\");
+	if (wxRenameFile(dir + m_fileData[m_indexMapping[event.GetItem()]].name, dir + newname))
+		m_fileData[m_indexMapping[event.GetItem()]].name = newname;
+	else
+		event.Veto();
+#endif
+
 }
