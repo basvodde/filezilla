@@ -1,9 +1,15 @@
 #ifndef __FILEZILLA_H__
 #define __FILEZILLA_H__
 
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+  #include <config.h>
+#endif
 
 #include <wx/wx.h>
+
+// Include after wx.h so that __WXFOO__ is properly defined
+#include "setup.h"
+
 #include <wx/splitter.h>
 #include <wx/wxhtml.h>
 #include <wx/socket.h>

@@ -134,8 +134,9 @@ checkTools()
 	fi
 
 	echo -n "$N.2 "; version_check aclocal
-	echo -n "$N.3 "; version_check autoconf 2 5
-	echo -n "$N.4 "; version_check libtoolize 1 4
+        echo -n "$N.3 "; version_check autoheader
+	echo -n "$N.4 "; version_check autoconf 2 5
+	echo -n "$N.5 "; version_check libtoolize 1 4
 }
 
 checkTools 2
@@ -149,16 +150,19 @@ fi
 echo "3.1 Running aclocal... "
 aclocal -I . || failedAclocal
 
-echo "3.2 Runnig libtoolize... "
+echo "3.2 Running autoheader... "
+autoheader
+
+echo "3.3 Runnig libtoolize... "
 libtoolize --automake -c -f
 
-echo "3.3 Running autoconf... "
+echo "3.4 Running autoconf... "
 autoconf
 
-echo "3.4 Runing automake... "
+echo "3.5 Runing automake... "
 automake -a -c -f
 
-echo -n "3. Checking generate files... "
+echo -n "4. Checking generate files... "
 if test ! -f configure || test ! -f config/ltmain.sh || test ! -f Makefile.in; then
   echo -e "\033[1;31mfailed"
   echo -e "\nError: Unable to generate all required files!\033[0m\n"
