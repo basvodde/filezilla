@@ -11,8 +11,8 @@ AC_PROG_LIBTOOL
 
 AC_CACHE_SAVE
 
-CFLAGS="$aCFLAGS -Wall -g -fexceptions"
-CXXFLAGS="$aCXXFLAGS -Wall -g -fexceptions"
+CFLAGS="$CFLAGS -Wall -g -fexceptions"
+CXXFLAGS="$CXXFLAGS -Wall -g -fexceptions"
 
 AM_OPTIONS_WXCONFIG
 
@@ -34,95 +34,54 @@ AC_CACHE_SAVE
 CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
 CXXFLAGS="$CXXFLAGS $WX_CXXFLAGS_ONLY"
 CFLAGS="$CFLAGS $WX_CFLAGS_ONLY"
-
 LDFLAGS="$LDFLAGS $WX_LIBS"
 
-if echo $host_os | grep mingw; then
-	if test ! `$WXCONFIG --libs | grep -e '-l(wx)?zlib'`; then
-		AC_ARG_WITH(zlib-lib,
-		[[  --with-zlib-lib=FILE     Use the given path to the (wx)zlib library.]],
-		[
-			if test "$withval" != "yes" -a "$withval" != ""; then
-				ZLIB_LIB=$withval
-			fi
-		])
-		if test "x$ZLIB_LIB" = "x"; then
-			AC_CHECK_LIB(wxzlib, zlibVersion, ZLIB_LIB="-lwxzlib",
-				AC_CHECK_LIB(zlib, zlibVersion, ZLIB_LIB="-lzlib",
-					AC_MSG_ERROR([zlib library not found. Try using --with-zlib-lib=FILE to specify the library path. The library source is included in the wxWidgets source in the src/zlib/ directory.])
-				)
-			)
-		fi
-	fi
-
-	if test ! `$WXCONFIG --libs | grep -e '-l(wx)?png'`; then
-		AC_ARG_WITH(png-lib,
-		[[  --with-png-lib=FILE     Use the given path to the (wx)png library.]],
-		[
-			if test "$withval" != "yes" -a "$withval" != ""; then
-				PNG_LIB=$withval
-			fi
-		])
-		if test "x$PNG_LIB" = "x"; then
-			AC_CHECK_LIB(wxpng, png_create_info_struct, PNG_LIB="-lwxpng",
-				AC_CHECK_LIB(png, png_create_info_struct, PNG_LIB="-lpng",
-					AC_MSG_ERROR([png library not found. Try using --with-png-lib=FILE to specify the library path. The library source is included in the wxWidgets source in the src/png/ directory.]), $ZLIB_LIB
-				), $ZLIB_LIB
-			)
-		fi
-	fi
-else
-	PNG_LIB=
-	ZLIB_LIB=
-fi
-
+WINDRESFLAGS=
 use_resourcefile=
 if test "x$host_os" = "xcygwin" -o "x$host_os" = "xmingw32"; then
-	AC_ARG_WITH(expat-lib,
-	[[  --with-expat-lib=FILE     Use the given path to the (wx)expat library.]],
-	[
-		if test "$withval" != "yes" -a "$withval" != ""; then
-			EXPAT_LIB=$withval
-		fi
-	])
-	if test "x$EXPAT_LIB" = "x"; then
-		AC_CHECK_LIB(wxexpat, XML_ParserCreate, EXPAT_LIB="-lwxexpat",
-			AC_CHECK_LIB(expat, XML_ParserCreate, EXPAT_LIB="-lexpat",
-				AC_MSG_ERROR([expat xml parser library not found. Try using --with-expat-lib=FILE to specify the library path. The library source is included in the wxWidgets source in the src/expat/ directory.])
-			)
-		)
-	fi
-	if wx-config --cppflags | grep __WXMSW__; then
-		if ! wx-config --libs | grep -e -lcomctl32; then
-			WX_LIBS="$WX_LIBS -lrpcrt4 -loleaut32 -lole32 -luuid -lwinspool -lwinmm -lshell32 -lcomctl32 -lcomdlg32 -ladvapi32 -lwsock32 -lgdi32"
-		fi
+        if wx-config --cppflags | grep __WXMSW__; then
 		if windres --version; then
                   use_resourcefile=true
                 fi
 	fi
-else
-	EXPAT_LIB=
+	# I hate Quadrigraphs
+	# fixme: hardcoded -mthreads removal is no solution, I need a real 
+        # filter for defines and include paths
+	WINDRESFLAGS=`echo $CPPFLAGS | sed 's/\(^\|@<:@ @:>@\)-mthreads\($\|@<:@ @:>@\)/ /g'`
 fi
+
 AM_CONDITIONAL(USE_RESOURCEFILE, test x$use_resourcefile = xtrue)
 AM_CONDITIONAL(MACAPPBUNDLE, wx-config --cppflags | grep __WXMAC__)
 
-PKG_CHECK_MODULES(LIBIDN, libidn)
+AC_CHECK_HEADER(idna.h,, 
+[
+	AC_MSG_ERROR([idna.h not found which is part of GNU libidn.])
+])
 
-CFLAGS="$CFLAGS $LIBIDN_CFLAGS"
-CPPFLAGS="$CPPFLAGS $LIBIDN_CFLAGS"
-LIBS="$LIBS $LIBIDN_LIBS"
+AC_ARG_WITH(idn-lib,
+[[  --with-idn-lib=FILE     Use the given path to the idn library.]],
+[
+	if test "$withval" != "yes" -a "$withval" != ""; then
+		IDN_LIB=$withval
+	fi
+])
 
-CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
-CXXFLAGS="$CXXFLAGS $WX_CXXFLAGS"
+if test "x$IDN_LIB" = "x"; then
+	AC_CHECK_LIB(idn, idna_to_ascii_8z, IDN_LIB="-lidn",
+		AC_MSG_ERROR([GNU libidn not found. Try using --with-idn-lib=FILE to specify the library path.])
+	)
+fi
+
+LIBS="$LIBS $IDN_LIB"
+
 
 CATALOGS_TO_INSTALL="install-filezilla-catalogs"
 
 AC_SUBST(WX_LIBS)
-AC_SUBST(EXPAT_LIB)
-AC_SUBST(PNG_LIB)
-AC_SUBST(ZLIB_LIB)
 AC_SUBST(CATALOGS_TO_INSTALL)
+AC_SUBST(WINDRESFLAGS)
 
 AC_OUTPUT(Makefile src/Makefile src/engine/Makefile src/tinyxml/Makefile
-src/interface/Makefile src/interface/resources/Makefile src/include/Makefile 
-locales/Makefile src/interface/resources/16x16/Makefile src/interface/resources/32x32/Makefile)
+src/interface/Makefile src/interface/resources/Makefile src/include/Makefile
+locales/Makefile src/interface/resources/16x16/Makefile
+src/interface/resources/32x32/Makefile data/Makefile)

@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = 1.6
 
-SUBDIRS = . src locales
+SUBDIRS = . src locales data
 
 dist_noinst_SCRIPTS = autogen.sh update-configure.sh
 

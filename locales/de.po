@@ -7,43 +7,43 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-09-29 16:30+0200\n"
-"PO-Revision-Date: 2004-05-25 16:09+0100\n"
+"POT-Creation-Date: 2004-10-02 22:58+0200\n"
+"PO-Revision-Date: 2004-10-02 20:15+0100\n"
 "Last-Translator: Tim Kosse <tim.kosse@gmx.de>\n"
 "Language-Team: Tim Kosse <tim.kosse@gmx.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../src/interface/Mainfrm.cpp:661
+#: ../src/interface/Mainfrm.cpp:659
 msgid "%H:%M:%S elapsed"
 msgstr "%H:%M:%S vergangen"
 
-#: ../src/interface/Mainfrm.cpp:681
+#: ../src/interface/Mainfrm.cpp:679
 msgid "%H:%M:%S left"
 msgstr "%H:%M:%S verblieben"
 
-#: ../src/interface/Mainfrm.cpp:673
+#: ../src/interface/Mainfrm.cpp:671
 #, c-format
 msgid "%s bytes (%d B/s)"
-msgstr "%S Bytes ($d B/s)"
+msgstr "%s Bytes (%d B/s)"
 
-#: ../src/interface/Mainfrm.cpp:671
+#: ../src/interface/Mainfrm.cpp:669
 #, c-format
 msgid "%s bytes (%d.%d KB/s)"
 msgstr "%s Bytes (%d.%d KB/s)"
 
-#: ../src/interface/Mainfrm.cpp:669
+#: ../src/interface/Mainfrm.cpp:667
 #, c-format
 msgid "%s bytes (%d.%d MB/s)"
 msgstr "%s Bytes (%d.%d MB/s)"
 
-#: ../src/interface/Mainfrm.cpp:689
+#: ../src/interface/Mainfrm.cpp:687
 #, c-format
 msgid "%s bytes (? B/s)"
 msgstr "%s Bytes (? B/s)"
 
-#: resources.h:54
+#: resources.h:57
 msgid "&Active"
 msgstr "&Aktiv"
 
@@ -53,13 +53,13 @@ msgstr "&Immer diese Aktion verwenden"
 
 #: resources.h:49
 msgid "&Browse..."
-msgstr "&Durchsuchen"
+msgstr "&Durchsuchen..."
 
-#: resources.h:20
+#: resources.h:20 resources.h:72
 msgid "&Cancel"
 msgstr "&Abbrechen"
 
-#: resources.h:57
+#: resources.h:60
 msgid "&Connect"
 msgstr "&Verbinden"
 
@@ -67,15 +67,15 @@ msgstr "&Verbinden"
 msgid "&Delete"
 msgstr "&Entfernen"
 
-#: resources.h:65
+#: resources.h:78 ../src/interface/resources/resources.h:4
 msgid "&Edit"
 msgstr "&Bearbeiten"
 
-#: resources.h:60
+#: resources.h:73 ../src/interface/resources/resources.h:1
 msgid "&File"
 msgstr "&Datei"
 
-#: resources.h:29 resources.h:68
+#: resources.h:29 resources.h:81 ../src/interface/resources/resources.h:7
 msgid "&Host:"
 msgstr "&Host:"
 
@@ -87,7 +87,7 @@ msgstr "&Logontyp:"
 msgid "&New Site"
 msgstr "&Neuer Server"
 
-#: resources.h:58
+#: resources.h:61 resources.h:71
 msgid "&OK"
 msgstr "&OK"
 
@@ -95,21 +95,25 @@ msgstr "&OK"
 msgid "&Overwrite"
 msgstr "&Überschreiben"
 
-#: resources.h:55
+#: resources.h:58
 msgid "&Passive"
 msgstr "&Passiv"
 
-#: resources.h:39
+#: resources.h:69
 msgid "&Password:"
 msgstr "&Passwort:"
 
-#: resources.h:72
+#: resources.h:30 resources.h:85 ../src/interface/resources/resources.h:11
 msgid "&Port:"
 msgstr "&Port:"
 
-#: resources.h:74
+#: resources.h:87 ../src/interface/resources/resources.h:13
 msgid "&Quickconnect"
 msgstr "&Verbinden"
+
+#: resources.h:70
+msgid "&Remember password for this session"
+msgstr "Passwort für den Rest der Sitzung &speichern"
 
 #: resources.h:25
 msgid "&Rename"
@@ -119,11 +123,11 @@ msgstr "&Umbenennen"
 msgid "&Resume"
 msgstr "&Fortsetzen"
 
-#: resources.h:66
+#: resources.h:79 ../src/interface/resources/resources.h:5
 msgid "&Settings"
 msgstr "&Einstellungen"
 
-#: resources.h:61
+#: resources.h:74
 msgid "&Site Manager"
 msgstr "&Seitenverwaltung"
 
@@ -131,7 +135,7 @@ msgstr "&Seitenverwaltung"
 msgid "&Skip"
 msgstr "Ü&berspringen"
 
-#: resources.h:52
+#: resources.h:55
 msgid "&Transfer mode:"
 msgstr "&Transfermodus:"
 
@@ -139,11 +143,11 @@ msgstr "&Transfermodus:"
 msgid "&User:"
 msgstr "&Benutzername:"
 
-#: resources.h:70
+#: resources.h:83 ../src/interface/resources/resources.h:9
 msgid "&Username:"
 msgstr "&Benutzername:"
 
-#: ../src/interface/Mainfrm.cpp:685
+#: ../src/interface/Mainfrm.cpp:683
 msgid "--:--:-- left"
 msgstr "--:--:-- verblieben"
 
@@ -155,11 +159,16 @@ msgstr "&Nur auf Downloads anwenden"
 msgid "A&pply only to uploads"
 msgstr "&Nur auf Uploads anwenden"
 
+#: resources.h:51
+msgid "Adjust server timezone offset:"
+msgstr "Zeitzone des Server ausgleichen:"
+
 #: resources.h:41
 msgid "Advanced"
 msgstr "Erweitert"
 
-#: resources.h:34
+#: resources.h:34 ../src/interface/sitemanager.cpp:473
+#: ../src/interface/sitemanager.cpp:523 ../src/interface/sitemanager.cpp:628
 msgid "Anonymous"
 msgstr "Anonym"
 
@@ -167,48 +176,57 @@ msgstr "Anonym"
 msgid "Apply to &current queue only"
 msgstr "Nur auf aktuelle &Warteschlange anwenden"
 
-#: resources.h:36
+#: resources.h:36 ../src/interface/sitemanager.cpp:517
+#: ../src/interface/sitemanager.cpp:659
 msgid "Ask for password"
 msgstr "Nach Passwort fragen"
 
-#: ../src/interface/Mainfrm.cpp:341
+#: ../src/interface/Mainfrm.cpp:333 ../src/interface/Mainfrm.cpp:709
 msgid "Break current connection?"
 msgstr "Aktuelle Verbindung unterbrechen?"
 
-#: ../src/engine/transfersocket.cpp:226
+#: ../src/engine/transfersocket.cpp:227
 msgid "Can't read from file"
 msgstr "Kann nicht aus Datei lesen"
 
-#: ../src/engine/transfersocket.cpp:184
+#: ../src/engine/transfersocket.cpp:182
 msgid "Can't write data to file, disk is full."
 msgstr ""
 "In die Zieldatei kann nicht geschrieben werden, nicht genug Speicherplatz."
 
-#: ../src/engine/transfersocket.cpp:186 ../src/engine/transfersocket.cpp:189
+#: ../src/engine/transfersocket.cpp:184 ../src/engine/transfersocket.cpp:187
 msgid "Can't write data to file."
 msgstr "In die Zieldatei kann nicht geschrieben werden."
 
-#: resources.h:77
+#: resources.h:92 ../src/interface/resources/resources.h:14
 msgid "Cancel current operation"
 msgstr "Aktuelle Operation abbrechen?"
 
-#: resources.h:78
+#: resources.h:93 ../src/interface/resources/resources.h:15
 msgid "Cancels the current operation"
 msgstr "Bricht aktuelle Operation ab"
 
-#: ../src/interface/Mainfrm.cpp:268
+#: ../src/interface/Mainfrm.cpp:262
 msgid "Cannot load Quickconnect bar from resource file"
 msgstr "Quickconnect Leiste kann nicht aus Resourcen Datei geladen werden"
 
-#: ../src/interface/Mainfrm.cpp:250
+#: ../src/interface/Mainfrm.cpp:244
 msgid "Cannot load main menu from resource file"
 msgstr "Hauptmenü kann nicht aus Resourcen Datei geladen werden"
 
-#: ../src/interface/Mainfrm.cpp:432
+#: ../src/interface/Mainfrm.cpp:424
 msgid "Cannot load toolbar from resource file"
 msgstr "Werkzeugleiste kann nicht aus Resourcen Datei geladen werden"
 
-#: resources.h:64
+#: resources.h:68
+msgid "Challenge:"
+msgstr "Aufforderung:"
+
+#: ../src/interface/sitemanager.cpp:735
+msgid "Choose the default local directory"
+msgstr "Lokales Standard-Verzeichnis auswählen"
+
+#: resources.h:77 ../src/interface/resources/resources.h:3
 msgid "Close FileZilla"
 msgstr "FileZilla beenden"
 
@@ -220,7 +238,7 @@ msgstr "&Kommentar:"
 msgid "Command:"
 msgstr "Befehl:"
 
-#: ../src/engine/ftpcontrolsocket.cpp:241
+#: ../src/engine/ftpcontrolsocket.cpp:278
 msgid "Connected"
 msgstr "Verbunden"
 
@@ -229,7 +247,7 @@ msgstr "Verbunden"
 msgid "Connecting to %s:%d..."
 msgstr "Verbinden mit %s:%d..."
 
-#: ../src/engine/ftpcontrolsocket.cpp:135
+#: ../src/engine/ftpcontrolsocket.cpp:176
 msgid "Connection established, waiting for welcome message..."
 msgstr "Verbindung hergestellt, warte auf Willkommensnachricht..."
 
@@ -241,11 +259,11 @@ msgstr "Kop&ieren"
 msgid "Could not connect to server"
 msgstr "Verbindung mit Server fehlgeschlagen"
 
-#: ../src/engine/ftpcontrolsocket.cpp:413
+#: ../src/engine/ftpcontrolsocket.cpp:510
 msgid "Could not establish connection to server"
 msgstr "Verbindung mit Server fehlgeschlagen"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1392
+#: ../src/engine/ftpcontrolsocket.cpp:1501
 msgid "Could not establish passive connection to server"
 msgstr "Passive Verbindung mit Server fehlgeschlagen"
 
@@ -273,15 +291,15 @@ msgstr ""
 "Für diese Sitzung werden die Standardeinstellungen verwendet und alle "
 "Änderungen an den Einstellungen werden nicht beibehalten."
 
-#: ../src/interface/Mainfrm.cpp:316
+#: ../src/interface/Mainfrm.cpp:308
 msgid "Could not parse server address:"
 msgstr "Fehlerhafte Server-Adresse:"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1133
+#: ../src/engine/ftpcontrolsocket.cpp:1242
 msgid "Could not seek to end of file"
 msgstr "Es konnte nicht zum Dateiende gesprungen werden"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1113
+#: ../src/engine/ftpcontrolsocket.cpp:1222
 #, c-format
 msgid "Could not seek to offset %s within file"
 msgstr "Es konnte nicht zu Position %s innerhalb der Datei gesprungen werden"
@@ -290,11 +308,11 @@ msgstr "Es konnte nicht zu Position %s innerhalb der Datei gesprungen werden"
 msgid "Critical error"
 msgstr "Kritischer Fehler"
 
-#: resources.h:53
+#: resources.h:56
 msgid "D&efault"
 msgstr "Stan&dard"
 
-#: resources.h:59
+#: resources.h:62
 msgid "D&iscard"
 msgstr "&Verwerfen"
 
@@ -308,7 +326,8 @@ msgstr "Datum"
 msgid "Date/time unknown"
 msgstr "Datum/Zeit unbekannt"
 
-#: resources.h:43
+#: resources.h:43 ../src/interface/sitemanager.cpp:478
+#: ../src/interface/sitemanager.cpp:546
 msgid "Default"
 msgstr "Standard"
 
@@ -324,28 +343,33 @@ msgstr "Standard &Server-Verzeichnis"
 msgid "Directory listing successful"
 msgstr "Verzeichnisauflistung erfolgreich"
 
-#: resources.h:79
+#: resources.h:94 ../src/interface/resources/resources.h:16
 msgid "Disconnect from server"
 msgstr "Verbindung zum Server trennen"
 
-#: ../src/engine/ftpcontrolsocket.cpp:67 ../src/engine/ControlSocket.cpp:99
-#: ../src/engine/ControlSocket.cpp:152
+#: ../src/engine/ControlSocket.cpp:99 ../src/engine/ControlSocket.cpp:152
+#: ../src/engine/ftpcontrolsocket.cpp:98
 msgid "Disconnected from server"
 msgstr "Verbindung mit Server getrennt"
 
-#: resources.h:80
+#: resources.h:95 ../src/interface/resources/resources.h:17
 msgid "Disconnects from the currently visible server"
 msgstr "Trennt Verbindung mit aktuellem Server"
 
-#: resources.h:47
+#: resources.h:47 ../src/interface/sitemanager.cpp:537
+#: ../src/interface/sitemanager.cpp:673
 msgid "Dos"
 msgstr "Dos"
 
-#: resources.h:63
+#: resources.h:76 ../src/interface/resources/resources.h:2
 msgid "E&xit"
 msgstr "&Beenden"
 
-#: resources.h:69
+#: resources.h:63
+msgid "Enter password"
+msgstr "Passwort eingeben"
+
+#: resources.h:82 ../src/interface/resources/resources.h:8
 msgid ""
 "Enter the address of the server.\n"
 "To specify the server protocol, prepend the host with the protocol "
@@ -362,7 +386,7 @@ msgstr ""
 "passwort@host:port angeben, die Werte in den anderen Feldern werden dann "
 "überschrieben."
 
-#: resources.h:73
+#: resources.h:86 ../src/interface/resources/resources.h:12
 msgid ""
 "Enter the port on which the server listens.\n"
 "The default for FTP is 21, the default for SFTP is 22."
@@ -370,7 +394,7 @@ msgstr ""
 "Geben Sie den Port des Servers an.\n"
 "Der Standardport für FTP ist 21, der Standardport für SFTP ist 22."
 
-#: ../src/engine/transfersocket.cpp:263
+#: ../src/engine/transfersocket.cpp:264
 #, c-format
 msgid "Error %d writing to socket"
 msgstr "Fehler %d beim Schreiben auf Socket"
@@ -383,12 +407,13 @@ msgstr "Fehler beim Laden der xml Datei"
 msgid "Error:"
 msgstr "Fehler:"
 
-#: resources.h:32
+#: resources.h:32 ../src/interface/sitemanager.cpp:472
+#: ../src/interface/sitemanager.cpp:504 ../src/interface/sitemanager.cpp:651
 msgid "FTP"
 msgstr "FTP"
 
-#: ../src/engine/ftpcontrolsocket.cpp:393
-#: ../src/engine/ftpcontrolsocket.cpp:1353
+#: ../src/engine/ftpcontrolsocket.cpp:490
+#: ../src/engine/ftpcontrolsocket.cpp:1462
 msgid ""
 "Failed to create listening socket for active mode transfer, trying passive "
 "mode"
@@ -396,17 +421,17 @@ msgstr ""
 "Socket für eingehende Verbindungen für aktive Transfer konnte nicht erstellt "
 "werden, versuche passiven Modus"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1073
+#: ../src/engine/ftpcontrolsocket.cpp:1182
 #, c-format
 msgid "Failed to open \"%s\" for appending / writing"
 msgstr "%s konnte nicht zum Anhängen / Schreiben geöffnet werden"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1098
+#: ../src/engine/ftpcontrolsocket.cpp:1207
 #, c-format
 msgid "Failed to open \"%s\" for reading"
 msgstr "%s konnte nicht zum Lesen geöffnet werden"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1084
+#: ../src/engine/ftpcontrolsocket.cpp:1193
 #, c-format
 msgid "Failed to open \"%s\" for writing"
 msgstr "%s konnte nicht zum Schreiben geöffnet werden"
@@ -428,7 +453,7 @@ msgstr "Datei"
 msgid "File transfer successful"
 msgstr "Dateitransfer erfolgreich"
 
-#: ../src/interface/FileZilla.cpp:128 ../src/interface/Mainfrm.cpp:319
+#: ../src/interface/FileZilla.cpp:128 ../src/interface/Mainfrm.cpp:311
 msgid "FileZilla Error"
 msgstr "FileZilla Fehler"
 
@@ -460,7 +485,16 @@ msgstr "Ordner"
 msgid "General"
 msgstr "Allgemein"
 
-#: resources.h:37
+#: resources.h:66
+msgid "Host:"
+msgstr "Host:"
+
+#: resources.h:52
+msgid "Hours,"
+msgstr "Stunden,"
+
+#: resources.h:37 ../src/interface/sitemanager.cpp:520
+#: ../src/interface/sitemanager.cpp:661
 msgid "Interactive"
 msgstr "Interaktiv"
 
@@ -472,19 +506,19 @@ msgstr "Unterbrochen vonm Benutzer"
 msgid "Invalid hostname or host not found"
 msgstr "Ungültiger Host oder Host nicht gefunden"
 
-#: ../src/engine/server.cpp:86 ../src/engine/server.cpp:104
+#: ../src/engine/server.cpp:89 ../src/engine/server.cpp:107
 msgid "Invalid port given. The port has to be a value from 1 to 65535."
 msgstr ""
 "Ungültiger Port angegeben. Der Port muss ein Wert von 1 bis 65535 sein."
 
-#: ../src/engine/server.cpp:32
+#: ../src/engine/server.cpp:35
 msgid ""
 "Invalid protocol specified. Only valid protocol is ftp:// at the moment."
 msgstr ""
 "Ungültiges Protokoll angegeben. Momentan ist ftp:// das einzige gültige "
 "Protokoll."
 
-#: ../src/engine/server.cpp:54
+#: ../src/engine/server.cpp:57
 msgid "Invalid username given."
 msgstr "Ungültiger Benutzername angegeben."
 
@@ -496,28 +530,42 @@ msgstr "Zuletzt geändert"
 msgid "Listing:"
 msgstr "Listing:"
 
-#: resources.h:46
+#: resources.h:46 ../src/interface/sitemanager.cpp:540
+#: ../src/interface/sitemanager.cpp:677
 msgid "MVS"
 msgstr "MVS"
 
-#: ../src/interface/sitemanager.cpp:63
+#: resources.h:53
+msgid "Minutes"
+msgstr "Minuten"
+
+#: ../src/interface/sitemanager.cpp:133
 msgid "My Sites"
 msgstr "Eigene Server"
+
+#: resources.h:65
+msgid "Name:"
+msgstr "Name:"
 
 #: resources.h:24
 msgid "New &Folder"
 msgstr "Neuer &Ordner"
 
-#: ../src/interface/sitemanager.cpp:173 ../src/interface/sitemanager.cpp:196
+#: ../src/interface/sitemanager.cpp:301 ../src/interface/sitemanager.cpp:324
 msgid "New folder"
 msgstr "Neuer Ordner"
 
-#: ../src/engine/server.cpp:17 ../src/engine/server.cpp:79
-#: ../src/engine/server.cpp:111
+#: ../src/interface/sitemanager.cpp:581 ../src/interface/sitemanager.cpp:604
+msgid "New site"
+msgstr "Neuer Server"
+
+#: ../src/engine/server.cpp:20 ../src/engine/server.cpp:82
+#: ../src/engine/server.cpp:114
 msgid "No host given, please enter a host."
 msgstr "Kein Host angegeben, bitte Host eingeben."
 
-#: resources.h:35
+#: resources.h:35 ../src/interface/sitemanager.cpp:514
+#: ../src/interface/sitemanager.cpp:629 ../src/interface/sitemanager.cpp:657
 msgid "Normal"
 msgstr "Normal"
 
@@ -525,11 +573,15 @@ msgstr "Normal"
 msgid "OK"
 msgstr "OK"
 
-#: resources.h:67
+#: resources.h:88 resources.h:89
+msgid "Open the Site Manager"
+msgstr "Öffnet die Seitenverwaltung"
+
+#: resources.h:80 ../src/interface/resources/resources.h:6
 msgid "Open the settings dialog of FileZilla"
 msgstr "Einstellungsdialog von FileZilla öffnen"
 
-#: resources.h:62
+#: resources.h:75
 msgid "Opens the Site Manager"
 msgstr "Öffnet die Seitenverwaltung"
 
@@ -541,17 +593,17 @@ msgstr "Überschreiben falls &neuer"
 msgid "Owner / Group"
 msgstr "Besitzer / Gruppe"
 
-#: resources.h:30
-msgid "P&ort:"
-msgstr "&Port:"
-
-#: resources.h:71
+#: resources.h:39 resources.h:84 ../src/interface/resources/resources.h:10
 msgid "Pass&word:"
 msgstr "Pass&wort:"
 
 #: ../src/interface/RemoteListView.cpp:44
 msgid "Permissions"
 msgstr "Berechtigungen"
+
+#: resources.h:64
+msgid "Please enter a password for this server:"
+msgstr "Geben Sie ein Passwort für diesen Server ein:"
 
 #: resources.h:10
 msgid "Please select an action:"
@@ -561,15 +613,15 @@ msgstr "Bitte Aktion auswählen"
 msgid "Re&name"
 msgstr "&Umbenennen"
 
-#: ../src/interface/Mainfrm.cpp:465
+#: ../src/interface/Mainfrm.cpp:457
 msgid "Really cancel current operation?"
 msgstr "Aktuelle Operation abbrechen?"
 
-#: resources.h:81 resources.h:82
+#: resources.h:96 resources.h:97
 msgid "Reconnects to the last used server"
 msgstr "Stellt Verbindung mit dem zuletzt benutzten Server wieder her"
 
-#: resources.h:75 resources.h:76
+#: resources.h:90 resources.h:91
 msgid "Refresh the file and folder lists"
 msgstr "Datei- und Ordnerlisten aktualisieren"
 
@@ -581,7 +633,7 @@ msgstr "Datei umbenennen"
 msgid "Response:"
 msgstr "Antwort:"
 
-#: ../src/engine/ftpcontrolsocket.cpp:320
+#: ../src/engine/ftpcontrolsocket.cpp:407
 msgid "Retrieving directory listing..."
 msgstr "Empfange Verzeichnislisting..."
 
@@ -589,7 +641,7 @@ msgstr "Empfange Verzeichnislisting..."
 msgid "Select Entry:"
 msgstr "Eintrag auswählen:"
 
-#: resources.h:56
+#: resources.h:59
 msgid "Server allows &multiple connections"
 msgstr "Server erlaubt &mehrfache Verbindungen"
 
@@ -607,24 +659,24 @@ msgstr "Seitenverwaltung"
 msgid "Size unknown"
 msgstr "Dateigröße unbekannt"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1638
-#: ../src/engine/ftpcontrolsocket.cpp:1713
+#: ../src/engine/ftpcontrolsocket.cpp:1746
+#: ../src/engine/ftpcontrolsocket.cpp:1821
 #, c-format
 msgid "Skipping download of %s"
 msgstr "Überspringe Download von %s"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1642
-#: ../src/engine/ftpcontrolsocket.cpp:1717
+#: ../src/engine/ftpcontrolsocket.cpp:1750
+#: ../src/engine/ftpcontrolsocket.cpp:1825
 #, c-format
 msgid "Skipping upload of %s"
 msgstr "Überspringe Upload von %s"
 
-#: ../src/engine/ftpcontrolsocket.cpp:859
+#: ../src/engine/ftpcontrolsocket.cpp:956
 #, c-format
 msgid "Starting download of %s"
 msgstr "Starte Download von %s"
 
-#: ../src/engine/ftpcontrolsocket.cpp:863
+#: ../src/engine/ftpcontrolsocket.cpp:960
 #, c-format
 msgid "Starting upload of %s"
 msgstr "Starte Upload von %s"
@@ -663,15 +715,21 @@ msgstr "Zeit"
 msgid "Trace:"
 msgstr "Trace:"
 
-#: resources.h:51
+#: resources.h:54
 msgid "Transfer settings"
 msgstr "Transfer Einstellungen"
 
-#: resources.h:44
+#: resources.h:44 ../src/interface/sitemanager.cpp:534
+#: ../src/interface/sitemanager.cpp:671
 msgid "Unix"
 msgstr "Unix"
 
-#: resources.h:45
+#: resources.h:67
+msgid "User:"
+msgstr "Benutzername:"
+
+#: resources.h:45 ../src/interface/sitemanager.cpp:543
+#: ../src/interface/sitemanager.cpp:675
 msgid "VMS"
 msgstr "VMS"
 

@@ -1,0 +1,1 @@
+dist_noinst_DATA = install.nsi mingwm10.dll

@@ -12,8 +12,9 @@ dist_resources_DATA = menus.xrc quickconnectbar.xrc dropdown.png \
 
 if USE_RESOURCEFILE
 noinst_DATA = filezilla.o
+
 filezilla.o:
-	windres $(CPPFLAGS) filezilla.rc filezilla.o
+	windres $(WINDRESFLAGS) filezilla.rc filezilla.o
 endif
 
 
@@ -22,5 +23,5 @@ dist_noinst_DATA = filezilla.rc FileZilla.ico \
 
 if MACAPPBUNDLE
 mac-copy-resources: $(dist_resources_DATA)
-	cp -f $(dist_resources_DATA) ../FileZilla.app/Contents/MacOS/resources
+	cp -f `$(dist_resources_DATA)` ../FileZilla.app/Contents/MacOS/resources
 endif

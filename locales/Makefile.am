@@ -52,7 +52,7 @@ resources.h: ../src/interface/resources/*.xrc
 	cat $@~ | sed "s/_(\"<.*>\")\;//" > $@
 	if [ -f $@~ ]; then rm $@~; fi
 
-filezilla.pot: resources.h
+filezilla.pot: resources.h ../src/include/*.h ../src/engine/*.h ../src/interface/*.h  ../src/engine/*.cpp ../src/interface/*.cpp 
 	rm -f filezilla_new.pot
 	touch filezilla_new.pot
 
