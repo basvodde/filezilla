@@ -34,11 +34,12 @@ public:
 	void SetServer(wxString path, const CServer& server);
 	bool GetServer(wxString path, CServer& server);
 	
-	void SetServer(TiXmlElement *node, const CServer& server);
+	void SetServer(TiXmlElement *node, const CServer& server) const;
 	bool GetServer(TiXmlElement *node, CServer& server);
 	
-	char* ConvUTF8(wxString value) const;
-	wxString ConvLocal(const char *value) const;
+	static char* ConvUTF8(wxString value);
+	static wxString ConvLocal(const char *value);
+	static void AddTextElement(TiXmlElement* node, const char* name, const wxString& value);
 
 protected:
 	int Validate(unsigned int nID, int value);

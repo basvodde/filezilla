@@ -318,113 +318,55 @@ void COptions::FreeXml()
 	}
 }
 
-void COptions::SetServer(TiXmlElement *node, const CServer& server)
+void COptions::AddTextElement(TiXmlElement* node, const char* name, const wxString& value)
+{
+	TiXmlElement element(name);
+
+	char* utf8 = ConvUTF8(value);
+	if (!utf8)
+		return;
+	
+    element.InsertEndChild(TiXmlText(utf8));
+	delete [] utf8;
+
+	node->InsertEndChild(element);
+}
+
+void COptions::SetServer(TiXmlElement *node, const CServer& server) const
 {
 	if (!node)
 		return;
 	
 	node->Clear();
 	
-	TiXmlElement element("");
-
-	char *utf8;
-	
-	element = TiXmlElement("Host");
-	utf8 = ConvUTF8(server.GetHost());
-	if (!utf8)
-		return;
-	element.InsertEndChild(TiXmlText(utf8));
-	delete [] utf8;
-	node->InsertEndChild(element);
-
-	element = TiXmlElement("Port");
-	utf8 = ConvUTF8(wxString::Format(_T("%d"), server.GetPort()));
-	if (!utf8)
-		return;
-	element.InsertEndChild(TiXmlText(utf8));
-	delete [] utf8;
-	node->InsertEndChild(element);
-	
-	element = TiXmlElement("Protocol");
-	utf8 = ConvUTF8(wxString::Format(_T("%d"), server.GetProtocol()));
-	if (!utf8)
-		return;
-	element.InsertEndChild(TiXmlText(utf8));
-	delete [] utf8;
-	node->InsertEndChild(element);
-	
-	element = TiXmlElement("Type");
-	utf8 = ConvUTF8(wxString::Format(_T("%d"), server.GetType()));
-	if (!utf8)
-		return;
-	element.InsertEndChild(TiXmlText(utf8));
-	delete [] utf8;
-	node->InsertEndChild(element);
-	
-	element = TiXmlElement("Logontype");
-	utf8 = ConvUTF8(wxString::Format(_T("%d"), server.GetLogonType()));
-	if (!utf8)
-		return;
-	element.InsertEndChild(TiXmlText(utf8));
-	delete [] utf8;
-	node->InsertEndChild(element);
+	AddTextElement(node, "Host", server.GetHost());
+	AddTextElement(node, "Port", wxString::Format(_T("%d"), server.GetPort()));
+	AddTextElement(node, "Protocol", wxString::Format(_T("%d"), server.GetProtocol()));
+	AddTextElement(node, "Type", wxString::Format(_T("%d"), server.GetType()));
+	AddTextElement(node, "Logontype", wxString::Format(_T("%d"), server.GetLogonType()));
 	
 	if (server.GetLogonType() != ANONYMOUS)
 	{
-		element = TiXmlElement("User");
-		utf8 = ConvUTF8(server.GetUser());
-		if (!utf8)
-			return;
-		element.InsertEndChild(TiXmlText(utf8));
-		delete [] utf8;
-		node->InsertEndChild(element);
+		AddTextElement(node, "User", server.GetUser());
 
 		if (server.GetLogonType() == NORMAL)
-		{
-			element = TiXmlElement("Pass");
-			utf8 = ConvUTF8(server.GetPass());
-			if (!utf8)
-				return;
-			element.InsertEndChild(TiXmlText(utf8));
-			delete [] utf8;
-			node->InsertEndChild(element);
-		}
+			AddTextElement(node, "Pass", server.GetPass());
 	}
 
-	element = TiXmlElement("TimezoneOffset");
-	utf8 = ConvUTF8(wxString::Format(_T("%d"), server.GetTimezoneOffset()));
-	if (!utf8)
-		return;
-	element.InsertEndChild(TiXmlText(utf8));
-	delete [] utf8;
-	node->InsertEndChild(element);
-
-	element = TiXmlElement("PasvMode");
+	AddTextElement(node, "TimezoneOffset", wxString::Format(_T("%d"), server.GetTimezoneOffset()));
 	switch (server.GetPasvMode())
 	{
 	case MODE_PASSIVE:
-		utf8 = ConvUTF8(_T("MODE_PASSIVE"));
+		AddTextElement(node, "PasvMode", _T("MODE_PASSIVE"));
 		break;
 	case MODE_ACTIVE:
-		utf8 = ConvUTF8(_T("MODE_ACTIVE"));
+		AddTextElement(node, "PasvMode", _T("MODE_ACTIVE"));
 		break;
 	default:
-		utf8 = ConvUTF8(_T("MODE_DEFAULT"));
+		AddTextElement(node, "PasvMode", _T("MODE_DEFAULT"));
 		break;
 	}
-	if (!utf8)
-		return;
-	element.InsertEndChild(TiXmlText(utf8));
-	delete [] utf8;
-	node->InsertEndChild(element);
-
-	element = TiXmlElement("MaximumMultipleConnections");
-	utf8 = ConvUTF8(wxString::Format(_T("%d"), server.MaximumMultipleConnections()));
-	if (!utf8)
-		return;
-	element.InsertEndChild(TiXmlText(utf8));
-	delete [] utf8;
-	node->InsertEndChild(element);
+	AddTextElement(node, "MaximumMultipleConnections", wxString::Format(_T("%d"), server.MaximumMultipleConnections()));
 }
 
 bool COptions::GetServer(TiXmlElement *node, CServer& server)
@@ -536,7 +478,7 @@ bool COptions::GetServer(TiXmlElement *node, CServer& server)
 	return true;
 }
 
-char* COptions::ConvUTF8(wxString value) const
+char* COptions::ConvUTF8(wxString value)
 {
 	const wxWCharBuffer buffer = wxConvCurrent->cWX2WC(value);
 
@@ -547,7 +489,7 @@ char* COptions::ConvUTF8(wxString value) const
 	return utf8;
 }
 
-wxString COptions::ConvLocal(const char *value) const
+wxString COptions::ConvLocal(const char *value)
 {
 	return wxString(wxConvUTF8.cMB2WC(value), *wxConvCurrent);
 }
