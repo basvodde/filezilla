@@ -51,11 +51,11 @@ public:
 
 		if (!type)
 		{
-#ifdef __UNICODE__
+#ifdef wxUSE_UNICODE
 			char *buffer = new char[m_len + 1];
 			buffer[m_len] = 0;
 			memcpy(buffer, m_pToken, m_len);
-			wxString str = wxConvCurrent->wxMB2WX(buffer);
+			wxString str = wxConvCurrent->cMB2WX(buffer);
 			delete [] buffer;
 #else
 			wxString str(m_pToken, m_len);
@@ -72,11 +72,11 @@ public:
 			while (m_pToken[pos] >= '0' && m_pToken[pos] <= '9')
 				pos--;
 
-#ifdef __UNICODE__
+#ifdef wxUSE_UNICODE
 			char *buffer = new char[pos + 2];
 			buffer[pos + 1] = 0;
 			memcpy(buffer, m_pToken, pos + 1);
-			wxString str = wxConvCurrent->wxMB2WX(buffer);
+			wxString str = wxConvCurrent->cMB2WX(buffer);
 			delete [] buffer;
 #else
 			wxString str(m_pToken, pos + 1);
@@ -93,11 +93,11 @@ public:
 			while (m_pToken[len] >= '0' && m_pToken[len] <= '9')
 				len++;
 
-#ifdef __UNICODE__
+#ifdef wxUSE_UNICODE
 			char *buffer = new char[len + 1];
 			buffer[len] = 0;
 			memcpy(buffer, m_pToken, len);
-			wxString str = wxConvCurrent->wxMB2WX(buffer);
+			wxString str = wxConvCurrent->cMB2WX(buffer);
 			delete [] buffer;
 #else
 			wxString str(m_pToken, len);
@@ -152,7 +152,7 @@ public:
 		return m_rightNumeric == Yes;
 	}
 
-	int Find(const wxChar *chr, int start = 0) const
+	int Find(const char *chr, int start = 0) const
 	{
 		if (!chr)
 			return -1;
@@ -607,16 +607,16 @@ CDirectoryListingParser::CDirectoryListingParser()
 	for (std::map<wxString, int>::iterator iter = m_MonthNamesMap.begin(); iter != m_MonthNamesMap.end(); iter++)
 	{
 		// January could be 1 or 0, depends how the server counts
-		combo[wxString::Format(_T("%s%02d"), iter->first, iter->second)] = iter->second;
-		combo[wxString::Format(_T("%s%02d"), iter->first, iter->second - 1)] = iter->second;
+		combo[wxString::Format(_T("%s%02d"), iter->first.c_str(), iter->second)] = iter->second;
+		combo[wxString::Format(_T("%s%02d"), iter->first.c_str(), iter->second - 1)] = iter->second;
 		if (iter->second < 10)
-			combo[wxString::Format(_T("%s%d"), iter->first, iter->second)] = iter->second;
+			combo[wxString::Format(_T("%s%d"), iter->first.c_str(), iter->second)] = iter->second;
 		else
-			combo[wxString::Format(_T("%s%d"), iter->first, iter->second % 10)] = iter->second;
+			combo[wxString::Format(_T("%s%d"), iter->first.c_str(), iter->second % 10)] = iter->second;
 		if (iter->second <= 10)
-			combo[wxString::Format(_T("%s%d"), iter->first, iter->second - 1)] = iter->second;
+			combo[wxString::Format(_T("%s%d"), iter->first.c_str(), iter->second - 1)] = iter->second;
 		else
-			combo[wxString::Format(_T("%s%d"), iter->first, (iter->second - 1) % 10)] = iter->second;
+			combo[wxString::Format(_T("%s%d"), iter->first.c_str(), (iter->second - 1) % 10)] = iter->second;
 	}
 	m_MonthNamesMap.insert(combo.begin(), combo.end());
 
@@ -749,7 +749,7 @@ bool CDirectoryListingParser::ParseAsUnix(CLine *pLine, CDirentry &entry)
 		// Append missing group to ownerGroup
 		if (!token.IsNumeric() && token.IsRightNumeric())
 		{
-			if (i)
+			if (!entry.ownerGroup.IsEmpty())
 				entry.ownerGroup += _T(" ");
 			entry.ownerGroup += token.GetString(1);
 		}
