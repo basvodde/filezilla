@@ -37,12 +37,12 @@ while test $# != 0; do
   esac
   shift
 done
-rm -f update-configure.stamp
-if test -e $FILENAME
-then
-  touch -r$FILENAME update-configure.stamp 2>/dev/null
-fi
 if test x$NO_DOWNLOAD != xyes; then
+  rm -f update-configure.stamp
+  if test -e $FILENAME
+  then
+    touch -r$FILENAME update-configure.stamp 2>/dev/null
+  fi
   echo "*** Downloading $URL"
   if wget -N $URL; then :; else
     echo >&2 "*** An error occured while trying to download $FILENAME from"
@@ -75,6 +75,8 @@ if test x$FORCE_REBUILD = xyes -o ! -f update-configure.stamp -o $FILENAME -nt u
   else
      echo "*** now run ./configure, see ./configure --help for more information"
   fi
+
+  touch -r$FILENAME update-configure.stamp 2>/dev/null
 else
   echo "*** $FILENAME is up-to-date, nothing to be done"
 fi
