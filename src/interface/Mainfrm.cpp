@@ -26,7 +26,11 @@
 #define TRANSFERSTATUS_TIMER_ID wxID_HIGHEST + 3
 
 static const int statbarWidths[7] = {
+#ifdef __WXMSE__
 	-2, 100, 90, -1, 150, -1, 41
+#else
+	-2, 100, 90, -1, 150, -1, 50
+#endif
 };
 
 BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
