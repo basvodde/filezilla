@@ -3,6 +3,8 @@ localesdir = $(pkgdatadir)/locales
 FILEZILLA_LINGUAS = de
 WXWIN_LINGUAS  =    de
 
+CLEANFILES = *.mo resources.h
+
 dist_noinst_DATA = filezilla.pot de.po
 
 install-data-local: @CATALOGS_TO_INSTALL@
@@ -71,18 +73,12 @@ stats:
 			-e 's/\([0-9]\+\) fuzzy translations\?/FZ=\1/' \
 			-e 's/\([0-9]\+\) untranslated messages\?/UT=\1/'`; \
 		TR=0 FZ=0 UT=0; \
+echo $$x; \
 		eval $$x; \
 		TOTAL=`expr $$TR + $$FZ + $$UT`; \
-		echo "\"$$i\" => \"`expr 100 "*" $$TR / $$TOTAL`\", /* $$TOTAL strings */"; \
+		echo "\"$$i\" => \"`expr 100 "*" $$TR / $$TOTAL`%\", $$TR of $$TOTAL strings translated, $$FZ fuzzy"; \
 	done
 
-#echo "$$i.po `expr 100 "*" $$TR / $$TOTAL`% of $$TOTAL strings"; 
-
-distclean: clean
-	-rm $(srcdir)/Makefile
-
-clean:
-	-rm $(srcdir)/*.mo
-	-rm $(srcdir)/resources.h
+all: allmo
 
 .PHONY: allpo allmo force-update stats FORCE

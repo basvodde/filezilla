@@ -6,13 +6,16 @@ then
   mkdir config
 fi
 set -x
-aclocal
-libtoolize --automake -c -f
-autoconf
 automake -a -c -f
 set +x
 if test ! -f configure || test ! -f config/ltmain.sh || test ! -f Makefile.in; then
-   cat<<EOT
+  export WANT_AUTOMAKE="1.7"
+  aclocal
+  libtoolize --automake -c -f
+  autoconf
+  automake -a -c -f
+  if test ! -f configure || test ! -f config/ltmain.sh || test ! -f Makefile.in; then
+    cat<<EOT
 ** Unable to generate all required files!
 ** you'll need autoconf 2.5, automake 1.7, libtool 1.5, autoheader and aclocal installed
 ** If you don't have access to these tools, you can use the
@@ -20,7 +23,8 @@ if test ! -f configure || test ! -f config/ltmain.sh || test ! -f Makefile.in; t
 ** just remember to call it from time to time, it will only download 
 ** if some files have been changed
 EOT
-   exit 1
+     exit 1
+  fi
 fi
 echo "Now run ./configure, see ./configure --help for more information"
 
