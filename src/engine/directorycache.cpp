@@ -184,7 +184,7 @@ bool CDirectoryCache::InvalidateFile(wxString filename, const CServer &server, c
 			listing[entry.listing.m_entryCount].link = 0;
 			listing[entry.listing.m_entryCount].unsure = true;
 			entry.listing.m_entryCount++;
-			delete entry.listing.m_pEntries;
+			delete [] entry.listing.m_pEntries;
 			entry.listing.m_pEntries = listing;
 		}
 	}
