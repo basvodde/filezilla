@@ -25,7 +25,7 @@ public:
 	CRemoteListView(wxWindow* parent, wxWindowID id, CState* pState, CCommandQueue* pCommandQueue, CQueueView* pQueue);
 	virtual ~CRemoteListView();
 
-	void SetDirectoryListing(CDirectoryListing *pDirectoryListing);
+	void SetDirectoryListing(CDirectoryListing *pDirectoryListing, bool modified = false);
 	void ListingFailed();
 
 	void StopRecursiveOperation();

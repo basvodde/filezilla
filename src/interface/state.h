@@ -13,7 +13,7 @@ public:
 	wxString GetLocalDir() const;
 	bool SetLocalDir(wxString dir);
 
-	bool SetRemoteDir(const CDirectoryListing *m_pDirectoryListing);
+	bool SetRemoteDir(const CDirectoryListing *m_pDirectoryListing, bool modified = false);
 	const CDirectoryListing *GetRemoteDir() const;
 	const CServerPath GetRemotePath() const;
 	

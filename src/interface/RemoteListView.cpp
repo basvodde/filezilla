@@ -4,6 +4,7 @@
 #include "commandqueue.h"
 #include "QueueView.h"
 #include "filezillaapp.h"
+#include "inputdialog.h"
 
 #ifdef __WXMSW__
 #include "shellapi.h"
@@ -332,7 +333,7 @@ bool CRemoteListView::IsItemValid(unsigned int item) const
 	return true;
 }
 
-void CRemoteListView::SetDirectoryListing(CDirectoryListing *pDirectoryListing)
+void CRemoteListView::SetDirectoryListing(CDirectoryListing *pDirectoryListing, bool modified /*=false*/)
 {
 	m_pDirectoryListing = pDirectoryListing;
 
@@ -358,7 +359,8 @@ void CRemoteListView::SetDirectoryListing(CDirectoryListing *pDirectoryListing)
 
 	SortList();
 
-	ProcessDirectoryListing();
+	if (!modified)
+		ProcessDirectoryListing();
 }
 
 void CRemoteListView::SortList(int column /*=-1*/, int direction /*=-1*/)
@@ -736,6 +738,38 @@ void CRemoteListView::OnMenuDownload(wxCommandEvent& event)
 
 void CRemoteListView::OnMenuMkdir(wxCommandEvent& event)
 {
+	CInputDialog dlg;
+	if (!dlg.Create(this, _("Create directory"), _("Please enter the name of the directory which should be created:")))
+		return;
+
+	CServerPath path = m_pDirectoryListing->path;
+
+	// Append a long segment which does (most likely) not exist in the path and
+	// replace it with "New folder" later. This way we get the exact position of
+	// "New folder" and can preselect it in the dialog.
+	wxString tmpName = _T("25CF809E56B343b5A12D1F0466E3B37A49A9087FDCF8412AA9AF8D1E849D01CF");
+	if (path.AddSegment(tmpName))
+	{
+		wxString pathName = path.GetPath();
+		int pos = pathName.Find(tmpName);
+		wxASSERT(pos != -1);
+		wxString newName = _("New folder");
+		pathName.Replace(tmpName, newName);
+		dlg.SetValue(pathName);
+		dlg.SelectText(pos, pos + newName.Length());
+	}
+
+	if (dlg.ShowModal() != wxID_OK)
+		return;
+	
+	path = m_pDirectoryListing->path;
+	if (!path.ChangePath(dlg.GetValue()))
+	{
+		wxBell();
+		return;
+	}
+
+	m_pCommandQueue->ProcessCommand(new CMkdirCommand(path));
 }
 
 void CRemoteListView::OnMenuDelete(wxCommandEvent& event)
@@ -843,6 +877,7 @@ void CRemoteListView::ProcessDirectoryListing()
 			return;
 		}
 	}
+	m_visitedDirs.push_back(m_pDirectoryListing->path);
 
 	const CServer* pServer = m_pState->GetServer();
 	wxASSERT(pServer);

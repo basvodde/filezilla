@@ -116,7 +116,7 @@ void CCommandQueue::Finish(COperationNotification *pNotification)
 
 	// Let the remote list view know if a LIST command failed,
 	// so that it may issue the next command in recursive operations.
-	if (pCommand->GetId() == cmd_list)
+	if (pCommand->GetId() == cmd_list && pNotification->nReplyCode != FZ_REPLY_OK)
 		m_pMainFrame->GetRemoteListView()->ListingFailed();
 	
 	delete m_CommandList.front();

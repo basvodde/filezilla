@@ -10,9 +10,9 @@ bin_PROGRAMS = filezilla
 
 # the application source, library search path, and link libraries
 filezilla_SOURCES = asyncrequestqueue.cpp commandqueue.cpp fileexistsdlg.cpp \
-		FileZilla.cpp ipcmutex.cpp led.cpp LocalListView.cpp \
-		LocalTreeView.cpp Mainfrm.cpp Options.cpp optionspage.cpp \
-		optionspage_filetype.cpp optionspage_language.cpp \
+		FileZilla.cpp inputdialog.cpp ipcmutex.cpp led.cpp \
+		LocalListView.cpp LocalTreeView.cpp Mainfrm.cpp Options.cpp \
+		optionspage.cpp	optionspage_filetype.cpp optionspage_language.cpp \
 		optionspage_passive.cpp optionspage_themes.cpp QueueView.cpp \
 		RemoteListView.cpp RemoteTreeView.cpp settingsdialog.cpp \
 		sitemanager.cpp state.cpp statuslinectrl.cpp StatusView.cpp \
@@ -23,11 +23,12 @@ filezilla_SOURCES += prefix.cpp
 endif
 
 noinst_HEADERS = asyncrequestqueue.h commandqueue.h fileexistsdlg.h \
-		 filezillaapp.h ipcmutex.h led.h LocalListView.h \
-		 LocalTreeView.h Mainfrm.h Options.h optionspage.h \
-		 optionspage_filetype.h optionspage_language.h \
-		 optionspage_passive.h optionspage_themes.h prefix.h \
-		 QueueView.h RemoteListView.h RemoteTreeView.h \
+		 filezillaapp.h inputdialog.h ipcmutex.h led.h \
+		 LocalListView.h LocalTreeView.h Mainfrm.h Options.h \
+		 optionspage.h  optionspage_filetype.h \
+		 optionspage_language.h optionspage_passive.h \
+		 optionspage_themes.h prefix.h QueueView.h \
+		 RemoteListView.h RemoteTreeView.h \
 		 settingsdialog.h sitemanager.h state.h \
 		 statuslinectrl.h StatusView.h themeprovider.h \
 		 xmlfunctions.h

@@ -393,8 +393,11 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 			}
 			break;
 		case nId_listing:
-			m_pState->SetRemoteDir(reinterpret_cast<CDirectoryListingNotification *>(pNotification)->GetDirectoryListing());
-			delete pNotification;
+			{
+				CDirectoryListingNotification* pListingNotification = reinterpret_cast<CDirectoryListingNotification *>(pNotification);
+				m_pState->SetRemoteDir(pListingNotification->GetDirectoryListing(), pListingNotification->Modified());
+				delete pListingNotification;
+			}
 			break;
 		case nId_asyncrequest:
 			m_pAsyncRequestQueue->AddRequest(m_pEngine, reinterpret_cast<CAsyncRequestNotification *>(pNotification));

@@ -89,7 +89,7 @@ void CState::SetRemoteListView(CRemoteListView *pRemoteListView)
 	m_pRemoteListView = pRemoteListView;
 }
 
-bool CState::SetRemoteDir(const CDirectoryListing *pDirectoryListing)
+bool CState::SetRemoteDir(const CDirectoryListing *pDirectoryListing, bool modified /*=false*/)
 {
     if (!pDirectoryListing)
 	{
@@ -104,7 +104,7 @@ bool CState::SetRemoteDir(const CDirectoryListing *pDirectoryListing)
 	*newListing = *pDirectoryListing;
 	
 	if (m_pRemoteListView)
-		m_pRemoteListView->SetDirectoryListing(newListing);
+		m_pRemoteListView->SetDirectoryListing(newListing, modified);
 
 	delete m_pDirectoryListing;
 	m_pDirectoryListing = newListing;
