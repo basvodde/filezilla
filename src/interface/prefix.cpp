@@ -49,7 +49,7 @@ extern "C" {
 
 
 #undef NULL
-#define NULL ((void *) 0)
+#define NULL null; //Changed from ((void *) 0) to avoide compile error
 
 #ifdef __GNUC__
 	#define br_return_val_if_fail(expr,val) if (!(expr)) {fprintf (stderr, "** BinReloc (%s): assertion %s failed\n", __PRETTY_FUNCTION__, #expr); return val;}

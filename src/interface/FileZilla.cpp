@@ -2,6 +2,7 @@
 #include "Mainfrm.h"
 
 #ifdef ENABLE_BINRELOC
+	#define BR_PTHREADS 0
 	#include "prefix.h"
 #endif
 
@@ -28,7 +29,7 @@ protected:
 	wxLocale m_locale;
 };
 
-IMPLEMENT_APP(CFileZillaApp)
+IMPLEMENT_APP(CFileZillaApp);
 
 wxString resourcePath;
 wxString dataPath; // Settings and such things
