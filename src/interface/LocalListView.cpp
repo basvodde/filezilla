@@ -876,9 +876,8 @@ void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 
 	SHFileOperation(&op);
 	delete [] pBuffer;
-	m_pState->SetLocalDir(m_dir);
 #else
-	if (wxMessageBox(_("Really delete all selected files and/or directories?"), _("Confirmation needed"), wxICON_QUESTION | wxYES_NO, this) != wxID_YES)
+	if (wxMessageBox(_("Really delete all selected files and/or directories?"), _("Confirmation needed"), wxICON_QUESTION | wxYES_NO, this) != wxYES)
 		return;
 
 	// Remember the directories to delete and the directories to visit
@@ -887,7 +886,7 @@ void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 
 	wxString dir = m_dir;
 	if (dir.Right(1) != _T("\\") && dir.Right(1) != _T("/"))
-		dir += _T("\\");
+		dir += _T("/");
 
 	// First process selected items
 	long item = -1;
@@ -942,6 +941,7 @@ void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 		wxRmdir(*iter);
 
 #endif
+	m_pState->SetLocalDir(m_dir);
 }
 
 void CLocalListView::OnMenuRename(wxCommandEvent& event)
