@@ -16,7 +16,7 @@ filezilla_SOURCES = asyncrequestqueue.cpp commandqueue.cpp fileexistsdlg.cpp \
 		optionspage_passive.cpp optionspage_themes.cpp QueueView.cpp \
 		RemoteListView.cpp RemoteTreeView.cpp settingsdialog.cpp \
 		sitemanager.cpp state.cpp statuslinectrl.cpp StatusView.cpp \
-		themeprovider.cpp xmlfunctions.cpp
+		themeprovider.cpp view.cpp viewheader.cpp xmlfunctions.cpp
  
 if USE_BINRELOC
 filezilla_SOURCES += prefix.cpp
@@ -31,7 +31,7 @@ noinst_HEADERS = asyncrequestqueue.h commandqueue.h fileexistsdlg.h \
 		 RemoteListView.h RemoteTreeView.h \
 		 settingsdialog.h sitemanager.h state.h \
 		 statuslinectrl.h StatusView.h themeprovider.h \
-		 xmlfunctions.h
+		 view.h viewheader.h xmlfunctions.h
 
 if USE_RESOURCEFILE
 RESOURCEFILE = resources/filezilla.o

@@ -15,6 +15,8 @@
 #include "settingsdialog.h"
 #include "themeprovider.h"
 #include "filezillaapp.h"
+#include "view.h"
+#include "viewheader.h"
 
 #ifndef __WXMSW__
 #include "resources/filezilla.xpm"
@@ -59,6 +61,10 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_PROCESSQUEUE"), CMainFrame::OnUpdateToolbarProcessQueue)
 	EVT_TOOL(XRCID("ID_TOOLBAR_LOGVIEW"), CMainFrame::OnToggleLogView)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_LOGVIEW"), CMainFrame::OnUpdateToggleLogView)
+	EVT_TOOL(XRCID("ID_TOOLBAR_LOCALTREEVIEW"), CMainFrame::OnToggleLocalTreeView)
+	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_LOCALTREEVIEW"), CMainFrame::OnUpdateToggleLocalTreeView)
+	EVT_TOOL(XRCID("ID_TOOLBAR_REMOTETREEVIEW"), CMainFrame::OnToggleRemoteTreeView)
+	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_REMOTETREEVIEW"), CMainFrame::OnUpdateToggleRemoteTreeView)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame(COptions* pOptions) : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
@@ -80,6 +86,11 @@ CMainFrame::CMainFrame(COptions* pOptions) : wxFrame(NULL, -1, _T("FileZilla"), 
 	m_pRemoteSplitter = NULL;
 	m_bInitDone = false;
 	m_bQuit = false;
+
+	m_lastLogViewSplitterPos = 0;
+	m_lastLocalTreeSplitterPos = 0;
+	m_lastRemoteTreeSplitterPos = 0;
+	m_lastQueueSplitterPos = 0;
 
 #ifdef __WXMSW__
 	m_windowIsMaximized = false;
@@ -153,16 +164,28 @@ CMainFrame::CMainFrame(COptions* pOptions) : wxFrame(NULL, -1, _T("FileZilla"), 
 
 	m_pStatusView = new CStatusView(m_pTopSplitter, -1);
 	m_pQueueView = new CQueueView(m_pBottomSplitter, -1, this);
-	m_pLocalTreeView = new CLocalTreeView(m_pLocalSplitter, -1);
-	m_pLocalListView = new CLocalListView(m_pLocalSplitter, -1, m_pState, m_pQueueView);
-	m_pRemoteTreeView = new CRemoteTreeView(m_pRemoteSplitter, -1);
-	m_pRemoteListView = new CRemoteListView(m_pRemoteSplitter, -1, m_pState, m_pCommandQueue, m_pQueueView);
+
+	m_pLocalTreeViewPanel = new CView(m_pLocalSplitter);
+	m_pLocalListViewPanel = new CView(m_pLocalSplitter);
+	m_pLocalTreeView = new CLocalTreeView(m_pLocalTreeViewPanel, -1);
+	m_pLocalListView = new CLocalListView(m_pLocalListViewPanel, -1, m_pState, m_pQueueView);
+	m_pLocalTreeViewPanel->SetWindow(m_pLocalTreeView);
+	m_pLocalListViewPanel->SetWindow(m_pLocalListView);
+	m_pLocalTreeViewPanel->SetHeader(new CViewHeader(m_pLocalSplitter, _("Local site:")));
+	
+	m_pRemoteTreeViewPanel = new CView(m_pRemoteSplitter);
+	m_pRemoteListViewPanel = new CView(m_pRemoteSplitter);
+	m_pRemoteTreeView = new CRemoteTreeView(m_pRemoteTreeViewPanel, -1);
+	m_pRemoteListView = new CRemoteListView(m_pRemoteListViewPanel, -1, m_pState, m_pCommandQueue, m_pQueueView);
+	m_pRemoteTreeViewPanel->SetWindow(m_pRemoteTreeView);
+	m_pRemoteListViewPanel->SetWindow(m_pRemoteListView);
+	m_pRemoteTreeViewPanel->SetHeader(new CViewHeader(m_pRemoteSplitter, _("Remote site:")));
 	
 	m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter, 100);
 	m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueueView, 100);
 	m_pViewSplitter->SplitVertically(m_pLocalSplitter, m_pRemoteSplitter);
-	m_pLocalSplitter->SplitHorizontally(m_pLocalTreeView, m_pLocalListView);
-	m_pRemoteSplitter->SplitHorizontally(m_pRemoteTreeView, m_pRemoteListView);
+	m_pLocalSplitter->SplitHorizontally(m_pLocalTreeViewPanel, m_pLocalListViewPanel);
+	m_pRemoteSplitter->SplitHorizontally(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel);
 	wxSize size = m_pBottomSplitter->GetClientSize();
 	m_pBottomSplitter->SetSashPosition(size.GetHeight() - 140);
 	
@@ -880,14 +903,14 @@ void CMainFrame::OnToggleLogView(wxCommandEvent& event)
 		return;
 
 	if (m_pTopSplitter->IsSplit())
+	{
+		m_lastLogViewSplitterPos = m_pTopSplitter->GetSashPosition();
 		m_pTopSplitter->Unsplit(m_pStatusView);
+	}
 	else
 	{
-		wxSize size = m_pTopSplitter->GetClientSize();
-		if (size.GetHeight() < 200)
-			m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter, size.GetHeight() - 103);
-		else
-			m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter, 100);
+		m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter, m_lastLogViewSplitterPos);
+		ApplySplitterConstraints();
 	}
 }
 
@@ -907,4 +930,52 @@ void CMainFrame::ApplySplitterConstraints()
 
 	if (m_pBottomSplitter->GetSashPosition() < 45)
 		m_pBottomSplitter->SetSashPosition(45);
+}
+
+void CMainFrame::OnToggleLocalTreeView(wxCommandEvent& event)
+{
+	if (!m_pTopSplitter)
+		return;
+
+	if (m_pLocalSplitter->IsSplit())
+	{
+		m_pLocalListViewPanel->SetHeader(m_pLocalTreeViewPanel->DetachHeader());
+		m_lastLocalTreeSplitterPos = m_pLocalSplitter->GetSashPosition();
+		m_pLocalSplitter->Unsplit(m_pLocalTreeViewPanel);
+	}
+	else
+	{
+		m_pLocalTreeViewPanel->SetHeader(m_pLocalListViewPanel->DetachHeader());
+		wxSize size = m_pLocalSplitter->GetClientSize();
+		m_pLocalSplitter->SplitHorizontally(m_pLocalTreeViewPanel, m_pLocalListViewPanel, m_lastLocalTreeSplitterPos);
+	}
+}
+
+void CMainFrame::OnUpdateToggleLocalTreeView(wxUpdateUIEvent& event)
+{
+	event.Check(m_pLocalSplitter && m_pLocalSplitter->IsSplit());
+}
+
+void CMainFrame::OnToggleRemoteTreeView(wxCommandEvent& event)
+{
+	if (!m_pTopSplitter)
+		return;
+
+	if (m_pRemoteSplitter->IsSplit())
+	{
+		m_pRemoteListViewPanel->SetHeader(m_pRemoteTreeViewPanel->DetachHeader());
+		m_lastRemoteTreeSplitterPos = m_pRemoteSplitter->GetSashPosition();
+		m_pRemoteSplitter->Unsplit(m_pRemoteTreeViewPanel);
+	}
+	else
+	{
+		m_pRemoteTreeViewPanel->SetHeader(m_pRemoteListViewPanel->DetachHeader());
+		wxSize size = m_pRemoteSplitter->GetClientSize();
+		m_pRemoteSplitter->SplitHorizontally(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel, m_lastRemoteTreeSplitterPos);
+	}
+}
+
+void CMainFrame::OnUpdateToggleRemoteTreeView(wxUpdateUIEvent& event)
+{
+	event.Check(m_pRemoteSplitter && m_pRemoteSplitter->IsSplit());
 }

@@ -6,7 +6,7 @@
 #endif
 
 CLocalTreeView::CLocalTreeView(wxWindow* parent, wxWindowID id)
-	: wxWindow(parent, id, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER)
+	: wxWindow(parent, id)
 {
 }
 

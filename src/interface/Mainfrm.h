@@ -13,6 +13,7 @@ class CCommandQueue;
 class CAsyncRequestQueue;
 class CLed;
 class CThemeProvider;
+class CView;
 
 class CMainFrame : public wxFrame
 {
@@ -36,9 +37,9 @@ protected:
 	bool CreateMenus();
 	bool CreateQuickconnectBar();
 	bool CreateToolBar();
-	
 	void SetProgress(const CTransferStatus* pStatus);
 
+	// If resizing the window, make sure the individual splitter windows don't get too small
 	void ApplySplitterConstraints();
 
 	wxStatusBar* m_pStatusBar;
@@ -53,8 +54,12 @@ protected:
 
 	CStatusView* m_pStatusView;
 	CQueueView* m_pQueueView;
+	CView* m_pLocalTreeViewPanel;
+	CView* m_pLocalListViewPanel;
 	CLocalTreeView* m_pLocalTreeView;
 	CLocalListView* m_pLocalListView;
+	CView* m_pRemoteTreeViewPanel;
+	CView* m_pRemoteListViewPanel;
 	CRemoteTreeView* m_pRemoteTreeView;
 	CRemoteListView* m_pRemoteListView;
 	CLed* m_pRecvLed;
@@ -88,6 +93,10 @@ protected:
 	void OnMenuEditSettings(wxCommandEvent& event);
 	void OnToggleLogView(wxCommandEvent& event);
 	void OnUpdateToggleLogView(wxUpdateUIEvent& event);
+	void OnToggleLocalTreeView(wxCommandEvent& event);
+	void OnUpdateToggleLocalTreeView(wxUpdateUIEvent& event);
+	void OnToggleRemoteTreeView(wxCommandEvent& event);
+	void OnUpdateToggleRemoteTreeView(wxUpdateUIEvent& event);
 
 	float m_ViewSplitterSashPos;
 	bool m_bInitDone;
@@ -97,6 +106,12 @@ protected:
 	CCommandQueue* m_pCommandQueue;
 	CAsyncRequestQueue* m_pAsyncRequestQueue;
 	CState* m_pState;
+
+	// Variables to remember the splitter position on unsplit
+	int m_lastLogViewSplitterPos;
+	int m_lastLocalTreeSplitterPos;
+	int m_lastRemoteTreeSplitterPos;
+	int m_lastQueueSplitterPos;
 
 #ifdef __WXMSW__
 	bool m_windowIsMaximized;
