@@ -124,6 +124,6 @@ stats: allpo
 	echo " ALL => \"`expr 100 "*" $$ALLTR / $$ALLTOTAL`%\", $$ALLTR of $$ALLTOTAL strings translated, $$ALLFZ fuzzy, $$ALLUT untranslated"; \
 	echo $$TOTAL;
 
-all: allmo stats
+all: allmo
 
 .PHONY: allpo allmo force-update stats FORCE
