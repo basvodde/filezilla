@@ -198,6 +198,12 @@ bool CFtpControlSocket::Logon()
 	}
 	else if (pData->opState == 2)
 	{
+		if (code == 2 && m_ReceiveBuffer.Length() > 7 && m_ReceiveBuffer.Mid(3, 4) == _T(" MVS"))
+		{
+			if (m_pCurrentServer->GetType() == DEFAULT)
+				m_pCurrentServer->SetType(MVS);
+		}
+
 		LogMessage(Status, _("Connected"));
 		ResetOperation(FZ_REPLY_OK);
 		return true;
@@ -291,6 +297,8 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 	pData->bTriedPasv = pData->bTriedActive = false;
 	pData->opState = list_waitcwd;
 
+	if (path.GetType() == DEFAULT)
+		path.SetType(m_pCurrentServer->GetType());
 	pData->path = path;
 	pData->subDir = subDir;
 
@@ -477,7 +485,21 @@ int CFtpControlSocket::ListParseResponse()
 		pData->opState = list_list;
 		break;
 	case list_list:
-		if (code != 1)
+		if (!m_ReceiveBuffer.CmpNoCase(_T("550 No members found.")) && m_pCurrentServer->GetType() == MVS)
+		{
+			CDirectoryListing *pListing = new CDirectoryListing();
+			pListing->path = m_CurrentPath;
+
+			CDirectoryCache cache;
+			cache.Store(*pListing, *m_pCurrentServer, pData->path, pData->subDir);
+			
+			CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing);
+			m_pEngine->AddNotification(pNotification);
+
+			ResetOperation(FZ_REPLY_OK);
+			return FZ_REPLY_OK;
+		}
+		else if (code != 1)
 			error = true;
 		else
 			pData->opState = list_waitfinish;
@@ -632,6 +654,9 @@ enum cwdStates
 int CFtpControlSocket::ChangeDir(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/)
 {
 	enum cwdStates state = cwd_init;
+
+	if (path.GetType() == DEFAULT)
+		path.SetType(m_pCurrentServer->GetType());
 
 	if (path.IsEmpty())
 	{
@@ -819,7 +844,7 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 	
 	if (download)
 	{
-		wxString filename = remotePath.GetPath() + remoteFile;
+		wxString filename = remotePath.FormatFilename(remoteFile);
 		LogMessage(Status, _("Starting download of %s"), filename.c_str());
 	}
 	else
@@ -843,7 +868,10 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 	pData->bPasv = m_pEngine->GetOptions()->GetOptionVal(OPTION_USEPASV) != 0;
 	pData->opState = filetransfer_waitcwd;
 
-	int res = ChangeDir(remotePath);
+	if (pData->remotePath.GetType() == DEFAULT)
+		pData->remotePath.SetType(m_pCurrentServer->GetType());
+
+	int res = ChangeDir(pData->remotePath);
 	if (res != FZ_REPLY_OK)
 		return res;
 
@@ -1259,15 +1287,11 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 	{
 	case filetransfer_size:
 		cmd = _T("SIZE ");
-		if (pData->tryAbsolutePath)
-			cmd += pData->remotePath.GetPath();
-		cmd += pData->remoteFile;
+		cmd += pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath);
 		break;
 	case filetransfer_mdtm:
 		cmd = _T("MDTM ");
-		if (pData->tryAbsolutePath)
-			cmd += pData->remotePath.GetPath();
-		cmd += pData->remoteFile;
+		cmd += pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath);
 		break;
 	case filetransfer_type:
 		if (pData->binary)
@@ -1322,9 +1346,7 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 			cmd = _T("APPE ");
 		else
 			cmd = _T("STOR ");
-		if (pData->tryAbsolutePath)
-			cmd += pData->remotePath.GetPath();
-		cmd += pData->remoteFile;
+		cmd += pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath);
 
 		if (pData->bPasv)
 		{
@@ -1575,7 +1597,7 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 				{
 					if (pData->download)
 					{
-						wxString filename = pData->remotePath.GetPath() + pData->remoteFile;
+						wxString filename = pData->remotePath.FormatFilename(pData->remoteFile);
 						LogMessage(Status, _("Skipping download of %s"), filename.c_str());
 					}
 					else
@@ -1650,7 +1672,7 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 			case CFileExistsNotification::skip:
 				if (pData->download)
 				{
-					wxString filename = pData->remotePath.GetPath() + pData->remoteFile;
+					wxString filename = pData->remotePath.FormatFilename(pData->remoteFile);
 					LogMessage(Status, _("Skipping download of %s"), filename.c_str());
 				}
 				else

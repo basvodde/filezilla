@@ -35,6 +35,10 @@ public:
 	bool operator==(const CServerPath &op) const;
 	bool operator!=(const CServerPath &op) const;
 
+	// withPath is just a hint. For example dataset member names on MVS server
+	// always use absolute filenames including the full path
+	wxString FormatFilename(const wxString &filename, bool omitPath = false) const;
+
 protected:
 	bool m_bEmpty;
 	ServerType m_type;

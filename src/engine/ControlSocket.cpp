@@ -213,6 +213,17 @@ int CControlSocket::ResetOperation(int nErrorCode)
 			break;
 		}
 	}
+	else
+	{
+		switch (GetCurrentCommandId())
+		{
+		case cmd_list:
+			LogMessage(Status, _("Directory listing successful"));
+			break;
+		default:
+			break;
+		}
+	}
 
 	ResetTransferStatus();
 
