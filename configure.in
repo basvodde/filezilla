@@ -106,19 +106,11 @@ fi
 AM_CONDITIONAL(USE_RESOURCEFILE, test x$use_resourcefile = xtrue)
 AM_CONDITIONAL(MACAPPBUNDLE, wx-config --cppflags | grep __WXMAC__)
 
-AC_ARG_WITH(idn-lib,
-[[  --with-idn-lib=FILE     Use the given path to the idn library.]],
-[
-	if test "$withval" != "yes" -a "$withval" != ""; then
-		IDN_LIB=$withval
-	fi
-])
+PKG_CHECK_MODULES(LIBIDN, libidn)
 
-if test "x$IDN_LIB" = "x"; then
-	AC_CHECK_LIB(idn, idna_to_ascii_8z, IDN_LIB="-lidn",
-		AC_MSG_ERROR([GNU libidn not found. Try using --with-idn-lib=FILE to specify the library path.])
-	)
-fi
+CFLAGS="$CFLAGS $LIBIDN_CFLAGS"
+CPPFLAGS="$CPPFLAGS $LIBIDN_CFLAGS"
+LIBS="$LIBS $LIBIDN_LIBS"
 
 CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
 CXXFLAGS="$CXXFLAGS $WX_CXXFLAGS"
@@ -129,7 +121,6 @@ AC_SUBST(WX_LIBS)
 AC_SUBST(EXPAT_LIB)
 AC_SUBST(PNG_LIB)
 AC_SUBST(ZLIB_LIB)
-AC_SUBST(IDN_LIB)
 AC_SUBST(CATALOGS_TO_INSTALL)
 
 AC_OUTPUT(Makefile src/Makefile src/engine/Makefile src/tinyxml/Makefile

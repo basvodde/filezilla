@@ -30,7 +30,6 @@ filezilla_LDFLAGS += $(WX_LIBS)
 filezilla_LDFLAGS += $(EXPAT_LIB)
 filezilla_LDFLAGS += $(PNG_LIB)
 filezilla_LDFLAGS += $(ZLIB_LIB)
-filezilla_LDFLAGS += $(IDN_LIB)
 filezilla_LDFLAGS += $(RESOURCEFILE)
 
 filezilla_DEPENDENCIES = ../engine/libengine.a \
