@@ -3,6 +3,7 @@
 
 class CState;
 class CCommandQueue;
+class CQueueView;
 
 #ifdef __WXMSW__
 class wxImageListMsw;
@@ -11,7 +12,7 @@ class wxImageListMsw;
 class CRemoteListView : public wxListCtrl
 {
 public:
-	CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState, CCommandQueue *pCommandQueue);
+	CRemoteListView(wxWindow* parent, wxWindowID id, CState* pState, CCommandQueue* pCommandQueue, CQueueView* pQueue);
 	virtual ~CRemoteListView();
 
 	void SetDirectoryListing(CDirectoryListing *pDirectoryListing);
@@ -25,10 +26,6 @@ protected:
 	virtual int OnGetItemImage(long item) const;
 
 	wxString GetType(wxString name, bool dir);
-
-	// Event handlers
-	void OnItemActivated(wxListEvent &event);
-	void OnColumnClicked(wxListEvent &event);
 
 	struct t_fileData
 	{
@@ -55,19 +52,26 @@ protected:
 	void GetImageList();
 	void FreeImageList();
 
-	wxImageList *m_pImageList;
+	wxImageList* m_pImageList;
 #ifdef __WXMSW__
-	wxImageListMsw *m_pHeaderImageList;
+	wxImageListMsw* m_pHeaderImageList;
 #endif
 
-	CState *m_pState;
-	CCommandQueue *m_pCommandQueue;
+	CState* m_pState;
+	CCommandQueue* m_pCommandQueue;
+	CQueueView* m_pQueue;
 
 	int m_sortColumn;
 	int m_sortDirection;
 
 	DECLARE_EVENT_TABLE()
+	void OnItemActivated(wxListEvent &event);
+	void OnColumnClicked(wxListEvent &event);
+	void OnContextMenu(wxContextMenuEvent& event);
+	void OnMenuDownload(wxCommandEvent& event);
+	void OnMenuMkdir(wxCommandEvent& event);
+	void OnMenuDelete(wxCommandEvent& event);
+	void OnMenuRename(wxCommandEvent& event);
 };
 
 #endif
-

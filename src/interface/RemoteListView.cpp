@@ -2,6 +2,7 @@
 #include "RemoteListView.h"
 #include "state.h"
 #include "commandqueue.h"
+#include "queueview.h"
 
 #ifdef __WXMSW__
 #include "shellapi.h"
@@ -15,6 +16,13 @@
 BEGIN_EVENT_TABLE(CRemoteListView, wxListCtrl)
 	EVT_LIST_ITEM_ACTIVATED(wxID_ANY, CRemoteListView::OnItemActivated)
 	EVT_LIST_COL_CLICK(wxID_ANY, CRemoteListView::OnColumnClicked) 
+	EVT_CONTEXT_MENU(CRemoteListView::OnContextMenu)
+	// Map both ID_DOWNLOAD and ID_ADDTOQUEUE to OnMenuDownload, code is identical
+	EVT_MENU(XRCID("ID_DOWNLOAD"), CRemoteListView::OnMenuDownload)
+	EVT_MENU(XRCID("ID_ADDTOQUEUE"), CRemoteListView::OnMenuDownload)
+	EVT_MENU(XRCID("ID_MKDIR"), CRemoteListView::OnMenuMkdir)
+	EVT_MENU(XRCID("ID_DELETE"), CRemoteListView::OnMenuDelete)
+	EVT_MENU(XRCID("ID_RENAME"), CRemoteListView::OnMenuRename)
 END_EVENT_TABLE()
 
 #ifdef __WXMSW__
@@ -29,11 +37,12 @@ END_EVENT_TABLE()
 	};
 #endif
 
-CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState, CCommandQueue *pCommandQueue)
+CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState, CCommandQueue *pCommandQueue, CQueueView* pQueue)
 	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxLC_VIRTUAL | wxLC_REPORT | wxSUNKEN_BORDER)
 {
 	m_pState = pState;
 	m_pCommandQueue = pCommandQueue;
+	m_pQueue = pQueue;
 
 	m_pImageList = 0;
 	InsertColumn(0, _("Filename"));
@@ -608,10 +617,84 @@ void CRemoteListView::OnItemActivated(wxListEvent &event)
 			m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path, name));
 		else
 		{
-			wxString localname = m_pState->GetLocalDir() + name;
-			m_pCommandQueue->ProcessCommand(new CFileTransferCommand(localname, m_pDirectoryListing->path, name, true));
+			const CServer* pServer = m_pState->GetServer();
+			if (!pServer)
+			{
+				wxBell();
+				return;
+			}
+
+			wxFileName fn = wxFileName(m_pState->GetLocalDir(), name);
+			m_pQueue->QueueFile(false, true, fn.GetFullPath(), name, m_pDirectoryListing->path, *pServer, m_fileData[m_indexMapping[item]].pDirEntry->size);
 		}
 	}
 	else
 		m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path, _T("..")));
 }
+
+void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
+{
+	wxMenu* pMenu = wxXmlResource::Get()->LoadMenu(_T("ID_MENU_REMOTEFILELIST"));
+	if (!pMenu)
+		return;
+
+	PopupMenu(pMenu);
+	delete pMenu;
+}
+
+void CRemoteListView::OnMenuDownload(wxCommandEvent& event)
+{
+	long item = -1;
+	while (true)
+	{
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		if (item == -1)
+			break;
+
+		if (!item)
+			return;
+	}
+
+	item = -1;
+	while (true)
+	{
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		if (item == -1)
+			break;
+
+		wxString name;
+		if (!IsItemValid(item))
+			return;
+		name = m_fileData[m_indexMapping[item]].pDirEntry->name;
+
+		if (m_fileData[m_indexMapping[item]].pDirEntry->dir)
+		{
+			// TODO: Dir downloading
+		}
+		else
+		{
+			const CServer* pServer = m_pState->GetServer();
+			if (!pServer)
+			{
+				wxBell();
+				return;
+			}
+
+			wxFileName fn = wxFileName(m_pState->GetLocalDir(), name);
+			m_pQueue->QueueFile(event.GetId() == XRCID("ID_ADDTOQUEUE"), true, fn.GetFullPath(), name, m_pDirectoryListing->path, *pServer, m_fileData[m_indexMapping[item]].pDirEntry->size);
+		}
+	}
+}
+
+void CRemoteListView::OnMenuMkdir(wxCommandEvent& event)
+{
+}
+
+void CRemoteListView::OnMenuDelete(wxCommandEvent& event)
+{
+}
+
+void CRemoteListView::OnMenuRename(wxCommandEvent& event)
+{
+}
+

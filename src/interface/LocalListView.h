@@ -31,8 +31,13 @@ protected:
 	wxString GetType(wxString name, bool dir);
 
 	// Event handlers
-	void OnItemActivated(wxListEvent &event);
-	void OnColumnClicked(wxListEvent &event);
+	void OnItemActivated(wxListEvent& event);
+	void OnColumnClicked(wxListEvent& event);
+	void OnContextMenu(wxContextMenuEvent& event);
+	void OnMenuUpload(wxCommandEvent& event);
+	void OnMenuMkdir(wxCommandEvent& event);
+	void OnMenuDelete(wxCommandEvent& event);
+	void OnMenuRename(wxCommandEvent& event);
 
 	struct t_fileData
 	{

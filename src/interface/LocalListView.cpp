@@ -14,7 +14,14 @@
 
 BEGIN_EVENT_TABLE(CLocalListView, wxListCtrl)
 	EVT_LIST_ITEM_ACTIVATED(wxID_ANY, CLocalListView::OnItemActivated)
-	EVT_LIST_COL_CLICK(wxID_ANY, CLocalListView::OnColumnClicked) 
+	EVT_LIST_COL_CLICK(wxID_ANY, CLocalListView::OnColumnClicked)
+	EVT_CONTEXT_MENU(CLocalListView::OnContextMenu)
+	// Map both ID_UPLOAD and ID_ADDTOQUEUE to OnMenuUpload, code is identical
+	EVT_MENU(XRCID("ID_UPLOAD"), CLocalListView::OnMenuUpload)
+	EVT_MENU(XRCID("ID_ADDTOQUEUE"), CLocalListView::OnMenuUpload)
+	EVT_MENU(XRCID("ID_MKDIR"), CLocalListView::OnMenuMkdir)
+	EVT_MENU(XRCID("ID_DELETE"), CLocalListView::OnMenuDelete)
+	EVT_MENU(XRCID("ID_RENAME"), CLocalListView::OnMenuRename)
 END_EVENT_TABLE()
 
 #ifdef __WXMSW__
@@ -355,7 +362,35 @@ void CLocalListView::FreeImageList()
 
 void CLocalListView::OnItemActivated(wxListEvent &event)
 {
-	int item = event.GetIndex();
+	long item = -1;
+	
+	int count = 0;
+	bool back = false;
+
+	while (true)
+	{
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		if (item == -1)
+			break;
+
+		count++;
+
+		if (!item)
+			back = true;
+	}
+	if (count > 1)
+	{
+		if (back)
+		{
+			wxBell();
+			return;
+		}
+
+		OnMenuUpload(wxCommandEvent());
+		return;
+	}
+
+	item = event.GetIndex();
 	
 	t_fileData *data = GetData(item);
 	if (!data)
@@ -369,6 +404,13 @@ void CLocalListView::OnItemActivated(wxListEvent &event)
 			m_pState->SetLocalDir(data->name);
 		else
 		{
+			const CServer* pServer = m_pState->GetServer();
+			if (!pServer)
+			{
+				wxBell();
+				return;
+			}
+
 			CServerPath path = m_pState->GetRemotePath();
 			if (path.IsEmpty())
 			{
@@ -376,15 +418,8 @@ void CLocalListView::OnItemActivated(wxListEvent &event)
 				return;
 			}
 
-			const CServer* pServer = m_pState->GetServer();
-			if (!pServer)
-			{
-				wxBell();
-				return;
-			}
 			wxFileName fn(m_dir, data->name);
 
-			m_pQueue->QueueFile(false, false, fn.GetFullPath(), data->name, path, *pServer, data->size);
 			m_pQueue->QueueFile(false, false, fn.GetFullPath(), data->name, path, *pServer, data->size);
 		}
 	}
@@ -687,4 +722,82 @@ int CLocalListView::CmpSize(CLocalListView *pList, unsigned int index, t_fileDat
 
 	return data.name.CmpNoCase(refData.name);
 
+}
+
+void CLocalListView::OnContextMenu(wxContextMenuEvent& event)
+{
+	wxMenu* pMenu = wxXmlResource::Get()->LoadMenu(_T("ID_MENU_LOCALFILELIST"));
+	if (!pMenu)
+		return;
+
+	PopupMenu(pMenu);
+	delete pMenu;
+}
+
+void CLocalListView::OnMenuUpload(wxCommandEvent& event)
+{
+	long item = -1;
+	while (true)
+	{
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		if (item == -1)
+			break;
+
+		if (!item)
+			return;
+	}
+
+	item = -1;
+	while (true)
+	{
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		if (item == -1)
+			break;
+
+		t_fileData *data = GetData(item);
+		if (!data)
+			return;
+	
+		if (!item)
+			m_pState->SetLocalDir(data->name);
+		else
+		{
+			if (data->dir)
+			{
+				// TODO: Dir uploading
+			}
+			else
+			{
+				const CServer* pServer = m_pState->GetServer();
+				if (!pServer)
+				{
+					wxBell();
+					return;
+				}
+
+				CServerPath path = m_pState->GetRemotePath();
+				if (path.IsEmpty())
+				{
+					wxBell();
+					return;
+				}
+
+				wxFileName fn(m_dir, data->name);
+
+				m_pQueue->QueueFile(event.GetId() == XRCID("ID_ADDTOQUEUE"), false, fn.GetFullPath(), data->name, path, *pServer, data->size);
+			}
+		}
+	}
+}
+
+void CLocalListView::OnMenuMkdir(wxCommandEvent& event)
+{
+}
+
+void CLocalListView::OnMenuDelete(wxCommandEvent& event)
+{
+}
+
+void CLocalListView::OnMenuRename(wxCommandEvent& event)
+{
 }

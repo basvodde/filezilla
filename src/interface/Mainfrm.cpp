@@ -149,7 +149,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_pLocalTreeView = new CLocalTreeView(m_pLocalSplitter, -1);
 	m_pLocalListView = new CLocalListView(m_pLocalSplitter, -1, m_pState, m_pQueueView);
 	m_pRemoteTreeView = new CRemoteTreeView(m_pRemoteSplitter, -1);
-	m_pRemoteListView = new CRemoteListView(m_pRemoteSplitter, -1, m_pState, m_pCommandQueue);
+	m_pRemoteListView = new CRemoteListView(m_pRemoteSplitter, -1, m_pState, m_pCommandQueue, m_pQueueView);
 	
 	m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter, 100);
 	m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueueView, 100);

@@ -27,4 +27,82 @@
       </object>
     </object>
   </object>
+  <object class="wxMenu" name="ID_MENU_LOCALFILELIST">
+    <object class="wxMenuItem" name="ID_UPLOAD">
+      <label>&amp;Upload</label>
+      <help>Upload selected files and folders</help>
+    </object>
+    <object class="wxMenuItem" name="ID_ADDTOQUEUE">
+      <label>&amp;Add files to queue</label>
+      <help>Add selected files and folders to the transfer queue</help>
+    </object>
+    <object class="separator"/>
+    <object class="wxMenuItem" name="ID_MKDIR">
+      <label>&amp;Create directory</label>
+      <help>Create a new subdirectory in the current directory</help>
+    </object>
+    <object class="separator"/>
+    <object class="wxMenuItem" name="ID_DELETE">
+      <label>D&amp;elete</label>
+      <help>Delete selected files and folders</help>
+    </object>
+    <object class="wxMenuItem" name="ID_RENAME">
+      <label>&amp;Rename</label>
+      <help>Rename selected files and folders</help>
+    </object>
+  </object>
+  <object class="wxMenu" name="ID_MENU_REMOTEFILELIST">
+    <object class="wxMenuItem" name="ID_DOWNLOAD">
+      <label>&amp;Download</label>
+      <help>Download selected files and folders</help>
+    </object>
+    <object class="wxMenuItem" name="ID_ADDTOQUEUE">
+      <label>&amp;Add files to queue</label>
+      <help>Add selected files and folders to the transfer queue</help>
+    </object>
+    <object class="separator"/>
+    <object class="wxMenuItem" name="ID_MKDIR">
+      <label>&amp;Create directory</label>
+      <help>Create a new subdirectory in the current directory</help>
+    </object>
+    <object class="separator"/>
+    <object class="wxMenuItem" name="ID_DELETE">
+      <label>D&amp;elete</label>
+      <help>Delete selected files and folders</help>
+    </object>
+    <object class="wxMenuItem" name="ID_RENAME">
+      <label>&amp;Rename</label>
+      <help>Rename selected files and folders</help>
+    </object>
+  </object>
+  <object class="wxMenu" name="ID_MENU_QUEUE">
+    <object class="wxMenuItem" name="ID_PROCESSQUEUE">
+      <label>Process &amp;Queue</label>
+      <checkable>1</checkable>
+    </object>
+    <object class="separator"/>
+    <object class="wxMenu" name="ID_PRIORITY">
+      <label>Set &amp;Priority</label>
+      <object class="wxMenuItem" name="ID_PRIORITY_HIGHEST">
+        <label>&amp;Highest</label>
+        <checkable>1</checkable>
+      </object>
+      <object class="wxMenuItem" name="ID_PRIORITY_HIGH">
+        <label>H&amp;igh</label>
+        <checkable>1</checkable>
+      </object>
+      <object class="wxMenuItem" name="ID_PRIORITY_Normal">
+        <label>&amp;Normal</label>
+        <checkable>1</checkable>
+      </object>
+      <object class="wxMenuItem" name="ID_PRIORITY_LOW">
+        <label>&amp;Low</label>
+        <checkable>1</checkable>
+      </object>
+      <object class="wxMenuItem" name="ID_PRIORITY_LOWEST">
+        <label>L&amp;owest</label>
+        <checkable>1</checkable>
+      </object>
+    </object>
+  </object>
 </resource>
