@@ -343,7 +343,7 @@ void CServerItem::QueueImmediateFiles()
 }
 
 CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame)
-	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_VIRTUAL | wxSUNKEN_BORDER)
+	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN | wxLC_REPORT | wxLC_VIRTUAL | wxSUNKEN_BORDER)
 {
 	m_pMainFrame = pMainFrame;
 
@@ -611,19 +611,17 @@ void CQueueView::OnEngineEvent(wxEvent &event)
 				delete pNotification;
 			}
 			break;
-		/*case nId_transferstatus:
+		case nId_transferstatus:
 			{
 				CTransferStatusNotification *pTransferStatusNotification = reinterpret_cast<CTransferStatusNotification *>(pNotification);
 				const CTransferStatus *pStatus = pTransferStatusNotification->GetStatus();
-				if (pStatus && !m_transferStatusTimer.IsRunning())
-					m_transferStatusTimer.Start(100);
-				else if (!pStatus && m_transferStatusTimer.IsRunning())
-					m_transferStatusTimer.Stop();
+
+				if (data.pStatusLineCtrl)
+					data.pStatusLineCtrl->SetTransferStatus(pStatus);
                 
-				SetProgress(pStatus);
 				delete pNotification;
 			}
-			break;*/
+			break;
 		default:
 			delete pNotification;
 			break;
@@ -701,11 +699,6 @@ bool CQueueView::TryStartNextTransfer()
 	serverItem->m_activeCount++;
 	m_activeCount++;
 
-	// Create status line
-	CStatusLineCtrl* pStatusLineCtrl = new CStatusLineCtrl(this, fileItem);
-	m_statusLineList.push_back(pStatusLineCtrl);
-	engineData.pStatusLineCtrl = pStatusLineCtrl;
-
 	const CServer oldServer = engineData.lastServer;
 	engineData.lastServer = serverItem->GetServer();
 	
@@ -715,6 +708,11 @@ bool CQueueView::TryStartNextTransfer()
 		engineData.state = t_EngineData::disconnect;
 	else
 		engineData.state = t_EngineData::transfer;
+
+	// Create status line
+	CStatusLineCtrl* pStatusLineCtrl = new CStatusLineCtrl(this, engineData);
+	m_statusLineList.push_back(pStatusLineCtrl);
+	engineData.pStatusLineCtrl = pStatusLineCtrl;
 
 	SendNextCommand(engineData);
 
@@ -738,10 +736,16 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 	{
 	case t_EngineData::disconnect:
 		engineData.state = t_EngineData::connect;
+		if (engineData.pStatusLineCtrl)
+			engineData.pStatusLineCtrl->SetTransferStatus(0);
 		break;
 	case t_EngineData::connect:
 		if (replyCode == FZ_REPLY_OK)
+		{
 			engineData.state = t_EngineData::transfer;
+			if (engineData.pStatusLineCtrl)
+				engineData.pStatusLineCtrl->SetTransferStatus(0);
+		}
 		else if (!IncreaseErrorCount(engineData))
 			return;
 		break;
@@ -851,6 +855,8 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 			return;
 
 		engineData.state = t_EngineData::connect;
+		if (engineData.pStatusLineCtrl)
+			engineData.pStatusLineCtrl->SetTransferStatus(0);
 	}
 
 	if (engineData.state == t_EngineData::connect)
@@ -866,6 +872,8 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 			if (res == FZ_REPLY_OK)
 			{
 				engineData.state = t_EngineData::transfer;
+				if (engineData.pStatusLineCtrl)
+					engineData.pStatusLineCtrl->SetTransferStatus(0);
 				break;
 			}
 
@@ -897,7 +905,6 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 			if (!IncreaseErrorCount(engineData))
 				return;
 		}
-		engineData.state = t_EngineData::transfer;
 	}
 }
 

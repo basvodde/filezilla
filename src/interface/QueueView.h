@@ -173,9 +173,6 @@ public:
 	bool SetActive(bool active = true);
 	bool Quit();
 
-protected:
-	bool TryStartNextTransfer();
-
 	struct t_EngineData
 	{
 		CFileZillaEngine* pEngine;
@@ -194,6 +191,10 @@ protected:
 		CServer lastServer;
 		CStatusLineCtrl* pStatusLineCtrl;
 	};
+
+protected:
+	bool TryStartNextTransfer();
+
 	std::vector<t_EngineData> m_engineData;
 
 	virtual wxString OnGetItemText(long item, long column) const;

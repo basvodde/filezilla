@@ -2,23 +2,246 @@
 #include "QueueView.h"
 #include "statuslinectrl.h"
 
+#define TRANSFERSTATUS_TIMER_ID (wxID_HIGHEST + 1)
+
 BEGIN_EVENT_TABLE(CStatusLineCtrl, wxWindow)
 EVT_PAINT(CStatusLineCtrl::OnPaint)
+EVT_TIMER(TRANSFERSTATUS_TIMER_ID, CStatusLineCtrl::OnTimer)
+EVT_ERASE_BACKGROUND(CStatusLineCtrl::OnEraseBackground)
 END_EVENT_TABLE()
 
-CStatusLineCtrl::CStatusLineCtrl(CQueueView* pParent, const CQueueItem* pQueueItem)
-	: wxWindow(pParent, wxID_ANY)
+int CStatusLineCtrl::m_fieldOffsets[4];
+wxCoord CStatusLineCtrl::m_textHeight;
+bool CStatusLineCtrl::m_initialized = false;
+
+#define PROGRESSBAR_WIDTH 100
+
+CStatusLineCtrl::CStatusLineCtrl(CQueueView* pParent, const CQueueView::t_EngineData& engineData)
+	: m_engineData(engineData)
 {
+	Show(false);
+	Create(pParent, wxID_ANY);
+	SetOwnFont(pParent->GetFont());
+	SetBackgroundColour(pParent->GetBackgroundColour());
+	
+	m_transferStatusTimer.SetOwner(this, TRANSFERSTATUS_TIMER_ID);
+
 	m_pParent = pParent;
-	m_pQueueItem = pQueueItem;
+	m_pStatus = 0;
+
+	SetTransferStatus(0);
+
+
+	// Calculate field widths so that the contents fit under every language.
+	if (!m_initialized)
+	{
+		m_initialized = true;
+		wxClientDC dc(this);
+		dc.SetFont(GetFont());
+
+		wxCoord w, h;
+		wxTimeSpan elapsed(100, 0, 0);
+		dc.GetTextExtent(elapsed.Format(_("%H:%M:%S elapsed")), &w, &h);
+		m_textHeight = h;
+		m_fieldOffsets[0] = 50 + w;
+
+		dc.GetTextExtent(elapsed.Format(_("%H:%M:%S left")), &w, &h);
+		m_fieldOffsets[1] = m_fieldOffsets[0] + 20 + w;
+
+		m_fieldOffsets[2] = m_fieldOffsets[1] + 20;
+		m_fieldOffsets[3] = m_fieldOffsets[2] + PROGRESSBAR_WIDTH + 20;
+	}
 }
 
 CStatusLineCtrl::~CStatusLineCtrl()
 {
+	if (m_transferStatusTimer.IsRunning())
+		m_transferStatusTimer.Stop();
+	delete m_pStatus;
 }
 
 void CStatusLineCtrl::OnPaint(wxPaintEvent& event)
 {
-	wxPaintDC dc(this);
-	dc.DrawText(_T("OK"), 30, 0);
+	wxPaintDC paintDc(this);
+
+	wxRect rect = GetRect();
+
+	// Create memory DC to draw into to avoid flicker.
+	wxBitmap bmp(rect.GetWidth(), rect.GetHeight());
+	wxMemoryDC dc;
+	dc.SelectObject(bmp);
+
+	dc.SetFont(GetFont());
+	dc.SetPen(GetBackgroundColour());
+
+	// Get character height so that we can center the text vertically.
+	wxCoord h = (rect.GetHeight() - m_textHeight) / 2;
+
+	// Clear background
+	dc.DrawRectangle(0, 0, rect.GetWidth(), rect.GetHeight());
+
+	if (!m_pStatus)
+	{
+		dc.DrawText(m_statusText, 50, h);
+		return;
+	}
+
+	wxTimeSpan elapsed = wxDateTime::Now().Subtract(m_pStatus->started);
+
+	DrawRightAlignedText(dc, elapsed.Format(_("%H:%M:%S elapsed")), m_fieldOffsets[0], h);
+
+	int elapsedSeconds = elapsed.GetSeconds().GetLo(); // Assume GetHi is always 0
+	if (elapsedSeconds)
+	{
+		wxFileOffset rate = (m_pStatus->currentOffset - m_pStatus->startOffset) / elapsedSeconds;
+
+        if (rate > (1000*1000))
+			dc.DrawText(wxString::Format(_("%s bytes (%d.%d MB/s)"), wxLongLong(m_pStatus->currentOffset).ToString().c_str(), (int)(rate / 1000 / 1000), (int)((rate / 1000 / 100) % 10)), m_fieldOffsets[3], h);
+		else if (rate > 1000)
+			dc.DrawText(wxString::Format(_("%s bytes (%d.%d KB/s)"), wxLongLong(m_pStatus->currentOffset).ToString().c_str(), (int)(rate / 1000), (int)((rate / 100) % 10)), m_fieldOffsets[3], h);
+		else
+			dc.DrawText(wxString::Format(_("%s bytes (%d B/s)"), wxLongLong(m_pStatus->currentOffset).ToString().c_str(), (int)rate), m_fieldOffsets[3], h);
+
+		if (m_pStatus->totalSize > 0 && rate > 0)
+		{
+			int left = ((m_pStatus->totalSize - m_pStatus->startOffset) / rate) - elapsedSeconds;
+			if (left < 0)
+				left = 0;
+			wxTimeSpan timeLeft(0, 0, left);
+			DrawRightAlignedText(dc, timeLeft.Format(_("%H:%M:%S left")), m_fieldOffsets[1], h);
+		}
+		else
+		{
+			DrawRightAlignedText(dc, _("--:--:-- left"), m_fieldOffsets[1], h);
+		}
+	}
+	else
+	{
+		DrawRightAlignedText(dc, _("--:--:-- left"), m_fieldOffsets[1], h);
+		dc.DrawText(wxString::Format(_("%s bytes (? B/s)"), wxLongLong(m_pStatus->currentOffset).ToString().c_str()), m_fieldOffsets[3], h);
+	}
+
+	DrawProgressBar(dc, m_fieldOffsets[2], 1, rect.GetHeight() - 2);
+
+	paintDc.Blit(0, 0, rect.GetWidth(), rect.GetHeight(), &dc, 0, 0);
+}
+
+void CStatusLineCtrl::SetTransferStatus(const CTransferStatus* pStatus)
+{
+	if (!pStatus)
+	{
+		delete m_pStatus;
+		m_pStatus = 0;
+
+		switch (m_engineData.state)
+		{
+		case CQueueView::t_EngineData::disconnect:
+			m_statusText = _("Disconnecting from previous server");
+			break;
+		case CQueueView::t_EngineData::cancel:
+			m_statusText = _("Waiting for transfer to be canceled");
+			break;
+		case CQueueView::t_EngineData::connect:
+			m_statusText = wxString::Format(_("Connecting to %s"), m_engineData.lastServer.FormatServer());
+			break;
+		default:
+			m_statusText = _("Transferring");
+			break;
+		}
+
+		if (m_transferStatusTimer.IsRunning())
+			m_transferStatusTimer.Stop();
+	}
+	else
+	{
+		if (!m_pStatus)
+			m_pStatus = new CTransferStatus(*pStatus);
+		else
+			*m_pStatus = *pStatus;
+
+		if (!m_transferStatusTimer.IsRunning())
+			m_transferStatusTimer.Start(100);
+	}
+	Refresh();
+}
+
+void CStatusLineCtrl::OnTimer(wxTimerEvent& event)
+{
+	bool changed;
+	CTransferStatus status;
+	if (!m_engineData.pEngine->GetTransferStatus(status, changed))
+		SetTransferStatus(0);
+	else if (changed)
+		SetTransferStatus(&status);
+	else
+		m_transferStatusTimer.Stop();
+}
+
+void CStatusLineCtrl::DrawRightAlignedText(wxDC& dc, wxString text, int x, int y)
+{
+	wxCoord w, h;
+	dc.GetTextExtent(text, &w, &h);
+	x -= w;
+
+	dc.DrawText(text, x, y);
+}
+
+void CStatusLineCtrl::OnEraseBackground(wxEraseEvent& event)
+{
+	// Don't erase background, only causes status line to flicker.
+}
+
+void CStatusLineCtrl::DrawProgressBar(wxDC& dc, int x, int y, int height)
+{
+	wxASSERT(m_pStatus);
+
+	if (m_pStatus->totalSize <= 0)
+		return;
+
+	int barSplit = wxLongLong(m_pStatus->currentOffset * (PROGRESSBAR_WIDTH - 2) / m_pStatus->totalSize).GetLo();
+	if (barSplit > PROGRESSBAR_WIDTH)
+		barSplit = PROGRESSBAR_WIDTH;
+
+	// Draw right part
+	dc.SetPen(*wxTRANSPARENT_PEN);
+	dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+	dc.DrawRectangle(x + 1 + barSplit, y + 1, PROGRESSBAR_WIDTH - barSplit - 1, height - 2);
+
+	if (barSplit && height > 2)
+	{	
+		// Draw pretty gradient
+
+		int greenmin = 128;
+		int greenmax = 255;
+		int colourCount = ((height + 1) / 2);
+
+		for (int i = 0; i < colourCount; i++)
+		{
+			int curGreen = greenmax - ((greenmax - greenmin) * i / (colourCount - 1));
+			dc.SetPen(wxPen(wxColour(0, curGreen, 0)));
+			dc.DrawLine(x + 1, y + colourCount - i, x + 1 + barSplit, y + colourCount - i);
+			dc.DrawLine(x + 1, y + height - colourCount + i - 1, x + 1 + barSplit, y + height - colourCount + i - 1);
+		}
+	}
+
+	dc.SetPen(*wxBLACK_PEN);
+	dc.SetBrush(*wxTRANSPARENT_BRUSH);
+	dc.DrawRectangle(x, y, PROGRESSBAR_WIDTH, height);
+
+	// Draw percentage-done text
+	wxString prefix;
+	int perMill;
+	if (m_pStatus->currentOffset > m_pStatus->totalSize)
+	{
+		perMill = 1000;
+		prefix = _T("> ");
+	}
+	else
+		perMill = wxLongLong(m_pStatus->currentOffset * 1000 / m_pStatus->totalSize).GetLo();
+
+	wxString text = wxString::Format(_T("%s%d.%d%%"), prefix, perMill / 10, perMill % 10);
+
+	wxCoord w, h;
+	dc.GetTextExtent(text, &w, &h);
+	dc.DrawText(text, x + PROGRESSBAR_WIDTH / 2 - w / 2, y + height / 2 - h / 2);
 }
