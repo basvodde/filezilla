@@ -7,7 +7,7 @@ dist_noinst_DATA = filezilla.pot de.po
 
 install-data-local: @CATALOGS_TO_INSTALL@
 
-install-filezilla-catalogs:
+install-filezilla-catalogs: allmo
 	for i in $(FILEZILLA_LINGUAS) ; do \
 	    $(mkinstalldirs) $(DESTDIR)$(localesdir)/$$i/LC_MESSAGES ; \
 	    $(INSTALL_DATA) $(srcdir)/$$i.mo $(DESTDIR)$(localesdir)/$$i/LC_MESSAGES/filezilla.mo ; \
@@ -44,8 +44,13 @@ XGETTEXT_ARGS=-C -k_ -kwxGetTranslation -kwxTRANSLATE -s -j
 %.po: $(srcdir)/filezilla.pot
 	if [ -f $@ ]; then $(MSGMERGE) $@ $(srcdir)/filezilla.pot > $@.new && mv $@.new $@; else cp $(srcdir)/filezilla.pot $@; fi
 
-$(srcdir)/filezilla.pot:
+resources.h:
+	wxrc -g -e $(srcdir)/../src/interface/resources/*.xrc > $(srcdir)/resources.h
+
+$(srcdir)/filezilla.pot: resources.h
 	touch $@
+   
+	(cd $(srcdir) ; $(XGETTEXT) $(XGETTEXT_ARGS) -o filezilla.pot resources.h)
 	(cd $(srcdir) ; find ../src -name "*.h" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o filezilla.pot)
 	(cd $(srcdir) ; find ../src -name "*.cpp" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o filezilla.pot)
 
@@ -72,5 +77,12 @@ stats:
 	done
 
 #echo "$$i.po `expr 100 "*" $$TR / $$TOTAL`% of $$TOTAL strings"; 
+
+distclean: clean
+	-rm $(srcdir)/Makefile
+
+clean:
+	-rm $(srcdir)/*.mo
+	-rm $(srcdir)/resources.h
 
 .PHONY: allpo allmo force-update stats FORCE
