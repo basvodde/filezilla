@@ -500,7 +500,7 @@ static char data[][100]={
 #endif
 
 CDirectoryListingParser::CDirectoryListingParser(CFileZillaEngine *pEngine, enum ServerType serverType)
-	: m_serverType(serverType), m_pEngine(pEngine)
+	: m_pEngine(pEngine), m_serverType(serverType)
 {
 	startOffset = 0;
 	m_curLine = 0;

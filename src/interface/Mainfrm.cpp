@@ -11,6 +11,7 @@
 #include "commandqueue.h"
 #include "asyncrequestqueue.h"
 #include "led.h"
+#include "sitemanager.h"
 
 #ifndef __WXMSW__
 #include "resources/filezilla.xpm"
@@ -29,7 +30,7 @@ static const int statbarWidths[7] = {
 };
 
 BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
-    EVT_SIZE(CMainFrame::OnSize)
+	EVT_SIZE(CMainFrame::OnSize)
 	EVT_SPLITTER_SASH_POS_CHANGED(-1, CMainFrame::OnViewSplitterPosChanged)
 	EVT_MENU(wxID_ANY, CMainFrame::OnMenuHandler)
 	EVT_BUTTON(XRCID("ID_QUICKCONNECT_OK"), CMainFrame::OnQuickconnect)
@@ -39,7 +40,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_CANCEL"), CMainFrame::OnUpdateToolbarCancel)
 	EVT_TOOL(XRCID("ID_TOOLBAR_CANCEL"), CMainFrame::OnCancel)
 	EVT_SPLITTER_SASH_POS_CHANGING(wxID_ANY, CMainFrame::OnSplitterSashPosChanging) 
-    EVT_SPLITTER_SASH_POS_CHANGED(wxID_ANY, CMainFrame::OnSplitterSashPosChanged) 
+	EVT_SPLITTER_SASH_POS_CHANGED(wxID_ANY, CMainFrame::OnSplitterSashPosChanged) 
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_RECONNECT"), CMainFrame::OnUpdateToolbarReconnect)
 	EVT_TOOL(XRCID("ID_TOOLBAR_RECONNECT"), CMainFrame::OnReconnect)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_REFRESH"), CMainFrame::OnUpdateToolbarRefresh)
@@ -52,7 +53,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 {
 	SetSizeHints(250, 250);
 
-    SetIcon(wxICON(appicon));
+	SetIcon(wxICON(appicon));
 
 	m_pStatusBar = NULL;
 	m_pMenuBar = NULL;
@@ -279,6 +280,12 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	if (event.GetId() == XRCID("ID_MENU_FILE_EXIT"))
 	{
 		Close();
+	}
+	else if (event.GetId() == XRCID("ID_MENU_FILE_SITEMANAGER"))
+	{
+		CSiteManager dlg(m_pOptions);
+		dlg.Create(this);
+		dlg.ShowModal();
 	}
 	event.Skip();
 }

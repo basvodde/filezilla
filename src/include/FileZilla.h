@@ -16,6 +16,7 @@
 #include <wx/dir.h>
 #include <wx/list.h>
 #include <wx/filefn.h>
+#include <wx/treectrl.h>
 
 #include <list>
 #include <vector>

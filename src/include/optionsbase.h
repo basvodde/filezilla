@@ -3,7 +3,7 @@
 
 #define OPTIONS_ENGINE_NUM 1
 
-#define	OPTION_USEPASV 1
+#define	OPTION_USEPASV 0
 
 class COptionsBase
 {

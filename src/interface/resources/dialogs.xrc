@@ -1,246 +1,617 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <resource version="2.3.0.1" xmlns="http://www.wxwindows.org/wxxrc">
-    <object class="wxDialog" name="ID_FILEEXISTSDLG">
-        <style>wxCAPTION|wxSYSTEM_MENU|wxCLOSE_BOX</style>
-        <exstyle>wxWS_EX_BLOCK_EVENTS</exstyle>
-        <title>Target file already exists</title>
-        <centered>1</centered>
+  <object class="wxDialog" name="ID_FILEEXISTSDLG">
+    <style>wxCAPTION|wxSYSTEM_MENU|wxCLOSE_BOX</style>
+    <exstyle>wxWS_EX_BLOCK_EVENTS</exstyle>
+    <title>Target file already exists</title>
+    <centered>1</centered>
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <border>0</border>
         <object class="wxBoxSizer">
-            <orient>wxVERTICAL</orient>
-            <object class="sizeritem">
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <border>0</border>
+            <object class="wxBoxSizer">
+              <orient>wxVERTICAL</orient>
+              <object class="sizeritem">
+                <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP|wxADJUST_MINSIZE</flag>
+                <border>5</border>
+                <object class="wxStaticText" name="wxID_STATIC">
+                  <label>The target file already exists.
+Would you like to replace the file</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP|wxADJUST_MINSIZE</flag>
+                <border>5</border>
+                <object class="wxStaticText" name="ID_FILE1_NAME">
+                  <label>&lt;file&gt;</label>
+                </object>
+              </object>
+              <object class="sizeritem">
                 <border>0</border>
                 <object class="wxBoxSizer">
-                    <orient>wxHORIZONTAL</orient>
-                    <object class="sizeritem">
-                        <border>0</border>
-                        <object class="wxBoxSizer">
-                            <orient>wxVERTICAL</orient>
-                            <object class="sizeritem">
-                                <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP|wxADJUST_MINSIZE</flag>
-                                <border>5</border>
-                                <object class="wxStaticText" name="wxID_STATIC">
-                                    <label>The target file already exists.
-Would you like to replace the file</label>
-                                </object>
-                            </object>
-                            <object class="sizeritem">
-                                <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP|wxADJUST_MINSIZE</flag>
-                                <border>5</border>
-                                <object class="wxStaticText" name="ID_FILE1_NAME">
-                                    <label>&lt;file&gt;</label>
-                                </object>
-                            </object>
-                            <object class="sizeritem">
-                                <border>0</border>
-                                <object class="wxBoxSizer">
-                                    <orient>wxHORIZONTAL</orient>
-                                    <object class="sizeritem">
-                                        <flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-                                        <border>10</border>
-                                        <object class="wxStaticBitmap" name="ID_FILE1_ICON">
-                                            <bitmap>16x16/file.png</bitmap>
-                                        </object>
-                                    </object>
-                                    <object class="sizeritem">
-                                        <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-                                        <border>5</border>
-                                        <object class="wxBoxSizer">
-                                            <orient>wxVERTICAL</orient>
-                                            <object class="sizeritem">
-                                                <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxBOTTOM|wxADJUST_MINSIZE</flag>
-                                                <border>5</border>
-                                                <object class="wxStaticText" name="ID_FILE1_SIZE">
-                                                    <label>&lt;size&gt;</label>
-                                                </object>
-                                            </object>
-                                            <object class="sizeritem">
-                                                <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxBOTTOM|wxADJUST_MINSIZE</flag>
-                                                <border>5</border>
-                                                <object class="wxStaticText" name="ID_FILE1_TIME">
-                                                    <label>&lt;date/time&gt;</label>
-                                                </object>
-                                            </object>
-                                        </object>
-                                    </object>
-                                </object>
-                            </object>
-                            <object class="sizeritem">
-                                <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP|wxADJUST_MINSIZE</flag>
-                                <border>5</border>
-                                <object class="wxStaticText" name="wxID_STATIC">
-                                    <label>with the following file?</label>
-                                </object>
-                            </object>
-                            <object class="sizeritem">
-                                <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP|wxADJUST_MINSIZE</flag>
-                                <border>5</border>
-                                <object class="wxStaticText" name="ID_FILE2_NAME">
-                                    <label>&lt;file&gt;</label>
-                                </object>
-                            </object>
-                            <object class="sizeritem">
-                                <border>0</border>
-                                <object class="wxBoxSizer">
-                                    <orient>wxHORIZONTAL</orient>
-                                    <object class="sizeritem">
-                                        <flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-                                        <border>10</border>
-                                        <object class="wxStaticBitmap" name="ID_FILE2_ICON">
-                                            <bitmap>16x16/file.png</bitmap>
-                                        </object>
-                                    </object>
-                                    <object class="sizeritem">
-                                        <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-                                        <border>5</border>
-                                        <object class="wxBoxSizer">
-                                            <orient>wxVERTICAL</orient>
-                                            <object class="sizeritem">
-                                                <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxBOTTOM|wxADJUST_MINSIZE</flag>
-                                                <border>5</border>
-                                                <object class="wxStaticText" name="ID_FILE2_SIZE">
-                                                    <label>&lt;size&gt;</label>
-                                                </object>
-                                            </object>
-                                            <object class="sizeritem">
-                                                <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxBOTTOM|wxADJUST_MINSIZE</flag>
-                                                <border>5</border>
-                                                <object class="wxStaticText" name="ID_FILE2_TIME">
-                                                    <label>&lt;date/time&gt;</label>
-                                                </object>
-                                            </object>
-                                        </object>
-                                    </object>
-                                </object>
-                            </object>
-                        </object>
+                  <orient>wxHORIZONTAL</orient>
+                  <object class="sizeritem">
+                    <flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+                    <border>10</border>
+                    <object class="wxStaticBitmap" name="ID_FILE1_ICON">
+                      <bitmap>16x16/file.png</bitmap>
                     </object>
-                    <object class="spacer">
-                        <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                    <border>5</border>
+                    <object class="wxBoxSizer">
+                      <orient>wxVERTICAL</orient>
+                      <object class="sizeritem">
+                        <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxBOTTOM|wxADJUST_MINSIZE</flag>
                         <border>5</border>
-                        <size>3,4</size>
-                    </object>
-                    <object class="sizeritem">
-                        <flag>wxALIGN_TOP|wxALL</flag>
-                        <border>5</border>
-                        <object class="wxBoxSizer">
-                            <orient>wxVERTICAL</orient>
-                            <object class="sizeritem">
-                                <flag>wxALIGN_LEFT|wxALL</flag>
-                                <border>5</border>
-                                <object class="wxStaticBoxSizer">
-                                    <orient>wxVERTICAL</orient>
-                                    <label>Please select an action:</label>
-                                    <object class="sizeritem">
-                                        <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP</flag>
-                                        <border>5</border>
-                                        <object class="wxRadioButton" name="ID_ACTION1">
-                                            <label>&amp;Overwrite</label>
-                                            <value>1</value>
-                                        </object>
-                                    </object>
-                                    <object class="sizeritem">
-                                        <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP</flag>
-                                        <border>5</border>
-                                        <object class="wxRadioButton" name="ID_ACTION2">
-                                            <label>Overwrite &amp;if newer</label>
-                                            <value>0</value>
-                                        </object>
-                                    </object>
-                                    <object class="sizeritem">
-                                        <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP</flag>
-                                        <border>5</border>
-                                        <object class="wxRadioButton" name="ID_ACTION3">
-                                            <label>&amp;Resume</label>
-                                            <value>0</value>
-                                        </object>
-                                    </object>
-                                    <object class="sizeritem">
-                                        <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP</flag>
-                                        <border>5</border>
-                                        <object class="wxRadioButton" name="ID_ACTION4">
-                                            <label>Re&amp;name</label>
-                                            <value>0</value>
-                                        </object>
-                                    </object>
-                                    <object class="sizeritem">
-                                        <flag>wxALIGN_LEFT|wxALL</flag>
-                                        <border>5</border>
-                                        <object class="wxRadioButton" name="ID_ACTION5">
-                                            <label>&amp;Skip</label>
-                                            <value>0</value>
-                                        </object>
-                                    </object>
-                                </object>
-                            </object>
-                            <object class="sizeritem">
-                                <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP</flag>
-                                <border>5</border>
-                                <object class="wxCheckBox" name="ID_ALWAYS">
-                                    <label>&amp;Always use this action</label>
-                                    <checked>0</checked>
-                                </object>
-                            </object>
-                            <object class="sizeritem">
-                                <flag>wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT</flag>
-                                <border>5</border>
-                                <object class="wxBoxSizer">
-                                    <orient>wxHORIZONTAL</orient>
-                                    <object class="spacer">
-                                        <flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
-                                        <border>4</border>
-                                        <size>3,4</size>
-                                    </object>
-                                    <object class="sizeritem">
-                                        <flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
-                                        <border>5</border>
-                                        <object class="wxBoxSizer">
-                                            <orient>wxVERTICAL</orient>
-                                            <object class="sizeritem">
-                                                <flag>wxALIGN_LEFT|wxRIGHT|wxTOP</flag>
-                                                <border>5</border>
-                                                <object class="wxCheckBox" name="ID_QUEUEONLY">
-                                                    <label>Apply to &amp;current queue only</label>
-                                                    <checked>0</checked>
-                                                </object>
-                                            </object>
-                                            <object class="sizeritem">
-                                                <flag>wxALIGN_LEFT|wxRIGHT|wxTOP|wxBOTTOM</flag>
-                                                <border>5</border>
-                                                <object class="wxCheckBox" name="ID_UPDOWNONLY">
-                                                    <label>&lt;updownonly&gt;</label>
-                                                    <checked>0</checked>
-                                                </object>
-                                            </object>
-                                        </object>
-                                    </object>
-                                </object>
-                            </object>
+                        <object class="wxStaticText" name="ID_FILE1_SIZE">
+                          <label>&lt;size&gt;</label>
                         </object>
+                      </object>
+                      <object class="sizeritem">
+                        <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxBOTTOM|wxADJUST_MINSIZE</flag>
+                        <border>5</border>
+                        <object class="wxStaticText" name="ID_FILE1_TIME">
+                          <label>&lt;date/time&gt;</label>
+                        </object>
+                      </object>
                     </object>
+                  </object>
                 </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP|wxADJUST_MINSIZE</flag>
+                <border>5</border>
+                <object class="wxStaticText" name="wxID_STATIC">
+                  <label>with the following file?</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP|wxADJUST_MINSIZE</flag>
+                <border>5</border>
+                <object class="wxStaticText" name="ID_FILE2_NAME">
+                  <label>&lt;file&gt;</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <border>0</border>
+                <object class="wxBoxSizer">
+                  <orient>wxHORIZONTAL</orient>
+                  <object class="sizeritem">
+                    <flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+                    <border>10</border>
+                    <object class="wxStaticBitmap" name="ID_FILE2_ICON">
+                      <bitmap>16x16/file.png</bitmap>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                    <border>5</border>
+                    <object class="wxBoxSizer">
+                      <orient>wxVERTICAL</orient>
+                      <object class="sizeritem">
+                        <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxBOTTOM|wxADJUST_MINSIZE</flag>
+                        <border>5</border>
+                        <object class="wxStaticText" name="ID_FILE2_SIZE">
+                          <label>&lt;size&gt;</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxBOTTOM|wxADJUST_MINSIZE</flag>
+                        <border>5</border>
+                        <object class="wxStaticText" name="ID_FILE2_TIME">
+                          <label>&lt;date/time&gt;</label>
+                        </object>
+                      </object>
+                    </object>
+                  </object>
+                </object>
+              </object>
             </object>
-            <object class="sizeritem">
-                <flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
+          </object>
+          <object class="spacer">
+            <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+            <border>5</border>
+            <size>3,4</size>
+          </object>
+          <object class="sizeritem">
+            <flag>wxALIGN_TOP|wxALL</flag>
+            <border>5</border>
+            <object class="wxBoxSizer">
+              <orient>wxVERTICAL</orient>
+              <object class="sizeritem">
+                <flag>wxALIGN_LEFT|wxALL</flag>
+                <border>5</border>
+                <object class="wxStaticBoxSizer">
+                  <orient>wxVERTICAL</orient>
+                  <label>Please select an action:</label>
+                  <object class="sizeritem">
+                    <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP</flag>
+                    <border>5</border>
+                    <object class="wxRadioButton" name="ID_ACTION1">
+                      <label>&amp;Overwrite</label>
+                      <value>1</value>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP</flag>
+                    <border>5</border>
+                    <object class="wxRadioButton" name="ID_ACTION2">
+                      <label>Overwrite &amp;if newer</label>
+                      <value>0</value>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP</flag>
+                    <border>5</border>
+                    <object class="wxRadioButton" name="ID_ACTION3">
+                      <label>&amp;Resume</label>
+                      <value>0</value>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP</flag>
+                    <border>5</border>
+                    <object class="wxRadioButton" name="ID_ACTION4">
+                      <label>Re&amp;name</label>
+                      <value>0</value>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <flag>wxALIGN_LEFT|wxALL</flag>
+                    <border>5</border>
+                    <object class="wxRadioButton" name="ID_ACTION5">
+                      <label>&amp;Skip</label>
+                      <value>0</value>
+                    </object>
+                  </object>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP</flag>
+                <border>5</border>
+                <object class="wxCheckBox" name="ID_ALWAYS">
+                  <label>&amp;Always use this action</label>
+                  <checked>0</checked>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT</flag>
                 <border>5</border>
                 <object class="wxBoxSizer">
-                    <orient>wxHORIZONTAL</orient>
-                    <object class="sizeritem">
-                        <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                  <orient>wxHORIZONTAL</orient>
+                  <object class="spacer">
+                    <flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+                    <border>4</border>
+                    <size>3,4</size>
+                  </object>
+                  <object class="sizeritem">
+                    <flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+                    <border>5</border>
+                    <object class="wxBoxSizer">
+                      <orient>wxVERTICAL</orient>
+                      <object class="sizeritem">
+                        <flag>wxALIGN_LEFT|wxRIGHT|wxTOP</flag>
                         <border>5</border>
-                        <object class="wxButton" name="wxID_OK">
-                            <label>OK</label>
-                            <default>1</default>
+                        <object class="wxCheckBox" name="ID_QUEUEONLY">
+                          <label>Apply to &amp;current queue only</label>
+                          <checked>0</checked>
                         </object>
-                    </object>
-                    <object class="sizeritem">
-                        <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                      </object>
+                      <object class="sizeritem">
+                        <flag>wxALIGN_LEFT|wxRIGHT|wxTOP|wxBOTTOM</flag>
                         <border>5</border>
-                        <object class="wxButton" name="wxID_CANCEL">
-                            <label>&amp;Cancel</label>
+                        <object class="wxCheckBox" name="ID_UPDOWNONLY">
+                          <label>&lt;updownonly&gt;</label>
+                          <checked>0</checked>
                         </object>
+                      </object>
                     </object>
+                  </object>
                 </object>
+              </object>
             </object>
+          </object>
         </object>
+      </object>
+      <object class="sizeritem">
+        <flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
+        <border>5</border>
+        <object class="wxBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+            <border>5</border>
+            <object class="wxButton" name="wxID_OK">
+              <label>OK</label>
+              <default>1</default>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+            <border>5</border>
+            <object class="wxButton" name="wxID_CANCEL">
+              <label>&amp;Cancel</label>
+            </object>
+          </object>
+        </object>
+      </object>
     </object>
+  </object>
+  <object class="wxDialog" name="ID_SITEMANAGER">
+    <centered>1</centered>
+    <style>wxCAPTION|wxSYSTEM_MENU|wxWS_EX_BLOCK_EVENTS|wxCLOSE_BOX</style>
+    <exstyle>wxWS_EX_BLOCK_EVENTS</exstyle>
+    <title>Site Manager</title>
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxVERTICAL</orient>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Select Entry:</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxTreeCtrl" name="ID_SITETREE">
+                  <style>wxTR_HAS_BUTTONS|wxTR_EDIT_LABELS|wxSUNKEN_BORDER</style>
+                </object>
+                <option>1</option>
+                <flag>wxTOP|wxBOTTOM|wxGROW</flag>
+                <border>5</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxGridSizer">
+                  <cols>2</cols>
+                  <rows>2</rows>
+                  <object class="sizeritem">
+                    <object class="wxButton" name="ID_NEWSITE">
+                      <label>&amp;New Site</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxButton" name="ID_NEWFOLDER">
+                      <label>New &amp;Folder</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxButton" name="ID_RENAME">
+                      <label>&amp;Rename</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxButton" name="ID_DELETE">
+                      <label>&amp;Delete</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxButton" name="ID_COPY">
+                      <label>Cop&amp;y</label>
+                    </object>
+                  </object>
+                  <vgap>5</vgap>
+                  <hgap>5</hgap>
+                </object>
+                <flag></flag>
+                <border>5</border>
+              </object>
+            </object>
+            <flag>wxRIGHT|wxGROW</flag>
+            <border>5</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxVERTICAL</orient>
+              <object class="sizeritem">
+                <object class="wxNotebook">
+                  <object class="notebookpage">
+                    <label>General</label>
+                    <object class="wxPanel">
+                      <object class="wxBoxSizer">
+                        <orient>wxVERTICAL</orient>
+                        <object class="sizeritem">
+                          <object class="wxFlexGridSizer">
+                            <cols>2</cols>
+                            <object class="sizeritem">
+                              <object class="wxStaticText">
+                                <label>&amp;Host:</label>
+                              </object>
+                              <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxBoxSizer">
+                                <orient>wxHORIZONTAL</orient>
+                                <object class="sizeritem">
+                                  <object class="wxTextCtrl" name="ID_HOST"/>
+                                  <flag>wxGROW</flag>
+                                </object>
+                                <object class="sizeritem">
+                                  <object class="wxStaticText">
+                                    <label>P&amp;ort:</label>
+                                  </object>
+                                  <flag>wxLEFT|wxALIGN_CENTRE_VERTICAL</flag>
+                                  <border>10</border>
+                                </object>
+                                <object class="sizeritem">
+                                  <object class="wxTextCtrl" name="ID_PORT">
+                                    <size>50,-1</size>
+                                    <style></style>
+                                  </object>
+                                  <flag>wxLEFT</flag>
+                                  <border>5</border>
+                                </object>
+                              </object>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxStaticText">
+                                <label>Server&amp;type:</label>
+                              </object>
+                              <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxComboBox" name="ID_PROTOCOL">
+                                <content>
+                                  <item>FTP</item>
+                                </content>
+                                <selection>0</selection>
+                              </object>
+                              <flag>wxGROW</flag>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxStaticLine"/>
+                              <flag>wxTOP|wxBOTTOM|wxGROW</flag>
+                              <border>5</border>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxStaticLine"/>
+                              <flag>wxTOP|wxBOTTOM|wxGROW</flag>
+                              <border>5</border>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxStaticText">
+                                <label>&amp;Logontype:</label>
+                              </object>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxComboBox" name="ID_LOGONTYPE">
+                                <content>
+                                  <item>Anonymous</item>
+                                  <item>Normal</item>
+                                  <item>Ask for password</item>
+                                  <item>Interactive</item>
+                                </content>
+                              </object>
+                              <flag>wxGROW</flag>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxStaticText">
+                                <label>&amp;User:</label>
+                              </object>
+                              <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxTextCtrl" name="ID_USER"/>
+                              <flag>wxGROW</flag>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxStaticText">
+                                <label>&amp;Password:</label>
+                              </object>
+                              <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxTextCtrl" name="ID_PASS">
+                                <style>wxTE_PASSWORD</style>
+                              </object>
+                              <flag>wxGROW</flag>
+                            </object>
+                            <vgap>5</vgap>
+                            <hgap>5</hgap>
+                          </object>
+                          <flag>wxALL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>Co&amp;mments:</label>
+                          </object>
+                          <flag>wxALL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxTextCtrl" name="ID_COMMENTS">
+                            <size>-1,75</size>
+                            <style>wxTE_MULTILINE</style>
+                          </object>
+                          <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxGROW</flag>
+                          <border>5</border>
+                        </object>
+                      </object>
+                    </object>
+                    <selected>1</selected>
+                  </object>
+                  <object class="notebookpage">
+                    <label>Advanced</label>
+                    <object class="wxPanel">
+                      <object class="wxBoxSizer">
+                        <orient>wxVERTICAL</orient>
+                        <object class="sizeritem">
+                          <object class="wxBoxSizer">
+                            <orient>wxHORIZONTAL</orient>
+                            <object class="sizeritem">
+                              <object class="wxStaticText">
+                                <label>Server&amp;type:</label>
+                              </object>
+                              <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                              <border>5</border>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxComboBox" name="ID_SERVERTYPE">
+                                <content>
+                                  <item>Default</item>
+                                  <item>Unix</item>
+                                  <item>VMS</item>
+                                  <item>MVS</item>
+                                  <item>Dos</item>
+                                </content>
+                                <selection>0</selection>
+                                <size>-2,-1</size>
+                              </object>
+                              <flag>wxALL</flag>
+                              <border>5</border>
+                            </object>
+                          </object>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticLine"/>
+                          <flag>wxALL|wxGROW</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>Default &amp;local directory:</label>
+                          </object>
+                          <flag>wxALL|wxGROW</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxBoxSizer">
+                            <orient>wxHORIZONTAL</orient>
+                            <object class="sizeritem">
+                              <object class="wxTextCtrl" name="ID_LOCALDIR"/>
+                              <flag>wxRIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                              <border>5</border>
+                              <option>1</option>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxButton" name="ID_BROWSE">
+                                <label>&amp;Browse...</label>
+                              </object>
+                            </object>
+                          </object>
+                          <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxGROW</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>Default r&amp;emote directory:</label>
+                          </object>
+                          <flag>wxALL|wxGROW</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxTextCtrl" name="ID_REMOTEDIR"/>
+                          <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxGROW</flag>
+                          <border>5</border>
+                        </object>
+                      </object>
+                    </object>
+                  </object>
+                  <usenotebooksizer>1</usenotebooksizer>
+                  <object class="notebookpage">
+                    <label>Transfer settings</label>
+                    <object class="wxPanel">
+                      <object class="wxBoxSizer">
+                        <orient>wxVERTICAL</orient>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>&amp;Transfer mode:</label>
+                          </object>
+                          <flag>wxTOP|wxLEFT|wxRIGHT</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxBoxSizer">
+                            <orient>wxHORIZONTAL</orient>
+                            <object class="sizeritem">
+                              <object class="wxRadioButton" name="ID_TRANSFERMODE_DEFAULT">
+                                <label>D&amp;efault</label>
+                              </object>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxRadioButton" name="ID_TRANSFERMODE_ACTIVE">
+                                <label>&amp;Active</label>
+                              </object>
+                              <flag>wxLEFT|wxRIGHT</flag>
+                              <border>5</border>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxRadioButton" name="ID_TRANSFERMODE_PASSIVE">
+                                <label>&amp;Passive</label>
+                              </object>
+                            </object>
+                          </object>
+                          <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxCheckBox" name="ID_ALLOWMULTIPLE">
+                            <label>Server allows &amp;multiple connections</label>
+                          </object>
+                          <flag>wxALL</flag>
+                          <border>5</border>
+                        </object>
+                      </object>
+                    </object>
+                  </object>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <flag>wxALL</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticLine"/>
+        <flag>wxTOP|wxALL|wxGROW</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <object class="wxButton" name="wxID_CONNECT">
+              <label>&amp;Connect</label>
+              <default>1</default>
+              <style></style>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxButton" name="wxID_OK">
+              <label>&amp;OK</label>
+              <style></style>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxButton" name="wxID_CANCEL">
+              <label>D&amp;iscard</label>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <flag>wxALL|wxALIGN_CENTRE_HORIZONTAL</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticLine"/>
+      </object>
+    </object>
+  </object>
 </resource>

@@ -31,9 +31,13 @@ public:
 	void SetServer(wxString path, const CServer& server);
 	bool GetServer(wxString path, CServer& server);
 	
-protected:
+	void SetServer(TiXmlElement *node, const CServer& server);
+	bool GetServer(TiXmlElement *node, CServer& server);
+	
 	char* ConvUTF8(wxString value) const;
 	wxString ConvLocal(const char *value) const;
+
+protected:
 	void Validate(unsigned int nID, int &value);
 	void Validate(unsigned int nID, wxString &value);
 
@@ -42,9 +46,6 @@ protected:
 
 	void CreateNewXmlDocument();
 
-	void SetServer(TiXmlElement *node, const CServer& server);
-	bool GetServer(TiXmlElement *node, CServer& server);
-	
 	TiXmlDocument *m_pXmlDocument;
 	bool m_allowSave;
 

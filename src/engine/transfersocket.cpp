@@ -270,6 +270,7 @@ void CTransferSocket::OnSend()
 
 void CTransferSocket::OnClose(wxSocketEvent &event)
 {
+	m_pControlSocket->LogMessage(::Debug_Verbose, _("OnClose"));
 	TransferEnd(0);
 }
 

@@ -306,8 +306,8 @@ enum listStates
 {
 	list_init = 0,
 	list_waitcwd,
-	list_port_pasv,
 	list_type,
+	list_port_pasv,
 	list_list,
 	list_waitfinish,
 	list_waitlistpre,
@@ -327,7 +327,7 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 	pData->pNextOpData = m_pCurOpData;
 	m_pCurOpData = pData;
 			
-	pData->bPasv = m_pEngine->GetOptions()->GetOptionVal(OPTION_USEPASV) != 0;
+	pData->bPasv = m_pEngine->GetOptions()->GetOptionVal(OPTION_USEPASV);
 	pData->bTriedPasv = pData->bTriedActive = false;
 	pData->opState = list_waitcwd;
 
@@ -340,7 +340,7 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 	if (res != FZ_REPLY_OK)
 		return res;
 
-	pData->opState = list_port_pasv;
+	pData->opState = list_type;
 
 	return ListSend();
 }
@@ -366,13 +366,17 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 			ResetOperation(prevResult);
 			return FZ_REPLY_ERROR;
 		}
-		pData->opState = list_port_pasv;
+		pData->opState = list_type;
 	}
 
 	wxString cmd;
 	switch (pData->opState)
 	{
+	case list_type:
+		cmd = _T("TYPE A");
+		break;
 	case list_port_pasv:
+		delete m_pTransferSocket;
 		m_pTransferSocket = new CTransferSocket(m_pEngine, this, ::list);
 		if (pData->bPasv)
 		{
@@ -398,9 +402,6 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 			else
 				cmd = _T("PORT " + port);
 		}
-		break;
-	case list_type:
-		cmd = _T("TYPE A");
 		break;
 	case list_list:
 		cmd = _T("LIST");
@@ -459,6 +460,10 @@ int CFtpControlSocket::ListParseResponse()
 	bool error = false;
 	switch (pData->opState)
 	{
+	case list_type:
+		// Don't check error code here, we can live perfectly without it
+		pData->opState = list_port_pasv;
+		break;
 	case list_port_pasv:
 		if (code != 2 && code != 3)
 		{
@@ -507,15 +512,10 @@ int CFtpControlSocket::ListParseResponse()
 					error = true;
 				break;
 			}
-			pData->port = number; //add ms byte of server socket
-			pData->port += 256 * number;
+			pData->port += 256 * number; //add ms byte of server socket
 			pData->host = temp.Left(i);
 			pData->host.Replace(_T(","), _T("."));
 		}
-		pData->opState = list_type;
-		break;
-	case list_type:
-		// Don't check error code here, we can live perfectly without it
 		pData->opState = list_list;
 		break;
 	case list_list:
