@@ -43,6 +43,10 @@ public:
 
 	bool GetTransferStatus(CTransferStatus &status, bool &changed);
 
+	// Resend all modified directory listings if they are available in the cache.
+	// This function affects all engines.
+	void ResendModifiedListings();
+
 protected:
 	bool SendEvent(enum EngineNotificationType eventType, int data = 0);
 	void OnEngineEvent(wxFzEngineEvent &event);
@@ -80,6 +84,9 @@ protected:
 
 	// Remember last path used in a dirlisting.
 	CServerPath m_lastListDir;
+	CTimeEx m_lastListTime;
+
+	static std::list<CFileZillaEngine*> m_engineList;
 
 	DECLARE_EVENT_TABLE();
 };

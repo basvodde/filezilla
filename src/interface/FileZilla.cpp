@@ -28,7 +28,7 @@ bool CFileZillaApp::OnInit()
 
 	InitSettingsDir();
 
-#ifndef _DEBUG
+#ifdef _DEBUG
 	wxMessageBox(_T("This software is still alpha software in early development, don't expect anything to work\r\n\
 DO NOT post bugreports,\r\n\
 DO NOT use it in production environments,\r\n\

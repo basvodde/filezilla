@@ -15,6 +15,7 @@
 
 int CFileZillaEngine::m_activeStatusSend = 0;
 int CFileZillaEngine::m_activeStatusRecv = 0;
+std::list<CFileZillaEngine*> CFileZillaEngine::m_engineList;
 
 const wxEventType fzEVT_ENGINE_NOTIFICATION = wxNewEventType();
 
@@ -45,6 +46,8 @@ CFileZillaEngine::CFileZillaEngine()
 #else
 	m_asyncRequestCounter = (0xFFFFFFFF / RAND_MAX) * rand();
 #endif
+
+	m_engineList.push_back(this);
 }
 
 CFileZillaEngine::~CFileZillaEngine()
@@ -63,6 +66,14 @@ CFileZillaEngine::~CFileZillaEngine()
 		pResolver->Wait();
 		delete pResolver;					
 	}
+
+	// Remove ourself from the engine list
+	for (std::list<CFileZillaEngine*>::iterator iter = m_engineList.begin(); iter != m_engineList.end(); iter++)
+		if (*iter == this)
+		{
+			m_engineList.erase(iter);
+			break;
+		}
 }
 
 int CFileZillaEngine::Init(wxEvtHandler *pEventHandler, COptionsBase *pOptions)
@@ -275,6 +286,7 @@ int CFileZillaEngine::List(const CListCommand &command)
 				if (i == pListing->m_entryCount)
 				{
 					m_lastListDir = pListing->path;
+					m_lastListTime = wxDateTime::Now();
 					CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing);
 					AddNotification(pNotification);
 					return FZ_REPLY_OK;
@@ -464,4 +476,33 @@ int CFileZillaEngine::Delete(const CDeleteCommand& command)
 
 	m_pCurrentCommand = command.Clone();
 	return m_pControlSocket->Delete(command.GetPath(), command.GetFile());
+}
+
+void CFileZillaEngine::ResendModifiedListings()
+{
+	// Iterate through all engines and check if the last listed directory has 
+	// changed in the cache. If so, resend the listing
+
+	CDirectoryCache cache;
+	for (std::list<CFileZillaEngine*>::iterator iter = m_engineList.begin(); iter != m_engineList.end(); iter++)
+	{
+		CFileZillaEngine* pEngine = *iter;
+		if (pEngine->m_lastListDir.IsEmpty() || !pEngine->m_pControlSocket)
+			break;
+
+		const CServer* pServer = pEngine->m_pControlSocket->GetCurrentServer();
+		if (!pServer)
+			break;
+
+		if (!cache.HasChanged(pEngine->m_lastListTime, *pServer, pEngine->m_lastListDir))
+			continue;
+		
+		CDirectoryListing *pListing = new CDirectoryListing;
+		bool found = cache.Lookup(*pListing, *pServer, pEngine->m_lastListDir);
+		wxASSERT(found);
+		
+		pEngine->m_lastListTime = wxDateTime::Now();
+		CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing);
+		pEngine->AddNotification(pNotification);
+	}
 }

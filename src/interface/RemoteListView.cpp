@@ -796,6 +796,9 @@ void CRemoteListView::OnMenuRename(wxCommandEvent& event)
 
 bool CRemoteListView::NextOperation()
 {
+	if (m_operationMode == recursive_none)
+		return false;
+
 	if (m_dirsToVisit.empty())
 	{
 		StopRecursiveOperation();

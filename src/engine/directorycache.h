@@ -21,9 +21,11 @@ public:
 	~CDirectoryCache();
 
 	void Store(const CDirectoryListing &listing, const CServer &server, CServerPath parentPath = CServerPath(), wxString subDir = _T(""));
+	bool HasChanged(CTimeEx since, const CServer &server, const CServerPath &path) const;
 	bool Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path);
 	bool Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, wxString subDir);
-	bool InvalidateFile(wxString filename, const CServer &server, const CServerPath &path);
+	bool InvalidateFile(wxString filename, const CServer &server, const CServerPath &path, int size = -1);
+	bool RemoveFile(wxString filename, const CServer &server, const CServerPath &path);
 	void InvalidateServer(const CServer& server);
 
 protected:
@@ -37,6 +39,7 @@ protected:
 		CDirectoryListing listing;
 		CServer server;
 		wxDateTime createTime;
+		CTimeEx modificationTime;
 		typedef struct
 		{
 			CServerPath path;

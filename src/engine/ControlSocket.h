@@ -58,6 +58,10 @@ protected:
 	virtual int ResetOperation(int nErrorCode);
 	virtual bool Send(const char *buffer, int len);
 
+	// Send the directory listing to the interface.
+	// If the listing is a freshly received one, it should be stored
+	// in the cache before calling SendDirectoryListing, else
+	// list update logic will fail.
 	void SendDirectoryListing(CDirectoryListing* pListing);
 
 	wxString ConvertDomainName(wxString domain);

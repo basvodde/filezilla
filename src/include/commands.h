@@ -8,10 +8,9 @@ enum Command
 	cmd_disconnect,
 	cmd_cancel,
 	cmd_list,
-	cmd_recList, // Recursive list
 	cmd_transfer,
 	cmd_delete,
-	cmd_removeDir,
+	cmd_removedir,
 	cmd_makeDir,
 	cmd_rename,
 	cmd_chmod,
@@ -112,7 +111,7 @@ protected:
 };
 
 DECLARE_COMMAND(CDeleteCommand, cmd_delete, true)
-	CDeleteCommand(const CServerPath& path, wxString file);
+	CDeleteCommand(const CServerPath& path, const wxString& file);
 	virtual ~CDeleteCommand() { }
 
 	CServerPath GetPath() const { return m_path; }
@@ -122,6 +121,19 @@ protected:
 
 	CServerPath m_path;
 	wxString m_file;
+};
+
+DECLARE_COMMAND(CRemoveDirCommand, cmd_removedir, true)
+	CRemoveDirCommand(const CServerPath& path, const wxString& subdDir);
+	virtual ~CRemoveDirCommand() { }
+
+	CServerPath GetPath() const { return m_path; }
+	wxString GetSubDir() const { return m_subDir; }
+
+protected:
+
+	CServerPath m_path;
+	wxString m_subDir;
 };
 
 #endif

@@ -10,7 +10,7 @@
 CFileTransferOpData::CFileTransferOpData()
 {
 	opId = cmd_transfer;
-	
+
 	pFile = 0;
 	resume = false;
 	tryAbsolutePath = false;
@@ -51,7 +51,7 @@ public:
 		nCommand = 0;
 
 		opId = cmd_connect;
-		
+
 		waitChallenge = false;
 		gotPassword = false;
 		waitForAsyncRequest = false;
@@ -120,7 +120,7 @@ void CFtpControlSocket::OnReceive(wxSocketEvent &event)
 				continue;
 
 			LogMessage(Response, m_ReceiveBuffer);
-				
+
 			if (GetCurrentCommandId() == cmd_connect && m_pCurOpData && reinterpret_cast<CLogonOpData *>(m_pCurOpData)->waitChallenge)
 			{
 				wxString& challenge = reinterpret_cast<CLogonOpData *>(m_pCurOpData)->challenge;
@@ -213,7 +213,7 @@ int CFtpControlSocket::Logon()
 		delete m_pCurOpData;
 	}
 	m_pCurOpData = new CLogonOpData;
-	
+
 	return FZ_REPLY_WOULDBLOCK;
 }
 
@@ -231,7 +231,7 @@ int CFtpControlSocket::LogonParseResponse()
 	const int LO = -2, ER = -1;
 	const int NUMLOGIN = 9; // currently supports 9 different login sequences
 	int logonseq[NUMLOGIN][20] = {
-		// this array stores all of the logon sequences for the various firewalls 
+		// this array stores all of the logon sequences for the various firewalls
 		// in blocks of 3 nums. 1st num is command to send, 2nd num is next point in logon sequence array
 		// if 200 series response is rec'd from server as the result of the command, 3rd num is next
 		// point in logon sequence if 300 series rec'd
@@ -423,7 +423,7 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 	CListOpData *pData = new CListOpData;
 	pData->pNextOpData = m_pCurOpData;
 	m_pCurOpData = pData;
-	
+
 	switch (m_pCurrentServer->GetPasvMode())
 	{
 	case MODE_PASSIVE:
@@ -456,7 +456,7 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 {
 	LogMessage(Debug_Verbose, _T("CFtpControlSocket::ListSend(%d)"), prevResult);
-		
+
 	if (!m_pCurOpData)
 	{
 		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
@@ -490,7 +490,7 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 			else
 				delete pListing;
 		}
-				
+
 		pData->opState = list_type;
 	}
 
@@ -565,7 +565,7 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 int CFtpControlSocket::ListParseResponse()
 {
 	LogMessage(Debug_Verbose, _T("CFtpControlSocket::ListParseResponse()"));
-	
+
 	if (!m_pCurOpData)
 	{
 		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
@@ -576,12 +576,12 @@ int CFtpControlSocket::ListParseResponse()
 	CListOpData *pData = static_cast<CListOpData *>(m_pCurOpData);
 	if (pData->opState == list_init)
 		return FZ_REPLY_ERROR;
-	
+
 	int code = GetReplyCode();
-	
+
 	LogMessage(Debug_Debug, _T("  code = %d"), code);
 	LogMessage(Debug_Debug, _T("  state = %d"), pData->opState);
-	
+
 	bool error = false;
 	switch (pData->opState)
 	{
@@ -651,8 +651,9 @@ int CFtpControlSocket::ListParseResponse()
 
 			CDirectoryCache cache;
 			cache.Store(*pListing, *m_pCurrentServer, pData->path, pData->subDir);
-			
+
 			SendDirectoryListing(pListing);
+			m_pEngine->ResendModifiedListings();
 
 			ResetOperation(FZ_REPLY_OK);
 			return FZ_REPLY_OK;
@@ -684,13 +685,14 @@ int CFtpControlSocket::ListParseResponse()
 				error = true;
 				break;
 			}
-			
+
 			CDirectoryListing *pListing = m_pTransferSocket->m_pDirectoryListingParser->Parse(m_CurrentPath);
 
 			CDirectoryCache cache;
 			cache.Store(*pListing, *m_pCurrentServer, pData->path, pData->subDir);
-			
+
 			SendDirectoryListing(pListing);
+			m_pEngine->ResendModifiedListings();
 
 			ResetOperation(FZ_REPLY_OK);
 			return FZ_REPLY_OK;
@@ -742,7 +744,7 @@ bool CFtpControlSocket::ParsePwdReply(wxString reply)
 int CFtpControlSocket::ResetOperation(int nErrorCode)
 {
 	LogMessage(Debug_Verbose, _T("CFtpControlSocket::ResetOperation(%d)"), nErrorCode);
-	
+
 	delete m_pTransferSocket;
 	m_pTransferSocket = 0;
 
@@ -761,7 +763,9 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 		if (!pData->download && pData->opState >= filetransfer_transfer)
 		{
 			CDirectoryCache cache;
-			cache.InvalidateFile(pData->remoteFile, *m_pCurrentServer, pData->remotePath);
+			cache.InvalidateFile(pData->remoteFile, *m_pCurrentServer, pData->remotePath, (nErrorCode == FZ_REPLY_OK) ? pData->fileSize : -1);
+
+			m_pEngine->ResendModifiedListings();
 		}
 	}
 
@@ -987,7 +991,7 @@ int CFtpControlSocket::ChangeDirSend()
 int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath &remotePath, const wxString &remoteFile, bool download)
 {
 	LogMessage(Debug_Verbose, _T("CFtpControlSocket::FileTransfer()"));
-	
+
 	if (download)
 	{
 		wxString filename = remotePath.FormatFilename(remoteFile);
@@ -1002,7 +1006,7 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("deleting nonzero pData"));
 		delete m_pCurOpData;
 	}
-	
+
 	CFileTransferOpData *pData = new CFileTransferOpData;
 	m_pCurOpData = pData;
 
@@ -1010,7 +1014,7 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 	pData->remotePath = remotePath;
 	pData->remoteFile = remoteFile;
 	pData->download = download;
-			
+
 	switch (m_pCurrentServer->GetPasvMode())
 	{
 	case MODE_PASSIVE:
@@ -1052,7 +1056,7 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 				if (listing.m_pEntries[i].unsure)
 				{
 					shouldList = true;
-					break;				
+					break;
 				}
 				if (listing.m_pEntries[i].name != pData->remoteFile)
 					differentCase = true;
@@ -1247,7 +1251,7 @@ int CFtpControlSocket::FileTransferParseResponse()
 				error = true;
 				break;
 			}
-			
+
 			wxFileOffset startOffset;
 			if (pData->resume)
 			{
@@ -1352,7 +1356,7 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 		if (prevResult == FZ_REPLY_OK)
 		{
 			pData->opState = filetransfer_waitlist;
-		
+
 			CDirectoryListing listing;
 			CDirectoryCache cache;
 			bool found = cache.Lookup(listing, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath);
@@ -1370,7 +1374,7 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 						if (listing.m_pEntries[i].unsure)
 						{
 							shouldList = true;
-							break;				
+							break;
 						}
 						if (listing.m_pEntries[i].name != pData->remoteFile)
 							differentCase = true;
@@ -1577,7 +1581,7 @@ void CFtpControlSocket::TransferEnd(int reason)
 		LogMessage(Debug_Verbose, _T("TransferEnd message from previous operation"), reason);
 		return;
 	}
-	
+
 	// Even is reason indicates a failure, don't reset operation
 	// yet, wait for the reply to the LIST/RETR/... commands
 
@@ -1609,8 +1613,9 @@ void CFtpControlSocket::TransferEnd(int reason)
 
 					CDirectoryCache cache;
 					cache.Store(*pListing, *m_pCurrentServer, pData->path, pData->subDir);
-	
+
 					SendDirectoryListing(pListing);
+					m_pEngine->ResendModifiedListings();
 
 					ResetOperation(FZ_REPLY_OK);
 				}
@@ -1776,7 +1781,7 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 				LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("No or invalid operation in progress, ignoring request reply %f"), pNotification->GetRequestID());
 				return false;
 			}
-	
+
 			CFileTransferOpData *pData = static_cast<CFileTransferOpData *>(m_pCurOpData);
 
 			if (!pData->waitForAsyncRequest)
@@ -1785,7 +1790,7 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 				return false;
 			}
 			pData->waitForAsyncRequest = false;
-			
+
 			CFileExistsNotification *pFileExistsNotification = reinterpret_cast<CFileExistsNotification *>(pNotification);
 			switch (pFileExistsNotification->overwriteAction)
 			{
@@ -1833,7 +1838,7 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 				else
 				{
 					pData->remoteFile = pFileExistsNotification->newName;
-					
+
 					CDirectoryListing listing;
 					CDirectoryCache cache;
 					bool found = cache.Lookup(listing, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath);
@@ -1901,7 +1906,7 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 				LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("No or invalid operation in progress, ignoring request reply %d"), pNotification->GetRequestID());
 				return false;
 			}
-	
+
 			CLogonOpData* pData = static_cast<CLogonOpData*>(m_pCurOpData);
 
 			if (!pData->waitForAsyncRequest)
@@ -1937,7 +1942,7 @@ int CFtpControlSocket::RawCommand(const wxString& command /*=_T("")*/)
 	{
 		if (!Send(command))
 			return FZ_REPLY_ERROR;
-		
+
 		return FZ_REPLY_WOULDBLOCK;
 	}
 
@@ -1997,7 +2002,8 @@ int CFtpControlSocket::Delete(const CServerPath& path /*=CServerPath()*/, const 
 
 	CDeleteOpData *pData = static_cast<CDeleteOpData *>(m_pCurOpData);
 	CDirectoryCache cache;
-	cache.InvalidateFile(pData->file, *m_pCurrentServer, pData->path);	
+	cache.RemoveFile(pData->file, *m_pCurrentServer, pData->path);
+	m_pEngine->ResendModifiedListings();
 
 	return ResetOperation(FZ_REPLY_OK);
 }

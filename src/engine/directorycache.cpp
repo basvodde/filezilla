@@ -16,38 +16,42 @@ CDirectoryCache::~CDirectoryCache()
 
 void CDirectoryCache::Store(const CDirectoryListing &listing, const CServer &server, CServerPath parentPath /*=CServerPath()*/, wxString subDir /*=_T("")*/)
 {
+	// First check for existing entry in cache and update if it neccessary
 	for (tCacheIter iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
 	{
 		CCacheEntry &entry = *iter;
-		if (entry.server == server && entry.listing.path == listing.path)
+		if (entry.server != server || entry.listing.path != listing.path)
+			continue;
+		
+		entry.modificationTime = CTimeEx::Now();
+		entry.createTime = entry.modificationTime.GetTime();
+
+		entry.listing = listing;
+
+		if (!parentPath.IsEmpty() && subDir != _T(""))
 		{
-			entry.createTime = wxDateTime::Now();
-			entry.listing = listing;
-
-			if (!parentPath.IsEmpty() && subDir != _T(""))
+			// Search for parents
+			for (tParentsIter parentsIter = entry.parents.begin(); parentsIter != entry.parents.end(); parentsIter++)
 			{
-				// Search for parents
-				for (tParentsIter parentsIter = entry.parents.begin(); parentsIter != entry.parents.end(); parentsIter++)
-				{
-					const CCacheEntry::t_parent &parent = *parentsIter;
-					if (parent.path == parentPath && parent.subDir == subDir)
-						return;
-				}
-	
-				// Store parent
-				CCacheEntry::t_parent parent;
-				parent.path = parentPath;
-				parent.subDir = subDir;
-				entry.parents.push_front(parent);
+				const CCacheEntry::t_parent &parent = *parentsIter;
+				if (parent.path == parentPath && parent.subDir == subDir)
+					return;
 			}
-
-			return;
+	
+			// Store parent
+			CCacheEntry::t_parent parent;
+			parent.path = parentPath;
+			parent.subDir = subDir;
+			entry.parents.push_front(parent);
 		}
+
+		return;
 	}
 
-	// Store listing in cache
+	// Create new entry and store listing in cache
 	CCacheEntry entry;
-	entry.createTime = wxDateTime::Now();
+	entry.modificationTime = CTimeEx::Now();
+	entry.createTime = entry.modificationTime.GetTime();
 	entry.listing = listing;
 	entry.server = server;
 
@@ -75,33 +79,33 @@ bool CDirectoryCache::Lookup(CDirectoryListing &listing, const CServer &server, 
 		for (tCacheIter iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
 		{
 			CCacheEntry &entry = *iter;
-			if (entry.server == server)
+			if (entry.server != server)
+				continue;
+
+			if (subDir == _T(""))
 			{
-				if (subDir == _T(""))
+				if (entry.listing.path == path)
 				{
-					if (entry.listing.path == path)
-					{
-						listing = entry.listing;
-						return true;
-					}
+					listing = entry.listing;
+					return true;
 				}
-				else
+			}
+			else
+			{
+				for (tParentsIter parentsIter = entry.parents.begin(); parentsIter != entry.parents.end(); parentsIter++)
 				{
-					for (tParentsIter parentsIter = entry.parents.begin(); parentsIter != entry.parents.end(); parentsIter++)
+					const CCacheEntry::t_parent &parent = *parentsIter;
+					if (parent.path != path || parent.subDir != subDir)
+						continue;
+
+					// TODO: Cache timeout
+					if (false)
 					{
-						const CCacheEntry::t_parent &parent = *parentsIter;
-						if (parent.path == path && parent.subDir == subDir)
-						{
-							// TODO: Cache timeout
-							if (false)
-							{
-								m_CacheList.erase(iter);
-								return false;
-							}
-							listing = entry.listing;
-							return true;
-						}
+						m_CacheList.erase(iter);
+						return false;
 					}
+					listing = entry.listing;
+					return true;
 				}
 			}
 		}
@@ -140,6 +144,7 @@ CDirectoryCache::CCacheEntry& CDirectoryCache::CCacheEntry::operator=(const CDir
 	listing = a.listing;
 	server = a.server;
 	createTime = a.createTime;
+	modificationTime = a.modificationTime;
 	parents = a.parents;
 
 	return *this;
@@ -150,10 +155,11 @@ CDirectoryCache::CCacheEntry::CCacheEntry(const CDirectoryCache::CCacheEntry &en
 	listing = entry.listing;
 	server = entry.server;
 	createTime = entry.createTime;
+	modificationTime = entry.modificationTime;
 	parents = entry.parents;
 }
 
-bool CDirectoryCache::InvalidateFile(wxString filename, const CServer &server, const CServerPath &path)
+bool CDirectoryCache::InvalidateFile(wxString filename, const CServer &server, const CServerPath &path, int size /*=-1*/)
 {
 	for (tCacheIter iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
 	{
@@ -179,7 +185,7 @@ bool CDirectoryCache::InvalidateFile(wxString filename, const CServer &server, c
 			listing[entry.listing.m_entryCount].name = filename;
 			listing[entry.listing.m_entryCount].hasDate = false;
 			listing[entry.listing.m_entryCount].hasTime = false;
-			listing[entry.listing.m_entryCount].size = -1;
+			listing[entry.listing.m_entryCount].size = size;
 			listing[entry.listing.m_entryCount].dir = 0;
 			listing[entry.listing.m_entryCount].link = 0;
 			listing[entry.listing.m_entryCount].unsure = true;
@@ -187,6 +193,52 @@ bool CDirectoryCache::InvalidateFile(wxString filename, const CServer &server, c
 			delete [] entry.listing.m_pEntries;
 			entry.listing.m_pEntries = listing;
 		}
+		entry.listing.m_hasUnsureEntries = true;
+		entry.modificationTime = CTimeEx::Now();
+	}
+
+	return true;
+}
+
+bool CDirectoryCache::RemoveFile(wxString filename, const CServer &server, const CServerPath &path)
+{
+	for (tCacheIter iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
+	{
+		CCacheEntry &entry = *iter;
+		if (entry.server != server || path.CmpNoCase(entry.listing.path))
+			continue;
+
+		bool matchCase = false;
+		for (unsigned int i = 0; i < entry.listing.m_entryCount; i++)
+		{
+			if (entry.listing.m_pEntries[i].name == filename)
+				matchCase = true;
+		}
+		
+		if (matchCase)
+		{
+			CDirentry *listing = new CDirentry[entry.listing.m_entryCount + 1];
+			unsigned int i;
+			for (i = 0; i < entry.listing.m_entryCount; i++)
+				if (entry.listing.m_pEntries[i].name == filename)
+					break;
+			wxASSERT(i != entry.listing.m_entryCount);
+			for (i++; i < entry.listing.m_entryCount; i++)
+				entry.listing.m_pEntries[i - 1] = entry.listing.m_pEntries[i];
+			entry.listing.m_entryCount--;
+		}
+		else
+		{
+			for (unsigned int i = 0; i < entry.listing.m_entryCount; i++)
+			{
+				if (!filename.CmpNoCase(entry.listing.m_pEntries[i].name))
+				{
+					entry.listing.m_pEntries[i].unsure = true;
+				}				
+			}
+		}
+		entry.listing.m_hasUnsureEntries = true;
+		entry.modificationTime = CTimeEx::Now();
 	}
 
 	return true;
@@ -202,4 +254,24 @@ void CDirectoryCache::InvalidateServer(const CServer& server)
 			newCache.push_back(entry);
 	}
 	m_CacheList = newCache;
+}
+
+bool CDirectoryCache::HasChanged(CTimeEx since, const CServer &server, const CServerPath &path) const
+{
+	for (tCacheIter iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
+	{
+		CCacheEntry &entry = *iter;
+		if (entry.server != server)
+			continue;
+		
+		if (entry.listing.path != path)
+			continue;
+
+		if (entry.modificationTime > since)
+			return true;
+		else
+			return false;
+	}
+
+	return false;
 }
