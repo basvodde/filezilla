@@ -34,6 +34,9 @@ protected:
 	virtual void OnSend();
 	virtual void OnClose(wxSocketEvent &event);
 
+	// Create a socket server
+	wxSocketServer* CreateSocketServer();
+
 	DECLARE_EVENT_TABLE();
 
 	wxSocketBase *m_pSocket; // Will point to either client or server socket

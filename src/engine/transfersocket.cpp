@@ -2,6 +2,7 @@
 #include "transfersocket.h"
 #include "ftpcontrolsocket.h"
 #include "directorylistingparser.h"
+#include "optionsbase.h"
 
 #include <wx/file.h>
 
@@ -64,14 +65,25 @@ wxString CTransferSocket::SetupActiveTransfer()
 	addr.AnyAddress();
 	addr.Service(0);
 
-	m_pSocketServer = new wxSocketServer(addr, wxSOCKET_NOWAIT);
-	if (!m_pSocketServer->Ok() || !m_pSocketServer->GetLocal(addr) || !m_pControlSocket->GetLocal(controladdr))
+	m_pSocketServer = CreateSocketServer();
+	if (!m_pSocketServer)
+		return _T("");
+
+	if (!m_pSocketServer->GetLocal(addr) || !m_pControlSocket->GetLocal(controladdr))
 	{
 		delete m_pSocketServer;
 		m_pSocketServer = 0;
 		return _T("");
 	}
-	wxString port = controladdr.IPAddress() + wxString::Format(_T(",%d,%d"), addr.Service() / 256, addr.Service() % 256);
+
+	wxString port;
+
+	wxString externalIP = m_pEngine->GetOptions()->GetOption(OPTION_EXTERNALIP);
+	if (externalIP != _T(""))
+		port = externalIP;
+	else
+		port = controladdr.IPAddress();
+	port += wxString::Format(_T(",%d,%d"), addr.Service() / 256, addr.Service() % 256);
 	port.Replace(_T("."), _T(","));
 
 	m_pSocketServer->SetEventHandler(*this);
@@ -338,4 +350,77 @@ void CTransferSocket::TransferEnd(int reason)
 	m_pSocketServer = 0;
 
 	m_pEngine->SendEvent(engineTransferEnd, reason);
+}
+
+wxSocketServer* CTransferSocket::CreateSocketServer()
+{
+	wxIPV4address addr, controladdr;
+	addr.AnyAddress();
+
+	if (!m_pEngine->GetOptions()->GetOptionVal(OPTION_LIMITPORTS))
+	{
+		// Ask the systen for a port
+		addr.Service(0);
+		wxSocketServer* pServer = new wxSocketServer(addr, wxSOCKET_NOWAIT | wxSOCKET_REUSEADDR);
+		if (!pServer->Ok())
+		{
+			delete pServer;
+			pServer = 0;
+			return 0;
+		}
+		return pServer;
+	}
+
+	// Try out all ports in the port range.
+	// Upon first call, we try to use a random port fist, after that
+	// increase the port step by step
+	
+	// Windows only: I think there's a bug in the socket implementation of
+	// Windows: Even if using wxSOCKET_REUSEADDR, using the same local address
+	// twice will fail unless there are a couple of minutes between the 
+	// connection attempts. This may cause problems if transferring lots of 
+	// files with a narrow port range.
+
+	static int start = 0;
+
+	int low = m_pEngine->GetOptions()->GetOptionVal(OPTION_LIMITPORTS_LOW);
+	int high = m_pEngine->GetOptions()->GetOptionVal(OPTION_LIMITPORTS_HIGH);
+
+	if (start < low || start > high)
+	{
+		srand( (unsigned)time( NULL ) );
+		start = rand() * (high - low) / (RAND_MAX + 1) + low;
+	}
+
+	for (int i = start; i <= high; i++)
+	{
+		addr.Service(i);
+		wxSocketServer* pServer = new wxSocketServer(addr, wxSOCKET_NOWAIT | wxSOCKET_REUSEADDR);
+		if (pServer->Ok())
+		{
+			start = i + 1;
+			if (start > high)
+				start = low;
+			return pServer;
+		}
+		
+		delete pServer;
+	}
+
+	for (int i = low; i < start; i++)
+	{
+		addr.Service(i);
+		wxSocketServer* pServer = new wxSocketServer(addr, wxSOCKET_NOWAIT | wxSOCKET_REUSEADDR);
+		if (pServer->Ok())
+		{
+			start = i + 1;
+			if (start > high)
+				start = low;
+			return pServer;
+		}
+		
+		delete pServer;
+	}
+	
+	return 0;
 }
