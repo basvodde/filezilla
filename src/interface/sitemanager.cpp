@@ -71,6 +71,8 @@ bool CSiteManager::Create(wxWindow* parent)
 	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_SERVER"),  wxART_OTHER, wxSize(16, 16)));
 	
 	pTree->AssignImageList(pImageList);
+	
+	SetCtrlState();
 		
 	return true;
 }
@@ -488,133 +490,7 @@ void CSiteManager::OnSelChanging(wxTreeEvent& event)
 
 void CSiteManager::OnSelChanged(wxTreeEvent& event)
 {
-	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
-	if (!pTree)
-		return;
-
-	wxTreeItemId item = event.GetItem();
-	if (!item.IsOk())
-		return;
-
-	CSiteManagerItemData* data = reinterpret_cast<CSiteManagerItemData* >(pTree->GetItemData(item));
-	if (!data)
-	{
-		// Set the control stats according if it's possible to use the control
-		XRCCTRL(*this, "ID_RENAME", wxWindow)->Enable(item != pTree->GetRootItem());
-		XRCCTRL(*this, "ID_DELETE", wxWindow)->Enable(item != pTree->GetRootItem());
-		XRCCTRL(*this, "ID_COPY", wxWindow)->Enable(item != pTree->GetRootItem());
-		XRCCTRL(*this, "ID_NOTEBOOK", wxWindow)->Enable(false);
-		XRCCTRL(*this, "ID_NEWFOLDER", wxWindow)->Enable(true);
-		XRCCTRL(*this, "ID_NEWSITE", wxWindow)->Enable(true);
-		XRCCTRL(*this, "ID_CONNECT", wxWindow)->Enable(false);
-
-		// Empty all site information
-		XRCCTRL(*this, "ID_HOST", wxTextCtrl)->SetValue(_T(""));
-		XRCCTRL(*this, "ID_PORT", wxTextCtrl)->SetValue(_T("21"));
-		XRCCTRL(*this, "ID_PROTOCOL", wxComboBox)->SetValue(_("FTP"));
-		XRCCTRL(*this, "ID_LOGONTYPE", wxComboBox)->SetValue(_("Anonymous"));
-		XRCCTRL(*this, "ID_USER", wxTextCtrl)->SetValue(_T(""));
-		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->SetValue(_T(""));
-		XRCCTRL(*this, "ID_COMMENTS", wxTextCtrl)->SetValue(_T(""));
-		
-		XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->SetValue(_("Default"));
-		XRCCTRL(*this, "ID_LOCALDIR", wxTextCtrl)->SetValue(_T(""));
-		XRCCTRL(*this, "ID_REMOTEDIR", wxTextCtrl)->SetValue(_T(""));
-		XRCCTRL(*this, "ID_TIMEZONE_HOURS", wxSpinCtrl)->SetValue(0);
-		XRCCTRL(*this, "ID_TIMEZONE_MINUTES", wxSpinCtrl)->SetValue(0);
-
-		XRCCTRL(*this, "ID_TRANSFERMODE_DEFAULT", wxRadioButton)->SetValue(true);
-		XRCCTRL(*this, "ID_LIMITMULTIPLE", wxCheckBox)->SetValue(false);
-		XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->SetValue(1);
-	}
-	else
-	{
-		// Set the control stats according if it's possible to use the control
-		XRCCTRL(*this, "ID_RENAME", wxWindow)->Enable(true);
-		XRCCTRL(*this, "ID_DELETE", wxWindow)->Enable(true);
-		XRCCTRL(*this, "ID_COPY", wxWindow)->Enable(true);
-		XRCCTRL(*this, "ID_NOTEBOOK", wxWindow)->Enable(true);
-		XRCCTRL(*this, "ID_NEWFOLDER", wxWindow)->Enable(false);
-		XRCCTRL(*this, "ID_NEWSITE", wxWindow)->Enable(false);
-		XRCCTRL(*this, "ID_CONNECT", wxWindow)->Enable(true);
-
-		XRCCTRL(*this, "ID_HOST", wxTextCtrl)->SetValue(data->m_server.GetHost());
-		XRCCTRL(*this, "ID_PORT", wxTextCtrl)->SetValue(wxString::Format(_T("%d"), data->m_server.GetPort()));
-		switch (data->m_server.GetProtocol())
-		{
-		case FTP:
-		default:
-			XRCCTRL(*this, "ID_PROTOCOL", wxComboBox)->SetValue(_("FTP"));
-			break;
-		}
-
-		XRCCTRL(*this, "ID_USER", wxTextCtrl)->Enable(data->m_server.GetLogonType() != ANONYMOUS);
-		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->Enable(data->m_server.GetLogonType() == NORMAL);
-
-		switch (data->m_server.GetLogonType())
-		{
-		case NORMAL:
-			XRCCTRL(*this, "ID_LOGONTYPE", wxComboBox)->SetValue(_("Normal"));
-			break;
-		case ASK:
-			XRCCTRL(*this, "ID_LOGONTYPE", wxComboBox)->SetValue(_("Ask for password"));
-			break;
-		case INTERACTIVE:
-			XRCCTRL(*this, "ID_LOGONTYPE", wxComboBox)->SetValue(_("Interactive"));
-			break;
-		default:
-			XRCCTRL(*this, "ID_LOGONTYPE", wxComboBox)->SetValue(_("Anonymous"));
-			break;
-		}
-
-		XRCCTRL(*this, "ID_USER", wxTextCtrl)->SetValue(data->m_server.GetUser());
-		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->SetValue(data->m_server.GetPass());
-		XRCCTRL(*this, "ID_COMMENTS", wxTextCtrl)->SetValue(data->m_comments);
-
-		switch (data->m_server.GetType())
-		{
-		case UNIX:
-			XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->SetValue(_("Unix"));
-			break;
-		case DOS:
-			XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->SetValue(_("Dos"));
-			break;
-		case MVS:
-			XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->SetValue(_("MVS"));
-			break;
-		case VMS:
-			XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->SetValue(_("VMS"));
-			break;
-		default:
-			XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->SetValue(_("Default"));
-			break;
-		}
-		XRCCTRL(*this, "ID_LOCALDIR", wxTextCtrl)->SetValue(data->m_localDir);
-		XRCCTRL(*this, "ID_REMOTEDIR", wxTextCtrl)->SetValue(data->m_remoteDir.GetPath());
-		XRCCTRL(*this, "ID_TIMEZONE_HOURS", wxSpinCtrl)->SetValue(data->m_server.GetTimezoneOffset() / 60);
-		XRCCTRL(*this, "ID_TIMEZONE_MINUTES", wxSpinCtrl)->SetValue(data->m_server.GetTimezoneOffset() % 60);
-
-		enum PasvMode pasvMode = data->m_server.GetPasvMode();
-		if (pasvMode == MODE_ACTIVE)
-			XRCCTRL(*this, "ID_TRANSFERMODE_ACTIVE", wxRadioButton)->SetValue(true);
-		else if (pasvMode == MODE_PASSIVE)
-			XRCCTRL(*this, "ID_TRANSFERMODE_PASSIVE", wxRadioButton)->SetValue(true);
-		else
-			XRCCTRL(*this, "ID_TRANSFERMODE_DEFAULT", wxRadioButton)->SetValue(true);
-
-		int maxMultiple = data->m_server.MaximumMultipleConnections();
-		XRCCTRL(*this, "ID_LIMITMULTIPLE", wxCheckBox)->SetValue(maxMultiple != 0);
-		if (maxMultiple != 0)
-		{
-			XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->Enable(true);
-			XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->SetValue(maxMultiple);
-		}
-		else
-		{
-			XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->Enable(false);
-			XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->SetValue(1);
-		}
-	}
+	SetCtrlState();
 }
 
 void CSiteManager::OnNewSite(wxCommandEvent& event)
@@ -820,4 +696,135 @@ void CSiteManager::OnItemActivated(wxTreeEvent& event)
 void CSiteManager::OnLimitMultipleConnectionsChanged(wxCommandEvent& event)
 {
 	XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->Enable(event.IsChecked());
+}
+
+void CSiteManager::SetCtrlState()
+{
+	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
+	if (!pTree)
+		return;
+
+	wxTreeItemId item = pTree->GetSelection();
+	
+	CSiteManagerItemData* data = 0;
+	if (item.IsOk())
+		data = reinterpret_cast<CSiteManagerItemData* >(pTree->GetItemData(item));
+	if (!data)
+	{
+		// Set the control states according if it's possible to use the control
+		XRCCTRL(*this, "ID_RENAME", wxWindow)->Enable(item != pTree->GetRootItem());
+		XRCCTRL(*this, "ID_DELETE", wxWindow)->Enable(item != pTree->GetRootItem());
+		XRCCTRL(*this, "ID_COPY", wxWindow)->Enable(item != pTree->GetRootItem());
+		XRCCTRL(*this, "ID_NOTEBOOK", wxWindow)->Enable(false);
+		XRCCTRL(*this, "ID_NEWFOLDER", wxWindow)->Enable(true);
+		XRCCTRL(*this, "ID_NEWSITE", wxWindow)->Enable(true);
+		XRCCTRL(*this, "ID_CONNECT", wxWindow)->Enable(false);
+
+		// Empty all site information
+		XRCCTRL(*this, "ID_HOST", wxTextCtrl)->SetValue(_T(""));
+		XRCCTRL(*this, "ID_PORT", wxTextCtrl)->SetValue(_T("21"));
+		XRCCTRL(*this, "ID_PROTOCOL", wxComboBox)->SetValue(_("FTP"));
+		XRCCTRL(*this, "ID_LOGONTYPE", wxComboBox)->SetValue(_("Anonymous"));
+		XRCCTRL(*this, "ID_USER", wxTextCtrl)->SetValue(_T(""));
+		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->SetValue(_T(""));
+		XRCCTRL(*this, "ID_COMMENTS", wxTextCtrl)->SetValue(_T(""));
+		
+		XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->SetValue(_("Default"));
+		XRCCTRL(*this, "ID_LOCALDIR", wxTextCtrl)->SetValue(_T(""));
+		XRCCTRL(*this, "ID_REMOTEDIR", wxTextCtrl)->SetValue(_T(""));
+		XRCCTRL(*this, "ID_TIMEZONE_HOURS", wxSpinCtrl)->SetValue(0);
+		XRCCTRL(*this, "ID_TIMEZONE_MINUTES", wxSpinCtrl)->SetValue(0);
+
+		XRCCTRL(*this, "ID_TRANSFERMODE_DEFAULT", wxRadioButton)->SetValue(true);
+		XRCCTRL(*this, "ID_LIMITMULTIPLE", wxCheckBox)->SetValue(false);
+		XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->SetValue(1);
+	}
+	else
+	{
+		// Set the control states according if it's possible to use the control
+		XRCCTRL(*this, "ID_RENAME", wxWindow)->Enable(true);
+		XRCCTRL(*this, "ID_DELETE", wxWindow)->Enable(true);
+		XRCCTRL(*this, "ID_COPY", wxWindow)->Enable(true);
+		XRCCTRL(*this, "ID_NOTEBOOK", wxWindow)->Enable(true);
+		XRCCTRL(*this, "ID_NEWFOLDER", wxWindow)->Enable(false);
+		XRCCTRL(*this, "ID_NEWSITE", wxWindow)->Enable(false);
+		XRCCTRL(*this, "ID_CONNECT", wxWindow)->Enable(true);
+
+		XRCCTRL(*this, "ID_HOST", wxTextCtrl)->SetValue(data->m_server.GetHost());
+		XRCCTRL(*this, "ID_PORT", wxTextCtrl)->SetValue(wxString::Format(_T("%d"), data->m_server.GetPort()));
+		switch (data->m_server.GetProtocol())
+		{
+		case FTP:
+		default:
+			XRCCTRL(*this, "ID_PROTOCOL", wxComboBox)->SetValue(_("FTP"));
+			break;
+		}
+
+		XRCCTRL(*this, "ID_USER", wxTextCtrl)->Enable(data->m_server.GetLogonType() != ANONYMOUS);
+		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->Enable(data->m_server.GetLogonType() == NORMAL);
+
+		switch (data->m_server.GetLogonType())
+		{
+		case NORMAL:
+			XRCCTRL(*this, "ID_LOGONTYPE", wxComboBox)->SetValue(_("Normal"));
+			break;
+		case ASK:
+			XRCCTRL(*this, "ID_LOGONTYPE", wxComboBox)->SetValue(_("Ask for password"));
+			break;
+		case INTERACTIVE:
+			XRCCTRL(*this, "ID_LOGONTYPE", wxComboBox)->SetValue(_("Interactive"));
+			break;
+		default:
+			XRCCTRL(*this, "ID_LOGONTYPE", wxComboBox)->SetValue(_("Anonymous"));
+			break;
+		}
+
+		XRCCTRL(*this, "ID_USER", wxTextCtrl)->SetValue(data->m_server.GetUser());
+		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->SetValue(data->m_server.GetPass());
+		XRCCTRL(*this, "ID_COMMENTS", wxTextCtrl)->SetValue(data->m_comments);
+
+		switch (data->m_server.GetType())
+		{
+		case UNIX:
+			XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->SetValue(_("Unix"));
+			break;
+		case DOS:
+			XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->SetValue(_("Dos"));
+			break;
+		case MVS:
+			XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->SetValue(_("MVS"));
+			break;
+		case VMS:
+			XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->SetValue(_("VMS"));
+			break;
+		default:
+			XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->SetValue(_("Default"));
+			break;
+		}
+		XRCCTRL(*this, "ID_LOCALDIR", wxTextCtrl)->SetValue(data->m_localDir);
+		XRCCTRL(*this, "ID_REMOTEDIR", wxTextCtrl)->SetValue(data->m_remoteDir.GetPath());
+		XRCCTRL(*this, "ID_TIMEZONE_HOURS", wxSpinCtrl)->SetValue(data->m_server.GetTimezoneOffset() / 60);
+		XRCCTRL(*this, "ID_TIMEZONE_MINUTES", wxSpinCtrl)->SetValue(data->m_server.GetTimezoneOffset() % 60);
+
+		enum PasvMode pasvMode = data->m_server.GetPasvMode();
+		if (pasvMode == MODE_ACTIVE)
+			XRCCTRL(*this, "ID_TRANSFERMODE_ACTIVE", wxRadioButton)->SetValue(true);
+		else if (pasvMode == MODE_PASSIVE)
+			XRCCTRL(*this, "ID_TRANSFERMODE_PASSIVE", wxRadioButton)->SetValue(true);
+		else
+			XRCCTRL(*this, "ID_TRANSFERMODE_DEFAULT", wxRadioButton)->SetValue(true);
+
+		int maxMultiple = data->m_server.MaximumMultipleConnections();
+		XRCCTRL(*this, "ID_LIMITMULTIPLE", wxCheckBox)->SetValue(maxMultiple != 0);
+		if (maxMultiple != 0)
+		{
+			XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->Enable(true);
+			XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->SetValue(maxMultiple);
+		}
+		else
+		{
+			XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->Enable(false);
+			XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->SetValue(1);
+		}
+	}
 }

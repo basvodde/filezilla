@@ -45,6 +45,7 @@ protected:
 	bool UpdateServer();
 	bool Load(TiXmlElement *pElement = 0, wxTreeItemId treeId = wxTreeItemId());
 	bool Save(TiXmlElement *pElement = 0, wxTreeItemId treeId = wxTreeItemId());
+	void SetCtrlState();
 	
 	virtual void OnOK(wxCommandEvent& event);
 	virtual void OnCancel(wxCommandEvent& event);
