@@ -560,9 +560,11 @@ int CFtpControlSocket::SendNextCommand()
 		return ChangeDirSend();
 	case cmd_transfer:
 		return FileTransferSend();
+	default:
+		LogMessage(::Debug_Warning, __TFILE__, __LINE__, _T("Unknown opID (%d) in SendNextCommand"), m_pCurOpData->opId);
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		break;
 	}
-	LogMessage(Debug_Warning, __TFILE__, __LINE__, _T("Unknown operation in SendNextCommand"));
-	ResetOperation(FZ_REPLY_ERROR);
 
 	return FZ_REPLY_ERROR;
 }
@@ -891,7 +893,7 @@ int CFtpControlSocket::FileTransferParseResponse()
 			{
 				if (!pData->pFile->Open(pData->localFile, wxFile::write_append))
 				{
-					LogMessage(::Error, _("Failed to \"%s\" for appending / writing"), pData->localFile);
+					LogMessage(::Error, _("Failed to \"%s\" for appending / writing"), pData->localFile.c_str());
 					error = true;
 				}
 			}
@@ -899,7 +901,7 @@ int CFtpControlSocket::FileTransferParseResponse()
 			{
 				if (!pData->pFile->Open(pData->localFile, wxFile::write))
 				{
-					LogMessage(::Error, _("Failed to \"%s\" for writing"), pData->localFile);
+					LogMessage(::Error, _("Failed to \"%s\" for writing"), pData->localFile.c_str());
 					error = true;
 				}
 			}
@@ -928,7 +930,7 @@ int CFtpControlSocket::FileTransferParseResponse()
 		{
 			if (!pData->pFile->Open(pData->localFile, wxFile::read))
 			{
-				LogMessage(::Error, _("Failed to \"%s\" for reading"), pData->localFile);
+				LogMessage(::Error, _("Failed to \"%s\" for reading"), pData->localFile.c_str());
 				error = true;
 			}
 			
@@ -954,7 +956,7 @@ int CFtpControlSocket::FileTransferParseResponse()
 					wxFileOffset offset = pData->totalSize - pData->leftSize;
 					if (pData->pFile->Seek(offset, wxFromStart) == wxInvalidOffset)
 					{
-						LogMessage(::Error, _("Could not seek to offset %s withing file"), offset.ToString());
+						LogMessage(::Error, _("Could not seek to offset %s withing file"), offset.ToString().c_str());
 						error = true;
 					}
 				}

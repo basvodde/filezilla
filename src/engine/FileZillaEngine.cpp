@@ -301,3 +301,4 @@ int CFileZillaEngine::FileTransfer(const CFileTransferCommand &command)
 	m_pCurrentCommand = command.Clone();
 	return m_pControlSocket->FileTransfer(command.GetLocalFile(), command.GetRemotePath(), command.GetRemoteFile(), command.Download());
 }
+

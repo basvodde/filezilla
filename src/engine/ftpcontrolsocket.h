@@ -7,7 +7,7 @@
 class CTransferSocket;
 class CFtpControlSocket : public CControlSocket
 {
-	friend CTransferSocket;
+	friend class CTransferSocket;
 public:
 	CFtpControlSocket(CFileZillaEngine *pEngine);
 	virtual ~CFtpControlSocket();
@@ -79,3 +79,4 @@ public:
 
 
 #endif
+

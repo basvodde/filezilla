@@ -588,3 +588,4 @@ int CLocalListView::CmpSize(CLocalListView *pList, unsigned int index, t_fileDat
 	return data.name.CmpNoCase(refData.name);
 
 }
+
