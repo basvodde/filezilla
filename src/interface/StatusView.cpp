@@ -125,4 +125,6 @@ void CStatusView::InitDefAttr()
 	array.Add(maxWidth);
 	m_defAttr.SetTabs(array);
 	m_defAttr.SetLeftIndent(0, maxWidth);
+
+	m_defAttr.SetBackgroundColour(dc.GetTextBackground());
 }
