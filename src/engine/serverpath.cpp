@@ -3,16 +3,552 @@
 
 CServerPath::CServerPath()
 {
+	m_type = DEFAULT;
+	m_bEmpty = true;
 }
 
-CServerPath::CServerPath(const wxString &path)
+CServerPath::CServerPath(const CServerPath &path, wxString subdir /*=_T("")*/)
 {
+	m_type = path.m_type;
+	m_bEmpty = path.m_bEmpty;
+	m_prefix = path.m_prefix;
+	m_Segments = path.m_Segments;
+
+	subdir.Trim(true);
+	subdir.Trim(false);
+	
+	if (subdir == _T(""))
+		return;
+
+	if (!ChangePath(subdir))
+		Clear();
 }
 
-CServerPath::CServerPath(ServerProtocol protocol, const wxString &path)
+CServerPath::CServerPath(wxString path, ServerType type /*=DEFAULT*/)
 {
+	m_type = type;
+
+	SetPath(path);
 }
 
 CServerPath::~CServerPath()
 {
 }
+
+void CServerPath::Clear()
+{
+	m_bEmpty = true;
+	m_type = DEFAULT;
+	m_prefix = _T("");
+	m_Segments.clear();
+}
+
+bool CServerPath::SetPath(wxString newPath)
+{
+	return SetPath(newPath, false);
+}
+
+bool CServerPath::SetPath(wxString &newPath, bool isFile)
+{
+	m_Segments.clear();
+	m_prefix = _T("");
+
+	wxString path = newPath;
+	wxString file;
+
+	path.Trim(true);
+	path.Trim(false);
+
+	if (path == _T(""))
+	{
+		m_bEmpty = true;
+		return false;
+	}
+	else
+		m_bEmpty = false;
+
+	if (m_type == DEFAULT)
+	{
+		int pos1 = path.Find(_T(":["));
+		if (pos1 != -1)
+		{
+			int pos2 = path.Find(']', true);
+			if (pos2 == (path.Length() - 1) && !isFile)
+				m_type = VMS;
+			else if (isFile && pos2 > pos1)
+				m_type = VMS;
+		}
+		else if (path.Length() >= 3 &&
+			(path.c_str()[0] >= 'A' && path.c_str()[0] <= 'Z') || (path.c_str()[0] >= 'a' && path.c_str()[0] <= 'z') &&
+			path.c_str()[1] == ':' && (path.c_str()[2] == '\\' || path.c_str()[2] == '/'))
+				m_type = DOS;
+		else
+			m_type = UNIX;
+	}
+
+	int pos;
+	switch (m_type)
+	{
+	case VMS:
+		if (isFile)
+		{
+			pos = path.Find(']', true);
+			if (pos == -1)
+			{
+				m_bEmpty = true;
+				return false;
+			}
+			file = path.Mid(pos + 1);
+			path = path.Left(pos + 1);
+		}
+		pos = path.Find(_T("["));
+		if (pos == -1 || path.Right(1) != _T("]"))
+		{
+			m_bEmpty = true;
+			return false;
+		}
+		path.RemoveLast();
+		if (pos)
+			m_prefix = path.Left(pos);
+		path = path.Mid(pos + 1);
+		pos = path.Find(_T("."));
+		while (pos != -1)
+		{
+			m_Segments.push_back(path.Left(pos));
+			path = path.Mid(pos + 1);
+			pos = path.Find(_T("."));
+		}
+		if (path != _T(""))
+			m_Segments.push_back(path);
+		break;
+	case DOS:
+		path.Replace(_T("\\"), _T("/"));
+		pos = path.Find(_T("/"));
+		if (pos <= 2 || path.c_str()[1] != ':' ||
+			!(path.c_str()[0] >= 'A' && path.c_str()[0] <= 'Z') || (path.c_str()[0] >= 'a' && path.c_str()[0] <= 'z'))
+		{
+			m_bEmpty = true;
+			return false;
+		}
+	default:
+		while (path.Replace(_T("//"), _T("/")));
+
+		if (isFile)
+		{
+			pos = path.Find('/', true);
+			if (pos == -1 || pos == (path.Length() - 1))
+			{
+				m_bEmpty = true;
+				return false;
+			}
+			file = path.Mid(pos + 1);
+			path = path.Left(pos);
+		}
+
+		if (path.c_str()[0] == '/')
+			path.Remove(0, 1);
+
+		if (path.Right(1) == _T("/"))
+			path.RemoveLast();
+		pos = path.Find(_T("/"));
+		while (pos != -1)
+		{
+			m_Segments.push_back(path.Left(pos));
+			path = path.Mid(pos + 1);
+			pos = path.Find(_T("/"));
+		}
+		if (path != _T(""))
+			m_Segments.push_back(path);
+
+		break;
+	}
+
+	if (isFile)
+		newPath = file;
+	return true;
+}
+
+wxString CServerPath::GetPath() const
+{
+	if (m_bEmpty)
+		return _T("");
+
+	wxString path = m_prefix;
+
+	switch (m_type)
+	{
+	case VMS:
+		{
+			path += _T("");
+			for (tConstSegmentIter iter = m_Segments.begin(); iter != m_Segments.end(); iter++)
+				path += *iter + _T(".");
+			path.RemoveLast();
+			path += _T("]");
+		}
+		break;
+	case DOS:
+		{
+			for (tConstSegmentIter iter = m_Segments.begin(); iter != m_Segments.end(); iter++)
+				path += *iter + _T("\\");
+		}
+		break;
+	default:
+		path += _T("/");
+		for (tConstSegmentIter iter = m_Segments.begin(); iter != m_Segments.end(); iter++)
+			path += *iter + _T("/");
+
+		break;
+	}
+
+	return path;
+}
+
+bool CServerPath::HasParent() const
+{
+	if (m_bEmpty)
+		return false;
+
+	if (m_type == DOS || m_type == VMS)
+		return m_Segments.size() > 1;
+
+	return !m_Segments.empty();
+}
+
+CServerPath CServerPath::GetParent() const
+{
+	if (!HasParent())
+		return CServerPath();
+
+	CServerPath parent = *this;
+	parent.m_Segments.pop_back();
+
+	return parent;
+}
+
+wxString CServerPath::GetLastSegment() const
+{
+	if (!HasParent())
+		return _T("");
+
+	if (!m_Segments.empty())
+		return m_Segments.back();
+	else
+		return _T("");
+}
+
+wxString CServerPath::GetSafePath() const
+{
+	if (m_bEmpty)
+		return _T("");
+
+	wxString safepath;
+	safepath.Printf(_T("%d %d "), m_type, m_prefix.Length());
+	if (m_prefix != _T(""))
+		safepath += m_prefix + _T(" ");
+
+	for (tConstSegmentIter iter = m_Segments.begin(); iter != m_Segments.end(); iter++)
+		safepath += wxString::Format(_T("%d %s "), iter->Length(), iter->c_str);
+
+	if (!m_Segments.empty())
+		safepath.RemoveLast();
+
+	return safepath;
+}
+
+bool CServerPath::SetSafePath(wxString path)
+{
+	m_bEmpty = true;
+	m_prefix = _T("");
+	m_Segments.clear();
+
+	int pos = path.Find(' ');
+	if (pos < 1)
+		return false;
+
+	long type;
+	if (!path.Left(pos).ToLong(&type))
+		return false;
+	m_type = (ServerType)type;
+	path = path.Mid(pos + 1);
+
+	pos = path.Find(' ');
+	if (pos < 1)
+		return false;
+
+	long len;
+	if (!path.Left(pos).ToLong(&len))
+		return false;
+	path = path.Mid(pos + 1);
+	if (path.Length() < len)
+		return false;
+	
+	if (len)
+	{
+		m_prefix = path.Left(len);
+		path = path.Mid(len);
+	}
+
+	while (path != _T(""))
+	{
+		if (path.c_str()[0] != ' ')
+			return false;
+
+		if (!path.Left(pos).ToLong(&len))
+			return false;
+		path = path.Mid(pos + 1);
+		if (path.Length() < len)
+			return false;
+
+		if (!len)
+			return false;
+
+		if (path.Length() < len)
+			return false;
+
+		m_Segments.push_back(path.Left(len));
+		path = path.Mid(len);
+	}
+	
+	m_bEmpty = false;
+
+	return true;
+}
+
+bool CServerPath::SetType(ServerType type)
+{
+	if (!m_bEmpty)
+		return false;
+
+	m_type = type;
+
+	return true;
+}
+
+bool CServerPath::IsSubdirOf(const CServerPath &path, bool cmpNoCase) const
+{
+	if (m_bEmpty || path.m_bEmpty)
+		return false;
+
+	if (cmpNoCase && m_prefix.CmpNoCase(path.m_prefix))
+		return false;
+	if (!cmpNoCase && m_prefix != path.m_prefix)
+		return false;
+
+	if (m_type != path.m_type)
+		return false;
+
+	if (!HasParent())
+		return false;
+
+	tConstSegmentIter iter1 = m_Segments.begin();
+	tConstSegmentIter iter2 = path.m_Segments.begin();
+	while (iter1 != m_Segments.end())
+	{
+		if (iter2 == path.m_Segments.end())
+			return true;
+		if (cmpNoCase)
+		{
+			if (iter1->CmpNoCase(*iter2))
+				return false;
+		}
+		else if (*iter1 != *iter2)
+			return false;
+
+		iter1++;
+		iter2++;
+	}
+
+	return false;
+}
+
+bool CServerPath::IsParentOf(const CServerPath &path, bool cmpNoCase) const
+{
+	if (!this)
+		return false;
+
+	return path.IsSubdirOf(*this, cmpNoCase);
+}
+
+bool CServerPath::ChangePath(wxString subdir)
+{
+	wxString subdir2 = subdir;
+	return ChangePath(subdir2, false);
+}
+
+bool CServerPath::ChangePath(wxString &subdir, bool isFile)
+{
+	wxString dir = subdir;
+	wxString file;
+
+	dir.Trim(true);
+	dir.Trim(false);
+	
+	if (dir == _T(""))
+	{
+		if (IsEmpty() || isFile)
+			return false;
+		else
+			return true;
+	}
+
+	switch (m_type)
+	{
+	case VMS:
+		{
+			int pos1 = subdir.Find(_T("["));
+			if (pos1 == -1)
+			{
+				int pos2 = dir.Find(']', true);
+				if (pos2 != -1)
+					return false;
+
+				if (isFile)
+				{
+					if (IsEmpty())
+						return false;
+
+					subdir = dir;
+					return true;
+				}
+
+				while (dir.Replace(_T(".."), _T(".")));
+			}
+			else
+			{
+				int pos2 = dir.Find(']', true);
+				if (pos2 != -1)
+					return false;
+
+				if (isFile && pos2 == (dir.Length() - 1))
+					return false;
+				if (isFile && pos2 != (dir.Length() - 1))
+					return false;
+				if (pos2 <= pos1)
+					return false;
+
+				if (isFile)
+					file = dir.Mid(pos2 + 1);
+				dir = dir.Left(pos2);
+				
+				if (pos1)
+					m_prefix = dir.Left(pos1);
+				else
+					m_prefix = _T("");
+
+				m_Segments.clear();
+			}
+			int pos = dir.Find(_T("."));
+			while (pos != -1)
+			{
+				m_Segments.push_back(dir.Left(pos));
+				dir = dir.Mid(pos + 1);
+				pos = dir.Find(_T("."));
+			}
+			if (dir != _T(""))
+				m_Segments.push_back(dir);
+		}
+		break;
+	case DOS:
+		{
+			dir.Replace(_T("\\"), _T("/"));
+			while (dir.Replace(_T("//"), _T("/")));
+			if (dir.Length() >= 2 && dir.c_str()[1] == ':')
+				m_Segments.clear();
+			else if (dir.Left(1) == _T("/"))
+			{
+				if (m_Segments.empty())
+				{
+					Clear();
+					return false;
+				}
+				wxString first = m_Segments.front();
+				m_Segments.clear();
+				m_Segments.push_back(first);
+				dir = dir.Mid(1);
+			}
+			
+			if (dir.Right(1) == _T("/"))
+			{
+				if (isFile)
+					return false;
+				dir.RemoveLast();
+			}
+
+			if (isFile)
+			{
+				int pos = dir.Find('/', true);
+				if (pos == -1)
+				{
+					subdir = dir;
+					return true;
+				}
+				else
+				{
+					file = dir.Mid(pos + 1);
+					dir = dir.Left(pos);
+				}
+			}
+
+			int pos = dir.Find(_T("/"));
+			while (pos != -1)
+			{
+				m_Segments.push_back(dir.Left(pos));
+				dir = dir.Mid(pos + 1);
+				pos = dir.Find(_T("/"));
+			}
+			if (dir != _T(""))
+				m_Segments.push_back(dir);
+		}
+		break;
+	default:
+		{
+			while (dir.Replace(_T("//"), _T("/")));
+			if (dir.c_str()[0] == '/')
+			{
+				m_prefix = _T("");
+				m_Segments.clear();
+				dir = dir.Mid(1);
+			}
+			if (dir.Right(1) == _T("/"))
+			{
+				if (isFile)
+					return false;
+				dir.RemoveLast();
+			}
+
+			if (isFile)
+			{
+				int pos = dir.Find('/', true);
+				if (pos == -1)
+				{
+					subdir = dir;
+					return true;
+				}
+				else
+				{
+					file = dir.Mid(pos + 1);
+					dir = dir.Left(pos);
+				}
+			}
+			
+			int pos = dir.Find(_T("/"));
+			while (pos != -1)
+			{
+				m_Segments.push_back(dir.Left(pos));
+				dir = dir.Mid(pos + 1);
+				pos = dir.Find(_T("/"));
+			}
+			if (dir != _T(""))
+				m_Segments.push_back(dir);
+		}
+		break;
+	}
+
+	if (isFile)
+		subdir = file;
+
+	m_bEmpty = false;
+	return true;
+
+}
+

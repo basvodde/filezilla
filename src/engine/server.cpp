@@ -4,10 +4,13 @@ CServer::CServer()
 {
 	m_Port = 21;
 	m_Protocol = FTP;
+	m_Type = DEFAULT;
 }
 
 bool CServer::ParseUrl(wxString host, int port, wxString user, wxString pass, wxString &error, CServerPath &path)
 {
+	m_Type = DEFAULT;
+
 	if (host == _T(""))
 	{
 		error = _("No host given, please enter a host.");
@@ -63,7 +66,7 @@ bool CServer::ParseUrl(wxString host, int port, wxString user, wxString pass, wx
 	pos = host.Find('/');
 	if (pos != -1)
 	{
-		path = CServerPath(m_Protocol, host.Mid(pos));
+		path = CServerPath(host.Mid(pos));
 		host = host.Left(pos);
 	}
 
@@ -121,6 +124,11 @@ ServerProtocol CServer::GetProtocol() const
 	return m_Protocol;
 }
 
+ServerType CServer::GetType() const
+{
+	return m_Type;
+}
+
 wxString CServer::GetHost() const
 {
 	return m_Host;
@@ -144,6 +152,7 @@ wxString CServer::GetPass() const
 CServer& CServer::operator=(const CServer &op)
 {
 	m_Protocol = op.m_Protocol;
+	m_Type = op.m_Type;
 	m_Host = op.m_Host;
 	m_Port = op.m_Port;
 	m_User = op.m_User;

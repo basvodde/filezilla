@@ -6,6 +6,14 @@ enum ServerProtocol
 	FTP
 };
 
+enum ServerType
+{
+	DEFAULT,
+	UNIX,
+	VMS,
+	DOS
+};
+
 class CServerPath;
 class CServer
 {
@@ -19,6 +27,7 @@ public:
 	CServer(enum ServerProtocol protocol, wxString host, int port, wxString user, wxString pass = _T(""));
 
 	ServerProtocol GetProtocol() const;
+	ServerType GetType() const;
 	wxString GetHost() const;
 	int GetPort() const;
 	wxString GetUser() const;
@@ -35,6 +44,7 @@ public:
 
 protected:
 	ServerProtocol m_Protocol;
+	ServerType m_Type;
 	wxString m_Host;
 	int m_Port;
 	wxString m_User;
