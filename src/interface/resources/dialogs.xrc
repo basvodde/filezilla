@@ -928,9 +928,9 @@ Would you like to replace the file</label>
             <object class="wxBoxSizer">
               <orient>wxHORIZONTAL</orient>
               <object class="sizeritem">
-                <object class="wxListBox" name="ID_EXTENSIONS">
-                  <content/>
-                  <size>90,150</size>
+                <object class="wxListCtrl" name="ID_EXTENSIONS">
+                  <size>100,150</size>
+                  <style>wxLC_SORT_ASCENDING|wxLC_REPORT|wxLC_NO_HEADER</style>
                 </object>
               </object>
               <object class="sizeritem">
@@ -1093,7 +1093,7 @@ Would you like to replace the file</label>
           <orient>wxVERTICAL</orient>
           <object class="sizeritem">
             <object class="wxStaticText">
-              <label>If you are behind a router, FileZilla may not be able to detect your external\nIP address for active (non-passive) transfers. In this case you should enter the\nexternal IP address here.</label>
+              <label>If you are behind a router, FileZilla may not be able to detect your external\nIP address for active (non-passive) transfers. In this case you should enter\n the external IP address here.</label>
             </object>
             <flag>wxALL</flag>
             <border>5</border>

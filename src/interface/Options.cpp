@@ -23,13 +23,19 @@ struct t_Option
 
 static const t_Option options[OPTIONS_NUM] =
 {
+	// Engine settings
 	"Use Pasv mode", number, _T("1"),
 	"Limit local ports", number, _T("0"),
 	"Limit ports low", number, _T("6000"),
 	"Limit ports high", number, _T("7000"),
 	"External IP", string, _T(""),
+
+	// Interface settings
 	"Number of Transfers", number, _T("2"),
-	"Transfer Retry Count", number, _T("5")
+	"Transfer Retry Count", number, _T("5"),
+	"Ascii files", string, _T("am|asp|bat|c|cfm|cgi|conf|cpp|css|dhtml|diz|h|hpp|htm|html|in|inc|js|mak|nfo|pas|patch|php|phtml|pl|py|qmail|sh|shtml|sql|tcl|tpl|txt|vbs|xml"),
+	"Ascii no extension", number, _T("1"),
+	"Ascii dotfiles", number, _T("1"),
 };
 
 COptions::COptions()

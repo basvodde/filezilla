@@ -1,7 +1,7 @@
 #include "FileZilla.h"
 #include "settingsdialog.h"
 #include "Options.h"
-#include "Optionspage.h"
+#include "optionspage.h"
 #include "optionspage_passive.h"
 #include "optionspage_filetype.h"
 
