@@ -16,7 +16,7 @@ noinst_DATA = filezilla.o
 filezilla.o: filezilla.rc
 	if [ -f $@~ ]; then rm $@~; fi
 	windres $(WINDRESFLAGS) filezilla.rc $@~
-	if [ -f $@ ]; them rm $@; fi
+	if [ -f $@ ]; then rm $@; fi
 	mv $@~ $@
 endif
 
