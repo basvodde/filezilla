@@ -128,6 +128,14 @@ public:
 		return m_numeric == Yes;
 	}
 
+	bool IsNumeric(unsigned int start, unsigned int len)
+	{
+		for (unsigned int i = start; i < wxMin(start + len, m_len); i++)
+			if (m_pToken[i] < '0' || m_pToken[i] > '9')
+				return false;
+		return true;
+	}
+
 	bool IsLeftNumeric()
 	{
 		if (m_leftNumeric == Unknown)
@@ -495,6 +503,9 @@ static char data[][100]={
 	// Name         VV.MM   Created      Changed       Size  Init  Mod Id
 	// ADATAB /* filenames without data, only check for those on MVS servers */
 	"  MVSPDSMEMBER 01.01 2004/06/22 2004/06/22 16:32   128   128    0 BOBY12",
+
+	/* VxWorks based server used in Nortel routers */
+	"2048    Feb-28-1998  05:23:30   nortel.VwWorks dir <DIR>",
 
 	""};
 #endif
@@ -1082,6 +1093,7 @@ bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry)
 	bool gotYear = false;
 	bool gotMonth = false;
 	bool gotDay = false;
+	bool gotMonthName = false;
 
 	int value = 0;
 
@@ -1089,7 +1101,21 @@ bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry)
 	if (pos < 1)
 		return false;
 
-	if (pos == 4)
+	if (!token.IsNumeric(0, pos))
+	{
+		// Seems to be monthname-dd-yy
+		
+		// Check month name
+		wxString dateMonth = token.GetString().Mid(0, pos);
+		dateMonth.MakeLower();
+		std::map<wxString, int>::iterator iter = m_MonthNamesMap.find(dateMonth);
+		if (iter == m_MonthNamesMap.end())
+			return false;
+		entry.date.month = iter->second;
+		gotMonth = true;
+		gotMonthName = true;
+	}
+	else if (pos == 4)
 	{
 		// Seems to be yyyy-mm-dd
 		wxLongLong year = token.GetNumber(0, pos);
@@ -1141,8 +1167,11 @@ bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry)
 
 	// If we already got the month and the second field is not numeric, 
 	// change old month into day and use new token as month
-	if (token[pos + 1] < '0' || token[pos + 1] > '9' && gotMonth)
+	if (!token.IsNumeric(pos + 1, pos2 - pos - 1) && gotMonth)
 	{
+		if (gotMonthName)
+			return false;
+
 		if (gotDay)
 			return false;
 
@@ -1162,7 +1191,6 @@ bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry)
 			return false;
 		entry.date.month = iter->second;
 		gotMonth = true;
-
 	}
 	else
 	{
@@ -1489,7 +1517,7 @@ bool CDirectoryListingParser::ParseOther(CLine *pLine, CDirentry &entry)
 		return false;
 
 	// If token is a number, than it's the numerical Unix style format,
-	// else it's the VShell or OS/2 format
+	// else it's the VShell, OS/2 or nortel.VxWorks format
 	if (token.IsNumeric())
 	{
 		entry.permissions = firstToken.GetString();
@@ -1535,7 +1563,7 @@ bool CDirectoryListingParser::ParseOther(CLine *pLine, CDirentry &entry)
 	}
 	else
 	{
-		// VShell or OS/2 style format
+		// VShell, OS/2 or nortel.VxWorks style format
 		entry.size = firstToken.GetNumber();
 
 		// Get date
@@ -1544,13 +1572,17 @@ bool CDirectoryListingParser::ParseOther(CLine *pLine, CDirentry &entry)
 		std::map<wxString, int>::const_iterator iter = m_MonthNamesMap.find(dateMonth);
 		if (iter == m_MonthNamesMap.end())
 		{
+			// OS/2 or nortel.VxWorks
 			entry.dir = false;
+			int skippedCount = 0;
 			do
 			{
 				if (token.GetString() == _T("DIR"))
 					entry.dir = true;
 				else if (token.Find("-/.") != -1)
 					break;
+
+				skippedCount++;
 
 				if (!pLine->GetToken(++index, token))
 					return false;
@@ -1571,6 +1603,13 @@ bool CDirectoryListingParser::ParseOther(CLine *pLine, CDirentry &entry)
 				return false;
 
 			entry.name = token.GetString();
+			if (!skippedCount && entry.name.Right(5).MakeUpper() == _T("<DIR>"))
+			{
+				entry.dir = true;
+				entry.name = entry.name.Left(entry.name.Length() - 5);
+				while (entry.name.Last() == ' ')
+					entry.name.RemoveLast();
+			}
 		}
 		else
 		{
