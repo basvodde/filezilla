@@ -730,7 +730,7 @@ bool CServerPath::operator==(const CServerPath &op) const
 	else if (m_Segments != op.m_Segments)
 		return false;
 
-	return true;			
+	return true;
 }
 
 bool CServerPath::operator!=(const CServerPath &op) const
@@ -777,4 +777,30 @@ wxString CServerPath::FormatFilename(const wxString &filename, bool omitPath /*=
 			fullpath = GetPath() + filename;
 	}
 	return fullpath;
+}
+
+int CServerPath::CmpNoCase(const CServerPath &op) const
+{
+	if (m_bEmpty != op.m_bEmpty)
+		return 1;
+	else if (m_prefix != op.m_prefix)
+		return 1;
+	else if (m_type != op.m_type)
+		return 1;
+
+	if (m_Segments.size() > op.m_Segments.size())
+		return 1;
+	else if (m_Segments.size() < op.m_Segments.size())
+		return -1;
+
+	tConstSegmentIter iter = m_Segments.begin();
+	tConstSegmentIter iter2 = op.m_Segments.begin();
+	while (iter != m_Segments.end())
+	{
+		int res = iter++->CmpNoCase(*iter2++);
+		if (res)
+			return res;
+	}
+	
+	return 0;
 }

@@ -28,7 +28,7 @@ protected:
 
 	virtual int FileTransfer(const wxString localFile, const CServerPath &remotePath, const wxString &remoteFile, bool download);
 	int FileTransferParseResponse();
-	int FileTransferSend(int nprevResult = FZ_REPLY_OK);
+	int FileTransferSend(int prevResult = FZ_REPLY_OK);
 
 	bool ParsePwdReply(wxString reply);
 

@@ -539,7 +539,7 @@ void CMainFrame::OnUpdateToolbarRefresh(wxUpdateUIEvent &event)
 void CMainFrame::OnRefresh(wxCommandEvent &event)
 {
 	if (m_pEngine && m_pEngine->IsConnected() && !m_pEngine->IsBusy())
-		m_pCommandQueue->ProcessCommand(new CListCommand());
+		m_pCommandQueue->ProcessCommand(new CListCommand(m_pState->GetRemotePath(), _T(""), true));
 
 	if (m_pState)
 		m_pState->RefreshLocal();

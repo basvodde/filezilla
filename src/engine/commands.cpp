@@ -67,11 +67,13 @@ CCommand *CCancelCommand::Clone() const
 	return new CCancelCommand();
 }
 
-CListCommand::CListCommand()
+CListCommand::CListCommand(bool refresh /*=false*/)
+	: m_refresh(refresh)
 {
 }
 
-CListCommand::CListCommand(CServerPath path, wxString subDir /*=_T("")*/)
+CListCommand::CListCommand(CServerPath path, wxString subDir /*=_T("")*/, bool refresh /*=false*/)
+	: m_refresh(refresh)
 {
 	m_path = path;
 	m_subDir = subDir;
@@ -103,7 +105,12 @@ bool CListCommand::IsChainable() const
 
 CCommand *CListCommand::Clone() const
 {
-	return new CListCommand(m_path, m_subDir);
+	return new CListCommand(m_path, m_subDir, m_refresh);
+}
+
+bool CListCommand::Refresh() const
+{
+	return m_refresh;
 }
 
 CFileTransferCommand::CFileTransferCommand()

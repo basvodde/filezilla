@@ -65,23 +65,7 @@ void CDirectoryCache::Store(const CDirectoryListing &listing, const CServer &ser
 
 bool CDirectoryCache::Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path)
 {
-	for (tCacheIter iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
-	{
-		const CCacheEntry &entry = *iter;
-		if (entry.server == server && entry.listing.path == path)
-		{
-			// TODO: Cache timeout
-			if (false)
-			{
-				m_CacheList.erase(iter);
-				return false;
-			}
-
-			listing = entry.listing;
-			return true;
-		}
-	}
-	return false;
+	return Lookup(listing, server, path, _T(""));
 }
 
 bool CDirectoryCache::Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, wxString subDir)
@@ -93,19 +77,30 @@ bool CDirectoryCache::Lookup(CDirectoryListing &listing, const CServer &server, 
 			CCacheEntry &entry = *iter;
 			if (entry.server == server)
 			{
-				for (tParentsIter parentsIter = entry.parents.begin(); parentsIter != entry.parents.end(); parentsIter++)
+				if (subDir == _T(""))
 				{
-					const CCacheEntry::t_parent &parent = *parentsIter;
-					if (parent.path == path && parent.subDir == subDir)
+					if (entry.listing.path == path)
 					{
-						// TODO: Cache timeout
-						if (false)
-						{
-							m_CacheList.erase(iter);
-							return false;
-						}
 						listing = entry.listing;
 						return true;
+					}
+				}
+				else
+				{
+					for (tParentsIter parentsIter = entry.parents.begin(); parentsIter != entry.parents.end(); parentsIter++)
+					{
+						const CCacheEntry::t_parent &parent = *parentsIter;
+						if (parent.path == path && parent.subDir == subDir)
+						{
+							// TODO: Cache timeout
+							if (false)
+							{
+								m_CacheList.erase(iter);
+								return false;
+							}
+							listing = entry.listing;
+							return true;
+						}
 					}
 				}
 			}
@@ -117,23 +112,24 @@ bool CDirectoryCache::Lookup(CDirectoryListing &listing, const CServer &server, 
 		tCacheIter iter;
 		for (iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
 		{
-			if (iter->server == server && iter->listing.path == path)
+			if (iter->server != server)
+				continue;
+
+			CCacheEntry &entry = *iter;
+
+			tParentsIter parentsIter;
+			for (parentsIter = entry.parents.begin(); parentsIter != entry.parents.end(); parentsIter++)
+			{
+				if (parentsIter->subDir == _T("..") && parentsIter->path == path)
+					break;
+			}
+			if (parentsIter != entry.parents.end())
 				break;
 		}
 		if (iter == m_CacheList.end())
 			return false;
-		CCacheEntry &entry = *iter;
 
-		tParentsIter parentsIter;
-		for (parentsIter = entry.parents.begin(); parentsIter != entry.parents.end(); parentsIter++)
-		{
-			if (parentsIter->subDir == _T(".."))
-				break;
-		}
-		if (parentsIter == entry.parents.end())
-			return false;
-
-		bool res = Lookup(listing, server, parentsIter->path);
+		bool res = Lookup(listing, server, iter->listing.path);
 		return res;
 	}
 	return false;
@@ -157,3 +153,41 @@ CDirectoryCache::CCacheEntry::CCacheEntry(const CDirectoryCache::CCacheEntry &en
 	parents = entry.parents;
 }
 
+bool CDirectoryCache::InvalidateFile(wxString filename, const CServer &server, const CServerPath &path)
+{
+	for (tCacheIter iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
+	{
+		CCacheEntry &entry = *iter;
+		if (entry.server != server || path.CmpNoCase(entry.listing.path))
+			continue;
+
+		bool matchCase = false;
+		for (unsigned int i = 0; i < entry.listing.m_entryCount; i++)
+		{
+			if (!filename.CmpNoCase(entry.listing.m_pEntries[i].name))
+			{
+				entry.listing.m_pEntries[i].unsure = true;
+				if (entry.listing.m_pEntries[i].name == filename)
+					matchCase = true;
+			}				
+		}
+		if (!matchCase)
+		{
+			CDirentry *listing = new CDirentry[entry.listing.m_entryCount + 1];
+			for (unsigned int i = 0; i < entry.listing.m_entryCount; i++)
+				listing[i] = entry.listing.m_pEntries[i];
+			listing[entry.listing.m_entryCount].name = filename;
+			listing[entry.listing.m_entryCount].hasDate = false;
+			listing[entry.listing.m_entryCount].hasTime = false;
+			listing[entry.listing.m_entryCount].size = -1;
+			listing[entry.listing.m_entryCount].dir = 0;
+			listing[entry.listing.m_entryCount].link = 0;
+			listing[entry.listing.m_entryCount].unsure = true;
+			entry.listing.m_entryCount++;
+			delete entry.listing.m_pEntries;
+			entry.listing.m_pEntries = listing;
+		}
+	}
+
+	return true;
+}

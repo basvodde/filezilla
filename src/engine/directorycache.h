@@ -23,8 +23,10 @@ public:
 	void Store(const CDirectoryListing &listing, const CServer &server, CServerPath parentPath = CServerPath(), wxString subDir = _T(""));
 	bool Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path);
 	bool Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, wxString subDir);
+	bool InvalidateFile(wxString filename, const CServer &server, const CServerPath &path);
 
 protected:
+
 	class CCacheEntry
 	{
 	public:

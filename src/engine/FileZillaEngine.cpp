@@ -7,6 +7,7 @@
 #include "logging_private.h"
 #include "ControlSocket.h"
 #include "ftpcontrolsocket.h"
+#include "directorycache.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -236,6 +237,31 @@ int CFileZillaEngine::List(const CListCommand &command)
 	if (!IsConnected())
 		return FZ_REPLY_NOTCONNECTED;
 
+	if (!command.Refresh() && !command.GetPath().IsEmpty())
+	{
+		const CServer* pServer = m_pControlSocket->GetCurrentServer();
+		if (pServer)
+		{
+			CDirectoryListing *pListing = new CDirectoryListing;
+			CDirectoryCache cache;
+			bool found = cache.Lookup(*pListing, *pServer, command.GetPath(), command.GetSubDir());
+			if (found)
+			{
+				unsigned int i;
+				for (i = 0; i < pListing->m_entryCount; i++)
+					if (pListing->m_pEntries[i].unsure)
+						break;
+	
+				if (i == pListing->m_entryCount)
+				{
+					CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing);
+					AddNotification(pNotification);
+					return FZ_REPLY_OK;
+				}
+			}
+			delete pListing;
+		}
+	}
 	if (IsBusy())
 		return FZ_REPLY_BUSY;
 

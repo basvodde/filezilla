@@ -52,6 +52,7 @@ public:
 
 	CServer& operator=(const CServer &op);
 	bool operator==(const CServer &op) const;
+	bool operator!=(const CServer &op) const;
 
 protected:
 	enum ServerProtocol m_Protocol;

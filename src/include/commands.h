@@ -74,8 +74,8 @@ public:
 class CListCommand : public CCommand
 {
 public:
-	CListCommand();
-	CListCommand(CServerPath path, wxString subDir = _T(""));
+	CListCommand(bool refresh = false);
+	CListCommand(CServerPath path, wxString subDir = _T(""), bool refresh = false);
 	virtual ~CListCommand();
 	
 	virtual enum Command GetId() const;
@@ -85,9 +85,12 @@ public:
 	CServerPath GetPath() const;
 	wxString GetSubDir() const;
 
+	bool Refresh() const;
+
 protected:
 	CServerPath m_path;
 	wxString m_subDir;
+	bool m_refresh;
 };
 
 class CFileTransferCommand : public CCommand

@@ -220,6 +220,9 @@ int CControlSocket::ResetOperation(int nErrorCode)
 		case cmd_list:
 			LogMessage(Status, _("Directory listing successful"));
 			break;
+		case cmd_transfer:
+			LogMessage(Status, _("File transfer successful"));
+			break;
 		default:
 			break;
 		}
@@ -381,4 +384,10 @@ bool CControlSocket::GetTransferStatus(CTransferStatus &status, bool &changed)
 		m_transferStatusSendState = 0;
 		return true;
 	}
+}
+
+
+const CServer* CControlSocket::GetCurrentServer() const
+{
+	return m_pCurrentServer;
 }

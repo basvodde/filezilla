@@ -7,6 +7,40 @@
 #include <wx/filefn.h>
 #include <wx/file.h>
 
+CFileTransferOpData::CFileTransferOpData()
+{
+	opId = cmd_transfer;
+	pFile = 0;
+	resume = false;
+	tryAbsolutePath = false;
+	bTriedPasv = bTriedActive = false;
+	fileSize = -1;
+	waitAsyncRequest = false;
+}
+
+CFileTransferOpData::~CFileTransferOpData()
+{
+	delete pFile;
+}
+
+enum filetransferStates
+{
+	filetransfer_init = 0,
+	filetransfer_waitcwd,
+	filetransfer_waitlist,
+	filetransfer_size,
+	filetransfer_mdtm,
+	filetransfer_type,
+	filetransfer_port_pasv,
+	filetransfer_rest,
+	filetransfer_transfer,
+	filetransfer_waitfinish,
+	filetransfer_waittransferpre,
+	filetransfer_waittransfer,
+	filetransfer_waitsocket
+};
+
+
 CFtpControlSocket::CFtpControlSocket(CFileZillaEngine *pEngine) : CControlSocket(pEngine)
 {
 	m_ReceiveBuffer.Alloc(2000);
@@ -592,6 +626,16 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 		return SendNextCommand(nErrorCode);
 	}
 
+	if (m_pCurOpData && m_pCurOpData->opId == cmd_transfer)
+	{
+		CFileTransferOpData *pData = static_cast<CFileTransferOpData *>(m_pCurOpData);
+		if (!pData->download && pData->opState >= filetransfer_transfer)
+		{
+			CDirectoryCache cache;
+			cache.InvalidateFile(pData->remoteFile, *m_pCurrentServer, pData->remotePath);
+		}
+	}
+
 	return CControlSocket::ResetOperation(nErrorCode);
 }
 
@@ -805,39 +849,6 @@ int CFtpControlSocket::ChangeDirSend()
 	return FZ_REPLY_WOULDBLOCK;
 }
 
-CFileTransferOpData::CFileTransferOpData()
-{
-	opId = cmd_transfer;
-	pFile = 0;
-	resume = false;
-	tryAbsolutePath = false;
-	bTriedPasv = bTriedActive = false;
-	fileSize = -1;
-	waitAsyncRequest = false;
-}
-
-CFileTransferOpData::~CFileTransferOpData()
-{
-	delete pFile;
-}
-
-enum filetransferStates
-{
-	filetransfer_init = 0,
-	filetransfer_waitcwd,
-	filetransfer_waitlist,
-	filetransfer_size,
-	filetransfer_mdtm,
-	filetransfer_type,
-	filetransfer_port_pasv,
-	filetransfer_rest,
-	filetransfer_transfer,
-	filetransfer_waitfinish,
-	filetransfer_waittransferpre,
-	filetransfer_waittransfer,
-	filetransfer_waitsocket
-};
-
 int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath &remotePath, const wxString &remoteFile, bool download)
 {
 	LogMessage(Debug_Verbose, _T("CFtpControlSocket::FileTransfer()"));
@@ -880,7 +891,45 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 	CDirectoryListing listing;
 	CDirectoryCache cache;
 	bool found = cache.Lookup(listing, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath);
+	bool shouldList = false;
 	if (!found)
+		shouldList = true;
+	else
+	{
+		bool differentCase = false;
+
+		for (unsigned int i = 0; i < listing.m_entryCount; i++)
+		{
+			if (!listing.m_pEntries[i].name.CmpNoCase(pData->remoteFile))
+			{
+				if (listing.m_pEntries[i].unsure)
+				{
+					shouldList = true;
+					break;				
+				}
+				if (listing.m_pEntries[i].name != pData->remoteFile)
+					differentCase = true;
+				else
+				{
+					differentCase = false;
+					break;
+				}
+			}
+		}
+		if (!shouldList)
+		{
+			if (differentCase)
+				pData->opState = filetransfer_size;
+			else
+			{
+				pData->opState = filetransfer_type;
+				res = CheckOverwriteFile();
+				if (res != FZ_REPLY_OK)
+					return res;
+			}
+		}
+	}
+	if (shouldList)
 	{
 		res = List();
 		if (res != FZ_REPLY_OK)
@@ -891,33 +940,6 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 		res = CheckOverwriteFile();
 		if (res != FZ_REPLY_OK)
 			return res;
-	}
-	else
-	{
-		bool differentCase = false;
-
-		for (unsigned int i = 0; i < listing.m_entryCount; i++)
-		{
-			if (!listing.m_pEntries[i].name.CmpNoCase(pData->remoteFile))
-			{
-				if (listing.m_pEntries[i].name != pData->remoteFile)
-					differentCase = true;
-				else
-				{
-					differentCase = false;
-					break;
-				}
-			}
-		}
-		if (differentCase)
-			pData->opState = filetransfer_size;
-		else
-		{
-			pData->opState = filetransfer_type;
-			res = CheckOverwriteFile();
-			if (res != FZ_REPLY_OK)
-				return res;
-		}
 	}
 
 	return FileTransferSend();
@@ -1181,7 +1203,45 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 			CDirectoryListing listing;
 			CDirectoryCache cache;
 			bool found = cache.Lookup(listing, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath);
+			bool shouldList = false;
 			if (!found)
+				shouldList = true;
+			else
+			{
+				bool differentCase = false;
+
+				for (unsigned int i = 0; i < listing.m_entryCount; i++)
+				{
+					if (!listing.m_pEntries[i].name.CmpNoCase(pData->remoteFile))
+					{
+						if (listing.m_pEntries[i].unsure)
+						{
+							shouldList = true;
+							break;				
+						}
+						if (listing.m_pEntries[i].name != pData->remoteFile)
+							differentCase = true;
+						else
+						{
+							differentCase = false;
+							break;
+						}
+					}
+				}
+				if (!shouldList)
+				{
+					if (differentCase)
+						pData->opState = filetransfer_size;
+					else
+					{
+						pData->opState = filetransfer_type;
+						int res = CheckOverwriteFile();
+						if (res != FZ_REPLY_OK)
+							return res;
+					}
+				}
+			}
+			if (shouldList)
 			{
 				int res = List();
 				if (res != FZ_REPLY_OK)
@@ -1192,34 +1252,6 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 				res = CheckOverwriteFile();
 				if (res != FZ_REPLY_OK)
 					return res;
-			}
-			else
-			{
-				bool differentCase = false;
-
-				for (unsigned int i = 0; i < listing.m_entryCount; i++)
-				{
-					if (!listing.m_pEntries[i].name.CmpNoCase(pData->remoteFile))
-					{
-						if (listing.m_pEntries[i].name != pData->remoteFile)
-							differentCase = true;
-						else
-						{
-							differentCase = false;
-							break;
-						}
-					}
-				}
-				if (differentCase)
-					pData->opState = filetransfer_size;
-				else
-				{
-					pData->opState = filetransfer_type;
-
-					int res = CheckOverwriteFile();
-					if (res != FZ_REPLY_OK)
-						return res;
-				}
 			}
 		}
 		else if (prevResult == FZ_REPLY_ERROR)
@@ -1250,6 +1282,11 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 				{
 					if (!listing.m_pEntries[i].name.CmpNoCase(pData->remoteFile))
 					{
+						if (listing.m_pEntries[i].unsure)
+						{
+							differentCase = true;
+							break;
+						}
 						if (listing.m_pEntries[i].name != pData->remoteFile)
 							differentCase = true;
 						else

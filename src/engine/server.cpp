@@ -196,6 +196,11 @@ bool CServer::operator==(const CServer &op) const
 	return true;
 }
 
+bool CServer::operator!=(const CServer &op) const
+{
+	return !(*this == op);
+}
+
 CServer::CServer(enum ServerProtocol protocol, enum ServerType type, wxString host, int port, wxString user, wxString pass /*=_T("")*/)
 {
 	m_Protocol = protocol;
