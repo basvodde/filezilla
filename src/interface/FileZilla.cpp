@@ -74,6 +74,7 @@ bool CFileZillaApp::LoadResourceFiles()
 	wxImage::AddHandler(new wxPNGHandler());
 	wxImage::AddHandler(new wxXPMHandler());
 	wxLocale::AddCatalogLookupPathPrefix(wxPath + _T("/locales"));
+	m_locale.Init(wxLANGUAGE_DEFAULT);
 	m_locale.AddCatalog(_T("filezilla"));
 	
 	if (wxPath == _T(""))
