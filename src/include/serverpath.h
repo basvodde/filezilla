@@ -10,4 +10,4 @@ public:
 	virtual ~CServerPath();
 };
 
-#endif __SERVERPATH_H__
+#endif

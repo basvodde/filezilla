@@ -1,8 +1,7 @@
 #ifndef __FTPCONTROLSOCKET_H__
 #define __FTPCONTROLSOCKET_H__
 
-#pragma once
-#include "controlsocket.h"
+#include "ControlSocket.h"
 
 class CFtpControlSocket : public CControlSocket
 {

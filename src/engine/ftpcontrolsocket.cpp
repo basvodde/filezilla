@@ -1,4 +1,4 @@
-#include "filezilla.h"
+#include "FileZilla.h"
 #include "ftpcontrolsocket.h"
 
 CFtpControlSocket::CFtpControlSocket()
