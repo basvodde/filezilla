@@ -327,7 +327,7 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 	pData->pNextOpData = m_pCurOpData;
 	m_pCurOpData = pData;
 			
-	pData->bPasv = m_pEngine->GetOptions()->GetOptionVal(OPTION_USEPASV);
+	pData->bPasv = m_pEngine->GetOptions()->GetOptionVal(OPTION_USEPASV) != 0;
 	pData->bTriedPasv = pData->bTriedActive = false;
 	pData->opState = list_waitcwd;
 
