@@ -3,6 +3,11 @@
 
 #ifdef __WXMSW__
 	#include <shlobj.h>
+
+	// Needed for MinGW:
+        #ifndef SHGFP_TYPE_CURRENT
+		#define SHGFP_TYPE_CURRENT 0
+	#endif
 #endif
 
 #ifdef _DEBUG

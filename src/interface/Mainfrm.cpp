@@ -69,7 +69,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_pStatusBar = CreateStatusBar(7, wxST_SIZEGRIP);
 	if (m_pStatusBar)
 	{
-		m_pStatusBar->Connect(wxID_ANY, wxEVT_SIZE, (wxObjectEventFunction)CMainFrame::OnStatusbarSize, 0, this);
+		m_pStatusBar->Connect(wxID_ANY, wxEVT_SIZE, (wxObjectEventFunction)(wxEventFunction)&CMainFrame::OnStatusbarSize, 0, this);
 		int array[7];
 		for (int i = 1; i < 6; i++)
 			array[i] = wxSB_NORMAL;
