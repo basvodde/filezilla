@@ -51,10 +51,8 @@ wxString CTransferSocket::SetupActiveTransfer()
 {
 	// Void all previous attempts to createt a socket
 	if (!m_pSocketClient && !m_pSocketServer)
-	{
 		delete m_pSocket;
-		m_pSocket = 0;
-	}
+	m_pSocket = 0;
 	delete m_pSocketClient;
 	m_pSocketClient = 0;
 	delete m_pSocketServer;
@@ -195,6 +193,9 @@ void CTransferSocket::OnReceive()
 
 void CTransferSocket::OnSend()
 {
+	if (!m_pSocket)
+		return;
+
 	if (!m_bActive)
 		return;
 	
@@ -278,10 +279,8 @@ bool CTransferSocket::SetupPassiveTransfer(wxString host, int port)
 {
 	// Void all previous attempts to createt a socket
 	if (!m_pSocketClient && !m_pSocketServer)
-	{
 		delete m_pSocket;
-		m_pSocket = 0;
-	}
+	m_pSocket = 0;
 	delete m_pSocketClient;
 	m_pSocketClient = 0;
 	delete m_pSocketServer;
@@ -291,6 +290,7 @@ bool CTransferSocket::SetupPassiveTransfer(wxString host, int port)
 
 	m_pSocketClient->SetEventHandler(*this);
 	m_pSocketClient->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_OUTPUT_FLAG | wxSOCKET_CONNECTION_FLAG | wxSOCKET_LOST_FLAG);
+	m_pSocketClient->Notify(true);
 
 	wxIPV4address addr;
 	addr.Hostname(host);
@@ -299,7 +299,11 @@ bool CTransferSocket::SetupPassiveTransfer(wxString host, int port)
 	bool res = m_pSocketClient->Connect(addr, false);
 
 	if (!res && m_pSocketClient->LastError() != wxSOCKET_WOULDBLOCK)
+	{
+		delete m_pSocketClient;
+		m_pSocketClient = 0;
 		return false;
+	}
 
 	m_pSocket = m_pSocketClient;
 
@@ -321,10 +325,8 @@ void CTransferSocket::TransferEnd(int reason)
 	if (!m_pSocket)
 		return;
 	if (!m_pSocketClient && !m_pSocketServer)
-	{
 		delete m_pSocket;
-		m_pSocket = 0;
-	}
+	m_pSocket = 0;
 	delete m_pSocketClient;
 	m_pSocketClient = 0;
 	delete m_pSocketServer;
