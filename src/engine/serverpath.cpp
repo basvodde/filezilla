@@ -196,6 +196,9 @@ bool CServerPath::SetPath(wxString &newPath, bool isFile)
 	default:
 		while (path.Replace(_T("//"), _T("/")));
 
+		if (path.c_str()[0] == '/')
+			path.Remove(0, 1);
+
 		if (isFile)
 		{
 			pos = path.Find('/', true);
@@ -206,22 +209,34 @@ bool CServerPath::SetPath(wxString &newPath, bool isFile)
 			}
 			file = path.Mid(pos + 1);
 			path = path.Left(pos);
+
+			if (file == _T(".") || file == _T(".."))
+			{
+				m_bEmpty = true;
+				return false;
+			}
 		}
+		else if (path != _T("") && path.Right(1) != _T("/"))
+			path = path + _T("/");
 
-		if (path.c_str()[0] == '/')
-			path.Remove(0, 1);
-
-		if (path.Right(1) == _T("/"))
-			path.RemoveLast();
 		pos = path.Find(_T("/"));
 		while (pos != -1)
 		{
-			m_Segments.push_back(path.Left(pos));
+			wxString segment = path.Left(pos);
+			if (segment == _T(".."))
+			{
+				if (m_Segments.empty())
+				{
+					m_bEmpty = true;
+					return false;
+				}
+				m_Segments.pop_back();
+			}
+			else if (segment != _T("."))
+				m_Segments.push_back(segment);
 			path = path.Mid(pos + 1);
 			pos = path.Find(_T("/"));
 		}
-		if (path != _T(""))
-			m_Segments.push_back(path);
 
 		break;
 	}
@@ -560,16 +575,14 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 				dir = dir.Mid(1);
 			}
 			
-			if (dir.Right(1) == _T("/"))
-			{
-				if (isFile)
-					return false;
-				dir.RemoveLast();
-			}
-
 			if (isFile)
 			{
 				int pos = dir.Find('/', true);
+				if (pos == dir.Length() - 1)
+				{
+					Clear();
+					return false;
+				}
 				if (pos == -1)
 				{
 					subdir = dir;
@@ -578,19 +591,30 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 				else
 				{
 					file = dir.Mid(pos + 1);
-					dir = dir.Left(pos);
+					dir = dir.Left(pos + 1);
 				}
 			}
+			else if (dir != _T("") && dir.Right(1) != _T("/"))
+				dir += _T("/");
 
 			int pos = dir.Find(_T("/"));
 			while (pos != -1)
 			{
-				m_Segments.push_back(dir.Left(pos));
+				wxString segment = dir.Left(pos);
+				if (segment == _T(".."))
+				{
+					if (m_Segments.size() <= 1)
+					{
+						Clear();
+						return false;
+					}
+					m_Segments.pop_back();
+				}
+				else if (segment != _T("."))
+					m_Segments.push_back(segment);
 				dir = dir.Mid(pos + 1);
 				pos = dir.Find(_T("/"));
 			}
-			if (dir != _T(""))
-				m_Segments.push_back(dir);
 		}
 		break;
 	case MVS:
@@ -688,16 +712,15 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 				m_Segments.clear();
 				dir = dir.Mid(1);
 			}
-			if (dir.Right(1) == _T("/"))
-			{
-				if (isFile)
-					return false;
-				dir.RemoveLast();
-			}
-
+			
 			if (isFile)
 			{
 				int pos = dir.Find('/', true);
+				if (pos == dir.Length() - 1)
+				{
+					Clear();
+					return false;
+				}
 				if (pos == -1)
 				{
 					subdir = dir;
@@ -706,19 +729,30 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 				else
 				{
 					file = dir.Mid(pos + 1);
-					dir = dir.Left(pos);
+					dir = dir.Left(pos + 1);
 				}
 			}
+			else if (dir != _T("") && dir.Right(1) != _T("/"))
+				dir += _T("/");
 			
 			int pos = dir.Find(_T("/"));
 			while (pos != -1)
 			{
-				m_Segments.push_back(dir.Left(pos));
+				wxString segment = dir.Left(pos);
+				if (segment == _T(".."))
+				{
+					if (m_Segments.empty())
+					{
+						Clear();
+						return false;
+					}
+					m_Segments.pop_back();
+				}
+				else if (segment != _T("."))
+					m_Segments.push_back(segment);
 				dir = dir.Mid(pos + 1);
 				pos = dir.Find(_T("/"));
 			}
-			if (dir != _T(""))
-				m_Segments.push_back(dir);
 		}
 		break;
 	}
