@@ -76,4 +76,6 @@ bool CFileZillaApp::LoadResourceFiles()
 	
 	wxXmlResource::Get()->InitAllHandlers();
 	wxXmlResource::Get()->Load(wxPath + "/resources/*.xrc");
+
+	return true;
 }
