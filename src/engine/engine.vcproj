@@ -23,8 +23,10 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;ENGINE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="5"
-				UsePrecompiledHeader="0"
+				RuntimeLibrary="3"
+				BufferSecurityCheck="TRUE"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="FileZilla.h"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="4"/>
@@ -62,7 +64,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="../include/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
-				RuntimeLibrary="4"
+				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
@@ -103,6 +105,9 @@
 				RelativePath=".\commands.cpp">
 			</File>
 			<File
+				RelativePath=".\ControlSocket.cpp">
+			</File>
+			<File
 				RelativePath=".\FileZillaEngine.cpp">
 			</File>
 		</Filter>
@@ -115,6 +120,9 @@
 			</File>
 			<File
 				RelativePath="..\include\config.h">
+			</File>
+			<File
+				RelativePath=".\ControlSocket.h">
 			</File>
 			<File
 				RelativePath="..\include\FileZilla.h">

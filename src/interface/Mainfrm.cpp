@@ -69,6 +69,10 @@ CMainFrame::CMainFrame()
 	m_pBottomSplitter->SetSashPosition(size.GetHeight() - 100);
 
 	CreateToolBar(wxTB_FLAT);
+
+
+	m_pEngine = new CFileZillaEngine();
+	m_pEngine->Init(this);
 }
 
 CMainFrame::~CMainFrame()

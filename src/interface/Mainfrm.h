@@ -33,5 +33,7 @@ protected:
 
 	float m_ViewSplitterSashPos;
 
+	CFileZillaEngine *m_pEngine;
+
 	DECLARE_EVENT_TABLE()
 };
