@@ -21,6 +21,7 @@ public:
 	virtual int ContinueConnect();
 	virtual int Disconnect();
 	virtual void Cancel();
+	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T("")) = 0;
 
 	enum Command GetCurrentCommandId() const;
 
@@ -42,6 +43,8 @@ protected:
 	CFileZillaEngine *m_pEngine;
 	CServer *m_pCurrentServer;
 
+	CServerPath m_CurrentPath;
+	
 	char *m_pSendBuffer;
 	int m_nSendBufferLen;
 

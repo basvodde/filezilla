@@ -279,6 +279,7 @@ void CMainFrame::OnQuickconnect(wxCommandEvent &event)
 	}
 
 	ProcessCommand(new CConnectCommand(server));
+	ProcessCommand(new CListCommand());
 }
 
 void CMainFrame::OnEngineEvent(wxEvent &event)

@@ -12,9 +12,11 @@ INCLUDES = -I../include
 libengine_a_SOURCES = FileZillaEngine.cpp ControlSocket.cpp commands.cpp \
 			ftpcontrolsocket.cpp server.cpp serverpath.cpp \
 			logging.cpp notification.cpp asynchostresolver.cpp \
-                        directorylistingparser.cpp
+                        directorylistingparser.cpp directorylisting.cpp \
+			directorycache.cpp
 
 noinst_HEADERS = asynchostresolver.h ControlSocket.h \
 			engine_private.h ftpcontrolsocket.h \
-			logging_private.h directorylistingparser.h
+			logging_private.h directorylistingparser.h \
+			directorycache.h
 

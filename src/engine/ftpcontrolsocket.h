@@ -11,6 +11,8 @@ public:
 	virtual ~CFtpControlSocket();
 
 protected:
+	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T(""));
+
 	virtual void OnConnect(wxSocketEvent &event);
 	virtual void OnReceive(wxSocketEvent &event);
 

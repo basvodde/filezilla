@@ -168,13 +168,20 @@ void CFtpControlSocket::Logon()
 			DoClose();
 			return;
 		case LO: //LO means we are logged on
-			LogMessage(Status, _("Connected"));
-			ResetOperation(FZ_REPLY_OK);
+			m_nOpState = 2;
+			Send(_T("SYST"));
 			return;
 		}
 
 		nCommand = logonseq[pData->logonType][pData->logonSequencePos];
 	}
+	else if (m_nOpState == 2)
+	{
+		LogMessage(Status, _("Connected"));
+		ResetOperation(FZ_REPLY_OK);
+		return;
+	}
+
 	switch (nCommand)
 	{
 	case 0:
@@ -187,7 +194,6 @@ void CFtpControlSocket::Logon()
 		ResetOperation(FZ_REPLY_INTERNALERROR);
 		break;
 	}
-
 }
 
 int CFtpControlSocket::GetReplyCode() const
@@ -208,4 +214,42 @@ bool CFtpControlSocket::Send(wxString str)
 	wxCharBuffer buffer = wxConvCurrent->cWX2MB(str);
 	int len = strlen(buffer);
 	return CControlSocket::Send(buffer, len);
+}
+
+class CListOpData : public COpData
+{
+public:
+	CListOpData()
+	{
+	}
+
+	virtual ~CListOpData()
+	{
+	}
+};
+
+int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/)
+{
+	enum listStates
+	{
+		init = 0,
+		pwd,
+		cwd,
+		pwd_cwd,
+		cwd_subdir,
+		pwd_subdir,
+		port_pasv,
+		type,
+		list
+	};
+
+	if (m_nOpState != init)
+	{
+		switch (m_nOpState)
+		{
+		}
+	}
+
+
+	return FZ_REPLY_ERROR;
 }

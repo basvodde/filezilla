@@ -49,9 +49,6 @@ CFileZillaEngine::~CFileZillaEngine()
 int CFileZillaEngine::Init(wxEvtHandler *pEventHandler)
 {
 	m_pEventHandler = pEventHandler;
-
-	CDirectoryListingParser p(this);
-	p.Parse();
 	return FZ_REPLY_OK;
 }
 
@@ -73,6 +70,9 @@ int CFileZillaEngine::Command(const CCommand &command)
 		break;
 	case cmd_cancel:
 		res = Cancel(reinterpret_cast<const CCancelCommand &>(command));
+		break;
+	case cmd_list:
+		res = List(reinterpret_cast<const CListCommand &>(command));
 		break;
 	default:
 		return FZ_REPLY_SYNTAXERROR;
@@ -204,6 +204,20 @@ int CFileZillaEngine::Cancel(const CCancelCommand &command)
 	SendEvent(engineCancel);
 
 	return FZ_REPLY_WOULDBLOCK;
+}
+
+int CFileZillaEngine::List(const CListCommand &command)
+{
+	if (!IsConnected())
+		return FZ_REPLY_NOTCONNECTED;
+
+	if (IsBusy())
+		return FZ_REPLY_BUSY;
+
+	m_pCurrentCommand = command.Clone();
+	int res = m_pControlSocket->List(command.GetPath(), command.GetSubDir());
+
+	return res;
 }
 
 void CFileZillaEngine::OnEngineEvent(wxFzEngineEvent &event)

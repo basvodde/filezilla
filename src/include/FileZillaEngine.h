@@ -38,6 +38,7 @@ protected:
 	int Connect(const CConnectCommand &command);
 	int Disconnect(const CDisconnectCommand &command);
 	int Cancel(const CCancelCommand &command);
+	int List(const CListCommand &command);
 
 	int ResetOperation(int nErrorCode);
 

@@ -33,6 +33,7 @@ enum Command
 class CCommand
 {
 public:
+	CCommand();
 	virtual ~CCommand();
 	virtual enum Command GetId() const = 0;
 	virtual bool IsChainable() const = 0;
@@ -43,6 +44,7 @@ class CConnectCommand : public CCommand
 {
 public:
 	CConnectCommand(const CServer &server);
+	virtual ~CConnectCommand();
 	virtual enum Command GetId() const;
 	virtual bool IsChainable() const;
 	virtual CCommand *Clone() const;
@@ -66,6 +68,24 @@ public:
 	virtual enum Command GetId() const;
 	virtual bool IsChainable() const;
 	virtual CCommand *Clone() const;
+};
+
+class CListCommand : public CCommand
+{
+public:
+	CListCommand();
+	CListCommand(CServerPath path, wxString subDir = _T(""));
+	virtual ~CListCommand();
+	virtual enum Command GetId() const;
+	virtual bool IsChainable() const;
+	virtual CCommand *Clone() const;
+	
+	CServerPath GetPath() const;
+	wxString GetSubDir() const;
+
+protected:
+	CServerPath m_path;
+	wxString m_subDir;
 };
 
 #endif
