@@ -26,7 +26,7 @@ wxLongLong GetTextElementLongLong(TiXmlElement* node, const char* name, int defV
 
 // Opens the specified XML file if it exists or creates a new one otherwise.
 // Returns 0 on error.
-TiXmlDocument* GetXmlFile(wxFileName file);
+TiXmlElement* GetXmlFile(wxFileName file);
 
 // Functions to save and retrieve CServer objects to the XML file
 void SetServer(TiXmlElement *node, const CServer& server);

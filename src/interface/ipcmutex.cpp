@@ -2,13 +2,15 @@
 #include "ipcmutex.h"
 #include "filezillaapp.h"
 
+#ifndef __WXMSW__
 int CInterProcessMutex::m_fd = -1;
 int CInterProcessMutex::m_instanceCount = 0;
+#endif
 
 CInterProcessMutex::CInterProcessMutex(unsigned int mutexType, bool initialLock /*=true*/)
 {
 	m_locked = false;
-#ifdef __WXMSW_
+#ifdef __WXMSW__
 	// Create mutex_
 	hMutex = ::CreateMutex(0, false, wxString::Format(_T("FileZilla 3 Mutex Type %d"), mutexType));
 #else

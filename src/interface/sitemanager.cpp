@@ -155,12 +155,12 @@ bool CSiteManager::Load(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 		pTree->SetItemImage(treeId, 1, wxTreeItemIcon_Expanded);
 		pTree->SetItemImage(treeId, 1, wxTreeItemIcon_SelectedExpanded);
 
-		// We have to synchronize access to Queue.xml so that multiple processed don't write 
+		// We have to synchronize access to sitemanager.xml so that multiple processed don't write 
 		// to the same file or one is reading while the other one writes.
 		CInterProcessMutex mutex(MUTEX_SITEMANAGER);
 
-		wxFileName file(wxGetApp().GetSettingsDir(), _T("SiteManager.xml"));
-		TiXmlDocument* pDocument = GetXmlFile(file);
+		wxFileName file(wxGetApp().GetSettingsDir(), _T("sitemanager.xml"));
+		TiXmlElement* pDocument = GetXmlFile(file);
 		if (!pDocument)
 		{
 			wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager will not be saved."), file.GetFullPath().c_str());
@@ -243,12 +243,12 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 		
 	if (!pElement || !treeId)
 	{
-		// We have to synchronize access to Queue.xml so that multiple processed don't write 
+		// We have to synchronize access to sitemanager.xml so that multiple processed don't write 
 		// to the same file or one is reading while the other one writes.
 		CInterProcessMutex mutex(MUTEX_SITEMANAGER);
 
-		wxFileName file(wxGetApp().GetSettingsDir(), _T("SiteManager.xml"));
-		TiXmlDocument* pDocument = GetXmlFile(file);
+		wxFileName file(wxGetApp().GetSettingsDir(), _T("sitemanager.xml"));
+		TiXmlElement* pDocument = GetXmlFile(file);
 		if (!pDocument)
 		{
 			wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager could not be saved."), file.GetFullPath().c_str());
@@ -260,7 +260,7 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 		TiXmlElement *pServers = pDocument->FirstChildElement("Servers");
 		while (pServers)
 		{
-			pElement->RemoveChild(pServers);
+			pDocument->RemoveChild(pServers);
 			pServers = pDocument->FirstChildElement("Servers");
 		}
 		pElement = pDocument->InsertEndChild(TiXmlElement("Servers"))->ToElement();
@@ -274,7 +274,7 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 
 		bool res = Save(pElement, pTree->GetRootItem());
 		
-		if (!pDocument->SaveFile(file.GetFullPath().mb_str()))
+		if (!pDocument->GetDocument()->SaveFile(file.GetFullPath().mb_str()))
 		{
 			wxString msg = wxString::Format(_("Could not write \"%s\", any changes to the Site Manager could not be saved."), file.GetFullPath().c_str());
 			wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);

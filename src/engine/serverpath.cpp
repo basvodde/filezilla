@@ -348,6 +348,17 @@ bool CServerPath::SetSafePath(wxString path)
 	path = path.Mid(pos + 1);
 
 	pos = path.Find(' ');
+	if (pos == -1)
+	{
+		if (path != _T("0"))
+			return false;
+		else
+		{
+			// Is root folder, like / on unix like systems.
+			m_bEmpty = false;
+			return true;
+		}
+	}
 	if (pos < 1)
 		return false;
 

@@ -36,7 +36,7 @@ COptions::COptions()
 		m_optionsCache[i].cached = false;
 
 	wxFileName file = wxFileName(wxGetApp().GetSettingsDir(), _T("filezilla.xml"));
-	m_pXmlDocument = GetXmlFile(file);
+	m_pXmlDocument = GetXmlFile(file)->GetDocument();
 
 	if (!m_pXmlDocument)
 	{

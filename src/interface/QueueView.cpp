@@ -1444,12 +1444,12 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOn
 
 void CQueueView::SaveQueue()
 {
-	// We have to synchronize access to Queue.xml so that multiple processed don't write 
+	// We have to synchronize access to queue.xml so that multiple processed don't write 
 	// to the same file or one is reading while the other one writes.
 	CInterProcessMutex mutex(MUTEX_QUEUE);
 
-	wxFileName file(wxGetApp().GetSettingsDir(), _T("Queue.xml"));
-	TiXmlDocument* pDocument = GetXmlFile(file);
+	wxFileName file(wxGetApp().GetSettingsDir(), _T("queue.xml"));
+	TiXmlElement* pDocument = GetXmlFile(file);
 	if (!pDocument)
 	{
 		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nThe queue will not be saved."), file.GetFullPath().c_str());
@@ -1458,19 +1458,18 @@ void CQueueView::SaveQueue()
 		return;
 	}
 
-	TiXmlElement* pElement = pDocument->FirstChildElement("FileZilla3");
-	wxASSERT(pElement);
-
-	TiXmlElement* pQueue = pElement->FirstChildElement("Queue");
+	TiXmlElement* pQueue = pDocument->FirstChildElement("Queue");
 	if (!pQueue)
 	{
-		pQueue = pElement->InsertEndChild(TiXmlElement("Queue"))->ToElement();
+		pQueue = pDocument->InsertEndChild(TiXmlElement("Queue"))->ToElement();
 	}
+
+	wxASSERT(pQueue);
 
 	for (std::vector<CServerItem*>::iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
 		(*iter)->SaveItem(pQueue);
 
-	if (!pDocument->SaveFile(file.GetFullPath().mb_str()))
+	if (!pDocument->GetDocument()->SaveFile(file.GetFullPath().mb_str()))
 	{
 		wxString msg = wxString::Format(_("Could not write \"%s\", the queue could not be saved."), file.GetFullPath().c_str());
 		wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
@@ -1481,12 +1480,12 @@ void CQueueView::SaveQueue()
 
 void CQueueView::LoadQueue()
 {
-	// We have to synchronize access to Queue.xml so that multiple processed don't write 
+	// We have to synchronize access to queue.xml so that multiple processed don't write 
 	// to the same file or one is reading while the other one writes.
 	CInterProcessMutex mutex(MUTEX_QUEUE);
 
-	wxFileName file(wxGetApp().GetSettingsDir(), _T("Queue.xml"));
-	TiXmlDocument* pDocument = GetXmlFile(file);
+	wxFileName file(wxGetApp().GetSettingsDir(), _T("queue.xml"));
+	TiXmlElement* pDocument = GetXmlFile(file);
 	if (!pDocument)
 	{
 		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nThe queue will not be saved."), file.GetFullPath().c_str());
@@ -1551,6 +1550,13 @@ void CQueueView::LoadQueue()
 		}
 
 		pServer = pServer->NextSiblingElement("Server");
+	}
+	pDocument->RemoveChild(pQueue);
+
+	if (!pDocument->GetDocument()->SaveFile(file.GetFullPath().mb_str()))
+	{
+		wxString msg = wxString::Format(_("Could not write \"%s\", the queue could not be saved."), file.GetFullPath().c_str());
+		wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
 	}
 
 	delete pDocument;

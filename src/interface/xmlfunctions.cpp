@@ -127,7 +127,7 @@ wxLongLong GetTextElementLongLong(TiXmlElement* node, const char* name, int defV
 
 // Opens the specified XML file if it exists or creates a new one otherwise.
 // Returns 0 on error.
-TiXmlDocument* GetXmlFile(wxFileName file)
+TiXmlElement* GetXmlFile(wxFileName file)
 {
 	if (wxFileExists(file.GetFullPath()))
 	{
@@ -145,7 +145,7 @@ TiXmlDocument* GetXmlFile(wxFileName file)
 			return 0;
 		}
 
-		return pXmlDocument;
+		return pXmlDocument->FirstChildElement("FileZilla3");
 	}
 	else
 	{
@@ -159,7 +159,7 @@ TiXmlDocument* GetXmlFile(wxFileName file)
 
 		pXmlDocument->SaveFile(file.GetFullPath().mb_str());
 		
-		return pXmlDocument;
+		return pXmlDocument->FirstChildElement("FileZilla3");
 	}
 }
 
