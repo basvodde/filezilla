@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lt\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-10-18 13:28+0200\n"
+"POT-Creation-Date: 2004-11-27 11:56+0100\n"
 "PO-Revision-Date: 2004-10-15 09:21+0300\n"
 "Last-Translator: Darius Zitkevicius <skystis@splius.lt>\n"
 "Language-Team: Lithuanian <komp_lt@konferencijos.lt>\n"
@@ -17,30 +17,32 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.3.1\n"
 
-#: ../src/interface/Mainfrm.cpp:661
+#: ../src/interface/statuslinectrl.cpp:45
+#: ../src/interface/statuslinectrl.cpp:96
 msgid "%H:%M:%S elapsed"
 msgstr "%H:%M:%S praėjo"
 
-#: ../src/interface/Mainfrm.cpp:681
+#: ../src/interface/statuslinectrl.cpp:49
+#: ../src/interface/statuslinectrl.cpp:116
 msgid "%H:%M:%S left"
 msgstr "%H:%M:%S liko"
 
-#: ../src/interface/Mainfrm.cpp:673
+#: ../src/interface/statuslinectrl.cpp:108
 #, c-format
 msgid "%s bytes (%d B/s)"
 msgstr "%s bitų (%d B/s)"
 
-#: ../src/interface/Mainfrm.cpp:671
+#: ../src/interface/statuslinectrl.cpp:106
 #, c-format
 msgid "%s bytes (%d.%d KB/s)"
 msgstr "%s bitų (%d.%d KB/s)"
 
-#: ../src/interface/Mainfrm.cpp:669
+#: ../src/interface/statuslinectrl.cpp:104
 #, c-format
 msgid "%s bytes (%d.%d MB/s)"
 msgstr "%s bitų (%d.%d MB/s)"
 
-#: ../src/interface/Mainfrm.cpp:689
+#: ../src/interface/statuslinectrl.cpp:126
 #, c-format
 msgid "%s bytes (? B/s)"
 msgstr "%s bitų (? B/s)"
@@ -48,6 +50,10 @@ msgstr "%s bitų (? B/s)"
 #: resources.h:57
 msgid "&Active"
 msgstr "&Aktyvus"
+
+#: resources.h:87 resources.h:97
+msgid "&Add files to queue"
+msgstr ""
 
 #: resources.h:16
 msgid "&Always use this action"
@@ -65,9 +71,18 @@ msgstr "&Atšaukti"
 msgid "&Connect"
 msgstr "&Prisijungti"
 
+#: resources.h:89 resources.h:99
+#, fuzzy
+msgid "&Create directory"
+msgstr "Numatytas nut&olęs katalogas:"
+
 #: resources.h:26
 msgid "&Delete"
 msgstr "&Ištrinti"
+
+#: resources.h:95
+msgid "&Download"
+msgstr ""
 
 #: resources.h:79 ../src/interface/resources/resources.h:4
 msgid "&Edit"
@@ -77,7 +92,11 @@ msgstr "&Redaguoti"
 msgid "&File"
 msgstr "&Byla"
 
-#: resources.h:29 resources.h:85 ../src/interface/resources/resources.h:7
+#: resources.h:107
+msgid "&Highest"
+msgstr ""
+
+#: resources.h:29 resources.h:112 ../src/interface/resources/resources.h:7
 msgid "&Host:"
 msgstr "&Mazgas:"
 
@@ -89,6 +108,10 @@ msgstr ""
 msgid "&Logontype:"
 msgstr "&Prisijungimo tipas:"
 
+#: resources.h:110
+msgid "&Low"
+msgstr ""
+
 #: resources.h:60
 msgid "&Maximum number of connections:"
 msgstr ""
@@ -96,6 +119,11 @@ msgstr ""
 #: resources.h:23
 msgid "&New Site"
 msgstr "&Naujas serveris"
+
+#: resources.h:109
+#, fuzzy
+msgid "&Normal"
+msgstr "Normalus"
 
 #: resources.h:62 resources.h:72
 msgid "&OK"
@@ -113,11 +141,11 @@ msgstr "&Pasyvus"
 msgid "&Password:"
 msgstr "&Slaptažodis:"
 
-#: resources.h:30 resources.h:89 ../src/interface/resources/resources.h:11
+#: resources.h:30 resources.h:116 ../src/interface/resources/resources.h:11
 msgid "&Port:"
 msgstr "&Portas:"
 
-#: resources.h:91 ../src/interface/resources/resources.h:13
+#: resources.h:118 ../src/interface/resources/resources.h:13
 msgid "&Quickconnect"
 msgstr "&Jungtis dabar"
 
@@ -125,7 +153,7 @@ msgstr "&Jungtis dabar"
 msgid "&Remember password for this session"
 msgstr "&Atsiminti slaptažodį tik šiai sesijai"
 
-#: resources.h:25
+#: resources.h:25 resources.h:93 resources.h:103
 msgid "&Rename"
 msgstr "&Pervadinti"
 
@@ -154,15 +182,20 @@ msgstr "&Praleisti"
 msgid "&Transfer mode:"
 msgstr "&Siuntimo būdas:"
 
+#: resources.h:85
+msgid "&Upload"
+msgstr ""
+
 #: resources.h:38
 msgid "&User:"
 msgstr "&Vartotojas:"
 
-#: resources.h:87 ../src/interface/resources/resources.h:9
+#: resources.h:114 ../src/interface/resources/resources.h:9
 msgid "&Username:"
 msgstr "&Vartotojas:"
 
-#: ../src/interface/Mainfrm.cpp:685
+#: ../src/interface/statuslinectrl.cpp:120
+#: ../src/interface/statuslinectrl.cpp:125
 msgid "--:--:-- left"
 msgstr "--:--:-- liko"
 
@@ -173,6 +206,10 @@ msgstr "&Pritaikyti tik parsisiuntimams"
 #: ../src/interface/fileexistsdlg.cpp:146
 msgid "A&pply only to uploads"
 msgstr "&Pritaikyti tik išsiuntimams"
+
+#: resources.h:88 resources.h:98
+msgid "Add selected files and folders to the transfer queue"
+msgstr ""
 
 #: resources.h:51
 msgid "Adjust server timezone offset:"
@@ -196,39 +233,39 @@ msgstr "Pritaikyti &tik šiai eilei"
 msgid "Ask for password"
 msgstr "Klausti slaptažodžio"
 
-#: ../src/interface/Mainfrm.cpp:348 ../src/interface/Mainfrm.cpp:711
+#: ../src/interface/Mainfrm.cpp:351 ../src/interface/Mainfrm.cpp:750
 msgid "Break current connection?"
 msgstr "Nutraukti dabartinį prisijungimą?"
 
-#: ../src/engine/transfersocket.cpp:227
+#: ../src/engine/transfersocket.cpp:230
 msgid "Can't read from file"
 msgstr "Negaliu perskaityti bylos"
 
-#: ../src/engine/transfersocket.cpp:182
+#: ../src/engine/transfersocket.cpp:185
 msgid "Can't write data to file, disk is full."
 msgstr "Negaliu įrašyti duomenų, diskas pilnas."
 
-#: ../src/engine/transfersocket.cpp:184 ../src/engine/transfersocket.cpp:187
+#: ../src/engine/transfersocket.cpp:187 ../src/engine/transfersocket.cpp:190
 msgid "Can't write data to file."
 msgstr "Negaliu įrašyti duomenų į bylą."
 
-#: resources.h:96 ../src/interface/resources/resources.h:14
+#: resources.h:125 ../src/interface/resources/resources.h:14
 msgid "Cancel current operation"
 msgstr "Atšaukti šį veiksmą"
 
-#: resources.h:97 ../src/interface/resources/resources.h:15
+#: resources.h:126 ../src/interface/resources/resources.h:15
 msgid "Cancels the current operation"
 msgstr "Atšaukia šį veiksmą"
 
-#: ../src/interface/Mainfrm.cpp:266
+#: ../src/interface/Mainfrm.cpp:269
 msgid "Cannot load Quickconnect bar from resource file"
 msgstr "Negaliu pakrauti greito prisijungimo juostos iš resursų bylos"
 
-#: ../src/interface/Mainfrm.cpp:248
+#: ../src/interface/Mainfrm.cpp:251
 msgid "Cannot load main menu from resource file"
 msgstr "Negaliu pakrauti pagrindinio meniu iš resursų bylos"
 
-#: ../src/interface/Mainfrm.cpp:426
+#: ../src/interface/Mainfrm.cpp:435
 msgid "Cannot load toolbar from resource file"
 msgstr "Negaliu pakrauti įrankinės iš resursų bylos"
 
@@ -252,16 +289,26 @@ msgstr "Ko&mentarai:"
 msgid "Command:"
 msgstr "Komanda:"
 
-#: ../src/engine/ftpcontrolsocket.cpp:281
+#: ../src/engine/ftpcontrolsocket.cpp:280
 msgid "Connected"
 msgstr "Prisijungta"
 
-#: ../src/engine/ControlSocket.cpp:105
+#: ../src/interface/QueueView.cpp:893
+#, fuzzy
+msgid "Connecting"
+msgstr "&Prisijungti"
+
+#: ../src/interface/statuslinectrl.cpp:152
+#, fuzzy, c-format
+msgid "Connecting to %s"
+msgstr "Jungiuosi prie: %s:%d..."
+
+#: ../src/engine/ControlSocket.cpp:107
 #, c-format
 msgid "Connecting to %s:%d..."
 msgstr "Jungiuosi prie: %s:%d..."
 
-#: ../src/engine/ftpcontrolsocket.cpp:176
+#: ../src/engine/ftpcontrolsocket.cpp:175
 msgid "Connection established, waiting for welcome message..."
 msgstr "Prisijungta, laukiu pasveikinimo pranešimo..."
 
@@ -269,19 +316,19 @@ msgstr "Prisijungta, laukiu pasveikinimo pranešimo..."
 msgid "Cop&y"
 msgstr "Kopijuot&i"
 
-#: ../src/engine/ControlSocket.cpp:207
+#: ../src/engine/ControlSocket.cpp:211
 msgid "Could not connect to server"
 msgstr "Negaliu prisijungti prie serverio"
 
-#: ../src/engine/ftpcontrolsocket.cpp:513
+#: ../src/engine/ftpcontrolsocket.cpp:515
 msgid "Could not establish connection to server"
 msgstr "Negaliu nustatyti ryšio su serveriu"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1504
+#: ../src/engine/ftpcontrolsocket.cpp:1529
 msgid "Could not establish passive connection to server"
 msgstr "Negaliu nustatyti pasyvaus ryšio su serveriu"
 
-#: ../src/interface/FileZilla.cpp:127
+#: ../src/interface/FileZilla.cpp:130
 msgid ""
 "Could not find the resource files for FileZilla, closing FileZilla.\n"
 "You can set the data directory of FileZilla using the '--datadir "
@@ -304,20 +351,24 @@ msgstr ""
 "Šiai sesijai bus naudojamos numatytos nuostatos ir jokie nuostatų pakeitimai "
 "nebus išsaugomi."
 
-#: ../src/interface/Mainfrm.cpp:323
+#: ../src/interface/Mainfrm.cpp:326
 msgid "Could not parse server address:"
 msgstr "Negaliu interpretuoti serverio adreso:"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1245
+#: ../src/engine/ftpcontrolsocket.cpp:1260
 msgid "Could not seek to end of file"
 msgstr "Negaliu perskaityti bylos iki galo"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1225
+#: ../src/engine/ftpcontrolsocket.cpp:1240
 #, c-format
 msgid "Could not seek to offset %s within file"
 msgstr "Negaliu pasiekti pozicijos %s byloje"
 
-#: ../src/engine/ControlSocket.cpp:203
+#: resources.h:90 resources.h:100
+msgid "Create a new subdirectory in the current directory"
+msgstr ""
+
+#: ../src/engine/ControlSocket.cpp:207
 msgid "Critical error"
 msgstr "Kritinė klaida"
 
@@ -325,11 +376,16 @@ msgstr "Kritinė klaida"
 msgid "D&efault"
 msgstr "N&umatytas"
 
+#: resources.h:91 resources.h:101
+#, fuzzy
+msgid "D&elete"
+msgstr "&Ištrinti"
+
 #: resources.h:63
 msgid "D&iscard"
 msgstr "Ats&isakyti"
 
-#: ../src/interface/RemoteListView.cpp:42
+#: ../src/interface/RemoteListView.cpp:51
 msgid "Date"
 msgstr "Data"
 
@@ -352,24 +408,34 @@ msgstr "Numatytas &lokalus katalogas:"
 msgid "Default r&emote directory:"
 msgstr "Numatytas nut&olęs katalogas:"
 
-#: ../src/interface/QueueView.cpp:269
+#: resources.h:92 resources.h:102
+#, fuzzy
+msgid "Delete selected files and folders"
+msgstr "Atnaujinti bylų ir katalogų sąrašą"
+
+#: ../src/interface/QueueView.cpp:383
 msgid "Direction"
 msgstr ""
 
-#: ../src/engine/ControlSocket.cpp:221
+#: ../src/engine/ControlSocket.cpp:225
 msgid "Directory listing successful"
 msgstr "Katalogų sąrašas gautas"
 
-#: resources.h:98 ../src/interface/resources/resources.h:16
+#: resources.h:127 ../src/interface/resources/resources.h:16
 msgid "Disconnect from server"
 msgstr "Atsijungti nuo serverio"
 
-#: ../src/engine/ControlSocket.cpp:99 ../src/engine/ControlSocket.cpp:152
-#: ../src/engine/ftpcontrolsocket.cpp:98
+#: ../src/engine/ControlSocket.cpp:101 ../src/engine/ControlSocket.cpp:156
+#: ../src/engine/ftpcontrolsocket.cpp:97
 msgid "Disconnected from server"
 msgstr "Atsijungta nuo serverio"
 
-#: resources.h:99 ../src/interface/resources/resources.h:17
+#: ../src/interface/QueueView.cpp:882 ../src/interface/statuslinectrl.cpp:146
+#, fuzzy
+msgid "Disconnecting from previous server"
+msgstr "Atsijungti nuo serverio"
+
+#: resources.h:128 ../src/interface/resources/resources.h:17
 msgid "Disconnects from the currently visible server"
 msgstr "Atsijungia nuo šiuo metu matomo serverio"
 
@@ -377,6 +443,11 @@ msgstr "Atsijungia nuo šiuo metu matomo serverio"
 #: ../src/interface/sitemanager.cpp:687
 msgid "Dos"
 msgstr "Dos"
+
+#: resources.h:96
+#, fuzzy
+msgid "Download selected files and folders"
+msgstr "Atnaujinti bylų ir katalogų sąrašą"
 
 #: resources.h:77 ../src/interface/resources/resources.h:2
 msgid "E&xit"
@@ -386,7 +457,7 @@ msgstr "Iš&eiti"
 msgid "Enter &custom command"
 msgstr ""
 
-#: ../src/interface/Mainfrm.cpp:291
+#: ../src/interface/Mainfrm.cpp:294
 msgid "Enter custom command"
 msgstr ""
 
@@ -394,7 +465,7 @@ msgstr ""
 msgid "Enter password"
 msgstr "Įveskite slaptažodį"
 
-#: resources.h:86 ../src/interface/resources/resources.h:8
+#: resources.h:113 ../src/interface/resources/resources.h:8
 msgid ""
 "Enter the address of the server.\n"
 "To specify the server protocol, prepend the host with the protocol "
@@ -409,7 +480,7 @@ msgstr ""
 "Taip pat formoje galima nurodyti pilną URL adresą protokolas://vartotojas:"
 "slaptažodis@mazgas:portas tokiu atveju kitų laukų reikšmės bus ignoruojamos."
 
-#: resources.h:90 ../src/interface/resources/resources.h:12
+#: resources.h:117 ../src/interface/resources/resources.h:12
 msgid ""
 "Enter the port on which the server listens.\n"
 "The default for FTP is 21, the default for SFTP is 22."
@@ -417,7 +488,7 @@ msgstr ""
 "Nurodykite portą, kuriuo serveris lauks užklausų.\n"
 "Numatytas FTP portas yra 21, naudojant SFTP numatytas portas yra 22."
 
-#: ../src/engine/transfersocket.cpp:264
+#: ../src/engine/transfersocket.cpp:267
 #, c-format
 msgid "Error %d writing to socket"
 msgstr "Klaida %d rašant į lizdą (socket)"
@@ -435,8 +506,8 @@ msgstr "Klaida:"
 msgid "FTP"
 msgstr "FTP"
 
-#: ../src/engine/ftpcontrolsocket.cpp:493
-#: ../src/engine/ftpcontrolsocket.cpp:1465
+#: ../src/engine/ftpcontrolsocket.cpp:495
+#: ../src/engine/ftpcontrolsocket.cpp:1490
 msgid ""
 "Failed to create listening socket for active mode transfer, trying passive "
 "mode"
@@ -444,44 +515,44 @@ msgstr ""
 "Nepavyko sukurti klausymo lizdo aktyviam bylų perdavimui, bandau pasyvų "
 "rėžimą"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1185
+#: ../src/engine/ftpcontrolsocket.cpp:1200
 #, c-format
 msgid "Failed to open \"%s\" for appending / writing"
 msgstr "Nepavyko atidaryti „%s“ pildymui/rašymui"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1210
+#: ../src/engine/ftpcontrolsocket.cpp:1225
 #, c-format
 msgid "Failed to open \"%s\" for reading"
 msgstr "Nepavyko atidaryti „%s“ skaitymui"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1196
+#: ../src/engine/ftpcontrolsocket.cpp:1211
 #, c-format
 msgid "Failed to open \"%s\" for writing"
 msgstr "Nepavyko atidaryti „%s“ rašymui"
 
-#: ../src/engine/ControlSocket.cpp:210
+#: ../src/engine/ControlSocket.cpp:214
 msgid "Failed to retrieve directory listing"
 msgstr "Nepavyko gauti katalogų sąrašo"
 
-#: ../src/interface/LocalListView.cpp:465
-#: ../src/interface/LocalListView.cpp:483
-#: ../src/interface/LocalListView.cpp:487
-#: ../src/interface/RemoteListView.cpp:506
-#: ../src/interface/RemoteListView.cpp:524
-#: ../src/interface/RemoteListView.cpp:528
+#: ../src/interface/LocalListView.cpp:502
+#: ../src/interface/LocalListView.cpp:520
+#: ../src/interface/LocalListView.cpp:524
+#: ../src/interface/RemoteListView.cpp:515
+#: ../src/interface/RemoteListView.cpp:533
+#: ../src/interface/RemoteListView.cpp:537
 msgid "File"
 msgstr "Byla"
 
-#: ../src/engine/ControlSocket.cpp:224
+#: ../src/engine/ControlSocket.cpp:228
 msgid "File transfer successful"
 msgstr "Byla perduota sėkmingai"
 
-#: ../src/interface/FileZilla.cpp:128 ../src/interface/Mainfrm.cpp:326
+#: ../src/interface/FileZilla.cpp:131 ../src/interface/Mainfrm.cpp:329
 msgid "FileZilla Error"
 msgstr "FileZilla klaida"
 
-#: ../src/interface/LocalListView.cpp:39
-#: ../src/interface/RemoteListView.cpp:39
+#: ../src/interface/LocalListView.cpp:46
+#: ../src/interface/RemoteListView.cpp:48
 msgid "Filename"
 msgstr "Bylos pavadinimas"
 
@@ -489,24 +560,36 @@ msgstr "Bylos pavadinimas"
 msgid "Filename unchanged"
 msgstr "Bylos pavadinimas nepakeistas"
 
-#: ../src/interface/LocalListView.cpp:40
-#: ../src/interface/RemoteListView.cpp:40
+#: ../src/interface/LocalListView.cpp:47
+#: ../src/interface/RemoteListView.cpp:49
 msgid "Filesize"
 msgstr "Bylos dydis"
 
-#: ../src/interface/LocalListView.cpp:41
-#: ../src/interface/RemoteListView.cpp:41
+#: ../src/interface/LocalListView.cpp:48
+#: ../src/interface/RemoteListView.cpp:50
 msgid "Filetype"
 msgstr "Bylos tipas"
 
-#: ../src/interface/LocalListView.cpp:487
-#: ../src/interface/RemoteListView.cpp:528
+#: ../src/interface/LocalListView.cpp:524
+#: ../src/interface/RemoteListView.cpp:537
 msgid "Folder"
 msgstr "Katalogas"
 
 #: resources.h:28
 msgid "General"
 msgstr "Pagrindinis"
+
+#: resources.h:108
+msgid "H&igh"
+msgstr ""
+
+#: ../src/interface/QueueView.cpp:534
+msgid "High"
+msgstr ""
+
+#: ../src/interface/QueueView.cpp:536
+msgid "Highest"
+msgstr ""
 
 #: resources.h:67
 msgid "Host:"
@@ -521,36 +604,49 @@ msgstr "Val,"
 msgid "Interactive"
 msgstr "Interaktyviai"
 
-#: ../src/engine/ControlSocket.cpp:328
+#: ../src/engine/ControlSocket.cpp:332
 msgid "Interrupted by user"
 msgstr "Nutraukta vartotojo"
 
-#: ../src/engine/ControlSocket.cpp:135
+#: ../src/engine/ControlSocket.cpp:139
 msgid "Invalid hostname or host not found"
 msgstr "Blogas mazgo pavadinimas arba mazgas nerastas"
 
-#: ../src/engine/server.cpp:89 ../src/engine/server.cpp:107
+#: ../src/engine/server.cpp:83 ../src/engine/server.cpp:101
 msgid "Invalid port given. The port has to be a value from 1 to 65535."
 msgstr "Pateiktas netinkamas portas. Portas gali būti nuo 1 iki 65535."
 
-#: ../src/engine/server.cpp:35
+#: ../src/engine/server.cpp:29
 msgid ""
 "Invalid protocol specified. Only valid protocol is ftp:// at the moment."
 msgstr ""
 "Pateiktas netinkamas protokolas. Vienintelis tinkamas protokolas šiuo metu "
 "yra ftp://."
 
-#: ../src/engine/server.cpp:57
+#: ../src/engine/server.cpp:51
 msgid "Invalid username given."
 msgstr "Netinkamas vartotojo vardas"
 
-#: ../src/interface/LocalListView.cpp:42
+#: resources.h:111
+#, fuzzy
+msgid "L&owest"
+msgstr "&Mazgas:"
+
+#: ../src/interface/LocalListView.cpp:49
 msgid "Last modified"
 msgstr "Paskutinį kartą redaguotas"
 
 #: ../src/interface/StatusView.cpp:79 ../src/interface/StatusView.cpp:116
 msgid "Listing:"
 msgstr "Sąrašas:"
+
+#: ../src/interface/QueueView.cpp:529
+msgid "Low"
+msgstr ""
+
+#: ../src/interface/QueueView.cpp:527
+msgid "Lowest"
+msgstr ""
 
 #: resources.h:46 ../src/interface/sitemanager.cpp:542
 #: ../src/interface/sitemanager.cpp:691
@@ -581,13 +677,14 @@ msgstr "Naujas katalogas"
 msgid "New site"
 msgstr "Naujas serveris"
 
-#: ../src/engine/server.cpp:20 ../src/engine/server.cpp:82
-#: ../src/engine/server.cpp:114
+#: ../src/engine/server.cpp:14 ../src/engine/server.cpp:76
+#: ../src/engine/server.cpp:108
 msgid "No host given, please enter a host."
 msgstr "Nenurodytas mazgas, prašau nurodyti mazgą."
 
-#: resources.h:35 ../src/interface/sitemanager.cpp:516
-#: ../src/interface/sitemanager.cpp:643 ../src/interface/sitemanager.cpp:671
+#: resources.h:35 ../src/interface/QueueView.cpp:532
+#: ../src/interface/sitemanager.cpp:516 ../src/interface/sitemanager.cpp:643
+#: ../src/interface/sitemanager.cpp:671
 msgid "Normal"
 msgstr "Normalus"
 
@@ -595,7 +692,7 @@ msgstr "Normalus"
 msgid "OK"
 msgstr "OK"
 
-#: resources.h:92 resources.h:93
+#: resources.h:119 resources.h:120
 msgid "Open the Site Manager"
 msgstr "Atidaryti serverių tvarkyklę"
 
@@ -611,15 +708,15 @@ msgstr "Atidaro serverių tvarkyklę"
 msgid "Overwrite &if newer"
 msgstr "Perrašyti je&i naujesnis"
 
-#: ../src/interface/RemoteListView.cpp:45
+#: ../src/interface/RemoteListView.cpp:54
 msgid "Owner / Group"
 msgstr "Savininkas / Grupė"
 
-#: resources.h:39 resources.h:88 ../src/interface/resources/resources.h:10
+#: resources.h:39 resources.h:115 ../src/interface/resources/resources.h:10
 msgid "Pass&word:"
 msgstr "Slap&tažodis:"
 
-#: ../src/interface/RemoteListView.cpp:44
+#: ../src/interface/RemoteListView.cpp:53
 msgid "Permissions"
 msgstr "Teisės"
 
@@ -627,7 +724,7 @@ msgstr "Teisės"
 msgid "Please enter a password for this server:"
 msgstr "Prašau įvesti šio serverio slaptažodį:"
 
-#: ../src/interface/Mainfrm.cpp:291
+#: ../src/interface/Mainfrm.cpp:294
 msgid ""
 "Please enter raw FTP command.\n"
 "Using raw ftp commands will clear the directory cache."
@@ -637,23 +734,50 @@ msgstr ""
 msgid "Please select an action:"
 msgstr "Prašau nurodyti veiksmą:"
 
+#: ../src/interface/QueueView.cpp:386
+msgid "Priority"
+msgstr ""
+
+#: resources.h:105
+msgid "Process &Queue"
+msgstr ""
+
+#: ../src/interface/QueueView.cpp:1093
+#, c-format
+msgid "Queue: %s%d KB"
+msgstr ""
+
+#: ../src/interface/QueueView.cpp:1088
+#, c-format
+msgid "Queue: %s%d MB"
+msgstr ""
+
+#: ../src/interface/QueueView.cpp:1096
+#, c-format
+msgid "Queue: %s%d bytes"
+msgstr ""
+
+#: ../src/interface/QueueView.cpp:1084
+msgid "Queue: empty"
+msgstr ""
+
 #: resources.h:14
 msgid "Re&name"
 msgstr "Pervadi&nti"
 
-#: ../src/interface/Mainfrm.cpp:459
+#: ../src/interface/Mainfrm.cpp:468
 msgid "Really cancel current operation?"
 msgstr "Tikrai atšaukti dabartinę operaciją?"
 
-#: resources.h:100 resources.h:101
+#: resources.h:129 resources.h:130
 msgid "Reconnects to the last used server"
 msgstr "Prisijungs prie paskutinio serverio"
 
-#: resources.h:94 resources.h:95
+#: resources.h:121 resources.h:122
 msgid "Refresh the file and folder lists"
 msgstr "Atnaujinti bylų ir katalogų sąrašą"
 
-#: ../src/interface/QueueView.cpp:270
+#: ../src/interface/QueueView.cpp:384
 #, fuzzy
 msgid "Remote file"
 msgstr "Pervadinti bylą"
@@ -662,11 +786,16 @@ msgstr "Pervadinti bylą"
 msgid "Rename file"
 msgstr "Pervadinti bylą"
 
+#: resources.h:94 resources.h:104
+#, fuzzy
+msgid "Rename selected files and folders"
+msgstr "Atnaujinti bylų ir katalogų sąrašą"
+
 #: ../src/interface/StatusView.cpp:68 ../src/interface/StatusView.cpp:110
 msgid "Response:"
 msgstr "Atsakymas:"
 
-#: ../src/engine/ftpcontrolsocket.cpp:410
+#: ../src/engine/ftpcontrolsocket.cpp:412
 msgid "Retrieving directory listing..."
 msgstr "Gaunu katalogų sąrašą..."
 
@@ -678,7 +807,7 @@ msgstr "Nurodykite elementą:"
 msgid "Send custom command to the server otherwise not available"
 msgstr ""
 
-#: ../src/interface/QueueView.cpp:268
+#: ../src/interface/QueueView.cpp:382
 msgid "Server / Local file"
 msgstr ""
 
@@ -686,11 +815,15 @@ msgstr ""
 msgid "Server&type:"
 msgstr "Serverio&tipas:"
 
+#: resources.h:106
+msgid "Set &Priority"
+msgstr ""
+
 #: resources.h:21
 msgid "Site Manager"
 msgstr "Serverių tvarkyklė"
 
-#: ../src/interface/QueueView.cpp:271
+#: ../src/interface/QueueView.cpp:385
 msgid "Size"
 msgstr ""
 
@@ -700,27 +833,32 @@ msgstr ""
 msgid "Size unknown"
 msgstr "Dydis nežinomas"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1749
-#: ../src/engine/ftpcontrolsocket.cpp:1824
+#: ../src/engine/ftpcontrolsocket.cpp:1787
+#: ../src/engine/ftpcontrolsocket.cpp:1862
 #, c-format
 msgid "Skipping download of %s"
 msgstr "Praleidžiu bylos %s gavimą"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1753
-#: ../src/engine/ftpcontrolsocket.cpp:1828
+#: ../src/engine/ftpcontrolsocket.cpp:1791
+#: ../src/engine/ftpcontrolsocket.cpp:1866
 #, c-format
 msgid "Skipping upload of %s"
 msgstr "Praleidžiu bylos %s siuntimą"
 
-#: ../src/engine/ftpcontrolsocket.cpp:959
+#: ../src/engine/ftpcontrolsocket.cpp:973
 #, c-format
 msgid "Starting download of %s"
 msgstr "Pradedu bylos %s gavimą"
 
-#: ../src/engine/ftpcontrolsocket.cpp:963
+#: ../src/engine/ftpcontrolsocket.cpp:977
 #, c-format
 msgid "Starting upload of %s"
 msgstr "Pradedu bylos %s siuntimą"
+
+#: ../src/interface/QueueView.cpp:387
+#, fuzzy
+msgid "Status"
+msgstr "Būsena:"
 
 #: ../src/interface/StatusView.cpp:83 ../src/interface/StatusView.cpp:119
 msgid "Status:"
@@ -748,9 +886,13 @@ msgstr ""
 "Tikslo byla jau yra.\n"
 "Ar norėtumėte perrašyti bylą"
 
-#: ../src/interface/RemoteListView.cpp:43
+#: ../src/interface/RemoteListView.cpp:52
 msgid "Time"
 msgstr "Laikas"
+
+#: resources.h:123 resources.h:124
+msgid "Toggles processing of the transfer queue"
+msgstr ""
 
 #: ../src/interface/StatusView.cpp:75 ../src/interface/StatusView.cpp:113
 msgid "Trace:"
@@ -760,10 +902,20 @@ msgstr "Pėdsakas:"
 msgid "Transfer settings"
 msgstr "Siuntimų nuostatos"
 
+#: ../src/interface/QueueView.cpp:918 ../src/interface/statuslinectrl.cpp:155
+#, fuzzy
+msgid "Transferring"
+msgstr "Siuntimų nuostatos"
+
 #: resources.h:44 ../src/interface/sitemanager.cpp:536
 #: ../src/interface/sitemanager.cpp:685
 msgid "Unix"
 msgstr "Unix"
+
+#: resources.h:86
+#, fuzzy
+msgid "Upload selected files and folders"
+msgstr "Atnaujinti bylų ir katalogų sąrašą"
 
 #: resources.h:68
 msgid "User:"
@@ -773,6 +925,10 @@ msgstr "Vartotojas:"
 #: ../src/interface/sitemanager.cpp:689
 msgid "VMS"
 msgstr "VMS"
+
+#: ../src/interface/statuslinectrl.cpp:149
+msgid "Waiting for transfer to be canceled"
+msgstr ""
 
 #: ../src/interface/asyncrequestqueue.cpp:81
 msgid "You did not enter a new name for the file. Overwrite the file instead?"
@@ -784,10 +940,10 @@ msgstr "Jūs nenurodėte kitokio bylos pavadinimo. Perrašyti bylą?"
 msgid "bytes"
 msgstr "bitai"
 
-#: ../src/interface/LocalListView.cpp:462
-#: ../src/interface/LocalListView.cpp:480
-#: ../src/interface/RemoteListView.cpp:503
-#: ../src/interface/RemoteListView.cpp:521
+#: ../src/interface/LocalListView.cpp:499
+#: ../src/interface/LocalListView.cpp:517
+#: ../src/interface/RemoteListView.cpp:512
+#: ../src/interface/RemoteListView.cpp:530
 msgid "file"
 msgstr "byla"
 

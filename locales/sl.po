@@ -6,39 +6,42 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-09-08 00:02-0400\n"
+"POT-Creation-Date: 2004-11-27 11:56+0100\n"
 "PO-Revision-Date: 2004-11-25 20:15+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n%100==4 ? 3 : 0);\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n"
+"%100==4 ? 3 : 0);\n"
 
-#: ../src/interface/Mainfrm.cpp:659
+#: ../src/interface/statuslinectrl.cpp:45
+#: ../src/interface/statuslinectrl.cpp:96
 msgid "%H:%M:%S elapsed"
 msgstr "Pretečeni čas: %H:%M:%S"
 
-#: ../src/interface/Mainfrm.cpp:679
+#: ../src/interface/statuslinectrl.cpp:49
+#: ../src/interface/statuslinectrl.cpp:116
 msgid "%H:%M:%S left"
 msgstr "Preostane še %H:%M:%S"
 
-#: ../src/interface/Mainfrm.cpp:671
+#: ../src/interface/statuslinectrl.cpp:108
 #, c-format
 msgid "%s bytes (%d B/s)"
 msgstr "%s bajtov (%d KB/s)"
 
-#: ../src/interface/Mainfrm.cpp:669
+#: ../src/interface/statuslinectrl.cpp:106
 #, c-format
 msgid "%s bytes (%d.%d KB/s)"
 msgstr "%s bajtov (%d.%d KB/s)"
 
-#: ../src/interface/Mainfrm.cpp:667
+#: ../src/interface/statuslinectrl.cpp:104
 #, c-format
 msgid "%s bytes (%d.%d MB/s)"
 msgstr "%s bajtov (%d.%d MB/s)"
 
-#: ../src/interface/Mainfrm.cpp:687
+#: ../src/interface/statuslinectrl.cpp:126
 #, c-format
 msgid "%s bytes (? B/s)"
 msgstr "%s bajtov (? B/s)"
@@ -46,6 +49,10 @@ msgstr "%s bajtov (? B/s)"
 #: resources.h:57
 msgid "&Active"
 msgstr "&Aktiven"
+
+#: resources.h:87 resources.h:97
+msgid "&Add files to queue"
+msgstr ""
 
 #: resources.h:16
 msgid "&Always use this action"
@@ -55,45 +62,69 @@ msgstr "Vedno uporabi to &akcijo"
 msgid "&Browse..."
 msgstr "Pre&brskaj ..."
 
-#: resources.h:20
-#: resources.h:72
+#: resources.h:20 resources.h:73
 msgid "&Cancel"
 msgstr "&Razveljavi"
 
-#: resources.h:60
+#: resources.h:61
 msgid "&Connect"
 msgstr "&Poveži"
+
+#: resources.h:89 resources.h:99
+#, fuzzy
+msgid "&Create directory"
+msgstr "Privzeti &oddaljeni imenik:"
 
 #: resources.h:26
 msgid "&Delete"
 msgstr "&Zbriši"
 
-#: resources.h:78
-#: ../src/interface/resources/resources.h:4
+#: resources.h:95
+msgid "&Download"
+msgstr ""
+
+#: resources.h:79 ../src/interface/resources/resources.h:4
 msgid "&Edit"
 msgstr "Ur&edi"
 
-#: resources.h:73
-#: ../src/interface/resources/resources.h:1
+#: resources.h:74 ../src/interface/resources/resources.h:1
 msgid "&File"
 msgstr "&Datoteka"
 
-#: resources.h:29
-#: resources.h:81
-#: ../src/interface/resources/resources.h:7
+#: resources.h:107
+msgid "&Highest"
+msgstr ""
+
+#: resources.h:29 resources.h:112 ../src/interface/resources/resources.h:7
 msgid "&Host:"
 msgstr "&Gostitelj:"
+
+#: resources.h:59
+msgid "&Limit number of simultaneous connections"
+msgstr ""
 
 #: resources.h:33
 msgid "&Logontype:"
 msgstr "&Vrsta prijave:"
 
+#: resources.h:110
+msgid "&Low"
+msgstr ""
+
+#: resources.h:60
+msgid "&Maximum number of connections:"
+msgstr ""
+
 #: resources.h:23
 msgid "&New Site"
 msgstr "&Nov strežnik"
 
-#: resources.h:61
-#: resources.h:71
+#: resources.h:109
+#, fuzzy
+msgid "&Normal"
+msgstr "Običajno"
+
+#: resources.h:62 resources.h:72
 msgid "&OK"
 msgstr "&V redu"
 
@@ -105,26 +136,23 @@ msgstr "&Prepiši"
 msgid "&Passive"
 msgstr "&Pasiven"
 
-#: resources.h:69
+#: resources.h:70
 msgid "&Password:"
 msgstr "&Geslo:"
 
-#: resources.h:30
-#: resources.h:85
-#: ../src/interface/resources/resources.h:11
+#: resources.h:30 resources.h:116 ../src/interface/resources/resources.h:11
 msgid "&Port:"
 msgstr "&Vrata:"
 
-#: resources.h:87
-#: ../src/interface/resources/resources.h:13
+#: resources.h:118 ../src/interface/resources/resources.h:13
 msgid "&Quickconnect"
 msgstr "&Hitro poveži"
 
-#: resources.h:70
+#: resources.h:71
 msgid "&Remember password for this session"
 msgstr "&Zapomni si geslo za to sejo"
 
-#: resources.h:25
+#: resources.h:25 resources.h:93 resources.h:103
 msgid "&Rename"
 msgstr "P&reimenuj"
 
@@ -132,12 +160,16 @@ msgstr "P&reimenuj"
 msgid "&Resume"
 msgstr "&Nadaljuj"
 
-#: resources.h:79
-#: ../src/interface/resources/resources.h:5
+#: resources.h:82
+#, fuzzy
+msgid "&Server"
+msgstr "&Tip strežnika"
+
+#: resources.h:80 ../src/interface/resources/resources.h:5
 msgid "&Settings"
 msgstr "Na&stavitve"
 
-#: resources.h:74
+#: resources.h:75
 msgid "&Site Manager"
 msgstr "Upravljalec &strežnikov"
 
@@ -149,16 +181,20 @@ msgstr "&Preskoči"
 msgid "&Transfer mode:"
 msgstr "&Način prenosa:"
 
+#: resources.h:85
+msgid "&Upload"
+msgstr ""
+
 #: resources.h:38
 msgid "&User:"
 msgstr "&Uporabnik:"
 
-#: resources.h:83
-#: ../src/interface/resources/resources.h:9
+#: resources.h:114 ../src/interface/resources/resources.h:9
 msgid "&Username:"
 msgstr "&Uporabniško ime:"
 
-#: ../src/interface/Mainfrm.cpp:683
+#: ../src/interface/statuslinectrl.cpp:120
+#: ../src/interface/statuslinectrl.cpp:125
 msgid "--:--:-- left"
 msgstr "--:--:-- preostalega časa"
 
@@ -170,6 +206,10 @@ msgstr "&Uporabi le pri prenosih k sebi"
 msgid "A&pply only to uploads"
 msgstr "&Uporabi le pri prenosih od sebe"
 
+#: resources.h:88 resources.h:98
+msgid "Add selected files and folders to the transfer queue"
+msgstr ""
+
 #: resources.h:51
 msgid "Adjust server timezone offset:"
 msgstr "Prilagodi odmik časovnega pasu strežnika:"
@@ -178,10 +218,8 @@ msgstr "Prilagodi odmik časovnega pasu strežnika:"
 msgid "Advanced"
 msgstr "Napredno"
 
-#: resources.h:34
-#: ../src/interface/sitemanager.cpp:473
-#: ../src/interface/sitemanager.cpp:523
-#: ../src/interface/sitemanager.cpp:628
+#: resources.h:34 ../src/interface/sitemanager.cpp:474
+#: ../src/interface/sitemanager.cpp:525 ../src/interface/sitemanager.cpp:642
 msgid "Anonymous"
 msgstr "Anonimno"
 
@@ -189,62 +227,56 @@ msgstr "Anonimno"
 msgid "Apply to &current queue only"
 msgstr "Uporabi le na &trenutni vrsti"
 
-#: resources.h:36
-#: ../src/interface/sitemanager.cpp:517
-#: ../src/interface/sitemanager.cpp:659
+#: resources.h:36 ../src/interface/sitemanager.cpp:519
+#: ../src/interface/sitemanager.cpp:673
 msgid "Ask for password"
 msgstr "Vprašaj za geslo"
 
-#: ../src/interface/Mainfrm.cpp:333
-#: ../src/interface/Mainfrm.cpp:709
+#: ../src/interface/Mainfrm.cpp:351 ../src/interface/Mainfrm.cpp:750
 msgid "Break current connection?"
 msgstr "Želite prekinitev trenutne povezave?"
 
-#: ../src/engine/transfersocket.cpp:227
+#: ../src/engine/transfersocket.cpp:230
 msgid "Can't read from file"
 msgstr "Iz datoteke ni mogoče brati"
 
-#: ../src/engine/transfersocket.cpp:182
+#: ../src/engine/transfersocket.cpp:185
 msgid "Can't write data to file, disk is full."
 msgstr "Podatkov ni možno zapisati v datoteko, ker je disk poln."
 
-#: ../src/engine/transfersocket.cpp:184
-#: ../src/engine/transfersocket.cpp:187
+#: ../src/engine/transfersocket.cpp:187 ../src/engine/transfersocket.cpp:190
 msgid "Can't write data to file."
 msgstr "V datoteko ni mogoče zapisovati podatkov."
 
-#: resources.h:92
-#: ../src/interface/resources/resources.h:14
+#: resources.h:125 ../src/interface/resources/resources.h:14
 msgid "Cancel current operation"
 msgstr "Prekliči trenutno operacijo"
 
-#: resources.h:93
-#: ../src/interface/resources/resources.h:15
+#: resources.h:126 ../src/interface/resources/resources.h:15
 msgid "Cancels the current operation"
 msgstr "Prekine trenutno operacijo."
 
-#: ../src/interface/Mainfrm.cpp:262
+#: ../src/interface/Mainfrm.cpp:269
 msgid "Cannot load Quickconnect bar from resource file"
 msgstr "Vrstice Quickconnect ni mogoče naložiti iz datoteke virov."
 
-#: ../src/interface/Mainfrm.cpp:244
+#: ../src/interface/Mainfrm.cpp:251
 msgid "Cannot load main menu from resource file"
 msgstr "Glavnega menija ni mogoče naložiti iz datoteke virov."
 
-#: ../src/interface/Mainfrm.cpp:424
+#: ../src/interface/Mainfrm.cpp:435
 msgid "Cannot load toolbar from resource file"
 msgstr "Orodne vrstice ni mogoče naložiti iz datoteke virov."
 
-#: resources.h:68
+#: resources.h:69
 msgid "Challenge:"
 msgstr "Izzovi:"
 
-#: ../src/interface/sitemanager.cpp:735
+#: ../src/interface/sitemanager.cpp:754
 msgid "Choose the default local directory"
 msgstr "Izberite privzeti lokalni imenik"
 
-#: resources.h:77
-#: ../src/interface/resources/resources.h:3
+#: resources.h:78 ../src/interface/resources/resources.h:3
 msgid "Close FileZilla"
 msgstr "Zapri FileZillo"
 
@@ -252,21 +284,30 @@ msgstr "Zapri FileZillo"
 msgid "Co&mments:"
 msgstr "Ko&mentarji"
 
-#: ../src/interface/StatusView.cpp:64
-#: ../src/interface/StatusView.cpp:107
+#: ../src/interface/StatusView.cpp:64 ../src/interface/StatusView.cpp:107
 msgid "Command:"
 msgstr "Ukaz:"
 
-#: ../src/engine/ftpcontrolsocket.cpp:278
+#: ../src/engine/ftpcontrolsocket.cpp:280
 msgid "Connected"
 msgstr "Povezano"
 
-#: ../src/engine/ControlSocket.cpp:105
+#: ../src/interface/QueueView.cpp:893
+#, fuzzy
+msgid "Connecting"
+msgstr "&Poveži"
+
+#: ../src/interface/statuslinectrl.cpp:152
+#, fuzzy, c-format
+msgid "Connecting to %s"
+msgstr "Povezovanje z %s:%d ..."
+
+#: ../src/engine/ControlSocket.cpp:107
 #, c-format
 msgid "Connecting to %s:%d..."
 msgstr "Povezovanje z %s:%d ..."
 
-#: ../src/engine/ftpcontrolsocket.cpp:176
+#: ../src/engine/ftpcontrolsocket.cpp:175
 msgid "Connection established, waiting for welcome message..."
 msgstr "Povezava je vzpostavljena, v pričakovanju pozdravnega sporočila ..."
 
@@ -274,50 +315,59 @@ msgstr "Povezava je vzpostavljena, v pričakovanju pozdravnega sporočila ..."
 msgid "Cop&y"
 msgstr "Kop&iraj"
 
-#: ../src/engine/ControlSocket.cpp:207
+#: ../src/engine/ControlSocket.cpp:211
 msgid "Could not connect to server"
 msgstr "Povezava s strežnikom ni uspela"
 
-#: ../src/engine/ftpcontrolsocket.cpp:510
+#: ../src/engine/ftpcontrolsocket.cpp:515
 msgid "Could not establish connection to server"
 msgstr "Povezave s strežnikom ni mogoče vzpostaviti"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1501
+#: ../src/engine/ftpcontrolsocket.cpp:1529
 msgid "Could not establish passive connection to server"
 msgstr "Pasivne povezave s strežnikom ni mogoče vzpostaviti"
 
-#: ../src/interface/FileZilla.cpp:127
+#: ../src/interface/FileZilla.cpp:130
 msgid ""
 "Could not find the resource files for FileZilla, closing FileZilla.\n"
-"You can set the data directory of FileZilla using the '--datadir <custompath>' commandline option or by setting the FZ_DATADIR environment variable."
+"You can set the data directory of FileZilla using the '--datadir "
+"<custompath>' commandline option or by setting the FZ_DATADIR environment "
+"variable."
 msgstr ""
 "Datoteke virov za FileZillo ni mogoče najti, FileZilla se zapira.\n"
-"Podatokovni imenik FileZille lahko nastavite z možnostjo '--datadir <poljubnapot>' v ukazni vrstici ali z nastavljanjem spremenljivke okolja FZ_DATADIR."
+"Podatokovni imenik FileZille lahko nastavite z možnostjo '--datadir "
+"<poljubnapot>' v ukazni vrstici ali z nastavljanjem spremenljivke okolja "
+"FZ_DATADIR."
 
-#: ../src/interface/Options.cpp:43
-#: ../src/interface/Options.cpp:50
+#: ../src/interface/Options.cpp:45 ../src/interface/Options.cpp:52
 #, c-format
 msgid ""
 "Could not load \"%s\", make sure the file is valid.\n"
-"For this session, default settings will be used and any changes to the settings are not persistent."
+"For this session, default settings will be used and any changes to the "
+"settings are not persistent."
 msgstr ""
 "\"%s\" ni mogoče naložiti, preverite, če je datoteka veljavna.\n"
-"Za to sejo bodo uporabljene privzete nastavitve in vsakršna sprememba nastavitev ne bo trajna."
+"Za to sejo bodo uporabljene privzete nastavitve in vsakršna sprememba "
+"nastavitev ne bo trajna."
 
-#: ../src/interface/Mainfrm.cpp:308
+#: ../src/interface/Mainfrm.cpp:326
 msgid "Could not parse server address:"
 msgstr "Naslova strežnika ni mogoče razbrati:"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1242
+#: ../src/engine/ftpcontrolsocket.cpp:1260
 msgid "Could not seek to end of file"
 msgstr "Iskanje do konca datoteke ni možno."
 
-#: ../src/engine/ftpcontrolsocket.cpp:1222
+#: ../src/engine/ftpcontrolsocket.cpp:1240
 #, c-format
 msgid "Could not seek to offset %s within file"
 msgstr "Iskanje do odmika %s v datoteki ni možno."
 
-#: ../src/engine/ControlSocket.cpp:203
+#: resources.h:90 resources.h:100
+msgid "Create a new subdirectory in the current directory"
+msgstr ""
+
+#: ../src/engine/ControlSocket.cpp:207
 msgid "Critical error"
 msgstr "Kritična napaka"
 
@@ -325,24 +375,27 @@ msgstr "Kritična napaka"
 msgid "D&efault"
 msgstr "Pri&vzeto"
 
-#: resources.h:62
+#: resources.h:91 resources.h:101
+#, fuzzy
+msgid "D&elete"
+msgstr "&Zbriši"
+
+#: resources.h:63
 msgid "D&iscard"
 msgstr "&Opusti"
 
-#: ../src/interface/RemoteListView.cpp:42
+#: ../src/interface/RemoteListView.cpp:51
 msgid "Date"
 msgstr "Datun"
 
-#: ../src/interface/fileexistsdlg.cpp:59
-#: ../src/interface/fileexistsdlg.cpp:83
+#: ../src/interface/fileexistsdlg.cpp:59 ../src/interface/fileexistsdlg.cpp:83
 #: ../src/interface/fileexistsdlg.cpp:115
 #: ../src/interface/fileexistsdlg.cpp:139
 msgid "Date/time unknown"
 msgstr "Datum/čas neznan"
 
-#: resources.h:43
-#: ../src/interface/sitemanager.cpp:478
-#: ../src/interface/sitemanager.cpp:546
+#: resources.h:43 ../src/interface/sitemanager.cpp:479
+#: ../src/interface/sitemanager.cpp:548
 msgid "Default"
 msgstr "Privzeto"
 
@@ -354,54 +407,80 @@ msgstr "Privzeti &lokalni imenik:"
 msgid "Default r&emote directory:"
 msgstr "Privzeti &oddaljeni imenik:"
 
-#: ../src/engine/ControlSocket.cpp:221
+#: resources.h:92 resources.h:102
+#, fuzzy
+msgid "Delete selected files and folders"
+msgstr "Osveži sezname datotek in imenikov"
+
+#: ../src/interface/QueueView.cpp:383
+msgid "Direction"
+msgstr ""
+
+#: ../src/engine/ControlSocket.cpp:225
 msgid "Directory listing successful"
 msgstr "Pridobivanje seznama imenika uspešno."
 
-#: resources.h:94
-#: ../src/interface/resources/resources.h:16
+#: resources.h:127 ../src/interface/resources/resources.h:16
 msgid "Disconnect from server"
 msgstr "Razveži s strežnikom"
 
-#: ../src/engine/ControlSocket.cpp:99
-#: ../src/engine/ControlSocket.cpp:152
-#: ../src/engine/ftpcontrolsocket.cpp:98
+#: ../src/engine/ControlSocket.cpp:101 ../src/engine/ControlSocket.cpp:156
+#: ../src/engine/ftpcontrolsocket.cpp:97
 msgid "Disconnected from server"
 msgstr "Razvezan s strežnikom"
 
-#: resources.h:95
-#: ../src/interface/resources/resources.h:17
+#: ../src/interface/QueueView.cpp:882 ../src/interface/statuslinectrl.cpp:146
+#, fuzzy
+msgid "Disconnecting from previous server"
+msgstr "Razveži s strežnikom"
+
+#: resources.h:128 ../src/interface/resources/resources.h:17
 msgid "Disconnects from the currently visible server"
 msgstr "Razveže povezavo od trenutno vidnega strežnika."
 
-#: resources.h:47
-#: ../src/interface/sitemanager.cpp:537
-#: ../src/interface/sitemanager.cpp:673
+#: resources.h:47 ../src/interface/sitemanager.cpp:539
+#: ../src/interface/sitemanager.cpp:687
 msgid "Dos"
 msgstr "Dos"
 
-#: resources.h:76
-#: ../src/interface/resources/resources.h:2
+#: resources.h:96
+#, fuzzy
+msgid "Download selected files and folders"
+msgstr "Osveži sezname datotek in imenikov"
+
+#: resources.h:77 ../src/interface/resources/resources.h:2
 msgid "E&xit"
 msgstr "Izhod"
 
-#: resources.h:63
+#: resources.h:83
+msgid "Enter &custom command"
+msgstr ""
+
+#: ../src/interface/Mainfrm.cpp:294
+msgid "Enter custom command"
+msgstr ""
+
+#: resources.h:64
 msgid "Enter password"
 msgstr "Vnesite geslo"
 
-#: resources.h:82
-#: ../src/interface/resources/resources.h:8
+#: resources.h:113 ../src/interface/resources/resources.h:8
 msgid ""
 "Enter the address of the server.\n"
-"To specify the server protocol, prepend the host with the protocol identifier. If no protocol is specified, the default protocol (ftp://) will be used.\n"
-"You can also enter complete URLS in the form protocol://user:pass@host:port here, the values in the other fields will be overwritten then."
+"To specify the server protocol, prepend the host with the protocol "
+"identifier. If no protocol is specified, the default protocol (ftp://) will "
+"be used.\n"
+"You can also enter complete URLS in the form protocol://user:pass@host:port "
+"here, the values in the other fields will be overwritten then."
 msgstr ""
 "Vnesite naslov strežnika.\n"
-"Za določitev protokola strežnika dodajte gostitelju predpono, ki identificira protokol. Če protokol ni določen, bo uporabljen privzeti protokol (ftp://).\n"
-"Prav tako lahko tukaj vnesete celotne naslove URL v obliki protocol://user:pass@host:port, vrednosti v drugih poljih bodo s tem prepisane."
+"Za določitev protokola strežnika dodajte gostitelju predpono, ki "
+"identificira protokol. Če protokol ni določen, bo uporabljen privzeti "
+"protokol (ftp://).\n"
+"Prav tako lahko tukaj vnesete celotne naslove URL v obliki protocol://user:"
+"pass@host:port, vrednosti v drugih poljih bodo s tem prepisane."
 
-#: resources.h:86
-#: ../src/interface/resources/resources.h:12
+#: resources.h:117 ../src/interface/resources/resources.h:12
 msgid ""
 "Enter the port on which the server listens.\n"
 "The default for FTP is 21, the default for SFTP is 22."
@@ -409,72 +488,71 @@ msgstr ""
 "Vnesite vrata, na katerih posluša strežnik.\n"
 "Privzeta vrata za FTP so 21, privzeta vrednost za SFTP pa 22."
 
-#: ../src/engine/transfersocket.cpp:264
+#: ../src/engine/transfersocket.cpp:267
 #, c-format
 msgid "Error %d writing to socket"
 msgstr "Napaka %d pri pisanju na vrata"
 
-#: ../src/interface/Options.cpp:44
-#: ../src/interface/Options.cpp:51
+#: ../src/interface/Options.cpp:46 ../src/interface/Options.cpp:53
 msgid "Error loading xml file"
 msgstr "Napaka pri nalaganju datoteke xml"
 
-#: ../src/interface/StatusView.cpp:60
-#: ../src/interface/StatusView.cpp:105
+#: ../src/interface/StatusView.cpp:60 ../src/interface/StatusView.cpp:105
 msgid "Error:"
 msgstr "Napaka:"
 
-#: resources.h:32
-#: ../src/interface/sitemanager.cpp:472
-#: ../src/interface/sitemanager.cpp:504
-#: ../src/interface/sitemanager.cpp:651
+#: resources.h:32 ../src/interface/sitemanager.cpp:473
+#: ../src/interface/sitemanager.cpp:506 ../src/interface/sitemanager.cpp:665
 msgid "FTP"
 msgstr "FTP"
 
-#: ../src/engine/ftpcontrolsocket.cpp:490
-#: ../src/engine/ftpcontrolsocket.cpp:1462
-msgid "Failed to create listening socket for active mode transfer, trying passive mode"
-msgstr "Za aktiven način prenosa ni mogoče ustvariti socketa za poslušanje, sledi poskus v pasivnem načinu"
+#: ../src/engine/ftpcontrolsocket.cpp:495
+#: ../src/engine/ftpcontrolsocket.cpp:1490
+msgid ""
+"Failed to create listening socket for active mode transfer, trying passive "
+"mode"
+msgstr ""
+"Za aktiven način prenosa ni mogoče ustvariti socketa za poslušanje, sledi "
+"poskus v pasivnem načinu"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1182
+#: ../src/engine/ftpcontrolsocket.cpp:1200
 #, c-format
 msgid "Failed to open \"%s\" for appending / writing"
 msgstr "\"%s\" ni mogoče odpreti za dopisovanje / pisanje"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1207
+#: ../src/engine/ftpcontrolsocket.cpp:1225
 #, c-format
 msgid "Failed to open \"%s\" for reading"
 msgstr "\"%s\" ni mogoče odpreti za branje"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1193
+#: ../src/engine/ftpcontrolsocket.cpp:1211
 #, c-format
 msgid "Failed to open \"%s\" for writing"
 msgstr "\"%s\" ni mogoče odpreti za pisanje"
 
-#: ../src/engine/ControlSocket.cpp:210
+#: ../src/engine/ControlSocket.cpp:214
 msgid "Failed to retrieve directory listing"
 msgstr "Seznama imenika ni mogoče pridobiti"
 
-#: ../src/interface/LocalListView.cpp:457
-#: ../src/interface/LocalListView.cpp:475
-#: ../src/interface/LocalListView.cpp:479
-#: ../src/interface/RemoteListView.cpp:506
-#: ../src/interface/RemoteListView.cpp:524
-#: ../src/interface/RemoteListView.cpp:528
+#: ../src/interface/LocalListView.cpp:502
+#: ../src/interface/LocalListView.cpp:520
+#: ../src/interface/LocalListView.cpp:524
+#: ../src/interface/RemoteListView.cpp:515
+#: ../src/interface/RemoteListView.cpp:533
+#: ../src/interface/RemoteListView.cpp:537
 msgid "File"
 msgstr "Datoteka"
 
-#: ../src/engine/ControlSocket.cpp:224
+#: ../src/engine/ControlSocket.cpp:228
 msgid "File transfer successful"
 msgstr "Prenos datoteke je bil uspešen"
 
-#: ../src/interface/FileZilla.cpp:128
-#: ../src/interface/Mainfrm.cpp:311
+#: ../src/interface/FileZilla.cpp:131 ../src/interface/Mainfrm.cpp:329
 msgid "FileZilla Error"
 msgstr "Napaka FileZilla"
 
-#: ../src/interface/LocalListView.cpp:39
-#: ../src/interface/RemoteListView.cpp:39
+#: ../src/interface/LocalListView.cpp:46
+#: ../src/interface/RemoteListView.cpp:48
 msgid "Filename"
 msgstr "Ime datoteke"
 
@@ -482,18 +560,18 @@ msgstr "Ime datoteke"
 msgid "Filename unchanged"
 msgstr "Nespremenjeno ime datoteke"
 
-#: ../src/interface/LocalListView.cpp:40
-#: ../src/interface/RemoteListView.cpp:40
+#: ../src/interface/LocalListView.cpp:47
+#: ../src/interface/RemoteListView.cpp:49
 msgid "Filesize"
 msgstr "Velikost datoteke"
 
-#: ../src/interface/LocalListView.cpp:41
-#: ../src/interface/RemoteListView.cpp:41
+#: ../src/interface/LocalListView.cpp:48
+#: ../src/interface/RemoteListView.cpp:50
 msgid "Filetype"
 msgstr "Vrsta datoteke"
 
-#: ../src/interface/LocalListView.cpp:479
-#: ../src/interface/RemoteListView.cpp:528
+#: ../src/interface/LocalListView.cpp:524
+#: ../src/interface/RemoteListView.cpp:537
 msgid "Folder"
 msgstr "Imenik"
 
@@ -501,7 +579,19 @@ msgstr "Imenik"
 msgid "General"
 msgstr "Splošno"
 
-#: resources.h:66
+#: resources.h:108
+msgid "H&igh"
+msgstr ""
+
+#: ../src/interface/QueueView.cpp:534
+msgid "High"
+msgstr ""
+
+#: ../src/interface/QueueView.cpp:536
+msgid "Highest"
+msgstr ""
+
+#: resources.h:67
 msgid "Host:"
 msgstr "Gostitelj:"
 
@@ -509,45 +599,58 @@ msgstr "Gostitelj:"
 msgid "Hours,"
 msgstr "ur,"
 
-#: resources.h:37
-#: ../src/interface/sitemanager.cpp:520
-#: ../src/interface/sitemanager.cpp:661
+#: resources.h:37 ../src/interface/sitemanager.cpp:522
+#: ../src/interface/sitemanager.cpp:675
 msgid "Interactive"
 msgstr "Interaktivno"
 
-#: ../src/engine/ControlSocket.cpp:328
+#: ../src/engine/ControlSocket.cpp:332
 msgid "Interrupted by user"
 msgstr "Prekinil uporabnik"
 
-#: ../src/engine/ControlSocket.cpp:135
+#: ../src/engine/ControlSocket.cpp:139
 msgid "Invalid hostname or host not found"
 msgstr "Neveljavno ime gostitelja ali gostitelj ni bil najden"
 
-#: ../src/engine/server.cpp:89
-#: ../src/engine/server.cpp:107
+#: ../src/engine/server.cpp:83 ../src/engine/server.cpp:101
 msgid "Invalid port given. The port has to be a value from 1 to 65535."
-msgstr "Podana so bila neveljavna vrata. Vrednost vrat mora biti število med 1 in 65535."
+msgstr ""
+"Podana so bila neveljavna vrata. Vrednost vrat mora biti število med 1 in "
+"65535."
 
-#: ../src/engine/server.cpp:35
-msgid "Invalid protocol specified. Only valid protocol is ftp:// at the moment."
-msgstr "Podan je bil neveljaven protokol. Edini veljavni protokol ta hip je ftp://."
+#: ../src/engine/server.cpp:29
+msgid ""
+"Invalid protocol specified. Only valid protocol is ftp:// at the moment."
+msgstr ""
+"Podan je bil neveljaven protokol. Edini veljavni protokol ta hip je ftp://."
 
-#: ../src/engine/server.cpp:57
+#: ../src/engine/server.cpp:51
 msgid "Invalid username given."
 msgstr "Podano uporabniško ime ni veljavno."
 
-#: ../src/interface/LocalListView.cpp:42
+#: resources.h:111
+#, fuzzy
+msgid "L&owest"
+msgstr "&Gostitelj:"
+
+#: ../src/interface/LocalListView.cpp:49
 msgid "Last modified"
 msgstr "Zadnjič spremenjeno"
 
-#: ../src/interface/StatusView.cpp:79
-#: ../src/interface/StatusView.cpp:116
+#: ../src/interface/StatusView.cpp:79 ../src/interface/StatusView.cpp:116
 msgid "Listing:"
 msgstr "Seznam:"
 
-#: resources.h:46
-#: ../src/interface/sitemanager.cpp:540
-#: ../src/interface/sitemanager.cpp:677
+#: ../src/interface/QueueView.cpp:529
+msgid "Low"
+msgstr ""
+
+#: ../src/interface/QueueView.cpp:527
+msgid "Lowest"
+msgstr ""
+
+#: resources.h:46 ../src/interface/sitemanager.cpp:542
+#: ../src/interface/sitemanager.cpp:691
 msgid "MVS"
 msgstr "MVS"
 
@@ -555,11 +658,11 @@ msgstr "MVS"
 msgid "Minutes"
 msgstr "minut"
 
-#: ../src/interface/sitemanager.cpp:133
+#: ../src/interface/sitemanager.cpp:134
 msgid "My Sites"
 msgstr "Moji naslovi"
 
-#: resources.h:65
+#: resources.h:66
 msgid "Name:"
 msgstr "Ime:"
 
@@ -567,26 +670,22 @@ msgstr "Ime:"
 msgid "New &Folder"
 msgstr "Nov &imenik"
 
-#: ../src/interface/sitemanager.cpp:301
-#: ../src/interface/sitemanager.cpp:324
+#: ../src/interface/sitemanager.cpp:302 ../src/interface/sitemanager.cpp:325
 msgid "New folder"
 msgstr "Nov imenik"
 
-#: ../src/interface/sitemanager.cpp:581
-#: ../src/interface/sitemanager.cpp:604
+#: ../src/interface/sitemanager.cpp:595 ../src/interface/sitemanager.cpp:618
 msgid "New site"
 msgstr "Nov naslov"
 
-#: ../src/engine/server.cpp:20
-#: ../src/engine/server.cpp:82
-#: ../src/engine/server.cpp:114
+#: ../src/engine/server.cpp:14 ../src/engine/server.cpp:76
+#: ../src/engine/server.cpp:108
 msgid "No host given, please enter a host."
 msgstr "Gostitelj ni podan, prosimo vnesite gostitelja."
 
-#: resources.h:35
-#: ../src/interface/sitemanager.cpp:514
-#: ../src/interface/sitemanager.cpp:629
-#: ../src/interface/sitemanager.cpp:657
+#: resources.h:35 ../src/interface/QueueView.cpp:532
+#: ../src/interface/sitemanager.cpp:516 ../src/interface/sitemanager.cpp:643
+#: ../src/interface/sitemanager.cpp:671
 msgid "Normal"
 msgstr "Običajno"
 
@@ -594,17 +693,15 @@ msgstr "Običajno"
 msgid "OK"
 msgstr "V redu"
 
-#: resources.h:88
-#: resources.h:89
+#: resources.h:119 resources.h:120
 msgid "Open the Site Manager"
 msgstr "Odpri Upravljalca naslovov"
 
-#: resources.h:80
-#: ../src/interface/resources/resources.h:6
+#: resources.h:81 ../src/interface/resources/resources.h:6
 msgid "Open the settings dialog of FileZilla"
 msgstr "Odpri pogovorno okno nastavitev FileZille"
 
-#: resources.h:75
+#: resources.h:76
 msgid "Opens the Site Manager"
 msgstr "Odpre Upravljalca naslovov"
 
@@ -612,56 +709,94 @@ msgstr "Odpre Upravljalca naslovov"
 msgid "Overwrite &if newer"
 msgstr "Prepiši, &če je novejši"
 
-#: ../src/interface/RemoteListView.cpp:45
+#: ../src/interface/RemoteListView.cpp:54
 msgid "Owner / Group"
 msgstr "Lastnik / skupina"
 
-#: resources.h:39
-#: resources.h:84
-#: ../src/interface/resources/resources.h:10
+#: resources.h:39 resources.h:115 ../src/interface/resources/resources.h:10
 msgid "Pass&word:"
 msgstr "Ge&slo:"
 
-#: ../src/interface/RemoteListView.cpp:44
+#: ../src/interface/RemoteListView.cpp:53
 msgid "Permissions"
 msgstr "Dovoljenja"
 
-#: resources.h:64
+#: resources.h:65
 msgid "Please enter a password for this server:"
 msgstr "Prosimo vnesite geslo za ta strežnik:"
+
+#: ../src/interface/Mainfrm.cpp:294
+msgid ""
+"Please enter raw FTP command.\n"
+"Using raw ftp commands will clear the directory cache."
+msgstr ""
 
 #: resources.h:10
 msgid "Please select an action:"
 msgstr "Prosimo izberite akcijo:"
 
+#: ../src/interface/QueueView.cpp:386
+msgid "Priority"
+msgstr ""
+
+#: resources.h:105
+msgid "Process &Queue"
+msgstr ""
+
+#: ../src/interface/QueueView.cpp:1093
+#, c-format
+msgid "Queue: %s%d KB"
+msgstr ""
+
+#: ../src/interface/QueueView.cpp:1088
+#, c-format
+msgid "Queue: %s%d MB"
+msgstr ""
+
+#: ../src/interface/QueueView.cpp:1096
+#, c-format
+msgid "Queue: %s%d bytes"
+msgstr ""
+
+#: ../src/interface/QueueView.cpp:1084
+msgid "Queue: empty"
+msgstr ""
+
 #: resources.h:14
 msgid "Re&name"
 msgstr "Preime&nuj"
 
-#: ../src/interface/Mainfrm.cpp:457
+#: ../src/interface/Mainfrm.cpp:468
 msgid "Really cancel current operation?"
 msgstr "Resnično želite prekinitev trenutne operacije?"
 
-#: resources.h:96
-#: resources.h:97
+#: resources.h:129 resources.h:130
 msgid "Reconnects to the last used server"
 msgstr "Ponovna povezava z na zadnje uporabljenim strežnikom"
 
-#: resources.h:90
-#: resources.h:91
+#: resources.h:121 resources.h:122
 msgid "Refresh the file and folder lists"
 msgstr "Osveži sezname datotek in imenikov"
+
+#: ../src/interface/QueueView.cpp:384
+#, fuzzy
+msgid "Remote file"
+msgstr "Preimenuj datoteko"
 
 #: ../src/interface/asyncrequestqueue.cpp:69
 msgid "Rename file"
 msgstr "Preimenuj datoteko"
 
-#: ../src/interface/StatusView.cpp:68
-#: ../src/interface/StatusView.cpp:110
+#: resources.h:94 resources.h:104
+#, fuzzy
+msgid "Rename selected files and folders"
+msgstr "Osveži sezname datotek in imenikov"
+
+#: ../src/interface/StatusView.cpp:68 ../src/interface/StatusView.cpp:110
 msgid "Response:"
 msgstr "Odgovor:"
 
-#: ../src/engine/ftpcontrolsocket.cpp:407
+#: ../src/engine/ftpcontrolsocket.cpp:412
 msgid "Retrieving directory listing..."
 msgstr "Prenos seznama imenika ..."
 
@@ -669,50 +804,64 @@ msgstr "Prenos seznama imenika ..."
 msgid "Select Entry:"
 msgstr "Izberite vnos:"
 
-#: resources.h:59
-msgid "Server allows &multiple connections"
-msgstr "Strežnik omogoča &večkratne povezave"
+#: resources.h:84
+msgid "Send custom command to the server otherwise not available"
+msgstr ""
 
-#: resources.h:31
-#: resources.h:42
+#: ../src/interface/QueueView.cpp:382
+msgid "Server / Local file"
+msgstr ""
+
+#: resources.h:31 resources.h:42
 msgid "Server&type:"
 msgstr "&Tip strežnika"
+
+#: resources.h:106
+msgid "Set &Priority"
+msgstr ""
 
 #: resources.h:21
 msgid "Site Manager"
 msgstr "Upravljalec naslovov"
 
-#: ../src/interface/fileexistsdlg.cpp:50
-#: ../src/interface/fileexistsdlg.cpp:74
+#: ../src/interface/QueueView.cpp:385
+msgid "Size"
+msgstr ""
+
+#: ../src/interface/fileexistsdlg.cpp:50 ../src/interface/fileexistsdlg.cpp:74
 #: ../src/interface/fileexistsdlg.cpp:106
 #: ../src/interface/fileexistsdlg.cpp:130
 msgid "Size unknown"
 msgstr "Velikost ni znana"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1746
-#: ../src/engine/ftpcontrolsocket.cpp:1821
+#: ../src/engine/ftpcontrolsocket.cpp:1787
+#: ../src/engine/ftpcontrolsocket.cpp:1862
 #, c-format
 msgid "Skipping download of %s"
 msgstr "Preskok dol potega %s"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1750
-#: ../src/engine/ftpcontrolsocket.cpp:1825
+#: ../src/engine/ftpcontrolsocket.cpp:1791
+#: ../src/engine/ftpcontrolsocket.cpp:1866
 #, c-format
 msgid "Skipping upload of %s"
 msgstr "Preskok gor potega %s"
 
-#: ../src/engine/ftpcontrolsocket.cpp:956
+#: ../src/engine/ftpcontrolsocket.cpp:973
 #, c-format
 msgid "Starting download of %s"
 msgstr "Pričetek prenasanja %s na naslov"
 
-#: ../src/engine/ftpcontrolsocket.cpp:960
+#: ../src/engine/ftpcontrolsocket.cpp:977
 #, c-format
 msgid "Starting upload of %s"
 msgstr "Pričetek prenašanja %s sem"
 
-#: ../src/interface/StatusView.cpp:83
-#: ../src/interface/StatusView.cpp:119
+#: ../src/interface/QueueView.cpp:387
+#, fuzzy
+msgid "Status"
+msgstr "Stanje:"
+
+#: ../src/interface/StatusView.cpp:83 ../src/interface/StatusView.cpp:119
 msgid "Status:"
 msgstr "Stanje:"
 
@@ -738,12 +887,15 @@ msgstr ""
 "Ciljna datoteka že obstaja.\n"
 "Bi radi nadomestili datoteko?"
 
-#: ../src/interface/RemoteListView.cpp:43
+#: ../src/interface/RemoteListView.cpp:52
 msgid "Time"
 msgstr "Čas"
 
-#: ../src/interface/StatusView.cpp:75
-#: ../src/interface/StatusView.cpp:113
+#: resources.h:123 resources.h:124
+msgid "Toggles processing of the transfer queue"
+msgstr ""
+
+#: ../src/interface/StatusView.cpp:75 ../src/interface/StatusView.cpp:113
 msgid "Trace:"
 msgstr "Sledi:"
 
@@ -751,37 +903,49 @@ msgstr "Sledi:"
 msgid "Transfer settings"
 msgstr "Nastavitve prenašanja"
 
-#: resources.h:44
-#: ../src/interface/sitemanager.cpp:534
-#: ../src/interface/sitemanager.cpp:671
+#: ../src/interface/QueueView.cpp:918 ../src/interface/statuslinectrl.cpp:155
+#, fuzzy
+msgid "Transferring"
+msgstr "Nastavitve prenašanja"
+
+#: resources.h:44 ../src/interface/sitemanager.cpp:536
+#: ../src/interface/sitemanager.cpp:685
 msgid "Unix"
 msgstr "Unix"
 
-#: resources.h:67
+#: resources.h:86
+#, fuzzy
+msgid "Upload selected files and folders"
+msgstr "Osveži sezname datotek in imenikov"
+
+#: resources.h:68
 msgid "User:"
 msgstr "Uporabnik:"
 
-#: resources.h:45
-#: ../src/interface/sitemanager.cpp:543
-#: ../src/interface/sitemanager.cpp:675
+#: resources.h:45 ../src/interface/sitemanager.cpp:545
+#: ../src/interface/sitemanager.cpp:689
 msgid "VMS"
 msgstr "VMS"
 
+#: ../src/interface/statuslinectrl.cpp:149
+msgid "Waiting for transfer to be canceled"
+msgstr ""
+
 #: ../src/interface/asyncrequestqueue.cpp:81
 msgid "You did not enter a new name for the file. Overwrite the file instead?"
-msgstr "Niste vnesli novega imena datoteke. Želite prepisati obstoječo datoteko?"
+msgstr ""
+"Niste vnesli novega imena datoteke. Želite prepisati obstoječo datoteko?"
 
-#: ../src/interface/fileexistsdlg.cpp:48
-#: ../src/interface/fileexistsdlg.cpp:72
+#: ../src/interface/fileexistsdlg.cpp:48 ../src/interface/fileexistsdlg.cpp:72
 #: ../src/interface/fileexistsdlg.cpp:104
 #: ../src/interface/fileexistsdlg.cpp:128
 msgid "bytes"
 msgstr "bytov"
 
-#: ../src/interface/LocalListView.cpp:454
-#: ../src/interface/LocalListView.cpp:472
-#: ../src/interface/RemoteListView.cpp:503
-#: ../src/interface/RemoteListView.cpp:521
+#: ../src/interface/LocalListView.cpp:499
+#: ../src/interface/LocalListView.cpp:517
+#: ../src/interface/RemoteListView.cpp:512
+#: ../src/interface/RemoteListView.cpp:530
 msgid "file"
 msgstr "datoteka"
 
@@ -789,3 +953,5 @@ msgstr "datoteka"
 msgid "with the following file?"
 msgstr "z naslednjo datoteko?"
 
+#~ msgid "Server allows &multiple connections"
+#~ msgstr "Strežnik omogoča &večkratne povezave"

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FZ 3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-11-06 11:53+0100\n"
+"POT-Creation-Date: 2004-11-27 11:56+0100\n"
 "PO-Revision-Date: 2004-11-05 21:46+0100\n"
 "Last-Translator: Nathan Samson <nathansamson@gmail.com>\n"
 "Language-Team: Samson <nathansamson@gmail.com>\n"
@@ -13,30 +13,32 @@ msgstr ""
 "X-Poedit-Country: BELGIUM\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: ../src/interface/Mainfrm.cpp:697
+#: ../src/interface/statuslinectrl.cpp:45
+#: ../src/interface/statuslinectrl.cpp:96
 msgid "%H:%M:%S elapsed"
 msgstr "%H:%M:%S gemeten"
 
-#: ../src/interface/Mainfrm.cpp:717
+#: ../src/interface/statuslinectrl.cpp:49
+#: ../src/interface/statuslinectrl.cpp:116
 msgid "%H:%M:%S left"
 msgstr "%H:%M:%S te gaan"
 
-#: ../src/interface/Mainfrm.cpp:709
+#: ../src/interface/statuslinectrl.cpp:108
 #, c-format
 msgid "%s bytes (%d B/s)"
 msgstr "%s bytes (%d B/s)"
 
-#: ../src/interface/Mainfrm.cpp:707
+#: ../src/interface/statuslinectrl.cpp:106
 #, c-format
 msgid "%s bytes (%d.%d KB/s)"
 msgstr "%s bytes (%d.%d KB/s)"
 
-#: ../src/interface/Mainfrm.cpp:705
+#: ../src/interface/statuslinectrl.cpp:104
 #, c-format
 msgid "%s bytes (%d.%d MB/s)"
 msgstr "%s bytes (%d.%d MB/s)"
 
-#: ../src/interface/Mainfrm.cpp:725
+#: ../src/interface/statuslinectrl.cpp:126
 #, c-format
 msgid "%s bytes (? B/s)"
 msgstr "%s bytes (? B/s)"
@@ -45,7 +47,7 @@ msgstr "%s bytes (? B/s)"
 msgid "&Active"
 msgstr "&Actief"
 
-#: resources.h:87
+#: resources.h:87 resources.h:97
 msgid "&Add files to queue"
 msgstr ""
 
@@ -65,7 +67,7 @@ msgstr "&Annuleren"
 msgid "&Connect"
 msgstr "&Verbinden"
 
-#: resources.h:89
+#: resources.h:89 resources.h:99
 #, fuzzy
 msgid "&Create directory"
 msgstr "Standaard r&emote map"
@@ -73,6 +75,10 @@ msgstr "Standaard r&emote map"
 #: resources.h:26
 msgid "&Delete"
 msgstr "&Verwijderen"
+
+#: resources.h:95
+msgid "&Download"
+msgstr ""
 
 #: resources.h:79 ../src/interface/resources/resources.h:4
 msgid "&Edit"
@@ -82,12 +88,12 @@ msgstr "&Wijzigen"
 msgid "&File"
 msgstr "&Bestand"
 
-#: resources.h:97
+#: resources.h:107
 #, fuzzy
 msgid "&Highest"
 msgstr "Hoogst"
 
-#: resources.h:29 resources.h:102 ../src/interface/resources/resources.h:7
+#: resources.h:29 resources.h:112 ../src/interface/resources/resources.h:7
 msgid "&Host:"
 msgstr "&Host:"
 
@@ -99,7 +105,7 @@ msgstr "&Limiteer aantal gelijktijdige verbindingen"
 msgid "&Logontype:"
 msgstr "&Login type:"
 
-#: resources.h:100
+#: resources.h:110
 #, fuzzy
 msgid "&Low"
 msgstr "laag"
@@ -112,7 +118,7 @@ msgstr "&Maximaal aantal verbindingen"
 msgid "&New Site"
 msgstr "&Nieuwe Site"
 
-#: resources.h:99
+#: resources.h:109
 #, fuzzy
 msgid "&Normal"
 msgstr "Normaal"
@@ -133,11 +139,11 @@ msgstr "&Passief"
 msgid "&Password:"
 msgstr "&Wachtwoord:"
 
-#: resources.h:30 resources.h:106 ../src/interface/resources/resources.h:11
+#: resources.h:30 resources.h:116 ../src/interface/resources/resources.h:11
 msgid "&Port:"
 msgstr "&Poort:"
 
-#: resources.h:108 ../src/interface/resources/resources.h:13
+#: resources.h:118 ../src/interface/resources/resources.h:13
 msgid "&Quickconnect"
 msgstr "&Snelverbinden"
 
@@ -145,7 +151,7 @@ msgstr "&Snelverbinden"
 msgid "&Remember password for this session"
 msgstr "&Sla wachtwoord op voor deze sessie"
 
-#: resources.h:25 resources.h:93
+#: resources.h:25 resources.h:93 resources.h:103
 msgid "&Rename"
 msgstr "&Hernoem"
 
@@ -181,11 +187,12 @@ msgstr ""
 msgid "&User:"
 msgstr "Gebr&uiker:"
 
-#: resources.h:104 ../src/interface/resources/resources.h:9
+#: resources.h:114 ../src/interface/resources/resources.h:9
 msgid "&Username:"
 msgstr "&Gebruikersnaam:"
 
-#: ../src/interface/Mainfrm.cpp:721
+#: ../src/interface/statuslinectrl.cpp:120
+#: ../src/interface/statuslinectrl.cpp:125
 msgid "--:--:-- left"
 msgstr "--:--:-- te gaan"
 
@@ -197,7 +204,7 @@ msgstr "Voer alleern in op downloads"
 msgid "A&pply only to uploads"
 msgstr "Voer alleen in op uploads"
 
-#: resources.h:88
+#: resources.h:88 resources.h:98
 #, fuzzy
 msgid "Add selected files and folders to the transfer queue"
 msgstr "Laat de vooruitgang zien van de overdrachtslijst"
@@ -224,7 +231,7 @@ msgstr "Voer alleen in op huidige rij"
 msgid "Ask for password"
 msgstr "Vraag voor wachtwoord"
 
-#: ../src/interface/Mainfrm.cpp:351 ../src/interface/Mainfrm.cpp:747
+#: ../src/interface/Mainfrm.cpp:351 ../src/interface/Mainfrm.cpp:750
 msgid "Break current connection?"
 msgstr "Verbreek huidige verbinding?"
 
@@ -240,11 +247,11 @@ msgstr "Kan niet schrijven naar bestand, schij is vol"
 msgid "Can't write data to file."
 msgstr "Kan niet schrijven naar besta,"
 
-#: resources.h:115 ../src/interface/resources/resources.h:14
+#: resources.h:125 ../src/interface/resources/resources.h:14
 msgid "Cancel current operation"
 msgstr "Onderbreek huidoge operatie"
 
-#: resources.h:116 ../src/interface/resources/resources.h:15
+#: resources.h:126 ../src/interface/resources/resources.h:15
 msgid "Cancels the current operation"
 msgstr "Onderbreek de huidige operatie"
 
@@ -285,9 +292,14 @@ msgstr "Commando:"
 msgid "Connected"
 msgstr "Verbonden"
 
-#: ../src/interface/QueueView.cpp:815
+#: ../src/interface/QueueView.cpp:893
 msgid "Connecting"
 msgstr "Verbinden"
+
+#: ../src/interface/statuslinectrl.cpp:152
+#, fuzzy, c-format
+msgid "Connecting to %s"
+msgstr "Verbinden met %s:%d.."
 
 #: ../src/engine/ControlSocket.cpp:107
 #, c-format
@@ -314,7 +326,7 @@ msgstr "Kan geen verbindig maken met de server"
 msgid "Could not establish passive connection to server"
 msgstr "Kan geen passieve verbinding maken met de server"
 
-#: ../src/interface/FileZilla.cpp:127
+#: ../src/interface/FileZilla.cpp:130
 msgid ""
 "Could not find the resource files for FileZilla, closing FileZilla.\n"
 "You can set the data directory of FileZilla using the '--datadir "
@@ -349,7 +361,7 @@ msgstr "Kan einde van het bestand niet vinden"
 msgid "Could not seek to offset %s within file"
 msgstr "Kan compensatie niet vinden in %s bestand"
 
-#: resources.h:90
+#: resources.h:90 resources.h:100
 msgid "Create a new subdirectory in the current directory"
 msgstr ""
 
@@ -361,7 +373,7 @@ msgstr "Fatale fout"
 msgid "D&efault"
 msgstr "&Standaard"
 
-#: resources.h:91
+#: resources.h:91 resources.h:101
 #, fuzzy
 msgid "D&elete"
 msgstr "&Verwijderen"
@@ -370,7 +382,7 @@ msgstr "&Verwijderen"
 msgid "D&iscard"
 msgstr "M&aak ongedaan"
 
-#: ../src/interface/RemoteListView.cpp:44
+#: ../src/interface/RemoteListView.cpp:51
 msgid "Date"
 msgstr "Datum"
 
@@ -394,12 +406,12 @@ msgstr "Standaard lokale map:"
 msgid "Default r&emote directory:"
 msgstr "Standaard r&emote map"
 
-#: resources.h:92
+#: resources.h:92 resources.h:102
 #, fuzzy
 msgid "Delete selected files and folders"
 msgstr "Hernieuw de bestands en mappenlijst"
 
-#: ../src/interface/QueueView.cpp:327
+#: ../src/interface/QueueView.cpp:383
 msgid "Direction"
 msgstr "Richting"
 
@@ -407,7 +419,7 @@ msgstr "Richting"
 msgid "Directory listing successful"
 msgstr "Mappen lijsting succesvol"
 
-#: resources.h:117 ../src/interface/resources/resources.h:16
+#: resources.h:127 ../src/interface/resources/resources.h:16
 msgid "Disconnect from server"
 msgstr "Verbreek verbinding met server"
 
@@ -416,11 +428,11 @@ msgstr "Verbreek verbinding met server"
 msgid "Disconnected from server"
 msgstr "Verbinding verbroken met server"
 
-#: ../src/interface/QueueView.cpp:806
+#: ../src/interface/QueueView.cpp:882 ../src/interface/statuslinectrl.cpp:146
 msgid "Disconnecting from previous server"
 msgstr "Verbreek verbinding met vorige server"
 
-#: resources.h:118 ../src/interface/resources/resources.h:17
+#: resources.h:128 ../src/interface/resources/resources.h:17
 msgid "Disconnects from the currently visible server"
 msgstr "Verbinding verbreken  met de huidige zichtbare server"
 
@@ -428,6 +440,11 @@ msgstr "Verbinding verbreken  met de huidige zichtbare server"
 #: ../src/interface/sitemanager.cpp:687
 msgid "Dos"
 msgstr "Dos"
+
+#: resources.h:96
+#, fuzzy
+msgid "Download selected files and folders"
+msgstr "Hernieuw de bestands en mappenlijst"
 
 #: resources.h:77 ../src/interface/resources/resources.h:2
 msgid "E&xit"
@@ -445,7 +462,7 @@ msgstr "Vul een commando in"
 msgid "Enter password"
 msgstr "Vul wachtwoord in"
 
-#: resources.h:103 ../src/interface/resources/resources.h:8
+#: resources.h:113 ../src/interface/resources/resources.h:8
 msgid ""
 "Enter the address of the server.\n"
 "To specify the server protocol, prepend the host with the protocol "
@@ -461,7 +478,7 @@ msgstr ""
 "U kunt ook de volledige URLS in het  veld schrijven protocol://user:"
 "pass@host:port , de waarden in andere velde zullen worden overschreven."
 
-#: resources.h:107 ../src/interface/resources/resources.h:12
+#: resources.h:117 ../src/interface/resources/resources.h:12
 msgid ""
 "Enter the port on which the server listens.\n"
 "The default for FTP is 21, the default for SFTP is 22."
@@ -517,12 +534,12 @@ msgstr "Fout bij het openen van \"%s\" voor schrijven"
 msgid "Failed to retrieve directory listing"
 msgstr "Fout bij het ontvangen van mappenlijst"
 
-#: ../src/interface/LocalListView.cpp:473
-#: ../src/interface/LocalListView.cpp:491
-#: ../src/interface/LocalListView.cpp:495
-#: ../src/interface/RemoteListView.cpp:508
-#: ../src/interface/RemoteListView.cpp:526
-#: ../src/interface/RemoteListView.cpp:530
+#: ../src/interface/LocalListView.cpp:502
+#: ../src/interface/LocalListView.cpp:520
+#: ../src/interface/LocalListView.cpp:524
+#: ../src/interface/RemoteListView.cpp:515
+#: ../src/interface/RemoteListView.cpp:533
+#: ../src/interface/RemoteListView.cpp:537
 msgid "File"
 msgstr "Bestand"
 
@@ -530,12 +547,12 @@ msgstr "Bestand"
 msgid "File transfer successful"
 msgstr "Bestandsoverdracht succesvol"
 
-#: ../src/interface/FileZilla.cpp:128 ../src/interface/Mainfrm.cpp:329
+#: ../src/interface/FileZilla.cpp:131 ../src/interface/Mainfrm.cpp:329
 msgid "FileZilla Error"
 msgstr "FileZilla fout"
 
 #: ../src/interface/LocalListView.cpp:46
-#: ../src/interface/RemoteListView.cpp:41
+#: ../src/interface/RemoteListView.cpp:48
 msgid "Filename"
 msgstr "Bestandsnaam"
 
@@ -544,17 +561,17 @@ msgid "Filename unchanged"
 msgstr "Bestandsnaam onveranderd"
 
 #: ../src/interface/LocalListView.cpp:47
-#: ../src/interface/RemoteListView.cpp:42
+#: ../src/interface/RemoteListView.cpp:49
 msgid "Filesize"
 msgstr "Bestandsgrootte"
 
 #: ../src/interface/LocalListView.cpp:48
-#: ../src/interface/RemoteListView.cpp:43
+#: ../src/interface/RemoteListView.cpp:50
 msgid "Filetype"
 msgstr "Bestandstype"
 
-#: ../src/interface/LocalListView.cpp:495
-#: ../src/interface/RemoteListView.cpp:530
+#: ../src/interface/LocalListView.cpp:524
+#: ../src/interface/RemoteListView.cpp:537
 msgid "Folder"
 msgstr "Map"
 
@@ -562,16 +579,16 @@ msgstr "Map"
 msgid "General"
 msgstr "Algemeen"
 
-#: resources.h:98
+#: resources.h:108
 #, fuzzy
 msgid "H&igh"
 msgstr "Hoog"
 
-#: ../src/interface/QueueView.cpp:476
+#: ../src/interface/QueueView.cpp:534
 msgid "High"
 msgstr "Hoog"
 
-#: ../src/interface/QueueView.cpp:478
+#: ../src/interface/QueueView.cpp:536
 msgid "Highest"
 msgstr "Hoogst"
 
@@ -609,7 +626,7 @@ msgstr "Ongeldig protocol gegeven. Enigste geldig protocol is ftp:// ."
 msgid "Invalid username given."
 msgstr "Ongeldige gebruikersnaam ingevuld"
 
-#: resources.h:101
+#: resources.h:111
 #, fuzzy
 msgid "L&owest"
 msgstr "Laagst"
@@ -623,11 +640,11 @@ msgstr "Laatst gewijzigd"
 msgid "Listing:"
 msgstr "Lijsting: "
 
-#: ../src/interface/QueueView.cpp:471
+#: ../src/interface/QueueView.cpp:529
 msgid "Low"
 msgstr "laag"
 
-#: ../src/interface/QueueView.cpp:469
+#: ../src/interface/QueueView.cpp:527
 msgid "Lowest"
 msgstr "Laagst"
 
@@ -665,7 +682,7 @@ msgstr "Nieuwe site"
 msgid "No host given, please enter a host."
 msgstr "Geen host ingevuld, vul aub. een host in"
 
-#: resources.h:35 ../src/interface/QueueView.cpp:474
+#: resources.h:35 ../src/interface/QueueView.cpp:532
 #: ../src/interface/sitemanager.cpp:516 ../src/interface/sitemanager.cpp:643
 #: ../src/interface/sitemanager.cpp:671
 msgid "Normal"
@@ -675,7 +692,7 @@ msgstr "Normaal"
 msgid "OK"
 msgstr "OK"
 
-#: resources.h:109 resources.h:110
+#: resources.h:119 resources.h:120
 msgid "Open the Site Manager"
 msgstr "Open de Site Beheerder"
 
@@ -691,15 +708,15 @@ msgstr "Open de Site Beheerdr"
 msgid "Overwrite &if newer"
 msgstr "Overschrijf éals het bestand nieuwer is"
 
-#: ../src/interface/RemoteListView.cpp:47
+#: ../src/interface/RemoteListView.cpp:54
 msgid "Owner / Group"
 msgstr "Eigenaar / Groep"
 
-#: resources.h:39 resources.h:105 ../src/interface/resources/resources.h:10
+#: resources.h:39 resources.h:115 ../src/interface/resources/resources.h:10
 msgid "Pass&word:"
 msgstr "Wacht&woord:"
 
-#: ../src/interface/RemoteListView.cpp:46
+#: ../src/interface/RemoteListView.cpp:53
 msgid "Permissions"
 msgstr "Rechten"
 
@@ -719,12 +736,31 @@ msgstr ""
 msgid "Please select an action:"
 msgstr "Selecteer een actie:"
 
-#: ../src/interface/QueueView.cpp:330
+#: ../src/interface/QueueView.cpp:386
 msgid "Priority"
 msgstr "Prioriteit"
 
-#: resources.h:95
+#: resources.h:105
 msgid "Process &Queue"
+msgstr ""
+
+#: ../src/interface/QueueView.cpp:1093
+#, c-format
+msgid "Queue: %s%d KB"
+msgstr ""
+
+#: ../src/interface/QueueView.cpp:1088
+#, c-format
+msgid "Queue: %s%d MB"
+msgstr ""
+
+#: ../src/interface/QueueView.cpp:1096
+#, c-format
+msgid "Queue: %s%d bytes"
+msgstr ""
+
+#: ../src/interface/QueueView.cpp:1084
+msgid "Queue: empty"
 msgstr ""
 
 #: resources.h:14
@@ -735,15 +771,15 @@ msgstr "He&rnoem"
 msgid "Really cancel current operation?"
 msgstr "Zeker weten dat u de huidige operatie wilt onderbreken?"
 
-#: resources.h:119 resources.h:120
+#: resources.h:129 resources.h:130
 msgid "Reconnects to the last used server"
 msgstr "Verbind met de laatst gebruikte server"
 
-#: resources.h:111 resources.h:112
+#: resources.h:121 resources.h:122
 msgid "Refresh the file and folder lists"
 msgstr "Hernieuw de bestands en mappenlijst"
 
-#: ../src/interface/QueueView.cpp:328
+#: ../src/interface/QueueView.cpp:384
 msgid "Remote file"
 msgstr "Remote bestand"
 
@@ -751,7 +787,7 @@ msgstr "Remote bestand"
 msgid "Rename file"
 msgstr "Hernoem bestand"
 
-#: resources.h:94
+#: resources.h:94 resources.h:104
 #, fuzzy
 msgid "Rename selected files and folders"
 msgstr "Hernieuw de bestands en mappenlijst"
@@ -773,7 +809,7 @@ msgstr "Selecteer Site:"
 msgid "Send custom command to the server otherwise not available"
 msgstr "Stuur aangepast commando naar de server, anders niet mogelijk"
 
-#: ../src/interface/QueueView.cpp:326
+#: ../src/interface/QueueView.cpp:382
 msgid "Server / Local file"
 msgstr "Server / Lokaal bestand"
 
@@ -781,7 +817,7 @@ msgstr "Server / Lokaal bestand"
 msgid "Server&type:"
 msgstr "Server&type"
 
-#: resources.h:96
+#: resources.h:106
 #, fuzzy
 msgid "Set &Priority"
 msgstr "Prioriteit"
@@ -790,7 +826,7 @@ msgstr "Prioriteit"
 msgid "Site Manager"
 msgstr "Site Beheerder"
 
-#: ../src/interface/QueueView.cpp:329
+#: ../src/interface/QueueView.cpp:385
 msgid "Size"
 msgstr "Grootte"
 
@@ -822,7 +858,7 @@ msgstr "Start download over van %s"
 msgid "Starting upload of %s"
 msgstr "Start upload van %s"
 
-#: ../src/interface/QueueView.cpp:331
+#: ../src/interface/QueueView.cpp:387
 msgid "Status"
 msgstr "Status"
 
@@ -852,11 +888,11 @@ msgstr ""
 "Het doelbestand bestaat reeds.\n"
 "Wilt u het bestand vervangen?"
 
-#: ../src/interface/RemoteListView.cpp:45
+#: ../src/interface/RemoteListView.cpp:52
 msgid "Time"
 msgstr "Tijd"
 
-#: resources.h:113 resources.h:114
+#: resources.h:123 resources.h:124
 msgid "Toggles processing of the transfer queue"
 msgstr "Laat de vooruitgang zien van de overdrachtslijst"
 
@@ -869,7 +905,7 @@ msgstr "Trace:"
 msgid "Transfer settings"
 msgstr "Overdracht instellingen"
 
-#: ../src/interface/QueueView.cpp:838
+#: ../src/interface/QueueView.cpp:918 ../src/interface/statuslinectrl.cpp:155
 msgid "Transferring"
 msgstr "Overdragen"
 
@@ -892,6 +928,10 @@ msgstr "Gebruiker"
 msgid "VMS"
 msgstr "VMS"
 
+#: ../src/interface/statuslinectrl.cpp:149
+msgid "Waiting for transfer to be canceled"
+msgstr ""
+
 #: ../src/interface/asyncrequestqueue.cpp:81
 msgid "You did not enter a new name for the file. Overwrite the file instead?"
 msgstr "U hebt geen nieuwe bestandsnaam ingevuld. Overschrijven van bestand?"
@@ -902,10 +942,10 @@ msgstr "U hebt geen nieuwe bestandsnaam ingevuld. Overschrijven van bestand?"
 msgid "bytes"
 msgstr "bytes"
 
-#: ../src/interface/LocalListView.cpp:470
-#: ../src/interface/LocalListView.cpp:488
-#: ../src/interface/RemoteListView.cpp:505
-#: ../src/interface/RemoteListView.cpp:523
+#: ../src/interface/LocalListView.cpp:499
+#: ../src/interface/LocalListView.cpp:517
+#: ../src/interface/RemoteListView.cpp:512
+#: ../src/interface/RemoteListView.cpp:530
 msgid "file"
 msgstr "bestand"
 
