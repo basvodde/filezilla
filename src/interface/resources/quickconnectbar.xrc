@@ -34,7 +34,6 @@
                         <border>5</border>
                         <object class="wxStaticText" name="wxID_STATIC">
                             <size>-1,-1</size>
-                            <style></style>
                             <label>&amp;Host:</label>
                         </object>
                     </object>
@@ -45,6 +44,9 @@
                             <size>-1,-1</size>
                             <style></style>
                             <value></value>
+                            <tooltip>Enter the address of the server.
+To specify the server protocol, prepend the host with the protocol identifier. If no protocol is specified, the default protocol (ftp://) will be used.
+You can also enter complete URLS in the form protocol://user:pass@host:port here, the values in the other fields will be overwritten then.</tooltip>
                         </object>
                     </object>
                     <object class="sizeritem">
@@ -61,8 +63,6 @@
                         <border>5</border>
                         <object class="wxTextCtrl" name="ID_QUICKCONNECT_USER">
                             <size>-1,-1</size>
-                            <style></style>
-                            <value></value>
                         </object>
                     </object>
                     <object class="sizeritem">
@@ -70,7 +70,6 @@
                         <border>5</border>
                         <object class="wxStaticText" name="wxID_STATIC">
                             <size>-1,-1</size>
-                            <style></style>
                             <label>Pass&amp;word:</label>
                         </object>
                     </object>
@@ -79,8 +78,6 @@
                         <border>5</border>
                         <object class="wxTextCtrl" name="ID_QUICKCONNECT_PASS">
                             <size>-1,-1</size>
-                            <style></style>
-                            <value></value>
                         </object>
                     </object>
                     <object class="sizeritem">
@@ -88,7 +85,6 @@
                         <border>5</border>
                         <object class="wxStaticText" name="wxID_STATIC">
                             <size>-1,-1</size>
-                            <style></style>
                             <label>&amp;Port:</label>
                         </object>
                     </object>
@@ -96,9 +92,9 @@
                         <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
                         <border>5</border>
                         <object class="wxTextCtrl" name="ID_QUICKCONNECT_PORT">
-                            <size>-1,-1</size>
-                            <style></style>
-                            <value></value>
+                            <size>38,-1</size>
+                            <tooltip>Enter the port on which the server listens.
+The default for FTP is 22, the default for SFTP is 22.</tooltip>
                         </object>
                     </object>
                     <object class="sizeritem">
@@ -111,7 +107,6 @@
                                 <border>0</border>
                                 <object class="wxButton" name="ID_QUICKCONNECT_OK">
                                     <size>-1,-1</size>
-                                    <style></style>
                                     <label>&amp;Quickconnect</label>
                                     <default>1</default>
                                 </object>
@@ -121,7 +116,7 @@
                                 <border>0</border>
                                 <object class="wxBitmapButton" name="ID_QUICKCONNECT_DROPDOWN">
                                     <size>-1,-1</size>
-                                    <style>wxBU_AUTODRAW</style>
+                                    <style>wxBU_AUTODRAW|wxBU_EXACTFIT</style>
                                     <bitmap>dropdown.png</bitmap>
                                 </object>
                             </object>
