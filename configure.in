@@ -81,8 +81,24 @@ if test "x$IDN_LIB" = "x"; then
 fi
 
 AC_MSG_CHECKING([available FZ3 message catalogs])
-FILEZILLA_LINGUAS_PO=`ls locales/*.po | grep '\.po' | sed -e 's/\(.\+\/\)\?\(@<:@a-z@:>@*\(_@<:@A-Z@:>@*\)\?\)\.po/\2.po/g' | tr '\n' ' ' | sed -e 's/ \+/ /g'`
-FILEZILLA_LINGUAS=`echo $FILEZILLA_LINGUAS_PO | tr -d '.po'`
+
+FILEZILLA_LINGUAS_PO=
+FILEZILLA_LINGUAS=
+
+if /bin/ls > /dev/null; then
+	LSPROG='/bin/ls'
+else
+	LSPROG='ls'
+fi
+
+for i in `$LSPROG locales/*.po`
+do
+  i=${i%.*}
+  i=${i##*/}
+  FILEZILLA_LINGUAS_PO=$FILEZILLA_LINGUAS_PO${FILEZILLA_LINGUAS_PO:+ }$i.po
+  FILEZILLA_LINGUAS=$FILEZILLA_LINGUAS${FILEZILLA_LINGUAS:+ }$i
+done
+
 AC_MSG_RESULT([$FILEZILLA_LINGUAS])
 
 CATALOGS_TO_INSTALL="install-filezilla-catalogs"
