@@ -1,9 +1,9 @@
 localesdir = $(pkgdatadir)/locales
-locales_DATA = de.mo
-dist_noinst_DATA = filezilla.pot de.po
 
 FILEZILLA_LINGUAS = de
 WXWIN_LINGUAS  =    de
+
+dist_noinst_DATA = filezilla.pot de.po
 
 install-data-local: @CATALOGS_TO_INSTALL@
 
