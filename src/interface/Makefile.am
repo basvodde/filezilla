@@ -16,4 +16,7 @@ filezilla_SOURCES = FileZilla.cpp LocalListView.cpp LocalListView.h \
 			StatusView.cpp StatusView.h
 filezilla_LDFLAGS = $(WX_LIBS) $(WX_XRC_LIBS)
 filezilla_LDADD = ../engine/libengine.a
-filezilla_LDFLAGS += -lexpat
+
+filezilla_LDFLAGS += $(EXPAT_LIB)
+filezilla_LDFLAGS += $(PNG_LIB)
+filezilla_LDFLAGS += $(ZLIB_LIB)

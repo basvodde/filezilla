@@ -2,6 +2,8 @@ AC_INIT(FileZilla, 2.9, tim.kosse@gmx.de)
 AC_CONFIG_AUX_DIR(config)
 AM_INIT_AUTOMAKE(filezilla, 2.9)
 
+AC_CANONICAL_HOST
+
 AC_PROG_CXX
 AC_PROG_INSTALL
 AC_LIBTOOL_DLOPEN
@@ -47,9 +49,64 @@ else
 	AC_MSG_ERROR([wxWidgets 2.5.1 or newer is required])
 fi
 
-AC_CHECK_LIB(expat, XML_ParserCreate,,
-	AC_MSG_ERROR([expat xml parser library not found. It is included 
-in the wxWidgets source in the src/expat/ directory.]))
+AC_MSG_CHECKING([checking whether running inside MinGW32 environment])
+if test "x$host_os" = "xmingw32"; then
+	if test ! `$WXCONFIG --libs | grep -e '-l(wx)?png'`; then
+		AC_ARG_WITH(png-lib,
+		[[  --with-png-lib=FILE     Use the given path to the (wx)png library.]],
+		[
+			if test "$withval" != "yes" -a "$withval" != ""; then
+				PNG_LIB=$withval
+			fi
+		])
+		if test "x$PNG_LIB" = "x"; then
+			AC_CHECK_LIB(wxpng, png_create_read_struct, PNG_LIB="-lwxpng",
+				AC_CHECK_LIB(png, png_create_read_struct, PNG_LIB="-lpng",
+					AC_MSG_ERROR([png library not found. Try using --with-png-lib=FILE to specify the library path. The library source is included in the wxWidgets source in the src/png/ directory.])
+				)
+			)
+		fi
+	fi
+	
+	if test ! `$WXCONFIG --libs | grep -e '-l(wx)?zlib'`; then
+		AC_ARG_WITH(zlib-lib,
+		[[  --with-zlib-lib=FILE     Use the given path to the (wx)zlib library.]],
+		[
+			if test "$withval" != "yes" -a "$withval" != ""; then
+				ZLIB_LIB=$withval
+			fi
+		])
+		if test "x$ZLIB_LIB" = "x"; then
+			AC_CHECK_LIB(wxzlib, zlib_version, ZLIB_LIB="-lwxzlib",
+				AC_CHECK_LIB(zlib, zlib_version, ZLIB_LIB="-lzlib",
+					AC_MSG_ERROR([zlib library not found. Try using --with-zlib-lib=FILE to specify the library path. The library source is included in the wxWidgets source in the src/zlib/ directory.])
+				)
+			)
+		fi
+	fi
+else
+	PNG_LIB=
+	ZLIB_LIB=
+fi
+
+if test "x$host_os" = "xcygwin" -o "x$host_os" = "xmingw32"; then
+	AC_ARG_WITH(expat-lib,
+	[[  --with-expat-lib=FILE     Use the given path to the (wx)expat library.]],
+	[
+		if test "$withval" != "yes" -a "$withval" != ""; then
+			EXPAT_LIB=$withval
+		fi
+	])
+	if test "x$EXPAT_LIB" = "x"; then
+		AC_CHECK_LIB(wxexpat, XML_ParserCreate, EXPAT_LIB="-lwxexpat",
+			AC_CHECK_LIB(expat, XML_ParserCreate, EXPAT_LIB="-lexpat",
+				AC_MSG_ERROR([expat xml parser library not found. Try using --with-expat-lib=FILE to specify the library path. The library source is included in the wxWidgets source in the src/expat/ directory.])
+			)
+		)
+	fi
+else
+	EXPAT_LIB=
+fi
 
 CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
 CXXFLAGS="$CXXFLAGS $WX_CPPFLAGS"
@@ -57,5 +114,8 @@ CXXFLAGS="$CXXFLAGS $WX_CPPFLAGS"
 
 AC_SUBST(WX_LIBS)
 AC_SUBST(WX_XRC_LIBS)
+AC_SUBST(EXPAT_LIB)
+AC_SUBST(PNG_LIB)
+AC_SUBST(ZLIB_LIB)
 
 AC_OUTPUT(Makefile src/Makefile src/engine/Makefile src/interface/Makefile src/interface/resources/Makefile)
