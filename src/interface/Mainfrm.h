@@ -17,7 +17,7 @@ class CThemeProvider;
 class CMainFrame : public wxFrame
 {
 public:
-	CMainFrame();
+	CMainFrame(COptions* pOptions);
 	virtual ~CMainFrame();
 
 	bool GetPassword(CServer& server, wxString name = _T(""), wxString challenge = _T(""));

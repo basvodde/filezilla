@@ -1,6 +1,7 @@
 #include "FileZilla.h"
 #include "filezillaapp.h"
 #include "Mainfrm.h"
+#include "Options.h"
 
 #ifdef ENABLE_BINRELOC
 	#define BR_PTHREADS 0
@@ -8,14 +9,6 @@
 #endif
 
 #ifdef __WXMSW__
-
-	#if defined _WIN32_IE && __WIN32_IE <= 0x500
-		#undef _WIN32_IE
-		#define _WIN32_IE 0x0500
-	#elif !defined _WIN32_IE
-		#define _WIN32_IE 0x0500
-	#endif
-
 	#include <shlobj.h>
 
 	// Needed for MinGW:
@@ -30,11 +23,31 @@
 
 IMPLEMENT_APP(CFileZillaApp);
 
+CFileZillaApp::CFileZillaApp()
+{
+	m_pLocale = 0;
+}
+
+CFileZillaApp::~CFileZillaApp()
+{
+	delete m_pLocale;
+}
+
 bool CFileZillaApp::OnInit()
 {
 	wxSystemOptions::SetOption(wxT("msw.remap"), 0);
 
-	InitSettingsDir();
+	LoadLocales();
+    InitSettingsDir();
+
+	COptions* pOptions = new COptions;
+	wxString language = pOptions->GetOption(OPTION_LANGUAGE);
+	if (language != _T(""))
+	{
+		const wxLanguageInfo* pInfo = wxLocale::FindLanguageInfo(language);
+		if (!pInfo || !SetLocale(pInfo->Language))
+			wxMessageBox(wxString::Format(_("Failed to set language to %s, using default system language"), language.c_str()), _("Failed to change language"), wxICON_EXCLAMATION);
+	}
 
 #ifndef _DEBUG
 	wxMessageBox(_T("This software is still alpha software in early development, don't expect anything to work\r\n\
@@ -46,12 +59,15 @@ USE AT OWN RISK"), _T("Important Information"));
 #endif
 
 	if (!LoadResourceFiles())
+	{
+		delete pOptions;
 		return false;
+	}
 
 	// Turn off idle events, we don't need them
 	wxIdleEvent::SetMode(wxIDLE_PROCESS_SPECIFIED);
 
-	wxFrame *frame = new CMainFrame();
+	wxFrame *frame = new CMainFrame(pOptions);
 	frame->Show(true);
 	SetTopWindow(frame);
 
@@ -97,6 +113,14 @@ wxString GetDataDir(wxString fileToFind)
 		wxString datadir(DATADIR, *wxConvCurrent);
 		if (datadir != _T(""))
 			pathList.Add(datadir);
+	}
+#elif defined __WXMSW__
+	wxChar path[1024];
+	int res = GetModuleFileName(0, path, 1000);
+	if (res > 0 && res < 1000)
+	{
+		wxFileName fn(path);
+		pathList.Add(fn.GetPath());
 	}
 #endif
 
@@ -145,10 +169,7 @@ bool CFileZillaApp::LoadResourceFiles()
 
 	wxImage::AddHandler(new wxPNGHandler());
 	wxImage::AddHandler(new wxXPMHandler());
-	wxLocale::AddCatalogLookupPathPrefix(m_resourceDir + _T("/locales"));
-	m_locale.Init(wxLANGUAGE_DEFAULT);
-	m_locale.AddCatalog(_T("filezilla"));
-
+	
 	if (m_resourceDir == _T(""))
 	{
 		wxString msg = _("Could not find the resource files for FileZilla, closing FileZilla.\nYou can set the data directory of FileZilla using the '--datadir <custompath>' commandline option or by setting the FZ_DATADIR environment variable.");
@@ -195,4 +216,60 @@ bool CFileZillaApp::InitSettingsDir()
 	m_settingsDir = fn.GetPath();
 
 	return true;
+}
+
+bool CFileZillaApp::LoadLocales()
+{
+	// We assume the german language does always exist
+	m_localesDir = GetDataDir(_T("/locales/de/filezilla.mo"));
+
+	if (!m_localesDir.Length() || m_localesDir[m_localesDir.Length() - 1] != wxFileName::GetPathSeparator())
+		m_localesDir += wxFileName::GetPathSeparator();
+
+	m_localesDir += _T("locales/");
+
+	wxLocale::AddCatalogLookupPathPrefix(m_localesDir);
+
+	SetLocale(wxLANGUAGE_DEFAULT);
+	
+	return true;
+}
+
+bool CFileZillaApp::SetLocale(int language)
+{
+	// First check if we can load the new locale
+	wxLocale* pLocale = new wxLocale();
+	wxLogNull log;
+	pLocale->Init(language);
+	if (!pLocale->IsOk() || !pLocale->AddCatalog(_T("filezilla")))
+	{
+		delete pLocale;
+		return false;
+	}
+
+	// Now unload old locale
+	// We unload new locale as well, else the internal locale chain in wxWidgets get's broken.
+	delete pLocale;
+	delete m_pLocale;
+	m_pLocale = 0;
+
+	// Finally load new one
+	pLocale = new wxLocale();
+	pLocale->Init(language);
+	if (!pLocale->IsOk() || !pLocale->AddCatalog(_T("filezilla")))
+	{
+		delete pLocale;
+		return false;
+	}
+	m_pLocale = pLocale;
+
+	return true;
+}
+
+int CFileZillaApp::GetCurrentLanguage() const
+{
+	if (!m_pLocale)
+		return wxLANGUAGE_ENGLISH;
+
+	return m_pLocale->GetLanguage();
 }

@@ -11,10 +11,10 @@
 
 #ifdef __WXMSW__
   #ifndef _WIN32_IE 
-    #define _WIN32_IE 0x0300
-  #elif _WIN32_IE <= 0x0300
+    #define _WIN32_IE 0x0500
+  #elif _WIN32_IE <= 0x0500
     #undef _WIN32_IE
-    #define _WIN32_IE 0x0300
+    #define _WIN32_IE 0x0500
   #endif
 
 #endif

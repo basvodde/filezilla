@@ -14,6 +14,7 @@
 #include "sitemanager.h"
 #include "settingsdialog.h"
 #include "themeprovider.h"
+#include "filezillaapp.h"
 
 #ifndef __WXMSW__
 #include "resources/filezilla.xpm"
@@ -58,8 +59,10 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_PROCESSQUEUE"), CMainFrame::OnUpdateToolbarProcessQueue)
 END_EVENT_TABLE()
 
-CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
+CMainFrame::CMainFrame(COptions* pOptions) : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
 {
+	m_pOptions = pOptions;
+
 	SetSizeHints(250, 250);
 
 	SetIcon(wxICON(appicon));
@@ -80,7 +83,6 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_windowIsMaximized = false;
 #endif
 
-	m_pOptions = new COptions;
 	m_pThemeProvider = new CThemeProvider(m_pOptions);
 	m_pState = new CState();
 
@@ -851,11 +853,23 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 	if (!dlg.Create(this))
 		return;
 
+	wxString oldTheme = m_pOptions->GetOption(OPTION_THEME);
+	int oldLang = wxGetApp().GetCurrentLanguage();
+
 	int res = dlg.ShowModal();
 	if (res != wxID_OK)
 		return;
 
-	wxArtProvider::RemoveProvider(m_pThemeProvider);
-	m_pThemeProvider = new CThemeProvider(m_pOptions);
-	CreateToolBar();
+	wxString newTheme = m_pOptions->GetOption(OPTION_THEME);
+	int newLang = wxGetApp().GetCurrentLanguage();
+
+	if (oldTheme != newTheme)
+	{
+		wxArtProvider::RemoveProvider(m_pThemeProvider);
+		m_pThemeProvider = new CThemeProvider(m_pOptions);
+	}
+	if (oldTheme != newTheme || oldLang != newLang)
+		CreateToolBar();
+	if (oldLang != newLang)
+		CreateMenus();
 }

@@ -8,13 +8,13 @@ install-data-local: @CATALOGS_TO_INSTALL@
 
 install-filezilla-catalogs: allmo
 	for i in @FILEZILLA_LINGUAS@ ; do \
-	    $(mkinstalldirs) $(DESTDIR)$(localesdir)/$$i/LC_MESSAGES ; \
-	    $(INSTALL_DATA) $$i.mo $(DESTDIR)$(localesdir)/$$i/LC_MESSAGES/filezilla.mo ; \
+	    $(mkinstalldirs) $(DESTDIR)$(localesdir)/$$i ; \
+	    $(INSTALL_DATA) $$i.mo $(DESTDIR)$(localesdir)/$$i/filezilla.mo ; \
 	done
 
 uninstall-local:
 	for i in @FILEZILLA_LINGUAS@ ; do \
-	    rm $(DESTDIR)$(localesdir)/$$i/LC_MESSAGES/filezilla.mo ; \
+	    rm $(DESTDIR)$(localesdir)/$$i/filezilla.mo ; \
 	done
 
 
@@ -23,8 +23,8 @@ uninstall-local:
 
 #install-wxstd-catalogs:
 #	for i in $(WXWIN_LINGUAS) ; do \
-#	    $(mkinstalldirs) $(DESTDIR)$(localesdir)/$$i/LC_MESSAGES ; \
-#	    $(INSTALL_DATA) wxwin/$$i.mo $(DESTDIR)$(localesdir)/$$i/LC_MESSAGES/filezilla-wxstd.mo ; \
+#	    $(mkinstalldirs) $(DESTDIR)$(localesdir)/$$i ; \
+#	    $(INSTALL_DATA) wxwin/$$i.mo $(DESTDIR)$(localesdir)/$$i/filezilla-wxstd.mo ; \
 #	done
 
 

@@ -37,7 +37,8 @@ static const t_Option options[OPTIONS_NUM] =
 	"Auto Ascii files", string, _T("am|asp|bat|c|cfm|cgi|conf|cpp|css|dhtml|diz|h|hpp|htm|html|in|inc|js|mak|nfo|pas|patch|php|phtml|pl|py|qmail|sh|shtml|sql|tcl|tpl|txt|vbs|xml"),
 	"Auto Ascii no extension", number, _T("1"),
 	"Auto Ascii dotfiles", number, _T("1"),
-	"Theme", string, _T("")
+	"Theme", string, _T(""),
+	"Language", string, _T("")
 };
 
 COptions::COptions()
@@ -52,7 +53,7 @@ COptions::COptions()
 
 	if (!m_pXmlDocument)
 	{
-		wxString msg = wxString::Format(_("Could not load \"%s\", make sure the file is valid.\nFor this session, default settings will be used and any changes to the settings, including changes done in the Site Manager, are not persistent."), file.GetFullPath().c_str());
+		wxString msg = wxString::Format(_("Could not load \"%s\", make sure the file is valid.\nFor this session, default settings will be used and any changes to the settings are not persistent."), file.GetFullPath().c_str());
 		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
 	}
 	else
