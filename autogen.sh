@@ -68,10 +68,13 @@ version_check()
 	
 	($PACKAGE --version) < /dev/null > /dev/null 2>&1 ||
 	{
+		if [ -z "$VERSION" ]; then
+			VERSION="1.2.3"
+		fi
 		echo -e "\033[1;31mnot found\033[0m\n"
 		echo -e "\033[1m$PACKAGE\033[0m could not be found. On some systems \033[1m$PACKAGE\033[0m might be installed but"
 		echo -e "has a suffix with the version number, for example \033[1m$PACKAGE-$VERSION\033[0m."
-		echo -e "If that is the case, create a symlink to \033[1m$PACKAGE\033[0m"
+		echo -e "If that is the case, create a symlink to \033[1m$PACKAGE\033[0m."
 		exit 1
 	}
 
