@@ -75,6 +75,9 @@ USE AT OWN RISK"), _T("Important Information"));
 	if (!LoadResourceFiles())
 		return false;
 
+	// Turn off idle events, we don't need them
+	wxIdleEvent::SetMode(wxIDLE_PROCESS_SPECIFIED);
+
 	wxFrame *frame = new CMainFrame();
 	SetTopWindow(frame);
 	frame->Show(true);
@@ -145,9 +148,9 @@ wxString GetDataDir(wxString fileToFind)
 			return cur + _T("/share/filezilla");
 		if (wxFileExists(cur + _T("/filezilla") + fileToFind))
 			return cur + _T("/filezilla");
-#if defined(__WXMAC__) || defined(__WXCOCOA)
-		if (wxFileExists(cur + _T("/FileZilla.app/Contents/MacOS") + fileToFind))
-			return cur + _T("/FileZilla.app/Contents/MacOS");
+#if defined(__WXMAC__) || defined(__WXCOCOA__)
+		if (wxFileExists(cur + _T("/FileZilla.app/Contents/SharedSupport") + fileToFind))
+			return cur + _T("/FileZilla.app/Contents/SharedSupport");
 #endif
 	}
 	

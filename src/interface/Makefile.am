@@ -41,19 +41,16 @@ filezilla_DEPENDENCIES = ../engine/libengine.a \
 dist_noinst_DATA = interface.vcproj
 
 if MACAPPBUNDLE
-noinst_DATA = FileZilla.app/Contents/MacOS/filezilla$(EXEEXT)
+noinst_DATA = $(top_builddir)/FileZilla.app/Contents/MacOS/filezilla$(EXEEXT)
 endif
-
-FileZilla.app/Contents/MacOS/filezilla$(EXEEXT): filezilla
-	mkdir -p FileZilla.app/Contents/MacOS/resources
-	mkdir -p FileZilla.app/Contents/Resources
-	sed s/VERSION/$(VERSION)/ resources/MacInfo.plist >FileZilla.app/Contents/Info.plist
-	echo -n "APPL????" >FileZilla.app/Contents/PkgInfo
-	$(shell wx-config --rezflags) FileZilla.app/Contents/Resources/filezilla.rsrc
-	cp -f resources/FileZilla.icns FileZilla.app/Contents/Resources/FileZilla.icns
+ 
+$(top_builddir)/FileZilla.app/Contents/MacOS/filezilla$(EXEEXT): filezilla
+	mkdir -p $(top_builddir)/FileZilla.app/Contents/MacOS
+	mkdir -p $(top_builddir)/FileZilla.app/Contents/SharedSupport/resources
+	mkdir -p $(top_builddir)/FileZilla.app/Contents/Resources
+	sed s/VERSION/$(VERSION)/ resources/MacInfo.plist >$(top_builddir)/FileZilla.app/Contents/Info.plist
+	echo -n "APPL????" >$(top_builddir)/FileZilla.app/Contents/PkgInfo
+	$(shell wx-config --rezflags) $(top_builddir)/FileZilla.app/Contents/Resources/filezilla.rsrc
+	cp -f resources/FileZilla.icns $(top_builddir)/FileZilla.app/Contents/Resources/FileZilla.icns
 	$(MAKE) -C resources mac-copy-resources
-	cp -f filezilla FileZilla.app/Contents/MacOS/filezilla
-
-clean-local:
-	rm -rf FileZilla.app
-
+	cp -f filezilla $(top_builddir)/FileZilla.app/Contents/MacOS/filezilla

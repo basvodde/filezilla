@@ -5,6 +5,6 @@ dist_resources_DATA = file.png folder.png folderclosed.png server.png \
 
 if MACAPPBUNDLE
 mac-copy-resources: $(dist_resources_DATA)
-	mkdir -p ../../FileZilla.app/Contents/MacOS/resources/16x16
-	cp -f $(dist_resources_DATA) ../../FileZilla.app/Contents/MacOS/resources/16x16
+	mkdir -p $(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/16x16
+	cp -f $(dist_resources_DATA) $(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/16x16
 endif
