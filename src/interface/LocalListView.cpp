@@ -35,7 +35,7 @@ CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState)
 	m_pState = pState;
 
 	m_pImageList = 0;
-	InsertColumn(0, _("Filname"));
+	InsertColumn(0, _("Filename"));
 	InsertColumn(1, _("Filesize"));
 	InsertColumn(2, _("Filetype"));
 	InsertColumn(3, _("Last modified"), wxLIST_FORMAT_LEFT, 100);

@@ -34,7 +34,7 @@ CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState
 	m_pState = pState;
 
 	m_pImageList = 0;
-	InsertColumn(0, _("Filname"));
+	InsertColumn(0, _("Filename"));
 	InsertColumn(1, _("Filesize"), wxLIST_FORMAT_RIGHT);
 	InsertColumn(2, _("Filetype"));
 	InsertColumn(3, _("Date"), wxLIST_FORMAT_LEFT, 50);
@@ -160,13 +160,13 @@ wxString CRemoteListView::OnGetItemText(long item, long column) const
 	}
 	if (!item)
 		return _T(""); //.. has no attributes
-	
+
 	if (column == 1)
 	{
 		if (data->pDirEntry->dir || data->pDirEntry->size < 0)
 			return _T("");
 		else
-			return wxString::Format(_T("%d"), data->pDirEntry->size);
+			return data->pDirEntry->size.ToString();
 	}
 	else if (column == 2)
 	{
