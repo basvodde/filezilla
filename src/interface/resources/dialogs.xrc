@@ -897,6 +897,12 @@ Would you like to replace the file</label>
             <border>4</border>
           </object>
           <object class="sizeritem">
+            <object class="wxTextCtrl" name="ID_TYPE_AUTO2">
+            </object>
+            <flag>wxALL</flag>
+            <border>4</border>
+          </object>
+          <object class="sizeritem">
             <object class="wxRadioButton" name="ID_TYPE_ASCII">
               <label>A&amp;scii</label>
             </object>
@@ -1117,6 +1123,128 @@ Would you like to replace the file</label>
             <border>5</border>
           </object>
         </object>
+        <flag>wxGROW</flag>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_THEMES">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Select Theme</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>2</cols>
+              <rows>2</rows>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>&amp;Theme:</label>
+                </object>
+                <flag>wxRIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                <border>5</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxComboBox" name="ID_THEME">
+                  <content/>
+                  <style>wxCB_SORT|wxCB_READONLY|wxCB_DROPDOWN</style>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Author:</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="ID_AUTHOR">
+                  <label>&lt;Author&gt;</label>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="">
+                  <label>Email:</label>
+                </object>
+                <flag>wxLEFT</flag>
+                <border>5</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="ID_EMAIL">
+                  <label>&lt;Email&gt;</label>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <vgap>5</vgap>
+              <hgap>5</hgap>
+            </object>
+            <flag>wxALL|wxGROW</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Preview</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxNotebook" name="ID_PREVIEW">
+              <object class="notebookpage">
+                <label>Small icons</label>
+                <object class="wxPanel" name="">
+                  <object class="wxBoxSizer">
+                    <orient>wxVERTICAL</orient>
+                    <object class="sizeritem">
+                      <object class="wxScrolledWindow" name="ID_SMALL">
+                        <style>wxSTATIC_BORDER|wxVSCROLL</style>
+                      </object>
+                      <option>1</option>
+                      <flag>wxALL|wxGROW</flag>
+                      <border>5</border>
+                    </object>
+                  </object>
+                </object>
+              </object>
+              <object class="notebookpage">
+                <label>Medium icons</label>
+                <object class="wxPanel" name="">
+                  <object class="wxBoxSizer">
+                    <orient>wxVERTICAL</orient>
+                    <object class="sizeritem">
+                      <object class="wxScrolledWindow" name="ID_MEDIUM">
+                        <style>wxSTATIC_BORDER|wxVSCROLL</style>
+                      </object>
+                      <option>1</option>
+                      <flag>wxALL|wxGROW</flag>
+                      <border>5</border>
+                    </object>
+                  </object>
+                </object>
+              </object>
+              <object class="notebookpage">
+                <label>Large icons</label>
+                <object class="wxPanel" name="">
+                  <object class="wxBoxSizer">
+                    <orient>wxVERTICAL</orient>
+                    <object class="sizeritem">
+                      <object class="wxScrolledWindow" name="ID_LARGE">
+                        <style>wxSTATIC_BORDER|wxVSCROLL</style>
+                      </object>
+                      <option>1</option>
+                      <flag>wxALL|wxGROW</flag>
+                      <border>5</border>
+                    </object>
+                  </object>
+                </object>
+              </object>
+            </object>
+            <option>1</option>
+            <flag>wxALL|wxGROW</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <option>1</option>
         <flag>wxGROW</flag>
       </object>
     </object>

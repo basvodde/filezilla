@@ -503,6 +503,8 @@ void CFileZillaEngine::ResendModifiedListings()
 		CDirectoryListing *pListing = new CDirectoryListing;
 		bool found = cache.Lookup(*pListing, *pServer, pEngine->m_lastListDir);
 		wxASSERT(found);
+		if (!found)
+			return;
 		
 		pEngine->m_lastListTime = wxDateTime::Now();
 		CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing);

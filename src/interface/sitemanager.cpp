@@ -66,21 +66,10 @@ bool CSiteManager::Create(wxWindow* parent)
 		return false;
 	wxImageList* pImageList = new wxImageList(16, 16);
 
-	wxBitmap bmp;
-		
-	wxLogNull *tmp = new wxLogNull;
+	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDERCLOSED"),  wxART_OTHER, wxSize(16, 16)));
+	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDER"),  wxART_OTHER, wxSize(16, 16)));
+	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_SERVER"),  wxART_OTHER, wxSize(16, 16)));
 	
-	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("16x16/folderclosed.png"), wxBITMAP_TYPE_PNG);
-	pImageList->Add(bmp);
-
-	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("16x16/folder.png"), wxBITMAP_TYPE_PNG);
-	pImageList->Add(bmp);
-
-	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("16x16/server.png"), wxBITMAP_TYPE_PNG);
-	pImageList->Add(bmp);
-
-	delete tmp;
-
 	pTree->AssignImageList(pImageList);
 		
 	return true;
@@ -812,6 +801,18 @@ void CSiteManager::OnRemoteDirBrowse(wxCommandEvent& event)
 
 void CSiteManager::OnItemActivated(wxTreeEvent& event)
 {
+	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
+	if (!pTree)
+		return;
+
+	wxTreeItemId item = pTree->GetSelection();
+	if (!item.IsOk())
+		return;
+
+	CSiteManagerItemData* data = reinterpret_cast<CSiteManagerItemData* >(pTree->GetItemData(item));
+	if (!data)
+		return;
+
 	wxCommandEvent cmdEvent;
 	OnConnect(cmdEvent);
 }

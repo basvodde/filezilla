@@ -11,11 +11,11 @@ END_EVENT_TABLE();
 bool COptionsPagePassive::LoadPage()
 {
 	bool failure = false;
-	SetCheck("ID_PASSIVE", m_pOptions->GetOptionVal(OPTION_USEPASV) != 0, failure);
-	SetCheck("ID_LIMITPORTS", m_pOptions->GetOptionVal(OPTION_LIMITPORTS) != 0, failure);
-	SetText("ID_LOWESTPORT", wxString::Format(_T("%d"), m_pOptions->GetOptionVal(OPTION_LIMITPORTS_LOW)), failure);
-	SetText("ID_HIGHESTPORT", wxString::Format(_T("%d"), m_pOptions->GetOptionVal(OPTION_LIMITPORTS_HIGH)), failure);
-	SetText("ID_EXTERNALADDRESS", m_pOptions->GetOption(OPTION_EXTERNALIP), failure);
+	SetCheck(XRCID("ID_PASSIVE"), m_pOptions->GetOptionVal(OPTION_USEPASV) != 0, failure);
+	SetCheck(XRCID("ID_LIMITPORTS"), m_pOptions->GetOptionVal(OPTION_LIMITPORTS) != 0, failure);
+	SetText(XRCID("ID_LOWESTPORT"), wxString::Format(_T("%d"), m_pOptions->GetOptionVal(OPTION_LIMITPORTS_LOW)), failure);
+	SetText(XRCID("ID_HIGHESTPORT"), wxString::Format(_T("%d"), m_pOptions->GetOptionVal(OPTION_LIMITPORTS_HIGH)), failure);
+	SetText(XRCID("ID_EXTERNALADDRESS"), m_pOptions->GetOption(OPTION_EXTERNALIP), failure);
 
 	if (!failure)
 		SetCtrlState();
@@ -25,14 +25,14 @@ bool COptionsPagePassive::LoadPage()
 
 bool COptionsPagePassive::SavePage()
 {
-	m_pOptions->SetOption(OPTION_USEPASV, GetCheck("ID_PASSIVE") ? 1 : 0);
-	m_pOptions->SetOption(OPTION_LIMITPORTS, GetCheck("ID_LIMITPORTS") ? 1 : 0);
+	m_pOptions->SetOption(OPTION_USEPASV, GetCheck(XRCID("ID_PASSIVE")) ? 1 : 0);
+	m_pOptions->SetOption(OPTION_LIMITPORTS, GetCheck(XRCID("ID_LIMITPORTS")) ? 1 : 0);
 
 	long tmp;
-	GetText("ID_LOWESTPORT").ToLong(&tmp); m_pOptions->SetOption(OPTION_LIMITPORTS_LOW, tmp);
-	GetText("ID_HIGHESTPORT").ToLong(&tmp); m_pOptions->SetOption(OPTION_LIMITPORTS_HIGH, tmp);
+	GetText(XRCID("ID_LOWESTPORT")).ToLong(&tmp); m_pOptions->SetOption(OPTION_LIMITPORTS_LOW, tmp);
+	GetText(XRCID("ID_HIGHESTPORT")).ToLong(&tmp); m_pOptions->SetOption(OPTION_LIMITPORTS_HIGH, tmp);
 	
-	m_pOptions->SetOption(OPTION_EXTERNALIP, GetText("ID_EXTERNALADDRESS"));
+	m_pOptions->SetOption(OPTION_EXTERNALIP, GetText(XRCID("ID_EXTERNALADDRESS")));
 
 	return true;
 }
@@ -40,7 +40,7 @@ bool COptionsPagePassive::SavePage()
 bool COptionsPagePassive::Validate()
 {
 	// Validate port limiting settings
-	if (GetCheck("ID_LIMITPORTS"))
+	if (GetCheck(XRCID("ID_LIMITPORTS")))
 	{
 		wxTextCtrl* pLow = XRCCTRL(*this, "ID_LOWESTPORT", wxTextCtrl);
 		wxASSERT(pLow);
@@ -76,8 +76,8 @@ bool COptionsPagePassive::Validate()
 
 void COptionsPagePassive::SetCtrlState()
 {
-	FindWindow(XRCID("ID_LOWESTPORT"))->Enable(GetCheck("ID_LIMITPORTS"));
-	FindWindow(XRCID("ID_HIGHESTPORT"))->Enable(GetCheck("ID_LIMITPORTS"));
+	FindWindow(XRCID("ID_LOWESTPORT"))->Enable(GetCheck(XRCID("ID_LIMITPORTS")));
+	FindWindow(XRCID("ID_HIGHESTPORT"))->Enable(GetCheck(XRCID("ID_LIMITPORTS")));
 }
 
 void COptionsPagePassive::OnToggleLimitPorts(wxCommandEvent& event)

@@ -576,24 +576,10 @@ CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame)
 	// Create and assign the image list for the queue
 	wxImageList* pImageList = new wxImageList(16, 16);
 
-	wxBitmap bmp;
-	wxString resourcePath = wxGetApp().GetResourceDir();
-	
-	wxLogNull *tmp = new wxLogNull;
-	
-	bmp.LoadFile(resourcePath + _T("16x16/server.png"), wxBITMAP_TYPE_PNG);
-	pImageList->Add(bmp);
-
-	bmp.LoadFile(resourcePath + _T("16x16/file.png"), wxBITMAP_TYPE_PNG);
-	pImageList->Add(bmp);
-
-	bmp.LoadFile(resourcePath + _T("16x16/folderclosed.png"), wxBITMAP_TYPE_PNG);
-	pImageList->Add(bmp);
-
-	bmp.LoadFile(resourcePath + _T("16x16/folder.png"), wxBITMAP_TYPE_PNG);
-	pImageList->Add(bmp);
-
-	delete tmp;
+	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDERCLOSED"),  wxART_OTHER, wxSize(16, 16)));
+	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FILE"),  wxART_OTHER, wxSize(16, 16)));
+	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDERCLOSED"),  wxART_OTHER, wxSize(16, 16)));
+	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDER"),  wxART_OTHER, wxSize(16, 16)));
 
 	AssignImageList(pImageList, wxIMAGE_LIST_SMALL);
 
@@ -1239,7 +1225,6 @@ bool CQueueView::IncreaseErrorCount(t_EngineData& engineData)
 	if (engineData.pItem->m_errorCount <= m_pMainFrame->m_pOptions->GetOptionVal(OPTION_TRANSFERRETRYCOUNT))
 		return true;
 
-	CQueueItem* pItem = engineData.pItem;
 	ResetEngine(engineData, true);
 
 	//TODO: Error description?
@@ -1576,7 +1561,7 @@ void CQueueView::SettingsChanged()
 	m_asciiFiles.clear();
 	wxString extensions = m_pMainFrame->m_pOptions->GetOption(OPTION_ASCIIFILES);
 	wxString ext;
-	int pos = extensions.Find("|");
+	int pos = extensions.Find(_T("|"));
 	while (pos != -1)
 	{
 		if (!pos)
@@ -1600,7 +1585,7 @@ void CQueueView::SettingsChanged()
 			ext += extensions.Left(pos - 1) + _T("|");
 		}
 		extensions = extensions.Mid(pos + 1);
-		pos = extensions.Find("|");
+		pos = extensions.Find(_T("|"));
 	}
 	ext += extensions;
 	ext.Replace(_T("\\\\"), _T("\\")); 

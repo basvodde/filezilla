@@ -13,6 +13,7 @@
 #include "led.h"
 #include "sitemanager.h"
 #include "settingsdialog.h"
+#include "themeprovider.h"
 
 #ifndef __WXMSW__
 #include "resources/filezilla.xpm"
@@ -79,6 +80,8 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_windowIsMaximized = false;
 #endif
 
+	m_pOptions = new COptions;
+	m_pThemeProvider = new CThemeProvider(m_pOptions);
 	m_pState = new CState();
 
 	m_pStatusBar = CreateStatusBar(6, wxST_SIZEGRIP);
@@ -112,8 +115,6 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	CreateQuickconnectBar();
 
 	m_ViewSplitterSashPos = 0.5;
-
-	m_pOptions = new COptions;
 
 	m_pEngine = new CFileZillaEngine();
 	m_pEngine->Init(this, m_pOptions);
@@ -851,4 +852,10 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 		return;
 
 	int res = dlg.ShowModal();
+	if (res != wxID_OK)
+		return;
+
+	wxArtProvider::RemoveProvider(m_pThemeProvider);
+	m_pThemeProvider = new CThemeProvider(m_pOptions);
+	CreateToolBar();
 }

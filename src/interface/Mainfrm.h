@@ -12,6 +12,7 @@ class COptions;
 class CCommandQueue;
 class CAsyncRequestQueue;
 class CLed;
+class CThemeProvider;
 
 class CMainFrame : public wxFrame
 {
@@ -57,8 +58,8 @@ protected:
 	CLed* m_pRecvLed;
 	CLed* m_pSendLed;
 	wxTimer m_sendLedTimer, m_recvLedTimer;
-
 	wxTimer m_transferStatusTimer;
+	CThemeProvider* m_pThemeProvider;
 
 	// Event handlers
 	void OnSize(wxSizeEvent& event);

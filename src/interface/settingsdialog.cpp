@@ -4,12 +4,14 @@
 #include "optionspage.h"
 #include "optionspage_passive.h"
 #include "optionspage_filetype.h"
+#include "optionspage_themes.h"
 
 enum pagenames
 {
 	page_none = -1,
 	page_filetype = 0,
-	page_passive = 1
+	page_passive = 1,
+	page_themes = 2
 };
 
 // Helper macro to add pages in the most simplistic way
@@ -69,8 +71,9 @@ bool CSettingsDialog::LoadPages()
 
 	// Create the instances of the page classes and fill the tree.
 	t_page page;
-	ADD_PAGE(_T("Transfer Mode"), COptionsPagePassive, page_none);
-	ADD_PAGE(_T("File Types"), COptionsPageFiletype, page_none);
+	ADD_PAGE(_("Transfer Mode"), COptionsPagePassive, page_none);
+	ADD_PAGE(_("File Types"), COptionsPageFiletype, page_none);
+	ADD_PAGE(_("Themes"), COptionsPageThemes, page_none);
 
 	// Before we can initialize the pages, get the target panel in the settings
 	// dialog.

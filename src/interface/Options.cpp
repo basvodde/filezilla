@@ -37,6 +37,7 @@ static const t_Option options[OPTIONS_NUM] =
 	"Auto Ascii files", string, _T("am|asp|bat|c|cfm|cgi|conf|cpp|css|dhtml|diz|h|hpp|htm|html|in|inc|js|mak|nfo|pas|patch|php|phtml|pl|py|qmail|sh|shtml|sql|tcl|tpl|txt|vbs|xml"),
 	"Auto Ascii no extension", number, _T("1"),
 	"Auto Ascii dotfiles", number, _T("1"),
+	"Theme", string, _T("")
 };
 
 COptions::COptions()

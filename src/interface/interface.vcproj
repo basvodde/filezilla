@@ -94,7 +94,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../include/"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;__WXDEBUG__"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;__WXDEBUG__;__WXMSW__"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				BufferSecurityCheck="TRUE"
@@ -196,6 +196,9 @@
 				RelativePath=".\optionspage_passive.cpp">
 			</File>
 			<File
+				RelativePath=".\optionspage_themes.cpp">
+			</File>
+			<File
 				RelativePath=".\QueueView.cpp">
 			</File>
 			<File
@@ -218,6 +221,9 @@
 			</File>
 			<File
 				RelativePath=".\StatusView.cpp">
+			</File>
+			<File
+				RelativePath=".\themeprovider.cpp">
 			</File>
 			<File
 				RelativePath="..\tinyxml\tinystr.cpp">
@@ -278,6 +284,9 @@
 				RelativePath=".\optionspage_passive.h">
 			</File>
 			<File
+				RelativePath=".\optionspage_themes.h">
+			</File>
+			<File
 				RelativePath=".\QueueView.h">
 			</File>
 			<File
@@ -301,6 +310,9 @@
 			<File
 				RelativePath=".\StatusView.h">
 			</File>
+			<File
+				RelativePath=".\themeprovider.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Ressourcendateien"
@@ -309,6 +321,9 @@
 				RelativePath=".\resources\filezilla.rc">
 			</File>
 		</Filter>
+		<File
+			RelativePath=".\interface.vcproj">
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

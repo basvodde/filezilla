@@ -1,4 +1,4 @@
-SUBDIRS = 16x16 32x32
+SUBDIRS = 16x16 32x32 cyril
 
 CLEANFILES = filezilla.o
 
@@ -6,7 +6,7 @@ resourcesdir = $(pkgdatadir)/resources
 
 dist_resources_DATA = menus.xrc quickconnectbar.xrc dropdown.png \
 		toolbar.xrc empty.xpm up.xpm down.xpm filezilla.xpm \
-		dialogs.xrc leds.png
+		dialogs.xrc leds.png themes.xml
 
 if USE_RESOURCEFILE
 nodist_noinst_DATA = filezilla.o
@@ -30,4 +30,5 @@ mac-copy-resources: $(dist_resources_DATA)
 	
 	$(MAKE) -C 16x16 mac-copy-resources
 	$(MAKE) -C 32x32 mac-copy-resources
+	$(MAKE) -C cyril mac-copy-resources
 endif

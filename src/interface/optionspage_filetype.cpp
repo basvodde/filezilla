@@ -14,8 +14,8 @@ bool COptionsPageFiletype::LoadPage()
 {
 	bool failure = false;
 	
-	SetCheck("ID_ASCIIWITHOUT", m_pOptions->GetOptionVal(OPTION_ASCIINOEXT) != 0, failure);
-	SetCheck("ID_ASCIIDOTFILE", m_pOptions->GetOptionVal(OPTION_ASCIIDOTFILE) != 0, failure);
+	SetCheck(XRCID("ID_ASCIIWITHOUT"), m_pOptions->GetOptionVal(OPTION_ASCIINOEXT) != 0, failure);
+	SetCheck(XRCID("ID_ASCIIDOTFILE"), m_pOptions->GetOptionVal(OPTION_ASCIIDOTFILE) != 0, failure);
 
 	if (failure)
 		return false;
@@ -28,18 +28,18 @@ bool COptionsPageFiletype::LoadPage()
 
 	int mode = m_pOptions->GetOptionVal(OPTION_ASCIIBINARY);
 	if (mode == 1)
-		SetRCheck("ID_TYPE_ASCII", true, failure);
+		SetRCheck(XRCID("ID_TYPE_ASCII"), true, failure);
 	else if (mode == 2)
-		SetRCheck("ID_TYPE_BINARY", true, failure);
+		SetRCheck(XRCID("ID_TYPE_BINARY"), true, failure);
 	else
-		SetRCheck("ID_TYPE_AUTO", true, failure);
+		SetRCheck(XRCID("ID_TYPE_AUTO"), true, failure);
 
 	wxListCtrl* pListCtrl = XRCCTRL(*this, "ID_EXTENSIONS", wxListCtrl);
 	pListCtrl->InsertColumn(0, _T(""));
 	
 	wxString extensions = m_pOptions->GetOption(OPTION_ASCIIFILES);
 	wxString ext;
-	int pos = extensions.Find("|");
+	int pos = extensions.Find(_T("|"));
 	while (pos != -1)
 	{
 		if (!pos)
@@ -63,7 +63,7 @@ bool COptionsPageFiletype::LoadPage()
 			ext += extensions.Left(pos - 1) + _T("|");
 		}
 		extensions = extensions.Mid(pos + 1);
-		pos = extensions.Find("|");
+		pos = extensions.Find(_T("|"));
 	}
 	ext += extensions;
 	ext.Replace(_T("\\\\"), _T("\\")); 
@@ -76,13 +76,13 @@ bool COptionsPageFiletype::LoadPage()
 
 bool COptionsPageFiletype::SavePage()
 {
-	m_pOptions->SetOption(OPTION_ASCIINOEXT, GetCheck("ID_ASCIIWITHOUT"));
-	m_pOptions->SetOption(OPTION_ASCIIDOTFILE, GetCheck("ID_ASCIIDOTFILE"));
+	m_pOptions->SetOption(OPTION_ASCIINOEXT, GetCheck(XRCID("ID_ASCIIWITHOUT")));
+	m_pOptions->SetOption(OPTION_ASCIIDOTFILE, GetCheck(XRCID("ID_ASCIIDOTFILE")));
 
 	int mode;
-	if (GetRCheck("ID_TYPE_ASCII"))
+	if (GetRCheck(XRCID("ID_TYPE_ASCII")))
 		mode = 1;
-	else if (GetRCheck("ID_TYPE_BINARY"))
+	else if (GetRCheck(XRCID("ID_TYPE_BINARY")))
 		mode = 2;
 	else
 		mode = 0;
@@ -118,7 +118,7 @@ void COptionsPageFiletype::SetCtrlState()
 	wxASSERT(pListCtrl);
 
 	FindWindow(XRCID("ID_REMOVE"))->Enable(!pListCtrl->GetSelectedItemCount());
-	FindWindow(XRCID("ID_ADD"))->Enable(GetText("ID_EXTENSION") != _T(""));
+	FindWindow(XRCID("ID_ADD"))->Enable(GetText(XRCID("ID_EXTENSION")) != _T(""));
 }
 
 void COptionsPageFiletype::OnRemove(wxCommandEvent& event)
@@ -138,7 +138,7 @@ void COptionsPageFiletype::OnRemove(wxCommandEvent& event)
 
 void COptionsPageFiletype::OnAdd(wxCommandEvent& event)
 {
-	wxString ext = GetText("ID_EXTENSION");
+	wxString ext = GetText(XRCID("ID_EXTENSION"));
 	if (ext == _T(""))
 	{
 		wxBell();

@@ -135,17 +135,8 @@ void CRemoteListView::GetImageList()
 #else
 	m_pImageList = new wxImageList(16, 16);
 
-	wxBitmap bmp;
-	
-	wxLogNull *tmp = new wxLogNull;
-	
-	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("16x16/file.png"), wxBITMAP_TYPE_PNG);
-	m_pImageList->Add(bmp);
-
-	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("16x16/folder.png"), wxBITMAP_TYPE_PNG);
-	m_pImageList->Add(bmp);
-
-	delete tmp;
+	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FILE"),  wxART_OTHER, wxSize(16, 16)));
+	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDER"),  wxART_OTHER, wxSize(16, 16)));
 #endif
 	SetImageList(m_pImageList, wxIMAGE_LIST_SMALL);
 }

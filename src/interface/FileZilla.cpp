@@ -8,6 +8,14 @@
 #endif
 
 #ifdef __WXMSW__
+
+	#if defined _WIN32_IE && __WIN32_IE <= 0x500
+		#undef _WIN32_IE
+		#define _WIN32_IE 0x0500
+	#elif !defined _WIN32_IE
+		#define _WIN32_IE 0x0500
+	#endif
+
 	#include <shlobj.h>
 
 	// Needed for MinGW:
@@ -44,15 +52,15 @@ USE AT OWN RISK"), _T("Important Information"));
 	wxIdleEvent::SetMode(wxIDLE_PROCESS_SPECIFIED);
 
 	wxFrame *frame = new CMainFrame();
-	SetTopWindow(frame);
 	frame->Show(true);
+	SetTopWindow(frame);
 
 	return true;
 }
 
 wxString GetDataDir(wxString fileToFind)
 {
-/*
+	/*
 	 * Finding the resources in all cases is a difficult task,
 	 * due to the huge variety of diffent systems and their filesystem
 	 * structure.
@@ -151,7 +159,7 @@ bool CFileZillaApp::LoadResourceFiles()
 	if (m_resourceDir[m_resourceDir.Length() - 1] != wxFileName::GetPathSeparator())
 		m_resourceDir += wxFileName::GetPathSeparator();
 
-	m_resourceDir += _T("/resources/");
+	m_resourceDir += _T("resources/");
 	
 	wxXmlResource::Get()->InitAllHandlers();
 	wxXmlResource::Get()->Load(m_resourceDir + _T("*.xrc"));

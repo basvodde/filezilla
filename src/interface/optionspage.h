@@ -16,15 +16,17 @@ public:
 	virtual bool SavePage() = 0;
 	virtual bool Validate() { return true; }
 
-	void SetCheck(const char* id, bool checked, bool& failure);
-	void SetRCheck(const char* id, bool checked, bool& failure);
-	void SetText(const char* id, const wxString& text, bool& failure);
+	void SetCheck(int id, bool checked, bool& failure);
+	void SetRCheck(int id, bool checked, bool& failure);
+	void SetText(int id, const wxString& text, bool& failure);
+	void SetStaticText(int id, const wxString& text, bool& failure);
 
 	// The GetXXX functions do never return an error since the controls were 
 	// checked to exist while loading the dialog.
-	bool GetCheck(const char* id);
-	bool GetRCheck(const char* id);
-	wxString GetText(const char* id);
+	bool GetCheck(int id);
+	bool GetRCheck(int id);
+	wxString GetText(int id);
+	wxString GetStaticText(int id);
 
 protected:
 	COptions* m_pOptions;
