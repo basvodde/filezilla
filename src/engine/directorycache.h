@@ -29,6 +29,7 @@ public:
 	void InvalidateServer(const CServer& server);
 	void RemoveDir(const CServer& server, const CServerPath& path, const wxString& filename);
 	void Rename(const CServer& server, const CServerPath& pathFrom, const wxString& fileFrom, const CServerPath& pathTo, const wxString& fileTo);
+	void AddParent(const CServer& server, const CServerPath& path, const CServerPath& parentPath, const wxString subDir);
 
 protected:
 

@@ -492,6 +492,8 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 			bool found = cache.Lookup(*pListing, *m_pCurrentServer, m_CurrentPath);
 			if (found && !pListing->m_hasUnsureEntries)
 			{
+				if (!pData->path.IsEmpty() && pData->subDir != _T(""))
+					cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
 				SendDirectoryListing(pListing);
 				ResetOperation(FZ_REPLY_OK);
 				return FZ_REPLY_OK;

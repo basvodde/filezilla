@@ -354,3 +354,30 @@ void CDirectoryCache::Rename(const CServer& server, const CServerPath& pathFrom,
 		InvalidateServer(server);
 	}
 }
+
+void CDirectoryCache::AddParent(const CServer& server, const CServerPath& path, const CServerPath& parentPath, const wxString subDir)
+{
+	for (tCacheIter iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
+	{
+		CCacheEntry &entry = *iter;
+		if (entry.server != server)
+			continue;
+
+		if (entry.listing.path != path)
+			continue;
+
+		// Search for parents
+		for (tParentsIter parentsIter = entry.parents.begin(); parentsIter != entry.parents.end(); parentsIter++)
+		{
+			const CCacheEntry::t_parent &parent = *parentsIter;
+			if (parent.path == parentPath && parent.subDir == subDir)
+				return;
+		}
+
+		// Store parent
+		CCacheEntry::t_parent parent;
+		parent.path = parentPath;
+		parent.subDir = subDir;
+		entry.parents.push_front(parent);
+	}
+}
