@@ -9,7 +9,7 @@
 struct t_OptionsCache
 {
 	bool cached;
-	long numValue;
+	int numValue;
 	wxString strValue;
 };
 
@@ -41,8 +41,8 @@ public:
 	wxString ConvLocal(const char *value) const;
 
 protected:
-	void Validate(unsigned int nID, int &value);
-	void Validate(unsigned int nID, wxString &value);
+	int Validate(unsigned int nID, int value);
+	wxString Validate(unsigned int nID, wxString value);
 
 	void SetXmlValue(unsigned int nID, wxString value);
 	bool GetXmlValue(unsigned int nID, wxString &value);

@@ -87,7 +87,7 @@ int COptions::GetOptionVal(unsigned int nID)
 	else
 	{
 		value.ToLong(&numValue);
-		Validate(nID, numValue);
+		numValue = Validate(nID, numValue);
 	}
 
 	m_optionsCache[nID].numValue = numValue;
@@ -184,7 +184,11 @@ void COptions::CreateNewXmlDocument()
 		if (options[i].type == string)
 			m_optionsCache[i].strValue = options[i].defaultValue;
 		else
-			options[i].defaultValue.ToLong(&m_optionsCache[i].numValue);
+		{
+			long numValue = 0;
+			options[i].defaultValue.ToLong(&numValue);
+			m_optionsCache[i].numValue = numValue;
+		}
 		SetXmlValue(i, options[i].defaultValue);
 	}
 }
@@ -284,12 +288,14 @@ bool COptions::GetXmlValue(unsigned int nID, wxString &value)
 	return false;
 }
 
-void COptions::Validate(unsigned int nID, int &value)
+int COptions::Validate(unsigned int nID, int value)
 {
+	return value;
 }
 
-void COptions::Validate(unsigned int nID, wxString &value)
+wxString COptions::Validate(unsigned int nID, wxString value)
 {
+	return value;
 }
 
 TiXmlElement *COptions::GetXml()
