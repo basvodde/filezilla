@@ -1,7 +1,5 @@
 localesdir = $(pkgdatadir)/locales
 
-WXWIN_LINGUAS  =    de
-
 CLEANFILES = *.mo resources.h
 
 dist_noinst_DATA = filezilla.pot @FILEZILLA_LINGUAS_PO@
@@ -14,17 +12,22 @@ install-filezilla-catalogs: allmo
 	    $(INSTALL_DATA) $(srcdir)/$$i.mo $(DESTDIR)$(localesdir)/$$i/LC_MESSAGES/filezilla.mo ; \
 	done
 
-install-wxstd-catalogs:
-	for i in $(WXWIN_LINGUAS) ; do \
-	    $(mkinstalldirs) $(DESTDIR)$(localesdir)/$$i/LC_MESSAGES ; \
-	    $(INSTALL_DATA) $(srcdir)/wxwin/$$i.mo $(DESTDIR)$(localesdir)/$$i/LC_MESSAGES/filezilla-wxstd.mo ; \
-	done
+# Unused code
+#WXWIN_LINGUAS  =    de
+
+#install-wxstd-catalogs:
+#	for i in $(WXWIN_LINGUAS) ; do \
+#	    $(mkinstalldirs) $(DESTDIR)$(localesdir)/$$i/LC_MESSAGES ; \
+#	    $(INSTALL_DATA) $(srcdir)/wxwin/$$i.mo $(DESTDIR)$(localesdir)/$$i/LC_MESSAGES/filezilla-wxstd.mo ; \
+#	done
 
 
 
 # ----------------------------------------------------------------------------
 # Logic for catalogs updating follows
-# Try to not touch catalog files if nothing has changed
+# Try to not modify catalog files if nothing has changed
+# But touch them to make sure the timestamps are correct
+# so that the uptodate checks are only made if neccessary.
 # ----------------------------------------------------------------------------
 
 # the programs we use (TODO: use configure to detect them)
@@ -48,30 +51,41 @@ XGETTEXT_ARGS=-C -k_ -kwxGetTranslation -kwxTRANSLATE -s -j
 		cp $(srcdir)/filezilla.pot $@; \
 	fi
 	@if [ -f $@~ ]; then rm $@~; fi
+
+# touch file so that timestamp is newer than that of filezilla.pot
 	@touch $@;
 
+# generate resources.h from the xrc files. We have to do this since
+# xgettext cannot handle xrc files. So export all translatable strings from
+# the resource files into resources.h using wxrc.
 resources.h: ../src/interface/resources/*.xrc
 	@if [ -f $@~ ]; then rm $@~; fi
+
 	wxrc -g -e $(srcdir)/../src/interface/resources/*.xrc > $@~ || exit 1
+
+# strip strings not marked for translation (enclosed in <>)
 	cat $@~ | sed "s/_(\"<.*>\")\;//" > $@
+
 	@if [ -f $@~ ]; then rm $@~; fi
 
 filezilla.pot: resources.h ../src/include/*.h ../src/engine/*.h ../src/interface/*.h  ../src/engine/*.cpp ../src/interface/*.cpp 
-	@rm -f filezilla_new.pot
-	@touch filezilla_new.pot
+	@rm -f $@.new
+	@touch $@.new
 
-	(cd $(srcdir) ; $(XGETTEXT) $(XGETTEXT_ARGS) -o filezilla_new.pot resources.h)
-	(cd $(srcdir) ; find ../src -name "*.h" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o filezilla_new.pot)
-	(cd $(srcdir) ; find ../src -name "*.cpp" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o filezilla_new.pot)
+# create filezilla.pot.new from the source files
+	(cd $(srcdir) ; $(XGETTEXT) $(XGETTEXT_ARGS) -o $@.new resources.h)
+	(cd $(srcdir) ; find ../src -name "*.h" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o $@.new)
+	(cd $(srcdir) ; find ../src -name "*.cpp" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o $@.new)
 
 	if [ -f $@ ]; then \
 		touch $@; \
-		$(MSGMERGE) -U $@ filezilla_new.pot; \
-		if [ -f $@~ ]; then rm $@~; fi; \
-		rm filezilla_new.pot; \
+		$(MSGMERGE) -U $@ $@.new; \
 	else \
-		mv filezilla_new.pot $@; \
+		mv $@.new $@; \
 	fi;
+
+	@if [ -f $@~ ]; then rm $@~; fi
+	@if [ -f $@.new ]; then rm $@.new; fi
 
 allpo: @FILEZILLA_LINGUAS_PO@
 
