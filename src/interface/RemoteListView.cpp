@@ -81,7 +81,7 @@ CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState
 		return;
 	}
 
-	char buffer[1000] = {0};
+	wxChar buffer[1000] = {0};
 	HDITEM item;
 	item.mask = HDI_TEXT;
 	item.pszText = buffer;
@@ -362,7 +362,7 @@ void CRemoteListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 			HWND hWnd = (HWND)GetHandle();
 			HWND header = (HWND)SendMessage(hWnd, LVM_GETHEADER, 0, 0);
 
-			char buffer[100];
+			wxChar buffer[100];
 			HDITEM item;
 			item.mask = HDI_TEXT | HDI_FORMAT;
 			item.pszText = buffer;
@@ -385,7 +385,7 @@ void CRemoteListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 		HWND hWnd = (HWND)GetHandle();
 		HWND header = (HWND)SendMessage(hWnd, LVM_GETHEADER, 0, 0);
 
-		char buffer[100];
+		wxChar buffer[100];
 		HDITEM item;
 		item.mask = HDI_TEXT | HDI_FORMAT;
 		item.pszText = buffer;

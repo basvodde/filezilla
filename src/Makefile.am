@@ -1,3 +1,3 @@
-SUBDIRS = include engine interface .
+SUBDIRS = include engine tinyxml interface .
 
 dist_noinst_DATA = FileZilla.sln

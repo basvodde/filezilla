@@ -1,6 +1,10 @@
 #include "FileZilla.h"
 #include "Mainfrm.h"
 
+#ifdef __WXMSW__
+	#include <shlobj.h>
+#endif
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -17,9 +21,46 @@ protected:
 
 IMPLEMENT_APP(CFileZillaApp)
 
+wxString resourcePath;
+wxString dataPath; // Settings and such things
+
 bool CFileZillaApp::OnInit()
 {
 	wxSystemOptions::SetOption(wxT("msw.remap"), 0);
+
+#ifdef __WXMSW__
+	wxChar buffer[MAX_PATH * 2 + 1];
+	wxFileName fn;
+
+	if (SUCCEEDED(SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, buffer)))
+	{
+		fn = wxFileName(buffer, _T(""));
+		fn.AppendDir(_T("FileZilla"));
+		if (!fn.DirExists())
+			wxMkdir(fn.GetPath(), 700);
+	}
+	else
+	{
+		// Fall back to directory where the executable is
+		if (GetModuleFileName(0, buffer, MAX_PATH * 2))
+			fn = buffer;
+	}
+#else
+	wxFileName fn = wxGetHomeDir();
+	fn.AppendDir(_T(".filezilla"));
+	if (!fn.DirExists())
+		wxMkdir(fn.GetPath(), 700);
+#endif
+	dataPath = fn.GetPath();
+
+#ifndef _DEBUG
+	wxMessageBox(_T("This software is still alpha software in early development, don't expect anything to work\r\n\
+DO NOT post bugreports,\r\n\
+DO NOT use it in production environments,\r\n\
+DO NOT distrubute it,\r\n\
+DO NOT complain about it\r\n\
+USE AT OWN RISK"), _T("Important Information"));
+#endif
 
 	if (!LoadResourceFiles())
 		return false;
@@ -31,7 +72,6 @@ bool CFileZillaApp::OnInit()
 	return true;
 }
 
-wxString resourcePath;
 bool CFileZillaApp::LoadResourceFiles()
 {
 	wxPathList pathList;

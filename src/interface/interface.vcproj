@@ -43,7 +43,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libidn.a wxmsw.lib wxxrc.lib wsock32.lib odbc32.lib odbccp32.lib comctl32.lib ..\lib\engine.lib"
+				AdditionalDependencies="libidn.a wsock32.lib odbc32.lib odbccp32.lib comctl32.lib ..\lib\engine.lib wxbase25.lib wxmsw25_core.lib wxpng.lib wxbase25_net.lib wxbase25_xml.lib wxxrc.lib wxzlib.lib wxmsw25_adv.lib wxmsw25_html.lib wxexpat.lib"
 				OutputFile="../bin/FileZilla.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -194,6 +194,18 @@
 			</File>
 			<File
 				RelativePath=".\StatusView.cpp">
+			</File>
+			<File
+				RelativePath="..\tinyxml\tinystr.cpp">
+			</File>
+			<File
+				RelativePath="..\tinyxml\tinyxml.cpp">
+			</File>
+			<File
+				RelativePath="..\tinyxml\tinyxmlerror.cpp">
+			</File>
+			<File
+				RelativePath="..\tinyxml\tinyxmlparser.cpp">
 			</File>
 		</Filter>
 		<Filter
