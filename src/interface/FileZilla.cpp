@@ -1,6 +1,10 @@
 #include "FileZilla.h"
 #include "Mainfrm.h"
 
+#ifdef ENABLE_BINRELOC
+	#include "prefix.h"
+#endif
+
 #ifdef __WXMSW__
 	#include <shlobj.h>
 
@@ -77,52 +81,98 @@ USE AT OWN RISK"), _T("Important Information"));
 	return true;
 }
 
-bool CFileZillaApp::LoadResourceFiles()
+wxString GetDataDir(wxString fileToFind)
 {
+/*
+	 * Finding the resources in all cases is a difficult task,
+	 * due to the huge variety of diffent systems and their filesystem
+	 * structure.
+	 * Basically we just check a couple of paths for presence of the resources,
+	 * and hope we find them. If not, the user can still specify on the cmdline
+	 * and using environment variables where the resources are.
+	 */
+
 	wxPathList pathList;
 	// FIXME: --datadir cmdline
 	
+	// First try the user specified data dir.
 	pathList.AddEnvList(_T("FZ_DATADIR"));
+	
+	// Next try the current path and the current executable path.
+	// Without this, running development versions would be difficult.
+	
 	pathList.Add(wxGetCwd());
+	
+#ifdef ENABLE_BINRELOC
+	const char* path = SELFPATH;
+	if (path && *path)
+	{
+		wxString datadir(SELFPATH , *wxConvCurrent);
+		wxFileName fn(datadir);
+		datadir = fn.GetPath();
+		if (datadir != _T(""))
+			pathList.Add(datadir);
+
+	}
+	path = DATADIR;
+	if (path && *path)
+	{
+		wxString datadir(DATADIR, *wxConvCurrent);
+		if (datadir != _T(""))
+			pathList.Add(datadir);
+	}
+#endif
+
+	// Now scan through the path
 	pathList.AddEnvList(_T("PATH"));
-#ifdef __WXMSW_
+
+#ifdef __WXMSW__
 #else
+	// Try some common paths
 	pathList.Add(_T("/usr/share/filezilla"));
 	pathList.Add(_T("/usr/local/share/filezilla"));
 #endif
 
-	wxString wxPath;
-
+	// For each path, check for the resources
 	wxPathList::const_iterator node;
-	for (node = pathList.begin(); node != pathList.end() && wxPath == _T(""); node++)
+	for (node = pathList.begin(); node != pathList.end() && resourcePath == _T(""); node++)
 	{
 		wxString cur = *node;
-		if (wxFileExists(cur + _T("/resources/menus.xrc")))
-			wxPath = cur;
-		else if (wxFileExists(cur + _T("/share/filezilla/resources/menus.xrc")))
-			wxPath = cur + _T("/share/filezilla");
-		else if (wxFileExists(cur + _T("/filezilla/resources/menus.xrc")))
-			wxPath = cur + _T("/filezilla");
-		else if (wxFileExists(cur + _T("/FileZilla.app/Contents/MacOS/resources/menus.xrc")))
-			wxPath = cur + _T("/FileZilla.app/Contents/MacOS");
+		if (wxFileExists(cur + fileToFind))
+			return cur;
+		if (wxFileExists(cur + _T("/share/filezilla") + fileToFind))
+			return cur + _T("/share/filezilla");
+		if (wxFileExists(cur + _T("/filezilla") + fileToFind))
+			return cur + _T("/filezilla");
+#if defined(__WXMAC__) || defined(__WXCOCOA)
+		if (wxFileExists(cur + _T("/FileZilla.app/Contents/MacOS") + fileToFind))
+			return cur + _T("/FileZilla.app/Contents/MacOS");
+#endif
 	}
 	
-	for (node = pathList.begin(); node != pathList.end() && wxPath == _T(""); node++)
+	for (node = pathList.begin(); node != pathList.end() && resourcePath == _T(""); node++)
 	{
 		wxString cur = *node;
-		if (wxFileExists(cur + _T("/../resources/menus.xrc")))
-			wxPath = cur + _T("/..");
-		else if (wxFileExists(cur + _T("/../share/filezilla/resources/menus.xrc")))
-			wxPath = cur + _T("/../share/filezilla");
+		if (wxFileExists(cur + _T("/..") + fileToFind))
+			return cur + _T("/..");
+		if (wxFileExists(cur + _T("/../share/filezilla") + fileToFind))
+			return cur + _T("/../share/filezilla");
 	}
+	
+	return _T("");
+}
+
+bool CFileZillaApp::LoadResourceFiles()
+{
+	resourcePath = GetDataDir(_T("/resources/menus.xrc"));
 
 	wxImage::AddHandler(new wxPNGHandler());
 	wxImage::AddHandler(new wxXPMHandler());
-	wxLocale::AddCatalogLookupPathPrefix(wxPath + _T("/locales"));
+	wxLocale::AddCatalogLookupPathPrefix(resourcePath + _T("/locales"));
 	m_locale.Init(wxLANGUAGE_DEFAULT);
 	m_locale.AddCatalog(_T("filezilla"));
 	
-	if (wxPath == _T(""))
+	if (resourcePath == _T(""))
 	{
 		wxString msg = _("Could not find the resource files for FileZilla, closing FileZilla.\nYou can set the data directory of FileZilla using the '--datadir <custompath>' commandline option or by setting the FZ_DATADIR environment variable.");
 		wxMessageBox(msg, _("FileZilla Error"), wxOK | wxICON_ERROR);
@@ -130,9 +180,8 @@ bool CFileZillaApp::LoadResourceFiles()
 	}
 	
 	wxXmlResource::Get()->InitAllHandlers();
-	wxXmlResource::Get()->Load(wxPath + _T("/resources/*.xrc"));
+	wxXmlResource::Get()->Load(resourcePath + _T("/resources/*.xrc"));
 
-	resourcePath = wxPath;
 	if (resourcePath[resourcePath.Length() - 1] != wxFileName::GetPathSeparator())
 		resourcePath += wxFileName::GetPathSeparator();
 	resourcePath += _T("resources");

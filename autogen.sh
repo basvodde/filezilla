@@ -1,5 +1,12 @@
 #!/bin/sh
 echo "HINT: If this script fails, try './update-configure.sh'"
+echo "** Cleaning previous files **"
+
+rm -rf  configure configure.log aclocal.m4 \
+	config.status config autom4te.cache
+find . -name "Makefile.in" | xargs rm
+find . -name "Makefile" | xargs rm
+
 echo "** Creating configure and friends"
 if [ ! -e config ]
 then
@@ -11,11 +18,11 @@ am_version_major=`echo $am_version | sed 's/.*\([[0-9]]*\).\([[0-9]]*\)\(\.\|-p\
 am_version_minor=`echo $am_version | sed 's/.*\([[0-9]]*\).\([[0-9]]*\)\(\.\|-p\)\([[0-9]]*\).*/\2/'`
 
 if test "$am_version_major" = "" -o "$am_version_minor" = ""; then
-  export WANT_AUTOMAKE="1.6"
+  export WANT_AUTOMAKE="1.7"
 elif test $am_version_major -lt 1; then
-  export WANT_AUTOMAKE="1.6"
-elif test $am_version_major -eq 1 && test $am_version_minor -lt 6; then
-  export WANT_AUTOMAKE="1.6"
+  export WANT_AUTOMAKE="1.7"
+elif test $am_version_major -eq 1 && test $am_version_minor -lt 7; then
+  export WANT_AUTOMAKE="1.7"
 fi
 
 set -x
