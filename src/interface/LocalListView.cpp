@@ -30,10 +30,18 @@ END_EVENT_TABLE()
 	class wxImageListMsw : public wxImageList
 	{
 	public:
-		wxImageListMsw() : wxImageList() {};
+		wxImageListMsw(bool nodelete = true) : wxImageList() { m_nodelete = nodelete; }
+		wxImageListMsw(int width, int height, const bool mask = true, int initialCount = 1, bool nodelete = true)
+			: wxImageList(width, height, mask, initialCount)
+		{
+			m_nodelete = nodelete;
+		}
 		wxImageListMsw(WXHIMAGELIST hList) { m_hImageList = hList; };
-		~wxImageListMsw() { m_hImageList = 0; };
+		~wxImageListMsw() { if (m_nodelete) m_hImageList = 0; };
 		HIMAGELIST GetHandle() const { return (HIMAGELIST)m_hImageList; };
+
+	protected:
+		bool m_nodelete;
 	};
 #endif
 
@@ -56,8 +64,7 @@ CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, 
 
 #ifdef __WXMSW__
 	// Initialize imagelist for list header
-	m_pHeaderImageList = new wxImageListMsw(ImageList_Create(8, 8, ILC_MASK, 3, 3));
-	ImageList_SetBkColor(m_pHeaderImageList->GetHandle(), CLR_NONE);
+	m_pHeaderImageList = new wxImageListMsw(8, 8, true, 3, false);
 
 	wxBitmap bmp;
 	
