@@ -1,4 +1,4 @@
-AC_INIT(FileZilla, 2.9, tim.kosse@gmx.de)
+AC_INIT(FileZilla, 2.9.3, tim.kosse@gmx.de)
 AC_CONFIG_AUX_DIR(config)
 AM_INIT_AUTOMAKE([dist-bzip2])
 
@@ -84,6 +84,7 @@ AC_SUBST(WINDRESFLAGS)
 AM_CONDITIONAL(USE_RESOURCEFILE, test x$use_resourcefile = xtrue)
 
 AM_CONDITIONAL(MACAPPBUNDLE, echo $WX_CPPFLAGS | grep __WXMAC__)
+AM_CONDITIONAL(MAKENSISSCRIPT, echo $host_os | grep "mingw" > /dev/null 2>&1)
 
 AC_CHECK_HEADER(idna.h,, 
 [
@@ -132,17 +133,6 @@ do
 done
 
 AC_MSG_RESULT([$FILEZILLA_LINGUAS])
-
-if echo $host_os | grep -i "mingw" > /dev/null 2>&1 ; then
-  rm -f data/installlangfiles.nsh
-  rm -f data/uninstalllangfiles.nsh
-  INSTALLLANGUAGEFILES=
-  for i in $FILEZILLA_LINGUAS; do
-    echo "!insertmacro INSTALLLANGFILE $i" >> data/installlangfiles.nsh
-    echo "!insertmacro UNINSTALLLANGFILE $i" >> data/uninstalllangfiles.nsh
-  done
-  AC_CONFIG_FILES(data/install.nsi)
-fi
 
 CATALOGS_TO_INSTALL="install-filezilla-catalogs"
 
