@@ -1223,6 +1223,13 @@ int CFtpControlSocket::FileTransferParseResponse()
 		pData->pFile = new wxFile;
 		if (pData->download)
 		{
+			// Be quiet
+			wxLogNull nullLog;
+
+			// Create local directory
+			wxFileName fn(pData->localFile);
+			wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
+
 			wxFileOffset startOffset;
 			if (pData->resume)
 			{
