@@ -14,6 +14,8 @@
 #include <wx/imaglist.h>
 #include <wx/mimetype.h>
 #include <wx/dir.h>
+#include <wx/list.h>
+#include <wx/filefn.h>
 
 #include <list>
 #include <vector>
@@ -26,5 +28,6 @@
 #include "commands.h"
 #include "notification.h"
 #include "FileZillaEngine.h"
+#include "directorylisting.h"
 
 #endif

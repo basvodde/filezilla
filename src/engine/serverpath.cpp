@@ -247,7 +247,7 @@ wxString CServerPath::GetSafePath() const
 		safepath += m_prefix + _T(" ");
 
 	for (tConstSegmentIter iter = m_Segments.begin(); iter != m_Segments.end(); iter++)
-		safepath += wxString::Format(_T("%d %s "), iter->Length(), iter->c_str);
+		safepath += wxString::Format(_T("%d %s "), iter->Length(), iter->c_str());
 
 	if (!m_Segments.empty())
 		safepath.RemoveLast();
