@@ -1,6 +1,6 @@
 #include "FileZilla.h"
 #include "commandqueue.h"
-#include "MainFrm.h"
+#include "Mainfrm.h"
 #include "state.h"
 
 CCommandQueue::CCommandQueue(CFileZillaEngine *pEngine, CMainFrame* pMainFrame)
