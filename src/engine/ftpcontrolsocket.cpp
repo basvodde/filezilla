@@ -547,7 +547,7 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 	delete m_pTransferSocket;
 	m_pTransferSocket = 0;
 
-	if (m_pCurOpData->pNextOpData)
+	if (m_pCurOpData && m_pCurOpData->pNextOpData)
 	{
 		COpData *pNext = m_pCurOpData->pNextOpData;
 		m_pCurOpData->pNextOpData = 0;
@@ -1381,7 +1381,7 @@ int CFtpControlSocket::CheckOverwriteFile()
 	wxStructStat buf;
 	int result;
 	result = wxStat(pData->localFile, &buf);
-	if (result)
+	if (!result)
 	{
 		pNotification->localSize = buf.st_size;
 		pNotification->localTime = wxDateTime(buf.st_mtime);
@@ -1391,11 +1391,44 @@ int CFtpControlSocket::CheckOverwriteFile()
 
 	pNotification->remoteFile = pData->remoteFile;
 	pNotification->remotePath = pData->remotePath;
+
 	if (pData->fileSize != -1)
 		pNotification->remoteSize = pData->fileSize;
 
 	if (pData->fileTime.IsValid())
 		pNotification->remoteTime = pData->fileTime;
+
+	CDirectoryListing listing;
+	CDirectoryCache cache;
+	bool found = cache.Lookup(listing, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath);
+	if (found)
+	{
+		for (unsigned int i = 0; i < listing.m_entryCount; i++)
+		{
+			if (listing.m_pEntries[i].name == pData->remoteFile)
+			{
+				if (pData->fileSize == -1)
+				{
+					wxLongLong size = listing.m_pEntries[i].size;
+					if (size >= 0)
+						pNotification->remoteSize = size;
+				}
+				if (!pData->fileTime.IsValid())
+				{
+					if (listing.m_pEntries[i].hasDate)
+					{
+						pNotification->remoteTime.Set(listing.m_pEntries[i].date.day, (enum wxDateTime::Month)listing.m_pEntries[i].date.month, listing.m_pEntries[i].date.year);
+						if (pNotification->remoteTime.IsValid() && listing.m_pEntries[i].hasTime)
+						{
+							pNotification->remoteTime.SetHour(listing.m_pEntries[i].time.hour);
+							pNotification->remoteTime.SetMinute(listing.m_pEntries[i].time.minute);
+						}
+					}
+				}
+			}
+		}
+	}
+
 
 	pNotification->requestNumber = m_pEngine->GetNextAsyncRequestNumber();
 	pData->waitAsyncRequest = true;

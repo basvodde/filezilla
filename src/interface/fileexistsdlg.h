@@ -18,6 +18,8 @@ public:
 	wxRadioButton* m_pAction;
 
 protected:
+	void LoadIcon(int id, const wxString &file);
+
 	CFileExistsNotification *m_pNotification;
 };
 

@@ -15,7 +15,6 @@
 #include "resources/filezilla.xpm"
 #endif
 
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -34,7 +33,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
     EVT_SPLITTER_SASH_POS_CHANGED(wxID_ANY, CMainFrame::OnSplitterSashPosChanged) 
 	EVT_CLOSE(CMainFrame::OnClose)
 END_EVENT_TABLE()
-#include <wx/file.h>
+
 CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
 {
 	SetSizeHints(250, 250);
@@ -79,7 +78,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 
 	m_pEngine = new CFileZillaEngine();
 	m_pEngine->Init(this, m_pOptions);
-
+	
 	m_pCommandQueue = new CCommandQueue(m_pEngine);
 
 	wxSize clientSize = GetClientSize();
@@ -429,6 +428,7 @@ void CMainFrame::OnSplitterSashPosChanged(wxSplitterEvent& event)
 
 void CMainFrame::OnClose(wxCloseEvent &event)
 {
-	m_pCommandQueue->Cancel();
+	if (m_pCommandQueue)
+		m_pCommandQueue->Cancel();
 	Destroy();
 }
