@@ -821,6 +821,7 @@ public:
 	CChangeDirOpData()
 	{
 		opId = cmd_private;
+		triedMkd = false;
 	}
 
 	virtual ~CChangeDirOpData()
@@ -829,7 +830,7 @@ public:
 
 	CServerPath path;
 	wxString subDir;
-
+	bool triedMkd;
 };
 
 enum cwdStates
@@ -906,7 +907,19 @@ int CFtpControlSocket::ChangeDirParseResponse()
 		break;
 	case cwd_cwd:
 		if (code != 2 && code != 3)
-			error = true;
+		{
+			// Create remote directory if part of a file upload
+			if (pData->pNextOpData && pData->pNextOpData->opId == cmd_transfer && 
+				!static_cast<CFileTransferOpData *>(pData->pNextOpData)->download && !pData->triedMkd)
+			{
+				pData->triedMkd = true;
+				int res = Mkdir(pData->path, pData->path);
+				if (res != FZ_REPLY_OK)
+					return res;
+			}
+			else
+				error = true;
+		}
 		else
 			pData->opState = cwd_pwd_cwd;
 		break;
@@ -2106,22 +2119,42 @@ public:
 	std::list<wxString> segments;
 };
 
-int CFtpControlSocket::Mkdir(const CServerPath& path)
+int CFtpControlSocket::Mkdir(const CServerPath& path, CServerPath start /*=CServerPath()*/)
 {
 	/* Directory creation works like this: First find a parent directory into
 	 * which we can CWD, then create the subdirs one by one. If either part 
 	 * fails, try MKD with the full path directly.
 	 */
 
-	LogMessage(Status, _("Creating directory '%s'..."), path.GetPath().c_str());
+	if (!m_pCurOpData)
+		LogMessage(Status, _("Creating directory '%s'..."), path.GetPath().c_str());
 
 	CMkdirOpData *pData = new CMkdirOpData;
 	pData->pNextOpData = m_pCurOpData;
 	pData->opState = mkd_findparent;
 	pData->path = path;
 
-	pData->currentPath = path.GetParent();
-	pData->segments.push_back(path.GetLastSegment());
+	if (!start.IsEmpty())
+	{
+		CServerPath curPath = path;
+		if (start != curPath && !start.IsParentOf(curPath, false))
+		{
+			ResetOperation(FZ_REPLY_INTERNALERROR);
+			return FZ_REPLY_ERROR;
+		}
+		while (curPath != start)
+		{
+			pData->segments.push_back(curPath.GetLastSegment());
+			curPath = curPath.GetParent();
+		}
+		pData->currentPath = curPath.GetParent();
+		pData->segments.push_back(curPath.GetLastSegment());
+	}
+	else
+	{
+		pData->currentPath = path.GetParent();
+		pData->segments.push_back(path.GetLastSegment());
+	}
 	
 	m_pCurOpData = pData;
 

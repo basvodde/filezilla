@@ -36,7 +36,7 @@ public:
 	virtual int RawCommand(const wxString& command = _T("")) = 0;
 	virtual int Delete(const CServerPath& path = CServerPath(), const wxString& file = _T("")) = 0;
 	virtual int RemoveDir(const CServerPath& path = CServerPath(), const wxString& subDir = _T("")) = 0;
-	virtual int Mkdir(const CServerPath& path) = 0;
+	virtual int Mkdir(const CServerPath& path, CServerPath start = CServerPath()) = 0;
 
 	enum Command GetCurrentCommandId() const;
 

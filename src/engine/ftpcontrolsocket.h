@@ -38,7 +38,7 @@ protected:
 	
 	virtual int RemoveDir(const CServerPath& path = CServerPath(), const wxString& subDir = _T(""));
 
-	virtual int Mkdir(const CServerPath& path);
+	virtual int Mkdir(const CServerPath& path, CServerPath start = CServerPath());
 	virtual int MkdirParseResponse();
 	virtual int MkdirSend();
 	
