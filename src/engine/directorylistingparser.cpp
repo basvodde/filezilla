@@ -550,8 +550,8 @@ CDirectoryListingParser::CDirectoryListingParser(CFileZillaEngine *pEngine, enum
 	
 	//German month names
 	m_MonthNamesMap[_T("mrz")] = 3;
-	m_MonthNamesMap[_T("mär")] = 3;
-	m_MonthNamesMap[_T("märz")] = 3;
+	m_MonthNamesMap[_T("m\xe4r")] = 3;
+	m_MonthNamesMap[_T("m\xe4rz")] = 3;
 	m_MonthNamesMap[_T("mai")] = 5;
 	m_MonthNamesMap[_T("juni")] = 5;
 	m_MonthNamesMap[_T("juli")] = 6;
@@ -560,19 +560,19 @@ CDirectoryListingParser::CDirectoryListingParser(CFileZillaEngine *pEngine, enum
 	
 	//French month names
 	m_MonthNamesMap[_T("janv")] = 1;
-	m_MonthNamesMap[_T("féb")] = 1;
-	m_MonthNamesMap[_T("fév")] = 2;
+	m_MonthNamesMap[_T("f\xe9b")] = 1;
+	m_MonthNamesMap[_T("f\xe9v")] = 2;
 	m_MonthNamesMap[_T("fev")] = 2;
-	m_MonthNamesMap[_T("févr")] = 2;
+	m_MonthNamesMap[_T("f\xe9vr")] = 2;
 	m_MonthNamesMap[_T("fevr")] = 2;
 	m_MonthNamesMap[_T("mars")] = 3;
 	m_MonthNamesMap[_T("avr")] = 4;
 	m_MonthNamesMap[_T("juin")] = 7;
 	m_MonthNamesMap[_T("juil")] = 7;
-	m_MonthNamesMap[_T("aoû")] = 8;
-	m_MonthNamesMap[_T("août")] = 8;
+	m_MonthNamesMap[_T("ao\xfb")] = 8;
+	m_MonthNamesMap[_T("ao\xfbt")] = 8;
 	m_MonthNamesMap[_T("aout")] = 8;
-	m_MonthNamesMap[_T("déc")] = 12;
+	m_MonthNamesMap[_T("d\xe9c")] = 12;
 	m_MonthNamesMap[_T("dec")] = 12;
 	
 	//Italian month names
@@ -606,23 +606,23 @@ CDirectoryListingParser::CDirectoryListingParser(CFileZillaEngine *pEngine, enum
 	m_MonthNamesMap[_T("lip")] = 7;
 	m_MonthNamesMap[_T("sie")] = 8;
 	m_MonthNamesMap[_T("wrz")] = 9;
-	m_MonthNamesMap[_T("paŸ")] = 10;
+	m_MonthNamesMap[_T("pa\x9f")] = 10;
 	m_MonthNamesMap[_T("lis")] = 11;
 	m_MonthNamesMap[_T("gru")] = 12;
 
 	//Russian month names
-	m_MonthNamesMap[_T("ÿíâ")] = 1;
-	m_MonthNamesMap[_T("ôåâ")] = 2;
-	m_MonthNamesMap[_T("ìàð")] = 3;
-	m_MonthNamesMap[_T("àïð")] = 4;
-	m_MonthNamesMap[_T("ìàé")] = 5;
-	m_MonthNamesMap[_T("èþí")] = 6;
-	m_MonthNamesMap[_T("èþë")] = 7;
-	m_MonthNamesMap[_T("àâã")] = 8;
-	m_MonthNamesMap[_T("ñåí")] = 9;
-	m_MonthNamesMap[_T("îêò")] = 10;
-	m_MonthNamesMap[_T("íîÿ")] = 11;
-	m_MonthNamesMap[_T("äåê")] = 12;
+	m_MonthNamesMap[_T("\xff\xed\xe2")] = 1;
+	m_MonthNamesMap[_T("\xf4\xe5\xe2")] = 2;
+	m_MonthNamesMap[_T("\xec\xe0\xf0")] = 3;
+	m_MonthNamesMap[_T("\xe0\xef\xf0")] = 4;
+	m_MonthNamesMap[_T("\xec\xe0\xe9")] = 5;
+	m_MonthNamesMap[_T("\xe8\xfe\xed")] = 6;
+	m_MonthNamesMap[_T("\xe8\xfe\xeb")] = 7;
+	m_MonthNamesMap[_T("\xe0\xe2\xe3")] = 8;
+	m_MonthNamesMap[_T("\xf1\xe5\xed")] = 9;
+	m_MonthNamesMap[_T("\xee\xea\xf2")] = 10;
+	m_MonthNamesMap[_T("\xed\xee\xff")] = 11;
+	m_MonthNamesMap[_T("\xe4\xe5\xea")] = 12;
 
 	//Dutch month names
 	m_MonthNamesMap[_T("mrt")] = 3;
