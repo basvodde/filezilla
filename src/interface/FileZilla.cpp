@@ -10,12 +10,26 @@ class CFileZillaApp : public wxApp
 public:
 	virtual bool OnInit();
 protected:
+	bool LoadResourceFiles();
+
 	wxLocale m_locale;
 };
 
 IMPLEMENT_APP(CFileZillaApp)
 
 bool CFileZillaApp::OnInit()
+{
+	if (!LoadResourceFiles())
+		return false;
+
+	wxFrame *frame = new CMainFrame();
+	SetTopWindow(frame);
+	frame->Show(true);
+
+	return true;
+}
+
+bool CFileZillaApp::LoadResourceFiles()
 {
 	wxPathList pathList;
 	// FIXME: --datadir cmdline
@@ -34,20 +48,18 @@ bool CFileZillaApp::OnInit()
 	{
 		wxString cur = node->GetData();
 		if (wxFileExists(cur + "/resources/menus.xrc"))
-		{
 			wxPath = cur;
-			break;
-		}
+		else if (wxFileExists(cur + "/share/filezilla/resources/menus.xrc"))
+			wxPath = cur + "/share/filezilla";
 		else if (wxFileExists(cur + "/../resources/menus.xrc"))
-		{
-			wxPath = cur + "/../";
-			break;
-		}
+			wxPath = cur + "/..";
+		else if (wxFileExists(cur + "/../share/filezilla/resources/menus.xrc"))
+			wxPath = cur + "/../share/filezilla";
 		else if (wxFileExists(cur + "/filezilla/resources/menus.xrc"))
-		{
 			wxPath = cur + "/filezilla";
+
+		if (wxPath != "")
 			break;
-		}
 	}
 	
 	wxImage::AddHandler(new wxPNGHandler());
@@ -64,9 +76,4 @@ bool CFileZillaApp::OnInit()
 	
 	wxXmlResource::Get()->InitAllHandlers();
 	wxXmlResource::Get()->Load(wxPath + "/resources/*.xrc");
-	wxFrame *frame = new CMainFrame();
-	SetTopWindow(frame);
-	frame->Show(true);
-
-	return true;
 }
