@@ -1,1 +1,1 @@
-dist_noinst_DATA = install.nsi mingwm10.dll uninstall.ico
+dist_noinst_DATA = install.nsi.in mingwm10.dll uninstall.ico

@@ -134,7 +134,7 @@ checkTools()
 	fi
 
 	echo -n "$N.2 "; version_check aclocal
-	echo -n "$N.3 "; version_check autoconf 2 5
+	echo -n "$N.3 "; version_check autoconf 2 50
 	echo -n "$N.4 "; version_check libtoolize 1 4
 }
 

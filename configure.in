@@ -124,6 +124,17 @@ done
 
 AC_MSG_RESULT([$FILEZILLA_LINGUAS])
 
+if echo $host_os | grep -i "mingw" > /dev/null 2>&1 ; then
+  rm -f data/installlangfiles.nsh
+  rm -f data/uninstalllangfiles.nsh
+  INSTALLLANGUAGEFILES=
+  for i in $FILEZILLA_LINGUAS; do
+    echo "!insertmacro INSTALLLANGFILE $i" >> data/installlangfiles.nsh
+    echo "!insertmacro UNINSTALLLANGFILE $i" >> data/uninstalllangfiles.nsh
+  done
+  AC_CONFIG_FILES(data/install.nsi)
+fi
+
 CATALOGS_TO_INSTALL="install-filezilla-catalogs"
 
 # Check if we should use BinReloc
@@ -134,6 +145,7 @@ else
   use_binreloc=yes
   CPPFLAGS="$CPPFLAGS -DENABLE_BINRELOC"
 fi
+
 AC_MSG_RESULT([$use_binreloc])
 AM_CONDITIONAL(USE_BINRELOC, test $use_binreloc = yes)
 
@@ -144,9 +156,10 @@ AC_SUBST(FILEZILLA_LINGUAS_PO)
 AC_SUBST(FILEZILLA_LINGUAS_PO_NEW)
 AC_SUBST(WINDRESFLAGS)
 
-AC_OUTPUT(Makefile src/Makefile src/engine/Makefile src/tinyxml/Makefile
+AC_CONFIG_FILES(Makefile src/Makefile src/engine/Makefile src/tinyxml/Makefile
 src/interface/Makefile src/interface/resources/Makefile src/include/Makefile
 locales/Makefile src/interface/resources/16x16/Makefile
 src/interface/resources/32x32/Makefile data/Makefile
 src/interface/resources/cyril/Makefile
 src/interface/resources/cyril/16x16/Makefile)
+AC_OUTPUT
