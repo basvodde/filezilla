@@ -28,7 +28,6 @@ install-wxstd-catalogs:
 # (shamelessly stolen from wxWindows makefile):
 # ----------------------------------------------------------------------------
 
-
 # the programs we use (TODO: use configure to detect them)
 MSGFMT=msgfmt --verbose
 MSGMERGE=msgmerge
@@ -46,24 +45,31 @@ XGETTEXT_ARGS=-C -k_ -kwxGetTranslation -kwxTRANSLATE -s -j
 %.po: $(srcdir)/filezilla.pot
 	if [ -f $@ ]; then $(MSGMERGE) $@ $(srcdir)/filezilla.pot > $@.new && mv $@.new $@; else cp $(srcdir)/filezilla.pot $@; fi
 
-resources.h:
-	wxrc -g -e $(srcdir)/../src/interface/resources/*.xrc > $(srcdir)/resources.h
+resources.h: ../src/interface/resources/*.xrc
+	wxrc -g -e $(srcdir)/../src/interface/resources/*.xrc \
+	| sed "s/_(\"<.*>\")\;//" > $(srcdir)/resources.h
 
-$(srcdir)/filezilla.pot: resources.h
-	touch $@
-   
-	(cd $(srcdir) ; $(XGETTEXT) $(XGETTEXT_ARGS) -o filezilla.pot resources.h)
-	(cd $(srcdir) ; find ../src -name "*.h" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o filezilla.pot)
-	(cd $(srcdir) ; find ../src -name "*.cpp" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o filezilla.pot)
+filezilla.pot: resources.h
+	rm -f filezilla_new.pot
+	touch filezilla_new.pot
 
-allpo: force-update
+	(cd $(srcdir) ; $(XGETTEXT) $(XGETTEXT_ARGS) -o filezilla_new.pot resources.h)
+	(cd $(srcdir) ; find ../src -name "*.h" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o filezilla_new.pot)
+	(cd $(srcdir) ; find ../src -name "*.cpp" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o filezilla_new.pot)
+
+	if [ -f $@ ]; then \
+		touch $@; \
+		$(MSGMERGE) -U $@ filezilla_new.pot; \
+		rm filezilla_new.pot; \
+	else \
+		mv filezilla_new.pot $@; \
+	fi;
+
+allpo:
 	@-for t in $(FILEZILLA_LINGUAS); do $(MAKE) $(srcdir)/$$t.po; done
 
 allmo:
 	@for t in $(FILEZILLA_LINGUAS); do $(MAKE) $(srcdir)/$$t.mo; done
-
-force-update:
-	$(RM) $(srcdir)/filezilla.pot
 
 # print out the percentage of the translated strings
 stats:

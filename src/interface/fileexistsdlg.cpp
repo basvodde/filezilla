@@ -109,7 +109,7 @@ void CFileExistsDlg::CreateControls()
 				pStatText->SetLabel(_("Date/time unknown"));
 		}
 
-		//LoadIcon(XRCID("ID_FILE1_ICON"), m_pNotification->remoteFile);
+		LoadIcon(XRCID("ID_FILE1_ICON"), m_pNotification->remoteFile);
 
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE2_NAME")));
 		if (pStatText)
@@ -147,7 +147,7 @@ void CFileExistsDlg::LoadIcon(int id, const wxString &file)
 	if (!pStatBmp)
 		return;
 	
-#ifdef __WXMSW__457654
+#ifdef __WXMSW__
 	SHFILEINFO fileinfo;
 	memset(&fileinfo,0,sizeof(fileinfo));
 	if (SHGetFileInfo(file, FILE_ATTRIBUTE_NORMAL, &fileinfo, sizeof(fileinfo), SHGFI_ICON | SHGFI_USEFILEATTRIBUTES))

@@ -979,7 +979,7 @@ int CFtpControlSocket::FileTransferParseResponse()
 			{
 				if (!pData->pFile->Open(pData->localFile, wxFile::write_append))
 				{
-					LogMessage(::Error, _("Failed to \"%s\" for appending / writing"), pData->localFile.c_str());
+					LogMessage(::Error, _("Failed to open \"%s\" for appending / writing"), pData->localFile.c_str());
 					error = true;
 				}
 			}
@@ -987,7 +987,7 @@ int CFtpControlSocket::FileTransferParseResponse()
 			{
 				if (!pData->pFile->Open(pData->localFile, wxFile::write))
 				{
-					LogMessage(::Error, _("Failed to \"%s\" for writing"), pData->localFile.c_str());
+					LogMessage(::Error, _("Failed to open \"%s\" for writing"), pData->localFile.c_str());
 					error = true;
 				}
 			}
@@ -1024,7 +1024,7 @@ int CFtpControlSocket::FileTransferParseResponse()
 		{
 			if (!pData->pFile->Open(pData->localFile, wxFile::read))
 			{
-				LogMessage(::Error, _("Failed to \"%s\" for reading"), pData->localFile.c_str());
+				LogMessage(::Error, _("Failed to open \"%s\" for reading"), pData->localFile.c_str());
 				error = true;
 			}
 			
@@ -1060,7 +1060,7 @@ int CFtpControlSocket::FileTransferParseResponse()
 					// Assume native 64 bit type exists
 					if (pData->pFile->Seek(offset.GetValue(), wxFromStart) == wxInvalidOffset)
 					{
-                        LogMessage(::Error, _("Could not seek to offset %s within file"), offset.ToString().c_str());
+						LogMessage(::Error, _("Could not seek to offset %s within file"), offset.ToString().c_str());
 						error = true;
 					}
 				}
@@ -1252,7 +1252,7 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 	case filetransfer_rest:
 		if (!pData->pFile)
 		{
-			LogMessage(::Debug_Warning, _("Can't sent REST command, can't get local file length since pData->pFile is null"));
+			LogMessage(::Debug_Warning, _T("Can't send REST command, can't get local file length since pData->pFile is null"));
 			ResetOperation(FZ_REPLY_INTERNALERROR);
 			return FZ_REPLY_ERROR;
 		}

@@ -42,36 +42,38 @@ bool CFileZillaApp::LoadResourceFiles()
 	pathList.AddEnvList(_T("PATH"));
 #ifdef __WXMSW_
 #else
-	pathList.Add(_T("/usr/local/share/filezilla/"));
-	pathList.Add(_T("/usr/share/filezilla/"));
+	pathList.Add(_T("/usr/share/filezilla"));
+	pathList.Add(_T("/usr/local/share/filezilla"));
 #endif
 
 	wxString wxPath;
 
-	for (wxPathList::const_iterator node = pathList.begin(); node != pathList.end(); node++)
+	wxPathList::const_iterator node;
+	for (node = pathList.begin(); node != pathList.end() && wxPath == _T(""); node++)
 	{
 		wxString cur = *node;
 		if (wxFileExists(cur + _T("/resources/menus.xrc")))
 			wxPath = cur;
 		else if (wxFileExists(cur + _T("/share/filezilla/resources/menus.xrc")))
 			wxPath = cur + _T("/share/filezilla");
-		else if (wxFileExists(cur + _T("/../resources/menus.xrc")))
-			wxPath = cur + _T("/..");
-		else if (wxFileExists(cur + _T("/../share/filezilla/resources/menus.xrc")))
-			wxPath = cur + _T("/../share/filezilla");
 		else if (wxFileExists(cur + _T("/filezilla/resources/menus.xrc")))
 			wxPath = cur + _T("/filezilla");
 		else if (wxFileExists(cur + _T("/FileZilla.app/Contents/MacOS/resources/menus.xrc")))
 			wxPath = cur + _T("/FileZilla.app/Contents/MacOS");
-
-		if (wxPath != _T(""))
-			break;
 	}
 	
+	for (node = pathList.begin(); node != pathList.end() && wxPath == _T(""); node++)
+	{
+		wxString cur = *node;
+		if (wxFileExists(cur + _T("/../resources/menus.xrc")))
+			wxPath = cur + _T("/..");
+		else if (wxFileExists(cur + _T("/../share/filezilla/resources/menus.xrc")))
+			wxPath = cur + _T("/../share/filezilla");
+	}
+
 	wxImage::AddHandler(new wxPNGHandler());
 	wxImage::AddHandler(new wxXPMHandler());
 	wxLocale::AddCatalogLookupPathPrefix(wxPath + _T("/locales"));
-	m_locale.Init(wxLANGUAGE_GERMAN);
 	m_locale.AddCatalog(_T("filezilla"));
 	
 	if (wxPath == _T(""))

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-08-16 00:13+0200\n"
+"POT-Creation-Date: 2004-08-17 20:21+0200\n"
 "PO-Revision-Date: 2004-05-25 16:09+0100\n"
 "Last-Translator: Tim Kosse <tim.kosse@gmx.de>\n"
 "Language-Team: Tim Kosse <tim.kosse@gmx.de>\n"
@@ -17,116 +17,98 @@ msgstr ""
 
 #: resources.h:16
 msgid "&Always use this action"
-msgstr ""
+msgstr "&Immer diese Aktion verwenden"
 
 #: resources.h:20
 msgid "&Cancel"
-msgstr ""
+msgstr "&Abbrechen"
 
-#: ../src/interface/resources/resources.h:4 resources.h:4 resources.h:24
+#: resources.h:24
 msgid "&Edit"
 msgstr "&Bearbeiten"
 
-#: ../src/interface/resources/resources.h:1 resources.h:1 resources.h:21
+#: resources.h:21
 msgid "&File"
 msgstr "&Datei"
 
-#: ../src/interface/resources/resources.h:7 resources.h:7 resources.h:27
+#: resources.h:27
 msgid "&Host:"
 msgstr "&Host:"
 
 #: resources.h:11
 msgid "&Overwrite"
-msgstr ""
+msgstr "&Überschreiben"
 
-#: ../src/interface/resources/resources.h:11 resources.h:11 resources.h:31
+#: resources.h:31
 msgid "&Port:"
 msgstr "&Port:"
 
-#: ../src/interface/resources/resources.h:13 resources.h:13 resources.h:33
+#: resources.h:33
 msgid "&Quickconnect"
 msgstr "&Verbinden"
 
 #: resources.h:13
 msgid "&Resume"
-msgstr ""
+msgstr "&Fortsetzen"
 
-#: ../src/interface/resources/resources.h:5 resources.h:5 resources.h:25
+#: resources.h:25
 msgid "&Settings"
 msgstr "&Einstellungen"
 
 #: resources.h:15
 msgid "&Skip"
-msgstr ""
+msgstr "Ü&berspringen"
 
-#: ../src/interface/resources/resources.h:9 resources.h:9 resources.h:29
+#: resources.h:29
 msgid "&Username:"
 msgstr "&Benutzername:"
 
-#: resources.h:5 resources.h:9
-msgid "<date/time>"
-msgstr ""
+#: ../src/interface/fileexistsdlg.cpp:84
+msgid "A&pply only to downloads"
+msgstr "&Nur auf Downloads anwenden"
 
-#: resources.h:3 resources.h:7
-#, fuzzy
-msgid "<file>"
-msgstr "Datei"
-
-#: resources.h:4 resources.h:8
-msgid "<size>"
-msgstr ""
-
-#: resources.h:18
-msgid "<updownonly>"
-msgstr ""
+#: ../src/interface/fileexistsdlg.cpp:140
+msgid "A&pply only to uploads"
+msgstr "&Nur auf Uploads anwenden"
 
 #: resources.h:17
-msgid "Apply to current &queue only"
-msgstr ""
+msgid "Apply to &current queue only"
+msgstr "Nur auf aktuelle &Warteschlange anwenden"
 
-#: ../src/interface/Mainfrm.cpp:276 ../src/interface/Mainfrm.cpp:289
-#: ../src/interface/Mainfrm.cpp:300
+#: ../src/interface/Mainfrm.cpp:299
 msgid "Break current connection?"
 msgstr "Aktuelle Verbindung unterbrechen?"
-
-#: ../src/engine/ftpcontrolsocket.cpp:1249
-msgid ""
-"Can't sent REST command, can't get local file length since pData->pFile is "
-"null"
-msgstr ""
 
 #: ../src/engine/transfersocket.cpp:182
 msgid "Can't write data to file, disk is full."
 msgstr ""
+"In die Zieldatei kann nicht geschrieben werden, nicht genug Speicherplatz."
 
 #: ../src/engine/transfersocket.cpp:184 ../src/engine/transfersocket.cpp:187
 msgid "Can't write data to file."
-msgstr ""
+msgstr "In die Zieldatei kann nicht geschrieben werden."
 
-#: ../src/interface/resources/resources.h:14 resources.h:14 resources.h:34
+#: resources.h:34
 msgid "Cancel current operation"
 msgstr "Aktuelle Operation abbrechen?"
 
-#: ../src/interface/resources/resources.h:15 resources.h:15 resources.h:35
+#: resources.h:35
 msgid "Cancels the current operation"
 msgstr "Bricht aktuelle Operation ab"
 
-#: ../src/interface/Mainfrm.cpp:210 ../src/interface/Mainfrm.cpp:223
-#: ../src/interface/Mainfrm.cpp:233
+#: ../src/interface/Mainfrm.cpp:232
 msgid "Cannot load Quickconnect bar from resource file"
 msgstr "Quickconnect Leiste kann nicht aus Resourcen Datei geladen werden"
 
-#: ../src/interface/Mainfrm.cpp:192 ../src/interface/Mainfrm.cpp:205
-#: ../src/interface/Mainfrm.cpp:215
+#: ../src/interface/Mainfrm.cpp:214
 msgid "Cannot load main menu from resource file"
 msgstr "Hauptmenü kann nicht aus Resourcen Datei geladen werden"
 
-#: ../src/interface/Mainfrm.cpp:328 ../src/interface/Mainfrm.cpp:337
-#: ../src/interface/Mainfrm.cpp:355
+#: ../src/interface/Mainfrm.cpp:354
 msgid "Cannot load toolbar from resource file"
 msgstr "Werkzeugleiste kann nicht aus Resourcen Datei geladen werden"
 
-#: ../src/interface/resources/resources.h:3 resources.h:3 resources.h:23
+#: resources.h:23
 msgid "Close FileZilla"
 msgstr "FileZilla beenden"
 
@@ -134,38 +116,32 @@ msgstr "FileZilla beenden"
 msgid "Command:"
 msgstr "Befehl:"
 
-#: ../src/engine/ftpcontrolsocket.cpp:171
-#: ../src/engine/ftpcontrolsocket.cpp:192
 #: ../src/engine/ftpcontrolsocket.cpp:199
 msgid "Connected"
 msgstr "Verbunden"
 
-#: ../src/engine/ControlSocket.cpp:95 ../src/engine/ControlSocket.cpp:99
+#: ../src/engine/ControlSocket.cpp:99
 #, c-format
 msgid "Connecting to %s:%d..."
 msgstr "Verbinden mit %s:%d..."
 
-#: ../src/engine/ftpcontrolsocket.cpp:91 ../src/engine/ftpcontrolsocket.cpp:95
 #: ../src/engine/ftpcontrolsocket.cpp:99
 msgid "Connection established, waiting for welcome message..."
 msgstr "Verbindung hergestellt, warte auf Willkommensnachricht..."
 
-#: ../src/engine/ControlSocket.cpp:184 ../src/engine/ControlSocket.cpp:194
+#: ../src/engine/ControlSocket.cpp:194
 msgid "Could not connect to server"
 msgstr "Verbindung mit Server fehlgeschlagen"
 
-#: ../src/engine/ftpcontrolsocket.cpp:332
 #: ../src/engine/ftpcontrolsocket.cpp:365
-#, fuzzy
 msgid "Could not establish connection to server"
 msgstr "Verbindung mit Server fehlgeschlagen"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1265
-#, fuzzy
+#: ../src/engine/ftpcontrolsocket.cpp:1271
 msgid "Could not establish passive connection to server"
-msgstr "Verbindung mit Server fehlgeschlagen"
+msgstr "Passive Verbindung mit Server fehlgeschlagen"
 
-#: ../src/interface/FileZilla.cpp:77
+#: ../src/interface/FileZilla.cpp:79
 msgid ""
 "Could not find the resource files for FileZilla, closing FileZilla.\n"
 "You can set the data directory of FileZilla using the '--datadir "
@@ -178,50 +154,51 @@ msgstr ""
 "<custompath>' Option an der Kommandozeileoder mit Hilfe der FZ_DATADIR "
 "Umgebungsvariable angeben."
 
-#: ../src/interface/Mainfrm.cpp:252 ../src/interface/Mainfrm.cpp:265
-#: ../src/interface/Mainfrm.cpp:275
+#: ../src/interface/Mainfrm.cpp:274
 msgid "Could not parse server address:"
 msgstr "Fehlerhafte Server-Adresse:"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1073
-#, fuzzy
+#: ../src/engine/ftpcontrolsocket.cpp:1077
 msgid "Could not seek to end of file"
-msgstr "Verbindung mit Server fehlgeschlagen"
+msgstr "Es konnte nicht zum Dateiende gesprungen werden"
 
-#: ../src/engine/ftpcontrolsocket.cpp:1059
+#: ../src/engine/ftpcontrolsocket.cpp:1063
 #, c-format
 msgid "Could not seek to offset %s within file"
-msgstr ""
+msgstr "Es konnte nicht zu Position %s innerhalb der Datei gesprungen werden"
 
 #: ../src/engine/ControlSocket.cpp:190
 msgid "Critical error"
-msgstr ""
+msgstr "Kritischer Fehler"
 
-#: ../src/interface/RemoteListView.cpp:40
 #: ../src/interface/RemoteListView.cpp:42
 msgid "Date"
 msgstr "Datum"
 
-#: ../src/interface/resources/resources.h:16 resources.h:16 resources.h:36
+#: ../src/interface/fileexistsdlg.cpp:53 ../src/interface/fileexistsdlg.cpp:77
+#: ../src/interface/fileexistsdlg.cpp:109
+#: ../src/interface/fileexistsdlg.cpp:133
+msgid "Date/time unknown"
+msgstr "Datum/Zeit unbekannt"
+
+#: resources.h:36
 msgid "Disconnect from server"
 msgstr "Verbindung zum Server trennen"
 
-#: ../src/engine/ControlSocket.cpp:89 ../src/engine/ControlSocket.cpp:142
-#: ../src/engine/ftpcontrolsocket.cpp:25 ../src/engine/ftpcontrolsocket.cpp:29
-#: ../src/engine/ControlSocket.cpp:93 ../src/engine/ControlSocket.cpp:146
-#: ../src/engine/ftpcontrolsocket.cpp:33
+#: ../src/engine/ftpcontrolsocket.cpp:33 ../src/engine/ControlSocket.cpp:93
+#: ../src/engine/ControlSocket.cpp:146
 msgid "Disconnected from server"
 msgstr "Verbindung mit Server getrennt"
 
-#: ../src/interface/resources/resources.h:17 resources.h:17 resources.h:37
+#: resources.h:37
 msgid "Disconnects from the currently visible server"
 msgstr "Trennt Verbindung mit aktuellem Server"
 
-#: ../src/interface/resources/resources.h:2 resources.h:2 resources.h:22
+#: resources.h:22
 msgid "E&xit"
 msgstr "&Beenden"
 
-#: ../src/interface/resources/resources.h:8 resources.h:8 resources.h:28
+#: resources.h:28
 msgid ""
 "Enter the address of the server.\n"
 "To specify the server protocol, prepend the host with the protocol "
@@ -238,7 +215,7 @@ msgstr ""
 "passwort@host:port angeben, die Werte in den anderen Feldern werden dann "
 "überschrieben."
 
-#: ../src/interface/resources/resources.h:12 resources.h:12 resources.h:32
+#: resources.h:32
 msgid ""
 "Enter the port on which the server listens.\n"
 "The default for FTP is 21, the default for SFTP is 22."
@@ -250,89 +227,72 @@ msgstr ""
 msgid "Error:"
 msgstr "Fehler:"
 
-#: ../src/engine/ftpcontrolsocket.cpp:978
-#, c-format
-msgid "Failed to \"%s\" for appending / writing"
-msgstr ""
-
-#: ../src/engine/ftpcontrolsocket.cpp:1023
-#, c-format
-msgid "Failed to \"%s\" for reading"
-msgstr ""
-
-#: ../src/engine/ftpcontrolsocket.cpp:986
-#, c-format
-msgid "Failed to \"%s\" for writing"
-msgstr ""
-
-#: ../src/engine/ftpcontrolsocket.cpp:309
 #: ../src/engine/ftpcontrolsocket.cpp:342
-#: ../src/engine/ftpcontrolsocket.cpp:1233
+#: ../src/engine/ftpcontrolsocket.cpp:1239
 msgid ""
 "Failed to create listening socket for active mode transfer, trying passive "
 "mode"
 msgstr ""
+"Socket für eingehende Verbindungen für aktive Transfer konnte nicht erstellt "
+"werden, versuche passiven Modus"
+
+#: ../src/engine/ftpcontrolsocket.cpp:982
+#, c-format
+msgid "Failed to open \"%s\" for appending / writing"
+msgstr "%s konnte nicht zum Anhängen / Schreiben geöffnet werden"
+
+#: ../src/engine/ftpcontrolsocket.cpp:1027
+#, c-format
+msgid "Failed to open \"%s\" for reading"
+msgstr "%s konnte nicht zum Lesen geöffnet werden"
+
+#: ../src/engine/ftpcontrolsocket.cpp:990
+#, c-format
+msgid "Failed to open \"%s\" for writing"
+msgstr "%s konnte nicht zum Schreiben geöffnet werden"
 
 #: ../src/engine/ControlSocket.cpp:197
 msgid "Failed to retrieve directory listing"
-msgstr ""
+msgstr "Verzeichnislisting konnte nicht empfangen werden"
 
-#: ../src/interface/LocalListView.cpp:359
-#: ../src/interface/LocalListView.cpp:377
-#: ../src/interface/LocalListView.cpp:381
-#: ../src/interface/RemoteListView.cpp:441
-#: ../src/interface/RemoteListView.cpp:459
-#: ../src/interface/RemoteListView.cpp:463
-#: ../src/interface/LocalListView.cpp:368
-#: ../src/interface/LocalListView.cpp:386
-#: ../src/interface/LocalListView.cpp:390
-#: ../src/interface/RemoteListView.cpp:445
-#: ../src/interface/RemoteListView.cpp:467
 #: ../src/interface/LocalListView.cpp:367
 #: ../src/interface/LocalListView.cpp:385
 #: ../src/interface/LocalListView.cpp:389
+#: ../src/interface/RemoteListView.cpp:445
+#: ../src/interface/RemoteListView.cpp:463
+#: ../src/interface/RemoteListView.cpp:467
 msgid "File"
 msgstr "Datei"
 
-#: ../src/interface/FileZilla.cpp:78 ../src/interface/Mainfrm.cpp:255
-#: ../src/interface/Mainfrm.cpp:268 ../src/interface/Mainfrm.cpp:278
+#: ../src/interface/FileZilla.cpp:80 ../src/interface/Mainfrm.cpp:277
 msgid "FileZilla Error"
 msgstr "FileZilla Fehler"
 
-#: ../src/interface/LocalListView.cpp:38
-#: ../src/interface/RemoteListView.cpp:37
-#: ../src/interface/RemoteListView.cpp:39
 #: ../src/interface/LocalListView.cpp:37
+#: ../src/interface/RemoteListView.cpp:39
 msgid "Filename"
 msgstr "Dateiname"
 
-#: ../src/interface/LocalListView.cpp:39
-#: ../src/interface/RemoteListView.cpp:38
-#: ../src/interface/RemoteListView.cpp:40
 #: ../src/interface/LocalListView.cpp:38
+#: ../src/interface/RemoteListView.cpp:40
 msgid "Filesize"
 msgstr "Dateigröße"
 
-#: ../src/interface/LocalListView.cpp:40
-#: ../src/interface/RemoteListView.cpp:39
-#: ../src/interface/RemoteListView.cpp:41
 #: ../src/interface/LocalListView.cpp:39
+#: ../src/interface/RemoteListView.cpp:41
 msgid "Filetype"
 msgstr "Dateityp"
 
-#: ../src/interface/LocalListView.cpp:381
-#: ../src/interface/RemoteListView.cpp:463
-#: ../src/interface/LocalListView.cpp:390
-#: ../src/interface/RemoteListView.cpp:467
 #: ../src/interface/LocalListView.cpp:389
+#: ../src/interface/RemoteListView.cpp:467
 msgid "Folder"
 msgstr "Ordner"
 
-#: ../src/engine/ControlSocket.cpp:279 ../src/engine/ControlSocket.cpp:296
+#: ../src/engine/ControlSocket.cpp:296
 msgid "Interrupted by user"
 msgstr "Unterbrochen vonm Benutzer"
 
-#: ../src/engine/ControlSocket.cpp:125 ../src/engine/ControlSocket.cpp:129
+#: ../src/engine/ControlSocket.cpp:129
 msgid "Invalid hostname or host not found"
 msgstr "Ungültiger Host oder Host nicht gefunden"
 
@@ -340,10 +300,6 @@ msgstr "Ungültiger Host oder Host nicht gefunden"
 msgid "Invalid port given. The port has to be a value from 1 to 65535."
 msgstr ""
 "Ungültiger Port angegeben. Der Port muss ein Wert von 1 bis 65535 sein."
-
-#: ../src/engine/server.cpp:85
-msgid "Invalid port given. The port has to be a value from 1 to 65536."
-msgstr ""
 
 #: ../src/engine/server.cpp:31
 msgid ""
@@ -356,7 +312,7 @@ msgstr ""
 msgid "Invalid username given."
 msgstr "Ungültiger Benutzername angegeben."
 
-#: ../src/interface/LocalListView.cpp:41 ../src/interface/LocalListView.cpp:40
+#: ../src/interface/LocalListView.cpp:40
 msgid "Last modified"
 msgstr "Zuletzt geändert"
 
@@ -371,41 +327,37 @@ msgstr "Kein Host angegeben, bitte Host eingeben."
 
 #: resources.h:19
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
-#: ../src/interface/resources/resources.h:6 resources.h:6 resources.h:26
+#: resources.h:26
 msgid "Open the settings dialog of FileZilla"
 msgstr "Einstellungsdialog von FileZilla öffnen"
 
 #: resources.h:12
 msgid "Overwrite &if newer"
-msgstr ""
+msgstr "Überschreiben falls &neuer"
 
-#: ../src/interface/RemoteListView.cpp:43
 #: ../src/interface/RemoteListView.cpp:45
 msgid "Owner / Group"
 msgstr "Besitzer / Gruppe"
 
-#: ../src/interface/resources/resources.h:10 resources.h:10 resources.h:30
+#: resources.h:30
 msgid "Pass&word:"
 msgstr "Pass&wort:"
 
-#: ../src/interface/RemoteListView.cpp:42
 #: ../src/interface/RemoteListView.cpp:44
 msgid "Permissions"
 msgstr "Berechtigungen"
 
 #: resources.h:10
 msgid "Please select an action:"
-msgstr ""
+msgstr "Bitte Aktion auswählen"
 
 #: resources.h:14
-#, fuzzy
 msgid "Re&name"
-msgstr "Dateiname"
+msgstr "&Umbenennen"
 
-#: ../src/interface/Mainfrm.cpp:370 ../src/interface/Mainfrm.cpp:388
-#, fuzzy
+#: ../src/interface/Mainfrm.cpp:387
 msgid "Really cancel current operation?"
 msgstr "Aktuelle Operation abbrechen?"
 
@@ -413,20 +365,25 @@ msgstr "Aktuelle Operation abbrechen?"
 msgid "Response:"
 msgstr "Antwort:"
 
-#: ../src/engine/ftpcontrolsocket.cpp:267
 #: ../src/engine/ftpcontrolsocket.cpp:278
 msgid "Retrieving directory listing..."
-msgstr ""
+msgstr "Empfange Verzeichnislisting..."
 
-#: ../src/engine/ftpcontrolsocket.cpp:807
+#: ../src/interface/fileexistsdlg.cpp:44 ../src/interface/fileexistsdlg.cpp:68
+#: ../src/interface/fileexistsdlg.cpp:100
+#: ../src/interface/fileexistsdlg.cpp:124
+msgid "Size unknown"
+msgstr "Dateigröße unbekannt"
+
+#: ../src/engine/ftpcontrolsocket.cpp:809
 #, c-format
 msgid "Starting download of %s"
-msgstr ""
+msgstr "Starte Download von %s"
 
-#: ../src/engine/ftpcontrolsocket.cpp:811
+#: ../src/engine/ftpcontrolsocket.cpp:813
 #, c-format
 msgid "Starting upload of %s"
-msgstr ""
+msgstr "Starte Upload von %s"
 
 #: ../src/interface/StatusView.cpp:83 ../src/interface/StatusView.cpp:119
 msgid "Status:"
@@ -434,15 +391,16 @@ msgstr "Status:"
 
 #: resources.h:1
 msgid "Target file already exists"
-msgstr ""
+msgstr "Zieldatei existiert bereits"
 
 #: resources.h:2
 msgid ""
 "The target file already exists.\n"
 "Would you like to replace the file"
 msgstr ""
+"Die Zieldatei existiert bereits.\n"
+"Wollen Sie die Datei"
 
-#: ../src/interface/RemoteListView.cpp:41
 #: ../src/interface/RemoteListView.cpp:43
 msgid "Time"
 msgstr "Zeit"
@@ -451,19 +409,19 @@ msgstr "Zeit"
 msgid "Trace:"
 msgstr "Trace:"
 
-#: ../src/interface/LocalListView.cpp:356
-#: ../src/interface/LocalListView.cpp:374
-#: ../src/interface/RemoteListView.cpp:438
-#: ../src/interface/RemoteListView.cpp:456
-#: ../src/interface/LocalListView.cpp:365
-#: ../src/interface/LocalListView.cpp:383
-#: ../src/interface/RemoteListView.cpp:442
-#: ../src/interface/RemoteListView.cpp:460
+#: ../src/interface/fileexistsdlg.cpp:42 ../src/interface/fileexistsdlg.cpp:66
+#: ../src/interface/fileexistsdlg.cpp:98
+#: ../src/interface/fileexistsdlg.cpp:122
+msgid "bytes"
+msgstr "Bytes"
+
 #: ../src/interface/LocalListView.cpp:364
 #: ../src/interface/LocalListView.cpp:382
+#: ../src/interface/RemoteListView.cpp:442
+#: ../src/interface/RemoteListView.cpp:460
 msgid "file"
 msgstr "Datei"
 
 #: resources.h:6
 msgid "with the following file?"
-msgstr ""
+msgstr "mit der folgenden Datei ersetzen?"
