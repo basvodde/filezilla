@@ -34,6 +34,8 @@ protected:
 	virtual void OnClose(wxSocketEvent &event);
 	virtual int ResetOperation(int nErrorCode);
 
+	wxString ConvertDomainName(wxString domain);
+
 	DECLARE_EVENT_TABLE()
 
 	COpData *m_pCurOpData;

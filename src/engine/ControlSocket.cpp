@@ -1,6 +1,7 @@
 #include "FileZilla.h"
 #include "logging_private.h"
 #include "ControlSocket.h"
+#include <idna.h>
 
 BEGIN_EVENT_TABLE(CControlSocket, wxEvtHandler)
 	EVT_SOCKET(wxID_ANY, CControlSocket::OnSocketEvent)
@@ -16,7 +17,7 @@ COpData::~COpData()
 
 
 CControlSocket::CControlSocket(CFileZillaEngine *pEngine)
-	: CLogging(pEngine), wxSocketClient(wxSOCKET_NOWAIT)
+	: wxSocketClient(wxSOCKET_NOWAIT), CLogging(pEngine)
 {
 	m_pEngine = pEngine;
 	m_pCurOpData = 0;
@@ -64,7 +65,7 @@ void CControlSocket::OnSend(wxSocketEvent &event)
 		}
 
 		int numsent = LastCount();
-		if (numsent = m_nSendBufferLen)
+		if (numsent == m_nSendBufferLen)
 		{
 			m_nSendBufferLen = 0;
 			delete [] m_pSendBuffer;
@@ -89,7 +90,12 @@ int CControlSocket::Connect(const CServer &server)
 {
 	LogMessage(Status, _("Connecting to %s:%d..."), server.GetHost().c_str(), server.GetPort());
 	wxIPV4address addr;
-	addr.Hostname(server.GetHost());
+	if (!addr.Hostname(ConvertDomainName(server.GetHost())))
+	{
+		LogMessage(::Error, _("Invalid hostname or host not found"));
+		return ResetOperation(FZ_REPLY_CRITICALERROR);
+	}
+
 	addr.Service(server.GetPort());
 
 	m_pCurrentServer = new CServer(server);
@@ -205,4 +211,30 @@ bool CControlSocket::Send(const char *buffer, int len)
 	}
 
 	return true;
+}
+
+wxString CControlSocket::ConvertDomainName(wxString domain)
+{
+	const wxWCharBuffer buffer = wxConvCurrent->cWX2WC(domain);
+
+	int len = 0;
+	while (buffer.data()[len])
+		len++;
+
+	char *utf8 = new char[len * 2 + 2];
+	wxMBConvUTF8 conv;
+	conv.WC2MB(utf8, buffer, len * 2 + 2);
+
+	char *output;
+	if (idna_to_ascii_8z(utf8, &output, IDNA_ALLOW_UNASSIGNED))
+	{
+		delete [] utf8;
+		LogMessage(::Debug_Warning, "Could not convert domain name");
+		return domain;
+	}
+	delete [] utf8;
+
+	wxString result = output;
+	free(output);
+	return result;
 }

@@ -59,6 +59,8 @@ int CFileZillaEngine::Command(const CCommand &command)
 	case cmd_disconnect:
 		res = Disconnect(reinterpret_cast<const CDisconnectCommand &>(command));
 		break;
+	default:
+		return FZ_REPLY_SYNTAXERROR;
 	}
 
 	if (res != FZ_REPLY_WOULDBLOCK)

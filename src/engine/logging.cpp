@@ -6,7 +6,7 @@ CLogging::CLogging(CFileZillaEngine *pEngine)
 	m_pEngine = pEngine;
 }
 
-void CLogging::LogMessage(MessageType nMessageType, wxString msgFormat, ...) const
+void CLogging::LogMessage(MessageType nMessageType, const wxChar *msgFormat, ...) const
 {
 	va_list ap;
     
@@ -20,7 +20,7 @@ void CLogging::LogMessage(MessageType nMessageType, wxString msgFormat, ...) con
 	m_pEngine->AddNotification(notification);
 }
 
-void CLogging::LogMessage(wxString SourceFile, int nSourceLine, void *pInstance, MessageType nMessageType, const wxString &msgFormat, ...) const
+void CLogging::LogMessage(wxString SourceFile, int nSourceLine, void *pInstance, MessageType nMessageType, const wxChar *msgFormat, ...) const
 {
 	int pos = SourceFile.Find('\\', true);
 	if (pos != -1)

@@ -33,6 +33,7 @@ public:
 class CLogmsgNotification : public CNotification
 {
 public:
+	virtual ~CLogmsgNotification();
 	virtual enum NotificationId GetID() const;
 
 	wxString msg;
@@ -42,6 +43,7 @@ public:
 class COperationNotification : public CNotification
 {
 public:
+	virtual ~COperationNotification();
 	virtual enum NotificationId GetID() const;
 	
 	int nReplyCode;
