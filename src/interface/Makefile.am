@@ -6,12 +6,7 @@ INCLUDES = -I../include
 # this is the program that gets installed.  it's name is used for all
 # of the other Makefile.am variables
 
-if MACAPPBUNDLE
-FZPROGS = filezilla bundle
-else
-FZPROGS = filezilla
-endif
-bin_PROGRAMS = $(FZPROGS)
+bin_PROGRAMS = filezilla
 
 # the application source, library search path, and link libraries
 filezilla_SOURCES = FileZilla.cpp LocalListView.cpp LocalTreeView.cpp \
@@ -42,7 +37,8 @@ filezilla_DEPENDENCIES = ../engine/libengine.a
 dist_noinst_DATA = interface.vcproj
 
 if MACAPPBUNDLE
-nodist_bundle_SOURCES = _FileZilla.app/Contents/MacOS/filezilla$(EXEEXT)
+noinst_DATA = FileZilla.app/Contents/MacOS/filezilla$(EXEEXT)
+endif
 
 FileZilla.app/Contents/MacOS/filezilla$(EXEEXT): filezilla
 	mkdir -p FileZilla.app/Contents/MacOS/resources
@@ -53,5 +49,7 @@ FileZilla.app/Contents/MacOS/filezilla$(EXEEXT): filezilla
 	cp -f resources/FileZilla.icns FileZilla.app/Contents/Resources/FileZilla.icns
 	$(MAKE) -C resources mac-copy-resources
 	cp -f filezilla FileZilla.app/Contents/MacOS/filezilla
-endif
+
+clean-local:
+	rm -rf FileZilla.app
 

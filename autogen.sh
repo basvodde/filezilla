@@ -6,11 +6,13 @@ then
   mkdir config
 fi
 
-am_version=`automake --version`
+amk_version=`automake --version`
 am_version_major=`echo $am_version | sed 's/.*\([[0-9]]*\).\([[0-9]]*\)\(\.\|-p\)\([[0-9]]*\).*/\1/'`
 am_version_minor=`echo $am_version | sed 's/.*\([[0-9]]*\).\([[0-9]]*\)\(\.\|-p\)\([[0-9]]*\).*/\2/'`
 
-if test $am_version_major -lt 1; then
+if test "$am_version_major" = "" -o "$am_version_minor" = ""; then
+  export WANT_AUTOMAKE="1.6"
+elif test $am_version_major -lt 1; then
   export WANT_AUTOMAKE="1.6"
 elif test $am_version_major -eq 1 && test $am_version_minor -lt 6; then
   export WANT_AUTOMAKE="1.6"
