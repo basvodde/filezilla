@@ -38,6 +38,16 @@ bool CFileZillaApp::OnInit()
 			wxPath = cur;
 			break;
 		}
+		else if (wxFileExists(cur + "/../resources/menus.xrc"))
+		{
+			wxPath = cur + "/../";
+			break;
+		}
+		else if (wxFileExists(cur + "/filezilla/resources/menus.xrc"))
+		{
+			wxPath = cur + "/filezilla";
+			break;
+		}
 	}
 	
 	wxImage::AddHandler(new wxPNGHandler());
