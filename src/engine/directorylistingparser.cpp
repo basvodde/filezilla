@@ -367,6 +367,7 @@ protected:
 	int m_len;
 };
 
+#ifdef LISTDEBUG
 static char data[][100]={
 
 	// UNIX style listings
@@ -482,6 +483,7 @@ static char data[][100]={
 	"QSYS            77824 02/23/00 15:09:55 *DIR IBM Dir1/",
 
 	""};
+#endif
 
 CDirectoryListingParser::CDirectoryListingParser(CFileZillaEngine *pEngine)
 {
@@ -953,7 +955,7 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 	if (pos != -1)
 	{
 		// token is a time
-		if (!pos || pos == (token.GetLength() - 1))
+		if (!pos || static_cast<size_t>(pos) == (token.GetLength() - 1))
 			return false;
 
 		wxString str = token.GetString();
@@ -1004,7 +1006,7 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 			{
 				int pos = token.Find(':');
 				// token is a time
-				if (!pos || pos == (token.GetLength() - 1))
+				if (!pos || static_cast<size_t>(pos) == (token.GetLength() - 1))
 					return false;
 
 				wxString str = token.GetString();
@@ -1100,7 +1102,7 @@ bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry)
 	int pos2 = token.Find("-./", pos + 1);
 	if (pos2 == -1 || (pos2 - pos) == 1)
 		return false;
-	if (pos2 == (token.GetLength() - 1))
+	if (static_cast<size_t>(pos2) == (token.GetLength() - 1))
 		return false;
 
 	// If we already got the month and the second field is not numeric, 
@@ -1271,7 +1273,7 @@ bool CDirectoryListingParser::ParseAsEplf(CLine *pLine, CDirentry &entry)
 		return false;
 
 	int pos = token.Find('\t');
-	if (pos == -1 || pos == (token.GetLength() - 1))
+	if (pos == -1 || static_cast<size_t>(pos) == (token.GetLength() - 1))
 		return false;
 
 	entry.name = token.GetString().Mid(pos + 1);

@@ -338,7 +338,7 @@ void CRemoteListView::SetDirectoryListing(CDirectoryListing *pDirectoryListing)
 	m_fileData.push_back(data);
 	m_indexMapping.push_back(0);
 
-	for (int i = 0; i < m_pDirectoryListing->m_entryCount; i++)
+	for (unsigned int i = 0; i < m_pDirectoryListing->m_entryCount; i++)
 	{
 		t_fileData data;
 		data.icon = -2;

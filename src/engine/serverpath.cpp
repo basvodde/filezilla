@@ -73,7 +73,7 @@ bool CServerPath::SetPath(wxString &newPath, bool isFile)
 		if (pos1 != -1)
 		{
 			int pos2 = path.Find(']', true);
-			if (pos2 == (path.Length() - 1) && !isFile)
+			if (pos2 != -1 && static_cast<size_t>(pos2) == (path.Length() - 1) && !isFile)
 				m_type = VMS;
 			else if (isFile && pos2 > pos1)
 				m_type = VMS;
@@ -136,7 +136,7 @@ bool CServerPath::SetPath(wxString &newPath, bool isFile)
 		if (isFile)
 		{
 			pos = path.Find('/', true);
-			if (pos == -1 || pos == (path.Length() - 1))
+			if (pos == -1 || static_cast<size_t>(pos) == (path.Length() - 1))
 			{
 				m_bEmpty = true;
 				return false;
@@ -416,12 +416,12 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 			else
 			{
 				int pos2 = dir.Find(']', true);
-				if (pos2 != -1)
+				if (pos2 == -1)
 					return false;
 
-				if (isFile && pos2 == (dir.Length() - 1))
+				if (isFile && static_cast<size_t>(pos2) == (dir.Length() - 1))
 					return false;
-				if (isFile && pos2 != (dir.Length() - 1))
+				if (isFile && static_cast<size_t>(pos2) != (dir.Length() - 1))
 					return false;
 				if (pos2 <= pos1)
 					return false;
