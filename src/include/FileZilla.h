@@ -10,6 +10,9 @@
 #include <wx/xrc/xmlres.h>
 #include <wx/image.h>
 #include <wx/sysopt.h>
+#include <wx/listctrl.h>
+#include <wx/imaglist.h>
+#include <wx/mimetype.h>
 #include <wx/dir.h>
 
 #include <list>
