@@ -41,12 +41,15 @@ CFileTransferCommand::CFileTransferCommand()
 {
 }
 
-CFileTransferCommand::CFileTransferCommand(const wxString &localFile, const CServerPath& remotePath, const wxString &remoteFile, bool download)
+CFileTransferCommand::CFileTransferCommand(const wxString &localFile, const CServerPath& remotePath,
+										   const wxString &remoteFile, bool download,
+										   const CFileTransferCommand::t_transferSettings& transferSettings)
 {
 	m_localFile = localFile;
 	m_remotePath = remotePath;
 	m_remoteFile = remoteFile;
 	m_download = download;
+	m_transferSettings = transferSettings;
 }
 
 wxString CFileTransferCommand::GetLocalFile() const

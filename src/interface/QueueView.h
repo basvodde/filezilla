@@ -188,6 +188,8 @@ public:
 
 	wxString m_statusMessage;
 
+	CFileTransferCommand::t_transferSettings m_transferSettings;
+
 protected:
 	enum QueuePriority m_priority;
 	enum ItemState m_itemState;
@@ -219,6 +221,10 @@ public:
 	int IsActive() const { return m_activeMode; }
 	bool SetActive(bool active = true);
 	bool Quit();
+
+	// If the settings are changed, this function will recalculate some
+	// data like the list of ascii file types
+	void SettingsChanged();
 
 	struct t_EngineData
 	{
@@ -263,6 +269,7 @@ protected:
 	void UpdateQueueSize();
 	void SaveQueue();
 	void LoadQueue();
+	bool ShouldUseBinaryMode(wxString filename);
 
 	std::vector<t_EngineData> m_engineData;
 	std::vector<CServerItem*> m_serverList;	
@@ -290,6 +297,8 @@ protected:
 	bool m_quit;
 
 	CMainFrame* m_pMainFrame;
+
+	std::list<wxString> m_asciiFiles;
 
 	DECLARE_EVENT_TABLE();
 

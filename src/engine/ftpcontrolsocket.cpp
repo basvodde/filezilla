@@ -991,7 +991,9 @@ int CFtpControlSocket::ChangeDirSend()
 	return FZ_REPLY_WOULDBLOCK;
 }
 
-int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath &remotePath, const wxString &remoteFile, bool download)
+int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath &remotePath,
+									const wxString &remoteFile, bool download,
+									const CFileTransferCommand::t_transferSettings& transferSettings)
 {
 	LogMessage(Debug_Verbose, _T("CFtpControlSocket::FileTransfer()"));
 
@@ -1017,6 +1019,7 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 	pData->remotePath = remotePath;
 	pData->remoteFile = remoteFile;
 	pData->download = download;
+	pData->transferSettings = transferSettings;
 
 	switch (m_pCurrentServer->GetPasvMode())
 	{
@@ -1491,7 +1494,7 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 		cmd += pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath);
 		break;
 	case filetransfer_type:
-		if (pData->binary)
+		if (pData->transferSettings.binary)
 			cmd = _T("TYPE I");
 		else
 			cmd = _T("TYPE A");

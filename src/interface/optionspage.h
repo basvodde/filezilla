@@ -17,11 +17,13 @@ public:
 	virtual bool Validate() { return true; }
 
 	void SetCheck(const char* id, bool checked, bool& failure);
+	void SetRCheck(const char* id, bool checked, bool& failure);
 	void SetText(const char* id, const wxString& text, bool& failure);
 
 	// The GetXXX functions do never return an error since the controls were 
 	// checked to exist while loading the dialog.
 	bool GetCheck(const char* id);
+	bool GetRCheck(const char* id);
 	wxString GetText(const char* id);
 
 protected:

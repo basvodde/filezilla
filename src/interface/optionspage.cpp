@@ -62,3 +62,23 @@ wxString COptionsPage::GetText(const char* id)
 
 	return pTextCtrl->GetValue();
 }
+
+void COptionsPage::SetRCheck(const char* id, bool checked, bool& failure)
+{
+	wxRadioButton* pRadioButton = XRCCTRL(*this, id, wxRadioButton);
+	if (!pRadioButton)
+	{
+		failure = true;
+		return;
+	}
+
+	pRadioButton->SetValue(checked);
+}
+
+bool COptionsPage::GetRCheck(const char* id)
+{
+	wxRadioButton* pRadioButton = XRCCTRL(*this, id, wxRadioButton);
+	wxASSERT(pRadioButton);
+
+	return pRadioButton->GetValue();
+}

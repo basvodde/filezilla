@@ -395,6 +395,7 @@ void CFileItem::SaveItem(TiXmlElement* pElement) const
 	AddTextElement(&file, "ErrorCount", wxString::Format(_T("%d"), m_errorCount));
 	AddTextElement(&file, "Priority", wxString::Format(_T("%d"), m_priority));
 	AddTextElement(&file, "ItemState", wxString::Format(_T("%d"), m_itemState));
+	AddTextElement(&file, "TransferMode", m_transferSettings.binary ? _T("1") : _T("0"));
 
 	pElement->InsertEndChild(file);
 }
@@ -613,6 +614,7 @@ CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame)
 		m_engineData.push_back(data);
 	}
 
+	SettingsChanged();
 	LoadQueue();
 }
 
@@ -645,6 +647,7 @@ bool CQueueView::QueueFile(bool queueOnly, bool download, const wxString& localF
 	}
 
 	CFileItem* fileItem = new CFileItem(item, queueOnly, download, localFile, remoteFile, remotePath, size);
+	fileItem->m_transferSettings.binary = ShouldUseBinaryMode(download ? remoteFile : wxFileName(localFile).GetFullName());
 	item->AddChild(fileItem);
 	item->AddFileItemToList(fileItem);
 
@@ -1150,7 +1153,7 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 		while (true)
 		{
 			res = engineData.pEngine->Command(CFileTransferCommand(fileItem->GetLocalFile(), fileItem->GetRemotePath(), 
-											  fileItem->GetRemoteFile(), fileItem->Download()));
+											  fileItem->GetRemoteFile(), fileItem->Download(), fileItem->m_transferSettings));
 			if (res == FZ_REPLY_WOULDBLOCK)
 				return;
 
@@ -1420,6 +1423,7 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOn
 		const t_newEntry& entry = *iter;
 
 		CFileItem* fileItem = new CFileItem(item, queueOnly, download, entry.localFile, entry.remoteFile, remotePath, entry.size);
+		fileItem->m_transferSettings.binary = ShouldUseBinaryMode(download ? entry.remoteFile : wxFileName(entry.localFile).GetFullName());
 		item->AddChild(fileItem);
 		item->AddFileItemToList(fileItem);
 
@@ -1520,6 +1524,7 @@ void CQueueView::LoadQueue()
 				unsigned int errorCount = GetTextElementInt(pFile, "ErrorCount");
 				unsigned int priority = GetTextElementInt(pFile, "Priority", priority_normal);
 				unsigned int itemState = GetTextElementInt(pFile, "ItemState", ItemState_Wait);
+				bool binary = GetTextElementInt(pFile, "TransferMode", 1) != 0;
 
 				CServerPath remotePath;
 				if (localFile != _T("") && remoteFile != _T("") && remotePath.SetSafePath(safeRemotePath) &&
@@ -1537,6 +1542,7 @@ void CQueueView::LoadQueue()
 						}
 					}
 					CFileItem* fileItem = new CFileItem(pServerItem, true, download, localFile, remoteFile, remotePath, size);
+					fileItem->m_transferSettings.binary = binary;
 					fileItem->SetPriority((enum QueuePriority)priority);
 					fileItem->SetItemState((enum ItemState)itemState);
 					fileItem->m_errorCount = errorCount;
@@ -1563,4 +1569,62 @@ void CQueueView::LoadQueue()
 
 	SetItemCount(m_itemCount);
 	UpdateQueueSize();
+}
+
+void CQueueView::SettingsChanged()
+{
+	m_asciiFiles.clear();
+	wxString extensions = m_pMainFrame->m_pOptions->GetOption(OPTION_ASCIIFILES);
+	wxString ext;
+	int pos = extensions.Find("|");
+	while (pos != -1)
+	{
+		if (!pos)
+		{
+			if (ext != _T(""))
+			{
+				ext.Replace(_T("\\\\"), _T("\\")); 
+				m_asciiFiles.push_back(ext);
+				ext = _T("");
+			}
+		}
+		else if (extensions.c_str()[pos - 1] != '\\')
+		{
+			ext += extensions.Left(pos);
+			ext.Replace(_T("\\\\"), _T("\\")); 
+			m_asciiFiles.push_back(ext);
+			ext = _T("");
+		}
+		else
+		{
+			ext += extensions.Left(pos - 1) + _T("|");
+		}
+		extensions = extensions.Mid(pos + 1);
+		pos = extensions.Find("|");
+	}
+	ext += extensions;
+	ext.Replace(_T("\\\\"), _T("\\")); 
+	m_asciiFiles.push_back(ext);
+}
+
+bool CQueueView::ShouldUseBinaryMode(wxString filename)
+{
+	int mode = m_pMainFrame->m_pOptions->GetOptionVal(OPTION_ASCIIBINARY);
+	if (mode == 1)
+		return false;
+	else if (mode == 2)
+		return true;
+
+	int pos = filename.find('.');
+	if (pos == -1)
+		return m_pMainFrame->m_pOptions->GetOptionVal(OPTION_ASCIINOEXT) != 0;
+	else if (!pos)
+		return m_pMainFrame->m_pOptions->GetOptionVal(OPTION_ASCIIDOTFILE) != 0;
+	
+	wxString ext = filename.Mid(pos + 1);
+	for (std::list<wxString>::const_iterator iter = m_asciiFiles.begin(); iter != m_asciiFiles.end(); iter++)
+		if (*iter == ext)
+			return false;
+
+	return true;
 }

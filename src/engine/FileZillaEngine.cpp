@@ -367,7 +367,7 @@ int CFileZillaEngine::FileTransfer(const CFileTransferCommand &command)
 		return FZ_REPLY_BUSY;
 
 	m_pCurrentCommand = command.Clone();
-	return m_pControlSocket->FileTransfer(command.GetLocalFile(), command.GetRemotePath(), command.GetRemoteFile(), command.Download());
+	return m_pControlSocket->FileTransfer(command.GetLocalFile(), command.GetRemotePath(), command.GetRemoteFile(), command.Download(), command.GetTransferSettings());
 }
 
 bool CFileZillaEngine::SetAsyncRequestReply(CAsyncRequestNotification *pNotification)

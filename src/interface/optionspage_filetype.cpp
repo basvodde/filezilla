@@ -21,8 +21,18 @@ bool COptionsPageFiletype::LoadPage()
 		return false;
 
 	if (!FindWindow(XRCID("ID_EXTENSION")) || !FindWindow(XRCID("ID_ADD")) ||
-		!FindWindow(XRCID("ID_REMOVE")) || !FindWindow(XRCID("ID_EXTENSIONS")))
+		!FindWindow(XRCID("ID_REMOVE")) || !FindWindow(XRCID("ID_EXTENSIONS")) ||
+		!FindWindow(XRCID("ID_TYPE_AUTO")) || !FindWindow(XRCID("ID_TYPE_ASCII")) ||
+		!FindWindow(XRCID("ID_TYPE_BINARY"))) 
 		return false;
+
+	int mode = m_pOptions->GetOptionVal(OPTION_ASCIIBINARY);
+	if (mode == 1)
+		SetRCheck("ID_TYPE_ASCII", true, failure);
+	else if (mode == 2)
+		SetRCheck("ID_TYPE_BINARY", true, failure);
+	else
+		SetRCheck("ID_TYPE_AUTO", true, failure);
 
 	wxListCtrl* pListCtrl = XRCCTRL(*this, "ID_EXTENSIONS", wxListCtrl);
 	pListCtrl->InsertColumn(0, _T(""));
@@ -68,6 +78,15 @@ bool COptionsPageFiletype::SavePage()
 {
 	m_pOptions->SetOption(OPTION_ASCIINOEXT, GetCheck("ID_ASCIIWITHOUT"));
 	m_pOptions->SetOption(OPTION_ASCIIDOTFILE, GetCheck("ID_ASCIIDOTFILE"));
+
+	int mode;
+	if (GetRCheck("ID_TYPE_ASCII"))
+		mode = 1;
+	else if (GetRCheck("ID_TYPE_BINARY"))
+		mode = 2;
+	else
+		mode = 0;
+	m_pOptions->SetOption(OPTION_ASCIIBINARY, mode);
 
 	const wxListCtrl* pListCtrl = XRCCTRL(*this, "ID_EXTENSIONS", wxListCtrl);
 	wxASSERT(pListCtrl);

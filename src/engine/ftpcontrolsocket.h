@@ -26,7 +26,9 @@ protected:
 	int ChangeDirParseResponse();
 	int ChangeDirSend();
 
-	virtual int FileTransfer(const wxString localFile, const CServerPath &remotePath, const wxString &remoteFile, bool download);
+	virtual int FileTransfer(const wxString localFile, const CServerPath &remotePath,
+							 const wxString &remoteFile, bool download,
+							 const CFileTransferCommand::t_transferSettings& transferSettings);
 	int FileTransferParseResponse();
 	int FileTransferSend(int prevResult = FZ_REPLY_OK);
 
@@ -90,6 +92,8 @@ public:
 	wxFile *pFile;
 	
 	int transferEndReason;
+
+	CFileTransferCommand::t_transferSettings transferSettings;
 };
 
 

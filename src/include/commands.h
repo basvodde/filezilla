@@ -83,20 +83,28 @@ protected:
 };
 
 DECLARE_COMMAND(CFileTransferCommand, cmd_transfer, false)
+
+	struct t_transferSettings
+	{
+		bool binary;
+	};
+
 	CFileTransferCommand();
-	CFileTransferCommand(const wxString &localFile, const CServerPath& remotePath, const wxString &remoteFile, bool download);
+	CFileTransferCommand(const wxString &localFile, const CServerPath& remotePath, const wxString &remoteFile, bool download, const t_transferSettings& m_transferSettings);
 	virtual ~CFileTransferCommand() { }
 
 	wxString GetLocalFile() const;
 	CServerPath GetRemotePath() const;
 	wxString GetRemoteFile() const;
 	bool Download() const;
+	const t_transferSettings& GetTransferSettings() const { return m_transferSettings; }
 
 protected:
 	wxString m_localFile;
 	CServerPath m_remotePath;
 	wxString m_remoteFile;
 	bool m_download;
+	t_transferSettings m_transferSettings;
 };
 
 DECLARE_COMMAND(CRawCommand, cmd_raw, false)
