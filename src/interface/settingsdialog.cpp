@@ -104,7 +104,11 @@ bool CSettingsDialog::LoadPages()
 	GetSizer()->Fit(this);
 	GetSizer()->SetSizeHints(this);
 
+#ifdef __WXGTK__
+	// Pre-show dialog under GTK, else panels won't get initialized properly
 	Show();
+#endif
+
 	for (std::vector<t_page>::iterator iter = m_pages.begin(); iter != m_pages.end(); iter++)
 	{
 		if (!iter->page->LoadPage())
