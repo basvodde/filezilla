@@ -61,7 +61,7 @@ filezilla.pot: resources.h
 	if [ -f $@ ]; then \
 		touch $@; \
 		$(MSGMERGE) -U $@ filezilla_new.pot; \
-		if [ -f $@~ ]; then rm $@~; fi
+		if [ -f $@~ ]; then rm $@~; fi; \
 		rm filezilla_new.pot; \
 	else \
 		mv filezilla_new.pot $@; \
