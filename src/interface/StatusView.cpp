@@ -7,6 +7,8 @@
 
 BEGIN_EVENT_TABLE(CStatusView, wxWindow)
     EVT_SIZE(CStatusView::OnSize)
+	EVT_MENU(XRCID("ID_CLEARALL"), CStatusView::OnClear)
+	EVT_MENU(XRCID("ID_COPYTOCLIPBOARD"), CStatusView::OnCopy)
 END_EVENT_TABLE()
 
 CStatusView::CStatusView(wxWindow* parent, wxWindowID id)
@@ -17,6 +19,8 @@ CStatusView::CStatusView(wxWindow* parent, wxWindowID id)
 								wxNO_BORDER | wxVSCROLL | wxTE_MULTILINE |
 								wxTE_READONLY | wxTE_RICH | wxTE_RICH2 | wxTE_NOHIDESEL | wxTE_LINEWRAP);
 	m_pTextCtrl->SetFont(GetFont());
+
+	m_pTextCtrl->Connect(wxID_ANY, wxEVT_CONTEXT_MENU, (wxObjectEventFunction)(wxEventFunction)(wxContextMenuEventFunction)&CStatusView::OnContextMenu, 0, this);
 
 	m_nLineCount = 0;
 
@@ -127,4 +131,40 @@ void CStatusView::InitDefAttr()
 	m_defAttr.SetLeftIndent(0, maxWidth);
 
 	m_defAttr.SetBackgroundColour(dc.GetTextBackground());
+}
+
+void CStatusView::OnContextMenu(wxContextMenuEvent& event)
+{
+	wxMenu* pMenu = wxXmlResource::Get()->LoadMenu(_T("ID_MENU_LOG"));
+	if (!pMenu)
+		return;
+
+	PopupMenu(pMenu);
+	delete pMenu;
+}
+
+void CStatusView::OnClear(wxCommandEvent& event)
+{
+	if (m_pTextCtrl)
+		m_pTextCtrl->Clear();
+	m_nLineCount = 0;
+}
+
+void CStatusView::OnCopy(wxCommandEvent& event)
+{
+	if (!m_pTextCtrl)
+		return;
+	
+	long from, to;
+	m_pTextCtrl->GetSelection(&from, &to);
+	if (from != to)
+		m_pTextCtrl->Copy();
+	else
+	{
+		m_pTextCtrl->Freeze();
+		m_pTextCtrl->SetSelection(-1, -1);
+		m_pTextCtrl->Copy();
+		m_pTextCtrl->SetSelection(from, to);
+		m_pTextCtrl->Thaw();
+	}
 }
