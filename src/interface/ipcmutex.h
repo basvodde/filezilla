@@ -7,7 +7,7 @@
  * CInterProcessMutex represents an interprocess mutex. The mutex will be
  * created and locked in the constructor and released in the destructor.
  * Under Windows we use the normal Windows mutexes, under all other platforms
- * use lockfiles
+ * we use lockfiles using fcntl advisory locks.
  */
 
 #define MUTEX_OPTIONS 1
@@ -22,7 +22,7 @@ public:
 	~CInterProcessMutex();
 
 	void Lock();
-	bool TryLock();
+	bool TryLock(); // Tries to lock the mutex. Returns true if successful, else otherwise.
 	void Unlock();
 
 	bool IsLocked() const { return m_locked; }

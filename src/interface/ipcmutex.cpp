@@ -8,13 +8,17 @@ int CInterProcessMutex::m_instanceCount = 0;
 CInterProcessMutex::CInterProcessMutex(unsigned int mutexType, bool initialLock /*=true*/)
 {
 	m_locked = false;
-#ifdef __WXMSW__
+#ifdef __WXMSW_
+	// Create mutex_
 	hMutex = ::CreateMutex(0, false, wxString::Format(_T("FileZilla 3 Mutex Type %d"), mutexType));
 #else
 	m_type = mutexType;
-	wxFileName fn(wxGetApp().GetSettingsDir(), _T("lockfile"));
 	if (!m_instanceCount)
+	{
+		// Open file only if this is the first instance
+		wxFileName fn(wxGetApp().GetSettingsDir(), _T("lockfile"));
 		m_fd = open(fn.GetFullPath().mb_str(), O_CREAT | O_RDWR, 0644);
+	}
 	m_instanceCount++;
 #endif
 	if (initialLock)
@@ -30,6 +34,8 @@ CInterProcessMutex::~CInterProcessMutex()
 		::CloseHandle(hMutex);
 #else
 	m_instanceCount--;
+	// Close file only if this is the last instance. At least under
+	// Linux, closing the lock file has the affect of removing all locks.
 	if (!m_instanceCount && m_fd >= 0)
 		close(m_fd);
 #endif
@@ -44,6 +50,7 @@ void CInterProcessMutex::Lock()
 #else
 	if (m_fd >= 0)
 	{
+		// Lock 1 byte region in the lockfile. m_type specifies the byte to lock.
 		struct flock f = {0};
 		f.l_type = F_WRLCK;
 		f.l_whence = SEEK_SET;
@@ -77,6 +84,7 @@ bool CInterProcessMutex::TryLock()
 #else
 	if (m_fd >= 0)
 	{
+		// Try to lock 1 byte region in the lockfile. m_type specifies the byte to lock.
 		struct flock f = {0};
 		f.l_type = F_WRLCK;
 		f.l_whence = SEEK_SET;
@@ -105,6 +113,7 @@ void CInterProcessMutex::Unlock()
 #else
 	if (m_fd >= 0)
 	{
+		// Unlock region specified by m_type.
 		struct flock f = {0};
 		f.l_type = F_UNLCK;
 		f.l_whence = SEEK_SET;
