@@ -10,6 +10,7 @@
 CFileTransferOpData::CFileTransferOpData()
 {
 	opId = cmd_transfer;
+	
 	pFile = 0;
 	resume = false;
 	tryAbsolutePath = false;
@@ -285,6 +286,8 @@ public:
 	CListOpData()
 	{
 		opId = cmd_list;
+
+		bTriedPasv = bTriedActive = false;
 	}
 
 	virtual ~CListOpData()
@@ -326,9 +329,19 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 	CListOpData *pData = new CListOpData;
 	pData->pNextOpData = m_pCurOpData;
 	m_pCurOpData = pData;
-			
-	pData->bPasv = m_pEngine->GetOptions()->GetOptionVal(OPTION_USEPASV) != 0;
-	pData->bTriedPasv = pData->bTriedActive = false;
+	
+	switch (m_pCurrentServer->GetPasvMode())
+	{
+	case MODE_PASSIVE:
+		pData->bPasv = true;
+		break;
+	case MODE_ACTIVE:
+		pData->bPasv = false;
+		break;
+	default:
+		pData->bPasv = m_pEngine->GetOptions()->GetOptionVal(OPTION_USEPASV) != 0;
+		break;
+	}
 	pData->opState = list_waitcwd;
 
 	if (path.GetType() == DEFAULT)
@@ -876,7 +889,19 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 	pData->remoteFile = remoteFile;
 	pData->download = download;
 			
-	pData->bPasv = m_pEngine->GetOptions()->GetOptionVal(OPTION_USEPASV) != 0;
+	switch (m_pCurrentServer->GetPasvMode())
+	{
+	case MODE_PASSIVE:
+		pData->bPasv = true;
+		break;
+	case MODE_ACTIVE:
+		pData->bPasv = false;
+		break;
+	default:
+		pData->bPasv = m_pEngine->GetOptions()->GetOptionVal(OPTION_USEPASV) != 0;
+		break;
+	}
+
 	pData->opState = filetransfer_waitcwd;
 
 	if (pData->remotePath.GetType() == DEFAULT)
