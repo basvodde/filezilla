@@ -139,14 +139,15 @@ int CFileZillaEngine::Connect(const CConnectCommand &command)
 		return FZ_REPLY_ALREADYCONNECTED;
 
 	if (m_pControlSocket)
+	{
 		delete m_pControlSocket;
+		m_pControlSocket = 0;
+	}
 
 	m_pCurrentCommand = command.Clone();
 	switch (command.GetServer().GetProtocol())
 	{
 	case FTP:
-		if (m_pControlSocket)
-			delete m_pControlSocket;
 		m_pControlSocket = new CFtpControlSocket(this);
 		break;
 	}
