@@ -77,7 +77,7 @@ void CFileExistsDlg::CreateControls()
 				pWnd->SetTitle(_("Date/time unknown"));
 		}
 
-		LoadIcon(XRCID("ID_FILE2_ICON"), m_pNotification->remoteFile);
+		LoadIcon(XRCID("ID_FILE2_ICON"), "c:\\programme\\filezilla\\filezilla.exe");//m_pNotification->remoteFile);
 
 		pWnd = FindWindow(XRCID("ID_UPDOWNONLY"));
 		if (pWnd)
@@ -147,33 +147,78 @@ void CFileExistsDlg::LoadIcon(int id, const wxString &file)
 	if (!pStatBmp)
 		return;
 	
-#ifdef __WXMSW__
+#ifdef __WXMSW__457654
 	SHFILEINFO fileinfo;
 	memset(&fileinfo,0,sizeof(fileinfo));
-	SHGetFileInfo(file, FILE_ATTRIBUTE_NORMAL, &fileinfo, sizeof(fileinfo), SHGFI_ICON | SHGFI_USEFILEATTRIBUTES);
+	if (SHGetFileInfo(file, FILE_ATTRIBUTE_NORMAL, &fileinfo, sizeof(fileinfo), SHGFI_ICON | SHGFI_USEFILEATTRIBUTES))
+	{
+		wxBitmap bmp;
+		bmp.Create(32, 32);
 
-	wxBitmap bmp;
-	bmp.Create(32, 32);
+		wxMemoryDC *dc = new wxMemoryDC;
 
-	wxMemoryDC *dc = new wxMemoryDC;
+		wxPen pen(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+		wxBrush brush(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
-	wxPen pen(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
-	wxBrush brush(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+		dc->SelectObject(bmp);
 
-	dc->SelectObject(bmp);
+		dc->SetPen(pen);
+		dc->SetBrush(brush);
+		dc->DrawRectangle(0, 0, 32, 32);
 
-	dc->SetPen(pen);
-	dc->SetBrush(brush);
-	dc->DrawRectangle(0, 0, 32, 32);
+		wxIcon icon;
+		icon.SetHandle(fileinfo.hIcon);
+		icon.SetSize(32, 32);
 
-	wxIcon icon;
-	icon.SetHandle(fileinfo.hIcon);
-	icon.SetSize(32, 32);
+		dc->DrawIcon(icon, 0, 0);
+		delete dc;
 
-	dc->DrawIcon(icon, 0, 0);
-	delete dc;
+		pStatBmp->SetBitmap(bmp);
 
-	pStatBmp->SetBitmap(bmp);
+		return;
+	}
 
 #endif //__WXMSW__
+
+	wxString ext;
+	int pos = file.Find('.', true);
+	if (pos != -1)
+		ext = file.Mid(pos + 1);
+	wxFileType *pType = wxTheMimeTypesManager->GetFileTypeFromExtension(ext);
+	if (pType)
+	{
+		wxIconLocation loc;
+		if (pType->GetIcon(&loc) && loc.IsOk())
+		{
+			wxLogNull *tmp = new wxLogNull;
+			wxIcon icon(loc);
+			delete tmp;
+						
+			int width = icon.GetWidth();
+			int height = icon.GetHeight();
+			if (width && height)
+			{
+				wxBitmap bmp;
+				bmp.Create(icon.GetWidth(), icon.GetHeight());
+
+				wxMemoryDC *dc = new wxMemoryDC;
+
+				wxPen pen(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+				wxBrush brush(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+
+				dc->SelectObject(bmp);
+
+				dc->SetPen(pen);
+				dc->SetBrush(brush);
+				dc->DrawRectangle(0, 0, width, height);
+
+				dc->DrawIcon(icon, 0, 0);
+				delete dc;
+
+				pStatBmp->SetBitmap(bmp);
+
+				return;
+			}
+		}
+	}
 }
