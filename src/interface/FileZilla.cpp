@@ -1,4 +1,5 @@
 #include "FileZilla.h"
+#include "filezillaapp.h"
 #include "Mainfrm.h"
 
 #ifdef ENABLE_BINRELOC
@@ -10,7 +11,7 @@
 	#include <shlobj.h>
 
 	// Needed for MinGW:
-        #ifndef SHGFP_TYPE_CURRENT
+	#ifndef SHGFP_TYPE_CURRENT
 		#define SHGFP_TYPE_CURRENT 0
 	#endif
 #endif
@@ -19,49 +20,13 @@
 #define new DEBUG_NEW
 #endif
 
-class CFileZillaApp : public wxApp
-{
-public:
-	virtual bool OnInit();
-protected:
-	bool LoadResourceFiles();
-
-	wxLocale m_locale;
-};
-
 IMPLEMENT_APP(CFileZillaApp);
-
-wxString resourcePath;
-wxString dataPath; // Settings and such things
 
 bool CFileZillaApp::OnInit()
 {
 	wxSystemOptions::SetOption(wxT("msw.remap"), 0);
 
-#ifdef __WXMSW__
-	wxChar buffer[MAX_PATH * 2 + 1];
-	wxFileName fn;
-
-	if (SUCCEEDED(SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, buffer)))
-	{
-		fn = wxFileName(buffer, _T(""));
-		fn.AppendDir(_T("FileZilla"));
-		if (!fn.DirExists())
-			wxMkdir(fn.GetPath(), 0700);
-	}
-	else
-	{
-		// Fall back to directory where the executable is
-		if (GetModuleFileName(0, buffer, MAX_PATH * 2))
-			fn = buffer;
-	}
-#else
-	wxFileName fn = wxFileName(wxGetHomeDir(), _T(""));
-	fn.AppendDir(_T(".filezilla"));
-	if (!fn.DirExists())
-		wxMkdir(fn.GetPath(), 0700);
-#endif
-	dataPath = fn.GetPath();
+	InitSettingsDir();
 
 #ifndef _DEBUG
 	wxMessageBox(_T("This software is still alpha software in early development, don't expect anything to work\r\n\
@@ -139,7 +104,7 @@ wxString GetDataDir(wxString fileToFind)
 
 	// For each path, check for the resources
 	wxPathList::const_iterator node;
-	for (node = pathList.begin(); node != pathList.end() && resourcePath == _T(""); node++)
+	for (node = pathList.begin(); node != pathList.end(); node++)
 	{
 		wxString cur = *node;
 		if (wxFileExists(cur + fileToFind))
@@ -154,7 +119,7 @@ wxString GetDataDir(wxString fileToFind)
 #endif
 	}
 	
-	for (node = pathList.begin(); node != pathList.end() && resourcePath == _T(""); node++)
+	for (node = pathList.begin(); node != pathList.end(); node++)
 	{
 		wxString cur = *node;
 		if (wxFileExists(cur + _T("/..") + fileToFind))
@@ -168,28 +133,58 @@ wxString GetDataDir(wxString fileToFind)
 
 bool CFileZillaApp::LoadResourceFiles()
 {
-	resourcePath = GetDataDir(_T("/resources/menus.xrc"));
+	m_resourceDir = GetDataDir(_T("/resources/menus.xrc"));
 
 	wxImage::AddHandler(new wxPNGHandler());
 	wxImage::AddHandler(new wxXPMHandler());
-	wxLocale::AddCatalogLookupPathPrefix(resourcePath + _T("/locales"));
+	wxLocale::AddCatalogLookupPathPrefix(m_resourceDir + _T("/locales"));
 	m_locale.Init(wxLANGUAGE_DEFAULT);
 	m_locale.AddCatalog(_T("filezilla"));
-	
-	if (resourcePath == _T(""))
+
+	if (m_resourceDir == _T(""))
 	{
 		wxString msg = _("Could not find the resource files for FileZilla, closing FileZilla.\nYou can set the data directory of FileZilla using the '--datadir <custompath>' commandline option or by setting the FZ_DATADIR environment variable.");
 		wxMessageBox(msg, _("FileZilla Error"), wxOK | wxICON_ERROR);
 		return false;
 	}
+
+	if (m_resourceDir[m_resourceDir.Length() - 1] != wxFileName::GetPathSeparator())
+		m_resourceDir += wxFileName::GetPathSeparator();
+
+	m_resourceDir += "/resources/";
 	
 	wxXmlResource::Get()->InitAllHandlers();
-	wxXmlResource::Get()->Load(resourcePath + _T("/resources/*.xrc"));
+	wxXmlResource::Get()->Load(m_resourceDir + _T("*.xrc"));
 
-	if (resourcePath[resourcePath.Length() - 1] != wxFileName::GetPathSeparator())
-		resourcePath += wxFileName::GetPathSeparator();
-	resourcePath += _T("resources");
-	resourcePath += wxFileName::GetPathSeparator();
+	return true;
+}
+
+bool CFileZillaApp::InitSettingsDir()
+{
+#ifdef __WXMSW__
+	wxChar buffer[MAX_PATH * 2 + 1];
+	wxFileName fn;
+
+	if (SUCCEEDED(SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, buffer)))
+	{
+		fn = wxFileName(buffer, _T(""));
+		fn.AppendDir(_T("FileZilla"));
+		if (!fn.DirExists())
+			wxMkdir(fn.GetPath(), 0700);
+	}
+	else
+	{
+		// Fall back to directory where the executable is
+		if (GetModuleFileName(0, buffer, MAX_PATH * 2))
+			fn = buffer;
+	}
+#else
+	wxFileName fn = wxFileName(wxGetHomeDir(), _T(""));
+	fn.AppendDir(_T(".filezilla"));
+	if (!fn.DirExists())
+		wxMkdir(fn.GetPath(), 0700);
+#endif
+	m_settingsDir = fn.GetPath();
 
 	return true;
 }

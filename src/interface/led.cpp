@@ -1,5 +1,6 @@
 #include "FileZilla.h"
 #include "led.h"
+#include "filezillaapp.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -22,10 +23,8 @@ CLed::CLed(wxWindow *parent, unsigned int index)
 
 	m_state = LED_OFF;
 
-	extern wxString resourcePath;
-
 	wxLogNull *tmp = new wxLogNull;
-	m_bitmap.LoadFile(resourcePath + _T("leds.png"), wxBITMAP_TYPE_PNG);
+	m_bitmap.LoadFile(wxGetApp().GetResourceDir() + _T("leds.png"), wxBITMAP_TYPE_PNG);
 	delete tmp;
 	if (m_bitmap.Ok())
 	{

@@ -3,6 +3,7 @@
 #include "state.h"
 #include "commandqueue.h"
 #include "QueueView.h"
+#include "filezillaapp.h"
 
 #ifdef __WXMSW__
 #include "shellapi.h"
@@ -66,12 +67,11 @@ CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState
 
 	wxBitmap bmp;
 	
-	extern wxString resourcePath;
-	bmp.LoadFile(resourcePath + _T("empty.xpm"), wxBITMAP_TYPE_XPM);
+	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("empty.xpm"), wxBITMAP_TYPE_XPM);
 	m_pHeaderImageList->Add(bmp);
-	bmp.LoadFile(resourcePath + _T("up.xpm"), wxBITMAP_TYPE_XPM);
+	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("up.xpm"), wxBITMAP_TYPE_XPM);
 	m_pHeaderImageList->Add(bmp);
-	bmp.LoadFile(resourcePath + _T("down.xpm"), wxBITMAP_TYPE_XPM);
+	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("down.xpm"), wxBITMAP_TYPE_XPM);
 	m_pHeaderImageList->Add(bmp);
 
 	HWND hWnd = (HWND)GetHandle();
@@ -135,14 +135,13 @@ void CRemoteListView::GetImageList()
 	m_pImageList = new wxImageList(16, 16);
 
 	wxBitmap bmp;
-	extern wxString resourcePath;
 	
 	wxLogNull *tmp = new wxLogNull;
 	
-	bmp.LoadFile(resourcePath + _T("16x16/file.png"), wxBITMAP_TYPE_PNG);
+	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("16x16/file.png"), wxBITMAP_TYPE_PNG);
 	m_pImageList->Add(bmp);
 
-	bmp.LoadFile(resourcePath + _T("16x16/folder.png"), wxBITMAP_TYPE_PNG);
+	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("16x16/folder.png"), wxBITMAP_TYPE_PNG);
 	m_pImageList->Add(bmp);
 
 	delete tmp;

@@ -1,6 +1,8 @@
 #include "FileZilla.h"
 #include "Options.h"
 #include "../tinyxml/tinyxml.h"
+#include "xmlfunctions.h"
+#include "filezillaapp.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -35,14 +37,13 @@ COptions::COptions()
 
 	m_pXmlDocument = 0;
 
-	extern wxString dataPath;
-	wxFileName file = wxFileName(dataPath, _T("filezilla.xml"));
+	wxFileName file = wxFileName(wxGetApp().GetSettingsDir(), _T("filezilla.xml"));
 	if (wxFileExists(file.GetFullPath()))
 	{
 		m_pXmlDocument = new TiXmlDocument();
 		if (!m_pXmlDocument->LoadFile(file.GetFullPath().mb_str()))
 		{
-			wxString msg = wxString::Format(_("Could not load \"%s\", make sure the file is valid.\nFor this session, default settings will be used and any changes to the settings are not persistent."), file.GetFullPath().c_str());
+			wxString msg = wxString::Format(_("Could not load \"%s\", make sure the file is valid.\nFor this session, default settings will be used and any changes to the settings, including changes done in the Site Manager, are not persistent."), file.GetFullPath().c_str());
 			wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
 			m_allowSave = false;
 			return;
@@ -135,8 +136,7 @@ bool COptions::SetOption(unsigned int nID, int value)
 	SetXmlValue(nID, wxString::Format(_T("%d"), value));
 	if (m_allowSave)
 	{
-		extern wxString dataPath;
-		wxFileName file = wxFileName(dataPath, _T("filezilla.xml"));
+		wxFileName file = wxFileName(wxGetApp().GetSettingsDir(), _T("filezilla.xml"));
 		m_pXmlDocument->SaveFile(file.GetFullPath().mb_str());
 	}
 
@@ -159,8 +159,7 @@ bool COptions::SetOption(unsigned int nID, wxString value)
 	SetXmlValue(nID, value);
 	if (m_allowSave)
 	{
-		extern wxString dataPath;
-		wxFileName file = wxFileName(dataPath, _T("filezilla.xml"));
+		wxFileName file = wxFileName(wxGetApp().GetSettingsDir(), _T("filezilla.xml"));
 		m_pXmlDocument->SaveFile(file.GetFullPath().mb_str());
 	}
 
@@ -306,30 +305,15 @@ TiXmlElement *COptions::GetXml()
 	return m_pXmlDocument->FirstChildElement("FileZilla3");
 }
 
-void COptions::FreeXml()
+void COptions::FreeXml(bool save)
 {
 	m_acquired = false;
 	
-	if (m_allowSave)
+	if (m_allowSave && save)
 	{
-		extern wxString dataPath;
-		wxFileName file = wxFileName(dataPath, _T("filezilla.xml"));
+		wxFileName file = wxFileName(wxGetApp().GetSettingsDir(), _T("filezilla.xml"));
 		m_pXmlDocument->SaveFile(file.GetFullPath().mb_str());
 	}
-}
-
-void COptions::AddTextElement(TiXmlElement* node, const char* name, const wxString& value)
-{
-	TiXmlElement element(name);
-
-	char* utf8 = ConvUTF8(value);
-	if (!utf8)
-		return;
-	
-    element.InsertEndChild(TiXmlText(utf8));
-	delete [] utf8;
-
-	node->InsertEndChild(element);
 }
 
 void COptions::SetServer(TiXmlElement *node, const CServer& server) const
@@ -478,22 +462,6 @@ bool COptions::GetServer(TiXmlElement *node, CServer& server)
 	return true;
 }
 
-char* COptions::ConvUTF8(wxString value)
-{
-	const wxWCharBuffer buffer = wxConvCurrent->cWX2WC(value);
-
-	wxMBConvUTF8 conv;
-	int len = conv.WC2MB(0, buffer, 0);
-	char *utf8 = new char[len + 1];
-	conv.WC2MB(utf8, buffer, len + 1);
-	return utf8;
-}
-
-wxString COptions::ConvLocal(const char *value)
-{
-	return wxString(wxConvUTF8.cMB2WC(value), *wxConvCurrent);
-}
-
 void COptions::SetServer(wxString path, const CServer& server)
 {
 	if (path == _T(""))
@@ -537,7 +505,7 @@ void COptions::SetServer(wxString path, const CServer& server)
 	
 	SetServer(element, server);
 	
-	FreeXml();
+	FreeXml(true);
 }
 
 bool COptions::GetServer(wxString path, CServer& server)
@@ -572,7 +540,7 @@ bool COptions::GetServer(wxString path, CServer& server)
 	
 	bool res = GetServer(element, server);
 	
-	FreeXml();
+	FreeXml(false);
 	
 	return res;
 }

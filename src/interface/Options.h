@@ -28,7 +28,7 @@ public:
 	virtual bool SetOption(unsigned int nID, wxString value);
 	
 	TiXmlElement* GetXml();
-	void FreeXml();
+	void FreeXml(bool save);
 	
 	// path is element path below document root, separated by slashes
 	void SetServer(wxString path, const CServer& server);
@@ -37,9 +37,6 @@ public:
 	void SetServer(TiXmlElement *node, const CServer& server) const;
 	bool GetServer(TiXmlElement *node, CServer& server);
 	
-	static char* ConvUTF8(wxString value);
-	static wxString ConvLocal(const char *value);
-	static void AddTextElement(TiXmlElement* node, const char* name, const wxString& value);
 
 protected:
 	int Validate(unsigned int nID, int value);

@@ -2,6 +2,8 @@
 #include "sitemanager.h"
 #include "Options.h"
 #include "../tinyxml/tinyxml.h"
+#include "xmlfunctions.h"
+#include "filezillaapp.h"
 
 BEGIN_EVENT_TABLE(CSiteManager, wxDialog)
 EVT_BUTTON(XRCID("wxID_OK"), CSiteManager::OnOK)
@@ -47,17 +49,16 @@ bool CSiteManager::Create(wxWindow* parent)
 	wxImageList* pImageList = new wxImageList(16, 16);
 
 	wxBitmap bmp;
-	extern wxString resourcePath;
-	
+		
 	wxLogNull *tmp = new wxLogNull;
 	
-	bmp.LoadFile(resourcePath + _T("16x16/folderclosed.png"), wxBITMAP_TYPE_PNG);
+	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("16x16/folderclosed.png"), wxBITMAP_TYPE_PNG);
 	pImageList->Add(bmp);
 
-	bmp.LoadFile(resourcePath + _T("16x16/folder.png"), wxBITMAP_TYPE_PNG);
+	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("16x16/folder.png"), wxBITMAP_TYPE_PNG);
 	pImageList->Add(bmp);
 
-	bmp.LoadFile(resourcePath + _T("16x16/server.png"), wxBITMAP_TYPE_PNG);
+	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("16x16/server.png"), wxBITMAP_TYPE_PNG);
 	pImageList->Add(bmp);
 
 	delete tmp;
@@ -140,7 +141,7 @@ bool CSiteManager::Load(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 
 		if (!pElement)
 		{
-			m_pOptions->FreeXml();
+			m_pOptions->FreeXml(false);
 			return true;
 		}
 
@@ -150,7 +151,7 @@ bool CSiteManager::Load(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 		pTree->Expand(treeId);
 		pTree->SelectItem(treeId);
 		
-		m_pOptions->FreeXml();
+		m_pOptions->FreeXml(false);
 		return res;
 	}
 	
@@ -163,7 +164,7 @@ bool CSiteManager::Load(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 		if (!pNode)
 			continue;
 	
-		wxString name = m_pOptions->ConvLocal(pNode->ToText()->Value());
+		wxString name = ConvLocal(pNode->ToText()->Value());
 		
 		if (!strcmp(pChild->Value(), "Folder"))
 		{
@@ -184,15 +185,15 @@ bool CSiteManager::Load(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 
 			TiXmlText* comments = handle.FirstChildElement("Comments").FirstChild().Text();
 			if (comments)
-				data->m_comments = m_pOptions->ConvLocal(comments->Value());
+				data->m_comments = ConvLocal(comments->Value());
 			
 			TiXmlText* localDir = handle.FirstChildElement("LocalDir").FirstChild().Text();
 			if (localDir)
-				data->m_localDir = m_pOptions->ConvLocal(localDir->Value());
+				data->m_localDir = ConvLocal(localDir->Value());
 			
 			TiXmlText* remoteDir = handle.FirstChildElement("RemoteDir").FirstChild().Text();
 			if (remoteDir)
-				data->m_remoteDir.SetSafePath(m_pOptions->ConvLocal(remoteDir->Value()));
+				data->m_remoteDir.SetSafePath(ConvLocal(remoteDir->Value()));
 			
 			pTree->AppendItem(treeId, name, 2, 2, data);
 		}
@@ -222,12 +223,12 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 
 		if (!pElement)
 		{
-			m_pOptions->FreeXml();
+			m_pOptions->FreeXml(true);
 			return true;
 		}
 
 		bool res = Save(pElement, pTree->GetRootItem());
-		m_pOptions->FreeXml();
+		m_pOptions->FreeXml(true);
 		return res;
 	}
 	
@@ -237,7 +238,7 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 	while (child.IsOk())
 	{
 		wxString name = pTree->GetItemText(child);
-		char* utf8 = m_pOptions->ConvUTF8(name);
+		char* utf8 = ConvUTF8(name);
 		
 		CSiteManagerItemData* data = reinterpret_cast<CSiteManagerItemData* >(pTree->GetItemData(child));
 		if (!data)
@@ -257,19 +258,19 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 
 			// Save comments
 			sub = pNode->InsertEndChild(TiXmlElement("Comments"));
-			char* comments = m_pOptions->ConvUTF8(data->m_comments);
+			char* comments = ConvUTF8(data->m_comments);
 			sub->InsertEndChild(TiXmlText(comments));
 			delete [] comments;
 
 			// Save local dir
 			sub = pNode->InsertEndChild(TiXmlElement("LocalDir"));
-			char* localDir = m_pOptions->ConvUTF8(data->m_localDir);
+			char* localDir = ConvUTF8(data->m_localDir);
 			sub->InsertEndChild(TiXmlText(localDir));
 			delete [] localDir;
 
 			// Save remote dir
 			sub = pNode->InsertEndChild(TiXmlElement("RemoteDir"));
-			char* remoteDir = m_pOptions->ConvUTF8(data->m_remoteDir.GetSafePath());
+			char* remoteDir = ConvUTF8(data->m_remoteDir.GetSafePath());
 			sub->InsertEndChild(TiXmlText(remoteDir));
 			delete [] remoteDir;
 
