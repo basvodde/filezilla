@@ -33,11 +33,17 @@ public:
 class CDirectoryListing
 {
 public:
+	CDirectoryListing();
+	~CDirectoryListing();
+
+
 	int m_entryCount;
 
 	CServerPath path;
 
 	CDirentry *m_pEntries;
+
+	CDirectoryListing& operator=(const CDirectoryListing &a);
 };
 
 #endif

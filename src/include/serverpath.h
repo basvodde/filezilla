@@ -31,6 +31,8 @@ public:
 	bool IsSubdirOf(const CServerPath &path, bool cmpNoCase) const;
 	bool IsParentOf(const CServerPath &path, bool cmpNoCase) const;
 
+	bool operator==(const CServerPath &op) const;
+
 protected:
 	bool m_bEmpty;
 	ServerType m_type;

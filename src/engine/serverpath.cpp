@@ -552,3 +552,16 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 
 }
 
+bool CServerPath::operator==(const CServerPath &op) const
+{
+	if (m_bEmpty != op.m_bEmpty)
+		return false;
+	else if (m_prefix != op.m_prefix)
+		return false;
+	else if (m_type != op.m_type)
+		return false;
+	else if (m_Segments != op.m_Segments)
+		return false;
+
+	return true;			
+}
