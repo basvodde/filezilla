@@ -718,7 +718,7 @@ void CRemoteListView::OnMenuDownload(wxCommandEvent& event)
 			CServerPath remotePath = m_pDirectoryListing->path;
 			if (remotePath.AddSegment(name))
 			{
-				m_pQueue->QueueFolder(event.GetId() == XRCID("ID_ADDTOQUEUE"), true, fn.GetFullPath(), remotePath, *pServer);
+				//m_pQueue->QueueFolder(event.GetId() == XRCID("ID_ADDTOQUEUE"), true, fn.GetFullPath(), remotePath, *pServer);
 				m_operationMode = (event.GetId() == XRCID("ID_ADDTOQUEUE")) ? recursive_addtoqueue : recursive_download;
 				t_newDir dirToVisit;
 				dirToVisit.localDir = fn.GetFullPath();
