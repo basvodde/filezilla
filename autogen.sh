@@ -3,7 +3,7 @@ echo "HINT: If this script fails, try './update-configure.sh'"
 echo "** Cleaning previous files **"
 
 rm -rf  configure configure.log aclocal.m4 \
-	config.status config autom4te.cache
+	config.status config autom4te.cache libtool
 find . -name "Makefile.in" | xargs rm
 find . -name "Makefile" | xargs rm
 
