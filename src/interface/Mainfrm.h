@@ -38,6 +38,7 @@ protected:
 	void OnViewSplitterPosChanged(wxSplitterEvent& event);
 	void OnMenuHandler(wxCommandEvent &event);
 	void OnQuickconnect(wxCommandEvent &event);
+	void OnEngineEvent(wxEvent &event);
 
 	float m_ViewSplitterSashPos;
 	bool m_bInitDone;

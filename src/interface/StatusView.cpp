@@ -33,6 +33,11 @@ void CStatusView::OnSize(wxSizeEvent &event)
 	}
 }
 
+void CStatusView::AddToLog(CLogmsgNotification *pNotification)
+{
+	AddToLog(pNotification->msgType, pNotification->msg);
+}
+
 void CStatusView::AddToLog(enum MessageType messagetype, wxString message)
 {
 	m_Content += "<tr><td valign='top'>";

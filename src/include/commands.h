@@ -3,21 +3,22 @@
 
 enum Command
 {
-	Connect = 0,
-	Disconnect,
-	Cancel,
-	List,
-	RecList, // Recursive list
-	Transfer,
-	Delete,
-	RemoveDir,
-	MakeDir,
-	Rename,
-	Chmod,
-	Raw
+	cmd_connect = 0,
+	cmd_disconnect,
+	cmd_cancel,
+	cmd_list,
+	cmd_recList, // Recursive list
+	cmd_transfer,
+	cmd_delete,
+	cmd_removeDir,
+	cmd_makeDir,
+	cmd_rename,
+	cmd_chmod,
+	cmd_raw
 };
 
-#define FZ_REPLY_OK				(0x0001)
+#define FZ_REPLY_OK				(0x0000)
+#define FZ_REPLY_WOULDBLOCK		(0x0001)
 #define FZ_REPLY_ERROR			(0x0002)
 #define FZ_REPLY_CRITICALERROR	(0x0004 | FZ_REPLY_ERROR)
 #define FZ_REPLY_CANCELED		(0x0008 | FZ_REPLY_ERROR)
@@ -25,6 +26,7 @@ enum Command
 #define FZ_REPLY_NOTCONNECTED	(0x0020 | FZ_REPLY_ERROR)
 #define FZ_REPLY_DISCONNECTED	(0x0040)
 #define FZ_REPLY_INTERNALERROR	(0x0080)
+#define FZ_REPLY_BUSY			(0x0100 | FZ_REPLY_ERROR)
 
 class CCommand
 {
@@ -40,7 +42,7 @@ public:
 	CConnectCommand(const CServer &server);
 	virtual enum Command GetId() const;
 	virtual bool IsChainable() const;
-	CServer GetServer() const;
+	const CServer GetServer() const;
 protected:
 	CServer m_Server;
 };

@@ -10,11 +10,14 @@
 #include <wx/xrc/xmlres.h>
 #include <wx/image.h>
 
+#include <list>
+
 #include "optionsbase.h"
 #include "logging.h"
 #include "server.h"
 #include "serverpath.h"
 #include "commands.h"
+#include "notification.h"
 #include "FileZillaEngine.h"
 
 #endif

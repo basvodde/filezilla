@@ -141,3 +141,13 @@ wxString CServer::GetPass() const
 	return m_Pass;
 }
 
+CServer& CServer::operator=(const CServer &op)
+{
+	m_Protocol = op.m_Protocol;
+	m_Host = op.m_Host;
+	m_Port = op.m_Port;
+	m_User = op.m_User;
+	m_Pass = op.m_Pass;
+
+	return *this;
+}

@@ -16,6 +16,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_SPLITTER_SASH_POS_CHANGED(-1, CMainFrame::OnViewSplitterPosChanged)
 	EVT_MENU(wxID_ANY, CMainFrame::OnMenuHandler)
 	EVT_BUTTON(XRCID("ID_QUICKCONNECT_OK"), CMainFrame::OnQuickconnect)
+	EVT_FZ_NOTIFICATION(wxID_ANY, CMainFrame::OnEngineEvent)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame() : wxFrame(NULL, -1, "FileZilla", wxDefaultPosition, wxSize(900, 750))
@@ -207,6 +208,9 @@ void CMainFrame::OnQuickconnect(wxCommandEvent &event)
 	if (!m_pQuickconnectBar)
 		return;
 
+	if (!m_pEngine)
+		return;
+
 	wxString host = XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_HOST"), wxTextCtrl)->GetValue();
 	wxString user = XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_USER"), wxTextCtrl)->GetValue();
 	wxString pass = XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_PASS"), wxTextCtrl)->GetValue();
@@ -237,5 +241,29 @@ void CMainFrame::OnQuickconnect(wxCommandEvent &event)
 	XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_PORT"), wxTextCtrl)->SetValue(wxString::Format(_T("%d"), server.GetPort()));
 	XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_USER"), wxTextCtrl)->SetValue(server.GetUser());
 	XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_PASS"), wxTextCtrl)->SetValue(server.GetPass());
+
+	int res = m_pEngine->Command(CConnectCommand(server));
+	if (res != FZ_REPLY_OK || res != FZ_REPLY_WOULDBLOCK)
+		wxBell();
+}
+
+void CMainFrame::OnEngineEvent(wxEvent &event)
+{
+	if (!m_pEngine)
+		return;
+
+	CNotification *pNotification = m_pEngine->GetNextNotification();
+	while (pNotification)
+	{
+		switch (pNotification->GetID())
+		{
+		case nId_logmsg:
+			m_pStatusView->AddToLog(reinterpret_cast<CLogmsgNotification *>(pNotification));
+			break;
+		}
+		delete pNotification;
+
+		pNotification = m_pEngine->GetNextNotification();
+	}
 
 }

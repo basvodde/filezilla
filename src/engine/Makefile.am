@@ -10,6 +10,7 @@ INCLUDES = -I../include
 # of the other Makefile.am variables
 # lib_LIBRARIES = libengine.a
 libengine_a_SOURCES = FileZillaEngine.cpp ControlSocket.cpp ControlSocket.h \
-			commands.cpp ftpcontrolsocket.cpp server.cpp serverpath.cpp
+			commands.cpp ftpcontrolsocket.cpp server.cpp serverpath.cpp \
+			logging.cpp notification.cpp
 
 

@@ -11,21 +11,22 @@ CConnectCommand::CConnectCommand(const CServer &server)
 
 enum Command CConnectCommand::GetId() const
 {
-	return Connect;
+	return cmd_connect;
 }
 
 bool CConnectCommand::IsChainable() const
 {
 	return false;
 }
-CServer CConnectCommand::GetServer() const
+
+const CServer CConnectCommand::GetServer() const
 {
 	return m_Server;
 }
 
 enum Command CDisconnectCommand::GetId() const
 {
-	return Disconnect;
+	return cmd_disconnect;
 }
 
 bool CDisconnectCommand::IsChainable() const
@@ -35,7 +36,7 @@ bool CDisconnectCommand::IsChainable() const
 
 enum Command CCancelCommand::GetId() const
 {
-	return Cancel;
+	return cmd_cancel;
 }
 
 bool CCancelCommand::IsChainable() const

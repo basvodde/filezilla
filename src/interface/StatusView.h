@@ -7,6 +7,7 @@ public:
 	CStatusView(wxWindow* parent, wxWindowID id);
 	virtual ~CStatusView();
 
+	void AddToLog(CLogmsgNotification *pNotification);
 	void AddToLog(enum MessageType messagetype, wxString message);
 
 protected:
