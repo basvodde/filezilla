@@ -1506,6 +1506,7 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 			delete m_pTransferSocket;
 		}
 		m_pTransferSocket = new CTransferSocket(m_pEngine, this, pData->download ? download : upload);
+		m_pTransferSocket->m_binaryMode = pData->transferSettings.binary;
 		if (pData->bPasv)
 		{
 			pData->bTriedPasv = true;

@@ -36,7 +36,7 @@ CTransferSocket::CTransferSocket(CFileZillaEngine *pEngine, CFtpControlSocket *p
 	m_transferBufferPos = 0;
 	
 	m_transferEnd = false;
-	m_binaryMode = false;
+	m_binaryMode = true;
 }
 
 CTransferSocket::~CTransferSocket()
