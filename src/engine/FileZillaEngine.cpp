@@ -13,6 +13,9 @@
 #define new DEBUG_NEW
 #endif
 
+int CFileZillaEngine::m_activeStatusSend = 0;
+int CFileZillaEngine::m_activeStatusRecv = 0;
+
 const wxEventType fzEVT_ENGINE_NOTIFICATION = wxNewEventType();
 
 wxFzEngineEvent::wxFzEngineEvent(int id, enum EngineNotificationType eventType, int data /*=0*/) : wxEvent(id, fzEVT_ENGINE_NOTIFICATION)
@@ -42,7 +45,6 @@ CFileZillaEngine::CFileZillaEngine()
 #else
 	m_asyncRequestCounter = (0xFFFFFFFF / RAND_MAX) * rand();
 #endif
-	m_activeStatusSend = m_activeStatusRecv = 0;
 }
 
 CFileZillaEngine::~CFileZillaEngine()

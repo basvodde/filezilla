@@ -74,8 +74,8 @@ protected:
 	unsigned int m_asyncRequestCounter; // Initialized to random value, increased by one on each request
 
 	// Indicicates if data has been received/sent and whether to send any notifications
-	int m_activeStatusSend;
-	int m_activeStatusRecv;
+	static int m_activeStatusSend;
+	static int m_activeStatusRecv;
 
 	DECLARE_EVENT_TABLE();
 };
