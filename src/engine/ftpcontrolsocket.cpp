@@ -361,7 +361,7 @@ bool CFtpControlSocket::Send(wxString str)
 {
 	LogMessage(Command, str);
 	str += _T("\r\n");
-	wxCharBuffer buffer = wxConvCurrent->cWX2MB(str);
+	wxCharBuffer buffer = wxCSConv(_T("ISO8859-1")).cWX2MB(str);
 	unsigned int len = (unsigned int)strlen(buffer);
 	return CControlSocket::Send(buffer, len);
 }
