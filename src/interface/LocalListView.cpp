@@ -93,7 +93,9 @@ CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState)
 
 CLocalListView::~CLocalListView()
 {
+#ifdef __WXMSW__
 	delete m_pHeaderImageList;
+#endif
 	FreeImageList();
 }
 
