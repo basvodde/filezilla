@@ -37,7 +37,7 @@ CFLAGS="$CFLAGS $WX_CFLAGS_ONLY"
 
 LDFLAGS="$LDFLAGS $WX_LIBS"
 
-if test "x$host_os" = "xmingw32"; then
+if echo $host_os | grep mingw; then
 	if test ! `$WXCONFIG --libs | grep -e '-l(wx)?zlib'`; then
 		AC_ARG_WITH(zlib-lib,
 		[[  --with-zlib-lib=FILE     Use the given path to the (wx)zlib library.]],
