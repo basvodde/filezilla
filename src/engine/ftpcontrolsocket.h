@@ -16,11 +16,14 @@ protected:
 	virtual int ResetOperation(int nErrorCode);
 
 	virtual bool List(CServerPath path = CServerPath(), wxString subDir = _T(""));
-	virtual bool ListParseResponse();
-	virtual bool ListSend();
-	bool ParsePwdReply(wxString reply);
+	bool ListParseResponse();
+	bool ListSend();
 
 	bool ChangeDir(CServerPath path = CServerPath(), wxString subDir = _T(""));
+	bool ChangeDirParseResponse();
+	bool ChangeDirSend();
+
+	bool ParsePwdReply(wxString reply);
 
 	virtual void OnConnect(wxSocketEvent &event);
 	virtual void OnReceive(wxSocketEvent &event);
@@ -28,9 +31,11 @@ protected:
 	virtual bool Send(wxString str);
 
 	void ParseResponse();
+	bool SendNextCommand();
+
 	int GetReplyCode() const;
 
-	void Logon();
+	bool Logon();
 
 	wxString m_ReceiveBuffer;
 	wxString m_MultilineResponseCode;

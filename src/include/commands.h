@@ -15,7 +15,8 @@ enum Command
 	cmd_makeDir,
 	cmd_rename,
 	cmd_chmod,
-	cmd_raw
+	cmd_raw,
+	cmd_private // only used internally
 };
 
 #define FZ_REPLY_OK				(0x0000)

@@ -106,6 +106,9 @@ void CFtpControlSocket::ParseResponse()
 	case cmd_list:
 		ListParseResponse();
 		break;
+	case cmd_private:
+		ChangeDirParseResponse();
+		break;
 	default:
 		break;
 	}
@@ -130,7 +133,7 @@ public:
 	int logonType;
 };
 
-void CFtpControlSocket::Logon()
+bool CFtpControlSocket::Logon()
 {
 	if (!m_pCurOpData)
 		m_pCurOpData = new CLogonOpData;
@@ -160,7 +163,7 @@ void CFtpControlSocket::Logon()
 	if (code != 2 && code != 3)
 	{
 		DoClose(FZ_REPLY_DISCONNECTED);
-		return;
+		return false;
 	}
 	if (!pData->opState)
 	{
@@ -175,11 +178,11 @@ void CFtpControlSocket::Logon()
 		{
 		case ER: // ER means summat has gone wrong
 			DoClose();
-			return;
+			return false;
 		case LO: //LO means we are logged on
 			pData->opState = 2;
 			Send(_T("SYST"));
-			return;
+			return false;
 		}
 
 		nCommand = logonseq[pData->logonType][pData->logonSequencePos];
@@ -188,7 +191,7 @@ void CFtpControlSocket::Logon()
 	{
 		LogMessage(Status, _("Connected"));
 		ResetOperation(FZ_REPLY_OK);
-		return;
+		return true;
 	}
 
 	switch (nCommand)
@@ -203,6 +206,8 @@ void CFtpControlSocket::Logon()
 		ResetOperation(FZ_REPLY_INTERNALERROR);
 		break;
 	}
+
+	return false;
 }
 
 int CFtpControlSocket::GetReplyCode() const
@@ -237,9 +242,6 @@ public:
 	{
 	}
 
-	CServerPath path;
-	wxString subDir;
-
 	bool bPasv;
 	bool bTriedPasv;
 	bool bTriedActive;
@@ -251,11 +253,6 @@ public:
 enum listStates
 {
 	list_init = 0,
-	list_pwd,
-	list_cwd,
-	list_pwd_cwd,
-	list_cwd_subdir,
-	list_pwd_subdir,
 	list_port_pasv,
 	list_type,
 	list_list,
@@ -277,31 +274,13 @@ bool CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDi
 	}
 	pData = new CListOpData;
 	m_pCurOpData = pData;
-	pData->path = path;
-	pData->subDir = subDir;
-		
+			
 	pData->bPasv = m_pEngine->GetOptions()->GetOptionVal(OPTION_USEPASV);
 	pData->bTriedPasv = pData->bTriedActive = false;
+	pData->opState = list_port_pasv;
 
-	if (path.IsEmpty())
-	{
-		if (m_CurrentPath.IsEmpty())
-			pData->opState = list_pwd;
-		else
-			pData->opState = list_port_pasv;
-	}
-	else
-	{
-		if (m_CurrentPath != path)
-			pData->opState = list_cwd;
-		else
-		{
-			if (subDir == _T(""))
-				pData->opState = list_port_pasv;
-			else
-				pData->opState = list_cwd_subdir;
-		}
-	}
+	if (!ChangeDir(path, subDir))
+		return false;
 
 	return ListSend();
 }
@@ -313,29 +292,6 @@ bool CFtpControlSocket::ListSend()
 	wxString cmd;
 	switch (pData->opState)
 	{
-	case list_pwd:
-	case list_pwd_cwd:
-	case list_pwd_subdir:
-		cmd = _T("PWD");
-		cmd = _T("PWD");
-		cmd = _T("PWD");
-		break;
-	case list_cwd:
-		cmd = _T("CWD ") + pData->path.GetPath();
-		m_CurrentPath.Clear();
-		break;
-	case list_cwd_subdir:
-		if (pData->subDir == _T(""))
-		{
-			ResetOperation(FZ_REPLY_INTERNALERROR);
-			return false;
-		}
-		else if (pData->subDir == _T(".."))
-			cmd = _T("CDUP");
-		else
-			cmd = _T("CWD ") + pData->subDir;
-		m_CurrentPath.Clear();
-		break;
 	case list_port_pasv:
 		m_pTransferSocket = new CTransferSocket(m_pEngine, this, ::list);
 		if (pData->bPasv)
@@ -396,7 +352,7 @@ bool CFtpControlSocket::ListSend()
 		if (!Send(cmd))
 			return false;
 
-	return true;
+	return false;
 }
 
 bool CFtpControlSocket::ListParseResponse()
@@ -412,45 +368,6 @@ bool CFtpControlSocket::ListParseResponse()
 	bool error = false;
 	switch (pData->opState)
 	{
-	case list_pwd:
-		if (code != 2 && code != 3)
-			error = true;
-		else if (ParsePwdReply(m_ReceiveBuffer))
-			pData->opState = list_port_pasv;
-		else
-			error = true;
-		break;
-	case list_cwd:
-		if (code != 2 && code != 3)
-			error = true;
-		else
-			pData->opState = list_pwd_cwd;
-		break;
-	case list_pwd_cwd:
-		if (code != 2 && code != 3)
-			error = true;
-		else if (ParsePwdReply(m_ReceiveBuffer))
-			if (pData->subDir == _T(""))
-				pData->opState = list_port_pasv;
-			else
-				pData->opState = list_cwd_subdir;
-		else
-			error = true;
-		break;
-	case list_cwd_subdir:
-		if (code != 2 && code != 3)
-			error = true;
-		else
-			pData->opState = list_pwd_subdir;
-		break;
-	case list_pwd_subdir:
-		if (code != 2 && code != 3)
-			error = true;
-		else if (ParsePwdReply(m_ReceiveBuffer))
-			pData->opState = list_port_pasv;
-		else
-			error = true;
-		break;
 	case list_port_pasv:
 		if (code != 2 && code != 3)
 		{
@@ -550,10 +467,6 @@ bool CFtpControlSocket::ListParseResponse()
 
 bool CFtpControlSocket::ParsePwdReply(wxString reply)
 {
-	CListOpData *pData = static_cast<CListOpData *>(m_pCurOpData);
-	if (!pData)
-		return false;
-
 	int pos1 = reply.Find('"');
 	int pos2 = reply.Find('"', true);
 	if (pos1 == -1 || pos1 >= pos2)
@@ -586,6 +499,15 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 {
 	delete m_pTransferSocket;
 	m_pTransferSocket = 0;
+
+	if (nErrorCode == FZ_REPLY_OK && m_pCurOpData->pNextOpData)
+	{
+		COpData *pNext = m_pCurOpData->pNextOpData;
+		m_pCurOpData->pNextOpData = 0;
+		delete m_pCurOpData;
+		m_pCurOpData = pNext;
+		return SendNextCommand();
+	}
 
 	return CControlSocket::ResetOperation(nErrorCode);
 }
@@ -628,4 +550,208 @@ void CFtpControlSocket::TransferEnd(int reason)
 			ResetOperation(FZ_REPLY_ERROR);
 		}
 	}
+}
+
+bool CFtpControlSocket::SendNextCommand()
+{
+	if (!m_pCurOpData)
+	{
+		LogMessage(Debug_Warning, __TFILE__, __LINE__, _T("SendNextCommand called without active operation"));
+		ResetOperation(FZ_REPLY_ERROR);
+		return false;
+	}
+
+	switch (m_pCurOpData->opId)
+	{
+	case cmd_list:
+		return ListSend();
+	case cmd_connect:
+		return Logon();
+	case cmd_private:
+		return ChangeDirSend();
+	}
+	LogMessage(Debug_Warning, __TFILE__, __LINE__, _T("Unknown operation in SendNextCommand"));
+	ResetOperation(FZ_REPLY_ERROR);
+
+	return false;
+}
+
+class CChangeDirOpData : public COpData
+{
+public:
+	CChangeDirOpData()
+	{
+		opId = cmd_private;
+	}
+
+	virtual ~CChangeDirOpData()
+	{
+	}
+
+	CServerPath path;
+	wxString subDir;
+
+};
+
+enum cwdStates
+{
+	cwd_init = 0,
+	cwd_pwd,
+	cwd_cwd,
+	cwd_pwd_cwd,
+	cwd_cwd_subdir,
+	cwd_pwd_subdir
+};
+
+bool CFtpControlSocket::ChangeDir(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/)
+{
+	enum cwdStates state = cwd_init;
+
+	if (path.IsEmpty())
+	{
+		if (m_CurrentPath.IsEmpty())
+			state = cwd_pwd;
+		else
+			return true;
+	}
+	else
+	{
+		if (m_CurrentPath != path)
+			state = cwd_cwd;
+		else
+		{
+			if (subDir == _T(""))
+				return true;
+			else
+				state = cwd_cwd_subdir;
+		}
+	}
+
+	CChangeDirOpData *pData = new CChangeDirOpData;
+	pData->pNextOpData = m_pCurOpData;
+	pData->opState = state;
+	pData->path = path;
+	pData->subDir = subDir;
+
+	m_pCurOpData = pData;
+
+	ChangeDirSend();
+
+	return false;
+}
+
+bool CFtpControlSocket::ChangeDirParseResponse()
+{
+	if (!m_pCurOpData)
+	{
+		ResetOperation(FZ_REPLY_ERROR);
+		return false;
+	}
+	CChangeDirOpData *pData = static_cast<CChangeDirOpData *>(m_pCurOpData);
+
+	int code = GetReplyCode();
+	bool error = false;
+	switch (pData->opState)
+	{
+	case cwd_pwd:
+		if (code != 2 && code != 3)
+			error = true;
+		else if (ParsePwdReply(m_ReceiveBuffer))
+		{
+			ResetOperation(FZ_REPLY_OK);
+			return true;
+		}
+		else
+			error = true;
+		break;
+	case cwd_cwd:
+		if (code != 2 && code != 3)
+			error = true;
+		else
+			pData->opState = cwd_pwd_cwd;
+		break;
+	case cwd_pwd_cwd:
+		if (code != 2 && code != 3)
+			error = true;
+		else if (ParsePwdReply(m_ReceiveBuffer))
+			if (pData->subDir == _T(""))
+			{
+				ResetOperation(FZ_REPLY_OK);
+				return true;
+			}
+			else
+				pData->opState = cwd_cwd_subdir;
+		else
+			error = true;
+		break;
+	case cwd_cwd_subdir:
+		if (code != 2 && code != 3)
+			error = true;
+		else
+			pData->opState = cwd_pwd_subdir;
+		break;
+	case cwd_pwd_subdir:
+		if (code != 2 && code != 3)
+			error = true;
+		else if (ParsePwdReply(m_ReceiveBuffer))
+		{
+			ResetOperation(FZ_REPLY_OK);
+			return true;
+		}
+		else
+			error = true;
+		break;
+	}
+
+	if (error)
+	{
+		ResetOperation(FZ_REPLY_ERROR);
+		return false;
+	}
+
+	return ChangeDirSend();
+}
+
+bool CFtpControlSocket::ChangeDirSend()
+{
+	if (!m_pCurOpData)
+	{
+		ResetOperation(FZ_REPLY_ERROR);
+		return false;
+	}
+	CChangeDirOpData *pData = static_cast<CChangeDirOpData *>(m_pCurOpData);
+
+	wxString cmd;
+	switch (pData->opState)
+	{
+	case cwd_pwd:
+	case cwd_pwd_cwd:
+	case cwd_pwd_subdir:
+		cmd = _T("PWD");
+		cmd = _T("PWD");
+		cmd = _T("PWD");
+		break;
+	case cwd_cwd:
+		cmd = _T("CWD ") + pData->path.GetPath();
+		m_CurrentPath.Clear();
+		break;
+	case cwd_cwd_subdir:
+		if (pData->subDir == _T(""))
+		{
+			ResetOperation(FZ_REPLY_INTERNALERROR);
+			return false;
+		}
+		else if (pData->subDir == _T(".."))
+			cmd = _T("CDUP");
+		else
+			cmd = _T("CWD ") + pData->subDir;
+		m_CurrentPath.Clear();
+		break;
+	}
+
+	if (cmd != _T(""))
+		if (!Send(cmd))
+			return false;
+
+	return false;
 }
