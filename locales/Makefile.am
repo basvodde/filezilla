@@ -1,6 +1,6 @@
 localesdir = $(pkgdatadir)/locales
 
-FILEZILLA_LINGUAS = de
+FILEZILLA_LINGUAS = de lt
 WXWIN_LINGUAS  =    de
 
 CLEANFILES = *.mo resources.h
@@ -25,7 +25,7 @@ install-wxstd-catalogs:
 
 # ----------------------------------------------------------------------------
 # Logic for catalogs updating follows
-# (shamelessly stolen from wxWindows makefile):
+# Try to not touch catalog files if nothing has changed
 # ----------------------------------------------------------------------------
 
 # the programs we use (TODO: use configure to detect them)
@@ -44,17 +44,17 @@ XGETTEXT_ARGS=-C -k_ -kwxGetTranslation -kwxTRANSLATE -s -j
 # a PO file must be updated from wxstd.po to include new translations
 %.po: $(srcdir)/filezilla.pot
 	if [ -f $@ ]; then $(MSGMERGE) -U $@ $(srcdir)/filezilla.pot; else cp $(srcdir)/filezilla.pot $@; fi
-	if [ -f $@~ ]; then rm $@~; fi
+	@if [ -f $@~ ]; then rm $@~; fi
 
 resources.h: ../src/interface/resources/*.xrc
-	if [ -f $@~ ]; then rm $@~; fi
+	@if [ -f $@~ ]; then rm $@~; fi
 	wxrc -g -e $(srcdir)/../src/interface/resources/*.xrc > $@~ || exit 1
 	cat $@~ | sed "s/_(\"<.*>\")\;//" > $@
-	if [ -f $@~ ]; then rm $@~; fi
+	@if [ -f $@~ ]; then rm $@~; fi
 
 filezilla.pot: resources.h ../src/include/*.h ../src/engine/*.h ../src/interface/*.h  ../src/engine/*.cpp ../src/interface/*.cpp 
-	rm -f filezilla_new.pot
-	touch filezilla_new.pot
+	@rm -f filezilla_new.pot
+	@touch filezilla_new.pot
 
 	(cd $(srcdir) ; $(XGETTEXT) $(XGETTEXT_ARGS) -o filezilla_new.pot resources.h)
 	(cd $(srcdir) ; find ../src -name "*.h" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o filezilla_new.pot)
@@ -77,18 +77,25 @@ allmo:
 
 # print out the percentage of the translated strings
 stats:
-	@for i in $(FILEZILLA_LINGUAS); do \
-		x=`$(MSGFMT) -o /dev/null "$(srcdir)/$$i.po" 2>&1 | sed -e 's/[,\.]//g' \
-			-e 's/\([0-9]\+\) translated messages\?/TR=\1/' \
-			-e 's/\([0-9]\+\) fuzzy translations\?/FZ=\1/' \
-			-e 's/\([0-9]\+\) untranslated messages\?/UT=\1/'`; \
-		TR=0 FZ=0 UT=0; \
-echo $$x; \
-		eval $$x; \
+	@ALLTOTAL=0 ALLTR=0 ALLFZ=0 ALLUT=0; \
+	for i in $(FILEZILLA_LINGUAS); do \
+		if [ -f $$i.mo~ ]; then rm $$i.mo~; fi; \
+		res=`LC_ALL="en_EN" $(MSGFMT) -o $$i.mo~ "$(srcdir)/$$i.po" 2>&1`; \
+		if [ -f $$i.mo~ ]; then rm $$i.mo~; fi; \
+		TR=`echo $$res | sed -e 's/^[^0-9]*\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+/\\1/'`; \
+		FZ=`echo $$res | sed -e 's/^[^0-9]*\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+/\\2/'`; \
+		UT=`echo $$res | sed -e 's/^[^0-9]*\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+/\\3/'`; \
+		ALLTR=`expr $$ALLTR + $$TR`; \
+		ALLFZ=`expr $$ALLFZ + $$FZ`; \
+		ALLUT=`expr $$ALLUT + $$UT`; \
 		TOTAL=`expr $$TR + $$FZ + $$UT`; \
-		echo "\"$$i\" => \"`expr 100 "*" $$TR / $$TOTAL`%\", $$TR of $$TOTAL strings translated, $$FZ fuzzy"; \
-	done
+		echo "\"$$i\" => \"`expr 100 "*" $$TR / $$TOTAL`%\", $$TR of $$TOTAL strings translated, $$FZ fuzzy, $$UT untranslated"; \
+	done; \
+	ALLTOTAL=`expr $$ALLTR + $$ALLFZ + $$ALLUT`; \
+	echo "---------------------------------------"; \
+	echo " ALL => \"`expr 100 "*" $$ALLTR / $$ALLTOTAL`%\", $$ALLTR of $$ALLTOTAL strings translated, $$ALLFZ fuzzy, $$ALLUT untranslated"; \
+	echo $$TOTAL;
 
-all: allmo
+all: allmo stats
 
 .PHONY: allpo allmo force-update stats FORCE
