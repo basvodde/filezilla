@@ -68,16 +68,16 @@ class CServerItem : public CQueueItem
 public:
 	CServerItem(const CServer& server);
 	virtual ~CServerItem();
+	virtual enum QueueItemType GetType() const { return QueueItemType_Server; }
 
 	const CServer& GetServer() const;
 	wxString GetName() const;
-
-	virtual enum QueueItemType GetType() const { return QueueItemType_Server; }
 
 	void AddFileItemToList(CFileItem* pItem);
 
 	CFileItem* GetIdleChild(bool immadiateOnly);
 	virtual bool RemoveChild(CQueueItem* pItem); // Removes a child item with is somewhere in the tree of children
+	wxLongLong GetTotalSize(bool& partialSizeInfo) const;
 
 	void QueueImmediateFiles();
 
@@ -126,6 +126,7 @@ public:
 	wxString GetRemoteFile() const { return m_remoteFile; }
 	CServerPath GetRemotePath() const { return m_remotePath; }
 	wxLongLong GetSize() const { return m_size; }
+	void SetSize(wxLongLong size) { m_size = size; }
 	bool Download() const { return m_download; }
 	bool Queued() const { return m_queued; }
 
@@ -212,6 +213,8 @@ protected:
 	void CheckQueueState();
 	bool IncreaseErrorCount(t_EngineData& engineData);
 	void UpdateStatusLinePositions();
+
+	void UpdateQueueSize();
 
 	std::vector<CServerItem*> m_serverList;
 	

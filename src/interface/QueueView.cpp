@@ -342,6 +342,32 @@ void CServerItem::QueueImmediateFiles()
 	}
 }
 
+wxLongLong CServerItem::GetTotalSize(bool& partialSizeInfo) const
+{
+	wxLongLong totalSize = 0;
+	for (int i = 0; i < PRIORITY_COUNT; i++)
+	{
+		for (int j = 0; j < 2; j++)
+		{
+			const std::list<CFileItem*>& fileList = m_fileList[j][i];
+			for (std::list<CFileItem*>::const_iterator iter = fileList.begin(); iter != fileList.end(); iter++)
+			{
+				const CFileItem* item = *iter;
+				if (item->GetItemState() != ItemState_Complete)
+				{
+					wxLongLong size = item->GetSize();
+					if (size >= 0)
+						totalSize += size;
+					else
+						partialSizeInfo = true;
+				}
+			}
+		}
+	}
+
+	return totalSize;
+}
+
 CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame)
 	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN | wxLC_REPORT | wxLC_VIRTUAL | wxSUNKEN_BORDER)
 {
@@ -438,6 +464,8 @@ bool CQueueView::QueueFile(bool queueOnly, bool download, const wxString& localF
 	while (TryStartNextTransfer());
 	m_waitStatusLineUpdate = false;
 	UpdateStatusLinePositions();
+
+	UpdateQueueSize();
 
 	return true;
 }
@@ -618,7 +646,7 @@ void CQueueView::OnEngineEvent(wxEvent &event)
 
 				if (data.pStatusLineCtrl)
 					data.pStatusLineCtrl->SetTransferStatus(pStatus);
-                
+
 				delete pNotification;
 			}
 			break;
@@ -715,7 +743,7 @@ bool CQueueView::TryStartNextTransfer()
 	engineData.pStatusLineCtrl = pStatusLineCtrl;
 
 	SendNextCommand(engineData);
-
+	
 	return true;
 }
 
@@ -808,6 +836,7 @@ void CQueueView::ResetEngine(t_EngineData& data, bool removeFileItem)
 	while (TryStartNextTransfer());
 	m_waitStatusLineUpdate = false;
 	UpdateStatusLinePositions();
+	UpdateQueueSize();
 
 	CheckQueueState();
 }
@@ -979,6 +1008,8 @@ bool CQueueView::IncreaseErrorCount(t_EngineData& engineData)
 	CQueueItem* pItem = engineData.pItem;
 	ResetEngine(engineData, true);
 
+	//TODO: Error description?
+
 	return false;
 }
 
@@ -1033,4 +1064,35 @@ void CQueueView::UpdateStatusLinePositions()
 		pCtrl->SetSize(rect);
 		pCtrl->Show();
 	}
+}
+
+void CQueueView::UpdateQueueSize()
+{
+	wxStatusBar *pStatusBar = m_pMainFrame->GetStatusBar();
+	if (!pStatusBar)
+		return;
+
+	// Collect total queue size
+	wxLongLong totalSize = 0;
+
+	bool partialSizeInfo = false;
+	for (std::vector<CServerItem*>::const_iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
+		totalSize += (*iter)->GetTotalSize(partialSizeInfo);
+
+	wxString queueSize;
+	if (totalSize == 0 && !partialSizeInfo)
+		queueSize = _("Queue: empty");
+	if (totalSize > (1000 * 1000))
+	{
+		totalSize /= 1000 * 1000;
+		queueSize.Printf(_("Queue: %s%d MB"), partialSizeInfo ? _T(">") : _T(""), totalSize.GetLo());
+	}
+	else if (totalSize > 1000)
+	{
+		totalSize /= 1000;
+		queueSize.Printf(_("Queue: %s%d KB"), partialSizeInfo ? _T(">") : _T(""), totalSize.GetLo());
+	}
+	else
+		queueSize.Printf(_("Queue: %s%d bytes"), partialSizeInfo ? _T(">") : _T(""), totalSize.GetLo());
+	pStatusBar->SetStatusText(queueSize, 4);
 }

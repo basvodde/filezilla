@@ -25,11 +25,11 @@
 #define SENDLED_TIMER_ID wxID_HIGHEST + 2
 #define TRANSFERSTATUS_TIMER_ID wxID_HIGHEST + 3
 
-static const int statbarWidths[7] = {
+static const int statbarWidths[6] = {
 #ifdef __WXMSW__
-	-2, 100, 90, -1, 150, -1, 41
+	-2, 90, -1, 150, -1, 41
 #else
-	-2, 100, 90, -1, 150, -1, 50
+	-2, 90, -1, 150, -1, 50
 #endif
 };
 
@@ -80,18 +80,18 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 
 	m_pState = new CState();
 
-	m_pStatusBar = CreateStatusBar(7, wxST_SIZEGRIP);
+	m_pStatusBar = CreateStatusBar(6, wxST_SIZEGRIP);
 	if (m_pStatusBar)
 	{
 		m_pStatusBar->Connect(wxID_ANY, wxEVT_SIZE, (wxObjectEventFunction)(wxEventFunction)&CMainFrame::OnStatusbarSize, 0, this);
-		int array[7];
-		for (int i = 1; i < 6; i++)
+		int array[6];
+		for (int i = 1; i < 5; i++)
 			array[i] = wxSB_NORMAL;
 		array[0] = wxSB_FLAT;
-		array[6] = wxSB_FLAT;
-		m_pStatusBar->SetStatusStyles(7, array);
+		array[5] = wxSB_FLAT;
+		m_pStatusBar->SetStatusStyles(6, array);
 
-		m_pStatusBar->SetStatusWidths(7, statbarWidths);
+		m_pStatusBar->SetStatusWidths(6, statbarWidths);
 		
 		m_pRecvLed = new CLed(m_pStatusBar, 1);
 		m_pSendLed = new CLed(m_pStatusBar, 0);
@@ -595,17 +595,17 @@ void CMainFrame::OnStatusbarSize(wxSizeEvent& event)
 	if (IsMaximized() && !m_windowIsMaximized)
 	{
 		m_windowIsMaximized = true;
-		int widths[7];
-		memcpy(widths, statbarWidths, 7 * sizeof(int));
-		widths[6] = 35;
-		m_pStatusBar->SetStatusWidths(7, widths);
+		int widths[6];
+		memcpy(widths, statbarWidths, 6 * sizeof(int));
+		widths[5] = 35;
+		m_pStatusBar->SetStatusWidths(6, widths);
 		m_pStatusBar->Refresh();
 	}
 	else if (!IsMaximized() && m_windowIsMaximized)
 	{
 		m_windowIsMaximized = false;
 		
-		m_pStatusBar->SetStatusWidths(7, statbarWidths);
+		m_pStatusBar->SetStatusWidths(6, statbarWidths);
 		m_pStatusBar->Refresh();
 	}
 #endif
@@ -613,14 +613,14 @@ void CMainFrame::OnStatusbarSize(wxSizeEvent& event)
 	if (m_pSendLed)
 	{
 		wxRect rect;
-		m_pStatusBar->GetFieldRect(6, rect);
+		m_pStatusBar->GetFieldRect(5, rect);
 		m_pSendLed->SetSize(rect.GetLeft() + 16, rect.GetTop() + (rect.GetHeight() - 11) / 2, -1, -1);
 	}
 
 	if (m_pRecvLed)
 	{
 		wxRect rect;
-		m_pStatusBar->GetFieldRect(6, rect);
+		m_pStatusBar->GetFieldRect(5, rect);
 		m_pRecvLed->SetSize(rect.GetLeft() + 2, rect.GetTop() + (rect.GetHeight() - 11) / 2, -1, -1);
 	}
 }
@@ -681,6 +681,9 @@ void CMainFrame::OnTimer(wxTimerEvent& event)
 
 void CMainFrame::SetProgress(const CTransferStatus *pStatus)
 {
+	return;
+
+	/* TODO: If called during primary transfer, relay to queue, else relay to remote file list statusbar.
 	if (!m_pStatusBar)
 		return;
 
@@ -689,7 +692,6 @@ void CMainFrame::SetProgress(const CTransferStatus *pStatus)
 		m_pStatusBar->SetStatusText(_T(""), 1);
 		m_pStatusBar->SetStatusText(_T(""), 2);
 		m_pStatusBar->SetStatusText(_T(""), 3);
-		m_pStatusBar->SetStatusText(_T(""), 4);
 		return;
 	}
 	
@@ -723,6 +725,7 @@ void CMainFrame::SetProgress(const CTransferStatus *pStatus)
 	}
 	else
 		m_pStatusBar->SetStatusText(wxString::Format(_("%s bytes (? B/s)"), wxLongLong(pStatus->currentOffset).ToString().c_str()), 4);
+	*/
 }
 
 void CMainFrame::OnSiteManager(wxCommandEvent& event)

@@ -28,6 +28,7 @@ CStatusLineCtrl::CStatusLineCtrl(CQueueView* pParent, const CQueueView::t_Engine
 
 	m_pParent = pParent;
 	m_pStatus = 0;
+	m_lastOffset = -1;
 
 	SetTransferStatus(0);
 
@@ -55,6 +56,9 @@ CStatusLineCtrl::CStatusLineCtrl(CQueueView* pParent, const CQueueView::t_Engine
 
 CStatusLineCtrl::~CStatusLineCtrl()
 {
+	if (m_pStatus && m_pStatus->totalSize >= 0)
+		m_engineData.pItem->SetSize(m_pStatus->totalSize);
+
 	if (m_transferStatusTimer.IsRunning())
 		m_transferStatusTimer.Stop();
 	delete m_pStatus;
@@ -131,6 +135,8 @@ void CStatusLineCtrl::SetTransferStatus(const CTransferStatus* pStatus)
 {
 	if (!pStatus)
 	{
+		if (m_pStatus && m_pStatus->totalSize >= 0)
+			m_engineData.pItem->SetSize(m_pStatus->totalSize);
 		delete m_pStatus;
 		m_pStatus = 0;
 
@@ -143,7 +149,7 @@ void CStatusLineCtrl::SetTransferStatus(const CTransferStatus* pStatus)
 			m_statusText = _("Waiting for transfer to be canceled");
 			break;
 		case CQueueView::t_EngineData::connect:
-			m_statusText = wxString::Format(_("Connecting to %s"), m_engineData.lastServer.FormatServer());
+			m_statusText = wxString::Format(_("Connecting to %s"), m_engineData.lastServer.FormatServer().c_str());
 			break;
 		default:
 			m_statusText = _("Transferring");
@@ -159,6 +165,8 @@ void CStatusLineCtrl::SetTransferStatus(const CTransferStatus* pStatus)
 			m_pStatus = new CTransferStatus(*pStatus);
 		else
 			*m_pStatus = *pStatus;
+
+		m_lastOffset = pStatus->currentOffset;
 
 		if (!m_transferStatusTimer.IsRunning())
 			m_transferStatusTimer.Start(100);
@@ -240,9 +248,22 @@ void CStatusLineCtrl::DrawProgressBar(wxDC& dc, int x, int y, int height)
 	else
 		perMill = wxLongLong(m_pStatus->currentOffset * 1000 / m_pStatus->totalSize).GetLo();
 
-	wxString text = wxString::Format(_T("%s%d.%d%%"), prefix, perMill / 10, perMill % 10);
+	wxString text = wxString::Format(_T("%s%d.%d%%"), prefix.c_str(), perMill / 10, perMill % 10);
 
 	wxCoord w, h;
 	dc.GetTextExtent(text, &w, &h);
 	dc.DrawText(text, x + PROGRESSBAR_WIDTH / 2 - w / 2, y + height / 2 - h / 2);
+}
+
+wxLongLong CStatusLineCtrl::GetSpeed() const
+{
+	if (!m_pStatus)
+		return -1;
+
+	wxTimeSpan elapsed = wxDateTime::Now().Subtract(m_pStatus->started);
+	int elapsedSeconds = elapsed.GetSeconds().GetLo(); // Assume GetHi is always 0
+	if (elapsedSeconds > 0)
+		return (m_pStatus->currentOffset - m_pStatus->startOffset) / elapsedSeconds;
+	else
+		return -1;
 }
