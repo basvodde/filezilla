@@ -205,6 +205,9 @@ void CFtpControlSocket::ParseResponse()
 	case cmd_mkdir:
 		MkdirParseResponse();
 		break;
+	case cmd_rename:
+		RenameParseResponse();
+		break;
 	default:
 		ResetOperation(FZ_REPLY_INTERNALERROR);
 		break;
@@ -806,6 +809,8 @@ int CFtpControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
 		return FileTransferSend(prevResult);
 	case cmd_mkdir:
 		return MkdirSend();
+	case cmd_rename:
+		return RenameSend(prevResult);
 	default:
 		LogMessage(::Debug_Warning, __TFILE__, __LINE__, _T("Unknown opID (%d) in SendNextCommand"), m_pCurOpData->opId);
 		ResetOperation(FZ_REPLY_INTERNALERROR);
@@ -2289,5 +2294,120 @@ int CFtpControlSocket::MkdirSend()
 	if (!res)
 		return FZ_REPLY_ERROR;
 	
+	return FZ_REPLY_WOULDBLOCK;
+}
+
+class CRenameOpData : public COpData
+{
+public:
+	CRenameOpData(const CRenameCommand& command)
+		: m_cmd(command)
+	{
+		opId = cmd_rename;
+		m_useAbsolute = false;
+	}
+
+	virtual ~CRenameOpData() { }
+
+	CRenameCommand m_cmd;
+	bool m_useAbsolute;
+};
+
+enum renameStates
+{
+	rename_init = 0,
+	rename_rnfrom,
+	rename_rnto
+};
+
+int CFtpControlSocket::Rename(const CRenameCommand& command)
+{
+	if (m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("m_pCurOpData not empty"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	LogMessage(Status, _("Renaming '%s' to '%s'"), command.GetFromPath().FormatFilename(command.GetFromFile()).c_str(), command.GetToPath().FormatFilename(command.GetToFile()));
+
+	CRenameOpData *pData = new CRenameOpData(command);
+	pData->opState = rename_rnfrom;
+	m_pCurOpData = pData;
+
+	int res = ChangeDir(command.GetFromPath());
+	if (res != FZ_REPLY_OK)
+		return res;
+	
+	return RenameSend();
+}
+
+int CFtpControlSocket::RenameParseResponse()
+{
+	CRenameOpData *pData = static_cast<CRenameOpData*>(m_pCurOpData);
+	if (!pData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("m_pCurOpData empty"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	int code = GetReplyCode();
+	if (code != 2 && code != 3)
+	{
+		ResetOperation(FZ_REPLY_ERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	if (pData->opState == rename_rnfrom)
+		pData->opState = rename_rnto;
+	else
+	{
+		CDirectoryCache cache;
+		cache.Rename(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile(), pData->m_cmd.GetToPath(), pData->m_cmd.GetToFile());
+
+		m_pEngine->ResendModifiedListings();
+
+		ResetOperation(FZ_REPLY_OK);
+		return FZ_REPLY_OK;
+	}
+
+	return RenameSend();
+}
+
+int CFtpControlSocket::RenameSend(int prevResult /*=FZ_REPLY_OK*/)
+{
+	CRenameOpData *pData = static_cast<CRenameOpData*>(m_pCurOpData);
+	if (!pData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("m_pCurOpData empty"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	if (prevResult != FZ_REPLY_OK)
+		pData->m_useAbsolute = true;
+
+	bool res;
+	switch (pData->opState)
+	{
+	case rename_rnfrom:
+		res = Send("RNFR " + pData->m_cmd.GetFromPath().FormatFilename(pData->m_cmd.GetFromFile(), !pData->m_useAbsolute));
+		break;
+	case rename_rnto:
+		res = Send("RNTO " + pData->m_cmd.GetToPath().FormatFilename(pData->m_cmd.GetToFile(), !pData->m_useAbsolute && pData->m_cmd.GetFromPath() == pData->m_cmd.GetToPath()));
+		break;
+	default:
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("unknown op state: %d"), pData->opState);
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	if (!res)
+	{
+		ResetOperation(FZ_REPLY_ERROR);
+		return FZ_REPLY_ERROR;
+	}
+
 	return FZ_REPLY_WOULDBLOCK;
 }

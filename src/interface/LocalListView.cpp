@@ -1154,5 +1154,4 @@ void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 	else
 		event.Veto();
 #endif
-
 }

@@ -98,3 +98,12 @@ CMkdirCommand::CMkdirCommand(const CServerPath& path)
 {
 	m_path = path;
 }
+
+CRenameCommand::CRenameCommand(const CServerPath& fromPath, const wxString& fromFile,
+							   const CServerPath& toPath, const wxString& toFile)
+{
+	m_fromPath = fromPath;
+	m_toPath = toPath;
+	m_fromFile = fromFile;
+	m_toFile = toFile;
+}

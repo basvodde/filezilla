@@ -148,4 +148,20 @@ protected:
 	CServerPath m_path;
 };
 
+DECLARE_COMMAND(CRenameCommand, cmd_rename, true)
+	CRenameCommand(const CServerPath& fromPath, const wxString& fromFile,
+				   const CServerPath& toPath, const wxString& toFile);
+
+	CServerPath GetFromPath() const { return m_fromPath; }
+	CServerPath GetToPath() const { return m_toPath; }
+	wxString GetFromFile() const { return m_fromFile; }
+	wxString GetToFile() const { return m_toFile; }
+
+protected:
+	CServerPath m_fromPath;
+	CServerPath m_toPath;
+	wxString m_fromFile;
+	wxString m_toFile;
+};
+
 #endif

@@ -41,6 +41,10 @@ protected:
 	virtual int Mkdir(const CServerPath& path, CServerPath start = CServerPath());
 	virtual int MkdirParseResponse();
 	virtual int MkdirSend();
+
+	virtual int Rename(const CRenameCommand& command);
+	virtual int RenameParseResponse();
+	virtual int RenameSend(int prevResult = FZ_REPLY_OK);
 	
 	bool ParsePwdReply(wxString reply);
 

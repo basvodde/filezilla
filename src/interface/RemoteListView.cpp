@@ -26,6 +26,7 @@ BEGIN_EVENT_TABLE(CRemoteListView, wxListCtrl)
 	EVT_MENU(XRCID("ID_DELETE"), CRemoteListView::OnMenuDelete)
 	EVT_MENU(XRCID("ID_RENAME"), CRemoteListView::OnMenuRename)
 	EVT_CHAR(CRemoteListView::OnChar)
+	EVT_LIST_END_LABEL_EDIT(wxID_ANY, CRemoteListView::OnEndLabelEdit)
 END_EVENT_TABLE()
 
 #ifdef __WXMSW__
@@ -1080,4 +1081,38 @@ int CRemoteListView::FindItemWithPrefix(const wxString& prefix, int start)
 			return i % GetItemCount();
 	}
 	return -1;
+}
+
+void CRemoteListView::OnEndLabelEdit(wxListEvent& event)
+{
+	if (!m_pCommandQueue->Idle() || IsBusy())
+	{
+		wxBell();
+		return;
+	}
+
+	if (!m_pDirectoryListing)
+	{
+		wxBell();
+		return;
+	}
+
+	t_fileData* data = GetData(event.GetIndex());
+	if (!data)
+		return;
+
+	wxString newFile = event.GetLabel();
+
+	if (newFile == "")
+		return;
+
+	CServerPath newPath = m_pDirectoryListing->path;
+	if (!newPath.ChangePath(newFile, true))
+	{
+		wxMessageBox(_("Filename invalid"), _("Cannot rename file"), wxICON_EXCLAMATION);
+		event.Veto();
+		return;
+	}
+	
+	m_pCommandQueue->ProcessCommand(new CRenameCommand(m_pDirectoryListing->path, data->pDirEntry->name, newPath, newFile));
 }

@@ -290,7 +290,7 @@ void CDirectoryCache::RemoveDir(const CServer& server, const CServerPath& path, 
 		CCacheEntry &entry = *iter;
 		if (entry.server != server)
 		{
-			// Don't delet eitems from different server
+			// Don't delete items from different server
 			newList.push_back(*iter);
 			continue;
 		}
@@ -315,4 +315,42 @@ void CDirectoryCache::RemoveDir(const CServer& server, const CServerPath& path, 
 	m_CacheList = newList;
 
 	RemoveFile(server, path, filename);
+}
+
+void CDirectoryCache::Rename(const CServer& server, const CServerPath& pathFrom, const wxString& fileFrom, const CServerPath& pathTo, const wxString& fileTo)
+{
+	CDirectoryListing listing;
+	bool found = Lookup(listing, server, pathFrom);
+	if (found)
+	{
+		unsigned int i;
+		for (i = 0; i < listing.m_entryCount; i++)
+		{
+			if (listing.m_pEntries[i].name == fileFrom)
+				break;
+		}
+		if (i != listing.m_entryCount)
+		{
+			if (listing.m_pEntries[i].dir)
+			{
+				RemoveDir(server, pathFrom, fileFrom);
+				InvalidateFile(server, pathTo, fileTo, true);
+			}
+			else
+			{
+				RemoveFile(server, pathFrom, fileFrom);
+				InvalidateFile(server, pathTo, fileTo, false);
+			}
+		}
+		else
+		{
+			// Be on the safe side, invalidate everything.
+			InvalidateServer(server);
+		}
+	}
+	else
+	{
+		// We know nothing, invalidate everything.
+		InvalidateServer(server);
+	}
 }

@@ -107,6 +107,7 @@ protected:
 	void OnMenuDelete(wxCommandEvent& event);
 	void OnMenuRename(wxCommandEvent& event);
 	void OnChar(wxKeyEvent& event);
+	void OnEndLabelEdit(wxListEvent& event);
 
 	wxDateTime m_lastKeyPress;
 	wxString m_prefix;

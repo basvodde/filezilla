@@ -60,6 +60,7 @@ protected:
 	int Delete(const CDeleteCommand& command);
 	int RemoveDir(const CRemoveDirCommand& command);
 	int Mkdir(const CMkdirCommand& command);
+	int Rename(const CRenameCommand& command);
 
 	int ResetOperation(int nErrorCode);
 	

@@ -121,6 +121,9 @@ int CFileZillaEngine::Command(const CCommand &command)
 	case cmd_mkdir:
 		res = Mkdir(reinterpret_cast<const CMkdirCommand&>(command));
 		break;
+	case cmd_rename:
+		res = Rename(reinterpret_cast<const CRenameCommand&>(command));
+		break;
 	default:
 		return FZ_REPLY_SYNTAXERROR;
 	}
@@ -544,4 +547,20 @@ int CFileZillaEngine::Mkdir(const CMkdirCommand& command)
 
 	m_pCurrentCommand = command.Clone();
 	return m_pControlSocket->Mkdir(command.GetPath());
+}
+
+int CFileZillaEngine::Rename(const CRenameCommand& command)
+{
+	if (!IsConnected())
+		return FZ_REPLY_NOTCONNECTED;
+
+	if (IsBusy())
+		return FZ_REPLY_BUSY;
+
+	if (command.GetFromPath().IsEmpty() || command.GetToPath().IsEmpty() ||
+		command.GetFromFile() == _T("") || command.GetToFile() == _T(""))
+		return FZ_REPLY_SYNTAXERROR;
+
+	m_pCurrentCommand = command.Clone();
+	return m_pControlSocket->Rename(command);
 }
