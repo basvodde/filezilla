@@ -21,7 +21,7 @@ while test $# != 0; do
   -[dD])
       DOWNLOAD_ONLY=yes
       ;;
-  -[hH]|--help)
+  -[hH]|-help|--help)
       echo "Usage: $0 [-n] [-f]"
       echo "-n        Do not download $FILENAME automatically, it must"
       echo "          be downloaded manually from"
@@ -58,7 +58,7 @@ if test x$NO_DOWNLOAD != xyes; then
     touch -r$FILENAME update-configure.stamp 2>/dev/null
   fi
   echo "*** Downloading $URL"
-  if wget -N $URL; then :; else
+  if $WGET $URL; then :; else
     echo >&2 "*** An error occured while trying to download $FILENAME from"
     echo >&2 "*** $URL."
     echo >&2 "(I'll need wget to download the file automatically)"
