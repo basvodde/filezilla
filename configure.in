@@ -47,6 +47,9 @@ else
 	AC_MSG_ERROR([wxWidgets 2.5.1 or newer is required])
 fi
 
+AC_CHECK_LIB(expat, XML_ParserCreate,,
+	AC_MSG_ERROR([expat xml parser library not found. It is included 
+in the wxWidgets source in the src/expat/ directory.]))
 
 CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
 CXXFLAGS="$CXXFLAGS $WX_CPPFLAGS"
