@@ -103,5 +103,5 @@ bool CListCommand::IsChainable() const
 
 CCommand *CListCommand::Clone() const
 {
-	return new CListCommand();
+	return new CListCommand(m_path, m_subDir);
 }

@@ -9,16 +9,13 @@ class CRemoteTreeView;
 class CRemoteListView;
 class CState;
 class COptions;
+class CCommandQueue;
 
 class CMainFrame : public wxFrame
 {
 public:
 	CMainFrame();
 	virtual ~CMainFrame();
-
-	void ProcessCommand(CCommand *pCommand);
-	void ProcessNextCommand();
-	void Cancel();
 
 protected:
 	bool CreateMenus();
@@ -60,9 +57,9 @@ protected:
 	bool m_bInitDone;
 
 	CFileZillaEngine *m_pEngine;
+	CCommandQueue *m_pCommandQueue;
 	COptions *m_pOptions;
-	std::list<CCommand *> m_CommandList;
-
+	
 	CState *m_pState;
 
 	DECLARE_EVENT_TABLE()

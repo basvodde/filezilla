@@ -677,7 +677,7 @@ CDirectoryListingParser::~CDirectoryListingParser()
 	delete m_prevLine;
 }
 
-bool CDirectoryListingParser::Parse()
+bool CDirectoryListingParser::Parse(const CServerPath &path)
 {
 	CLine *pLine = GetLine();
 	m_curLine = pLine;
@@ -721,6 +721,7 @@ bool CDirectoryListingParser::Parse()
 	};
 
 	CDirectoryListing *pListing = new CDirectoryListing;
+	pListing->path = path;
 	pListing->m_entryCount = m_entryList.size();
 	pListing->m_pEntries = new CDirentry[m_entryList.size()];
 	
@@ -728,7 +729,6 @@ bool CDirectoryListingParser::Parse()
 	for (std::list<CDirentry>::iterator iter = m_entryList.begin(); iter != m_entryList.end(); iter++)
 		pListing->m_pEntries[i++] = *iter;
 
-	pListing->path = CServerPath(_T("/"));
 	CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing);
 	m_pEngine->AddNotification(pNotification);
 

@@ -279,6 +279,37 @@ bool CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDi
 			else
 				error = true;
 			break;
+		case list_cwd:
+			if (code != 2 && code != 3)
+				error = true;
+			else
+				m_nOpState = list_pwd_cwd;
+			break;
+		case list_pwd_cwd:
+			if (code != 2 && code != 3)
+				error = true;
+			else if (ParsePwdReply(m_ReceiveBuffer))
+				if (pData->subDir == _T(""))
+					m_nOpState = list_port_pasv;
+				else
+					m_nOpState = list_cwd_subdir;
+			else
+				error = true;
+			break;
+		case list_cwd_subdir:
+			if (code != 2 && code != 3)
+				error = true;
+			else
+				m_nOpState = list_pwd_subdir;
+			break;
+		case list_pwd_subdir:
+			if (code != 2 && code != 3)
+				error = true;
+			else if (ParsePwdReply(m_ReceiveBuffer))
+				m_nOpState = list_port_pasv;
+			else
+				error = true;
+			break;
 		case list_port_pasv:
 			if (code != 2 && code != 3)
 			{
@@ -361,7 +392,7 @@ bool CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDi
 				error = true;
 			else
 			{
-				m_pTransferSocket->m_pDirectoryListingParser->Parse();
+				m_pTransferSocket->m_pDirectoryListingParser->Parse(m_CurrentPath);
 				ResetOperation(FZ_REPLY_OK);
 				return true;
 			}
@@ -566,7 +597,7 @@ void CFtpControlSocket::TransferEnd(int reason)
 			m_nOpState = list_waitlist;
 			break;
 		case list_waitsocket:
-			m_pTransferSocket->m_pDirectoryListingParser->Parse();
+			m_pTransferSocket->m_pDirectoryListingParser->Parse(m_CurrentPath);
 			ResetOperation(FZ_REPLY_OK);
 			break;
 		default:

@@ -1,6 +1,7 @@
 #include "FileZilla.h"
 #include "RemoteListView.h"
 #include "state.h"
+#include "commandqueue.h"
 
 #ifdef __WXMSW__
 #include "shellapi.h"
@@ -12,7 +13,7 @@
 #endif
 
 BEGIN_EVENT_TABLE(CRemoteListView, wxListCtrl)
-//	EVT_LIST_ITEM_ACTIVATED(wxID_ANY, CRemoteListView::OnItemActivated)
+	EVT_LIST_ITEM_ACTIVATED(wxID_ANY, CRemoteListView::OnItemActivated)
 	EVT_LIST_COL_CLICK(wxID_ANY, CRemoteListView::OnColumnClicked) 
 END_EVENT_TABLE()
 
@@ -28,10 +29,11 @@ END_EVENT_TABLE()
 	};
 #endif
 
-CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState)
+CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState, CCommandQueue *pCommandQueue)
 	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxLC_VIRTUAL | wxLC_REPORT | wxSUNKEN_BORDER)
 {
 	m_pState = pState;
+	m_pCommandQueue = pCommandQueue;
 
 	m_pImageList = 0;
 	InsertColumn(0, _("Filename"));
@@ -525,3 +527,26 @@ int CRemoteListView::CmpSize(CRemoteListView *pList, unsigned int index, t_fileD
 
 }
 
+void CRemoteListView::OnItemActivated(wxListEvent &event)
+{
+	if (!m_pCommandQueue->Idle())
+	{
+		wxBell();
+		return;
+	}
+
+	int item = event.GetIndex();
+
+	wxString name;
+	if (item)
+	{
+		if (!IsItemValid(item))
+			return;
+		name = m_fileData[m_indexMapping[item]].pDirEntry->name;
+	}
+	else
+		name = _T("..");
+	
+	m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path, name));
+
+}

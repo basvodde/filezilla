@@ -2,13 +2,16 @@
 #define __REMOTELISTVIEW_H__
 
 class CState;
+class CCommandQueue;
+
 #ifdef __WXMSW__
 class wxImageListMsw;
 #endif
+
 class CRemoteListView : public wxListCtrl
 {
 public:
-	CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState);
+	CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState, CCommandQueue *pCommandQueue);
 	virtual ~CRemoteListView();
 
 	void SetDirectoryListing(CDirectoryListing *pDirectoryListing);
@@ -58,6 +61,7 @@ protected:
 #endif
 
 	CState *m_pState;
+	CCommandQueue *m_pCommandQueue;
 
 	int m_sortColumn;
 	int m_sortDirection;

@@ -99,11 +99,8 @@ bool CState::SetRemoteDir(const CDirectoryListing *pDirectoryListing)
 	}
 
 	CDirectoryListing *newListing = new CDirectoryListing;
-	newListing->m_entryCount = pDirectoryListing->m_entryCount;
-	newListing->m_pEntries = new CDirentry[newListing->m_entryCount];
-	for (int i = 0; i < newListing->m_entryCount; i++)
-		newListing->m_pEntries[i] = pDirectoryListing->m_pEntries[i];
-
+	*newListing = *pDirectoryListing;
+	
 	if (m_pRemoteListView)
 		m_pRemoteListView->SetDirectoryListing(newListing);
 

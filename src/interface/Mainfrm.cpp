@@ -8,6 +8,7 @@
 #include "Mainfrm.h"
 #include "state.h"
 #include "Options.h"
+#include "CommandQueue.h"
 
 #ifndef __WXMSW__
 #include "resources/filezilla.xpm"
@@ -66,6 +67,13 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	long style = wxSP_3DBORDER | wxSP_LIVE_UPDATE;
 #endif
 
+	m_pOptions = new COptions;
+
+	m_pEngine = new CFileZillaEngine();
+	m_pEngine->Init(this, m_pOptions);
+
+	m_pCommandQueue = new CCommandQueue(m_pEngine);
+
 	wxSize clientSize = GetClientSize();
 	if (m_pBottomSplitter)
 		clientSize.SetHeight(clientSize.GetHeight() - m_pBottomSplitter->GetSize().GetHeight());
@@ -88,7 +96,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_pLocalTreeView = new CLocalTreeView(m_pLocalSplitter, -1);
 	m_pLocalListView = new CLocalListView(m_pLocalSplitter, -1, m_pState);
 	m_pRemoteTreeView = new CRemoteTreeView(m_pRemoteSplitter, -1);
-	m_pRemoteListView = new CRemoteListView(m_pRemoteSplitter, -1, m_pState);
+	m_pRemoteListView = new CRemoteListView(m_pRemoteSplitter, -1, m_pState, m_pCommandQueue);
 	m_pStatusView = new CStatusView(m_pTopSplitter, -1);
 	m_pQueueView = new CQueueView(m_pBottomSplitter, -1);
 
@@ -99,11 +107,6 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_pRemoteSplitter->SplitHorizontally(m_pRemoteTreeView, m_pRemoteListView);
 	wxSize size = m_pBottomSplitter->GetClientSize();
 	m_pBottomSplitter->SetSashPosition(size.GetHeight() - 140);
-
-	m_pOptions = new COptions;
-
-	m_pEngine = new CFileZillaEngine();
-	m_pEngine->Init(this, m_pOptions);
 
 	Layout();
 
@@ -116,11 +119,8 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 CMainFrame::~CMainFrame()
 {
 	delete m_pState;
+	delete m_pCommandQueue;
 	delete m_pEngine;
-
-	for (std::list<CCommand *>::iterator iter = m_CommandList.begin(); iter != m_CommandList.end(); iter++)
-		delete *iter;
-
 	delete m_pOptions;
 }
 
@@ -288,11 +288,11 @@ void CMainFrame::OnQuickconnect(wxCommandEvent &event)
 	{
 		if (wxMessageBox(_("Break current connection?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) != wxYES)
 			return;
-		Cancel();
+		m_pCommandQueue->Cancel();
 	}
 
-	ProcessCommand(new CConnectCommand(server));
-	ProcessCommand(new CListCommand());
+	m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
+	m_pCommandQueue->ProcessCommand(new CListCommand());
 }
 
 void CMainFrame::OnEngineEvent(wxEvent &event)
@@ -309,12 +309,7 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 			m_pStatusView->AddToLog(reinterpret_cast<CLogmsgNotification *>(pNotification));
 			break;
 		case nId_operation:
-			if (!m_CommandList.empty())
-			{
-				delete m_CommandList.front();
-				m_CommandList.pop_front();
-			}
-			ProcessNextCommand();
+			m_pCommandQueue->Finish(pNotification);
 			break;
 		case nId_listing:
 			m_pState->SetRemoteDir(reinterpret_cast<CDirectoryListingNotification *>(pNotification)->GetDirectoryListing());
@@ -359,76 +354,7 @@ void CMainFrame::OnDisconnect(wxCommandEvent& event)
 	if (m_pEngine->IsBusy())
 		return;
 
-	ProcessCommand(new CDisconnectCommand());
-}
-
-void CMainFrame::ProcessCommand(CCommand *pCommand)
-{
-	m_CommandList.push_back(pCommand);
-	if (m_CommandList.size() == 1)
-		ProcessNextCommand();
-}
-
-void CMainFrame::ProcessNextCommand()
-{
-	if (m_pEngine->IsBusy())
-		return;
-
-	while (!m_CommandList.empty())
-	{
-		CCommand *pCommand = m_CommandList.front();
-
-		int res = m_pEngine->Command(*pCommand);
-		if (res == FZ_REPLY_WOULDBLOCK)
-			break;
-		else if (res == FZ_REPLY_OK)
-		{
-			delete pCommand;
-			m_CommandList.pop_front();
-			continue;
-		}
-		else if (res == FZ_REPLY_ALREADYCONNECTED)
-		{
-			res = m_pEngine->Command(CDisconnectCommand());
-			if (res == FZ_REPLY_WOULDBLOCK)
-			{
-				m_CommandList.push_front(new CDisconnectCommand);
-				break;
-			}
-			else if (res != FZ_REPLY_OK)
-			{
-				wxBell();
-				delete pCommand;
-				m_CommandList.pop_front();
-				continue;
-			}
-		}
-		else
-		{
-			wxBell();
-			
-			delete pCommand;
-			m_CommandList.pop_front();
-		}
-	}
-}
-
-void CMainFrame::Cancel()
-{
-	if (m_CommandList.empty())
-		return;
-	
-	std::list<CCommand *>::iterator iter = m_CommandList.begin();
-	CCommand *pCommand = *(iter++);
-
-	for (; iter != m_CommandList.end(); iter++)
-	{
-		delete *iter;
-	}
-	m_CommandList.clear();
-	m_CommandList.push_back(pCommand);
-	if (m_pEngine)
-		m_pEngine->Command(CCancelCommand());
+	m_pCommandQueue->ProcessCommand(new CDisconnectCommand());
 }
 
 void CMainFrame::OnUpdateToolbarCancel(wxUpdateUIEvent& event)
@@ -442,7 +368,7 @@ void CMainFrame::OnCancel(wxCommandEvent& event)
 		return;
 
 	if (wxMessageBox(_("Really cancel current operation?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) == wxYES)
-		Cancel();
+		m_pCommandQueue->Cancel();
 }
 
 void CMainFrame::OnSplitterSashPosChanging(wxSplitterEvent& event)
@@ -485,6 +411,6 @@ void CMainFrame::OnSplitterSashPosChanged(wxSplitterEvent& event)
 
 void CMainFrame::OnClose(wxCloseEvent &event)
 {
-	Cancel();
+	m_pCommandQueue->Cancel();
 	Destroy();
 }
