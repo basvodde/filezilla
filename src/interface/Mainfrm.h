@@ -39,6 +39,8 @@ protected:
 	
 	void SetProgress(const CTransferStatus* pStatus);
 
+	void ApplySplitterConstraints();
+
 	wxStatusBar* m_pStatusBar;
 	wxMenuBar* m_pMenuBar;
 	wxToolBar* m_pToolBar;

@@ -222,6 +222,8 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 			pos = size.GetWidth() - 20;
 		m_pViewSplitter->SetSashPosition(pos);
 	}
+
+	ApplySplitterConstraints();
 }
 
 void CMainFrame::OnViewSplitterPosChanged(wxSplitterEvent &event)
@@ -880,10 +882,29 @@ void CMainFrame::OnToggleLogView(wxCommandEvent& event)
 	if (m_pTopSplitter->IsSplit())
 		m_pTopSplitter->Unsplit(m_pStatusView);
 	else
-		m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter, 100);
+	{
+		wxSize size = m_pTopSplitter->GetClientSize();
+		if (size.GetHeight() < 200)
+			m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter, size.GetHeight() - 103);
+		else
+			m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter, 100);
+	}
 }
 
 void CMainFrame::OnUpdateToggleLogView(wxUpdateUIEvent& event)
 {
 	event.Check(m_pTopSplitter && m_pTopSplitter->IsSplit());
+}
+
+void CMainFrame::ApplySplitterConstraints()
+{
+	if (m_pTopSplitter->IsSplit())
+	{
+		wxSize size = m_pTopSplitter->GetClientSize();
+		if (size.GetHeight() - m_pTopSplitter->GetSashPosition() < 100)
+			m_pTopSplitter->SetSashPosition(size.GetHeight() - 103);
+	}
+
+	if (m_pBottomSplitter->GetSashPosition() < 45)
+		m_pBottomSplitter->SetSashPosition(45);
 }
