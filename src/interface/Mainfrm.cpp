@@ -385,21 +385,9 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 			{
 				CActiveNotification *pActiveNotification = reinterpret_cast<CActiveNotification *>(pNotification);
 				if (pActiveNotification->IsRecv())
-				{
-					if (m_pRecvLed && !m_recvLedTimer.IsRunning())
-					{
-						m_pRecvLed->Set();
-						m_recvLedTimer.Start(100);
-					}
-				}
+					UpdateRecvLed();
 				else
-				{
-					if (m_pSendLed && !m_sendLedTimer.IsRunning())
-					{
-						m_pSendLed->Set();
-						m_sendLedTimer.Start(100);
-					}
-				}
+					UpdateSendLed();
 				delete pNotification;
 			}
 			break;
@@ -423,7 +411,6 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 
 		pNotification = m_pEngine->GetNextNotification();
 	}
-
 }
 
 bool CMainFrame::CreateToolBar()
@@ -770,4 +757,27 @@ bool CMainFrame::GetPassword(CServer &server, wxString name /*=_T("")*/, wxStrin
 	server.SetUser(server.GetUser(), XRCCTRL(pwdDlg, "ID_PASSWORD", wxTextCtrl)->GetValue());
 
 	return true;
+}
+
+void CMainFrame::UpdateSendLed()
+{
+	if (m_pSendLed && !m_sendLedTimer.IsRunning())
+	{
+		m_pSendLed->Set();
+		m_sendLedTimer.Start(100);
+	}
+}
+
+void CMainFrame::UpdateRecvLed()
+{
+	if (m_pRecvLed && !m_recvLedTimer.IsRunning())
+	{
+		m_pRecvLed->Set();
+		m_recvLedTimer.Start(100);
+	}
+}
+
+void CMainFrame::AddToRequestQueue(CFileZillaEngine *pEngine, CAsyncRequestNotification *pNotification)
+{
+	m_pAsyncRequestQueue->AddRequest(pEngine, reinterpret_cast<CAsyncRequestNotification *>(pNotification));
 }

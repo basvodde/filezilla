@@ -29,6 +29,8 @@ enum ItemState
 class CQueueItem
 {
 public:
+	virtual ~CQueueItem();
+
 	void Expand(bool recursive);
 	void Collapse(bool recursive);
 	bool IsExpanded() const;
@@ -38,12 +40,14 @@ public:
 	void AddChild(CQueueItem* pItem);
 	unsigned int GetVisibleCount() const;
 	CQueueItem* GetChild(unsigned int item);
+	CQueueItem* GetParent() { return m_parent; }
+	virtual bool RemoveChild(CQueueItem* pItem); // Removes a child item with is somewhere in the tree of children
+	CQueueItem* GetTopLevelItem();
 
 	virtual enum QueueItemType GetType() const = 0;
 
 protected:
 	CQueueItem();
-	virtual ~CQueueItem();
 	wxString GetIndent();
 
 	CQueueItem* m_parent;
@@ -69,6 +73,7 @@ public:
 	void AddFileItemToList(CFileItem* pItem);
 
 	CFileItem* GetIdleChild(bool immadiateOnly);
+	virtual bool RemoveChild(CQueueItem* pItem); // Removes a child item with is somewhere in the tree of children
 
 	int m_activeCount;
 
@@ -120,6 +125,7 @@ public:
 	void SetActive(bool active);
 
 	bool m_queued;
+	int m_errorCount;
 
 protected:
 	enum QueuePriority m_priority;
@@ -158,13 +164,14 @@ protected:
 
 		enum EngineDataState
 		{
+			none,
 			cancel,
 			disconnect,
 			connect,
 			transfer
 		} state;
 		
-		CQueueItem* pItem;
+		CFileItem* pItem;
 		CServer lastServer;
 	};
 	std::vector<t_EngineData> m_engineData;
@@ -174,6 +181,11 @@ protected:
 
 	CQueueItem* GetQueueItem(unsigned int item);
 	CServerItem* GetServerItem(const CServer& server);
+
+	void ProcessReply(t_EngineData& engineData, COperationNotification* pNotification);
+	void SendNextCommand(t_EngineData& engineData);
+	void ResetEngine(t_EngineData& data);
+	void RemoveItem(CQueueItem* item);
 
 	std::vector<CServerItem*> m_serverList;
 

@@ -70,6 +70,57 @@ CQueueItem* CQueueItem::GetChild(unsigned int item)
 	return 0;
 }
 
+bool CQueueItem::RemoveChild(CQueueItem* pItem)
+{
+	for (std::vector<CQueueItem*>::iterator iter = m_children.begin(); iter != m_children.end(); iter++)
+	{
+		if (*iter == pItem)
+		{
+			if (IsExpanded())
+			{
+				m_visibleOffspring -= 1;
+				if (pItem->IsExpanded())
+					m_visibleOffspring -= pItem->m_visibleOffspring;
+			}
+			delete pItem;
+			m_children.erase(iter);
+			return true;
+		}
+
+		if ((*iter)->RemoveChild(pItem))
+		{
+			if (!(*iter)->m_children.size())
+			{
+				if (IsExpanded())
+				{
+					m_visibleOffspring -= 1;
+					if ((*iter)->IsExpanded())
+						m_visibleOffspring -= pItem->m_visibleOffspring;
+				}
+				delete *iter;
+				m_children.erase(iter);
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
+CQueueItem* CQueueItem::GetTopLevelItem()
+{
+	CQueueItem* newParent = m_parent;
+	CQueueItem* parent = 0;
+	while (newParent)
+	{
+		parent = newParent;
+		newParent = newParent->GetParent();
+	}
+
+	return parent;
+}
+
+
+
 CFileItem::CFileItem(CServerItem* parent, bool queued, bool download, const wxString& localFile,
 					 const wxString& remoteFile, const CServerPath& remotePath, wxLongLong size)
 {
@@ -84,6 +135,7 @@ CFileItem::CFileItem(CServerItem* parent, bool queued, bool download, const wxSt
 	m_itemState = ItemState_Wait;
 	m_queued = queued;
 	m_active = false;
+	m_errorCount = 0;
 }
 
 CFileItem::~CFileItem()
@@ -108,6 +160,19 @@ void CFileItem::SetItemState(enum ItemState itemState)
 enum QueuePriority CFileItem::GetPriority() const
 {
 	return m_priority;
+}
+
+void CFileItem::SetActive(bool active)
+{
+	if (active && !m_active)
+	{
+		//TODO add status child
+	}
+	else if (!active && m_active)
+	{
+		//TODO remove status child
+	}
+	m_active = active;
 }
 
 CServerItem::CServerItem(const CServer& server)
@@ -169,17 +234,26 @@ CFileItem* CServerItem::GetIdleChild(bool immediateOnly)
 	return 0;
 }
 
-void CFileItem::SetActive(bool active)
+bool CServerItem::RemoveChild(CQueueItem* pItem)
 {
-	if (active && !m_active)
+	if (!pItem)
+		return false;
+	
+	if (pItem->GetType() == QueueItemType_File)
 	{
-		//TODO add status child
+		CFileItem* pFileItem = reinterpret_cast<CFileItem*>(pItem);
+		std::list<CFileItem*>& fileList = m_fileList[pFileItem->m_queued ? 0 : 1][pFileItem->GetPriority()];
+		for (std::list<CFileItem*>::iterator iter = fileList.begin(); iter != fileList.end(); iter++)
+		{
+			if (*iter == pFileItem)
+			{
+				fileList.erase(iter);
+				break;
+			}
+		}
 	}
-	else if (!active && m_active)
-	{
-		//TODO remove status child
-	}
-	m_active = active;
+
+	return CQueueItem::RemoveChild(pItem);
 }
 
 CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame)
@@ -196,6 +270,7 @@ CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame)
 	InsertColumn(2, _("Remote file"), wxLIST_FORMAT_LEFT, 150);
 	InsertColumn(3, _("Size"), wxLIST_FORMAT_RIGHT, 50);
 
+	// Create and assign the image list for the queue
 	wxImageList* pImageList = new wxImageList(16, 16);
 
 	wxBitmap bmp;
@@ -219,14 +294,30 @@ CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame)
 
 	AssignImageList(pImageList, wxIMAGE_LIST_SMALL);
 
-	QueueFile(false, true, _T("c:\\test.txt"), _T("test.txt"), CServerPath(_T("/")), CServer(FTP, DEFAULT, _T("127.0.0.1"), 21), -1);
+	//Initialize the engine data
+	t_EngineData data;
+	data.active = false;
+	data.pEngine = 0; // TODO: Primary transfer engine data
+	data.pItem = 0;
+	data.state = t_EngineData::none;
+	m_engineData.push_back(data);
+	
+	int engineCount = m_pMainFrame->m_pOptions->GetOptionVal(OPTION_NUMTRANSFERS);
+	for (int i = 0; i < engineCount; i++)
+	{
+		data.pEngine = new CFileZillaEngine();
+		data.pEngine->Init(this, m_pMainFrame->m_pOptions);
+		m_engineData.push_back(data);
+	}
 }
 
 CQueueView::~CQueueView()
 {
-	std::vector<CServerItem*>::iterator iter;
-	for (iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
+	for (std::vector<CServerItem*>::iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
 		delete *iter;
+
+	for (std::vector<t_EngineData>::iterator iter = m_engineData.begin(); iter != m_engineData.end(); iter++)
+		delete iter->pEngine;
 }
 
 bool CQueueView::QueueFile(bool queueOnly, bool download, const wxString& localFile, 
@@ -364,6 +455,67 @@ CQueueItem* CQueueView::GetQueueItem(unsigned int item)
 
 void CQueueView::OnEngineEvent(wxEvent &event)
 {
+	std::vector<t_EngineData>::iterator iter;
+	for (iter = m_engineData.begin(); iter != m_engineData.end(); iter++)
+	{
+		if ((wxObject *)iter->pEngine == event.GetEventObject())
+			break;
+	}
+	if (iter == m_engineData.end())
+		return;
+
+	CFileZillaEngine *pEngine = iter->pEngine;
+
+	CNotification *pNotification = pEngine->GetNextNotification();
+	while (pNotification)
+	{
+		switch (pNotification->GetID())
+		{
+/*		case nId_logmsg:
+			m_pStatusView->AddToLog(reinterpret_cast<CLogmsgNotification *>(pNotification));
+			delete pNotification;
+			break;*/
+		case nId_operation:
+			ProcessReply(*iter, reinterpret_cast<COperationNotification*>(pNotification));
+			delete pNotification;
+			break;
+		/*case nId_listing:
+			m_pState->SetRemoteDir(reinterpret_cast<CDirectoryListingNotification *>(pNotification)->GetDirectoryListing());
+			delete pNotification;
+			break;*/
+		case nId_asyncrequest:
+			m_pMainFrame->AddToRequestQueue(pEngine, reinterpret_cast<CAsyncRequestNotification *>(pNotification));
+			break;
+		case nId_active:
+			{
+				CActiveNotification *pActiveNotification = reinterpret_cast<CActiveNotification *>(pNotification);
+				if (pActiveNotification->IsRecv())
+					m_pMainFrame->UpdateRecvLed();
+				else
+					m_pMainFrame->UpdateSendLed();
+				delete pNotification;
+			}
+			break;
+		/*case nId_transferstatus:
+			{
+				CTransferStatusNotification *pTransferStatusNotification = reinterpret_cast<CTransferStatusNotification *>(pNotification);
+				const CTransferStatus *pStatus = pTransferStatusNotification->GetStatus();
+				if (pStatus && !m_transferStatusTimer.IsRunning())
+					m_transferStatusTimer.Start(100);
+				else if (!pStatus && m_transferStatusTimer.IsRunning())
+					m_transferStatusTimer.Stop();
+                
+				SetProgress(pStatus);
+				delete pNotification;
+			}
+			break;*/
+		default:
+			delete pNotification;
+			break;
+		}
+
+		pNotification = pEngine->GetNextNotification();
+	}
 }
 
 CServerItem* CQueueView::GetServerItem(const CServer& server)
@@ -385,28 +537,31 @@ bool CQueueView::TryStartNextTransfer()
 	unsigned int engineIndex;
 	for (engineIndex = 1; engineIndex < m_engineData.size(); engineIndex++)
 	{
-		if (m_engineData[engineIndex].active)
-			continue;
+		if (!m_engineData[engineIndex].active)
+			break;
 	}
 	if (engineIndex >= m_engineData.size())
 		return false;
 
 	t_EngineData& engineData = m_engineData[engineIndex];
 
-	CFileItem* fileItem = 0;
 	// Check all servers for the item with the highest priority
+	CFileItem* fileItem = 0;
 	CServerItem* serverItem = 0;
 	for (std::vector<CServerItem*>::iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
 	{
-		CServerItem* serverItem = *iter;
-		int maxCount = serverItem->GetServer().MaximumMultipleConnections();
-		if (maxCount && serverItem->m_activeCount >= maxCount)
+		CServerItem* currentServerItem = *iter;
+		int maxCount = currentServerItem->GetServer().MaximumMultipleConnections();
+		if (maxCount && currentServerItem->m_activeCount >= maxCount)
 			continue;
 
-		CFileItem* newFileItem = serverItem->GetIdleChild(m_activeMode == 1);
+		CFileItem* newFileItem = currentServerItem->GetIdleChild(m_activeMode == 1);
+		if (!newFileItem)
+			continue;
+
 		if (!fileItem || newFileItem->GetPriority() > fileItem->GetPriority())
 		{
-			serverItem = *iter;
+			serverItem = currentServerItem;
 			fileItem = newFileItem;
 			if (fileItem->GetPriority() == priority_highest)
 				break;
@@ -422,22 +577,162 @@ bool CQueueView::TryStartNextTransfer()
 
 	const CServer oldServer = engineData.lastServer;
 	engineData.lastServer = serverItem->GetServer();
-	if (engineData.pEngine->IsConnected() && oldServer != serverItem->GetServer())
-	{
-		engineData.state = t_EngineData::disconnect;
-		engineData.pEngine->Command(CDisconnectCommand());
-	}
-	else if (!engineData.pEngine->IsConnected())
-	{
+	
+	if (!engineData.pEngine->IsConnected())
 		engineData.state = t_EngineData::connect;
-		engineData.pEngine->Command(CConnectCommand(engineData.lastServer));
+	else if (oldServer != serverItem->GetServer())
+		engineData.state = t_EngineData::disconnect;
+	else
+		engineData.state = t_EngineData::transfer;
+
+	SendNextCommand(engineData);
+
+	return true;
+}
+
+void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* pNotification)
+{
+	// Process reply from the engine
+
+	// Cycle through queue states
+	switch (engineData.state)
+	{
+	case t_EngineData::disconnect:
+		engineData.state = t_EngineData::connect;
+		break;
+	case t_EngineData::connect:
+		if (pNotification->nReplyCode == FZ_REPLY_OK)
+			engineData.state = t_EngineData::transfer;
+		else
+			engineData.pItem->m_errorCount++;
+		break;
+	case t_EngineData::transfer:
+		if (pNotification->nReplyCode == FZ_REPLY_OK)
+		{
+			CQueueItem* pItem = engineData.pItem;
+			ResetEngine(engineData);
+			RemoveItem(pItem);
+			return;
+		}
+		else
+			engineData.pItem->m_errorCount++;
+		break;
+	default:
+		return;
+	}
+
+	if (engineData.pItem->m_errorCount > m_pMainFrame->m_pOptions->GetOptionVal(OPTION_TRANSFERRETRYCOUNT))
+	{
+		CQueueItem* pItem = engineData.pItem;
+		ResetEngine(engineData);
+		RemoveItem(pItem);
+		return;
+	}
+
+	SendNextCommand(engineData);
+}
+
+void CQueueView::ResetEngine(t_EngineData& data)
+{
+	data.pItem = 0;
+	data.active = false;
+	data.state = t_EngineData::none;
+}
+
+void CQueueView::RemoveItem(CQueueItem* item)
+{
+	// Remove item assumes that the item has already removed from all engines
+
+	CQueueItem* topLevelItem = item->GetTopLevelItem();
+
+	int count = topLevelItem->GetVisibleCount();
+	topLevelItem->RemoveChild(item);
+	if (!topLevelItem->GetChild(0))
+	{
+		std::vector<CServerItem*>::iterator iter;
+		for (iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
+		{
+			if (*iter == topLevelItem)
+				break;
+		}
+		if (iter != m_serverList.end())
+			m_serverList.erase(iter);
+		delete topLevelItem;
+
+		m_itemCount -= count + 1;
+		SetItemCount(m_itemCount);
+		Refresh();
 	}
 	else
 	{
-		engineData.state = t_EngineData::transfer;
-		engineData.pEngine->Command(CFileTransferCommand(fileItem->GetLocalFile(), fileItem->GetRemotePath(), 
-														 fileItem->GetRemoteFile(), fileItem->Download()));
+		count -= topLevelItem->GetVisibleCount();
+		m_itemCount -= count;
+		SetItemCount(m_itemCount);
+	}
+}
+
+void CQueueView::SendNextCommand(t_EngineData& engineData)
+{
+	if (engineData.state == t_EngineData::disconnect)
+	{
+		if (engineData.pEngine->Command(CDisconnectCommand()) == FZ_REPLY_WOULDBLOCK)
+			return;
+
+		engineData.state = t_EngineData::connect;
 	}
 
-	return true;
+	if (engineData.state == t_EngineData::connect)
+	{
+		int res;
+		while (true)
+		{
+			res = engineData.pEngine->Command(CConnectCommand(engineData.lastServer));
+			if (res == FZ_REPLY_WOULDBLOCK)
+				return;
+
+			if (res == FZ_REPLY_OK)
+			{
+				engineData.state = t_EngineData::transfer;
+				break;
+			}
+
+			engineData.pItem->m_errorCount++;
+			if (engineData.pItem->m_errorCount > m_pMainFrame->m_pOptions->GetOptionVal(OPTION_TRANSFERRETRYCOUNT))
+			{
+				CQueueItem* pItem = engineData.pItem;
+				ResetEngine(engineData);
+				RemoveItem(pItem);
+			}
+		}
+	}
+	
+	if (engineData.state == t_EngineData::transfer)
+	{
+		CFileItem* fileItem = engineData.pItem;
+
+		int res;
+		while (true)
+		{
+			res = engineData.pEngine->Command(CFileTransferCommand(fileItem->GetLocalFile(), fileItem->GetRemotePath(), 
+											  fileItem->GetRemoteFile(), fileItem->Download()));
+			if (res == FZ_REPLY_WOULDBLOCK)
+				return;
+
+			if (res == FZ_REPLY_OK)
+			{
+				ResetEngine(engineData);
+				RemoveItem(fileItem);
+				return;
+			}
+
+			engineData.pItem->m_errorCount++;
+			if (engineData.pItem->m_errorCount > m_pMainFrame->m_pOptions->GetOptionVal(OPTION_TRANSFERRETRYCOUNT))
+			{
+				ResetEngine(engineData);
+				RemoveItem(fileItem);
+				return;
+			}
+		}
+		engineData.state = t_EngineData::transfer;
+	}
 }

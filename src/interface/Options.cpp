@@ -22,7 +22,8 @@ struct t_Option
 static const t_Option options[OPTIONS_NUM] =
 {
 	"Use Pasv mode", number, _T("1"),
-	"Number of Transfers", number, _T("2")
+	"Number of Transfers", number, _T("2"),
+	"Transfer Retry Count", number, _T("5")
 };
 
 COptions::COptions()

@@ -22,6 +22,11 @@ public:
 	bool GetPassword(CServer &server, wxString name = _T(""), wxString challenge = _T(""));
 	COptions *m_pOptions;
 
+	void UpdateSendLed();
+	void UpdateRecvLed();
+
+	void AddToRequestQueue(CFileZillaEngine *pEngine, CAsyncRequestNotification *pNotification);
+
 protected:
 	bool CreateMenus();
 	bool CreateQuickconnectBar();
