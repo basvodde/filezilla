@@ -16,7 +16,7 @@ endif
 
 
 dist_noinst_DATA = filezilla.rc FileZilla.ico \
-		FileZilla.icns MaxInfo.plist
+		FileZilla.icns MacInfo.plist
 
 if MACAPPBUNDLE
 mac-copy-resources: $(dist_resources_DATA)
