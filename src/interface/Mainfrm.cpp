@@ -184,7 +184,11 @@ bool CMainFrame::CreateQuickconnectBar()
 	{
 		wxLogError(_("Cannot load Quickconnect bar from resource file"));
 	}
-	
+	else
+	{
+		XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetMaxLength(5);
+	}
+
 	return true;
 }
 
