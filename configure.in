@@ -65,7 +65,7 @@ WINDRESFLAGS=
 use_resourcefile=
 if echo $host_os | grep "cygwin\|mingw"; then
         if wx-config --cppflags | grep __WXMSW__; then
-		if windres --version; then
+		if windres --version > /dev/null 2>&1; then
                   use_resourcefile=true
                 fi
 	fi
@@ -147,4 +147,6 @@ AC_SUBST(WINDRESFLAGS)
 AC_OUTPUT(Makefile src/Makefile src/engine/Makefile src/tinyxml/Makefile
 src/interface/Makefile src/interface/resources/Makefile src/include/Makefile
 locales/Makefile src/interface/resources/16x16/Makefile
-src/interface/resources/32x32/Makefile data/Makefile)
+src/interface/resources/32x32/Makefile data/Makefile
+src/interface/resources/cyril/Makefile
+src/interface/resources/cyril/16x16/Makefile)
