@@ -23,7 +23,10 @@ enum pagenames
 	m_pages.push_back(page);
 
 BEGIN_EVENT_TABLE(CSettingsDialog, wxDialog)
+EVT_TREE_SEL_CHANGING(XRCID("ID_TREE"), CSettingsDialog::OnPageChanging)
 EVT_TREE_SEL_CHANGED(XRCID("ID_TREE"), CSettingsDialog::OnPageChanged)
+EVT_BUTTON(XRCID("ID_OK"), CSettingsDialog::OnOK)
+EVT_BUTTON(XRCID("ID_CANCEL"), CSettingsDialog::OnCancel)
 END_EVENT_TABLE()
 
 CSettingsDialog::CSettingsDialog(COptions* pOptions)
@@ -55,8 +58,8 @@ bool CSettingsDialog::Create(wxWindow* parent)
 bool CSettingsDialog::LoadPages()
 {
 	// Get the tree control.
-	wxWindow* wnd = FindWindow(XRCID("ID_TREE"));
-	wxTreeCtrl* treeCtrl = wxDynamicCast(wnd, wxTreeCtrl);
+	
+	wxTreeCtrl* treeCtrl = XRCCTRL(*this, "ID_TREE", wxTreeCtrl);
 	wxASSERT(treeCtrl);
 	if (!treeCtrl)
 		return false;
@@ -70,8 +73,7 @@ bool CSettingsDialog::LoadPages()
 
 	// Before we can initialize the pages, get the target panel in the settings
 	// dialog.
-    wnd = FindWindow(XRCID("ID_PAGEPANEL"));
-	wxPanel* parentPanel = wxDynamicCast(wnd, wxPanel);
+	wxPanel* parentPanel = XRCCTRL(*this, "ID_PAGEPANEL", wxPanel);
 	wxASSERT(parentPanel);
 	if (!parentPanel)
 		return false;
@@ -81,7 +83,8 @@ bool CSettingsDialog::LoadPages()
 
 	for (std::vector<t_page>::iterator iter = m_pages.begin(); iter != m_pages.end(); iter++)
 	{
-		if (!iter->page->CreatePage(m_pOptions, parentPanel, size))
+		if (!iter->page->CreatePage(m_pOptions, parentPanel, size) ||
+			!iter->page->LoadPage())
 			return false;
 	}
 
@@ -123,4 +126,33 @@ void CSettingsDialog::OnPageChanged(wxTreeEvent& event)
 			break;
 		}
 	}
+}
+
+void CSettingsDialog::OnOK(wxCommandEvent& event)
+{
+	unsigned int size = m_pages.size();
+	for (unsigned int i = 0; i < size; i++)
+	{
+		if (!m_pages[i].page->Validate())
+			return;
+	}
+
+	for (unsigned int i = 0; i < size; i++)
+		m_pages[i].page->SavePage();
+
+	EndModal(wxID_OK);
+}
+
+void CSettingsDialog::OnCancel(wxCommandEvent& event)
+{
+	EndModal(wxID_CANCEL);
+}
+
+void CSettingsDialog::OnPageChanging(wxTreeEvent& event)
+{
+	if (!m_activePanel)
+		return;
+
+	if (!m_activePanel->Validate())
+		event.Veto();
 }

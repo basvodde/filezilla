@@ -24,6 +24,10 @@ struct t_Option
 static const t_Option options[OPTIONS_NUM] =
 {
 	"Use Pasv mode", number, _T("1"),
+	"Limit local ports", number, _T("0"),
+	"Limit ports low", number, _T("6000"),
+	"Limit ports high", number, _T("7000"),
+	"External IP", string, _T(""),
 	"Number of Transfers", number, _T("2"),
 	"Transfer Retry Count", number, _T("5")
 };
