@@ -12,13 +12,15 @@ END_EVENT_TABLE()
 CStatusView::CStatusView(wxWindow* parent, wxWindowID id)
 	: wxWindow(parent, id, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER)
 {
-	m_pHtmlWindow = NULL;
-	m_pHtmlWindow = new wxHtmlWindow(this, -1, wxDefaultPosition, wxDefaultSize, wxVSCROLL);
-	m_pHtmlWindow->SetBorders(3);
-	int sizes[7];
-	for (int i = 0; i < 7; i++)
-		sizes[i] = GetFont().GetPointSize();
-	m_pHtmlWindow->SetFonts(GetFont().GetFaceName(), GetFont().GetFaceName(), sizes);
+	m_pTextCtrl = 0;
+	m_pTextCtrl = new wxTextCtrl(this, -1, _T(""), wxDefaultPosition, wxDefaultSize,
+								wxNO_BORDER | wxVSCROLL | wxTE_MULTILINE |
+								wxTE_READONLY | wxTE_RICH | wxTE_RICH2 | wxTE_NOHIDESEL | wxTE_LINEWRAP);
+	m_pTextCtrl->SetFont(GetFont());
+
+	m_nLineCount = 0;
+
+	InitDefAttr();
 }
 
 CStatusView::~CStatusView()
@@ -27,9 +29,9 @@ CStatusView::~CStatusView()
 
 void CStatusView::OnSize(wxSizeEvent &event)
 {
-	if (m_pHtmlWindow)
+	if (m_pTextCtrl)
 	{
-		m_pHtmlWindow->SetSize(GetClientSize());
+		m_pTextCtrl->SetSize(GetClientSize());
 	}
 }
 
@@ -40,52 +42,87 @@ void CStatusView::AddToLog(CLogmsgNotification *pNotification)
 
 void CStatusView::AddToLog(enum MessageType messagetype, wxString message)
 {
-	m_Content += "<tr><td valign='top'>";
-	wxString font = "<font color=";
+	wxTextAttr attr = m_defAttr;
+	wxString prefix;
+	if (m_nLineCount)
+		prefix = _T("\n");
+	if (m_nLineCount == 1000)
+	{
+		int len = m_pTextCtrl->GetLineLength(0);
+		m_pTextCtrl->Remove(0, len + 1);
+	}
+	else
+		m_nLineCount++;
 
-	wxString typeStr;
 	switch (messagetype)
 	{
 	case Error:
-		font += "red";
-		typeStr = _("Error");
+		prefix += _("Error:");
+		attr.SetTextColour(wxColour(255, 0, 0));
 		break;
 	case Command:
-		font += "navy";
-		typeStr = _("Command");
+		prefix += _("Command:");
+		attr.SetTextColour(wxColour(0, 0, 128));
 		break;
 	case Response:
-		font += "green";
-		typeStr = _("Response");
+		prefix += _("Response:");
+		attr.SetTextColour(wxColour(0, 128, 0));
 		break;
 	case Debug_Warning:
 	case Debug_Info:
 	case Debug_Verbose:
 	case Debug_Debug:
-		font += "purple";
-		typeStr = _("Trace");
+		prefix += _("Trace:");
+		attr.SetTextColour(wxColour(128, 0, 128));
 		break;
 	case RawList:
-		font += "fuchsia";
-		typeStr = _("Listing");
+		prefix += _("Listing:");
+		attr.SetTextColour(wxColour(0, 128, 128));
 		break;
 	default:
-		font += "black";
-		typeStr = _("Status");
+		prefix += _("Status:");
+		attr.SetTextColour(wxColour(0, 0, 0));
+		break;
 	}
-	font += ">";
+	prefix += _T("\t");
 
-	m_Content += font;
-	m_Content += typeStr + _T(":");
-	
-	m_Content += "</font></td><td width='5'></td><td>" + font;
-	
-	message.Replace("\n", "<br>");
-	m_Content += message;
-	
-	m_Content += "</font>";
+	m_pTextCtrl->SetDefaultStyle(attr);
+	m_pTextCtrl->AppendText(prefix + message);
 
-	m_Content += "</td></tr>";
+	m_nLineCount++;
+}
 
-	m_pHtmlWindow->SetPage("<html><body><table cellspacing='0' cellpadding = '0'>" + m_Content + "</table></body></html>");
+void CStatusView::InitDefAttr()
+{
+	// Measure withs of all types
+    wxClientDC dc(this);
+
+	dc.SetMapMode(wxMM_METRIC);
+
+	int maxWidth = 0;
+	wxCoord width = 0;
+	wxCoord height = 0;
+	dc.GetTextExtent(_("Error:"), &width, &height);
+	maxWidth = width;
+	dc.GetTextExtent(_("Command:"), &width, &height);
+	if (width > maxWidth)
+		maxWidth = width;
+	dc.GetTextExtent(_("Response:"), &width, &height);
+	if (width > maxWidth)
+		maxWidth = width;
+	dc.GetTextExtent(_("Trace:"), &width, &height);
+	if (width > maxWidth)
+		maxWidth = width;
+	dc.GetTextExtent(_("Listing:"), &width, &height);
+	if (width > maxWidth)
+		maxWidth = width;
+	dc.GetTextExtent(_("Status:"), &width, &height);
+	if (width > maxWidth)
+		maxWidth = width;
+
+	maxWidth = maxWidth * 10 + 20;
+	wxArrayInt array;
+	array.Add(maxWidth);
+	m_defAttr.SetTabs(array);
+	m_defAttr.SetLeftIndent(0, maxWidth);
 }

@@ -10,9 +10,14 @@ public:
 	void AddToLog(CLogmsgNotification *pNotification);
 	void AddToLog(enum MessageType messagetype, wxString message);
 
+
 protected:
+	void InitDefAttr();
+
+	int m_nLineCount;
 	wxString m_Content;
-	wxHtmlWindow *m_pHtmlWindow;
+	wxTextCtrl *m_pTextCtrl;
+	wxTextAttr m_defAttr;
 
 	void OnSize(wxSizeEvent &event);
 
