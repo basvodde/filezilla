@@ -6,10 +6,10 @@ INCLUDES = -I../include
 # this is the program that gets installed.  it's name is used for all
 # of the other Makefile.am variables
 
-bin_PROGRAMS = filezilla
-
 if MACAPPBUNDLE
-bin_PROGRAMS += $FileZilla.app/Contents/MacOS/filezilla
+bin_PROGRAMS = filezilla FileZilla.app/Contents/MacOS/filezilla
+else
+bin_PROGRAMS = filezilla
 endif
 
 # the application source, library search path, and link libraries
