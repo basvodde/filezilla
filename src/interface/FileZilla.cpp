@@ -31,6 +31,7 @@ bool CFileZillaApp::OnInit()
 	return true;
 }
 
+wxString resourcePath;
 bool CFileZillaApp::LoadResourceFiles()
 {
 	wxPathList pathList;
@@ -65,6 +66,7 @@ bool CFileZillaApp::LoadResourceFiles()
 	}
 	
 	wxImage::AddHandler(new wxPNGHandler());
+	wxImage::AddHandler(new wxXPMHandler());
 	wxLocale::AddCatalogLookupPathPrefix(wxPath + _T("/locales"));
 	m_locale.Init(wxLANGUAGE_GERMAN);
 	m_locale.AddCatalog(_T("filezilla"));
@@ -78,6 +80,8 @@ bool CFileZillaApp::LoadResourceFiles()
 	
 	wxXmlResource::Get()->InitAllHandlers();
 	wxXmlResource::Get()->Load(wxPath + _T("/resources/*.xrc"));
+
+	resourcePath = wxPath;
 
 	return true;
 }

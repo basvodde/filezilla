@@ -97,12 +97,13 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	Layout();
 
 	m_pState->SetLocalListView(m_pLocalListView);
-	m_pState->SetLocalDir(_T("d:\\cvsroot\\FileZilla 3\\src\\interface\\"));
+	m_pState->SetLocalDir(wxGetCwd());
 
 }
 
 CMainFrame::~CMainFrame()
 {
+	delete m_pState;
 	delete m_pEngine;
 
 	for (std::list<CCommand *>::iterator iter = m_CommandList.begin(); iter != m_CommandList.end(); iter++)
