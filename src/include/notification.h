@@ -23,7 +23,7 @@ enum NotificationId
 	nId_connection, // connection information: connects, disconnects, timeouts etc..
 	nId_transfers, // transfer information: bytes transferes, transfer speed and such
 	nId_listing, // directory listings
-	nId_async // asynchronous request
+	nId_asyncrequest // asynchronous request
 };
 
 class CNotification

@@ -36,6 +36,7 @@ public:
 	COptionsBase *GetOptions() const;
 
 	bool SetAsyncRequestReply(CAsyncRequestNotification *pNotification);
+	int GetNextAsyncRequestNumber();
 
 protected:
 	bool SendEvent(enum EngineNotificationType eventType, int data = 0);

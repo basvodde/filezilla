@@ -75,7 +75,7 @@ CAsyncRequestNotification::~CAsyncRequestNotification()
 
 enum NotificationId CAsyncRequestNotification::GetID() const
 {
-	return nId_async;
+	return nId_asyncrequest;
 }
 
 CFileExistsNotification::CFileExistsNotification()

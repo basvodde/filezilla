@@ -805,11 +805,11 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 	if (download)
 	{
 		wxString filename = remotePath.GetPath() + remoteFile;
-        LogMessage(Status, _("Starting download of %s"), filename);
+        LogMessage(Status, _("Starting download of %s"), filename.c_str());
 	}
 	else
 	{
-		LogMessage(Status, _("Starting upload of %s"), localFile);
+		LogMessage(Status, _("Starting upload of %s"), localFile.c_str());
 	}
 	if (m_pCurOpData)
 	{
@@ -845,6 +845,10 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 	}
 
 	pData->opState = filetransfer_type;
+
+	res = CheckOverwriteFile();
+	if (res != FZ_REPLY_OK)
+		return res;
 
 	return FileTransferSend();
 }
@@ -891,6 +895,13 @@ int CFtpControlSocket::FileTransferParseResponse()
 			if (res && date.IsValid())
 				pData->fileTime = date;
 		}
+
+		{
+			int res = CheckOverwriteFile();
+			if (res != FZ_REPLY_OK)
+				return res;
+		}
+
 		break;
 	case filetransfer_type:
 		if (code == 2 || code == 3)
@@ -1140,6 +1151,10 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 			}
 
 			pData->opState = filetransfer_type;
+
+			int res = CheckOverwriteFile();
+			if (res != FZ_REPLY_OK)
+				return res;
 		}
 		else if (prevResult == FZ_REPLY_ERROR)
 		{
@@ -1162,7 +1177,13 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 			if (!found)
 				pData->opState = filetransfer_size;
 			else
+			{
 				pData->opState = filetransfer_type;
+
+				int res = CheckOverwriteFile();
+				if (res != FZ_REPLY_OK)
+					return res;
+			}
 		}
 		else if (prevResult == FZ_REPLY_ERROR)
 		{
@@ -1376,6 +1397,11 @@ int CFtpControlSocket::CheckOverwriteFile()
 
 	if (pData->fileTime.IsValid())
 		pNotification->remoteTime = pData->fileTime;
+
+	pNotification->requestNumber = m_pEngine->GetNextAsyncRequestNumber();
+	pData->waitAsyncRequest = true;
+
+	m_pEngine->AddNotification(pNotification);
 
 	return true;
 }

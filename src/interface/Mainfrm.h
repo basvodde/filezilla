@@ -10,6 +10,7 @@ class CRemoteListView;
 class CState;
 class COptions;
 class CCommandQueue;
+class CAsyncRequestQueue;
 
 class CMainFrame : public wxFrame
 {
@@ -59,6 +60,7 @@ protected:
 	CFileZillaEngine *m_pEngine;
 	CCommandQueue *m_pCommandQueue;
 	COptions *m_pOptions;
+	CAsyncRequestQueue *m_pAsyncRequestQueue;
 	
 	CState *m_pState;
 

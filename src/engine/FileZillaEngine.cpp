@@ -323,3 +323,8 @@ bool CFileZillaEngine::SetAsyncRequestReply(CAsyncRequestNotification *pNotifica
 
 	return true;
 }
+
+int CFileZillaEngine::GetNextAsyncRequestNumber()
+{
+	return ++m_asyncRequestCounter;
+}

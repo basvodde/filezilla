@@ -9,7 +9,7 @@
 #include "state.h"
 #include "Options.h"
 #include "commandqueue.h"
-#include "fileexistsdlg.h"
+#include "asyncrequestqueue.h"
 
 #ifndef __WXMSW__
 #include "resources/filezilla.xpm"
@@ -121,6 +121,8 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_pState->SetLocalListView(m_pLocalListView);
 	m_pState->SetRemoteListView(m_pRemoteListView);
 	m_pState->SetLocalDir(wxGetCwd());
+
+	m_pAsyncRequestQueue = new CAsyncRequestQueue(this);
 }
 
 CMainFrame::~CMainFrame()
@@ -129,6 +131,7 @@ CMainFrame::~CMainFrame()
 	delete m_pCommandQueue;
 	delete m_pEngine;
 	delete m_pOptions;
+	delete m_pAsyncRequestQueue;
 }
 
 void CMainFrame::OnSize(wxSizeEvent &event)
@@ -316,17 +319,23 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 		{
 		case nId_logmsg:
 			m_pStatusView->AddToLog(reinterpret_cast<CLogmsgNotification *>(pNotification));
+			delete pNotification;
 			break;
 		case nId_operation:
 			m_pCommandQueue->Finish(pNotification);
+			delete pNotification;
 			break;
 		case nId_listing:
 			m_pState->SetRemoteDir(reinterpret_cast<CDirectoryListingNotification *>(pNotification)->GetDirectoryListing());
+			delete pNotification;
+			break;
+		case nId_asyncrequest:
+			m_pAsyncRequestQueue->AddRequest(m_pEngine, reinterpret_cast<CAsyncRequestNotification *>(pNotification));
 			break;
 		default:
+			delete pNotification;
 			break;
 		}
-		delete pNotification;
 
 		pNotification = m_pEngine->GetNextNotification();
 	}
