@@ -33,19 +33,19 @@ XGETTEXT_ARGS=-C -k_ -kwxGetTranslation -kwxTRANSLATE -s -j
 #	If running under Windows, restore windows line endings to not confuse CVS
 	if echo $(OS) | grep Windows; then dos2unix $@; unix2dos $@; fi
 
-ressources:
-	touch ../src/interface/ressources/ressources.h
-	rm ../src/interface/ressources/ressources.h
-	$(FIND) ../src/interface/ressources -name "*.xrc" | $(XARGS) wxrc -g >> ../src/interface/ressources/ressources.h
+resources:
+	touch ../src/interface/resources/resources.h
+	rm ../src/interface/resources/resources.h
+	$(FIND) ../src/interface/resources -name "*.xrc" | $(XARGS) wxrc -g >> ../src/interface/resources/resources.h
 
-filezilla.pot: ressources
+filezilla.pot: resources
 	touch $@
 	$(FIND) ../src/include -name "*.h" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o filezilla.pot
 	$(FIND) ../src/engine -name "*.cpp" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o filezilla.pot
 	$(FIND) ../src/engine -name "*.h" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o filezilla.pot
 	$(FIND) ../src/interface -name "*.cpp" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o filezilla.pot
 	$(FIND) ../src/interface -name "*.h" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o filezilla.pot
-	$(FIND) ../src/interface/ressources -name "*.h" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o filezilla.pot
+	$(FIND) ../src/interface/resources -name "*.h" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o filezilla.pot
 
 allpo: force-update
 	@-for t in $(FZ_LINGUAS); do $(MAKE) $$t.po; done
