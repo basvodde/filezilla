@@ -86,9 +86,7 @@ CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState
 	item.cchTextMax = 999;
 	SendMessage(header, HDM_GETITEM, 0, (LPARAM)&item);
 
-	int res = SendMessage(header, HDM_SETIMAGELIST, 0, (LPARAM)m_pHeaderImageList->GetHandle());
-	int errt = GetLastError();
-	int x = 0;
+	SendMessage(header, HDM_SETIMAGELIST, 0, (LPARAM)m_pHeaderImageList->GetHandle());
 #endif
 }
 
@@ -110,7 +108,11 @@ void CRemoteListView::GetImageList()
 	int m_nStyle = 0;
 	wxChar buffer[MAX_PATH + 10];
 	if (!GetWindowsDirectory(buffer, MAX_PATH))
+#ifdef _tcscpy
 		_tcscpy(buffer, _T("C:\\"));
+#else
+		strcpy(buffer, _T("C:\\"));
+#endif
 
 	m_pImageList = new wxImageListMsw((WXHIMAGELIST)SHGetFileInfo( buffer,
 							  0,

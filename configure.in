@@ -107,6 +107,11 @@ if test "x$host_os" = "xcygwin" -o "x$host_os" = "xmingw32"; then
 			)
 		)
 	fi
+	if wx-config --cxxflags | grep __WXMSW__; then
+		if ! wx-config --libs | grep -e -lcomctl32; then
+			WX_LIBS="$WX_LIBS -lrpcrt4 -loleaut32 -lole32 -luuid -lwinspool -lwinmm -lshell32 -lcomctl32 -lcomdlg32 -ladvapi32 -lwsock32 -lgdi32"
+		fi
+	fi
 else
 	EXPAT_LIB=
 fi

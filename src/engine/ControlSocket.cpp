@@ -190,6 +190,8 @@ int CControlSocket::ResetOperation(int nErrorCode)
 		case cmd_list:
 			LogMessage(::Error, _("Failed to retrieve directory listing"));
 			break;
+		default:
+			break;
 		}
 	}
 

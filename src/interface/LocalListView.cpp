@@ -4,8 +4,8 @@
 #include <sys/stat.h>
 
 #ifdef __WXMSW__
-#include "shellapi.h"
-#include "commctrl.h"
+#include <shellapi.h>
+#include <commctrl.h>
 #endif
 
 #ifdef _DEBUG
@@ -83,9 +83,7 @@ CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState)
 	item.cchTextMax = 999;
 	SendMessage(header, HDM_GETITEM, 0, (LPARAM)&item);
 
-	int res = SendMessage(header, HDM_SETIMAGELIST, 0, (LPARAM)m_pHeaderImageList->GetHandle());
-	int errt = GetLastError();
-	int x = 0;
+	SendMessage(header, HDM_SETIMAGELIST, 0, (LPARAM)m_pHeaderImageList->GetHandle());
 #endif
 }
 
@@ -252,9 +250,13 @@ void CLocalListView::GetImageList()
 	int m_nStyle = 0;
 	wxChar buffer[MAX_PATH + 10];
 	if (!GetWindowsDirectory(buffer, MAX_PATH))
+#ifdef _tcscpy
 		_tcscpy(buffer, _T("C:\\"));
+#else
+		strcpy(buffer, _T("C:\\"));
+#endif
 
-	m_pImageList = new wxImageListMsw((WXHIMAGELIST)SHGetFileInfo( buffer,
+	m_pImageList = new wxImageListMsw((WXHIMAGELIST)SHGetFileInfo(buffer,
 							  0,
 							  &shFinfo,
 							  sizeof( shFinfo ),
@@ -315,7 +317,11 @@ void CLocalListView::DisplayDrives()
 		
 		m_fileData.push_back(data);
 		m_indexMapping.push_back(count);
+#ifdef _tcslen
 		pDrive += _tcslen(pDrive) + 1;
+#else
+		pDrive += strlen(pDrive) + 1;
+#endif
 		count++;
 	}
 	SetItemCount(count);

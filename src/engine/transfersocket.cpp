@@ -1,6 +1,6 @@
 #include "FileZilla.h"
 #include "transfersocket.h"
-#include "ttpcontrolsocket.h"
+#include "ftpcontrolsocket.h"
 #include "directorylistingparser.h"
 
 BEGIN_EVENT_TABLE(CTransferSocket, wxEvtHandler)
