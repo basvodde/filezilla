@@ -453,10 +453,13 @@ static char data[][100]={
 	/* two different VMS style listings */
 	"vms_dir_1.DIR;1  1 19-NOV-2001 21:41 [root,root] (RWE,RWE,RE,RE)",
 	"vms_file_3;1       155   2-JUL-2003 10:30:13.64",
-
+	
 	/* VMS multiline */
 	"VMS_file_1;1\r\n170774/170775     24-APR-2003 08:16:15  [FTP_CLIENT,SCOT]      (RWED,RWED,RE,)",
 	"VMS_file_2;1\r\n10			     2-JUL-2003 10:30:08.59  [FTP_CLIENT,SCOT]      (RWED,RWED,RE,)",
+
+	/* VMS without time */
+	"vms_dir_2.DIR;1  1 19-NOV-2001 [root,root] (RWE,RWE,RE,RE)",
 
 
 	// Miscellaneous formats
@@ -1359,17 +1362,24 @@ bool CDirectoryListingParser::ParseAsVms(CLine *pLine, CDirentry &entry)
 
 	// Get time
 	if (!pLine->GetToken(++index, token))
-		return false;
+		return true;
 
 	if (!ParseTime(token, entry))
-		return false;
+	{
+		if (token[0] != '[' && token[0] != '(')
+			return false;
+		entry.hasTime = false;
+		index--;
+	}
 
 	// Owner / group
-	if (pLine->GetToken(++index, token))
+	while (pLine->GetToken(++index, token))
 	{
 		int len = token.GetLength();
 		if (len > 2 && token[0] == '(' && token[len - 1] == ')')
 			entry.permissions = token.GetString().Mid(1, len - 2);
+		else if (len > 2 && token[0] == '[' && token[len - 1] == ']')
+			entry.ownerGroup = token.GetString().Mid(1, len - 2);
 		else
 			entry.permissions = token.GetString();
 	}
