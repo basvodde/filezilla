@@ -12,7 +12,7 @@ AC_PROG_LIBTOOL
 AC_CACHE_SAVE
 
 CPPFLAGS="$CPPFLAGS -Wall -g -fexceptions"
-CXXFLAGS="$CPPFLAGS -Wall -g -fexceptions"
+CXXFLAGS="$CXXFLAGS -Wall -g -fexceptions"
 
 WXCONFIG=wx-config
 AC_ARG_WITH(wx-config,
@@ -127,7 +127,7 @@ fi
 
 
 CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
-CXXFLAGS="$CXXFLAGS $WX_CPPFLAGS"
+CXXFLAGS="$CXXFLAGS $WX_CXXFLAGS"
 
 CATALOGS_TO_INSTALL="install-filezilla-catalogs"
 
