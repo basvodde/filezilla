@@ -386,7 +386,8 @@ void CLocalListView::OnItemActivated(wxListEvent &event)
 			return;
 		}
 
-		OnMenuUpload(wxCommandEvent());
+		wxCommandEvent cmdEvent;
+		OnMenuUpload(cmdEvent);
 		return;
 	}
 

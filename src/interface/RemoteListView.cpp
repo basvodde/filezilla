@@ -2,7 +2,7 @@
 #include "RemoteListView.h"
 #include "state.h"
 #include "commandqueue.h"
-#include "queueview.h"
+#include "QueueView.h"
 
 #ifdef __WXMSW__
 #include "shellapi.h"
