@@ -26,35 +26,105 @@ find . -name "Makefile.in" | xargs rm -f
 find . -name "Makefile" | xargs rm -f
 echo done
 
-echo "2. Creating configure and friends... "
+version_check()
+{
+	PACKAGE=$1
+	MAJOR=$2
+	MINOR=$3
+	MICRO=$4
+	SILENT=$5
+
+	VERSION=$MAJOR
+
+	if [ ! -z "$MINOR" ]; then VERSION=$VERSION.$MINOR; else MINOR=0; fi
+	if [ ! -z "$MICRO" ]; then VERSION=$VERSION.$MICRO; else MICRO=0; fi
+	
+	if [ x$SILENT != x2 ]; then
+		if [ ! -z $VERSION ]; then
+			echo -n "Checking for $PACKAGE >= $VERSION ... "
+		else
+			echo -n "Checking for $PACKAGE ... "
+		fi
+	fi
+	
+	($PACKAGE --version) < /dev/null > /dev/null 2>&1 ||
+	{
+		echo -e "\033[1;31mnot found\033[0m\n"
+		echo -e "\033[1m$PACKAGE\033[0m could not be found. On some systems \033[1m$PACKAGE\033[0m might be installed but"
+		echo -e "has a suffix with the version number, for example \033[1m$PACKAGE-$VERSION\033[0m."
+		echo -e "If that is the case, create a symlink to \033[1m$PACKAGE\033[0m"
+		exit 1
+	}
+
+	# the following line is carefully crafted sed magic
+	pkg_version=`$PACKAGE --version|head -n 1|sed 's/([^)]*)//g;s/^[a-zA-Z\.\ \-]*//;s/ .*$//'`
+	pkg_major=`echo $pkg_version | cut -d. -f1`
+	pkg_minor=`echo $pkg_version | sed s/[-,a-z,A-Z].*// | cut -d. -f2`
+	pkg_micro=`echo $pkg_version | sed s/[-,a-z,A-Z].*// | cut -d. -f3`
+	[ -z "$pkg_minor" ] && pkg_minor=0
+	[ -z "$pkg_micro" ] && pkg_micro=0
+
+	WRONG=
+	if [ -z $MAJOR ]; then
+		echo "found $pkg_version, ok."
+		return 0
+	fi
+	
+	# start checking the version
+	if [ "$pkg_major" -lt "$MAJOR" ]; then
+		WRONG=1
+	elif [ "$pkg_major" -eq "$MAJOR" ]; then
+		if [ "$pkg_minor" -lt "$MINOR" ]; then
+			WRONG=1
+		elif [ "$pkg_minor" -eq "$MINOR" -a "$pkg_micro" -lt "$MICRO" ]; then
+			WRONG=1
+		fi
+	fi
+
+	if [ ! -z "$WRONG" ]; then
+		if [ x$SILENT == x1 ]; then
+			return 2;
+		fi
+		echo -e "\033[1mfound $pkg_version, not ok !\033[0m"
+		echo "You must have $PACKAGE $VERSION or greater to generate the configure script."
+		echo -e "If \033[1m$PACKAGE\033[0m is a symlink, make sure it points to the correct version."
+		echo -e "Please update your installation or use the provides \033[1mupdate-configure.sh\033[0m script."
+		exit 2
+	else
+		echo "found $pkg_version, ok."
+		return 0
+	fi
+}
+
+echo "2 Checking required tools... "
+
+echo -n "2.1 "; version_check automake 1 7 0 1
+if [ x$? == x2 ]; then
+	WANT_AUTOMAKE=1.7
+	export WANT_AUTOMAKE
+	version_check automake 1 7 0 2
+fi
+
+echo -n "2.2 "; version_check aclocal
+echo -n "2.3 "; version_check autoconf 2 5
+echo -n "2.4 "; version_check libtoolize 1 5
+
+echo "3. Creating configure and friends... "
 if [ ! -e config ]
 then
   mkdir config
 fi
 
-echo "2.1 Checking automake version... "
-amk_version=`automake --version`
-am_version_major=`echo $am_version | sed 's/.*\([[0-9]]*\).\([[0-9]]*\)\(\.\|-p\)\([[0-9]]*\).*/\1/'`
-am_version_minor=`echo $am_version | sed 's/.*\([[0-9]]*\).\([[0-9]]*\)\(\.\|-p\)\([[0-9]]*\).*/\2/'`
-
-if test "$am_version_major" = "" -o "$am_version_minor" = ""; then
-  export WANT_AUTOMAKE="1.7"
-elif test $am_version_major -lt 1; then
-  export WANT_AUTOMAKE="1.7"
-elif test $am_version_major -eq 1 && test $am_version_minor -lt 7; then
-  export WANT_AUTOMAKE="1.7"
-fi
-
-echo "2.2 Running aclocal... "
+echo "3.1 Running aclocal... "
 aclocal -I . || failedAclocal
 
-echo "2.3 Runnig libtoolize... "
+echo "3.2 Runnig libtoolize... "
 libtoolize --automake -c -f
 
-echo "2.4 Running autoconf... "
+echo "3.3 Running autoconf... "
 autoconf
 
-echo "2.5 Runing automake... "
+echo "3.4 Runing automake... "
 automake -a -c -f
 
 echo -n "3. Checking generate files... "
