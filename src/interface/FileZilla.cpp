@@ -61,6 +61,8 @@ bool CFileZillaApp::LoadResourceFiles()
 			wxPath = cur + _T("/../share/filezilla");
 		else if (wxFileExists(cur + _T("/filezilla/resources/menus.xrc")))
 			wxPath = cur + _T("/filezilla");
+		else if (wxFileExists(cur + _T("/FileZilla.app/Contents/MacOS/resources/menus.xrc")))
+			wxPath = cur + _T("/FileZilla.app/Contents/MacOS");
 
 		if (wxPath != _T(""))
 			break;

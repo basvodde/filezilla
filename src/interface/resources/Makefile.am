@@ -14,3 +14,9 @@ endif
 
 
 dist_noinst_DATA = filezilla.rc FileZilla.ico
+
+if MACAPPBUNDLE
+mac-copy-resources: $(dist_resources_DATA)
+	mkdir ../FileZilla.app/Contents/MacOS/resources
+	cp -f $(dist_resources_DATA) ../FileZilla.app/Contents/MacOS/resources
+endif
