@@ -25,6 +25,8 @@ public:
 
 	CDirectoryListingParser *m_pDirectoryListingParser;
 
+	bool m_binaryMode;
+
 protected:
 	void TransferEnd(int reason);
 

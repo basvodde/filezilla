@@ -36,6 +36,7 @@ CTransferSocket::CTransferSocket(CFileZillaEngine *pEngine, CFtpControlSocket *p
 	m_transferBufferPos = 0;
 	
 	m_transferEnd = false;
+	m_binaryMode = false;
 }
 
 CTransferSocket::~CTransferSocket()
@@ -188,7 +189,29 @@ void CTransferSocket::OnReceive()
 		{
 			m_pEngine->SetActive(true);
 			m_pControlSocket->UpdateTransferStatus(numread);
-			if (pData->pFile->Write(m_pTransferBuffer, numread) != static_cast<size_t>(numread))
+
+			bool res;
+#ifndef __WXMSW__
+			if (!m_binaryMode)
+			{
+				// On systems other than Windows, we have to convert the line endings from
+				// CRLF into LFs only. We do this by skipping every CR.
+				int i = 0;
+				while (i < numread && m_pTransferBuffer[i] != '\r')
+					i++;
+				int j = i;
+				while (i < numread)
+				{
+					if (m_pTransferBuffer[i] != '\r')
+						m_pTransferBuffer[j++] = m_pTransferBuffer[i];
+					i++;
+				}
+				res = pData->pFile->Write(m_pTransferBuffer, j) == static_cast<size_t>(j);
+			}
+			else
+#endif
+			res = pData->pFile->Write(m_pTransferBuffer, numread) == static_cast<size_t>(numread);
+			if (!res)
 			{
 				wxLongLong free;
 				if (wxGetDiskSpace(pData->localFile, 0, &free))
@@ -228,12 +251,42 @@ void CTransferSocket::OnSend()
 		{
 			if (pData->pFile)
 			{
-				wxFileOffset numread = pData->pFile->Read(m_pTransferBuffer + m_transferBufferPos, BUFFERSIZE - m_transferBufferPos);
-				if (numread < BUFFERSIZE - m_transferBufferPos)
+#ifndef __WXMSW__
+				// Again, on  non-Windows systems perform ascii file conversion. This
+				// time we add CRs
+				wxFileOffset numread;
+				if (!m_binaryMode)
 				{
-					delete pData->pFile;
-					pData->pFile = 0;
+					int numToRead = (BUFFERSIZE - m_transferBufferPos) / 2;
+					char* tmp = new char[numToRead];
+					numread = pData->pFile->Read(tmp, numToRead);
+					if (numread < numToRead)
+					{
+						delete pData->pFile;
+						pData->pFile = 0;
+					}
+
+					char *p = m_pTransferBuffer + m_transferBufferPos;
+					for (int i = 0; i < numread; i++)
+					{
+						char c = tmp[i];
+						if (c == '\n')
+							*p++ = '\r';
+						*p++ = c;
+					}
+					delete [] tmp;
+					numread = p - (m_pTransferBuffer + m_transferBufferPos);
 				}
+				else
+				{
+					numread = pData->pFile->Read(m_pTransferBuffer + m_transferBufferPos, BUFFERSIZE - m_transferBufferPos);
+					if (numread < BUFFERSIZE - m_transferBufferPos)
+					{
+						delete pData->pFile;
+						pData->pFile = 0;
+					}
+				}
+#endif
 				if (numread > 0)
 					m_transferBufferPos += numread;
 				
