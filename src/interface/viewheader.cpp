@@ -42,9 +42,7 @@ protected:
 
 BEGIN_EVENT_TABLE(CViewHeader, wxWindow)
 EVT_SIZE(CViewHeader::OnSize)
-#ifdef __WXMSW__
 EVT_PAINT(CViewHeader::OnPaint)
-#endif //__WXMSW__
 END_EVENT_TABLE()
 
 CViewHeader::CViewHeader(wxWindow* pParent, const wxString& label)
@@ -53,7 +51,11 @@ CViewHeader::CViewHeader(wxWindow* pParent, const wxString& label)
 	m_alreadyInPaint = false;
 	m_pComboBox = new CComboBoxEx(this);
 	wxSize size = GetSize();
+#ifdef __WXMSW__
 	size.SetHeight(m_pComboBox->GetSize().GetHeight());
+#else
+	size.SetHeight(m_pComboBox->GetSize().GetHeight() + 10);
+#endif
 	SetSize(size);
 
 #ifdef __WXMSW__
@@ -68,8 +70,13 @@ CViewHeader::CViewHeader(wxWindow* pParent, const wxString& label)
 void CViewHeader::OnSize(wxSizeEvent& event)
 {
 	wxRect rect = GetClientRect();
+	
 	rect.SetWidth(rect.GetWidth() - m_cbOffset + 2);
 	rect.SetX(m_cbOffset);
+#ifndef __WXMSW__
+	rect.Deflate(0, 5);
+	rect.SetWidth(rect.GetWidth() - 5);
+#endif
 	m_pComboBox->SetSize(rect);
 	Refresh();
 }
@@ -186,18 +193,23 @@ void CViewHeader::OnComboMouseEvent(wxMouseEvent& event)
 	event.Skip();
 }
 
+#endif //__WXMSW__
+
 void CViewHeader::OnPaint(wxPaintEvent& event)
 {
 	wxRect rect = GetClientRect();
 	wxPaintDC dc(this);
 	dc.SetPen(*wxBLACK_PEN);
+	
+#ifdef __WXMSW__
 	dc.DrawLine(rect.GetLeft(), rect.GetBottom(), m_cbOffset, rect.GetBottom());
+#else
+	dc.DrawLine(rect.GetLeft(), rect.GetBottom(), rect.GetRight(), rect.GetBottom());
+#endif
 
 	dc.SetFont(GetFont());
 	dc.DrawText(m_label, 5, (rect.GetHeight() - m_labelHeight) / 2 - 1);
 }
-
-#endif //__WXMSW__
 
 void CViewHeader::SetLabel(const wxString& label)
 {

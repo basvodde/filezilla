@@ -23,8 +23,8 @@ protected:
 	DECLARE_EVENT_TABLE();
 	void OnSize(wxSizeEvent& event);
 
-#ifdef __WXMSW__
 	void OnPaint(wxPaintEvent& event);
+#ifdef __WXMSW__
 	void OnComboPaint(wxPaintEvent& event);
 	void OnComboMouseEvent(wxMouseEvent& event);
 	bool m_bLeftMousePressed;
