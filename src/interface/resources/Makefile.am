@@ -26,7 +26,10 @@ dist_noinst_DATA = filezilla.rc FileZilla.ico \
 
 if MACAPPBUNDLE
 mac-copy-resources: $(dist_resources_DATA)
-	cp -f $(dist_resources_DATA) $(top_builddir)/FileZilla.app/Contents/SharedSupport/resources
+	for i in $(dist_resources_DATA); \
+		do cp -f $(srcdir)/$$i $(top_builddir)/FileZilla.app/Contents/SharedSupport/resources; \
+	done
+	
 	$(MAKE) -C 16x16 mac-copy-resources
 	$(MAKE) -C 32x32 mac-copy-resources
 endif

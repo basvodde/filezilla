@@ -48,9 +48,9 @@ $(top_builddir)/FileZilla.app/Contents/MacOS/filezilla$(EXEEXT): filezilla
 	mkdir -p $(top_builddir)/FileZilla.app/Contents/MacOS
 	mkdir -p $(top_builddir)/FileZilla.app/Contents/SharedSupport/resources
 	mkdir -p $(top_builddir)/FileZilla.app/Contents/Resources
-	sed s/VERSION/$(VERSION)/ resources/MacInfo.plist >$(top_builddir)/FileZilla.app/Contents/Info.plist
+	sed s/VERSION/$(VERSION)/ $(srcdir)/resources/MacInfo.plist > $(top_builddir)/FileZilla.app/Contents/Info.plist
 	echo -n "APPL????" >$(top_builddir)/FileZilla.app/Contents/PkgInfo
 	$(shell wx-config --rezflags) $(top_builddir)/FileZilla.app/Contents/Resources/filezilla.rsrc
-	cp -f resources/FileZilla.icns $(top_builddir)/FileZilla.app/Contents/Resources/FileZilla.icns
+	cp -f $(srcdir)/resources/FileZilla.icns $(top_builddir)/FileZilla.app/Contents/Resources/FileZilla.icns
 	$(MAKE) -C resources mac-copy-resources
 	cp -f filezilla $(top_builddir)/FileZilla.app/Contents/MacOS/filezilla
