@@ -9,28 +9,28 @@ INCLUDES = -I$(srcdir)/../include
 bin_PROGRAMS = filezilla
 
 # the application source, library search path, and link libraries
-filezilla_SOURCES = FileZilla.cpp LocalListView.cpp LocalTreeView.cpp \
-			Mainfrm.cpp Options.cpp QueueView.cpp \
-			RemoteListView.cpp RemoteTreeView.cpp StatusView.cpp \
-			state.cpp commandqueue.cpp fileexistsdlg.cpp \
-                        asyncrequestqueue.cpp led.cpp sitemanager.cpp \
-			statuslinectrl.cpp xmlfunctions.cpp ipcmutex.cpp \
-			settingsdialog.cpp optionspage.cpp optionspage_passive.cpp \
-			optionspage_filetype.cpp optionspage_themes.cpp themeprovider.cpp \
-			optionspage_language.cpp
+filezilla_SOURCES = asyncrequestqueue.cpp commandqueue.cpp fileexistsdlg.cpp \
+		FileZilla.cpp ipcmutex.cpp led.cpp LocalListView.cpp \
+		LocalTreeView.cpp Mainfrm.cpp Options.cpp optionspage.cpp \
+		optionspage_filetype.cpp optionspage_language.cpp \
+		optionspage_passive.cpp optionspage_themes.cpp QueueView.cpp \
+		RemoteListView.cpp RemoteTreeView.cpp settingsdialog.cpp \
+		sitemanager.cpp state.cpp statuslinectrl.cpp StatusView.cpp \
+		themeprovider.cpp xmlfunctions.cpp
+ 
 if USE_BINRELOC
 filezilla_SOURCES += prefix.cpp
 endif
 
-noinst_HEADERS = 	LocalListView.h Mainfrm.h QueueView.h \
-			RemoteTreeView.h LocalTreeView.h Options.h \
-			RemoteListView.h StatusView.h state.h commandqueue.h \
-			fileexistsdlg.h asyncrequestqueue.h led.h \
-			sitemanager.h statuslinectrl.h prefix.h \
-			prefix.h xmlfunctions.h filezillaapp.h ipcmutex.h \
-			settingsdialog.h optionspage.h optionspage_passive.h \
-			optionspage_filetype.h optionspage_themes.h themeprovider.h \
-			optionspage_language.h
+noinst_HEADERS = asyncrequestqueue.h commandqueue.h fileexistsdlg.h \
+		 filezillaapp.h ipcmutex.h led.h LocalListView.h \
+		 LocalTreeView.h Mainfrm.h Options.h optionspage.h \
+		 optionspage_filetype.h optionspage_language.h \
+		 optionspage_passive.h optionspage_themes.h prefix.h \
+		 QueueView.h RemoteListView.h RemoteTreeView.h \
+		 settingsdialog.h sitemanager.h state.h \
+		 statuslinectrl.h StatusView.h themeprovider.h \
+		 xmlfunctions.h
 
 if USE_RESOURCEFILE
 RESOURCEFILE = resources/filezilla.o

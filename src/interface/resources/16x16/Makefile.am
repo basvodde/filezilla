@@ -1,8 +1,8 @@
 resourcesdir = $(pkgdatadir)/resources/16x16
 
-dist_resources_DATA = file.png folder.png folderclosed.png server.png \
-		sitemanager.png processqueue.png cancel.png disconnect.png \
-		reconnect.png refresh.png download.png downloadadd.png \
+dist_resources_DATA = cancel.png disconnect.png download.png downloadadd.png \
+		file.png folder.png folderclosed.png processqueue.png \
+		reconnect.png refresh.png  server.png sitemanager.png \
 		upload.png uploadadd.png
 
 if MACAPPBUNDLE

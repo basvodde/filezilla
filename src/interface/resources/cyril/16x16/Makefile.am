@@ -1,13 +1,12 @@
 resourcesdir = $(pkgdatadir)/resources/cyril/16x16
 
-dist_resources_DATA = download.png localtreeview.png server.png \
-		ascii.png downloadadd.png logview.png showhidden.png \
-		auto.png file.png processqueue.png sitemanager.png \
-		binary.png folder.png queueview.png speedlimits.png \
-		bookmark.png folderback.png reconnect.png synchronize.png \
-		cancel.png folderclosed.png refresh.png upload.png \
-		compare.png folderup.png uploadadd.png \
-		disconnect.png help.png remotetreeview.png
+dist_resources_DATA = ascii.png auto.png binary.png bookmark.png cancel.png \
+		compare.png disconnect.png download.png downloadadd.png file.png \
+		folder.png folderback.png folderclosed.png folderup.png help.png \
+		localtreeview.png logview.png processqueue.png queueview.png \
+		reconnect.png refresh.png remotetreeview.png server.png \
+		showhidden.png sitemanager.png speedlimits.png synchronize.png \
+		upload.png uploadadd.png
 
 if MACAPPBUNDLE
 mac-copy-resources: $(dist_resources_DATA)

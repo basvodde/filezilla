@@ -4,9 +4,9 @@ CLEANFILES = filezilla.o
 
 resourcesdir = $(pkgdatadir)/resources
 
-dist_resources_DATA = menus.xrc quickconnectbar.xrc dropdown.png \
-		toolbar.xrc empty.xpm up.xpm down.xpm filezilla.xpm \
-		dialogs.xrc leds.png themes.xml
+dist_resources_DATA = dialogs.xrc down.xpm dropdown.png empty.xpm \
+		filezilla.xpm leds.png menus.xrc quickconnectbar.xrc \
+		themes.xml toolbar.xrc up.xpm		  
 
 if USE_RESOURCEFILE
 nodist_noinst_DATA = filezilla.o
