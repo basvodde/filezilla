@@ -135,6 +135,7 @@ void CLocalListView::DisplayDir(wxString dirname)
 			wxStructStat buf;
 			int result;
 			result = wxStat(fn.GetFullPath(), &buf);
+
 			if (!result)
 			{
 				data.hasTime = true;
@@ -178,7 +179,7 @@ wxString CLocalListView::OnGetItemText(long item, long column) const
 		if (data->size < 0)
 			return _T("");
 		else
-			return wxString::Format(_T("%d"), data->size);
+			return wxLongLong(data->size).ToString();
 	}
 	else if (column == 2 && item)
 	{
@@ -669,9 +670,11 @@ int CLocalListView::CmpSize(CLocalListView *pList, unsigned int index, t_fileDat
 	else if (refData.size == -1)
 		return 1;
 
-	int res = data.size - refData.size;
-	if (res)
-		return res;
+	wxLongLong res = data.size - refData.size;
+	if (res > 0)
+		return 1;
+	else if (res < 0)
+		return -1;
 
 	return data.name.CmpNoCase(refData.name);
 

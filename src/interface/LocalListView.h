@@ -39,7 +39,7 @@ protected:
 		wxString name;
 		bool dir;
 		int icon;
-		int size;
+		wxLongLong size;
 		wxString fileType;
 		bool hasTime;
 		wxDateTime lastModified;
