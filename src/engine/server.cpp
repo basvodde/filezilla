@@ -159,8 +159,6 @@ wxString CServer::GetPass() const
 {
 	if (m_logonType == ANONYMOUS)
 		return _T("anon@localhost");
-	else if (m_logonType != NORMAL)
-		return _T("");
 	
 	return m_pass;
 }
@@ -197,8 +195,12 @@ bool CServer::operator==(const CServer &op) const
 	{
 		if (m_user != op.m_user)
 			return false;
-		else if (m_pass != op.m_pass)
-			return false;
+
+		if (m_logonType == NORMAL)
+		{
+			if (m_pass != op.m_pass)
+				return false;
+		}
 	}
 	else if (m_timezoneOffset != op.m_timezoneOffset)
 		return false;
@@ -278,12 +280,8 @@ bool CServer::SetUser(wxString user, wxString pass /*=_T("")*/)
 		return false;
 
 	m_user = user;
-
-	if (m_logonType == NORMAL)
-		m_pass = pass;
-	else
-		m_pass = _T("");
-
+	m_pass = pass;
+	
 	return true;
 }
 
@@ -320,4 +318,13 @@ void CServer::AllowMultipleConnections(bool allow)
 bool CServer::AllowMultipleConnections() const
 {
 	return m_allowMultipleConnections;
+}
+
+wxString CServer::FormatHost() const
+{
+	wxString host = m_host;
+	if (m_port != 21)
+		host += wxString::Format(_T(":%d"), m_port);
+
+	return host;
 }

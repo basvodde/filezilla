@@ -45,6 +45,8 @@ protected:
 	CLed *m_pRecvLed, *m_pSendLed;
 	wxTimer m_sendLedTimer, m_recvLedTimer;
 
+	bool GetPassword(CServer &server, wxString name = "");
+
 	wxTimer m_transferStatusTimer;
 
 	// Event handlers
@@ -66,6 +68,7 @@ protected:
 	void OnRefresh(wxCommandEvent &event);
 	void OnStatusbarSize(wxSizeEvent& event);
 	void OnTimer(wxTimerEvent& event);
+	void OnSiteManager(wxCommandEvent &event);
 
 	float m_ViewSplitterSashPos;
 	bool m_bInitDone;

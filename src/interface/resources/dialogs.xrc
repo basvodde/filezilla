@@ -469,7 +469,7 @@ Would you like to replace the file</label>
                                   <item>Dos</item>
                                 </content>
                                 <selection>0</selection>
-				<option>1</option>
+                                <option>1</option>
                               </object>
                               <flag>wxALL</flag>
                               <border>5</border>
@@ -668,6 +668,108 @@ Would you like to replace the file</label>
       </object>
       <object class="sizeritem">
         <object class="wxStaticLine"/>
+      </object>
+    </object>
+  </object>
+  <object class="wxDialog" name="ID_ENTERPASSWORD">
+    <title>Enter password</title>
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticText">
+          <label>Please enter a password for this server:</label>
+        </object>
+        <flag>wxTOP|wxLEFT|wxRIGHT</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxFlexGridSizer">
+          <cols>2</cols>
+          <object class="sizeritem">
+            <object class="wxStaticText" name="ID_NAMELABEL">
+              <label>Name:</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText" name="ID_NAME">
+              <label></label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>Host:</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText" name="ID_HOST">
+              <label></label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>User:</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText" name="ID_USER">
+              <label></label>
+            </object>
+          </object>
+          <vgap>5</vgap>
+          <hgap>5</hgap>
+        </object>
+        <flag>wxALL</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>&amp;Password:</label>
+            </object>
+            <flag>wxALIGN_CENTRE_VERTICAL</flag>
+          </object>
+          <object class="sizeritem">
+            <object class="wxTextCtrl" name="ID_PASSWORD">
+              <size>150,-1</size>
+              <style>wxTE_PASSWORD</style>
+            </object>
+            <flag>wxLEFT</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <flag>wxALL</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxCheckBox" name="ID_REMEMBER">
+          <label>&amp;Remember password for this session</label>
+          <checked>1</checked>
+        </object>
+        <flag>wxALL</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <object class="wxButton" name="wxID_OK">
+              <label>&amp;OK</label>
+              <default>1</default>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxButton" name="wxID_CANCEL">
+              <label>&amp;Cancel</label>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <flag>wxALIGN_CENTRE_HORIZONTAL</flag>
       </object>
     </object>
   </object>

@@ -20,7 +20,7 @@ enum LogonType
 	ANONYMOUS,
 	NORMAL,
 	ASK, // ASK should not be sent to the engine, it's intendet to be used by the interface
-	INTERACTIVE
+	INTERACTIVE,
 };
 
 enum PasvMode
@@ -72,6 +72,8 @@ public:
 	bool SetTimezoneOffset(int minutes);	
 	void SetPasvMode(enum PasvMode pasvMode);
 	void AllowMultipleConnections(bool allow);
+
+	wxString FormatHost() const;
 
 protected:
 	enum ServerProtocol m_protocol;

@@ -17,25 +17,9 @@ EVT_TREE_SEL_CHANGING(XRCID("ID_SITETREE"), CSiteManager::OnSelChanging)
 EVT_TREE_SEL_CHANGED(XRCID("ID_SITETREE"), CSiteManager::OnSelChanged)
 EVT_COMBOBOX(XRCID("ID_LOGONTYPE"), CSiteManager::OnLogontypeSelChanged)
 EVT_BUTTON(XRCID("ID_BROWSE"), CSiteManager::OnRemoteDirBrowse)
+//EVT_TREE_ITEM_EXPANDED(XRCID("ID_SITETREE"), CSiteManager::OnItemFolding)
+//EVT_TREE_ITEM_COLLAPSED(XRCID("ID_SITETREE"), CSiteManager::OnItemFolding)
 END_EVENT_TABLE()
-
-class CSiteManagerItemData : public wxTreeItemData
-{
-public:
-	CSiteManagerItemData(CServer server = CServer())
-	{
-		m_server = server;
-	}
-
-	virtual ~CSiteManagerItemData()
-	{
-	}
-
-	CServer m_server;
-	wxString m_comments;
-	wxString m_localDir;
-	CServerPath m_remoteDir;
-};
 
 CSiteManager::CSiteManager(COptions* pOptions)
 	: m_pOptions(pOptions)
@@ -55,8 +39,32 @@ bool CSiteManager::Create(wxWindow* parent)
 	XRCCTRL(*this, "ID_TRANSFERMODE_DEFAULT", wxRadioButton)->Update();
 	XRCCTRL(*this, "ID_TRANSFERMODE_ACTIVE", wxRadioButton)->Update();
 	XRCCTRL(*this, "ID_TRANSFERMODE_PASSIVE", wxRadioButton)->Update();
+
+	// Now create the imagelist for the site tree
+	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
+	if (!pTree)
+		return false;
+	wxImageList* pImageList = new wxImageList(16, 16);
+
+	wxBitmap bmp;
+	extern wxString resourcePath;
+	
+	wxLogNull *tmp = new wxLogNull;
+	
+	bmp.LoadFile(resourcePath + _T("16x16/folderclosed.png"), wxBITMAP_TYPE_PNG);
+	pImageList->Add(bmp);
+
+	bmp.LoadFile(resourcePath + _T("16x16/folder.png"), wxBITMAP_TYPE_PNG);
+	pImageList->Add(bmp);
+
+	bmp.LoadFile(resourcePath + _T("16x16/server.png"), wxBITMAP_TYPE_PNG);
+	pImageList->Add(bmp);
+
+	delete tmp;
+
+	pTree->AssignImageList(pImageList);
 		
-	return TRUE;
+	return true;
 }
 
 void CSiteManager::CreateControls()
@@ -120,8 +128,10 @@ bool CSiteManager::Load(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 	if (!pElement || !treeId)
 	{
 		pTree->DeleteAllItems();
-		treeId = pTree->AddRoot(_("My Sites"));
-		
+		treeId = pTree->AddRoot(_("My Sites"), 0, 0);
+		pTree->SetItemImage(treeId, 1, wxTreeItemIcon_Expanded);
+		pTree->SetItemImage(treeId, 1, wxTreeItemIcon_SelectedExpanded);
+
 		pElement = m_pOptions->GetXml();
 		pElement = pElement->FirstChildElement("Servers");
 
@@ -154,7 +164,9 @@ bool CSiteManager::Load(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 		
 		if (!strcmp(pChild->Value(), "Folder"))
 		{
-			wxTreeItemId id = pTree->AppendItem(treeId, name);
+			wxTreeItemId id = pTree->AppendItem(treeId, name, 0, 0);
+			pTree->SetItemImage(id, 1, wxTreeItemIcon_Expanded);
+			pTree->SetItemImage(id, 1, wxTreeItemIcon_SelectedExpanded);
 			Load(pChild, id);
 		}
 		else if (!strcmp(pChild->Value(), "Server"))
@@ -179,7 +191,7 @@ bool CSiteManager::Load(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 			if (remoteDir)
 				data->m_remoteDir.SetSafePath(m_pOptions->ConvLocal(remoteDir->Value()));
 			
-			pTree->AppendItem(treeId, name, -1, -1, data);
+			pTree->AppendItem(treeId, name, 2, 2, data);
 		}
 	}
 	pTree->SortChildren(treeId);
@@ -310,7 +322,9 @@ void CSiteManager::OnNewFolder(wxCommandEvent&event)
 		newName = _("New folder") + wxString::Format(_T(" %d"), index++);
 	}
 
-	wxTreeItemId newItem = pTree->AppendItem(item, newName);
+	wxTreeItemId newItem = pTree->AppendItem(item, newName, 0, 0);
+	pTree->SetItemImage(newItem, 1, wxTreeItemIcon_Expanded);
+	pTree->SetItemImage(newItem, 1, wxTreeItemIcon_SelectedExpanded);
 	pTree->SortChildren(item);
 	pTree->SelectItem(newItem);
 	pTree->Expand(item);
@@ -498,7 +512,7 @@ void CSiteManager::OnSelChanged(wxTreeEvent& event)
 			XRCCTRL(*this, "ID_LOGONTYPE", wxComboBox)->SetValue(_("Normal"));
 			break;
 		case ASK:
-			XRCCTRL(*this, "ID_LOGONTYPE", wxComboBox)->SetValue(_("Ask"));
+			XRCCTRL(*this, "ID_LOGONTYPE", wxComboBox)->SetValue(_("Ask for password"));
 			break;
 		case INTERACTIVE:
 			XRCCTRL(*this, "ID_LOGONTYPE", wxComboBox)->SetValue(_("Interactive"));
@@ -588,7 +602,7 @@ void CSiteManager::OnNewSite(wxCommandEvent& event)
 		newName = _("New site") + wxString::Format(_T(" %d"), index++);
 	}
 
-	wxTreeItemId newItem = pTree->AppendItem(item, newName, -1, -1, new CSiteManagerItemData());
+	wxTreeItemId newItem = pTree->AppendItem(item, newName, 2, 2, new CSiteManagerItemData());
 	pTree->SortChildren(item);
 	pTree->SelectItem(newItem);
 	pTree->Expand(item);
@@ -640,7 +654,7 @@ bool CSiteManager::UpdateServer()
 	wxString logonType = XRCCTRL(*this, "ID_LOGONTYPE", wxComboBox)->GetValue();
 	if (logonType == _("Normal"))
 		data->m_server.SetLogonType(NORMAL);
-	else if (logonType == _("Ask"))
+	else if (logonType == _("Ask for password"))
 		data->m_server.SetLogonType(ASK);
 	else if (logonType == _("Interactive"))
 		data->m_server.SetLogonType(INTERACTIVE);
@@ -682,7 +696,7 @@ bool CSiteManager::UpdateServer()
 	return true;
 }
 
-bool CSiteManager::GetServer(CServer &server)
+bool CSiteManager::GetServer(CSiteManagerItemData& data)
 {
 	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
 	if (!pTree)
@@ -692,11 +706,12 @@ bool CSiteManager::GetServer(CServer &server)
 	if (!item.IsOk())
 		return false;
 
-	CSiteManagerItemData* data = reinterpret_cast<CSiteManagerItemData* >(pTree->GetItemData(item));
-	if (!data)
+	CSiteManagerItemData* pData = reinterpret_cast<CSiteManagerItemData* >(pTree->GetItemData(item));
+	if (!pData)
 		return false;
 
-	server = data->m_server;
+	data = *pData;
+	data.m_name = pTree->GetItemText(item);
 
 	return true;
 }
@@ -720,4 +735,22 @@ void CSiteManager::OnRemoteDirBrowse(wxCommandEvent& event)
 	{
 		XRCCTRL(*this, "ID_LOCALDIR", wxTextCtrl)->SetValue(dlg.GetPath());
 	}
+}
+
+void CSiteManager::OnItemFolding(wxTreeEvent& event)
+{
+	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
+	if (!pTree)
+		return;
+
+	wxTreeItemId item = event.GetItem();
+	if (!item.IsOk())
+		return;
+
+	CSiteManagerItemData* data = reinterpret_cast<CSiteManagerItemData* >(pTree->GetItemData(item));
+	if (data)
+		return;
+
+//	if (pTree->IsExpanded(item))
+//		pTree->Set
 }

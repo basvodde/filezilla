@@ -45,6 +45,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_TOOL(XRCID("ID_TOOLBAR_RECONNECT"), CMainFrame::OnReconnect)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_REFRESH"), CMainFrame::OnUpdateToolbarRefresh)
 	EVT_TOOL(XRCID("ID_TOOLBAR_REFRESH"), CMainFrame::OnRefresh)
+	EVT_TOOL(XRCID("ID_TOOLBAR_SITEMANAGER"), CMainFrame::OnSiteManager)
 	EVT_CLOSE(CMainFrame::OnClose)
 	EVT_TIMER(wxID_ANY, CMainFrame::OnTimer)
 END_EVENT_TABLE()
@@ -283,27 +284,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	}
 	else if (event.GetId() == XRCID("ID_MENU_FILE_SITEMANAGER"))
 	{
-		CSiteManager dlg(m_pOptions);
-		dlg.Create(this);
-		int res = dlg.ShowModal();
-		if (res == wxID_YES)
-		{
-			CServer server;
-			if (!dlg.GetServer(server))
-				return;
-
-			if (m_pEngine->IsConnected() || m_pEngine->IsBusy())
-			{
-				if (wxMessageBox(_("Break current connection?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) != wxYES)
-					return;
-				m_pCommandQueue->Cancel();
-			}
-
-			m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
-			m_pCommandQueue->ProcessCommand(new CListCommand());
-
-			m_pOptions->SetServer(_T("Settings/LastServer"), server);
-		}
+		OnSiteManager(event);
 	}
 	event.Skip();
 }
@@ -552,6 +533,12 @@ void CMainFrame::OnReconnect(wxCommandEvent &event)
 	CServer server;
 	if (!m_pOptions->GetServer(_T("Settings/LastServer"), server))
 		return;
+
+	if (server.GetLogonType() == ASK)
+	{
+		if (!GetPassword(server))
+			return;
+	}
 	
 	m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
 	m_pCommandQueue->ProcessCommand(new CListCommand());
@@ -705,4 +692,63 @@ void CMainFrame::SetProgress(const CTransferStatus *pStatus)
 	}
 	else
 		m_pStatusBar->SetStatusText(wxString::Format(_("%s bytes (? B/s)"), wxLongLong(pStatus->currentOffset).ToString().c_str()), 4);
+}
+
+void CMainFrame::OnSiteManager(wxCommandEvent& event)
+{
+	CSiteManager dlg(m_pOptions);
+	dlg.Create(this);
+	int res = dlg.ShowModal();
+	if (res == wxID_YES)
+	{
+		CSiteManagerItemData data;
+		if (!dlg.GetServer(data))
+			return;
+
+		if (data.m_server.GetLogonType() == ASK)
+		{
+			if (!GetPassword(data.m_server, data.m_name))
+				return;
+		}
+
+		if (m_pEngine->IsConnected() || m_pEngine->IsBusy())
+		{
+			if (wxMessageBox(_("Break current connection?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) != wxYES)
+				return;
+			m_pCommandQueue->Cancel();
+		}
+
+		m_pCommandQueue->ProcessCommand(new CConnectCommand(data.m_server));
+		m_pCommandQueue->ProcessCommand(new CListCommand(data.m_remoteDir));
+
+		m_pOptions->SetServer(_T("Settings/LastServer"), data.m_server);
+
+		if (data.m_localDir != _T(""))
+			m_pState->SetLocalDir(data.m_localDir);
+	}
+}
+
+bool CMainFrame::GetPassword(CServer &server, wxString name /*=""*/)
+{
+	wxDialog pwdDlg;
+	wxXmlResource::Get()->LoadDialog(&pwdDlg, this, _T("ID_ENTERPASSWORD"));
+	if (name == _T(""))
+	{
+		pwdDlg.GetSizer()->Show(XRCCTRL(pwdDlg, "ID_NAMELABEL", wxStaticText), false, true);
+		pwdDlg.GetSizer()->Show(XRCCTRL(pwdDlg, "ID_NAME", wxStaticText), false, true);
+	}
+	else
+		XRCCTRL(pwdDlg, "ID_NAME", wxStaticText)->SetLabel(name);
+	XRCCTRL(pwdDlg, "ID_HOST", wxStaticText)->SetLabel(server.FormatHost());
+	XRCCTRL(pwdDlg, "ID_USER", wxStaticText)->SetLabel(server.GetUser());
+	XRCCTRL(pwdDlg, "wxID_OK", wxButton)->SetId(wxID_OK);
+	XRCCTRL(pwdDlg, "wxID_CANCEL", wxButton)->SetId(wxID_CANCEL);
+	pwdDlg.GetSizer()->Fit(&pwdDlg);
+	pwdDlg.GetSizer()->SetSizeHints(&pwdDlg);
+	if (pwdDlg.ShowModal() != wxID_OK)
+		return false;
+
+	server.SetUser(server.GetUser(), XRCCTRL(pwdDlg, "ID_PASSWORD", wxTextCtrl)->GetValue());
+
+	return true;
 }

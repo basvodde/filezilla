@@ -1,128 +1,127 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <resource version="2.3.0.1" xmlns="http://www.wxwindows.org/wxxrc">
-    <object class="wxPanel" name="ID_QUICKCONNECTBAR">
-        <object class="wxBoxSizer">
-            <orient>wxVERTICAL</orient>
-            <object class="sizeritem">
-                <flag>wxGROW</flag>
-
-                <border>0</border>
-                <object class="wxStaticLine" name="wxID_STATIC">
-                    <size>-1,-1</size>
-                    <style>wxLI_HORIZONTAL</style>
-                </object>
+  <object class="wxPanel" name="ID_QUICKCONNECTBAR">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <flag>wxGROW</flag>
+        <border>0</border>
+        <object class="wxStaticLine" name="wxID_STATIC">
+          <size>-1,-1</size>
+          <style>wxLI_HORIZONTAL</style>
+        </object>
+      </object>
+      <object class="sizeritem">
+        <border>0</border>
+        <object class="wxFlexGridSizer">
+          <cols>10</cols>
+          <rows>1</rows>
+          <vgap>0</vgap>
+          <hgap>0</hgap>
+          <object class="sizeritem">
+            <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM</flag>
+            <border>3</border>
+            <object class="wxStaticLine" name="wxID_STATIC">
+              <size>-1,-1</size>
+              <style>wxLI_VERTICAL</style>
             </object>
-            <object class="sizeritem">
-                <border>0</border>
-                <object class="wxFlexGridSizer">
-                    <cols>10</cols>
-                    <rows>1</rows>
-                    <vgap>0</vgap>
-                    <hgap>0</hgap>
-                    <object class="sizeritem">
-                        <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM</flag>
-                        <border>3</border>
-                        <object class="wxStaticLine" name="wxID_STATIC">
-                            <size>-1,-1</size>
-                            <style>wxLI_VERTICAL</style>
-                        </object>
-                    </object>
-                    <object class="sizeritem">
-                        <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM|wxADJUST_MINSIZE</flag>
-                        <border>5</border>
-                        <object class="wxStaticText" name="wxID_STATIC">
-                            <size>-1,-1</size>
-                            <label>&amp;Host:</label>
-                        </object>
-                    </object>
-                    <object class="sizeritem">
-                        <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
-                        <border>5</border>
-                        <object class="wxTextCtrl" name="ID_QUICKCONNECT_HOST">
-                            <size>-1,-1</size>
-                            <style></style>
-                            <value></value>
-                            <tooltip>Enter the address of the server.
+          </object>
+          <object class="sizeritem">
+            <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM|wxADJUST_MINSIZE</flag>
+            <border>5</border>
+            <object class="wxStaticText" name="wxID_STATIC">
+              <size>-1,-1</size>
+              <label>&amp;Host:</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+            <border>5</border>
+            <object class="wxTextCtrl" name="ID_QUICKCONNECT_HOST">
+              <size>-1,-1</size>
+              <style></style>
+              <value></value>
+              <tooltip>Enter the address of the server.
 To specify the server protocol, prepend the host with the protocol identifier. If no protocol is specified, the default protocol (ftp://) will be used.
 You can also enter complete URLS in the form protocol://user:pass@host:port here, the values in the other fields will be overwritten then.</tooltip>
-                        </object>
-                    </object>
-                    <object class="sizeritem">
-                        <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM|wxADJUST_MINSIZE</flag>
-                        <border>5</border>
-                        <object class="wxStaticText" name="wxID_STATIC">
-                            <size>-1,-1</size>
-                            <style></style>
-                            <label>&amp;Username:</label>
-                        </object>
-                    </object>
-                    <object class="sizeritem">
-                        <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
-                        <border>5</border>
-                        <object class="wxTextCtrl" name="ID_QUICKCONNECT_USER">
-                            <size>-1,-1</size>
-                        </object>
-                    </object>
-                    <object class="sizeritem">
-                        <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM|wxADJUST_MINSIZE</flag>
-                        <border>5</border>
-                        <object class="wxStaticText" name="wxID_STATIC">
-                            <size>-1,-1</size>
-                            <label>Pass&amp;word:</label>
-                        </object>
-                    </object>
-                    <object class="sizeritem">
-                        <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
-                        <border>5</border>
-                        <object class="wxTextCtrl" name="ID_QUICKCONNECT_PASS">
-                            <style>wxTE_PASSWORD</style>
-                            <size>-1,-1</size>
-                        </object>
-                    </object>
-                    <object class="sizeritem">
-                        <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM|wxADJUST_MINSIZE</flag>
-                        <border>5</border>
-                        <object class="wxStaticText" name="wxID_STATIC">
-                            <size>-1,-1</size>
-                            <label>&amp;Port:</label>
-                        </object>
-                    </object>
-                    <object class="sizeritem">
-                        <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
-                        <border>5</border>
-                        <object class="wxTextCtrl" name="ID_QUICKCONNECT_PORT">
-                            <size>38,-1</size>
-                            <tooltip>Enter the port on which the server listens.
-The default for FTP is 21, the default for SFTP is 22.</tooltip>
-                        </object>
-                    </object>
-                    <object class="sizeritem">
-                        <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
-                        <border>0</border>
-                        <object class="wxBoxSizer">
-                            <orient>wxHORIZONTAL</orient>
-                            <object class="sizeritem">
-                                <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-                                <border>0</border>
-                                <object class="wxButton" name="ID_QUICKCONNECT_OK">
-                                    <size>-1,-1</size>
-                                    <label>&amp;Quickconnect</label>
-                                    <default>1</default>
-                                </object>
-                            </object>
-                            <object class="sizeritem">
-                                <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-                                <border>0</border>
-                                <object class="wxBitmapButton" name="ID_QUICKCONNECT_DROPDOWN">
-                                    <size>-1,-1</size>
-                                    <style>wxBU_AUTODRAW|wxBU_EXACTFIT</style>
-                                    <bitmap>dropdown.png</bitmap>
-                                </object>
-                            </object>
-                        </object>
-                    </object>
-                </object>
             </object>
+          </object>
+          <object class="sizeritem">
+            <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM|wxADJUST_MINSIZE</flag>
+            <border>5</border>
+            <object class="wxStaticText" name="wxID_STATIC">
+              <size>-1,-1</size>
+              <style></style>
+              <label>&amp;Username:</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+            <border>5</border>
+            <object class="wxTextCtrl" name="ID_QUICKCONNECT_USER">
+              <size>-1,-1</size>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM|wxADJUST_MINSIZE</flag>
+            <border>5</border>
+            <object class="wxStaticText" name="wxID_STATIC">
+              <size>-1,-1</size>
+              <label>Pass&amp;word:</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+            <border>5</border>
+            <object class="wxTextCtrl" name="ID_QUICKCONNECT_PASS">
+              <style>wxTE_PASSWORD</style>
+              <size>-1,-1</size>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM|wxADJUST_MINSIZE</flag>
+            <border>5</border>
+            <object class="wxStaticText" name="wxID_STATIC">
+              <size>-1,-1</size>
+              <label>&amp;Port:</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+            <border>5</border>
+            <object class="wxTextCtrl" name="ID_QUICKCONNECT_PORT">
+              <size>38,-1</size>
+              <tooltip>Enter the port on which the server listens.
+The default for FTP is 21, the default for SFTP is 22.</tooltip>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+            <border>0</border>
+            <object class="wxBoxSizer">
+              <orient>wxHORIZONTAL</orient>
+              <object class="sizeritem">
+                <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                <border>0</border>
+                <object class="wxButton" name="ID_QUICKCONNECT_OK">
+                  <size>-1,-1</size>
+                  <label>&amp;Quickconnect</label>
+                  <default>1</default>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxALL|wxGROW|wxALIGN_CENTRE_VERTICAL</flag>
+                <border>0</border>
+                <object class="wxBitmapButton" name="ID_QUICKCONNECT_DROPDOWN">
+                  <size>-1,-1</size>
+                  <style>wxBU_AUTODRAW|wxBU_EXACTFIT</style>
+                  <bitmap>dropdown.png</bitmap>
+                </object>
+              </object>
+            </object>
+          </object>
         </object>
+      </object>
     </object>
+  </object>
 </resource>

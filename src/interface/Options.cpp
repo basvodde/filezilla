@@ -443,6 +443,9 @@ bool COptions::GetServer(TiXmlElement *node, CServer& server)
 		return false;
 	if (port < 1 || port > 65535)
 		return false;
+
+	if (!server.SetHost(host, port))
+		return false;
 	
 	text = handle.FirstChildElement("Protocol").FirstChild().Text();
 	if (!text)
@@ -450,6 +453,8 @@ bool COptions::GetServer(TiXmlElement *node, CServer& server)
 	long protocol = 0;
 	if (!ConvLocal(text->Value()).ToLong(&protocol))
 		return false;
+
+	server.SetProtocol((enum ServerProtocol)protocol);
 	
 	text = handle.FirstChildElement("Type").FirstChild().Text();
 	if (!text)
@@ -457,6 +462,8 @@ bool COptions::GetServer(TiXmlElement *node, CServer& server)
 	long type = 0;
 	if (!ConvLocal(text->Value()).ToLong(&type))
 		return false;
+
+	server.SetType((enum ServerType)type);
 	
 	text = handle.FirstChildElement("Logontype").FirstChild().Text();
 	if (!text)
@@ -464,8 +471,10 @@ bool COptions::GetServer(TiXmlElement *node, CServer& server)
 	long logonType = 0;
 	if (!ConvLocal(text->Value()).ToLong(&logonType))
 		return false;
+
+	server.SetLogonType((enum LogonType)logonType);
 	
-	if ((long)ANONYMOUS != logonType)
+	if (server.GetLogonType() != ANONYMOUS)
 	{
 		text = handle.FirstChildElement("User").FirstChild().Text();
 		if (!text)
@@ -482,10 +491,9 @@ bool COptions::GetServer(TiXmlElement *node, CServer& server)
 				pass = ConvLocal(text->Value());
 		}
 		
-		server = CServer((enum ServerProtocol)protocol, (enum ServerType)type, host, port, user, pass);
+		if (!server.SetUser(user, pass))
+			return false;
 	}
-	else
-		server = CServer((enum ServerProtocol)protocol, (enum ServerType)type, host, port);
 
 	text = handle.FirstChildElement("TimezoneOffset").FirstChild().Text();
 	if (text)

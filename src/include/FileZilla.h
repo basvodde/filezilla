@@ -18,6 +18,7 @@
 #include <wx/filefn.h>
 #include <wx/treectrl.h>
 #include <wx/spinctrl.h>
+#include <wx/notebook.h>
 
 #include <list>
 #include <vector>

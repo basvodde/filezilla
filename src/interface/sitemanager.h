@@ -1,6 +1,25 @@
 #ifndef __SITEMANAGER_H__
 #define __SITEMANAGER_H__
 
+class CSiteManagerItemData : public wxTreeItemData
+{
+public:
+	CSiteManagerItemData(CServer server = CServer())
+	{
+		m_server = server;
+	}
+
+	virtual ~CSiteManagerItemData()
+	{
+	}
+
+	CServer m_server;
+	wxString m_comments;
+	wxString m_localDir;
+	CServerPath m_remoteDir;
+	wxString m_name; // Only filled by CSiteManager::GetServer
+};
+
 class COptions;
 class TiXmlElement;
 class CSiteManager: public wxDialog
@@ -17,7 +36,7 @@ public:
 	/// Creates the controls and sizers
 	void CreateControls();
 	
-	bool GetServer(CServer &server);
+	bool GetServer(CSiteManagerItemData& data);
 	
 protected:
 	bool Verify();
@@ -38,6 +57,7 @@ protected:
 	virtual void OnSelChanged(wxTreeEvent& event);
 	virtual void OnLogontypeSelChanged(wxCommandEvent& event);
 	virtual void OnRemoteDirBrowse(wxCommandEvent& event);
+	void OnItemFolding(wxTreeEvent& event);
 	
 	COptions* m_pOptions;
 };
