@@ -1,3 +1,5 @@
+SUBDIRS = 16x16 32x32
+
 CLEANFILES = filezilla.o
 
 resourcesdir = $(pkgdatadir)/resources
@@ -5,7 +7,7 @@ resourcesdir = $(pkgdatadir)/resources
 dist_resources_DATA = menus.xrc quickconnectbar.xrc dropdown.png \
 		disconnect.png toolbar.xrc cancel.png \
 		empty.xpm up.xpm down.xpm filezilla.xpm \
-		file.png dialogs.xrc reconnect.png \
+		dialogs.xrc reconnect.png \
 		refresh.png
 
 if USE_RESOURCEFILE

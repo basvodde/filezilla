@@ -212,6 +212,12 @@ wxString CRemoteListView::OnGetItemText(long item, long column) const
 	return _T("");
 }
 
+#ifndef __WXMSW__
+// This function converts to the right size with the given background colour
+// Defined in LocalListView.cpp
+wxBitmap PrepareIcon(wxIcon icon, wxColour colour);
+#endif
+
 // See comment to OnGetItemText
 int CRemoteListView::OnGetItemImage(long item) const
 {
@@ -220,9 +226,9 @@ int CRemoteListView::OnGetItemImage(long item) const
 	if (!data)
 		return -1;
 	int &icon = data->icon;
+#ifdef __WXMSW__
 	if (icon == -2)
 	{
-#ifdef __WXMSW__
 		wxString path;
 		bool bDir;
 		if (!data->pDirEntry)
@@ -249,7 +255,16 @@ int CRemoteListView::OnGetItemImage(long item) const
 			// we only need the index from the system image ctrl
 			DestroyIcon( shFinfo.hIcon );
 		}
+	}
 #else
+	if (icon == -2)
+	{
+		if (!item)
+		{
+			icon = 1;
+			return icon;
+		}
+			
 		if (data->pDirEntry->dir)
 			icon = 1;
 		else
@@ -269,19 +284,24 @@ int CRemoteListView::OnGetItemImage(long item) const
 				
 				if (newIcon.Ok())
 				{
-					newIcon.SetWidth(16);
-					newIcon.SetHeight(16);
-					newIcon.SetDepth(32);
-					int index = m_pImageList->Add(newIcon);
+					wxBitmap bmp = PrepareIcon(newIcon, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+					int index = m_pImageList->Add(bmp);
 					if (index > 0)
 						icon = index;
+					bmp = PrepareIcon(newIcon, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+					m_pImageList->Add(bmp);
 				}
 				delete tmp;
 			}
 			delete pType;
 		}
+	}
+	else if (icon > 1)
+	{
+		if (GetItemState(item, wxLIST_STATE_SELECTED))
+			return icon + 1;
+	}
 #endif
-	}	
 	return icon;
 }
 

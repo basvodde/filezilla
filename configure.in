@@ -11,8 +11,8 @@ AC_PROG_LIBTOOL
 
 AC_CACHE_SAVE
 
-CFLAGS="$CFLAGS -Wall -g -fexceptions"
-CXXFLAGS="$CXXFLAGS -Wall -g -fexceptions"
+CFLAGS="$aCFLAGS -Wall -g -fexceptions"
+CXXFLAGS="$aCXXFLAGS -Wall -g -fexceptions"
 
 AM_OPTIONS_WXCONFIG
 
@@ -120,7 +120,6 @@ if test "x$IDN_LIB" = "x"; then
 	)
 fi
 
-
 CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
 CXXFLAGS="$CXXFLAGS $WX_CXXFLAGS"
 
@@ -133,4 +132,4 @@ AC_SUBST(ZLIB_LIB)
 AC_SUBST(IDN_LIB)
 AC_SUBST(CATALOGS_TO_INSTALL)
 
-AC_OUTPUT(Makefile src/Makefile src/engine/Makefile src/interface/Makefile src/interface/resources/Makefile src/include/Makefile locales/Makefile)
+AC_OUTPUT(Makefile src/Makefile src/engine/Makefile src/interface/Makefile src/interface/resources/Makefile src/include/Makefile locales/Makefile src/interface/resources/16x16/Makefile src/interface/resources/32x32/Makefile)

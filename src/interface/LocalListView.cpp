@@ -195,6 +195,26 @@ wxString CLocalListView::OnGetItemText(long item, long column) const
 	return _T("");
 }
 
+#ifndef __WXMSW__
+// This function converts to the right size with the given background colour
+wxBitmap PrepareIcon(wxIcon icon, wxColour colour)
+{
+	wxBitmap bmp(icon.GetWidth(), icon.GetHeight());
+	wxMemoryDC dc;
+	dc.SelectObject(bmp);
+	dc.SetPen(wxPen(colour));
+	dc.SetBrush(wxBrush(colour));
+	dc.DrawRectangle(0, 0, icon.GetWidth(), icon.GetHeight());
+	dc.DrawIcon(icon, 0, 0);
+	dc.SelectObject(wxNullBitmap);
+	
+	wxImage img = bmp.ConvertToImage();
+	img.SetMask();
+	img.Rescale(16, 16);
+	return img;
+}
+#endif
+
 // See comment to OnGetItemText
 int CLocalListView::OnGetItemImage(long item) const
 {
@@ -203,9 +223,9 @@ int CLocalListView::OnGetItemImage(long item) const
 	if (!data)
 		return -1;
 	int &icon = data->icon;
+#ifdef __WXMSW__
 	if (icon == -2)
 	{
-#ifdef __WXMSW__
 		wxString path;
 		if (data->name == _T(".."))
 			path = _T("alkjhgfdfghjjhgfdghuztxvbhzt");
@@ -230,7 +250,10 @@ int CLocalListView::OnGetItemImage(long item) const
 			// we only need the index from the system image ctrl
 			DestroyIcon( shFinfo.hIcon );
 		}
+	}
 #else
+	if (icon == -2)
+	{
 		if (data->dir)
 			icon = 1;
 		else
@@ -245,24 +268,29 @@ int CLocalListView::OnGetItemImage(long item) const
 			wxIconLocation loc;
 			if (pType->GetIcon(&loc) && loc.IsOk())
 			{
-				wxLogNull *tmp = new wxLogNull;
+				//wxLogNull *tmp = new wxLogNull;
 				wxIcon newIcon(loc);
 				
 				if (newIcon.Ok())
 				{
-					newIcon.SetWidth(16);
-					newIcon.SetHeight(16);
-					newIcon.SetDepth(32);
-					int index = m_pImageList->Add(newIcon);
+					wxBitmap bmp = PrepareIcon(newIcon, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+					int index = m_pImageList->Add(bmp);
 					if (index > 0)
 						icon = index;
+					bmp = PrepareIcon(newIcon, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+					m_pImageList->Add(bmp);
 				}
-				delete tmp;
+				//delete tmp;
 			}
 			delete pType;
 		}
+	}
+	else if (icon > 1)
+	{
+		if (GetItemState(item, wxLIST_STATE_SELECTED))
+			return icon + 1;
+	}
 #endif
-	}	
 	return icon;
 }
 
