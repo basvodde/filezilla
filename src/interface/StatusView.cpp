@@ -42,6 +42,7 @@ void CStatusView::AddToLog(CLogmsgNotification *pNotification)
 
 void CStatusView::AddToLog(enum MessageType messagetype, wxString message)
 {
+	m_pTextCtrl->Freeze();
 	wxTextAttr attr = m_defAttr;
 	wxString prefix;
 	if (m_nLineCount)
@@ -88,8 +89,7 @@ void CStatusView::AddToLog(enum MessageType messagetype, wxString message)
 
 	m_pTextCtrl->SetDefaultStyle(attr);
 	m_pTextCtrl->AppendText(prefix + message);
-
-	m_nLineCount++;
+	m_pTextCtrl->Thaw();
 }
 
 void CStatusView::InitDefAttr()
