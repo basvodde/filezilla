@@ -1,0 +1,125 @@
+<html>
+<body>
+
+<p align="center"><font size="5"><b>FileZilla 3 Icon set specification</b></font></p>
+
+<p><b><u>Introduction:</u></b></p>
+
+<p>This document describes the requirements for icon sets in FileZilla 3.</p>
+
+<p>
+  Please remember that if you want to create an icon set for FileZilla,
+  that you should be available to update the icon set in the feature when it's
+  required. Else it could happen that the icon set will be removed.
+</p>
+
+<p><b><u>Requirements:</u></b></p>
+<p>
+  Since FileZilla is Free Software, the same has to apply to all artwork used 
+  in FileZilla. This means that all artwork has to be published under the GPL
+  or a GPL compatible license.
+</p>
+
+<p>
+  To improve accessability of the software, the icons should be available in
+  different sizes. Each icon has to be available at least in the following 
+  sizes:
+</p>
+<ul>
+  <li>16x16</li>
+  <li>32x32</li>
+  <li>48x38</li>
+</ul>
+
+<p>
+  It is important, that the icons are good-looking in all those sizes.<br>
+  As fileformat for the icons, the png format has to be used. For each 
+  provided size there has to be a subdirectory with the size as name 
+  ("16x16" for example) containing all icons in the corresponding size.
+</p>
+
+<p>
+  If possible, despite the files for the different sizes, each icon should be
+  available in a vector based format, so that differently sized icons can 
+  quickly be generated.
+</p>
+
+<p>
+  Regarding the used color-depth or alpha-blending there is no limitation.
+</p>
+
+<p>
+  Each icon set should follow a theme, the icons should match nicely. Also,
+  the function of the icon has to be easily recognizeable.
+</p>
+
+<p><b><u>Required icons:</u></b></p>
+
+<p>
+  The following icons together with the required file name are required in all
+  icon sets for FileZilla:
+</p>
+
+<p><b>General toolbar:</b></p>
+<ul>
+  <li>sitemanager.png - Sitemanager</li>
+  <li>localtree.png, remotetree.png, messagelog.png, queue.png
+    - Togglebuttons for the local folder tree, for the remote folder tree, 
+      the message log, and the transfer queue.</li>
+  <li>refresh.png - a refresh button</li>
+  <li>
+    processqueue.png - a button that starts/stops transfer queue processing
+  </li>
+  <li>
+    cancel.png, disconnect.png, reconnect.png - cancel, disconnect and 
+    reconnect buttons
+  </li>
+  <li>help.png - a help button</li>
+</ul>
+
+<p><b>Browsing toolbar:</b></p>
+<ul>
+  <li>
+    synchronize.png - Synchronize folder views (if you change the local dir,
+    remote dir will be changes as well)
+  </li>
+  <li>
+    compare.png - Compare local and remote directories (file entries in the
+    file lists will receive a coloured background if they exist either only on
+    the local or remote side, or when the file attributes differ.)
+  </li>
+  <li>showhidden.png - show hidden files</li>
+</ul>
+
+<p><b>Transfer settings toolbar:</b></p>
+<ul>
+  <li>
+    ascii.png, binary.png, auto.png - Transfermode buttons for Ascii, binary
+    and Auto mode.
+  </li>
+  <li>speedlimits.png - Button to enable speed limits</li>
+</ul>
+
+<p><b>"Quicktransfer" toolbar:</b></p>
+<p>
+  (This toolbar will be positioned vertically between the local and remote
+  filelists with the local file list on the left side)
+</p>
+<ul>
+  <li>upload.png - Upload selected local files</li>
+  <li>uploadadd.png - Add selected local files to queue</li>
+  <li>download.png - Download selected remote files</li>
+  <li>downloadadd.png - Add selected remote files to queue</li>
+</ul>
+
+<p><b>Other generic icons:</b></p>
+<ul>
+  <li>bookmars.png - Bookmarks/Favourites</li>
+  <li>folderup.png - "Go up one folder"</li>
+  <li>folderback.png - "Go back to previous folder"</li>
+  <li>file.png - icon for generic files</li>
+  <li>folder.png - icon for folders</li>
+</ul>
+
+</body>
+</html>
