@@ -394,7 +394,7 @@ bool CServerPath::SetSafePath(wxString path)
 			return false;
 
 		m_Segments.push_back(path.Left(len));
-		path = path.Mid(len);
+		path = path.Mid(len + 1);
 	}
 	
 	m_bEmpty = false;
