@@ -38,6 +38,7 @@ static const int statbarWidths[6] = {
 
 BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_SIZE(CMainFrame::OnSize)
+	EVT_SPLITTER_SASH_POS_CHANGED(wxID_ANY, CMainFrame::OnViewSplitterPosChanged)
 	EVT_MENU(wxID_ANY, CMainFrame::OnMenuHandler)
 	EVT_BUTTON(XRCID("ID_QUICKCONNECT_OK"), CMainFrame::OnQuickconnect)
 	EVT_FZ_NOTIFICATION(wxID_ANY, CMainFrame::OnEngineEvent)
@@ -56,6 +57,8 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_TIMER(wxID_ANY, CMainFrame::OnTimer)
 	EVT_TOOL(XRCID("ID_TOOLBAR_PROCESSQUEUE"), CMainFrame::OnProcessQueue)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_PROCESSQUEUE"), CMainFrame::OnUpdateToolbarProcessQueue)
+	EVT_TOOL(XRCID("ID_TOOLBAR_LOGVIEW"), CMainFrame::OnToggleLogView)
+	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_LOGVIEW"), CMainFrame::OnUpdateToggleLogView)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame(COptions* pOptions) : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
@@ -115,6 +118,8 @@ CMainFrame::CMainFrame(COptions* pOptions) : wxFrame(NULL, -1, _T("FileZilla"), 
 	CreateToolBar();
 	CreateQuickconnectBar();
 
+	m_ViewSplitterSashPos = 0.5;
+
 	m_pEngine = new CFileZillaEngine();
 	m_pEngine->Init(this, m_pOptions);
 	
@@ -137,13 +142,14 @@ CMainFrame::CMainFrame(COptions* pOptions) : wxFrame(NULL, -1, _T("FileZilla"), 
 
 	m_pViewSplitter = new wxSplitterWindow(m_pBottomSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
 	m_pViewSplitter->SetMinimumPaneSize(20);
-	m_pViewSplitter->SetSashGravity(0.5);
-
+	
 	m_pLocalSplitter = new wxSplitterWindow(m_pViewSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
 	m_pLocalSplitter->SetMinimumPaneSize(20);
+	m_pLocalSplitter->SetSashGravity(0.7);
 
 	m_pRemoteSplitter = new wxSplitterWindow(m_pViewSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
 	m_pRemoteSplitter->SetMinimumPaneSize(20);
+	m_pRemoteSplitter->SetSashGravity(0.7);
 
 	m_pStatusView = new CStatusView(m_pTopSplitter, -1);
 	m_pQueueView = new CQueueView(m_pBottomSplitter, -1, this);
@@ -159,7 +165,7 @@ CMainFrame::CMainFrame(COptions* pOptions) : wxFrame(NULL, -1, _T("FileZilla"), 
 	m_pRemoteSplitter->SplitHorizontally(m_pRemoteTreeView, m_pRemoteListView);
 	wxSize size = m_pBottomSplitter->GetClientSize();
 	m_pBottomSplitter->SetSashPosition(size.GetHeight() - 140);
-
+	
 	Layout();
 
 	m_pState->SetLocalListView(m_pLocalListView);
@@ -183,6 +189,8 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 	if (!m_pBottomSplitter)
 		return;
 
+	float ViewSplitterSashPos = m_ViewSplitterSashPos;
+
 	wxFrame::OnSize(event);
 
 	wxSize clientSize = GetClientSize();
@@ -201,6 +209,32 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 			m_pTopSplitter->SetSize(0, panelSize.GetHeight(), clientSize.GetWidth(), clientSize.GetHeight() - panelSize.GetHeight());
 		}
 	}
+
+	m_ViewSplitterSashPos = ViewSplitterSashPos;
+
+	if (m_pViewSplitter)
+	{
+		wxSize size = m_pViewSplitter->GetClientSize();
+		int pos = static_cast<int>(size.GetWidth() * m_ViewSplitterSashPos);
+		if (pos < 20)
+			pos = 20;
+		else if (pos > size.GetWidth() - 20)
+			pos = size.GetWidth() - 20;
+		m_pViewSplitter->SetSashPosition(pos);
+	}
+}
+
+void CMainFrame::OnViewSplitterPosChanged(wxSplitterEvent &event)
+{
+	if (event.GetEventObject() != m_pViewSplitter)
+	{
+		event.Skip();
+		return;
+	}
+
+	wxSize size = m_pViewSplitter->GetClientSize();
+	int pos = m_pViewSplitter->GetSashPosition();
+	m_ViewSplitterSashPos = pos / (float)size.GetWidth();
 }
 
 bool CMainFrame::CreateMenus()
@@ -836,4 +870,20 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 		CreateToolBar();
 	if (oldLang != newLang)
 		CreateMenus();
+}
+
+void CMainFrame::OnToggleLogView(wxCommandEvent& event)
+{
+	if (!m_pTopSplitter)
+		return;
+
+	if (m_pTopSplitter->IsSplit())
+		m_pTopSplitter->Unsplit(m_pStatusView);
+	else
+		m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter, 100);
+}
+
+void CMainFrame::OnUpdateToggleLogView(wxUpdateUIEvent& event)
+{
+	event.Check(m_pTopSplitter && m_pTopSplitter->IsSplit());
 }

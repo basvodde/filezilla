@@ -63,6 +63,7 @@ protected:
 
 	// Event handlers
 	void OnSize(wxSizeEvent& event);
+	void OnViewSplitterPosChanged(wxSplitterEvent& event);
 	void OnMenuHandler(wxCommandEvent& event);
 	void OnQuickconnect(wxCommandEvent& event);
 	void OnEngineEvent(wxEvent& event);
@@ -83,7 +84,10 @@ protected:
 	void OnProcessQueue(wxCommandEvent& event);
 	void OnUpdateToolbarProcessQueue(wxUpdateUIEvent& event);
 	void OnMenuEditSettings(wxCommandEvent& event);
+	void OnToggleLogView(wxCommandEvent& event);
+	void OnUpdateToggleLogView(wxUpdateUIEvent& event);
 
+	float m_ViewSplitterSashPos;
 	bool m_bInitDone;
 	bool m_bQuit;
 
