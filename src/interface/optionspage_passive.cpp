@@ -49,7 +49,7 @@ bool COptionsPagePassive::Validate()
 		if (!pLow->GetValue().ToLong(&low) || low < 1 || low > 65535)
 		{
 			pLow->SetFocus();
-			wxMessageBox(_("Lowest available port has to be a number between 1 and 65535."), validationFailed, wxICON_EXCLAMATION);
+			wxMessageBox(_("Lowest available port has to be a number between 1 and 65535."), validationFailed, wxICON_EXCLAMATION, this);
 			return false;
 		}
 
@@ -60,14 +60,14 @@ bool COptionsPagePassive::Validate()
 		if (!pHigh->GetValue().ToLong(&high) || high < 1 || high > 65535)
 		{
 			pHigh->SetFocus();
-			wxMessageBox(_("Highest available port has to be a number between 1 and 65535."), validationFailed, wxICON_EXCLAMATION);
+			wxMessageBox(_("Highest available port has to be a number between 1 and 65535."), validationFailed, wxICON_EXCLAMATION, this);
 			return false;
 		}
 
 		if (low > high)
 		{
 			pLow->SetFocus();
-			wxMessageBox(_("The lowest available port has to be less or equal than the highest available port."), validationFailed, wxICON_EXCLAMATION);
+			wxMessageBox(_("The lowest available port has to be less or equal than the highest available port."), validationFailed, wxICON_EXCLAMATION, this);
 			return false;
 		}
 	}

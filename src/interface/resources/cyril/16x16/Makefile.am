@@ -7,7 +7,7 @@ dist_resources_DATA = download.png localtreeview.png server.png \
 		bookmark.png folderback.png reconnect.png synchronize.png \
 		cancel.png folderclosed.png refresh.png upload.png \
 		compare.png folderup.png uploadadd.png \
-		disconnect.png help.png remotetreeview.png \
+		disconnect.png help.png remotetreeview.png
 
 if MACAPPBUNDLE
 mac-copy-resources: $(dist_resources_DATA)

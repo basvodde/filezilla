@@ -21,7 +21,7 @@ enum pagenames
 	if (parent == page_none) \
 		page.id = treeCtrl->AppendItem(root, name); \
 	else \
-		page.id = treeCtrl->AppendItem(m_pages[parent].id, name); \
+		page.id = treeCtrl->AppendItem(m_pages[(unsigned int)parent].id, name); \
 	m_pages.push_back(page);
 
 BEGIN_EVENT_TABLE(CSettingsDialog, wxDialog)
@@ -51,9 +51,6 @@ bool CSettingsDialog::Create(wxWindow* parent)
 
 	if (!LoadPages())
 		return false;
-
-	GetSizer()->Fit(this);
-	GetSizer()->SetSizeHints(this);
 
 	return true;
 }
@@ -87,8 +84,7 @@ bool CSettingsDialog::LoadPages()
 
 	for (std::vector<t_page>::iterator iter = m_pages.begin(); iter != m_pages.end(); iter++)
 	{
-		if (!iter->page->CreatePage(m_pOptions, parentPanel, size) ||
-			!iter->page->LoadPage())
+		if (!iter->page->CreatePage(m_pOptions, parentPanel, size))
 			return false;
 	}
 
@@ -100,6 +96,17 @@ bool CSettingsDialog::LoadPages()
 		iter->page->GetSizer()->SetMinSize(size);
 		iter->page->GetSizer()->Fit(iter->page);
 		iter->page->GetSizer()->SetSizeHints(iter->page);
+	}
+
+	GetSizer()->Fit(this);
+	GetSizer()->SetSizeHints(this);
+
+	Show();
+	for (std::vector<t_page>::iterator iter = m_pages.begin(); iter != m_pages.end(); iter++)
+	{
+		if (!iter->page->LoadPage())
+			return false;
+		iter->page->Hide();
 	}
 
 	// Select first page

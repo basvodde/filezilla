@@ -135,8 +135,8 @@ void CRemoteListView::GetImageList()
 #else
 	m_pImageList = new wxImageList(16, 16);
 
-	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FILE"),  wxART_OTHER, wxSize(16, 16)));
-	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDER"),  wxART_OTHER, wxSize(16, 16)));
+	m_pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FILE"),  wxART_OTHER, wxSize(16, 16)));
+	m_pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDER"),  wxART_OTHER, wxSize(16, 16)));
 #endif
 	SetImageList(m_pImageList, wxIMAGE_LIST_SMALL);
 }

@@ -18,8 +18,6 @@ bool COptionsPage::CreatePage(COptions* pOptions, wxWindow* parent, wxSize& maxS
 	if (size.GetHeight() > maxSize.GetHeight())
 		maxSize.SetHeight(size.GetHeight());
 
-	Hide();
-
 	return true;
 }
 

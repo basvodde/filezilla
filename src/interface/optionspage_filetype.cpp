@@ -8,6 +8,8 @@ BEGIN_EVENT_TABLE(COptionsPageFiletype, COptionsPage)
 EVT_BUTTON(XRCID("ID_ADD"), COptionsPageFiletype::OnAdd)
 EVT_BUTTON(XRCID("ID_REMOVE"), COptionsPageFiletype::OnRemove)
 EVT_TEXT(XRCID("ID_EXTENSION"), COptionsPageFiletype::OnTextChanged)
+EVT_LIST_ITEM_SELECTED(XRCID("ID_EXTENSIONS"), COptionsPageFiletype::OnSelChanged)
+EVT_LIST_ITEM_DESELECTED(XRCID("ID_EXTENSIONS"), COptionsPageFiletype::OnSelChanged)
 END_EVENT_TABLE()
 
 bool COptionsPageFiletype::LoadPage()
@@ -117,7 +119,7 @@ void COptionsPageFiletype::SetCtrlState()
 	wxListCtrl* pListCtrl = XRCCTRL(*this, "ID_EXTENSIONS", wxListCtrl);
 	wxASSERT(pListCtrl);
 
-	FindWindow(XRCID("ID_REMOVE"))->Enable(!pListCtrl->GetSelectedItemCount());
+	FindWindow(XRCID("ID_REMOVE"))->Enable(pListCtrl->GetSelectedItemCount() != 0);
 	FindWindow(XRCID("ID_ADD"))->Enable(GetText(XRCID("ID_EXTENSION")) != _T(""));
 }
 
@@ -153,7 +155,7 @@ void COptionsPageFiletype::OnAdd(wxCommandEvent& event)
 		wxString text = pListCtrl->GetItemText(i);
 		if (text == ext)
 		{
-			wxMessageBox(wxString::Format(_("The extenstion '%s' does already exist in the list"), ext.c_str()), validationFailed, wxICON_EXCLAMATION);
+			wxMessageBox(wxString::Format(_("The extenstion '%s' does already exist in the list"), ext.c_str()), validationFailed, wxICON_EXCLAMATION, this);
 			return;
 		}
 	}
@@ -165,3 +167,9 @@ void COptionsPageFiletype::OnTextChanged(wxCommandEvent& event)
 {
 	SetCtrlState();
 }
+
+void COptionsPageFiletype::OnSelChanged(wxListEvent& event)
+{
+	SetCtrlState();
+}
+
