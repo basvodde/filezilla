@@ -4,7 +4,7 @@ WXWIN_LINGUAS  =    de
 
 CLEANFILES = *.mo resources.h
 
-dist_noinst_DATA = filezilla.pot de.po
+dist_noinst_DATA = filezilla.pot @FILEZILLA_LINGUAS_PO@
 
 install-data-local: @CATALOGS_TO_INSTALL@
 
