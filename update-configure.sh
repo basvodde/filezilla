@@ -8,7 +8,7 @@
 
 FILENAME=FZ3-autotools.tar.bz2
 URL=http://filezilla.sourceforge.net/$FILENAME
-TAR_OPTIONS=-xjf
+TAR_OPTIONS=-xjmf
 
 while test $# != 0; do
   case $1 in 
