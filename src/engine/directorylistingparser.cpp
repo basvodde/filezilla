@@ -574,6 +574,9 @@ CDirectoryListingParser::CDirectoryListingParser(CFileZillaEngine *pEngine, enum
 	m_MonthNamesMap[_T("juli")] = 6;
 	m_MonthNamesMap[_T("okt")] = 10;
 	m_MonthNamesMap[_T("dez")] = 12;
+
+	//Austrian month names
+	m_MonthNamesMap[_T("j\xe4n")] = 1;
 	
 	//French month names
 	m_MonthNamesMap[_T("janv")] = 1;
