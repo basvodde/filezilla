@@ -37,7 +37,7 @@ CSiteManager::~CSiteManager()
 
 bool CSiteManager::Create(wxWindow* parent)
 {
-	m_pSiteManagerMutex = new CInterProcessMutex(_T("Global Site Manager"), false);
+	m_pSiteManagerMutex = new CInterProcessMutex(MUTEX_SITEMANAGERGLOBAL, false);
 	if (!m_pSiteManagerMutex->TryLock())
 	{
 		int answer = wxMessageBox(_("The Site Manager is opened in another instance of FileZilla 3.\nDo you want to continue? Any changes made in the Site Manager won't be saved then."),
@@ -157,7 +157,7 @@ bool CSiteManager::Load(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 
 		// We have to synchronize access to Queue.xml so that multiple processed don't write 
 		// to the same file or one is reading while the other one writes.
-		CInterProcessMutex mutex(_T("Site Manager"));
+		CInterProcessMutex mutex(MUTEX_SITEMANAGER);
 
 		wxFileName file(wxGetApp().GetSettingsDir(), _T("SiteManager.xml"));
 		TiXmlDocument* pDocument = GetXmlFile(file);
@@ -245,7 +245,7 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 	{
 		// We have to synchronize access to Queue.xml so that multiple processed don't write 
 		// to the same file or one is reading while the other one writes.
-		CInterProcessMutex mutex(_T("Site Manager"));
+		CInterProcessMutex mutex(MUTEX_SITEMANAGER);
 
 		wxFileName file(wxGetApp().GetSettingsDir(), _T("SiteManager.xml"));
 		TiXmlDocument* pDocument = GetXmlFile(file);

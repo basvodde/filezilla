@@ -1446,7 +1446,7 @@ void CQueueView::SaveQueue()
 {
 	// We have to synchronize access to Queue.xml so that multiple processed don't write 
 	// to the same file or one is reading while the other one writes.
-	CInterProcessMutex mutex(_T("Queue"));
+	CInterProcessMutex mutex(MUTEX_QUEUE);
 
 	wxFileName file(wxGetApp().GetSettingsDir(), _T("Queue.xml"));
 	TiXmlDocument* pDocument = GetXmlFile(file);
@@ -1483,7 +1483,7 @@ void CQueueView::LoadQueue()
 {
 	// We have to synchronize access to Queue.xml so that multiple processed don't write 
 	// to the same file or one is reading while the other one writes.
-	CInterProcessMutex mutex(_T("Queue"));
+	CInterProcessMutex mutex(MUTEX_QUEUE);
 
 	wxFileName file(wxGetApp().GetSettingsDir(), _T("Queue.xml"));
 	TiXmlDocument* pDocument = GetXmlFile(file);

@@ -151,7 +151,7 @@ bool CFileZillaApp::LoadResourceFiles()
 	if (m_resourceDir[m_resourceDir.Length() - 1] != wxFileName::GetPathSeparator())
 		m_resourceDir += wxFileName::GetPathSeparator();
 
-	m_resourceDir += "/resources/";
+	m_resourceDir += _T("/resources/");
 	
 	wxXmlResource::Get()->InitAllHandlers();
 	wxXmlResource::Get()->Load(m_resourceDir + _T("*.xrc"));
