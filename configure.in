@@ -29,6 +29,14 @@ if test "$wxWin" != 1; then
 	])
 fi
 
+AC_PATH_PROG([WXRC], [wxrc --version])
+if test "x$WXRC" = "x"; then
+	AC_MSG_ERROR([
+		wxrc could not be found. This program gets build together with wxWidgets.
+		Please make sure wxrc is within your path.
+	])
+fi
+
 AC_CACHE_SAVE
 
 CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
