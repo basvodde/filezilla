@@ -16,11 +16,10 @@ bool CStatusLineCtrl::m_initialized = false;
 
 #define PROGRESSBAR_WIDTH 100
 
-CStatusLineCtrl::CStatusLineCtrl(CQueueView* pParent, const CQueueView::t_EngineData& engineData)
+CStatusLineCtrl::CStatusLineCtrl(CQueueView* pParent, const CQueueView::t_EngineData& engineData, const wxRect& initialPosition)
 	: m_engineData(engineData)
 {
-	Show(false);
-	Create(pParent, wxID_ANY);
+	Create(pParent, wxID_ANY, initialPosition.GetPosition(), initialPosition.GetSize());
 	SetOwnFont(pParent->GetFont());
 	SetBackgroundColour(pParent->GetBackgroundColour());
 	

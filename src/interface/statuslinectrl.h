@@ -5,7 +5,7 @@ class CQueueView;
 class CStatusLineCtrl : public wxWindow
 {
 public:
-	CStatusLineCtrl(CQueueView* pParent, const CQueueView::t_EngineData& engineData);
+	CStatusLineCtrl(CQueueView* pParent, const CQueueView::t_EngineData& engineData, const wxRect& initialPosition);
 	~CStatusLineCtrl();
 
 	const CFileItem* GetItem() const { return m_engineData.pItem; }

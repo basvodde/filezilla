@@ -738,7 +738,11 @@ bool CQueueView::TryStartNextTransfer()
 		engineData.state = t_EngineData::transfer;
 
 	// Create status line
-	CStatusLineCtrl* pStatusLineCtrl = new CStatusLineCtrl(this, engineData);
+	int lineIndex = GetItemIndex(fileItem);
+	
+	wxRect rect;
+	GetItemRect(lineIndex, rect);
+	CStatusLineCtrl* pStatusLineCtrl = new CStatusLineCtrl(this, engineData, rect);
 	m_statusLineList.push_back(pStatusLineCtrl);
 	engineData.pStatusLineCtrl = pStatusLineCtrl;
 
