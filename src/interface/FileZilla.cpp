@@ -1,4 +1,4 @@
-#include "filezilla.h"
+#include "FileZilla.h"
 #include "Mainfrm.h"
 
 #ifdef _DEBUG

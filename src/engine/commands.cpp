@@ -1,4 +1,4 @@
-#include "filezilla.h"
+#include "FileZilla.h"
 
 CConnectCommand::CConnectCommand(const CServer &server)
 {

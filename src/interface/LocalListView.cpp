@@ -1,4 +1,4 @@
-#include "filezilla.h"
+#include "FileZilla.h"
 #include "LocalListView.h"
 
 #ifdef _DEBUG

@@ -2,9 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "filezilla.h"
+#include "FileZilla.h"
 #include "FileZillaEngine.h"
-#include "filezilla.h"
 #include "ControlSocket.h"
 
 #ifdef _DEBUG
