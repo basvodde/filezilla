@@ -127,7 +127,7 @@ bool CServerPath::SetPath(wxString &newPath, bool isFile)
 	case MVS:
 		{
 			int i = 0;
-			char c = path.c_str()[i];
+			wxChar c = path.c_str()[i];
 			while (c == FTP_MVS_DOUBLE_QUOTE || c == '\'' || c == '.')
 				c = path.c_str()[++i];
 			path.Remove(0, i);
@@ -150,7 +150,7 @@ bool CServerPath::SetPath(wxString &newPath, bool isFile)
 				path = path.Mid(pos + 1);
 				pos = path.Find( _T(".") );
 			}
-			if (path != "")
+			if (path != _T(""))
 				m_Segments.push_back(path);
 			else
 				m_prefix = _T(".");
@@ -169,7 +169,7 @@ bool CServerPath::SetPath(wxString &newPath, bool isFile)
 				int pos2 = file.Find(')');
 				if (pos != -1)
 				{
-					if (!pos || pos2 != file.Length() - 2)
+					if (!pos || pos2 <= pos || pos2 != (int)file.Length() - 2)
 						return false;
 					m_Segments.push_back(file.Left(pos));
 					file = file.Mid(pos + 1, pos2 - pos - 1);
@@ -263,7 +263,7 @@ wxString CServerPath::GetPath() const
 				path += _T(".");
 			path += *iter;
 		}
-		path += m_prefix + "'";
+		path += m_prefix + _T("'");
 		break;
 	default:
 		path += _T("/");
@@ -584,7 +584,7 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 	case MVS:
 		{
 			int i = 0;
-			char c = subdir.c_str()[i];
+			wxChar c = subdir.c_str()[i];
 			while (c == FTP_MVS_DOUBLE_QUOTE)
 				c = subdir.c_str()[++i];
 			subdir.Remove(0, i);
@@ -651,7 +651,7 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 				int pos2 = file.Find(')');
 				if (pos != -1)
 				{
-					if (!pos || pos2 != file.Length() - 2)
+					if (!pos || pos2 <= pos || pos2 != (int)file.Length() - 2)
 						return false;
 					m_Segments.push_back(file.Left(pos));
 					file = file.Mid(pos + 1, pos2 - pos - 1);
@@ -757,7 +757,7 @@ wxString CServerPath::FormatFilename(const wxString &filename, bool omitPath /*=
 		if (m_prefix == _T(".") && omitPath)
 			return filename;
 
-		fullpath = "'";
+		fullpath = _T("'");
 		for (iter = m_Segments.begin(); iter != m_Segments.end(); iter++)
 			fullpath += *iter + _T(".");
 		if (m_prefix != _T("."))
@@ -768,7 +768,7 @@ wxString CServerPath::FormatFilename(const wxString &filename, bool omitPath /*=
 		}
 		else
 			fullpath += filename;
-		fullpath += "'";
+		fullpath += _T("'");
 		break;
 	default:
 		if (omitPath)

@@ -391,3 +391,4 @@ const CServer* CControlSocket::GetCurrentServer() const
 {
 	return m_pCurrentServer;
 }
+
