@@ -17,8 +17,7 @@ EVT_TREE_SEL_CHANGING(XRCID("ID_SITETREE"), CSiteManager::OnSelChanging)
 EVT_TREE_SEL_CHANGED(XRCID("ID_SITETREE"), CSiteManager::OnSelChanged)
 EVT_COMBOBOX(XRCID("ID_LOGONTYPE"), CSiteManager::OnLogontypeSelChanged)
 EVT_BUTTON(XRCID("ID_BROWSE"), CSiteManager::OnRemoteDirBrowse)
-//EVT_TREE_ITEM_EXPANDED(XRCID("ID_SITETREE"), CSiteManager::OnItemFolding)
-//EVT_TREE_ITEM_COLLAPSED(XRCID("ID_SITETREE"), CSiteManager::OnItemFolding)
+EVT_TREE_ITEM_ACTIVATED(XRCID("ID_SITETREE"), CSiteManager::OnItemActivated)
 END_EVENT_TABLE()
 
 CSiteManager::CSiteManager(COptions* pOptions)
@@ -104,7 +103,10 @@ void CSiteManager::OnConnect(wxCommandEvent& event)
 
 	CSiteManagerItemData* data = reinterpret_cast<CSiteManagerItemData* >(pTree->GetItemData(item));
 	if (!data)
+	{
+		wxBell();
 		return;
+	}
 	
 	if (!Verify())
 	{
@@ -737,20 +739,7 @@ void CSiteManager::OnRemoteDirBrowse(wxCommandEvent& event)
 	}
 }
 
-void CSiteManager::OnItemFolding(wxTreeEvent& event)
+void CSiteManager::OnItemActivated(wxTreeEvent& event)
 {
-	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
-	if (!pTree)
-		return;
-
-	wxTreeItemId item = event.GetItem();
-	if (!item.IsOk())
-		return;
-
-	CSiteManagerItemData* data = reinterpret_cast<CSiteManagerItemData* >(pTree->GetItemData(item));
-	if (data)
-		return;
-
-//	if (pTree->IsExpanded(item))
-//		pTree->Set
+	OnConnect(wxCommandEvent());
 }
