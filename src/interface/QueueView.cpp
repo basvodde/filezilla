@@ -6,8 +6,11 @@
 #endif
 
 CQueueView::CQueueView(wxWindow* parent, wxWindowID id)
-	: wxWindow(parent, id, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER)
+	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_VIRTUAL | wxSUNKEN_BORDER)
 {
+	InsertColumn(0, _("Local file"));
+	InsertColumn(1, _("Direction"));
+	InsertColumn(2, _("Remote file"));
 }
 
 CQueueView::~CQueueView()
