@@ -36,6 +36,8 @@ filezilla_LDFLAGS += $(ZLIB_LIB)
 filezilla_LDFLAGS += $(IDN_LIB)
 filezilla_LDFLAGS += $(RESOURCEFILE)
 
+filezilla_DEPENDENCIES = ../engine/libengine.a
+
 dist_noinst_DATA = interface.vcproj
 
 if MACAPPBUNDLE
