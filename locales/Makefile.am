@@ -47,8 +47,10 @@ XGETTEXT_ARGS=-C -k_ -kwxGetTranslation -kwxTRANSLATE -s -j
 	if [ -f $@~ ]; then rm $@~; fi
 
 resources.h: ../src/interface/resources/*.xrc
-	wxrc -g -e $(srcdir)/../src/interface/resources/*.xrc \
-	| sed "s/_(\"<.*>\")\;//" > $(srcdir)/resources.h
+	if [ -f $@~ ]; then rm $@~; fi
+	wxrc -g -e $(srcdir)/../src/interface/resources/*.xrc > $@~ || exit 1
+	cat $@~ | sed "s/_(\"<.*>\")\;//" > $@
+	if [ -f $@~ ]; then rm $@~; fi
 
 filezilla.pot: resources.h
 	rm -f filezilla_new.pot
