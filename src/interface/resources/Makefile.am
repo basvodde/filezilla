@@ -5,7 +5,8 @@ resourcesdir = $(pkgdatadir)/resources
 dist_resources_DATA = menus.xrc quickconnectbar.xrc dropdown.png \
 		disconnect.png toolbar.xrc cancel.png \
 		empty.xpm up.xpm down.xpm filezilla.xpm \
-		file.png dialogs.xrc
+		file.png dialogs.xrc reconnect.png \
+		refresh.png
 
 if USE_RESOURCEFILE
 noinst_DATA = filezilla.o
@@ -14,7 +15,8 @@ filezilla.o:
 endif
 
 
-dist_noinst_DATA = filezilla.rc FileZilla.ico
+dist_noinst_DATA = filezilla.rc FileZilla.ico \
+		FileZilla.icns MaxInfo.plist
 
 if MACAPPBUNDLE
 mac-copy-resources: $(dist_resources_DATA)

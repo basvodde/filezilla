@@ -53,6 +53,10 @@ protected:
 	void OnSplitterSashPosChanging(wxSplitterEvent &event);
 	void OnSplitterSashPosChanged(wxSplitterEvent &event);
 	void OnClose(wxCloseEvent &event);
+	void OnUpdateToolbarReconnect(wxUpdateUIEvent &event);
+	void OnReconnect(wxCommandEvent &event);
+	void OnUpdateToolbarRefresh(wxUpdateUIEvent &event);
+	void OnRefresh(wxCommandEvent &event);
 
 	float m_ViewSplitterSashPos;
 	bool m_bInitDone;

@@ -114,3 +114,9 @@ const CDirectoryListing *CState::GetRemoteDir() const
 {
 	return m_pDirectoryListing;
 }
+
+void CState::RefreshLocal()
+{
+	if (m_pLocalListView)
+		m_pLocalListView->DisplayDir(m_localDir);
+}

@@ -524,7 +524,6 @@ int CRemoteListView::CmpSize(CRemoteListView *pList, unsigned int index, t_fileD
 		return -1;
 
 	return data.pDirEntry->name.CmpNoCase(refData.pDirEntry->name);
-
 }
 
 void CRemoteListView::OnItemActivated(wxListEvent &event)
@@ -537,16 +536,21 @@ void CRemoteListView::OnItemActivated(wxListEvent &event)
 
 	int item = event.GetIndex();
 
-	wxString name;
 	if (item)
 	{
+		wxString name;
 		if (!IsItemValid(item))
 			return;
 		name = m_fileData[m_indexMapping[item]].pDirEntry->name;
+
+		if (m_fileData[m_indexMapping[item]].pDirEntry->dir)
+			m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path, name));
+		else
+		{
+			wxString localname = m_pState->GetLocalDir() + name;
+			m_pCommandQueue->ProcessCommand(new CFileTransferCommand(localname, m_pDirectoryListing->path, name, true));
+		}
 	}
 	else
-		name = _T("..");
-	
-	m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path, name));
-
+		m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path, _T("..")));
 }

@@ -31,6 +31,10 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_TOOL(XRCID("ID_TOOLBAR_CANCEL"), CMainFrame::OnCancel)
 	EVT_SPLITTER_SASH_POS_CHANGING(wxID_ANY, CMainFrame::OnSplitterSashPosChanging) 
     EVT_SPLITTER_SASH_POS_CHANGED(wxID_ANY, CMainFrame::OnSplitterSashPosChanged) 
+	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_RECONNECT"), CMainFrame::OnUpdateToolbarReconnect)
+	EVT_TOOL(XRCID("ID_TOOLBAR_RECONNECT"), CMainFrame::OnReconnect)
+	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_REFRESH"), CMainFrame::OnUpdateToolbarRefresh)
+	EVT_TOOL(XRCID("ID_TOOLBAR_REFRESH"), CMainFrame::OnRefresh)
 	EVT_CLOSE(CMainFrame::OnClose)
 END_EVENT_TABLE()
 
@@ -302,8 +306,7 @@ void CMainFrame::OnQuickconnect(wxCommandEvent &event)
 	}
 
 	m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
-	//m_pCommandQueue->ProcessCommand(new CListCommand());
-	m_pCommandQueue->ProcessCommand(new CFileTransferCommand(_T("c:\\test.txt"), CServerPath(_T("/")), _T("test.txt"), true));
+	m_pCommandQueue->ProcessCommand(new CListCommand());
 }
 
 void CMainFrame::OnEngineEvent(wxEvent &event)
@@ -431,4 +434,32 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 	if (m_pCommandQueue)
 		m_pCommandQueue->Cancel();
 	Destroy();
+}
+
+void CMainFrame::OnUpdateToolbarReconnect(wxUpdateUIEvent &event)
+{
+	event.Enable(m_pEngine && !m_pEngine->IsConnected() && !m_pEngine->IsBusy());
+}
+
+void CMainFrame::OnReconnect(wxCommandEvent &event)
+{
+	wxString error;
+	CServerPath path;
+	CServer server;
+	server.ParseUrl(_T("127.0.0.1"), 21, _T("dev"), _T("dev"), error, path);
+	m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
+	m_pCommandQueue->ProcessCommand(new CListCommand());
+}
+
+void CMainFrame::OnUpdateToolbarRefresh(wxUpdateUIEvent &event)
+{
+}
+
+void CMainFrame::OnRefresh(wxCommandEvent &event)
+{
+	if (m_pEngine && m_pEngine->IsConnected() && !m_pEngine->IsBusy())
+		m_pCommandQueue->ProcessCommand(new CListCommand());
+
+	if (m_pState)
+		m_pState->RefreshLocal();
 }

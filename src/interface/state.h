@@ -19,6 +19,8 @@ public:
 	void SetLocalListView(CLocalListView *pLocalListView);
 	void SetRemoteListView(CRemoteListView *pRemoteListView);
 
+	void RefreshLocal();
+
 protected:
 	wxString m_localDir;
 	CDirectoryListing *m_pDirectoryListing;
