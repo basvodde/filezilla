@@ -37,6 +37,10 @@ protected:
 	virtual int Delete(const CServerPath& path = CServerPath(), const wxString& file = _T(""));
 	
 	virtual int RemoveDir(const CServerPath& path = CServerPath(), const wxString& subDir = _T(""));
+
+	virtual int Mkdir(const CServerPath& path);
+	virtual int MkdirParseResponse();
+	virtual int MkdirSend();
 	
 	bool ParsePwdReply(wxString reply);
 

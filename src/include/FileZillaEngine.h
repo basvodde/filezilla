@@ -59,6 +59,7 @@ protected:
 	int RawCommand(const CRawCommand& command);
 	int Delete(const CDeleteCommand& command);
 	int RemoveDir(const CRemoveDirCommand& command);
+	int Mkdir(const CMkdirCommand& command);
 
 	int ResetOperation(int nErrorCode);
 	

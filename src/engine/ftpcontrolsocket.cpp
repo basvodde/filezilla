@@ -202,6 +202,9 @@ void CFtpControlSocket::ParseResponse()
 	case cmd_removedir:
 		RemoveDir();
 		break;
+	case cmd_mkdir:
+		MkdirParseResponse();
+		break;
 	default:
 		ResetOperation(FZ_REPLY_INTERNALERROR);
 		break;
@@ -801,6 +804,8 @@ int CFtpControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
 		return ChangeDirSend();
 	case cmd_transfer:
 		return FileTransferSend(prevResult);
+	case cmd_mkdir:
+		return MkdirSend();
 	default:
 		LogMessage(::Debug_Warning, __TFILE__, __LINE__, _T("Unknown opID (%d) in SendNextCommand"), m_pCurOpData->opId);
 		ResetOperation(FZ_REPLY_INTERNALERROR);
@@ -2073,4 +2078,179 @@ int CFtpControlSocket::RemoveDir(const CServerPath& path /*=CServerPath()*/, con
 	m_pEngine->ResendModifiedListings();
 
 	return ResetOperation(FZ_REPLY_OK);
+}
+
+enum mkdStates
+{
+	mkd_init = 0,
+	mkd_findparent,
+	mkd_mkdsub,
+	mkd_cwdsub,
+	mkd_tryfull
+};
+
+class CMkdirOpData : public COpData
+{
+public:
+	CMkdirOpData()
+	{
+		opId = cmd_mkdir;
+	}
+
+	virtual ~CMkdirOpData()
+	{
+	}
+
+	CServerPath path;
+	CServerPath currentPath;
+	std::list<wxString> segments;
+};
+
+int CFtpControlSocket::Mkdir(const CServerPath& path)
+{
+	/* Directory creation works like this: First find a parent directory into
+	 * which we can CWD, then create the subdirs one by one. If either part 
+	 * fails, try MKD with the full path directly.
+	 */
+
+	LogMessage(Status, _("Creating directory '%s'..."), path.GetPath().c_str());
+
+	CMkdirOpData *pData = new CMkdirOpData;
+	pData->pNextOpData = m_pCurOpData;
+	pData->opState = mkd_findparent;
+	pData->path = path;
+
+	pData->currentPath = path.GetParent();
+	pData->segments.push_back(path.GetLastSegment());
+	
+	m_pCurOpData = pData;
+
+	return MkdirSend();
+}
+
+int CFtpControlSocket::MkdirParseResponse()
+{
+	LogMessage(Debug_Verbose, _T("CFtpControlSocket::MkdirParseResonse"));
+
+	if (!m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	CMkdirOpData *pData = static_cast<CMkdirOpData *>(m_pCurOpData);
+	LogMessage(Debug_Debug, _T("  state = %d"), pData->opState);
+
+	int code = GetReplyCode();
+	bool error = false;
+	switch (pData->opState)
+	{
+	case mkd_findparent:
+		if (code == 2 || code == 3)
+		{
+			m_CurrentPath = pData->currentPath;
+			pData->opState = mkd_mkdsub;
+		}
+		else if (pData->currentPath.HasParent())
+		{
+			pData->segments.push_front(pData->currentPath.GetLastSegment());
+			pData->currentPath = pData->currentPath.GetParent();
+		}
+		else
+			pData->opState = mkd_tryfull;
+		break;
+	case mkd_mkdsub:
+		if (code == 2 || code == 3)
+		{
+			if (pData->segments.empty())
+			{
+				LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("  pData->segments is empty"));
+				ResetOperation(FZ_REPLY_INTERNALERROR);
+				return FZ_REPLY_ERROR;
+			}
+			pData->currentPath.AddSegment(pData->segments.front());
+			pData->segments.pop_front();
+
+			if (pData->segments.empty())
+			{
+				ResetOperation(FZ_REPLY_OK);
+				return FZ_REPLY_OK;
+			}
+			else
+				pData->opState = mkd_cwdsub;
+		}
+		else
+			pData->opState = mkd_tryfull;
+		break;
+	case mkd_cwdsub:
+		if (code == 2 || code == 3)
+		{
+			m_CurrentPath = pData->currentPath;
+			pData->opState = mkd_mkdsub;
+		}
+		else
+			pData->opState = mkd_tryfull;
+		break;
+	case mkd_tryfull:
+		if (code != 2 && code != 3)
+			error = true;
+		else
+		{
+			ResetOperation(FZ_REPLY_OK);
+			return FZ_REPLY_OK;
+		}
+	default:
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("unknown op state: %d"), pData->opState);
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	if (error)
+	{
+		ResetOperation(FZ_REPLY_ERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	return MkdirSend();
+}
+
+int CFtpControlSocket::MkdirSend()
+{
+	LogMessage(Debug_Verbose, _T("CFtpControlSocket::MkdirSend"));
+
+	if (!m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	CMkdirOpData *pData = static_cast<CMkdirOpData *>(m_pCurOpData);
+	LogMessage(Debug_Debug, _T("  state = %d"), pData->opState);
+
+	bool res;
+	switch (pData->opState)
+	{
+	case mkd_findparent:
+	case mkd_cwdsub:
+		m_CurrentPath.Clear();
+		res = Send(_T("CWD ") + pData->currentPath.GetPath());
+		break;
+	case mkd_mkdsub:
+		res = Send(_T("MKD ") + pData->segments.front());
+		break;
+	case mkd_tryfull:
+		res = Send(_T("MKD ") + pData->path.GetPath());
+		break;
+	default:
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("unknown op state: %d"), pData->opState);
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	if (!res)
+		return FZ_REPLY_ERROR;
+	
+	return FZ_REPLY_WOULDBLOCK;
 }

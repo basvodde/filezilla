@@ -93,3 +93,8 @@ CRemoveDirCommand::CRemoveDirCommand(const CServerPath& path, const wxString& su
 	m_path = path;
 	m_subDir = subDir;
 }
+
+CMkdirCommand::CMkdirCommand(const CServerPath& path)
+{
+	m_path = path;
+}

@@ -118,6 +118,9 @@ int CFileZillaEngine::Command(const CCommand &command)
 	case cmd_removedir:
 		res = RemoveDir(reinterpret_cast<const CRemoveDirCommand&>(command));
 		break;
+	case cmd_mkdir:
+		res = Mkdir(reinterpret_cast<const CMkdirCommand&>(command));
+		break;
 	default:
 		return FZ_REPLY_SYNTAXERROR;
 	}
@@ -506,8 +509,8 @@ void CFileZillaEngine::ResendModifiedListings()
 		if (!found)
 			return;
 		
-		pEngine->m_lastListTime = wxDateTime::Now();
-		CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing);
+		pEngine->m_lastListTime = CTimeEx::Now();
+		CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing, true);
 		pEngine->AddNotification(pNotification);
 	}
 }
@@ -526,4 +529,19 @@ int CFileZillaEngine::RemoveDir(const CRemoveDirCommand& command)
 
 	m_pCurrentCommand = command.Clone();
 	return m_pControlSocket->RemoveDir(command.GetPath(), command.GetSubDir());
+}
+
+int CFileZillaEngine::Mkdir(const CMkdirCommand& command)
+{
+	if (!IsConnected())
+		return FZ_REPLY_NOTCONNECTED;
+
+	if (IsBusy())
+		return FZ_REPLY_BUSY;
+
+	if (command.GetPath().IsEmpty() || !command.GetPath().HasParent())
+		return FZ_REPLY_SYNTAXERROR;
+
+	m_pCurrentCommand = command.Clone();
+	return m_pControlSocket->Mkdir(command.GetPath());
 }

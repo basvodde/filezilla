@@ -45,9 +45,10 @@ enum NotificationId COperationNotification::GetID() const
 	return nId_operation;
 }
 
-CDirectoryListingNotification::CDirectoryListingNotification(CDirectoryListing *pDirectoryListing)
+CDirectoryListingNotification::CDirectoryListingNotification(CDirectoryListing *pDirectoryListing, bool modified /*=false*/)
 {
 	this->pDirectoryListing = pDirectoryListing;
+	this->modified = modified;
 }
 
 CDirectoryListingNotification::~CDirectoryListingNotification()

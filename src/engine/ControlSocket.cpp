@@ -412,7 +412,7 @@ void CControlSocket::SendDirectoryListing(CDirectoryListing* pListing)
 	wxASSERT(pListing);
 
 	m_pEngine->m_lastListDir = pListing->path;
-	m_pEngine->m_lastListTime = wxDateTime::Now();
+	m_pEngine->m_lastListTime = CTimeEx::Now();
 	CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing);
 	m_pEngine->AddNotification(pNotification);
 }

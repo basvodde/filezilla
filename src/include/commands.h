@@ -11,7 +11,7 @@ enum Command
 	cmd_transfer,
 	cmd_delete,
 	cmd_removedir,
-	cmd_makeDir,
+	cmd_mkdir,
 	cmd_rename,
 	cmd_chmod,
 	cmd_raw,
@@ -53,7 +53,6 @@ public:
 
 DECLARE_COMMAND(CConnectCommand, cmd_connect, false)
 	CConnectCommand(const CServer &server);
-	virtual ~CConnectCommand() { }
 
 	const CServer GetServer() const;
 protected:
@@ -69,7 +68,6 @@ DECLARE_COMMAND(CCancelCommand, cmd_cancel, false)
 DECLARE_COMMAND(CListCommand, cmd_list, false)
 	CListCommand(bool refresh = false);
 	CListCommand(CServerPath path, wxString subDir = _T(""), bool refresh = false);
-	virtual ~CListCommand() { }
 	
 	CServerPath GetPath() const;
 	wxString GetSubDir() const;
@@ -91,7 +89,6 @@ DECLARE_COMMAND(CFileTransferCommand, cmd_transfer, false)
 
 	CFileTransferCommand();
 	CFileTransferCommand(const wxString &localFile, const CServerPath& remotePath, const wxString &remoteFile, bool download, const t_transferSettings& m_transferSettings);
-	virtual ~CFileTransferCommand() { }
 
 	wxString GetLocalFile() const;
 	CServerPath GetRemotePath() const;
@@ -110,7 +107,6 @@ protected:
 DECLARE_COMMAND(CRawCommand, cmd_raw, false)
 	CRawCommand();
 	CRawCommand(const wxString &command);
-	virtual ~CRawCommand() { }
 
 	wxString GetCommand() const;
 
@@ -120,8 +116,7 @@ protected:
 
 DECLARE_COMMAND(CDeleteCommand, cmd_delete, true)
 	CDeleteCommand(const CServerPath& path, const wxString& file);
-	virtual ~CDeleteCommand() { }
-
+	
 	CServerPath GetPath() const { return m_path; }
 	wxString GetFile() const { return m_file; }
 
@@ -133,7 +128,6 @@ protected:
 
 DECLARE_COMMAND(CRemoveDirCommand, cmd_removedir, true)
 	CRemoveDirCommand(const CServerPath& path, const wxString& subdDir);
-	virtual ~CRemoveDirCommand() { }
 
 	CServerPath GetPath() const { return m_path; }
 	wxString GetSubDir() const { return m_subDir; }
@@ -142,6 +136,16 @@ protected:
 
 	CServerPath m_path;
 	wxString m_subDir;
+};
+
+DECLARE_COMMAND(CMkdirCommand, cmd_mkdir, true)
+	CMkdirCommand(const CServerPath& path);
+
+	CServerPath GetPath() const { return m_path; }
+
+protected:
+
+	CServerPath m_path;
 };
 
 #endif

@@ -68,12 +68,14 @@ class CDirectoryListing;
 class CDirectoryListingNotification : public CNotification
 {
 public:
-	CDirectoryListingNotification(CDirectoryListing *pDirectoryListing);
+	CDirectoryListingNotification(CDirectoryListing *pDirectoryListing, bool modified = false);
 	virtual ~CDirectoryListingNotification();
 	virtual enum NotificationId GetID() const;
 	const CDirectoryListing *GetDirectoryListing() const;
+	bool Modified() const { return modified; }
 
 protected:
+	bool modified;
 	CDirectoryListing *pDirectoryListing;
 };
 
