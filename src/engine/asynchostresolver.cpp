@@ -11,13 +11,16 @@ CAsyncHostResolver::CAsyncHostResolver(CFileZillaEngine *pOwner, wxString hostna
 	m_bDone = false;
 }
 
+CAsyncHostResolver::~CAsyncHostResolver()
+{
+}
+
 wxThread::ExitCode CAsyncHostResolver::Entry()
 {
 	m_bSuccessful = m_Address.Hostname(m_Hostname);
 
 	SendReply();
-
-	Exit(0);
+	
 	return 0;
 }
 
@@ -30,7 +33,9 @@ void CAsyncHostResolver::SendReply()
 {
 	m_bDone = true;
 	if (m_pOwner)
+	{
 		m_pOwner->SendEvent(engineHostresolve);
+	}
 }
 
 bool CAsyncHostResolver::Done() const

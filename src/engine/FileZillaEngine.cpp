@@ -298,7 +298,6 @@ void CFileZillaEngine::OnEngineEvent(wxFzEngineEvent &event)
 							m_pControlSocket->ContinueConnect();
 					}
 					(*iter)->Wait();
-					(*iter)->Delete();
 					delete *iter;					
 				}
 			}

@@ -6,6 +6,7 @@ class CAsyncHostResolver : public wxThread
 {
 public:
 	CAsyncHostResolver(CFileZillaEngine *pOwner, wxString hostname);
+	virtual ~CAsyncHostResolver();
 
 	wxIPV4address m_Address;
 	
