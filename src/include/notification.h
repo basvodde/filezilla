@@ -21,7 +21,7 @@ enum NotificationId
 	nId_logmsg, // notification about new messages for the message log
 	nId_operation, // operation reply codes
 	nId_connection, // connection information: connects, disconnects, timeouts etc..
-	nId_transfers, // transfer information: bytes transferes, transfer speed and such
+	nId_transferstatus, // transfer information: bytes transferes, transfer speed and such
 	nId_listing, // directory listings
 	nId_asyncrequest, // asynchronous request
 	nId_active // sent if data gets either received or sent
@@ -129,6 +129,28 @@ public:
 	bool IsRecv() const;
 protected:
 	bool m_recv;
+};
+
+class CTransferStatus
+{
+public:
+	wxDateTime started;
+	wxFileOffset totalSize;
+	wxFileOffset startOffset;
+	wxFileOffset currentOffset;
+};
+
+class CTransferStatusNotification : public CNotification
+{
+public:
+	CTransferStatusNotification(CTransferStatus *pStatus);
+	virtual ~CTransferStatusNotification();
+	virtual enum  NotificationId GetID() const;
+
+    const CTransferStatus *GetStatus() const;
+	
+protected:
+	CTransferStatus *m_pStatus;
 };
 
 #endif

@@ -22,6 +22,11 @@
 
 #define RECVLED_TIMER_ID wxID_HIGHEST + 1
 #define SENDLED_TIMER_ID wxID_HIGHEST + 2
+#define TRANSFERSTATUS_TIMER_ID wxID_HIGHEST + 3
+
+static const int statbarWidths[7] = {
+	-2, 100, 90, -1, 150, -1, 41
+};
 
 BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
     EVT_SIZE(CMainFrame::OnSize)
@@ -77,16 +82,12 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 		array[6] = wxSB_FLAT;
 		m_pStatusBar->SetStatusStyles(7, array);
 
-		int statbarWidths[7];
-		for (int i = 0; i < 6; i++)
-			statbarWidths[i] = -1;
-		statbarWidths[6] = 41;
 		m_pStatusBar->SetStatusWidths(7, statbarWidths);
 		
 		m_pRecvLed = new CLed(m_pStatusBar, 1);
 		m_pSendLed = new CLed(m_pStatusBar, 0);
-		m_RecvLedTimer.SetOwner(this, RECVLED_TIMER_ID);
-		m_SendLedTimer.SetOwner(this, SENDLED_TIMER_ID);
+		m_recvLedTimer.SetOwner(this, RECVLED_TIMER_ID);
+		m_sendLedTimer.SetOwner(this, SENDLED_TIMER_ID);
 	}
 	else
 	{
@@ -94,6 +95,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 		m_pSendLed = 0;
 	}
 
+	m_transferStatusTimer.SetOwner(this, TRANSFERSTATUS_TIMER_ID);
 
 	CreateToolBar();
 	CreateMenus();
@@ -370,20 +372,33 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 				CActiveNotification *pActiveNotification = reinterpret_cast<CActiveNotification *>(pNotification);
 				if (pActiveNotification->IsRecv())
 				{
-					if (m_pRecvLed && !m_RecvLedTimer.IsRunning())
+					if (m_pRecvLed && !m_recvLedTimer.IsRunning())
 					{
 						m_pRecvLed->Set();
-						m_RecvLedTimer.Start(100);
+						m_recvLedTimer.Start(100);
 					}
 				}
 				else
 				{
-					if (m_pSendLed && !m_SendLedTimer.IsRunning())
+					if (m_pSendLed && !m_sendLedTimer.IsRunning())
 					{
 						m_pSendLed->Set();
-						m_SendLedTimer.Start(100);
+						m_sendLedTimer.Start(100);
 					}
 				}
+				delete pNotification;
+			}
+			break;
+		case nId_transferstatus:
+			{
+				CTransferStatusNotification *pTransferStatusNotification = reinterpret_cast<CTransferStatusNotification *>(pNotification);
+				const CTransferStatus *pStatus = pTransferStatusNotification->GetStatus();
+				if (pStatus && !m_transferStatusTimer.IsRunning())
+					m_transferStatusTimer.Start(100);
+				else if (!pStatus && m_transferStatusTimer.IsRunning())
+					m_transferStatusTimer.Stop();
+                
+				SetProgress(pStatus);
 				delete pNotification;
 			}
 			break;
@@ -484,8 +499,9 @@ void CMainFrame::OnSplitterSashPosChanged(wxSplitterEvent& event)
 
 void CMainFrame::OnClose(wxCloseEvent &event)
 {
-	m_SendLedTimer.Stop();
-	m_RecvLedTimer.Stop();
+	m_sendLedTimer.Stop();
+	m_recvLedTimer.Stop();
+	m_transferStatusTimer.Stop();
 	if (m_pCommandQueue)
 		m_pCommandQueue->Cancel();
 	Destroy();
@@ -538,20 +554,16 @@ void CMainFrame::OnStatusbarSize(wxSizeEvent& event)
 	if (IsMaximized() && !m_windowIsMaximized)
 	{
 		m_windowIsMaximized = true;
-		int statbarWidths[7];
-		for (int i = 0; i < 6; i++)
-			statbarWidths[i] = -1;
-		statbarWidths[6] = 35;
-		m_pStatusBar->SetStatusWidths(7, statbarWidths);
+		int widths[7];
+		memcpy(widths, statbarWidths, 7 * sizeof(int));
+		widths[6] = 35;
+		m_pStatusBar->SetStatusWidths(7, widths);
 		m_pStatusBar->Refresh();
 	}
 	else if (!IsMaximized() && m_windowIsMaximized)
 	{
 		m_windowIsMaximized = false;
-		int statbarWidths[7];
-		for (int i = 0; i < 6; i++)
-			statbarWidths[i] = -1;
-		statbarWidths[6] = 41;
+		
 		m_pStatusBar->SetStatusWidths(7, statbarWidths);
 		m_pStatusBar->Refresh();
 	}
@@ -574,26 +586,98 @@ void CMainFrame::OnStatusbarSize(wxSizeEvent& event)
 
 void CMainFrame::OnTimer(wxTimerEvent& event)
 {
-	if (event.GetId() == RECVLED_TIMER_ID && m_RecvLedTimer.IsRunning())
+	if (event.GetId() == RECVLED_TIMER_ID && m_recvLedTimer.IsRunning())
 	{
 		if (!m_pEngine)
+		{
+			m_recvLedTimer.Stop();
 			return;
+		}
 
 		if (!m_pEngine->IsActive(true))
 		{
 			m_pRecvLed->Unset();
-			m_RecvLedTimer.Stop();
+			m_recvLedTimer.Stop();
 		}
 	}
-	else if (event.GetId() == SENDLED_TIMER_ID && m_SendLedTimer.IsRunning())
+	else if (event.GetId() == SENDLED_TIMER_ID && m_sendLedTimer.IsRunning())
 	{
 		if (!m_pEngine)
+		{
+			m_sendLedTimer.Stop();
 			return;
+		}
 
 		if (!m_pEngine->IsActive(false))
 		{
 			m_pSendLed->Unset();
-			m_SendLedTimer.Stop();
+			m_sendLedTimer.Stop();
 		}
 	}
+	else if (event.GetId() == TRANSFERSTATUS_TIMER_ID && m_transferStatusTimer.IsRunning())
+	{
+		if (!m_pEngine)
+		{
+			m_transferStatusTimer.Stop();
+			return;
+		}
+
+		bool changed;
+		CTransferStatus status;
+		if (!m_pEngine->GetTransferStatus(status, changed))
+		{
+			SetProgress(0);
+			m_transferStatusTimer.Stop();
+		}
+		else if (changed)
+			SetProgress(&status);
+		else
+			m_transferStatusTimer.Stop();
+	}
+}
+
+void CMainFrame::SetProgress(const CTransferStatus *pStatus)
+{
+	if (!m_pStatusBar)
+		return;
+
+	if (!pStatus)
+	{
+		m_pStatusBar->SetStatusText(_T(""), 1);
+		m_pStatusBar->SetStatusText(_T(""), 2);
+		m_pStatusBar->SetStatusText(_T(""), 3);
+		m_pStatusBar->SetStatusText(_T(""), 4);
+		return;
+	}
+	
+	wxTimeSpan elapsed = wxDateTime::Now().Subtract(pStatus->started);
+	m_pStatusBar->SetStatusText(elapsed.Format(_("%H:%M:%S elapsed")), 1);
+
+	int elapsedSeconds = elapsed.GetSeconds().GetLo(); // Assume GetHi is always 0
+	if (elapsedSeconds)
+	{
+		wxFileOffset rate = (pStatus->currentOffset - pStatus->startOffset) / elapsedSeconds;
+
+        if (rate > (1000*1000))
+			m_pStatusBar->SetStatusText(wxString::Format(_("%s bytes (%d.%d MB/s)"), wxLongLong(pStatus->currentOffset).ToString().c_str(), (int)(rate / 1000 / 1000), (int)((rate / 1000 / 100) % 10)), 4);
+		else if (rate > 1000)
+			m_pStatusBar->SetStatusText(wxString::Format(_("%s bytes (%d.%d KB/s)"), wxLongLong(pStatus->currentOffset).ToString().c_str(), (int)(rate / 1000), (int)((rate / 100) % 10)), 4);
+		else
+			m_pStatusBar->SetStatusText(wxString::Format(_("%s bytes (%d B/s)"), wxLongLong(pStatus->currentOffset).ToString().c_str(), (int)rate), 4);
+
+		if (pStatus->totalSize > 0 && rate > 0)
+		{
+			int left = ((pStatus->totalSize - pStatus->startOffset) / rate) - elapsedSeconds;
+			if (left < 0)
+				left = 0;
+			wxTimeSpan timeLeft(0, 0, left);
+			m_pStatusBar->SetStatusText(timeLeft.Format(_("%H:%M:%S left")), 2);
+		}
+		else
+		{
+			m_pStatusBar->SetStatusText(_("--:--:-- left"), 2);
+		}
+	}
+	else
+		m_pStatusBar->SetStatusText(wxString::Format(_("%s bytes (? B/s)"), wxLongLong(pStatus->currentOffset).ToString().c_str()), 4);
 }

@@ -376,3 +376,14 @@ void CFileZillaEngine::SetActive(bool recv)
 		m_activeStatusSend = 2;
 	}
 }
+
+bool CFileZillaEngine::GetTransferStatus(CTransferStatus &status, bool &changed)
+{
+	if (!m_pControlSocket)
+	{
+		changed = false;
+		return false;
+	}
+
+	return m_pControlSocket->GetTransferStatus(status, changed);
+}

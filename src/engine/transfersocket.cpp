@@ -140,8 +140,9 @@ void CTransferSocket::OnReceive()
 
 		if (numread > 0)
 		{
-			m_pEngine->SetActive(true);
 			m_pDirectoryListingParser->AddData(pBuffer, numread);
+			m_pEngine->SetActive(true);
+			m_pControlSocket->UpdateTransferStatus(numread);
 		}
 		else
 		{
@@ -173,13 +174,7 @@ void CTransferSocket::OnReceive()
 		if (numread > 0)
 		{
 			m_pEngine->SetActive(true);
-			if (pData->leftSize > 0)
-			{
-				if (pData->leftSize > numread)
-					pData->leftSize -= numread;
-				else
-					pData->leftSize = 0;
-			}
+			m_pControlSocket->UpdateTransferStatus(numread);
 			if (pData->pFile->Write(m_pTransferBuffer, numread) != static_cast<size_t>(numread))
 			{
 				wxLongLong free;
@@ -217,7 +212,7 @@ void CTransferSocket::OnSend()
 		{
 			if (pData->pFile)
 			{
-				int numread = pData->pFile->Read(m_pTransferBuffer + m_transferBufferPos, BUFFERSIZE - m_transferBufferPos);
+				wxFileOffset numread = pData->pFile->Read(m_pTransferBuffer + m_transferBufferPos, BUFFERSIZE - m_transferBufferPos);
 				if (numread < BUFFERSIZE - m_transferBufferPos)
 				{
 					delete pData->pFile;
@@ -249,18 +244,13 @@ void CTransferSocket::OnSend()
 		{
 			numsent = m_pSocket->LastCount();
 			if (numsent > 0)
-				m_pEngine->SetActive(true);
-
-			if (pData->leftSize > 0)
 			{
-				if (pData->leftSize > numsent)
-					pData->leftSize -= numsent;
-				else
-					pData->leftSize = 0;
-				
-				memmove(m_pTransferBuffer, m_pTransferBuffer + numsent, m_transferBufferPos - numsent);
-				m_transferBufferPos -= numsent;
+				m_pEngine->SetActive(false);
+				m_pControlSocket->UpdateTransferStatus(numsent);
 			}
+
+			memmove(m_pTransferBuffer, m_pTransferBuffer + numsent, m_transferBufferPos - numsent);
+			m_transferBufferPos -= numsent;
 		}
 	}
 	while (!m_pSocket->Error() && numsent > 0);

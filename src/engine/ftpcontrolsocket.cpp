@@ -373,6 +373,7 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 			}
 		}
 
+		InitTransferStatus(-1, 0);
 		m_pTransferSocket->SetActive();
 
 		break;
@@ -784,7 +785,6 @@ CFileTransferOpData::CFileTransferOpData()
 	opId = cmd_transfer;
 	pFile = 0;
 	resume = false;
-	totalSize = leftSize = -1;
 	tryAbsolutePath = false;
 	bTriedPasv = bTriedActive = false;
 	fileSize = -1;
@@ -915,7 +915,7 @@ int CFtpControlSocket::FileTransferParseResponse()
 		if (m_ReceiveBuffer.Left(4) == _T("213 ") && m_ReceiveBuffer.Length() > 4)
 		{
 			wxString str = m_ReceiveBuffer.Mid(4);
-			wxLongLong size = 0;
+			wxFileOffset size = 0;
 			const wxChar *buf = str.c_str();
 			while (*buf)
 			{
@@ -926,8 +926,7 @@ int CFtpControlSocket::FileTransferParseResponse()
 				size += *buf - '0';
 				buf++;
 			}
-			if (!*buf)
-				pData->totalSize = size;
+			pData->fileSize = size;
 		}
 		break;
 	case filetransfer_mdtm:
@@ -1016,13 +1015,17 @@ int CFtpControlSocket::FileTransferParseResponse()
 		pData->pFile = new wxFile;
 		if (pData->download)
 		{
+			wxFileOffset startOffset;
 			if (pData->resume)
 			{
 				if (!pData->pFile->Open(pData->localFile, wxFile::write_append))
 				{
 					LogMessage(::Error, _("Failed to open \"%s\" for appending / writing"), pData->localFile.c_str());
 					error = true;
+					break;
 				}
+
+				startOffset = pData->pFile->Length();
 			}
 			else
 			{
@@ -1030,36 +1033,13 @@ int CFtpControlSocket::FileTransferParseResponse()
 				{
 					LogMessage(::Error, _("Failed to open \"%s\" for writing"), pData->localFile.c_str());
 					error = true;
+					break;
 				}
+
+				startOffset = 0;
 			}
 
-			wxString remotefile = pData->remoteFile;
-
-			if (pData->fileSize != -1)
-			{
-				pData->totalSize -= pData->fileSize;
-			}
-
-			CDirectoryListing listing;
-			CDirectoryCache cache;
-			bool found = cache.Lookup(listing, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath);
-			if (found)
-			{
-				for (unsigned int i = 0; i < listing.m_entryCount; i++)
-				{
-					if (listing.m_pEntries[i].name == remotefile)
-					{
-						if (pData->totalSize == -1)
-						{
-							wxLongLong size = listing.m_pEntries[i].size;
-							if (size >= 0)
-								pData->totalSize = size;
-						}
-					}
-				}
-			}
-			
-			pData->leftSize = pData->totalSize;
+			InitTransferStatus(pData->fileSize, startOffset);
 		}
 		else
 		{
@@ -1067,47 +1047,32 @@ int CFtpControlSocket::FileTransferParseResponse()
 			{
 				LogMessage(::Error, _("Failed to open \"%s\" for reading"), pData->localFile.c_str());
 				error = true;
+				break;
 			}
 			
-			pData->totalSize = pData->pFile->Length();
+			wxFileOffset startOffset;
 			if (pData->resume)
 			{
-				wxString remotefile = pData->remoteFile;
-
-				if (pData->fileSize != -1)
+				if (pData->fileSize > 0)
 				{
-					pData->leftSize -= pData->fileSize;
-					if (pData->leftSize < 0)
-						pData->leftSize = 0;
-				}
+					startOffset = pData->fileSize;
 
-				CDirectoryListing listing;
-				CDirectoryCache cache;
-				bool found = cache.Lookup(listing, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath);
-				if (found)
-				{
-					for (unsigned int i = 0; i < listing.m_entryCount; i++)
-					{
-						if (listing.m_pEntries[i].name == remotefile)
-						{
-							wxLongLong size = listing.m_pEntries[i].size;
-							if (size >= 0 && pData->leftSize == -1)
-								pData->leftSize -= size;
-							break;
-						}
-					}
-
-					wxLongLong offset = pData->totalSize - pData->leftSize;
 					// Assume native 64 bit type exists
-					if (pData->pFile->Seek(offset.GetValue(), wxFromStart) == wxInvalidOffset)
+					if (pData->pFile->Seek(startOffset, wxFromStart) == wxInvalidOffset)
 					{
-						LogMessage(::Error, _("Could not seek to offset %s within file"), offset.ToString().c_str());
+						LogMessage(::Error, _("Could not seek to offset %s within file"), wxLongLong(startOffset).ToString().c_str());
 						error = true;
+						break;
 					}
 				}
+				else
+					startOffset = 0;
 			}
 			else
-				pData->leftSize = pData->totalSize;
+				startOffset = 0;
+
+			wxFileOffset len = pData->pFile->Length();
+			InitTransferStatus(len, startOffset);
 		}
 		break;
 	case filetransfer_rest:
@@ -1120,7 +1085,6 @@ int CFtpControlSocket::FileTransferParseResponse()
 				break;
 			}
 			pData->opState = filetransfer_transfer;
-			pData->leftSize = pData->totalSize - pData->pFile->Length();
 		}
 		else
 			error = true;
@@ -1345,10 +1309,19 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 			ResetOperation(FZ_REPLY_INTERNALERROR);
 			return FZ_REPLY_ERROR;
 		}
-		cmd = _T("REST ") + ((wxLongLong)pData->pFile->Length()).ToString();
+		else
+		{
+			wxFileOffset offset = pData->pFile->Length();
+			cmd = _T("REST ") + ((wxLongLong)offset).ToString();
+		}
 		break;
 	case filetransfer_transfer:
-		cmd = pData->download ? _T("RETR ") : _T("STOR ");
+		if (pData->download)
+			cmd = _T("RETR ");
+		else if (pData->resume)
+			cmd = _T("APPE ");
+		else
+			cmd = _T("STOR ");
 		if (pData->tryAbsolutePath)
 			cmd += pData->remotePath.GetPath();
 		cmd += pData->remoteFile;
@@ -1531,7 +1504,10 @@ int CFtpControlSocket::CheckOverwriteFile()
 				{
 					wxLongLong size = listing.m_pEntries[i].size;
 					if (size >= 0)
+					{
 						pNotification->remoteSize = size;
+						pData->fileSize = size.GetLo() + ((wxFileOffset)size.GetHi() << 32);
+					}
 				}
 				if (!pData->fileTime.IsValid())
 				{
@@ -1543,6 +1519,8 @@ int CFtpControlSocket::CheckOverwriteFile()
 							pNotification->remoteTime.SetHour(listing.m_pEntries[i].time.hour);
 							pNotification->remoteTime.SetMinute(listing.m_pEntries[i].time.minute);
 						}
+						if (pNotification->remoteTime.IsValid())
+							pData->fileTime = pNotification->remoteTime;
 					}
 				}
 			}
@@ -1610,7 +1588,7 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 			case CFileExistsNotification::resume:
 				if (pData->download && pFileExistsNotification->localSize != -1)
 					pData->resume = true;
-				else if (pData->download && pFileExistsNotification->remoteSize != -1)
+				else if (!pData->download && pFileExistsNotification->remoteSize != -1)
 					pData->resume = true;
 				SendNextCommand();
 				break;

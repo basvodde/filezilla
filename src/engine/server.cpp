@@ -114,12 +114,12 @@ bool CServer::ParseUrl(wxString host, int port, wxString user, wxString pass, wx
 
 	m_Host = host;
 	m_Port = port;
+	m_User = user;
+	m_Pass = pass;
 	if (m_User == _T("") || m_User == _T("anonymous"))
 		m_logonType = ANONYMOUS;
 	else
 		m_logonType = NORMAL;
-	m_User = user;
-	m_Pass = pass;
 
 	return true;
 }

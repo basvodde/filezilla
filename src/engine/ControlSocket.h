@@ -16,6 +16,7 @@ public:
 	COpData *pNextOpData;
 };
 
+class CTransferStatus;
 class CControlSocket : protected wxEvtHandler, public wxSocketClient, public CLogging
 {
 public:
@@ -36,6 +37,11 @@ public:
 	virtual void TransferEnd(int reason) = 0;
 
 	virtual bool SetAsyncRequestReply(CAsyncRequestNotification *pNotification) = 0;
+
+	void InitTransferStatus(wxFileOffset totalSize, wxFileOffset startOffset);
+	void UpdateTransferStatus(wxFileOffset transferredBytes);
+	void ResetTransferStatus();
+	bool GetTransferStatus(CTransferStatus &status, bool &changed);
 	
 protected:
 	virtual void OnSocketEvent(wxSocketEvent &event);
@@ -57,6 +63,9 @@ protected:
 	
 	char *m_pSendBuffer;
 	int m_nSendBufferLen;
+
+	CTransferStatus *m_pTransferStatus;
+	int m_transferStatusSendState;
 
 	DECLARE_EVENT_TABLE();
 };

@@ -76,10 +76,8 @@ public:
 
 	bool resume;
 
-	wxLongLong totalSize, leftSize;
-	
 	wxDateTime fileTime;
-	wxLongLong fileSize;
+	wxFileOffset fileSize;
 
 	wxFile *pFile;
 

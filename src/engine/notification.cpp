@@ -110,3 +110,23 @@ bool CActiveNotification::IsRecv() const
 {
 	return m_recv;
 }
+
+CTransferStatusNotification::CTransferStatusNotification(CTransferStatus *pStatus)
+{
+	m_pStatus = pStatus;
+}
+
+CTransferStatusNotification::~CTransferStatusNotification()
+{
+	delete m_pStatus;
+}
+
+enum NotificationId CTransferStatusNotification::GetID() const
+{
+	return nId_transferstatus;
+}
+
+const CTransferStatus* CTransferStatusNotification::GetStatus() const
+{
+	return m_pStatus;
+}

@@ -41,6 +41,8 @@ public:
 	bool SetAsyncRequestReply(CAsyncRequestNotification *pNotification);
 	int GetNextAsyncRequestNumber();
 
+	bool GetTransferStatus(CTransferStatus &status, bool &changed);
+
 protected:
 	bool SendEvent(enum EngineNotificationType eventType, int data = 0);
 	void OnEngineEvent(wxFzEngineEvent &event);

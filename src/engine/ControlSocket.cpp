@@ -33,6 +33,8 @@ CControlSocket::CControlSocket(CFileZillaEngine *pEngine)
 	m_pSendBuffer = 0;
 	m_nSendBufferLen = 0;
 	m_pCurrentServer = 0;
+	m_pTransferStatus = 0;
+	m_transferStatusSendState = 0;
 
 	SetEvtHandlerEnabled(true);
 	SetEventHandler(*this);
@@ -212,6 +214,8 @@ int CControlSocket::ResetOperation(int nErrorCode)
 		}
 	}
 
+	ResetTransferStatus();
+
 	return m_pEngine->ResetOperation(nErrorCode);
 }
 
@@ -308,5 +312,62 @@ void CControlSocket::Cancel()
 		else
 			ResetOperation(FZ_REPLY_CANCELED);
 		LogMessage(::Error, _("Interrupted by user"));
+	}
+}
+
+void CControlSocket::ResetTransferStatus()
+{
+	delete m_pTransferStatus;
+	m_pTransferStatus = 0;
+
+	m_pEngine->AddNotification(new CTransferStatusNotification(0));
+
+	m_transferStatusSendState = 0;
+}
+
+void CControlSocket::InitTransferStatus(wxFileOffset totalSize, wxFileOffset startOffset)
+{
+	delete m_pTransferStatus;
+	m_pTransferStatus = new CTransferStatus();
+
+	m_pTransferStatus->started = wxDateTime::Now();
+	m_pTransferStatus->totalSize = totalSize;
+	m_pTransferStatus->startOffset = startOffset;
+	m_pTransferStatus->currentOffset = startOffset;
+}
+
+void CControlSocket::UpdateTransferStatus(wxFileOffset transferredBytes)
+{
+	if (!m_pTransferStatus)
+		return;
+
+	m_pTransferStatus->currentOffset += transferredBytes;
+
+	if (!m_transferStatusSendState)
+		m_pEngine->AddNotification(new CTransferStatusNotification(new CTransferStatus(*m_pTransferStatus)));
+	m_transferStatusSendState = 2;
+}
+
+bool CControlSocket::GetTransferStatus(CTransferStatus &status, bool &changed)
+{
+	if (!m_pTransferStatus)
+	{
+		changed = false;
+		m_transferStatusSendState = 0;
+		return false;
+	}
+
+	status = *m_pTransferStatus;
+	if (m_transferStatusSendState == 2)
+	{
+		changed = true;
+		m_transferStatusSendState = 1;
+		return true;
+	}
+	else
+	{
+		changed = false;
+		m_transferStatusSendState = 0;
+		return true;
 	}
 }

@@ -23,6 +23,8 @@ protected:
 	bool CreateMenus();
 	bool CreateQuickconnectBar();
 	bool CreateToolBar();
+	
+	void SetProgress(const CTransferStatus *pStatus);
 
 	wxStatusBar *m_pStatusBar;
 	wxMenuBar *m_pMenuBar;
@@ -41,7 +43,9 @@ protected:
 	CRemoteTreeView *m_pRemoteTreeView;
 	CRemoteListView *m_pRemoteListView;
 	CLed *m_pRecvLed, *m_pSendLed;
-	wxTimer m_SendLedTimer, m_RecvLedTimer;
+	wxTimer m_sendLedTimer, m_recvLedTimer;
+
+	wxTimer m_transferStatusTimer;
 
 	// Event handlers
 	void OnSize(wxSizeEvent& event);
