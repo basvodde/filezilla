@@ -288,7 +288,9 @@ CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame)
 	InsertColumn(0, _("Server / Local file"), wxLIST_FORMAT_LEFT, 150);
 	InsertColumn(1, _("Direction"), wxLIST_FORMAT_CENTER, 60);
 	InsertColumn(2, _("Remote file"), wxLIST_FORMAT_LEFT, 150);
-	InsertColumn(3, _("Size"), wxLIST_FORMAT_RIGHT, 50);
+	InsertColumn(3, _("Size"), wxLIST_FORMAT_RIGHT, 70);
+	InsertColumn(4, _("Priority"), wxLIST_FORMAT_LEFT, 60);
+	InsertColumn(5, _("Status"), wxLIST_FORMAT_LEFT, 150);
 
 	// Create and assign the image list for the queue
 	wxImageList* pImageList = new wxImageList(16, 16);
@@ -413,10 +415,28 @@ wxString CQueueView::OnGetItemText(long item, long column) const
 				{
 					wxLongLong size = pFileItem->GetSize();
 					if (size >= 0)
-						return wxLongLong().ToString();
+						return size.ToString();
 					else
 						return _T("?");
 				}
+			case 4:
+				switch (pFileItem->GetPriority())
+				{
+				case 0:
+					return _("Lowest");
+				case 1:
+					return _("Low");
+				default:
+				case 2:
+					return _("Normal");
+				case 3:
+					return _("High");
+				case 4:
+					return _("Highest");
+				}
+				break;
+			case 5:
+				return pFileItem->m_statusMessage;
 			default:
 				break;
 			}
@@ -624,6 +644,14 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 {
 	// Process reply from the engine
 
+	int replyCode = pNotification->nReplyCode;
+
+	if (replyCode & FZ_REPLY_CANCELED)
+	{
+		ResetEngine(engineData, false);
+		return;
+	}
+
 	// Cycle through queue states
 	switch (engineData.state)
 	{
@@ -631,49 +659,47 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 		engineData.state = t_EngineData::connect;
 		break;
 	case t_EngineData::connect:
-		if (pNotification->nReplyCode == FZ_REPLY_OK)
+		if (replyCode == FZ_REPLY_OK)
 			engineData.state = t_EngineData::transfer;
-		else
-			engineData.pItem->m_errorCount++;
+		else if (!IncreaseErrorCount(engineData))
+			return;
 		break;
 	case t_EngineData::transfer:
-		if (pNotification->nReplyCode == FZ_REPLY_OK)
+		if (replyCode == FZ_REPLY_OK)
 		{
 			CQueueItem* pItem = engineData.pItem;
-			ResetEngine(engineData);
-			RemoveItem(pItem);
-			CheckQueueState();
+			ResetEngine(engineData, true);
 			return;
 		}
-		else
-			engineData.pItem->m_errorCount++;
+		else if (!IncreaseErrorCount(engineData))
+			return;
 		break;
 	default:
-		return;
-	}
-
-	if (engineData.pItem->m_errorCount > m_pMainFrame->m_pOptions->GetOptionVal(OPTION_TRANSFERRETRYCOUNT))
-	{
-		CQueueItem* pItem = engineData.pItem;
-		ResetEngine(engineData);
-		RemoveItem(pItem);
-		while (TryStartNextTransfer());
-		CheckQueueState();
 		return;
 	}
 
 	SendNextCommand(engineData);
 }
 
-void CQueueView::ResetEngine(t_EngineData& data)
+void CQueueView::ResetEngine(t_EngineData& data, bool removeFileItem)
 {
 	if (!data.active)
 		return;
 
+	if (data.pItem)
+	{
+		if (removeFileItem)
+			RemoveItem(data.pItem);
+		else
+			ResetItem(data.pItem);
+	}
 	data.pItem = 0;
 	data.active = false;
 	data.state = t_EngineData::none;
 	m_activeCount--;
+
+	while (TryStartNextTransfer());
+	CheckQueueState();
 }
 
 void CQueueView::RemoveItem(CQueueItem* item)
@@ -712,6 +738,7 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 {
 	if (engineData.state == t_EngineData::disconnect)
 	{
+		engineData.pItem->m_statusMessage = _("Disconnecting from previous server");
 		if (engineData.pEngine->Command(CDisconnectCommand()) == FZ_REPLY_WOULDBLOCK)
 			return;
 
@@ -720,6 +747,7 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 
 	if (engineData.state == t_EngineData::connect)
 	{
+		engineData.pItem->m_statusMessage = _("Connecting");
 		int res;
 		while (true)
 		{
@@ -733,22 +761,16 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 				break;
 			}
 
-			engineData.pItem->m_errorCount++;
-			if (engineData.pItem->m_errorCount > m_pMainFrame->m_pOptions->GetOptionVal(OPTION_TRANSFERRETRYCOUNT))
-			{
-				CQueueItem* pItem = engineData.pItem;
-				ResetEngine(engineData);
-				RemoveItem(pItem);
-				while (TryStartNextTransfer());
-				CheckQueueState();
+			if (!IncreaseErrorCount(engineData))
 				return;
-			}
 		}
 	}
 	
 	if (engineData.state == t_EngineData::transfer)
 	{
 		CFileItem* fileItem = engineData.pItem;
+
+		fileItem->m_statusMessage = _("Transferring");
 
 		int res;
 		while (true)
@@ -760,22 +782,12 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 
 			if (res == FZ_REPLY_OK)
 			{
-				ResetEngine(engineData);
-				RemoveItem(fileItem);
-				while (TryStartNextTransfer());
-				CheckQueueState();
+				ResetEngine(engineData, true);
 				return;
 			}
 
-			engineData.pItem->m_errorCount++;
-			if (engineData.pItem->m_errorCount > m_pMainFrame->m_pOptions->GetOptionVal(OPTION_TRANSFERRETRYCOUNT))
-			{
-				ResetEngine(engineData);
-				RemoveItem(fileItem);
-				while (TryStartNextTransfer());
-				CheckQueueState();
+			if (!IncreaseErrorCount(engineData))
 				return;
-			}
 		}
 		engineData.state = t_EngineData::transfer;
 	}
@@ -799,6 +811,13 @@ bool CQueueView::SetActive(bool active /*=true*/)
 		}
 
 		return m_activeCount == 0;
+	}
+	else
+	{
+		m_activeMode = 2;
+
+		while (TryStartNextTransfer());
+		CheckQueueState();
 	}
 
 	return true;
@@ -828,4 +847,23 @@ void CQueueView::CheckQueueState()
 
 	if (m_quit)
 		m_pMainFrame->Close();
+}
+
+bool CQueueView::IncreaseErrorCount(t_EngineData& engineData)
+{
+	engineData.pItem->m_errorCount++;
+	if (engineData.pItem->m_errorCount <= m_pMainFrame->m_pOptions->GetOptionVal(OPTION_TRANSFERRETRYCOUNT))
+		return true;
+
+	CQueueItem* pItem = engineData.pItem;
+	ResetEngine(engineData, true);
+
+	return false;
+}
+
+void CQueueView::ResetItem(CFileItem* item)
+{
+	item->SetActive(false);
+	if (!item->Queued())
+		reinterpret_cast<CServerItem*>(item->GetTopLevelItem())->QueueImmediateFiles();
 }

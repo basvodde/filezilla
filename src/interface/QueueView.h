@@ -129,6 +129,8 @@ public:
 	bool m_queued;
 	int m_errorCount;
 
+	wxString m_statusMessage;
+
 protected:
 	enum QueuePriority m_priority;
 	enum ItemState m_itemState;
@@ -187,9 +189,11 @@ protected:
 
 	void ProcessReply(t_EngineData& engineData, COperationNotification* pNotification);
 	void SendNextCommand(t_EngineData& engineData);
-	void ResetEngine(t_EngineData& data);
+	void ResetEngine(t_EngineData& data, bool removeFileItem);
 	void RemoveItem(CQueueItem* item);
+	void ResetItem(CFileItem* item);
 	void CheckQueueState();
+	bool IncreaseErrorCount(t_EngineData& engineData);
 
 	std::vector<CServerItem*> m_serverList;
 
