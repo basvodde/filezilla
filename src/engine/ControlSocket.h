@@ -6,6 +6,9 @@
 
 class COpData
 {
+public:
+	COpData();
+	virtual ~COpData();
 };
 
 class CControlSocket : protected wxEvtHandler, public wxSocketClient, public CLogging
@@ -21,6 +24,8 @@ public:
 
 	int DoClose(int nErrorCode = FZ_REPLY_DISCONNECTED);
 
+	virtual bool Send(const char *buffer, int len);
+
 protected:
 	virtual void OnSocketEvent(wxSocketEvent &event);
 	virtual void OnConnect(wxSocketEvent &event);
@@ -34,6 +39,10 @@ protected:
 	COpData *m_pCurOpData;
 	int m_nOpState;
 	CFileZillaEngine *m_pEngine;
+	CServer *m_pCurrentServer;
+
+	char *m_pSendBuffer;
+	int m_nSendBufferLen;
 };
 
 #endif

@@ -14,6 +14,13 @@ protected:
 	virtual void OnConnect(wxSocketEvent &event);
 	virtual void OnReceive(wxSocketEvent &event);
 
+	virtual bool Send(wxString str);
+
+	void ParseResponse();
+	int GetReplyCode() const;
+
+	void Logon();
+
 	wxString m_ReceiveBuffer;
 	wxString m_MultilineResponseCode;
 };
