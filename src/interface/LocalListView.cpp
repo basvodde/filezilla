@@ -727,6 +727,15 @@ void CLocalListView::OnContextMenu(wxContextMenuEvent& event)
 	if (!pMenu)
 		return;
 
+	long item = -1;
+	if (GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) == -1)
+	{
+		pMenu->Enable(XRCID("ID_UPLOAD"), false);
+		pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
+		pMenu->Enable(XRCID("ID_DELETE"), false);
+		pMenu->Enable(XRCID("ID_RENAME"), false);
+	}
+
 	PopupMenu(pMenu);
 	delete pMenu;
 }
@@ -797,6 +806,142 @@ void CLocalListView::OnMenuMkdir(wxCommandEvent& event)
 
 void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 {
+	// Under Windows use SHFileOperation delete files and directories.
+	// Under other systems, we have to recurse into subdirectories manually
+	// to delete all contents.
+
+#ifdef __WXMSW__
+	// SHFileOperation accepts a list of null-terminated strings. Go through all
+	// items to get the required buffer length
+
+	wxString dir = m_dir;
+	if (dir.Right(1) != _T("\\") && dir.Right(1) != _T("/"))
+		dir += _T("\\");
+	int dirLen = dir.Length();
+
+	int len = 1; // String list terminated by empty string
+
+	long item = -1;
+	while (true)
+	{
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		if (item == -1)
+			break;
+
+		if (!item)
+			continue;
+        
+		t_fileData *data = GetData(item);
+		if (!data)
+			continue;
+	
+		len += dirLen + data->name.Length() + 1;
+	}
+
+	// Allocate memory
+	wxChar* pBuffer = new wxChar[len];
+	wxChar* p = pBuffer;
+
+	// Loop through all selected items again and fill buffer
+	item = -1;
+	while (true)
+	{
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		if (item == -1)
+			break;
+
+		if (!item)
+			continue;
+        
+		t_fileData *data = GetData(item);
+		if (!data)
+			continue;
+
+		_tcscpy(p, dir);
+		p += dirLen;
+		_tcscpy(p, data->name);
+		p += data->name.Length() + 1;
+	}
+	*p = 0;
+
+	// Now we can delete the files in the buffer
+	SHFILEOPSTRUCT op;
+	memset(&op, 0, sizeof(op));
+	op.hwnd = (HWND)GetHWND();
+	op.wFunc = FO_DELETE;
+	op.pFrom = pBuffer;
+
+	// Move to trash if shift is not pressed, else delete
+	op.fFlags = wxGetKeyState(WXK_SHIFT) ? 0 : FOF_ALLOWUNDO;
+
+	SHFileOperation(&op);
+	delete [] pBuffer;
+	m_pState->SetLocalDir(m_dir);
+#else
+	if (wxMessageBox(_("Really delete all selected files and/or directories?"), _("Confirmation needed"), wxICON_QUESTION | wxYES_NO, this) != wxID_YES)
+		return;
+
+	// Remember the directories to delete and the directories to visit
+	std::list<wxString> dirsToDelete;
+	std::list<wxString> dirsToVisit;
+
+	wxString dir = m_dir;
+	if (dir.Right(1) != _T("\\") && dir.Right(1) != _T("/"))
+		dir += _T("\\");
+
+	// First process selected items
+	long item = -1;
+	while (true)
+	{
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		if (item == -1)
+			break;
+
+		if (!item)
+			continue;
+        
+		t_fileData *data = GetData(item);
+		if (!data)
+			continue;
+	
+		if (data->dir)
+		{
+			wxString subDir = dir + data->name + _T("/");
+			dirsToVisit.push_back(subDir);
+			dirsToDelete.push_front(subDir);
+		}
+		else
+			wxRemoveFile(dir + data->name);
+	}
+
+	// Process any subdirs which still have to be visited
+	while (!dirsToVisit.empty())
+	{
+		wxString filename = dirsToVisit.front();
+		dirsToVisit.pop_front();
+		wxDir dir;
+		if (!dir.Open(filename))
+			continue;
+
+		wxString file;
+		for (bool found = dir.GetFirst(&file); found; found = dir.GetNext(&file))
+		{
+			if (wxFileName::DirExists(filename + file))
+			{
+				wxString subDir = filename + file + _T("/");
+				dirsToVisit.push_back(subDir);
+				dirsToDelete.push_front(subDir);
+			}
+			else
+				wxRemoveFile(filename + file);
+		}
+	}
+	
+	// Delete the now empty directories
+	for (std::list<wxString>::const_iterator iter = dirsToDelete.begin(); iter != dirsToDelete.end(); iter++)
+		wxRmdir(*iter);
+
+#endif
 }
 
 void CLocalListView::OnMenuRename(wxCommandEvent& event)
