@@ -1,6 +1,7 @@
 #include "FileZilla.h"
 #include "viewheader.h"
 #include "state.h"
+#include "commandqueue.h"
 
 #ifdef __WXMSW__
 #include "wx/msw/uxtheme.h"
@@ -60,9 +61,9 @@ CViewHeader::CViewHeader(wxWindow* pParent, const wxString& label)
 	SetSize(size);
 
 #ifdef __WXMSW__
-	m_pComboBox->Connect(wxID_ANY, wxEVT_PAINT, (wxObjectEventFunction)(wxEventFunction)&CViewHeader::OnComboPaint, 0, this);
-	m_pComboBox->Connect(wxID_ANY, wxEVT_LEFT_DOWN, (wxObjectEventFunction)(wxEventFunction)&CViewHeader::OnComboMouseEvent, 0, this);
-	m_pComboBox->Connect(wxID_ANY, wxEVT_LEFT_UP, (wxObjectEventFunction)(wxEventFunction)&CViewHeader::OnComboMouseEvent, 0, this);
+	m_pComboBox->Connect(wxID_ANY, wxEVT_PAINT, (wxObjectEventFunction)(wxEventFunction)(wxPaintEventFunction)&CViewHeader::OnComboPaint, 0, this);
+	m_pComboBox->Connect(wxID_ANY, wxEVT_LEFT_DOWN, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)&CViewHeader::OnComboMouseEvent, 0, this);
+	m_pComboBox->Connect(wxID_ANY, wxEVT_LEFT_UP, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)&CViewHeader::OnComboMouseEvent, 0, this);
 	m_bLeftMousePressed = false;
 #endif //__WXMSW__
 	SetLabel(label);
@@ -339,7 +340,49 @@ void CLocalViewHeader::SetDir(wxString dir)
 	m_pComboBox->SetSelection(m_pComboBox->GetValue().Length(), m_pComboBox->GetValue().Length());
 }
 
-CRemoteViewHeader::CRemoteViewHeader(wxWindow* pParent)
+BEGIN_EVENT_TABLE(CRemoteViewHeader, CViewHeader)
+EVT_TEXT_ENTER(wxID_ANY, CRemoteViewHeader::OnTextEnter)
+END_EVENT_TABLE()
+
+CRemoteViewHeader::CRemoteViewHeader(wxWindow* pParent, CState* pState, CCommandQueue* pCommandQueue)
 	: CViewHeader(pParent, _("Remote site:"))
 {
+	m_pCommandQueue = pCommandQueue;
+	m_pState = pState;
+	m_pState->SetRemoteViewHeader(this);
+}
+
+void CRemoteViewHeader::SetDir(const CServerPath& path)
+{
+	m_path = path;
+	if (path.IsEmpty())
+	{
+		m_pComboBox->SetValue(_T(""));
+		m_pComboBox->Disable();
+	}
+	else
+	{
+		m_pComboBox->Enable();
+		m_pComboBox->SetValue(path.GetPath());
+		m_pComboBox->SetSelection(m_pComboBox->GetValue().Length(), m_pComboBox->GetValue().Length());
+	}
+}
+
+void CRemoteViewHeader::OnTextEnter(wxCommandEvent& event)
+{
+	CServerPath path = m_path;
+	wxString value = m_pComboBox->GetValue();
+	if (value == _T("") || !path.ChangePath(value))
+	{
+		wxBell();
+		return;
+	}
+
+	if (!m_pCommandQueue->Idle())
+	{
+		wxBell();
+		return;
+	}
+
+	m_pCommandQueue->ProcessCommand(new CListCommand(path));
 }

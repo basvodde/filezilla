@@ -104,7 +104,7 @@ CMainFrame::CMainFrame(COptions* pOptions) : wxFrame(NULL, -1, _T("FileZilla"), 
 	m_pStatusBar = CreateStatusBar(6, wxST_SIZEGRIP);
 	if (m_pStatusBar)
 	{
-		m_pStatusBar->Connect(wxID_ANY, wxEVT_SIZE, (wxObjectEventFunction)(wxEventFunction)&CMainFrame::OnStatusbarSize, 0, this);
+		m_pStatusBar->Connect(wxID_ANY, wxEVT_SIZE, (wxObjectEventFunction)(wxEventFunction)(wxSizeEventFunction)&CMainFrame::OnStatusbarSize, 0, this);
 		int array[6];
 		for (int i = 1; i < 5; i++)
 			array[i] = wxSB_NORMAL;
@@ -181,7 +181,7 @@ CMainFrame::CMainFrame(COptions* pOptions) : wxFrame(NULL, -1, _T("FileZilla"), 
 	m_pRemoteListView = new CRemoteListView(m_pRemoteListViewPanel, -1, m_pState, m_pCommandQueue, m_pQueueView);
 	m_pRemoteTreeViewPanel->SetWindow(m_pRemoteTreeView);
 	m_pRemoteListViewPanel->SetWindow(m_pRemoteListView);
-	m_pRemoteTreeViewPanel->SetHeader(new CRemoteViewHeader(m_pRemoteSplitter));
+	m_pRemoteTreeViewPanel->SetHeader(new CRemoteViewHeader(m_pRemoteSplitter, m_pState, m_pCommandQueue));
 	
 	m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter, 100);
 	m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueueView, 100);

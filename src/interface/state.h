@@ -5,6 +5,7 @@ class CLocalListView;
 class CRemoteListView;
 class CDirectoryListing;
 class CLocalViewHeader;
+class CRemoteViewHeader;
 class CState
 {
 public:
@@ -27,6 +28,7 @@ public:
 	void RefreshLocal();
 
 	void SetLocalViewHeader(CLocalViewHeader* pLocalViewHeader) { m_pLocalViewHeader = pLocalViewHeader; }
+	void SetRemoteViewHeader(CRemoteViewHeader* pRemoteViewHeader) { m_pRemoteViewHeader = pRemoteViewHeader; }
 
 protected:
 	wxString m_localDir;
@@ -36,6 +38,7 @@ protected:
 	CRemoteListView *m_pRemoteListView;
 	CServer* m_pServer;
 	CLocalViewHeader* m_pLocalViewHeader;
+	CRemoteViewHeader* m_pRemoteViewHeader;
 };
 
 #endif

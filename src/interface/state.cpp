@@ -12,6 +12,7 @@ CState::CState()
 	m_pDirectoryListing = 0;
 	m_pServer = 0;
 	m_pLocalViewHeader = 0;
+	m_pRemoteViewHeader = 0;
 }
 
 CState::~CState()
@@ -110,6 +111,9 @@ bool CState::SetRemoteDir(const CDirectoryListing *pDirectoryListing, bool modif
 	
 	if (m_pRemoteListView)
 		m_pRemoteListView->SetDirectoryListing(newListing, modified);
+
+	if (m_pRemoteViewHeader)
+		m_pRemoteViewHeader->SetDir(newListing ? newListing->path : CServerPath());
 
 	delete m_pDirectoryListing;
 	m_pDirectoryListing = newListing;
