@@ -16,7 +16,7 @@ CXXFLAGS="$CXXFLAGS -Wall -g -fexceptions"
 
 AM_OPTIONS_WXCONFIG
 
-AM_PATH_WXCONFIG(2.5.1, wxWin=1, , [xrc,std])
+AM_PATH_WXCONFIG(2.5.3, wxWin=1, , [xrc,std])
 if test "$wxWin" != 1; then
 	AC_MSG_ERROR([
         	wxWidgets must be installed on your system
@@ -25,7 +25,7 @@ if test "$wxWin" != 1; then
 		Please check that wx-config is in path, the directory
 		where wxWidgets libraries are installed (returned by
 		'wx-config --libs' command) is in LD_LIBRARY_PATH or
-		equivalent variable and wxWidgets version is 2.3.4 or above.
+		equivalent variable and wxWidgets version is 2.5.3 or above.
 	])
 fi
 
