@@ -14,6 +14,7 @@
 BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
     EVT_SIZE(CMainFrame::OnSize)
 	EVT_SPLITTER_SASH_POS_CHANGED(-1, CMainFrame::OnViewSplitterPosChanged)
+	EVT_MENU(wxID_ANY, OnMenuHandler)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame()
@@ -31,10 +32,7 @@ CMainFrame::CMainFrame()
 
 	m_pStatusBar = CreateStatusBar(7);
 
-	m_pMenuBar = new wxMenuBar();
-    wxMenu *pMenu = new wxMenu;
-    m_pMenuBar->Append(pMenu, "OK");
-    SetMenuBar(m_pMenuBar);
+	CreateMenus();
 
 	m_ViewSplitterSashPos = 0.5;
 
@@ -121,4 +119,30 @@ void CMainFrame::OnViewSplitterPosChanged(wxSplitterEvent &event)
 	wxSize size = m_pViewSplitter->GetClientSize();
 	int pos = m_pViewSplitter->GetSashPosition();
 	m_ViewSplitterSashPos = pos / (float)size.GetWidth();
+}
+
+bool CMainFrame::CreateMenus()
+{
+	if (m_pMenuBar)
+	{
+		SetMenuBar(0);
+		delete m_pMenuBar;
+	}
+	m_pMenuBar = wxXmlResource::Get()->LoadMenuBar(_T("ID_MENUBAR"));
+	if (!m_pMenuBar)
+	{
+		wxLogError(_T("Cannot load main menu from resource file"));
+	}
+	SetMenuBar(m_pMenuBar);
+
+	return true;
+}
+
+void CMainFrame::OnMenuHandler(wxCommandEvent &event)
+{
+	if (event.GetId() == XRCID("ID_MENU_FILE_EXIT"))
+	{
+		Close();
+	}
+	event.Skip();
 }

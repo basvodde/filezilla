@@ -13,6 +13,8 @@ public:
     CMainFrame();
     virtual ~CMainFrame();
 protected:
+	bool CreateMenus();
+
     wxStatusBar *m_pStatusBar;
     wxMenuBar	*m_pMenuBar;
 	wxSplitterWindow *m_pTopSplitter;
@@ -28,8 +30,10 @@ protected:
 	CRemoteTreeView *m_pRemoteTreeView;
 	CRemoteListView *m_pRemoteListView;
 
+	// Event handlers
     void OnSize(wxSizeEvent& event);
 	void OnViewSplitterPosChanged(wxSplitterEvent& event);
+	void OnMenuHandler(wxCommandEvent &event);
 
 	float m_ViewSplitterSashPos;
 
