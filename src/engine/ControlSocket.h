@@ -71,6 +71,8 @@ protected:
 
 	CTransferStatus *m_pTransferStatus;
 	int m_transferStatusSendState;
+	
+	bool m_onConnectCalled;
 
 	DECLARE_EVENT_TABLE();
 };

@@ -37,6 +37,7 @@ CControlSocket::CControlSocket(CFileZillaEngine *pEngine)
 	m_pCurrentServer = 0;
 	m_pTransferStatus = 0;
 	m_transferStatusSendState = 0;
+	m_onConnectCalled = false;
 
 	SetEvtHandlerEnabled(true);
 	SetEventHandler(*this);
@@ -164,9 +165,15 @@ void CControlSocket::OnSocketEvent(wxSocketEvent &event)
 	switch (event.GetSocketEvent())
 	{
 	case wxSOCKET_CONNECTION:
+		m_onConnectCalled = true;
 		OnConnect(event);
 		break;
 	case wxSOCKET_INPUT:
+		if (!m_onConnectCalled)
+		{
+			m_onConnectCalled = true;
+			OnConnect(event);
+		}
 		OnReceive(event);
 		break;
 	case wxSOCKET_OUTPUT:
@@ -248,6 +255,8 @@ int CControlSocket::DoClose(int nErrorCode /*=FZ_REPLY_DISCONNECTED*/)
 
 	delete m_pCurrentServer;
 	m_pCurrentServer = 0;
+	
+	m_onConnectCalled = false;
 
 	return nErrorCode;
 }

@@ -121,7 +121,7 @@ void CFtpControlSocket::OnReceive(wxSocketEvent &event)
 
 			LogMessage(Response, m_ReceiveBuffer);
 				
-			if (GetCurrentCommandId() == cmd_connect && reinterpret_cast<CLogonOpData *>(m_pCurOpData)->waitChallenge)
+			if (GetCurrentCommandId() == cmd_connect && m_pCurOpData && reinterpret_cast<CLogonOpData *>(m_pCurOpData)->waitChallenge)
 			{
 				wxString& challenge = reinterpret_cast<CLogonOpData *>(m_pCurOpData)->challenge;
 				if (challenge != _T(""))
