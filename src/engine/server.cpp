@@ -2,13 +2,7 @@
 
 CServer::CServer()
 {
-	m_port = 21;
-	m_protocol = FTP;
-	m_type = DEFAULT;
-	m_logonType = ANONYMOUS;
-	m_timezoneOffset = 0;
-	m_maximumMultipleConnections = 0;
-	m_pasvMode = MODE_DEFAULT;
+	Initialize();
 }
 
 bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString pass, wxString &error, CServerPath &path)
@@ -219,6 +213,7 @@ bool CServer::operator!=(const CServer &op) const
 
 CServer::CServer(enum ServerProtocol protocol, enum ServerType type, wxString host, unsigned int port, wxString user, wxString pass /*=_T("")*/)
 {
+	Initialize();
 	m_protocol = protocol;
 	m_type = type;
 	m_host = host;
@@ -230,11 +225,11 @@ CServer::CServer(enum ServerProtocol protocol, enum ServerType type, wxString ho
 
 CServer::CServer(enum ServerProtocol protocol, enum ServerType type, wxString host, unsigned int port)
 {
+	Initialize();
 	m_protocol = protocol;
 	m_type = type;
 	m_host = host;
 	m_port = port;
-	m_logonType = ANONYMOUS;
 }
 
 void CServer::SetType(enum ServerType type)
@@ -339,4 +334,18 @@ wxString CServer::FormatServer() const
 		server = GetUser() + _T("@") + server;
 
 	return server;
+}
+
+void CServer::Initialize()
+{
+	m_protocol = FTP;
+	m_type = DEFAULT;
+	m_host = _T("");
+	m_port = 21;
+	m_logonType = ANONYMOUS;
+	m_user = _T("");
+	m_pass = _T("");
+	m_timezoneOffset = 0;
+	m_pasvMode = MODE_DEFAULT;
+	m_maximumMultipleConnections = 0;
 }

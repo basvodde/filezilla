@@ -77,6 +77,8 @@ public:
 	wxString FormatServer() const;
 
 protected:
+	void Initialize();
+
 	enum ServerProtocol m_protocol;
 	enum ServerType m_type;
 	wxString m_host;
