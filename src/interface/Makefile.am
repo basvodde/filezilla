@@ -11,11 +11,13 @@ bin_PROGRAMS = filezilla
 filezilla_SOURCES = FileZilla.cpp LocalListView.cpp LocalTreeView.cpp \
 			Mainfrm.cpp Options.cpp QueueView.cpp \
 			RemoteListView.cpp RemoteTreeView.cpp StatusView.cpp \
-			state.cpp commandqueue.cpp
+			state.cpp commandqueue.cpp fileexistsdlg.cpp \
+                        asyncrequestqueue.cpp
 
 noinst_HEADERS = 	LocalListView.h Mainfrm.h QueueView.h \
 			RemoteTreeView.h LocalTreeView.h Options.h \
-			RemoteListView.h StatusView.h state.h commandqueue.h
+			RemoteListView.h StatusView.h state.h commandqueue.h \
+                        fileexistsdlg.h asyncrequestqueue.h
 
 filezilla_LDFLAGS = ../engine/libengine.a
 filezilla_LDFLAGS += $(WX_LIBS)

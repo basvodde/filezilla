@@ -328,3 +328,4 @@ int CFileZillaEngine::GetNextAsyncRequestNumber()
 {
 	return ++m_asyncRequestCounter;
 }
+
