@@ -1,7 +1,6 @@
 #include "FileZilla.h"
 #include "LocalListView.h"
 #include "state.h"
-#include <sys/stat.h>
 
 #ifdef __WXMSW__
 #include <shellapi.h>

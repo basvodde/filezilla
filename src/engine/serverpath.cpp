@@ -275,8 +275,8 @@ bool CServerPath::SetSafePath(wxString path)
 	if (pos < 1)
 		return false;
 
-	long len;
-	if (!path.Left(pos).ToLong(&len))
+	unsigned long len;
+	if (!path.Left(pos).ToULong(&len))
 		return false;
 	path = path.Mid(pos + 1);
 	if (path.Length() < len)
@@ -293,7 +293,7 @@ bool CServerPath::SetSafePath(wxString path)
 		if (path.c_str()[0] != ' ')
 			return false;
 
-		if (!path.Left(pos).ToLong(&len))
+		if (!path.Left(pos).ToULong(&len))
 			return false;
 		path = path.Mid(pos + 1);
 		if (path.Length() < len)

@@ -25,7 +25,7 @@ CDirectoryListing& CDirectoryListing::operator=(const CDirectoryListing &a)
 	if (m_entryCount)
 	{
 		m_pEntries = new CDirentry[m_entryCount];
-		for (int i = 0; i < m_entryCount; i++)
+		for (unsigned int i = 0; i < m_entryCount; i++)
 			m_pEntries[i] = a.m_pEntries[i];
 	}
 	else

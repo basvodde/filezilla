@@ -22,7 +22,8 @@ enum NotificationId
 	nId_operation, // operation reply codes
 	nId_connection, // connection information: connects, disconnects, timeouts etc..
 	nId_transfers, // transfer information: bytes transferes, transfer speed and such
-	nId_listing // directory listings
+	nId_listing, // directory listings
+	nId_async // asynchronous request
 };
 
 class CNotification
@@ -66,6 +67,42 @@ public:
 
 protected:
 	CDirectoryListing *pDirectoryListing;
+};
+
+enum RequestId
+{
+	reqId_fileexists
+};
+
+class CAsyncRequestNotification : public CNotification
+{
+public:
+	CAsyncRequestNotification();
+	virtual ~CAsyncRequestNotification();
+	virtual enum NotificationId GetID() const;
+
+	virtual enum RequestId GetRequestID() const = 0;
+
+	unsigned int requestNumber;
+};
+
+class CFileExistsNotification : public CAsyncRequestNotification
+{
+public:
+	CFileExistsNotification();
+	virtual ~CFileExistsNotification();
+	virtual enum RequestId GetRequestID() const;
+
+	bool download;
+
+	wxString localFile;
+	wxLongLong localSize;
+	wxDateTime localTime;
+
+	wxString remoteFile;
+	CServerPath remotePath;
+	wxLongLong remoteSize;
+	wxDateTime remoteTime;
 };
 
 #endif

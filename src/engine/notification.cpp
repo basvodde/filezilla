@@ -64,3 +64,30 @@ const CDirectoryListing *CDirectoryListingNotification::GetDirectoryListing() co
 {
 	return pDirectoryListing;
 }
+
+CAsyncRequestNotification::CAsyncRequestNotification()
+{
+}
+
+CAsyncRequestNotification::~CAsyncRequestNotification()
+{
+}
+
+enum NotificationId CAsyncRequestNotification::GetID() const
+{
+	return nId_async;
+}
+
+CFileExistsNotification::CFileExistsNotification()
+{
+	localSize = remoteSize = -1;
+}
+
+CFileExistsNotification::~CFileExistsNotification()
+{
+}
+
+enum RequestId CFileExistsNotification::GetRequestID() const
+{
+	return reqId_fileexists;
+}

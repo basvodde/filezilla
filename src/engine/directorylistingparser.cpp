@@ -22,7 +22,7 @@ public:
 		m_len = 0;
 	}
 
-	CToken(const char *p, int len)
+	CToken(const char *p, unsigned int len)
 	{
 		m_pToken = p;
 		m_len = len;
@@ -37,7 +37,7 @@ public:
 		return m_pToken;
 	}
 
-	int GetLength() const
+	unsigned int GetLength() const
 	{
 		return m_len;
 	}
@@ -118,7 +118,7 @@ public:
 		if (m_numeric == Unknown)
 		{
 			m_numeric = Yes;
-			for (int i = 0; i < m_len; i++)
+			for (unsigned int i = 0; i < m_len; i++)
 				if (m_pToken[i] < '0' || m_pToken[i] > '9')
 				{
 					m_numeric = No;
@@ -161,7 +161,7 @@ public:
 		if (!chr)
 			return -1;
 		
-		for (int i = start; i < m_len; i++)
+		for (unsigned int i = start; i < m_len; i++)
 		{
 			for (int c = 0; chr[c]; c++)
 			{
@@ -177,7 +177,7 @@ public:
 		if (!m_pToken)
 			return -1;
 
-		for (int i = start; i < m_len; i++)
+		for (unsigned int i = start; i < m_len; i++)
 			if (m_pToken[i] == chr)
 				return i;
 		
@@ -191,14 +191,14 @@ public:
 		if (len < 1)
 			return -1;
 
-		if (start + len > m_len)
+		if (start + static_cast<unsigned int>(len) > m_len)
 			return -1;
 
 		if (m_pToken[start] < '0' || m_pToken[start] > '9')
 			return -1;
 
 		wxLongLong number = 0;
-		for (int i = start; i < (start + len); i++)
+		for (unsigned int i = start; i < (start + len); i++)
 		{
 			if (m_pToken[i] < '0' || m_pToken[i] > '9')
 				break;
@@ -215,7 +215,7 @@ public:
 			if (IsNumeric() || IsLeftNumeric())
 			{
 				m_number = 0;
-				for (int i = 0; i < m_len; i++)
+				for (unsigned int i = 0; i < m_len; i++)
 				{
 					if (m_pToken[i] < '0' || m_pToken[i] > '9')
 						break;
@@ -229,7 +229,7 @@ public:
 				int start = m_len - 1;
 				while (m_pToken[start - 1] >= '0' && m_pToken[start - 1] <= '9')
 					start--;
-				for (int i = start; i < m_len; i++)
+				for (unsigned int i = start; i < m_len; i++)
 				{
 					m_number *= 10;
 					m_number += m_pToken[i] - '0';
@@ -249,7 +249,7 @@ public:
 
 protected:
 	const char *m_pToken;
-	int m_len;
+	unsigned int m_len;
 
 	TokenInformation m_numeric;
 	TokenInformation m_leftNumeric;
@@ -337,7 +337,7 @@ public:
 				if (!GetToken(n, token))
 					return false;
 
-			for (unsigned int i = m_LineEndTokens.size(); i <= n; i++)
+			for (unsigned int i = static_cast<unsigned int>(m_LineEndTokens.size()); i <= n; i++)
 			{
 				const CToken *refToken = m_Tokens[i];
 				const char *p = refToken->GetToken();
@@ -722,7 +722,7 @@ CDirectoryListing* CDirectoryListingParser::Parse(const CServerPath &path)
 
 	CDirectoryListing *pListing = new CDirectoryListing;
 	pListing->path = path;
-	pListing->m_entryCount = m_entryList.size();
+	pListing->m_entryCount = static_cast<unsigned int>(m_entryList.size());
 	pListing->m_pEntries = new CDirentry[m_entryList.size()];
 	
 	int i = 0;
@@ -1230,7 +1230,7 @@ bool CDirectoryListingParser::ParseAsDos(CLine *pLine, CDirentry &entry)
 bool CDirectoryListingParser::ParseTime(CToken &token, CDirentry &entry)
 {
 	int pos = token.Find(':');
-	if (pos < 1 || pos >= (token.GetLength() - 1))
+	if (pos < 1 || static_cast<unsigned int>(pos) >= (token.GetLength() - 1))
 		return false;
 
 	wxLongLong hour = token.GetNumber(0, pos);

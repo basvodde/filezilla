@@ -13,6 +13,8 @@ public:
 	virtual ~CFtpControlSocket();
 	virtual void TransferEnd(int reason);
 
+	virtual bool SetAsyncRequestReply(CAsyncRequestNotification *pNotification);
+
 protected:
 	virtual int ResetOperation(int nErrorCode);
 
@@ -41,6 +43,8 @@ protected:
 	int GetReplyCode() const;
 
 	bool Logon();
+
+	int CheckOverwriteFile();
 
 	wxString m_ReceiveBuffer;
 	wxString m_MultilineResponseCode;
@@ -73,8 +77,13 @@ public:
 	bool resume;
 
 	wxLongLong totalSize, leftSize;
+	
+	wxDateTime fileTime;
+	wxLongLong fileSize;
 
 	wxFile *pFile;
+
+	bool waitAsyncRequest;
 };
 
 

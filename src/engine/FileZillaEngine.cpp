@@ -36,6 +36,11 @@ CFileZillaEngine::CFileZillaEngine()
 	m_pCurrentCommand = 0;
 	m_bIsInCommand = false;
 	m_nControlSocketError = 0;
+#if RAND_MAX > 0xFFFFFFFF
+	m_asyncRequestCounter = rand();
+#else
+	m_asyncRequestCounter = (0xFFFFFFFF / RAND_MAX) * rand();
+#endif
 }
 
 CFileZillaEngine::~CFileZillaEngine()
@@ -302,3 +307,19 @@ int CFileZillaEngine::FileTransfer(const CFileTransferCommand &command)
 	return m_pControlSocket->FileTransfer(command.GetLocalFile(), command.GetRemotePath(), command.GetRemoteFile(), command.Download());
 }
 
+bool CFileZillaEngine::SetAsyncRequestReply(CAsyncRequestNotification *pNotification)
+{
+	if (!pNotification)
+		return false;
+	if (!IsBusy())
+		return false;
+	if (pNotification->requestNumber != m_asyncRequestCounter)
+		return false;
+
+	if (!m_pControlSocket)
+		return false;
+
+	m_pControlSocket->SetAsyncRequestReply(pNotification);
+
+	return true;
+}

@@ -37,7 +37,7 @@ public:
 	~CDirectoryListing();
 
 
-	int m_entryCount;
+	unsigned int m_entryCount;
 
 	CServerPath path;
 

@@ -35,6 +35,8 @@ public:
 
 	COptionsBase *GetOptions() const;
 
+	bool SetAsyncRequestReply(CAsyncRequestNotification *pNotification);
+
 protected:
 	bool SendEvent(enum EngineNotificationType eventType, int data = 0);
 	void OnEngineEvent(wxFzEngineEvent &event);
@@ -59,6 +61,8 @@ protected:
 	int m_nControlSocketError;
 
 	COptionsBase *m_pOptions;
+
+	unsigned int m_asyncRequestCounter; // Initialized to random value, increased by one on each request
 
 	DECLARE_EVENT_TABLE();
 };
