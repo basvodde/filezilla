@@ -37,30 +37,41 @@ void CStatusView::AddToLog(enum MessageType messagetype, wxString message)
 {
 	m_Content += "<tr><td valign='top'>";
 	wxString font = "<font color=";
+
+	wxString typeStr;
 	switch (messagetype)
 	{
 	case Error:
 		font += "red";
+		typeStr = _("Error");
 		break;
 	case Command:
 		font += "navy";
+		typeStr = _("Command");
 		break;
 	case Response:
 		font += "green";
+		typeStr = _("Response");
 		break;
 	case Debug_Warning:
 	case Debug_Info:
 	case Debug_Verbose:
 	case Debug_Debug:
 		font += "purple";
+		typeStr = _("Trace");
+		break;
+	case RawList:
+		font += "fuchsia";
+		typeStr = _("Listing");
 		break;
 	default:
 		font += "black";
+		typeStr = _("Status");
 	}
 	font += ">";
 
 	m_Content += font;
-	m_Content += "<FIXME>:";
+	m_Content += typeStr + _T(":");
 	
 	m_Content += "</font></td><td width='5'></td><td>" + font;
 	
