@@ -39,7 +39,13 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, "FileZilla", wxDefaultPosition, wxS
 
 	m_ViewSplitterSashPos = 0.5;
 
-	m_pTopSplitter = new wxSplitterWindow(this, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER | wxSP_LIVE_UPDATE);
+#ifdef __WXMSW__
+	long style = wxSP_NOBORDER | wxSP_LIVE_UPDATE;
+#else
+	long style = wxSP_3DBORDER | wxSP_LIVE_UPDATE;
+#endif
+
+	m_pTopSplitter = new wxSplitterWindow(this, -1, wxDefaultPosition, wxDefaultSize, style);
 	m_pTopSplitter->SetMinimumPaneSize(20);
 
 	m_pBottomSplitter = new wxSplitterWindow(m_pTopSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);

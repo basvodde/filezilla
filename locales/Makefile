@@ -13,9 +13,7 @@ MSGFMT=msgfmt --verbose
 MSGMERGE=msgmerge
 XGETTEXT=xgettext
 XARGS=xargs
-
-# used if running under cygwin due to the windows find conflicting
-FIND="/bin/find"
+FIND=find
 
 FZ_LINGUAS := `$(FIND) . -name *.po 2> /dev/null | sed -n 's/\(wxstd\)\?\.po//p'`
 
@@ -36,8 +34,7 @@ XGETTEXT_ARGS=-C -k_ -kwxGetTranslation -kwxTRANSLATE -s -j
 resources:
 	touch ../src/interface/resources/resources.h
 	rm ../src/interface/resources/resources.h
-	$(FIND) ../src/interface/resources -name "*.xrc" | $(XARGS) wxrc -g >> ../src/interface/resources/resources.h
-
+	$(FIND) ../src/interface/resources/ -name "*.xrc" | $(XARGS) wxrc -g >> ../src/interface/resources/resources.h 
 filezilla.pot: resources
 	touch $@
 	$(FIND) ../src/include -name "*.h" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o filezilla.pot

@@ -17,20 +17,43 @@ IMPLEMENT_APP(CFileZillaApp)
 
 bool CFileZillaApp::OnInit()
 {
+	wxPathList pathList;
+	// FIXME: --datadir cmdline
+	
+	pathList.AddEnvList(_T("FZ_DATADIR"));
+	pathList.Add(wxGetCwd());
+	pathList.AddEnvList(_T("PATH"));
+#ifdef __WXMSW_
+#else
+	pathList.Add(_T("/usr/local/share/filezilla/"));
+	pathList.Add(_T("/usr/share/filezilla/"));
+#endif
+
+	wxString wxPath = "";
+	for (wxPathList::Node *node = pathList.GetFirst(); node; node = node->GetNext())
+	{
+		wxString cur = node->GetData();
+		if (wxFileExists(cur + "/resources/menus.xrc"))
+		{
+			wxPath = cur;
+			break;
+		}
+	}
+	
 	wxImage::AddHandler(new wxPNGHandler());
-	wxLocale::AddCatalogLookupPathPrefix(_T("../../locales"));
+	wxLocale::AddCatalogLookupPathPrefix(wxPath + _T("/locales"));
 	m_locale.Init(wxLANGUAGE_GERMAN);
 	m_locale.AddCatalog(_T("filezilla"));
-
-	//TODO: If ! resources found...
-	if (0)
+	
+	if (wxPath == "")
 	{
-		wxString msg = wxString::Format(_("Could not load resource files for FileZilla from \"%s\", closing FileZilla"), "asdf");
+		wxString msg = _("Could not find the resource files for FileZilla, closing FileZilla.\nYou can set the data directory of FileZilla using the '--datadir <custompath>' commandline option or by setting the FZ_DATADIR environment variable.");
 		wxMessageBox(msg, _("FileZilla Error"), wxOK | wxICON_ERROR);
+		return false;
 	}
 	
 	wxXmlResource::Get()->InitAllHandlers();
-	wxXmlResource::Get()->Load("../interface/resources/*.xrc");
+	wxXmlResource::Get()->Load(wxPath + "/resources/*.xrc");
 	wxFrame *frame = new CMainFrame();
 	SetTopWindow(frame);
 	frame->Show(true);

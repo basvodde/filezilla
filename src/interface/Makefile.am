@@ -1,3 +1,4 @@
+SUBDIRS = resources
 INCLUDES = -I../include
 #########################################################################
 # APPLICATION SECTION
