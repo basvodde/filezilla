@@ -1707,7 +1707,7 @@ int CFtpControlSocket::CheckOverwriteFile()
 
 	m_pEngine->AddNotification(pNotification);
 
-	return true;
+	return FZ_REPLY_WOULDBLOCK;
 }
 
 bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotification)

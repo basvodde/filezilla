@@ -3,21 +3,23 @@
 
 class CFileZillaEngine;
 class CNotification;
+class CMainFrame;
 
 class CCommandQueue
 {
 public:
-	CCommandQueue(CFileZillaEngine *pEngine);
+	CCommandQueue(CFileZillaEngine *pEngine, CMainFrame* pMainFrame);
 	~CCommandQueue();
 
 	void ProcessCommand(CCommand *pCommand);
 	void ProcessNextCommand();
 	bool Idle() const;
-	void Cancel();
-	void Finish(CNotification *pNotification);
+	bool Cancel();
+	void Finish(COperationNotification *pNotification);
 
 protected:
 	CFileZillaEngine *m_pEngine;
+	CMainFrame* m_pMainFrame;
 
 	std::list<CCommand *> m_CommandList;
 };

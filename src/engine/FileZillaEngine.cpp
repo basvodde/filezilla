@@ -53,6 +53,14 @@ CFileZillaEngine::~CFileZillaEngine()
 	// Delete notification list
 	for (std::list<CNotification *>::iterator iter = m_NotificationList.begin(); iter != m_NotificationList.end(); iter++)
 		delete *iter;
+
+	for (std::list<CAsyncHostResolver *>::iterator iter = m_HostResolverThreads.begin(); iter != m_HostResolverThreads.end(); iter++)
+	{
+		CAsyncHostResolver* pResolver = *iter;
+		pResolver->SetObsolete();
+		pResolver->Wait();
+		delete pResolver;					
+	}
 }
 
 int CFileZillaEngine::Init(wxEvtHandler *pEventHandler, COptionsBase *pOptions)
@@ -137,6 +145,8 @@ int CFileZillaEngine::Connect(const CConnectCommand &command)
 	switch (command.GetServer().GetProtocol())
 	{
 	case FTP:
+		if (m_pControlSocket)
+			delete m_pControlSocket;
 		m_pControlSocket = new CFtpControlSocket(this);
 		break;
 	}
@@ -164,7 +174,7 @@ void CFileZillaEngine::AddNotification(CNotification *pNotification)
 
 	m_NotificationList.push_back(pNotification);
 
-	if (bSend)
+	if (bSend && m_pEventHandler)
 	{
 		wxFzEvent evt(wxID_ANY);
 		evt.SetEventObject(this);
@@ -288,17 +298,18 @@ void CFileZillaEngine::OnEngineEvent(wxFzEngineEvent &event)
 			std::list<CAsyncHostResolver *> remaining;
 			for (std::list<CAsyncHostResolver *>::iterator iter = m_HostResolverThreads.begin(); iter != m_HostResolverThreads.end(); iter++)
 			{
-				if (!(*iter)->Done())
-					remaining.push_back(*iter);
+				CAsyncHostResolver* pResolver = *iter;
+				if (!pResolver->Done())
+					remaining.push_back(pResolver);
 				else
 				{
-					if (!(*iter)->Obsolete())
+					if (!pResolver->Obsolete())
 					{
 						if (GetCurrentCommandId() == cmd_connect)
 							m_pControlSocket->ContinueConnect();
 					}
-					(*iter)->Wait();
-					delete *iter;					
+					pResolver->Wait();
+					delete pResolver;					
 				}
 			}
 			m_HostResolverThreads.clear();

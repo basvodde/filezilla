@@ -75,6 +75,8 @@ public:
 	CFileItem* GetIdleChild(bool immadiateOnly);
 	virtual bool RemoveChild(CQueueItem* pItem); // Removes a child item with is somewhere in the tree of children
 
+	void QueueImmediateFiles();
+
 	int m_activeCount;
 
 protected:
@@ -151,8 +153,9 @@ public:
 	bool QueueFolder(bool queueOnly, bool download, const wxString& localPath, const CServerPath& remotePath, const CServer& server);
 	
 	bool IsEmpty() const;
-	bool IsActive() const;
-	bool SetActive(bool activate = true);
+	int IsActive() const { return m_activeMode; }
+	bool SetActive(bool active = true);
+	bool Quit();
 
 protected:
 	bool TryStartNextTransfer();
@@ -186,12 +189,14 @@ protected:
 	void SendNextCommand(t_EngineData& engineData);
 	void ResetEngine(t_EngineData& data);
 	void RemoveItem(CQueueItem* item);
+	void CheckQueueState();
 
 	std::vector<CServerItem*> m_serverList;
 
 	int m_itemCount;
 	int m_activeCount;
 	int m_activeMode; // 0 inactive, 1 only immediate transfers, 2 all
+	bool m_quit;
 
 	CMainFrame* m_pMainFrame;
 

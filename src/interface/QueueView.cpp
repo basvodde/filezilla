@@ -2,6 +2,7 @@
 #include "QueueView.h"
 #include "Mainfrm.h"
 #include "Options.h"
+#include "StatusView.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -256,6 +257,24 @@ bool CServerItem::RemoveChild(CQueueItem* pItem)
 	return CQueueItem::RemoveChild(pItem);
 }
 
+void CServerItem::QueueImmediateFiles()
+{
+	for (int i = 0; i < PRIORITY_COUNT; i++)
+	{
+		std::list<CFileItem*> activeList;
+		std::list<CFileItem*>& fileList = m_fileList[1][i];
+		for (std::list<CFileItem*>::iterator iter = fileList.begin(); iter != fileList.end(); iter++)
+		{
+			CFileItem* item = *iter;
+			if (item->IsActive())
+				activeList.push_back(item);
+			else
+				m_fileList[0][i].push_back(item);
+		}
+		fileList = activeList;
+	}
+}
+
 CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame)
 	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_VIRTUAL | wxSUNKEN_BORDER)
 {
@@ -264,6 +283,7 @@ CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame)
 	m_itemCount = 0;
 	m_activeCount = 0;
 	m_activeMode = 0;
+	m_quit = false;
 	
 	InsertColumn(0, _("Server / Local file"), wxLIST_FORMAT_LEFT, 150);
 	InsertColumn(1, _("Direction"), wxLIST_FORMAT_CENTER, 60);
@@ -316,8 +336,8 @@ CQueueView::~CQueueView()
 	for (std::vector<CServerItem*>::iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
 		delete *iter;
 
-	for (std::vector<t_EngineData>::iterator iter = m_engineData.begin(); iter != m_engineData.end(); iter++)
-		delete iter->pEngine;
+	for (unsigned int engineIndex = 1; engineIndex < m_engineData.size(); engineIndex++)
+		delete m_engineData[engineIndex].pEngine;
 }
 
 bool CQueueView::QueueFile(bool queueOnly, bool download, const wxString& localFile, 
@@ -464,17 +484,17 @@ void CQueueView::OnEngineEvent(wxEvent &event)
 	if (iter == m_engineData.end())
 		return;
 
-	CFileZillaEngine *pEngine = iter->pEngine;
+	t_EngineData& data = *iter;
 
-	CNotification *pNotification = pEngine->GetNextNotification();
+	CNotification *pNotification = data.pEngine->GetNextNotification();
 	while (pNotification)
 	{
 		switch (pNotification->GetID())
 		{
-/*		case nId_logmsg:
-			m_pStatusView->AddToLog(reinterpret_cast<CLogmsgNotification *>(pNotification));
+		case nId_logmsg:
+			m_pMainFrame->GetStatusView()->AddToLog(reinterpret_cast<CLogmsgNotification *>(pNotification));
 			delete pNotification;
-			break;*/
+			break;
 		case nId_operation:
 			ProcessReply(*iter, reinterpret_cast<COperationNotification*>(pNotification));
 			delete pNotification;
@@ -484,7 +504,7 @@ void CQueueView::OnEngineEvent(wxEvent &event)
 			delete pNotification;
 			break;*/
 		case nId_asyncrequest:
-			m_pMainFrame->AddToRequestQueue(pEngine, reinterpret_cast<CAsyncRequestNotification *>(pNotification));
+			m_pMainFrame->AddToRequestQueue(data.pEngine, reinterpret_cast<CAsyncRequestNotification *>(pNotification));
 			break;
 		case nId_active:
 			{
@@ -514,7 +534,10 @@ void CQueueView::OnEngineEvent(wxEvent &event)
 			break;
 		}
 
-		pNotification = pEngine->GetNextNotification();
+		if (!data.pEngine || m_engineData.empty())
+			break;
+
+		pNotification = data.pEngine->GetNextNotification();
 	}
 }
 
@@ -530,6 +553,9 @@ CServerItem* CQueueView::GetServerItem(const CServer& server)
 
 bool CQueueView::TryStartNextTransfer()
 {
+	if (m_quit)
+		return false;
+
 	if (m_activeCount >= m_pMainFrame->m_pOptions->GetOptionVal(OPTION_NUMTRANSFERS))
 		return false;
 
@@ -571,9 +597,13 @@ bool CQueueView::TryStartNextTransfer()
 		return false;
 
 	// Found idle item
+	if (!m_activeMode)
+		m_activeMode = 1;
 	fileItem->SetActive(true);
 	engineData.pItem = fileItem;
+	engineData.active = true;
 	serverItem->m_activeCount++;
+	m_activeCount++;
 
 	const CServer oldServer = engineData.lastServer;
 	engineData.lastServer = serverItem->GetServer();
@@ -612,6 +642,7 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 			CQueueItem* pItem = engineData.pItem;
 			ResetEngine(engineData);
 			RemoveItem(pItem);
+			CheckQueueState();
 			return;
 		}
 		else
@@ -626,6 +657,8 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 		CQueueItem* pItem = engineData.pItem;
 		ResetEngine(engineData);
 		RemoveItem(pItem);
+		while (TryStartNextTransfer());
+		CheckQueueState();
 		return;
 	}
 
@@ -634,9 +667,13 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 
 void CQueueView::ResetEngine(t_EngineData& data)
 {
+	if (!data.active)
+		return;
+
 	data.pItem = 0;
 	data.active = false;
 	data.state = t_EngineData::none;
+	m_activeCount--;
 }
 
 void CQueueView::RemoveItem(CQueueItem* item)
@@ -702,6 +739,9 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 				CQueueItem* pItem = engineData.pItem;
 				ResetEngine(engineData);
 				RemoveItem(pItem);
+				while (TryStartNextTransfer());
+				CheckQueueState();
+				return;
 			}
 		}
 	}
@@ -722,6 +762,8 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 			{
 				ResetEngine(engineData);
 				RemoveItem(fileItem);
+				while (TryStartNextTransfer());
+				CheckQueueState();
 				return;
 			}
 
@@ -730,9 +772,60 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 			{
 				ResetEngine(engineData);
 				RemoveItem(fileItem);
+				while (TryStartNextTransfer());
+				CheckQueueState();
 				return;
 			}
 		}
 		engineData.state = t_EngineData::transfer;
 	}
+}
+
+bool CQueueView::SetActive(bool active /*=true*/)
+{
+	if (!active)
+	{
+		m_activeMode = 0;
+		for (std::vector<CServerItem*>::iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
+			(*iter)->QueueImmediateFiles();
+
+		// Find first idle server and assign a transfer to it.
+		unsigned int engineIndex;
+		for (engineIndex = 1; engineIndex < m_engineData.size(); engineIndex++)
+		{
+			t_EngineData& data = m_engineData[engineIndex];
+			if (data.active)
+				data.pEngine->Command(CCancelCommand());
+		}
+
+		return m_activeCount == 0;
+	}
+
+	return true;
+}
+
+bool CQueueView::Quit()
+{
+	m_quit = true;
+	if (!SetActive(false))
+		return false;
+
+	for (unsigned int engineIndex = 1; engineIndex < m_engineData.size(); engineIndex++)
+	{
+		t_EngineData& data = m_engineData[engineIndex];
+		delete data.pEngine;
+		data.pEngine = 0;
+	}
+	m_engineData.clear();
+
+	return true;
+}
+
+void CQueueView::CheckQueueState()
+{
+	if (!m_activeCount)
+		m_activeMode = 0;
+
+	if (m_quit)
+		m_pMainFrame->Close();
 }

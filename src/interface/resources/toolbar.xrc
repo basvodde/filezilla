@@ -1,34 +1,40 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <resource version="2.3.0.1" xmlns="http://www.wxwindows.org/wxxrc">
-    <object class="wxToolBar" name="ID_TOOLBAR">
-        <style>wxTB_FLAT|wxTB_DOCKABLE|wxTB_HORIZONTAL</style>
-        <bitmapsize>16,16</bitmapsize>
-        <object class="separator" />
-        <object class="tool" name="ID_TOOLBAR_SITEMANAGER">
-            <bitmap>16x16/sitemanager.png</bitmap>
-            <longhelp>Open the Site Manager</longhelp>
-            <tooltip>Open the Site Manager</tooltip>
-        </object>
-        <object class="separator" />
-        <object class="tool" name="ID_TOOLBAR_REFRESH">
-            <bitmap>refresh.png</bitmap>
-            <longhelp>Refresh the file and folder lists</longhelp>
-            <tooltip>Refresh the file and folder lists</tooltip>
-        </object>
-        <object class="tool" name="ID_TOOLBAR_CANCEL">
-            <bitmap>cancel.png</bitmap>
-            <longhelp>Cancel current operation</longhelp>
-            <tooltip>Cancels the current operation</tooltip>
-        </object>
-        <object class="tool" name="ID_TOOLBAR_DISCONNECT">
-            <bitmap>disconnect.png</bitmap>
-            <longhelp>Disconnect from server</longhelp>
-            <tooltip>Disconnects from the currently visible server</tooltip>
-        </object>
-        <object class="tool" name="ID_TOOLBAR_RECONNECT">
-            <bitmap>reconnect.png</bitmap>
-            <longhelp>Reconnects to the last used server</longhelp>
-            <tooltip>Reconnects to the last used server</tooltip>
-        </object>
+  <object class="wxToolBar" name="ID_TOOLBAR">
+    <style>wxTB_FLAT|wxTB_DOCKABLE|wxTB_HORIZONTAL</style>
+    <bitmapsize>16,16</bitmapsize>
+    <object class="separator"/>
+    <object class="tool" name="ID_TOOLBAR_SITEMANAGER">
+      <bitmap>16x16/sitemanager.png</bitmap>
+      <longhelp>Open the Site Manager</longhelp>
+      <tooltip>Open the Site Manager</tooltip>
     </object>
+    <object class="separator"/>
+    <object class="tool" name="ID_TOOLBAR_REFRESH">
+      <bitmap>refresh.png</bitmap>
+      <longhelp>Refresh the file and folder lists</longhelp>
+      <tooltip>Refresh the file and folder lists</tooltip>
+    </object>
+    <object class="tool" name="ID_TOOLBAR_PROCESSQUEUE">
+      <bitmap>16x16\processqueue.png</bitmap>
+      <longhelp>Toggles processing of the transfer queue</longhelp>
+      <tooltip>Toggles processing of the transfer queue</tooltip>
+      <toggle>1</toggle>
+    </object>
+    <object class="tool" name="ID_TOOLBAR_CANCEL">
+      <bitmap>cancel.png</bitmap>
+      <longhelp>Cancel current operation</longhelp>
+      <tooltip>Cancels the current operation</tooltip>
+    </object>
+    <object class="tool" name="ID_TOOLBAR_DISCONNECT">
+      <bitmap>disconnect.png</bitmap>
+      <longhelp>Disconnect from server</longhelp>
+      <tooltip>Disconnects from the currently visible server</tooltip>
+    </object>
+    <object class="tool" name="ID_TOOLBAR_RECONNECT">
+      <bitmap>reconnect.png</bitmap>
+      <longhelp>Reconnects to the last used server</longhelp>
+      <tooltip>Reconnects to the last used server</tooltip>
+    </object>
+  </object>
 </resource>

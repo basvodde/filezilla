@@ -385,6 +385,7 @@ void CLocalListView::OnItemActivated(wxListEvent &event)
 			wxFileName fn(m_dir, data->name);
 
 			m_pQueue->QueueFile(false, false, fn.GetFullPath(), data->name, path, *pServer, data->size);
+			m_pQueue->QueueFile(false, false, fn.GetFullPath(), data->name, path, *pServer, data->size);
 		}
 	}
 }

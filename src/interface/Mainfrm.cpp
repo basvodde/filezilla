@@ -52,6 +52,8 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_TOOL(XRCID("ID_TOOLBAR_SITEMANAGER"), CMainFrame::OnSiteManager)
 	EVT_CLOSE(CMainFrame::OnClose)
 	EVT_TIMER(wxID_ANY, CMainFrame::OnTimer)
+	EVT_TOOL(XRCID("ID_TOOLBAR_PROCESSQUEUE"), CMainFrame::OnProcessQueue)
+	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_PROCESSQUEUE"), CMainFrame::OnUpdateToolbarProcessQueue)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
@@ -70,6 +72,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_pLocalSplitter = NULL;
 	m_pRemoteSplitter = NULL;
 	m_bInitDone = false;
+	m_bQuit = false;
 
 #ifdef __WXMSW__
 	m_windowIsMaximized = false;
@@ -120,7 +123,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_pEngine = new CFileZillaEngine();
 	m_pEngine->Init(this, m_pOptions);
 	
-	m_pCommandQueue = new CCommandQueue(m_pEngine);
+	m_pCommandQueue = new CCommandQueue(m_pEngine, this);
 
 	wxSize clientSize = GetClientSize();
 	if (m_pBottomSplitter)
@@ -343,13 +346,14 @@ void CMainFrame::OnQuickconnect(wxCommandEvent &event)
 	XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_USER", wxTextCtrl)->SetValue(server.GetUser());
 	XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_PASS", wxTextCtrl)->SetValue(server.GetPass());
 
-	if (m_pEngine->IsConnected() || m_pEngine->IsBusy())
+	if (m_pEngine->IsConnected() || m_pEngine->IsBusy() || !m_pCommandQueue->Idle())
 	{
 		if (wxMessageBox(_("Break current connection?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) != wxYES)
 			return;
 		m_pCommandQueue->Cancel();
 	}
 
+	m_pState->SetServer(&server);
 	m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
 	m_pCommandQueue->ProcessCommand(new CListCommand());
 	
@@ -371,8 +375,13 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 			delete pNotification;
 			break;
 		case nId_operation:
-			m_pCommandQueue->Finish(pNotification);
+			m_pCommandQueue->Finish(reinterpret_cast<COperationNotification*>(pNotification));
 			delete pNotification;
+			if (m_bQuit)
+			{
+				Close();
+				return;
+			}
 			break;
 		case nId_listing:
 			m_pState->SetRemoteDir(reinterpret_cast<CDirectoryListingNotification *>(pNotification)->GetDirectoryListing());
@@ -500,11 +509,35 @@ void CMainFrame::OnSplitterSashPosChanged(wxSplitterEvent& event)
 
 void CMainFrame::OnClose(wxCloseEvent &event)
 {
+	Show(false);
+	m_bQuit = true;
 	m_sendLedTimer.Stop();
 	m_recvLedTimer.Stop();
+	delete m_pSendLed;
+	delete m_pRecvLed;
+	m_pSendLed = 0;
+	m_pRecvLed = 0;
+
 	m_transferStatusTimer.Stop();
+
+	bool res = true;
 	if (m_pCommandQueue)
-		m_pCommandQueue->Cancel();
+		res = m_pCommandQueue->Cancel();
+
+	if (!res)
+	{
+		event.Veto();
+		return;
+	}
+	delete m_pEngine;
+	m_pEngine = 0;
+
+	if (!m_pQueueView->Quit())
+	{
+		event.Veto();
+		return;
+	}
+
 	Destroy();
 }
 
@@ -535,6 +568,7 @@ void CMainFrame::OnReconnect(wxCommandEvent &event)
 			return;
 	}
 	
+	m_pState->SetServer(&server);
 	m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
 	m_pCommandQueue->ProcessCommand(new CListCommand());
 }
@@ -603,7 +637,8 @@ void CMainFrame::OnTimer(wxTimerEvent& event)
 
 		if (!m_pEngine->IsActive(true))
 		{
-			m_pRecvLed->Unset();
+			if (m_pRecvLed)
+				m_pRecvLed->Unset();
 			m_recvLedTimer.Stop();
 		}
 	}
@@ -617,7 +652,8 @@ void CMainFrame::OnTimer(wxTimerEvent& event)
 
 		if (!m_pEngine->IsActive(false))
 		{
-			m_pSendLed->Unset();
+			if (m_pSendLed)
+				m_pSendLed->Unset();
 			m_sendLedTimer.Stop();
 		}
 	}
@@ -713,6 +749,7 @@ void CMainFrame::OnSiteManager(wxCommandEvent& event)
 			m_pCommandQueue->Cancel();
 		}
 
+		m_pState->SetServer(&data.m_server);
 		m_pCommandQueue->ProcessCommand(new CConnectCommand(data.m_server));
 		m_pCommandQueue->ProcessCommand(new CListCommand(data.m_remoteDir));
 
@@ -781,3 +818,15 @@ void CMainFrame::AddToRequestQueue(CFileZillaEngine *pEngine, CAsyncRequestNotif
 {
 	m_pAsyncRequestQueue->AddRequest(pEngine, reinterpret_cast<CAsyncRequestNotification *>(pNotification));
 }
+
+void CMainFrame::OnProcessQueue(wxCommandEvent& event)
+{
+	if (m_pQueueView)
+		m_pQueueView->SetActive(event.IsChecked());
+}
+
+void CMainFrame::OnUpdateToolbarProcessQueue(wxUpdateUIEvent& event)
+{
+	event.Check(m_pQueueView->IsActive() != 0);
+}
+

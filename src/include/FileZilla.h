@@ -33,4 +33,8 @@
 #include "FileZillaEngine.h"
 #include "directorylisting.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+
 #endif
