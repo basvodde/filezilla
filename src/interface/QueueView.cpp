@@ -359,8 +359,10 @@ bool CQueueView::QueueFile(bool queueOnly, bool download, const wxString& localF
 
 	SetItemCount(m_itemCount);
 
-	if (m_activeMode == 2 || !queueOnly)
-		while (TryStartNextTransfer());
+	if (!m_activeMode && !queueOnly)
+		m_activeMode = 1;
+
+	while (TryStartNextTransfer());
 
 	return true;
 }
@@ -553,7 +555,7 @@ CServerItem* CQueueView::GetServerItem(const CServer& server)
 
 bool CQueueView::TryStartNextTransfer()
 {
-	if (m_quit)
+	if (m_quit || !m_activeMode)
 		return false;
 
 	if (m_activeCount >= m_pMainFrame->m_pOptions->GetOptionVal(OPTION_NUMTRANSFERS))
@@ -597,8 +599,6 @@ bool CQueueView::TryStartNextTransfer()
 		return false;
 
 	// Found idle item
-	if (!m_activeMode)
-		m_activeMode = 1;
 	fileItem->SetActive(true);
 	engineData.pItem = fileItem;
 	engineData.active = true;
