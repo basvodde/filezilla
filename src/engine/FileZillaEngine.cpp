@@ -229,7 +229,7 @@ int CFileZillaEngine::Disconnect(const CDisconnectCommand &command)
 int CFileZillaEngine::Cancel(const CCancelCommand &command)
 {
 	if (!IsBusy())
-		return FZ_REPLY_WOULDBLOCK;
+		return FZ_REPLY_OK;
 
 	SendEvent(engineCancel);
 
