@@ -42,8 +42,13 @@ XGETTEXT_ARGS=-C -k_ -kwxGetTranslation -kwxTRANSLATE -s -j
 
 # a PO file must be updated from wxstd.po to include new translations
 %.po: $(srcdir)/filezilla.pot
-	if [ -f $@ ]; then $(MSGMERGE) -U $@ $(srcdir)/filezilla.pot; else cp $(srcdir)/filezilla.pot $@; fi
+	if [ -f $@ ]; then \
+		$(MSGMERGE) -U $@ $(srcdir)/filezilla.pot; \
+	else \
+		cp $(srcdir)/filezilla.pot $@; \
+	fi
 	@if [ -f $@~ ]; then rm $@~; fi
+	@touch $@;
 
 resources.h: ../src/interface/resources/*.xrc
 	@if [ -f $@~ ]; then rm $@~; fi
