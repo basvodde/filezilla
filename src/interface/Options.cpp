@@ -2,6 +2,10 @@
 #include "Options.h"
 #include "../tinyxml/tinyxml.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+
 enum Type
 {
 	string,
@@ -482,12 +486,20 @@ void COptions::SetServer(wxString path, const CServer& server)
 			sub = path;
 			path = _T("");
 		}
-		TiXmlElement *newElement = element->FirstChildElement(ConvUTF8(sub));
+		char *utf8 = ConvUTF8(sub);
+		if (!utf8)
+			return;
+		TiXmlElement *newElement = element->FirstChildElement(utf8);
+		delete [] utf8;
 		if (newElement)
 			element = newElement;
 		else
 		{
-			TiXmlNode *node = element->InsertEndChild(TiXmlElement(ConvUTF8(sub)));
+			char *utf8 = ConvUTF8(sub);
+			if (!utf8)
+				return;
+			TiXmlNode *node = element->InsertEndChild(TiXmlElement(utf8));
+			delete [] utf8;
 			if (!node || !node->ToElement())
 				return;
 			element = node->ToElement();
@@ -520,7 +532,11 @@ bool COptions::GetServer(wxString path, CServer& server)
 			sub = path;
 			path = _T("");
 		}
-		element = element->FirstChildElement(ConvUTF8(sub));
+		char *utf8 = ConvUTF8(sub);
+		if (!utf8)
+			return false;
+		element = element->FirstChildElement(utf8);
+		delete [] utf8;
 		if (!element)
 			return false;
 	}
