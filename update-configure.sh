@@ -18,6 +18,9 @@ while test $# != 0; do
   -[fF])
       FORCE_REBUILD=yes
       ;;
+  -[dD])
+      DOWNLOAD_ONLY=yes
+      ;;
   -[hH]|--help)
       echo "Usage: $0 [-n] [-f]"
       echo "-n        Do not download $FILENAME automatically, it must"
@@ -26,6 +29,9 @@ while test $# != 0; do
       echo
       echo "-f        Force operation regardless whether $FILENAME was changed."
       echo "          Useful if unpacking lead to an error"
+      echo
+      echo "-d        Just update $FILENAME if neccessary, do not unpack and"
+      echo "          (re)run configure"
       echo 
       echo "-h --help This message"
       exit
@@ -59,6 +65,11 @@ if test ! -e $FILENAME; then
   echo >&2 "*** $FILENAME is missing! Exiting"
   exit 2
 fi 
+
+if test x$DOWNLOAD_ONLY = xyes; then
+  echo "*** done"
+  exit 0
+fi
 
 if test x$FORCE_REBUILD = xyes -o ! -f update-configure.stamp -o $FILENAME -nt update-configure.stamp; then
   echo "*** Extracting $FILENAME"   
