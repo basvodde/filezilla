@@ -7,10 +7,11 @@ INCLUDES = -I../include
 # of the other Makefile.am variables
 
 if MACAPPBUNDLE
-bin_PROGRAMS = filezilla FileZilla.app/Contents/MacOS/filezilla
+FZPROGS = filezilla bundle
 else
-bin_PROGRAMS = filezilla
+FZPROGS = filezilla
 endif
+bin_PROGRAMS = $(FZPROGS)
 
 # the application source, library search path, and link libraries
 filezilla_SOURCES = FileZilla.cpp LocalListView.cpp LocalTreeView.cpp \
@@ -41,6 +42,8 @@ filezilla_DEPENDENCIES = ../engine/libengine.a
 dist_noinst_DATA = interface.vcproj
 
 if MACAPPBUNDLE
+nodist_bundle_SOURCES = _FileZilla.app/Contents/MacOS/filezilla$(EXEEXT)
+
 FileZilla.app/Contents/MacOS/filezilla$(EXEEXT): filezilla
 	mkdir -p FileZilla.app/Contents/MacOS/resources
 	mkdir -p FileZilla.app/Contents/Resources
@@ -51,3 +54,4 @@ FileZilla.app/Contents/MacOS/filezilla$(EXEEXT): filezilla
 	$(MAKE) -C resources mac-copy-resources
 	cp -f filezilla FileZilla.app/Contents/MacOS/filezilla
 endif
+
