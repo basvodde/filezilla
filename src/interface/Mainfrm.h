@@ -8,6 +8,7 @@ class CLocalListView;
 class CRemoteTreeView;
 class CRemoteListView;
 class CState;
+class COptions;
 
 class CMainFrame : public wxFrame
 {
@@ -59,6 +60,7 @@ protected:
 	bool m_bInitDone;
 
 	CFileZillaEngine *m_pEngine;
+	COptions *m_pOptions;
 	std::list<CCommand *> m_CommandList;
 
 	CState *m_pState;

@@ -7,6 +7,12 @@
 #include "QueueView.h"
 #include "Mainfrm.h"
 #include "state.h"
+#include "Options.h"
+
+#ifndef __WXMSW__
+#include "resources/filezilla.xpm"
+#endif
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -30,6 +36,8 @@ END_EVENT_TABLE()
 CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
 {
 	SetSizeHints(250, 250);
+
+    SetIcon(wxICON(appicon));
 
 	m_pStatusBar = NULL;
 	m_pMenuBar = NULL;
@@ -92,8 +100,10 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	wxSize size = m_pBottomSplitter->GetClientSize();
 	m_pBottomSplitter->SetSashPosition(size.GetHeight() - 140);
 
+	m_pOptions = new COptions;
+
 	m_pEngine = new CFileZillaEngine();
-	m_pEngine->Init(this);
+	m_pEngine->Init(this, m_pOptions);
 
 	Layout();
 
@@ -110,6 +120,8 @@ CMainFrame::~CMainFrame()
 
 	for (std::list<CCommand *>::iterator iter = m_CommandList.begin(); iter != m_CommandList.end(); iter++)
 		delete *iter;
+
+	delete m_pOptions;
 }
 
 void CMainFrame::OnSize(wxSizeEvent &event)
@@ -429,7 +441,7 @@ void CMainFrame::OnCancel(wxCommandEvent& event)
 	if (!m_pEngine || !m_pEngine->IsBusy())
 		return;
 
-	if (wxMessageBox(_("Realy cancel current operation?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) == wxYES)
+	if (wxMessageBox(_("Really cancel current operation?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) == wxYES)
 		Cancel();
 }
 

@@ -2,6 +2,6 @@ resourcesdir = $(pkgdatadir)/resources
 
 dist_resources_DATA = menus.xrc quickconnectbar.xrc dropdown.png \
 		disconnect.png toolbar.xrc cancel.png \
-		empty.xpm up.xpm down.xpm
+		empty.xpm up.xpm down.xpm filezilla.xpm
 
-dist_noinst_DATA = filezilla.rc
+dist_noinst_DATA = filezilla.rc FileZilla.ico
