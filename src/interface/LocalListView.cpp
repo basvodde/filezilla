@@ -126,9 +126,9 @@ void CLocalListView::DisplayDir(wxString dirname)
 		int num = 1;
 		while (found)
 		{
-			wxFileName fn(file);
+			wxFileName fn(dirname + file);
 			t_fileData data;
-			data.dir = wxDir::Exists(file + _T("/"));
+			data.dir = fn.DirExists();
 			data.icon = -2;
 			data.name = fn.GetFullName();
 	
