@@ -1,14 +1,19 @@
 #include "FileZilla.h"
 #include "state.h"
 #include "LocalListView.h"
+#include "RemoteListView.h"
 
 CState::CState()
 {
 	m_pLocalListView = 0;
+	m_pRemoteListView = 0;
+	
+	m_pDirectoryListing = 0;
 }
 
 CState::~CState()
 {
+	delete m_pDirectoryListing;
 }
 
 wxString CState::GetLocalDir() const
@@ -74,3 +79,38 @@ void CState::SetLocalListView(CLocalListView *pLocalListView)
 	m_pLocalListView = pLocalListView;
 }
 
+void CState::SetRemoteListView(CRemoteListView *pRemoteListView)
+{
+	m_pRemoteListView = pRemoteListView;
+}
+
+bool CState::SetRemoteDir(const CDirectoryListing *pDirectoryListing)
+{
+    if (!pDirectoryListing)
+	{
+		if (m_pRemoteListView)
+			m_pRemoteListView->SetDirectoryListing(0);
+		delete m_pDirectoryListing;
+		m_pDirectoryListing = 0;
+		return true;
+	}
+
+	CDirectoryListing *newListing = new CDirectoryListing;
+	newListing->m_entryCount = pDirectoryListing->m_entryCount;
+	newListing->m_pEntries = new CDirentry[newListing->m_entryCount];
+	for (int i = 0; i < newListing->m_entryCount; i++)
+		newListing->m_pEntries[i] = pDirectoryListing->m_pEntries[i];
+
+	if (m_pRemoteListView)
+		m_pRemoteListView->SetDirectoryListing(newListing);
+
+	delete m_pDirectoryListing;
+	m_pDirectoryListing = newListing;
+
+	return true;
+}
+
+const CDirectoryListing *CState::GetRemoteDir() const
+{
+	return m_pDirectoryListing;
+}

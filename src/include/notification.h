@@ -21,7 +21,8 @@ enum NotificationId
 	nId_logmsg, // notification about new messages for the message log
 	nId_operation, // operation reply codes
 	nId_connection, // connection information: connects, disconnects, timeouts etc..
-	nId_transfers // transfer information: bytes transferes, transfer speed and such
+	nId_transfers, // transfer information: bytes transferes, transfer speed and such
+	nId_listing // directory listings
 };
 
 class CNotification
@@ -52,6 +53,19 @@ public:
 	
 	int nReplyCode;
 	enum Command commandId;
+};
+
+class CDirectoryListing;
+class CDirectoryListingNotification : public CNotification
+{
+public:
+	CDirectoryListingNotification(CDirectoryListing *pDirectoryListing);
+	virtual ~CDirectoryListingNotification();
+	virtual enum NotificationId GetID() const;
+	const CDirectoryListing *GetDirectoryListing() const;
+
+protected:
+	CDirectoryListing *pDirectoryListing;
 };
 
 #endif

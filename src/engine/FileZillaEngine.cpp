@@ -27,7 +27,7 @@ wxEvent *wxFzEngineEvent::Clone() const
 BEGIN_EVENT_TABLE(CFileZillaEngine, wxEvtHandler)
 	EVT_FZ_ENGINE_NOTIFICATION(wxID_ANY, CFileZillaEngine::OnEngineEvent)
 END_EVENT_TABLE();
-
+#include "directorylistingparser.h"
 CFileZillaEngine::CFileZillaEngine()
 {
 	m_pEventHandler = 0;
@@ -50,6 +50,8 @@ int CFileZillaEngine::Init(wxEvtHandler *pEventHandler)
 {
 	m_pEventHandler = pEventHandler;
 
+	CDirectoryListingParser p(this);
+	p.Parse();
 	return FZ_REPLY_OK;
 }
 

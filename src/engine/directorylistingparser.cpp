@@ -455,8 +455,10 @@ static char data[][100]={
 
 	""};
 
-CDirectoryListingParser::CDirectoryListingParser()
+CDirectoryListingParser::CDirectoryListingParser(CFileZillaEngine *pEngine)
 {
+	m_pEngine = pEngine;
+
 	//Fill the month names map
 
 	//English month names
@@ -640,17 +642,32 @@ CDirectoryListingParser::~CDirectoryListingParser()
 
 bool CDirectoryListingParser::Parse()
 {
-	int i = 44;
+	int ii = -1;
 	bool res;
-	while (*data[++i])
+
+	std::list<CDirentry> entryList;
+	while (*data[++ii])
 	{
-		CLine line(data[i], strlen(data[i]));
-		res = ParseLine(&line);
+		CLine line(data[ii], strlen(data[ii]));
+		res = ParseLine(&line, entryList);
 	}
+
+	CDirectoryListing *pListing = new CDirectoryListing;
+	pListing->m_entryCount = entryList.size();
+	pListing->m_pEntries = new CDirentry[entryList.size()];
+	
+	int i = 0;
+	for (std::list<CDirentry>::iterator iter = entryList.begin(); iter != entryList.end(); iter++)
+		pListing->m_pEntries[i++] = *iter;
+
+	pListing->path = CServerPath(_T("/"));
+	CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing);
+	m_pEngine->AddNotification(pNotification);
+
 	return false;
 }
 
-bool CDirectoryListingParser::ParseLine(CLine *pLine)
+bool CDirectoryListingParser::ParseLine(CLine *pLine, std::list<CDirentry> &entryList)
 {
 	CDirentry entry;
 	bool res = ParseAsUnix(pLine, entry);
@@ -665,7 +682,11 @@ bool CDirectoryListingParser::ParseLine(CLine *pLine)
 	if (!res)
 		res = ParseAsIbm(pLine, entry);
 
-	entry.unsure = false;
+	if (res)
+	{
+		entry.unsure = false;
+		entryList.push_back(entry);
+	}
 
 	return res;
 }

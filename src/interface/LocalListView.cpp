@@ -38,7 +38,7 @@ CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState)
 	InsertColumn(0, _("Filname"));
 	InsertColumn(1, _("Filesize"));
 	InsertColumn(2, _("Filetype"));
-	InsertColumn(3, _("Last modified"));
+	InsertColumn(3, _("Last modified"), wxLIST_FORMAT_LEFT, 100);
 
 	m_sortColumn = 0;
 	m_sortDirection = 0;
@@ -49,8 +49,6 @@ CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState)
 	// Initialize imagelist for list header
 	m_pHeaderImageList = new wxImageListMsw(ImageList_Create(8, 8, ILC_MASK, 3, 3));
 	ImageList_SetBkColor(m_pHeaderImageList->GetHandle(), CLR_NONE);
-		//new wxImageListMsw;
-	//m_pHeaderImageList->Create(8,8, true, 3);
 
 	wxBitmap bmp;
 	
@@ -380,7 +378,7 @@ wxString CLocalListView::GetType(wxString name, bool dir)
 		}
 	}
 #else
-	type = dir ? _("File") : _("Folder");
+	type = dir ? _("Folder") : _("File");
 #endif
 	return type;
 }

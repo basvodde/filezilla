@@ -6,14 +6,15 @@ class CToken;
 class CDirectoryListingParser
 {
 public:
-	CDirectoryListingParser();
+	CDirectoryListingParser(CFileZillaEngine *pEngine);
 	~CDirectoryListingParser();
 
 	bool Parse();
 
 protected:
 
-	bool ParseLine(CLine *pLine);
+	CFileZillaEngine *m_pEngine;
+	bool ParseLine(CLine *pLine, std::list<CDirentry> &entryList);
 
 	bool ParseAsUnix(CLine *pLine, CDirentry &entry);
 	bool ParseAsDos(CLine *pLine, CDirentry &entry);

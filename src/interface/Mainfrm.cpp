@@ -79,7 +79,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_pLocalTreeView = new CLocalTreeView(m_pLocalSplitter, -1);
 	m_pLocalListView = new CLocalListView(m_pLocalSplitter, -1, m_pState);
 	m_pRemoteTreeView = new CRemoteTreeView(m_pRemoteSplitter, -1);
-	m_pRemoteListView = new CRemoteListView(m_pRemoteSplitter, -1);
+	m_pRemoteListView = new CRemoteListView(m_pRemoteSplitter, -1, m_pState);
 	m_pStatusView = new CStatusView(m_pTopSplitter, -1);
 	m_pQueueView = new CQueueView(m_pBottomSplitter, -1);
 
@@ -97,6 +97,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	Layout();
 
 	m_pState->SetLocalListView(m_pLocalListView);
+	m_pState->SetRemoteListView(m_pRemoteListView);
 	m_pState->SetLocalDir(wxGetCwd());
 
 }
@@ -300,6 +301,9 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 				m_CommandList.pop_front();
 			}
 			ProcessNextCommand();
+			break;
+		case nId_listing:
+			m_pState->SetRemoteDir(reinterpret_cast<CDirectoryListingNotification *>(pNotification)->GetDirectoryListing());
 			break;
 		default:
 			break;

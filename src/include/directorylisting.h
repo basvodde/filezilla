@@ -35,6 +35,8 @@ class CDirectoryListing
 public:
 	int m_entryCount;
 
+	CServerPath path;
+
 	CDirentry *m_pEntries;
 };
 
