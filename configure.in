@@ -129,11 +129,14 @@ fi
 CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
 CXXFLAGS="$CXXFLAGS $WX_CPPFLAGS"
 
+CATALOGS_TO_INSTALL="install-filezilla-catalogs"
+
 AC_SUBST(WX_LIBS)
 AC_SUBST(WX_XRC_LIBS)
 AC_SUBST(EXPAT_LIB)
 AC_SUBST(PNG_LIB)
 AC_SUBST(ZLIB_LIB)
 AC_SUBST(IDN_LIB)
+AC_SUBST(CATALOGS_TO_INSTALL)
 
-AC_OUTPUT(Makefile src/Makefile src/engine/Makefile src/interface/Makefile src/interface/resources/Makefile src/include/Makefile)
+AC_OUTPUT(Makefile src/Makefile src/engine/Makefile src/interface/Makefile src/interface/resources/Makefile src/include/Makefile locales/Makefile)
