@@ -188,16 +188,24 @@ void COptions::SetXmlValue(unsigned int nID, wxString value)
 	// No checks are made about the validity of the value, that's done in SetOption
 	
 	char *utf8 = ConvUTF8(value);
+	if (!utf8)
+		return;
 
 	TiXmlElement *settings = m_pXmlDocument->FirstChildElement("FileZilla3")->FirstChildElement("Settings");
 	if (!settings)
 	{
 		TiXmlNode *node = m_pXmlDocument->FirstChildElement("FileZilla3")->InsertEndChild(TiXmlElement("Settings"));
 		if (!node)
+		{
+			delete [] utf8;
 			return;
+		}
 		settings = node->ToElement();
 		if (!settings)
+		{
+			delete [] utf8;
 			return;
+		}
 	}
 	else
 	{
@@ -219,6 +227,7 @@ void COptions::SetXmlValue(unsigned int nID, wxString value)
 			setting->SetAttribute("type", (options[nID].type == string) ? "string" : "number");
 			setting->InsertEndChild(TiXmlText(utf8));
 			
+			delete [] utf8;
 			return;
 		}
 	}
@@ -305,35 +314,65 @@ void COptions::SetServer(TiXmlElement *node, const CServer& server)
 	node->Clear();
 	
 	TiXmlElement element("");
+
+	char *utf8;
 	
 	element = TiXmlElement("Host");
-	element.InsertEndChild(TiXmlText(ConvUTF8(server.GetHost())));
+	utf8 = ConvUTF8(server.GetHost());
+	if (!utf8)
+		return;
+	element.InsertEndChild(TiXmlText(utf8));
+	delete [] utf8;
 	node->InsertEndChild(element);
 
 	element = TiXmlElement("Port");
-	element.InsertEndChild(TiXmlText(ConvUTF8(wxString::Format(_T("%d"), server.GetPort()))));
+	utf8 = ConvUTF8(wxString::Format(_T("%d"), server.GetPort()));
+	if (!utf8)
+		return;
+	element.InsertEndChild(TiXmlText(utf8));
+	delete [] utf8;
 	node->InsertEndChild(element);
 	
 	element = TiXmlElement("Protocol");
-	element.InsertEndChild(TiXmlText(ConvUTF8(wxString::Format(_T("%d"), server.GetProtocol()))));
+	utf8 = ConvUTF8(wxString::Format(_T("%d"), server.GetProtocol()));
+	if (!utf8)
+		return;
+	element.InsertEndChild(TiXmlText(utf8));
+	delete [] utf8;
 	node->InsertEndChild(element);
 	
 	element = TiXmlElement("Type");
-	element.InsertEndChild(TiXmlText(ConvUTF8(wxString::Format(_T("%d"), server.GetType()))));
+	utf8 = ConvUTF8(wxString::Format(_T("%d"), server.GetType()));
+	if (!utf8)
+		return;
+	element.InsertEndChild(TiXmlText(utf8));
+	delete [] utf8;
 	node->InsertEndChild(element);
 	
 	element = TiXmlElement("Logontype");
-	element.InsertEndChild(TiXmlText(ConvUTF8(wxString::Format(_T("%d"), server.GetLogonType()))));
+	utf8 = ConvUTF8(wxString::Format(_T("%d"), server.GetLogonType()));
+	if (!utf8)
+		return;
+	element.InsertEndChild(TiXmlText(utf8));
+	delete [] utf8;
 	node->InsertEndChild(element);
 	
 	if (server.GetLogonType() != ANONYMOUS)
 	{
 		element = TiXmlElement("User");
-		element.InsertEndChild(TiXmlText(ConvUTF8(server.GetUser())));
+		utf8 = ConvUTF8(server.GetUser());
+		if (!utf8)
+			return;
+		element.InsertEndChild(TiXmlText(utf8));
+		delete [] utf8;
 		node->InsertEndChild(element);
 
 		element = TiXmlElement("Pass");
-		element.InsertEndChild(TiXmlText(ConvUTF8(server.GetPass())));
+		utf8 = ConvUTF8(server.GetPass());
+		if (!utf8)
+			return;
+		element.InsertEndChild(TiXmlText(utf8));
+		delete [] utf8;
 		node->InsertEndChild(element);
 	}
 }
