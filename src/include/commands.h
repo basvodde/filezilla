@@ -16,24 +16,34 @@ enum Command
 	Raw
 };
 
-struct t_commandFlags
+class CCommand
 {
-	bool chainable;
+public:
+	virtual enum Command GetId() const = 0;
+	virtual bool IsChainable() const = 0;
 };
 
-#ifdef ENGINE
-t_commandFlags commandFlags[12] = {
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	true,
-	false,
-	true,
-	true,
-	true,
-	false
+class CConnectCommand : public CCommand
+{
+public:
+	CConnectCommand(const CServer &server);
+	virtual enum Command GetId() const;
+	virtual bool IsChainable() const;
+	CServer GetServer() const;
+protected:
+	CServer m_Server;
 };
-#endif
+
+class CDisconnectCommand : public CCommand
+{
+public:
+	virtual enum Command GetId() const;
+	virtual bool IsChainable() const;
+};
+
+class CCancelCommand : public CCommand
+{
+public:
+	virtual enum Command GetId() const;
+	virtual bool IsChainable() const;
+};

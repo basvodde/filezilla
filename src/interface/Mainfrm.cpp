@@ -67,6 +67,8 @@ CMainFrame::CMainFrame()
 	m_pRemoteSplitter->SplitHorizontally(m_pRemoteTreeView, m_pRemoteListView);
 	wxSize size = m_pBottomSplitter->GetClientSize();
 	m_pBottomSplitter->SetSashPosition(size.GetHeight() - 100);
+
+	CreateToolBar(wxTB_FLAT);
 }
 
 CMainFrame::~CMainFrame()
