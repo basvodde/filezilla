@@ -5,10 +5,8 @@ CLEANFILES = filezilla.o
 resourcesdir = $(pkgdatadir)/resources
 
 dist_resources_DATA = menus.xrc quickconnectbar.xrc dropdown.png \
-		disconnect.png toolbar.xrc cancel.png \
-		empty.xpm up.xpm down.xpm filezilla.xpm \
-		dialogs.xrc reconnect.png \
-		refresh.png leds.png
+		toolbar.xrc empty.xpm up.xpm down.xpm filezilla.xpm \
+		dialogs.xrc leds.png
 
 if USE_RESOURCEFILE
 nodist_noinst_DATA = filezilla.o
