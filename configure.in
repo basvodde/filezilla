@@ -76,6 +76,7 @@ else
 	ZLIB_LIB=
 fi
 
+use_resourcefile=
 if test "x$host_os" = "xcygwin" -o "x$host_os" = "xmingw32"; then
 	AC_ARG_WITH(expat-lib,
 	[[  --with-expat-lib=FILE     Use the given path to the (wx)expat library.]],
@@ -97,15 +98,12 @@ if test "x$host_os" = "xcygwin" -o "x$host_os" = "xmingw32"; then
 		fi
 		if windres --version; then
                   use_resourcefile=true
-                else
-                  use_resourcefile=false
                 fi
-
-                AM_CONDITIONAL(USE_RESOURCEFILE, test x$use_resourcefile = xtrue)
 	fi
 else
 	EXPAT_LIB=
 fi
+AM_CONDITIONAL(USE_RESOURCEFILE, test x$use_resourcefile = xtrue)
 
 AC_ARG_WITH(idn-lib,
 [[  --with-idn-lib=FILE     Use the given path to the idn library.]],
