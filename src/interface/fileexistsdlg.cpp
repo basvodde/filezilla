@@ -181,10 +181,8 @@ void CFileExistsDlg::LoadIcon(int id, const wxString &file)
 
 #endif //__WXMSW__
 
-	wxString ext;
-	int pos = file.Find('.', true);
-	if (pos != -1)
-		ext = file.Mid(pos + 1);
+	wxFileName fn(file);
+	wxString ext = fn.GetExt();
 	wxFileType *pType = wxTheMimeTypesManager->GetFileTypeFromExtension(ext);
 	if (pType)
 	{
@@ -221,6 +219,7 @@ void CFileExistsDlg::LoadIcon(int id, const wxString &file)
 				return;
 			}
 		}
+		delete pType;
 	}
 }
 

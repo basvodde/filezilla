@@ -103,6 +103,15 @@ public:
 	CServerPath remotePath;
 	wxLongLong remoteSize;
 	wxDateTime remoteTime;
+
+	enum OverwriteAction
+	{
+		overwrite,
+		overwriteNewer,
+		resume,
+		rename,
+		skip
+	} overwriteAction;
 };
 
 #endif

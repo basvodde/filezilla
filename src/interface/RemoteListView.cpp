@@ -58,11 +58,11 @@ CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState
 	wxBitmap bmp;
 	
 	extern wxString resourcePath;
-	bmp.LoadFile(resourcePath + _T("/resources/empty.xpm"), wxBITMAP_TYPE_XPM);
+	bmp.LoadFile(resourcePath + _T("empty.xpm"), wxBITMAP_TYPE_XPM);
 	m_pHeaderImageList->Add(bmp);
-	bmp.LoadFile(resourcePath + _T("/resources/up.xpm"), wxBITMAP_TYPE_XPM);
+	bmp.LoadFile(resourcePath + _T("up.xpm"), wxBITMAP_TYPE_XPM);
 	m_pHeaderImageList->Add(bmp);
-	bmp.LoadFile(resourcePath + _T("/resources/down.xpm"), wxBITMAP_TYPE_XPM);
+	bmp.LoadFile(resourcePath + _T("down.xpm"), wxBITMAP_TYPE_XPM);
 	m_pHeaderImageList->Add(bmp);
 
 	HWND hWnd = (HWND)GetHandle();
@@ -124,7 +124,19 @@ void CRemoteListView::GetImageList()
 							  ((m_nStyle)?SHGFI_ICON:SHGFI_SMALLICON) ));
 #else
 	m_pImageList = new wxImageList(16, 16);
-	//TODO: Fill with icons
+
+	wxBitmap bmp;
+	extern wxString resourcePath;
+	
+	wxLogNull *tmp = new wxLogNull;
+	
+	bmp.LoadFile(resourcePath + _T("16x16/file.png"), wxBITMAP_TYPE_PNG);
+	m_pImageList->Add(bmp);
+
+	bmp.LoadFile(resourcePath + _T("16x16/folder.png"), wxBITMAP_TYPE_PNG);
+	m_pImageList->Add(bmp);
+
+	delete tmp;
 #endif
 	SetImageList(m_pImageList, wxIMAGE_LIST_SMALL);
 }
@@ -238,7 +250,36 @@ int CRemoteListView::OnGetItemImage(long item) const
 			DestroyIcon( shFinfo.hIcon );
 		}
 #else
-		icon = -1;
+		if (data->pDirEntry->dir)
+			icon = 1;
+		else
+			icon = 0;
+
+		wxFileName fn(data->pDirEntry->name);
+		wxString ext = fn.GetExt();
+
+		wxFileType *pType = wxTheMimeTypesManager->GetFileTypeFromExtension(ext);
+		if (pType)
+		{
+			wxIconLocation loc;
+			if (pType->GetIcon(&loc) && loc.IsOk())
+			{
+				wxLogNull *tmp = new wxLogNull;
+				wxIcon newIcon(loc);
+				
+				if (newIcon.Ok())
+				{
+					newIcon.SetWidth(16);
+					newIcon.SetHeight(16);
+					newIcon.SetDepth(32);
+					int index = m_pImageList->Add(newIcon);
+					if (index > 0)
+						icon = index;
+				}
+				delete tmp;
+			}
+			delete pType;
+		}
 #endif
 	}	
 	return icon;
