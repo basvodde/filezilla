@@ -80,13 +80,17 @@ if test "x$IDN_LIB" = "x"; then
 	)
 fi
 
-LIBS="$LIBS $IDN_LIB"
-
+AC_MSG_CHECKING([available FZ3 message catalogs])
+FILEZILLA_LINGUAS=`ls locales/*.po | grep '\.po' | sed -e 's/\(.\+\/\)\?\(@<:@a-z@:>@*\(_@<:@A-Z@:>@*\)\?\)\.po/\2/g' | tr '\n' ' ' | sed -e 's/ \+/ /g'`
+AC_MSG_RESULT([$FILEZILLA_LINGUAS])
 
 CATALOGS_TO_INSTALL="install-filezilla-catalogs"
 
+LIBS="$LIBS $IDN_LIB"
+
 AC_SUBST(WX_LIBS)
 AC_SUBST(CATALOGS_TO_INSTALL)
+AC_SUBST(FILEZILLA_LINGUAS)
 AC_SUBST(WINDRESFLAGS)
 
 AC_OUTPUT(Makefile src/Makefile src/engine/Makefile src/tinyxml/Makefile

@@ -1,6 +1,5 @@
 localesdir = $(pkgdatadir)/locales
 
-FILEZILLA_LINGUAS = de lt
 WXWIN_LINGUAS  =    de
 
 CLEANFILES = *.mo resources.h
@@ -10,7 +9,7 @@ dist_noinst_DATA = filezilla.pot de.po
 install-data-local: @CATALOGS_TO_INSTALL@
 
 install-filezilla-catalogs: allmo
-	for i in $(FILEZILLA_LINGUAS) ; do \
+	for i in @FILEZILLA_LINGUAS@ ; do \
 	    $(mkinstalldirs) $(DESTDIR)$(localesdir)/$$i/LC_MESSAGES ; \
 	    $(INSTALL_DATA) $(srcdir)/$$i.mo $(DESTDIR)$(localesdir)/$$i/LC_MESSAGES/filezilla.mo ; \
 	done
@@ -70,15 +69,15 @@ filezilla.pot: resources.h ../src/include/*.h ../src/engine/*.h ../src/interface
 	fi;
 
 allpo:
-	@-for t in $(FILEZILLA_LINGUAS); do $(MAKE) $(srcdir)/$$t.po; done
+	@-for t in @FILEZILLA_LINGUAS@; do $(MAKE) $(srcdir)/$$t.po; done
 
 allmo:
-	@for t in $(FILEZILLA_LINGUAS); do $(MAKE) $(srcdir)/$$t.mo; done
+	@for t in @FILEZILLA_LINGUAS@; do $(MAKE) $(srcdir)/$$t.mo; done
 
 # print out the percentage of the translated strings
 stats:
 	@ALLTOTAL=0 ALLTR=0 ALLFZ=0 ALLUT=0; \
-	for i in $(FILEZILLA_LINGUAS); do \
+	for i in @FILEZILLA_LINGUAS@; do \
 		if [ -f $$i.mo~ ]; then rm $$i.mo~; fi; \
 		res=`LC_ALL="en_EN" $(MSGFMT) -o $$i.mo~ "$(srcdir)/$$i.po" 2>&1`; \
 		if [ -f $$i.mo~ ]; then rm $$i.mo~; fi; \
