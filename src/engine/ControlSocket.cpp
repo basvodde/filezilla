@@ -18,6 +18,8 @@ COpData::COpData()
 	opState = 0;
 
 	pNextOpData = 0;
+
+	waitForAsyncRequest = false;
 }
 
 COpData::~COpData()
@@ -112,6 +114,8 @@ int CControlSocket::Connect(const CServer &server)
 	resolver->Create();
 	resolver->Run();
 
+	if (m_pCurrentServer)
+		delete m_pCurrentServer;
 	m_pCurrentServer = new CServer(server);
 
 	return FZ_REPLY_WOULDBLOCK;
@@ -184,7 +188,7 @@ enum Command CControlSocket::GetCurrentCommandId() const
 
 int CControlSocket::ResetOperation(int nErrorCode)
 {
-	LogMessage(Debug_Verbose, _T("CControlSocket::TransferEnd(%d)"), nErrorCode);
+	LogMessage(Debug_Verbose, _T("CControlSocket::ResetOperation(%d)"), nErrorCode);
 	
 	if (nErrorCode & FZ_REPLY_WOULDBLOCK)
 	{

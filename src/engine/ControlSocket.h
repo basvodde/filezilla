@@ -13,6 +13,8 @@ public:
 	int opState;
 	enum Command opId;
 
+	bool waitForAsyncRequest;
+
 	COpData *pNextOpData;
 };
 

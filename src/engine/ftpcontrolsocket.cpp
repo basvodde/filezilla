@@ -16,7 +16,7 @@ CFileTransferOpData::CFileTransferOpData()
 	tryAbsolutePath = false;
 	bTriedPasv = bTriedActive = false;
 	fileSize = -1;
-	waitAsyncRequest = false;
+	transferEndReason = 0;
 }
 
 CFileTransferOpData::~CFileTransferOpData()
@@ -54,7 +54,7 @@ public:
 		
 		waitChallenge = false;
 		gotPassword = false;
-		waitAsyncRequest = false;
+		waitForAsyncRequest = false;
 
 	}
 
@@ -68,7 +68,7 @@ public:
 
 	wxString challenge; // Used for interactive logons
 	bool waitChallenge;
-	bool waitAsyncRequest;
+	bool waitForAsyncRequest;
 	bool gotPassword;
 };
 
@@ -321,7 +321,7 @@ int CFtpControlSocket::LogonSend()
 				pNotification->server = *m_pCurrentServer;
 				pNotification->challenge = pData->challenge;
 				pNotification->requestNumber = m_pEngine->GetNextAsyncRequestNumber();
-				pData->waitAsyncRequest = true;
+				pData->waitForAsyncRequest = true;
 				pData->challenge = _T("");
 				m_pEngine->AddNotification(pNotification);
 
@@ -374,6 +374,7 @@ public:
 		opId = cmd_list;
 
 		bTriedPasv = bTriedActive = false;
+		transferEndReason = 0;
 	}
 
 	virtual ~CListOpData()
@@ -389,6 +390,8 @@ public:
 
 	CServerPath path;
 	wxString subDir;
+
+	int transferEndReason;
 };
 
 enum listStates
@@ -654,6 +657,12 @@ int CFtpControlSocket::ListParseResponse()
 			error = true;
 		else
 		{
+			if (pData->transferEndReason)
+			{
+				error = true;
+				break;
+			}
+			
 			CDirectoryListing *pListing = m_pTransferSocket->m_pDirectoryListingParser->Parse(m_CurrentPath);
 
 			CDirectoryCache cache;
@@ -746,6 +755,12 @@ int CFtpControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("SendNextCommand called without active operation"));
 		ResetOperation(FZ_REPLY_ERROR);
 		return FZ_REPLY_ERROR;
+	}
+
+	if (m_pCurOpData->waitForAsyncRequest)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Waiting for async request, ignoring SendNextCommand"));
+		return FZ_REPLY_WOULDBLOCK;
 	}
 
 	switch (m_pCurOpData->opId)
@@ -1089,6 +1104,8 @@ int CFtpControlSocket::FileTransferParseResponse()
 			}
 			pData->fileSize = size;
 		}
+		else if (code == 2 || code == 3)
+			LogMessage(Debug_Info, _T("Invalid SIZE reply"));
 		break;
 	case filetransfer_mdtm:
 		pData->opState = filetransfer_type;
@@ -1272,8 +1289,13 @@ int CFtpControlSocket::FileTransferParseResponse()
 			error = true;
 		else
 		{
-			ResetOperation(FZ_REPLY_OK);
-			return FZ_REPLY_OK;
+			if (pData->transferEndReason)
+				error = true;
+			else
+			{
+				ResetOperation(FZ_REPLY_OK);
+				return FZ_REPLY_OK;
+			}
 		}
 		break;
 	default:
@@ -1524,18 +1546,22 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 void CFtpControlSocket::TransferEnd(int reason)
 {
 	LogMessage(Debug_Verbose, _T("CFtpControlSocket::TransferEnd(%d)"), reason);
-	
-	if (reason)
+
+	// If m_pTransferSocket is zero, the message was sent by the previous command.
+	// We can safely ignore it.
+	// It does not cause problems, since before creating the next transfer socket, other
+	// messages which were added to the queue later than this one will be processed first.
+	if (!m_pCurOpData || !m_pTransferSocket)
 	{
-		ResetOperation(FZ_REPLY_ERROR);
+		LogMessage(Debug_Verbose, _T("TransferEnd message from previous operation"), reason);
 		return;
 	}
+	
+	// Even is reason indicates a failure, don't reset operation
+	// yet, wait for the reply to the LIST/RETR/... commands
 
 	if (GetCurrentCommandId() == cmd_list)
 	{
-		if (!m_pCurOpData)
-			return;
-			
 		CListOpData *pData = static_cast<CListOpData *>(m_pCurOpData);
 		if (pData->opState < list_list || pData->opState == list_waitlist || pData->opState == list_waitlistpre)
 		{
@@ -1543,6 +1569,8 @@ void CFtpControlSocket::TransferEnd(int reason)
 			ResetOperation(FZ_REPLY_ERROR);
 			return;
 		}
+
+		pData->transferEndReason = reason;
 
 		switch (pData->opState)
 		{
@@ -1554,15 +1582,20 @@ void CFtpControlSocket::TransferEnd(int reason)
 			break;
 		case list_waitsocket:
 			{
-				CDirectoryListing *pListing = m_pTransferSocket->m_pDirectoryListingParser->Parse(m_CurrentPath);
+				if (!reason)
+				{
+					CDirectoryListing *pListing = m_pTransferSocket->m_pDirectoryListingParser->Parse(m_CurrentPath);
 
-				CDirectoryCache cache;
-				cache.Store(*pListing, *m_pCurrentServer, pData->path, pData->subDir);
+					CDirectoryCache cache;
+					cache.Store(*pListing, *m_pCurrentServer, pData->path, pData->subDir);
 	
-				CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing);
-				m_pEngine->AddNotification(pNotification);
+					CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing);
+					m_pEngine->AddNotification(pNotification);
 
-				ResetOperation(FZ_REPLY_OK);
+					ResetOperation(FZ_REPLY_OK);
+				}
+				else
+					ResetOperation(FZ_REPLY_ERROR);
 			}
 			break;
 		default:
@@ -1572,9 +1605,6 @@ void CFtpControlSocket::TransferEnd(int reason)
 	}
 	else if (GetCurrentCommandId() == cmd_transfer)
 	{
-		if (!m_pCurOpData)
-			return;
-			
 		CFileTransferOpData *pData = static_cast<CFileTransferOpData *>(m_pCurOpData);
 		if (pData->opState < filetransfer_transfer || pData->opState == filetransfer_waittransfer || pData->opState == filetransfer_waittransferpre)
 		{
@@ -1582,6 +1612,8 @@ void CFtpControlSocket::TransferEnd(int reason)
 			ResetOperation(FZ_REPLY_ERROR);
 			return;
 		}
+
+		pData->transferEndReason = reason;
 
 		switch (pData->opState)
 		{
@@ -1593,7 +1625,10 @@ void CFtpControlSocket::TransferEnd(int reason)
 			break;
 		case filetransfer_waitsocket:
 			{
-				ResetOperation(FZ_REPLY_OK);
+				if (reason)
+					ResetOperation(FZ_REPLY_ERROR);
+				else
+					ResetOperation(FZ_REPLY_OK);
 			}
 			break;
 		default:
@@ -1703,7 +1738,7 @@ int CFtpControlSocket::CheckOverwriteFile()
 
 
 	pNotification->requestNumber = m_pEngine->GetNextAsyncRequestNumber();
-	pData->waitAsyncRequest = true;
+	pData->waitForAsyncRequest = true;
 
 	m_pEngine->AddNotification(pNotification);
 
@@ -1724,12 +1759,12 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 	
 			CFileTransferOpData *pData = static_cast<CFileTransferOpData *>(m_pCurOpData);
 
-			if (!pData->waitAsyncRequest)
+			if (!pData->waitForAsyncRequest)
 			{
 				LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Not waiting for request reply, ignoring request reply %d"), pNotification->GetRequestID());
 				return false;
 			}
-			pData->waitAsyncRequest = false;
+			pData->waitForAsyncRequest = false;
 			
 			CFileExistsNotification *pFileExistsNotification = reinterpret_cast<CFileExistsNotification *>(pNotification);
 			switch (pFileExistsNotification->overwriteAction)
@@ -1849,12 +1884,12 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 	
 			CLogonOpData* pData = static_cast<CLogonOpData*>(m_pCurOpData);
 
-			if (!pData->waitAsyncRequest)
+			if (!pData->waitForAsyncRequest)
 			{
 				LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Not waiting for request reply, ignoring request reply %d"), pNotification->GetRequestID());
 				return false;
 			}
-			pData->waitAsyncRequest = false;
+			pData->waitForAsyncRequest = false;
 
 			CInteractiveLoginNotification *pInteractiveLoginNotification = reinterpret_cast<CInteractiveLoginNotification *>(pNotification);
 			if (!pInteractiveLoginNotification->passwordSet)

@@ -84,8 +84,8 @@ public:
 	wxFileOffset fileSize;
 
 	wxFile *pFile;
-
-	bool waitAsyncRequest;
+	
+	int transferEndReason;
 };
 
 

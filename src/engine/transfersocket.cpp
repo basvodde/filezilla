@@ -33,6 +33,8 @@ CTransferSocket::CTransferSocket(CFileZillaEngine *pEngine, CFtpControlSocket *p
 
 	m_pTransferBuffer = 0;
 	m_transferBufferPos = 0;
+	
+	m_transferEnd = false;
 }
 
 CTransferSocket::~CTransferSocket()
@@ -100,6 +102,7 @@ void CTransferSocket::OnSocketEvent(wxSocketEvent &event)
 
 void CTransferSocket::OnConnect(wxSocketEvent &event)
 {
+	m_pControlSocket->LogMessage(::Debug_Verbose, _T("OnConnect"));
 	if (m_pSocketServer)
 	{
 		wxSocketBase *pSocket = m_pSocketServer->Accept(false);
@@ -322,8 +325,10 @@ void CTransferSocket::SetActive()
 
 void CTransferSocket::TransferEnd(int reason)
 {
-	if (!m_pSocket)
+	if (m_transferEnd)
 		return;
+	m_transferEnd = true;
+
 	if (!m_pSocketClient && !m_pSocketServer)
 		delete m_pSocket;
 	m_pSocket = 0;

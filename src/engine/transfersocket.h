@@ -16,7 +16,7 @@ class CTransferSocket : public wxEvtHandler
 {
 public:
 	CTransferSocket(CFileZillaEngine *pEngine, CFtpControlSocket *pControlSocket, enum TransferMode transferMode);
-	~CTransferSocket();
+	virtual ~CTransferSocket();
 
 	wxString SetupActiveTransfer();
 	bool SetupPassiveTransfer(wxString host, int port);
@@ -46,6 +46,7 @@ protected:
 	CFtpControlSocket *m_pControlSocket;
 
 	bool m_bActive;
+	bool m_transferEnd; // Set to true if TransferEnd was called
 
 	enum TransferMode m_transferMode;
 
