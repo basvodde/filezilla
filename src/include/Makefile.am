@@ -1,5 +1,6 @@
 # these are the headers for your project
 
-noinst_HEADERS = FileZilla.h commands.h logging.h optionsbase.h \
-		 serverpath.h FileZillaEngine.h setup.h notification.h \
-		 server.h directorylisting.h timeex.h
+noinst_HEADERS = commands.h directorylisting.h FileZilla.h FileZillaEngine.h \
+		 logging.h notification.h optionsbase.h server.h \
+		 serverpath.h setup.h timeex.h
+

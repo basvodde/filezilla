@@ -9,15 +9,14 @@ INCLUDES = -I$(srcdir)/../include
 # this is the program that gets installed.  it's name is used for all
 # of the other Makefile.am variables
 # lib_LIBRARIES = libengine.a
-libengine_a_SOURCES = FileZillaEngine.cpp ControlSocket.cpp commands.cpp \
-			ftpcontrolsocket.cpp server.cpp serverpath.cpp \
-			logging.cpp notification.cpp asynchostresolver.cpp \
-                        directorylistingparser.cpp directorylisting.cpp \
-			directorycache.cpp transfersocket.cpp timeex.cpp
+libengine_a_SOURCES = asynchostresolver.cpp commands.cpp ControlSocket.cpp \
+		directorycache.cpp directorylisting.cpp directorylistingparser.cpp \
+		FileZillaEngine.cpp ftpcontrolsocket.cpp logging.cpp \
+		notification.cpp server.cpp serverpath.cpp timeex.cpp \
+		transfersocket.cpp
 
-noinst_HEADERS = asynchostresolver.h ControlSocket.h \
-			engine_private.h ftpcontrolsocket.h \
-			logging_private.h directorylistingparser.h \
-			directorycache.h transfersocket.h
+noinst_HEADERS = asynchostresolver.h ControlSocket.h directorycache.h \
+		directorylistingparser.h engine_private.h ftpcontrolsocket.h \
+		logging_private.h transfersocket.h
 
 dist_noinst_DATA = engine.vcproj
