@@ -1,4 +1,4 @@
-AUTOMAKE_OPTIONS = 1.7
+AUTOMAKE_OPTIONS = 1.6
 
 SUBDIRS = . src locales
 

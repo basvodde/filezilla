@@ -9,7 +9,7 @@ set -x
 automake -a -c -f
 set +x
 if test ! -f configure || test ! -f config/ltmain.sh || test ! -f Makefile.in; then
-  export WANT_AUTOMAKE="1.7"
+  export WANT_AUTOMAKE="1.6"
   aclocal
   libtoolize --automake -c -f
   autoconf
