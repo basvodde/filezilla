@@ -49,7 +49,6 @@ else
 	AC_MSG_ERROR([wxWidgets 2.5.1 or newer is required])
 fi
 
-AC_MSG_CHECKING([checking whether running inside MinGW32 environment])
 if test "x$host_os" = "xmingw32"; then
 	if test ! `$WXCONFIG --libs | grep -e '-l(wx)?png'`; then
 		AC_ARG_WITH(png-lib,
