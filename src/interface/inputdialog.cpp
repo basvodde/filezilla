@@ -36,7 +36,7 @@ wxString WrapText(const wxString &text, unsigned long
 
 		if (lineLength > maxLength)
 		{
-			wrappedText += text.SubString(lastCut, lastBlank) + '\n';
+			wrappedText += text.SubString(lastCut, lastBlank) + _T("\n");
 			lineLength -= saveLength;
 			lastCut = lastBlank + 1;
 		}
@@ -108,10 +108,10 @@ bool CInputDialog::SelectText(int start, int end)
 
 void CInputDialog::OnOK(wxCommandEvent& event)
 {
-	EndDialog(wxID_OK);
+	EndModal(wxID_OK);
 }
 
 void CInputDialog::OnCancel(wxCommandEvent& event)
 {
-	EndDialog(wxID_CANCEL);
+	EndModal(wxID_CANCEL);
 }
