@@ -43,7 +43,7 @@ bool CState::SetLocalDir(wxString dir)
 	else
 	{
 #ifdef __WXMSW__
-			m_localDir.Replace(_T("\\"), _T("/"));
+		m_localDir.Replace(_T("\\"), _T("/"));
 #endif
 
 		if (m_localDir == _T("/"))
@@ -66,6 +66,9 @@ bool CState::SetLocalDir(wxString dir)
 		m_localDir = _T("\\");
 
 	m_localDir.Replace(_T("/"), _T("\\"));
+#else
+	if (m_localDir == _T(""))
+		m_localDir = _T("/");
 #endif
 
 	if (m_pLocalListView)

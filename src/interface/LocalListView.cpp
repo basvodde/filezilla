@@ -201,7 +201,7 @@ wxString CLocalListView::OnGetItemText(long item, long column) const
 // See comment to OnGetItemText
 int CLocalListView::OnGetItemImage(long item) const
 {
-    CLocalListView *pThis = const_cast<CLocalListView *>(this);
+	CLocalListView *pThis = const_cast<CLocalListView *>(this);
 	t_fileData *data = pThis->GetData(item);
 	if (!data)
 		return -1;
@@ -284,7 +284,10 @@ void CLocalListView::FreeImageList()
 
 void CLocalListView::OnItemActivated(wxListEvent &event)
 {
-	m_pState->SetLocalDir(event.GetText());
+	t_fileData *data = GetData(event.GetIndex());
+	if (!data)
+		return;
+	m_pState->SetLocalDir(data->name);
 }
 
 #ifdef __WXMSW__
