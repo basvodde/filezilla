@@ -41,6 +41,8 @@ protected:
 
 	wxString GetType(wxString name, bool dir);
 
+	int FindItemWithPrefix(const wxString& prefix, int start);
+
 	struct t_fileData
 	{
 		CDirentry *pDirEntry;
@@ -57,6 +59,7 @@ protected:
 	static int CmpName(CRemoteListView *pList, unsigned int index, t_fileData &refData);
 	static int CmpType(CRemoteListView *pList, unsigned int index, t_fileData &refData);
 	static int CmpSize(CRemoteListView *pList, unsigned int index, t_fileData &refData);
+
 
 	// Processes the directory listing in case of a recursive operation
 	void ProcessDirectoryListing();
@@ -103,6 +106,10 @@ protected:
 	void OnMenuMkdir(wxCommandEvent& event);
 	void OnMenuDelete(wxCommandEvent& event);
 	void OnMenuRename(wxCommandEvent& event);
+	void OnChar(wxKeyEvent& event);
+
+	wxDateTime m_lastKeyPress;
+	wxString m_prefix;
 };
 
 #endif

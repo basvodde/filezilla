@@ -25,6 +25,7 @@ BEGIN_EVENT_TABLE(CRemoteListView, wxListCtrl)
 	EVT_MENU(XRCID("ID_MKDIR"), CRemoteListView::OnMenuMkdir)
 	EVT_MENU(XRCID("ID_DELETE"), CRemoteListView::OnMenuDelete)
 	EVT_MENU(XRCID("ID_RENAME"), CRemoteListView::OnMenuRename)
+	EVT_CHAR(CRemoteListView::OnChar)
 END_EVENT_TABLE()
 
 #ifdef __WXMSW__
@@ -788,11 +789,20 @@ void CRemoteListView::OnMenuDelete(wxCommandEvent& event)
 			break;
 
 		if (!item)
+		{
+			wxBell();
 			return;
+		}
 
 		if (!IsItemValid(item))
+		{
+			wxBell();
 			return;
+		}
 	}
+
+	if (wxMessageBox(_("Really delete all selected files and/or directories?"), _("Confirmation needed"), wxICON_QUESTION | wxYES_NO, this) != wxYES)
+		return;
 
 	item = -1;
 	while (true)
@@ -936,4 +946,113 @@ void CRemoteListView::StopRecursiveOperation()
 	m_dirsToVisit.clear();
 	m_visitedDirs.clear();
 	m_dirsToDelete.clear();
+}
+
+void CRemoteListView::OnChar(wxKeyEvent& event)
+{
+	int code = event.GetKeyCode();
+	if (code == WXK_DELETE)
+	{
+		if (GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) == -1)
+		{
+			wxBell();
+			return;
+		}
+
+		wxCommandEvent tmp;
+		OnMenuDelete(tmp);
+		return;
+	}
+	else if (code > 32 && code < 300 && !event.HasModifiers())
+	{
+		// Keyboard navigation within items
+		wxDateTime now = wxDateTime::UNow();
+		if (m_lastKeyPress.IsValid())
+		{
+			wxTimeSpan span = now - m_lastKeyPress;
+			if (span.GetSeconds() >= 1)
+				m_prefix = _T("");
+		}
+		m_lastKeyPress = now;
+
+		wxChar tmp[2];
+#ifdef wxUSE_UNICODE
+		tmp[0] = event.GetUnicodeKey();
+#else
+		tmp[0] = code;
+#endif
+		tmp[1] = 0;
+		wxString newPrefix = m_prefix + tmp;
+		
+		bool beep = false;
+		int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		if (item != -1)
+		{
+			wxString text;
+			if (!item)
+				text = _T("..");
+			else
+				text = GetData(item)->pDirEntry->name;
+			if (text.Length() >= m_prefix.Length() && !m_prefix.CmpNoCase(text.Left(m_prefix.Length())))
+				beep = true;
+		}
+		else if (m_prefix == _T(""))
+			beep = true;
+
+		int start = item;
+		if (start < 0)
+			start = 0;
+
+		int newPos = FindItemWithPrefix(newPrefix, (item >= 0) ? item : 0);
+
+		if (newPos == -1 && m_prefix == tmp && item != -1 && beep)
+		{
+			// Search the next item that starts with the same letter
+			newPrefix = m_prefix;
+			newPos = FindItemWithPrefix(newPrefix, item + 1);
+		}
+	
+		m_prefix = newPrefix;
+		if (newPos == -1)
+		{
+			if (beep)
+				wxBell();
+			return;
+		}
+
+		item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		while (item != -1)
+		{
+			SetItemState(item, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+			item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		}
+		SetItemState(newPos, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+		EnsureVisible(newPos);
+	}
+	else
+		event.Skip();
+}
+
+int CRemoteListView::FindItemWithPrefix(const wxString& prefix, int start)
+{
+	for (int i = start; i < (GetItemCount() + start); i++)
+	{
+		int item = i % GetItemCount();
+		wxString fn;
+		if (!item)
+		{
+			fn = _T("..");
+			fn = fn.Left(prefix.Length());
+		}
+		else
+		{
+			t_fileData* data = GetData(item);
+			if (!data)
+				continue;
+			fn = data->pDirEntry->name.Left(prefix.Length());
+		}
+		if (!fn.CmpNoCase(prefix))
+			return i % GetItemCount();
+	}
+	return -1;
 }

@@ -30,15 +30,6 @@ protected:
 #endif
 	wxString GetType(wxString name, bool dir);
 
-	// Event handlers
-	void OnItemActivated(wxListEvent& event);
-	void OnColumnClicked(wxListEvent& event);
-	void OnContextMenu(wxContextMenuEvent& event);
-	void OnMenuUpload(wxCommandEvent& event);
-	void OnMenuMkdir(wxCommandEvent& event);
-	void OnMenuDelete(wxCommandEvent& event);
-	void OnMenuRename(wxCommandEvent& event);
-
 	struct t_fileData
 	{
 		wxString name;
@@ -60,6 +51,8 @@ protected:
 	static int CmpType(CLocalListView *pList, unsigned int index, t_fileData &refData);
 	static int CmpSize(CLocalListView *pList, unsigned int index, t_fileData &refData);
 
+	int FindItemWithPrefix(const wxString& prefix, int start);
+
 	wxString m_dir;
 
 	std::vector<t_fileData> m_fileData;
@@ -77,7 +70,19 @@ protected:
 	int m_sortColumn;
 	int m_sortDirection;
 
-	DECLARE_EVENT_TABLE()
+	wxDateTime m_lastKeyPress;
+	wxString m_prefix;
+
+	// Event handlers
+	DECLARE_EVENT_TABLE();
+	void OnItemActivated(wxListEvent& event);
+	void OnColumnClicked(wxListEvent& event);
+	void OnContextMenu(wxContextMenuEvent& event);
+	void OnMenuUpload(wxCommandEvent& event);
+	void OnMenuMkdir(wxCommandEvent& event);
+	void OnMenuDelete(wxCommandEvent& event);
+	void OnMenuRename(wxCommandEvent& event);
+	void OnChar(wxKeyEvent& event);
 };
 
 #endif

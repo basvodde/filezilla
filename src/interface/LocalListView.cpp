@@ -23,6 +23,7 @@ BEGIN_EVENT_TABLE(CLocalListView, wxListCtrl)
 	EVT_MENU(XRCID("ID_MKDIR"), CLocalListView::OnMenuMkdir)
 	EVT_MENU(XRCID("ID_DELETE"), CLocalListView::OnMenuDelete)
 	EVT_MENU(XRCID("ID_RENAME"), CLocalListView::OnMenuRename)
+	EVT_CHAR(CLocalListView::OnChar)
 END_EVENT_TABLE()
 
 #ifdef __WXMSW__
@@ -946,4 +947,112 @@ void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 
 void CLocalListView::OnMenuRename(wxCommandEvent& event)
 {
+}
+
+void CLocalListView::OnChar(wxKeyEvent& event)
+{
+	int code = event.GetKeyCode();
+	if (code == WXK_DELETE)
+	{
+		if (GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) == -1)
+		{
+			wxBell();
+			return;
+		}
+
+		wxCommandEvent tmp;
+		OnMenuDelete(tmp);
+	}
+	else if (code > 32 && code < 300 && !event.HasModifiers())
+	{
+		// Keyboard navigation within items
+		wxDateTime now = wxDateTime::UNow();
+		if (m_lastKeyPress.IsValid())
+		{
+			wxTimeSpan span = now - m_lastKeyPress;
+			if (span.GetSeconds() >= 1)
+				m_prefix = _T("");
+		}
+		m_lastKeyPress = now;
+
+		wxChar tmp[2];
+#ifdef wxUSE_UNICODE
+		tmp[0] = event.GetUnicodeKey();
+#else
+		tmp[0] = code;
+#endif
+		tmp[1] = 0;
+		wxString newPrefix = m_prefix + tmp;
+		
+		bool beep = false;
+		int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		if (item != -1)
+		{
+			wxString text;
+			if (!item)
+				text = _T("..");
+			else
+				text = GetData(item)->name;
+			if (text.Length() >= m_prefix.Length() && !m_prefix.CmpNoCase(text.Left(m_prefix.Length())))
+				beep = true;
+		}
+		else if (m_prefix == _T(""))
+			beep = true;
+
+		int start = item;
+		if (start < 0)
+			start = 0;
+
+		int newPos = FindItemWithPrefix(newPrefix, (item >= 0) ? item : 0);
+
+		if (newPos == -1 && m_prefix == tmp && item != -1 && beep)
+		{
+			// Search the next item that starts with the same letter
+			newPrefix = m_prefix;
+			newPos = FindItemWithPrefix(newPrefix, item + 1);
+		}
+	
+		m_prefix = newPrefix;
+		if (newPos == -1)
+		{
+			if (beep)
+				wxBell();
+			return;
+		}
+
+		item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		while (item != -1)
+		{
+			SetItemState(item, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+			item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		}
+		SetItemState(newPos, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+		EnsureVisible(newPos);
+	}
+	else
+		event.Skip();
+}
+
+int CLocalListView::FindItemWithPrefix(const wxString& prefix, int start)
+{
+	for (int i = start; i < (GetItemCount() + start); i++)
+	{
+		int item = i % GetItemCount();
+		wxString fn;
+		if (!item)
+		{
+			fn = _T("..");
+			fn = fn.Left(prefix.Length());
+		}
+		else
+		{
+			t_fileData* data = GetData(item);
+			if (!data)
+				continue;
+			fn = data->name.Left(prefix.Length());
+		}
+		if (!fn.CmpNoCase(prefix))
+			return i % GetItemCount();
+	}
+	return -1;
 }
