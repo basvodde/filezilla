@@ -8,6 +8,7 @@ CFileExistsDlg::CFileExistsDlg(CFileExistsNotification *pNotification)
 {
 	m_pNotification = pNotification;
 	m_pAction = 0;
+	m_action = 0;
 }
 
 bool CFileExistsDlg::Create(wxWindow* parent)
@@ -221,4 +222,22 @@ void CFileExistsDlg::LoadIcon(int id, const wxString &file)
 			}
 		}
 	}
+}
+
+void CFileExistsDlg::OnOK(wxCommandEvent& event)
+{
+	if (m_pAction)
+		m_action = m_pAction->GetValue();
+	else
+		m_action = 0;
+}
+
+int CFileExistsDlg::GetAction() const
+{
+	return m_action;
+}
+
+void CFileExistsDlg::OnCancel(wxCommandEvent& event)
+{
+	m_action = 4;
 }

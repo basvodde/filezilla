@@ -178,6 +178,13 @@ enum Command CControlSocket::GetCurrentCommandId() const
 
 int CControlSocket::ResetOperation(int nErrorCode)
 {
+	LogMessage(Debug_Verbose, _T("CControlSocket::TransferEnd(%d)"), nErrorCode);
+	
+	if (nErrorCode & FZ_REPLY_WOULDBLOCK)
+	{
+		LogMessage(::Debug_Warning, _T("ResetOperation with FZ_REPLY_WOULDBLOCK in nErrorCode (%d)"), nErrorCode);
+	}
+	
 	if (m_pCurOpData)
 	{
 		delete m_pCurOpData;

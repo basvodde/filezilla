@@ -14,13 +14,18 @@ public:
 
 	/// Creates the controls and sizers
 	void CreateControls();
-
-	wxRadioButton* m_pAction;
+	
+	int GetAction() const;
 
 protected:
+	virtual void OnOK(wxCommandEvent& event);
+	virtual void OnCancel(wxCommandEvent& event);
+	
 	void LoadIcon(int id, const wxString &file);
 
 	CFileExistsNotification *m_pNotification;
+	wxRadioButton* m_pAction;
+	int m_action;
 };
 
 #endif //__FILEEXISTSDLG_H__

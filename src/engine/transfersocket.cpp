@@ -199,8 +199,6 @@ void CTransferSocket::OnSend()
 
 void CTransferSocket::OnClose(wxSocketEvent &event)
 {
-	if (m_pSocket)
-for(int i = 0; i < 1000;i++)		OnReceive();
 	TransferEnd(0);
 }
 

@@ -22,7 +22,7 @@ CFtpControlSocket::~CFtpControlSocket()
 #define BUFFERSIZE 4096
 void CFtpControlSocket::OnReceive(wxSocketEvent &event)
 {
-	LogMessage(__TFILE__, __LINE__, this, Debug_Verbose, _T("OnReceive()"));
+	LogMessage(Debug_Verbose, _T("CFtpControlSocket::OnReceive()"));
 
 	char *buffer = new char[BUFFERSIZE];
 	Read(buffer, BUFFERSIZE);
@@ -303,6 +303,8 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 
 int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 {
+	LogMessage(Debug_Verbose, _T("CFtpControlSocket::ListSend(%d)"), prevResult);
+		
 	if (!m_pCurOpData)
 	{
 		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
@@ -311,6 +313,7 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 	}
 
 	CListOpData *pData = static_cast<CListOpData *>(m_pCurOpData);
+	LogMessage(Debug_Debug, _T("  state = %d"), pData->opState);
 
 	if (pData->opState == list_waitcwd)
 	{
@@ -390,6 +393,8 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 
 int CFtpControlSocket::ListParseResponse()
 {
+	LogMessage(Debug_Verbose, _T("CFtpControlSocket::ListParseResponse()"));
+	
 	if (!m_pCurOpData)
 	{
 		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
@@ -400,8 +405,12 @@ int CFtpControlSocket::ListParseResponse()
 	CListOpData *pData = static_cast<CListOpData *>(m_pCurOpData);
 	if (pData->opState == list_init)
 		return FZ_REPLY_ERROR;
-
+	
 	int code = GetReplyCode();
+	
+	LogMessage(Debug_Debug, _T("  code = %d"), code);
+	LogMessage(Debug_Debug, _T("  state = %d"), pData->opState);
+	
 	bool error = false;
 	switch (pData->opState)
 	{
@@ -500,7 +509,7 @@ int CFtpControlSocket::ListParseResponse()
 		}
 		break;
 	default:
-		LogMessage(Debug_Warning, __TFILE__, __LINE__, _T("Unknown op state"));
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Unknown op state"));
 		error = true;
 	}
 	if (error)
@@ -544,6 +553,8 @@ bool CFtpControlSocket::ParsePwdReply(wxString reply)
 
 int CFtpControlSocket::ResetOperation(int nErrorCode)
 {
+	LogMessage(Debug_Verbose, _T("CFtpControlSocket::ResetOperation(%d)"), nErrorCode);
+	
 	delete m_pTransferSocket;
 	m_pTransferSocket = 0;
 
@@ -561,9 +572,10 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 
 int CFtpControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
 {
+	LogMessage(Debug_Verbose, _T("CFtpControlSocket::SendNextCommand(%d)"), prevResult);
 	if (!m_pCurOpData)
 	{
-		LogMessage(Debug_Warning, __TFILE__, __LINE__, _T("SendNextCommand called without active operation"));
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("SendNextCommand called without active operation"));
 		ResetOperation(FZ_REPLY_ERROR);
 		return FZ_REPLY_ERROR;
 	}
@@ -801,8 +813,8 @@ enum filetransferStates
 
 int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath &remotePath, const wxString &remoteFile, bool download)
 {
-	LogMessage(__TFILE__, __LINE__, this, Debug_Verbose, _T("FileTransfer()"));
-
+	LogMessage(Debug_Verbose, _T("CFtpControlSocket::FileTransfer()"));
+	
 	if (download)
 	{
 		wxString filename = remotePath.GetPath() + remoteFile;
@@ -883,7 +895,7 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 
 int CFtpControlSocket::FileTransferParseResponse()
 {
-	LogMessage(__TFILE__, __LINE__, this, Debug_Verbose, _T("FileTransferParseResponse()"));
+	LogMessage(Debug_Verbose, _T("FileTransferParseResponse()"));
 
 	if (!m_pCurOpData)
 		return FZ_REPLY_ERROR;
@@ -1139,7 +1151,7 @@ int CFtpControlSocket::FileTransferParseResponse()
 		}
 		break;
 	default:
-		LogMessage(Debug_Warning, __TFILE__, __LINE__, _T("Unknown op state"));
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Unknown op state"));
 		error = true;
 		break;
 	}
@@ -1155,7 +1167,7 @@ int CFtpControlSocket::FileTransferParseResponse()
 
 int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 {
-	LogMessage(__TFILE__, __LINE__, this, Debug_Verbose, _T("FileTransferSend()"));
+	LogMessage(Debug_Verbose, _T("FileTransferSend()"));
 
 	if (!m_pCurOpData)
 	{
@@ -1362,6 +1374,8 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 
 void CFtpControlSocket::TransferEnd(int reason)
 {
+	LogMessage(Debug_Verbose, _T("CFtpControlSocket::TransferEnd(%d)"), reason);
+	
 	if (reason)
 	{
 		ResetOperation(FZ_REPLY_ERROR);
@@ -1376,7 +1390,7 @@ void CFtpControlSocket::TransferEnd(int reason)
 		CListOpData *pData = static_cast<CListOpData *>(m_pCurOpData);
 		if (pData->opState < list_list || pData->opState == list_waitlist || pData->opState == list_waitlistpre)
 		{
-			LogMessage(Debug_Info, __TFILE__, __LINE__, _T("Call to TransferEnd at unusual time"));
+			LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Call to TransferEnd at unusual time"));
 			ResetOperation(FZ_REPLY_ERROR);
 			return;
 		}
@@ -1403,7 +1417,7 @@ void CFtpControlSocket::TransferEnd(int reason)
 			}
 			break;
 		default:
-			LogMessage(Debug_Warning, __TFILE__, __LINE__, _T("Unknown op state"));
+			LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Unknown op state"));
 			ResetOperation(FZ_REPLY_ERROR);
 		}
 	}
@@ -1415,7 +1429,7 @@ void CFtpControlSocket::TransferEnd(int reason)
 		CFileTransferOpData *pData = static_cast<CFileTransferOpData *>(m_pCurOpData);
 		if (pData->opState < filetransfer_transfer || pData->opState == filetransfer_waittransfer || pData->opState == filetransfer_waittransferpre)
 		{
-			LogMessage(Debug_Info, __TFILE__, __LINE__, _T("Call to TransferEnd at unusual time"));
+			LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Call to TransferEnd at unusual time"));
 			ResetOperation(FZ_REPLY_ERROR);
 			return;
 		}
@@ -1434,7 +1448,7 @@ void CFtpControlSocket::TransferEnd(int reason)
 			}
 			break;
 		default:
-			LogMessage(Debug_Warning, __TFILE__, __LINE__, _T("Unknown op state"));
+			LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Unknown op state"));
 			ResetOperation(FZ_REPLY_INTERNALERROR);
 		}
 	}
