@@ -392,7 +392,7 @@ bool CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDi
 
 		if (path.IsEmpty())
 		{
-			if (m_CurrentPath.IsEmpty)
+			if (m_CurrentPath.IsEmpty())
 				m_nOpState = list_pwd;
 			else
 				m_nOpState = list_port_pasv;
