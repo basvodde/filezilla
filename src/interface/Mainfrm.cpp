@@ -12,6 +12,7 @@
 #include "asyncrequestqueue.h"
 #include "led.h"
 #include "sitemanager.h"
+#include "settingsdialog.h"
 
 #ifndef __WXMSW__
 #include "resources/filezilla.xpm"
@@ -106,17 +107,11 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 
 	m_transferStatusTimer.SetOwner(this, TRANSFERSTATUS_TIMER_ID);
 
-	CreateToolBar();
 	CreateMenus();
+	CreateToolBar();
 	CreateQuickconnectBar();
 
 	m_ViewSplitterSashPos = 0.5;
-
-#ifdef __WXMSW__
-	long style = wxSP_NOBORDER | wxSP_LIVE_UPDATE;
-#else
-	long style = wxSP_3DBORDER | wxSP_LIVE_UPDATE;
-#endif
 
 	m_pOptions = new COptions;
 
@@ -124,6 +119,12 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_pEngine->Init(this, m_pOptions);
 	
 	m_pCommandQueue = new CCommandQueue(m_pEngine, this);
+
+#ifdef __WXMSW__
+	long style = wxSP_NOBORDER | wxSP_LIVE_UPDATE;
+#else
+	long style = wxSP_3DBORDER | wxSP_LIVE_UPDATE;
+#endif
 
 	wxSize clientSize = GetClientSize();
 	if (m_pBottomSplitter)
@@ -297,7 +298,12 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 
 		m_pCommandQueue->ProcessCommand(new CRawCommand(dlg.GetValue()));		
 	}
-	event.Skip();
+	else if (event.GetId() == XRCID("ID_MENU_EDIT_SETTINGS"))
+	{
+		OnMenuEditSettings(event);
+	}
+	else
+		event.Skip();
 }
 
 void CMainFrame::OnQuickconnect(wxCommandEvent &event)
@@ -838,3 +844,11 @@ void CMainFrame::OnUpdateToolbarProcessQueue(wxUpdateUIEvent& event)
 	event.Check(m_pQueueView->IsActive() != 0);
 }
 
+void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
+{
+	CSettingsDialog dlg(m_pOptions);
+	if (!dlg.Create(this))
+		return;
+
+	int res = dlg.ShowModal();
+}

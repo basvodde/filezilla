@@ -14,7 +14,9 @@ filezilla_SOURCES = FileZilla.cpp LocalListView.cpp LocalTreeView.cpp \
 			RemoteListView.cpp RemoteTreeView.cpp StatusView.cpp \
 			state.cpp commandqueue.cpp fileexistsdlg.cpp \
                         asyncrequestqueue.cpp led.cpp sitemanager.cpp \
-			statuslinectrl.cpp xmlfunctions.cpp ipcmutex.cpp
+			statuslinectrl.cpp xmlfunctions.cpp ipcmutex.cpp \
+			settingsdialog.cpp optionspage.cpp optionspage_passive.cpp \
+			optionspage_filetype.cpp
 if USE_BINRELOC
 filezilla_SOURCES += prefix.cpp
 endif
@@ -24,7 +26,9 @@ noinst_HEADERS = 	LocalListView.h Mainfrm.h QueueView.h \
 			RemoteListView.h StatusView.h state.h commandqueue.h \
 			fileexistsdlg.h asyncrequestqueue.h led.h \
 			sitemanager.h statuslinectrl.h prefix.h \
-			prefix.h xmlfunctions.h filezillaapp.h ipcmutex.h
+			prefix.h xmlfunctions.h filezillaapp.h ipcmutex.h \
+			settingsdialog.h optionspage.h optionspage_passive.h \
+			optionspage_filetype.h
 
 if USE_RESOURCEFILE
 RESOURCEFILE = resources/filezilla.o

@@ -1,5 +1,5 @@
 #ifndef __OPTIONS_H__
-#define __OPTIONS_H_
+#define __OPTIONS_H__
 
 #define OPTIONS_NUM (OPTIONS_ENGINE_NUM + 2)
 
@@ -49,4 +49,4 @@ protected:
 	bool m_acquired;
 };
 
-#endif
+#endif //__OPTIONS_H__

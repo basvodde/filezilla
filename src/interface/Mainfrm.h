@@ -82,6 +82,7 @@ protected:
 	void OnSiteManager(wxCommandEvent& event);
 	void OnProcessQueue(wxCommandEvent& event);
 	void OnUpdateToolbarProcessQueue(wxUpdateUIEvent& event);
+	void OnMenuEditSettings(wxCommandEvent& event);
 
 	float m_ViewSplitterSashPos;
 	bool m_bInitDone;

@@ -818,4 +818,305 @@ Would you like to replace the file</label>
       </object>
     </object>
   </object>
+  <object class="wxDialog" name="ID_SETTINGS">
+    <title>Settings</title>
+    <centered>1</centered>
+    <object class="wxBoxSizer">
+      <orient>wxHORIZONTAL</orient>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>Select &amp;page:</label>
+            </object>
+            <flag>wxBOTTOM</flag>
+            <border>5</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxTreeCtrl" name="ID_TREE">
+              <size>150,-1</size>
+              <style>wxTR_LINES_AT_ROOT|wxTR_HIDE_ROOT</style>
+            </object>
+            <option>1</option>
+          </object>
+          <object class="sizeritem">
+            <object class="wxButton" name="wxID_OK">
+              <label>&amp;OK</label>
+            </object>
+            <flag>wxTOP|wxBOTTOM|wxGROW</flag>
+            <border>5</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxButton" name="wxID_CANCEL">
+              <label>&amp;Cancel</label>
+            </object>
+            <flag>wxBOTTOM|wxGROW</flag>
+            <border>2</border>
+          </object>
+        </object>
+        <flag>wxALL|wxGROW</flag>
+        <border>7</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxStaticText" name="ID_NAME">
+              <label>&lt;pagename&gt;</label>
+              <style></style>
+            </object>
+            <flag></flag>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticLine"/>
+          </object>
+          <object class="sizeritem">
+            <object class="wxPanel" name="ID_PAGEPANEL"/>
+          </object>
+        </object>
+        <flag>wxTOP|wxBOTTOM|wxRIGHT</flag>
+        <border>7</border>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_FILETYPE">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Default transfer type:</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxRadioButton" name="ID_TYPE_AUTO">
+              <label>&amp;Auto</label>
+            </object>
+            <flag>wxALL</flag>
+            <border>4</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxRadioButton" name="ID_TYPE_ASCII">
+              <label>A&amp;scii</label>
+            </object>
+            <flag>wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxRadioButton" name="ID_TYPE_BINARY">
+              <label>&amp;Binary</label>
+            </object>
+            <flag>wxALL</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <flag>wxBOTTOM|wxGROW</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Automatic file type classification</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>Treat the &amp;following filetypes as Ascii files:</label>
+            </object>
+            <flag>wxALL</flag>
+            <border>4</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxHORIZONTAL</orient>
+              <object class="sizeritem">
+                <object class="wxListBox" name="ID_EXTENSIONS">
+                  <content/>
+                  <size>90,150</size>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxBoxSizer">
+                  <orient>wxVERTICAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_EXTENSION">
+                      <size>90,-1</size>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxButton" name="ID_ADD">
+                      <label>A&amp;dd</label>
+                    </object>
+                    <flag>wxTOP|wxBOTTOM|wxGROW</flag>
+                    <border>5</border>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxButton" name="ID_REMOVE">
+                      <label>&amp;Remove</label>
+                    </object>
+                    <flag>wxGROW</flag>
+                  </object>
+                </object>
+                <flag>wxLEFT|wxRIGHT</flag>
+                <border>5</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>If you enter the wrong filetypes,\nthose files may get corrupted\nwhen transferred.</label>
+                </object>
+              </object>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxCheckBox" name="ID_ASCIIWITHOUT">
+              <label>Treat files &amp;without extention as Ascii file</label>
+              <checked>1</checked>
+            </object>
+            <flag>wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxCheckBox" name="ID_ASCIIDOTFILE">
+              <label>Treat dotfiles (filenames starting with a dot) as Ascii files</label>
+              <checked>1</checked>
+            </object>
+            <flag>wxALL</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <flag>wxTOP|wxGROW</flag>
+        <border>5</border>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_PASSIVE">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Passive Mode</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxCheckBox" name="ID_PASSIVE">
+              <label>&amp;Use passive mode</label>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxVERTICAL</orient>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>If you have problems to retrieve directory listings or to transfer files,\ntry to toggle the passive mode setting.</label>
+                </object>
+                <flag>wxLEFT</flag>
+                <border>19</border>
+              </object>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Limit local ports</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxCheckBox" name="ID_LIMITPORTS">
+              <label>&amp;Limit local ports used by FileZilla</label>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxHORIZONTAL</orient>
+              <object class="spacer">
+                <size>18,0</size>
+              </object>
+              <object class="sizeritem">
+                <object class="wxBoxSizer">
+                  <orient>wxVERTICAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>By default uses any available local port to establish connections\nand transfers. If you want to limit FileZilla to use only a small range of ports,\nplease enter the port range below.</label>
+                    </object>
+                    <flag>wxBOTTOM</flag>
+                    <border>5</border>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxFlexGridSizer">
+                      <cols>2</cols>
+                      <rows>2</rows>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>L&amp;owest available port:</label>
+                        </object>
+                        <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxTextCtrl" name="ID_LOWESTPORT">
+                          <size>50,-1</size>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>&amp;Highest available port:</label>
+                        </object>
+                        <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxTextCtrl" name="ID_HIGHESTPORT">
+                          <size>50,-1</size>
+                        </object>
+                      </object>
+                      <vgap>5</vgap>
+                      <hgap>5</hgap>
+                    </object>
+                  </object>
+                </object>
+              </object>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <flag>wxTOP|wxBOTTOM|wxGROW</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Active mode IP</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>If you are behind a router, FileZilla may not be able to detect your external\nIP address for active (non-passive) transfers. In this case you should enter the\nexternal IP address here.</label>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxHORIZONTAL</orient>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>&amp;External IP address:</label>
+                </object>
+                <flag>wxRIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                <border>5</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="ID_EXTERNALADDRESS"/>
+              </object>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+    </object>
+  </object>
 </resource>
