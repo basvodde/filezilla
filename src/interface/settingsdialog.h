@@ -30,6 +30,7 @@ protected:
 	void OnPageChanged(wxTreeEvent& event);
 	void OnOK(wxCommandEvent& event);
 	void OnCancel(wxCommandEvent& event);
+	void OnChar(wxKeyEvent& event);
 };
 
 #endif //__SETTINGSDIALOG_H__

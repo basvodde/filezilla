@@ -25,8 +25,9 @@ enum pagenames
 BEGIN_EVENT_TABLE(CSettingsDialog, wxDialog)
 EVT_TREE_SEL_CHANGING(XRCID("ID_TREE"), CSettingsDialog::OnPageChanging)
 EVT_TREE_SEL_CHANGED(XRCID("ID_TREE"), CSettingsDialog::OnPageChanged)
-EVT_BUTTON(XRCID("ID_OK"), CSettingsDialog::OnOK)
-EVT_BUTTON(XRCID("ID_CANCEL"), CSettingsDialog::OnCancel)
+EVT_BUTTON(XRCID("wxID_OK"), CSettingsDialog::OnOK)
+EVT_BUTTON(XRCID("wxID_CANCEL"), CSettingsDialog::OnCancel)
+EVT_CHAR_HOOK(CSettingsDialog::OnChar)
 END_EVENT_TABLE()
 
 CSettingsDialog::CSettingsDialog(COptions* pOptions)
@@ -155,4 +156,12 @@ void CSettingsDialog::OnPageChanging(wxTreeEvent& event)
 
 	if (!m_activePanel->Validate())
 		event.Veto();
+}
+
+void CSettingsDialog::OnChar(wxKeyEvent& event)
+{
+	if (event.m_keyCode == WXK_ESCAPE)
+		EndModal(wxID_OK);
+	else
+		event.Skip();
 }
