@@ -73,6 +73,10 @@ void CControlSocket::OnSend(wxSocketEvent &event)
 		}
 
 		int numsent = LastCount();
+
+		if (numsent)
+			m_pEngine->SetActive(false);
+
 		if (numsent == m_nSendBufferLen)
 		{
 			m_nSendBufferLen = 0;
@@ -251,6 +255,9 @@ bool CControlSocket::Send(const char *buffer, int len)
 		}
 		else
 			numsent = LastCount();
+
+		if (numsent)
+			m_pEngine->SetActive(false);
 
 		if (numsent < len)
 		{

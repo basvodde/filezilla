@@ -91,3 +91,22 @@ enum RequestId CFileExistsNotification::GetRequestID() const
 {
 	return reqId_fileexists;
 }
+
+CActiveNotification::CActiveNotification(bool recv)
+{
+	m_recv = recv;
+}
+
+CActiveNotification::~CActiveNotification()
+{
+}
+
+enum NotificationId CActiveNotification::GetID() const
+{
+	return nId_active;
+}
+
+bool CActiveNotification::IsRecv() const
+{
+	return m_recv;
+}

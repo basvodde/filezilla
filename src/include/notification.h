@@ -23,7 +23,8 @@ enum NotificationId
 	nId_connection, // connection information: connects, disconnects, timeouts etc..
 	nId_transfers, // transfer information: bytes transferes, transfer speed and such
 	nId_listing, // directory listings
-	nId_asyncrequest // asynchronous request
+	nId_asyncrequest, // asynchronous request
+	nId_active // sent if data gets either received or sent
 };
 
 class CNotification
@@ -117,6 +118,17 @@ public:
 	enum OverwriteAction overwriteAction;
 	
 	wxString newName; //Will contain the new filename if overwriteAction is rename
+};
+
+class CActiveNotification : public CNotification
+{
+public:
+	CActiveNotification(bool recv);
+	virtual ~CActiveNotification();
+	virtual enum NotificationId GetID() const;
+	bool IsRecv() const;
+protected:
+	bool m_recv;
 };
 
 #endif

@@ -41,6 +41,7 @@ CFileZillaEngine::CFileZillaEngine()
 #else
 	m_asyncRequestCounter = (0xFFFFFFFF / RAND_MAX) * rand();
 #endif
+	m_activeStatusSend = m_activeStatusRecv = 0;
 }
 
 CFileZillaEngine::~CFileZillaEngine()
@@ -329,3 +330,49 @@ int CFileZillaEngine::GetNextAsyncRequestNumber()
 	return ++m_asyncRequestCounter;
 }
 
+bool CFileZillaEngine::IsActive(bool recv)
+{
+	if (recv)
+	{
+		if (m_activeStatusRecv == 2)
+		{
+			m_activeStatusRecv = 1;
+			return true;
+		}
+		else
+		{
+			m_activeStatusRecv = 0;
+			return false;
+		}
+	}
+	else
+	{
+		if (m_activeStatusSend == 2)
+		{
+			m_activeStatusSend = 1;
+			return true;
+		}
+		else
+		{
+			m_activeStatusSend = 0;
+			return false;
+		}
+	}
+	return false;
+}
+
+void CFileZillaEngine::SetActive(bool recv)
+{
+	if (recv)
+	{
+		if (!m_activeStatusRecv)
+			AddNotification(new CActiveNotification(true));
+		m_activeStatusRecv = 2;
+	}
+	else
+	{
+		if (!m_activeStatusSend)
+			AddNotification(new CActiveNotification(false));
+		m_activeStatusSend = 2;
+	}
+}

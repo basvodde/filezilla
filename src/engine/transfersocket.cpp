@@ -139,7 +139,10 @@ void CTransferSocket::OnReceive()
 		int numread = m_pSocket->LastCount();
 
 		if (numread > 0)
+		{
+			m_pEngine->SetActive(true);
 			m_pDirectoryListingParser->AddData(pBuffer, numread);
+		}
 		else
 		{
 			delete [] pBuffer;
@@ -169,6 +172,7 @@ void CTransferSocket::OnReceive()
 
 		if (numread > 0)
 		{
+			m_pEngine->SetActive(true);
 			if (pData->leftSize > 0)
 			{
 				if (pData->leftSize > numread)
@@ -244,6 +248,9 @@ void CTransferSocket::OnSend()
 		if (!m_pSocket->Error())
 		{
 			numsent = m_pSocket->LastCount();
+			if (numsent > 0)
+				m_pEngine->SetActive(true);
+
 			if (pData->leftSize > 0)
 			{
 				if (pData->leftSize > numsent)

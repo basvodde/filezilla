@@ -8,7 +8,7 @@ dist_resources_DATA = menus.xrc quickconnectbar.xrc dropdown.png \
 		disconnect.png toolbar.xrc cancel.png \
 		empty.xpm up.xpm down.xpm filezilla.xpm \
 		dialogs.xrc reconnect.png \
-		refresh.png
+		refresh.png leds.png
 
 if USE_RESOURCEFILE
 noinst_DATA = filezilla.o

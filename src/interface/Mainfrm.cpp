@@ -10,6 +10,7 @@
 #include "Options.h"
 #include "commandqueue.h"
 #include "asyncrequestqueue.h"
+#include "led.h"
 
 #ifndef __WXMSW__
 #include "resources/filezilla.xpm"
@@ -18,6 +19,9 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+#define RECVLED_TIMER_ID wxID_HIGHEST + 1
+#define SENDLED_TIMER_ID wxID_HIGHEST + 2
 
 BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
     EVT_SIZE(CMainFrame::OnSize)
@@ -36,6 +40,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_REFRESH"), CMainFrame::OnUpdateToolbarRefresh)
 	EVT_TOOL(XRCID("ID_TOOLBAR_REFRESH"), CMainFrame::OnRefresh)
 	EVT_CLOSE(CMainFrame::OnClose)
+	EVT_TIMER(wxID_ANY, CMainFrame::OnTimer)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
@@ -55,16 +60,40 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_pRemoteSplitter = NULL;
 	m_bInitDone = false;
 
+#ifdef __WXMSW__
+	m_windowIsMaximized = false;
+#endif
+
 	m_pState = new CState();
 
-	m_pStatusBar = CreateStatusBar(8, wxST_SIZEGRIP);
-	int array[8];
-	for (int i = 1; i < 6; i++)
-		array[i] = wxSB_NORMAL;
-	array[0] = wxSB_FLAT;
-	array[6] = wxSB_FLAT;
-	array[7] = wxSB_FLAT;
-	m_pStatusBar->SetStatusStyles(8, array);
+	m_pStatusBar = CreateStatusBar(7, wxST_SIZEGRIP);
+	if (m_pStatusBar)
+	{
+		m_pStatusBar->Connect(wxID_ANY, wxEVT_SIZE, (wxObjectEventFunction)CMainFrame::OnStatusbarSize, 0, this);
+		int array[7];
+		for (int i = 1; i < 6; i++)
+			array[i] = wxSB_NORMAL;
+		array[0] = wxSB_FLAT;
+		array[6] = wxSB_FLAT;
+		m_pStatusBar->SetStatusStyles(7, array);
+
+		int statbarWidths[7];
+		for (int i = 0; i < 6; i++)
+			statbarWidths[i] = -1;
+		statbarWidths[6] = 41;
+		m_pStatusBar->SetStatusWidths(7, statbarWidths);
+		
+		m_pRecvLed = new CLed(m_pStatusBar, 1);
+		m_pSendLed = new CLed(m_pStatusBar, 0);
+		m_RecvLedTimer.SetOwner(this, RECVLED_TIMER_ID);
+		m_SendLedTimer.SetOwner(this, SENDLED_TIMER_ID);
+	}
+	else
+	{
+		m_pRecvLed = 0;
+		m_pSendLed = 0;
+	}
+
 
 	CreateToolBar();
 	CreateMenus();
@@ -336,6 +365,28 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 		case nId_asyncrequest:
 			m_pAsyncRequestQueue->AddRequest(m_pEngine, reinterpret_cast<CAsyncRequestNotification *>(pNotification));
 			break;
+		case nId_active:
+			{
+				CActiveNotification *pActiveNotification = reinterpret_cast<CActiveNotification *>(pNotification);
+				if (pActiveNotification->IsRecv())
+				{
+					if (m_pRecvLed && !m_RecvLedTimer.IsRunning())
+					{
+						m_pRecvLed->Set();
+						m_RecvLedTimer.Start(100);
+					}
+				}
+				else
+				{
+					if (m_pSendLed && !m_SendLedTimer.IsRunning())
+					{
+						m_pSendLed->Set();
+						m_SendLedTimer.Start(100);
+					}
+				}
+				delete pNotification;
+			}
+			break;
 		default:
 			delete pNotification;
 			break;
@@ -433,6 +484,8 @@ void CMainFrame::OnSplitterSashPosChanged(wxSplitterEvent& event)
 
 void CMainFrame::OnClose(wxCloseEvent &event)
 {
+	m_SendLedTimer.Stop();
+	m_RecvLedTimer.Stop();
 	if (m_pCommandQueue)
 		m_pCommandQueue->Cancel();
 	Destroy();
@@ -474,4 +527,73 @@ void CMainFrame::OnRefresh(wxCommandEvent &event)
 
 	if (m_pState)
 		m_pState->RefreshLocal();
+}
+
+void CMainFrame::OnStatusbarSize(wxSizeEvent& event)
+{
+	if (!m_pStatusBar)
+		return;
+
+#ifdef __WXMSW__
+	if (IsMaximized() && !m_windowIsMaximized)
+	{
+		m_windowIsMaximized = true;
+		int statbarWidths[7];
+		for (int i = 0; i < 6; i++)
+			statbarWidths[i] = -1;
+		statbarWidths[6] = 35;
+		m_pStatusBar->SetStatusWidths(7, statbarWidths);
+		m_pStatusBar->Refresh();
+	}
+	else if (!IsMaximized() && m_windowIsMaximized)
+	{
+		m_windowIsMaximized = false;
+		int statbarWidths[7];
+		for (int i = 0; i < 6; i++)
+			statbarWidths[i] = -1;
+		statbarWidths[6] = 41;
+		m_pStatusBar->SetStatusWidths(7, statbarWidths);
+		m_pStatusBar->Refresh();
+	}
+#endif
+
+	if (m_pSendLed)
+	{
+		wxRect rect;
+		m_pStatusBar->GetFieldRect(6, rect);
+		m_pSendLed->SetSize(rect.GetLeft() + 16, rect.GetTop() + (rect.GetHeight() - 11) / 2, -1, -1);
+	}
+
+	if (m_pRecvLed)
+	{
+		wxRect rect;
+		m_pStatusBar->GetFieldRect(6, rect);
+		m_pRecvLed->SetSize(rect.GetLeft() + 2, rect.GetTop() + (rect.GetHeight() - 11) / 2, -1, -1);
+	}
+}
+
+void CMainFrame::OnTimer(wxTimerEvent& event)
+{
+	if (event.GetId() == RECVLED_TIMER_ID && m_RecvLedTimer.IsRunning())
+	{
+		if (!m_pEngine)
+			return;
+
+		if (!m_pEngine->IsActive(true))
+		{
+			m_pRecvLed->Unset();
+			m_RecvLedTimer.Stop();
+		}
+	}
+	else if (event.GetId() == SENDLED_TIMER_ID && m_SendLedTimer.IsRunning())
+	{
+		if (!m_pEngine)
+			return;
+
+		if (!m_pEngine->IsActive(false))
+		{
+			m_pSendLed->Unset();
+			m_SendLedTimer.Stop();
+		}
+	}
 }

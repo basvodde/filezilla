@@ -11,6 +11,7 @@ class CState;
 class COptions;
 class CCommandQueue;
 class CAsyncRequestQueue;
+class CLed;
 
 class CMainFrame : public wxFrame
 {
@@ -39,6 +40,8 @@ protected:
 	CLocalListView *m_pLocalListView;
 	CRemoteTreeView *m_pRemoteTreeView;
 	CRemoteListView *m_pRemoteListView;
+	CLed *m_pRecvLed, *m_pSendLed;
+	wxTimer m_SendLedTimer, m_RecvLedTimer;
 
 	// Event handlers
 	void OnSize(wxSizeEvent& event);
@@ -57,6 +60,8 @@ protected:
 	void OnReconnect(wxCommandEvent &event);
 	void OnUpdateToolbarRefresh(wxUpdateUIEvent &event);
 	void OnRefresh(wxCommandEvent &event);
+	void OnStatusbarSize(wxSizeEvent& event);
+	void OnTimer(wxTimerEvent& event);
 
 	float m_ViewSplitterSashPos;
 	bool m_bInitDone;
@@ -65,6 +70,10 @@ protected:
 	CCommandQueue *m_pCommandQueue;
 	COptions *m_pOptions;
 	CAsyncRequestQueue *m_pAsyncRequestQueue;
+
+#ifdef __WXMSW__
+	bool m_windowIsMaximized;
+#endif
 	
 	CState *m_pState;
 

@@ -14,8 +14,9 @@ class wxFzEngineEvent;
 class CFileZillaEngine : protected wxEvtHandler
 {
 	friend class CControlSocket;
+	friend class CFtpControlSocket;
 	friend class CAsyncHostResolver;
-	friend class CTransferSocket; // Only calls SendEvent(engineTransferEnd)
+	friend class CTransferSocket; // Only calls SendEvent(engineTransferEnd) and SetActive
 public:
 	CFileZillaEngine();
 	virtual ~CFileZillaEngine();
@@ -26,6 +27,8 @@ public:
 
 	bool IsBusy() const;
 	bool IsConnected() const;
+	
+	bool IsActive(bool recv); // Return true only if data has been transferred or sent since the last check
 
 	void AddNotification(CNotification *pNotification);
 	CNotification *GetNextNotification();
@@ -49,6 +52,8 @@ protected:
 	int FileTransfer(const CFileTransferCommand &command);
 
 	int ResetOperation(int nErrorCode);
+	
+	void SetActive(bool recv);
 
 	wxEvtHandler *m_pEventHandler;
 	CControlSocket *m_pControlSocket;
@@ -64,6 +69,10 @@ protected:
 	COptionsBase *m_pOptions;
 
 	unsigned int m_asyncRequestCounter; // Initialized to random value, increased by one on each request
+
+	// Indicicates if data has been received/sent and whether to send any notifications
+	int m_activeStatusSend;
+	int m_activeStatusRecv;
 
 	DECLARE_EVENT_TABLE();
 };

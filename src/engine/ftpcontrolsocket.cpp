@@ -44,6 +44,8 @@ void CFtpControlSocket::OnReceive(wxSocketEvent &event)
 		return;
 	}
 
+	m_pEngine->SetActive(true);
+
 	for (int i = 0; i < numread; i++)
 	{
 		if (buffer[i] == '\r' ||

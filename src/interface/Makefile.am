@@ -13,12 +13,12 @@ filezilla_SOURCES = FileZilla.cpp LocalListView.cpp LocalTreeView.cpp \
 			Mainfrm.cpp Options.cpp QueueView.cpp \
 			RemoteListView.cpp RemoteTreeView.cpp StatusView.cpp \
 			state.cpp commandqueue.cpp fileexistsdlg.cpp \
-                        asyncrequestqueue.cpp
+                        asyncrequestqueue.cpp led.cpp
 
 noinst_HEADERS = 	LocalListView.h Mainfrm.h QueueView.h \
 			RemoteTreeView.h LocalTreeView.h Options.h \
 			RemoteListView.h StatusView.h state.h commandqueue.h \
-			fileexistsdlg.h asyncrequestqueue.h
+			fileexistsdlg.h asyncrequestqueue.h led.h
 
 if USE_RESOURCEFILE
 RESOURCEFILE = resources/filezilla.o
