@@ -206,7 +206,7 @@ void CTransferSocket::OnSend()
 		m_pTransferBuffer = new char[BUFFERSIZE];
 	
 	CFileTransferOpData *pData = static_cast<CFileTransferOpData *>(m_pControlSocket->m_pCurOpData);
-	int numsent;
+	int numsent = 0;
 	do
 	{
 		if (m_transferBufferPos * 2 < BUFFERSIZE)

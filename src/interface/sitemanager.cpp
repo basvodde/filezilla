@@ -741,5 +741,6 @@ void CSiteManager::OnRemoteDirBrowse(wxCommandEvent& event)
 
 void CSiteManager::OnItemActivated(wxTreeEvent& event)
 {
-	OnConnect(wxCommandEvent());
+	wxCommandEvent cmdEvent;
+	OnConnect(cmdEvent);
 }

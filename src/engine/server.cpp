@@ -95,14 +95,14 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 	}
 	else
 	{
-		if (port == -1)
+		if (!port)
 		{
 			if (m_protocol == FTP)
 				port = 21;
 			else
 				port = 21;
 		}
-		else if (port < 1 || port > 65535)
+		else if (port > 65535)
 		{
 			error = _("Invalid port given. The port has to be a value from 1 to 65535.");
 			return false;
