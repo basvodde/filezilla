@@ -29,6 +29,9 @@
 ;--------------------------------
 ;Interface Settings
 
+  !define MUI_ICON "../src/interface/resources/FileZilla.ico"
+  !define MUI_UNICON "uninstall.ico"
+
   !define MUI_ABORTWARNING
 
 ;--------------------------------
@@ -71,12 +74,19 @@ Section "FileZilla 3" SecMain
   File "..\src\interface\resources\*.xrc"
   File "..\src\interface\resources\*.png"
   File "..\src\interface\resources\*.xpm"
+  File "..\src\interface\resources\themes.xml"
 
   SetOutPath "$INSTDIR\resources\16x16"
   File "..\src\interface\resources\16x16\*.png"
 
   SetOutPath "$INSTDIR\resources\32x32"
   File "..\src\interface\resources\32x32\*.png"
+  
+  SetOutPath "$INSTDIR\resources\cyril\16x16"
+  File "..\src\interface\resources\cyril\16x16\*.png"
+
+  SetOutPath "$INSTDIR\resources\cyril\32x32"
+;  File "..\src\interface\resources\cyril\32x32\*.png"
   
   ;Store installation folder
   WriteRegStr HKCU "Software\FileZilla 3" "" $INSTDIR
@@ -127,8 +137,11 @@ Section "Uninstall"
   Delete "$INSTDIR\resources\*.xrc"
   Delete "$INSTDIR\resources\*.png"
   Delete "$INSTDIR\resources\*.xpm"
+  Delete "$INSTDIR\resources\themes.xml"
   Delete "$INSTDIR\resources\16x16\*.png"
   Delete "$INSTDIR\resources\32x32\*.png"
+  Delete "$INSTDIR\resources\cyril\16x16\*.png"
+  Delete "$INSTDIR\resources\cyril\32x32\*.png"
 
   Delete "$INSTDIR\locales\de\LC_MESSAGES\filezilla.mo"
 
@@ -139,6 +152,9 @@ Section "Uninstall"
   RMDir "$INSTDIR\locales"
   RMDir "$INSTDIR\resources\32x32"
   RMDir "$INSTDIR\resources\16x16"
+  RMDir "$INSTDIR\resources\cyril\32x32"
+  RMDir "$INSTDIR\resources\cyril\16x16"
+  RMDir "$INSTDIR\resources\cyril"
   RMDir "$INSTDIR\resources"
   RMDir "$INSTDIR"
 
