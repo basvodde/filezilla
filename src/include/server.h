@@ -14,22 +14,31 @@ enum ServerType
 	DOS
 };
 
+enum LogonType
+{
+	ANONYMOUS,
+	NORMAL
+};
+
 class CServerPath;
 class CServer
 {
 public:
 
-	// No error checking is done in the constructor
+	// No error checking is done in the constructors
 	CServer();
 	CServer(wxString host, int port);
 	CServer(wxString host, int port, wxString user, wxString pass = _T(""));
-	CServer(enum ServerProtocol protocol, wxString host, int port);
-	CServer(enum ServerProtocol protocol, wxString host, int port, wxString user, wxString pass = _T(""));
+	CServer(enum ServerProtocol protocol, enum ServerType type, wxString host, int port);
+	CServer(enum ServerProtocol protocol, enum ServerType type, wxString host, int port, wxString user, wxString pass = _T(""));
 
-	ServerProtocol GetProtocol() const;
-	ServerType GetType() const;
+	void SetType(enum ServerType type);
+	
+	enum ServerProtocol GetProtocol() const;
+	enum ServerType GetType() const;
 	wxString GetHost() const;
 	int GetPort() const;
+	enum LogonType GetLogonType() const;
 	wxString GetUser() const;
 	wxString GetPass() const;
 	
@@ -44,10 +53,11 @@ public:
 	bool operator==(const CServer &op) const;
 
 protected:
-	ServerProtocol m_Protocol;
-	ServerType m_Type;
+	enum ServerProtocol m_Protocol;
+	enum ServerType m_Type;
 	wxString m_Host;
 	int m_Port;
+	enum LogonType m_logonType;
 	wxString m_User;
 	wxString m_Pass;
 };

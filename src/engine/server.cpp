@@ -5,6 +5,7 @@ CServer::CServer()
 	m_Port = 21;
 	m_Protocol = FTP;
 	m_Type = DEFAULT;
+	m_logonType = ANONYMOUS;
 }
 
 bool CServer::ParseUrl(wxString host, int port, wxString user, wxString pass, wxString &error, CServerPath &path)
@@ -113,6 +114,10 @@ bool CServer::ParseUrl(wxString host, int port, wxString user, wxString pass, wx
 
 	m_Host = host;
 	m_Port = port;
+	if (!m_User || m_User == _T("anonymous"))
+		m_logonType = ANONYMOUS;
+	else
+		m_logonType = NORMAL;
 	m_User = user;
 	m_Pass = pass;
 
@@ -141,11 +146,17 @@ int CServer::GetPort() const
 
 wxString CServer::GetUser() const
 {
+	if (m_logonType == ANONYMOUS)
+		return _T("anonymous");
+	
 	return m_User;
 }
 
 wxString CServer::GetPass() const
 {
+	if (m_logonType == ANONYMOUS)
+		return _T("anon@localhost");
+	
 	return m_Pass;
 }
 
@@ -155,6 +166,7 @@ CServer& CServer::operator=(const CServer &op)
 	m_Type = op.m_Type;
 	m_Host = op.m_Host;
 	m_Port = op.m_Port;
+	m_logonType = op.m_logonType;
 	m_User = op.m_User;
 	m_Pass = op.m_Pass;
 
@@ -171,10 +183,45 @@ bool CServer::operator==(const CServer &op) const
 		return false;
 	else if (m_Port != op.m_Port)
 		return false;
-	else if (m_User != op.m_User)
+	else if (m_logonType != op.m_logonType)
 		return false;
-	else if (m_Pass != op.m_Pass)
-		return false;
+	else if (m_logonType != ANONYMOUS)
+	{
+		if (m_User != op.m_User)
+			return false;
+		else if (m_Pass != op.m_Pass)
+			return false;
+	}
 
 	return true;
+}
+
+CServer::CServer(enum ServerProtocol protocol, enum ServerType type, wxString host, int port, wxString user, wxString pass /*=_T("")*/)
+{
+	m_Protocol = protocol;
+	m_Type = type;
+	m_Host = host;
+	m_Port = port;
+	m_logonType = NORMAL;
+	m_User = user;
+	m_Pass = pass;
+}
+
+CServer::CServer(enum ServerProtocol protocol, enum ServerType type, wxString host, int port)
+{
+	m_Protocol = protocol;
+	m_Type = type;
+	m_Host = host;
+	m_Port = port;
+	m_logonType = ANONYMOUS;
+}
+
+void CServer::SetType(enum ServerType type)
+{
+	m_Type = type;
+}
+
+enum LogonType CServer::GetLogonType() const
+{
+	return m_logonType;
 }

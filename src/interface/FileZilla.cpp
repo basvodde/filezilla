@@ -37,7 +37,7 @@ bool CFileZillaApp::OnInit()
 		fn = wxFileName(buffer, _T(""));
 		fn.AppendDir(_T("FileZilla"));
 		if (!fn.DirExists())
-			wxMkdir(fn.GetPath(), 700);
+			wxMkdir(fn.GetPath(), 0700);
 	}
 	else
 	{
@@ -49,7 +49,7 @@ bool CFileZillaApp::OnInit()
 	wxFileName fn = wxFileName(wxGetHomeDir(), _T(""));
 	fn.AppendDir(_T(".filezilla"));
 	if (!fn.DirExists())
-		wxMkdir(fn.GetPath(), 700);
+		wxMkdir(fn.GetPath(), 0700);
 #endif
 	dataPath = fn.GetPath();
 

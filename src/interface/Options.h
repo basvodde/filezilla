@@ -11,6 +11,7 @@ struct t_OptionsCache
 };
 
 class TiXmlDocument;
+class TiXmlElement;
 class COptions : public COptionsBase
 {
 public:
@@ -22,8 +23,17 @@ public:
 
 	virtual bool SetOption(unsigned int nID, int value);
 	virtual bool SetOption(unsigned int nID, wxString value);
-
+	
+	TiXmlElement* GetXml();
+	void FreeXml();
+	
+	// path is element path below document root, separated by slashes
+	void SetServer(wxString path, const CServer& server);
+	bool GetServer(wxString path, CServer& server);
+	
 protected:
+	char* ConvUTF8(wxString value) const;
+	wxString ConvLocal(const char *value) const;
 	void Validate(unsigned int nID, int &value);
 	void Validate(unsigned int nID, wxString &value);
 
@@ -32,10 +42,14 @@ protected:
 
 	void CreateNewXmlDocument();
 
+	void SetServer(TiXmlElement *node, const CServer& server);
+	bool GetServer(TiXmlElement *node, CServer& server);
+	
 	TiXmlDocument *m_pXmlDocument;
 	bool m_allowSave;
 
 	t_OptionsCache m_optionsCache[OPTIONS_NUM];
+	bool m_acquired;
 };
 
 #endif

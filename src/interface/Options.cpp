@@ -1,9 +1,9 @@
 #include "FileZilla.h"
 #include "Options.h"
-
 #include "../tinyxml/tinyxml.h"
 
-enum Type {
+enum Type
+{
 	string,
 	number
 };
@@ -22,6 +22,8 @@ static const t_Option options[OPTIONS_NUM] =
 
 COptions::COptions()
 {
+	m_acquired = false;
+	
 	for (unsigned int i = 0; i < OPTIONS_NUM; i++)
 		m_optionsCache[i].cached = false;
 
@@ -184,15 +186,8 @@ void COptions::CreateNewXmlDocument()
 void COptions::SetXmlValue(unsigned int nID, wxString value)
 {
 	// No checks are made about the validity of the value, that's done in SetOption
-	const wxWCharBuffer buffer = wxConvCurrent->cWX2WC(value);
-
-	int len = 0;
-	while (buffer.data()[len])
-		len++;
-
-	char *utf8 = new char[len * 2 + 2];
-	wxMBConvUTF8 conv;
-	conv.WC2MB(utf8, buffer, len * 2 + 2);
+	
+	char *utf8 = ConvUTF8(value);
 
 	TiXmlElement *settings = m_pXmlDocument->FirstChildElement("FileZilla3")->FirstChildElement("Settings");
 	if (!settings)
@@ -266,7 +261,7 @@ bool COptions::GetXmlValue(unsigned int nID, wxString &value)
 		if (!text || !text->ToText())
 			return false;
 		
-		value = wxString(wxConvUTF8.cMB2WC(text->Value()), *wxConvCurrent);
+		value = ConvLocal(text->Value());
 
 		return true;
 	}
@@ -280,4 +275,220 @@ void COptions::Validate(unsigned int nID, int &value)
 
 void COptions::Validate(unsigned int nID, wxString &value)
 {
+}
+
+TiXmlElement *COptions::GetXml()
+{
+	if (m_acquired)
+		return 0;
+	
+	return m_pXmlDocument->FirstChildElement("FileZilla3");
+}
+
+void COptions::FreeXml()
+{
+	m_acquired = false;
+	
+	if (m_allowSave)
+	{
+		extern wxString dataPath;
+		wxFileName file = wxFileName(dataPath, _T("filezilla.xml"));
+		m_pXmlDocument->SaveFile(file.GetFullPath().mb_str());
+	}
+}
+
+void COptions::SetServer(TiXmlElement *node, const CServer& server)
+{
+	if (!node)
+		return;
+	
+	node->Clear();
+	
+	TiXmlElement element("");
+	
+	element = TiXmlElement("Host");
+	element.InsertEndChild(TiXmlText(ConvUTF8(server.GetHost())));
+	node->InsertEndChild(element);
+
+	element = TiXmlElement("Port");
+	element.InsertEndChild(TiXmlText(ConvUTF8(wxString::Format(_T("%d"), server.GetPort()))));
+	node->InsertEndChild(element);
+	
+	element = TiXmlElement("Protocol");
+	element.InsertEndChild(TiXmlText(ConvUTF8(wxString::Format(_T("%d"), server.GetProtocol()))));
+	node->InsertEndChild(element);
+	
+	element = TiXmlElement("Type");
+	element.InsertEndChild(TiXmlText(ConvUTF8(wxString::Format(_T("%d"), server.GetType()))));
+	node->InsertEndChild(element);
+	
+	element = TiXmlElement("Logontype");
+	element.InsertEndChild(TiXmlText(ConvUTF8(wxString::Format(_T("%d"), server.GetLogonType()))));
+	node->InsertEndChild(element);
+	
+	if (server.GetLogonType() != ANONYMOUS)
+	{
+		element = TiXmlElement("User");
+		element.InsertEndChild(TiXmlText(ConvUTF8(server.GetUser())));
+		node->InsertEndChild(element);
+
+		element = TiXmlElement("Pass");
+		element.InsertEndChild(TiXmlText(ConvUTF8(server.GetPass())));
+		node->InsertEndChild(element);
+	}
+}
+
+bool COptions::GetServer(TiXmlElement *node, CServer& server)
+{
+	if (!node)
+		return false;
+	
+	TiXmlHandle handle(node);
+	
+	TiXmlText *text;
+		
+	text = handle.FirstChildElement("Host").FirstChild().Text();
+	if (!text)
+		return false;
+	wxString host = ConvLocal(text->Value());
+	if (host == _T(""))
+		return false;
+	
+	text = handle.FirstChildElement("Port").FirstChild().Text();
+	if (!text)
+		return false;
+	long port = 0;
+	if (!ConvLocal(text->Value()).ToLong(&port))
+		return false;
+	if (port < 1 || port > 65535)
+		return false;
+	
+	text = handle.FirstChildElement("Protocol").FirstChild().Text();
+	if (!text)
+		return false;
+	long protocol = 0;
+	if (!ConvLocal(text->Value()).ToLong(&protocol))
+		return false;
+	
+	text = handle.FirstChildElement("Type").FirstChild().Text();
+	if (!text)
+		return false;
+	long type = 0;
+	if (!ConvLocal(text->Value()).ToLong(&type))
+		return false;
+	
+	text = handle.FirstChildElement("Logontype").FirstChild().Text();
+	if (!text)
+		return false;
+	long logonType = 0;
+	if (!ConvLocal(text->Value()).ToLong(&logonType))
+		return false;
+	
+	if ((long)ANONYMOUS != logonType)
+	{
+		text = handle.FirstChildElement("User").FirstChild().Text();
+		if (!text)
+			return false;
+		wxString user = ConvLocal(text->Value());
+		if (!user)
+			return false;
+	
+		text = handle.FirstChildElement("Pass").FirstChild().Text();
+		wxString pass;
+		if (text)
+			pass = ConvLocal(text->Value());
+		
+		server = CServer((enum ServerProtocol)protocol, (enum ServerType)type, host, port, user, pass);
+	}
+	else
+		server = CServer((enum ServerProtocol)protocol, (enum ServerType)type, host, port);
+	
+	return true;
+}
+
+char* COptions::ConvUTF8(wxString value) const
+{
+	const wxWCharBuffer buffer = wxConvCurrent->cWX2WC(value);
+
+	wxMBConvUTF8 conv;
+	int len = conv.WC2MB(0, buffer, 0);
+	char *utf8 = new char[len + 1];
+	conv.WC2MB(utf8, buffer, len + 1);
+	return utf8;
+}
+
+wxString COptions::ConvLocal(const char *value) const
+{
+	return wxString(wxConvUTF8.cMB2WC(value), *wxConvCurrent);
+}
+
+void COptions::SetServer(wxString path, const CServer& server)
+{
+	if (path == _T(""))
+		return;
+	
+	TiXmlElement *element = GetXml();
+	
+	while (path != _T(""))
+	{
+		wxString sub;
+		int pos = path.Find('/');
+		if (pos != -1)
+		{
+			sub = path.Left(pos);
+			path = path.Mid(pos + 1);
+		}
+		else
+		{
+			sub = path;
+			path = _T("");
+		}
+		TiXmlElement *newElement = element->FirstChildElement(ConvUTF8(sub));
+		if (newElement)
+			element = newElement;
+		else
+		{
+			TiXmlNode *node = element->InsertEndChild(TiXmlElement(ConvUTF8(sub)));
+			if (!node || !node->ToElement())
+				return;
+			element = node->ToElement();
+		}
+	}
+	
+	SetServer(element, server);
+	
+	FreeXml();
+}
+
+bool COptions::GetServer(wxString path, CServer& server)
+{
+	if (path == _T(""))
+		return false;
+	
+	TiXmlElement *element = GetXml();
+	
+	while (path != _T(""))
+	{
+		wxString sub;
+		int pos = path.Find('/');
+		if (pos != -1)
+		{
+			sub = path.Left(pos);
+			path = path.Mid(pos + 1);
+		}
+		else
+		{
+			sub = path;
+			path = _T("");
+		}
+		element = element->FirstChildElement(ConvUTF8(sub));
+		if (!element)
+			return false;
+	}
+	
+	bool res = GetServer(element, server);
+	
+	FreeXml();
+	
+	return res;
 }

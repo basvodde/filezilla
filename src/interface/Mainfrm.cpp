@@ -307,6 +307,8 @@ void CMainFrame::OnQuickconnect(wxCommandEvent &event)
 
 	m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
 	m_pCommandQueue->ProcessCommand(new CListCommand());
+	
+	m_pOptions->SetServer(_T("Settings/LastServer"), server);
 }
 
 void CMainFrame::OnEngineEvent(wxEvent &event)
@@ -438,15 +440,25 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 
 void CMainFrame::OnUpdateToolbarReconnect(wxUpdateUIEvent &event)
 {
-	event.Enable(m_pEngine && !m_pEngine->IsConnected() && !m_pEngine->IsBusy());
+	if (!m_pEngine || m_pEngine->IsConnected() || m_pEngine->IsBusy() || !m_pOptions)
+	{
+		event.Enable(false);
+		return;
+	}
+	
+	CServer server;
+	event.Enable(m_pOptions->GetServer(_T("Settings/LastServer"), server));
 }
 
 void CMainFrame::OnReconnect(wxCommandEvent &event)
 {
-	wxString error;
-	CServerPath path;
+	if (!m_pEngine || m_pEngine->IsConnected() || m_pEngine->IsBusy() || !m_pOptions)
+		return;
+	
 	CServer server;
-	server.ParseUrl(_T("127.0.0.1"), 21, _T("dev"), _T("dev"), error, path);
+	if (!m_pOptions->GetServer(_T("Settings/LastServer"), server))
+		return;
+	
 	m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
 	m_pCommandQueue->ProcessCommand(new CListCommand());
 }
