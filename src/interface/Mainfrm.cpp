@@ -105,7 +105,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_pRemoteSplitter->SetMinimumPaneSize(20);
 
 	m_pLocalTreeView = new CLocalTreeView(m_pLocalSplitter, -1);
-	m_pLocalListView = new CLocalListView(m_pLocalSplitter, -1, m_pState);
+	m_pLocalListView = new CLocalListView(m_pLocalSplitter, -1, m_pState, m_pCommandQueue);
 	m_pRemoteTreeView = new CRemoteTreeView(m_pRemoteSplitter, -1);
 	m_pRemoteListView = new CRemoteListView(m_pRemoteSplitter, -1, m_pState, m_pCommandQueue);
 	m_pStatusView = new CStatusView(m_pTopSplitter, -1);

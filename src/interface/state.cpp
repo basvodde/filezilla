@@ -115,6 +115,14 @@ const CDirectoryListing *CState::GetRemoteDir() const
 	return m_pDirectoryListing;
 }
 
+const CServerPath CState::GetRemotePath() const
+{
+	if (!m_pDirectoryListing)
+		return CServerPath();
+	
+	return m_pDirectoryListing->path;
+}
+
 void CState::RefreshLocal()
 {
 	if (m_pLocalListView)

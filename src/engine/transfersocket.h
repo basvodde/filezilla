@@ -50,6 +50,7 @@ protected:
 	enum TransferMode m_transferMode;
 
 	char *m_pTransferBuffer;
+	int m_transferBufferPos;
 };
 
 #endif

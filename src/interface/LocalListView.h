@@ -2,13 +2,14 @@
 #define __LOCALLISTVIEW_H__
 
 class CState;
+class CCommandQueue;
 #ifdef __WXMSW__
 class wxImageListMsw;
 #endif
 class CLocalListView : public wxListCtrl
 {
 public:
-	CLocalListView(wxWindow* parent, wxWindowID id, CState *pState);
+	CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, CCommandQueue *pCommandQueue);
 	virtual ~CLocalListView();
 
 	void DisplayDir(wxString dirname);
@@ -66,6 +67,7 @@ protected:
 #endif
 
 	CState *m_pState;
+	CCommandQueue *m_pCommandQueue;
 
 	int m_sortColumn;
 	int m_sortDirection;

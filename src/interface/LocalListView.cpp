@@ -1,6 +1,7 @@
 #include "FileZilla.h"
 #include "LocalListView.h"
 #include "state.h"
+#include "commandqueue.h"
 
 #ifdef __WXMSW__
 #include <shellapi.h>
@@ -28,10 +29,11 @@ END_EVENT_TABLE()
 	};
 #endif
 
-CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState)
+CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, CCommandQueue *pCommandQueue)
 	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxLC_VIRTUAL | wxLC_REPORT | wxSUNKEN_BORDER)
 {
 	m_pState = pState;
+	m_pCommandQueue = pCommandQueue;
 
 	m_pImageList = 0;
 	InsertColumn(0, _("Filename"));
@@ -352,10 +354,29 @@ void CLocalListView::FreeImageList()
 
 void CLocalListView::OnItemActivated(wxListEvent &event)
 {
-	t_fileData *data = GetData(event.GetIndex());
+	int item = event.GetIndex();
+	
+	t_fileData *data = GetData(item);
 	if (!data)
 		return;
-	m_pState->SetLocalDir(data->name);
+	
+	if (!item)
+		m_pState->SetLocalDir(data->name);
+	else
+	{
+		if (data->dir)
+			m_pState->SetLocalDir(data->name);
+		else
+		{
+			CServerPath path = m_pState->GetRemotePath();
+			if (path.IsEmpty())
+			{
+				wxBell();
+				return;
+			}
+			m_pCommandQueue->ProcessCommand(new CFileTransferCommand(data->name, path, data->name, false));
+		}
+	}
 }
 
 #ifdef __WXMSW__
@@ -654,4 +675,3 @@ int CLocalListView::CmpSize(CLocalListView *pList, unsigned int index, t_fileDat
 	return data.name.CmpNoCase(refData.name);
 
 }
-
