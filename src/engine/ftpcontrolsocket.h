@@ -13,6 +13,9 @@ public:
 protected:
 	virtual void OnConnect(wxSocketEvent &event);
 	virtual void OnReceive(wxSocketEvent &event);
+
+	wxString m_ReceiveBuffer;
+	wxString m_MultilineResponseCode;
 };
 
 #endif
