@@ -26,7 +26,8 @@ public:
 	CServerPath GetParent() const;
 	wxString GetLastSegment() const;
 
-	bool SetType(ServerType type);
+	bool SetType(enum ServerType type);
+	enum ServerType GetType() const;
 
 	bool IsSubdirOf(const CServerPath &path, bool cmpNoCase) const;
 	bool IsParentOf(const CServerPath &path, bool cmpNoCase) const;

@@ -351,10 +351,11 @@ public:
 
 	CLine *Concat(const CLine *pLine) const
 	{
-		int newLen = m_len + pLine->m_len;
+		int newLen = m_len + pLine->m_len + 1;
 		char *p = new char[newLen];
 		memcpy(p, m_pLine, m_len);
-		memcpy(p + m_len, pLine->m_pLine, pLine->m_len);
+		p[m_len] = ' ';
+		memcpy(p + m_len + 1, pLine->m_pLine, pLine->m_len);
 		
 		return new CLine(p, newLen);
 	}
@@ -366,7 +367,7 @@ protected:
 	const char *m_pLine;
 	int m_len;
 };
-
+//#define LISTDEBUG
 #ifdef LISTDEBUG
 static char data[][100]={
 
@@ -480,15 +481,27 @@ static char data[][100]={
 	" 1123 DIR  A    10-05-100   23:38  OS2 test2.dir",
 
 	/* IBM AS/400 style listing */
-	"QSYS            77824 02/23/00 15:09:55 *DIR IBM Dir1/",
+	"QSYS            77824 02/23/00 15:09:55 *DIR IBM AS/400 Dir1/",
+
+	/* Nortel wfFtp router */
+	"nortel.wfFtp       1014196  06/03/04  Thur.   10:20:03",
+
+	/* IBM MVS listings */
+	// Volume Unit    Referred Ext Used Recfm Lrecl BlkSz Dsorg Dsname
+	"  WYOSPT 3420   2003/05/21  1  200  FB      80  8053  PS  MVS.FILE",
+	"  WPTA01 3290   2004/03/04  1    3  FB      80  3125  PO  MVS.DATASET",
+
+	/* Dataset members */
+	// Name         VV.MM   Created      Changed       Size  Init  Mod Id
+	// ADATAB /* filenames without data, only check for those on MVS servers */
+	"  MVSPDSMEMBER 01.01 2004/06/22 2004/06/22 16:32   128   128    0 BOBY12",
 
 	""};
 #endif
 
-CDirectoryListingParser::CDirectoryListingParser(CFileZillaEngine *pEngine)
+CDirectoryListingParser::CDirectoryListingParser(CFileZillaEngine *pEngine, enum ServerType serverType)
+	: m_serverType(serverType), m_pEngine(pEngine)
 {
-	m_pEngine = pEngine;
-
 	startOffset = 0;
 	m_curLine = 0;
 	m_prevLine = 0;
@@ -668,6 +681,17 @@ CDirectoryListingParser::CDirectoryListingParser(CFileZillaEngine *pEngine)
 	m_MonthNamesMap[_T("10")] = 10;
 	m_MonthNamesMap[_T("11")] = 11;
 	m_MonthNamesMap[_T("12")] = 12;
+
+#ifdef LISTDEBUG
+	for (unsigned int i = 0; data[i][0]; i++)
+	{
+		unsigned int len = (unsigned int)strlen(data[i]);
+		char *pData = new char[len + 3];
+		strcpy(pData, data[i]);
+		strcat(pData, "\r\n");
+		AddData(pData, len + 2);
+	}
+#endif
 }
 
 CDirectoryListingParser::~CDirectoryListingParser()
@@ -685,16 +709,16 @@ CDirectoryListing* CDirectoryListingParser::Parse(const CServerPath &path)
 	m_curLine = pLine;
 	while (pLine)
 	{
-		bool res = ParseLine(pLine);
+		bool res = ParseLine(pLine, m_serverType);
 		if (!res)
 		{
 			if (m_prevLine)
 			{
 				if (m_curLine != pLine)
 				{
-					delete [] m_prevLine;
+					delete m_prevLine;
 					m_prevLine = m_curLine;
-					delete [] pLine;
+					delete pLine;
 					m_prevLine = 0;
 
 					pLine = GetLine();
@@ -734,7 +758,7 @@ CDirectoryListing* CDirectoryListingParser::Parse(const CServerPath &path)
 	return pListing;
 }
 
-bool CDirectoryListingParser::ParseLine(CLine *pLine)
+bool CDirectoryListingParser::ParseLine(CLine *pLine, const enum ServerType serverType)
 {
 	CDirentry entry;
 	bool res = ParseAsUnix(pLine, entry);
@@ -748,6 +772,14 @@ bool CDirectoryListingParser::ParseLine(CLine *pLine)
 		res = ParseOther(pLine, entry);
 	if (!res)
 		res = ParseAsIbm(pLine, entry);
+	if (!res)
+		res = ParseAsWfFtp(pLine, entry);
+	if (!res)
+		res = ParseAsIBM_MVS(pLine, entry);
+	if (!res)
+		res = ParseAsIBM_MVS_PDS(pLine, entry);
+	if (!res && serverType == MVS)
+		res = ParseAsIBM_MVS_PDS_NameOnly(pLine, entry);
 
 	if (res)
 	{
@@ -1034,6 +1066,8 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 		else
 			entry.hasTime = false;
 	}
+	else
+		index--;
 
 	entry.hasDate = true;
 
@@ -1217,6 +1251,7 @@ bool CDirectoryListingParser::ParseAsDos(CLine *pLine, CDirentry &entry)
 			size += chr - '0';
 		}
 		entry.size = size;
+		entry.dir = false;
 	}
 	else
 		return false;
@@ -1286,7 +1321,7 @@ bool CDirectoryListingParser::ParseAsEplf(CLine *pLine, CDirentry &entry)
 	
 	int fact = 1;
 	int separator = token.Find(',', fact);
-	while (separator != -1 && separator < (pos - 1))
+	while (separator != -1 && separator < pos)
 	{
 		int len = separator - fact;
 		char type = token[fact];
@@ -1607,16 +1642,16 @@ void CDirectoryListingParser::AddData(char *pData, int len)
 	m_curLine = pLine;
 	while (pLine)
 	{
-		bool res = ParseLine(pLine);
+		bool res = ParseLine(pLine, m_serverType);
 		if (!res)
 		{
 			if (m_prevLine)
 			{
 				if (m_curLine != pLine)
 				{
-					delete [] m_prevLine;
+					delete m_prevLine;
 					m_prevLine = m_curLine;
-					delete [] pLine;
+					delete pLine;
 					m_prevLine = 0;
 
 					pLine = GetLine(true);
@@ -1745,4 +1780,216 @@ CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
 		m_DataList.erase(m_DataList.begin(), iter);
 
 	return line;
+}
+
+bool CDirectoryListingParser::ParseAsWfFtp(CLine *pLine, CDirentry &entry)
+{
+	int index = 0;
+	CToken token;
+
+	// Get filename
+	if (!pLine->GetToken(index++, token))
+		return false;
+
+	entry.name = token.GetString();
+
+	// Get filesize
+	if (!pLine->GetToken(index++, token))
+		return false;
+
+	if (!token.IsNumeric())
+		return false;
+
+	entry.size = token.GetNumber();
+
+	// Parse daste
+	if (!pLine->GetToken(index++, token))
+		return false;
+
+	if (!ParseShortDate(token, entry))
+		return false;
+
+	// Unused token
+	if (!pLine->GetToken(index++, token))
+		return false;
+
+	if (token.GetString().Right(1) != _T("."))
+		return false;
+
+	// Parse time
+	if (!pLine->GetToken(index++, token, true))
+		return false;
+
+	if (!ParseTime(token, entry))
+		return false;
+
+	entry.dir = false;
+	entry.link = false;
+	entry.ownerGroup = _T("");
+	entry.permissions = _T("");
+	
+	return true;
+}
+
+bool CDirectoryListingParser::ParseAsIBM_MVS(CLine *pLine, CDirentry &entry)
+{
+	int index = 0;
+	CToken token;
+
+	// volume
+	if (!pLine->GetToken(index++, token))
+		return false;
+
+	// unit
+	if (!pLine->GetToken(index++, token))
+		return false;
+
+	// Referred date
+	if (!pLine->GetToken(index++, token))
+		return false;
+	if (!ParseShortDate(token, entry))
+		return false;
+
+	// ext
+	if (!pLine->GetToken(index++, token))
+		return false;
+	if (!token.IsNumeric())
+		return false;
+
+	// used
+	if (!pLine->GetToken(index++, token))
+		return false;
+	if (!token.IsNumeric())
+		return false;
+
+	// recfm
+	if (!pLine->GetToken(index++, token))
+		return false;
+
+	// lrecl
+	if (!pLine->GetToken(index++, token))
+		return false;
+	if (!token.IsNumeric())
+		return false;
+
+	// blksize
+	if (!pLine->GetToken(index++, token))
+		return false;
+	if (!token.IsNumeric())
+		return false; 
+
+	// dsorg
+	if (!pLine->GetToken(index++, token))
+		return false;
+
+	if (token.GetString() == _T("PO"))
+	{
+		entry.dir = true;
+		entry.size = -1;
+	}
+	else
+	{
+		entry.dir = false;
+		entry.size = 100;
+	}
+	
+	// name of dataset or sequential file
+	if (!pLine->GetToken(index++, token, true))
+		return false;
+
+	entry.name = token.GetString();
+
+	entry.ownerGroup = _T("");
+	entry.permissions = _T("");
+	entry.hasTime = false;
+	entry.link = false;
+	
+	return true;
+}
+
+bool CDirectoryListingParser::ParseAsIBM_MVS_PDS(CLine *pLine, CDirentry &entry)
+{
+	int index = 0;
+	CToken token;
+
+	// pds member name
+	if (!pLine->GetToken(index++, token))
+		return false;
+	entry.name = token.GetString();
+
+	// vv.mm
+	if (!pLine->GetToken(index++, token))
+		return false;
+	
+	// creation date
+	if (!pLine->GetToken(index++, token))
+		return false;
+	if (!ParseShortDate(token, entry))
+		return false;
+
+	// modification date
+	if (!pLine->GetToken(index++, token))
+		return false;
+	if (!ParseShortDate(token, entry))
+		return false;
+
+	// modification time
+	if (!pLine->GetToken(index++, token))
+		return false;
+	if (!ParseTime(token, entry))
+		return false;
+
+	// size
+	if (!pLine->GetToken(index++, token))
+		return false;
+	if (!token.IsNumeric())
+		return false;
+	entry.size = token.GetNumber();
+
+	// init
+	if (!pLine->GetToken(index++, token))
+		return false;
+	if (!token.IsNumeric())
+		return false;
+
+	// mod
+	if (!pLine->GetToken(index++, token))
+		return false;
+	if (!token.IsNumeric())
+		return false;
+
+	// id
+	if (!pLine->GetToken(index++, token, true))
+		return false;	
+	
+	entry.dir = false;
+	entry.ownerGroup = _T("");
+	entry.permissions = _T("");
+	entry.hasTime = false;
+	entry.link = false;
+	
+	return true;
+}
+
+bool CDirectoryListingParser::ParseAsIBM_MVS_PDS_NameOnly(CLine *pLine, CDirentry &entry)
+{
+	int index = 0;
+	CToken token;
+	if (!pLine->GetToken(index++, token))
+		return false;
+
+	entry.name = token.GetString();
+
+	if (pLine->GetToken(index, token))
+		return false;
+
+	entry.dir = false;
+	entry.link = false;
+	entry.ownerGroup = _T("");
+	entry.permissions = _T("");
+	entry.size = -1;
+	entry.hasDate = false;
+	entry.hasTime = false;
+
+	return true;
 }

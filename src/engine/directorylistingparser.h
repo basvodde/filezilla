@@ -6,7 +6,7 @@ class CToken;
 class CDirectoryListingParser
 {
 public:
-	CDirectoryListingParser(CFileZillaEngine *pEngine);
+	CDirectoryListingParser(CFileZillaEngine *pEngine, enum ServerType serverType);
 	~CDirectoryListingParser();
 
 	CDirectoryListing* Parse(const CServerPath &path);
@@ -15,7 +15,7 @@ public:
 
 protected:
 	CLine *GetLine(bool breakAtEnd = false);
-	bool ParseLine(CLine *pLine);
+	bool ParseLine(CLine *pLine, const enum ServerType serverType);
 
 	bool ParseAsUnix(CLine *pLine, CDirentry &entry);
 	bool ParseAsDos(CLine *pLine, CDirentry &entry);
@@ -23,6 +23,10 @@ protected:
 	bool ParseAsVms(CLine *pLine, CDirentry &entry);
 	bool ParseAsIbm(CLine *pLine, CDirentry &entry);
 	bool ParseOther(CLine *pLine, CDirentry &entry);
+	bool ParseAsWfFtp(CLine *pLine, CDirentry &entry);
+	bool ParseAsIBM_MVS(CLine *pLine, CDirentry &entry);
+	bool ParseAsIBM_MVS_PDS(CLine *pLine, CDirentry &entry);
+	bool ParseAsIBM_MVS_PDS_NameOnly(CLine *pLine, CDirentry &entry);
 
 	// Date / time parsers
 	bool ParseUnixDateTime(CLine *pLine, int &index, CDirentry &entry);
@@ -45,6 +49,8 @@ protected:
 
 	CLine *m_curLine;
 	CLine *m_prevLine;
+
+	enum ServerType m_serverType;
 };
 
 #endif

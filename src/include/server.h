@@ -11,7 +11,8 @@ enum ServerType
 	DEFAULT,
 	UNIX,
 	VMS,
-	DOS
+	DOS,
+	MVS
 };
 
 enum LogonType

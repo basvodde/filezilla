@@ -314,7 +314,7 @@ bool CServerPath::SetSafePath(wxString path)
 	return true;
 }
 
-bool CServerPath::SetType(ServerType type)
+bool CServerPath::SetType(enum ServerType type)
 {
 	if (!m_bEmpty)
 		return false;
@@ -322,6 +322,11 @@ bool CServerPath::SetType(ServerType type)
 	m_type = type;
 
 	return true;
+}
+
+enum ServerType CServerPath::GetType() const
+{
+	return m_type;
 }
 
 bool CServerPath::IsSubdirOf(const CServerPath &path, bool cmpNoCase) const
