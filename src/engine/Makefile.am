@@ -20,3 +20,4 @@ noinst_HEADERS = asynchostresolver.h ControlSocket.h \
 			logging_private.h directorylistingparser.h \
 			directorycache.h
 
+dist_noinst_DATA = engine.vcproj

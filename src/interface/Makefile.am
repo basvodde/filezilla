@@ -24,3 +24,4 @@ filezilla_LDFLAGS += $(PNG_LIB)
 filezilla_LDFLAGS += $(ZLIB_LIB)
 filezilla_LDFLAGS += $(IDN_LIB)
 
+dist_noinst_DATA = interface.vcproj
