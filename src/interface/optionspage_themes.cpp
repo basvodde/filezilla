@@ -100,27 +100,29 @@ void COptionsPageThemes::GetPreview()
 		for (std::list<wxBitmap*>::iterator iter = m_preview[i].begin(); iter != m_preview[i].end(); iter++)
 			delete *iter;
 
-		wxSize imageSize(step[i], step[i]);
-		m_preview[i] = CThemeProvider::GetAllImages(theme, imageSize);
-        	
 		wxSize size = pPanels[i]->GetClientSize();
 		
-		int lines = (m_preview[i].size() - 1) / ((size.GetWidth() - 5) / (step[i] + 5)) + 1;
-		int vheight = lines * (step[i] + 5) + 5;
-		if (vheight > size.GetHeight())
+		wxSize imageSize(step[i], step[i]);
+		m_preview[i] = CThemeProvider::GetAllImages(theme, imageSize);
+		if (!m_preview[i].empty())
 		{
-			size.SetHeight(vheight);
-			pPanels[i]->SetVirtualSize(size);
-			pPanels[i]->SetVirtualSizeHints(size, size);
-			pPanels[i]->SetScrollRate(0, step[i] + 5);
-
-			wxSize size2 = pPanels[i]->GetClientSize();
-			size.SetWidth(size2.GetWidth());
-		
-			lines = (m_preview[i].size() - 1) / ((size.GetWidth() - 5) / (step[i] + 5)) + 1;
-			vheight = lines * (step[i] + 5) + 5;
+			int lines = (m_preview[i].size() - 1) / ((size.GetWidth() - 5) / (step[i] + 5)) + 1;
+			int vheight = lines * (step[i] + 5) + 5;
 			if (vheight > size.GetHeight())
+			{
 				size.SetHeight(vheight);
+				pPanels[i]->SetVirtualSize(size);
+				pPanels[i]->SetVirtualSizeHints(size, size);
+				pPanels[i]->SetScrollRate(0, step[i] + 5);
+
+				wxSize size2 = pPanels[i]->GetClientSize();
+				size.SetWidth(size2.GetWidth());
+			
+				lines = (m_preview[i].size() - 1) / ((size.GetWidth() - 5) / (step[i] + 5)) + 1;
+				vheight = lines * (step[i] + 5) + 5;
+				if (vheight > size.GetHeight())
+					size.SetHeight(vheight);
+			}
 		}
 		pPanels[i]->SetVirtualSize(size);
 		pPanels[i]->SetVirtualSizeHints(size, size);

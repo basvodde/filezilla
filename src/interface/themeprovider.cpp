@@ -98,7 +98,13 @@ std::list<wxBitmap*> CThemeProvider::GetAllImages(const wxString& theme, wxSize&
 	std::list<wxBitmap*> bitmaps;
 	wxBitmap* bmp = new wxBitmap;
 
+	if (!wxDir::Exists(path))
+		return bitmaps;
+
 	wxDir dir(path);
+	if (!dir.IsOpened())
+		return bitmaps;
+
 	wxString file;
 	for (bool found = dir.GetFirst(&file, _T("*.png")); found; found = dir.GetNext(&file))
 	{
