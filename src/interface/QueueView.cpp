@@ -3,6 +3,7 @@
 #include "Mainfrm.h"
 #include "Options.h"
 #include "StatusView.h"
+#include "statuslinectrl.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -43,7 +44,15 @@ void CQueueItem::AddChild(CQueueItem* item)
 	item->m_indent = m_indent + _T("  ");
 	m_children.push_back(item);
 	if (m_expanded)
+	{
 		m_visibleOffspring += 1 + item->m_visibleOffspring;
+		CQueueItem* parent = GetParent();
+		while (parent)
+		{
+			parent->m_visibleOffspring += 1 + item->m_visibleOffspring;
+			parent = parent->GetParent();
+		}
+	}
 }
 
 unsigned int CQueueItem::GetVisibleCount() const
@@ -73,7 +82,10 @@ CQueueItem* CQueueItem::GetChild(unsigned int item)
 
 bool CQueueItem::RemoveChild(CQueueItem* pItem)
 {
-	for (std::vector<CQueueItem*>::iterator iter = m_children.begin(); iter != m_children.end(); iter++)
+	int oldVisibleOffspring = m_visibleOffspring;
+	std::vector<CQueueItem*>::iterator iter;
+	bool deleted = false;
+	for (iter = m_children.begin(); iter != m_children.end(); iter++)
 	{
 		if (*iter == pItem)
 		{
@@ -85,30 +97,51 @@ bool CQueueItem::RemoveChild(CQueueItem* pItem)
 			}
 			delete pItem;
 			m_children.erase(iter);
-			return true;
+
+			deleted = true;
+			break;
 		}
 
+		int visibleOffspring = (*iter)->m_visibleOffspring;
 		if ((*iter)->RemoveChild(pItem))
 		{
+			if (IsExpanded() && (*iter)->IsExpanded())
+			{
+				m_visibleOffspring -= visibleOffspring - (*iter)->m_visibleOffspring;
+			}
 			if (!(*iter)->m_children.size())
 			{
 				if (IsExpanded())
-				{
 					m_visibleOffspring -= 1;
-					if ((*iter)->IsExpanded())
-						m_visibleOffspring -= pItem->m_visibleOffspring;
-				}
 				delete *iter;
 				m_children.erase(iter);
 			}
-			return true;
+			
+			deleted = true;
+			break;
 		}
 	}
-	return false;
+	if (!deleted)
+		return false;
+
+	if (IsExpanded())
+	{
+		CQueueItem* parent = GetParent();
+		while (parent)
+		{
+			parent->m_visibleOffspring -= oldVisibleOffspring - m_visibleOffspring;
+			parent = parent->GetParent();
+		}
+	}
+	
+	return true;
 }
 
 CQueueItem* CQueueItem::GetTopLevelItem()
 {
+	if (!m_parent)
+		return this;
+
 	CQueueItem* newParent = m_parent;
 	CQueueItem* parent = 0;
 	while (newParent)
@@ -120,7 +153,39 @@ CQueueItem* CQueueItem::GetTopLevelItem()
 	return parent;
 }
 
+const CQueueItem* CQueueItem::GetTopLevelItem() const
+{
+	if (!m_parent)
+		return this;
 
+	const CQueueItem* newParent = m_parent;
+	const CQueueItem* parent = 0;
+	while (newParent)
+	{
+		parent = newParent;
+		newParent = newParent->GetParent();
+	}
+
+	return parent;
+}
+
+int CQueueItem::GetItemIndex() const
+{
+	const CQueueItem* pParent = GetParent();
+	if (!pParent)
+		return 0;
+
+	int index = 1;
+	for (std::vector<CQueueItem*>::const_iterator iter = pParent->m_children.begin(); iter != pParent->m_children.end(); iter++)
+	{
+		if (*iter == this)
+			break;
+
+		index += (*iter)->GetVisibleCount() + 1;
+	}
+
+	return index + pParent->GetItemIndex();
+}
 
 CFileItem::CFileItem(CServerItem* parent, bool queued, bool download, const wxString& localFile,
 					 const wxString& remoteFile, const CServerPath& remotePath, wxLongLong size)
@@ -137,6 +202,7 @@ CFileItem::CFileItem(CServerItem* parent, bool queued, bool download, const wxSt
 	m_queued = queued;
 	m_active = false;
 	m_errorCount = 0;
+	m_expanded = true;
 }
 
 CFileItem::~CFileItem()
@@ -167,11 +233,12 @@ void CFileItem::SetActive(bool active)
 {
 	if (active && !m_active)
 	{
-		//TODO add status child
+		AddChild(new CStatusItem);
 	}
 	else if (!active && m_active)
 	{
-		//TODO remove status child
+		CQueueItem* pItem = m_children.front();
+		RemoveChild(pItem);
 	}
 	m_active = active;
 }
@@ -284,6 +351,7 @@ CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame)
 	m_activeCount = 0;
 	m_activeMode = 0;
 	m_quit = false;
+	m_waitStatusLineUpdate = false;
 	
 	InsertColumn(0, _("Server / Local file"), wxLIST_FORMAT_LEFT, 150);
 	InsertColumn(1, _("Direction"), wxLIST_FORMAT_CENTER, 60);
@@ -321,6 +389,7 @@ CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame)
 	data.active = false;
 	data.pEngine = 0; // TODO: Primary transfer engine data
 	data.pItem = 0;
+	data.pStatusLineCtrl = 0;
 	data.state = t_EngineData::none;
 	m_engineData.push_back(data);
 	
@@ -344,7 +413,8 @@ CQueueView::~CQueueView()
 
 bool CQueueView::QueueFile(bool queueOnly, bool download, const wxString& localFile, 
 						   const wxString& remoteFile, const CServerPath& remotePath, const CServer& server, wxLongLong size)
-{	CServerItem* item = GetServerItem(server);
+{
+	CServerItem* item = GetServerItem(server);
 	if (!item)
 	{
 		item = new CServerItem(server);
@@ -364,7 +434,10 @@ bool CQueueView::QueueFile(bool queueOnly, bool download, const wxString& localF
 	if (!m_activeMode && !queueOnly)
 		m_activeMode = 1;
 
+	m_waitStatusLineUpdate = true;
 	while (TryStartNextTransfer());
+	m_waitStatusLineUpdate = false;
+	UpdateStatusLinePositions();
 
 	return true;
 }
@@ -620,10 +693,18 @@ bool CQueueView::TryStartNextTransfer()
 
 	// Found idle item
 	fileItem->SetActive(true);
+	m_itemCount++;
+	SetItemCount(m_itemCount);
+
 	engineData.pItem = fileItem;
 	engineData.active = true;
 	serverItem->m_activeCount++;
 	m_activeCount++;
+
+	// Create status line
+	CStatusLineCtrl* pStatusLineCtrl = new CStatusLineCtrl(this, fileItem);
+	m_statusLineList.push_back(pStatusLineCtrl);
+	engineData.pStatusLineCtrl = pStatusLineCtrl;
 
 	const CServer oldServer = engineData.lastServer;
 	engineData.lastServer = serverItem->GetServer();
@@ -686,19 +767,44 @@ void CQueueView::ResetEngine(t_EngineData& data, bool removeFileItem)
 	if (!data.active)
 		return;
 
+	m_waitStatusLineUpdate = true;
+
+	if (data.pStatusLineCtrl)
+	{
+		for (std::list<CStatusLineCtrl*>::iterator iter = m_statusLineList.begin(); iter != m_statusLineList.end(); iter++)
+		{
+			if (*iter == data.pStatusLineCtrl)
+			{
+				m_statusLineList.erase(iter);
+				break;
+			}
+		}
+		delete data.pStatusLineCtrl;
+		data.pStatusLineCtrl = 0;
+	}
 	if (data.pItem)
 	{
+		if (data.pItem->IsActive())
+		{
+			data.pItem->SetActive(false);
+			m_itemCount--;
+			SetItemCount(m_itemCount);
+		}
+
 		if (removeFileItem)
 			RemoveItem(data.pItem);
 		else
 			ResetItem(data.pItem);
+		data.pItem = 0;
 	}
-	data.pItem = 0;
 	data.active = false;
 	data.state = t_EngineData::none;
 	m_activeCount--;
 
 	while (TryStartNextTransfer());
+	m_waitStatusLineUpdate = false;
+	UpdateStatusLinePositions();
+
 	CheckQueueState();
 }
 
@@ -732,6 +838,8 @@ void CQueueView::RemoveItem(CQueueItem* item)
 		m_itemCount -= count;
 		SetItemCount(m_itemCount);
 	}
+
+	UpdateStatusLinePositions();
 }
 
 void CQueueView::SendNextCommand(t_EngineData& engineData)
@@ -801,7 +909,9 @@ bool CQueueView::SetActive(bool active /*=true*/)
 		for (std::vector<CServerItem*>::iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
 			(*iter)->QueueImmediateFiles();
 
-		// Find first idle server and assign a transfer to it.
+		UpdateStatusLinePositions();
+
+		// Send active engines the cancel command
 		unsigned int engineIndex;
 		for (engineIndex = 1; engineIndex < m_engineData.size(); engineIndex++)
 		{
@@ -816,7 +926,11 @@ bool CQueueView::SetActive(bool active /*=true*/)
 	{
 		m_activeMode = 2;
 
+		m_waitStatusLineUpdate = true;
 		while (TryStartNextTransfer());
+		m_waitStatusLineUpdate = false;
+		UpdateStatusLinePositions();
+
 		CheckQueueState();
 	}
 
@@ -863,7 +977,53 @@ bool CQueueView::IncreaseErrorCount(t_EngineData& engineData)
 
 void CQueueView::ResetItem(CFileItem* item)
 {
-	item->SetActive(false);
 	if (!item->Queued())
 		reinterpret_cast<CServerItem*>(item->GetTopLevelItem())->QueueImmediateFiles();
+
+	UpdateStatusLinePositions();
+}
+
+int CQueueView::GetItemIndex(const CQueueItem* item)
+{
+	const CQueueItem* pTopLevelItem = item->GetTopLevelItem();
+
+	int index = 0;
+	for (std::vector<CServerItem*>::const_iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
+	{
+		if (pTopLevelItem == *iter)
+			break;
+
+		index += (*iter)->GetVisibleCount() + 1;
+	}
+
+	return index + item->GetItemIndex();
+}
+
+void CQueueView::UpdateStatusLinePositions()
+{
+	if (m_waitStatusLineUpdate)
+		return;
+
+	int topItem = GetTopItem();
+	int bottomItem = topItem + GetCountPerPage();
+
+	for (std::list<CStatusLineCtrl*>::iterator iter = m_statusLineList.begin(); iter != m_statusLineList.end(); iter++)
+	{
+		CStatusLineCtrl *pCtrl = *iter;
+		int index = GetItemIndex(pCtrl->GetItem()) + 1;
+		if (index < topItem || index > bottomItem)
+		{
+			pCtrl->Show(false);
+			continue;
+		}
+
+		wxRect rect;
+		if (!GetItemRect(index, rect))
+		{
+			pCtrl->Show(false);
+			continue;
+		}
+		pCtrl->SetSize(rect);
+		pCtrl->Show();
+	}
 }

@@ -15,7 +15,8 @@ enum QueueItemType
 {
 	QueueItemType_Server,
 	QueueItemType_File,
-	QueueItemType_Folder
+	QueueItemType_Folder,
+	QueueItemType_Status
 };
 
 enum ItemState
@@ -41,8 +42,11 @@ public:
 	unsigned int GetVisibleCount() const;
 	CQueueItem* GetChild(unsigned int item);
 	CQueueItem* GetParent() { return m_parent; }
-	virtual bool RemoveChild(CQueueItem* pItem); // Removes a child item with is somewhere in the tree of children
+	const CQueueItem* GetParent() const { return m_parent; }
+	virtual bool RemoveChild(CQueueItem* pItem); // Removes a child item with is somewhere in the tree of children.
 	CQueueItem* GetTopLevelItem();
+	const CQueueItem* GetTopLevelItem() const;
+	int GetItemIndex() const; // Return the visible item index relative to the topmost parent item.
 
 	virtual enum QueueItemType GetType() const = 0;
 
@@ -97,6 +101,15 @@ public:
 protected:
 };
 
+class CStatusItem : public CQueueItem
+{
+public:
+	CStatusItem() { m_expanded = true; }
+	~CStatusItem() {}
+
+	virtual enum QueueItemType GetType() const { return QueueItemType_Status; }
+};
+
 class CFileItem : public CQueueItem
 {
 public:
@@ -144,6 +157,7 @@ protected:
 };
 
 class CMainFrame;
+class CStatusLineCtrl;
 class CQueueView : public wxListCtrl
 {
 public:
@@ -178,6 +192,7 @@ protected:
 		
 		CFileItem* pItem;
 		CServer lastServer;
+		CStatusLineCtrl* pStatusLineCtrl;
 	};
 	std::vector<t_EngineData> m_engineData;
 
@@ -186,6 +201,7 @@ protected:
 
 	CQueueItem* GetQueueItem(unsigned int item);
 	CServerItem* GetServerItem(const CServer& server);
+	int GetItemIndex(const CQueueItem* item);
 
 	void ProcessReply(t_EngineData& engineData, COperationNotification* pNotification);
 	void SendNextCommand(t_EngineData& engineData);
@@ -194,8 +210,17 @@ protected:
 	void ResetItem(CFileItem* item);
 	void CheckQueueState();
 	bool IncreaseErrorCount(t_EngineData& engineData);
+	void UpdateStatusLinePositions();
 
 	std::vector<CServerItem*> m_serverList;
+	
+	std::list<CStatusLineCtrl*> m_statusLineList;
+	/*
+	 * Don't update status line positions if m_waitStatusLineUpdate is true.
+	 * This assures we are updating the status line positions only once,
+	 * and not multiple times (for example inside a loop).
+	 */
+	bool m_waitStatusLineUpdate; 
 
 	int m_itemCount;
 	int m_activeCount;
