@@ -86,7 +86,7 @@ AM_CONDITIONAL(USE_RESOURCEFILE, test x$use_resourcefile = xtrue)
 AM_CONDITIONAL(MACAPPBUNDLE, echo $WX_CPPFLAGS | grep __WXMAC__)
 
 AM_CONDITIONAL(MAKENSISSCRIPT, echo $host_os | grep "mingw" > /dev/null 2>&1)
-if test echo $host_os | grep "mingw" > /dev/null 2>&1; then
+if echo $host_os | grep "mingw" > /dev/null 2>&1; then
   AC_CONFIG_FILES(data/install.nsi)
 fi
 
