@@ -1,4 +1,4 @@
-#include "filezilla.h"
+#include "FileZilla.h"
 #include "logging_private.h"
 
 CLogging::CLogging(CFileZillaEngine *pEngine)
