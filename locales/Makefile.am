@@ -68,14 +68,13 @@ filezilla.pot: resources.h ../src/include/*.h ../src/engine/*.h ../src/interface
 		mv filezilla_new.pot $@; \
 	fi;
 
-allpo:
-	@-for t in @FILEZILLA_LINGUAS@; do $(MAKE) $(srcdir)/$$t.po; done
+allpo: @FILEZILLA_LINGUAS_PO@
 
-allmo:
+allmo: allpo
 	@for t in @FILEZILLA_LINGUAS@; do $(MAKE) $(srcdir)/$$t.mo; done
 
 # print out the percentage of the translated strings
-stats:
+stats: allpo
 	@ALLTOTAL=0 ALLTR=0 ALLFZ=0 ALLUT=0; \
 	for i in @FILEZILLA_LINGUAS@; do \
 		if [ -f $$i.mo~ ]; then rm $$i.mo~; fi; \
