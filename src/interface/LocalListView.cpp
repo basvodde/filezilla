@@ -134,7 +134,7 @@ void CLocalListView::DisplayDir(wxString dirname)
 	
 			wxStructStat buf;
 			int result;
-			result = wxStat(file, &buf);
+			result = wxStat(fn.GetFullPath(), &buf);
 			if (!result)
 			{
 				data.hasTime = true;
@@ -374,7 +374,8 @@ void CLocalListView::OnItemActivated(wxListEvent &event)
 				wxBell();
 				return;
 			}
-			m_pCommandQueue->ProcessCommand(new CFileTransferCommand(data->name, path, data->name, false));
+			wxFileName fn(m_dir, data->name);
+			m_pCommandQueue->ProcessCommand(new CFileTransferCommand(fn.GetFullPath(), path, data->name, false));
 		}
 	}
 }
