@@ -15,5 +15,5 @@ mac-copy-resources: $(dist_resources_DATA)
 	done
 	
 	$(MAKE) -C 16x16 mac-copy-resources
-	$(MAKE) -C 32x32 mac-copy-resources
+#	$(MAKE) -C 32x32 mac-copy-resources
 endif
