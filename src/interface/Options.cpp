@@ -35,34 +35,16 @@ COptions::COptions()
 	for (unsigned int i = 0; i < OPTIONS_NUM; i++)
 		m_optionsCache[i].cached = false;
 
-	m_pXmlDocument = 0;
-
 	wxFileName file = wxFileName(wxGetApp().GetSettingsDir(), _T("filezilla.xml"));
-	if (wxFileExists(file.GetFullPath()))
+	m_pXmlDocument = GetXmlFile(file);
+
+	if (!m_pXmlDocument)
 	{
-		m_pXmlDocument = new TiXmlDocument();
-		if (!m_pXmlDocument->LoadFile(file.GetFullPath().mb_str()))
-		{
-			wxString msg = wxString::Format(_("Could not load \"%s\", make sure the file is valid.\nFor this session, default settings will be used and any changes to the settings, including changes done in the Site Manager, are not persistent."), file.GetFullPath().c_str());
-			wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
-			m_allowSave = false;
-			return;
-		}
-		if (!m_pXmlDocument->FirstChildElement("FileZilla3"))
-		{
-			wxString msg = wxString::Format(_("Could not load \"%s\", make sure the file is valid.\nFor this session, default settings will be used and any changes to the settings are not persistent."), file.GetFullPath().c_str());
-			wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
-			m_allowSave = false;
-			return;
-		}
-		m_allowSave = true;
+		wxString msg = wxString::Format(_("Could not load \"%s\", make sure the file is valid.\nFor this session, default settings will be used and any changes to the settings, including changes done in the Site Manager, are not persistent."), file.GetFullPath().c_str());
+		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
 	}
 	else
-	{
-		CreateNewXmlDocument();
-		m_pXmlDocument->SaveFile(file.GetFullPath().mb_str());
-		m_allowSave = true;
-	}
+		CreateSettingsXmlElement();
 }
 
 COptions::~COptions()
@@ -133,9 +115,9 @@ bool COptions::SetOption(unsigned int nID, int value)
 	m_optionsCache[nID].cached = true;
 	m_optionsCache[nID].numValue = value;
 
-	SetXmlValue(nID, wxString::Format(_T("%d"), value));
-	if (m_allowSave)
+	if (m_pXmlDocument)
 	{
+		SetXmlValue(nID, wxString::Format(_T("%d"), value));
 		wxFileName file = wxFileName(wxGetApp().GetSettingsDir(), _T("filezilla.xml"));
 		m_pXmlDocument->SaveFile(file.GetFullPath().mb_str());
 	}
@@ -156,9 +138,9 @@ bool COptions::SetOption(unsigned int nID, wxString value)
 	m_optionsCache[nID].cached = true;
 	m_optionsCache[nID].strValue = value;
 
-	SetXmlValue(nID, value);
-	if (m_allowSave)
+	if (m_pXmlDocument)
 	{
+		SetXmlValue(nID, value);
 		wxFileName file = wxFileName(wxGetApp().GetSettingsDir(), _T("filezilla.xml"));
 		m_pXmlDocument->SaveFile(file.GetFullPath().mb_str());
 	}
@@ -166,17 +148,18 @@ bool COptions::SetOption(unsigned int nID, wxString value)
 	return true;
 }
 
-void COptions::CreateNewXmlDocument()
+void COptions::CreateSettingsXmlElement()
 {
-	delete m_pXmlDocument;
-	m_pXmlDocument = new TiXmlDocument();
-	m_pXmlDocument->InsertEndChild(TiXmlDeclaration("1.0", "UTF-8", "yes"));
-	
-	TiXmlElement element("FileZilla3");
-	TiXmlElement settings("Settings");
-	element.InsertEndChild(settings);
-	m_pXmlDocument->InsertEndChild(element);
+	if (!m_pXmlDocument)
+		return;
 
+	if (m_pXmlDocument->FirstChildElement("FileZilla3")->FirstChildElement("Settings"))
+		return;	
+
+	TiXmlElement *element = m_pXmlDocument->FirstChildElement("FileZilla3");
+	TiXmlElement settings("Settings");
+	element->InsertEndChild(settings);
+	
 	for (int i = 0; i < OPTIONS_NUM; i++)
 	{
 		m_optionsCache[i].cached = true;
@@ -190,10 +173,15 @@ void COptions::CreateNewXmlDocument()
 		}
 		SetXmlValue(i, options[i].defaultValue);
 	}
+
+	wxFileName file = wxFileName(wxGetApp().GetSettingsDir(), _T("filezilla.xml"));
+	m_pXmlDocument->SaveFile(file.GetFullPath().mb_str());
 }
 
 void COptions::SetXmlValue(unsigned int nID, wxString value)
 {
+	wxASSERT(m_pXmlDocument);
+
 	// No checks are made about the validity of the value, that's done in SetOption
 	
 	char *utf8 = ConvUTF8(value);
@@ -251,6 +239,8 @@ void COptions::SetXmlValue(unsigned int nID, wxString value)
 
 bool COptions::GetXmlValue(unsigned int nID, wxString &value)
 {
+	wxASSERT(m_pXmlDocument);
+
 	TiXmlElement *settings = m_pXmlDocument->FirstChildElement("FileZilla3")->FirstChildElement("Settings");
 	if (!settings)
 	{
@@ -301,165 +291,25 @@ TiXmlElement *COptions::GetXml()
 {
 	if (m_acquired)
 		return 0;
+
+	if (!m_pXmlDocument)
+		return 0;
 	
 	return m_pXmlDocument->FirstChildElement("FileZilla3");
 }
 
 void COptions::FreeXml(bool save)
 {
+	if (!m_pXmlDocument)
+		return;
+
 	m_acquired = false;
 	
-	if (m_allowSave && save)
+	if (save)
 	{
 		wxFileName file = wxFileName(wxGetApp().GetSettingsDir(), _T("filezilla.xml"));
 		m_pXmlDocument->SaveFile(file.GetFullPath().mb_str());
 	}
-}
-
-void COptions::SetServer(TiXmlElement *node, const CServer& server) const
-{
-	if (!node)
-		return;
-	
-	node->Clear();
-	
-	AddTextElement(node, "Host", server.GetHost());
-	AddTextElement(node, "Port", wxString::Format(_T("%d"), server.GetPort()));
-	AddTextElement(node, "Protocol", wxString::Format(_T("%d"), server.GetProtocol()));
-	AddTextElement(node, "Type", wxString::Format(_T("%d"), server.GetType()));
-	AddTextElement(node, "Logontype", wxString::Format(_T("%d"), server.GetLogonType()));
-	
-	if (server.GetLogonType() != ANONYMOUS)
-	{
-		AddTextElement(node, "User", server.GetUser());
-
-		if (server.GetLogonType() == NORMAL)
-			AddTextElement(node, "Pass", server.GetPass());
-	}
-
-	AddTextElement(node, "TimezoneOffset", wxString::Format(_T("%d"), server.GetTimezoneOffset()));
-	switch (server.GetPasvMode())
-	{
-	case MODE_PASSIVE:
-		AddTextElement(node, "PasvMode", _T("MODE_PASSIVE"));
-		break;
-	case MODE_ACTIVE:
-		AddTextElement(node, "PasvMode", _T("MODE_ACTIVE"));
-		break;
-	default:
-		AddTextElement(node, "PasvMode", _T("MODE_DEFAULT"));
-		break;
-	}
-	AddTextElement(node, "MaximumMultipleConnections", wxString::Format(_T("%d"), server.MaximumMultipleConnections()));
-}
-
-bool COptions::GetServer(TiXmlElement *node, CServer& server)
-{
-	if (!node)
-		return false;
-	
-	TiXmlHandle handle(node);
-	
-	TiXmlText *text;
-		
-	text = handle.FirstChildElement("Host").FirstChild().Text();
-	if (!text)
-		return false;
-	wxString host = ConvLocal(text->Value());
-	if (host == _T(""))
-		return false;
-	
-	text = handle.FirstChildElement("Port").FirstChild().Text();
-	if (!text)
-		return false;
-	long port = 0;
-	if (!ConvLocal(text->Value()).ToLong(&port))
-		return false;
-	if (port < 1 || port > 65535)
-		return false;
-
-	if (!server.SetHost(host, port))
-		return false;
-	
-	text = handle.FirstChildElement("Protocol").FirstChild().Text();
-	if (!text)
-		return false;
-	long protocol = 0;
-	if (!ConvLocal(text->Value()).ToLong(&protocol))
-		return false;
-
-	server.SetProtocol((enum ServerProtocol)protocol);
-	
-	text = handle.FirstChildElement("Type").FirstChild().Text();
-	if (!text)
-		return false;
-	long type = 0;
-	if (!ConvLocal(text->Value()).ToLong(&type))
-		return false;
-
-	server.SetType((enum ServerType)type);
-	
-	text = handle.FirstChildElement("Logontype").FirstChild().Text();
-	if (!text)
-		return false;
-	long logonType = 0;
-	if (!ConvLocal(text->Value()).ToLong(&logonType))
-		return false;
-
-	server.SetLogonType((enum LogonType)logonType);
-	
-	if (server.GetLogonType() != ANONYMOUS)
-	{
-		text = handle.FirstChildElement("User").FirstChild().Text();
-		if (!text)
-			return false;
-		wxString user = ConvLocal(text->Value());
-		if (!user)
-			return false;
-	
-		wxString pass;
-		if ((long)NORMAL == logonType)
-		{
-			text = handle.FirstChildElement("Pass").FirstChild().Text();
-			if (text)
-				pass = ConvLocal(text->Value());
-		}
-		
-		if (!server.SetUser(user, pass))
-			return false;
-	}
-
-	text = handle.FirstChildElement("TimezoneOffset").FirstChild().Text();
-	if (text)
-	{
-		long timezoneOffset = 0;
-		if (!ConvLocal(text->Value()).ToLong(&timezoneOffset))
-			return false;
-		if (!server.SetTimezoneOffset(timezoneOffset))
-			return false;
-	}
-	
-	text = handle.FirstChildElement("PasvMode").FirstChild().Text();
-	if (text)
-	{
-		wxString pasvMode = ConvLocal(text->Value());
-		if (pasvMode == _T("MODE_PASSIVE"))
-			server.SetPasvMode(MODE_PASSIVE);
-		else if (pasvMode == _T("MODE_ACTIVE"))
-			server.SetPasvMode(MODE_ACTIVE);
-		else
-			server.SetPasvMode(MODE_DEFAULT);
-	}
-	
-	text = handle.FirstChildElement("MaximumMultipleConnections").FirstChild().Text();
-	if (text)
-	{
-		unsigned long maximumMultipleConnections = 0;
-		if (ConvLocal(text->Value()).ToULong(&maximumMultipleConnections) && maximumMultipleConnections <= 10)
-			server.MaximumMultipleConnections(maximumMultipleConnections);
-	}
-	
-	return true;
 }
 
 void COptions::SetServer(wxString path, const CServer& server)
@@ -503,7 +353,7 @@ void COptions::SetServer(wxString path, const CServer& server)
 		}
 	}
 	
-	SetServer(element, server);
+	::SetServer(element, server);
 	
 	FreeXml(true);
 }
@@ -538,7 +388,7 @@ bool COptions::GetServer(wxString path, CServer& server)
 			return false;
 	}
 	
-	bool res = GetServer(element, server);
+	bool res = ::GetServer(element, server);
 	
 	FreeXml(false);
 	

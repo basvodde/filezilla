@@ -34,10 +34,6 @@ public:
 	void SetServer(wxString path, const CServer& server);
 	bool GetServer(wxString path, CServer& server);
 	
-	void SetServer(TiXmlElement *node, const CServer& server) const;
-	bool GetServer(TiXmlElement *node, CServer& server);
-	
-
 protected:
 	int Validate(unsigned int nID, int value);
 	wxString Validate(unsigned int nID, wxString value);
@@ -45,10 +41,9 @@ protected:
 	void SetXmlValue(unsigned int nID, wxString value);
 	bool GetXmlValue(unsigned int nID, wxString &value);
 
-	void CreateNewXmlDocument();
+	void CreateSettingsXmlElement();
 
 	TiXmlDocument *m_pXmlDocument;
-	bool m_allowSave;
 
 	t_OptionsCache m_optionsCache[OPTIONS_NUM];
 	bool m_acquired;

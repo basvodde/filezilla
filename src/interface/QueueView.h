@@ -8,7 +8,7 @@ enum QueuePriority
 	priority_low = 1,
 	priority_normal = 2,
 	priority_high = 3,
-	priority_highest = 4,
+	priority_highest = 4
 };
 
 enum QueueItemType
@@ -19,12 +19,13 @@ enum QueueItemType
 	QueueItemType_Status
 };
 
+#define ITEMSTATE_COUNT 4
 enum ItemState
 {
-	ItemState_Wait,
-	ItemState_Active,
-	ItemState_Complete,
-	ItemState_Error
+	ItemState_Wait = 0,
+	ItemState_Active = 1,
+	ItemState_Complete = 2,
+	ItemState_Error = 3
 };
 
 struct t_newEntry
@@ -34,6 +35,7 @@ struct t_newEntry
 	wxLongLong size;
 };
 
+class TiXmlElement;
 class CQueueItem
 {
 public:
@@ -54,6 +56,7 @@ public:
 	CQueueItem* GetTopLevelItem();
 	const CQueueItem* GetTopLevelItem() const;
 	int GetItemIndex() const; // Return the visible item index relative to the topmost parent item.
+	virtual void SaveItem(TiXmlElement* pElement) const { }
 
 	virtual enum QueueItemType GetType() const = 0;
 
@@ -87,6 +90,8 @@ public:
 	wxLongLong GetTotalSize(bool& partialSizeInfo) const;
 
 	void QueueImmediateFiles();
+
+	virtual void SaveItem(TiXmlElement* pElement) const;
 
 	int m_activeCount;
 
@@ -176,6 +181,8 @@ public:
 	bool IsActive() const { return m_active; }
 	void SetActive(bool active);
 
+	virtual void SaveItem(TiXmlElement* pElement) const;
+
 	bool m_queued;
 	int m_errorCount;
 
@@ -254,6 +261,8 @@ protected:
 	bool IncreaseErrorCount(t_EngineData& engineData);
 	void UpdateStatusLinePositions();
 	void UpdateQueueSize();
+	void SaveQueue();
+	void LoadQueue();
 
 	std::vector<t_EngineData> m_engineData;
 	std::vector<CServerItem*> m_serverList;	

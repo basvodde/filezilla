@@ -22,6 +22,7 @@ public:
 
 class COptions;
 class TiXmlElement;
+class CInterProcessMutex;
 class CSiteManager: public wxDialog
 {	
 	DECLARE_EVENT_TABLE();
@@ -29,6 +30,7 @@ class CSiteManager: public wxDialog
 public:
 	/// Constructors
 	CSiteManager(COptions* pOptions);
+	virtual ~CSiteManager();
 
 	/// Creation
 	bool Create(wxWindow* parent);
@@ -61,6 +63,7 @@ protected:
 	virtual void OnLimitMultipleConnectionsChanged(wxCommandEvent& event);
 	
 	COptions* m_pOptions;
+	CInterProcessMutex* m_pSiteManagerMutex;
 };
 
 #endif //__SITEMANAGER_H__

@@ -813,4 +813,6 @@ bool CServerPath::AddSegment(const wxString& segment)
 
 	// TODO: Check for invalid characters
 	m_Segments.push_back(segment);
+
+	return true;
 }

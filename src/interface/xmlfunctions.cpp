@@ -124,3 +124,143 @@ wxLongLong GetTextElementLongLong(TiXmlElement* node, const char* name, int defV
 
 	return negative ? -value : value;
 }
+
+// Opens the specified XML file if it exists or creates a new one otherwise.
+// Returns 0 on error.
+TiXmlDocument* GetXmlFile(wxFileName file)
+{
+	if (wxFileExists(file.GetFullPath()))
+	{
+		// File does exist, open it
+
+		TiXmlDocument* pXmlDocument = new TiXmlDocument();
+		if (!pXmlDocument->LoadFile(file.GetFullPath().mb_str()))
+		{
+			delete pXmlDocument;
+			return 0;
+		}
+		if (!pXmlDocument->FirstChildElement("FileZilla3"))
+		{
+			delete pXmlDocument;
+			return 0;
+		}
+
+		return pXmlDocument;
+	}
+	else
+	{
+		// File does not exist, create new XML document
+
+		TiXmlDocument* pXmlDocument = new TiXmlDocument();
+		pXmlDocument->InsertEndChild(TiXmlDeclaration("1.0", "UTF-8", "yes"));
+	
+		TiXmlElement element("FileZilla3");
+		pXmlDocument->InsertEndChild(TiXmlElement("FileZilla3"));
+
+		pXmlDocument->SaveFile(file.GetFullPath().mb_str());
+		
+		return pXmlDocument;
+	}
+}
+
+bool GetServer(TiXmlElement *node, CServer& server)
+{
+	wxASSERT(node);
+	
+	wxString host = GetTextElement(node, "Host");
+	if (host == _T(""))
+		return false;
+
+	int port = GetTextElementInt(node, "Port");
+	if (port < 1 || port > 65535)
+		return false;
+
+	if (!server.SetHost(host, port))
+		return false;
+	
+	int protocol = GetTextElementInt(node, "Protocol");
+	if (protocol < 0)
+		return false;
+
+	server.SetProtocol((enum ServerProtocol)protocol);
+	
+	int type = GetTextElementInt(node, "Type");
+	if (type < 0)
+		return false;
+
+	server.SetType((enum ServerType)type);
+
+	int logonType = GetTextElementInt(node, "Logontype");
+	if (logonType < 0)
+		return false;
+
+	server.SetLogonType((enum LogonType)logonType);
+	
+	if (server.GetLogonType() != ANONYMOUS)
+	{
+		wxString user = GetTextElement(node, "User");
+		if (user == _T(""))
+			return false;
+	
+		wxString pass;
+		if ((long)NORMAL == logonType)
+			pass = GetTextElement(node, "Pass");
+		
+		if (!server.SetUser(user, pass))
+			return false;
+	}
+
+	int timezoneOffset = GetTextElementInt(node, "TimezoneOffset");
+	if (!server.SetTimezoneOffset(timezoneOffset))
+		return false;
+	
+	wxString pasvMode = GetTextElement(node, "PasvMode");
+	if (pasvMode == _T("MODE_PASSIVE"))
+		server.SetPasvMode(MODE_PASSIVE);
+	else if (pasvMode == _T("MODE_ACTIVE"))
+		server.SetPasvMode(MODE_ACTIVE);
+	else
+		server.SetPasvMode(MODE_DEFAULT);
+	
+	int maximumMultipleConnections = GetTextElementInt(node, "MaximumMultipleConnections");
+	server.MaximumMultipleConnections(maximumMultipleConnections);
+	
+	return true;
+}
+
+void SetServer(TiXmlElement *node, const CServer& server)
+{
+	if (!node)
+		return;
+	
+	node->Clear();
+	
+	AddTextElement(node, "Host", server.GetHost());
+	AddTextElement(node, "Port", wxString::Format(_T("%d"), server.GetPort()));
+	AddTextElement(node, "Protocol", wxString::Format(_T("%d"), server.GetProtocol()));
+	AddTextElement(node, "Type", wxString::Format(_T("%d"), server.GetType()));
+	AddTextElement(node, "Logontype", wxString::Format(_T("%d"), server.GetLogonType()));
+	
+	if (server.GetLogonType() != ANONYMOUS)
+	{
+		AddTextElement(node, "User", server.GetUser());
+
+		if (server.GetLogonType() == NORMAL)
+			AddTextElement(node, "Pass", server.GetPass());
+	}
+
+	AddTextElement(node, "TimezoneOffset", wxString::Format(_T("%d"), server.GetTimezoneOffset()));
+	switch (server.GetPasvMode())
+	{
+	case MODE_PASSIVE:
+		AddTextElement(node, "PasvMode", _T("MODE_PASSIVE"));
+		break;
+	case MODE_ACTIVE:
+		AddTextElement(node, "PasvMode", _T("MODE_ACTIVE"));
+		break;
+	default:
+		AddTextElement(node, "PasvMode", _T("MODE_DEFAULT"));
+		break;
+	}
+	AddTextElement(node, "MaximumMultipleConnections", wxString::Format(_T("%d"), server.MaximumMultipleConnections()));
+}

@@ -24,6 +24,10 @@
 #include <vector>
 #include <map>
 
+#define __STR2__(x) #x
+#define __STR1__(x) __STR2__(x)
+#define __LOCWRN__(x) __FILE__ "(" __STR1__(__LINE__) ") : warning: " x
+
 #include "optionsbase.h"
 #include "logging.h"
 #include "server.h"

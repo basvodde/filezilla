@@ -731,7 +731,9 @@ void CMainFrame::SetProgress(const CTransferStatus *pStatus)
 void CMainFrame::OnSiteManager(wxCommandEvent& event)
 {
 	CSiteManager dlg(m_pOptions);
-	dlg.Create(this);
+	if (!dlg.Create(this))
+		return;
+
 	int res = dlg.ShowModal();
 	if (res == wxID_YES)
 	{
