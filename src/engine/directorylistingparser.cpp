@@ -1,6 +1,10 @@
 #include "FileZilla.h"
 #include "directorylistingparser.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+
 class CToken
 {
 protected:
@@ -345,6 +349,16 @@ public:
 		}
 	};
 
+	CLine *Concat(const CLine *pLine) const
+	{
+		int newLen = m_len + pLine->m_len;
+		char *p = new char[newLen];
+		memcpy(p, m_pLine, m_len);
+		memcpy(p + m_len, pLine->m_pLine, pLine->m_len);
+		
+		return new CLine(p, newLen);
+	}
+
 protected:
 	std::vector<CToken *> m_Tokens;
 	std::vector<CToken *> m_LineEndTokens;
@@ -471,6 +485,8 @@ CDirectoryListingParser::CDirectoryListingParser(CFileZillaEngine *pEngine)
 	m_pEngine = pEngine;
 
 	startOffset = 0;
+	m_curLine = 0;
+	m_prevLine = 0;
 
 	//Fill the month names map
 
@@ -653,28 +669,60 @@ CDirectoryListingParser::~CDirectoryListingParser()
 {
 	for (std::list<t_list>::iterator iter = m_DataList.begin(); iter != m_DataList.end(); iter++)
 		delete [] iter->p;
+
+	delete m_curLine;
+	delete m_prevLine;
 }
 
 bool CDirectoryListingParser::Parse()
 {
-	std::list<CDirentry> entryList;
-
-	while (true)
+	CLine *pLine = GetLine();
+	m_curLine = pLine;
+	while (pLine)
 	{
-		CLine *pLine = GetLine();
-		if (!pLine)
-			break;
-		
-		bool res = ParseLine(pLine, entryList);
-		delete pLine;
+		bool res = ParseLine(pLine);
+		if (!res)
+		{
+			if (m_prevLine)
+			{
+				if (m_curLine != pLine)
+				{
+					delete [] m_prevLine;
+					m_prevLine = m_curLine;
+					delete [] pLine;
+					m_prevLine = 0;
+
+					pLine = GetLine();
+					m_curLine = pLine;
+				}
+				else
+					pLine = m_prevLine->Concat(m_curLine);
+			}
+			else
+			{
+				m_prevLine = pLine;
+
+				pLine = GetLine();
+				m_curLine = pLine;
+			}
+		}
+		else
+		{
+			delete m_prevLine;
+			m_prevLine = 0;
+			delete m_curLine;
+
+			pLine = GetLine();
+			m_curLine = pLine;
+		}
 	};
 
 	CDirectoryListing *pListing = new CDirectoryListing;
-	pListing->m_entryCount = entryList.size();
-	pListing->m_pEntries = new CDirentry[entryList.size()];
+	pListing->m_entryCount = m_entryList.size();
+	pListing->m_pEntries = new CDirentry[m_entryList.size()];
 	
 	int i = 0;
-	for (std::list<CDirentry>::iterator iter = entryList.begin(); iter != entryList.end(); iter++)
+	for (std::list<CDirentry>::iterator iter = m_entryList.begin(); iter != m_entryList.end(); iter++)
 		pListing->m_pEntries[i++] = *iter;
 
 	pListing->path = CServerPath(_T("/"));
@@ -684,7 +732,7 @@ bool CDirectoryListingParser::Parse()
 	return false;
 }
 
-bool CDirectoryListingParser::ParseLine(CLine *pLine, std::list<CDirentry> &entryList)
+bool CDirectoryListingParser::ParseLine(CLine *pLine)
 {
 	CDirentry entry;
 	bool res = ParseAsUnix(pLine, entry);
@@ -702,7 +750,7 @@ bool CDirectoryListingParser::ParseLine(CLine *pLine, std::list<CDirentry> &entr
 	if (res)
 	{
 		entry.unsure = false;
-		entryList.push_back(entry);
+		m_entryList.push_back(entry);
 	}
 
 	return res;
@@ -1545,9 +1593,50 @@ void CDirectoryListingParser::AddData(char *pData, int len)
 	item.len = len;
 
 	m_DataList.push_back(item);
+
+	CLine *pLine = GetLine(true);
+	m_curLine = pLine;
+	while (pLine)
+	{
+		bool res = ParseLine(pLine);
+		if (!res)
+		{
+			if (m_prevLine)
+			{
+				if (m_curLine != pLine)
+				{
+					delete [] m_prevLine;
+					m_prevLine = m_curLine;
+					delete [] pLine;
+					m_prevLine = 0;
+
+					pLine = GetLine(true);
+					m_curLine = pLine;
+				}
+				else
+					pLine = m_prevLine->Concat(m_curLine);
+			}
+			else
+			{
+				m_prevLine = pLine;
+
+				pLine = GetLine(true);
+				m_curLine = pLine;
+			}
+		}
+		else
+		{
+			delete m_prevLine;
+			m_prevLine = 0;
+			delete m_curLine;
+
+			pLine = GetLine(true);
+			m_curLine = pLine;
+		}
+	}
 }
 
-CLine *CDirectoryListingParser::GetLine()
+CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
 {
 	if (m_DataList.empty())
 		return 0;
@@ -1561,13 +1650,13 @@ CLine *CDirectoryListingParser::GetLine()
 		{
 			delete [] iter->p;
 			iter++;
+			startOffset = 0;
 			if (iter == m_DataList.end())
 			{
 				m_DataList.clear();
 				return 0;
 			}
 			len = iter->len;
-			startOffset = 0;
 		}
 	}
 	m_DataList.erase(m_DataList.begin(), iter);
@@ -1578,9 +1667,10 @@ CLine *CDirectoryListingParser::GetLine()
 
 	int emptylen = 0;
 
-	while ((iter->p[startOffset] != '\n') && (iter->p[startOffset] != '\r'))
+	int newStartOffset = startOffset;
+	while ((iter->p[newStartOffset] != '\n') && (iter->p[newStartOffset] != '\r'))
 	{
-		if (iter->p[startOffset] != ' ' && iter->p[startOffset] != '\t')
+		if (iter->p[newStartOffset] != ' ' && iter->p[newStartOffset] != '\t')
 		{
 			reslen += emptylen + 1;
 			emptylen = 0;
@@ -1588,17 +1678,22 @@ CLine *CDirectoryListingParser::GetLine()
 		else
 			emptylen++;
 		
-		startOffset++;
-		if (startOffset >= len)
+		newStartOffset++;
+		if (newStartOffset >= len)
 		{
 			iter++;
 			if (iter == m_DataList.end())
+			{
+				if (breakAtEnd)
+					return 0;
 				break;
+			}
 			len = iter->len;
-			startOffset = 0;
+			newStartOffset = 0;
 		}
 	}
-	
+	startOffset = newStartOffset;
+
 	char *res = new char[reslen];
 	CLine *line = new CLine(res, reslen);
 

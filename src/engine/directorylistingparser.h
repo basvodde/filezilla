@@ -14,8 +14,8 @@ public:
 	void AddData(char *pData, int len);
 
 protected:
-	CLine *GetLine();
-	bool ParseLine(CLine *pLine, std::list<CDirentry> &entryList);
+	CLine *GetLine(bool breakAtEnd = false);
+	bool ParseLine(CLine *pLine);
 
 	bool ParseAsUnix(CLine *pLine, CDirentry &entry);
 	bool ParseAsDos(CLine *pLine, CDirentry &entry);
@@ -41,9 +41,10 @@ protected:
 	int startOffset;
 
 	std::list<t_list> m_DataList;
+	std::list<CDirentry> m_entryList;
 
-	CLine *curLine;
-	CLine *prevLine;
+	CLine *m_curLine;
+	CLine *m_prevLine;
 };
 
 #endif
