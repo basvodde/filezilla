@@ -107,7 +107,7 @@ Section "FileZilla 3" SecMain
   ;Create shortcuts
   CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
   CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
-  CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\FileZilla 3.lnk" "$INSTDIR\FileZilla 3.exe"
+  CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\FileZilla 3.lnk" "$INSTDIR\filezilla.exe"
   
   !insertmacro MUI_STARTMENU_WRITE_END
 
@@ -153,7 +153,7 @@ SectionEnd
 
 Section "Uninstall"
 
-  Delete "$INSTDIR\FileZilla.exe"
+  Delete "$INSTDIR\filezilla.exe"
   Delete "$INSTDIR\mingwm10.dll"
   Delete "mingwm10.dll"
   Delete "$INSTDIR\GPL.html"
