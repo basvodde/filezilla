@@ -112,7 +112,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libidn.a odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib wxmswd.lib wxxrcd.lib ..\lib\engine_debug.lib"
+				AdditionalDependencies="libidn.a odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib ..\lib\engine_debug.lib wxbase25d.lib wxmsw25d_core.lib wxpngd.lib wxbase25d_net.lib wxbase25d_xml.lib wxxrcd.lib wxzlibd.lib wxmsw25d_adv.lib wxmsw25d_html.lib wxexpatd.lib"
 				OutputFile="../bin/FileZilla_dbg.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
@@ -160,6 +160,9 @@
 				RelativePath=".\commandqueue.cpp">
 			</File>
 			<File
+				RelativePath=".\fileexistsdlg.cpp">
+			</File>
+			<File
 				RelativePath="FileZilla.cpp">
 			</File>
 			<File
@@ -195,6 +198,9 @@
 			Filter="h;hpp;hxx;hm;inl">
 			<File
 				RelativePath=".\commandqueue.h">
+			</File>
+			<File
+				RelativePath=".\fileexistsdlg.h">
 			</File>
 			<File
 				RelativePath=".\LocalListView.h">

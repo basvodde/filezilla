@@ -18,7 +18,7 @@ protected:
 
 	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T(""));
 	int ListParseResponse();
-	int ListSend();
+	int ListSend(int prevResult = FZ_REPLY_OK);
 
 	int ChangeDir(CServerPath path = CServerPath(), wxString subDir = _T(""));
 	int ChangeDirParseResponse();
@@ -26,7 +26,7 @@ protected:
 
 	virtual int FileTransfer(const wxString localFile, const CServerPath &remotePath, const wxString &remoteFile, bool download);
 	int FileTransferParseResponse();
-	int FileTransferSend();
+	int FileTransferSend(int nprevResult = FZ_REPLY_OK);
 
 	bool ParsePwdReply(wxString reply);
 
@@ -36,7 +36,7 @@ protected:
 	virtual bool Send(wxString str);
 
 	void ParseResponse();
-	int SendNextCommand();
+	int SendNextCommand(int prevResult = FZ_REPLY_OK);
 
 	int GetReplyCode() const;
 

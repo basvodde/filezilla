@@ -9,6 +9,7 @@
 #include "state.h"
 #include "Options.h"
 #include "commandqueue.h"
+#include "fileexistsdlg.h"
 
 #ifndef __WXMSW__
 #include "resources/filezilla.xpm"
@@ -299,7 +300,7 @@ void CMainFrame::OnQuickconnect(wxCommandEvent &event)
 	}
 
 	m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
-	m_pCommandQueue->ProcessCommand(new CListCommand());
+	//m_pCommandQueue->ProcessCommand(new CListCommand());
 	m_pCommandQueue->ProcessCommand(new CFileTransferCommand(_T("c:\\test.txt"), CServerPath(_T("/")), _T("test.txt"), true));
 }
 
