@@ -2,7 +2,7 @@
 
 noinst_LIBRARIES = libengine.a
 
-INCLUDES = -I../include
+INCLUDES = -I$(srcdir)/../include
 #########################################################################
 # APPLICATION SECTION
 #########################################################################

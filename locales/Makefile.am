@@ -1,16 +1,22 @@
 localesdir = $(pkgdatadir)/locales
 
-CLEANFILES = *.mo resources.h
+CLEANFILES = *.po.new *.mo resources.h filezilla.pot filezilla.pot.new
 
-dist_noinst_DATA = filezilla.pot @FILEZILLA_LINGUAS_PO@
+dist_noinst_DATA = filezilla.pot @FILEZILLA_LINGUAS_PO@ 
 
 install-data-local: @CATALOGS_TO_INSTALL@
 
 install-filezilla-catalogs: allmo
 	for i in @FILEZILLA_LINGUAS@ ; do \
 	    $(mkinstalldirs) $(DESTDIR)$(localesdir)/$$i/LC_MESSAGES ; \
-	    $(INSTALL_DATA) $(srcdir)/$$i.mo $(DESTDIR)$(localesdir)/$$i/LC_MESSAGES/filezilla.mo ; \
+	    $(INSTALL_DATA) $$i.mo $(DESTDIR)$(localesdir)/$$i/LC_MESSAGES/filezilla.mo ; \
 	done
+
+uninstall-local:
+	for i in @FILEZILLA_LINGUAS@ ; do \
+	    rm $(DESTDIR)$(localesdir)/$$i/LC_MESSAGES/filezilla.mo ; \
+	done
+
 
 # Unused code
 #WXWIN_LINGUAS  =    de
@@ -18,7 +24,7 @@ install-filezilla-catalogs: allmo
 #install-wxstd-catalogs:
 #	for i in $(WXWIN_LINGUAS) ; do \
 #	    $(mkinstalldirs) $(DESTDIR)$(localesdir)/$$i/LC_MESSAGES ; \
-#	    $(INSTALL_DATA) $(srcdir)/wxwin/$$i.mo $(DESTDIR)$(localesdir)/$$i/LC_MESSAGES/filezilla-wxstd.mo ; \
+#	    $(INSTALL_DATA) wxwin/$$i.mo $(DESTDIR)$(localesdir)/$$i/LC_MESSAGES/filezilla-wxstd.mo ; \
 #	done
 
 
@@ -40,16 +46,17 @@ XARGS=xargs
 XGETTEXT_ARGS=-C -k_ -kwxGetTranslation -kwxTRANSLATE -s -j
 
 # implicit rules
-%.mo: %.po
+%.mo: %.po.new
 	$(MSGFMT) -o $@ $<
 
 # a PO file must be updated from wxstd.po to include new translations
-%.po: $(srcdir)/filezilla.pot
-	if [ -f $@ ]; then \
-		$(MSGMERGE) -U $@ $(srcdir)/filezilla.pot; \
-	else \
-		cp $(srcdir)/filezilla.pot $@; \
+%.po.new: $(srcdir)/%.po filezilla.pot
+	file=$@; \
+	cat $(srcdir)/$${file%.po.new}.po > $@
+	if [ ! -f $@ ]; then \
+		exit 1; \
 	fi
+	$(MSGMERGE) -U $@ filezilla.pot
 	@if [ -f $@~ ]; then rm $@~; fi
 
 # touch file so that timestamp is newer than that of filezilla.pot
@@ -58,7 +65,7 @@ XGETTEXT_ARGS=-C -k_ -kwxGetTranslation -kwxTRANSLATE -s -j
 # generate resources.h from the xrc files. We have to do this since
 # xgettext cannot handle xrc files. So export all translatable strings from
 # the resource files into resources.h using wxrc.
-resources.h: ../src/interface/resources/*.xrc
+resources.h: $(srcdir)/../src/interface/resources/*.xrc
 	@if [ -f $@~ ]; then rm $@~; fi
 
 	wxrc -g -e $(srcdir)/../src/interface/resources/*.xrc > $@~ || exit 1
@@ -68,14 +75,14 @@ resources.h: ../src/interface/resources/*.xrc
 
 	@if [ -f $@~ ]; then rm $@~; fi
 
-filezilla.pot: resources.h ../src/include/*.h ../src/engine/*.h ../src/interface/*.h  ../src/engine/*.cpp ../src/interface/*.cpp 
+filezilla.pot: resources.h $(srcdir)/../src/include/*.h $(srcdir)/../src/engine/*.h $(srcdir)/../src/interface/*.h  $(srcdir)/../src/engine/*.cpp $(srcdir)/../src/interface/*.cpp 
 	@rm -f $@.new
 	@touch $@.new
 
 # create filezilla.pot.new from the source files
-	(cd $(srcdir) ; $(XGETTEXT) $(XGETTEXT_ARGS) -o $@.new resources.h)
-	(cd $(srcdir) ; find ../src -name "*.h" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o $@.new)
-	(cd $(srcdir) ; find ../src -name "*.cpp" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o $@.new)
+	($(XGETTEXT) $(XGETTEXT_ARGS) -o $@.new resources.h)
+	(find $(srcdir)/../src -name "*.h" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o $@.new)
+	(find $(srcdir)/../src -name "*.cpp" | $(XARGS) $(XGETTEXT) $(XGETTEXT_ARGS) -o $@.new)
 
 	if [ -f $@ ]; then \
 		touch $@; \
@@ -84,13 +91,17 @@ filezilla.pot: resources.h ../src/include/*.h ../src/engine/*.h ../src/interface
 		mv $@.new $@; \
 	fi;
 
-	@if [ -f $@~ ]; then rm $@~; fi
+	@if [ -f $@.pot~ ]; then rm $@~; fi
 	@if [ -f $@.new ]; then rm $@.new; fi
 
-allpo: @FILEZILLA_LINGUAS_PO@
+allpo: @FILEZILLA_LINGUAS_PO_NEW@
+
+# this target which will not be called automatically will update the .po files
+updatepo: @FILEZILLA_LINGUAS_PO_NEW@
+	for t in @FILEZILLA_LINGUAS@; do cp $$t.po.new $(srcdir)/$$t.po; done
 
 allmo: allpo
-	@for t in @FILEZILLA_LINGUAS@; do $(MAKE) $(srcdir)/$$t.mo; done
+	@for t in @FILEZILLA_LINGUAS@; do $(MAKE) $$t.mo; done
 
 # print out the percentage of the translated strings
 stats: allpo

@@ -93,11 +93,17 @@ else
 	LSPROG='ls'
 fi
 
-for i in `$LSPROG locales/*.po`
+if test x$srcdir = x; then
+  path="locales"
+else
+  path="$srcdir/locales"
+fi
+for i in `$LSPROG $path/*.po`
 do
   i=${i%.*}
   i=${i##*/}
-  FILEZILLA_LINGUAS_PO=$FILEZILLA_LINGUAS_PO${FILEZILLA_LINGUAS_PO:+ }$i.po
+  FILEZILLA_LINGUAS_PO=$FILEZILLA_LINGUAS_PO${FILEZILLA_LINGUAS_PO:+ }\$\(srcdir\)/$i.po
+  FILEZILLA_LINGUAS_PO_NEW=$FILEZILLA_LINGUAS_PO_NEW${FILEZILLA_LINGUAS_PO_NEW:+ }$i.po.new
   FILEZILLA_LINGUAS=$FILEZILLA_LINGUAS${FILEZILLA_LINGUAS:+ }$i
 done
 
@@ -120,6 +126,7 @@ AC_SUBST(WX_LIBS)
 AC_SUBST(CATALOGS_TO_INSTALL)
 AC_SUBST(FILEZILLA_LINGUAS)
 AC_SUBST(FILEZILLA_LINGUAS_PO)
+AC_SUBST(FILEZILLA_LINGUAS_PO_NEW)
 AC_SUBST(WINDRESFLAGS)
 
 AC_OUTPUT(Makefile src/Makefile src/engine/Makefile src/tinyxml/Makefile
