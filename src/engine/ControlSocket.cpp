@@ -3,8 +3,21 @@
 #include "ControlSocket.h"
 #include <idna.h>
 
+const wxEventType fzEVT_ENGINE_NOTIFICATION = wxNewEventType();
+
+wxFzEngineEvent::wxFzEngineEvent(int id, enum EngineNotificationType eventType) : wxEvent(id, fzEVT_ENGINE_NOTIFICATION)
+{
+	m_eventType = eventType;
+}
+
+wxEvent *wxFzEngineEvent::Clone() const
+{
+	return new wxFzEngineEvent(*this);
+}
+
 BEGIN_EVENT_TABLE(CControlSocket, wxEvtHandler)
 	EVT_SOCKET(wxID_ANY, CControlSocket::OnSocketEvent)
+	EVT_FZ_ENGINE_NOTIFICATION(wxID_ANY, CControlSocket::OnEngineEvent)
 END_EVENT_TABLE();
 
 COpData::COpData()
@@ -237,4 +250,30 @@ wxString CControlSocket::ConvertDomainName(wxString domain)
 	wxString result = output;
 	free(output);
 	return result;
+}
+
+bool CControlSocket::SendEvent(enum EngineNotificationType eventType)
+{
+	wxFzEngineEvent evt(wxID_ANY, eventType);
+	wxPostEvent(this, evt);
+	return true;
+}
+
+void CControlSocket::OnEngineEvent(wxFzEngineEvent &event)
+{
+	switch (event.m_eventType)
+	{
+	case engineCancel:
+		if (GetCurrentCommandId() != cmd_none)
+		{
+			if (GetCurrentCommandId() == cmd_connect)
+				DoClose(FZ_REPLY_CANCELED);
+			else
+				ResetOperation(FZ_REPLY_CANCELED);
+			LogMessage(::Error, _("Interrupted by user"));
+		}
+		break;
+	default:
+		break;
+	}
 }

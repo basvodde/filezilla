@@ -1,6 +1,30 @@
 #ifndef __CONTROLSOCKET_H__
 #define __CONTROLSOCKET_H__
 
+enum EngineNotificationType
+{
+	engineCancel
+};
+
+class wxFzEngineEvent : public wxEvent
+{
+public:
+	wxFzEngineEvent(int id, enum EngineNotificationType eventType);
+	virtual wxEvent *Clone() const;
+
+	enum EngineNotificationType m_eventType;
+};
+
+extern const wxEventType fzEVT_ENGINE_NOTIFICATION;
+typedef void (wxEvtHandler::*fzEngineEventFunction)(wxFzEngineEvent&);
+
+#define EVT_FZ_ENGINE_NOTIFICATION(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( \
+        fzEVT_ENGINE_NOTIFICATION, id, -1, \
+        (wxObjectEventFunction)(fzEngineEventFunction) wxStaticCastEvent( fzEngineEventFunction, &fn ), \
+        (wxObject *) NULL \
+    ),
+
 #define OPERATION_NONE
 #define OPERATION_
 
@@ -23,8 +47,8 @@ public:
 	enum Command GetCurrentCommandId() const;
 
 	int DoClose(int nErrorCode = FZ_REPLY_DISCONNECTED);
-
-	virtual bool Send(const char *buffer, int len);
+	
+	bool SendEvent(enum EngineNotificationType eventType);
 
 protected:
 	virtual void OnSocketEvent(wxSocketEvent &event);
@@ -33,6 +57,8 @@ protected:
 	virtual void OnSend(wxSocketEvent &event);
 	virtual void OnClose(wxSocketEvent &event);
 	virtual int ResetOperation(int nErrorCode);
+	virtual bool Send(const char *buffer, int len);
+	void OnEngineEvent(wxFzEngineEvent &event);
 
 	wxString ConvertDomainName(wxString domain);
 

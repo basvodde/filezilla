@@ -46,7 +46,8 @@ int CFileZillaEngine::Command(const CCommand &command)
 	if (command.GetId() != cmd_cancel && IsBusy())
 		return FZ_REPLY_BUSY;
 
-	m_pCurrentCommand = command.Clone();
+	if (!m_pCurrentCommand && command.GetId() != cmd_cancel)
+		m_pCurrentCommand = command.Clone();
 
 	m_bIsInCommand = true;
 
@@ -58,6 +59,9 @@ int CFileZillaEngine::Command(const CCommand &command)
 		break;
 	case cmd_disconnect:
 		res = Disconnect(reinterpret_cast<const CDisconnectCommand &>(command));
+		break;
+	case cmd_cancel:
+		res = Cancel(reinterpret_cast<const CCancelCommand &>(command));
 		break;
 	default:
 		return FZ_REPLY_SYNTAXERROR;
@@ -171,4 +175,14 @@ int CFileZillaEngine::Disconnect(const CDisconnectCommand &command)
 	}
 
 	return res;
+}
+
+int CFileZillaEngine::Cancel(const CCancelCommand &command)
+{
+	if (!IsBusy())
+		return FZ_REPLY_WOULDBLOCK;
+
+	m_pControlSocket->SendEvent(engineCancel);
+
+	return FZ_REPLY_WOULDBLOCK;
 }
