@@ -46,7 +46,7 @@ bool CFileZillaApp::OnInit()
 			fn = buffer;
 	}
 #else
-	wxFileName fn = wxGetHomeDir();
+	wxFileName fn = wxFileName(wxGetHomeDir(), _T(""));
 	fn.AppendDir(_T(".filezilla"));
 	if (!fn.DirExists())
 		wxMkdir(fn.GetPath(), 700);
