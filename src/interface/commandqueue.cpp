@@ -2,6 +2,7 @@
 #include "commandqueue.h"
 #include "Mainfrm.h"
 #include "state.h"
+#include "RemoteListView.h"
 
 CCommandQueue::CCommandQueue(CFileZillaEngine *pEngine, CMainFrame* pMainFrame)
 {
@@ -65,8 +66,13 @@ void CCommandQueue::ProcessNextCommand()
 		{
 			wxBell();
 			
-			delete pCommand;
+			// Let the remote list view know if a LIST command failed,
+			// so that it may issue the next command in recursive operations.
+			if (pCommand->GetId() == cmd_list)
+				m_pMainFrame->GetRemoteListView()->ListingFailed();
+
 			m_CommandList.pop_front();
+			delete pCommand;
 		}
 	}
 }
@@ -103,10 +109,18 @@ void CCommandQueue::Finish(COperationNotification *pNotification)
 	if (pNotification->nReplyCode && FZ_REPLY_DISCONNECTED)
 		m_pMainFrame->GetState()->SetServer(0);
 
-	if (!m_CommandList.empty())
-	{
-		delete m_CommandList.front();
-		m_CommandList.pop_front();
-	}
+	if (m_CommandList.empty())
+		return;
+
+	CCommand* pCommand = m_CommandList.front();
+
+	// Let the remote list view know if a LIST command failed,
+	// so that it may issue the next command in recursive operations.
+	if (pCommand->GetId() == cmd_list)
+		m_pMainFrame->GetRemoteListView()->ListingFailed();
+	
+	delete m_CommandList.front();
+	m_CommandList.pop_front();
+	
 	ProcessNextCommand();
 }

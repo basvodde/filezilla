@@ -28,6 +28,8 @@ public:
 	void AddToRequestQueue(CFileZillaEngine* pEngine, CAsyncRequestNotification* pNotification);
 	CState* GetState() { return m_pState; }
 	CStatusView* GetStatusView() { return m_pStatusView; }
+	CLocalListView* GetLocalListView() { return m_pLocalListView; }
+	CRemoteListView* GetRemoteListView() { return m_pRemoteListView; }
 
 protected:
 	bool CreateMenus();

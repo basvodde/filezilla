@@ -361,14 +361,12 @@ void CLocalListView::FreeImageList()
 
 void CLocalListView::OnItemActivated(wxListEvent &event)
 {
-	long item = -1;
-	
 	int count = 0;
 	bool back = false;
 
 	while (true)
 	{
-		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		int item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 		if (item == -1)
 			break;
 
@@ -390,7 +388,7 @@ void CLocalListView::OnItemActivated(wxListEvent &event)
 		return;
 	}
 
-	item = event.GetIndex();
+	int item = event.GetIndex();
 	
 	t_fileData *data = GetData(item);
 	if (!data)

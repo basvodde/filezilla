@@ -11,11 +11,25 @@ class wxImageListMsw;
 
 class CRemoteListView : public wxListCtrl
 {
+protected:
+	enum OperationMode
+	{
+		recursive_none,
+		recursive_download,
+		recursive_addtoqueue,
+		recursive_delete,
+		recursive_chmod
+	} m_operationMode;
+
 public:
 	CRemoteListView(wxWindow* parent, wxWindowID id, CState* pState, CCommandQueue* pCommandQueue, CQueueView* pQueue);
 	virtual ~CRemoteListView();
 
 	void SetDirectoryListing(CDirectoryListing *pDirectoryListing);
+	void ListingFailed();
+
+	bool StopRecursiveOperation();
+	bool IsBusy() const { return m_operationMode != recursive_none; }
 
 protected:
 	// Declared const due to design error in wxWidgets.
@@ -44,6 +58,10 @@ protected:
 	static int CmpType(CRemoteListView *pList, unsigned int index, t_fileData &refData);
 	static int CmpSize(CRemoteListView *pList, unsigned int index, t_fileData &refData);
 
+	// Processes the directory listing in case of a recursive operation
+	void ProcessDirectoryListing();
+	bool NextOperation();
+
 	CDirectoryListing *m_pDirectoryListing;
 	std::vector<t_fileData> m_fileData;
 	std::vector<unsigned int> m_indexMapping;
@@ -63,6 +81,19 @@ protected:
 
 	int m_sortColumn;
 	int m_sortDirection;
+
+	// Variables for recursive operations
+	CServerPath m_startDir;
+	std::list<CServerPath> m_visitedDirs;
+
+	struct t_newDir
+	{
+		CServerPath parent;
+		wxString subdir;
+		wxString localDir;
+	};
+	std::list<t_newDir> m_dirsToVisit;
+	bool stopRecursiveOperation;
 
 	DECLARE_EVENT_TABLE()
 	void OnItemActivated(wxListEvent &event);
