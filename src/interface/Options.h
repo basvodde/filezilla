@@ -9,7 +9,7 @@
 struct t_OptionsCache
 {
 	bool cached;
-	int numValue;
+	long numValue;
 	wxString strValue;
 };
 

@@ -81,12 +81,12 @@ int COptions::GetOptionVal(unsigned int nID)
 		return m_optionsCache[nID].numValue;
 
 	wxString value;
-	int numValue = 0;
+	long numValue = 0;
 	if (!GetXmlValue(nID, value))
-		options[nID].defaultValue.ToLong((long *)&numValue);
+		options[nID].defaultValue.ToLong(&numValue);
 	else
 	{
-		value.ToLong((long *)&numValue);
+		value.ToLong(&numValue);
 		Validate(nID, numValue);
 	}
 
@@ -184,7 +184,7 @@ void COptions::CreateNewXmlDocument()
 		if (options[i].type == string)
 			m_optionsCache[i].strValue = options[i].defaultValue;
 		else
-			options[i].defaultValue.ToLong((long *)&m_optionsCache[i].numValue);
+			options[i].defaultValue.ToLong(&m_optionsCache[i].numValue);
 		SetXmlValue(i, options[i].defaultValue);
 	}
 }
