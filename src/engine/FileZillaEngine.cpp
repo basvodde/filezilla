@@ -21,6 +21,7 @@ CFileZillaEngine::CFileZillaEngine()
 	m_pEventHandler = 0;
 	m_pControlSocket = 0;
 	m_pCurrentCommand = 0;
+	m_bIsInCommand = false;
 }
 
 CFileZillaEngine::~CFileZillaEngine()
@@ -42,16 +43,29 @@ int CFileZillaEngine::Init(wxEvtHandler *pEventHandler)
 
 int CFileZillaEngine::Command(const CCommand &command)
 {
-	if (IsBusy())
+	if (command.GetId() != cmd_cancel && IsBusy())
 		return FZ_REPLY_BUSY;
 
+	m_pCurrentCommand = command.Clone();
+
+	m_bIsInCommand = true;
+
+	int res = FZ_REPLY_INTERNALERROR;
 	switch (command.GetId())
 	{
 	case cmd_connect:
-		return Connect(reinterpret_cast<const CConnectCommand &>(command));
+		res = Connect(reinterpret_cast<const CConnectCommand &>(command));
+		break;
+	case cmd_disconnect:
+		res = Disconnect(reinterpret_cast<const CDisconnectCommand &>(command));
+		break;
 	}
 
-	return FZ_REPLY_INTERNALERROR;
+	if (res != FZ_REPLY_WOULDBLOCK)
+		ResetOperation(res);
+
+	m_bIsInCommand = false;
+	return res;
 }
 
 bool CFileZillaEngine::IsBusy() const
@@ -73,10 +87,7 @@ bool CFileZillaEngine::IsConnected() const
 int CFileZillaEngine::Connect(const CConnectCommand &command)
 {
 	if (IsConnected())
-	{
-		m_pControlSocket->Disconnect();
-		delete m_pControlSocket;
-	}
+		return FZ_REPLY_ALREADYCONNECTED;
 
 	switch (command.GetServer().GetProtocol())
 	{
@@ -87,7 +98,7 @@ int CFileZillaEngine::Connect(const CConnectCommand &command)
 
 	int res = m_pControlSocket->Connect(command.GetServer());
 
-	return FZ_REPLY_INTERNALERROR;
+	return res;
 }
 
 CNotification *CFileZillaEngine::GetNextNotification()
@@ -113,4 +124,49 @@ void CFileZillaEngine::AddNotification(CNotification *pNotification)
 		wxFzEvent evt(wxID_ANY);
 		wxPostEvent(m_pEventHandler, evt);
 	}
+}
+
+const CCommand *CFileZillaEngine::GetCurrentCommand() const
+{
+	return m_pCurrentCommand;
+}
+
+enum Command CFileZillaEngine::GetCurrentCommandId() const
+{
+	if (!m_pCurrentCommand)
+		return cmd_none;
+
+	else
+		return GetCurrentCommand()->GetId();
+}
+
+int CFileZillaEngine::ResetOperation(int nErrorCode)
+{
+	if (!m_bIsInCommand && m_pCurrentCommand)
+	{
+		COperationNotification *notification = new COperationNotification();
+		notification->nReplyCode = nErrorCode;
+		notification->commandId = m_pCurrentCommand->GetId();
+		AddNotification(notification);
+	}
+
+	delete m_pCurrentCommand;
+	m_pCurrentCommand = 0;
+
+	return nErrorCode;
+}
+
+int CFileZillaEngine::Disconnect(const CDisconnectCommand &command)
+{
+	if (!IsConnected())
+		return FZ_REPLY_OK;
+
+	int res = m_pControlSocket->Disconnect();
+	if (res == FZ_REPLY_OK)
+	{
+		delete m_pControlSocket;
+		m_pControlSocket = 0;
+	}
+
+	return res;
 }

@@ -17,4 +17,6 @@ void CFtpControlSocket::OnReceive(wxSocketEvent &event)
 void CFtpControlSocket::OnConnect(wxSocketEvent &event)
 {
 	LogMessage(Status, _("Connection established, waiting for welcome message..."));
+
+	ResetOperation(FZ_REPLY_OK);
 }

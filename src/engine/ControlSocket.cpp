@@ -9,6 +9,7 @@ END_EVENT_TABLE();
 CControlSocket::CControlSocket(CFileZillaEngine *pEngine)
 	: CLogging(pEngine), wxSocketClient(wxSOCKET_NOWAIT)
 {
+	m_pEngine = pEngine;
 	m_pCurOpData = 0;
 	m_nOpState = 0;
 
@@ -37,6 +38,11 @@ void CControlSocket::OnSend(wxSocketEvent &event)
 
 void CControlSocket::OnClose(wxSocketEvent &event)
 {
+	if (GetCurrentCommandId() == cmd_connect)
+		LogMessage(::Error, _("Could not connect to server"));
+	else
+		LogMessage(::Error, _("Disconnected from server"));
+	DoClose();
 }
 
 int CControlSocket::Connect(const CServer &server)
@@ -49,14 +55,17 @@ int CControlSocket::Connect(const CServer &server)
 	bool res = wxSocketClient::Connect(addr, false);
 
 	if (!res && LastError() != wxSOCKET_WOULDBLOCK)
-		return FZ_REPLY_ERROR;	
+		return ResetOperation(FZ_REPLY_ERROR);
 
 	return FZ_REPLY_WOULDBLOCK;
 }
 
-void CControlSocket::Disconnect()
+int CControlSocket::Disconnect()
 {
-	Close();
+	LogMessage(Status, _("Disconnected from server"));
+
+	DoClose();
+	return FZ_REPLY_OK;
 }
 
 void CControlSocket::OnSocketEvent(wxSocketEvent &event)
@@ -76,4 +85,27 @@ void CControlSocket::OnSocketEvent(wxSocketEvent &event)
 		OnClose(event);
 		break;
 	}
+}
+
+enum Command CControlSocket::GetCurrentCommandId() const
+{
+	return m_pEngine->GetCurrentCommandId();
+}
+
+int CControlSocket::ResetOperation(int nErrorCode)
+{
+	if (m_pCurOpData)
+	{
+		delete m_pCurOpData;
+		m_pCurOpData = 0;
+	}
+
+	return m_pEngine->ResetOperation(nErrorCode);
+}
+
+int CControlSocket::DoClose(int nErrorCode /*=FZ_REPLY_DISCONNECTED*/)
+{
+	nErrorCode = ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED | nErrorCode);
+	Close();
+	return nErrorCode;
 }

@@ -19,6 +19,8 @@ IMPLEMENT_APP(CFileZillaApp)
 
 bool CFileZillaApp::OnInit()
 {
+	wxSystemOptions::SetOption(wxT("msw.remap"), 0);
+
 	if (!LoadResourceFiles())
 		return false;
 

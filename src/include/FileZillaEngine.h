@@ -4,6 +4,7 @@
 class CControlSocket;
 class CFileZillaEngine  
 {
+	friend class CControlSocket;
 public:
 	CFileZillaEngine();
 	virtual ~CFileZillaEngine();
@@ -11,7 +12,6 @@ public:
 	int Init(wxEvtHandler *pEventHandler);
 
 	int Command(const CCommand &command);
-	int Connect(const CConnectCommand &command);
 
 	bool IsBusy() const;
 	bool IsConnected() const;
@@ -19,7 +19,15 @@ public:
 	void AddNotification(CNotification *pNotification);
 	CNotification *GetNextNotification();
 
+	const CCommand *GetCurrentCommand() const;
+	enum Command GetCurrentCommandId() const;
+
 protected:
+	int Connect(const CConnectCommand &command);
+	int Disconnect(const CDisconnectCommand &command);
+
+	int ResetOperation(int nErrorCode);
+
 	wxEvtHandler *m_pEventHandler;
 	CControlSocket *m_pControlSocket;
 
@@ -27,6 +35,7 @@ protected:
 
 	std::list<CNotification *> m_NotificationList;
 
+	bool m_bIsInCommand; //true if Command is on the callstack
 };
 
 #endif

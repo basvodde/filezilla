@@ -15,7 +15,11 @@ public:
 	virtual ~CControlSocket();
 
 	virtual int Connect(const CServer &server);
-	virtual void Disconnect();
+	virtual int Disconnect();
+
+	enum Command GetCurrentCommandId() const;
+
+	int DoClose(int nErrorCode = FZ_REPLY_DISCONNECTED);
 
 protected:
 	virtual void OnSocketEvent(wxSocketEvent &event);
@@ -23,11 +27,13 @@ protected:
 	virtual void OnReceive(wxSocketEvent &event);
 	virtual void OnSend(wxSocketEvent &event);
 	virtual void OnClose(wxSocketEvent &event);
+	virtual int ResetOperation(int nErrorCode);
 
 	DECLARE_EVENT_TABLE()
 
 	COpData *m_pCurOpData;
 	int m_nOpState;
+	CFileZillaEngine *m_pEngine;
 };
 
 #endif

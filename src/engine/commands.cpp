@@ -19,6 +19,11 @@ bool CConnectCommand::IsChainable() const
 	return false;
 }
 
+CCommand *CConnectCommand::Clone() const
+{
+	return new CConnectCommand(GetServer());
+}
+
 const CServer CConnectCommand::GetServer() const
 {
 	return m_Server;
@@ -34,6 +39,11 @@ bool CDisconnectCommand::IsChainable() const
 	return false;
 }
 
+CCommand *CDisconnectCommand::Clone() const
+{
+	return new CDisconnectCommand();
+}
+
 enum Command CCancelCommand::GetId() const
 {
 	return cmd_cancel;
@@ -42,4 +52,9 @@ enum Command CCancelCommand::GetId() const
 bool CCancelCommand::IsChainable() const
 {
 	return false;
+}
+
+CCommand *CCancelCommand::Clone() const
+{
+	return new CCancelCommand();
 }

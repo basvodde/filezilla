@@ -17,6 +17,8 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_MENU(wxID_ANY, CMainFrame::OnMenuHandler)
 	EVT_BUTTON(XRCID("ID_QUICKCONNECT_OK"), CMainFrame::OnQuickconnect)
 	EVT_FZ_NOTIFICATION(wxID_ANY, CMainFrame::OnEngineEvent)
+	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_DISCONNECT"), CMainFrame::OnUpdateToolbarDisconnect)
+	EVT_TOOL(XRCID("ID_TOOLBAR_DISCONNECT"), CMainFrame::OnDisconnect)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame() : wxFrame(NULL, -1, "FileZilla", wxDefaultPosition, wxSize(900, 750))
@@ -25,6 +27,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, "FileZilla", wxDefaultPosition, wxS
 
 	m_pStatusBar = NULL;
 	m_pMenuBar = NULL;
+	m_pToolBar = 0;
 	m_pQuickconnectBar = NULL;
 	m_pTopSplitter = NULL;
 	m_pBottomSplitter = NULL;
@@ -83,6 +86,10 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, "FileZilla", wxDefaultPosition, wxS
 
 CMainFrame::~CMainFrame()
 {
+	delete m_pEngine;
+
+	for (std::list<CCommand *>::iterator iter = m_CommandList.begin(); iter != m_CommandList.end(); iter++)
+		delete *iter;
 }
 
 void CMainFrame::OnSize(wxSizeEvent &event)
@@ -242,9 +249,14 @@ void CMainFrame::OnQuickconnect(wxCommandEvent &event)
 	XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_USER"), wxTextCtrl)->SetValue(server.GetUser());
 	XRCCTRL(*m_pQuickconnectBar, _T("ID_QUICKCONNECT_PASS"), wxTextCtrl)->SetValue(server.GetPass());
 
-	int res = m_pEngine->Command(CConnectCommand(server));
-	if (res != FZ_REPLY_OK || res != FZ_REPLY_WOULDBLOCK)
-		wxBell();
+	if (m_pEngine->IsConnected() || m_pEngine->IsBusy())
+	{
+		if (wxMessageBox(_("Break current connection?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) != wxYES)
+			return;
+		Cancel();
+	}
+
+	ProcessCommand(new CConnectCommand(server));
 }
 
 void CMainFrame::OnEngineEvent(wxEvent &event)
@@ -260,10 +272,114 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 		case nId_logmsg:
 			m_pStatusView->AddToLog(reinterpret_cast<CLogmsgNotification *>(pNotification));
 			break;
+		case nId_operation:
+			if (!m_CommandList.empty())
+			{
+				delete m_CommandList.front();
+				m_CommandList.pop_front();
+			}
+			ProcessNextCommand();
+			break;
 		}
 		delete pNotification;
 
 		pNotification = m_pEngine->GetNextNotification();
 	}
 
+}
+
+bool CMainFrame::CreateToolBar()
+{
+	if (m_pToolBar)
+	{
+		SetToolBar(0);
+		delete m_pToolBar;
+	}
+	m_pToolBar = wxXmlResource::Get()->LoadToolBar(this, _T("ID_TOOLBAR"));
+	if (!m_pToolBar)
+	{
+		wxLogError(_("Cannot load toolbar from resource file"));
+	}
+	SetToolBar(m_pToolBar);
+
+	return true;
+}
+
+void CMainFrame::OnUpdateToolbarDisconnect(wxUpdateUIEvent& event)
+{
+	event.Enable(m_pEngine && m_pEngine->IsConnected() && !m_pEngine->IsBusy());
+}
+
+void CMainFrame::OnDisconnect(wxCommandEvent& event)
+{
+	if (!m_pEngine)
+		return;
+
+	if (m_pEngine->IsBusy())
+		return;
+
+	ProcessCommand(new CDisconnectCommand());
+}
+
+void CMainFrame::ProcessCommand(CCommand *pCommand)
+{
+	m_CommandList.push_back(pCommand);
+	if (m_CommandList.size() == 1)
+		ProcessNextCommand();
+}
+
+void CMainFrame::ProcessNextCommand()
+{
+	if (m_pEngine->IsBusy())
+		return;
+
+	while (!m_CommandList.empty())
+	{
+		CCommand *pCommand = m_CommandList.front();
+
+		int res = m_pEngine->Command(*pCommand);
+		if (res == FZ_REPLY_WOULDBLOCK)
+			break;
+		else if (res == FZ_REPLY_OK)
+		{
+			delete pCommand;
+			m_CommandList.pop_front();
+			continue;
+		}
+		else if (res == FZ_REPLY_ALREADYCONNECTED)
+		{
+			res = m_pEngine->Command(CDisconnectCommand());
+			if (res == FZ_REPLY_WOULDBLOCK)
+			{
+				m_CommandList.push_front(new CDisconnectCommand);
+				break;
+			}
+			else if (res != FZ_REPLY_OK)
+			{
+				wxBell();
+				delete pCommand;
+				m_CommandList.pop_front();
+				continue;
+			}
+		}
+		else
+			wxBell();
+	}
+}
+
+void CMainFrame::Cancel()
+{
+	if (m_CommandList.empty())
+		return;
+	
+	std::list<CCommand *>::iterator iter = m_CommandList.begin();
+	CCommand *pCommand = *(iter++);
+
+	for (; iter != m_CommandList.end(); iter++)
+	{
+		delete *iter;
+	}
+	m_CommandList.clear();
+	m_CommandList.push_back(pCommand);
+	m_pEngine->Command(CCancelCommand());
 }

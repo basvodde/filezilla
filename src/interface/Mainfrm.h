@@ -13,12 +13,19 @@ class CMainFrame : public wxFrame
 public:
 	CMainFrame();
 	virtual ~CMainFrame();
+
+	void ProcessCommand(CCommand *pCommand);
+	void ProcessNextCommand();
+	void Cancel();
+
 protected:
 	bool CreateMenus();
 	bool CreateQuickconnectBar();
+	bool CreateToolBar();
 
 	wxStatusBar *m_pStatusBar;
-	wxMenuBar	*m_pMenuBar;
+	wxMenuBar *m_pMenuBar;
+	wxToolBar *m_pToolBar;
 	wxPanel	*m_pQuickconnectBar;
 	wxSplitterWindow *m_pTopSplitter;
 	wxSplitterWindow *m_pBottomSplitter;
@@ -39,11 +46,14 @@ protected:
 	void OnMenuHandler(wxCommandEvent &event);
 	void OnQuickconnect(wxCommandEvent &event);
 	void OnEngineEvent(wxEvent &event);
+	void OnUpdateToolbarDisconnect(wxUpdateUIEvent& event);
+	void OnDisconnect(wxCommandEvent &event);
 
 	float m_ViewSplitterSashPos;
 	bool m_bInitDone;
 
 	CFileZillaEngine *m_pEngine;
+	std::list<CCommand *> m_CommandList;
 
 	DECLARE_EVENT_TABLE()
 };

@@ -3,7 +3,8 @@
 
 enum Command
 {
-	cmd_connect = 0,
+	cmd_none = 0,
+	cmd_connect,
 	cmd_disconnect,
 	cmd_cancel,
 	cmd_list,
@@ -27,6 +28,7 @@ enum Command
 #define FZ_REPLY_DISCONNECTED	(0x0040)
 #define FZ_REPLY_INTERNALERROR	(0x0080)
 #define FZ_REPLY_BUSY			(0x0100 | FZ_REPLY_ERROR)
+#define FZ_REPLY_ALREADYCONNECTED	(0x0200 | FZ_REPLY_ERROR) // Will be returned by connect if already connected
 
 class CCommand
 {
@@ -34,6 +36,7 @@ public:
 	virtual ~CCommand();
 	virtual enum Command GetId() const = 0;
 	virtual bool IsChainable() const = 0;
+	virtual CCommand *Clone() const = 0;
 };
 
 class CConnectCommand : public CCommand
@@ -42,6 +45,8 @@ public:
 	CConnectCommand(const CServer &server);
 	virtual enum Command GetId() const;
 	virtual bool IsChainable() const;
+	virtual CCommand *Clone() const;
+
 	const CServer GetServer() const;
 protected:
 	CServer m_Server;
@@ -52,6 +57,7 @@ class CDisconnectCommand : public CCommand
 public:
 	virtual enum Command GetId() const;
 	virtual bool IsChainable() const;
+	virtual CCommand *Clone() const;
 };
 
 class CCancelCommand : public CCommand
@@ -59,6 +65,7 @@ class CCancelCommand : public CCommand
 public:
 	virtual enum Command GetId() const;
 	virtual bool IsChainable() const;
+	virtual CCommand *Clone() const;
 };
 
 #endif

@@ -45,6 +45,7 @@ public:
 	virtual enum NotificationId GetID() const;
 	
 	int nReplyCode;
+	enum Command commandId;
 };
 
 #endif
