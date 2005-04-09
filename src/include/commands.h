@@ -33,12 +33,11 @@ enum Command
 // Small macro to simplify command class declaration
 // Basically all this macro does, is to declare the class and add the required
 // standard functions to it.
-#define DECLARE_COMMAND(name, id, chainable) \
+#define DECLARE_COMMAND(name, id) \
 	class name : public CCommand \
 	{ \
 	public: \
 		virtual enum Command GetId() const { return id; } \
-		virtual bool IsChainable() const { return chainable; } \
 		virtual CCommand* Clone() const { return new name(*this); }
 
 class CCommand
@@ -47,11 +46,10 @@ public:
 	CCommand() { }
 	virtual ~CCommand() { }
 	virtual enum Command GetId() const = 0;
-	virtual bool IsChainable() const = 0;
 	virtual CCommand *Clone() const = 0;
 };
 
-DECLARE_COMMAND(CConnectCommand, cmd_connect, false)
+DECLARE_COMMAND(CConnectCommand, cmd_connect)
 	CConnectCommand(const CServer &server);
 
 	const CServer GetServer() const;
@@ -59,13 +57,13 @@ protected:
 	CServer m_Server;
 };
 
-DECLARE_COMMAND(CDisconnectCommand, cmd_disconnect, false)
+DECLARE_COMMAND(CDisconnectCommand, cmd_disconnect)
 };
 
-DECLARE_COMMAND(CCancelCommand, cmd_cancel, false)
+DECLARE_COMMAND(CCancelCommand, cmd_cancel)
 };
 
-DECLARE_COMMAND(CListCommand, cmd_list, false)
+DECLARE_COMMAND(CListCommand, cmd_list)
 	CListCommand(bool refresh = false);
 	CListCommand(CServerPath path, wxString subDir = _T(""), bool refresh = false);
 	
@@ -80,7 +78,7 @@ protected:
 	bool m_refresh;
 };
 
-DECLARE_COMMAND(CFileTransferCommand, cmd_transfer, false)
+DECLARE_COMMAND(CFileTransferCommand, cmd_transfer)
 
 	struct t_transferSettings
 	{
@@ -104,7 +102,7 @@ protected:
 	t_transferSettings m_transferSettings;
 };
 
-DECLARE_COMMAND(CRawCommand, cmd_raw, false)
+DECLARE_COMMAND(CRawCommand, cmd_raw)
 	CRawCommand();
 	CRawCommand(const wxString &command);
 
@@ -114,7 +112,7 @@ protected:
 	wxString m_command;
 };
 
-DECLARE_COMMAND(CDeleteCommand, cmd_delete, true)
+DECLARE_COMMAND(CDeleteCommand, cmd_delete)
 	CDeleteCommand(const CServerPath& path, const wxString& file);
 	
 	CServerPath GetPath() const { return m_path; }
@@ -126,7 +124,7 @@ protected:
 	wxString m_file;
 };
 
-DECLARE_COMMAND(CRemoveDirCommand, cmd_removedir, true)
+DECLARE_COMMAND(CRemoveDirCommand, cmd_removedir)
 	CRemoveDirCommand(const CServerPath& path, const wxString& subdDir);
 
 	CServerPath GetPath() const { return m_path; }
@@ -138,7 +136,7 @@ protected:
 	wxString m_subDir;
 };
 
-DECLARE_COMMAND(CMkdirCommand, cmd_mkdir, true)
+DECLARE_COMMAND(CMkdirCommand, cmd_mkdir)
 	CMkdirCommand(const CServerPath& path);
 
 	CServerPath GetPath() const { return m_path; }
@@ -148,7 +146,7 @@ protected:
 	CServerPath m_path;
 };
 
-DECLARE_COMMAND(CRenameCommand, cmd_rename, true)
+DECLARE_COMMAND(CRenameCommand, cmd_rename)
 	CRenameCommand(const CServerPath& fromPath, const wxString& fromFile,
 				   const CServerPath& toPath, const wxString& toFile);
 
@@ -162,6 +160,19 @@ protected:
 	CServerPath m_toPath;
 	wxString m_fromFile;
 	wxString m_toFile;
+};
+
+DECLARE_COMMAND(CChmodCommand, cmd_chmod)
+	CChmodCommand(const CServerPath& path, const wxString& file, const wxString& permission);
+
+	CServerPath GetPath() const { return m_path; }
+	wxString GetFile() const { return m_file; }
+	wxString GetPermission() const { return m_permission; }
+
+protected:
+	CServerPath m_path;
+	wxString m_file;
+	wxString m_permission;
 };
 
 #endif

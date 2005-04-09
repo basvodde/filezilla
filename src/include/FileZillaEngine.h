@@ -61,6 +61,7 @@ protected:
 	int RemoveDir(const CRemoveDirCommand& command);
 	int Mkdir(const CMkdirCommand& command);
 	int Rename(const CRenameCommand& command);
+	int Chmod(const CChmodCommand& command);
 
 	int ResetOperation(int nErrorCode);
 	

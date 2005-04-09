@@ -124,6 +124,9 @@ int CFileZillaEngine::Command(const CCommand &command)
 	case cmd_rename:
 		res = Rename(reinterpret_cast<const CRenameCommand&>(command));
 		break;
+	case cmd_chmod:
+		res = Chmod(reinterpret_cast<const CChmodCommand&>(command));
+		break;
 	default:
 		return FZ_REPLY_SYNTAXERROR;
 	}
@@ -563,4 +566,20 @@ int CFileZillaEngine::Rename(const CRenameCommand& command)
 
 	m_pCurrentCommand = command.Clone();
 	return m_pControlSocket->Rename(command);
+}
+
+int CFileZillaEngine::Chmod(const CChmodCommand& command)
+{
+	if (!IsConnected())
+		return FZ_REPLY_NOTCONNECTED;
+
+	if (IsBusy())
+		return FZ_REPLY_BUSY;
+
+	if (command.GetPath().IsEmpty() || command.GetFile().IsEmpty() ||
+		command.GetPermission() == _T(""))
+		return FZ_REPLY_SYNTAXERROR;
+
+	m_pCurrentCommand = command.Clone();
+	return m_pControlSocket->Chmod(command);
 }

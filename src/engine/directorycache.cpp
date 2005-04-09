@@ -159,7 +159,7 @@ CDirectoryCache::CCacheEntry::CCacheEntry(const CDirectoryCache::CCacheEntry &en
 	parents = entry.parents;
 }
 
-bool CDirectoryCache::InvalidateFile(const CServer &server, const CServerPath &path, const wxString& filename, bool dir /*=false*/, int size /*=-1*/)
+bool CDirectoryCache::InvalidateFile(const CServer &server, const CServerPath &path, const wxString& filename, enum Filetype type /*=file*/, int size /*=-1*/)
 {
 	for (tCacheIter iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
 	{
@@ -177,7 +177,7 @@ bool CDirectoryCache::InvalidateFile(const CServer &server, const CServerPath &p
 					matchCase = true;
 			}				
 		}
-		if (!matchCase)
+		if (!matchCase && type != unknown)
 		{
 			CDirentry *listing = new CDirentry[entry.listing.m_entryCount + 1];
 			for (unsigned int i = 0; i < entry.listing.m_entryCount; i++)
@@ -186,7 +186,7 @@ bool CDirectoryCache::InvalidateFile(const CServer &server, const CServerPath &p
 			listing[entry.listing.m_entryCount].hasDate = false;
 			listing[entry.listing.m_entryCount].hasTime = false;
 			listing[entry.listing.m_entryCount].size = size;
-			listing[entry.listing.m_entryCount].dir = dir;
+			listing[entry.listing.m_entryCount].dir = (type == dir);
 			listing[entry.listing.m_entryCount].link = 0;
 			listing[entry.listing.m_entryCount].unsure = true;
 			entry.listing.m_entryCount++;
@@ -334,12 +334,12 @@ void CDirectoryCache::Rename(const CServer& server, const CServerPath& pathFrom,
 			if (listing.m_pEntries[i].dir)
 			{
 				RemoveDir(server, pathFrom, fileFrom);
-				InvalidateFile(server, pathTo, fileTo, true);
+				InvalidateFile(server, pathTo, fileTo, dir);
 			}
 			else
 			{
 				RemoveFile(server, pathFrom, fileFrom);
-				InvalidateFile(server, pathTo, fileTo, false);
+				InvalidateFile(server, pathTo, fileTo, file);
 			}
 		}
 		else

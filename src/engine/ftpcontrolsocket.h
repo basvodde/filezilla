@@ -45,6 +45,10 @@ protected:
 	virtual int Rename(const CRenameCommand& command);
 	virtual int RenameParseResponse();
 	virtual int RenameSend(int prevResult = FZ_REPLY_OK);
+
+	virtual int Chmod(const CChmodCommand& command);
+	virtual int ChmodParseResponse();
+	virtual int ChmodSend(int prevResult = FZ_REPLY_OK);
 	
 	bool ParsePwdReply(wxString reply);
 
@@ -104,6 +108,4 @@ public:
 	CFileTransferCommand::t_transferSettings transferSettings;
 };
 
-
 #endif
-

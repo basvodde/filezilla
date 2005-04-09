@@ -208,6 +208,9 @@ void CFtpControlSocket::ParseResponse()
 	case cmd_rename:
 		RenameParseResponse();
 		break;
+	case cmd_chmod:
+		ChmodParseResponse();
+		break;
 	default:
 		ResetOperation(FZ_REPLY_INTERNALERROR);
 		break;
@@ -774,7 +777,7 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 		if (!pData->download && pData->opState >= filetransfer_transfer)
 		{
 			CDirectoryCache cache;
-			cache.InvalidateFile(*m_pCurrentServer, pData->remotePath, pData->remoteFile, false, (nErrorCode == FZ_REPLY_OK) ? pData->fileSize : -1);
+			cache.InvalidateFile(*m_pCurrentServer, pData->remotePath, pData->remoteFile, CDirectoryCache::file, (nErrorCode == FZ_REPLY_OK) ? pData->fileSize : -1);
 
 			m_pEngine->ResendModifiedListings();
 		}
@@ -813,6 +816,8 @@ int CFtpControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
 		return MkdirSend();
 	case cmd_rename:
 		return RenameSend(prevResult);
+	case cmd_chmod:
+		return ChmodSend(prevResult);
 	default:
 		LogMessage(::Debug_Warning, __TFILE__, __LINE__, _T("Unknown opID (%d) in SendNextCommand"), m_pCurOpData->opId);
 		ResetOperation(FZ_REPLY_INTERNALERROR);
@@ -2210,7 +2215,7 @@ int CFtpControlSocket::MkdirParseResponse()
 				return FZ_REPLY_ERROR;
 			}
 			CDirectoryCache cache;
-			cache.InvalidateFile(*m_pCurrentServer, pData->currentPath, pData->segments.front(), true);
+			cache.InvalidateFile(*m_pCurrentServer, pData->currentPath, pData->segments.front(), CDirectoryCache::dir);
 			m_pEngine->ResendModifiedListings();
 
 			pData->currentPath.AddSegment(pData->segments.front());
@@ -2398,6 +2403,108 @@ int CFtpControlSocket::RenameSend(int prevResult /*=FZ_REPLY_OK*/)
 		break;
 	case rename_rnto:
 		res = Send(_T("RNTO ") + pData->m_cmd.GetToPath().FormatFilename(pData->m_cmd.GetToFile(), !pData->m_useAbsolute && pData->m_cmd.GetFromPath() == pData->m_cmd.GetToPath()));
+		break;
+	default:
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("unknown op state: %d"), pData->opState);
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	if (!res)
+	{
+		ResetOperation(FZ_REPLY_ERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	return FZ_REPLY_WOULDBLOCK;
+}
+
+class CChmodOpData : public COpData
+{
+public:
+	CChmodOpData(const CChmodCommand& command)
+		: m_cmd(command)
+	{
+		opId = cmd_chmod;
+		m_useAbsolute = false;
+	}
+
+	virtual ~CChmodOpData() { }
+
+	CChmodCommand m_cmd;
+	bool m_useAbsolute;
+};
+
+enum chmodStates
+{
+	chmod_init = 0,
+	chmod_chmod
+};
+
+int CFtpControlSocket::Chmod(const CChmodCommand& command)
+{
+	if (m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("m_pCurOpData not empty"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	LogMessage(Status, _("Set permissio of '%s' to '%s'"), command.GetPath().FormatFilename(command.GetFile()).c_str(), command.GetPermission().c_str());
+
+	CChmodOpData *pData = new CChmodOpData(command);
+	pData->opState = chmod_chmod;
+	m_pCurOpData = pData;
+
+	int res = ChangeDir(command.GetPath());
+	if (res != FZ_REPLY_OK)
+		return res;
+	
+	return ChmodSend();
+}
+
+int CFtpControlSocket::ChmodParseResponse()
+{
+	CChmodOpData *pData = static_cast<CChmodOpData*>(m_pCurOpData);
+	if (!pData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("m_pCurOpData empty"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	int code = GetReplyCode();
+	if (code != 2 && code != 3)
+	{
+		ResetOperation(FZ_REPLY_ERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	CDirectoryCache cache;
+	cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetPath(), pData->m_cmd.GetFile(), CDirectoryCache::unknown);
+
+	ResetOperation(FZ_REPLY_OK);
+	return FZ_REPLY_OK;
+}
+
+int CFtpControlSocket::ChmodSend(int prevResult /*=FZ_REPLY_OK*/)
+{
+	CChmodOpData *pData = static_cast<CChmodOpData*>(m_pCurOpData);
+	if (!pData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("m_pCurOpData empty"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	if (prevResult != FZ_REPLY_OK)
+		pData->m_useAbsolute = true;
+
+	bool res;
+	switch (pData->opState)
+	{
+	case chmod_chmod:
+		res = Send(_T("SITE CHMOD ") + pData->m_cmd.GetPermission() + _T(" ") + pData->m_cmd.GetPath().FormatFilename(pData->m_cmd.GetFile(), !pData->m_useAbsolute));
 		break;
 	default:
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("unknown op state: %d"), pData->opState);
