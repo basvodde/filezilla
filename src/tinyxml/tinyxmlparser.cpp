@@ -49,7 +49,9 @@ TiXmlBase::Entity TiXmlBase::entity[ NUM_ENTITY ] =
 //				ef bf be
 //				ef bf bf 
 
-
+const char TIXML_UTF_LEAD_0 = (const char)0xef;
+const char TIXML_UTF_LEAD_1 = (const char)0xbb;
+const char TIXML_UTF_LEAD_2 = (const char)0xbf;
 
 const int TiXmlBase::utf8ByteTable[256] = 
 {
@@ -114,7 +116,7 @@ void TiXmlBase::ConvertUTF32ToUTF8( unsigned long input, char* output, int* leng
 }
 
 
-/*static*/ int TiXmlBase::IsAlpha( unsigned char anyByte, TiXmlEncoding encoding )
+/*static*/ int TiXmlBase::IsAlpha( unsigned char anyByte, TiXmlEncoding )
 {
 	// This will only work for low-ascii, everything else is assumed to be a valid
 	// letter. I'm not sure this is the best approach, but it is quite tricky trying
@@ -135,7 +137,7 @@ void TiXmlBase::ConvertUTF32ToUTF8( unsigned long input, char* output, int* leng
 }
 
 
-/*static*/ int TiXmlBase::IsAlphaNum( unsigned char anyByte, TiXmlEncoding encoding )
+/*static*/ int TiXmlBase::IsAlphaNum( unsigned char anyByte, TiXmlEncoding )
 {
 	// This will only work for low-ascii, everything else is assumed to be a valid
 	// letter. I'm not sure this is the best approach, but it is quite tricky trying
@@ -243,14 +245,14 @@ void TiXmlParsingData::Stamp( const char* now, TiXmlEncoding encoding )
 				col = (col / tabsize + 1) * tabsize;
 				break;
 
-			case (char)(0xef):
+			case TIXML_UTF_LEAD_0:
 				if ( encoding == TIXML_ENCODING_UTF8 )
 				{
 					if ( *(p+1) && *(p+2) )
 					{
 						// In these cases, don't advance the column. These are
 						// 0-width spaces.
-						if ( *(p+1)==(char)(0xbb) && *(p+2)==(char)(0xbf) )
+						if ( *(p+1)==TIXML_UTF_LEAD_1 && *(p+2)==TIXML_UTF_LEAD_2 )
 							p += 3;	
 						else if ( *(p+1)==(char)(0xbf) && *(p+2)==(char)(0xbe) )
 							p += 3;	
@@ -307,23 +309,23 @@ const char* TiXmlBase::SkipWhiteSpace( const char* p, TiXmlEncoding encoding )
 		while ( *p )
 		{
 			// Skip the stupid Microsoft UTF-8 Byte order marks
-			if (	*(p+0)==(char) 0xef 
-				 && *(p+1)==(char) 0xbb 
-				 && *(p+2)==(char) 0xbf )
+			if (	*(p+0)==TIXML_UTF_LEAD_0
+				 && *(p+1)==TIXML_UTF_LEAD_1 
+				 && *(p+2)==TIXML_UTF_LEAD_2 )
 			{
 				p += 3;
 				continue;
 			}
-			else if(*(p+0)==(char) 0xef
-				 && *(p+1)==(char) 0xbf
-				 && *(p+2)==(char) 0xbe )
+			else if(*(p+0)==TIXML_UTF_LEAD_0
+				 && *(p+1)==(const char) 0xbf
+				 && *(p+2)==(const char) 0xbe )
 			{
 				p += 3;
 				continue;
 			}
-			else if(*(p+0)==(char) 0xef
-				 && *(p+1)==(char) 0xbf
-				 && *(p+2)==(char) 0xbf )
+			else if(*(p+0)==TIXML_UTF_LEAD_0
+				 && *(p+1)==(const char) 0xbf
+				 && *(p+2)==(const char) 0xbf )
 			{
 				p += 3;
 				continue;
@@ -418,7 +420,9 @@ const char* TiXmlBase::GetEntity( const char* p, char* value, int* length, TiXml
 	if ( *(p+1) && *(p+1) == '#' && *(p+2) )
 	{
 		unsigned long ucs = 0;
-		unsigned delta = 0;
+		//*ME:	warning C4244: convert '__w64 int' to 'unsigned'
+		//*ME:	Use size_t instead of unsigned (pointer-arithmetic)
+		size_t delta = 0;
 		unsigned mult = 1;
 
 		if ( *(p+2) == 'x' )
@@ -703,9 +707,9 @@ const char* TiXmlDocument::Parse( const char* p, TiXmlParsingData* prevData, TiX
 	if ( encoding == TIXML_ENCODING_UNKNOWN )
 	{
 		// Check for the Microsoft UTF-8 lead bytes.
-		if (	*(p+0) && *(p+0) == (char)(0xef)
-			 && *(p+1) && *(p+1) == (char)(0xbb)
-			 && *(p+2) && *(p+2) == (char)(0xbf) )
+		if (	*(p+0) && *(p+0) == TIXML_UTF_LEAD_0
+			 && *(p+1) && *(p+1) == TIXML_UTF_LEAD_1
+			 && *(p+2) && *(p+2) == TIXML_UTF_LEAD_2 )
 		{
 			encoding = TIXML_ENCODING_UTF8;
 		}
@@ -750,6 +754,12 @@ const char* TiXmlDocument::Parse( const char* p, TiXmlParsingData* prevData, TiX
 		}
 
 		p = SkipWhiteSpace( p, encoding );
+	}
+
+	// Was this empty?
+	if ( !firstChild ) {
+		SetError( TIXML_ERROR_DOCUMENT_EMPTY, 0, 0, encoding );
+		return 0;
 	}
 
 	// All is well.

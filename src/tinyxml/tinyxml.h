@@ -72,7 +72,7 @@ class TiXmlParsingData;
 
 const int TIXML_MAJOR_VERSION = 2;
 const int TIXML_MINOR_VERSION = 3;
-const int TIXML_PATCH_VERSION = 2;
+const int TIXML_PATCH_VERSION = 3;
 
 /*	Internal structure for tracking location of items 
 	in the XML file.
@@ -188,6 +188,27 @@ public:
 								TiXmlParsingData* data, 
 								TiXmlEncoding encoding /*= TIXML_ENCODING_UNKNOWN */ ) = 0;
 
+	enum
+	{
+		TIXML_NO_ERROR = 0,
+		TIXML_ERROR,
+		TIXML_ERROR_OPENING_FILE,
+		TIXML_ERROR_OUT_OF_MEMORY,
+		TIXML_ERROR_PARSING_ELEMENT,
+		TIXML_ERROR_FAILED_TO_READ_ELEMENT_NAME,
+		TIXML_ERROR_READING_ELEMENT_VALUE,
+		TIXML_ERROR_READING_ATTRIBUTES,
+		TIXML_ERROR_PARSING_EMPTY,
+		TIXML_ERROR_READING_END_TAG,
+		TIXML_ERROR_PARSING_UNKNOWN,
+		TIXML_ERROR_PARSING_COMMENT,
+		TIXML_ERROR_PARSING_DECLARATION,
+		TIXML_ERROR_DOCUMENT_EMPTY,
+		TIXML_ERROR_EMBEDDED_NULL,
+
+		TIXML_ERROR_STRING_COUNT
+	};
+
 protected:
 
 	// See STL_STRING_BUG
@@ -280,27 +301,6 @@ protected:
 								bool ignoreCase,
 								TiXmlEncoding encoding );
 
-
-	enum
-	{
-		TIXML_NO_ERROR = 0,
-		TIXML_ERROR,
-		TIXML_ERROR_OPENING_FILE,
-		TIXML_ERROR_OUT_OF_MEMORY,
-		TIXML_ERROR_PARSING_ELEMENT,
-		TIXML_ERROR_FAILED_TO_READ_ELEMENT_NAME,
-		TIXML_ERROR_READING_ELEMENT_VALUE,
-		TIXML_ERROR_READING_ATTRIBUTES,
-		TIXML_ERROR_PARSING_EMPTY,
-		TIXML_ERROR_READING_END_TAG,
-		TIXML_ERROR_PARSING_UNKNOWN,
-		TIXML_ERROR_PARSING_COMMENT,
-		TIXML_ERROR_PARSING_DECLARATION,
-		TIXML_ERROR_DOCUMENT_EMPTY,
-		TIXML_ERROR_EMBEDDED_NULL,
-
-		TIXML_ERROR_STRING_COUNT
-	};
 	static const char* errorString[ TIXML_ERROR_STRING_COUNT ];
 
 	TiXmlCursor location;
@@ -446,17 +446,24 @@ public:
 	void Clear();
 
 	/// One step up the DOM.
-	TiXmlNode* Parent() const					{ return parent; }
+	TiXmlNode* Parent()							{ return parent; }
+	const TiXmlNode* Parent() const				{ return parent; }
 
-	TiXmlNode* FirstChild()	const	{ return firstChild; }		///< The first child of this node. Will be null if there are no children.
-	TiXmlNode* FirstChild( const char * value ) const;			///< The first child of this node with the matching 'value'. Will be null if none found.
+	const TiXmlNode* FirstChild()	const	{ return firstChild; }		///< The first child of this node. Will be null if there are no children.
+	TiXmlNode* FirstChild()					{ return firstChild; }
+	const TiXmlNode* FirstChild( const char * value ) const;			///< The first child of this node with the matching 'value'. Will be null if none found.
+	TiXmlNode* FirstChild( const char * value );						///< The first child of this node with the matching 'value'. Will be null if none found.
 
-	TiXmlNode* LastChild() const	{ return lastChild; }		/// The last child of this node. Will be null if there are no children.
-	TiXmlNode* LastChild( const char * value ) const;			/// The last child of this node matching 'value'. Will be null if there are no children.
+	const TiXmlNode* LastChild() const	{ return lastChild; }		/// The last child of this node. Will be null if there are no children.
+	TiXmlNode* LastChild()	{ return lastChild; }
+	const TiXmlNode* LastChild( const char * value ) const;			/// The last child of this node matching 'value'. Will be null if there are no children.
+	TiXmlNode* LastChild( const char * value );	
 
     #ifdef TIXML_USE_STL
-	TiXmlNode* FirstChild( const std::string& _value ) const	{	return FirstChild (_value.c_str ());	}	///< STL std::string form.
-	TiXmlNode* LastChild( const std::string& _value ) const		{	return LastChild (_value.c_str ());	}	///< STL std::string form.
+	const TiXmlNode* FirstChild( const std::string& _value ) const	{	return FirstChild (_value.c_str ());	}	///< STL std::string form.
+	TiXmlNode* FirstChild( const std::string& _value )				{	return FirstChild (_value.c_str ());	}	///< STL std::string form.
+	const TiXmlNode* LastChild( const std::string& _value ) const	{	return LastChild (_value.c_str ());	}	///< STL std::string form.
+	TiXmlNode* LastChild( const std::string& _value )				{	return LastChild (_value.c_str ());	}	///< STL std::string form.
 	#endif
 
 	/** An alternate way to walk the children of a node.
@@ -475,13 +482,16 @@ public:
 		the next one. If the previous child is null, it returns the
 		first. IterateChildren will return null when done.
 	*/
-	TiXmlNode* IterateChildren( TiXmlNode* previous ) const;
+	const TiXmlNode* IterateChildren( TiXmlNode* previous ) const;
+	TiXmlNode* IterateChildren( TiXmlNode* previous );
 
 	/// This flavor of IterateChildren searches for children with a particular 'value'
-	TiXmlNode* IterateChildren( const char * value, TiXmlNode* previous ) const;
+	const TiXmlNode* IterateChildren( const char * value, TiXmlNode* previous ) const;
+	TiXmlNode* IterateChildren( const char * value, TiXmlNode* previous );
 
     #ifdef TIXML_USE_STL
-	TiXmlNode* IterateChildren( const std::string& _value, TiXmlNode* previous ) const	{	return IterateChildren (_value.c_str (), previous);	}	///< STL std::string form.
+	const TiXmlNode* IterateChildren( const std::string& _value, TiXmlNode* previous ) const	{	return IterateChildren (_value.c_str (), previous);	}	///< STL std::string form.
+	TiXmlNode* IterateChildren( const std::string& _value, TiXmlNode* previous ) {	return IterateChildren (_value.c_str (), previous);	}	///< STL std::string form.
 	#endif
 
 	/** Add a new node related to this. Adds a child past the LastChild.
@@ -520,46 +530,58 @@ public:
 	bool RemoveChild( TiXmlNode* removeThis );
 
 	/// Navigate to a sibling node.
-	TiXmlNode* PreviousSibling() const			{ return prev; }
+	const TiXmlNode* PreviousSibling() const			{ return prev; }
+	TiXmlNode* PreviousSibling()						{ return prev; }
 
 	/// Navigate to a sibling node.
-	TiXmlNode* PreviousSibling( const char * ) const;
+	const TiXmlNode* PreviousSibling( const char * ) const;
+	TiXmlNode* PreviousSibling( const char * );
 
     #ifdef TIXML_USE_STL
-	TiXmlNode* PreviousSibling( const std::string& _value ) const	{	return PreviousSibling (_value.c_str ());	}	///< STL std::string form.
-	TiXmlNode* NextSibling( const std::string& _value) const		{	return NextSibling (_value.c_str ());	}	///< STL std::string form.
+	const TiXmlNode* PreviousSibling( const std::string& _value ) const	{	return PreviousSibling (_value.c_str ());	}	///< STL std::string form.
+	TiXmlNode* PreviousSibling( const std::string& _value ) 			{	return PreviousSibling (_value.c_str ());	}	///< STL std::string form.
+	const TiXmlNode* NextSibling( const std::string& _value) const		{	return NextSibling (_value.c_str ());	}	///< STL std::string form.
+	TiXmlNode* NextSibling( const std::string& _value) 					{	return NextSibling (_value.c_str ());	}	///< STL std::string form.
 	#endif
 
 	/// Navigate to a sibling node.
-	TiXmlNode* NextSibling() const				{ return next; }
+	const TiXmlNode* NextSibling() const				{ return next; }
+	TiXmlNode* NextSibling()							{ return next; }
 
 	/// Navigate to a sibling node with the given 'value'.
-	TiXmlNode* NextSibling( const char * ) const;
+	const TiXmlNode* NextSibling( const char * ) const;
+	TiXmlNode* NextSibling( const char * );
 
 	/** Convenience function to get through elements.
 		Calls NextSibling and ToElement. Will skip all non-Element
 		nodes. Returns 0 if there is not another element.
 	*/
-	TiXmlElement* NextSiblingElement() const;
+	const TiXmlElement* NextSiblingElement() const;
+	TiXmlElement* NextSiblingElement();
 
 	/** Convenience function to get through elements.
 		Calls NextSibling and ToElement. Will skip all non-Element
 		nodes. Returns 0 if there is not another element.
 	*/
-	TiXmlElement* NextSiblingElement( const char * ) const;
+	const TiXmlElement* NextSiblingElement( const char * ) const;
+	TiXmlElement* NextSiblingElement( const char * );
 
     #ifdef TIXML_USE_STL
-	TiXmlElement* NextSiblingElement( const std::string& _value) const	{	return NextSiblingElement (_value.c_str ());	}	///< STL std::string form.
+	const TiXmlElement* NextSiblingElement( const std::string& _value) const	{	return NextSiblingElement (_value.c_str ());	}	///< STL std::string form.
+	TiXmlElement* NextSiblingElement( const std::string& _value)				{	return NextSiblingElement (_value.c_str ());	}	///< STL std::string form.
 	#endif
 
 	/// Convenience function to get through elements.
-	TiXmlElement* FirstChildElement()	const;
+	const TiXmlElement* FirstChildElement()	const;
+	TiXmlElement* FirstChildElement();
 
 	/// Convenience function to get through elements.
-	TiXmlElement* FirstChildElement( const char * value ) const;
+	const TiXmlElement* FirstChildElement( const char * value ) const;
+	TiXmlElement* FirstChildElement( const char * value );
 
     #ifdef TIXML_USE_STL
-	TiXmlElement* FirstChildElement( const std::string& _value ) const	{	return FirstChildElement (_value.c_str ());	}	///< STL std::string form.
+	const TiXmlElement* FirstChildElement( const std::string& _value ) const	{	return FirstChildElement (_value.c_str ());	}	///< STL std::string form.
+	TiXmlElement* FirstChildElement( const std::string& _value )				{	return FirstChildElement (_value.c_str ());	}	///< STL std::string form.
 	#endif
 
 	/** Query the type (as an enumerated value, above) of this node.
@@ -571,17 +593,25 @@ public:
 	/** Return a pointer to the Document this node lives in.
 		Returns null if not in a document.
 	*/
-	TiXmlDocument* GetDocument() const;
+	const TiXmlDocument* GetDocument() const;
+	TiXmlDocument* GetDocument();
 
 	/// Returns true if this node has no children.
 	bool NoChildren() const						{ return !firstChild; }
 
-	TiXmlDocument* ToDocument()	const		{ return ( this && type == DOCUMENT ) ? (TiXmlDocument*) this : 0; } ///< Cast to a more defined type. Will return null not of the requested type.
-	TiXmlElement*  ToElement() const		{ return ( this && type == ELEMENT  ) ? (TiXmlElement*)  this : 0; } ///< Cast to a more defined type. Will return null not of the requested type.
-	TiXmlComment*  ToComment() const		{ return ( this && type == COMMENT  ) ? (TiXmlComment*)  this : 0; } ///< Cast to a more defined type. Will return null not of the requested type.
-	TiXmlUnknown*  ToUnknown() const		{ return ( this && type == UNKNOWN  ) ? (TiXmlUnknown*)  this : 0; } ///< Cast to a more defined type. Will return null not of the requested type.
-	TiXmlText*	   ToText()    const		{ return ( this && type == TEXT     ) ? (TiXmlText*)     this : 0; } ///< Cast to a more defined type. Will return null not of the requested type.
-	TiXmlDeclaration* ToDeclaration() const	{ return ( this && type == DECLARATION ) ? (TiXmlDeclaration*) this : 0; } ///< Cast to a more defined type. Will return null not of the requested type.
+	const TiXmlDocument* ToDocument()	const		{ return ( this && type == DOCUMENT ) ? (const TiXmlDocument*) this : 0; } ///< Cast to a more defined type. Will return null not of the requested type.
+	const TiXmlElement*  ToElement() const			{ return ( this && type == ELEMENT  ) ? (const TiXmlElement*)  this : 0; } ///< Cast to a more defined type. Will return null not of the requested type.
+	const TiXmlComment*  ToComment() const			{ return ( this && type == COMMENT  ) ? (const TiXmlComment*)  this : 0; } ///< Cast to a more defined type. Will return null not of the requested type.
+	const TiXmlUnknown*  ToUnknown() const			{ return ( this && type == UNKNOWN  ) ? (const TiXmlUnknown*)  this : 0; } ///< Cast to a more defined type. Will return null not of the requested type.
+	const TiXmlText*	   ToText()    const		{ return ( this && type == TEXT     ) ? (const TiXmlText*)     this : 0; } ///< Cast to a more defined type. Will return null not of the requested type.
+	const TiXmlDeclaration* ToDeclaration() const	{ return ( this && type == DECLARATION ) ? (const TiXmlDeclaration*) this : 0; } ///< Cast to a more defined type. Will return null not of the requested type.
+
+	TiXmlDocument* ToDocument()			{ return ( this && type == DOCUMENT ) ? (TiXmlDocument*) this : 0; } ///< Cast to a more defined type. Will return null not of the requested type.
+	TiXmlElement*  ToElement()			{ return ( this && type == ELEMENT  ) ? (TiXmlElement*)  this : 0; } ///< Cast to a more defined type. Will return null not of the requested type.
+	TiXmlComment*  ToComment()			{ return ( this && type == COMMENT  ) ? (TiXmlComment*)  this : 0; } ///< Cast to a more defined type. Will return null not of the requested type.
+	TiXmlUnknown*  ToUnknown()			{ return ( this && type == UNKNOWN  ) ? (TiXmlUnknown*)  this : 0; } ///< Cast to a more defined type. Will return null not of the requested type.
+	TiXmlText*	   ToText()   			{ return ( this && type == TEXT     ) ? (TiXmlText*)     this : 0; } ///< Cast to a more defined type. Will return null not of the requested type.
+	TiXmlDeclaration* ToDeclaration()	{ return ( this && type == DECLARATION ) ? (TiXmlDeclaration*) this : 0; } ///< Cast to a more defined type. Will return null not of the requested type.
 
 	/** Create an exact duplicate of this node and return it. The memory must be deleted
 		by the caller. 
@@ -702,9 +732,11 @@ public:
 	#endif
 
 	/// Get the next sibling attribute in the DOM. Returns null at end.
-	TiXmlAttribute* Next() const;
+	const TiXmlAttribute* Next() const;
+	TiXmlAttribute* Next();
 	/// Get the previous sibling attribute in the DOM. Returns null at beginning.
-	TiXmlAttribute* Previous() const;
+	const TiXmlAttribute* Previous() const;
+	TiXmlAttribute* Previous();
 
 	bool operator==( const TiXmlAttribute& rhs ) const { return rhs.name == name; }
 	bool operator<( const TiXmlAttribute& rhs )	 const { return name < rhs.name; }
@@ -756,11 +788,20 @@ public:
 	void Add( TiXmlAttribute* attribute );
 	void Remove( TiXmlAttribute* attribute );
 
-	TiXmlAttribute* First() const	{ return ( sentinel.next == &sentinel ) ? 0 : sentinel.next; }
-	TiXmlAttribute* Last()  const	{ return ( sentinel.prev == &sentinel ) ? 0 : sentinel.prev; }
-	TiXmlAttribute*	Find( const char * name ) const;
+	const TiXmlAttribute* First()	const	{ return ( sentinel.next == &sentinel ) ? 0 : sentinel.next; }
+	TiXmlAttribute* First()					{ return ( sentinel.next == &sentinel ) ? 0 : sentinel.next; }
+	const TiXmlAttribute* Last() const		{ return ( sentinel.prev == &sentinel ) ? 0 : sentinel.prev; }
+	TiXmlAttribute* Last()					{ return ( sentinel.prev == &sentinel ) ? 0 : sentinel.prev; }
+
+	const TiXmlAttribute*	Find( const char * name ) const;
+	TiXmlAttribute*	Find( const char * name );
 
 private:
+	//*ME:	Because of hidden/disabled copy-construktor in TiXmlAttribute (sentinel-element),
+	//*ME:	this class must be also use a hidden/disabled copy-constructor !!!
+	TiXmlAttributeSet( const TiXmlAttributeSet& );	// not allowed
+	void operator=( const TiXmlAttributeSet& );	// not allowed (as TiXmlAttribute)
+
 	TiXmlAttribute sentinel;
 };
 
@@ -817,6 +858,13 @@ public:
 	int QueryIntAttribute( const char* name, int* value ) const;
 	/// QueryDoubleAttribute examines the attribute - see QueryIntAttribute().
 	int QueryDoubleAttribute( const char* name, double* value ) const;
+	/// QueryFloatAttribute examines the attribute - see QueryIntAttribute().
+	int QueryDoubleAttribute( const char* name, float* value ) const {
+		double d;
+		int result = QueryDoubleAttribute( name, &d );
+		*value = (float)d;
+		return result;
+	}
 
 	/** Sets an attribute of name to a given value. The attribute
 		will be created if it does not exist, or changed if it does.
@@ -864,8 +912,10 @@ public:
 	void RemoveAttribute( const std::string& name )	{	RemoveAttribute (name.c_str ());	}	///< STL std::string form.
 	#endif
 
-	TiXmlAttribute* FirstAttribute() const	{ return attributeSet.First(); }		///< Access the first attribute in this element.
-	TiXmlAttribute* LastAttribute()	const 	{ return attributeSet.Last(); }		///< Access the last attribute in this element.
+	const TiXmlAttribute* FirstAttribute() const	{ return attributeSet.First(); }		///< Access the first attribute in this element.
+	TiXmlAttribute* FirstAttribute() 				{ return attributeSet.First(); }
+	const TiXmlAttribute* LastAttribute()	const 	{ return attributeSet.Last(); }		///< Access the last attribute in this element.
+	TiXmlAttribute* LastAttribute()					{ return attributeSet.Last(); }
 
 	/// Creates a new Element and returns it - the returned element is a copy.
 	virtual TiXmlNode* Clone() const;
@@ -1140,7 +1190,8 @@ public:
 		In well formed XML, there should only be one. TinyXml is tolerant of
 		multiple elements at the document level.
 	*/
-	TiXmlElement* RootElement() const		{ return FirstChildElement(); }
+	const TiXmlElement* RootElement() const		{ return FirstChildElement(); }
+	TiXmlElement* RootElement()					{ return FirstChildElement(); }
 
 	/** If an error occurs, Error will be set to true. Also,
 		- The ErrorId() will contain the integer identifier of the error (not generally useful)

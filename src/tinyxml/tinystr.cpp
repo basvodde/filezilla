@@ -46,7 +46,9 @@ TiXmlString::TiXmlString (const char* instring)
         current_length = 0;
         return;
     }
-    newlen = strlen (instring) + 1;
+	//*ME:	warning C4267: convert 'size_t' to 'unsigned int'
+	//*ME:	Use Cast: (unsigned)
+    newlen = (unsigned)strlen (instring) + 1;
     newstring = new char [newlen];
     memcpy (newstring, instring, newlen);
     // strcpy (newstring, instring);
@@ -92,7 +94,7 @@ void TiXmlString ::operator = (const char * content)
         empty_it ();
         return;
     }
-    newlen = strlen (content) + 1;
+    newlen = (unsigned)strlen (content) + 1;
     newstring = new char [newlen];
     // strcpy (newstring, content);
     memcpy (newstring, content, newlen);
@@ -249,13 +251,18 @@ void TiXmlString::append( const char * suffix )
 
 unsigned TiXmlString::find (char tofind, unsigned offset) const
 {
-    char * lookup;
+	//*ME:	warning C4244: convert '__w64 int' to 'unsigned'
+	//*ME:	Use Array-Arithmetic instead of Pointer
+	//  char * lookup;
 
     if (offset >= length ())
         return (unsigned) notfound;
-    for (lookup = cstring + offset; * lookup; lookup++)
-        if (* lookup == tofind)
-            return lookup - cstring;
+	//  for (lookup = cstring + offset; * lookup; lookup++)
+	//	if (* lookup == tofind)
+	//	    return lookup - cstring;
+    for( unsigned n=offset ; cstring[n] != '\0' ; n++ )
+	if( cstring[n] == tofind )
+	    return  n ;
     return (unsigned) notfound;
 }
 
