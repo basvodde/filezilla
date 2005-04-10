@@ -10,6 +10,9 @@ else
   while test $# != 0; do
     cat $1 | sed -e "s/^ *$//" | sed -e "/^$/d" > $1_new
     mv $1_new $1
+    if uname | grep MINGW > /dev/null; then
+      unix2dos $1
+    fi
     shift
   done
 fi
