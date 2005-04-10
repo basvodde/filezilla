@@ -20,7 +20,7 @@ CStatusView::CStatusView(wxWindow* parent, wxWindowID id)
 								wxTE_READONLY | wxTE_RICH | wxTE_RICH2 | wxTE_NOHIDESEL | wxTE_LINEWRAP);
 	m_pTextCtrl->SetFont(GetFont());
 
-	m_pTextCtrl->Connect(wxID_ANY, wxEVT_CONTEXT_MENU, (wxObjectEventFunction)(wxEventFunction)(wxContextMenuEventFunction)&CStatusView::OnContextMenu, 0, this);
+	m_pTextCtrl->Connect(wxID_ANY, wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(CStatusView::OnContextMenu), 0, this);
 
 	m_nLineCount = 0;
 

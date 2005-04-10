@@ -48,9 +48,9 @@ bool COptionsPageThemes::LoadPage()
 	if (pTheme->GetSelection() == wxNOT_FOUND)
 		pTheme->SetSelection(pTheme->FindString(themes.front()));
 
-	pPanelSmall->Connect(wxID_ANY, wxEVT_PAINT, (wxObjectEventFunction)(wxEventFunction)(wxPaintEventFunction)&COptionsPageThemes::OnPanelPaint, 0, this);
-	pPanelMedium->Connect(wxID_ANY, wxEVT_PAINT, (wxObjectEventFunction)(wxEventFunction)(wxPaintEventFunction)&COptionsPageThemes::OnPanelPaint, 0, this);
-	pPanelLarge->Connect(wxID_ANY, wxEVT_PAINT, (wxObjectEventFunction)(wxEventFunction)(wxPaintEventFunction)&COptionsPageThemes::OnPanelPaint, 0, this);
+	pPanelSmall->Connect(wxID_ANY, wxEVT_PAINT, wxPaintEventHandler(COptionsPageThemes::OnPanelPaint), 0, this);
+	pPanelMedium->Connect(wxID_ANY, wxEVT_PAINT, wxPaintEventHandler(COptionsPageThemes::OnPanelPaint), 0, this);
+	pPanelLarge->Connect(wxID_ANY, wxEVT_PAINT, wxPaintEventHandler(COptionsPageThemes::OnPanelPaint), 0, this);
 
 	wxString author, mail;
 	CThemeProvider::GetThemeData(pTheme->GetString(pTheme->GetSelection()), author, mail);
