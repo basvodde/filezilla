@@ -1329,4 +1329,174 @@ Would you like to replace the file</label>
       </object>
     </object>
   </object>
+  <object class="wxDialog" name="ID_CHMODDIALOG">
+    <title>Change file attributes</title>
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticText" name="ID_DESC">
+          <label>&lt;desc&gt;</label>
+        </object>
+        <flag>wxALL</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Owner permissions</label>
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <object class="wxGridSizer">
+              <cols>3</cols>
+              <rows>1</rows>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_OWNERREAD">
+                  <label>&amp;Read</label>
+                  <style>wxCHK_3STATE|wxCHK_ALLOW_3RD_STATE_FOR_USER</style>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_OWNERWRITE">
+                  <label>&amp;Write</label>
+                  <style>wxCHK_3STATE|wxCHK_ALLOW_3RD_STATE_FOR_USER</style>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_OWNEREXECUTE">
+                  <label>&amp;Execute</label>
+                  <style>wxCHK_3STATE|wxCHK_ALLOW_3RD_STATE_FOR_USER</style>
+                </object>
+              </object>
+            </object>
+            <option>1</option>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <flag>wxLEFT|wxRIGHT|wxGROW</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Group permissions</label>
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <object class="wxGridSizer">
+              <cols>3</cols>
+              <rows>1</rows>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_GROUPREAD">
+                  <label>Re&amp;ad</label>
+                  <style>wxCHK_3STATE|wxCHK_ALLOW_3RD_STATE_FOR_USER</style>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_GROUPWRITE">
+                  <label>W&amp;rite</label>
+                  <style>wxCHK_3STATE|wxCHK_ALLOW_3RD_STATE_FOR_USER</style>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_GROUPEXECUTE">
+                  <label>E&amp;xecute</label>
+                  <style>wxCHK_3STATE|wxCHK_ALLOW_3RD_STATE_FOR_USER</style>
+                </object>
+              </object>
+            </object>
+            <option>1</option>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <flag>wxALL|wxGROW</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Public permissions</label>
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <object class="wxGridSizer">
+              <cols>3</cols>
+              <rows>1</rows>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_PUBLICREAD">
+                  <label>Rea&amp;d</label>
+                  <style>wxCHK_3STATE|wxCHK_ALLOW_3RD_STATE_FOR_USER</style>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_PUBLICWRITE">
+                  <label>Wr&amp;ite</label>
+                  <style>wxCHK_3STATE|wxCHK_ALLOW_3RD_STATE_FOR_USER</style>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_PUBLICEXECUTE">
+                  <label>Exe&amp;cute</label>
+                  <style>wxCHK_3STATE|wxCHK_ALLOW_3RD_STATE_FOR_USER</style>
+                </object>
+              </object>
+            </object>
+            <option>1</option>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <flag>wxLEFT|wxRIGHT|wxGROW</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>&amp;Numeric value:</label>
+            </object>
+            <flag>wxALIGN_CENTRE_VERTICAL</flag>
+          </object>
+          <object class="sizeritem">
+            <object class="wxTextCtrl" name="ID_NUMERIC"/>
+            <flag>wxLEFT|wxRIGHT</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <flag>wxALL</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticText" name="ID_NUMERICTEXT">
+          <label>You can use an x at any position to keep the permission the original files have.</label>
+        </object>
+        <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxCheckBox" name="ID_RECURSE">
+          <label>Rec&amp;urse into subdirectories</label>
+        </object>
+        <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <object class="wxButton" name="wxID_OK">
+              <label>OK</label>
+              <default>1</default>
+            </object>
+            <flag>wxRIGHT</flag>
+            <border>5</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxButton" name="wxID_CANCEL">
+              <label>Cancel</label>
+            </object>
+          </object>
+        </object>
+        <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxALIGN_CENTRE_HORIZONTAL</flag>
+        <border>5</border>
+      </object>
+    </object>
+  </object>
 </resource>

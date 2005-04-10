@@ -9,6 +9,7 @@ class CQueueView;
 class wxImageListMsw;
 #endif
 
+class CChmodDialog;
 class CRemoteListView : public wxListCtrl
 {
 protected:
@@ -60,10 +61,13 @@ protected:
 	static int CmpType(CRemoteListView *pList, unsigned int index, t_fileData &refData);
 	static int CmpSize(CRemoteListView *pList, unsigned int index, t_fileData &refData);
 
-
 	// Processes the directory listing in case of a recursive operation
 	void ProcessDirectoryListing();
 	bool NextOperation();
+
+	// Convert permissions from rwx style into an array.
+	// Permission has to be at least 9 bytes long
+	bool ConvertPermissions(const wxString rwx, char* permissions);
 
 	CDirectoryListing *m_pDirectoryListing;
 	std::vector<t_fileData> m_fileData;
@@ -98,6 +102,11 @@ protected:
 	std::list<t_newDir> m_dirsToVisit;
 	std::list<t_newDir> m_dirsToDelete;
 
+	wxDateTime m_lastKeyPress;
+	wxString m_prefix;
+
+	CChmodDialog* m_pChmodDlg;
+
 	DECLARE_EVENT_TABLE()
 	void OnItemActivated(wxListEvent &event);
 	void OnColumnClicked(wxListEvent &event);
@@ -108,9 +117,7 @@ protected:
 	void OnMenuRename(wxCommandEvent& event);
 	void OnChar(wxKeyEvent& event);
 	void OnEndLabelEdit(wxListEvent& event);
-
-	wxDateTime m_lastKeyPress;
-	wxString m_prefix;
+	void OnMenuChmod(wxCommandEvent& event);
 };
 
 #endif

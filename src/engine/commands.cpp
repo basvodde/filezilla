@@ -107,3 +107,10 @@ CRenameCommand::CRenameCommand(const CServerPath& fromPath, const wxString& from
 	m_fromFile = fromFile;
 	m_toFile = toFile;
 }
+
+CChmodCommand::CChmodCommand(const CServerPath& path, const wxString& file, const wxString& permission)
+{
+	m_path = path;
+	m_file = file;
+	m_permission = permission;
+}

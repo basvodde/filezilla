@@ -2450,7 +2450,7 @@ int CFtpControlSocket::Chmod(const CChmodCommand& command)
 		return FZ_REPLY_ERROR;
 	}
 
-	LogMessage(Status, _("Set permissio of '%s' to '%s'"), command.GetPath().FormatFilename(command.GetFile()).c_str(), command.GetPermission().c_str());
+	LogMessage(Status, _("Set permissions of '%s' to '%s'"), command.GetPath().FormatFilename(command.GetFile()).c_str(), command.GetPermission().c_str());
 
 	CChmodOpData *pData = new CChmodOpData(command);
 	pData->opState = chmod_chmod;

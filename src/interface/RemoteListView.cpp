@@ -5,6 +5,7 @@
 #include "QueueView.h"
 #include "filezillaapp.h"
 #include "inputdialog.h"
+#include "chmoddialog.h"
 
 #ifdef __WXMSW__
 #include "shellapi.h"
@@ -25,6 +26,7 @@ BEGIN_EVENT_TABLE(CRemoteListView, wxListCtrl)
 	EVT_MENU(XRCID("ID_MKDIR"), CRemoteListView::OnMenuMkdir)
 	EVT_MENU(XRCID("ID_DELETE"), CRemoteListView::OnMenuDelete)
 	EVT_MENU(XRCID("ID_RENAME"), CRemoteListView::OnMenuRename)
+	EVT_MENU(XRCID("ID_CHMOD"), CRemoteListView::OnMenuChmod)
 	EVT_CHAR(CRemoteListView::OnChar)
 	EVT_LIST_END_LABEL_EDIT(wxID_ANY, CRemoteListView::OnEndLabelEdit)
 END_EVENT_TABLE()
@@ -52,6 +54,8 @@ END_EVENT_TABLE()
 CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState, CCommandQueue *pCommandQueue, CQueueView* pQueue)
 	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER | wxLC_EDIT_LABELS)
 {
+	m_pChmodDlg = 0;
+
 	m_pState = pState;
 	m_pCommandQueue = pCommandQueue;
 	m_pQueue = pQueue;
@@ -946,6 +950,14 @@ void CRemoteListView::ProcessDirectoryListing()
 				break;
 			}
 		}
+
+		if (m_operationMode == recursive_chmod)
+		{
+			char permissions[9];
+			bool res = ConvertPermissions(entry.permissions, permissions);
+			wxString newPerms = m_pChmodDlg->GetPermissions(res ? permissions : 0);
+			m_pCommandQueue->ProcessCommand(new CChmodCommand(m_pDirectoryListing->path, entry.name, newPerms));
+		}
 	}
 
 	NextOperation();
@@ -967,6 +979,12 @@ void CRemoteListView::StopRecursiveOperation()
 	m_dirsToVisit.clear();
 	m_visitedDirs.clear();
 	m_dirsToDelete.clear();
+
+	if (m_pChmodDlg)
+	{
+		m_pChmodDlg->Destroy();
+		m_pChmodDlg = 0;
+	}
 }
 
 void CRemoteListView::OnChar(wxKeyEvent& event)
@@ -1115,4 +1133,129 @@ void CRemoteListView::OnEndLabelEdit(wxListEvent& event)
 	}
 	
 	m_pCommandQueue->ProcessCommand(new CRenameCommand(m_pDirectoryListing->path, data->pDirEntry->name, newPath, newFile));
+}
+
+void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
+{
+	if (!m_pCommandQueue->Idle() || IsBusy())
+	{
+		wxBell();
+		return;
+	}
+
+	int fileCount = 0;
+	int dirCount = 0;
+	wxString name;
+
+	char permissions[9] = {0};
+	const char permchars[3] = {'r', 'w', 'x'};
+
+	long item = -1;
+	while (true)
+	{
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		if (item == -1)
+			break;
+
+		if (!item)
+			return;
+
+		t_fileData *data = GetData(item);
+		if (!data)
+			return;
+
+		if (data->pDirEntry->dir)
+			dirCount++;
+		else
+			fileCount++;
+		name = data->pDirEntry->name;
+
+		if (data->pDirEntry->permissions.Length() == 10)
+		{
+			for (int i = 0; i < 9; i++)
+			{
+				bool set = data->pDirEntry->permissions[i + 1] == permchars[i % 3];
+				if (!permissions[i] || permissions[i] == (set ? 2 : 1))
+					permissions[i] = set ? 2 : 1;
+				else
+					permissions[i] = -1;
+			}
+		}
+	}
+	for (int i = 0; i < 9; i++)
+		if (permissions[i] == -1)
+			permissions[i] = 0;
+
+	m_pChmodDlg = new CChmodDialog;
+	if (!m_pChmodDlg->Create(this, fileCount, dirCount, name, permissions))
+	{
+		m_pChmodDlg->Destroy();
+		m_pChmodDlg = 0;
+		return;
+	}
+
+	if (m_pChmodDlg->ShowModal() != wxID_OK)
+	{
+		m_pChmodDlg->Destroy();
+		m_pChmodDlg = 0;
+		return;
+	}
+
+	item = -1;
+	while (true)
+	{
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		if (item == -1)
+			break;
+
+		if (!item)
+		{
+			m_pChmodDlg->Destroy();
+			m_pChmodDlg = 0;
+			return;
+		}
+
+		t_fileData *data = GetData(item);
+		if (!data)
+		{
+			m_pChmodDlg->Destroy();
+			m_pChmodDlg = 0;
+			return;
+		}
+
+		char permissions[9];
+		bool res = ConvertPermissions(data->pDirEntry->permissions, permissions);
+		wxString newPerms = m_pChmodDlg->GetPermissions(res ? permissions : 0);
+		m_pCommandQueue->ProcessCommand(new CChmodCommand(m_pDirectoryListing->path, data->pDirEntry->name, newPerms));
+		
+		if (m_pChmodDlg->Recursive() && data->pDirEntry->dir)
+		{
+			m_operationMode = recursive_chmod;
+			t_newDir dirToVisit;
+			dirToVisit.parent = m_pDirectoryListing->path;
+			dirToVisit.subdir = data->pDirEntry->name;
+			m_dirsToVisit.push_back(dirToVisit);
+			m_startDir = m_pDirectoryListing->path;
+		}
+	}
+	NextOperation();
+}
+
+bool CRemoteListView::ConvertPermissions(const wxString rwx, char* permissions)
+{
+	if (!permissions)
+		return false;
+
+	const char permchars[3] = {'r', 'w', 'x'};
+
+	if (rwx.Length() != 10)
+		return false;
+
+    for (int i = 0; i < 9; i++)
+	{
+		bool set = rwx[i + 1] == permchars[i % 3];
+		permissions[i] = set ? 2 : 1;
+	}
+
+	return true;
 }

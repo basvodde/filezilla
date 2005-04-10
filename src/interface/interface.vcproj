@@ -43,10 +43,11 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libidn.a wsock32.lib odbc32.lib odbccp32.lib comctl32.lib ..\lib\engine.lib wxbase25.lib wxmsw25_core.lib wxpng.lib wxbase25_net.lib wxbase25_xml.lib wxzlib.lib wxmsw25_adv.lib wxmsw25_html.lib wxexpat.lib wxmsw25_xrc.lib"
+				AdditionalDependencies="libidn.a wsock32.lib odbc32.lib odbccp32.lib comctl32.lib ..\lib\engine.lib wxbase25.lib wxmsw25_core.lib wxpng.lib wxbase25_net.lib wxbase25_xml.lib wxzlib.lib wxmsw25_adv.lib wxmsw25_html.lib wxexpat.lib wxmsw25_xrc.lib wxmsw25_qa.lib"
 				OutputFile="../bin/FileZilla.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
+				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Release/FileZilla.pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -112,12 +113,13 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libidn.a odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib ..\lib\engine_debug.lib wxbase25d.lib wxmsw25d_core.lib wxpngd.lib wxbase25d_net.lib wxbase25d_xml.lib wxzlibd.lib wxmsw25d_adv.lib wxmsw25d_html.lib wxexpatd.lib wxmsw25d_xrc.lib"
+				AdditionalDependencies="libidn.a odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib ..\lib\engine_debug.lib wxbase25d.lib wxmsw25d_core.lib wxpngd.lib wxbase25d_net.lib wxbase25d_xml.lib wxzlibd.lib wxmsw25d_adv.lib wxmsw25d_html.lib wxexpatd.lib wxmsw25d_xrc.lib wxmsw25d_qa.lib"
 				OutputFile="../bin/FileZilla_dbg.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Debug/FileZilla_dbg.pdb"
+				GenerateMapFile="TRUE"
 				SubSystem="2"
 				TargetMachine="1"/>
 			<Tool
@@ -158,6 +160,9 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
 			<File
 				RelativePath=".\asyncrequestqueue.cpp">
+			</File>
+			<File
+				RelativePath=".\chmoddialog.cpp">
 			</File>
 			<File
 				RelativePath=".\commandqueue.cpp">
@@ -258,6 +263,9 @@
 			Filter="h;hpp;hxx;hm;inl">
 			<File
 				RelativePath=".\asyncrequestqueue.h">
+			</File>
+			<File
+				RelativePath=".\chmoddialog.h">
 			</File>
 			<File
 				RelativePath=".\commandqueue.h">
