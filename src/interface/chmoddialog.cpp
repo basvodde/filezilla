@@ -26,7 +26,7 @@ bool CChmodDialog::Create(wxWindow* parent, int fileCount, int dirCount,
 	{
 		if (fileCount == 1)
 		{
-			title = wxString::Format(_("Plase select the new attributes for the file \"%s\"."), name);
+			title = wxString::Format(_("Plase select the new attributes for the file \"%s\"."), name.c_str());
 		}
 		else
 			title = _("Please select the new attributes for the selected files.");
@@ -37,7 +37,7 @@ bool CChmodDialog::Create(wxWindow* parent, int fileCount, int dirCount,
 		{
 			if (dirCount == 1)
 			{
-				title = wxString::Format(_("Plase select the new attributes for the directory \"%s\"."), name);
+				title = wxString::Format(_("Plase select the new attributes for the directory \"%s\"."), name.c_str());
 			}
 			else
 				title = _("Please select the new attributes for the selected directories.");
@@ -79,19 +79,20 @@ bool CChmodDialog::Create(wxWindow* parent, int fileCount, int dirCount,
 		pRecurse->Hide();
 	}
 
-	const char* IDs[9] = { "ID_OWNERREAD", "ID_OWNERWRITE", "ID_OWNEREXECUTE",
-						   "ID_GROUPREAD", "ID_GROUPWRITE", "ID_GROUPEXECUTE",
-						   "ID_PUBLICREAD", "ID_PUBLICWRITE", "ID_PUBLICEXECUTE"
+	const wxChar* IDs[9] = { _T("ID_OWNERREAD"), _T("ID_OWNERWRITE"), _T("ID_OWNEREXECUTE"),
+						   _T("ID_GROUPREAD"), _T("ID_GROUPWRITE"), _T("ID_GROUPEXECUTE"),
+						   _T("ID_PUBLICREAD"), _T("ID_PUBLICWRITE"), _T("ID_PUBLICEXECUTE")
 						 };
 
 	for (int i = 0; i < 9; i++)
 	{
-		m_checkBoxes[i] = XRCCTRL(*this, IDs[i], wxCheckBox);
+		int id = wxXmlResource::GetXRCID(IDs[i]);
+		m_checkBoxes[i] = wxDynamicCast(FindWindow(id), wxCheckBox);
 		
 		if (!m_checkBoxes[i])
 			return false;
 
-		Connect(XRCID(IDs[i]), wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CChmodDialog::OnCheckboxClick));
+		Connect(id, wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CChmodDialog::OnCheckboxClick));
 
 		switch (permissions[i])
 		{
