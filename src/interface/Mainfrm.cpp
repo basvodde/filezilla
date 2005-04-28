@@ -804,6 +804,23 @@ void CMainFrame::OnSiteManager(wxCommandEvent& event)
 
 bool CMainFrame::GetPassword(CServer &server, wxString name /*=_T("")*/, wxString challenge /*=_T("")*/)
 {
+	if (server.GetLogonType() == ASK)
+	{
+		std::list<t_passwordcache>::const_iterator iter;
+		for (iter = m_passwordCache.begin(); iter != m_passwordCache.end(); iter++)
+		{
+			if (iter->host != server.GetHost())
+				continue;
+			if (iter->port != server.GetPort())
+				continue;
+			if (iter->user != server.GetUser())
+				continue;
+	
+			server.SetUser(server.GetUser(), iter->password);
+			return true;
+		}
+	}
+
 	wxDialog pwdDlg;
 	wxXmlResource::Get()->LoadDialog(&pwdDlg, this, _T("ID_ENTERPASSWORD"));
 	if (name == _T(""))
@@ -834,6 +851,16 @@ bool CMainFrame::GetPassword(CServer &server, wxString name /*=_T("")*/, wxStrin
 		return false;
 
 	server.SetUser(server.GetUser(), XRCCTRL(pwdDlg, "ID_PASSWORD", wxTextCtrl)->GetValue());
+
+	if (server.GetLogonType() == ASK && XRCCTRL(pwdDlg, "ID_REMEMBER", wxCheckBox)->GetValue())
+	{
+		t_passwordcache entry;
+		entry.host = server.GetHost();
+		entry.port = server.GetPort();
+		entry.user = server.GetUser();
+		entry.password = server.GetPass();
+		m_passwordCache.push_back(entry);
+	}
 
 	return true;
 }
