@@ -9,8 +9,8 @@ INCLUDES = -I$(srcdir)/../include
 bin_PROGRAMS = filezilla
 
 # the application source, library search path, and link libraries
-filezilla_SOURCES = asyncrequestqueue.cpp chmoddialog.cpp commandqueue.cpp \
-		fileexistsdlg.cpp \
+filezilla_SOURCES = aboutdialog.cpp asyncrequestqueue.cpp chmoddialog.cpp \
+		commandqueue.cpp fileexistsdlg.cpp \
 		FileZilla.cpp inputdialog.cpp ipcmutex.cpp led.cpp \
 		LocalListView.cpp LocalTreeView.cpp Mainfrm.cpp Options.cpp \
 		optionspage.cpp	optionspage_filetype.cpp optionspage_language.cpp \
@@ -23,8 +23,8 @@ if USE_BINRELOC
 filezilla_SOURCES += prefix.cpp
 endif
 
-noinst_HEADERS = asyncrequestqueue.h chmoddialog.h commandqueue.h \
-		 fileexistsdlg.h \
+noinst_HEADERS = aboutdialog.h asyncrequestqueue.h chmoddialog.h 
+		 commandqueue.h fileexistsdlg.h \
 		 filezillaapp.h inputdialog.h ipcmutex.h led.h \
 		 LocalListView.h LocalTreeView.h Mainfrm.h Options.h \
 		 optionspage.h  optionspage_filetype.h \

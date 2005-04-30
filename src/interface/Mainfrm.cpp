@@ -17,6 +17,7 @@
 #include "filezillaapp.h"
 #include "view.h"
 #include "viewheader.h"
+#include "aboutdialog.h"
 
 #ifndef __WXMSW__
 #include "resources/filezilla.xpm"
@@ -67,6 +68,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_REMOTETREEVIEW"), CMainFrame::OnUpdateToggleRemoteTreeView)
 	EVT_TOOL(XRCID("ID_TOOLBAR_QUEUEVIEW"), CMainFrame::OnToggleQueueView)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_QUEUEVIEW"), CMainFrame::OnUpdateToggleQueueView)
+	EVT_MENU(XRCID("ID_ABOUT"), CMainFrame::OnMenuHelpAbout)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame(COptions* pOptions) : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
@@ -1040,4 +1042,13 @@ void CMainFrame::OnToggleQueueView(wxCommandEvent& event)
 void CMainFrame::OnUpdateToggleQueueView(wxUpdateUIEvent& event)
 {
 	event.Check(m_pBottomSplitter && m_pBottomSplitter->IsSplit());
+}
+
+void CMainFrame::OnMenuHelpAbout(wxCommandEvent& event)
+{
+	CAboutDialog dlg;
+	if (!dlg.Create(this))
+		return;
+
+	dlg.ShowModal();
 }

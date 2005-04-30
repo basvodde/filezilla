@@ -6,7 +6,7 @@ resourcesdir = $(pkgdatadir)/resources
 
 dist_resources_DATA = dialogs.xrc down.xpm dropdown.png empty.xpm \
 		filezilla.xpm leds.png menus.xrc quickconnectbar.xrc \
-		themes.xml toolbar.xrc up.xpm		  
+		themes.xml toolbar.xrc up.xpm filezilla.png	  
 
 if USE_RESOURCEFILE
 nodist_noinst_DATA = filezilla.o
