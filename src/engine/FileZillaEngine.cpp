@@ -326,25 +326,39 @@ void CFileZillaEngine::OnEngineEvent(wxFzEngineEvent &event)
 		break;
 	case engineHostresolve:
 		{
+			if (m_HostResolverThreads.empty())
+				break;
+			CAsyncHostResolver *pResolver = m_HostResolverThreads.front();
+			m_HostResolverThreads.pop_front();
+
 			std::list<CAsyncHostResolver *> remaining;
 			for (std::list<CAsyncHostResolver *>::iterator iter = m_HostResolverThreads.begin(); iter != m_HostResolverThreads.end(); iter++)
 			{
 				CAsyncHostResolver* pResolver = *iter;
+				pResolver->SetObsolete();
 				if (!pResolver->Done())
 					remaining.push_back(pResolver);
 				else
 				{
-					if (!pResolver->Obsolete())
-					{
-						if (GetCurrentCommandId() == cmd_connect)
-							m_pControlSocket->ContinueConnect();
-					}
 					pResolver->Wait();
 					delete pResolver;					
 				}
 			}
 			m_HostResolverThreads.clear();
 			m_HostResolverThreads = remaining;
+
+			if (!pResolver->Done())
+				m_HostResolverThreads.push_front(pResolver);
+			else
+			{
+				if (!pResolver->Obsolete())
+				{
+					if (GetCurrentCommandId() == cmd_connect)
+						m_pControlSocket->ContinueConnect(pResolver->Successful() ? &pResolver->m_Address : 0);
+				}
+				pResolver->Wait();
+				delete pResolver;
+			}
 		}
 		break;
 	case engineTransferEnd:

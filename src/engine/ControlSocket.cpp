@@ -122,26 +122,23 @@ int CControlSocket::Connect(const CServer &server)
 	return FZ_REPLY_WOULDBLOCK;
 }
 
-int CControlSocket::ContinueConnect()
+int CControlSocket::ContinueConnect(const wxIPV4address *address)
 {
-	LogMessage(__TFILE__, __LINE__, this, Debug_Verbose, _T("ContinueConnect() cmd=%d, m_pEngine=%d, m_pCurrentServer=%d"), GetCurrentCommandId(), m_pEngine, m_pCurrentServer);
+	LogMessage(__TFILE__, __LINE__, this, Debug_Verbose, _T("ContinueConnect(%d) cmd=%d, m_pEngine=%d, m_pCurrentServer=%d"), (int)address, GetCurrentCommandId(), m_pEngine, m_pCurrentServer);
 	if (GetCurrentCommandId() != cmd_connect ||
-		m_pEngine->m_HostResolverThreads.empty() ||
-		!m_pEngine->m_HostResolverThreads.front()->Done() ||
-		m_pEngine->m_HostResolverThreads.front()->Obsolete() ||
 		!m_pCurrentServer)
 	{
 		LogMessage(Debug_Warning, _T("Invalid context for call to ContinueConnect()"));
 		return DoClose(FZ_REPLY_INTERNALERROR);
 	}
 	
-	if (!m_pEngine->m_HostResolverThreads.front()->Successful())
+	if (!address)
 	{
 		LogMessage(::Error, _("Invalid hostname or host not found"));
 		return ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_CRITICALERROR);
 	}
 
-	wxIPV4address addr = m_pEngine->m_HostResolverThreads.front()->m_Address;
+	wxIPV4address addr = *address;
 	addr.Service(m_pCurrentServer->GetPort());
 
 	bool res = wxSocketClient::Connect(addr, false);

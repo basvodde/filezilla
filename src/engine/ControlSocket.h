@@ -26,7 +26,7 @@ public:
 	virtual ~CControlSocket();
 
 	virtual int Connect(const CServer &server);
-	virtual int ContinueConnect();
+	virtual int ContinueConnect(const wxIPV4address *address);
 	virtual int Disconnect();
 	virtual void Cancel();
 	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T(""), bool refresh = false) = 0;
