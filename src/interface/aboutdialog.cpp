@@ -113,7 +113,7 @@ wxString CAboutDialog::GetBuildDate() const
 wxString CAboutDialog::GetCompiler() const
 {
 #ifdef USED_COMPILER
-	return wxString(COMPILER, wxConvLocal);
+	return wxString(USED_COMPILER, wxConvLocal);
 #elif defined __VISUALC__
 	int version = __VISUALC__;
 	return wxString::Format(_T("Visual C++ %d"), version);
