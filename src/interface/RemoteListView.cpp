@@ -900,6 +900,12 @@ void CRemoteListView::ProcessDirectoryListing()
 		return;
 	}
 
+	if (!m_pDirectoryListing->path.IsSubdirOf(m_startDir, false))
+	{
+		NextOperation();
+		return;
+	}
+
 	t_newDir dir = m_dirsToVisit.front();
 	m_dirsToVisit.pop_front();
 
