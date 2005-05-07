@@ -1,6 +1,10 @@
 #ifndef __FILEZILLAAPP_H__
 #define __FILEZILLAAPP_H__
 
+#ifdef _MSC_VER
+#include <msvc/wx/setup.h>
+#endif
+
 class CFileZillaApp : public wxApp
 {
 public:
