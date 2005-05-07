@@ -37,6 +37,8 @@ CTransferSocket::CTransferSocket(CFileZillaEngine *pEngine, CFtpControlSocket *p
 	
 	m_transferEnd = false;
 	m_binaryMode = true;
+
+	m_onCloseCalled = false;
 }
 
 CTransferSocket::~CTransferSocket()
@@ -341,6 +343,19 @@ void CTransferSocket::OnSend()
 void CTransferSocket::OnClose(wxSocketEvent &event)
 {
 	m_pControlSocket->LogMessage(::Debug_Verbose, _T("OnClose"));
+	m_onCloseCalled = true;
+	m_pSocket->SetNotify(wxSOCKET_OUTPUT_FLAG | wxSOCKET_CONNECTION_FLAG | wxSOCKET_LOST_FLAG);
+	char buffer;
+	m_pSocket->Peek(&buffer, 1);
+	while (!m_pSocket->Error() && m_pSocket->LastCount() == 1)
+	{
+		OnReceive();
+		if (!m_pSocket)
+			break;
+
+		m_pSocket->Peek(&buffer, 1);
+	}
+
 	TransferEnd(0);
 }
 

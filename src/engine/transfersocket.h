@@ -57,6 +57,11 @@ protected:
 
 	char *m_pTransferBuffer;
 	int m_transferBufferPos;
+
+	// Set to true if OnClose got called
+	// We now have to read all available data in the socket, ignoring any
+	// speed limits
+	bool m_onCloseCalled;
 };
 
 #endif
