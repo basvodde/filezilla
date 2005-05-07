@@ -99,32 +99,12 @@ allpo: @FILEZILLA_LINGUAS_PO_NEW@
 
 # this target which will not be called automatically will update the .po files
 updatepo: @FILEZILLA_LINGUAS_PO_NEW@
-	for t in @FILEZILLA_LINGUAS@; do cp $$t.po.new $(srcdir)/$$t.po; done
+	for t in @FILEZILLA_LINGUAS@; do \
+          cp $$t.po.new $(srcdir)/$$t.po; \
+        done
 
 allmo: allpo
 	@for t in @FILEZILLA_LINGUAS@; do $(MAKE) $$t.mo; done
-
-# print out the percentage of the translated strings
-stats: allpo
-	@ALLTOTAL=0 ALLTR=0 ALLFZ=0 ALLUT=0; \
-	for i in @FILEZILLA_LINGUAS@; do \
-	  if [ -f $$i.mo~ ]; then rm $$i.mo~; fi; \
-	  res=`LC_ALL="en_EN" $(MSGFMT) -o $$i.mo~ "$$i.po.new" 2>&1`; \
-	  if [ -f $$i.mo~ ]; then rm $$i.mo~; fi; \
-	  TR=`echo $$res | sed -e 's/^[^0-9]*\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+/\\1/'`; \
-	  FZ=`echo $$res | sed -e 's/^[^0-9]*\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+/\\2/'`; \
-	  UT=`echo $$res | sed -e 's/^[^0-9]*\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+\([0-9]\+\)[^0-9]\+/\\3/'`; \
-	  ALLTR=`expr $$ALLTR + $$TR`; \
-	  ALLFZ=`expr $$ALLFZ + $$FZ`; \
-	  ALLUT=`expr $$ALLUT + $$UT`; \
-	  TOTAL=`expr $$TR + $$FZ + $$UT`; \
-	  echo "\"$$i\" => \"`expr 100 "*" $$TR / $$TOTAL`%\", $$TR of $$TOTAL strings translated, $$FZ fuzzy, $$UT untranslated"; \
-	done; \
-	ALLTOTAL=`expr $$ALLTR + $$ALLFZ + $$ALLUT`; \
-	echo "---------------------------------------"; \
-	echo " ALL => \"`expr 100 "*" $$ALLTR / $$ALLTOTAL`%\", $$ALLTR of $$ALLTOTAL strings translated, $$ALLFZ fuzzy, $$ALLUT untranslated"; \
-	echo $$TOTAL;
-
 
 # on the Mac copy the .mo files into the application bundle
 if MACAPPBUNDLE
@@ -142,4 +122,4 @@ endif
 
 all: allmo
 
-.PHONY: allpo allmo force-update stats FORCE
+.PHONY: allpo allmo force-update FORCE
