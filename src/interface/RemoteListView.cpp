@@ -1137,6 +1137,24 @@ void CRemoteListView::OnEndLabelEdit(wxListEvent& event)
 		event.Veto();
 		return;
 	}
+
+	if (newPath == m_pDirectoryListing->path)
+	{
+		if (data->pDirEntry->name == newFile)
+			return;
+
+		// Check if target file already exists
+		for (unsigned int i = 0; i < m_pDirectoryListing->m_entryCount; i++)
+		{
+			if (newFile == m_pDirectoryListing->m_pEntries[i].name)
+			{
+				if (wxMessageBox(_("Target filename already exists, really continue?"), _("File exists"), wxICON_QUESTION | wxYES_NO) != wxYES)
+					return;
+
+				break;
+			}
+		}
+	}
 	
 	m_pCommandQueue->ProcessCommand(new CRenameCommand(m_pDirectoryListing->path, data->pDirEntry->name, newPath, newFile));
 }
