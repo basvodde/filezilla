@@ -68,7 +68,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_REMOTETREEVIEW"), CMainFrame::OnUpdateToggleRemoteTreeView)
 	EVT_TOOL(XRCID("ID_TOOLBAR_QUEUEVIEW"), CMainFrame::OnToggleQueueView)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_QUEUEVIEW"), CMainFrame::OnUpdateToggleQueueView)
-	EVT_MENU(XRCID("ID_ABOUT"), CMainFrame::OnMenuHelpAbout)
+	EVT_MENU(wxID_ABOUT, CMainFrame::OnMenuHelpAbout)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame(COptions* pOptions) : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
@@ -306,7 +306,7 @@ bool CMainFrame::CreateQuickconnectBar()
 
 void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 {
-	if (event.GetId() == XRCID("ID_MENU_FILE_EXIT"))
+	if (event.GetId() == XRCID("wxID_EXIT"))
 	{
 		Close();
 	}
@@ -325,7 +325,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 
 		m_pCommandQueue->ProcessCommand(new CRawCommand(dlg.GetValue()));		
 	}
-	else if (event.GetId() == XRCID("ID_MENU_EDIT_SETTINGS"))
+	else if (event.GetId() == XRCID("wxID_PREFERENCES"))
 	{
 		OnMenuEditSettings(event);
 	}
