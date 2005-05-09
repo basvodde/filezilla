@@ -3,6 +3,7 @@
 
 BEGIN_EVENT_TABLE(CAboutDialog, wxDialog)
 EVT_BUTTON(XRCID("wxID_OK"), CAboutDialog::OnOK)
+EVT_CHAR_HOOK(CAboutDialog::OnChar)
 END_EVENT_TABLE();
 
 extern wxString WrapText(const wxString &text, unsigned long
@@ -74,6 +75,7 @@ wxString CAboutDialog::GetBuildDate() const
 	// Get build date. Unfortunately it is in the ugly Mmm dd yyyy format.
 	// Make a good yyyy-mm-dd out of it
 	wxString date(__DATE__, wxConvLocal);
+	while (date.Replace(_T("  "), _T(" ")));
 
 	const wxChar months[][4] = { _T("Jan"), _T("Feb"), _T("Mar"),
 								_T("Apr"), _T("May"), _T("Jun"), 
@@ -120,4 +122,12 @@ wxString CAboutDialog::GetCompiler() const
 #else
 	return _T("Unknown compiler");
 #endif
+}
+
+void CAboutDialog::OnChar(wxKeyEvent& event)
+{
+	if (event.GetKeyCode() == WXK_ESCAPE)
+		EndModal(wxID_CANCEL);
+	else
+		event.Skip();
 }

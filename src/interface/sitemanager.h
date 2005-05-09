@@ -62,6 +62,7 @@ protected:
 	virtual void OnRemoteDirBrowse(wxCommandEvent& event);
 	virtual void OnItemActivated(wxTreeEvent& event);
 	virtual void OnLimitMultipleConnectionsChanged(wxCommandEvent& event);
+	virtual void OnChar(wxKeyEvent& event);
 	
 	COptions* m_pOptions;
 	CInterProcessMutex* m_pSiteManagerMutex;

@@ -15,6 +15,7 @@ protected:
 
 	DECLARE_EVENT_TABLE();
 	void OnOK(wxCommandEvent& event);
+	void OnChar(wxKeyEvent& event);
 };
 
 #endif //__ABOUTDIALOG_H__
