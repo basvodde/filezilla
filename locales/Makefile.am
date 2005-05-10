@@ -46,7 +46,7 @@ XGETTEXT_ARGS=-C -k_ -kwxGetTranslation -kwxTRANSLATE -s -j
 
 # implicit rules
 %.mo: %.po.new
-	$(MSGFMT) -o $@ $<
+	$(MSGFMT) -o $@ $< || exit 1
 
 # a PO file must be updated from wxstd.po to include new translations
 %.po.new: $(srcdir)/%.po filezilla.pot
@@ -55,7 +55,7 @@ XGETTEXT_ARGS=-C -k_ -kwxGetTranslation -kwxTRANSLATE -s -j
 	if [ ! -f $@ ]; then \
 	  exit 1; \
 	fi
-	$(MSGMERGE) -U $@ filezilla.pot
+	$(MSGMERGE) -U $@ filezilla.pot  || exit 1
 	@if [ -f $@~ ]; then rm $@~; fi
 
 # touch file so that timestamp is newer than that of filezilla.pot
@@ -70,7 +70,7 @@ resources.h: $(srcdir)/../src/interface/resources/*.xrc
 	@WXRC@ -g -e $(srcdir)/../src/interface/resources/*.xrc > $@~ || exit 1
 
 # strip strings not marked for translation (enclosed in <>)
-	cat $@~ | sed "s/_(\"<.*>\")\;//" > $@
+	cat $@~ | sed "s/_(\"<.*>\")\;//" > $@  || exit 1
 
 	@if [ -f $@~ ]; then rm $@~; fi
 
@@ -79,7 +79,7 @@ filezilla.pot: resources.h $(srcdir)/../src/include/*.h $(srcdir)/../src/engine/
 	@touch $@.new
 
 	FILES="resources.h `find $(srcdir)/../src -name '*.h' -o -name '*.cpp'`"; \
-	($(XGETTEXT) $(XGETTEXT_ARGS) -o $@.new $$FILES)
+	$(XGETTEXT) $(XGETTEXT_ARGS) -o $@.new $$FILES || exit 1
 
 # change charset declaration in template file to UTF-8
 	cat $@.new | sed -e "s/^\"Content-Type: .*$$/\"Content-Type: text\\/plain; charset=UTF-8\\\\n\"/" > $@.new~
@@ -87,7 +87,7 @@ filezilla.pot: resources.h $(srcdir)/../src/include/*.h $(srcdir)/../src/engine/
 
 	if [ -f $@ ]; then \
 	  touch $@; \
-	  $(MSGMERGE) -U $@ $@.new; \
+	  $(MSGMERGE) -U $@ $@.new || exit 1; \
 	else \
 	  mv $@.new $@; \
 	fi;
@@ -100,11 +100,11 @@ allpo: @FILEZILLA_LINGUAS_PO_NEW@
 # this target which will not be called automatically will update the .po files
 updatepo: @FILEZILLA_LINGUAS_PO_NEW@
 	for t in @FILEZILLA_LINGUAS@; do \
-          cp $$t.po.new $(srcdir)/$$t.po; \
+          cp $$t.po.new $(srcdir)/$$t.po || exit 1; \
         done
 
 allmo: allpo
-	@for t in @FILEZILLA_LINGUAS@; do $(MAKE) $$t.mo; done
+	@for t in @FILEZILLA_LINGUAS@; do $(MAKE) $(AM_MAKEFLAGS) $$t.mo || exit 1; done
 
 # on the Mac copy the .mo files into the application bundle
 if MACAPPBUNDLE
