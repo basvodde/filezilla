@@ -33,6 +33,7 @@ enum filetransferStates
 	filetransfer_mdtm,
 	filetransfer_type,
 	filetransfer_port_pasv,
+	filetransfer_rest0,
 	filetransfer_rest,
 	filetransfer_transfer,
 	filetransfer_waitfinish,
@@ -77,6 +78,7 @@ CFtpControlSocket::CFtpControlSocket(CFileZillaEngine *pEngine) : CControlSocket
 	m_ReceiveBuffer.Alloc(2000);
 
 	m_pTransferSocket = 0;
+	m_sentRestartOffset = false;
 }
 
 CFtpControlSocket::~CFtpControlSocket()
@@ -1245,8 +1247,15 @@ int CFtpControlSocket::FileTransferParseResponse()
 			pData->host.Replace(_T(","), _T("."));
 		}
 
-		if (pData->resume && pData->download)
-			pData->opState = filetransfer_rest;
+		if (pData->download)
+		{
+			if (pData->resume)
+				pData->opState = filetransfer_rest;
+			else if (m_sentRestartOffset)
+				pData->opState = filetransfer_rest0;
+			else
+				pData->opState = filetransfer_transfer;
+		}
 		else
 			pData->opState = filetransfer_transfer;
 
@@ -1319,6 +1328,9 @@ int CFtpControlSocket::FileTransferParseResponse()
 			wxFileOffset len = pData->pFile->Length();
 			InitTransferStatus(len, startOffset);
 		}
+		break;
+	case filetransfer_rest0:
+		pData->opState = filetransfer_transfer;
 		break;
 	case filetransfer_rest:
 		if (code == 3 || code == 2)
@@ -1569,6 +1581,9 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 				cmd = _T("PORT " + port);
 		}
 		break;
+	case filetransfer_rest0:
+		cmd = _T("REST 0");
+		break;
 	case filetransfer_rest:
 		if (!pData->pFile)
 		{
@@ -1580,6 +1595,7 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 		{
 			wxFileOffset offset = pData->pFile->Length();
 			cmd = _T("REST ") + ((wxLongLong)offset).ToString();
+			m_sentRestartOffset = true;
 		}
 		break;
 	case filetransfer_transfer:

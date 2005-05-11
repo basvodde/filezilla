@@ -72,6 +72,10 @@ protected:
 	wxString m_MultilineResponseCode;
 
 	CTransferSocket *m_pTransferSocket;
+
+	// Some servers keep track of the offset specified by REST between sessions
+	// So we always sent a REST 0 for a normal transfer following a restarted one
+	bool m_sentRestartOffset;
 };
 
 class CFileTransferOpData : public COpData
