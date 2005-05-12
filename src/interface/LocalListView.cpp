@@ -4,11 +4,6 @@
 #include "QueueView.h"
 #include "filezillaapp.h"
 
-#ifdef __WXMSW__
-#include <shellapi.h>
-#include <commctrl.h>
-#endif
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -28,33 +23,13 @@ BEGIN_EVENT_TABLE(CLocalListView, wxListCtrl)
 	EVT_LIST_END_LABEL_EDIT(wxID_ANY, CLocalListView::OnEndLabelEdit)
 END_EVENT_TABLE()
 
-#ifdef __WXMSW__
-	// Required wxImageList extension
-	class wxImageListMsw : public wxImageList
-	{
-	public:
-		wxImageListMsw(bool nodelete = true) : wxImageList() { m_nodelete = nodelete; }
-		wxImageListMsw(int width, int height, const bool mask = true, int initialCount = 1, bool nodelete = true)
-			: wxImageList(width, height, mask, initialCount)
-		{
-			m_nodelete = nodelete;
-		}
-		wxImageListMsw(WXHIMAGELIST hList) { m_hImageList = hList; };
-		~wxImageListMsw() { if (m_nodelete) m_hImageList = 0; };
-		HIMAGELIST GetHandle() const { return (HIMAGELIST)m_hImageList; };
-
-	protected:
-		bool m_nodelete;
-	};
-#endif
-
 CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView *pQueue)
-	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER | wxLC_EDIT_LABELS)
+	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER | wxLC_EDIT_LABELS),
+	CSystemImageList(16)
 {
 	m_pState = pState;
 	m_pQueue = pQueue;
 
-	m_pImageList = 0;
 	InsertColumn(0, _("Filename"));
 	InsertColumn(1, _("Filesize"));
 	InsertColumn(2, _("Filetype"));
@@ -63,11 +38,11 @@ CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, 
 	m_sortColumn = 0;
 	m_sortDirection = 0;
 
-	GetImageList();
+	SetImageList(GetSystemImageList(), wxIMAGE_LIST_SMALL);
 
 #ifdef __WXMSW__
 	// Initialize imagelist for list header
-	m_pHeaderImageList = new wxImageListMsw(8, 8, true, 3, false);
+	m_pHeaderImageList = new wxImageListEx(8, 8, true, 3);
 
 	wxBitmap bmp;
 	
@@ -110,7 +85,6 @@ CLocalListView::~CLocalListView()
 #ifdef __WXMSW__
 	delete m_pHeaderImageList;
 #endif
-	FreeImageList();
 }
 
 void CLocalListView::DisplayDir(wxString dirname)
@@ -215,26 +189,6 @@ wxString CLocalListView::OnGetItemText(long item, long column) const
 	return _T("");
 }
 
-#ifndef __WXMSW__
-// This function converts to the right size with the given background colour
-wxBitmap PrepareIcon(wxIcon icon, wxColour colour)
-{
-	wxBitmap bmp(icon.GetWidth(), icon.GetHeight());
-	wxMemoryDC dc;
-	dc.SelectObject(bmp);
-	dc.SetPen(wxPen(colour));
-	dc.SetBrush(wxBrush(colour));
-	dc.DrawRectangle(0, 0, icon.GetWidth(), icon.GetHeight());
-	dc.DrawIcon(icon, 0, 0);
-	dc.SelectObject(wxNullBitmap);
-	
-	wxImage img = bmp.ConvertToImage();
-	img.SetMask();
-	img.Rescale(16, 16);
-	return img;
-}
-#endif
-
 // See comment to OnGetItemText
 int CLocalListView::OnGetItemImage(long item) const
 {
@@ -243,121 +197,27 @@ int CLocalListView::OnGetItemImage(long item) const
 	if (!data)
 		return -1;
 	int &icon = data->icon;
-#ifdef __WXMSW__
+
 	if (icon == -2)
 	{
-		wxString path;
-		if (data->name == _T(".."))
-			path = _T("alkjhgfdfghjjhgfdghuztxvbhzt");
-		else
+		wxString path = _T("");
+		if (data->name != _T(".."))
 		{
+#ifdef __WXMSW__
 			if (m_dir == _T("\\"))
 				path = data->name + _T("\\");
 			else
+#endif
 				path = m_dir + data->name;
 		}
-		icon = -1;
 
-		SHFILEINFO shFinfo;
-		memset(&shFinfo, 0, sizeof(SHFILEINFO));
-		if (SHGetFileInfo( path,
-			data->dir ? FILE_ATTRIBUTE_DIRECTORY : FILE_ATTRIBUTE_NORMAL,
-			&shFinfo,
-			sizeof( SHFILEINFO ),
-			SHGFI_ICON | ((data->name == _T(".."))?SHGFI_USEFILEATTRIBUTES:0) ) )
-		{
-			icon = shFinfo.iIcon;
-			// we only need the index from the system image ctrl
-			DestroyIcon( shFinfo.hIcon );
-		}
-	}
-#else
-	if (icon == -2)
-	{
-		if (data->dir)
-			icon = 1;
-		else
-			icon = 0;
-
-		wxFileName fn(m_dir + data->name);
-		wxString ext = fn.GetExt();
-
-		wxFileType *pType = wxTheMimeTypesManager->GetFileTypeFromExtension(ext);
-		if (pType)
-		{
-			wxIconLocation loc;
-			if (pType->GetIcon(&loc) && loc.IsOk())
-			{
-				//wxLogNull *tmp = new wxLogNull;
-				wxIcon newIcon(loc);
-				
-				if (newIcon.Ok())
-				{
-					wxBitmap bmp = PrepareIcon(newIcon, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-					int index = m_pImageList->Add(bmp);
-					if (index > 0)
-						icon = index;
-					bmp = PrepareIcon(newIcon, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
-					m_pImageList->Add(bmp);
-				}
-				//delete tmp;
-			}
-			delete pType;
-		}
-	}
-	else if (icon > 1)
-	{
-		if (GetItemState(item, wxLIST_STATE_SELECTED))
+		icon = pThis->GetIconIndex(data->dir, path);
+#ifndef __WXMSW__
+		if (icon > 1 && GetItemState(item, wxLIST_STATE_SELECTED))
 			return icon + 1;
+#endif
 	}
-#endif
 	return icon;
-}
-
-void CLocalListView::GetImageList()
-{
-	if (m_pImageList)
-		return;
-
-#ifdef __WXMSW__
-	SHFILEINFO shFinfo;	
-	int m_nStyle = 0;
-	wxChar buffer[MAX_PATH + 10];
-	if (!GetWindowsDirectory(buffer, MAX_PATH))
-#ifdef _tcscpy
-		_tcscpy(buffer, _T("C:\\"));
-#else
-		strcpy(buffer, _T("C:\\"));
-#endif
-
-	m_pImageList = new wxImageListMsw((WXHIMAGELIST)SHGetFileInfo(buffer,
-							  0,
-							  &shFinfo,
-							  sizeof( shFinfo ),
-							  SHGFI_SYSICONINDEX |
-							  ((m_nStyle)?SHGFI_ICON:SHGFI_SMALLICON) ));
-#else
-	m_pImageList = new wxImageList(16, 16);
-
-	m_pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FILE"),  wxART_OTHER, wxSize(16, 16)));
-	m_pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDER"),  wxART_OTHER, wxSize(16, 16)));
-#endif
-	SetImageList(m_pImageList, wxIMAGE_LIST_SMALL);
-}
-
-void CLocalListView::FreeImageList()
-{
-	if (!m_pImageList)
-		return;
-
-#ifdef __WXMSW__
-	wxImageListMsw *pList = reinterpret_cast<wxImageListMsw *>(m_pImageList);
-	delete pList;
-#else
-	delete m_pImageList;
-#endif
-
-	m_pImageList = 0;
 }
 
 void CLocalListView::OnItemActivated(wxListEvent &event)

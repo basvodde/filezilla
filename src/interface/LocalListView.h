@@ -3,10 +3,10 @@
 
 class CState;
 class CQueueView;
-#ifdef __WXMSW__
-class wxImageListMsw;
-#endif
-class CLocalListView : public wxListCtrl
+
+#include "systemimagelist.h"
+
+class CLocalListView : public wxListCtrl, CSystemImageList
 {
 public:
 	CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView *pQueue);
@@ -21,9 +21,6 @@ protected:
 	// the instance.
 	virtual wxString OnGetItemText(long item, long column) const;
 	virtual int OnGetItemImage(long item) const;
-
-	void GetImageList();
-	void FreeImageList();
 
 #ifdef __WXMSW__
 	void DisplayDrives();
@@ -59,9 +56,8 @@ protected:
 	std::vector<unsigned int> m_indexMapping;
 	std::map<wxString, wxString> m_fileTypeMap;
 
-	wxImageList *m_pImageList;
 #ifdef __WXMSW__
-	wxImageListMsw *m_pHeaderImageList;
+	wxImageListEx *m_pHeaderImageList;
 #endif
 
 	CState *m_pState;

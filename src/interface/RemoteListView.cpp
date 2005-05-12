@@ -31,28 +31,9 @@ BEGIN_EVENT_TABLE(CRemoteListView, wxListCtrl)
 	EVT_LIST_END_LABEL_EDIT(wxID_ANY, CRemoteListView::OnEndLabelEdit)
 END_EVENT_TABLE()
 
-#ifdef __WXMSW__
-	// Required wxImageList extension
-	class wxImageListMsw : public wxImageList
-	{
-	public:
-		wxImageListMsw(bool nodelete = true) : wxImageList() { m_nodelete = nodelete; }
-		wxImageListMsw(int width, int height, const bool mask = true, int initialCount = 1, bool nodelete = true)
-			: wxImageList(width, height, mask, initialCount)
-		{
-			m_nodelete = nodelete;
-		}
-		wxImageListMsw(WXHIMAGELIST hList) { m_hImageList = hList; };
-		~wxImageListMsw() { if (m_nodelete) m_hImageList = 0; };
-		HIMAGELIST GetHandle() const { return (HIMAGELIST)m_hImageList; };
-
-	protected:
-		bool m_nodelete;
-	};
-#endif
-
 CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState, CCommandQueue *pCommandQueue, CQueueView* pQueue)
-	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER | wxLC_EDIT_LABELS)
+	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER | wxLC_EDIT_LABELS),
+	CSystemImageList(16)
 {
 	m_pChmodDlg = 0;
 
@@ -61,7 +42,6 @@ CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState
 	m_pQueue = pQueue;
 	m_operationMode = recursive_none;
 
-	m_pImageList = 0;
 	InsertColumn(0, _("Filename"));
 	InsertColumn(1, _("Filesize"), wxLIST_FORMAT_RIGHT);
 	InsertColumn(2, _("Filetype"));
@@ -70,16 +50,15 @@ CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState
 	InsertColumn(5, _("Permissions"));
 	InsertColumn(6, _("Owner / Group"));
 
-
 	m_sortColumn = 0;
 	m_sortDirection = 0;
 
-	m_dirIcon = -1;
-	GetImageList();
+	m_dirIcon = GetIconIndex(true);
+	SetImageList(GetSystemImageList(), wxIMAGE_LIST_SMALL);
 
 #ifdef __WXMSW__
 	// Initialize imagelist for list header
-	m_pHeaderImageList = new wxImageListMsw(8, 8, true, 3, false);
+	m_pHeaderImageList = new wxImageListEx(8, 8, true, 3);
 	
 	wxBitmap bmp;
 	
@@ -122,66 +101,6 @@ CRemoteListView::~CRemoteListView()
 #ifdef __WXMSW__
 	delete m_pHeaderImageList;
 #endif
-	FreeImageList();
-}
-
-void CRemoteListView::GetImageList()
-{
-	if (m_pImageList)
-		return;
-
-#ifdef __WXMSW__
-	SHFILEINFO shFinfo;	
-	int m_nStyle = 0;
-	wxChar buffer[MAX_PATH + 10];
-	if (!GetWindowsDirectory(buffer, MAX_PATH))
-#ifdef _tcscpy
-		_tcscpy(buffer, _T("C:\\"));
-#else
-		strcpy(buffer, _T("C:\\"));
-#endif
-
-	m_pImageList = new wxImageListMsw((WXHIMAGELIST)SHGetFileInfo( buffer,
-							  0,
-							  &shFinfo,
-							  sizeof( shFinfo ),
-							  SHGFI_SYSICONINDEX |
-							  ((m_nStyle)?SHGFI_ICON:SHGFI_SMALLICON) ));
-
-	memset(&shFinfo, 0, sizeof(SHFILEINFO));
-	if (SHGetFileInfo(_T("{B97D3074-1830-4b4a-9D8A-17A38B074052}"),
-		FILE_ATTRIBUTE_DIRECTORY,
-		&shFinfo,
-		sizeof(SHFILEINFO),
-		SHGFI_ICON | SHGFI_USEFILEATTRIBUTES))
-	{
-		m_dirIcon = shFinfo.iIcon;
-		// we only need the index from the system image ctrl
-		DestroyIcon( shFinfo.hIcon );
-	}
-
-#else
-	m_pImageList = new wxImageList(16, 16);
-
-	m_pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FILE"),  wxART_OTHER, wxSize(16, 16)));
-	m_pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDER"),  wxART_OTHER, wxSize(16, 16)));
-#endif
-	SetImageList(m_pImageList, wxIMAGE_LIST_SMALL);
-}
-
-void CRemoteListView::FreeImageList()
-{
-	if (!m_pImageList)
-		return;
-
-#ifdef __WXMSW__
-	wxImageListMsw *pList = reinterpret_cast<wxImageListMsw *>(m_pImageList);
-	delete pList;
-#else
-	delete m_pImageList;
-#endif
-
-	m_pImageList = 0;
 }
 
 // Declared const due to design error in wxWidgets.
@@ -254,77 +173,20 @@ int CRemoteListView::OnGetItemImage(long item) const
 	if (!data)
 		return -1;
 	int &icon = data->icon;
-#ifdef __WXMSW__
-	if (icon == -2)
+
+	if (icon != -2)
+		return icon;
+
+	if (!data->pDirEntry || data->pDirEntry->dir)
 	{
-		wxString path;
-		bool bDir;
-		if (!data->pDirEntry || data->pDirEntry->dir)
-			return m_dirIcon;
-
-		path = data->pDirEntry->name;
-		bDir = data->pDirEntry->dir;
-
-		icon = -1;
-
-		SHFILEINFO shFinfo;
-		memset(&shFinfo, 0, sizeof(SHFILEINFO));
-		if (SHGetFileInfo(path,
-			bDir ? FILE_ATTRIBUTE_DIRECTORY : FILE_ATTRIBUTE_NORMAL,
-			&shFinfo,
-			sizeof(SHFILEINFO),
-			SHGFI_ICON | SHGFI_USEFILEATTRIBUTES))
-		{
-			icon = shFinfo.iIcon;
-			// we only need the index from the system image ctrl
-			DestroyIcon( shFinfo.hIcon );
-		}
+		icon = m_dirIcon;
+		return icon;
 	}
-#else
-	if (icon == -2)
-	{
-		if (!item)
-		{
-			icon = 1;
-			return icon;
-		}
-			
-		if (data->pDirEntry->dir)
-			icon = 1;
-		else
-			icon = 0;
 
-		wxFileName fn(data->pDirEntry->name);
-		wxString ext = fn.GetExt();
-
-		wxFileType *pType = wxTheMimeTypesManager->GetFileTypeFromExtension(ext);
-		if (pType)
-		{
-			wxIconLocation loc;
-			if (pType->GetIcon(&loc) && loc.IsOk())
-			{
-				wxLogNull *tmp = new wxLogNull;
-				wxIcon newIcon(loc);
-				
-				if (newIcon.Ok())
-				{
-					wxBitmap bmp = PrepareIcon(newIcon, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-					int index = m_pImageList->Add(bmp);
-					if (index > 0)
-						icon = index;
-					bmp = PrepareIcon(newIcon, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
-					m_pImageList->Add(bmp);
-				}
-				delete tmp;
-			}
-			delete pType;
-		}
-	}
-	else if (icon > 1)
-	{
-		if (GetItemState(item, wxLIST_STATE_SELECTED))
-			return icon + 1;
-	}
+	icon = pThis->GetIconIndex(false, data->pDirEntry->name, false);
+#ifndef __WXMSW__
+	if (GetItemState(item, wxLIST_STATE_SELECTED))
+		return icon + 1;
 #endif
 	return icon;
 }

@@ -1,16 +1,13 @@
 #ifndef __REMOTELISTVIEW_H__
 #define __REMOTELISTVIEW_H__
 
+#include "systemimagelist.h"
+
 class CState;
 class CCommandQueue;
 class CQueueView;
-
-#ifdef __WXMSW__
-class wxImageListMsw;
-#endif
-
 class CChmodDialog;
-class CRemoteListView : public wxListCtrl
+class CRemoteListView : public wxListCtrl, CSystemImageList
 {
 protected:
 	enum OperationMode
@@ -74,15 +71,12 @@ protected:
 	std::vector<unsigned int> m_indexMapping;
 	std::map<wxString, wxString> m_fileTypeMap;
 
-	void GetImageList();
-	void FreeImageList();
 #ifdef __WXMSW__
 	int m_dirIcon;
 #endif
 
-	wxImageList* m_pImageList;
 #ifdef __WXMSW__
-	wxImageListMsw* m_pHeaderImageList;
+	wxImageListEx* m_pHeaderImageList;
 #endif
 
 	CState* m_pState;

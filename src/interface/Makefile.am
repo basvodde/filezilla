@@ -17,6 +17,7 @@ filezilla_SOURCES = aboutdialog.cpp asyncrequestqueue.cpp chmoddialog.cpp \
 		optionspage_passive.cpp optionspage_themes.cpp QueueView.cpp \
 		RemoteListView.cpp RemoteTreeView.cpp settingsdialog.cpp \
 		sitemanager.cpp state.cpp statuslinectrl.cpp StatusView.cpp \
+		systemimagelist.cpp \
 		themeprovider.cpp view.cpp viewheader.cpp xmlfunctions.cpp
  
 if USE_BINRELOC
@@ -32,7 +33,8 @@ noinst_HEADERS = aboutdialog.h asyncrequestqueue.h chmoddialog.h
 		 optionspage_themes.h prefix.h QueueView.h \
 		 RemoteListView.h RemoteTreeView.h \
 		 settingsdialog.h sitemanager.h state.h \
-		 statuslinectrl.h StatusView.h themeprovider.h \
+		 statuslinectrl.h StatusView.h systemimagelist.h \
+		 themeprovider.h  \
 		 view.h viewheader.h xmlfunctions.h
 
 if USE_RESOURCEFILE
