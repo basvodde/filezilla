@@ -76,6 +76,9 @@ protected:
 
 	void GetImageList();
 	void FreeImageList();
+#ifdef __WXMSW__
+	int m_dirIcon;
+#endif
 
 	wxImageList* m_pImageList;
 #ifdef __WXMSW__

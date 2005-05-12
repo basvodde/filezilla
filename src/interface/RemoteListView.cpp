@@ -74,6 +74,7 @@ CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState
 	m_sortColumn = 0;
 	m_sortDirection = 0;
 
+	m_dirIcon = -1;
 	GetImageList();
 
 #ifdef __WXMSW__
@@ -146,6 +147,19 @@ void CRemoteListView::GetImageList()
 							  sizeof( shFinfo ),
 							  SHGFI_SYSICONINDEX |
 							  ((m_nStyle)?SHGFI_ICON:SHGFI_SMALLICON) ));
+
+	memset(&shFinfo, 0, sizeof(SHFILEINFO));
+	if (SHGetFileInfo(_T("{B97D3074-1830-4b4a-9D8A-17A38B074052}"),
+		FILE_ATTRIBUTE_DIRECTORY,
+		&shFinfo,
+		sizeof(SHFILEINFO),
+		SHGFI_ICON | SHGFI_USEFILEATTRIBUTES))
+	{
+		m_dirIcon = shFinfo.iIcon;
+		// we only need the index from the system image ctrl
+		DestroyIcon( shFinfo.hIcon );
+	}
+
 #else
 	m_pImageList = new wxImageList(16, 16);
 
@@ -245,16 +259,12 @@ int CRemoteListView::OnGetItemImage(long item) const
 	{
 		wxString path;
 		bool bDir;
-		if (!data->pDirEntry)
-		{
-			path = _T("{B97D3074-1830-4b4a-9D8A-17A38B074052}");
-			bDir = true;
-		}
-		else
-		{
-			path = data->pDirEntry->name;
-			bDir = data->pDirEntry->dir;
-		}
+		if (!data->pDirEntry || data->pDirEntry->dir)
+			return m_dirIcon;
+
+		path = data->pDirEntry->name;
+		bDir = data->pDirEntry->dir;
+
 		icon = -1;
 
 		SHFILEINFO shFinfo;
