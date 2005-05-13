@@ -184,10 +184,6 @@ int CRemoteListView::OnGetItemImage(long item) const
 	}
 
 	icon = pThis->GetIconIndex(false, data->pDirEntry->name, false);
-#ifndef __WXMSW__
-	if (GetItemState(item, wxLIST_STATE_SELECTED))
-		return icon + 1;
-#endif
 	return icon;
 }
 

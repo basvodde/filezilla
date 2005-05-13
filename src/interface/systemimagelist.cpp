@@ -11,12 +11,14 @@ wxImageListEx::wxImageListEx(int width, int height, const bool mask /*=true*/, i
 {
 }
 
+#ifdef __WMXSW__
 HIMAGELIST wxImageListEx::Detach()
 {
 	 HIMAGELIST hImageList = (HIMAGELIST)m_hImageList;
 	 m_hImageList = 0;
 	 return hImageList;
 }
+#endif
 
 CSystemImageList::CSystemImageList(int size)
 {
@@ -61,21 +63,12 @@ CSystemImageList::~CSystemImageList()
 
 #ifndef __WXMSW__
 // This function converts to the right size with the given background colour
-wxBitmap PrepareIcon(wxIcon icon, wxColour colour)
+wxBitmap PrepareIcon(wxIcon icon, wxSize size)
 {
-	wxBitmap bmp(icon.GetWidth(), icon.GetHeight());
-	wxMemoryDC dc;
-	dc.SelectObject(bmp);
-	dc.SetPen(wxPen(colour));
-	dc.SetBrush(wxBrush(colour));
-	dc.DrawRectangle(0, 0, icon.GetWidth(), icon.GetHeight());
-	dc.DrawIcon(icon, 0, 0);
-	dc.SelectObject(wxNullBitmap);
+	if (icon.GetWidth() == size.GetWidth() && icon.GetHeight() == size.GetHeight())
+		return icon;
 	
-	wxImage img = bmp.ConvertToImage();
-	img.SetMask();
-	img.Rescale(16, 16);
-	return img;
+	return icon.ConvertToImage().Rescale(size.GetWidth(), size.GetHeight());
 }
 #endif
 
@@ -119,12 +112,10 @@ int CSystemImageList::GetIconIndex(bool dir, const wxString& fileName /*=_T("")*
 				
 			if (newIcon.Ok())
 			{
-				wxBitmap bmp = PrepareIcon(newIcon, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+				wxBitmap bmp = PrepareIcon(newIcon, wxSize(16, 16));
 				int index = m_pImageList->Add(bmp);
 				if (index > 0)
 					icon = index;
-				bmp = PrepareIcon(newIcon, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
-				m_pImageList->Add(bmp);
 			}
 		}
 		delete pType;

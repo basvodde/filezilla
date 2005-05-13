@@ -29,13 +29,10 @@ public:
 
 	wxImageList* GetSystemImageList() { return m_pImageList; }
 
-	// Return the icon index. Under systems other than wxMSW and an index > 1,
-	// increase the index by 1 if the item is selected.
-	// Returns -1 on failure.
 	int GetIconIndex(bool dir, const wxString& fileName = _T(""), bool physical = true);
 
 protected:
 	wxImageListEx *m_pImageList;
 };
 
-#endif __SYSTEMIMAGELIST_H__
+#endif //__SYSTEMIMAGELIST_H__

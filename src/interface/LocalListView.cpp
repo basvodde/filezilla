@@ -212,10 +212,6 @@ int CLocalListView::OnGetItemImage(long item) const
 		}
 
 		icon = pThis->GetIconIndex(data->dir, path);
-#ifndef __WXMSW__
-		if (icon > 1 && GetItemState(item, wxLIST_STATE_SELECTED))
-			return icon + 1;
-#endif
 	}
 	return icon;
 }
@@ -590,7 +586,6 @@ void CLocalListView::OnContextMenu(wxContextMenuEvent& event)
 	if (!pMenu)
 		return;
 
-	long item = -1;
 	if (GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) == -1)
 	{
 		pMenu->Enable(XRCID("ID_UPLOAD"), false);
@@ -1015,3 +1010,4 @@ void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 		event.Veto();
 #endif
 }
+

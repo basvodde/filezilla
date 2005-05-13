@@ -71,9 +71,8 @@ protected:
 	std::vector<unsigned int> m_indexMapping;
 	std::map<wxString, wxString> m_fileTypeMap;
 
-#ifdef __WXMSW__
+	// Cache icon for directories, no need to calculate it multiple times
 	int m_dirIcon;
-#endif
 
 #ifdef __WXMSW__
 	wxImageListEx* m_pHeaderImageList;
