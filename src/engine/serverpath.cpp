@@ -578,7 +578,7 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 			if (isFile)
 			{
 				int pos = dir.Find('/', true);
-				if (pos == dir.Length() - 1)
+				if (pos == (int)dir.Length() - 1)
 				{
 					Clear();
 					return false;
@@ -716,7 +716,7 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 			if (isFile)
 			{
 				int pos = dir.Find('/', true);
-				if (pos == dir.Length() - 1)
+				if (pos == (int)dir.Length() - 1)
 				{
 					Clear();
 					return false;
