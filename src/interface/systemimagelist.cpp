@@ -11,7 +11,7 @@ wxImageListEx::wxImageListEx(int width, int height, const bool mask /*=true*/, i
 {
 }
 
-#ifdef __WMXSW__
+#ifdef __WXMSW__
 HIMAGELIST wxImageListEx::Detach()
 {
 	 HIMAGELIST hImageList = (HIMAGELIST)m_hImageList;
