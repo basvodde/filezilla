@@ -1379,13 +1379,15 @@ void CQueueView::ProcessUploadFolderItems()
 
 void CQueueView::OnFolderThreadComplete(wxEvent& event)
 {
+	if (!m_pFolderProcessingThread)
+		return;
+
 	wxASSERT(!m_queuedFolders[1].empty());
 	CFolderItem* pItem = m_queuedFolders[1].front();
 	m_queuedFolders[1].pop_front();
 
 	RemoveItem(pItem);
 	
-	m_pFolderProcessingThread->Delete();
 	m_pFolderProcessingThread->Wait();
 	delete m_pFolderProcessingThread;
 	m_pFolderProcessingThread = 0;
