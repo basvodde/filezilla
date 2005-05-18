@@ -83,7 +83,6 @@ protected:
 	void OnClose(wxCloseEvent& event);
 	void OnUpdateToolbarReconnect(wxUpdateUIEvent& event);
 	void OnReconnect(wxCommandEvent& event);
-	void OnUpdateToolbarRefresh(wxUpdateUIEvent& event);
 	void OnRefresh(wxCommandEvent& event);
 	void OnStatusbarSize(wxSizeEvent& event);
 	void OnTimer(wxTimerEvent& event);

@@ -2,6 +2,7 @@
 #define __STATE_H__
 
 class CLocalListView;
+class CLocalTreeView;
 class CRemoteListView;
 class CDirectoryListing;
 class CLocalViewHeader;
@@ -23,6 +24,7 @@ public:
 	void SetServer(CServer* server);
 
 	void SetLocalListView(CLocalListView *pLocalListView);
+	void SetLocalTreeView(CLocalTreeView *m_pLocalTreeView);
 	void SetRemoteListView(CRemoteListView *pRemoteListView);
 
 	void RefreshLocal();
@@ -35,6 +37,7 @@ protected:
 	CDirectoryListing *m_pDirectoryListing;
 
 	CLocalListView *m_pLocalListView;
+	CLocalTreeView *m_pLocalTreeView;
 	CRemoteListView *m_pRemoteListView;
 	CServer* m_pServer;
 	CLocalViewHeader* m_pLocalViewHeader;

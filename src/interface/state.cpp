@@ -1,12 +1,14 @@
 #include "FileZilla.h"
 #include "state.h"
 #include "LocalListView.h"
+#include "LocalTreeView.h"
 #include "RemoteListView.h"
 #include "viewheader.h"
 
 CState::CState()
 {
 	m_pLocalListView = 0;
+	m_pLocalTreeView = 0;
 	m_pRemoteListView = 0;
 
 	m_pDirectoryListing = 0;
@@ -79,6 +81,9 @@ bool CState::SetLocalDir(wxString dir)
 	if (m_pLocalListView)
 		m_pLocalListView->DisplayDir(m_localDir);
 
+	if (m_pLocalTreeView)
+		m_pLocalTreeView->SetDir(m_localDir);
+
 	if (m_pLocalViewHeader)
 		m_pLocalViewHeader->SetDir(m_localDir);
 
@@ -88,6 +93,11 @@ bool CState::SetLocalDir(wxString dir)
 void CState::SetLocalListView(CLocalListView *pLocalListView)
 {
 	m_pLocalListView = pLocalListView;
+}
+
+void CState::SetLocalTreeView(CLocalTreeView *pLocalTreeView)
+{
+	m_pLocalTreeView = pLocalTreeView;
 }
 
 void CState::SetRemoteListView(CRemoteListView *pRemoteListView)
@@ -138,6 +148,8 @@ void CState::RefreshLocal()
 {
 	if (m_pLocalListView)
 		m_pLocalListView->DisplayDir(m_localDir);
+	if (m_pLocalTreeView)
+		m_pLocalTreeView->Refresh();
 }
 
 void CState::SetServer(CServer* server)

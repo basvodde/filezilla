@@ -53,7 +53,6 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_SPLITTER_SASH_POS_CHANGED(wxID_ANY, CMainFrame::OnSplitterSashPosChanged) 
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_RECONNECT"), CMainFrame::OnUpdateToolbarReconnect)
 	EVT_TOOL(XRCID("ID_TOOLBAR_RECONNECT"), CMainFrame::OnReconnect)
-	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_REFRESH"), CMainFrame::OnUpdateToolbarRefresh)
 	EVT_TOOL(XRCID("ID_TOOLBAR_REFRESH"), CMainFrame::OnRefresh)
 	EVT_TOOL(XRCID("ID_TOOLBAR_SITEMANAGER"), CMainFrame::OnSiteManager)
 	EVT_CLOSE(CMainFrame::OnClose)
@@ -171,7 +170,7 @@ CMainFrame::CMainFrame(COptions* pOptions) : wxFrame(NULL, -1, _T("FileZilla"), 
 
 	m_pLocalTreeViewPanel = new CView(m_pLocalSplitter);
 	m_pLocalListViewPanel = new CView(m_pLocalSplitter);
-	m_pLocalTreeView = new CLocalTreeView(m_pLocalTreeViewPanel, -1);
+	m_pLocalTreeView = new CLocalTreeView(m_pLocalTreeViewPanel, -1, m_pState, m_pQueueView);
 	m_pLocalListView = new CLocalListView(m_pLocalListViewPanel, -1, m_pState, m_pQueueView);
 	m_pLocalTreeViewPanel->SetWindow(m_pLocalTreeView);
 	m_pLocalListViewPanel->SetWindow(m_pLocalListView);
@@ -196,6 +195,7 @@ CMainFrame::CMainFrame(COptions* pOptions) : wxFrame(NULL, -1, _T("FileZilla"), 
 	Layout();
 
 	m_pState->SetLocalListView(m_pLocalListView);
+	m_pState->SetLocalTreeView(m_pLocalTreeView);
 	m_pState->SetRemoteListView(m_pRemoteListView);
 	m_pState->SetLocalDir(wxGetCwd());
 
@@ -328,6 +328,12 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	else if (event.GetId() == XRCID("wxID_PREFERENCES"))
 	{
 		OnMenuEditSettings(event);
+	}
+	else if (event.GetId() == XRCID("ID_CRASH"))
+	{
+		// Cause a crash
+		int *x = 0;
+		*x = 0;
 	}
 	else
 		event.Skip();
@@ -610,10 +616,6 @@ void CMainFrame::OnReconnect(wxCommandEvent &event)
 	m_pState->SetServer(&server);
 	m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
 	m_pCommandQueue->ProcessCommand(new CListCommand());
-}
-
-void CMainFrame::OnUpdateToolbarRefresh(wxUpdateUIEvent &event)
-{
 }
 
 void CMainFrame::OnRefresh(wxCommandEvent &event)
