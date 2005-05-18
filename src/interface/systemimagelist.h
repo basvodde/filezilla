@@ -6,6 +6,13 @@
 #include <commctrl.h>
 #endif
 
+enum filetype
+{
+	file,
+	dir,
+	opendir
+};
+
 // Required wxImageList extension
 class wxImageListEx : public wxImageList
 {
@@ -29,7 +36,7 @@ public:
 
 	wxImageList* GetSystemImageList() { return m_pImageList; }
 
-	int GetIconIndex(bool dir, const wxString& fileName = _T(""), bool physical = true);
+	int GetIconIndex(enum filetype type, const wxString& fileName = _T(""), bool physical = true);
 
 protected:
 	wxImageListEx *m_pImageList;

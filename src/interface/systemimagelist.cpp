@@ -24,7 +24,6 @@ CSystemImageList::CSystemImageList(int size)
 {
 #ifdef __WXMSW__
 	SHFILEINFO shFinfo;	
-	int m_nStyle = 0;
 	wxChar buffer[MAX_PATH + 10];
 	if (!GetWindowsDirectory(buffer, MAX_PATH))
 #ifdef _tcscpy
@@ -43,6 +42,7 @@ CSystemImageList::CSystemImageList(int size)
 	m_pImageList = new wxImageListEx(size, size);
 
 	m_pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FILE"),  wxART_OTHER, wxSize(size, size)));
+	m_pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDERCLOSED"),  wxART_OTHER, wxSize(size, size)));
 	m_pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDER"),  wxART_OTHER, wxSize(size, size)));
 #endif
 }
@@ -72,7 +72,7 @@ wxBitmap PrepareIcon(wxIcon icon, wxSize size)
 }
 #endif
 
-int CSystemImageList::GetIconIndex(bool dir, const wxString& fileName /*=_T("")*/, bool physical /*=true*/)
+int CSystemImageList::GetIconIndex(enum filetype type, const wxString& fileName /*=_T("")*/, bool physical /*=true*/)
 {
 #ifdef __WXMSW__
 	if (fileName == _T(""))
@@ -81,10 +81,10 @@ int CSystemImageList::GetIconIndex(bool dir, const wxString& fileName /*=_T("")*
 	SHFILEINFO shFinfo;
 	memset(&shFinfo, 0, sizeof(SHFILEINFO));
 	if (SHGetFileInfo(fileName != _T("") ? fileName : _T("{B97D3074-1830-4b4a-9D8A-17A38B074052}"),
-		dir ? FILE_ATTRIBUTE_DIRECTORY : FILE_ATTRIBUTE_NORMAL,
+		(type != file) ? FILE_ATTRIBUTE_DIRECTORY : FILE_ATTRIBUTE_NORMAL,
 		&shFinfo,
 		sizeof(SHFILEINFO),
-		SHGFI_ICON | ((physical) ? 0 : SHGFI_USEFILEATTRIBUTES) ) )
+		SHGFI_ICON | ((type == opendir) ? SHGFI_OPENICON : 0) | ((physical) ? 0 : SHGFI_USEFILEATTRIBUTES) ) )
 	{
 		int icon = shFinfo.iIcon;
 		// we only need the index from the system image ctrl
@@ -93,10 +93,17 @@ int CSystemImageList::GetIconIndex(bool dir, const wxString& fileName /*=_T("")*
 	}
 #else
 	int icon;
-	if (dir)
-		icon = 1;
-	else
+	switch (type)
+	{
+	case file:
+	default:
 		icon = 0;
+		break;
+	case dir:
+		return 1;
+	case opendir:
+		return 2;
+	}
 
 	wxFileName fn(fileName);
 	wxString ext = fn.GetExt();

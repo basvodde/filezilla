@@ -53,7 +53,7 @@ CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState
 	m_sortColumn = 0;
 	m_sortDirection = 0;
 
-	m_dirIcon = GetIconIndex(true);
+	m_dirIcon = GetIconIndex(dir);
 	SetImageList(GetSystemImageList(), wxIMAGE_LIST_SMALL);
 
 #ifdef __WXMSW__
@@ -183,7 +183,7 @@ int CRemoteListView::OnGetItemImage(long item) const
 		return icon;
 	}
 
-	icon = pThis->GetIconIndex(false, data->pDirEntry->name, false);
+	icon = pThis->GetIconIndex(file, data->pDirEntry->name, false);
 	return icon;
 }
 
