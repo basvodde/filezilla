@@ -84,7 +84,7 @@ int CSystemImageList::GetIconIndex(enum filetype type, const wxString& fileName 
 		(type != file) ? FILE_ATTRIBUTE_DIRECTORY : FILE_ATTRIBUTE_NORMAL,
 		&shFinfo,
 		sizeof(SHFILEINFO),
-		SHGFI_ICON | ((type == opendir) ? SHGFI_OPENICON : 0) | ((physical) ? 0 : SHGFI_USEFILEATTRIBUTES) ) )
+		SHGFI_ICON | ((type == opened_dir) ? SHGFI_OPENICON : 0) | ((physical) ? 0 : SHGFI_USEFILEATTRIBUTES) ) )
 	{
 		int icon = shFinfo.iIcon;
 		// we only need the index from the system image ctrl
@@ -101,7 +101,7 @@ int CSystemImageList::GetIconIndex(enum filetype type, const wxString& fileName 
 		break;
 	case dir:
 		return 1;
-	case opendir:
+	case opened_dir:
 		return 2;
 	}
 

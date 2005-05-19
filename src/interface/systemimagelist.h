@@ -10,7 +10,7 @@ enum filetype
 {
 	file,
 	dir,
-	opendir
+	opened_dir
 };
 
 // Required wxImageList extension

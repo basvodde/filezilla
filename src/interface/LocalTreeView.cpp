@@ -1,7 +1,7 @@
 #include "FileZilla.h"
 #include "LocalTreeView.h"
 #include "state.h"
-#include "queueview.h"
+#include "QueueView.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -226,7 +226,7 @@ void CLocalTreeView::DisplayDir(wxTreeItemId parent, const wxString& dirname)
 	while (found)
 	{
 		wxString fullName = dirname + file;
-		wxTreeItemId item = AppendItem(parent, file, GetIconIndex(::dir, fullName), GetIconIndex(opendir, fullName));
+		wxTreeItemId item = AppendItem(parent, file, GetIconIndex(::dir, fullName), GetIconIndex(opened_dir, fullName));
 		if (HasSubdir(fullName))
 			AppendItem(item, _T(""));
 
@@ -427,7 +427,7 @@ void CLocalTreeView::Refresh()
 			else if (cmp < 0)
 			{
 				wxString fullname = dir.dir + *iter + separator;
-				AppendItem(dir.item, *iter, GetIconIndex(::dir, fullname), GetIconIndex(opendir, fullname));
+				AppendItem(dir.item, *iter, GetIconIndex(::dir, fullname), GetIconIndex(opened_dir, fullname));
 				iter++;
 				inserted++;
 			}
@@ -441,7 +441,7 @@ void CLocalTreeView::Refresh()
 		while (iter != dirs.rend())
 		{
 			wxString fullname = dir.dir + *iter + separator;
-			AppendItem(dir.item, *iter, GetIconIndex(::dir, fullname), GetIconIndex(opendir, fullname));
+			AppendItem(dir.item, *iter, GetIconIndex(::dir, fullname), GetIconIndex(opened_dir, fullname));
 			iter++;
 			inserted++;
 		}
