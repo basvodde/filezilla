@@ -42,8 +42,8 @@ CLocalTreeView::CLocalTreeView(wxWindow* parent, wxWindowID id, CState *pState, 
 	DisplayDrives();
 	Expand(GetRootItem());
 #else
-	AddRoot(_T("/"), GetIconIndex(true), GetIconIndex(true));
-	DisplayDir(_T("/"));
+	AddRoot(_T("/"), GetIconIndex(dir), GetIconIndex(opened_dir));
+	SetDir(_T("/"));
 #endif
 }
 
@@ -429,7 +429,7 @@ void CLocalTreeView::Refresh()
 				wxString fullname = dir.dir + *iter + separator;
 				AppendItem(dir.item, *iter, GetIconIndex(::dir, fullname), GetIconIndex(opened_dir, fullname));
 				iter++;
-				inserted++;
+				inserted = true;
 			}
 		}
 		while (child)
@@ -443,7 +443,7 @@ void CLocalTreeView::Refresh()
 			wxString fullname = dir.dir + *iter + separator;
 			AppendItem(dir.item, *iter, GetIconIndex(::dir, fullname), GetIconIndex(opened_dir, fullname));
 			iter++;
-			inserted++;
+			inserted = true;
 		}
 		if (inserted)
 			SortChildren(dir.item);
