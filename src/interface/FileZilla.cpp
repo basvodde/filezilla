@@ -35,6 +35,11 @@ CFileZillaApp::~CFileZillaApp()
 
 bool CFileZillaApp::OnInit()
 {
+#if wxUSE_DEBUGREPORT && wxUSE_ON_FATAL_EXCEPTION
+	//wxHandleFatalExceptions();
+#endif
+	wxApp::OnInit();
+
 	wxSystemOptions::SetOption(wxT("msw.remap"), 0);
 
 	LoadLocales();
@@ -74,7 +79,35 @@ USE AT OWN RISK"), _T("Important Information"));
 	return true;
 }
 
-wxString GetDataDir(wxString fileToFind)
+bool CFileZillaApp::FileExists(const wxString& file) const
+{
+	int pos = file.Find('*');
+	if (pos == -1)
+		return wxFileExists(file);
+
+	wxASSERT(pos > 0);
+	wxASSERT(file[pos - 1] == '/');
+	wxASSERT(file[pos + 1] == '/');
+
+	wxLogNull nullLog;
+	wxDir dir(file.Left(pos));
+	if (!dir.IsOpened())
+		return false;
+
+	wxString subDir;
+	bool found = dir.GetFirst(&subDir, _T(""), wxDIR_DIRS);
+	while (found)
+	{
+		if (FileExists(file.Left(pos) + subDir + file.Mid(pos + 1)))
+			return true;
+
+		found = dir.GetNext(&subDir);
+	}
+
+	return false;
+}
+
+wxString CFileZillaApp::GetDataDir(wxString fileToFind) const
 {
 	/*
 	 * Finding the resources in all cases is a difficult task,
@@ -139,14 +172,14 @@ wxString GetDataDir(wxString fileToFind)
 	for (node = pathList.begin(); node != pathList.end(); node++)
 	{
 		wxString cur = *node;
-		if (wxFileExists(cur + fileToFind))
+		if (FileExists(cur + fileToFind))
 			return cur;
-		if (wxFileExists(cur + _T("/share/filezilla") + fileToFind))
+		if (FileExists(cur + _T("/share/filezilla") + fileToFind))
 			return cur + _T("/share/filezilla");
-		if (wxFileExists(cur + _T("/filezilla") + fileToFind))
+		if (FileExists(cur + _T("/filezilla") + fileToFind))
 			return cur + _T("/filezilla");
 #if defined(__WXMAC__) || defined(__WXCOCOA__)
-		if (wxFileExists(cur + _T("/FileZilla.app/Contents/SharedSupport") + fileToFind))
+		if (FileExists(cur + _T("/FileZilla.app/Contents/SharedSupport") + fileToFind))
 			return cur + _T("/FileZilla.app/Contents/SharedSupport");
 #endif
 	}
@@ -154,9 +187,9 @@ wxString GetDataDir(wxString fileToFind)
 	for (node = pathList.begin(); node != pathList.end(); node++)
 	{
 		wxString cur = *node;
-		if (wxFileExists(cur + _T("/..") + fileToFind))
+		if (FileExists(cur + _T("/..") + fileToFind))
 			return cur + _T("/..");
-		if (wxFileExists(cur + _T("/../share/filezilla") + fileToFind))
+		if (FileExists(cur + _T("/../share/filezilla") + fileToFind))
 			return cur + _T("/../share/filezilla");
 	}
 	
@@ -220,8 +253,7 @@ bool CFileZillaApp::InitSettingsDir()
 
 bool CFileZillaApp::LoadLocales()
 {
-	// We assume the german language does always exist
-	m_localesDir = GetDataDir(_T("/locales/de/filezilla.mo"));
+	m_localesDir = GetDataDir(_T("/locales/*/filezilla.mo"));
 
 	if (!m_localesDir.Length() || m_localesDir[m_localesDir.Length() - 1] != wxFileName::GetPathSeparator())
 		m_localesDir += wxFileName::GetPathSeparator();
@@ -273,3 +305,32 @@ int CFileZillaApp::GetCurrentLanguage() const
 
 	return m_pLocale->GetLanguage();
 }
+
+
+#if wxUSE_DEBUGREPORT && wxUSE_ON_FATAL_EXCEPTION
+
+void CFileZillaApp::OnFatalException()
+{
+	GenerateReport(wxDebugReport::Context_Exception);
+}
+
+void CFileZillaApp::GenerateReport(wxDebugReport::Context ctx)
+{
+	wxDebugReport report;
+
+	// add all standard files: currently this means just a minidump and an
+	// XML file with system info and stack trace
+	report.AddAll(ctx);
+
+	// calling Show() is not mandatory, but is more polite
+	if ( wxDebugReportPreviewStd().Show(report) )
+	{
+		if ( report.Process() )
+		{
+			// report successfully uploaded
+		}
+	}
+	//else: user cancelled the report
+}
+
+#endif

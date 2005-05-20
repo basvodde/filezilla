@@ -5,6 +5,10 @@
 #include <msvc/wx/setup.h>
 #endif
 
+#if wxUSE_DEBUGREPORT && wxUSE_ON_FATAL_EXCEPTION
+#include <wx/debugrpt.h>
+#endif
+
 class CFileZillaApp : public wxApp
 {
 public:
@@ -30,6 +34,19 @@ protected:
 	wxString m_resourceDir;
 	wxString m_settingsDir;
 	wxString m_localesDir;
+
+#if wxUSE_DEBUGREPORT && wxUSE_ON_FATAL_EXCEPTION
+	virtual void OnFatalException();
+	void GenerateReport(wxDebugReport::Context ctx);
+#endif
+
+	wxString GetDataDir(wxString fileToFind) const;
+
+	// FileExists acceppts full paths as parameter,
+	// with the addition that path segments may be obmitted
+	// with a wildcard (*). A matching directory will then be searched.
+	// Example: FileExists(_T("/home/*/.filezilla/filezilla.xml"));
+	bool FileExists(const wxString& file) const;
 };
 
 DECLARE_APP(CFileZillaApp)
