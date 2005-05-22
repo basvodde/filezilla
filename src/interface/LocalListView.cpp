@@ -1004,10 +1004,9 @@ void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 	wxString dir = m_dir;
 	if (dir.Right(1) != _T("\\") && dir.Right(1) != _T("/"))
 		dir += _T("\\");
-	if (wxRenameFile(dir + m_fileData[m_indexMapping[event.GetItem()]].name, dir + newname))
+	if (wxRename(dir + m_fileData[m_indexMapping[event.GetItem()]].name, dir + newname))
 		m_fileData[m_indexMapping[event.GetItem()]].name = newname;
 	else
 		event.Veto();
 #endif
 }
-
