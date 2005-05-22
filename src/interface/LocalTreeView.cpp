@@ -99,7 +99,7 @@ wxTreeItemId CLocalTreeView::GetNearestParent(wxString& localDir)
 #ifdef __WXMSW__
 	int pos = localDir.Find(separator);
 	if (pos == -1)
-		return 0;
+		return wxTreeItemId();
 
 	wxString drive = localDir.Left(pos);
 	localDir = localDir.Mid(pos + 1);
@@ -115,7 +115,7 @@ wxTreeItemId CLocalTreeView::GetNearestParent(wxString& localDir)
 	}
 	if (!root)
 		// TODO: Number is drives changed
-		return 0;
+		return wxTreeItemId();
 #else
 		if (localDir[0] == '/')
 			localDir = localDir.Mid(1);
@@ -160,7 +160,7 @@ wxTreeItemId CLocalTreeView::GetSubdir(wxTreeItemId parent, const wxString& subD
 
 		child = GetNextSibling(child);
 	}
-	return 0;
+	return wxTreeItemId();
 }
 
 #ifdef __WXMSW__
@@ -257,7 +257,7 @@ wxTreeItemId CLocalTreeView::MakeSubdirs(wxTreeItemId parent, wxString dirname, 
 			segment = subDir.Left(pos);
 		wxTreeItemId item = GetSubdir(parent, segment);
 		if (!item)
-			return 0;
+			return wxTreeItemId();
 
 		parent = item;
 		DisplayDir(parent, dirname + segment + separator);
