@@ -803,6 +803,10 @@ bool CDirectoryListingParser::ParseLine(CLine *pLine, const enum ServerType serv
 
 	if (res)
 	{
+		// Don't add . or ..
+		if (entry.name == _T(".") || entry.name == _T(".."))
+			return true;
+		
 		entry.unsure = false;
 		m_entryList.push_back(entry);
 	}
