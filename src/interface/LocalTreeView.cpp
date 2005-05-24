@@ -237,7 +237,11 @@ void CLocalTreeView::DisplayDir(wxTreeItemId parent, const wxString& dirname)
 
 bool CLocalTreeView::HasSubdir(const wxString& dirname)
 {
+	wxLogNull nullLog;
 	wxDir dir(dirname);
+	if (!dir.IsOpened())
+		return false;
+
 	wxString file;
 	return dir.GetFirst(&file, _T(""), wxDIR_DIRS | wxDIR_HIDDEN);
 }
@@ -318,7 +322,11 @@ struct t_dir
 
 static bool sortfunc(const wxString& a, const wxString& b)
 {
+#ifdef __WXMSW__
 	return b.CmpNoCase(a) > 0;
+#else
+	return b.Cmp(a) > 0;
+#endif
 }
 
 void CLocalTreeView::Refresh()
@@ -355,7 +363,7 @@ void CLocalTreeView::Refresh()
 	t_dir dir;
 	dir.dir = separator;
 	dir.item = GetRootItem();
-    dirsToCheck.push_back(dir);
+	dirsToCheck.push_back(dir);
 #endif
 
 	while (!dirsToCheck.empty())
@@ -427,7 +435,9 @@ void CLocalTreeView::Refresh()
 			else if (cmp < 0)
 			{
 				wxString fullname = dir.dir + *iter + separator;
-				AppendItem(dir.item, *iter, GetIconIndex(::dir, fullname), GetIconIndex(opened_dir, fullname));
+				wxTreeItemId newItem = AppendItem(dir.item, *iter, GetIconIndex(::dir, fullname), GetIconIndex(opened_dir, fullname));
+				if (HasSubdir(fullname))
+					AppendItem(newItem, _T(""));
 				iter++;
 				inserted = true;
 			}
@@ -441,7 +451,9 @@ void CLocalTreeView::Refresh()
 		while (iter != dirs.rend())
 		{
 			wxString fullname = dir.dir + *iter + separator;
-			AppendItem(dir.item, *iter, GetIconIndex(::dir, fullname), GetIconIndex(opened_dir, fullname));
+			wxTreeItemId newItem = AppendItem(dir.item, *iter, GetIconIndex(::dir, fullname), GetIconIndex(opened_dir, fullname));
+			if (HasSubdir(fullname))
+				AppendItem(newItem, _T(""));
 			iter++;
 			inserted = true;
 		}
@@ -470,3 +482,15 @@ void CLocalTreeView::OnSelectionChanged(wxTreeEvent& event)
 
 	m_pState->SetLocalDir(dir);
 }
+
+int CLocalTreeView::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2)
+{
+	wxString label1 = GetItemText(item1);
+	wxString label2 = GetItemText(item2);
+#ifdef __WXMSW__
+	return label1.CmpNoCase(label2);
+#else
+	return label1.Cmp(label2);
+#endif
+}
+

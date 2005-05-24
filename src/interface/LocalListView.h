@@ -12,7 +12,7 @@ public:
 	CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView *pQueue);
 	virtual ~CLocalListView();
 
-	void DisplayDir(wxString dirname);
+	bool DisplayDir(wxString dirname);
 
 protected:
 	// Declared const due to design error in wxWidgets.

@@ -20,6 +20,8 @@ public:
 #endif
 
 protected:
+	virtual int OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2);
+	
 	wxTreeItemId GetNearestParent(wxString& localDir);
 	wxTreeItemId GetSubdir(wxTreeItemId parent, const wxString& subDir);
 	void DisplayDir(wxTreeItemId parent, const wxString& dirname);

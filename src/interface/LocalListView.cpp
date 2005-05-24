@@ -87,7 +87,7 @@ CLocalListView::~CLocalListView()
 #endif
 }
 
-void CLocalListView::DisplayDir(wxString dirname)
+bool CLocalListView::DisplayDir(wxString dirname)
 {
 	m_dir = dirname;
 
@@ -112,6 +112,11 @@ void CLocalListView::DisplayDir(wxString dirname)
 #endif
 	{
 		wxDir dir(dirname);
+		if (!dir.IsOpened())
+		{
+			SetItemCount(1);
+			return false;
+		}
 		wxString file;
 		bool found = dir.GetFirst(&file);
 		int num = 1;
@@ -150,6 +155,8 @@ void CLocalListView::DisplayDir(wxString dirname)
 	}
 
 	SortList();
+
+	return true;
 }
 
 // Declared const due to design error in wxWidgets.
@@ -519,7 +526,11 @@ int CLocalListView::CmpName(CLocalListView *pList, unsigned int index, t_fileDat
 	else if (refData.dir)
 		return 1;
 
+#ifdef __WXMSW__
 	return data.name.CmpNoCase(refData.name);
+#else
+	return data.name.Cmp(refData.name);
+#endif
 }
 
 int CLocalListView::CmpType(CLocalListView *pList, unsigned int index, t_fileData &refData)
@@ -543,7 +554,11 @@ int CLocalListView::CmpType(CLocalListView *pList, unsigned int index, t_fileDat
 	if (res)
 		return res;
 	
+#ifdef __WXMSW__
 	return data.name.CmpNoCase(refData.name);
+#else
+	return data.name.Cmp(refData.name);
+#endif
 }
 
 int CLocalListView::CmpSize(CLocalListView *pList, unsigned int index, t_fileData &refData)
@@ -555,7 +570,11 @@ int CLocalListView::CmpSize(CLocalListView *pList, unsigned int index, t_fileDat
 		if (!refData.dir)
 			return -1;
 		else
+#ifdef __WXMSW__
 			return data.name.CmpNoCase(refData.name);
+#else
+			return data.name.Cmp(refData.name);
+#endif
 	}
 	else if (refData.dir)
 		return 1;
@@ -576,8 +595,11 @@ int CLocalListView::CmpSize(CLocalListView *pList, unsigned int index, t_fileDat
 	else if (res < 0)
 		return -1;
 
+#ifdef __WXMSW__
 	return data.name.CmpNoCase(refData.name);
-
+#else
+	return data.name.Cmp(refData.name);
+#endif
 }
 
 void CLocalListView::OnContextMenu(wxContextMenuEvent& event)
@@ -586,13 +608,29 @@ void CLocalListView::OnContextMenu(wxContextMenuEvent& event)
 	if (!pMenu)
 		return;
 
-	if (GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) == -1)
+	int index = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	int count = 0;
+	while (index != -1)
+	{
+		count++;
+		if (!index)
+		{
+			pMenu->Enable(XRCID("ID_UPLOAD"), false);
+			pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
+			pMenu->Enable(XRCID("ID_DELETE"), false);
+			pMenu->Enable(XRCID("ID_RENAME"), false);
+		}
+		index = GetNextItem(index, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	}
+	if (!count)
 	{
 		pMenu->Enable(XRCID("ID_UPLOAD"), false);
 		pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
 		pMenu->Enable(XRCID("ID_DELETE"), false);
 		pMenu->Enable(XRCID("ID_RENAME"), false);
 	}
+	else if (count > 1)
+		pMenu->Enable(XRCID("ID_RENAME"), false);
 
 	PopupMenu(pMenu);
 	delete pMenu;
@@ -944,8 +982,21 @@ void CLocalListView::OnBeginLabelEdit(wxListEvent& event)
 
 void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 {
-	if (event.GetLabel() == _T(""))
+	if (event.IsEditCancelled())
 		return;
+
+	int index = event.GetIndex();
+	if (!index)
+	{
+		event.Veto();
+		return;
+	}
+	
+	if (event.GetLabel() == _T(""))
+	{
+		event.Veto();
+		return;
+	}
 
 	wxString newname = event.GetLabel();
 #ifdef __WXMSW__
@@ -972,7 +1023,7 @@ void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 	wxString dir = m_dir;
 	if (dir.Right(1) != _T("\\") && dir.Right(1) != _T("/"))
 		dir += _T("\\");
-	wxString from = dir + m_fileData[m_indexMapping[event.GetItem()]].name + _T(" ");
+	wxString from = dir + m_fileData[m_indexMapping[index]].name + _T(" ");
 	from.SetChar(from.Length() - 1, '\0');
 	op.pFrom = from;
 	wxString to = dir + newname + _T(" ");
@@ -985,7 +1036,7 @@ void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 		event.Veto();
 	else
 	{
-		m_fileData[m_indexMapping[event.GetItem()]].name = newname;
+		m_fileData[m_indexMapping[index]].name = newname;
 		return;
 	}
 #else
@@ -1004,9 +1055,10 @@ void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 	wxString dir = m_dir;
 	if (dir.Right(1) != _T("\\") && dir.Right(1) != _T("/"))
 		dir += _T("\\");
-	if (wxRename(dir + m_fileData[m_indexMapping[event.GetItem()]].name, dir + newname))
-		m_fileData[m_indexMapping[event.GetItem()]].name = newname;
+	if (wxRename(dir + m_fileData[m_indexMapping[index]].name, dir + newname))
+		m_fileData[m_indexMapping[index]].name = newname;
 	else
 		event.Veto();
 #endif
 }
+
