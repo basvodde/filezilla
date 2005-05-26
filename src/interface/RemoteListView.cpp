@@ -197,11 +197,11 @@ CRemoteListView::t_fileData* CRemoteListView::GetData(unsigned int item)
 
 bool CRemoteListView::IsItemValid(unsigned int item) const
 {
-	if (item > m_indexMapping.size())
+	if (item >= m_indexMapping.size())
 		return false;
 
 	unsigned int index = m_indexMapping[item];
-	if (index > m_fileData.size())
+	if (index >= m_fileData.size())
 		return false;
 
 	return true;
@@ -977,6 +977,9 @@ int CRemoteListView::FindItemWithPrefix(const wxString& prefix, int start)
 
 void CRemoteListView::OnEndLabelEdit(wxListEvent& event)
 {
+	if (event.IsEditCancelled())
+		return;
+	
 	if (!m_pCommandQueue->Idle() || IsBusy())
 	{
 		wxBell();
@@ -989,9 +992,19 @@ void CRemoteListView::OnEndLabelEdit(wxListEvent& event)
 		return;
 	}
 
-	t_fileData* data = GetData(event.GetIndex());
-	if (!data)
+	int index = event.GetIndex();
+	if (!index)
+	{
+		event.Veto();
 		return;
+	}
+
+	t_fileData* data = GetData(index);
+	if (!data)
+	{
+		event.Veto();
+		return;
+	}
 
 	wxString newFile = event.GetLabel();
 

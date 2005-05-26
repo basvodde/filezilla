@@ -398,11 +398,11 @@ CLocalListView::t_fileData* CLocalListView::GetData(unsigned int item)
 
 bool CLocalListView::IsItemValid(unsigned int item) const
 {
-	if (item > m_indexMapping.size())
+	if (item >= m_indexMapping.size())
 		return false;
 
 	unsigned int index = m_indexMapping[item];
-	if (index > m_fileData.size())
+	if (index >= m_fileData.size())
 		return false;
 
 	return true;
