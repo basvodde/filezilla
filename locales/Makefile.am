@@ -37,9 +37,9 @@ uninstall-local:
 # ----------------------------------------------------------------------------
 
 # the programs we use (TODO: use configure to detect them)
-MSGFMT=msgfmt --verbose
-MSGMERGE=msgmerge
-XGETTEXT=xgettext
+MSGFMT=@msgfmt@ --verbose
+MSGMERGE=@msgmerge@
+XGETTEXT=@xgettext@
 
 # common xgettext args: C++ syntax, use the specified macro names as markers
 XGETTEXT_ARGS=-C -k_ -kwxGetTranslation -kwxTRANSLATE -s -j

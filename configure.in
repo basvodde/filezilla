@@ -134,6 +134,24 @@ fi
 
 LIBS="$LIBS $IDN_LIB"
 
+# Everything translation related
+# ------------------------------
+
+AC_PATH_PROG(xgettext, xgettext)
+if test -z "$xgettext"; then
+	AC_MSG_ERROR([xgettext not found, please install the GNU gettext package and make sure xgettext is in the path.])
+fi
+
+AC_PATH_PROG(msgfmt, msgfmt)
+if test -z "$msgfmt"; then
+	AC_MSG_ERROR([ msgfmt not found, please install the GNU gettext package and make sure  msgfmt is in the path.])
+fi
+
+AC_PATH_PROG(msgmerge, msgmerge)
+if test -z "$msgmerge"; then
+	AC_MSG_ERROR([msgmerge not found, please install the GNU gettext package and make sure msgmerge is in the path.])
+fi
+
 AC_MSG_CHECKING([available FZ3 message catalogs])
 
 FILEZILLA_LINGUAS_PO=
