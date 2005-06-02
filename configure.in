@@ -195,6 +195,13 @@ fi
 AC_MSG_RESULT([$use_binreloc])
 AM_CONDITIONAL(USE_BINRELOC, test $use_binreloc = yes)
 
+# Precompiled headers support
+# ---------------------------
+
+AC_ARG_ENABLE(precomp, [  --enable-precomp        Use precompiled headers], \
+		use_precomp="$enableval")
+AM_CONDITIONAL(ENABLE_PRECOMP, test "x$use_precomp" = "xyes")
+
 AC_SUBST(WX_LIBS)
 AC_SUBST(CATALOGS_TO_INSTALL)
 AC_SUBST(FILEZILLA_LINGUAS)
