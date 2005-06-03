@@ -13,24 +13,18 @@
 #define new DEBUG_NEW
 #endif
 
-const wxEventType fzEVT_FOLDERTHREAD_COMPLETE = wxNewEventType();
+DECLARE_EVENT_TYPE(fzEVT_FOLDERTHREAD_COMPLETE, -1)
+DEFINE_EVENT_TYPE(fzEVT_FOLDERTHREAD_COMPLETE)
 
-class CFolderThreadCompleteEvent : public wxEvent
-{
-public:
-	CFolderThreadCompleteEvent(int id) : wxEvent(id, fzEVT_FOLDERTHREAD_COMPLETE)
-	{
-	}
-
-	virtual wxEvent *CFolderThreadCompleteEvent::Clone() const
-	{
-		return new CFolderThreadCompleteEvent(*this);
-	}
-};
+DECLARE_EVENT_TYPE(fzEVT_UPDATE_STATUSLINES, -1)
+DEFINE_EVENT_TYPE(fzEVT_UPDATE_STATUSLINES)
 
 BEGIN_EVENT_TABLE(CQueueView, wxListCtrl)
 EVT_FZ_NOTIFICATION(wxID_ANY, CQueueView::OnEngineEvent)
-EVT_CUSTOM(fzEVT_FOLDERTHREAD_COMPLETE, wxID_ANY, CQueueView::OnFolderThreadComplete)
+EVT_COMMAND(wxID_ANY, fzEVT_FOLDERTHREAD_COMPLETE, CQueueView::OnFolderThreadComplete)
+EVT_SCROLLWIN(CQueueView::OnScrollEvent)
+EVT_COMMAND(wxID_ANY, fzEVT_UPDATE_STATUSLINES, CQueueView::OnUpdateStatusLines)
+EVT_MOUSEWHEEL(CQueueView::OnMouseWheel)
 END_EVENT_TABLE()
 
 class CFolderItem;
@@ -76,7 +70,7 @@ protected:
 				}
 				else
 				{
-					CFolderThreadCompleteEvent evt(wxID_ANY);
+					wxCommandEvent evt(fzEVT_FOLDERTHREAD_COMPLETE, wxID_ANY);
 					wxPostEvent(m_pOwner, evt);
 					return 0;
 				}
@@ -1377,7 +1371,7 @@ void CQueueView::ProcessUploadFolderItems()
 	Refresh(false);
 }
 
-void CQueueView::OnFolderThreadComplete(wxEvent& event)
+void CQueueView::OnFolderThreadComplete(wxCommandEvent& event)
 {
 	if (!m_pFolderProcessingThread)
 		return;
@@ -1614,4 +1608,23 @@ bool CQueueView::ShouldUseBinaryMode(wxString filename)
 			return false;
 
 	return true;
+}
+
+void CQueueView::OnScrollEvent(wxScrollWinEvent& event)
+{
+	event.Skip();
+	wxCommandEvent evt(fzEVT_UPDATE_STATUSLINES, wxID_ANY);
+	AddPendingEvent(evt);
+}
+
+void CQueueView::OnUpdateStatusLines(wxCommandEvent& event)
+{
+	UpdateStatusLinePositions();
+}
+
+void CQueueView::OnMouseWheel(wxMouseEvent& event)
+{
+	event.Skip();
+	wxCommandEvent evt(fzEVT_UPDATE_STATUSLINES, wxID_ANY);
+	AddPendingEvent(evt);
 }

@@ -303,7 +303,10 @@ protected:
 	DECLARE_EVENT_TABLE();
 
 	void OnEngineEvent(wxEvent &event);
-	void OnFolderThreadComplete(wxEvent& event);
+	void OnFolderThreadComplete(wxCommandEvent& event);
+	void OnScrollEvent(wxScrollWinEvent& event);
+	void OnUpdateStatusLines(wxCommandEvent& event);
+	void OnMouseWheel(wxMouseEvent& event);
 };
 
 #endif
