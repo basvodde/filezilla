@@ -1187,7 +1187,7 @@ bool CRemoteListView::ConvertPermissions(const wxString rwx, char* permissions)
 	if (!permissions)
 		return false;
 
-	const char permchars[3] = {'r', 'w', 'x'};
+	const unsigned char permchars[3] = {'r', 'w', 'x'};
 
 	if (rwx.Length() != 10)
 		return false;
