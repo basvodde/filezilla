@@ -6,7 +6,7 @@
 #include "filezillaapp.h"
 #include "ipcmutex.h"
 
-BEGIN_EVENT_TABLE(CSiteManager, wxDialog)
+BEGIN_EVENT_TABLE(CSiteManager, wxDialogEx)
 EVT_BUTTON(XRCID("wxID_OK"), CSiteManager::OnOK)
 EVT_BUTTON(XRCID("wxID_CANCEL"), CSiteManager::OnCancel)
 EVT_BUTTON(XRCID("ID_CONNECT"), CSiteManager::OnConnect)
@@ -22,7 +22,6 @@ EVT_COMBOBOX(XRCID("ID_LOGONTYPE"), CSiteManager::OnLogontypeSelChanged)
 EVT_BUTTON(XRCID("ID_BROWSE"), CSiteManager::OnRemoteDirBrowse)
 EVT_TREE_ITEM_ACTIVATED(XRCID("ID_SITETREE"), CSiteManager::OnItemActivated)
 EVT_CHECKBOX(XRCID("ID_LIMITMULTIPLE"), CSiteManager::OnLimitMultipleConnectionsChanged)
-EVT_CHAR_HOOK(CSiteManager::OnChar)
 END_EVENT_TABLE()
 
 CSiteManager::CSiteManager(COptions* pOptions)
@@ -162,11 +161,14 @@ bool CSiteManager::Load(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 		}
 		pElement = pDocument->FirstChildElement("Servers");
 		if (!pElement)
+		{
+			delete pDocument->GetDocument();
 			return true;
+		}
 
 		bool res = Load(pElement, treeId);
 
-		delete pDocument;
+		delete pDocument->GetDocument();
 
 		pTree->SortChildren(treeId);
 		pTree->Expand(treeId);
@@ -259,7 +261,7 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 
 		if (!pElement)
 		{
-			delete pDocument;
+			delete pDocument->GetDocument();
 
 			return true;
 		}
@@ -272,7 +274,7 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 			wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
 		}
 
-		delete pDocument;
+		delete pDocument->GetDocument();
 		return res;
 	}
 	
@@ -828,12 +830,4 @@ void CSiteManager::SetCtrlState()
 			XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->SetValue(1);
 		}
 	}
-}
-
-void CSiteManager::OnChar(wxKeyEvent& event)
-{
-	if (event.GetKeyCode() == WXK_ESCAPE)
-		EndModal(wxID_CANCEL);
-	else
-		event.Skip();
 }

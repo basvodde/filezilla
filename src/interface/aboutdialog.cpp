@@ -1,9 +1,8 @@
 #include "FileZilla.h"
 #include "aboutdialog.h"
 
-BEGIN_EVENT_TABLE(CAboutDialog, wxDialog)
+BEGIN_EVENT_TABLE(CAboutDialog, wxDialogEx)
 EVT_BUTTON(XRCID("wxID_OK"), CAboutDialog::OnOK)
-EVT_CHAR_HOOK(CAboutDialog::OnChar)
 END_EVENT_TABLE();
 
 extern wxString WrapText(const wxString &text, unsigned long
@@ -122,12 +121,4 @@ wxString CAboutDialog::GetCompiler() const
 #else
 	return _T("Unknown compiler");
 #endif
-}
-
-void CAboutDialog::OnChar(wxKeyEvent& event)
-{
-	if (event.GetKeyCode() == WXK_ESCAPE)
-		EndModal(wxID_CANCEL);
-	else
-		event.Skip();
 }

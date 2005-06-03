@@ -1,7 +1,7 @@
 #include "FileZilla.h"
 #include "chmoddialog.h"
 
-BEGIN_EVENT_TABLE(CChmodDialog, wxDialog)
+BEGIN_EVENT_TABLE(CChmodDialog, wxDialogEx)
 EVT_BUTTON(XRCID("wxID_OK"), CChmodDialog::OnOK)
 EVT_BUTTON(XRCID("wxID_CANCEL"), CChmodDialog::OnCancel)
 EVT_TEXT(XRCID("ID_NUMERIC"), CChmodDialog::OnNumericChanged)

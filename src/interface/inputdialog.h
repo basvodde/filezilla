@@ -1,7 +1,9 @@
 #ifndef __INPUTDIALOG_H__
 #define __INPUTDIALOG_H__
 
-class CInputDialog : public wxDialog
+#include "dialogex.h"
+
+class CInputDialog : public wxDialogEx
 {
 public:
 	CInputDialog() {}

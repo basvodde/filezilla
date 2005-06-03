@@ -1,9 +1,11 @@
 #ifndef __SETTINGSDIALOG_H__
 #define __SETTINGSDIALOG_H__
 
+#include "dialogex.h"
+
 class COptions;
 class COptionsPage;
-class CSettingsDialog : public wxDialog
+class CSettingsDialog : public wxDialogEx
 {
 public:
 	CSettingsDialog(COptions* pOptions);
@@ -30,7 +32,6 @@ protected:
 	void OnPageChanged(wxTreeEvent& event);
 	void OnOK(wxCommandEvent& event);
 	void OnCancel(wxCommandEvent& event);
-	void OnChar(wxKeyEvent& event);
 };
 
 #endif //__SETTINGSDIALOG_H__

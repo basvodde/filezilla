@@ -1,7 +1,7 @@
 #include "FileZilla.h"
 #include "fileexistsdlg.h"
 
-BEGIN_EVENT_TABLE(CFileExistsDlg, wxDialog)
+BEGIN_EVENT_TABLE(CFileExistsDlg, wxDialogEx)
 EVT_BUTTON(XRCID("wxID_OK"), CFileExistsDlg::OnOK)
 EVT_BUTTON(XRCID("wxID_CANCEL"), CFileExistsDlg::OnCancel)
 END_EVENT_TABLE()

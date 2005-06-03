@@ -20,10 +20,12 @@ public:
 	wxString m_name; // Only filled by CSiteManager::GetServer
 };
 
+#include "dialogex.h"
+
 class COptions;
 class TiXmlElement;
 class CInterProcessMutex;
-class CSiteManager: public wxDialog
+class CSiteManager: public wxDialogEx
 {	
 	DECLARE_EVENT_TABLE();
 
@@ -62,7 +64,6 @@ protected:
 	virtual void OnRemoteDirBrowse(wxCommandEvent& event);
 	virtual void OnItemActivated(wxTreeEvent& event);
 	virtual void OnLimitMultipleConnectionsChanged(wxCommandEvent& event);
-	virtual void OnChar(wxKeyEvent& event);
 	
 	COptions* m_pOptions;
 	CInterProcessMutex* m_pSiteManagerMutex;

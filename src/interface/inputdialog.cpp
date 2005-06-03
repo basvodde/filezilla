@@ -1,7 +1,7 @@
 #include "FileZilla.h"
 #include "inputdialog.h"
 
-BEGIN_EVENT_TABLE(CInputDialog, wxDialog)
+BEGIN_EVENT_TABLE(CInputDialog, wxDialogEx)
 EVT_TEXT(XRCID("ID_STRING"), CInputDialog::OnValueChanged)
 EVT_BUTTON(XRCID("wxID_OK"), CInputDialog::OnOK)
 EVT_BUTTON(XRCID("wxID_CANCEL"), CInputDialog::OnCancel)

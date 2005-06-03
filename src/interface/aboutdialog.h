@@ -1,7 +1,9 @@
 #ifndef __ABOUTDIALOG_H__
 #define __ABOUTDIALOG_H__
 
-class CAboutDialog : public wxDialog
+#include "dialogex.h"
+
+class CAboutDialog : public wxDialogEx
 {
 public:
 	CAboutDialog() {}
@@ -15,7 +17,6 @@ protected:
 
 	DECLARE_EVENT_TABLE();
 	void OnOK(wxCommandEvent& event);
-	void OnChar(wxKeyEvent& event);
 };
 
 #endif //__ABOUTDIALOG_H__

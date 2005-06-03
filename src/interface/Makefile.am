@@ -10,7 +10,7 @@ bin_PROGRAMS = filezilla
 
 # the application source, library search path, and link libraries
 filezilla_SOURCES = aboutdialog.cpp asyncrequestqueue.cpp chmoddialog.cpp \
-		commandqueue.cpp fileexistsdlg.cpp \
+		commandqueue.cpp dialogex.cpp fileexistsdlg.cpp \
 		FileZilla.cpp inputdialog.cpp ipcmutex.cpp led.cpp \
 		LocalListView.cpp LocalTreeView.cpp Mainfrm.cpp Options.cpp \
 		optionspage.cpp	optionspage_filetype.cpp optionspage_language.cpp \
@@ -25,7 +25,7 @@ filezilla_SOURCES += prefix.cpp
 endif
 
 noinst_HEADERS = aboutdialog.h asyncrequestqueue.h chmoddialog.h 
-		 commandqueue.h fileexistsdlg.h \
+		 commandqueue.h dialogex.h fileexistsdlg.h \
 		 filezillaapp.h inputdialog.h ipcmutex.h led.h \
 		 LocalListView.h LocalTreeView.h Mainfrm.h Options.h \
 		 optionspage.h  optionspage_filetype.h \

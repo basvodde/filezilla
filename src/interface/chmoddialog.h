@@ -1,7 +1,9 @@
 #ifndef __CHMODDIALOG_H__
 #define __CHMODDIALOG_H__
 
-class CChmodDialog : public wxDialog
+#include "dialogex.h"
+
+class CChmodDialog : public wxDialogEx
 {
 public:
 	CChmodDialog() {}

@@ -1,7 +1,9 @@
 #ifndef __FILEEXISTSDLG_H__
 #define __FILEEXISTSDLG_H__
 
-class CFileExistsDlg: public wxDialog
+#include "dialogex.h"
+
+class CFileExistsDlg: public wxDialogEx
 {	
 	DECLARE_EVENT_TABLE()
 
