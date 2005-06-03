@@ -975,19 +975,55 @@ int CRemoteListView::FindItemWithPrefix(const wxString& prefix, int start)
 	return -1;
 }
 
-void CRemoteListView::OnEndLabelEdit(wxListEvent& event)
+void CRemoteListView::OnBeginLabelEdit(wxListEvent& event)
 {
-	if (event.IsEditCancelled())
-		return;
-	
 	if (!m_pCommandQueue->Idle() || IsBusy())
 	{
+		event.Veto();
 		wxBell();
 		return;
 	}
 
 	if (!m_pDirectoryListing)
 	{
+		event.Veto();
+		wxBell();
+		return;
+	}
+
+	int index = event.GetIndex();
+	if (!index)
+	{
+		event.Veto();
+		return;
+	}
+
+	t_fileData* data = GetData(index);
+	if (!data)
+	{
+		event.Veto();
+		return;
+	}
+}
+
+void CRemoteListView::OnEndLabelEdit(wxListEvent& event)
+{
+	if (event.IsEditCancelled() || event.GetLabel() == _T(""))
+	{
+		event.Veto();
+		return;
+	}
+	
+	if (!m_pCommandQueue->Idle() || IsBusy())
+	{
+		event.Veto();
+		wxBell();
+		return;
+	}
+
+	if (!m_pDirectoryListing)
+	{
+		event.Veto();
 		wxBell();
 		return;
 	}
@@ -1008,9 +1044,6 @@ void CRemoteListView::OnEndLabelEdit(wxListEvent& event)
 
 	wxString newFile = event.GetLabel();
 
-	if (newFile == _T(""))
-		return;
-
 	CServerPath newPath = m_pDirectoryListing->path;
 	if (!newPath.ChangePath(newFile, true))
 	{
@@ -1030,7 +1063,10 @@ void CRemoteListView::OnEndLabelEdit(wxListEvent& event)
 			if (newFile == m_pDirectoryListing->m_pEntries[i].name)
 			{
 				if (wxMessageBox(_("Target filename already exists, really continue?"), _("File exists"), wxICON_QUESTION | wxYES_NO) != wxYES)
+				{
+					event.Veto();
 					return;
+				}
 
 				break;
 			}
@@ -1053,7 +1089,7 @@ void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 	wxString name;
 
 	char permissions[9] = {0};
-	const char permchars[3] = {'r', 'w', 'x'};
+	const unsigned char permchars[3] = {'r', 'w', 'x'};
 
 	long item = -1;
 	while (true)
