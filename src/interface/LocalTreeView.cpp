@@ -37,7 +37,16 @@ CLocalTreeView::CLocalTreeView(wxWindow* parent, wxWindowID id, CState *pState, 
 	
 	AddRoot(shFinfo.szDisplayName, iIcon, shFinfo.iIcon);
 
-	CoTaskMemFree(list);
+	LPMALLOC pMalloc;
+    SHGetMalloc(&pMalloc);
+
+	if (pMalloc)
+	{
+		pMalloc->Free(list);
+		pMalloc->Release();
+	}
+	else
+		wxLogLastError(wxT("SHGetMalloc"));
 
 	DisplayDrives();
 	Expand(GetRootItem());
