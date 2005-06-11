@@ -5,6 +5,125 @@
 #define new DEBUG_NEW
 #endif
 
+//#define LISTDEBUG
+#ifdef LISTDEBUG
+static char data[][110]={
+	"-rw-r--r--   1 root     other        531 Jan 29 03:26 01-unix-std file",
+	"dr-xr-xr-x   2 root     other        512 Apr  8  1994 02-unix-std dir",
+	"dr-xr-xr-x   2 root                  512 Apr  8  1994 03-unix-nogroup dir",
+	"lrwxrwxrwx   1 root     other          7 Jan 25 00:17 04-unix-std link -> usr/bin",
+		
+	/* Some listings with uncommon date/time format: */
+	"-rw-r--r--   1 root     other        531 09-26 2000 05-unix-date file",
+	"-rw-r--r--   1 root     other        531 09-26 13:45 06-unix-date file",
+	"-rw-r--r--   1 root     other        531 2005-06-07 21:22 07-unix-date file",
+		
+	/* Unix style with size information in kilobytes */
+	"-rw-r--r--   1 root     other  33.5k Oct 5 21:22 08-unix-namedsize file",
+
+	/* Also NetWare: */
+	"d [R----F--] supervisor            512       Jan 16 18:53    09-netware dir",
+	"- [R----F--] rhesus             214059       Oct 20 15:27    10-netware file",
+		
+	/* Also NetPresenz for the Mac: */
+	"-------r--         326  1391972  1392298 Nov 22  1995 11-netpresenz file",
+	"drwxrwxr-x               folder        2 May 10  1996 12-netpresenz dir",
+
+	/* A format with domain field some windows servers send */
+	"-rw-r--r--   1 group domain user 531 Jan 29 03:26 13-unix-domain file",
+
+	/* EPLF directory listings */
+	"+i8388621.48594,m825718503,r,s280,\t14-eplf file",
+	"+i8388621.50690,m824255907,/,\t15-eplf dir",
+
+	/* MSDOS type listing used by IIS */
+	"04-27-00  12:09PM       <DIR>          16-dos-dateambigious dir",
+	"04-14-00  03:47PM                  589 17-dos-dateambigious file",
+
+	/* Another type of MSDOS style listings */
+	"2002-09-02  18:48       <DIR>          18-dos-longyear dir",
+	"2002-09-02  19:06                9,730 19-dos-longyear file",
+
+	/* Numerical Unix style format */
+	"0100644   500  101   12345    123456789       20-unix-numerical file",
+
+	/* This one is used by SSH-2.0-VShell_2_1_2_143, this is the old VShell format */
+	"206876  Apr 04, 2000 21:06 21-vshell-old file",
+	"0  Dec 12, 2002 02:13 22-vshell-old dir/",
+
+	/* This type of directory listings is sent by some newer versions of VShell
+	 * both year and time in one line is uncommon.
+	 */
+	"-rwxr-xr-x    1 user group        9 Oct 08, 2002 09:47 23-vshell-new file",
+
+	/* Next ones come from an OS/2 server. The server obviously isn't Y2K aware */
+	"36611      A    04-23-103  10:57  24-os2 file",
+	" 1123      A    07-14-99   12:37  25-os2 file",
+	"    0 DIR       02-11-103  16:15  26-os2 dir",
+	" 1123 DIR  A    10-05-100  23:38  27-os2 dir",
+
+	/* Some servers send localized date formats, here the German one: */
+	"dr-xr-xr-x   2 root     other      2235 26. Juli, 20:10 28-datetest-ger dir",
+	"-r-xr-xr-x   2 root     other      2235 2.   Okt.  2003 29-datetest-ger file",
+	"-r-xr-xr-x   2 root     other      2235 1999/10/12 17:12 30-datetest file",
+	"-r-xr-xr-x   2 root     other      2235 24-04-2003 17:12 31-datetest file",
+
+	/* Here a Japanese one: */
+	"-rw-r--r--   1 root       sys           8473  4\x8c\x8e 18\x93\xfa 2003\x94\x4e 32-datatest-japanese file",
+
+	/* VMS style listings */
+	"33-vms-dir.DIR;1  1 19-NOV-2001 21:41 [root,root] (RWE,RWE,RE,RE)",
+	"34-vms-file;1       155   2-JUL-2003 10:30:13.64",
+
+	/* VMS style listings without time */
+	"35-vms-notime-file;1    2/8    15-JAN-2000    [IV2_XXX]   (RWED,RWED,RE,)",
+	"36-vms-notime-file;1    6/8    15-JUI-2002    PRONAS   (RWED,RWED,RE,)",
+
+	/* VMS multiline */
+	"37-vms-multiline-file;1\r\n170774/170775     24-APR-2003 08:16:15  [FTP_CLIENT,SCOT]      (RWED,RWED,RE,)",
+	"38-vms-multiline-file;1\r\n10			     2-JUL-2003 10:30:08.59  [FTP_CLIENT,SCOT]      (RWED,RWED,RE,)",
+
+	/* IBM AS/400 style listing */
+	"QSYS            77824 02/23/00 15:09:55 *DIR 39-ibm-as400 dir/",
+	"QSYS            77824 23/02/00 15:09:55 *FILE 40-ibm-as400-date file",
+
+	/* aligned directory listing with too long size */
+	"-r-xr-xr-x longowner longgroup123456 Feb 12 17:20 41-unix-concatsize file",
+
+	/* short directory listing with month name */
+	"-r-xr-xr-x 2 owner group 4512 01-jun-99 42_unix_shortdatemonth file",
+
+	/* the following format is sent by the Connect:Enterprise server by Sterling Commerce */
+	"-C--E-----FTP B BCC3I1       7670  1294495 Jan 13 07:42 43-conent file",
+	"-C--E-----FTS B BCC3I1       7670  1294495 Jan 13 07:42 44-conent-file",
+
+	"-AR--M----TCP B ceunix      17570  2313708 Mar 29 08:56 45-conent-file",
+
+	/* Nortel wfFtp router */
+	"46-nortel-wfftp-file       1014196  06/03/04  Thur.   10:20:03",
+
+	/* VxWorks based server used in Nortel routers */
+	"2048    Feb-28-1998  05:23:30   47-nortel-vxworks dir <DIR>",
+
+	/* IBM MVS listings */
+	// Volume Unit    Referred Ext Used Recfm Lrecl BlkSz Dsorg Dsname
+	"  WYOSPT 3420   2003/05/21  1  200  FB      80  8053  PS  48-MVS.FILE",
+	"  WPTA01 3290   2004/03/04  1    3  FB      80  3125  PO  49-MVS.DATASET",
+	"  TSO004 3390   VSAM 50-mvs-file",
+	"  TSO005 3390   2005/06/06 213000 U 0 27998 PO 51-mvs-dir",
+
+	/* Dataset members */
+	// Name         VV.MM   Created      Changed       Size  Init  Mod Id
+	// ADATAB /* filenames without data, only check for those on MVS servers */
+	"  52-MVSPDSMEMBER 01.01 2004/06/22 2004/06/22 16:32   128   128    0 BOBY12",
+
+	"53-MVSPDSMEMBER2 00B308 000411  00 FO                31    ANY",
+	"54-MVSPDSMEMBER3 00B308 000411  00 FO        RU      ANY    24",
+
+	""};
+
+#endif
+
 class CToken
 {
 protected:
@@ -21,6 +140,12 @@ public:
 		m_pToken = 0;
 		m_len = 0;
 	}
+
+	enum t_numberBase
+	{
+		decimal,
+		hex
+	};
 
 	CToken(const char *p, unsigned int len)
 	{
@@ -119,19 +244,32 @@ public:
 		return _T("");
 	}
 
-	bool IsNumeric()
+	bool IsNumeric(t_numberBase base = decimal)
 	{
-		if (m_numeric == Unknown)
+		switch (base)
 		{
-			m_numeric = Yes;
+		case decimal:
+		default:
+			if (m_numeric == Unknown)
+			{
+				m_numeric = Yes;
+				for (unsigned int i = 0; i < m_len; i++)
+					if (m_pToken[i] < '0' || m_pToken[i] > '9')
+					{
+						m_numeric = No;
+						break;
+					}
+			}
+			return m_numeric == Yes;
+		case hex:
 			for (unsigned int i = 0; i < m_len; i++)
-				if (m_pToken[i] < '0' || m_pToken[i] > '9')
-				{
-					m_numeric = No;
-					break;
-				}
+			{
+				const char c = m_pToken[i];
+				if ((c < '0' || c > '9') && (c < 'A' || c > 'F') && (c < 'a' || c > 'f'))
+					return false;
+			}
+			return true;
 		}
-		return m_numeric == Yes;
 	}
 
 	bool IsNumeric(unsigned int start, unsigned int len)
@@ -222,35 +360,66 @@ public:
 		return number;
 	}
 
-	wxLongLong GetNumber()
+	wxLongLong GetNumber(t_numberBase base = decimal)
 	{
-		if (m_number == -1)
+		switch (base)
 		{
-			if (IsNumeric() || IsLeftNumeric())
+		default:
+		case decimal:
+			if (m_number == -1)
 			{
-				m_number = 0;
+				if (IsNumeric() || IsLeftNumeric())
+				{
+					m_number = 0;
+					for (unsigned int i = 0; i < m_len; i++)
+					{
+						if (m_pToken[i] < '0' || m_pToken[i] > '9')
+							break;
+						m_number *= 10;
+						m_number += m_pToken[i] - '0';
+					}
+				}
+				else if (IsRightNumeric())
+				{
+					m_number = 0;
+					int start = m_len - 1;
+					while (m_pToken[start - 1] >= '0' && m_pToken[start - 1] <= '9')
+						start--;
+					for (unsigned int i = start; i < m_len; i++)
+					{
+						m_number *= 10;
+						m_number += m_pToken[i] - '0';
+					}
+				}
+			}
+			return m_number;
+		case hex:
+			{
+				wxLongLong number = 0;
 				for (unsigned int i = 0; i < m_len; i++)
 				{
-					if (m_pToken[i] < '0' || m_pToken[i] > '9')
-						break;
-					m_number *= 10;
-					m_number += m_pToken[i] - '0';
+					const char c = m_pToken[i];
+					if (c >= '0' && c <= '9')
+					{
+						number *= 16;
+						number += c - '0';
+					}
+					else if (c >= 'a' && c <= 'f')
+					{
+						number *= 16;
+						number += c - '0' + 10;
+					}
+					else if (c >= 'A' && c <= 'F')
+					{
+						number *= 16;
+						number += c - 'A' + 10;
+					}
+					else
+						return -1;
 				}
-			}
-			else if (IsRightNumeric())
-			{
-				m_number = 0;
-				int start = m_len - 1;
-				while (m_pToken[start - 1] >= '0' && m_pToken[start - 1] <= '9')
-					start--;
-				for (unsigned int i = start; i < m_len; i++)
-				{
-					m_number *= 10;
-					m_number += m_pToken[i] - '0';
-				}
+				return number;
 			}
 		}
-		return m_number;;
 	}
 
 	char operator[](unsigned int n) const
@@ -381,140 +550,6 @@ protected:
 	const char *m_pLine;
 	int m_len;
 };
-//#define LISTDEBUG
-#ifdef LISTDEBUG
-static char data[][100]={
-
-	// UNIX style listings
-	// -------------------
-
-	// Most common format
-	"-rw-r--r--   1 root     other        531 Jan 29 03:26 unix time",
-	"dr-xr-xr-x   2 root     other        512 Apr  8  1994 d unix year",
-	"-r-xr-xr-x   2 root                  512 Apr  8  1994 unix nogroup",
-	"lrwxrwxrwx   1 root     other          7 Jan 25 00:17 unix link -> usr/bin",
-	
-	/* Some listings with uncommon date/time format: */
-	"-rw-r--r--   1 root     other        531 09-26 2000 README2",
-	"-rw-r--r--   1 root     other        531 09-26 13:45 README3",
-	"-rw-r--r--   1 root     other        531 2005-06-07 21:22 README4",
-	
-	/* Also produced by Microsoft's FTP servers for Windows: */
-	"----------   1 owner    group         1803128 Jul 10 10:18 ls-lR.Z",
-	"d---------   1 owner    group               0 May  9 19:45 Softlib",
-	
-	/* Also WFTPD for MSDOS: */
-	"-rwxrwxrwx   1 noone    nogroup      322 Aug 19  1996 message.ftp",
-	
-	/* Also NetWare: */
-	"d [R----F--] supervisor            512       Jan 16 18:53    login",
-	"- [R----F--] rhesus             214059       Oct 20 15:27    cx.exe",
-	
-	/* Also NetPresenz for the Mac: */
-	"-------r--         326  1391972  1392298 Nov 22  1995 MegaPhone.sit",
-	"drwxrwxr-x               folder        2 May 10  1996 network",
-
-	/* Some other formats some windows servers send */
-	"-rw-r--r--   1 root 531 Jan 29 03:26 README5",
-	"-rw-r--r--   1 group domain user 531 Jan 29 03:26 README6",
-
-	/* aligned directory listing with too long size */
-	"-r-xr-xr-x longowner longgroup123456 Feb 12 17:20 long size test1",
-
-	/* short directory listing with month name */
-	"-r-xr-xr-x 2 owner group 4512 01-jun-99 shortdate with monthname",
-
-	/* This type of directory listings is sent by some newer versions of VShell
-	 * both year and time in one line is uncommon.
-	 */
-	"-rwxr-xr-x    1 user group        9 Oct 08, 2002 09:47 VShell (new)",
-
-	/* Some servers send localized date formats, here the German one: */
-	"dr-xr-xr-x   2 root     other      2235 26. Juli, 20:10 datetest1 (ger)",
-	"-r-xr-xr-x   2 root     other      2235 2.   Okt.  2003 datetest2 (ger)",
-	"-r-xr-xr-x   2 root     other      2235 1999/10/12 17:12 datetest3",
-	"-r-xr-xr-x   2 root     other      2235 24-04-2003 17:12 datetest4",
-
-	/* Here a Japanese one: */
-	"-rw-r--r--   1 root       sys           8473  4\x8c\x8e 18\x93\xfa 2003\x94\x4e datatest1 (jap)",
-
-	/* the following format is sent by the Connect:Enterprise server by Sterling Commerce */
-	"-C--E-----FTP B BCC3I1       7670  1294495 Jan 13 07:42 ConEnt file",
-	"-C--E-----FTS B BCC3I1       7670  1294495 Jan 13 07:42 ConEnt file2",
-
-	"-AR--M----TCP B ceunix      17570  2313708 Mar 29 08:56 ALL_SHORT1.zip",
-
-	// EPLF style listings
-	// -------------------
-
-	/* EPLF directory listings */
-	"+i8388621.48594,m825718503,r,s280,\teplf test 1.file",
-	"+i8388621.50690,m824255907,/,\teplf test 2.dir",
-	"+i8388621.48598,m824253270,r,s612,\teplf test 3.file",
-
-	// DOS style listings
-	// ------------------
-
-	/* MSDOS type listing used by IIS */
-	"04-27-00  12:09PM       <DIR>          DOS dir 1",
-	"04-14-00  03:47PM                  589 DOS file 1",
-
-	/* Another type of MSDOS style listings */
-	"2002-09-02  18:48       <DIR>          DOS dir 2",
-	"2002-09-02  19:06                9,730 DOS file 2",
-
-	// VMS style listings
-	// ------------------
-
-	/* two different VMS style listings */
-	"vms_dir_1.DIR;1  1 19-NOV-2001 21:41 [root,root] (RWE,RWE,RE,RE)",
-	"vms_file_3;1       155   2-JUL-2003 10:30:13.64",
-	
-	/* VMS multiline */
-	"VMS_file_1;1\r\n170774/170775     24-APR-2003 08:16:15  [FTP_CLIENT,SCOT]      (RWED,RWED,RE,)",
-	"VMS_file_2;1\r\n10			     2-JUL-2003 10:30:08.59  [FTP_CLIENT,SCOT]      (RWED,RWED,RE,)",
-
-	/* VMS without time */
-	"vms_dir_2.DIR;1  1 19-NOV-2001 [root,root] (RWE,RWE,RE,RE)",
-
-
-	// Miscellaneous formats
-	// ---------------------
-
-	/* Numerical Unix style format */
-	"0100644   500  101   12345    123456789       filename",
-
-	/* This one is used by SSH-2.0-VShell_2_1_2_143, this is the old VShell format */
-	"206876  Apr 04, 2000 21:06 VShell (old)",
-	"0  Dec 12, 2002 02:13 VShell (old) Dir/",
-
-	/* Next ones come from an OS/2 server. The server obviously isn't Y2K aware */
-	"36611      A    04-23-103   10:57  OS2 test1.file",
-	" 1123      A    07-14-99   12:37  OS2 test2.file",
-	"    0 DIR       02-11-103   16:15  OS2 test1.dir",
-	" 1123 DIR  A    10-05-100   23:38  OS2 test2.dir",
-
-	/* IBM AS/400 style listing */
-	"QSYS            77824 02/23/00 15:09:55 *DIR IBM AS/400 Dir1/",
-
-	/* Nortel wfFtp router */
-	"nortel.wfFtp       1014196  06/03/04  Thur.   10:20:03",
-
-	/* IBM MVS listings */
-	// Volume Unit    Referred Ext Used Recfm Lrecl BlkSz Dsorg Dsname
-	"  WYOSPT 3420   2003/05/21  1  200  FB      80  8053  PS  MVS.FILE",
-	"  WPTA01 3290   2004/03/04  1    3  FB      80  3125  PO  MVS.DATASET",
-
-	/* Dataset members */
-	// Name         VV.MM   Created      Changed       Size  Init  Mod Id
-	// ADATAB /* filenames without data, only check for those on MVS servers */
-	"  MVSPDSMEMBER 01.01 2004/06/22 2004/06/22 16:32   128   128    0 BOBY12",
-
-	/* VxWorks based server used in Nortel routers */
-	"2048    Feb-28-1998  05:23:30   nortel.VwWorks dir <DIR>",
-
-	""};
-#endif
 
 CDirectoryListingParser::CDirectoryListingParser(CFileZillaEngine *pEngine, enum ServerType serverType)
 	: m_pEngine(pEngine), m_serverType(serverType)
@@ -586,9 +621,11 @@ CDirectoryListingParser::CDirectoryListingParser(CFileZillaEngine *pEngine, enum
 	m_MonthNamesMap[_T("f\xe9vr")] = 2;
 	m_MonthNamesMap[_T("fevr")] = 2;
 	m_MonthNamesMap[_T("mars")] = 3;
+	m_MonthNamesMap[_T("mrs")] = 3;
 	m_MonthNamesMap[_T("avr")] = 4;
 	m_MonthNamesMap[_T("juin")] = 7;
 	m_MonthNamesMap[_T("juil")] = 7;
+	m_MonthNamesMap[_T("jui")] = 7;
 	m_MonthNamesMap[_T("ao\xfb")] = 8;
 	m_MonthNamesMap[_T("ao\xfbt")] = 8;
 	m_MonthNamesMap[_T("aout")] = 8;
@@ -739,8 +776,7 @@ CDirectoryListing* CDirectoryListingParser::Parse(const CServerPath &path)
 					delete m_prevLine;
 					m_prevLine = m_curLine;
 					delete pLine;
-					m_prevLine = 0;
-
+					
 					pLine = GetLine();
 					m_curLine = pLine;
 				}
@@ -798,8 +834,11 @@ bool CDirectoryListingParser::ParseLine(CLine *pLine, const enum ServerType serv
 		res = ParseAsIBM_MVS(pLine, entry);
 	if (!res)
 		res = ParseAsIBM_MVS_PDS(pLine, entry);
-	if (!res && serverType == MVS)
-		res = ParseAsIBM_MVS_PDS_NameOnly(pLine, entry);
+	if (!res)
+#ifndef LISTDEBUG
+		if (serverType == MVS)
+#endif LISTDEBUG
+			res = ParseAsIBM_MVS_PDS2(pLine, entry);
 
 	if (res)
 	{
@@ -885,10 +924,12 @@ bool CDirectoryListingParser::ParseAsUnix(CLine *pLine, CDirentry &entry)
 			return false;
 
 		// Check for concatenated groupname and size fields
-		if (!token.IsNumeric() && !token.IsRightNumeric())
-			continue;
-
-		entry.size = token.GetNumber();
+		if (!ParseComplexFileSize(token, entry.size))
+		{
+			if (!token.IsRightNumeric())
+				continue;
+			entry.size = token.GetNumber();
+		}
 
 		// Append missing group to ownerGroup
 		if (!token.IsNumeric() && token.IsRightNumeric())
@@ -1441,7 +1482,14 @@ bool CDirectoryListingParser::ParseAsVms(CLine *pLine, CDirentry &entry)
 
 	if (!ParseTime(token, entry))
 	{
-		if (token[0] != '[' && token[0] != '(')
+		int len = token.GetLength();
+		if (token[0] == '[' && token[len] != ']')
+			return false;
+		if (token[0] == '(' && token[len] != ')')
+			return false;
+		if (token[0] != '[' && token[len] == ']')
+			return false;
+		if (token[0] != '(' && token[len] == ')')
 			return false;
 		entry.hasTime = false;
 		index--;
@@ -1704,8 +1752,7 @@ void CDirectoryListingParser::AddData(char *pData, int len)
 					delete m_prevLine;
 					m_prevLine = m_curLine;
 					delete pLine;
-					m_prevLine = 0;
-
+					
 					pLine = GetLine(true);
 					m_curLine = pLine;
 				}
@@ -1900,7 +1947,29 @@ bool CDirectoryListingParser::ParseAsIBM_MVS(CLine *pLine, CDirentry &entry)
 	if (!pLine->GetToken(index++, token))
 		return false;
 	if (!ParseShortDate(token, entry))
-		return false;
+	{
+		// Perhaps of the following type:
+		// TSO004 3390 VSAM FOO.BAR
+		if (token.GetString() != _T("VSAM"))
+			return false;
+
+		if (!pLine->GetToken(index++, token))
+			return false;
+
+		entry.name = token.GetString();
+		if (entry.name.Find(' ') != -1)
+			return false;
+
+		entry.size = -1;
+		entry.dir = false;
+		entry.ownerGroup = _T("");
+		entry.permissions = _T("");
+		entry.hasDate = false;
+		entry.hasTime = false;
+		entry.link = false;
+
+		return true;
+	}
 
 	// ext
 	if (!pLine->GetToken(index++, token))
@@ -1908,15 +1977,24 @@ bool CDirectoryListingParser::ParseAsIBM_MVS(CLine *pLine, CDirentry &entry)
 	if (!token.IsNumeric())
 		return false;
 
+	int prevLen = token.GetLength();
+
 	// used
 	if (!pLine->GetToken(index++, token))
 		return false;
-	if (!token.IsNumeric())
-		return false;
-
-	// recfm
-	if (!pLine->GetToken(index++, token))
-		return false;
+	if (token.IsNumeric())
+	{
+		// recfm
+		if (!pLine->GetToken(index++, token))
+			return false;
+		if (token.IsNumeric())
+			return false;
+	}
+	else
+	{
+		if (prevLen < 6)
+			return false;
+	}
 
 	// lrecl
 	if (!pLine->GetToken(index++, token))
@@ -2023,17 +2101,14 @@ bool CDirectoryListingParser::ParseAsIBM_MVS_PDS(CLine *pLine, CDirentry &entry)
 	return true;
 }
 
-bool CDirectoryListingParser::ParseAsIBM_MVS_PDS_NameOnly(CLine *pLine, CDirentry &entry)
+bool CDirectoryListingParser::ParseAsIBM_MVS_PDS2(CLine *pLine, CDirentry &entry)
 {
 	int index = 0;
 	CToken token;
-	if (!pLine->GetToken(index++, token))
+	if (!pLine->GetToken(index, token))
 		return false;
 
 	entry.name = token.GetString();
-
-	if (pLine->GetToken(index, token))
-		return false;
 
 	entry.dir = false;
 	entry.link = false;
@@ -2042,6 +2117,126 @@ bool CDirectoryListingParser::ParseAsIBM_MVS_PDS_NameOnly(CLine *pLine, CDirentr
 	entry.size = -1;
 	entry.hasDate = false;
 	entry.hasTime = false;
+
+	if (!pLine->GetToken(++index, token))
+		return true;
+
+	entry.size = token.GetNumber(CToken::hex);
+	if (entry.size == -1)
+		return false;
+
+	// Unused hexadecimal token
+	if (!pLine->GetToken(++index, token))
+		return false;
+	if (!token.IsNumeric(CToken::hex))
+		return false;
+
+	// Unused numeric token
+	if (!pLine->GetToken(++index, token))
+		return false;
+	if (!token.IsNumeric())
+		return false;
+	
+	CToken* prevprev = 0;
+	CToken* prev = 0;
+
+	int start = ++index;
+	while (pLine->GetToken(index, token))
+	{
+		index++;
+	}
+	if ((index - start < 2))
+		return false;
+	index--;
+
+	pLine->GetToken(index, token);
+	if (!token.IsNumeric() && (token.GetString() != _T("ANY")))
+		return false;
+
+	pLine->GetToken(index - 1, token);
+	if (!token.IsNumeric() && (token.GetString() != _T("ANY")))
+		return false;
+
+	for (int i = start; i < index - 1; i++)
+	{
+		pLine->GetToken(i, token);
+		int len = token.GetLength();
+		for (int j = 0; j < len; j++)
+			if (token[j] < 'A' || token[j] > 'Z')
+				return false;
+	}
+
+	return true;
+}
+
+bool CDirectoryListingParser::ParseComplexFileSize(CToken& token, wxLongLong& size)
+{
+	if (token.IsNumeric())
+	{
+		size = token.GetNumber();
+		return true;
+	}
+
+	int len = token.GetLength() - 1;
+
+	char last = token[len];
+	if (last == 'B' || last == 'b')
+	{
+		char c = token[len];
+		if (c < '0' || c > '9')
+		{
+			last = token[len];
+			len--;
+		}
+	}
+
+	size = 0;
+
+	int dot = -1;
+	for (int i = 0; i < len; i++)
+	{
+		char c = token[i];
+		if (c >= '0' && c <= '9')
+		{
+			size *= 10;
+			size += c - '0';
+		}
+		else if (c == '.')
+		{
+			if (dot != -1)
+				return false;
+			dot = len - i - 1;
+		}
+		else
+			return false;
+	}
+	switch (last)
+	{
+	case 'k':
+	case 'K':
+		size *= 1000;
+		break;
+	case 'm':
+	case 'M':
+		size *= 1000 * 1000;
+		break;
+	case 'g':
+	case 'G':
+		size *= 1000 * 1000 * 1000;
+		break;
+	case 't':
+	case 'T':
+		size *= 1000 * 1000;
+		size *= 1000 * 1000;
+		break;
+	case 'b':
+	case 'B':
+		break;
+	default:
+		return false;
+	}
+	while (dot-- > 0)
+		size /= 10;
 
 	return true;
 }

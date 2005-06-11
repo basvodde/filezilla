@@ -26,12 +26,15 @@ protected:
 	bool ParseAsWfFtp(CLine *pLine, CDirentry &entry);
 	bool ParseAsIBM_MVS(CLine *pLine, CDirentry &entry);
 	bool ParseAsIBM_MVS_PDS(CLine *pLine, CDirentry &entry);
-	bool ParseAsIBM_MVS_PDS_NameOnly(CLine *pLine, CDirentry &entry);
+	bool ParseAsIBM_MVS_PDS2(CLine *pLine, CDirentry &entry);
 
 	// Date / time parsers
 	bool ParseUnixDateTime(CLine *pLine, int &index, CDirentry &entry);
 	bool ParseShortDate(CToken &token, CDirentry &entry);
 	bool ParseTime(CToken &token, CDirentry &entry);
+
+	// Parse file sizes given like this: 123.4M
+	bool ParseComplexFileSize(CToken& token, wxLongLong& size);
 
 	CFileZillaEngine *m_pEngine;
 
