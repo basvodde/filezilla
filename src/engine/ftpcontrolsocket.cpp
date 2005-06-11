@@ -73,7 +73,7 @@ public:
 	bool gotPassword;
 };
 
-CFtpControlSocket::CFtpControlSocket(CFileZillaEngine *pEngine) : CControlSocket(pEngine)
+CFtpControlSocket::CFtpControlSocket(CFileZillaEnginePrivate *pEngine) : CControlSocket(pEngine)
 {
 	m_ReceiveBuffer.Alloc(2000);
 

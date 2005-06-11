@@ -1,9 +1,6 @@
 #ifndef __CONTROLSOCKET_H__
 #define __CONTROLSOCKET_H__
 
-#define OPERATION_NONE
-#define OPERATION_
-
 class COpData
 {
 public:
@@ -18,11 +15,13 @@ public:
 	COpData *pNextOpData;
 };
 
+#include "logging_private.h"
+
 class CTransferStatus;
 class CControlSocket : protected wxEvtHandler, public wxSocketClient, public CLogging
 {
 public:
-	CControlSocket(CFileZillaEngine *pEngine);
+	CControlSocket(CFileZillaEnginePrivate *pEngine);
 	virtual ~CControlSocket();
 
 	virtual int Connect(const CServer &server);
@@ -74,7 +73,7 @@ protected:
 
 	COpData *m_pCurOpData;
 	int m_nOpState;
-	CFileZillaEngine *m_pEngine;
+	CFileZillaEnginePrivate *m_pEngine;
 	CServer *m_pCurrentServer;
 
 	CServerPath m_CurrentPath;

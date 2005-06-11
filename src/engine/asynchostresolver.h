@@ -5,12 +5,12 @@ class CControlSocket;
 class CAsyncHostResolver : public wxThread
 {
 public:
-	CAsyncHostResolver(CFileZillaEngine *pOwner, wxString hostname);
+	CAsyncHostResolver(CFileZillaEnginePrivate *pOwner, wxString hostname);
 	virtual ~CAsyncHostResolver();
 
 	wxIPV4address m_Address;
 	
-	CFileZillaEngine *m_pOwner;
+	CFileZillaEnginePrivate *m_pOwner;
 
 	void SetObsolete();
 

@@ -4,13 +4,13 @@
 class CLogging
 {
 public:
-	CLogging(CFileZillaEngine *pEngine);
+	CLogging(CFileZillaEnginePrivate *pEngine);
 
 	void LogMessage(MessageType nMessageType, const wxChar *msgFormat, ...) const;
 	void LogMessage(wxString sourceFile, int nSourceLine, void *pInstance, MessageType nMessageType, const wxChar *msgFormat, ...) const;
 
 private:
-	CFileZillaEngine *m_pEngine;
+	CFileZillaEnginePrivate *m_pEngine;
 };
 
 #endif

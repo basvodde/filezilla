@@ -12,7 +12,7 @@ END_EVENT_TABLE();
 
 #define BUFFERSIZE 65535
 
-CTransferSocket::CTransferSocket(CFileZillaEngine *pEngine, CFtpControlSocket *pControlSocket, enum TransferMode transferMode)
+CTransferSocket::CTransferSocket(CFileZillaEnginePrivate *pEngine, CFtpControlSocket *pControlSocket, enum TransferMode transferMode)
 {
 	m_pEngine = pEngine;
 	m_pControlSocket = pControlSocket;

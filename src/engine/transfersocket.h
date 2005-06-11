@@ -1,7 +1,7 @@
 #ifndef __TRANSFERSOCKET_H__
 #define __TRANSFERSOCKET_H__
 
-class CFileZillaEngine;
+class CFileZillaEnginePrivate;
 class CFtpControlSocket;
 class CDirectoryListingParser;
 
@@ -15,7 +15,7 @@ enum TransferMode
 class CTransferSocket : public wxEvtHandler
 {
 public:
-	CTransferSocket(CFileZillaEngine *pEngine, CFtpControlSocket *pControlSocket, enum TransferMode transferMode);
+	CTransferSocket(CFileZillaEnginePrivate *pEngine, CFtpControlSocket *pControlSocket, enum TransferMode transferMode);
 	virtual ~CTransferSocket();
 
 	wxString SetupActiveTransfer();
@@ -47,7 +47,7 @@ protected:
 	wxSocketClient *m_pSocketClient;
 	wxSocketServer *m_pSocketServer;
 
-	CFileZillaEngine *m_pEngine;
+	CFileZillaEnginePrivate *m_pEngine;
 	CFtpControlSocket *m_pControlSocket;
 
 	bool m_bActive;

@@ -27,7 +27,7 @@ COpData::~COpData()
 	delete [] pNextOpData;
 }
 
-CControlSocket::CControlSocket(CFileZillaEngine *pEngine)
+CControlSocket::CControlSocket(CFileZillaEnginePrivate *pEngine)
 	: wxSocketClient(wxSOCKET_NOWAIT), CLogging(pEngine)
 {
 	m_pEngine = pEngine;
@@ -108,10 +108,8 @@ int CControlSocket::Connect(const CServer &server)
 	LogMessage(Status, _("Connecting to %s:%d..."), server.GetHost().c_str(), server.GetPort());
 
 	CAsyncHostResolver *resolver = new CAsyncHostResolver(m_pEngine, ConvertDomainName(server.GetHost()));
-	if (!m_pEngine->m_HostResolverThreads.empty())
-		m_pEngine->m_HostResolverThreads.front()->SetObsolete();
-	
-	m_pEngine->m_HostResolverThreads.push_front(resolver);
+	m_pEngine->AddNewAsyncHostResolver(resolver);
+
 	resolver->Create();
 	resolver->Run();
 
@@ -255,7 +253,7 @@ int CControlSocket::DoClose(int nErrorCode /*=FZ_REPLY_DISCONNECTED*/)
 	
 	m_onConnectCalled = false;
 
-	m_pEngine->m_lastListDir.Clear();
+	SendDirectoryListing(0);
 
 	return nErrorCode;
 }
@@ -406,10 +404,5 @@ const CServer* CControlSocket::GetCurrentServer() const
 
 void CControlSocket::SendDirectoryListing(CDirectoryListing* pListing)
 {
-	wxASSERT(pListing);
-
-	m_pEngine->m_lastListDir = pListing->path;
-	m_pEngine->m_lastListTime = CTimeEx::Now();
-	CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing);
-	m_pEngine->AddNotification(pNotification);
+	m_pEngine->SendDirectoryListing(pListing);
 }

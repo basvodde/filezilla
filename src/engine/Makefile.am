@@ -11,12 +11,13 @@ INCLUDES = -I$(srcdir)/../include
 # lib_LIBRARIES = libengine.a
 libengine_a_SOURCES = asynchostresolver.cpp commands.cpp ControlSocket.cpp \
 		directorycache.cpp directorylisting.cpp directorylistingparser.cpp \
+		engineprivate.cpp \
 		FileZillaEngine.cpp ftpcontrolsocket.cpp logging.cpp \
 		notification.cpp server.cpp serverpath.cpp timeex.cpp \
 		transfersocket.cpp
 
 noinst_HEADERS = asynchostresolver.h ControlSocket.h directorycache.h \
-		directorylistingparser.h engine_private.h ftpcontrolsocket.h \
+		directorylistingparser.h ftpcontrolsocket.h \
 		logging_private.h transfersocket.h
 
 dist_noinst_DATA = engine.vcproj

@@ -6,7 +6,7 @@ class CToken;
 class CDirectoryListingParser
 {
 public:
-	CDirectoryListingParser(CFileZillaEngine *pEngine, enum ServerType serverType);
+	CDirectoryListingParser(CFileZillaEnginePrivate *pEngine, enum ServerType serverType);
 	~CDirectoryListingParser();
 
 	CDirectoryListing* Parse(const CServerPath &path);
@@ -36,7 +36,7 @@ protected:
 	// Parse file sizes given like this: 123.4M
 	bool ParseComplexFileSize(CToken& token, wxLongLong& size);
 
-	CFileZillaEngine *m_pEngine;
+	CFileZillaEnginePrivate *m_pEngine;
 
 	std::map<wxString, int> m_MonthNamesMap;
 

@@ -2,7 +2,7 @@
 #include "asynchostresolver.h"
 #include "engine_private.h"
 
-CAsyncHostResolver::CAsyncHostResolver(CFileZillaEngine *pOwner, wxString hostname) : wxThread(wxTHREAD_JOINABLE)
+CAsyncHostResolver::CAsyncHostResolver(CFileZillaEnginePrivate *pOwner, wxString hostname) : wxThread(wxTHREAD_JOINABLE)
 {
 	m_bObsolete = false;
 	m_pOwner = pOwner;

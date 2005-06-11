@@ -1,7 +1,7 @@
 #include "FileZilla.h"
 #include "logging_private.h"
 
-CLogging::CLogging(CFileZillaEngine *pEngine)
+CLogging::CLogging(CFileZillaEnginePrivate *pEngine)
 {
 	m_pEngine = pEngine;
 }

@@ -551,7 +551,7 @@ protected:
 	int m_len;
 };
 
-CDirectoryListingParser::CDirectoryListingParser(CFileZillaEngine *pEngine, enum ServerType serverType)
+CDirectoryListingParser::CDirectoryListingParser(CFileZillaEnginePrivate *pEngine, enum ServerType serverType)
 	: m_pEngine(pEngine), m_serverType(serverType)
 {
 	startOffset = 0;
