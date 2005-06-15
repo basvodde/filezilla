@@ -1,6 +1,5 @@
 #include "FileZilla.h"
 #include "asynchostresolver.h"
-#include "engine_private.h"
 
 CAsyncHostResolver::CAsyncHostResolver(CFileZillaEnginePrivate *pOwner, wxString hostname) : wxThread(wxTHREAD_JOINABLE)
 {
