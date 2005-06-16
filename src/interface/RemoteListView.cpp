@@ -214,22 +214,28 @@ void CRemoteListView::SetDirectoryListing(CDirectoryListing *pDirectoryListing, 
 	m_fileData.clear();
 	m_indexMapping.clear();
 
-	t_fileData data;
-	data.icon = -2;
-	data.pDirEntry = 0;
-	m_fileData.push_back(data);
-	m_indexMapping.push_back(0);
-
-	for (unsigned int i = 0; i < m_pDirectoryListing->m_entryCount; i++)
+	if (m_pDirectoryListing)
 	{
 		t_fileData data;
 		data.icon = -2;
-		data.pDirEntry = &m_pDirectoryListing->m_pEntries[i];
+		data.pDirEntry = 0;
 		m_fileData.push_back(data);
-		m_indexMapping.push_back(i + 1);
+		m_indexMapping.push_back(0);
+
+		for (unsigned int i = 0; i < m_pDirectoryListing->m_entryCount; i++)
+		{
+			t_fileData data;
+			data.icon = -2;
+			data.pDirEntry = &m_pDirectoryListing->m_pEntries[i];
+			m_fileData.push_back(data);
+			m_indexMapping.push_back(i + 1);
+		}
 	}
+	else
+		StopRecursiveOperation();
 
 	SetItemCount(m_fileData.size());
+	Refresh();
 
 	SortList();
 
