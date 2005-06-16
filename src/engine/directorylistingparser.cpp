@@ -837,7 +837,7 @@ bool CDirectoryListingParser::ParseLine(CLine *pLine, const enum ServerType serv
 	if (!res)
 #ifndef LISTDEBUG
 		if (serverType == MVS)
-#endif LISTDEBUG
+#endif //LISTDEBUG
 			res = ParseAsIBM_MVS_PDS2(pLine, entry);
 
 	if (res)
@@ -2137,9 +2137,6 @@ bool CDirectoryListingParser::ParseAsIBM_MVS_PDS2(CLine *pLine, CDirentry &entry
 	if (!token.IsNumeric())
 		return false;
 	
-	CToken* prevprev = 0;
-	CToken* prev = 0;
-
 	int start = ++index;
 	while (pLine->GetToken(index, token))
 	{

@@ -3,7 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "FileZilla.h"
-#include "controlsocket.h"
+#include "ControlSocket.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

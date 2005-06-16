@@ -1,6 +1,6 @@
 # these are the headers for your project
 
-CLEANFILES = filezilla.h.gch
+CLEANFILES = FileZilla.h.gch
 
 noinst_HEADERS = commands.h directorylisting.h engineprivate.h FileZilla.h \
 		 FileZillaEngine.h \
