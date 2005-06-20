@@ -24,7 +24,7 @@ if USE_BINRELOC
 filezilla_SOURCES += prefix.cpp
 endif
 
-noinst_HEADERS = aboutdialog.h asyncrequestqueue.h chmoddialog.h \ 
+noinst_HEADERS = aboutdialog.h asyncrequestqueue.h chmoddialog.h \
 		 commandqueue.h dialogex.h fileexistsdlg.h \
 		 filezillaapp.h inputdialog.h ipcmutex.h led.h \
 		 LocalListView.h LocalTreeView.h Mainfrm.h Options.h \
