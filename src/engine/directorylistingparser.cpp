@@ -1074,7 +1074,7 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 		// Some servers use times only for files nweer than 6 months,
 		int year = wxDateTime::Now().GetYear();
 		int now = wxDateTime::Now().GetDay() + 31 * wxDateTime::Now().GetMonth();
-		int file = entry.date.month * 31 + entry.date.day;
+		int file = (entry.date.month - 1) * 31 + (entry.date.day - 1);
 		if (now > file)
 			entry.date.year = year;
 		else
