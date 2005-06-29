@@ -2,6 +2,7 @@
 #include "asynchostresolver.h"
 #include "ControlSocket.h"
 #include "ftpcontrolsocket.h"
+#include "sftpcontrolsocket.h"
 #include "directorycache.h"
 
 class wxFzEngineEvent : public wxEvent
@@ -20,7 +21,7 @@ typedef void (wxEvtHandler::*fzEngineEventFunction)(wxFzEngineEvent&);
 #define EVT_FZ_ENGINE_NOTIFICATION(id, fn) \
     DECLARE_EVENT_TABLE_ENTRY( \
         fzEVT_ENGINE_NOTIFICATION, id, -1, \
-        (wxObjectEventFunction)(fzEngineEventFunction) wxStaticCastEvent( fzEngineEventFunction, &fn ), \
+        (wxObjectEventFunction)(wxEventFunction) wxStaticCastEvent( fzEngineEventFunction, &fn ), \
         (wxObject *) NULL \
     ),
 
@@ -28,7 +29,7 @@ std::list<CFileZillaEnginePrivate*> CFileZillaEnginePrivate::m_engineList;
 int CFileZillaEnginePrivate::m_activeStatusSend = 0;
 int CFileZillaEnginePrivate::m_activeStatusRecv = 0;
 
-const wxEventType fzEVT_ENGINE_NOTIFICATION = wxNewEventType();
+DEFINE_EVENT_TYPE(fzEVT_ENGINE_NOTIFICATION);
 
 wxFzEngineEvent::wxFzEngineEvent(int id, enum EngineNotificationType eventType, int data /*=0*/) : wxEvent(id, fzEVT_ENGINE_NOTIFICATION)
 {
@@ -156,7 +157,7 @@ bool CFileZillaEnginePrivate::IsConnected() const
 	if (!m_pControlSocket)
 		return false;
 
-	return m_pControlSocket->IsConnected();
+	return m_pControlSocket->Connected();
 }
 
 const CCommand *CFileZillaEnginePrivate::GetCurrentCommand() const
@@ -302,6 +303,11 @@ int CFileZillaEnginePrivate::Connect(const CConnectCommand &command)
 	case FTP:
 		m_pControlSocket = new CFtpControlSocket(this);
 		break;
+	case SFTP:
+		m_pControlSocket = new CSftpControlSocket(this);
+		break;
+	default:
+		return FZ_REPLY_SYNTAXERROR;
 	}
 
 	int res = m_pControlSocket->Connect(command.GetServer());

@@ -17,6 +17,7 @@ fi
 for i in $FILES; do
   if [ -f $i ]; then
     for j in $PNGCRUSH_WNDSIZES; do
+      echo -n "."
       $PNGCRUSH -w $j $PNGCRUSH_OPTIONS $i $i~ | grep -v 'IDAT length with method' | grep -v '^ |' | grep -v '^$' | grep -v 'CPU time used' | grep -v 'seconds)' | grep -v ' version: ' | grep -v 'versions are different' > pngcrush.log || die
       if ! cat pngcrush.log | grep '\(no change\)' > /dev/null; then
         cat pngcrush.log

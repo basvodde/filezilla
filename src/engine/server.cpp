@@ -24,9 +24,11 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 			protocol = protocol.Mid(3);
 		if (protocol == _T("ftp"))
 			m_protocol = FTP;
+		else if (protocol == _T("sftp"))
+			m_protocol = SFTP;
 		else
 		{
-			error = _("Invalid protocol specified. Only valid protocol is ftp:// at the moment.");
+			error = _("Invalid protocol specified. Valid protocols are ftp and sftp:// at the moment.");
 			return false;
 		}
 	}
@@ -91,10 +93,16 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 	{
 		if (!port)
 		{
-			if (m_protocol == FTP)
+			switch (m_protocol)
+			{
+			case FTP:
+			default:
 				port = 21;
-			else
-				port = 21;
+				break;
+			case SFTP:
+				port = 22;
+				break;
+			}
 		}
 		else if (port > 65535)
 		{

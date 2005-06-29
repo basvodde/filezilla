@@ -1807,8 +1807,8 @@ int CFtpControlSocket::CheckOverwriteFile()
 				{
 					if (listing.m_pEntries[i].hasDate)
 					{
-						pNotification->remoteTime.Set(listing.m_pEntries[i].date.day, (enum wxDateTime::Month)listing.m_pEntries[i].date.month, listing.m_pEntries[i].date.year);
-						if (pNotification->remoteTime.IsValid() && listing.m_pEntries[i].hasTime)
+						if (VerifySetDate(pNotification->remoteTime, listing.m_pEntries[i].date.year, (enum wxDateTime::Month)(listing.m_pEntries[i].date.month - 1), listing.m_pEntries[i].date.day) && 
+							listing.m_pEntries[i].hasTime)
 						{
 							pNotification->remoteTime.SetHour(listing.m_pEntries[i].time.hour);
 							pNotification->remoteTime.SetMinute(listing.m_pEntries[i].time.minute);

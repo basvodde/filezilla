@@ -18,7 +18,7 @@ public:
 #include "logging_private.h"
 
 class CTransferStatus;
-class CControlSocket : protected wxEvtHandler, public wxSocketClient, public CLogging
+class CControlSocket : public wxEvtHandler, public wxSocketClient, public CLogging
 {
 public:
 	CControlSocket(CFileZillaEnginePrivate *pEngine);
@@ -38,6 +38,7 @@ public:
 	virtual int Mkdir(const CServerPath& path, CServerPath start = CServerPath()) = 0;
 	virtual int Rename(const CRenameCommand& command) = 0;
 	virtual int Chmod(const CChmodCommand& command) = 0;
+	virtual bool Connected() const { return IsConnected(); }
 
 	enum Command GetCurrentCommandId() const;
 

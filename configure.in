@@ -12,8 +12,10 @@ AC_PROG_LIBTOOL
 
 AC_CACHE_SAVE
 
-CFLAGS="$CFLAGS -Wall -g -fexceptions"
-CXXFLAGS="$CXXFLAGS -Wall -g -fexceptions"
+if test "X$GCC" = Xyes; then
+  CFLAGS="$CFLAGS -Wall -g -fexceptions"
+  CXXFLAGS="$CXXFLAGS -Wall -g -fexceptions"
+fi
 
 # Add build information to config.h
 # ---------------------------------
@@ -59,6 +61,27 @@ CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
 CXXFLAGS="$CXXFLAGS $WX_CXXFLAGS_ONLY"
 CFLAGS="$CFLAGS $WX_CFLAGS_ONLY"
 LIBS="$LIBS $WX_LIBS"
+
+# Get OS type for PUTTY frontend
+# ------------------------------
+
+AC_MSG_CHECKING([system type for sftp stub])
+sftpbuild="unix"
+if echo $host_os | grep "mingw" > /dev/null 2>&1; then sftpbuild="mingw"; fi
+AM_CONDITIONAL(SFTP_MINGW, [test "$sftpbuild" = "mingw"])
+AM_CONDITIONAL(SFTP_UNIX, [test "$sftpbuild" = "unix"])
+AC_MSG_RESULT([$sftpbuild])
+
+# Checks for PuTTY
+# ----------------
+
+AC_CHECK_HEADERS([utmpx.h],,,[
+#include <sys/types.h>
+#include <utmp.h>])
+
+AC_SEARCH_LIBS([socket], [xnet])
+
+AC_CHECK_FUNCS([getaddrinfo ptsname setresuid strsignal])
 
 # Check for windres on MinGW builds
 # ---------------------------------
@@ -198,9 +221,37 @@ AM_CONDITIONAL(USE_BINRELOC, test $use_binreloc = yes)
 # Precompiled headers support
 # ---------------------------
 
+AC_MSG_CHECKING([whether to use precompiled headers])
+use_precomp=""
 AC_ARG_ENABLE(precomp, [  --enable-precomp        Use precompiled headers], \
 		use_precomp="$enableval")
+if test -z "$use_precomp"; then
+  if test "X$GCC" = Xyes; then
+    if gcc_version=`$CC -dumpversion` > /dev/null 2>&1; then
+      major=`echo $gcc_version | cut -d. -f1`
+      minor=`echo $gcc_version | sed "s/@<:@-,a-z,A-Z@:>@.*//" | cut -d. -f2`
+      if test -z "$major" || test -z "$minor"; then
+        use_precomp=no
+      elif test "$major" -ge 4; then
+        use_precomp=yes
+      elif test "$major" -ge 3 && test "$minor" -ge 4; then
+        use_precomp=yes
+      else
+        use_precomp=no
+      fi
+    else
+      use_precomp=no
+    fi
+  else
+    use_precomp=no
+  fi
+fi
 AM_CONDITIONAL(ENABLE_PRECOMP, test "x$use_precomp" = "xyes")
+if test "x$use_precomp" = "xyes"; then
+  AC_MSG_RESULT([yes])
+else
+  AC_MSG_RESULT([no])
+fi
 
 AC_SUBST(WX_LIBS)
 AC_SUBST(CATALOGS_TO_INSTALL)
@@ -213,5 +264,6 @@ src/interface/Makefile src/interface/resources/Makefile src/include/Makefile
 locales/Makefile src/interface/resources/16x16/Makefile
 src/interface/resources/32x32/Makefile data/Makefile
 src/interface/resources/cyril/Makefile
-src/interface/resources/cyril/16x16/Makefile)
+src/interface/resources/cyril/16x16/Makefile
+src/putty/Makefile src/putty/unix/Makefile src/putty/windows/Makefile)
 AC_OUTPUT

@@ -4,7 +4,7 @@ CLEANFILES = FileZilla.h.gch
 
 noinst_HEADERS = commands.h directorylisting.h engineprivate.h FileZilla.h \
 		 FileZillaEngine.h \
-		 logging.h notification.h optionsbase.h server.h \
+		 logging.h misc.h notification.h optionsbase.h server.h \
 		 serverpath.h setup.h timeex.h
 
 if ENABLE_PRECOMP
