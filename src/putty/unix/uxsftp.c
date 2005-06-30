@@ -500,8 +500,8 @@ char *ssh_sftp_get_cmdline(char *prompt, int no_fds_ok)
     char *buf;
     int buflen, bufsize, ret;
 
-    fputs(prompt, stdout);
-    fflush(stdout);
+    //fputs(prompt, stdout);
+    //fflush(stdout);
 
     buf = NULL;
     buflen = bufsize = 0;
