@@ -1,6 +1,6 @@
 noinst_LIBRARIES = libfzsftp_ux.a
 
-INCLUDES = -I$(srcdir)/..
+INCLUDES = -I$(srcdir)/.. -I../../include
 
 libfzsftp_ux_a_SOURCES = uxsftp.c uxcons.c \
 			 uxnoise.c uxagentc.c \

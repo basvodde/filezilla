@@ -26,7 +26,7 @@ if USE_RESOURCEFILE
   RESOURCEFILE = windows/pscp.o
 endif
 
-INCLUDES = -I$(srcdir)/$(FRONTEND)
+INCLUDES = -I$(srcdir)/$(FRONTEND) -I../../config.h
 
 if SFTP_UNIX
   fzsftp_SOURCES += time.c

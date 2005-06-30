@@ -131,7 +131,7 @@ int CSftpControlSocket::Connect(const CServer &server)
 	m_pProcess = new wxProcess(this);
 	m_pProcess->Redirect();
 
-	m_pid = wxExecute(_T("psftp -v"), wxEXEC_ASYNC, m_pProcess);
+	m_pid = wxExecute(_T("fzsftp -v"), wxEXEC_ASYNC, m_pProcess);
 	wxASSERT(m_pid);
 
 	m_pInputThread = new CSftpInputThread(this, m_pProcess);

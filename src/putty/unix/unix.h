@@ -2,7 +2,7 @@
 #define PUTTY_UNIX_H
 
 #ifdef HAVE_CONFIG_H
-# include "../../include/config.h" /* Space to hide it from mkfiles.pl */
+# include "config.h" /* Space to hide it from mkfiles.pl */
 #endif
 
 #ifndef HAVE_GETADDRINFO
@@ -22,7 +22,7 @@
 #endif
 
 #include <stdio.h>		       /* for FILENAME_MAX */
-#include "charset.h"
+//#include "charset.h"
 
 struct Filename {
     char path[FILENAME_MAX];
