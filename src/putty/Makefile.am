@@ -19,8 +19,6 @@ fzsftp_SOURCES = ssh.c sshcrc.c sshdes.c sshmd5.c sshrsa.c sshrand.c \
 		 timing.c misc.c version.c settings.c tree234.c proxy.c \
 		 fzsftp.c
 
-fzsftp_DEPENDENCIES = putty.h.gch
-
 noinst_HEADERS = fzsftp.h int64.h misc.h network.h proxy.h psftp.h putty.h \
 		 puttymem.h puttyps.h sftp.h ssh.h storage.h tree234.h
 
