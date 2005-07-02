@@ -26,7 +26,7 @@ bool CChmodDialog::Create(wxWindow* parent, int fileCount, int dirCount,
 	{
 		if (fileCount == 1)
 		{
-			title = wxString::Format(_("Plase select the new attributes for the file \"%s\"."), name.c_str());
+			title = wxString::Format(_("Please select the new attributes for the file \"%s\"."), name.c_str());
 		}
 		else
 			title = _("Please select the new attributes for the selected files.");
@@ -37,7 +37,7 @@ bool CChmodDialog::Create(wxWindow* parent, int fileCount, int dirCount,
 		{
 			if (dirCount == 1)
 			{
-				title = wxString::Format(_("Plase select the new attributes for the directory \"%s\"."), name.c_str());
+				title = wxString::Format(_("Please select the new attributes for the directory \"%s\"."), name.c_str());
 			}
 			else
 				title = _("Please select the new attributes for the selected directories.");
