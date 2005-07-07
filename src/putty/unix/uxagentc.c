@@ -10,7 +10,7 @@
 #include <sys/un.h>
 
 #include "putty.h"
-#include "misc.h"
+#include "../misc.h"
 #include "tree234.h"
 #include "puttymem.h"
 
