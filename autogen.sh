@@ -129,11 +129,11 @@ checkTools()
 
 	echo "$N. Checking required tools... "
 
-	echo -n "$N.1 "; version_check automake 1 7 0 1
+	echo -n "$N.1 "; version_check automake 1 8 0 1
 	if [ x$? = x2 ]; then
-		WANT_AUTOMAKE=1.7
+		WANT_AUTOMAKE=1.8
 		export WANT_AUTOMAKE
-		version_check automake 1 7 0 2
+		version_check automake 1 8 0 2
 	fi
 
 	echo -n "$N.2 "; version_check aclocal
