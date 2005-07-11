@@ -98,6 +98,8 @@ bool CFileZillaEngine::IsConnected() const
 
 CNotification* CFileZillaEngine::GetNextNotification()
 {
+	wxCriticalSectionLocker lock(m_lock);
+
 	if (!m_maySendNotificationEvent)
 	{
 		m_maySendNotificationEvent = true;
@@ -130,8 +132,14 @@ bool CFileZillaEngine::SetAsyncRequestReply(CAsyncRequestNotification *pNotifica
 		return false;
 	if (!IsBusy())
 		return false;
+
+	m_lock.Enter();
 	if (pNotification->requestNumber != m_asyncRequestCounter)
+	{
+		m_lock.Leave();
 		return false;
+	}
+	m_lock.Leave();
 
 	if (!m_pControlSocket)
 		return false;
@@ -139,6 +147,17 @@ bool CFileZillaEngine::SetAsyncRequestReply(CAsyncRequestNotification *pNotifica
 	m_pControlSocket->SetAsyncRequestReply(pNotification);
 
 	return true;
+}
+
+bool CFileZillaEngine::IsPendingAsyncRequestReply(const CAsyncRequestNotification *pNotification)
+{
+	if (!pNotification)
+		return false;
+	if (!IsBusy())
+		return false;
+
+	wxCriticalSectionLocker lock(m_lock);
+	return pNotification->requestNumber == m_asyncRequestCounter;
 }
 
 bool CFileZillaEngine::IsActive(bool recv)

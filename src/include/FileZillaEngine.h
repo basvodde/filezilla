@@ -43,6 +43,7 @@ public:
 	enum Command GetCurrentCommandId() const;
 
 	// Sets the reply to an async request, e.g. a file exists request.
+	bool IsPendingAsyncRequestReply(const CAsyncRequestNotification *pNotification);
 	bool SetAsyncRequestReply(CAsyncRequestNotification *pNotification);
 	
 	// Get a progress update about the current transfer. changed will be set

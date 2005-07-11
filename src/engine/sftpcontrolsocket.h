@@ -4,9 +4,9 @@
 #include "ControlSocket.h"
 #include <wx/process.h>
 
-enum sftpEventTypes
+typedef enum
 {
-	sftpReply = 0,
+    sftpReply = 0,
     sftpDone,
     sftpError,
     sftpVerbose,
@@ -14,25 +14,35 @@ enum sftpEventTypes
     sftpRecv,
     sftpSend,
     sftpClose,
+    sftpRequest,
     sftpUnknown
+} sftpEventTypes;
+
+enum sftpRequestTypes
+{
+    sftpReqPassword,
+    sftpReqHostkey,
+    sftpReqHostkeyChanged,
+    sftpReqUnknown
 };
 
 class CSftpEvent : public wxEvent
 {
 public:
 	CSftpEvent(sftpEventTypes type, const wxString& text);
+	CSftpEvent(sftpRequestTypes reqType, const wxString& text1, const wxString& text2 = _T(""), const wxString& text3 = _T(""), const wxString& text4 = _T(""));
 	virtual ~CSftpEvent() {}
 
 	virtual wxEvent* Clone() const
 	{
-		return new CSftpEvent(m_type, m_text);
+		return new CSftpEvent(m_type, m_text[0]);
 	}
 
 	sftpEventTypes GetType() const { return m_type; }
-	wxString GetText() const { return m_text; }
+	wxString GetText(int index = 0) const { return m_text[index]; }
 
 protected:
-	wxString m_text;
+	wxString m_text[4];
 	sftpEventTypes m_type;
 };
 
@@ -60,7 +70,9 @@ public:
 
 	virtual void TransferEnd(int reason) { }
 
-	virtual bool SetAsyncRequestReply(CAsyncRequestNotification *pNotification) { return false; }
+	virtual bool SetAsyncRequestReply(CAsyncRequestNotification *pNotification);
+
+	bool SendRequest(CAsyncRequestNotification *pNotification);
 
 protected:
 	bool Send(const char* str);

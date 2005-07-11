@@ -145,3 +145,32 @@ const CTransferStatus* CTransferStatusNotification::GetStatus() const
 {
 	return m_pStatus;
 }
+
+CHostKeyNotification::CHostKeyNotification(wxString host, int port, wxString fingerprint, bool changed /*=false*/)
+	: m_host(host), m_port(port), m_fingerprint(fingerprint), m_changed(changed), m_trust(false), m_alwaysTrust(false)
+{
+}
+
+CHostKeyNotification::~CHostKeyNotification()
+{
+}
+
+enum RequestId CHostKeyNotification::GetRequestID() const
+{
+	return m_changed ? reqId_hostkeyChanged : reqId_hostkey;
+}
+
+wxString CHostKeyNotification::GetHost() const
+{
+	return m_host;
+}
+
+int CHostKeyNotification::GetPort() const
+{
+	return m_port;
+}
+
+wxString CHostKeyNotification::GetFingerprint() const
+{
+	return m_fingerprint;
+}

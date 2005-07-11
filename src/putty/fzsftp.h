@@ -8,14 +8,19 @@ typedef enum
     sftpRecv,
     sftpSend,
     sftpClose,
+    sftpRequest,
     sftpUnknown
 } sftpEventTypes;
 
-enum sftpCommands
+enum sftpRequestTypes
 {
-    sftpConnect // Parameters: strhost, port, struser, strpass 
+    sftpReqPassword,
+    sftpReqHostkey,
+    sftpReqHostkeyChanged,
+    sftpReqUnknown
 };
 
 int fznotify(sftpEventTypes type);
 int fzprintf(sftpEventTypes type, const char* p, ...);
+int fzprintf_raw(sftpEventTypes type, const char* p, ...);
 int fznotify1(sftpEventTypes type, int data);

@@ -29,6 +29,13 @@ void CAsyncRequestQueue::ProcessNextRequest()
 	while (!m_requestList.empty())
 	{
 		t_queueEntry &entry = m_requestList.front();
+
+		if (!entry.pEngine->IsPendingAsyncRequestReply(entry.pNotification))
+		{
+			delete entry.pNotification;
+			m_requestList.pop_front();
+			continue;
+		}
 		
 		if (entry.pNotification->GetRequestID() == reqId_fileexists)
 		{
@@ -124,6 +131,36 @@ void CAsyncRequestQueue::ProcessNextRequest()
 			entry.pEngine->SetAsyncRequestReply(pNotification);
 			delete pNotification;
 		}
+		else if (entry.pNotification->GetRequestID() == reqId_hostkey || entry.pNotification->GetRequestID() == reqId_hostkeyChanged)
+		{
+			CHostKeyNotification *pNotification = reinterpret_cast<CHostKeyNotification *>(entry.pNotification);
+
+			wxDialogEx* pDlg = new wxDialogEx;
+			if (pNotification->GetRequestID() == reqId_hostkey)
+				pDlg->Load(m_pMainFrame, _T("ID_HOSTKEY"));
+			else
+				pDlg->Load(m_pMainFrame, _T("ID_HOSTKEYCHANGED"));
+
+			pDlg->WrapText(XRCID("ID_DESC"), 400);
+
+			pDlg->SetLabel(XRCID("ID_HOST"), wxString::Format(_T("%s:%d"), pNotification->GetHost().c_str(), pNotification->GetPort()));
+			pDlg->SetLabel(XRCID("ID_FINGERPRINT"), pNotification->GetFingerprint());
+
+			pDlg->GetSizer()->Fit(pDlg);
+			pDlg->GetSizer()->SetSizeHints(pDlg);
+
+			int res = pDlg->ShowModal();
+
+			if (res == wxID_OK)
+			{
+				pNotification->m_trust = true;
+				pNotification->m_alwaysTrust = XRCCTRL(*pDlg, "ID_ALWAYS", wxCheckBox)->GetValue();
+			}
+			
+			entry.pEngine->SetAsyncRequestReply(pNotification);
+			delete pNotification;
+		}
+		
 
 		m_requestList.pop_front();
 	}

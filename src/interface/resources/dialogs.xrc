@@ -19,8 +19,7 @@
                 <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP|wxADJUST_MINSIZE</flag>
                 <border>5</border>
                 <object class="wxStaticText" name="wxID_STATIC">
-                  <label>The target file already exists.
-Would you like to replace the file</label>
+                  <label>The target file already exists.\nWould you like to replace the file</label>
                 </object>
               </object>
               <object class="sizeritem">
@@ -1606,6 +1605,217 @@ Would you like to replace the file</label>
         </object>
         <flag>wxALL|wxALIGN_CENTRE_HORIZONTAL</flag>
         <border>5</border>
+      </object>
+    </object>
+  </object>
+  <object class="wxDialog" name="ID_HOSTKEY">
+    <title>Unknown host key</title>
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <object class="wxStaticBitmap">
+              <bitmap stock_id="wxART_INFORMATION"></bitmap>
+            </object>
+            <flag>wxALL</flag>
+            <border>7</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxVERTICAL</orient>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="ID_DESC">
+                  <label>The server's host key is not cached in the registry. You have no guarantee that the server is the computer you think it is.</label>
+                </object>
+                <flag>wxALL</flag>
+                <border>5</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticBoxSizer">
+                  <label>Details</label>
+                  <orient>wxVERTICAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxFlexGridSizer">
+                      <cols>2</cols>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>Host:</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText" name="ID_HOST">
+                          <label>&lt;Host:port&gt;</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>Fingerprint:</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText" name="ID_FINGERPRINT">
+                          <label>&lt;fingerprint&gt;</label>
+                        </object>
+                      </object>
+                      <vgap>2</vgap>
+                      <hgap>2</hgap>
+                    </object>
+                    <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxGROW</flag>
+                    <border>5</border>
+                  </object>
+                </object>
+                <flag>wxLEFT|wxRIGHT|wxEXPAND</flag>
+                <border>6</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Trust this host and carry on connecting?</label>
+                </object>
+                <flag>wxALL</flag>
+                <border>5</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_ALWAYS">
+                  <label>&amp;Always trust this host, add this key to the cache</label>
+                </object>
+                <flag>wxLEFT|wxRIGHT</flag>
+                <border>5</border>
+              </object>
+            </object>
+          </object>
+        </object>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+            <border>5</border>
+            <object class="wxButton" name="wxID_OK">
+              <label>OK</label>
+              <default>1</default>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+            <border>5</border>
+            <object class="wxButton" name="wxID_CANCEL">
+              <label>&amp;Cancel</label>
+            </object>
+          </object>
+        </object>
+        <flag>wxALIGN_CENTRE_HORIZONTAL</flag>
+      </object>
+    </object>
+  </object>
+  <object class="wxDialog" name="ID_HOSTKEYCHANGED">
+    <title>Host key mismatch</title>
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <object class="wxStaticBitmap">
+              <bitmap stock_id="wxART_WARNING"></bitmap>
+            </object>
+            <flag>wxALL</flag>
+            <border>7</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxVERTICAL</orient>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Warning: Potential security breach!</label>
+                </object>
+                <flag>wxTOP|wxLEFT|wxRIGHT</flag>
+                <border>5</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="ID_DESC">
+                  <label>The server's host key does not match the key that has been cached. This means that either the administrator has changed the host key, or you have actually to another computer pretending to be the server.\nIf the host key change was not expected, please contact the server administrator.</label>
+                </object>
+                <flag>wxALL</flag>
+                <border>5</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticBoxSizer">
+                  <label>Details for new key:</label>
+                  <orient>wxVERTICAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxFlexGridSizer">
+                      <cols>2</cols>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>Host:</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText" name="ID_HOST">
+                          <label>&lt;Host:port&gt;</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>Fingerprint:</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText" name="ID_FINGERPRINT">
+                          <label>&lt;fingerprint&gt;</label>
+                        </object>
+                      </object>
+                      <vgap>2</vgap>
+                      <hgap>2</hgap>
+                    </object>
+                    <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxGROW</flag>
+                    <border>5</border>
+                  </object>
+                </object>
+                <flag>wxLEFT|wxRIGHT|wxEXPAND</flag>
+                <border>6</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Trust the new key and carry on connecting?</label>
+                </object>
+                <flag>wxALL</flag>
+                <border>5</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_ALWAYS">
+                  <label>&amp;Update cached key for this host</label>
+                </object>
+                <flag>wxLEFT|wxRIGHT</flag>
+                <border>5</border>
+              </object>
+            </object>
+          </object>
+        </object>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+            <border>5</border>
+            <object class="wxButton" name="wxID_OK">
+              <label>OK</label>
+              <default>1</default>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+            <border>5</border>
+            <object class="wxButton" name="wxID_CANCEL">
+              <label>&amp;Cancel</label>
+            </object>
+          </object>
+        </object>
+        <flag>wxALIGN_CENTRE_HORIZONTAL</flag>
       </object>
     </object>
   </object>

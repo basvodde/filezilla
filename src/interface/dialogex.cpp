@@ -50,6 +50,7 @@ wxString wxDialogEx::WrapText(const wxString &text, unsigned long maxLength, wxW
 		{
 			wrappedText += text.SubString(lastCut, i);
 			wrappedText.Trim();
+			wrappedText += _T("\n");
 			lineLength = 0;
 			lastCut = i + 1;
 		}

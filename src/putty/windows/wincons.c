@@ -102,7 +102,7 @@ int verify_ssh_host_key(void *frontend, char *host, int port, char *keytype,
 	"safe choice.\n"
 	"Update cached key? (y/n, Return cancels connection) ";
 
-    static const char abandoned[] = "Connection abandoned.\n";
+    static const char abandoned[] = "Connection abandoned.";
 
     char line[32];
 
@@ -119,21 +119,15 @@ int verify_ssh_host_key(void *frontend, char *host, int port, char *keytype,
 	    fprintf(stderr, wrongmsg_batch, keytype, fingerprint);
             return 0;
 	}
-	fprintf(stderr, wrongmsg, keytype, fingerprint);
-	fflush(stderr);
+	fzprintf_raw(sftpRequest, "%d%s\n%d\n%s\n", (int)sftpReqHostkeyChanged, host, port, fingerprint);
     }
     if (ret == 1) {		       /* key was absent */
-	if (console_batch_mode) {
-	    fprintf(stderr, absentmsg_batch, keytype, fingerprint);
-            return 0;
-	}
-	fprintf(stderr, absentmsg, keytype, fingerprint);
-	fflush(stderr);
+	fzprintf_raw(sftpRequest, "%d%s\n%d\n%s\n", (int)sftpReqHostkey, host, port, fingerprint);
     }
 
     hin = GetStdHandle(STD_INPUT_HANDLE);
     GetConsoleMode(hin, &savemode);
-    SetConsoleMode(hin, (savemode | ENABLE_ECHO_INPUT |
+    SetConsoleMode(hin, (savemode | 
 			 ENABLE_PROCESSED_INPUT | ENABLE_LINE_INPUT));
     ReadFile(hin, line, sizeof(line) - 1, &i, NULL);
     SetConsoleMode(hin, savemode);
@@ -143,7 +137,7 @@ int verify_ssh_host_key(void *frontend, char *host, int port, char *keytype,
 	    store_host_key(host, port, keytype, keystr);
         return 1;
     } else {
-	fprintf(stderr, abandoned);
+	fzprintf(sftpError, abandoned);
         return 0;
     }
 }

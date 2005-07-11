@@ -5,36 +5,23 @@ BEGIN_EVENT_TABLE(CAboutDialog, wxDialogEx)
 EVT_BUTTON(XRCID("wxID_OK"), CAboutDialog::OnOK)
 END_EVENT_TABLE();
 
-extern wxString WrapText(const wxString &text, unsigned long
-				  maxLength, wxWindow* pWindow);
-
 bool CAboutDialog::Create(wxWindow* parent)
 {
-	SetParent(parent);
-
-	if (!wxXmlResource::Get()->LoadDialog(this, parent, _T("ID_ABOUT")))
+	if (!Load(this, _T("ID_ABOUT")))
 		return false;
 
-	wxStaticText* pVersion = XRCCTRL(*this, "ID_VERSION", wxStaticText);
-	if (!pVersion)
-		return 0;
-#ifdef PACKAGE_STRING
-	pVersion->SetLabel(wxString(PACKAGE_STRING, wxConvLocal));
-#else
-	pVersion->SetLabel(_T("FileZilla 3"));
+#ifndef PACKAGE_STRING
+#define PACKAGE_STRING "FileZilla 3"
 #endif
 
-	wxStaticText* pBuildDate = XRCCTRL(*this, "ID_BUILDDATE", wxStaticText);
-	if (!pBuildDate)
+	if (!SetLabel(XRCID("ID_VERSION"), wxString(PACKAGE_STRING, wxConvLocal)))
 		return false;
 
-	pBuildDate->SetLabel(GetBuildDate());
-
-	wxStaticText* pCompiledWith = XRCCTRL(*this, "ID_COMPILEDWITH", wxStaticText);
-	if (!pCompiledWith)
+	if (!SetLabel(XRCID("ID_BUILDDATE"), GetBuildDate()))
 		return false;
 
-	pCompiledWith->SetLabel(WrapText(GetCompiler(), 200, this));
+	if (!SetLabel(XRCID("ID_COMPILEDWITH"), GetCompiler(), 200))
+		return false;
 
 	wxStaticText* pCompilerFlags = XRCCTRL(*this, "ID_CFLAGS", wxStaticText);
 	if (!pCompilerFlags)

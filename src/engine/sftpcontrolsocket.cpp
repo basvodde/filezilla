@@ -19,7 +19,18 @@ CSftpEvent::CSftpEvent(sftpEventTypes type, const wxString& text)
 	: wxEvent(wxID_ANY, fzEVT_SFTP)
 {
 	m_type = type;
-	m_text = text;
+	m_text[0] = text;
+}
+
+CSftpEvent::CSftpEvent(sftpRequestTypes reqType, const wxString& text1, const wxString& text2 /*=_T("")*/, const wxString& text3 /*=_T("")*/, const wxString& text4 /*=_T("")*/)
+	: wxEvent(wxID_ANY, fzEVT_SFTP)
+{
+	m_type = sftpRequest;
+
+	m_text[1] = text1;
+	m_text[2] = text2;
+	m_text[3] = text3;
+	m_text[4] = text4;
 }
 
 BEGIN_EVENT_TABLE(CSftpControlSocket, CControlSocket)
@@ -68,9 +79,41 @@ protected:
 			switch(eventType)
 			{
 			case sftpReply:
+				{
+					wxTextInputStream textStream(*pInputStream);
+					wxString text = textStream.ReadLine();
+					if (pInputStream->LastRead() <= 0 || text == _T(""))
+						goto loopexit;
+					m_pOwner->LogMessage(Response, text);
+				}
+				break;
 			case sftpError:
+				{
+					wxTextInputStream textStream(*pInputStream);
+					wxString text = textStream.ReadLine();
+					if (pInputStream->LastRead() <= 0 || text == _T(""))
+						goto loopexit;
+					m_pOwner->LogMessage(::Error, text);
+				}
+				break;
 			case sftpVerbose:
+				{
+					wxTextInputStream textStream(*pInputStream);
+					wxString text = textStream.ReadLine();
+					if (pInputStream->LastRead() <= 0 || text == _T(""))
+						goto loopexit;
+					m_pOwner->LogMessage(Debug_Info, text);
+				}
+				break;
 			case sftpStatus:
+				{
+					wxTextInputStream textStream(*pInputStream);
+					wxString text = textStream.ReadLine();
+					if (pInputStream->LastRead() <= 0 || text == _T(""))
+						goto loopexit;
+					m_pOwner->LogMessage(Status, text);
+				}
+				break;
 			case sftpDone:
 				{
 					wxTextInputStream textStream(*pInputStream);
@@ -79,6 +122,29 @@ protected:
 						goto loopexit;
 					CSftpEvent evt((sftpEventTypes)eventType, text);
 					wxPostEvent(m_pOwner, evt);
+				}
+				break;
+			case sftpRequest:
+				{
+					wxTextInputStream textStream(*pInputStream);
+					wxString text = textStream.ReadLine();
+					if (pInputStream->LastRead() <= 0 || text == _T(""))
+						goto loopexit;
+					int requestType = text[0] - '0';
+					if (requestType == sftpReqHostkey || requestType == sftpReqHostkeyChanged)
+					{
+						wxString strPort = textStream.ReadLine();
+						if (pInputStream->LastRead() <= 0 || strPort == _T(""))
+							goto loopexit;
+						long port = 0;
+						if (!strPort.ToLong(&port))
+							goto loopexit;
+						wxString fingerprint = textStream.ReadLine();
+						if (pInputStream->LastRead() <= 0 || fingerprint == _T(""))
+							goto loopexit;
+
+						m_pOwner->SendRequest(new CHostKeyNotification(text.Mid(1), port, fingerprint, requestType == sftpReqHostkeyChanged));
+					}
 				}
 				break;
 			default:
@@ -128,12 +194,22 @@ CSftpControlSocket::~CSftpControlSocket()
 
 int CSftpControlSocket::Connect(const CServer &server)
 {
+	if (m_pCurrentServer)
+		delete m_pCurrentServer;
+	m_pCurrentServer = new CServer(server);
+
 	m_pProcess = new wxProcess(this);
 	m_pProcess->Redirect();
 
 	m_pid = wxExecute(_T("fzsftp -v"), wxEXEC_ASYNC, m_pProcess);
-	wxASSERT(m_pid);
-
+	if (!m_pid)
+	{
+		delete m_pProcess;
+		m_pProcess = 0;
+		LogMessage(::Error, _("fzsftp could not be started"));
+		return FZ_REPLY_ERROR;
+	}
+	
 	m_pInputThread = new CSftpInputThread(this, m_pProcess);
 	if (!m_pInputThread->Init())
 	{
@@ -155,16 +231,10 @@ void CSftpControlSocket::OnSftpEvent(CSftpEvent& event)
 	switch (event.GetType())
 	{
 	case sftpReply:
-		LogMessage(Response, event.GetText());
-		break;
 	case sftpStatus:
-		LogMessage(Status, event.GetText());
-		break;
 	case sftpError:
-		LogMessage(::Error, event.GetText());
-		break;
 	case sftpVerbose:
-		LogMessage(Debug_Info, event.GetText());
+		wxFAIL_MSG(_T("given notification codes should have been handled by thread"));
 		break;
 	case sftpDone:
 		{
@@ -221,4 +291,37 @@ bool CSftpControlSocket::Send(const char* str)
 		return false;
 
 	return true;
+}
+
+bool CSftpControlSocket::SendRequest(CAsyncRequestNotification *pNotification)
+{
+	pNotification->requestNumber = m_pEngine->GetNextAsyncRequestNumber();
+	m_pEngine->AddNotification(pNotification);
+
+	return true;
+}
+
+bool CSftpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotification)
+{
+	if (pNotification->GetRequestID() == reqId_hostkey || pNotification->GetRequestID() == reqId_hostkeyChanged)
+	{
+		if (GetCurrentCommandId() != cmd_connect ||
+			!m_pCurrentServer)
+		{
+			LogMessage(Debug_Info, _T("SetAsyncRequestReply called to wrong time"));
+			return false;
+		}
+
+		CHostKeyNotification *pHostKeyNotification = reinterpret_cast<CHostKeyNotification *>(pNotification);
+		if (!pHostKeyNotification->m_trust)
+			Send("");
+		else if (pHostKeyNotification->m_alwaysTrust)
+			Send("y");
+		else
+			Send("n");
+
+		return true;
+	}
+
+	return false;
 }

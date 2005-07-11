@@ -7,9 +7,6 @@ EVT_BUTTON(XRCID("wxID_CANCEL"), CChmodDialog::OnCancel)
 EVT_TEXT(XRCID("ID_NUMERIC"), CChmodDialog::OnNumericChanged)
 END_EVENT_TABLE();
 
-extern wxString WrapText(const wxString &text, unsigned long
-				  maxLength, wxWindow* pWindow);
-
 bool CChmodDialog::Create(wxWindow* parent, int fileCount, int dirCount,
 						  const wxString& name, const char permissions[9])
 {
@@ -49,10 +46,8 @@ bool CChmodDialog::Create(wxWindow* parent, int fileCount, int dirCount,
 	if (!wxXmlResource::Get()->LoadDialog(this, parent, _T("ID_CHMODDIALOG")))
 		return false;
 
-	if (!XRCCTRL(*this, "ID_DESC", wxStaticText))
+	if (!WrapText(XRCID("ID_DESC"), 300))
 		return false;
-
-	XRCCTRL(*this, "ID_DESC", wxStaticText)->SetLabel(WrapText(title, 300, this));
 
 	if (!XRCCTRL(*this, "wxID_OK", wxButton))
 		return false;
@@ -63,12 +58,8 @@ bool CChmodDialog::Create(wxWindow* parent, int fileCount, int dirCount,
 	if (!XRCCTRL(*this, "ID_NUMERIC", wxTextCtrl))
 		return false;
 
-	wxStaticText* pText = XRCCTRL(*this, "ID_NUMERICTEXT", wxStaticText);
-	if (!pText)
+	if (!WrapText(XRCID("ID_NUMERICTEXT"), 300))
 		return false;
-
-	wxString text = pText->GetLabel();
-	pText->SetLabel(WrapText(text, 300, this));
 
 	wxCheckBox* pRecurse = XRCCTRL(*this, "ID_RECURSE", wxCheckBox);
 	if (!pRecurse)

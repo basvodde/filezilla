@@ -115,23 +115,21 @@ int verify_ssh_host_key(void *frontend, char *host, int port, char *keytype,
 	    fprintf(stderr, wrongmsg_batch, keytype, fingerprint);
 	    return 0;
 	}
-	fprintf(stderr, wrongmsg, keytype, fingerprint);
-	fflush(stderr);
+	fzprintf_raw(sftpRequest, "%d%s\n%d\n%s\n", (int)sftpReqHostkeyChanged, host, port, fingerprint);
     }
     if (ret == 1) {		       /* key was absent */
 	if (console_batch_mode) {
 	    fprintf(stderr, absentmsg_batch, keytype, fingerprint);
 	    return 0;
 	}
-	fprintf(stderr, absentmsg, keytype, fingerprint);
-	fflush(stderr);
+	fzprintf_raw(sftpRequest, "%d%s\n%d\n%s\n", (int)sftpReqHostkey, host, port, fingerprint);
     }
 
     {
 	struct termios oldmode, newmode;
 	tcgetattr(0, &oldmode);
 	newmode = oldmode;
-	newmode.c_lflag |= ECHO | ISIG | ICANON;
+	newmode.c_lflag |= ISIG | ICANON;
 	tcsetattr(0, TCSANOW, &newmode);
 	line[0] = '\0';
 	read(0, line, sizeof(line) - 1);

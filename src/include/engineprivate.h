@@ -17,7 +17,7 @@ public:
 	// Add new pending notification
 	void AddNotification(CNotification *pNotification);
 
-	int GetNextAsyncRequestNumber();
+	unsigned int GetNextAsyncRequestNumber();
 
 	// Event handling
 	bool SendEvent(enum EngineNotificationType eventType, int data = 0);
@@ -85,6 +85,9 @@ protected:
 	COptionsBase *m_pOptions;
 
 	unsigned int m_asyncRequestCounter;
+
+	// Used to synchronize access to the notification list
+	wxCriticalSection m_lock;
 };
 
 #endif //__FILEZILLAENGINEPRIVATE_H__

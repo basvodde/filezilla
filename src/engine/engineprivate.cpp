@@ -176,15 +176,19 @@ enum Command CFileZillaEnginePrivate::GetCurrentCommandId() const
 
 void CFileZillaEnginePrivate::AddNotification(CNotification *pNotification)
 {
+	m_lock.Enter();
 	m_NotificationList.push_back(pNotification);
 
 	if (m_maySendNotificationEvent && m_pEventHandler)
 	{
 		m_maySendNotificationEvent = false;
+		m_lock.Leave();
 		wxFzEvent evt(wxID_ANY);
 		evt.SetEventObject(this);
 		wxPostEvent(m_pEventHandler, evt);
 	}
+	else
+		m_lock.Leave();
 }
 
 int CFileZillaEnginePrivate::ResetOperation(int nErrorCode)
@@ -258,8 +262,9 @@ void CFileZillaEnginePrivate::ResendModifiedListings()
 	}
 }
 
-int CFileZillaEnginePrivate::GetNextAsyncRequestNumber()
+unsigned int CFileZillaEnginePrivate::GetNextAsyncRequestNumber()
 {
+	wxCriticalSectionLocker lock(m_lock);
 	return ++m_asyncRequestCounter;
 }
 

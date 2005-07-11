@@ -31,7 +31,9 @@ enum NotificationId
 enum RequestId
 {
 	reqId_fileexists,
-	reqId_interactiveLogin
+	reqId_interactiveLogin,
+	reqId_hostkey,
+	reqId_hostkeyChanged
 };
 
 class CNotification
@@ -167,6 +169,28 @@ public:
 	
 protected:
 	CTransferStatus *m_pStatus;
+};
+
+class CHostKeyNotification : public CAsyncRequestNotification
+{
+public:
+    CHostKeyNotification(wxString host, int port, wxString fingerprint, bool changed = false);
+    virtual ~CHostKeyNotification();
+    virtual enum RequestId GetRequestID() const;
+
+    wxString GetHost() const;
+    int GetPort() const;
+    wxString GetFingerprint() const;
+
+	bool m_trust;
+	bool m_alwaysTrust;
+
+protected:
+
+    const wxString m_host;
+    const int m_port;
+    const wxString m_fingerprint;
+    const bool m_changed;
 };
 
 #endif
