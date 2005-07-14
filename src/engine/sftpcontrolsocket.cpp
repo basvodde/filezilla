@@ -354,6 +354,13 @@ bool CSftpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotifi
 
 		return true;
 	}
+	else if (pNotification->GetRequestID() == reqId_interactiveLogin)
+	{
+		CInteractiveLoginNotification *pInteractiveLoginNotification = reinterpret_cast<CInteractiveLoginNotification *>(pNotification);
+		
+		m_pCurrentServer->SetUser(m_pCurrentServer->GetUser(), pInteractiveLoginNotification->server.GetPass());
+		Send(m_pCurrentServer->GetPass());
+	}
 
 	return false;
 }

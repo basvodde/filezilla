@@ -297,7 +297,7 @@ int console_get_line(const char *prompt, char *str,
 {
     HANDLE hin, hout;
     DWORD savemode, newmode, i = 0;
-	char* cleanPrompt, *p;
+    char* cleanPrompt, *p;
 
     if (!is_pw)
     {
@@ -340,7 +340,7 @@ int console_get_line(const char *prompt, char *str,
 	    i = maxlen - 1;
 
 	str[i--] = 0;
-	while (str[i] == '\r' || str[i] == '\n')
+	while (i >= 0 && str[i] == '\r' || str[i] == '\n')
 	    str[i--] = '\0';
 	
 	//if (is_pw)
