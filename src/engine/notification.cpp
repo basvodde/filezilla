@@ -147,7 +147,7 @@ const CTransferStatus* CTransferStatusNotification::GetStatus() const
 }
 
 CHostKeyNotification::CHostKeyNotification(wxString host, int port, wxString fingerprint, bool changed /*=false*/)
-	: m_host(host), m_port(port), m_fingerprint(fingerprint), m_changed(changed), m_trust(false), m_alwaysTrust(false)
+	: m_host(host), m_port(port), m_fingerprint(fingerprint), m_trust(false), m_alwaysTrust(false), m_changed(changed)
 {
 }
 

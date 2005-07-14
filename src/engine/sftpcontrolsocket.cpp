@@ -20,17 +20,21 @@ CSftpEvent::CSftpEvent(sftpEventTypes type, const wxString& text)
 {
 	m_type = type;
 	m_text[0] = text;
+	m_reqType = sftpReqUnknown;
 }
 
-CSftpEvent::CSftpEvent(sftpRequestTypes reqType, const wxString& text1, const wxString& text2 /*=_T("")*/, const wxString& text3 /*=_T("")*/, const wxString& text4 /*=_T("")*/)
+CSftpEvent::CSftpEvent(sftpEventTypes type, sftpRequestTypes reqType, const wxString& text1, const wxString& text2 /*=_T("")*/, const wxString& text3 /*=_T("")*/, const wxString& text4 /*=_T("")*/)
 	: wxEvent(wxID_ANY, fzEVT_SFTP)
 {
-	m_type = sftpRequest;
+	wxASSERT(type == sftpRequest || reqType == sftpReqUnknown);
+	m_type = type;
 
-	m_text[1] = text1;
-	m_text[2] = text2;
-	m_text[3] = text3;
-	m_text[4] = text4;
+	m_reqType = reqType;
+
+	m_text[0] = text1;
+	m_text[1] = text2;
+	m_text[2] = text3;
+	m_text[3] = text4;
 }
 
 BEGIN_EVENT_TABLE(CSftpControlSocket, CControlSocket)
@@ -145,6 +149,11 @@ protected:
 
 						m_pOwner->SendRequest(new CHostKeyNotification(text.Mid(1), port, fingerprint, requestType == sftpReqHostkeyChanged));
 					}
+					else if (requestType == sftpReqPassword)
+					{
+						CSftpEvent evt(sftpRequest, sftpReqPassword, text.Mid(1));
+						wxPostEvent(m_pOwner, evt);
+					}
 				}
 				break;
 			default:
@@ -245,7 +254,30 @@ void CSftpControlSocket::OnSftpEvent(CSftpEvent& event)
 				ResetOperation(FZ_REPLY_ERROR);
 			break;
 		}
+	case sftpRequest:
+		switch(event.GetRequestType())
+		{
+		case sftpReqPassword:
+			if (m_pCurrentServer->GetLogonType() == INTERACTIVE)
+			{
+				CInteractiveLoginNotification *pNotification = new CInteractiveLoginNotification;
+				pNotification->server = *m_pCurrentServer;
+				pNotification->challenge = event.GetText();
+				pNotification->requestNumber = m_pEngine->GetNextAsyncRequestNumber();
+				m_pEngine->AddNotification(pNotification);
+			}
+			else
+			{
+				Send(m_pCurrentServer->GetPass().mb_str());
+			}
+			break;
+		default:
+			wxFAIL_MSG(_T("given notification codes should have been handled by thread"));
+			break;
+		}
+		break;
 	default:
+		wxFAIL_MSG(_T("given notification codes not handled"));
 		break;
 	}
 }

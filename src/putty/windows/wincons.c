@@ -296,7 +296,13 @@ int console_get_line(const char *prompt, char *str,
 			    int maxlen, int is_pw)
 {
     HANDLE hin, hout;
-    DWORD savemode, newmode, i;
+    DWORD savemode, newmode, i = 0;
+	char* cleanPrompt, *p;
+
+    if (!is_pw)
+    {
+	return 0;
+    }
 
     if (console_batch_mode) {
 	if (maxlen > 0)
@@ -312,25 +318,33 @@ int console_get_line(const char *prompt, char *str,
 
 	GetConsoleMode(hin, &savemode);
 	newmode = savemode | ENABLE_PROCESSED_INPUT | ENABLE_LINE_INPUT;
-	if (is_pw)
+	//if (is_pw)
 	    newmode &= ~ENABLE_ECHO_INPUT;
-	else
-	    newmode |= ENABLE_ECHO_INPUT;
+	//else
+	//    newmode |= ENABLE_ECHO_INPUT;
 	SetConsoleMode(hin, newmode);
 
-	WriteFile(hout, prompt, strlen(prompt), &i, NULL);
+	cleanPrompt = strdup(prompt);
+	for (p = cleanPrompt; *p; p++)
+	    if (*p == '\n' || *p == '\r')
+		*p = ' ';
+
+	fzprintf_raw(sftpRequest, "%d%s\n", (int)sftpReqPassword, cleanPrompt);
 	ReadFile(hin, str, maxlen - 1, &i, NULL);
+
+	sfree(cleanPrompt);
 
 	SetConsoleMode(hin, savemode);
 
 	if ((int) i > maxlen)
 	    i = maxlen - 1;
-	else
-	    i = i - 2;
-	str[i] = '\0';
 
-	if (is_pw)
-	    WriteFile(hout, "\r\n", 2, &i, NULL);
+	str[i--] = 0;
+	while (str[i] == '\r' || str[i] == '\n')
+	    str[i--] = '\0';
+	
+	//if (is_pw)
+	//    WriteFile(hout, "\r\n", 2, &i, NULL);
 
 	return 1;
     }
