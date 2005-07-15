@@ -359,7 +359,7 @@ bool CSftpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotifi
 		CInteractiveLoginNotification *pInteractiveLoginNotification = reinterpret_cast<CInteractiveLoginNotification *>(pNotification);
 		
 		m_pCurrentServer->SetUser(m_pCurrentServer->GetUser(), pInteractiveLoginNotification->server.GetPass());
-		Send(m_pCurrentServer->GetPass());
+		Send(m_pCurrentServer->GetPass().mb_str());
 	}
 
 	return false;
