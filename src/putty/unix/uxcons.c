@@ -283,6 +283,7 @@ int console_get_line(const char *prompt, char *str,
 {
     struct termios oldmode, newmode;
     int i;
+    char* cleanPrompt, *p;
 
     if (console_batch_mode) {
 	if (maxlen > 0)
@@ -292,24 +293,29 @@ int console_get_line(const char *prompt, char *str,
 	tcgetattr(0, &oldmode);
 	newmode = oldmode;
 	newmode.c_lflag |= ISIG | ICANON;
-	if (is_pw)
+//	if (is_pw)
 	    newmode.c_lflag &= ~ECHO;
-	else
-	    newmode.c_lflag |= ECHO;
+//	else
+//	    newmode.c_lflag |= ECHO;
 	tcsetattr(0, TCSANOW, &newmode);
 
-	fputs(prompt, stdout);
-	fflush(stdout);
+	cleanPrompt = strdup(prompt);
+	for (p = cleanPrompt; *p; p++)
+	    if (*p == '\n' || *p == '\r')
+		*p = ' ';
+
+	fzprintf_raw(sftpRequest, "%d%s\n", (int)sftpReqPassword, cleanPrompt);
+
 	i = read(0, str, maxlen - 1);
 
 	tcsetattr(0, TCSANOW, &oldmode);
 
-	if (i > 0 && str[i-1] == '\n')
-	    i--;
-	str[i] = '\0';
-
-	if (is_pw)
-	    fputs("\n", stdout);
+	str[i--] = 0;
+	while (i >= 0 && str[i] == '\r' || str[i] == '\n')
+	    str[i--] = '\0';
+	
+//	if (is_pw)
+//	    fputs("\n", stdout);
 
 	return 1;
     }
