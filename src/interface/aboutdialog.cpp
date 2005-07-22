@@ -7,7 +7,7 @@ END_EVENT_TABLE();
 
 bool CAboutDialog::Create(wxWindow* parent)
 {
-	if (!Load(this, _T("ID_ABOUT")))
+	if (!Load(parent, _T("ID_ABOUT")))
 		return false;
 
 #ifndef PACKAGE_STRING
