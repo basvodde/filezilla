@@ -466,6 +466,24 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 	if (res != FZ_REPLY_OK)
 		return res;
 
+	if (!pData->refresh)
+	{
+		// Do a cache lookup now that we know the correct directory
+		CDirectoryListing *pListing = new CDirectoryListing;
+		CDirectoryCache cache;
+		bool found = cache.Lookup(*pListing, *m_pCurrentServer, m_CurrentPath);
+		if (found && !pListing->m_hasUnsureEntries)
+		{
+			if (!pData->path.IsEmpty() && pData->subDir != _T(""))
+				cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
+			SendDirectoryListing(pListing);
+			ResetOperation(FZ_REPLY_OK);
+			return FZ_REPLY_OK;
+		}
+		else
+			delete pListing;
+	}
+
 	pData->opState = list_type;
 
 	return ListSend();

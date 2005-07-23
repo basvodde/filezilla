@@ -6,6 +6,7 @@
 
 typedef enum
 {
+    sftpUnknown = -1,
     sftpReply = 0,
     sftpDone,
     sftpError,
@@ -15,7 +16,7 @@ typedef enum
     sftpSend,
     sftpClose,
     sftpRequest,
-    sftpUnknown
+    sftpListentry
 } sftpEventTypes;
 
 enum sftpRequestTypes
@@ -57,7 +58,7 @@ public:
 
 	virtual int Connect(const CServer &server);
 
-	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T(""), bool refresh = false) { return 0; }
+	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T(""), bool refresh = false);
 	virtual int FileTransfer(const wxString localFile, const CServerPath &remotePath,
 							 const wxString &remoteFile, bool download,
 							 const CFileTransferCommand::t_transferSettings& transferSettings) { return 0; }
@@ -77,6 +78,20 @@ public:
 	bool SendRequest(CAsyncRequestNotification *pNotification);
 
 protected:
+
+	int ResetOperation(int nErrorCode);
+	int SendNextCommand(int prevResult = FZ_REPLY_OK);
+
+	int ProcessReply(const wxString& reply);
+
+	int ListSend(int prevResult = FZ_REPLY_OK);
+	int ListParseResponse(const wxString& reply);
+	int ListParseEntry(const wxString& entry);
+
+	int ChangeDir(CServerPath path = CServerPath(), wxString subDir = _T(""));
+	int ChangeDirParseResponse(const wxString& reply);
+	int ChangeDirSend();
+
 	bool Send(const char* str);
 
 	wxProcess* m_pProcess;

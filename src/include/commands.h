@@ -64,6 +64,8 @@ DECLARE_COMMAND(CCancelCommand, cmd_cancel)
 };
 
 DECLARE_COMMAND(CListCommand, cmd_list)
+	// Set refresh to true to get a directory listing even if a cache
+	// lookup can be made after finding out true remote directory
 	CListCommand(bool refresh = false);
 	CListCommand(CServerPath path, wxString subDir = _T(""), bool refresh = false);
 	

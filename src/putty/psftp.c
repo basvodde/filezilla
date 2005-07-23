@@ -99,7 +99,7 @@ char *canonify(char *name)
 	int i;
 	char *returnname;
 
-	i = strlen(fullname);
+	i = (int)strlen(fullname);
 	if (i > 2 && fullname[i - 1] == '/')
 	    fullname[--i] = '\0';      /* strip trailing / unless at pos 0 */
 	while (i > 0 && fullname[--i] != '/');
@@ -1007,12 +1007,12 @@ int sftp_cmd_ls(struct sftp_command *cmd)
 
     cdir = canonify(dir);
     if (!cdir) {
-	printf("%s: %s\n", dir, fxp_error());
+	fzprintf(sftpError, "%s: %s", dir, fxp_error());
 	sfree(unwcdir);
 	return 0;
     }
 
-    printf("Listing directory %s\n", cdir);
+    fzprintf(sftpStatus, "Listing directory %s", cdir);
 
     sftp_register(req = fxp_opendir_send(cdir));
     rreq = sftp_find_request(pktin = sftp_recv());
@@ -1020,7 +1020,7 @@ int sftp_cmd_ls(struct sftp_command *cmd)
     dirh = fxp_opendir_recv(pktin, rreq);
 
     if (dirh == NULL) {
-	printf("Unable to open %s: %s\n", dir, fxp_error());
+	fzprintf(sftpError, "Unable to open %s: %s", dir, fxp_error());
     } else {
 	nnames = namesize = 0;
 	ournames = NULL;
@@ -1035,7 +1035,7 @@ int sftp_cmd_ls(struct sftp_command *cmd)
 	    if (names == NULL) {
 		if (fxp_error_type() == SSH_FX_EOF)
 		    break;
-		printf("Reading directory %s: %s\n", dir, fxp_error());
+		fzprintf(sftpError, "Reading directory %s: %s", dir, fxp_error());
 		break;
 	    }
 	    if (names->nnames == 0) {
@@ -1063,13 +1063,13 @@ int sftp_cmd_ls(struct sftp_command *cmd)
 	 * Now we have our filenames. Sort them by actual file
 	 * name, and then output the longname parts.
 	 */
-	qsort(ournames, nnames, sizeof(*ournames), sftp_name_compare);
+	//qsort(ournames, nnames, sizeof(*ournames), sftp_name_compare);
 
 	/*
 	 * And print them.
 	 */
 	for (i = 0; i < nnames; i++) {
-	    printf("%s\n", ournames[i]->longname);
+	    fzprintf(sftpListentry, "%s", ournames[i]->longname);
 	    fxp_free_name(ournames[i]);
 	}
 	sfree(ournames);
@@ -1077,6 +1077,8 @@ int sftp_cmd_ls(struct sftp_command *cmd)
 
     sfree(cdir);
     sfree(unwcdir);
+
+    fznotify1(sftpDone, 1);
 
     return 1;
 }
@@ -1103,7 +1105,7 @@ int sftp_cmd_cd(struct sftp_command *cmd)
 	dir = canonify(cmd->words[1]);
 
     if (!dir) {
-	printf("%s: %s\n", dir, fxp_error());
+	fzprintf(sftpError, "%s: %s", dir, fxp_error());
 	return 0;
     }
 
@@ -1113,7 +1115,7 @@ int sftp_cmd_cd(struct sftp_command *cmd)
     dirh = fxp_opendir_recv(pktin, rreq);
 
     if (!dirh) {
-	printf("Directory %s: %s\n", dir, fxp_error());
+	fzprintf(sftpError, "Directory %s: %s\n", dir, fxp_error());
 	sfree(dir);
 	return 0;
     }
@@ -1125,8 +1127,8 @@ int sftp_cmd_cd(struct sftp_command *cmd)
 
     sfree(pwd);
     pwd = dir;
-    printf("Remote directory is now %s\n", pwd);
-
+    fzprintf(sftpReply, "New directory is: \"%s\"", pwd);
+    
     return 1;
 }
 
@@ -1140,7 +1142,7 @@ int sftp_cmd_pwd(struct sftp_command *cmd)
 	return 0;
     }
 
-    printf("Remote directory is %s\n", pwd);
+    fzprintf(sftpReply, "Current directory is: \"%s\"", pwd);
     return 1;
 }
 
@@ -1815,6 +1817,7 @@ static int sftp_cmd_open(struct sftp_command *cmd)
 	return -1;		       /* this is fatal */
     }
     do_sftp_init();
+    fznotify1(sftpDone, 1);
     return 1;
 }
 
@@ -2295,7 +2298,7 @@ static int do_sftp_init(void)
      * Do protocol initialisation. 
      */
     if (!fxp_init()) {
-	fprintf(stderr,
+	fzprintf(sftpError,
 		"Fatal: unable to initialise SFTP: %s\n", fxp_error());
 	return 1;		       /* failure */
     }
@@ -2309,12 +2312,10 @@ static int do_sftp_init(void)
     homedir = fxp_realpath_recv(pktin, rreq);
 
     if (!homedir) {
-	fprintf(stderr,
+	fzprintf(sftpError,
 		"Warning: failed to resolve home directory: %s\n",
 		fxp_error());
 	homedir = dupstr(".");
-    } else {
-	printf("Remote working directory is %s\n", homedir);
     }
     pwd = dupstr(homedir);
     return 0;
@@ -2367,7 +2368,8 @@ void do_sftp(int mode, int modeflags, char *batchfile)
 		sfree(cmd->words);
 	    }
 	    sfree(cmd);
-	    fznotify1(sftpDone, ret);
+	    if (!ret)
+		fznotify1(sftpDone, ret);
 	    if (ret < 0)
 		break;
 	}
@@ -2599,7 +2601,7 @@ static int psftp_connect(char *userhost, char *user, int portnumber)
     } else {
 	*host++ = '\0';
 	if (user) {
-	    printf("psftp: multiple usernames specified; using \"%s\"\n",
+	    fzprintf(sftpVerbose, "psftp: multiple usernames specified; using \"%s\"",
 		   user);
 	} else
 	    user = userhost;
@@ -2700,15 +2702,8 @@ static int psftp_connect(char *userhost, char *user, int portnumber)
 	cfg.username[sizeof(cfg.username) - 1] = '\0';
     }
     if (!cfg.username[0]) {
-	if (!console_get_line("login as: ",
-			      cfg.username, sizeof(cfg.username), FALSE)) {
-	    fprintf(stderr, "psftp: no username, aborting\n");
-	    cleanup_exit(1);
-	} else {
-	    int len = strlen(cfg.username);
-	    if (cfg.username[len - 1] == '\n')
-		cfg.username[len - 1] = '\0';
-	}
+        fzprintf(sftpError, "psftp: no username, aborting");
+        cleanup_exit(1);
     }
 
     if (portnumber)
@@ -2756,7 +2751,7 @@ static int psftp_connect(char *userhost, char *user, int portnumber)
     err = back->init(NULL, &backhandle, &cfg, cfg.host, cfg.port, &realhost,
 		     0, cfg.tcp_keepalives);
     if (err != NULL) {
-	fprintf(stderr, "ssh_init: %s\n", err);
+	fzprintf(sftpError, "ssh_init: %s", err);
 	return 1;
     }
     logctx = log_init(NULL, &cfg);
@@ -2764,12 +2759,12 @@ static int psftp_connect(char *userhost, char *user, int portnumber)
     console_provide_logctx(logctx);
     while (!back->sendok(backhandle)) {
 	if (ssh_sftp_loop_iteration() < 0) {
-	    fprintf(stderr, "ssh_init: error during SSH connection setup\n");
+	    fzprintf(sftpError, "ssh_init: error during SSH connection setup");
 	    return 1;
 	}
     }
     if (verbose && realhost != NULL)
-	printf("Connected to %s\n", realhost);
+	fzprintf(sftpStatus, "Connected to %s", realhost);
     if (realhost != NULL)
 	sfree(realhost);
     return 0;

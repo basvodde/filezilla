@@ -1,5 +1,6 @@
 typedef enum
 {
+    sftpUnknown = -1,
     sftpReply = 0,
     sftpDone,
     sftpError,
@@ -9,7 +10,7 @@ typedef enum
     sftpSend,
     sftpClose,
     sftpRequest,
-    sftpUnknown
+    sftpListentry
 } sftpEventTypes;
 
 enum sftpRequestTypes
