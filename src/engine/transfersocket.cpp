@@ -171,7 +171,7 @@ void CTransferSocket::OnReceive()
 	}
 	else if (m_transferMode == download)
 	{
-		CFileTransferOpData *pData = static_cast<CFileTransferOpData *>(m_pControlSocket->m_pCurOpData);
+		CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(m_pControlSocket->m_pCurOpData);
 		if (!m_pTransferBuffer)
 			m_pTransferBuffer = new char[4096];
 
@@ -245,7 +245,7 @@ void CTransferSocket::OnSend()
 	if (!m_pTransferBuffer)
 		m_pTransferBuffer = new char[BUFFERSIZE];
 	
-	CFileTransferOpData *pData = static_cast<CFileTransferOpData *>(m_pControlSocket->m_pCurOpData);
+	CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(m_pControlSocket->m_pCurOpData);
 	int numsent = 0;
 	do
 	{

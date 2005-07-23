@@ -50,8 +50,6 @@ protected:
 	virtual int ChmodParseResponse();
 	virtual int ChmodSend(int prevResult = FZ_REPLY_OK);
 	
-	bool ParsePwdReply(wxString reply);
-
 	virtual void OnConnect(wxSocketEvent &event);
 	virtual void OnReceive(wxSocketEvent &event);
 
@@ -78,11 +76,11 @@ protected:
 	bool m_sentRestartOffset;
 };
 
-class CFileTransferOpData : public COpData
+class CFtpFileTransferOpData : public COpData
 {
 public:
-	CFileTransferOpData();
-	virtual ~CFileTransferOpData();
+	CFtpFileTransferOpData();
+	virtual ~CFtpFileTransferOpData();
 
 	// Transfer data
 	wxString localFile, remoteFile;

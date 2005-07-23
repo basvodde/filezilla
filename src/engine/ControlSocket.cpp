@@ -406,3 +406,36 @@ void CControlSocket::SendDirectoryListing(CDirectoryListing* pListing)
 {
 	m_pEngine->SendDirectoryListing(pListing);
 }
+
+bool CControlSocket::ParsePwdReply(wxString reply, bool unquoted /*=false*/)
+{
+	if (!unquoted)
+	{
+		int pos1 = reply.Find('"');
+		int pos2 = reply.Find('"', true);
+		if (pos1 == -1 || pos1 >= pos2)
+		{
+			LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("No quoted path found in pwd reply, trying first token as path"));
+			pos1 = reply.Find(' ');
+			if (pos1 == -1)
+			{
+				LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Can't parse path"));
+				return false;
+			}
+
+			pos2 = reply.Mid(pos1 + 1).Find(' ');
+			if (pos2 == -1)
+				pos2 = (int)reply.Length();
+		}
+		reply = reply.Mid(pos1 + 1, pos2 - pos1 - 1);
+	}
+
+	m_CurrentPath.SetType(m_pCurrentServer->GetType());
+	if (!m_CurrentPath.SetPath(reply))
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Can't parse path"));
+		return false;
+	}
+
+	return true;
+}

@@ -72,6 +72,8 @@ protected:
 
 	wxString ConvertDomainName(wxString domain);
 
+	bool ParsePwdReply(wxString reply, bool unquoted = false);
+
 	COpData *m_pCurOpData;
 	int m_nOpState;
 	CFileZillaEnginePrivate *m_pEngine;
