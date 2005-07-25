@@ -53,7 +53,7 @@ int fzprintf(sftpEventTypes type, const char* fmt, ...)
 int fzprintf_raw(sftpEventTypes type, const char* fmt, ...)
 {
     va_list ap;
-    char* str, *p, *s;
+    char* str ;
     va_start(ap, fmt);
     str = dupvprintf(fmt, ap);
 

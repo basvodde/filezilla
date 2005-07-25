@@ -59,7 +59,7 @@ int verify_ssh_host_key(void *frontend, char *host, int port, char *keytype,
 	"The server's %s key fingerprint is:\n"
 	"%s\n"
 	"Connection abandoned.\n";
-    static const char absentmsg[] =
+/*    static const char absentmsg[] =
 	"The server's host key is not cached. You have no guarantee\n"
 	"that the server is the computer you think it is.\n"
 	"The server's %s key fingerprint is:\n"
@@ -71,7 +71,7 @@ int verify_ssh_host_key(void *frontend, char *host, int port, char *keytype,
 	"If you do not trust this host, press Return to abandon the\n"
 	"connection.\n"
 	"Store key in cache? (y/n) ";
-
+*/
     static const char wrongmsg_batch[] =
 	"WARNING - POTENTIAL SECURITY BREACH!\n"
 	"The server's host key does not match the one PuTTY has\n"
@@ -81,7 +81,7 @@ int verify_ssh_host_key(void *frontend, char *host, int port, char *keytype,
 	"The new %s key fingerprint is:\n"
 	"%s\n"
 	"Connection abandoned.\n";
-    static const char wrongmsg[] =
+/*    static const char wrongmsg[] =
 	"WARNING - POTENTIAL SECURITY BREACH!\n"
 	"The server's host key does not match the one PuTTY has\n"
 	"cached. This means that either the server administrator\n"
@@ -97,7 +97,7 @@ int verify_ssh_host_key(void *frontend, char *host, int port, char *keytype,
 	"Return to cancel. Pressing Return is the ONLY guaranteed\n"
 	"safe choice.\n"
 	"Update cached key? (y/n, Return cancels connection) ";
-
+*/
     static const char abandoned[] = "Connection abandoned.\n";
 
     char line[32];
@@ -311,7 +311,7 @@ int console_get_line(const char *prompt, char *str,
 	tcsetattr(0, TCSANOW, &oldmode);
 
 	str[i--] = 0;
-	while (i >= 0 && str[i] == '\r' || str[i] == '\n')
+	while (i >= 0 && (str[i] == '\r' || str[i] == '\n'))
 	    str[i--] = '\0';
 	
 //	if (is_pw)

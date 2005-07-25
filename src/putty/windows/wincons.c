@@ -340,7 +340,7 @@ int console_get_line(const char *prompt, char *str,
 	    i = maxlen - 1;
 
 	str[i--] = 0;
-	while (i >= 0 && str[i] == '\r' || str[i] == '\n')
+	while (i >= 0 && (str[i] == '\r' || str[i] == '\n'))
 	    str[i--] = '\0';
 	
 	//if (is_pw)
