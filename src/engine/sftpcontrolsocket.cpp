@@ -260,6 +260,9 @@ int CSftpControlSocket::Connect(const CServer &server)
 
 void CSftpControlSocket::OnSftpEvent(CSftpEvent& event)
 {
+	if (!m_pCurrentServer)
+		return;
+
 	switch (event.GetType())
 	{
 	case sftpReply:
