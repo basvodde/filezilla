@@ -101,7 +101,8 @@ public:
 	bool resume;
 
 	wxDateTime fileTime;
-	wxFileOffset fileSize;
+	wxFileOffset localFileSize;
+	wxFileOffset remoteFileSize;
 
 	wxFile *pFile;
 	

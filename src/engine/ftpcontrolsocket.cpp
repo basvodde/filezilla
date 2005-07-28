@@ -15,7 +15,8 @@ CFtpFileTransferOpData::CFtpFileTransferOpData()
 	resume = false;
 	tryAbsolutePath = false;
 	bTriedPasv = bTriedActive = false;
-	fileSize = -1;
+	localFileSize = -1;
+	remoteFileSize = -1;
 	transferEndReason = 0;
 }
 
@@ -771,7 +772,7 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 		if (!pData->download && pData->opState >= filetransfer_transfer)
 		{
 			CDirectoryCache cache;
-			cache.InvalidateFile(*m_pCurrentServer, pData->remotePath, pData->remoteFile, CDirectoryCache::file, (nErrorCode == FZ_REPLY_OK) ? pData->fileSize : -1);
+			cache.InvalidateFile(*m_pCurrentServer, pData->remotePath, pData->remoteFile, CDirectoryCache::file, (nErrorCode == FZ_REPLY_OK) ? pData->localFileSize : -1);
 
 			m_pEngine->ResendModifiedListings();
 		}
@@ -1061,6 +1062,14 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 	if (pData->remotePath.GetType() == DEFAULT)
 		pData->remotePath.SetType(m_pCurrentServer->GetType());
 
+	wxStructStat buf;
+	int result;
+	result = wxStat(pData->localFile, &buf);
+	if (!result)
+	{
+		pData->localFileSize = buf.st_size;
+	}
+
 	int res = ChangeDir(pData->remotePath);
 	if (res != FZ_REPLY_OK)
 		return res;
@@ -1090,6 +1099,8 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 					differentCase = true;
 				else
 				{
+					wxLongLong size = listing.m_pEntries[i].size;	
+					pData->remoteFileSize = size.GetLo() + ((wxFileOffset)size.GetHi() << 32);
 					differentCase = false;
 					break;
 				}
@@ -1155,7 +1166,7 @@ int CFtpControlSocket::FileTransferParseResponse()
 				size += *buf - '0';
 				buf++;
 			}
-			pData->fileSize = size;
+			pData->remoteFileSize = size;
 		}
 		else if (code == 2 || code == 3)
 			LogMessage(Debug_Info, _T("Invalid SIZE reply"));
@@ -1283,7 +1294,7 @@ int CFtpControlSocket::FileTransferParseResponse()
 				startOffset = 0;
 			}
 
-			InitTransferStatus(pData->fileSize, startOffset);
+			InitTransferStatus(pData->download ? pData->remoteFileSize : pData->localFileSize, startOffset);
 		}
 		else
 		{
@@ -1297,9 +1308,9 @@ int CFtpControlSocket::FileTransferParseResponse()
 			wxFileOffset startOffset;
 			if (pData->resume)
 			{
-				if (pData->fileSize > 0)
+				if (pData->remoteFileSize > 0)
 				{
-					startOffset = pData->fileSize;
+					startOffset = pData->remoteFileSize;
 
 					// Assume native 64 bit type exists
 					if (pData->pFile->Seek(startOffset, wxFromStart) == wxInvalidOffset)
@@ -1425,6 +1436,8 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 							differentCase = true;
 						else
 						{
+							wxLongLong size = listing.m_pEntries[i].size;	
+							pData->remoteFileSize = size.GetLo() + ((wxFileOffset)size.GetHi() << 32);
 							differentCase = false;
 							break;
 						}
@@ -1748,32 +1761,28 @@ int CFtpControlSocket::CheckOverwriteFile()
 				}
 			}
 		}
-		if (!found && pData->fileSize == -1 && !pData->fileTime.IsValid())
+		if (!found && pData->remoteFileSize == -1 && !pData->fileTime.IsValid())
 			return FZ_REPLY_OK;
 	}
 
 	CFileExistsNotification *pNotification = new CFileExistsNotification;
 
 	pNotification->download = pData->download;
-
 	pNotification->localFile = pData->localFile;
+	pNotification->remoteFile = pData->remoteFile;
+	pNotification->remotePath = pData->remotePath;
+	pNotification->localSize = pData->localFileSize;
+	pNotification->remoteSize = pData->remoteFileSize;
 
 	wxStructStat buf;
 	int result;
 	result = wxStat(pData->localFile, &buf);
 	if (!result)
 	{
-		pNotification->localSize = buf.st_size;
 		pNotification->localTime = wxDateTime(buf.st_mtime);
 		if (!pNotification->localTime.IsValid())
 			pNotification->localTime = wxDateTime(buf.st_ctime);
 	}
-
-	pNotification->remoteFile = pData->remoteFile;
-	pNotification->remotePath = pData->remotePath;
-
-	if (pData->fileSize != -1)
-		pNotification->remoteSize = pData->fileSize;
 
 	if (pData->fileTime.IsValid())
 		pNotification->remoteTime = pData->fileTime;
@@ -1784,15 +1793,6 @@ int CFtpControlSocket::CheckOverwriteFile()
 		{
 			if (listing.m_pEntries[i].name == pData->remoteFile)
 			{
-				if (pData->fileSize == -1)
-				{
-					wxLongLong size = listing.m_pEntries[i].size;
-					if (size >= 0)
-					{
-						pNotification->remoteSize = size;
-						pData->fileSize = size.GetLo() + ((wxFileOffset)size.GetHi() << 32);
-					}
-				}
 				if (!pData->fileTime.IsValid())
 				{
 					if (listing.m_pEntries[i].hasDate)
@@ -1882,6 +1882,14 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 					fn.SetFullName(pFileExistsNotification->newName);
 					pData->localFile = fn.GetFullPath();
 
+					wxStructStat buf;
+					int result;
+					result = wxStat(pData->localFile, &buf);
+					if (!result)
+						pData->localFileSize = buf.st_size;
+					else
+						pData->localFileSize = -1;
+
 					if (CheckOverwriteFile() == FZ_REPLY_OK)
 						SendNextCommand();
 				}
@@ -1909,6 +1917,8 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 									differentCase = true;
 								else
 								{
+									wxLongLong size = listing.m_pEntries[i].size;	
+									pData->remoteFileSize = size.GetLo() + ((wxFileOffset)size.GetHi() << 32);
 									found = true;
 									break;
 								}
