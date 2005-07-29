@@ -484,6 +484,7 @@ void CServerItem::QueueImmediateFiles()
 		for (std::list<CFileItem*>::iterator iter = fileList.begin(); iter != fileList.end(); iter++)
 		{
 			CFileItem* item = *iter;
+			item->m_queued = true;
 			if (item->IsActive())
 				activeList.push_back(item);
 			else
