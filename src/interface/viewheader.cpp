@@ -54,9 +54,9 @@ CViewHeader::CViewHeader(wxWindow* pParent, const wxString& label)
 	m_pComboBox = new CComboBoxEx(this);
 	wxSize size = GetSize();
 #ifdef __WXMSW__
-	size.SetHeight(m_pComboBox->GetSize().GetHeight());
+	size.SetHeight(m_pComboBox->GetBestSize().GetHeight());
 #else
-	size.SetHeight(m_pComboBox->GetSize().GetHeight() + 10);
+	size.SetHeight(m_pComboBox->GetBestSize().GetHeight() + 10);
 #endif
 	SetSize(size);
 
