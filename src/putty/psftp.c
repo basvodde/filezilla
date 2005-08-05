@@ -1175,14 +1175,14 @@ int sftp_general_get(struct sftp_command *cmd, int restart, int multiple)
 	} else if (!strcmp(cmd->words[i], "-r")) {
 	    recurse = TRUE;
 	} else {
-	    printf("%s: unrecognised option '%s'\n", cmd->words[0], cmd->words[i]);
+	    fzprintf(sftpError, "%s: unrecognised option '%s'", cmd->words[0], cmd->words[i]);
 	    return 0;
 	}
 	i++;
     }
 
     if (i >= cmd->nwords) {
-	printf("%s: expects a filename\n", cmd->words[0]);
+	fzprintf(sftpError, printf("%s: expects a filename", cmd->words[0]);
 	return 0;
     }
 
@@ -1202,7 +1202,7 @@ int sftp_general_get(struct sftp_command *cmd, int restart, int multiple)
 	    origwfname = sftp_wildcard_get_filename(swcm);
 	    if (!origwfname) {
 		/* Politely warn the user that nothing matched. */
-		printf("%s: nothing matched\n", origfname);
+		fzprintf(sftpStatus, "%s: nothing matched", origfname);
 		sftp_finish_wildcard_matching(swcm);
 		sfree(unwcfname);
 		continue;
@@ -1216,7 +1216,7 @@ int sftp_general_get(struct sftp_command *cmd, int restart, int multiple)
 	    fname = canonify(origwfname);
 
 	    if (!fname) {
-		printf("%s: %s\n", origwfname, fxp_error());
+		fzprintf(sftpError, "%s: %s", origwfname, fxp_error());
 		sfree(unwcfname);
 		return 0;
 	    }
@@ -1245,6 +1245,8 @@ int sftp_general_get(struct sftp_command *cmd, int restart, int multiple)
 
     } while (multiple && i < cmd->nwords);
 
+    if (ret != 0)
+	fznotify1(sftpDone, ret);
     return ret;
 }
 int sftp_cmd_get(struct sftp_command *cmd)
