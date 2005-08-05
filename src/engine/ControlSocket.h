@@ -15,6 +15,25 @@ public:
 	COpData *pNextOpData;
 };
 
+class CFileTransferOpData : public COpData
+{
+public:
+	CFileTransferOpData();
+	virtual ~CFileTransferOpData();
+	// Transfer data
+	wxString localFile, remoteFile;
+	CServerPath remotePath;
+	bool download;
+
+	wxDateTime fileTime;
+	wxFileOffset localFileSize;
+	wxFileOffset remoteFileSize;
+
+	bool tryAbsolutePath;
+	bool resume;
+
+};
+
 #include "logging_private.h"
 
 class CTransferStatus;
@@ -71,6 +90,8 @@ protected:
 	void SendDirectoryListing(CDirectoryListing* pListing);
 
 	wxString ConvertDomainName(wxString domain);
+
+	int CheckOverwriteFile();
 
 	bool ParsePwdReply(wxString reply, bool unquoted = false);
 

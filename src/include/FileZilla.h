@@ -25,6 +25,8 @@
 #include <wx/treectrl.h>
 #include <wx/spinctrl.h>
 #include <wx/notebook.h>
+#include <wx/filefn.h>
+#include <wx/file.h>
 
 #include <list>
 #include <vector>

@@ -3,6 +3,7 @@
 #include "ControlSocket.h"
 #include <idna.h>
 #include "asynchostresolver.h"
+#include "directorycache.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -438,4 +439,108 @@ bool CControlSocket::ParsePwdReply(wxString reply, bool unquoted /*=false*/)
 	}
 
 	return true;
+}
+
+int CControlSocket::CheckOverwriteFile()
+{
+	if (!m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	CFileTransferOpData *pData = static_cast<CFileTransferOpData *>(m_pCurOpData);
+
+	if (pData->download)
+	{
+		if (!wxFile::Exists(pData->localFile))
+			return FZ_REPLY_OK;
+	}
+
+	CDirectoryListing listing;
+	CDirectoryCache cache;
+	bool foundListing = cache.Lookup(listing, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath);
+
+	bool found = false;
+	if (!pData->download)
+	{
+		if (foundListing)
+		{
+			for (unsigned int i = 0; i < listing.m_entryCount; i++)
+			{
+				if (listing.m_pEntries[i].name == pData->remoteFile)
+				{
+					found = true;
+					break;
+				}
+			}
+		}
+		if (!found && pData->remoteFileSize == -1 && !pData->fileTime.IsValid())
+			return FZ_REPLY_OK;
+	}
+
+	CFileExistsNotification *pNotification = new CFileExistsNotification;
+
+	pNotification->download = pData->download;
+	pNotification->localFile = pData->localFile;
+	pNotification->remoteFile = pData->remoteFile;
+	pNotification->remotePath = pData->remotePath;
+	pNotification->localSize = pData->localFileSize;
+	pNotification->remoteSize = pData->remoteFileSize;
+
+	wxStructStat buf;
+	int result;
+	result = wxStat(pData->localFile, &buf);
+	if (!result)
+	{
+		pNotification->localTime = wxDateTime(buf.st_mtime);
+		if (!pNotification->localTime.IsValid())
+			pNotification->localTime = wxDateTime(buf.st_ctime);
+	}
+
+	if (pData->fileTime.IsValid())
+		pNotification->remoteTime = pData->fileTime;
+
+	if (foundListing)
+	{
+		for (unsigned int i = 0; i < listing.m_entryCount; i++)
+		{
+			if (listing.m_pEntries[i].name == pData->remoteFile)
+			{
+				if (!pData->fileTime.IsValid())
+				{
+					if (listing.m_pEntries[i].hasDate)
+					{
+						if (VerifySetDate(pNotification->remoteTime, listing.m_pEntries[i].date.year, (enum wxDateTime::Month)(listing.m_pEntries[i].date.month - 1), listing.m_pEntries[i].date.day) && 
+							listing.m_pEntries[i].hasTime)
+						{
+							pNotification->remoteTime.SetHour(listing.m_pEntries[i].time.hour);
+							pNotification->remoteTime.SetMinute(listing.m_pEntries[i].time.minute);
+						}
+						if (pNotification->remoteTime.IsValid())
+							pData->fileTime = pNotification->remoteTime;
+					}
+				}
+			}
+		}
+	}
+
+
+	pNotification->requestNumber = m_pEngine->GetNextAsyncRequestNumber();
+	pData->waitForAsyncRequest = true;
+
+	m_pEngine->AddNotification(pNotification);
+
+	return FZ_REPLY_WOULDBLOCK;
+}
+
+CFileTransferOpData::CFileTransferOpData() :
+	localFileSize(-1), remoteFileSize(-1),
+	tryAbsolutePath(false), resume(false)
+{
+}
+
+CFileTransferOpData::~CFileTransferOpData()
+{
 }

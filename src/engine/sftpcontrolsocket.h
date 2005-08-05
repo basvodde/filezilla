@@ -61,7 +61,7 @@ public:
 	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T(""), bool refresh = false);
 	virtual int FileTransfer(const wxString localFile, const CServerPath &remotePath,
 							 const wxString &remoteFile, bool download,
-							 const CFileTransferCommand::t_transferSettings& transferSettings) { return 0; }
+							 const CFileTransferCommand::t_transferSettings& transferSettings);
 	virtual int RawCommand(const wxString& command = _T("")) { return 0; }
 	virtual int Delete(const CServerPath& path = CServerPath(), const wxString& file = _T("")) { return 0; }
 	virtual int RemoveDir(const CServerPath& path = CServerPath(), const wxString& subDir = _T("")) { return 0; }
@@ -84,6 +84,9 @@ protected:
 
 	int ProcessReply(const wxString& reply);
 
+	int FileTransferSend(int prevResult = FZ_REPLY_OK);
+	int FileTransferParseResponse(const wxString& reply);
+
 	int ListSend(int prevResult = FZ_REPLY_OK);
 	int ListParseResponse(const wxString& reply);
 	int ListParseEntry(const wxString& entry);
@@ -92,7 +95,7 @@ protected:
 	int ChangeDirParseResponse(const wxString& reply);
 	int ChangeDirSend();
 
-	bool Send(const char* str);
+	bool Send(const wxString& cmd);
 
 	wxProcess* m_pProcess;
 	CSftpInputThread* m_pInputThread;

@@ -5,16 +5,23 @@
 #include "directorycache.h"
 #include "directorylistingparser.h"
 
-class CSftpFileTransferOpData : public COpData
+class CSftpFileTransferOpData : public CFileTransferOpData
 {
 public:
-	bool download;
-	CServerPath remotePath;
-	wxString remoteFile;
-	wxFileOffset fileSize;
+	CSftpFileTransferOpData()
+	{
+	}
+
+	CFileTransferCommand::t_transferSettings transferSettings;
 };
 
-const int filetransfer_transfer = 0; // TODO!!
+enum filetransferStates
+{
+	filetransfer_init = 0,
+	filetransfer_waitcwd,
+	filetransfer_waitlist,
+	filetransfer_transfer
+};
 
 extern const wxEventType fzEVT_SFTP;
 typedef void (wxEvtHandler::*fzSftpEventFunction)(CSftpEvent&);
@@ -253,7 +260,7 @@ int CSftpControlSocket::Connect(const CServer &server)
 	}
 
 	wxString str;
-	Send(wxString::Format(_T("open %s@%s %d"), server.GetUser().c_str(), server.GetHost().c_str(), server.GetPort()).mb_str());
+	Send(wxString::Format(_T("open %s@%s %d"), server.GetUser().c_str(), server.GetHost().c_str(), server.GetPort()));
 
 	return FZ_REPLY_WOULDBLOCK;
 }
@@ -297,7 +304,7 @@ void CSftpControlSocket::OnSftpEvent(CSftpEvent& event)
 			}
 			else
 			{
-				Send(m_pCurrentServer->GetPass().mb_str());
+				Send(m_pCurrentServer->GetPass());
 			}
 			break;
 		default:
@@ -338,8 +345,10 @@ void CSftpControlSocket::OnTerminate(wxProcessEvent& event)
 	m_pProcess = 0;
 }
 
-bool CSftpControlSocket::Send(const char* str)
+bool CSftpControlSocket::Send(const wxString& cmd)
 {
+	LogMessage(Command, cmd);
+	const char* str = cmd.mb_str();
 	if (!m_pProcess)
 		return false;
 
@@ -378,11 +387,11 @@ bool CSftpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotifi
 
 		CHostKeyNotification *pHostKeyNotification = reinterpret_cast<CHostKeyNotification *>(pNotification);
 		if (!pHostKeyNotification->m_trust)
-			Send("");
+			Send(_T(""));
 		else if (pHostKeyNotification->m_alwaysTrust)
-			Send("y");
+			Send(_T("y"));
 		else
-			Send("n");
+			Send(_T("n"));
 
 		return true;
 	}
@@ -391,7 +400,7 @@ bool CSftpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotifi
 		CInteractiveLoginNotification *pInteractiveLoginNotification = reinterpret_cast<CInteractiveLoginNotification *>(pNotification);
 		
 		m_pCurrentServer->SetUser(m_pCurrentServer->GetUser(), pInteractiveLoginNotification->server.GetPass());
-		Send(m_pCurrentServer->GetPass().mb_str());
+		Send(m_pCurrentServer->GetPass());
 	}
 
 	return false;
@@ -596,7 +605,7 @@ int CSftpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 	if (pData->opState == list_list)
 	{
 		pData->pParser = new CDirectoryListingParser(m_pEngine, m_pCurrentServer->GetType());
-		Send("ls");
+		Send(_T("ls"));
 		return FZ_REPLY_WOULDBLOCK;
 	}
 	return FZ_REPLY_ERROR;
@@ -769,7 +778,7 @@ int CSftpControlSocket::ChangeDirSend()
 	}
 
 	if (cmd != _T(""))
-		if (!Send(cmd.mb_str()))
+		if (!Send(cmd))
 			return FZ_REPLY_ERROR;
 
 	return FZ_REPLY_WOULDBLOCK;
@@ -813,7 +822,7 @@ int CSftpControlSocket::ResetOperation(int nErrorCode)
 		if (!pData->download && pData->opState >= filetransfer_transfer)
 		{
 			CDirectoryCache cache;
-			cache.InvalidateFile(*m_pCurrentServer, pData->remotePath, pData->remoteFile, CDirectoryCache::file, (nErrorCode == FZ_REPLY_OK) ? pData->fileSize : -1);
+			cache.InvalidateFile(*m_pCurrentServer, pData->remotePath, pData->remoteFile, CDirectoryCache::file, (nErrorCode == FZ_REPLY_OK) ? pData->remoteFileSize : -1);
 
 			m_pEngine->ResendModifiedListings();
 		}
@@ -851,4 +860,254 @@ int CSftpControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
 	}
 
 	return FZ_REPLY_ERROR;
+}
+
+int CSftpControlSocket::FileTransfer(const wxString localFile, const CServerPath &remotePath,
+									const wxString &remoteFile, bool download,
+									const CFileTransferCommand::t_transferSettings& transferSettings)
+{
+	LogMessage(Debug_Verbose, _T("CSftpControlSocket::FileTransfer(...)"));
+
+	if (download)
+	{
+		wxString filename = remotePath.FormatFilename(remoteFile);
+		LogMessage(Status, _("Starting download of %s"), filename.c_str());
+	}
+	else
+	{
+		LogMessage(Status, _("Starting upload of %s"), localFile.c_str());
+	}
+	if (m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("deleting nonzero pData"));
+		delete m_pCurOpData;
+	}
+
+	CSftpFileTransferOpData *pData = new CSftpFileTransferOpData;
+	m_pCurOpData = pData;
+
+	pData->localFile = localFile;
+	pData->remotePath = remotePath;
+	pData->remoteFile = remoteFile;
+	pData->download = download;
+	pData->transferSettings = transferSettings;
+
+	pData->opState = filetransfer_waitcwd;
+
+	if (pData->remotePath.GetType() == DEFAULT)
+		pData->remotePath.SetType(m_pCurrentServer->GetType());
+
+	wxStructStat buf;
+	int result;
+	result = wxStat(pData->localFile, &buf);
+	if (!result)
+		pData->localFileSize = buf.st_size;
+
+	int res = ChangeDir(pData->remotePath);
+	if (res != FZ_REPLY_OK)
+		return res;
+
+	pData->opState = filetransfer_waitlist;
+
+	CDirectoryListing listing;
+	CDirectoryCache cache;
+	bool found = cache.Lookup(listing, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath);
+	bool shouldList = false;
+	if (!found)
+		shouldList = true;
+	else
+	{
+		bool differentCase = false;
+
+		for (unsigned int i = 0; i < listing.m_entryCount; i++)
+		{
+			if (!listing.m_pEntries[i].name.CmpNoCase(pData->remoteFile))
+			{
+				if (listing.m_pEntries[i].unsure)
+				{
+					shouldList = true;
+					break;
+				}
+				if (listing.m_pEntries[i].name != pData->remoteFile)
+					differentCase = true;
+				else
+				{
+					wxLongLong size = listing.m_pEntries[i].size;	
+					pData->remoteFileSize = size.GetLo() + ((wxFileOffset)size.GetHi() << 32);
+					differentCase = false;
+					break;
+				}
+			}
+		}
+		if (!shouldList)
+		{
+			pData->opState = filetransfer_transfer;
+			res = CheckOverwriteFile();
+			if (res != FZ_REPLY_OK)
+				return res;
+		}
+	}
+	if (shouldList)
+	{
+		res = List();
+		if (res != FZ_REPLY_OK)
+			return res;
+
+		pData->opState = filetransfer_transfer;
+
+		res = CheckOverwriteFile();
+		if (res != FZ_REPLY_OK)
+			return res;
+	}
+
+	return FileTransferSend();
+}
+
+int CSftpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
+{
+	LogMessage(Debug_Verbose, _T("FileTransferSend()"));
+
+	if (!m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	CSftpFileTransferOpData *pData = static_cast<CSftpFileTransferOpData *>(m_pCurOpData);
+
+	if (pData->opState == filetransfer_waitcwd)
+	{
+		if (prevResult == FZ_REPLY_OK)
+		{
+			pData->opState = filetransfer_waitlist;
+
+			CDirectoryListing listing;
+			CDirectoryCache cache;
+			bool found = cache.Lookup(listing, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath);
+			bool shouldList = false;
+			if (!found)
+				shouldList = true;
+			else
+			{
+				bool differentCase = false;
+
+				for (unsigned int i = 0; i < listing.m_entryCount; i++)
+				{
+					if (!listing.m_pEntries[i].name.CmpNoCase(pData->remoteFile))
+					{
+						if (listing.m_pEntries[i].unsure)
+						{
+							shouldList = true;
+							break;
+						}
+						if (listing.m_pEntries[i].name != pData->remoteFile)
+							differentCase = true;
+						else
+						{
+							wxLongLong size = listing.m_pEntries[i].size;	
+							pData->remoteFileSize = size.GetLo() + ((wxFileOffset)size.GetHi() << 32);
+							differentCase = false;
+							break;
+						}
+					}
+				}
+				if (!shouldList)
+				{
+					pData->opState = filetransfer_transfer;
+					int res = CheckOverwriteFile();
+					if (res != FZ_REPLY_OK)
+						return res;
+				}
+			}
+			if (shouldList)
+			{
+				int res = List();
+				if (res != FZ_REPLY_OK)
+					return res;
+
+				pData->opState = filetransfer_transfer;
+
+				res = CheckOverwriteFile();
+				if (res != FZ_REPLY_OK)
+					return res;
+			}
+		}
+		else if (prevResult == FZ_REPLY_ERROR)
+		{
+			pData->tryAbsolutePath = true;
+			pData->opState = filetransfer_transfer;
+
+			int res = CheckOverwriteFile();
+			if (res != FZ_REPLY_OK)
+				return res;
+		}
+		else
+		{
+			ResetOperation(prevResult);
+			return FZ_REPLY_ERROR;
+		}
+	}
+	else if (pData->opState == filetransfer_waitlist)
+	{
+		if (prevResult == FZ_REPLY_OK)
+		{
+			CDirectoryListing listing;
+			CDirectoryCache cache;
+			bool found = cache.Lookup(listing, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath);
+			if (found)
+			{
+				bool differentCase = false;
+
+				for (unsigned int i = 0; i < listing.m_entryCount; i++)
+				{
+					if (!listing.m_pEntries[i].name.CmpNoCase(pData->remoteFile))
+					{
+						if (listing.m_pEntries[i].unsure)
+						{
+							differentCase = true;
+							break;
+						}
+						if (listing.m_pEntries[i].name != pData->remoteFile)
+							differentCase = true;
+						else
+						{
+							differentCase = false;
+							break;
+						}
+					}
+				}
+			}
+		}
+		else if (prevResult != FZ_REPLY_ERROR)
+		{
+			ResetOperation(prevResult);
+			return FZ_REPLY_ERROR;
+		}
+
+		pData->opState = filetransfer_transfer;
+
+		int res = CheckOverwriteFile();
+		if (res != FZ_REPLY_OK)
+			return res;
+	}
+
+	wxString cmd;
+	if (pData->resume)
+		cmd = _T("re");
+	if (pData->download)
+		cmd += _T("get ");
+	else
+		cmd += _T("put");
+
+	cmd += pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath);
+	cmd += _T(" ") + pData->localFile;
+
+	if (!Send(cmd))
+	{
+		ResetOperation(FZ_REPLY_ERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	return FZ_REPLY_WOULDBLOCK;
 }

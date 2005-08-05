@@ -4,8 +4,6 @@
 #include "directorylistingparser.h"
 #include "optionsbase.h"
 
-#include <wx/file.h>
-
 BEGIN_EVENT_TABLE(CTransferSocket, wxEvtHandler)
 	EVT_SOCKET(wxID_ANY, CTransferSocket::OnSocketEvent)
 END_EVENT_TABLE();

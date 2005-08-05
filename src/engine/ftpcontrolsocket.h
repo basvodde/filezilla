@@ -64,8 +64,6 @@ protected:
 	int LogonParseResponse();
 	int LogonSend();
 
-	int CheckOverwriteFile();
-
 	wxString m_ReceiveBuffer;
 	wxString m_MultilineResponseCode;
 
@@ -76,16 +74,11 @@ protected:
 	bool m_sentRestartOffset;
 };
 
-class CFtpFileTransferOpData : public COpData
+class CFtpFileTransferOpData : public CFileTransferOpData
 {
 public:
 	CFtpFileTransferOpData();
 	virtual ~CFtpFileTransferOpData();
-
-	// Transfer data
-	wxString localFile, remoteFile;
-	CServerPath remotePath;
-	bool download;
 
 	bool bPasv;
 	bool bTriedPasv;
@@ -99,10 +92,6 @@ public:
 	bool tryAbsolutePath;
 
 	bool resume;
-
-	wxDateTime fileTime;
-	wxFileOffset localFileSize;
-	wxFileOffset remoteFileSize;
 
 	wxFile *pFile;
 	
