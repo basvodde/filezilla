@@ -10,7 +10,6 @@ END_EVENT_TABLE();
 bool CInputDialog::Create(wxWindow* parent, const wxString& title, const wxString& text)
 {
 	m_allowEmpty = false;
-	SetExtraStyle(wxWS_EX_BLOCK_EVENTS);
 	SetParent(parent);
 
 	if (!wxXmlResource::Get()->LoadDialog(this, parent, _T("ID_INPUTDIALOG")))

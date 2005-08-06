@@ -476,7 +476,6 @@ bool CMainFrame::CreateToolBar()
 	{
 		wxLogError(_("Cannot load toolbar from resource file"));
 	}
-	SetToolBar(0);
 	SetToolBar(m_pToolBar);
 
 	return true;

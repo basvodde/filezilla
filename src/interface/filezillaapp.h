@@ -1,10 +1,6 @@
 #ifndef __FILEZILLAAPP_H__
 #define __FILEZILLAAPP_H__
 
-#ifdef _MSC_VER
-#include <msvc/wx/setup.h>
-#endif
-
 #if wxUSE_DEBUGREPORT && wxUSE_ON_FATAL_EXCEPTION
 #include <wx/debugrpt.h>
 #endif
