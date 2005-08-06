@@ -208,15 +208,26 @@ int CControlSocket::ResetOperation(int nErrorCode)
 	{
 		if (nErrorCode & FZ_REPLY_CRITICALERROR)
 			LogMessage(::Error, _("Critical error"));
-		switch (GetCurrentCommandId())
+		const enum Command commandId = GetCurrentCommandId();
+		switch (commandId)
 		{
 		case cmd_connect:
-			LogMessage(::Error, _("Could not connect to server"));
+			if (nErrorCode & FZ_REPLY_CANCELED)
+				LogMessage(::Error, _("Connection attempt interrupted by user"));
+			else
+				LogMessage(::Error, _("Could not connect to server"));
 			break;
 		case cmd_list:
-			LogMessage(::Error, _("Failed to retrieve directory listing"));
+			if (nErrorCode & FZ_REPLY_CANCELED)
+				LogMessage(::Error, _("Directory listing aborted by user"));
+			else
+				LogMessage(::Error, _("Failed to retrieve directory listing"));
+			break;
+		case cmd_none:
 			break;
 		default:
+			if (nErrorCode & FZ_REPLY_CANCELED)
+				LogMessage(::Error, _("Interrupted by user"));
 			break;
 		}
 	}
@@ -336,7 +347,6 @@ void CControlSocket::Cancel()
 			DoClose(FZ_REPLY_CANCELED);
 		else
 			ResetOperation(FZ_REPLY_CANCELED);
-		LogMessage(::Error, _("Interrupted by user"));
 	}
 }
 
@@ -539,6 +549,7 @@ CFileTransferOpData::CFileTransferOpData() :
 	localFileSize(-1), remoteFileSize(-1),
 	tryAbsolutePath(false), resume(false)
 {
+	opId = cmd_transfer;
 }
 
 CFileTransferOpData::~CFileTransferOpData()

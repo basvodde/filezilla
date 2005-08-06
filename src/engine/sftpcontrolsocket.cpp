@@ -213,20 +213,7 @@ CSftpControlSocket::CSftpControlSocket(CFileZillaEnginePrivate *pEngine) : CCont
 
 CSftpControlSocket::~CSftpControlSocket()
 {
-	if (m_pInputThread)
-	{
-		wxProcess::Kill(m_pid, wxSIGKILL);
-		m_inDestructor = true;
-		if (m_pInputThread)
-		{
-			m_pInputThread->Wait();
-			delete m_pInputThread;
-		}
-		if (!m_termindatedInDestructor)
-			m_pProcess->Detach();
-		else
-			delete m_pProcess;
-	}
+	DoClose();
 }
 
 int CSftpControlSocket::Connect(const CServer &server)
@@ -304,7 +291,10 @@ void CSftpControlSocket::OnSftpEvent(CSftpEvent& event)
 			}
 			else
 			{
-				Send(m_pCurrentServer->GetPass());
+				const wxString pass = m_pCurrentServer->GetPass();
+				wxString show = _T("Pass: ");
+				show.Append('*', pass.Length());
+				Send(pass, show);
 			}
 			break;
 		default:
@@ -337,6 +327,8 @@ void CSftpControlSocket::OnTerminate(wxProcessEvent& event)
 		return;
 	}
 
+	CControlSocket::DoClose();
+
 	m_pInputThread->Wait();
 	delete m_pInputThread;
 	m_pInputThread = 0;
@@ -345,9 +337,25 @@ void CSftpControlSocket::OnTerminate(wxProcessEvent& event)
 	m_pProcess = 0;
 }
 
-bool CSftpControlSocket::Send(const wxString& cmd)
+bool CSftpControlSocket::Send(wxString cmd, const wxString& show /*=_T("")*/)
 {
-	LogMessage(Command, cmd);
+	if (show != _T(""))
+		LogMessage(Command, show);
+	else
+		LogMessage(Command, cmd);
+
+	// Check for newlines in command
+	// a command like "ls\nrm foo/bar" is dangerous
+	if (cmd.Find('\n') != -1 ||
+		cmd.Find('\r') != -1)
+	{
+		LogMessage(Debug_Warning, _T("Command containing newline characters, aborting"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return false;
+	}
+
+	cmd += _T("\n");
+
 	const char* str = cmd.mb_str();
 	if (!m_pProcess)
 		return false;
@@ -358,9 +366,6 @@ bool CSftpControlSocket::Send(const wxString& cmd)
 
 	unsigned int len = strlen(str);
 	if (pStream->Write(str, len).LastWrite() != len)
-		return false;
-
-	if (pStream->Write("\n", 1).LastWrite() != 1)
 		return false;
 
 	return true;
@@ -376,34 +381,170 @@ bool CSftpControlSocket::SendRequest(CAsyncRequestNotification *pNotification)
 
 bool CSftpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotification)
 {
-	if (pNotification->GetRequestID() == reqId_hostkey || pNotification->GetRequestID() == reqId_hostkeyChanged)
+	const enum RequestId requestId = pNotification->GetRequestID();
+	switch(requestId)
 	{
-		if (GetCurrentCommandId() != cmd_connect ||
-			!m_pCurrentServer)
+	case reqId_fileexists:
 		{
-			LogMessage(Debug_Info, _T("SetAsyncRequestReply called to wrong time"));
-			return false;
+			if (!m_pCurOpData || m_pCurOpData->opId != cmd_transfer)
+			{
+				LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("No or invalid operation in progress, ignoring request reply %f"), pNotification->GetRequestID());
+				return false;
+			}
+
+			CSftpFileTransferOpData *pData = static_cast<CSftpFileTransferOpData *>(m_pCurOpData);
+
+			if (!pData->waitForAsyncRequest)
+			{
+				LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Not waiting for request reply, ignoring request reply %d"), pNotification->GetRequestID());
+				return false;
+			}
+			pData->waitForAsyncRequest = false;
+
+			CFileExistsNotification *pFileExistsNotification = reinterpret_cast<CFileExistsNotification *>(pNotification);
+			switch (pFileExistsNotification->overwriteAction)
+			{
+			case CFileExistsNotification::overwrite:
+				SendNextCommand();
+				break;
+			case CFileExistsNotification::overwriteNewer:
+				if (!pFileExistsNotification->localTime.IsValid() || !pFileExistsNotification->remoteTime.IsValid())
+					SendNextCommand();
+				else if (pFileExistsNotification->download && pFileExistsNotification->localTime.IsEarlierThan(pFileExistsNotification->remoteTime))
+					SendNextCommand();
+				else if (!pFileExistsNotification->download && pFileExistsNotification->localTime.IsLaterThan(pFileExistsNotification->remoteTime))
+					SendNextCommand();
+				else
+				{
+					if (pData->download)
+					{
+						wxString filename = pData->remotePath.FormatFilename(pData->remoteFile);
+						LogMessage(Status, _("Skipping download of %s"), filename.c_str());
+					}
+					else
+					{
+						LogMessage(Status, _("Skipping upload of %s"), pData->localFile.c_str());
+					}
+					ResetOperation(FZ_REPLY_OK);
+				}
+				break;
+			case CFileExistsNotification::resume:
+				if (pData->download && pFileExistsNotification->localSize != -1)
+					pData->resume = true;
+				else if (!pData->download && pFileExistsNotification->remoteSize != -1)
+					pData->resume = true;
+				SendNextCommand();
+				break;
+			case CFileExistsNotification::rename:
+				if (pData->download)
+				{
+					wxFileName fn = pData->localFile;
+					fn.SetFullName(pFileExistsNotification->newName);
+					pData->localFile = fn.GetFullPath();
+
+					wxStructStat buf;
+					int result;
+					result = wxStat(pData->localFile, &buf);
+					if (!result)
+						pData->localFileSize = buf.st_size;
+					else
+						pData->localFileSize = -1;
+
+					if (CheckOverwriteFile() == FZ_REPLY_OK)
+						SendNextCommand();
+				}
+				else
+				{
+					pData->remoteFile = pFileExistsNotification->newName;
+
+					CDirectoryListing listing;
+					CDirectoryCache cache;
+					bool found = cache.Lookup(listing, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath);
+					if (found)
+					{
+						bool differentCase = false;
+						bool found = false;
+						for (unsigned int i = 0; i < listing.m_entryCount; i++)
+						{
+							if (!listing.m_pEntries[i].name.CmpNoCase(pData->remoteFile))
+							{
+								if (listing.m_pEntries[i].name != pData->remoteFile)
+									differentCase = true;
+								else
+								{
+									wxLongLong size = listing.m_pEntries[i].size;	
+									pData->remoteFileSize = size.GetLo() + ((wxFileOffset)size.GetHi() << 32);
+									found = true;
+									break;
+								}
+							}
+						}
+						if (found)
+						{
+							if (CheckOverwriteFile() != FZ_REPLY_OK)
+								break;
+						}
+					}
+					SendNextCommand();
+				}
+				break;
+			case CFileExistsNotification::skip:
+				if (pData->download)
+				{
+					wxString filename = pData->remotePath.FormatFilename(pData->remoteFile);
+					LogMessage(Status, _("Skipping download of %s"), filename.c_str());
+				}
+				else
+				{
+					LogMessage(Status, _("Skipping upload of %s"), pData->localFile.c_str());
+				}
+				ResetOperation(FZ_REPLY_OK);
+				break;
+			default:
+				LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Unknown file exists action: %d"), pFileExistsNotification->overwriteAction);
+				ResetOperation(FZ_REPLY_INTERNALERROR);
+				return false;
+			}
 		}
+		break;
+	case reqId_hostkey:
+	case reqId_hostkeyChanged:
+		{
+			if (GetCurrentCommandId() != cmd_connect ||
+				!m_pCurrentServer)
+			{
+				LogMessage(Debug_Info, _T("SetAsyncRequestReply called to wrong time"));
+				return false;
+			}
 
-		CHostKeyNotification *pHostKeyNotification = reinterpret_cast<CHostKeyNotification *>(pNotification);
-		if (!pHostKeyNotification->m_trust)
-			Send(_T(""));
-		else if (pHostKeyNotification->m_alwaysTrust)
-			Send(_T("y"));
-		else
-			Send(_T("n"));
-
-		return true;
-	}
-	else if (pNotification->GetRequestID() == reqId_interactiveLogin)
-	{
-		CInteractiveLoginNotification *pInteractiveLoginNotification = reinterpret_cast<CInteractiveLoginNotification *>(pNotification);
+			CHostKeyNotification *pHostKeyNotification = reinterpret_cast<CHostKeyNotification *>(pNotification);
+			if (!pHostKeyNotification->m_trust)
+				Send(_T(""));
+			else if (pHostKeyNotification->m_alwaysTrust)
+				Send(_T("y"));
+			else
+				Send(_T("n"));
+		}
+		break;
+	case reqId_interactiveLogin:
+		{
+			CInteractiveLoginNotification *pInteractiveLoginNotification = reinterpret_cast<CInteractiveLoginNotification *>(pNotification);
 		
-		m_pCurrentServer->SetUser(m_pCurrentServer->GetUser(), pInteractiveLoginNotification->server.GetPass());
-		Send(m_pCurrentServer->GetPass());
+			if (!pInteractiveLoginNotification->passwordSet)
+			{
+				DoClose(FZ_REPLY_CANCELED);
+				return false;
+			}
+			const wxString pass = pInteractiveLoginNotification->server.GetPass();
+			m_pCurrentServer->SetUser(m_pCurrentServer->GetUser(), pass);
+			wxString show = _T("Pass: ");
+			show.Append('*', pass.Length());
+			Send(pass, show);
+		}
+		break;
 	}
 
-	return false;
+	return true;
 }
 
 class CSftpListOpData : public COpData
@@ -450,6 +591,14 @@ int CSftpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDi
 	{
 		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("List called from other command"));
 	}
+
+	if (!m_pCurrentServer)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("m_pCurrenServer == 0"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
 	CSftpListOpData *pData = new CSftpListOpData;
 	pData->pNextOpData = m_pCurOpData;
 	m_pCurOpData = pData;
@@ -794,6 +943,9 @@ int CSftpControlSocket::ProcessReply(const wxString& reply)
 	case cmd_list:
 		return ListParseResponse(reply);
 		break;
+	case cmd_transfer:
+		return FileTransferParseResponse(reply);
+		break;
 	case cmd_private:
 		return ChangeDirParseResponse(reply);
 		break;
@@ -851,6 +1003,8 @@ int CSftpControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
 	{
 	case cmd_list:
 		return ListSend(prevResult);
+	case cmd_transfer:
+		return FileTransferSend(prevResult);
 	case cmd_private:
 		return ChangeDirSend();
 	default:
@@ -1100,7 +1254,7 @@ int CSftpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 	else
 		cmd += _T("put");
 
-	cmd += pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath);
+	cmd += _T("\"") + pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath) + _T("\"");
 	cmd += _T(" ") + pData->localFile;
 
 	if (!Send(cmd))
@@ -1110,4 +1264,60 @@ int CSftpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 	}
 
 	return FZ_REPLY_WOULDBLOCK;
+}
+
+int CSftpControlSocket::FileTransferParseResponse(const wxString& reply)
+{
+	LogMessage(Debug_Verbose, _T("FileTransferParseResponse()"));
+
+	if (!m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	CSftpFileTransferOpData *pData = static_cast<CSftpFileTransferOpData *>(m_pCurOpData);
+
+	if (pData->opState != filetransfer_transfer)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("  Called at improper time: opState == %d"), pData->opState);
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	ResetOperation(FZ_REPLY_OK);
+	return FZ_REPLY_OK;
+}
+
+int CSftpControlSocket::DoClose(int nErrorCode /*=FZ_REPLY_DISCONNECTED*/)
+{
+	nErrorCode = CControlSocket::DoClose(nErrorCode);
+	if (m_pInputThread)
+	{
+		wxProcess::Kill(m_pid, wxSIGKILL);
+		m_inDestructor = true;
+		if (m_pInputThread)
+		{
+			m_pInputThread->Wait();
+			delete m_pInputThread;
+			m_pInputThread = 0;
+		}
+		if (!m_termindatedInDestructor)
+			m_pProcess->Detach();
+		else
+		{
+			delete m_pProcess;
+			m_pProcess = 0;
+		}
+	}
+	return nErrorCode;
+}
+
+void CSftpControlSocket::Cancel()
+{
+	if (GetCurrentCommandId() != cmd_none)
+	{
+		DoClose(FZ_REPLY_CANCELED);
+	}
 }

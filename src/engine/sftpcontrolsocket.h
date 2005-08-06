@@ -68,6 +68,7 @@ public:
 	virtual int Mkdir(const CServerPath& path, CServerPath start = CServerPath()) { return 0; }
 	virtual int Rename(const CRenameCommand& command) { return 0; }
 	virtual int Chmod(const CChmodCommand& command) { return 0; }
+	virtual void Cancel();
 
 	virtual bool Connected() const { return m_pInputThread != 0; }
 
@@ -78,6 +79,7 @@ public:
 	bool SendRequest(CAsyncRequestNotification *pNotification);
 
 protected:
+	virtual int DoClose(int nErrorCode = FZ_REPLY_DISCONNECTED);
 
 	int ResetOperation(int nErrorCode);
 	int SendNextCommand(int prevResult = FZ_REPLY_OK);
@@ -95,7 +97,7 @@ protected:
 	int ChangeDirParseResponse(const wxString& reply);
 	int ChangeDirSend();
 
-	bool Send(const wxString& cmd);
+	bool Send(wxString cmd, const wxString& show = _T(""));
 
 	wxProcess* m_pProcess;
 	CSftpInputThread* m_pInputThread;

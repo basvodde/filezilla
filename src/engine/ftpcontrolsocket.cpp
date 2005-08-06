@@ -6,8 +6,6 @@
 
 CFtpFileTransferOpData::CFtpFileTransferOpData()
 {
-	opId = cmd_transfer;
-
 	pFile = 0;
 	resume = false;
 	bTriedPasv = bTriedActive = false;

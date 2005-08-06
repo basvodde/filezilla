@@ -61,8 +61,6 @@ public:
 
 	enum Command GetCurrentCommandId() const;
 
-	int DoClose(int nErrorCode = FZ_REPLY_DISCONNECTED);
-
 	virtual void TransferEnd(int reason) = 0;
 
 	virtual bool SetAsyncRequestReply(CAsyncRequestNotification *pNotification) = 0;
@@ -75,6 +73,8 @@ public:
 	const CServer* GetCurrentServer() const;
 	
 protected:
+	virtual int DoClose(int nErrorCode = FZ_REPLY_DISCONNECTED);
+
 	virtual void OnSocketEvent(wxSocketEvent &event);
 	virtual void OnConnect(wxSocketEvent &event);
 	virtual void OnReceive(wxSocketEvent &event);
