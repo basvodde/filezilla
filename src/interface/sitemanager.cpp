@@ -584,6 +584,8 @@ bool CSiteManager::UpdateServer()
 	wxString protocol = XRCCTRL(*this, "ID_PROTOCOL", wxComboBox)->GetValue();
 	if (protocol == _("FTP"))
 		data->m_server.SetProtocol(FTP);
+	else if (protocol == _("SFTP"))
+		data->m_server.SetProtocol(SFTP);
 	else
 		data->m_server.SetProtocol(FTP);
 
@@ -757,6 +759,9 @@ void CSiteManager::SetCtrlState()
 		XRCCTRL(*this, "ID_PORT", wxTextCtrl)->SetValue(wxString::Format(_T("%d"), data->m_server.GetPort()));
 		switch (data->m_server.GetProtocol())
 		{
+		case SFTP:
+			XRCCTRL(*this, "ID_PROTOCOL", wxComboBox)->SetValue(_("SFTP"));
+			break;
 		case FTP:
 		default:
 			XRCCTRL(*this, "ID_PROTOCOL", wxComboBox)->SetValue(_("FTP"));
