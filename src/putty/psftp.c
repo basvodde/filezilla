@@ -929,7 +929,7 @@ int sftp_cmd_null(struct sftp_command *cmd)
 
 int sftp_cmd_unknown(struct sftp_command *cmd)
 {
-    printf("psftp: unknown command \"%s\"\n", cmd->words[0]);
+	fzprintf(sftpError, "Unknown command: \"%s\"\n", cmd->words[0]);
     return 0;			       /* failure */
 }
 
@@ -1182,7 +1182,7 @@ int sftp_general_get(struct sftp_command *cmd, int restart, int multiple)
     }
 
     if (i >= cmd->nwords) {
-	fzprintf(sftpError, printf("%s: expects a filename", cmd->words[0]);
+	fzprintf(sftpError, "%s: expects a filename", cmd->words[0]);
 	return 0;
     }
 
@@ -1291,14 +1291,14 @@ int sftp_general_put(struct sftp_command *cmd, int restart, int multiple)
 	} else if (!strcmp(cmd->words[i], "-r")) {
 	    recurse = TRUE;
 	} else {
-	    printf("%s: unrecognised option '%s'\n", cmd->words[0], cmd->words[i]);
+	    fzprintf(sftpError, "%s: unrecognised option '%s'", cmd->words[0], cmd->words[i]);
 	    return 0;
 	}
 	i++;
     }
 
     if (i >= cmd->nwords) {
-	printf("%s: expects a filename\n", cmd->words[0]);
+	fzprintf(sftpError, "%s: expects a filename", cmd->words[0]);
 	return 0;
     }
 
@@ -1312,7 +1312,7 @@ int sftp_general_put(struct sftp_command *cmd, int restart, int multiple)
 	    wfname = wildcard_get_filename(wcm);
 	    if (!wfname) {
 		/* Politely warn the user that nothing matched. */
-		printf("%s: nothing matched\n", fname);
+		fzprintf(sftpError, "%s: nothing matched", fname);
 		finish_wildcard_matching(wcm);
 		continue;
 	    }
@@ -1329,7 +1329,7 @@ int sftp_general_put(struct sftp_command *cmd, int restart, int multiple)
 
 	    outfname = canonify(origoutfname);
 	    if (!outfname) {
-		printf("%s: %s\n", origoutfname, fxp_error());
+		fzprintf(sftpError, "%s: %s", origoutfname, fxp_error());
 		if (wcm) {
 		    sfree(wfname);
 		    finish_wildcard_matching(wcm);
@@ -1355,6 +1355,8 @@ int sftp_general_put(struct sftp_command *cmd, int restart, int multiple)
 
     } while (multiple && i < cmd->nwords);
 
+    if (ret != 0)
+	fznotify1(sftpDone, ret);
     return ret;
 }
 int sftp_cmd_put(struct sftp_command *cmd)
