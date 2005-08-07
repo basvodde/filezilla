@@ -1,13 +1,6 @@
 #ifndef __FILEZILLAENGINE_H__
 #define __FILEZILLAENGINE_H__
 
-enum EngineNotificationType
-{
-	engineCancel,
-	engineHostresolve,
-	engineTransferEnd
-};
-
 #include "engineprivate.h"
 
 class CFileZillaEngine : public CFileZillaEnginePrivate
@@ -17,13 +10,15 @@ public:
 	virtual ~CFileZillaEngine();
 
 	// Initialize the engine. Pass over the event handler that should receive notification
-	// events. (Defined in notification.h)
+	// events as defined in notification.h
+	// You also need to pass an options handler as defined in optionsbase.h
 	int Init(wxEvtHandler *pEventHandler, COptionsBase *pOptions);
 
 	// TODO: Init function with a function pointer for a callback function for 
 	// notifications. Not all users of the engine use wxWidgets.
 
-    // Execute the given command. See commands.h for a list of the available commands.
+    // Execute the given command. See commands.h for a list of the available 
+	// commands and reply codes.
 	int Command(const CCommand &command);
 
 	bool IsBusy() const;
@@ -37,12 +32,14 @@ public:
 	// Returns the next pending notification.
 	// Has to be called until it returns 0 each time you get the
 	// pending notifications event, or you'll lose notifications.
+	// See notification.h for details.
 	CNotification* GetNextNotification();
 
 	const CCommand *GetCurrentCommand() const;
 	enum Command GetCurrentCommandId() const;
 
 	// Sets the reply to an async request, e.g. a file exists request.
+	// See notifiction.h for details.
 	bool IsPendingAsyncRequestReply(const CAsyncRequestNotification *pNotification);
 	bool SetAsyncRequestReply(CAsyncRequestNotification *pNotification);
 	

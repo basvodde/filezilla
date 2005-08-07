@@ -1,6 +1,10 @@
 #ifndef __COMMANDS_H__
 #define __COMMANDS_H__
 
+// See below for actual commands and their parameters
+
+// Command IDs
+// -----------
 enum Command
 {
 	cmd_none = 0,
@@ -18,15 +22,20 @@ enum Command
 	cmd_private // only used internally
 };
 
+// Reply codes
+// -----------
 #define FZ_REPLY_OK				(0x0000)
 #define FZ_REPLY_WOULDBLOCK		(0x0001)
 #define FZ_REPLY_ERROR			(0x0002)
-#define FZ_REPLY_CRITICALERROR	(0x0004)
+#define FZ_REPLY_CRITICALERROR	(0x0004 | FZ_REPLY_ERROR) // If there is no point to retry an operation, this
+														  // code is returned.
 #define FZ_REPLY_CANCELED		(0x0008 | FZ_REPLY_ERROR)
 #define FZ_REPLY_SYNTAXERROR	(0x0010 | FZ_REPLY_ERROR)
 #define FZ_REPLY_NOTCONNECTED	(0x0020 | FZ_REPLY_ERROR)
 #define FZ_REPLY_DISCONNECTED	(0x0040)
-#define FZ_REPLY_INTERNALERROR	(0x0080)
+#define FZ_REPLY_INTERNALERROR	(0x0080 | FZ_REPLY_ERROR) // If you get this reply, the error description will be 
+														  // given by the last Debug_Warning log message. This
+														  // should not happen unless there is a bug in FileZilla 3.
 #define FZ_REPLY_BUSY			(0x0100 | FZ_REPLY_ERROR)
 #define FZ_REPLY_ALREADYCONNECTED	(0x0200 | FZ_REPLY_ERROR) // Will be returned by connect if already connected
 
@@ -39,6 +48,10 @@ enum Command
 	public: \
 		virtual enum Command GetId() const { return id; } \
 		virtual CCommand* Clone() const { return new name(*this); }
+
+// --------------- //
+// Actual commands //
+// --------------- //
 
 class CCommand
 {
@@ -64,8 +77,11 @@ DECLARE_COMMAND(CCancelCommand, cmd_cancel)
 };
 
 DECLARE_COMMAND(CListCommand, cmd_list)
+    // Without a given directory, the current directory will be listed.
+    // Directories can either be given as absolute path or as
+    // pair of an absolute path and the very last path segments.
 	// Set refresh to true to get a directory listing even if a cache
-	// lookup can be made after finding out true remote directory
+	// lookup can be made after finding out true remote directory.
 	CListCommand(bool refresh = false);
 	CListCommand(CServerPath path, wxString subDir = _T(""), bool refresh = false);
 	
@@ -87,7 +103,7 @@ DECLARE_COMMAND(CFileTransferCommand, cmd_transfer)
 		bool binary;
 	};
 
-	CFileTransferCommand();
+	// For uploads, set download to false.
 	CFileTransferCommand(const wxString &localFile, const CServerPath& remotePath, const wxString &remoteFile, bool download, const t_transferSettings& m_transferSettings);
 
 	wxString GetLocalFile() const;
@@ -105,7 +121,6 @@ protected:
 };
 
 DECLARE_COMMAND(CRawCommand, cmd_raw)
-	CRawCommand();
 	CRawCommand(const wxString &command);
 
 	wxString GetCommand() const;
@@ -127,6 +142,8 @@ protected:
 };
 
 DECLARE_COMMAND(CRemoveDirCommand, cmd_removedir)
+    // Directories can either be given as absolute path or as
+    // pair of an absolute path and the very last path segments.
 	CRemoveDirCommand(const CServerPath& path, const wxString& subdDir);
 
 	CServerPath GetPath() const { return m_path; }
@@ -165,6 +182,9 @@ protected:
 };
 
 DECLARE_COMMAND(CChmodCommand, cmd_chmod)
+	// The permission string should be given in a format understandable by the server.
+	// Most likely it's the defaut octal representation used by the unix chmod command,
+    // i.e. chmod 755 foo.bar
 	CChmodCommand(const CServerPath& path, const wxString& file, const wxString& permission);
 
 	CServerPath GetPath() const { return m_path; }

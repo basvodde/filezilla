@@ -1,6 +1,25 @@
 #ifndef __NOTIFICATION_H__
 #define __NOTIFICATION_H__
 
+// Notification overview
+// ---------------------
+
+// To inform the application about what's happening, the engine sends
+// some notifications to the application using events.
+// For example the event table entry could look like this:
+//     EVT_FZ_NOTIFICATION(wxID_ANY, CMainFrame::OnEngineEvent)
+// and the handler function has the following declaration:
+//     void OnEngineEvent(wxEvent& event);
+// You can get the engine which sent the event by calling
+//     event.GetEventObject()
+// Whenever you get a notification event,
+// CFileZillaEngine::GetNextNotification has to be called until it returns 0,
+// or you will lose important notifications.
+
+// A special class of notifications are the asynchronous requests. These 
+// requests have to be answered. Once proessed, call 
+// CFileZillaEngine::SetAsyncRequestReply to continue the current operation.
+
 extern const wxEventType fzEVT_NOTIFICATION;
 #define EVT_FZ_NOTIFICATION(id, fn) \
     DECLARE_EVENT_TABLE_ENTRY( \
@@ -18,22 +37,22 @@ public:
 
 enum NotificationId
 {
-	nId_logmsg, // notification about new messages for the message log
-	nId_operation, // operation reply codes
-	nId_connection, // connection information: connects, disconnects, timeouts etc..
-	nId_transferstatus, // transfer information: bytes transferes, transfer speed and such
-	nId_listing, // directory listings
-	nId_asyncrequest, // asynchronous request
-	nId_active // sent if data gets either received or sent
+	nId_logmsg,			// notification about new messages for the message log
+	nId_operation,		// operation reply codes
+	nId_connection,		// connection information: connects, disconnects, timeouts etc..
+	nId_transferstatus,	// transfer information: bytes transferes, transfer speed and such
+	nId_listing,		// directory listings
+	nId_asyncrequest,	// asynchronous request
+	nId_active			// sent if data gets either received or sent
 };
 
 // Async request IDs
 enum RequestId
 {
-	reqId_fileexists,
-	reqId_interactiveLogin,
-	reqId_hostkey,
-	reqId_hostkeyChanged
+	reqId_fileexists,		// Target file already exists, awaiting further instructions
+	reqId_interactiveLogin, // gives a challenge prompt for a password
+	reqId_hostkey,			// used only by SSH/SFTP to indicate new host key
+	reqId_hostkeyChanged	// used only by SSH/SFTP to indicate changed host key
 };
 
 class CNotification
@@ -52,9 +71,11 @@ public:
 	virtual enum NotificationId GetID() const;
 
 	wxString msg;
-	enum MessageType msgType;
+	enum MessageType msgType; // Type of message, see logging.h for details
 };
 
+// If CFileZillaEngine does return with FZ_REPLY_WOULDBLOCK, you will receive
+// a nId_operation notification once the operation ends.
 class COperationNotification : public CNotification
 {
 public:
@@ -66,6 +87,9 @@ public:
 	enum Command commandId;
 };
 
+// You get this type of notification everytime a directory listing has been
+// requested explicitely or when a directory listing was retrieved implicitely
+// during another operation, e.g. file transfers.
 class CDirectoryListing;
 class CDirectoryListingNotification : public CNotification
 {
@@ -90,7 +114,7 @@ public:
 
 	virtual enum RequestId GetRequestID() const = 0;
 
-	unsigned int requestNumber;
+	unsigned int requestNumber; // Do never change this
 };
 
 class CFileExistsNotification : public CAsyncRequestNotification
@@ -115,15 +139,18 @@ public:
 	enum OverwriteAction
 	{
 		overwrite,
-		overwriteNewer,
+		overwriteNewer,	// Overwrite if source file is newer than target file
 		resume,
 		rename,
 		skip
 	};
-	 
+
+	// Set overwriteAction to the desired action
 	enum OverwriteAction overwriteAction;
 	
-	wxString newName; //Will contain the new filename if overwriteAction is rename
+	// Set to new filename if overwriteAction is rename. Might trigger further
+	// file exists notifications if new target file exists as well.
+	wxString newName; 
 };
 
 class CInteractiveLoginNotification : public CAsyncRequestNotification
@@ -133,11 +160,17 @@ public:
 	virtual ~CInteractiveLoginNotification();
 	virtual enum RequestId GetRequestID() const;
 
+	// Set to true if you have set a password
 	bool passwordSet;
+
+	// Set password by calling server.SetUser
 	CServer server;
+
+	// Password prompt string as given by the server
 	wxString challenge;
 };
 
+// Indicate network action.
 class CActiveNotification : public CNotification
 {
 public:
@@ -153,7 +186,7 @@ class CTransferStatus
 {
 public:
 	wxDateTime started;
-	wxFileOffset totalSize;
+	wxFileOffset totalSize;		// Total size of the file to transfer, -1 if unknown
 	wxFileOffset startOffset;
 	wxFileOffset currentOffset;
 };
@@ -171,6 +204,8 @@ protected:
 	CTransferStatus *m_pStatus;
 };
 
+// Notification about new or changed hostkeys, only used by SSH/SFTP transfers.
+// GetRequestID() returns either reqId_hostkey or reqId_hostkeyChanged
 class CHostKeyNotification : public CAsyncRequestNotification
 {
 public:
@@ -182,7 +217,11 @@ public:
     int GetPort() const;
     wxString GetFingerprint() const;
 
+	// Set to true if you trust the server
 	bool m_trust;
+
+	// If m_truest is true, set this to true to always trust this server 
+	// in future.
 	bool m_alwaysTrust;
 
 protected:

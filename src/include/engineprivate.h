@@ -1,6 +1,13 @@
 #ifndef __FILEZILLAENGINEPRIVATE_H__
 #define __FILEZILLAENGINEPRIVATE_H__
 
+enum EngineNotificationType
+{
+	engineCancel,
+	engineHostresolve,
+	engineTransferEnd
+};
+
 class wxFzEngineEvent;
 class CControlSocket;
 class CAsyncHostResolver;

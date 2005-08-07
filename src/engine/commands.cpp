@@ -37,10 +37,6 @@ bool CListCommand::Refresh() const
 	return m_refresh;
 }
 
-CFileTransferCommand::CFileTransferCommand()
-{
-}
-
 CFileTransferCommand::CFileTransferCommand(const wxString &localFile, const CServerPath& remotePath,
 										   const wxString &remoteFile, bool download,
 										   const CFileTransferCommand::t_transferSettings& transferSettings)

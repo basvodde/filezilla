@@ -109,7 +109,7 @@ CNotification* CFileZillaEngine::GetNextNotification()
 		m_NotificationList.push_back(0);
 	}
 	else if (m_NotificationList.empty())
-			return 0;
+		return 0;
 	CNotification* pNotification = m_NotificationList.front();
 	m_NotificationList.pop_front();
 		
