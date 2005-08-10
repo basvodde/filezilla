@@ -78,6 +78,8 @@ public:
 
 	bool SendRequest(CAsyncRequestNotification *pNotification);
 
+	void SetActive(bool recv);
+
 protected:
 	virtual int DoClose(int nErrorCode = FZ_REPLY_DISCONNECTED);
 

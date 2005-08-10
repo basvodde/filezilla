@@ -217,6 +217,7 @@ int CFileZillaEnginePrivate::ResetOperation(int nErrorCode)
 
 void CFileZillaEnginePrivate::SetActive(bool recv)
 {
+	m_lock.Enter();
 	if (recv)
 	{
 		if (!m_activeStatusRecv)
@@ -229,6 +230,7 @@ void CFileZillaEnginePrivate::SetActive(bool recv)
 			AddNotification(new CActiveNotification(false));
 		m_activeStatusSend = 2;
 	}
+	m_lock.Leave();
 }
 
 void CFileZillaEnginePrivate::ResendModifiedListings()

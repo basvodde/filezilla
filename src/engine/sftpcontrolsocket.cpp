@@ -178,6 +178,12 @@ protected:
 					}
 				}
 				break;
+			case sftpRecv:
+				m_pOwner->SetActive(true);
+				break;
+			case sftpSend:
+				m_pOwner->SetActive(false);
+				break;
 			default:
 				{
 					char tmp[2];
@@ -1320,4 +1326,9 @@ void CSftpControlSocket::Cancel()
 	{
 		DoClose(FZ_REPLY_CANCELED);
 	}
+}
+
+void CSftpControlSocket::SetActive(bool recv)
+{
+	m_pEngine->SetActive(recv);
 }

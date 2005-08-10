@@ -920,6 +920,7 @@ void try_send(Actual_Socket s)
 		return;
 	    }
 	} else {
+	    fznotify(sftpSend);
 	    if (s->sending_oob) {
 		if (nsent < len) {
 		    memmove(s->oobdata, s->oobdata+nsent, len-nsent);
@@ -1016,6 +1017,7 @@ static int net_select_result(int fd, int event)
 				    ret == 0 ? "Internal networking trouble" :
 				    strerror(errno), errno, 0);
 	    } else {
+		fznotify(sftpRecv);
                 /*
                  * Receiving actual data on a socket means we can
                  * stop falling back through the candidate
@@ -1117,6 +1119,7 @@ static int net_select_result(int fd, int event)
 	} else if (0 == ret) {
 	    return plug_closing(s->plug, NULL, 0, 0);
 	} else {
+	    fznotify(sftpRecv);
             /*
              * Receiving actual data on a socket means we can
              * stop falling back through the candidate

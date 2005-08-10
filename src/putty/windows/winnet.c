@@ -1211,6 +1211,7 @@ void try_send(Actual_Socket s)
 		fatalbox("%s", winsock_error_string(err));
 	    }
 	} else {
+	    fznotify(sftpSend);
 	    if (s->sending_oob) {
 		if (nsent < len) {
 		    memmove(s->oobdata, s->oobdata+nsent, len-nsent);
@@ -1354,6 +1355,7 @@ int select_result(WPARAM wParam, LPARAM lParam)
 	} else if (0 == ret) {
 	    return plug_closing(s->plug, NULL, 0, 0);
 	} else {
+	    fznotify(sftpRecv);
 	    return plug_receive(s->plug, atmark ? 0 : 1, buf, ret);
 	}
 	break;
@@ -1374,6 +1376,7 @@ int select_result(WPARAM wParam, LPARAM lParam)
 	    logevent(NULL, str);
 	    fatalbox("%s", str);
 	} else {
+	    fznotify(sftpRecv);
 	    return plug_receive(s->plug, 2, buf, ret);
 	}
 	break;
@@ -1401,7 +1404,10 @@ int select_result(WPARAM wParam, LPARAM lParam)
 				    err, 0);
 	    } else {
 		if (ret)
+		{
+		    fznotify(sftpRecv);
 		    open &= plug_receive(s->plug, 0, buf, ret);
+		}
 		else
 		    open &= plug_closing(s->plug, NULL, 0, 0);
 	    }
