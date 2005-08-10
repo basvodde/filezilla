@@ -221,14 +221,22 @@ void CFileZillaEnginePrivate::SetActive(bool recv)
 	if (recv)
 	{
 		if (!m_activeStatusRecv)
+		{
+			m_activeStatusRecv = 2;
+			m_lock.Leave();
 			AddNotification(new CActiveNotification(true));
-		m_activeStatusRecv = 2;
+			return;
+		}
 	}
 	else
 	{
 		if (!m_activeStatusSend)
+		{
+			m_activeStatusSend = 2;
+			m_lock.Leave();
 			AddNotification(new CActiveNotification(false));
-		m_activeStatusSend = 2;
+			return;
+		}
 	}
 	m_lock.Leave();
 }
