@@ -215,7 +215,10 @@ int read_from_file(RFile *f, void *buffer, int length)
     if (!ret)
 	return -1;		       /* error */
     else
+    {
+	fzprintf(sftpRead, "%d", read);
 	return read;
+    }
 }
 
 void close_rfile(RFile *f)
@@ -251,7 +254,10 @@ int write_to_file(WFile *f, void *buffer, int length)
     if (!ret)
 	return -1;		       /* error */
     else
+    {
+	fzprintf(sftpWrite, "%d", written);
 	return written;
+    }
 }
 
 void set_file_times(WFile *f, unsigned long mtime, unsigned long atime)
@@ -720,7 +726,7 @@ char *ssh_sftp_get_cmdline(char *prompt, int no_fds_ok)
 
     if (!CreateThread(NULL, 0, command_read_thread,
 		      ctx, 0, &threadid)) {
-	fprintf(stderr, "Unable to create command input thread\n");
+	fzprintf(sftpError, "Unable to create command input thread");
 	cleanup_exit(1);
     }
 

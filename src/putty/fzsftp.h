@@ -10,7 +10,9 @@ typedef enum
     sftpSend,
     sftpClose,
     sftpRequest,
-    sftpListentry
+    sftpListentry,
+	sftpRead,
+	sftpWrite
 } sftpEventTypes;
 
 enum sftpRequestTypes
