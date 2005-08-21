@@ -57,6 +57,13 @@ CSftpEvent::CSftpEvent(sftpEventTypes type, sftpRequestTypes reqType, const wxSt
 	m_text[3] = text4;
 }
 
+int CSftpEvent::GetNumber() const
+{
+	long number = 0;
+	m_text[0].ToLong(&number);
+	return number;
+}
+
 BEGIN_EVENT_TABLE(CSftpControlSocket, CControlSocket)
 EVT_SFTP(CSftpControlSocket::OnSftpEvent)
 EVT_END_PROCESS(wxID_ANY, CSftpControlSocket::OnTerminate)
@@ -184,6 +191,17 @@ protected:
 			case sftpSend:
 				m_pOwner->SetActive(false);
 				break;
+			case sftpRead:
+			case sftpWrite:
+				{
+					wxTextInputStream textStream(*pInputStream);
+					wxString text = textStream.ReadLine();
+					if (pInputStream->LastRead() <= 0 || text == _T(""))
+						goto loopexit;
+					CSftpEvent evt((sftpEventTypes)eventType, text);
+					wxPostEvent(m_pOwner, evt);
+				}
+				break;
 			default:
 				{
 					char tmp[2];
@@ -310,6 +328,10 @@ void CSftpControlSocket::OnSftpEvent(CSftpEvent& event)
 		break;
 	case sftpListentry:
 		ListParseEntry(event.GetText());
+		break;
+	case sftpRead:
+	case sftpWrite:
+		UpdateTransferStatus(event.GetNumber());
 		break;
 	default:
 		wxFAIL_MSG(_T("given notification codes not handled"));
@@ -1256,12 +1278,19 @@ int CSftpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 	if (pData->resume)
 		cmd = _T("re");
 	if (pData->download)
+	{
+		InitTransferStatus(pData->remoteFileSize, pData->resume ? pData->localFileSize : 0);
 		cmd += _T("get ");
+		cmd += _T("\"") + pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath) + _T("\"");
+		cmd += _T(" \"") + pData->localFile + _T("\"");
+	}
 	else
-		cmd += _T("put");
-
-	cmd += _T("\"") + pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath) + _T("\"");
-	cmd += _T(" ") + pData->localFile;
+	{
+		InitTransferStatus(pData->localFileSize, pData->resume ? pData->remoteFileSize : 0);
+		cmd += _T("put ");
+		cmd += _T("\"") + pData->localFile + _T("\"");
+		cmd += _T(" \"") + pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath) + _T("\"");
+	}
 
 	if (!Send(cmd))
 	{
@@ -1298,16 +1327,16 @@ int CSftpControlSocket::FileTransferParseResponse(const wxString& reply)
 
 int CSftpControlSocket::DoClose(int nErrorCode /*=FZ_REPLY_DISCONNECTED*/)
 {
-	nErrorCode = CControlSocket::DoClose(nErrorCode);
 	if (m_pInputThread)
 	{
+		wxThread* pThread = m_pInputThread;
+		m_pInputThread = 0;
 		wxProcess::Kill(m_pid, wxSIGKILL);
 		m_inDestructor = true;
-		if (m_pInputThread)
+		if (pThread)
 		{
-			m_pInputThread->Wait();
-			delete m_pInputThread;
-			m_pInputThread = 0;
+			pThread->Wait();
+			delete pThread;
 		}
 		if (!m_termindatedInDestructor)
 			m_pProcess->Detach();
@@ -1317,7 +1346,7 @@ int CSftpControlSocket::DoClose(int nErrorCode /*=FZ_REPLY_DISCONNECTED*/)
 			m_pProcess = 0;
 		}
 	}
-	return nErrorCode;
+	return CControlSocket::DoClose(nErrorCode);
 }
 
 void CSftpControlSocket::Cancel()

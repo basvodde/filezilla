@@ -206,7 +206,7 @@ int CControlSocket::ResetOperation(int nErrorCode)
 
 	if (nErrorCode != FZ_REPLY_OK)
 	{
-		if (nErrorCode & FZ_REPLY_CRITICALERROR)
+		if ((nErrorCode & FZ_REPLY_CRITICALERROR) == FZ_REPLY_CRITICALERROR)
 			LogMessage(::Error, _("Critical error"));
 		const enum Command commandId = GetCurrentCommandId();
 		switch (commandId)
@@ -226,7 +226,7 @@ int CControlSocket::ResetOperation(int nErrorCode)
 		case cmd_none:
 			break;
 		default:
-			if (nErrorCode & FZ_REPLY_CANCELED)
+			if ((nErrorCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)
 				LogMessage(::Error, _("Interrupted by user"));
 			break;
 		}
@@ -362,6 +362,9 @@ void CControlSocket::ResetTransferStatus()
 
 void CControlSocket::InitTransferStatus(wxFileOffset totalSize, wxFileOffset startOffset)
 {
+	if (startOffset < 0)
+		startOffset = 0;
+
 	delete m_pTransferStatus;
 	m_pTransferStatus = new CTransferStatus();
 

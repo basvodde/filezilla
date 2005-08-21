@@ -3,7 +3,7 @@
 
 int fznotify(sftpEventTypes type)
 {
-    fprintf(stdout, "%d", (int)type);
+    fprintf(stdout, "%c", (int)type + '0');
     fflush(stdout);
     return 0;
 }
@@ -23,7 +23,7 @@ int fzprintf(sftpEventTypes type, const char* fmt, ...)
 	    if (p != s)
 	    {
 		*p = 0;
-		fprintf(stdout, "%d%s\n", (int)type, s);
+		fprintf(stdout, "%c%s\n", (int)type + '0', s);
 		s = p + 1;
 	    }
 	    else
@@ -34,7 +34,7 @@ int fzprintf(sftpEventTypes type, const char* fmt, ...)
 	    if (p != s)
 	    {
 		*p = 0;
-		fprintf(stdout, "%d%s\n", (int)type, s);
+		fprintf(stdout, "%c%s\n", (int)type + '0', s);
 		s = p + 1;
 	    }
 	    break;
@@ -57,7 +57,7 @@ int fzprintf_raw(sftpEventTypes type, const char* fmt, ...)
     va_start(ap, fmt);
     str = dupvprintf(fmt, ap);
 
-    fprintf(stdout, "%d", (int)type);
+    fprintf(stdout, "%c", (int)type + '0');
     fprintf(stdout, str);
 
     sfree(str);
@@ -71,7 +71,7 @@ int fzprintf_raw(sftpEventTypes type, const char* fmt, ...)
 
 int fznotify1(sftpEventTypes type, int data)
 {
-    fprintf(stdout, "%d%d\n", (int)type, data);
+    fprintf(stdout, "%c%d\n", (int)type + '0', data);
     fflush(stdout);
     return 0;
 }

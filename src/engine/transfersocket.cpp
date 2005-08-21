@@ -8,7 +8,7 @@ BEGIN_EVENT_TABLE(CTransferSocket, wxEvtHandler)
 	EVT_SOCKET(wxID_ANY, CTransferSocket::OnSocketEvent)
 END_EVENT_TABLE();
 
-#define BUFFERSIZE 65535
+#define BUFFERSIZE 65536
 
 CTransferSocket::CTransferSocket(CFileZillaEnginePrivate *pEngine, CFtpControlSocket *pControlSocket, enum TransferMode transferMode)
 {

@@ -448,6 +448,8 @@ int sftp_get_file(char *fname, char *outfname, int recurse, int restart)
 		    ret = 0;
 		    xfer_set_error(xfer);
 		}
+		else
+		    fzprintf(sftpWrite, "%d", wlen);
 		wpos += wlen;
 	    }
 	    if (wpos < len) {	       /* we had an error */
@@ -680,6 +682,7 @@ int sftp_put_file(char *fname, char *outfname, int recurse, int restart)
 	    } else if (len == 0) {
 		eof = 1;
 	    } else {
+		fzprintf(sftpRead, "%d", len);
 		xfer_upload_data(xfer, buffer, len);
 	    }
 	}

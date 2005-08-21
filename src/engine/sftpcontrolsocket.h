@@ -6,25 +6,27 @@
 
 typedef enum
 {
-    sftpUnknown = -1,
-    sftpReply = 0,
-    sftpDone,
-    sftpError,
-    sftpVerbose,
-    sftpStatus,
-    sftpRecv,
-    sftpSend,
-    sftpClose,
-    sftpRequest,
-    sftpListentry
+	sftpUnknown = -1,
+	sftpReply = 0,
+	sftpDone,
+	sftpError,
+	sftpVerbose,
+	sftpStatus,
+	sftpRecv,
+	sftpSend,
+	sftpClose,
+	sftpRequest,
+	sftpListentry,
+	sftpRead,
+	sftpWrite
 } sftpEventTypes;
 
 enum sftpRequestTypes
 {
 	sftpReqPassword,
-    sftpReqHostkey,
-    sftpReqHostkeyChanged,
-    sftpReqUnknown
+	sftpReqHostkey,
+	sftpReqHostkeyChanged,
+	sftpReqUnknown
 };
 
 class CSftpEvent : public wxEvent
@@ -42,6 +44,7 @@ public:
 	sftpEventTypes GetType() const { return m_type; }
 	sftpRequestTypes GetRequestType() const { return m_reqType; }
 	wxString GetText(int index = 0) const { return m_text[index]; }
+	int GetNumber() const;
 
 protected:
 	wxString m_text[4];
