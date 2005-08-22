@@ -996,18 +996,6 @@ int CSftpControlSocket::ResetOperation(int nErrorCode)
 		return SendNextCommand(nErrorCode);
 	}
 
-	if (m_pCurOpData && m_pCurOpData->opId == cmd_transfer)
-	{
-		CSftpFileTransferOpData *pData = static_cast<CSftpFileTransferOpData *>(m_pCurOpData);
-		if (!pData->download && pData->opState >= filetransfer_transfer)
-		{
-			CDirectoryCache cache;
-			cache.InvalidateFile(*m_pCurrentServer, pData->remotePath, pData->remoteFile, CDirectoryCache::file, (nErrorCode == FZ_REPLY_OK) ? pData->remoteFileSize : -1);
-
-			m_pEngine->ResendModifiedListings();
-		}
-	}
-
 	return CControlSocket::ResetOperation(nErrorCode);
 }
 
@@ -1292,6 +1280,7 @@ int CSftpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 		cmd += _T(" \"") + pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath) + _T("\"");
 	}
 
+	pData->transferInitiated = true;
 	if (!Send(cmd))
 	{
 		ResetOperation(FZ_REPLY_ERROR);

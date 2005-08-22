@@ -760,18 +760,6 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 		return SendNextCommand(nErrorCode);
 	}
 
-	if (m_pCurOpData && m_pCurOpData->opId == cmd_transfer)
-	{
-		CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(m_pCurOpData);
-		if (!pData->download && pData->opState >= filetransfer_transfer)
-		{
-			CDirectoryCache cache;
-			cache.InvalidateFile(*m_pCurrentServer, pData->remotePath, pData->remoteFile, CDirectoryCache::file, (nErrorCode == FZ_REPLY_OK) ? pData->localFileSize : -1);
-
-			m_pEngine->ResendModifiedListings();
-		}
-	}
-
 	return CControlSocket::ResetOperation(nErrorCode);
 }
 
@@ -1614,6 +1602,7 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 			}
 		}
 
+		pData->transferInitiated = true;
 		m_pTransferSocket->SetActive();
 		break;
 	}

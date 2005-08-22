@@ -197,9 +197,21 @@ int CControlSocket::ResetOperation(int nErrorCode)
 	{
 		LogMessage(::Debug_Warning, _T("ResetOperation with FZ_REPLY_WOULDBLOCK in nErrorCode (%d)"), nErrorCode);
 	}
-	
+
 	if (m_pCurOpData)
 	{
+		if (m_pCurOpData->opId == cmd_transfer)
+		{
+			CFileTransferOpData *pData = static_cast<CFileTransferOpData *>(m_pCurOpData);
+			if (!pData->download && pData->transferInitiated)
+			{
+				CDirectoryCache cache;
+				cache.InvalidateFile(*m_pCurrentServer, pData->remotePath, pData->remoteFile, CDirectoryCache::file, (nErrorCode == FZ_REPLY_OK) ? pData->localFileSize : -1);
+
+				m_pEngine->ResendModifiedListings();
+			}
+		}
+
 		delete m_pCurOpData;
 		m_pCurOpData = 0;
 	}
@@ -550,7 +562,7 @@ int CControlSocket::CheckOverwriteFile()
 
 CFileTransferOpData::CFileTransferOpData() :
 	localFileSize(-1), remoteFileSize(-1),
-	tryAbsolutePath(false), resume(false)
+	tryAbsolutePath(false), resume(false), transferInitiated(false)
 {
 	opId = cmd_transfer;
 }

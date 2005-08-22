@@ -32,6 +32,9 @@ public:
 	bool tryAbsolutePath;
 	bool resume;
 
+	// Set to true when sending the command which
+	// starts the actual transfer
+	bool transferInitiated;
 };
 
 #include "logging_private.h"
