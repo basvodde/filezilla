@@ -75,6 +75,7 @@ Section "FileZilla 3" SecMain
   SetOutPath "$INSTDIR"
   
   File "..\src\interface\FileZilla.exe"
+  File "..\src\putty\fzsftp.exe"
   File "${srcdir}\mingwm10.dll"
   File "${top_srcdir}\GPL.html"
 
@@ -154,6 +155,7 @@ SectionEnd
 Section "Uninstall"
 
   Delete "$INSTDIR\filezilla.exe"
+  Delete "$INSTDIR\fzsftp.exe"
   Delete "$INSTDIR\mingwm10.dll"
   Delete "mingwm10.dll"
   Delete "$INSTDIR\GPL.html"
