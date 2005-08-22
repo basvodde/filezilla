@@ -56,7 +56,7 @@ protected:
 	virtual bool Send(wxString str);
 
 	void ParseResponse();
-	int SendNextCommand(int prevResult = FZ_REPLY_OK);
+	virtual int SendNextCommand(int prevResult = FZ_REPLY_OK);
 
 	int GetReplyCode() const;
 

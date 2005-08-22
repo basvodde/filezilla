@@ -68,7 +68,7 @@ public:
 	virtual int RawCommand(const wxString& command = _T("")) { return 0; }
 	virtual int Delete(const CServerPath& path = CServerPath(), const wxString& file = _T("")) { return 0; }
 	virtual int RemoveDir(const CServerPath& path = CServerPath(), const wxString& subDir = _T("")) { return 0; }
-	virtual int Mkdir(const CServerPath& path, CServerPath start = CServerPath()) { return 0; }
+	virtual int Mkdir(const CServerPath& path, CServerPath start = CServerPath());
 	virtual int Rename(const CRenameCommand& command) { return 0; }
 	virtual int Chmod(const CChmodCommand& command) { return 0; }
 	virtual void Cancel();
@@ -84,23 +84,30 @@ public:
 	void SetActive(bool recv);
 
 protected:
+	// Replaces filename"with"quotes with
+	// "filename""with""quotes"
+	wxString QuoteFilename(wxString filename);
+
 	virtual int DoClose(int nErrorCode = FZ_REPLY_DISCONNECTED);
 
-	int ResetOperation(int nErrorCode);
-	int SendNextCommand(int prevResult = FZ_REPLY_OK);
+	virtual int ResetOperation(int nErrorCode);
+	virtual int SendNextCommand(int prevResult = FZ_REPLY_OK);
 
-	int ProcessReply(const wxString& reply);
+	int ProcessReply(bool successful, const wxString& reply = _T(""));
 
 	int FileTransferSend(int prevResult = FZ_REPLY_OK);
-	int FileTransferParseResponse(const wxString& reply);
+	int FileTransferParseResponse(bool successful, const wxString& reply);
 
 	int ListSend(int prevResult = FZ_REPLY_OK);
-	int ListParseResponse(const wxString& reply);
+	int ListParseResponse(bool successful, const wxString& reply);
 	int ListParseEntry(const wxString& entry);
 
 	int ChangeDir(CServerPath path = CServerPath(), wxString subDir = _T(""));
-	int ChangeDirParseResponse(const wxString& reply);
+	int ChangeDirParseResponse(bool successful, const wxString& reply);
 	int ChangeDirSend();
+
+	int MkdirParseResponse(bool successful, const wxString& reply);
+	int MkdirSend();
 
 	bool Send(wxString cmd, const wxString& show = _T(""));
 

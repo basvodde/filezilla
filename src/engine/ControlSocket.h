@@ -86,6 +86,9 @@ protected:
 	virtual int ResetOperation(int nErrorCode);
 	virtual bool Send(const char *buffer, int len);
 
+	// Called by ResetOperation if there's a queued operation
+	virtual int SendNextCommand(int prevResult = FZ_REPLY_OK) = 0;
+
 	// Send the directory listing to the interface.
 	// If the listing is a freshly received one, it should be stored
 	// in the cache before calling SendDirectoryListing, else

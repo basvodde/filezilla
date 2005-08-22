@@ -751,15 +751,6 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 	delete m_pTransferSocket;
 	m_pTransferSocket = 0;
 
-	if (m_pCurOpData && m_pCurOpData->pNextOpData)
-	{
-		COpData *pNext = m_pCurOpData->pNextOpData;
-		m_pCurOpData->pNextOpData = 0;
-		delete m_pCurOpData;
-		m_pCurOpData = pNext;
-		return SendNextCommand(nErrorCode);
-	}
-
 	return CControlSocket::ResetOperation(nErrorCode);
 }
 

@@ -1389,7 +1389,7 @@ int sftp_cmd_mkdir(struct sftp_command *cmd)
     }
 
     if (cmd->nwords < 2) {
-	printf("mkdir: expects a directory\n");
+	fzprintf(sftpError, "mkdir: expects a directoryn");
 	return 0;
     }
 
@@ -1397,7 +1397,7 @@ int sftp_cmd_mkdir(struct sftp_command *cmd)
     for (i = 1; i < cmd->nwords; i++) {
 	dir = canonify(cmd->words[i]);
 	if (!dir) {
-	    printf("%s: %s\n", dir, fxp_error());
+	    fzprintf(sftpError, "%s: %s", dir, fxp_error());
 	    return 0;
 	}
 
@@ -1407,14 +1407,16 @@ int sftp_cmd_mkdir(struct sftp_command *cmd)
 	result = fxp_mkdir_recv(pktin, rreq);
 
 	if (!result) {
-	    printf("mkdir %s: %s\n", dir, fxp_error());
+	    fzprintf(sftpError, "mkdir %s: %s", dir, fxp_error());
 	    ret = 0;
 	} else
-	    printf("mkdir %s: OK\n", dir);
+	    fzprintf(sftpReply, "mkdir %s: OK", dir);
 
 	sfree(dir);
     }
 
+    if (ret != 0)
+	fznotify1(sftpDone, ret);
     return ret;
 }
 
@@ -1430,11 +1432,11 @@ static int sftp_action_rmdir(void *vctx, char *dir)
     result = fxp_rmdir_recv(pktin, rreq);
 
     if (!result) {
-	printf("rmdir %s: %s\n", dir, fxp_error());
+	fzprintf(sftpError, "rmdir %s: %s", dir, fxp_error());
 	return 0;
     }
 
-    printf("rmdir %s: OK\n", dir);
+    fzprintf(sftpReply, "rmdir %s: OK", dir);
 
     return 1;
 }
@@ -1449,7 +1451,7 @@ int sftp_cmd_rmdir(struct sftp_command *cmd)
     }
 
     if (cmd->nwords < 2) {
-	printf("rmdir: expects a directory\n");
+	fzprintf(sftpError, "rmdir: expects a directory");
 	return 0;
     }
 
@@ -1457,6 +1459,8 @@ int sftp_cmd_rmdir(struct sftp_command *cmd)
     for (i = 1; i < cmd->nwords; i++)
 	ret &= wildcard_iterate(cmd->words[i], sftp_action_rmdir, NULL);
 
+    if (ret != 0)
+	fznotify1(sftpDone, ret);
     return ret;
 }
 
@@ -1472,11 +1476,11 @@ static int sftp_action_rm(void *vctx, char *fname)
     result = fxp_remove_recv(pktin, rreq);
 
     if (!result) {
-	printf("rm %s: %s\n", fname, fxp_error());
+	fzprintf(sftpError, "rm %s: %s", fname, fxp_error());
 	return 0;
     }
 
-    printf("rm %s: OK\n", fname);
+    fzprintf(sftpReply, "rm %s: OK", fname);
 
     return 1;
 }
@@ -1491,7 +1495,7 @@ int sftp_cmd_rm(struct sftp_command *cmd)
     }
 
     if (cmd->nwords < 2) {
-	printf("rm: expects a filename\n");
+	fzprintf(sftpError, "rm: expects a filename");
 	return 0;
     }
 
@@ -1499,6 +1503,8 @@ int sftp_cmd_rm(struct sftp_command *cmd)
     for (i = 1; i < cmd->nwords; i++)
 	ret &= wildcard_iterate(cmd->words[i], sftp_action_rm, NULL);
 
+    if (ret != 0)
+	fznotify1(sftpDone, ret);
     return ret;
 }
 

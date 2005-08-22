@@ -192,12 +192,21 @@ enum Command CControlSocket::GetCurrentCommandId() const
 int CControlSocket::ResetOperation(int nErrorCode)
 {
 	LogMessage(Debug_Verbose, _T("CControlSocket::ResetOperation(%d)"), nErrorCode);
-	
+
 	if (nErrorCode & FZ_REPLY_WOULDBLOCK)
 	{
 		LogMessage(::Debug_Warning, _T("ResetOperation with FZ_REPLY_WOULDBLOCK in nErrorCode (%d)"), nErrorCode);
 	}
 
+	if (m_pCurOpData && m_pCurOpData->pNextOpData)
+	{
+		COpData *pNext = m_pCurOpData->pNextOpData;
+		m_pCurOpData->pNextOpData = 0;
+		delete m_pCurOpData;
+		m_pCurOpData = pNext;
+		return SendNextCommand(nErrorCode);
+	}
+	
 	if (m_pCurOpData)
 	{
 		if (m_pCurOpData->opId == cmd_transfer)
