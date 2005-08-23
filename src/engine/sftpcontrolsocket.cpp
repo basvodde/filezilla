@@ -380,7 +380,7 @@ bool CSftpControlSocket::Send(wxString cmd, const wxString& show /*=_T("")*/)
 
 	cmd += _T("\n");
 
-	const char* str = cmd.mb_str();
+	const wxCharBuffer str = cmd.mb_str();
 	if (!m_pProcess)
 		return false;
 
