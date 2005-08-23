@@ -1647,7 +1647,7 @@ int CSftpControlSocket::RemoveDir(const CServerPath& path /*=CServerPath()*/, co
 	}
 
 	CDirectoryCache cache;
-	cache.InvalidateFile(*m_pCurrentServer, path, subDir, false, CDirectoryCache::Filetype::dir);
+	cache.InvalidateFile(*m_pCurrentServer, path, subDir, false, CDirectoryCache::dir);
 
 	if (!Send(_T("rmdir ") + QuoteFilename(fullPath.GetPath())))
 		return FZ_REPLY_ERROR;
