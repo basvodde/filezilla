@@ -981,6 +981,8 @@ int CSftpControlSocket::ProcessReply(bool successful, const wxString& reply /*=_
 		return ChangeDirParseResponse(successful, reply);
 	case cmd_mkdir:
 		return MkdirParseResponse(successful, reply);
+	case cmd_delete:
+		return DeleteParseResponse(successful, reply);
 	default:
 		LogMessage(Debug_Warning, _T("No action for parsing replies to command %d"), (int)commandId);
 		return ResetOperation(FZ_REPLY_INTERNALERROR);
@@ -1461,7 +1463,7 @@ int CSftpControlSocket::MkdirParseResponse(bool successful, const wxString& repl
 				return FZ_REPLY_ERROR;
 			}
 			CDirectoryCache cache;
-			cache.InvalidateFile(*m_pCurrentServer, pData->currentPath, pData->segments.front(), CDirectoryCache::dir);
+			cache.InvalidateFile(*m_pCurrentServer, pData->currentPath, pData->segments.front(), true, CDirectoryCache::dir);
 			m_pEngine->ResendModifiedListings();
 
 			pData->currentPath.AddSegment(pData->segments.front());
@@ -1554,4 +1556,61 @@ wxString CSftpControlSocket::QuoteFilename(wxString filename)
 {
 	filename.Replace(_T("\""), _T("\"\""));
 	return _T("\"") + filename + _T("\"");
+}
+
+class CSftpDeleteOpData : public COpData
+	{
+	public:
+		CSftpDeleteOpData() { opId = cmd_delete; }
+		virtual ~CSftpDeleteOpData() { }
+
+		CServerPath path;
+		wxString file;
+	};
+
+int CSftpControlSocket::Delete(const CServerPath& path /*=CServerPath()*/, const wxString& file /*=_T("")*/)
+{
+	wxASSERT(!m_pCurOpData);
+	CSftpDeleteOpData *pData = new CSftpDeleteOpData();
+	m_pCurOpData = pData;
+	pData->path = path;
+	pData->file = file;
+
+	wxString filename = path.FormatFilename(file);
+	if (filename == _T(""))
+	{
+		LogMessage(::Error, wxString::Format(_T("Filename cannot be constructed for folder %s and filename %s"), path.GetPath().c_str(), file.c_str()));
+		return FZ_REPLY_ERROR;
+	}
+
+	CDirectoryCache cache;
+	cache.InvalidateFile(*m_pCurrentServer, path, file, false);
+
+	if (!Send(_T("rm ") + filename))
+		return FZ_REPLY_ERROR;
+
+	return FZ_REPLY_WOULDBLOCK;
+}
+
+int CSftpControlSocket::DeleteParseResponse(bool successful, const wxString& reply)
+{
+	LogMessage(Debug_Verbose, _T("CSftpControlSocket::DeleteParseResponse"));
+
+	if (!m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	if (!successful)
+		return ResetOperation(FZ_REPLY_ERROR);
+
+	CSftpDeleteOpData *pData = static_cast<CSftpDeleteOpData *>(m_pCurOpData);
+
+	CDirectoryCache cache;
+	cache.RemoveFile(*m_pCurrentServer, pData->path, pData->file);
+	m_pEngine->ResendModifiedListings();
+
+	return ResetOperation(FZ_REPLY_OK);
 }

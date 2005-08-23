@@ -31,7 +31,7 @@ public:
 	bool HasChanged(CTimeEx since, const CServer &server, const CServerPath &path) const;
 	bool Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path);
 	bool Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, wxString subDir);
-	bool InvalidateFile(const CServer &server, const CServerPath &path, const wxString& filename, enum Filetype type = file, int size = -1);
+	bool InvalidateFile(const CServer &server, const CServerPath &path, const wxString& filename, bool mayCreate, enum Filetype type = file, int size = -1);
 	bool RemoveFile(const CServer &server, const CServerPath &path, const wxString& filename);
 	void InvalidateServer(const CServer& server);
 	void RemoveDir(const CServer& server, const CServerPath& path, const wxString& filename);

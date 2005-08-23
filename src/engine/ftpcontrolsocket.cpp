@@ -1923,6 +1923,9 @@ int CFtpControlSocket::Delete(const CServerPath& path /*=CServerPath()*/, const 
 			return FZ_REPLY_ERROR;
 		}
 
+		CDirectoryCache cache;
+		cache.InvalidateFile(*m_pCurrentServer, path, file, false);
+
 		if (!Send(_T("DELE ") + filename))
 			return FZ_REPLY_ERROR;
 
@@ -2111,7 +2114,7 @@ int CFtpControlSocket::MkdirParseResponse()
 				return FZ_REPLY_ERROR;
 			}
 			CDirectoryCache cache;
-			cache.InvalidateFile(*m_pCurrentServer, pData->currentPath, pData->segments.front(), CDirectoryCache::dir);
+			cache.InvalidateFile(*m_pCurrentServer, pData->currentPath, pData->segments.front(), true, CDirectoryCache::dir);
 			m_pEngine->ResendModifiedListings();
 
 			pData->currentPath.AddSegment(pData->segments.front());
@@ -2377,7 +2380,7 @@ int CFtpControlSocket::ChmodParseResponse()
 	}
 
 	CDirectoryCache cache;
-	cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetPath(), pData->m_cmd.GetFile(), CDirectoryCache::unknown);
+	cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetPath(), pData->m_cmd.GetFile(), false, CDirectoryCache::unknown);
 
 	ResetOperation(FZ_REPLY_OK);
 	return FZ_REPLY_OK;

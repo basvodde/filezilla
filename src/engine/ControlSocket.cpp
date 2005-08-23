@@ -215,7 +215,7 @@ int CControlSocket::ResetOperation(int nErrorCode)
 			if (!pData->download && pData->transferInitiated)
 			{
 				CDirectoryCache cache;
-				cache.InvalidateFile(*m_pCurrentServer, pData->remotePath, pData->remoteFile, CDirectoryCache::file, (nErrorCode == FZ_REPLY_OK) ? pData->localFileSize : -1);
+				cache.InvalidateFile(*m_pCurrentServer, pData->remotePath, pData->remoteFile, true, CDirectoryCache::file, (nErrorCode == FZ_REPLY_OK) ? pData->localFileSize : -1);
 
 				m_pEngine->ResendModifiedListings();
 			}
