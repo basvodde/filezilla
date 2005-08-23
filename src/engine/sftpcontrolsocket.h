@@ -67,7 +67,7 @@ public:
 							 const CFileTransferCommand::t_transferSettings& transferSettings);
 	virtual int RawCommand(const wxString& command = _T("")) { return 0; }
 	virtual int Delete(const CServerPath& path = CServerPath(), const wxString& file = _T(""));
-	virtual int RemoveDir(const CServerPath& path = CServerPath(), const wxString& subDir = _T("")) { return 0; }
+	virtual int RemoveDir(const CServerPath& path = CServerPath(), const wxString& subDir = _T(""));
 	virtual int Mkdir(const CServerPath& path, CServerPath start = CServerPath());
 	virtual int Rename(const CRenameCommand& command) { return 0; }
 	virtual int Chmod(const CChmodCommand& command) { return 0; }
@@ -110,6 +110,8 @@ protected:
 	int MkdirSend();
 
 	int DeleteParseResponse(bool successful, const wxString& reply);
+
+	int RemoveDirParseResponse(bool successful, const wxString& reply);
 
 	bool Send(wxString cmd, const wxString& show = _T(""));
 

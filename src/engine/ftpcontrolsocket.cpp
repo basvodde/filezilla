@@ -1979,6 +1979,9 @@ int CFtpControlSocket::RemoveDir(const CServerPath& path /*=CServerPath()*/, con
 			return FZ_REPLY_ERROR;
 		}
 
+		CDirectoryCache cache;
+		cache.InvalidateFile(*m_pCurrentServer, path, subDir, false, CDirectoryCache::Filetype::dir);
+		
 		if (!Send(_T("RMD ") + path.GetPath()))
 			return FZ_REPLY_ERROR;
 

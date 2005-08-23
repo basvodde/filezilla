@@ -983,6 +983,8 @@ int CSftpControlSocket::ProcessReply(bool successful, const wxString& reply /*=_
 		return MkdirParseResponse(successful, reply);
 	case cmd_delete:
 		return DeleteParseResponse(successful, reply);
+	case cmd_removedir:
+		return RemoveDirParseResponse(successful, reply);
 	default:
 		LogMessage(Debug_Warning, _T("No action for parsing replies to command %d"), (int)commandId);
 		return ResetOperation(FZ_REPLY_INTERNALERROR);
@@ -1570,6 +1572,7 @@ class CSftpDeleteOpData : public COpData
 
 int CSftpControlSocket::Delete(const CServerPath& path /*=CServerPath()*/, const wxString& file /*=_T("")*/)
 {
+	LogMessage(Debug_Verbose, _T("CSftpControlSocket::Delete"));
 	wxASSERT(!m_pCurOpData);
 	CSftpDeleteOpData *pData = new CSftpDeleteOpData();
 	m_pCurOpData = pData;
@@ -1610,6 +1613,65 @@ int CSftpControlSocket::DeleteParseResponse(bool successful, const wxString& rep
 
 	CDirectoryCache cache;
 	cache.RemoveFile(*m_pCurrentServer, pData->path, pData->file);
+	m_pEngine->ResendModifiedListings();
+
+	return ResetOperation(FZ_REPLY_OK);
+}
+
+class CSftpRemoveDirOpData : public COpData
+{
+public:
+	CSftpRemoveDirOpData() { opId = cmd_removedir; }
+	virtual ~CSftpRemoveDirOpData() { }
+
+	CServerPath path;
+	wxString subDir;
+};
+
+int CSftpControlSocket::RemoveDir(const CServerPath& path /*=CServerPath()*/, const wxString& subDir /*=_T("")*/)
+{
+	LogMessage(Debug_Verbose, _T("CSftpControlSocket::RemoveDir"));
+
+	wxASSERT(!m_pCurOpData);
+	CSftpRemoveDirOpData *pData = new CSftpRemoveDirOpData();
+	m_pCurOpData = pData;
+	pData->path = path;
+	pData->subDir = subDir;
+
+	CServerPath fullPath = pData->path;
+		
+	if (!fullPath.AddSegment(subDir))
+	{
+		LogMessage(::Error, wxString::Format(_T("Path cannot be constructed for folder %s and subdir %s"), path.GetPath().c_str(), subDir.c_str()));
+		return FZ_REPLY_ERROR;
+	}
+
+	CDirectoryCache cache;
+	cache.InvalidateFile(*m_pCurrentServer, path, subDir, false, CDirectoryCache::Filetype::dir);
+
+	if (!Send(_T("rmdir ") + QuoteFilename(fullPath.GetPath())))
+		return FZ_REPLY_ERROR;
+
+	return FZ_REPLY_WOULDBLOCK;
+}
+
+int CSftpControlSocket::RemoveDirParseResponse(bool successful, const wxString& reply)
+{
+	LogMessage(Debug_Verbose, _T("CSftpControlSocket::RemoveDirParseResponse"));
+
+	if (!m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	if (!successful)
+		ResetOperation(FZ_REPLY_ERROR);
+
+	CSftpRemoveDirOpData *pData = static_cast<CSftpRemoveDirOpData *>(m_pCurOpData);
+	CDirectoryCache cache;
+	cache.RemoveDir(*m_pCurrentServer, pData->path, pData->subDir);
 	m_pEngine->ResendModifiedListings();
 
 	return ResetOperation(FZ_REPLY_OK);
