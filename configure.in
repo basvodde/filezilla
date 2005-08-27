@@ -155,7 +155,7 @@ AC_ARG_WITH(idn-lib,
 ])
 
 if test "x$IDN_LIB" = "x"; then
-	AC_CHECK_LIB(idn, idna_to_ascii_8z, IDN_LIB="-lidn",
+	AC_CHECK_LIB(idn, stringprep_check_version, IDN_LIB="-lidn",
 		AC_MSG_ERROR([GNU libidn not found. Try using --with-idn-lib=FILE to specify the library path.])
 	)
 fi
