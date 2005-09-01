@@ -373,7 +373,9 @@ void CMainFrame::OnQuickconnect(wxCommandEvent &event)
 	ServerProtocol protocol = server.GetProtocol();
 	switch (protocol)
 	{
-	//TODO: If not ftp, add protocol to host
+	case SFTP:
+		host = _T("sftp://") + host;
+		break;
 	case FTP:
 	default:
 		// do nothing
