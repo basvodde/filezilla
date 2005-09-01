@@ -69,8 +69,8 @@ public:
 	virtual int Delete(const CServerPath& path = CServerPath(), const wxString& file = _T(""));
 	virtual int RemoveDir(const CServerPath& path = CServerPath(), const wxString& subDir = _T(""));
 	virtual int Mkdir(const CServerPath& path, CServerPath start = CServerPath());
-	virtual int Rename(const CRenameCommand& command) { return 0; }
-	virtual int Chmod(const CChmodCommand& command) { return 0; }
+	virtual int Rename(const CRenameCommand& command);
+	virtual int Chmod(const CChmodCommand& command);
 	virtual void Cancel();
 
 	virtual bool Connected() const { return m_pInputThread != 0; }
@@ -112,6 +112,12 @@ protected:
 	int DeleteParseResponse(bool successful, const wxString& reply);
 
 	int RemoveDirParseResponse(bool successful, const wxString& reply);
+
+	int ChmodParseResponse(bool successful, const wxString& reply);
+	int ChmodSend(int prevResult = FZ_REPLY_OK);
+
+	int RenameParseResponse(bool successful, const wxString& reply);
+	int RenameSend(int prevResult = FZ_REPLY_OK);
 
 	bool Send(wxString cmd, const wxString& show = _T(""));
 

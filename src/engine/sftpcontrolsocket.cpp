@@ -985,6 +985,10 @@ int CSftpControlSocket::ProcessReply(bool successful, const wxString& reply /*=_
 		return DeleteParseResponse(successful, reply);
 	case cmd_removedir:
 		return RemoveDirParseResponse(successful, reply);
+	case cmd_chmod:
+		return ChmodParseResponse(successful, reply);
+	case cmd_rename:
+		return RenameParseResponse(successful, reply);
 	default:
 		LogMessage(Debug_Warning, _T("No action for parsing replies to command %d"), (int)commandId);
 		return ResetOperation(FZ_REPLY_INTERNALERROR);
@@ -1675,4 +1679,217 @@ int CSftpControlSocket::RemoveDirParseResponse(bool successful, const wxString& 
 	m_pEngine->ResendModifiedListings();
 
 	return ResetOperation(FZ_REPLY_OK);
+}
+
+class CSftpChmodOpData : public COpData
+{
+public:
+	CSftpChmodOpData(const CChmodCommand& command)
+		: m_cmd(command)
+	{
+		opId = cmd_chmod;
+		m_useAbsolute = false;
+	}
+
+	virtual ~CSftpChmodOpData() { }
+
+	CChmodCommand m_cmd;
+	bool m_useAbsolute;
+};
+
+enum chmodStates
+{
+	chmod_init = 0,
+	chmod_chmod
+};
+
+int CSftpControlSocket::Chmod(const CChmodCommand& command)
+{
+	if (m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("m_pCurOpData not empty"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	LogMessage(Status, _("Set permissions of '%s' to '%s'"), command.GetPath().FormatFilename(command.GetFile()).c_str(), command.GetPermission().c_str());
+
+	CSftpChmodOpData *pData = new CSftpChmodOpData(command);
+	pData->opState = chmod_chmod;
+	m_pCurOpData = pData;
+
+	int res = ChangeDir(command.GetPath());
+	if (res != FZ_REPLY_OK)
+		return res;
+	
+	return ChmodSend();
+}
+
+int CSftpControlSocket::ChmodParseResponse(bool successful, const wxString& reply)
+{
+	CSftpChmodOpData *pData = static_cast<CSftpChmodOpData*>(m_pCurOpData);
+	if (!pData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("m_pCurOpData empty"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	if (!successful)
+	{
+		ResetOperation(FZ_REPLY_ERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	ResetOperation(FZ_REPLY_OK);
+	return FZ_REPLY_OK;
+}
+
+int CSftpControlSocket::ChmodSend(int prevResult /*=FZ_REPLY_OK*/)
+{
+	CSftpChmodOpData *pData = static_cast<CSftpChmodOpData*>(m_pCurOpData);
+	if (!pData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("m_pCurOpData empty"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	if (prevResult != FZ_REPLY_OK)
+		pData->m_useAbsolute = true;
+
+	bool res;
+	switch (pData->opState)
+	{
+	case chmod_chmod:
+		{
+			CDirectoryCache cache;
+			cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetPath(), pData->m_cmd.GetFile(), false, CDirectoryCache::unknown);
+		}
+		res = Send(_T("chmod ") + pData->m_cmd.GetPermission() + _T(" ") + QuoteFilename(pData->m_cmd.GetPath().FormatFilename(pData->m_cmd.GetFile(), !pData->m_useAbsolute)));
+		break;
+	default:
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("unknown op state: %d"), pData->opState);
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	if (!res)
+	{
+		ResetOperation(FZ_REPLY_ERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	return FZ_REPLY_WOULDBLOCK;
+}
+
+class CSftpRenameOpData : public COpData
+{
+public:
+	CSftpRenameOpData(const CRenameCommand& command)
+		: m_cmd(command)
+	{
+		opId = cmd_rename;
+		m_useAbsolute = false;
+	}
+
+	virtual ~CSftpRenameOpData() { }
+
+	CRenameCommand m_cmd;
+	bool m_useAbsolute;
+};
+
+enum renameStates
+{
+	rename_init = 0,
+	rename_rename
+};
+
+int CSftpControlSocket::Rename(const CRenameCommand& command)
+{
+	if (m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("m_pCurOpData not empty"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	LogMessage(Status, _("Renaming '%s' to '%s'"), command.GetFromPath().FormatFilename(command.GetFromFile()).c_str(), command.GetToPath().FormatFilename(command.GetToFile()).c_str());
+
+	CSftpRenameOpData *pData = new CSftpRenameOpData(command);
+	pData->opState = rename_rename;
+	m_pCurOpData = pData;
+
+	int res = ChangeDir(command.GetFromPath());
+	if (res != FZ_REPLY_OK)
+		return res;
+	
+	return RenameSend();
+}
+
+int CSftpControlSocket::RenameParseResponse(bool successful, const wxString& reply)
+{
+	CSftpRenameOpData *pData = static_cast<CSftpRenameOpData*>(m_pCurOpData);
+	if (!pData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("m_pCurOpData empty"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	if (!successful)
+	{
+		ResetOperation(FZ_REPLY_ERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	CDirectoryCache cache;
+	cache.Rename(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile(), pData->m_cmd.GetToPath(), pData->m_cmd.GetToFile());
+
+	m_pEngine->ResendModifiedListings();
+
+	ResetOperation(FZ_REPLY_OK);
+	return FZ_REPLY_OK;
+}
+
+int CSftpControlSocket::RenameSend(int prevResult /*=FZ_REPLY_OK*/)
+{
+	CSftpRenameOpData *pData = static_cast<CSftpRenameOpData*>(m_pCurOpData);
+	if (!pData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("m_pCurOpData empty"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	if (prevResult != FZ_REPLY_OK)
+		pData->m_useAbsolute = true;
+
+	bool res;
+	switch (pData->opState)
+	{
+	case rename_rename:
+		{
+			CDirectoryCache cache;
+			cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile(), false);
+			cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetToPath(), pData->m_cmd.GetToFile(), false);
+		}
+
+		res = Send(_T("mv ") + QuoteFilename(pData->m_cmd.GetFromPath().FormatFilename(pData->m_cmd.GetFromFile(), !pData->m_useAbsolute))
+					+ _T(" ")
+					+ QuoteFilename(pData->m_cmd.GetToPath().FormatFilename(pData->m_cmd.GetToFile(), !pData->m_useAbsolute && pData->m_cmd.GetFromPath() == pData->m_cmd.GetToPath())));
+		break;
+	default:
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("unknown op state: %d"), pData->opState);
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	if (!res)
+	{
+		ResetOperation(FZ_REPLY_ERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	return FZ_REPLY_WOULDBLOCK;
 }
