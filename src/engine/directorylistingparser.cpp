@@ -623,7 +623,7 @@ CDirectoryListingParser::CDirectoryListingParser(CFileZillaEnginePrivate *pEngin
 	m_MonthNamesMap[_T("mars")] = 3;
 	m_MonthNamesMap[_T("mrs")] = 3;
 	m_MonthNamesMap[_T("avr")] = 4;
-	m_MonthNamesMap[_T("juin")] = 7;
+	m_MonthNamesMap[_T("juin")] = 6;
 	m_MonthNamesMap[_T("juil")] = 7;
 	m_MonthNamesMap[_T("jui")] = 7;
 	m_MonthNamesMap[_T("ao\xfb")] = 8;
