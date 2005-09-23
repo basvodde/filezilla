@@ -55,6 +55,11 @@ if test "x$WXRC" = "x"; then
 	])
 fi
 
+AC_SUBST(WX_CPPFLAGS)
+AC_SUBST(WX_CXXFLAGS_ONLY)
+AC_SUBST(WX_CFLAGS_ONLY)
+AC_SUBST(WX_LIBS)
+
 AC_CACHE_SAVE
 
 # Get OS type for PUTTY frontend
@@ -155,7 +160,7 @@ if test "x$IDN_LIB" = "x"; then
 	)
 fi
 
-LIBS="$LIBS $IDN_LIB"
+AC_SUBST(IDN_LIB)
 
 # Everything translation related
 # ------------------------------
@@ -253,10 +258,6 @@ else
   AC_MSG_RESULT([no])
 fi
 
-AC_SUBST(WX_CPPFLAGS)
-AC_SUBST(WX_CXXFLAGS_ONLY)
-AC_SUBST(WX_CFLAGS_ONLY)
-AC_SUBST(WX_LIBS)
 AC_SUBST(CATALOGS_TO_INSTALL)
 AC_SUBST(FILEZILLA_LINGUAS)
 AC_SUBST(FILEZILLA_LINGUAS_PO)
