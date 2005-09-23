@@ -45,6 +45,10 @@ if USE_RESOURCEFILE
 RESOURCEFILE = resources/filezilla.o
 endif
 
+filezilla_CPPFLAGS = $(WX_CPPFLAGS)
+filezilla_CXXFLAGS = $(WX_CXXFLAGS_ONLY)
+filezilla_CFLAGS = $(WX_CFLAGS_ONLY)
+
 filezilla_LDFLAGS = ../engine/libengine.a
 filezilla_LDFLAGS += ../tinyxml/libtinyxml.a
 filezilla_LDFLAGS += $(WX_LIBS)

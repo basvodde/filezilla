@@ -14,10 +14,14 @@ noinst_DATA = FileZilla.h.gch
 noinst_PROGRAMS = dummy
 dummy_SOURCES = dummy.cpp
 
+dummy_CPPFLAGS = $(WX_CPPFLAGS)
+dummy_CXXFLAGS = $(WX_CXXFLAGS_ONLY)
+dummy_CFLAGS = $(WX_CFLAGS_ONLY)
+
 include ./$(DEPDIR)/FileZilla.Po
 
 %.h.gch : %.h
-	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
+	if $(CXXCOMPILE) $(WX_CPPFLAGS) $(WX_CXXFLAGS_ONLY) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
 	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
 
 endif

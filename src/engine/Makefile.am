@@ -3,12 +3,12 @@
 noinst_LIBRARIES = libengine.a
 
 INCLUDES = -I$(srcdir)/../include
-#########################################################################
-# APPLICATION SECTION
-#########################################################################
-# this is the program that gets installed.  it's name is used for all
-# of the other Makefile.am variables
-# lib_LIBRARIES = libengine.a
+
+libengine_a_CPPFLAGS = $(WX_CPPFLAGS)
+libengine_a_CXXFLAGS = $(WX_CXXFLAGS_ONLY)
+libengine_a_CFLAGS = $(WX_CFLAGS_ONLY)
+
+
 libengine_a_SOURCES = asynchostresolver.cpp commands.cpp ControlSocket.cpp \
 		directorycache.cpp directorylisting.cpp directorylistingparser.cpp \
 		engineprivate.cpp \
