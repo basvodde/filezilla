@@ -18,6 +18,7 @@
 #include "view.h"
 #include "viewheader.h"
 #include "aboutdialog.h"
+#include "filter.h"
 
 #ifndef __WXMSW__
 #include "resources/filezilla.xpm"
@@ -68,6 +69,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_TOOL(XRCID("ID_TOOLBAR_QUEUEVIEW"), CMainFrame::OnToggleQueueView)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_QUEUEVIEW"), CMainFrame::OnUpdateToggleQueueView)
 	EVT_MENU(wxID_ABOUT, CMainFrame::OnMenuHelpAbout)
+	EVT_TOOL(XRCID("ID_TOOLBAR_FILTER"), CMainFrame::OnFilter)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame(COptions* pOptions) : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
@@ -1054,5 +1056,12 @@ void CMainFrame::OnMenuHelpAbout(wxCommandEvent& event)
 	if (!dlg.Create(this))
 		return;
 
+	dlg.ShowModal();
+}
+
+void CMainFrame::OnFilter(wxCommandEvent& event)
+{
+	CFilterDialog dlg;
+	dlg.Create(this);
 	dlg.ShowModal();
 }

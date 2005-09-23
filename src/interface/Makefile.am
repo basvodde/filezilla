@@ -10,8 +10,10 @@ bin_PROGRAMS = filezilla
 
 # the application source, library search path, and link libraries
 filezilla_SOURCES = aboutdialog.cpp asyncrequestqueue.cpp chmoddialog.cpp \
-		commandqueue.cpp dialogex.cpp fileexistsdlg.cpp \
-		FileZilla.cpp inputdialog.cpp ipcmutex.cpp led.cpp \
+		commandqueue.cpp customheightlistctrl.cpp dialogex.cpp \
+		fileexistsdlg.cpp \
+		FileZilla.cpp filter.cpp filteredit.cpp inputdialog.cpp \
+		ipcmutex.cpp led.cpp \
 		LocalListView.cpp LocalTreeView.cpp Mainfrm.cpp Options.cpp \
 		optionspage.cpp	optionspage_filetype.cpp optionspage_language.cpp \
 		optionspage_passive.cpp optionspage_themes.cpp QueueView.cpp \
@@ -25,8 +27,10 @@ filezilla_SOURCES += prefix.cpp
 endif
 
 noinst_HEADERS = aboutdialog.h asyncrequestqueue.h chmoddialog.h \
-		 commandqueue.h dialogex.h fileexistsdlg.h \
-		 filezillaapp.h inputdialog.h ipcmutex.h led.h \
+		 commandqueue.h customheightlistctrl.h \
+		 dialogex.h fileexistsdlg.h \
+		 filezillaapp.h filter.h filteredit.h \
+		 inputdialog.h ipcmutex.h led.h \
 		 LocalListView.h LocalTreeView.h Mainfrm.h Options.h \
 		 optionspage.h  optionspage_filetype.h \
 		 optionspage_language.h optionspage_passive.h \
@@ -34,7 +38,7 @@ noinst_HEADERS = aboutdialog.h asyncrequestqueue.h chmoddialog.h \
 		 RemoteListView.h RemoteTreeView.h \
 		 settingsdialog.h sitemanager.h state.h \
 		 statuslinectrl.h StatusView.h systemimagelist.h \
-		 themeprovider.h  \
+		 themeprovider.h \
 		 view.h viewheader.h xmlfunctions.h
 
 if USE_RESOURCEFILE

@@ -99,6 +99,7 @@ protected:
 	void OnToggleQueueView(wxCommandEvent& event);
 	void OnUpdateToggleQueueView(wxUpdateUIEvent& event);
 	void OnMenuHelpAbout(wxCommandEvent& event);
+	void OnFilter(wxCommandEvent& event);
 
 	float m_ViewSplitterSashPos;
 	bool m_bInitDone;
