@@ -16,4 +16,6 @@ uninstalllangfiles.nsh: Makefile
 	  echo !insertmacro UNINSTALLLANGFILE $$i >> $@; \
 	done
 
+CLEANFILES = installlangfiles.nsh uninstalllangfiles.nsh
+
 endif
