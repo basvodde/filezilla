@@ -32,6 +32,8 @@ public:
 class CFilter
 {
 public:
+	wxString name;
+
 	bool filterFiles;
 	bool filterDirs;
 	bool matchAll;

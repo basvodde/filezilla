@@ -23,6 +23,7 @@ EVT_BUTTON(XRCID("ID_NEW"), CFilterEditDialog::OnNew)
 EVT_BUTTON(XRCID("ID_DELETE"), CFilterEditDialog::OnDelete)
 EVT_BUTTON(XRCID("ID_RENAME"), CFilterEditDialog::OnRename)
 EVT_BUTTON(XRCID("ID_COPY"), CFilterEditDialog::OnCopy)
+EVT_LISTBOX(XRCID("ID_FILTERS"), CFilterEditDialog::OnFilterSelect)
 END_EVENT_TABLE();
 
 void CFilterEditDialog::OnOK(wxCommandEvent& event)
@@ -46,6 +47,13 @@ bool CFilterEditDialog::Create(wxWindow* parent)
 		return false;
 
 	m_choiceBoxHeight = 0;
+
+	m_pFilterListCtrl = XRCCTRL(*this, "ID_FILTERS", wxListBox);
+	if (!m_pFilterListCtrl)
+		return false;
+	m_currentSelection = -1;
+
+	SetCtrlState(false);
 
 	return true;
 }
@@ -110,15 +118,7 @@ void CFilterEditDialog::OnRemove(wxCommandEvent& event)
 
 void CFilterEditDialog::ShowFilter(const CFilter& filter)
 {
-	// First delete old controls
-	for (unsigned int i = 0; i < m_filterControls.size(); i++)
-	{
-		CFilterControls& controls = m_filterControls[i];
-		delete controls.pType;
-		delete controls.pCondition;
-		delete controls.pValue;
-	}
-	m_filterControls.clear();
+	DestroyControls();
 
 	// Create new controls
 	m_currentFilter = filter;
@@ -128,6 +128,12 @@ void CFilterEditDialog::ShowFilter(const CFilter& filter)
 
 		MakeControls(cond);
 	}
+
+	XRCCTRL(*this, "ID_MATCHALL", wxRadioButton)->SetValue(filter.matchAll);
+	XRCCTRL(*this, "ID_MATCHANY", wxRadioButton)->SetValue(!filter.matchAll);
+
+	XRCCTRL(*this, "ID_FILES", wxCheckBox)->SetValue(filter.filterFiles);
+	XRCCTRL(*this, "ID_DIRS", wxCheckBox)->SetValue(filter.filterDirs);
 
 	UpdateCount();
 }
@@ -227,19 +233,43 @@ void CFilterEditDialog::UpdateCount()
 
 void CFilterEditDialog::SaveFilter(CFilter& filter)
 {
+	filter.filters.clear();
 	for (unsigned int i = 0; i < m_currentFilter.filters.size(); i++)
 	{
 		const CFilterControls& controls = m_filterControls[i];
 		CFilterCondition condition = m_currentFilter.filters[i];
 		
-		// We don't have to save the type, it gets updated in OnFilterTypeChange
+		condition.type = controls.pType->GetSelection();
 		condition.condition = controls.pCondition->GetSelection();
 		condition.strValue = controls.pValue->GetValue();
+
+		filter.filters.push_back(condition);
 	}
+
+	filter.matchAll = XRCCTRL(*this, "ID_MATCHALL", wxRadioButton)->GetValue();
+
+	filter.filterFiles = XRCCTRL(*this, "ID_FILES", wxCheckBox)->GetValue();
+	filter.filterDirs = XRCCTRL(*this, "ID_DIRS", wxCheckBox)->GetValue();
 }
 
 void CFilterEditDialog::OnNew(wxCommandEvent& event)
 {
+	CFilter filter;
+	filter.matchAll = false;
+	filter.filterDirs = true;
+	filter.filterFiles = true;
+
+	int index = 1;
+	wxString name = _("New filter");
+	wxString newName = name;
+	while (m_pFilterListCtrl->FindString(newName) != wxNOT_FOUND)
+		newName = wxString::Format(_T("%s (%d)"), name.c_str(), ++index);
+
+	filter.name = newName;
+
+	m_filters.push_back(filter);
+
+	m_pFilterListCtrl->Append(newName);
 }
 
 void CFilterEditDialog::OnDelete(wxCommandEvent& event)
@@ -252,4 +282,55 @@ void CFilterEditDialog::OnRename(wxCommandEvent& event)
 
 void CFilterEditDialog::OnCopy(wxCommandEvent& event)
 {
+}
+
+void CFilterEditDialog::OnFilterSelect(wxCommandEvent& event)
+{
+	int item = m_pFilterListCtrl->GetSelection();
+	if (item == -1)
+	{
+		SetCtrlState(false);
+		return;
+	}
+	else
+		SetCtrlState(true);
+	
+	if (m_currentSelection != -1)
+	{
+		wxASSERT((unsigned int)m_currentSelection < m_filters.size());
+		SaveFilter(m_filters[m_currentSelection]);
+	}
+
+	m_currentSelection = item;
+	CFilter filter = m_filters[item];
+	ShowFilter(filter);
+}
+
+void CFilterEditDialog::SetCtrlState(bool enabled)
+{
+	if (!enabled)
+	{
+		DestroyControls();
+		m_pListCtrl->SetLineCount(0);
+	}
+
+	m_pListCtrl->Enable(enabled);
+	XRCCTRL(*this, "ID_MATCHALL", wxRadioButton)->Enable(enabled);
+	XRCCTRL(*this, "ID_MATCHANY", wxRadioButton)->Enable(enabled);
+	XRCCTRL(*this, "ID_MORE", wxButton)->Enable(enabled);
+	XRCCTRL(*this, "ID_REMOVE", wxButton)->Enable(enabled);
+	XRCCTRL(*this, "ID_FILES", wxCheckBox)->Enable(enabled);
+	XRCCTRL(*this, "ID_DIRS", wxCheckBox)->Enable(enabled);
+}
+
+void CFilterEditDialog::DestroyControls()
+{
+	for (unsigned int i = 0; i < m_filterControls.size(); i++)
+	{
+		CFilterControls& controls = m_filterControls[i];
+		delete controls.pType;
+		delete controls.pCondition;
+		delete controls.pValue;
+	}
+	m_filterControls.clear();
 }

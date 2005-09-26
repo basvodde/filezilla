@@ -1994,7 +1994,7 @@
                 </object>
               </object>
               <object class="sizeritem">
-                <object class="wxListBox">
+                <object class="wxListBox" name="ID_FILTERS">
                   <content/>
                 </object>
                 <option>1</option>
@@ -2006,22 +2006,22 @@
                   <cols>2</cols>
                   <rows>2</rows>
                   <object class="sizeritem">
-                    <object class="wxButton">
+                    <object class="wxButton" name="ID_NEW">
                       <label>&amp;New</label>
                     </object>
                   </object>
                   <object class="sizeritem">
-                    <object class="wxButton">
+                    <object class="wxButton" name="ID_DELETE">
                       <label>&amp;Delete</label>
                     </object>
                   </object>
                   <object class="sizeritem">
-                    <object class="wxButton">
+                    <object class="wxButton" name="ID_RENAME">
                       <label>&amp;Rename</label>
                     </object>
                   </object>
                   <object class="sizeritem">
-                    <object class="wxButton">
+                    <object class="wxButton" name="ID_COPY">
                       <label>&amp;Copy</label>
                     </object>
                   </object>
@@ -2063,13 +2063,16 @@
                   <cols>2</cols>
                   <hgap>5</hgap>
                   <object class="sizeritem">
-                    <object class="wxRadioButton">
+                    <object class="wxRadioButton" name="ID_MATCHALL">
                       <label>Match all of the following</label>
+                      <value>1</value>
+                      <style>wxRB_GROUP</style>
                     </object>
                   </object>
                   <object class="sizeritem">
-                    <object class="wxRadioButton">
+                    <object class="wxRadioButton" name="ID_MATCHANY">
                       <label>Any of the following</label>
+                      <value>0</value>
                     </object>
                   </object>
                 </object>
@@ -2109,12 +2112,12 @@
               <object class="sizeritem">
                 <object class="wxFlexGridSizer">
                   <object class="sizeritem">
-                    <object class="wxCheckBox">
+                    <object class="wxCheckBox" name="ID_FILES">
                       <label>Files</label>
                     </object>
                   </object>
                   <object class="sizeritem">
-                    <object class="wxCheckBox">
+                    <object class="wxCheckBox" name="ID_DIRS">
                       <label>Directories</label>
                     </object>
                   </object>

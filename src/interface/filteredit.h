@@ -35,17 +35,26 @@ protected:
 	void OnDelete(wxCommandEvent& event);
 	void OnRename(wxCommandEvent& event);
 	void OnCopy(wxCommandEvent& event);
+	void OnFilterSelect(wxCommandEvent& event);
 		
 	void ShowFilter(const CFilter& filter);
 	void SaveFilter(CFilter& filter);
 	void MakeControls(const CFilterCondition& condition);
+	void DestroyControls();
 	void UpdateCount();
+
+	void SetCtrlState(bool enabled);
 
 	wxCustomHeightListCtrl* m_pListCtrl;
 	int m_choiceBoxHeight;
 
+	wxListBox* m_pFilterListCtrl;
+	int m_currentSelection;
+
 	CFilter m_currentFilter;
 	std::vector<CFilterControls> m_filterControls;
+
+	std::vector<CFilter> m_filters;
 };
 
 #endif //__FILTEREDIT_H__
