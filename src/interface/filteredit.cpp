@@ -28,6 +28,12 @@ END_EVENT_TABLE();
 
 void CFilterEditDialog::OnOK(wxCommandEvent& event)
 {
+	if (m_currentSelection != -1)
+	{
+		wxASSERT((unsigned int)m_currentSelection < m_filters.size());
+		SaveFilter(m_filters[m_currentSelection]);
+	}
+
 	EndModal(wxID_OK);
 }
 
@@ -36,7 +42,7 @@ void CFilterEditDialog::OnCancel(wxCommandEvent& event)
 	EndModal(wxID_CANCEL);
 }
 
-bool CFilterEditDialog::Create(wxWindow* parent)
+bool CFilterEditDialog::Create(wxWindow* parent, const std::vector<CFilter>& filters)
 {
 	if (!Load(parent, _T("ID_EDITFILTER")))
 		return false;
@@ -52,6 +58,10 @@ bool CFilterEditDialog::Create(wxWindow* parent)
 	if (!m_pFilterListCtrl)
 		return false;
 	m_currentSelection = -1;
+
+	m_filters = filters;
+	for (std::vector<CFilter>::const_iterator iter = filters.begin(); iter != filters.end(); iter++)
+		m_pFilterListCtrl->Append(iter->name);
 
 	SetCtrlState(false);
 
@@ -274,6 +284,14 @@ void CFilterEditDialog::OnNew(wxCommandEvent& event)
 
 void CFilterEditDialog::OnDelete(wxCommandEvent& event)
 {
+	int item = m_pFilterListCtrl->GetSelection();
+	if (item == -1)
+		return;
+
+	m_currentSelection = -1;
+	m_pFilterListCtrl->Delete(item);
+	m_filters.erase(m_filters.begin() + item);
+	SetCtrlState(false);
 }
 
 void CFilterEditDialog::OnRename(wxCommandEvent& event)
@@ -333,4 +351,9 @@ void CFilterEditDialog::DestroyControls()
 		delete controls.pValue;
 	}
 	m_filterControls.clear();
+}
+
+const std::vector<CFilter>& CFilterEditDialog::GetFilters() const
+{
+	return m_filters;
 }

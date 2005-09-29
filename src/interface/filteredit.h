@@ -21,7 +21,9 @@ public:
 	CFilterEditDialog() {}
 	virtual ~CFilterEditDialog() { }
 
-	bool Create(wxWindow* parent);
+	bool Create(wxWindow* parent, const std::vector<CFilter>& filters);
+
+	const std::vector<CFilter>& GetFilters() const;
 
 protected:
 
