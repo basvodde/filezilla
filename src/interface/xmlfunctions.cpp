@@ -170,6 +170,36 @@ TiXmlElement* GetXmlFile(wxFileName file)
 	}
 }
 
+bool SaveXmlFile(const wxFileName& file, TiXmlNode* node)
+{
+	if (!node)
+		return true;
+
+	TiXmlDocument* pDocument = node->GetDocument();
+
+	bool exists = false;
+	if (wxFileExists(file.GetFullPath()))
+	{
+		exists = true;
+		if (!wxCopyFile(file.GetFullPath(), file.GetFullPath() + _T("~")))
+		{
+			wxMessageBox(_("Failed to create backup copy of xml file"));
+			return false;
+		}
+	}
+
+	if (!pDocument->SaveFile(file.GetFullPath().mb_str()))
+	{
+		wxMessageBox(_("Failed to write xml file"));
+		return false;
+	}
+
+	if (exists)
+		wxRemoveFile(file.GetFullPath() + _T("~"));
+
+	return true;
+}
+
 bool GetServer(TiXmlElement *node, CServer& server)
 {
 	wxASSERT(node);
