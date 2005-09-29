@@ -28,6 +28,9 @@ END_EVENT_TABLE();
 
 void CFilterEditDialog::OnOK(wxCommandEvent& event)
 {
+	if (!Validate())
+		return;
+
 	if (m_currentSelection != -1)
 	{
 		wxASSERT((unsigned int)m_currentSelection < m_filters.size());
@@ -312,10 +315,17 @@ void CFilterEditDialog::OnFilterSelect(wxCommandEvent& event)
 	}
 	else
 		SetCtrlState(true);
+
+	if (item == m_currentSelection)
+		return;
 	
 	if (m_currentSelection != -1)
 	{
 		wxASSERT((unsigned int)m_currentSelection < m_filters.size());
+
+		if (!Validate())
+			return;
+
 		SaveFilter(m_filters[m_currentSelection]);
 	}
 
@@ -356,4 +366,41 @@ void CFilterEditDialog::DestroyControls()
 const std::vector<CFilter>& CFilterEditDialog::GetFilters() const
 {
 	return m_filters;
+}
+
+bool CFilterEditDialog::Validate()
+{
+	const unsigned int size = m_currentFilter.filters.size();
+	if (!size)
+	{
+		m_pFilterListCtrl->SetSelection(m_currentSelection);
+		wxMessageBox(_("Each filter needs at least one condition"));
+		return false;
+	}
+	for (unsigned int i = 0; i < size; i++)
+	{
+		const CFilterControls& controls = m_filterControls[i];
+		if (controls.pValue->GetValue() == _T(""))
+		{
+			m_pFilterListCtrl->SetSelection(m_currentSelection);
+			m_pListCtrl->SelectLine(i);
+			controls.pValue->SetFocus();
+			wxMessageBox(_("At least one filter condition is incomplete"));
+			return false;
+		}
+		if (controls.pType->GetSelection() == 1)
+		{
+			long number;
+			if (!controls.pValue->GetValue().ToLong(&number) || number < 0)
+			{
+				m_pFilterListCtrl->SetSelection(m_currentSelection);
+				m_pListCtrl->SelectLine(i);
+				controls.pValue->SetFocus();
+				wxMessageBox(_("Invalid size in condition"));
+				return false;
+			}				
+		}
+	}
+
+	return true;
 }

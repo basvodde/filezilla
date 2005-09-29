@@ -25,6 +25,8 @@ public:
 
 	const std::vector<CFilter>& GetFilters() const;
 
+	bool Validate();
+
 protected:
 
 	DECLARE_EVENT_TABLE();

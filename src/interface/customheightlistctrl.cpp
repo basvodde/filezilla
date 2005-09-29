@@ -143,3 +143,13 @@ std::set<int> wxCustomHeightListCtrl::GetSelection() const
 {
 	return m_selectedLines;
 }
+
+void wxCustomHeightListCtrl::SelectLine(int line)
+{
+	m_selectedLines.clear();
+	m_focusedLine = line;
+	if (line != -1)
+		m_selectedLines.insert(line);
+
+	Refresh();
+}

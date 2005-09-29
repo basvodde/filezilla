@@ -16,6 +16,7 @@ public:
 	void ClearSelection();
 
 	std::set<int> GetSelection() const;
+	void SelectLine(int line);
 
 protected:
 	virtual void OnDraw(wxDC& dc);
