@@ -33,6 +33,8 @@ bool CFilterDialog::Create(wxWindow* parent)
 	if (!Load(parent, _T("ID_FILTER")))
 		return false;
 
+	DisplayFilters();
+
 	return true;
 }
 
@@ -51,13 +53,16 @@ void CFilterDialog::OnCancel(wxCommandEvent& event)
 void CFilterDialog::OnEdit(wxCommandEvent& event)
 {
 	CFilterEditDialog dlg;
-	if (!dlg.Create(this, m_filters))
+	if (!dlg.Create(this, m_filters, m_filterSets))
 		return;
 	
 	if (dlg.ShowModal() != wxID_OK)
 		return;
 
 	m_filters = dlg.GetFilters();
+	m_filterSets = dlg.GetFilterSets();
+
+	DisplayFilters();
 }
 
 void CFilterDialog::SaveFilters()
@@ -86,7 +91,7 @@ void CFilterDialog::SaveFilters()
 	for (std::vector<CFilter>::const_iterator iter = m_globalFilters.begin(); iter != m_globalFilters.end(); iter++)
 	{
 		const CFilter& filter = *iter;
-		TiXmlElement* pFilter = pDocument->InsertEndChild(TiXmlElement("Filter"))->ToElement();
+		TiXmlElement* pFilter = pFilters->InsertEndChild(TiXmlElement("Filter"))->ToElement();
 
 		AddTextElement(pFilter, "Name", filter.name);
 		AddTextElement(pFilter, "ApplyToFiles", filter.filterFiles ? _T("1") : _T("0"));
@@ -165,10 +170,10 @@ void CFilterDialog::LoadFilters()
 		while (pCondition)
 		{
 			CFilterCondition condition;
-			condition.type = GetTextElementInt(pFilter, "Type", 0);
-			condition.condition = GetTextElementInt(pFilter, "Condition", 0);
-			condition.strValue = GetTextElement(pFilter, "Value");
-			if (!condition.value)
+			condition.type = GetTextElementInt(pCondition, "Type", 0);
+			condition.condition = GetTextElementInt(pCondition, "Condition", 0);
+			condition.strValue = GetTextElement(pCondition, "Value");
+			if (condition.strValue == _T(""))
 			{
 				pCondition = pCondition->NextSiblingElement("Condition");
 				continue;
@@ -188,4 +193,20 @@ void CFilterDialog::LoadFilters()
 	delete pDocument->GetDocument();
 
 	m_filters = m_globalFilters;
+}
+
+void CFilterDialog::DisplayFilters()
+{
+	wxCheckListBox* pLocalFilters = XRCCTRL(*this, "ID_LOCALFILTERS", wxCheckListBox);
+	wxCheckListBox* pRemoteFilters = XRCCTRL(*this, "ID_REMOTEFILTERS", wxCheckListBox);
+
+	pLocalFilters->Clear();
+	pRemoteFilters->Clear();
+
+	for (std::vector<CFilter>::const_iterator iter = m_filters.begin(); iter != m_filters.end(); iter++)
+	{
+		const CFilter& filter = *iter;
+		pLocalFilters->Append(filter.name);
+		pRemoteFilters->Append(filter.name);
+	}
 }

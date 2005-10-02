@@ -21,9 +21,10 @@ public:
 	CFilterEditDialog() {}
 	virtual ~CFilterEditDialog() { }
 
-	bool Create(wxWindow* parent, const std::vector<CFilter>& filters);
+	bool Create(wxWindow* parent, const std::vector<CFilter>& filters, const std::vector<CFilterSet>& filterSets);
 
 	const std::vector<CFilter>& GetFilters() const;
+	const std::vector<CFilterSet>& GetFilterSets() const;
 
 	bool Validate();
 
@@ -59,6 +60,7 @@ protected:
 	std::vector<CFilterControls> m_filterControls;
 
 	std::vector<CFilter> m_filters;
+	std::vector<CFilterSet> m_filterSets;
 };
 
 #endif //__FILTEREDIT_H__

@@ -45,7 +45,7 @@ void CFilterEditDialog::OnCancel(wxCommandEvent& event)
 	EndModal(wxID_CANCEL);
 }
 
-bool CFilterEditDialog::Create(wxWindow* parent, const std::vector<CFilter>& filters)
+bool CFilterEditDialog::Create(wxWindow* parent, const std::vector<CFilter>& filters, const std::vector<CFilterSet>& filterSets)
 {
 	if (!Load(parent, _T("ID_EDITFILTER")))
 		return false;
@@ -63,6 +63,7 @@ bool CFilterEditDialog::Create(wxWindow* parent, const std::vector<CFilter>& fil
 	m_currentSelection = -1;
 
 	m_filters = filters;
+	m_filterSets = filterSets;
 	for (std::vector<CFilter>::const_iterator iter = filters.begin(); iter != filters.end(); iter++)
 		m_pFilterListCtrl->Append(iter->name);
 
@@ -366,6 +367,11 @@ void CFilterEditDialog::DestroyControls()
 const std::vector<CFilter>& CFilterEditDialog::GetFilters() const
 {
 	return m_filters;
+}
+
+const std::vector<CFilterSet>& CFilterEditDialog::GetFilterSets() const
+{
+	return m_filterSets;
 }
 
 bool CFilterEditDialog::Validate()
