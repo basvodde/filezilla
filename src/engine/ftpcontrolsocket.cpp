@@ -375,7 +375,14 @@ bool CFtpControlSocket::Send(wxString str)
 {
 	LogMessage(Command, str);
 	str += _T("\r\n");
-	wxCharBuffer buffer = wxCSConv(_T("ISO8859-1")).cWX2MB(str);
+	wxCharBuffer buffer = wxConvCurrent->cWX2MB(str);
+	if (!buffer)
+		buffer = wxCSConv(_T("ISO8859-1")).cWX2MB(str);
+	if (!buffer)
+	{
+		LogMessage(::Error, _T("Failed to convert command to 8 bit charset"));
+		return false;
+	}
 	unsigned int len = (unsigned int)strlen(buffer);
 	return CControlSocket::Send(buffer, len);
 }
