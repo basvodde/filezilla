@@ -44,10 +44,15 @@ CControlSocket::CControlSocket(CFileZillaEnginePrivate *pEngine)
 	SetEventHandler(*this);
 	SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_OUTPUT_FLAG | wxSOCKET_CONNECTION_FLAG | wxSOCKET_LOST_FLAG);
 	Notify(true);
+
+	m_pCSConv = 0;
+	m_useUTF8 = 0;
 }
 
 CControlSocket::~CControlSocket()
 {
+	delete m_pCSConv;
+
 	DoClose();
 }
 
@@ -233,13 +238,13 @@ int CControlSocket::ResetOperation(int nErrorCode)
 		switch (commandId)
 		{
 		case cmd_connect:
-			if (nErrorCode & FZ_REPLY_CANCELED)
+			if ((nErrorCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)
 				LogMessage(::Error, _("Connection attempt interrupted by user"));
 			else
 				LogMessage(::Error, _("Could not connect to server"));
 			break;
 		case cmd_list:
-			if (nErrorCode & FZ_REPLY_CANCELED)
+			if ((nErrorCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)
 				LogMessage(::Error, _("Directory listing aborted by user"));
 			else
 				LogMessage(::Error, _("Failed to retrieve directory listing"));
@@ -578,4 +583,94 @@ CFileTransferOpData::CFileTransferOpData() :
 
 CFileTransferOpData::~CFileTransferOpData()
 {
+}
+
+wxString CControlSocket::ConvToLocal(const char* buffer)
+{
+	if (m_useUTF8)
+	{
+#if wxUSE_UNICODE
+		wxString str = wxConvUTF8.cMB2WX(buffer);
+#else
+		const wxWCharBuffer unicode = wxConvUTF8.cMB2WC(buffer);
+		wxString str(unicode, *wxConvCurrent);
+#endif
+
+		if (str != _T(""))
+			return str;
+	}
+
+	wxString str = wxConvCurrent->cMB2WX(buffer);
+
+	return str;
+}
+
+wxChar* CControlSocket::ConvToLocalBuffer(const char* buffer, wxMBConv& conv)
+{
+	size_t len = conv.MB2WC(0, buffer, 0);
+	if (!len)
+		return 0;
+
+	wchar_t* unicode = new wchar_t[len + 1];
+	conv.MB2WC(unicode, buffer, len + 1);
+#if wxUSE_UNICODE
+	return unicode;
+#else
+	len = wxConvCurrent->WC2MB(0, unicode, 0);
+	if (!len)
+	{
+		delete [] unicode;
+		return 0;
+	}
+
+	wxChar* output = new wxChar[len + 1];
+	wxConvCurrent->WC2MB(output, unicode, len + 1);
+	delete [] unicode;
+	return output;
+#endif
+}
+
+wxChar* CControlSocket::ConvToLocalBuffer(const char* buffer)
+{
+	if (m_useUTF8)
+	{
+		wxChar* res = ConvToLocalBuffer(buffer, wxConvUTF8);
+		if (res)
+			return res;
+	}
+
+	// Fallback: Conversion using current locale
+#if wxUSE_UNICODE
+	wxChar* res = ConvToLocalBuffer(buffer, wxConvUTF8);
+#else
+	// No conversion needed, just copy
+	wxChar* res = new wxChar[strlen(buffer) + 1];
+	strcpy(res, buffer);
+#endif
+
+	return res;
+}
+
+wxCharBuffer CControlSocket::ConvToServer(const wxString& str)
+{
+	if (m_useUTF8)
+	{
+#if wxUSE_UNICODE
+		wxCharBuffer buffer = wxConvUTF8.cWX2MB(str);
+#else
+		wxWCharBuffer unicode = wxConvCurrent->cMB2WC(str);
+		wxCharBuffer buffer;
+		if (unicode)
+			 buffer = wxConvUTF8.cWC2MB(unicode);
+#endif
+
+		if (buffer)
+			return buffer;
+	}
+
+	wxCharBuffer buffer = wxConvCurrent->cWX2MB(str);
+	if (!buffer)
+		buffer = wxCSConv(_T("ISO8859-1")).cWX2MB(str);
+
+	return buffer;
 }

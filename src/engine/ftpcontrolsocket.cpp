@@ -4,6 +4,12 @@
 #include "directorylistingparser.h"
 #include "directorycache.h"
 
+#define LOGON_LOGON		1
+#define LOGON_SYST		2
+#define LOGON_FEAT		3
+#define LOGON_CLNT		4
+#define LOGON_OPTSUTF8	5
+
 CFtpFileTransferOpData::CFtpFileTransferOpData()
 {
 	pFile = 0;
@@ -70,23 +76,23 @@ public:
 
 CFtpControlSocket::CFtpControlSocket(CFileZillaEnginePrivate *pEngine) : CControlSocket(pEngine)
 {
-	m_ReceiveBuffer.Alloc(2000);
-
 	m_pTransferSocket = 0;
 	m_sentRestartOffset = false;
+	m_bufferLen = 0;
+
+	m_hasCLNT = false;
+	m_hasUTF8 = false;
 }
 
 CFtpControlSocket::~CFtpControlSocket()
 {
 }
 
-#define BUFFERSIZE 4096
 void CFtpControlSocket::OnReceive(wxSocketEvent &event)
 {
 	LogMessage(Debug_Verbose, _T("CFtpControlSocket::OnReceive()"));
 
-	char *buffer = new char[BUFFERSIZE];
-	Read(buffer, BUFFERSIZE);
+	Read(m_receiveBuffer, RECVBUFFERSIZE - m_bufferLen);
 	if (Error())
 	{
 		if (LastError() != wxSOCKET_WOULDBLOCK)
@@ -94,77 +100,103 @@ void CFtpControlSocket::OnReceive(wxSocketEvent &event)
 			LogMessage(::Error, _("Disconnected from server"));
 			DoClose();
 		}
-		delete [] buffer;
 		return;
 	}
 
 	int numread = LastCount();
 	if (!numread)
-	{
-		delete [] buffer;
 		return;
-	}
 
 	m_pEngine->SetActive(true);
 
-	for (int i = 0; i < numread; i++)
+	char* start = m_receiveBuffer;
+	m_bufferLen += numread;
+
+	for (int i = start - m_receiveBuffer; i < m_bufferLen; i++)
 	{
-		if (buffer[i] == '\r' ||
-			buffer[i] == '\n' ||
-			buffer[i] == 0)
+		char& p = m_receiveBuffer[i];
+		if (p == '\r' ||
+			p == '\n' ||
+			p == 0)
 		{
-			if (m_ReceiveBuffer == _T(""))
+			int len = i - (start - m_receiveBuffer);
+			if (!len)
+			{
+				start++;
 				continue;
+			}
 
-			LogMessage(Response, m_ReceiveBuffer);
+			if (len > MAXLINELEN)
+				len = MAXLINELEN;
+			p = 0;
+			wxString line = ConvToLocal(start);
+			start = m_receiveBuffer + i + 1;
 
-			if (GetCurrentCommandId() == cmd_connect && m_pCurOpData && reinterpret_cast<CFtpLogonOpData *>(m_pCurOpData)->waitChallenge)
-			{
-				wxString& challenge = reinterpret_cast<CFtpLogonOpData *>(m_pCurOpData)->challenge;
-				if (challenge != _T(""))
+			ParseLine(line);
+
+			// Abort if connection got closed
+			if (!m_pCurrentServer)
+				return;
+		}
+	}
+	memmove(m_receiveBuffer, start, m_bufferLen - (start - m_receiveBuffer));
+	m_bufferLen -= (start -m_receiveBuffer);
+	if (m_bufferLen > MAXLINELEN)
+		m_bufferLen = MAXLINELEN;
+}
+
+void CFtpControlSocket::ParseLine(wxString line)
+{
+	LogMessage(Response, line);
+
+	if (GetCurrentCommandId() == cmd_connect && m_pCurOpData)
+	{
+		CFtpLogonOpData* pData = reinterpret_cast<CFtpLogonOpData *>(m_pCurOpData);
+		if (pData->waitChallenge)
+		{
+			wxString& challenge = pData->challenge;
+			if (challenge != _T(""))
 #ifdef __WXMSW__
-					challenge += _T("\r\n");
+				challenge += _T("\r\n");
 #else
-					challenge += _T("\n");
+				challenge += _T("\n");
 #endif
-				challenge += m_ReceiveBuffer;
-			}
-			//Check for multi-line responses
-			if (m_ReceiveBuffer.Len() > 3)
+			challenge += line;
+		}
+		else if (pData->opState == LOGON_FEAT)
+		{
+			wxString up = line.Upper();
+			if (up == _T(" UTF8"))
+				m_hasUTF8 = true;
+			else if (line == _T(" CLNT"))
+				m_hasCLNT = true;
+		}
+	}
+	//Check for multi-line responses
+	if (line.Len() > 3)
+	{
+		if (m_MultilineResponseCode != _T(""))
+		{
+			if (line.Left(4) == m_MultilineResponseCode)
 			{
-				if (m_MultilineResponseCode != _T(""))
-				{
-					if (m_ReceiveBuffer.Left(4) == m_MultilineResponseCode)
-					{
-						// end of multi-line found
-						m_MultilineResponseCode.Clear();
-						ParseResponse();
-					}
-				}
-				// start of new multi-line
-				else if (m_ReceiveBuffer.GetChar(3) == '-')
-				{
-					// DDD<SP> is the end of a multi-line response
-					m_MultilineResponseCode = m_ReceiveBuffer.Left(3) + _T(" ");
-				}
-				else
-				{
-					ParseResponse();
-				}
+				// end of multi-line found
+				m_MultilineResponseCode.Clear();
+				m_Response = line;
+				ParseResponse();
 			}
-
-			m_ReceiveBuffer.clear();
+		}
+		// start of new multi-line
+		else if (line.GetChar(3) == '-')
+		{
+			// DDD<SP> is the end of a multi-line response
+			m_MultilineResponseCode = line.Left(3) + _T(" ");
 		}
 		else
 		{
-			//The command may only be 2000 chars long. This ensures that a malicious user can't
-			//send extremely large commands to fill the memory of the server
-			if (m_ReceiveBuffer.Len()<2000)
-				m_ReceiveBuffer += buffer[i];
+			m_Response = line;
+			ParseResponse();
 		}
 	}
-
-	delete [] buffer;
 }
 
 void CFtpControlSocket::OnConnect(wxSocketEvent &event)
@@ -257,18 +289,26 @@ int CFtpControlSocket::LogonParseResponse()
 	};
 
 	int code = GetReplyCode();
-	if (code != 2 && code != 3)
-	{
-		DoClose(FZ_REPLY_DISCONNECTED);
-		return FZ_REPLY_DISCONNECTED;
-	}
+
 	if (!pData->opState)
 	{
-		pData->opState = 1;
+		if (code != 2 && code != 3)
+		{
+			DoClose(FZ_REPLY_DISCONNECTED);
+			return FZ_REPLY_DISCONNECTED;
+		}
+
+		pData->opState = LOGON_LOGON;
 		pData->nCommand = logonseq[pData->logonType][0];
 	}
-	else if (pData->opState == 1)
+	else if (pData->opState == LOGON_LOGON)
 	{
+		if (code != 2 && code != 3)
+		{
+			DoClose(FZ_REPLY_DISCONNECTED);
+			return FZ_REPLY_DISCONNECTED;
+		}
+
 		pData->waitChallenge = false;
 		pData->logonSequencePos = logonseq[pData->logonType][pData->logonSequencePos + code - 1];
 
@@ -278,14 +318,14 @@ int CFtpControlSocket::LogonParseResponse()
 			DoClose();
 			return FZ_REPLY_ERROR;
 		case LO: //LO means we are logged on
-			pData->opState = 2;
+			pData->opState = LOGON_FEAT;
 		}
 
 		pData->nCommand = logonseq[pData->logonType][pData->logonSequencePos];
 	}
-	else if (pData->opState == 2)
+	else if (pData->opState == LOGON_SYST)
 	{
-		if (code == 2 && m_ReceiveBuffer.Length() > 7 && m_ReceiveBuffer.Mid(3, 4) == _T(" MVS"))
+		if (code == 2 && m_Response.Length() > 7 && m_Response.Mid(3, 4) == _T(" MVS"))
 		{
 			if (m_pCurrentServer->GetType() == DEFAULT)
 				m_pCurrentServer->SetType(MVS);
@@ -294,6 +334,46 @@ int CFtpControlSocket::LogonParseResponse()
 		LogMessage(Status, _("Connected"));
 		ResetOperation(FZ_REPLY_OK);
 		return true;
+	}
+	else if (pData->opState == LOGON_FEAT)
+	{
+		const enum CharsetEncoding encoding = m_pCurrentServer->GetEncodingType();
+		if (encoding == ENCODING_AUTO && m_hasUTF8)
+			m_useUTF8 = true;
+		else if (encoding == ENCODING_UTF8)
+			m_useUTF8 = true;
+
+		if (m_useUTF8 && m_hasUTF8 && m_hasCLNT)
+		{
+			// Some servers refuse to enable UTF8 if client does not send CLNT command
+			// to fix compatibility with Internet Explorer, but in the process breaking
+			// compatibility with other clients.
+			// Rather than forcing MS to fix Internet Explorer, letting other clients
+			// suffer is a questionable decision in my opinion.
+			pData->opState = LOGON_CLNT;
+		}
+		else if (m_useUTF8 && m_hasUTF8)
+		{
+			// Handle servers that disobey RFC 2640 by having UTF8 in their FEAT
+			// response but do not use UTF8 unless OPTS UTF8 ON gets send.
+			// However these servers obey a conflicting ietf draft:
+			// http://www.ietf.org/proceedings/02nov/I-D/draft-ietf-ftpext-utf-8-option-00.txt
+			// Example servers are, amongst others, G6 FTP Server and RaidenFTPd.
+			pData->opState = LOGON_OPTSUTF8;
+		}
+		else
+			pData->opState = LOGON_SYST;
+	}
+	else if (pData->opState == LOGON_CLNT)
+	{
+		// Don't check return code, it has no meaning for us
+		pData->opState = LOGON_OPTSUTF8;
+	}
+	else if (pData->opState == LOGON_OPTSUTF8)
+	{
+		// If server obeys RFC 2640 this command had no effect, return code
+		// check is not needed.
+		pData->opState = LOGON_SYST;
 	}
 
 	return LogonSend();
@@ -313,10 +393,10 @@ int CFtpControlSocket::LogonSend()
 	bool res;
 	switch (pData->opState)
 	{
-	case 2:
+	case LOGON_SYST:
 		res = Send(_T("SYST"));
 		break;
-	case 1:
+	case LOGON_LOGON:
 		switch (pData->nCommand)
 		{
 		case 0:
@@ -350,6 +430,15 @@ int CFtpControlSocket::LogonSend()
 			break;
 		}
 		break;
+	case LOGON_FEAT:
+		res = Send(_T("FEAT"));
+		break;
+	case LOGON_CLNT:
+		res = Send(_T("CLNT FileZilla"));
+		break;
+	case LOGON_OPTSUTF8:
+		res = Send(_T("OPTS UTF8 ON"));
+		break;
 	default:
 		return FZ_REPLY_ERROR;
 	}
@@ -362,22 +451,20 @@ int CFtpControlSocket::LogonSend()
 
 int CFtpControlSocket::GetReplyCode() const
 {
-	if (m_ReceiveBuffer == _T(""))
+	if (m_Response == _T(""))
 		return 0;
 
-	if (m_ReceiveBuffer[0] < '0' || m_ReceiveBuffer[0] > '9')
+	if (m_Response[0] < '0' || m_Response[0] > '9')
 		return 0;
 
-	return m_ReceiveBuffer[0] - '0';
+	return m_Response[0] - '0';
 }
 
 bool CFtpControlSocket::Send(wxString str)
 {
 	LogMessage(Command, str);
 	str += _T("\r\n");
-	wxCharBuffer buffer = wxConvCurrent->cWX2MB(str);
-	if (!buffer)
-		buffer = wxCSConv(_T("ISO8859-1")).cWX2MB(str);
+	wxCharBuffer buffer = ConvToServer(str);
 	if (!buffer)
 	{
 		LogMessage(::Error, _T("Failed to convert command to 8 bit charset"));
@@ -644,8 +731,8 @@ int CFtpControlSocket::ListParseResponse()
 		if (pData->bPasv)
 		{
 			int i, j;
-			i = m_ReceiveBuffer.Find(_T("("));
-			j = m_ReceiveBuffer.Find(_T(")"));
+			i = m_Response.Find(_T("("));
+			j = m_Response.Find(_T(")"));
 			if (i == -1 || j == -1)
 			{
 				if (!pData->bTriedActive)
@@ -655,7 +742,7 @@ int CFtpControlSocket::ListParseResponse()
 				break;
 			}
 
-			wxString temp = m_ReceiveBuffer.Mid(i+1,(j-i)-1);
+			wxString temp = m_Response.Mid(i+1,(j-i)-1);
 			i = temp.Find(',', true);
 			long number;
 			if (i == -1 || !temp.Mid(i + 1).ToLong(&number))
@@ -684,7 +771,7 @@ int CFtpControlSocket::ListParseResponse()
 		pData->opState = list_list;
 		break;
 	case list_list:
-		if (!m_ReceiveBuffer.CmpNoCase(_T("550 No members found.")) && m_pCurrentServer->GetType() == MVS)
+		if (!m_Response.CmpNoCase(_T("550 No members found.")) && m_pCurrentServer->GetType() == MVS)
 		{
 			CDirectoryListing *pListing = new CDirectoryListing();
 			pListing->path = m_CurrentPath;
@@ -884,7 +971,7 @@ int CFtpControlSocket::ChangeDirParseResponse()
 	case cwd_pwd:
 		if (code != 2 && code != 3)
 			error = true;
-		else if (ParsePwdReply(m_ReceiveBuffer))
+		else if (ParsePwdReply(m_Response))
 		{
 			ResetOperation(FZ_REPLY_OK);
 			return FZ_REPLY_OK;
@@ -913,7 +1000,7 @@ int CFtpControlSocket::ChangeDirParseResponse()
 	case cwd_pwd_cwd:
 		if (code != 2 && code != 3)
 			error = true;
-		else if (ParsePwdReply(m_ReceiveBuffer))
+		else if (ParsePwdReply(m_Response))
 			if (pData->subDir == _T(""))
 			{
 				ResetOperation(FZ_REPLY_OK);
@@ -933,7 +1020,7 @@ int CFtpControlSocket::ChangeDirParseResponse()
 	case cwd_pwd_subdir:
 		if (code != 2 && code != 3)
 			error = true;
-		else if (ParsePwdReply(m_ReceiveBuffer))
+		else if (ParsePwdReply(m_Response))
 		{
 			ResetOperation(FZ_REPLY_OK);
 			return FZ_REPLY_OK;
@@ -1132,9 +1219,9 @@ int CFtpControlSocket::FileTransferParseResponse()
 	{
 	case filetransfer_size:
 		pData->opState = filetransfer_mdtm;
-		if (m_ReceiveBuffer.Left(4) == _T("213 ") && m_ReceiveBuffer.Length() > 4)
+		if (m_Response.Left(4) == _T("213 ") && m_Response.Length() > 4)
 		{
-			wxString str = m_ReceiveBuffer.Mid(4);
+			wxString str = m_Response.Mid(4);
 			wxFileOffset size = 0;
 			const wxChar *buf = str.c_str();
 			while (*buf)
@@ -1153,10 +1240,10 @@ int CFtpControlSocket::FileTransferParseResponse()
 		break;
 	case filetransfer_mdtm:
 		pData->opState = filetransfer_type;
-		if (m_ReceiveBuffer.Left(4) == _T("213 ") && m_ReceiveBuffer.Length() > 16)
+		if (m_Response.Left(4) == _T("213 ") && m_Response.Length() > 16)
 		{
 			wxDateTime date;
-			const wxChar *res = date.ParseFormat(m_ReceiveBuffer.Mid(4), _T("%Y%m%d%H%M"));
+			const wxChar *res = date.ParseFormat(m_Response.Mid(4), _T("%Y%m%d%H%M"));
 			if (res && date.IsValid())
 				pData->fileTime = date;
 		}
@@ -1190,8 +1277,8 @@ int CFtpControlSocket::FileTransferParseResponse()
 		if (pData->bPasv)
 		{
 			int i, j;
-			i = m_ReceiveBuffer.Find(_T("("));
-			j = m_ReceiveBuffer.Find(_T(")"));
+			i = m_Response.Find(_T("("));
+			j = m_Response.Find(_T(")"));
 			if (i == -1 || j == -1)
 			{
 				if (!pData->bTriedActive)
@@ -1201,7 +1288,7 @@ int CFtpControlSocket::FileTransferParseResponse()
 				break;
 			}
 
-			wxString temp = m_ReceiveBuffer.Mid(i+1,(j-i)-1);
+			wxString temp = m_Response.Mid(i+1,(j-i)-1);
 			i = temp.Find(',', true);
 			long number;
 			if (i == -1 || !temp.Mid(i + 1).ToLong(&number))

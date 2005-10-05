@@ -4,6 +4,9 @@
 #include "logging_private.h"
 #include "ControlSocket.h"
 
+#define RECVBUFFERSIZE 4096
+#define MAXLINELEN 2000
+
 class CTransferSocket;
 class CFtpControlSocket : public CControlSocket
 {
@@ -55,7 +58,13 @@ protected:
 
 	virtual bool Send(wxString str);
 
+	// Parse the latest reply line from the server
+	void ParseLine(wxString line);
+
+	// Parse the actual response and delegate it to the handlers.
+	// It's the last line in a multi-line response.
 	void ParseResponse();
+
 	virtual int SendNextCommand(int prevResult = FZ_REPLY_OK);
 
 	int GetReplyCode() const;
@@ -64,7 +73,7 @@ protected:
 	int LogonParseResponse();
 	int LogonSend();
 
-	wxString m_ReceiveBuffer;
+	wxString m_Response;
 	wxString m_MultilineResponseCode;
 
 	CTransferSocket *m_pTransferSocket;
@@ -72,6 +81,13 @@ protected:
 	// Some servers keep track of the offset specified by REST between sessions
 	// So we always sent a REST 0 for a normal transfer following a restarted one
 	bool m_sentRestartOffset;
+
+	char m_receiveBuffer[RECVBUFFERSIZE];
+	int m_bufferLen;
+
+	// List of features
+	bool m_hasCLNT;
+	bool m_hasUTF8;
 };
 
 class CFtpFileTransferOpData : public CFileTransferOpData

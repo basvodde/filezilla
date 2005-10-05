@@ -74,7 +74,13 @@ public:
 	bool GetTransferStatus(CTransferStatus &status, bool &changed);
 
 	const CServer* GetCurrentServer() const;
-	
+
+	// Conversion function which convert between local and server charset.
+	wxString ConvToLocal(const char* buffer);
+	wxChar* ConvToLocalBuffer(const char* buffer);
+	wxChar* ConvToLocalBuffer(const char* buffer, wxMBConv& conv);
+	wxCharBuffer ConvToServer(const wxString& str);
+
 protected:
 	virtual int DoClose(int nErrorCode = FZ_REPLY_DISCONNECTED);
 
@@ -115,6 +121,9 @@ protected:
 	int m_transferStatusSendState;
 	
 	bool m_onConnectCalled;
+
+	wxCSConv *m_pCSConv;
+	bool m_useUTF8;
 
 	DECLARE_EVENT_TABLE();
 };

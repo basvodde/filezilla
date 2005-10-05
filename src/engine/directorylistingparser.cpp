@@ -1,5 +1,6 @@
 #include "FileZilla.h"
 #include "directorylistingparser.h"
+#include "ControlSocket.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -133,7 +134,7 @@ protected:
 		Yes,
 		No
 	};
-
+	
 public:
 	CToken()
 	{
@@ -147,7 +148,7 @@ public:
 		hex
 	};
 
-	CToken(const char *p, unsigned int len)
+	CToken(const wxChar* p, unsigned int len)
 	{
 		m_pToken = p;
 		m_len = len;
@@ -157,7 +158,7 @@ public:
 		m_number = -1;
 	}
 
-	const char *GetToken() const
+	const wxChar* GetToken() const
 	{
 		return m_pToken;
 	}
@@ -180,17 +181,7 @@ public:
 
 		if (!type)
 		{
-#if wxUSE_UNICODE
-			char *buffer = new char[m_len + 1];
-			buffer[m_len] = 0;
-			memcpy(buffer, m_pToken, m_len);
-			wxString str = wxConvLocal.cMB2WX(buffer);
-			if (str == _T(""))
-				str = wxConvLibc.cMB2WX(buffer);
-			delete [] buffer;
-#else
 			wxString str(m_pToken, m_len);
-#endif
 			m_str[type] = str;
 			return str;
 		}
@@ -203,17 +194,7 @@ public:
 			while (m_pToken[pos] >= '0' && m_pToken[pos] <= '9')
 				pos--;
 
-#if wxUSE_UNICODE
-			char *buffer = new char[pos + 2];
-			buffer[pos + 1] = 0;
-			memcpy(buffer, m_pToken, pos + 1);
-			wxString str = wxConvLocal.cMB2WX(buffer);
-			if (str == _T(""))
-				str = wxConvLibc.cMB2WX(buffer);
-			delete [] buffer;
-#else
 			wxString str(m_pToken, pos + 1);
-#endif
 			m_str[type] = str;
 			return str;
 		}
@@ -222,21 +203,11 @@ public:
 			if (!IsLeftNumeric() || IsNumeric())
 				return _T("");
 
-			int len = 0;
-			while (m_pToken[len] >= '0' && m_pToken[len] <= '9')
-				len++;
+			int pos = 0;
+			while (m_pToken[pos] >= '0' && m_pToken[pos] <= '9')
+				pos++;
 
-#if wxUSE_UNICODE
-			char *buffer = new char[len + 1];
-			buffer[len] = 0;
-			memcpy(buffer, m_pToken, len);
-			wxString str = wxConvLocal.cMB2WX(buffer);
-			if (str == _T(""))
-				str = wxConvLibc.cMB2WX(buffer);
-			delete [] buffer;
-#else
-			wxString str(m_pToken, len);
-#endif
+			wxString str(m_pToken + pos, m_len - pos);
 			m_str[type] = str;
 			return str;
 		}
@@ -308,7 +279,7 @@ public:
 		return m_rightNumeric == Yes;
 	}
 
-	int Find(const char *chr, int start = 0) const
+	int Find(const wxChar* chr, int start = 0) const
 	{
 		if (!chr)
 			return -1;
@@ -324,7 +295,7 @@ public:
 		return -1;
 	}
 	
-	int Find(char chr, int start = 0) const
+	int Find(wxChar chr, int start = 0) const
 	{
 		if (!m_pToken)
 			return -1;
@@ -398,7 +369,7 @@ public:
 				wxLongLong number = 0;
 				for (unsigned int i = 0; i < m_len; i++)
 				{
-					const char c = m_pToken[i];
+					const wxChar& c = m_pToken[i];
 					if (c >= '0' && c <= '9')
 					{
 						number *= 16;
@@ -431,7 +402,7 @@ public:
 	}
 
 protected:
-	const char *m_pToken;
+	const wxChar* m_pToken;
 	unsigned int m_len;
 
 	TokenInformation m_numeric;
@@ -444,10 +415,10 @@ protected:
 class CLine
 {
 public:
-	CLine(const char *p, int len)
+	CLine(wxChar* p)
 	{
 		m_pLine = p;
-		m_len = len;
+		m_len = wxStrlen(p);
 
 		m_parsePos = 0;
 	}
@@ -523,7 +494,7 @@ public:
 			for (unsigned int i = static_cast<unsigned int>(m_LineEndTokens.size()); i <= n; i++)
 			{
 				const CToken *refToken = m_Tokens[i];
-				const char *p = refToken->GetToken();
+				const wxChar* p = refToken->GetToken();
 				CToken *pToken = new CToken(p, m_len - (p - m_pLine));
 				m_LineEndTokens.push_back(pToken);
 			}
@@ -535,24 +506,24 @@ public:
 	CLine *Concat(const CLine *pLine) const
 	{
 		int newLen = m_len + pLine->m_len + 1;
-		char *p = new char[newLen];
+		wxChar* p = new wxChar[newLen];
 		memcpy(p, m_pLine, m_len);
 		p[m_len] = ' ';
 		memcpy(p + m_len + 1, pLine->m_pLine, pLine->m_len);
 		
-		return new CLine(p, newLen);
+		return new CLine(p);
 	}
 
 protected:
 	std::vector<CToken *> m_Tokens;
 	std::vector<CToken *> m_LineEndTokens;
 	int m_parsePos;
-	const char *m_pLine;
 	int m_len;
+	wxChar* m_pLine;
 };
 
-CDirectoryListingParser::CDirectoryListingParser(CFileZillaEnginePrivate *pEngine, enum ServerType serverType)
-	: m_pEngine(pEngine), m_serverType(serverType)
+CDirectoryListingParser::CDirectoryListingParser(CFileZillaEnginePrivate *pEngine, CControlSocket* pControlSocket, enum ServerType serverType)
+	: m_pEngine(pEngine), m_pControlSocket(pControlSocket), m_serverType(serverType)
 {
 	startOffset = 0;
 	m_curLine = 0;
@@ -818,39 +789,52 @@ bool CDirectoryListingParser::ParseLine(CLine *pLine, const enum ServerType serv
 {
 	CDirentry entry;
 	bool res = ParseAsUnix(pLine, entry);
-	if (!res)
-		res = ParseAsDos(pLine, entry);
-	if (!res)
-		res = ParseAsEplf(pLine, entry);
-	if (!res)
-		res = ParseAsVms(pLine, entry);
-	if (!res)
-		res = ParseOther(pLine, entry);
-	if (!res)
-		res = ParseAsIbm(pLine, entry);
-	if (!res)
-		res = ParseAsWfFtp(pLine, entry);
-	if (!res)
-		res = ParseAsIBM_MVS(pLine, entry);
-	if (!res)
-		res = ParseAsIBM_MVS_PDS(pLine, entry);
-	if (!res)
-#ifndef LISTDEBUG
-		if (serverType == MVS)
-#endif //LISTDEBUG
-			res = ParseAsIBM_MVS_PDS2(pLine, entry);
-
 	if (res)
+		goto done;
+	res = ParseAsDos(pLine, entry);
+	if (res)
+		goto done;
+	res = ParseAsEplf(pLine, entry);
+	if (res)
+		goto done;
+	res = ParseAsVms(pLine, entry);
+	if (res)
+		goto done;
+	res = ParseOther(pLine, entry);
+	if (res)
+		goto done;
+	res = ParseAsIbm(pLine, entry);
+	if (res)
+		goto done;
+	res = ParseAsWfFtp(pLine, entry);
+	if (res)
+		goto done;
+	res = ParseAsIBM_MVS(pLine, entry);
+	if (res)
+		goto done;
+	res = ParseAsIBM_MVS_PDS(pLine, entry);
+	if (res)
+		goto done;
+#ifndef LISTDEBUG
+	if (serverType == MVS)
+#endif //LISTDEBUG
 	{
-		// Don't add . or ..
-		if (entry.name == _T(".") || entry.name == _T(".."))
-			return true;
-		
-		entry.unsure = false;
-		m_entryList.push_back(entry);
+		res = ParseAsIBM_MVS_PDS2(pLine, entry);
+		if (res)
+			goto done;
 	}
 
-	return res;
+	return false;
+done:
+
+	// Don't add . or ..
+	if (entry.name == _T(".") || entry.name == _T(".."))
+		return true;
+		
+	entry.unsure = false;
+	m_entryList.push_back(entry);
+
+	return true;
 }
 
 bool CDirectoryListingParser::ParseAsUnix(CLine *pLine, CDirentry &entry)
@@ -980,10 +964,10 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 	// Some servers use the following date formats:
 	// 26-05 2002, 2002-10-14, 01-jun-99
 	// slashes instead of dashes are also possible
-	int pos = token.Find("-/");
+	int pos = token.Find(_T("-/"));
 	if (pos != -1)
 	{
-		int pos2 = token.Find("-/", pos + 1);
+		int pos2 = token.Find(_T("-/"), pos + 1);
 		if (pos2 == -1)
 		{
 			// something like 26-05 2002
@@ -1048,7 +1032,7 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 	if (!pLine->GetToken(++index, token))
 		return false;
 
-	pos = token.Find(":.-");
+	pos = token.Find(_T(":.-"));
 	if (pos != -1)
 	{
 		// token is a time
@@ -1151,7 +1135,7 @@ bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry)
 
 	int value = 0;
 
-	int pos = token.Find("-./");
+	int pos = token.Find(_T("-./"));
 	if (pos < 1)
 		return false;
 
@@ -1213,7 +1197,7 @@ bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry)
 	else
 		return false;
 
-	int pos2 = token.Find("-./", pos + 1);
+	int pos2 = token.Find(_T("-./"), pos + 1);
 	if (pos2 == -1 || (pos2 - pos) == 1)
 		return false;
 	if (static_cast<size_t>(pos2) == (token.GetLength() - 1))
@@ -1483,13 +1467,13 @@ bool CDirectoryListingParser::ParseAsVms(CLine *pLine, CDirentry &entry)
 	if (!ParseTime(token, entry))
 	{
 		int len = token.GetLength();
-		if (token[0] == '[' && token[len] != ']')
+		if (token[0] == '[' && token[len - 1] != ']')
 			return false;
-		if (token[0] == '(' && token[len] != ')')
+		if (token[0] == '(' && token[len - 1] != ')')
 			return false;
-		if (token[0] != '[' && token[len] == ']')
+		if (token[0] != '[' && token[len - 1] == ']')
 			return false;
-		if (token[0] != '(' && token[len] == ')')
+		if (token[0] != '(' && token[len - 1] == ')')
 			return false;
 		entry.hasTime = false;
 		index--;
@@ -1640,7 +1624,7 @@ bool CDirectoryListingParser::ParseOther(CLine *pLine, CDirentry &entry)
 			{
 				if (token.GetString() == _T("DIR"))
 					entry.dir = true;
-				else if (token.Find("-/.") != -1)
+				else if (token.Find(_T("-/.")) != -1)
 					break;
 
 				skippedCount++;
@@ -1781,104 +1765,117 @@ void CDirectoryListingParser::AddData(char *pData, int len)
 
 CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
 {
-	if (m_DataList.empty())
-		return 0;
-	
-	std::list<t_list>::iterator iter = m_DataList.begin();
-	int len = iter->len;
-	while (iter->p[startOffset]=='\r' || iter->p[startOffset]=='\n' || iter->p[startOffset]==' ' || iter->p[startOffset]=='\t')
-	{
-		startOffset++;
-		if (startOffset >= len)
+	while (!m_DataList.empty())
+	{	
+		// Trim empty lines and spaces
+		std::list<t_list>::iterator iter = m_DataList.begin();
+		int len = iter->len;
+		while (iter->p[startOffset]=='\r' || iter->p[startOffset]=='\n' || iter->p[startOffset]==' ' || iter->p[startOffset]=='\t')
 		{
-			delete [] iter->p;
-			iter++;
-			startOffset = 0;
-			if (iter == m_DataList.end())
+			startOffset++;
+			if (startOffset >= len)
 			{
-				m_DataList.clear();
-				return 0;
-			}
-			len = iter->len;
-		}
-	}
-	m_DataList.erase(m_DataList.begin(), iter);
-	iter = m_DataList.begin();
-
-	int startpos = startOffset;
-	int reslen = 0;
-
-	int emptylen = 0;
-
-	int newStartOffset = startOffset;
-	while ((iter->p[newStartOffset] != '\n') && (iter->p[newStartOffset] != '\r'))
-	{
-		if (iter->p[newStartOffset] != ' ' && iter->p[newStartOffset] != '\t')
-		{
-			reslen += emptylen + 1;
-			emptylen = 0;
-		}
-		else
-			emptylen++;
-		
-		newStartOffset++;
-		if (newStartOffset >= len)
-		{
-			iter++;
-			if (iter == m_DataList.end())
-			{
-				if (breakAtEnd)
+				delete [] iter->p;
+				iter++;
+				startOffset = 0;
+				if (iter == m_DataList.end())
+				{
+					m_DataList.clear();
 					return 0;
-				break;
+				}
+				len = iter->len;
 			}
-			len = iter->len;
-			newStartOffset = 0;
 		}
-	}
-	startOffset = newStartOffset;
+		m_DataList.erase(m_DataList.begin(), iter);
+		iter = m_DataList.begin();
 
-	char *res = new char[reslen];
-	CLine *line = new CLine(res, reslen);
+		// Remember start offset and find next linebreak
+		int startpos = startOffset;
+		int reslen = 0;
 
-	int respos = 0;
+		int emptylen = 0;
 
-	std::list<t_list>::iterator i = m_DataList.begin();
-	while (i != iter && reslen)
-	{
-		int copylen = i->len - startpos;
-		if (copylen > reslen)
-			copylen = reslen;
-		memcpy(&res[respos], &i->p[startpos], copylen);
-		reslen -= copylen;
-		respos += i->len - startpos;
-		startpos = 0;
-
-		delete [] i->p;
-		i++;
-	}
-	while (i != iter)
-	{
-		delete [] i->p;
-		i++;
-	}
-	if (iter != m_DataList.end() && reslen)
-	{
-		int copylen = startOffset-startpos;
-		if (copylen>reslen)
-			copylen=reslen;
-		memcpy(&res[respos], &iter->p[startpos], copylen);
-		if (reslen >= iter->len)
+		int newStartOffset = startOffset;
+		while ((iter->p[newStartOffset] != '\n') && (iter->p[newStartOffset] != '\r'))
 		{
-			delete [] iter->p;
-			m_DataList.erase(m_DataList.begin(), ++iter);
+			if (iter->p[newStartOffset] != ' ' && iter->p[newStartOffset] != '\t')
+			{
+				reslen += emptylen + 1;
+				emptylen = 0;
+			}
+			else
+				emptylen++;
+		
+			newStartOffset++;
+			if (newStartOffset >= len)
+			{
+				iter++;
+				if (iter == m_DataList.end())
+				{
+					if (breakAtEnd)
+						return 0;
+					break;
+				}
+				len = iter->len;
+				newStartOffset = 0;
+			}
+		}
+		startOffset = newStartOffset;
+
+		// Reslen is now the length of the line, excluding any terminating whitespace
+		char *res = new char[reslen + 1];
+		res[reslen] = 0;
+
+		int	respos = 0;
+
+		// Copy line data
+		std::list<t_list>::iterator i = m_DataList.begin();
+		while (i != iter && reslen)
+		{
+			int copylen = i->len - startpos;
+			if (copylen > reslen)
+				copylen = reslen;
+			memcpy(&res[respos], &i->p[startpos], copylen);
+			reslen -= copylen;
+			respos += i->len - startpos;
+			startpos = 0;
+
+			delete [] i->p;
+			i++;
+		}
+		// Delete all extra whitespace
+		while (i != iter)
+		{
+			delete [] i->p;
+			i++;
+		}
+
+		// Copy last chunk
+		if (iter != m_DataList.end() && reslen)
+		{
+			int copylen = startOffset-startpos;
+			if (copylen>reslen)
+				copylen=reslen;
+			memcpy(&res[respos], &iter->p[startpos], copylen);
+			if (reslen >= iter->len)
+			{
+				delete [] iter->p;
+				m_DataList.erase(m_DataList.begin(), ++iter);
+			}
+			else
+				m_DataList.erase(m_DataList.begin(), iter);
 		}
 		else
 			m_DataList.erase(m_DataList.begin(), iter);
-	}
-	else
-		m_DataList.erase(m_DataList.begin(), iter);
 
-	return line;
+		wxChar* buffer = m_pControlSocket->ConvToLocalBuffer(res);
+		if (!buffer)
+			continue;
+
+		return new CLine(buffer);
+	}
+
+	return 0;
 }
 
 bool CDirectoryListingParser::ParseAsWfFtp(CLine *pLine, CDirentry &entry)

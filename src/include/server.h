@@ -31,6 +31,13 @@ enum PasvMode
 	MODE_PASSIVE
 };
 
+enum CharsetEncoding
+{
+	ENCODING_AUTO,
+	ENCODING_UTF8,
+	ENCODING_CUSTOM
+};
+
 class CServerPath;
 class CServer
 {
@@ -77,6 +84,11 @@ public:
 	wxString FormatHost() const;
 	wxString FormatServer() const;
 
+	bool SetEncodingType(enum CharsetEncoding type, const wxString& encoding = _T(""));
+	bool SetCustomEncoding(const wxString& encoding);
+	enum CharsetEncoding GetEncodingType() const;
+	wxString GetCustomEncoding() const;
+
 protected:
 	void Initialize();
 
@@ -90,6 +102,8 @@ protected:
 	int m_timezoneOffset;
 	enum PasvMode m_pasvMode;
 	int m_maximumMultipleConnections;
+	enum CharsetEncoding m_encodingType;
+	wxString m_customEncoding;
 };
 
 #endif

@@ -24,7 +24,7 @@ CTransferSocket::CTransferSocket(CFileZillaEnginePrivate *pEngine, CFtpControlSo
 	SetEvtHandlerEnabled(true);
 
 	if (transferMode == list)
-		m_pDirectoryListingParser = new CDirectoryListingParser(pEngine, m_pControlSocket->m_pCurrentServer->GetType());
+		m_pDirectoryListingParser = new CDirectoryListingParser(pEngine, pControlSocket, m_pControlSocket->m_pCurrentServer->GetType());
 	else
 		m_pDirectoryListingParser = 0;
 

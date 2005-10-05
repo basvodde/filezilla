@@ -177,6 +177,8 @@ CServer& CServer::operator=(const CServer &op)
 	m_timezoneOffset = op.m_timezoneOffset;
 	m_pasvMode = op.m_pasvMode;
 	m_maximumMultipleConnections = op.m_maximumMultipleConnections;
+	m_encodingType = op.m_encodingType;
+	m_customEncoding = op.m_customEncoding;
 
 	return *this;
 }
@@ -208,6 +210,13 @@ bool CServer::operator==(const CServer &op) const
 		return false;
 	else if (m_pasvMode != op.m_pasvMode)
 		return false;
+	else if (m_encodingType != op.m_encodingType)
+		return false;
+	else if (m_encodingType == ENCODING_CUSTOM)
+	{
+		if (m_customEncoding != op.m_customEncoding)
+			return false;
+	}
 
 	// Do not compare number of allowed multiple connections
 
@@ -356,4 +365,38 @@ void CServer::Initialize()
 	m_timezoneOffset = 0;
 	m_pasvMode = MODE_DEFAULT;
 	m_maximumMultipleConnections = 0;
+	m_encodingType = ENCODING_AUTO;
+	m_customEncoding = _T("");
+}
+
+bool CServer::SetEncodingType(enum CharsetEncoding type, const wxString& encoding /*=_T("")*/)
+{
+	if (type == ENCODING_CUSTOM && encoding == _T(""))
+		return false;
+
+	m_encodingType = type;
+	m_customEncoding = encoding;
+
+	return true;
+}
+
+bool CServer::SetCustomEncoding(const wxString& encoding)
+{
+	if (encoding == _T(""))
+		return false;
+
+	m_encodingType = ENCODING_CUSTOM;
+	m_customEncoding = encoding;
+	
+	return true;
+}
+
+enum CharsetEncoding CServer::GetEncodingType() const
+{
+	return m_encodingType;
+}
+
+wxString CServer::GetCustomEncoding() const
+{
+	return m_customEncoding;
 }
