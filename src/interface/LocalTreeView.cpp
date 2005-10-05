@@ -2,6 +2,7 @@
 #include "LocalTreeView.h"
 #include "state.h"
 #include "QueueView.h"
+#include "filezillaapp.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -29,12 +30,12 @@ CLocalTreeView::CLocalTreeView(wxWindow* parent, wxWindowID id, CState *pState, 
 	SHGetSpecialFolderLocation(GetHwnd(), CSIDL_DRIVES, &list);
 	SHFILEINFO shFinfo;
 
-	SHGetFileInfo((LPCTSTR)list,0,&shFinfo,sizeof(shFinfo),SHGFI_PIDL|SHGFI_ICON|SHGFI_SMALLICON);	
+	SHGetFileInfo((LPCTSTR)list,0,&shFinfo,sizeof(shFinfo),SHGFI_PIDL|SHGFI_ICON|SHGFI_SMALLICON);
 	DestroyIcon(shFinfo.hIcon);
 	int iIcon=shFinfo.iIcon;
 	SHGetFileInfo((LPCTSTR)list,0,&shFinfo,sizeof(shFinfo),SHGFI_PIDL|SHGFI_ICON|SHGFI_SMALLICON|SHGFI_OPENICON|SHGFI_DISPLAYNAME);
-	DestroyIcon(shFinfo.hIcon);	
-	
+	DestroyIcon(shFinfo.hIcon);
+
 	AddRoot(shFinfo.szDisplayName, iIcon, shFinfo.iIcon);
 
 	LPMALLOC pMalloc;
@@ -76,7 +77,7 @@ void CLocalTreeView::SetDir(wxString localDir)
 	wxTreeItemId parent = GetNearestParent(subDirs);
 	if (!parent)
 		return;
-	
+
 	if (subDirs == _T(""))
 	{
 		wxTreeItemIdValue value;
@@ -94,7 +95,7 @@ void CLocalTreeView::SetDir(wxString localDir)
 	wxTreeItemId item = MakeSubdirs(parent, localDir.Left(localDir.Length() - subDirs.Length()), subDirs);
 	if (!item)
 		return;
-	
+
 	m_setSelection = true;
 	SelectItem(item);
 	m_setSelection = false;
@@ -234,11 +235,16 @@ void CLocalTreeView::DisplayDir(wxTreeItemId parent, const wxString& dirname)
 	bool found = dir.GetFirst(&file, _T(""), wxDIR_DIRS | wxDIR_HIDDEN);
 	while (found)
 	{
+		if (file == _T(""))
+		{
+			wxGetApp().DisplayEncodingWarning();
+			found = dir.GetNext(&file);
+			continue;
+		}
 		wxString fullName = dirname + file;
 		wxTreeItemId item = AppendItem(parent, file, GetIconIndex(::dir, fullName), GetIconIndex(opened_dir, fullName));
 		if (HasSubdir(fullName))
 			AppendItem(item, _T(""));
-
 		found = dir.GetNext(&file);
 	}
 	SortChildren(parent);
@@ -277,7 +283,7 @@ wxTreeItemId CLocalTreeView::MakeSubdirs(wxTreeItemId parent, wxString dirname, 
 
 		if (pos == -1)
 			break;
-		
+
 		subDir = subDir.Mid(pos + 1);
 		dirname += segment + separator;
 	}
@@ -314,7 +320,7 @@ wxString CLocalTreeView::GetDirFromItem(wxTreeItemId item)
 #endif
 		if (item == GetRootItem())
 			return _T("/") + dir;
-    
+
 		dir = GetItemText(item) + separator + dir;
 
 		item = GetItemParent(item);
@@ -386,6 +392,12 @@ void CLocalTreeView::Refresh()
 		std::list<wxString> dirs;
 		while (found)
 		{
+			if (file == _T(""))
+			{
+				wxGetApp().DisplayEncodingWarning();
+				found = find.GetNext(&file);
+				continue;
+			}
 			dirs.push_back(file);
 			found = find.GetNext(&file);
 		}

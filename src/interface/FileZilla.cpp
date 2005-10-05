@@ -334,3 +334,15 @@ void CFileZillaApp::GenerateReport(wxDebugReport::Context ctx)
 }
 
 #endif
+
+void CFileZillaApp::DisplayEncodingWarning()
+{
+	static bool displayedEncodingWarning = false;
+	if (displayedEncodingWarning)
+		return;
+
+	displayedEncodingWarning = true;
+	
+	wxMessageBox(_("A local filename could not be decoded.\nPlease make sure the LC_CTYPE (or LC_ALL) environment variable is set correctly.\nUnless you fix this problem, files might be missing in the file listings.\nNo further warning will be displayed this session."), _("Character encoding issue"), wxICON_EXCLAMATION);
+}
+

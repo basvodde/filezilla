@@ -122,6 +122,12 @@ bool CLocalListView::DisplayDir(wxString dirname)
 		int num = 1;
 		while (found)
 		{
+			if (file == _T(""))
+			{
+				wxGetApp().DisplayEncodingWarning();
+				found = dir.GetNext(&file);
+				continue;
+			}
 			wxFileName fn(dirname + file);
 			t_fileData data;
 			data.dir = fn.DirExists();
@@ -821,6 +827,11 @@ void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 		wxString file;
 		for (bool found = dir.GetFirst(&file); found; found = dir.GetNext(&file))
 		{
+			if (file == _T(""))
+			{
+				wxGetApp().DisplayEncodingWarning();
+				continue;
+			}
 			if (wxFileName::DirExists(filename + file))
 			{
 				wxString subDir = filename + file + _T("/");

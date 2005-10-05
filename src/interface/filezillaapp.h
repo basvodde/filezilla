@@ -20,6 +20,8 @@ public:
 	bool SetLocale(int language);
 	int GetCurrentLanguage() const;
 
+	void DisplayEncodingWarning();
+
 protected:
 	bool InitSettingsDir();
 	bool LoadResourceFiles();
