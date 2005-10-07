@@ -103,8 +103,7 @@ updatepo: @FILEZILLA_LINGUAS_PO_NEW@
           cp $$t.po.new $(srcdir)/$$t.po || exit 1; \
         done
 
-allmo: allpo
-	@for t in @FILEZILLA_LINGUAS@; do $(MAKE) $(AM_MAKEFLAGS) $$t.mo || exit 1; done
+allmo: @FILEZILLA_LINGUAS_MO@
 
 # on the Mac copy the .mo files into the application bundle
 if MACAPPBUNDLE
