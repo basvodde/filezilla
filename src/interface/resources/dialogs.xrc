@@ -336,7 +336,7 @@
                                 <orient>wxHORIZONTAL</orient>
                                 <object class="sizeritem">
                                   <object class="wxTextCtrl" name="ID_HOST"/>
-                                  <flag>wxGROW</flag>
+                                  <option>1</option>
                                 </object>
                                 <object class="sizeritem">
                                   <object class="wxStaticText">
@@ -354,6 +354,7 @@
                                   <border>5</border>
                                 </object>
                               </object>
+                              <flag>wxGROW</flag>
                             </object>
                             <object class="sizeritem">
                               <object class="wxStaticText">
@@ -425,8 +426,9 @@
                             </object>
                             <vgap>5</vgap>
                             <hgap>5</hgap>
+                            <growablecols>1</growablecols>
                           </object>
-                          <flag>wxALL</flag>
+                          <flag>wxALL|wxGROW</flag>
                           <border>5</border>
                         </object>
                         <object class="sizeritem">
@@ -645,6 +647,77 @@
                           </object>
                           <flag>wxLEFT|wxRIGHT</flag>
                           <border>14</border>
+                        </object>
+                      </object>
+                    </object>
+                  </object>
+                  <object class="notebookpage">
+                    <label>Charset</label>
+                    <object class="wxPanel">
+                      <object class="wxBoxSizer">
+                        <orient>wxVERTICAL</orient>
+                        <object class="sizeritem">
+                          <object class="wxFlexGridSizer">
+                            <object class="sizeritem">
+                              <object class="wxStaticText">
+                                <label>The server uses following charset encoding for\nfilenames:</label>
+                              </object>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxRadioButton" name="ID_CHARSET_AUTO">
+                                <label>&amp;Autodetect</label>
+                                <style>wxRB_GROUP</style>
+                              </object>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxStaticText">
+                                <label>Uses UTF-8 if the server supports it, else use\nlocal charset.</label>
+                              </object>
+                              <flag>wxLEFT</flag>
+                              <border>18</border>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxRadioButton" name="ID_CHARSET_UTF8">
+                                <label>Force &amp;UTF-8</label>
+                              </object>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxRadioButton" name="ID_CHARSET_CUSTOM">
+                                <label>Use &amp;custom charset</label>
+                              </object>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxFlexGridSizer">
+                                <object class="sizeritem">
+                                  <object class="wxStaticText">
+                                    <label>&amp;Encoding:</label>
+                                  </object>
+                                  <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                                </object>
+                                <object class="sizeritem">
+                                  <object class="wxTextCtrl" name="ID_ENCODING"/>
+                                  <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                                </object>
+                                <cols>2</cols>
+                                <rows>1</rows>
+                                <hgap>5</hgap>
+                              </object>
+                              <flag>wxLEFT</flag>
+                              <border>18</border>
+                            </object>
+                            <cols>1</cols>
+                            <vgap>5</vgap>
+                            <object class="spacer">
+                              <size>0,10</size>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxStaticText">
+                                <label>Using the wrong charset can result in filenames not\ndisplaying properly.</label>
+                              </object>
+                            </object>
+                          </object>
+                          <flag>wxALL</flag>
+                          <border>5</border>
                         </object>
                       </object>
                     </object>

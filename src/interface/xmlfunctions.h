@@ -29,7 +29,7 @@ wxLongLong GetTextElementLongLong(TiXmlElement* node, const char* name, int defV
 TiXmlElement* GetXmlFile(wxFileName file);
 
 // Save the XML document to the given file
-bool SaveXmlFile(const wxFileName& file, TiXmlNode* node);
+bool SaveXmlFile(const wxFileName& file, TiXmlNode* node, wxString* error = 0);
 
 // Functions to save and retrieve CServer objects to the XML file
 void SetServer(TiXmlElement *node, const CServer& server);

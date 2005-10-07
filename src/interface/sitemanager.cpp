@@ -22,6 +22,9 @@ EVT_COMBOBOX(XRCID("ID_LOGONTYPE"), CSiteManager::OnLogontypeSelChanged)
 EVT_BUTTON(XRCID("ID_BROWSE"), CSiteManager::OnRemoteDirBrowse)
 EVT_TREE_ITEM_ACTIVATED(XRCID("ID_SITETREE"), CSiteManager::OnItemActivated)
 EVT_CHECKBOX(XRCID("ID_LIMITMULTIPLE"), CSiteManager::OnLimitMultipleConnectionsChanged)
+EVT_RADIOBUTTON(XRCID("ID_CHARSET_AUTO"), CSiteManager::OnCharsetChange)
+EVT_RADIOBUTTON(XRCID("ID_CHARSET_UTF8"), CSiteManager::OnCharsetChange)
+EVT_RADIOBUTTON(XRCID("ID_CHARSET_CUSTOM"), CSiteManager::OnCharsetChange)
 END_EVENT_TABLE()
 
 CSiteManager::CSiteManager(COptions* pOptions)
@@ -268,9 +271,10 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 
 		bool res = Save(pElement, pTree->GetRootItem());
 		
-		if (!pDocument->GetDocument()->SaveFile(file.GetFullPath().mb_str()))
+		wxString error;
+		if (!SaveXmlFile(file, pDocument, &error))
 		{
-			wxString msg = wxString::Format(_("Could not write \"%s\", any changes to the Site Manager could not be saved."), file.GetFullPath().c_str());
+			wxString msg = wxString::Format(_("Could not write \"%s\", any changes to the Site Manager could not be saved: %s"), file.GetFullPath().c_str(), error);
 			wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
 		}
 
@@ -395,6 +399,18 @@ bool CSiteManager::Verify()
 	wxTreeItemData* data = pTree->GetItemData(item);
 	if (!data)
 		return true;
+
+	// TODO: validation
+
+	if (XRCCTRL(*this, "ID_CHARSET_CUSTOM", wxRadioButton)->GetValue())
+	{
+		if (XRCCTRL(*this, "ID_ENCODING", wxTextCtrl)->GetValue() == _T(""))
+		{
+			XRCCTRL(*this, "ID_ENCODING", wxTextCtrl)->SetFocus();
+			wxMessageBox(_("Need to specify a character encoding"));
+			return false;
+		}
+	}
 
 	return true;
 }
@@ -636,6 +652,16 @@ bool CSiteManager::UpdateServer()
 	else
 		data->m_server.MaximumMultipleConnections(0);
 
+	if (XRCCTRL(*this, "ID_CHARSET_UTF8", wxRadioButton)->GetValue())
+		data->m_server.SetEncodingType(ENCODING_UTF8);
+	if (XRCCTRL(*this, "ID_CHARSET_CUSTOM", wxRadioButton)->GetValue())
+	{
+		wxString encoding = XRCCTRL(*this, "ID_ENCODING", wxTextCtrl)->GetValue();
+		data->m_server.SetEncodingType(ENCODING_CUSTOM, encoding);
+	}
+	else
+		data->m_server.SetEncodingType(ENCODING_AUTO);
+
 	return true;
 }
 
@@ -834,5 +860,27 @@ void CSiteManager::SetCtrlState()
 			XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->Enable(false);
 			XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->SetValue(1);
 		}
+
+		switch (data->m_server.GetEncodingType())
+		{
+		default:
+		case ENCODING_AUTO:
+			XRCCTRL(*this, "ID_CHARSET_AUTO", wxRadioButton)->SetValue(true);
+			break;
+		case ENCODING_UTF8:
+			XRCCTRL(*this, "ID_CHARSET_UTF8", wxRadioButton)->SetValue(true);
+			break;
+		case ENCODING_CUSTOM:
+			XRCCTRL(*this, "ID_CHARSET_CUSTOM", wxRadioButton)->SetValue(true);
+			break;
+		}
+		XRCCTRL(*this, "ID_ENCODING", wxTextCtrl)->Enable(data->m_server.GetEncodingType() == ENCODING_CUSTOM);
+		XRCCTRL(*this, "ID_ENCODING", wxTextCtrl)->SetValue(data->m_server.GetCustomEncoding());
 	}
+}
+
+void CSiteManager::OnCharsetChange(wxCommandEvent& event)
+{
+	bool checked = XRCCTRL(*this, "ID_CHARSET_CUSTOM", wxRadioButton)->GetValue();
+	XRCCTRL(*this, "ID_ENCODING", wxTextCtrl)->Enable(checked);
 }

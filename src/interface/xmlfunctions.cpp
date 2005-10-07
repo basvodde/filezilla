@@ -170,7 +170,7 @@ TiXmlElement* GetXmlFile(wxFileName file)
 	}
 }
 
-bool SaveXmlFile(const wxFileName& file, TiXmlNode* node)
+bool SaveXmlFile(const wxFileName& file, TiXmlNode* node, wxString* error /*=0*/)
 {
 	if (!node)
 		return true;
@@ -183,14 +183,22 @@ bool SaveXmlFile(const wxFileName& file, TiXmlNode* node)
 		exists = true;
 		if (!wxCopyFile(file.GetFullPath(), file.GetFullPath() + _T("~")))
 		{
-			wxMessageBox(_("Failed to create backup copy of xml file"));
+			const wxString msg = _("Failed to create backup copy of xml file");
+			if (error)
+				*error = msg;
+			else
+				wxMessageBox(msg);
 			return false;
 		}
 	}
 
 	if (!pDocument->SaveFile(file.GetFullPath().mb_str()))
 	{
-		wxMessageBox(_("Failed to write xml file"));
+		const wxString msg = _("Failed to write xml file");
+		if (error)
+			*error = msg;
+		else
+			wxMessageBox(msg);
 		return false;
 	}
 
@@ -261,6 +269,22 @@ bool GetServer(TiXmlElement *node, CServer& server)
 	
 	int maximumMultipleConnections = GetTextElementInt(node, "MaximumMultipleConnections");
 	server.MaximumMultipleConnections(maximumMultipleConnections);
+
+	wxString encodingType = GetTextElement(node, "EncodingType");
+	if (encodingType == _T("Auto"))
+		server.SetEncodingType(ENCODING_AUTO);
+	else if (encodingType == _T("UTF-8"))
+		server.SetEncodingType(ENCODING_UTF8);
+	else if (encodingType == _T("Custom"))
+	{
+		wxString customEncoding = GetTextElement(node, "CustomEncoding");
+		if (customEncoding == _T(""))
+			return false;
+		if (!server.SetEncodingType(ENCODING_CUSTOM, customEncoding))
+			return false;
+	}
+	else
+		server.SetEncodingType(ENCODING_AUTO);
 	
 	return true;
 }
@@ -300,4 +324,18 @@ void SetServer(TiXmlElement *node, const CServer& server)
 		break;
 	}
 	AddTextElement(node, "MaximumMultipleConnections", wxString::Format(_T("%d"), server.MaximumMultipleConnections()));
+
+	switch (server.GetEncodingType())
+	{
+	case ENCODING_AUTO:
+		AddTextElement(node, "EncodingType", _T("Auto"));
+		break;
+	case ENCODING_UTF8:
+		AddTextElement(node, "EncodingType", _T("UTF-8"));
+		break;
+	case ENCODING_CUSTOM:
+		AddTextElement(node, "EncodingType", _T("Custom"));
+		AddTextElement(node, "CustomEncoding", server.GetCustomEncoding());
+		break;
+	}
 }
