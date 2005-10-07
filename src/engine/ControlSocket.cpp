@@ -113,6 +113,9 @@ int CControlSocket::Connect(const CServer &server)
 {
 	LogMessage(Status, _("Connecting to %s:%d..."), server.GetHost().c_str(), server.GetPort());
 
+	if (server.GetEncodingType() == ENCODING_CUSTOM)
+		m_pCSConv = new wxCSConv(server.GetCustomEncoding());
+
 	CAsyncHostResolver *resolver = new CAsyncHostResolver(m_pEngine, ConvertDomainName(server.GetHost()));
 	m_pEngine->AddNewAsyncHostResolver(resolver);
 
@@ -589,15 +592,24 @@ wxString CControlSocket::ConvToLocal(const char* buffer)
 {
 	if (m_useUTF8)
 	{
-#if wxUSE_UNICODE
-		wxString str = wxConvUTF8.cMB2WX(buffer);
-#else
-		const wxWCharBuffer unicode = wxConvUTF8.cMB2WC(buffer);
-		wxString str(unicode, *wxConvCurrent);
-#endif
-
-		if (str != _T(""))
+		wxChar* out = ConvToLocalBuffer(buffer, wxConvUTF8);
+		if (buffer)
+		{
+			wxString str = out;
+			delete [] out;
 			return str;
+		}
+	}
+	
+	if (m_pCSConv)
+	{
+		wxChar* out = ConvToLocalBuffer(buffer, *m_pCSConv);
+		if (buffer)
+		{
+			wxString str = out;
+			delete [] out;
+			return str;
+		}
 	}
 
 	wxString str = wxConvCurrent->cMB2WX(buffer);
@@ -635,7 +647,14 @@ wxChar* CControlSocket::ConvToLocalBuffer(const char* buffer)
 	if (m_useUTF8)
 	{
 		wxChar* res = ConvToLocalBuffer(buffer, wxConvUTF8);
-		if (res)
+		if (res && *res)
+			return res;
+	}
+
+	if (m_pCSConv)
+	{
+		wxChar* res = ConvToLocalBuffer(buffer, *m_pCSConv);
+		if (res && *res)
 			return res;
 	}
 
@@ -662,6 +681,21 @@ wxCharBuffer CControlSocket::ConvToServer(const wxString& str)
 		wxCharBuffer buffer;
 		if (unicode)
 			 buffer = wxConvUTF8.cWC2MB(unicode);
+#endif
+
+		if (buffer)
+			return buffer;
+	}
+
+	if (m_pCSConv)
+	{
+#if wxUSE_UNICODE
+		wxCharBuffer buffer = m_pCSConv->cWX2MB(str);
+#else
+		wxWCharBuffer unicode = wxConvCurrent->cMB2WC(str);
+		wxCharBuffer buffer;
+		if (unicode)
+			 buffer = m_pCSConv->cWC2MB(unicode);
 #endif
 
 		if (buffer)
