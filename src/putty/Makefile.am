@@ -11,7 +11,7 @@ bin_PROGRAMS = fzsftp
 
 fzsftp_SOURCES = ssh.c sshcrc.c sshdes.c sshmd5.c sshrsa.c sshrand.c \
 		 sshsha.c sshblowf.c sshdh.c sshcrcda.c sshpubk.c sshzlib.c \
-		 sshdss.c x11fwd.c portfwd.c sshaes.c sshsh512.c sshbn.c \
+		 sshdss.c x11fwd.c portfwd.c sshaes.c sshsh256.c sshsh512.c sshbn.c \
 		 wildcard.c pinger.c ssharcf.c \
 		 sftp.c int64.c logging.c \
 		 be_none.c cproxy.c \
@@ -23,7 +23,7 @@ noinst_HEADERS = fzsftp.h int64.h misc.h network.h proxy.h psftp.h putty.h \
 		 puttymem.h puttyps.h sftp.h ssh.h storage.h tree234.h
 
 if USE_RESOURCEFILE
-  RESOURCEFILE = windows/pscp.o
+  RESOURCEFILE = windows/psftp.o
 endif
 
 INCLUDES = -I$(srcdir)/$(FRONTEND) -I../../config.h

@@ -122,6 +122,16 @@ void SHA_Simple(void *p, int len, unsigned char *output);
 
 void hmac_sha1_simple(void *key, int keylen, void *data, int datalen,
 		      unsigned char *output);
+typedef struct {
+    uint32 h[8];
+    unsigned char block[64];
+    int blkused;
+    uint32 lenhi, lenlo;
+} SHA256_State;
+void SHA256_Init(SHA256_State * s);
+void SHA256_Bytes(SHA256_State * s, const void *p, int len);
+void SHA256_Final(SHA256_State * s, unsigned char *output);
+void SHA256_Simple(const void *p, int len, unsigned char *output);
 
 typedef struct {
     uint64 h[8];
@@ -175,6 +185,13 @@ struct ssh_mac {
     char *text_name;
 };
 
+struct ssh_hash {
+    void *(*init)(void); /* also allocates context */
+    void (*bytes)(void *, void *, int);
+    void (*final)(void *, unsigned char *); /* also frees context */
+    int hlen; /* output length in bytes */
+};   
+
 struct ssh_kex {
     /*
      * Plugging in another KEX algorithm requires structural chaos,
@@ -186,6 +203,12 @@ struct ssh_kex {
     char *name, *groupname;
     const unsigned char *pdata, *gdata;/* NULL means use group exchange */
     int plen, glen;
+    const struct ssh_hash *hash;
+};
+
+struct ssh_kexes {
+    int nkexes;
+    const struct ssh_kex *const *list;
 };
 
 struct ssh_signkey {
@@ -236,14 +259,19 @@ extern const struct ssh2_ciphers ssh2_des;
 extern const struct ssh2_ciphers ssh2_aes;
 extern const struct ssh2_ciphers ssh2_blowfish;
 extern const struct ssh2_ciphers ssh2_arcfour;
-extern const struct ssh_kex ssh_diffiehellman_group1;
-extern const struct ssh_kex ssh_diffiehellman_group14;
-extern const struct ssh_kex ssh_diffiehellman_gex;
+extern const struct ssh_hash ssh_sha1;
+extern const struct ssh_hash ssh_sha256;
+extern const struct ssh_kexes ssh_diffiehellman_group1;
+extern const struct ssh_kexes ssh_diffiehellman_group14;
+extern const struct ssh_kexes ssh_diffiehellman_gex;
 extern const struct ssh_signkey ssh_dss;
 extern const struct ssh_signkey ssh_rsa;
-extern const struct ssh_mac ssh_md5;
-extern const struct ssh_mac ssh_sha1;
-extern const struct ssh_mac ssh_sha1_buggy;
+extern const struct ssh_mac ssh_hmac_md5;
+extern const struct ssh_mac ssh_hmac_sha1;
+extern const struct ssh_mac ssh_hmac_sha1_buggy;
+extern const struct ssh_mac ssh_hmac_sha1_96;
+extern const struct ssh_mac ssh_hmac_sha1_96_buggy;
+
 
 /*
  * PuTTY version number formatted as an SSH version string. 

@@ -462,10 +462,10 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 const static struct ssh_signkey *hostkey_algs[] = { &ssh_rsa, &ssh_dss };
 
 const static struct ssh_mac *macs[] = {
-    &ssh_sha1, &ssh_md5
+    &ssh_hmac_sha1, &ssh_hmac_sha1_96, &ssh_hmac_md5
 };
 const static struct ssh_mac *buggymacs[] = {
-    &ssh_sha1_buggy, &ssh_md5
+    &ssh_hmac_sha1_buggy, &ssh_hmac_sha1_96_buggy, &ssh_hmac_md5
 };
 
 static void *ssh_comp_none_init(void)
@@ -679,7 +679,8 @@ struct ssh_tag {
     const struct plug_function_table *fn;
     /* the above field _must_ be first in the structure */
 
-    SHA_State exhash, exhashbase;
+    char *v_c, *v_s;
+    void *exhash;
 
     Socket s;
 
@@ -704,7 +705,8 @@ struct ssh_tag {
     void *cs_comp_ctx, *sc_comp_ctx;
     const struct ssh_kex *kex;
     const struct ssh_signkey *hostkey;
-    unsigned char v2_session_id[20];
+    unsigned char v2_session_id[32];
+    int v2_session_id_len;
     void *kex_ctx;
 
     char *savedhost;
@@ -1267,7 +1269,8 @@ static struct Packet *ssh2_rdpkt(Ssh ssh, unsigned char **data, int *datalen)
      * _Completely_ silly lengths should be stomped on before they
      * do us any more damage.
      */
-    if (st->len < 0 || st->pad < 0 || st->len + st->pad < 0) {
+    if (st->len < 0 || st->len > 35000 || st->pad < 4 ||
+	st->len - st->pad < 1 || (st->len + 4) % st->cipherblk != 0) {
 	bombout(("Incoming packet was garbled on decryption"));
 	ssh_free_packet(st->pktin);
 	crStop(NULL);
@@ -1560,21 +1563,21 @@ static int ssh_versioncmp(char *a, char *b)
 
 /*
  * Utility routines for putting an SSH-protocol `string' and
- * `uint32' into a SHA state.
+ * `uint32' into a hash state.
  */
-static void sha_string(SHA_State * s, void *str, int len)
+static void hash_string(const struct ssh_hash *h, void *s, void *str, int len)
 {
     unsigned char lenblk[4];
     PUT_32BIT(lenblk, len);
-    SHA_Bytes(s, lenblk, 4);
-    SHA_Bytes(s, str, len);
+    h->bytes(s, lenblk, 4);
+    h->bytes(s, str, len);
 }
 
-static void sha_uint32(SHA_State * s, unsigned i)
+static void hash_uint32(const struct ssh_hash *h, void *s, unsigned i)
 {
     unsigned char intblk[4];
     PUT_32BIT(intblk, i);
-    SHA_Bytes(s, intblk, 4);
+    h->bytes(s, intblk, 4);
 }
 
 /*
@@ -1652,8 +1655,6 @@ static unsigned char *ssh2_mpint_fmt(Bignum b, int *len)
     unsigned char *p;
     int i, n = (bignum_bitcount(b) + 7) / 8;
     p = snewn(n + 1, unsigned char);
-    if (!p)
-	fatalbox("out of memory");
     p[0] = 0;
     for (i = 1; i <= n; i++)
 	p[i] = bignum_byte(b, n - i);
@@ -1972,12 +1973,12 @@ void bndebug(char *string, Bignum b)
 }
 #endif
 
-static void sha_mpint(SHA_State * s, Bignum b)
+static void hash_mpint(const struct ssh_hash *h, void *s, Bignum b)
 {
     unsigned char *p;
     int len;
     p = ssh2_mpint_fmt(b, &len);
-    sha_string(s, p, len);
+    hash_string(h, s, p, len);
     sfree(p);
 }
 
@@ -2246,10 +2247,13 @@ static void ssh_detect_bugs(Ssh ssh, char *vstring)
 
     if (ssh->cfg.sshbug_rekey2 == FORCE_ON ||
 	(ssh->cfg.sshbug_rekey2 == AUTO &&
-	 (wc_match("OpenSSH_2.[0-4]*", imp) ||
+	 (wc_match("DigiSSH_2.0", imp) ||
+	  wc_match("OpenSSH_2.[0-4]*", imp) ||
 	  wc_match("OpenSSH_2.5.[0-3]*", imp) ||
 	  wc_match("Sun_SSH_1.0", imp) ||
-	  wc_match("Sun_SSH_1.0.1", imp)))) {
+	  wc_match("Sun_SSH_1.0.1", imp) ||
+	  /* All versions <= 1.2.6 (they changed their format in 1.2.7) */
+	  wc_match("WeOnlyDo-*", imp)))) {
 	/*
 	 * These versions have the SSH-2 rekey bug.
 	 */
@@ -2295,23 +2299,20 @@ static int do_ssh_init(Ssh ssh, unsigned char c)
 
     crBegin(ssh->do_ssh_init_crstate);
 
-    /* Search for the string "SSH-" in the input. */
-    s->i = 0;
-    while (1) {
-	static const int transS[] = { 1, 2, 2, 1 };
-	static const int transH[] = { 0, 0, 3, 0 };
-	static const int transminus[] = { 0, 0, 0, -1 };
-	if (c == 'S')
-	    s->i = transS[s->i];
-	else if (c == 'H')
-	    s->i = transH[s->i];
-	else if (c == '-')
-	    s->i = transminus[s->i];
-	else
-	    s->i = 0;
-	if (s->i < 0)
-	    break;
-	crReturn(1);		       /* get another character */
+    /* Search for a line beginning with the string "SSH-" in the input. */
+    for (;;) {
+	if (c != 'S') goto no;
+	crReturn(1);
+	if (c != 'S') goto no;
+	crReturn(1);
+	if (c != 'H') goto no;
+	crReturn(1);
+	if (c != '-') goto no;
+	break;
+      no:
+	while (c != '\012')
+	    crReturn(1);
+	crReturn(1);
     }
 
     s->vstrsize = 16;
@@ -2385,14 +2386,18 @@ static int do_ssh_init(Ssh ssh, unsigned char c)
         ssh_fix_verstring(verstring);
 
         if (ssh->version == 2) {
+	    size_t len;
             /*
              * Hash our version string and their version string.
              */
-            SHA_Init(&ssh->exhashbase);
-            sha_string(&ssh->exhashbase, verstring,
-                       strcspn(verstring, "\015\012"));
-            sha_string(&ssh->exhashbase, s->vstring,
-                       strcspn(s->vstring, "\015\012"));
+	    len = strcspn(verstring, "\015\012");
+	    ssh->v_c = snewn(len + 1, char);
+	    memcpy(ssh->v_c, verstring, len);
+	    ssh->v_c[len] = 0;
+	    len = strcspn(s->vstring, "\015\012");
+            ssh->v_s = snewn(len + 1, char);
+            memcpy(ssh->v_s, s->vstring, len);
+            ssh->v_s[len] = 0;
 
             /*
              * Initialise SSH-2 protocol.
@@ -2498,24 +2503,29 @@ static void ssh_gotdata(Ssh ssh, unsigned char *data, int datalen)
      * everything to s_rdpkt, and then pass the resulting packets
      * to the proper protocol handler.
      */
-    if (datalen == 0)
-	crReturnV;
-
-    /*
-     * Process queued data if there is any.
-     */
-    ssh_process_queued_incoming_data(ssh);
 
     while (1) {
-	while (datalen > 0) {
-	    if (ssh->frozen)
+	while (bufchain_size(&ssh->queued_incoming_data) > 0 || datalen > 0) {
+	    if (ssh->frozen) {
 		ssh_queue_incoming_data(ssh, &data, &datalen);
-
-	    ssh_process_incoming_data(ssh, &data, &datalen);
-
+		/* This uses up all data and cannot cause anything interesting
+		 * to happen; indeed, for anything to happen at all, we must
+		 * return, so break out. */
+		break;
+	    } else if (bufchain_size(&ssh->queued_incoming_data) > 0) {
+		/* This uses up some or all data, and may freeze the
+		 * session. */
+		ssh_process_queued_incoming_data(ssh);
+	    } else {
+		/* This uses up some or all data, and may freeze the
+		 * session. */
+		ssh_process_incoming_data(ssh, &data, &datalen);
+	    }
+	    /* FIXME this is probably EBW. */
 	    if (ssh->state == SSH_STATE_CLOSED)
 		return;
 	}
+	/* We're out of data. Go and get some more. */
 	crReturnV;
     }
     crFinishV;
@@ -2657,8 +2667,6 @@ static const char *connect_to_host(Ssh ssh, char *host, int port,
     const char *err;
 
     ssh->savedhost = snewn(1 + strlen(host), char);
-    if (!ssh->savedhost)
-	fatalbox("Out of memory");
     strcpy(ssh->savedhost, host);
 
     if (port < 0)
@@ -3011,8 +3019,6 @@ static int do_ssh1_login(Ssh ssh, unsigned char *in, int inlen,
     s->len = (hostkey.bytes > servkey.bytes ? hostkey.bytes : servkey.bytes);
 
     s->rsabuf = snewn(s->len, unsigned char);
-    if (!s->rsabuf)
-	fatalbox("Out of memory");
 
     /*
      * Verify the host key.
@@ -3024,8 +3030,6 @@ static int do_ssh1_login(Ssh ssh, unsigned char *in, int inlen,
 	int len = rsastr_len(&hostkey);
 	char fingerprint[100];
 	char *keystr = snewn(len, char);
-	if (!keystr)
-	    fatalbox("Out of memory");
 	rsastr_fmt(keystr, &hostkey);
 	rsa_fingerprint(fingerprint, sizeof(fingerprint), &hostkey);
 
@@ -4944,26 +4948,26 @@ static int first_in_commasep_string(char *needle, char *haystack, int haylen)
 /*
  * SSH-2 key creation method.
  */
-static void ssh2_mkkey(Ssh ssh, Bignum K, unsigned char *H,
-		       unsigned char *sessid, char chr,
+static void ssh2_mkkey(Ssh ssh, Bignum K, unsigned char *H, char chr,
 		       unsigned char *keyspace)
 {
-    SHA_State s;
-    /* First 20 bytes. */
-    SHA_Init(&s);
+    const struct ssh_hash *h = ssh->kex->hash;
+    void *s;
+    /* First hlen bytes. */
+    s = h->init();
     if (!(ssh->remote_bugs & BUG_SSH2_DERIVEKEY))
-	sha_mpint(&s, K);
-    SHA_Bytes(&s, H, 20);
-    SHA_Bytes(&s, &chr, 1);
-    SHA_Bytes(&s, sessid, 20);
-    SHA_Final(&s, keyspace);
-    /* Next 20 bytes. */
-    SHA_Init(&s);
+	hash_mpint(h, s, K);
+    h->bytes(s, H, h->hlen);
+    h->bytes(s, &chr, 1);
+    h->bytes(s, ssh->v2_session_id, ssh->v2_session_id_len);
+    h->final(s, keyspace);
+    /* Next hlen bytes. */
+    s = h->init();
     if (!(ssh->remote_bugs & BUG_SSH2_DERIVEKEY))
-	sha_mpint(&s, K);
-    SHA_Bytes(&s, H, 20);
-    SHA_Bytes(&s, keyspace, 20);
-    SHA_Final(&s, keyspace + 20);
+	hash_mpint(h, s, K);
+    h->bytes(s, H, h->hlen);
+    h->bytes(s, keyspace, h->hlen);
+    h->final(s, keyspace + h->hlen);
 }
 
 /*
@@ -4976,6 +4980,8 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
     struct do_ssh2_transport_state {
 	int nbits, pbits, warn_kex, warn_cscipher, warn_sccipher;
 	Bignum p, g, e, f, K;
+	void *our_kexinit;
+	int our_kexinitlen;
 	int kex_init_value, kex_reply_value;
 	const struct ssh_mac **maclist;
 	int nmacs;
@@ -4988,9 +4994,9 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
 	char *hostkeydata, *sigdata, *keystr, *fingerprint;
 	int hostkeylen, siglen;
 	void *hkey;		       /* actual host key */
-	unsigned char exchange_hash[20];
+	unsigned char exchange_hash[32];
 	int n_preferred_kex;
-	const struct ssh_kex *preferred_kex[KEX_MAX];
+	const struct ssh_kexes *preferred_kex[KEX_MAX];
 	int n_preferred_ciphers;
 	const struct ssh2_ciphers *preferred_ciphers[CIPHER_MAX];
 	const struct ssh_compress *preferred_comp;
@@ -5113,12 +5119,14 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
 	ssh2_pkt_addstring_start(s->pktout);
 	commalist_started = 0;
 	for (i = 0; i < s->n_preferred_kex; i++) {
-	    const struct ssh_kex *k = s->preferred_kex[i];
+	    const struct ssh_kexes *k = s->preferred_kex[i];
 	    if (!k) continue;	       /* warning flag */
-	    if (commalist_started)
-		ssh2_pkt_addstring_str(s->pktout, ",");
-	    ssh2_pkt_addstring_str(s->pktout, s->preferred_kex[i]->name);
-	    commalist_started = 1;
+	    for (j = 0; j < k->nkexes; j++) {
+		if (commalist_started)
+		    ssh2_pkt_addstring_str(s->pktout, ",");
+		ssh2_pkt_addstring_str(s->pktout, k->list[j]->name);
+		commalist_started = 1;
+	    }
 	}
 	/* List server host key algorithms. */
 	ssh2_pkt_addstring_start(s->pktout);
@@ -5199,15 +5207,14 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
 	ssh2_pkt_adduint32(s->pktout, 0);
     }
 
-    ssh->exhash = ssh->exhashbase;
-    sha_string(&ssh->exhash, s->pktout->data + 5, s->pktout->length - 5);
+    s->our_kexinitlen = s->pktout->length - 5;
+    s->our_kexinit = snewn(s->our_kexinitlen, unsigned char);
+    memcpy(s->our_kexinit, s->pktout->data + 5, s->our_kexinitlen);
 
     ssh2_pkt_send_noqueue(ssh, s->pktout);
 
     if (!pktin)
 	crWaitUntil(pktin);
-    if (pktin->length > 5)
-	sha_string(&ssh->exhash, pktin->data + 5, pktin->length - 5);
 
     /*
      * Now examine the other side's KEXINIT to see what we're up
@@ -5236,13 +5243,17 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
 
 	preferred = NULL;
 	for (i = 0; i < s->n_preferred_kex; i++) {
-	    const struct ssh_kex *k = s->preferred_kex[i];
+	    const struct ssh_kexes *k = s->preferred_kex[i];
 	    if (!k) {
 		s->warn_kex = TRUE;
 	    } else {
-		if (!preferred) preferred = k->name;
-		if (in_commasep_string(k->name, str, len))
-		    ssh->kex = k;
+		for (j = 0; j < k->nkexes; j++) {
+		    if (!preferred) preferred = k->list[j]->name;
+		    if (in_commasep_string(k->list[j]->name, str, len)) {
+			ssh->kex = k->list[j];
+			break;
+		    }
+		}
 	    }
 	    if (ssh->kex)
 		break;
@@ -5421,6 +5432,16 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
 	    }
 	}
 
+	ssh->exhash = ssh->kex->hash->init();
+	hash_string(ssh->kex->hash, ssh->exhash, ssh->v_c, strlen(ssh->v_c));
+	hash_string(ssh->kex->hash, ssh->exhash, ssh->v_s, strlen(ssh->v_s));
+	hash_string(ssh->kex->hash, ssh->exhash,
+	    s->our_kexinit, s->our_kexinitlen);
+	sfree(s->our_kexinit);
+	if (pktin->length > 5)
+	    hash_string(ssh->kex->hash, ssh->exhash,
+		pktin->data + 5, pktin->length - 5);
+
 	if (s->ignorepkt) /* first_kex_packet_follows */
 	    crWaitUntil(pktin);                /* Ignore packet */
     }
@@ -5437,10 +5458,10 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
 	scbits = s->sccipher_tobe->keylen;
 	s->nbits = (csbits > scbits ? csbits : scbits);
     }
-    /* The keys only have 160-bit entropy, since they're based on
-     * a SHA-1 hash. So cap the key size at 160 bits. */
-    if (s->nbits > 160)
-	s->nbits = 160;
+    /* The keys only have hlen-bit entropy, since they're based on
+     * a hash. So cap the key size at hlen bits. */
+    if (s->nbits > ssh->kex->hash->hlen * 8)
+	s->nbits = ssh->kex->hash->hlen * 8;
 
     /*
      * If we're doing Diffie-Hellman group exchange, start by
@@ -5512,29 +5533,31 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
      * involve user interaction. */
     set_busy_status(ssh->frontend, BUSY_NOT);
 
-    sha_string(&ssh->exhash, s->hostkeydata, s->hostkeylen);
-    if (ssh->kex == &ssh_diffiehellman_gex) {
-	sha_uint32(&ssh->exhash, s->pbits);
-	sha_mpint(&ssh->exhash, s->p);
-	sha_mpint(&ssh->exhash, s->g);
+    hash_string(ssh->kex->hash, ssh->exhash, s->hostkeydata, s->hostkeylen);
+    if (!ssh->kex->pdata) {
+	hash_uint32(ssh->kex->hash, ssh->exhash, s->pbits);
+	hash_mpint(ssh->kex->hash, ssh->exhash, s->p);
+	hash_mpint(ssh->kex->hash, ssh->exhash, s->g);
     }
-    sha_mpint(&ssh->exhash, s->e);
-    sha_mpint(&ssh->exhash, s->f);
-    sha_mpint(&ssh->exhash, s->K);
-    SHA_Final(&ssh->exhash, s->exchange_hash);
+    hash_mpint(ssh->kex->hash, ssh->exhash, s->e);
+    hash_mpint(ssh->kex->hash, ssh->exhash, s->f);
+    hash_mpint(ssh->kex->hash, ssh->exhash, s->K);
+    assert(ssh->kex->hash->hlen <= sizeof(s->exchange_hash));
+    ssh->kex->hash->final(ssh->exhash, s->exchange_hash);
 
     dh_cleanup(ssh->kex_ctx);
     ssh->kex_ctx = NULL;
 
 #if 0
     debug(("Exchange hash is:\n"));
-    dmemdump(s->exchange_hash, 20);
+    dmemdump(s->exchange_hash, ssh->kex->hash->hlen);
 #endif
 
     s->hkey = ssh->hostkey->newkey(s->hostkeydata, s->hostkeylen);
     if (!s->hkey ||
 	!ssh->hostkey->verifysig(s->hkey, s->sigdata, s->siglen,
-				 (char *)s->exchange_hash, 20)) {
+				 (char *)s->exchange_hash,
+				 ssh->kex->hash->hlen)) {
 	bombout(("Server's host key did not match the signature supplied"));
 	crStop(0);
     }
@@ -5582,8 +5605,11 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
      * authentication.
      */
     if (!s->got_session_id) {
+	assert(sizeof(s->exchange_hash) <= sizeof(ssh->v2_session_id));
 	memcpy(ssh->v2_session_id, s->exchange_hash,
 	       sizeof(s->exchange_hash));
+	ssh->v2_session_id_len = ssh->kex->hash->hlen;
+	assert(ssh->v2_session_id_len <= sizeof(ssh->v2_session_id));
 	s->got_session_id = TRUE;
     }
 
@@ -5619,11 +5645,11 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
      */
     {
 	unsigned char keyspace[40];
-	ssh2_mkkey(ssh,s->K,s->exchange_hash,ssh->v2_session_id,'C',keyspace);
+	ssh2_mkkey(ssh,s->K,s->exchange_hash,'C',keyspace);
 	ssh->cscipher->setkey(ssh->cs_cipher_ctx, keyspace);
-	ssh2_mkkey(ssh,s->K,s->exchange_hash,ssh->v2_session_id,'A',keyspace);
+	ssh2_mkkey(ssh,s->K,s->exchange_hash,'A',keyspace);
 	ssh->cscipher->setiv(ssh->cs_cipher_ctx, keyspace);
-	ssh2_mkkey(ssh,s->K,s->exchange_hash,ssh->v2_session_id,'E',keyspace);
+	ssh2_mkkey(ssh,s->K,s->exchange_hash,'E',keyspace);
 	ssh->csmac->setkey(ssh->cs_mac_ctx, keyspace);
     }
 
@@ -5677,11 +5703,11 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
      */
     {
 	unsigned char keyspace[40];
-	ssh2_mkkey(ssh,s->K,s->exchange_hash,ssh->v2_session_id,'D',keyspace);
+	ssh2_mkkey(ssh,s->K,s->exchange_hash,'D',keyspace);
 	ssh->sccipher->setkey(ssh->sc_cipher_ctx, keyspace);
-	ssh2_mkkey(ssh,s->K,s->exchange_hash,ssh->v2_session_id,'B',keyspace);
+	ssh2_mkkey(ssh,s->K,s->exchange_hash,'B',keyspace);
 	ssh->sccipher->setiv(ssh->sc_cipher_ctx, keyspace);
-	ssh2_mkkey(ssh,s->K,s->exchange_hash,ssh->v2_session_id,'F',keyspace);
+	ssh2_mkkey(ssh,s->K,s->exchange_hash,'F',keyspace);
 	ssh->scmac->setkey(ssh->sc_mac_ctx, keyspace);
     }
     logeventf(ssh, "Initialised %.200s server->client encryption",
@@ -5697,7 +5723,7 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
      */
     freebn(s->f);
     freebn(s->K);
-    if (ssh->kex == &ssh_diffiehellman_gex) {
+    if (!ssh->kex->pdata) {
 	freebn(s->g);
 	freebn(s->p);
     }
@@ -5731,7 +5757,7 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
      * it would only confuse the layer above.
      */
     if (s->activated_authconn) {
-	crReturn(1);
+	crReturn(0);
     }
     s->activated_authconn = TRUE;
 
@@ -6864,7 +6890,8 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 			ssh2_pkt_addstring_start(s->pktout);
 			ssh2_pkt_addstring_data(s->pktout, s->pkblob, s->pklen);
 
-			s->siglen = s->pktout->length - 5 + 4 + 20;
+			s->siglen = s->pktout->length - 5 + 4 +
+			    ssh->v2_session_id_len;
                         if (ssh->remote_bugs & BUG_SSH2_PK_SESSIONID)
                             s->siglen -= 4;
 			s->len = 1;       /* message type */
@@ -6883,11 +6910,12 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 			s->q += 4;
 			/* Now the data to be signed... */
                         if (!(ssh->remote_bugs & BUG_SSH2_PK_SESSIONID)) {
-                            PUT_32BIT(s->q, 20);
+                            PUT_32BIT(s->q, ssh->v2_session_id_len);
                             s->q += 4;
                         }
-			memcpy(s->q, ssh->v2_session_id, 20);
-			s->q += 20;
+			memcpy(s->q, ssh->v2_session_id,
+				ssh->v2_session_id_len);
+			s->q += ssh->v2_session_id_len;
 			memcpy(s->q, s->pktout->data + 5,
 			       s->pktout->length - 5);
 			s->q += s->pktout->length - 5;
@@ -7183,16 +7211,19 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 		     * followed by everything so far placed in the
 		     * outgoing packet.
 		     */
-		    sigdata_len = s->pktout->length - 5 + 4 + 20;
+		    sigdata_len = s->pktout->length - 5 + 4 +
+			ssh->v2_session_id_len;
                     if (ssh->remote_bugs & BUG_SSH2_PK_SESSIONID)
                         sigdata_len -= 4;
 		    sigdata = snewn(sigdata_len, unsigned char);
                     p = 0;
                     if (!(ssh->remote_bugs & BUG_SSH2_PK_SESSIONID)) {
-                        PUT_32BIT(sigdata+p, 20);
+                        PUT_32BIT(sigdata+p, ssh->v2_session_id_len);
                         p += 4;
                     }
-		    memcpy(sigdata+p, ssh->v2_session_id, 20); p += 20;
+		    memcpy(sigdata+p, ssh->v2_session_id,
+			   ssh->v2_session_id_len);
+		    p += ssh->v2_session_id_len;
 		    memcpy(sigdata+p, s->pktout->data + 5,
 			   s->pktout->length - 5);
                     p += s->pktout->length - 5;
@@ -7863,6 +7894,8 @@ static const char *ssh_init(void *frontend_handle, void **backend_handle,
     ssh->do_ssh1_login_state = NULL;
     ssh->do_ssh2_transport_state = NULL;
     ssh->do_ssh2_authconn_state = NULL;
+    ssh->v_c = NULL;
+    ssh->v_s = NULL;
     ssh->mainchan = NULL;
     ssh->throttled_all = 0;
     ssh->v1_stdout_throttling = 0;
@@ -7990,6 +8023,8 @@ static void ssh_free(void *handle)
     sfree(ssh->do_ssh1_login_state);
     sfree(ssh->do_ssh2_transport_state);
     sfree(ssh->do_ssh2_authconn_state);
+    sfree(ssh->v_c);
+    sfree(ssh->v_s);
     if (ssh->crcda_ctx) {
 	crcda_free_context(ssh->crcda_ctx);
 	ssh->crcda_ctx = NULL;

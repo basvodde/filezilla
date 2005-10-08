@@ -9,19 +9,19 @@ libfzsftp_win_a_SOURCES = winnoise.c winpgntc.c \
 		       wintime.c \
 		       winsftp.c wincons.c
 
-noinst_HEADERS = winstuff.h
+noinst_HEADERS = winstuff.h rcstuff.h
 
-dist_noinst_DATA = pscp.rc pscp.ico
+dist_noinst_DATA = psftp.rc version.rc2 pscp.ico
 
 CLEANFILES = pscp.o
 
 if USE_RESOURCEFILE
 
-nodist_noinst_DATA = pscp.o
+nodist_noinst_DATA = psftp.o
 
-pscp.o: $(srcdir)/pscp.rc
+psftp.o: $(srcdir)/psftp.rc
 	@if [ -f $@~ ]; then rm $@~; fi
-	@WINDRES@ --include-dir=$(srcdir) $(WINDRESFLAGS) $(srcdir)/pscp.rc $@~
+	@WINDRES@ --include-dir=$(srcdir) $(WINDRESFLAGS) $(srcdir)/psftp.rc $@~
 	@if [ -f $@ ]; then rm $@; fi
 	mv $@~ $@
 endif

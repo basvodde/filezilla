@@ -877,7 +877,7 @@ int wildcard_iterate(char *filename, int (*func)(void *, char *), void *ctx)
 	while ( (newname = sftp_wildcard_get_filename(swcm)) != NULL ) {
 	    cname = canonify(newname);
 	    if (!cname) {
-		printf("%s: %s\n", newname, fxp_error());
+		fzprintf(sftpError, "%s: %sn", newname, fxp_error());
 		ret = 0;
 	    }
 	    matched = TRUE;
@@ -887,14 +887,14 @@ int wildcard_iterate(char *filename, int (*func)(void *, char *), void *ctx)
 
 	if (!matched) {
 	    /* Politely warn the user that nothing matched. */
-	    printf("%s: nothing matched\n", filename);
+	    fzprintf(sftpStatus, "%s: nothing matched", filename);
 	}
 
 	sftp_finish_wildcard_matching(swcm);
     } else {
 	cname = canonify(unwcfname);
 	if (!cname) {
-	    printf("%s: %s\n", filename, fxp_error());
+	    fzprintf(sftpError, "%s: %s", filename, fxp_error());
 	    ret = 0;
 	}
 	ret = func(ctx, cname);
@@ -1001,7 +1001,7 @@ int sftp_cmd_ls(struct sftp_command *cmd)
 	check = wc_unescape(tmpdir, unwcdir);
 	sfree(tmpdir);
 	if (!check) {
-	    printf("Multiple-level wildcards are not supported\n");
+	    fzprintf(sftpError, "Multiple-level wildcards are not supported");
 	    sfree(unwcdir);
 	    return 0;
 	}
@@ -1551,7 +1551,7 @@ static int sftp_action_mv(void *vctx, char *srcfname)
 	newname = dupcat(ctx->dstfname, "/", p, NULL);
 	newcanon = canonify(newname);
 	if (!newcanon) {
-	    printf("%s: %s\n", newname, fxp_error());
+	    fzprintf(sftpError, "%s: %s", newname, fxp_error());
 	    sfree(newname);
 	    return 0;
 	}
@@ -1570,10 +1570,10 @@ static int sftp_action_mv(void *vctx, char *srcfname)
     error = result ? NULL : fxp_error();
 
     if (error) {
-	printf("mv %s %s: %s\n", srcfname, finalfname, error);
+	fzprintf(sftpError, "mv %s %s: %s", srcfname, finalfname, error);
 	ret = 0;
     } else {
-	printf("%s -> %s\n", srcfname, finalfname);
+	fzprintf(sftpStatus, "%s -> %s", srcfname, finalfname);
 	ret = 1;
     }
 
@@ -1592,13 +1592,13 @@ int sftp_cmd_mv(struct sftp_command *cmd)
     }
 
     if (cmd->nwords < 3) {
-	printf("mv: expects two filenames\n");
+	fzprintf(sftpError, "mv: expects two filenames");
 	return 0;
     }
 
     ctx->dstfname = canonify(cmd->words[cmd->nwords-1]);
     if (!ctx->dstfname) {
-	printf("%s: %s\n", ctx->dstfname, fxp_error());
+	fzprintf(sftpError, "%s: %s", ctx->dstfname, fxp_error());
 	return 0;
     }
 
@@ -1609,8 +1609,8 @@ int sftp_cmd_mv(struct sftp_command *cmd)
      */
     ctx->dest_is_dir = check_is_dir(ctx->dstfname);
     if ((cmd->nwords > 3 || is_wildcard(cmd->words[1])) && !ctx->dest_is_dir) {
-	printf("mv: multiple or wildcard arguments require the destination"
-	       " to be a directory\n");
+	fzprintf(sftpError, "mv: multiple or wildcard arguments require the destination"
+	       " to be a directory");
 	sfree(ctx->dstfname);
 	return 0;
     }
@@ -1623,6 +1623,9 @@ int sftp_cmd_mv(struct sftp_command *cmd)
 	ret &= wildcard_iterate(cmd->words[i], sftp_action_mv, ctx);
 
     sfree(ctx->dstfname);
+
+    if (ret)
+	fznotify1(sftpDone, 1);
     return ret;
 }
 
@@ -1645,7 +1648,7 @@ static int sftp_action_chmod(void *vctx, char *fname)
     result = fxp_stat_recv(pktin, rreq, &attrs);
 
     if (!result || !(attrs.flags & SSH_FILEXFER_ATTR_PERMISSIONS)) {
-	printf("get attrs for %s: %s\n", fname,
+	fzprintf(sftpError, "get attrs for %s: %s", fname,
 	       result ? "file permissions not provided" : fxp_error());
 	return 0;
     }
@@ -1665,11 +1668,11 @@ static int sftp_action_chmod(void *vctx, char *fname)
     result = fxp_setstat_recv(pktin, rreq);
 
     if (!result) {
-	printf("set attrs for %s: %s\n", fname, fxp_error());
+	fzprintf(sftpError, "set attrs for %s: %s", fname, fxp_error());
 	return 0;
     }
 
-    printf("%s: %04o -> %04o\n", fname, oldperms, newperms);
+    fzprintf(sftpStatus, "%s: %04o -> %04o", fname, oldperms, newperms);
 
     return 1;
 }
@@ -1686,7 +1689,7 @@ int sftp_cmd_chmod(struct sftp_command *cmd)
     }
 
     if (cmd->nwords < 3) {
-	printf("chmod: expects a mode specifier and a filename\n");
+	fzprintf(sftpError, "chmod: expects a mode specifier and a filename");
 	return 0;
     }
 
@@ -1705,8 +1708,8 @@ int sftp_cmd_chmod(struct sftp_command *cmd)
     mode = cmd->words[1];
     if (mode[0] >= '0' && mode[0] <= '9') {
 	if (mode[strspn(mode, "01234567")]) {
-	    printf("chmod: numeric file modes should"
-		   " contain digits 0-7 only\n");
+	    fzprintf(sftpError, "chmod: numeric file modes should"
+		   " contain digits 0-7 only");
 	    return 0;
 	}
 	ctx->attrs_clr = 07777;
@@ -1727,21 +1730,21 @@ int sftp_cmd_chmod(struct sftp_command *cmd)
 		  case 'o': subset |= 00007; break; /* just other perms */
 		  case 'a': subset |= 06777; break; /* all of the above */
 		  default:
-		    printf("chmod: file mode '%.*s' contains unrecognised"
-			   " user/group/other specifier '%c'\n",
+		    fzprintf(sftpError, "chmod: file mode '%.*s' contains unrecognised"
+			   " user/group/other specifier '%c'",
 			   (int)strcspn(modebegin, ","), modebegin, *mode);
 		    return 0;
 		}
 		mode++;
 	    }
 	    if (!*mode || *mode == ',') {
-		printf("chmod: file mode '%.*s' is incomplete\n",
+		fzprintf(sftpError, "chmod: file mode '%.*s' is incomplete",
 		       (int)strcspn(modebegin, ","), modebegin);
 		return 0;
 	    }
 	    action = *mode++;
 	    if (!*mode || *mode == ',') {
-		printf("chmod: file mode '%.*s' is incomplete\n",
+		fzprintf(sftpError, "chmod: file mode '%.*s' is incomplete",
 		       (int)strcspn(modebegin, ","), modebegin);
 		return 0;
 	    }
@@ -1755,24 +1758,24 @@ int sftp_cmd_chmod(struct sftp_command *cmd)
 		  case 's':
 		    if ((subset & 06777) != 04700 &&
 			(subset & 06777) != 02070) {
-			printf("chmod: file mode '%.*s': set[ug]id bit should"
-			       " be used with exactly one of u or g only\n",
+			fzprintf(sftpError, "chmod: file mode '%.*s': set[ug]id bit should"
+			       " be used with exactly one of u or g only",
 			       (int)strcspn(modebegin, ","), modebegin);
 			return 0;
 		    }
 		    perms |= 06000;
 		    break;
 		  default:
-		    printf("chmod: file mode '%.*s' contains unrecognised"
-			   " permission specifier '%c'\n",
+		    fzprintf(sftpError, "chmod: file mode '%.*s' contains unrecognised"
+			   " permission specifier '%c'",
 			   (int)strcspn(modebegin, ","), modebegin, *mode);
 		    return 0;
 		}
 		mode++;
 	    }
 	    if (!(subset & 06777) && (perms &~ subset)) {
-		printf("chmod: file mode '%.*s' contains no user/group/other"
-		       " specifier and permissions other than 't' \n",
+		fzprintf(sftpError, "chmod: file mode '%.*s' contains no user/group/other"
+		       " specifier and permissions other than 't'",
 		       (int)strcspn(modebegin, ","), modebegin);
 		return 0;
 	    }
@@ -1798,6 +1801,9 @@ int sftp_cmd_chmod(struct sftp_command *cmd)
     ret = 1;
     for (i = 2; i < cmd->nwords; i++)
 	ret &= wildcard_iterate(cmd->words[i], sftp_action_chmod, ctx);
+
+    if (ret)
+	fznotify1(sftpDone, 1);
 
     return ret;
 }
@@ -1876,7 +1882,7 @@ static int sftp_cmd_pling(struct sftp_command *cmd)
     return (exitcode == 0);
 }
 
-static int sftp_cmd_help(struct sftp_command *cmd);
+// static int sftp_cmd_help(struct sftp_command *cmd);
 
 static struct sftp_cmd_lookup {
     char *name;
@@ -1989,6 +1995,7 @@ static struct sftp_cmd_lookup {
 	    "  If -r specified, recursively fetch a directory.\n",
 	    sftp_cmd_get
     },
+/* BEGIN FZ UNUSED
     {
 	"help", TRUE, "give help",
 	    " [ <command> [ <command> ... ] ]\n"
@@ -1997,6 +2004,7 @@ static struct sftp_cmd_lookup {
 	    "  those particular commands.\n",
 	    sftp_cmd_help
     },
+/* END FZ UNUSED */
     {
 	"lcd", TRUE, "change local working directory",
 	    " <local-directory-name>\n"
@@ -2137,6 +2145,7 @@ const struct sftp_cmd_lookup *lookup_command(char *name)
     return NULL;
 }
 
+/* BEGIN FZ UNUSED
 static int sftp_cmd_help(struct sftp_command *cmd)
 {
     int i;
@@ -2144,6 +2153,7 @@ static int sftp_cmd_help(struct sftp_command *cmd)
 	/*
 	 * Give short help on each command.
 	 */
+	/* CONTINUE FZ UNUSED
 	int maxlen;
 	maxlen = 0;
 	for (i = 0; i < sizeof(sftp_lookup) / sizeof(*sftp_lookup); i++) {
@@ -2167,7 +2177,7 @@ static int sftp_cmd_help(struct sftp_command *cmd)
     } else {
 	/*
 	 * Give long help on specific commands.
-	 */
+	 *//* CONTINUE FZ UNUSED
 	for (i = 1; i < cmd->nwords; i++) {
 	    const struct sftp_cmd_lookup *lookup;
 	    lookup = lookup_command(cmd->words[i]);
@@ -2183,6 +2193,7 @@ static int sftp_cmd_help(struct sftp_command *cmd)
     }
     return 1;
 }
+/* END FZ UNUSED */
 
 /* ----------------------------------------------------------------------
  * Command line reading and parsing.
@@ -2202,8 +2213,8 @@ struct sftp_command *sftp_getcmd(FILE *fp, int mode, int modeflags)
     line = NULL;
 
     if (fp) {
-	if (modeflags & 1)
-	    printf("psftp> ");
+	//if (modeflags & 1)
+	//    printf("psftp> ");
 	line = fgetline(fp);
     } else {
 	line = ssh_sftp_get_cmdline("psftp> ", back == NULL);
@@ -2785,12 +2796,15 @@ static int psftp_connect(char *userhost, char *user, int portnumber)
 
 void cmdline_error(char *p, ...)
 {
+    char *str;
     va_list ap;
-    fprintf(stderr, "psftp: ");
+
     va_start(ap, p);
-    vfprintf(stderr, p, ap);
+    str = dupvprintf(p, ap);
     va_end(ap);
-    fprintf(stderr, "\n       try typing \"psftp -h\" for help\n");
+    fzprintf(sftpError, "psftp: %s", str);
+    sfree(str);
+
     exit(1);
 }
 
