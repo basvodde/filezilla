@@ -75,13 +75,36 @@ AC_MSG_RESULT([$sftpbuild])
 # Checks for PuTTY
 # ----------------
 
-AC_CHECK_HEADERS([utmpx.h],,,[
+AC_CHECK_HEADERS([utmpx.h sys/select.h],,,[
 #include <sys/types.h>
 #include <utmp.h>])
 
 AC_SEARCH_LIBS([socket], [xnet])
 
-AC_CHECK_FUNCS([getaddrinfo ptsname setresuid strsignal])
+AC_CHECK_FUNCS([getaddrinfo ptsname setresuid strsignal updwtmpx])
+
+AH_BOTTOM([
+/* Convert autoconf definitions to ones that PuTTY wants. */
+
+#ifndef HAVE_GETADDRINFO
+# define NO_IPV6
+#endif
+#ifndef HAVE_SETRESUID
+# define HAVE_NO_SETRESUID
+#endif
+#ifndef HAVE_STRSIGNAL
+# define HAVE_NO_STRSIGNAL
+#endif
+#if !defined(HAVE_UTMPX_H) || !defined(HAVE_UPDWTMPX)
+# define OMIT_UTMP
+#endif
+#ifndef HAVE_PTSNAME
+# define BSD_PTYS
+#endif
+#ifndef HAVE_SYS_SELECT_H
+# define HAVE_NO_SYS_SELECT_H
+#endif
+])
 
 # Check for windres on MinGW builds
 # ---------------------------------
@@ -130,16 +153,23 @@ AC_SUBST(WINDRES)
 AC_SUBST(WINDRESFLAGS)
 AM_CONDITIONAL(USE_RESOURCEFILE, test x$use_resourcefile = xtrue)
 
-# --------------------------
+# Mac OS X specific checks
+# ------------------------
 
 # Create application bundle on OS X
 AM_CONDITIONAL(MACAPPBUNDLE, echo $WX_CPPFLAGS | grep __WXMAC__)
+
+# Installer creation under Windows
+# --------------------------------
 
 # Create installer under Windows
 AM_CONDITIONAL(MAKENSISSCRIPT, echo $host_os | grep "mingw" > /dev/null 2>&1)
 if echo $host_os | grep "mingw" > /dev/null 2>&1; then
   AC_CONFIG_FILES(data/install.nsi)
 fi
+
+# Libidn checks
+# -------------
 
 AC_CHECK_HEADER(idna.h,, 
 [
@@ -210,6 +240,15 @@ AC_MSG_RESULT([$FILEZILLA_LINGUAS])
 
 CATALOGS_TO_INSTALL="install-filezilla-catalogs"
 
+AC_SUBST(CATALOGS_TO_INSTALL)
+AC_SUBST(FILEZILLA_LINGUAS)
+AC_SUBST(FILEZILLA_LINGUAS_PO)
+AC_SUBST(FILEZILLA_LINGUAS_PO_NEW)
+AC_SUBST(FILEZILLA_LINGUAS_MO)
+
+# Binreloc
+# --------
+
 # Check if we should use BinReloc
 AH_TEMPLATE(ENABLE_BINRELOC, [Define ENABLE_BINRELOC on systems where the executable
                               location can be obtained using /proc/self/maps])
@@ -258,12 +297,6 @@ if test "x$use_precomp" = "xyes"; then
 else
   AC_MSG_RESULT([no])
 fi
-
-AC_SUBST(CATALOGS_TO_INSTALL)
-AC_SUBST(FILEZILLA_LINGUAS)
-AC_SUBST(FILEZILLA_LINGUAS_PO)
-AC_SUBST(FILEZILLA_LINGUAS_PO_NEW)
-AC_SUBST(FILEZILLA_LINGUAS_MO)
 
 AC_CONFIG_FILES(Makefile src/Makefile src/engine/Makefile src/tinyxml/Makefile
 src/interface/Makefile src/interface/resources/Makefile src/include/Makefile
