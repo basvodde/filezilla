@@ -274,7 +274,7 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 		wxString error;
 		if (!SaveXmlFile(file, pDocument, &error))
 		{
-			wxString msg = wxString::Format(_("Could not write \"%s\", any changes to the Site Manager could not be saved: %s"), file.GetFullPath().c_str(), error);
+			wxString msg = wxString::Format(_("Could not write \"%s\", any changes to the Site Manager could not be saved: %s"), file.GetFullPath().c_str(), error.c_str());
 			wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
 		}
 

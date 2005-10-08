@@ -19,6 +19,7 @@
 class COptionsBase
 {
 public:
+	inline virtual ~COptionsBase() {};
 	virtual int GetOptionVal(unsigned int nID) = 0;
 	virtual wxString GetOption(unsigned int nID) = 0;
 
