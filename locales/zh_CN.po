@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FZ 3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-07 13:26+0200\n"
-"PO-Revision-Date: 2005-09-28 13:02+0800\n"
+"POT-Creation-Date: 2005-10-08 15:48+0200\n"
+"PO-Revision-Date: 2005-10-08 11:49+0800\n"
 "Last-Translator: Emfox Zhou <EmfoxZhou@gmail.com>\n"
 "Language-Team: Emfox Zhou <EmfoxZhou@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -62,7 +62,7 @@ msgstr "添加文件到队列"
 
 #: resources.h:163
 msgid "&Always trust this host, add this key to the cache"
-msgstr "总是信任该主机，并将密钥加入缓存(&A)"
+msgstr "总是信任该主机，并将该密钥加入缓存(&A)"
 
 #: resources.h:16
 msgid "&Always use this action"
@@ -73,9 +73,8 @@ msgid "&Auto"
 msgstr "自动(&A)"
 
 #: resources.h:64
-#, fuzzy
 msgid "&Autodetect"
-msgstr "自动(&A)"
+msgstr "自动检测(&A)"
 
 #: resources.h:91
 msgid "&Binary"
@@ -124,7 +123,7 @@ msgstr "编辑(&E)"
 
 #: resources.h:68
 msgid "&Encoding:"
-msgstr ""
+msgstr "编码(&E)："
 
 #: resources.h:255
 msgid "&Enter custom command..."
@@ -311,6 +310,10 @@ msgid ""
 "Unless you fix this problem, files might be missing in the file listings.\n"
 "No further warning will be displayed this session."
 msgstr ""
+"一个本地文件名无法被解码。\n"
+"请确保 LC_CTYPE(或者 LC_ALL)环境变量已经被正确设定。\n"
+"除非解决了这个问题，不然文件在文件列表中可能会不显示。\n"
+"本次会话不会再显示警告信息了。"
 
 #: resources.h:94
 msgid "A&dd"
@@ -377,7 +380,7 @@ msgstr "询问密码"
 
 #: ../../locales/../src/interface/filteredit.cpp:394
 msgid "At least one filter condition is incomplete"
-msgstr ""
+msgstr "至少有一个过滤条件不完整"
 
 #: resources.h:112
 msgid "Author:"
@@ -469,11 +472,11 @@ msgstr "改变文件权限。"
 
 #: ../../locales/../src/interface/FileZilla.cpp:347
 msgid "Character encoding issue"
-msgstr ""
+msgstr "字符编码问题"
 
 #: resources.h:62
 msgid "Charset"
-msgstr ""
+msgstr "字符集"
 
 #: ../../locales/../src/interface/sitemanager.cpp:702
 msgid "Choose the default local directory"
@@ -616,11 +619,11 @@ msgid "Could not seek to offset %s within file"
 msgstr "无法找到文件中偏移为%s"
 
 #: ../../locales/../src/interface/sitemanager.cpp:277
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Could not write \"%s\", any changes to the Site Manager could not be saved: %"
 "s"
-msgstr "不能写入“ %s” ，任何对站点管理器的更改不能被保存。"
+msgstr "不能写入“ %s” ，任何对站点管理器的更改不能被保存：%s"
 
 #: ../../locales/../src/interface/QueueView.cpp:1460
 #: ../../locales/../src/interface/QueueView.cpp:1546
@@ -772,7 +775,7 @@ msgstr "退出 (&X)"
 
 #: ../../locales/../src/interface/filteredit.cpp:383
 msgid "Each filter needs at least one condition"
-msgstr ""
+msgstr "每个过滤器至少要有一个条件"
 
 #: resources.h:193
 msgid "Edit filters"
@@ -868,7 +871,7 @@ msgstr "改变语言失败"
 
 #: ../../locales/../src/interface/xmlfunctions.cpp:186
 msgid "Failed to create backup copy of xml file"
-msgstr ""
+msgstr "创建 xml 文件的备件拷贝失败"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:645
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1641
@@ -907,7 +910,6 @@ msgid "Failed to validate settings"
 msgstr "校验设置失败"
 
 #: ../../locales/../src/interface/xmlfunctions.cpp:197
-#, fuzzy
 msgid "Failed to write xml file"
 msgstr "写入 xml 文件错误"
 
@@ -1008,7 +1010,7 @@ msgstr "文件夹"
 
 #: resources.h:66
 msgid "Force &UTF-8"
-msgstr ""
+msgstr "强制 UTF-8(&U)"
 
 #: resources.h:28
 msgid "General"
@@ -1120,7 +1122,7 @@ msgstr "指定了非法的协议。目前只有 sftp:// 协议是合法的。"
 
 #: ../../locales/../src/interface/filteredit.cpp:405
 msgid "Invalid size in condition"
-msgstr ""
+msgstr "条件指定了非法的大小"
 
 #: ../../locales/../src/engine/server.cpp:53
 msgid "Invalid username given."
@@ -1209,7 +1211,7 @@ msgstr "名字："
 
 #: ../../locales/../src/interface/sitemanager.cpp:410
 msgid "Need to specify a character encoding"
-msgstr ""
+msgstr "需要指定字符编码"
 
 #: resources.h:24
 msgid "New &Folder"
@@ -1601,6 +1603,8 @@ msgid ""
 "The server uses following charset encoding for\n"
 "filenames:"
 msgstr ""
+"服务器使用以下的字符集编码来处理\n"
+"文件名："
 
 #: resources.h:168
 msgid ""
@@ -1715,7 +1719,7 @@ msgstr "上传选定的文件和文件夹"
 
 #: resources.h:67
 msgid "Use &custom charset"
-msgstr ""
+msgstr "使用自定义的字符集(&C)"
 
 #: resources.h:77
 msgid "User:"
@@ -1726,12 +1730,16 @@ msgid ""
 "Uses UTF-8 if the server supports it, else use\n"
 "local charset."
 msgstr ""
+"如果服务器支持就使用 UTF-8，否则使用\n"
+"本地编码。"
 
 #: resources.h:69
 msgid ""
 "Using the wrong charset can result in filenames not\n"
 "displaying properly."
 msgstr ""
+"使用错误的字符集可能导致文件名\n"
+"显示不正确。"
 
 #: resources.h:46 ../../locales/../src/interface/sitemanager.cpp:627
 #: ../../locales/../src/interface/sitemanager.cpp:832
@@ -1817,9 +1825,3 @@ msgstr "找不到 themes.xml，无法得到主题数据"
 #: resources.h:6
 msgid "with the following file?"
 msgstr "用以下文件？"
-
-#~ msgid "Copyright 2004-2005"
-#~ msgstr "版权所有 2004-2005"
-
-#~ msgid "http://filezilla-project.org"
-#~ msgstr "http://filezilla-project.org"

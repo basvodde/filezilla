@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla 3 Translate Polisj\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-07 13:26+0200\n"
-"PO-Revision-Date: 2005-10-01 10:40+0100\n"
-"Last-Translator: Angelo <angelos@vp.pl>\n"
+"POT-Creation-Date: 2005-10-08 15:48+0200\n"
+"PO-Revision-Date: 2005-10-08 13:06+0100\n"
+"Last-Translator: Angelo <angelos [at] vp.pl>\n"
 "Language-Team: Angelo <angelos@vp.pl>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -78,9 +78,8 @@ msgid "&Auto"
 msgstr "&Automatycznie"
 
 #: resources.h:64
-#, fuzzy
 msgid "&Autodetect"
-msgstr "&Automatycznie"
+msgstr "&Wykryj Automatycznie"
 
 #: resources.h:91
 msgid "&Binary"
@@ -129,7 +128,7 @@ msgstr "&Edytuj"
 
 #: resources.h:68
 msgid "&Encoding:"
-msgstr ""
+msgstr "&Kodowanie:"
 
 #: resources.h:255
 msgid "&Enter custom command..."
@@ -316,6 +315,12 @@ msgid ""
 "Unless you fix this problem, files might be missing in the file listings.\n"
 "No further warning will be displayed this session."
 msgstr ""
+"Lokalna nazwa pliku nie może zostać zdekodowana.\n"
+"Proszę się upewnić, że wartość środowiska LC_TYPE (lub LC_ALL) jest "
+"ustawiona poprawnie.\n"
+"Jeśli nie naprawisz tego problemu, na listingu folderów, może brakować "
+"niektórych plików.\n"
+"Podczas tej sesji to ostrzeżenie nie zostanie więcej wyświetlone."
 
 #: resources.h:94
 msgid "A&dd"
@@ -382,7 +387,7 @@ msgstr "Pytaj o hasło"
 
 #: ../../locales/../src/interface/filteredit.cpp:394
 msgid "At least one filter condition is incomplete"
-msgstr ""
+msgstr "Przynajmniej jeden warunek filtra jest niekompletny"
 
 #: resources.h:112
 msgid "Author:"
@@ -475,11 +480,11 @@ msgstr "Zmień zezwolenia pliku."
 
 #: ../../locales/../src/interface/FileZilla.cpp:347
 msgid "Character encoding issue"
-msgstr ""
+msgstr "Problem z kodowaniem znaków"
 
 #: resources.h:62
 msgid "Charset"
-msgstr ""
+msgstr "Charset"
 
 #: ../../locales/../src/interface/sitemanager.cpp:702
 msgid "Choose the default local directory"
@@ -626,13 +631,13 @@ msgid "Could not seek to offset %s within file"
 msgstr "Nie mogę wyszukać offsetu %s w pliku"
 
 #: ../../locales/../src/interface/sitemanager.cpp:277
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Could not write \"%s\", any changes to the Site Manager could not be saved: %"
 "s"
 msgstr ""
 "Nie mogę zapisać \"%s\", jakiekolwiek zmiany w Menadżerze Stron nie będą "
-"zapisane."
+"zapisane: %s"
 
 #: ../../locales/../src/interface/QueueView.cpp:1460
 #: ../../locales/../src/interface/QueueView.cpp:1546
@@ -784,7 +789,7 @@ msgstr "Zakończ"
 
 #: ../../locales/../src/interface/filteredit.cpp:383
 msgid "Each filter needs at least one condition"
-msgstr ""
+msgstr "Każdy filtr potrzebuje przynajmniej jeden warunek"
 
 #: resources.h:193
 msgid "Edit filters"
@@ -881,7 +886,7 @@ msgstr "Błąd zmiany jezyka"
 
 #: ../../locales/../src/interface/xmlfunctions.cpp:186
 msgid "Failed to create backup copy of xml file"
-msgstr ""
+msgstr "Błąd tworzenia kopi zapasowej pliku xml"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:645
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1641
@@ -922,9 +927,8 @@ msgid "Failed to validate settings"
 msgstr "Nie mogę potwierdzić ustawień"
 
 #: ../../locales/../src/interface/xmlfunctions.cpp:197
-#, fuzzy
 msgid "Failed to write xml file"
-msgstr "Błąd zapisywania pliku xml"
+msgstr "Nie mogę zapisać pliku xml"
 
 #: ../../locales/../src/interface/LocalListView.cpp:370
 #: ../../locales/../src/interface/LocalListView.cpp:388
@@ -1026,7 +1030,7 @@ msgstr "Folder"
 
 #: resources.h:66
 msgid "Force &UTF-8"
-msgstr ""
+msgstr "Wymuś &UTF-8"
 
 #: resources.h:28
 msgid "General"
@@ -1142,7 +1146,7 @@ msgstr "Podano zły protokół. Obsługiwane protokoły to na razie ftp i sftp:/
 
 #: ../../locales/../src/interface/filteredit.cpp:405
 msgid "Invalid size in condition"
-msgstr ""
+msgstr "Niepoprawny rozmiar w warunku"
 
 #: ../../locales/../src/engine/server.cpp:53
 msgid "Invalid username given."
@@ -1231,16 +1235,15 @@ msgstr "Imię:"
 
 #: ../../locales/../src/interface/sitemanager.cpp:410
 msgid "Need to specify a character encoding"
-msgstr ""
+msgstr "Musisz podać kodowanie znaków"
 
 #: resources.h:24
 msgid "New &Folder"
 msgstr "Nowy folder"
 
 #: ../../locales/../src/interface/filteredit.cpp:277
-#, fuzzy
 msgid "New filter"
-msgstr "Nowy folder"
+msgstr "Nowy filtr"
 
 #: ../../locales/../src/interface/RemoteListView.cpp:636
 #: ../../locales/../src/interface/sitemanager.cpp:353
@@ -1627,6 +1630,8 @@ msgid ""
 "The server uses following charset encoding for\n"
 "filenames:"
 msgstr ""
+"Ten serwer używa następującego kodowania znaków dla\n"
+"nazw plików:"
 
 #: resources.h:168
 msgid ""
@@ -1744,7 +1749,7 @@ msgstr "Wyślij zaznaczone pliki i foldery"
 
 #: resources.h:67
 msgid "Use &custom charset"
-msgstr ""
+msgstr "Użyj własnego kodowania"
 
 #: resources.h:77
 msgid "User:"
@@ -1755,12 +1760,16 @@ msgid ""
 "Uses UTF-8 if the server supports it, else use\n"
 "local charset."
 msgstr ""
+"Używa UTF-8 jeśli serwer z nim współpracuje, inaczej używa\n"
+"lokalnego kodowania."
 
 #: resources.h:69
 msgid ""
 "Using the wrong charset can result in filenames not\n"
 "displaying properly."
 msgstr ""
+"Używanie niepoprawnego kodowania może spowodować\n"
+"niepoprawne wyświetlanie nazw plików."
 
 #: resources.h:46 ../../locales/../src/interface/sitemanager.cpp:627
 #: ../../locales/../src/interface/sitemanager.cpp:832
