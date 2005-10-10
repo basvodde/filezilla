@@ -13,6 +13,7 @@ BEGIN_EVENT_TABLE(CFilterDialog, wxDialogEx)
 EVT_BUTTON(XRCID("wxID_OK"), CFilterDialog::OnOK)
 EVT_BUTTON(XRCID("wxID_CANCEL"), CFilterDialog::OnCancel)
 EVT_BUTTON(XRCID("ID_EDIT"), CFilterDialog::OnEdit)
+EVT_CHECKLISTBOX(wxID_ANY, CFilterDialog::OnFilterSelect)
 END_EVENT_TABLE();
 
 CFilterCondition::CFilterCondition()
@@ -24,6 +25,7 @@ CFilterCondition::CFilterCondition()
 
 CFilterDialog::CFilterDialog()
 {
+	m_shiftClick = false;
 }
 
 bool CFilterDialog::Create(wxWindow* parent)
@@ -32,6 +34,11 @@ bool CFilterDialog::Create(wxWindow* parent)
 
 	if (!Load(parent, _T("ID_FILTER")))
 		return false;
+
+	XRCCTRL(*this, "ID_LOCALFILTERS", wxCheckListBox)->Connect(wxID_ANY, wxEVT_LEFT_DOWN, wxMouseEventHandler(CFilterDialog::OnMouseEvent), 0, this);
+	XRCCTRL(*this, "ID_LOCALFILTERS", wxCheckListBox)->Connect(wxID_ANY, wxEVT_KEY_DOWN, wxKeyEventHandler(CFilterDialog::OnKeyEvent), 0, this);
+	XRCCTRL(*this, "ID_REMOTEFILTERS", wxCheckListBox)->Connect(wxID_ANY, wxEVT_LEFT_DOWN, wxMouseEventHandler(CFilterDialog::OnMouseEvent), 0, this);
+	XRCCTRL(*this, "ID_REMOTEFILTERS", wxCheckListBox)->Connect(wxID_ANY, wxEVT_KEY_DOWN, wxKeyEventHandler(CFilterDialog::OnKeyEvent), 0, this);
 
 	DisplayFilters();
 
@@ -209,4 +216,30 @@ void CFilterDialog::DisplayFilters()
 		pLocalFilters->Append(filter.name);
 		pRemoteFilters->Append(filter.name);
 	}
+}
+
+void CFilterDialog::OnMouseEvent(wxMouseEvent& event)
+{
+	m_shiftClick = event.ShiftDown();
+	event.Skip();
+}
+
+void CFilterDialog::OnKeyEvent(wxKeyEvent& event)
+{
+	m_shiftClick = event.ShiftDown();
+	event.Skip();
+}
+
+void CFilterDialog::OnFilterSelect(wxCommandEvent& event)
+{
+	if (!m_shiftClick)
+		return;
+
+	wxCheckListBox* pLocal = XRCCTRL(*this, "ID_LOCALFILTERS", wxCheckListBox);
+	wxCheckListBox* pRemote = XRCCTRL(*this, "ID_REMOTEFILTERS", wxCheckListBox);
+
+	if (event.GetEventObject() == pLocal)
+		pRemote->Check(event.GetSelection(), pLocal->IsChecked(event.GetSelection()));
+	else
+		pLocal->Check(event.GetSelection(), pRemote->IsChecked(event.GetSelection()));
 }

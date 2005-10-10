@@ -55,8 +55,13 @@ protected:
 	void OnOK(wxCommandEvent& event);
 	void OnCancel(wxCommandEvent& event);
 	void OnEdit(wxCommandEvent& event);
+	void OnFilterSelect(wxCommandEvent& event);
+	void OnMouseEvent(wxMouseEvent& event);
+	void OnKeyEvent(wxKeyEvent& event);
 
 	std::vector<CFilterSet> m_filterSets;
+
+	bool m_shiftClick;
 };
 
 #endif //__FILTER_H__
