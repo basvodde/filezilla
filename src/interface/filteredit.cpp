@@ -149,6 +149,8 @@ void CFilterEditDialog::ShowFilter(const CFilter& filter)
 	XRCCTRL(*this, "ID_FILES", wxCheckBox)->SetValue(filter.filterFiles);
 	XRCCTRL(*this, "ID_DIRS", wxCheckBox)->SetValue(filter.filterDirs);
 
+	XRCCTRL(*this, "ID_NAME", wxTextCtrl)->SetValue(filter.name);
+
 	UpdateCount();
 }
 
@@ -264,6 +266,14 @@ void CFilterEditDialog::SaveFilter(CFilter& filter)
 
 	filter.filterFiles = XRCCTRL(*this, "ID_FILES", wxCheckBox)->GetValue();
 	filter.filterDirs = XRCCTRL(*this, "ID_DIRS", wxCheckBox)->GetValue();
+
+	wxString oldName = filter.name;
+	filter.name = XRCCTRL(*this, "ID_NAME", wxTextCtrl)->GetValue();
+	if (oldName != filter.name)
+	{
+		m_pFilterListCtrl->Delete(m_currentSelection);
+		m_pFilterListCtrl->Insert(filter.name, m_currentSelection);
+	}
 }
 
 void CFilterEditDialog::OnNew(wxCommandEvent& event)
@@ -407,6 +417,25 @@ bool CFilterEditDialog::Validate()
 			}				
 		}
 	}
+
+	wxString name = XRCCTRL(*this, "ID_NAME", wxTextCtrl)->GetValue();
+	if (name == _T(""))
+	{
+		m_pFilterListCtrl->SetSelection(m_currentSelection);
+		XRCCTRL(*this, "ID_NAME", wxTextCtrl)->SetFocus();
+		wxMessageBox(_("Need to enter filter name"));
+		return false;
+	}
+
+	int pos = m_pFilterListCtrl->FindString(name);
+	if (pos != wxNOT_FOUND && pos != m_currentSelection)
+	{
+		m_pFilterListCtrl->SetSelection(m_currentSelection);
+		XRCCTRL(*this, "ID_NAME", wxTextCtrl)->SetFocus();
+		wxMessageBox(_("Filter name already exists"));
+		return false;
+	}
+
 
 	return true;
 }
