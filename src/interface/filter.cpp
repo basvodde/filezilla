@@ -5,9 +5,11 @@
 #include "filezillaapp.h"
 #include "../tinyxml/tinyxml.h"
 #include "xmlfunctions.h"
+#include <wx/regex.h>
 
 bool CFilterDialog::m_loaded = false;
 std::vector<CFilter> CFilterDialog::m_globalFilters;
+std::vector<CFilterSet> CFilterDialog::m_globalFilterSets;
 
 BEGIN_EVENT_TABLE(CFilterDialog, wxDialogEx)
 EVT_BUTTON(XRCID("wxID_OK"), CFilterDialog::OnOK)
@@ -20,17 +22,50 @@ CFilterCondition::CFilterCondition()
 {
 	type = 0;
 	condition = 0;
-	value = 0;
+	pRegEx = 0;
+	matchCase = true;
+}
+
+CFilterCondition::~CFilterCondition()
+{
+	delete pRegEx;
+}
+
+CFilterCondition& CFilterCondition::operator=(const CFilterCondition& cond)
+{
+	type = cond.type;
+	condition = cond.condition;
+	strValue = cond.strValue;
+	matchCase = cond.matchCase;
+	delete pRegEx;
+	if (cond.pRegEx)
+		pRegEx = new wxRegEx(strValue, wxRE_EXTENDED | (matchCase ? 0 : wxRE_ICASE));
+	else	
+		pRegEx = 0;
+
+	return *this;
+}
+
+CFilter::CFilter()
+{
+	matchAll = false;
+	filterDirs = true;
+	filterFiles = true;
+
+	// Filenames on Windows ignore case
+#ifdef __WXMSW__
+	matchCase = false;
+#else
+	matchCase = true;
+#endif
 }
 
 CFilterDialog::CFilterDialog()
 {
 	m_shiftClick = false;
-}
-
-bool CFilterDialog::Create(wxWindow* parent)
-{
+	
 	LoadFilters();
+	CompileRegexes();
 
 	if (m_globalFilterSets.empty())
 	{
@@ -41,7 +76,10 @@ bool CFilterDialog::Create(wxWindow* parent)
 		m_globalFilterSets.push_back(set);
 		m_filterSets.push_back(set);
 	}
+}
 
+bool CFilterDialog::Create(wxWindow* parent)
+{
 	if (!Load(parent, _T("ID_FILTER")))
 		return false;
 
@@ -58,7 +96,10 @@ bool CFilterDialog::Create(wxWindow* parent)
 void CFilterDialog::OnOK(wxCommandEvent& event)
 {
 	m_globalFilters = m_filters;
+	CompileRegexes();
+	m_filters = m_globalFilters;
 	m_globalFilterSets = m_filterSets;
+
 	SaveFilters();
 	EndModal(wxID_OK);
 }
@@ -115,6 +156,7 @@ void CFilterDialog::SaveFilters()
 		AddTextElement(pFilter, "ApplyToFiles", filter.filterFiles ? _T("1") : _T("0"));
 		AddTextElement(pFilter, "ApplyToDirs", filter.filterFiles ? _T("1") : _T("0"));
 		AddTextElement(pFilter, "MatchType", filter.matchAll ? _T("All") : _T("Any"));
+		AddTextElement(pFilter, "MatchCase", filter.matchCase ? _T("1") : _T("0"));
 
 		TiXmlElement* pConditions = pFilter->InsertEndChild(TiXmlElement("Conditions"))->ToElement();
 		for (std::vector<CFilterCondition>::const_iterator conditionIter = filter.filters.begin(); conditionIter != filter.filters.end(); conditionIter++)
@@ -199,6 +241,7 @@ void CFilterDialog::LoadFilters()
 		filter.filterDirs = GetTextElement(pFilter, "ApplyToDirs") == _T("1");
 
 		filter.matchAll = GetTextElement(pFilter, "MatchType") == _T("All");
+		filter.matchCase = GetTextElement(pFilter, "MatchCase") == _T("1");
 
 		TiXmlElement *pConditions = pFilter->FirstChildElement("Conditions");
 		if (!pConditions)
@@ -214,6 +257,7 @@ void CFilterDialog::LoadFilters()
 			condition.type = GetTextElementInt(pCondition, "Type", 0);
 			condition.condition = GetTextElementInt(pCondition, "Condition", 0);
 			condition.strValue = GetTextElement(pCondition, "Value");
+			condition.matchCase = filter.matchCase;
 			if (condition.strValue == _T(""))
 			{
 				pCondition = pCondition->NextSiblingElement("Condition");
@@ -313,4 +357,97 @@ void CFilterDialog::OnFilterSelect(wxCommandEvent& event)
 	bool remoteChecked = pRemote->IsChecked(event.GetSelection());
 	m_filterSets[0].local[item] = localChecked;
 	m_filterSets[0].remote[item] = remoteChecked;
+}
+
+bool CFilterDialog::FilenameFiltered(const wxString& name, bool local) const
+{
+	// Check active filters
+	for (unsigned int i = 0; i < m_filters.size(); i++)
+	{
+		if (local)
+		{
+			if (m_filterSets[0].local[i])
+				if (FilenameFilteredByFilter(name, i))
+					return true;
+		}
+		else
+		{
+			if (m_filterSets[0].remote[i])
+				if (FilenameFilteredByFilter(name, i))
+					return true;
+		}
+	}
+
+	return false;
+}
+
+bool CFilterDialog::FilenameFilteredByFilter(const wxString& name, unsigned int filterIndex) const
+{
+	wxRegEx regex;
+	const CFilter& filter = m_filters[filterIndex];
+
+	bool match = false;
+	for (std::vector<CFilterCondition>::const_iterator iter = filter.filters.begin(); iter != filter.filters.end(); iter++)
+	{
+		const CFilterCondition& condition = *iter;
+
+		switch (condition.type)
+		{
+		case 0:
+			switch (condition.condition)
+			{
+			case 0:
+				if (filter.matchCase)
+				{
+					if (name.Contains(condition.strValue))
+						match = true;
+				}
+				else
+				{
+					if (name.Lower().Contains(condition.strValue.Lower()))
+						match = true;
+				}
+				break;
+			case 1:
+				if (filter.matchCase)
+				{
+					if (name == condition.strValue)
+						match = true;
+				}
+				else
+				{
+					if (!name.CmpNoCase(condition.strValue))
+						match = true;
+				}
+				break;
+			case 2:
+				wxASSERT(condition.pRegEx);
+				if (condition.pRegEx->Matches(name))
+					match = true;
+			}
+			break;
+		}
+		if (match && !filter.matchAll)
+			return true;
+	}
+	
+	return match;
+}
+
+bool CFilterDialog::CompileRegexes()
+{
+	for (unsigned int i = 0; i < m_globalFilters.size(); i++)
+	{
+		CFilter& filter = m_globalFilters[i];
+		for (std::vector<CFilterCondition>::iterator iter = filter.filters.begin(); iter != filter.filters.end(); iter++)
+		{
+			CFilterCondition& condition = *iter;
+			delete condition.pRegEx;
+			if ((condition.type == 0 || condition.type == 2) && condition.condition == 2)
+				condition.pRegEx = new wxRegEx(condition.strValue);
+			else
+				condition.pRegEx = 0;
+		}
+	}
+	return true;
 }

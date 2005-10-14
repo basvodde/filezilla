@@ -146,6 +146,8 @@ void CFilterEditDialog::ShowFilter(const CFilter& filter)
 	XRCCTRL(*this, "ID_MATCHALL", wxRadioButton)->SetValue(filter.matchAll);
 	XRCCTRL(*this, "ID_MATCHANY", wxRadioButton)->SetValue(!filter.matchAll);
 
+	XRCCTRL(*this, "ID_CASE", wxCheckBox)->SetValue(filter.matchCase);
+
 	XRCCTRL(*this, "ID_FILES", wxCheckBox)->SetValue(filter.filterFiles);
 	XRCCTRL(*this, "ID_DIRS", wxCheckBox)->SetValue(filter.filterDirs);
 
@@ -249,6 +251,9 @@ void CFilterEditDialog::UpdateCount()
 
 void CFilterEditDialog::SaveFilter(CFilter& filter)
 {
+	filter.matchAll = XRCCTRL(*this, "ID_MATCHALL", wxRadioButton)->GetValue();
+	filter.matchCase = XRCCTRL(*this, "ID_CASE", wxCheckBox)->GetValue();
+
 	filter.filters.clear();
 	for (unsigned int i = 0; i < m_currentFilter.filters.size(); i++)
 	{
@@ -259,10 +264,13 @@ void CFilterEditDialog::SaveFilter(CFilter& filter)
 		condition.condition = controls.pCondition->GetSelection();
 		condition.strValue = controls.pValue->GetValue();
 
+		condition.matchCase = filter.matchCase;
+
 		filter.filters.push_back(condition);
 	}
 
 	filter.matchAll = XRCCTRL(*this, "ID_MATCHALL", wxRadioButton)->GetValue();
+	filter.matchCase = XRCCTRL(*this, "ID_CASE", wxCheckBox)->GetValue();
 
 	filter.filterFiles = XRCCTRL(*this, "ID_FILES", wxCheckBox)->GetValue();
 	filter.filterDirs = XRCCTRL(*this, "ID_DIRS", wxCheckBox)->GetValue();
@@ -279,9 +287,6 @@ void CFilterEditDialog::SaveFilter(CFilter& filter)
 void CFilterEditDialog::OnNew(wxCommandEvent& event)
 {
 	CFilter filter;
-	filter.matchAll = false;
-	filter.filterDirs = true;
-	filter.filterFiles = true;
 
 	int index = 1;
 	wxString name = _("New filter");

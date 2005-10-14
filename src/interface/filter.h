@@ -2,25 +2,33 @@
 #define __FILTER_H__
 
 #include "dialogex.h"
+#include <wx/regex.h>
 
 class CFilterCondition
 {
 public:
 	CFilterCondition();
+	virtual ~CFilterCondition();
 	int type;
 	int condition;
 	wxString strValue;
-	int value;
+	bool matchCase;
+	wxRegEx* pRegEx;
+
+	CFilterCondition& operator=(const CFilterCondition& cond);
 };
 
 class CFilter
 {
 public:
+	CFilter();
+
 	wxString name;
 
 	bool filterFiles;
 	bool filterDirs;
 	bool matchAll;
+	bool matchCase;
 
 	std::vector<CFilterCondition> filters;
 };
@@ -40,7 +48,12 @@ public:
 
 	bool Create(wxWindow* parent);
 
+	bool FilenameFiltered(const wxString& name, bool local) const;
+
 protected:
+
+	bool CompileRegexes();
+	bool FilenameFilteredByFilter(const wxString& name, unsigned int filterIndex) const;
 
 	void SaveFilters();
 	void LoadFilters();
@@ -52,7 +65,7 @@ protected:
 	static std::vector<CFilter> m_globalFilters;
 	std::vector<CFilter> m_filters;
 
-	std::vector<CFilterSet> m_globalFilterSets;
+	static std::vector<CFilterSet> m_globalFilterSets;
 	std::vector<CFilterSet> m_filterSets;
 
 	DECLARE_EVENT_TABLE();
