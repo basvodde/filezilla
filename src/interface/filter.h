@@ -48,8 +48,12 @@ protected:
 	void DisplayFilters();
 
 	static bool m_loaded;
+
 	static std::vector<CFilter> m_globalFilters;
 	std::vector<CFilter> m_filters;
+
+	std::vector<CFilterSet> m_globalFilterSets;
+	std::vector<CFilterSet> m_filterSets;
 
 	DECLARE_EVENT_TABLE();
 	void OnOK(wxCommandEvent& event);
@@ -58,8 +62,6 @@ protected:
 	void OnFilterSelect(wxCommandEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);
 	void OnKeyEvent(wxKeyEvent& event);
-
-	std::vector<CFilterSet> m_filterSets;
 
 	bool m_shiftClick;
 };

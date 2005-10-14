@@ -32,6 +32,16 @@ bool CFilterDialog::Create(wxWindow* parent)
 {
 	LoadFilters();
 
+	if (m_globalFilterSets.empty())
+	{
+		CFilterSet set;
+		set.local.resize(m_filters.size(), false);
+		set.remote.resize(m_filters.size(), false);
+
+		m_globalFilterSets.push_back(set);
+		m_filterSets.push_back(set);
+	}
+
 	if (!Load(parent, _T("ID_FILTER")))
 		return false;
 
@@ -48,6 +58,7 @@ bool CFilterDialog::Create(wxWindow* parent)
 void CFilterDialog::OnOK(wxCommandEvent& event)
 {
 	m_globalFilters = m_filters;
+	m_globalFilterSets = m_filterSets;
 	SaveFilters();
 	EndModal(wxID_OK);
 }
@@ -117,6 +128,28 @@ void CFilterDialog::SaveFilters()
 		}
 	}
 
+	TiXmlElement *pSets = pDocument->FirstChildElement("Sets");
+	while (pSets)
+	{
+		pDocument->RemoveChild(pSets);
+		pSets = pDocument->FirstChildElement("Sets");
+	}
+
+	pSets = pDocument->InsertEndChild(TiXmlElement("Sets"))->ToElement();
+
+	for (std::vector<CFilterSet>::const_iterator iter = m_globalFilterSets.begin(); iter != m_globalFilterSets.end(); iter++)
+	{
+		const CFilterSet& set = *iter;
+		TiXmlElement* pSet = pSets->InsertEndChild(TiXmlElement("Set"))->ToElement();
+
+		for (unsigned int i = 0; i < set.local.size(); i++)
+		{
+			TiXmlElement* pItem = pSet->InsertEndChild(TiXmlElement("Item"))->ToElement();
+			AddTextElement(pItem, "Local", set.local[i] ? _("1") : _T("0"));
+			AddTextElement(pItem, "Remote", set.remote[i] ? _("1") : _T("0"));
+		}
+	}
+
 	SaveXmlFile(file, pDocument);
 	delete pDocument->GetDocument();
 }
@@ -126,6 +159,7 @@ void CFilterDialog::LoadFilters()
 	if (m_loaded)
 	{
 		m_filters = m_globalFilters;
+		m_filterSets = m_globalFilterSets;
 		return;
 	}
 	m_loaded = true;
@@ -196,10 +230,37 @@ void CFilterDialog::LoadFilters()
 
 		pFilter = pFilter->NextSiblingElement("Filter");
 	}
+	m_filters = m_globalFilters;
+
+	TiXmlElement* pSets = pDocument->FirstChildElement("Sets");
+	if (!pSets)
+	{
+		delete pDocument->GetDocument();
+		return;
+	}
+
+	TiXmlElement* pSet = pSets->FirstChildElement("Set");
+	while (pSet)
+	{
+		CFilterSet set;
+		TiXmlElement* pItem = pSet->FirstChildElement("Item");
+		while (pItem)
+		{
+			wxString local = GetTextElement(pItem, "Local");
+			wxString remote = GetTextElement(pItem, "Remote");
+			set.local.push_back(local == _T("1") ? true : false);
+			set.remote.push_back(remote == _T("1") ? true : false);
+
+			pItem = pItem->NextSiblingElement("Item");
+		}
+		if (set.local.size() == m_filters.size())
+			m_globalFilterSets.push_back(set);
+
+		pSet = pSet->NextSiblingElement("Set");
+	}
+	m_filterSets = m_globalFilterSets;
 
 	delete pDocument->GetDocument();
-
-	m_filters = m_globalFilters;
 }
 
 void CFilterDialog::DisplayFilters()
@@ -210,11 +271,14 @@ void CFilterDialog::DisplayFilters()
 	pLocalFilters->Clear();
 	pRemoteFilters->Clear();
 
-	for (std::vector<CFilter>::const_iterator iter = m_filters.begin(); iter != m_filters.end(); iter++)
+	for (unsigned int i = 0; i < m_filters.size(); i++)
 	{
-		const CFilter& filter = *iter;
+		const CFilter& filter = m_filters[i];
 		pLocalFilters->Append(filter.name);
 		pRemoteFilters->Append(filter.name);
+
+		pLocalFilters->Check(i, m_filterSets[0].local[i]);
+		pRemoteFilters->Check(i, m_filterSets[0].remote[i]);
 	}
 }
 
@@ -232,14 +296,21 @@ void CFilterDialog::OnKeyEvent(wxKeyEvent& event)
 
 void CFilterDialog::OnFilterSelect(wxCommandEvent& event)
 {
-	if (!m_shiftClick)
-		return;
-
 	wxCheckListBox* pLocal = XRCCTRL(*this, "ID_LOCALFILTERS", wxCheckListBox);
 	wxCheckListBox* pRemote = XRCCTRL(*this, "ID_REMOTEFILTERS", wxCheckListBox);
 
-	if (event.GetEventObject() == pLocal)
-		pRemote->Check(event.GetSelection(), pLocal->IsChecked(event.GetSelection()));
-	else
-		pLocal->Check(event.GetSelection(), pRemote->IsChecked(event.GetSelection()));
+	int item = event.GetSelection();
+
+	if (m_shiftClick)
+	{
+		if (event.GetEventObject() == pLocal)
+			pRemote->Check(item, pLocal->IsChecked(event.GetSelection()));
+		else
+			pLocal->Check(item, pRemote->IsChecked(event.GetSelection()));
+	}
+
+	bool localChecked = pLocal->IsChecked(event.GetSelection());
+	bool remoteChecked = pRemote->IsChecked(event.GetSelection());
+	m_filterSets[0].local[item] = localChecked;
+	m_filterSets[0].remote[item] = remoteChecked;
 }

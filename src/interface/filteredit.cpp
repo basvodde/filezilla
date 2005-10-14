@@ -294,6 +294,13 @@ void CFilterEditDialog::OnNew(wxCommandEvent& event)
 	m_filters.push_back(filter);
 
 	m_pFilterListCtrl->Append(newName);
+
+	for (std::vector<CFilterSet>::iterator iter = m_filterSets.begin(); iter != m_filterSets.end(); iter++)
+	{
+		CFilterSet& set = *iter;
+		set.local.push_back(false);
+		set.remote.push_back(false);
+	}
 }
 
 void CFilterEditDialog::OnDelete(wxCommandEvent& event)
@@ -305,6 +312,15 @@ void CFilterEditDialog::OnDelete(wxCommandEvent& event)
 	m_currentSelection = -1;
 	m_pFilterListCtrl->Delete(item);
 	m_filters.erase(m_filters.begin() + item);
+	
+	// Remote filter from all filter sets
+	for (std::vector<CFilterSet>::iterator iter = m_filterSets.begin(); iter != m_filterSets.end(); iter++)
+	{
+		CFilterSet& set = *iter;
+		set.local.erase(set.local.begin() + item);
+		set.remote.erase(set.remote.begin() + item);
+	}
+	
 	SetCtrlState(false);
 }
 
@@ -386,6 +402,9 @@ const std::vector<CFilterSet>& CFilterEditDialog::GetFilterSets() const
 
 bool CFilterEditDialog::Validate()
 {
+	if (m_currentSelection == -1)
+		return true;
+
 	const unsigned int size = m_currentFilter.filters.size();
 	if (!size)
 	{
@@ -435,7 +454,6 @@ bool CFilterEditDialog::Validate()
 		wxMessageBox(_("Filter name already exists"));
 		return false;
 	}
-
 
 	return true;
 }
