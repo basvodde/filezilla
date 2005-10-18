@@ -165,3 +165,9 @@ const CServer* CState::GetServer() const
 {
 	return m_pServer;
 }
+
+void CState::ApplyCurrentFilter()
+{
+	if (m_pLocalListView)
+		m_pLocalListView->ApplyCurrentFilter();
+}

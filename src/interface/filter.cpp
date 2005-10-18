@@ -6,6 +6,7 @@
 #include "../tinyxml/tinyxml.h"
 #include "xmlfunctions.h"
 #include <wx/regex.h>
+#include "Mainfrm.h"
 
 bool CFilterDialog::m_loaded = false;
 std::vector<CFilter> CFilterDialog::m_globalFilters;
@@ -24,6 +25,7 @@ CFilterCondition::CFilterCondition()
 	condition = 0;
 	pRegEx = 0;
 	matchCase = true;
+	value = 0;
 }
 
 CFilterCondition::~CFilterCondition()
@@ -36,12 +38,10 @@ CFilterCondition& CFilterCondition::operator=(const CFilterCondition& cond)
 	type = cond.type;
 	condition = cond.condition;
 	strValue = cond.strValue;
+	value = cond.value;
 	matchCase = cond.matchCase;
 	delete pRegEx;
-	if (cond.pRegEx)
-		pRegEx = new wxRegEx(strValue, wxRE_EXTENDED | (matchCase ? 0 : wxRE_ICASE));
-	else	
-		pRegEx = 0;
+	pRegEx = 0;
 
 	return *this;
 }
@@ -62,6 +62,7 @@ CFilter::CFilter()
 
 CFilterDialog::CFilterDialog()
 {
+	m_pMainFrame = 0;
 	m_shiftClick = false;
 	
 	LoadFilters();
@@ -78,8 +79,10 @@ CFilterDialog::CFilterDialog()
 	}
 }
 
-bool CFilterDialog::Create(wxWindow* parent)
+bool CFilterDialog::Create(CMainFrame* parent)
 {
+	m_pMainFrame = parent;
+
 	if (!Load(parent, _T("ID_FILTER")))
 		return false;
 
@@ -97,7 +100,6 @@ void CFilterDialog::OnOK(wxCommandEvent& event)
 {
 	m_globalFilters = m_filters;
 	CompileRegexes();
-	m_filters = m_globalFilters;
 	m_globalFilterSets = m_filterSets;
 
 	SaveFilters();
@@ -264,6 +266,14 @@ void CFilterDialog::LoadFilters()
 				continue;
 			}
 
+			// TODO: 64bit filesize
+			if (condition.type == 1)
+			{
+				unsigned long tmp;
+				condition.strValue.ToULong(&tmp);
+				condition.value = tmp;
+			}
+
 			filter.filters.push_back(condition);
 
 			pCondition = pCondition->NextSiblingElement("Condition");
@@ -359,7 +369,7 @@ void CFilterDialog::OnFilterSelect(wxCommandEvent& event)
 	m_filterSets[0].remote[item] = remoteChecked;
 }
 
-bool CFilterDialog::FilenameFiltered(const wxString& name, bool local) const
+bool CFilterDialog::FilenameFiltered(const wxString& name, bool dir, wxLongLong size, bool local) const
 {
 	// Check active filters
 	for (unsigned int i = 0; i < m_filters.size(); i++)
@@ -367,13 +377,13 @@ bool CFilterDialog::FilenameFiltered(const wxString& name, bool local) const
 		if (local)
 		{
 			if (m_filterSets[0].local[i])
-				if (FilenameFilteredByFilter(name, i))
+				if (FilenameFilteredByFilter(name, dir, size, i))
 					return true;
 		}
 		else
 		{
 			if (m_filterSets[0].remote[i])
-				if (FilenameFilteredByFilter(name, i))
+				if (FilenameFilteredByFilter(name, dir, size, i))
 					return true;
 		}
 	}
@@ -381,14 +391,14 @@ bool CFilterDialog::FilenameFiltered(const wxString& name, bool local) const
 	return false;
 }
 
-bool CFilterDialog::FilenameFilteredByFilter(const wxString& name, unsigned int filterIndex) const
+bool CFilterDialog::FilenameFilteredByFilter(const wxString& name, bool dir, wxLongLong size, unsigned int filterIndex) const
 {
 	wxRegEx regex;
-	const CFilter& filter = m_filters[filterIndex];
+	const CFilter& filter = m_globalFilters[filterIndex];
 
-	bool match = false;
 	for (std::vector<CFilterCondition>::const_iterator iter = filter.filters.begin(); iter != filter.filters.end(); iter++)
 	{
+		bool match = false;
 		const CFilterCondition& condition = *iter;
 
 		switch (condition.type)
@@ -426,12 +436,31 @@ bool CFilterDialog::FilenameFilteredByFilter(const wxString& name, unsigned int 
 					match = true;
 			}
 			break;
+		case 1:
+			if (size == -1)
+				continue;
+			switch (condition.condition)
+			{
+			case 0:
+				if (size > condition.value)
+					match = true;
+				break;
+			case 1:
+				if (size == condition.value)
+					match = true;
+				break;
+			case 2:
+				if (size < condition.value)
+					match = true;
+				break;
+			}
+			break;
 		}
 		if (match && !filter.matchAll)
 			return true;
 	}
 	
-	return match;
+	return false;
 }
 
 bool CFilterDialog::CompileRegexes()
@@ -443,7 +472,7 @@ bool CFilterDialog::CompileRegexes()
 		{
 			CFilterCondition& condition = *iter;
 			delete condition.pRegEx;
-			if ((condition.type == 0 || condition.type == 2) && condition.condition == 2)
+			if (!condition.type && condition.condition == 2)
 				condition.pRegEx = new wxRegEx(condition.strValue);
 			else
 				condition.pRegEx = 0;

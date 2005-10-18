@@ -1064,4 +1064,5 @@ void CMainFrame::OnFilter(wxCommandEvent& event)
 	CFilterDialog dlg;
 	dlg.Create(this);
 	dlg.ShowModal();
+	m_pState->ApplyCurrentFilter();
 }

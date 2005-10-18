@@ -12,6 +12,7 @@ public:
 	int type;
 	int condition;
 	wxString strValue;
+	wxLongLong value;
 	bool matchCase;
 	wxRegEx* pRegEx;
 
@@ -40,20 +41,21 @@ public:
 	std::vector<bool> remote;
 };
 
+class CMainFrame;
 class CFilterDialog : public wxDialogEx
 {
 public:
 	CFilterDialog();
 	virtual ~CFilterDialog() { }
 
-	bool Create(wxWindow* parent);
+	bool Create(CMainFrame* parent);
 
-	bool FilenameFiltered(const wxString& name, bool local) const;
+	bool FilenameFiltered(const wxString& name, bool dir, wxLongLong size, bool local) const;
 
 protected:
 
 	bool CompileRegexes();
-	bool FilenameFilteredByFilter(const wxString& name, unsigned int filterIndex) const;
+	bool FilenameFilteredByFilter(const wxString& name, bool dir, wxLongLong size, unsigned int filterIndex) const;
 
 	void SaveFilters();
 	void LoadFilters();
@@ -77,6 +79,8 @@ protected:
 	void OnKeyEvent(wxKeyEvent& event);
 
 	bool m_shiftClick;
+
+	CMainFrame* m_pMainFrame;
 };
 
 #endif //__FILTER_H__

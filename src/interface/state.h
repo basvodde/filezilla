@@ -32,6 +32,8 @@ public:
 	void SetLocalViewHeader(CLocalViewHeader* pLocalViewHeader) { m_pLocalViewHeader = pLocalViewHeader; }
 	void SetRemoteViewHeader(CRemoteViewHeader* pRemoteViewHeader) { m_pRemoteViewHeader = pRemoteViewHeader; }
 
+	void ApplyCurrentFilter();
+
 protected:
 	wxString m_localDir;
 	CDirectoryListing *m_pDirectoryListing;

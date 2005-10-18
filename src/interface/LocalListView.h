@@ -14,6 +14,8 @@ public:
 
 	bool DisplayDir(wxString dirname);
 
+	void ApplyCurrentFilter();
+
 protected:
 	// Declared const due to design error in wxWidgets.
 	// Won't be fixed since a fix would break backwards compatibility
@@ -21,6 +23,14 @@ protected:
 	// the instance.
 	virtual wxString OnGetItemText(long item, long column) const;
 	virtual int OnGetItemImage(long item) const;
+
+	// Clears all selections and returns the list of items that were selected
+	std::list<wxString> RememberSelectedItems();
+
+	// Select a list of items based in their names.
+	// Sort order may not change between call to RememberSelectedItems and
+	// ReselectItems
+	void ReselectItems(const std::list<wxString>& selectedNames);
 
 #ifdef __WXMSW__
 	void DisplayDrives();

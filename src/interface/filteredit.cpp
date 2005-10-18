@@ -2,7 +2,7 @@
 #include "filteredit.h"
 #include "customheightlistctrl.h"
 
-const wxString filterTypes[] = { _("Filename"), _("Filesize"), _("Filetype") };
+const wxString filterTypes[] = { _("Filename"), _("Filesize") };
 const wxString stringConditionTypes[] = { _("contains"), _("is equal to"), _("matches regex") };
 const wxString sizeConditionTypes[] = { _("greater than"), _("equals"), _("less than") };
 
@@ -263,6 +263,14 @@ void CFilterEditDialog::SaveFilter(CFilter& filter)
 		condition.type = controls.pType->GetSelection();
 		condition.condition = controls.pCondition->GetSelection();
 		condition.strValue = controls.pValue->GetValue();
+
+		// TODO: 64bit filesize
+		if (condition.type == 1)
+		{
+			unsigned long tmp;
+			condition.strValue.ToULong(&tmp);
+			condition.value = tmp;
+		}
 
 		condition.matchCase = filter.matchCase;
 

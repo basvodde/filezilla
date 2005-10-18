@@ -3,6 +3,7 @@
 #include "state.h"
 #include "QueueView.h"
 #include "filezillaapp.h"
+#include "filter.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -89,7 +90,26 @@ CLocalListView::~CLocalListView()
 
 bool CLocalListView::DisplayDir(wxString dirname)
 {
-	m_dir = dirname;
+	std::list<wxString> selectedNames;
+	if (m_dir != dirname)
+	{
+		// Clear selection
+		int item = -1;
+		while (true)
+		{
+			item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+			if (item == -1)
+				break;
+			SetItemState(item, 0, wxLIST_STATE_SELECTED);
+		}
+
+		m_dir = dirname;
+	}
+	else
+	{
+		// Remember which items were selected
+		selectedNames = RememberSelectedItems();
+	}
 
 	m_fileData.clear();
 	m_indexMapping.clear();
@@ -111,6 +131,8 @@ bool CLocalListView::DisplayDir(wxString dirname)
 	else
 #endif
 	{
+		CFilterDialog filter;
+		
 		wxDir dir(dirname);
 		if (!dir.IsOpened())
 		{
@@ -152,15 +174,18 @@ bool CLocalListView::DisplayDir(wxString dirname)
 				data.size = result ? -1 : buf.st_size;
 
 			m_fileData.push_back(data);
-			m_indexMapping.push_back(num);
+			if (!filter.FilenameFiltered(data.name, data.dir, data.size, true))
+				m_indexMapping.push_back(num);
 			num++;
 
 			found = dir.GetNext(&file);
 		}
-		SetItemCount(num);
+		SetItemCount(m_indexMapping.size());
 	}
 
 	SortList();
+
+	ReselectItems(selectedNames);
 
 	return true;
 }
@@ -332,50 +357,31 @@ void CLocalListView::DisplayDrives()
 
 wxString CLocalListView::GetType(wxString name, bool dir)
 {
-	wxString type;
 #ifdef __WXMSW__
 	wxString ext = wxFileName(name).GetExt();
 	ext.MakeLower();
 	std::map<wxString, wxString>::iterator typeIter = m_fileTypeMap.find(ext);
 	if (typeIter != m_fileTypeMap.end())
-		type = typeIter->second;
+		return typeIter->second;
+
+	wxString type;
+
+	wxString path;
+	if (m_dir == _T("\\"))
+		path = name + _T("\\");
 	else
+		path = m_dir + name;
+
+	SHFILEINFO shFinfo;		
+	memset(&shFinfo,0,sizeof(SHFILEINFO));
+	if (SHGetFileInfo(path,
+		dir ? FILE_ATTRIBUTE_DIRECTORY : FILE_ATTRIBUTE_NORMAL,
+		&shFinfo,
+		sizeof(shFinfo),
+		SHGFI_TYPENAME))
 	{
-		wxString path;
-#ifdef __WXMSW__
-		if (m_dir == _T("\\"))
-			path = name + _T("\\");
-		else
-#endif
-			path = m_dir + name;
-		SHFILEINFO shFinfo;		
-		memset(&shFinfo,0,sizeof(SHFILEINFO));
-		if (SHGetFileInfo(path,
-			dir ? FILE_ATTRIBUTE_DIRECTORY : FILE_ATTRIBUTE_NORMAL,
-			&shFinfo,
-			sizeof(shFinfo),
-			SHGFI_TYPENAME))
-		{
-			type = shFinfo.szTypeName;
-			if (type == _T(""))
-			{
-				type = ext;
-				type.MakeUpper();
-				if (!type.IsEmpty())
-				{
-					type += _T("-");
-					type += _("file");
-				}
-				else
-					type = _("File");
-			}
-			else
-			{
-				if (!dir && ext != _T(""))
-					m_fileTypeMap[ext.MakeLower()] = type;
-			}
-		}
-		else
+		type = shFinfo.szTypeName;
+		if (type == _T(""))
 		{
 			type = ext;
 			type.MakeUpper();
@@ -387,11 +393,28 @@ wxString CLocalListView::GetType(wxString name, bool dir)
 			else
 				type = _("File");
 		}
+		else
+		{
+			if (!dir && ext != _T(""))
+				m_fileTypeMap[ext.MakeLower()] = type;
+		}
 	}
-#else
-	type = dir ? _("Folder") : _("File");
-#endif
+	else
+	{
+		type = ext;
+		type.MakeUpper();
+		if (!type.IsEmpty())
+		{
+			type += _T("-");
+			type += _("file");
+		}
+		else
+			type = _("File");
+	}
 	return type;
+#else
+	return dir ? _("Folder") : _("File");
+#endif
 }
 
 CLocalListView::t_fileData* CLocalListView::GetData(unsigned int item)
@@ -464,12 +487,12 @@ void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 		return;
 
 	if (!m_sortColumn)
-		QSortList(m_sortDirection, 1, m_fileData.size() - 1, CmpName);
+		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpName);
 	else if (m_sortColumn == 1)
-		QSortList(m_sortDirection, 1, m_fileData.size() - 1, CmpSize);
+		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpSize);
 	else if (m_sortColumn == 2)
-		QSortList(m_sortDirection, 1, m_fileData.size() - 1, CmpType);
-	RefreshItems(1, m_fileData.size() - 1);
+		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpType);
+	RefreshItems(1, m_indexMapping.size() - 1);
 }
 
 void CLocalListView::OnColumnClicked(wxListEvent &event)
@@ -1073,3 +1096,76 @@ void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 #endif
 }
 
+void CLocalListView::ApplyCurrentFilter()
+{
+	if (m_fileData.size() <= 1)
+		return;
+
+	std::list<wxString>& selectedNames = RememberSelectedItems();
+
+	CFilterDialog filter;
+	m_indexMapping.clear();
+	m_indexMapping.push_back(0);
+	for (unsigned int i = 1; i < m_fileData.size(); i++)
+	{
+		const t_fileData& data = m_fileData[i];
+		if (!filter.FilenameFiltered(data.name, data.dir, data.size, true))
+			m_indexMapping.push_back(i);
+	}
+	SetItemCount(m_indexMapping.size());
+
+	SortList();
+
+	ReselectItems(selectedNames);
+}
+
+std::list<wxString> CLocalListView::RememberSelectedItems()
+{
+	std::list<wxString> selectedNames;
+	// Remember which items were selected
+	int item = -1;
+	while (true)
+	{
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		if (item == -1)
+			break;
+		const t_fileData &data = m_fileData[m_indexMapping[item]];
+		if (data.dir)
+			selectedNames.push_back(_T("d") + data.name);
+		else
+			selectedNames.push_back(_T("-") + data.name);
+		SetItemState(item, 0, wxLIST_STATE_SELECTED);
+	}
+
+	return selectedNames;
+}
+
+void CLocalListView::ReselectItems(const std::list<wxString>& selectedNames)
+{
+	// Reselect previous items if neccessary.
+	// Sorting direction did not change. We just have to scan through items once
+	unsigned i = 0;
+	for (std::list<wxString>::const_iterator iter = selectedNames.begin(); iter != selectedNames.end(); iter++)
+	{
+		while (i < m_indexMapping.size())
+		{
+			const t_fileData &data = m_fileData[m_indexMapping[i]];
+			if (data.dir && *iter == (_T("d") + data.name))
+			{
+				SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+				i++;
+				break;
+			}
+			else if (*iter == (_T("-") + data.name))
+			{
+				SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+				i++;
+				break;
+			}
+			else
+				i++;
+		}
+		if (i == m_indexMapping.size())
+			break;
+	}
+}
