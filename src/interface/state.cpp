@@ -170,4 +170,6 @@ void CState::ApplyCurrentFilter()
 {
 	if (m_pLocalListView)
 		m_pLocalListView->ApplyCurrentFilter();
+	if (m_pRemoteListView)
+		m_pRemoteListView->ApplyCurrentFilter();
 }

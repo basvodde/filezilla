@@ -29,7 +29,18 @@ public:
 	void StopRecursiveOperation();
 	bool IsBusy() const { return m_operationMode != recursive_none; }
 
+	void ApplyCurrentFilter();
+
 protected:
+	// Clears all selections and returns the list of items that were selected
+	std::list<wxString> RememberSelectedItems();
+
+	// Select a list of items based in their names.
+	// Sort order may not change between call to RememberSelectedItems and
+	// ReselectItems
+	void ReselectItems(std::list<wxString>& selectedNames);
+
+
 	// Declared const due to design error in wxWidgets.
 	// Won't be fixed since a fix would break backwards compatibility
 	// Both functions use a const_cast<CLocalListView *>(this) and modify

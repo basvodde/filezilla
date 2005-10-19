@@ -396,6 +396,11 @@ bool CFilterDialog::FilenameFilteredByFilter(const wxString& name, bool dir, wxL
 	wxRegEx regex;
 	const CFilter& filter = m_globalFilters[filterIndex];
 
+	if (dir && !filter.filterDirs)
+		return false;
+	else if (!filter.filterFiles)
+		return false;
+    
 	for (std::vector<CFilterCondition>::const_iterator iter = filter.filters.begin(); iter != filter.filters.end(); iter++)
 	{
 		bool match = false;

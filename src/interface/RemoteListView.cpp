@@ -6,6 +6,7 @@
 #include "filezillaapp.h"
 #include "inputdialog.h"
 #include "chmoddialog.h"
+#include "filter.h"
 
 #ifdef __WXMSW__
 #include "shellapi.h"
@@ -35,6 +36,7 @@ CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState
 	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER | wxLC_EDIT_LABELS),
 	CSystemImageList(16)
 {
+	m_pDirectoryListing = 0;
 	m_pChmodDlg = 0;
 
 	m_pState = pState;
@@ -209,6 +211,31 @@ bool CRemoteListView::IsItemValid(unsigned int item) const
 
 void CRemoteListView::SetDirectoryListing(CDirectoryListing *pDirectoryListing, bool modified /*=false*/)
 {
+	bool reset = false;
+	if (!pDirectoryListing || !m_pDirectoryListing)
+		reset = true;
+	else if (m_pDirectoryListing->path != pDirectoryListing->path)
+		reset = true;
+	
+	std::list<wxString> selectedNames;
+	if (reset)
+	{
+		// Clear selection
+		int item = -1;
+		while (true)
+		{
+			item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+			if (item == -1)
+				break;
+			SetItemState(item, 0, wxLIST_STATE_SELECTED);
+		}
+	}
+	else
+	{
+		// Remember which items were selected
+		selectedNames = RememberSelectedItems();
+	}
+
 	m_pDirectoryListing = pDirectoryListing;
 
 	m_fileData.clear();
@@ -222,22 +249,27 @@ void CRemoteListView::SetDirectoryListing(CDirectoryListing *pDirectoryListing, 
 		m_fileData.push_back(data);
 		m_indexMapping.push_back(0);
 
+		CFilterDialog filter;
 		for (unsigned int i = 0; i < m_pDirectoryListing->m_entryCount; i++)
 		{
+			CDirentry* pEntry = &m_pDirectoryListing->m_pEntries[i];
 			t_fileData data;
 			data.icon = -2;
-			data.pDirEntry = &m_pDirectoryListing->m_pEntries[i];
+			data.pDirEntry = pEntry;
 			m_fileData.push_back(data);
-			m_indexMapping.push_back(i + 1);
+
+			if (!filter.FilenameFiltered(pEntry->name, pEntry->dir, pEntry->size, false))
+				m_indexMapping.push_back(i + 1);
 		}
 	}
 	else
 		StopRecursiveOperation();
 
-	SetItemCount(m_fileData.size());
-	Refresh();
+	SetItemCount(m_indexMapping.size());
 
 	SortList();
+
+	ReselectItems(selectedNames);
 
 	if (!modified)
 		ProcessDirectoryListing();
@@ -293,12 +325,12 @@ void CRemoteListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 		return;
 
 	if (!m_sortColumn)
-		QSortList(m_sortDirection, 1, m_fileData.size() - 1, CmpName);
+		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpName);
 	else if (m_sortColumn == 1)
-		QSortList(m_sortDirection, 1, m_fileData.size() - 1, CmpSize);
+		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpSize);
 	else if (m_sortColumn == 2)
-		QSortList(m_sortDirection, 1, m_fileData.size() - 1, CmpType);
-	RefreshItems(1, m_fileData.size() - 1);
+		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpType);
+	RefreshItems(1, m_indexMapping.size() - 1);
 }
 
 void CRemoteListView::OnColumnClicked(wxListEvent &event)
@@ -1205,4 +1237,93 @@ bool CRemoteListView::ConvertPermissions(const wxString rwx, char* permissions)
 	}
 
 	return true;
+}
+
+
+void CRemoteListView::ApplyCurrentFilter()
+{
+	if (m_fileData.size() <= 1)
+		return;
+
+	std::list<wxString>& selectedNames = RememberSelectedItems();
+
+	CFilterDialog filter;
+	m_indexMapping.clear();
+	m_indexMapping.push_back(0);
+	for (unsigned int i = 1; i < m_fileData.size(); i++)
+	{
+		const t_fileData& data = m_fileData[i];
+		if (!filter.FilenameFiltered(data.pDirEntry->name, data.pDirEntry->dir, data.pDirEntry->size, false))
+			m_indexMapping.push_back(i);
+	}
+	SetItemCount(m_indexMapping.size());
+
+	SortList();
+
+	ReselectItems(selectedNames);
+}
+
+std::list<wxString> CRemoteListView::RememberSelectedItems()
+{
+	std::list<wxString> selectedNames;
+	// Remember which items were selected
+	int item = -1;
+	while (true)
+	{
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		if (item == -1)
+			break;
+		if (!item)
+		{
+			selectedNames.push_back(_T(".."));
+			continue;
+		}
+		const t_fileData &data = m_fileData[m_indexMapping[item]];
+		if (data.pDirEntry->dir)
+			selectedNames.push_back(_T("d") + data.pDirEntry->name);
+		else
+			selectedNames.push_back(_T("-") + data.pDirEntry->name);
+		SetItemState(item, 0, wxLIST_STATE_SELECTED);
+	}
+
+	return selectedNames;
+}
+
+void CRemoteListView::ReselectItems(std::list<wxString>& selectedNames)
+{
+	if (selectedNames.empty())
+		return;
+
+	if (selectedNames.front() == _T(".."))
+	{
+		selectedNames.pop_front();
+		SetItemState(0, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+	}
+
+	// Reselect previous items if neccessary.
+	// Sorting direction did not change. We just have to scan through items once
+	unsigned i = 1;
+	for (std::list<wxString>::const_iterator iter = selectedNames.begin(); iter != selectedNames.end(); iter++)
+	{
+		while (i < m_indexMapping.size())
+		{
+			const t_fileData &data = m_fileData[m_indexMapping[i]];
+			if (data.pDirEntry->dir && *iter == (_T("d") + data.pDirEntry->name))
+			{
+				SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+				i++;
+				break;
+			}
+			else if (*iter == (_T("-") + data.pDirEntry->name))
+			{
+				SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+				i++;
+				break;
+			}
+			else
+				i++;
+		}
+		if (i == m_indexMapping.size())
+			break;
+	}
 }
