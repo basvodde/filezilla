@@ -15,6 +15,7 @@ public:
 	static void Reparent(CViewHeader** pViewHeader, wxWindow* parent);
 
 	void SetLabel(const wxString& label);
+	wxString GetLabel() const;
 
 	virtual void CopyDataFrom(CViewHeader* pHeader);
 

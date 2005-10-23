@@ -34,7 +34,7 @@ fi
 
 AM_OPTIONS_WXCONFIG
 
-AM_PATH_WXCONFIG(2.6.1, wxWin=1, , [xrc,std])
+AM_PATH_WXCONFIG(2.6.2, wxWin=1, , [xrc,std])
 if test "$wxWin" != 1; then
 	AC_MSG_ERROR([
         	wxWidgets must be installed on your system

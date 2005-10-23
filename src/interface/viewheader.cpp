@@ -223,7 +223,8 @@ void CViewHeader::SetLabel(const wxString& label)
 
 void CViewHeader::Reparent(CViewHeader** pViewHeader, wxWindow* parent)
 {
-#if defined __WXMSW__ || defined __WXGTK__
+#if defined __WXMSW__ || defined __WXGTK__ || \
+	(defined __WXMAC__ && !(defined __WXMAC_CLASSIC__))
 	((wxWindow*)*pViewHeader)->Reparent(parent);
 #else
 #error CViewHeader::Reparent unimplemented
@@ -235,6 +236,11 @@ void CViewHeader::CopyDataFrom(CViewHeader* pHeader)
 	m_label = pHeader->m_label;
 	m_cbOffset = pHeader->m_cbOffset;
 	m_labelHeight = pHeader->m_labelHeight;
+}
+
+wxString CViewHeader::GetLabel() const
+{
+	return m_label;
 }
 
 BEGIN_EVENT_TABLE(CLocalViewHeader, CViewHeader)
