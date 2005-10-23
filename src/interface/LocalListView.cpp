@@ -1101,7 +1101,7 @@ void CLocalListView::ApplyCurrentFilter()
 	if (m_fileData.size() <= 1)
 		return;
 
-	std::list<wxString>& selectedNames = RememberSelectedItems();
+	const std::list<wxString>& selectedNames = RememberSelectedItems();
 
 	CFilterDialog filter;
 	m_indexMapping.clear();

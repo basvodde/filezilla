@@ -1245,7 +1245,7 @@ void CRemoteListView::ApplyCurrentFilter()
 	if (m_fileData.size() <= 1)
 		return;
 
-	std::list<wxString>& selectedNames = RememberSelectedItems();
+	std::list<wxString> selectedNames = RememberSelectedItems();
 
 	CFilterDialog filter;
 	m_indexMapping.clear();
