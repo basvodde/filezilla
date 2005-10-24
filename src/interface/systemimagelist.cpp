@@ -67,8 +67,9 @@ wxBitmap PrepareIcon(wxIcon icon, wxSize size)
 {
 	if (icon.GetWidth() == size.GetWidth() && icon.GetHeight() == size.GetHeight())
 		return icon;
-	
-	return icon.ConvertToImage().Rescale(size.GetWidth(), size.GetHeight());
+	wxBitmap bmp;
+	bmp.CopyFromIcon(icon);
+	return bmp.ConvertToImage().Rescale(size.GetWidth(), size.GetHeight());
 }
 #endif
 
