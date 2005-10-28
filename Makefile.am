@@ -1,3 +1,5 @@
+ACLOCAL_AMFLAGS = -I . 
+
 AUTOMAKE_OPTIONS = 1.6
 
 SUBDIRS = . src locales data

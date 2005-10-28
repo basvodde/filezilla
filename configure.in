@@ -202,9 +202,9 @@ if test -z "$msgfmt"; then
 	AC_MSG_ERROR([ msgfmt not found, please install the GNU gettext package and make sure  msgfmt is in the path.])
 fi
 
-AC_PATH_PROG(msgmerge, msgmerge)
+FZ_PATH_PROG_VER(msgmerge, msgmerge, 0.11.0)
 if test -z "$msgmerge"; then
-	AC_MSG_ERROR([msgmerge not found, please install the GNU gettext package and make sure msgmerge is in the path.])
+	AC_MSG_ERROR([msgmerge not found or too old, please install a current version of the GNU gettext package and make sure msgmerge is in the path.])
 fi
 
 AC_MSG_CHECKING([available FZ3 message catalogs])
