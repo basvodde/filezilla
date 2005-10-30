@@ -47,11 +47,11 @@ CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, 
 
 	wxBitmap bmp;
 	
-	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("empty.xpm"), wxBITMAP_TYPE_XPM);
+	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("empty.png"), wxBITMAP_TYPE_PNG);
 	m_pHeaderImageList->Add(bmp);
-	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("up.xpm"), wxBITMAP_TYPE_XPM);
+	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("up.png"), wxBITMAP_TYPE_PNG);
 	m_pHeaderImageList->Add(bmp);
-	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("down.xpm"), wxBITMAP_TYPE_XPM);
+	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("down.png"), wxBITMAP_TYPE_PNG);
 	m_pHeaderImageList->Add(bmp);
 
 	HWND hWnd = (HWND)GetHandle();
