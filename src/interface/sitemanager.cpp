@@ -18,13 +18,14 @@ EVT_TREE_BEGIN_LABEL_EDIT(XRCID("ID_SITETREE"), CSiteManager::OnBeginLabelEdit)
 EVT_TREE_END_LABEL_EDIT(XRCID("ID_SITETREE"), CSiteManager::OnEndLabelEdit)
 EVT_TREE_SEL_CHANGING(XRCID("ID_SITETREE"), CSiteManager::OnSelChanging)
 EVT_TREE_SEL_CHANGED(XRCID("ID_SITETREE"), CSiteManager::OnSelChanged)
-EVT_COMBOBOX(XRCID("ID_LOGONTYPE"), CSiteManager::OnLogontypeSelChanged)
+EVT_CHOICE(XRCID("ID_LOGONTYPE"), CSiteManager::OnLogontypeSelChanged)
 EVT_BUTTON(XRCID("ID_BROWSE"), CSiteManager::OnRemoteDirBrowse)
 EVT_TREE_ITEM_ACTIVATED(XRCID("ID_SITETREE"), CSiteManager::OnItemActivated)
 EVT_CHECKBOX(XRCID("ID_LIMITMULTIPLE"), CSiteManager::OnLimitMultipleConnectionsChanged)
 EVT_RADIOBUTTON(XRCID("ID_CHARSET_AUTO"), CSiteManager::OnCharsetChange)
 EVT_RADIOBUTTON(XRCID("ID_CHARSET_UTF8"), CSiteManager::OnCharsetChange)
 EVT_RADIOBUTTON(XRCID("ID_CHARSET_CUSTOM"), CSiteManager::OnCharsetChange)
+EVT_CHOICE(XRCID("ID_PROTOCOL"), CSiteManager::OnProtocolSelChanged)
 END_EVENT_TABLE()
 
 CSiteManager::CSiteManager(COptions* pOptions)
@@ -400,7 +401,13 @@ bool CSiteManager::Verify()
 	if (!data)
 		return true;
 
-	// TODO: validation
+	if (XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->GetStringSelection() == _("SFTP") &&
+		XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->GetStringSelection() == _("PROTOCOL"))
+	{
+		XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetFocus();
+		wxMessageBox(_("'Account' logontype not supported by selected protocol"));
+		return false;
+	}
 
 	if (XRCCTRL(*this, "ID_CHARSET_CUSTOM", wxRadioButton)->GetValue())
 	{
@@ -576,7 +583,8 @@ void CSiteManager::OnLogontypeSelChanged(wxCommandEvent& event)
 		return;
 
 	XRCCTRL(*this, "ID_USER", wxTextCtrl)->Enable(event.GetString() != _("Anonymous"));
-	XRCCTRL(*this, "ID_PASS", wxTextCtrl)->Enable(event.GetString() == _("Normal"));
+	XRCCTRL(*this, "ID_PASS", wxTextCtrl)->Enable(event.GetString() == _("Normal") || event.GetString() == _("Account"));
+	XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->Enable(event.GetString() == _("Account"));
 }
 
 bool CSiteManager::UpdateServer()
@@ -597,7 +605,7 @@ bool CSiteManager::UpdateServer()
 	XRCCTRL(*this, "ID_PORT", wxTextCtrl)->GetValue().ToULong(&port);
 	data->m_server.SetHost(XRCCTRL(*this, "ID_HOST", wxTextCtrl)->GetValue(), port);
 
-	wxString protocol = XRCCTRL(*this, "ID_PROTOCOL", wxComboBox)->GetValue();
+	wxString protocol = XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->GetStringSelection();
 	if (protocol == _("FTP"))
 		data->m_server.SetProtocol(FTP);
 	else if (protocol == _("SFTP"))
@@ -605,21 +613,25 @@ bool CSiteManager::UpdateServer()
 	else
 		data->m_server.SetProtocol(FTP);
 
-	wxString logonType = XRCCTRL(*this, "ID_LOGONTYPE", wxComboBox)->GetValue();
+	wxString logonType = XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->GetStringSelection();
 	if (logonType == _("Normal"))
 		data->m_server.SetLogonType(NORMAL);
 	else if (logonType == _("Ask for password"))
 		data->m_server.SetLogonType(ASK);
 	else if (logonType == _("Interactive"))
 		data->m_server.SetLogonType(INTERACTIVE);
+	else if (logonType == _("Account"))
+		data->m_server.SetLogonType(ACCOUNT);
 	else
 		data->m_server.SetLogonType(ANONYMOUS);
 
-	data->m_server.SetUser(XRCCTRL(*this, "ID_USER", wxTextCtrl)->GetValue(), XRCCTRL(*this, "ID_PASS", wxTextCtrl)->GetValue());
+	data->m_server.SetUser(XRCCTRL(*this, "ID_USER", wxTextCtrl)->GetValue(),
+						   XRCCTRL(*this, "ID_PASS", wxTextCtrl)->GetValue());
+	data->m_server.SetAccount(XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->GetValue());
 	
 	data->m_comments = XRCCTRL(*this, "ID_COMMENTS", wxTextCtrl)->GetValue();
 
-	wxString serverType = XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->GetValue();
+	wxString serverType = XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->GetStringSelection();
 	if (serverType == _("Unix"))
 		data->m_server.SetType(UNIX);
 	else if (serverType == _("Dos"))
@@ -754,13 +766,14 @@ void CSiteManager::SetCtrlState()
 		// Empty all site information
 		XRCCTRL(*this, "ID_HOST", wxTextCtrl)->SetValue(_T(""));
 		XRCCTRL(*this, "ID_PORT", wxTextCtrl)->SetValue(_T("21"));
-		XRCCTRL(*this, "ID_PROTOCOL", wxComboBox)->SetValue(_("FTP"));
-		XRCCTRL(*this, "ID_LOGONTYPE", wxComboBox)->SetValue(_("Anonymous"));
+		XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(_("FTP"));
+		XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetStringSelection(_("Anonymous"));
 		XRCCTRL(*this, "ID_USER", wxTextCtrl)->SetValue(_T(""));
 		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->SetValue(_T(""));
+		XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->SetValue(_T(""));
 		XRCCTRL(*this, "ID_COMMENTS", wxTextCtrl)->SetValue(_T(""));
 		
-		XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->SetValue(_("Default"));
+		XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->SetStringSelection(_("Default"));
 		XRCCTRL(*this, "ID_LOCALDIR", wxTextCtrl)->SetValue(_T(""));
 		XRCCTRL(*this, "ID_REMOTEDIR", wxTextCtrl)->SetValue(_T(""));
 		XRCCTRL(*this, "ID_TIMEZONE_HOURS", wxSpinCtrl)->SetValue(0);
@@ -786,53 +799,58 @@ void CSiteManager::SetCtrlState()
 		switch (data->m_server.GetProtocol())
 		{
 		case SFTP:
-			XRCCTRL(*this, "ID_PROTOCOL", wxComboBox)->SetValue(_("SFTP"));
+			XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(_("SFTP"));
 			break;
 		case FTP:
 		default:
-			XRCCTRL(*this, "ID_PROTOCOL", wxComboBox)->SetValue(_("FTP"));
+			XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(_("FTP"));
 			break;
 		}
 
 		XRCCTRL(*this, "ID_USER", wxTextCtrl)->Enable(data->m_server.GetLogonType() != ANONYMOUS);
-		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->Enable(data->m_server.GetLogonType() == NORMAL);
+		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->Enable(data->m_server.GetLogonType() == NORMAL || data->m_server.GetLogonType() == ACCOUNT);
+		XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->Enable(data->m_server.GetLogonType() == ACCOUNT);
 
 		switch (data->m_server.GetLogonType())
 		{
 		case NORMAL:
-			XRCCTRL(*this, "ID_LOGONTYPE", wxComboBox)->SetValue(_("Normal"));
+			XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetStringSelection(_("Normal"));
 			break;
 		case ASK:
-			XRCCTRL(*this, "ID_LOGONTYPE", wxComboBox)->SetValue(_("Ask for password"));
+			XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetStringSelection(_("Ask for password"));
 			break;
 		case INTERACTIVE:
-			XRCCTRL(*this, "ID_LOGONTYPE", wxComboBox)->SetValue(_("Interactive"));
+			XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetStringSelection(_("Interactive"));
+			break;
+		case ACCOUNT:
+			XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetStringSelection(_("Account"));
 			break;
 		default:
-			XRCCTRL(*this, "ID_LOGONTYPE", wxComboBox)->SetValue(_("Anonymous"));
+			XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetStringSelection(_("Anonymous"));
 			break;
 		}
 
 		XRCCTRL(*this, "ID_USER", wxTextCtrl)->SetValue(data->m_server.GetUser());
+		XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->SetValue(data->m_server.GetAccount());
 		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->SetValue(data->m_server.GetPass());
 		XRCCTRL(*this, "ID_COMMENTS", wxTextCtrl)->SetValue(data->m_comments);
 
 		switch (data->m_server.GetType())
 		{
 		case UNIX:
-			XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->SetValue(_("Unix"));
+			XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->SetStringSelection(_("Unix"));
 			break;
 		case DOS:
-			XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->SetValue(_("Dos"));
+			XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->SetStringSelection(_("Dos"));
 			break;
 		case MVS:
-			XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->SetValue(_("MVS"));
+			XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->SetStringSelection(_("MVS"));
 			break;
 		case VMS:
-			XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->SetValue(_("VMS"));
+			XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->SetStringSelection(_("VMS"));
 			break;
 		default:
-			XRCCTRL(*this, "ID_SERVERTYPE", wxComboBox)->SetValue(_("Default"));
+			XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->SetStringSelection(_("Default"));
 			break;
 		}
 		XRCCTRL(*this, "ID_LOCALDIR", wxTextCtrl)->SetValue(data->m_localDir);
@@ -883,4 +901,8 @@ void CSiteManager::OnCharsetChange(wxCommandEvent& event)
 {
 	bool checked = XRCCTRL(*this, "ID_CHARSET_CUSTOM", wxRadioButton)->GetValue();
 	XRCCTRL(*this, "ID_ENCODING", wxTextCtrl)->Enable(checked);
+}
+
+void CSiteManager::OnProtocolSelChanged(wxCommandEvent& event)
+{
 }

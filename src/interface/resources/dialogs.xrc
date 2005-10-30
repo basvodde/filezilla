@@ -363,8 +363,7 @@
                               <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
                             </object>
                             <object class="sizeritem">
-                              <object class="wxComboBox" name="ID_PROTOCOL">
-                                <style>wxCB_READONLY</style>
+                              <object class="wxChoice" name="ID_PROTOCOL">
                                 <content>
                                   <item>FTP</item>
                                   <item>SFTP</item>
@@ -390,13 +389,13 @@
                               <flag>wxALIGN_CENTRE_VERTICAL</flag>
                             </object>
                             <object class="sizeritem">
-                              <object class="wxComboBox" name="ID_LOGONTYPE">
-                                <style>wxCB_READONLY</style>
+                              <object class="wxChoice" name="ID_LOGONTYPE">
                                 <content>
                                   <item>Anonymous</item>
                                   <item>Normal</item>
                                   <item>Ask for password</item>
                                   <item>Interactive</item>
+                                  <item>Account</item>
                                 </content>
                                 <selection>0</selection>
                               </object>
@@ -427,6 +426,15 @@
                             <vgap>5</vgap>
                             <hgap>5</hgap>
                             <growablecols>1</growablecols>
+                            <object class="sizeritem">
+                              <object class="wxStaticText">
+                                <label>&amp;Account:</label>
+                              </object>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxTextCtrl" name="ID_ACCOUNT"/>
+                              <flag>wxGROW</flag>
+                            </object>
                           </object>
                           <flag>wxALL|wxGROW</flag>
                           <border>5</border>
@@ -466,8 +474,7 @@
                               <border>5</border>
                             </object>
                             <object class="sizeritem">
-                              <object class="wxComboBox" name="ID_SERVERTYPE">
-                                <style>wxCB_READONLY</style>
+                              <object class="wxChoice" name="ID_SERVERTYPE">
                                 <content>
                                   <item>Default</item>
                                   <item>Unix</item>
@@ -476,7 +483,6 @@
                                   <item>Dos</item>
                                 </content>
                                 <selection>0</selection>
-                                <option>1</option>
                               </object>
                               <flag>wxALL</flag>
                               <border>5</border>

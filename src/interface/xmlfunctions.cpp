@@ -248,11 +248,20 @@ bool GetServer(TiXmlElement *node, CServer& server)
 			return false;
 	
 		wxString pass;
-		if ((long)NORMAL == logonType)
+		if ((long)NORMAL == logonType || (long)ACCOUNT == logonType)
 			pass = GetTextElement(node, "Pass");
-		
+
 		if (!server.SetUser(user, pass))
 			return false;
+		
+		if ((long)ACCOUNT == logonType)
+		{
+			wxString account = GetTextElement(node, "Account");
+			if (account == _T(""))
+				return false;
+			if (!server.SetAccount(account))
+				return false;
+		}
 	}
 
 	int timezoneOffset = GetTextElementInt(node, "TimezoneOffset");
@@ -306,8 +315,11 @@ void SetServer(TiXmlElement *node, const CServer& server)
 	{
 		AddTextElement(node, "User", server.GetUser());
 
-		if (server.GetLogonType() == NORMAL)
+		if (server.GetLogonType() == NORMAL || server.GetLogonType() == ACCOUNT)
 			AddTextElement(node, "Pass", server.GetPass());
+		
+		if (server.GetLogonType() == ACCOUNT)
+			AddTextElement(node, "Account", server.GetAccount());
 	}
 
 	AddTextElement(node, "TimezoneOffset", wxString::Format(_T("%d"), server.GetTimezoneOffset()));

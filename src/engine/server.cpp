@@ -121,6 +121,7 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 	m_port = port;
 	m_user = user;
 	m_pass = pass;
+	m_account = _T("");
 	if (m_user == _T("") || m_user == _T("anonymous"))
 		m_logonType = ANONYMOUS;
 	else
@@ -165,6 +166,14 @@ wxString CServer::GetPass() const
 	return m_pass;
 }
 
+wxString CServer::GetAccount() const
+{
+	if (m_logonType != ACCOUNT)
+		return _T("");
+
+	return m_account;
+}
+
 CServer& CServer::operator=(const CServer &op)
 {
 	m_protocol = op.m_protocol;
@@ -174,6 +183,7 @@ CServer& CServer::operator=(const CServer &op)
 	m_logonType = op.m_logonType;
 	m_user = op.m_user;
 	m_pass = op.m_pass;
+	m_account = op.m_account;
 	m_timezoneOffset = op.m_timezoneOffset;
 	m_pasvMode = op.m_pasvMode;
 	m_maximumMultipleConnections = op.m_maximumMultipleConnections;
@@ -205,6 +215,13 @@ bool CServer::operator==(const CServer &op) const
 			if (m_pass != op.m_pass)
 				return false;
 		}
+		else if (m_logonType == NORMAL)
+		{
+			if (m_pass != op.m_pass)
+				return false;
+			if (m_account != op.m_account)
+				return false;
+		}
 	}
 	else if (m_timezoneOffset != op.m_timezoneOffset)
 		return false;
@@ -228,7 +245,7 @@ bool CServer::operator!=(const CServer &op) const
 	return !(*this == op);
 }
 
-CServer::CServer(enum ServerProtocol protocol, enum ServerType type, wxString host, unsigned int port, wxString user, wxString pass /*=_T("")*/)
+CServer::CServer(enum ServerProtocol protocol, enum ServerType type, wxString host, unsigned int port, wxString user, wxString pass /*=_T("")*/, wxString account /*=_T("")*/)
 {
 	Initialize();
 	m_protocol = protocol;
@@ -238,6 +255,7 @@ CServer::CServer(enum ServerProtocol protocol, enum ServerType type, wxString ho
 	m_logonType = NORMAL;
 	m_user = user;
 	m_pass = pass;
+	m_account = account;
 }
 
 CServer::CServer(enum ServerProtocol protocol, enum ServerType type, wxString host, unsigned int port)
@@ -283,7 +301,7 @@ bool CServer::SetHost(wxString host, unsigned int port)
 	return true;
 }
 
-bool CServer::SetUser(wxString user, wxString pass /*=_T("")*/)
+bool CServer::SetUser(const wxString& user, const wxString& pass /*=_T("")*/)
 {
 	if (m_logonType == ANONYMOUS)
 		return true;
@@ -294,6 +312,16 @@ bool CServer::SetUser(wxString user, wxString pass /*=_T("")*/)
 	m_user = user;
 	m_pass = pass;
 	
+	return true;
+}
+
+bool CServer::SetAccount(const wxString& account)
+{
+	if (m_logonType != ACCOUNT)
+		return false;
+
+	m_account = account;
+
 	return true;
 }
 
@@ -362,6 +390,7 @@ void CServer::Initialize()
 	m_logonType = ANONYMOUS;
 	m_user = _T("");
 	m_pass = _T("");
+	m_account = _T("");
 	m_timezoneOffset = 0;
 	m_pasvMode = MODE_DEFAULT;
 	m_maximumMultipleConnections = 0;

@@ -65,6 +65,7 @@ protected:
 	virtual void OnItemActivated(wxTreeEvent& event);
 	virtual void OnLimitMultipleConnectionsChanged(wxCommandEvent& event);
 	virtual void OnCharsetChange(wxCommandEvent& event);
+	virtual void OnProtocolSelChanged(wxCommandEvent& event);
 	
 	COptions* m_pOptions;
 	CInterProcessMutex* m_pSiteManagerMutex;

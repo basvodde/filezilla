@@ -277,7 +277,7 @@ int CFtpControlSocket::LogonParseResponse()
 		// in blocks of 3 nums. 1st num is command to send, 2nd num is next point in logon sequence array
 		// if 200 series response is rec'd from server as the result of the command, 3rd num is next
 		// point in logon sequence if 300 series rec'd
-		{0,LO,3, 1,LO,ER}, // no firewall
+		{0,LO,3, 1,LO,6, 12,LO,ER}, // no firewall
 		{3,6,3,  4,6,ER, 5,9,9, 0,LO,12, 1,LO,ER}, // SITE hostname
 		{3,6,3,  4,6,ER, 6,LO,9, 1,LO,ER}, // USER after logon
 		{7,3,3,  0,LO,6, 1,LO,ER}, //proxy OPEN
@@ -424,6 +424,18 @@ int CFtpControlSocket::LogonSend()
 
 			res = Send(_T("PASS ") + m_pCurrentServer->GetPass());
 			break;
+		case 12:
+			if (m_pCurrentServer->GetAccount() == _T(""))
+			{
+				LogMessage(::Error, _("Server requires an account. Please specify an account using the Site Manager"));
+				ResetOperation(FZ_REPLY_ERROR);
+				res = false;
+				break;
+			}
+
+			res = Send(_T("ACCT ") + m_pCurrentServer->GetAccount());
+			break;
+
 		default:
 			ResetOperation(FZ_REPLY_INTERNALERROR);
 			res = false;

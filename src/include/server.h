@@ -22,6 +22,7 @@ enum LogonType
 	NORMAL,
 	ASK, // ASK should not be sent to the engine, it's intendet to be used by the interface
 	INTERACTIVE,
+	ACCOUNT
 };
 
 enum PasvMode
@@ -48,7 +49,7 @@ public:
 	CServer(wxString host, unsigned int);
 	CServer(wxString host, unsigned int, wxString user, wxString pass = _T(""));
 	CServer(enum ServerProtocol protocol, enum ServerType type, wxString host, unsigned int);
-	CServer(enum ServerProtocol protocol, enum ServerType type, wxString host, unsigned int, wxString user, wxString pass = _T(""));
+	CServer(enum ServerProtocol protocol, enum ServerType type, wxString host, unsigned int, wxString user, wxString pass = _T(""), wxString account = _T(""));
 
 	void SetType(enum ServerType type);
 	
@@ -59,6 +60,7 @@ public:
 	enum LogonType GetLogonType() const;
 	wxString GetUser() const;
 	wxString GetPass() const;
+	wxString GetAccount() const;
 	int GetTimezoneOffset() const;
 	enum PasvMode GetPasvMode() const;
 	int MaximumMultipleConnections() const;
@@ -71,7 +73,8 @@ public:
 	bool SetHost(wxString Host, unsigned int);
 
 	void SetLogonType(enum LogonType logonType);
-	bool SetUser(wxString user, wxString pass = _T(""));
+	bool SetUser(const wxString& user, const wxString& pass = _T(""));
+	bool SetAccount(const wxString& account);
 
 	CServer& operator=(const CServer &op);
 	bool operator==(const CServer &op) const;
@@ -99,6 +102,7 @@ protected:
 	enum LogonType m_logonType;
 	wxString m_user;
 	wxString m_pass;
+	wxString m_account;
 	int m_timezoneOffset;
 	enum PasvMode m_pasvMode;
 	int m_maximumMultipleConnections;
