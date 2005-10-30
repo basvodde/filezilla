@@ -402,7 +402,7 @@ bool CSiteManager::Verify()
 		return true;
 
 	if (XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->GetStringSelection() == _("SFTP") &&
-		XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->GetStringSelection() == _("PROTOCOL"))
+		XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->GetStringSelection() == _("Account"))
 	{
 		XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetFocus();
 		wxMessageBox(_("'Account' logontype not supported by selected protocol"));

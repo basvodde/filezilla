@@ -189,8 +189,8 @@ void CFilterDialog::SaveFilters()
 		for (unsigned int i = 0; i < set.local.size(); i++)
 		{
 			TiXmlElement* pItem = pSet->InsertEndChild(TiXmlElement("Item"))->ToElement();
-			AddTextElement(pItem, "Local", set.local[i] ? _("1") : _T("0"));
-			AddTextElement(pItem, "Remote", set.remote[i] ? _("1") : _T("0"));
+			AddTextElement(pItem, "Local", set.local[i] ? _T("1") : _T("0"));
+			AddTextElement(pItem, "Remote", set.remote[i] ? _T("1") : _T("0"));
 		}
 	}
 
