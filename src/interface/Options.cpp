@@ -43,6 +43,8 @@ static const t_Option options[OPTIONS_NUM] =
 
 COptions::COptions()
 {
+	m_pLastServer = 0;
+
 	m_acquired = false;
 	
 	for (unsigned int i = 0; i < OPTIONS_NUM; i++)
@@ -62,6 +64,7 @@ COptions::COptions()
 
 COptions::~COptions()
 {
+	delete m_pLastServer;
 	delete m_pXmlDocument;
 }
 
@@ -406,4 +409,27 @@ bool COptions::GetServer(wxString path, CServer& server)
 	FreeXml(false);
 	
 	return res;
+}
+
+void COptions::SetLastServer(const CServer& server)
+{
+	if (!m_pLastServer)
+		m_pLastServer = new CServer(server);
+	SetServer(_T("Settings/LastServer"), server);
+}
+
+bool COptions::GetLastServer(CServer& server)
+{
+	if (!m_pLastServer)
+	{
+		bool res = GetServer(_T("Settings/LastServer"), server);
+		if (res)
+			m_pLastServer = new CServer(server);
+		return res;
+	}
+	else
+	{
+		server = *m_pLastServer;
+		return true;
+	}
 }

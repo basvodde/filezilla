@@ -400,7 +400,7 @@ void CMainFrame::OnQuickconnect(wxCommandEvent &event)
 	m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
 	m_pCommandQueue->ProcessCommand(new CListCommand());
 	
-	m_pOptions->SetServer(_T("Settings/LastServer"), server);
+	m_pOptions->SetLastServer(server);
 }
 
 void CMainFrame::OnEngineEvent(wxEvent &event)
@@ -599,7 +599,7 @@ void CMainFrame::OnUpdateToolbarReconnect(wxUpdateUIEvent &event)
 	}
 	
 	CServer server;
-	event.Enable(m_pOptions->GetServer(_T("Settings/LastServer"), server));
+	event.Enable(m_pOptions->GetLastServer(server));
 }
 
 void CMainFrame::OnReconnect(wxCommandEvent &event)
@@ -608,7 +608,7 @@ void CMainFrame::OnReconnect(wxCommandEvent &event)
 		return;
 	
 	CServer server;
-	if (!m_pOptions->GetServer(_T("Settings/LastServer"), server))
+	if (!m_pOptions->GetLastServer(server))
 		return;
 
 	if (server.GetLogonType() == ASK)
@@ -803,7 +803,7 @@ void CMainFrame::OnSiteManager(wxCommandEvent& event)
 		m_pCommandQueue->ProcessCommand(new CConnectCommand(data.m_server));
 		m_pCommandQueue->ProcessCommand(new CListCommand(data.m_remoteDir));
 
-		m_pOptions->SetServer(_T("Settings/LastServer"), data.m_server);
+		m_pOptions->SetLastServer(data.m_server);
 
 		if (data.m_localDir != _T(""))
 			m_pState->SetLocalDir(data.m_localDir);

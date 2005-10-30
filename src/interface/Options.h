@@ -39,6 +39,9 @@ public:
 	// path is element path below document root, separated by slashes
 	void SetServer(wxString path, const CServer& server);
 	bool GetServer(wxString path, CServer& server);
+
+	void SetLastServer(const CServer& server);
+	bool GetLastServer(CServer& server);
 	
 protected:
 	int Validate(unsigned int nID, int value);
@@ -53,6 +56,8 @@ protected:
 
 	t_OptionsCache m_optionsCache[OPTIONS_NUM];
 	bool m_acquired;
+
+	CServer* m_pLastServer;
 };
 
 #endif //__OPTIONS_H__
