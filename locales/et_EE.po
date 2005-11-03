@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: filezilla\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-30 18:33+0100\n"
-"PO-Revision-Date: 2005-10-10 01:12+0200\n"
+"POT-Creation-Date: 2005-10-31 18:02+0100\n"
+"PO-Revision-Date: 2005-11-02 00:52+0200\n"
 "Last-Translator: Andrus Lillemaa <andrus@taebla.ee>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,7 +21,7 @@ msgstr "Aega kulunud: %H:%M:%S"
 #: ../../locales/../src/interface/statuslinectrl.cpp:48
 #: ../../locales/../src/interface/statuslinectrl.cpp:115
 msgid "%H:%M:%S left"
-msgstr "Aega jäänud: %H:%M:%S"
+msgstr "Aega lõpuni: %H:%M:%S"
 
 #: ../../locales/../src/interface/QueueView.cpp:114
 #, c-format
@@ -54,7 +54,7 @@ msgstr "&Programmist..."
 
 #: resources.h:42
 msgid "&Account:"
-msgstr ""
+msgstr "&Konto:"
 
 #: resources.h:60
 msgid "&Active"
@@ -303,12 +303,12 @@ msgstr "&Kirjuta"
 
 #: ../../locales/../src/interface/sitemanager.cpp:408
 msgid "'Account' logontype not supported by selected protocol"
-msgstr ""
+msgstr "'Konto' tüüpi sisselogimine ei ole valitud protokolli poolt toetatud"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:119
 #: ../../locales/../src/interface/statuslinectrl.cpp:124
 msgid "--:--:-- left"
-msgstr "Aega jäänud: --:--:-- "
+msgstr "Aega lõpuni: --:--:-- "
 
 #: ../../locales/../src/interface/FileZilla.cpp:347
 msgid ""
@@ -348,7 +348,7 @@ msgstr "FileZillast"
 #: ../../locales/../src/interface/sitemanager.cpp:623
 #: ../../locales/../src/interface/sitemanager.cpp:826
 msgid "Account"
-msgstr ""
+msgstr "Konto"
 
 #: resources.h:109
 msgid "Active mode IP"
@@ -519,7 +519,7 @@ msgstr "Kompileerimise lipud:"
 
 #: resources.h:207
 msgid "Conditions are c&ase sensitive"
-msgstr ""
+msgstr "Tingimused on tõs&tutundlikud"
 
 #: ../../locales/../src/interface/LocalListView.cpp:805
 #: ../../locales/../src/interface/RemoteListView.cpp:715
@@ -591,8 +591,8 @@ msgstr ""
 "Selle seansi jaoks kasutatakse vaikeväärtusi. Kõik tehtud muudatused "
 "seadistustes jäävad salvestamata."
 
-#: ../../locales/../src/interface/filter.cpp:137
-#: ../../locales/../src/interface/filter.cpp:217
+#: ../../locales/../src/interface/filter.cpp:147
+#: ../../locales/../src/interface/filter.cpp:228
 #: ../../locales/../src/interface/sitemanager.cpp:252
 #, c-format
 msgid ""
@@ -676,6 +676,11 @@ msgstr "Kataloogi '%s' loomine..."
 msgid "Critical error"
 msgstr "Kriitiline viga"
 
+#: ../../locales/../src/interface/filter.cpp:99
+#, fuzzy
+msgid "Custom filter set"
+msgstr "Filtrite muutmine"
+
 #: resources.h:59
 msgid "D&efault"
 msgstr "V&aikeväärtused"
@@ -733,9 +738,8 @@ msgid "Details for new key:"
 msgstr "Uue võtme detailid:"
 
 #: resources.h:210
-#, fuzzy
 msgid "Dire&ctories"
-msgstr "Kataloogidele"
+msgstr "Kata&loogid"
 
 #: ../../locales/../src/interface/QueueView.cpp:565
 msgid "Direction"
@@ -858,8 +862,8 @@ msgstr ""
 msgid "Error %d writing to socket"
 msgstr "Socketi kirjutamise viga %d"
 
-#: ../../locales/../src/interface/filter.cpp:138
-#: ../../locales/../src/interface/filter.cpp:218
+#: ../../locales/../src/interface/filter.cpp:148
+#: ../../locales/../src/interface/filter.cpp:229
 #: ../../locales/../src/interface/Options.cpp:59
 #: ../../locales/../src/interface/QueueView.cpp:1442
 #: ../../locales/../src/interface/QueueView.cpp:1478
@@ -884,9 +888,8 @@ msgid "Exe&cute"
 msgstr "Käi&vita"
 
 #: resources.h:201
-#, fuzzy
 msgid "F&ilter name:"
-msgstr "Filtri nimi:"
+msgstr "F&iltri nimi:"
 
 #: resources.h:32 ../../locales/../src/interface/sitemanager.cpp:609
 #: ../../locales/../src/interface/sitemanager.cpp:769
@@ -944,9 +947,8 @@ msgid "Failed to write xml file"
 msgstr "XML faili kirjutamine ebaõnnestus"
 
 #: resources.h:209
-#, fuzzy
 msgid "Fil&es"
-msgstr "Failidele"
+msgstr "Fai&lid"
 
 #: ../../locales/../src/interface/LocalListView.cpp:394
 #: ../../locales/../src/interface/LocalListView.cpp:412
@@ -1018,9 +1020,8 @@ msgid "Filter applies to:"
 msgstr "Filter rakendub:"
 
 #: ../../locales/../src/interface/filteredit.cpp:467
-#, fuzzy
 msgid "Filter name already exists"
-msgstr "Sihtfail on juba olemas"
+msgstr "Selline filtri nimi juba olemas"
 
 #: resources.h:181
 msgid "Filter sets:"
@@ -1243,7 +1244,7 @@ msgstr "Nimi:"
 
 #: ../../locales/../src/interface/filteredit.cpp:458
 msgid "Need to enter filter name"
-msgstr ""
+msgstr "Vaja sisestada filtri nimi"
 
 #: ../../locales/../src/interface/sitemanager.cpp:417
 msgid "Need to specify a character encoding"
@@ -1522,7 +1523,7 @@ msgstr "Server / kohalik fail"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:430
 msgid ""
 "Server requires an account. Please specify an account using the Site Manager"
-msgstr ""
+msgstr "Server nõuab kontot. Palun kirjelda konto kasutades Saidihaldurit"
 
 #: resources.h:31 resources.h:45
 msgid "Server&type:"
