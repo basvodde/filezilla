@@ -783,7 +783,7 @@ int CFtpControlSocket::ListParseResponse()
 		pData->opState = list_list;
 		break;
 	case list_list:
-		if (!m_Response.CmpNoCase(_T("550 No members found.")) && m_pCurrentServer->GetType() == MVS)
+		if (IsMisleadingListResponse())
 		{
 			CDirectoryListing *pListing = new CDirectoryListing();
 			pListing->path = m_CurrentPath;
@@ -2532,4 +2532,22 @@ int CFtpControlSocket::ChmodSend(int prevResult /*=FZ_REPLY_OK*/)
 	}
 
 	return FZ_REPLY_WOULDBLOCK;
+}
+
+bool CFtpControlSocket::IsMisleadingListResponse() const
+{
+	// Some servers are broken. Instead of an empty listing, some MVS servers
+	// for example they return "550 no members found"
+	// Other servers return "550 No files found."
+
+	if (m_Response.CmpNoCase(_T("550 No members found.")))
+		return true;
+
+	if (m_Response.CmpNoCase(_T("550 No data sets found.")))
+		return true;
+
+	if (m_Response.CmpNoCase(_T("550 No files found.")))
+		return true;
+
+	return false;
 }
