@@ -673,6 +673,34 @@ CDirectoryListingParser::CDirectoryListingParser(CFileZillaEnginePrivate *pEngin
 	m_MonthNamesMap[_T("11\x9c\x9e")] = 11;
 	m_MonthNamesMap[_T("12\x9c\x9e")] = 12;
 
+	//Korean (Unicode) month names
+	m_MonthNamesMap[_T("1\xc6\xd4")] = 1;
+	m_MonthNamesMap[_T("2\xc6\xd4")] = 2;
+	m_MonthNamesMap[_T("3\xc6\xd4")] = 3;
+	m_MonthNamesMap[_T("4\xc6\xd4")] = 4;
+	m_MonthNamesMap[_T("5\xc6\xd4")] = 5;
+	m_MonthNamesMap[_T("6\xc6\xd4")] = 6;
+	m_MonthNamesMap[_T("7\xc6\xd4")] = 7;
+	m_MonthNamesMap[_T("8\xc6\xd4")] = 8;
+	m_MonthNamesMap[_T("9\xc6\xd4")] = 9;
+	m_MonthNamesMap[_T("10\xc6\xd4")] = 10;
+	m_MonthNamesMap[_T("11\xc6\xd4")] = 11;
+	m_MonthNamesMap[_T("12\xc6\xd4")] = 12;
+
+	//Korean (EUC-KR) month names
+	m_MonthNamesMap[_T("1\xbf\xf9")] = 1;
+	m_MonthNamesMap[_T("2\xbf\xf9")] = 2;
+	m_MonthNamesMap[_T("3\xbf\xf9")] = 3;
+	m_MonthNamesMap[_T("4\xbf\xf9")] = 4;
+	m_MonthNamesMap[_T("5\xbf\xf9")] = 5;
+	m_MonthNamesMap[_T("6\xbf\xf9")] = 6;
+	m_MonthNamesMap[_T("7\xbf\xf9")] = 7;
+	m_MonthNamesMap[_T("8\xbf\xf9")] = 8;
+	m_MonthNamesMap[_T("9\xbf\xf9")] = 9;
+	m_MonthNamesMap[_T("10\xbf\xf9")] = 10;
+	m_MonthNamesMap[_T("11\xbf\xf9")] = 11;
+	m_MonthNamesMap[_T("12\xbf\xf9")] = 12;
+
 	//There are more languages and thus month 
 	//names, but as long as knowbody reports a 
 	//problem, I won't add them, there are way 
