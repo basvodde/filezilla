@@ -37,6 +37,7 @@ public:
 class CFilterSet
 {
 public:
+	wxString name;
 	std::vector<bool> local;
 	std::vector<bool> remote;
 };
@@ -69,6 +70,8 @@ protected:
 
 	static std::vector<CFilterSet> m_globalFilterSets;
 	std::vector<CFilterSet> m_filterSets;
+	unsigned int m_currentFilterSet;
+	static unsigned int m_globalCurrentFilterSet;
 
 	DECLARE_EVENT_TABLE();
 	void OnOK(wxCommandEvent& event);
@@ -77,6 +80,11 @@ protected:
 	void OnFilterSelect(wxCommandEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);
 	void OnKeyEvent(wxKeyEvent& event);
+	void OnSaveAs(wxCommandEvent& event);
+	void OnDeleteSet(wxCommandEvent& event);
+	void OnSetSelect(wxCommandEvent& event);
+
+	void OnChangeAll(wxCommandEvent& event);
 
 	bool m_shiftClick;
 

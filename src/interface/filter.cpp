@@ -7,16 +7,26 @@
 #include "xmlfunctions.h"
 #include <wx/regex.h>
 #include "Mainfrm.h"
+#include "inputdialog.h"
 
 bool CFilterDialog::m_loaded = false;
 std::vector<CFilter> CFilterDialog::m_globalFilters;
 std::vector<CFilterSet> CFilterDialog::m_globalFilterSets;
+unsigned int CFilterDialog::m_globalCurrentFilterSet = 0;
 
 BEGIN_EVENT_TABLE(CFilterDialog, wxDialogEx)
 EVT_BUTTON(XRCID("wxID_OK"), CFilterDialog::OnOK)
 EVT_BUTTON(XRCID("wxID_CANCEL"), CFilterDialog::OnCancel)
 EVT_BUTTON(XRCID("ID_EDIT"), CFilterDialog::OnEdit)
 EVT_CHECKLISTBOX(wxID_ANY, CFilterDialog::OnFilterSelect)
+EVT_BUTTON(XRCID("ID_SAVESET"), CFilterDialog::OnSaveAs)
+EVT_BUTTON(XRCID("ID_DELETESET"), CFilterDialog::OnDeleteSet)
+EVT_CHOICE(XRCID("ID_SETS"), CFilterDialog::OnSetSelect)
+
+EVT_BUTTON(XRCID("ID_LOCAL_ENABLEALL"), CFilterDialog::OnChangeAll)
+EVT_BUTTON(XRCID("ID_LOCAL_DISABLEALL"), CFilterDialog::OnChangeAll)
+EVT_BUTTON(XRCID("ID_REMOTE_ENABLEALL"), CFilterDialog::OnChangeAll)
+EVT_BUTTON(XRCID("ID_REMOTE_DISABLEALL"), CFilterDialog::OnChangeAll)
 END_EVENT_TABLE();
 
 CFilterCondition::CFilterCondition()
@@ -62,6 +72,7 @@ CFilter::CFilter()
 
 CFilterDialog::CFilterDialog()
 {
+	m_currentFilterSet = 0;
 	m_pMainFrame = 0;
 	m_shiftClick = false;
 	
@@ -93,6 +104,13 @@ bool CFilterDialog::Create(CMainFrame* parent)
 
 	DisplayFilters();
 
+	wxChoice* pChoice = XRCCTRL(*this, "ID_SETS", wxChoice);
+	wxString name = _("Custom filter set");
+	pChoice->Append(_T("<") + name + _T(">"));
+	for (unsigned int i = 1; i < m_filterSets.size(); i++)
+		pChoice->Append(m_filterSets[i].name);
+	pChoice->SetSelection(m_currentFilterSet);
+
 	return true;
 }
 
@@ -101,6 +119,7 @@ void CFilterDialog::OnOK(wxCommandEvent& event)
 	m_globalFilters = m_filters;
 	CompileRegexes();
 	m_globalFilterSets = m_filterSets;
+	m_globalCurrentFilterSet = m_currentFilterSet;
 
 	SaveFilters();
 	EndModal(wxID_OK);
@@ -180,11 +199,15 @@ void CFilterDialog::SaveFilters()
 	}
 
 	pSets = pDocument->InsertEndChild(TiXmlElement("Sets"))->ToElement();
+	SetTextAttribute(pSets, "Current", wxString::Format(_T("%d"), m_currentFilterSet));
 
 	for (std::vector<CFilterSet>::const_iterator iter = m_globalFilterSets.begin(); iter != m_globalFilterSets.end(); iter++)
 	{
 		const CFilterSet& set = *iter;
 		TiXmlElement* pSet = pSets->InsertEndChild(TiXmlElement("Set"))->ToElement();
+
+		if (iter != m_globalFilterSets.begin())
+			AddTextElement(pSet, "Name", set.name);
 
 		for (unsigned int i = 0; i < set.local.size(); i++)
 		{
@@ -293,8 +316,7 @@ void CFilterDialog::LoadFilters()
 		return;
 	}
 
-	TiXmlElement* pSet = pSets->FirstChildElement("Set");
-	while (pSet)
+	for (TiXmlElement* pSet = pSets->FirstChildElement("Set"); pSet; pSet = pSet->NextSiblingElement("Set"))
 	{
 		CFilterSet set;
 		TiXmlElement* pItem = pSet->FirstChildElement("Item");
@@ -307,12 +329,28 @@ void CFilterDialog::LoadFilters()
 
 			pItem = pItem->NextSiblingElement("Item");
 		}
+
+		if (!m_globalFilterSets.empty())
+		{
+			set.name = GetTextElement(pSet, "Name");
+			if (set.name == _T(""))
+				continue;
+		}
+
 		if (set.local.size() == m_filters.size())
 			m_globalFilterSets.push_back(set);
-
-		pSet = pSet->NextSiblingElement("Set");
 	}
 	m_filterSets = m_globalFilterSets;
+
+	wxString attribute = GetTextAttribute(pSets, "Current");
+	unsigned long value;
+	if (attribute.ToULong(&value))
+	{
+		if (value < m_globalFilterSets.size())
+			m_globalCurrentFilterSet = value;
+	}
+
+	m_currentFilterSet = m_globalCurrentFilterSet;
 
 	delete pDocument->GetDocument();
 }
@@ -331,8 +369,8 @@ void CFilterDialog::DisplayFilters()
 		pLocalFilters->Append(filter.name);
 		pRemoteFilters->Append(filter.name);
 
-		pLocalFilters->Check(i, m_filterSets[0].local[i]);
-		pRemoteFilters->Check(i, m_filterSets[0].remote[i]);
+		pLocalFilters->Check(i, m_filterSets[m_currentFilterSet].local[i]);
+		pRemoteFilters->Check(i, m_filterSets[m_currentFilterSet].remote[i]);
 	}
 }
 
@@ -363,6 +401,14 @@ void CFilterDialog::OnFilterSelect(wxCommandEvent& event)
 			pLocal->Check(item, pRemote->IsChecked(event.GetSelection()));
 	}
 
+	if (m_currentFilterSet)
+	{
+		m_filterSets[0] = m_filterSets[m_currentFilterSet];
+		m_currentFilterSet = 0;
+		wxChoice* pChoice = XRCCTRL(*this, "ID_SETS", wxChoice);
+		pChoice->SetSelection(0);
+	}
+
 	bool localChecked = pLocal->IsChecked(event.GetSelection());
 	bool remoteChecked = pRemote->IsChecked(event.GetSelection());
 	m_filterSets[0].local[item] = localChecked;
@@ -371,18 +417,20 @@ void CFilterDialog::OnFilterSelect(wxCommandEvent& event)
 
 bool CFilterDialog::FilenameFiltered(const wxString& name, bool dir, wxLongLong size, bool local) const
 {
+	wxASSERT(m_currentFilterSet < m_filterSets.size());
+
 	// Check active filters
 	for (unsigned int i = 0; i < m_filters.size(); i++)
 	{
 		if (local)
 		{
-			if (m_filterSets[0].local[i])
+			if (m_filterSets[m_currentFilterSet].local[i])
 				if (FilenameFilteredByFilter(name, dir, size, i))
 					return true;
 		}
 		else
 		{
-			if (m_filterSets[0].remote[i])
+			if (m_filterSets[m_currentFilterSet].remote[i])
 				if (FilenameFilteredByFilter(name, dir, size, i))
 					return true;
 		}
@@ -484,4 +532,98 @@ bool CFilterDialog::CompileRegexes()
 		}
 	}
 	return true;
+}
+
+void CFilterDialog::OnSaveAs(wxCommandEvent& event)
+{
+	CInputDialog dlg;
+	dlg.Create(this, _("Enter name for filterset"), _("Please enter a unique name for this filter set"));
+	if (dlg.ShowModal() != wxID_OK)
+		return;
+
+	wxString name = dlg.GetValue();
+	wxChoice* pChoice = XRCCTRL(*this, "ID_SETS", wxChoice);
+	int pos = pChoice->FindString(name);
+	if (pos != wxNOT_FOUND)
+	{
+		if (wxMessageBox(_("Given filterset name already exists, overwrite filter?"), _("Filter set already exists"), wxICON_QUESTION | wxYES_NO) != wxYES)
+			return;
+	}
+
+	if (pos == wxNOT_FOUND)
+	{
+		pos = m_filterSets.size();
+		m_filterSets.push_back(m_filterSets[0]);
+		pChoice->Append(name);
+	}
+	else
+		m_filterSets[pos] = m_filterSets[0];
+
+	m_filterSets[pos].name = name;
+
+	pChoice->SetSelection(pos);
+	m_currentFilterSet = pos;
+}
+
+void CFilterDialog::OnDeleteSet(wxCommandEvent& event)
+{
+	wxChoice* pChoice = XRCCTRL(*this, "ID_SETS", wxChoice);
+	int pos = pChoice->GetSelection();
+	if (pos == -1)
+		return;
+
+	if (!pos)
+	{
+		wxMessageBox(_("This filter set cannot be removed"));
+		return;
+	}
+
+	m_filterSets[0] = m_filterSets[pos];
+
+	pChoice->Delete(pos);
+	m_filterSets.erase(m_filterSets.begin() + pos);
+	wxASSERT(!m_filterSets.empty());
+
+	pChoice->SetSelection(0);
+	m_currentFilterSet = 0;
+}
+
+void CFilterDialog::OnSetSelect(wxCommandEvent& event)
+{
+	m_currentFilterSet = event.GetSelection();
+	DisplayFilters();
+}
+
+void CFilterDialog::OnChangeAll(wxCommandEvent& event)
+{
+	bool check = true;
+	if (event.GetId() == XRCID("ID_LOCAL_DISABLEALL") || event.GetId() == XRCID("ID_REMOTE_DISABLEALL"))
+		check = false;
+
+	std::vector<bool>* pValues;
+	wxCheckListBox* pListBox;
+	if (event.GetId() == XRCID("ID_LOCAL_ENABLEALL") || event.GetId() == XRCID("ID_LOCAL_DISABLEALL"))
+	{
+		pListBox = XRCCTRL(*this, "ID_LOCALFILTERS", wxCheckListBox);
+		pValues = &m_filterSets[0].local;
+	}
+	else
+	{
+		pListBox = XRCCTRL(*this, "ID_REMOTEFILTERS", wxCheckListBox);
+		pValues = &m_filterSets[0].remote;
+	}
+
+	if (m_currentFilterSet)
+	{
+		m_filterSets[0] = m_filterSets[m_currentFilterSet];
+		m_currentFilterSet = 0;
+		wxChoice* pChoice = XRCCTRL(*this, "ID_SETS", wxChoice);
+		pChoice->SetSelection(0);
+	}
+
+	for (int i = 0; i < pListBox->GetCount(); i++)
+	{
+		pListBox->Check(i, check);
+		(*pValues)[i] = check;
+	}
 }

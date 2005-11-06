@@ -14,6 +14,9 @@ char* ConvUTF8(const wxString& value);
 // Convert the given utf-8 string into wxString
 wxString ConvLocal(const char *value);
 
+void SetTextAttribute(TiXmlElement* node, const char* name, const wxString& value);
+wxString GetTextAttribute(TiXmlElement* node, const char* name);
+
 // Add a new element with the specified name and value to the xml document
 void AddTextElement(TiXmlElement* node, const char* name, const wxString& value);
 

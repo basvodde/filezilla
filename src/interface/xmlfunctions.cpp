@@ -351,3 +351,30 @@ void SetServer(TiXmlElement *node, const CServer& server)
 		break;
 	}
 }
+
+void SetTextAttribute(TiXmlElement* node, const char* name, const wxString& value)
+{
+	wxASSERT(node);
+
+	char* utf8 = ConvUTF8(value);
+	if (!utf8)
+		return;
+	
+    node->SetAttribute(name, utf8);
+	delete [] utf8;
+}
+
+wxString GetTextAttribute(TiXmlElement* node, const char* name)
+{
+	wxASSERT(node);
+
+	TiXmlElement* element = node->FirstChildElement(name);
+	if (!element)
+		return _T("");
+
+	const char* value = node->Attribute(name);
+	if (!value)
+		return _T("");
+	
+	return ConvLocal(value);
+}
