@@ -2540,13 +2540,13 @@ bool CFtpControlSocket::IsMisleadingListResponse() const
 	// for example they return "550 no members found"
 	// Other servers return "550 No files found."
 
-	if (m_Response.CmpNoCase(_T("550 No members found.")))
+	if (!m_Response.CmpNoCase(_T("550 No members found.")))
 		return true;
 
-	if (m_Response.CmpNoCase(_T("550 No data sets found.")))
+	if (!m_Response.CmpNoCase(_T("550 No data sets found.")))
 		return true;
 
-	if (m_Response.CmpNoCase(_T("550 No files found.")))
+	if (!m_Response.CmpNoCase(_T("550 No files found.")))
 		return true;
 
 	return false;
