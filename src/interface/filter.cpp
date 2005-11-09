@@ -546,7 +546,7 @@ void CFilterDialog::OnSaveAs(wxCommandEvent& event)
 	int pos = pChoice->FindString(name);
 	if (pos != wxNOT_FOUND)
 	{
-		if (wxMessageBox(_("Given filterset name already exists, overwrite filter?"), _("Filter set already exists"), wxICON_QUESTION | wxYES_NO) != wxYES)
+		if (wxMessageBox(_("Given filterset name already exists, overwrite filter set?"), _("Filter set already exists"), wxICON_QUESTION | wxYES_NO) != wxYES)
 			return;
 	}
 
