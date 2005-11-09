@@ -76,6 +76,7 @@ protected:
 	DECLARE_EVENT_TABLE();
 	void OnOK(wxCommandEvent& event);
 	void OnCancel(wxCommandEvent& event);
+	void OnApply(wxCommandEvent& event);
 	void OnEdit(wxCommandEvent& event);
 	void OnFilterSelect(wxCommandEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);

@@ -8,6 +8,7 @@
 #include <wx/regex.h>
 #include "Mainfrm.h"
 #include "inputdialog.h"
+#include "state.h"
 
 bool CFilterDialog::m_loaded = false;
 std::vector<CFilter> CFilterDialog::m_globalFilters;
@@ -17,6 +18,7 @@ unsigned int CFilterDialog::m_globalCurrentFilterSet = 0;
 BEGIN_EVENT_TABLE(CFilterDialog, wxDialogEx)
 EVT_BUTTON(XRCID("wxID_OK"), CFilterDialog::OnOK)
 EVT_BUTTON(XRCID("wxID_CANCEL"), CFilterDialog::OnCancel)
+EVT_BUTTON(XRCID("wxID_APPLY"), CFilterDialog::OnApply)
 EVT_BUTTON(XRCID("ID_EDIT"), CFilterDialog::OnEdit)
 EVT_CHECKLISTBOX(wxID_ANY, CFilterDialog::OnFilterSelect)
 EVT_BUTTON(XRCID("ID_SAVESET"), CFilterDialog::OnSaveAs)
@@ -626,4 +628,16 @@ void CFilterDialog::OnChangeAll(wxCommandEvent& event)
 		pListBox->Check(i, check);
 		(*pValues)[i] = check;
 	}
+}
+
+void CFilterDialog::OnApply(wxCommandEvent& event)
+{
+	m_globalFilters = m_filters;
+	CompileRegexes();
+	m_globalFilterSets = m_filterSets;
+	m_globalCurrentFilterSet = m_currentFilterSet;
+
+	SaveFilters();
+
+	m_pMainFrame->GetState()->ApplyCurrentFilter();
 }
