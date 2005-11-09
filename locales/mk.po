@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: filezilla\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-30 18:33+0100\n"
-"PO-Revision-Date: 2005-10-27 08:39+0200\n"
+"POT-Creation-Date: 2005-11-09 13:35+0100\n"
+"PO-Revision-Date: 2005-11-04 07:33+0100\n"
 "Last-Translator: Jovan Kostovski <chombium@gmail.com>\n"
 "Language-Team: Macedonian <ossm-members@hedona.on.net.mk>\n"
 "MIME-Version: 1.0\n"
@@ -57,7 +57,7 @@ msgstr "&За..."
 
 #: resources.h:42
 msgid "&Account:"
-msgstr ""
+msgstr "&Сметка"
 
 #: resources.h:60
 msgid "&Active"
@@ -116,7 +116,7 @@ msgstr "&Пад"
 msgid "&Create directory"
 msgstr "&Создади именик"
 
-#: resources.h:26 resources.h:198
+#: resources.h:26 resources.h:182 resources.h:198
 msgid "&Delete"
 msgstr "&Избриши"
 
@@ -127,6 +127,11 @@ msgstr "&Преземи"
 #: resources.h:218
 msgid "&Edit"
 msgstr "&Уреди"
+
+#: resources.h:184
+#, fuzzy
+msgid "&Edit filters..."
+msgstr "Уреди филтри..."
 
 #: resources.h:70
 msgid "&Encoding:"
@@ -151,6 +156,11 @@ msgstr "&Датотека"
 #: resources.h:249
 msgid "&File Attributes"
 msgstr "&Својства на датотека"
+
+#: resources.h:181
+#, fuzzy
+msgid "&Filter sets:"
+msgstr "Филтерот поставува:"
 
 #: resources.h:196
 msgid "&Filters:"
@@ -252,6 +262,11 @@ msgstr "&Преименувај"
 msgid "&Resume"
 msgstr "&Продолжи"
 
+#: resources.h:183
+#, fuzzy
+msgid "&Save as..."
+msgstr "Зачувај како..."
+
 #: resources.h:123
 msgid "&Select language:"
 msgstr "&Избери јазик:"
@@ -307,6 +322,8 @@ msgstr "&Запиши"
 #: ../../locales/../src/interface/sitemanager.cpp:408
 msgid "'Account' logontype not supported by selected protocol"
 msgstr ""
+"Типот на најавување кој го користи сметката не е поддржан од избраниот "
+"потокол"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:119
 #: ../../locales/../src/interface/statuslinectrl.cpp:124
@@ -355,7 +372,7 @@ msgstr "За FileZilla"
 #: ../../locales/../src/interface/sitemanager.cpp:623
 #: ../../locales/../src/interface/sitemanager.cpp:826
 msgid "Account"
-msgstr ""
+msgstr "Сметка"
 
 #: resources.h:109
 msgid "Active mode IP"
@@ -603,8 +620,8 @@ msgstr ""
 "За оваа сесија, ќе се користат стандардните поставувања и сите измени нема "
 "да бидат зачувани."
 
-#: ../../locales/../src/interface/filter.cpp:137
-#: ../../locales/../src/interface/filter.cpp:217
+#: ../../locales/../src/interface/filter.cpp:156
+#: ../../locales/../src/interface/filter.cpp:240
 #: ../../locales/../src/interface/sitemanager.cpp:252
 #, c-format
 msgid ""
@@ -690,6 +707,11 @@ msgstr "Го креирам именикот '%s'..."
 msgid "Critical error"
 msgstr "Критична грешка"
 
+#: ../../locales/../src/interface/filter.cpp:108
+#, fuzzy
+msgid "Custom filter set"
+msgstr "Уреди филтри"
+
 #: resources.h:59
 msgid "D&efault"
 msgstr "С&тандардно"
@@ -697,6 +719,11 @@ msgstr "С&тандардно"
 #: resources.h:235 resources.h:245
 msgid "D&elete"
 msgstr "Из&бриши"
+
+#: resources.h:187
+#, fuzzy
+msgid "D&isable all"
+msgstr "Оневозможи ги сите"
 
 #: resources.h:74
 msgid "D&iscard"
@@ -730,10 +757,6 @@ msgstr "Стандардeн мрежен именик:"
 msgid "Default transfer type:"
 msgstr "Стандардно тип на пренос:"
 
-#: resources.h:182
-msgid "Delete"
-msgstr "Избриши"
-
 #: resources.h:236 resources.h:246
 msgid "Delete selected files and folders"
 msgstr "Избриши ги избраните датотеки и папки"
@@ -766,8 +789,9 @@ msgstr "Филтри за прелисување на именици"
 msgid "Directory listing successful"
 msgstr "Успешно прелистување на имениците"
 
-#: resources.h:187 resources.h:190
-msgid "Disable all"
+#: resources.h:190
+#, fuzzy
+msgid "Disa&ble all"
 msgstr "Оневозможи ги сите"
 
 #: resources.h:284
@@ -802,6 +826,11 @@ msgstr "Dos"
 msgid "Download selected files and folders"
 msgstr "Преземи ги избраните именици и датотеки"
 
+#: resources.h:186
+#, fuzzy
+msgid "E&nable all"
+msgstr "Овозможи ги сите"
+
 #: resources.h:137
 msgid "E&xecute"
 msgstr "И&зврши"
@@ -818,16 +847,13 @@ msgstr "На секој филтер му е потребно барем едн�
 msgid "Edit filters"
 msgstr "Уреди филтри"
 
-#: resources.h:184
-msgid "Edit filters..."
-msgstr "Уреди филтри..."
-
 #: resources.h:116
 msgid "Email:"
 msgstr "Е-пошта:"
 
-#: resources.h:186 resources.h:189
-msgid "Enable all"
+#: resources.h:189
+#, fuzzy
+msgid "En&able all"
 msgstr "Овозможи ги сите"
 
 #: resources.h:222
@@ -837,6 +863,10 @@ msgstr "Внеси &сопствена команда..."
 #: ../../locales/../src/interface/Mainfrm.cpp:324
 msgid "Enter custom command"
 msgstr "Внеси сопствена команда..."
+
+#: ../../locales/../src/interface/filter.cpp:540
+msgid "Enter name for filterset"
+msgstr ""
 
 #: resources.h:75
 msgid "Enter password"
@@ -871,8 +901,8 @@ msgstr ""
 msgid "Error %d writing to socket"
 msgstr "Грешка %d при запишување во приклучокот"
 
-#: ../../locales/../src/interface/filter.cpp:138
-#: ../../locales/../src/interface/filter.cpp:218
+#: ../../locales/../src/interface/filter.cpp:157
+#: ../../locales/../src/interface/filter.cpp:241
 #: ../../locales/../src/interface/Options.cpp:59
 #: ../../locales/../src/interface/QueueView.cpp:1442
 #: ../../locales/../src/interface/QueueView.cpp:1478
@@ -1039,9 +1069,10 @@ msgstr "Филтерот се однесува на:"
 msgid "Filter name already exists"
 msgstr "Името на филтерот веќе постои"
 
-#: resources.h:181
-msgid "Filter sets:"
-msgstr "Филтерот поставува:"
+#: ../../locales/../src/interface/filter.cpp:549
+#, fuzzy
+msgid "Filter set already exists"
+msgstr "Името на филтерот веќе постои"
 
 #: resources.h:288 resources.h:289
 msgid "Filter the directory listings"
@@ -1063,6 +1094,11 @@ msgstr "Наметни &UTF-8"
 #: resources.h:28
 msgid "General"
 msgstr "Општо"
+
+#: ../../locales/../src/interface/filter.cpp:549
+#, fuzzy
+msgid "Given filterset name already exists, overwrite filter set?"
+msgstr "Одредишната датотека веже постои, дали навистина сакате да продолжите?"
 
 #: resources.h:134
 msgid "Group permissions"
@@ -1356,6 +1392,11 @@ msgstr "Дозволи"
 msgid "Please enter a password for this server:"
 msgstr "Ве молам внесете лозинка за овој сервер:"
 
+#: ../../locales/../src/interface/filter.cpp:540
+#, fuzzy
+msgid "Please enter a unique name for this filter set"
+msgstr "Ве молам внесете лозинка за овој сервер:"
+
 #: ../../locales/../src/interface/Mainfrm.cpp:324
 msgid ""
 "Please enter raw FTP command.\n"
@@ -1510,10 +1551,6 @@ msgstr "Примам листа со именици..."
 msgid "SFTP"
 msgstr "SFTP"
 
-#: resources.h:183
-msgid "Save as..."
-msgstr "Зачувај како..."
-
 #: ../../locales/../src/interface/QueueView.cpp:1365
 msgid "Scanning for files to add to queue"
 msgstr "Скенирање за датотеки за да се додадат во редот на чекање"
@@ -1546,6 +1583,9 @@ msgstr "Сервер / локална датотека"
 msgid ""
 "Server requires an account. Please specify an account using the Site Manager"
 msgstr ""
+"Серверот бара корисничка сметка.\n"
+" Ве молам внесете ги податоците за сметката користејќи го Менаџерот на "
+"мрежни локации"
 
 #: resources.h:31 resources.h:45
 msgid "Server&type:"
@@ -1713,6 +1753,10 @@ msgstr "Грешка на тема"
 #: ../../locales/../src/interface/settingsdialog.cpp:74
 msgid "Themes"
 msgstr "Теми"
+
+#: ../../locales/../src/interface/filter.cpp:577
+msgid "This filter set cannot be removed"
+msgstr ""
 
 #: ../../locales/../src/interface/RemoteListView.cpp:51
 msgid "Time"
@@ -1902,6 +1946,9 @@ msgstr "themes.xml не е пронајден, не може да се прон�
 #: resources.h:6
 msgid "with the following file?"
 msgstr "со следната датотека?"
+
+#~ msgid "Delete"
+#~ msgstr "Избриши"
 
 #~ msgid "1"
 #~ msgstr "1"

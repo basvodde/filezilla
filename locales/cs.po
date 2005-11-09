@@ -1,11 +1,11 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version: FileZilla 3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-30 18:33+0100\n"
-"PO-Revision-Date: 2005-10-10 00:17+0100\n"
+"POT-Creation-Date: 2005-11-09 13:35+0100\n"
+"PO-Revision-Date: 2005-11-05 00:39+0100\n"
 "Last-Translator: Michal Molhanec <michal@molhanec.net>\n"
-"Language-Team: \n"
+"Language-Team: Michal Molhanec <michal@molhanec.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -53,7 +53,7 @@ msgstr "&O programu Filezilla"
 
 #: resources.h:42
 msgid "&Account:"
-msgstr ""
+msgstr "Kon&to:"
 
 #: resources.h:60
 msgid "&Active"
@@ -85,7 +85,7 @@ msgstr "&Binární"
 
 #: resources.h:52
 msgid "&Browse..."
-msgstr "&Procházet..."
+msgstr "P&rocházet..."
 
 #: resources.h:20 resources.h:84 resources.h:88 resources.h:127
 #: resources.h:167 resources.h:179
@@ -112,7 +112,7 @@ msgstr "&Spadnout"
 msgid "&Create directory"
 msgstr "&Vytvořit složku"
 
-#: resources.h:26 resources.h:198
+#: resources.h:26 resources.h:182 resources.h:198
 msgid "&Delete"
 msgstr "O&dstranit"
 
@@ -123,6 +123,11 @@ msgstr "&Stáhnout"
 #: resources.h:218
 msgid "&Edit"
 msgstr "Úpr&avy"
+
+#: resources.h:184
+#, fuzzy
+msgid "&Edit filters..."
+msgstr "Upravit filtry..."
 
 #: resources.h:70
 msgid "&Encoding:"
@@ -147,6 +152,11 @@ msgstr "&Soubor"
 #: resources.h:249
 msgid "&File Attributes"
 msgstr "&Atributy souboru"
+
+#: resources.h:181
+#, fuzzy
+msgid "&Filter sets:"
+msgstr "Sady filtrů:"
 
 #: resources.h:196
 msgid "&Filters:"
@@ -174,11 +184,11 @@ msgstr "&Omezit lokální porty, které může FileZilla používat"
 
 #: resources.h:62
 msgid "&Limit number of simultaneous connections"
-msgstr "&Omezit počet současných spojení"
+msgstr "Ome&zit počet současných spojení"
 
 #: resources.h:34
 msgid "&Logontype:"
-msgstr "Způsob &přihlašování:"
+msgstr "Způso&b přihlašování:"
 
 #: resources.h:256
 msgid "&Low"
@@ -186,7 +196,7 @@ msgstr "Ní&zká"
 
 #: resources.h:63
 msgid "&Maximum number of connections:"
-msgstr "&Maximální počet spojení:"
+msgstr "Ma&ximální počet spojení:"
 
 #: resources.h:197
 msgid "&New"
@@ -214,7 +224,7 @@ msgstr "&Přepsat"
 
 #: resources.h:61
 msgid "&Passive"
-msgstr "&Pasívní"
+msgstr "Pasí&vní"
 
 #: resources.h:81
 msgid "&Password:"
@@ -222,7 +232,7 @@ msgstr "&Heslo:"
 
 #: resources.h:30 resources.h:265
 msgid "&Port:"
-msgstr "&Port:"
+msgstr "Po&rt:"
 
 #: resources.h:267
 msgid "&Quickconnect"
@@ -247,6 +257,11 @@ msgstr "&Přejmenovat"
 #: resources.h:13
 msgid "&Resume"
 msgstr "&Obnovit"
+
+#: resources.h:183
+#, fuzzy
+msgid "&Save as..."
+msgstr "Uložit jako..."
 
 #: resources.h:123
 msgid "&Select language:"
@@ -302,7 +317,7 @@ msgstr "&Zápis"
 
 #: ../../locales/../src/interface/sitemanager.cpp:408
 msgid "'Account' logontype not supported by selected protocol"
-msgstr ""
+msgstr "Vybraný protokol nepodporuje způsob přihlašování 'Konto'"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:119
 #: ../../locales/../src/interface/statuslinectrl.cpp:124
@@ -318,8 +333,8 @@ msgid ""
 "No further warning will be displayed this session."
 msgstr ""
 "Název lokálního souboru nemůže být dekódován.\n"
-"Ubezpečte se, prosím, že proměnné prostředí LC_CTYPE (nebo LC_ALL) jsou "
-"nastaveny správně.\n"
+"Ubezpečte se, prosím, že proměnná prostředí LC_CTYPE (nebo LC_ALL) je "
+"nastavena správně.\n"
 "Dokud tento problém nevyřešíte, ve výpisu souborů mohou chybět soubory.\n"
 "Žádná další varování nebudou již během tohoto sezení zobrazena."
 
@@ -349,7 +364,7 @@ msgstr "O programu Filezilla"
 #: ../../locales/../src/interface/sitemanager.cpp:623
 #: ../../locales/../src/interface/sitemanager.cpp:826
 msgid "Account"
-msgstr ""
+msgstr "Konto"
 
 #: resources.h:109
 msgid "Active mode IP"
@@ -357,7 +372,7 @@ msgstr "IP adresa pro aktivní režim"
 
 #: resources.h:205
 msgid "Add &more"
-msgstr "&Přidat další"
+msgstr "Přida&t další"
 
 #: resources.h:232 resources.h:242
 msgid "Add selected files and folders to the transfer queue"
@@ -522,7 +537,7 @@ msgstr "Parametry kompilátoru:"
 
 #: resources.h:207
 msgid "Conditions are c&ase sensitive"
-msgstr ""
+msgstr "&Rozlišovat v podmínkách velikost písmen"
 
 #: ../../locales/../src/interface/LocalListView.cpp:805
 #: ../../locales/../src/interface/RemoteListView.cpp:715
@@ -595,8 +610,8 @@ msgstr ""
 "Pro toto sezení budou použita výchozí nastavení a změny nastavení nebudou "
 "uloženy."
 
-#: ../../locales/../src/interface/filter.cpp:137
-#: ../../locales/../src/interface/filter.cpp:217
+#: ../../locales/../src/interface/filter.cpp:156
+#: ../../locales/../src/interface/filter.cpp:240
 #: ../../locales/../src/interface/sitemanager.cpp:252
 #, c-format
 msgid ""
@@ -679,13 +694,23 @@ msgstr "Vytvářím adresář '%s'..."
 msgid "Critical error"
 msgstr "Kritická chyba"
 
+#: ../../locales/../src/interface/filter.cpp:108
+#, fuzzy
+msgid "Custom filter set"
+msgstr "Upravit filtry"
+
 #: resources.h:59
 msgid "D&efault"
-msgstr "&Výchozí"
+msgstr "Vý&chozí"
 
 #: resources.h:235 resources.h:245
 msgid "D&elete"
 msgstr "&Odstranit"
+
+#: resources.h:187
+#, fuzzy
+msgid "D&isable all"
+msgstr "Zakázat všechny"
 
 #: resources.h:74
 msgid "D&iscard"
@@ -709,19 +734,15 @@ msgstr "Výchozí"
 
 #: resources.h:51
 msgid "Default &local directory:"
-msgstr "Výchozí &místní složka:"
+msgstr "Výchozí &lokální složka:"
 
 #: resources.h:53
 msgid "Default r&emote directory:"
-msgstr "Výchozí &vzdálení složka:"
+msgstr "Výchozí &vzdálená složka:"
 
 #: resources.h:90
 msgid "Default transfer type:"
 msgstr "Výchozí typ spojení:"
-
-#: resources.h:182
-msgid "Delete"
-msgstr "Odstranit"
 
 #: resources.h:236 resources.h:246
 msgid "Delete selected files and folders"
@@ -736,9 +757,8 @@ msgid "Details for new key:"
 msgstr "Detaily pro nový klíč:"
 
 #: resources.h:210
-#, fuzzy
 msgid "Dire&ctories"
-msgstr "Složky"
+msgstr "&Složky"
 
 #: ../../locales/../src/interface/QueueView.cpp:565
 msgid "Direction"
@@ -756,8 +776,9 @@ msgstr "Filtry výpisu složky"
 msgid "Directory listing successful"
 msgstr "Výpis složky proběhl úspěšně"
 
-#: resources.h:187 resources.h:190
-msgid "Disable all"
+#: resources.h:190
+#, fuzzy
+msgid "Disa&ble all"
 msgstr "Zakázat všechny"
 
 #: resources.h:284
@@ -792,6 +813,11 @@ msgstr "DOS"
 msgid "Download selected files and folders"
 msgstr "Stáhnout vybrané soubory a složky"
 
+#: resources.h:186
+#, fuzzy
+msgid "E&nable all"
+msgstr "Povolit všechny"
+
 #: resources.h:137
 msgid "E&xecute"
 msgstr "Sp&ouštění"
@@ -808,16 +834,13 @@ msgstr "Každý filtr musí mít alespoň jednu podmínku"
 msgid "Edit filters"
 msgstr "Upravit filtry"
 
-#: resources.h:184
-msgid "Edit filters..."
-msgstr "Upravit filtry..."
-
 #: resources.h:116
 msgid "Email:"
 msgstr "Email:"
 
-#: resources.h:186 resources.h:189
-msgid "Enable all"
+#: resources.h:189
+#, fuzzy
+msgid "En&able all"
 msgstr "Povolit všechny"
 
 #: resources.h:222
@@ -827,6 +850,10 @@ msgstr "&Zadat vlastní příkaz..."
 #: ../../locales/../src/interface/Mainfrm.cpp:324
 msgid "Enter custom command"
 msgstr "Zadat vlastní příkaz"
+
+#: ../../locales/../src/interface/filter.cpp:540
+msgid "Enter name for filterset"
+msgstr ""
 
 #: resources.h:75
 msgid "Enter password"
@@ -860,8 +887,8 @@ msgstr ""
 msgid "Error %d writing to socket"
 msgstr "Chyba %d zápisu do soketu"
 
-#: ../../locales/../src/interface/filter.cpp:138
-#: ../../locales/../src/interface/filter.cpp:218
+#: ../../locales/../src/interface/filter.cpp:157
+#: ../../locales/../src/interface/filter.cpp:241
 #: ../../locales/../src/interface/Options.cpp:59
 #: ../../locales/../src/interface/QueueView.cpp:1442
 #: ../../locales/../src/interface/QueueView.cpp:1478
@@ -886,9 +913,8 @@ msgid "Exe&cute"
 msgstr "Spo&uštění"
 
 #: resources.h:201
-#, fuzzy
 msgid "F&ilter name:"
-msgstr "Jméno filtru:"
+msgstr "&Jméno filtru:"
 
 #: resources.h:32 ../../locales/../src/interface/sitemanager.cpp:609
 #: ../../locales/../src/interface/sitemanager.cpp:769
@@ -948,9 +974,8 @@ msgid "Failed to write xml file"
 msgstr "Chyba při zápisu XML souboru"
 
 #: resources.h:209
-#, fuzzy
 msgid "Fil&es"
-msgstr "Soubory"
+msgstr "Sou&bory"
 
 #: ../../locales/../src/interface/LocalListView.cpp:394
 #: ../../locales/../src/interface/LocalListView.cpp:412
@@ -1023,13 +1048,13 @@ msgid "Filter applies to:"
 msgstr "Filtr platí pro:"
 
 #: ../../locales/../src/interface/filteredit.cpp:467
-#, fuzzy
 msgid "Filter name already exists"
-msgstr "Cílový soubor už existuje"
+msgstr "Filtr s tímto jménem již existuje"
 
-#: resources.h:181
-msgid "Filter sets:"
-msgstr "Sady filtrů:"
+#: ../../locales/../src/interface/filter.cpp:549
+#, fuzzy
+msgid "Filter set already exists"
+msgstr "Filtr s tímto jménem již existuje"
 
 #: resources.h:288 resources.h:289
 msgid "Filter the directory listings"
@@ -1051,6 +1076,11 @@ msgstr "Vynutit &UTF-8"
 #: resources.h:28
 msgid "General"
 msgstr "Základní"
+
+#: ../../locales/../src/interface/filter.cpp:549
+#, fuzzy
+msgid "Given filterset name already exists, overwrite filter set?"
+msgstr "Cílové jméno souboru už existuje, chcete opravdu pokračovat?"
 
 #: resources.h:134
 msgid "Group permissions"
@@ -1201,7 +1231,7 @@ msgstr "Lokální filtry:"
 
 #: ../../locales/../src/interface/viewheader.cpp:252
 msgid "Local site:"
-msgstr "Lokální místo:"
+msgstr "Lokální složka:"
 
 #: ../../locales/../src/interface/QueueView.cpp:709
 msgid "Low"
@@ -1249,7 +1279,7 @@ msgstr "Název:"
 
 #: ../../locales/../src/interface/filteredit.cpp:458
 msgid "Need to enter filter name"
-msgstr ""
+msgstr "Musíte zadat jméno filtru"
 
 #: ../../locales/../src/interface/sitemanager.cpp:417
 msgid "Need to specify a character encoding"
@@ -1338,6 +1368,11 @@ msgstr "Oprávnění"
 
 #: resources.h:76
 msgid "Please enter a password for this server:"
+msgstr "Prosím zadejte heslo pro tento server:"
+
+#: ../../locales/../src/interface/filter.cpp:540
+#, fuzzy
+msgid "Please enter a unique name for this filter set"
 msgstr "Prosím zadejte heslo pro tento server:"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:324
@@ -1457,11 +1492,11 @@ msgstr "Vzdálené filtry:"
 
 #: ../../locales/../src/interface/viewheader.cpp:354
 msgid "Remote site:"
-msgstr "Vzdálené místo:"
+msgstr "Vzdálená složka:"
 
 #: resources.h:206
 msgid "Remove &selected"
-msgstr "O&debrat vybrané"
+msgstr "Odebrat &vybrané"
 
 #: ../../locales/../src/interface/asyncrequestqueue.cpp:76
 msgid "Rename file"
@@ -1492,10 +1527,6 @@ msgstr "Přijímám výpis složky..."
 #: ../../locales/../src/interface/sitemanager.cpp:802
 msgid "SFTP"
 msgstr "SFTP"
-
-#: resources.h:183
-msgid "Save as..."
-msgstr "Uložit jako..."
 
 #: ../../locales/../src/interface/QueueView.cpp:1365
 msgid "Scanning for files to add to queue"
@@ -1528,11 +1559,11 @@ msgstr "Server / lokální soubor"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:430
 msgid ""
 "Server requires an account. Please specify an account using the Site Manager"
-msgstr ""
+msgstr "Server vyžaduje konto. Určete ho pomocí správce míst."
 
 #: resources.h:31 resources.h:45
 msgid "Server&type:"
-msgstr "&Typ serveru:"
+msgstr "T&yp serveru:"
 
 #: resources.h:252
 msgid "Set &Priority"
@@ -1695,6 +1726,10 @@ msgstr "Chyba témat"
 #: ../../locales/../src/interface/settingsdialog.cpp:74
 msgid "Themes"
 msgstr "Témata"
+
+#: ../../locales/../src/interface/filter.cpp:577
+msgid "This filter set cannot be removed"
+msgstr ""
 
 #: ../../locales/../src/interface/RemoteListView.cpp:51
 msgid "Time"
@@ -1880,3 +1915,6 @@ msgstr "themes.xml chybí, nemohu získat informace o tématech"
 #: resources.h:6
 msgid "with the following file?"
 msgstr "následujícím souborem?"
+
+#~ msgid "Delete"
+#~ msgstr "Odstranit"

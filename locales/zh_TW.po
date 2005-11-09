@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-31 18:02+0100\n"
-"PO-Revision-Date: 2005-11-01 13:35+0800\n"
+"POT-Creation-Date: 2005-11-09 13:35+0100\n"
+"PO-Revision-Date: 2005-11-08 01:52+0800\n"
 "Last-Translator: Kene Lin <kene@openstep.twbbs.org>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -112,7 +112,7 @@ msgstr "毀壞(&C)"
 msgid "&Create directory"
 msgstr "新增目錄(&C)"
 
-#: resources.h:26 resources.h:198
+#: resources.h:26 resources.h:182 resources.h:198
 msgid "&Delete"
 msgstr "刪除(&D)"
 
@@ -123,6 +123,10 @@ msgstr "下載(&D)"
 #: resources.h:218
 msgid "&Edit"
 msgstr "編輯(&E)"
+
+#: resources.h:184
+msgid "&Edit filters..."
+msgstr "編輯篩選器(&E)..."
 
 #: resources.h:70
 msgid "&Encoding:"
@@ -147,6 +151,10 @@ msgstr "檔案(&F)"
 #: resources.h:249
 msgid "&File Attributes"
 msgstr "檔案屬性(&F)"
+
+#: resources.h:181
+msgid "&Filter sets:"
+msgstr "篩選集(&F):"
 
 #: resources.h:196
 msgid "&Filters:"
@@ -247,6 +255,10 @@ msgstr "更名(&R)"
 #: resources.h:13
 msgid "&Resume"
 msgstr "回復(&R)"
+
+#: resources.h:183
+msgid "&Save as..."
+msgstr "儲存成(&S)..."
 
 #: resources.h:123
 msgid "&Select language:"
@@ -590,8 +602,8 @@ msgstr ""
 "無法載入 \"%s\", 請確定檔案是否有效.\n"
 "在這次連線期間將會使用預設值, 且任何設定的修改都不永久保留."
 
-#: ../../locales/../src/interface/filter.cpp:147
-#: ../../locales/../src/interface/filter.cpp:228
+#: ../../locales/../src/interface/filter.cpp:156
+#: ../../locales/../src/interface/filter.cpp:240
 #: ../../locales/../src/interface/sitemanager.cpp:252
 #, c-format
 msgid ""
@@ -671,10 +683,9 @@ msgstr "建立目錄 '%s'..."
 msgid "Critical error"
 msgstr "嚴重錯誤"
 
-#: ../../locales/../src/interface/filter.cpp:99
-#, fuzzy
+#: ../../locales/../src/interface/filter.cpp:108
 msgid "Custom filter set"
-msgstr "編輯篩選器"
+msgstr "自訂篩選集"
 
 #: resources.h:59
 msgid "D&efault"
@@ -683,6 +694,10 @@ msgstr "預設(&E)"
 #: resources.h:235 resources.h:245
 msgid "D&elete"
 msgstr "刪除(&E)"
+
+#: resources.h:187
+msgid "D&isable all"
+msgstr "全部關閉(&I)"
 
 #: resources.h:74
 msgid "D&iscard"
@@ -716,10 +731,6 @@ msgstr "預設遠端目錄(&E):"
 msgid "Default transfer type:"
 msgstr "預設傳輸形式:"
 
-#: resources.h:182
-msgid "Delete"
-msgstr "刪除"
-
 #: resources.h:236 resources.h:246
 msgid "Delete selected files and folders"
 msgstr "刪除選擇的檔案與資料夾"
@@ -752,9 +763,9 @@ msgstr "目錄列表篩選器"
 msgid "Directory listing successful"
 msgstr "成功取得目錄列表"
 
-#: resources.h:187 resources.h:190
-msgid "Disable all"
-msgstr "全部關閉"
+#: resources.h:190
+msgid "Disa&ble all"
+msgstr "全部關閉(&B)"
 
 #: resources.h:284
 msgid "Disconnect from server"
@@ -788,6 +799,10 @@ msgstr "Dos"
 msgid "Download selected files and folders"
 msgstr "下載選擇的檔案與資料夾"
 
+#: resources.h:186
+msgid "E&nable all"
+msgstr "全部打開(&N)"
+
 #: resources.h:137
 msgid "E&xecute"
 msgstr "執行(&X)"
@@ -804,17 +819,13 @@ msgstr "每一個篩選器需要最少一個條件"
 msgid "Edit filters"
 msgstr "編輯篩選器"
 
-#: resources.h:184
-msgid "Edit filters..."
-msgstr "編輯篩選器..."
-
 #: resources.h:116
 msgid "Email:"
 msgstr "電子郵件:"
 
-#: resources.h:186 resources.h:189
-msgid "Enable all"
-msgstr "全部打開"
+#: resources.h:189
+msgid "En&able all"
+msgstr "全部打開(&A)"
 
 #: resources.h:222
 msgid "Enter &custom command..."
@@ -823,6 +834,10 @@ msgstr "輸入自訂指令(&C)..."
 #: ../../locales/../src/interface/Mainfrm.cpp:324
 msgid "Enter custom command"
 msgstr "輸入自訂指令"
+
+#: ../../locales/../src/interface/filter.cpp:540
+msgid "Enter name for filterset"
+msgstr "輸入篩選集的名稱"
 
 #: resources.h:75
 msgid "Enter password"
@@ -856,8 +871,8 @@ msgstr ""
 msgid "Error %d writing to socket"
 msgstr "錯誤 %d 寫入 socket"
 
-#: ../../locales/../src/interface/filter.cpp:148
-#: ../../locales/../src/interface/filter.cpp:229
+#: ../../locales/../src/interface/filter.cpp:157
+#: ../../locales/../src/interface/filter.cpp:241
 #: ../../locales/../src/interface/Options.cpp:59
 #: ../../locales/../src/interface/QueueView.cpp:1442
 #: ../../locales/../src/interface/QueueView.cpp:1478
@@ -1017,9 +1032,9 @@ msgstr "篩選器套用到:"
 msgid "Filter name already exists"
 msgstr "篩選器名稱已經存在"
 
-#: resources.h:181
-msgid "Filter sets:"
-msgstr "篩選集合:"
+#: ../../locales/../src/interface/filter.cpp:549
+msgid "Filter set already exists"
+msgstr "篩選集名稱已經存在"
 
 #: resources.h:288 resources.h:289
 msgid "Filter the directory listings"
@@ -1041,6 +1056,11 @@ msgstr "強制 UTF-8 (&U)"
 #: resources.h:28
 msgid "General"
 msgstr "一般設定"
+
+#: ../../locales/../src/interface/filter.cpp:549
+#, fuzzy
+msgid "Given filterset name already exists, overwrite filter set?"
+msgstr "篩選集名稱已經存在, 要複寫嗎?"
 
 #: resources.h:134
 msgid "Group permissions"
@@ -1326,6 +1346,10 @@ msgstr "權限"
 msgid "Please enter a password for this server:"
 msgstr "請輸入這台主機的密碼:"
 
+#: ../../locales/../src/interface/filter.cpp:540
+msgid "Please enter a unique name for this filter set"
+msgstr "請輸入這篩選集的獨特名稱:"
+
 #: ../../locales/../src/interface/Mainfrm.cpp:324
 msgid ""
 "Please enter raw FTP command.\n"
@@ -1478,10 +1502,6 @@ msgstr "取得目錄列表..."
 #: ../../locales/../src/interface/sitemanager.cpp:802
 msgid "SFTP"
 msgstr "SFTP"
-
-#: resources.h:183
-msgid "Save as..."
-msgstr "儲存成..."
 
 #: ../../locales/../src/interface/QueueView.cpp:1365
 msgid "Scanning for files to add to queue"
@@ -1673,6 +1693,10 @@ msgstr "佈景主題錯誤"
 msgid "Themes"
 msgstr "佈景主題"
 
+#: ../../locales/../src/interface/filter.cpp:577
+msgid "This filter set cannot be removed"
+msgstr "無法移除篩選集"
+
 #: ../../locales/../src/interface/RemoteListView.cpp:51
 msgid "Time"
 msgstr "時間"
@@ -1854,6 +1878,9 @@ msgstr "檔案 themes.xml 遺失, 無法取得佈景主題資料."
 #: resources.h:6
 msgid "with the following file?"
 msgstr "跟接下來的檔案一起?"
+
+#~ msgid "Delete"
+#~ msgstr "刪除"
 
 #~ msgid "Copyright 2004-2005"
 #~ msgstr "Copyright 2004-2005"
