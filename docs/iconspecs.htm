@@ -40,12 +40,12 @@
 
 <p>
   If possible, despite the files for the different sizes, each icon should be
-  available in a vector based format, so that differently sized icons can 
+  available in a vector based format (e.g. SVG), so that differently sized icons can 
   quickly be generated.
 </p>
 
 <p>
-  Regarding the used color-depth or alpha-blending there is no limitation.
+  Regarding the used color-depth there is no limitation. But you should restrict transparency to a simple 1-bit mask. Windows cannot handle toobar icons with full alpha transparency. But you can create multiple versions of your icon set to fill the needs for both Windows on the one hand and quality operatin systems on the other hand.
 </p>
 
 <p>
@@ -89,6 +89,7 @@
     the local or remote side, or when the file attributes differ.)
   </li>
   <li>showhidden.png - show hidden files</li>
+  <li>filter.png - filter filenames</li>
 </ul>
 
 <p><b>Transfer settings toolbar:</b></p>
