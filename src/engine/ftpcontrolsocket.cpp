@@ -578,7 +578,14 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 			if (!pData->path.IsEmpty() && pData->subDir != _T(""))
 				cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
 			SendDirectoryListing(pListing);
-			ResetOperation(FZ_REPLY_OK);
+
+			if (pData->pNextOpData)
+			{
+				delete pData;
+				m_pCurOpData = pData->pNextOpData;
+			}
+			else
+				ResetOperation(FZ_REPLY_OK);
 			return FZ_REPLY_OK;
 		}
 		else
@@ -1200,7 +1207,7 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 	}
 	if (shouldList)
 	{
-		res = List();
+		res = List(CServerPath(), _T(""), true);
 		if (res != FZ_REPLY_OK)
 			return res;
 
