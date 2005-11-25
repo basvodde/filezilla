@@ -6,7 +6,7 @@
 #include "themeprovider.h"
 
 BEGIN_EVENT_TABLE(COptionsPageThemes, COptionsPage)
-EVT_COMBOBOX(XRCID("ID_THEME"), COptionsPageThemes::OnThemeChange)
+EVT_CHOICE(XRCID("ID_THEME"), COptionsPageThemes::OnThemeChange)
 END_EVENT_TABLE();
 
 COptionsPageThemes::~COptionsPageThemes()
@@ -23,7 +23,7 @@ bool COptionsPageThemes::LoadPage()
 
 	bool failure = false;
 
-	wxComboBox* pTheme = XRCCTRL(*this, "ID_THEME", wxComboBox);
+	wxChoice* pTheme = XRCCTRL(*this, "ID_THEME", wxChoice);
 	wxScrolledWindow* pPanelSmall = XRCCTRL(*this, "ID_SMALL", wxScrolledWindow);
 	wxScrolledWindow* pPanelMedium = XRCCTRL(*this, "ID_MEDIUM", wxScrolledWindow);
 	wxScrolledWindow* pPanelLarge = XRCCTRL(*this, "ID_LARGE", wxScrolledWindow);
@@ -67,7 +67,7 @@ bool COptionsPageThemes::LoadPage()
 
 bool COptionsPageThemes::SavePage()
 {
-	wxComboBox* pTheme = XRCCTRL(*this, "ID_THEME", wxComboBox);
+	wxChoice* pTheme = XRCCTRL(*this, "ID_THEME", wxChoice);
 	
 	m_pOptions->SetOption(OPTION_THEME, pTheme->GetString(pTheme->GetSelection()));
 	return true;
@@ -85,7 +85,7 @@ void COptionsPageThemes::GetPreview()
 
 	m_previewInitialized = true;
 
-	wxComboBox* pTheme = XRCCTRL(*this, "ID_THEME", wxComboBox);
+	wxChoice* pTheme = XRCCTRL(*this, "ID_THEME", wxChoice);
 
 	wxString theme = pTheme->GetString(pTheme->GetSelection());
 	wxScrolledWindow* pPanels[3];
@@ -193,7 +193,7 @@ void COptionsPageThemes::OnThemeChange(wxCommandEvent& event)
 	XRCCTRL(*this, "ID_MEDIUM", wxScrolledWindow)->Refresh();
 	XRCCTRL(*this, "ID_LARGE", wxScrolledWindow)->Refresh();
 	
-	wxComboBox* pTheme = XRCCTRL(*this, "ID_THEME", wxComboBox);
+	wxChoice* pTheme = XRCCTRL(*this, "ID_THEME", wxChoice);
 
 	wxString author, mail;
 	CThemeProvider::GetThemeData(pTheme->GetString(pTheme->GetSelection()), author, mail);
