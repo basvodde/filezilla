@@ -1592,6 +1592,8 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 							differentCase = true;
 						else
 						{
+							wxLongLong size = listing.m_pEntries[i].size;	
+							pData->remoteFileSize = size.GetLo() + ((wxFileOffset)size.GetHi() << 32);
 							differentCase = false;
 							break;
 						}
