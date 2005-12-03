@@ -14,7 +14,7 @@ wxEvent* CIOThreadEvent::Clone() const
 }
 
 CIOThread::CIOThread()
-	: wxThread(wxTHREAD_JOINABLE), m_condition(m_mutex), m_evtHandler(0), m_pFile(0)
+	: wxThread(wxTHREAD_JOINABLE), m_evtHandler(0), m_pFile(0), m_condition(m_mutex)
 {
 	for (unsigned int i = 0; i < BUFFERCOUNT; i++)
 	{
@@ -154,7 +154,7 @@ wxThread::ExitCode CIOThread::Entry()
 
 			wxMutexLocker locker(m_mutex);
 
-			if (written != m_bufferLens[m_curThreadBuf])
+			if (written != (int)m_bufferLens[m_curThreadBuf])
 			{
 				m_error = true;
 				m_running = false;
