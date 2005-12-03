@@ -3,7 +3,7 @@
 #include "transfersocket.h"
 #include "directorylistingparser.h"
 #include "directorycache.h"
-#include "IOThread.h"
+#include "iothread.h"
 
 #define LOGON_LOGON		1
 #define LOGON_SYST		2
