@@ -95,6 +95,7 @@ protected:
 	bool m_hasUTF8;
 };
 
+class CIOThread;
 class CFtpFileTransferOpData : public CFileTransferOpData
 {
 public:
@@ -114,7 +115,7 @@ public:
 
 	bool resume;
 
-	wxFile *pFile;
+	CIOThread *pIOThread;
 	
 	int transferEndReason;
 

@@ -1,6 +1,8 @@
 #ifndef __TRANSFERSOCKET_H__
 #define __TRANSFERSOCKET_H__
 
+#include "iothread.h"
+
 class CFileZillaEnginePrivate;
 class CFtpControlSocket;
 class CDirectoryListingParser;
@@ -28,6 +30,10 @@ public:
 	bool m_binaryMode;
 
 protected:
+	bool CheckGetNextWriteBuffer();
+	bool CheckGetNextReadBuffer();
+	void FinalizeWrite();
+
 	void TransferEnd(int reason);
 
 	virtual void OnSocketEvent(wxSocketEvent &event);
@@ -35,6 +41,7 @@ protected:
 	virtual void OnReceive();
 	virtual void OnSend();
 	virtual void OnClose(wxSocketEvent &event);
+	virtual void OnIOThreadEvent(CIOThreadEvent& event);
 
 	// Create a socket server
 	wxSocketServer* CreateSocketServer();
@@ -56,7 +63,8 @@ protected:
 	enum TransferMode m_transferMode;
 
 	char *m_pTransferBuffer;
-	int m_transferBufferPos;
+	int m_transferBufferLen;
+	int m_tranferBufferPos;
 
 	// Set to true if OnClose got called
 	// We now have to read all available data in the socket, ignoring any

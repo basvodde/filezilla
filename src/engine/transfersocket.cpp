@@ -3,12 +3,12 @@
 #include "ftpcontrolsocket.h"
 #include "directorylistingparser.h"
 #include "optionsbase.h"
+#include "iothread.h"
 
 BEGIN_EVENT_TABLE(CTransferSocket, wxEvtHandler)
 	EVT_SOCKET(wxID_ANY, CTransferSocket::OnSocketEvent)
+	EVT_IOTHREAD(wxID_ANY, CTransferSocket::OnIOThreadEvent)
 END_EVENT_TABLE();
-
-#define BUFFERSIZE 65536
 
 CTransferSocket::CTransferSocket(CFileZillaEnginePrivate *pEngine, CFtpControlSocket *pControlSocket, enum TransferMode transferMode)
 {
@@ -31,8 +31,8 @@ CTransferSocket::CTransferSocket(CFileZillaEnginePrivate *pEngine, CFtpControlSo
 	m_transferMode = transferMode;
 
 	m_pTransferBuffer = 0;
-	m_transferBufferPos = 0;
-	
+	m_transferBufferLen = 0;
+		
 	m_transferEnd = false;
 	m_binaryMode = true;
 
@@ -41,14 +41,28 @@ CTransferSocket::CTransferSocket(CFileZillaEnginePrivate *pEngine, CFtpControlSo
 
 CTransferSocket::~CTransferSocket()
 {
+	m_transferEnd = true;
+
 	delete m_pSocketClient;
 	delete m_pSocketServer;
 	if (!m_pSocketClient && !m_pSocketServer)
 		delete m_pSocket;
 
 	delete m_pDirectoryListingParser;
-	
-	delete [] m_pTransferBuffer;
+
+	if (m_pControlSocket)
+	{
+		if (m_transferMode == upload || m_transferMode == download)
+		{
+			CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(m_pControlSocket->m_pCurOpData);
+			if (pData && pData->pIOThread)
+			{
+				if (m_transferMode == download)
+					FinalizeWrite();
+				pData->pIOThread->SetEventHandler(0);
+			}
+		}
+	}
 }
 
 wxString CTransferSocket::SetupActiveTransfer()
@@ -169,16 +183,15 @@ void CTransferSocket::OnReceive()
 	}
 	else if (m_transferMode == download)
 	{
-		CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(m_pControlSocket->m_pCurOpData);
-		if (!m_pTransferBuffer)
-			m_pTransferBuffer = new char[4096];
-
-		m_pSocket->Read(m_pTransferBuffer, 4096);
+		if (!CheckGetNextWriteBuffer())
+			return;
+		
+		m_pSocket->Read(m_pTransferBuffer, m_transferBufferLen);
 		if (m_pSocket->Error())
 		{
 			int error = m_pSocket->LastError();
 			if (error == wxSOCKET_NOERROR)
-				TransferEnd(0);
+				FinalizeWrite();
 			else if (error != wxSOCKET_WOULDBLOCK)
 				TransferEnd(1);
 			return;
@@ -190,42 +203,13 @@ void CTransferSocket::OnReceive()
 			m_pEngine->SetActive(true);
 			m_pControlSocket->UpdateTransferStatus(numread);
 
-			bool res;
-#ifndef __WXMSW__
-			if (!m_binaryMode)
-			{
-				// On systems other than Windows, we have to convert the line endings from
-				// CRLF into LFs only. We do this by skipping every CR.
-				int i = 0;
-				while (i < numread && m_pTransferBuffer[i] != '\r')
-					i++;
-				int j = i;
-				while (i < numread)
-				{
-					if (m_pTransferBuffer[i] != '\r')
-						m_pTransferBuffer[j++] = m_pTransferBuffer[i];
-					i++;
-				}
-				res = pData->pFile->Write(m_pTransferBuffer, j) == static_cast<size_t>(j);
-			}
-			else
-#endif
-			res = pData->pFile->Write(m_pTransferBuffer, numread) == static_cast<size_t>(numread);
-			if (!res)
-			{
-				wxLongLong free;
-				if (wxGetDiskSpace(pData->localFile, 0, &free))
-				{
-					if (free == 0)
-						m_pControlSocket->LogMessage(::Error, _("Can't write data to file, disk is full."));
-					else
-						m_pControlSocket->LogMessage(::Error, _("Can't write data to file."));
-				}
-				else
-					m_pControlSocket->LogMessage(::Error, _("Can't write data to file."));
-				TransferEnd(1);
-			}
+			m_pTransferBuffer += numread;
+			m_transferBufferLen -= numread;
+
+			CheckGetNextWriteBuffer();
 		}
+		else //!numread
+			FinalizeWrite();
 	}
 }
 
@@ -240,88 +224,25 @@ void CTransferSocket::OnSend()
 	if (m_transferMode != upload)
 		return;
 	
-	if (!m_pTransferBuffer)
-		m_pTransferBuffer = new char[BUFFERSIZE];
-	
-	CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(m_pControlSocket->m_pCurOpData);
 	int numsent = 0;
 	do
 	{
-		if (m_transferBufferPos * 2 < BUFFERSIZE)
+		if (!CheckGetNextReadBuffer())
+			return;
+
+		m_pSocket->Write(m_pTransferBuffer, m_transferBufferLen);
+		if (m_pSocket->Error())
+			break;
+
+		numsent = m_pSocket->LastCount();
+		if (numsent > 0)
 		{
-			if (pData->pFile)
-			{
-				wxFileOffset numread;
-#ifndef __WXMSW__
-				// Again, on  non-Windows systems perform ascii file conversion. This
-				// time we add CRs
-				if (!m_binaryMode)
-				{
-					int numToRead = (BUFFERSIZE - m_transferBufferPos) / 2;
-					char* tmp = new char[numToRead];
-					numread = pData->pFile->Read(tmp, numToRead);
-					if (numread < numToRead)
-					{
-						delete pData->pFile;
-						pData->pFile = 0;
-					}
-
-					char *p = m_pTransferBuffer + m_transferBufferPos;
-					for (int i = 0; i < numread; i++)
-					{
-						char c = tmp[i];
-						if (c == '\n')
-							*p++ = '\r';
-						*p++ = c;
-					}
-					delete [] tmp;
-					numread = p - (m_pTransferBuffer + m_transferBufferPos);
-				}
-				else
-#endif
-				{
-					numread = pData->pFile->Read(m_pTransferBuffer + m_transferBufferPos, BUFFERSIZE - m_transferBufferPos);
-					if (numread < BUFFERSIZE - m_transferBufferPos)
-					{
-						delete pData->pFile;
-						pData->pFile = 0;
-					}
-				}
-
-				if (numread > 0)
-					m_transferBufferPos += numread;
-				
-				if (numread < 0)
-				{
-					m_pControlSocket->LogMessage(::Error, _("Can't read from file"));
-					TransferEnd(1);
-					return;
-				}
-				else if (!numread && !m_transferBufferPos)
-				{
-					TransferEnd(0);
-					return;
-				}
-			}
-			else if (!m_transferBufferPos)
-			{
-				TransferEnd(0);
-				return;
-			}
+			m_pEngine->SetActive(false);
+			m_pControlSocket->UpdateTransferStatus(numsent);
 		}
-		m_pSocket->Write(m_pTransferBuffer, m_transferBufferPos);
-		if (!m_pSocket->Error())
-		{
-			numsent = m_pSocket->LastCount();
-			if (numsent > 0)
-			{
-				m_pEngine->SetActive(false);
-				m_pControlSocket->UpdateTransferStatus(numsent);
-			}
 
-			memmove(m_pTransferBuffer, m_pTransferBuffer + numsent, m_transferBufferPos - numsent);
-			m_transferBufferPos -= numsent;
-		}
+		m_pTransferBuffer += numsent;
+		m_transferBufferLen -= numsent;
 	}
 	while (!m_pSocket->Error() && numsent > 0);
 	
@@ -334,8 +255,6 @@ void CTransferSocket::OnSend()
 			TransferEnd(1);
 		}
 	}
-	else if (!pData->pFile && !m_transferBufferPos)
-		TransferEnd(0);
 }
 
 void CTransferSocket::OnClose(wxSocketEvent &event)
@@ -394,6 +313,13 @@ bool CTransferSocket::SetupPassiveTransfer(wxString host, int port)
 
 void CTransferSocket::SetActive()
 {
+	if (m_transferMode == download || m_transferMode == upload)
+	{
+		CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(m_pControlSocket->m_pCurOpData);
+		if (pData && pData->pIOThread)
+			pData->pIOThread->SetEventHandler(this);
+	}
+
 	m_bActive = true;
 	if (m_pSocket && m_pSocket->IsConnected())
 	{
@@ -490,4 +416,83 @@ wxSocketServer* CTransferSocket::CreateSocketServer()
 	}
 	
 	return 0;
+}
+
+bool CTransferSocket::CheckGetNextWriteBuffer()
+{
+	CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(m_pControlSocket->m_pCurOpData);
+	if (!m_transferBufferLen)
+	{
+		int res = pData->pIOThread->GetNextWriteBuffer(&m_pTransferBuffer);
+
+		if (res == IO_Again)
+			return false;
+		else if (res == IO_Error)
+		{
+			wxLongLong free;
+			if (wxGetDiskSpace(pData->localFile, 0, &free))
+			{
+				if (free == 0)
+					m_pControlSocket->LogMessage(::Error, _("Can't write data to file, disk is full."));
+				else
+					m_pControlSocket->LogMessage(::Error, _("Can't write data to file."));
+			}
+			else
+				m_pControlSocket->LogMessage(::Error, _("Can't write data to file."));
+			TransferEnd(1);
+			return false;
+		}
+
+		m_transferBufferLen = BUFFERSIZE;
+	}
+
+	return true;
+}
+
+bool CTransferSocket::CheckGetNextReadBuffer()
+{
+	CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(m_pControlSocket->m_pCurOpData);
+	if (!m_transferBufferLen)
+	{
+		int res = pData->pIOThread->GetNextReadBuffer(&m_pTransferBuffer);
+		if (res == IO_Again)
+			return false;
+		else if (res == IO_Error)
+		{
+			m_pControlSocket->LogMessage(::Error, _("Can't read from file"));
+			TransferEnd(1);
+			return false;
+		}
+		else if (res == IO_Success)
+		{
+			TransferEnd(0);
+			return false;
+		}
+		m_transferBufferLen = res;
+	}
+
+	return true;
+}
+
+void CTransferSocket::OnIOThreadEvent(CIOThreadEvent& event)
+{
+	if (!m_bActive || m_transferEnd)
+		return;
+
+	if (m_transferMode == download)
+		OnReceive();
+	else if (m_transferMode == upload)
+		OnSend();
+}
+
+void CTransferSocket::FinalizeWrite()
+{
+	CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(m_pControlSocket->m_pCurOpData);
+	if (pData->pIOThread->Finalize(BUFFERSIZE - m_transferBufferLen))
+		TransferEnd(0);
+	else
+	{
+		m_pControlSocket->LogMessage(::Error, _("Can't write data to file."));
+		TransferEnd(1);
+	}
 }

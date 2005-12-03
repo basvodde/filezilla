@@ -3,6 +3,7 @@
 #include "transfersocket.h"
 #include "directorylistingparser.h"
 #include "directorycache.h"
+#include "IOThread.h"
 
 #define LOGON_LOGON		1
 #define LOGON_SYST		2
@@ -12,7 +13,7 @@
 
 CFtpFileTransferOpData::CFtpFileTransferOpData()
 {
-	pFile = 0;
+	pIOThread = 0;
 	resume = false;
 	bTriedPasv = bTriedActive = false;
 	localFileSize = -1;
@@ -22,7 +23,12 @@ CFtpFileTransferOpData::CFtpFileTransferOpData()
 
 CFtpFileTransferOpData::~CFtpFileTransferOpData()
 {
-	delete pFile;
+	if (pIOThread)
+	{
+		pIOThread->Destroy();
+		delete pIOThread;
+		pIOThread = 0;
+	}
 }
 
 enum filetransferStates
@@ -1346,90 +1352,107 @@ int CFtpControlSocket::FileTransferParseResponse()
 		else
 			pData->opState = filetransfer_transfer;
 
-		pData->pFile = new wxFile;
-		if (pData->download)
 		{
-			// Be quiet
-			wxLogNull nullLog;
-
-			// Create local directory
-			wxFileName fn(pData->localFile);
-			wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
-
-			wxFileOffset startOffset;
-			if (pData->resume)
+			wxFile* pFile = new wxFile;
+			if (pData->download)
 			{
-				if (!pData->pFile->Open(pData->localFile, wxFile::write_append))
+				// Be quiet
+				wxLogNull nullLog;
+
+				// Create local directory
+				wxFileName fn(pData->localFile);
+				wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
+
+				wxFileOffset startOffset;
+				if (pData->resume)
 				{
-					LogMessage(::Error, _("Failed to open \"%s\" for appending / writing"), pData->localFile.c_str());
-					error = true;
-					break;
-				}
-
-				startOffset = pData->pFile->Length();
-			}
-			else
-			{
-				if (!pData->pFile->Open(pData->localFile, wxFile::write))
-				{
-					LogMessage(::Error, _("Failed to open \"%s\" for writing"), pData->localFile.c_str());
-					error = true;
-					break;
-				}
-
-				startOffset = 0;
-			}
-
-			InitTransferStatus(pData->download ? pData->remoteFileSize : pData->localFileSize, startOffset);
-		}
-		else
-		{
-			if (!pData->pFile->Open(pData->localFile, wxFile::read))
-			{
-				LogMessage(::Error, _("Failed to open \"%s\" for reading"), pData->localFile.c_str());
-				error = true;
-				break;
-			}
-
-			wxFileOffset startOffset;
-			if (pData->resume)
-			{
-				if (pData->remoteFileSize > 0)
-				{
-					startOffset = pData->remoteFileSize;
-
-					// Assume native 64 bit type exists
-					if (pData->pFile->Seek(startOffset, wxFromStart) == wxInvalidOffset)
+					if (!pFile->Open(pData->localFile, wxFile::write_append))
 					{
-						LogMessage(::Error, _("Could not seek to offset %s within file"), wxLongLong(startOffset).ToString().c_str());
+						delete pFile;
+						LogMessage(::Error, _("Failed to open \"%s\" for appending / writing"), pData->localFile.c_str());
+						error = true;
+						break;
+					}
+
+					startOffset = pFile->SeekEnd(0);
+					if (startOffset == wxInvalidOffset)
+					{
+						delete pFile;
+						LogMessage(::Error, _("Could not seek to the end of the file"));
 						error = true;
 						break;
 					}
 				}
 				else
+				{
+					if (!pFile->Open(pData->localFile, wxFile::write))
+					{
+						delete pFile;
+						LogMessage(::Error, _("Failed to open \"%s\" for writing"), pData->localFile.c_str());
+						error = true;
+						break;
+					}
+
 					startOffset = 0;
+				}
+				pData->localFileSize = pFile->Length();
+
+				InitTransferStatus(pData->download ? pData->remoteFileSize : pData->localFileSize, startOffset);
 			}
 			else
-				startOffset = 0;
+			{
+				if (!pFile->Open(pData->localFile, wxFile::read))
+				{
+					delete pFile;
+					LogMessage(::Error, _("Failed to open \"%s\" for reading"), pData->localFile.c_str());
+					error = true;
+					break;
+				}
 
-			wxFileOffset len = pData->pFile->Length();
-			InitTransferStatus(len, startOffset);
+				wxFileOffset startOffset;
+				if (pData->resume)
+				{
+					if (pData->remoteFileSize > 0)
+					{
+						startOffset = pData->remoteFileSize;
+
+						// Assume native 64 bit type exists
+						if (pFile->Seek(startOffset, wxFromStart) == wxInvalidOffset)
+						{
+							delete pFile;
+							LogMessage(::Error, _("Could not seek to offset %s within file"), wxLongLong(startOffset).ToString().c_str());
+							error = true;
+							break;
+						}
+					}
+					else
+						startOffset = 0;
+				}
+				else
+					startOffset = 0;
+
+				wxFileOffset len = pFile->Length();
+				InitTransferStatus(len, startOffset);
+			}
+			pData->pIOThread = new CIOThread;
+			if (!pData->pIOThread->Create(pFile, !pData->download, pData->binary))
+			{
+				// CIOThread will delete pFile
+				delete pData->pIOThread;
+				pData->pIOThread = 0;
+				LogMessage(::Error, _("Could not spawn IO thread"));
+				error = true;
+				break;
+			}
 		}
 		break;
 	case filetransfer_rest0:
 		pData->opState = filetransfer_transfer;
+		m_sentRestartOffset = false;
 		break;
 	case filetransfer_rest:
 		if (code == 3 || code == 2)
-		{
-			if (pData->pFile->Seek(0, wxFromEnd) == wxInvalidOffset)
-			{
-				LogMessage(::Error, _("Could not seek to end of file"));
-				error = true;
-				break;
-			}
 			pData->opState = filetransfer_transfer;
-		}
 		else
 			error = true;
 		break;
@@ -1676,16 +1699,15 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 		cmd = _T("REST 0");
 		break;
 	case filetransfer_rest:
-		if (!pData->pFile)
+		if (pData->localFileSize == -1)
 		{
-			LogMessage(::Debug_Warning, _T("Can't send REST command, can't get local file length since pData->pFile is null"));
+			LogMessage(::Debug_Warning, _T("Can't send REST command, unknown local file length"));
 			ResetOperation(FZ_REPLY_INTERNALERROR);
 			return FZ_REPLY_ERROR;
 		}
 		else
 		{
-			wxFileOffset offset = pData->pFile->Length();
-			cmd = _T("REST ") + ((wxLongLong)offset).ToString();
+			cmd = _T("REST ") + ((wxLongLong)pData->localFileSize).ToString();
 			m_sentRestartOffset = true;
 		}
 		break;
@@ -1864,9 +1886,9 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 				}
 				break;
 			case CFileExistsNotification::resume:
-				if (pData->download && pFileExistsNotification->localSize != -1)
+				if (pData->download && pData->localFileSize != -1)
 					pData->resume = true;
-				else if (!pData->download && pFileExistsNotification->remoteSize != -1)
+				else if (!pData->download && pData->remoteFileSize != -1)
 					pData->resume = true;
 				SendNextCommand();
 				break;

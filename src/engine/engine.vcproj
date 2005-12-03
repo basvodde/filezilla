@@ -63,8 +63,13 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="2"
+				GlobalOptimizations="TRUE"
+				InlineFunctionExpansion="0"
+				OmitFramePointers="TRUE"
 				AdditionalIncludeDirectories="../include/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
+				StringPooling="TRUE"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -106,9 +111,6 @@
 				RelativePath=".\asynchostresolver.cpp">
 			</File>
 			<File
-				RelativePath=".\asynchostresolver.h">
-			</File>
-			<File
 				RelativePath=".\commands.cpp">
 			</File>
 			<File
@@ -124,9 +126,6 @@
 				RelativePath=".\directorylistingparser.cpp">
 			</File>
 			<File
-				RelativePath=".\engine_private.h">
-			</File>
-			<File
 				RelativePath=".\engineprivate.cpp">
 			</File>
 			<File
@@ -134,6 +133,9 @@
 			</File>
 			<File
 				RelativePath=".\ftpcontrolsocket.cpp">
+			</File>
+			<File
+				RelativePath=".\iothread.cpp">
 			</File>
 			<File
 				RelativePath=".\logging.cpp">
@@ -165,6 +167,9 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
+				RelativePath=".\asynchostresolver.h">
+			</File>
+			<File
 				RelativePath="..\include\commands.h">
 			</File>
 			<File
@@ -183,6 +188,9 @@
 				RelativePath=".\directorylistingparser.h">
 			</File>
 			<File
+				RelativePath=".\engine_private.h">
+			</File>
+			<File
 				RelativePath="..\include\engineprivate.h">
 			</File>
 			<File
@@ -193,6 +201,9 @@
 			</File>
 			<File
 				RelativePath=".\FtpControlSocket.h">
+			</File>
+			<File
+				RelativePath=".\iothread.h">
 			</File>
 			<File
 				RelativePath="..\include\logging.h">
