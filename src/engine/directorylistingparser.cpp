@@ -6,7 +6,7 @@
 #define new DEBUG_NEW
 #endif
 
-#define LISTDEBUG
+//#define LISTDEBUG
 #ifdef LISTDEBUG
 static char data[][110]={
 	"-rw-r--r--   1 root     other        531 3 29 03:26 01-unix-std file",
