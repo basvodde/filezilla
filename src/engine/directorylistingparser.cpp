@@ -6,10 +6,10 @@
 #define new DEBUG_NEW
 #endif
 
-//#define LISTDEBUG
+#define LISTDEBUG
 #ifdef LISTDEBUG
 static char data[][110]={
-	"-rw-r--r--   1 root     other        531 Jan 29 03:26 01-unix-std file",
+	"-rw-r--r--   1 root     other        531 3 29 03:26 01-unix-std file",
 	"dr-xr-xr-x   2 root     other        512 Apr  8  1994 02-unix-std dir",
 	"dr-xr-xr-x   2 root                  512 Apr  8  1994 03-unix-nogroup dir",
 	"lrwxrwxrwx   1 root     other          7 Jan 25 00:17 04-unix-std link -> usr/bin",
@@ -120,6 +120,10 @@ static char data[][110]={
 
 	"53-MVSPDSMEMBER2 00B308 000411  00 FO                31    ANY",
 	"54-MVSPDSMEMBER3 00B308 000411  00 FO        RU      ANY    24",
+
+	// Some asian listing format. Those >127 chars are just examples
+	"-rwxrwxrwx   1 root     staff          0 2003   3\xed\xef 20 55-asian date file",
+	"-r--r--r-- 1 root root 2096 8\xed 17 08:52 56-asian date file",
 
 	""};
 
@@ -659,48 +663,6 @@ CDirectoryListingParser::CDirectoryListingParser(CFileZillaEnginePrivate *pEngin
 	//Portuguese month names
 	m_MonthNamesMap[_T("out")] = 10;
 
-	//Japanese month names
-	m_MonthNamesMap[_T("1\x9c\x9e")] = 1;
-	m_MonthNamesMap[_T("2\x9c\x9e")] = 2;
-	m_MonthNamesMap[_T("3\x9c\x9e")] = 3;
-	m_MonthNamesMap[_T("4\x9c\x9e")] = 4;
-	m_MonthNamesMap[_T("5\x9c\x9e")] = 5;
-	m_MonthNamesMap[_T("6\x9c\x9e")] = 6;
-	m_MonthNamesMap[_T("7\x9c\x9e")] = 7;
-	m_MonthNamesMap[_T("8\x9c\x9e")] = 8;
-	m_MonthNamesMap[_T("9\x9c\x9e")] = 9;
-	m_MonthNamesMap[_T("10\x9c\x9e")] = 10;
-	m_MonthNamesMap[_T("11\x9c\x9e")] = 11;
-	m_MonthNamesMap[_T("12\x9c\x9e")] = 12;
-
-	//Korean (Unicode) month names
-	m_MonthNamesMap[_T("1\xc6\xd4")] = 1;
-	m_MonthNamesMap[_T("2\xc6\xd4")] = 2;
-	m_MonthNamesMap[_T("3\xc6\xd4")] = 3;
-	m_MonthNamesMap[_T("4\xc6\xd4")] = 4;
-	m_MonthNamesMap[_T("5\xc6\xd4")] = 5;
-	m_MonthNamesMap[_T("6\xc6\xd4")] = 6;
-	m_MonthNamesMap[_T("7\xc6\xd4")] = 7;
-	m_MonthNamesMap[_T("8\xc6\xd4")] = 8;
-	m_MonthNamesMap[_T("9\xc6\xd4")] = 9;
-	m_MonthNamesMap[_T("10\xc6\xd4")] = 10;
-	m_MonthNamesMap[_T("11\xc6\xd4")] = 11;
-	m_MonthNamesMap[_T("12\xc6\xd4")] = 12;
-
-	//Korean (EUC-KR) month names
-	m_MonthNamesMap[_T("1\xbf\xf9")] = 1;
-	m_MonthNamesMap[_T("2\xbf\xf9")] = 2;
-	m_MonthNamesMap[_T("3\xbf\xf9")] = 3;
-	m_MonthNamesMap[_T("4\xbf\xf9")] = 4;
-	m_MonthNamesMap[_T("5\xbf\xf9")] = 5;
-	m_MonthNamesMap[_T("6\xbf\xf9")] = 6;
-	m_MonthNamesMap[_T("7\xbf\xf9")] = 7;
-	m_MonthNamesMap[_T("8\xbf\xf9")] = 8;
-	m_MonthNamesMap[_T("9\xbf\xf9")] = 9;
-	m_MonthNamesMap[_T("10\xbf\xf9")] = 10;
-	m_MonthNamesMap[_T("11\xbf\xf9")] = 11;
-	m_MonthNamesMap[_T("12\xbf\xf9")] = 12;
-
 	//There are more languages and thus month 
 	//names, but as long as knowbody reports a 
 	//problem, I won't add them, there are way 
@@ -976,10 +938,13 @@ bool CDirectoryListingParser::ParseAsUnix(CLine *pLine, CDirentry &entry)
 
 bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDirentry &entry)
 {
+	bool mayHaveTime = true;
+	bool bHasYearAndTime = false;
+
 	CToken token;
 
 	// Get the month date field
-	wxString dateMonth;
+	CToken dateMonth;
 	if (!pLine->GetToken(++index, token))
 		return false;
 
@@ -1003,15 +968,30 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 			if (day < 1 || day > 31)
 				return false;
 			entry.date.day = day;
-			dateMonth = token.GetString().Left(pos);
+			dateMonth = CToken(token.GetToken(), pos);
 		}
 		else if (!ParseShortDate(token, entry))
 			return false;
 	}
+	else if (token.IsNumeric())
+	{
+		if (token.GetNumber() > 1000 && token.GetNumber() < 10000)
+		{
+			// Two possible variants:
+			// 1) 2005 3 13
+			// 2) 2005 13 3
+			// assume first one.
+			entry.date.year = token.GetNumber().GetLo();
+			if (!pLine->GetToken(++index, dateMonth))
+				return false;
+			mayHaveTime = false;
+		}
+		else
+			dateMonth = token;
+	}
 	else
-		dateMonth = token.GetString();
+		dateMonth = token;
 
-	bool bHasYearAndTime = false;
 	if (!entry.date.day)
 	{
 		// Get day field
@@ -1023,14 +1003,13 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 		// Check for non-numeric day
 		if (!token.IsNumeric() && !token.IsLeftNumeric())
 		{
-			if (dateMonth.Right(1) == _T("."))
-				dateMonth.RemoveLast();
-			if (!dateMonth.IsNumber())
+			int offset = 0;
+			if (dateMonth.GetString().Right(1) == _T("."))
+				offset++;
+			if (!dateMonth.IsNumeric(0, dateMonth.GetLength() - offset))
 				return false;
-			unsigned long tmp;
-			dateMonth.ToULong(&tmp);
-			dateDay = tmp;
-			dateMonth = token.GetString();
+			dateDay = dateMonth.GetNumber(0, dateMonth.GetLength() - 1).GetLo();
+			dateMonth = token;
 		}
 		else
 		{
@@ -1046,11 +1025,24 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 
 	if (!entry.date.month)
 	{
+		wxString month = dateMonth.GetString();
+		if (dateMonth.IsLeftNumeric() && (unsigned int)month[month.Length() - 1] > 127)
+		{
+			// Most likely an Asian server sending some unknown language specific 
+			// suffix at the end of the monthname. Filter it out.
+			int i;
+			for (i = month.Length() - 1; i > 0; i--)
+			{
+				if (month[i] >= '0' && month[i] <= '9')
+					break;
+			}
+			month = month.Left(i + 1);
+		}
 		// Check month name
-		if (dateMonth.Right(1) == _T(",") || dateMonth.Right(1) == _T("."))
-			dateMonth.RemoveLast();
-		dateMonth.MakeLower();
-		std::map<wxString, int>::iterator iter = m_MonthNamesMap.find(dateMonth);
+		if (month.Right(1) == _T(",") || month.Right(1) == _T("."))
+			month.RemoveLast();
+		month.MakeLower();
+		std::map<wxString, int>::iterator iter = m_MonthNamesMap.find(month);
 		if (iter == m_MonthNamesMap.end())
 			return false;
 		entry.date.month = iter->second;
@@ -1061,7 +1053,7 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 		return false;
 
 	pos = token.Find(_T(":.-"));
-	if (pos != -1)
+	if (pos != -1 && mayHaveTime)
 	{
 		// token is a time
 		if (!pos || static_cast<size_t>(pos) == (token.GetLength() - 1))
@@ -1594,6 +1586,10 @@ bool CDirectoryListingParser::ParseOther(CLine *pLine, CDirentry &entry)
 	if (token.IsNumeric())
 	{
 		entry.permissions = firstToken.GetString();
+		if (firstToken.GetLength() >= 2 && firstToken[1] == '4')
+			entry.dir = true;
+		else
+			entry.dir = false;
 
 		entry.ownerGroup += token.GetString();
 
