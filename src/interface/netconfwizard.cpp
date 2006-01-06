@@ -49,7 +49,6 @@ void CNetConfWizard::OnPageChanging(wxWizardEvent& event)
 {
 	if (event.GetPage() == m_pages[1])
 	{
-		wxMessageBox("OK");
 	}
 }
 
