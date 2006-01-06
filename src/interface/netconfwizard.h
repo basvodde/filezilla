@@ -14,6 +14,8 @@ public:
 	bool Run();
 
 protected:
+	bool WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max);
+
 	wxWindow* m_parent;
 	COptions* m_pOptions;
 

@@ -1,6 +1,7 @@
 #include "FileZilla.h"
 #include "netconfwizard.h"
 #include "Options.h"
+#include "dialogex.h"
 
 BEGIN_EVENT_TABLE(CNetConfWizard, wxWizard)
 EVT_WIZARD_PAGE_CHANGING(wxID_ANY, CNetConfWizard::OnPageChanging)
@@ -14,6 +15,46 @@ CNetConfWizard::CNetConfWizard(wxWindow* parent, COptions* pOptions)
 
 CNetConfWizard::~CNetConfWizard()
 {
+}
+
+bool CNetConfWizard::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
+{
+	// This function auto-wraps static texts.
+
+	if (max < 0)
+		return false;
+
+	wxSizer* root = wnd->GetSizer();
+
+	wxPoint pos = sizer->GetPosition();
+
+	for (unsigned int i = 0; i < sizer->GetChildren().GetCount(); i++)
+	{
+		wxSizerItem* item = sizer->GetItem(i);
+		if (!item)
+			continue;
+
+		wxRect rect = item->GetRect();
+
+		wxWindow* window;
+		wxSizer* subSizer;
+		if ((window = item->GetWindow()))
+		{
+			wxStaticText* text = wxDynamicCast(window, wxStaticText);
+			if (!text)
+				continue;
+			
+			wxString str = text->GetLabel();
+			str = wxDialogEx::WrapText(str, max - rect.GetLeft() + pos.x, text);
+			text->SetLabel(str);
+		}
+		else if ((subSizer = item->GetSizer()))
+		{
+			WrapRecursive(wnd, subSizer, wxMin(rect.GetWidth(), max - rect.GetLeft()));
+		}
+	}
+
+	return true;
 }
 
 bool CNetConfWizard::Load()
@@ -35,6 +76,14 @@ bool CNetConfWizard::Load()
 		m_pages[i]->Chain(m_pages[i], m_pages[i + 1]);
 
 	GetPageAreaSizer()->Add(m_pages[0]);
+
+	for (unsigned int i = 0; i < m_pages.size(); i++)
+	{
+		wxWizardPage* page = m_pages[i];
+		wxSizer* sizer = page->GetSizer();
+		
+		WrapRecursive(m_pages[i], m_pages[i]->GetSizer(), 350);
+	}
 
 	return true;
 }

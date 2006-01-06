@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <resource version="2.3.0.1" xmlns="http://www.wxwindows.org/wxxrc">
   <object class="wxPanel" name="PANEL1" subclass="wxWizardPage">
-    <style></style>
     <object class="wxBoxSizer">
       <orient>wxVERTICAL</orient>
       <object class="sizeritem">
         <object class="wxStaticText">
-          <label>This wizard will help you to properly configure any routers and\nfirewalls you have and tests your configuration.</label>
+          <label>This wizard will help you to properly configure any routers and firewalls you have and tests your configuration.</label>
         </object>
       </object>
       <object class="spacer">
@@ -14,7 +13,7 @@
       </object>
       <object class="sizeritem">
         <object class="wxStaticText">
-          <label>If you sucessfully complete the wizard and the final test\nsucceeds, any firewalls and routers you have should be\nconfigured properly.</label>
+          <label>If you sucessfully complete the wizard and the final test succeeds, any firewalls and routers you have should be configured properly.</label>
         </object>
       </object>
     </object>
@@ -28,8 +27,13 @@
         </object>
       </object>
       <object class="sizeritem">
+        <object class="wxStaticLine">
+          <size>0,5</size>
+        </object>
+      </object>
+      <object class="sizeritem">
         <object class="wxStaticText">
-          <label>FTP uses secondary connections for data transfers. These\n additionalconnections  can be established in two ways.</label>
+          <label>FTP uses secondary connections for data transfers. These additionalconnections  can be established in two ways.</label>
         </object>
       </object>
       <object class="spacer">
@@ -37,7 +41,7 @@
       </object>
       <object class="sizeritem">
         <object class="wxStaticText">
-          <label>In passive mode, which is recommended for most users, FileZilla\nasks the server for a port and connects to the given port. Not\nmuch configuration has to be done for this.</label>
+          <label>In passive mode, which is recommended for most users, FileZilla asks the server for a port and connects to the given port. Not much configuration has to be done for this.</label>
         </object>
       </object>
       <object class="spacer">
@@ -45,7 +49,7 @@
       </object>
       <object class="sizeritem">
         <object class="wxStaticText">
-          <label>A few servers don't allow passive mode or are misconfigures.\nIn such cases you would have to use active mode.\nIn active mode, FileZilla opens a port and asks the server to\nconnect to it.</label>
+          <label>A few servers don't allow passive mode or are misconfigures. In such cases you would have to use active mode. In active mode, FileZilla opens a port and asks the server to connect to it.</label>
         </object>
       </object>
       <object class="spacer">
@@ -83,7 +87,7 @@
       </object>
       <object class="sizeritem">
         <object class="wxStaticText">
-          <label>Please configure any firewalls and routers so that FileZilla\ncan establish outgoing connection to arbitrary ports.</label>
+          <label>Please configure any firewalls and routers so that FileZilla can establish outgoing connection to arbitrary ports.</label>
         </object>
       </object>
       <object class="spacer">
@@ -91,7 +95,7 @@
       </object>
       <object class="sizeritem">
         <object class="wxStaticText">
-          <label>Please note that FileZilla has no influence on the port the server chooses.\nSo the server might choose a port which your firewall thinks is only used by\ntrojans or other malware. This might raise a false alarm you can safely discard.</label>
+          <label>Please note that FileZilla has no influence on the port the server chooses. So the server might choose a port which your firewall thinks is only used by trojans or other malware. This might raise a false alarm you can safely discard.</label>
         </object>
       </object>
       <object class="spacer">
@@ -99,14 +103,13 @@
       </object>
       <object class="sizeritem">
         <object class="wxStaticText">
-          <label>If the automatic test at the end of this wizard succeeds, but you cannot\ntransfer files to a particular server, the server might be misconfigured\nand you should try active mode. You can set the transfer mode on\na per-server basis in the Site Manager.</label>
+          <label>If the automatic test at the end of this wizard succeeds, but you cannot transfer files to a particular server, the server might be misconfigured and you should try active mode. You can set the transfer mode on a per-server basis in the Site Manager.</label>
         </object>
       </object>
     </object>
   </object>
   <object class="wxPanel" name="PANEL4" subclass="wxWizardPage">
     <object class="wxBoxSizer">
-      <orient>wxVERTICAL</orient>
       <object class="sizeritem">
         <object class="wxStaticText">
           <label>In order to use passive mode, FileZilla needs to know your internal IP address.</label>
@@ -116,11 +119,22 @@
         <object class="wxRadioButton">
           <label>Ask Windows for the external IP address</label>
         </object>
+        <flag>wxTOP</flag>
+        <border>5</border>
       </object>
       <object class="sizeritem">
-        <object class="wxStaticText">
-          <label>This only works if you are not behind a router, else Windows would just return\nyour internal address.</label>
+        <object class="wxBoxSizer">
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>This only works if you are not behind a router, else Windows would just return your internal address.</label>
+            </object>
+            <flag>wxLEFT</flag>
+            <border>17</border>
+          </object>
         </object>
+        <flag>wxTOP|wxBOTTOM</flag>
+        <border>5</border>
       </object>
       <object class="sizeritem">
         <object class="wxRadioButton">
@@ -128,38 +142,60 @@
         </object>
       </object>
       <object class="sizeritem">
-        <object class="wxTextCtrl"/>
-      </object>
-      <object class="sizeritem">
-        <object class="wxStaticText">
-          <label>Use this if you're behind a router and have a static external IP address</label>
+        <object class="wxBoxSizer">
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxTextCtrl"/>
+            <flag>wxTOP</flag>
+            <border>4</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>Use this if you're behind a router and have a static external IP address.</label>
+            </object>
+            <flag>wxBOTTOM</flag>
+            <border>4</border>
+          </object>
         </object>
+        <flag>wxLEFT</flag>
+        <border>17</border>
       </object>
       <object class="sizeritem">
         <object class="wxRadioButton">
           <label>Get external IP address from the following URL:</label>
         </object>
+        <flag>wxBOTTOM</flag>
+        <border>3</border>
       </object>
       <object class="sizeritem">
-        <object class="wxFlexGridSizer">
+        <object class="wxBoxSizer">
+          <orient>wxVERTICAL</orient>
           <object class="sizeritem">
-            <object class="wxTextCtrl"/>
+            <object class="wxFlexGridSizer">
+              <object class="sizeritem">
+                <object class="wxTextCtrl"/>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Default: http://ip.filezilla-project.org/ip.php</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <cols>2</cols>
+              <hgap>5</hgap>
+            </object>
           </object>
           <object class="sizeritem">
             <object class="wxStaticText">
-              <label>(Default: http://ip.filezilla-project.org/ip.php)</label>
+              <label>Use this option if you have a dynamic IP address. FileZilla will contact the above server once each session as soon as you use active mode for the first time. Only the version of FileZilla you're using is submitted to the server.</label>
             </object>
-            <flag>wxALIGN_CENTRE_VERTICAL</flag>
           </object>
-          <cols>2</cols>
-          <hgap>5</hgap>
         </object>
+        <flag>wxLEFT</flag>
+        <border>17</border>
       </object>
-      <object class="sizeritem">
-        <object class="wxStaticText">
-          <label>Use this option if you have a dynamic IP address. FileZilla will contact the above\nserver once each session as soon as you use active mode for the first time.\nOnly the version of FileZilla you're using is submitted to the server.</label>
-        </object>
-      </object>
+      <orient>wxVERTICAL</orient>
     </object>
   </object>
   <object class="wxPanel" name="PANEL5" subclass="wxWizardPage">
@@ -171,7 +207,7 @@
       </object>
       <object class="sizeritem">
         <object class="wxStaticText">
-          <label>In active mode, FileZilla has to listen on a port for data transfers. You have to specify\nwhich ports FileZilla will use.</label>
+          <label>In active mode, FileZilla has to listen on a port for data transfers. You have to specify which ports FileZilla will use.</label>
         </object>
       </object>
       <object class="sizeritem">
@@ -181,7 +217,7 @@
       </object>
       <object class="sizeritem">
         <object class="wxStaticText">
-          <label>In case you have a router, you will have to forward all available ports, as FileZilla has no\ninfluence on the ports Windows chooses.</label>
+          <label>In case you have a router, you will have to forward all available ports, as FileZilla has no influence on the ports Windows chooses.</label>
         </object>
       </object>
       <object class="sizeritem">
@@ -214,12 +250,12 @@
       </object>
       <object class="sizeritem">
         <object class="wxStaticText">
-          <label>All ports in the given range have to be between 1 and 65535. Also, it is higly recommended\nto choose only ports larger than 1024.</label>
+          <label>All ports in the given range have to be between 1 and 65535. Also, it is higly recommended to choose only ports larger than 1024.</label>
         </object>
       </object>
       <object class="sizeritem">
         <object class="wxStaticText">
-          <label>If you use a router, make sure all these ports are forwarded to the machine you're running\nFileZilla on.</label>
+          <label>If you use a router, make sure all these ports are forwarded to the machine you're running FileZilla on.</label>
         </object>
       </object>
       <object class="sizeritem">
