@@ -5,7 +5,8 @@ CLEANFILES = filezilla.o
 resourcesdir = $(pkgdatadir)/resources
 
 dist_resources_DATA = dialogs.xrc down.png dropdown.png empty.png \
-		filezilla.xpm leds.png menus.xrc quickconnectbar.xrc \
+		filezilla.xpm leds.png menus.xrc netconfwizard.xrc \
+		quickconnectbar.xrc \
 		themes.xml toolbar.xrc up.png filezilla.png	  
 
 if USE_RESOURCEFILE

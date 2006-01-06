@@ -14,7 +14,8 @@ filezilla_SOURCES = aboutdialog.cpp asyncrequestqueue.cpp chmoddialog.cpp \
 		fileexistsdlg.cpp \
 		FileZilla.cpp filter.cpp filteredit.cpp inputdialog.cpp \
 		ipcmutex.cpp led.cpp \
-		LocalListView.cpp LocalTreeView.cpp Mainfrm.cpp Options.cpp \
+		LocalListView.cpp LocalTreeView.cpp Mainfrm.cpp netconfwizard.cpp \
+		Options.cpp \
 		optionspage.cpp	optionspage_filetype.cpp optionspage_language.cpp \
 		optionspage_passive.cpp optionspage_themes.cpp QueueView.cpp \
 		RemoteListView.cpp RemoteTreeView.cpp settingsdialog.cpp \
@@ -31,7 +32,8 @@ noinst_HEADERS = aboutdialog.h asyncrequestqueue.h chmoddialog.h \
 		 dialogex.h fileexistsdlg.h \
 		 filezillaapp.h filter.h filteredit.h \
 		 inputdialog.h ipcmutex.h led.h \
-		 LocalListView.h LocalTreeView.h Mainfrm.h Options.h \
+		 LocalListView.h LocalTreeView.h Mainfrm.h \
+		 netconfwizard.h Options.h \
 		 optionspage.h  optionspage_filetype.h \
 		 optionspage_language.h optionspage_passive.h \
 		 optionspage_themes.h prefix.h QueueView.h \
