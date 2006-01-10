@@ -666,7 +666,7 @@ bool CSiteManager::UpdateServer()
 
 	if (XRCCTRL(*this, "ID_CHARSET_UTF8", wxRadioButton)->GetValue())
 		data->m_server.SetEncodingType(ENCODING_UTF8);
-	if (XRCCTRL(*this, "ID_CHARSET_CUSTOM", wxRadioButton)->GetValue())
+	else if (XRCCTRL(*this, "ID_CHARSET_CUSTOM", wxRadioButton)->GetValue())
 	{
 		wxString encoding = XRCCTRL(*this, "ID_ENCODING", wxTextCtrl)->GetValue();
 		data->m_server.SetEncodingType(ENCODING_CUSTOM, encoding);
