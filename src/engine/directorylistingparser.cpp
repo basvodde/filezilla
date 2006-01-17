@@ -125,6 +125,8 @@ static char data[][110]={
 	"-rwxrwxrwx   1 root     staff          0 2003   3\xed\xef 20 55-asian date file",
 	"-r--r--r-- 1 root root 2096 8\xed 17 08:52 56-asian date file",
 
+	"-r-xr-xr-x   2 root  root  96 2004.07.15   57-dotted-date file",
+
 	""};
 
 #endif
@@ -955,23 +957,39 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 	entry.time.minute = 0;
 
 	// Some servers use the following date formats:
-	// 26-05 2002, 2002-10-14, 01-jun-99
+	// 26-05 2002, 2002-10-14, 01-jun-99 or 2004.07.15
 	// slashes instead of dashes are also possible
-	int pos = token.Find(_T("-/"));
+	int pos = token.Find(_T("-/."));
 	if (pos != -1)
 	{
-		int pos2 = token.Find(_T("-/"), pos + 1);
+		int pos2 = token.Find(_T("-/."), pos + 1);
 		if (pos2 == -1)
 		{
-			// something like 26-05 2002
-			int day = token.GetNumber(pos + 1, token.GetLength() - pos - 1).GetLo();
-			if (day < 1 || day > 31)
-				return false;
-			entry.date.day = day;
-			dateMonth = CToken(token.GetToken(), pos);
+			if (token[pos] != '.')
+			{
+				// something like 26-05 2002
+				int day = token.GetNumber(pos + 1, token.GetLength() - pos - 1).GetLo();
+				if (day < 1 || day > 31)
+					return false;
+				entry.date.day = day;
+				dateMonth = CToken(token.GetToken(), pos);
+			}
+			else
+				dateMonth = token;
 		}
-		else if (!ParseShortDate(token, entry))
+		else if (token[pos] != token[pos2])
 			return false;
+		else
+		{
+			if (!ParseShortDate(token, entry))
+				return false;
+
+			if (token[pos] == '.')
+			{
+				entry.hasTime = false;
+				return true;
+			}
+		}
 	}
 	else if (token.IsNumeric())
 	{
