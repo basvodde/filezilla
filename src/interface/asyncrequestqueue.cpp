@@ -141,7 +141,7 @@ void CAsyncRequestQueue::ProcessNextRequest()
 			else
 				pDlg->Load(m_pMainFrame, _T("ID_HOSTKEYCHANGED"));
 
-			pDlg->WrapText(XRCID("ID_DESC"), 400);
+			pDlg->WrapText(pDlg, XRCID("ID_DESC"), 400);
 
 			pDlg->SetLabel(XRCID("ID_HOST"), wxString::Format(_T("%s:%d"), pNotification->GetHost().c_str(), pNotification->GetPort()));
 			pDlg->SetLabel(XRCID("ID_FINGERPRINT"), pNotification->GetFingerprint());

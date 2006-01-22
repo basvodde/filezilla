@@ -46,7 +46,7 @@ bool CChmodDialog::Create(wxWindow* parent, int fileCount, int dirCount,
 	if (!wxXmlResource::Get()->LoadDialog(this, parent, _T("ID_CHMODDIALOG")))
 		return false;
 
-	if (!WrapText(XRCID("ID_DESC"), 300))
+	if (!WrapText(this, XRCID("ID_DESC"), 300))
 		return false;
 
 	if (!XRCCTRL(*this, "wxID_OK", wxButton))
@@ -58,7 +58,7 @@ bool CChmodDialog::Create(wxWindow* parent, int fileCount, int dirCount,
 	if (!XRCCTRL(*this, "ID_NUMERIC", wxTextCtrl))
 		return false;
 
-	if (!WrapText(XRCID("ID_NUMERICTEXT"), 300))
+	if (!WrapText(this, XRCID("ID_NUMERICTEXT"), 300))
 		return false;
 
 	wxCheckBox* pRecurse = XRCCTRL(*this, "ID_RECURSE", wxCheckBox);

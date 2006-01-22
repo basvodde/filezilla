@@ -30,7 +30,7 @@ bool CInputDialog::Create(wxWindow* parent, const wxString& title, const wxStrin
 	if (!pText)
 		return false;
 
-	pText->SetLabel(WrapText(text, 250, pText));
+	pText->SetLabel(WrapText(pText, text, 250));
 
 	GetSizer()->Fit(this);
 	GetSizer()->SetSizeHints(this);

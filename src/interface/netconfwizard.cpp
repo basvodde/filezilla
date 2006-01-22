@@ -17,46 +17,6 @@ CNetConfWizard::~CNetConfWizard()
 {
 }
 
-bool CNetConfWizard::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
-{
-	// This function auto-wraps static texts.
-
-	if (max < 0)
-		return false;
-
-	wxSizer* root = wnd->GetSizer();
-
-	wxPoint pos = sizer->GetPosition();
-
-	for (unsigned int i = 0; i < sizer->GetChildren().GetCount(); i++)
-	{
-		wxSizerItem* item = sizer->GetItem(i);
-		if (!item)
-			continue;
-
-		wxRect rect = item->GetRect();
-
-		wxWindow* window;
-		wxSizer* subSizer;
-		if ((window = item->GetWindow()))
-		{
-			wxStaticText* text = wxDynamicCast(window, wxStaticText);
-			if (!text)
-				continue;
-			
-			wxString str = text->GetLabel();
-			str = wxDialogEx::WrapText(str, max - rect.GetLeft() + pos.x, text);
-			text->SetLabel(str);
-		}
-		else if ((subSizer = item->GetSizer()))
-		{
-			WrapRecursive(wnd, subSizer, wxMin(rect.GetWidth(), max - rect.GetLeft()));
-		}
-	}
-
-	return true;
-}
-
 bool CNetConfWizard::Load()
 {
 	if (!Create(m_parent, wxID_ANY, _("Firewall and router configuration wizard")))
@@ -65,7 +25,7 @@ bool CNetConfWizard::Load()
 	for (int i = 1; i <= 6; i++)
 	{
 		wxWizardPageSimple* page = new wxWizardPageSimple();
-		bool res = wxXmlResource::Get()->LoadPanel(page, this, wxString::Format(_T("PANEL%d"), i));
+		bool res = wxXmlResource::Get()->LoadPanel(page, this, wxString::Format(_T("NETCONF_PANEL%d"), i));
 		if (!res)
 			return false;
 		page->Show(false);
@@ -77,13 +37,10 @@ bool CNetConfWizard::Load()
 
 	GetPageAreaSizer()->Add(m_pages[0]);
 
+	std::vector<wxWindow*> windows;
 	for (unsigned int i = 0; i < m_pages.size(); i++)
-	{
-		wxWizardPage* page = m_pages[i];
-		wxSizer* sizer = page->GetSizer();
-		
-		WrapRecursive(m_pages[i], m_pages[i]->GetSizer(), 350);
-	}
+		windows.push_back(m_pages[i]);
+	WrapRecursive(windows, 1.7);
 
 	return true;
 }
@@ -96,8 +53,25 @@ bool CNetConfWizard::Run()
 
 void CNetConfWizard::OnPageChanging(wxWizardEvent& event)
 {
-	if (event.GetPage() == m_pages[1])
+	if (event.GetPage() == m_pages[3])
 	{
+		int mode = XRCCTRL(*this, "ID_ACTIVEMODE1", wxRadioButton)->GetValue() ? 0 : (XRCCTRL(*this, "ID_ACTIVEMODE2", wxRadioButton)->GetValue() ? 1 : 2);
+		if (mode == 1)
+		{
+			wxString ip = XRCCTRL(*this, "ID_ACTIVEIP", wxTextCtrl)->GetValue();
+		}
+		else if (mode == 2)
+		{
+			wxTextCtrl* pResolver = XRCCTRL(*this, "ID_ACTIVERESOLVER", wxTextCtrl);
+			wxString address = pResolver->GetValue();
+			if (address == _T(""))
+			{
+				wxMessageBox(_("Please enter an URL where to get your external address from"));
+				pResolver->SetFocus();
+				event.Veto();
+				return;
+			}
+		}
 	}
 }
 

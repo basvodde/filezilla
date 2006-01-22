@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <resource version="2.3.0.1" xmlns="http://www.wxwindows.org/wxxrc">
-  <object class="wxPanel" name="PANEL1" subclass="wxWizardPage">
+  <object class="wxPanel" name="NETCONF_PANEL1" subclass="wxWizardPage">
     <object class="wxBoxSizer">
       <orient>wxVERTICAL</orient>
       <object class="sizeritem">
@@ -18,7 +18,7 @@
       </object>
     </object>
   </object>
-  <object class="wxPanel" name="PANEL2" subclass="wxWizardPage">
+  <object class="wxPanel" name="NETCONF_PANEL2" subclass="wxWizardPage">
     <object class="wxBoxSizer">
       <orient>wxVERTICAL</orient>
       <object class="sizeritem">
@@ -33,7 +33,7 @@
       </object>
       <object class="sizeritem">
         <object class="wxStaticText">
-          <label>FTP uses secondary connections for data transfers. These additionalconnections  can be established in two ways.</label>
+          <label>FTP uses secondary connections for data transfers. These additional connections can be established in two ways.</label>
         </object>
       </object>
       <object class="spacer">
@@ -74,7 +74,7 @@
       </object>
     </object>
   </object>
-  <object class="wxPanel" name="PANEL3" subclass="wxWizardPage">
+  <object class="wxPanel" name="NETCONF_PANEL3" subclass="wxWizardPage">
     <object class="wxBoxSizer">
       <orient>wxVERTICAL</orient>
       <object class="sizeritem">
@@ -108,15 +108,15 @@
       </object>
     </object>
   </object>
-  <object class="wxPanel" name="PANEL4" subclass="wxWizardPage">
+  <object class="wxPanel" name="NETCONF_PANEL4" subclass="wxWizardPage">
     <object class="wxBoxSizer">
       <object class="sizeritem">
         <object class="wxStaticText">
-          <label>In order to use passive mode, FileZilla needs to know your internal IP address.</label>
+          <label>In order to use active mode, FileZilla needs to know your internal IP address.</label>
         </object>
       </object>
       <object class="sizeritem">
-        <object class="wxRadioButton">
+        <object class="wxRadioButton" name="ID_ACTIVEMODE1">
           <label>Ask Windows for the external IP address</label>
         </object>
         <flag>wxTOP</flag>
@@ -137,7 +137,7 @@
         <border>5</border>
       </object>
       <object class="sizeritem">
-        <object class="wxRadioButton">
+        <object class="wxRadioButton" name="ID_ACTIVEMODE2">
           <label>Use the following IP address:</label>
         </object>
       </object>
@@ -145,7 +145,7 @@
         <object class="wxBoxSizer">
           <orient>wxVERTICAL</orient>
           <object class="sizeritem">
-            <object class="wxTextCtrl"/>
+            <object class="wxTextCtrl" name="ID_ACTIVEIP"/>
             <flag>wxTOP</flag>
             <border>4</border>
           </object>
@@ -161,7 +161,7 @@
         <border>17</border>
       </object>
       <object class="sizeritem">
-        <object class="wxRadioButton">
+        <object class="wxRadioButton" name="ID_ACTIVEMODE3">
           <label>Get external IP address from the following URL:</label>
         </object>
         <flag>wxBOTTOM</flag>
@@ -173,7 +173,7 @@
           <object class="sizeritem">
             <object class="wxFlexGridSizer">
               <object class="sizeritem">
-                <object class="wxTextCtrl"/>
+                <object class="wxTextCtrl" name="ID_ACTIVERESOLVER"/>
                 <flag>wxALIGN_CENTRE_VERTICAL</flag>
               </object>
               <object class="sizeritem">
@@ -198,7 +198,7 @@
       <orient>wxVERTICAL</orient>
     </object>
   </object>
-  <object class="wxPanel" name="PANEL5" subclass="wxWizardPage">
+  <object class="wxPanel" name="NETCONF_PANEL5" subclass="wxWizardPage">
     <object class="wxFlexGridSizer">
       <object class="sizeritem">
         <object class="wxStaticText">
@@ -267,7 +267,7 @@
       <vgap>5</vgap>
     </object>
   </object>
-  <object class="wxPanel" name="PANEL6" subclass="wxWizardPage">
+  <object class="wxPanel" name="NETCONF_PANEL6" subclass="wxWizardPage">
     <object class="wxBoxSizer">
       <orient>wxVERTICAL</orient>
       <object class="sizeritem">
@@ -282,7 +282,7 @@
       </object>
       <object class="sizeritem">
         <object class="wxStaticText">
-          <label>FileZilla can test your configuration now to ensure everying is configured properly.</label>
+          <label>FileZilla can test your configuration now to ensure everything is configured properly.</label>
         </object>
       </object>
       <object class="sizeritem">

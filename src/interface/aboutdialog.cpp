@@ -39,7 +39,7 @@ bool CAboutDialog::Create(wxWindow* parent)
 		pCompilerFlagsDesc->Hide();
 	}
 	else
-		pCompilerFlags->SetLabel(WrapText(cflags, 200, this));
+		pCompilerFlags->SetLabel(WrapText(this, cflags, 200));
 #else
 	pCompilerFlags->Hide();
 	pCompilerFlagsDesc->Hide();

@@ -2,9 +2,10 @@
 #define __NETCONFWIZARD_H__
 
 #include <wx/wizard.h>
+#include "wrapengine.h"
 
 class COptions;
-class CNetConfWizard : public wxWizard
+class CNetConfWizard : public wxWizard, protected CWrapEngine
 {
 public:
 	CNetConfWizard(wxWindow* parent, COptions* pOptions);
@@ -14,7 +15,6 @@ public:
 	bool Run();
 
 protected:
-	bool WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max);
 
 	wxWindow* m_parent;
 	COptions* m_pOptions;

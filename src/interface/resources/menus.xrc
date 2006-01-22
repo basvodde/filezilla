@@ -18,6 +18,9 @@
         <label>&amp;Settings</label>
         <help>Open the settings dialog of FileZilla</help>
       </object>
+      <object class="wxMenuItem" name="ID_MENU_EDIT_NETCONFWIZARD">
+        <label>&amp;Network configuration wizard</label>
+      </object>
     </object>
     <object class="wxMenu" name="ID_MENU_SERVER">
       <label>&amp;Server</label>
@@ -99,7 +102,13 @@
       <label>Process &amp;Queue</label>
       <checkable>1</checkable>
     </object>
+    <object class="wxMenuItem" name="ID_REMOVEALL">
+      <label>Stop and remove &amp;all</label>
+    </object>
     <object class="separator"/>
+    <object class="wxMenuItem" name="ID_REMOVE">
+      <label>&amp;Remove selected</label>
+    </object>
     <object class="wxMenu" name="ID_PRIORITY">
       <label>Set &amp;Priority</label>
       <object class="wxMenuItem" name="ID_PRIORITY_HIGHEST">

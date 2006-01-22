@@ -19,6 +19,7 @@
 #include "viewheader.h"
 #include "aboutdialog.h"
 #include "filter.h"
+#include "netconfwizard.h"
 
 #ifndef __WXMSW__
 #include "resources/filezilla.xpm"
@@ -336,6 +337,12 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		// Cause a crash
 		int *x = 0;
 		*x = 0;
+	}
+	else if (event.GetId() == XRCID("ID_MENU_EDIT_NETCONFWIZARD"))
+	{
+		CNetConfWizard wizard(this, m_pOptions);
+		wizard.Load();
+		wizard.Run();
 	}
 	else
 		event.Skip();
