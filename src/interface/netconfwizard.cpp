@@ -2,6 +2,7 @@
 #include "netconfwizard.h"
 #include "Options.h"
 #include "dialogex.h"
+#include "filezillaapp.h"
 
 BEGIN_EVENT_TABLE(CNetConfWizard, wxWizard)
 EVT_WIZARD_PAGE_CHANGING(wxID_ANY, CNetConfWizard::OnPageChanging)
@@ -40,7 +41,7 @@ bool CNetConfWizard::Load()
 	std::vector<wxWindow*> windows;
 	for (unsigned int i = 0; i < m_pages.size(); i++)
 		windows.push_back(m_pages[i]);
-	WrapRecursive(windows, 1.7);
+	wxGetApp().GetWrapEngine()->WrapRecursive(windows, 1.7, "Netconf");
 
 	return true;
 }

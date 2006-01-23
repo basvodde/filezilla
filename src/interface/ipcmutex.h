@@ -15,6 +15,7 @@
 #define MUTEX_SITEMANAGERGLOBAL 3
 #define MUTEX_QUEUE 4
 #define MUTEX_FILTERS 5
+#define MUTEX_LAYOUT 6
 
 class CInterProcessMutex
 {

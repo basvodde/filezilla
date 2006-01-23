@@ -5,6 +5,7 @@
 #include <wx/debugrpt.h>
 #endif
 
+class CWrapEngine;
 class CFileZillaApp : public wxApp
 {
 public:
@@ -21,6 +22,8 @@ public:
 	int GetCurrentLanguage() const;
 
 	void DisplayEncodingWarning();
+
+	CWrapEngine* GetWrapEngine();
 
 protected:
 	bool InitSettingsDir();
@@ -45,6 +48,8 @@ protected:
 	// with a wildcard (*). A matching directory will then be searched.
 	// Example: FileExists(_T("/home/*/.filezilla/filezilla.xml"));
 	bool FileExists(const wxString& file) const;
+
+	CWrapEngine* m_pWrapEngine;
 };
 
 DECLARE_APP(CFileZillaApp)

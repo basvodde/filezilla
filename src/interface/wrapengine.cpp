@@ -2,11 +2,15 @@
 #include "wrapengine.h"
 #include <wx/wizard.h>
 #include "filezillaapp.h"
+#include "ipcmutex.h"
+#include "xmlfunctions.h"
 
+#if wxUSE_UNICODE
 // Chinese equivalents to ".", "," and ":"
 static const wxChar wrapAfter_Chinese[] = { 0x3002, 0xFF0C, 0xFF1A, 0};
 // Remark: Chinese (Taiwan) uses ascii punctuation marks though, but those
 // don't have to be added, as only characters >= 128 will be wrapped.
+#endif
 
 wxString CWrapEngine::WrapText(wxWindow* parent, const wxString &text, unsigned long maxLength)
 {
@@ -55,10 +59,7 @@ wxString CWrapEngine::WrapText(wxWindow* parent, const wxString &text, unsigned 
 
 		const wxChar* p = str;
 
-		// Remember unrwappable positions.
-		const wxChar* minWrap = str;
-
-		// Position of last space
+		// Position of last wrappable character
 		const wxChar* wrappable = 0;
 
 		while (*p)
@@ -169,8 +170,20 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, double ratio)
 	return WrapRecursive(windows, ratio);
 }
 
-bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio)
+bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, const char* name /*=""*/)
 {
+	int maxWidth = GetWidthFromCache(name);
+	if (maxWidth)
+	{
+		for (std::vector<wxWindow*>::iterator iter = windows.begin(); iter != windows.end(); iter++)
+		{
+			wxSizer* pSizer = (*iter)->GetSizer();
+			if (pSizer)
+				WrapRecursive(*iter, pSizer, maxWidth);
+		}
+		return true;
+	}
+
 	wxSize size(0, 0);
 
 	for (std::vector<wxWindow*>::iterator iter = windows.begin(); iter != windows.end(); iter++)
@@ -219,7 +232,10 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio)
 			break;
 
 		for (std::vector<wxWindow*>::iterator iter = windows.begin(); iter != windows.end(); iter++)
+		{
 			UnwrapRecursive(*iter, (*iter)->GetSizer());
+			(*iter)->GetSizer()->Layout();
+		}
 		
 		currentRatio = newRatio;
 	}
@@ -227,9 +243,12 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio)
 	{
 		wxSizer* pSizer = (*iter)->GetSizer();
 		UnwrapRecursive(*iter, pSizer);
+		pSizer->Layout();
 	
 		WrapRecursive(*iter, pSizer, cur);
 	}
+
+	SetWidthToCache(name, cur);
 
 	return true;
 }
@@ -293,5 +312,276 @@ bool CWrapEngine::UnwrapRecursive(wxWindow* wnd, wxSizer* sizer)
 		}
 	}
 
+	return true;
+}
+
+int CWrapEngine::GetWidthFromCache(const char* name)
+{
+	if (!name || name == "")
+		return 0;
+
+	// We have to synchronize access to layout.xml so that multiple processed don't write 
+	// to the same file or one is reading while the other one writes.
+	CInterProcessMutex mutex(MUTEX_LAYOUT);
+
+	wxFileName file(wxGetApp().GetSettingsDir(), _T("layout.xml"));
+	TiXmlElement* pDocument = GetXmlFile(file);
+
+	if (!pDocument)
+		return 0;
+
+	TiXmlElement* pElement = pDocument->FirstChildElement("Layout");
+	if (!pElement)
+	{
+		delete pDocument->GetDocument();
+		return 0;
+	}
+
+	int language = wxGetApp().GetCurrentLanguage();
+
+	TiXmlElement* pLanguage = FindElementWithAttribute(pElement, "Language", "id", language);
+	if (!pLanguage)
+	{
+		delete pDocument->GetDocument();
+		return 0;
+	}
+
+	TiXmlElement* pDialog = FindElementWithAttribute(pLanguage, "Dialog", "name", name);
+	if (!pDialog)
+	{
+		delete pDocument->GetDocument();
+		return 0;
+	}
+
+	int value = GetAttributeInt(pDialog, "width");
+
+	delete pDocument->GetDocument();
+
+	return value;
+}
+
+void CWrapEngine::SetWidthToCache(const char* name, int width)
+{
+	if (!name || name == "")
+		return;
+
+	// We have to synchronize access to layout.xml so that multiple processed don't write 
+	// to the same file or one is reading while the other one writes.
+	CInterProcessMutex mutex(MUTEX_LAYOUT);
+
+	wxFileName file(wxGetApp().GetSettingsDir(), _T("layout.xml"));
+	TiXmlElement* pDocument = GetXmlFile(file);
+
+	if (!pDocument)
+		return;
+
+	TiXmlElement* pElement = pDocument->FirstChildElement("Layout");
+	if (!pElement)
+	{
+		delete pDocument->GetDocument();
+		return;
+	}
+
+	int language = wxGetApp().GetCurrentLanguage();
+
+	TiXmlElement* pLanguage = FindElementWithAttribute(pElement, "Language", "id", language);
+	if (!pLanguage)
+	{
+		delete pDocument->GetDocument();
+		return;
+	}
+
+	TiXmlElement* pDialog = FindElementWithAttribute(pLanguage, "Dialog", "name", name);
+	if (!pDialog)
+	{
+		pDialog = pLanguage->InsertEndChild(TiXmlElement("Dialog"))->ToElement();
+		pDialog->SetAttribute("name", name);
+	}
+
+	pDialog->SetAttribute("width", width);
+	wxString error;
+	SaveXmlFile(file, pDocument, &error);
+
+	delete pDocument->GetDocument();
+}
+
+CWrapEngine::CWrapEngine()
+{
+}
+
+CWrapEngine::~CWrapEngine()
+{
+}
+
+bool CWrapEngine::LoadCache()
+{
+	// We have to synchronize access to layout.xml so that multiple processed don't write 
+	// to the same file or one is reading while the other one writes.
+	CInterProcessMutex mutex(MUTEX_LAYOUT);
+
+	wxFileName file(wxGetApp().GetSettingsDir(), _T("layout.xml"));
+	TiXmlElement* pDocument = GetXmlFile(file);
+
+	if (!pDocument)
+	{
+		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed."), file.GetFullPath().c_str());
+		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
+
+		return false;
+	}
+	TiXmlElement* pElement = pDocument->FirstChildElement("Layout");
+	if (!pElement)
+		pElement = pDocument->InsertEndChild(TiXmlElement("Layout"))->ToElement();
+
+	bool cacheValid = true;
+	
+	// Enumerate resource file names
+	// -----------------------------
+
+	TiXmlElement* pResources = pElement->FirstChildElement("Resources");
+	if (!pResources)
+		pResources = pElement->InsertEndChild(TiXmlElement("Resources"))->ToElement();
+
+	wxString resourceDir = wxGetApp().GetResourceDir();
+	wxDir dir(resourceDir);
+
+	wxLogNull log;
+	
+	wxString xrc;
+	for (bool found = dir.GetFirst(&xrc, _T("*.xrc")); found; found = dir.GetNext(&xrc))
+	{
+		if (!wxFileName::FileExists(resourceDir + xrc))
+			continue;
+
+		wxFileName fn(resourceDir + xrc);
+		wxDateTime date = fn.GetModificationTime();
+		wxLongLong ticks = date.GetTicks();
+
+		TiXmlElement* resourceElement = FindElementWithAttribute(pResources, "xrc", "file", xrc.mb_str());
+		if (!resourceElement)
+		{
+			resourceElement = pResources->InsertEndChild(TiXmlElement("xrc"))->ToElement();
+			resourceElement->SetAttribute("file", xrc.mb_str());
+			resourceElement->SetAttribute("date", ticks.ToString().mb_str());
+			cacheValid = false;
+		}
+		else
+		{
+			const char* xrcNodeDate = resourceElement->Attribute("date");
+			if (!xrcNodeDate || strcmp(xrcNodeDate, ticks.ToString().mb_str()))
+			{
+				cacheValid = false;
+
+				resourceElement->SetAttribute("date", ticks.ToString().mb_str());
+			}
+		}
+	}
+
+	// Get static text font and measure sample text
+	wxFrame* pFrame = new wxFrame;
+	pFrame->Hide();
+	pFrame->Create(0, -1, _T("Title"), wxDefaultPosition, wxDefaultSize, wxFRAME_TOOL_WINDOW);
+	wxStaticText* pText = new wxStaticText(pFrame, -1, _T("foo"));
+
+	wxFont font = pText->GetFont();
+	wxString fontDesc = font.GetNativeFontInfoDesc();
+
+	TiXmlElement* pFontElement = pElement->FirstChildElement("Font");
+	if (!pFontElement)
+		pFontElement = pElement->InsertEndChild(TiXmlElement("Font"))->ToElement();
+
+	if (GetTextAttribute(pFontElement, "font") != fontDesc)
+	{
+		SetTextAttribute(pFontElement, "font", fontDesc);
+		cacheValid = false;
+	}
+
+	int width, height;
+	pText->GetTextExtent(_T("Just some test string we are measuring. If width or heigh differ from the recorded values, invalidate cache."), &width, &height);
+
+	if (GetAttributeInt(pFontElement, "width") != width ||
+		GetAttributeInt(pFontElement, "height") != height)
+	{
+		cacheValid = false;
+		SetAttributeInt(pFontElement, "width", width);
+		SetAttributeInt(pFontElement, "height", height);
+	}
+
+	pFrame->Destroy();
+
+
+	if (!cacheValid)
+	{
+		// Clear all languages
+		TiXmlElement* pLanguage = pElement->FirstChildElement("Language");
+		while (pLanguage)
+		{
+			pElement->RemoveChild(pLanguage);
+			pLanguage = pElement->FirstChildElement("Language");
+		}
+	}
+
+	// Enumerate language files
+	// ------------------------
+
+	const wxLanguageInfo* pInfo = wxLocale::FindLanguageInfo(_T("en"));
+	if (pInfo)
+	{
+		TiXmlElement* languageElement = FindElementWithAttribute(pElement, "Language", "id", pInfo->Language);
+		if (!languageElement)
+		{
+			languageElement = pElement->InsertEndChild(TiXmlElement("Language"))->ToElement();
+			languageElement->SetAttribute("id", pInfo->Language);
+		}
+	}
+
+
+	wxString localesDir = wxGetApp().GetLocalesDir();
+	dir.Open(localesDir);
+	
+	wxString locale;
+	for (bool found = dir.GetFirst(&locale); found; found = dir.GetNext(&locale))
+	{
+		if (!wxFileName::FileExists(localesDir + locale + _T("/filezilla.mo")))
+			continue;
+		
+		wxString name;
+		const wxLanguageInfo* pInfo = wxLocale::FindLanguageInfo(locale);
+		if (!pInfo)
+			continue;
+
+		wxFileName fn(localesDir + locale + _T("/filezilla.mo"));
+		wxDateTime date = fn.GetModificationTime();
+		wxLongLong ticks = date.GetTicks();
+
+		TiXmlElement* languageElement = FindElementWithAttribute(pElement, "Language", "id", pInfo->Language);
+		if (!languageElement)
+		{
+			languageElement = pElement->InsertEndChild(TiXmlElement("Language"))->ToElement();
+			languageElement->SetAttribute("id", pInfo->Language);
+			languageElement->SetAttribute("date", ticks.ToString().mb_str());
+		}
+		else
+		{
+			const char* languageNodeDate = languageElement->Attribute("date");
+			if (!languageNodeDate || strcmp(languageNodeDate, ticks.ToString().mb_str()))
+			{
+				languageElement->SetAttribute("date", ticks.ToString().mb_str());
+				languageElement->Clear();
+			}
+		}
+	}
+
+	// Outdated cache entries are now purged
+
+	wxString error;
+	if (!SaveXmlFile(file, pDocument, &error))
+	{
+		wxString msg = wxString::Format(_("Could not write \"%s\": %s"), file.GetFullPath().c_str(), error.c_str());
+		wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
+	}
+
+	delete pDocument->GetDocument();
+	
 	return true;
 }

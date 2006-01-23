@@ -17,6 +17,12 @@ wxString ConvLocal(const char *value);
 void SetTextAttribute(TiXmlElement* node, const char* name, const wxString& value);
 wxString GetTextAttribute(TiXmlElement* node, const char* name);
 
+int GetAttributeInt(TiXmlElement* node, const char* name);
+void SetAttributeInt(TiXmlElement* node, const char* name, int value);
+
+TiXmlElement* FindElementWithAttribute(TiXmlElement* node, const char* element, const char* attribute, const char* value);
+TiXmlElement* FindElementWithAttribute(TiXmlElement* node, const char* element, const char* attribute, int value);
+
 // Add a new element with the specified name and value to the xml document
 void AddTextElement(TiXmlElement* node, const char* name, const wxString& value);
 

@@ -368,13 +368,70 @@ wxString GetTextAttribute(TiXmlElement* node, const char* name)
 {
 	wxASSERT(node);
 
-	TiXmlElement* element = node->FirstChildElement(name);
-	if (!element)
-		return _T("");
-
 	const char* value = node->Attribute(name);
 	if (!value)
 		return _T("");
 	
 	return ConvLocal(value);
+}
+
+TiXmlElement* FindElementWithAttribute(TiXmlElement* node, const char* element, const char* attribute, const char* value)
+{
+	TiXmlElement* child;
+	if (element)
+		child = node->FirstChildElement(element);
+	else
+		child = node->FirstChildElement();
+
+	while (child)
+	{
+		const char* nodeVal = child->Attribute(attribute);
+		if (nodeVal && !strcmp(value, nodeVal))
+			return child;			
+
+		if (element)
+			child = child->NextSiblingElement(element);
+		else
+			child = child->NextSiblingElement();
+	}
+
+	return 0;
+}
+
+TiXmlElement* FindElementWithAttribute(TiXmlElement* node, const char* element, const char* attribute, int value)
+{
+	TiXmlElement* child;
+	if (element)
+		child = node->FirstChildElement(element);
+	else
+		child = node->FirstChildElement();
+
+	while (child)
+	{
+		int nodeValue;
+		const char* nodeVal = child->Attribute(attribute, &nodeValue);
+		if (nodeVal && nodeValue == value)
+			return child;			
+
+		if (element)
+			child = child->NextSiblingElement(element);
+		else
+			child = child->NextSiblingElement();
+	}
+
+	return 0;
+}
+
+int GetAttributeInt(TiXmlElement* node, const char* name)
+{
+	int value;
+	if (!node->Attribute(name, &value))
+		return 0;
+
+	return value;
+}
+
+void SetAttributeInt(TiXmlElement* node, const char* name, int value)
+{
+	node->SetAttribute(name, value);
 }

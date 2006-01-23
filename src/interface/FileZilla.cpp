@@ -2,6 +2,7 @@
 #include "filezillaapp.h"
 #include "Mainfrm.h"
 #include "Options.h"
+#include "wrapengine.h"
 
 #ifdef ENABLE_BINRELOC
 	#define BR_PTHREADS 0
@@ -25,12 +26,14 @@ IMPLEMENT_APP(CFileZillaApp);
 
 CFileZillaApp::CFileZillaApp()
 {
+	m_pWrapEngine = 0;
 	m_pLocale = 0;
 }
 
 CFileZillaApp::~CFileZillaApp()
 {
 	delete m_pLocale;
+	delete m_pWrapEngine;
 }
 
 bool CFileZillaApp::OnInit()
@@ -71,6 +74,10 @@ USE AT OWN RISK"), _T("Important Information"));
 
 	// Turn off idle events, we don't need them
 	wxIdleEvent::SetMode(wxIDLE_PROCESS_SPECIFIED);
+
+	// Load the text wrapping engine
+	m_pWrapEngine = new CWrapEngine();
+	m_pWrapEngine->LoadCache();
 
 	wxFrame *frame = new CMainFrame(pOptions);
 	frame->Show(true);
@@ -311,11 +318,12 @@ int CFileZillaApp::GetCurrentLanguage() const
 
 void CFileZillaApp::OnFatalException()
 {
-	GenerateReport(wxDebugReport::Context_Exception);
+	//GenerateReport(wxDebugReport::Context_Exception);
 }
 
 void CFileZillaApp::GenerateReport(wxDebugReport::Context ctx)
 {
+	/*
 	wxDebugReport report;
 
 	// add all standard files: currently this means just a minidump and an
@@ -329,7 +337,7 @@ void CFileZillaApp::GenerateReport(wxDebugReport::Context ctx)
 		{
 			// report successfully uploaded
 		}
-	}
+	}*/
 	//else: user cancelled the report
 }
 
@@ -346,3 +354,7 @@ void CFileZillaApp::DisplayEncodingWarning()
 	wxMessageBox(_("A local filename could not be decoded.\nPlease make sure the LC_CTYPE (or LC_ALL) environment variable is set correctly.\nUnless you fix this problem, files might be missing in the file listings.\nNo further warning will be displayed this session."), _("Character encoding issue"), wxICON_EXCLAMATION);
 }
 
+CWrapEngine* CFileZillaApp::GetWrapEngine()
+{
+	return m_pWrapEngine;
+}
