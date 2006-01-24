@@ -5,6 +5,7 @@
 #include "xmlfunctions.h"
 #include "filezillaapp.h"
 #include "ipcmutex.h"
+#include "wrapengine.h"
 
 BEGIN_EVENT_TABLE(CSiteManager, wxDialogEx)
 EVT_BUTTON(XRCID("wxID_OK"), CSiteManager::OnOK)
@@ -77,6 +78,8 @@ bool CSiteManager::Create(wxWindow* parent)
 	pTree->AssignImageList(pImageList);
 	
 	SetCtrlState();
+
+	wxGetApp().GetWrapEngine()->WrapRecursive(this, 1.33, "Site Manager");
 		
 	return true;
 }
