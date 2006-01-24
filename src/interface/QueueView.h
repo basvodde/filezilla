@@ -307,6 +307,9 @@ protected:
 	void OnScrollEvent(wxScrollWinEvent& event);
 	void OnUpdateStatusLines(wxCommandEvent& event);
 	void OnMouseWheel(wxMouseEvent& event);
+	
+	void OnContextMenu(wxContextMenuEvent& event);
+	void OnProcessQueue(wxCommandEvent& event);
 };
 
 #endif

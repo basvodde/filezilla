@@ -25,6 +25,10 @@ EVT_COMMAND(wxID_ANY, fzEVT_FOLDERTHREAD_COMPLETE, CQueueView::OnFolderThreadCom
 EVT_SCROLLWIN(CQueueView::OnScrollEvent)
 EVT_COMMAND(wxID_ANY, fzEVT_UPDATE_STATUSLINES, CQueueView::OnUpdateStatusLines)
 EVT_MOUSEWHEEL(CQueueView::OnMouseWheel)
+
+EVT_CONTEXT_MENU(CQueueView::OnContextMenu)
+EVT_MENU(XRCID("ID_PROCESSQUEUE"), CQueueView::OnProcessQueue)
+
 END_EVENT_TABLE()
 
 class CFolderItem;
@@ -1628,4 +1632,21 @@ void CQueueView::OnMouseWheel(wxMouseEvent& event)
 	event.Skip();
 	wxCommandEvent evt(fzEVT_UPDATE_STATUSLINES, wxID_ANY);
 	AddPendingEvent(evt);
+}
+
+void CQueueView::OnContextMenu(wxContextMenuEvent& event)
+{
+	wxMenu* pMenu = wxXmlResource::Get()->LoadMenu(_T("ID_MENU_QUEUE"));
+	if (!pMenu)
+		return;
+
+	pMenu->Check(XRCID("ID_PROCESSQUEUE"), IsActive() ? true : false);
+
+	PopupMenu(pMenu);
+	delete pMenu;
+}
+
+void CQueueView::OnProcessQueue(wxCommandEvent& event)
+{
+	SetActive(event.IsChecked());
 }
