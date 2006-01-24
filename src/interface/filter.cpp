@@ -113,6 +113,8 @@ bool CFilterDialog::Create(CMainFrame* parent)
 		pChoice->Append(m_filterSets[i].name);
 	pChoice->SetSelection(m_currentFilterSet);
 
+	GetSizer()->Fit(this);
+
 	return true;
 }
 
