@@ -147,12 +147,30 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 		if ((window = item->GetWindow()))
 		{
 			wxStaticText* text = wxDynamicCast(window, wxStaticText);
-			if (!text)
+			if (text)
+			{
+				wxString str = text->GetLabel();
+				str = WrapText(text, str,  max - rect.GetLeft() + pos.x);
+				text->SetLabel(str);
 				continue;
-
-			wxString str = text->GetLabel();
-			str = WrapText(text, str, max - rect.GetLeft() + pos.x);
-			text->SetLabel(str);
+			}
+			
+			wxNotebook* book = wxDynamicCast(window, wxNotebook);
+			if (book)
+			{
+				for (unsigned int i = 0; i < book->GetPageCount(); i++)
+				{
+					if (i == 3)
+					{
+						int y = 4;
+						y = 6;
+					}
+					wxNotebookPage* page = book->GetPage(i);
+					wxRect rect = page->GetRect();
+					WrapRecursive(wnd, page->GetSizer(), wxMin(max - rect.GetLeft(), rect.GetWidth()));
+				}
+				continue;
+			}
 		}
 		else if ((subSizer = item->GetSizer()))
 		{
@@ -163,11 +181,11 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 	return true;
 }
 
-bool CWrapEngine::WrapRecursive(wxWindow* wnd, double ratio)
+bool CWrapEngine::WrapRecursive(wxWindow* wnd, double ratio, const char* name /*=""*/)
 {
 	std::vector<wxWindow*> windows;
 	windows.push_back(wnd);
-	return WrapRecursive(windows, ratio);
+	return WrapRecursive(windows, ratio, name);
 }
 
 bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, const char* name /*=""*/)
@@ -204,31 +222,33 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 
 	int max = size.GetWidth();
 	int min = size.GetHeight();
-	int cur = (min + max) / 2;
+	int desiredWidth = (min + max) / 2;
+	int actualWidth = size.GetWidth();
 	while (true)
 	{
 		wxSize size(0, 0);
 		for (std::vector<wxWindow*>::iterator iter = windows.begin(); iter != windows.end(); iter++)
 		{
 			wxSizer* pSizer = (*iter)->GetSizer();
-			WrapRecursive(*iter, pSizer, cur);
+			WrapRecursive(*iter, pSizer, desiredWidth);
 			pSizer->Layout();
 			size.IncTo(pSizer->GetMinSize());
 		}
 
+		actualWidth = size.GetWidth();
 		double newRatio = ((double)size.GetWidth() / size.GetHeight());
 
 		if (newRatio < ratio)
-			min = cur;
+			min = desiredWidth;
 		else if (newRatio > ratio)
-			max = cur;
+			max = desiredWidth;
 		else
 			break;
 
-		cur = (min + max) / 2;
-		if ((max - cur) < 10)
+		desiredWidth = (min + max) / 2;
+		if ((max - desiredWidth) < 10)
 			break;
-		if ((cur - min) < 10)
+		if ((desiredWidth - min) < 10)
 			break;
 
 		for (std::vector<wxWindow*>::iterator iter = windows.begin(); iter != windows.end(); iter++)
@@ -244,11 +264,13 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 		wxSizer* pSizer = (*iter)->GetSizer();
 		UnwrapRecursive(*iter, pSizer);
 		pSizer->Layout();
-	
-		WrapRecursive(*iter, pSizer, cur);
+
+		WrapRecursive(*iter, pSizer, actualWidth);
+		pSizer->Layout();
+		pSizer->Fit(*iter);
 	}
 
-	SetWidthToCache(name, cur);
+	SetWidthToCache(name, actualWidth);
 
 	return true;
 }
@@ -266,44 +288,56 @@ bool CWrapEngine::UnwrapRecursive(wxWindow* wnd, wxSizer* sizer)
 		if ((window = item->GetWindow()))
 		{
 			wxStaticText* text = wxDynamicCast(window, wxStaticText);
-			if (!text)
-				continue;
-			
-			wxString str = text->GetLabel();
+			if (text)
+			{
+				wxString str = text->GetLabel();
 #if wxUSE_UNICODE
-			int lang = wxGetApp().GetCurrentLanguage();
-			if (lang == wxLANGUAGE_CHINESE || lang == wxLANGUAGE_CHINESE_SIMPLIFIED ||
-				lang == wxLANGUAGE_CHINESE_TRADITIONAL || lang == wxLANGUAGE_CHINESE_HONGKONG ||
-				lang == wxLANGUAGE_CHINESE_MACAU || lang == wxLANGUAGE_CHINESE_SINGAPORE ||
-				lang == wxLANGUAGE_CHINESE_TAIWAN)
-			{
-				wxString unwrapped;
-				const wxChar* p = str;
-				bool wasAscii = false;
-				while (*p)
+				int lang = wxGetApp().GetCurrentLanguage();
+				if (lang == wxLANGUAGE_CHINESE || lang == wxLANGUAGE_CHINESE_SIMPLIFIED ||
+					lang == wxLANGUAGE_CHINESE_TRADITIONAL || lang == wxLANGUAGE_CHINESE_HONGKONG ||
+					lang == wxLANGUAGE_CHINESE_MACAU || lang == wxLANGUAGE_CHINESE_SINGAPORE ||
+					lang == wxLANGUAGE_CHINESE_TAIWAN)
 				{
-					if (*p == '\n')
+					wxString unwrapped;
+					const wxChar* p = str;
+					bool wasAscii = false;
+					while (*p)
 					{
-						if (wasAscii || *(p + 1) < 127)
-							unwrapped += ' ';
+						if (*p == '\n')
+						{
+							if (wasAscii || *(p + 1) < 127)
+								unwrapped += ' ';
+						}
+						else
+							unwrapped += *p;
+
+						if (*p < 127)
+							wasAscii = true;
+						else
+							wasAscii = false;
+
+						p++;
 					}
-					else
-						unwrapped += *p;
-
-					if (*p < 127)
-						wasAscii = true;
-					else
-						wasAscii = false;
-
-					p++;
+					text->SetLabel(unwrapped);
 				}
-				text->SetLabel(unwrapped);
+				else
+	#endif
+				{
+					str.Replace(_T("\n"), _T(" "));
+					text->SetLabel(str);
+				}
+				continue;
 			}
-			else
-#endif
+
+			wxNotebook* book = wxDynamicCast(window, wxNotebook);
+			if (book)
 			{
-				str.Replace(_T("\n"), _T(" "));
-				text->SetLabel(str);
+				for (unsigned int i = 0; i < book->GetPageCount(); i++)
+				{
+					wxNotebookPage* page = book->GetPage(i);
+					UnwrapRecursive(wnd, page->GetSizer());
+				}
+				continue;
 			}
 		}
 		else if ((subSizer = item->GetSizer()))
