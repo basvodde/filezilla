@@ -1,6 +1,6 @@
 localesdir = $(pkgdatadir)/locales
 
-CLEANFILES = *.po.new *.mo resources.h filezilla.pot filezilla.pot.new
+CLEANFILES = *.po.new *.mo resources.h filezilla.pot filezilla.pot.new filezilla.pot~
 
 dist_noinst_DATA = filezilla.pot @FILEZILLA_LINGUAS_PO@ 
 
