@@ -211,7 +211,7 @@
         </object>
       </object>
       <object class="sizeritem">
-        <object class="wxRadioButton">
+        <object class="wxRadioButton" name="ID_ACTIVE_PORTMODE1">
           <label>Ask operating system for a port.</label>
         </object>
       </object>
@@ -221,14 +221,14 @@
         </object>
       </object>
       <object class="sizeritem">
-        <object class="wxRadioButton">
+        <object class="wxRadioButton" name="ID_ACTIVE_PORTMODE2">
           <label>Use the following port range:</label>
         </object>
       </object>
       <object class="sizeritem">
         <object class="wxFlexGridSizer">
           <object class="sizeritem">
-            <object class="wxTextCtrl"/>
+            <object class="wxTextCtrl" name="ID_ACTIVE_PORTMIN"/>
           </object>
           <object class="sizeritem">
             <object class="wxStaticText">
@@ -237,7 +237,7 @@
             <flag>wxALIGN_CENTRE_VERTICAL</flag>
           </object>
           <object class="sizeritem">
-            <object class="wxTextCtrl"/>
+            <object class="wxTextCtrl" name="ID_ACTIVE_PORTMAX"/>
           </object>
           <cols>3</cols>
           <hgap>5</hgap>
@@ -250,7 +250,7 @@
       </object>
       <object class="sizeritem">
         <object class="wxStaticText">
-          <label>All ports in the given range have to be between 1 and 65535. Also, it is higly recommended to choose only ports larger than 1024.</label>
+          <label>All ports in the given range have to be between 1 and 65535. Also, it is highly recommended to choose only ports larger than 1024.</label>
         </object>
       </object>
       <object class="sizeritem">

@@ -59,7 +59,15 @@ void CNetConfWizard::OnPageChanging(wxWizardEvent& event)
 		int mode = XRCCTRL(*this, "ID_ACTIVEMODE1", wxRadioButton)->GetValue() ? 0 : (XRCCTRL(*this, "ID_ACTIVEMODE2", wxRadioButton)->GetValue() ? 1 : 2);
 		if (mode == 1)
 		{
-			wxString ip = XRCCTRL(*this, "ID_ACTIVEIP", wxTextCtrl)->GetValue();
+			wxTextCtrl* control = XRCCTRL(*this, "ID_ACTIVEIP", wxTextCtrl);
+			wxString ip = control->GetValue();
+			if (ip == _T(""))
+			{
+				wxMessageBox(_("Please enter your external IP address"));
+				control->SetFocus();
+				event.Veto();
+				return;
+			}
 		}
 		else if (mode == 2)
 		{
@@ -72,6 +80,28 @@ void CNetConfWizard::OnPageChanging(wxWizardEvent& event)
 				event.Veto();
 				return;
 			}
+		}
+	}
+	else if (event.GetPage() == m_pages[4])
+	{
+		int mode = XRCCTRL(*this, "ID_ACTIVE_PORTMODE1", wxRadioButton)->GetValue() ? 0 : 1;
+		if (mode)
+		{
+			wxTextCtrl* pPortMin = XRCCTRL(*this, "ID_ACTIVE_PORTMIN", wxTextCtrl);
+			wxTextCtrl* pPortMax = XRCCTRL(*this, "ID_ACTIVE_PORTMAX", wxTextCtrl);
+			wxString portMin = pPortMin->GetValue();
+			wxString portMax = pPortMax->GetValue();
+
+			long min = 0, max = 0;
+			if (!portMin.ToLong(&min) || !portMax.ToLong(&max) ||
+				min < 1 || max > 65535 || min > max)
+			{
+				wxMessageBox(_("Please enter a valid portrange."));
+				pPortMin->SetFocus();
+				event.Veto();
+				return;
+			}
+				
 		}
 	}
 }
