@@ -9,6 +9,14 @@
         </object>
       </object>
       <object class="spacer">
+        <size>0,5</size>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticText">
+          <label>Please follow the instructions carefully, as wrong configuration will prevent successful FTP connections.</label>
+        </object>
+      </object>
+      <object class="spacer">
         <size>0,10</size>
       </object>
       <object class="sizeritem">
@@ -279,6 +287,8 @@
         <object class="wxStaticText">
           <label>At this point, all configuration should be complete.</label>
         </object>
+        <flag>wxTOP|wxBOTTOM</flag>
+        <border>5</border>
       </object>
       <object class="sizeritem">
         <object class="wxStaticText">
@@ -289,6 +299,8 @@
         <object class="wxStaticText">
           <label>If you click on test, FileZilla will connect to probe.filezilla-project.org and will perform some simple tests.</label>
         </object>
+        <flag>wxTOP|wxBOTTOM</flag>
+        <border>5</border>
       </object>
       <object class="sizeritem">
         <object class="wxStaticText">
@@ -304,11 +316,14 @@
               <size>-1,100</size>
               <style>wxTE_MULTILINE|wxTE_READONLY</style>
             </object>
+            <option>1</option>
             <flag>wxGROW|wxALL</flag>
             <border>5</border>
           </object>
         </object>
-        <flag>wxGROW</flag>
+        <option>1</option>
+        <flag>wxGROW|wxTOP</flag>
+        <border>5</border>
       </object>
     </object>
   </object>
