@@ -513,7 +513,6 @@ bool CWrapEngine::LoadCache()
 
 	// Get static text font and measure sample text
 	wxFrame* pFrame = new wxFrame;
-	pFrame->Hide();
 	pFrame->Create(0, -1, _T("Title"), wxDefaultPosition, wxDefaultSize, wxFRAME_TOOL_WINDOW);
 	wxStaticText* pText = new wxStaticText(pFrame, -1, _T("foo"));
 
