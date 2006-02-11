@@ -64,9 +64,16 @@ wxString CWrapEngine::WrapText(wxWindow* parent, const wxString &text, unsigned 
 
 		while (*p)
 		{
-			// Get width of all individual characters, record width of the current line
-			parent->GetTextExtent(*p, &width, &height);
-			lineLength += width;
+			std::map<wxChar, unsigned int>::const_iterator iter = m_charWidths.find(*p);
+			if (iter == m_charWidths.end())
+			{
+				// Get width of all individual characters, record width of the current line
+				parent->GetTextExtent(*p, &width, &height);
+				m_charWidths[*p] = width;
+				lineLength += width;
+			}
+			else
+				lineLength += iter->second;
 
 			if (*p == '\n')
 			{
