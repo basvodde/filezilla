@@ -56,8 +56,7 @@ bool CSiteManager::Create(wxWindow* parent)
 	SetExtraStyle(wxWS_EX_BLOCK_EVENTS);
 	SetParent(parent);
 	CreateControls();
-	GetSizer()->Fit(this);
-	GetSizer()->SetSizeHints(this);
+	wxGetApp().GetWrapEngine()->WrapRecursive(this, 1.33, "Site Manager");
 	
 	Load();
 
@@ -78,8 +77,6 @@ bool CSiteManager::Create(wxWindow* parent)
 	pTree->AssignImageList(pImageList);
 	
 	SetCtrlState();
-
-	wxGetApp().GetWrapEngine()->WrapRecursive(this, 1.33, "Site Manager");
 		
 	return true;
 }

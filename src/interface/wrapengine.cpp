@@ -167,11 +167,6 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 			{
 				for (unsigned int i = 0; i < book->GetPageCount(); i++)
 				{
-					if (i == 3)
-					{
-						int y = 4;
-						y = 6;
-					}
 					wxNotebookPage* page = book->GetPage(i);
 					wxRect rect = page->GetRect();
 					WrapRecursive(wnd, page->GetSizer(), wxMin(max - rect.GetLeft(), rect.GetWidth()));
@@ -203,8 +198,13 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 		for (std::vector<wxWindow*>::iterator iter = windows.begin(); iter != windows.end(); iter++)
 		{
 			wxSizer* pSizer = (*iter)->GetSizer();
-			if (pSizer)
-				WrapRecursive(*iter, pSizer, maxWidth);
+			if (!pSizer)
+				continue;
+
+			pSizer->Layout();
+			WrapRecursive(*iter, pSizer, maxWidth);
+			pSizer->Layout();
+			pSizer->Fit(*iter);
 		}
 		return true;
 	}
@@ -217,6 +217,7 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 		if (!pSizer)
 			return false;
 
+		pSizer->Layout();
 		size.IncTo(pSizer->GetMinSize());
 	}
 
