@@ -44,7 +44,10 @@ void CAsyncHostResolver::SendReply()
 {
 	m_bDone = true;
 	if (m_pOwner)
-		wxPostEvent(m_pOwner, fzAsyncHostResolveEvent());
+	{
+		fzAsyncHostResolveEvent event;
+		wxPostEvent(m_pOwner, event);
+	}
 }
 
 bool CAsyncHostResolver::Done() const
