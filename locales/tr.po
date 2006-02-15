@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Filezilla 3 Turkish PO\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-31 13:54+0100\n"
-"PO-Revision-Date: 2005-07-25 23:50+0200\n"
+"POT-Creation-Date: 2006-02-15 21:19+0100\n"
+"PO-Revision-Date: 2006-01-30 13:57+0200\n"
 "Last-Translator: Bogac Guven <bogacmx@yahoo.com>\n"
 "Language-Team: Bogac Guven <bogacmx@yahoo.com>\n"
 "MIME-Version: 1.0\n"
@@ -58,7 +58,7 @@ msgstr "&Hakkında..."
 
 #: resources.h:42
 msgid "&Account:"
-msgstr ""
+msgstr "&Hesap:"
 
 #: resources.h:60 resources.h:273
 msgid "&Active"
@@ -81,9 +81,8 @@ msgid "&Auto"
 msgstr "&Otomatik"
 
 #: resources.h:66
-#, fuzzy
 msgid "&Autodetect"
-msgstr "&Otomatik"
+msgstr "&Otomatik Algı"
 
 #: resources.h:93
 msgid "&Binary"
@@ -103,9 +102,8 @@ msgid "&Connect"
 msgstr "&Bağlan"
 
 #: resources.h:200
-#, fuzzy
 msgid "&Copy"
-msgstr "Kop&yala"
+msgstr "&Kopyala"
 
 #: resources.h:262
 msgid "&Copy to clipboard"
@@ -133,11 +131,11 @@ msgstr "&Düzenle"
 
 #: resources.h:184
 msgid "&Edit filters..."
-msgstr ""
+msgstr "&Filtreleri düzenle..."
 
 #: resources.h:70
 msgid "&Encoding:"
-msgstr ""
+msgstr "&Kodlama:"
 
 #: resources.h:261
 msgid "&Enter custom command..."
@@ -160,14 +158,12 @@ msgid "&File Attributes"
 msgstr "&Dosya Özellikleri"
 
 #: resources.h:181
-#, fuzzy
 msgid "&Filter sets:"
-msgstr "Dosya var"
+msgstr "&Filtre setleri:"
 
 #: resources.h:196
-#, fuzzy
 msgid "&Filters:"
-msgstr "&Dosya"
+msgstr "&Filtreler"
 
 #: resources.h:225
 msgid "&Help"
@@ -207,12 +203,11 @@ msgstr "&En fazla bağlantı sayısı:"
 
 #: resources.h:221
 msgid "&Network configuration wizard"
-msgstr ""
+msgstr "&Network yapılandırma sihirbazı"
 
 #: resources.h:197
-#, fuzzy
 msgid "&New"
-msgstr "&Yeni Site"
+msgstr "&Yeni"
 
 #: resources.h:23
 msgid "&New Site"
@@ -263,9 +258,8 @@ msgid "&Remove"
 msgstr "&Kaldır"
 
 #: resources.h:254
-#, fuzzy
 msgid "&Remove selected"
-msgstr "Uzaktaki site:"
+msgstr "&Seçileni kaldır"
 
 #: resources.h:25 resources.h:199 resources.h:238 resources.h:248
 msgid "&Rename"
@@ -277,7 +271,7 @@ msgstr "&Devam"
 
 #: resources.h:183
 msgid "&Save as..."
-msgstr ""
+msgstr "&Farklı kaydet"
 
 #: resources.h:123
 msgid "&Select language:"
@@ -299,7 +293,7 @@ msgstr "&Site Yöneticisi"
 msgid "&Skip"
 msgstr "&Geç"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:129
+#: ../../locales/../src/interface/netconfwizard.cpp:145
 #, fuzzy
 msgid "&Test"
 msgstr "E&n düşük"
@@ -336,13 +330,13 @@ msgstr "&Kullanıcı Adı:"
 msgid "&Write"
 msgstr "&Yaz"
 
-#: ../../locales/../src/interface/sitemanager.cpp:411
+#: ../../locales/../src/interface/sitemanager.cpp:408
 msgid "'Account' logontype not supported by selected protocol"
-msgstr ""
+msgstr "'Hesap'lı giriş tipi bu protokol için desteklenmemekte"
 
 #: resources.h:291
 msgid "-"
-msgstr ""
+msgstr "-"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:119
 #: ../../locales/../src/interface/statuslinectrl.cpp:124
@@ -350,13 +344,17 @@ msgid "--:--:-- left"
 msgstr "--:--:-- kaldı"
 
 #: resources.h:270
+#, fuzzy
 msgid ""
 "A few servers don't allow passive mode or are misconfigured. In such cases "
 "you would have to use active mode. In active mode, FileZilla opens a port "
 "and asks the server to connect to it."
 msgstr ""
+"Bazı sunucular pasif moda izin vermez ya da yanlış ayarlanmışlardır. Böyle "
+"durumlarda aktif modu kullanmalısınız. Aktif modda, FileZilla bir port açar "
+"ve sunucuya buna bağlanmasını söyler."
 
-#: ../../locales/../src/interface/FileZilla.cpp:354
+#: ../../locales/../src/interface/FileZilla.cpp:361
 msgid ""
 "A local filename could not be decoded.\n"
 "Please make sure the LC_CTYPE (or LC_ALL) environment variable is set "
@@ -364,6 +362,10 @@ msgid ""
 "Unless you fix this problem, files might be missing in the file listings.\n"
 "No further warning will be displayed this session."
 msgstr ""
+"Yerel bir dosya adı anlaşılamıyor.\n"
+"LC_CTYPE (ya da LC_ALL) ortam değişkeninin doğru ayarlandığından emin olun.\n"
+"Bu sorunu çözmezseniz listelemelerde bazı dosyalar görünmeyebilir.\n"
+"Bu oturum boyunca başka uyarı almayacaksınız."
 
 #: resources.h:96
 msgid "A&dd"
@@ -385,13 +387,13 @@ msgstr "A&scii"
 msgid "About FileZilla"
 msgstr "FileZilla Hakkında"
 
-#: resources.h:39 ../../locales/../src/interface/sitemanager.cpp:408
-#: ../../locales/../src/interface/sitemanager.cpp:589
-#: ../../locales/../src/interface/sitemanager.cpp:590
-#: ../../locales/../src/interface/sitemanager.cpp:626
-#: ../../locales/../src/interface/sitemanager.cpp:829
+#: resources.h:39 ../../locales/../src/interface/sitemanager.cpp:405
+#: ../../locales/../src/interface/sitemanager.cpp:586
+#: ../../locales/../src/interface/sitemanager.cpp:587
+#: ../../locales/../src/interface/sitemanager.cpp:623
+#: ../../locales/../src/interface/sitemanager.cpp:826
 msgid "Account"
-msgstr ""
+msgstr "Hesap"
 
 #: resources.h:109
 msgid "Active mode IP"
@@ -399,7 +401,7 @@ msgstr "Aktif mod IP'si"
 
 #: resources.h:205
 msgid "Add &more"
-msgstr ""
+msgstr "Daha &ekle"
 
 #: resources.h:233 resources.h:243
 msgid "Add selected files and folders to the transfer queue"
@@ -414,51 +416,52 @@ msgid "Advanced"
 msgstr "Gelişmiş"
 
 #: resources.h:293
+#, fuzzy
 msgid ""
 "All ports in the given range have to be between 1 and 65535. Also, it is "
 "highly recommended to choose only ports larger than 1024."
 msgstr ""
+"Girilen aralıktaki tüm portlar 1 ile 65535 arasında olmalıdır. Aynı zamanda "
+"sadece 1024 üzerindeki portların kullanılması şiddetle tavsiye olunur."
 
-#: resources.h:35 ../../locales/../src/interface/sitemanager.cpp:588
-#: ../../locales/../src/interface/sitemanager.cpp:773
-#: ../../locales/../src/interface/sitemanager.cpp:832
+#: resources.h:35 ../../locales/../src/interface/sitemanager.cpp:585
+#: ../../locales/../src/interface/sitemanager.cpp:770
+#: ../../locales/../src/interface/sitemanager.cpp:829
 msgid "Anonymous"
 msgstr "Anonim"
 
 #: resources.h:204
-#, fuzzy
 msgid "Any of the following"
-msgstr "şu dosya ile?"
+msgstr "Şunlardan herhangi biri"
 
 #: resources.h:194
 msgid "Apply"
-msgstr ""
+msgstr "Uygula"
 
 #: resources.h:17
 msgid "Apply to &current queue only"
 msgstr "Sadece &geçerli kuyruğa uygula"
 
-#: resources.h:37 ../../locales/../src/interface/sitemanager.cpp:622
-#: ../../locales/../src/interface/sitemanager.cpp:823
+#: resources.h:37 ../../locales/../src/interface/sitemanager.cpp:619
+#: ../../locales/../src/interface/sitemanager.cpp:820
 msgid "Ask for password"
 msgstr "Parola sor"
 
 #: resources.h:288
 msgid "Ask operating system for a port."
-msgstr ""
+msgstr "İşletim sisteminden bir port iste."
 
 #: resources.h:279
-#, fuzzy
 msgid "Ask your operating system for the external IP address"
-msgstr "&Dış IP adresi:"
+msgstr "İşletim sistemine dış IP adresini sor"
 
 #: ../../locales/../src/interface/filteredit.cpp:436
 msgid "At least one filter condition is incomplete"
-msgstr ""
+msgstr "En az bir filtre kısıtı tamamlanmamış"
 
 #: resources.h:297
 msgid "At this point, all configuration should be complete."
-msgstr ""
+msgstr "Bu noktada tüm yapılandırma tamamlanmış olmalı."
 
 #: resources.h:114
 msgid "Author:"
@@ -488,9 +491,8 @@ msgid ""
 "please enter the port range below."
 msgstr ""
 "Varsayılan olarak aktif modda transfer için mevcut olan herhangi bir\n"
-" yerel port kullanılabilir. Eğer FileZilla'nın sadece sınırlı aralıktaki "
-"portları\n"
-" kullanabilmesini istiyorsanız, bu aralığı aşağıya giriniz."
+" yerel port kullanılabilir. Eğer FileZilla'nın sadece sınırlı aralıktaki\n"
+"portları kullanabilmesini istiyorsanız, bu aralığı aşağıya giriniz."
 
 #: resources.h:263
 msgid "C&lear all"
@@ -550,15 +552,20 @@ msgstr "Dosya özelliklerini değiştir"
 msgid "Change the file permissions."
 msgstr "Dosya izinlerini değiştir."
 
-#: ../../locales/../src/interface/FileZilla.cpp:354
+#: ../../locales/../src/interface/FileZilla.cpp:361
 msgid "Character encoding issue"
-msgstr ""
+msgstr "Karakter kodlaması sorunu"
 
 #: resources.h:64
 msgid "Charset"
-msgstr ""
+msgstr "Karakter seti"
 
-#: ../../locales/../src/interface/sitemanager.cpp:717
+#: ../../locales/../src/interface/netconfwizard.cpp:218
+#, fuzzy
+msgid "Checking for correct external IP address"
+msgstr "Lütfen dış IP adresinizi girin"
+
+#: ../../locales/../src/interface/sitemanager.cpp:714
 msgid "Choose the default local directory"
 msgstr "Varsayılan yerel klasörü seç"
 
@@ -585,21 +592,19 @@ msgstr "Derleyici bayrakları:"
 
 #: resources.h:207
 msgid "Conditions are c&ase sensitive"
-msgstr ""
+msgstr "Kısıtlar büyük küçük h&arf duyarlıdır"
 
 #: resources.h:296
-#, fuzzy
 msgid "Configuration test"
-msgstr "Onay gerekmekte"
+msgstr "Yapılandırma testi"
 
 #: resources.h:274
-#, fuzzy
 msgid "Configure passive mode"
-msgstr "&Pasif modu kullan"
+msgstr "Pasif modu yapılandır"
 
 #: resources.h:286
 msgid "Configure port range"
-msgstr ""
+msgstr "Port aralığını yapılandır"
 
 #: ../../locales/../src/interface/LocalListView.cpp:805
 #: ../../locales/../src/interface/RemoteListView.cpp:715
@@ -614,6 +619,7 @@ msgstr "Bağlanıldı"
 msgid "Connecting"
 msgstr "Bağlanıyor"
 
+#: ../../locales/../src/interface/netconfwizard.cpp:123
 #: ../../locales/../src/interface/statuslinectrl.cpp:151
 #, c-format
 msgid "Connecting to %s"
@@ -626,13 +632,18 @@ msgid "Connecting to %s:%d..."
 msgstr "%s:%d bağlantısı kuruluyor..."
 
 #: ../../locales/../src/engine/ControlSocket.cpp:245
-#, fuzzy
 msgid "Connection attempt interrupted by user"
-msgstr "Kullanıcı tarafından durduruldu"
+msgstr "Bağlantı denemesi kullanıcı tarafından durduruldu"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:210
 msgid "Connection established, waiting for welcome message..."
 msgstr "Bağlantı sağlandı, hoşgeldin mesajı beklenmekte..."
+
+#: ../../locales/../src/interface/netconfwizard.cpp:168
+#: ../../locales/../src/interface/netconfwizard.cpp:252
+#, fuzzy
+msgid "Connection lost"
+msgstr "%s'e başlanılıyor"
 
 #: resources.h:27
 msgid "Cop&y"
@@ -650,7 +661,7 @@ msgstr "Sunucu ile bağlantı sağlanamamakta"
 msgid "Could not establish passive connection to server"
 msgstr "Sunucu ile pasif bağlantı sağlanamamakta"
 
-#: ../../locales/../src/interface/FileZilla.cpp:215
+#: ../../locales/../src/interface/FileZilla.cpp:222
 msgid ""
 "Could not find the resource files for FileZilla, closing FileZilla.\n"
 "You can set the data directory of FileZilla using the '--datadir "
@@ -673,19 +684,18 @@ msgstr ""
 "Bu oturum süresince varsayılan ayarlar kullanılacak ve yapılan değişiklikler "
 "kalıcı olmayacak."
 
-#: ../../locales/../src/interface/wrapengine.cpp:461
-#, fuzzy, c-format
+#: ../../locales/../src/interface/wrapengine.cpp:469
+#, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
 "accessed."
 msgstr ""
 "\"%s\" yüklenemiyor, lütfen dosyanın erişilebilir ve geçerli olduğundan emin "
-"olun.\n"
-"Kuyruk kadedilemeyecek."
+"olun."
 
 #: ../../locales/../src/interface/filter.cpp:160
 #: ../../locales/../src/interface/filter.cpp:244
-#: ../../locales/../src/interface/sitemanager.cpp:255
+#: ../../locales/../src/interface/sitemanager.cpp:252
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -696,7 +706,7 @@ msgstr ""
 "olun.\n"
 "Site Yöneticisi'nde yapılan değişiklikler kaydedilemiyor."
 
-#: ../../locales/../src/interface/sitemanager.cpp:164
+#: ../../locales/../src/interface/sitemanager.cpp:161
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -729,22 +739,20 @@ msgid "Could not seek to offset %s within file"
 msgstr "Dosya içinde %s uzaklığına ulaşılamıyor"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1323
-#, fuzzy
 msgid "Could not seek to the end of the file"
 msgstr "Dosyanın sonuna gidiliememekte"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1385
-#, fuzzy
 msgid "Could not spawn IO thread"
-msgstr "Sunucu adresi işlenememekte:"
+msgstr "IO işlemi başlatılamamakta:"
 
-#: ../../locales/../src/interface/sitemanager.cpp:281
-#, fuzzy, c-format
+#: ../../locales/../src/interface/sitemanager.cpp:278
+#, c-format
 msgid ""
 "Could not write \"%s\", any changes to the Site Manager could not be saved: %"
 "s"
 msgstr ""
-"\"%s\" yazılamıyor, Site Yöneticisi'nde yapılan değişiklikler "
+"\"%s\" yazılamıyor, Site Yöneticisi'nde yapılan değişiklikler %s e "
 "kaydedilemeyecek."
 
 #: ../../locales/../src/interface/QueueView.cpp:1464
@@ -753,15 +761,15 @@ msgstr ""
 msgid "Could not write \"%s\", the queue could not be saved."
 msgstr "\"%s\" yazılamıyor, kuyruk kaydedilemez."
 
-#: ../../locales/../src/interface/wrapengine.cpp:614
+#: ../../locales/../src/interface/wrapengine.cpp:621
 #, c-format
 msgid "Could not write \"%s\": %s"
-msgstr ""
+msgstr "\"%s\" yazılamıyor: %s"
 
 #: resources.h:227
 msgid "Crashes FileZilla instantly. Only used to debug the exception handler"
 msgstr ""
-"Filezilla'yı anlık olarak çökertir. Sadece istisna yakalayıcı ile kullanılır"
+"FileZilla'yı anlık olarak çökertir. Sadece istisna yakalayıcı ile kullanılır"
 
 #: resources.h:235 resources.h:245
 msgid "Create a new subdirectory in the current directory"
@@ -782,9 +790,8 @@ msgid "Critical error"
 msgstr "Kritik hata"
 
 #: ../../locales/../src/interface/filter.cpp:110
-#, fuzzy
 msgid "Custom filter set"
-msgstr "Dosya var"
+msgstr "Özelleştirilmiş filtre seti"
 
 #: resources.h:59
 msgid "D&efault"
@@ -795,9 +802,8 @@ msgid "D&elete"
 msgstr "S&il"
 
 #: resources.h:187
-#, fuzzy
 msgid "D&isable all"
-msgstr "H&epsini sil"
+msgstr "H&epsi devre dışı"
 
 #: resources.h:74
 msgid "D&iscard"
@@ -814,8 +820,8 @@ msgstr "Tarih"
 msgid "Date/time unknown"
 msgstr "Tarih/zaman bilinmiyor"
 
-#: resources.h:46 ../../locales/../src/interface/sitemanager.cpp:779
-#: ../../locales/../src/interface/sitemanager.cpp:856
+#: resources.h:46 ../../locales/../src/interface/sitemanager.cpp:776
+#: ../../locales/../src/interface/sitemanager.cpp:853
 msgid "Default"
 msgstr "Varsayılan"
 
@@ -828,9 +834,8 @@ msgid "Default r&emote directory:"
 msgstr "Varsayılan &uzak klasör:"
 
 #: resources.h:271
-#, fuzzy
 msgid "Default transfer mode:"
-msgstr "Varsayılan transfer türü:"
+msgstr "Varsayılan transfer modu:"
 
 #: resources.h:90
 msgid "Default transfer type:"
@@ -838,7 +843,7 @@ msgstr "Varsayılan transfer türü:"
 
 #: resources.h:284
 msgid "Default: http://ip.filezilla-project.org/ip.php"
-msgstr ""
+msgstr "Varsayılan: http://ip.filezilla-project.org/ip.php"
 
 #: resources.h:237 resources.h:247
 msgid "Delete selected files and folders"
@@ -853,36 +858,32 @@ msgid "Details for new key:"
 msgstr "Yeni anahtarın detayları:"
 
 #: resources.h:210
-#, fuzzy
 msgid "Dire&ctories"
-msgstr "Yönlendirme"
+msgstr "Klas&örler"
 
 #: ../../locales/../src/interface/QueueView.cpp:569
 msgid "Direction"
 msgstr "Yönlendirme"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:251
-#, fuzzy
 msgid "Directory listing aborted by user"
-msgstr "Klasör listeleme başarılı"
+msgstr "Klasör listeleme kullanıcı tarafından sonlandı"
 
 #: resources.h:180
-#, fuzzy
 msgid "Directory listing filters"
-msgstr "Klasör listeleme başarılı"
+msgstr "Klasör listeleme filtreleri"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:268
 msgid "Directory listing successful"
 msgstr "Klasör listeleme başarılı"
 
 #: resources.h:190
-#, fuzzy
 msgid "Disa&ble all"
-msgstr "H&epsini sil"
+msgstr "Heps&ini etkisiz kıl"
 
 #: resources.h:325
 msgid "Disconnect from server"
-msgstr "Sunucu ile bağlantı kesiliyor"
+msgstr "Sunucu ile bağlantıyı kes"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:108
 #: ../../locales/../src/engine/ControlSocket.cpp:161
@@ -903,8 +904,8 @@ msgstr "Şu anki görünen sunucu ile bağlantıyı keser"
 msgid "Display about dialog"
 msgstr "Hakkında penceresini göster"
 
-#: resources.h:50 ../../locales/../src/interface/sitemanager.cpp:640
-#: ../../locales/../src/interface/sitemanager.cpp:847
+#: resources.h:50 ../../locales/../src/interface/sitemanager.cpp:637
+#: ../../locales/../src/interface/sitemanager.cpp:844
 msgid "Dos"
 msgstr "Dos"
 
@@ -913,9 +914,8 @@ msgid "Download selected files and folders"
 msgstr "Seçili dosya ve klasörleri indir"
 
 #: resources.h:186
-#, fuzzy
 msgid "E&nable all"
-msgstr "H&epsini sil"
+msgstr "H&epsini etkinleştir"
 
 #: resources.h:137
 msgid "E&xecute"
@@ -927,32 +927,31 @@ msgstr "Ç&ık"
 
 #: ../../locales/../src/interface/filteredit.cpp:425
 msgid "Each filter needs at least one condition"
-msgstr ""
+msgstr "Her filtre en az bir kısıt gerektirmektedir"
 
 #: resources.h:195
 msgid "Edit filters"
-msgstr ""
+msgstr "Filtreleri düzenle"
 
 #: resources.h:116
 msgid "Email:"
 msgstr "Eposta:"
 
 #: resources.h:189
-#, fuzzy
 msgid "En&able all"
-msgstr "H&epsini sil"
+msgstr "He&psini etkinleştir"
 
 #: resources.h:223
 msgid "Enter &custom command..."
-msgstr "Kşisel &komut gir..."
+msgstr "Özelleştirilmiş &komut gir..."
 
 #: ../../locales/../src/interface/Mainfrm.cpp:325
 msgid "Enter custom command"
-msgstr "Kişisel komut gir"
+msgstr "Özelleştirilmiş komut gir..."
 
 #: ../../locales/../src/interface/filter.cpp:544
 msgid "Enter name for filterset"
-msgstr ""
+msgstr "Filtreseti için isim girin"
 
 #: resources.h:75
 msgid "Enter password"
@@ -992,16 +991,16 @@ msgstr "%d sokete yazma hatası"
 #: ../../locales/../src/interface/Options.cpp:59
 #: ../../locales/../src/interface/QueueView.cpp:1446
 #: ../../locales/../src/interface/QueueView.cpp:1482
-#: ../../locales/../src/interface/sitemanager.cpp:165
-#: ../../locales/../src/interface/sitemanager.cpp:256
-#: ../../locales/../src/interface/wrapengine.cpp:462
+#: ../../locales/../src/interface/sitemanager.cpp:162
+#: ../../locales/../src/interface/sitemanager.cpp:253
+#: ../../locales/../src/interface/wrapengine.cpp:470
 msgid "Error loading xml file"
 msgstr "XML dosyasının okunmasında hata"
 
 #: ../../locales/../src/interface/QueueView.cpp:1465
 #: ../../locales/../src/interface/QueueView.cpp:1551
-#: ../../locales/../src/interface/sitemanager.cpp:282
-#: ../../locales/../src/interface/wrapengine.cpp:615
+#: ../../locales/../src/interface/sitemanager.cpp:279
+#: ../../locales/../src/interface/wrapengine.cpp:622
 msgid "Error writing xml file"
 msgstr "XML dosyasının yazılmasında hata"
 
@@ -1015,21 +1014,23 @@ msgid "Exe&cute"
 msgstr "Çal&ıştır"
 
 #: resources.h:201
-#, fuzzy
 msgid "F&ilter name:"
-msgstr "Dosya Adı"
+msgstr "F&iltre adı:"
 
-#: resources.h:32 ../../locales/../src/interface/sitemanager.cpp:612
-#: ../../locales/../src/interface/sitemanager.cpp:772
-#: ../../locales/../src/interface/sitemanager.cpp:809
+#: resources.h:32 ../../locales/../src/interface/sitemanager.cpp:609
+#: ../../locales/../src/interface/sitemanager.cpp:769
+#: ../../locales/../src/interface/sitemanager.cpp:806
 msgid "FTP"
 msgstr "FTP"
 
 #: resources.h:268
+#, fuzzy
 msgid ""
 "FTP uses secondary connections for data transfers. These additional "
 "connections can be established in two ways."
 msgstr ""
+"FTP veri transferi için ikincil bağlantılar kullanır. Bu ek bağlantılar iki "
+"şekilde sağlanabilir."
 
 #: ../../locales/../src/interface/FileZilla.cpp:57
 #: ../../locales/../src/interface/optionspage_language.cpp:64
@@ -1038,7 +1039,7 @@ msgstr "Lisan değişimi başarısız"
 
 #: ../../locales/../src/interface/xmlfunctions.cpp:186
 msgid "Failed to create backup copy of xml file"
-msgstr ""
+msgstr "Xml dosyasının yedeği alınamadı"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:670
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1627
@@ -1080,14 +1081,12 @@ msgid "Failed to validate settings"
 msgstr "Ayarların geçerliliği sağlanamadı"
 
 #: ../../locales/../src/interface/xmlfunctions.cpp:197
-#, fuzzy
 msgid "Failed to write xml file"
 msgstr "XML dosyasının yazılmasında hata"
 
 #: resources.h:209
-#, fuzzy
 msgid "Fil&es"
-msgstr "Dosya"
+msgstr "Dos&yalar"
 
 #: ../../locales/../src/interface/LocalListView.cpp:394
 #: ../../locales/../src/interface/LocalListView.cpp:412
@@ -1110,16 +1109,19 @@ msgstr "Dosya var"
 msgid "File transfer successful"
 msgstr "Dosya transferi başarılı"
 
-#: ../../locales/../src/interface/FileZilla.cpp:216
+#: ../../locales/../src/interface/FileZilla.cpp:223
 #: ../../locales/../src/interface/Mainfrm.cpp:377
 msgid "FileZilla Error"
 msgstr "FileZilla Hatası"
 
 #: resources.h:298
+#, fuzzy
 msgid ""
 "FileZilla can test your configuration now to ensure everything is configured "
 "properly."
 msgstr ""
+"FileZilla şimdi tüm ayarlarınızın doğru yapılıp yapılmadığını anlamak için "
+"yapılandırmanızı sınayabilir."
 
 #: ../../locales/../src/interface/filteredit.cpp:5
 #: ../../locales/../src/interface/LocalListView.cpp:34
@@ -1158,34 +1160,31 @@ msgstr "Dosya türü"
 
 #: resources.h:202
 msgid "Filter &out all files that:"
-msgstr ""
+msgstr "Şöyle &dosyaları filtrele:"
 
 #: resources.h:208
 msgid "Filter applies to:"
-msgstr ""
+msgstr "Bu filtre uygulananlar:"
 
 #: ../../locales/../src/interface/filteredit.cpp:467
-#, fuzzy
 msgid "Filter name already exists"
-msgstr "Hedef dosya zaten mevcut"
+msgstr "Filtre adı zaten mevcut"
 
 #: ../../locales/../src/interface/filter.cpp:553
-#, fuzzy
 msgid "Filter set already exists"
-msgstr "Hedef dosya zaten mevcut"
+msgstr "Filtre seti zaten mevcut"
 
 #: resources.h:329 resources.h:330
-#, fuzzy
 msgid "Filter the directory listings"
-msgstr "Klasör listesini alma işlemi başarısız"
+msgstr "Klasör listesini filtrele"
 
 #: resources.h:162 resources.h:174
 msgid "Fingerprint:"
 msgstr "Parmak İzi:"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:25
+#: ../../locales/../src/interface/netconfwizard.cpp:27
 msgid "Firewall and router configuration wizard"
-msgstr ""
+msgstr "Güvenlik duvarı ve yönlendirici ayar sihirbazı"
 
 #: ../../locales/../src/interface/LocalListView.cpp:416
 #: ../../locales/../src/interface/RemoteListView.cpp:451
@@ -1194,11 +1193,11 @@ msgstr "Klasör"
 
 #: resources.h:292
 msgid "For realibility you should specify a range of at least 10 ports."
-msgstr ""
+msgstr "Güvenirlik açısından en az 10 portluk bir ara belirtilmeli."
 
 #: resources.h:68
 msgid "Force &UTF-8"
-msgstr ""
+msgstr "UTF-8i &zorla"
 
 #: resources.h:28
 msgid "General"
@@ -1206,12 +1205,11 @@ msgstr "Genel"
 
 #: resources.h:283
 msgid "Get external IP address from the following URL:"
-msgstr ""
+msgstr "Şu URL'den dış IP adresini al:"
 
 #: ../../locales/../src/interface/filter.cpp:553
-#, fuzzy
 msgid "Given filterset name already exists, overwrite filter set?"
-msgstr "Hedef dosya adı zaten var, devam edilsin mi?"
+msgstr "Verilen filtre seti adı zaten mevcut, üzerine yazılsın mıi?"
 
 #: resources.h:134
 msgid "Group permissions"
@@ -1237,6 +1235,8 @@ msgstr "En yüksek mevcut port 1 ila 65535 arasında bir sayı olmalı."
 msgid ""
 "Hold the shift key to toggle the filter state on both sides simultanously."
 msgstr ""
+"Her iki tarafta da aynı anda filtre durumunu açıp kapamak için shift tuşuna "
+"basın."
 
 #: resources.h:150
 msgid "Homepage:"
@@ -1261,6 +1261,10 @@ msgid ""
 "you should try active mode. You can set the transfer mode on a per-server "
 "basis in the Site Manager."
 msgstr ""
+"Bu sihirbazın sonundaki test başarılı olur buna rağmen belli bazı sunuculara "
+"dosya transferi yapamazsanız, sunucu yanlış yapılandırılmıştır ve aktif modu "
+"denemeniz gereklidir. Site Yöneticisi'nden transfer modunu her sunucu için "
+"ayrı ayrı ayarlayabilirsiniz."
 
 #: resources.h:110
 msgid ""
@@ -1270,7 +1274,7 @@ msgid ""
 "enter\n"
 " the external IP address here."
 msgstr ""
-"Bir routerın arkasındaysanız, FileZilla aktif (pasif olmayan) "
+"Bir yönlendiricinin arkasındaysanız, FileZilla aktif (pasif olmayan) "
 "transferleriniz için\n"
 "dış IP adresinizi algılamayabilir. Bu durumda dış IP adresinizi\n"
 "buraya girmelisiniz."
@@ -1284,6 +1288,8 @@ msgid ""
 "If you click on test, FileZilla will connect to probe.filezilla-project.org "
 "and will perform some simple tests."
 msgstr ""
+"test'e basarsanız FileZilla probe.filezilla-project.org adresine bağlanıp "
+"bazı sıradan testler yapacaktır."
 
 #: resources.h:98
 msgid ""
@@ -1296,8 +1302,9 @@ msgstr ""
 "bozulabilirler."
 
 #: resources.h:300
+#, fuzzy
 msgid "If you get any errors, your configuration is not correct."
-msgstr ""
+msgstr "Hata alıyorsanız ayarlarınız doğru yapılmamış demektir."
 
 #: resources.h:103
 msgid ""
@@ -1312,36 +1319,51 @@ msgid ""
 "If you sucessfully complete the wizard and the final test succeeds, any "
 "firewalls and routers you have should be configured properly."
 msgstr ""
+"Eğer sihirbazı ve son testi başarıyla sonlandırırsanız, güvenlik "
+"duvarlarınız ve yönlendiricileriniz doğru yapılandırılmış demektir."
 
 #: resources.h:295
 msgid ""
 "If you use a firewall, make sure FileZilla is allowed to accept connection "
 "on all given ports."
 msgstr ""
+"Bir güvenlik duvarı kullanıyorsanız FileZilla'nın belirtilen portlardan "
+"bağlantı alma izni olduğunu kontrol edin."
 
 #: resources.h:294
 msgid ""
 "If you use a router, make sure all these ports are forwarded to the machine "
 "you're running FileZilla on."
 msgstr ""
+"Bir yönlendirici kullanıyorsanız bu portların FileZilla'nın çalıştığı "
+"bilgisayara yönlendirildiğinden emin olun."
 
 #: resources.h:287
 msgid ""
 "In active mode, FileZilla has to listen on a port for data transfers. You "
 "have to specify which ports FileZilla will use."
 msgstr ""
+"Aktif modda FileZilla veri transferi için bir portu dinleyebilmelidir. "
+"FileZilla'nın hangi portu dinleyeceğini belirtiniz."
 
 #: resources.h:289
+#, fuzzy
 msgid ""
 "In case you have a router, you will have to forward all available ports, as "
 "FileZilla has no influence on the ports your system chooses."
 msgstr ""
+"Bir yönlendiricinizin olması halinde, FileZilla'nın Windows'un seçtiği "
+"portlarda seçim şansı olmadığından, tüm mevcut portları yönlendirmeniz "
+"gerekmektedir."
 
 #: resources.h:278
+#, fuzzy
 msgid ""
 "In order to use active mode, FileZilla needs to know your external IP "
 "address."
 msgstr ""
+"Pasif modu kullanabilmesi için FileZilla'nın iç IP adresinizi bilmesi "
+"gereklidir."
 
 #: resources.h:269
 msgid ""
@@ -1349,15 +1371,22 @@ msgid ""
 "server for a port and connects to the given port. Not much configuration has "
 "to be done for this."
 msgstr ""
+"Çoğu kullanıcı için tavsiye edilen pasif modda FileZilla sunucuya bir port "
+"sorar ve verilen porttan bağlantı kurulur. Bunun için pek ayar yapılmasına "
+"gerek yoktur."
 
-#: resources.h:38 ../../locales/../src/interface/sitemanager.cpp:624
-#: ../../locales/../src/interface/sitemanager.cpp:826
+#: resources.h:38 ../../locales/../src/interface/sitemanager.cpp:621
+#: ../../locales/../src/interface/sitemanager.cpp:823
 msgid "Interactive"
 msgstr "İnteraktif"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:259
 msgid "Interrupted by user"
 msgstr "Kullanıcı tarafından durduruldu"
+
+#: ../../locales/../src/interface/netconfwizard.cpp:182
+msgid "Invalid data received"
+msgstr ""
 
 #: ../../locales/../src/interface/LocalListView.cpp:1049
 #: ../../locales/../src/interface/LocalListView.cpp:1084
@@ -1382,7 +1411,7 @@ msgstr ""
 
 #: ../../locales/../src/interface/filteredit.cpp:447
 msgid "Invalid size in condition"
-msgstr ""
+msgstr "Kısıttaki boyut geçersiz"
 
 #: ../../locales/../src/engine/server.cpp:53
 msgid "Invalid username given."
@@ -1418,9 +1447,8 @@ msgid "Listing:"
 msgstr "Sıralama:"
 
 #: resources.h:185
-#, fuzzy
 msgid "Local filters:"
-msgstr "Yerel site:"
+msgstr "Yerel filtreler:"
 
 #: ../../locales/../src/interface/viewheader.cpp:252
 msgid "Local site:"
@@ -1438,15 +1466,14 @@ msgstr "En Düşük"
 msgid "Lowest available port has to be a number between 1 and 65535."
 msgstr "En düşük kullanılabilir port 1 ile 65535 arasında olmalıdır."
 
-#: resources.h:49 ../../locales/../src/interface/sitemanager.cpp:644
-#: ../../locales/../src/interface/sitemanager.cpp:850
+#: resources.h:49 ../../locales/../src/interface/sitemanager.cpp:641
+#: ../../locales/../src/interface/sitemanager.cpp:847
 msgid "MVS"
 msgstr "MVS"
 
 #: resources.h:203
-#, fuzzy
 msgid "Match all of the following"
-msgstr "şu dosya ile?"
+msgstr "Şunların hepsini eşle"
 
 #: resources.h:120
 msgid "Medium icons"
@@ -1456,7 +1483,7 @@ msgstr "Orta ikonlar"
 msgid "Minutes"
 msgstr "Dakika"
 
-#: ../../locales/../src/interface/sitemanager.cpp:151
+#: ../../locales/../src/interface/sitemanager.cpp:148
 msgid "My Sites"
 msgstr "Sitelerim"
 
@@ -1473,29 +1500,28 @@ msgstr "İsim:"
 
 #: ../../locales/../src/interface/filteredit.cpp:458
 msgid "Need to enter filter name"
-msgstr ""
+msgstr "Filtre adı girilmeli"
 
-#: ../../locales/../src/interface/sitemanager.cpp:420
+#: ../../locales/../src/interface/sitemanager.cpp:417
 msgid "Need to specify a character encoding"
-msgstr ""
+msgstr "Karakter kodlaması belirtilmeli"
 
 #: resources.h:24
 msgid "New &Folder"
 msgstr "Yeni &Klasör"
 
 #: ../../locales/../src/interface/filteredit.cpp:300
-#, fuzzy
 msgid "New filter"
-msgstr "Yeni klasör"
+msgstr "Yeni filtre"
 
 #: ../../locales/../src/interface/RemoteListView.cpp:668
-#: ../../locales/../src/interface/sitemanager.cpp:357
-#: ../../locales/../src/interface/sitemanager.cpp:380
+#: ../../locales/../src/interface/sitemanager.cpp:354
+#: ../../locales/../src/interface/sitemanager.cpp:377
 msgid "New folder"
 msgstr "Yeni klasör"
 
-#: ../../locales/../src/interface/sitemanager.cpp:541
-#: ../../locales/../src/interface/sitemanager.cpp:564
+#: ../../locales/../src/interface/sitemanager.cpp:538
+#: ../../locales/../src/interface/sitemanager.cpp:561
 msgid "New site"
 msgstr "Yeni site"
 
@@ -1514,9 +1540,9 @@ msgid "No themes in themes.xml"
 msgstr "themes.xml'de tema yok"
 
 #: resources.h:36 ../../locales/../src/interface/QueueView.cpp:716
-#: ../../locales/../src/interface/sitemanager.cpp:589
-#: ../../locales/../src/interface/sitemanager.cpp:620
-#: ../../locales/../src/interface/sitemanager.cpp:820
+#: ../../locales/../src/interface/sitemanager.cpp:586
+#: ../../locales/../src/interface/sitemanager.cpp:617
+#: ../../locales/../src/interface/sitemanager.cpp:817
 msgid "Normal"
 msgstr "Normal"
 
@@ -1554,9 +1580,8 @@ msgid "Pass&word:"
 msgstr "Parol&a:"
 
 #: resources.h:272
-#, fuzzy
 msgid "Passive (recommended)"
-msgstr "Pasif Mod"
+msgstr "Pasif (önerilen)"
 
 #: resources.h:101
 msgid "Passive Mode"
@@ -1571,24 +1596,24 @@ msgid ""
 "Please configure any firewalls and routers so that FileZilla can establish "
 "outgoing connection to arbitrary ports."
 msgstr ""
+"Lütfen tüm güvenlik duvarlarınızı ve yönlendiricilerinizi FileZilla'nın "
+"çıkan bağlantılarda keyfi portları kullanabileceği şekilde ayarlayın."
 
 #: resources.h:76
 msgid "Please enter a password for this server:"
 msgstr "Lütfen bu sunucu için bir parola girin:"
 
 #: ../../locales/../src/interface/filter.cpp:544
-#, fuzzy
 msgid "Please enter a unique name for this filter set"
-msgstr "Lütfen bu sunucu için bir parola girin:"
+msgstr "Lütfen bu filtre seti için benzersiz bir isim girin"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:101
-#, fuzzy
+#: ../../locales/../src/interface/netconfwizard.cpp:103
 msgid "Please enter a valid portrange."
-msgstr "Lütfen bu sunucu için bir parola girin:"
+msgstr "Lütfen geçerli bir port aralğı girin."
 
-#: ../../locales/../src/interface/netconfwizard.cpp:80
+#: ../../locales/../src/interface/netconfwizard.cpp:82
 msgid "Please enter an URL where to get your external address from"
-msgstr ""
+msgstr "Lütfen sizin dış adresinizin alınabileceği bir URL girin"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:325
 msgid ""
@@ -1602,10 +1627,9 @@ msgstr ""
 msgid "Please enter the name of the directory which should be created:"
 msgstr "Lütfen oluşturulacak klasörün ismini girin:"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:68
-#, fuzzy
+#: ../../locales/../src/interface/netconfwizard.cpp:70
 msgid "Please enter your external IP address"
-msgstr "&Dış IP adresi:"
+msgstr "Lütfen dış IP adresinizi girin"
 
 #: resources.h:265
 msgid ""
@@ -1620,23 +1644,26 @@ msgid ""
 "trojans or other malware. This might raise a false alarm you can safely "
 "discard."
 msgstr ""
+"FileZilla'nın sunucuların kullandığı portlar üzerinde hiçbir etkisi "
+"olmadığını unutmayın. Güvenlik duvarınız sunucunun seçtiği portu zararlı bir "
+"bağlantı tarafından kullanılıyor zannedebilir. Bu da güvenlik uyarısı "
+"almanıza sebep olur ama yok sayabilirsiniz."
 
 #: resources.h:10
 msgid "Please select an action:"
 msgstr "Lütfen bir işlem seçin:"
 
 #: resources.h:267
-#, fuzzy
 msgid "Please select the default transfer mode you would like to use."
-msgstr "\"%s\" klasörü için lütfen yeni özellikleri seçin."
+msgstr "Lütfen kullanmak istediğiniz varsayılan transfer modunu seçiniz."
 
 #: ../../locales/../src/interface/chmoddialog.cpp:37
-#, fuzzy, c-format
+#, c-format
 msgid "Please select the new attributes for the directory \"%s\"."
 msgstr "\"%s\" klasörü için lütfen yeni özellikleri seçin."
 
 #: ../../locales/../src/interface/chmoddialog.cpp:26
-#, fuzzy, c-format
+#, c-format
 msgid "Please select the new attributes for the file \"%s\"."
 msgstr "Lütfen \"%s\" dosyası için yeni özellikleri seçin."
 
@@ -1726,18 +1753,16 @@ msgid "Remote file"
 msgstr "Uzaktaki dosya"
 
 #: resources.h:188
-#, fuzzy
 msgid "Remote filters:"
-msgstr "Uzaktaki dosya"
+msgstr "Uzaktaki filtreler:"
 
 #: ../../locales/../src/interface/viewheader.cpp:354
 msgid "Remote site:"
 msgstr "Uzaktaki site:"
 
 #: resources.h:206
-#, fuzzy
 msgid "Remove &selected"
-msgstr "Uzaktaki site:"
+msgstr "Seçileni &kaldır"
 
 #: ../../locales/../src/interface/asyncrequestqueue.cpp:76
 msgid "Rename file"
@@ -1753,6 +1778,7 @@ msgstr "Seçilen dosya ve klasörleri yeniden adlandır"
 msgid "Renaming '%s' to '%s'"
 msgstr "'%s' ismi '%s' olarak değiştiriliyor"
 
+#: ../../locales/../src/interface/netconfwizard.cpp:190
 #: ../../locales/../src/interface/StatusView.cpp:73
 #: ../../locales/../src/interface/StatusView.cpp:114
 msgid "Response:"
@@ -1763,12 +1789,11 @@ msgstr "Cevap:"
 msgid "Retrieving directory listing..."
 msgstr "Klasör listesi alınıyor..."
 
-#: resources.h:33 ../../locales/../src/interface/sitemanager.cpp:407
-#: ../../locales/../src/interface/sitemanager.cpp:614
-#: ../../locales/../src/interface/sitemanager.cpp:805
-#, fuzzy
+#: resources.h:33 ../../locales/../src/interface/sitemanager.cpp:404
+#: ../../locales/../src/interface/sitemanager.cpp:611
+#: ../../locales/../src/interface/sitemanager.cpp:802
 msgid "SFTP"
-msgstr "FTP"
+msgstr "SFTP"
 
 #: ../../locales/../src/interface/QueueView.cpp:1369
 msgid "Scanning for files to add to queue"
@@ -1802,6 +1827,7 @@ msgstr "Sunucu / Yerel dosya"
 msgid ""
 "Server requires an account. Please specify an account using the Site Manager"
 msgstr ""
+"Sunucu bir hesap gerektirmekte. Site Yöneticisi'ni kullanarak bir hesap seçin"
 
 #: resources.h:31 resources.h:45
 msgid "Server&type:"
@@ -1883,7 +1909,7 @@ msgstr "Durum:"
 
 #: resources.h:253
 msgid "Stop and remove &all"
-msgstr ""
+msgstr "Durdur ve hepsini &kaldır"
 
 #: resources.h:1
 msgid "Target file already exists"
@@ -1895,7 +1921,7 @@ msgstr "Hedef dosya adı zaten var, devam edilsin mi?"
 
 #: resources.h:301
 msgid "Test results"
-msgstr ""
+msgstr "Sonuçları sına"
 
 #: ../../locales/../src/interface/sitemanager.cpp:48
 msgid ""
@@ -1931,8 +1957,11 @@ msgstr ""
 "olmalı."
 
 #: resources.h:65
+#, fuzzy
 msgid "The server uses following charset encoding for filenames:"
 msgstr ""
+"Sunucu dosya isimleri için şu karakter setini \n"
+"kullanır:"
 
 #: resources.h:170
 msgid ""
@@ -1975,19 +2004,25 @@ msgstr "Temalar"
 
 #: ../../locales/../src/interface/filter.cpp:581
 msgid "This filter set cannot be removed"
-msgstr ""
+msgstr "Bu filtre seti kaldırılamaz"
 
 #: resources.h:280
+#, fuzzy
 msgid ""
 "This only works if you are not behind a router, else your system would just "
 "return your internal address."
 msgstr ""
+"Sadece bir yönlendiricinin arkasında değilseniz çalışır, aksi durumda "
+"Windows sadece iç IP adresinizi döner."
 
 #: resources.h:264
 msgid ""
 "This wizard will help you to properly configure any routers and firewalls "
 "you have and tests your configuration."
 msgstr ""
+"Bu sihirbaz sahip olduğunuz tüm güvenlik duvarlarını ve yönlendiricileri "
+"düzgün şekilde ayarlamanıza yardımcı olacak ve yapılandırmanızı test "
+"etmenizi sağlayacak."
 
 #: ../../locales/../src/interface/RemoteListView.cpp:51
 msgid "Time"
@@ -2052,8 +2087,8 @@ msgstr "Yeni anahtara güvenip bağlantı sağlansın mı?"
 msgid "Trust this host and carry on connecting?"
 msgstr "Bu ana bilgisayara güvenip bağlantı sağlansın mı?"
 
-#: resources.h:47 ../../locales/../src/interface/sitemanager.cpp:638
-#: ../../locales/../src/interface/sitemanager.cpp:844
+#: resources.h:47 ../../locales/../src/interface/sitemanager.cpp:635
+#: ../../locales/../src/interface/sitemanager.cpp:841
 msgid "Unix"
 msgstr "Unix"
 
@@ -2067,22 +2102,22 @@ msgstr "Seçili dosya ve klasörleri karşıya yükle"
 
 #: resources.h:69
 msgid "Use &custom charset"
-msgstr ""
+msgstr "Özel &karakter seti kullan"
 
 #: resources.h:281
-#, fuzzy
 msgid "Use the following IP address:"
-msgstr "şu dosya ile?"
+msgstr "Şu IP adresini kullan:"
 
 #: resources.h:290
-#, fuzzy
 msgid "Use the following port range:"
-msgstr "şu dosya ile?"
+msgstr "Şu port aralığını kullan:"
 
 #: resources.h:282
 msgid ""
 "Use this if you're behind a router and have a static external IP address."
 msgstr ""
+"Bir yönlendiricinin arkasındaysanız ve kalıcı bir dış IP adresiniz var ise "
+"bunu kullanın."
 
 #: resources.h:285
 msgid ""
@@ -2090,22 +2125,32 @@ msgid ""
 "above server once each session as soon as you use active mode for the first "
 "time. Only the version of FileZilla you're using is submitted to the server."
 msgstr ""
+"Bu seçeneği dinamik IP adresiniz var ise kullanın. Her oturumda FileZilla "
+"aktif mod ilk kullanıldığında yukardaki sunucuyla bir kere bağlantı "
+"kuracaktır. Sunucuya sadece FileZilla'nın hangi sürümünü kullandığınız "
+"bilgisi gönderilir."
 
 #: resources.h:79
 msgid "User:"
 msgstr "Kullanıcı:"
 
 #: resources.h:67
+#, fuzzy
 msgid "Uses UTF-8 if the server supports it, else use local charset."
 msgstr ""
+"Sunucu destekliyorsa UTF-8'i kullanır, desteklemiyorsa\n"
+" yerel karaktersetini kullanın."
 
 #: resources.h:71
+#, fuzzy
 msgid ""
 "Using the wrong charset can result in filenames not displaying properly."
 msgstr ""
+"Yanlış karakter setlerinin kullanımı dosya adlarının \n"
+"düzgün görüntülenememesine yol açabilir."
 
-#: resources.h:48 ../../locales/../src/interface/sitemanager.cpp:642
-#: ../../locales/../src/interface/sitemanager.cpp:853
+#: resources.h:48 ../../locales/../src/interface/sitemanager.cpp:639
+#: ../../locales/../src/interface/sitemanager.cpp:850
 msgid "VMS"
 msgstr "VMS"
 
@@ -2151,12 +2196,11 @@ msgstr "bayt"
 
 #: ../../locales/../src/interface/filteredit.cpp:6
 msgid "contains"
-msgstr ""
+msgstr "içerir"
 
 #: ../../locales/../src/interface/filteredit.cpp:7
-#, fuzzy
 msgid "equals"
-msgstr "Detaylar"
+msgstr "eşittir"
 
 #: ../../locales/../src/interface/LocalListView.cpp:391
 #: ../../locales/../src/interface/LocalListView.cpp:409
@@ -2171,19 +2215,19 @@ msgstr "fzsftp başlatılamıyor"
 
 #: ../../locales/../src/interface/filteredit.cpp:7
 msgid "greater than"
-msgstr ""
+msgstr "daha büyüktür"
 
 #: ../../locales/../src/interface/filteredit.cpp:6
 msgid "is equal to"
-msgstr ""
+msgstr "eşittir"
 
 #: ../../locales/../src/interface/filteredit.cpp:7
 msgid "less than"
-msgstr ""
+msgstr "daha azdır"
 
 #: ../../locales/../src/interface/filteredit.cpp:6
 msgid "matches regex"
-msgstr ""
+msgstr "uyar regex'e"
 
 #: ../../locales/../src/interface/themeprovider.cpp:58
 msgid "themes.xml missing, can not get theme data"
@@ -2192,7 +2236,3 @@ msgstr "themes.xml bulunamıyor, tema verilerine erişemiyoruz"
 #: resources.h:6
 msgid "with the following file?"
 msgstr "şu dosya ile?"
-
-#, fuzzy
-#~ msgid "Delete"
-#~ msgstr "&Sil"
