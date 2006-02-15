@@ -1,7 +1,19 @@
 #include "FileZilla.h"
 #include "asynchostresolver.h"
 
-CAsyncHostResolver::CAsyncHostResolver(CFileZillaEnginePrivate *pOwner, wxString hostname) : wxThread(wxTHREAD_JOINABLE)
+const wxEventType fzEVT_ASYNCHOSTRESOLVE = wxNewEventType();
+
+fzAsyncHostResolveEvent::fzAsyncHostResolveEvent(int id)
+	: wxEvent(id, fzEVT_ASYNCHOSTRESOLVE)
+{
+}
+
+wxEvent* fzAsyncHostResolveEvent::Clone() const
+{
+	return new fzAsyncHostResolveEvent(GetId());
+}
+
+CAsyncHostResolver::CAsyncHostResolver(wxEvtHandler *pOwner, wxString hostname) : wxThread(wxTHREAD_JOINABLE)
 {
 	m_bObsolete = false;
 	m_pOwner = pOwner;
@@ -32,9 +44,7 @@ void CAsyncHostResolver::SendReply()
 {
 	m_bDone = true;
 	if (m_pOwner)
-	{
-		m_pOwner->SendEvent(engineHostresolve);
-	}
+		wxPostEvent(m_pOwner, fzAsyncHostResolveEvent());
 }
 
 bool CAsyncHostResolver::Done() const

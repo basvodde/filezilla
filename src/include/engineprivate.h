@@ -4,14 +4,15 @@
 enum EngineNotificationType
 {
 	engineCancel,
-	engineHostresolve,
 	engineTransferEnd
 };
+
+#include "asynchostresolver.h"
 
 class wxFzEngineEvent;
 class CControlSocket;
 class CAsyncHostResolver;
-class CFileZillaEnginePrivate : protected wxEvtHandler
+class CFileZillaEnginePrivate : public wxEvtHandler
 {
 public:
 	// Resend all modified directory listings if they are available in the cache.
@@ -64,6 +65,7 @@ protected:
 
 	DECLARE_EVENT_TABLE();
 	void OnEngineEvent(wxFzEngineEvent &event);
+	void OnAsyncHostResolver(fzAsyncHostResolveEvent& event);
 
 	wxEvtHandler *m_pEventHandler;
 
