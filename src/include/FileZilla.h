@@ -5,6 +5,18 @@
   #include <config.h>
 #endif
 
+#ifndef PACKAGE_STRING
+#define PACKAGE_STRING "FileZilla 3"
+#endif
+
+#ifndef PACKAGE_NAME
+#define PACKAGE_NAME "FileZilla"
+#endif
+
+#ifndef PACKAGE_VERSION
+#define PACKAGE_VERSION "custom build"
+#endif
+
 #include <wx/wx.h>
 
 // Include after wx.h so that __WXFOO__ is properly defined

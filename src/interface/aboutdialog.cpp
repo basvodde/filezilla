@@ -10,10 +10,6 @@ bool CAboutDialog::Create(wxWindow* parent)
 	if (!Load(parent, _T("ID_ABOUT")))
 		return false;
 
-#ifndef PACKAGE_STRING
-#define PACKAGE_STRING "FileZilla 3"
-#endif
-
 	if (!SetLabel(XRCID("ID_VERSION"), wxString(PACKAGE_STRING, wxConvLocal)))
 		return false;
 
