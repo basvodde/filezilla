@@ -11,7 +11,7 @@ libengine_a_CFLAGS = $(WX_CFLAGS_ONLY)
 
 libengine_a_SOURCES = asynchostresolver.cpp commands.cpp ControlSocket.cpp \
 		directorycache.cpp directorylisting.cpp directorylistingparser.cpp \
-		engineprivate.cpp \
+		engineprivate.cpp externalipresolver.cpp \
 		FileZillaEngine.cpp ftpcontrolsocket.cpp iothread.cpp logging.cpp \
 		misc.cpp notification.cpp server.cpp serverpath.cpp\
 		sftpcontrolsocket.cpp timeex.cpp transfersocket.cpp
