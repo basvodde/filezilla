@@ -665,6 +665,20 @@ CDirectoryListingParser::CDirectoryListingParser(CFileZillaEnginePrivate *pEngin
 	//Portuguese month names
 	m_MonthNamesMap[_T("out")] = 10;
 
+	//Finnish month names
+	m_MonthNamesMap[_T("tammi")] = 1;
+	m_MonthNamesMap[_T("helmi")] = 2;
+	m_MonthNamesMap[_T("maalis")] = 3;
+	m_MonthNamesMap[_T("huhti")] = 4;
+	m_MonthNamesMap[_T("touko")] = 5;
+	m_MonthNamesMap[_T("kes\xe4")] = 6;
+	m_MonthNamesMap[_T("hein\xe4")] = 7;
+	m_MonthNamesMap[_T("elo")] = 8;
+	m_MonthNamesMap[_T("syys")] = 9;
+	m_MonthNamesMap[_T("loka")] = 10;
+	m_MonthNamesMap[_T("marras")] = 11;
+	m_MonthNamesMap[_T("joulu")] = 12;
+
 	//There are more languages and thus month 
 	//names, but as long as knowbody reports a 
 	//problem, I won't add them, there are way 
