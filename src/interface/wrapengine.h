@@ -24,8 +24,9 @@ public:
 	wxString WrapText(wxWindow* parent, const wxString &text, unsigned long maxLength);
 	bool WrapText(wxWindow* parent, int id, unsigned long maxLength);
 
-protected:
 	int GetWidthFromCache(const char* name);
+
+protected:
 	void SetWidthToCache(const char* name, int width);
 
 	std::map<wxChar, unsigned int> m_charWidths;

@@ -3,6 +3,9 @@
 
 #include <wx/wizard.h>
 #include "wrapengine.h"
+#include "externalipresolver.h"
+
+#define NETCONFBUFFERSIZE 100
 
 class COptions;
 class CNetConfWizard : public wxWizard, protected CWrapEngine
@@ -16,6 +19,8 @@ public:
 
 protected:
 
+	void PrintMessage(const wxString& msg, int type);
+
 	wxWindow* m_parent;
 	COptions* m_pOptions;
 
@@ -24,6 +29,40 @@ protected:
 	DECLARE_EVENT_TABLE();
 	void OnPageChanging(wxWizardEvent& event);
 	void OnPageChanged(wxWizardEvent& event);
+	void OnSocketEvent(wxSocketEvent& event);
+	void OnExternalIPAddress(fzExternalIPResolveEvent& event);
+	
+	void OnReceive();
+	void OnClose();
+	void OnConnect();
+	void CloseSocket();
+	bool Send(wxString cmd);
+
+	void SendNextCommand();
+
+	wxString GetExternalIPAddress();
+
+	wxString m_nextLabelText;
+
+	// Test data
+	wxSocketClient* m_socket;
+	int m_state;
+
+	char m_recvBuffer[NETCONFBUFFERSIZE];
+	int m_recvBufferPos;
+	bool m_testDidRun;
+	bool m_connectSuccessful;
+
+	enum testResults
+	{
+		unknown,
+		successful,
+		mismatch,
+		tained,
+		mismatchandtainted
+	} m_testResult;
+
+	CExternalIPResolver* m_pIPResolver;
 };
 
 #endif //__NETCONFWIZARD_H__

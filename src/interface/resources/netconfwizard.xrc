@@ -312,7 +312,7 @@
           <label>Test results</label>
           <orient>wxVERTICAL</orient>
           <object class="sizeritem">
-            <object class="wxTextCtrl">
+            <object class="wxTextCtrl" name="ID_RESULTS">
               <size>-1,100</size>
               <style>wxTE_MULTILINE|wxTE_READONLY</style>
             </object>
@@ -323,6 +323,58 @@
         </object>
         <option>1</option>
         <flag>wxGROW|wxTOP</flag>
+        <border>5</border>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="NETCONF_PANEL7" subclass="wxWizardPage">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticText">
+          <label>Summary of test results:</label>
+        </object>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticText" name="ID_SUMMARY1">
+          <label></label>
+        </object>
+        <flag>wxTOP|wxBOTTOM</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticText" name="ID_SUMMARY2">
+          <label></label>
+        </object>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticText" name="ID_SUMMARY3">
+          <label></label>
+        </object>
+        <flag>wxTOP|wxBOTTOM</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticText" name="ID_SUMMARY4">
+          <label></label>
+        </object>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticText" name="ID_SUMMARY5">
+          <label></label>
+        </object>
+        <flag>wxTOP|wxBOTTOM</flag>
+        <border>5</border>
+      </object>
+      <object class="spacer">
+        <size>0,0</size>
+        <option>1</option>
+      </object>
+      <object class="sizeritem">
+        <object class="wxButton">
+          <label>&amp;Restart Wizard</label>
+        </object>
+        <flag>wxBOTTOM|wxRIGHT|wxALIGN_RIGHT</flag>
         <border>5</border>
       </object>
     </object>
