@@ -268,7 +268,11 @@ void CNetConfWizard::CloseSocket()
 		}
 	}
 	for (unsigned int i = 0; i < 5; i++)
-		XRCCTRL(*this, wxString::Format(_T("ID_SUMMARY%d"), i + 1).mb_str(), wxStaticText)->SetLabel(text[i]);
+	{
+		wxString name = wxString::Format(_T("ID_SUMMARY%d"), i + 1);
+		int id = wxXmlResource::GetXRCID(name);
+		wxDynamicCast(FindWindowById(id, this), wxStaticText)->SetLabel(text[i]);
+	}
 	wxGetApp().GetWrapEngine()->WrapRecursive(m_pages[6], m_pages[6]->GetSizer(), wxGetApp().GetWrapEngine()->GetWidthFromCache("Netconf"));
 
 	delete m_socket;
@@ -284,7 +288,7 @@ bool CNetConfWizard::Send(wxString cmd)
 
 	cmd += _T("\r\n");
 	const char* buffer = cmd.mb_str();
-	int len = strlen(buffer);
+	unsigned int len = strlen(buffer);
 	m_socket->Write(buffer, len);
 	if (!m_socket->Error() && m_socket->LastCount() == len)
 		return true;
@@ -393,7 +397,7 @@ void CNetConfWizard::SendNextCommand()
 			wxString hexIP = ip;
 			for (unsigned int i = 0; i < hexIP.Length(); i++)
 			{
-				char& c = hexIP[i];
+				wxChar& c = hexIP[i];
 				if (c == '.')
 					c = '-';
 				else
