@@ -21,6 +21,8 @@ protected:
 
 	void PrintMessage(const wxString& msg, int type);
 
+	void ResetTest();
+
 	wxWindow* m_parent;
 	COptions* m_pOptions;
 
@@ -31,6 +33,7 @@ protected:
 	void OnPageChanged(wxWizardEvent& event);
 	void OnSocketEvent(wxSocketEvent& event);
 	void OnExternalIPAddress(fzExternalIPResolveEvent& event);
+	void OnRestart(wxCommandEvent& event);
 	
 	void OnReceive();
 	void OnClose();
@@ -58,8 +61,9 @@ protected:
 		unknown,
 		successful,
 		mismatch,
-		tained,
-		mismatchandtainted
+		tainted,
+		mismatchandtainted,
+		servererror
 	} m_testResult;
 
 	CExternalIPResolver* m_pIPResolver;

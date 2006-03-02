@@ -10,17 +10,15 @@ EVT_WIZARD_PAGE_CHANGING(wxID_ANY, CNetConfWizard::OnPageChanging)
 EVT_WIZARD_PAGE_CHANGED(wxID_ANY, CNetConfWizard::OnPageChanged)
 EVT_SOCKET(0, CNetConfWizard::OnSocketEvent)
 EVT_FZ_EXTERNALIPRESOLVE(wxID_ANY, CNetConfWizard::OnExternalIPAddress)
+EVT_BUTTON(XRCID("ID_RESTART"), CNetConfWizard::OnRestart)
 END_EVENT_TABLE()
 
 CNetConfWizard::CNetConfWizard(wxWindow* parent, COptions* pOptions)
 : m_parent(parent), m_pOptions(pOptions)
 {
 	m_socket = 0;
-	m_state = 0;
-	m_connectSuccessful = false;
 	m_pIPResolver = 0;
-	m_testDidRun = false;
-	m_testResult = unknown;
+	ResetTest();
 }
 
 CNetConfWizard::~CNetConfWizard()
@@ -133,8 +131,6 @@ void CNetConfWizard::OnPageChanging(wxWizardEvent& event)
 		event.Veto();
 
 		PrintMessage(wxString::Format(_("Connecting to %s"), _T("probe.filezilla-project.org")), 0);
-		m_state = 0;
-		m_connectSuccessful = false;
 		m_socket = new wxSocketClient(wxSOCKET_NOWAIT);
 		m_socket->SetEventHandler(*this, 0);
 		m_socket->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_CONNECTION_FLAG | wxSOCKET_LOST_FLAG);
@@ -156,6 +152,11 @@ void CNetConfWizard::OnPageChanged(wxWizardEvent& event)
 		wxButton* pNext = wxDynamicCast(FindWindow(wxID_FORWARD), wxButton);
 		m_nextLabelText = pNext->GetLabel();
 		pNext->SetLabel(_("&Test"));
+	}
+	else if (event.GetPage() == m_pages[6])
+	{
+		wxButton* pPrev = wxDynamicCast(FindWindow(wxID_BACKWARD), wxButton);
+		pPrev->Disable();
 	}
 }
 
@@ -221,8 +222,55 @@ void CNetConfWizard::OnReceive()
 	str += msg;
 	PrintMessage(str, 3);
 
-	m_recvBufferPos = 0;
+	if (m_recvBufferPos < 3)
+	{
+		m_testResult = servererror;
+		PrintMessage(_("Server sent invalid reply."), 1);
+		CloseSocket();
+		return;
+	}
 
+	switch (m_state)
+	{
+	case 3:
+		if (m_recvBuffer[0] == 2)
+			break;
+
+		if (m_recvBuffer[1] == 0 && m_recvBuffer[2] == 1)
+		{
+			PrintMessage(_("Communication tainted by router"), 1);
+			m_testResult = tainted;
+			CloseSocket();
+			return;
+		}
+		else if (m_recvBuffer[1] == 0 && m_recvBuffer[2] == 0)
+		{
+			PrintMessage(_("Wrong external IP address"), 1);
+			m_testResult = mismatch;
+			CloseSocket();
+			return;
+		}
+		else if (m_recvBuffer[1] == 1 && m_recvBuffer[2] == 1)
+		{
+			PrintMessage(_("Wrong external IP address"), 1);
+			PrintMessage(_("Communication tainted by router"), 1);
+			m_testResult = mismatchandtainted;
+			CloseSocket();
+			return;
+		}
+		else
+		{
+			m_testResult = servererror;
+			PrintMessage(_("Server sent invalid reply."), 1);
+			CloseSocket();
+			return;
+		}
+		break;
+	default:
+		break;
+	}
+
+	m_recvBufferPos = 0;
 	m_state++;
 
 	SendNextCommand();
@@ -264,6 +312,47 @@ void CNetConfWizard::CloseSocket()
 			text[2] = _("If you keep having problems with a specific server, the server itself or a remote router might be misconfigured. In this case try to toggle passive mode and contact the server administrator for help.");
 			text[3] = _("Please run this wizard again should you change your network environment or in case you suddenly encounter problems with servers that did work previously.");
 			text[4] = _("Click on Finish to save your configuration.");
+			break;
+		case servererror:
+			text[0] = _("The server sent an unrecognized reply.");
+			text[1] = _("Please make sure you are running the latest version of FileZilla. Visit http://filezilla-project.org for details.");
+			text[2] = _("Submit a bug report if this problem persists even with the latest version of FileZilla");
+			break;
+		case tainted:
+			text[0] = _("Active mode FTP test failed. FileZilla knows the correct external IP address, but your router has misleadingly modified the sent address.");
+			text[1] = _("Please make sure your router is using the latest available firmware. Furthermore, your router has to be configured properly. You will have to manual port forwarding. Don't run your router in the so called 'DMZ mode' or 'game mode'.");
+			text[2] = _("If this problem stays, please contact your router manufacturer.");
+			text[3] = _("Unless this problem gets fixed, active mode FTP will not work and passive mode has to be used.");
+			if (XRCCTRL(*this, "ID_ACTIVE", wxRadioButton)->GetValue())
+			{
+				XRCCTRL(*this, "ID_PASSIVE", wxRadioButton)->SetValue(true);
+				text[3] += _T(" ");
+				text[3] += _("Passive mode has been set as default transfer mode.");
+			}
+			break;
+		case mismatchandtainted:
+			text[0] = _("Active mode FTP test failed. FileZilla does not know the correct external IP address. In addition to that, your router has modified the sent address.");
+			text[1] = _("Please enter your external IP address on the active mode page of this wizard. In case you have a dynamic address or don't know your external address, use the external resolver option.");
+			text[2] = _("Please make sure your router is using the latest available firmware. Furthermore, your router has to be configured properly. You will have to manual port forwarding. Don't run your router in the so called 'DMZ mode' or 'game mode'.");
+			text[3] = _("If your router keeps changing the IP address, please contact your router manufacturer.");
+			text[4] = _("Unless these problems get fixed, active mode FTP will not work and passive mode has to be used.");
+			if (XRCCTRL(*this, "ID_ACTIVE", wxRadioButton)->GetValue())
+			{
+				XRCCTRL(*this, "ID_PASSIVE", wxRadioButton)->SetValue(true);
+				text[4] += _T(" ");
+				text[4] += _("Passive mode has been set as default transfer mode.");
+			}
+			break;
+		case mismatch:
+			text[0] = _("Active mode FTP test failed. FileZilla does not know the correct external IP address.");
+			text[1] = _("Please enter your external IP address on the active mode page of this wizard. In case you have a dynamic address or don't know your external address, use the external resolver option.");
+			text[2] = _("Unless these problems get fixed, active mode FTP will not work and passive mode has to be used.");
+			if (XRCCTRL(*this, "ID_ACTIVE", wxRadioButton)->GetValue())
+			{
+				XRCCTRL(*this, "ID_PASSIVE", wxRadioButton)->SetValue(true);
+				text[2] += _T(" ");
+				text[2] += _("Passive mode has been set as default transfer mode.");
+			}
 			break;
 		}
 	}
@@ -417,4 +506,23 @@ void CNetConfWizard::SendNextCommand()
 		CloseSocket();
 		break;
 	}
+}
+
+void CNetConfWizard::OnRestart(wxCommandEvent& event)
+{
+	ResetTest();
+	ShowPage(m_pages[0], false);
+}
+
+void CNetConfWizard::ResetTest()
+{
+	m_state = 0;
+	m_connectSuccessful = false;
+
+	m_testDidRun = false;
+	m_testResult = unknown;
+	m_recvBufferPos = 0;
+
+	if (!m_pages.empty())
+		XRCCTRL(*this, "ID_RESULTS", wxTextCtrl)->SetLabel(_T(""));
 }
