@@ -233,24 +233,24 @@ void CNetConfWizard::OnReceive()
 	switch (m_state)
 	{
 	case 3:
-		if (m_recvBuffer[0] == 2)
+		if (m_recvBuffer[0] == '2')
 			break;
 
-		if (m_recvBuffer[1] == 0 && m_recvBuffer[2] == 1)
+		if (m_recvBuffer[1] == '0' && m_recvBuffer[2] == '1')
 		{
 			PrintMessage(_("Communication tainted by router"), 1);
 			m_testResult = tainted;
 			CloseSocket();
 			return;
 		}
-		else if (m_recvBuffer[1] == 0 && m_recvBuffer[2] == 0)
+		else if (m_recvBuffer[1] == '1' && m_recvBuffer[2] == '0')
 		{
 			PrintMessage(_("Wrong external IP address"), 1);
 			m_testResult = mismatch;
 			CloseSocket();
 			return;
 		}
-		else if (m_recvBuffer[1] == 1 && m_recvBuffer[2] == 1)
+		else if (m_recvBuffer[1] == '1' && m_recvBuffer[2] == '1')
 		{
 			PrintMessage(_("Wrong external IP address"), 1);
 			PrintMessage(_("Communication tainted by router"), 1);
@@ -316,7 +316,7 @@ void CNetConfWizard::CloseSocket()
 		case servererror:
 			text[0] = _("The server sent an unrecognized reply.");
 			text[1] = _("Please make sure you are running the latest version of FileZilla. Visit http://filezilla-project.org for details.");
-			text[2] = _("Submit a bug report if this problem persists even with the latest version of FileZilla");
+			text[2] = _("Submit a bug report if this problem persists even with the latest version of FileZilla.");
 			break;
 		case tainted:
 			text[0] = _("Active mode FTP test failed. FileZilla knows the correct external IP address, but your router has misleadingly modified the sent address.");
