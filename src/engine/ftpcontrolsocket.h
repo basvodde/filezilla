@@ -73,6 +73,8 @@ protected:
 	int LogonParseResponse();
 	int LogonSend();
 
+	bool ParsePasvResponse(wxString& host, int& port);
+
 	// Some servers are broken. Instead of an empty listing, some MVS servers
 	// for example they return "550 no members found"
 	// Other servers return "550 No files found."

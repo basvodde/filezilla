@@ -22,6 +22,8 @@ public:
 	virtual ~CMainFrame();
 
 	bool GetPassword(CServer& server, wxString name = _T(""), wxString challenge = _T(""));
+	void CachedPasswordFailed(const CServer& server);
+
 	COptions* m_pOptions;
 
 	void UpdateSendLed();

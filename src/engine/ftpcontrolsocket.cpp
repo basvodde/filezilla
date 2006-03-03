@@ -311,8 +311,11 @@ int CFtpControlSocket::LogonParseResponse()
 	{
 		if (code != 2 && code != 3)
 		{
-			DoClose(FZ_REPLY_DISCONNECTED);
-			return FZ_REPLY_DISCONNECTED;
+			int error = FZ_REPLY_DISCONNECTED;
+			if (pData->nCommand == 1 && code == 5)
+				error |= FZ_REPLY_PASSWORDFAILED;
+			DoClose(error);
+			return FZ_REPLY_ERROR;
 		}
 
 		pData->waitChallenge = false;
@@ -755,10 +758,7 @@ int CFtpControlSocket::ListParseResponse()
 		}
 		if (pData->bPasv)
 		{
-			int i, j;
-			i = m_Response.Find(_T("("));
-			j = m_Response.Find(_T(")"));
-			if (i == -1 || j == -1)
+			if (!ParsePasvResponse(pData->host, pData->port))
 			{
 				if (!pData->bTriedActive)
 					pData->bPasv = false;
@@ -766,32 +766,6 @@ int CFtpControlSocket::ListParseResponse()
 					error = true;
 				break;
 			}
-
-			wxString temp = m_Response.Mid(i+1,(j-i)-1);
-			i = temp.Find(',', true);
-			long number;
-			if (i == -1 || !temp.Mid(i + 1).ToLong(&number))
-			{
-				if (!pData->bTriedActive)
-					pData->bPasv = false;
-				else
-					error = true;
-				break;
-			}
-			pData->port = number; //get ls byte of server socket
-			temp = temp.Left(i);
-			i = temp.Find(',', true);
-			if (i == -1 || !temp.Mid(i + 1).ToLong(&number))
-			{
-				if (!pData->bTriedActive)
-					pData->bPasv = false;
-				else
-					error = true;
-				break;
-			}
-			pData->port += 256 * number; //add ms byte of server socket
-			pData->host = temp.Left(i);
-			pData->host.Replace(_T(","), _T("."));
 		}
 		pData->opState = list_list;
 		break;
@@ -1301,10 +1275,7 @@ int CFtpControlSocket::FileTransferParseResponse()
 
 		if (pData->bPasv)
 		{
-			int i, j;
-			i = m_Response.Find(_T("("));
-			j = m_Response.Find(_T(")"));
-			if (i == -1 || j == -1)
+			if (!ParsePasvResponse(pData->host, pData->port))
 			{
 				if (!pData->bTriedActive)
 					pData->bPasv = false;
@@ -1312,32 +1283,6 @@ int CFtpControlSocket::FileTransferParseResponse()
 					error = true;
 				break;
 			}
-
-			wxString temp = m_Response.Mid(i+1,(j-i)-1);
-			i = temp.Find(',', true);
-			long number;
-			if (i == -1 || !temp.Mid(i + 1).ToLong(&number))
-			{
-				if (!pData->bTriedActive)
-					pData->bPasv = false;
-				else
-					error = true;
-				break;
-			}
-			pData->port = number; //get ls byte of server socket
-			temp = temp.Left(i);
-			i = temp.Find(',', true);
-			if (i == -1 || !temp.Mid(i + 1).ToLong(&number))
-			{
-				if (!pData->bTriedActive)
-					pData->bPasv = false;
-				else
-					error = true;
-				break;
-			}
-			pData->port += 256 * number; //add ms byte of server socket
-			pData->host = temp.Left(i);
-			pData->host.Replace(_T(","), _T("."));
 		}
 
 		if (pData->download)
@@ -2581,4 +2526,33 @@ bool CFtpControlSocket::IsMisleadingListResponse() const
 		return true;
 
 	return false;
+}
+
+bool CFtpControlSocket::ParsePasvResponse(wxString& host, int& port)
+{
+	int i, j;
+	i = m_Response.Find(_T("("));
+	j = m_Response.Find(_T(")"));
+	if (i == -1 || j == -1)
+		return false;
+
+	// FIXME: Servers omitting closing bracket
+
+	wxString temp = m_Response.Mid(i+1,(j-i)-1);
+	i = temp.Find(',', true);
+	long number;
+	if (i == -1 || !temp.Mid(i + 1).ToLong(&number))
+		return false;
+
+	port = number; //get ls byte of server socket
+	temp = temp.Left(i);
+	i = temp.Find(',', true);
+	if (i == -1 || !temp.Mid(i + 1).ToLong(&number))
+		return false;
+
+	port += 256 * number; //add ms byte of server socket
+	host = temp.Left(i);
+	host.Replace(_T(","), _T("."));
+
+	return true;
 }

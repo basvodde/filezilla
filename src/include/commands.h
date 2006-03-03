@@ -38,6 +38,7 @@ enum Command
 														  // should not happen unless there is a bug in FileZilla 3.
 #define FZ_REPLY_BUSY			(0x0100 | FZ_REPLY_ERROR)
 #define FZ_REPLY_ALREADYCONNECTED	(0x0200 | FZ_REPLY_ERROR) // Will be returned by connect if already connected
+#define FZ_REPLY_PASSWORDFAILED	0x0400 // Will be returned if PASS fails with 5yz reply code.
 
 // Small macro to simplify command class declaration
 // Basically all this macro does, is to declare the class and add the required
