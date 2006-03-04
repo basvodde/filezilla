@@ -53,12 +53,17 @@ CExternalIPResolver::~CExternalIPResolver()
 	}
 }
 
-void CExternalIPResolver::GetExternalIP(const wxString& address /*=_T("")*/)
+void CExternalIPResolver::GetExternalIP(const wxString& address /*=_T("")*/, bool force /*=false*/)
 {
 	if (m_checked)
 	{
-		m_done = true;
-		return;
+		if (force)
+			m_checked = false;
+		else
+		{
+			m_done = true;
+			return;
+		}
 	}
 
 	m_address = address;

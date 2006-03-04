@@ -63,7 +63,8 @@ protected:
 		mismatch,
 		tainted,
 		mismatchandtainted,
-		servererror
+		servererror,
+		externalfailed
 	} m_testResult;
 
 	CExternalIPResolver* m_pIPResolver;

@@ -80,6 +80,13 @@
           <label>&amp;Active</label>
         </object>
       </object>
+      <object class="sizeritem">
+        <object class="wxStaticText">
+          <label>On the following pages, both active and passive mode will be configured, so you can connect to servers which reject either transfer mode.</label>
+        </object>
+        <flag>wxTOP</flag>
+        <border>5</border>
+      </object>
     </object>
   </object>
   <object class="wxPanel" name="NETCONF_PANEL3" subclass="wxWizardPage">
@@ -112,6 +119,26 @@
       <object class="sizeritem">
         <object class="wxStaticText">
           <label>If the automatic test at the end of this wizard succeeds, but you cannot transfer files to a particular server, the server might be misconfigured and you should try active mode. You can set the transfer mode on a per-server basis in the Site Manager.</label>
+        </object>
+      </object>
+      <object class="spacer">
+        <size>0,10</size>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticText">
+          <label>Some misconfigured remote servers which are behind a router, may reply with their local ip address.</label>
+        </object>
+      </object>
+      <object class="sizeritem">
+        <object class="wxRadioButton" name="ID_PASSIVE_FALLBACK1">
+          <label>Use the server's external IP address instead</label>
+        </object>
+        <flag>wxTOP|wxBOTTOM</flag>
+        <border>3</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxRadioButton" name="ID_PASSIVE_FALLBACK2">
+          <label>Fall back to active mode</label>
         </object>
       </object>
     </object>
@@ -179,20 +206,16 @@
         <object class="wxBoxSizer">
           <orient>wxVERTICAL</orient>
           <object class="sizeritem">
-            <object class="wxFlexGridSizer">
-              <object class="sizeritem">
-                <object class="wxTextCtrl" name="ID_ACTIVERESOLVER"/>
-                <flag>wxALIGN_CENTRE_VERTICAL</flag>
-              </object>
-              <object class="sizeritem">
-                <object class="wxStaticText">
-                  <label>Default: http://ip.filezilla-project.org/ip.php</label>
-                </object>
-                <flag>wxALIGN_CENTRE_VERTICAL</flag>
-              </object>
-              <cols>2</cols>
-              <hgap>5</hgap>
+            <object class="wxTextCtrl" name="ID_ACTIVERESOLVER"/>
+            <flag>wxBOTTOM|wxGROW</flag>
+            <border>3</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>Default: http://ip.filezilla-project.org/ip.php</label>
             </object>
+            <flag>wxBOTTOM</flag>
+            <border>5</border>
           </object>
           <object class="sizeritem">
             <object class="wxStaticText">
@@ -204,6 +227,13 @@
         <border>17</border>
       </object>
       <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxCheckBox" name="ID_NOEXTERNALONLOCAL">
+          <label>Don't use external IP address on &amp;local connections.</label>
+        </object>
+        <flag>wxTOP</flag>
+        <border>5</border>
+      </object>
     </object>
   </object>
   <object class="wxPanel" name="NETCONF_PANEL5" subclass="wxWizardPage">

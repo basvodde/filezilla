@@ -30,7 +30,7 @@ public:
 	bool Successful() const { return m_ip != _T(""); }
 	wxString GetIP() const { return m_ip; }
 
-	void GetExternalIP(const wxString& address = _T(""));
+	void GetExternalIP(const wxString& address = _T(""), bool force = false);
 
 protected:
 

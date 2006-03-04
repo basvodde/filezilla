@@ -52,6 +52,57 @@ bool CNetConfWizard::Load()
 		windows.push_back(m_pages[i]);
 	wxGetApp().GetWrapEngine()->WrapRecursive(windows, 1.7, "Netconf");
 
+	// Load values
+
+	switch (m_pOptions->GetOptionVal(OPTION_USEPASV))
+	{
+	default:
+	case 0:
+		XRCCTRL(*this, "ID_PASSIVE", wxRadioButton)->SetValue(true);
+		break;
+	case 1:
+		XRCCTRL(*this, "ID_ACTIVE", wxRadioButton)->SetValue(true);
+		break;
+	}
+	switch (m_pOptions->GetOptionVal(OPTION_PASVREPLYFALLBACKMODE))
+	{
+	default:
+	case 0:
+		XRCCTRL(*this, "ID_PASSIVE_FALLBACK1", wxRadioButton)->SetValue(true);
+		break;
+	case 1:
+		XRCCTRL(*this, "ID_PASSIVE_FALLBACK2", wxRadioButton)->SetValue(true);
+		break;
+	}
+	switch (m_pOptions->GetOptionVal(OPTION_EXTERNALIPMODE))
+	{
+	default:
+	case 0:
+		XRCCTRL(*this, "ID_ACTIVEMODE1", wxRadioButton)->SetValue(true);
+		break;
+	case 1:
+		XRCCTRL(*this, "ID_ACTIVEMODE2", wxRadioButton)->SetValue(true);
+		break;
+	case 2:
+		XRCCTRL(*this, "ID_ACTIVEMODE3", wxRadioButton)->SetValue(true);
+		break;
+	}
+	switch (m_pOptions->GetOptionVal(OPTION_LIMITPORTS))
+	{
+	default:
+	case 0:
+		XRCCTRL(*this, "ID_ACTIVE_PORTMODE1", wxRadioButton)->SetValue(true);
+		break;
+	case 1:
+		XRCCTRL(*this, "ID_ACTIVE_PORTMODE2", wxRadioButton)->SetValue(true);
+		break;
+	}
+	XRCCTRL(*this, "ID_ACTIVE_PORTMIN", wxTextCtrl)->SetValue(wxString::Format(_T("%d"), m_pOptions->GetOptionVal(OPTION_LIMITPORTS_LOW)));
+	XRCCTRL(*this, "ID_ACTIVE_PORTMAX", wxTextCtrl)->SetValue(wxString::Format(_T("%d"), m_pOptions->GetOptionVal(OPTION_LIMITPORTS_HIGH)));
+	XRCCTRL(*this, "ID_ACTIVEIP", wxTextCtrl)->SetValue(m_pOptions->GetOption(OPTION_EXTERNALIP));
+	XRCCTRL(*this, "ID_ACTIVERESOLVER", wxTextCtrl)->SetValue(m_pOptions->GetOption(OPTION_EXTERNALIPRESOLVER));
+	XRCCTRL(*this, "ID_NOEXTERNALONLOCAL", wxCheckBox)->SetValue(m_pOptions->GetOptionVal(OPTION_NOEXTERNALONLOCAL) != 0);
+
 	return true;
 }
 
@@ -354,6 +405,11 @@ void CNetConfWizard::CloseSocket()
 				text[2] += _("Passive mode has been set as default transfer mode.");
 			}
 			break;
+		case externalfailed:
+			text[0] = _("Failed to retrieve the external IP address.");
+			text[1] = _("Pleae make sure FileZilla is allowed to establish outgoing connections and make sure you typed the address of the address resolver correctly.");
+			text[2] = wxString::Format(_("The address you entered was: %s"), XRCCTRL(*this, "ID_ACTIVERESOLVER", wxTextCtrl)->GetValue().c_str());
+			break;
 		}
 	}
 	for (unsigned int i = 0; i < 5; i++)
@@ -420,23 +476,20 @@ wxString CNetConfWizard::GetExternalIPAddress()
 			PrintMessage(wxString::Format(_("Retrieving external IP address from %s"), address.c_str()), 0);
 
 			m_pIPResolver = new CExternalIPResolver(this);
-			m_pIPResolver->GetExternalIP(address);
+			m_pIPResolver->GetExternalIP(address, true);
 			if (!m_pIPResolver->Done())
 				return _T("");
 		}
 		if (!m_pIPResolver->Successful())
 		{
-			PrintMessage(_("Failed to retrieve external ip address, using fallback to local address"), 1);
+			delete m_pIPResolver;
+			m_pIPResolver = 0;
 
-			wxIPV4address addr;
-			if (!m_socket->GetLocal(addr))
-			{
-				PrintMessage(_("Failed to retrieve local ip address. Aborting"), 1);
-				CloseSocket();
-				return _T("");
-			}
+			PrintMessage(_("Failed to retrieve external ip address, aborting"), 1);
 
-			return addr.IPAddress();
+			m_testResult = externalfailed;
+			CloseSocket();
+			return _T("");
 		}
 
 		wxString ip = m_pIPResolver->GetIP();
