@@ -57,10 +57,10 @@ bool CNetConfWizard::Load()
 	switch (m_pOptions->GetOptionVal(OPTION_USEPASV))
 	{
 	default:
-	case 0:
+	case 1:
 		XRCCTRL(*this, "ID_PASSIVE", wxRadioButton)->SetValue(true);
 		break;
-	case 1:
+	case 0:
 		XRCCTRL(*this, "ID_ACTIVE", wxRadioButton)->SetValue(true);
 		break;
 	}
@@ -154,7 +154,7 @@ void CNetConfWizard::OnPageChanging(wxWizardEvent& event)
 
 			long min = 0, max = 0;
 			if (!portMin.ToLong(&min) || !portMax.ToLong(&max) ||
-				min < 1 || max > 65535 || min > max)
+				min < 1024 || max > 65535 || min > max)
 			{
 				wxMessageBox(_("Please enter a valid portrange."));
 				pPortMin->SetFocus();
