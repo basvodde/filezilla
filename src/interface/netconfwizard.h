@@ -34,6 +34,7 @@ protected:
 	void OnSocketEvent(wxSocketEvent& event);
 	void OnExternalIPAddress(fzExternalIPResolveEvent& event);
 	void OnRestart(wxCommandEvent& event);
+	void OnFinish(wxWizardEvent& event);
 	
 	void OnReceive();
 	void OnClose();

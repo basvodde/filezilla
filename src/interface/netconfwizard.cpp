@@ -11,6 +11,7 @@ EVT_WIZARD_PAGE_CHANGED(wxID_ANY, CNetConfWizard::OnPageChanged)
 EVT_SOCKET(0, CNetConfWizard::OnSocketEvent)
 EVT_FZ_EXTERNALIPRESOLVE(wxID_ANY, CNetConfWizard::OnExternalIPAddress)
 EVT_BUTTON(XRCID("ID_RESTART"), CNetConfWizard::OnRestart)
+EVT_WIZARD_FINISHED(wxID_ANY, CNetConfWizard::OnFinish)
 END_EVENT_TABLE()
 
 CNetConfWizard::CNetConfWizard(wxWindow* parent, COptions* pOptions)
@@ -208,6 +209,8 @@ void CNetConfWizard::OnPageChanged(wxWizardEvent& event)
 	{
 		wxButton* pPrev = wxDynamicCast(FindWindow(wxID_BACKWARD), wxButton);
 		pPrev->Disable();
+		wxButton* pNext = wxDynamicCast(FindWindow(wxID_FORWARD), wxButton);
+		pNext->SetFocus();
 	}
 }
 
@@ -420,6 +423,9 @@ void CNetConfWizard::CloseSocket()
 	}
 	wxGetApp().GetWrapEngine()->WrapRecursive(m_pages[6], m_pages[6]->GetSizer(), wxGetApp().GetWrapEngine()->GetWidthFromCache("Netconf"));
 
+	// Focus one so enter key hits finish and not the restart button by default
+	XRCCTRL(*this, "ID_SUMMARY1", wxStaticText)->SetFocus();
+
 	delete m_socket;
 	m_socket = 0;
 }
@@ -578,4 +584,31 @@ void CNetConfWizard::ResetTest()
 
 	if (!m_pages.empty())
 		XRCCTRL(*this, "ID_RESULTS", wxTextCtrl)->SetLabel(_T(""));
+}
+
+void CNetConfWizard::OnFinish(wxWizardEvent& event)
+{
+	if (m_testResult != successful)
+	{
+		if (wxMessageBox(_("The test did not succeed. Do you really want to save the settings?"), _("Save settings?"), wxYES_NO | wxICON_QUESTION) != wxYES)
+			return;
+	}
+
+	m_pOptions->SetOption(OPTION_USEPASV, XRCCTRL(*this, "ID_PASSIVE", wxRadioButton)->GetValue() ? 1 : 0);
+
+	m_pOptions->SetOption(OPTION_PASVREPLYFALLBACKMODE, XRCCTRL(*this, "ID_PASSIVE_FALLBACK1", wxRadioButton)->GetValue() ? 0 : 1);
+
+	if (XRCCTRL(*this, "ID_ACTIVEMODE1", wxRadioButton)->GetValue())
+		m_pOptions->SetOption(OPTION_EXTERNALIPMODE, 0);
+	else
+		m_pOptions->SetOption(OPTION_EXTERNALIPMODE, XRCCTRL(*this, "ID_ACTIVEMODE2", wxRadioButton)->GetValue() ? 1 : 2);
+
+	m_pOptions->SetOption(OPTION_LIMITPORTS, XRCCTRL(*this, "ID_ACTIVE_PORTMODE1", wxRadioButton)->GetValue() ? 0 : 1);
+
+	m_pOptions->SetOption(OPTION_LIMITPORTS_LOW, XRCCTRL(*this, "ID_ACTIVE_PORTMIN", wxTextCtrl)->GetValue());
+	m_pOptions->SetOption(OPTION_LIMITPORTS_HIGH, XRCCTRL(*this, "ID_ACTIVE_PORTMAX", wxTextCtrl)->GetValue());
+	
+	m_pOptions->SetOption(OPTION_EXTERNALIP, XRCCTRL(*this, "ID_ACTIVEIP", wxTextCtrl)->GetValue());
+	m_pOptions->SetOption(OPTION_EXTERNALIPRESOLVER, XRCCTRL(*this, "ID_ACTIVERESOLVER", wxTextCtrl)->GetValue());
+	m_pOptions->SetOption(OPTION_NOEXTERNALONLOCAL, XRCCTRL(*this, "ID_NOEXTERNALONLOCAL", wxCheckBox)->GetValue());
 }
