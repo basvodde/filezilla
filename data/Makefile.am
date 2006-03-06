@@ -1,4 +1,4 @@
-dist_noinst_DATA = install.nsi.in mingwm10.dll uninstall.ico
+dist_noinst_DATA = install.nsi.in mingwm10.dll reinstall.ini uninstall.ico
 
 if MAKENSISSCRIPT
 
