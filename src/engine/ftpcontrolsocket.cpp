@@ -4,6 +4,7 @@
 #include "directorylistingparser.h"
 #include "directorycache.h"
 #include "iothread.h"
+#include <wx/regex.h>
 
 #define LOGON_LOGON		1
 #define LOGON_SYST		2
@@ -2530,28 +2531,31 @@ bool CFtpControlSocket::IsMisleadingListResponse() const
 
 bool CFtpControlSocket::ParsePasvResponse(wxString& host, int& port)
 {
-	int i, j;
-	i = m_Response.Find(_T("("));
-	j = m_Response.Find(_T(")"));
-	if (i == -1 || j == -1)
+	// Validate ip address
+	wxString digit = _T("0*[0-9]{1,3}");
+	const wxChar* dot = _T(",");
+	wxString exp = _T("( |\\()(") + digit + dot + digit + dot + digit + dot + digit + dot + digit + dot + digit + _T(")( |\\)|$)");
+	wxRegEx regex;
+	regex.Compile(exp);
+
+	if (!regex.Matches(m_Response))
 		return false;
+		
+	host = regex.GetMatch(m_Response, 2);
 
-	// FIXME: Servers omitting closing bracket
-
-	wxString temp = m_Response.Mid(i+1,(j-i)-1);
-	i = temp.Find(',', true);
+	int i = host.Find(',', true);
 	long number;
-	if (i == -1 || !temp.Mid(i + 1).ToLong(&number))
+	if (i == -1 || !host.Mid(i + 1).ToLong(&number))
 		return false;
 
 	port = number; //get ls byte of server socket
-	temp = temp.Left(i);
-	i = temp.Find(',', true);
-	if (i == -1 || !temp.Mid(i + 1).ToLong(&number))
+	host = host.Left(i);
+	i = host.Find(',', true);
+	if (i == -1 || !host.Mid(i + 1).ToLong(&number))
 		return false;
 
 	port += 256 * number; //add ms byte of server socket
-	host = temp.Left(i);
+	host = host.Left(i);
 	host.Replace(_T(","), _T("."));
 
 	return true;
