@@ -16,3 +16,27 @@ bool VerifySetDate(wxDateTime& date, int year, wxDateTime::Month month, int day,
 
 	return date.IsValid();
 }
+
+bool IsRouteableAddress(const wxString& address)
+{
+	// Assumes address is already a valid IP address
+	if (address.Left(3) == _T("127") ||
+		address.Left(3) == _T("10.") ||
+		address.Left(7) == _T("192.168") ||
+		address.Left(7) == _T("169.254"))
+		return false;
+
+	if (address.Left(3) == _T("172"))
+	{
+		wxString middle = address.Mid(4);
+		int pos = address.Find(_T("."));
+		wxASSERT(pos != -1);
+		long part;
+		middle.Left(pos).ToLong(&part);
+
+		if (part >= 16 && part <= 31)
+			return false;
+	}
+
+	return true;
+}
