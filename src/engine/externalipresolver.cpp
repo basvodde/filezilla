@@ -438,7 +438,7 @@ void CExternalIPResolver::OnData(char* buffer, unsigned int len)
 
 	// Validate ip address
 	wxString digit = _T("0*[0-9]{1,3}");
-	const wxChar* dot = _T(".");
+	const wxChar* dot = _T("\\.");
 	wxString exp = _T("(^|[^\\.[:digit:]])(") + digit + dot + digit + dot + digit + dot + digit + _T(")([^\\.[:digit:]]|$)");
 	wxRegEx regex;
 	regex.Compile(exp);
