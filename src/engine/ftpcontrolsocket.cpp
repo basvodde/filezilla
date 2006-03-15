@@ -17,11 +17,15 @@ BEGIN_EVENT_TABLE(CFtpControlSocket, CControlSocket)
 EVT_FZ_EXTERNALIPRESOLVE(wxID_ANY, CFtpControlSocket::OnExternalIPAddress)
 END_EVENT_TABLE();
 
+CFtpTransferOpData::CFtpTransferOpData()
+{
+	bTriedPasv = bTriedActive = false;
+}
+
 CFtpFileTransferOpData::CFtpFileTransferOpData()
 {
 	pIOThread = 0;
 	resume = false;
-	bTriedPasv = bTriedActive = false;
 	localFileSize = -1;
 	remoteFileSize = -1;
 	transferEndReason = 0;
@@ -502,7 +506,7 @@ bool CFtpControlSocket::Send(wxString str)
 	return CControlSocket::Send(buffer, len);
 }
 
-class CFtpListOpData : public COpData
+class CFtpListOpData : public COpData, public CFtpTransferOpData
 {
 public:
 	CFtpListOpData()
@@ -516,13 +520,6 @@ public:
 	virtual ~CFtpListOpData()
 	{
 	}
-
-	bool bPasv;
-	bool bTriedPasv;
-	bool bTriedActive;
-
-	int port;
-	wxString host;
 
 	CServerPath path;
 	wxString subDir;
@@ -774,7 +771,7 @@ int CFtpControlSocket::ListParseResponse()
 		}
 		if (pData->bPasv)
 		{
-			if (!ParsePasvResponse(pData->host, pData->port))
+			if (!ParsePasvResponse(pData))
 			{
 				if (!pData->bTriedActive)
 					pData->bPasv = false;
@@ -1294,7 +1291,7 @@ int CFtpControlSocket::FileTransferParseResponse()
 
 		if (pData->bPasv)
 		{
-			if (!ParsePasvResponse(pData->host, pData->port))
+			if (!ParsePasvResponse(pData))
 			{
 				if (!pData->bTriedActive)
 					pData->bPasv = false;
@@ -2556,7 +2553,7 @@ bool CFtpControlSocket::IsMisleadingListResponse() const
 	return false;
 }
 
-bool CFtpControlSocket::ParsePasvResponse(wxString& host, int& port)
+bool CFtpControlSocket::ParsePasvResponse(CFtpTransferOpData* pData)
 {
 	// Validate ip address
 	wxString digit = _T("0*[0-9]{1,3}");
@@ -2568,22 +2565,34 @@ bool CFtpControlSocket::ParsePasvResponse(wxString& host, int& port)
 	if (!regex.Matches(m_Response))
 		return false;
 		
-	host = regex.GetMatch(m_Response, 2);
+	pData->host = regex.GetMatch(m_Response, 2);
 
-	int i = host.Find(',', true);
+	int i = pData->host.Find(',', true);
 	long number;
-	if (i == -1 || !host.Mid(i + 1).ToLong(&number))
+	if (i == -1 || !pData->host.Mid(i + 1).ToLong(&number))
 		return false;
 
-	port = number; //get ls byte of server socket
-	host = host.Left(i);
-	i = host.Find(',', true);
-	if (i == -1 || !host.Mid(i + 1).ToLong(&number))
+	pData->port = number; //get ls byte of server socket
+	pData->host = pData->host.Left(i);
+	i = pData->host.Find(',', true);
+	if (i == -1 || !pData->host.Mid(i + 1).ToLong(&number))
 		return false;
 
-	port += 256 * number; //add ms byte of server socket
-	host = host.Left(i);
-	host.Replace(_T(","), _T("."));
+	pData->port += 256 * number; //add ms byte of server socket
+	pData->host =pData-> host.Left(i);
+	pData->host.Replace(_T(","), _T("."));
+
+	const wxString peerIP = GetPeerIP();
+	if (!IsRoutableAddress(pData->host) && IsRoutableAddress(peerIP))
+	{
+		if (!m_pEngine->GetOptions()->GetOptionVal(OPTION_PASVREPLYFALLBACKMODE) || pData->bTriedActive)
+		{
+			LogMessage(Debug_Verbose, _("Server sent passive reply with unroutable address. Using server address instead."));
+			pData->host = peerIP;
+		}
+		else
+			return false;
+	}
 
 	return true;
 }

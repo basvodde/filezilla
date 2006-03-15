@@ -9,6 +9,7 @@
 #define MAXLINELEN 2000
 
 class CTransferSocket;
+class CFtpTransferOpData;
 class CFtpControlSocket : public CControlSocket
 {
 	friend class CTransferSocket;
@@ -74,7 +75,7 @@ protected:
 	int LogonParseResponse();
 	int LogonSend();
 
-	bool ParsePasvResponse(wxString& host, int& port);
+	bool ParsePasvResponse(CFtpTransferOpData* pData);
 
 	// Some servers are broken. Instead of an empty listing, some MVS servers
 	// for example they return "550 no members found"
@@ -106,20 +107,26 @@ protected:
 };
 
 class CIOThread;
-class CFtpFileTransferOpData : public CFileTransferOpData
+
+class CFtpTransferOpData
+{
+public:
+	CFtpTransferOpData();
+	bool bPasv;
+	bool bTriedPasv;
+	bool bTriedActive;
+
+	int port;
+	wxString host;
+};
+
+class CFtpFileTransferOpData : public CFileTransferOpData, public CFtpTransferOpData
 {
 public:
 	CFtpFileTransferOpData();
 	virtual ~CFtpFileTransferOpData();
 
-	bool bPasv;
-	bool bTriedPasv;
-	bool bTriedActive;
-
 	bool binary;
-
-	int port;
-	wxString host;
 
 	bool tryAbsolutePath;
 
