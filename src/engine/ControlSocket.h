@@ -101,6 +101,10 @@ protected:
 	// list update logic will fail.
 	void SendDirectoryListing(CDirectoryListing* pListing);
 
+	// Easier functions to get the IP addresses
+	virtual wxString GetLocalIP() const;
+	virtual wxString GetPeerIP() const;
+
 	wxString ConvertDomainName(wxString domain);
 
 	int CheckOverwriteFile();

@@ -708,3 +708,21 @@ wxCharBuffer CControlSocket::ConvToServer(const wxString& str)
 
 	return buffer;
 }
+
+wxString CControlSocket::GetLocalIP() const
+{
+	wxIPV4address addr;
+	if (!GetLocal(addr))
+		return _T("");
+
+	return addr.IPAddress();
+}
+
+wxString CControlSocket::GetPeerIP() const
+{
+	wxIPV4address addr;
+	if (!GetPeer(addr))
+		return _T("");
+
+	return addr.IPAddress();
+}
