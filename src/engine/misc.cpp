@@ -17,7 +17,7 @@ bool VerifySetDate(wxDateTime& date, int year, wxDateTime::Month month, int day,
 	return date.IsValid();
 }
 
-bool IsRouteableAddress(const wxString& address)
+bool IsRoutableAddress(const wxString& address)
 {
 	// Assumes address is already a valid IP address
 	if (address.Left(3) == _T("127") ||

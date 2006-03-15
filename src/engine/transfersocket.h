@@ -20,7 +20,7 @@ public:
 	CTransferSocket(CFileZillaEnginePrivate *pEngine, CFtpControlSocket *pControlSocket, enum TransferMode transferMode);
 	virtual ~CTransferSocket();
 
-	wxString SetupActiveTransfer();
+	wxString SetupActiveTransfer(const wxString& ip);
 	bool SetupPassiveTransfer(wxString host, int port);
 
 	void SetActive();

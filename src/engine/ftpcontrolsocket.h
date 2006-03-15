@@ -3,6 +3,7 @@
 
 #include "logging_private.h"
 #include "ControlSocket.h"
+#include "externalipresolver.h"
 
 #define RECVBUFFERSIZE 4096
 #define MAXLINELEN 2000
@@ -80,6 +81,8 @@ protected:
 	// Other servers return "550 No files found."
 	bool IsMisleadingListResponse() const;
 
+	int GetExternalIPAddress(wxString& address);
+
 	wxString m_Response;
 	wxString m_MultilineResponseCode;
 
@@ -95,6 +98,11 @@ protected:
 	// List of features
 	bool m_hasCLNT;
 	bool m_hasUTF8;
+
+	CExternalIPResolver* m_pIPResolver;
+
+	DECLARE_EVENT_TABLE();
+	void OnExternalIPAddress(fzExternalIPResolveEvent& event);
 };
 
 class CIOThread;

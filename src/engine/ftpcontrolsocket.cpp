@@ -5,12 +5,17 @@
 #include "directorycache.h"
 #include "iothread.h"
 #include <wx/regex.h>
+#include "externalipresolver.h"
 
 #define LOGON_LOGON		1
 #define LOGON_SYST		2
 #define LOGON_FEAT		3
 #define LOGON_CLNT		4
 #define LOGON_OPTSUTF8	5
+
+BEGIN_EVENT_TABLE(CFtpControlSocket, CControlSocket)
+EVT_FZ_EXTERNALIPRESOLVE(wxID_ANY, CFtpControlSocket::OnExternalIPAddress)
+END_EVENT_TABLE();
 
 CFtpFileTransferOpData::CFtpFileTransferOpData()
 {
@@ -83,6 +88,7 @@ public:
 
 CFtpControlSocket::CFtpControlSocket(CFileZillaEnginePrivate *pEngine) : CControlSocket(pEngine)
 {
+	m_pIPResolver = 0;
 	m_pTransferSocket = 0;
 	m_sentRestartOffset = false;
 	m_bufferLen = 0;
@@ -666,22 +672,31 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 		}
 		else
 		{
-			wxString port = m_pTransferSocket->SetupActiveTransfer();
-			if (port == _T(""))
+			wxString address;
+			int res = GetExternalIPAddress(address);
+			if (res == FZ_REPLY_WOULDBLOCK)
+				return res;
+			else if (res == FZ_REPLY_OK)
 			{
-				if (pData->bTriedPasv)
+				wxString portArgument = m_pTransferSocket->SetupActiveTransfer(address);
+                if (portArgument != _T(""))
 				{
-					LogMessage(::Error, _("Failed to create listening socket for active mode transfer, trying passive mode"));
-					ResetOperation(FZ_REPLY_ERROR);
-					return FZ_REPLY_ERROR;
+					cmd = _T("PORT " + portArgument);
+					break;
 				}
-				pData->bTriedActive = true;
-				pData->bTriedPasv = true;
-				pData->bPasv = true;
-				cmd = _T("PASV");
 			}
-			else
-				cmd = _T("PORT " + port);
+			
+			if (pData->bTriedPasv)
+			{
+				LogMessage(::Error, _("Failed to create listening socket for active mode transfer"));
+				ResetOperation(FZ_REPLY_ERROR);
+				return FZ_REPLY_ERROR;
+			}
+			LogMessage(::Debug_Warning, _("Failed to create listening socket for active mode transfer"));
+			pData->bTriedActive = true;
+			pData->bTriedPasv = true;
+			pData->bPasv = true;
+			cmd = _T("PASV");
 		}
 		break;
 	case list_list:
@@ -844,6 +859,9 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 
 	delete m_pTransferSocket;
 	m_pTransferSocket = 0;
+
+	delete m_pIPResolver;
+	m_pIPResolver = 0;
 
 	return CControlSocket::ResetOperation(nErrorCode);
 }
@@ -1611,7 +1629,7 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 	case filetransfer_port_pasv:
 		if (m_pTransferSocket)
 		{
-			LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("m_pTransferSocket != 0"));
+			LogMessage(__TFILE__, __LINE__, this, Debug_Verbose, _T("m_pTransferSocket != 0"));
 			delete m_pTransferSocket;
 		}
 		m_pTransferSocket = new CTransferSocket(m_pEngine, this, pData->download ? download : upload);
@@ -1623,22 +1641,31 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 		}
 		else
 		{
-			wxString port = m_pTransferSocket->SetupActiveTransfer();
-			if (port == _T(""))
+			wxString address;
+			int res = GetExternalIPAddress(address);
+			if (res == FZ_REPLY_WOULDBLOCK)
+				return res;
+			else if (res == FZ_REPLY_OK)
 			{
-				if (pData->bTriedPasv)
+				wxString portArgument = m_pTransferSocket->SetupActiveTransfer(address);
+                if (portArgument != _T(""))
 				{
-					LogMessage(::Error, _("Failed to create listening socket for active mode transfer, trying passive mode"));
-					ResetOperation(FZ_REPLY_ERROR);
-					return FZ_REPLY_ERROR;
+					cmd = _T("PORT " + portArgument);
+					break;
 				}
-				pData->bTriedActive = true;
-				pData->bTriedPasv = true;
-				pData->bPasv = true;
-				cmd = _T("PASV");
 			}
-			else
-				cmd = _T("PORT " + port);
+			
+			if (pData->bTriedPasv)
+			{
+				LogMessage(::Error, _("Failed to create listening socket for active mode transfer"));
+				ResetOperation(FZ_REPLY_ERROR);
+				return FZ_REPLY_ERROR;
+			}
+			LogMessage(::Debug_Warning, _("Failed to create listening socket for active mode transfer"));
+			pData->bTriedActive = true;
+			pData->bTriedPasv = true;
+			pData->bPasv = true;
+			cmd = _T("PASV");
 		}
 		break;
 	case filetransfer_rest0:
@@ -2559,4 +2586,78 @@ bool CFtpControlSocket::ParsePasvResponse(wxString& host, int& port)
 	host.Replace(_T(","), _T("."));
 
 	return true;
+}
+
+int CFtpControlSocket::GetExternalIPAddress(wxString& address)
+{
+	int mode = m_pEngine->GetOptions()->GetOptionVal(OPTION_EXTERNALIPMODE);
+
+	if (mode)
+	{
+		if (m_pEngine->GetOptions()->GetOptionVal(OPTION_NOEXTERNALONLOCAL) &&
+			!IsRoutableAddress(GetPeerIP()))
+			// Skip next block, use local address
+			goto getLocalIP;
+	}
+
+	if (mode == 1)
+	{
+		wxString ip = m_pEngine->GetOptions()->GetOption(OPTION_EXTERNALIP);
+		if (ip != _(""))
+		{
+			address = ip;
+			return FZ_REPLY_OK;
+		}
+	
+		LogMessage(::Debug_Warning, _("No external IP address set, trying default."));
+	}
+	else if (mode == 2)
+	{
+		if (!m_pIPResolver)
+		{
+			wxString resolverAddress = m_pEngine->GetOptions()->GetOption(OPTION_EXTERNALIPRESOLVER);
+
+			LogMessage(::Debug_Info, _("Retrieving external IP address from %s"), resolverAddress.c_str());
+
+			m_pIPResolver = new CExternalIPResolver(this);
+			m_pIPResolver->GetExternalIP(resolverAddress, true);
+			if (!m_pIPResolver->Done())
+				return FZ_REPLY_WOULDBLOCK;
+		}
+		if (!m_pIPResolver->Successful())
+		{
+			delete m_pIPResolver;
+			m_pIPResolver = 0;
+
+			LogMessage(::Debug_Warning, _("Failed to retrieve external ip address, using local address"));
+		}
+		else
+		{
+			address = m_pIPResolver->GetIP();
+
+			delete m_pIPResolver;
+			m_pIPResolver = 0;
+
+			return FZ_REPLY_OK;
+		}
+	}
+
+getLocalIP:
+
+	address = GetLocalIP();
+	if (address == _T(""))
+	{
+		LogMessage(::Error, _("Failed to retrieve local ip address."), 1);
+		return FZ_REPLY_ERROR;
+	}
+
+	return FZ_REPLY_OK;
+}
+
+void CFtpControlSocket::OnExternalIPAddress(fzExternalIPResolveEvent& event)
+{
+	if (!m_pIPResolver)
+		return;
+
+	SendNextCommand();
 }

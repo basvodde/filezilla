@@ -65,7 +65,7 @@ CTransferSocket::~CTransferSocket()
 	}
 }
 
-wxString CTransferSocket::SetupActiveTransfer()
+wxString CTransferSocket::SetupActiveTransfer(const wxString& ip)
 {
 	// Void all previous attempts to createt a socket
 	if (!m_pSocketClient && !m_pSocketServer)
@@ -76,7 +76,7 @@ wxString CTransferSocket::SetupActiveTransfer()
 	delete m_pSocketServer;
 	m_pSocketServer = 0;
 	
-	wxIPV4address addr, controladdr;
+	wxIPV4address addr;
 	addr.AnyAddress();
 	addr.Service(0);
 
@@ -84,28 +84,22 @@ wxString CTransferSocket::SetupActiveTransfer()
 	if (!m_pSocketServer)
 		return _T("");
 
-	if (!m_pSocketServer->GetLocal(addr) || !m_pControlSocket->GetLocal(controladdr))
+	if (!m_pSocketServer->GetLocal(addr))
 	{
 		delete m_pSocketServer;
 		m_pSocketServer = 0;
 		return _T("");
 	}
 
-	wxString port;
-
-	wxString externalIP = m_pEngine->GetOptions()->GetOption(OPTION_EXTERNALIP);
-	if (externalIP != _T(""))
-		port = externalIP;
-	else
-		port = controladdr.IPAddress();
-	port += wxString::Format(_T(",%d,%d"), addr.Service() / 256, addr.Service() % 256);
-	port.Replace(_T("."), _T(","));
+	wxString portArguments = ip;
+	portArguments += wxString::Format(_T(",%d,%d"), addr.Service() / 256, addr.Service() % 256);
+	portArguments.Replace(_T("."), _T(","));
 
 	m_pSocketServer->SetEventHandler(*this);
 	m_pSocketServer->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_OUTPUT_FLAG | wxSOCKET_CONNECTION_FLAG | wxSOCKET_LOST_FLAG);
 	m_pSocketServer->Notify(true);
 
-	return port;
+	return portArguments;
 }
 
 void CTransferSocket::OnSocketEvent(wxSocketEvent &event)
