@@ -1,4 +1,4 @@
-AC_INIT(FileZilla, 2.9.3, tim.kosse@gmx.de)
+AC_INIT(FileZilla, 2.9.4, tim.kosse@gmx.de)
 AC_CONFIG_HEADERS([src/include/config.h])
 AC_CONFIG_AUX_DIR(config)
 AM_INIT_AUTOMAKE([dist-bzip2])
@@ -139,7 +139,7 @@ if echo $host_os | grep "cygwin\|mingw" > /dev/null 2>&1; then
 			AC_MSG_ERROR([windres could not be found, please make sure this program is within your path.])
 		fi
                 use_resourcefile=true
-                parseflags $CPPFLAGS
+                parseflags $WX_CPPFLAGS
 	else
 		AC_MSG_RESULT([no])
 	fi
