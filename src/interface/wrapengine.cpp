@@ -82,21 +82,24 @@ wxString CWrapEngine::WrapText(wxWindow* parent, const wxString &text, unsigned 
 				str = p + 1;
 				break;
 			}
-			else if (*p == ' ')
-				// Remember position of last space
-				wrappable = p;
-			else if (wrapOnEveryChar && *p >= 128)
+			else if (p != str) // Don't wrap at first character
 			{
-				const wxChar* w = wrapAfter;
-				while (*w)
-				{
-					if (*w == *p)
-						break;
-
-					w++;
-				}
-				if (!*w)
+				if (*p == ' ')
+					// Remember position of last space
 					wrappable = p;
+				else if (wrapOnEveryChar && *p >= 128)
+				{
+					const wxChar* w = wrapAfter;
+					while (*w)
+					{
+						if (*w == *p)
+							break;
+	
+						w++;
+					}
+					if (!*w)
+						wrappable = p;
+				}
 			}
 
 			if (lineLength > maxLength && wrappable)
