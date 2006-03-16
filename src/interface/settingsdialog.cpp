@@ -6,6 +6,7 @@
 #include "optionspage_filetype.h"
 #include "optionspage_themes.h"
 #include "optionspage_language.h"
+#include "filezillaapp.h"
 
 enum pagenames
 {
@@ -89,6 +90,23 @@ bool CSettingsDialog::LoadPages()
 		if (!iter->page->CreatePage(m_pOptions, parentPanel, size))
 			return false;
 	}
+
+	wxSize canvas;
+	canvas.x = GetSize().x - parentPanel->GetSize().x;
+	canvas.y = GetSize().y - parentPanel->GetSize().y;
+
+	// Wrap pages nicely
+	std::vector<wxWindow*> pages;
+	for (unsigned int i = 0; i < m_pages.size(); i++)
+	{
+		pages.push_back(m_pages[i].page);
+	}
+	wxGetApp().GetWrapEngine()->WrapRecursive(pages, 1.33, "Settings", canvas);
+
+	// Keep track of maximum page size
+	size = wxSize(0, 0);
+	for (std::vector<t_page>::iterator iter = m_pages.begin(); iter != m_pages.end(); iter++)
+		size.IncTo(iter->page->GetSizer()->GetMinSize());
 
 	parentPanel->SetSizeHints(size);
 

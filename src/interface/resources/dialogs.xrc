@@ -953,9 +953,12 @@
           </object>
           <object class="sizeritem">
             <object class="wxPanel" name="ID_PAGEPANEL"/>
+            <option>1</option>
+            <flag>wxGROW</flag>
           </object>
         </object>
-        <flag>wxTOP|wxBOTTOM|wxRIGHT</flag>
+        <option>1</option>
+        <flag>wxTOP|wxBOTTOM|wxRIGHT|wxGROW</flag>
         <border>7</border>
       </object>
     </object>
@@ -1009,9 +1012,9 @@
               <orient>wxHORIZONTAL</orient>
               <object class="sizeritem">
                 <object class="wxListCtrl" name="ID_EXTENSIONS">
-                  <size>100,150</size>
                   <style>wxLC_SORT_ASCENDING|wxLC_REPORT|wxLC_NO_HEADER</style>
                 </object>
+                <minsize>100,150</minsize>
               </object>
               <object class="sizeritem">
                 <object class="wxBoxSizer">
@@ -1040,10 +1043,11 @@
               </object>
               <object class="sizeritem">
                 <object class="wxStaticText">
-                  <label>If you enter the wrong filetypes,\nthose files may get corrupted\nwhen transferred.</label>
+                  <label>If you enter the wrong filetypes, those files may get corrupted when transferred.</label>
                 </object>
               </object>
             </object>
+            <option>1</option>
             <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
             <border>4</border>
           </object>
@@ -1064,6 +1068,7 @@
             <border>4</border>
           </object>
         </object>
+        <option>1</option>
         <flag>wxTOP|wxGROW</flag>
         <border>5</border>
       </object>
@@ -1088,7 +1093,7 @@
               <orient>wxVERTICAL</orient>
               <object class="sizeritem">
                 <object class="wxStaticText">
-                  <label>If you have problems to retrieve directory listings or to transfer files,\ntry to toggle the passive mode setting.</label>
+                  <label>If you have problems to retrieve directory listings or to transfer files, try to toggle the passive mode setting.</label>
                 </object>
                 <flag>wxLEFT</flag>
                 <border>19</border>
@@ -1122,7 +1127,7 @@
                   <orient>wxVERTICAL</orient>
                   <object class="sizeritem">
                     <object class="wxStaticText">
-                      <label>By default uses any available local port to establish transfers in active\nmode. If you want to limit FileZilla to use only a small range of ports,\nplease enter the port range below.</label>
+                      <label>By default uses any available local port to establish transfers in active mode. If you want to limit FileZilla to use only a small range of ports, please enter the port range below.</label>
                     </object>
                     <flag>wxBOTTOM</flag>
                     <border>5</border>
@@ -1173,7 +1178,7 @@
           <orient>wxVERTICAL</orient>
           <object class="sizeritem">
             <object class="wxStaticText">
-              <label>If you are behind a router, FileZilla may not be able to detect your external\nIP address for active (non-passive) transfers. In this case you should enter\n the external IP address here.</label>
+              <label>If you are behind a router, FileZilla may not be able to detect your external IP address for active (non-passive) transfers. In this case you should enter the external IP address here.</label>
             </object>
             <flag>wxALL</flag>
             <border>5</border>
@@ -1339,11 +1344,12 @@
           <object class="sizeritem">
             <object class="wxListBox" name="ID_LANGUAGES">
               <content/>
-              <size>150,200</size>
               <style>wxLB_SINGLE|wxLB_NEEDED_SB|wxLB_SORT</style>
             </object>
+            <option>1</option>
             <flag>wxLEFT|wxRIGHT</flag>
             <border>5</border>
+            <minsize>150,200</minsize>
           </object>
           <object class="sizeritem">
             <object class="wxStaticText">
@@ -1353,6 +1359,7 @@
             <border>5</border>
           </object>
         </object>
+        <option>1</option>
         <flag>wxGROW</flag>
       </object>
     </object>

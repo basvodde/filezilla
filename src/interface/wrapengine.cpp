@@ -183,14 +183,14 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 	return true;
 }
 
-bool CWrapEngine::WrapRecursive(wxWindow* wnd, double ratio, const char* name /*=""*/)
+bool CWrapEngine::WrapRecursive(wxWindow* wnd, double ratio, const char* name /*=""*/, wxSize canvas /*=wxSize()*/)
 {
 	std::vector<wxWindow*> windows;
 	windows.push_back(wnd);
-	return WrapRecursive(windows, ratio, name);
+	return WrapRecursive(windows, ratio, name, canvas);
 }
 
-bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, const char* name /*=""*/)
+bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, const char* name /*=""*/, wxSize canvas /*=wxSize()*/)
 {
 	int maxWidth = GetWidthFromCache(name);
 	if (maxWidth)
@@ -221,7 +221,7 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 		size.IncTo(pSizer->GetMinSize());
 	}
 
-	double currentRatio = ((double)size.GetWidth() / size.GetHeight());
+	double currentRatio = ((double)(size.GetWidth() + canvas.x) / (size.GetHeight() + canvas.y));
 	if (ratio > currentRatio)
 	{
 		// Nothing to do, can't wrap anything
@@ -229,7 +229,11 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 	}
 
 	int max = size.GetWidth();
-	int min = size.GetHeight();
+	int min = wxMin(size.GetWidth(), size.GetHeight());
+	if (ratio < 0)
+		min *= ratio;
+	if (min > canvas.x)
+		min -= canvas.x;
 	int desiredWidth = (min + max) / 2;
 	int actualWidth = size.GetWidth();
 	while (true)
@@ -244,19 +248,38 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 		}
 
 		actualWidth = size.GetWidth();
-		double newRatio = ((double)size.GetWidth() / size.GetHeight());
+		if (actualWidth > max)
+		{
+			// Wrapping failed
+			min = desiredWidth;
+			desiredWidth = (min + max) / 2;
+			if ((max - desiredWidth) < 5)
+				break;
+			if ((desiredWidth - min) < 5)
+				break;
+			continue;
+		}
+		double newRatio = ((double)(size.GetWidth() + canvas.x) / (size.GetHeight() + canvas.y));
 
 		if (newRatio < ratio)
-			min = desiredWidth;
+		{
+			if (min == actualWidth)
+				break;
+			min = actualWidth;
+		}
 		else if (newRatio > ratio)
-			max = desiredWidth;
+		{
+			if (max == actualWidth)
+				break;
+			max = actualWidth;
+		}
 		else
 			break;
 
 		desiredWidth = (min + max) / 2;
-		if ((max - desiredWidth) < 10)
+		if ((max - desiredWidth) < 5)
 			break;
-		if ((desiredWidth - min) < 10)
+		if ((desiredWidth - min) < 5)
 			break;
 
 		for (std::vector<wxWindow*>::iterator iter = windows.begin(); iter != windows.end(); iter++)
@@ -273,7 +296,7 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 		UnwrapRecursive(*iter, pSizer);
 		pSizer->Layout();
 
-		WrapRecursive(*iter, pSizer, actualWidth);
+		WrapRecursive(*iter, pSizer, max);
 		pSizer->Layout();
 		pSizer->Fit(*iter);
 	}
