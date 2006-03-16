@@ -10,6 +10,7 @@ public:
 	wxString ownerGroup;
 	bool dir;
 	bool link;
+	wxString target; // Set to linktarget it link is true
 
 	bool hasDate;
 	bool hasTime;

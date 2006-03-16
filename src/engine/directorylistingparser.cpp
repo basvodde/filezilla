@@ -945,6 +945,16 @@ bool CDirectoryListingParser::ParseAsUnix(CLine *pLine, CDirentry &entry)
 			chr == '*')
 			entry.name.RemoveLast();
 
+		if (entry.link)
+		{
+			int pos;
+			if ((pos = entry.name.Find(_T(" -> "))) == -1)
+				return false;
+
+			entry.target = entry.name.Mid(pos + 4);
+			entry.name = entry.name.Left(pos);
+		}
+
 		return true;
 	}
 	while (--numOwnerGroup);
