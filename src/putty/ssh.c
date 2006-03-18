@@ -130,21 +130,21 @@
 
 static const char *const ssh2_disconnect_reasons[] = {
     NULL,
-    "SSH_DISCONNECT_HOST_NOT_ALLOWED_TO_CONNECT",
-    "SSH_DISCONNECT_PROTOCOL_ERROR",
-    "SSH_DISCONNECT_KEY_EXCHANGE_FAILED",
-    "SSH_DISCONNECT_HOST_AUTHENTICATION_FAILED",
-    "SSH_DISCONNECT_MAC_ERROR",
-    "SSH_DISCONNECT_COMPRESSION_ERROR",
-    "SSH_DISCONNECT_SERVICE_NOT_AVAILABLE",
-    "SSH_DISCONNECT_PROTOCOL_VERSION_NOT_SUPPORTED",
-    "SSH_DISCONNECT_HOST_KEY_NOT_VERIFIABLE",
-    "SSH_DISCONNECT_CONNECTION_LOST",
-    "SSH_DISCONNECT_BY_APPLICATION",
-    "SSH_DISCONNECT_TOO_MANY_CONNECTIONS",
-    "SSH_DISCONNECT_AUTH_CANCELLED_BY_USER",
-    "SSH_DISCONNECT_NO_MORE_AUTH_METHODS_AVAILABLE",
-    "SSH_DISCONNECT_ILLEGAL_USER_NAME",
+    "host not allowed to connect",
+    "protocol error",
+    "key exchange failed",
+    "host authentication failed",
+    "MAC error",
+    "compression error",
+    "service not available",
+    "protocol version not supported",
+    "host key not verifiable",
+    "connection lost",
+    "by application",
+    "too many connections",
+    "auth cancelled by user",
+    "no more auth methods available",
+    "illegal user name",
 };
 
 #define SSH2_OPEN_ADMINISTRATIVELY_PROHIBITED     1	/* 0x1 */
@@ -459,6 +459,9 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 #define OUR_V2_WINSIZE 16384
 #define OUR_V2_MAXPKT 0x4000UL
 
+/* Maximum length of passwords/passphrases (arbitrary) */
+#define SSH_MAX_PASSWORD_LEN 100
+
 const static struct ssh_signkey *hostkey_algs[] = { &ssh_rsa, &ssh_dss };
 
 const static struct ssh_mac *macs[] = {
@@ -705,7 +708,7 @@ struct ssh_tag {
     void *cs_comp_ctx, *sc_comp_ctx;
     const struct ssh_kex *kex;
     const struct ssh_signkey *hostkey;
-    unsigned char v2_session_id[32];
+    unsigned char v2_session_id[SSH2_KEX_MAX_HASH_LEN];
     int v2_session_id_len;
     void *kex_ctx;
 
@@ -752,13 +755,6 @@ struct ssh_tag {
     int fallback_cmd;
 
     bufchain banner;	/* accumulates banners during do_ssh2_authconn */
-    /*
-     * Used for username and password input.
-     */
-    char *userpass_input_buffer;
-    int userpass_input_buflen;
-    int userpass_input_bufpos;
-    int userpass_input_echo;
 
     int pkt_ctx;
 
@@ -1046,27 +1042,28 @@ static int alloc_channel_id(Ssh ssh)
     return low + 1 + CHANNEL_NUMBER_OFFSET;
 }
 
+static void c_write_stderr(int trusted, const char *buf, int len)
+{
+    int i;
+    for (i = 0; i < len; i++)
+	if (buf[i] != '\r' && (trusted || buf[i] & 0x60))
+	    fputc(buf[i], stderr);
+}
+
 static void c_write(Ssh ssh, const char *buf, int len)
 {
-    if ((flags & FLAG_STDERR)) {
-	int i;
-	for (i = 0; i < len; i++)
-	    if (buf[i] != '\r')
-		fputc(buf[i], stderr);
-	return;
-    }
-    from_backend(ssh->frontend, 1, buf, len);
+    if (flags & FLAG_STDERR)
+	c_write_stderr(1, buf, len);
+    else
+	from_backend(ssh->frontend, 1, buf, len);
 }
 
 static void c_write_untrusted(Ssh ssh, const char *buf, int len)
 {
-    int i;
-    for (i = 0; i < len; i++) {
-	if (buf[i] == '\n')
-	    c_write(ssh, "\r\n", 2);
-	else if ((buf[i] & 0x60) || (buf[i] == '\r'))
-	    c_write(ssh, buf + i, 1);
-    }
+    if (flags & FLAG_STDERR)
+	c_write_stderr(0, buf, len);
+    else
+	from_backend_untrusted(ssh->frontend, buf, len);
 }
 
 static void c_write_str(Ssh ssh, const char *buf)
@@ -1587,7 +1584,7 @@ static void ssh_pkt_ensure(struct Packet *pkt, int length)
 {
     if (pkt->maxlen < length) {
 	unsigned char *body = pkt->body;
-	int offset = body ? pkt->data - body : 0;
+	int offset = body ? body - pkt->data : 0;
 	pkt->maxlen = length + 256;
 	pkt->data = sresize(pkt->data, pkt->maxlen + APIEXTRA, unsigned char);
 	if (body) pkt->body = pkt->data + offset;
@@ -1697,10 +1694,10 @@ static struct Packet *ssh1_pkt_init(int pkt_type)
 static struct Packet *ssh2_pkt_init(int pkt_type)
 {
     struct Packet *pkt = ssh_new_packet();
-    pkt->length = 5;
+    pkt->length = 5; /* space for packet length + padding length */
     pkt->forcepad = 0;
     ssh_pkt_addbyte(pkt, (unsigned char) pkt_type);
-    pkt->body = pkt->data + pkt->length;
+    pkt->body = pkt->data + pkt->length; /* after packet type */
     return pkt;
 }
 
@@ -2395,10 +2392,10 @@ static int do_ssh_init(Ssh ssh, unsigned char c)
 	    memcpy(ssh->v_c, verstring, len);
 	    ssh->v_c[len] = 0;
 	    len = strcspn(s->vstring, "\015\012");
-            ssh->v_s = snewn(len + 1, char);
-            memcpy(ssh->v_s, s->vstring, len);
-            ssh->v_s[len] = 0;
-
+	    ssh->v_s = snewn(len + 1, char);
+	    memcpy(ssh->v_s, s->vstring, len);
+	    ssh->v_s[len] = 0;
+	    
             /*
              * Initialise SSH-2 protocol.
              */
@@ -2751,78 +2748,6 @@ static void ssh_throttle_all(Ssh ssh, int enable, int bufsize)
     }
 }
 
-/*
- * Username and password input, abstracted off into routines
- * reusable in several places - even between SSH-1 and SSH-2.
- */
-
-/* Set up a username or password input loop on a given buffer. */
-static void setup_userpass_input(Ssh ssh, char *buffer, int buflen, int echo)
-{
-    ssh->userpass_input_buffer = buffer;
-    ssh->userpass_input_buflen = buflen;
-    ssh->userpass_input_bufpos = 0;
-    ssh->userpass_input_echo = echo;
-}
-
-/*
- * Process some terminal data in the course of username/password
- * input. Returns >0 for success (line of input returned in
- * buffer), <0 for failure (user hit ^C/^D, bomb out and exit), 0
- * for inconclusive (keep waiting for more input please).
- */
-static int process_userpass_input(Ssh ssh, unsigned char *in, int inlen)
-{
-    char c;
-
-    while (inlen--) {
-	switch (c = *in++) {
-	  case 10:
-	  case 13:
-	    ssh->userpass_input_buffer[ssh->userpass_input_bufpos] = 0;
-	    ssh->userpass_input_buffer[ssh->userpass_input_buflen-1] = 0;
-	    return +1;
-	    break;
-	  case 8:
-	  case 127:
-	    if (ssh->userpass_input_bufpos > 0) {
-		if (ssh->userpass_input_echo)
-		    c_write_str(ssh, "\b \b");
-		ssh->userpass_input_bufpos--;
-	    }
-	    break;
-	  case 21:
-	  case 27:
-	    while (ssh->userpass_input_bufpos > 0) {
-		if (ssh->userpass_input_echo)
-		    c_write_str(ssh, "\b \b");
-		ssh->userpass_input_bufpos--;
-	    }
-	    break;
-	  case 3:
-	  case 4:
-	    return -1;
-	    break;
-	  default:
-	    /*
-	     * This simplistic check for printability is disabled
-	     * when we're doing password input, because some people
-	     * have control characters in their passwords.o
-	     */
-	    if ((!ssh->userpass_input_echo ||
-		 (c >= ' ' && c <= '~') ||
-		 ((unsigned char) c >= 160))
-		&& ssh->userpass_input_bufpos < ssh->userpass_input_buflen-1) {
-		ssh->userpass_input_buffer[ssh->userpass_input_bufpos++] = c;
-		if (ssh->userpass_input_echo)
-		    c_write(ssh, &c, 1);
-	    }
-	    break;
-	}
-    }
-    return 0;
-}
-
 static void ssh_agent_callback(void *sshv, void *reply, int replylen)
 {
     Ssh ssh = (Ssh) sshv;
@@ -2935,9 +2860,9 @@ static int do_ssh1_login(Ssh ssh, unsigned char *in, int inlen,
 	char username[100];
 	void *publickey_blob;
 	int publickey_bloblen;
-	char password[100];
-	char prompt[200];
-	int pos;
+	char *publickey_comment;
+	int publickey_encrypted;
+	prompts_t *cur_prompt;
 	char c;
 	int pwpkt_type;
 	unsigned char request[5], *response, *p;
@@ -3199,33 +3124,33 @@ static int do_ssh1_login(Ssh ssh, unsigned char *in, int inlen,
 
     logevent("Successfully started encryption");
 
-    fflush(stdout);
+    fflush(stdout); /* FIXME eh? */
     {
 	if (!*ssh->cfg.username) {
-	    if (ssh_get_line && !ssh_getline_pw_only) {
-		if (!ssh_get_line("login as: ",
-				  s->username, sizeof(s->username), FALSE)) {
-		    /*
-		     * get_line failed to get a username.
-		     * Terminate.
-		     */
-		    ssh_disconnect(ssh, "No username provided", NULL, 0, TRUE);
-		    crStop(1);
-		}
-	    } else {
-		int ret;	       /* need not be kept over crReturn */
-		c_write_str(ssh, "login as: ");
+	    int ret; /* need not be kept over crReturn */
+	    s->cur_prompt = new_prompts(ssh->frontend);
+	    s->cur_prompt->to_server = TRUE;
+	    s->cur_prompt->name = dupstr("SSH login name");
+	    add_prompt(s->cur_prompt, dupstr("login as: "), TRUE,
+		       lenof(s->username)); 
+	    ret = get_userpass_input(s->cur_prompt, NULL, 0);
+	    while (ret < 0) {
 		ssh->send_ok = 1;
-
-		setup_userpass_input(ssh, s->username, sizeof(s->username), 1);
-		do {
-		    crWaitUntil(!pktin);
-		    ret = process_userpass_input(ssh, in, inlen);
-		} while (ret == 0);
-		if (ret < 0)
-		    cleanup_exit(0);
-		c_write_str(ssh, "\r\n");
+		crWaitUntil(!pktin);
+		ret = get_userpass_input(s->cur_prompt, in, inlen);
+		ssh->send_ok = 0;
 	    }
+	    if (!ret) {
+		/*
+		 * Failed to get a username. Terminate.
+		 */
+		free_prompts(s->cur_prompt);
+		ssh_disconnect(ssh, "No username provided", NULL, 0, TRUE);
+		crStop(0);
+	    }
+	    memcpy(s->username, s->cur_prompt->prompts[0]->result,
+		   lenof(s->username));
+	    free_prompts(s->cur_prompt);
 	} else {
 	    strncpy(s->username, ssh->cfg.username, sizeof(s->username));
 	    s->username[sizeof(s->username)-1] = '\0';
@@ -3233,14 +3158,14 @@ static int do_ssh1_login(Ssh ssh, unsigned char *in, int inlen,
 
 	send_packet(ssh, SSH1_CMSG_USER, PKT_STR, s->username, PKT_END);
 	{
-	    char userlog[22 + sizeof(s->username)];
-	    sprintf(userlog, "Sent username \"%s\"", s->username);
+	    char *userlog = dupprintf("Sent username \"%s\"", s->username);
 	    logevent(userlog);
 	    if (flags & FLAG_INTERACTIVE &&
 		(!((flags & FLAG_STDERR) && (flags & FLAG_VERBOSE)))) {
-		strcat(userlog, "\r\n");
 		c_write_str(ssh, userlog);
+		c_write_str(ssh, "\r\n");
 	    }
+	    sfree(userlog);
 	}
     }
 
@@ -3253,18 +3178,51 @@ static int do_ssh1_login(Ssh ssh, unsigned char *in, int inlen,
 	s->tried_publickey = s->tried_agent = 0;
     }
     s->tis_auth_refused = s->ccard_auth_refused = 0;
-    /* Load the public half of ssh->cfg.keyfile so we notice if it's in Pageant */
+    /*
+     * Load the public half of any configured keyfile for later use.
+     */
     if (!filename_is_null(ssh->cfg.keyfile)) {
-	if (!rsakey_pubblob(&ssh->cfg.keyfile,
-			    &s->publickey_blob, &s->publickey_bloblen, NULL))
+	int keytype;
+	logeventf(ssh, "Reading private key file \"%.150s\"",
+		  filename_to_str(&ssh->cfg.keyfile));
+	keytype = key_type(&ssh->cfg.keyfile);
+	if (keytype == SSH_KEYTYPE_SSH1) {
+	    const char *error;
+	    if (rsakey_pubblob(&ssh->cfg.keyfile,
+			       &s->publickey_blob, &s->publickey_bloblen,
+			       &s->publickey_comment, &error)) {
+		s->publickey_encrypted = rsakey_encrypted(&ssh->cfg.keyfile,
+							  NULL);
+	    } else {
+		char *msgbuf;
+		logeventf(ssh, "Unable to load private key (%s)", error);
+		msgbuf = dupprintf("Unable to load private key file "
+				   "\"%.150s\" (%s)\r\n",
+				   filename_to_str(&ssh->cfg.keyfile),
+				   error);
+		c_write_str(ssh, msgbuf);
+		sfree(msgbuf);
+		s->publickey_blob = NULL;
+	    }
+	} else {
+	    char *msgbuf;
+	    logeventf(ssh, "Unable to use this key file (%s)",
+		      key_type_to_str(keytype));
+	    msgbuf = dupprintf("Unable to use key file \"%.150s\""
+			       " (%s)\r\n",
+			       filename_to_str(&ssh->cfg.keyfile),
+			       key_type_to_str(keytype));
+	    c_write_str(ssh, msgbuf);
+	    sfree(msgbuf);
 	    s->publickey_blob = NULL;
+	}
     } else
 	s->publickey_blob = NULL;
 
     while (pktin->type == SSH1_SMSG_FAILURE) {
 	s->pwpkt_type = SSH1_CMSG_AUTH_PASSWORD;
 
-	if (agent_exists() && !s->tried_agent) {
+	if (ssh->cfg.tryagent && agent_exists() && !s->tried_agent) {
 	    /*
 	     * Attempt RSA authentication using Pageant.
 	     */
@@ -3298,13 +3256,7 @@ static int do_ssh1_login(Ssh ssh, unsigned char *in, int inlen,
 		s->p += 4;
 		logeventf(ssh, "Pageant has %d SSH-1 keys", s->nkeys);
 		for (s->keyi = 0; s->keyi < s->nkeys; s->keyi++) {
-		    logeventf(ssh, "Trying Pageant key #%d", s->keyi);
-		    if (s->publickey_blob &&
-			!memcmp(s->p, s->publickey_blob,
-				s->publickey_bloblen)) {
-			logevent("This key matches configured key file");
-			s->tried_publickey = 1;
-		    }
+		    unsigned char *pkblob = s->p;
 		    s->p += 4;
 		    {
 			int n, ok = FALSE;
@@ -3337,6 +3289,17 @@ static int do_ssh1_login(Ssh ssh, unsigned char *in, int inlen,
 			    break;
 			}
 		    }
+		    if (s->publickey_blob) {
+			if (!memcmp(pkblob, s->publickey_blob,
+				    s->publickey_bloblen)) {
+			    logeventf(ssh, "Pageant key #%d matches "
+				      "configured key file", s->keyi);
+			    s->tried_publickey = 1;
+			} else
+			    /* Skip non-configured key */
+			    continue;
+		    }
+		    logeventf(ssh, "Trying Pageant key #%d", s->keyi);
 		    send_packet(ssh, SSH1_CMSG_AUTH_RSA,
 				PKT_BIGNUM, s->key.modulus, PKT_END);
 		    crWaitUntil(pktin);
@@ -3427,12 +3390,155 @@ static int do_ssh1_login(Ssh ssh, unsigned char *in, int inlen,
 			break;
 		}
 		sfree(s->response);
+		if (s->publickey_blob && !s->tried_publickey)
+		    logevent("Configured key file not in Pageant");
 	    }
 	    if (s->authed)
 		break;
 	}
-	if (!filename_is_null(ssh->cfg.keyfile) && !s->tried_publickey)
-	    s->pwpkt_type = SSH1_CMSG_AUTH_RSA;
+	if (s->publickey_blob && !s->tried_publickey) {
+	    /*
+	     * Try public key authentication with the specified
+	     * key file.
+	     */
+	    int got_passphrase; /* need not be kept over crReturn */
+	    if (flags & FLAG_VERBOSE)
+		c_write_str(ssh, "Trying public key authentication.\r\n");
+	    logeventf(ssh, "Trying public key \"%s\"",
+		      filename_to_str(&ssh->cfg.keyfile));
+	    s->tried_publickey = 1;
+	    got_passphrase = FALSE;
+	    while (!got_passphrase) {
+		/*
+		 * Get a passphrase, if necessary.
+		 */
+		char *passphrase = NULL;    /* only written after crReturn */
+		const char *error;
+		if (!s->publickey_encrypted) {
+		    if (flags & FLAG_VERBOSE)
+			c_write_str(ssh, "No passphrase required.\r\n");
+		    passphrase = NULL;
+		} else {
+		    int ret; /* need not be kept over crReturn */
+		    s->cur_prompt = new_prompts(ssh->frontend);
+		    s->cur_prompt->to_server = FALSE;
+		    s->cur_prompt->name = dupstr("SSH key passphrase");
+		    add_prompt(s->cur_prompt,
+			       dupprintf("Passphrase for key \"%.100s\": ",
+					 s->publickey_comment),
+			       FALSE, SSH_MAX_PASSWORD_LEN);
+		    ret = get_userpass_input(s->cur_prompt, NULL, 0);
+		    while (ret < 0) {
+			ssh->send_ok = 1;
+			crWaitUntil(!pktin);
+			ret = get_userpass_input(s->cur_prompt, in, inlen);
+			ssh->send_ok = 0;
+		    }
+		    if (!ret) {
+			/* Failed to get a passphrase. Terminate. */
+			free_prompts(s->cur_prompt);
+			ssh_disconnect(ssh, NULL, "Unable to authenticate",
+				       0, TRUE);
+			crStop(0);
+		    }
+		    passphrase = dupstr(s->cur_prompt->prompts[0]->result);
+		    free_prompts(s->cur_prompt);
+		}
+		/*
+		 * Try decrypting key with passphrase.
+		 */
+		ret = loadrsakey(&ssh->cfg.keyfile, &s->key, passphrase,
+				 &error);
+		if (passphrase) {
+		    memset(passphrase, 0, strlen(passphrase));
+		    sfree(passphrase);
+		}
+		if (ret == 1) {
+		    /* Correct passphrase. */
+		    got_passphrase = TRUE;
+		} else if (ret == 0) {
+		    c_write_str(ssh, "Couldn't load private key from ");
+		    c_write_str(ssh, filename_to_str(&ssh->cfg.keyfile));
+		    c_write_str(ssh, " (");
+		    c_write_str(ssh, error);
+		    c_write_str(ssh, ").\r\n");
+		    got_passphrase = FALSE;
+		    break;	       /* go and try something else */
+		} else if (ret == -1) {
+		    c_write_str(ssh, "Wrong passphrase.\r\n"); /* FIXME */
+		    got_passphrase = FALSE;
+		    /* and try again */
+		} else {
+		    assert(0 && "unexpected return from loadrsakey()");
+		}
+	    }
+
+	    if (got_passphrase) {
+
+		/*
+		 * Send a public key attempt.
+		 */
+		send_packet(ssh, SSH1_CMSG_AUTH_RSA,
+			    PKT_BIGNUM, s->key.modulus, PKT_END);
+
+		crWaitUntil(pktin);
+		if (pktin->type == SSH1_SMSG_FAILURE) {
+		    c_write_str(ssh, "Server refused our public key.\r\n");
+		    continue;	       /* go and try something else */
+		}
+		if (pktin->type != SSH1_SMSG_AUTH_RSA_CHALLENGE) {
+		    bombout(("Bizarre response to offer of public key"));
+		    crStop(0);
+		}
+
+		{
+		    int i;
+		    unsigned char buffer[32];
+		    Bignum challenge, response;
+
+		    if ((challenge = ssh1_pkt_getmp(pktin)) == NULL) {
+			bombout(("Server's RSA challenge was badly formatted"));
+			crStop(0);
+		    }
+		    response = rsadecrypt(challenge, &s->key);
+		    freebn(s->key.private_exponent);/* burn the evidence */
+
+		    for (i = 0; i < 32; i++) {
+			buffer[i] = bignum_byte(response, 31 - i);
+		    }
+
+		    MD5Init(&md5c);
+		    MD5Update(&md5c, buffer, 32);
+		    MD5Update(&md5c, s->session_id, 16);
+		    MD5Final(buffer, &md5c);
+
+		    send_packet(ssh, SSH1_CMSG_AUTH_RSA_RESPONSE,
+				PKT_DATA, buffer, 16, PKT_END);
+
+		    freebn(challenge);
+		    freebn(response);
+		}
+
+		crWaitUntil(pktin);
+		if (pktin->type == SSH1_SMSG_FAILURE) {
+		    if (flags & FLAG_VERBOSE)
+			c_write_str(ssh, "Failed to authenticate with"
+				    " our public key.\r\n");
+		    continue;	       /* go and try something else */
+		} else if (pktin->type != SSH1_SMSG_SUCCESS) {
+		    bombout(("Bizarre response to RSA authentication response"));
+		    crStop(0);
+		}
+
+		break;		       /* we're through! */
+	    }
+
+	}
+
+	/*
+	 * Otherwise, try various forms of password-like authentication.
+	 */
+	s->cur_prompt = new_prompts(ssh->frontend);
 
 	if (ssh->cfg.try_tis_auth &&
 	    (s->supported_auths_mask & (1 << SSH1_AUTH_TIS)) &&
@@ -3450,23 +3556,31 @@ static int do_ssh1_login(Ssh ssh, unsigned char *in, int inlen,
 	    } else {
 		char *challenge;
 		int challengelen;
+		char *instr_suf, *prompt;
 
 		ssh_pkt_getstring(pktin, &challenge, &challengelen);
 		if (!challenge) {
 		    bombout(("TIS challenge packet was badly formed"));
 		    crStop(0);
 		}
-		c_write_str(ssh, "Using TIS authentication.\r\n");
 		logevent("Received TIS challenge");
-		if (challengelen > sizeof(s->prompt) - 1)
-		    challengelen = sizeof(s->prompt) - 1;/* prevent overrun */
-		memcpy(s->prompt, challenge, challengelen);
+		s->cur_prompt->to_server = TRUE;
+		s->cur_prompt->name = dupstr("SSH TIS authentication");
 		/* Prompt heuristic comes from OpenSSH */
-		strncpy(s->prompt + challengelen,
-		        memchr(s->prompt, '\n', challengelen) ?
-			"": "\r\nResponse: ",
-			(sizeof s->prompt) - challengelen);
-		s->prompt[(sizeof s->prompt) - 1] = '\0';
+		if (memchr(challenge, '\n', challengelen)) {
+		    instr_suf = dupstr("");
+		    prompt = dupprintf("%.*s", challengelen, challenge);
+		} else {
+		    instr_suf = dupprintf("%.*s", challengelen, challenge);
+		    prompt = dupstr("Response: ");
+		}
+		s->cur_prompt->instruction =
+		    dupprintf("Using TIS authentication.%s%s",
+			      (*instr_suf) ? "\n" : "",
+			      instr_suf);
+		s->cur_prompt->instr_reqd = TRUE;
+		add_prompt(s->cur_prompt, prompt, FALSE, SSH_MAX_PASSWORD_LEN);
+		sfree(instr_suf);
 	    }
 	}
 	if (ssh->cfg.try_tis_auth &&
@@ -3484,53 +3598,40 @@ static int do_ssh1_login(Ssh ssh, unsigned char *in, int inlen,
 	    } else {
 		char *challenge;
 		int challengelen;
+		char *instr_suf, *prompt;
 
 		ssh_pkt_getstring(pktin, &challenge, &challengelen);
 		if (!challenge) {
 		    bombout(("CryptoCard challenge packet was badly formed"));
 		    crStop(0);
 		}
-		c_write_str(ssh, "Using CryptoCard authentication.\r\n");
 		logevent("Received CryptoCard challenge");
-		if (challengelen > sizeof(s->prompt) - 1)
-		    challengelen = sizeof(s->prompt) - 1;/* prevent overrun */
-		memcpy(s->prompt, challenge, challengelen);
-		strncpy(s->prompt + challengelen,
-		        memchr(s->prompt, '\n', challengelen) ?
-			"" : "\r\nResponse: ",
-			sizeof(s->prompt) - challengelen);
-		s->prompt[sizeof(s->prompt) - 1] = '\0';
+		s->cur_prompt->to_server = TRUE;
+		s->cur_prompt->name = dupstr("SSH CryptoCard authentication");
+		s->cur_prompt->name_reqd = FALSE;
+		/* Prompt heuristic comes from OpenSSH */
+		if (memchr(challenge, '\n', challengelen)) {
+		    instr_suf = dupstr("");
+		    prompt = dupprintf("%.*s", challengelen, challenge);
+		} else {
+		    instr_suf = dupprintf("%.*s", challengelen, challenge);
+		    prompt = dupstr("Response: ");
+		}
+		s->cur_prompt->instruction =
+		    dupprintf("Using CryptoCard authentication.%s%s",
+			      (*instr_suf) ? "\n" : "",
+			      instr_suf);
+		s->cur_prompt->instr_reqd = TRUE;
+		add_prompt(s->cur_prompt, prompt, FALSE, SSH_MAX_PASSWORD_LEN);
+		sfree(instr_suf);
 	    }
 	}
 	if (s->pwpkt_type == SSH1_CMSG_AUTH_PASSWORD) {
-	    sprintf(s->prompt, "%.90s@%.90s's password: ",
-		    s->username, ssh->savedhost);
-	}
-	if (s->pwpkt_type == SSH1_CMSG_AUTH_RSA) {
-	    char *comment = NULL;
-	    int type;
-	    if (flags & FLAG_VERBOSE)
-		c_write_str(ssh, "Trying public key authentication.\r\n");
-	    logeventf(ssh, "Trying public key \"%s\"",
-		      filename_to_str(&ssh->cfg.keyfile));
-	    type = key_type(&ssh->cfg.keyfile);
-	    if (type != SSH_KEYTYPE_SSH1) {
-		char *msg = dupprintf("Key is of wrong type (%s)",
-				      key_type_to_str(type));
-		logevent(msg);
-		c_write_str(ssh, msg);
-		c_write_str(ssh, "\r\n");
-		sfree(msg);
-		s->tried_publickey = 1;
-		continue;
-	    }
-	    if (!rsakey_encrypted(&ssh->cfg.keyfile, &comment)) {
-		if (flags & FLAG_VERBOSE)
-		    c_write_str(ssh, "No passphrase required.\r\n");
-		goto tryauth;
-	    }
-	    sprintf(s->prompt, "Passphrase for key \"%.100s\": ", comment);
-	    sfree(comment);
+	    s->cur_prompt->to_server = TRUE;
+	    s->cur_prompt->name = dupstr("SSH password");
+	    add_prompt(s->cur_prompt, dupprintf("%.90s@%.90s's password: ",
+						s->username, ssh->savedhost),
+		       FALSE, SSH_MAX_PASSWORD_LEN);
 	}
 
 	/*
@@ -3538,245 +3639,155 @@ static int do_ssh1_login(Ssh ssh, unsigned char *in, int inlen,
 	 * or CryptoCard exchange if we're doing TIS or CryptoCard
 	 * authentication.
 	 */
-	if (ssh_get_line) {
-	    if (!ssh_get_line(s->prompt, s->password,
-			      sizeof(s->password), TRUE)) {
+	{
+	    int ret; /* need not be kept over crReturn */
+	    ret = get_userpass_input(s->cur_prompt, NULL, 0);
+	    while (ret < 0) {
+		ssh->send_ok = 1;
+		crWaitUntil(!pktin);
+		ret = get_userpass_input(s->cur_prompt, in, inlen);
+		ssh->send_ok = 0;
+	    }
+	    if (!ret) {
 		/*
-		 * get_line failed to get a password (for example
+		 * Failed to get a password (for example
 		 * because one was supplied on the command line
 		 * which has already failed to work). Terminate.
 		 */
-		ssh_disconnect(ssh, NULL, "Unable to authenticate", 0, FALSE);
-		crStop(1);
+		free_prompts(s->cur_prompt);
+		ssh_disconnect(ssh, NULL, "Unable to authenticate", 0, TRUE);
+		crStop(0);
 	    }
-	} else {
-	    /* Prompt may have come from server. We've munged it a bit, so
-	     * we know it to be zero-terminated at least once. */
-	    int ret;		       /* need not be saved over crReturn */
-	    c_write_untrusted(ssh, s->prompt, strlen(s->prompt));
-	    s->pos = 0;
-
-	    setup_userpass_input(ssh, s->password, sizeof(s->password), 0);
-	    do {
-		crWaitUntil(!pktin);
-		ret = process_userpass_input(ssh, in, inlen);
-	    } while (ret == 0);
-	    if (ret < 0)
-		cleanup_exit(0);
-	    c_write_str(ssh, "\r\n");
 	}
 
-      tryauth:
-	if (s->pwpkt_type == SSH1_CMSG_AUTH_RSA) {
+	if (s->pwpkt_type == SSH1_CMSG_AUTH_PASSWORD) {
 	    /*
-	     * Try public key authentication with the specified
-	     * key file.
+	     * Defence against traffic analysis: we send a
+	     * whole bunch of packets containing strings of
+	     * different lengths. One of these strings is the
+	     * password, in a SSH1_CMSG_AUTH_PASSWORD packet.
+	     * The others are all random data in
+	     * SSH1_MSG_IGNORE packets. This way a passive
+	     * listener can't tell which is the password, and
+	     * hence can't deduce the password length.
+	     * 
+	     * Anybody with a password length greater than 16
+	     * bytes is going to have enough entropy in their
+	     * password that a listener won't find it _that_
+	     * much help to know how long it is. So what we'll
+	     * do is:
+	     * 
+	     *  - if password length < 16, we send 15 packets
+	     *    containing string lengths 1 through 15
+	     * 
+	     *  - otherwise, we let N be the nearest multiple
+	     *    of 8 below the password length, and send 8
+	     *    packets containing string lengths N through
+	     *    N+7. This won't obscure the order of
+	     *    magnitude of the password length, but it will
+	     *    introduce a bit of extra uncertainty.
+	     * 
+	     * A few servers (the old 1.2.18 through 1.2.22)
+	     * can't deal with SSH1_MSG_IGNORE. For these
+	     * servers, we need an alternative defence. We make
+	     * use of the fact that the password is interpreted
+	     * as a C string: so we can append a NUL, then some
+	     * random data.
+	     * 
+	     * One server (a Cisco one) can deal with neither
+	     * SSH1_MSG_IGNORE _nor_ a padded password string.
+	     * For this server we are left with no defences
+	     * against password length sniffing.
 	     */
-	    s->tried_publickey = 1;
-	    
-	    {
-		const char *error = NULL;
-		int ret = loadrsakey(&ssh->cfg.keyfile, &s->key, s->password,
-				     &error);
-		if (ret == 0) {
-		    c_write_str(ssh, "Couldn't load private key from ");
-		    c_write_str(ssh, filename_to_str(&ssh->cfg.keyfile));
-		    c_write_str(ssh, " (");
-		    c_write_str(ssh, error);
-		    c_write_str(ssh, ").\r\n");
-		    continue;	       /* go and try password */
-		}
-		if (ret == -1) {
-		    c_write_str(ssh, "Wrong passphrase.\r\n");
-		    s->tried_publickey = 0;
-		    continue;	       /* try again */
-		}
-	    }
-
-	    /*
-	     * Send a public key attempt.
-	     */
-	    send_packet(ssh, SSH1_CMSG_AUTH_RSA,
-			PKT_BIGNUM, s->key.modulus, PKT_END);
-
-	    crWaitUntil(pktin);
-	    if (pktin->type == SSH1_SMSG_FAILURE) {
-		c_write_str(ssh, "Server refused our public key.\r\n");
-		continue;	       /* go and try password */
-	    }
-	    if (pktin->type != SSH1_SMSG_AUTH_RSA_CHALLENGE) {
-		bombout(("Bizarre response to offer of public key"));
-		crStop(0);
-	    }
-
-	    {
-		int i;
-		unsigned char buffer[32];
-		Bignum challenge, response;
-
-		if ((challenge = ssh1_pkt_getmp(pktin)) == NULL) {
-		    bombout(("Server's RSA challenge was badly formatted"));
-		    crStop(0);
-		}
-		response = rsadecrypt(challenge, &s->key);
-		freebn(s->key.private_exponent);/* burn the evidence */
-
-		for (i = 0; i < 32; i++) {
-		    buffer[i] = bignum_byte(response, 31 - i);
-		}
-
-		MD5Init(&md5c);
-		MD5Update(&md5c, buffer, 32);
-		MD5Update(&md5c, s->session_id, 16);
-		MD5Final(buffer, &md5c);
-
-		send_packet(ssh, SSH1_CMSG_AUTH_RSA_RESPONSE,
-			    PKT_DATA, buffer, 16, PKT_END);
-
-		freebn(challenge);
-		freebn(response);
-	    }
-
-	    crWaitUntil(pktin);
-	    if (pktin->type == SSH1_SMSG_FAILURE) {
-		if (flags & FLAG_VERBOSE)
-		    c_write_str(ssh, "Failed to authenticate with"
-				" our public key.\r\n");
-		continue;	       /* go and try password */
-	    } else if (pktin->type != SSH1_SMSG_SUCCESS) {
-		bombout(("Bizarre response to RSA authentication response"));
-		crStop(0);
-	    }
-
-	    break;		       /* we're through! */
-	} else {
-	    if (s->pwpkt_type == SSH1_CMSG_AUTH_PASSWORD) {
+	    if (!(ssh->remote_bugs & BUG_CHOKES_ON_SSH1_IGNORE)) {
 		/*
-		 * Defence against traffic analysis: we send a
-		 * whole bunch of packets containing strings of
-		 * different lengths. One of these strings is the
-		 * password, in a SSH1_CMSG_AUTH_PASSWORD packet.
-		 * The others are all random data in
-		 * SSH1_MSG_IGNORE packets. This way a passive
-		 * listener can't tell which is the password, and
-		 * hence can't deduce the password length.
-		 * 
-		 * Anybody with a password length greater than 16
-		 * bytes is going to have enough entropy in their
-		 * password that a listener won't find it _that_
-		 * much help to know how long it is. So what we'll
-		 * do is:
-		 * 
-		 *  - if password length < 16, we send 15 packets
-		 *    containing string lengths 1 through 15
-		 * 
-		 *  - otherwise, we let N be the nearest multiple
-		 *    of 8 below the password length, and send 8
-		 *    packets containing string lengths N through
-		 *    N+7. This won't obscure the order of
-		 *    magnitude of the password length, but it will
-		 *    introduce a bit of extra uncertainty.
-		 * 
-		 * A few servers (the old 1.2.18 through 1.2.22)
-		 * can't deal with SSH1_MSG_IGNORE. For these
-		 * servers, we need an alternative defence. We make
-		 * use of the fact that the password is interpreted
-		 * as a C string: so we can append a NUL, then some
-		 * random data.
-		 * 
-		 * One server (a Cisco one) can deal with neither
-		 * SSH1_MSG_IGNORE _nor_ a padded password string.
-		 * For this server we are left with no defences
-		 * against password length sniffing.
+		 * The server can deal with SSH1_MSG_IGNORE, so
+		 * we can use the primary defence.
 		 */
-		if (!(ssh->remote_bugs & BUG_CHOKES_ON_SSH1_IGNORE)) {
-		    /*
-		     * The server can deal with SSH1_MSG_IGNORE, so
-		     * we can use the primary defence.
-		     */
-		    int bottom, top, pwlen, i;
-		    char *randomstr;
+		int bottom, top, pwlen, i;
+		char *randomstr;
 
-		    pwlen = strlen(s->password);
-		    if (pwlen < 16) {
-			bottom = 0;    /* zero length passwords are OK! :-) */
-			top = 15;
-		    } else {
-			bottom = pwlen & ~7;
-			top = bottom + 7;
-		    }
-
-		    assert(pwlen >= bottom && pwlen <= top);
-
-		    randomstr = snewn(top + 1, char);
-
-		    for (i = bottom; i <= top; i++) {
-			if (i == pwlen) {
-			    defer_packet(ssh, s->pwpkt_type,
-					 PKTT_PASSWORD, PKT_STR, s->password,
-					 PKTT_OTHER, PKT_END);
-			} else {
-			    for (j = 0; j < i; j++) {
-				do {
-				    randomstr[j] = random_byte();
-				} while (randomstr[j] == '\0');
-			    }
-			    randomstr[i] = '\0';
-			    defer_packet(ssh, SSH1_MSG_IGNORE,
-					 PKT_STR, randomstr, PKT_END);
-			}
-		    }
-		    logevent("Sending password with camouflage packets");
-		    ssh_pkt_defersend(ssh);
-		    sfree(randomstr);
-		} 
-		else if (!(ssh->remote_bugs & BUG_NEEDS_SSH1_PLAIN_PASSWORD)) {
-		    /*
-		     * The server can't deal with SSH1_MSG_IGNORE
-		     * but can deal with padded passwords, so we
-		     * can use the secondary defence.
-		     */
-		    char string[64];
-		    char *ss;
-		    int len;
-
-		    len = strlen(s->password);
-		    if (len < sizeof(string)) {
-			ss = string;
-			strcpy(string, s->password);
-			len++;	       /* cover the zero byte */
-			while (len < sizeof(string)) {
-			    string[len++] = (char) random_byte();
-			}
-		    } else {
-			ss = s->password;
-		    }
-		    logevent("Sending length-padded password");
-		    send_packet(ssh, s->pwpkt_type, PKTT_PASSWORD,
-				PKT_INT, len, PKT_DATA, ss, len,
-			       	PKTT_OTHER, PKT_END);
+		pwlen = strlen(s->cur_prompt->prompts[0]->result);
+		if (pwlen < 16) {
+		    bottom = 0;    /* zero length passwords are OK! :-) */
+		    top = 15;
 		} else {
-		    /*
-		     * The server has _both_
-		     * BUG_CHOKES_ON_SSH1_IGNORE and
-		     * BUG_NEEDS_SSH1_PLAIN_PASSWORD. There is
-		     * therefore nothing we can do.
-		     */
-		    int len;
-		    len = strlen(s->password);
-		    logevent("Sending unpadded password");
-		    send_packet(ssh, s->pwpkt_type,
-				PKTT_PASSWORD, PKT_INT, len,
-				PKT_DATA, s->password, len,
-				PKTT_OTHER, PKT_END);
+		    bottom = pwlen & ~7;
+		    top = bottom + 7;
 		}
-	    } else {
+
+		assert(pwlen >= bottom && pwlen <= top);
+
+		randomstr = snewn(top + 1, char);
+
+		for (i = bottom; i <= top; i++) {
+		    if (i == pwlen) {
+			defer_packet(ssh, s->pwpkt_type,
+				     PKTT_PASSWORD, PKT_STR,
+				     s->cur_prompt->prompts[0]->result,
+				     PKTT_OTHER, PKT_END);
+		    } else {
+			for (j = 0; j < i; j++) {
+			    do {
+				randomstr[j] = random_byte();
+			    } while (randomstr[j] == '\0');
+			}
+			randomstr[i] = '\0';
+			defer_packet(ssh, SSH1_MSG_IGNORE,
+				     PKT_STR, randomstr, PKT_END);
+		    }
+		}
+		logevent("Sending password with camouflage packets");
+		ssh_pkt_defersend(ssh);
+		sfree(randomstr);
+	    } 
+	    else if (!(ssh->remote_bugs & BUG_NEEDS_SSH1_PLAIN_PASSWORD)) {
+		/*
+		 * The server can't deal with SSH1_MSG_IGNORE
+		 * but can deal with padded passwords, so we
+		 * can use the secondary defence.
+		 */
+		char string[64];
+		char *ss;
+		int len;
+
+		len = strlen(s->cur_prompt->prompts[0]->result);
+		if (len < sizeof(string)) {
+		    ss = string;
+		    strcpy(string, s->cur_prompt->prompts[0]->result);
+		    len++;	       /* cover the zero byte */
+		    while (len < sizeof(string)) {
+			string[len++] = (char) random_byte();
+		    }
+		} else {
+		    ss = s->cur_prompt->prompts[0]->result;
+		}
+		logevent("Sending length-padded password");
 		send_packet(ssh, s->pwpkt_type, PKTT_PASSWORD,
-			    PKT_STR, s->password, PKTT_OTHER, PKT_END);
+			    PKT_INT, len, PKT_DATA, ss, len,
+			    PKTT_OTHER, PKT_END);
+	    } else {
+		/*
+		 * The server has _both_
+		 * BUG_CHOKES_ON_SSH1_IGNORE and
+		 * BUG_NEEDS_SSH1_PLAIN_PASSWORD. There is
+		 * therefore nothing we can do.
+		 */
+		int len;
+		len = strlen(s->cur_prompt->prompts[0]->result);
+		logevent("Sending unpadded password");
+		send_packet(ssh, s->pwpkt_type,
+			    PKTT_PASSWORD, PKT_INT, len,
+			    PKT_DATA, s->cur_prompt->prompts[0]->result, len,
+			    PKTT_OTHER, PKT_END);
 	    }
+	} else {
+	    send_packet(ssh, s->pwpkt_type, PKTT_PASSWORD,
+			PKT_STR, s->cur_prompt->prompts[0]->result,
+			PKTT_OTHER, PKT_END);
 	}
 	logevent("Sent password");
-	memset(s->password, 0, strlen(s->password));
+	free_prompts(s->cur_prompt);
 	crWaitUntil(pktin);
 	if (pktin->type == SSH1_SMSG_FAILURE) {
 	    if (flags & FLAG_VERBOSE)
@@ -3786,6 +3797,12 @@ static int do_ssh1_login(Ssh ssh, unsigned char *in, int inlen,
 	    bombout(("Strange packet received, type %d", pktin->type));
 	    crStop(0);
 	}
+    }
+
+    /* Clear up */
+    if (s->publickey_blob) {
+	sfree(s->publickey_blob);
+	sfree(s->publickey_comment);
     }
 
     logevent("Authentication successful");
@@ -4947,7 +4964,10 @@ static int first_in_commasep_string(char *needle, char *haystack, int haylen)
 
 /*
  * SSH-2 key creation method.
+ * (Currently assumes 2 lots of any hash are sufficient to generate
+ * keys/IVs for any cipher/MAC. SSH2_MKKEY_ITERS documents this assumption.)
  */
+#define SSH2_MKKEY_ITERS (2)
 static void ssh2_mkkey(Ssh ssh, Bignum K, unsigned char *H, char chr,
 		       unsigned char *keyspace)
 {
@@ -4994,7 +5014,7 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
 	char *hostkeydata, *sigdata, *keystr, *fingerprint;
 	int hostkeylen, siglen;
 	void *hkey;		       /* actual host key */
-	unsigned char exchange_hash[32];
+	unsigned char exchange_hash[SSH2_KEX_MAX_HASH_LEN];
 	int n_preferred_kex;
 	const struct ssh_kexes *preferred_kex[KEX_MAX];
 	int n_preferred_ciphers;
@@ -5047,7 +5067,7 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
 		s->preferred_kex[s->n_preferred_kex++] =
 		    &ssh_diffiehellman_group1;
 		break;
-	      case CIPHER_WARN:
+	      case KEX_WARN:
 		/* Flag for later. Don't bother if it's the last in
 		 * the list. */
 		if (i < KEX_MAX - 1) {
@@ -5209,7 +5229,7 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
 
     s->our_kexinitlen = s->pktout->length - 5;
     s->our_kexinit = snewn(s->our_kexinitlen, unsigned char);
-    memcpy(s->our_kexinit, s->pktout->data + 5, s->our_kexinitlen);
+    memcpy(s->our_kexinit, s->pktout->data + 5, s->our_kexinitlen); 
 
     ssh2_pkt_send_noqueue(ssh, s->pktout);
 
@@ -5502,7 +5522,8 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
 		  ssh->kex->groupname);
     }
 
-    logevent("Doing Diffie-Hellman key exchange");
+    logeventf(ssh, "Doing Diffie-Hellman key exchange with hash %s",
+             ssh->kex->hash->text_name);
     /*
      * Now generate and send e for Diffie-Hellman.
      */
@@ -5644,13 +5665,21 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
      * hash from the _first_ key exchange.
      */
     {
-	unsigned char keyspace[40];
+	unsigned char keyspace[SSH2_KEX_MAX_HASH_LEN * SSH2_MKKEY_ITERS];
+	assert(sizeof(keyspace) >= ssh->kex->hash->hlen * SSH2_MKKEY_ITERS);
 	ssh2_mkkey(ssh,s->K,s->exchange_hash,'C',keyspace);
+	assert((ssh->cscipher->keylen+7) / 8 <=
+	       ssh->kex->hash->hlen * SSH2_MKKEY_ITERS);
 	ssh->cscipher->setkey(ssh->cs_cipher_ctx, keyspace);
 	ssh2_mkkey(ssh,s->K,s->exchange_hash,'A',keyspace);
+	assert(ssh->cscipher->blksize <=
+	       ssh->kex->hash->hlen * SSH2_MKKEY_ITERS);
 	ssh->cscipher->setiv(ssh->cs_cipher_ctx, keyspace);
 	ssh2_mkkey(ssh,s->K,s->exchange_hash,'E',keyspace);
+	assert(ssh->csmac->len <=
+	       ssh->kex->hash->hlen * SSH2_MKKEY_ITERS);
 	ssh->csmac->setkey(ssh->cs_mac_ctx, keyspace);
+	memset(keyspace, 0, sizeof(keyspace));
     }
 
     logeventf(ssh, "Initialised %.200s client->server encryption",
@@ -5702,13 +5731,21 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
      * hash from the _first_ key exchange.
      */
     {
-	unsigned char keyspace[40];
+	unsigned char keyspace[SSH2_KEX_MAX_HASH_LEN * SSH2_MKKEY_ITERS];
+	assert(sizeof(keyspace) >= ssh->kex->hash->hlen * SSH2_MKKEY_ITERS);
 	ssh2_mkkey(ssh,s->K,s->exchange_hash,'D',keyspace);
+	assert((ssh->sccipher->keylen+7) / 8 <=
+	       ssh->kex->hash->hlen * SSH2_MKKEY_ITERS);
 	ssh->sccipher->setkey(ssh->sc_cipher_ctx, keyspace);
 	ssh2_mkkey(ssh,s->K,s->exchange_hash,'B',keyspace);
+	assert(ssh->sccipher->blksize <=
+	       ssh->kex->hash->hlen * SSH2_MKKEY_ITERS);
 	ssh->sccipher->setiv(ssh->sc_cipher_ctx, keyspace);
 	ssh2_mkkey(ssh,s->K,s->exchange_hash,'F',keyspace);
+	assert(ssh->scmac->len <=
+	       ssh->kex->hash->hlen * SSH2_MKKEY_ITERS);
 	ssh->scmac->setkey(ssh->sc_mac_ctx, keyspace);
+	memset(keyspace, 0, sizeof(keyspace));
     }
     logeventf(ssh, "Initialised %.200s server->client encryption",
 	      ssh->sccipher->text_name);
@@ -6465,11 +6502,6 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 {
     struct do_ssh2_authconn_state {
 	enum {
-	    AUTH_INVALID, AUTH_PUBLICKEY_AGENT, AUTH_PUBLICKEY_FILE,
-		AUTH_PASSWORD,
-		AUTH_KEYBOARD_INTERACTIVE
-	} method;
-	enum {
 	    AUTH_TYPE_NONE,
 		AUTH_TYPE_PUBLICKEY,
 		AUTH_TYPE_PUBLICKEY_OFFER_LOUD,
@@ -6480,20 +6512,23 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 	} type;
 	int done_service_req;
 	int gotit, need_pw, can_pubkey, can_passwd, can_keyb_inter;
-	int tried_pubkey_config, tried_agent;
-	int kbd_inter_running, kbd_inter_refused;
+	int tried_pubkey_config, done_agent;
+	int kbd_inter_refused;
 	int we_are_in;
-	int num_prompts, curr_prompt, echo;
+	prompts_t *cur_prompt;
+	int num_prompts;
 	char username[100];
+	char *password;
 	int got_username;
-	char pwprompt[512];
-	char password[100];
 	void *publickey_blob;
 	int publickey_bloblen;
-	unsigned char request[5], *response, *p;
-	int responselen;
+	int publickey_encrypted;
+	char *publickey_algorithm;
+	char *publickey_comment;
+	unsigned char agent_request[5], *agent_response, *agentp;
+	int agent_responselen;
+	unsigned char *pkblob_in_agent;
 	int keyi, nkeys;
-	int authed;
 	char *pkblob, *alg, *commentp;
 	int pklen, alglen, commentlen;
 	int siglen, retlen, len;
@@ -6535,6 +6570,126 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 	}
     }
 
+    /* Arrange to be able to deal with any BANNERs that come in.
+     * (We do this now as packets may come in during the next bit.) */
+    bufchain_init(&ssh->banner);
+    ssh->packet_dispatch[SSH2_MSG_USERAUTH_BANNER] =
+	ssh2_msg_userauth_banner;
+
+    /*
+     * Misc one-time setup for authentication.
+     */
+    s->publickey_blob = NULL;
+    if (!s->we_are_in) {
+
+	/*
+	 * Load the public half of any configured public key file
+	 * for later use.
+	 */
+	if (!filename_is_null(ssh->cfg.keyfile)) {
+	    int keytype;
+	    logeventf(ssh, "Reading private key file \"%.150s\"",
+		      filename_to_str(&ssh->cfg.keyfile));
+	    keytype = key_type(&ssh->cfg.keyfile);
+	    if (keytype == SSH_KEYTYPE_SSH2) {
+		const char *error;
+		s->publickey_blob =
+		    ssh2_userkey_loadpub(&ssh->cfg.keyfile,
+					 &s->publickey_algorithm,
+					 &s->publickey_bloblen, 
+					 &s->publickey_comment, &error);
+		if (s->publickey_blob) {
+		    s->publickey_encrypted =
+			ssh2_userkey_encrypted(&ssh->cfg.keyfile, NULL);
+		} else {
+		    char *msgbuf;
+		    logeventf(ssh, "Unable to load private key (%s)", 
+			      error);
+		    msgbuf = dupprintf("Unable to load private key file "
+				       "\"%.150s\" (%s)\r\n",
+				       filename_to_str(&ssh->cfg.keyfile),
+				       error);
+		    c_write_str(ssh, msgbuf);
+		    sfree(msgbuf);
+		}
+	    } else {
+		char *msgbuf;
+		logeventf(ssh, "Unable to use this key file (%s)",
+			  key_type_to_str(keytype));
+		msgbuf = dupprintf("Unable to use key file \"%.150s\""
+				   " (%s)\r\n",
+				   filename_to_str(&ssh->cfg.keyfile),
+				   key_type_to_str(keytype));
+		c_write_str(ssh, msgbuf);
+		sfree(msgbuf);
+		s->publickey_blob = NULL;
+	    }
+	}
+
+	/*
+	 * Find out about any keys Pageant has (but if there's a
+	 * public key configured, filter out all others).
+	 */
+	s->nkeys = 0;
+	s->agent_response = NULL;
+	s->pkblob_in_agent = NULL;
+	if (ssh->cfg.tryagent && agent_exists()) {
+
+	    void *r;
+
+	    logevent("Pageant is running. Requesting keys.");
+
+	    /* Request the keys held by the agent. */
+	    PUT_32BIT(s->agent_request, 1);
+	    s->agent_request[4] = SSH2_AGENTC_REQUEST_IDENTITIES;
+	    if (!agent_query(s->agent_request, 5, &r, &s->agent_responselen,
+			     ssh_agent_callback, ssh)) {
+		do {
+		    crReturnV;
+		    if (pktin) {
+			bombout(("Unexpected data from server while"
+				 " waiting for agent response"));
+			crStopV;
+		    }
+		} while (pktin || inlen > 0);
+		r = ssh->agent_response;
+		s->agent_responselen = ssh->agent_response_len;
+	    }
+	    s->agent_response = (unsigned char *) r;
+	    if (s->agent_response && s->agent_responselen >= 5 &&
+		s->agent_response[4] == SSH2_AGENT_IDENTITIES_ANSWER) {
+		int keyi;
+		unsigned char *p;
+		p = s->agent_response + 5;
+		s->nkeys = GET_32BIT(p);
+		p += 4;
+		logeventf(ssh, "Pageant has %d SSH-2 keys", s->nkeys);
+		if (s->publickey_blob) {
+		    /* See if configured key is in agent. */
+		    for (keyi = 0; keyi < s->nkeys; keyi++) {
+			s->pklen = GET_32BIT(p);
+			if (s->pklen == s->publickey_bloblen &&
+			    !memcmp(p+4, s->publickey_blob,
+				    s->publickey_bloblen)) {
+			    logeventf(ssh, "Pageant key #%d matches "
+				      "configured key file", keyi);
+			    s->keyi = keyi;
+			    s->pkblob_in_agent = p;
+			    break;
+			}
+			p += 4 + s->pklen;
+			p += GET_32BIT(p) + 4; /* comment */
+		    }
+		    if (!s->pkblob_in_agent) {
+			logevent("Configured key file not in Pageant");
+			s->nkeys = 0;
+		    }
+		}
+	    }
+	}
+
+    }
+
     /*
      * We repeat this whole loop, including the username prompt,
      * until we manage a successful authentication. If the user
@@ -6561,9 +6716,6 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
      */
     s->username[0] = '\0';
     s->got_username = FALSE;
-    bufchain_init(&ssh->banner);
-    ssh->packet_dispatch[SSH2_MSG_USERAUTH_BANNER] =
-	ssh2_msg_userauth_banner;
     while (!s->we_are_in) {
 	/*
 	 * Get a username.
@@ -6575,30 +6727,31 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 	     * it again.
 	     */
 	} else if (!*ssh->cfg.username) {
-	    if (ssh_get_line && !ssh_getline_pw_only) {
-		if (!ssh_get_line("login as: ",
-				  s->username, sizeof(s->username), FALSE)) {
-		    /*
-		     * get_line failed to get a username.
-		     * Terminate.
-		     */
-		    ssh_disconnect(ssh, "No username provided", NULL, 0, TRUE);
-		    crStopV;
-		}
-	    } else {
-		int ret;	       /* need not be saved across crReturn */
-		c_write_str(ssh, "login as: ");
+	    int ret; /* need not be kept over crReturn */
+	    s->cur_prompt = new_prompts(ssh->frontend);
+	    s->cur_prompt->to_server = TRUE;
+	    s->cur_prompt->name = dupstr("SSH login name");
+	    add_prompt(s->cur_prompt, dupstr("login as: "), TRUE,
+		       lenof(s->username)); 
+	    ret = get_userpass_input(s->cur_prompt, NULL, 0);
+	    while (ret < 0) {
 		ssh->send_ok = 1;
-		setup_userpass_input(ssh, s->username, sizeof(s->username), 1);
-		do {
-		    crWaitUntilV(!pktin);
-		    ret = process_userpass_input(ssh, in, inlen);
-		} while (ret == 0);
-		if (ret < 0)
-		    cleanup_exit(0);
-		c_write_str(ssh, "\r\n");
+		crWaitUntilV(!pktin);
+		ret = get_userpass_input(s->cur_prompt, in, inlen);
+		ssh->send_ok = 0;
 	    }
-	    s->username[strcspn(s->username, "\n\r")] = '\0';
+	    if (!ret) {
+		/*
+		 * get_userpass_input() failed to get a username.
+		 * Terminate.
+		 */
+		free_prompts(s->cur_prompt);
+		ssh_disconnect(ssh, "No username provided", NULL, 0, TRUE);
+		crStopV;
+	    }
+	    memcpy(s->username, s->cur_prompt->prompts[0]->result,
+		   lenof(s->username));
+	    free_prompts(s->cur_prompt);
 	} else {
 	    char *stuff;
 	    strncpy(s->username, ssh->cfg.username, sizeof(s->username));
@@ -6628,33 +6781,18 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 	s->we_are_in = FALSE;
 
 	s->tried_pubkey_config = FALSE;
-	s->tried_agent = FALSE;
-	s->kbd_inter_running = FALSE;
 	s->kbd_inter_refused = FALSE;
-	/* Load the pub half of ssh->cfg.keyfile so we notice if it's in Pageant */
-	if (!filename_is_null(ssh->cfg.keyfile)) {
-	    int keytype;
-	    logeventf(ssh, "Reading private key file \"%.150s\"",
-		      filename_to_str(&ssh->cfg.keyfile));
-	    keytype = key_type(&ssh->cfg.keyfile);
-	    if (keytype == SSH_KEYTYPE_SSH2) {
-		s->publickey_blob =
-		    ssh2_userkey_loadpub(&ssh->cfg.keyfile, NULL,
-					 &s->publickey_bloblen, NULL);
+
+	/* Reset agent request state. */
+	s->done_agent = FALSE;
+	if (s->agent_response) {
+	    if (s->pkblob_in_agent) {
+		s->agentp = s->pkblob_in_agent;
 	    } else {
-		char *msgbuf;
-		logeventf(ssh, "Unable to use this key file (%s)",
-			  key_type_to_str(keytype));
-		msgbuf = dupprintf("Unable to use key file \"%.150s\""
-				   " (%s)\r\n",
-				   filename_to_str(&ssh->cfg.keyfile),
-				   key_type_to_str(keytype));
-		c_write_str(ssh, msgbuf);
-		sfree(msgbuf);
-		s->publickey_blob = NULL;
+		s->agentp = s->agent_response + 5 + 4;
+		s->keyi = 0;
 	    }
-	} else
-	    s->publickey_blob = NULL;
+	}
 
 	while (1) {
 	    /*
@@ -6692,24 +6830,9 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 		break;
 	    }
 
-	    if (s->kbd_inter_running &&
-		pktin->type == SSH2_MSG_USERAUTH_INFO_REQUEST) {
-		/*
-		 * This is either a further set-of-prompts packet
-		 * in keyboard-interactive authentication, or it's
-		 * the same one and we came back here with `gotit'
-		 * set. In the former case, we must reset the
-		 * curr_prompt variable.
-		 */
-		if (!s->gotit)
-		    s->curr_prompt = 0;
-	    } else if (pktin->type == SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ) {
-		/* FIXME: perhaps we should support this? */
-		bombout(("PASSWD_CHANGEREQ not yet supported"));
-		crStopV;
-	    } else if (pktin->type != SSH2_MSG_USERAUTH_FAILURE) {
-		bombout(("Strange packet received during authentication: type %d",
-			 pktin->type));
+	    if (pktin->type != SSH2_MSG_USERAUTH_FAILURE) {
+		bombout(("Strange packet received during authentication: "
+			 "type %d", pktin->type));
 		crStopV;
 	    }
 
@@ -6724,7 +6847,6 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 		char *methods;
 		int methlen;
 		ssh_pkt_getstring(pktin, &methods, &methlen);
-		s->kbd_inter_running = FALSE;
 		if (!ssh2_pkt_getbool(pktin)) {
 		    /*
 		     * We have received an unequivocal Access
@@ -6781,196 +6903,166 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 		    in_commasep_string("keyboard-interactive", methods, methlen);
 	    }
 
-	    s->method = 0;
 	    ssh->pkt_ctx &= ~SSH2_PKTCTX_AUTH_MASK;
-	    s->need_pw = FALSE;
 
-	    /*
-	     * Most password/passphrase prompts will be
-	     * non-echoing, so we set this to 0 by default.
-	     * Exception is that some keyboard-interactive prompts
-	     * can be echoing, in which case we'll set this to 1.
-	     */
-	    s->echo = 0;
+	    if (s->can_pubkey && !s->done_agent && s->nkeys) {
 
-	    if (!s->method && s->can_pubkey &&
-		agent_exists() && !s->tried_agent) {
 		/*
-		 * Attempt public-key authentication using Pageant.
+		 * Attempt public-key authentication using a key from Pageant.
 		 */
-		void *r;
-		s->authed = FALSE;
 
 		ssh->pkt_ctx &= ~SSH2_PKTCTX_AUTH_MASK;
 		ssh->pkt_ctx |= SSH2_PKTCTX_PUBLICKEY;
 
-		s->tried_agent = TRUE;
+		logeventf(ssh, "Trying Pageant key #%d", s->keyi);
 
-		logevent("Pageant is running. Requesting keys.");
+		/* Unpack key from agent response */
+		s->pklen = GET_32BIT(s->agentp);
+		s->agentp += 4;
+		s->pkblob = (char *)s->agentp;
+		s->agentp += s->pklen;
+		s->alglen = GET_32BIT(s->pkblob);
+		s->alg = s->pkblob + 4;
+		s->commentlen = GET_32BIT(s->agentp);
+		s->agentp += 4;
+		s->commentp = (char *)s->agentp;
+		s->agentp += s->commentlen;
+		/* s->agentp now points at next key, if any */
 
-		/* Request the keys held by the agent. */
-		PUT_32BIT(s->request, 1);
-		s->request[4] = SSH2_AGENTC_REQUEST_IDENTITIES;
-		if (!agent_query(s->request, 5, &r, &s->responselen,
-				 ssh_agent_callback, ssh)) {
-		    do {
-			crReturnV;
-			if (pktin) {
-			    bombout(("Unexpected data from server while"
-				     " waiting for agent response"));
+		/* See if server will accept it */
+		s->pktout = ssh2_pkt_init(SSH2_MSG_USERAUTH_REQUEST);
+		ssh2_pkt_addstring(s->pktout, s->username);
+		ssh2_pkt_addstring(s->pktout, "ssh-connection");
+						    /* service requested */
+		ssh2_pkt_addstring(s->pktout, "publickey");
+						    /* method */
+		ssh2_pkt_addbool(s->pktout, FALSE); /* no signature included */
+		ssh2_pkt_addstring_start(s->pktout);
+		ssh2_pkt_addstring_data(s->pktout, s->alg, s->alglen);
+		ssh2_pkt_addstring_start(s->pktout);
+		ssh2_pkt_addstring_data(s->pktout, s->pkblob, s->pklen);
+		ssh2_pkt_send(ssh, s->pktout);
+		s->type = AUTH_TYPE_PUBLICKEY_OFFER_QUIET;
+
+		crWaitUntilV(pktin);
+		if (pktin->type != SSH2_MSG_USERAUTH_PK_OK) {
+
+		    /* Offer of key refused. */
+		    s->gotit = TRUE;
+
+		} else {
+		    
+		    void *vret;
+
+		    if (flags & FLAG_VERBOSE) {
+			c_write_str(ssh, "Authenticating with "
+				    "public key \"");
+			c_write(ssh, s->commentp, s->commentlen);
+			c_write_str(ssh, "\" from agent\r\n");
+		    }
+
+		    /*
+		     * Server is willing to accept the key.
+		     * Construct a SIGN_REQUEST.
+		     */
+		    s->pktout = ssh2_pkt_init(SSH2_MSG_USERAUTH_REQUEST);
+		    ssh2_pkt_addstring(s->pktout, s->username);
+		    ssh2_pkt_addstring(s->pktout, "ssh-connection");
+							/* service requested */
+		    ssh2_pkt_addstring(s->pktout, "publickey");
+							/* method */
+		    ssh2_pkt_addbool(s->pktout, TRUE);  /* signature included */
+		    ssh2_pkt_addstring_start(s->pktout);
+		    ssh2_pkt_addstring_data(s->pktout, s->alg, s->alglen);
+		    ssh2_pkt_addstring_start(s->pktout);
+		    ssh2_pkt_addstring_data(s->pktout, s->pkblob, s->pklen);
+
+		    /* Ask agent for signature. */
+		    s->siglen = s->pktout->length - 5 + 4 +
+			ssh->v2_session_id_len;
+		    if (ssh->remote_bugs & BUG_SSH2_PK_SESSIONID)
+			s->siglen -= 4;
+		    s->len = 1;       /* message type */
+		    s->len += 4 + s->pklen;	/* key blob */
+		    s->len += 4 + s->siglen;	/* data to sign */
+		    s->len += 4;      /* flags */
+		    s->agentreq = snewn(4 + s->len, char);
+		    PUT_32BIT(s->agentreq, s->len);
+		    s->q = s->agentreq + 4;
+		    *s->q++ = SSH2_AGENTC_SIGN_REQUEST;
+		    PUT_32BIT(s->q, s->pklen);
+		    s->q += 4;
+		    memcpy(s->q, s->pkblob, s->pklen);
+		    s->q += s->pklen;
+		    PUT_32BIT(s->q, s->siglen);
+		    s->q += 4;
+		    /* Now the data to be signed... */
+		    if (!(ssh->remote_bugs & BUG_SSH2_PK_SESSIONID)) {
+			PUT_32BIT(s->q, ssh->v2_session_id_len);
+			s->q += 4;
+		    }
+		    memcpy(s->q, ssh->v2_session_id,
+			   ssh->v2_session_id_len);
+		    s->q += ssh->v2_session_id_len;
+		    memcpy(s->q, s->pktout->data + 5,
+			   s->pktout->length - 5);
+		    s->q += s->pktout->length - 5;
+		    /* And finally the (zero) flags word. */
+		    PUT_32BIT(s->q, 0);
+		    if (!agent_query(s->agentreq, s->len + 4,
+				     &vret, &s->retlen,
+				     ssh_agent_callback, ssh)) {
+			do {
+			    crReturnV;
+			    if (pktin) {
+				bombout(("Unexpected data from server"
+					 " while waiting for agent"
+					 " response"));
+				crStopV;
+			    }
+			} while (pktin || inlen > 0);
+			vret = ssh->agent_response;
+			s->retlen = ssh->agent_response_len;
+		    }
+		    s->ret = vret;
+		    sfree(s->agentreq);
+		    if (s->ret) {
+			if (s->ret[4] == SSH2_AGENT_SIGN_RESPONSE) {
+			    logevent("Sending Pageant's response");
+			    ssh2_add_sigblob(ssh, s->pktout,
+					     s->pkblob, s->pklen,
+					     s->ret + 9,
+					     GET_32BIT(s->ret + 5));
+			    ssh2_pkt_send(ssh, s->pktout);
+			    s->type = AUTH_TYPE_PUBLICKEY;
+			} else {
+			    /* FIXME: less drastic response */
+			    bombout(("Pageant failed to answer challenge"));
 			    crStopV;
 			}
-		    } while (pktin || inlen > 0);
-		    r = ssh->agent_response;
-		    s->responselen = ssh->agent_response_len;
-		}
-		s->response = (unsigned char *) r;
-		if (s->response && s->responselen >= 5 &&
-		    s->response[4] == SSH2_AGENT_IDENTITIES_ANSWER) {
-		    s->p = s->response + 5;
-		    s->nkeys = GET_32BIT(s->p);
-		    s->p += 4;
-		    logeventf(ssh, "Pageant has %d SSH-2 keys", s->nkeys);
-		    for (s->keyi = 0; s->keyi < s->nkeys; s->keyi++) {
-			void *vret;
-
-			logeventf(ssh, "Trying Pageant key #%d", s->keyi);
-			s->pklen = GET_32BIT(s->p);
-			s->p += 4;
-			if (s->publickey_blob &&
-			    s->pklen == s->publickey_bloblen &&
-			    !memcmp(s->p, s->publickey_blob,
-				    s->publickey_bloblen)) {
-			    logevent("This key matches configured key file");
-			    s->tried_pubkey_config = 1;
-			}
-			s->pkblob = (char *)s->p;
-			s->p += s->pklen;
-			s->alglen = GET_32BIT(s->pkblob);
-			s->alg = s->pkblob + 4;
-			s->commentlen = GET_32BIT(s->p);
-			s->p += 4;
-			s->commentp = (char *)s->p;
-			s->p += s->commentlen;
-			s->pktout = ssh2_pkt_init(SSH2_MSG_USERAUTH_REQUEST);
-			ssh2_pkt_addstring(s->pktout, s->username);
-			ssh2_pkt_addstring(s->pktout, "ssh-connection");	/* service requested */
-			ssh2_pkt_addstring(s->pktout, "publickey");	/* method */
-			ssh2_pkt_addbool(s->pktout, FALSE);	/* no signature included */
-			ssh2_pkt_addstring_start(s->pktout);
-			ssh2_pkt_addstring_data(s->pktout, s->alg, s->alglen);
-			ssh2_pkt_addstring_start(s->pktout);
-			ssh2_pkt_addstring_data(s->pktout, s->pkblob, s->pklen);
-			ssh2_pkt_send(ssh, s->pktout);
-
-			crWaitUntilV(pktin);
-			if (pktin->type != SSH2_MSG_USERAUTH_PK_OK) {
-			    logevent("Key refused");
-			    continue;
-			}
-
-			if (flags & FLAG_VERBOSE) {
-			    c_write_str(ssh, "Authenticating with "
-					"public key \"");
-			    c_write(ssh, s->commentp, s->commentlen);
-			    c_write_str(ssh, "\" from agent\r\n");
-			}
-
-			/*
-			 * Server is willing to accept the key.
-			 * Construct a SIGN_REQUEST.
-			 */
-			s->pktout = ssh2_pkt_init(SSH2_MSG_USERAUTH_REQUEST);
-			ssh2_pkt_addstring(s->pktout, s->username);
-			ssh2_pkt_addstring(s->pktout, "ssh-connection");	/* service requested */
-			ssh2_pkt_addstring(s->pktout, "publickey");	/* method */
-			ssh2_pkt_addbool(s->pktout, TRUE);
-			ssh2_pkt_addstring_start(s->pktout);
-			ssh2_pkt_addstring_data(s->pktout, s->alg, s->alglen);
-			ssh2_pkt_addstring_start(s->pktout);
-			ssh2_pkt_addstring_data(s->pktout, s->pkblob, s->pklen);
-
-			s->siglen = s->pktout->length - 5 + 4 +
-			    ssh->v2_session_id_len;
-                        if (ssh->remote_bugs & BUG_SSH2_PK_SESSIONID)
-                            s->siglen -= 4;
-			s->len = 1;       /* message type */
-			s->len += 4 + s->pklen;	/* key blob */
-			s->len += 4 + s->siglen;	/* data to sign */
-			s->len += 4;      /* flags */
-			s->agentreq = snewn(4 + s->len, char);
-			PUT_32BIT(s->agentreq, s->len);
-			s->q = s->agentreq + 4;
-			*s->q++ = SSH2_AGENTC_SIGN_REQUEST;
-			PUT_32BIT(s->q, s->pklen);
-			s->q += 4;
-			memcpy(s->q, s->pkblob, s->pklen);
-			s->q += s->pklen;
-			PUT_32BIT(s->q, s->siglen);
-			s->q += 4;
-			/* Now the data to be signed... */
-                        if (!(ssh->remote_bugs & BUG_SSH2_PK_SESSIONID)) {
-                            PUT_32BIT(s->q, ssh->v2_session_id_len);
-                            s->q += 4;
-                        }
-			memcpy(s->q, ssh->v2_session_id,
-				ssh->v2_session_id_len);
-			s->q += ssh->v2_session_id_len;
-			memcpy(s->q, s->pktout->data + 5,
-			       s->pktout->length - 5);
-			s->q += s->pktout->length - 5;
-			/* And finally the (zero) flags word. */
-			PUT_32BIT(s->q, 0);
-			if (!agent_query(s->agentreq, s->len + 4,
-					 &vret, &s->retlen,
-					 ssh_agent_callback, ssh)) {
-			    do {
-				crReturnV;
-				if (pktin) {
-				    bombout(("Unexpected data from server"
-					     " while waiting for agent"
-					     " response"));
-				    crStopV;
-				}
-			    } while (pktin || inlen > 0);
-			    vret = ssh->agent_response;
-			    s->retlen = ssh->agent_response_len;
-			}
-			s->ret = vret;
-			sfree(s->agentreq);
-			if (s->ret) {
-			    if (s->ret[4] == SSH2_AGENT_SIGN_RESPONSE) {
-				logevent("Sending Pageant's response");
-				ssh2_add_sigblob(ssh, s->pktout,
-						 s->pkblob, s->pklen,
-						 s->ret + 9,
-						 GET_32BIT(s->ret + 5));
-				ssh2_pkt_send(ssh, s->pktout);
-				s->authed = TRUE;
-				break;
-			    } else {
-				logevent
-				    ("Pageant failed to answer challenge");
-				sfree(s->ret);
-			    }
-			}
 		    }
-		    if (s->authed)
-			continue;
 		}
-		sfree(s->response);
-	    }
 
-	    if (!s->method && s->can_pubkey && s->publickey_blob
-		&& !s->tried_pubkey_config) {
-		unsigned char *pub_blob;
-		char *algorithm, *comment;
-		int pub_blob_len;
+		/* Do we have any keys left to try? */
+		if (s->pkblob_in_agent) {
+		    s->done_agent = TRUE;
+		    s->tried_pubkey_config = TRUE;
+		} else {
+		    s->keyi++;
+		    if (s->keyi >= s->nkeys)
+			s->done_agent = TRUE;
+		}
 
-		s->tried_pubkey_config = TRUE;
+	    } else if (s->can_pubkey && s->publickey_blob &&
+		       !s->tried_pubkey_config) {
+
+		struct ssh2_userkey *key;   /* not live over crReturn */
+		char *passphrase;	    /* not live over crReturn */
 
 		ssh->pkt_ctx &= ~SSH2_PKTCTX_AUTH_MASK;
 		ssh->pkt_ctx |= SSH2_PKTCTX_PUBLICKEY;
+
+		s->tried_pubkey_config = TRUE;
 
 		/*
 		 * Try the public key supplied in the configuration.
@@ -6978,215 +7070,108 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 		 * First, offer the public blob to see if the server is
 		 * willing to accept it.
 		 */
-		pub_blob =
-		    (unsigned char *)ssh2_userkey_loadpub(&ssh->cfg.keyfile,
-							  &algorithm,
-							  &pub_blob_len,
-							  NULL);
-		if (pub_blob) {
-		    s->pktout = ssh2_pkt_init(SSH2_MSG_USERAUTH_REQUEST);
-		    ssh2_pkt_addstring(s->pktout, s->username);
-		    ssh2_pkt_addstring(s->pktout, "ssh-connection");	/* service requested */
-		    ssh2_pkt_addstring(s->pktout, "publickey");	/* method */
-		    ssh2_pkt_addbool(s->pktout, FALSE);	/* no signature included */
-		    ssh2_pkt_addstring(s->pktout, algorithm);
-		    ssh2_pkt_addstring_start(s->pktout);
-		    ssh2_pkt_addstring_data(s->pktout, (char *)pub_blob,
-					    pub_blob_len);
-		    ssh2_pkt_send(ssh, s->pktout);
-		    logevent("Offered public key");
-
-		    crWaitUntilV(pktin);
-		    if (pktin->type != SSH2_MSG_USERAUTH_PK_OK) {
-			s->gotit = TRUE;
-			s->type = AUTH_TYPE_PUBLICKEY_OFFER_LOUD;
-			continue;      /* key refused; give up on it */
-		    }
-
-		    logevent("Offer of public key accepted");
-		    /*
-		     * Actually attempt a serious authentication using
-		     * the key.
-		     */
-		    if (ssh2_userkey_encrypted(&ssh->cfg.keyfile, &comment)) {
-			sprintf(s->pwprompt,
-				"Passphrase for key \"%.100s\": ",
-				comment);
-			s->need_pw = TRUE;
-		    } else {
-			s->need_pw = FALSE;
-		    }
-		    if (flags & FLAG_VERBOSE) {
-			c_write_str(ssh, "Authenticating with public key \"");
-			c_write_str(ssh, comment);
-			c_write_str(ssh, "\"\r\n");
-		    }
-		    s->method = AUTH_PUBLICKEY_FILE;
-		}
-	    }
-
-	    if (!s->method && s->can_keyb_inter && !s->kbd_inter_refused &&
-		!s->kbd_inter_running) {
-		s->method = AUTH_KEYBOARD_INTERACTIVE;
-		s->type = AUTH_TYPE_KEYBOARD_INTERACTIVE;
-
-		ssh->pkt_ctx &= ~SSH2_PKTCTX_AUTH_MASK;
-		ssh->pkt_ctx |= SSH2_PKTCTX_KBDINTER;
-
 		s->pktout = ssh2_pkt_init(SSH2_MSG_USERAUTH_REQUEST);
 		ssh2_pkt_addstring(s->pktout, s->username);
-		ssh2_pkt_addstring(s->pktout, "ssh-connection");	/* service requested */
-		ssh2_pkt_addstring(s->pktout, "keyboard-interactive");	/* method */
-		ssh2_pkt_addstring(s->pktout, ""); /* lang */
-		ssh2_pkt_addstring(s->pktout, "");
+		ssh2_pkt_addstring(s->pktout, "ssh-connection");
+						/* service requested */
+		ssh2_pkt_addstring(s->pktout, "publickey");	/* method */
+		ssh2_pkt_addbool(s->pktout, FALSE);
+						/* no signature included */
+		ssh2_pkt_addstring(s->pktout, s->publickey_algorithm);
+		ssh2_pkt_addstring_start(s->pktout);
+		ssh2_pkt_addstring_data(s->pktout,
+					(char *)s->publickey_blob,
+					s->publickey_bloblen);
 		ssh2_pkt_send(ssh, s->pktout);
+		logevent("Offered public key");
 
 		crWaitUntilV(pktin);
-		if (pktin->type != SSH2_MSG_USERAUTH_INFO_REQUEST) {
-		    if (pktin->type == SSH2_MSG_USERAUTH_FAILURE)
-			s->gotit = TRUE;
-		    logevent("Keyboard-interactive authentication refused");
-		    s->type = AUTH_TYPE_KEYBOARD_INTERACTIVE_QUIET;
-		    s->kbd_inter_refused = TRUE; /* don't try it again */
-		    continue;
+		if (pktin->type != SSH2_MSG_USERAUTH_PK_OK) {
+		    /* Key refused. Give up. */
+		    s->gotit = TRUE; /* reconsider message next loop */
+		    s->type = AUTH_TYPE_PUBLICKEY_OFFER_LOUD;
+		    continue; /* process this new message */
 		}
-
-		c_write_str(ssh, "Using keyboard-interactive authentication.\r\n");
-		s->kbd_inter_running = TRUE;
-		s->curr_prompt = 0;
-	    }
-
-	    if (s->kbd_inter_running) {
-		s->method = AUTH_KEYBOARD_INTERACTIVE;
-		s->type = AUTH_TYPE_KEYBOARD_INTERACTIVE;
-
-		ssh->pkt_ctx &= ~SSH2_PKTCTX_AUTH_MASK;
-		ssh->pkt_ctx |= SSH2_PKTCTX_KBDINTER;
-
-		if (s->curr_prompt == 0) {
-		    /*
-		     * We've got a fresh USERAUTH_INFO_REQUEST.
-		     * Display header data, and start going through
-		     * the prompts.
-		     */
-		    char *name, *inst, *lang;
-		    int name_len, inst_len, lang_len;
-
-		    ssh_pkt_getstring(pktin, &name, &name_len);
-		    ssh_pkt_getstring(pktin, &inst, &inst_len);
-		    ssh_pkt_getstring(pktin, &lang, &lang_len);
-		    if (name_len > 0) {
-			c_write_untrusted(ssh, name, name_len);
-			c_write_str(ssh, "\r\n");
-		    }
-		    if (inst_len > 0) {
-			c_write_untrusted(ssh, inst, inst_len);
-			c_write_str(ssh, "\r\n");
-		    }
-		    s->num_prompts = ssh_pkt_getuint32(pktin);
-		}
+		logevent("Offer of public key accepted");
 
 		/*
-		 * If there are prompts remaining in the packet,
-		 * display one and get a response.
+		 * Actually attempt a serious authentication using
+		 * the key.
 		 */
-		if (s->curr_prompt < s->num_prompts) {
-		    char *prompt;
-		    int prompt_len;
-
-		    ssh_pkt_getstring(pktin, &prompt, &prompt_len);
-		    if (prompt_len > 0) {
-			static const char trunc[] = "<prompt truncated>: ";
-			static const int prlen = sizeof(s->pwprompt) -
-						 lenof(trunc);
-			if (prompt_len > prlen) {
-			    memcpy(s->pwprompt, prompt, prlen);
-			    strcpy(s->pwprompt + prlen, trunc);
-			} else {
-			    memcpy(s->pwprompt, prompt, prompt_len);
-			    s->pwprompt[prompt_len] = '\0';
-			}
-		    } else {
-			strcpy(s->pwprompt,
-			       "<server failed to send prompt>: ");
-		    }
-		    s->echo = ssh2_pkt_getbool(pktin);
-		    s->need_pw = TRUE;
-		} else
-		    s->need_pw = FALSE;
-	    }
-
-	    if (!s->method && s->can_passwd) {
-		s->method = AUTH_PASSWORD;
-		ssh->pkt_ctx &= ~SSH2_PKTCTX_AUTH_MASK;
-		ssh->pkt_ctx |= SSH2_PKTCTX_PASSWORD;
-		sprintf(s->pwprompt, "%.90s@%.90s's password: ", s->username,
-			ssh->savedhost);
-		s->need_pw = TRUE;
-	    }
-
-	    if (s->need_pw) {
-		if (ssh_get_line) {
-		    if (!ssh_get_line(s->pwprompt, s->password,
-				      sizeof(s->password), TRUE)) {
+		if (flags & FLAG_VERBOSE) {
+		    c_write_str(ssh, "Authenticating with public key \"");
+		    c_write_str(ssh, s->publickey_comment);
+		    c_write_str(ssh, "\"\r\n");
+		}
+		key = NULL;
+		while (!key) {
+		    const char *error;  /* not live over crReturn */
+		    if (s->publickey_encrypted) {
 			/*
-			 * get_line failed to get a password (for
-			 * example because one was supplied on the
-			 * command line which has already failed to
-			 * work). Terminate.
+			 * Get a passphrase from the user.
 			 */
-			ssh_disconnect(ssh, NULL, "Unable to authenticate",
-				       SSH2_DISCONNECT_AUTH_CANCELLED_BY_USER,
-				       FALSE);
-			crStopV;
-		    }
-		} else {
-		    int ret;	       /* need not be saved across crReturn */
-		    c_write_untrusted(ssh, s->pwprompt, strlen(s->pwprompt));
-		    ssh->send_ok = 1;
-
-		    setup_userpass_input(ssh, s->password,
-					 sizeof(s->password), s->echo);
-		    do {
-			crWaitUntilV(!pktin);
-			ret = process_userpass_input(ssh, in, inlen);
-		    } while (ret == 0);
-		    if (ret < 0)
-			cleanup_exit(0);
-		    c_write_str(ssh, "\r\n");
-		}
-	    }
-
-	    if (s->method == AUTH_PUBLICKEY_FILE) {
-		/*
-		 * We have our passphrase. Now try the actual authentication.
-		 */
-		struct ssh2_userkey *key;
-		const char *error = NULL;
-
-		key = ssh2_load_userkey(&ssh->cfg.keyfile, s->password,
-					&error);
-		if (key == SSH2_WRONG_PASSPHRASE || key == NULL) {
-		    if (key == SSH2_WRONG_PASSPHRASE) {
-			c_write_str(ssh, "Wrong passphrase\r\n");
-			s->tried_pubkey_config = FALSE;
+			int ret; /* need not be kept over crReturn */
+			s->cur_prompt = new_prompts(ssh->frontend);
+			s->cur_prompt->to_server = FALSE;
+			s->cur_prompt->name = dupstr("SSH key passphrase");
+			add_prompt(s->cur_prompt,
+				   dupprintf("Passphrase for key \"%.100s\": ",
+					     s->publickey_comment),
+				   FALSE, SSH_MAX_PASSWORD_LEN);
+			ret = get_userpass_input(s->cur_prompt, NULL, 0);
+			while (ret < 0) {
+			    ssh->send_ok = 1;
+			    crWaitUntilV(!pktin);
+			    ret = get_userpass_input(s->cur_prompt,
+						     in, inlen);
+			    ssh->send_ok = 0;
+			}
+			if (!ret) {
+			    /* Failed to get a passphrase. Terminate. */
+			    free_prompts(s->cur_prompt);
+			    ssh_disconnect(ssh, NULL,
+					   "Unable to authenticate",
+					   SSH2_DISCONNECT_AUTH_CANCELLED_BY_USER,
+					   TRUE);
+			    crStopV;
+			}
+			passphrase =
+			    dupstr(s->cur_prompt->prompts[0]->result);
+			free_prompts(s->cur_prompt);
 		    } else {
-			c_write_str(ssh, "Unable to load private key (");
-			c_write_str(ssh, error);
-			c_write_str(ssh, ")\r\n");
-			s->tried_pubkey_config = TRUE;
+			passphrase = NULL; /* no passphrase needed */
 		    }
-		    /* Send a spurious AUTH_NONE to return to the top. */
-		    s->pktout = ssh2_pkt_init(SSH2_MSG_USERAUTH_REQUEST);
-		    ssh2_pkt_addstring(s->pktout, s->username);
-		    ssh2_pkt_addstring(s->pktout, "ssh-connection");	/* service requested */
-		    ssh2_pkt_addstring(s->pktout, "none");	/* method */
-		    ssh2_pkt_send(ssh, s->pktout);
-		    s->type = AUTH_TYPE_NONE;
-		} else {
+
+		    /*
+		     * Try decrypting the key.
+		     */
+		    key = ssh2_load_userkey(&ssh->cfg.keyfile, passphrase,
+					    &error);
+		    if (passphrase) {
+			/* burn the evidence */
+			memset(passphrase, 0, strlen(passphrase));
+			sfree(passphrase);
+		    }
+		    if (key == SSH2_WRONG_PASSPHRASE || key == NULL) {
+			if (passphrase &&
+			    (key == SSH2_WRONG_PASSPHRASE)) {
+			    c_write_str(ssh, "Wrong passphrase\r\n");
+			    key = NULL;
+			    /* and loop again */
+			} else {
+			    c_write_str(ssh, "Unable to load private key (");
+			    c_write_str(ssh, error);
+			    c_write_str(ssh, ")\r\n");
+			    key = NULL;
+			    break; /* try something else */
+			}
+		    }
+		}
+
+		if (key) {
 		    unsigned char *pkblob, *sigblob, *sigdata;
 		    int pkblob_len, sigblob_len, sigdata_len;
-                    int p;
+		    int p;
 
 		    /*
 		     * We have loaded the private key and the server
@@ -7195,13 +7180,18 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 		     */
 		    s->pktout = ssh2_pkt_init(SSH2_MSG_USERAUTH_REQUEST);
 		    ssh2_pkt_addstring(s->pktout, s->username);
-		    ssh2_pkt_addstring(s->pktout, "ssh-connection");	/* service requested */
-		    ssh2_pkt_addstring(s->pktout, "publickey");	/* method */
+		    ssh2_pkt_addstring(s->pktout, "ssh-connection");
+						    /* service requested */
+		    ssh2_pkt_addstring(s->pktout, "publickey");
+						    /* method */
 		    ssh2_pkt_addbool(s->pktout, TRUE);
+						    /* signature follows */
 		    ssh2_pkt_addstring(s->pktout, key->alg->name);
-		    pkblob = key->alg->public_blob(key->data, &pkblob_len);
+		    pkblob = key->alg->public_blob(key->data,
+						   &pkblob_len);
 		    ssh2_pkt_addstring_start(s->pktout);
-		    ssh2_pkt_addstring_data(s->pktout, (char *)pkblob, pkblob_len);
+		    ssh2_pkt_addstring_data(s->pktout, (char *)pkblob,
+					    pkblob_len);
 
 		    /*
 		     * The data to be signed is:
@@ -7213,21 +7203,21 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 		     */
 		    sigdata_len = s->pktout->length - 5 + 4 +
 			ssh->v2_session_id_len;
-                    if (ssh->remote_bugs & BUG_SSH2_PK_SESSIONID)
-                        sigdata_len -= 4;
+		    if (ssh->remote_bugs & BUG_SSH2_PK_SESSIONID)
+			sigdata_len -= 4;
 		    sigdata = snewn(sigdata_len, unsigned char);
-                    p = 0;
-                    if (!(ssh->remote_bugs & BUG_SSH2_PK_SESSIONID)) {
-                        PUT_32BIT(sigdata+p, ssh->v2_session_id_len);
-                        p += 4;
-                    }
+		    p = 0;
+		    if (!(ssh->remote_bugs & BUG_SSH2_PK_SESSIONID)) {
+			PUT_32BIT(sigdata+p, ssh->v2_session_id_len);
+			p += 4;
+		    }
 		    memcpy(sigdata+p, ssh->v2_session_id,
 			   ssh->v2_session_id_len);
 		    p += ssh->v2_session_id_len;
 		    memcpy(sigdata+p, s->pktout->data + 5,
 			   s->pktout->length - 5);
-                    p += s->pktout->length - 5;
-                    assert(p == sigdata_len);
+		    p += s->pktout->length - 5;
+		    assert(p == sigdata_len);
 		    sigblob = key->alg->sign(key->data, (char *)sigdata,
 					     sigdata_len, &sigblob_len);
 		    ssh2_add_sigblob(ssh, s->pktout, pkblob, pkblob_len,
@@ -7240,8 +7230,197 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 		    s->type = AUTH_TYPE_PUBLICKEY;
 		    key->alg->freekey(key->data);
 		}
-	    } else if (s->method == AUTH_PASSWORD) {
+
+	    } else if (s->can_keyb_inter && !s->kbd_inter_refused) {
+
 		/*
+		 * Keyboard-interactive authentication.
+		 */
+
+		s->type = AUTH_TYPE_KEYBOARD_INTERACTIVE;
+
+		ssh->pkt_ctx &= ~SSH2_PKTCTX_AUTH_MASK;
+		ssh->pkt_ctx |= SSH2_PKTCTX_KBDINTER;
+
+		s->pktout = ssh2_pkt_init(SSH2_MSG_USERAUTH_REQUEST);
+		ssh2_pkt_addstring(s->pktout, s->username);
+		ssh2_pkt_addstring(s->pktout, "ssh-connection");
+							/* service requested */
+		ssh2_pkt_addstring(s->pktout, "keyboard-interactive");
+							/* method */
+		ssh2_pkt_addstring(s->pktout, "");	/* lang */
+		ssh2_pkt_addstring(s->pktout, "");	/* submethods */
+		ssh2_pkt_send(ssh, s->pktout);
+
+		crWaitUntilV(pktin);
+		if (pktin->type != SSH2_MSG_USERAUTH_INFO_REQUEST) {
+		    /* Server is not willing to do keyboard-interactive
+		     * at all (or, bizarrely but legally, accepts the
+		     * user without actually issuing any prompts).
+		     * Give up on it entirely. */
+		    s->gotit = TRUE;
+		    if (pktin->type == SSH2_MSG_USERAUTH_FAILURE)
+			logevent("Keyboard-interactive authentication refused");
+		    s->type = AUTH_TYPE_KEYBOARD_INTERACTIVE_QUIET;
+		    s->kbd_inter_refused = TRUE; /* don't try it again */
+		    continue;
+		}
+
+		/*
+		 * Loop while the server continues to send INFO_REQUESTs.
+		 */
+		while (pktin->type == SSH2_MSG_USERAUTH_INFO_REQUEST) {
+
+		    char *name, *inst, *lang;
+		    int name_len, inst_len, lang_len;
+		    int i;
+
+		    /*
+		     * We've got a fresh USERAUTH_INFO_REQUEST.
+		     * Get the preamble and start building a prompt.
+		     */
+		    ssh_pkt_getstring(pktin, &name, &name_len);
+		    ssh_pkt_getstring(pktin, &inst, &inst_len);
+		    ssh_pkt_getstring(pktin, &lang, &lang_len);
+		    s->cur_prompt = new_prompts(ssh->frontend);
+		    s->cur_prompt->to_server = TRUE;
+		    if (name_len) {
+			/* FIXME: better prefix to distinguish from
+			 * local prompts? */
+			s->cur_prompt->name =
+			    dupprintf("SSH server: %.*s", name_len, name);
+			s->cur_prompt->name_reqd = TRUE;
+		    } else {
+			s->cur_prompt->name =
+			    dupstr("SSH server authentication");
+			s->cur_prompt->name_reqd = FALSE;
+		    }
+		    /* FIXME: ugly to print "Using..." in prompt _every_
+		     * time round. Can this be done more subtly? */
+		    s->cur_prompt->instruction =
+			dupprintf("Using keyboard-interactive authentication.%s%.*s",
+				  inst_len ? "\n" : "", inst_len, inst);
+		    s->cur_prompt->instr_reqd = TRUE;
+
+		    /*
+		     * Get the prompts from the packet.
+		     */
+		    s->num_prompts = ssh_pkt_getuint32(pktin);
+		    for (i = 0; i < s->num_prompts; i++) {
+			char *prompt;
+			int prompt_len;
+			int echo;
+			static char noprompt[] =
+			    "<server failed to send prompt>: ";
+
+			ssh_pkt_getstring(pktin, &prompt, &prompt_len);
+			echo = ssh2_pkt_getbool(pktin);
+			if (!prompt_len) {
+			    prompt = noprompt;
+			    prompt_len = lenof(noprompt)-1;
+			}
+			add_prompt(s->cur_prompt,
+				   dupprintf("%.*s", prompt_len, prompt),
+				   echo, SSH_MAX_PASSWORD_LEN);
+		    }
+
+		    /*
+		     * Get the user's responses.
+		     */
+		    if (s->num_prompts) {
+			int ret; /* not live over crReturn */
+			ret = get_userpass_input(s->cur_prompt, NULL, 0);
+			while (ret < 0) {
+			    ssh->send_ok = 1;
+			    crWaitUntilV(!pktin);
+			    ret = get_userpass_input(s->cur_prompt, in, inlen);
+			    ssh->send_ok = 0;
+			}
+			if (!ret) {
+			    /*
+			     * Failed to get responses. Terminate.
+			     */
+			    free_prompts(s->cur_prompt);
+			    ssh_disconnect(ssh, NULL, "Unable to authenticate",
+					   SSH2_DISCONNECT_AUTH_CANCELLED_BY_USER,
+					   TRUE);
+			    crStopV;
+			}
+		    }
+
+		    /*
+		     * Send the responses to the server.
+		     */
+		    s->pktout = ssh2_pkt_init(SSH2_MSG_USERAUTH_INFO_RESPONSE);
+		    s->pktout->forcepad = 256;
+		    ssh2_pkt_adduint32(s->pktout, s->num_prompts);
+		    for (i=0; i < s->num_prompts; i++) {
+			dont_log_password(ssh, s->pktout, PKTLOG_BLANK);
+			ssh2_pkt_addstring(s->pktout,
+					   s->cur_prompt->prompts[i]->result);
+			end_log_omission(ssh, s->pktout);
+		    }
+		    ssh2_pkt_send(ssh, s->pktout);
+
+		    /*
+		     * Get the next packet in case it's another
+		     * INFO_REQUEST.
+		     */
+		    crWaitUntilV(pktin);
+
+		}
+
+		/*
+		 * We should have SUCCESS or FAILURE now.
+		 */
+		s->gotit = TRUE;
+
+	    } else if (s->can_passwd) {
+
+		/*
+		 * Plain old password authentication.
+		 */
+		int ret; /* not live over crReturn */
+		int changereq_first_time; /* not live over crReturn */
+
+		ssh->pkt_ctx &= ~SSH2_PKTCTX_AUTH_MASK;
+		ssh->pkt_ctx |= SSH2_PKTCTX_PASSWORD;
+
+		s->cur_prompt = new_prompts(ssh->frontend);
+		s->cur_prompt->to_server = TRUE;
+		s->cur_prompt->name = dupstr("SSH password");
+		add_prompt(s->cur_prompt, dupprintf("%.90s@%.90s's password: ",
+						    s->username,
+						    ssh->savedhost),
+			   FALSE, SSH_MAX_PASSWORD_LEN);
+
+		ret = get_userpass_input(s->cur_prompt, NULL, 0);
+		while (ret < 0) {
+		    ssh->send_ok = 1;
+		    crWaitUntilV(!pktin);
+		    ret = get_userpass_input(s->cur_prompt, in, inlen);
+		    ssh->send_ok = 0;
+		}
+		if (!ret) {
+		    /*
+		     * Failed to get responses. Terminate.
+		     */
+		    free_prompts(s->cur_prompt);
+		    ssh_disconnect(ssh, NULL, "Unable to authenticate",
+				   SSH2_DISCONNECT_AUTH_CANCELLED_BY_USER,
+				   TRUE);
+		    crStopV;
+		}
+		/*
+		 * Squirrel away the password. (We may need it later if
+		 * asked to change it.)
+		 */
+		s->password = dupstr(s->cur_prompt->prompts[0]->result);
+		free_prompts(s->cur_prompt);
+
+		/*
+		 * Send the password packet.
+		 *
 		 * We pad out the password packet to 256 bytes to make
 		 * it harder for an attacker to find the length of the
 		 * user's password.
@@ -7253,53 +7432,172 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 		s->pktout = ssh2_pkt_init(SSH2_MSG_USERAUTH_REQUEST);
 		s->pktout->forcepad = 256;
 		ssh2_pkt_addstring(s->pktout, s->username);
-		ssh2_pkt_addstring(s->pktout, "ssh-connection");	/* service requested */
+		ssh2_pkt_addstring(s->pktout, "ssh-connection");
+							/* service requested */
 		ssh2_pkt_addstring(s->pktout, "password");
 		ssh2_pkt_addbool(s->pktout, FALSE);
 		dont_log_password(ssh, s->pktout, PKTLOG_BLANK);
 		ssh2_pkt_addstring(s->pktout, s->password);
-		memset(s->password, 0, sizeof(s->password));
 		end_log_omission(ssh, s->pktout);
 		ssh2_pkt_send(ssh, s->pktout);
 		logevent("Sent password");
 		s->type = AUTH_TYPE_PASSWORD;
-	    } else if (s->method == AUTH_KEYBOARD_INTERACTIVE) {
-		if (s->curr_prompt == 0) {
-		    s->pktout = ssh2_pkt_init(SSH2_MSG_USERAUTH_INFO_RESPONSE);
+
+		/*
+		 * Wait for next packet, in case it's a password change
+		 * request.
+		 */
+		crWaitUntilV(pktin);
+		changereq_first_time = TRUE;
+
+		while (pktin->type == SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ) {
+
+		    /* 
+		     * We're being asked for a new password
+		     * (perhaps not for the first time).
+		     * Loop until the server accepts it.
+		     */
+
+		    int got_new = FALSE; /* not live over crReturn */
+		    char *prompt;   /* not live over crReturn */
+		    int prompt_len; /* not live over crReturn */
+		    
+		    {
+			char *msg;
+			if (changereq_first_time)
+			    msg = "Server requested password change";
+			else
+			    msg = "Server rejected new password";
+			logevent(msg);
+			c_write_str(ssh, msg);
+			c_write_str(ssh, "\r\n");
+		    }
+
+		    ssh_pkt_getstring(pktin, &prompt, &prompt_len);
+
+		    s->cur_prompt = new_prompts(ssh->frontend);
+		    s->cur_prompt->to_server = TRUE;
+		    s->cur_prompt->name = dupstr("New SSH password");
+		    s->cur_prompt->instruction =
+			dupprintf("%.*s", prompt_len, prompt);
+		    s->cur_prompt->instr_reqd = TRUE;
+		    add_prompt(s->cur_prompt, dupstr("Enter new password: "),
+			       FALSE, SSH_MAX_PASSWORD_LEN);
+		    add_prompt(s->cur_prompt, dupstr("Confirm new password: "),
+			       FALSE, SSH_MAX_PASSWORD_LEN);
+
+		    /*
+		     * Loop until the user manages to enter the same
+		     * password twice.
+		     */
+		    while (!got_new) {
+
+			ret = get_userpass_input(s->cur_prompt, NULL, 0);
+			while (ret < 0) {
+			    ssh->send_ok = 1;
+			    crWaitUntilV(!pktin);
+			    ret = get_userpass_input(s->cur_prompt, in, inlen);
+			    ssh->send_ok = 0;
+			}
+			if (!ret) {
+			    /*
+			     * Failed to get responses. Terminate.
+			     */
+			    /* burn the evidence */
+			    free_prompts(s->cur_prompt);
+			    memset(s->password, 0, strlen(s->password));
+			    sfree(s->password);
+			    ssh_disconnect(ssh, NULL, "Unable to authenticate",
+					   SSH2_DISCONNECT_AUTH_CANCELLED_BY_USER,
+					   TRUE);
+			    crStopV;
+			}
+
+			/*
+			 * Check the two passwords match.
+			 */
+			got_new = (strcmp(s->cur_prompt->prompts[0]->result,
+					  s->cur_prompt->prompts[1]->result)
+				   == 0);
+			if (!got_new)
+			    /* They don't. Silly user. */
+			    c_write_str(ssh, "Passwords do not match\r\n");
+
+		    }
+
+		    /*
+		     * Send the new password (along with the old one).
+		     * (see above for padding rationale)
+		     */
+		    s->pktout = ssh2_pkt_init(SSH2_MSG_USERAUTH_REQUEST);
 		    s->pktout->forcepad = 256;
-		    ssh2_pkt_adduint32(s->pktout, s->num_prompts);
-		}
-		if (s->need_pw) {      /* only add pw if we just got one! */
+		    ssh2_pkt_addstring(s->pktout, s->username);
+		    ssh2_pkt_addstring(s->pktout, "ssh-connection");
+							/* service requested */
+		    ssh2_pkt_addstring(s->pktout, "password");
+		    ssh2_pkt_addbool(s->pktout, TRUE);
 		    dont_log_password(ssh, s->pktout, PKTLOG_BLANK);
 		    ssh2_pkt_addstring(s->pktout, s->password);
-		    memset(s->password, 0, sizeof(s->password));
+		    ssh2_pkt_addstring(s->pktout,
+				       s->cur_prompt->prompts[0]->result);
+		    free_prompts(s->cur_prompt);
 		    end_log_omission(ssh, s->pktout);
-		    s->curr_prompt++;
-		}
-		if (s->curr_prompt >= s->num_prompts) {
 		    ssh2_pkt_send(ssh, s->pktout);
-		} else {
+		    logevent("Sent new password");
+		    
 		    /*
-		     * If there are prompts remaining, we set
-		     * `gotit' so that we won't attempt to get
-		     * another packet. Then we go back round the
-		     * loop and will end up retrieving another
-		     * prompt out of the existing packet. Funky or
-		     * what?
+		     * Now see what the server has to say about it.
+		     * (If it's CHANGEREQ again, it's not happy with the
+		     * new password.)
 		     */
-		    s->gotit = TRUE;
+		    crWaitUntilV(pktin);
+		    changereq_first_time = FALSE;
+
 		}
-		s->type = AUTH_TYPE_KEYBOARD_INTERACTIVE;
+
+		/*
+		 * We need to reexamine the current pktin at the top
+		 * of the loop. Either:
+		 *  - we weren't asked to change password at all, in
+		 *    which case it's a SUCCESS or FAILURE with the
+		 *    usual meaning
+		 *  - we sent a new password, and the server was
+		 *    either OK with it (SUCCESS or FAILURE w/partial
+		 *    success) or unhappy with the _old_ password
+		 *    (FAILURE w/o partial success)
+		 * In any of these cases, we go back to the top of
+		 * the loop and start again.
+		 */
+		s->gotit = TRUE;
+
+		/*
+		 * We don't need the old password any more, in any
+		 * case. Burn the evidence.
+		 */
+		memset(s->password, 0, strlen(s->password));
+		sfree(s->password);
+
 	    } else {
+
 		ssh_disconnect(ssh, NULL,
 			       "No supported authentication methods available",
 			       SSH2_DISCONNECT_NO_MORE_AUTH_METHODS_AVAILABLE,
 			       FALSE);
 		crStopV;
+
 	    }
+
 	}
     }
     ssh->packet_dispatch[SSH2_MSG_USERAUTH_BANNER] = NULL;
+
+    /* Clear up various bits and pieces from authentication. */
+    if (s->publickey_blob) {
+	sfree(s->publickey_blob);
+	sfree(s->publickey_comment);
+    }
+    if (s->agent_response)
+	sfree(s->agent_response);
 
     /*
      * Now the connection protocol has started, one way or another.
@@ -8412,8 +8710,11 @@ void ssh_send_port_open(void *channel, char *hostname, int port, char *org)
 	 * too much hassle to keep track, and partly I'm not
 	 * convinced the server should be told details like that
 	 * about my local network configuration.
+	 * The "originator IP address" is syntactically a numeric
+	 * IP address, and some servers (e.g., Tectia) get upset
+	 * if it doesn't match this syntax.
 	 */
-	ssh2_pkt_addstring(pktout, "client-side-connection");
+	ssh2_pkt_addstring(pktout, "0.0.0.0");
 	ssh2_pkt_adduint32(pktout, 0);
 	ssh2_pkt_send(ssh, pktout);
     }

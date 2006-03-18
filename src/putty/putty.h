@@ -70,8 +70,10 @@ typedef struct terminal_tag Terminal;
 #define LATTR_TOP    0x00000002UL
 #define LATTR_BOT    0x00000003UL
 #define LATTR_MODE   0x00000003UL
-#define LATTR_WRAPPED 0x00000010UL
-#define LATTR_WRAPPED2 0x00000020UL
+#define LATTR_WRAPPED 0x00000010UL     /* this line wraps to next */
+#define LATTR_WRAPPED2 0x00000020UL    /* with WRAPPED: CJK wide character
+					  wrapped to next line, so last
+					  single-width cell is empty */
 
 #define ATTR_INVALID 0x03FFFFU
 
@@ -324,6 +326,10 @@ enum {
     FUNKY_SCO
 };
 
+enum {
+    FQ_DEFAULT, FQ_ANTIALIASED, FQ_NONANTIALIASED, FQ_CLEARTYPE
+};
+
 extern const char *const ttymodes[];
 
 enum {
@@ -353,6 +359,8 @@ struct backend_tag {
     const struct telnet_special *(*get_specials) (void *handle);
     Socket(*socket) (void *handle);
     int (*exitcode) (void *handle);
+    /* If back->sendok() returns FALSE, data sent to it from the frontend
+     * may be lost. */
     int (*sendok) (void *handle);
     int (*ldisc) (void *handle, int);
     void (*provide_ldisc) (void *handle, void *ldisc);
@@ -426,6 +434,7 @@ struct config_tag {
     int ssh_kexlist[KEX_MAX];
     int ssh_rekey_time;		       /* in minutes */
     char ssh_rekey_data[16];
+    int tryagent;
     int agentfwd;
     int change_username;	       /* allow username switching in SSH-2 */
     int ssh_cipherlist[CIPHER_MAX];
@@ -500,6 +509,7 @@ struct config_tag {
     int win_name_always;
     int width, height;
     FontSpec font;
+    int font_quality;
     Filename logfilename;
     int logtype;
     int logxfovr;
@@ -610,6 +620,52 @@ GLOBAL int loaded_session;
 struct RSAKey;			       /* be a little careful of scope */
 
 /*
+ * Mechanism for getting text strings such as usernames and passwords
+ * from the front-end.
+ * The fields are mostly modelled after SSH's keyboard-interactive auth.
+ * FIXME We should probably mandate a character set/encoding (probably UTF-8).
+ *
+ * Since many of the pieces of text involved may be chosen by the server,
+ * the caller must take care to ensure that the server can't spoof locally-
+ * generated prompts such as key passphrase prompts. Some ground rules:
+ *  - If the front-end needs to truncate a string, it should lop off the
+ *    end.
+ *  - The front-end should filter out any dangerous characters and
+ *    generally not trust the strings. (But \n is required to behave
+ *    vaguely sensibly, at least in `instruction', and ideally in
+ *    `prompt[]' too.)
+ */
+typedef struct {
+    char *prompt;
+    int echo;
+    char *result;	/* allocated/freed by caller */
+    size_t result_len;
+} prompt_t;
+typedef struct {
+    /*
+     * Indicates whether the information entered is to be used locally
+     * (for instance a key passphrase prompt), or is destined for the wire.
+     * This is a hint only; the front-end is at liberty not to use this
+     * information (so the caller should ensure that the supplied text is
+     * sufficient).
+     */
+    int to_server;
+    char *name;		/* Short description, perhaps for dialog box title */
+    int name_reqd;	/* Display of `name' required or optional? */
+    char *instruction;	/* Long description, maybe with embedded newlines */
+    int instr_reqd;	/* Display of `instruction' required or optional? */
+    size_t n_prompts;
+    prompt_t **prompts;
+    void *frontend;
+    void *data;		/* slot for housekeeping data, managed by
+			 * get_userpass_input(); initially NULL */
+} prompts_t;
+prompts_t *new_prompts(void *frontend);
+void add_prompt(prompts_t *p, char *promptstr, int echo, size_t len);
+/* Burn the evidence. (Assumes _all_ strings want free()ing.) */
+void free_prompts(prompts_t *p);
+
+/*
  * Exports from the front end.
  */
 void request_resize(void *frontend, int, int);
@@ -627,7 +683,7 @@ void free_ctx(Context);
 void palette_set(void *frontend, int, int, int, int);
 void palette_reset(void *frontend);
 void write_aclip(void *frontend, char *, int, int);
-void write_clip(void *frontend, wchar_t *, int, int);
+void write_clip(void *frontend, wchar_t *, int *, int, int);
 void get_clip(void *frontend, wchar_t **, int *);
 void optimised_move(void *frontend, int, int, int);
 void set_raw_mouse_mode(void *frontend, int);
@@ -638,7 +694,7 @@ void modalfatalbox(char *, ...);
 #pragma noreturn(fatalbox)
 #pragma noreturn(modalfatalbox)
 #endif
-void beep(void *frontend, int);
+void do_beep(void *frontend, int);
 void begin_session(void *frontend);
 void sys_cursor(void *frontend, int x, int y);
 void request_paste(void *frontend);
@@ -650,10 +706,17 @@ void ldisc_update(void *frontend, int echo, int edit);
  * shutdown. */
 void update_specials_menu(void *frontend);
 int from_backend(void *frontend, int is_stderr, const char *data, int len);
+int from_backend_untrusted(void *frontend, const char *data, int len);
 void notify_remote_exit(void *frontend);
 /* Get a sensible value for a tty mode. NULL return = don't set.
  * Otherwise, returned value should be freed by caller. */
 char *get_ttymode(void *frontend, const char *mode);
+/*
+ * >0 = `got all results, carry on'
+ * 0  = `user cancelled' (FIXME distinguish "give up entirely" and "next auth"?)
+ * <0 = `please call back later with more in/inlen'
+ */
+int get_userpass_input(prompts_t *p, unsigned char *in, int inlen);
 #define OPTIMISE_IS_SCROLL 1
 
 void set_iconic(void *frontend, int iconic);
@@ -724,7 +787,7 @@ void term_free(Terminal *);
 void term_size(Terminal *, int, int, int);
 void term_paint(Terminal *, Context, int, int, int, int, int);
 void term_scroll(Terminal *, int, int);
-void term_pwron(Terminal *);
+void term_pwron(Terminal *, int);
 void term_clrsb(Terminal *);
 void term_mouse(Terminal *, Mouse_Button, Mouse_Button, Mouse_Action,
 		int,int,int,int,int);
@@ -743,12 +806,15 @@ void term_copyall(Terminal *);
 void term_reconfig(Terminal *, Config *);
 void term_seen_key_event(Terminal *); 
 int term_data(Terminal *, int is_stderr, const char *data, int len);
+int term_data_untrusted(Terminal *, const char *data, int len);
 void term_provide_resize_fn(Terminal *term,
 			    void (*resize_fn)(void *, int, int),
 			    void *resize_ctx);
 void term_provide_logctx(Terminal *term, void *logctx);
 void term_set_focus(Terminal *term, int has_focus);
 char *term_get_ttymode(Terminal *term, const char *mode);
+int term_get_userpass_input(Terminal *term, prompts_t *p,
+			    unsigned char *in, int inlen);
 
 /*
  * Exports from logging.c.
@@ -798,14 +864,8 @@ extern Backend rlogin_backend;
 extern Backend telnet_backend;
 
 /*
- * Exports from ssh.c. (NB the getline variables have to be GLOBAL
- * so that PuTTYtel will still compile - otherwise it would depend
- * on ssh.c.)
+ * Exports from ssh.c.
  */
-
-GLOBAL int (*ssh_get_line) (const char *prompt, char *str, int maxlen,
-			    int is_pw);
-GLOBAL int ssh_getline_pw_only;
 extern Backend ssh_backend;
 
 /*
@@ -950,11 +1010,11 @@ int askappend(void *frontend, Filename filename,
 	      void (*callback)(void *ctx, int result), void *ctx);
 
 /*
- * Exports from console.c (that aren't equivalents to things in
- * windlg.c).
+ * Exports from console frontends (wincons.c, uxcons.c)
+ * that aren't equivalents to things in windlg.c et al.
  */
 extern int console_batch_mode;
-int console_get_line(const char *prompt, char *str, int maxlen, int is_pw);
+int console_get_userpass_input(prompts_t *p, unsigned char *in, int inlen);
 void console_provide_logctx(void *logctx);
 int is_interactive(void);
 
@@ -978,7 +1038,7 @@ void printer_finish_job(printer_job *);
 int cmdline_process_param(char *, char *, int, Config *);
 void cmdline_run_saved(Config *);
 void cmdline_cleanup(void);
-extern char *cmdline_password;
+int cmdline_get_passwd_input(prompts_t *p, unsigned char *in, int inlen);
 #define TOOLTYPE_FILETRANSFER 1
 #define TOOLTYPE_NONNETWORK 2
 extern int cmdline_tooltype;
@@ -1119,6 +1179,6 @@ void expire_timer_context(void *ctx);
 int run_timers(long now, long *next);
 void timer_change_notify(long next);
 
-#endif
-
 #include "fzsftp.h"
+
+#endif

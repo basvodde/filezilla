@@ -9,6 +9,20 @@
 
 #include "misc.h"
 
+/*
+ * Usage notes:
+ *  * Do not call the DIVMOD_WORD macro with expressions such as array
+ *    subscripts, as some implementations object to this (see below).
+ *  * Note that none of the division methods below will cope if the
+ *    quotient won't fit into BIGNUM_INT_BITS. Callers should be careful
+ *    to avoid this case.
+ *    If this condition occurs, in the case of the x86 DIV instruction,
+ *    an overflow exception will occur, which (according to a correspondent)
+ *    will manifest on Windows as something like
+ *      0xC0000095: Integer overflow
+ *    The C variant won't give the right answer, either.
+ */
+
 #if defined __GNUC__ && defined __i386__
 typedef unsigned long BignumInt;
 typedef unsigned long long BignumDblInt;
@@ -20,6 +34,23 @@ typedef unsigned long long BignumDblInt;
     __asm__("div %2" : \
 	    "=d" (r), "=a" (q) : \
 	    "r" (w), "d" (hi), "a" (lo))
+#elif defined _MSC_VER && defined _M_IX86
+typedef unsigned __int32 BignumInt;
+typedef unsigned __int64 BignumDblInt;
+#define BIGNUM_INT_MASK  0xFFFFFFFFUL
+#define BIGNUM_TOP_BIT   0x80000000UL
+#define BIGNUM_INT_BITS  32
+#define MUL_WORD(w1, w2) ((BignumDblInt)w1 * w2)
+/* Note: MASM interprets array subscripts in the macro arguments as
+ * assembler syntax, which gives the wrong answer. Don't supply them.
+ * <http://msdn2.microsoft.com/en-us/library/bf1dw62z.aspx> */
+#define DIVMOD_WORD(q, r, hi, lo, w) do { \
+    __asm mov edx, hi \
+    __asm mov eax, lo \
+    __asm div w \
+    __asm mov r, edx \
+    __asm mov q, eax \
+} while(0)
 #else
 typedef unsigned short BignumInt;
 typedef unsigned long BignumDblInt;
@@ -203,7 +234,10 @@ static void internal_mod(BignumInt *a, int alen,
 	     */
 	    q = BIGNUM_INT_MASK;
 	} else {
-	    DIVMOD_WORD(q, r, h, a[i], m0);
+	    /* Macro doesn't want an array subscript expression passed
+	     * into it (see definition), so use a temporary. */
+	    BignumInt tmplo = a[i];
+	    DIVMOD_WORD(q, r, h, tmplo, m0);
 
 	    /* Refine our estimate of q by looking at
 	     h:a[i]:a[i+1] / m0:m1 */

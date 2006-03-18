@@ -236,7 +236,7 @@ SockAddr sk_nonamelookup(const char *host)
 static int sk_nextaddr(SockAddr addr)
 {
 #ifndef NO_IPV6
-    if (addr->ai->ai_next) {
+    if (addr->ai && addr->ai->ai_next) {
 	addr->ai = addr->ai->ai_next;
 	addr->family = addr->ai->ai_family;
 	return TRUE;
@@ -1022,7 +1022,7 @@ static int net_select_result(int fd, int event)
 				    ret == 0 ? "Internal networking trouble" :
 				    strerror(errno), errno, 0);
 	    } else {
-		fznotify(sftpRecv);
+                fznotify(sftpRecv);
                 /*
                  * Receiving actual data on a socket means we can
                  * stop falling back through the candidate
@@ -1124,7 +1124,7 @@ static int net_select_result(int fd, int event)
 	} else if (0 == ret) {
 	    return plug_closing(s->plug, NULL, 0, 0);
 	} else {
-	    fznotify(sftpRecv);
+            fznotify(sftpRecv);
             /*
              * Receiving actual data on a socket means we can
              * stop falling back through the candidate
@@ -1285,9 +1285,10 @@ SockAddr platform_get_x11_unix_address(int displaynum, char **canonicalname)
     else
 	*canonicalname = dupstr(ret->hostname);
 #ifndef NO_IPV6
-    ret->ais = NULL;
+    ret->ai = ret->ais = NULL;
 #else
     ret->addresses = NULL;
+    ret->curraddr = ret->naddresses = 0;
 #endif
     return ret;
 }

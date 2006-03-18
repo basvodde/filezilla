@@ -2535,6 +2535,15 @@ int from_backend(void *frontend, int is_stderr, const char *data, int datalen)
 
     return 0;
 }
+int from_backend_untrusted(void *frontend_handle, const char *data, int len)
+{
+    /*
+     * No "untrusted" output should get here (the way the code is
+     * currently, it's all diverted by FLAG_STDERR).
+     */
+    assert(!"Unexpected call to from_backend_untrusted()");
+    return 0; /* not reached */
+}
 int sftp_recvdata(char *buf, int len)
 {
     outptr = (unsigned char *) buf;
@@ -2598,6 +2607,8 @@ static void usage(void)
     printf("  -4 -6     force use of IPv4 or IPv6\n");
     printf("  -C        enable compression\n");
     printf("  -i key    private key file for authentication\n");
+    printf("  -noagent  disable use of Pageant\n");
+    printf("  -agent    enable use of Pageant\n");
     printf("  -batch    disable all interactive prompts\n");
     cleanup_exit(1);
 }
@@ -2829,7 +2840,6 @@ int psftp_main(int argc, char *argv[])
 #endif
 	;
     cmdline_tooltype = TOOLTYPE_FILETRANSFER;
-    ssh_get_line = &console_get_line;
     sk_init();
 
     userhost = user = NULL;

@@ -292,62 +292,97 @@ void logevent(void *frontend, const char *string)
 	log_eventlog(console_logctx, string);
 }
 
-int console_get_line(const char *prompt, char *str,
-			    int maxlen, int is_pw)
+static void console_data_untrusted(HANDLE hout, const char *data, int len)
+{
+    DWORD dummy;
+    /* FIXME: control-character filtering */
+    WriteFile(hout, data, len, &dummy, NULL);
+}
+
+int console_get_userpass_input(prompts_t *p, unsigned char *in, int inlen)
 {
     HANDLE hin, hout;
-    DWORD savemode, newmode, i = 0;
-    char* cleanPrompt, *p;
+    size_t curr_prompt;
 
-    if (!is_pw)
+    /*
+     * Zero all the results, in case we abort half-way through.
+     */
     {
-	return 0;
+	int i;
+	for (i = 0; i < p->n_prompts; i++)
+	    memset(p->prompts[i]->result, 0, p->prompts[i]->result_len);
     }
 
-    if (console_batch_mode) {
-	if (maxlen > 0)
-	    str[0] = '\0';
+    if (console_batch_mode)
 	return 0;
-    } else {
-	hin = GetStdHandle(STD_INPUT_HANDLE);
-	hout = GetStdHandle(STD_OUTPUT_HANDLE);
-	if (hin == INVALID_HANDLE_VALUE || hout == INVALID_HANDLE_VALUE) {
-	    fprintf(stderr, "Cannot get standard input/output handles\n");
-	    cleanup_exit(1);
-	}
+
+    hin = GetStdHandle(STD_INPUT_HANDLE);
+    hout = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (hin == INVALID_HANDLE_VALUE || hout == INVALID_HANDLE_VALUE) {
+	fprintf(stderr, "Cannot get standard input/output handles\n");
+	cleanup_exit(1);
+    }
+
+    /*
+     * Preamble.
+     */
+    /* We only print the `name' caption if we have to... */
+    if (p->name_reqd && p->name) {
+	size_t l = strlen(p->name);
+	console_data_untrusted(hout, p->name, l);
+	if (p->name[l-1] != '\n')
+	    console_data_untrusted(hout, "\n", 1);
+    }
+    /* ...but we always print any `instruction'. */
+    if (p->instruction) {
+	size_t l = strlen(p->instruction);
+	console_data_untrusted(hout, p->instruction, l);
+	if (p->instruction[l-1] != '\n')
+	    console_data_untrusted(hout, "\n", 1);
+    }
+
+    for (curr_prompt = 0; curr_prompt < p->n_prompts; curr_prompt++) {
+
+	DWORD savemode, newmode, i = 0;
+	prompt_t *pr = p->prompts[curr_prompt];
+	BOOL r;
+	char* cleanPrompt, *p;
 
 	GetConsoleMode(hin, &savemode);
 	newmode = savemode | ENABLE_PROCESSED_INPUT | ENABLE_LINE_INPUT;
-	//if (is_pw)
+	//if (!pr->echo)
 	    newmode &= ~ENABLE_ECHO_INPUT;
 	//else
 	//    newmode |= ENABLE_ECHO_INPUT;
 	SetConsoleMode(hin, newmode);
 
-	cleanPrompt = strdup(prompt);
+	cleanPrompt = strdup(pr->prompt);
 	for (p = cleanPrompt; *p; p++)
 	    if (*p == '\n' || *p == '\r')
 		*p = ' ';
 
 	fzprintf_raw(sftpRequest, "%d%s\n", (int)sftpReqPassword, cleanPrompt);
-	ReadFile(hin, str, maxlen - 1, &i, NULL);
-
-	sfree(cleanPrompt);
+	
+	r = ReadFile(hin, pr->result, pr->result_len - 1, &i, NULL);
 
 	SetConsoleMode(hin, savemode);
 
-	if ((int) i > maxlen)
-	    i = maxlen - 1;
-
-	str[i--] = 0;
-	while (i >= 0 && (str[i] == '\r' || str[i] == '\n'))
-	    str[i--] = '\0';
+	if ((int) i > pr->result_len)
+	    i = pr->result_len - 1;
 	
-	//if (is_pw)
-	//    WriteFile(hout, "\r\n", 2, &i, NULL);
+	pr->result[i--] = 0;
+	while (i >= 0 && (pr->result[i] == '\r' || pr->result[i] == '\n'))
+	    pr->result[i--] = '\0';
 
-	return 1;
+/*	if (!pr->echo) {
+	    DWORD dummy;
+	    WriteFile(hout, "\r\n", 2, &dummy, NULL);
+	}*/
+
     }
+
+    return 1; /* success */
+
 }
 
 void frontend_keypress(void *handle)

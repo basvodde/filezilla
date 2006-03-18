@@ -190,6 +190,7 @@ struct ssh_hash {
     void (*bytes)(void *, void *, int);
     void (*final)(void *, unsigned char *); /* also frees context */
     int hlen; /* output length in bytes */
+    char *text_name;
 };   
 
 struct ssh_kex {
@@ -250,6 +251,9 @@ struct ssh2_userkey {
     void *data;			       /* the key data */
     char *comment;		       /* the key comment */
 };
+
+/* The maximum length of any hash algorithm used in kex. (bytes) */
+#define SSH2_KEX_MAX_HASH_LEN (32) /* SHA-256 */
 
 extern const struct ssh_cipher ssh_3des;
 extern const struct ssh_cipher ssh_des;
@@ -383,7 +387,7 @@ int loadrsakey(const Filename *filename, struct RSAKey *key,
 	       char *passphrase, const char **errorstr);
 int rsakey_encrypted(const Filename *filename, char **comment);
 int rsakey_pubblob(const Filename *filename, void **blob, int *bloblen,
-		   const char **errorstr);
+		   char **commentptr, const char **errorstr);
 
 int saversakey(const Filename *filename, struct RSAKey *key, char *passphrase);
 
@@ -400,7 +404,8 @@ int ssh2_userkey_encrypted(const Filename *filename, char **comment);
 struct ssh2_userkey *ssh2_load_userkey(const Filename *filename,
 				       char *passphrase, const char **errorstr);
 char *ssh2_userkey_loadpub(const Filename *filename, char **algorithm,
-			   int *pub_blob_len, const char **errorstr);
+			   int *pub_blob_len, char **commentptr,
+			   const char **errorstr);
 int ssh2_save_userkey(const Filename *filename, struct ssh2_userkey *key,
 		      char *passphrase);
 const struct ssh_signkey *find_pubkey_alg(const char *name);
