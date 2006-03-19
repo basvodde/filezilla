@@ -339,7 +339,7 @@ int console_get_userpass_input(prompts_t *p, unsigned char *in, int inlen)
 
 	tcsetattr(0, TCSANOW, &oldmode);
 
-	str[i--] = 0;
+	pr->result[i--] = 0;
 	while (i >= 0 && (pr->result[i] == '\r' || pr->result[i] == '\n'))
 	    pr->result[i--] = '\0';
 
