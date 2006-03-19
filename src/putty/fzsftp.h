@@ -12,7 +12,9 @@ typedef enum
     sftpRequest,
     sftpListentry,
     sftpRead,
-    sftpWrite
+    sftpWrite,
+    sftpRequestPreamble,
+    sftpRequestInstruction
 } sftpEventTypes;
 
 enum sftpRequestTypes
@@ -26,4 +28,5 @@ enum sftpRequestTypes
 int fznotify(sftpEventTypes type);
 int fzprintf(sftpEventTypes type, const char* p, ...);
 int fzprintf_raw(sftpEventTypes type, const char* p, ...);
+int fzprintf_raw_untrusted(sftpEventTypes type, const char* p, ...);
 int fznotify1(sftpEventTypes type, int data);

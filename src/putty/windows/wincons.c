@@ -327,26 +327,22 @@ int console_get_userpass_input(prompts_t *p, unsigned char *in, int inlen)
      * Preamble.
      */
     /* We only print the `name' caption if we have to... */
-    if (p->name_reqd && p->name) {
-	size_t l = strlen(p->name);
-	console_data_untrusted(hout, p->name, l);
-	if (p->name[l-1] != '\n')
-	    console_data_untrusted(hout, "\n", 1);
-    }
+    if (p->name_reqd && p->name)
+	fzprintf_raw_untrusted(sftpRequestInstruction, p->name);
+    else
+	fzprintf_raw_untrusted(sftpRequestInstruction, "");
+
     /* ...but we always print any `instruction'. */
-    if (p->instruction) {
-	size_t l = strlen(p->instruction);
-	console_data_untrusted(hout, p->instruction, l);
-	if (p->instruction[l-1] != '\n')
-	    console_data_untrusted(hout, "\n", 1);
-    }
+    if (p->instruction)
+	fzprintf_raw_untrusted(sftpRequestInstruction, p->instruction);
+    else
+	fzprintf_raw_untrusted(sftpRequestInstruction, "");
 
     for (curr_prompt = 0; curr_prompt < p->n_prompts; curr_prompt++) {
 
 	DWORD savemode, newmode, i = 0;
 	prompt_t *pr = p->prompts[curr_prompt];
 	BOOL r;
-	char* cleanPrompt, *p;
 
 	GetConsoleMode(hin, &savemode);
 	newmode = savemode | ENABLE_PROCESSED_INPUT | ENABLE_LINE_INPUT;
@@ -356,12 +352,7 @@ int console_get_userpass_input(prompts_t *p, unsigned char *in, int inlen)
 	//    newmode |= ENABLE_ECHO_INPUT;
 	SetConsoleMode(hin, newmode);
 
-	cleanPrompt = strdup(pr->prompt);
-	for (p = cleanPrompt; *p; p++)
-	    if (*p == '\n' || *p == '\r')
-		*p = ' ';
-
-	fzprintf_raw(sftpRequest, "%d%s\n", (int)sftpReqPassword, cleanPrompt);
+	fzprintf_raw_untrusted(sftpRequest, "%d%s\n", (int)sftpReqPassword, pr->prompt);
 	
 	r = ReadFile(hin, pr->result, pr->result_len - 1, &i, NULL);
 

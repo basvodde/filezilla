@@ -852,6 +852,9 @@ bool CMainFrame::GetPassword(CServer &server, wxString name /*=_T("")*/, wxStrin
 	}
 	else
 	{
+#ifdef __WXMSW__
+		challenge.Replace(_T("\n"), _T("\r\n"));
+#endif
 		XRCCTRL(pwdDlg, "ID_CHALLENGE", wxTextCtrl)->SetLabel(challenge);
 		pwdDlg.GetSizer()->Show(XRCCTRL(pwdDlg, "ID_REMEMBER", wxCheckBox), false, true);
 		XRCCTRL(pwdDlg, "ID_CHALLENGE", wxTextCtrl)->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));

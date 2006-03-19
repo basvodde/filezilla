@@ -18,7 +18,9 @@ typedef enum
 	sftpRequest,
 	sftpListentry,
 	sftpRead,
-	sftpWrite
+	sftpWrite,
+	sftpRequestPreamble,
+	sftpRequestInstruction
 } sftpEventTypes;
 
 enum sftpRequestTypes
@@ -134,6 +136,9 @@ protected:
 	// To avoid a race condition, abort OnTerminate if m_inDestructor is set
 	bool m_inDestructor;
 	bool m_termindatedInDestructor;
+
+	wxString m_requestPreamble;
+	wxString m_requestInstruction;
 };
 
 #endif //__SFTPCONTROLSOCKET_H__

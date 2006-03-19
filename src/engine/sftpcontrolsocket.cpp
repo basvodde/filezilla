@@ -111,6 +111,8 @@ protected:
 			{
 			case sftpReply:
 			case sftpListentry:
+			case sftpRequestPreamble:
+			case sftpRequestInstruction:
 				{
 					wxTextInputStream textStream(*pInputStream);
 					wxString text = textStream.ReadLine();
@@ -297,6 +299,12 @@ void CSftpControlSocket::OnSftpEvent(CSftpEvent& event)
 			ProcessReply(event.GetText() == _T("1"));
 			break;
 		}
+	case sftpRequestPreamble:
+		m_requestPreamble = event.GetText();
+		break;
+	case sftpRequestInstruction:
+		m_requestInstruction = event.GetText();
+		break;
 	case sftpRequest:
 		switch(event.GetRequestType())
 		{
@@ -305,7 +313,12 @@ void CSftpControlSocket::OnSftpEvent(CSftpEvent& event)
 			{
 				CInteractiveLoginNotification *pNotification = new CInteractiveLoginNotification;
 				pNotification->server = *m_pCurrentServer;
-				pNotification->challenge = event.GetText();
+				if (m_requestPreamble != _T(""))
+					pNotification->challenge += m_requestPreamble + _T("\n");
+				if (m_requestInstruction != _T(""))
+					pNotification->challenge += m_requestInstruction + _T("\n");
+				if (event.GetText() != _T("Password:"))
+					pNotification->challenge += event.GetText();
 				pNotification->requestNumber = m_pEngine->GetNextAsyncRequestNumber();
 				m_pEngine->AddNotification(pNotification);
 			}

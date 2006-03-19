@@ -307,26 +307,22 @@ int console_get_userpass_input(prompts_t *p, unsigned char *in, int inlen)
      * Preamble.
      */
     /* We only print the `name' caption if we have to... */
-    if (p->name_reqd && p->name) {
-	size_t l = strlen(p->name);
-	console_data_untrusted(p->name, l);
-	if (p->name[l-1] != '\n')
-	    console_data_untrusted("\n", 1);
-    }
+    if (p->name_reqd && p->name)
+	fzprintf_raw_untrusted(sftpRequestInstruction, p->name);
+    else
+	fzprintf_raw_untrusted(sftpRequestInstruction, "");
+
     /* ...but we always print any `instruction'. */
-    if (p->instruction) {
-	size_t l = strlen(p->instruction);
-	console_data_untrusted(p->instruction, l);
-	if (p->instruction[l-1] != '\n')
-	    console_data_untrusted("\n", 1);
-    }
+    if (p->instruction)
+	fzprintf_raw_untrusted(sftpRequestInstruction, p->instruction);
+    else
+	fzprintf_raw_untrusted(sftpRequestInstruction, "");
 
     for (curr_prompt = 0; curr_prompt < p->n_prompts; curr_prompt++) {
 
 	struct termios oldmode, newmode;
 	int i;
 	prompt_t *pr = p->prompts[curr_prompt];
-	char* cleanPrompt, *p;
 
 	tcgetattr(0, &oldmode);
 	newmode = oldmode;
@@ -337,12 +333,7 @@ int console_get_userpass_input(prompts_t *p, unsigned char *in, int inlen)
 //	    newmode.c_lflag |= ECHO;
 	tcsetattr(0, TCSANOW, &newmode);
 
-	cleanPrompt = strdup(pr->prompt);
-	for (p = cleanPrompt; *p; p++)
-	    if (*p == '\n' || *p == '\r')
-		*p = ' ';
-
-	fzprintf_raw(sftpRequest, "%d%s\n", (int)sftpReqPassword, cleanPrompt);
+	fzprintf_raw_untrusted(sftpRequest, "%d%s\n", (int)sftpReqPassword, pr->prompt);
 
 	i = read(0, pr->result, pr->result_len - 1);
 
