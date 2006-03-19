@@ -19,6 +19,7 @@
 #endif
 #ifndef HAVE_PTSNAME
 # define BSD_PTYS
+#endif
 
 #include <stdio.h>		       /* for FILENAME_MAX */
 //#include "charset.h"
