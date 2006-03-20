@@ -11,9 +11,10 @@ public:
 
 	bool Create(wxWindow* parent);
 
+	static wxString GetBuildDate();
+	static wxString GetCompiler();
+
 protected:
-	wxString GetBuildDate() const;
-	wxString GetCompiler() const;
 
 	DECLARE_EVENT_TABLE();
 	void OnOK(wxCommandEvent& event);

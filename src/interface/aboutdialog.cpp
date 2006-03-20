@@ -52,7 +52,7 @@ void CAboutDialog::OnOK(wxCommandEvent& event)
 	EndModal(wxID_OK);
 }
 
-wxString CAboutDialog::GetBuildDate() const
+wxString CAboutDialog::GetBuildDate()
 {
 	// Get build date. Unfortunately it is in the ugly Mmm dd yyyy format.
 	// Make a good yyyy-mm-dd out of it
@@ -94,7 +94,7 @@ wxString CAboutDialog::GetBuildDate() const
 	return wxString::Format(_T("%04d-%02d-%02d"), year, i + 1, day);
 }
 
-wxString CAboutDialog::GetCompiler() const
+wxString CAboutDialog::GetCompiler()
 {
 #ifdef USED_COMPILER
 	return wxString(USED_COMPILER, wxConvLocal);

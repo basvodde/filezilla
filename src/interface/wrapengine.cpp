@@ -4,6 +4,7 @@
 #include "filezillaapp.h"
 #include "ipcmutex.h"
 #include "xmlfunctions.h"
+#include "aboutdialog.h"
 
 #if wxUSE_UNICODE
 // Chinese equivalents to ".", "," and ":"
@@ -502,11 +503,19 @@ bool CWrapEngine::LoadCache()
 
 		return false;
 	}
+
+	bool cacheValid = true;
+
 	TiXmlElement* pElement = pDocument->FirstChildElement("Layout");
 	if (!pElement)
 		pElement = pDocument->InsertEndChild(TiXmlElement("Layout"))->ToElement();
-
-	bool cacheValid = true;
+	
+	const wxString buildDate = CAboutDialog::GetBuildDate();
+	if (GetTextAttribute(pElement, "Builddate") != buildDate)
+	{
+		cacheValid = false;
+		SetTextAttribute(pElement, "Builddate", buildDate);
+	}
 	
 	// Enumerate resource file names
 	// -----------------------------
