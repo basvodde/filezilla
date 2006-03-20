@@ -257,6 +257,8 @@
         <object class="wxStaticText">
           <label>In case you have a router, you will have to forward all available ports, as FileZilla has no influence on the ports your system chooses.</label>
         </object>
+        <flag>wxLEFT</flag>
+        <border>17</border>
       </object>
       <object class="sizeritem">
         <object class="wxRadioButton" name="ID_ACTIVE_PORTMODE2">
@@ -266,40 +268,48 @@
       <object class="sizeritem">
         <object class="wxFlexGridSizer">
           <object class="sizeritem">
-            <object class="wxTextCtrl" name="ID_ACTIVE_PORTMIN"/>
+            <object class="wxFlexGridSizer">
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="ID_ACTIVE_PORTMIN"/>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>-</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="ID_ACTIVE_PORTMAX"/>
+              </object>
+              <cols>3</cols>
+              <hgap>5</hgap>
+            </object>
           </object>
           <object class="sizeritem">
             <object class="wxStaticText">
-              <label>-</label>
+              <label>All ports in the given range have to be between 1024 and 65535.</label>
             </object>
-            <flag>wxALIGN_CENTRE_VERTICAL</flag>
           </object>
           <object class="sizeritem">
-            <object class="wxTextCtrl" name="ID_ACTIVE_PORTMAX"/>
+            <object class="wxStaticText">
+              <label>For reliability you should specify a range of at least 10 ports.</label>
+            </object>
           </object>
-          <cols>3</cols>
-          <hgap>5</hgap>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>If you use a router, make sure all these ports are forwarded to the machine you're running FileZilla on.</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>If you use a firewall, make sure FileZilla is allowed to accept connection on all given ports.</label>
+            </object>
+          </object>
+          <cols>1</cols>
+          <vgap>5</vgap>
         </object>
-      </object>
-      <object class="sizeritem">
-        <object class="wxStaticText">
-          <label>For reliability you should specify a range of at least 10 ports.</label>
-        </object>
-      </object>
-      <object class="sizeritem">
-        <object class="wxStaticText">
-          <label>All ports in the given range have to be between 1024 and 65535.</label>
-        </object>
-      </object>
-      <object class="sizeritem">
-        <object class="wxStaticText">
-          <label>If you use a router, make sure all these ports are forwarded to the machine you're running FileZilla on.</label>
-        </object>
-      </object>
-      <object class="sizeritem">
-        <object class="wxStaticText">
-          <label>If you use a firewall, make sure FileZilla is allowed to accept connection on all given ports.</label>
-        </object>
+        <flag>wxLEFT</flag>
+        <border>17</border>
       </object>
       <cols>1</cols>
       <vgap>5</vgap>
