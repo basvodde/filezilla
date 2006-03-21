@@ -2612,7 +2612,7 @@ int CFtpControlSocket::GetExternalIPAddress(wxString& address)
 	if (mode == 1)
 	{
 		wxString ip = m_pEngine->GetOptions()->GetOption(OPTION_EXTERNALIP);
-		if (ip != _(""))
+		if (ip != _T(""))
 		{
 			address = ip;
 			return FZ_REPLY_OK;
