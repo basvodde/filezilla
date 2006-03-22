@@ -915,7 +915,7 @@
           <object class="sizeritem">
             <object class="wxTreeCtrl" name="ID_TREE">
               <size>150,-1</size>
-              <style>wxTR_LINES_AT_ROOT|wxTR_HIDE_ROOT</style>
+              <style>wxTR_HAS_BUTTONS|wxTR_LINES_AT_ROOT|wxTR_HIDE_ROOT|wxSUNKEN_BORDER</style>
             </object>
             <option>1</option>
           </object>
@@ -1014,6 +1014,7 @@
                 <object class="wxListCtrl" name="ID_EXTENSIONS">
                   <style>wxLC_SORT_ASCENDING|wxLC_REPORT|wxLC_NO_HEADER</style>
                 </object>
+                <flag>wxGROW</flag>
                 <minsize>100,150</minsize>
               </object>
               <object class="sizeritem">
@@ -1061,7 +1062,7 @@
           </object>
           <object class="sizeritem">
             <object class="wxCheckBox" name="ID_ASCIIDOTFILE">
-              <label>Treat dotfiles (filenames starting with a dot) as Ascii files</label>
+              <label>&amp;Treat dotfiles (filenames starting with a dot) as Ascii files</label>
               <checked>1</checked>
             </object>
             <flag>wxALL</flag>
@@ -1074,131 +1075,93 @@
       </object>
     </object>
   </object>
-  <object class="wxPanel" name="ID_SETTINGS_PASSIVE">
+  <object class="wxPanel" name="ID_SETTINGS_CONNECTION">
     <object class="wxBoxSizer">
       <orient>wxVERTICAL</orient>
       <object class="sizeritem">
         <object class="wxStaticBoxSizer">
-          <label>Passive Mode</label>
+          <label>Overview</label>
           <orient>wxVERTICAL</orient>
           <object class="sizeritem">
-            <object class="wxCheckBox" name="ID_PASSIVE">
-              <label>&amp;Use passive mode</label>
-            </object>
-            <flag>wxALL</flag>
-            <border>5</border>
-          </object>
-          <object class="sizeritem">
-            <object class="wxBoxSizer">
-              <orient>wxVERTICAL</orient>
+            <object class="wxFlexGridSizer">
+              <cols>1</cols>
               <object class="sizeritem">
                 <object class="wxStaticText">
-                  <label>If you have problems to retrieve directory listings or to transfer files, try to toggle the passive mode setting.</label>
+                  <label>For more detailed information about what these options do, please run the network configuration wizard.</label>
                 </object>
-                <flag>wxLEFT</flag>
-                <border>19</border>
+              </object>
+              <vgap>3</vgap>
+              <object class="sizeritem">
+                <object class="wxButton" name="ID_RUNWIZARD">
+                  <label>&amp;Run configuration wizard now...</label>
+                </object>
               </object>
             </object>
             <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
-            <border>5</border>
+            <border>4</border>
           </object>
         </object>
         <flag>wxGROW</flag>
       </object>
       <object class="sizeritem">
         <object class="wxStaticBoxSizer">
-          <label>Limit local ports</label>
+          <label>Transfer Mode</label>
           <orient>wxVERTICAL</orient>
           <object class="sizeritem">
-            <object class="wxCheckBox" name="ID_LIMITPORTS">
-              <label>&amp;Limit local ports used by FileZilla</label>
-            </object>
-            <flag>wxALL</flag>
-            <border>5</border>
-          </object>
-          <object class="sizeritem">
-            <object class="wxBoxSizer">
-              <orient>wxHORIZONTAL</orient>
-              <object class="spacer">
-                <size>18,0</size>
-              </object>
+            <object class="wxFlexGridSizer">
               <object class="sizeritem">
-                <object class="wxBoxSizer">
-                  <orient>wxVERTICAL</orient>
-                  <object class="sizeritem">
-                    <object class="wxStaticText">
-                      <label>By default uses any available local port to establish transfers in active mode. If you want to limit FileZilla to use only a small range of ports, please enter the port range below.</label>
-                    </object>
-                    <flag>wxBOTTOM</flag>
-                    <border>5</border>
-                  </object>
-                  <object class="sizeritem">
-                    <object class="wxFlexGridSizer">
-                      <cols>2</cols>
-                      <rows>2</rows>
-                      <object class="sizeritem">
-                        <object class="wxStaticText">
-                          <label>L&amp;owest available port:</label>
-                        </object>
-                        <flag>wxALIGN_CENTRE_VERTICAL</flag>
-                      </object>
-                      <object class="sizeritem">
-                        <object class="wxTextCtrl" name="ID_LOWESTPORT">
-                          <size>50,-1</size>
-                        </object>
-                      </object>
-                      <object class="sizeritem">
-                        <object class="wxStaticText">
-                          <label>&amp;Highest available port:</label>
-                        </object>
-                        <flag>wxALIGN_CENTRE_VERTICAL</flag>
-                      </object>
-                      <object class="sizeritem">
-                        <object class="wxTextCtrl" name="ID_HIGHESTPORT">
-                          <size>50,-1</size>
-                        </object>
-                      </object>
-                      <vgap>5</vgap>
-                      <hgap>5</hgap>
-                    </object>
-                  </object>
+                <object class="wxRadioButton" name="ID_PASSIVE">
+                  <label>Pa&amp;ssive (recommended)</label>
+                  <style>wxRB_GROUP</style>
                 </object>
               </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_ACTIVE">
+                  <label>&amp;Active</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>If you have problems to retrieve directory listings or to transfer files, try to toggle the passive mode setting.</label>
+                </object>
+              </object>
+              <cols>1</cols>
+              <vgap>3</vgap>
             </object>
             <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
-            <border>5</border>
+            <border>4</border>
           </object>
         </object>
-        <flag>wxTOP|wxBOTTOM|wxGROW</flag>
-        <border>5</border>
+        <flag>wxGROW</flag>
       </object>
       <object class="sizeritem">
         <object class="wxStaticBoxSizer">
-          <label>Active mode IP</label>
+          <label>Passive mode</label>
           <orient>wxVERTICAL</orient>
           <object class="sizeritem">
-            <object class="wxStaticText">
-              <label>If you are behind a router, FileZilla may not be able to detect your external IP address for active (non-passive) transfers. In this case you should enter the external IP address here.</label>
-            </object>
-            <flag>wxALL</flag>
-            <border>5</border>
-          </object>
-          <object class="sizeritem">
-            <object class="wxBoxSizer">
-              <orient>wxHORIZONTAL</orient>
+            <object class="wxFlexGridSizer">
               <object class="sizeritem">
                 <object class="wxStaticText">
-                  <label>&amp;External IP address:</label>
+                  <label>Some misconfigured remote servers which are behind a router, may reply with their local ip address.</label>
                 </object>
-                <flag>wxRIGHT|wxALIGN_CENTRE_VERTICAL</flag>
-                <border>5</border>
               </object>
               <object class="sizeritem">
-                <object class="wxTextCtrl" name="ID_EXTERNALADDRESS"/>
+                <object class="wxRadioButton" name="ID_PASSIVE_FALLBACK1">
+                  <label>&amp;Use the server's external IP address instead</label>
+                  <style>wxRB_GROUP</style>
+                </object>
               </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_PASSIVE_FALLBACK2">
+                  <label>&amp;Fall back to active mode</label>
+                </object>
+              </object>
+              <cols>1</cols>
+              <vgap>3</vgap>
+              <rows>2</rows>
             </object>
-            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
-            <border>5</border>
+            <flag>wxLEFT|wxRIGHT|wxBOTTOM</flag>
+            <border>4</border>
           </object>
         </object>
         <flag>wxGROW</flag>
@@ -2247,6 +2210,150 @@
         </object>
         <flag>wxALL|wxALIGN_CENTRE</flag>
         <border>5</border>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_CONNECTION_ACTIVE">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Limit local ports</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxCheckBox" name="ID_LIMITPORTS">
+              <label>&amp;Limit local ports used by FileZilla</label>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxHORIZONTAL</orient>
+              <object class="spacer">
+                <size>18,0</size>
+              </object>
+              <object class="sizeritem">
+                <object class="wxBoxSizer">
+                  <orient>wxVERTICAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>By default uses any available local port to establish transfers in active mode. If you want to limit FileZilla to use only a small range of ports, please enter the port range below.</label>
+                    </object>
+                    <flag>wxBOTTOM</flag>
+                    <border>5</border>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxFlexGridSizer">
+                      <cols>2</cols>
+                      <rows>2</rows>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>L&amp;owest available port:</label>
+                        </object>
+                        <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxTextCtrl" name="ID_LOWESTPORT">
+                          <size>50,-1</size>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>&amp;Highest available port:</label>
+                        </object>
+                        <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxTextCtrl" name="ID_HIGHESTPORT">
+                          <size>50,-1</size>
+                        </object>
+                      </object>
+                      <vgap>5</vgap>
+                      <hgap>5</hgap>
+                    </object>
+                  </object>
+                </object>
+              </object>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <flag>wxTOP|wxBOTTOM|wxGROW</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>In order to use active mode, FileZilla needs to know your external IP address.</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_ACTIVEMODE1">
+                  <label>Ask your operating system for the external IP address</label>
+                  <style>wxRB_GROUP</style>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_ACTIVEMODE2">
+                  <label>Use the following IP address:</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxBoxSizer">
+                  <orient>wxVERTICAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_ACTIVEIP"/>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Use this if you're behind a router and have a static external IP address.</label>
+                    </object>
+                  </object>
+                </object>
+                <flag>wxLEFT</flag>
+                <border>17</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_ACTIVEMODE3">
+                  <label>Get external IP address from the following URL:</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxBoxSizer">
+                  <orient>wxVERTICAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_ACTIVERESOLVER"/>
+                    <flag>wxBOTTOM|wxGROW</flag>
+                    <border>3</border>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Default: http://ip.filezilla-project.org/ip.php</label>
+                    </object>
+                  </object>
+                </object>
+                <flag>wxLEFT</flag>
+                <border>17</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_NOEXTERNALONLOCAL">
+                  <label>Don't use external IP address on &amp;local connections.</label>
+                </object>
+              </object>
+              <cols>1</cols>
+              <vgap>3</vgap>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+          <label>Active mode IP</label>
+        </object>
       </object>
     </object>
   </object>

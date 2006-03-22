@@ -9,7 +9,7 @@ class CSettingsDialog;
 class COptionsPage : public wxPanel
 {
 public:
-	bool CreatePage(COptions* pOptions, wxWindow* parent, wxSize& maxSize);
+	bool CreatePage(COptions* pOptions, CSettingsDialog* pOwner, wxWindow* parent, wxSize& maxSize);
 
 	virtual wxString GetResourceName() = 0;
 	virtual bool LoadPage() = 0;
@@ -28,8 +28,11 @@ public:
 	wxString GetText(int id);
 	wxString GetStaticText(int id);
 
+	void ReloadSettings();
+
 protected:
 	COptions* m_pOptions;
+	CSettingsDialog* m_pOwner;
 };
 
 #endif //__OPTIONSPAGE_H__

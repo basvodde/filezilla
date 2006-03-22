@@ -2,7 +2,8 @@
 #include "settingsdialog.h"
 #include "Options.h"
 #include "optionspage.h"
-#include "optionspage_passive.h"
+#include "optionspage_connection.h"
+#include "optionspage_connection_active.h"
 #include "optionspage_filetype.h"
 #include "optionspage_themes.h"
 #include "optionspage_language.h"
@@ -11,10 +12,11 @@
 enum pagenames
 {
 	page_none = -1,
-	page_filetype = 0,
-	page_passive = 1,
-	page_themes = 2,
-	page_language = 3
+	page_connection = 0,
+	page_connection_active = 1,
+	page_filetype = 2,
+	page_themes = 3,
+	page_language = 4
 };
 
 // Helper macro to add pages in the most simplistic way
@@ -24,7 +26,10 @@ enum pagenames
 	if (parent == page_none) \
 		page.id = treeCtrl->AppendItem(root, name); \
 	else \
+	{ \
 		page.id = treeCtrl->AppendItem(m_pages[(unsigned int)parent].id, name); \
+		treeCtrl->Expand(m_pages[(unsigned int)parent].id); \
+	} \
 	m_pages.push_back(page);
 
 BEGIN_EVENT_TABLE(CSettingsDialog, wxDialogEx)
@@ -70,7 +75,8 @@ bool CSettingsDialog::LoadPages()
 
 	// Create the instances of the page classes and fill the tree.
 	t_page page;
-	ADD_PAGE(_("Transfer Mode"), COptionsPagePassive, page_none);
+	ADD_PAGE(_("Connection"), COptionsPageConnection, page_none);
+	ADD_PAGE(_("Active mode"), COptionsPageConnectionActive, page_connection);
 	ADD_PAGE(_("File Types"), COptionsPageFiletype, page_none);
 	ADD_PAGE(_("Themes"), COptionsPageThemes, page_none);
 	ADD_PAGE(_("Language"), COptionsPageLanguage, page_none);
@@ -87,7 +93,7 @@ bool CSettingsDialog::LoadPages()
 
 	for (std::vector<t_page>::iterator iter = m_pages.begin(); iter != m_pages.end(); iter++)
 	{
-		if (!iter->page->CreatePage(m_pOptions, parentPanel, size))
+		if (!iter->page->CreatePage(m_pOptions, this, parentPanel, size))
 			return false;
 	}
 
@@ -126,12 +132,14 @@ bool CSettingsDialog::LoadPages()
 	Show();
 #endif
 
-	for (std::vector<t_page>::iterator iter = m_pages.begin(); iter != m_pages.end(); iter++)
+	if (!LoadSettings())
 	{
-		if (!iter->page->LoadPage())
-			return false;
-		iter->page->Hide();
+		wxMessageBox(_("Failed to load panels, invalid resource files?"));
+		return false;
 	}
+
+	for (std::vector<t_page>::iterator iter = m_pages.begin(); iter != m_pages.end(); iter++)
+		iter->page->Hide();
 
 	// Select first page
 	treeCtrl->SelectItem(m_pages[0].id);
@@ -139,6 +147,17 @@ bool CSettingsDialog::LoadPages()
 	{
 		m_activePanel = m_pages[0].page;
 		m_activePanel->Show();
+	}
+
+	return true;
+}
+
+bool CSettingsDialog::LoadSettings()
+{
+	for (std::vector<t_page>::iterator iter = m_pages.begin(); iter != m_pages.end(); iter++)
+	{
+		if (!iter->page->LoadPage())
+			return false;
 	}
 
 	return true;

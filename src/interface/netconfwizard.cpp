@@ -109,8 +109,7 @@ bool CNetConfWizard::Load()
 
 bool CNetConfWizard::Run()
 {
-	RunWizard(m_pages.front());
-	return true;
+	return RunWizard(m_pages.front());
 }
 
 void CNetConfWizard::OnPageChanging(wxWizardEvent& event)

@@ -16,8 +16,10 @@ filezilla_SOURCES = aboutdialog.cpp asyncrequestqueue.cpp chmoddialog.cpp \
 		ipcmutex.cpp led.cpp \
 		LocalListView.cpp LocalTreeView.cpp Mainfrm.cpp netconfwizard.cpp \
 		Options.cpp \
-		optionspage.cpp	optionspage_filetype.cpp optionspage_language.cpp \
-		optionspage_passive.cpp optionspage_themes.cpp QueueView.cpp \
+		optionspage.cpp	optionspage_connection.cpp \
+		optionspage_connection_active.cpp optionspage_filetype.cpp \
+		optionspage_language.cpp \
+		optionspage_themes.cpp QueueView.cpp \
 		RemoteListView.cpp RemoteTreeView.cpp settingsdialog.cpp \
 		sitemanager.cpp state.cpp statuslinectrl.cpp StatusView.cpp \
 		systemimagelist.cpp \
@@ -35,8 +37,9 @@ noinst_HEADERS = aboutdialog.h asyncrequestqueue.h chmoddialog.h \
 		 inputdialog.h ipcmutex.h led.h \
 		 LocalListView.h LocalTreeView.h Mainfrm.h \
 		 netconfwizard.h Options.h \
-		 optionspage.h  optionspage_filetype.h \
-		 optionspage_language.h optionspage_passive.h \
+		 optionspage.h optionspage_connection.h \
+		 optionspage_connection_active.h optionspage_filetype.h \
+		 optionspage_language.h \
 		 optionspage_themes.h prefix.h QueueView.h \
 		 RemoteListView.h RemoteTreeView.h \
 		 settingsdialog.h sitemanager.h state.h \

@@ -12,6 +12,7 @@ public:
 	virtual ~CSettingsDialog();
 
 	bool Create(wxWindow* parent);
+	bool LoadSettings();
 
 protected:
 	bool LoadPages();

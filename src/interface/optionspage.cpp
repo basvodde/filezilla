@@ -5,8 +5,9 @@
 
 wxString validationFailed = _("Failed to validate settings");
 
-bool COptionsPage::CreatePage(COptions* pOptions, wxWindow* parent, wxSize& maxSize)
+bool COptionsPage::CreatePage(COptions* pOptions, CSettingsDialog* pOwner, wxWindow* parent, wxSize& maxSize)
 {
+	m_pOwner = pOwner;
 	m_pOptions = pOptions;
 
 	if (!wxXmlResource::Get()->LoadPanel(this, parent, GetResourceName()))
@@ -99,4 +100,9 @@ wxString COptionsPage::GetStaticText(int id)
 	wxASSERT(pStaticText);
 
 	return pStaticText->GetLabel();
+}
+
+void COptionsPage::ReloadSettings()
+{
+	m_pOwner->LoadSettings();
 }
