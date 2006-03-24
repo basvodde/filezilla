@@ -39,6 +39,7 @@ protected:
 	void OnReceive();
 	void OnClose();
 	void OnConnect();
+	void OnSend();
 	void CloseSocket();
 	bool Send(wxString cmd);
 
@@ -69,6 +70,8 @@ protected:
 	} m_testResult;
 
 	CExternalIPResolver* m_pIPResolver;
+
+	char* m_pSendBuffer;
 };
 
 #endif //__NETCONFWIZARD_H__

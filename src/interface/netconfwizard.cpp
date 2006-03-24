@@ -19,6 +19,7 @@ CNetConfWizard::CNetConfWizard(wxWindow* parent, COptions* pOptions)
 {
 	m_socket = 0;
 	m_pIPResolver = 0;
+	m_pSendBuffer = 0;
 	ResetTest();
 }
 
@@ -26,6 +27,7 @@ CNetConfWizard::~CNetConfWizard()
 {
 	delete m_socket;
 	delete m_pIPResolver;
+	delete [] m_pSendBuffer;
 }
 
 bool CNetConfWizard::Load()
@@ -184,7 +186,7 @@ void CNetConfWizard::OnPageChanging(wxWizardEvent& event)
 		PrintMessage(wxString::Format(_("Connecting to %s"), _T("probe.filezilla-project.org")), 0);
 		m_socket = new wxSocketClient(wxSOCKET_NOWAIT);
 		m_socket->SetEventHandler(*this, 0);
-		m_socket->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_CONNECTION_FLAG | wxSOCKET_LOST_FLAG);
+		m_socket->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_OUTPUT_FLAG | wxSOCKET_CONNECTION_FLAG | wxSOCKET_LOST_FLAG);
 		m_socket->Notify(true);
 		m_recvBufferPos = 0;
 
@@ -223,6 +225,9 @@ void CNetConfWizard::OnSocketEvent(wxSocketEvent& event)
 	case wxSOCKET_INPUT:
 		OnReceive();
 		break;
+	case wxSOCKET_OUTPUT:
+		OnSend();
+		break;
 	case wxSOCKET_LOST:
 		OnClose();
 		break;
@@ -230,6 +235,35 @@ void CNetConfWizard::OnSocketEvent(wxSocketEvent& event)
 		OnConnect();
 		break;
 	}
+}
+
+void CNetConfWizard::OnSend()
+{
+	if (!m_pSendBuffer)
+		return;
+
+	if (!m_socket)
+		return;
+
+	int len = strlen(m_pSendBuffer);
+	m_socket->Write(m_pSendBuffer, len);
+	if (m_socket->Error())
+	{
+		if (m_socket->LastError() != wxSOCKET_WOULDBLOCK)
+		{
+			PrintMessage(_("Failed to send command."), 1);
+			CloseSocket();
+		}
+		return;
+	}
+	int written = m_socket->LastCount();
+	if (written == len)
+	{
+		delete m_pSendBuffer;
+		m_pSendBuffer = 0;
+	}
+	else
+		memmove(m_pSendBuffer, m_pSendBuffer + written, len - written + 1);
 }
 
 void CNetConfWizard::OnClose()
@@ -427,26 +461,28 @@ void CNetConfWizard::CloseSocket()
 
 	delete m_socket;
 	m_socket = 0;
+
+	delete [] m_pSendBuffer;
+	m_pSendBuffer = 0;
 }
 
 bool CNetConfWizard::Send(wxString cmd)
 {
+	wxASSERT(!m_pSendBuffer);
+
 	if (!m_socket)
 		return false;
 
 	PrintMessage(cmd, 2);
 
 	cmd += _T("\r\n");
-	const char* buffer = cmd.mb_str();
+	wxCharBuffer buffer = cmd.mb_str();
 	unsigned int len = strlen(buffer);
-	m_socket->Write(buffer, len);
-	if (!m_socket->Error() && m_socket->LastCount() == len)
-		return true;
+	m_pSendBuffer = new char[len + 1];
+	memcpy(m_pSendBuffer, buffer, len + 1);
+	OnSend();
 
-	PrintMessage(_("Connection lost"), 1);	
-	Close();
-
-	return false;
+	return m_socket != 0;
 }
 
 wxString CNetConfWizard::GetExternalIPAddress()
