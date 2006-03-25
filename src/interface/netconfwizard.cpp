@@ -454,6 +454,7 @@ void CNetConfWizard::CloseSocket()
 		int id = wxXmlResource::GetXRCID(name);
 		wxDynamicCast(FindWindowById(id, this), wxStaticText)->SetLabel(text[i]);
 	}
+	m_pages[6]->GetSizer()->Layout();
 	wxGetApp().GetWrapEngine()->WrapRecursive(m_pages[6], m_pages[6]->GetSizer(), wxGetApp().GetWrapEngine()->GetWidthFromCache("Netconf"));
 
 	// Focus one so enter key hits finish and not the restart button by default
