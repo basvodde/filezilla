@@ -69,6 +69,7 @@ public:
 	virtual bool SetAsyncRequestReply(CAsyncRequestNotification *pNotification) = 0;
 
 	void InitTransferStatus(wxFileOffset totalSize, wxFileOffset startOffset);
+	void SetTransferStatusStartTime();
 	void UpdateTransferStatus(wxFileOffset transferredBytes);
 	void ResetTransferStatus();
 	bool GetTransferStatus(CTransferStatus &status, bool &changed);

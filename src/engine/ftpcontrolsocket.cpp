@@ -17,9 +17,19 @@ BEGIN_EVENT_TABLE(CFtpControlSocket, CControlSocket)
 EVT_FZ_EXTERNALIPRESOLVE(wxID_ANY, CFtpControlSocket::OnExternalIPAddress)
 END_EVENT_TABLE();
 
+CRawTransferOpData::CRawTransferOpData()
+{
+	bTriedPasv = bTriedActive = false;
+	bPasv = true;
+}
+
 CFtpTransferOpData::CFtpTransferOpData()
 {
 	bTriedPasv = bTriedActive = false;
+	transferEndReason = 0;
+	tranferCommandSent = false;
+	resumeOffset = 0;
+	binary = true;
 }
 
 CFtpFileTransferOpData::CFtpFileTransferOpData()
@@ -28,7 +38,6 @@ CFtpFileTransferOpData::CFtpFileTransferOpData()
 	resume = false;
 	localFileSize = -1;
 	remoteFileSize = -1;
-	transferEndReason = 0;
 }
 
 CFtpFileTransferOpData::~CFtpFileTransferOpData()
@@ -48,15 +57,21 @@ enum filetransferStates
 	filetransfer_waitlist,
 	filetransfer_size,
 	filetransfer_mdtm,
-	filetransfer_type,
-	filetransfer_port_pasv,
-	filetransfer_rest0,
-	filetransfer_rest,
 	filetransfer_transfer,
-	filetransfer_waitfinish,
-	filetransfer_waittransferpre,
 	filetransfer_waittransfer,
-	filetransfer_waitsocket
+};
+
+enum rawtransferStates
+{
+	rawtransfer_init = 0,
+	rawtransfer_type,
+	rawtransfer_port_pasv,
+	rawtransfer_rest,
+	rawtransfer_transfer,
+	rawtransfer_waitfinish,
+	rawtransfer_waittransferpre,
+	rawtransfer_waittransfer,
+	rawtransfer_waitsocket
 };
 
 class CFtpLogonOpData : public COpData
@@ -200,6 +215,7 @@ void CFtpControlSocket::ParseLine(wxString line)
 				m_MultilineResponseCode.Clear();
 				m_Response = line;
 				ParseResponse();
+				m_Response = _T("");
 			}
 		}
 		// start of new multi-line
@@ -212,6 +228,7 @@ void CFtpControlSocket::ParseLine(wxString line)
 		{
 			m_Response = line;
 			ParseResponse();
+			m_Response = _T("");
 		}
 	}
 }
@@ -256,6 +273,9 @@ void CFtpControlSocket::ParseResponse()
 		break;
 	case cmd_chmod:
 		ChmodParseResponse();
+		break;
+	case cmd_rawtransfer:
+		TransferParseResponse();
 		break;
 	default:
 		LogMessage(Debug_Warning, _T("No action for parsing replies to command %d"), (int)commandId);
@@ -512,36 +532,29 @@ public:
 	CFtpListOpData()
 	{
 		opId = cmd_list;
-
-		bTriedPasv = bTriedActive = false;
-		transferEndReason = 0;
+		m_pDirectoryListingParser = 0;
 	}
 
 	virtual ~CFtpListOpData()
 	{
+		delete m_pDirectoryListingParser;
 	}
 
 	CServerPath path;
 	wxString subDir;
 
+	CDirectoryListingParser* m_pDirectoryListingParser;
+
 	// Set to true to get a directory listing even if a cache
 	// lookup can be made after finding out true remote directory
 	bool refresh;
-
-	int transferEndReason;
 };
 
 enum listStates
 {
 	list_init = 0,
 	list_waitcwd,
-	list_type,
-	list_port_pasv,
-	list_list,
-	list_waitfinish,
-	list_waitlistpre,
-	list_waitlist,
-	list_waitsocket
+	list_waittransfer,
 };
 
 int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/, bool refresh /*=false*/)
@@ -556,18 +569,6 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 	pData->pNextOpData = m_pCurOpData;
 	m_pCurOpData = pData;
 
-	switch (m_pCurrentServer->GetPasvMode())
-	{
-	case MODE_PASSIVE:
-		pData->bPasv = true;
-		break;
-	case MODE_ACTIVE:
-		pData->bPasv = false;
-		break;
-	default:
-		pData->bPasv = m_pEngine->GetOptions()->GetOptionVal(OPTION_USEPASV) != 0;
-		break;
-	}
 	pData->opState = list_waitcwd;
 
 	if (path.GetType() == DEFAULT)
@@ -605,9 +606,15 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 			delete pListing;
 	}
 
-	pData->opState = list_type;
+	delete m_pTransferSocket;
+	m_pTransferSocket = new CTransferSocket(m_pEngine, this, ::list);
+	pData->m_pDirectoryListingParser = new CDirectoryListingParser(m_pEngine, this, m_pCurrentServer->GetType());
+	m_pTransferSocket->m_pDirectoryListingParser = pData->m_pDirectoryListingParser;
 
-	return ListSend();
+	InitTransferStatus(-1, 0);
+
+	pData->opState = list_waittransfer;
+	return Transfer(_T("LIST"), pData);
 }
 
 int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
@@ -650,84 +657,56 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 				delete pListing;
 		}
 
-		pData->opState = list_type;
-	}
-
-	wxString cmd;
-	switch (pData->opState)
-	{
-	case list_type:
-		cmd = _T("TYPE A");
-		break;
-	case list_port_pasv:
 		delete m_pTransferSocket;
 		m_pTransferSocket = new CTransferSocket(m_pEngine, this, ::list);
-		if (pData->bPasv)
+		pData->m_pDirectoryListingParser = new CDirectoryListingParser(m_pEngine, this, m_pCurrentServer->GetType());
+		m_pTransferSocket->m_pDirectoryListingParser = pData->m_pDirectoryListingParser;
+
+		InitTransferStatus(-1, 0);
+
+		pData->opState = list_waittransfer;
+		return Transfer(_T("LIST"), pData);
+	}
+	else if (pData->opState == list_waittransfer)
+	{
+		if (prevResult == FZ_REPLY_OK)
 		{
-			pData->bTriedPasv = true;
-			cmd = _T("PASV");
+			CDirectoryListing *pListing = pData->m_pDirectoryListingParser->Parse(m_CurrentPath);
+
+			CDirectoryCache cache;
+			cache.Store(*pListing, *m_pCurrentServer, pData->path, pData->subDir);
+
+			SendDirectoryListing(pListing);
+			m_pEngine->ResendModifiedListings();
+
+			ResetOperation(FZ_REPLY_OK);
+			return FZ_REPLY_OK;
 		}
 		else
 		{
-			wxString address;
-			int res = GetExternalIPAddress(address);
-			if (res == FZ_REPLY_WOULDBLOCK)
-				return res;
-			else if (res == FZ_REPLY_OK)
+			if (pData->tranferCommandSent && IsMisleadingListResponse())
 			{
-				wxString portArgument = m_pTransferSocket->SetupActiveTransfer(address);
-                if (portArgument != _T(""))
-				{
-					cmd = _T("PORT " + portArgument);
-					break;
-				}
+				CDirectoryListing *pListing = new CDirectoryListing();
+				pListing->path = m_CurrentPath;
+
+				CDirectoryCache cache;
+				cache.Store(*pListing, *m_pCurrentServer, pData->path, pData->subDir);
+
+				SendDirectoryListing(pListing);
+				m_pEngine->ResendModifiedListings();
+
+				ResetOperation(FZ_REPLY_OK);
+				return FZ_REPLY_OK;
 			}
 			
-			if (pData->bTriedPasv)
-			{
-				LogMessage(::Error, _("Failed to create listening socket for active mode transfer"));
-				ResetOperation(FZ_REPLY_ERROR);
-				return FZ_REPLY_ERROR;
-			}
-			LogMessage(::Debug_Warning, _("Failed to create listening socket for active mode transfer"));
-			pData->bTriedActive = true;
-			pData->bTriedPasv = true;
-			pData->bPasv = true;
-			cmd = _T("PASV");
-		}
-		break;
-	case list_list:
-		cmd = _T("LIST");
-
-		if (pData->bPasv)
-		{
-			if (!m_pTransferSocket->SetupPassiveTransfer(pData->host, pData->port))
-			{
-				LogMessage(::Error, _("Could not establish connection to server"));
-				ResetOperation(FZ_REPLY_ERROR);
-				return FZ_REPLY_ERROR;
-			}
-		}
-
-		InitTransferStatus(-1, 0);
-		m_pTransferSocket->SetActive();
-
-		break;
-	case list_waitfinish:
-	case list_waitlist:
-	case list_waitsocket:
-	case list_waitlistpre:
-		break;
-	default:
-		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("invalid opstate"));
-		ResetOperation(FZ_REPLY_INTERNALERROR);
-		return FZ_REPLY_ERROR;
-	}
-	if (cmd != _T(""))
-		if (!Send(cmd))
+			ResetOperation(FZ_REPLY_ERROR);
 			return FZ_REPLY_ERROR;
+		}
+	}
 
-	return FZ_REPLY_WOULDBLOCK;
+	LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("invalid opstate"));
+	ResetOperation(FZ_REPLY_INTERNALERROR);
+	return FZ_REPLY_ERROR;
 }
 
 int CFtpControlSocket::ListParseResponse()
@@ -736,118 +715,14 @@ int CFtpControlSocket::ListParseResponse()
 
 	if (!m_pCurOpData)
 	{
-		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Empty m_pCurOpData"));
 		ResetOperation(FZ_REPLY_INTERNALERROR);
 		return FZ_REPLY_ERROR;
 	}
 
-	CFtpListOpData *pData = static_cast<CFtpListOpData *>(m_pCurOpData);
-	if (pData->opState == list_init)
-		return FZ_REPLY_ERROR;
-
-	int code = GetReplyCode();
-
-	LogMessage(Debug_Debug, _T("  code = %d"), code);
-	LogMessage(Debug_Debug, _T("  state = %d"), pData->opState);
-
-	bool error = false;
-	switch (pData->opState)
-	{
-	case list_type:
-		// Don't check error code here, we can live perfectly without it
-		pData->opState = list_port_pasv;
-		break;
-	case list_port_pasv:
-		if (code != 2 && code != 3)
-		{
-			if (pData->bTriedPasv)
-				if (pData->bTriedActive)
-					error = true;
-				else
-					pData->bPasv = false;
-			else
-				pData->bPasv = true;
-			break;
-		}
-		if (pData->bPasv)
-		{
-			if (!ParsePasvResponse(pData))
-			{
-				if (!pData->bTriedActive)
-					pData->bPasv = false;
-				else
-					error = true;
-				break;
-			}
-		}
-		pData->opState = list_list;
-		break;
-	case list_list:
-		if (IsMisleadingListResponse())
-		{
-			CDirectoryListing *pListing = new CDirectoryListing();
-			pListing->path = m_CurrentPath;
-
-			CDirectoryCache cache;
-			cache.Store(*pListing, *m_pCurrentServer, pData->path, pData->subDir);
-
-			SendDirectoryListing(pListing);
-			m_pEngine->ResendModifiedListings();
-
-			ResetOperation(FZ_REPLY_OK);
-			return FZ_REPLY_OK;
-		}
-		else if (code != 1)
-			error = true;
-		else
-			pData->opState = list_waitfinish;
-		break;
-	case list_waitlistpre:
-		if (code != 1)
-			error = true;
-		else
-			pData->opState = list_waitlist;
-		break;
-	case list_waitfinish:
-		if (code != 2 && code != 3)
-			error = true;
-		else
-			pData->opState = list_waitsocket;
-		break;
-	case list_waitlist:
-		if (code != 2 && code != 3)
-			error = true;
-		else
-		{
-			if (pData->transferEndReason)
-			{
-				error = true;
-				break;
-			}
-
-			CDirectoryListing *pListing = m_pTransferSocket->m_pDirectoryListingParser->Parse(m_CurrentPath);
-
-			CDirectoryCache cache;
-			cache.Store(*pListing, *m_pCurrentServer, pData->path, pData->subDir);
-
-			SendDirectoryListing(pListing);
-			m_pEngine->ResendModifiedListings();
-
-			ResetOperation(FZ_REPLY_OK);
-			return FZ_REPLY_OK;
-		}
-		break;
-	default:
-		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Unknown op state"));
-		error = true;
-	}
-	if (error)
-	{
-		ResetOperation(FZ_REPLY_ERROR);
-		return FZ_REPLY_ERROR;
-	}
-
-	return ListSend();
+	LogMessage(Debug_Warning, _T("ListParseResponse should never be called"));
+	ResetOperation(FZ_REPLY_INTERNALERROR);
+	return FZ_REPLY_ERROR;
 }
 
 int CFtpControlSocket::ResetOperation(int nErrorCode)
@@ -1194,7 +1069,7 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 				pData->opState = filetransfer_size;
 			else
 			{
-				pData->opState = filetransfer_type;
+				pData->opState = filetransfer_transfer;
 				res = CheckOverwriteFile();
 				if (res != FZ_REPLY_OK)
 					return res;
@@ -1207,7 +1082,7 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 		if (res != FZ_REPLY_OK)
 			return res;
 
-		pData->opState = filetransfer_type;
+		pData->opState = filetransfer_transfer;
 
 		res = CheckOverwriteFile();
 		if (res != FZ_REPLY_OK)
@@ -1254,7 +1129,7 @@ int CFtpControlSocket::FileTransferParseResponse()
 			LogMessage(Debug_Info, _T("Invalid SIZE reply"));
 		break;
 	case filetransfer_mdtm:
-		pData->opState = filetransfer_type;
+		pData->opState = filetransfer_transfer;
 		if (m_Response.Left(4) == _T("213 ") && m_Response.Length() > 16)
 		{
 			wxDateTime date;
@@ -1269,185 +1144,6 @@ int CFtpControlSocket::FileTransferParseResponse()
 				return res;
 		}
 
-		break;
-	case filetransfer_type:
-		if (code == 2 || code == 3)
-			pData->opState = filetransfer_port_pasv;
-		else
-			error = true;
-		break;
-	case filetransfer_port_pasv:
-		if (code != 2 && code != 3)
-		{
-			if (pData->bTriedPasv)
-				if (pData->bTriedActive)
-					error = true;
-				else
-					pData->bPasv = false;
-			else
-				pData->bPasv = true;
-			break;
-		}
-
-		if (pData->bPasv)
-		{
-			if (!ParsePasvResponse(pData))
-			{
-				if (!pData->bTriedActive)
-					pData->bPasv = false;
-				else
-					error = true;
-				break;
-			}
-		}
-
-		if (pData->download)
-		{
-			if (pData->resume)
-				pData->opState = filetransfer_rest;
-			else if (m_sentRestartOffset)
-				pData->opState = filetransfer_rest0;
-			else
-				pData->opState = filetransfer_transfer;
-		}
-		else
-			pData->opState = filetransfer_transfer;
-
-		{
-			wxFile* pFile = new wxFile;
-			if (pData->download)
-			{
-				// Be quiet
-				wxLogNull nullLog;
-
-				// Create local directory
-				wxFileName fn(pData->localFile);
-				wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
-
-				wxFileOffset startOffset;
-				if (pData->resume)
-				{
-					if (!pFile->Open(pData->localFile, wxFile::write_append))
-					{
-						delete pFile;
-						LogMessage(::Error, _("Failed to open \"%s\" for appending / writing"), pData->localFile.c_str());
-						error = true;
-						break;
-					}
-
-					startOffset = pFile->SeekEnd(0);
-					if (startOffset == wxInvalidOffset)
-					{
-						delete pFile;
-						LogMessage(::Error, _("Could not seek to the end of the file"));
-						error = true;
-						break;
-					}
-				}
-				else
-				{
-					if (!pFile->Open(pData->localFile, wxFile::write))
-					{
-						delete pFile;
-						LogMessage(::Error, _("Failed to open \"%s\" for writing"), pData->localFile.c_str());
-						error = true;
-						break;
-					}
-
-					startOffset = 0;
-				}
-				pData->localFileSize = pFile->Length();
-
-				InitTransferStatus(pData->download ? pData->remoteFileSize : pData->localFileSize, startOffset);
-			}
-			else
-			{
-				if (!pFile->Open(pData->localFile, wxFile::read))
-				{
-					delete pFile;
-					LogMessage(::Error, _("Failed to open \"%s\" for reading"), pData->localFile.c_str());
-					error = true;
-					break;
-				}
-
-				wxFileOffset startOffset;
-				if (pData->resume)
-				{
-					if (pData->remoteFileSize > 0)
-					{
-						startOffset = pData->remoteFileSize;
-
-						// Assume native 64 bit type exists
-						if (pFile->Seek(startOffset, wxFromStart) == wxInvalidOffset)
-						{
-							delete pFile;
-							LogMessage(::Error, _("Could not seek to offset %s within file"), wxLongLong(startOffset).ToString().c_str());
-							error = true;
-							break;
-						}
-					}
-					else
-						startOffset = 0;
-				}
-				else
-					startOffset = 0;
-
-				wxFileOffset len = pFile->Length();
-				InitTransferStatus(len, startOffset);
-			}
-			pData->pIOThread = new CIOThread;
-			if (!pData->pIOThread->Create(pFile, !pData->download, pData->binary))
-			{
-				// CIOThread will delete pFile
-				delete pData->pIOThread;
-				pData->pIOThread = 0;
-				LogMessage(::Error, _("Could not spawn IO thread"));
-				error = true;
-				break;
-			}
-		}
-		break;
-	case filetransfer_rest0:
-		pData->opState = filetransfer_transfer;
-		m_sentRestartOffset = false;
-		break;
-	case filetransfer_rest:
-		if (code == 3 || code == 2)
-			pData->opState = filetransfer_transfer;
-		else
-			error = true;
-		break;
-	case filetransfer_transfer:
-		if (code != 1)
-			error = true;
-		else
-			pData->opState = filetransfer_waitfinish;
-		break;
-	case filetransfer_waittransferpre:
-		if (code != 1)
-			error = true;
-		else
-			pData->opState = filetransfer_waittransfer;
-		break;
-	case filetransfer_waitfinish:
-		if (code != 2 && code != 3)
-			error = true;
-		else
-			pData->opState = filetransfer_waitsocket;
-		break;
-	case filetransfer_waittransfer:
-		if (code != 2 && code != 3)
-			error = true;
-		else
-		{
-			if (pData->transferEndReason)
-				error = true;
-			else
-			{
-				ResetOperation(FZ_REPLY_OK);
-				return FZ_REPLY_OK;
-			}
-		}
 		break;
 	default:
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Unknown op state"));
@@ -1519,7 +1215,7 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 						pData->opState = filetransfer_size;
 					else
 					{
-						pData->opState = filetransfer_type;
+						pData->opState = filetransfer_transfer;
 						int res = CheckOverwriteFile();
 						if (res != FZ_REPLY_OK)
 							return res;
@@ -1532,7 +1228,7 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 				if (res != FZ_REPLY_OK)
 					return res;
 
-				pData->opState = filetransfer_type;
+				pData->opState = filetransfer_transfer;
 
 				res = CheckOverwriteFile();
 				if (res != FZ_REPLY_OK)
@@ -1587,7 +1283,7 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 					pData->opState = filetransfer_size;
 				else
 				{
-					pData->opState = filetransfer_type;
+					pData->opState = filetransfer_transfer;
 
 					int res = CheckOverwriteFile();
 					if (res != FZ_REPLY_OK)
@@ -1605,6 +1301,13 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 			return FZ_REPLY_ERROR;
 		}
 	}
+	else if (pData->opState == filetransfer_waittransfer)
+	{
+		if (pData->tranferCommandSent)
+			pData->transferInitiated = true;
+		ResetOperation(prevResult);
+		return prevResult;
+	}
 
 	wxString cmd;
 	switch (pData->opState)
@@ -1617,13 +1320,7 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 		cmd = _T("MDTM ");
 		cmd += pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath);
 		break;
-	case filetransfer_type:
-		if (pData->transferSettings.binary)
-			cmd = _T("TYPE I");
-		else
-			cmd = _T("TYPE A");
-		break;
-	case filetransfer_port_pasv:
+	case filetransfer_transfer:
 		if (m_pTransferSocket)
 		{
 			LogMessage(__TFILE__, __LINE__, this, Debug_Verbose, _T("m_pTransferSocket != 0"));
@@ -1631,57 +1328,111 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 		}
 		m_pTransferSocket = new CTransferSocket(m_pEngine, this, pData->download ? download : upload);
 		m_pTransferSocket->m_binaryMode = pData->transferSettings.binary;
-		if (pData->bPasv)
+		pData->binary = pData->transferSettings.binary;
+
 		{
-			pData->bTriedPasv = true;
-			cmd = _T("PASV");
-		}
-		else
-		{
-			wxString address;
-			int res = GetExternalIPAddress(address);
-			if (res == FZ_REPLY_WOULDBLOCK)
-				return res;
-			else if (res == FZ_REPLY_OK)
+			wxFile* pFile = new wxFile;
+			if (pData->download)
 			{
-				wxString portArgument = m_pTransferSocket->SetupActiveTransfer(address);
-                if (portArgument != _T(""))
+				// Be quiet
+				wxLogNull nullLog;
+
+				// Create local directory
+				wxFileName fn(pData->localFile);
+				wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
+
+				wxFileOffset startOffset;
+				if (pData->resume)
 				{
-					cmd = _T("PORT " + portArgument);
-					break;
+					if (!pFile->Open(pData->localFile, wxFile::write_append))
+					{
+						delete pFile;
+						LogMessage(::Error, _("Failed to open \"%s\" for appending / writing"), pData->localFile.c_str());
+						ResetOperation(FZ_REPLY_ERROR);
+						return FZ_REPLY_ERROR;
+					}
+
+					startOffset = pFile->SeekEnd(0);
+					if (startOffset == wxInvalidOffset)
+					{
+						delete pFile;
+						LogMessage(::Error, _("Could not seek to the end of the file"));
+						ResetOperation(FZ_REPLY_ERROR);
+						return FZ_REPLY_ERROR;
+					}
 				}
+				else
+				{
+					if (!pFile->Open(pData->localFile, wxFile::write))
+					{
+						delete pFile;
+						LogMessage(::Error, _("Failed to open \"%s\" for writing"), pData->localFile.c_str());
+						ResetOperation(FZ_REPLY_ERROR);
+						return FZ_REPLY_ERROR;
+					}
+
+					startOffset = 0;
+				}
+				pData->localFileSize = pFile->Length();
+
+				if (pData->resume)
+					pData->resumeOffset = pData->localFileSize;
+				else if (m_sentRestartOffset)
+					pData->resumeOffset = 0;
+				else
+					pData->resumeOffset = -1;
+
+				InitTransferStatus(pData->localFileSize, startOffset);
 			}
-			
-			if (pData->bTriedPasv)
+			else
 			{
-				LogMessage(::Error, _("Failed to create listening socket for active mode transfer"));
+				if (!pFile->Open(pData->localFile, wxFile::read))
+				{
+					delete pFile;
+					LogMessage(::Error, _("Failed to open \"%s\" for reading"), pData->localFile.c_str());
+					ResetOperation(FZ_REPLY_ERROR);
+					return FZ_REPLY_ERROR;
+				}
+
+				wxFileOffset startOffset;
+				if (pData->resume)
+				{
+					if (pData->remoteFileSize > 0)
+					{
+						startOffset = pData->remoteFileSize;
+
+						// Assume native 64 bit type exists
+						if (pFile->Seek(startOffset, wxFromStart) == wxInvalidOffset)
+						{
+							delete pFile;
+							LogMessage(::Error, _("Could not seek to offset %s within file"), wxLongLong(startOffset).ToString().c_str());
+							ResetOperation(FZ_REPLY_ERROR);
+							return FZ_REPLY_ERROR;
+						}
+					}
+					else
+						startOffset = 0;
+				}
+				else
+					startOffset = 0;
+
+				pData->resumeOffset = -1;
+
+				wxFileOffset len = pFile->Length();
+				InitTransferStatus(len, startOffset);
+			}
+			pData->pIOThread = new CIOThread;
+			if (!pData->pIOThread->Create(pFile, !pData->download, pData->binary))
+			{
+				// CIOThread will delete pFile
+				delete pData->pIOThread;
+				pData->pIOThread = 0;
+				LogMessage(::Error, _("Could not spawn IO thread"));
 				ResetOperation(FZ_REPLY_ERROR);
 				return FZ_REPLY_ERROR;
 			}
-			LogMessage(::Debug_Warning, _("Failed to create listening socket for active mode transfer"));
-			pData->bTriedActive = true;
-			pData->bTriedPasv = true;
-			pData->bPasv = true;
-			cmd = _T("PASV");
 		}
-		break;
-	case filetransfer_rest0:
-		cmd = _T("REST 0");
-		break;
-	case filetransfer_rest:
-		if (pData->localFileSize == -1)
-		{
-			LogMessage(::Debug_Warning, _T("Can't send REST command, unknown local file length"));
-			ResetOperation(FZ_REPLY_INTERNALERROR);
-			return FZ_REPLY_ERROR;
-		}
-		else
-		{
-			cmd = _T("REST ") + ((wxLongLong)pData->localFileSize).ToString();
-			m_sentRestartOffset = true;
-		}
-		break;
-	case filetransfer_transfer:
+
 		if (pData->download)
 			cmd = _T("RETR ");
 		else if (pData->resume)
@@ -1690,19 +1441,8 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 			cmd = _T("STOR ");
 		cmd += pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath);
 
-		if (pData->bPasv)
-		{
-			if (!m_pTransferSocket->SetupPassiveTransfer(pData->host, pData->port))
-			{
-				LogMessage(::Error, _("Could not establish passive connection to server"));
-				ResetOperation(FZ_REPLY_ERROR);
-				return FZ_REPLY_ERROR;
-			}
-		}
-
-		pData->transferInitiated = true;
-		m_pTransferSocket->SetActive();
-		break;
+		pData->opState = filetransfer_waittransfer;
+		return Transfer(cmd, pData);
 	}
 
 	if (cmd != _T(""))
@@ -1726,84 +1466,40 @@ void CFtpControlSocket::TransferEnd(int reason)
 		return;
 	}
 
-	// Even is reason indicates a failure, don't reset operation
+	if (GetCurrentCommandId() != cmd_rawtransfer)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Call to TransferEnd at unusual time"));
+		ResetOperation(FZ_REPLY_ERROR);
+		return;
+	}
+
+	// Even if reason indicates a failure, don't reset operation
 	// yet, wait for the reply to the LIST/RETR/... commands
 
-	if (GetCurrentCommandId() == cmd_list)
+	CRawTransferOpData *pData = static_cast<CRawTransferOpData *>(m_pCurOpData);
+	if (pData->opState < rawtransfer_transfer || pData->opState == rawtransfer_waittransfer || pData->opState == rawtransfer_waittransferpre)
 	{
-		CFtpListOpData *pData = static_cast<CFtpListOpData *>(m_pCurOpData);
-		if (pData->opState < list_list || pData->opState == list_waitlist || pData->opState == list_waitlistpre)
-		{
-			LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Call to TransferEnd at unusual time"));
-			ResetOperation(FZ_REPLY_ERROR);
-			return;
-		}
-
-		pData->transferEndReason = reason;
-
-		switch (pData->opState)
-		{
-		case list_list:
-			pData->opState = list_waitlistpre;
-			break;
-		case list_waitfinish:
-			pData->opState = list_waitlist;
-			break;
-		case list_waitsocket:
-			{
-				if (!reason)
-				{
-					CDirectoryListing *pListing = m_pTransferSocket->m_pDirectoryListingParser->Parse(m_CurrentPath);
-
-					CDirectoryCache cache;
-					cache.Store(*pListing, *m_pCurrentServer, pData->path, pData->subDir);
-
-					SendDirectoryListing(pListing);
-					m_pEngine->ResendModifiedListings();
-
-					ResetOperation(FZ_REPLY_OK);
-				}
-				else
-					ResetOperation(FZ_REPLY_ERROR);
-			}
-			break;
-		default:
-			LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Unknown op state"));
-			ResetOperation(FZ_REPLY_ERROR);
-		}
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Call to TransferEnd at unusual time"));
+		ResetOperation(FZ_REPLY_ERROR);
+		return;
 	}
-	else if (GetCurrentCommandId() == cmd_transfer)
+
+	pData->pOldData->transferEndReason = reason;
+
+	switch (pData->opState)
 	{
-		CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(m_pCurOpData);
-		if (pData->opState < filetransfer_transfer || pData->opState == filetransfer_waittransfer || pData->opState == filetransfer_waittransferpre)
-		{
-			LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Call to TransferEnd at unusual time"));
-			ResetOperation(FZ_REPLY_ERROR);
-			return;
-		}
-
-		pData->transferEndReason = reason;
-
-		switch (pData->opState)
-		{
-		case filetransfer_transfer:
-			pData->opState = filetransfer_waittransferpre;
-			break;
-		case filetransfer_waitfinish:
-			pData->opState = filetransfer_waittransfer;
-			break;
-		case filetransfer_waitsocket:
-			{
-				if (reason)
-					ResetOperation(FZ_REPLY_ERROR);
-				else
-					ResetOperation(FZ_REPLY_OK);
-			}
-			break;
-		default:
-			LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Unknown op state"));
-			ResetOperation(FZ_REPLY_INTERNALERROR);
-		}
+	case rawtransfer_transfer:
+		pData->opState = rawtransfer_waittransferpre;
+		break;
+	case rawtransfer_waitfinish:
+		pData->opState = rawtransfer_waittransfer;
+		break;
+	case rawtransfer_waitsocket:
+		ResetOperation((!reason) ? FZ_REPLY_OK : FZ_REPLY_ERROR);
+		break;
+	default:
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Unknown op state"));
+		ResetOperation(FZ_REPLY_ERROR);
 	}
 }
 
@@ -2553,7 +2249,7 @@ bool CFtpControlSocket::IsMisleadingListResponse() const
 	return false;
 }
 
-bool CFtpControlSocket::ParsePasvResponse(CFtpTransferOpData* pData)
+bool CFtpControlSocket::ParsePasvResponse(CRawTransferOpData* pData)
 {
 	// Validate ip address
 	wxString digit = _T("0*[0-9]{1,3}");
@@ -2669,4 +2365,248 @@ void CFtpControlSocket::OnExternalIPAddress(fzExternalIPResolveEvent& event)
 		return;
 
 	SendNextCommand();
+}
+
+int CFtpControlSocket::Transfer(const wxString& cmd, CFtpTransferOpData* oldData)
+{
+	CRawTransferOpData *pData = new CRawTransferOpData;
+	pData->opId = cmd_rawtransfer;
+	pData->pNextOpData = m_pCurOpData;
+	m_pCurOpData = pData;
+
+	pData->cmd = cmd;
+	pData->pOldData = oldData;
+
+	switch (m_pCurrentServer->GetPasvMode())
+	{
+	case MODE_PASSIVE:
+		pData->bPasv = true;
+		break;
+	case MODE_ACTIVE:
+		pData->bPasv = false;
+		break;
+	default:
+		pData->bPasv = m_pEngine->GetOptions()->GetOptionVal(OPTION_USEPASV) != 0;
+		break;
+	}
+
+	pData->opState = rawtransfer_type;
+
+	return TransferSend();
+}
+
+int CFtpControlSocket::TransferParseResponse()
+{
+	LogMessage(Debug_Verbose, _T("CFtpControlSocket::TransferParseResponse()"));
+
+	if (!m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	CRawTransferOpData *pData = static_cast<CRawTransferOpData *>(m_pCurOpData);
+	if (pData->opState == rawtransfer_init)
+		return FZ_REPLY_ERROR;
+
+	int code = GetReplyCode();
+
+	LogMessage(Debug_Debug, _T("  code = %d"), code);
+	LogMessage(Debug_Debug, _T("  state = %d"), pData->opState);
+
+	bool error = false;
+	switch (pData->opState)
+	{
+	case rawtransfer_type:
+		if (code != 2 && code != 2)
+			error = true;
+		else
+			pData->opState = rawtransfer_port_pasv;
+		break;
+	case rawtransfer_port_pasv:
+		if (code != 2 && code != 3)
+		{
+			if (pData->bTriedPasv)
+				if (pData->bTriedActive)
+					error = true;
+				else
+					pData->bPasv = false;
+			else
+				pData->bPasv = true;
+			break;
+		}
+		if (pData->bPasv)
+		{
+			if (!ParsePasvResponse(pData))
+			{
+				if (!pData->bTriedActive)
+					pData->bPasv = false;
+				else
+					error = true;
+				break;
+			}
+		}
+		if (pData->pOldData->resumeOffset != -1)
+			pData->opState = rawtransfer_rest;
+		else
+			pData->opState = rawtransfer_transfer;
+		break;
+	case rawtransfer_rest:
+		if (pData->pOldData->resumeOffset == 0)
+			m_sentRestartOffset = false;
+		if (pData->pOldData->resumeOffset != 0 && code != 2 && code != 3)
+			error = true;
+		else
+			pData->opState = rawtransfer_transfer;
+		break;
+	case rawtransfer_transfer:
+		if (code != 1)
+			error = true;
+		else
+			pData->opState = rawtransfer_waitfinish;
+		break;
+	case rawtransfer_waittransferpre:
+		if (code != 1)
+			error = true;
+		else
+			pData->opState = rawtransfer_waittransfer;
+		break;
+	case rawtransfer_waitfinish:
+		if (code != 2 && code != 3)
+			error = true;
+		else
+			pData->opState = rawtransfer_waitsocket;
+		break;
+	case rawtransfer_waittransfer:
+		if (code != 2 && code != 3)
+			error = true;
+		else
+		{
+			if (pData->pOldData->transferEndReason)
+			{
+				error = true;
+				break;
+			}
+
+			ResetOperation(FZ_REPLY_OK);
+			return FZ_REPLY_OK;
+		}
+		break;
+	default:
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Unknown op state"));
+		error = true;
+	}
+	if (error)
+	{
+		ResetOperation(FZ_REPLY_ERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	return TransferSend();
+}
+
+int CFtpControlSocket::TransferSend(int prevResult /*=FZ_REPLY_OK*/)
+{
+	LogMessage(Debug_Verbose, _T("CFtpControlSocket::TransferSend(%d)"), prevResult);
+
+	if (!m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	if (!m_pTransferSocket)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pTransferSocket"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	CRawTransferOpData *pData = static_cast<CRawTransferOpData *>(m_pCurOpData);
+	LogMessage(Debug_Debug, _T("  state = %d"), pData->opState);
+
+	wxString cmd;
+	switch (pData->opState)
+	{
+	case rawtransfer_type:
+		if (pData->pOldData->binary)
+			cmd = _T("TYPE I");
+		else
+			cmd = _T("TYPE A");
+		break;
+	case rawtransfer_port_pasv:
+		if (pData->bPasv)
+		{
+			pData->bTriedPasv = true;
+			cmd = _T("PASV");
+		}
+		else
+		{
+			wxString address;
+			int res = GetExternalIPAddress(address);
+			if (res == FZ_REPLY_WOULDBLOCK)
+				return res;
+			else if (res == FZ_REPLY_OK)
+			{
+				wxString portArgument = m_pTransferSocket->SetupActiveTransfer(address);
+                if (portArgument != _T(""))
+				{
+					pData->bTriedActive = true;
+					cmd = _T("PORT " + portArgument);
+					break;
+				}
+			}
+			
+			if (pData->bTriedPasv)
+			{
+				LogMessage(::Error, _("Failed to create listening socket for active mode transfer"));
+				ResetOperation(FZ_REPLY_ERROR);
+				return FZ_REPLY_ERROR;
+			}
+			LogMessage(::Debug_Warning, _("Failed to create listening socket for active mode transfer"));
+			pData->bTriedActive = true;
+			pData->bTriedPasv = true;
+			pData->bPasv = true;
+			cmd = _T("PASV");
+		}
+		break;
+	case rawtransfer_rest:
+		cmd = _T("REST ") + pData->pOldData->resumeOffset.ToString();
+		if (pData->pOldData->resumeOffset > 0)
+			m_sentRestartOffset = true;
+		break;
+	case rawtransfer_transfer:
+		if (pData->bPasv)
+		{
+			if (!m_pTransferSocket->SetupPassiveTransfer(pData->host, pData->port))
+			{
+				LogMessage(::Error, _("Could not establish connection to server"));
+				ResetOperation(FZ_REPLY_ERROR);
+				return FZ_REPLY_ERROR;
+			}
+		}
+
+		cmd = pData->cmd;
+		pData->pOldData->tranferCommandSent = true;
+
+		SetTransferStatusStartTime();
+		m_pTransferSocket->SetActive();
+		break;
+	case rawtransfer_waitfinish:
+	case rawtransfer_waittransferpre:
+	case rawtransfer_waittransfer:
+	case rawtransfer_waitsocket:
+		break;
+	default:
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("invalid opstate"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+	if (cmd != _T(""))
+		if (!Send(cmd))
+			return FZ_REPLY_ERROR;
+
+	return FZ_REPLY_WOULDBLOCK;
 }

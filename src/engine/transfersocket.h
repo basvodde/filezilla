@@ -14,6 +14,7 @@ enum TransferMode
 	download
 };
 
+class CIOThread;
 class CTransferSocket : public wxEvtHandler
 {
 public:

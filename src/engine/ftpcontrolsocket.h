@@ -10,6 +10,7 @@
 
 class CTransferSocket;
 class CFtpTransferOpData;
+class CRawTransferOpData;
 class CFtpControlSocket : public CControlSocket
 {
 	friend class CTransferSocket;
@@ -54,6 +55,10 @@ protected:
 	virtual int Chmod(const CChmodCommand& command);
 	virtual int ChmodParseResponse();
 	virtual int ChmodSend(int prevResult = FZ_REPLY_OK);
+
+	virtual int Transfer(const wxString& cmd, CFtpTransferOpData* oldData);
+	virtual int TransferParseResponse();
+	virtual int TransferSend(int prevResult = FZ_REPLY_OK);
 	
 	virtual void OnConnect(wxSocketEvent &event);
 	virtual void OnReceive(wxSocketEvent &event);
@@ -75,7 +80,7 @@ protected:
 	int LogonParseResponse();
 	int LogonSend();
 
-	bool ParsePasvResponse(CFtpTransferOpData* pData);
+	bool ParsePasvResponse(CRawTransferOpData* pData);
 
 	// Some servers are broken. Instead of an empty listing, some MVS servers
 	// for example they return "550 no members found"
@@ -116,6 +121,12 @@ public:
 	bool bTriedPasv;
 	bool bTriedActive;
 
+	int transferEndReason;
+	bool tranferCommandSent;
+
+	wxLongLong resumeOffset;
+	bool binary;
+
 	int port;
 	wxString host;
 };
@@ -126,17 +137,29 @@ public:
 	CFtpFileTransferOpData();
 	virtual ~CFtpFileTransferOpData();
 
-	bool binary;
-
 	bool tryAbsolutePath;
 
 	bool resume;
-
-	CIOThread *pIOThread;
 	
-	int transferEndReason;
+	CIOThread *pIOThread;
 
 	CFileTransferCommand::t_transferSettings transferSettings;
+};
+
+class CRawTransferOpData : public COpData
+{
+public:
+	CRawTransferOpData();
+	wxString cmd;
+
+	CFtpTransferOpData* pOldData;
+
+	bool bPasv;
+	bool bTriedPasv;
+	bool bTriedActive;
+
+	wxString host;
+	int port;
 };
 
 #endif

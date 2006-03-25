@@ -18,15 +18,12 @@ CTransferSocket::CTransferSocket(CFileZillaEnginePrivate *pEngine, CFtpControlSo
 	m_pSocketClient = 0;
 	m_pSocketServer = 0;
 	m_pSocket = 0;
+	
+	m_pDirectoryListingParser = 0;
 
 	m_bActive = false;
 
 	SetEvtHandlerEnabled(true);
-
-	if (transferMode == list)
-		m_pDirectoryListingParser = new CDirectoryListingParser(pEngine, pControlSocket, m_pControlSocket->m_pCurrentServer->GetType());
-	else
-		m_pDirectoryListingParser = 0;
 
 	m_transferMode = transferMode;
 
@@ -48,13 +45,11 @@ CTransferSocket::~CTransferSocket()
 	if (!m_pSocketClient && !m_pSocketServer)
 		delete m_pSocket;
 
-	delete m_pDirectoryListingParser;
-
 	if (m_pControlSocket)
 	{
 		if (m_transferMode == upload || m_transferMode == download)
 		{
-			CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(m_pControlSocket->m_pCurOpData);
+			CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(static_cast<CRawTransferOpData *>(m_pControlSocket->m_pCurOpData)->pOldData);;
 			if (pData && pData->pIOThread)
 			{
 				if (m_transferMode == download)
@@ -309,7 +304,7 @@ void CTransferSocket::SetActive()
 {
 	if (m_transferMode == download || m_transferMode == upload)
 	{
-		CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(m_pControlSocket->m_pCurOpData);
+		CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(static_cast<CRawTransferOpData *>(m_pControlSocket->m_pCurOpData)->pOldData);;
 		if (pData && pData->pIOThread)
 			pData->pIOThread->SetEventHandler(this);
 	}
@@ -414,7 +409,7 @@ wxSocketServer* CTransferSocket::CreateSocketServer()
 
 bool CTransferSocket::CheckGetNextWriteBuffer()
 {
-	CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(m_pControlSocket->m_pCurOpData);
+	CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(static_cast<CRawTransferOpData *>(m_pControlSocket->m_pCurOpData)->pOldData);;
 	if (!m_transferBufferLen)
 	{
 		int res = pData->pIOThread->GetNextWriteBuffer(&m_pTransferBuffer);
@@ -445,7 +440,7 @@ bool CTransferSocket::CheckGetNextWriteBuffer()
 
 bool CTransferSocket::CheckGetNextReadBuffer()
 {
-	CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(m_pControlSocket->m_pCurOpData);
+	CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(static_cast<CRawTransferOpData *>(m_pControlSocket->m_pCurOpData)->pOldData);;
 	if (!m_transferBufferLen)
 	{
 		int res = pData->pIOThread->GetNextReadBuffer(&m_pTransferBuffer);
@@ -481,7 +476,7 @@ void CTransferSocket::OnIOThreadEvent(CIOThreadEvent& event)
 
 void CTransferSocket::FinalizeWrite()
 {
-	CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(m_pControlSocket->m_pCurOpData);
+	CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(static_cast<CRawTransferOpData *>(m_pControlSocket->m_pCurOpData)->pOldData);
 	if (pData->pIOThread->Finalize(BUFFERSIZE - m_transferBufferLen))
 		TransferEnd(0);
 	else

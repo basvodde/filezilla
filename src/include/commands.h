@@ -19,7 +19,10 @@ enum Command
 	cmd_rename,
 	cmd_chmod,
 	cmd_raw,
-	cmd_private // only used internally
+
+	// Only use internally
+	cmd_private,
+	cmd_rawtransfer
 };
 
 // Reply codes

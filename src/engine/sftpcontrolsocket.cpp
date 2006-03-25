@@ -1295,6 +1295,7 @@ int CSftpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 		cmd += QuoteFilename(pData->localFile) + _T(" ");
 		cmd += QuoteFilename(pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath));
 	}
+	SetTransferStatusStartTime();
 
 	pData->transferInitiated = true;
 	if (!Send(cmd))

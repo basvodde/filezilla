@@ -25,7 +25,7 @@ COpData::COpData()
 
 COpData::~COpData()
 {
-	delete [] pNextOpData;
+	delete pNextOpData;
 }
 
 CControlSocket::CControlSocket(CFileZillaEnginePrivate *pEngine)
@@ -206,7 +206,7 @@ int CControlSocket::ResetOperation(int nErrorCode)
 		LogMessage(::Debug_Warning, _T("ResetOperation with FZ_REPLY_WOULDBLOCK in nErrorCode (%d)"), nErrorCode);
 	}
 
-	if (m_pCurOpData && m_pCurOpData->pNextOpData)
+	if (m_pCurOpData && m_pCurOpData->pNextOpData && (nErrorCode & FZ_REPLY_INTERNALERROR) != FZ_REPLY_INTERNALERROR)
 	{
 		COpData *pNext = m_pCurOpData->pNextOpData;
 		m_pCurOpData->pNextOpData = 0;
@@ -397,10 +397,17 @@ void CControlSocket::InitTransferStatus(wxFileOffset totalSize, wxFileOffset sta
 	delete m_pTransferStatus;
 	m_pTransferStatus = new CTransferStatus();
 
-	m_pTransferStatus->started = wxDateTime::Now();
 	m_pTransferStatus->totalSize = totalSize;
 	m_pTransferStatus->startOffset = startOffset;
 	m_pTransferStatus->currentOffset = startOffset;
+}
+
+void CControlSocket::SetTransferStatusStartTime()
+{
+	if (!m_pTransferStatus)
+		return;
+
+	m_pTransferStatus->started = wxDateTime::Now();
 }
 
 void CControlSocket::UpdateTransferStatus(wxFileOffset transferredBytes)
