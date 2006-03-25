@@ -14,10 +14,12 @@ libengine_a_SOURCES = asynchostresolver.cpp commands.cpp ControlSocket.cpp \
 		engineprivate.cpp externalipresolver.cpp \
 		FileZillaEngine.cpp ftpcontrolsocket.cpp iothread.cpp logging.cpp \
 		misc.cpp notification.cpp server.cpp serverpath.cpp\
+		servercapabilities.cpp \
 		sftpcontrolsocket.cpp timeex.cpp transfersocket.cpp
 
 noinst_HEADERS = ControlSocket.h directorycache.h \
 		directorylistingparser.h ftpcontrolsocket.h iothread.h \
-		logging_private.h sftpcontrolsocket.h transfersocket.h
+		logging_private.h servercapabilities.h \
+		sftpcontrolsocket.h transfersocket.h
 
 dist_noinst_DATA = engine.vcproj
