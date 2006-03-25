@@ -240,6 +240,53 @@ bool CServer::operator==(const CServer &op) const
 	return true;
 }
 
+bool CServer::operator<(const CServer &op) const
+{
+	if (m_protocol < op.m_protocol)
+		return true;
+	else if (m_type < op.m_type)
+		return true;
+	else if (m_host < op.m_host)
+		return true;
+	else if (m_port < op.m_port)
+		return true;
+	else if (m_logonType < op.m_logonType)
+		return true;
+	else if (m_logonType != ANONYMOUS)
+	{
+		if (m_user < op.m_user)
+			return true;
+
+		if (m_logonType == NORMAL)
+		{
+			if (m_pass < op.m_pass)
+				return true;
+		}
+		else if (m_logonType == NORMAL)
+		{
+			if (m_pass < op.m_pass)
+				return true;
+			if (m_account < op.m_account)
+				return true;
+		}
+	}
+	else if (m_timezoneOffset < op.m_timezoneOffset)
+		return true;
+	else if (m_pasvMode < op.m_pasvMode)
+		return true;
+	else if (m_encodingType < op.m_encodingType)
+		return true;
+	else if (m_encodingType == ENCODING_CUSTOM)
+	{
+		if (m_customEncoding < op.m_customEncoding)
+			return true;
+	}
+
+	// Do not compare number of allowed multiple connections
+
+	return false;
+}
+
 bool CServer::operator!=(const CServer &op) const
 {
 	return !(*this == op);
