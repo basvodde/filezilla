@@ -21,6 +21,8 @@ bool COptionsPageLanguage::LoadPage()
 	
 	int language = wxGetApp().GetCurrentLanguage();
 
+	pListBox->Clear();
+
 	int n = pListBox->Append(_T("English"));
 
 	const wxLanguageInfo* pInfo = wxLocale::FindLanguageInfo(_T("en"));

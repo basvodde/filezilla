@@ -37,6 +37,7 @@ bool COptionsPageFiletype::LoadPage()
 		SetRCheck(XRCID("ID_TYPE_AUTO"), true, failure);
 
 	wxListCtrl* pListCtrl = XRCCTRL(*this, "ID_EXTENSIONS", wxListCtrl);
+	pListCtrl->ClearAll();
 	pListCtrl->InsertColumn(0, _T(""));
 	
 	wxString extensions = m_pOptions->GetOption(OPTION_ASCIIFILES);
