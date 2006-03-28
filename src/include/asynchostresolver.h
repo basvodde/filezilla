@@ -19,7 +19,7 @@ extern const wxEventType fzEVT_ASYNCHOSTRESOLVE;
     ),
 
 class CControlSocket;
-class CAsyncHostResolver : public wxThread
+class CAsyncHostResolver : public wxThreadEx
 {
 public:
 	CAsyncHostResolver(wxEvtHandler *pOwner, wxString hostname);
@@ -40,7 +40,7 @@ protected:
 	bool m_bObsolete;
 	bool m_bSuccessful;
 	void SendReply();
-	virtual wxThread::ExitCode Entry();
+	virtual ExitCode Entry();
 
 	wxString m_Hostname;
 };

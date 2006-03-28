@@ -15,7 +15,7 @@ libengine_a_SOURCES = asynchostresolver.cpp commands.cpp ControlSocket.cpp \
 		FileZillaEngine.cpp ftpcontrolsocket.cpp iothread.cpp logging.cpp \
 		misc.cpp notification.cpp server.cpp serverpath.cpp\
 		servercapabilities.cpp \
-		sftpcontrolsocket.cpp timeex.cpp transfersocket.cpp
+		sftpcontrolsocket.cpp threadex.cpp timeex.cpp transfersocket.cpp
 
 noinst_HEADERS = ControlSocket.h directorycache.h \
 		directorylistingparser.h ftpcontrolsocket.h iothread.h \

@@ -44,13 +44,16 @@
 #include <vector>
 #include <map>
 
+// Enhancements to classes provided by wxWidgets
+#include "timeex.h"
+#include "threadex.h"
+
 #include "optionsbase.h"
 #include "logging.h"
 #include "server.h"
 #include "serverpath.h"
 #include "commands.h"
 #include "notification.h"
-#include "timeex.h"
 #include "FileZillaEngine.h"
 #include "directorylisting.h"
 

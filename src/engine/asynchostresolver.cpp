@@ -13,7 +13,7 @@ wxEvent* fzAsyncHostResolveEvent::Clone() const
 	return new fzAsyncHostResolveEvent(GetId());
 }
 
-CAsyncHostResolver::CAsyncHostResolver(wxEvtHandler *pOwner, wxString hostname) : wxThread(wxTHREAD_JOINABLE)
+CAsyncHostResolver::CAsyncHostResolver(wxEvtHandler *pOwner, wxString hostname) : wxThreadEx(wxTHREAD_JOINABLE)
 {
 	m_bObsolete = false;
 	m_pOwner = pOwner;
@@ -26,7 +26,7 @@ CAsyncHostResolver::~CAsyncHostResolver()
 {
 }
 
-wxThread::ExitCode CAsyncHostResolver::Entry()
+wxThreadEx::ExitCode CAsyncHostResolver::Entry()
 {
 	m_bSuccessful = m_Address.Hostname(m_Hostname);
 

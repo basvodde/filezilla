@@ -14,7 +14,7 @@ wxEvent* CIOThreadEvent::Clone() const
 }
 
 CIOThread::CIOThread()
-	: wxThread(wxTHREAD_JOINABLE), m_evtHandler(0), m_pFile(0), m_condition(m_mutex)
+	: wxThreadEx(wxTHREAD_JOINABLE), m_evtHandler(0), m_pFile(0), m_condition(m_mutex)
 {
 	for (unsigned int i = 0; i < BUFFERCOUNT; i++)
 	{
@@ -59,13 +59,13 @@ bool CIOThread::Create(wxFile* pFile, bool read, bool binary)
 	}
 
 	m_running = true;
-	wxThread::Create();
-	wxThread::Run();
+	wxThreadEx::Create();
+	wxThreadEx::Run();
 
 	return true;
 }
 
-wxThread::ExitCode CIOThread::Entry()
+wxThreadEx::ExitCode CIOThread::Entry()
 {
 	if (m_read)
 	{
@@ -184,6 +184,8 @@ wxThread::ExitCode CIOThread::Entry()
 
 int CIOThread::GetNextWriteBuffer(char** pBuffer, int len /*=BUFFERSIZE*/)
 {
+	wxASSERT(!m_destroyed);
+
 	wxMutexLocker locker(m_mutex);
 
 	if (m_error)
@@ -244,6 +246,7 @@ bool CIOThread::Finalize(int len)
 
 int CIOThread::GetNextReadBuffer(char** pBuffer)
 {
+	wxASSERT(!m_destroyed);
 	wxASSERT(m_read);
 
 	int newBuf = (m_curAppBuf + 1) % BUFFERCOUNT;

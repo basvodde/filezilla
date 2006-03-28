@@ -69,11 +69,11 @@ EVT_SFTP(CSftpControlSocket::OnSftpEvent)
 EVT_END_PROCESS(wxID_ANY, CSftpControlSocket::OnTerminate)
 END_EVENT_TABLE();
 
-class CSftpInputThread : public wxThread
+class CSftpInputThread : public wxThreadEx
 {
 public:
 	CSftpInputThread(CSftpControlSocket* pOwner, wxProcess* pProcess)
-		: wxThread(wxTHREAD_JOINABLE), m_pProcess(pProcess),
+		: wxThreadEx(wxTHREAD_JOINABLE), m_pProcess(pProcess),
 		  m_pOwner(pOwner)
 	{
 
@@ -1341,7 +1341,7 @@ int CSftpControlSocket::DoClose(int nErrorCode /*=FZ_REPLY_DISCONNECTED*/)
 {
 	if (m_pInputThread)
 	{
-		wxThread* pThread = m_pInputThread;
+		wxThreadEx* pThread = m_pInputThread;
 		m_pInputThread = 0;
 		wxProcess::Kill(m_pid, wxSIGKILL);
 		m_inDestructor = true;

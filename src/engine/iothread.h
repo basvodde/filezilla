@@ -29,7 +29,8 @@ enum IORet
 	IO_Again = -1
 };
 
-class CIOThread : public wxThread
+#include "threadex.h"
+class CIOThread : public wxThreadEx
 {
 public:
 	CIOThread();
