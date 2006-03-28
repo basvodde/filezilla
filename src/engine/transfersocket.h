@@ -11,7 +11,8 @@ enum TransferMode
 {
 	list,
 	upload,
-	download
+	download,
+	resumetest
 };
 
 class CIOThread;
@@ -65,7 +66,6 @@ protected:
 
 	char *m_pTransferBuffer;
 	int m_transferBufferLen;
-	int m_tranferBufferPos;
 
 	// Set to true if OnClose got called
 	// We now have to read all available data in the socket, ignoring any

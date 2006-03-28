@@ -44,6 +44,9 @@ CTransferSocket::~CTransferSocket()
 	delete m_pSocketServer;
 	if (!m_pSocketClient && !m_pSocketServer)
 		delete m_pSocket;
+	m_pSocketClient = 0;
+	m_pSocketServer = 0;
+	m_pSocket = 0;
 
 	if (m_pControlSocket)
 	{
@@ -200,6 +203,27 @@ void CTransferSocket::OnReceive()
 		else //!numread
 			FinalizeWrite();
 	}
+	else if (m_transferMode == resumetest)
+	{
+		char buffer[2];
+		m_pSocket->Read(buffer, 2);
+		if (m_pSocket->Error())
+		{
+			if (m_pSocket->LastError() != wxSOCKET_WOULDBLOCK)
+				TransferEnd(1);
+			return;
+		}
+		int numread = m_pSocket->LastCount();
+		if (!numread)
+		{
+			TransferEnd(0);
+			return;
+		}
+		m_transferBufferLen += numread;
+
+		if (m_transferBufferLen > 1)
+			TransferEnd(2);
+	}
 }
 
 void CTransferSocket::OnSend()
@@ -262,6 +286,14 @@ void CTransferSocket::OnClose(wxSocketEvent &event)
 		m_pSocket->Peek(&buffer, 1);
 	}
 
+	if (m_transferMode == resumetest)
+	{
+		if (m_transferBufferLen != 1)
+		{
+			TransferEnd(2);
+			return;
+		}
+	}
 	TransferEnd(0);
 }
 

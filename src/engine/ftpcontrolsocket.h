@@ -37,6 +37,7 @@ protected:
 							 const CFileTransferCommand::t_transferSettings& transferSettings);
 	int FileTransferParseResponse();
 	int FileTransferSend(int prevResult = FZ_REPLY_OK);
+	int FileTransferTestResumeCapability();
 
 	virtual int RawCommand(const wxString& command = _T(""));
 
@@ -117,18 +118,12 @@ class CFtpTransferOpData
 {
 public:
 	CFtpTransferOpData();
-	bool bPasv;
-	bool bTriedPasv;
-	bool bTriedActive;
 
 	int transferEndReason;
 	bool tranferCommandSent;
 
 	wxLongLong resumeOffset;
 	bool binary;
-
-	int port;
-	wxString host;
 };
 
 class CFtpFileTransferOpData : public CFileTransferOpData, public CFtpTransferOpData
