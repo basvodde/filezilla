@@ -2,10 +2,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla 3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-29 18:40+0200\n"
+"POT-Creation-Date: 2006-04-05 00:01+0200\n"
 "PO-Revision-Date: 2006-03-28 10:29+0100\n"
 "Last-Translator: Juraj Halcak <juraj@halcak.sk>\n"
-"Language-Team: Michal Molhanec <juraj@halcak.sk>\n"
+"Language-Team: Juraj Halcak <juraj@halcak.sk>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -57,7 +57,7 @@ msgstr "Kon&to:"
 
 #: resources.h:60 resources.h:106 resources.h:286
 msgid "&Active"
-msgstr "&Aktívne"
+msgstr "&Aktívny"
 
 #: resources.h:245 resources.h:255
 msgid "&Add files to queue"
@@ -81,7 +81,7 @@ msgstr "&Automatická detekcia"
 
 #: resources.h:93
 msgid "&Binary"
-msgstr "&Binárne"
+msgstr "&Binárny"
 
 #: resources.h:52
 msgid "&Browse..."
@@ -142,7 +142,7 @@ msgstr "&Spustiť"
 
 #: resources.h:111 resources.h:294
 msgid "&Fall back to active mode"
-msgstr ""
+msgstr "&Vrátiť sa k aktívnemu režimu"
 
 #: resources.h:226
 msgid "&File"
@@ -186,7 +186,7 @@ msgstr "Obmed&ziť počet súčasných spojení"
 
 #: resources.h:34
 msgid "&Logontype:"
-msgstr "Zpôso&b prihlasovania:"
+msgstr "Spôso&b prihlasovania:"
 
 #: resources.h:272
 msgid "&Low"
@@ -269,9 +269,8 @@ msgid "&Resume"
 msgstr "&Obnoviť"
 
 #: resources.h:103
-#, fuzzy
 msgid "&Run configuration wizard now..."
-msgstr "S&prievodca nastavením siete"
+msgstr "Sp&rievodca nastavením siete"
 
 #: resources.h:183
 msgid "&Save as..."
@@ -298,7 +297,6 @@ msgid "&Skip"
 msgstr "Pres&kočiť"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:207
-#, fuzzy
 msgid "&Test"
 msgstr "&Test"
 
@@ -311,7 +309,6 @@ msgid "&Transfer mode:"
 msgstr "&Režim prenosu:"
 
 #: resources.h:100
-#, fuzzy
 msgid "&Treat dotfiles (filenames starting with a dot) as Ascii files"
 msgstr "Rozpoznávať súbory začínajúce bodkou ako ASCII súbory"
 
@@ -324,9 +321,8 @@ msgid "&Upload"
 msgstr "&Nahráť na server"
 
 #: resources.h:110
-#, fuzzy
 msgid "&Use the server's external IP address instead"
-msgstr "Zadajte prosím svoju externú IP adresu."
+msgstr "Použij externú IP adresu."
 
 #: resources.h:40
 msgid "&User:"
@@ -352,6 +348,15 @@ msgstr "-"
 #: ../../locales/../src/interface/statuslinectrl.cpp:124
 msgid "--:--:-- left"
 msgstr "--:--:-- zostáva"
+
+#: ../../locales/../src/interface/RemoteListView.cpp:257
+msgid "<Listing failed>"
+msgstr ""
+
+#: ../../locales/../src/interface/RemoteListView.cpp:284
+#, fuzzy
+msgid "<Not connected to any server>"
+msgstr "Nedá sa spojiť so serverom"
 
 #: resources.h:283
 msgid ""
@@ -406,12 +411,10 @@ msgid "Account"
 msgstr "Konto"
 
 #: ../../locales/../src/interface/settingsdialog.cpp:79
-#, fuzzy
 msgid "Active mode"
-msgstr "IP adresa pre aktívny režim"
+msgstr "Aktívny mód"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:434
-#, fuzzy
 msgid ""
 "Active mode FTP test failed. FileZilla does not know the correct external IP "
 "address."
@@ -454,11 +457,8 @@ msgid "Advanced"
 msgstr "Pokročilé"
 
 #: resources.h:310
-#, fuzzy
 msgid "All ports in the given range have to be between 1024 and 65535."
-msgstr ""
-"Všetky zadané porty musia byť medzi 1 a 65535. Taktiež sa veľmi odporúča "
-"použíť iba porty vyššie ako 1024."
+msgstr "Všetky zadané porty musia byť medzi 1024 a 65535."
 
 #: resources.h:35 ../../locales/../src/interface/sitemanager.cpp:585
 #: ../../locales/../src/interface/sitemanager.cpp:770
@@ -521,7 +521,6 @@ msgid "Build information"
 msgstr "Informácie o zostavení"
 
 #: resources.h:215
-#, fuzzy
 msgid ""
 "By default uses any available local port to establish transfers in active "
 "mode. If you want to limit FileZilla to use only a small range of ports, "
@@ -529,7 +528,7 @@ msgid ""
 msgstr ""
 "Štandardne FileZilla používa ktorýkoľvek dostupný lokálny port k nadviazaniu "
 "spojenia\n"
-"v aktivnom režime. Ak to chcete obmedziť, zadajte rozsah portov, které\n"
+"v aktivnom režime. Ak to chcete obmedziť, zadajte rozsah portov, ktoré\n"
 "sa môžu používať:"
 
 #: resources.h:276
@@ -574,7 +573,7 @@ msgstr "Nedá sa načítať hlavné menu zo súboru prostriedkov"
 msgid "Cannot load toolbar from resource file"
 msgstr "Nedá sa načítať nástrojová lišta zo súboru prostriedkov"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1088
+#: ../../locales/../src/interface/RemoteListView.cpp:1110
 msgid "Cannot rename file"
 msgstr "Nedá sa premenovať súbor"
 
@@ -599,7 +598,6 @@ msgid "Charset"
 msgstr "Znaková sada"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:576
-#, fuzzy
 msgid "Checking for correct external IP address"
 msgstr "Zadajte prosím svoju externú IP adresu."
 
@@ -626,9 +624,8 @@ msgstr "Príkaz:"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:328
 #: ../../locales/../src/interface/netconfwizard.cpp:343
-#, fuzzy
 msgid "Communication tainted by router"
-msgstr "Pokus o pripojenie prerušené užívateľom"
+msgstr "Zlyhala komunikácia s routerom"
 
 #: resources.h:154
 msgid "Compiled with:"
@@ -655,12 +652,11 @@ msgid "Configure port range"
 msgstr "Nastavenie rozsahu portov"
 
 #: ../../locales/../src/interface/LocalListView.cpp:805
-#: ../../locales/../src/interface/RemoteListView.cpp:715
+#: ../../locales/../src/interface/RemoteListView.cpp:737
 msgid "Confirmation needed"
 msgstr "Vyžadované potvrdenie"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:397
-#, fuzzy
 msgid "Congratulations, your configuration seems to be working."
 msgstr "Gratulujeme, vaša konfigurácia vyzerá byť v poriadku."
 
@@ -685,34 +681,30 @@ msgid "Connecting to %s:%d..."
 msgstr "Pripájam %s:%d..."
 
 #: ../../locales/../src/interface/settingsdialog.cpp:78
-#, fuzzy
 msgid "Connection"
-msgstr "Pripájam sa"
+msgstr "Pripojenie"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:245
 msgid "Connection attempt interrupted by user"
 msgstr "Pokus o pripojenie prerušený užívateľom"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:376
-#, fuzzy
 msgid "Connection closed"
-msgstr "Pripojenie uzavreté"
+msgstr "Spojenie ukončené"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:241
 msgid "Connection established, waiting for welcome message..."
 msgstr "Spojenie nadviazané, čakám na uvítaciu správu..."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:285
-#, fuzzy
 msgid "Connection lost"
 msgstr "Spojenie prerušené"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:393
 msgid "Connection with server got closed prematurely."
-msgstr "Spojenie so serverom bolo prerušené."
+msgstr "Spojenie so serverom bolo predčasne prerušené."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:385
-#, fuzzy
 msgid "Connection with the test server failed."
 msgstr "Spojenie s testovacím serverom sa nepodarilo"
 
@@ -724,7 +716,7 @@ msgstr "&Kopírovať"
 msgid "Could not connect to server"
 msgstr "Nedá sa spojiť so serverom"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2628
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2638
 msgid "Could not establish connection to server"
 msgstr "Nedá sa nadviazať spojenie so serverom"
 
@@ -800,16 +792,16 @@ msgstr ""
 msgid "Could not parse server address:"
 msgstr "Nedá sa prečítať adresa servera:"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1447
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1457
 #, c-format
 msgid "Could not seek to offset %s within file"
 msgstr "Nedá sa presunúť na offset %s vo vnútri súboru"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1380
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1390
 msgid "Could not seek to the end of the file"
 msgstr "Nedá sa presunúť na koniec súboru"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1469
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1479
 msgid "Could not spawn IO thread"
 msgstr "Nedá sa spustiť vlákno pre vstup a výstup"
 
@@ -839,11 +831,11 @@ msgstr "Nechá FileZillu spadnúť. Používa sa k ladeniu obsluhy výnimiek"
 msgid "Create a new subdirectory in the current directory"
 msgstr "Vytvoriť podadresár v aktuálnom adresáry"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:654
+#: ../../locales/../src/interface/RemoteListView.cpp:676
 msgid "Create directory"
 msgstr "Vytvoriť adresár"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1889
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1899
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1411
 #, c-format
 msgid "Creating directory '%s'..."
@@ -873,7 +865,7 @@ msgstr "&Zakázať všetky"
 msgid "D&iscard"
 msgstr "Stor&no"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:50
+#: ../../locales/../src/interface/RemoteListView.cpp:52
 msgid "Date"
 msgstr "Dátum"
 
@@ -887,7 +879,7 @@ msgstr "Neznámy dátum a čas"
 #: resources.h:46 ../../locales/../src/interface/sitemanager.cpp:776
 #: ../../locales/../src/interface/sitemanager.cpp:853
 msgid "Default"
-msgstr "Východzie"
+msgstr "Východzí"
 
 #: resources.h:51
 msgid "Default &local directory:"
@@ -907,7 +899,7 @@ msgstr "Východzí typ spojenia:"
 
 #: resources.h:223 resources.h:301
 msgid "Default: http://ip.filezilla-project.org/ip.php"
-msgstr "Východzí: http://ip.filezilla-project.org/ip.php"
+msgstr "Východzia: http://ip.filezilla-project.org/ip.php"
 
 #: resources.h:250 resources.h:260
 msgid "Delete selected files and folders"
@@ -1107,30 +1099,26 @@ msgstr "Nepodarilo sa zmeniť jazyk"
 msgid "Failed to create backup copy of xml file"
 msgstr "Nedá sa vytvoriť záložná kópia XML súboru"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2607
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2611
-#, fuzzy
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2617
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2621
 msgid "Failed to create listening socket for active mode transfer"
-msgstr ""
-"Nepodarilo sa vytvoriť počúvajúci soket pre aktivny režim prenosu, skúša sa "
-"použiť pasívny režim"
+msgstr "Nepodarilo sa vytvoriť počúvajúci soket pre aktivny režim prenosu"
 
 #: ../../locales/../src/interface/settingsdialog.cpp:137
-#, fuzzy
 msgid "Failed to load panels, invalid resource files?"
 msgstr "Nedá sa načítať hlavné menu zo súboru prostriedkov"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1371
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1381
 #, c-format
 msgid "Failed to open \"%s\" for appending / writing"
 msgstr "Nedá sa otvoríť \"%s\" pre pridávanie / zapisovanie"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1431
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1441
 #, c-format
 msgid "Failed to open \"%s\" for reading"
 msgstr "Nedá sa otvoriť \"%s\" pre čítanie"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1408
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1418
 #, c-format
 msgid "Failed to open \"%s\" for writing"
 msgstr "Nedá sa otvoriť \"%s\" pre zapisovanie"
@@ -1140,26 +1128,22 @@ msgid "Failed to retrieve directory listing"
 msgstr "Nedá sa získať výpis adresára"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:530
-#, fuzzy
 msgid "Failed to retrieve external ip address, aborting"
 msgstr "Nedá sa získať externá IP adresa, prerušenie"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2379
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2389
 msgid "Failed to retrieve external ip address, using local address"
 msgstr "Nedá sa získať externá IP adresa, skúšam lokálnu adresu"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2397
-#, fuzzy
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2407
 msgid "Failed to retrieve local ip address."
 msgstr "Nedá sa získať lokálna IP adresa"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:499
-#, fuzzy
 msgid "Failed to retrieve local ip address. Aborting"
 msgstr "Nedá sa získať lokálna IP adresa. Koniec"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:445
-#, fuzzy
 msgid "Failed to retrieve the external IP address."
 msgstr "Nedá sa získať externá IP adresa."
 
@@ -1188,9 +1172,9 @@ msgstr "Sú&bory"
 #: ../../locales/../src/interface/LocalListView.cpp:394
 #: ../../locales/../src/interface/LocalListView.cpp:412
 #: ../../locales/../src/interface/LocalListView.cpp:416
-#: ../../locales/../src/interface/RemoteListView.cpp:429
-#: ../../locales/../src/interface/RemoteListView.cpp:447
 #: ../../locales/../src/interface/RemoteListView.cpp:451
+#: ../../locales/../src/interface/RemoteListView.cpp:469
+#: ../../locales/../src/interface/RemoteListView.cpp:473
 msgid "File"
 msgstr "Súbor"
 
@@ -1198,7 +1182,7 @@ msgstr "Súbor"
 msgid "File Types"
 msgstr "Typy súborov"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1103
+#: ../../locales/../src/interface/RemoteListView.cpp:1125
 msgid "File exists"
 msgstr "Súbor existuje"
 
@@ -1221,11 +1205,11 @@ msgstr ""
 
 #: ../../locales/../src/interface/filteredit.cpp:5
 #: ../../locales/../src/interface/LocalListView.cpp:34
-#: ../../locales/../src/interface/RemoteListView.cpp:47
+#: ../../locales/../src/interface/RemoteListView.cpp:49
 msgid "Filename"
 msgstr "Meno súboru"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1088
+#: ../../locales/../src/interface/RemoteListView.cpp:1110
 msgid "Filename invalid"
 msgstr "Neplatné meno súboru"
 
@@ -1246,12 +1230,12 @@ msgstr ""
 
 #: ../../locales/../src/interface/filteredit.cpp:5
 #: ../../locales/../src/interface/LocalListView.cpp:35
-#: ../../locales/../src/interface/RemoteListView.cpp:48
+#: ../../locales/../src/interface/RemoteListView.cpp:50
 msgid "Filesize"
 msgstr "Veľkosť súboru"
 
 #: ../../locales/../src/interface/LocalListView.cpp:36
-#: ../../locales/../src/interface/RemoteListView.cpp:49
+#: ../../locales/../src/interface/RemoteListView.cpp:51
 msgid "Filetype"
 msgstr "Typ súboru"
 
@@ -1284,7 +1268,7 @@ msgid "Firewall and router configuration wizard"
 msgstr "Sprievodca nastavením firewallu a routeru"
 
 #: ../../locales/../src/interface/LocalListView.cpp:416
-#: ../../locales/../src/interface/RemoteListView.cpp:451
+#: ../../locales/../src/interface/RemoteListView.cpp:473
 msgid "Folder"
 msgstr "Adresár"
 
@@ -1297,7 +1281,6 @@ msgstr ""
 "sprievodcu sieťovaj konfigurácie."
 
 #: resources.h:311
-#, fuzzy
 msgid "For reliability you should specify a range of at least 10 ports."
 msgstr "Pre zaistenie spoľahlivosti zadajte rozsah aspoň 10 portov."
 
@@ -1334,9 +1317,8 @@ msgid "Highest"
 msgstr "Najvyššia"
 
 #: ../../locales/../src/interface/optionspage_connection_active.cpp:75
-#, fuzzy
 msgid "Highest available port has to be a number between 1024 and 65535."
-msgstr "Najvyššia využiteľný port musí byť číslo medzi 1 a 65535."
+msgstr "Najvyššia využiteľný port musí byť číslo medzi 1024 a 65535."
 
 #: resources.h:191
 msgid ""
@@ -1390,7 +1372,6 @@ msgstr ""
 "vykoná niekoľko jednoduchých testov."
 
 #: resources.h:98
-#, fuzzy
 msgid ""
 "If you enter the wrong filetypes, those files may get corrupted when "
 "transferred."
@@ -1403,7 +1384,6 @@ msgid "If you get any errors, your configuration is not correct."
 msgstr "Pokiaľ budú výsledkom nejaké chyby, vaše nastavenie nie je v poriadku."
 
 #: resources.h:107
-#, fuzzy
 msgid ""
 "If you have problems to retrieve directory listings or to transfer files, "
 "try to toggle the passive mode setting."
@@ -1561,7 +1541,7 @@ msgstr "Lokálne filtre:"
 
 #: ../../locales/../src/interface/viewheader.cpp:252
 msgid "Local site:"
-msgstr "Lokálny miesto:"
+msgstr "Lokálne miesto:"
 
 #: ../../locales/../src/interface/QueueView.cpp:713
 msgid "Low"
@@ -1572,9 +1552,8 @@ msgid "Lowest"
 msgstr "Najnižšia"
 
 #: ../../locales/../src/interface/optionspage_connection_active.cpp:64
-#, fuzzy
 msgid "Lowest available port has to be a number between 1024 and 65535."
-msgstr "Najnižší využiteľný port musí byť číslo medzi 1 a 65535."
+msgstr "Najnižší využiteľný port musí byť číslo medzi 1024 a 65535."
 
 #: resources.h:49 ../../locales/../src/interface/sitemanager.cpp:641
 #: ../../locales/../src/interface/sitemanager.cpp:847
@@ -1624,7 +1603,7 @@ msgstr "Nový &adresár"
 msgid "New filter"
 msgstr "Nový filter"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:668
+#: ../../locales/../src/interface/RemoteListView.cpp:690
 #: ../../locales/../src/interface/sitemanager.cpp:354
 #: ../../locales/../src/interface/sitemanager.cpp:377
 msgid "New folder"
@@ -1635,10 +1614,9 @@ msgstr "Nový adresár"
 msgid "New site"
 msgstr "Nové miesto"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2359
-#, fuzzy
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2369
 msgid "No external IP address set, trying default."
-msgstr "Získať externú IP adresu z následujúcej URL:"
+msgstr "Nenastavená žiadna externá IP adresa, skúšam východziu."
 
 #: ../../locales/../src/engine/server.cpp:14
 #: ../../locales/../src/engine/server.cpp:78
@@ -1659,7 +1637,7 @@ msgstr "V themes.xml nie sú žiadne témy"
 #: ../../locales/../src/interface/sitemanager.cpp:617
 #: ../../locales/../src/interface/sitemanager.cpp:817
 msgid "Normal"
-msgstr "Normálne"
+msgstr "Normálny"
 
 #: resources.h:19 resources.h:126 resources.h:145 resources.h:156
 #: resources.h:166 resources.h:178 resources.h:192 resources.h:211
@@ -1671,6 +1649,8 @@ msgid ""
 "On the following pages, both active and passive mode will be configured, so "
 "you can connect to servers which reject either transfer mode."
 msgstr ""
+"Na nasledujúcich stránkach bude nastavený aktívny aj pasívny režim, aby ste "
+"sa mohli spojiť so serverom, ak by jeden z režimov odmietol."
 
 #: resources.h:329 resources.h:330
 msgid "Open the Site Manager"
@@ -1685,7 +1665,6 @@ msgid "Opens the Site Manager"
 msgstr "Otvorí správcu miest"
 
 #: resources.h:101
-#, fuzzy
 msgid "Overview"
 msgstr "Náhľad"
 
@@ -1693,7 +1672,7 @@ msgstr "Náhľad"
 msgid "Overwrite &if newer"
 msgstr "Prepísať, ak je &novší"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:53
+#: ../../locales/../src/interface/RemoteListView.cpp:55
 msgid "Owner / Group"
 msgstr "Vlastník / skupina"
 
@@ -1702,9 +1681,8 @@ msgid "Owner permissions"
 msgstr "Oprávnenie vlastníka"
 
 #: resources.h:105
-#, fuzzy
 msgid "Pa&ssive (recommended)"
-msgstr "Pasívny (doporučený)"
+msgstr "Pa&sívny (doporučený)"
 
 #: resources.h:41 resources.h:325
 msgid "Pass&word:"
@@ -1715,7 +1693,6 @@ msgid "Passive (recommended)"
 msgstr "Pasívny (doporučený)"
 
 #: resources.h:108
-#, fuzzy
 msgid "Passive mode"
 msgstr "Pasívny režim"
 
@@ -1725,7 +1702,7 @@ msgstr "Pasívny režim"
 msgid "Passive mode has been set as default transfer mode."
 msgstr "Pasívny mód bol nastavený ak predvolený mód."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:52
+#: ../../locales/../src/interface/RemoteListView.cpp:54
 msgid "Permissions"
 msgstr "Oprávnenia"
 
@@ -1779,7 +1756,7 @@ msgstr ""
 "Prosím zadajte priamy FTP príkaz.\n"
 "Použitie priameho FTP príkazu vymaže cache složiek."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:654
+#: ../../locales/../src/interface/RemoteListView.cpp:676
 msgid "Please enter the name of the directory which should be created:"
 msgstr "Zadajte prosím meno adresára, ktorý má byť vytvorený:"
 
@@ -1800,6 +1777,8 @@ msgid ""
 "Please follow the instructions carefully, as wrong configuration will "
 "prevent successful FTP connections."
 msgstr ""
+"Dodržujte pozorne pokyny, lebo nesprávne nastavenia znomožnia úspešne "
+"nadviazať FTP spojenie."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:405
 msgid ""
@@ -1918,7 +1897,7 @@ msgid "Really cancel current operation?"
 msgstr "Skutočne si prajete prerušiť aktuálnu operáciu?"
 
 #: ../../locales/../src/interface/LocalListView.cpp:805
-#: ../../locales/../src/interface/RemoteListView.cpp:715
+#: ../../locales/../src/interface/RemoteListView.cpp:737
 msgid "Really delete all selected files and/or directories?"
 msgstr "Chcete skutočne odstrániť všetky zvolené súbory a/alebo adresáre?"
 
@@ -1958,7 +1937,7 @@ msgstr "Premenovať súbor"
 msgid "Rename selected files and folders"
 msgstr "Premenovať zvolené súbory a adresáre"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2086
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2096
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1831
 #, c-format
 msgid "Renaming '%s' to '%s'"
@@ -1975,11 +1954,11 @@ msgstr "Odpoveď:"
 msgid "Retrieving directory listing..."
 msgstr "Prijímam výpis adresára..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2367
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2377
 #: ../../locales/../src/interface/netconfwizard.cpp:518
-#, fuzzy, c-format
+#, c-format
 msgid "Retrieving external IP address from %s"
-msgstr "Získať externú IP adresu z následujúcej URL:"
+msgstr "Získať externú IP adresu z %s"
 
 #: resources.h:33 ../../locales/../src/interface/sitemanager.cpp:404
 #: ../../locales/../src/interface/sitemanager.cpp:611
@@ -1988,7 +1967,6 @@ msgid "SFTP"
 msgstr "SFTP"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:629
-#, fuzzy
 msgid "Save settings?"
 msgstr "Uložiť nastavenia?"
 
@@ -2020,27 +1998,27 @@ msgstr "Pošle užívateľom zadaný, ináč nedostupný, príkaz serveru"
 msgid "Server / Local file"
 msgstr "Server / lokálny súbor"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2686
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2696
 #, c-format
 msgid "Server does not support resume of files > %d GB."
 msgstr ""
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2682
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2692
 #, c-format
 msgid ""
 "Server does not support resume of files > %d GB. End transfer since "
 "filesizes match."
 msgstr ""
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1315
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1325
 msgid "Server does not support resume of files > 2GB."
 msgstr ""
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1310
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1320
 msgid "Server does not support resume of files > 4GB."
 msgstr ""
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2697
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2707
 #, c-format
 msgid ""
 "Server may not support resume of files > %d GB. End transfer since filesizes "
@@ -2057,7 +2035,7 @@ msgstr "Server vyžaduje konto. Zadajte ho pomocou správcu miest."
 msgid "Server sent invalid reply."
 msgstr "Server poslal neplatnú odpoveď"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2328
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2338
 msgid ""
 "Server sent passive reply with unroutable address. Using server address "
 "instead."
@@ -2071,7 +2049,7 @@ msgstr "T&yp servera:"
 msgid "Set &Priority"
 msgstr "Nastav priorit&u"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2205
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2215
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1729
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
@@ -2100,16 +2078,16 @@ msgstr "Veľkosť"
 msgid "Size unknown"
 msgstr "Neznáma veľkosť"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1587
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1672
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1597
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1682
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:459
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:532
 #, c-format
 msgid "Skipping download of %s"
 msgstr "Vynechávam sťahovanie %s"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1591
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1676
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1601
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1686
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:463
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:536
 #, c-format
@@ -2125,14 +2103,16 @@ msgid ""
 "Some misconfigured remote servers which are behind a router, may reply with "
 "their local ip address."
 msgstr ""
+"Niektoré nesprávne nastavené servery, ktoré sú za routerom, môžu sa hlásiť "
+"svojou lokálnou IP adresou."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:986
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:996
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1060
 #, c-format
 msgid "Starting download of %s"
 msgstr "Začínam sťahovať %s"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:990
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1000
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1064
 #, c-format
 msgid "Starting upload of %s"
@@ -2158,15 +2138,14 @@ msgid ""
 msgstr ""
 
 #: resources.h:320
-#, fuzzy
 msgid "Summary of test results:"
-msgstr "Výsledky testu"
+msgstr "Výsledky testu:"
 
 #: resources.h:1
 msgid "Target file already exists"
 msgstr "Cieľový súbor už existuje"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1103
+#: ../../locales/../src/interface/RemoteListView.cpp:1125
 msgid "Target filename already exists, really continue?"
 msgstr "Cieľové meno súboru už existuje, chcete skutočne pokračovať?"
 
@@ -2174,7 +2153,7 @@ msgstr "Cieľové meno súboru už existuje, chcete skutočne pokračovať?"
 msgid "Test results"
 msgstr "Výsledky testu"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2703
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2713
 msgid "Testing resume capabilities of server"
 msgstr ""
 
@@ -2287,7 +2266,7 @@ msgstr ""
 "Tento sprievodca vám pomôže správne nastaviť vaše routery a firewally a "
 "otestovať vaše nastavenia."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:51
+#: ../../locales/../src/interface/RemoteListView.cpp:53
 msgid "Time"
 msgstr "Čas"
 
@@ -2386,9 +2365,8 @@ msgid "Use the following port range:"
 msgstr "Použiť následujúci rozsah portov:"
 
 #: resources.h:293
-#, fuzzy
 msgid "Use the server's external &IP address instead"
-msgstr "Zadajte prosím svoju externú IP adresu."
+msgstr "Použij namiesto toho externú &IP adresu."
 
 #: resources.h:221 resources.h:299
 msgid ""
@@ -2450,7 +2428,6 @@ msgstr "Záp&is"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:335
 #: ../../locales/../src/interface/netconfwizard.cpp:342
-#, fuzzy
 msgid "Wrong external IP address"
 msgstr "Nesprávna externá IP adresa:"
 
@@ -2489,8 +2466,8 @@ msgstr "je rovné"
 
 #: ../../locales/../src/interface/LocalListView.cpp:391
 #: ../../locales/../src/interface/LocalListView.cpp:409
-#: ../../locales/../src/interface/RemoteListView.cpp:426
-#: ../../locales/../src/interface/RemoteListView.cpp:444
+#: ../../locales/../src/interface/RemoteListView.cpp:448
+#: ../../locales/../src/interface/RemoteListView.cpp:466
 msgid "file"
 msgstr "súbor"
 
@@ -2526,7 +2503,7 @@ msgstr "následujúcim súborom?"
 #~ msgstr "Návrat k aktívnemu módu"
 
 #~ msgid "&Use passive mode"
-#~ msgstr "&Použíť pasívny režim"
+#~ msgstr "&Použij pasívny režim"
 
 #~ msgid "Could not establish passive connection to server"
 #~ msgstr "Nedá sa nadviazať pasívne spojenie so serverom"
