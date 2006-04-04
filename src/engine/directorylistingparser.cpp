@@ -112,20 +112,21 @@ static char data[][110]={
 	"  WPTA01 3290   2004/03/04  1    3  FB      80  3125  PO  49-MVS.DATASET",
 	"  TSO004 3390   VSAM 50-mvs-file",
 	"  TSO005 3390   2005/06/06 213000 U 0 27998 PO 51-mvs-dir",
+	"  NRP004 3390   **NONE**    1   15  NONE     0     0  PO  52-MVS-NONEDATE.DATASET",
 
 	/* Dataset members */
 	// Name         VV.MM   Created      Changed       Size  Init  Mod Id
 	// ADATAB /* filenames without data, only check for those on MVS servers */
-	"  52-MVSPDSMEMBER 01.01 2004/06/22 2004/06/22 16:32   128   128    0 BOBY12",
+	"  53-MVSPDSMEMBER 01.01 2004/06/22 2004/06/22 16:32   128   128    0 BOBY12",
 
-	"53-MVSPDSMEMBER2 00B308 000411  00 FO                31    ANY",
-	"54-MVSPDSMEMBER3 00B308 000411  00 FO        RU      ANY    24",
+	"54-MVSPDSMEMBER2 00B308 000411  00 FO                31    ANY",
+	"55-MVSPDSMEMBER3 00B308 000411  00 FO        RU      ANY    24",
 
 	// Some asian listing format. Those >127 chars are just examples
-	"-rwxrwxrwx   1 root     staff          0 2003   3\xed\xef 20 55-asian date file",
-	"-r--r--r-- 1 root root 2096 8\xed 17 08:52 56-asian date file",
+	"-rwxrwxrwx   1 root     staff          0 2003   3\xed\xef 20 56-asian date file",
+	"-r--r--r-- 1 root root 2096 8\xed 17 08:52 57-asian date file",
 
-	"-r-xr-xr-x   2 root  root  96 2004.07.15   57-dotted-date file",
+	"-r-xr-xr-x   2 root  root  96 2004.07.15   58-dotted-date file",
 
 	""};
 
@@ -2012,7 +2013,10 @@ bool CDirectoryListingParser::ParseAsIBM_MVS(CLine *pLine, CDirentry &entry)
 	// Referred date
 	if (!pLine->GetToken(index++, token))
 		return false;
-	if (!ParseShortDate(token, entry))
+
+	if (token.GetString() == _T("**NONE**"))
+		entry.hasDate = false;
+	else if (!ParseShortDate(token, entry))
 	{
 		// Perhaps of the following type:
 		// TSO004 3390 VSAM FOO.BAR
