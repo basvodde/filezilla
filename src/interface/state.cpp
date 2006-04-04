@@ -116,6 +116,11 @@ bool CState::SetRemoteDir(const CDirectoryListing *pDirectoryListing, bool modif
 		return true;
 	}
 
+	if (m_pDirectoryListing && pDirectoryListing && 
+		m_pDirectoryListing->path == pDirectoryListing->path && 
+		pDirectoryListing->m_failed)
+		return true;
+
 	CDirectoryListing *newListing = new CDirectoryListing;
 	*newListing = *pDirectoryListing;
 	

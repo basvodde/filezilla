@@ -44,6 +44,7 @@ public:
 	CDirectoryListing& operator=(const CDirectoryListing &a);
 
 	bool m_hasUnsureEntries;
+	bool m_failed;
 };
 
 #endif

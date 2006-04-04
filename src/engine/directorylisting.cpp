@@ -5,6 +5,7 @@ CDirectoryListing::CDirectoryListing()
 	m_pEntries = 0;
 	m_entryCount = 0;
 	m_hasUnsureEntries = false;
+	m_failed = false;
 }
 
 CDirectoryListing::~CDirectoryListing()
@@ -21,6 +22,9 @@ CDirectoryListing& CDirectoryListing::operator=(const CDirectoryListing &a)
 		delete [] m_pEntries;
 
 	path = a.path;
+
+	m_hasUnsureEntries = a.m_hasUnsureEntries;
+	m_failed = a.m_failed;
 
 	m_entryCount = a.m_entryCount;
 	if (m_entryCount)

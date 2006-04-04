@@ -114,6 +114,9 @@ protected:
 
 	CChmodDialog* m_pChmodDlg;
 
+	wxStaticText* m_pInfoText;
+	void RepositionInfoText();
+
 	DECLARE_EVENT_TABLE()
 	void OnItemActivated(wxListEvent &event);
 	void OnColumnClicked(wxListEvent &event);
@@ -126,6 +129,7 @@ protected:
 	void OnBeginLabelEdit(wxListEvent& event);
 	void OnEndLabelEdit(wxListEvent& event);
 	void OnMenuChmod(wxCommandEvent& event);
+	void OnSize(wxSizeEvent& event);
 };
 
 #endif

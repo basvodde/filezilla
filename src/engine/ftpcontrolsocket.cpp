@@ -701,6 +701,16 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 				ResetOperation(FZ_REPLY_OK);
 				return FZ_REPLY_OK;
 			}
+			else
+			{
+				if (prevResult & FZ_REPLY_ERROR)
+				{
+					CDirectoryListing *pListing = new CDirectoryListing;
+					pListing->m_failed = true;
+					pListing->path = m_CurrentPath;
+					SendDirectoryListing(pListing);
+				}
+			}
 			
 			ResetOperation(FZ_REPLY_ERROR);
 			return FZ_REPLY_ERROR;

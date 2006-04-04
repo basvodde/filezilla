@@ -30,12 +30,14 @@ BEGIN_EVENT_TABLE(CRemoteListView, wxListCtrl)
 	EVT_MENU(XRCID("ID_CHMOD"), CRemoteListView::OnMenuChmod)
 	EVT_CHAR(CRemoteListView::OnChar)
 	EVT_LIST_END_LABEL_EDIT(wxID_ANY, CRemoteListView::OnEndLabelEdit)
+	EVT_SIZE(CRemoteListView::OnSize)
 END_EVENT_TABLE()
 
 CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState, CCommandQueue *pCommandQueue, CQueueView* pQueue)
 	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER | wxLC_EDIT_LABELS),
 	CSystemImageList(16)
 {
+	m_pInfoText = 0;
 	m_pDirectoryListing = 0;
 	m_pChmodDlg = 0;
 
@@ -96,6 +98,8 @@ CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState
 
 	SendMessage(header, HDM_SETIMAGELIST, 0, (LPARAM)m_pHeaderImageList->GetHandle());
 #endif
+
+	SetDirectoryListing(0);
 }
 
 CRemoteListView::~CRemoteListView()
@@ -243,6 +247,17 @@ void CRemoteListView::SetDirectoryListing(CDirectoryListing *pDirectoryListing, 
 
 	if (m_pDirectoryListing)
 	{
+		if (m_pInfoText)
+		{
+			delete m_pInfoText;
+			m_pInfoText = 0;
+		}
+		if (m_pDirectoryListing->m_failed)
+		{
+			m_pInfoText = new wxStaticText(this, wxID_ANY, _("<Listing failed>"), wxDefaultPosition, wxDefaultSize, wxTRANSPARENT_WINDOW);
+			m_pInfoText->SetBackgroundColour(GetBackgroundColour());
+			RepositionInfoText();
+		}
 		t_fileData data;
 		data.icon = -2;
 		data.pDirEntry = 0;
@@ -263,8 +278,15 @@ void CRemoteListView::SetDirectoryListing(CDirectoryListing *pDirectoryListing, 
 		}
 	}
 	else
+	{
 		StopRecursiveOperation();
+		delete m_pInfoText;
+		m_pInfoText = new wxStaticText(this, wxID_ANY, _("<Not connected to any server>"), wxDefaultPosition, wxDefaultSize, wxTRANSPARENT_WINDOW);
+		m_pInfoText->SetBackgroundColour(GetBackgroundColour());
+		RepositionInfoText();
+	}
 
+	Refresh();
 	SetItemCount(m_indexMapping.size());
 
 	SortList();
@@ -1326,4 +1348,20 @@ void CRemoteListView::ReselectItems(std::list<wxString>& selectedNames)
 		if (i == m_indexMapping.size())
 			break;
 	}
+}
+
+void CRemoteListView::OnSize(wxSizeEvent& event)
+{
+	RepositionInfoText();
+}
+
+void CRemoteListView::RepositionInfoText()
+{
+	if (!m_pInfoText)
+		return;
+
+	wxPoint point;
+	GetItemPosition(1, point);
+	point.x = (GetSize().GetWidth() - m_pInfoText->GetSize().GetWidth()) / 2;
+	m_pInfoText->SetPosition(point);
 }
