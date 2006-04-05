@@ -146,7 +146,6 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 	wxPoint pos = sizer->GetPosition();
 
 	// Rightmost valid x-coordinate
-	int maxX = pos.x + max;
 
 	for (unsigned int i = 0; i < sizer->GetChildren().GetCount(); i++)
 	{
@@ -155,7 +154,7 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 			continue;
 
 		wxRect rect = item->GetRect();
-		if (rect.GetRight() <= maxX)
+		if (rect.GetRight() <= max)
 		    continue;
 
 		wxWindow* window;
@@ -166,7 +165,7 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 			if (text)
 			{
 				wxString str = text->GetLabel();
-				str = WrapText(text, str,  maxX - rect.GetLeft());
+				str = WrapText(text, str,  max - rect.GetLeft());
 				text->SetLabel(str);
 				continue;
 			}
@@ -178,14 +177,14 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 				{
 					wxNotebookPage* page = book->GetPage(i);
 					wxRect rect = page->GetRect();
-					WrapRecursive(wnd, page->GetSizer(), maxX - rect.GetLeft());
+					WrapRecursive(wnd, page->GetSizer(), max - rect.GetLeft());
 				}
 				continue;
 			}
 		}
 		else if ((subSizer = item->GetSizer()))
 		{
-			WrapRecursive(wnd, subSizer, maxX - rect.GetLeft());
+			WrapRecursive(wnd, subSizer, max - rect.GetLeft());
 		}
 	}
 
