@@ -63,8 +63,20 @@ wxString CWrapEngine::WrapText(wxWindow* parent, const wxString &text, unsigned 
 		// Position of last wrappable character
 		const wxChar* wrappable = 0;
 
+		bool lastAmpersand = false;
 		while (*p)
 		{
+			if (*p == '&')
+			{
+				if (!lastAmpersand)
+				{
+					lastAmpersand = true;
+					p++;
+					continue;
+				}
+				else
+					lastAmpersand = false;
+			}
 			std::map<wxChar, unsigned int>::const_iterator iter = m_charWidths.find(*p);
 			if (iter == m_charWidths.end())
 			{
@@ -76,6 +88,7 @@ wxString CWrapEngine::WrapText(wxWindow* parent, const wxString &text, unsigned 
 			else
 				lineLength += iter->second;
 
+			wxASSERT(*p != '\r');
 			if (*p == '\n')
 			{
 				// Wrap on newline
@@ -105,7 +118,8 @@ wxString CWrapEngine::WrapText(wxWindow* parent, const wxString &text, unsigned 
 
 			if (lineLength > maxLength && wrappable)
 			{
-				wrappedText += wxString(str, wrappable - str) + _T("\n");
+				const wxString& tmp = wxString(str, wrappable - str);
+				wrappedText += tmp + _T("\n");
 				if (*wrappable != ' ')
 					str = wrappable;
 				else
@@ -153,8 +167,12 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 		if (!item)
 			continue;
 
+		int border = 0;
+		if (item->GetFlag() & wxRIGHT)
+			border = item->GetBorder();
+
 		wxRect rect = item->GetRect();
-		if (rect.GetRight() <= max)
+		if (rect.GetRight() <= (max - border))
 		    continue;
 
 		wxWindow* window;
@@ -165,7 +183,7 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 			if (text)
 			{
 				wxString str = text->GetLabel();
-				str = WrapText(text, str,  max - rect.GetLeft());
+				str = WrapText(text, str,  max - rect.GetLeft() - border - 2);
 				text->SetLabel(str);
 				continue;
 			}
@@ -176,15 +194,15 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 				for (unsigned int i = 0; i < book->GetPageCount(); i++)
 				{
 					wxNotebookPage* page = book->GetPage(i);
-					wxRect rect = page->GetRect();
-					WrapRecursive(wnd, page->GetSizer(), max - rect.GetLeft());
+					wxRect pageRect = page->GetRect();
+					WrapRecursive(wnd, page->GetSizer(), max - rect.GetLeft() - pageRect.GetLeft() - border - rect.GetWidth() + pageRect.GetWidth());
 				}
 				continue;
 			}
 		}
 		else if ((subSizer = item->GetSizer()))
 		{
-			WrapRecursive(wnd, subSizer, max - rect.GetLeft());
+			WrapRecursive(wnd, subSizer, max - border);
 		}
 	}
 
@@ -255,18 +273,17 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 			size.IncTo(pSizer->GetMinSize());
 		}
 
-		actualWidth = size.GetWidth();
-		if (actualWidth > max)
+		if (size.GetWidth() > max)
 		{
 			// Wrapping failed
 			min = desiredWidth;
+			if (max - min < 5)
+				break;
 			desiredWidth = (min + max) / 2;
-			if ((max - desiredWidth) < 5)
-				break;
-			if ((desiredWidth - min) < 5)
-				break;
 			continue;
 		}
+		actualWidth = size.GetWidth();
+
 		double newRatio = ((double)(size.GetWidth() + canvas.x) / (size.GetHeight() + canvas.y));
 
 		if (newRatio < ratio)
@@ -284,11 +301,9 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 		else
 			break;
 
+		if (max - min < 5)
+			break;
 		desiredWidth = (min + max) / 2;
-		if ((max - desiredWidth) < 5)
-			break;
-		if ((desiredWidth - min) < 5)
-			break;
 
 		for (std::vector<wxWindow*>::iterator iter = windows.begin(); iter != windows.end(); iter++)
 		{
@@ -307,9 +322,11 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 		WrapRecursive(*iter, pSizer, max);
 		pSizer->Layout();
 		pSizer->Fit(*iter);
+		size = pSizer->GetMinSize();
+		wxASSERT(size.x <= max);
 	}
 
-	SetWidthToCache(name, actualWidth);
+	SetWidthToCache(name, max);
 
 	return true;
 }
@@ -347,7 +364,7 @@ bool CWrapEngine::UnwrapRecursive(wxWindow* wnd, wxSizer* sizer)
 							if (wasAscii || *(p + 1) < 127)
 								unwrapped += ' ';
 						}
-						else
+						else if (*p != '\r')
 							unwrapped += *p;
 
 						if (*p < 127)
@@ -363,6 +380,7 @@ bool CWrapEngine::UnwrapRecursive(wxWindow* wnd, wxSizer* sizer)
 	#endif
 				{
 					str.Replace(_T("\n"), _T(" "));
+					str.Replace(_T("\r"), _T(""));
 					text->SetLabel(str);
 				}
 				continue;
