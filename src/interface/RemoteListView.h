@@ -114,7 +114,7 @@ protected:
 
 	CChmodDialog* m_pChmodDlg;
 
-	wxStaticText* m_pInfoText;
+	wxWindow* m_pInfoText;
 	void RepositionInfoText();
 
 	DECLARE_EVENT_TABLE()

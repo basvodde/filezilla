@@ -17,6 +17,39 @@
 #define new DEBUG_NEW
 #endif
 
+class CInfoText : public wxWindow
+{
+public:
+	CInfoText(wxWindow* parent, const wxString& text)
+		: wxWindow(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize),
+		m_text(_T("<") + text + _T(">"))
+	{
+		SetBackgroundColour(parent->GetBackgroundColour());
+	}
+protected:
+	void OnPaint(wxPaintEvent& event)
+	{
+		wxPaintDC paintDc(this);
+
+		wxRect rect = GetRect();
+		paintDc.SetFont(GetFont());
+
+		int width, height;
+		paintDc.GetTextExtent(m_text, &width, &height);
+		paintDc.DrawText(m_text, rect.x + rect.GetWidth() / 2 - width / 2, rect.y);
+	};
+	void OnEraseBackground(wxEraseEvent& event) {};
+
+	const wxString m_text;
+
+	DECLARE_EVENT_TABLE();
+};
+
+BEGIN_EVENT_TABLE(CInfoText, wxWindow)
+EVT_PAINT(CInfoText::OnPaint)
+EVT_ERASE_BACKGROUND(CInfoText::OnEraseBackground)
+END_EVENT_TABLE()	
+
 BEGIN_EVENT_TABLE(CRemoteListView, wxListCtrl)
 	EVT_LIST_ITEM_ACTIVATED(wxID_ANY, CRemoteListView::OnItemActivated)
 	EVT_LIST_COL_CLICK(wxID_ANY, CRemoteListView::OnColumnClicked) 
@@ -254,8 +287,7 @@ void CRemoteListView::SetDirectoryListing(CDirectoryListing *pDirectoryListing, 
 		}
 		if (m_pDirectoryListing->m_failed)
 		{
-			m_pInfoText = new wxStaticText(this, wxID_ANY, _("<Listing failed>"), wxDefaultPosition, wxDefaultSize, wxTRANSPARENT_WINDOW);
-			m_pInfoText->SetBackgroundColour(GetBackgroundColour());
+			m_pInfoText = new CInfoText(this, _("Directory listing failed"));
 			RepositionInfoText();
 		}
 		t_fileData data;
@@ -281,8 +313,7 @@ void CRemoteListView::SetDirectoryListing(CDirectoryListing *pDirectoryListing, 
 	{
 		StopRecursiveOperation();
 		delete m_pInfoText;
-		m_pInfoText = new wxStaticText(this, wxID_ANY, _("<Not connected to any server>"), wxDefaultPosition, wxDefaultSize, wxTRANSPARENT_WINDOW);
-		m_pInfoText->SetBackgroundColour(GetBackgroundColour());
+		m_pInfoText = new CInfoText(this, _("Not connected to any server"));
 		RepositionInfoText();
 	}
 
@@ -1352,6 +1383,7 @@ void CRemoteListView::ReselectItems(std::list<wxString>& selectedNames)
 
 void CRemoteListView::OnSize(wxSizeEvent& event)
 {
+	event.Skip();
 	RepositionInfoText();
 }
 
@@ -1360,8 +1392,21 @@ void CRemoteListView::RepositionInfoText()
 	if (!m_pInfoText)
 		return;
 
-	wxPoint point;
-	GetItemPosition(1, point);
-	point.x = (GetSize().GetWidth() - m_pInfoText->GetSize().GetWidth()) / 2;
-	m_pInfoText->SetPosition(point);
+	wxRect rect = GetClientRect();
+#ifndef __WXMSW__
+	if (!GetItemCount())
+		rect.y = 30;
+	else
+	{
+		wxRect itemRect;
+		GetItemRect(0, itemRect);
+		rect.y = itemRect.GetBottom() + 1;
+	}
+#else
+	wxRect itemRect;
+	GetItemRect(0, itemRect);
+	rect.y = itemRect.GetBottom() + 1;
+#endif
+	
+	m_pInfoText->SetSize(rect);
 }
