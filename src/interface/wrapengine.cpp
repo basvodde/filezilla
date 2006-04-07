@@ -16,7 +16,7 @@ static const wxChar wrapAfter_Chinese[] = { 0x3002, 0xFF0C, 0xFF1A, 0};
 wxString CWrapEngine::WrapText(wxWindow* parent, const wxString &text, unsigned long maxLength)
 {
 	/*
-	This function wraps the given string so that it's width in pixels does 
+	This function wraps the given string so that it's width in pixels does
 	not exceed maxLength.
 	In the general case, wrapping is done on word boundaries. Unfortunatly
 	some languages, e.g. Chinese, don't separate words with spaces. In such
@@ -108,7 +108,7 @@ wxString CWrapEngine::WrapText(wxWindow* parent, const wxString &text, unsigned 
 					{
 						if (*w == *p)
 							break;
-	
+
 						w++;
 					}
 					if (!*w)
@@ -187,15 +187,27 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 				text->SetLabel(str);
 				continue;
 			}
-			
+
 			wxNotebook* book = wxDynamicCast(window, wxNotebook);
 			if (book)
 			{
+				//printf("wrapengine: wrapping wxNotebook, max=%d, border=%d\n", max, border);
+				//printf("notebook rect: %d %d %d %d\n", rect.GetLeft(), rect.GetTop(), rect.GetRight(), rect.GetBottom());
+				int maxPageWidth = 0;
+				for (unsigned int i = 0; i < book->GetPageCount(); i++)
+				{
+					wxNotebookPage* page = book->GetPage(i);
+					maxPageWidth = wxMax(maxPageWidth, page->GetRect().GetWidth());
+				}
+				//printf("max page width: %d\n", maxPageWidth);
 				for (unsigned int i = 0; i < book->GetPageCount(); i++)
 				{
 					wxNotebookPage* page = book->GetPage(i);
 					wxRect pageRect = page->GetRect();
-					WrapRecursive(wnd, page->GetSizer(), max - rect.GetLeft() - pageRect.GetLeft() - border - rect.GetWidth() + pageRect.GetWidth());
+					//printf("page rect: %d %d %d %d\n", pageRect.GetLeft(), pageRect.GetTop(), pageRect.GetRight(), pageRect.GetBottom());
+					int pageMax = max - rect.GetLeft() - pageRect.GetLeft() - border - rect.GetWidth() + maxPageWidth;
+					//printf("page max: %d\n", pageMax);
+					WrapRecursive(wnd, page->GetSizer(), pageMax);
 				}
 				continue;
 			}
@@ -310,7 +322,7 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 			UnwrapRecursive(*iter, (*iter)->GetSizer());
 			(*iter)->GetSizer()->Layout();
 		}
-		
+
 		currentRatio = newRatio;
 	}
 	for (std::vector<wxWindow*>::iterator iter = windows.begin(); iter != windows.end(); iter++)
@@ -411,7 +423,7 @@ int CWrapEngine::GetWidthFromCache(const char* name)
 	if (!name || name == "")
 		return 0;
 
-	// We have to synchronize access to layout.xml so that multiple processed don't write 
+	// We have to synchronize access to layout.xml so that multiple processed don't write
 	// to the same file or one is reading while the other one writes.
 	CInterProcessMutex mutex(MUTEX_LAYOUT);
 
@@ -456,7 +468,7 @@ void CWrapEngine::SetWidthToCache(const char* name, int width)
 	if (!name || name == "")
 		return;
 
-	// We have to synchronize access to layout.xml so that multiple processed don't write 
+	// We have to synchronize access to layout.xml so that multiple processed don't write
 	// to the same file or one is reading while the other one writes.
 	CInterProcessMutex mutex(MUTEX_LAYOUT);
 
@@ -506,7 +518,7 @@ CWrapEngine::~CWrapEngine()
 
 bool CWrapEngine::LoadCache()
 {
-	// We have to synchronize access to layout.xml so that multiple processed don't write 
+	// We have to synchronize access to layout.xml so that multiple processed don't write
 	// to the same file or one is reading while the other one writes.
 	CInterProcessMutex mutex(MUTEX_LAYOUT);
 
@@ -526,14 +538,14 @@ bool CWrapEngine::LoadCache()
 	TiXmlElement* pElement = pDocument->FirstChildElement("Layout");
 	if (!pElement)
 		pElement = pDocument->InsertEndChild(TiXmlElement("Layout"))->ToElement();
-	
+
 	const wxString buildDate = CAboutDialog::GetBuildDate();
 	if (GetTextAttribute(pElement, "Builddate") != buildDate)
 	{
 		cacheValid = false;
 		SetTextAttribute(pElement, "Builddate", buildDate);
 	}
-	
+
 	// Enumerate resource file names
 	// -----------------------------
 
@@ -545,7 +557,7 @@ bool CWrapEngine::LoadCache()
 	wxDir dir(resourceDir);
 
 	wxLogNull log;
-	
+
 	wxString xrc;
 	for (bool found = dir.GetFirst(&xrc, _T("*.xrc")); found; found = dir.GetNext(&xrc))
 	{
@@ -636,13 +648,13 @@ bool CWrapEngine::LoadCache()
 
 	wxString localesDir = wxGetApp().GetLocalesDir();
 	dir.Open(localesDir);
-	
+
 	wxString locale;
 	for (bool found = dir.GetFirst(&locale); found; found = dir.GetNext(&locale))
 	{
 		if (!wxFileName::FileExists(localesDir + locale + _T("/filezilla.mo")))
 			continue;
-		
+
 		wxString name;
 		const wxLanguageInfo* pInfo = wxLocale::FindLanguageInfo(locale);
 		if (!pInfo)
@@ -680,6 +692,6 @@ bool CWrapEngine::LoadCache()
 	}
 
 	delete pDocument->GetDocument();
-	
+
 	return true;
 }
