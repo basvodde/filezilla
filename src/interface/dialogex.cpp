@@ -50,3 +50,11 @@ wxString wxDialogEx::GetLabel(int id)
 
 	return pText->GetLabel();
 }
+
+int wxDialogEx::ShowModal()
+{
+#ifdef __WXMSW__
+	::EndMenu();
+#endif
+	return wxDialog::ShowModal();
+}

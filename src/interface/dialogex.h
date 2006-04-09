@@ -11,6 +11,8 @@ public:
 	bool SetLabel(int id, const wxString& label, unsigned long maxLength = 0);
 	wxString GetLabel(int id);
 
+	virtual int ShowModal();
+
 protected:
 
 	DECLARE_EVENT_TABLE();
