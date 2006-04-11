@@ -7,35 +7,39 @@ AC_CANONICAL_HOST
 
 AC_PROG_CXX
 AC_PROG_INSTALL
-# AC_LIBTOOL_DLOPEN # This seems to be unneccessary
 AC_PROG_LIBTOOL
 
 AC_CACHE_SAVE
 
-if test "X$GCC" = Xyes; then
-  CFLAGS="$CFLAGS -Wall -g -fexceptions"
-  CXXFLAGS="$CXXFLAGS -Wall -g -fexceptions"
-fi
+AC_ARG_ENABLE(localesonly, [  --enable-localesonly    Just build locales], \
+		[localesonly="$enableval"])
 
-# Add build information to config.h
-# ---------------------------------
+if ! test "$localesonly" = "yes"; then
 
-# Add used CXXFLAGS to config.h
-AC_DEFINE_UNQUOTED(USED_CXXFLAGS, ["$CXXFLAGS"], [Define to the used CXXFLAGS to compile this package.])
+  if test "X$GCC" = Xyes; then
+    CFLAGS="$CFLAGS -Wall -g -fexceptions"
+    CXXFLAGS="$CXXFLAGS -Wall -g -fexceptions"
+  fi
 
-# Get compiler (version)
-AH_TEMPLATE(USED_COMPILER, [Define to name and version of used compiler])
-if COMPILER=`$CC --version | head -n 1`; then
-  AC_DEFINE_UNQUOTED(USED_COMPILER, ["$COMPILER"])
-fi
+  # Add build information to config.h
+  # ---------------------------------
 
-# Detect wxWidgets
-# ----------------
+  # Add used CXXFLAGS to config.h
+  AC_DEFINE_UNQUOTED(USED_CXXFLAGS, ["$CXXFLAGS"], [Define to the used CXXFLAGS to compile this package.])
 
-AM_OPTIONS_WXCONFIG
+  # Get compiler (version)
+  AH_TEMPLATE(USED_COMPILER, [Define to name and version of used compiler])
+  if COMPILER=`$CC --version | head -n 1`; then
+    AC_DEFINE_UNQUOTED(USED_COMPILER, ["$COMPILER"])
+  fi
 
-AM_PATH_WXCONFIG(2.6.2, wxWin=1, , [xrc,std])
-if test "$wxWin" != 1; then
+  # Detect wxWidgets
+  # ----------------
+
+  AM_OPTIONS_WXCONFIG
+
+  AM_PATH_WXCONFIG(2.6.2, wxWin=1, , [xrc,std])
+  if test "$wxWin" != 1; then
 	AC_MSG_ERROR([
         	wxWidgets must be installed on your system
 		but wx-config script couldn't be found.
@@ -45,40 +49,30 @@ if test "$wxWin" != 1; then
 		'wx-config --libs' command) is in LD_LIBRARY_PATH or
 		equivalent variable and wxWidgets version is 2.5.3 or above.
 	])
-fi
+  fi
 
-AC_PATH_PROG([WXRC], [wxrc --version])
-if test "x$WXRC" = "x"; then
-	AC_MSG_ERROR([
-		wxrc could not be found. This program gets build together with wxWidgets.
-		Please make sure wxrc is within your path.
-	])
-fi
+  AC_SUBST(WX_CONFIG_WITH_ARGS)
 
-AC_SUBST(WX_CONFIG_WITH_ARGS)
+  AC_CACHE_SAVE
 
-AC_CACHE_SAVE
+  # Get OS type for PUTTY frontend
+  # ------------------------------
 
-# Get OS type for PUTTY frontend
-# ------------------------------
+  AC_MSG_CHECKING([system type for sftp stub])
+  sftpbuild="unix"
+  if echo $host_os | grep "mingw" > /dev/null 2>&1; then sftpbuild="mingw"; fi
+  AC_MSG_RESULT([$sftpbuild])
 
-AC_MSG_CHECKING([system type for sftp stub])
-sftpbuild="unix"
-if echo $host_os | grep "mingw" > /dev/null 2>&1; then sftpbuild="mingw"; fi
-AM_CONDITIONAL(SFTP_MINGW, [test "$sftpbuild" = "mingw"])
-AM_CONDITIONAL(SFTP_UNIX, [test "$sftpbuild" = "unix"])
-AC_MSG_RESULT([$sftpbuild])
+  # Checks for PuTTY
+  # ----------------
 
-# Checks for PuTTY
-# ----------------
+  AC_CHECK_HEADERS([utmpx.h sys/select.h],,,[
+  #include <sys/types.h>
+  #include <utmp.h>])
 
-AC_CHECK_HEADERS([utmpx.h sys/select.h],,,[
-#include <sys/types.h>
-#include <utmp.h>])
+  AC_SEARCH_LIBS([socket], [xnet])
 
-AC_SEARCH_LIBS([socket], [xnet])
-
-AC_CHECK_FUNCS([getaddrinfo ptsname setresuid strsignal updwtmpx])
+  AC_CHECK_FUNCS([getaddrinfo ptsname setresuid strsignal updwtmpx])
 
 AH_BOTTOM([
 /* Convert autoconf definitions to ones that PuTTY wants. */
@@ -103,12 +97,12 @@ AH_BOTTOM([
 #endif
 ])
 
-# Check for windres on MinGW builds
-# ---------------------------------
+  # Check for windres on MinGW builds
+  # ---------------------------------
 
-# Small function to filter the flags for windres,
-# so that only includes and defines are passed to windres.
-parseflags() {
+  # Small function to filter the flags for windres,
+  # so that only includes and defines are passed to windres.
+  parseflags() {
 	WINDRESFLAGS=""
 	for opt in "$@"
 	do
@@ -121,12 +115,12 @@ parseflags() {
 			;;
 		esac
 	done
-}
+  }
 
-WINDRESFLAGS=
-use_resourcefile=
-AC_MSG_CHECKING([whether to use windres])
-if echo $host_os | grep "cygwin\|mingw" > /dev/null 2>&1; then
+  WINDRESFLAGS=
+  use_resourcefile=
+  AC_MSG_CHECKING([whether to use windres])
+  if echo $host_os | grep "cygwin\|mingw" > /dev/null 2>&1; then
         if echo $WX_CPPFLAGS | grep __WXMSW__ > /dev/null 2>&1; then
 		if test -z "$host_alias"; then
 			hostaliaswindres=
@@ -143,58 +137,117 @@ if echo $host_os | grep "cygwin\|mingw" > /dev/null 2>&1; then
 	else
 		AC_MSG_RESULT([no])
 	fi
-else
+  else
 	AC_MSG_RESULT([no])
-fi
-AC_SUBST(WINDRES)
-AC_SUBST(WINDRESFLAGS)
-AM_CONDITIONAL(USE_RESOURCEFILE, test x$use_resourcefile = xtrue)
+  fi
+  AC_SUBST(WINDRES)
+  AC_SUBST(WINDRESFLAGS)
 
-# Mac OS X specific checks
-# ------------------------
+  # Mac OS X specific checks
+  # ------------------------
 
-# Create application bundle on OS X
-AM_CONDITIONAL(MACAPPBUNDLE, echo $WX_CPPFLAGS | grep __WXMAC__)
+  # Create application bundle on OS X
+  if echo $WX_CPPFLAGS | grep __WXMAC__; then
+    macappbundle = "yes"
+  else
+    macappbundle = "no"
+  fi
 
-# Installer creation under Windows
-# --------------------------------
+  # Installer creation under Windows
+  # --------------------------------
 
-# Create installer under Windows
-AM_CONDITIONAL(MAKENSISSCRIPT, echo $host_os | grep "mingw" > /dev/null 2>&1)
-if echo $host_os | grep "mingw" > /dev/null 2>&1; then
-  AC_CONFIG_FILES(data/install.nsi)
-fi
+  # Create installer under Windows
+  if echo $host_os | grep "mingw" > /dev/null 2>&1; then
+    makensisscript="yes"
+  else
+    makensisscript="no"
+  fi
 
-# Libidn checks
-# -------------
+  if echo $host_os | grep "mingw" > /dev/null 2>&1; then
+    AC_CONFIG_FILES(data/install.nsi)
+  fi
 
-AC_CHECK_HEADER(idna.h,, 
-[
-	AC_MSG_ERROR([idna.h not found which is part of GNU libidn.])
-])
+  # Libidn checks
+  # -------------
 
-AC_ARG_WITH(idn-lib,
-[[  --with-idn-lib=FILE     Use the given path to the idn library.]],
-[
+  AC_CHECK_HEADER(idna.h,, 
+  [
+    AC_MSG_ERROR([idna.h not found which is part of GNU libidn.])
+  ])
+
+  AC_ARG_WITH(idn-lib,
+  [[  --with-idn-lib=FILE     Use the given path to the idn library.]],
+  [
 	if test "$withval" != "yes" -a "$withval" != ""; then
 		IDN_LIB=$withval
 	fi
-])
+  ])
 
-if test "x$IDN_LIB" = "x"; then
-	AC_CHECK_LIB(idn, stringprep_check_version, IDN_LIB="-lidn",
-		AC_MSG_ERROR([GNU libidn not found. Try using --with-idn-lib=FILE to specify the library path.])
-	)
+  if test "x$IDN_LIB" = "x"; then
+    AC_CHECK_LIB(idn, stringprep_check_version, IDN_LIB="-lidn",
+                 AC_MSG_ERROR([GNU libidn not found. Try using --with-idn-lib=FILE to specify the library path.])
+                 )
+  fi
+
+  AC_SUBST(IDN_LIB)
+
+  # Binreloc
+  # --------
+
+  # Check if we should use BinReloc
+  AH_TEMPLATE(ENABLE_BINRELOC, [Define ENABLE_BINRELOC on systems where the executable
+                                location can be obtained using /proc/self/maps])
+  AC_MSG_CHECKING([whether to use BinReloc])
+  if echo $host_os | grep -i "cygwin\|mingw\|mac" > /dev/null 2>&1 ; then
+    use_binreloc=no
+  else
+    use_binreloc=yes
+    AC_DEFINE(ENABLE_BINRELOC)
+  fi
+
+  AC_MSG_RESULT([$use_binreloc])
+
+  # Precompiled headers support
+  # ---------------------------
+
+  AC_MSG_CHECKING([whether to use precompiled headers])
+  use_precomp=""
+  AC_ARG_ENABLE(precomp, [  --enable-precomp        Use precompiled headers], \
+                use_precomp="$enableval")
+  if test -z "$use_precomp"; then
+    if test "X$GCC" = Xyes; then
+      if gcc_version=`$CC -dumpversion` > /dev/null 2>&1; then
+        major=`echo $gcc_version | cut -d. -f1`
+        minor=`echo $gcc_version | sed "s/@<:@-,a-z,A-Z@:>@.*//" | cut -d. -f2`
+        if test -z "$major" || test -z "$minor"; then
+          use_precomp=no
+        elif test "$major" -ge 4; then
+          use_precomp=yes
+        elif test "$major" -ge 3 && test "$minor" -ge 4; then
+          use_precomp=yes
+        else
+          use_precomp=no
+        fi
+      else
+        use_precomp=no
+      fi
+    else
+      use_precomp=no
+    fi
+  fi
+  if test "x$use_precomp" = "xyes"; then
+    AC_MSG_RESULT([yes])
+  else
+    AC_MSG_RESULT([no])
+  fi
 fi
-
-AC_SUBST(IDN_LIB)
 
 # Everything translation related
 # ------------------------------
 
 AC_PATH_PROG(xgettext, xgettext)
 if test -z "$xgettext"; then
-	AC_MSG_ERROR([xgettext not found, please install the GNU gettext package and make sure xgettext is in the path.])
+  AC_MSG_ERROR([xgettext not found, please install the GNU gettext package and make sure xgettext is in the path.])
 fi
 
 AC_PATH_PROG(msgfmt, msgfmt)
@@ -243,57 +296,25 @@ AC_SUBST(FILEZILLA_LINGUAS_PO)
 AC_SUBST(FILEZILLA_LINGUAS_PO_NEW)
 AC_SUBST(FILEZILLA_LINGUAS_MO)
 
-# Binreloc
-# --------
-
-# Check if we should use BinReloc
-AH_TEMPLATE(ENABLE_BINRELOC, [Define ENABLE_BINRELOC on systems where the executable
-                              location can be obtained using /proc/self/maps])
-AC_MSG_CHECKING([whether to use BinReloc])
-if echo $host_os | grep -i "cygwin\|mingw\|mac" > /dev/null 2>&1 ; then
-  use_binreloc=no
-else
-  use_binreloc=yes
-  AC_DEFINE(ENABLE_BINRELOC)
+AC_PATH_PROG([WXRC], [wxrc --version])
+if test "x$WXRC" = "x"; then
+	AC_MSG_ERROR([
+		wxrc could not be found. This program gets build together with wxWidgets.
+		Please make sure wxrc is within your path.
+	])
 fi
 
-AC_MSG_RESULT([$use_binreloc])
-AM_CONDITIONAL(USE_BINRELOC, test $use_binreloc = yes)
+# Output automake conditionals
+# ----------------------------
 
-# Precompiled headers support
-# ---------------------------
-
-AC_MSG_CHECKING([whether to use precompiled headers])
-use_precomp=""
-AC_ARG_ENABLE(precomp, [  --enable-precomp        Use precompiled headers], \
-		use_precomp="$enableval")
-if test -z "$use_precomp"; then
-  if test "X$GCC" = Xyes; then
-    if gcc_version=`$CC -dumpversion` > /dev/null 2>&1; then
-      major=`echo $gcc_version | cut -d. -f1`
-      minor=`echo $gcc_version | sed "s/@<:@-,a-z,A-Z@:>@.*//" | cut -d. -f2`
-      if test -z "$major" || test -z "$minor"; then
-        use_precomp=no
-      elif test "$major" -ge 4; then
-        use_precomp=yes
-      elif test "$major" -ge 3 && test "$minor" -ge 4; then
-        use_precomp=yes
-      else
-        use_precomp=no
-      fi
-    else
-      use_precomp=no
-    fi
-  else
-    use_precomp=no
-  fi
-fi
+AM_CONDITIONAL([LOCALES_ONLY], [test "$localesonly" = "yes"])
+AM_CONDITIONAL(SFTP_MINGW, [test "$sftpbuild" = "mingw"])
+AM_CONDITIONAL(SFTP_UNIX, [test "$sftpbuild" = "unix"])
+AM_CONDITIONAL(USE_RESOURCEFILE, test "$use_resourcefile" = "true")
+AM_CONDITIONAL(MACAPPBUNDLE, [test "$macappbundle" = "yes"])
+AM_CONDITIONAL(MAKENSISSCRIPT, [test "$makensisscript" = "no"])
+AM_CONDITIONAL(USE_BINRELOC, test "$use_binreloc" = "yes")
 AM_CONDITIONAL(ENABLE_PRECOMP, test "x$use_precomp" = "xyes")
-if test "x$use_precomp" = "xyes"; then
-  AC_MSG_RESULT([yes])
-else
-  AC_MSG_RESULT([no])
-fi
 
 AC_CONFIG_FILES(Makefile src/Makefile src/engine/Makefile src/tinyxml/Makefile
 src/interface/Makefile src/interface/resources/Makefile src/include/Makefile
