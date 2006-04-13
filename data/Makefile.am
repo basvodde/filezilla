@@ -6,17 +6,13 @@ noinst_DATA = installlangfiles.nsh uninstalllangfiles.nsh
 
 installlangfiles.nsh: Makefile
 	rm -f $@
-	for i in $(top_srcdir)/locales/*.po; do\
-	  i=$${i%.po};\
-	  i=$${i##*/};\
+	for i in @FILEZILLA_LINGUAS@; do\
 	  echo !insertmacro INSTALLLANGFILE $$i >> $@; \
 	done
 
 uninstalllangfiles.nsh: Makefile
 	rm -f $@
-	for i in $(top_srcdir)/locales/*.po; do\
-	  i=$${i%.po};\
-	  i=$${i##*/};\
+	for i in @FILEZILLA_LINGUAS@; do\
 	  echo !insertmacro UNINSTALLLANGFILE $$i >> $@; \
 	done
 
