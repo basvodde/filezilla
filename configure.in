@@ -148,9 +148,9 @@ AH_BOTTOM([
 
   # Create application bundle on OS X
   if echo $WX_CPPFLAGS | grep __WXMAC__; then
-    macappbundle = "yes"
+    macappbundle="yes"
   else
-    macappbundle = "no"
+    macappbundle="no"
   fi
 
   # Installer creation under Windows
