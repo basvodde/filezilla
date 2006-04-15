@@ -111,6 +111,9 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 		}
 	}
 
+	host.Trim(true);
+	host.Trim(false);
+
 	if (host == _T(""))
 	{
 		error = _("No host given, please enter a host.");
