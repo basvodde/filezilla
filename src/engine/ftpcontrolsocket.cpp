@@ -465,7 +465,7 @@ int CFtpControlSocket::LogonSend()
 				return FZ_REPLY_WOULDBLOCK;
 			}
 
-			res = Send(_T("PASS ") + m_pCurrentServer->GetPass());
+			res = Send(_T("PASS ") + m_pCurrentServer->GetPass(), true);
 			break;
 		case 12:
 			if (m_pCurrentServer->GetAccount() == _T(""))
@@ -515,9 +515,17 @@ int CFtpControlSocket::GetReplyCode() const
 	return m_Response[0] - '0';
 }
 
-bool CFtpControlSocket::Send(wxString str)
+bool CFtpControlSocket::Send(wxString str, bool maskArgs /*=false*/)
 {
-	LogMessage(Command, str);
+	int pos;
+	if (maskArgs && (pos = str.Find(_T(" "))) != -1)
+	{
+		wxString stars('*', str.Length() - pos - 1);
+		LogMessage(Command, str.Left(pos + 1) + stars);
+	}
+	else
+		LogMessage(Command, str);
+
 	str += _T("\r\n");
 	wxCharBuffer buffer = ConvToServer(str);
 	if (!buffer)

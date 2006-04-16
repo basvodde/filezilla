@@ -64,7 +64,7 @@ protected:
 	virtual void OnConnect(wxSocketEvent &event);
 	virtual void OnReceive(wxSocketEvent &event);
 
-	virtual bool Send(wxString str);
+	virtual bool Send(wxString str, bool maskArgs = false);
 
 	// Parse the latest reply line from the server
 	void ParseLine(wxString line);
