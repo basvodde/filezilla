@@ -1,5 +1,87 @@
 #include "FileZilla.h"
 #include "xmlfunctions.h"
+#include "filezillaapp.h"
+
+CXmlFile::CXmlFile()
+{
+	m_pDocument = 0;
+}
+
+CXmlFile::~CXmlFile()
+{
+	delete m_pDocument;
+}
+
+TiXmlElement* CXmlFile::Load(const wxString& name)
+{
+	wxFileName fileName(wxGetApp().GetSettingsDir(), name + _T(".xml"));
+	return Load(fileName);
+}
+
+TiXmlElement* CXmlFile::Load(const wxFileName& name)
+{
+	delete m_pDocument;
+	m_pDocument = 0;
+
+	m_fileName = name;
+	
+	{
+		wxLogNull log;
+		m_modificationTime = m_fileName.GetModificationTime();
+	}
+
+	TiXmlElement* pElement = GetXmlFile(m_fileName);
+	if (!pElement)
+		return 0;
+
+	m_pDocument = pElement->GetDocument();
+	return pElement;
+}
+
+TiXmlElement* CXmlFile::GetElement()
+{
+	TiXmlElement* pElement = m_pDocument->FirstChildElement("FileZilla3");
+	if (!pElement)
+	{
+		delete m_pDocument;
+		m_pDocument = 0;
+		return 0;
+	}
+	else
+		return pElement;
+}
+
+bool CXmlFile::Reload(bool forceReload)
+{
+	if (!m_fileName.IsOk())
+		return false;
+
+	if (!forceReload)
+	{
+		wxLogNull log;
+		if (m_fileName.GetModificationTime() ==	m_modificationTime)
+			return false;
+	}
+
+	return Load(m_fileName) != 0;
+}
+
+void CXmlFile::Close()
+{
+	delete m_pDocument;
+	m_pDocument = 0;
+}
+
+bool CXmlFile::Save(wxString* error)
+{
+	if (!m_pDocument)
+		return false;
+
+	bool res = SaveXmlFile(m_fileName, GetElement(), error);
+	wxLogNull log;
+	m_modificationTime = m_fileName.GetModificationTime();
+	return res;
+}
 
 char* ConvUTF8(const wxString& value)
 {
@@ -164,7 +246,11 @@ TiXmlElement* GetXmlFile(wxFileName file)
 		TiXmlElement element("FileZilla3");
 		pXmlDocument->InsertEndChild(TiXmlElement("FileZilla3"));
 
-		pXmlDocument->SaveFile(file.GetFullPath().mb_str());
+		if (!pXmlDocument->SaveFile(file.GetFullPath().mb_str()))
+		{
+			delete pXmlDocument;
+			return 0;
+		}
 		
 		return pXmlDocument->FirstChildElement("FileZilla3");
 	}
@@ -194,6 +280,9 @@ bool SaveXmlFile(const wxFileName& file, TiXmlNode* node, wxString* error /*=0*/
 
 	if (!pDocument->SaveFile(file.GetFullPath().mb_str()))
 	{
+		wxRemoveFile(file.GetFullPath());
+		if (exists)
+			wxRenameFile(file.GetFullPath() + _T("~"), file.GetFullPath());
 		const wxString msg = _("Failed to write xml file");
 		if (error)
 			*error = msg;

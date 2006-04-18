@@ -8,6 +8,32 @@
 
 #include "../tinyxml/tinyxml.h"
 
+class CXmlFile
+{
+public:
+	CXmlFile();
+	virtual ~CXmlFile();
+	
+	TiXmlElement* Load(const wxString& name);
+	TiXmlElement* Load(const wxFileName& name);
+	bool Loaded() const { return m_fileName.IsOk(); }
+
+	void Close();
+
+	TiXmlElement* GetElement();
+
+	// Unless forceReload is set, reloads file
+	// if modification time changed.
+	bool Reload(bool forceReload);
+
+    bool Save(wxString* error = 0);
+
+protected:
+	wxDateTime m_modificationTime;
+	wxFileName m_fileName;
+	TiXmlDocument* m_pDocument;
+};
+
 // Convert the given string into an UTF-8 string. Returned string has to be deleted manually.
 char* ConvUTF8(const wxString& value);
 
