@@ -38,7 +38,8 @@ const std::list<CServer> CRecentServerList::GetMostRecentServers(bool lockMutex 
 		}
 		else
 		{
-			for (std::list<CServer>::const_iterator iter = m_mostRecentServers.begin(); iter != m_mostRecentServers.end(); iter++)
+			std::list<CServer>::const_iterator iter;
+			for (iter = m_mostRecentServers.begin(); iter != m_mostRecentServers.end(); iter++)
 			{
 				if (*iter == server)
 					break;
