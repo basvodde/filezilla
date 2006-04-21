@@ -627,7 +627,7 @@ wxString CControlSocket::ConvToLocal(const char* buffer)
 wxChar* CControlSocket::ConvToLocalBuffer(const char* buffer, wxMBConv& conv)
 {
 	size_t len = conv.MB2WC(0, buffer, 0);
-	if (!len)
+	if (!len || len == wxCONV_FAILED)
 		return 0;
 
 	wchar_t* unicode = new wchar_t[len + 1];
@@ -667,7 +667,7 @@ wxChar* CControlSocket::ConvToLocalBuffer(const char* buffer)
 
 	// Fallback: Conversion using current locale
 #if wxUSE_UNICODE
-	wxChar* res = ConvToLocalBuffer(buffer, wxConvUTF8);
+	wxChar* res = ConvToLocalBuffer(buffer, *wxConvCurrent);
 #else
 	// No conversion needed, just copy
 	wxChar* res = new wxChar[strlen(buffer) + 1];
