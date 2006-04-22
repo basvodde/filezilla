@@ -2434,8 +2434,10 @@ void fatalbox(char *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    fzprintf(sftpError, fmt, ap);
-    va_end(ap);
+	char* str = dupvprintf(fmt, ap);
+	va_end(ap);
+    fzprintf(sftpError, str);
+	sfree(str);
 
     cleanup_exit(1);
 }
@@ -2443,8 +2445,10 @@ void modalfatalbox(char *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    fzprintf(sftpError, fmt, ap);
-    va_end(ap);
+    char* str = dupvprintf(fmt, ap);
+	va_end(ap);
+    fzprintf(sftpError, str);
+	sfree(str);
 
     cleanup_exit(1);
 }
@@ -2452,8 +2456,10 @@ void connection_fatal(void *frontend, char *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    fzprintf(sftpError, fmt, ap);
-    va_end(ap);
+	char* str = dupvprintf(fmt, ap);
+	va_end(ap);
+    fzprintf(sftpError, str);
+	sfree(str);
 
     cleanup_exit(1);
 }
