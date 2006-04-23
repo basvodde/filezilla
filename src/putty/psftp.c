@@ -2433,33 +2433,39 @@ static int verbose = 0;
 void fatalbox(char *fmt, ...)
 {
     va_list ap;
+    char* str;
+
     va_start(ap, fmt);
-	char* str = dupvprintf(fmt, ap);
-	va_end(ap);
+    str = dupvprintf(fmt, ap);
+    va_end(ap);
     fzprintf(sftpError, str);
-	sfree(str);
+    sfree(str);
 
     cleanup_exit(1);
 }
 void modalfatalbox(char *fmt, ...)
 {
     va_list ap;
+    char* str;
+
     va_start(ap, fmt);
-    char* str = dupvprintf(fmt, ap);
-	va_end(ap);
+    str = dupvprintf(fmt, ap);
+    va_end(ap);
     fzprintf(sftpError, str);
-	sfree(str);
+    sfree(str);
 
     cleanup_exit(1);
 }
 void connection_fatal(void *frontend, char *fmt, ...)
 {
     va_list ap;
+    char* str;
+
     va_start(ap, fmt);
-	char* str = dupvprintf(fmt, ap);
-	va_end(ap);
+    str = dupvprintf(fmt, ap);
+    va_end(ap);
     fzprintf(sftpError, str);
-	sfree(str);
+    sfree(str);
 
     cleanup_exit(1);
 }
