@@ -73,6 +73,7 @@ if ! test "$localesonly" = "yes"; then
   AC_SEARCH_LIBS([socket], [xnet])
 
   AC_CHECK_FUNCS([getaddrinfo ptsname setresuid strsignal updwtmpx])
+  AC_CHECK_FUNCS([gettimeofday ftime])
 
 AH_BOTTOM([
 /* Convert autoconf definitions to ones that PuTTY wants. */

@@ -61,7 +61,71 @@ struct Socket_tag {
      * track this link.
      */
     Actual_Socket parent, child;
+
+    // Remember last notification time to avoid spamming FZ
+    FILETIME lastSendNotification;
+    FILETIME lastRecvNotification;
 };
+
+// 1/10th of a second
+const static unsigned int notificationDelay = 10000000 / 10;
+
+static void SendNotification(Actual_Socket s)
+{
+    SYSTEMTIME sNow;
+    FILETIME fNow;
+    unsigned int diff;
+    GetSystemTime(&sNow);
+    SystemTimeToFileTime(&sNow, &fNow);
+
+    diff = fNow.dwHighDateTime - s->lastSendNotification.dwHighDateTime;
+    if (!diff)
+    {
+	if ((fNow.dwLowDateTime - s->lastSendNotification.dwLowDateTime) < notificationDelay)
+	    return;
+    }
+    else if (diff == 1)
+    {
+        if (fNow.dwLowDateTime < s->lastSendNotification.dwLowDateTime)
+        {
+	    return;
+	    if (((0xFFFFFFFF - s->lastSendNotification.dwLowDateTime) + fNow.dwLowDateTime) < notificationDelay)
+    		return;
+        }
+    }
+
+    s->lastSendNotification = fNow;
+
+    fznotify(sftpSend);
+}
+
+static void RecvNotification(Actual_Socket s)
+{
+    SYSTEMTIME sNow;
+    FILETIME fNow;
+    unsigned int diff;
+    GetSystemTime(&sNow);
+    SystemTimeToFileTime(&sNow, &fNow);
+
+    diff = fNow.dwHighDateTime - s->lastRecvNotification.dwHighDateTime;
+    if (!diff)
+    {
+	if ((fNow.dwLowDateTime - s->lastRecvNotification.dwLowDateTime) < notificationDelay)
+	    return;
+    }
+    else if (diff == 1)
+    {
+        if (fNow.dwLowDateTime < s->lastRecvNotification.dwLowDateTime)
+	{
+    	    if (((0xFFFFFFFF - s->lastRecvNotification.dwLowDateTime) + fNow.dwLowDateTime) < notificationDelay)
+		return;
+	}
+    }
+
+    s->lastRecvNotification = fNow;
+
+    fznotify(sftpRecv);
+}
 
 struct SockAddr_tag {
     char *error;
@@ -1211,7 +1275,7 @@ void try_send(Actual_Socket s)
 		fatalbox("%s", winsock_error_string(err));
 	    }
 	} else {
-	    fznotify(sftpSend);
+	    SendNotification(s);
 	    if (s->sending_oob) {
 		if (nsent < len) {
 		    memmove(s->oobdata, s->oobdata+nsent, len-nsent);
@@ -1355,7 +1419,7 @@ int select_result(WPARAM wParam, LPARAM lParam)
 	} else if (0 == ret) {
 	    return plug_closing(s->plug, NULL, 0, 0);
 	} else {
-	    fznotify(sftpRecv);
+	    RecvNotification(s);
 	    return plug_receive(s->plug, atmark ? 0 : 1, buf, ret);
 	}
 	break;
@@ -1376,7 +1440,7 @@ int select_result(WPARAM wParam, LPARAM lParam)
 	    logevent(NULL, str);
 	    fatalbox("%s", str);
 	} else {
-	    fznotify(sftpRecv);
+	    RecvNotification(s);
 	    return plug_receive(s->plug, 2, buf, ret);
 	}
 	break;
@@ -1405,7 +1469,7 @@ int select_result(WPARAM wParam, LPARAM lParam)
 	    } else {
 		if (ret)
 		{
-		    fznotify(sftpRecv);
+		    RecvNotification(s);
 		    open &= plug_receive(s->plug, 0, buf, ret);
 		}
 		else

@@ -22,6 +22,12 @@
 #include "network.h"
 #include "tree234.h"
 
+#if defined(HAVE_GETTIMEOFDAY)
+  #include <sys/time.h>
+#elif defined(HAVE_FTIME)
+  #include <sys/timeb.h>
+#endif
+
 /* Solaris needs <sys/sockio.h> for SIOCATMARK. */
 #ifndef SIOCATMARK
 #include <sys/sockio.h>
@@ -54,6 +60,11 @@ struct Socket_tag {
     int nodelay, keepalive;            /* for connect()-type sockets */
     int privport, port;                /* and again */
     SockAddr addr;
+
+    unsigned int lastSendNotificationLow;
+    time_t lastSendNotificationHigh;
+    unsigned int lastRecvNotificationLow;
+    time_t lastRecvNotificationHigh;
 };
 
 /*
@@ -84,6 +95,109 @@ struct SockAddr_tag {
 #endif
     char hostname[512];		       /* Store an unresolved host name. */
 };
+
+// 1/10th of a second in microseconds
+const static int notificationDelay = 1000000 / 10;
+
+static void SendNotification(Actual_Socket s)
+{
+#if defined(HAVE_GETTIMEOFDAY)
+    struct timeval tv;
+    if (!gettimeofday(&tv, 0))
+    {
+	if (tv.tv_sec == s->lastSendNotificationHigh)
+	{
+	    if ((tv.tv_usec < s->lastSendNotificationLow) < notificationDelay)
+		return;
+	}
+	else if ((tv.tv_sec - s->lastSendNotificationHigh) == 1)
+	{
+	    if (s->lastSendNotificationLow < tv.tv_usec)
+	    {
+		if (((1000000 - tv.tv_usec) + s->lastSendNotificationLow) < notificationDelay)
+		    return;
+	    }
+	}
+
+	s->lastSendNotificationHigh = tv.tv_sec;
+	s->lastSendNotificationLow = tv.tv_usec;
+    }
+
+#elif defined(HAVE_FTIME)
+    struct timeb tp;
+
+    ftime(&tp);
+    if (tp.time == s->lastSendNotificationHigh)
+    {
+	if ((tp.millitm < s->lastSendNotificationLow) < (notificationDelay / 1000))
+	    return;
+    }
+    else if ((tp.time - s->lastSendNotificationHigh) == 1)
+    {
+	if (s->lastSendNotificationLow < tp.millitm)
+	{
+	    if (((1000 - tp.millitm) + s->lastSendNotificationLow) < (notificationDelay / 1000))
+		return;
+	}
+    }
+
+    s->lastSendNotificationHigh = tp.time;
+    s->lastSendNotificationLow = tp.millitm;
+#else
+#error "Neither gettimeofday nor ftime available."
+#endif
+    fznotify(sftpSend);
+}
+
+static void RecvNotification(Actual_Socket s)
+{
+#if defined(HAVE_GETTIMEOFDAY)
+    struct timeval tv;
+    if (!gettimeofday(&tv, 0))
+    {
+	if (tv.tv_sec == s->lastRecvNotificationHigh)
+	{
+	    if ((tv.tv_usec < s->lastRecvNotificationLow) < notificationDelay)
+		return;
+	}
+	else if ((tv.tv_sec - s->lastRecvNotificationHigh) == 1)
+	{
+	    if (s->lastRecvNotificationLow < tv.tv_usec)
+	    {
+		if (((1000000 - tv.tv_usec) + s->lastRecvNotificationLow) < notificationDelay)
+		    return;
+	    }
+	}
+
+	s->lastRecvNotificationHigh = tv.tv_sec;
+	s->lastRecvNotificationLow = tv.tv_usec;
+    }
+
+#elif defined(HAVE_FTIME)
+    struct timeb tp;
+
+    ftime(&tp);
+    if (tp.time == s->lastRecvNotificationHigh)
+    {
+	if ((tp.millitm < s->lastRecvNotificationLow) < (notificationDelay / 1000))
+	    return;
+    }
+    else if ((tp.time - s->lastRecvNotificationHigh) == 1)
+    {
+	if (s->lastRecvNotificationLow < tp.millitm)
+	{
+	    if (((1000 - tp.millitm) + s->lastRecvNotificationLow) < (notificationDelay / 1000))
+		return;
+	}
+    }
+
+    s->lastRecvNotificationHigh = tp.time;
+    s->lastRecvNotificationLow = tp.millitm;
+#else
+#error "Neither gettimeofday nor ftime available."
+#endif
+    fznotify(sftpRecv);
+}
 
 static tree234 *sktree;
 
@@ -925,7 +1039,7 @@ void try_send(Actual_Socket s)
 		return;
 	    }
 	} else {
-	    fznotify(sftpSend);
+	    SendNotification(s);
 	    if (s->sending_oob) {
 		if (nsent < len) {
 		    memmove(s->oobdata, s->oobdata+nsent, len-nsent);
@@ -1022,7 +1136,7 @@ static int net_select_result(int fd, int event)
 				    ret == 0 ? "Internal networking trouble" :
 				    strerror(errno), errno, 0);
 	    } else {
-                fznotify(sftpRecv);
+                RecvNotification(s);
                 /*
                  * Receiving actual data on a socket means we can
                  * stop falling back through the candidate
@@ -1124,7 +1238,7 @@ static int net_select_result(int fd, int event)
 	} else if (0 == ret) {
 	    return plug_closing(s->plug, NULL, 0, 0);
 	} else {
-            fznotify(sftpRecv);
+            RecvNotification(s);
             /*
              * Receiving actual data on a socket means we can
              * stop falling back through the candidate
