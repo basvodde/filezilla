@@ -422,11 +422,22 @@ wxString CServer::FormatHost() const
 wxString CServer::FormatServer() const
 {
 	wxString server = m_host;
-	if (m_port != 21)
-		server += wxString::Format(_T(":%d"), m_port);
 
 	if (m_logonType != ANONYMOUS)
 		server = GetUser() + _T("@") + server;
+
+	switch (m_protocol)
+	{
+	case FTP:
+		if (m_port != 21)
+			server += wxString::Format(_T(":%d"), m_port);
+		break;
+	case SFTP:
+		server = _T("sftp://") + server;
+		if (m_port != 22)
+			server += wxString::Format(_T(":%d"), m_port);
+		break;
+	}
 
 	return server;
 }
