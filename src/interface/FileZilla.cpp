@@ -200,6 +200,13 @@ wxString CFileZillaApp::GetDataDir(wxString fileToFind) const
 			return cur + _T("/../share/filezilla");
 	}
 	
+	for (node = pathList.begin(); node != pathList.end(); node++)
+	{
+		wxString cur = *node;
+		if (FileExists(cur + _T("/../../") + fileToFind))
+			return cur + _T("/../..");
+	}
+	
 	return _T("");
 }
 
