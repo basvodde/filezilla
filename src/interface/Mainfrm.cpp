@@ -20,6 +20,7 @@
 #include "aboutdialog.h"
 #include "filter.h"
 #include "netconfwizard.h"
+#include "quickconnectbar.h"
 
 #ifndef __WXMSW__
 #include "resources/filezilla.xpm"
@@ -45,7 +46,6 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_SIZE(CMainFrame::OnSize)
 	EVT_SPLITTER_SASH_POS_CHANGED(wxID_ANY, CMainFrame::OnViewSplitterPosChanged)
 	EVT_MENU(wxID_ANY, CMainFrame::OnMenuHandler)
-	EVT_BUTTON(XRCID("ID_QUICKCONNECT_OK"), CMainFrame::OnQuickconnect)
 	EVT_FZ_NOTIFICATION(wxID_ANY, CMainFrame::OnEngineEvent)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_DISCONNECT"), CMainFrame::OnUpdateToolbarDisconnect)
 	EVT_TOOL(XRCID("ID_TOOLBAR_DISCONNECT"), CMainFrame::OnDisconnect)
@@ -289,19 +289,13 @@ bool CMainFrame::CreateMenus()
 bool CMainFrame::CreateQuickconnectBar()
 {
 	if (m_pQuickconnectBar)
+		delete m_pQuickconnectBar;
+
+	m_pQuickconnectBar = new CQuickconnectBar();
+	if (!m_pQuickconnectBar->Create(this))
 	{
 		delete m_pQuickconnectBar;
-	}
-
-	m_pQuickconnectBar = wxXmlResource::Get()->LoadPanel(this, _T("ID_QUICKCONNECTBAR"));
-
-	if (!m_pQuickconnectBar)
-	{
-		wxLogError(_("Cannot load Quickconnect bar from resource file"));
-	}
-	else
-	{
-		XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetMaxLength(5);
+		m_pQuickconnectBar = 0;
 	}
 
 	return true;
@@ -346,68 +340,6 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	}
 	else
 		event.Skip();
-}
-
-void CMainFrame::OnQuickconnect(wxCommandEvent &event)
-{	
-	if (!m_pQuickconnectBar)
-		return;
-
-	if (!m_pEngine)
-		return;
-
-	wxString host = XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_HOST", wxTextCtrl)->GetValue();
-	wxString user = XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_USER", wxTextCtrl)->GetValue();
-	wxString pass = XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_PASS", wxTextCtrl)->GetValue();
-	wxString port = XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_PORT", wxTextCtrl)->GetValue();
-	
-	long numericPort = 0;
-	if (port != _T(""))
-		port.ToLong(&numericPort);
-	
-	CServer server;
-	wxString error;
-
-	CServerPath path;
-	if (!server.ParseUrl(host, numericPort, user, pass, error, path))
-	{
-		wxString msg = _("Could not parse server address:");
-		msg += _T("\n");
-		msg += error;
-		wxMessageBox(msg, _("FileZilla Error"), wxICON_EXCLAMATION);
-		return;
-	}
-
-	host = server.GetHost();
-	ServerProtocol protocol = server.GetProtocol();
-	switch (protocol)
-	{
-	case SFTP:
-		host = _T("sftp://") + host;
-		break;
-	case FTP:
-	default:
-		// do nothing
-		break;
-	}
-	
-	XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_HOST", wxTextCtrl)->SetValue(host);
-	XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetValue(wxString::Format(_T("%d"), server.GetPort()));
-	XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_USER", wxTextCtrl)->SetValue(server.GetUser());
-	XRCCTRL(*m_pQuickconnectBar, "ID_QUICKCONNECT_PASS", wxTextCtrl)->SetValue(server.GetPass());
-
-	if (m_pEngine->IsConnected() || m_pEngine->IsBusy() || !m_pCommandQueue->Idle())
-	{
-		if (wxMessageBox(_("Break current connection?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) != wxYES)
-			return;
-		m_pCommandQueue->Cancel();
-	}
-
-	m_pState->SetServer(&server);
-	m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
-	m_pCommandQueue->ProcessCommand(new CListCommand());
-	
-	m_pOptions->SetLastServer(server);
 }
 
 void CMainFrame::OnEngineEvent(wxEvent &event)

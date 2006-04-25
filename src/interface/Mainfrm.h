@@ -14,6 +14,7 @@ class CAsyncRequestQueue;
 class CLed;
 class CThemeProvider;
 class CView;
+class CQuickconnectBar;
 
 class CMainFrame : public wxFrame
 {
@@ -35,6 +36,9 @@ public:
 	CLocalListView* GetLocalListView() { return m_pLocalListView; }
 	CRemoteListView* GetRemoteListView() { return m_pRemoteListView; }
 
+	CFileZillaEngine* m_pEngine;
+	CCommandQueue* m_pCommandQueue;
+
 protected:
 	bool CreateMenus();
 	bool CreateQuickconnectBar();
@@ -47,7 +51,7 @@ protected:
 	wxStatusBar* m_pStatusBar;
 	wxMenuBar* m_pMenuBar;
 	wxToolBar* m_pToolBar;
-	wxPanel* m_pQuickconnectBar;
+	CQuickconnectBar* m_pQuickconnectBar;
 	wxSplitterWindow* m_pTopSplitter;
 	wxSplitterWindow* m_pBottomSplitter;
 	wxSplitterWindow* m_pViewSplitter;
@@ -71,10 +75,10 @@ protected:
 	CThemeProvider* m_pThemeProvider;
 
 	// Event handlers
+	DECLARE_EVENT_TABLE()
 	void OnSize(wxSizeEvent& event);
 	void OnViewSplitterPosChanged(wxSplitterEvent& event);
 	void OnMenuHandler(wxCommandEvent& event);
-	void OnQuickconnect(wxCommandEvent& event);
 	void OnEngineEvent(wxEvent& event);
 	void OnUpdateToolbarDisconnect(wxUpdateUIEvent& event);
 	void OnDisconnect(wxCommandEvent& event);
@@ -107,8 +111,6 @@ protected:
 	bool m_bInitDone;
 	bool m_bQuit;
 
-	CFileZillaEngine* m_pEngine;
-	CCommandQueue* m_pCommandQueue;
 	CAsyncRequestQueue* m_pAsyncRequestQueue;
 	CState* m_pState;
 
@@ -131,8 +133,6 @@ protected:
 #ifdef __WXMSW__
 	bool m_windowIsMaximized;
 #endif
-
-	DECLARE_EVENT_TABLE()
 };
 
 #endif

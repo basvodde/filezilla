@@ -19,7 +19,8 @@ filezilla_SOURCES = aboutdialog.cpp asyncrequestqueue.cpp chmoddialog.cpp \
 		optionspage.cpp	optionspage_connection.cpp \
 		optionspage_connection_active.cpp optionspage_filetype.cpp \
 		optionspage_language.cpp \
-		optionspage_themes.cpp QueueView.cpp recentserverlist.cpp \
+		optionspage_themes.cpp QueueView.cpp \
+		quickconnectbar.cpp recentserverlist.cpp \
 		RemoteListView.cpp RemoteTreeView.cpp settingsdialog.cpp \
 		sitemanager.cpp state.cpp statuslinectrl.cpp StatusView.cpp \
 		systemimagelist.cpp \
@@ -41,7 +42,7 @@ noinst_HEADERS = aboutdialog.h asyncrequestqueue.h chmoddialog.h \
 		 optionspage_connection_active.h optionspage_filetype.h \
 		 optionspage_language.h \
 		 optionspage_themes.h prefix.h QueueView.h \
-		 recentserverlist.h \
+		 quickconnectbar.h recentserverlist.h \
 		 RemoteListView.h RemoteTreeView.h \
 		 settingsdialog.h sitemanager.h state.h \
 		 statuslinectrl.h StatusView.h systemimagelist.h \
