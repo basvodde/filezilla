@@ -81,14 +81,14 @@ void CQuickconnectBar::OnQuickconnect(wxCommandEvent &event)
 	switch (protocol)
 	{
 	case SFTP:
-		if (numericPort != 22)
+		if (server.GetPort() != 22)
 			XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetValue(wxString::Format(_T("%d"), numericPort));
 		else
 			XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetValue(_T(""));
 		break;
 	case FTP:
 	default:
-		if (numericPort != 21)
+		if (server.GetPort() != 21)
 			XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetValue(wxString::Format(_T("%d"), numericPort));
 		else
 			XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetValue(_T(""));
@@ -126,7 +126,8 @@ void CQuickconnectBar::OnQuickconnectDropdown(wxCommandEvent& event)
 
 void CQuickconnectBar::OnMenu(wxCommandEvent& event)
 {
-	if (!event.GetId())
+	const int id = event.GetId();
+	if (!id)
 	{
 		XRCCTRL(*this, "ID_QUICKCONNECT_HOST", wxTextCtrl)->SetValue(_T(""));
 		XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetValue(_T(""));
@@ -134,8 +135,20 @@ void CQuickconnectBar::OnMenu(wxCommandEvent& event)
 		XRCCTRL(*this, "ID_QUICKCONNECT_PASS", wxTextCtrl)->SetValue(_T(""));
 		return;
 	}
-	else if (event.GetId() == 1)
+	else if (id == 1)
 	{
 		CRecentServerList::Clear();
 	}
+
+	if (id < 10)
+		return;
+
+	unsigned int index = id - 10;
+	if (index >= m_recentServers.size())
+		return;
+
+	std::list<CServer>::const_iterator iter;
+	for (iter = m_recentServers.begin(); index; index--, iter++);
+
+	m_pState->Connect(*iter, true);
 }
