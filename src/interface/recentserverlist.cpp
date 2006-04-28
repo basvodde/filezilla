@@ -102,3 +102,25 @@ void CRecentServerList::SetMostRecentServer(const CServer& server)
 	wxString error;
 	m_XmlFile.Save(&error);
 }
+
+void CRecentServerList::Clear()
+{
+	m_mostRecentServers.clear();
+
+	CInterProcessMutex mutex(MUTEX_MOSTRECENTSERVERS);
+	if (!m_XmlFile.Loaded())
+		m_XmlFile.Load(_T("recentservers"));
+
+	TiXmlElement* pDocument = m_XmlFile.GetElement();
+	if (!pDocument)
+		return;
+	
+	TiXmlElement* pElement = pDocument->FirstChildElement("RecentServers");
+	if (!pElement)
+		pElement = pDocument->InsertEndChild(TiXmlElement("RecentServers"))->ToElement();
+
+	pElement->Clear();
+
+	wxString error;
+	m_XmlFile.Save(&error);
+}

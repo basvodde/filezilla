@@ -8,6 +8,7 @@ class CRecentServerList
 public:
 	static void SetMostRecentServer(const CServer& server);
 	static const std::list<CServer> GetMostRecentServers(bool lockMutex = true);
+	static void Clear();
 
 protected:
 
