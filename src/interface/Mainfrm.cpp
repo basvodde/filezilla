@@ -30,8 +30,6 @@
 #define new DEBUG_NEW
 #endif
 
-#define RECVLED_TIMER_ID wxID_HIGHEST + 1
-#define SENDLED_TIMER_ID wxID_HIGHEST + 2
 #define TRANSFERSTATUS_TIMER_ID wxID_HIGHEST + 3
 
 static const int statbarWidths[6] = {
@@ -116,10 +114,8 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 
 		m_pStatusBar->SetStatusWidths(6, statbarWidths);
 		
-		m_pRecvLed = new CLed(m_pStatusBar, 1);
-		m_pSendLed = new CLed(m_pStatusBar, 0);
-		m_recvLedTimer.SetOwner(this, RECVLED_TIMER_ID);
-		m_sendLedTimer.SetOwner(this, SENDLED_TIMER_ID);
+		m_pRecvLed = new CLed(m_pStatusBar, 1, m_pState);
+		m_pSendLed = new CLed(m_pStatusBar, 0, m_pState);
 	}
 	else
 	{
@@ -494,8 +490,6 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 {
 	Show(false);
 	m_bQuit = true;
-	m_sendLedTimer.Stop();
-	m_recvLedTimer.Stop();
 	delete m_pSendLed;
 	delete m_pRecvLed;
 	m_pSendLed = 0;
@@ -603,37 +597,7 @@ void CMainFrame::OnStatusbarSize(wxSizeEvent& event)
 
 void CMainFrame::OnTimer(wxTimerEvent& event)
 {
-	if (event.GetId() == RECVLED_TIMER_ID && m_recvLedTimer.IsRunning())
-	{
-		if (!m_pState->m_pEngine)
-		{
-			m_recvLedTimer.Stop();
-			return;
-		}
-
-		if (!m_pState->m_pEngine->IsActive(true))
-		{
-			if (m_pRecvLed)
-				m_pRecvLed->Unset();
-			m_recvLedTimer.Stop();
-		}
-	}
-	else if (event.GetId() == SENDLED_TIMER_ID && m_sendLedTimer.IsRunning())
-	{
-		if (!m_pState->m_pEngine)
-		{
-			m_sendLedTimer.Stop();
-			return;
-		}
-
-		if (!m_pState->m_pEngine->IsActive(false))
-		{
-			if (m_pSendLed)
-				m_pSendLed->Unset();
-			m_sendLedTimer.Stop();
-		}
-	}
-	else if (event.GetId() == TRANSFERSTATUS_TIMER_ID && m_transferStatusTimer.IsRunning())
+	if (event.GetId() == TRANSFERSTATUS_TIMER_ID && m_transferStatusTimer.IsRunning())
 	{
 		if (!m_pState->m_pEngine)
 		{
@@ -817,20 +781,14 @@ void CMainFrame::CachedPasswordFailed(const CServer& server)
 
 void CMainFrame::UpdateSendLed()
 {
-	if (m_pSendLed && !m_sendLedTimer.IsRunning())
-	{
-		m_pSendLed->Set();
-		m_sendLedTimer.Start(100);
-	}
+	if (m_pSendLed)
+		m_pSendLed->Ping();
 }
 
 void CMainFrame::UpdateRecvLed()
 {
-	if (m_pRecvLed && !m_recvLedTimer.IsRunning())
-	{
-		m_pRecvLed->Set();
-		m_recvLedTimer.Start(100);
-	}
+	if (m_pRecvLed)
+		m_pRecvLed->Ping();
 }
 
 void CMainFrame::AddToRequestQueue(CFileZillaEngine *pEngine, CAsyncRequestNotification *pNotification)

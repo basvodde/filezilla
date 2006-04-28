@@ -63,7 +63,6 @@ protected:
 	CRemoteListView* m_pRemoteListView;
 	CLed* m_pRecvLed;
 	CLed* m_pSendLed;
-	wxTimer m_sendLedTimer, m_recvLedTimer;
 	wxTimer m_transferStatusTimer;
 	CThemeProvider* m_pThemeProvider;
 
