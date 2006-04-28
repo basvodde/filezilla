@@ -1,24 +1,25 @@
 #ifndef __QUICKCONNECTBAR_H__
 #define __QUICKCONNECTBAR_H__
 
-class CMainFrame;
+class CState;
 class CQuickconnectBar : public wxPanel
 {
 public:
 	CQuickconnectBar();
 	virtual~CQuickconnectBar();
 
-	bool Create(CMainFrame* pMainFrame);
+	bool Create(wxWindow* pParent, CState* pState);
 
 protected:
-	CMainFrame* m_pMainFrame;
-
 	// Only valid while menu is being displayed
 	std::list<CServer> m_recentServers;
+
+	CState* m_pState;
 
 	DECLARE_EVENT_TABLE();
 	void OnQuickconnect(wxCommandEvent& event);
 	void OnQuickconnectDropdown(wxCommandEvent& event);
+	void OnMenu(wxCommandEvent& event);
 };
 
 

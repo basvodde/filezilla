@@ -4,15 +4,14 @@
 #include "Options.h"
 #include "xmlfunctions.h"
 
-CThemeProvider::CThemeProvider(COptions* pOptions)
+CThemeProvider::CThemeProvider()
 {
 	wxArtProvider::PushProvider(this);
-	m_pOptions = pOptions;
 }
 
 wxBitmap CThemeProvider::CreateBitmap(const wxArtID& id, const wxArtClient& client, const wxSize& size)
 {
-	wxString path = GetThemePath(m_pOptions->GetOption(OPTION_THEME));
+	wxString path = GetThemePath(COptions::Get()->GetOption(OPTION_THEME));
 
 	wxString strSize;
 	if (size.GetWidth() >= 40)

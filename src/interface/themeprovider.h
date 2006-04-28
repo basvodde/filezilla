@@ -1,11 +1,10 @@
 #ifndef __THEMEPROVIDER_H__
 #define __THEMEPROVIDER_H__
 
-class COptions;
 class CThemeProvider : public wxArtProvider
 {
 public:
-	CThemeProvider(COptions* pOptions);
+	CThemeProvider();
 	virtual ~CThemeProvider() { }
 
 	static std::list<wxString> GetThemes();
@@ -16,7 +15,6 @@ protected:
 	static wxString GetThemePath(const wxString& theme);
 
 	wxBitmap CreateBitmap(const wxArtID& id, const wxArtClient& client, const wxSize& size);
-	COptions* m_pOptions;
 };
 
 #endif //__THEMEPROVIDER_H__

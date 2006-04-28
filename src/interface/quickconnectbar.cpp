@@ -1,30 +1,29 @@
 #include "FileZilla.h"
-#include "Mainfrm.h"
 #include "quickconnectbar.h"
 #include "recentserverlist.h"
 #include "commandqueue.h"
 #include "state.h"
-#include "options.h"
+#include "Options.h"
 
 BEGIN_EVENT_TABLE(CQuickconnectBar, wxPanel)
 EVT_BUTTON(XRCID("ID_QUICKCONNECT_OK"), CQuickconnectBar::OnQuickconnect)
 EVT_BUTTON(XRCID("ID_QUICKCONNECT_DROPDOWN"), CQuickconnectBar::OnQuickconnectDropdown)
+EVT_MENU(wxID_ANY, CQuickconnectBar::OnMenu)
 END_EVENT_TABLE();
 
 CQuickconnectBar::CQuickconnectBar()
 {
-	m_pMainFrame = 0;
 }
 
 CQuickconnectBar::~CQuickconnectBar()
 {
 }
 
-bool CQuickconnectBar::Create(CMainFrame* pMainFrame)
+bool CQuickconnectBar::Create(wxWindow* pParent, CState* pState)
 {
-	m_pMainFrame = pMainFrame;
+	m_pState = pState;
 
-    if (!wxXmlResource::Get()->LoadPanel(this, pMainFrame, _T("ID_QUICKCONNECTBAR")))
+    if (!wxXmlResource::Get()->LoadPanel(this, pParent, _T("ID_QUICKCONNECTBAR")))
 	{
 		wxLogError(_("Cannot load Quickconnect bar from resource file"));
 		return false;
@@ -37,7 +36,7 @@ bool CQuickconnectBar::Create(CMainFrame* pMainFrame)
 
 void CQuickconnectBar::OnQuickconnect(wxCommandEvent &event)
 {	
-	if (!m_pMainFrame->m_pEngine)
+	if (!m_pState->m_pEngine)
 	{
 		wxMessageBox(_("FTP Engine not initialized, can't connect"), _("FileZilla Error"), wxICON_EXCLAMATION);
 		return;
@@ -98,18 +97,9 @@ void CQuickconnectBar::OnQuickconnect(wxCommandEvent &event)
 	XRCCTRL(*this, "ID_QUICKCONNECT_USER", wxTextCtrl)->SetValue(server.GetUser());
 	XRCCTRL(*this, "ID_QUICKCONNECT_PASS", wxTextCtrl)->SetValue(server.GetPass());
 
-	if (m_pMainFrame->m_pEngine->IsConnected() || m_pMainFrame->m_pEngine->IsBusy() || !m_pMainFrame->m_pCommandQueue->Idle())
-	{
-		if (wxMessageBox(_("Break current connection?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) != wxYES)
-			return;
-		m_pMainFrame->m_pCommandQueue->Cancel();
-	}
+	if (!m_pState->Connect(server, true))
+		return;
 
-	m_pMainFrame->GetState()->SetServer(&server);
-	m_pMainFrame->m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
-	m_pMainFrame->m_pCommandQueue->ProcessCommand(new CListCommand());
-	
-	m_pMainFrame->m_pOptions->SetLastServer(server);
 	CRecentServerList::SetMostRecentServer(server);
 }
 
@@ -132,4 +122,20 @@ void CQuickconnectBar::OnQuickconnectDropdown(wxCommandEvent& event)
 	XRCCTRL(*this, "ID_QUICKCONNECT_DROPDOWN", wxButton)->PopupMenu(pMenu);
 	delete pMenu;
 	m_recentServers.clear();
+}
+
+void CQuickconnectBar::OnMenu(wxCommandEvent& event)
+{
+	if (!event.GetId())
+	{
+		XRCCTRL(*this, "ID_QUICKCONNECT_HOST", wxTextCtrl)->SetValue(_T(""));
+		XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetValue(_T(""));
+		XRCCTRL(*this, "ID_QUICKCONNECT_USER", wxTextCtrl)->SetValue(_T(""));
+		XRCCTRL(*this, "ID_QUICKCONNECT_PASS", wxTextCtrl)->SetValue(_T(""));
+		return;
+	}
+	else if (event.GetId() == 1)
+	{
+		CRecentServerList::Clear();
+	}
 }

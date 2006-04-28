@@ -8,7 +8,7 @@ class COptionsPage;
 class CSettingsDialog : public wxDialogEx
 {
 public:
-	CSettingsDialog(COptions* pOptions);
+	CSettingsDialog();
 	virtual ~CSettingsDialog();
 
 	bool Create(wxWindow* parent);

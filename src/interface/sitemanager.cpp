@@ -29,8 +29,7 @@ EVT_RADIOBUTTON(XRCID("ID_CHARSET_CUSTOM"), CSiteManager::OnCharsetChange)
 EVT_CHOICE(XRCID("ID_PROTOCOL"), CSiteManager::OnProtocolSelChanged)
 END_EVENT_TABLE()
 
-CSiteManager::CSiteManager(COptions* pOptions)
-	: m_pOptions(pOptions)
+CSiteManager::CSiteManager()
 {
 	m_pSiteManagerMutex = 0;
 }

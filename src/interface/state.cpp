@@ -4,9 +4,15 @@
 #include "LocalTreeView.h"
 #include "RemoteListView.h"
 #include "viewheader.h"
+#include "commandqueue.h"
+#include "FileZillaEngine.h"
+#include "Options.h"
+#include "MainFrm.h"
 
-CState::CState()
+CState::CState(CMainFrame* pMainFrame)
 {
+	m_pMainFrame = pMainFrame;
+
 	m_pLocalListView = 0;
 	m_pLocalTreeView = 0;
 	m_pRemoteListView = 0;
@@ -15,12 +21,18 @@ CState::CState()
 	m_pServer = 0;
 	m_pLocalViewHeader = 0;
 	m_pRemoteViewHeader = 0;
+
+	m_pEngine = 0;
+	m_pCommandQueue = 0;
 }
 
 CState::~CState()
 {
 	delete m_pDirectoryListing;
 	delete m_pServer;
+
+	delete m_pCommandQueue;
+	delete m_pEngine;
 }
 
 wxString CState::GetLocalDir() const
@@ -157,7 +169,7 @@ void CState::RefreshLocal()
 		m_pLocalTreeView->Refresh();
 }
 
-void CState::SetServer(CServer* server)
+void CState::SetServer(const CServer* server)
 {
 	delete m_pServer;
 	if (server)
@@ -177,4 +189,47 @@ void CState::ApplyCurrentFilter()
 		m_pLocalListView->ApplyCurrentFilter();
 	if (m_pRemoteListView)
 		m_pRemoteListView->ApplyCurrentFilter();
+}
+
+bool CState::Connect(const CServer& server, bool askBreak, const CServerPath& path /*=CServerPath()*/)
+{
+	if (!m_pEngine)
+		return false;
+	if (m_pEngine->IsConnected() || m_pEngine->IsBusy() || !m_pCommandQueue->Idle())
+	{
+		if (askBreak)
+			if (wxMessageBox(_("Break current connection?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) != wxYES)
+				return false;
+		m_pCommandQueue->Cancel();
+	}
+
+	SetServer(&server);
+	m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
+	m_pCommandQueue->ProcessCommand(new CListCommand(path));
+	
+	COptions::Get()->SetLastServer(server);
+
+	return true;
+}
+
+bool CState::CreateEngine()
+{
+	wxASSERT(!m_pEngine);
+	if (m_pEngine)
+		return true;
+
+	m_pEngine = new CFileZillaEngine();
+	m_pEngine->Init(m_pMainFrame, COptions::Get());
+
+	m_pCommandQueue = new CCommandQueue(m_pEngine, m_pMainFrame);
+	
+	return true;
+}
+
+void CState::DestroyEngine()
+{
+	delete m_pCommandQueue;
+	m_pCommandQueue = 0;
+	delete m_pEngine;
+	m_pEngine = 0;
 }

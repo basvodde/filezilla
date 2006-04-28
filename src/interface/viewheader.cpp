@@ -350,10 +350,9 @@ BEGIN_EVENT_TABLE(CRemoteViewHeader, CViewHeader)
 EVT_TEXT_ENTER(wxID_ANY, CRemoteViewHeader::OnTextEnter)
 END_EVENT_TABLE()
 
-CRemoteViewHeader::CRemoteViewHeader(wxWindow* pParent, CState* pState, CCommandQueue* pCommandQueue)
+CRemoteViewHeader::CRemoteViewHeader(wxWindow* pParent, CState* pState)
 	: CViewHeader(pParent, _("Remote site:"))
 {
-	m_pCommandQueue = pCommandQueue;
 	m_pState = pState;
 	m_pState->SetRemoteViewHeader(this);
 }
@@ -384,11 +383,11 @@ void CRemoteViewHeader::OnTextEnter(wxCommandEvent& event)
 		return;
 	}
 
-	if (!m_pCommandQueue->Idle())
+	if (!m_pState->m_pCommandQueue->Idle())
 	{
 		wxBell();
 		return;
 	}
 
-	m_pCommandQueue->ProcessCommand(new CListCommand(path));
+	m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(path));
 }

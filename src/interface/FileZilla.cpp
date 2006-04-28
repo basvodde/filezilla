@@ -34,6 +34,7 @@ CFileZillaApp::~CFileZillaApp()
 {
 	delete m_pLocale;
 	delete m_pWrapEngine;
+	COptions::Destroy();
 }
 
 bool CFileZillaApp::OnInit()
@@ -48,8 +49,8 @@ bool CFileZillaApp::OnInit()
 	LoadLocales();
     InitSettingsDir();
 
-	COptions* pOptions = new COptions;
-	wxString language = pOptions->GetOption(OPTION_LANGUAGE);
+	COptions::Init();
+	wxString language = COptions::Get()->GetOption(OPTION_LANGUAGE);
 	if (language != _T(""))
 	{
 		const wxLanguageInfo* pInfo = wxLocale::FindLanguageInfo(language);
@@ -68,7 +69,7 @@ USE AT OWN RISK"), _T("Important Information"));
 
 	if (!LoadResourceFiles())
 	{
-		delete pOptions;
+		COptions::Destroy();
 		return false;
 	}
 
@@ -79,7 +80,7 @@ USE AT OWN RISK"), _T("Important Information"));
 	m_pWrapEngine = new CWrapEngine();
 	m_pWrapEngine->LoadCache();
 
-	wxFrame *frame = new CMainFrame(pOptions);
+	wxFrame *frame = new CMainFrame();
 	frame->Show(true);
 	SetTopWindow(frame);
 

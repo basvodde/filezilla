@@ -625,7 +625,7 @@ void CFilterDialog::OnChangeAll(wxCommandEvent& event)
 		pChoice->SetSelection(0);
 	}
 
-	for (int i = 0; i < pListBox->GetCount(); i++)
+	for (size_t i = 0; i < pListBox->GetCount(); i++)
 	{
 		pListBox->Check(i, check);
 		(*pValues)[i] = check;

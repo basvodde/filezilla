@@ -4,7 +4,6 @@
 #include "systemimagelist.h"
 
 class CState;
-class CCommandQueue;
 class CQueueView;
 class CChmodDialog;
 class CRemoteListView : public wxListCtrl, CSystemImageList
@@ -20,7 +19,7 @@ protected:
 	} m_operationMode;
 
 public:
-	CRemoteListView(wxWindow* parent, wxWindowID id, CState* pState, CCommandQueue* pCommandQueue, CQueueView* pQueue);
+	CRemoteListView(wxWindow* parent, wxWindowID id, CState* pState, CQueueView* pQueue);
 	virtual ~CRemoteListView();
 
 	void SetDirectoryListing(CDirectoryListing *pDirectoryListing, bool modified = false);
@@ -90,7 +89,6 @@ protected:
 #endif
 
 	CState* m_pState;
-	CCommandQueue* m_pCommandQueue;
 	CQueueView* m_pQueue;
 
 	int m_sortColumn;

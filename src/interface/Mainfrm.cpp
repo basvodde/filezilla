@@ -73,10 +73,8 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_TOOL(XRCID("ID_TOOLBAR_FILTER"), CMainFrame::OnFilter)
 END_EVENT_TABLE()
 
-CMainFrame::CMainFrame(COptions* pOptions) : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
+CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
 {
-	m_pOptions = pOptions;
-
 	SetSizeHints(250, 250);
 
 	SetIcon(wxICON(appicon));
@@ -102,8 +100,8 @@ CMainFrame::CMainFrame(COptions* pOptions) : wxFrame(NULL, -1, _T("FileZilla"), 
 	m_windowIsMaximized = false;
 #endif
 
-	m_pThemeProvider = new CThemeProvider(m_pOptions);
-	m_pState = new CState();
+	m_pThemeProvider = new CThemeProvider();
+	m_pState = new CState(this);
 
 	m_pStatusBar = CreateStatusBar(6, wxST_SIZEGRIP);
 	if (m_pStatusBar)
@@ -137,10 +135,10 @@ CMainFrame::CMainFrame(COptions* pOptions) : wxFrame(NULL, -1, _T("FileZilla"), 
 
 	m_ViewSplitterSashPos = 0.5;
 
-	m_pEngine = new CFileZillaEngine();
-	m_pEngine->Init(this, m_pOptions);
-	
-	m_pCommandQueue = new CCommandQueue(m_pEngine, this);
+	if (!m_pState->CreateEngine())
+	{
+		wxMessageBox(_("Failed to initialize FTP engine"));
+	}
 
 #ifdef __WXMSW__
 	long style = wxSP_NOBORDER | wxSP_LIVE_UPDATE;
@@ -182,10 +180,10 @@ CMainFrame::CMainFrame(COptions* pOptions) : wxFrame(NULL, -1, _T("FileZilla"), 
 	m_pRemoteTreeViewPanel = new CView(m_pRemoteSplitter);
 	m_pRemoteListViewPanel = new CView(m_pRemoteSplitter);
 	m_pRemoteTreeView = new CRemoteTreeView(m_pRemoteTreeViewPanel, -1);
-	m_pRemoteListView = new CRemoteListView(m_pRemoteListViewPanel, -1, m_pState, m_pCommandQueue, m_pQueueView);
+	m_pRemoteListView = new CRemoteListView(m_pRemoteListViewPanel, -1, m_pState, m_pQueueView);
 	m_pRemoteTreeViewPanel->SetWindow(m_pRemoteTreeView);
 	m_pRemoteListViewPanel->SetWindow(m_pRemoteListView);
-	m_pRemoteTreeViewPanel->SetHeader(new CRemoteViewHeader(m_pRemoteSplitter, m_pState, m_pCommandQueue));
+	m_pRemoteTreeViewPanel->SetHeader(new CRemoteViewHeader(m_pRemoteSplitter, m_pState));
 	
 	m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter, 100);
 	m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueueView, 100);
@@ -208,9 +206,6 @@ CMainFrame::CMainFrame(COptions* pOptions) : wxFrame(NULL, -1, _T("FileZilla"), 
 CMainFrame::~CMainFrame()
 {
 	delete m_pState;
-	delete m_pCommandQueue;
-	delete m_pEngine;
-	delete m_pOptions;
 	delete m_pAsyncRequestQueue;
 }
 
@@ -292,7 +287,7 @@ bool CMainFrame::CreateQuickconnectBar()
 		delete m_pQuickconnectBar;
 
 	m_pQuickconnectBar = new CQuickconnectBar();
-	if (!m_pQuickconnectBar->Create(this))
+	if (!m_pQuickconnectBar->Create(this, m_pState))
 	{
 		delete m_pQuickconnectBar;
 		m_pQuickconnectBar = 0;
@@ -313,14 +308,14 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	}
 	else if (event.GetId() == XRCID("ID_MENU_SERVER_CMD"))
 	{
-		if (!m_pEngine || !m_pEngine->IsConnected() || m_pEngine->IsBusy() || !m_pCommandQueue->Idle())
+		if (!m_pState->m_pEngine || !m_pState->m_pEngine->IsConnected() || m_pState->m_pEngine->IsBusy() || !m_pState->m_pCommandQueue->Idle())
 			return;
 
 		wxTextEntryDialog dlg(this, _("Please enter raw FTP command.\nUsing raw ftp commands will clear the directory cache."), _("Enter custom command"));
 		if (dlg.ShowModal() != wxID_OK)
 			return;
 
-		m_pCommandQueue->ProcessCommand(new CRawCommand(dlg.GetValue()));		
+		m_pState->m_pCommandQueue->ProcessCommand(new CRawCommand(dlg.GetValue()));		
 	}
 	else if (event.GetId() == XRCID("wxID_PREFERENCES"))
 	{
@@ -334,7 +329,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	}
 	else if (event.GetId() == XRCID("ID_MENU_EDIT_NETCONFWIZARD"))
 	{
-		CNetConfWizard wizard(this, m_pOptions);
+		CNetConfWizard wizard(this, COptions::Get());
 		wizard.Load();
 		wizard.Run();
 	}
@@ -344,10 +339,10 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 
 void CMainFrame::OnEngineEvent(wxEvent &event)
 {
-	if (!m_pEngine)
+	if (!m_pState->m_pEngine)
 		return;
 
-	CNotification *pNotification = m_pEngine->GetNextNotification();
+	CNotification *pNotification = m_pState->m_pEngine->GetNextNotification();
 	while (pNotification)
 	{
 		switch (pNotification->GetID())
@@ -357,7 +352,7 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 			delete pNotification;
 			break;
 		case nId_operation:
-			m_pCommandQueue->Finish(reinterpret_cast<COperationNotification*>(pNotification));
+			m_pState->m_pCommandQueue->Finish(reinterpret_cast<COperationNotification*>(pNotification));
 			delete pNotification;
 			if (m_bQuit)
 			{
@@ -373,7 +368,7 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 			}
 			break;
 		case nId_asyncrequest:
-			m_pAsyncRequestQueue->AddRequest(m_pEngine, reinterpret_cast<CAsyncRequestNotification *>(pNotification));
+			m_pAsyncRequestQueue->AddRequest(m_pState->m_pEngine, reinterpret_cast<CAsyncRequestNotification *>(pNotification));
 			break;
 		case nId_active:
 			{
@@ -403,7 +398,7 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 			break;
 		}
 
-		pNotification = m_pEngine->GetNextNotification();
+		pNotification = m_pState->m_pEngine->GetNextNotification();
 	}
 }
 
@@ -426,33 +421,33 @@ bool CMainFrame::CreateToolBar()
 
 void CMainFrame::OnUpdateToolbarDisconnect(wxUpdateUIEvent& event)
 {
-	event.Enable(m_pEngine && m_pEngine->IsConnected() && !m_pEngine->IsBusy());
+	event.Enable(m_pState->m_pEngine && m_pState->m_pEngine->IsConnected() && !m_pState->m_pEngine->IsBusy());
 }
 
 void CMainFrame::OnDisconnect(wxCommandEvent& event)
 {
-	if (!m_pEngine)
+	if (!m_pState->m_pEngine)
 		return;
 
-	if (m_pEngine->IsBusy())
+	if (m_pState->m_pEngine->IsBusy())
 		return;
 
-	m_pCommandQueue->ProcessCommand(new CDisconnectCommand());
+	m_pState->m_pCommandQueue->ProcessCommand(new CDisconnectCommand());
 }
 
 void CMainFrame::OnUpdateToolbarCancel(wxUpdateUIEvent& event)
 {
-	event.Enable(m_pEngine && m_pEngine->IsBusy());
+	event.Enable(m_pState->m_pEngine && m_pState->m_pEngine->IsBusy());
 }
 
 void CMainFrame::OnCancel(wxCommandEvent& event)
 {
-	if (!m_pEngine || !m_pEngine->IsBusy())
+	if (!m_pState->m_pEngine || !m_pState->m_pEngine->IsBusy())
 		return;
 
 	if (wxMessageBox(_("Really cancel current operation?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) == wxYES)
 	{
-		m_pCommandQueue->Cancel();
+		m_pState->m_pCommandQueue->Cancel();
 		GetRemoteListView()->StopRecursiveOperation();
 	}
 }
@@ -509,16 +504,15 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 	m_transferStatusTimer.Stop();
 
 	bool res = true;
-	if (m_pCommandQueue)
-		res = m_pCommandQueue->Cancel();
+	if (m_pState->m_pCommandQueue)
+		res = m_pState->m_pCommandQueue->Cancel();
 
 	if (!res)
 	{
 		event.Veto();
 		return;
 	}
-	delete m_pEngine;
-	m_pEngine = 0;
+	m_pState->DestroyEngine();
 
 	if (!m_pQueueView->Quit())
 	{
@@ -531,23 +525,23 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 
 void CMainFrame::OnUpdateToolbarReconnect(wxUpdateUIEvent &event)
 {
-	if (!m_pEngine || m_pEngine->IsConnected() || m_pEngine->IsBusy() || !m_pOptions)
+	if (!m_pState->m_pEngine || m_pState->m_pEngine->IsConnected() || m_pState->m_pEngine->IsBusy())
 	{
 		event.Enable(false);
 		return;
 	}
 	
 	CServer server;
-	event.Enable(m_pOptions->GetLastServer(server));
+	event.Enable(COptions::Get()->GetLastServer(server));
 }
 
 void CMainFrame::OnReconnect(wxCommandEvent &event)
 {
-	if (!m_pEngine || m_pEngine->IsConnected() || m_pEngine->IsBusy() || !m_pOptions)
+	if (!m_pState->m_pEngine || m_pState->m_pEngine->IsConnected() || m_pState->m_pEngine->IsBusy())
 		return;
 	
 	CServer server;
-	if (!m_pOptions->GetLastServer(server))
+	if (!COptions::Get()->GetLastServer(server))
 		return;
 
 	if (server.GetLogonType() == ASK)
@@ -555,16 +549,14 @@ void CMainFrame::OnReconnect(wxCommandEvent &event)
 		if (!GetPassword(server))
 			return;
 	}
-	
-	m_pState->SetServer(&server);
-	m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
-	m_pCommandQueue->ProcessCommand(new CListCommand());
+
+	m_pState->Connect(server, false);
 }
 
 void CMainFrame::OnRefresh(wxCommandEvent &event)
 {
-	if (m_pEngine && m_pEngine->IsConnected() && !m_pEngine->IsBusy())
-		m_pCommandQueue->ProcessCommand(new CListCommand(m_pState->GetRemotePath(), _T(""), true));
+	if (m_pState->m_pEngine && m_pState->m_pEngine->IsConnected() && !m_pState->m_pEngine->IsBusy())
+		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_pState->GetRemotePath(), _T(""), true));
 
 	if (m_pState)
 		m_pState->RefreshLocal();
@@ -613,13 +605,13 @@ void CMainFrame::OnTimer(wxTimerEvent& event)
 {
 	if (event.GetId() == RECVLED_TIMER_ID && m_recvLedTimer.IsRunning())
 	{
-		if (!m_pEngine)
+		if (!m_pState->m_pEngine)
 		{
 			m_recvLedTimer.Stop();
 			return;
 		}
 
-		if (!m_pEngine->IsActive(true))
+		if (!m_pState->m_pEngine->IsActive(true))
 		{
 			if (m_pRecvLed)
 				m_pRecvLed->Unset();
@@ -628,13 +620,13 @@ void CMainFrame::OnTimer(wxTimerEvent& event)
 	}
 	else if (event.GetId() == SENDLED_TIMER_ID && m_sendLedTimer.IsRunning())
 	{
-		if (!m_pEngine)
+		if (!m_pState->m_pEngine)
 		{
 			m_sendLedTimer.Stop();
 			return;
 		}
 
-		if (!m_pEngine->IsActive(false))
+		if (!m_pState->m_pEngine->IsActive(false))
 		{
 			if (m_pSendLed)
 				m_pSendLed->Unset();
@@ -643,7 +635,7 @@ void CMainFrame::OnTimer(wxTimerEvent& event)
 	}
 	else if (event.GetId() == TRANSFERSTATUS_TIMER_ID && m_transferStatusTimer.IsRunning())
 	{
-		if (!m_pEngine)
+		if (!m_pState->m_pEngine)
 		{
 			m_transferStatusTimer.Stop();
 			return;
@@ -651,7 +643,7 @@ void CMainFrame::OnTimer(wxTimerEvent& event)
 
 		bool changed;
 		CTransferStatus status;
-		if (!m_pEngine->GetTransferStatus(status, changed))
+		if (!m_pState->m_pEngine->GetTransferStatus(status, changed))
 		{
 			SetProgress(0);
 			m_transferStatusTimer.Stop();
@@ -714,7 +706,7 @@ void CMainFrame::SetProgress(const CTransferStatus *pStatus)
 
 void CMainFrame::OnSiteManager(wxCommandEvent& event)
 {
-	CSiteManager dlg(m_pOptions);
+	CSiteManager dlg;
 	if (!dlg.Create(this))
 		return;
 
@@ -731,18 +723,7 @@ void CMainFrame::OnSiteManager(wxCommandEvent& event)
 				return;
 		}
 
-		if (m_pEngine->IsConnected() || m_pEngine->IsBusy())
-		{
-			if (wxMessageBox(_("Break current connection?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) != wxYES)
-				return;
-			m_pCommandQueue->Cancel();
-		}
-
-		m_pState->SetServer(&data.m_server);
-		m_pCommandQueue->ProcessCommand(new CConnectCommand(data.m_server));
-		m_pCommandQueue->ProcessCommand(new CListCommand(data.m_remoteDir));
-
-		m_pOptions->SetLastServer(data.m_server);
+		m_pState->Connect(data.m_server, true, data.m_remoteDir);
 
 		if (data.m_localDir != _T(""))
 			m_pState->SetLocalDir(data.m_localDir);
@@ -870,24 +851,24 @@ void CMainFrame::OnUpdateToolbarProcessQueue(wxUpdateUIEvent& event)
 
 void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 {
-	CSettingsDialog dlg(m_pOptions);
+	CSettingsDialog dlg;
 	if (!dlg.Create(this))
 		return;
 
-	wxString oldTheme = m_pOptions->GetOption(OPTION_THEME);
+	wxString oldTheme = COptions::Get()->GetOption(OPTION_THEME);
 	int oldLang = wxGetApp().GetCurrentLanguage();
 
 	int res = dlg.ShowModal();
 	if (res != wxID_OK)
 		return;
 
-	wxString newTheme = m_pOptions->GetOption(OPTION_THEME);
+	wxString newTheme = COptions::Get()->GetOption(OPTION_THEME);
 	int newLang = wxGetApp().GetCurrentLanguage();
 
 	if (oldTheme != newTheme)
 	{
 		wxArtProvider::RemoveProvider(m_pThemeProvider);
-		m_pThemeProvider = new CThemeProvider(m_pOptions);
+		m_pThemeProvider = new CThemeProvider();
 	}
 	if (oldTheme != newTheme || oldLang != newLang)
 		CreateToolBar();

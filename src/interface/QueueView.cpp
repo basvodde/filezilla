@@ -591,11 +591,11 @@ CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame)
 	data.state = t_EngineData::none;
 	m_engineData.push_back(data);
 	
-	int engineCount = m_pMainFrame->m_pOptions->GetOptionVal(OPTION_NUMTRANSFERS);
+	int engineCount = COptions::Get()->GetOptionVal(OPTION_NUMTRANSFERS);
 	for (int i = 0; i < engineCount; i++)
 	{
 		data.pEngine = new CFileZillaEngine();
-		data.pEngine->Init(this, m_pMainFrame->m_pOptions);
+		data.pEngine->Init(this, COptions::Get());
 		m_engineData.push_back(data);
 	}
 
@@ -889,7 +889,7 @@ bool CQueueView::TryStartNextTransfer()
 	if (m_quit || !m_activeMode)
 		return false;
 
-	if (m_activeCount >= m_pMainFrame->m_pOptions->GetOptionVal(OPTION_NUMTRANSFERS))
+	if (m_activeCount >= COptions::Get()->GetOptionVal(OPTION_NUMTRANSFERS))
 		return false;
 
 	// Find first idle server and assign a transfer to it.
@@ -1221,7 +1221,7 @@ void CQueueView::CheckQueueState()
 bool CQueueView::IncreaseErrorCount(t_EngineData& engineData)
 {
 	engineData.pItem->m_errorCount++;
-	if (engineData.pItem->m_errorCount <= m_pMainFrame->m_pOptions->GetOptionVal(OPTION_TRANSFERRETRYCOUNT))
+	if (engineData.pItem->m_errorCount <= COptions::Get()->GetOptionVal(OPTION_TRANSFERRETRYCOUNT))
 		return true;
 
 	ResetEngine(engineData, true);
@@ -1560,7 +1560,7 @@ void CQueueView::LoadQueue()
 void CQueueView::SettingsChanged()
 {
 	m_asciiFiles.clear();
-	wxString extensions = m_pMainFrame->m_pOptions->GetOption(OPTION_ASCIIFILES);
+	wxString extensions = COptions::Get()->GetOption(OPTION_ASCIIFILES);
 	wxString ext;
 	int pos = extensions.Find(_T("|"));
 	while (pos != -1)
@@ -1595,7 +1595,7 @@ void CQueueView::SettingsChanged()
 
 bool CQueueView::ShouldUseBinaryMode(wxString filename)
 {
-	int mode = m_pMainFrame->m_pOptions->GetOptionVal(OPTION_ASCIIBINARY);
+	int mode = COptions::Get()->GetOptionVal(OPTION_ASCIIBINARY);
 	if (mode == 1)
 		return false;
 	else if (mode == 2)
@@ -1603,9 +1603,9 @@ bool CQueueView::ShouldUseBinaryMode(wxString filename)
 
 	int pos = filename.find('.');
 	if (pos == -1)
-		return m_pMainFrame->m_pOptions->GetOptionVal(OPTION_ASCIINOEXT) != 0;
+		return COptions::Get()->GetOptionVal(OPTION_ASCIINOEXT) != 0;
 	else if (!pos)
-		return m_pMainFrame->m_pOptions->GetOptionVal(OPTION_ASCIIDOTFILE) != 0;
+		return COptions::Get()->GetOptionVal(OPTION_ASCIIDOTFILE) != 0;
 	
 	wxString ext = filename.Mid(pos + 1);
 	for (std::list<wxString>::const_iterator iter = m_asciiFiles.begin(); iter != m_asciiFiles.end(); iter++)

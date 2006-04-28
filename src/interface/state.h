@@ -7,21 +7,29 @@ class CRemoteListView;
 class CDirectoryListing;
 class CLocalViewHeader;
 class CRemoteViewHeader;
+class CFileZillaEngine;
+class CCommandQueue;
+class CMainFrame;
 class CState
 {
+	friend class CCommandQueue;
 public:
-	CState();
+	CState(CMainFrame* pMainFrame);
 	~CState();
+
+	bool CreateEngine();
+	void DestroyEngine();
 
 	wxString GetLocalDir() const;
 	bool SetLocalDir(wxString dir);
+
+	bool Connect(const CServer& server, bool askBreak, const CServerPath& path = CServerPath());
 
 	bool SetRemoteDir(const CDirectoryListing *m_pDirectoryListing, bool modified = false);
 	const CDirectoryListing *GetRemoteDir() const;
 	const CServerPath GetRemotePath() const;
 	
 	const CServer* GetServer() const;
-	void SetServer(CServer* server);
 
 	void SetLocalListView(CLocalListView *pLocalListView);
 	void SetLocalTreeView(CLocalTreeView *m_pLocalTreeView);
@@ -34,7 +42,14 @@ public:
 
 	void ApplyCurrentFilter();
 
+	static CState* GetState();
+
+	CFileZillaEngine* m_pEngine;
+	CCommandQueue* m_pCommandQueue;
+
 protected:
+	void SetServer(const CServer* server);
+
 	wxString m_localDir;
 	CDirectoryListing *m_pDirectoryListing;
 
@@ -44,6 +59,8 @@ protected:
 	CServer* m_pServer;
 	CLocalViewHeader* m_pLocalViewHeader;
 	CRemoteViewHeader* m_pRemoteViewHeader;
+
+	CMainFrame* m_pMainFrame;
 };
 
 #endif

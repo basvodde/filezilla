@@ -55,16 +55,14 @@ protected:
 	void OnTextEnter(wxCommandEvent& event);
 };
 
-class CCommandQueue;
 class CRemoteViewHeader : public CViewHeader
 {
 public:
-	CRemoteViewHeader(wxWindow* pParent, CState* pState, CCommandQueue* pCommandQueue);
+	CRemoteViewHeader(wxWindow* pParent, CState* pState);
 	void SetDir(const CServerPath& path);
 
 protected:
 	CState* m_pState;
-	CCommandQueue* m_pCommandQueue;
 	CServerPath m_path;
 
 	DECLARE_EVENT_TABLE();

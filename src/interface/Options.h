@@ -24,9 +24,6 @@ class TiXmlElement;
 class COptions : public COptionsBase
 {
 public:
-	COptions();
-	virtual ~COptions();
-
 	virtual int GetOptionVal(unsigned int nID);
 	virtual wxString GetOption(unsigned int nID);
 
@@ -42,8 +39,15 @@ public:
 
 	void SetLastServer(const CServer& server);
 	bool GetLastServer(CServer& server);
+
+	static COptions* Get();
+	static void Init();
+	static void Destroy();
 	
 protected:
+	COptions();
+	virtual ~COptions();
+
 	int Validate(unsigned int nID, int value);
 	wxString Validate(unsigned int nID, wxString value);
 
@@ -58,6 +62,8 @@ protected:
 	bool m_acquired;
 
 	CServer* m_pLastServer;
+
+	static COptions* m_theOptions;
 };
 
 #endif //__OPTIONS_H__

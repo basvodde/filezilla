@@ -22,7 +22,6 @@ public:
 
 #include "dialogex.h"
 
-class COptions;
 class TiXmlElement;
 class CInterProcessMutex;
 class CSiteManager: public wxDialogEx
@@ -31,7 +30,7 @@ class CSiteManager: public wxDialogEx
 
 public:
 	/// Constructors
-	CSiteManager(COptions* pOptions);
+	CSiteManager();
 	virtual ~CSiteManager();
 
 	/// Creation
@@ -67,7 +66,6 @@ protected:
 	virtual void OnCharsetChange(wxCommandEvent& event);
 	virtual void OnProtocolSelChanged(wxCommandEvent& event);
 	
-	COptions* m_pOptions;
 	CInterProcessMutex* m_pSiteManagerMutex;
 };
 

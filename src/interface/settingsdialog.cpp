@@ -39,9 +39,9 @@ EVT_BUTTON(XRCID("wxID_OK"), CSettingsDialog::OnOK)
 EVT_BUTTON(XRCID("wxID_CANCEL"), CSettingsDialog::OnCancel)
 END_EVENT_TABLE()
 
-CSettingsDialog::CSettingsDialog(COptions* pOptions)
+CSettingsDialog::CSettingsDialog()
 {
-	m_pOptions = pOptions;
+	m_pOptions = COptions::Get();
 	m_activePanel = 0;
 }
 

@@ -8,8 +8,6 @@ class CLocalListView;
 class CRemoteTreeView;
 class CRemoteListView;
 class CState;
-class COptions;
-class CCommandQueue;
 class CAsyncRequestQueue;
 class CLed;
 class CThemeProvider;
@@ -19,13 +17,11 @@ class CQuickconnectBar;
 class CMainFrame : public wxFrame
 {
 public:
-	CMainFrame(COptions* pOptions);
+	CMainFrame();
 	virtual ~CMainFrame();
 
 	bool GetPassword(CServer& server, wxString name = _T(""), wxString challenge = _T(""));
 	void CachedPasswordFailed(const CServer& server);
-
-	COptions* m_pOptions;
 
 	void UpdateSendLed();
 	void UpdateRecvLed();
@@ -35,9 +31,6 @@ public:
 	CStatusView* GetStatusView() { return m_pStatusView; }
 	CLocalListView* GetLocalListView() { return m_pLocalListView; }
 	CRemoteListView* GetRemoteListView() { return m_pRemoteListView; }
-
-	CFileZillaEngine* m_pEngine;
-	CCommandQueue* m_pCommandQueue;
 
 protected:
 	bool CreateMenus();

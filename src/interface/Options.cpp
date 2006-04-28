@@ -8,6 +8,8 @@
 #define new DEBUG_NEW
 #endif
 
+COptions* COptions::m_theOptions = 0;
+
 enum Type
 {
 	string,
@@ -436,4 +438,24 @@ bool COptions::GetLastServer(CServer& server)
 		server = *m_pLastServer;
 		return true;
 	}
+}
+
+void COptions::Init()
+{
+	if (!m_theOptions)
+		m_theOptions = new COptions();
+}
+
+void COptions::Destroy()
+{
+	if (!m_theOptions)
+		return;
+
+	delete m_theOptions;
+	m_theOptions = 0;
+}
+
+COptions* COptions::Get()
+{
+	return m_theOptions;
 }

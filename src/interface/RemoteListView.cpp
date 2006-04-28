@@ -66,7 +66,7 @@ BEGIN_EVENT_TABLE(CRemoteListView, wxListCtrl)
 	EVT_SIZE(CRemoteListView::OnSize)
 END_EVENT_TABLE()
 
-CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState, CCommandQueue *pCommandQueue, CQueueView* pQueue)
+CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView* pQueue)
 	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER | wxLC_EDIT_LABELS),
 	CSystemImageList(16)
 {
@@ -75,7 +75,6 @@ CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState
 	m_pChmodDlg = 0;
 
 	m_pState = pState;
-	m_pCommandQueue = pCommandQueue;
 	m_pQueue = pQueue;
 	m_operationMode = recursive_none;
 
@@ -565,7 +564,7 @@ int CRemoteListView::CmpSize(CRemoteListView *pList, unsigned int index, t_fileD
 
 void CRemoteListView::OnItemActivated(wxListEvent &event)
 {
-	if (!m_pCommandQueue->Idle() || IsBusy())
+	if (!m_pState->m_pCommandQueue->Idle() || IsBusy())
 	{
 		wxBell();
 		return;
@@ -609,7 +608,7 @@ void CRemoteListView::OnItemActivated(wxListEvent &event)
 		name = m_fileData[m_indexMapping[item]].pDirEntry->name;
 
 		if (m_fileData[m_indexMapping[item]].pDirEntry->dir)
-			m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path, name));
+			m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path, name));
 		else
 		{
 			const CServer* pServer = m_pState->GetServer();
@@ -624,7 +623,7 @@ void CRemoteListView::OnItemActivated(wxListEvent &event)
 		}
 	}
 	else
-		m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path, _T("..")));
+		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path, _T("..")));
 }
 
 void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
@@ -639,7 +638,7 @@ void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
 
 void CRemoteListView::OnMenuDownload(wxCommandEvent& event)
 {
-	if (!m_pCommandQueue->Idle() || IsBusy())
+	if (!m_pState->m_pCommandQueue->Idle() || IsBusy())
 	{
 		wxBell();
 		return;
@@ -734,12 +733,12 @@ void CRemoteListView::OnMenuMkdir(wxCommandEvent& event)
 		return;
 	}
 
-	m_pCommandQueue->ProcessCommand(new CMkdirCommand(path));
+	m_pState->m_pCommandQueue->ProcessCommand(new CMkdirCommand(path));
 }
 
 void CRemoteListView::OnMenuDelete(wxCommandEvent& event)
 {
-	if (!m_pCommandQueue->Idle() || IsBusy())
+	if (!m_pState->m_pCommandQueue->Idle() || IsBusy())
 	{
 		wxBell();
 		return;
@@ -792,14 +791,14 @@ void CRemoteListView::OnMenuDelete(wxCommandEvent& event)
 			}
 		}
 		else
-			m_pCommandQueue->ProcessCommand(new CDeleteCommand(m_pDirectoryListing->path, name));
+			m_pState->m_pCommandQueue->ProcessCommand(new CDeleteCommand(m_pDirectoryListing->path, name));
 	}
 	NextOperation();
 }
 
 void CRemoteListView::OnMenuRename(wxCommandEvent& event)
 {
-	if (!m_pCommandQueue->Idle() || IsBusy())
+	if (!m_pState->m_pCommandQueue->Idle() || IsBusy())
 	{
 		wxBell();
 		return;
@@ -832,16 +831,16 @@ bool CRemoteListView::NextOperation()
 		{
 			// Remove visited directories
 			for (std::list<t_newDir>::const_iterator iter = m_dirsToDelete.begin(); iter != m_dirsToDelete.end(); iter++)
-				m_pCommandQueue->ProcessCommand(new CRemoveDirCommand(iter->parent, iter->subdir));
+				m_pState->m_pCommandQueue->ProcessCommand(new CRemoveDirCommand(iter->parent, iter->subdir));
 	
 		}
 		StopRecursiveOperation();
-		m_pCommandQueue->ProcessCommand(new CListCommand(m_startDir));
+		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_startDir));
 		return false;
 	}
 
 	const t_newDir& dirToVisit = m_dirsToVisit.front();
-	m_pCommandQueue->ProcessCommand(new CListCommand(dirToVisit.parent, dirToVisit.subdir));
+	m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(dirToVisit.parent, dirToVisit.subdir));
 
 	return true;
 }
@@ -909,7 +908,7 @@ void CRemoteListView::ProcessDirectoryListing()
 				}
 				break;
 			case recursive_delete:
-				m_pCommandQueue->ProcessCommand(new CDeleteCommand(m_pDirectoryListing->path, entry.name));
+				m_pState->m_pCommandQueue->ProcessCommand(new CDeleteCommand(m_pDirectoryListing->path, entry.name));
 				break;
 			default:
 				break;
@@ -921,7 +920,7 @@ void CRemoteListView::ProcessDirectoryListing()
 			char permissions[9];
 			bool res = ConvertPermissions(entry.permissions, permissions);
 			wxString newPerms = m_pChmodDlg->GetPermissions(res ? permissions : 0);
-			m_pCommandQueue->ProcessCommand(new CChmodCommand(m_pDirectoryListing->path, entry.name, newPerms));
+			m_pState->m_pCommandQueue->ProcessCommand(new CChmodCommand(m_pDirectoryListing->path, entry.name, newPerms));
 		}
 	}
 
@@ -1068,7 +1067,7 @@ int CRemoteListView::FindItemWithPrefix(const wxString& prefix, int start)
 
 void CRemoteListView::OnBeginLabelEdit(wxListEvent& event)
 {
-	if (!m_pCommandQueue->Idle() || IsBusy())
+	if (!m_pState->m_pCommandQueue->Idle() || IsBusy())
 	{
 		event.Veto();
 		wxBell();
@@ -1105,7 +1104,7 @@ void CRemoteListView::OnEndLabelEdit(wxListEvent& event)
 		return;
 	}
 	
-	if (!m_pCommandQueue->Idle() || IsBusy())
+	if (!m_pState->m_pCommandQueue->Idle() || IsBusy())
 	{
 		event.Veto();
 		wxBell();
@@ -1164,12 +1163,12 @@ void CRemoteListView::OnEndLabelEdit(wxListEvent& event)
 		}
 	}
 	
-	m_pCommandQueue->ProcessCommand(new CRenameCommand(m_pDirectoryListing->path, data->pDirEntry->name, newPath, newFile));
+	m_pState->m_pCommandQueue->ProcessCommand(new CRenameCommand(m_pDirectoryListing->path, data->pDirEntry->name, newPath, newFile));
 }
 
 void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 {
-	if (!m_pCommandQueue->Idle() || IsBusy())
+	if (!m_pState->m_pCommandQueue->Idle() || IsBusy())
 	{
 		wxBell();
 		return;
@@ -1258,7 +1257,7 @@ void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 		char permissions[9];
 		bool res = ConvertPermissions(data->pDirEntry->permissions, permissions);
 		wxString newPerms = m_pChmodDlg->GetPermissions(res ? permissions : 0);
-		m_pCommandQueue->ProcessCommand(new CChmodCommand(m_pDirectoryListing->path, data->pDirEntry->name, newPerms));
+		m_pState->m_pCommandQueue->ProcessCommand(new CChmodCommand(m_pDirectoryListing->path, data->pDirEntry->name, newPerms));
 		
 		if (m_pChmodDlg->Recursive() && data->pDirEntry->dir)
 		{
