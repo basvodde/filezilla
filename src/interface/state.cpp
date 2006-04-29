@@ -7,7 +7,7 @@
 #include "commandqueue.h"
 #include "FileZillaEngine.h"
 #include "Options.h"
-#include "MainFrm.h"
+#include "Mainfrm.h"
 
 CState::CState(CMainFrame* pMainFrame)
 {
