@@ -2,15 +2,18 @@
 #define __LOCALTREEVIEW_H__
 
 #include "systemimagelist.h"
+#include "state.h"
 
-class CState;
 class CQueueView;
 
-class CLocalTreeView : public wxTreeCtrl, CSystemImageList
+class CLocalTreeView : public wxTreeCtrl, CSystemImageList, CStateEventHandler
 {
 public:
 	CLocalTreeView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView *pQueueView);
 	virtual ~CLocalTreeView();
+
+protected:
+	virtual void OnStateChange(unsigned int event);
 
 	void SetDir(wxString localDir);
 	void Refresh();
@@ -19,7 +22,6 @@ public:
 	bool DisplayDrives();
 #endif
 
-protected:
 	virtual int OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2);
 	
 	wxTreeItemId GetNearestParent(wxString& localDir);
@@ -35,7 +37,6 @@ protected:
 
 	wxString GetDirFromItem(wxTreeItemId item);
 
-	CState* m_pState;
 	CQueueView* m_pQueueView;
 
 	bool m_setSelection;

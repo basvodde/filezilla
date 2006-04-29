@@ -1,6 +1,5 @@
 #include "FileZilla.h"
 #include "LocalTreeView.h"
-#include "state.h"
 #include "QueueView.h"
 #include "filezillaapp.h"
 
@@ -19,7 +18,8 @@ END_EVENT_TABLE()
 
 CLocalTreeView::CLocalTreeView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView *pQueueView)
 	: wxTreeCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxTR_EDIT_LABELS | wxTR_LINES_AT_ROOT | wxTR_HAS_BUTTONS | wxNO_BORDER),
-	CSystemImageList(16), m_pState(pState), m_pQueueView(pQueueView)
+	CSystemImageList(16), m_pQueueView(pQueueView),
+	CStateEventHandler(pState, STATECHANGE_LOCAL_DIR | STATECHANGE_APPLYFILTER)
 {
 	m_setSelection = false;
 
@@ -63,6 +63,13 @@ CLocalTreeView::~CLocalTreeView()
 
 void CLocalTreeView::SetDir(wxString localDir)
 {
+	if (m_currentDir == localDir)
+	{
+		Refresh();
+		return;
+	}
+	m_currentDir = localDir;
+
 #ifdef __WXMSW__
 	if (localDir == _T("\\"))
 	{
@@ -515,3 +522,8 @@ int CLocalTreeView::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId
 #endif
 }
 
+void CLocalTreeView::OnStateChange(unsigned int event)
+{
+	if (event == STATECHANGE_LOCAL_DIR)
+		SetDir(m_pState->GetLocalDir());
+}

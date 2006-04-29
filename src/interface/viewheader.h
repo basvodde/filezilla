@@ -1,6 +1,8 @@
 #ifndef __VIEWHEADER_H__
 #define __VIEWHEADER_H__
 
+#include "state.h"
+
 class CComboBoxEx;
 class CViewHeader : public wxWindow
 {
@@ -38,15 +40,13 @@ protected:
 	int m_labelHeight;
 };
 
-class CState;
-class CLocalViewHeader : public CViewHeader
+class CLocalViewHeader : public CViewHeader, CStateEventHandler
 {
 public:
 	CLocalViewHeader(wxWindow* pParent, CState* pState);
-	void SetDir(wxString dir);
-
+	
 protected:
-	CState* m_pState;
+	virtual void OnStateChange(unsigned int event);
 
 	wxString m_oldValue;
 
@@ -55,14 +55,14 @@ protected:
 	void OnTextEnter(wxCommandEvent& event);
 };
 
-class CRemoteViewHeader : public CViewHeader
+class CRemoteViewHeader : public CViewHeader, CStateEventHandler
 {
 public:
 	CRemoteViewHeader(wxWindow* pParent, CState* pState);
-	void SetDir(const CServerPath& path);
-
+	
 protected:
-	CState* m_pState;
+	virtual void OnStateChange(unsigned int event);
+
 	CServerPath m_path;
 
 	DECLARE_EVENT_TABLE();

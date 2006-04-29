@@ -1,22 +1,22 @@
 #ifndef __LOCALLISTVIEW_H__
 #define __LOCALLISTVIEW_H__
 
-class CState;
 class CQueueView;
 
 #include "systemimagelist.h"
+#include "state.h"
 
-class CLocalListView : public wxListCtrl, CSystemImageList
+class CLocalListView : public wxListCtrl, CSystemImageList, CStateEventHandler
 {
 public:
 	CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView *pQueue);
 	virtual ~CLocalListView();
 
+protected:
+	void OnStateChange(unsigned int event);
 	bool DisplayDir(wxString dirname);
-
 	void ApplyCurrentFilter();
 
-protected:
 	// Declared const due to design error in wxWidgets.
 	// Won't be fixed since a fix would break backwards compatibility
 	// Both functions use a const_cast<CLocalListView *>(this) and modify
@@ -70,7 +70,6 @@ protected:
 	wxImageListEx *m_pHeaderImageList;
 #endif
 
-	CState *m_pState;
 	CQueueView *m_pQueue;
 
 	int m_sortColumn;

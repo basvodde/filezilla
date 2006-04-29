@@ -1,6 +1,5 @@
 #include "FileZilla.h"
 #include "LocalListView.h"
-#include "state.h"
 #include "QueueView.h"
 #include "filezillaapp.h"
 #include "filter.h"
@@ -26,9 +25,8 @@ END_EVENT_TABLE()
 
 CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView *pQueue)
 	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER | wxLC_EDIT_LABELS),
-	CSystemImageList(16)
+	CSystemImageList(16), CStateEventHandler(pState, STATECHANGE_LOCAL_DIR | STATECHANGE_APPLYFILTER)
 {
-	m_pState = pState;
 	m_pQueue = pQueue;
 
 	InsertColumn(0, _("Filename"));
@@ -1168,4 +1166,12 @@ void CLocalListView::ReselectItems(const std::list<wxString>& selectedNames)
 		if (i == m_indexMapping.size())
 			break;
 	}
+}
+
+void CLocalListView::OnStateChange(unsigned int event)
+{
+	if (event == STATECHANGE_LOCAL_DIR)
+		DisplayDir(m_pState->GetLocalDir());
+	else if (event == STATECHANGE_APPLYFILTER)
+		ApplyCurrentFilter();
 }

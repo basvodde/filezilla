@@ -191,8 +191,6 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	
 	Layout();
 
-	m_pState->SetLocalListView(m_pLocalListView);
-	m_pState->SetLocalTreeView(m_pLocalTreeView);
 	m_pState->SetLocalDir(wxGetCwd());
 
 	m_pAsyncRequestQueue = new CAsyncRequestQueue(this);

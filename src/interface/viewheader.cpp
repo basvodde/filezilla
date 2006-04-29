@@ -1,6 +1,5 @@
 #include "FileZilla.h"
 #include "viewheader.h"
-#include "state.h"
 #include "commandqueue.h"
 
 #ifdef __WXMSW__
@@ -249,11 +248,8 @@ EVT_TEXT_ENTER(wxID_ANY, CLocalViewHeader::OnTextEnter)
 END_EVENT_TABLE()
 
 CLocalViewHeader::CLocalViewHeader(wxWindow* pParent, CState* pState)
-	: CViewHeader(pParent, _("Local site:"))
+	: CViewHeader(pParent, _("Local site:")), CStateEventHandler(pState, STATECHANGE_LOCAL_DIR)
 {
-	m_pState = pState;
-	m_pState->SetLocalViewHeader(this);
-	SetDir(m_pState->GetLocalDir());
 }
 
 void CLocalViewHeader::OnTextChanged(wxCommandEvent& event)
@@ -340,8 +336,12 @@ void CLocalViewHeader::OnTextEnter(wxCommandEvent& event)
 	m_pState->SetLocalDir(dir);
 }
 
-void CLocalViewHeader::SetDir(wxString dir)
+void CLocalViewHeader::OnStateChange(unsigned int event)
 {
+	if (event != STATECHANGE_LOCAL_DIR)
+		return;
+
+	const wxString& dir = m_pState->GetLocalDir();
 	m_pComboBox->SetValue(dir);
 	m_pComboBox->SetSelection(m_pComboBox->GetValue().Length(), m_pComboBox->GetValue().Length());
 }
@@ -351,16 +351,17 @@ EVT_TEXT_ENTER(wxID_ANY, CRemoteViewHeader::OnTextEnter)
 END_EVENT_TABLE()
 
 CRemoteViewHeader::CRemoteViewHeader(wxWindow* pParent, CState* pState)
-	: CViewHeader(pParent, _("Remote site:"))
+	: CViewHeader(pParent, _("Remote site:")), CStateEventHandler(pState, STATECHANGE_REMOTE_DIR)
 {
-	m_pState = pState;
-	m_pState->SetRemoteViewHeader(this);
 }
 
-void CRemoteViewHeader::SetDir(const CServerPath& path)
+void CRemoteViewHeader::OnStateChange(unsigned int event)
 {
-	m_path = path;
-	if (path.IsEmpty())
+	if (event != STATECHANGE_REMOTE_DIR)
+		return;
+
+	m_path = m_pState->GetRemotePath();
+	if (m_path.IsEmpty())
 	{
 		m_pComboBox->SetValue(_T(""));
 		m_pComboBox->Disable();
@@ -368,7 +369,7 @@ void CRemoteViewHeader::SetDir(const CServerPath& path)
 	else
 	{
 		m_pComboBox->Enable();
-		m_pComboBox->SetValue(path.GetPath());
+		m_pComboBox->SetValue(m_path.GetPath());
 		m_pComboBox->SetSelection(m_pComboBox->GetValue().Length(), m_pComboBox->GetValue().Length());
 	}
 }

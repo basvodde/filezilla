@@ -8,11 +8,7 @@
 #define STATECHANGE_LOCAL_DIR			0x0100
 #define STATECHANGE_APPLYFILTER			0x1000
 
-class CLocalListView;
-class CLocalTreeView;
 class CDirectoryListing;
-class CLocalViewHeader;
-class CRemoteViewHeader;
 class CFileZillaEngine;
 class CCommandQueue;
 class CMainFrame;
@@ -38,13 +34,7 @@ public:
 	
 	const CServer* GetServer() const;
 
-	void SetLocalListView(CLocalListView *pLocalListView);
-	void SetLocalTreeView(CLocalTreeView *m_pLocalTreeView);
-	
 	void RefreshLocal();
-
-	void SetLocalViewHeader(CLocalViewHeader* pLocalViewHeader) { m_pLocalViewHeader = pLocalViewHeader; }
-	void SetRemoteViewHeader(CRemoteViewHeader* pRemoteViewHeader) { m_pRemoteViewHeader = pRemoteViewHeader; }
 
 	void ApplyCurrentFilter();
 
@@ -63,11 +53,7 @@ protected:
 	wxString m_localDir;
 	const CDirectoryListing *m_pDirectoryListing;
 
-	CLocalListView *m_pLocalListView;
-	CLocalTreeView *m_pLocalTreeView;
 	CServer* m_pServer;
-	CLocalViewHeader* m_pLocalViewHeader;
-	CRemoteViewHeader* m_pRemoteViewHeader;
 
 	CMainFrame* m_pMainFrame;
 

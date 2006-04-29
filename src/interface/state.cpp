@@ -1,8 +1,5 @@
 #include "FileZilla.h"
 #include "state.h"
-#include "LocalListView.h"
-#include "LocalTreeView.h"
-#include "viewheader.h"
 #include "commandqueue.h"
 #include "FileZillaEngine.h"
 #include "Options.h"
@@ -12,13 +9,8 @@ CState::CState(CMainFrame* pMainFrame)
 {
 	m_pMainFrame = pMainFrame;
 
-	m_pLocalListView = 0;
-	m_pLocalTreeView = 0;
-	
 	m_pDirectoryListing = 0;
 	m_pServer = 0;
-	m_pLocalViewHeader = 0;
-	m_pRemoteViewHeader = 0;
 
 	m_pEngine = 0;
 	m_pCommandQueue = 0;
@@ -92,26 +84,9 @@ bool CState::SetLocalDir(wxString dir)
 		m_localDir = _T("/");
 #endif
 
-	if (m_pLocalListView)
-		m_pLocalListView->DisplayDir(m_localDir);
-
-	if (m_pLocalTreeView)
-		m_pLocalTreeView->SetDir(m_localDir);
-
-	if (m_pLocalViewHeader)
-		m_pLocalViewHeader->SetDir(m_localDir);
+	NotifyHandlers(STATECHANGE_LOCAL_DIR);
 
 	return true;
-}
-
-void CState::SetLocalListView(CLocalListView *pLocalListView)
-{
-	m_pLocalListView = pLocalListView;
-}
-
-void CState::SetLocalTreeView(CLocalTreeView *pLocalTreeView)
-{
-	m_pLocalTreeView = pLocalTreeView;
 }
 
 bool CState::SetRemoteDir(const CDirectoryListing *pDirectoryListing, bool modified /*=false*/)
@@ -152,9 +127,6 @@ bool CState::SetRemoteDir(const CDirectoryListing *pDirectoryListing, bool modif
 	else
 		NotifyHandlers(STATECHANGE_REMOTE_DIR_MODIFIED);
 
-	if (m_pRemoteViewHeader)
-		m_pRemoteViewHeader->SetDir(pDirectoryListing ? pDirectoryListing->path : CServerPath());
-
 	delete pOldListing;
 
 	return true;
@@ -175,10 +147,7 @@ const CServerPath CState::GetRemotePath() const
 
 void CState::RefreshLocal()
 {
-	if (m_pLocalListView)
-		m_pLocalListView->DisplayDir(m_localDir);
-	if (m_pLocalTreeView)
-		m_pLocalTreeView->Refresh();
+	NotifyHandlers(STATECHANGE_LOCAL_DIR);
 }
 
 void CState::SetServer(const CServer* server)
@@ -197,9 +166,6 @@ const CServer* CState::GetServer() const
 
 void CState::ApplyCurrentFilter()
 {
-	if (m_pLocalListView)
-		m_pLocalListView->ApplyCurrentFilter();
-
 	NotifyHandlers(STATECHANGE_APPLYFILTER);
 }
 
