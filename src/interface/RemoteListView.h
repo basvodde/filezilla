@@ -2,11 +2,12 @@
 #define __REMOTELISTVIEW_H__
 
 #include "systemimagelist.h"
+#include "state.h"
 
 class CState;
 class CQueueView;
 class CChmodDialog;
-class CRemoteListView : public wxListCtrl, CSystemImageList
+class CRemoteListView : public wxListCtrl, CSystemImageList, CStateEventHandler
 {
 protected:
 	enum OperationMode
@@ -22,13 +23,10 @@ public:
 	CRemoteListView(wxWindow* parent, wxWindowID id, CState* pState, CQueueView* pQueue);
 	virtual ~CRemoteListView();
 
-	void SetDirectoryListing(CDirectoryListing *pDirectoryListing, bool modified = false);
 	void ListingFailed();
 
 	void StopRecursiveOperation();
 	bool IsBusy() const { return m_operationMode != recursive_none; }
-
-	void ApplyCurrentFilter();
 
 protected:
 	// Clears all selections and returns the list of items that were selected
@@ -76,7 +74,11 @@ protected:
 	// Permission has to be at least 9 bytes long
 	bool ConvertPermissions(const wxString rwx, char* permissions);
 
-	CDirectoryListing *m_pDirectoryListing;
+	virtual void OnStateChange(unsigned int event);
+	void ApplyCurrentFilter();
+	void SetDirectoryListing(const CDirectoryListing *pDirectoryListing, bool modified = false);
+
+	const CDirectoryListing *m_pDirectoryListing;
 	std::vector<t_fileData> m_fileData;
 	std::vector<unsigned int> m_indexMapping;
 	std::map<wxString, wxString> m_fileTypeMap;
@@ -88,7 +90,6 @@ protected:
 	wxImageListEx* m_pHeaderImageList;
 #endif
 
-	CState* m_pState;
 	CQueueView* m_pQueue;
 
 	int m_sortColumn;

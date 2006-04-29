@@ -1,15 +1,22 @@
 #ifndef __STATE_H__
 #define __STATE_H__
 
+#define STATECHANGE_REMOTE_DIR			0x0001
+#define STATECHANGE_REMOTE_DIR_MODIFIED	0x0002
+#define STATECHANGE_REMOTE_RECV			0x0010
+#define STATECHANGE_REMOTE_SEND			0x0020
+#define STATECHANGE_LOCAL_DIR			0x0100
+#define STATECHANGE_APPLYFILTER			0x1000
+
 class CLocalListView;
 class CLocalTreeView;
-class CRemoteListView;
 class CDirectoryListing;
 class CLocalViewHeader;
 class CRemoteViewHeader;
 class CFileZillaEngine;
 class CCommandQueue;
 class CMainFrame;
+class CStateEventHandler;
 class CState
 {
 	friend class CCommandQueue;
@@ -33,14 +40,16 @@ public:
 
 	void SetLocalListView(CLocalListView *pLocalListView);
 	void SetLocalTreeView(CLocalTreeView *m_pLocalTreeView);
-	void SetRemoteListView(CRemoteListView *pRemoteListView);
-
+	
 	void RefreshLocal();
 
 	void SetLocalViewHeader(CLocalViewHeader* pLocalViewHeader) { m_pLocalViewHeader = pLocalViewHeader; }
 	void SetRemoteViewHeader(CRemoteViewHeader* pRemoteViewHeader) { m_pRemoteViewHeader = pRemoteViewHeader; }
 
 	void ApplyCurrentFilter();
+
+	void RegisterHandler(CStateEventHandler* pHandler);
+	void UnregisterHandler(CStateEventHandler* pHandler);
 
 	static CState* GetState();
 
@@ -49,19 +58,33 @@ public:
 
 protected:
 	void SetServer(const CServer* server);
+	void NotifyHandlers(unsigned int event);
 
 	wxString m_localDir;
-	CDirectoryListing *m_pDirectoryListing;
+	const CDirectoryListing *m_pDirectoryListing;
 
 	CLocalListView *m_pLocalListView;
 	CLocalTreeView *m_pLocalTreeView;
-	CRemoteListView *m_pRemoteListView;
 	CServer* m_pServer;
 	CLocalViewHeader* m_pLocalViewHeader;
 	CRemoteViewHeader* m_pRemoteViewHeader;
 
 	CMainFrame* m_pMainFrame;
+
+	std::list<CStateEventHandler*> m_handlers;
+};
+
+class CStateEventHandler
+{
+public:
+	CStateEventHandler(CState* pState, unsigned int eventMask);
+	virtual ~CStateEventHandler();
+
+	CState* m_pState;
+
+	int m_eventMask;
+	
+	virtual void OnStateChange(unsigned int event) = 0;
 };
 
 #endif
-

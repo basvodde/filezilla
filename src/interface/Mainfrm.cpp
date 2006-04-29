@@ -193,7 +193,6 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 
 	m_pState->SetLocalListView(m_pLocalListView);
 	m_pState->SetLocalTreeView(m_pLocalTreeView);
-	m_pState->SetRemoteListView(m_pRemoteListView);
 	m_pState->SetLocalDir(wxGetCwd());
 
 	m_pAsyncRequestQueue = new CAsyncRequestQueue(this);
@@ -359,7 +358,7 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 		case nId_listing:
 			{
 				CDirectoryListingNotification* pListingNotification = reinterpret_cast<CDirectoryListingNotification *>(pNotification);
-				m_pState->SetRemoteDir(pListingNotification->GetDirectoryListing(), pListingNotification->Modified());
+				m_pState->SetRemoteDir(pListingNotification->DetachDirectoryListing(), pListingNotification->Modified());
 				delete pListingNotification;
 			}
 			break;

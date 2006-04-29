@@ -1,6 +1,5 @@
 #include "FileZilla.h"
 #include "RemoteListView.h"
-#include "state.h"
 #include "commandqueue.h"
 #include "QueueView.h"
 #include "filezillaapp.h"
@@ -68,13 +67,13 @@ END_EVENT_TABLE()
 
 CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView* pQueue)
 	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER | wxLC_EDIT_LABELS),
-	CSystemImageList(16)
+	CSystemImageList(16),
+	CStateEventHandler(pState, STATECHANGE_REMOTE_DIR | STATECHANGE_REMOTE_DIR_MODIFIED | STATECHANGE_APPLYFILTER)
 {
 	m_pInfoText = 0;
 	m_pDirectoryListing = 0;
 	m_pChmodDlg = 0;
 
-	m_pState = pState;
 	m_pQueue = pQueue;
 	m_operationMode = recursive_none;
 
@@ -245,7 +244,7 @@ bool CRemoteListView::IsItemValid(unsigned int item) const
 	return true;
 }
 
-void CRemoteListView::SetDirectoryListing(CDirectoryListing *pDirectoryListing, bool modified /*=false*/)
+void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryListing, bool modified /*=false*/)
 {
 	bool reset = false;
 	if (!pDirectoryListing || !m_pDirectoryListing)
@@ -1408,4 +1407,15 @@ void CRemoteListView::RepositionInfoText()
 #endif
 	
 	m_pInfoText->SetSize(rect);
+}
+
+void CRemoteListView::OnStateChange(unsigned int event)
+{
+	wxASSERT(m_pState);
+	if (event == STATECHANGE_REMOTE_DIR)
+		SetDirectoryListing(m_pState->GetRemoteDir(), false);
+	else if (event == STATECHANGE_REMOTE_DIR)
+		SetDirectoryListing(m_pState->GetRemoteDir(), true);
+	else if (event == STATECHANGE_APPLYFILTER)
+		ApplyCurrentFilter();
 }

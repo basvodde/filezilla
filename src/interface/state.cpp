@@ -2,7 +2,6 @@
 #include "state.h"
 #include "LocalListView.h"
 #include "LocalTreeView.h"
-#include "RemoteListView.h"
 #include "viewheader.h"
 #include "commandqueue.h"
 #include "FileZillaEngine.h"
@@ -15,8 +14,7 @@ CState::CState(CMainFrame* pMainFrame)
 
 	m_pLocalListView = 0;
 	m_pLocalTreeView = 0;
-	m_pRemoteListView = 0;
-
+	
 	m_pDirectoryListing = 0;
 	m_pServer = 0;
 	m_pLocalViewHeader = 0;
@@ -33,6 +31,10 @@ CState::~CState()
 
 	delete m_pCommandQueue;
 	delete m_pEngine;
+
+	// Unregister all handlers
+	for (std::list<CStateEventHandler*>::iterator iter = m_handlers.begin(); iter != m_handlers.end(); iter++)
+		(*iter)->m_pState = 0;
 }
 
 wxString CState::GetLocalDir() const
@@ -112,38 +114,48 @@ void CState::SetLocalTreeView(CLocalTreeView *pLocalTreeView)
 	m_pLocalTreeView = pLocalTreeView;
 }
 
-void CState::SetRemoteListView(CRemoteListView *pRemoteListView)
-{
-	m_pRemoteListView = pRemoteListView;
-}
-
 bool CState::SetRemoteDir(const CDirectoryListing *pDirectoryListing, bool modified /*=false*/)
 {
     if (!pDirectoryListing)
 	{
-		if (m_pRemoteListView)
-			m_pRemoteListView->SetDirectoryListing(0);
-		delete m_pDirectoryListing;
+		wxASSERT(!modified);
+		const CDirectoryListing* pOldListing = m_pDirectoryListing;
 		m_pDirectoryListing = 0;
+		NotifyHandlers(STATECHANGE_REMOTE_DIR);
+		delete pOldListing;
 		return true;
 	}
 
-	if (m_pDirectoryListing && pDirectoryListing && 
-		m_pDirectoryListing->path == pDirectoryListing->path && 
-		pDirectoryListing->m_failed)
-		return true;
-
-	CDirectoryListing *newListing = new CDirectoryListing;
-	*newListing = *pDirectoryListing;
+	if (modified)
+	{
+		if (!m_pDirectoryListing || m_pDirectoryListing->path != pDirectoryListing->path)
+		{
+			// We aren't interested in these listings
+			delete pDirectoryListing;
+			return true;
+		}
+	}
 	
-	if (m_pRemoteListView)
-		m_pRemoteListView->SetDirectoryListing(newListing, modified);
+	if (m_pDirectoryListing && m_pDirectoryListing->path == pDirectoryListing->path &&
+        pDirectoryListing->m_failed)
+	{
+		// We still got an old listing, no need to display the new one
+		delete pDirectoryListing;
+		return true;
+	}
+
+	const CDirectoryListing *pOldListing = m_pDirectoryListing;
+	m_pDirectoryListing = pDirectoryListing;
+	
+	if (!modified)
+		NotifyHandlers(STATECHANGE_REMOTE_DIR);
+	else
+		NotifyHandlers(STATECHANGE_REMOTE_DIR_MODIFIED);
 
 	if (m_pRemoteViewHeader)
-		m_pRemoteViewHeader->SetDir(newListing ? newListing->path : CServerPath());
+		m_pRemoteViewHeader->SetDir(pDirectoryListing ? pDirectoryListing->path : CServerPath());
 
-	delete m_pDirectoryListing;
-	m_pDirectoryListing = newListing;
+	delete pOldListing;
 
 	return true;
 }
@@ -187,8 +199,8 @@ void CState::ApplyCurrentFilter()
 {
 	if (m_pLocalListView)
 		m_pLocalListView->ApplyCurrentFilter();
-	if (m_pRemoteListView)
-		m_pRemoteListView->ApplyCurrentFilter();
+
+	NotifyHandlers(STATECHANGE_APPLYFILTER);
 }
 
 bool CState::Connect(const CServer& server, bool askBreak, const CServerPath& path /*=CServerPath()*/)
@@ -232,4 +244,61 @@ void CState::DestroyEngine()
 	m_pCommandQueue = 0;
 	delete m_pEngine;
 	m_pEngine = 0;
+}
+
+void CState::RegisterHandler(CStateEventHandler* pHandler)
+{
+	wxASSERT(pHandler);
+
+	std::list<CStateEventHandler*>::const_iterator iter;
+	for (iter = m_handlers.begin(); iter != m_handlers.end(); iter++)
+		if (*iter == pHandler)
+			break;
+
+	if (iter != m_handlers.end())
+		return;
+
+	m_handlers.push_back(pHandler);
+}
+
+void CState::UnregisterHandler(CStateEventHandler* pHandler)
+{
+	for (std::list<CStateEventHandler*>::iterator iter = m_handlers.begin(); iter != m_handlers.end(); iter++)
+	{
+		if (*iter == pHandler)
+		{
+			m_handlers.erase(iter);
+			return;
+		}
+	}
+}
+
+void CState::NotifyHandlers(unsigned int event)
+{
+	for (std::list<CStateEventHandler*>::iterator iter = m_handlers.begin(); iter != m_handlers.end(); iter++)
+	{
+		if ((*iter)->m_eventMask & event)
+			(*iter)->OnStateChange(event);
+	}
+}
+
+CStateEventHandler::CStateEventHandler(CState* pState, unsigned int eventMask)
+{
+	wxASSERT(pState);
+	wxASSERT(eventMask);
+
+	if (!pState)
+		return;
+
+	m_pState = pState;
+	m_eventMask = eventMask;
+
+	m_pState->RegisterHandler(this);
+}
+
+CStateEventHandler::~CStateEventHandler()
+{
+	if (!m_pState)
+		return;
+	m_pState->UnregisterHandler(this);
 }
