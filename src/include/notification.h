@@ -98,11 +98,12 @@ public:
 	virtual ~CDirectoryListingNotification();
 	virtual enum NotificationId GetID() const;
 	const CDirectoryListing *GetDirectoryListing() const;
+	const CDirectoryListing *DetachDirectoryListing();
 	bool Modified() const { return modified; }
 
 protected:
 	bool modified;
-	CDirectoryListing *pDirectoryListing;
+	CDirectoryListing *m_pDirectoryListing;
 };
 
 class CAsyncRequestNotification : public CNotification

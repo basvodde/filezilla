@@ -47,13 +47,13 @@ enum NotificationId COperationNotification::GetID() const
 
 CDirectoryListingNotification::CDirectoryListingNotification(CDirectoryListing *pDirectoryListing, bool modified /*=false*/)
 {
-	this->pDirectoryListing = pDirectoryListing;
+	m_pDirectoryListing = pDirectoryListing;
 	this->modified = modified;
 }
 
 CDirectoryListingNotification::~CDirectoryListingNotification()
 {
-	delete pDirectoryListing;
+	delete m_pDirectoryListing;
 }
 
 enum NotificationId CDirectoryListingNotification::GetID() const
@@ -63,6 +63,13 @@ enum NotificationId CDirectoryListingNotification::GetID() const
 
 const CDirectoryListing *CDirectoryListingNotification::GetDirectoryListing() const
 {
+	return m_pDirectoryListing;
+}
+
+const CDirectoryListing *CDirectoryListingNotification::DetachDirectoryListing()
+{
+	CDirectoryListing* pDirectoryListing = m_pDirectoryListing;
+	m_pDirectoryListing = 0;
 	return pDirectoryListing;
 }
 
