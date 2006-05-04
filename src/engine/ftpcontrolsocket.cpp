@@ -280,6 +280,9 @@ void CFtpControlSocket::ParseResponse()
 	case cmd_rawtransfer:
 		TransferParseResponse();
 		break;
+	case cmd_none:
+		LogMessage(Debug_Verbose, _T("Out-of-order reply, ignoring,"));
+		break;
 	default:
 		LogMessage(Debug_Warning, _T("No action for parsing replies to command %d"), (int)commandId);
 		ResetOperation(FZ_REPLY_INTERNALERROR);
@@ -719,7 +722,7 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 					SendDirectoryListing(pListing);
 				}
 			}
-			
+
 			ResetOperation(FZ_REPLY_ERROR);
 			return FZ_REPLY_ERROR;
 		}
@@ -752,7 +755,7 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 
 	CTransferSocket* pTransferSocket = m_pTransferSocket;
 	m_pTransferSocket = 0;
-	delete pTransferSocket;	
+	delete pTransferSocket;
 	delete m_pIPResolver;
 	m_pIPResolver = 0;
 
@@ -791,8 +794,10 @@ int CFtpControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
 		return RenameSend(prevResult);
 	case cmd_chmod:
 		return ChmodSend(prevResult);
+	case cmd_rawtransfer:
+		return TransferParseResponse();
 	default:
-		LogMessage(::Debug_Warning, __TFILE__, __LINE__, _T("Unknown opID (%d) in SendNextCommand"), m_pCurOpData->opId);
+		LogMessage(__TFILE__, __LINE__, this, ::Debug_Warning, _T("Unknown opID (%d) in SendNextCommand"), m_pCurOpData->opId);
 		ResetOperation(FZ_REPLY_INTERNALERROR);
 		break;
 	}
@@ -894,7 +899,7 @@ int CFtpControlSocket::ChangeDirParseResponse()
 		if (code != 2 && code != 3)
 		{
 			// Create remote directory if part of a file upload
-			if (pData->pNextOpData && pData->pNextOpData->opId == cmd_transfer && 
+			if (pData->pNextOpData && pData->pNextOpData->opId == cmd_transfer &&
 				!static_cast<CFtpFileTransferOpData *>(pData->pNextOpData)->download && !pData->triedMkd)
 			{
 				pData->triedMkd = true;
@@ -1064,7 +1069,7 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 					differentCase = true;
 				else
 				{
-					wxLongLong size = listing.m_pEntries[i].size;	
+					wxLongLong size = listing.m_pEntries[i].size;
 					pData->remoteFileSize = size.GetLo() + ((wxFileOffset)size.GetHi() << 32);
 					differentCase = false;
 					break;
@@ -1210,7 +1215,7 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 							differentCase = true;
 						else
 						{
-							wxLongLong size = listing.m_pEntries[i].size;	
+							wxLongLong size = listing.m_pEntries[i].size;
 							pData->remoteFileSize = size.GetLo() + ((wxFileOffset)size.GetHi() << 32);
 							differentCase = false;
 							break;
@@ -1280,7 +1285,7 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 							differentCase = true;
 						else
 						{
-							wxLongLong size = listing.m_pEntries[i].size;	
+							wxLongLong size = listing.m_pEntries[i].size;
 							pData->remoteFileSize = size.GetLo() + ((wxFileOffset)size.GetHi() << 32);
 							differentCase = false;
 							break;
@@ -1660,7 +1665,7 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 									differentCase = true;
 								else
 								{
-									wxLongLong size = listing.m_pEntries[i].size;	
+									wxLongLong size = listing.m_pEntries[i].size;
 									pData->remoteFileSize = size.GetLo() + ((wxFileOffset)size.GetHi() << 32);
 									found = true;
 									break;
@@ -1835,7 +1840,7 @@ int CFtpControlSocket::RemoveDir(const CServerPath& path /*=CServerPath()*/, con
 		pData->subDir = subDir;
 
 		CServerPath path = pData->path;
-		
+
 		if (!path.AddSegment(subDir))
 		{
 			LogMessage(::Error, wxString::Format(_T("Path cannot be constructed for folder %s and subdir %s"), path.GetPath().c_str(), subDir.c_str()));
@@ -1844,7 +1849,7 @@ int CFtpControlSocket::RemoveDir(const CServerPath& path /*=CServerPath()*/, con
 
 		CDirectoryCache cache;
 		cache.InvalidateFile(*m_pCurrentServer, path, subDir, false, CDirectoryCache::dir);
-		
+
 		if (!Send(_T("RMD ") + path.GetPath()))
 			return FZ_REPLY_ERROR;
 
@@ -1899,7 +1904,7 @@ public:
 int CFtpControlSocket::Mkdir(const CServerPath& path, CServerPath start /*=CServerPath()*/)
 {
 	/* Directory creation works like this: First find a parent directory into
-	 * which we can CWD, then create the subdirs one by one. If either part 
+	 * which we can CWD, then create the subdirs one by one. If either part
 	 * fails, try MKD with the full path directly.
 	 */
 
@@ -1932,7 +1937,7 @@ int CFtpControlSocket::Mkdir(const CServerPath& path, CServerPath start /*=CServ
 		pData->currentPath = path.GetParent();
 		pData->segments.push_back(path.GetLastSegment());
 	}
-	
+
 	m_pCurOpData = pData;
 
 	return MkdirSend();
@@ -2065,7 +2070,7 @@ int CFtpControlSocket::MkdirSend()
 
 	if (!res)
 		return FZ_REPLY_ERROR;
-	
+
 	return FZ_REPLY_WOULDBLOCK;
 }
 
@@ -2110,7 +2115,7 @@ int CFtpControlSocket::Rename(const CRenameCommand& command)
 	int res = ChangeDir(command.GetFromPath());
 	if (res != FZ_REPLY_OK)
 		return res;
-	
+
 	return RenameSend();
 }
 
@@ -2229,7 +2234,7 @@ int CFtpControlSocket::Chmod(const CChmodCommand& command)
 	int res = ChangeDir(command.GetPath());
 	if (res != FZ_REPLY_OK)
 		return res;
-	
+
 	return ChmodSend();
 }
 
@@ -2320,7 +2325,7 @@ bool CFtpControlSocket::ParsePasvResponse(CRawTransferOpData* pData)
 
 	if (!regex.Matches(m_Response))
 		return false;
-		
+
 	pData->host = regex.GetMatch(m_Response, 2);
 
 	int i = pData->host.Find(',', true);
@@ -2373,7 +2378,7 @@ int CFtpControlSocket::GetExternalIPAddress(wxString& address)
 			address = ip;
 			return FZ_REPLY_OK;
 		}
-	
+
 		LogMessage(::Debug_Warning, _("No external IP address set, trying default."));
 	}
 	else if (mode == 2)
@@ -2619,7 +2624,7 @@ int CFtpControlSocket::TransferSend(int prevResult /*=FZ_REPLY_OK*/)
 					break;
 				}
 			}
-			
+
 			if (pData->bTriedPasv)
 			{
 				LogMessage(::Error, _("Failed to create listening socket for active mode transfer"));
