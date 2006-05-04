@@ -2392,7 +2392,10 @@ int CFtpControlSocket::GetExternalIPAddress(wxString& address)
 			m_pIPResolver = new CExternalIPResolver(this);
 			m_pIPResolver->GetExternalIP(resolverAddress, true);
 			if (!m_pIPResolver->Done())
+			{
+				LogMessage(::Debug_Info, _T("Got external IP address"));
 				return FZ_REPLY_WOULDBLOCK;
+			}
 		}
 		if (!m_pIPResolver->Successful())
 		{
@@ -2403,6 +2406,7 @@ int CFtpControlSocket::GetExternalIPAddress(wxString& address)
 		}
 		else
 		{
+			LogMessage(::Debug_Info, _T("Got external IP address"));
 			address = m_pIPResolver->GetIP();
 
 			delete m_pIPResolver;
@@ -2426,8 +2430,12 @@ getLocalIP:
 
 void CFtpControlSocket::OnExternalIPAddress(fzExternalIPResolveEvent& event)
 {
+	LogMessage(::Debug_Verbose, _T("CFtpControlSocket::OnExternalIPAddress()"));
 	if (!m_pIPResolver)
+	{
+		LogMessage(::Debug_Info, _T("Ignoring event"));
 		return;
+	}
 
 	SendNextCommand();
 }
