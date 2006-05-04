@@ -52,7 +52,7 @@ COptions::COptions()
 	m_pLastServer = 0;
 
 	m_acquired = false;
-	
+
 	for (unsigned int i = 0; i < OPTIONS_NUM; i++)
 		m_optionsCache[i].cached = false;
 
@@ -97,7 +97,7 @@ int COptions::GetOptionVal(unsigned int nID)
 
 	m_optionsCache[nID].numValue = numValue;
 	m_optionsCache[nID].cached = true;
-	
+
 	return numValue;
 }
 
@@ -120,7 +120,7 @@ wxString COptions::GetOption(unsigned int nID)
 
 	m_optionsCache[nID].strValue = value;
 	m_optionsCache[nID].cached = true;
-	
+
 	return value;
 }
 
@@ -176,12 +176,12 @@ void COptions::CreateSettingsXmlElement()
 		return;
 
 	if (m_pXmlDocument->FirstChildElement("FileZilla3")->FirstChildElement("Settings"))
-		return;	
+		return;
 
 	TiXmlElement *element = m_pXmlDocument->FirstChildElement("FileZilla3");
 	TiXmlElement settings("Settings");
 	element->InsertEndChild(settings);
-	
+
 	for (int i = 0; i < OPTIONS_NUM; i++)
 	{
 		m_optionsCache[i].cached = true;
@@ -205,7 +205,7 @@ void COptions::SetXmlValue(unsigned int nID, wxString value)
 	wxASSERT(m_pXmlDocument);
 
 	// No checks are made about the validity of the value, that's done in SetOption
-	
+
 	char *utf8 = ConvUTF8(value);
 	if (!utf8)
 		return;
@@ -245,7 +245,7 @@ void COptions::SetXmlValue(unsigned int nID, wxString value)
 			setting->Clear();
 			setting->SetAttribute("type", (options[nID].type == string) ? "string" : "number");
 			setting->InsertEndChild(TiXmlText(utf8));
-			
+
 			delete [] utf8;
 			return;
 		}
@@ -290,7 +290,7 @@ bool COptions::GetXmlValue(unsigned int nID, wxString &value)
 		TiXmlNode *text = setting->FirstChild();
 		if (!text || !text->ToText())
 			return false;
-		
+
 		value = ConvLocal(text->Value());
 
 		return true;
@@ -316,7 +316,7 @@ TiXmlElement *COptions::GetXml()
 
 	if (!m_pXmlDocument)
 		return 0;
-	
+
 	return m_pXmlDocument->FirstChildElement("FileZilla3");
 }
 
@@ -326,7 +326,7 @@ void COptions::FreeXml(bool save)
 		return;
 
 	m_acquired = false;
-	
+
 	if (save)
 	{
 		wxFileName file = wxFileName(wxGetApp().GetSettingsDir(), _T("filezilla.xml"));
@@ -338,9 +338,9 @@ void COptions::SetServer(wxString path, const CServer& server)
 {
 	if (path == _T(""))
 		return;
-	
+
 	TiXmlElement *element = GetXml();
-	
+
 	while (path != _T(""))
 	{
 		wxString sub;
@@ -374,9 +374,9 @@ void COptions::SetServer(wxString path, const CServer& server)
 			element = node->ToElement();
 		}
 	}
-	
+
 	::SetServer(element, server);
-	
+
 	FreeXml(true);
 }
 
@@ -384,9 +384,9 @@ bool COptions::GetServer(wxString path, CServer& server)
 {
 	if (path == _T(""))
 		return false;
-	
+
 	TiXmlElement *element = GetXml();
-	
+
 	while (path != _T(""))
 	{
 		wxString sub;
@@ -409,11 +409,11 @@ bool COptions::GetServer(wxString path, CServer& server)
 		if (!element)
 			return false;
 	}
-	
+
 	bool res = ::GetServer(element, server);
-	
+
 	FreeXml(false);
-	
+
 	return res;
 }
 
@@ -421,6 +421,8 @@ void COptions::SetLastServer(const CServer& server)
 {
 	if (!m_pLastServer)
 		m_pLastServer = new CServer(server);
+	else
+		*m_pLastServer = server;
 	SetServer(_T("Settings/LastServer"), server);
 }
 
