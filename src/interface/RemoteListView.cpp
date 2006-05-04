@@ -1414,7 +1414,7 @@ void CRemoteListView::OnStateChange(unsigned int event)
 	wxASSERT(m_pState);
 	if (event == STATECHANGE_REMOTE_DIR)
 		SetDirectoryListing(m_pState->GetRemoteDir(), false);
-	else if (event == STATECHANGE_REMOTE_DIR)
+	else if (event == STATECHANGE_REMOTE_DIR_MODIFIED)
 		SetDirectoryListing(m_pState->GetRemoteDir(), true);
 	else if (event == STATECHANGE_APPLYFILTER)
 		ApplyCurrentFilter();
