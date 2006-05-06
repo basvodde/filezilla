@@ -795,7 +795,7 @@ int CFtpControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
 	case cmd_chmod:
 		return ChmodSend(prevResult);
 	case cmd_rawtransfer:
-		return TransferParseResponse();
+		return TransferSend(prevResult);
 	default:
 		LogMessage(__TFILE__, __LINE__, this, ::Debug_Warning, _T("Unknown opID (%d) in SendNextCommand"), m_pCurOpData->opId);
 		ResetOperation(FZ_REPLY_INTERNALERROR);
@@ -2340,7 +2340,7 @@ bool CFtpControlSocket::ParsePasvResponse(CRawTransferOpData* pData)
 		return false;
 
 	pData->port += 256 * number; //add ms byte of server socket
-	pData->host =pData-> host.Left(i);
+	pData->host = pData-> host.Left(i);
 	pData->host.Replace(_T(","), _T("."));
 
 	const wxString peerIP = GetPeerIP();
