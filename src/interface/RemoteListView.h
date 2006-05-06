@@ -30,12 +30,12 @@ public:
 
 protected:
 	// Clears all selections and returns the list of items that were selected
-	std::list<wxString> RememberSelectedItems();
+	std::list<wxString> RememberSelectedItems(wxString& focused);
 
 	// Select a list of items based in their names.
 	// Sort order may not change between call to RememberSelectedItems and
 	// ReselectItems
-	void ReselectItems(std::list<wxString>& selectedNames);
+	void ReselectItems(std::list<wxString>& selectedNames, wxString focused);
 
 
 	// Declared const due to design error in wxWidgets.
