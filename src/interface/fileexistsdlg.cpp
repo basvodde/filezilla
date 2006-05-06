@@ -197,7 +197,12 @@ void CFileExistsDlg::LoadIcon(int id, const wxString &file)
 			wxLogNull *tmp = new wxLogNull;
 			wxIcon icon(loc);
 			delete tmp;
-						
+			if (!icon.Ok())
+			{
+				delete pType;
+				return;
+			}
+
 			int width = icon.GetWidth();
 			int height = icon.GetHeight();
 			if (width && height)
