@@ -8,6 +8,7 @@
 #include "xmlfunctions.h"
 #include "filezillaapp.h"
 #include "ipcmutex.h"
+#include "state.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -835,7 +836,7 @@ void CQueueView::OnEngineEvent(wxEvent &event)
 			delete pNotification;
 			break;
 		case nId_listing:
-			m_pState->SetRemoteDir(reinterpret_cast<CDirectoryListingNotification *>(pNotification)->DetachDirectoryListing(), true);
+			m_pMainFrame->GetState()->SetRemoteDir(reinterpret_cast<CDirectoryListingNotification *>(pNotification)->DetachDirectoryListing(), true);
 			delete pNotification;
 			break;
 		case nId_asyncrequest:
