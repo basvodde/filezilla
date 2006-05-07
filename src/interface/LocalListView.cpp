@@ -758,7 +758,7 @@ void CLocalListView::OnMenuMkdir(wxCommandEvent& event)
 
 void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 {
-	// Under Windows use SHFileOperation delete files and directories.
+	// Under Windows use SHFileOperation to delete files and directories.
 	// Under other systems, we have to recurse into subdirectories manually
 	// to delete all contents.
 
