@@ -259,10 +259,16 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 		int item = -1;
 		while (true)
 		{
-			item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+			item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 			if (item == -1)
 				break;
-			SetItemState(item, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+			SetItemState(item, 0, wxLIST_STATE_SELECTED);
+		}
+		item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
+		if (item != -1)
+		{
+			SetItemState(item, 0, wxLIST_STATE_FOCUSED);
+			wxASSERT(GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED) == -1);
 		}
 	}
 	else
