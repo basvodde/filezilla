@@ -45,7 +45,6 @@ protected:
 
 BEGIN_EVENT_TABLE(CInfoText, wxWindow)
 EVT_PAINT(CInfoText::OnPaint)
-EVT_ERASE_BACKGROUND(CInfoText::OnEraseBackground)
 END_EVENT_TABLE()
 
 BEGIN_EVENT_TABLE(CRemoteListView, wxListCtrl)
@@ -315,7 +314,7 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 		Refresh();
 	}
 
-	if (GetItemCount() != m_indexMapping.size())
+	if ((unsigned int)GetItemCount() != m_indexMapping.size())
 		SetItemCount(m_indexMapping.size());
 
 	if (GetItemCount() && reset)
