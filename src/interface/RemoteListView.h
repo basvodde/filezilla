@@ -7,6 +7,7 @@
 class CState;
 class CQueueView;
 class CChmodDialog;
+class CInfoText;
 class CRemoteListView : public wxListCtrl, CSystemImageList, CStateEventHandler
 {
 protected:
@@ -113,8 +114,9 @@ protected:
 
 	CChmodDialog* m_pChmodDlg;
 
-	wxWindow* m_pInfoText;
+	CInfoText* m_pInfoText;
 	void RepositionInfoText();
+	void SetInfoText(const wxString& text);
 
 	DECLARE_EVENT_TABLE()
 	void OnItemActivated(wxListEvent &event);

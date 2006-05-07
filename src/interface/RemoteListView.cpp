@@ -25,6 +25,9 @@ public:
 	{
 		SetBackgroundColour(parent->GetBackgroundColour());
 	}
+
+	wxString m_text;
+
 protected:
 	void OnPaint(wxPaintEvent& event)
 	{
@@ -37,8 +40,6 @@ protected:
 		paintDc.GetTextExtent(m_text, &width, &height);
 		paintDc.DrawText(m_text, rect.x + rect.GetWidth() / 2 - width / 2, rect.GetTop());
 	};
-
-	const wxString m_text;
 
 	DECLARE_EVENT_TABLE();
 };
@@ -277,15 +278,12 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 
 	if (m_pDirectoryListing)
 	{
-		if (m_pInfoText)
-		{
-			delete m_pInfoText;
-			m_pInfoText = 0;
-		}
 		if (m_pDirectoryListing->m_failed)
-			m_pInfoText = new CInfoText(this, _("Directory listing failed"));
+			SetInfoText(_("Directory listing failed"));
 		else if (!m_pDirectoryListing->m_entryCount)
-			m_pInfoText = new CInfoText(this, _("Empty directory listing"));
+			SetInfoText(_("Empty directory listing"));
+		else
+			SetInfoText(_T(""));
 
 		t_fileData data;
 		data.icon = -2;
@@ -309,8 +307,7 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 	else
 	{
 		StopRecursiveOperation();
-		delete m_pInfoText;
-		m_pInfoText = new CInfoText(this, _("Not connected to any server"));
+		SetInfoText(_("Not connected to any server"));
 		Refresh();
 	}
 
@@ -319,9 +316,6 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 
 	if (GetItemCount() && reset)
 		SetItemState(0, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
-
-	if (m_pInfoText)
-		RepositionInfoText();
 
 	SortList();
 
@@ -386,7 +380,7 @@ void CRemoteListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpSize);
 	else if (m_sortColumn == 2)
 		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpType);
-	RefreshItems(1, m_indexMapping.size() - 1);
+	Refresh(false);
 }
 
 void CRemoteListView::OnColumnClicked(wxListEvent &event)
@@ -1468,4 +1462,27 @@ void CRemoteListView::OnStateChange(unsigned int event)
 		SetDirectoryListing(m_pState->GetRemoteDir(), true);
 	else if (event == STATECHANGE_APPLYFILTER)
 		ApplyCurrentFilter();
+}
+
+void CRemoteListView::SetInfoText(const wxString& text)
+{
+	if (text == _T(""))
+	{
+		delete m_pInfoText;
+		m_pInfoText = 0;
+		return;
+	}
+
+	if (!m_pInfoText)
+	{
+		m_pInfoText = new CInfoText(this, text);
+		RepositionInfoText();
+		return;
+	}
+
+	if (m_pInfoText->m_text == _T("<") + text + _T(">"))
+		return;
+
+	m_pInfoText->m_text = text;
+	m_pInfoText->Refresh();
 }

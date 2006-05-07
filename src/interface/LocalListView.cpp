@@ -95,10 +95,10 @@ bool CLocalListView::DisplayDir(wxString dirname)
 		int item = -1;
 		while (true)
 		{
-			item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+			item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
 			if (item == -1)
 				break;
-			SetItemState(item, 0, wxLIST_STATE_SELECTED);
+			SetItemState(item, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
 		}
 
 		m_dir = dirname;
@@ -178,7 +178,8 @@ bool CLocalListView::DisplayDir(wxString dirname)
 
 			found = dir.GetNext(&file);
 		}
-		SetItemCount(m_indexMapping.size());
+		if (GetItemCount() != m_indexMapping.size())
+			SetItemCount(m_indexMapping.size());
 	}
 
 	SortList();
@@ -490,7 +491,7 @@ void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpSize);
 	else if (m_sortColumn == 2)
 		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpType);
-	RefreshItems(1, m_indexMapping.size() - 1);
+	Refresh(false);
 }
 
 void CLocalListView::OnColumnClicked(wxListEvent &event)
