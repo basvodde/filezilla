@@ -834,10 +834,10 @@ void CQueueView::OnEngineEvent(wxEvent &event)
 			ProcessReply(*iter, reinterpret_cast<COperationNotification*>(pNotification));
 			delete pNotification;
 			break;
-		/*case nId_listing:
-			m_pState->SetRemoteDir(reinterpret_cast<CDirectoryListingNotification *>(pNotification)->GetDirectoryListing());
+		case nId_listing:
+			m_pState->SetRemoteDir(reinterpret_cast<CDirectoryListingNotification *>(pNotification)->DetachDirectoryListing(), true);
 			delete pNotification;
-			break;*/
+			break;
 		case nId_asyncrequest:
 			m_pMainFrame->AddToRequestQueue(data.pEngine, reinterpret_cast<CAsyncRequestNotification *>(pNotification));
 			break;
