@@ -1321,27 +1321,17 @@ std::list<wxString> CRemoteListView::RememberSelectedItems(wxString& focused)
 	int item = -1;
 	while (true)
 	{
-		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 		if (item == -1)
 			break;
 		if (!item)
 		{
-			if (GetItemState(item, wxLIST_STATE_FOCUSED))
-			{
-				SetItemState(item, 0, wxLIST_STATE_FOCUSED);
-				focused = _T("..");
-			}
 			if (!GetItemState(item, wxLIST_STATE_SELECTED))
 				continue;
 			selectedNames.push_back(_T(".."));
 			continue;
 		}
 		const t_fileData &data = m_fileData[m_indexMapping[item]];
-		if (GetItemState(item, wxLIST_STATE_FOCUSED))
-		{
-			SetItemState(item, 0, wxLIST_STATE_FOCUSED);
-			focused = data.pDirEntry->name;
-		}
 		if (!GetItemState(item, wxLIST_STATE_SELECTED))
 			continue;
 
@@ -1352,6 +1342,17 @@ std::list<wxString> CRemoteListView::RememberSelectedItems(wxString& focused)
 		SetItemState(item, 0, wxLIST_STATE_SELECTED);
 	}
 
+	item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
+	if (item != -1)
+	{
+		if (!item)
+			focused = _T("..");
+		else
+			focused = m_fileData[m_indexMapping[item]].pDirEntry->name;
+
+		SetItemState(item, 0, wxLIST_STATE_FOCUSED);
+	}
+	
 	return selectedNames;
 }
 
@@ -1425,7 +1426,7 @@ void CRemoteListView::ReselectItems(std::list<wxString>& selectedNames, wxString
 			break;
 	}
 	if (focused != _T("") && firstSelected != -1)
-		SetItemState(firstSelected, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+		SetItemState(firstSelected, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
 }
 
 void CRemoteListView::OnSize(wxSizeEvent& event)
