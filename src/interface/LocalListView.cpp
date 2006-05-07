@@ -3,6 +3,7 @@
 #include "QueueView.h"
 #include "filezillaapp.h"
 #include "filter.h"
+#include "inputdialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -726,6 +727,33 @@ void CLocalListView::OnMenuUpload(wxCommandEvent& event)
 
 void CLocalListView::OnMenuMkdir(wxCommandEvent& event)
 {
+	CInputDialog dlg;
+	if (!dlg.Create(this, _("Create directory"), _("Please enter the name of the directory which should be created:")))
+		return;
+
+	if (dlg.ShowModal() != wxID_OK)
+		return;
+
+	if (dlg.GetValue() == _T(""))
+	{
+		wxBell();
+		return;
+	}
+
+	wxFileName fn(dlg.GetValue(), _T(""));
+	fn.Normalize(wxPATH_NORM_ALL, m_dir);
+	
+	bool res;
+	
+	{
+		wxLogNull log;
+		res = fn.Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
+	}
+
+	if (!res)
+		wxBell();
+
+	DisplayDir(m_dir);
 }
 
 void CLocalListView::OnMenuDelete(wxCommandEvent& event)
