@@ -20,7 +20,7 @@ class CInfoText : public wxWindow
 {
 public:
 	CInfoText(wxWindow* parent, const wxString& text)
-		: wxWindow(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize),
+		: wxWindow(parent, wxID_ANY, wxPoint(0, 60), wxDefaultSize),
 		m_text(_T("<") + text + _T(">"))
 	{
 		SetBackgroundColour(parent->GetBackgroundColour());
@@ -37,7 +37,6 @@ protected:
 		paintDc.GetTextExtent(m_text, &width, &height);
 		paintDc.DrawText(m_text, rect.x + rect.GetWidth() / 2 - width / 2, rect.GetTop());
 	};
-	void OnEraseBackground(wxEraseEvent& event) {};
 
 	const wxString m_text;
 
@@ -313,12 +312,11 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 		StopRecursiveOperation();
 		delete m_pInfoText;
 		m_pInfoText = new CInfoText(this, _("Not connected to any server"));
+		Refresh();
 	}
 
 	if (GetItemCount() != m_indexMapping.size())
 		SetItemCount(m_indexMapping.size());
-	//if (m_indexMapping.size())
-	//	RefreshItems(0, m_indexMapping.size() - 1);
 
 	if (GetItemCount() && reset)
 		SetItemState(0, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
@@ -1449,7 +1447,7 @@ void CRemoteListView::RepositionInfoText()
 		return;
 
 	wxRect rect = GetClientRect();
-#ifndef __WXMSW__
+
 	if (!GetItemCount())
 		rect.y = 60;
 	else
@@ -1458,11 +1456,6 @@ void CRemoteListView::RepositionInfoText()
 		GetItemRect(0, itemRect);
 		rect.y = wxMax(60, itemRect.GetBottom() + 1);
 	}
-#else
-	wxRect itemRect;
-	GetItemRect(0, itemRect);
-	rect.y = itemRect.GetBottom() + 1;
-#endif
 
 	m_pInfoText->SetSize(rect);
 }
