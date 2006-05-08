@@ -4,7 +4,8 @@ CLEANFILES = *.po.new *.mo resources.h filezilla.pot filezilla.pot.new filezilla
 
 dist_noinst_DATA = filezilla.pot @FILEZILLA_LINGUAS_PO@ 
 
-install-data-local: @CATALOGS_TO_INSTALL@
+install-data-local: install-filezilla-catalogs
+#@CATALOGS_TO_INSTALL@
 
 install-filezilla-catalogs: allmo
 	for i in @FILEZILLA_LINGUAS@ ; do \

@@ -6,7 +6,11 @@ if !LOCALES_ONLY
   MAYBE_SRCDIR = src
   MAYBE_DATADIR = data
 endif
-SUBDIRS = . $(MAYBE_SRCDIR) locales $(MAYBE_DATADIR)
+
+if LOCALES
+  MAYBE_LOCALES = locales
+endif
+SUBDIRS = . $(MAYBE_SRCDIR) $(MAYBE_LOCALES) $(MAYBE_DATADIR)
 
 dist_noinst_SCRIPTS = autogen.sh update-configure.sh
 

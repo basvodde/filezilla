@@ -11,8 +11,15 @@ AC_PROG_LIBTOOL
 
 AC_CACHE_SAVE
 
+AC_ARG_ENABLE(locales, [  --enable-locales       Build message catalogs], \
+		[locales="$enableval"], [locales="yes"])
+
 AC_ARG_ENABLE(localesonly, [  --enable-localesonly    Just build locales], \
-		[localesonly="$enableval"])
+		[localesonly="$enableval"], [localesonly="no"])
+
+if test "$locales" != "yes" -a "$localesonly" = "yes"; then
+  AC_MSG_ERROR([invalid flags: --disable-locales cannot be used together with --locales-only])
+fi
 
 if ! test "$localesonly" = "yes"; then
 
@@ -246,50 +253,63 @@ fi
 # Everything translation related
 # ------------------------------
 
-AC_PATH_PROG(xgettext, xgettext)
-if test -z "$xgettext"; then
-  AC_MSG_ERROR([xgettext not found, please install the GNU gettext package and make sure xgettext is in the path.])
-fi
-
-AC_PATH_PROG(msgfmt, msgfmt)
-if test -z "$msgfmt"; then
-	AC_MSG_ERROR([ msgfmt not found, please install the GNU gettext package and make sure  msgfmt is in the path.])
-fi
-
-FZ_PATH_PROG_VER(msgmerge, msgmerge, 0.11.0)
-if test -z "$msgmerge"; then
-	AC_MSG_ERROR([msgmerge not found or too old, please install a current version of the GNU gettext package and make sure msgmerge is in the path.])
-fi
-
-AC_MSG_CHECKING([available FZ3 message catalogs])
-
-FILEZILLA_LINGUAS_PO=
 FILEZILLA_LINGUAS=
+FILEZILLA_LINGUAS_PO=
+FILEZILLA_LINGUAS_MO=
+FILEZILLA_LINGUAS_PO_NEW=
 
-if /bin/ls > /dev/null; then
-	LSPROG='/bin/ls'
-else
-	LSPROG='ls'
+if test "locales" = "yes"; then
+  AC_PATH_PROG(xgettext, xgettext)
+  if test -z "$xgettext"; then
+    AC_MSG_ERROR([xgettext not found, please install the GNU gettext package and make sure xgettext is in the path.])
+  fi
+
+  AC_PATH_PROG(msgfmt, msgfmt)
+  if test -z "$msgfmt"; then
+    AC_MSG_ERROR([ msgfmt not found, please install the GNU gettext package and make sure  msgfmt is in the path.])
+  fi
+
+  FZ_PATH_PROG_VER(msgmerge, msgmerge, 0.11.0)
+  if test -z "$msgmerge"; then
+    AC_MSG_ERROR([msgmerge not found or too old, please install a current version of the GNU gettext package and make sure msgmerge is in the path.])
+  fi
+
+  AC_MSG_CHECKING([available FZ3 message catalogs])
+
+  FILEZILLA_LINGUAS_PO=
+  FILEZILLA_LINGUAS=
+
+  if /bin/ls > /dev/null; then
+    LSPROG='/bin/ls'
+  else
+    LSPROG='ls'
+  fi
+
+  if test x$srcdir = x; then
+    path="locales"
+  else
+    path="$srcdir/locales"
+  fi
+  for i in `$LSPROG $path/*.po`; do
+    i=${i%.*}
+    i=${i##*/}
+    FILEZILLA_LINGUAS_PO=$FILEZILLA_LINGUAS_PO${FILEZILLA_LINGUAS_PO:+ }\$\(srcdir\)/$i.po
+    FILEZILLA_LINGUAS_PO_NEW=$FILEZILLA_LINGUAS_PO_NEW${FILEZILLA_LINGUAS_PO_NEW:+ }$i.po.new
+    FILEZILLA_LINGUAS=$FILEZILLA_LINGUAS${FILEZILLA_LINGUAS:+ }$i
+    FILEZILLA_LINGUAS_MO=$FILEZILLA_LINGUAS_MO${FILEZILLA_LINGUAS_MO:+ }$i.mo
+  done
+
+  AC_MSG_RESULT([$FILEZILLA_LINGUAS])
+
 fi
 
-if test x$srcdir = x; then
-  path="locales"
-else
-  path="$srcdir/locales"
+AC_PATH_PROG([WXRC], [wxrc --version])
+if test "x$WXRC" = "x"; then
+  AC_MSG_ERROR([
+    wxrc could not be found. This program gets build together with wxWidgets.
+    Please make sure wxrc is within your path.
+  ])
 fi
-for i in `$LSPROG $path/*.po`
-do
-  i=${i%.*}
-  i=${i##*/}
-  FILEZILLA_LINGUAS_PO=$FILEZILLA_LINGUAS_PO${FILEZILLA_LINGUAS_PO:+ }\$\(srcdir\)/$i.po
-  FILEZILLA_LINGUAS_PO_NEW=$FILEZILLA_LINGUAS_PO_NEW${FILEZILLA_LINGUAS_PO_NEW:+ }$i.po.new
-  FILEZILLA_LINGUAS=$FILEZILLA_LINGUAS${FILEZILLA_LINGUAS:+ }$i
-  FILEZILLA_LINGUAS_MO=$FILEZILLA_LINGUAS_MO${FILEZILLA_LINGUAS_MO:+ }$i.mo
-done
-
-AC_MSG_RESULT([$FILEZILLA_LINGUAS])
-
-CATALOGS_TO_INSTALL="install-filezilla-catalogs"
 
 AC_SUBST(CATALOGS_TO_INSTALL)
 AC_SUBST(FILEZILLA_LINGUAS)
@@ -297,18 +317,12 @@ AC_SUBST(FILEZILLA_LINGUAS_PO)
 AC_SUBST(FILEZILLA_LINGUAS_PO_NEW)
 AC_SUBST(FILEZILLA_LINGUAS_MO)
 
-AC_PATH_PROG([WXRC], [wxrc --version])
-if test "x$WXRC" = "x"; then
-	AC_MSG_ERROR([
-		wxrc could not be found. This program gets build together with wxWidgets.
-		Please make sure wxrc is within your path.
-	])
-fi
 
 # Output automake conditionals
 # ----------------------------
 
 AM_CONDITIONAL([LOCALES_ONLY], [test "$localesonly" = "yes"])
+AM_CONDITIONAL([LOCALES], [test "$locales" = "yes"])
 AM_CONDITIONAL(SFTP_MINGW, [test "$sftpbuild" = "mingw"])
 AM_CONDITIONAL(SFTP_UNIX, [test "$sftpbuild" = "unix"])
 AM_CONDITIONAL(USE_RESOURCEFILE, test "$use_resourcefile" = "true")
