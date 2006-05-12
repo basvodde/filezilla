@@ -1047,6 +1047,13 @@ void CQueueView::ResetEngine(t_EngineData& data, bool removeFileItem)
 	}
 	data.active = false;
 	data.state = t_EngineData::none;
+	CServerItem* item = GetServerItem(data.lastServer);
+	if (item)
+	{
+		wxASSERT(item->m_activeCount > 0);
+		if (item->m_activeCount > 0)
+			item->m_activeCount--;
+	}
 	m_activeCount--;
 
 	while (TryStartNextTransfer());
