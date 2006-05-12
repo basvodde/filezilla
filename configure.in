@@ -258,7 +258,7 @@ FILEZILLA_LINGUAS_PO=
 FILEZILLA_LINGUAS_MO=
 FILEZILLA_LINGUAS_PO_NEW=
 
-if test "locales" = "yes"; then
+if test "$locales" = "yes"; then
   AC_PATH_PROG(xgettext, xgettext)
   if test -z "$xgettext"; then
     AC_MSG_ERROR([xgettext not found, please install the GNU gettext package and make sure xgettext is in the path.])
