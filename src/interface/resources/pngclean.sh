@@ -5,7 +5,7 @@
 
 # Settings
 PNGCRUSH=pngcrush
-PNGCRUSH_OPTIONS="-brute -reduce -rem gAMA -rem tIME -rem pHYs -rem cHRM -rem bKGD -rem ICCP -rem iTXt -rem tEXt -rem zTXt -rem sBIT -rem sPLT -rem hIST"
+PNGCRUSH_OPTIONS="-brute -reduce -rem gAMA -rem tIME -rem pHYs -rem cHRM -rem bKGD -rem ICCP -rem iTXt -rem tEXt -rem zTXt -rem sBIT -rem sPLT -rem hIST -rem BTEH"
 PNGCRUSH_WNDSIZES="32 16 8 4 2 1 512"
 
 FILES=$@
