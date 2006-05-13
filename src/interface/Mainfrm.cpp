@@ -541,7 +541,9 @@ void CMainFrame::OnReconnect(wxCommandEvent &event)
 			return;
 	}
 
-	m_pState->Connect(server, false);
+	CServerPath path;
+	path.SetSafePath(COptions::Get()->GetOption(OPTION_LASTSERVERPATH));
+	m_pState->Connect(server, false, path);
 }
 
 void CMainFrame::OnRefresh(wxCommandEvent &event)

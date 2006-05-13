@@ -44,7 +44,8 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Auto Ascii no extension", number, _T("1") },
 	{ "Auto Ascii dotfiles", number, _T("1") },
 	{ "Theme", string, _T("") },
-	{ "Language", string, _T("") }
+	{ "Language", string, _T("") },
+	{ "Last Server Password", string, _T("") }
 };
 
 COptions::COptions()
