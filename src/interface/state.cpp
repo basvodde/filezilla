@@ -91,9 +91,14 @@ bool CState::SetLocalDir(wxString dir)
 
 bool CState::SetRemoteDir(const CDirectoryListing *pDirectoryListing, bool modified /*=false*/)
 {
-    if (!pDirectoryListing)
+	if (!pDirectoryListing)
 	{
-		wxASSERT(!modified);
+		if (modified)
+		{
+			delete pDirectoryListing;
+			return false;
+		}
+
 		const CDirectoryListing* pOldListing = m_pDirectoryListing;
 		m_pDirectoryListing = 0;
 		NotifyHandlers(STATECHANGE_REMOTE_DIR);
