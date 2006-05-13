@@ -836,7 +836,11 @@ void CQueueView::OnEngineEvent(wxEvent &event)
 			delete pNotification;
 			break;
 		case nId_listing:
-			m_pMainFrame->GetState()->SetRemoteDir(reinterpret_cast<CDirectoryListingNotification *>(pNotification)->DetachDirectoryListing(), true);
+			{
+				const CServer* const pServer = m_pMainFrame->GetState()->GetServer();
+				if (pServer && *pServer == data.lastServer)
+					m_pMainFrame->GetState()->SetRemoteDir(reinterpret_cast<CDirectoryListingNotification *>(pNotification)->DetachDirectoryListing(), true);
+			}
 			delete pNotification;
 			break;
 		case nId_asyncrequest:
