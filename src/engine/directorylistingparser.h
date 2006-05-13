@@ -7,7 +7,7 @@ class CControlSocket;
 class CDirectoryListingParser
 {
 public:
-	CDirectoryListingParser(CFileZillaEnginePrivate *pEngine, CControlSocket* pControlSocket, enum ServerType serverType);
+	CDirectoryListingParser(CFileZillaEnginePrivate *pEngine, CControlSocket* pControlSocket, const CServer& server);
 	~CDirectoryListingParser();
 
 	CDirectoryListing* Parse(const CServerPath &path);
@@ -55,7 +55,7 @@ protected:
 	CLine *m_curLine;
 	CLine *m_prevLine;
 
-	enum ServerType m_serverType;
+	const CServer& m_server;
 };
 
 #endif

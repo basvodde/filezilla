@@ -529,8 +529,8 @@ protected:
 	wxChar* m_pLine;
 };
 
-CDirectoryListingParser::CDirectoryListingParser(CFileZillaEnginePrivate *pEngine, CControlSocket* pControlSocket, enum ServerType serverType)
-	: m_pEngine(pEngine), m_pControlSocket(pControlSocket), m_serverType(serverType)
+CDirectoryListingParser::CDirectoryListingParser(CFileZillaEnginePrivate *pEngine, CControlSocket* pControlSocket, const CServer& server)
+	: m_pEngine(pEngine), m_pControlSocket(pControlSocket), m_server(server)
 {
 	startOffset = 0;
 	m_curLine = 0;
@@ -744,7 +744,7 @@ CDirectoryListing* CDirectoryListingParser::Parse(const CServerPath &path)
 	m_curLine = pLine;
 	while (pLine)
 	{
-		bool res = ParseLine(pLine, m_serverType);
+		bool res = ParseLine(pLine, m_server.GetType());
 		if (!res)
 		{
 			if (m_prevLine)
@@ -837,6 +837,23 @@ done:
 	// Don't add . or ..
 	if (entry.name == _T(".") || entry.name == _T(".."))
 		return true;
+
+	int offset = m_server.GetTimezoneOffset();
+	if (offset && entry.hasTime)
+	{
+		// Apply timezone offset
+		wxDateTime time;
+		if (VerifySetDate(time, entry.date.year, (wxDateTime::Month)(wxDateTime::Jan + entry.date.month - 1), entry.date.day, entry.time.hour, entry.time.minute))
+		{
+			wxTimeSpan span(0, offset, 0, 0);
+			time.Add(span);
+			entry.date.year = time.GetYear();
+			entry.date.month = time.GetMonth() - wxDateTime::Jan + 1;
+			entry.date.day = time.GetDay();
+			entry.time.hour = time.GetHour();
+			entry.time.minute = time.GetMinute();
+		}
+	}
 		
 	entry.unsure = false;
 	m_entryList.push_back(entry);
@@ -1793,7 +1810,7 @@ void CDirectoryListingParser::AddData(char *pData, int len)
 	m_curLine = pLine;
 	while (pLine)
 	{
-		bool res = ParseLine(pLine, m_serverType);
+		bool res = ParseLine(pLine, m_server.GetType());
 		if (!res)
 		{
 			if (m_prevLine)
