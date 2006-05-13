@@ -226,7 +226,7 @@ bool CServer::operator==(const CServer &op) const
 				return false;
 		}
 	}
-	else if (m_timezoneOffset != op.m_timezoneOffset)
+	if (m_timezoneOffset != op.m_timezoneOffset)
 		return false;
 	else if (m_pasvMode != op.m_pasvMode)
 		return false;
@@ -273,7 +273,7 @@ bool CServer::operator<(const CServer &op) const
 				return true;
 		}
 	}
-	else if (m_timezoneOffset < op.m_timezoneOffset)
+	if (m_timezoneOffset < op.m_timezoneOffset)
 		return true;
 	else if (m_pasvMode < op.m_pasvMode)
 		return true;
