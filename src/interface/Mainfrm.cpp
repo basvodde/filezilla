@@ -194,6 +194,11 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_pState->SetLocalDir(wxGetCwd());
 
 	m_pAsyncRequestQueue = new CAsyncRequestQueue(this);
+
+	wxAcceleratorEntry entries[1];
+	entries[0].Set(wxACCEL_NORMAL, WXK_F5, XRCID("ID_TOOLBAR_REFRESH"));
+	wxAcceleratorTable accel(1, entries);
+	SetAcceleratorTable(accel);
 }
 
 CMainFrame::~CMainFrame()
