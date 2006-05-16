@@ -2,6 +2,7 @@
 #include "LocalTreeView.h"
 #include "QueueView.h"
 #include "filezillaapp.h"
+#include "filter.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -231,7 +232,7 @@ bool CLocalTreeView::DisplayDrives()
 
 #endif
 
-void CLocalTreeView::DisplayDir(wxTreeItemId parent, const wxString& dirname)
+void CLocalTreeView::DisplayDir(wxTreeItemId parent, const wxString& dirname, const wxString& filterException /*=_T("")*/)
 {
 	wxASSERT(parent);
 	m_setSelection = true;
@@ -239,20 +240,42 @@ void CLocalTreeView::DisplayDir(wxTreeItemId parent, const wxString& dirname)
 	m_setSelection = false;
 	wxDir dir(dirname);
 	wxString file;
-	bool found = dir.GetFirst(&file, _T(""), wxDIR_DIRS | wxDIR_HIDDEN);
-	while (found)
+
+	CFilterDialog filter;
+
+	for (bool found = dir.GetFirst(&file, _T(""), wxDIR_DIRS | wxDIR_HIDDEN); found; found = dir.GetNext(&file))
 	{
 		if (file == _T(""))
 		{
 			wxGetApp().DisplayEncodingWarning();
-			found = dir.GetNext(&file);
 			continue;
 		}
+
 		wxString fullName = dirname + file;
+#ifdef __WXMSW__
+		if (file.CmpNoCase(filterException))
+#else
+		if (file != filterException)
+#endif
+		{
+			wxFileName fn(fullName);
+			const bool isDir = fn.DirExists();
+
+			wxLongLong size;
+
+			wxStructStat buf;
+			if (!isDir && !wxStat(fn.GetFullPath(), &buf))
+				size = buf.st_size;
+			else
+				size = -1;
+	
+			if (filter.FilenameFiltered(file, isDir, size, true))
+				continue;
+		}
+
 		wxTreeItemId item = AppendItem(parent, file, GetIconIndex(::dir, fullName), GetIconIndex(opened_dir, fullName));
 		if (HasSubdir(fullName))
-			AppendItem(item, _T(""));
-		found = dir.GetNext(&file);
+			AppendItem(item, _T(""));		
 	}
 	SortChildren(parent);
 }
@@ -264,36 +287,47 @@ bool CLocalTreeView::HasSubdir(const wxString& dirname)
 	if (!dir.IsOpened())
 		return false;
 
+	CFilterDialog filter;
 	wxString file;
-	return dir.GetFirst(&file, _T(""), wxDIR_DIRS | wxDIR_HIDDEN);
+	for (bool found = dir.GetFirst(&file, _T(""), wxDIR_DIRS | wxDIR_HIDDEN); found; found = dir.GetNext(&file))
+	{
+		if (!filter.FilenameFiltered(file, true, -1, true))
+			return true;
+	}
+
+	return false;
 }
 
 wxTreeItemId CLocalTreeView::MakeSubdirs(wxTreeItemId parent, wxString dirname, wxString subDir)
 {
-	const wxString separator = wxFileName::GetPathSeparator();
-	DisplayDir(parent, dirname);
+	const wxString& separator = wxFileName::GetPathSeparator();
 
 	while (subDir != _T(""))
 	{
 		int pos = subDir.Find(separator);
 		wxString segment;
 		if (pos == -1)
+		{
 			segment = subDir;
+			subDir = _T("");
+		}
 		else
+		{
 			segment = subDir.Left(pos);
+			subDir = subDir.Mid(pos + 1);
+		}
+
+		DisplayDir(parent, dirname, segment);
+
 		wxTreeItemId item = GetSubdir(parent, segment);
 		if (!item)
 			return wxTreeItemId();
 
 		parent = item;
-		DisplayDir(parent, dirname + segment + separator);
-
-		if (pos == -1)
-			break;
-
-		subDir = subDir.Mid(pos + 1);
 		dirname += segment + separator;
 	}
+	
+	DisplayDir(parent, dirname);
 	return parent;
 }
 
@@ -388,6 +422,8 @@ void CLocalTreeView::Refresh()
 	dirsToCheck.push_back(dir);
 #endif
 
+	CFilterDialog filter;
+
 	while (!dirsToCheck.empty())
 	{
 		t_dir dir = dirsToCheck.front();
@@ -405,7 +441,19 @@ void CLocalTreeView::Refresh()
 				found = find.GetNext(&file);
 				continue;
 			}
-			dirs.push_back(file);
+			wxFileName fn(dir.dir + file);
+			const bool isDir = fn.DirExists();
+
+			wxLongLong size;
+			
+			wxStructStat buf;
+			if (!isDir && !wxStat(fn.GetFullPath(), &buf))
+				size = buf.st_size;
+			else
+				size = -1;
+
+			if (!filter.FilenameFiltered(file, isDir, size , true))
+				dirs.push_back(file);
 			found = find.GetNext(&file);
 		}
 		dirs.sort(sortfunc);
@@ -526,4 +574,6 @@ void CLocalTreeView::OnStateChange(unsigned int event)
 {
 	if (event == STATECHANGE_LOCAL_DIR)
 		SetDir(m_pState->GetLocalDir());
+	else if (event == STATECHANGE_APPLYFILTER)
+		Refresh();
 }
