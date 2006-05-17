@@ -12,7 +12,7 @@ if LOCALES
 endif
 SUBDIRS = . $(MAYBE_SRCDIR) $(MAYBE_LOCALES) $(MAYBE_DATADIR)
 
-dist_noinst_SCRIPTS = autogen.sh update-configure.sh
+dist_noinst_SCRIPTS = autogen.sh
 
 dist_noinst_DATA = filezilla.kdevelop
 
