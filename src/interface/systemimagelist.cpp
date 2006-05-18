@@ -88,7 +88,7 @@ int CSystemImageList::GetIconIndex(enum filetype type, const wxString& fileName 
 		SHGFI_ICON | ((type == opened_dir) ? SHGFI_OPENICON : 0) | ((physical) ? 0 : SHGFI_USEFILEATTRIBUTES) ) )
 	{
 		int icon = shFinfo.iIcon;
-		// we only need the index from the system image ctrl
+		// we only need the index from the system image list
 		DestroyIcon(shFinfo.hIcon);
 		return icon;
 	}
