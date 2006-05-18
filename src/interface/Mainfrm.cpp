@@ -175,7 +175,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	
 	m_pRemoteTreeViewPanel = new CView(m_pRemoteSplitter);
 	m_pRemoteListViewPanel = new CView(m_pRemoteSplitter);
-	m_pRemoteTreeView = new CRemoteTreeView(m_pRemoteTreeViewPanel, -1);
+	m_pRemoteTreeView = new CRemoteTreeView(m_pRemoteTreeViewPanel, -1, m_pState, m_pQueueView);
 	m_pRemoteListView = new CRemoteListView(m_pRemoteListViewPanel, -1, m_pState, m_pQueueView);
 	m_pRemoteTreeViewPanel->SetWindow(m_pRemoteTreeView);
 	m_pRemoteListViewPanel->SetWindow(m_pRemoteListView);
