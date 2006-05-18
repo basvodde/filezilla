@@ -20,6 +20,7 @@ protected:
 	const CDirectoryListing* m_pDirectoryListing;
 
 	void CreateImageList();
+	wxBitmap CreateIconWithOverlay(int index);
 };
 
 #endif

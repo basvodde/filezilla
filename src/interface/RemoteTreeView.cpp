@@ -36,6 +36,7 @@ void CRemoteTreeView::SetDirectoryListing(const CDirectoryListing* pListing, boo
 	if (!pListing)
 	{
 		DeleteAllItems();
+		AddRoot(_T(""));
 		return;
 	}
 
@@ -54,7 +55,7 @@ void CRemoteTreeView::SetDirectoryListing(const CDirectoryListing* pListing, boo
 		if (filter.FilenameFiltered(pListing->m_pEntries[i].name, true, -1, false))
 			continue;
 
-		AppendItem(parent, pListing->m_pEntries[i].name, 0, 1); 
+		AppendItem(parent, pListing->m_pEntries[i].name, 0, 2);
 	}
 	Expand(parent);
 	SortChildren(parent);
@@ -75,14 +76,15 @@ wxTreeItemId CRemoteTreeView::MakeParent(CServerPath path, bool select)
 	for (std::list<wxString>::const_iterator iter = pieces.begin(); iter != pieces.end(); iter++)
 	{
 		wxTreeItemIdValue cookie;
-		for (wxTreeItemId child = GetFirstChild(parent, cookie); child; child = GetNextSibling(child))
+		wxTreeItemId child;
+		for (child = GetFirstChild(parent, cookie); child; child = GetNextSibling(child))
 		{
 			if (GetItemText(child) == *iter)
 				break;
 		}
 		if (!child)
 		{
-			child = AppendItem(parent, *iter, 0, 1);
+			child = AppendItem(parent, *iter, 0, 2);
 			SortChildren(parent);
 		}
 		parent = child;
@@ -98,15 +100,46 @@ wxTreeItemId CRemoteTreeView::MakeParent(CServerPath path, bool select)
 	return parent;
 }
 
+wxBitmap CRemoteTreeView::CreateIconWithOverlay(int index)
+{
+	// Create memory DC
+	wxBitmap bmp(16, 16, 32);
+	wxMemoryDC dc;
+	dc.SelectObject(bmp);
+
+	// Draw item from system image list
+	GetSystemImageList()->Draw(index, dc, 0, 0, wxIMAGELIST_DRAW_TRANSPARENT);
+
+	// Load overlay
+	wxImage unknownIcon = wxArtProvider::GetBitmap(_T("ART_UNKNOWN")).ConvertToImage();
+	
+	// Convert mask into alpha channel
+	if (!unknownIcon.HasAlpha())
+	{
+		wxASSERT(unknownIcon.HasMask());
+		unknownIcon.InitAlpha();
+	}
+
+	// Draw overlay
+	dc.DrawBitmap(unknownIcon, 0, 0, true);
+
+    dc.SelectObject(wxNullBitmap);
+	return bmp;
+}
+
 void CRemoteTreeView::CreateImageList()
 {
 	wxImageList* pImageList = new wxImageList(16, 16, true, 4);
 
+	// Normal directory
 	int index = GetIconIndex(dir, _T("{78013B9C-3532-4fe1-A418-5CD1955127CC}"), false);
 	pImageList->Add(GetSystemImageList()->GetIcon(index));
+	pImageList->Add(CreateIconWithOverlay(index));
 	
+	// Opened directory
 	index = GetIconIndex(opened_dir, _T("{78013B9C-3532-4fe1-A418-5CD1955127CC}"), false);
 	pImageList->Add(GetSystemImageList()->GetIcon(index));
-
+	pImageList->Add(CreateIconWithOverlay(index));
+	
 	SetImageList(pImageList);
 }
