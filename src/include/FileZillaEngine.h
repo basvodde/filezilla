@@ -47,6 +47,8 @@ public:
 	// to true if the data has been updated compared to the last time
 	// GetTransferStatus was called.
 	bool GetTransferStatus(CTransferStatus &status, bool &changed);
+
+	int CacheLookup(const CServerPath& path, CDirectoryListing& listing);
 };
 
 #endif

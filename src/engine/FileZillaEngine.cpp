@@ -4,6 +4,7 @@
 
 #include "FileZilla.h"
 #include "ControlSocket.h"
+#include "directorycache.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -201,4 +202,18 @@ bool CFileZillaEngine::GetTransferStatus(CTransferStatus &status, bool &changed)
 	}
 
 	return m_pControlSocket->GetTransferStatus(status, changed);
+}
+
+int CFileZillaEngine::CacheLookup(const CServerPath& path, CDirectoryListing& listing)
+{
+	if (!IsConnected())
+		return FZ_REPLY_ERROR;
+
+	wxASSERT(m_pControlSocket->GetCurrentServer());
+
+	CDirectoryCache cache;
+	if (!cache.Lookup(listing, *m_pControlSocket->GetCurrentServer(), path))
+		return FZ_REPLY_ERROR;
+
+	return FZ_REPLY_OK;
 }
