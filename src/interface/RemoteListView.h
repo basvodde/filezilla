@@ -4,7 +4,6 @@
 #include "systemimagelist.h"
 #include "state.h"
 
-class CState;
 class CQueueView;
 class CChmodDialog;
 class CInfoText;
