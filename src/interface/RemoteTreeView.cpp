@@ -118,9 +118,15 @@ wxTreeItemId CRemoteTreeView::MakeParent(CServerPath path, bool select)
 			CDirectoryListing listing;
 
 			if (m_pState->m_pEngine->CacheLookup(path, listing) == FZ_REPLY_OK)
+			{
 				child = AppendItem(parent, *iter, 0, 2, new CItemData(path));
+				SetItemImages(child, false);
+			}
 			else
+			{
 				child = AppendItem(parent, *iter, 1, 3, new CItemData(path));
+				SetItemImages(child, true);
+			}
 			SortChildren(parent);
 
 			std::list<wxString>::const_iterator nextIter = iter;
@@ -233,12 +239,16 @@ void CRemoteTreeView::DisplayItem(wxTreeItemId parent, const CDirectoryListing& 
 		if (m_pState->m_pEngine->CacheLookup(subdir, subListing) == FZ_REPLY_OK)
 		{
 			wxTreeItemId child = AppendItem(parent, name, 0, 2, new CItemData(subdir));
+			SetItemImages(child, false);
 
 			if (HasSubdirs(subListing, filter))
 				AppendItem(child, _T(""), -1, -1);
 		}
 		else
-			AppendItem(parent, name, 1, 3, new CItemData(subdir));
+		{
+			wxTreeItemId child = AppendItem(parent, name, 1, 3, new CItemData(subdir));
+			SetItemImages(child, true);
+		}
 	}
 	SortChildren(parent);
 }
@@ -335,12 +345,16 @@ void CRemoteTreeView::RefreshItem(wxTreeItemId parent, const CDirectoryListing& 
 			if (m_pState->m_pEngine->CacheLookup(path, subListing) == FZ_REPLY_OK)
 			{
 				wxTreeItemId child = AppendItem(parent, *iter, 0, 2, new CItemData(path));
+				SetItemImages(child, false);
 
 				if (HasSubdirs(subListing, filter))
 					AppendItem(child, _T(""), -1, -1);
 			}
 			else
-				AppendItem(parent, *iter, 1, 3, new CItemData(path));
+			{
+				wxTreeItemId child = AppendItem(parent, *iter, 1, 3, new CItemData(path));
+				SetItemImages(child, true);
+			}
 
 			iter++;
 			inserted = true;
@@ -374,12 +388,16 @@ void CRemoteTreeView::RefreshItem(wxTreeItemId parent, const CDirectoryListing& 
 		if (m_pState->m_pEngine->CacheLookup(path, subListing) == FZ_REPLY_OK)
 		{
 			wxTreeItemId child = AppendItem(parent, *iter, 0, 2, new CItemData(path));
+			SetItemImages(child, false);
 
 			if (HasSubdirs(subListing, filter))
 				AppendItem(child, _T(""), -1, -1);
 		}
 		else
-			AppendItem(parent, *iter, 1, 3, new CItemData(path));
+		{
+			wxTreeItemId child = AppendItem(parent, *iter, 1, 3, new CItemData(path));
+			SetItemImages(child, true);
+		}
 
 		iter++;
 		inserted = true;
