@@ -12,6 +12,8 @@
 #include <shlobj.h>
 #endif
 
+IMPLEMENT_CLASS(CLocalTreeView, wxTreeCtrl)
+
 BEGIN_EVENT_TABLE(CLocalTreeView, wxTreeCtrl)
 EVT_TREE_ITEM_EXPANDING(wxID_ANY, CLocalTreeView::OnItemExpanding)
 EVT_TREE_SEL_CHANGED(wxID_ANY, CLocalTreeView::OnSelectionChanged)

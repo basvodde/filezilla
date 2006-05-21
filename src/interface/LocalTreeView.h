@@ -8,6 +8,8 @@ class CQueueView;
 
 class CLocalTreeView : public wxTreeCtrl, CSystemImageList, CStateEventHandler
 {
+	DECLARE_CLASS(CLocalTreeView)
+
 public:
 	CLocalTreeView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView *pQueueView);
 	virtual ~CLocalTreeView();
