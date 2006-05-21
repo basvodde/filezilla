@@ -70,7 +70,7 @@ void CRemoteTreeView::SetDirectoryListing(const CDirectoryListing* pListing, boo
 		DeleteChildren(parent);
 		CFilterDialog filter;
 		if (HasSubdirs(*pListing, filter))
-			AppendItem(parent, "", -1, -1);
+			AppendItem(parent, _T(""), -1, -1);
 	}
 	else
 		RefreshItem(parent, *pListing);
@@ -231,7 +231,7 @@ void CRemoteTreeView::DisplayItem(wxTreeItemId parent, const CDirectoryListing& 
 			wxTreeItemId child = AppendItem(parent, name, 0, 2, new CItemData(subdir));
 
 			if (HasSubdirs(subListing, filter))
-				AppendItem(child, "", -1, -1);
+				AppendItem(child, _T(""), -1, -1);
 		}
 		else
 			AppendItem(parent, name, 1, 3, new CItemData(subdir));
@@ -281,9 +281,6 @@ void CRemoteTreeView::RefreshItem(wxTreeItemId parent, const CDirectoryListing& 
 	std::list<wxString>::reverse_iterator iter = dirs.rbegin();
 	while (child && iter != dirs.rend())
 	{
-		const char* itername = *iter;
-		wxString x = GetItemText(child);
-		const char* itemname = x;
 		int cmp = GetItemText(child).CmpNoCase(*iter);
 		if (!cmp)
 			cmp = GetItemText(child).Cmp(*iter);
@@ -297,7 +294,7 @@ void CRemoteTreeView::RefreshItem(wxTreeItemId parent, const CDirectoryListing& 
 			if (m_pState->m_pEngine->CacheLookup(path, subListing) == FZ_REPLY_OK)
 			{
 				if (!GetLastChild(child) && HasSubdirs(subListing, filter))
-					AppendItem(child, "", -1, -1);
+					AppendItem(child, _T(""), -1, -1);
 				SetItemImages(child, false);
 			}
 			else
@@ -336,7 +333,7 @@ void CRemoteTreeView::RefreshItem(wxTreeItemId parent, const CDirectoryListing& 
 				wxTreeItemId child = AppendItem(parent, *iter, 0, 2, new CItemData(path));
 
 				if (HasSubdirs(subListing, filter))
-					AppendItem(child, "", -1, -1);
+					AppendItem(child, _T(""), -1, -1);
 			}
 			else
 				AppendItem(parent, *iter, 1, 3, new CItemData(path));
@@ -375,7 +372,7 @@ void CRemoteTreeView::RefreshItem(wxTreeItemId parent, const CDirectoryListing& 
 			wxTreeItemId child = AppendItem(parent, *iter, 0, 2, new CItemData(path));
 
 			if (HasSubdirs(subListing, filter))
-				AppendItem(child, "", -1, -1);
+				AppendItem(child, _T(""), -1, -1);
 		}
 		else
 			AppendItem(parent, *iter, 1, 3, new CItemData(path));
