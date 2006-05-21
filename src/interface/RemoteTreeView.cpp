@@ -92,7 +92,7 @@ wxTreeItemId CRemoteTreeView::MakeParent(CServerPath path, bool select)
 	}
 	wxASSERT(path.GetPath() != _T(""));
 	pieces.push_front(path.GetPath());
-	
+
 	wxTreeItemId parent = GetRootItem();
 	for (std::list<wxString>::const_iterator iter = pieces.begin(); iter != pieces.end(); iter++)
 	{
@@ -135,14 +135,18 @@ wxTreeItemId CRemoteTreeView::MakeParent(CServerPath path, bool select)
 	}
 	if (select)
 		SelectItem(parent);
-	
+
 	return parent;
 }
 
 wxBitmap CRemoteTreeView::CreateIcon(int index, const wxString& overlay /*=_T("")*/)
 {
 	// Create memory DC
+#ifdef __WXMSW__
 	wxBitmap bmp(16, 16, 32);
+#else
+	wxBitmap bmp(16, 16, 24);
+#endif
 	wxMemoryDC dc;
 	dc.SelectObject(bmp);
 
@@ -157,8 +161,8 @@ wxBitmap CRemoteTreeView::CreateIcon(int index, const wxString& overlay /*=_T(""
 	// Load overlay
 	if (overlay != _T(""))
 	{
-		wxImage unknownIcon = wxArtProvider::GetBitmap(overlay).ConvertToImage();
-	
+		wxImage unknownIcon = wxArtProvider::GetBitmap(overlay, wxART_OTHER, wxSize(16,16)).ConvertToImage();
+
 		// Convert mask into alpha channel
 		if (!unknownIcon.HasAlpha())
 		{
@@ -182,12 +186,12 @@ void CRemoteTreeView::CreateImageList()
 	int index = GetIconIndex(dir, _T("{78013B9C-3532-4fe1-A418-5CD1955127CC}"), false);
 	m_pImageList->Add(CreateIcon(index));
 	m_pImageList->Add(CreateIcon(index, _T("ART_UNKNOWN")));
-	
+
 	// Opened directory
 	index = GetIconIndex(opened_dir, _T("{78013B9C-3532-4fe1-A418-5CD1955127CC}"), false);
 	m_pImageList->Add(CreateIcon(index));
 	m_pImageList->Add(CreateIcon(index, _T("ART_UNKNOWN")));
-	
+
 	SetImageList(m_pImageList);
 }
 
@@ -242,10 +246,10 @@ void CRemoteTreeView::DisplayItem(wxTreeItemId parent, const CDirectoryListing& 
 static bool sortfunc(const wxString& a, const wxString& b)
 {
 	int cmp = a.CmpNoCase(b);
-	
+
 	if (!cmp)
-		cmp = a.Cmp(b); 
-	
+		cmp = a.Cmp(b);
+
 	return cmp < 0;
 }
 
