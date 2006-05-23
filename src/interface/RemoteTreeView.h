@@ -41,6 +41,7 @@ protected:
 
 	DECLARE_EVENT_TABLE()
 	void OnItemExpanding(wxTreeEvent& event);
+	void OnSelectionChanged(wxTreeEvent& event);
 };
 
 #endif

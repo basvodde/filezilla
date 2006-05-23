@@ -1,5 +1,6 @@
 #include "FileZilla.h"
 #include "RemoteTreeView.h"
+#include "commandqueue.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -9,6 +10,7 @@ IMPLEMENT_CLASS(CRemoteTreeView, wxTreeCtrl)
 
 BEGIN_EVENT_TABLE(CRemoteTreeView, wxTreeCtrl)
 EVT_TREE_ITEM_EXPANDING(wxID_ANY, CRemoteTreeView::OnItemExpanding)
+EVT_TREE_SEL_CHANGED(wxID_ANY, CRemoteTreeView::OnSelectionChanged)
 END_EVENT_TABLE()
 
 class CItemData : public wxTreeItemData
@@ -470,4 +472,27 @@ void CRemoteTreeView::SetItemImages(wxTreeItemId item, bool unknown)
 		SetItemImage(item, 1, wxTreeItemIcon_Expanded);
 		SetItemImage(item, 3, wxTreeItemIcon_SelectedExpanded);
 	}
+}
+
+void CRemoteTreeView::OnSelectionChanged(wxTreeEvent& event)
+{
+	if (m_busy)
+		return;
+
+	if (!m_pState->m_pCommandQueue->Idle())
+	{
+		wxBell();
+		return;
+	}
+
+	wxTreeItemId item = event.GetItem();
+	if (!item)
+		return;
+
+	const CItemData* data = (CItemData*)GetItemData(item);
+	wxASSERT(data);
+	if (!data)
+		return;
+
+	m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(data->m_path));
 }
