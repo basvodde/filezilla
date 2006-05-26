@@ -39,9 +39,12 @@ protected:
 	// Used to suspends event processing in OnItemExpanding for example
 	bool m_busy;
 
+	wxTreeItemId m_ExpandAfterList;
+
 	DECLARE_EVENT_TABLE()
 	void OnItemExpanding(wxTreeEvent& event);
 	void OnSelectionChanged(wxTreeEvent& event);
+	void OnItemActivated(wxTreeEvent& event);
 };
 
 #endif

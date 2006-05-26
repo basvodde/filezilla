@@ -11,6 +11,7 @@ IMPLEMENT_CLASS(CRemoteTreeView, wxTreeCtrl)
 BEGIN_EVENT_TABLE(CRemoteTreeView, wxTreeCtrl)
 EVT_TREE_ITEM_EXPANDING(wxID_ANY, CRemoteTreeView::OnItemExpanding)
 EVT_TREE_SEL_CHANGED(wxID_ANY, CRemoteTreeView::OnSelectionChanged)
+EVT_TREE_ITEM_ACTIVATED(wxID_ANY, CRemoteTreeView::OnItemActivated)
 END_EVENT_TABLE()
 
 class CItemData : public wxTreeItemData
@@ -28,6 +29,7 @@ CRemoteTreeView::CRemoteTreeView(wxWindow* parent, wxWindowID id, CState* pState
 	m_busy = false;
 	m_pQueue = pQueue;
 	AddRoot(_T(""));
+	m_ExpandAfterList = 0;
 
 	CreateImageList();
 }
@@ -59,7 +61,6 @@ void CRemoteTreeView::SetDirectoryListing(const CDirectoryListing* pListing, boo
 		return;
 	}
 
-
 	wxTreeItemId parent = MakeParent(pListing->path, !modified);
 	if (!parent)
 	{
@@ -67,7 +68,7 @@ void CRemoteTreeView::SetDirectoryListing(const CDirectoryListing* pListing, boo
 		return;
 	}
 
-	if (!IsExpanded(parent))
+	if (!IsExpanded(parent) && parent != m_ExpandAfterList)
 	{
 		DeleteChildren(parent);
 		CFilterDialog filter;
@@ -75,7 +76,14 @@ void CRemoteTreeView::SetDirectoryListing(const CDirectoryListing* pListing, boo
 			AppendItem(parent, _T(""), -1, -1);
 	}
 	else
+	{
 		RefreshItem(parent, *pListing);
+
+		if (m_ExpandAfterList == parent)
+			Expand(parent);
+	}
+	m_ExpandAfterList = 0;
+
 
 	SetItemImages(parent, false);
 
@@ -272,7 +280,7 @@ void CRemoteTreeView::RefreshItem(wxTreeItemId parent, const CDirectoryListing& 
 
 	wxTreeItemIdValue cookie;
 	wxTreeItemId child = GetFirstChild(parent, cookie);
-	if (GetItemText(child) == _T(""))
+	if (!child || GetItemText(child) == _T(""))
 	{
 		DisplayItem(parent, listing);
 		return;
@@ -476,6 +484,8 @@ void CRemoteTreeView::SetItemImages(wxTreeItemId item, bool unknown)
 
 void CRemoteTreeView::OnSelectionChanged(wxTreeEvent& event)
 {
+	if (event.GetItem() != m_ExpandAfterList)
+        m_ExpandAfterList = 0;
 	if (m_busy)
 		return;
 
@@ -495,4 +505,10 @@ void CRemoteTreeView::OnSelectionChanged(wxTreeEvent& event)
 		return;
 
 	m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(data->m_path));
+}
+
+void CRemoteTreeView::OnItemActivated(wxTreeEvent& event)
+{
+	m_ExpandAfterList = GetSelection();
+	event.Skip();
 }
