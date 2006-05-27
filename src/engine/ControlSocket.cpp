@@ -46,7 +46,7 @@ CControlSocket::CControlSocket(CFileZillaEnginePrivate *pEngine)
 	Notify(true);
 
 	m_pCSConv = 0;
-	m_useUTF8 = 0;
+	m_useUTF8 = false;
 }
 
 CControlSocket::~CControlSocket()
@@ -605,6 +605,13 @@ wxString CControlSocket::ConvToLocal(const char* buffer)
 			wxString str = out;
 			delete [] out;
 			return str;
+		}
+
+		// Fall back to local charset on error
+		if (m_pCurrentServer->GetEncodingType() != ENCODING_UTF8)
+		{
+			LogMessage(Status, _("Invalid character sequence received, disabling UTF-8. Select UTF-8 option in site manager to force UTF-8."));
+			m_useUTF8 = false;
 		}
 	}
 	

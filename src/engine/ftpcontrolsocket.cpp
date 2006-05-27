@@ -114,9 +114,6 @@ CFtpControlSocket::CFtpControlSocket(CFileZillaEnginePrivate *pEngine) : CContro
 	m_pTransferSocket = 0;
 	m_sentRestartOffset = false;
 	m_bufferLen = 0;
-
-	m_hasCLNT = false;
-	m_hasUTF8 = false;
 }
 
 CFtpControlSocket::~CFtpControlSocket()
@@ -202,9 +199,9 @@ void CFtpControlSocket::ParseLine(wxString line)
 		{
 			wxString up = line.Upper();
 			if (up == _T(" UTF8"))
-				m_hasUTF8 = true;
-			else if (line == _T(" CLNT"))
-				m_hasCLNT = true;
+				CServerCapabilities::SetCapability(*m_pCurrentServer, utf8_command, yes);
+			else if (line == _T(" CLNT") || line.Left(5) == _T(" CLNT ")) 
+				CServerCapabilities::SetCapability(*m_pCurrentServer, clnt_command, yes);
 		}
 	}
 	//Check for multi-line responses
@@ -299,6 +296,12 @@ int CFtpControlSocket::Logon()
 	}
 	m_pCurOpData = new CFtpLogonOpData;
 
+	const enum CharsetEncoding encoding = m_pCurrentServer->GetEncodingType();
+	if (encoding == ENCODING_AUTO && CServerCapabilities::GetCapability(*m_pCurrentServer, utf8_command) != no)
+		m_useUTF8 = true;
+	else if (encoding == ENCODING_UTF8)
+		m_useUTF8 = true;
+
 	return FZ_REPLY_WOULDBLOCK;
 }
 
@@ -364,17 +367,71 @@ int CFtpControlSocket::LogonParseResponse()
 			DoClose();
 			return FZ_REPLY_ERROR;
 		case LO: //LO means we are logged on
-			pData->opState = LOGON_FEAT;
+
+			wxString system;
+			enum capabilities cap = CServerCapabilities::GetCapability(*GetCurrentServer(), syst_command, &system);
+			if (cap == unknown)
+			{
+				pData->opState = LOGON_SYST;
+				return LogonSend();
+			}
+			else if (cap == yes)
+			{
+				if (system.Left(3) == _T("MVS") && m_pCurrentServer->GetType() == DEFAULT)
+					m_pCurrentServer->SetType(MVS);
+			}
+
+			if (CServerCapabilities::GetCapability(*GetCurrentServer(), feat_command) == unknown)
+			{
+				pData->opState = LOGON_FEAT;
+				return LogonSend();
+			}
+
+			if (system.Find(_T("FileZilla")) == -1 &&
+				m_useUTF8 && CServerCapabilities::GetCapability(*GetCurrentServer(), utf8_command) == yes)
+			{
+				// If server is not FileZilla Server, we might have to send some extra commands to enable
+				// UTF-8
+				if (CServerCapabilities::GetCapability(*GetCurrentServer(), clnt_command) == yes)
+					pData->opState = LOGON_CLNT;
+				else
+					pData->opState = LOGON_OPTSUTF8;
+				return LogonSend();
+			}
+
+			LogMessage(Status, _("Connected"));
+			ResetOperation(FZ_REPLY_OK);
+			return true;
 		}
 
 		pData->nCommand = logonseq[pData->logonType][pData->logonSequencePos];
 	}
 	else if (pData->opState == LOGON_SYST)
 	{
+		CServerCapabilities::SetCapability(*GetCurrentServer(), syst_command, (code == 2) ? yes : no, m_Response.Mid(4));
+
 		if (code == 2 && m_Response.Length() > 7 && m_Response.Mid(3, 4) == _T(" MVS"))
 		{
 			if (m_pCurrentServer->GetType() == DEFAULT)
 				m_pCurrentServer->SetType(MVS);
+		}
+
+		if (CServerCapabilities::GetCapability(*GetCurrentServer(), feat_command) == unknown)
+		{
+			pData->opState = LOGON_FEAT;
+			return LogonSend();
+		}
+
+		if (m_Response.Find(_T("FileZilla")) == -1 &&
+			m_useUTF8 && CServerCapabilities::GetCapability(*GetCurrentServer(), utf8_command) == yes)
+		{
+			// If server is not FileZilla Server, we might have to send some extra commands to enable
+			// UTF-8
+			if (CServerCapabilities::GetCapability(*GetCurrentServer(), clnt_command) == yes)
+				pData->opState = LOGON_CLNT;
+			else
+				pData->opState = LOGON_OPTSUTF8;
+			return LogonSend();
 		}
 
 		LogMessage(Status, _("Connected"));
@@ -383,32 +440,37 @@ int CFtpControlSocket::LogonParseResponse()
 	}
 	else if (pData->opState == LOGON_FEAT)
 	{
-		const enum CharsetEncoding encoding = m_pCurrentServer->GetEncodingType();
-		if (encoding == ENCODING_AUTO && m_hasUTF8)
-			m_useUTF8 = true;
-		else if (encoding == ENCODING_UTF8)
-			m_useUTF8 = true;
-
-		if (m_useUTF8 && m_hasUTF8 && m_hasCLNT)
+		if (code == 2)
 		{
-			// Some servers refuse to enable UTF8 if client does not send CLNT command
-			// to fix compatibility with Internet Explorer, but in the process breaking
-			// compatibility with other clients.
-			// Rather than forcing MS to fix Internet Explorer, letting other clients
-			// suffer is a questionable decision in my opinion.
-			pData->opState = LOGON_CLNT;
-		}
-		else if (m_useUTF8 && m_hasUTF8)
-		{
-			// Handle servers that disobey RFC 2640 by having UTF8 in their FEAT
-			// response but do not use UTF8 unless OPTS UTF8 ON gets send.
-			// However these servers obey a conflicting ietf draft:
-			// http://www.ietf.org/proceedings/02nov/I-D/draft-ietf-ftpext-utf-8-option-00.txt
-			// Example servers are, amongst others, G6 FTP Server and RaidenFTPd.
-			pData->opState = LOGON_OPTSUTF8;
+			CServerCapabilities::SetCapability(*GetCurrentServer(), feat_command, yes);
+			if (CServerCapabilities::GetCapability(*m_pCurrentServer, utf8_command) != yes)
+				CServerCapabilities::SetCapability(*m_pCurrentServer, utf8_command, no);
+			if (CServerCapabilities::GetCapability(*m_pCurrentServer, clnt_command) != yes)
+				CServerCapabilities::SetCapability(*m_pCurrentServer, clnt_command, no);
 		}
 		else
-			pData->opState = LOGON_SYST;
+			CServerCapabilities::SetCapability(*GetCurrentServer(), feat_command, no);
+
+		const enum CharsetEncoding encoding = m_pCurrentServer->GetEncodingType();
+		if (encoding == ENCODING_AUTO && CServerCapabilities::GetCapability(*m_pCurrentServer, utf8_command) != yes)
+			m_useUTF8 = false;
+
+		wxString system;
+		CServerCapabilities::GetCapability(*GetCurrentServer(), syst_command, &system);
+			
+		if (system.Find(_T("FileZilla")) != -1 &&
+			m_useUTF8 && CServerCapabilities::GetCapability(*GetCurrentServer(), utf8_command) == yes)
+		{
+			if (CServerCapabilities::GetCapability(*GetCurrentServer(), clnt_command) == yes)
+				pData->opState = LOGON_CLNT;
+			else
+				pData->opState = LOGON_OPTSUTF8;
+			return LogonSend();
+		}
+
+		LogMessage(Status, _("Connected"));
+		ResetOperation(FZ_REPLY_OK);
+		return true;
 	}
 	else if (pData->opState == LOGON_CLNT)
 	{
@@ -418,8 +480,11 @@ int CFtpControlSocket::LogonParseResponse()
 	else if (pData->opState == LOGON_OPTSUTF8)
 	{
 		// If server obeys RFC 2640 this command had no effect, return code
-		// check is not needed.
-		pData->opState = LOGON_SYST;
+		// is irrelevant
+
+		LogMessage(Status, _("Connected"));
+		ResetOperation(FZ_REPLY_OK);
+		return true;
 	}
 
 	return LogonSend();
@@ -492,9 +557,19 @@ int CFtpControlSocket::LogonSend()
 		res = Send(_T("FEAT"));
 		break;
 	case LOGON_CLNT:
+		// Some servers refuse to enable UTF8 if client does not send CLNT command
+		// to fix compatibility with Internet Explorer, but in the process breaking
+		// compatibility with other clients.
+		// Rather than forcing MS to fix Internet Explorer, letting other clients
+		// suffer is a questionable decision in my opinion.
 		res = Send(_T("CLNT FileZilla"));
 		break;
 	case LOGON_OPTSUTF8:
+		// Handle servers that disobey RFC 2640 by having UTF8 in their FEAT
+		// response but do not use UTF8 unless OPTS UTF8 ON gets send.
+		// However these servers obey a conflicting ietf draft:
+		// http://www.ietf.org/proceedings/02nov/I-D/draft-ietf-ftpext-utf-8-option-00.txt
+		// Example servers are, amongst others, G6 FTP Server and RaidenFTPd.
 		res = Send(_T("OPTS UTF8 ON"));
 		break;
 	default:

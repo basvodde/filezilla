@@ -102,10 +102,6 @@ protected:
 	char m_receiveBuffer[RECVBUFFERSIZE];
 	int m_bufferLen;
 
-	// List of features
-	bool m_hasCLNT;
-	bool m_hasUTF8;
-
 	CExternalIPResolver* m_pIPResolver;
 
 	DECLARE_EVENT_TABLE();
