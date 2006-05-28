@@ -351,6 +351,31 @@ int CFtpControlSocket::LogonParseResponse()
 	{
 		if (code != 2 && code != 3)
 		{
+			if (m_pCurrentServer->GetEncodingType() == ENCODING_AUTO && m_useUTF8)
+			{
+				// Fall back to local charset for the case that the server might not
+				// support UTF8 and the login data contains non-ascii characters.
+				bool asciiOnly = true;
+				for (unsigned int i = 0; i < m_pCurrentServer->GetUser().Length(); i++)
+					if ((unsigned int)m_pCurrentServer->GetUser()[i] > 127)
+						asciiOnly = false;
+				for (unsigned int i = 0; i < m_pCurrentServer->GetPass().Length(); i++)
+					if ((unsigned int)m_pCurrentServer->GetPass()[i] > 127)
+						asciiOnly = false;
+				for (unsigned int i = 0; i < m_pCurrentServer->GetAccount().Length(); i++)
+					if ((unsigned int)m_pCurrentServer->GetAccount()[i] > 127)
+						asciiOnly = false;
+				if (!asciiOnly)
+				{
+					LogMessage(Status, _("Login data contains non-ascii characters and server might not be UTF-8 aware. Trying local charset."), 0);
+					m_useUTF8 = false;
+					pData->opState = LOGON_LOGON;
+					pData->nCommand = logonseq[pData->logonType][0];
+					pData->logonSequencePos = 0;
+					return LogonSend();
+				}
+			}
+
 			int error = FZ_REPLY_DISCONNECTED;
 			if (pData->nCommand == 1 && code == 5)
 				error |= FZ_REPLY_PASSWORDFAILED;
@@ -363,11 +388,10 @@ int CFtpControlSocket::LogonParseResponse()
 
 		switch(pData->logonSequencePos)
 		{
-		case ER: // ER means summat has gone wrong
+		case ER: // ER means something has gone wrong
 			DoClose();
 			return FZ_REPLY_ERROR;
 		case LO: //LO means we are logged on
-
 			wxString system;
 			enum capabilities cap = CServerCapabilities::GetCapability(*GetCurrentServer(), syst_command, &system);
 			if (cap == unknown)
@@ -539,7 +563,7 @@ int CFtpControlSocket::LogonSend()
 			if (m_pCurrentServer->GetAccount() == _T(""))
 			{
 				LogMessage(::Error, _("Server requires an account. Please specify an account using the Site Manager"));
-				ResetOperation(FZ_REPLY_ERROR);
+				DoClose(FZ_REPLY_DISCONNECTED);
 				res = false;
 				break;
 			}
