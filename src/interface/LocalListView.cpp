@@ -149,15 +149,15 @@ bool CLocalListView::DisplayDir(wxString dirname)
 				found = dir.GetNext(&file);
 				continue;
 			}
-			wxFileName fn(dirname + file);
 			t_fileData data;
-			data.dir = fn.DirExists();
+
+			data.dir = wxFileName::DirExists(dirname + file);
 			data.icon = -2;
-			data.name = fn.GetFullName();
+			data.name = file;
 	
 			wxStructStat buf;
 			int result;
-			result = wxStat(fn.GetFullPath(), &buf);
+			result = wxStat(dirname + file, &buf);
 
 			if (!result)
 			{
