@@ -66,12 +66,20 @@ protected:
 		
 					const CFolderItem::t_dirPair& pair = m_pFolderItem->m_dirsToCheck.front();
 
+					wxLogNull nullLog;
+
 					m_pFolderItem->m_pDir = new wxDir(pair.localPath);
-					m_pFolderItem->m_currentLocalPath = pair.localPath;
-					m_pFolderItem->m_currentRemotePath = pair.remotePath;
 					m_pFolderItem->m_dirsToCheck.pop_front();
 
-					found = m_pFolderItem->m_pDir->GetFirst(&file);
+					if (m_pFolderItem->m_pDir->IsOpened())
+					{
+						m_pFolderItem->m_currentLocalPath = pair.localPath;
+						m_pFolderItem->m_currentRemotePath = pair.remotePath;
+
+						found = m_pFolderItem->m_pDir->GetFirst(&file);
+					}
+					else
+						found = false;
 				}
 				else
 				{
