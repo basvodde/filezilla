@@ -663,6 +663,13 @@ wxChar* CControlSocket::ConvToLocalBuffer(const char* buffer)
 		wxChar* res = ConvToLocalBuffer(buffer, wxConvUTF8);
 		if (res && *res)
 			return res;
+
+		// Fall back to local charset on error
+		if (m_pCurrentServer->GetEncodingType() != ENCODING_UTF8)
+		{
+			LogMessage(Status, _("Invalid character sequence received, disabling UTF-8. Select UTF-8 option in site manager to force UTF-8."));
+			m_useUTF8 = false;
+		}
 	}
 
 	if (m_pCSConv)
