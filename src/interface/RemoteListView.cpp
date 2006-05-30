@@ -1431,8 +1431,13 @@ void CRemoteListView::ReselectItems(std::list<wxString>& selectedNames, wxString
 		if (i == m_indexMapping.size())
 			break;
 	}
-	if (focused != _T("") && firstSelected != -1)
-		SetItemState(firstSelected, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
+	if (focused != _T(""))
+	{
+		if (firstSelected != -1)
+			SetItemState(firstSelected, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
+		else
+			SetItemState(0, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
+	}
 }
 
 void CRemoteListView::OnSize(wxSizeEvent& event)
