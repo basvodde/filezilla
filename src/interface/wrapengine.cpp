@@ -157,9 +157,7 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 	if (max <= 0)
 		return false;
 
-	wxPoint pos = sizer->GetPosition();
-
-	// Rightmost valid x-coordinate
+	const wxPoint& pos = sizer->GetPosition();
 
 	for (unsigned int i = 0; i < sizer->GetChildren().GetCount(); i++)
 	{
@@ -172,7 +170,9 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 			border = item->GetBorder();
 
 		wxRect rect = item->GetRect();
-		if (rect.GetRight() <= (max - border))
+		wxASSERT(rect.GetRight() + border < sizer->GetPosition().x + sizer->GetSize().GetWidth());
+		
+		if (item->GetMinSize().GetWidth() + item->GetPosition().x + border <= max)
 		    continue;
 
 		wxWindow* window;
@@ -185,36 +185,52 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 				wxString str = text->GetLabel();
 				str = WrapText(text, str,  max - rect.GetLeft() - border - 2);
 				text->SetLabel(str);
+
 				continue;
 			}
 
 			wxNotebook* book = wxDynamicCast(window, wxNotebook);
 			if (book)
 			{
-				//printf("wrapengine: wrapping wxNotebook, max=%d, border=%d\n", max, border);
-				//printf("notebook rect: %d %d %d %d\n", rect.GetLeft(), rect.GetTop(), rect.GetRight(), rect.GetBottom());
 				int maxPageWidth = 0;
 				for (unsigned int i = 0; i < book->GetPageCount(); i++)
 				{
 					wxNotebookPage* page = book->GetPage(i);
 					maxPageWidth = wxMax(maxPageWidth, page->GetRect().GetWidth());
 				}
-				//printf("max page width: %d\n", maxPageWidth);
+				
 				for (unsigned int i = 0; i < book->GetPageCount(); i++)
 				{
 					wxNotebookPage* page = book->GetPage(i);
 					wxRect pageRect = page->GetRect();
-					//printf("page rect: %d %d %d %d\n", pageRect.GetLeft(), pageRect.GetTop(), pageRect.GetRight(), pageRect.GetBottom());
 					int pageMax = max - rect.GetLeft() - pageRect.GetLeft() - border - rect.GetWidth() + maxPageWidth;
-					//printf("page max: %d\n", pageMax);
-					WrapRecursive(wnd, page->GetSizer(), pageMax);
+					if (!WrapRecursive(wnd, page->GetSizer(), pageMax))
+						return false;
 				}
 				continue;
 			}
+
+			if (item->GetMinSize().GetWidth() + item->GetPosition().x + border > max)
+				return false;
 		}
 		else if ((subSizer = item->GetSizer()))
 		{
-			WrapRecursive(wnd, subSizer, max - border);
+			// FIXME: wxGridSizer not implemented
+			wxASSERT(wxDynamicCast(subSizer, wxFlexGridSizer) || !wxDynamicCast(subSizer, wxGridSizer));
+
+			int subBorder = 0;
+
+			// Add border of static box sizer
+			wxStaticBoxSizer* sboxSizer;
+			if (sboxSizer = wxDynamicCast(subSizer, wxStaticBoxSizer))
+			{
+				int top, other;
+				sboxSizer->GetStaticBox()->GetBordersForSizer(&top, &other);
+				subBorder += other;
+			}
+			
+			if (!WrapRecursive(0, subSizer, max - border - subBorder))
+				return false;
 		}
 	}
 
@@ -285,7 +301,7 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 			size.IncTo(pSizer->GetMinSize());
 		}
 
-		if (size.GetWidth() > max)
+		if (size.GetWidth() > desiredWidth)
 		{
 			// Wrapping failed
 			min = desiredWidth;
