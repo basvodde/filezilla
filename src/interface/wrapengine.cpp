@@ -170,7 +170,7 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 			border = item->GetBorder();
 
 		wxRect rect = item->GetRect();
-		wxASSERT(rect.GetRight() + border < sizer->GetPosition().x + sizer->GetSize().GetWidth());
+		wxASSERT(rect.GetRight() + border < pos.x + sizer->GetSize().GetWidth());
 		
 		if (item->GetMinSize().GetWidth() + item->GetPosition().x + border <= max)
 		    continue;
@@ -222,7 +222,7 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 
 			// Add border of static box sizer
 			wxStaticBoxSizer* sboxSizer;
-			if (sboxSizer = wxDynamicCast(subSizer, wxStaticBoxSizer))
+			if ((sboxSizer = wxDynamicCast(subSizer, wxStaticBoxSizer)))
 			{
 				int top, other;
 				sboxSizer->GetStaticBox()->GetBordersForSizer(&top, &other);
@@ -285,7 +285,7 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 	int max = size.GetWidth();
 	int min = wxMin(size.GetWidth(), size.GetHeight());
 	if (ratio < 0)
-		min *= ratio;
+		min = (int)(min * ratio);
 	if (min > canvas.x)
 		min -= canvas.x;
 	int desiredWidth = (min + max) / 2;
