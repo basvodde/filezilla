@@ -158,7 +158,7 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 		return false;
 
 	const wxPoint& pos = sizer->GetPosition();
-	const wxSize& sizerSize = sizer->GetMinSize();
+	const wxSize& sizerSize = sizer->GetSize();
 
 	for (unsigned int i = 0; i < sizer->GetChildren().GetCount(); i++)
 	{
@@ -166,14 +166,20 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 		if (!item)
 			continue;
 
-		int border = 0;
+		int rborder = 0;
 		if (item->GetFlag() & wxRIGHT)
-			border = item->GetBorder();
+			rborder = item->GetBorder();
+		int lborder = 0;
+		if (item->GetFlag() & wxLEFT)
+			lborder = item->GetBorder();
 
 		wxRect rect = item->GetRect();
-		wxASSERT(rect.GetRight() + border < pos.x + sizerSize.GetWidth());
+#ifdef __WXMSW__
+		wxASSERT(rect.GetRight() + rborder < pos.x + sizerSize.GetWidth());
+#endif
+		wxASSERT(item->GetMinSize().GetWidth() + rborder + lborder <= sizer->GetMinSize().GetWidth());
 
-		if (item->GetMinSize().GetWidth() + item->GetPosition().x + border <= max)
+		if (item->GetMinSize().GetWidth() + item->GetPosition().x + rborder <= max)
 		    continue;
 
 		wxWindow* window;
@@ -184,7 +190,7 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 			if (text)
 			{
 				wxString str = text->GetLabel();
-				str = WrapText(text, str,  max - rect.GetLeft() - border - 2);
+				str = WrapText(text, str,  max - rect.GetLeft() - rborder - 2);
 				text->SetLabel(str);
 
 				continue;
@@ -204,14 +210,14 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 				{
 					wxNotebookPage* page = book->GetPage(i);
 					wxRect pageRect = page->GetRect();
-					int pageMax = max - rect.GetLeft() - pageRect.GetLeft() - border - rect.GetWidth() + maxPageWidth;
+					int pageMax = max - rect.GetLeft() - pageRect.GetLeft() - rborder - rect.GetWidth() + maxPageWidth;
 					if (!WrapRecursive(wnd, page->GetSizer(), pageMax))
 						return false;
 				}
 				continue;
 			}
 
-			if (item->GetMinSize().GetWidth() + item->GetPosition().x + border > max)
+			if (item->GetMinSize().GetWidth() + item->GetPosition().x + rborder > max)
 				return false;
 		}
 		else if ((subSizer = item->GetSizer()))
@@ -230,7 +236,7 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 				subBorder += other;
 			}
 
-			if (!WrapRecursive(0, subSizer, max - border - subBorder))
+			if (!WrapRecursive(0, subSizer, max - rborder - subBorder))
 				return false;
 		}
 	}
