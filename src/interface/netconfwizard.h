@@ -8,6 +8,7 @@
 #define NETCONFBUFFERSIZE 100
 
 class COptions;
+
 class CNetConfWizard : public wxWizard, protected CWrapEngine
 {
 public:
@@ -37,15 +38,23 @@ protected:
 	void OnFinish(wxWizardEvent& event);
 	
 	void OnReceive();
+	void ParseResponse(const char* line);
 	void OnClose();
 	void OnConnect();
 	void OnSend();
 	void CloseSocket();
 	bool Send(wxString cmd);
+	void OnDataReceive();
+	void OnDataClose();
+
+	void OnAccept();
 
 	void SendNextCommand();
 
 	wxString GetExternalIPAddress();
+	
+	int CreateListenSocket();
+	int CreateListenSocket(unsigned int port);
 
 	wxString m_nextLabelText;
 
@@ -66,10 +75,18 @@ protected:
 		tainted,
 		mismatchandtainted,
 		servererror,
-		externalfailed
+		externalfailed,
+		datatainted
 	} m_testResult;
 
 	CExternalIPResolver* m_pIPResolver;
+	wxString m_externalIP;
+
+	wxSocketServer* m_pSocketServer;
+	wxSocketBase* m_pDataSocket;
+	int m_listenPort;
+	bool gotListReply;
+	int m_data;
 
 	char* m_pSendBuffer;
 };

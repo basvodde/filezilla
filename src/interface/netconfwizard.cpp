@@ -8,18 +8,21 @@
 BEGIN_EVENT_TABLE(CNetConfWizard, wxWizard)
 EVT_WIZARD_PAGE_CHANGING(wxID_ANY, CNetConfWizard::OnPageChanging)
 EVT_WIZARD_PAGE_CHANGED(wxID_ANY, CNetConfWizard::OnPageChanged)
-EVT_SOCKET(0, CNetConfWizard::OnSocketEvent)
+EVT_SOCKET(wxID_ANY, CNetConfWizard::OnSocketEvent)
 EVT_FZ_EXTERNALIPRESOLVE(wxID_ANY, CNetConfWizard::OnExternalIPAddress)
 EVT_BUTTON(XRCID("ID_RESTART"), CNetConfWizard::OnRestart)
 EVT_WIZARD_FINISHED(wxID_ANY, CNetConfWizard::OnFinish)
 END_EVENT_TABLE()
 
 CNetConfWizard::CNetConfWizard(wxWindow* parent, COptions* pOptions)
-: m_parent(parent), m_pOptions(pOptions)
+: m_parent(parent), m_pOptions(pOptions), m_pSocketServer(0)
 {
 	m_socket = 0;
 	m_pIPResolver = 0;
 	m_pSendBuffer = 0;
+	m_pSocketServer = 0;
+	m_pDataSocket = 0;
+
 	ResetTest();
 }
 
@@ -28,6 +31,7 @@ CNetConfWizard::~CNetConfWizard()
 	delete m_socket;
 	delete m_pIPResolver;
 	delete [] m_pSendBuffer;
+	delete m_pSocketServer;
 }
 
 bool CNetConfWizard::Load()
@@ -220,20 +224,52 @@ void CNetConfWizard::OnSocketEvent(wxSocketEvent& event)
 	if (!m_socket)
 		return;
 
-	switch (event.GetSocketEvent())
+	if (event.GetSocket() == m_socket)
 	{
-	case wxSOCKET_INPUT:
-		OnReceive();
-		break;
-	case wxSOCKET_OUTPUT:
-		OnSend();
-		break;
-	case wxSOCKET_LOST:
-		OnClose();
-		break;
-	case wxSOCKET_CONNECTION:
-		OnConnect();
-		break;
+		switch (event.GetSocketEvent())
+		{
+		case wxSOCKET_INPUT:
+			OnReceive();
+			break;
+		case wxSOCKET_OUTPUT:
+			OnSend();
+			break;
+		case wxSOCKET_LOST:
+			OnClose();
+			break;
+		case wxSOCKET_CONNECTION:
+			OnConnect();
+			break;
+		}
+	}
+	else if (event.GetSocket() == m_pSocketServer)
+	{
+		switch (event.GetSocketEvent())
+		{
+		case wxSOCKET_LOST:
+			PrintMessage(_("Listen socket closed"), 1);
+			CloseSocket();
+			break;
+		case wxSOCKET_CONNECTION:
+			OnAccept();
+			break;
+		default:
+			break;
+		}
+	}
+	else if (event.GetSocket() == m_pDataSocket)
+	{
+		switch (event.GetSocketEvent())
+		{
+		case wxSOCKET_LOST:
+			OnDataClose();
+			break;
+		case wxSOCKET_INPUT:
+			OnDataReceive();
+			break;
+		default:
+			break;
+		}
 	}
 }
 
@@ -292,24 +328,63 @@ void CNetConfWizard::OnReceive()
 	if (m_recvBufferPos < 3)
 		return;
 
-	if (m_recvBuffer[m_recvBufferPos - 1] != '\n' || m_recvBuffer[m_recvBufferPos - 2] != '\r')
+	for (int i = 0; i < m_recvBufferPos - 1; i++)
 	{
-		if (m_recvBufferPos == NETCONFBUFFERSIZE)
+		if (m_recvBuffer[i] == '\n')
 		{
+			m_testResult = servererror;
 			PrintMessage(_("Invalid data received"), 1);
 			CloseSocket();
+			return;
 		}
-		return;
+		if (m_recvBuffer[i] != '\r')
+			continue;
+		
+		if (m_recvBuffer[i + 1] != '\n')
+		{
+			m_testResult = servererror;
+			PrintMessage(_("Invalid data received"), 1);
+			CloseSocket();
+			return;
+		}
+		m_recvBuffer[i] = 0;
+
+		if (!*m_recvBuffer)
+		{
+			m_testResult = servererror;
+			PrintMessage(_("Invalid data received"), 1);
+			CloseSocket();
+			return;
+		}
+
+		ParseResponse(m_recvBuffer);
+
+		if (!m_socket)
+			return;
+
+		memmove(m_recvBuffer, m_recvBuffer + i + 2, m_recvBufferPos - i - 2);
+		m_recvBufferPos -= i + 2;
+		i = -1;
 	}
-	m_recvBuffer[m_recvBufferPos - 2] = 0;
-	
-	wxString msg(m_recvBuffer, wxConvLocal);
+}
+
+void CNetConfWizard::ParseResponse(const char* line)
+{
+	const int len = strlen(line);
+	wxString msg(line, wxConvLocal);
 	wxString str = _("Response:");
 	str += _T(" ");
 	str += msg;
 	PrintMessage(str, 3);
 
-	if (m_recvBufferPos < 3)
+	if (len < 3)
+	{
+		m_testResult = servererror;
+		PrintMessage(_("Server sent invalid reply."), 1);
+		CloseSocket();
+		return;
+	}
+	if (line[3] && line[3] != ' ')
 	{
 		m_testResult = servererror;
 		PrintMessage(_("Server sent invalid reply."), 1);
@@ -317,27 +392,30 @@ void CNetConfWizard::OnReceive()
 		return;
 	}
 
+	if (line[0] == '1')
+		return;
+
 	switch (m_state)
 	{
 	case 3:
-		if (m_recvBuffer[0] == '2')
+		if (line[0] == '2')
 			break;
 
-		if (m_recvBuffer[1] == '0' && m_recvBuffer[2] == '1')
+		if (line[1] == '0' && line[2] == '1')
 		{
 			PrintMessage(_("Communication tainted by router"), 1);
 			m_testResult = tainted;
 			CloseSocket();
 			return;
 		}
-		else if (m_recvBuffer[1] == '1' && m_recvBuffer[2] == '0')
+		else if (line[1] == '1' && line[2] == '0')
 		{
 			PrintMessage(_("Wrong external IP address"), 1);
 			m_testResult = mismatch;
 			CloseSocket();
 			return;
 		}
-		else if (m_recvBuffer[1] == '1' && m_recvBuffer[2] == '1')
+		else if (line[1] == '1' && line[2] == '1')
 		{
 			PrintMessage(_("Wrong external IP address"), 1);
 			PrintMessage(_("Communication tainted by router"), 1);
@@ -353,11 +431,80 @@ void CNetConfWizard::OnReceive()
 			return;
 		}
 		break;
+	case 4:
+		if (line[0] == '5' && line[1] == '0')
+		{
+			if (line[2] == '1' || line[2] == '2')
+			{
+				m_testResult = tainted;
+				PrintMessage(_("PORT command tainted by router."), 1);
+				CloseSocket();
+				return;
+			}
+		}
+		if (line[0] != '2' && line[0] != '3')
+		{
+			m_testResult = servererror;
+			PrintMessage(_("Server sent invalid reply."), 1);
+			CloseSocket();
+			return;
+		}
+		if (len < 4)
+		{
+			m_testResult = servererror;
+			PrintMessage(_("Server sent invalid reply."), 1);
+			CloseSocket();
+			return;
+		}
+		else
+		{
+			const char* p = line + len;
+			while (*(--p) != ' ')
+			{
+				if (*p < '0' || *p > '9')
+				{
+					m_testResult = servererror;
+					PrintMessage(_("Server sent invalid reply."), 1);
+					CloseSocket();
+					return;
+				}
+			}
+			m_data = 0;
+			while (*++p)
+				m_data = m_data * 10 + *p - '0';
+		}
+		break;
+	case 6:
+		if (line[0] != '2' && line[0] != '3')
+		{
+			m_testResult = servererror;
+			PrintMessage(_("Server sent invalid reply."), 1);
+			CloseSocket();
+			return;
+		}
+		if (m_pDataSocket)
+		{
+			if (gotListReply)
+			{
+				m_testResult = servererror;
+				PrintMessage(_("Server sent invalid reply."), 1);
+				CloseSocket();
+			}
+			gotListReply = true;
+			return;
+		}
+		break;
 	default:
+		if (line[0] != '2' && line[0] != '3')
+		{
+			m_testResult = servererror;
+			PrintMessage(_("Server sent invalid reply."), 1);
+			CloseSocket();
+			return;
+		}
 		break;
 	}
-
-	m_recvBufferPos = 0;
+	
 	m_state++;
 
 	SendNextCommand();
@@ -407,7 +554,7 @@ void CNetConfWizard::CloseSocket()
 			break;
 		case tainted:
 			text[0] = _("Active mode FTP test failed. FileZilla knows the correct external IP address, but your router has misleadingly modified the sent address.");
-			text[1] = _("Please make sure your router is using the latest available firmware. Furthermore, your router has to be configured properly. You will have to manual port forwarding. Don't run your router in the so called 'DMZ mode' or 'game mode'.");
+			text[1] = _("Please make sure your router is using the latest available firmware. Furthermore, your router has to be configured properly. You will have to use manual port forwarding. Don't run your router in the so called 'DMZ mode' or 'game mode'.");
 			text[2] = _("If this problem stays, please contact your router manufacturer.");
 			text[3] = _("Unless this problem gets fixed, active mode FTP will not work and passive mode has to be used.");
 			if (XRCCTRL(*this, "ID_ACTIVE", wxRadioButton)->GetValue())
@@ -446,6 +593,12 @@ void CNetConfWizard::CloseSocket()
 			text[1] = _("Pleae make sure FileZilla is allowed to establish outgoing connections and make sure you typed the address of the address resolver correctly.");
 			text[2] = wxString::Format(_("The address you entered was: %s"), XRCCTRL(*this, "ID_ACTIVERESOLVER", wxTextCtrl)->GetValue().c_str());
 			break;
+		case datatainted:
+			text[0] = _("Transferred data got tainted.");
+			text[1] = _("You likely have a router or firewall which errorneously modified the transferred data.");
+			text[2] = _("Please disable settings like 'DMZ mode' or 'Game mode' on your router.");
+			text[3] = _("If this problem persists, please contact your router or firewall manufacturer for a solution.");
+			break;
 		}
 	}
 	for (unsigned int i = 0; i < 5; i++)
@@ -455,6 +608,7 @@ void CNetConfWizard::CloseSocket()
 		wxDynamicCast(FindWindowById(id, this), wxStaticText)->SetLabel(text[i]);
 	}
 	m_pages[6]->GetSizer()->Layout();
+	m_pages[6]->GetSizer()->Fit(m_pages[6]);
 	wxGetApp().GetWrapEngine()->WrapRecursive(m_pages[6], m_pages[6]->GetSizer(), wxGetApp().GetWrapEngine()->GetWidthFromCache("Netconf"));
 
 	// Focus one so enter key hits finish and not the restart button by default
@@ -465,6 +619,12 @@ void CNetConfWizard::CloseSocket()
 
 	delete [] m_pSendBuffer;
 	m_pSendBuffer = 0;
+
+	delete m_pSocketServer;
+	m_pSocketServer = 0;
+
+	delete m_pDataSocket;
+	m_pDataSocket = 0;
 }
 
 bool CNetConfWizard::Send(wxString cmd)
@@ -577,6 +737,7 @@ void CNetConfWizard::SendNextCommand()
 			wxString ip = GetExternalIPAddress();
 			if (ip == _T(""))
 				return;
+			m_externalIP = ip;
 
 			wxString hexIP = ip;
 			for (unsigned int i = 0; i < hexIP.Length(); i++)
@@ -594,10 +755,33 @@ void CNetConfWizard::SendNextCommand()
 		}
 		break;
 	case 4:
+		{
+			int port = CreateListenSocket();
+			if (!port)
+			{
+				PrintMessage(_("Failed to create listen socket, aborting"), 1);
+				CloseSocket();
+				return;
+			}
+			m_listenPort = port;
+			Send(wxString::Format(_T("PREP %d"), port));
+			break;
+		}
+	case 5:
+		{
+			wxString cmd = wxString::Format(_T("PORT %s,%d,%d"), m_externalIP.c_str(), m_listenPort / 256, m_listenPort % 256);
+			cmd.Replace(_T("."), _T(","));
+			Send(cmd);
+		}
+		break;
+	case 6:
+		Send(_T("LIST"));
+		break;
+	case 7:
 		m_testResult = successful;
 		Send(_T("QUIT"));
 		break;
-	case 5:
+	case 8:
 		CloseSocket();
 		break;
 	}
@@ -617,6 +801,7 @@ void CNetConfWizard::ResetTest()
 	m_testDidRun = false;
 	m_testResult = unknown;
 	m_recvBufferPos = 0;
+	gotListReply = false;
 
 	if (!m_pages.empty())
 		XRCCTRL(*this, "ID_RESULTS", wxTextCtrl)->SetLabel(_T(""));
@@ -641,10 +826,205 @@ void CNetConfWizard::OnFinish(wxWizardEvent& event)
 
 	m_pOptions->SetOption(OPTION_LIMITPORTS, XRCCTRL(*this, "ID_ACTIVE_PORTMODE1", wxRadioButton)->GetValue() ? 0 : 1);
 
-	m_pOptions->SetOption(OPTION_LIMITPORTS_LOW, XRCCTRL(*this, "ID_ACTIVE_PORTMIN", wxTextCtrl)->GetValue());
-	m_pOptions->SetOption(OPTION_LIMITPORTS_HIGH, XRCCTRL(*this, "ID_ACTIVE_PORTMAX", wxTextCtrl)->GetValue());
+	long tmp;
+	XRCCTRL(*this, "ID_ACTIVE_PORTMIN", wxTextCtrl)->GetValue().ToLong(&tmp); m_pOptions->SetOption(OPTION_LIMITPORTS_LOW, tmp);
+	XRCCTRL(*this, "ID_ACTIVE_PORTMAX", wxTextCtrl)->GetValue().ToLong(&tmp); m_pOptions->SetOption(OPTION_LIMITPORTS_HIGH, tmp);
 	
 	m_pOptions->SetOption(OPTION_EXTERNALIP, XRCCTRL(*this, "ID_ACTIVEIP", wxTextCtrl)->GetValue());
 	m_pOptions->SetOption(OPTION_EXTERNALIPRESOLVER, XRCCTRL(*this, "ID_ACTIVERESOLVER", wxTextCtrl)->GetValue());
 	m_pOptions->SetOption(OPTION_NOEXTERNALONLOCAL, XRCCTRL(*this, "ID_NOEXTERNALONLOCAL", wxCheckBox)->GetValue());
+}
+
+int CNetConfWizard::CreateListenSocket()
+{
+	if (m_pSocketServer)
+		return 0;
+
+	if (XRCCTRL(*this, "ID_ACTIVE_PORTMODE1", wxRadioButton)->GetValue())
+	{
+		return CreateListenSocket(0);
+	}
+	else
+	{
+		long low;
+		long high;
+		XRCCTRL(*this, "ID_ACTIVE_PORTMIN", wxTextCtrl)->GetValue().ToLong(&low);
+		XRCCTRL(*this, "ID_ACTIVE_PORTMAX", wxTextCtrl)->GetValue().ToLong(&high);
+		
+		int mid = (rand() * (high - low)) / (RAND_MAX + 1) + low;
+		for (int port = mid; port <= high; port++)
+			if (CreateListenSocket(port))
+				return port;
+		for (int port = low; port < mid; port++)
+			if (CreateListenSocket(port))
+				return port;
+
+		return 0;
+	}
+}
+
+int CNetConfWizard::CreateListenSocket(unsigned int port)
+{
+	wxIPV4address addr;
+	if (!addr.AnyAddress())
+		return 0;
+	if (port)
+	{
+		if (!addr.Service(port))
+			return 0;
+	}
+
+	m_pSocketServer = new wxSocketServer(addr, wxSOCKET_NOWAIT);
+	if (!m_pSocketServer->Ok())
+	{
+		delete m_pSocketServer;
+		m_pSocketServer = 0;
+		return 0;
+	}
+
+	m_pSocketServer->SetEventHandler(*this);
+	m_pSocketServer->SetFlags(wxSOCKET_NOWAIT);
+	m_pSocketServer->SetNotify(wxSOCKET_CONNECTION_FLAG | wxSOCKET_LOST_FLAG);
+	m_pSocketServer->Notify(true);
+
+
+	if (port)
+		return port;
+
+	// Get port number from socket
+	if (!m_pSocketServer->GetLocal(addr))
+	{
+		delete m_pSocketServer;
+		m_pSocketServer = 0;
+		return 0;
+	}
+	return addr.Service();
+}
+
+void CNetConfWizard::OnAccept()
+{
+	if (m_pDataSocket)
+		return;
+	m_pDataSocket = m_pSocketServer->Accept(false);
+	if (!m_pDataSocket)
+		return;
+
+	wxIPV4address peerAddr, dataPeerAddr;
+	if (!m_socket->GetPeer(peerAddr))
+	{
+		delete m_pDataSocket;
+		m_pDataSocket = 0;
+		PrintMessage(_("Failed to get peer address, connection closed."), 1);
+		CloseSocket();
+		return;
+	}
+	if (!m_pDataSocket->GetPeer(dataPeerAddr))
+	{
+		delete m_pDataSocket;
+		m_pDataSocket = 0;
+		PrintMessage(_("Failed to get data peer address, connection closed."), 1);
+		CloseSocket();
+		return;
+	}
+	if (peerAddr.IPAddress() != dataPeerAddr.IPAddress())
+	{
+		delete m_pDataSocket;
+		m_pDataSocket = 0;
+		PrintMessage(_("Warning, ignoring data connection from wrong IP."), 0);
+		return;
+	}
+	delete m_pSocketServer;
+	m_pSocketServer = 0;
+
+	m_pDataSocket->SetEventHandler(*this);
+	m_pDataSocket->SetFlags(wxSOCKET_NOWAIT);
+	m_pDataSocket->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_LOST_FLAG);
+	m_pDataSocket->Notify(true);
+}
+
+void CNetConfWizard::OnDataReceive()
+{
+	char buffer[100];
+	m_pDataSocket->Read(buffer, 99);
+	unsigned int len;
+	if (m_pDataSocket->Error() || !(len = m_pDataSocket->LastCount()))
+	{
+		PrintMessage(_("Data socket closed too early."), 1);
+		CloseSocket();
+		return;
+	}
+	buffer[len] = 0;
+
+	int data = 0;
+	const char* p = buffer;
+	while (*p && *p != ' ')
+	{
+		if (*p < '0' || *p > '9')
+		{
+			m_testResult = datatainted;
+			PrintMessage(_("Received data tainted"), 1);
+			CloseSocket();
+			return;
+		}
+		data = data * 10 + *p++ - '0';
+	}
+	if (data != m_data)
+	{
+		m_testResult = datatainted;
+		PrintMessage(_("Received data tainted"), 1);
+		CloseSocket();
+		return;
+	}
+	p++;
+	if (p - buffer != (int)len - 4)
+	{
+		PrintMessage(_("Failed to receive data"), 1);
+		CloseSocket();
+		return;
+	}
+
+	wxUint32 ip = 0;
+	for (const wxChar* q = m_externalIP.c_str(); *q; q++)
+	{
+		if (*q == '.')
+			ip *= 256;
+		else
+			ip = ip - (ip % 256) + (ip % 256) * 10 + *q - '0';
+	}
+	ip = wxUINT32_SWAP_ON_LE(ip);
+	if (memcmp(&ip, p, 4))
+	{
+		m_testResult = datatainted;
+		PrintMessage(_("Received data tainted"), 1);
+		CloseSocket();
+		return;
+	}
+	
+	delete m_pDataSocket;
+	m_pDataSocket = 0;
+
+	if (gotListReply)
+	{
+		m_state++;
+		SendNextCommand();
+	}
+}
+
+void CNetConfWizard::OnDataClose()
+{
+	OnDataReceive();
+	if (m_pDataSocket)
+	{
+		PrintMessage(_("Data socket closed too early."), 0);
+		CloseSocket();
+		return;
+	}
+	delete m_pDataSocket;
+	m_pDataSocket = 0;
+
+	if (gotListReply)
+	{
+		m_state++;
+		SendNextCommand();
+	}
 }
