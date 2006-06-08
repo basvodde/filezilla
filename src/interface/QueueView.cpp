@@ -29,6 +29,7 @@ EVT_MOUSEWHEEL(CQueueView::OnMouseWheel)
 
 EVT_CONTEXT_MENU(CQueueView::OnContextMenu)
 EVT_MENU(XRCID("ID_PROCESSQUEUE"), CQueueView::OnProcessQueue)
+EVT_MENU(XRCID("ID_REMOVEALL"), CQueueView::OnStopAndClear)
 
 END_EVENT_TABLE()
 
@@ -263,6 +264,42 @@ bool CQueueItem::RemoveChild(CQueueItem* pItem)
 	return true;
 }
 
+bool CQueueItem::TryRemoveAll()
+{
+	const int oldVisibleOffspring = m_visibleOffspring;
+	std::vector<CQueueItem*>::iterator iter;
+	std::vector<CQueueItem*> keepChildren;
+	m_visibleOffspring = 0;
+	for (iter = m_children.begin(); iter != m_children.end(); iter++)
+	{
+		CQueueItem* pItem = *iter;
+		if (pItem->TryRemoveAll())
+			delete pItem;
+		else
+		{
+			keepChildren.push_back(pItem);
+			if (IsExpanded())
+			{
+				m_visibleOffspring++;
+				m_visibleOffspring += pItem->GetVisibleCount();
+			}
+		}
+	}
+	m_children = keepChildren;
+
+	if (IsExpanded())
+	{
+		CQueueItem* parent = GetParent();
+		while (parent)
+		{
+			parent->m_visibleOffspring -= oldVisibleOffspring - m_visibleOffspring;
+			parent = parent->GetParent();
+		}
+	}
+
+	return m_children.empty();
+}
+
 CQueueItem* CQueueItem::GetTopLevelItem()
 {
 	if (!m_parent)
@@ -346,6 +383,7 @@ CFileItem::CFileItem(CServerItem* parent, bool queued, bool download, const wxSt
 	m_active = false;
 	m_errorCount = 0;
 	m_expanded = true;
+	m_remove = false;
 }
 
 CFileItem::~CFileItem()
@@ -560,6 +598,15 @@ wxLongLong CServerItem::GetTotalSize(bool& partialSizeInfo) const
 	}
 
 	return totalSize;
+}
+
+bool CFileItem::TryRemoveAll()
+{
+	if (!IsActive())
+		return true;
+
+	m_remove = true;
+	return false;
 }
 
 CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame)
@@ -979,12 +1026,11 @@ bool CQueueView::TryStartNextTransfer()
 void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* pNotification)
 {
 	// Process reply from the engine
-
 	int replyCode = pNotification->nReplyCode;
 
 	if ((replyCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)
 	{
-		ResetEngine(engineData, false);
+		ResetEngine(engineData, engineData.pItem ? engineData.pItem->m_remove : false);
 		return;
 	}
 
@@ -1669,4 +1715,35 @@ void CQueueView::OnContextMenu(wxContextMenuEvent& event)
 void CQueueView::OnProcessQueue(wxCommandEvent& event)
 {
 	SetActive(event.IsChecked());
+}
+
+void CQueueView::OnStopAndClear(wxCommandEvent& event)
+{
+	SetActive(false);
+	RemoveAll();
+}
+
+void CQueueView::RemoveAll()
+{
+	// This function removes all inactive items and queues active items
+	// for removal
+	std::vector<CServerItem*> newServerList;
+	m_itemCount = 0;
+	for (std::vector<CServerItem*>::iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
+	{
+		if ((*iter)->TryRemoveAll())
+			delete *iter;
+		else
+		{
+			newServerList.push_back(*iter);
+			m_itemCount += 1 + (*iter)->GetVisibleCount();
+		}
+	}
+	SetItemCount(m_itemCount);
+
+	m_serverList = newServerList;
+	UpdateStatusLinePositions();
+	UpdateQueueSize();
+	CheckQueueState();
+	Refresh();
 }

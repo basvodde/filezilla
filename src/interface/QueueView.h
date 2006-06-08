@@ -53,6 +53,8 @@ public:
 	CQueueItem* GetParent() { return m_parent; }
 	const CQueueItem* GetParent() const { return m_parent; }
 	virtual bool RemoveChild(CQueueItem* pItem); // Removes a child item with is somewhere in the tree of children.
+	virtual bool TryRemoveAll(); // Removes a inactive childrens, queues active children for removal.
+								 // Returns true if item can be removed itself
 	CQueueItem* GetTopLevelItem();
 	const CQueueItem* GetTopLevelItem() const;
 	int GetItemIndex() const; // Return the visible item index relative to the topmost parent item.
@@ -156,8 +158,6 @@ class CFileItem : public CQueueItem
 public:
 	CFileItem(CServerItem* parent, bool queued, bool download, const wxString& localFile,
 			const wxString& remoteFile, const CServerPath& remotePath, wxLongLong size);
-	CFileItem(CFolderItem* parent, bool queued, bool download, const wxString& localFile,
-			const wxString& remoteFile, const CServerPath& remotePath, wxLongLong size);
 	virtual ~CFileItem();
 
 	virtual void SetPriority(enum QueuePriority priority);
@@ -180,11 +180,16 @@ public:
 
 	bool IsActive() const { return m_active; }
 	void SetActive(bool active);
-
+	
 	virtual void SaveItem(TiXmlElement* pElement) const;
+
+	virtual bool TryRemoveAll(); // Removes a inactive childrens, queues active children for removal.
+								 // Returns true if item can be removed itself
+
 
 	bool m_queued;
 	int m_errorCount;
+	bool m_remove;
 
 	wxString m_statusMessage;
 
@@ -262,6 +267,7 @@ protected:
 	void SendNextCommand(t_EngineData& engineData);
 	void ResetEngine(t_EngineData& data, bool removeFileItem);
 	void RemoveItem(CQueueItem* item);
+	void RemoveAll();
 	void ResetItem(CFileItem* item);
 	void CheckQueueState();
 	bool IncreaseErrorCount(t_EngineData& engineData);
@@ -310,6 +316,7 @@ protected:
 	
 	void OnContextMenu(wxContextMenuEvent& event);
 	void OnProcessQueue(wxCommandEvent& event);
+	void OnStopAndClear(wxCommandEvent& event);
 };
 
 #endif
