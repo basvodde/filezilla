@@ -7,6 +7,7 @@
 #include "optionspage_filetype.h"
 #include "optionspage_themes.h"
 #include "optionspage_language.h"
+#include "optionspage_transfer.h"
 #include "filezillaapp.h"
 
 enum pagenames
@@ -14,9 +15,10 @@ enum pagenames
 	page_none = -1,
 	page_connection = 0,
 	page_connection_active = 1,
-	page_filetype = 2,
-	page_themes = 3,
-	page_language = 4
+	page_transfer = 2,
+	page_filetype = 3,
+	page_themes = 4,
+	page_language = 5
 };
 
 // Helper macro to add pages in the most simplistic way
@@ -77,7 +79,8 @@ bool CSettingsDialog::LoadPages()
 	t_page page;
 	ADD_PAGE(_("Connection"), COptionsPageConnection, page_none);
 	ADD_PAGE(_("Active mode"), COptionsPageConnectionActive, page_connection);
-	ADD_PAGE(_("File Types"), COptionsPageFiletype, page_none);
+	ADD_PAGE(_("Transfers"), COptionsPageTransfer, page_none);
+	ADD_PAGE(_("File Types"), COptionsPageFiletype, page_transfer);
 	ADD_PAGE(_("Themes"), COptionsPageThemes, page_none);
 	ADD_PAGE(_("Language"), COptionsPageLanguage, page_none);
 

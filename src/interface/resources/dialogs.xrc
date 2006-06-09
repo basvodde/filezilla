@@ -1,5 +1,80 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <resource version="2.3.0.1" xmlns="http://www.wxwindows.org/wxxrc">
+  <object class="wxPanel" name="ID_SETTINGS_TRANSFER">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Concurrent transfers</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>3</cols>
+              <vgap>4</vgap>
+              <hgap>4</hgap>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Maximum simultaneous &amp;transfers:</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="ID_NUMTRANSFERS">
+                  <size>40,-1</size>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>(1-10)</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Limit for concurrent &amp;downloads:</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="ID_NUMDOWNLOADS">
+                  <size>40,-1</size>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>(0 for no limit)</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Limit for concurrent &amp;uploads:</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="ID_NUMUPLOADS">
+                  <size>40,-1</size>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>(0 for no limit)</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+    </object>
+  </object>
   <object class="wxDialog" name="ID_FILEEXISTSDLG">
     <style>wxCAPTION|wxSYSTEM_MENU|wxCLOSE_BOX</style>
     <exstyle>wxWS_EX_BLOCK_EVENTS</exstyle>
