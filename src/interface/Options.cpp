@@ -45,7 +45,9 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Auto Ascii dotfiles", number, _T("1") },
 	{ "Theme", string, _T("") },
 	{ "Language", string, _T("") },
-	{ "Last Server Password", string, _T("") }
+	{ "Last Server Password", string, _T("") },
+	{ "Max Concurrent Uploads", number, _T("0") },
+	{ "Max Concurrent Downloads", number, _T("0") }
 };
 
 COptions::COptions()
@@ -108,7 +110,7 @@ wxString COptions::GetOption(unsigned int nID)
 		return _T("");
 
 	if (options[nID].type != string)
-		return _T("");
+		return wxString::Format(_T("%d"), GetOptionVal(nID));
 
 	if (m_optionsCache[nID].cached)
 		return m_optionsCache[nID].strValue;
@@ -154,7 +156,13 @@ bool COptions::SetOption(unsigned int nID, wxString value)
 		return false;
 
 	if (options[nID].type != string)
-		return false;
+	{
+		long tmp;
+		if (!value.ToLong(&tmp))
+			return false;
+
+		return SetOption(nID, tmp);
+	}
 
 	Validate(nID, value);
 
