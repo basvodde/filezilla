@@ -40,6 +40,8 @@
 #include <wx/filefn.h>
 #include <wx/file.h>
 
+#include "compatibility.h"
+
 #include <list>
 #include <vector>
 #include <map>

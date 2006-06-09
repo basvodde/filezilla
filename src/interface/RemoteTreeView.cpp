@@ -29,7 +29,7 @@ CRemoteTreeView::CRemoteTreeView(wxWindow* parent, wxWindowID id, CState* pState
 	m_busy = false;
 	m_pQueue = pQueue;
 	AddRoot(_T(""));
-	m_ExpandAfterList = 0;
+	m_ExpandAfterList = wxTreeItemId();
 
 	CreateImageList();
 }
@@ -82,7 +82,7 @@ void CRemoteTreeView::SetDirectoryListing(const CDirectoryListing* pListing, boo
 		if (m_ExpandAfterList == parent)
 			Expand(parent);
 	}
-	m_ExpandAfterList = 0;
+	m_ExpandAfterList = wxTreeItemId();
 
 
 	SetItemImages(parent, false);
