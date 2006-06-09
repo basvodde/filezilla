@@ -12,15 +12,15 @@ bool COptionsPageConnectionActive::LoadPage()
 {
 	bool failure = false;
 	SetCheck(XRCID("ID_LIMITPORTS"), m_pOptions->GetOptionVal(OPTION_LIMITPORTS) != 0, failure);
-	SetText(XRCID("ID_LOWESTPORT"), wxString::Format(_T("%d"), m_pOptions->GetOptionVal(OPTION_LIMITPORTS_LOW)), failure);
-	SetText(XRCID("ID_HIGHESTPORT"), wxString::Format(_T("%d"), m_pOptions->GetOptionVal(OPTION_LIMITPORTS_HIGH)), failure);
+	SetTextFromOption(XRCID("ID_LOWESTPORT"), OPTION_LIMITPORTS_LOW, failure);
+	SetTextFromOption(XRCID("ID_HIGHESTPORT"), OPTION_LIMITPORTS_HIGH, failure);
 	
 	SetRCheck(XRCID("ID_ACTIVEMODE1"), m_pOptions->GetOptionVal(OPTION_EXTERNALIPMODE) == 0, failure);
 	SetRCheck(XRCID("ID_ACTIVEMODE2"), m_pOptions->GetOptionVal(OPTION_EXTERNALIPMODE) == 1, failure);
 	SetRCheck(XRCID("ID_ACTIVEMODE3"), m_pOptions->GetOptionVal(OPTION_EXTERNALIPMODE) == 2, failure);
 
-	SetText(XRCID("ID_ACTIVEIP"), m_pOptions->GetOption(OPTION_EXTERNALIP), failure);
-	SetText(XRCID("ID_ACTIVERESOLVER"), m_pOptions->GetOption(OPTION_EXTERNALIPRESOLVER), failure);
+	SetTextFromOption(XRCID("ID_ACTIVEIP"), OPTION_EXTERNALIP, failure);
+	SetTextFromOption(XRCID("ID_ACTIVERESOLVER"), OPTION_EXTERNALIPRESOLVER, failure);
 	SetCheck(XRCID("ID_NOEXTERNALONLOCAL"), m_pOptions->GetOptionVal(OPTION_NOEXTERNALONLOCAL) != 0, failure);
 
 	if (!failure)

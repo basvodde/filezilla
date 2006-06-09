@@ -42,15 +42,16 @@ bool COptionsPage::GetCheck(int id)
 	return pCheckBox->GetValue();
 }
 
-void COptionsPage::SetText(int id, const wxString& text, bool& failure)
+void COptionsPage::SetTextFromOption(int ctrlId, int optionId, bool& failure)
 {
-	wxTextCtrl* pTextCtrl = wxDynamicCast(FindWindow(id), wxTextCtrl);
+	wxTextCtrl* pTextCtrl = wxDynamicCast(FindWindow(ctrlId), wxTextCtrl);
 	if (!pTextCtrl)
 	{
 		failure = true;
 		return;
 	}
 
+	const wxString& text = m_pOptions->GetOption(optionId);
 	pTextCtrl->SetValue(text);
 }
 
@@ -105,4 +106,10 @@ wxString COptionsPage::GetStaticText(int id)
 void COptionsPage::ReloadSettings()
 {
 	m_pOwner->LoadSettings();
+}
+
+void COptionsPage::SetOptionFromText(int ctrlId, int optionId)
+{
+	const wxString& value = GetText(ctrlId);
+	m_pOptions->SetOption(optionId, value);
 }

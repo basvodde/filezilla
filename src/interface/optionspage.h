@@ -18,7 +18,7 @@ public:
 
 	void SetCheck(int id, bool checked, bool& failure);
 	void SetRCheck(int id, bool checked, bool& failure);
-	void SetText(int id, const wxString& text, bool& failure);
+	void SetTextFromOption(int ctrlId, int optionId, bool& failure);
 	void SetStaticText(int id, const wxString& text, bool& failure);
 
 	// The GetXXX functions do never return an error since the controls were 
@@ -27,6 +27,8 @@ public:
 	bool GetRCheck(int id);
 	wxString GetText(int id);
 	wxString GetStaticText(int id);
+
+	void SetOptionFromText(int ctrlId, int optionId);
 
 	void ReloadSettings();
 
