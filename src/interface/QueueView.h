@@ -35,6 +35,13 @@ struct t_newEntry
 	wxLongLong size;
 };
 
+enum AcceptedTransferDirection
+{
+	all,
+	download,
+	upload
+};
+
 class TiXmlElement;
 class CQueueItem
 {
@@ -87,7 +94,7 @@ public:
 
 	void AddFileItemToList(CFileItem* pItem);
 
-	CFileItem* GetIdleChild(bool immadiateOnly);
+	CFileItem* GetIdleChild(bool immadiateOnly, enum AcceptedTransferDirection direction);
 	virtual bool RemoveChild(CQueueItem* pItem); // Removes a child item with is somewhere in the tree of children
 	wxLongLong GetTotalSize(bool& partialSizeInfo) const;
 
@@ -299,6 +306,8 @@ protected:
 
 	int m_itemCount;
 	int m_activeCount;
+	int m_activeCountDown;
+	int m_activeCountUp;
 	int m_activeMode; // 0 inactive, 1 only immediate transfers, 2 all
 	bool m_quit;
 

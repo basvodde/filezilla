@@ -474,7 +474,7 @@ void CServerItem::AddFileItemToList(CFileItem* pItem)
 	m_fileList[pItem->m_queued ? 0 : 1][pItem->GetPriority()].push_back(pItem);
 }
 
-CFileItem* CServerItem::GetIdleChild(bool immediateOnly)
+CFileItem* CServerItem::GetIdleChild(bool immediateOnly, enum AcceptedTransferDirection direction)
 {
 	int i = 0;
 	for (i = (PRIORITY_COUNT - 1); i >= 0; i--)
@@ -483,7 +483,18 @@ CFileItem* CServerItem::GetIdleChild(bool immediateOnly)
 		for (std::list<CFileItem*>::iterator iter = fileList.begin(); iter != fileList.end(); iter++)
 		{
 			CFileItem* item = *iter;
-			if (!item->IsActive())
+			if (item->IsActive())
+				continue;
+
+			if (direction == all)
+				return item;
+
+			if (direction == download)
+			{	
+				if (item->Download())
+					return item;
+			}
+			else if (!item->Download())
 				return item;
 		}
 	}
@@ -496,7 +507,18 @@ CFileItem* CServerItem::GetIdleChild(bool immediateOnly)
 		for (std::list<CFileItem*>::iterator iter = fileList.begin(); iter != fileList.end(); iter++)
 		{
 			CFileItem* item = *iter;
-			if (!item->IsActive())
+			if (item->IsActive())
+				continue;
+
+			if (direction == all)
+				return item;
+
+			if (direction == download)
+			{	
+				if (item->Download())
+					return item;
+			}
+			else if (!item->Download())
 				return item;
 		}
 	}
@@ -616,6 +638,8 @@ CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame)
 
 	m_itemCount = 0;
 	m_activeCount = 0;
+	m_activeCountDown = 0;
+	m_activeCountUp = 0;
 	m_activeMode = 0;
 	m_quit = false;
 	m_waitStatusLineUpdate = false;
@@ -949,8 +973,25 @@ bool CQueueView::TryStartNextTransfer()
 	if (m_quit || !m_activeMode)
 		return false;
 
+	// Check transfer limit
 	if (m_activeCount >= COptions::Get()->GetOptionVal(OPTION_NUMTRANSFERS))
 		return false;
+
+	// Check limits for concurrent up/downloads
+	const int maxDownloads = COptions::Get()->GetOptionVal(OPTION_CONCURRENTDOWNLOADLIMIT);
+	const int maxUploads = COptions::Get()->GetOptionVal(OPTION_CONCURRENTUPLOADLIMIT);
+	enum AcceptedTransferDirection wantedDirection;
+	if (maxDownloads && m_activeCountDown >= maxDownloads)
+	{
+		if (maxUploads && m_activeCountUp >= maxUploads)
+			return false;
+		else
+			wantedDirection = upload;
+	}
+	else if (maxUploads && m_activeCountUp >= maxUploads)
+		wantedDirection = download;
+	else
+		wantedDirection = all;
 
 	// Find first idle server and assign a transfer to it.
 	unsigned int engineIndex;
@@ -974,7 +1015,7 @@ bool CQueueView::TryStartNextTransfer()
 		if (maxCount && currentServerItem->m_activeCount >= maxCount)
 			continue;
 
-		CFileItem* newFileItem = currentServerItem->GetIdleChild(m_activeMode == 1);
+		CFileItem* newFileItem = currentServerItem->GetIdleChild(m_activeMode == 1, wantedDirection);
 		if (!newFileItem)
 			continue;
 
@@ -998,6 +1039,10 @@ bool CQueueView::TryStartNextTransfer()
 	engineData.active = true;
 	serverItem->m_activeCount++;
 	m_activeCount++;
+	if (fileItem->Download())
+		m_activeCountDown++;
+	else
+		m_activeCountUp++;
 
 	const CServer oldServer = engineData.lastServer;
 	engineData.lastServer = serverItem->GetServer();
@@ -1060,6 +1105,8 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 		}
 		else if (!IncreaseErrorCount(engineData))
 			return;
+		if (replyCode & FZ_REPLY_DISCONNECTED)
+			engineData.state = t_EngineData::connect;
 		break;
 	default:
 		return;
@@ -1096,6 +1143,18 @@ void CQueueView::ResetEngine(t_EngineData& data, bool removeFileItem)
 			m_itemCount--;
 			SetItemCount(m_itemCount);
 		}
+		if (data.pItem->Download())
+		{
+			wxASSERT(m_activeCountDown > 0);
+			if (m_activeCountDown > 0)
+				m_activeCountDown--;
+		}
+		else
+		{
+			wxASSERT(m_activeCountUp > 0);
+			if (m_activeCountUp > 0)
+				m_activeCountUp--;
+		}
 
 		if (removeFileItem)
 			RemoveItem(data.pItem);
@@ -1115,6 +1174,7 @@ void CQueueView::ResetEngine(t_EngineData& data, bool removeFileItem)
 	m_activeCount--;
 
 	while (TryStartNextTransfer());
+
 	m_waitStatusLineUpdate = false;
 	UpdateStatusLinePositions();
 	UpdateQueueSize();
@@ -1160,26 +1220,32 @@ void CQueueView::RemoveItem(CQueueItem* item)
 
 void CQueueView::SendNextCommand(t_EngineData& engineData)
 {
-	if (engineData.state == t_EngineData::disconnect)
+	while (true)
 	{
-		engineData.pItem->m_statusMessage = _("Disconnecting from previous server");
-		if (engineData.pEngine->Command(CDisconnectCommand()) == FZ_REPLY_WOULDBLOCK)
-			return;
-
-		engineData.state = t_EngineData::connect;
-		if (engineData.pStatusLineCtrl)
-			engineData.pStatusLineCtrl->SetTransferStatus(0);
-	}
-
-	if (engineData.state == t_EngineData::connect)
-	{
-		engineData.pItem->m_statusMessage = _("Connecting");
-		int res;
-		while (true)
+		if (engineData.state == t_EngineData::disconnect)
 		{
-			res = engineData.pEngine->Command(CConnectCommand(engineData.lastServer));
+			engineData.pItem->m_statusMessage = _("Disconnecting from previous server");
+			if (engineData.pEngine->Command(CDisconnectCommand()) == FZ_REPLY_WOULDBLOCK)
+				return;
+
+			engineData.state = t_EngineData::connect;
+			if (engineData.pStatusLineCtrl)
+				engineData.pStatusLineCtrl->SetTransferStatus(0);
+		}
+
+		if (engineData.state == t_EngineData::connect)
+		{
+			engineData.pItem->m_statusMessage = _("Connecting");
+
+			int	res = engineData.pEngine->Command(CConnectCommand(engineData.lastServer));
 			if (res == FZ_REPLY_WOULDBLOCK)
 				return;
+
+			if (res == FZ_REPLY_ALREADYCONNECTED)
+			{
+				engineData.state = t_EngineData::disconnect;
+				continue;
+			}
 
 			if (res == FZ_REPLY_OK)
 			{
@@ -1191,22 +1257,25 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 
 			if (!IncreaseErrorCount(engineData))
 				return;
+			continue;
 		}
-	}
-	
-	if (engineData.state == t_EngineData::transfer)
-	{
-		CFileItem* fileItem = engineData.pItem;
 
-		fileItem->m_statusMessage = _("Transferring");
-
-		int res;
-		while (true)
+		if (engineData.state == t_EngineData::transfer)
 		{
-			res = engineData.pEngine->Command(CFileTransferCommand(fileItem->GetLocalFile(), fileItem->GetRemotePath(), 
-											  fileItem->GetRemoteFile(), fileItem->Download(), fileItem->m_transferSettings));
+			CFileItem* fileItem = engineData.pItem;
+
+			fileItem->m_statusMessage = _("Transferring");
+
+			int res = engineData.pEngine->Command(CFileTransferCommand(fileItem->GetLocalFile(), fileItem->GetRemotePath(), 
+												fileItem->GetRemoteFile(), fileItem->Download(), fileItem->m_transferSettings));
 			if (res == FZ_REPLY_WOULDBLOCK)
 				return;
+
+			if (res == FZ_REPLY_NOTCONNECTED)
+			{
+				engineData.state = t_EngineData::connect;
+				continue;
+			}
 
 			if (res == FZ_REPLY_OK)
 			{
@@ -1216,6 +1285,7 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 
 			if (!IncreaseErrorCount(engineData))
 				return;
+			continue;
 		}
 	}
 }
