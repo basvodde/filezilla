@@ -35,6 +35,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "External address resolver", string, _T("http://ip.filezilla-project.org/ip.php") },
 	{ "No external ip on local conn", number, _T("1") },
 	{ "Pasv reply fallback mode", number, _T("0") },
+	{ "Timeout", number, _T("15") },
 
 	// Interface settings
 	{ "Number of Transfers", number, _T("2") },

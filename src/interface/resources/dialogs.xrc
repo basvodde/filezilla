@@ -73,6 +73,50 @@
         </object>
         <flag>wxGROW</flag>
       </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Timeout</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>1</cols>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <cols>3</cols>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Time&amp;out in seconds:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_TIMEOUT">
+                      <size>40,-1</size>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <hgap>4</hgap>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>(5-9999, 0 to disable)</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>If no data can be sent or received during this time, the connection will be closed and FileZilla will try to reconnect.</label>
+                </object>
+              </object>
+              <vgap>4</vgap>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
     </object>
   </object>
   <object class="wxDialog" name="ID_FILEEXISTSDLG">
