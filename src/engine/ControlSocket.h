@@ -82,6 +82,17 @@ public:
 	wxChar* ConvToLocalBuffer(const char* buffer, wxMBConv& conv);
 	wxCharBuffer ConvToServer(const wxString& str);
 
+	// ---
+	// The following two functions control the timeout behaviour:
+	// ---
+    
+	// Call this if data could be sent or retrieved
+	void SetAlive();
+	
+	// Set to true if waiting for data
+	void SetWait(bool waiting);
+
+
 protected:
 	virtual int DoClose(int nErrorCode = FZ_REPLY_DISCONNECTED);
 
@@ -130,7 +141,12 @@ protected:
 	wxCSConv *m_pCSConv;
 	bool m_useUTF8;
 
+	// Timeout data
+	wxTimer m_timer;
+	wxStopWatch m_stopWatch;
+
 	DECLARE_EVENT_TABLE();
+	void OnTimer(wxTimerEvent& event);
 };
 
 #endif

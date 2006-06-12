@@ -245,6 +245,7 @@ CSftpControlSocket::~CSftpControlSocket()
 int CSftpControlSocket::Connect(const CServer &server)
 {
 	LogMessage(Status, _("Connecting to %s:%d..."), server.GetHost().c_str(), server.GetPort());
+	SetWait(true);
 
 	if (m_pCurrentServer)
 		delete m_pCurrentServer;
@@ -376,6 +377,8 @@ void CSftpControlSocket::OnTerminate(wxProcessEvent& event)
 
 bool CSftpControlSocket::Send(wxString cmd, const wxString& show /*=_T("")*/)
 {
+	SetWait(true);
+
 	if (show != _T(""))
 		LogMessage(Command, show);
 	else

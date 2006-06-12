@@ -121,6 +121,7 @@ void CTransferSocket::OnSocketEvent(wxSocketEvent &event)
 
 void CTransferSocket::OnConnect(wxSocketEvent &event)
 {
+	m_pControlSocket->SetAlive();
 	m_pControlSocket->LogMessage(::Debug_Verbose, _T("OnConnect"));
 	if (m_pSocketServer)
 	{

@@ -11,6 +11,7 @@
 
 BEGIN_EVENT_TABLE(CControlSocket, wxEvtHandler)
 	EVT_SOCKET(wxID_ANY, CControlSocket::OnSocketEvent)
+	EVT_TIMER(wxID_ANY, CControlSocket::OnTimer)
 END_EVENT_TABLE();
 
 COpData::COpData()
@@ -47,6 +48,8 @@ CControlSocket::CControlSocket(CFileZillaEnginePrivate *pEngine)
 
 	m_pCSConv = 0;
 	m_useUTF8 = false;
+
+	m_timer.SetOwner(this);
 }
 
 CControlSocket::~CControlSocket()
@@ -86,7 +89,10 @@ void CControlSocket::OnSend(wxSocketEvent &event)
 		int numsent = LastCount();
 
 		if (numsent)
+		{
+			SetAlive();
 			m_pEngine->SetActive(false);
+		}
 
 		if (numsent == m_nSendBufferLen)
 		{
@@ -112,6 +118,8 @@ void CControlSocket::OnClose(wxSocketEvent &event)
 int CControlSocket::Connect(const CServer &server)
 {
 	LogMessage(Status, _("Connecting to %s:%d..."), server.GetHost().c_str(), server.GetPort());
+
+	SetWait(true);
 
 	if (server.GetEncodingType() == ENCODING_CUSTOM)
 		m_pCSConv = new wxCSConv(server.GetCustomEncoding());
@@ -277,6 +285,8 @@ int CControlSocket::ResetOperation(int nErrorCode)
 
 	ResetTransferStatus();
 
+	SetWait(false);
+
 	return m_pEngine->ResetOperation(nErrorCode);
 }
 
@@ -301,6 +311,7 @@ int CControlSocket::DoClose(int nErrorCode /*=FZ_REPLY_DISCONNECTED*/)
 
 bool CControlSocket::Send(const char *buffer, int len)
 {
+	SetWait(true);
 	if (m_pSendBuffer)
 	{
 		char *tmp = m_pSendBuffer;
@@ -746,4 +757,37 @@ wxString CControlSocket::GetPeerIP() const
 		return _T("");
 
 	return addr.IPAddress();
+}
+
+void CControlSocket::OnTimer(wxTimerEvent& event)
+{
+	int timeout = m_pEngine->GetOptions()->GetOptionVal(OPTION_TIMEOUT);
+	if (!timeout)
+		return;
+
+	if (m_stopWatch.Time() > (timeout * 1000))
+	{
+		
+		LogMessage(::Error, _("Connection timed out"));
+		ResetOperation(FZ_REPLY_TIMEOUT);
+	}
+}
+
+void CControlSocket::SetAlive()
+{
+	m_stopWatch.Start();
+}
+
+void CControlSocket::SetWait(bool wait)
+{
+	if (wait)
+	{
+		if (m_timer.IsRunning())
+			return;
+
+		m_stopWatch.Start();
+		m_timer.Start(1000);
+	}
+	else if (m_timer.IsRunning())
+		m_timer.Stop();
 }

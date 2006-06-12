@@ -7,7 +7,7 @@
 // Since COptionsBase is virtual, the user of the engine has to create a
 // derived class which handles settings-reading and writing.
 
-#define OPTIONS_ENGINE_NUM 9
+#define OPTIONS_ENGINE_NUM 10
 
 #define	OPTION_USEPASV 0			// Use passive mode unless overridden by 
 									// server settings
@@ -24,6 +24,7 @@
 #define OPTION_NOEXTERNALONLOCAL 7	// Don't use external IP address if connection is
 									// coming from a local unroutable address
 #define OPTION_PASVREPLYFALLBACKMODE 8
+#define OPTION_TIMEOUT 9
 
 class COptionsBase
 {

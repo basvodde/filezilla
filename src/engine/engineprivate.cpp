@@ -218,6 +218,9 @@ int CFileZillaEnginePrivate::ResetOperation(int nErrorCode)
 
 void CFileZillaEnginePrivate::SetActive(bool recv)
 {
+	if (m_pControlSocket)
+		m_pControlSocket->SetAlive();
+
 	m_lock.Enter();
 	if (recv)
 	{

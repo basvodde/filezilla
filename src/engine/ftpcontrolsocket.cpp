@@ -180,6 +180,7 @@ void CFtpControlSocket::OnReceive(wxSocketEvent &event)
 void CFtpControlSocket::ParseLine(wxString line)
 {
 	LogMessage(Response, line);
+	SetAlive();
 
 	if (GetCurrentCommandId() == cmd_connect && m_pCurOpData)
 	{
@@ -235,6 +236,7 @@ void CFtpControlSocket::ParseLine(wxString line)
 
 void CFtpControlSocket::OnConnect(wxSocketEvent &event)
 {
+	SetAlive();
 	LogMessage(Status, _("Connection established, waiting for welcome message..."));
 	Logon();
 }
