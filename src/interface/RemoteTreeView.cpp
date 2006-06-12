@@ -119,7 +119,7 @@ wxTreeItemId CRemoteTreeView::MakeParent(CServerPath path, bool select)
 			if (text == _T(""))
 			{
 				Delete(child);
-				child = 0;
+				child = wxTreeItemId();
 				break;
 			}
 		}
@@ -485,7 +485,7 @@ void CRemoteTreeView::SetItemImages(wxTreeItemId item, bool unknown)
 void CRemoteTreeView::OnSelectionChanged(wxTreeEvent& event)
 {
 	if (event.GetItem() != m_ExpandAfterList)
-        m_ExpandAfterList = 0;
+        m_ExpandAfterList = wxTreeItemId();
 	if (m_busy)
 		return;
 
