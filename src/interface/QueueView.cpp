@@ -30,6 +30,7 @@ EVT_MOUSEWHEEL(CQueueView::OnMouseWheel)
 EVT_CONTEXT_MENU(CQueueView::OnContextMenu)
 EVT_MENU(XRCID("ID_PROCESSQUEUE"), CQueueView::OnProcessQueue)
 EVT_MENU(XRCID("ID_REMOVEALL"), CQueueView::OnStopAndClear)
+EVT_MENU(XRCID("ID_REMOVE"), CQueueView::OnRemoveSelected)
 
 END_EVENT_TABLE()
 
@@ -57,20 +58,23 @@ protected:
 
 		while (!TestDestroy())
 		{
+			if (m_pFolderItem->m_remove)
+			{
+				wxCommandEvent evt(fzEVT_FOLDERTHREAD_COMPLETE, wxID_ANY);
+				wxPostEvent(m_pOwner, evt);
+				return 0;
+			}
 			bool found;
 			wxString file;
 			if (!m_pFolderItem->m_pDir)
 			{
 				if (!m_pFolderItem->m_dirsToCheck.empty())
 				{
-					m_pFolderItem->Expand(false);
-		
 					const CFolderItem::t_dirPair& pair = m_pFolderItem->m_dirsToCheck.front();
 
 					wxLogNull nullLog;
 
 					m_pFolderItem->m_pDir = new wxDir(pair.localPath);
-					m_pFolderItem->m_dirsToCheck.pop_front();
 
 					if (m_pFolderItem->m_pDir->IsOpened())
 					{
@@ -81,6 +85,7 @@ protected:
 					}
 					else
 						found = false;
+					m_pFolderItem->m_dirsToCheck.pop_front();
 				}
 				else
 				{
@@ -93,18 +98,19 @@ protected:
 				found = m_pFolderItem->m_pDir->GetNext(&file);
 
 			std::list<t_newEntry> entryList;
-			while (found && !TestDestroy())
+			while (found && !TestDestroy() && !m_pFolderItem->m_remove)
 			{
+				Sleep(1000);
 				t_newEntry entry;
-				wxFileName fn(m_pFolderItem->m_currentLocalPath, file);
-				entry.localFile = fn.GetFullPath();
-				entry.remoteFile = fn.GetFullName();
+				const wxString& fullName = m_pFolderItem->m_currentLocalPath + wxFileName::GetPathSeparator() + file;
+				entry.localFile = fullName;
+				entry.remoteFile = file;
 	
 				wxStructStat buf;
 				int result;
 				result = wxStat(entry.localFile, &buf);
 
-				if (fn.DirExists())
+				if (wxDir::Exists(fullName))
 				{	
 					CFolderItem::t_dirPair pair;
 					pair.localPath = entry.localFile;
@@ -137,6 +143,8 @@ protected:
 				wxMutexGuiEnter();
 				m_pOwner->QueueFiles(entryList, m_pFolderItem->Queued(), m_pFolderItem->Download(), m_pFolderItem->m_currentRemotePath, pServerItem->GetServer());
 				entryList.clear();
+				m_pFolderItem->m_statusMessage = wxString::Format(_("%d files added to queue"), m_pFolderItem->GetCount());
+
 				wxMutexGuiLeave();
 			}
 			delete m_pFolderItem->m_pDir;
@@ -586,6 +594,8 @@ CFolderItem::CFolderItem(CServerItem* parent, bool queued, bool download, const 
 	m_localPath = localPath;
 	m_remotePath = remotePath;
 	m_queued = queued;
+	m_remove = false;
+	m_active = false;
 	m_expanded = false;
 	m_count = 0;
 	m_pDir = 0;
@@ -1184,7 +1194,7 @@ void CQueueView::ResetEngine(t_EngineData& data, bool removeFileItem)
 
 void CQueueView::RemoveItem(CQueueItem* item)
 {
-	// Remove item assumes that the item has already removed from all engines
+	// RemoveItem assumes that the item has already removed from all engines
 
 	CQueueItem* topLevelItem = item->GetTopLevelItem();
 
@@ -1505,6 +1515,7 @@ void CQueueView::ProcessUploadFolderItems()
 		pItem->m_statusMessage = _("Scanning for files to add to queue");
 	else
 		pItem->m_statusMessage = _("Scanning for files to upload");
+	pItem->m_active = true;
 	m_pFolderProcessingThread = new CFolderProcessingThread(this, pItem);
 	m_pFolderProcessingThread->Create();
 	m_pFolderProcessingThread->Run();
@@ -1816,4 +1827,59 @@ void CQueueView::RemoveAll()
 	UpdateQueueSize();
 	CheckQueueState();
 	Refresh();
+}
+
+void CQueueView::OnRemoveSelected(wxCommandEvent& event)
+{
+	std::list<long> selectedItems;
+	long item = -1;
+	while (true)
+	{
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		if (item == -1)
+			break;
+
+		selectedItems.push_front(item);
+	}
+
+	long skip = -1;
+	for (std::list<long>::const_iterator iter = selectedItems.begin(); iter != selectedItems.end(); iter++)
+	{
+		if (*iter == skip)
+			continue;
+
+		CQueueItem* pItem = GetQueueItem(*iter);
+		if (!pItem)
+			continue;
+
+		if (pItem->GetType() == QueueItemType_Status)
+			continue;
+
+		else if (pItem->GetType() == QueueItemType_Folder)
+		{
+			CFolderItem* pFolder = (CFolderItem*)pItem;
+			if (pFolder->m_active)
+			{
+				pFolder->m_remove = true;
+				continue;
+			}
+		}
+		else if (pItem->GetType() == QueueItemType_Server)
+		{
+			CServerItem* pServer = (CServerItem*)pItem;
+			continue; //TODO
+		}
+		else if (pItem->GetType() == QueueItemType_Server)
+		{
+			CFileItem* pFile = (CFileItem*)pItem;
+			if (pFile->IsActive())
+				continue; //TODO
+		}
+
+		CQueueItem* pTopLevelItem = pItem->GetTopLevelItem();
+		if (!pTopLevelItem->GetChild(1))
+			// Parent will get deleted, skip it so it doesn't get deleted twice.
+			skip = GetItemIndex(pTopLevelItem);
+		RemoveItem(pItem);
+	}
 }

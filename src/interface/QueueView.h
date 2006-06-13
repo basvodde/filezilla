@@ -129,6 +129,8 @@ public:
 	wxString m_statusMessage;
 
 	bool m_queued;
+	volatile bool m_remove;
+	bool m_active;
 
 	int m_count;
 
@@ -326,6 +328,7 @@ protected:
 	void OnContextMenu(wxContextMenuEvent& event);
 	void OnProcessQueue(wxCommandEvent& event);
 	void OnStopAndClear(wxCommandEvent& event);
+	void OnRemoveSelected(wxCommandEvent& event);
 };
 
 #endif
