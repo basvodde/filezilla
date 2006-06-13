@@ -161,7 +161,6 @@ protected:
 CQueueItem::CQueueItem()
 {
 	m_visibleOffspring = 0;
-	m_expanded = false;
 	m_parent = 0;
 }
 
@@ -183,15 +182,13 @@ void CQueueItem::AddChild(CQueueItem* item)
 {
 	item->m_indent = m_indent + _T("  ");
 	m_children.push_back(item);
-	if (m_expanded)
+
+	m_visibleOffspring += 1 + item->m_visibleOffspring;
+	CQueueItem* parent = GetParent();
+	while (parent)
 	{
-		m_visibleOffspring += 1 + item->m_visibleOffspring;
-		CQueueItem* parent = GetParent();
-		while (parent)
-		{
-			parent->m_visibleOffspring += 1 + item->m_visibleOffspring;
-			parent = parent->GetParent();
-		}
+		parent->m_visibleOffspring += 1 + item->m_visibleOffspring;
+		parent = parent->GetParent();
 	}
 }
 
@@ -224,12 +221,8 @@ bool CQueueItem::RemoveChild(CQueueItem* pItem)
 	{
 		if (*iter == pItem)
 		{
-			if (IsExpanded())
-			{
-				m_visibleOffspring -= 1;
-				if (pItem->IsExpanded())
-					m_visibleOffspring -= pItem->m_visibleOffspring;
-			}
+			m_visibleOffspring -= 1;
+			m_visibleOffspring -= pItem->m_visibleOffspring;
 			delete pItem;
 			m_children.erase(iter);
 
@@ -240,14 +233,10 @@ bool CQueueItem::RemoveChild(CQueueItem* pItem)
 		int visibleOffspring = (*iter)->m_visibleOffspring;
 		if ((*iter)->RemoveChild(pItem))
 		{
-			if (IsExpanded() && (*iter)->IsExpanded())
-			{
-				m_visibleOffspring -= visibleOffspring - (*iter)->m_visibleOffspring;
-			}
+			m_visibleOffspring -= visibleOffspring - (*iter)->m_visibleOffspring;
 			if (!(*iter)->m_children.size())
 			{
-				if (IsExpanded())
-					m_visibleOffspring -= 1;
+				m_visibleOffspring -= 1;
 				delete *iter;
 				m_children.erase(iter);
 			}
@@ -259,14 +248,12 @@ bool CQueueItem::RemoveChild(CQueueItem* pItem)
 	if (!deleted)
 		return false;
 
-	if (IsExpanded())
+	// Propagate new children count to parent
+	CQueueItem* parent = GetParent();
+	while (parent)
 	{
-		CQueueItem* parent = GetParent();
-		while (parent)
-		{
-			parent->m_visibleOffspring -= oldVisibleOffspring - m_visibleOffspring;
-			parent = parent->GetParent();
-		}
+		parent->m_visibleOffspring -= oldVisibleOffspring - m_visibleOffspring;
+		parent = parent->GetParent();
 	}
 	
 	return true;
@@ -286,23 +273,17 @@ bool CQueueItem::TryRemoveAll()
 		else
 		{
 			keepChildren.push_back(pItem);
-			if (IsExpanded())
-			{
-				m_visibleOffspring++;
-				m_visibleOffspring += pItem->GetVisibleCount();
-			}
+			m_visibleOffspring++;
+			m_visibleOffspring += pItem->GetVisibleCount();
 		}
 	}
 	m_children = keepChildren;
 
-	if (IsExpanded())
+	CQueueItem* parent = GetParent();
+	while (parent)
 	{
-		CQueueItem* parent = GetParent();
-		while (parent)
-		{
-			parent->m_visibleOffspring -= oldVisibleOffspring - m_visibleOffspring;
-			parent = parent->GetParent();
-		}
+		parent->m_visibleOffspring -= oldVisibleOffspring - m_visibleOffspring;
+		parent = parent->GetParent();
 	}
 
 	return m_children.empty();
@@ -358,23 +339,6 @@ int CQueueItem::GetItemIndex() const
 	return index + pParent->GetItemIndex();
 }
 
-int CQueueItem::Expand(bool recursive /*=false*/)
-{
-	if (m_expanded)
-		return 0;
-
-	wxASSERT(m_visibleOffspring == 0);
-	m_visibleOffspring += m_children.size();
-	for (std::vector<CQueueItem*>::iterator iter = m_children.begin(); iter != m_children.end(); iter++)
-	{
-		if (recursive)
-			(*iter)->Expand(true);
-		m_visibleOffspring += (*iter)->GetVisibleCount();
-	}
-
-	return m_visibleOffspring;
-}
-
 CFileItem::CFileItem(CServerItem* parent, bool queued, bool download, const wxString& localFile,
 					 const wxString& remoteFile, const CServerPath& remotePath, wxLongLong size)
 {
@@ -390,7 +354,6 @@ CFileItem::CFileItem(CServerItem* parent, bool queued, bool download, const wxSt
 	m_queued = queued;
 	m_active = false;
 	m_errorCount = 0;
-	m_expanded = true;
 	m_remove = false;
 }
 
@@ -455,7 +418,6 @@ void CFileItem::SaveItem(TiXmlElement* pElement) const
 
 CServerItem::CServerItem(const CServer& server)
 {
-	m_expanded = true;
 	m_server = server;
 	m_activeCount = 0;
 }
@@ -596,7 +558,6 @@ CFolderItem::CFolderItem(CServerItem* parent, bool queued, bool download, const 
 	m_queued = queued;
 	m_remove = false;
 	m_active = false;
-	m_expanded = false;
 	m_count = 0;
 	m_pDir = 0;
 
@@ -726,8 +687,7 @@ bool CQueueView::QueueFile(bool queueOnly, bool download, const wxString& localF
 	item->AddChild(fileItem);
 	item->AddFileItemToList(fileItem);
 
-	if (item->IsExpanded())
-		m_itemCount++;
+	m_itemCount++;
 
 	SetItemCount(m_itemCount);
 
@@ -867,10 +827,7 @@ int CQueueView::OnGetItemImage(long item) const
 	case QueueItemType_File:
 		return 1;
 	case QueueItemType_Folder:
-		if (pItem->IsExpanded())
 			return 3;
-		else
-			return 2;
 	default:
 		return -1;
 	}
@@ -1474,8 +1431,7 @@ bool CQueueView::QueueFolder(bool queueOnly, bool download, const wxString& loca
 	CFolderItem* folderItem = new CFolderItem(item, queueOnly, download, localPath, remotePath);
 	item->AddChild(folderItem);
 
-	if (item->IsExpanded())
-		m_itemCount++;
+	m_itemCount++;
 
 	folderItem->m_statusMessage = _("Waiting");
 
@@ -1560,8 +1516,7 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOn
 		item->AddChild(fileItem);
 		item->AddFileItemToList(fileItem);
 
-		if (item->IsExpanded())
-			m_itemCount++;
+		m_itemCount++;
 	}
 
 	SetItemCount(m_itemCount);

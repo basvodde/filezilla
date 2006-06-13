@@ -48,10 +48,6 @@ class CQueueItem
 public:
 	virtual ~CQueueItem();
 
-	int Expand(bool recursive = false);
-	void Collapse(bool recursive);
-	bool IsExpanded() const { return m_expanded; }
-
 	virtual void SetPriority(enum QueuePriority priority);
 
 	void AddChild(CQueueItem* pItem);
@@ -76,8 +72,7 @@ protected:
 	CQueueItem* m_parent;
 
 	std::vector<CQueueItem*> m_children;
-	int m_visibleOffspring; // Visible offspring over all expanded sublevels
-	bool m_expanded;
+	int m_visibleOffspring; // Visible offspring over all sublevels
 	wxString m_indent;
 };
 
@@ -156,7 +151,7 @@ protected:
 class CStatusItem : public CQueueItem
 {
 public:
-	CStatusItem() { m_expanded = true; }
+	CStatusItem() {}
 	~CStatusItem() {}
 
 	virtual enum QueueItemType GetType() const { return QueueItemType_Status; }
