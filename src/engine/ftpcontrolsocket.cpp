@@ -114,6 +114,7 @@ CFtpControlSocket::CFtpControlSocket(CFileZillaEnginePrivate *pEngine) : CContro
 	m_pTransferSocket = 0;
 	m_sentRestartOffset = false;
 	m_bufferLen = 0;
+	m_skipOneReply = false;
 }
 
 CFtpControlSocket::~CFtpControlSocket()
@@ -181,6 +182,13 @@ void CFtpControlSocket::ParseLine(wxString line)
 {
 	LogMessage(Response, line);
 	SetAlive();
+
+	if (m_skipOneReply)
+	{
+		LogMessage(Debug_Info, _T("Skipping reply after cancel"));
+		m_skipOneReply = false;
+		SendNextCommand();
+	}
 
 	if (GetCurrentCommandId() == cmd_connect && m_pCurOpData)
 	{
@@ -860,6 +868,9 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 	delete m_pIPResolver;
 	m_pIPResolver = 0;
 
+	if ((nErrorCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED && m_pCurOpData)
+		m_skipOneReply = true;
+
 	return CControlSocket::ResetOperation(nErrorCode);
 }
 
@@ -876,6 +887,12 @@ int CFtpControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
 	if (m_pCurOpData->waitForAsyncRequest)
 	{
 		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Waiting for async request, ignoring SendNextCommand"));
+		return FZ_REPLY_WOULDBLOCK;
+	}
+
+	// If already waiting for a reply, don't send next command yet
+	if (m_skipOneReply)
+	{
 		return FZ_REPLY_WOULDBLOCK;
 	}
 
@@ -969,7 +986,7 @@ int CFtpControlSocket::ChangeDir(CServerPath path /*=CServerPath()*/, wxString s
 
 	m_pCurOpData = pData;
 
-	return ChangeDirSend();
+	return SendNextCommand();;
 }
 
 int CFtpControlSocket::ChangeDirParseResponse()
@@ -1203,7 +1220,7 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 			return res;
 	}
 
-	return FileTransferSend();
+	return SendNextCommand();
 }
 
 int CFtpControlSocket::FileTransferParseResponse()
@@ -1847,6 +1864,7 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 
 int CFtpControlSocket::RawCommand(const wxString& command /*=_T("")*/)
 {
+	// FIXME: obey m_skipOneReply by using SendNextCommand
 	if (command != _T(""))
 	{
 		if (!Send(command))
@@ -1867,6 +1885,9 @@ int CFtpControlSocket::RawCommand(const wxString& command /*=_T("")*/)
 
 int CFtpControlSocket::Delete(const CServerPath& path /*=CServerPath()*/, const wxString& file /*=_T("")*/)
 {
+	// FIXME: 
+	// - Needs to eventually use ChangeDir
+	// - obey skipOneReply by calling SendNextCommand
 	class CFtpDeleteOpData : public COpData
 	{
 	public:
@@ -1922,6 +1943,7 @@ int CFtpControlSocket::Delete(const CServerPath& path /*=CServerPath()*/, const 
 
 int CFtpControlSocket::RemoveDir(const CServerPath& path /*=CServerPath()*/, const wxString& subDir /*=_T("")*/)
 {
+	// FIXME: obey m_skipOneReply by using SendNextCommand
 	class CFtpRemoveDirOpData : public COpData
 	{
 	public:
@@ -2041,7 +2063,7 @@ int CFtpControlSocket::Mkdir(const CServerPath& path, CServerPath start /*=CServ
 
 	m_pCurOpData = pData;
 
-	return MkdirSend();
+	return SendNextCommand();
 }
 
 int CFtpControlSocket::MkdirParseResponse()
@@ -2217,7 +2239,7 @@ int CFtpControlSocket::Rename(const CRenameCommand& command)
 	if (res != FZ_REPLY_OK)
 		return res;
 
-	return RenameSend();
+	return SendNextCommand();
 }
 
 int CFtpControlSocket::RenameParseResponse()
@@ -2336,7 +2358,7 @@ int CFtpControlSocket::Chmod(const CChmodCommand& command)
 	if (res != FZ_REPLY_OK)
 		return res;
 
-	return ChmodSend();
+	return SendNextCommand();
 }
 
 int CFtpControlSocket::ChmodParseResponse()
@@ -2567,7 +2589,7 @@ int CFtpControlSocket::Transfer(const wxString& cmd, CFtpTransferOpData* oldData
 
 	pData->opState = rawtransfer_type;
 
-	return TransferSend();
+	return SendNextCommand();
 }
 
 int CFtpControlSocket::TransferParseResponse()

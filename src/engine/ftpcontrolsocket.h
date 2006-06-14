@@ -101,6 +101,7 @@ protected:
 
 	char m_receiveBuffer[RECVBUFFERSIZE];
 	int m_bufferLen;
+	bool m_skipOneReply; // Set to true if cancelling an action
 
 	CExternalIPResolver* m_pIPResolver;
 
