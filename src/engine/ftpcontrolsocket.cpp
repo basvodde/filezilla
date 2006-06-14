@@ -270,7 +270,7 @@ void CFtpControlSocket::ParseResponse()
 		RawCommandParseResponse();
 		break;
 	case cmd_delete:
-		Delete();
+		DeleteParseResponse();
 		break;
 	case cmd_removedir:
 		RemoveDir();
@@ -916,6 +916,8 @@ int CFtpControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
 		return TransferSend(prevResult);
 	case cmd_raw:
 		return RawCommandSend();
+	case cmd_delete:
+		return DeleteSend(prevResult);
 	default:
 		LogMessage(__TFILE__, __LINE__, this, ::Debug_Warning, _T("Unknown opID (%d) in SendNextCommand"), m_pCurOpData->opId);
 		ResetOperation(FZ_REPLY_INTERNALERROR);
@@ -1924,48 +1926,43 @@ int CFtpControlSocket::RawCommandParseResponse()
 	}
 }
 
+class CFtpDeleteOpData : public COpData
+{
+public:
+	CFtpDeleteOpData() { opId = cmd_delete; }
+	virtual ~CFtpDeleteOpData() { }
+
+	CServerPath path;
+	wxString file;
+	bool omitPath;
+};
+
 int CFtpControlSocket::Delete(const CServerPath& path /*=CServerPath()*/, const wxString& file /*=_T("")*/)
 {
 	// FIXME: 
 	// - Needs to eventually use ChangeDir
 	// - obey skipOneReply by calling SendNextCommand
-	class CFtpDeleteOpData : public COpData
-	{
-	public:
-		CFtpDeleteOpData() { opId = cmd_delete; }
-		virtual ~CFtpDeleteOpData() { }
 
-		CServerPath path;
-		wxString file;
-	};
+	wxASSERT(!m_pCurOpData);
+	CFtpDeleteOpData *pData = new CFtpDeleteOpData();
+	m_pCurOpData = pData;
+	pData->path = path;
+	pData->file = file;
+	pData->omitPath = true;
 
-	if (!path.IsEmpty())
-	{
-		wxASSERT(!m_pCurOpData);
-		CFtpDeleteOpData *pData = new CFtpDeleteOpData();
-		m_pCurOpData = pData;
-		pData->path = path;
-		pData->file = file;
+	int res = ChangeDir(pData->path);
+	if (res == FZ_REPLY_WOULDBLOCK)
+		return res;
 
-		wxString filename = path.FormatFilename(file);
-		if (filename == _T(""))
-		{
-			LogMessage(::Error, wxString::Format(_T("Filename cannot be constructed for folder %s and filename %s"), path.GetPath().c_str(), file.c_str()));
-			return FZ_REPLY_ERROR;
-		}
+	if (res == FZ_REPLY_ERROR)
+		pData->omitPath = false;
 
-		CDirectoryCache cache;
-		cache.InvalidateFile(*m_pCurrentServer, path, file, false);
+	return SendNextCommand();
+}
 
-		if (!Send(_T("DELE ") + filename))
-			return FZ_REPLY_ERROR;
-
-		return FZ_REPLY_WOULDBLOCK;
-	}
-
-	int code = GetReplyCode();
-	if (code != 2 && code != 3)
-		return ResetOperation(FZ_REPLY_ERROR);
+int CFtpControlSocket::DeleteSend(int prevResult /*=FZ_REPLY_OK*/)
+{
+	LogMessage(Debug_Verbose, _T("CFtpControlSocket::DeleteSend(%d)"), prevResult);
 
 	if (!m_pCurOpData)
 	{
@@ -1975,6 +1972,44 @@ int CFtpControlSocket::Delete(const CServerPath& path /*=CServerPath()*/, const 
 	}
 
 	CFtpDeleteOpData *pData = static_cast<CFtpDeleteOpData *>(m_pCurOpData);
+
+	if (prevResult != FZ_REPLY_OK)
+		pData->omitPath = false;
+
+	wxString filename = pData->path.FormatFilename(pData->file, pData->omitPath);
+	if (filename == _T(""))
+	{
+		LogMessage(::Error, wxString::Format(_T("Filename cannot be constructed for folder %s and filename %s"), pData->path.GetPath().c_str(), pData->file.c_str()));
+		ResetOperation(FZ_REPLY_ERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	CDirectoryCache cache;
+	cache.InvalidateFile(*m_pCurrentServer, pData->path, pData->file, false);
+
+	if (!Send(_T("DELE ") + filename))
+		return FZ_REPLY_ERROR;
+
+	return FZ_REPLY_WOULDBLOCK;
+}
+
+int CFtpControlSocket::DeleteParseResponse()
+{	
+	LogMessage(Debug_Verbose, _T("CFtpControlSocket::DeleteParseResponse()"));
+
+	if (!m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	CFtpDeleteOpData *pData = static_cast<CFtpDeleteOpData *>(m_pCurOpData);
+
+	int code = GetReplyCode();
+	if (code != 2 && code != 3)
+		return ResetOperation(FZ_REPLY_ERROR);
+
 	CDirectoryCache cache;
 	cache.RemoveFile(*m_pCurrentServer, pData->path, pData->file);
 	m_pEngine->ResendModifiedListings();

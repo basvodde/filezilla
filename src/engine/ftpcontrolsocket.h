@@ -43,7 +43,9 @@ protected:
 	int RawCommandSend();
 	int RawCommandParseResponse();
 
-	virtual int Delete(const CServerPath& path = CServerPath(), const wxString& file = _T(""));
+	virtual int Delete(const CServerPath& path, const wxString& file);
+	int DeleteSend(int prevResult = FZ_REPLY_OK);
+	int DeleteParseResponse();
 	
 	virtual int RemoveDir(const CServerPath& path = CServerPath(), const wxString& subDir = _T(""));
 
