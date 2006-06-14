@@ -39,7 +39,9 @@ protected:
 	int FileTransferSend(int prevResult = FZ_REPLY_OK);
 	int FileTransferTestResumeCapability();
 
-	virtual int RawCommand(const wxString& command = _T(""));
+	virtual int RawCommand(const wxString& command);
+	int RawCommandSend();
+	int RawCommandParseResponse();
 
 	virtual int Delete(const CServerPath& path = CServerPath(), const wxString& file = _T(""));
 	

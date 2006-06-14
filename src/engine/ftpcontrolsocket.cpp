@@ -267,7 +267,7 @@ void CFtpControlSocket::ParseResponse()
 		FileTransferParseResponse();
 		break;
 	case cmd_raw:
-		RawCommand();
+		RawCommandParseResponse();
 		break;
 	case cmd_delete:
 		Delete();
@@ -914,6 +914,8 @@ int CFtpControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
 		return ChmodSend(prevResult);
 	case cmd_rawtransfer:
 		return TransferSend(prevResult);
+	case cmd_raw:
+		return RawCommandSend();
 	default:
 		LogMessage(__TFILE__, __LINE__, this, ::Debug_Warning, _T("Unknown opID (%d) in SendNextCommand"), m_pCurOpData->opId);
 		ResetOperation(FZ_REPLY_INTERNALERROR);
@@ -1862,25 +1864,64 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 	return true;
 }
 
-int CFtpControlSocket::RawCommand(const wxString& command /*=_T("")*/)
+class CRawCommandOpData : public COpData
 {
-	// FIXME: obey m_skipOneReply by using SendNextCommand
-	if (command != _T(""))
+public:
+	CRawCommandOpData(const wxString& command)
 	{
-		if (!Send(command))
-			return FZ_REPLY_ERROR;
+		m_command = command;
+		opId = cmd_raw;
+	}
 
-		return FZ_REPLY_WOULDBLOCK;
+	wxString m_command;
+};
+
+int CFtpControlSocket::RawCommand(const wxString& command)
+{
+	wxASSERT(command != _T(""));
+
+	m_pCurOpData = new CRawCommandOpData(command);
+
+	return SendNextCommand();
+}
+
+int CFtpControlSocket::RawCommandSend()
+{
+	LogMessage(Debug_Verbose, _T("CFtpControlSocket::RawCommandSend"));
+
+	if (!m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
 	}
 
 	CDirectoryCache cache;
 	cache.InvalidateServer(*m_pCurrentServer);
 
+	CRawCommandOpData *pData = static_cast<CRawCommandOpData *>(m_pCurOpData);
+
+	if (!Send(pData->m_command))
+		return FZ_REPLY_ERROR;
+
+	return FZ_REPLY_WOULDBLOCK;
+}
+
+int CFtpControlSocket::RawCommandParseResponse()
+{
+	LogMessage(Debug_Verbose, _T("CFtpControlSocket::RawCommandParseResponse"));
+
 	int code = GetReplyCode();
 	if (code == 2 || code == 3)
-		return ResetOperation(FZ_REPLY_OK);
+	{
+		ResetOperation(FZ_REPLY_OK);
+		return FZ_REPLY_OK;
+	}
 	else
-		return ResetOperation(FZ_REPLY_ERROR);
+	{
+        ResetOperation(FZ_REPLY_ERROR);
+		return FZ_REPLY_ERROR;
+	}
 }
 
 int CFtpControlSocket::Delete(const CServerPath& path /*=CServerPath()*/, const wxString& file /*=_T("")*/)
