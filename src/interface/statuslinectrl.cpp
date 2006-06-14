@@ -16,7 +16,7 @@ bool CStatusLineCtrl::m_initialized = false;
 
 #define PROGRESSBAR_WIDTH 100
 
-CStatusLineCtrl::CStatusLineCtrl(CQueueView* pParent, const CQueueView::t_EngineData& engineData, const wxRect& initialPosition)
+CStatusLineCtrl::CStatusLineCtrl(CQueueView* pParent, const t_EngineData& engineData, const wxRect& initialPosition)
 	: m_engineData(engineData)
 {
 	Create(pParent, wxID_ANY, initialPosition.GetPosition(), initialPosition.GetSize());
@@ -141,13 +141,13 @@ void CStatusLineCtrl::SetTransferStatus(const CTransferStatus* pStatus)
 
 		switch (m_engineData.state)
 		{
-		case CQueueView::t_EngineData::disconnect:
+		case t_EngineData::disconnect:
 			m_statusText = _("Disconnecting from previous server");
 			break;
-		case CQueueView::t_EngineData::cancel:
+		case t_EngineData::cancel:
 			m_statusText = _("Waiting for transfer to be canceled");
 			break;
-		case CQueueView::t_EngineData::connect:
+		case t_EngineData::connect:
 			m_statusText = wxString::Format(_("Connecting to %s"), m_engineData.lastServer.FormatServer().c_str());
 			break;
 		default:

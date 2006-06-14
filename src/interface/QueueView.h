@@ -51,8 +51,8 @@ public:
 	virtual void SetPriority(enum QueuePriority priority);
 
 	void AddChild(CQueueItem* pItem);
-	unsigned int GetVisibleCount() const { return m_visibleOffspring; }
-	CQueueItem* GetChild(unsigned int item);
+	unsigned int GetChildrenCount(bool recursive);
+	CQueueItem* GetChild(unsigned int item, bool recursive = true);
 	CQueueItem* GetParent() { return m_parent; }
 	const CQueueItem* GetParent() const { return m_parent; }
 	virtual bool RemoveChild(CQueueItem* pItem); // Removes a child item with is somewhere in the tree of children.
@@ -94,6 +94,7 @@ public:
 	wxLongLong GetTotalSize(bool& partialSizeInfo) const;
 
 	void QueueImmediateFiles();
+	void QueueImmediateFile(CFileItem* pItem);
 
 	virtual void SaveItem(TiXmlElement* pElement) const;
 
@@ -120,6 +121,7 @@ public:
 	bool Download() const { return m_download; }
 	bool Queued() const { return m_queued; }
 	int GetCount() const { return m_count; }
+	virtual bool TryRemoveAll();
 
 	wxString m_statusMessage;
 
@@ -155,6 +157,26 @@ public:
 	~CStatusItem() {}
 
 	virtual enum QueueItemType GetType() const { return QueueItemType_Status; }
+};
+
+class CStatusLineCtrl;
+struct t_EngineData
+{
+	CFileZillaEngine* pEngine;
+	bool active;
+
+	enum EngineDataState
+	{
+		none,
+		cancel,
+		disconnect,
+		connect,
+		transfer
+	} state;
+
+	CFileItem* pItem;
+	CServer lastServer;
+	CStatusLineCtrl* pStatusLineCtrl;
 };
 
 class CFileItem : public CQueueItem
@@ -199,6 +221,8 @@ public:
 
 	CFileTransferCommand::t_transferSettings m_transferSettings;
 
+	t_EngineData* m_pEngineData;
+
 protected:
 	enum QueuePriority m_priority;
 	enum ItemState m_itemState;
@@ -235,25 +259,6 @@ public:
 	// data like the list of ascii file types
 	void SettingsChanged();
 
-	struct t_EngineData
-	{
-		CFileZillaEngine* pEngine;
-		bool active;
-
-		enum EngineDataState
-		{
-			none,
-			cancel,
-			disconnect,
-			connect,
-			transfer
-		} state;
-		
-		CFileItem* pItem;
-		CServer lastServer;
-		CStatusLineCtrl* pStatusLineCtrl;
-	};
-
 protected:
 
 	bool TryStartNextTransfer();
@@ -270,9 +275,16 @@ protected:
 	void ProcessReply(t_EngineData& engineData, COperationNotification* pNotification);
 	void SendNextCommand(t_EngineData& engineData);
 	void ResetEngine(t_EngineData& data, bool removeFileItem);
+	void ResetItem(CFileItem* item);
+	
 	void RemoveItem(CQueueItem* item);
 	void RemoveAll();
-	void ResetItem(CFileItem* item);
+
+	// Stops processing of given item
+	// Returns true on success, false if it would block
+	bool StopItem(CFileItem* item); 
+	bool StopItem(CServerItem* pServerItem); 
+	
 	void CheckQueueState();
 	bool IncreaseErrorCount(t_EngineData& engineData);
 	void UpdateStatusLinePositions();
@@ -299,7 +311,7 @@ protected:
 	 * This assures we are updating the status line positions only once,
 	 * and not multiple times (for example inside a loop).
 	 */
-	bool m_waitStatusLineUpdate; 
+	bool m_waitStatusLineUpdate;
 
 	int m_itemCount;
 	int m_activeCount;
@@ -320,6 +332,7 @@ protected:
 	void OnUpdateStatusLines(wxCommandEvent& event);
 	void OnMouseWheel(wxMouseEvent& event);
 	
+	// Context menu handlers
 	void OnContextMenu(wxContextMenuEvent& event);
 	void OnProcessQueue(wxCommandEvent& event);
 	void OnStopAndClear(wxCommandEvent& event);

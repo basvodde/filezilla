@@ -192,15 +192,23 @@ void CQueueItem::AddChild(CQueueItem* item)
 	}
 }
 
-CQueueItem* CQueueItem::GetChild(unsigned int item)
+CQueueItem* CQueueItem::GetChild(unsigned int item, bool recursive /*=true*/)
 {
 	std::vector<CQueueItem*>::iterator iter;
+	if (!recursive)
+	{
+		if (item >= m_children.size())
+			return 0;
+		iter = m_children.begin();
+		iter += item;
+		return *iter;
+	}
 	for (iter = m_children.begin(); iter != m_children.end(); iter++)
 	{
 		if (!item)
 			return *iter;
 		
-		unsigned int count = (*iter)->GetVisibleCount();
+		unsigned int count = (*iter)->GetChildrenCount(true);
 		if (item > count)
 		{
 			item -= count + 1;
@@ -210,6 +218,14 @@ CQueueItem* CQueueItem::GetChild(unsigned int item)
 		return (*iter)->GetChild(item - 1);
 	}
 	return 0;
+}
+
+unsigned int CQueueItem::GetChildrenCount(bool recursive)
+{
+	if (!recursive)
+		return m_children.size();
+
+	return m_visibleOffspring;
 }
 
 bool CQueueItem::RemoveChild(CQueueItem* pItem)
@@ -274,7 +290,7 @@ bool CQueueItem::TryRemoveAll()
 		{
 			keepChildren.push_back(pItem);
 			m_visibleOffspring++;
-			m_visibleOffspring += pItem->GetVisibleCount();
+			m_visibleOffspring += pItem->GetChildrenCount(true);
 		}
 	}
 	m_children = keepChildren;
@@ -333,7 +349,7 @@ int CQueueItem::GetItemIndex() const
 		if (*iter == this)
 			break;
 
-		index += (*iter)->GetVisibleCount() + 1;
+		index += (*iter)->GetChildrenCount(true) + 1;
 	}
 
 	return index + pParent->GetItemIndex();
@@ -355,6 +371,7 @@ CFileItem::CFileItem(CServerItem* parent, bool queued, bool download, const wxSt
 	m_active = false;
 	m_errorCount = 0;
 	m_remove = false;
+	m_pEngineData = 0;
 }
 
 CFileItem::~CFileItem()
@@ -527,6 +544,7 @@ void CServerItem::QueueImmediateFiles()
 		for (std::list<CFileItem*>::iterator iter = fileList.begin(); iter != fileList.end(); iter++)
 		{
 			CFileItem* item = *iter;
+			wxASSERT(!item->m_queued);
 			item->m_queued = true;
 			if (item->IsActive())
 				activeList.push_back(item);
@@ -535,6 +553,25 @@ void CServerItem::QueueImmediateFiles()
 		}
 		fileList = activeList;
 	}
+}
+
+void CServerItem::QueueImmediateFile(CFileItem* pItem)
+{
+	if (pItem->m_queued)
+		return;
+
+	std::list<CFileItem*>& fileList = m_fileList[1][pItem->GetPriority()];
+	for (std::list<CFileItem*>::iterator iter = fileList.begin(); iter != fileList.end(); iter++)
+	{
+		if (*iter != pItem)
+			continue;
+
+		pItem->m_queued = true;
+		fileList.erase(iter);
+		m_fileList[1][pItem->GetPriority()].push_back(pItem);
+		return;
+	}
+	wxASSERT(false);
 }
 
 void CServerItem::SaveItem(TiXmlElement* pElement) const
@@ -565,6 +602,15 @@ CFolderItem::CFolderItem(CServerItem* parent, bool queued, bool download, const 
 	pair.localPath = localPath;
 	pair.remotePath = remotePath;
 	m_dirsToCheck.push_back(pair);
+}
+
+bool CFolderItem::TryRemoveAll()
+{
+	if (!m_active)
+		return true;
+
+	m_remove = true;
+	return false;
 }
 
 wxLongLong CServerItem::GetTotalSize(bool& partialSizeInfo) const
@@ -843,7 +889,7 @@ CQueueItem* CQueueView::GetQueueItem(unsigned int item)
 		if (!item)
 			return *iter;
 		
-		unsigned int count = (*iter)->GetVisibleCount();
+		unsigned int count = (*iter)->GetChildrenCount(true);
 		if (item > count)
 		{
 			item -= count + 1;
@@ -1003,6 +1049,7 @@ bool CQueueView::TryStartNextTransfer()
 	SetItemCount(m_itemCount);
 
 	engineData.pItem = fileItem;
+	fileItem->m_pEngineData = &engineData;
 	engineData.active = true;
 	serverItem->m_activeCount++;
 	m_activeCount++;
@@ -1104,6 +1151,8 @@ void CQueueView::ResetEngine(t_EngineData& data, bool removeFileItem)
 	}
 	if (data.pItem)
 	{
+		wxASSERT(data.pItem->IsActive());
+		wxASSERT(data.pItem->m_pEngineData = &data);
 		if (data.pItem->IsActive())
 		{
 			data.pItem->SetActive(false);
@@ -1155,7 +1204,7 @@ void CQueueView::RemoveItem(CQueueItem* item)
 
 	CQueueItem* topLevelItem = item->GetTopLevelItem();
 
-	int count = topLevelItem->GetVisibleCount();
+	int count = topLevelItem->GetChildrenCount(true);
 	topLevelItem->RemoveChild(item);
 	if (!topLevelItem->GetChild(0))
 	{
@@ -1175,7 +1224,7 @@ void CQueueView::RemoveItem(CQueueItem* item)
 	}
 	else
 	{
-		count -= topLevelItem->GetVisibleCount();
+		count -= topLevelItem->GetChildrenCount(true);
 		m_itemCount -= count;
 		SetItemCount(m_itemCount);
 	}
@@ -1352,7 +1401,7 @@ int CQueueView::GetItemIndex(const CQueueItem* item)
 		if (pTopLevelItem == *iter)
 			break;
 
-		index += (*iter)->GetVisibleCount() + 1;
+		index += (*iter)->GetChildrenCount(true) + 1;
 	}
 
 	return index + item->GetItemIndex();
@@ -1772,7 +1821,7 @@ void CQueueView::RemoveAll()
 		else
 		{
 			newServerList.push_back(*iter);
-			m_itemCount += 1 + (*iter)->GetVisibleCount();
+			m_itemCount += 1 + (*iter)->GetChildrenCount(true);
 		}
 	}
 	SetItemCount(m_itemCount);
@@ -1797,6 +1846,8 @@ void CQueueView::OnRemoveSelected(wxCommandEvent& event)
 		selectedItems.push_front(item);
 	}
 
+	m_waitStatusLineUpdate = true;
+
 	long skip = -1;
 	for (std::list<long>::const_iterator iter = selectedItems.begin(); iter != selectedItems.end(); iter++)
 	{
@@ -1809,7 +1860,6 @@ void CQueueView::OnRemoveSelected(wxCommandEvent& event)
 
 		if (pItem->GetType() == QueueItemType_Status)
 			continue;
-
 		else if (pItem->GetType() == QueueItemType_Folder)
 		{
 			CFolderItem* pFolder = (CFolderItem*)pItem;
@@ -1822,13 +1872,20 @@ void CQueueView::OnRemoveSelected(wxCommandEvent& event)
 		else if (pItem->GetType() == QueueItemType_Server)
 		{
 			CServerItem* pServer = (CServerItem*)pItem;
-			continue; //TODO
+			StopItem(pServer);
+
+			// Server items get deleted automatically if all children are gone
+			continue;
 		}
-		else if (pItem->GetType() == QueueItemType_Server)
+		else if (pItem->GetType() == QueueItemType_File)
 		{
 			CFileItem* pFile = (CFileItem*)pItem;
 			if (pFile->IsActive())
-				continue; //TODO
+			{
+				StopItem(pFile);
+				pFile->m_remove = true;
+				continue;
+			}
 		}
 
 		CQueueItem* pTopLevelItem = pItem->GetTopLevelItem();
@@ -1837,4 +1894,58 @@ void CQueueView::OnRemoveSelected(wxCommandEvent& event)
 			skip = GetItemIndex(pTopLevelItem);
 		RemoveItem(pItem);
 	}
+
+	m_waitStatusLineUpdate = false;
+	UpdateStatusLinePositions();
+}
+
+bool CQueueView::StopItem(CFileItem* item)
+{
+	if (!item->IsActive())
+		return true;
+
+	((CServerItem*)item->GetTopLevelItem())->QueueImmediateFile(item);
+	item->m_pEngineData->pEngine->Command(CCancelCommand());
+	return false;
+}
+
+bool CQueueView::StopItem(CServerItem* pServerItem)
+{
+	for (unsigned int i = 0; i < pServerItem->GetChildrenCount(false); i++)
+	{
+		CQueueItem* pItem = pServerItem->GetChild(0, false);
+		if (pItem->GetType() == QueueItemType_Folder)
+		{
+			CFolderItem* pFolder = (CFolderItem*)pItem;
+			if (pFolder->m_active)
+			{
+				pFolder->m_remove = true;
+				continue;
+			}
+		}
+		else if (pItem->GetType() == QueueItemType_File)
+		{
+			CFileItem* pFile = (CFileItem*)pItem;
+			if (pFile->IsActive())
+			{
+				StopItem(pFile);
+				pFile->m_remove = true;
+				continue;
+			}
+		}
+		else
+			// Unknown type, shouldn't be here.
+			wxASSERT(false);
+
+		if (pServerItem->GetChildrenCount(false) == 1)
+		{
+			RemoveItem(pItem);
+			return true;
+		}
+		
+		RemoveItem(pItem);
+		i--;
+	}
+
+	return pServerItem->GetChildrenCount(false) == 0;
 }

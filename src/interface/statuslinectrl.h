@@ -5,7 +5,7 @@ class CQueueView;
 class CStatusLineCtrl : public wxWindow
 {
 public:
-	CStatusLineCtrl(CQueueView* pParent, const CQueueView::t_EngineData& engineData, const wxRect& initialPosition);
+	CStatusLineCtrl(CQueueView* pParent, const t_EngineData& engineData, const wxRect& initialPosition);
 	~CStatusLineCtrl();
 
 	const CFileItem* GetItem() const { return m_engineData.pItem; }
@@ -20,7 +20,7 @@ protected:
 	void DrawProgressBar(wxDC& dc, int x, int y, int height);
 
 	CQueueView* m_pParent;
-	const CQueueView::t_EngineData& m_engineData;
+	const t_EngineData& m_engineData;
 	CTransferStatus* m_pStatus;
 
 	wxString m_statusText;
