@@ -1027,7 +1027,7 @@ int CFtpControlSocket::ChangeDirParseResponse()
 				!static_cast<CFtpFileTransferOpData *>(pData->pNextOpData)->download && !pData->triedMkd)
 			{
 				pData->triedMkd = true;
-				int res = Mkdir(pData->path, pData->path);
+				int res = Mkdir(pData->path);
 				if (res != FZ_REPLY_OK)
 					return res;
 			}
@@ -1949,10 +1949,8 @@ int CFtpControlSocket::Delete(const CServerPath& path /*=CServerPath()*/, const 
 	pData->omitPath = true;
 
 	int res = ChangeDir(pData->path);
-	if (res == FZ_REPLY_WOULDBLOCK)
+	if (res != FZ_REPLY_OK)
 		return res;
-	else if (res == FZ_REPLY_ERROR)
-		pData->omitPath = false;
 
 	return SendNextCommand();
 }
@@ -2039,13 +2037,12 @@ int CFtpControlSocket::RemoveDir(const CServerPath& path, const wxString& subDir
 	if (!pData->fullPath.AddSegment(subDir))
 	{
 		LogMessage(::Error, wxString::Format(_T("Path cannot be constructed for folder %s and subdir %s"), path.GetPath().c_str(), subDir.c_str()));
+		ResetOperation(FZ_REPLY_ERROR);
 		return FZ_REPLY_ERROR;
 	}
 
 	int res = ChangeDir(pData->path);
-	if (res == FZ_REPLY_ERROR)
-		pData->omitPath = false;
-	else if (res == FZ_REPLY_WOULDBLOCK)
+	if (res != FZ_REPLY_OK)
 		return res;
 
 	return SendNextCommand();
@@ -2118,24 +2115,7 @@ enum mkdStates
 	mkd_tryfull
 };
 
-class CFtpMkdirOpData : public COpData
-{
-public:
-	CFtpMkdirOpData()
-	{
-		opId = cmd_mkdir;
-	}
-
-	virtual ~CFtpMkdirOpData()
-	{
-	}
-
-	CServerPath path;
-	CServerPath currentPath;
-	std::list<wxString> segments;
-};
-
-int CFtpControlSocket::Mkdir(const CServerPath& path, CServerPath start /*=CServerPath()*/)
+int CFtpControlSocket::Mkdir(const CServerPath& path)
 {
 	/* Directory creation works like this: First find a parent directory into
 	 * which we can CWD, then create the subdirs one by one. If either part
@@ -2145,33 +2125,29 @@ int CFtpControlSocket::Mkdir(const CServerPath& path, CServerPath start /*=CServ
 	if (!m_pCurOpData)
 		LogMessage(Status, _("Creating directory '%s'..."), path.GetPath().c_str());
 
-	CFtpMkdirOpData *pData = new CFtpMkdirOpData;
-	pData->pNextOpData = m_pCurOpData;
+	CMkdirOpData *pData = new CMkdirOpData;
 	pData->opState = mkd_findparent;
 	pData->path = path;
 
-	if (!start.IsEmpty())
+	if (!m_CurrentPath.IsEmpty())
 	{
-		CServerPath curPath = path;
-		if (start != curPath && !start.IsParentOf(curPath, false))
-		{
-			ResetOperation(FZ_REPLY_INTERNALERROR);
-			return FZ_REPLY_ERROR;
-		}
-		while (curPath != start)
-		{
-			pData->segments.push_back(curPath.GetLastSegment());
-			curPath = curPath.GetParent();
-		}
-		pData->currentPath = curPath.GetParent();
-		pData->segments.push_back(curPath.GetLastSegment());
-	}
-	else
-	{
-		pData->currentPath = path.GetParent();
-		pData->segments.push_back(path.GetLastSegment());
+		// Unless the server is broken, a directory already exists if current directory is a subdir of it.
+		if (m_CurrentPath == path || m_CurrentPath.IsSubdirOf(path, false))
+			return FZ_REPLY_OK;
+
+		if (m_CurrentPath.IsParentOf(path, false))
+			pData->commonParent = m_CurrentPath;
+		else
+			pData->commonParent = path.GetCommonParent(m_CurrentPath);
 	}
 
+	pData->currentPath = path.GetParent();
+	pData->segments.push_back(path.GetLastSegment());
+
+	if (pData->currentPath == m_CurrentPath)
+		pData->opState = mkd_mkdsub;
+
+	pData->pNextOpData = m_pCurOpData;
 	m_pCurOpData = pData;
 
 	return SendNextCommand();
@@ -2188,7 +2164,7 @@ int CFtpControlSocket::MkdirParseResponse()
 		return FZ_REPLY_ERROR;
 	}
 
-	CFtpMkdirOpData *pData = static_cast<CFtpMkdirOpData *>(m_pCurOpData);
+	CMkdirOpData *pData = static_cast<CMkdirOpData *>(m_pCurOpData);
 	LogMessage(Debug_Debug, _T("  state = %d"), pData->opState);
 
 	int code = GetReplyCode();
@@ -2201,10 +2177,13 @@ int CFtpControlSocket::MkdirParseResponse()
 			m_CurrentPath = pData->currentPath;
 			pData->opState = mkd_mkdsub;
 		}
+		else if (pData->currentPath == pData->commonParent)
+			pData->opState = mkd_tryfull;
 		else if (pData->currentPath.HasParent())
 		{
+			const CServerPath& parent = pData->currentPath.GetParent();
 			pData->segments.push_front(pData->currentPath.GetLastSegment());
-			pData->currentPath = pData->currentPath.GetParent();
+			pData->currentPath = parent;
 		}
 		else
 			pData->opState = mkd_tryfull;
@@ -2279,7 +2258,7 @@ int CFtpControlSocket::MkdirSend()
 		return FZ_REPLY_ERROR;
 	}
 
-	CFtpMkdirOpData *pData = static_cast<CFtpMkdirOpData *>(m_pCurOpData);
+	CMkdirOpData *pData = static_cast<CMkdirOpData *>(m_pCurOpData);
 	LogMessage(Debug_Debug, _T("  state = %d"), pData->opState);
 
 	bool res;

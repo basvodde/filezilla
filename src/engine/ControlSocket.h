@@ -37,6 +37,24 @@ public:
 	bool transferInitiated;
 };
 
+class CMkdirOpData : public COpData
+{
+public:
+	CMkdirOpData()
+	{
+		opId = cmd_mkdir;
+	}
+
+	virtual ~CMkdirOpData()
+	{
+	}
+
+	CServerPath path;
+	CServerPath currentPath;
+	CServerPath commonParent;
+	std::list<wxString> segments;
+};
+
 #include "logging_private.h"
 
 class CTransferStatus;
@@ -57,7 +75,7 @@ public:
 	virtual int RawCommand(const wxString& command = _T("")) = 0;
 	virtual int Delete(const CServerPath& path = CServerPath(), const wxString& file = _T("")) = 0;
 	virtual int RemoveDir(const CServerPath& path = CServerPath(), const wxString& subDir = _T("")) = 0;
-	virtual int Mkdir(const CServerPath& path, CServerPath start = CServerPath()) = 0;
+	virtual int Mkdir(const CServerPath& path) = 0;
 	virtual int Rename(const CRenameCommand& command) = 0;
 	virtual int Chmod(const CChmodCommand& command) = 0;
 	virtual bool Connected() const { return IsConnected(); }

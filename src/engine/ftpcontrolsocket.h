@@ -51,7 +51,7 @@ protected:
 	int RemoveDirSend(int prevResult = FZ_REPLY_OK);
 	int RemoveDirParseResponse();
 
-	virtual int Mkdir(const CServerPath& path, CServerPath start = CServerPath());
+	virtual int Mkdir(const CServerPath& path);
 	virtual int MkdirParseResponse();
 	virtual int MkdirSend();
 

@@ -901,7 +901,7 @@ int CSftpControlSocket::ChangeDirParseResponse(bool successful, const wxString& 
 				!static_cast<CSftpFileTransferOpData *>(pData->pNextOpData)->download && !pData->triedMkd)
 			{
 				pData->triedMkd = true;
-				int res = Mkdir(pData->path, pData->path);
+				int res = Mkdir(pData->path);
 				if (res != FZ_REPLY_OK)
 					return res;
 			}
@@ -1386,24 +1386,7 @@ enum mkdStates
 	mkd_tryfull
 };
 
-class CSftpMkdirOpData : public COpData
-{
-public:
-	CSftpMkdirOpData()
-	{
-		opId = cmd_mkdir;
-	}
-
-	virtual ~CSftpMkdirOpData()
-	{
-	}
-
-	CServerPath path;
-	CServerPath currentPath;
-	std::list<wxString> segments;
-};
-
-int CSftpControlSocket::Mkdir(const CServerPath& path, CServerPath start /*=CServerPath()*/)
+int CSftpControlSocket::Mkdir(const CServerPath& path)
 {
 	/* Directory creation works like this: First find a parent directory into
 	 * which we can CWD, then create the subdirs one by one. If either part 
@@ -1413,36 +1396,32 @@ int CSftpControlSocket::Mkdir(const CServerPath& path, CServerPath start /*=CSer
 	if (!m_pCurOpData)
 		LogMessage(Status, _("Creating directory '%s'..."), path.GetPath().c_str());
 
-	CSftpMkdirOpData *pData = new CSftpMkdirOpData;
-	pData->pNextOpData = m_pCurOpData;
+	CMkdirOpData *pData = new CMkdirOpData;
 	pData->opState = mkd_findparent;
 	pData->path = path;
 
-	if (!start.IsEmpty())
+	if (!m_CurrentPath.IsEmpty())
 	{
-		CServerPath curPath = path;
-		if (start != curPath && !start.IsParentOf(curPath, false))
-		{
-			ResetOperation(FZ_REPLY_INTERNALERROR);
-			return FZ_REPLY_ERROR;
-		}
-		while (curPath != start)
-		{
-			pData->segments.push_back(curPath.GetLastSegment());
-			curPath = curPath.GetParent();
-		}
-		pData->currentPath = curPath.GetParent();
-		pData->segments.push_back(curPath.GetLastSegment());
+		// Unless the server is broken, a directory already exists if current directory is a subdir of it.
+		if (m_CurrentPath == path || m_CurrentPath.IsSubdirOf(path, false))
+			return FZ_REPLY_OK;
+
+		if (m_CurrentPath.IsParentOf(path, false))
+			pData->commonParent = m_CurrentPath;
+		else
+			pData->commonParent = path.GetCommonParent(m_CurrentPath);
 	}
-	else
-	{
-		pData->currentPath = path.GetParent();
-		pData->segments.push_back(path.GetLastSegment());
-	}
-	
+
+	pData->currentPath = path.GetParent();
+	pData->segments.push_back(path.GetLastSegment());
+
+	if (pData->currentPath == m_CurrentPath)
+		pData->opState = mkd_mkdsub;
+
+	pData->pNextOpData = m_pCurOpData;
 	m_pCurOpData = pData;
 
-	return MkdirSend();
+	return SendNextCommand();
 }
 
 int CSftpControlSocket::MkdirParseResponse(bool successful, const wxString& reply)
@@ -1456,7 +1435,7 @@ int CSftpControlSocket::MkdirParseResponse(bool successful, const wxString& repl
 		return FZ_REPLY_ERROR;
 	}
 
-	CSftpMkdirOpData *pData = static_cast<CSftpMkdirOpData *>(m_pCurOpData);
+	CMkdirOpData *pData = static_cast<CMkdirOpData *>(m_pCurOpData);
 	LogMessage(Debug_Debug, _T("  state = %d"), pData->opState);
 
 	bool error = false;
@@ -1468,6 +1447,8 @@ int CSftpControlSocket::MkdirParseResponse(bool successful, const wxString& repl
 			m_CurrentPath = pData->currentPath;
 			pData->opState = mkd_mkdsub;
 		}
+		else if (pData->currentPath == pData->commonParent)
+			pData->opState = mkd_tryfull;
 		else if (pData->currentPath.HasParent())
 		{
 			pData->segments.push_front(pData->currentPath.GetLastSegment());
@@ -1546,7 +1527,7 @@ int CSftpControlSocket::MkdirSend()
 		return FZ_REPLY_ERROR;
 	}
 
-	CSftpMkdirOpData *pData = static_cast<CSftpMkdirOpData *>(m_pCurOpData);
+	CMkdirOpData *pData = static_cast<CMkdirOpData *>(m_pCurOpData);
 	LogMessage(Debug_Debug, _T("  state = %d"), pData->opState);
 
 	bool res;
