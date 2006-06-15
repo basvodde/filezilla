@@ -47,7 +47,9 @@ protected:
 	int DeleteSend(int prevResult = FZ_REPLY_OK);
 	int DeleteParseResponse();
 	
-	virtual int RemoveDir(const CServerPath& path = CServerPath(), const wxString& subDir = _T(""));
+	virtual int RemoveDir(const CServerPath& path, const wxString& subDir);
+	int RemoveDirSend(int prevResult = FZ_REPLY_OK);
+	int RemoveDirParseResponse();
 
 	virtual int Mkdir(const CServerPath& path, CServerPath start = CServerPath());
 	virtual int MkdirParseResponse();

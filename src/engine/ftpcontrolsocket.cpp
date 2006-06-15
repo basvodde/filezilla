@@ -273,7 +273,7 @@ void CFtpControlSocket::ParseResponse()
 		DeleteParseResponse();
 		break;
 	case cmd_removedir:
-		RemoveDir();
+		RemoveDirParseResponse();
 		break;
 	case cmd_mkdir:
 		MkdirParseResponse();
@@ -918,6 +918,8 @@ int CFtpControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
 		return RawCommandSend();
 	case cmd_delete:
 		return DeleteSend(prevResult);
+	case cmd_removedir:
+		return RemoveDirSend(prevResult);
 	default:
 		LogMessage(__TFILE__, __LINE__, this, ::Debug_Warning, _T("Unknown opID (%d) in SendNextCommand"), m_pCurOpData->opId);
 		ResetOperation(FZ_REPLY_INTERNALERROR);
@@ -1939,10 +1941,6 @@ public:
 
 int CFtpControlSocket::Delete(const CServerPath& path /*=CServerPath()*/, const wxString& file /*=_T("")*/)
 {
-	// FIXME: 
-	// - Needs to eventually use ChangeDir
-	// - obey skipOneReply by calling SendNextCommand
-
 	wxASSERT(!m_pCurOpData);
 	CFtpDeleteOpData *pData = new CFtpDeleteOpData();
 	m_pCurOpData = pData;
@@ -1953,8 +1951,7 @@ int CFtpControlSocket::Delete(const CServerPath& path /*=CServerPath()*/, const 
 	int res = ChangeDir(pData->path);
 	if (res == FZ_REPLY_WOULDBLOCK)
 		return res;
-
-	if (res == FZ_REPLY_ERROR)
+	else if (res == FZ_REPLY_ERROR)
 		pData->omitPath = false;
 
 	return SendNextCommand();
@@ -2017,47 +2014,46 @@ int CFtpControlSocket::DeleteParseResponse()
 	return ResetOperation(FZ_REPLY_OK);
 }
 
-int CFtpControlSocket::RemoveDir(const CServerPath& path /*=CServerPath()*/, const wxString& subDir /*=_T("")*/)
+class CFtpRemoveDirOpData : public COpData
 {
-	// FIXME: obey m_skipOneReply by using SendNextCommand
-	class CFtpRemoveDirOpData : public COpData
+public:
+	CFtpRemoveDirOpData() { opId = cmd_removedir; }
+	virtual ~CFtpRemoveDirOpData() { }
+
+	CServerPath path;
+	CServerPath fullPath;
+	wxString subDir;
+	bool omitPath;
+};
+
+int CFtpControlSocket::RemoveDir(const CServerPath& path, const wxString& subDir)
+{
+	wxASSERT(!m_pCurOpData);
+	CFtpRemoveDirOpData *pData = new CFtpRemoveDirOpData();
+	m_pCurOpData = pData;
+	pData->path = path;
+	pData->subDir = subDir;
+	pData->omitPath = true;
+	pData->fullPath = path;
+
+	if (!pData->fullPath.AddSegment(subDir))
 	{
-	public:
-		CFtpRemoveDirOpData() { opId = cmd_removedir; }
-		virtual ~CFtpRemoveDirOpData() { }
-
-		CServerPath path;
-		wxString subDir;
-	};
-
-	if (!path.IsEmpty())
-	{
-		wxASSERT(!m_pCurOpData);
-		CFtpRemoveDirOpData *pData = new CFtpRemoveDirOpData();
-		m_pCurOpData = pData;
-		pData->path = path;
-		pData->subDir = subDir;
-
-		CServerPath path = pData->path;
-
-		if (!path.AddSegment(subDir))
-		{
-			LogMessage(::Error, wxString::Format(_T("Path cannot be constructed for folder %s and subdir %s"), path.GetPath().c_str(), subDir.c_str()));
-			return FZ_REPLY_ERROR;
-		}
-
-		CDirectoryCache cache;
-		cache.InvalidateFile(*m_pCurrentServer, path, subDir, false, CDirectoryCache::dir);
-
-		if (!Send(_T("RMD ") + path.GetPath()))
-			return FZ_REPLY_ERROR;
-
-		return FZ_REPLY_WOULDBLOCK;
+		LogMessage(::Error, wxString::Format(_T("Path cannot be constructed for folder %s and subdir %s"), path.GetPath().c_str(), subDir.c_str()));
+		return FZ_REPLY_ERROR;
 	}
 
-	int code = GetReplyCode();
-	if (code != 2 && code != 3)
-		return ResetOperation(FZ_REPLY_ERROR);
+	int res = ChangeDir(pData->path);
+	if (res == FZ_REPLY_ERROR)
+		pData->omitPath = false;
+	else if (res == FZ_REPLY_WOULDBLOCK)
+		return res;
+
+	return SendNextCommand();
+}
+
+int CFtpControlSocket::RemoveDirSend(int prevResult /*=FZ_REPLY_OK*/)
+{
+	LogMessage(Debug_Verbose, _T("CFtpControlSocket::RemoveDirSende()"));
 
 	if (!m_pCurOpData)
 	{
@@ -2067,6 +2063,45 @@ int CFtpControlSocket::RemoveDir(const CServerPath& path /*=CServerPath()*/, con
 	}
 
 	CFtpRemoveDirOpData *pData = static_cast<CFtpRemoveDirOpData *>(m_pCurOpData);
+
+	if (prevResult != FZ_REPLY_OK)
+		pData->omitPath = false;
+
+	CDirectoryCache cache;
+	cache.InvalidateFile(*m_pCurrentServer, pData->path, pData->subDir, false, CDirectoryCache::dir);
+
+	if (pData->omitPath)
+	{
+		if (!Send(_T("RMD ") + pData->subDir))
+			return FZ_REPLY_ERROR;
+	}
+	else
+		if (!Send(_T("RMD ") + pData->fullPath.GetPath()))
+			return FZ_REPLY_ERROR;
+
+	return FZ_REPLY_WOULDBLOCK;
+}
+
+int CFtpControlSocket::RemoveDirParseResponse()
+{
+	LogMessage(Debug_Verbose, _T("CFtpControlSocket::RemoveDirParseResponse()"));
+
+	if (!m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	CFtpRemoveDirOpData *pData = static_cast<CFtpRemoveDirOpData *>(m_pCurOpData);
+
+	int code = GetReplyCode();
+	if (code != 2 && code != 3)
+	{
+		ResetOperation(FZ_REPLY_ERROR);
+		return FZ_REPLY_ERROR;
+	}
+
 	CDirectoryCache cache;
 	cache.RemoveDir(*m_pCurrentServer, pData->path, pData->subDir);
 	m_pEngine->ResendModifiedListings();
