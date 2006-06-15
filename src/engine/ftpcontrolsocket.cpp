@@ -1902,6 +1902,7 @@ int CFtpControlSocket::RawCommandSend()
 
 	CDirectoryCache cache;
 	cache.InvalidateServer(*m_pCurrentServer);
+	m_CurrentPath = CServerPath();
 
 	CRawCommandOpData *pData = static_cast<CRawCommandOpData *>(m_pCurOpData);
 
