@@ -861,3 +861,38 @@ bool CServerPath::AddSegment(const wxString& segment)
 
 	return true;
 }
+
+CServerPath CServerPath::GetCommonParent(const CServerPath& path) const
+{
+	if (m_bEmpty || path.m_bEmpty)
+		return CServerPath();
+
+	if (m_type != path.m_type ||
+		m_prefix != path.m_prefix)
+		return CServerPath();
+
+	if (!HasParent() || !path.HasParent())
+		return CServerPath();
+
+	CServerPath parent;
+	parent.m_bEmpty = false;
+	parent.m_type = m_type;
+	parent.m_prefix = m_prefix;
+
+	std::list<wxString>::const_iterator iter = m_Segments.begin();
+	std::list<wxString>::const_iterator iter2 = path.m_Segments.begin();
+	while (iter != m_Segments.end() && iter2 != path.m_Segments.end())
+	{
+		if (*iter != *iter2)
+			return parent;
+
+		parent.m_Segments.push_back(*iter);
+
+		iter++;
+		iter2++;
+	}
+
+	return parent;
+	
+
+}

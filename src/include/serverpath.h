@@ -26,6 +26,8 @@ public:
 	CServerPath GetParent() const;
 	wxString GetLastSegment() const;
 
+	CServerPath GetCommonParent(const CServerPath& path) const;
+
 	bool SetType(enum ServerType type);
 	enum ServerType GetType() const;
 
