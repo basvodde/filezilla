@@ -14,13 +14,15 @@ public:
 
 	wxString GetPermissions(const char* previousPermissions);
 
-	bool Recursive();
+	bool Recursive() const ;
+	int GetApplyType() const { return m_applyType; }
 
 protected:
 
 	DECLARE_EVENT_TABLE();
 	void OnOK(wxCommandEvent& event);
 	void OnCancel(wxCommandEvent& event);
+	void OnRecurseChanged(wxCommandEvent& event);
 
 	wxCheckBox* m_checkBoxes[9];
 	char m_permissions[9];
@@ -33,6 +35,7 @@ protected:
 	bool lastChangedNumeric;
 
 	bool m_recursive;
+	int m_applyType;
 };
 
 #endif //__CHMODDIALOG_H__

@@ -1640,6 +1640,32 @@
       </object>
       <object class="sizeritem">
         <object class="wxBoxSizer">
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxRadioButton" name="ID_APPLYALL">
+              <label>A&amp;pply to all files and directories</label>
+              <value>1</value>
+              <style>wxRB_GROUP</style>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxRadioButton" name="ID_APPLYFILES">
+              <label>Apply to &amp;files only</label>
+            </object>
+            <flag>wxTOP|wxBOTTOM</flag>
+            <border>3</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxRadioButton" name="ID_APPLYDIRS">
+              <label>App&amp;ly to directories only</label>
+            </object>
+          </object>
+        </object>
+        <flag>wxLEFT</flag>
+        <border>21</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
           <orient>wxHORIZONTAL</orient>
           <object class="sizeritem">
             <object class="wxButton" name="wxID_OK">
@@ -1655,7 +1681,7 @@
             </object>
           </object>
         </object>
-        <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxALIGN_CENTRE_HORIZONTAL</flag>
+        <flag>wxALL|wxALIGN_CENTRE_HORIZONTAL</flag>
         <border>5</border>
       </object>
     </object>

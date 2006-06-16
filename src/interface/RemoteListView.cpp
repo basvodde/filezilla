@@ -921,10 +921,16 @@ void CRemoteListView::ProcessDirectoryListing()
 
 		if (m_operationMode == recursive_chmod)
 		{
-			char permissions[9];
-			bool res = ConvertPermissions(entry.permissions, permissions);
-			wxString newPerms = m_pChmodDlg->GetPermissions(res ? permissions : 0);
-			m_pState->m_pCommandQueue->ProcessCommand(new CChmodCommand(m_pDirectoryListing->path, entry.name, newPerms));
+			const int applyType = m_pChmodDlg->GetApplyType();
+			if (!applyType ||
+				(!entry.dir && applyType == 1) ||
+				(entry.dir && applyType == 2))
+			{
+				char permissions[9];
+				bool res = ConvertPermissions(entry.permissions, permissions);
+				wxString newPerms = m_pChmodDlg->GetPermissions(res ? permissions : 0);
+				m_pState->m_pCommandQueue->ProcessCommand(new CChmodCommand(m_pDirectoryListing->path, entry.name, newPerms));
+			}
 		}
 	}
 

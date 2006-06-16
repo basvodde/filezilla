@@ -5,6 +5,7 @@ BEGIN_EVENT_TABLE(CChmodDialog, wxDialogEx)
 EVT_BUTTON(XRCID("wxID_OK"), CChmodDialog::OnOK)
 EVT_BUTTON(XRCID("wxID_CANCEL"), CChmodDialog::OnCancel)
 EVT_TEXT(XRCID("ID_NUMERIC"), CChmodDialog::OnNumericChanged)
+EVT_CHECKBOX(XRCID("ID_RECURSE"), CChmodDialog::OnRecurseChanged)
 END_EVENT_TABLE();
 
 bool CChmodDialog::Create(wxWindow* parent, int fileCount, int dirCount,
@@ -62,13 +63,23 @@ bool CChmodDialog::Create(wxWindow* parent, int fileCount, int dirCount,
 		return false;
 
 	wxCheckBox* pRecurse = XRCCTRL(*this, "ID_RECURSE", wxCheckBox);
-	if (!pRecurse)
+	wxRadioButton* pApplyAll = XRCCTRL(*this, "ID_APPLYALL", wxRadioButton);
+	wxRadioButton* pApplyFiles = XRCCTRL(*this, "ID_APPLYFILES", wxRadioButton);
+	wxRadioButton* pApplyDirs = XRCCTRL(*this, "ID_APPLYDIRS", wxRadioButton);
+	if (!pRecurse || !pApplyAll || !pApplyFiles || !pApplyDirs)
 		return false;
 
 	if (!dirCount)
 	{
 		pRecurse->Hide();
+		pApplyAll->Hide();
+		pApplyFiles->Hide();
+		pApplyDirs->Hide();
 	}
+
+	pApplyAll->Enable(false);
+	pApplyFiles->Enable(false);
+	pApplyDirs->Enable(false);
 
 	const wxChar* IDs[9] = { _T("ID_OWNERREAD"), _T("ID_OWNERWRITE"), _T("ID_OWNEREXECUTE"),
 						   _T("ID_GROUPREAD"), _T("ID_GROUPWRITE"), _T("ID_GROUPEXECUTE"),
@@ -112,7 +123,15 @@ bool CChmodDialog::Create(wxWindow* parent, int fileCount, int dirCount,
 void CChmodDialog::OnOK(wxCommandEvent& event)
 {
 	wxCheckBox* pRecurse = XRCCTRL(*this, "ID_RECURSE", wxCheckBox);
-	m_recursive = pRecurse->GetValue();	
+	m_recursive = pRecurse->GetValue();
+	wxRadioButton* pApplyFiles = XRCCTRL(*this, "ID_APPLYFILES", wxRadioButton);
+	wxRadioButton* pApplyDirs = XRCCTRL(*this, "ID_APPLYDIRS", wxRadioButton);
+	if (pApplyFiles->GetValue())
+		m_applyType = 1;
+	else if (pApplyDirs->GetValue())
+		m_applyType = 2;
+	else
+		m_applyType = 0;
 	EndModal(wxID_OK);
 }
 
@@ -271,7 +290,18 @@ wxString CChmodDialog::GetPermissions(const char* previousPermissions)
 	return permission;
 }
 
-bool CChmodDialog::Recursive()
+bool CChmodDialog::Recursive() const
 {
 	return m_recursive;
+}
+
+void CChmodDialog::OnRecurseChanged(wxCommandEvent& event)
+{
+	wxCheckBox* pRecurse = XRCCTRL(*this, "ID_RECURSE", wxCheckBox);
+	wxRadioButton* pApplyAll = XRCCTRL(*this, "ID_APPLYALL", wxRadioButton);
+	wxRadioButton* pApplyFiles = XRCCTRL(*this, "ID_APPLYFILES", wxRadioButton);
+	wxRadioButton* pApplyDirs = XRCCTRL(*this, "ID_APPLYDIRS", wxRadioButton);
+	pApplyAll->Enable(pRecurse->GetValue());
+	pApplyFiles->Enable(pRecurse->GetValue());
+	pApplyDirs->Enable(pRecurse->GetValue());
 }
