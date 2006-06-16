@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-06-12 16:47+0200\n"
+"POT-Creation-Date: 2006-06-16 13:50+0200\n"
 "PO-Revision-Date: 2006-06-05 14:11+0900\n"
 "Last-Translator: Jungman Seo <cowest@gmail.com>\n"
 "Language-Team: \n"
@@ -22,7 +22,8 @@ msgstr "%H:%M:%S 경과"
 msgid "%H:%M:%S left"
 msgstr "%H:%M:%S 남음"
 
-#: ../../locales/../src/interface/QueueView.cpp:128
+#: ../../locales/../src/interface/QueueView.cpp:134
+#: ../../locales/../src/interface/QueueView.cpp:146
 #, c-format
 msgid "%d files added to queue"
 msgstr "%d 개의 파일이 대기열에 추가됨"
@@ -342,7 +343,7 @@ msgstr "선택된 프로토콜은 '계정' 로그온 타입을 미지원"
 
 #: resources.h:5 resources.h:7
 msgid "(0 for no limit)"
-msgstr "0 : 제한없음"
+msgstr "(0은 제한 없음)"
 
 #: resources.h:3
 msgid "(1-10)"
@@ -350,7 +351,7 @@ msgstr "(1-10)"
 
 #: resources.h:10
 msgid "(5-9999, 0 to disable)"
-msgstr ""
+msgstr "(5-9999, 0은 끄기)"
 
 #: resources.h:320
 msgid "-"
@@ -647,7 +648,7 @@ msgstr "컴파일 플래그:"
 
 #: resources.h:1
 msgid "Concurrent transfers"
-msgstr "현재 전송 수"
+msgstr "동시 전송 수"
 
 #: resources.h:218
 msgid "Conditions are c&ase sensitive"
@@ -674,14 +675,14 @@ msgstr "확인이 필요함"
 msgid "Congratulations, your configuration seems to be working."
 msgstr "축하합니다, 사용자의 설정이 제대로 동작합니다."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:428
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:463
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:497
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:511
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:436
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:471
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:505
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:519
 msgid "Connected"
 msgstr "연결됨"
 
-#: ../../locales/../src/interface/QueueView.cpp:1238
+#: ../../locales/../src/interface/QueueView.cpp:1254
 msgid "Connecting"
 msgstr "연결 중"
 
@@ -709,7 +710,7 @@ msgstr "사용자에의해 접속시도 중단"
 msgid "Connection closed"
 msgstr "접속 종료"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:240
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:248
 msgid "Connection established, waiting for welcome message..."
 msgstr "연결되었습니다. 환영 메세지를 기다리는 중..."
 
@@ -718,9 +719,8 @@ msgid "Connection lost"
 msgstr "접속 끊김"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:771
-#, fuzzy
 msgid "Connection timed out"
-msgstr "접속 끊김"
+msgstr "접속시간 초과"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:540
 msgid "Connection with server got closed prematurely."
@@ -738,7 +738,7 @@ msgstr "복사(&Y)"
 msgid "Could not connect to server"
 msgstr "서버에 연결할 수 없음"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2760
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2873
 msgid "Could not establish connection to server"
 msgstr "서버에 연결설정을 할 수 없음"
 
@@ -793,8 +793,8 @@ msgstr ""
 "\"%s\" 를 읽을 수 없습니다, 파일이 올바르고 접근이 가능한지 확인하세요.\n"
 "사이트 관리자에는 어떤 것도 저장되지 않습니다."
 
-#: ../../locales/../src/interface/QueueView.cpp:1581
-#: ../../locales/../src/interface/QueueView.cpp:1617
+#: ../../locales/../src/interface/QueueView.cpp:1596
+#: ../../locales/../src/interface/QueueView.cpp:1632
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -808,16 +808,16 @@ msgstr ""
 msgid "Could not parse server address:"
 msgstr "서버주소를 해석할 수 없음:"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1571
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1594
 #, c-format
 msgid "Could not seek to offset %s within file"
 msgstr "파일에서 %s 위치를 찾을 수 없음"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1504
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1527
 msgid "Could not seek to the end of the file"
 msgstr "파일의 끝을 찾을 수 없음"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1593
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1616
 msgid "Could not spawn IO thread"
 msgstr "IO 쓰레드 생성을 할 수 없음"
 
@@ -829,8 +829,8 @@ msgid ""
 msgstr ""
 "\"%s\" 을 쓸수 없습니다, 사이트 관리자에는 어떤 것도 저장되지 않습니다.:%s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1600
-#: ../../locales/../src/interface/QueueView.cpp:1686
+#: ../../locales/../src/interface/QueueView.cpp:1615
+#: ../../locales/../src/interface/QueueView.cpp:1701
 #, c-format
 msgid "Could not write \"%s\", the queue could not be saved."
 msgstr "\"%s\" 을 쓸수 없습니다, 대기열은 저장되지 않습니다."
@@ -853,8 +853,8 @@ msgstr "현재 디렉토리에 새로운 하위 디렉토리 만들기"
 msgid "Create directory"
 msgstr "디렉토리 만들기"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2013
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1414
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2127
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1397
 #, c-format
 msgid "Creating directory '%s'..."
 msgstr "'%s' 디렉토리 만드는 중..."
@@ -940,7 +940,7 @@ msgstr "새로운 키의 상세 정보:"
 msgid "Dire&ctories"
 msgstr "디렉토리(&C)"
 
-#: ../../locales/../src/interface/QueueView.cpp:649
+#: ../../locales/../src/interface/QueueView.cpp:666
 msgid "Direction"
 msgstr "전송 방향"
 
@@ -970,11 +970,11 @@ msgstr "서버로부터 연결을 끊음"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:114
 #: ../../locales/../src/engine/ControlSocket.cpp:169
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:132
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:133
 msgid "Disconnected from server"
 msgstr "서버로부터 연결이 끊어짐"
 
-#: ../../locales/../src/interface/QueueView.cpp:1227
+#: ../../locales/../src/interface/QueueView.cpp:1243
 #: ../../locales/../src/interface/statuslinectrl.cpp:145
 msgid "Disconnecting from previous server"
 msgstr "이전 서버로부터 연결을 끊는 중"
@@ -1079,16 +1079,16 @@ msgstr "소켓에 쓰는중 %d 오류"
 #: ../../locales/../src/interface/filter.cpp:161
 #: ../../locales/../src/interface/filter.cpp:245
 #: ../../locales/../src/interface/Options.cpp:69
-#: ../../locales/../src/interface/QueueView.cpp:1582
-#: ../../locales/../src/interface/QueueView.cpp:1618
+#: ../../locales/../src/interface/QueueView.cpp:1597
+#: ../../locales/../src/interface/QueueView.cpp:1633
 #: ../../locales/../src/interface/sitemanager.cpp:161
 #: ../../locales/../src/interface/sitemanager.cpp:252
 #: ../../locales/../src/interface/wrapengine.cpp:554
 msgid "Error loading xml file"
 msgstr "xml 파일을 로딩 중 오류"
 
-#: ../../locales/../src/interface/QueueView.cpp:1601
-#: ../../locales/../src/interface/QueueView.cpp:1687
+#: ../../locales/../src/interface/QueueView.cpp:1616
+#: ../../locales/../src/interface/QueueView.cpp:1702
 #: ../../locales/../src/interface/sitemanager.cpp:278
 #: ../../locales/../src/interface/wrapengine.cpp:714
 msgid "Error writing xml file"
@@ -1138,8 +1138,8 @@ msgstr "xml파일의 빽업 복사 생성 실패"
 msgid "Failed to create listen socket, aborting"
 msgstr "대기 소켓 생성을 실패, 중단"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2739
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2743
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2852
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2856
 msgid "Failed to create listening socket for active mode transfer"
 msgstr "액티브 모드 전송을 위한 대기 소켓 생성 실패"
 
@@ -1159,17 +1159,17 @@ msgstr "FTP 엔진 초기화 실패"
 msgid "Failed to load panels, invalid resource files?"
 msgstr "패널 로드 실패, 잘못된 리소스 파일?"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1495
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1518
 #, c-format
 msgid "Failed to open \"%s\" for appending / writing"
 msgstr "추가/쓰기를 위한 \"%s\" 열기 실패"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1555
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1578
 #, c-format
 msgid "Failed to open \"%s\" for reading"
 msgstr "일기 위한 \"%s\" 열기 실패"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1532
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1555
 #, c-format
 msgid "Failed to open \"%s\" for writing"
 msgstr "쓰기 위한 \"%s\" 열기 실패"
@@ -1186,11 +1186,11 @@ msgstr "디렉토리 목록 갱신 실패"
 msgid "Failed to retrieve external ip address, aborting"
 msgstr "외부 IP 주소 갱신 실패, 중지"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2506
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2619
 msgid "Failed to retrieve external ip address, using local address"
 msgstr "외부 IP 주소 갱신 실패, 로컬 주소 사용"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2525
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2638
 msgid "Failed to retrieve local ip address."
 msgstr "로컬 IP 주소 갱신하는데 실패했습니다."
 
@@ -1363,11 +1363,11 @@ msgstr "그룹 권한"
 msgid "H&igh"
 msgstr "높음(&I)"
 
-#: ../../locales/../src/interface/QueueView.cpp:798
+#: ../../locales/../src/interface/QueueView.cpp:814
 msgid "High"
 msgstr "높음"
 
-#: ../../locales/../src/interface/QueueView.cpp:800
+#: ../../locales/../src/interface/QueueView.cpp:816
 msgid "Highest"
 msgstr "가장 높음"
 
@@ -1401,6 +1401,8 @@ msgid ""
 "If no data can be sent or received during this time, the connection will be "
 "closed and FileZilla will try to reconnect."
 msgstr ""
+"이 시간 동안 데이터를 보내거나 받을 수 없다면, FileZilla는 접속을 종료하고  "
+"재접속을 할 것입니다."
 
 #: resources.h:302
 msgid ""
@@ -1426,7 +1428,7 @@ msgstr "이 문제가 여전하다면, 사용자의 라우터 제조사에 문�
 
 #: resources.h:135
 msgid "If you change the language, you should restart FileZilla."
-msgstr "사용자가 언어를 바꾸면, FileZilla를 재시작 해야 합니다."
+msgstr "언어설정을 바꾸면, FileZilla를 재시작 해야 합니다."
 
 #: resources.h:328
 msgid ""
@@ -1441,7 +1443,7 @@ msgid ""
 "If you enter the wrong filetypes, those files may get corrupted when "
 "transferred."
 msgstr ""
-"사용자가 잘못된 파일타입을 입력하면, 이런 파일은 전송후 오류를 일으킬 수 있습"
+"사용자가 잘못된 파일타입을 입력하는 경우, 전송후 파일이 오류를 일으킬 수 있습"
 "니다."
 
 #: resources.h:329
@@ -1633,7 +1635,7 @@ msgstr "로컬 필터:"
 msgid "Local site:"
 msgstr "로컬 컴퓨터:"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:372
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:380
 msgid ""
 "Login data contains non-ascii characters and server might not be UTF-8 "
 "aware. Trying local charset."
@@ -1641,11 +1643,11 @@ msgstr ""
 "로그인 데이터는 아스키 문자가 아닌것을 포함하고있고 서버는 UTF-8 인식을 하지 "
 "못할 것입니다. 로컬 문자셋으로 시도"
 
-#: ../../locales/../src/interface/QueueView.cpp:793
+#: ../../locales/../src/interface/QueueView.cpp:809
 msgid "Low"
 msgstr "낮음"
 
-#: ../../locales/../src/interface/QueueView.cpp:791
+#: ../../locales/../src/interface/QueueView.cpp:807
 msgid "Lowest"
 msgstr "가장 낮음"
 
@@ -1664,7 +1666,7 @@ msgstr "아래의 모든 필터 적용"
 
 #: resources.h:2
 msgid "Maximum simultaneous &transfers:"
-msgstr "최대 동시 전송수(&T):"
+msgstr "최대 동시 전송 수(&T):"
 
 #: resources.h:131
 msgid "Medium icons"
@@ -1716,7 +1718,7 @@ msgstr "새 폴더"
 msgid "New site"
 msgstr "새 사이트"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2483
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2596
 msgid "No external IP address set, trying default."
 msgstr "외부 IP 주소가 설정되지 않았습니다. 기본설정으로 시도합니다."
 
@@ -1734,7 +1736,7 @@ msgstr "가능한 이미지가 없음"
 msgid "No themes in themes.xml"
 msgstr "theme.xml에 테마가 없음"
 
-#: resources.h:47 ../../locales/../src/interface/QueueView.cpp:796
+#: resources.h:47 ../../locales/../src/interface/QueueView.cpp:812
 #: ../../locales/../src/interface/sitemanager.cpp:585
 #: ../../locales/../src/interface/sitemanager.cpp:616
 #: ../../locales/../src/interface/sitemanager.cpp:816
@@ -1876,6 +1878,8 @@ msgstr "이 서버의 암호를 입력하세요:"
 msgid ""
 "Please enter a timeout between 5 and 9999 seconds or 0 to disable timeouts."
 msgstr ""
+"시간초과 설정은 5초에서 9999초 사이의 값을 넣어 주세요. 0은 시간초과기능을 사"
+"용하지 않습니다."
 
 #: ../../locales/../src/interface/filter.cpp:544
 msgid "Please enter a unique name for this filter set"
@@ -2010,7 +2014,7 @@ msgstr "선택된 파일의 새로운 속성을 선택하세요."
 msgid "Preview"
 msgstr "미리보기"
 
-#: ../../locales/../src/interface/QueueView.cpp:652
+#: ../../locales/../src/interface/QueueView.cpp:669
 msgid "Priority"
 msgstr "우선순위"
 
@@ -2022,22 +2026,22 @@ msgstr "대기열 진행(&Q)"
 msgid "Public permissions"
 msgstr "공동 권한"
 
-#: ../../locales/../src/interface/QueueView.cpp:1447
+#: ../../locales/../src/interface/QueueView.cpp:1463
 #, c-format
 msgid "Queue: %s%d KB"
 msgstr "대기열: %s%d KB"
 
-#: ../../locales/../src/interface/QueueView.cpp:1442
+#: ../../locales/../src/interface/QueueView.cpp:1458
 #, c-format
 msgid "Queue: %s%d MB"
 msgstr "대기열: %s%d MB"
 
-#: ../../locales/../src/interface/QueueView.cpp:1450
+#: ../../locales/../src/interface/QueueView.cpp:1466
 #, c-format
 msgid "Queue: %s%d bytes"
 msgstr "대기열: %s%d bytes"
 
-#: ../../locales/../src/interface/QueueView.cpp:1438
+#: ../../locales/../src/interface/QueueView.cpp:1454
 msgid "Queue: empty"
 msgstr "대기열: 비었음"
 
@@ -2080,7 +2084,7 @@ msgstr "마지막으로 사용한 서버로 재접속"
 msgid "Refresh the file and folder lists"
 msgstr "파일과 폴더 목록 새로고침"
 
-#: ../../locales/../src/interface/QueueView.cpp:650
+#: ../../locales/../src/interface/QueueView.cpp:667
 msgid "Remote file"
 msgstr "서버 파일"
 
@@ -2104,8 +2108,8 @@ msgstr "파일 이름바꾸기"
 msgid "Rename selected files and folders"
 msgstr "선택된 파일과 폴더 이름 바꾸기"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2210
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1834
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2323
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1815
 #, c-format
 msgid "Renaming '%s' to '%s'"
 msgstr "'%s' 에서 '%s' 로 이름 바꾸기"
@@ -2116,12 +2120,12 @@ msgstr "'%s' 에서 '%s' 로 이름 바꾸기"
 msgid "Response:"
 msgstr "응답:"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:677
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:685
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:628
 msgid "Retrieving directory listing..."
 msgstr "디렉토리 목록 갱신 중..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2491
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2604
 #: ../../locales/../src/interface/netconfwizard.cpp:678
 #, c-format
 msgid "Retrieving external IP address from %s"
@@ -2137,11 +2141,11 @@ msgstr "SFTP"
 msgid "Save settings?"
 msgstr "설정을 저장할까요?"
 
-#: ../../locales/../src/interface/QueueView.cpp:1505
+#: ../../locales/../src/interface/QueueView.cpp:1520
 msgid "Scanning for files to add to queue"
 msgstr "대기열에 추가할 파일 검사"
 
-#: ../../locales/../src/interface/QueueView.cpp:1507
+#: ../../locales/../src/interface/QueueView.cpp:1522
 msgid "Scanning for files to upload"
 msgstr "업로드할 파일 검사"
 
@@ -2161,16 +2165,16 @@ msgstr "테마 선택"
 msgid "Send custom command to the server otherwise not available"
 msgstr "다른 방법으로 서버에 사용자 명령을 보냄"
 
-#: ../../locales/../src/interface/QueueView.cpp:648
+#: ../../locales/../src/interface/QueueView.cpp:665
 msgid "Server / Local file"
 msgstr "서버 / 로컬 파일"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2818
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2931
 #, c-format
 msgid "Server does not support resume of files > %d GB."
 msgstr "서버가 %d GB 이상의 파일 이어전송을 지원하지 않습니다."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2814
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2927
 #, c-format
 msgid ""
 "Server does not support resume of files > %d GB. End transfer since "
@@ -2179,15 +2183,15 @@ msgstr ""
 "서버가 %d GB 이상의 파일 이어전송을 지원하지 않습니다. 파일 전송을 종료합니"
 "다."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1439
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1462
 msgid "Server does not support resume of files > 2GB."
 msgstr "서버가 2GB 이상의 파일 이어전송을 지원하지 않습니다."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1434
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1457
 msgid "Server does not support resume of files > 4GB."
 msgstr "서버가 4GB 이상의 파일 이어전송을 지원하지 않습니다."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2829
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2942
 #, c-format
 msgid ""
 "Server may not support resume of files > %d GB. End transfer since filesizes "
@@ -2196,7 +2200,7 @@ msgstr ""
 "서버가 %dGB 이상의 파일 이어전송을 지원하지 않을 수 있습니다. 파일 전송을 종"
 "료합니다."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:567
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:575
 msgid ""
 "Server requires an account. Please specify an account using the Site Manager"
 msgstr "계정이 필요합니다. 사이트 관리자를 이용해 계정을 적어 주세요."
@@ -2213,7 +2217,7 @@ msgstr "계정이 필요합니다. 사이트 관리자를 이용해 계정을 �
 msgid "Server sent invalid reply."
 msgstr "서버가 잘못된 응답을 보냈습니다."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2452
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2565
 msgid ""
 "Server sent passive reply with unroutable address. Using server address "
 "instead."
@@ -2229,8 +2233,8 @@ msgstr "서버종류(&T)"
 msgid "Set &Priority"
 msgstr "우선순위 설정(&P)"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2329
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1732
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2442
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1713
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
 msgstr "'%s'의 권한을 '%s'로 설정"
@@ -2247,7 +2251,7 @@ msgstr "사이트 관리자"
 msgid "Site Manager already open"
 msgstr "사이트 관리자 이미 열림"
 
-#: ../../locales/../src/interface/QueueView.cpp:651
+#: ../../locales/../src/interface/QueueView.cpp:668
 msgid "Size"
 msgstr "크기"
 
@@ -2258,16 +2262,16 @@ msgstr "크기"
 msgid "Size unknown"
 msgstr "알수없는 크기"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1711
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1796
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1734
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1819
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:462
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:535
 #, c-format
 msgid "Skipping download of %s"
 msgstr "%s의 다운로드 취소"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1715
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1800
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1738
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1823
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:466
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:539
 #, c-format
@@ -2285,19 +2289,19 @@ msgid ""
 msgstr ""
 "설정이 잘못된 서버는 라우터에의해, 서버의 로컬 IP 주소를 답할 수도 있습니다."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1110
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1133
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1063
 #, c-format
 msgid "Starting download of %s"
 msgstr "%s의 다운로드 시작"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1114
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1137
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1067
 #, c-format
 msgid "Starting upload of %s"
 msgstr "%s의 업로드 시작"
 
-#: ../../locales/../src/interface/QueueView.cpp:653
+#: ../../locales/../src/interface/QueueView.cpp:670
 msgid "Status"
 msgstr "상태"
 
@@ -2336,7 +2340,7 @@ msgstr "지정한 파일이 이미 존재합니다. 정말 계속 할까요?"
 msgid "Test results"
 msgstr "테스트 결과"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2835
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2948
 msgid "Testing resume capabilities of server"
 msgstr "서버의 이어전송 여부 검사"
 
@@ -2452,12 +2456,11 @@ msgstr "시간"
 
 #: resources.h:9
 msgid "Time&out in seconds:"
-msgstr ""
+msgstr "시간초과 초설정(&O):"
 
 #: resources.h:8
-#, fuzzy
 msgid "Timeout"
-msgstr "시간"
+msgstr "시간초과"
 
 #: resources.h:352 resources.h:353
 msgid "Toggles processing of the transfer queue"
@@ -2496,7 +2499,7 @@ msgstr "전송 설정"
 msgid "Transferred data got tainted."
 msgstr "전송된 데이터가 손상되었습니다."
 
-#: ../../locales/../src/interface/QueueView.cpp:1267
+#: ../../locales/../src/interface/QueueView.cpp:1283
 #: ../../locales/../src/interface/statuslinectrl.cpp:154
 msgid "Transferring"
 msgstr "전송 중"
@@ -2606,7 +2609,7 @@ msgstr "VMS"
 msgid "W&rite"
 msgstr "쓰기(&R)"
 
-#: ../../locales/../src/interface/QueueView.cpp:1470
+#: ../../locales/../src/interface/QueueView.cpp:1485
 msgid "Waiting"
 msgstr "기다리는 중"
 
