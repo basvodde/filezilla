@@ -1242,6 +1242,8 @@ void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 		return;
 	}
 
+	const int applyType = m_pChmodDlg->GetApplyType();
+
 	item = -1;
 	while (true)
 	{
@@ -1264,10 +1266,16 @@ void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 			return;
 		}
 
-		char permissions[9];
-		bool res = ConvertPermissions(data->pDirEntry->permissions, permissions);
-		wxString newPerms = m_pChmodDlg->GetPermissions(res ? permissions : 0);
-		m_pState->m_pCommandQueue->ProcessCommand(new CChmodCommand(m_pDirectoryListing->path, data->pDirEntry->name, newPerms));
+		if (!applyType ||
+			(!data->pDirEntry->dir && applyType == 1) ||
+			(data->pDirEntry->dir && applyType == 2))
+		{
+			char permissions[9];
+			bool res = ConvertPermissions(data->pDirEntry->permissions, permissions);
+			wxString newPerms = m_pChmodDlg->GetPermissions(res ? permissions : 0);
+
+			m_pState->m_pCommandQueue->ProcessCommand(new CChmodCommand(m_pDirectoryListing->path, data->pDirEntry->name, newPerms));
+		}
 
 		if (m_pChmodDlg->Recursive() && data->pDirEntry->dir)
 		{
