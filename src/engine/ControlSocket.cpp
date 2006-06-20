@@ -139,7 +139,7 @@ int CControlSocket::Connect(const CServer &server)
 
 int CControlSocket::ContinueConnect(const wxIPV4address *address)
 {
-	LogMessage(__TFILE__, __LINE__, this, Debug_Verbose, _T("ContinueConnect(%d) cmd=%d, m_pEngine=%d, m_pCurrentServer=%d"), (int)address, GetCurrentCommandId(), m_pEngine, m_pCurrentServer);
+	LogMessage(__TFILE__, __LINE__, this, Debug_Verbose, _T("ContinueConnect(%p) cmd=%d, m_pEngine=%p, m_pCurrentServer=%p"), address, GetCurrentCommandId(), m_pEngine, m_pCurrentServer);
 	if (GetCurrentCommandId() != cmd_connect ||
 		!m_pCurrentServer)
 	{
