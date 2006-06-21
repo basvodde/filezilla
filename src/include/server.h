@@ -4,7 +4,8 @@
 enum ServerProtocol
 {
 	FTP,
-	SFTP
+	SFTP,
+	HTTP
 };
 
 enum ServerType

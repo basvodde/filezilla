@@ -28,7 +28,8 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 			m_protocol = SFTP;
 		else
 		{
-			error = _("Invalid protocol specified. Valid protocols are ftp and sftp:// at the moment.");
+			// TODO: http:// once WebDAV is officially supported
+			error = _("Invalid protocol specified. Valid protocols are ftp:// and sftp:// at the moment.");
 			return false;
 		}
 	}
@@ -96,12 +97,17 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 			switch (m_protocol)
 			{
 			case FTP:
-			default:
 				port = 21;
 				break;
 			case SFTP:
 				port = 22;
 				break;
+			case HTTP:
+				port = 80;
+				break;
+			default:
+				// Shouldn't ever be here
+				wxASSERT(false);
 			}
 		}
 		else if (port > 65535)
@@ -435,6 +441,11 @@ wxString CServer::FormatServer() const
 	case SFTP:
 		server = _T("sftp://") + server;
 		if (m_port != 22)
+			server += wxString::Format(_T(":%d"), m_port);
+		break;
+	case HTTP:
+		server = _T("http://") + server;
+		if (m_port != 80)
 			server += wxString::Format(_T(":%d"), m_port);
 		break;
 	}
