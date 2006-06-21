@@ -21,6 +21,7 @@
 #include "filter.h"
 #include "netconfwizard.h"
 #include "quickconnectbar.h"
+#include "updatewizard.h"
 
 #ifndef __WXMSW__
 #include "resources/filezilla.xpm"
@@ -69,6 +70,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_QUEUEVIEW"), CMainFrame::OnUpdateToggleQueueView)
 	EVT_MENU(wxID_ABOUT, CMainFrame::OnMenuHelpAbout)
 	EVT_TOOL(XRCID("ID_TOOLBAR_FILTER"), CMainFrame::OnFilter)
+	EVT_MENU(XRCID("ID_CHECKFORUPDATES"), CMainFrame::OnCheckForUpdates)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
@@ -969,4 +971,13 @@ void CMainFrame::OnFilter(wxCommandEvent& event)
 	dlg.Create(this);
 	dlg.ShowModal();
 	m_pState->ApplyCurrentFilter();
+}
+
+void CMainFrame::OnCheckForUpdates(wxCommandEvent& event)
+{
+	CUpdateWizard dlg(this);
+	if (!dlg.Load())
+		return;
+	
+	dlg.Run();
 }

@@ -2503,4 +2503,121 @@
       </object>
     </object>
   </object>
+  <object class="wxPanel" name="ID_CHECKFORUPDATE1">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticText">
+          <label>Using this wizard you can check for available updates to FileZilla.</label>
+        </object>
+      </object>
+      <object class="spacer">
+        <size>0,50</size>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxStaticText" name="ID_CHECKINGTEXT">
+              <label>Checking for updates</label>
+            </object>
+            <flag>wxALIGN_CENTRE_HORIZONTAL</flag>
+          </object>
+          <object class="sizeritem">
+            <object class="wxGauge" name="ID_CHECKINGPROGRESS">
+              <style>wxGA_PROGRESSBAR|wxGA_SMOOTH</style>
+            </object>
+            <flag>wxGROW</flag>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText" name="ID_CHECKINGTEXTPROGRESS">
+              <label>&lt;progress&gt;</label>
+            </object>
+            <flag>wxALIGN_CENTRE_HORIZONTAL</flag>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+      <object class="spacer">
+        <option>1</option>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticText">
+          <label>Advanced options:</label>
+        </object>
+      </object>
+      <object class="sizeritem">
+        <object class="wxCheckBox" name="ID_CHECKBETA">
+          <label>&amp;Check for beta versions of FileZilla</label>
+        </object>
+        <flag>wxTOP|wxBOTTOM</flag>
+        <border>3</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxCheckBox" name="ID_CHECKNIGHTLY">
+          <label>C&amp;heck for nightly builds of FileZilla</label>
+        </object>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_CHECKFORUPDATE2">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticText">
+          <label>A newer version of FileZilla is available:</label>
+        </object>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticText" name="ID_VERSION">
+          <label>&lt;version&gt;</label>
+        </object>
+      </object>
+      <object class="spacer">
+        <size>0,20</size>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticText" name="ID_UPDATEDESC">
+          <label>&lt;write here what to do next&gt;</label>
+        </object>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_CHECKFORUPDATE3">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxStaticText" name="ID_CHECKINGTEXT">
+              <label>&lt;downloading&gt;</label>
+            </object>
+            <flag>wxALIGN_CENTRE_HORIZONTAL</flag>
+          </object>
+          <object class="sizeritem">
+            <object class="wxGauge" name="ID_CHECKINGPROGRESS">
+              <style>wxGA_PROGRESSBAR|wxGA_SMOOTH</style>
+            </object>
+            <flag>wxGROW</flag>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText" name="ID_CHECKINGPROGRESSTEXT">
+              <label>&lt;progresstext&gt;</label>
+            </object>
+            <flag>wxALIGN_CENTRE_HORIZONTAL</flag>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+      <object class="spacer">
+        <option>1</option>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticText">
+          <label>&lt;completiontext&gt;</label>
+        </object>
+      </object>
+    </object>
+  </object>
 </resource>
