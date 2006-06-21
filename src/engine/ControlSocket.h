@@ -68,16 +68,16 @@ public:
 	virtual int ContinueConnect(const wxIPV4address *address);
 	virtual int Disconnect();
 	virtual void Cancel();
-	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T(""), bool refresh = false) = 0;
+	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T(""), bool refresh = false) { return FZ_REPLY_NOTSUPPORTED; }
 	virtual int FileTransfer(const wxString localFile, const CServerPath &remotePath,
 							 const wxString &remoteFile, bool download,
-							 const CFileTransferCommand::t_transferSettings& transferSettings) = 0;
-	virtual int RawCommand(const wxString& command = _T("")) = 0;
-	virtual int Delete(const CServerPath& path = CServerPath(), const wxString& file = _T("")) = 0;
-	virtual int RemoveDir(const CServerPath& path = CServerPath(), const wxString& subDir = _T("")) = 0;
-	virtual int Mkdir(const CServerPath& path) = 0;
-	virtual int Rename(const CRenameCommand& command) = 0;
-	virtual int Chmod(const CChmodCommand& command) = 0;
+							 const CFileTransferCommand::t_transferSettings& transferSettings) { return FZ_REPLY_NOTSUPPORTED; }
+	virtual int RawCommand(const wxString& command = _T("")) { return FZ_REPLY_NOTSUPPORTED; }
+	virtual int Delete(const CServerPath& path = CServerPath(), const wxString& file = _T("")) { return FZ_REPLY_NOTSUPPORTED; }
+	virtual int RemoveDir(const CServerPath& path = CServerPath(), const wxString& subDir = _T("")) { return FZ_REPLY_NOTSUPPORTED; }
+	virtual int Mkdir(const CServerPath& path) { return FZ_REPLY_NOTSUPPORTED; }
+	virtual int Rename(const CRenameCommand& command) { return FZ_REPLY_NOTSUPPORTED; }
+	virtual int Chmod(const CChmodCommand& command) { return FZ_REPLY_NOTSUPPORTED; }
 	virtual bool Connected() const { return IsConnected(); }
 
 	enum Command GetCurrentCommandId() const;

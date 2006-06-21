@@ -67,7 +67,6 @@ public:
 	virtual int FileTransfer(const wxString localFile, const CServerPath &remotePath,
 							 const wxString &remoteFile, bool download,
 							 const CFileTransferCommand::t_transferSettings& transferSettings);
-	virtual int RawCommand(const wxString& command = _T("")) { return 0; }
 	virtual int Delete(const CServerPath& path = CServerPath(), const wxString& file = _T(""));
 	virtual int RemoveDir(const CServerPath& path = CServerPath(), const wxString& subDir = _T(""));
 	virtual int Mkdir(const CServerPath& path);

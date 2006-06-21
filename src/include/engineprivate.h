@@ -12,6 +12,7 @@ enum EngineNotificationType
 class wxFzEngineEvent;
 class CControlSocket;
 class CAsyncHostResolver;
+class CLogging;
 class CFileZillaEnginePrivate : public wxEvtHandler
 {
 public:
@@ -97,6 +98,8 @@ protected:
 
 	// Used to synchronize access to the notification list
 	wxCriticalSection m_lock;
+
+	CLogging* m_pLogging;
 };
 
 #endif //__FILEZILLAENGINEPRIVATE_H__

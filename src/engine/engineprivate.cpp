@@ -4,6 +4,7 @@
 #include "ftpcontrolsocket.h"
 #include "sftpcontrolsocket.h"
 #include "directorycache.h"
+#include "logging_private.h"
 
 class wxFzEngineEvent : public wxEvent
 {
@@ -58,6 +59,8 @@ CFileZillaEnginePrivate::CFileZillaEnginePrivate()
 	m_nControlSocketError = 0;
 	m_asyncRequestCounter = 0;
 	m_engineList.push_back(this);
+
+	m_pLogging = new CLogging(this);
 }
 
 CFileZillaEnginePrivate::~CFileZillaEnginePrivate()
@@ -84,6 +87,8 @@ CFileZillaEnginePrivate::~CFileZillaEnginePrivate()
 			m_engineList.erase(iter);
 			break;
 		}
+
+	delete m_pLogging;
 }
 
 bool CFileZillaEnginePrivate::SendEvent(enum EngineNotificationType eventType, int data /*=0*/)
@@ -196,6 +201,12 @@ int CFileZillaEnginePrivate::ResetOperation(int nErrorCode)
 {
 	if (m_pCurrentCommand)
 	{
+		if ((nErrorCode & FZ_REPLY_NOTSUPPORTED) == FZ_REPLY_NOTSUPPORTED)
+		{
+			wxASSERT(m_bIsInCommand);
+			m_pLogging->LogMessage(Error, _("Command not supported by this protocol"));
+		}
+
 		if (!m_bIsInCommand)
 		{
 			COperationNotification *notification = new COperationNotification();
