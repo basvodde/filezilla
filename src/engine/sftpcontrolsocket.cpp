@@ -591,10 +591,8 @@ class CSftpListOpData : public COpData
 {
 public:
 	CSftpListOpData()
+		: COpData(cmd_list)
 	{
-		opId = cmd_list;
-
-		transferEndReason = 0;
 		pParser = 0;
 	}
 
@@ -611,8 +609,6 @@ public:
 	// Set to true to get a directory listing even if a cache
 	// lookup can be made after finding out true remote directory
 	bool refresh;
-
-	int transferEndReason;
 };
 
 enum listStates
@@ -810,8 +806,8 @@ class CSftpChangeDirOpData : public COpData
 {
 public:
 	CSftpChangeDirOpData()
+		: COpData(cmd_private)
 	{
-		opId = cmd_private;
 		triedMkd = false;
 	}
 
@@ -1565,7 +1561,11 @@ wxString CSftpControlSocket::QuoteFilename(wxString filename)
 class CSftpDeleteOpData : public COpData
 	{
 	public:
-		CSftpDeleteOpData() { opId = cmd_delete; }
+		CSftpDeleteOpData()
+			: COpData(cmd_delete)
+		{
+		}
+
 		virtual ~CSftpDeleteOpData() { }
 
 		CServerPath path;
@@ -1623,7 +1623,11 @@ int CSftpControlSocket::DeleteParseResponse(bool successful, const wxString& rep
 class CSftpRemoveDirOpData : public COpData
 {
 public:
-	CSftpRemoveDirOpData() { opId = cmd_removedir; }
+	CSftpRemoveDirOpData()
+		: COpData(cmd_removedir)
+	{
+	}
+
 	virtual ~CSftpRemoveDirOpData() { }
 
 	CServerPath path;
@@ -1683,9 +1687,8 @@ class CSftpChmodOpData : public COpData
 {
 public:
 	CSftpChmodOpData(const CChmodCommand& command)
-		: m_cmd(command)
+		: COpData(cmd_chmod), m_cmd(command)
 	{
-		opId = cmd_chmod;
 		m_useAbsolute = false;
 	}
 
@@ -1785,9 +1788,8 @@ class CSftpRenameOpData : public COpData
 {
 public:
 	CSftpRenameOpData(const CRenameCommand& command)
-		: m_cmd(command)
+		: COpData(cmd_rename), m_cmd(command)
 	{
-		opId = cmd_rename;
 		m_useAbsolute = false;
 	}
 

@@ -76,8 +76,6 @@ public:
 
 	virtual bool Connected() const { return m_pInputThread != 0; }
 
-	virtual void TransferEnd(int reason) { }
-
 	virtual bool SetAsyncRequestReply(CAsyncRequestNotification *pNotification);
 
 	bool SendRequest(CAsyncRequestNotification *pNotification);

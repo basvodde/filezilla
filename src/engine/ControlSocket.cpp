@@ -14,9 +14,9 @@ BEGIN_EVENT_TABLE(CControlSocket, wxEvtHandler)
 	EVT_TIMER(wxID_ANY, CControlSocket::OnTimer)
 END_EVENT_TABLE();
 
-COpData::COpData()
+COpData::COpData(enum Command op_Id)
+	: opId(op_Id)
 {
-	opId = cmd_none;
 	opState = 0;
 
 	pNextOpData = 0;
@@ -596,10 +596,10 @@ int CControlSocket::CheckOverwriteFile()
 }
 
 CFileTransferOpData::CFileTransferOpData() :
+	COpData(cmd_transfer),
 	localFileSize(-1), remoteFileSize(-1),
 	tryAbsolutePath(false), resume(false), transferInitiated(false)
 {
-	opId = cmd_transfer;
 }
 
 CFileTransferOpData::~CFileTransferOpData()

@@ -19,6 +19,7 @@ EVT_FZ_EXTERNALIPRESOLVE(wxID_ANY, CFtpControlSocket::OnExternalIPAddress)
 END_EVENT_TABLE();
 
 CRawTransferOpData::CRawTransferOpData()
+	: COpData(cmd_rawtransfer)
 {
 	bTriedPasv = bTriedActive = false;
 	bPasv = true;
@@ -81,12 +82,11 @@ class CFtpLogonOpData : public COpData
 {
 public:
 	CFtpLogonOpData()
+		: COpData(cmd_connect)
 	{
 		logonSequencePos = 0;
 		logonType = 0;
 		nCommand = 0;
-
-		opId = cmd_connect;
 
 		waitChallenge = false;
 		gotPassword = false;
@@ -653,8 +653,8 @@ class CFtpListOpData : public COpData, public CFtpTransferOpData
 {
 public:
 	CFtpListOpData()
+		: COpData(cmd_list)
 	{
-		opId = cmd_list;
 		m_pDirectoryListingParser = 0;
 	}
 
@@ -933,8 +933,8 @@ class CFtpChangeDirOpData : public COpData
 {
 public:
 	CFtpChangeDirOpData()
+		: COpData(cmd_private)
 	{
-		opId = cmd_private;
 		triedMkd = false;
 	}
 
@@ -1872,9 +1872,9 @@ class CRawCommandOpData : public COpData
 {
 public:
 	CRawCommandOpData(const wxString& command)
+		: COpData(cmd_raw)
 	{
 		m_command = command;
-		opId = cmd_raw;
 	}
 
 	wxString m_command;
@@ -1932,7 +1932,11 @@ int CFtpControlSocket::RawCommandParseResponse()
 class CFtpDeleteOpData : public COpData
 {
 public:
-	CFtpDeleteOpData() { opId = cmd_delete; }
+	CFtpDeleteOpData()
+		: COpData(cmd_delete)
+	{
+	}
+
 	virtual ~CFtpDeleteOpData() { }
 
 	CServerPath path;
@@ -2016,7 +2020,11 @@ int CFtpControlSocket::DeleteParseResponse()
 class CFtpRemoveDirOpData : public COpData
 {
 public:
-	CFtpRemoveDirOpData() { opId = cmd_removedir; }
+	CFtpRemoveDirOpData()
+		: COpData(cmd_removedir)
+	{
+	}
+
 	virtual ~CFtpRemoveDirOpData() { }
 
 	CServerPath path;
@@ -2292,9 +2300,8 @@ class CFtpRenameOpData : public COpData
 {
 public:
 	CFtpRenameOpData(const CRenameCommand& command)
-		: m_cmd(command)
+		: COpData(cmd_rename), m_cmd(command)
 	{
-		opId = cmd_rename;
 		m_useAbsolute = false;
 	}
 
@@ -2412,9 +2419,8 @@ class CFtpChmodOpData : public COpData
 {
 public:
 	CFtpChmodOpData(const CChmodCommand& command)
-		: m_cmd(command)
+		: COpData(cmd_chmod), m_cmd(command)
 	{
-		opId = cmd_chmod;
 		m_useAbsolute = false;
 	}
 
@@ -2657,7 +2663,6 @@ void CFtpControlSocket::OnExternalIPAddress(fzExternalIPResolveEvent& event)
 int CFtpControlSocket::Transfer(const wxString& cmd, CFtpTransferOpData* oldData)
 {
 	CRawTransferOpData *pData = new CRawTransferOpData;
-	pData->opId = cmd_rawtransfer;
 	pData->pNextOpData = m_pCurOpData;
 	m_pCurOpData = pData;
 

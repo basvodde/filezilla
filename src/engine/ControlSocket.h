@@ -4,11 +4,11 @@
 class COpData
 {
 public:
-	COpData();
+	COpData(enum Command op_Id);
 	virtual ~COpData();
 
 	int opState;
-	enum Command opId;
+	const enum Command opId;
 
 	bool waitForAsyncRequest;
 
@@ -41,8 +41,8 @@ class CMkdirOpData : public COpData
 {
 public:
 	CMkdirOpData()
+		: COpData(cmd_mkdir)
 	{
-		opId = cmd_mkdir;
 	}
 
 	virtual ~CMkdirOpData()
@@ -82,7 +82,7 @@ public:
 
 	enum Command GetCurrentCommandId() const;
 
-	virtual void TransferEnd(int reason) = 0;
+	virtual void TransferEnd(int reason) { }
 
 	virtual bool SetAsyncRequestReply(CAsyncRequestNotification *pNotification) = 0;
 
