@@ -8,4 +8,4 @@
 #define wxCONV_FAILED ((size_t)-1)
 #endif
 
-#endif __COMPATIBILITY_H__
+#endif //__COMPATIBILITY_H__
