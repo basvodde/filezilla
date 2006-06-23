@@ -806,7 +806,7 @@ class CSftpChangeDirOpData : public COpData
 {
 public:
 	CSftpChangeDirOpData()
-		: COpData(cmd_private)
+		: COpData(cmd_cwd)
 	{
 		triedMkd = false;
 	}
@@ -989,7 +989,7 @@ int CSftpControlSocket::ProcessReply(bool successful, const wxString& reply /*=_
 		return ListParseResponse(successful, reply);
 	case cmd_transfer:
 		return FileTransferParseResponse(successful, reply);
-	case cmd_private:
+	case cmd_cwd:
 		return ChangeDirParseResponse(successful, reply);
 	case cmd_mkdir:
 		return MkdirParseResponse(successful, reply);
@@ -1036,7 +1036,7 @@ int CSftpControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
 		return ListSend(prevResult);
 	case cmd_transfer:
 		return FileTransferSend(prevResult);
-	case cmd_private:
+	case cmd_cwd:
 		return ChangeDirSend();
 	default:
 		LogMessage(::Debug_Warning, __TFILE__, __LINE__, _T("Unknown opID (%d) in SendNextCommand"), m_pCurOpData->opId);

@@ -20,8 +20,8 @@ enum Command
 	cmd_chmod,
 	cmd_raw,
 
-	// Only use internally
-	cmd_private,
+	// Only used internally
+	cmd_cwd,
 	cmd_rawtransfer
 };
 

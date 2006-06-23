@@ -260,7 +260,7 @@ void CFtpControlSocket::ParseResponse()
 	case cmd_list:
 		ListParseResponse();
 		break;
-	case cmd_private:
+	case cmd_cwd:
 		ChangeDirParseResponse();
 		break;
 	case cmd_transfer:
@@ -902,7 +902,7 @@ int CFtpControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
 		return ListSend(prevResult);
 	case cmd_connect:
 		return LogonSend();
-	case cmd_private:
+	case cmd_cwd:
 		return ChangeDirSend();
 	case cmd_transfer:
 		return FileTransferSend(prevResult);
@@ -933,7 +933,7 @@ class CFtpChangeDirOpData : public COpData
 {
 public:
 	CFtpChangeDirOpData()
-		: COpData(cmd_private)
+		: COpData(cmd_cwd)
 	{
 		triedMkd = false;
 	}
