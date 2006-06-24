@@ -1127,6 +1127,15 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 {
 	LogMessage(Debug_Verbose, _T("CFtpControlSocket::FileTransfer()"));
 
+	if (localFile == _T(""))
+	{
+		if (!download)
+			ResetOperation(FZ_REPLY_CRITICALERROR | FZ_REPLY_NOTSUPPORTED);
+		else
+			ResetOperation(FZ_REPLY_SYNTAXERROR);
+		return FZ_REPLY_ERROR;
+	}
+
 	if (download)
 	{
 		wxString filename = remotePath.FormatFilename(remoteFile);

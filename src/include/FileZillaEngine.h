@@ -30,8 +30,9 @@ public:
 	bool IsActive(bool recv);
 
 	// Returns the next pending notification.
-	// Has to be called until it returns 0 each time you get the
-	// pending notifications event, or you'll lose notifications.
+	// It is mandatory to call this function until it returns 0 each time you
+	// get the pending notifications event, or you'll either lose notifications
+	// or your memory will fill with pending notifications.
 	// See notification.h for details.
 	CNotification* GetNextNotification();
 

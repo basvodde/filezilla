@@ -14,7 +14,8 @@
 //     event.GetEventObject()
 // Whenever you get a notification event,
 // CFileZillaEngine::GetNextNotification has to be called until it returns 0,
-// or you will lose important notifications.
+// or you will lose important notifications or your memory will fill with
+// pending notifications.
 
 // A special class of notifications are the asynchronous requests. These 
 // requests have to be answered. Once proessed, call 
@@ -43,7 +44,8 @@ enum NotificationId
 	nId_transferstatus,	// transfer information: bytes transferes, transfer speed and such
 	nId_listing,		// directory listings
 	nId_asyncrequest,	// asynchronous request
-	nId_active			// sent if data gets either received or sent
+	nId_active,			// sent if data gets either received or sent
+	nId_data			// for memory downloads, indicates that new data is available.
 };
 
 // Async request IDs
@@ -231,6 +233,20 @@ protected:
     const int m_port;
     const wxString m_fingerprint;
     const bool m_changed;
+};
+
+class CDataNotification : public CNotification
+{
+public:
+	CDataNotification(char* pData, int len);
+	virtual ~CDataNotification();
+	virtual enum NotificationId GetID() const { return nId_data; }
+
+	char* Detach(int& len);
+
+protected:
+	char* m_pData;
+	unsigned int m_len;
 };
 
 #endif

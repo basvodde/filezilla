@@ -181,3 +181,21 @@ wxString CHostKeyNotification::GetFingerprint() const
 {
 	return m_fingerprint;
 }
+
+CDataNotification::CDataNotification(char* pData, int len)
+	: m_pData(pData), m_len(len)
+{
+}
+
+CDataNotification::~CDataNotification()
+{
+	delete [] m_pData;
+}
+
+char* CDataNotification::Detach(int& len)
+{
+	len = m_len;
+	char* pData = m_pData;
+	m_pData = 0;
+	return pData;
+}

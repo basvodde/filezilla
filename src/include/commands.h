@@ -110,6 +110,9 @@ DECLARE_COMMAND(CFileTransferCommand, cmd_transfer)
 	};
 
 	// For uploads, set download to false.
+	// For downloads, localFile can be left empty if supported by protocol.
+	// Check for nId_data notification.
+	// FIXME: localFile empty iff protocol is HTTP.
 	CFileTransferCommand(const wxString &localFile, const CServerPath& remotePath, const wxString &remoteFile, bool download, const t_transferSettings& m_transferSettings);
 
 	wxString GetLocalFile() const;
