@@ -100,7 +100,6 @@ protected:
 			std::list<t_newEntry> entryList;
 			while (found && !TestDestroy() && !m_pFolderItem->m_remove)
 			{
-				Sleep(1000);
 				t_newEntry entry;
 				const wxString& fullName = m_pFolderItem->m_currentLocalPath + wxFileName::GetPathSeparator() + file;
 				entry.localFile = fullName;
