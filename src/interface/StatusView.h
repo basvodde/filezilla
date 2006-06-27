@@ -25,6 +25,8 @@ protected:
 	void OnContextMenu(wxContextMenuEvent& event);
 	void OnClear(wxCommandEvent& event);
 	void OnCopy(wxCommandEvent& event);
+
+	std::list<int> m_lineLengths;
 };
 
 #endif
