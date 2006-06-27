@@ -5,8 +5,10 @@
 #define new DEBUG_NEW
 #endif
 
+#define MAX_LINECOUNT 1000
+
 BEGIN_EVENT_TABLE(CStatusView, wxWindow)
-    EVT_SIZE(CStatusView::OnSize)
+	EVT_SIZE(CStatusView::OnSize)
 	EVT_MENU(XRCID("ID_CLEARALL"), CStatusView::OnClear)
 	EVT_MENU(XRCID("ID_COPYTOCLIPBOARD"), CStatusView::OnCopy)
 END_EVENT_TABLE()
@@ -46,19 +48,26 @@ void CStatusView::AddToLog(CLogmsgNotification *pNotification)
 
 void CStatusView::AddToLog(enum MessageType messagetype, wxString message)
 {
-	m_pTextCtrl->Freeze();
 	wxTextAttr attr = m_defAttr;
 	wxString prefix;
+	int prefixLen;
+	
 	if (m_nLineCount)
-		prefix = _T("\n");
-	if (m_nLineCount == 1000)
 	{
-		int len = m_pTextCtrl->GetLineLength(0);
-		m_pTextCtrl->Remove(0, len + 1);
+		prefix = _T("\n");
+		prefixLen = -1;
+	}
+	else
+		prefixLen = 0;
+	
+	if (m_nLineCount == MAX_LINECOUNT)
+	{
+		m_pTextCtrl->Remove(0, m_lineLengths.front() + 1);
+		m_lineLengths.pop_front();
 	}
 	else
 		m_nLineCount++;
-
+	
 	switch (messagetype)
 	{
 	case Error:
@@ -92,14 +101,17 @@ void CStatusView::AddToLog(enum MessageType messagetype, wxString message)
 	prefix += _T("\t");
 
 	m_pTextCtrl->SetDefaultStyle(attr);
+	
+	prefixLen += prefix.Length() + message.Length();
+	m_lineLengths.push_back(prefixLen);
+	
 	m_pTextCtrl->AppendText(prefix + message);
-	m_pTextCtrl->Thaw();
 }
 
 void CStatusView::InitDefAttr()
 {
 	// Measure withs of all types
-    wxClientDC dc(this);
+	wxClientDC dc(this);
 
 	dc.SetMapMode(wxMM_METRIC);
 
@@ -148,6 +160,7 @@ void CStatusView::OnClear(wxCommandEvent& event)
 	if (m_pTextCtrl)
 		m_pTextCtrl->Clear();
 	m_nLineCount = 0;
+	m_lineLengths.clear();
 }
 
 void CStatusView::OnCopy(wxCommandEvent& event)
