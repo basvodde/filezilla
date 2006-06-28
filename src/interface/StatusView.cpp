@@ -113,8 +113,6 @@ void CStatusView::InitDefAttr()
 	// Measure withs of all types
 	wxClientDC dc(this);
 
-	dc.SetMapMode(wxMM_METRIC);
-
 	int maxWidth = 0;
 	wxCoord width = 0;
 	wxCoord height = 0;
@@ -136,7 +134,9 @@ void CStatusView::InitDefAttr()
 	if (width > maxWidth)
 		maxWidth = width;
 
-	maxWidth = maxWidth * 10 + 20;
+	dc.SetMapMode(wxMM_LOMETRIC);
+
+	maxWidth = dc.DeviceToLogicalX(maxWidth) + 20;	
 	wxArrayInt array;
 	array.Add(maxWidth);
 	m_defAttr.SetTabs(array);
