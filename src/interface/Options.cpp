@@ -213,6 +213,8 @@ void COptions::CreateSettingsXmlElement()
 void COptions::SetXmlValue(unsigned int nID, wxString value)
 {
 	wxASSERT(m_pXmlDocument);
+	if (!m_pXmlDocument)
+		return;
 
 	// No checks are made about the validity of the value, that's done in SetOption
 
@@ -272,6 +274,8 @@ void COptions::SetXmlValue(unsigned int nID, wxString value)
 bool COptions::GetXmlValue(unsigned int nID, wxString &value)
 {
 	wxASSERT(m_pXmlDocument);
+	if (!m_pXmlDocument)
+		return false;
 
 	TiXmlElement *settings = m_pXmlDocument->FirstChildElement("FileZilla3")->FirstChildElement("Settings");
 	if (!settings)
