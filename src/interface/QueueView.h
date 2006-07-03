@@ -32,6 +32,7 @@ struct t_newEntry
 {
 	wxString localFile;
 	wxString remoteFile;
+	CServerPath remotePath;
 	wxLongLong size;
 };
 
@@ -247,14 +248,14 @@ public:
 	
 	bool QueueFile(bool queueOnly, bool download, const wxString& localFile, const wxString& remoteFile,
 				const CServerPath& remotePath, const CServer& server, wxLongLong size);
-	bool QueueFiles(const std::list<t_newEntry> &entryList, bool queueOnly, bool download, const CServerPath& remotePath, const CServer& server);
+	bool QueueFiles(const std::list<t_newEntry> &entryList, bool queueOnly, bool download, CServerItem* pServerItem);
 	bool QueueFolder(bool queueOnly, bool download, const wxString& localPath, const CServerPath& remotePath, const CServer& server);
 	
 	bool IsEmpty() const;
 	int IsActive() const { return m_activeMode; }
 	bool SetActive(bool active = true);
 	bool Quit();
-
+	
 	// If the settings are changed, this function will recalculate some
 	// data like the list of ascii file types
 	void SettingsChanged();
@@ -328,6 +329,7 @@ protected:
 
 	void OnEngineEvent(wxEvent &event);
 	void OnFolderThreadComplete(wxCommandEvent& event);
+	void OnFolderThreadFiles(wxCommandEvent& event);
 	void OnScrollEvent(wxScrollWinEvent& event);
 	void OnUpdateStatusLines(wxCommandEvent& event);
 	void OnMouseWheel(wxMouseEvent& event);

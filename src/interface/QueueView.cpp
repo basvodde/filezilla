@@ -17,12 +17,16 @@
 DECLARE_EVENT_TYPE(fzEVT_FOLDERTHREAD_COMPLETE, -1)
 DEFINE_EVENT_TYPE(fzEVT_FOLDERTHREAD_COMPLETE)
 
+DECLARE_EVENT_TYPE(fzEVT_FOLDERTHREAD_FILES, -1)
+DEFINE_EVENT_TYPE(fzEVT_FOLDERTHREAD_FILES)
+
 DECLARE_EVENT_TYPE(fzEVT_UPDATE_STATUSLINES, -1)
 DEFINE_EVENT_TYPE(fzEVT_UPDATE_STATUSLINES)
 
 BEGIN_EVENT_TABLE(CQueueView, wxListCtrl)
 EVT_FZ_NOTIFICATION(wxID_ANY, CQueueView::OnEngineEvent)
 EVT_COMMAND(wxID_ANY, fzEVT_FOLDERTHREAD_COMPLETE, CQueueView::OnFolderThreadComplete)
+EVT_COMMAND(wxID_ANY, fzEVT_FOLDERTHREAD_FILES, CQueueView::OnFolderThreadFiles)
 EVT_SCROLLWIN(CQueueView::OnScrollEvent)
 EVT_COMMAND(wxID_ANY, fzEVT_UPDATE_STATUSLINES, CQueueView::OnUpdateStatusLines)
 EVT_MOUSEWHEEL(CQueueView::OnMouseWheel)
@@ -43,6 +47,13 @@ public:
 		m_pFolderItem = pFolderItem;
 	}
 	~CFolderProcessingThread() { }
+
+	void GetFiles(std::list<t_newEntry> &entryList)
+	{
+		wxASSERT(entryList.empty());
+		wxCriticalSectionLocker locker(m_sync);
+		entryList.swap(m_entryList);
+	}
 
 protected:
 
@@ -97,54 +108,45 @@ protected:
 			else
 				found = m_pFolderItem->m_pDir->GetNext(&file);
 
-			std::list<t_newEntry> entryList;
 			while (found && !TestDestroy() && !m_pFolderItem->m_remove)
 			{
-				t_newEntry entry;
 				const wxString& fullName = m_pFolderItem->m_currentLocalPath + wxFileName::GetPathSeparator() + file;
-				entry.localFile = fullName;
-				entry.remoteFile = file;
-	
+
 				wxStructStat buf;
 				int result;
-				result = wxStat(entry.localFile, &buf);
+				result = wxStat(fullName, &buf);
 
 				if (wxDir::Exists(fullName))
 				{	
 					CFolderItem::t_dirPair pair;
-					pair.localPath = entry.localFile;
+					pair.localPath = fullName;
 					pair.remotePath = m_pFolderItem->m_currentRemotePath;
-					pair.remotePath.AddSegment(entry.remoteFile);
+					pair.remotePath.AddSegment(file);
 					m_pFolderItem->m_dirsToCheck.push_back(pair);
 				}
 				else
 				{
+					t_newEntry entry;
+					entry.localFile = fullName;
+					entry.remoteFile = file;
+					entry.remotePath = m_pFolderItem->m_currentRemotePath;
 					entry.size = result ? -1 : buf.st_size;
-					entryList.push_back(entry);
-				}
 
-				if (entryList.size() == 50)
-				{
-					m_pFolderItem->m_count += 50;
-
-					wxMutexGuiEnter();
-					m_pOwner->QueueFiles(entryList, m_pFolderItem->Queued(), m_pFolderItem->Download(), m_pFolderItem->m_currentRemotePath, pServerItem->GetServer());
-					entryList.clear();
-					m_pFolderItem->m_statusMessage = wxString::Format(_("%d files added to queue"), m_pFolderItem->GetCount());
-
-					wxMutexGuiLeave();
+					bool send = false;
+					m_sync.Enter();;
+					if (!m_entryList.size())
+						send = true;
+					m_entryList.push_back(entry);
+					m_sync.Leave();
+					
+					if (send)
+					{
+						wxCommandEvent evt(fzEVT_FOLDERTHREAD_FILES, wxID_ANY);
+						wxPostEvent(m_pOwner, evt);
+					}
 				}
 
 				found = m_pFolderItem->m_pDir->GetNext(&file);
-			}
-			if (!found && !entryList.empty())
-			{
-				wxMutexGuiEnter();
-				m_pOwner->QueueFiles(entryList, m_pFolderItem->Queued(), m_pFolderItem->Download(), m_pFolderItem->m_currentRemotePath, pServerItem->GetServer());
-				entryList.clear();
-				m_pFolderItem->m_statusMessage = wxString::Format(_("%d files added to queue"), m_pFolderItem->GetCount());
-
-				wxMutexGuiLeave();
 			}
 			delete m_pFolderItem->m_pDir;
 			m_pFolderItem->m_pDir = 0;
@@ -153,8 +155,13 @@ protected:
 		return 0;
 	}
 
+	// Access has to be guarded by m_sync
+	std::list<t_newEntry> m_entryList;
+
 	CQueueView* m_pOwner;
 	CFolderItem* m_pFolderItem;
+
+	wxCriticalSection m_sync;
 };
 
 CQueueItem::CQueueItem()
@@ -1344,7 +1351,24 @@ bool CQueueView::SetActive(bool active /*=true*/)
 bool CQueueView::Quit()
 {
 	m_quit = true;
+	
+	bool canQuit = true;
 	if (!SetActive(false))
+		canQuit = false;
+
+	for (unsigned int i = 0; i < 2; i++)
+	{
+		if (!m_queuedFolders[i].empty())
+		{
+			canQuit = false;
+			for (std::list<CFolderItem*>::iterator iter = m_queuedFolders[i].begin(); iter != m_queuedFolders[i].end(); iter++)
+				(*iter)->m_remove = true;
+		}
+	}
+	if (m_pFolderProcessingThread)
+		canQuit = false;
+
+	if (!canQuit)
 		return false;
 
 	for (unsigned int engineIndex = 1; engineIndex < m_engineData.size(); engineIndex++)
@@ -1508,7 +1532,12 @@ bool CQueueView::ProcessFolderItems(int type /*=-1*/)
 void CQueueView::ProcessUploadFolderItems()
 {
 	if (m_queuedFolders[1].empty())
+	{
+		if (m_quit)
+			m_pMainFrame->Close();
+
 		return;
+	}
 
 	if (m_pFolderProcessingThread)
 		return;
@@ -1545,24 +1574,18 @@ void CQueueView::OnFolderThreadComplete(wxCommandEvent& event)
 	ProcessUploadFolderItems();
 }
 
-bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOnly, bool download, const CServerPath& remotePath, const CServer& server)
+bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOnly, bool download, CServerItem* pServerItem)
 {
-	CServerItem* item = GetServerItem(server);
-	if (!item)
-	{
-		item = new CServerItem(server);
-		m_serverList.push_back(item);
-		m_itemCount++;
-	}
+	wxASSERT(pServerItem);
 
 	for (std::list<t_newEntry>::const_iterator iter = entryList.begin(); iter != entryList.end(); iter++)
 	{
 		const t_newEntry& entry = *iter;
 
-		CFileItem* fileItem = new CFileItem(item, queueOnly, download, entry.localFile, entry.remoteFile, remotePath, entry.size);
+		CFileItem* fileItem = new CFileItem(pServerItem, queueOnly, download, entry.localFile, entry.remoteFile, entry.remotePath, entry.size);
 		fileItem->m_transferSettings.binary = ShouldUseBinaryMode(download ? entry.remoteFile : wxFileName(entry.localFile).GetFullName());
-		item->AddChild(fileItem);
-		item->AddFileItemToList(fileItem);
+		pServerItem->AddChild(fileItem);
+		pServerItem->AddFileItemToList(fileItem);
 
 		m_itemCount++;
 	}
@@ -1947,4 +1970,21 @@ bool CQueueView::StopItem(CServerItem* pServerItem)
 	}
 
 	return pServerItem->GetChildrenCount(false) == 0;
+}
+
+void CQueueView::OnFolderThreadFiles(wxCommandEvent& event)
+{
+	if (!m_pFolderProcessingThread)
+		return;
+
+	wxASSERT(!m_queuedFolders[1].empty());
+	CFolderItem* pItem = m_queuedFolders[1].front();
+
+	std::list<t_newEntry> entryList;
+	m_pFolderProcessingThread->GetFiles(entryList);
+	QueueFiles(entryList, pItem->Queued(), false, (CServerItem*)pItem->GetTopLevelItem());
+
+	pItem->m_count += entryList.size();
+	pItem->m_statusMessage = wxString::Format(_("%d files added to queue"), pItem->GetCount());
+	RefreshItem(GetItemIndex(pItem));
 }
