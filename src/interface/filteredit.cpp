@@ -3,7 +3,7 @@
 #include "customheightlistctrl.h"
 
 const wxString filterTypes[] = { _("Filename"), _("Filesize") };
-const wxString stringConditionTypes[] = { _("contains"), _("is equal to"), _("matches regex") };
+const wxString stringConditionTypes[] = { _("contains"), _("is equal to"), _("begins with"), _("ends with"), _("matches regex") };
 const wxString sizeConditionTypes[] = { _("greater than"), _("equals"), _("less than") };
 
 CFilterControls::CFilterControls()

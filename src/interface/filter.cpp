@@ -488,8 +488,38 @@ bool CFilterDialog::FilenameFilteredByFilter(const wxString& name, bool dir, wxL
 				}
 				break;
 			case 2:
+				{
+					const wxString& left = name.Left(condition.strValue.Len());
+					if (filter.matchCase)
+					{
+						if (left == condition.strValue)
+							match = true;
+					}
+					else
+					{
+						if (!left.CmpNoCase(condition.strValue))
+							match = true;
+					}
+				}
+				break;
+			case 3:
+				{
+					const wxString& right = name.Right(condition.strValue.Len());
+					if (filter.matchCase)
+					{
+						if (right == condition.strValue)
+							match = true;
+					}
+					else
+					{
+						if (!right.CmpNoCase(condition.strValue))
+							match = true;
+					}
+				}
+				break;
+			case 4:
 				wxASSERT(condition.pRegEx);
-				if (condition.pRegEx->Matches(name))
+				if (condition.pRegEx && condition.pRegEx->Matches(name))
 					match = true;
 			}
 			break;
@@ -529,7 +559,7 @@ bool CFilterDialog::CompileRegexes()
 		{
 			CFilterCondition& condition = *iter;
 			delete condition.pRegEx;
-			if (!condition.type && condition.condition == 2)
+			if (!condition.type && condition.condition == 4)
 				condition.pRegEx = new wxRegEx(condition.strValue);
 			else
 				condition.pRegEx = 0;
