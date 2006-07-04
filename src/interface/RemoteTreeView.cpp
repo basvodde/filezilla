@@ -55,6 +55,7 @@ void CRemoteTreeView::SetDirectoryListing(const CDirectoryListing* pListing, boo
 
 	if (!pListing)
 	{
+        m_ExpandAfterList = wxTreeItemId();
 		DeleteAllItems();
 		AddRoot(_T(""));
 		m_busy = false;
@@ -363,7 +364,8 @@ void CRemoteTreeView::RefreshItem(wxTreeItemId parent, const CDirectoryListing& 
 			else
 			{
 				wxTreeItemId child = AppendItem(parent, *iter, 1, 3, new CItemData(path));
-				SetItemImages(child, true);
+                if (child)
+				    SetItemImages(child, true);
 			}
 
 			iter++;
