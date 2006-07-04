@@ -282,6 +282,7 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 	m_fileData.clear();
 	m_indexMapping.clear();
 
+	bool eraseBackground = false;
 	if (m_pDirectoryListing)
 	{
 		if (m_pDirectoryListing->m_failed)
@@ -312,11 +313,13 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 	}
 	else
 	{
+		eraseBackground = true;
 		StopRecursiveOperation();
 		SetInfoText(_("Not connected to any server"));
-		Refresh();
 	}
 
+	if ((unsigned int)GetItemCount() > m_indexMapping.size())
+		eraseBackground = true;
 	if ((unsigned int)GetItemCount() != m_indexMapping.size())
 		SetItemCount(m_indexMapping.size());
 
@@ -326,6 +329,8 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 	SortList();
 
 	ReselectItems(selectedNames, prevFocused);
+
+	Refresh(eraseBackground);
 
 	if (!modified)
 		ProcessDirectoryListing();
