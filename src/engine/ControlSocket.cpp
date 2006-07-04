@@ -110,6 +110,8 @@ void CControlSocket::OnSend(wxSocketEvent &event)
 
 void CControlSocket::OnClose(wxSocketEvent &event)
 {
+	LogMessage(Debug_Verbose, _T("CControlSocket::OnClose()"));
+
 	if (GetCurrentCommandId() != cmd_connect)
 		LogMessage(::Error, _("Disconnected from server"));
 	DoClose();
