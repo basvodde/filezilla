@@ -125,7 +125,7 @@ void CFtpControlSocket::OnReceive(wxSocketEvent &event)
 {
 	LogMessage(Debug_Verbose, _T("CFtpControlSocket::OnReceive()"));
 
-	Read(m_receiveBuffer, RECVBUFFERSIZE - m_bufferLen);
+	Read(m_receiveBuffer + m_bufferLen, RECVBUFFERSIZE - m_bufferLen);
 	if (Error())
 	{
 		if (LastError() != wxSOCKET_WOULDBLOCK)
@@ -1243,7 +1243,11 @@ int CFtpControlSocket::FileTransferParseResponse()
 	LogMessage(Debug_Verbose, _T("FileTransferParseResponse()"));
 
 	if (!m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
 		return FZ_REPLY_ERROR;
+	}
 
 	CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(m_pCurOpData);
 	if (pData->opState == list_init)
