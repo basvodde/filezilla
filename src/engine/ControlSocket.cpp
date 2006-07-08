@@ -119,22 +119,31 @@ void CControlSocket::OnClose(wxSocketEvent &event)
 
 int CControlSocket::Connect(const CServer &server)
 {
-	LogMessage(Status, _("Connecting to %s:%d..."), server.GetHost().c_str(), server.GetPort());
-
 	SetWait(true);
 
 	if (server.GetEncodingType() == ENCODING_CUSTOM)
 		m_pCSConv = new wxCSConv(server.GetCustomEncoding());
 
-	CAsyncHostResolver *resolver = new CAsyncHostResolver(m_pEngine, ConvertDomainName(server.GetHost()));
-	m_pEngine->AddNewAsyncHostResolver(resolver);
-
-	resolver->Create();
-	resolver->Run();
-
 	if (m_pCurrentServer)
 		delete m_pCurrentServer;
 	m_pCurrentServer = new CServer(server);
+
+	const wxString & host = server.GetHost();
+	if (!IsIpAddress(host))
+	{
+		LogMessage(Status, _("Resolving IP-Address for %s"), host.c_str());
+		CAsyncHostResolver *resolver = new CAsyncHostResolver(m_pEngine, ConvertDomainName(host));
+		m_pEngine->AddNewAsyncHostResolver(resolver);
+
+		resolver->Create();
+		resolver->Run();
+	}
+	else
+	{
+		wxIPV4address addr;
+		addr.Hostname(host);
+		return ContinueConnect(&addr);
+	}
 
 	return FZ_REPLY_WOULDBLOCK;
 }
@@ -155,8 +164,11 @@ int CControlSocket::ContinueConnect(const wxIPV4address *address)
 		return ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_CRITICALERROR);
 	}
 
+	const unsigned int port = m_pCurrentServer->GetPort();
+	LogMessage(Status, _("Connecting to %s:%d..."), address->IPAddress().c_str(), port);
+
 	wxIPV4address addr = *address;
-	addr.Service(m_pCurrentServer->GetPort());
+	addr.Service(port);
 
 	bool res = wxSocketClient::Connect(addr, false);
 
@@ -295,6 +307,16 @@ int CControlSocket::ResetOperation(int nErrorCode)
 int CControlSocket::DoClose(int nErrorCode /*=FZ_REPLY_DISCONNECTED*/)
 {
 	nErrorCode = ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED | nErrorCode);
+	
+	ResetSocket();
+
+	SendDirectoryListing(0);
+
+	return nErrorCode;
+}
+
+void CControlSocket::ResetSocket()
+{
 	Close();
 
 	delete [] m_pSendBuffer;
@@ -305,10 +327,6 @@ int CControlSocket::DoClose(int nErrorCode /*=FZ_REPLY_DISCONNECTED*/)
 	m_pCurrentServer = 0;
 	
 	m_onConnectCalled = false;
-
-	SendDirectoryListing(0);
-
-	return nErrorCode;
 }
 
 bool CControlSocket::Send(const char *buffer, int len)
@@ -792,4 +810,38 @@ void CControlSocket::SetWait(bool wait)
 	}
 	else if (m_timer.IsRunning())
 		m_timer.Stop();
+}
+
+bool CControlSocket::IsIpAddress(const wxString& address)
+{
+	int segment = 0;
+	int dotcount = 0;
+	for (size_t i = 0; i < address.Len(); i++)
+	{
+		const char& c = address[i];
+		if (c == '.')
+		{
+			if (address[i + 1] == '.')
+				// Disallow multiple dots in a row
+				return false;
+
+			if (segment > 255)
+				return false;
+			if (!dotcount && !segment)
+				return false;
+			dotcount++;
+			segment = 0;
+		}
+		else if (c < '0' || c > '9')
+			return false;
+
+		segment = segment * 10 + c - '0';
+	}
+	if (dotcount != 3)
+		return false;
+
+	if (segment > 255)
+		return false;
+
+	return true;
 }

@@ -113,6 +113,7 @@ public:
 
 protected:
 	virtual int DoClose(int nErrorCode = FZ_REPLY_DISCONNECTED);
+	void ResetSocket();
 
 	virtual void OnSocketEvent(wxSocketEvent &event);
 	virtual void OnConnect(wxSocketEvent &event);
@@ -134,6 +135,8 @@ protected:
 	// Easier functions to get the IP addresses
 	virtual wxString GetLocalIP() const;
 	virtual wxString GetPeerIP() const;
+
+	bool IsIpAddress(const wxString& address);
 
 	wxString ConvertDomainName(wxString domain);
 
