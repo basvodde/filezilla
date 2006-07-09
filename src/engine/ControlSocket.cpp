@@ -32,6 +32,7 @@ COpData::~COpData()
 CControlSocket::CControlSocket(CFileZillaEnginePrivate *pEngine)
 	: wxSocketClient(wxSOCKET_NOWAIT), CLogging(pEngine)
 {
+	m_socketId = 0;
 	m_pEngine = pEngine;
 	m_pCurOpData = 0;
 	m_pSendBuffer = 0;
@@ -42,7 +43,7 @@ CControlSocket::CControlSocket(CFileZillaEnginePrivate *pEngine)
 	m_onConnectCalled = false;
 
 	SetEvtHandlerEnabled(true);
-	SetEventHandler(*this);
+	SetEventHandler(*this, m_socketId);
 	SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_OUTPUT_FLAG | wxSOCKET_CONNECTION_FLAG | wxSOCKET_LOST_FLAG);
 	Notify(true);
 
@@ -150,11 +151,11 @@ int CControlSocket::Connect(const CServer &server)
 
 int CControlSocket::ContinueConnect(const wxIPV4address *address)
 {
-	LogMessage(__TFILE__, __LINE__, this, Debug_Verbose, _T("ContinueConnect(%p) cmd=%d, m_pEngine=%p, m_pCurrentServer=%p"), address, GetCurrentCommandId(), m_pEngine, m_pCurrentServer);
+	LogMessage(__TFILE__, __LINE__, this, Debug_Verbose, _T("CControlSocket::ContinueConnect(%p) m_pEngine=%p"), address, m_pEngine);
 	if (GetCurrentCommandId() != cmd_connect ||
 		!m_pCurrentServer)
 	{
-		LogMessage(Debug_Warning, _T("Invalid context for call to ContinueConnect()"));
+		LogMessage(Debug_Warning, _T("Invalid context for call to ContinueConnect(), cmd=%d, m_pCurrentServer=%p"), GetCurrentCommandId(), m_pCurrentServer);
 		return DoClose(FZ_REPLY_INTERNALERROR);
 	}
 	
@@ -188,6 +189,9 @@ int CControlSocket::Disconnect()
 
 void CControlSocket::OnSocketEvent(wxSocketEvent &event)
 {
+	if (event.GetId() != m_socketId)
+		return;
+
 	switch (event.GetSocketEvent())
 	{
 	case wxSOCKET_CONNECTION:
@@ -310,6 +314,9 @@ int CControlSocket::DoClose(int nErrorCode /*=FZ_REPLY_DISCONNECTED*/)
 	
 	ResetSocket();
 
+	delete m_pCurrentServer;
+	m_pCurrentServer = 0;
+
 	SendDirectoryListing(0);
 
 	return nErrorCode;
@@ -323,10 +330,9 @@ void CControlSocket::ResetSocket()
 	m_pSendBuffer = 0;
 	m_nSendBufferLen = 0;
 
-	delete m_pCurrentServer;
-	m_pCurrentServer = 0;
-	
 	m_onConnectCalled = false;
+
+	SetEventHandler(*this, ++m_socketId);
 }
 
 bool CControlSocket::Send(const char *buffer, int len)

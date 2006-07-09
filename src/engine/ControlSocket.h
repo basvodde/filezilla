@@ -80,6 +80,8 @@ public:
 	virtual int Chmod(const CChmodCommand& command) { return FZ_REPLY_NOTSUPPORTED; }
 	virtual bool Connected() const { return IsConnected(); }
 
+	// If m_pCurrentOpData is zero, this function returns the current command
+	// from the engine.
 	enum Command GetCurrentCommandId() const;
 
 	virtual void TransferEnd(int reason) { }
@@ -165,6 +167,13 @@ protected:
 	// Timeout data
 	wxTimer m_timer;
 	wxStopWatch m_stopWatch;
+
+	// Initialized with 0, incremented each time
+	// a new connection is created from the same instance.
+	// Mainly needed for CHttpControlSockets if server sends a redirects.
+	// Otherwise, lingering events from the previous connection will cause
+	// problems
+	int m_socketId;
 
 	DECLARE_EVENT_TABLE();
 	void OnTimer(wxTimerEvent& event);
