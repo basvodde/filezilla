@@ -851,3 +851,9 @@ bool CControlSocket::IsIpAddress(const wxString& address)
 
 	return true;
 }
+
+int CControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
+{
+	ResetOperation(prevResult);
+	return FZ_REPLY_ERROR;
+}
