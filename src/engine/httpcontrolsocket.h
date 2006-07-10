@@ -29,6 +29,8 @@ protected:
 	virtual void OnReceive(wxSocketEvent& event);
 
 	virtual int ResetOperation(int nErrorCode);
+	
+	virtual void ResetHttpData(CHttpOpData* pData);
 
 	int ParseHeader(CHttpOpData* pData);
 

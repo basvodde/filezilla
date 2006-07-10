@@ -34,6 +34,7 @@ public:
 	int m_responseCode;
 	wxString m_responseString;
 	wxString m_newLocation;
+	wxString m_newHostWithPort;
 	
 	COpData* m_pOpData;
 
@@ -248,11 +249,22 @@ int CHttpControlSocket::FileTransferSend(int prevResult /*=FZ_RESULT_OK*/)
 		return FZ_REPLY_ERROR;
 	}
 
+	wxString location;
+	wxString hostWithPort;
+	if (pData->m_newLocation == _T(""))
+	{
+		location = _T("http://") + m_pCurrentServer->GetHost() + pData->remotePath.FormatFilename(pData->remoteFile).c_str();
+		hostWithPort = wxString::Format(_T("%s:%d"), m_pCurrentServer->GetHost().c_str(), m_pCurrentServer->GetPort());
+	}
+	else
+	{
+		location = pData->m_newLocation;
+		hostWithPort = pData->m_newHostWithPort;
+	}
 
-	wxString action = wxString::Format(_T("GET http://%s%s HTTP/1.1"), m_pCurrentServer->GetHost().c_str(), pData->remotePath.FormatFilename(pData->remoteFile).c_str());
+	wxString action = wxString::Format(_T("GET %s HTTP/1.1"), location);
 	LogMessage(Command, action);
 
-	wxString hostWithPort = wxString::Format(_T("%s:%d"), m_pCurrentServer->GetHost().c_str(), m_pCurrentServer->GetPort());
 	wxString command = wxString::Format(_T("%s\r\nHost: %s\r\nUser-Agent: %s\r\nConnection: close\r\n\r\n"), action.c_str(), hostWithPort.c_str(), wxString(PACKAGE_STRING, wxConvLocal).c_str());
 
 	const wxWX2MBbuf str = command.mb_str();
@@ -424,11 +436,8 @@ int CHttpControlSocket::ParseHeader(CHttpOpData* pData)
 				// Redirect if neccessary
 				if (pData->m_responseCode >= 300)
 				{
-					// TODO
 					ResetSocket();
-
-					delete m_pRecvBuffer;
-					m_pRecvBuffer = 0;
+					ResetHttpData(pData);
 
 					wxString host;
 					int pos;
@@ -458,6 +467,7 @@ int CHttpControlSocket::ParseHeader(CHttpOpData* pData)
 						ResetOperation(FZ_REPLY_ERROR);
 						return FZ_REPLY_ERROR;
 					}
+					pData->m_newHostWithPort = wxString::Format(_T("%s:%d"), host.c_str(), port);
 
 					return InternalConnect(host, port);
 				}
@@ -518,4 +528,16 @@ int CHttpControlSocket::ResetOperation(int nErrorCode)
 void CHttpControlSocket::OnClose(wxSocketEvent& event)
 {
 	ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED);
+}
+
+void CHttpControlSocket::ResetHttpData(CHttpOpData* pData)
+{
+	wxASSERT(pData);
+
+	delete m_pRecvBuffer;
+	m_pRecvBuffer = 0;
+
+	pData->m_gotHeader = false;
+	pData->m_responseCode = -1;
+	pData->m_transferEncoding = CHttpOpData::unknown;
 }
