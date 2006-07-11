@@ -19,7 +19,7 @@ protected:
 							 const wxString &remoteFile, bool download,
 							 const CFileTransferCommand::t_transferSettings& transferSettings);
 	virtual int FileTransferSend(int prevResult = FZ_REPLY_OK);
-	virtual int FileTransferParseResponse();
+	virtual int FileTransferParseResponse(char* p, int len);
 
 	int InternalConnect(const wxString& host, unsigned short port);
 	int DoInternalConnect();
@@ -33,6 +33,9 @@ protected:
 	virtual void ResetHttpData(CHttpOpData* pData);
 
 	int ParseHeader(CHttpOpData* pData);
+	int OnChunkedData(CHttpOpData* pData);
+
+	int ProcessData(char* p, int len);
 
 	// IP address of server
 	wxIPV4address* m_pAddress;

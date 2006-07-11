@@ -29,6 +29,11 @@ public:
 		m_gotHeader = false;
 		m_responseCode = -1;
 		m_redirectionCount = 0;
+		m_transferEncoding = unknown;
+
+		m_chunkData.getTrailer = false;
+		m_chunkData.size = 0;
+		m_chunkData.terminateChunk = false;
 	}
 
 	bool m_gotHeader;
@@ -47,6 +52,13 @@ public:
 		unknown
 	};
 	enum transferEncodings m_transferEncoding;
+
+	struct t_chunkData
+	{
+		bool getTrailer;
+		bool terminateChunk;
+		wxLongLong size;
+	} m_chunkData;
 };
 
 class CHttpFileTransferOpData : public CFileTransferOpData, public CHttpOpData
@@ -169,7 +181,7 @@ void CHttpControlSocket::OnReceive(wxSocketEvent& event)
 		return;
 	}
 
-	if (!m_pCurOpData)
+	if (!m_pCurOpData || m_pCurOpData->opId == cmd_connect)
 	{
 		// Just ignore all further data
 		m_recvBufferPos = 0;
@@ -178,17 +190,13 @@ void CHttpControlSocket::OnReceive(wxSocketEvent& event)
 
 	m_recvBufferPos += read;
 
-	enum Command commandId = GetCurrentCommandId();
-	switch (commandId)
-	{
-	case cmd_transfer:
-		FileTransferParseResponse();
-		break;
-	default:
-		LogMessage(Debug_Warning, _T("No action for parsing data for command %d"), (int)commandId);
-		ResetOperation(FZ_REPLY_INTERNALERROR);
-		break;
-	}
+	CHttpOpData* pData = (CHttpOpData*)m_pCurOpData;
+	if (!pData->m_gotHeader)
+		ParseHeader(pData);
+	else if (pData->m_transferEncoding == CHttpOpData::chunked)
+		OnChunkedData(pData);
+	else
+		ProcessData(m_pRecvBuffer, m_recvBufferPos);
 }
 
 void CHttpControlSocket::OnConnect(wxSocketEvent& event)
@@ -328,9 +336,9 @@ int CHttpControlSocket::DoInternalConnect()
 	return FZ_REPLY_WOULDBLOCK;
 }
 
-int CHttpControlSocket::FileTransferParseResponse()
+int CHttpControlSocket::FileTransferParseResponse(char* p, int len)
 {
-	LogMessage(Debug_Verbose, _T("CHttpControlSocket::FileTransferParseResponse()"));
+	LogMessage(Debug_Verbose, _T("CHttpControlSocket::FileTransferParseResponse(%p, %d)"), p, len);
 
 	if (!m_pCurOpData)
 	{
@@ -341,14 +349,13 @@ int CHttpControlSocket::FileTransferParseResponse()
 
 	CHttpFileTransferOpData *pData = static_cast<CHttpFileTransferOpData *>(m_pCurOpData);
 
-	if (!pData->m_gotHeader)
+	if (!p)
 	{
-		int res;
-		if ((res = ParseHeader(pData)) != FZ_REPLY_OK)
-			return res;
+		ResetOperation(FZ_REPLY_OK);
+		return FZ_REPLY_OK;
 	}
 
-	return FZ_REPLY_ERROR;
+	return FZ_REPLY_WOULDBLOCK;
 }
 
 int CHttpControlSocket::ParseHeader(CHttpOpData* pData)
@@ -485,12 +492,15 @@ int CHttpControlSocket::ParseHeader(CHttpOpData* pData)
 
 				memmove(m_pRecvBuffer, m_pRecvBuffer + 2, m_recvBufferPos - 2);
 				m_recvBufferPos -= 2;
+
 				if (m_recvBufferPos)
 				{
-					//if (pData->m_transferEncoding == chunked)
-					//	OnChunkedData();
-					//else
-					//	OnData(m_pRecvBuffer, m_recvBufferPos);
+					int res;
+					if (pData->m_transferEncoding == pData->chunked)
+						res = OnChunkedData(pData);
+					else
+						res = ProcessData(m_pRecvBuffer, m_recvBufferPos);
+					return res;
 				}
 				
 				return FZ_REPLY_WOULDBLOCK;
@@ -515,6 +525,136 @@ int CHttpControlSocket::ParseHeader(CHttpOpData* pData)
 
 		if (!m_recvBufferPos)
 			break;
+	}
+
+	return FZ_REPLY_WOULDBLOCK;
+}
+
+int CHttpControlSocket::OnChunkedData(CHttpOpData* pData)
+{
+	char* p = m_pRecvBuffer;
+	unsigned int len = m_recvBufferPos;
+
+	while (true)
+	{
+		if (pData->m_chunkData.size != 0)
+		{
+			unsigned int dataLen = len;
+			if (pData->m_chunkData.size < len)
+				dataLen = pData->m_chunkData.size.GetLo();
+			int res = ProcessData(p, dataLen);
+			if (res != FZ_REPLY_WOULDBLOCK)
+				return res;
+
+            pData->m_chunkData.size -= dataLen;
+			p += dataLen;
+			len -= dataLen;
+
+			if (pData->m_chunkData.size == 0)
+				pData->m_chunkData.terminateChunk = true;
+
+			if (!len)
+				break;
+		}
+
+		// Find line ending
+		unsigned int i = 0;
+		for (i = 0; (i + 1) < len; i++)
+		{
+			if (p[i] == '\r')
+			{
+				if (p[i + 1] != '\n')
+				{
+					LogMessage(::Error, _("Malformed chunk data: %s"), _("Wrong lineendings"));
+					ResetOperation(FZ_REPLY_ERROR);
+					return FZ_REPLY_ERROR;
+				}
+				break;
+			}
+		}
+		if ((i + 1) >= len)
+		{
+			if (len == m_recvBufferLen)
+			{
+				// We don't support lines larger than 4096
+				LogMessage(::Error, _("Malformed chunk data: %s"), _("Line length exceeded"));
+				ResetOperation(FZ_REPLY_ERROR);
+				return FZ_REPLY_ERROR;
+			}
+			break;
+		}
+
+		p[i] = 0;
+
+		if (pData->m_chunkData.terminateChunk)
+		{
+			if (i)
+			{
+				// The chunk data has to end with CRLF. If i is nonzero,
+				// it didn't end with just CRLF.
+				LogMessage(::Error, _("Malformed chunk data: %s"), _("Chunk data improperly terminated"));
+				ResetOperation(FZ_REPLY_ERROR);
+				return FZ_REPLY_ERROR;
+			}
+			pData->m_chunkData.terminateChunk = false;
+		}
+		else if (pData->m_chunkData.getTrailer)
+		{
+			if (!i)
+			{
+				// We're done
+				return ProcessData(0, 0);
+			}
+			
+			// Ignore the trailer
+		}
+		else
+		{
+			// Read chunk size
+			char* q = p;
+			while (*q)
+			{
+				if (*q >= '0' && *q <= '9')
+				{
+					pData->m_chunkData.size *= 16;
+					pData->m_chunkData.size += *q - '0';
+				}
+				else if (*q >= 'A' && *q <= 'F')
+				{
+					pData->m_chunkData.size *= 10;
+					pData->m_chunkData.size += *q - 'A' + 10;
+				}
+				else if (*q >= 'a' && *q <= 'f')
+				{
+					pData->m_chunkData.size *= 10;
+					pData->m_chunkData.size += *q - 'a' + 10;
+				}
+				else if (*q == ';' || *q == ' ')
+					break;
+				else
+				{
+					// Invalid size
+					LogMessage(::Error, _("Malformed chunk data: %s"), _("Invalid chunk size"));
+					ResetOperation(FZ_REPLY_ERROR);
+					return FZ_REPLY_ERROR;
+				}
+				q++;
+			}
+			if (pData->m_chunkData.size == 0)
+				pData->m_chunkData.getTrailer = true;
+		}
+
+		p += i + 2;
+		len -= i + 2;
+
+		if (!len)
+			break;
+	}
+
+	if (p != m_pRecvBuffer)
+	{
+		memmove(m_pRecvBuffer, p, len);
+		m_recvBufferPos = len;
 	}
 
 	return FZ_REPLY_WOULDBLOCK;
@@ -549,4 +689,25 @@ void CHttpControlSocket::ResetHttpData(CHttpOpData* pData)
 	pData->m_gotHeader = false;
 	pData->m_responseCode = -1;
 	pData->m_transferEncoding = CHttpOpData::unknown;
+
+	pData->m_chunkData.getTrailer = false;
+	pData->m_chunkData.size = 0;
+	pData->m_chunkData.terminateChunk = false;
+}
+
+int CHttpControlSocket::ProcessData(char* p, int len)
+{
+	enum Command commandId = GetCurrentCommandId();
+	switch (commandId)
+	{
+	case cmd_transfer:
+		FileTransferParseResponse(p, len);
+		break;
+	default:
+		LogMessage(Debug_Warning, _T("No action for parsing data for command %d"), (int)commandId);
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		break;
+	}
+
+	return FZ_REPLY_ERROR;
 }
