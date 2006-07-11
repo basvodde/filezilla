@@ -28,6 +28,7 @@ public:
 	{
 		m_gotHeader = false;
 		m_responseCode = -1;
+		m_redirectionCount = 0;
 	}
 
 	bool m_gotHeader;
@@ -35,6 +36,7 @@ public:
 	wxString m_responseString;
 	wxString m_newLocation;
 	wxString m_newHostWithPort;
+	int m_redirectionCount;
 	
 	COpData* m_pOpData;
 
@@ -436,6 +438,13 @@ int CHttpControlSocket::ParseHeader(CHttpOpData* pData)
 				// Redirect if neccessary
 				if (pData->m_responseCode >= 300)
 				{
+					if (pData->m_redirectionCount++ == 5)
+					{
+						LogMessage(::Error, _("Too many redirects"));
+						ResetOperation(FZ_REPLY_ERROR);
+						return FZ_REPLY_ERROR;
+					}
+
 					ResetSocket();
 					ResetHttpData(pData);
 
