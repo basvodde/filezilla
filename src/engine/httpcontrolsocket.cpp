@@ -282,7 +282,7 @@ int CHttpControlSocket::FileTransferSend(int prevResult /*=FZ_RESULT_OK*/)
 		hostWithPort = pData->m_newHostWithPort;
 	}
 
-	wxString action = wxString::Format(_T("GET %s HTTP/1.1"), location);
+	wxString action = wxString::Format(_T("GET %s HTTP/1.1"), location.c_str());
 	LogMessage(Command, action);
 
 	wxString command = wxString::Format(_T("%s\r\nHost: %s\r\nUser-Agent: %s\r\nConnection: close\r\n\r\n"), action.c_str(), hostWithPort.c_str(), wxString(PACKAGE_STRING, wxConvLocal).c_str());
@@ -364,6 +364,10 @@ int CHttpControlSocket::FileTransferParseResponse(char* p, int len)
 		ResetOperation(FZ_REPLY_OK);
 		return FZ_REPLY_OK;
 	}
+
+	char* q = new char[len];
+	memcpy(q, p, len);
+	m_pEngine->AddNotification(new CDataNotification(q, len));
 
 	return FZ_REPLY_WOULDBLOCK;
 }
