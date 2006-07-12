@@ -5,6 +5,7 @@
 #include "sftpcontrolsocket.h"
 #include "directorycache.h"
 #include "logging_private.h"
+#include "httpcontrolsocket.h"
 
 class wxFzEngineEvent : public wxEvent
 {
@@ -144,10 +145,7 @@ void CFileZillaEnginePrivate::OnAsyncHostResolver(fzAsyncHostResolveEvent& event
 	else
 	{
 		if (!pResolver->Obsolete())
-		{
-			if (GetCurrentCommandId() == cmd_connect)
-				m_pControlSocket->ContinueConnect(pResolver->Successful() ? &pResolver->m_Address : 0);
-		}
+			m_pControlSocket->ContinueConnect(pResolver->Successful() ? &pResolver->m_Address : 0);
 		pResolver->Wait();
 		delete pResolver;
 	}
@@ -335,6 +333,9 @@ int CFileZillaEnginePrivate::Connect(const CConnectCommand &command)
 		break;
 	case SFTP:
 		m_pControlSocket = new CSftpControlSocket(this);
+		break;
+	case HTTP:
+		m_pControlSocket = new CHttpControlSocket(this);
 		break;
 	default:
 		return FZ_REPLY_SYNTAXERROR;
