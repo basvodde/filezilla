@@ -1,19 +1,30 @@
 #include "FileZilla.h"
 #include "updatewizard.h"
 #include "filezillaapp.h"
+#include "options.h"
+
+#define MAXCHECKPROGRESS 9 // Maximum value of progress bar
 
 BEGIN_EVENT_TABLE(CUpdateWizard, wxWizard)
 EVT_CHECKBOX(wxID_ANY, CUpdateWizard::OnCheck)
 EVT_WIZARD_PAGE_CHANGING(wxID_ANY, CUpdateWizard::OnPageChanging)
+EVT_FZ_NOTIFICATION(wxID_ANY, CUpdateWizard::OnEngineEvent)
 END_EVENT_TABLE()
 
 CUpdateWizard::CUpdateWizard(wxWindow* pParent)
 	: m_parent(pParent)
 {
+	m_pEngine = new CFileZillaEngine;
+
+	m_pEngine->Init(this, COptions::Get());
+
+	m_inTransfer = false;
+	m_skipPageChanging = false;
 }
 
 CUpdateWizard::~CUpdateWizard()
 {
+	delete m_pEngine;
 }
 
 bool CUpdateWizard::Load()
@@ -21,7 +32,7 @@ bool CUpdateWizard::Load()
 	if (!Create(m_parent, wxID_ANY, _("Check for updates")))
 		return false;
 
-	for (int i = 1; i <= 3; i++)
+	for (int i = 1; i <= 4; i++)
 	{
 		wxWizardPageSimple* page = new wxWizardPageSimple();
 		bool res = wxXmlResource::Get()->LoadPanel(page, this, wxString::Format(_T("ID_CHECKFORUPDATE%d"), i));
@@ -44,6 +55,8 @@ bool CUpdateWizard::Load()
 	XRCCTRL(*this, "ID_CHECKINGTEXT", wxStaticText)->Hide();
 	XRCCTRL(*this, "ID_CHECKINGPROGRESS", wxGauge)->Hide();
 	XRCCTRL(*this, "ID_CHECKINGTEXTPROGRESS", wxStaticText)->Hide();
+
+	XRCCTRL(*this, "ID_CHECKINGPROGRESS", wxGauge)->SetRange(MAXCHECKPROGRESS);
 
 	return true;
 }
@@ -75,6 +88,10 @@ void CUpdateWizard::OnCheck(wxCommandEvent& event)
 
 void CUpdateWizard::OnPageChanging(wxWizardEvent& event)
 {
+	if (m_skipPageChanging)
+		return;
+	m_skipPageChanging = true;
+
 	if (event.GetPage() == m_pages[0])
 	{
 		XRCCTRL(*this, "ID_CHECKBETA", wxCheckBox)->Disable();
@@ -82,6 +99,109 @@ void CUpdateWizard::OnPageChanging(wxWizardEvent& event)
 		wxButton* pNext = wxDynamicCast(FindWindow(wxID_FORWARD), wxButton);
 		pNext->Disable();
 
+		XRCCTRL(*this, "ID_CHECKINGTEXT", wxStaticText)->Show();
+		wxGauge* pProgress = XRCCTRL(*this, "ID_CHECKINGPROGRESS", wxGauge);
+		pProgress->Show();
+
+		wxStaticText *pText = XRCCTRL(*this, "ID_CHECKINGTEXTPROGRESS", wxStaticText);
+		pText->Show();
+		pText->SetLabel(_("Revolving hostname"));
+
+
 		event.Veto();
+
+		int res = m_pEngine->Command(CConnectCommand(CServer(HTTP, DEFAULT, _T("filezilla-project.org"), 80)));
+		if (res == FZ_REPLY_OK)
+		{
+			m_inTransfer = true;
+			pText->SetLabel(_("Connecting to server"));
+			pProgress->SetValue(pProgress->GetValue() + 1);
+			CFileTransferCommand::t_transferSettings transferSettings;
+			CFileTransferCommand cmd(_T(""), CServerPath(_T("/")), _T("updatecheck.php"), true, transferSettings);
+			res = m_pEngine->Command(cmd);
+		}
+		if (res == FZ_REPLY_OK)
+			ShowPage(m_pages[1]);
+		else if (res != FZ_REPLY_WOULDBLOCK)
+			FailedCheck();
+	}
+	
+	m_skipPageChanging = false;
+}
+
+void CUpdateWizard::FailedCheck()
+{
+	m_inTransfer = false;
+	XRCCTRL(*this, "ID_FAILURE", wxStaticText)->SetLabel(_("Failed to check for newer version of FileZilla."));
+	
+	((wxWizardPageSimple*)GetCurrentPage())->SetNext(m_pages[3]);
+	m_pages[3]->SetPrev((wxWizardPageSimple*)GetCurrentPage());	
+
+	wxButton* pNext = wxDynamicCast(FindWindow(wxID_FORWARD), wxButton);
+	pNext->Enable();
+
+	m_skipPageChanging = true;
+	ShowPage(m_pages[3]);
+	m_skipPageChanging = false;
+}
+
+void CUpdateWizard::OnEngineEvent(wxEvent& event)
+{
+	CNotification *pNotification = m_pEngine->GetNextNotification();
+	while (pNotification)
+	{
+		switch (pNotification->GetID())
+		{
+		case nId_logmsg:
+			{
+				CLogmsgNotification* pLogMsg = reinterpret_cast<CLogmsgNotification *>(pNotification);
+				if (pLogMsg->msgType == Status || pLogMsg->msgType == Command)
+				{
+					wxStaticText *pText = XRCCTRL(*this, "ID_CHECKINGTEXTPROGRESS", wxStaticText);
+					pText->SetLabel(pLogMsg->msg);
+					m_pages[0]->GetSizer()->Layout();
+					wxGauge* pProgress = XRCCTRL(*this, "ID_CHECKINGPROGRESS", wxGauge);
+					int value = pProgress->GetValue();
+#ifdef __WXDEBUG__
+					wxASSERT(value < MAXCHECKPROGRESS);
+#endif
+					if (value < MAXCHECKPROGRESS)
+						pProgress->SetValue(value + 1);
+				}
+			}
+			break;
+		case nId_operation:
+			{
+				COperationNotification* pOpMsg = reinterpret_cast<COperationNotification*>(pNotification);
+				if (pOpMsg->nReplyCode != FZ_REPLY_OK)
+				{
+					while (pNotification)
+					{
+						delete pNotification;
+						pNotification = m_pEngine->GetNextNotification();
+					}
+					FailedCheck();
+					return;
+				}
+				if (!m_inTransfer)
+				{
+					m_inTransfer = true;
+					wxGauge* pProgress = XRCCTRL(*this, "ID_CHECKINGPROGRESS", wxGauge);
+					pProgress->SetValue(pProgress->GetValue() + 1);
+					CFileTransferCommand::t_transferSettings transferSettings;
+					CFileTransferCommand cmd(_T(""), CServerPath(_T("/")), _T("updatecheck.php"), true, transferSettings);
+					int res = m_pEngine->Command(cmd);
+					if (res == FZ_REPLY_OK)
+						ShowPage(m_pages[1]);
+					else if (res != FZ_REPLY_WOULDBLOCK)
+						FailedCheck();
+				}
+			}
+			break;
+		default:
+			break;
+		}
+		delete pNotification;
+		pNotification = m_pEngine->GetNextNotification();
 	}
 }

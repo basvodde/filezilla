@@ -14,13 +14,21 @@ public:
 	bool Run();
 
 protected:
+	void FailedCheck();
+
 	wxWindow* m_parent;
 
 	std::vector<wxWizardPageSimple*> m_pages;
 
+	CFileZillaEngine* m_pEngine;
+
 	DECLARE_EVENT_TABLE()
 	void OnCheck(wxCommandEvent& event);
 	void OnPageChanging(wxWizardEvent& event);
+	void OnEngineEvent(wxEvent& event);
+
+	bool m_inTransfer;
+	bool m_skipPageChanging;
 };
 
 #endif //__UPDATEWIZARD_H__
