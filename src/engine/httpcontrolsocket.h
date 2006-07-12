@@ -43,6 +43,8 @@ protected:
 	char* m_pRecvBuffer;
 	unsigned int m_recvBufferPos;
 	static const unsigned int m_recvBufferLen = 4096;
+
+	CHttpOpData* m_pHttpOpData;
 };
 
 #endif //__HTTPCONTROLSOCKET_H__

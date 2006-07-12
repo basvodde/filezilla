@@ -34,6 +34,9 @@ public:
 		m_chunkData.getTrailer = false;
 		m_chunkData.size = 0;
 		m_chunkData.terminateChunk = false;
+
+		m_totalSize = -1;
+		m_receivedData = 0;
 	}
 
 	bool m_gotHeader;
@@ -42,6 +45,9 @@ public:
 	wxString m_newLocation;
 	wxString m_newHostWithPort;
 	int m_redirectionCount;
+
+	wxLongLong m_totalSize;
+	wxLongLong m_receivedData;
 	
 	COpData* m_pOpData;
 
@@ -190,13 +196,16 @@ void CHttpControlSocket::OnReceive(wxSocketEvent& event)
 
 	m_recvBufferPos += read;
 
-	CHttpOpData* pData = (CHttpOpData*)m_pCurOpData;
-	if (!pData->m_gotHeader)
-		ParseHeader(pData);
-	else if (pData->m_transferEncoding == CHttpOpData::chunked)
-		OnChunkedData(pData);
+	if (!m_pHttpOpData->m_gotHeader)
+		ParseHeader(m_pHttpOpData);
+	else if (m_pHttpOpData->m_transferEncoding == CHttpOpData::chunked)
+		OnChunkedData(m_pHttpOpData);
 	else
+	{
+		m_pHttpOpData->m_receivedData += m_recvBufferPos;
 		ProcessData(m_pRecvBuffer, m_recvBufferPos);
+		m_recvBufferPos = 0;
+	}
 }
 
 void CHttpControlSocket::OnConnect(wxSocketEvent& event)
@@ -227,6 +236,7 @@ int CHttpControlSocket::FileTransfer(const wxString localFile, const CServerPath
 
 	CHttpFileTransferOpData *pData = new CHttpFileTransferOpData;
 	m_pCurOpData = pData;
+	m_pHttpOpData = pData;
 
 	pData->localFile = localFile;
 	pData->remotePath = remotePath;
@@ -499,7 +509,11 @@ int CHttpControlSocket::ParseHeader(CHttpOpData* pData)
 					if (pData->m_transferEncoding == pData->chunked)
 						res = OnChunkedData(pData);
 					else
+					{
+						pData->m_receivedData += m_recvBufferPos;
 						res = ProcessData(m_pRecvBuffer, m_recvBufferPos);
+						m_recvBufferPos = 0;
+					}
 					return res;
 				}
 				
@@ -517,6 +531,21 @@ int CHttpControlSocket::ParseHeader(CHttpOpData* pData)
 					pData->m_transferEncoding = CHttpOpData::identity;
 				else
 					pData->m_transferEncoding = CHttpOpData::unknown;
+			}
+			else if (i > 16 && !memcmp(m_pRecvBuffer, "Content-Length: ", 16))
+			{
+				pData->m_totalSize = 0;
+				char* p = m_pRecvBuffer + 16;
+				while (*p)
+				{
+					if (*p < '0' || *p > '9')
+					{
+						LogMessage(::Error, _("Malformed header: %s"), _("Invalid Content-Length"));
+						ResetOperation(FZ_REPLY_ERROR);
+						return FZ_REPLY_ERROR;
+					}
+					pData->m_totalSize = pData->m_totalSize * 10 + *p++ - '0';
+				}
 			}
 		}
 
@@ -542,6 +571,7 @@ int CHttpControlSocket::OnChunkedData(CHttpOpData* pData)
 			unsigned int dataLen = len;
 			if (pData->m_chunkData.size < len)
 				dataLen = pData->m_chunkData.size.GetLo();
+			pData->m_receivedData += dataLen;
 			int res = ProcessData(p, dataLen);
 			if (res != FZ_REPLY_WOULDBLOCK)
 				return res;
@@ -669,6 +699,7 @@ int CHttpControlSocket::ResetOperation(int nErrorCode)
 		else
 			LogMessage(::Error, _("Disconnected from server"));
 		ResetSocket();
+		m_pHttpOpData = 0;
 	}
 
 	return CControlSocket::ResetOperation(nErrorCode);
@@ -676,7 +707,40 @@ int CHttpControlSocket::ResetOperation(int nErrorCode)
 
 void CHttpControlSocket::OnClose(wxSocketEvent& event)
 {
-	ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED);
+	// HTTP socket isn't connected outside operations
+	if (!m_pCurOpData)
+		return;
+
+	if (m_pCurOpData->pNextOpData)
+	{
+		ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED);
+		return;
+	}
+
+	if (!m_pHttpOpData->m_gotHeader)
+	{
+		ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED);
+		return;
+	}
+
+	if (m_pHttpOpData->m_transferEncoding == CHttpOpData::chunked)
+	{
+		if (!m_pHttpOpData->m_chunkData.getTrailer)
+		{
+			ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED);
+			return;
+		}
+	}
+	else
+	{
+		if (m_pHttpOpData->m_totalSize != -1 && m_pHttpOpData->m_receivedData != m_pHttpOpData->m_totalSize)
+		{
+			ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED);
+			return;
+		}
+	}
+
+	ProcessData(0, 0);
 }
 
 void CHttpControlSocket::ResetHttpData(CHttpOpData* pData)
@@ -693,21 +757,28 @@ void CHttpControlSocket::ResetHttpData(CHttpOpData* pData)
 	pData->m_chunkData.getTrailer = false;
 	pData->m_chunkData.size = 0;
 	pData->m_chunkData.terminateChunk = false;
+
+	pData->m_totalSize = -1;
+	pData->m_receivedData = 0;
 }
 
 int CHttpControlSocket::ProcessData(char* p, int len)
 {
+	int res;
 	enum Command commandId = GetCurrentCommandId();
 	switch (commandId)
 	{
 	case cmd_transfer:
-		FileTransferParseResponse(p, len);
+		res = FileTransferParseResponse(p, len);
 		break;
 	default:
 		LogMessage(Debug_Warning, _T("No action for parsing data for command %d"), (int)commandId);
 		ResetOperation(FZ_REPLY_INTERNALERROR);
+		res = FZ_REPLY_ERROR;
 		break;
 	}
 
-	return FZ_REPLY_ERROR;
+	wxASSERT(p || !m_pCurOpData);
+
+	return res;
 }
