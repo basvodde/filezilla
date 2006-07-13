@@ -1,7 +1,7 @@
 #include "FileZilla.h"
 #include "updatewizard.h"
 #include "filezillaapp.h"
-#include "options.h"
+#include "Options.h"
 
 #define MAXCHECKPROGRESS 9 // Maximum value of progress bar
 
