@@ -15,6 +15,9 @@ public:
 
 protected:
 	void FailedCheck();
+	void ParseData();
+
+	wxString m_data;
 
 	wxWindow* m_parent;
 
@@ -29,6 +32,8 @@ protected:
 
 	bool m_inTransfer;
 	bool m_skipPageChanging;
+
+	int m_currentPage;
 };
 
 #endif //__UPDATEWIZARD_H__
