@@ -11,10 +11,10 @@ AC_PROG_LIBTOOL
 
 AC_CACHE_SAVE
 
-AC_ARG_ENABLE(locales, [  --enable-locales       Build message catalogs], \
+AC_ARG_ENABLE(locales, AC_HELP_STRING([--enable-locales], [Build message catalogs]), \
 		[locales="$enableval"], [locales="yes"])
 
-AC_ARG_ENABLE(localesonly, [  --enable-localesonly    Just build locales], \
+AC_ARG_ENABLE(localesonly, AC_HELP_STRING([--enable-localesonly], [Just build locales]), \
 		[localesonly="$enableval"], [localesonly="no"])
 
 if test "$locales" != "yes" -a "$localesonly" = "yes"; then
@@ -40,12 +40,32 @@ if ! test "$localesonly" = "yes"; then
     AC_DEFINE_UNQUOTED(USED_COMPILER, ["$COMPILER"])
   fi
 
+  # Get buildtype.
+  AC_ARG_ENABLE(buildtype, AC_HELP_STRING([--enable-buildtype=TYPE], [DO NOT USE. Reserved for use by official maintainer. TYPE can either be 'official' or 'nightly'.]),
+	[buildtype=$enableval], [buildtype=])
+  buildtype_valid=false
+  if test -z "$buildtype"; then
+    buildtype_valid=true
+  elif test "$buildtype" = "official"; then
+    buildtype_valid=true
+  elif test "$buildtype" = "nightly"; then
+    buildtype_valid=true
+  fi
+
+  if test "$buildtype_valid" != "true"; then
+    AC_MSG_ERROR([invalid buildtype passed])
+  fi
+
+  if ! test -z "$buildtype"; then
+    AC_DEFINE_UNQUOTED(BUILDTYPE, ["$buildtype"], [Buildtype, indicates official builds and nightly builds])
+  fi
+
   # Detect wxWidgets
   # ----------------
 
   AM_OPTIONS_WXCONFIG
 
-  AM_PATH_WXCONFIG(2.6.2, wxWin=1, , [xrc,std])
+  AM_PATH_WXCONFIG(2.6.3, wxWin=1, , [xrc,std])
   if test "$wxWin" != 1; then
 	AC_MSG_ERROR([
         	wxWidgets must be installed on your system
@@ -184,7 +204,7 @@ AH_BOTTOM([
   ])
 
   AC_ARG_WITH(idn-lib,
-  [[  --with-idn-lib=FILE     Use the given path to the idn library.]],
+  	AC_HELP_STRING([--with-idn-lib=FILE], [Use the given path to the idn library.]),
   [
 	if test "$withval" != "yes" -a "$withval" != ""; then
 		IDN_LIB=$withval
@@ -220,7 +240,7 @@ AH_BOTTOM([
 
   AC_MSG_CHECKING([whether to use precompiled headers])
   use_precomp=""
-  AC_ARG_ENABLE(precomp, [  --enable-precomp        Use precompiled headers], \
+  AC_ARG_ENABLE(precomp, AC_HELP_STRING([--enable-precomp], [Use precompiled headers]), \
                 use_precomp="$enableval")
   if test -z "$use_precomp"; then
     if test "X$GCC" = Xyes; then
