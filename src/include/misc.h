@@ -5,4 +5,6 @@ bool VerifySetDate(wxDateTime& date, int year, wxDateTime::Month month, int day,
 
 bool IsRoutableAddress(const wxString& address);
 
+bool IsIpAddress(const wxString& address);
+
 #endif //__MISC_H__

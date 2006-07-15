@@ -40,3 +40,37 @@ bool IsRoutableAddress(const wxString& address)
 
 	return true;
 }
+
+bool IsIpAddress(const wxString& address)
+{
+	int segment = 0;
+	int dotcount = 0;
+	for (size_t i = 0; i < address.Len(); i++)
+	{
+		const char& c = address[i];
+		if (c == '.')
+		{
+			if (address[i + 1] == '.')
+				// Disallow multiple dots in a row
+				return false;
+
+			if (segment > 255)
+				return false;
+			if (!dotcount && !segment)
+				return false;
+			dotcount++;
+			segment = 0;
+		}
+		else if (c < '0' || c > '9')
+			return false;
+
+		segment = segment * 10 + c - '0';
+	}
+	if (dotcount != 3)
+		return false;
+
+	if (segment > 255)
+		return false;
+
+	return true;
+}

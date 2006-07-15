@@ -138,8 +138,6 @@ protected:
 	virtual wxString GetLocalIP() const;
 	virtual wxString GetPeerIP() const;
 
-	bool IsIpAddress(const wxString& address);
-
 	wxString ConvertDomainName(wxString domain);
 
 	int CheckOverwriteFile();
