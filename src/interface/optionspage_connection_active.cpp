@@ -5,7 +5,10 @@
 #include "optionspage_connection_active.h"
 
 BEGIN_EVENT_TABLE(COptionsPageConnectionActive, COptionsPage)
-EVT_CHECKBOX(XRCID("ID_LIMITPORTS"), COptionsPageConnectionActive::OnToggleLimitPorts)
+EVT_CHECKBOX(XRCID("ID_LIMITPORTS"), COptionsPageConnectionActive::OnRadioOrCheckEvent)
+EVT_RADIOBUTTON(XRCID("ID_ACTIVEMODE1"), COptionsPageConnectionActive::OnRadioOrCheckEvent)
+EVT_RADIOBUTTON(XRCID("ID_ACTIVEMODE2"), COptionsPageConnectionActive::OnRadioOrCheckEvent)
+EVT_RADIOBUTTON(XRCID("ID_ACTIVEMODE3"), COptionsPageConnectionActive::OnRadioOrCheckEvent)
 END_EVENT_TABLE();
 
 bool COptionsPageConnectionActive::LoadPage()
@@ -37,13 +40,17 @@ bool COptionsPageConnectionActive::SavePage()
 	GetText(XRCID("ID_LOWESTPORT")).ToLong(&tmp); m_pOptions->SetOption(OPTION_LIMITPORTS_LOW, tmp);
 	GetText(XRCID("ID_HIGHESTPORT")).ToLong(&tmp); m_pOptions->SetOption(OPTION_LIMITPORTS_HIGH, tmp);
 	
+	int mode;
 	if (XRCCTRL(*this, "ID_ACTIVEMODE1", wxRadioButton)->GetValue())
-		m_pOptions->SetOption(OPTION_EXTERNALIPMODE, 0);
+		mode = 0;
 	else
-		m_pOptions->SetOption(OPTION_EXTERNALIPMODE, XRCCTRL(*this, "ID_ACTIVEMODE2", wxRadioButton)->GetValue() ? 1 : 2);
+		mode = XRCCTRL(*this, "ID_ACTIVEMODE2", wxRadioButton)->GetValue() ? 1 : 2;
+	m_pOptions->SetOption(OPTION_EXTERNALIPMODE, mode);
 
-	m_pOptions->SetOption(OPTION_EXTERNALIP, XRCCTRL(*this, "ID_ACTIVEIP", wxTextCtrl)->GetValue());
-	m_pOptions->SetOption(OPTION_EXTERNALIPRESOLVER, XRCCTRL(*this, "ID_ACTIVERESOLVER", wxTextCtrl)->GetValue());
+	if (mode == 1)
+		m_pOptions->SetOption(OPTION_EXTERNALIP, XRCCTRL(*this, "ID_ACTIVEIP", wxTextCtrl)->GetValue());
+	else if (mode == 2)
+		m_pOptions->SetOption(OPTION_EXTERNALIPRESOLVER, XRCCTRL(*this, "ID_ACTIVERESOLVER", wxTextCtrl)->GetValue());
 	m_pOptions->SetOption(OPTION_NOEXTERNALONLOCAL, XRCCTRL(*this, "ID_NOEXTERNALONLOCAL", wxCheckBox)->GetValue());
 
 	return true;
@@ -83,6 +90,24 @@ bool COptionsPageConnectionActive::Validate()
 			return false;
 		}
 	}
+
+	int mode;
+	if (XRCCTRL(*this, "ID_ACTIVEMODE1", wxRadioButton)->GetValue())
+		mode = 0;
+	else
+		mode = XRCCTRL(*this, "ID_ACTIVEMODE2", wxRadioButton)->GetValue() ? 1 : 2;
+
+	if (mode == 1)
+	{
+		wxTextCtrl* pActiveIP = XRCCTRL(*this, "ID_ACTIVEIP", wxTextCtrl);
+		if (!IsIpAddress(pActiveIP->GetValue()))
+		{
+			pActiveIP->SetFocus();
+			wxMessageBox(_("You have to enter a valid IP address."));
+			return false;
+		}
+	}
+	
 	return true;
 }
 
@@ -90,9 +115,19 @@ void COptionsPageConnectionActive::SetCtrlState()
 {
 	FindWindow(XRCID("ID_LOWESTPORT"))->Enable(GetCheck(XRCID("ID_LIMITPORTS")));
 	FindWindow(XRCID("ID_HIGHESTPORT"))->Enable(GetCheck(XRCID("ID_LIMITPORTS")));
+
+	int mode;
+	if (XRCCTRL(*this, "ID_ACTIVEMODE1", wxRadioButton)->GetValue())
+		mode = 0;
+	else
+		mode = XRCCTRL(*this, "ID_ACTIVEMODE2", wxRadioButton)->GetValue() ? 1 : 2;
+	FindWindow(XRCID("ID_ACTIVEIP"))->Enable(mode == 1);
+	FindWindow(XRCID("ID_ACTIVERESOLVER"))->Enable(mode == 2);
+
+	FindWindow(XRCID("ID_NOEXTERNALONLOCAL"))->Enable(mode != 0);	
 }
 
-void COptionsPageConnectionActive::OnToggleLimitPorts(wxCommandEvent& event)
+void COptionsPageConnectionActive::OnRadioOrCheckEvent(wxCommandEvent& event)
 {
 	SetCtrlState();
 }

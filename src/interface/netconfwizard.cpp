@@ -134,6 +134,13 @@ void CNetConfWizard::OnPageChanging(wxWizardEvent& event)
 				event.Veto();
 				return;
 			}
+			if (!IsIpAddress(ip))
+			{
+				wxMessageBox(_("You have to enter a valid IP address."));
+				control->SetFocus();
+				event.Veto();
+				return;
+			}
 		}
 		else if (mode == 2)
 		{

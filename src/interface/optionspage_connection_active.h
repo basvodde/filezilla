@@ -13,7 +13,7 @@ protected:
 	virtual void SetCtrlState();
 
 	DECLARE_EVENT_TABLE();
-	void OnToggleLimitPorts(wxCommandEvent& event);
+	void OnRadioOrCheckEvent(wxCommandEvent& event);
 };
 
 #endif //__OPTIONSPAGE_CONNECTION_ACTIVE_H__
