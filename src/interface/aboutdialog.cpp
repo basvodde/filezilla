@@ -105,3 +105,13 @@ wxString CAboutDialog::GetCompiler()
 	return _T("Unknown compiler");
 #endif
 }
+
+wxString CAboutDialog::GetBuildType()
+{
+#ifdef BUILDTYPE
+	wxString buildtype = (BUILDTYPE, wxConvLocal);
+	if (buildtype == _T("official") || buildtype == _T("nightly"))
+		return buildtype;
+#endif
+	return _T("");
+}

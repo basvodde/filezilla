@@ -12,6 +12,7 @@ public:
 	bool Create(wxWindow* parent);
 
 	static wxString GetBuildDate();
+	static wxString GetBuildType();
 	static wxString GetCompiler();
 
 protected:
