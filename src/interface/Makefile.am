@@ -9,7 +9,8 @@ INCLUDES = -I$(srcdir)/../include
 bin_PROGRAMS = filezilla
 
 # the application source, library search path, and link libraries
-filezilla_SOURCES = aboutdialog.cpp asyncrequestqueue.cpp chmoddialog.cpp \
+filezilla_SOURCES = aboutdialog.cpp asyncrequestqueue.cpp \
+		buildinfo.cpp chmoddialog.cpp \
 		commandqueue.cpp customheightlistctrl.cpp dialogex.cpp \
 		fileexistsdlg.cpp \
 		FileZilla.cpp filter.cpp filteredit.cpp inputdialog.cpp \
@@ -32,7 +33,8 @@ if USE_BINRELOC
 filezilla_SOURCES += prefix.cpp
 endif
 
-noinst_HEADERS = aboutdialog.h asyncrequestqueue.h chmoddialog.h \
+noinst_HEADERS = aboutdialog.h asyncrequestqueue.h \
+		 buildinfo.h chmoddialog.h \
 		 commandqueue.h customheightlistctrl.h \
 		 dialogex.h fileexistsdlg.h \
 		 filezillaapp.h filter.h filteredit.h \

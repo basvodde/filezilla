@@ -4,7 +4,7 @@
 #include "filezillaapp.h"
 #include "ipcmutex.h"
 #include "xmlfunctions.h"
-#include "aboutdialog.h"
+#include "buildinfo.h"
 
 #if wxUSE_UNICODE
 // Chinese equivalents to ".", "," and ":"
@@ -562,7 +562,7 @@ bool CWrapEngine::LoadCache()
 	if (!pElement)
 		pElement = pDocument->InsertEndChild(TiXmlElement("Layout"))->ToElement();
 
-	const wxString buildDate = CAboutDialog::GetBuildDate();
+	const wxString buildDate = CBuildInfo::GetBuildDate();
 	if (GetTextAttribute(pElement, "Builddate") != buildDate)
 	{
 		cacheValid = false;
