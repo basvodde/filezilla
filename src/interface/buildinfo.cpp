@@ -115,7 +115,6 @@ wxULongLong CBuildInfo::ConvertToVersionNumber(const wxChar* version)
 			segment = 0;
 			v <<= 10;
 			shifts++;
-			continue;
 		}
 		if (*version == '-' && shifts < 4)
 		{
