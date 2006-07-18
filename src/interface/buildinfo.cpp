@@ -79,3 +79,57 @@ wxString CBuildInfo::GetBuildType()
 #endif
 	return _T("");
 }
+
+wxULongLong CBuildInfo::ConvertToVersionNumber(const wxChar* version)
+{
+	// Crude conversion from version string into number for easy comparison
+	// Supported version formats:
+	// 1.2.4
+	// 11.22.33.44
+	// 1.2.3-rc3
+	// 1.2.3.4-beta5
+	// All numbers can be as large as 1024
+	// Only either rc or beta can exist at the same time)
+	//
+	// The version string A.B.C.D-rcE-betaF expands to the following binary representation:
+	// aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeefffffffff
+	//
+	// Example:
+	// 2.2.26-beta3 will be converted into
+	// 0000000010 0000000010 0000011010 0000000000 0000000000 0000000011
+	// which in turn corresponds to the simple 64-bit number 2254026754228227
+	// And these can be compared easily
+
+	wxASSERT(*version >= '0' && *version <= '9');
+
+	wxULongLong v = 0;
+	int segment = 0;
+
+	int shifts = 0;
+
+	for (; *version; version++)
+	{
+		if (*version == '.' || *version == '-' || *version == 'b')
+		{
+			v += segment;
+			segment = 0;
+			v <<= 10;
+			shifts++;
+			continue;
+		}
+		if (*version == '-' && shifts < 4)
+		{
+			v <<= (4 - shifts) * 10;
+			shifts = 4;
+		}
+		else if (*version >= '0' && *version <= '9')
+		{
+			segment *= 10;
+			segment += *version - '0';
+		}
+	}
+	v += segment;
+	v <<= (5 - shifts) * 10;
+
+	return v;
+}
