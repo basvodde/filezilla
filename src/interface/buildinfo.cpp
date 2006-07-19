@@ -6,7 +6,7 @@ wxString CBuildInfo::GetVersion()
 	return wxString(PACKAGE_VERSION, wxConvLocal);
 }
 
-wxString CBuildInfo::GetBuildDate()
+wxString CBuildInfo::GetBuildDateString()
 {
 	// Get build date. Unfortunately it is in the ugly Mmm dd yyyy format.
 	// Make a good yyyy-mm-dd out of it
@@ -46,6 +46,13 @@ wxString CBuildInfo::GetBuildDate()
 		return date;
 
 	return wxString::Format(_T("%04d-%02d-%02d"), year, i + 1, day);
+}
+
+wxDateTime CBuildInfo::GetBuildDate()
+{
+	wxDateTime date;
+	date.ParseDate(GetBuildDateString());
+	return date;
 }
 
 wxString CBuildInfo::GetCompiler()

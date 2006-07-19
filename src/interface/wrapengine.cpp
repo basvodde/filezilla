@@ -562,7 +562,7 @@ bool CWrapEngine::LoadCache()
 	if (!pElement)
 		pElement = pDocument->InsertEndChild(TiXmlElement("Layout"))->ToElement();
 
-	const wxString buildDate = CBuildInfo::GetBuildDate();
+	const wxString buildDate = CBuildInfo::GetBuildDateString();
 	if (GetTextAttribute(pElement, "Builddate") != buildDate)
 	{
 		cacheValid = false;

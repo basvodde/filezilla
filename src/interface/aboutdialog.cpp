@@ -14,7 +14,7 @@ bool CAboutDialog::Create(wxWindow* parent)
 	if (!SetLabel(XRCID("ID_VERSION"), CBuildInfo::GetVersion()))
 		return false;
 
-	if (!SetLabel(XRCID("ID_BUILDDATE"), CBuildInfo::GetBuildDate()))
+	if (!SetLabel(XRCID("ID_BUILDDATE"), CBuildInfo::GetBuildDateString()))
 		return false;
 
 	if (!SetLabel(XRCID("ID_COMPILEDWITH"), CBuildInfo::GetCompiler(), 200))
