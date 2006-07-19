@@ -95,11 +95,14 @@ wxULongLong CBuildInfo::ConvertToVersionNumber(const wxChar* version)
 	// 11.22.33.44
 	// 1.2.3-rc3
 	// 1.2.3.4-beta5
-	// All numbers can be as large as 1024
+	// All numbers can be as large as 1024, with the exception of the release candidate.
+
 	// Only either rc or beta can exist at the same time)
 	//
 	// The version string A.B.C.D-rcE-betaF expands to the following binary representation:
-	// aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeefffffffff
+	// aaaaaaaaaabbbbbbbbbbccccccccccddddddddddexeeeeeeefffffffff
+	//
+	// x will be set to 1 if neither rc nor beta are set. 0 otherwise.
 	//
 	// Example:
 	// 2.2.26-beta3 will be converted into
@@ -136,6 +139,10 @@ wxULongLong CBuildInfo::ConvertToVersionNumber(const wxChar* version)
 	}
 	v += segment;
 	v <<= (5 - shifts) * 10;
+
+	// Make sure final releases have a higher version number than rc or beta releases
+	if (!(v & 0x0FFFFF))
+		v |= 0x080000;
 
 	return v;
 }
