@@ -34,6 +34,9 @@ protected:
 	bool m_skipPageChanging;
 
 	int m_currentPage;
+
+	wxString m_urlServer;
+	wxString m_urlFile;
 };
 
 #endif //__UPDATEWIZARD_H__

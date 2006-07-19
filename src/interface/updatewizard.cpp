@@ -2,6 +2,7 @@
 #include "updatewizard.h"
 #include "filezillaapp.h"
 #include "Options.h"
+#include "buildinfo.h"
 
 #define MAXCHECKPROGRESS 9 // Maximum value of progress bar
 
@@ -21,6 +22,16 @@ CUpdateWizard::CUpdateWizard(wxWindow* pParent)
 	m_inTransfer = false;
 	m_skipPageChanging = false;
 	m_currentPage = 1;
+
+#ifdef __WXMSW__
+	const wxChar system[] = _T("Win32");
+#else
+	const wxChar system[] = _T("Other");
+#endif
+	wxString version(PACKAGE_VERSION, wxConvLocal);
+	version.Replace(_T(" "), _T("%20"));
+	m_urlServer = _T("update.filezilla-project.org");
+	m_urlFile = wxString::Format(_T("updatecheck.php?platform=%s&version=%s"), system, version.c_str());
 }
 
 CUpdateWizard::~CUpdateWizard()
@@ -120,14 +131,14 @@ void CUpdateWizard::OnPageChanging(wxWizardEvent& event)
 
 		event.Veto();
 
-		int res = m_pEngine->Command(CConnectCommand(CServer(HTTP, DEFAULT, _T("filezilla-project.org"), 80)));
+		int res = m_pEngine->Command(CConnectCommand(CServer(HTTP, DEFAULT, m_urlServer, 80)));
 		if (res == FZ_REPLY_OK)
 		{
 			m_inTransfer = true;
 			pText->SetLabel(_("Connecting to server"));
 			pProgress->SetValue(pProgress->GetValue() + 1);
 			CFileTransferCommand::t_transferSettings transferSettings;
-			CFileTransferCommand cmd(_T(""), CServerPath(_T("/")), _T("updatecheck.php"), true, transferSettings);
+			CFileTransferCommand cmd(_T(""), CServerPath(_T("/")), m_urlFile, true, transferSettings);
 			res = m_pEngine->Command(cmd);
 		}
 		if (res == FZ_REPLY_OK)
@@ -216,7 +227,7 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 					wxGauge* pProgress = XRCCTRL(*this, "ID_CHECKINGPROGRESS", wxGauge);
 					pProgress->SetValue(pProgress->GetValue() + 1);
 					CFileTransferCommand::t_transferSettings transferSettings;
-					CFileTransferCommand cmd(_T(""), CServerPath(_T("/")), _T("updatecheck.php"), true, transferSettings);
+					CFileTransferCommand cmd(_T(""), CServerPath(_T("/")), m_urlFile, true, transferSettings);
 					int res = m_pEngine->Command(cmd);
 					if (res == FZ_REPLY_OK)
 						ShowPage(m_pages[1]);
@@ -244,7 +255,7 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 				}
 				for (int i = 0; i < len; i++)
 				{
-					if (!data[i] || data[i] > 127)
+					if (!data[i] || (unsigned char)data[i] > 127)
 					{
 						delete [] data;
 						m_pEngine->Command(CCancelCommand());
@@ -266,10 +277,118 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 
 void CUpdateWizard::ParseData()
 {
-	m_skipPageChanging = true;
-	ShowPage(m_pages[4]);
-	m_currentPage = 4;
-	m_skipPageChanging = false;
+	const wxULongLong ownVersionNumber = CBuildInfo::ConvertToVersionNumber(CBuildInfo::GetVersion());
+
+	wxString newVersion;
+	wxULongLong newVersionNumber = 0;
+	wxString newUrl;
+
+	while (m_data != _T(""))
+	{
+		wxString line;
+		int pos = m_data.Find('\n');
+		if (pos != -1)
+		{
+			line = m_data.Left(pos);
+			m_data = m_data.Mid(pos + 1);
+		}
+		else
+		{
+			line = m_data;
+			m_data = _T("");
+		}
+
+		line.Trim(true);
+		line.Trim(false);
+		
+		// Extract type of update
+		pos = line.Find(' ');
+		if (pos < 1)
+			continue;
+
+		wxString type = line.Left(pos);
+		line = line.Mid(pos + 1);
+
+		// Extract version/date
+		pos = line.Find(' ');
+		if (pos < 1)
+			continue;
+
+		wxString versionOrDate = line.Left(pos);
+		line = line.Mid(pos + 1);
+
+		// Extract URL
+		pos = line.Find(' ');
+		if (pos != -1)
+			continue;
+		wxString url = line;
+		if (url == _T("none"))
+			url = _T("");
+
+		if (type == _T("nightly"))
+		{
+			if (!XRCCTRL(*this, "ID_CHECKNIGHTLY", wxCheckBox)->GetValue())
+				continue;
+
+			wxDateTime nightlyDate;
+			if (!nightlyDate.ParseDate(versionOrDate))
+				continue;
+
+			wxDateTime buildDate = CBuildInfo::GetBuildDate();
+			if (!buildDate.IsValid() || !nightlyDate.IsValid() || nightlyDate <= buildDate)
+				continue;
+
+			if (url == _T(""))
+				continue;
+
+			newVersion = versionOrDate + _T(" Nightly");
+			newUrl = url;
+			break;
+		}
+		else
+		{
+			if (CBuildInfo::ConvertToVersionNumber(versionOrDate) <= ownVersionNumber)
+				continue;
+		}
+		if (type == _T("beta"))
+		{
+			// Update beta only if at least one of these conditions is true:
+			// - Beta box is checked
+			// - Current version is a beta and no newer stable version exists
+
+			if (!XRCCTRL(*this, "ID_CHECKBETA", wxCheckBox)->GetValue() &&
+				!((ownVersionNumber & 0x0FFFFF) != 0 && newVersionNumber != 0))
+				continue;
+
+			if (newVersionNumber >= CBuildInfo::ConvertToVersionNumber(versionOrDate))
+				continue;
+		}
+		else
+		{
+			// Final releases
+			if (CBuildInfo::ConvertToVersionNumber(versionOrDate) < newVersionNumber && XRCCTRL(*this, "ID_CHECKBETA", wxCheckBox)->GetValue())
+				continue;
+		}
+
+		newVersion = versionOrDate;
+		newVersionNumber = CBuildInfo::ConvertToVersionNumber(versionOrDate);
+		newUrl = url;
+	}
+
+	if (newVersionNumber == 0)
+	{
+		m_skipPageChanging = true;
+		ShowPage(m_pages[4]);
+		m_currentPage = 4;
+		m_skipPageChanging = false;
+	}
+	else
+	{
+		m_skipPageChanging = true;
+		ShowPage(m_pages[1]);
+		m_currentPage = 1;
+		m_skipPageChanging = false;
+	}
 
 	wxButton* pNext = wxDynamicCast(FindWindow(wxID_FORWARD), wxButton);
 	pNext->Enable();

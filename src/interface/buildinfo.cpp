@@ -141,7 +141,7 @@ wxULongLong CBuildInfo::ConvertToVersionNumber(const wxChar* version)
 	v <<= (5 - shifts) * 10;
 
 	// Make sure final releases have a higher version number than rc or beta releases
-	if (!(v & 0x0FFFFF))
+	if ((v & 0x0FFFFF) == 0)
 		v |= 0x080000;
 
 	return v;
