@@ -11,6 +11,7 @@ public:
 	static wxString GetVersion();
 	static wxULongLong ConvertToVersionNumber(const wxChar* version);
 	static wxString GetBuildDateString();
+	static wxString GetBuildTimeString();
 	static wxDateTime GetBuildDate();
 	static wxString GetBuildType();
 	static wxString GetCompiler();

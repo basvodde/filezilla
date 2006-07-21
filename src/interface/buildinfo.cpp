@@ -48,6 +48,11 @@ wxString CBuildInfo::GetBuildDateString()
 	return wxString::Format(_T("%04d-%02d-%02d"), year, i + 1, day);
 }
 
+wxString CBuildInfo::GetBuildTimeString()
+{
+	return wxString(__TIME__, wxConvLocal);
+}
+
 wxDateTime CBuildInfo::GetBuildDate()
 {
 	wxDateTime date;
