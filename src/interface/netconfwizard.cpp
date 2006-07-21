@@ -39,6 +39,8 @@ bool CNetConfWizard::Load()
 	if (!Create(m_parent, wxID_ANY, _("Firewall and router configuration wizard")))
 		return false;
 
+	wxSize minPageSize = GetPageAreaSizer()->GetMinSize();
+
 	for (int i = 1; i <= 7; i++)
 	{
 		wxWizardPageSimple* page = new wxWizardPageSimple();
@@ -57,7 +59,7 @@ bool CNetConfWizard::Load()
 	std::vector<wxWindow*> windows;
 	for (unsigned int i = 0; i < m_pages.size(); i++)
 		windows.push_back(m_pages[i]);
-	wxGetApp().GetWrapEngine()->WrapRecursive(windows, 1.7, "Netconf");
+	wxGetApp().GetWrapEngine()->WrapRecursive(windows, 1.7, "Netconf", wxSize(), minPageSize);
 
 	// Load values
 
