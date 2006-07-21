@@ -11,8 +11,8 @@ public:
 
 	// Find all wxStaticText controls in the given window(s) and wrap them, so
 	// that the window has the right aspect ratio...
-	bool WrapRecursive(wxWindow* wnd, double ratio, const char* name = "", wxSize canvas = wxSize());
-	bool WrapRecursive(std::vector<wxWindow*>& windows, double ratio, const char* name = "", wxSize canvas = wxSize());
+	bool WrapRecursive(wxWindow* wnd, double ratio, const char* name = "", wxSize canvas = wxSize(), wxSize minRequested = wxSize());
+	bool WrapRecursive(std::vector<wxWindow*>& windows, double ratio, const char* name = "", wxSize canvas = wxSize(), wxSize minRequested = wxSize());
 
 	// .. or does not exceed the given maximum length.
 	bool WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max);

@@ -244,14 +244,14 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 	return true;
 }
 
-bool CWrapEngine::WrapRecursive(wxWindow* wnd, double ratio, const char* name /*=""*/, wxSize canvas /*=wxSize()*/)
+bool CWrapEngine::WrapRecursive(wxWindow* wnd, double ratio, const char* name /*=""*/, wxSize canvas /*=wxSize()*/, wxSize minRequestedSize /*wxSize()*/)
 {
 	std::vector<wxWindow*> windows;
 	windows.push_back(wnd);
 	return WrapRecursive(windows, ratio, name, canvas);
 }
 
-bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, const char* name /*=""*/, wxSize canvas /*=wxSize()*/)
+bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, const char* name /*=""*/, wxSize canvas /*=wxSize()*/, wxSize minRequestedSize /*wxSize()*/)
 {
 	int maxWidth = GetWidthFromCache(name);
 	if (maxWidth)
@@ -270,7 +270,7 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 		return true;
 	}
 
-	wxSize size(0, 0);
+	wxSize size = minRequestedSize;
 
 	for (std::vector<wxWindow*>::iterator iter = windows.begin(); iter != windows.end(); iter++)
 	{
@@ -299,7 +299,7 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 	int actualWidth = size.GetWidth();
 	while (true)
 	{
-		wxSize size(0, 0);
+		wxSize size = minRequestedSize;
 		for (std::vector<wxWindow*>::iterator iter = windows.begin(); iter != windows.end(); iter++)
 		{
 			wxSizer* pSizer = (*iter)->GetSizer();
@@ -567,6 +567,13 @@ bool CWrapEngine::LoadCache()
 	{
 		cacheValid = false;
 		SetTextAttribute(pElement, "Builddate", buildDate);
+	}
+
+	const wxString buildTime = CBuildInfo::GetBuildTimeString();
+	if (GetTextAttribute(pElement, "Buildtime") != buildTime)
+	{
+		cacheValid = false;
+		SetTextAttribute(pElement, "Buildtime", buildTime);
 	}
 
 	// Enumerate resource file names
