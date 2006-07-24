@@ -8,10 +8,26 @@
 
 #if wxUSE_UNICODE
 // Chinese equivalents to ".", "," and ":"
-static const wxChar wrapAfter_Chinese[] = { 0x3002, 0xFF0C, 0xFF1A, 0};
+static const wxChar wrapAfter_Chinese[] = { '.', ',', ':', 0x3002, 0xFF0C, 0xFF1A, 0};
 // Remark: Chinese (Taiwan) uses ascii punctuation marks though, but those
 // don't have to be added, as only characters >= 128 will be wrapped.
 #endif
+
+static bool CanWrapBefore(const wxChar& c, const wxChar* wrapAfter)
+{
+	const wxChar* w = wrapAfter;
+	while (*w)
+	{
+		if (*w == c)
+			break;
+
+		w++;
+	}
+	if (!*w)
+		return true;
+
+	return false;
+}
 
 wxString CWrapEngine::WrapText(wxWindow* parent, const wxString &text, unsigned long maxLength)
 {
@@ -53,6 +69,7 @@ wxString CWrapEngine::WrapText(wxWindow* parent, const wxString &text, unsigned 
 	int width = 0, height = 0;
 
 	const wxChar* str = text.c_str();
+
 	// Scan entire string
 	while (*str)
 	{
@@ -63,31 +80,8 @@ wxString CWrapEngine::WrapText(wxWindow* parent, const wxString &text, unsigned 
 		// Position of last wrappable character
 		const wxChar* wrappable = 0;
 
-		bool lastAmpersand = false;
 		while (*p)
 		{
-			if (*p == '&')
-			{
-				if (!lastAmpersand)
-				{
-					lastAmpersand = true;
-					p++;
-					continue;
-				}
-				else
-					lastAmpersand = false;
-			}
-			std::map<wxChar, unsigned int>::const_iterator iter = m_charWidths.find(*p);
-			if (iter == m_charWidths.end())
-			{
-				// Get width of all individual characters, record width of the current line
-				parent->GetTextExtent(*p, &width, &height);
-				m_charWidths[*p] = width;
-				lineLength += width;
-			}
-			else
-				lineLength += iter->second;
-
 			wxASSERT(*p != '\r');
 			if (*p == '\n')
 			{
@@ -98,43 +92,116 @@ wxString CWrapEngine::WrapText(wxWindow* parent, const wxString &text, unsigned 
 			}
 			else if (p != str) // Don't wrap at first character
 			{
-				if (*p == ' ')
-					// Remember position of last space
-					wrappable = p;
-				else if (wrapOnEveryChar && *p >= 128)
+				if (*p != ' ')
 				{
-					const wxChar* w = wrapAfter;
-					while (*w)
+					if (wrapOnEveryChar && *p >= 128)
 					{
-						if (*w == *p)
-							break;
-
-						w++;
+						if (!CanWrapBefore(*(p + 1), wrapAfter))
+						{
+							p++;
+							continue;
+						}
 					}
-					if (!*w)
-						wrappable = p;
+					else
+					{
+						p++;
+						continue;
+					}
 				}
-			}
-
-			if (lineLength > maxLength && wrappable)
-			{
-				const wxString& tmp = wxString(str, wrappable - str);
-				wrappedText += tmp + _T("\n");
-				if (*wrappable != ' ')
-					str = wrappable;
+				
+				wxString temp;
+				if (*p == ' ')
+					temp = wxString(str, p - str);
 				else
-					str = wrappable + 1;
-				break;
+					temp = wxString(str, p - str + 1);
+				temp.Replace(_T("&"), _T(""));
+				parent->GetTextExtent(temp, &width, &height);
+				if (width > maxLength)
+				{
+					if (wrappable)
+					{
+						if (*wrappable == ' ')
+						{
+							wrappedText += wxString(str, wrappable - str) + _T("\n");
+							str = wrappable;
+						}
+						else
+						{
+							wrappedText += wxString(str, wrappable - str + 1) + _T("\n");
+							str = wrappable + 1;
+						}
+					}
+					else
+					{
+						if (*p == ' ')
+							wrappedText += wxString(str, p - str) + _T("\n");
+						else
+							wrappedText += wxString(str, p - str + 1) + _T("\n");
+						str = p + 1;
+					}
+					break;
+				}
+				else
+					wrappable = p;
 			}
 
 			p++;
 		}
 		if (!*p)
 		{
-			wrappedText += str;
+			wxString temp(str);
+			temp.Replace(_T("&"), _T(""));
+			parent->GetTextExtent(temp, &width, &height);
+			if (width > maxLength)
+			{
+				if (wrappable)
+				{
+					if (*wrappable != ' ')
+					{
+						wrappedText += wxString(str, wrappable - str + 1) + _T("\n");
+						str = wrappable + 1;
+						if (*str == ' ')
+							str++;
+						wrappedText += str;
+					}	
+					else
+					{
+						wrappedText += wxString(str, wrappable - str) + _T("\n");
+						str = wrappable;
+						if (*str == ' ')
+							str++;
+						wrappedText += str;
+					}
+				}
+				else
+					wrappedText += str;
+			}
+			else
+				wrappedText += str;
 			break;
 		}
 	}
+#ifdef __WXDEBUG__
+	wxString temp = wrappedText;
+	temp.Replace(_T("&"), _T(""));
+	while (temp != _T(""))
+	{
+		wxString piece;
+		int pos = temp.Find(_T("\n"));
+		if (pos == -1)
+		{
+			piece = temp;
+			temp = _T("");
+		}
+		else
+		{
+			piece = temp.Left(pos);
+			temp = temp.Mid(pos + 1);
+		}
+		parent->GetTextExtent(piece, &width, &height);
+		wxASSERT(width <= maxLength);
+	}
+#endif
 
 	return wrappedText;
 }
@@ -174,12 +241,10 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 			lborder = item->GetBorder();
 
 		wxRect rect = item->GetRect();
-#ifdef __WXMSW__
-		wxASSERT(rect.GetRight() + rborder < pos.x + sizerSize.GetWidth());
-#endif
+
 		wxASSERT(item->GetMinSize().GetWidth() + rborder + lborder <= sizer->GetMinSize().GetWidth());
 
-		if (item->GetMinSize().GetWidth() + item->GetPosition().x + rborder <= max)
+		if (item->GetMinSize().GetWidth() + item->GetPosition().x + lborder + rborder <= max)
 		    continue;
 
 		wxWindow* window;
@@ -263,9 +328,11 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 				continue;
 
 			pSizer->Layout();
-			WrapRecursive(*iter, pSizer, maxWidth);
+			bool res = WrapRecursive(*iter, pSizer, maxWidth);
 			pSizer->Layout();
 			pSizer->Fit(*iter);
+			wxSize size = pSizer->GetMinSize();
+			wxASSERT(size.x <= maxWidth);
 		}
 		return true;
 	}
