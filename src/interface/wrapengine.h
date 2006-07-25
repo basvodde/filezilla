@@ -22,6 +22,7 @@ public:
 
 	// Wrap the given text so its length in pixels does not exceed maxLength
 	wxString WrapText(wxWindow* parent, const wxString &text, unsigned long maxLength);
+	wxString WrapTextChinese(wxWindow* parent, const wxString &text, unsigned long maxLength);
 	bool WrapText(wxWindow* parent, int id, unsigned long maxLength);
 
 	int GetWidthFromCache(const char* name);
@@ -30,6 +31,10 @@ protected:
 	void SetWidthToCache(const char* name, int width);
 
 	std::map<wxChar, unsigned int> m_charWidths;
+
+	bool CanWrapBefore(const wxChar& c);
+	bool m_wrapOnEveryChar;
+	const wxChar* m_noWrapChars;
 };
 
 #endif //__WRAPENGINE_H__

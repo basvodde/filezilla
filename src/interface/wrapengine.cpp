@@ -8,68 +8,40 @@
 
 #if wxUSE_UNICODE
 // Chinese equivalents to ".", "," and ":"
-static const wxChar wrapAfter_Chinese[] = { '.', ',', ':', 0x3002, 0xFF0C, 0xFF1A, 0};
+static const wxChar noWrapChars_Chinese[] = { '.', ',', ':', 0x3002, 0xFF0C, 0xFF1A, 0};
 // Remark: Chinese (Taiwan) uses ascii punctuation marks though, but those
 // don't have to be added, as only characters >= 128 will be wrapped.
 #endif
 
-static bool CanWrapBefore(const wxChar& c, const wxChar* wrapAfter)
+bool CWrapEngine::CanWrapBefore(const wxChar& c)
 {
-	const wxChar* w = wrapAfter;
-	while (*w)
+	// Check if this is a punctuation character, we're not allowed
+	// to wrap before such a character
+	const wxChar* p = m_noWrapChars;
+	while (*p)
 	{
-		if (*w == c)
+		if (*p == c)
 			break;
 
-		w++;
+		p++;
 	}
-	if (!*w)
+	if (!*p)
 		return true;
 
 	return false;
 }
 
-wxString CWrapEngine::WrapText(wxWindow* parent, const wxString &text, unsigned long maxLength)
-{
-	/*
-	This function wraps the given string so that it's width in pixels does
-	not exceed maxLength.
-	In the general case, wrapping is done on word boundaries. Unfortunatly
-	some languages, e.g. Chinese, don't separate words with spaces. In such
-	languages it is allowed to break lines after any character.
-
-	Though there are a few exceptions:
-	- Don't wrap before punctuation marks
-	- Wrap embedded English text fragments only on spaces
-    */
-
-	const wxChar* wrapAfter = 0;
-
-	bool wrapOnEveryChar;
-
-#if wxUSE_UNICODE
-	// Just don't bother with wrapping on anything other than UCS-2
-	// FIXME: Use charset conversion routines to convert into UCS-2 and back into
-	//        local charset if not using unicode.
-	int lang = wxGetApp().GetCurrentLanguage();
-	if (lang == wxLANGUAGE_CHINESE || lang == wxLANGUAGE_CHINESE_SIMPLIFIED ||
-		lang == wxLANGUAGE_CHINESE_TRADITIONAL || lang == wxLANGUAGE_CHINESE_HONGKONG ||
-		lang == wxLANGUAGE_CHINESE_MACAU || lang == wxLANGUAGE_CHINESE_SINGAPORE ||
-		lang == wxLANGUAGE_CHINESE_TAIWAN)
-	{
-		wrapOnEveryChar = true;
-		wrapAfter = wrapAfter_Chinese;
-	}
-	else
-#endif
-		wrapOnEveryChar = false;
-
+wxString CWrapEngine::WrapTextChinese(wxWindow* parent, const wxString &text, unsigned long maxLength)
+{{
+	//maxLength = 28;
+	wxChar x[] = { 31471, 21475, '(', 'P', ')', ':', 0 };
+	//wxString text = x;
+	// See comment at start of WrapText function what this function does
 	wxString wrappedText;
 
 	int width = 0, height = 0;
 
 	const wxChar* str = text.c_str();
-
 	// Scan entire string
 	while (*str)
 	{
@@ -80,8 +52,31 @@ wxString CWrapEngine::WrapText(wxWindow* parent, const wxString &text, unsigned 
 		// Position of last wrappable character
 		const wxChar* wrappable = 0;
 
+		bool lastAmpersand = false;
 		while (*p)
 		{
+			if (*p == '&')
+			{
+				if (!lastAmpersand)
+				{
+					lastAmpersand = true;
+					p++;
+					continue;
+				}
+				else
+					lastAmpersand = false;
+			}
+			std::map<wxChar, unsigned int>::const_iterator iter = m_charWidths.find(*p);
+			if (iter == m_charWidths.end())
+			{
+				// Get width of all individual characters, record width of the current line
+				parent->GetTextExtent(*p, &width, &height);
+				m_charWidths[*p] = width;
+				lineLength += width;
+			}
+			else
+				lineLength += iter->second;
+
 			wxASSERT(*p != '\r');
 			if (*p == '\n')
 			{
@@ -92,95 +87,171 @@ wxString CWrapEngine::WrapText(wxWindow* parent, const wxString &text, unsigned 
 			}
 			else if (p != str) // Don't wrap at first character
 			{
-				if (*p != ' ')
-				{
-					if (wrapOnEveryChar && *p >= 128)
-					{
-						if (!CanWrapBefore(*(p + 1), wrapAfter))
-						{
-							p++;
-							continue;
-						}
-					}
-					else
-					{
-						p++;
-						continue;
-					}
-				}
-				
-				wxString temp;
 				if (*p == ' ')
-					temp = wxString(str, p - str);
-				else
-					temp = wxString(str, p - str + 1);
-				temp.Replace(_T("&"), _T(""));
-				parent->GetTextExtent(temp, &width, &height);
-				if (width > maxLength)
-				{
-					if (wrappable)
-					{
-						if (*wrappable == ' ')
-						{
-							wrappedText += wxString(str, wrappable - str) + _T("\n");
-							str = wrappable;
-						}
-						else
-						{
-							wrappedText += wxString(str, wrappable - str + 1) + _T("\n");
-							str = wrappable + 1;
-						}
-					}
-					else
-					{
-						if (*p == ' ')
-							wrappedText += wxString(str, p - str) + _T("\n");
-						else
-							wrappedText += wxString(str, p - str + 1) + _T("\n");
-						str = p + 1;
-					}
-					break;
-				}
-				else
+					// Remember position of last space
 					wrappable = p;
+				else if (*p >= 128)
+				{
+					if (CanWrapBefore(*p))
+						wrappable = p;
+				}
+				else if (*(p - 1) >= 128 && CanWrapBefore(*p))
+				{
+					// Beginning of embedded English text, can wrap before
+					wrappable = p;
+				}
+			}
+
+			if (lineLength > maxLength && wrappable)
+			{
+				const wxString& tmp = wxString(str, wrappable - str);
+				wrappedText += tmp + _T("\n");
+				if (*wrappable != ' ')
+					str = wrappable;
+				else
+					str = wrappable + 1;
+				break;
 			}
 
 			p++;
 		}
 		if (!*p)
 		{
-			wxString temp(str);
-			temp.Replace(_T("&"), _T(""));
-			parent->GetTextExtent(temp, &width, &height);
-			if (width > maxLength)
-			{
-				if (wrappable)
-				{
-					if (*wrappable != ' ')
-					{
-						wrappedText += wxString(str, wrappable - str + 1) + _T("\n");
-						str = wrappable + 1;
-						if (*str == ' ')
-							str++;
-						wrappedText += str;
-					}	
-					else
-					{
-						wrappedText += wxString(str, wrappable - str) + _T("\n");
-						str = wrappable;
-						if (*str == ' ')
-							str++;
-						wrappedText += str;
-					}
-				}
-				else
-					wrappedText += str;
-			}
-			else
-				wrappedText += str;
+			wrappedText += str;
 			break;
 		}
 	}
+
+#ifdef __WXDEBUG__
+	wxString temp = wrappedText;
+	temp.Replace(_T("&"), _T(""));
+	while (temp != _T(""))
+	{
+		wxString piece;
+		int pos = temp.Find(_T("\n"));
+		if (pos == -1)
+		{
+			piece = temp;
+			temp = _T("");
+		}
+		else
+		{
+			piece = temp.Left(pos);
+			temp = temp.Mid(pos + 1);
+		}
+		parent->GetTextExtent(piece, &width, &height);
+		wxASSERT(width <= maxLength);
+	}
+#endif
+
+	return wrappedText;}
+}
+
+wxString CWrapEngine::WrapText(wxWindow* parent, const wxString &text, unsigned long maxLength)
+{
+	/*
+	This function wraps the given string so that it's width in pixels does
+	not exceed maxLength.
+	In the general case, wrapping is done on word boundaries. Thus we scan the
+	string for spaces, measuer the length of the words and wrap if line becomes
+	too long.
+	It has to be done wordwise, as with some languages/fonts, the width in
+	pixels of a line is smaller than the sum of the widths of every character.
+	
+	A special case are some languages, e.g. Chinese, which don't separate words
+	with spaces. In such languages it is allowed to break lines after any
+	character.
+
+	Though there are a few exceptions:
+	- Don't wrap before punctuation marks
+	- Wrap embedded English text fragments only on spaces
+
+	For this kind of languages, a different wrapping algorithm is used.
+    */
+
+	if (m_wrapOnEveryChar)
+	{
+		return WrapTextChinese(parent, text, maxLength);
+	}
+
+	wxString wrappedText;
+
+	int width = 0, height = 0;
+
+	int spaceWidth = 0;
+	parent->GetTextExtent(_T(" "), &spaceWidth, &height);
+
+	const int maxLengthWithSpace = maxLength + spaceWidth;
+
+	int strLen = text.Length();
+	int wrapAfter = -1;
+	int start = 0;
+	int lineLength = 0;
+	for (int i = 0; i <= strLen; i++)
+	{
+		if (text[i] != ' ' && text[i] != 0)
+			continue;
+
+		wxString segment;
+		if (wrapAfter == -1)
+		{
+			segment = text.Mid(start, i - start);
+			wrapAfter = i;
+		}
+		else
+			segment = text.Mid(wrapAfter + 1, i - wrapAfter - 1);
+
+		segment.Replace(_T("&"), _T(""));
+		parent->GetTextExtent(segment, &width, &height);
+		
+		if (lineLength + spaceWidth + width > maxLength)
+		{
+			if (wrappedText != _T(""))
+				wrappedText += _T("\n");
+			wrappedText += text.Mid(start, wrapAfter - start);
+			if (width + spaceWidth >= maxLength)
+			{
+				if (i - wrapAfter + 1 > 0)
+				{
+					if (wrappedText != _T(""))
+						wrappedText += _T("\n");
+					wrappedText += text.Mid(wrapAfter + 1, i - wrapAfter - 1);
+				}
+				start = i + 1;
+				wrapAfter = -1;
+				lineLength = 0;
+			}
+			else
+			{
+				start = wrapAfter + 1;
+				wrapAfter = i;
+				lineLength = width;
+			}
+		}
+		else if (lineLength + spaceWidth + width + spaceWidth >= maxLength)
+		{
+			if (wrappedText != _T(""))
+				wrappedText += _T("\n");
+			wrappedText += text.Mid(start, i - start);
+			start = i + 1;
+			wrapAfter = -1;
+			lineLength = 0;
+		}
+		else
+		{
+			if (lineLength)
+				lineLength += spaceWidth;
+			lineLength += width;
+			wrapAfter = i;
+		}
+	}
+	if (start < strLen)
+	{
+		if (wrappedText != _T(""))
+			wrappedText += _T("\n");
+		wrappedText += text.Mid(start);
+	}
+
 #ifdef __WXDEBUG__
 	wxString temp = wrappedText;
 	temp.Replace(_T("&"), _T(""));
@@ -390,9 +461,10 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 
 		if (newRatio < ratio)
 		{
-			if (min == actualWidth)
-				break;
-			min = actualWidth;
+			if (min >= actualWidth)
+				min = desiredWidth;
+			else
+				min = actualWidth;
 		}
 		else if (newRatio > ratio)
 		{
@@ -403,7 +475,7 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 		else
 			break;
 
-		if (max - min < 5)
+		if (max - min < 2)
 			break;
 		desiredWidth = (min + max) / 2;
 
@@ -600,6 +672,25 @@ void CWrapEngine::SetWidthToCache(const char* name, int width)
 
 CWrapEngine::CWrapEngine()
 {
+#if wxUSE_UNICODE
+	// Just don't bother with wrapping on anything other than UCS-2
+	// FIXME: Use charset conversion routines to convert into UCS-2 and back into
+	//        local charset if not using unicode.
+	int lang = wxGetApp().GetCurrentLanguage();
+	if (lang == wxLANGUAGE_CHINESE || lang == wxLANGUAGE_CHINESE_SIMPLIFIED ||
+		lang == wxLANGUAGE_CHINESE_TRADITIONAL || lang == wxLANGUAGE_CHINESE_HONGKONG ||
+		lang == wxLANGUAGE_CHINESE_MACAU || lang == wxLANGUAGE_CHINESE_SINGAPORE ||
+		lang == wxLANGUAGE_CHINESE_TAIWAN)
+	{
+		m_wrapOnEveryChar = true;
+		m_noWrapChars = noWrapChars_Chinese;
+	}
+	else
+#endif
+	{
+		m_wrapOnEveryChar = false;
+		m_noWrapChars = 0;
+	}
 }
 
 CWrapEngine::~CWrapEngine()
