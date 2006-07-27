@@ -400,6 +400,7 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 
 			pSizer->Layout();
 			bool res = WrapRecursive(*iter, pSizer, maxWidth);
+			wxASSERT(res);
 			pSizer->Layout();
 			pSizer->Fit(*iter);
 			wxSize size = pSizer->GetMinSize();
@@ -421,7 +422,7 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 	}
 
 	double currentRatio = ((double)(size.GetWidth() + canvas.x) / (size.GetHeight() + canvas.y));
-	if (ratio > currentRatio)
+	if (ratio >= currentRatio)
 	{
 		// Nothing to do, can't wrap anything
 		return true;
@@ -435,6 +436,10 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 		min -= canvas.x;
 	int desiredWidth = (min + max) / 2;
 	int actualWidth = size.GetWidth();
+
+	double bestRatioDiff = currentRatio - ratio;
+	int bestWidth = max;
+
 	while (true)
 	{
 		wxSize size = minRequestedSize;
@@ -461,6 +466,12 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 
 		if (newRatio < ratio)
 		{
+			if (ratio - newRatio < bestRatioDiff)
+			{
+				bestRatioDiff = ratio - newRatio;
+				bestWidth = actualWidth;
+			}
+
 			if (min >= actualWidth)
 				min = desiredWidth;
 			else
@@ -468,12 +479,22 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 		}
 		else if (newRatio > ratio)
 		{
+			if (newRatio - ratio < bestRatioDiff)
+			{
+				bestRatioDiff = newRatio - ratio;
+				bestWidth = actualWidth;
+			}
+
 			if (max == actualWidth)
 				break;
 			max = actualWidth;
 		}
 		else
+		{
+			bestRatioDiff = ratio - newRatio;
+			bestWidth = actualWidth;
 			break;
+		}
 
 		if (max - min < 2)
 			break;
@@ -493,14 +514,14 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 		UnwrapRecursive(*iter, pSizer);
 		pSizer->Layout();
 
-		WrapRecursive(*iter, pSizer, max);
+		WrapRecursive(*iter, pSizer, bestWidth);
 		pSizer->Layout();
 		pSizer->Fit(*iter);
 		size = pSizer->GetMinSize();
-		wxASSERT(size.x <= max);
+		wxASSERT(size.x <= bestWidth);
 	}
 
-	SetWidthToCache(name, max);
+	SetWidthToCache(name, bestWidth);
 
 	return true;
 }
