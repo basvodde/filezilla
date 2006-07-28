@@ -3,6 +3,7 @@
 #include "filezillaapp.h"
 #include "Options.h"
 #include "buildinfo.h"
+#include <wx/stdpaths.h>
 
 #define MAXCHECKPROGRESS 9 // Maximum value of progress bar
 
@@ -31,7 +32,7 @@ CUpdateWizard::CUpdateWizard(wxWindow* pParent)
 	wxString version(PACKAGE_VERSION, wxConvLocal);
 	version.Replace(_T(" "), _T("%20"));
 	m_urlServer = _T("update.filezilla-project.org");
-	m_urlFile = wxString::Format(_T("updatecheck.php?platform=%s&version=%s"), system, version.c_str());
+	m_urlFile = wxString::Format(_T("/updatecheck.php?platform=%s&version=%s"), system, version.c_str());
 }
 
 CUpdateWizard::~CUpdateWizard()
@@ -43,6 +44,8 @@ bool CUpdateWizard::Load()
 {
 	if (!Create(m_parent, wxID_ANY, _("Check for updates")))
 		return false;
+
+	wxSize minPageSize = GetPageAreaSizer()->GetMinSize();
 
 	for (int i = 1; i <= 5; i++)
 	{
@@ -60,12 +63,14 @@ bool CUpdateWizard::Load()
 	for (unsigned int i = 0; i < (m_pages.size() - 1); i++)
 		m_pages[i]->Chain(m_pages[i], m_pages[i + 1]);
 
-	GetPageAreaSizer()->Add(m_pages[0]);
 
+	GetPageAreaSizer()->Add(m_pages[0]);
+	
 	std::vector<wxWindow*> windows;
 	for (unsigned int i = 0; i < m_pages.size(); i++)
 		windows.push_back(m_pages[i]);
-	wxGetApp().GetWrapEngine()->WrapRecursive(windows, 1.7, "UpdateCheck");
+
+	wxGetApp().GetWrapEngine()->WrapRecursive(windows, 1.7, "UpdateCheck", wxSize(), minPageSize);
 
 	XRCCTRL(*this, "ID_CHECKINGTEXT", wxStaticText)->Hide();
 	XRCCTRL(*this, "ID_CHECKINGPROGRESS", wxGauge)->Hide();
@@ -75,9 +80,10 @@ bool CUpdateWizard::Load()
 
 	m_pages[3]->SetPrev(0);
 	m_pages[3]->SetNext(0);
+	GetPageAreaSizer()->Add(m_pages[3]);
 	m_pages[4]->SetPrev(0);
 	m_pages[4]->SetNext(0);
-
+	GetPageAreaSizer()->Add(m_pages[4]);
 
 	return true;
 }
@@ -138,13 +144,32 @@ void CUpdateWizard::OnPageChanging(wxWizardEvent& event)
 			pText->SetLabel(_("Connecting to server"));
 			pProgress->SetValue(pProgress->GetValue() + 1);
 			CFileTransferCommand::t_transferSettings transferSettings;
-			CFileTransferCommand cmd(_T(""), CServerPath(_T("/")), m_urlFile, true, transferSettings);
+			
+			CServerPath path;
+			wxString file = m_urlFile;
+			path.SetPath(file, true);
+			
+			CFileTransferCommand cmd(_T(""), path, file, true, transferSettings);
 			res = m_pEngine->Command(cmd);
 		}
 		if (res == FZ_REPLY_OK)
 			ShowPage(m_pages[1]);
 		else if (res != FZ_REPLY_WOULDBLOCK)
 			FailedCheck();
+	}
+	if (event.GetPage() == m_pages[1] && m_pages[1]->GetNext())
+	{
+		wxString filename = m_urlFile;
+		int pos = filename.Find('/', true);
+		if (pos != -1)
+			filename = filename.Mid(pos + 1);
+		wxFileDialog dialog(this, _("Select download location for package"), wxStandardPaths::Get().GetDocumentsDir(), filename, _T("*.*"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+		if (dialog.ShowModal() != wxID_OK)
+		{
+			event.Veto();
+			return;
+		}
+		m_localFile = dialog.GetPath();
 	}
 	
 	m_skipPageChanging = false;
@@ -227,7 +252,12 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 					wxGauge* pProgress = XRCCTRL(*this, "ID_CHECKINGPROGRESS", wxGauge);
 					pProgress->SetValue(pProgress->GetValue() + 1);
 					CFileTransferCommand::t_transferSettings transferSettings;
-					CFileTransferCommand cmd(_T(""), CServerPath(_T("/")), m_urlFile, true, transferSettings);
+
+					CServerPath path;
+					wxString file = m_urlFile;
+					path.SetPath(file, true);
+
+					CFileTransferCommand cmd(_T(""), path, file, true, transferSettings);
 					int res = m_pEngine->Command(cmd);
 					if (res == FZ_REPLY_OK)
 						ShowPage(m_pages[1]);
@@ -375,7 +405,7 @@ void CUpdateWizard::ParseData()
 		newUrl = url;
 	}
 
-	if (newVersionNumber == 0)
+	if (newVersion == _T(""))
 	{
 		m_skipPageChanging = true;
 		ShowPage(m_pages[4]);
@@ -384,10 +414,42 @@ void CUpdateWizard::ParseData()
 	}
 	else
 	{
+		XRCCTRL(*this, "ID_VERSION", wxStaticText)->SetLabel(newVersion);
+
+		if (newUrl == _(""))
+		{
+			if (CBuildInfo::GetBuildType() == _T("official") || CBuildInfo::GetBuildType() == _T("nightly"))
+				XRCCTRL(*this, "ID_UPDATEDESC", wxStaticText)->SetLabel(_("Please visit http://filezilla-project.org to download the most recent version."));
+			else
+				XRCCTRL(*this, "ID_UPDATEDESC", wxStaticText)->SetLabel(_("Please check the package manager of your system for an updated package or visit http://filezilla-project.org to download the source code of FileZilla."));
+			m_pages[1]->SetNext(0);
+		}
+		else
+		{
+			int pos = newUrl.Find('/');
+			if (pos == -1)
+			{
+				XRCCTRL(*this, "ID_UPDATEDESC", wxStaticText)->SetLabel(_("Please visit http://filezilla-project.org to download the most recent version."));
+				m_pages[1]->SetNext(0);
+			}
+			else
+			{
+				XRCCTRL(*this, "ID_UPDATEDESC", wxStaticText)->SetLabel(_("Click on next to download the new version.\nAlternatively, visit http://filezilla-project.org to download the most recent version."));
+
+				m_urlServer = newUrl.Left(pos);
+				m_urlFile = newUrl.Mid(pos);
+			}
+		}
+		m_pages[1]->GetSizer()->Layout();
+		m_pages[1]->GetSizer()->Fit(m_pages[1]);
+		wxGetApp().GetWrapEngine()->WrapRecursive(m_pages[1], m_pages[1]->GetSizer(), wxGetApp().GetWrapEngine()->GetWidthFromCache("UpdateCheck"));
+
+
 		m_skipPageChanging = true;
 		ShowPage(m_pages[1]);
 		m_currentPage = 1;
 		m_skipPageChanging = false;
+
 	}
 
 	wxButton* pNext = wxDynamicCast(FindWindow(wxID_FORWARD), wxButton);

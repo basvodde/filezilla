@@ -37,6 +37,7 @@ protected:
 
 	wxString m_urlServer;
 	wxString m_urlFile;
+	wxString m_localFile;
 };
 
 #endif //__UPDATEWIZARD_H__
