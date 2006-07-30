@@ -296,7 +296,18 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 
 				m_data += wxString(data, wxConvUTF8, len);
 				delete [] data;
+				break;
 			}
+		case nId_asyncrequest:
+			{
+				CAsyncRequestNotification* pData = reinterpret_cast<CAsyncRequestNotification *>(pNotification);
+				if (pData->GetRequestID() == reqId_fileexists)
+				{
+					reinterpret_cast<CFileExistsNotification *>(pData)->overwriteAction = CFileExistsNotification::overwrite;
+				}
+				m_pEngine->SetAsyncRequestReply(pData);
+			}
+			break;
 		default:
 			break;
 		}
