@@ -73,7 +73,10 @@ public:
 	CHttpFileTransferOpData()
 		: CHttpOpData(this)
 	{
+		pFile = 0;
 	}
+
+	wxFile* pFile;
 };
 
 CHttpControlSocket::CHttpControlSocket(CFileZillaEnginePrivate *pEngine)
@@ -158,9 +161,105 @@ int CHttpControlSocket::ContinueConnect(const wxIPV4address *address)
 
 bool CHttpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotification)
 {
-	LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Unknown request %d"), pNotification->GetRequestID());
-	ResetOperation(FZ_REPLY_INTERNALERROR);
-	return false;
+	switch (pNotification->GetRequestID())
+	{
+	case reqId_fileexists:
+		{
+			if (!m_pCurOpData || m_pCurOpData->opId != cmd_transfer)
+			{
+				LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("No or invalid operation in progress, ignoring request reply %f"), pNotification->GetRequestID());
+				return false;
+			}
+
+			CHttpFileTransferOpData *pData = static_cast<CHttpFileTransferOpData *>(m_pCurOpData);
+
+			if (!pData->waitForAsyncRequest)
+			{
+				LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Not waiting for request reply, ignoring request reply %d"), pNotification->GetRequestID());
+				return false;
+			}
+			pData->waitForAsyncRequest = false;
+
+			CFileExistsNotification *pFileExistsNotification = reinterpret_cast<CFileExistsNotification *>(pNotification);
+			switch (pFileExistsNotification->overwriteAction)
+			{
+			case CFileExistsNotification::overwrite:
+				SendNextCommand();
+				break;
+			case CFileExistsNotification::overwriteNewer:
+				if (!pFileExistsNotification->localTime.IsValid() || !pFileExistsNotification->remoteTime.IsValid())
+					SendNextCommand();
+				else if (pFileExistsNotification->download && pFileExistsNotification->localTime.IsEarlierThan(pFileExistsNotification->remoteTime))
+					SendNextCommand();
+				else if (!pFileExistsNotification->download && pFileExistsNotification->localTime.IsLaterThan(pFileExistsNotification->remoteTime))
+					SendNextCommand();
+				else
+				{
+					if (pData->download)
+					{
+						wxString filename = pData->remotePath.FormatFilename(pData->remoteFile);
+						LogMessage(Status, _("Skipping download of %s"), filename.c_str());
+					}
+					else
+					{
+						LogMessage(Status, _("Skipping upload of %s"), pData->localFile.c_str());
+					}
+					ResetOperation(FZ_REPLY_OK);
+				}
+				break;
+			case CFileExistsNotification::resume:
+				ResetOperation(FZ_REPLY_CRITICALERROR | FZ_REPLY_NOTSUPPORTED);
+				break;
+			case CFileExistsNotification::rename:
+				if (pData->download)
+				{
+					wxFileName fn = pData->localFile;
+					fn.SetFullName(pFileExistsNotification->newName);
+					pData->localFile = fn.GetFullPath();
+
+					wxStructStat buf;
+					int result;
+					result = wxStat(pData->localFile, &buf);
+					if (!result)
+						pData->localFileSize = buf.st_size;
+					else
+						pData->localFileSize = -1;
+
+					if (CheckOverwriteFile() == FZ_REPLY_OK)
+						SendNextCommand();
+				}
+				else
+				{
+					ResetOperation(FZ_REPLY_CRITICALERROR | FZ_REPLY_NOTSUPPORTED);
+					break;
+				}
+				break;
+			case CFileExistsNotification::skip:
+				if (pData->download)
+				{
+					wxString filename = pData->remotePath.FormatFilename(pData->remoteFile);
+					LogMessage(Status, _("Skipping download of %s"), filename.c_str());
+				}
+				else
+				{
+					LogMessage(Status, _("Skipping upload of %s"), pData->localFile.c_str());
+				}
+				ResetOperation(FZ_REPLY_OK);
+				break;
+			default:
+				LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Unknown file exists action: %d"), pFileExistsNotification->overwriteAction);
+				ResetOperation(FZ_REPLY_INTERNALERROR);
+				return false;
+			}
+		}
+		break;
+	default:
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Unknown request %d"), pNotification->GetRequestID());
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return false;
+	}
+
+	return true;
 }
 
 void CHttpControlSocket::OnReceive(wxSocketEvent& event)
@@ -214,6 +313,13 @@ void CHttpControlSocket::OnConnect(wxSocketEvent& event)
 	ResetOperation(FZ_REPLY_OK);
 }
 
+enum filetransferStates
+{
+	filetransfer_init = 0,
+	filetransfer_waitfileexists,
+	filetransfer_transfer
+};
+
 int CHttpControlSocket::FileTransfer(const wxString localFile, const CServerPath &remotePath,
 							  const wxString &remoteFile, bool download,
 							  const CFileTransferCommand::t_transferSettings& transferSettings)
@@ -222,7 +328,7 @@ int CHttpControlSocket::FileTransfer(const wxString localFile, const CServerPath
 	
 	LogMessage(Status, _("Downloading %s"), remotePath.FormatFilename(remoteFile).c_str());
 
-	if (localFile != _T("") || !download)
+	if (!download)
 	{
 		ResetOperation(FZ_REPLY_CRITICALERROR | FZ_REPLY_NOTSUPPORTED);
 		return FZ_REPLY_ERROR;
@@ -242,6 +348,31 @@ int CHttpControlSocket::FileTransfer(const wxString localFile, const CServerPath
 	pData->remotePath = remotePath;
 	pData->remoteFile = remoteFile;
 	pData->download = download;
+
+	if (localFile != _T(""))
+	{
+		pData->opState = filetransfer_waitfileexists;
+		int res = CheckOverwriteFile();
+		if (res != FZ_REPLY_OK)
+			return res;
+
+		pData->opState = filetransfer_transfer;
+
+		pData->pFile = new wxFile();
+
+		// Create local directory
+		wxFileName fn(pData->localFile);
+		wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
+
+		if (!pData->pFile->Open(pData->localFile, wxFile::write))
+		{
+			LogMessage(::Error, _("Failed to open \"%s\" for writing"), pData->localFile.c_str());
+			ResetOperation(FZ_REPLY_ERROR);
+			return FZ_REPLY_ERROR;
+		}
+	}
+	else
+		pData->opState = filetransfer_transfer;
 
 	int res = InternalConnect(m_pAddress->IPAddress(), m_pCurrentServer->GetPort());
 	if (res != FZ_REPLY_OK)
@@ -267,6 +398,27 @@ int CHttpControlSocket::FileTransferSend(int prevResult /*=FZ_RESULT_OK*/)
 	{
 		ResetOperation(prevResult);
 		return FZ_REPLY_ERROR;
+	}
+
+	if (pData->opState == filetransfer_waitfileexists)
+	{
+		pData->opState = filetransfer_transfer;
+		pData->pFile = new wxFile();
+
+		// Create local directory
+		wxFileName fn(pData->localFile);
+		wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
+
+		if (!pData->pFile->Open(pData->localFile, wxFile::write))
+		{
+			LogMessage(::Error, _("Failed to open \"%s\" for writing"), pData->localFile.c_str());
+			ResetOperation(FZ_REPLY_ERROR);
+			return FZ_REPLY_ERROR;
+		}
+
+		int res = InternalConnect(m_pAddress->IPAddress(), m_pCurrentServer->GetPort());
+		if (res != FZ_REPLY_OK)
+			return res;
 	}
 
 	wxString location;
@@ -365,9 +517,23 @@ int CHttpControlSocket::FileTransferParseResponse(char* p, int len)
 		return FZ_REPLY_OK;
 	}
 
-	char* q = new char[len];
-	memcpy(q, p, len);
-	m_pEngine->AddNotification(new CDataNotification(q, len));
+	if (pData->localFile == _T(""))
+	{
+		char* q = new char[len];
+		memcpy(q, p, len);
+		m_pEngine->AddNotification(new CDataNotification(q, len));
+	}
+	else
+	{
+		wxASSERT(pData->pFile);
+
+		if (pData->pFile->Write(p, len) != len)
+		{
+			LogMessage(::Error, _("Failed to write to file %s"), pData->localFile.c_str());
+			ResetOperation(FZ_REPLY_ERROR);
+			return FZ_REPLY_ERROR;
+		}
+	}
 
 	return FZ_REPLY_WOULDBLOCK;
 }
@@ -696,6 +862,12 @@ int CHttpControlSocket::OnChunkedData(CHttpOpData* pData)
 
 int CHttpControlSocket::ResetOperation(int nErrorCode)
 {
+	if (m_pCurOpData && m_pCurOpData->opId == cmd_transfer)
+	{
+		CHttpFileTransferOpData *pData = static_cast<CHttpFileTransferOpData *>(m_pCurOpData);
+		delete pData->pFile;
+	}
+
 	if (!m_pCurOpData || !m_pCurOpData->pNextOpData)
 	{
 		if (nErrorCode == FZ_REPLY_OK)
