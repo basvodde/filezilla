@@ -208,7 +208,7 @@ bool CServerPath::SetPath(wxString &newPath, bool isFile)
 				return false;
 			}
 			file = path.Mid(pos + 1);
-			path = path.Left(pos);
+			path = path.Left(pos + 1);
 
 			if (file == _T(".") || file == _T(".."))
 			{
