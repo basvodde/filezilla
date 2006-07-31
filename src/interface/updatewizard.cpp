@@ -5,6 +5,15 @@
 #include "buildinfo.h"
 #include <wx/stdpaths.h>
 
+#if !(wxMAJOR_VERSION > 2 || wxMINOR_VERSION > 6) && __WXMSW__
+	#include <shlobj.h>
+
+	// Needed for MinGW:
+	#ifndef SHGFP_TYPE_CURRENT
+		#define SHGFP_TYPE_CURRENT 0
+	#endif
+#endif
+
 #define MAXCHECKPROGRESS 9 // Maximum value of progress bar
 
 BEGIN_EVENT_TABLE(CUpdateWizard, wxWizard)
@@ -163,7 +172,23 @@ void CUpdateWizard::OnPageChanging(wxWizardEvent& event)
 		int pos = filename.Find('/', true);
 		if (pos != -1)
 			filename = filename.Mid(pos + 1);
-		wxFileDialog dialog(this, _("Select download location for package"), wxStandardPaths::Get().GetDocumentsDir(), filename, _T("*.*"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+
+#if (wxMAJOR_VERSION > 2 || wxMINOR_VERSION > 6)
+		const wxString defaultDir = wxStandardPaths::Get().GetDocumentsDir();
+#else
+		wxString defaultDir;
+#ifdef __WXMSW__
+		wxChar buffer[MAX_PATH * 2 + 1];
+		wxFileName fn;
+
+		if (SUCCEEDED(SHGetFolderPath(0, CSIDL_PERSONAL, 0, SHGFP_TYPE_CURRENT, buffer)))
+			defaultDir = buffer;
+		else
+#endif //__WXMSW__
+			defaultDir = wxGetHomeDir();
+#endif
+		
+		wxFileDialog dialog(this, _("Select download location for package"), defaultDir, filename, _T("*.*"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 		if (dialog.ShowModal() != wxID_OK)
 		{
 			event.Veto();
@@ -427,7 +452,7 @@ void CUpdateWizard::ParseData()
 	{
 		XRCCTRL(*this, "ID_VERSION", wxStaticText)->SetLabel(newVersion);
 
-		if (newUrl == _(""))
+		if (newUrl == _T(""))
 		{
 			if (CBuildInfo::GetBuildType() == _T("official") || CBuildInfo::GetBuildType() == _T("nightly"))
 				XRCCTRL(*this, "ID_UPDATEDESC", wxStaticText)->SetLabel(_("Please visit http://filezilla-project.org to download the most recent version."));
