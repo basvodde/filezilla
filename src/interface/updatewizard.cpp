@@ -179,7 +179,6 @@ void CUpdateWizard::OnPageChanging(wxWizardEvent& event)
 		wxString defaultDir;
 #ifdef __WXMSW__
 		wxChar buffer[MAX_PATH * 2 + 1];
-		wxFileName fn;
 
 		if (SUCCEEDED(SHGetFolderPath(0, CSIDL_PERSONAL, 0, SHGFP_TYPE_CURRENT, buffer)))
 			defaultDir = buffer;
@@ -187,8 +186,13 @@ void CUpdateWizard::OnPageChanging(wxWizardEvent& event)
 #endif //__WXMSW__
 			defaultDir = wxGetHomeDir();
 #endif
-		
-		wxFileDialog dialog(this, _("Select download location for package"), defaultDir, filename, _T("*.*"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+
+#if (wxMAJOR_VERSION > 2 || wxMINOR_VERSION > 6)
+		const int flags = wxFD_SAVE | wxFD_OVERWRITE_PROMPT;
+#else
+		const int flags = wxSAVE | wxOVERWRITE_PROMPT;
+#endif
+		wxFileDialog dialog(this, _("Select download location for package"), defaultDir, filename, _T("*.*"), flags);
 		if (dialog.ShowModal() != wxID_OK)
 		{
 			event.Veto();
