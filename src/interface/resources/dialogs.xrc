@@ -2590,19 +2590,19 @@
         <object class="wxBoxSizer">
           <orient>wxVERTICAL</orient>
           <object class="sizeritem">
-            <object class="wxStaticText" name="ID_CHECKINGTEXT">
+            <object class="wxStaticText" name="ID_DOWNLOADTEXT">
               <label>&lt;downloading&gt;</label>
             </object>
             <flag>wxALIGN_CENTRE_HORIZONTAL</flag>
           </object>
           <object class="sizeritem">
-            <object class="wxGauge" name="ID_CHECKINGPROGRESS">
+            <object class="wxGauge" name="ID_DOWNLOADPROGRESS">
               <style>wxGA_PROGRESSBAR|wxGA_SMOOTH</style>
             </object>
             <flag>wxGROW</flag>
           </object>
           <object class="sizeritem">
-            <object class="wxStaticText" name="ID_CHECKINGPROGRESSTEXT">
+            <object class="wxStaticText" name="ID_DOWNLOADPROGRESSTEXT">
               <label>&lt;progresstext&gt;</label>
             </object>
             <flag>wxALIGN_CENTRE_HORIZONTAL</flag>
@@ -2614,8 +2614,9 @@
         <option>1</option>
       </object>
       <object class="sizeritem">
-        <object class="wxStaticText">
+        <object class="wxStaticText" name="ID_DOWNLOADCOMPLETE">
           <label>&lt;completiontext&gt;</label>
+          <hidden>1</hidden>
         </object>
       </object>
     </object>

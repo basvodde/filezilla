@@ -14,7 +14,7 @@ public:
 	bool Run();
 
 protected:
-	void FailedCheck();
+	void FailedTransfer();
 	void ParseData();
 
 	wxString m_data;
@@ -28,6 +28,7 @@ protected:
 	DECLARE_EVENT_TABLE()
 	void OnCheck(wxCommandEvent& event);
 	void OnPageChanging(wxWizardEvent& event);
+	void OnPageChanged(wxWizardEvent& event);
 	void OnEngineEvent(wxEvent& event);
 
 	bool m_inTransfer;

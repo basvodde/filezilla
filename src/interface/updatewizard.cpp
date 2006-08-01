@@ -19,6 +19,7 @@
 BEGIN_EVENT_TABLE(CUpdateWizard, wxWizard)
 EVT_CHECKBOX(wxID_ANY, CUpdateWizard::OnCheck)
 EVT_WIZARD_PAGE_CHANGING(wxID_ANY, CUpdateWizard::OnPageChanging)
+EVT_WIZARD_PAGE_CHANGED(wxID_ANY, CUpdateWizard::OnPageChanged)
 EVT_FZ_NOTIFICATION(wxID_ANY, CUpdateWizard::OnEngineEvent)
 END_EVENT_TABLE()
 
@@ -31,7 +32,7 @@ CUpdateWizard::CUpdateWizard(wxWindow* pParent)
 
 	m_inTransfer = false;
 	m_skipPageChanging = false;
-	m_currentPage = 1;
+	m_currentPage = 0;
 
 #ifdef __WXMSW__
 	const wxChar system[] = _T("Win32");
@@ -87,12 +88,12 @@ bool CUpdateWizard::Load()
 
 	XRCCTRL(*this, "ID_CHECKINGPROGRESS", wxGauge)->SetRange(MAXCHECKPROGRESS);
 
-	m_pages[3]->SetPrev(0);
-	m_pages[3]->SetNext(0);
-	GetPageAreaSizer()->Add(m_pages[3]);
-	m_pages[4]->SetPrev(0);
-	m_pages[4]->SetNext(0);
-	GetPageAreaSizer()->Add(m_pages[4]);
+	for (int i = 2; i <= 4; i++)
+	{
+		m_pages[i]->SetPrev(0);
+		m_pages[i]->SetNext(0);
+		GetPageAreaSizer()->Add(m_pages[i]);
+	}
 
 	return true;
 }
@@ -141,7 +142,7 @@ void CUpdateWizard::OnPageChanging(wxWizardEvent& event)
 
 		wxStaticText *pText = XRCCTRL(*this, "ID_CHECKINGTEXTPROGRESS", wxStaticText);
 		pText->Show();
-		pText->SetLabel(_("Revolving hostname"));
+		pText->SetLabel(_("Resolving hostname"));
 
 
 		event.Veto();
@@ -164,7 +165,7 @@ void CUpdateWizard::OnPageChanging(wxWizardEvent& event)
 		if (res == FZ_REPLY_OK)
 			ShowPage(m_pages[1]);
 		else if (res != FZ_REPLY_WOULDBLOCK)
-			FailedCheck();
+			FailedTransfer();
 	}
 	if (event.GetPage() == m_pages[1] && m_pages[1]->GetNext())
 	{
@@ -204,10 +205,44 @@ void CUpdateWizard::OnPageChanging(wxWizardEvent& event)
 	m_skipPageChanging = false;
 }
 
-void CUpdateWizard::FailedCheck()
+void CUpdateWizard::OnPageChanged(wxWizardEvent& event)
+{
+	if (event.GetPage() != m_pages[2])
+		return;
+
+	m_currentPage = 2;
+
+	XRCCTRL(*this, "ID_DOWNLOADTEXT", wxStaticText)->SetLabel(wxString::Format(_("Downloading %s"), wxString(_T("http://") + m_urlServer + m_urlFile).c_str()));
+	wxGetApp().GetWrapEngine()->WrapRecursive(m_pages[1], m_pages[2]->GetSizer(), wxGetApp().GetWrapEngine()->GetWidthFromCache("UpdateCheck"));
+
+	m_inTransfer = false;
+	int res = m_pEngine->Command(CConnectCommand(CServer(HTTP, DEFAULT, m_urlServer, 80)));
+	if (res == FZ_REPLY_OK)
+	{
+		m_inTransfer = true;
+		XRCCTRL(*this, "ID_DOWNLOADPROGRESSTEXT", wxStaticText)->SetLabel(_("Connecting to server"));
+		CFileTransferCommand::t_transferSettings transferSettings;
+
+		CServerPath path;
+		wxString file = m_urlFile;
+		path.SetPath(file, true);
+
+		CFileTransferCommand cmd(m_localFile, path, file, true, transferSettings);
+		res = m_pEngine->Command(cmd);
+	}
+	if (res == FZ_REPLY_OK)
+		ShowPage(m_pages[1]);
+	else if (res != FZ_REPLY_WOULDBLOCK)
+		FailedTransfer();
+}
+
+void CUpdateWizard::FailedTransfer()
 {
 	m_inTransfer = false;
-	XRCCTRL(*this, "ID_FAILURE", wxStaticText)->SetLabel(_("Failed to check for newer version of FileZilla."));
+	if (!m_currentPage)
+		XRCCTRL(*this, "ID_FAILURE", wxStaticText)->SetLabel(_("Failed to check for newer version of FileZilla."));
+	else
+		XRCCTRL(*this, "ID_FAILURE", wxStaticText)->SetLabel(_("Failed to download the latest version of FileZilla."));
 	
 	((wxWizardPageSimple*)GetCurrentPage())->SetNext(m_pages[3]);
 	m_pages[3]->SetPrev((wxWizardPageSimple*)GetCurrentPage());	
@@ -249,16 +284,24 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 				CLogmsgNotification* pLogMsg = reinterpret_cast<CLogmsgNotification *>(pNotification);
 				if (pLogMsg->msgType == Status || pLogMsg->msgType == Command)
 				{
-					wxStaticText *pText = XRCCTRL(*this, "ID_CHECKINGTEXTPROGRESS", wxStaticText);
-					pText->SetLabel(pLogMsg->msg);
-					m_pages[0]->GetSizer()->Layout();
-					wxGauge* pProgress = XRCCTRL(*this, "ID_CHECKINGPROGRESS", wxGauge);
-					int value = pProgress->GetValue();
+					if (!m_currentPage)
+					{
+						wxStaticText *pText = XRCCTRL(*this, "ID_CHECKINGTEXTPROGRESS", wxStaticText);
+						pText->SetLabel(pLogMsg->msg);
+						m_pages[0]->GetSizer()->Layout();
+						wxGauge* pProgress = XRCCTRL(*this, "ID_CHECKINGPROGRESS", wxGauge);
+						int value = pProgress->GetValue();
 #ifdef __WXDEBUG__
-					wxASSERT(value < MAXCHECKPROGRESS);
+						wxASSERT(value < MAXCHECKPROGRESS);
 #endif
-					if (value < MAXCHECKPROGRESS)
-						pProgress->SetValue(value + 1);
+						if (value < MAXCHECKPROGRESS)
+							pProgress->SetValue(value + 1);
+					}
+					else if (m_currentPage == 2)
+					{
+						XRCCTRL(*this, "ID_DOWNLOADPROGRESSTEXT", wxStaticText)->SetLabel(pLogMsg->msg);
+						m_pages[0]->GetSizer()->Layout();
+					}
 				}
 			}
 			break;
@@ -272,35 +315,59 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 						delete pNotification;
 						pNotification = m_pEngine->GetNextNotification();
 					}
-					FailedCheck();
+					FailedTransfer();
 					return;
 				}
 				if (!m_inTransfer)
 				{
 					m_inTransfer = true;
-					wxGauge* pProgress = XRCCTRL(*this, "ID_CHECKINGPROGRESS", wxGauge);
-					pProgress->SetValue(pProgress->GetValue() + 1);
+
+					if (!m_currentPage)
+					{
+						wxGauge* pProgress = XRCCTRL(*this, "ID_CHECKINGPROGRESS", wxGauge);
+						pProgress->SetValue(pProgress->GetValue() + 1);
+					}
+
 					CFileTransferCommand::t_transferSettings transferSettings;
 
 					CServerPath path;
 					wxString file = m_urlFile;
 					path.SetPath(file, true);
 
-					CFileTransferCommand cmd(_T(""), path, file, true, transferSettings);
+					CFileTransferCommand cmd(m_localFile, path, file, true, transferSettings);
 					int res = m_pEngine->Command(cmd);
-					if (res == FZ_REPLY_OK)
-						ShowPage(m_pages[1]);
-					else if (res != FZ_REPLY_WOULDBLOCK)
-						FailedCheck();
+					if (res == FZ_REPLY_WOULDBLOCK)
+						break;
+					else if (res != FZ_REPLY_OK)
+					{
+						FailedTransfer();
+						break;
+					}
 				}
-				else
+
+				if (!m_currentPage)
 				{
+					m_pEngine->Command(CDisconnectCommand());
 					ParseData();
+				}
+				else if (m_currentPage == 2)
+				{
+					wxStaticText* pText = XRCCTRL(*this, "ID_DOWNLOADCOMPLETE", wxStaticText);
+					wxASSERT(pText);
+
+#ifdef __WXMSW__
+					pText->SetLabel(_("The most recent version has been downloaded. Click on Finish to start the installation."));
+#else
+					pText->SetLabel(_("The most recent version has been downloaded. Please install like you did install this version."));
+#endif
+					pText->Show();
+					m_pages[2]->GetSizer()->Layout();
 				}
 			}
 			break;
 		case nId_data:
 			{
+				wxASSERT(!m_currentPage);
 				CDataNotification* pOpMsg = reinterpret_cast<CDataNotification*>(pNotification);
 				int len;
 				char* data = pOpMsg->Detach(len);
@@ -309,7 +376,7 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 				{
 					delete [] data;
 					m_pEngine->Command(CCancelCommand());
-					FailedCheck();
+					FailedTransfer();
 					break;
 				}
 				for (int i = 0; i < len; i++)
@@ -318,7 +385,7 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 					{
 						delete [] data;
 						m_pEngine->Command(CCancelCommand());
-						FailedCheck();
+						FailedTransfer();
 						break;
 					}
 				}
@@ -466,6 +533,8 @@ void CUpdateWizard::ParseData()
 		}
 		else
 		{
+			if (!newUrl.Left(7).CmpNoCase(_T("http://")))
+				newUrl = newUrl.Mid(7);
 			int pos = newUrl.Find('/');
 			if (pos == -1)
 			{
