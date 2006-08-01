@@ -517,6 +517,12 @@ int CHttpControlSocket::FileTransferParseResponse(char* p, int len)
 		return FZ_REPLY_OK;
 	}
 
+	if (!m_pTransferStatus)
+	{
+		InitTransferStatus(pData->m_totalSize.GetLo() + ((wxFileOffset)pData->m_totalSize.GetHi() << 32), 0);
+		SetTransferStatusStartTime();
+	}
+
 	if (pData->localFile == _T(""))
 	{
 		char* q = new char[len];
@@ -534,6 +540,8 @@ int CHttpControlSocket::FileTransferParseResponse(char* p, int len)
 			return FZ_REPLY_ERROR;
 		}
 	}
+
+	UpdateTransferStatus(len);
 
 	return FZ_REPLY_WOULDBLOCK;
 }
