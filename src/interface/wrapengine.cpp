@@ -32,10 +32,7 @@ bool CWrapEngine::CanWrapBefore(const wxChar& c)
 }
 
 wxString CWrapEngine::WrapTextChinese(wxWindow* parent, const wxString &text, unsigned long maxLength)
-{{
-	//maxLength = 28;
-	wxChar x[] = { 31471, 21475, '(', 'P', ')', ':', 0 };
-	//wxString text = x;
+{
 	// See comment at start of WrapText function what this function does
 	wxString wrappedText;
 
@@ -144,7 +141,7 @@ wxString CWrapEngine::WrapTextChinese(wxWindow* parent, const wxString &text, un
 	}
 #endif
 
-	return wrappedText;}
+	return wrappedText;
 }
 
 wxString CWrapEngine::WrapText(wxWindow* parent, const wxString &text, unsigned long maxLength)
