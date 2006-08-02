@@ -25,11 +25,14 @@ protected:
 
 	CFileZillaEngine* m_pEngine;
 
+	void SetTransferStatus(const CTransferStatus* pStatus);
+
 	DECLARE_EVENT_TABLE()
 	void OnCheck(wxCommandEvent& event);
 	void OnPageChanging(wxWizardEvent& event);
 	void OnPageChanged(wxWizardEvent& event);
 	void OnEngineEvent(wxEvent& event);
+	void OnTimer(wxTimerEvent& event);
 
 	bool m_inTransfer;
 	bool m_skipPageChanging;
@@ -39,6 +42,8 @@ protected:
 	wxString m_urlServer;
 	wxString m_urlFile;
 	wxString m_localFile;
+
+	wxTimer m_timer;
 };
 
 #endif //__UPDATEWIZARD_H__

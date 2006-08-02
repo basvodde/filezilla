@@ -21,6 +21,7 @@ EVT_CHECKBOX(wxID_ANY, CUpdateWizard::OnCheck)
 EVT_WIZARD_PAGE_CHANGING(wxID_ANY, CUpdateWizard::OnPageChanging)
 EVT_WIZARD_PAGE_CHANGED(wxID_ANY, CUpdateWizard::OnPageChanged)
 EVT_FZ_NOTIFICATION(wxID_ANY, CUpdateWizard::OnEngineEvent)
+EVT_TIMER(wxID_ANY, CUpdateWizard::OnTimer)
 END_EVENT_TABLE()
 
 CUpdateWizard::CUpdateWizard(wxWindow* pParent)
@@ -43,6 +44,8 @@ CUpdateWizard::CUpdateWizard(wxWindow* pParent)
 	version.Replace(_T(" "), _T("%20"));
 	m_urlServer = _T("update.filezilla-project.org");
 	m_urlFile = wxString::Format(_T("/updatecheck.php?platform=%s&version=%s"), system, version.c_str());
+
+	m_timer.SetOwner(this);
 }
 
 CUpdateWizard::~CUpdateWizard()
@@ -213,7 +216,7 @@ void CUpdateWizard::OnPageChanged(wxWizardEvent& event)
 	m_currentPage = 2;
 
 	XRCCTRL(*this, "ID_DOWNLOADTEXT", wxStaticText)->SetLabel(wxString::Format(_("Downloading %s"), wxString(_T("http://") + m_urlServer + m_urlFile).c_str()));
-	wxGetApp().GetWrapEngine()->WrapRecursive(m_pages[1], m_pages[2]->GetSizer(), wxGetApp().GetWrapEngine()->GetWidthFromCache("UpdateCheck"));
+	m_pages[2]->GetSizer()->Layout();
 
 	m_inTransfer = false;
 	int res = m_pEngine->Command(CConnectCommand(CServer(HTTP, DEFAULT, m_urlServer, 80)));
@@ -229,6 +232,8 @@ void CUpdateWizard::OnPageChanged(wxWizardEvent& event)
 
 		CFileTransferCommand cmd(m_localFile, path, file, true, transferSettings);
 		res = m_pEngine->Command(cmd);
+
+		XRCCTRL(*this, "ID_DOWNLOADPROGRESS", wxGauge)->SetRange(100);
 	}
 	if (res == FZ_REPLY_OK)
 		ShowPage(m_pages[1]);
@@ -300,7 +305,7 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 					else if (m_currentPage == 2)
 					{
 						XRCCTRL(*this, "ID_DOWNLOADPROGRESSTEXT", wxStaticText)->SetLabel(pLogMsg->msg);
-						m_pages[0]->GetSizer()->Layout();
+						m_pages[2]->GetSizer()->Layout();
 					}
 				}
 			}
@@ -355,6 +360,7 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 					wxStaticText* pText = XRCCTRL(*this, "ID_DOWNLOADCOMPLETE", wxStaticText);
 					wxASSERT(pText);
 
+					XRCCTRL(*this, "ID_DOWNLOADPROGRESS", wxGauge)->SetValue(100);
 #ifdef __WXMSW__
 					pText->SetLabel(_("The most recent version has been downloaded. Click on Finish to start the installation."));
 #else
@@ -402,6 +408,14 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 					reinterpret_cast<CFileExistsNotification *>(pData)->overwriteAction = CFileExistsNotification::overwrite;
 				}
 				m_pEngine->SetAsyncRequestReply(pData);
+			}
+			break;
+		case nId_transferstatus:
+			if (m_currentPage == 2)
+			{
+				CTransferStatusNotification *pTransferStatusNotification = reinterpret_cast<CTransferStatusNotification *>(pNotification);
+				const CTransferStatus *pStatus = pTransferStatusNotification->GetStatus();
+				SetTransferStatus(pStatus);
 			}
 			break;
 		default:
@@ -565,4 +579,74 @@ void CUpdateWizard::ParseData()
 	pNext->Enable();
 	wxButton* pPrev = wxDynamicCast(FindWindow(wxID_BACKWARD), wxButton);
 	pPrev->Disable();
+}
+
+void CUpdateWizard::OnTimer(wxTimerEvent& event)
+{
+	bool changed;
+	CTransferStatus status;
+	if (!m_pEngine)
+		m_timer.Stop();
+	else if (!m_pEngine->GetTransferStatus(status, changed))
+		SetTransferStatus(0);
+	else if (changed)
+		SetTransferStatus(&status);
+	else
+		m_timer.Stop();
+}
+
+void CUpdateWizard::SetTransferStatus(const CTransferStatus* pStatus)
+{
+	if (!pStatus)
+	{
+		if (m_timer.IsRunning())
+			m_timer.Stop();
+		return;
+	}
+
+	
+	wxTimeSpan elapsed = wxDateTime::Now().Subtract(pStatus->started);
+	int elapsedSeconds = elapsed.GetSeconds().GetLo(); // Assume GetHi is always 0
+
+	wxString text;
+	if (elapsedSeconds)
+	{
+		wxFileOffset rate = (pStatus->currentOffset - pStatus->startOffset) / elapsedSeconds;
+
+        if (rate > (1000*1000))
+			text.Printf(_("%s bytes (%d.%d MB/s)"), wxLongLong(pStatus->currentOffset).ToString().c_str(), (int)(rate / 1000 / 1000), (int)((rate / 1000 / 100) % 10));
+		else if (rate > 1000)
+			text.Printf(_("%s bytes (%d.%d KB/s)"), wxLongLong(pStatus->currentOffset).ToString().c_str(), (int)(rate / 1000), (int)((rate / 100) % 10));
+		else
+			text.Printf(_("%s bytes (%d B/s)"), wxLongLong(pStatus->currentOffset).ToString().c_str(), (int)rate);
+
+		if (pStatus->totalSize > 0 && rate > 0)
+		{
+			int left = ((pStatus->totalSize - pStatus->startOffset) / rate) - elapsedSeconds;
+			if (left < 0)
+				left = 0;
+			wxTimeSpan timeLeft(0, 0, left);
+			text += timeLeft.Format(_(", %H:%M:%S left"));
+		}
+		else
+		{
+			text += _(", --:--:-- left");
+		}
+	}
+	else
+		text.Format(_("%s bytes"), wxLongLong(pStatus->currentOffset).ToString().c_str());
+
+	XRCCTRL(*this, "ID_DOWNLOADPROGRESSTEXT", wxStaticText)->SetLabel(text);
+	m_pages[2]->GetSizer()->Layout();
+
+	if (pStatus->totalSize > 0)
+	{	
+		int percent = (pStatus->currentOffset * 100) / pStatus->totalSize;
+		if (percent > 100)
+			percent = 100;
+		XRCCTRL(*this, "ID_DOWNLOADPROGRESS", wxGauge)->SetValue(percent);
+	}
+
+	if (!m_timer.IsRunning())
+		m_timer.Start(100);
 }
