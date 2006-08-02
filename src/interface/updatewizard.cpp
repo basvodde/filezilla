@@ -5,7 +5,7 @@
 #include "buildinfo.h"
 #include <wx/stdpaths.h>
 
-#if !(wxMAJOR_VERSION > 2 || wxMINOR_VERSION > 6) && __WXMSW__
+#if !(wxMAJOR_VERSION > 2 || wxMINOR_VERSION > 6) && defined(__WXMSW__)
 	#include <shlobj.h>
 
 	// Needed for MinGW:
