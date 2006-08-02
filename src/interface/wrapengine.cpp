@@ -298,7 +298,7 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 	for (unsigned int i = 0; i < sizer->GetChildren().GetCount(); i++)
 	{
 		wxSizerItem* item = sizer->GetItem(i);
-		if (!item)
+		if (!item || !item->IsShown())
 			continue;
 
 		int rborder = 0;
