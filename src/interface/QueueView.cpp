@@ -551,11 +551,13 @@ void CServerItem::QueueImmediateFiles()
 		{
 			CFileItem* item = *iter;
 			wxASSERT(!item->m_queued);
-			item->m_queued = true;
 			if (item->IsActive())
 				activeList.push_back(item);
 			else
+			{
+				item->m_queued = true;
 				m_fileList[0][i].push_back(item);
+			}
 		}
 		fileList = activeList;
 	}
@@ -1132,6 +1134,12 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 		return;
 	}
 
+	if (!m_activeMode)
+	{
+		ResetEngine(engineData, engineData.pItem ? engineData.pItem->m_remove : false);
+		return;
+	}
+	
 	SendNextCommand(engineData);
 }
 
