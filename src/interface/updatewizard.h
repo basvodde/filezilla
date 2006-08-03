@@ -31,6 +31,7 @@ protected:
 	void OnCheck(wxCommandEvent& event);
 	void OnPageChanging(wxWizardEvent& event);
 	void OnPageChanged(wxWizardEvent& event);
+	void OnFinish(wxWizardEvent& event);
 	void OnEngineEvent(wxEvent& event);
 	void OnTimer(wxTimerEvent& event);
 

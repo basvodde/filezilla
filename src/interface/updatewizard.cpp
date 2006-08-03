@@ -22,6 +22,7 @@ EVT_WIZARD_PAGE_CHANGING(wxID_ANY, CUpdateWizard::OnPageChanging)
 EVT_WIZARD_PAGE_CHANGED(wxID_ANY, CUpdateWizard::OnPageChanged)
 EVT_FZ_NOTIFICATION(wxID_ANY, CUpdateWizard::OnEngineEvent)
 EVT_TIMER(wxID_ANY, CUpdateWizard::OnTimer)
+EVT_WIZARD_FINISHED(wxID_ANY, CUpdateWizard::OnFinish)
 END_EVENT_TABLE()
 
 CUpdateWizard::CUpdateWizard(wxWindow* pParent)
@@ -649,4 +650,12 @@ void CUpdateWizard::SetTransferStatus(const CTransferStatus* pStatus)
 
 	if (!m_timer.IsRunning())
 		m_timer.Start(100);
+}
+
+void CUpdateWizard::OnFinish(wxWizardEvent& event)
+{
+#ifdef __WXMSW__
+	if (m_currentPage == 2)
+		wxExecute(m_localFile);
+#endif
 }
