@@ -8,6 +8,7 @@
 #include "optionspage_themes.h"
 #include "optionspage_language.h"
 #include "optionspage_transfer.h"
+#include "optionspage_updatecheck.h"
 #include "filezillaapp.h"
 
 enum pagenames
@@ -18,7 +19,8 @@ enum pagenames
 	page_transfer = 2,
 	page_filetype = 3,
 	page_themes = 4,
-	page_language = 5
+	page_language = 5,
+	page_updatecheck = 6
 };
 
 // Helper macro to add pages in the most simplistic way
@@ -83,6 +85,7 @@ bool CSettingsDialog::LoadPages()
 	ADD_PAGE(_("File Types"), COptionsPageFiletype, page_transfer);
 	ADD_PAGE(_("Themes"), COptionsPageThemes, page_none);
 	ADD_PAGE(_("Language"), COptionsPageLanguage, page_none);
+	ADD_PAGE(_("Update Check"), COptionsPageUpdateCheck, page_none);
 
 	// Before we can initialize the pages, get the target panel in the settings
 	// dialog.

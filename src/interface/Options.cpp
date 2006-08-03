@@ -48,7 +48,9 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Language", string, _T("") },
 	{ "Last Server Password", string, _T("") },
 	{ "Max Concurrent Uploads", number, _T("0") },
-	{ "Max Concurrent Downloads", number, _T("0") }
+	{ "Max Concurrent Downloads", number, _T("0") },
+	{ "Update Check", number, _T("1") },
+	{ "Update Check Interval", number, _T("7") }
 };
 
 COptions::COptions()
@@ -315,6 +317,13 @@ bool COptions::GetXmlValue(unsigned int nID, wxString &value)
 
 int COptions::Validate(unsigned int nID, int value)
 {
+	switch (nID)
+	{
+	case OPTION_UPDATECHECK_INTERVAL:
+		if (value < 7 || value > 9999)
+			value = 7;
+		break;
+	}
 	return value;
 }
 

@@ -1446,6 +1446,66 @@
       </object>
     </object>
   </object>
+  <object class="wxPanel" name="ID_SETTINGS_UPDATECHECK">
+    <style></style>
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Automatic update check</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxVERTICAL</orient>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_UPDATECHECK">
+                  <label>&amp;Enable automatic update check</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxBoxSizer">
+                  <orient>wxHORIZONTAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Number of days between update checks:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_DAYS">
+                      <size>30,-1</size>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL|wxLEFT|wxRIGHT</flag>
+                    <border>5</border>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>(At least 7 days)</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                </object>
+                <flag>wxTOP|wxBOTTOM</flag>
+                <border>3</border>
+              </object>
+              <object class="spacer">
+                <size>0,10</size>
+              </object>
+              <object class="sizeritem">
+                <object class="wxButton" name="ID_RUNUPDATECHECK">
+                  <label>&amp;Run update check now...</label>
+                </object>
+              </object>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <option>1</option>
+        <flag>wxGROW</flag>
+      </object>
+    </object>
+  </object>
   <object class="wxDialog" name="ID_INPUTDIALOG">
     <title></title>
     <object class="wxBoxSizer">

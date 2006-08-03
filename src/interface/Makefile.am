@@ -20,7 +20,8 @@ filezilla_SOURCES = aboutdialog.cpp asyncrequestqueue.cpp \
 		optionspage.cpp	optionspage_connection.cpp \
 		optionspage_connection_active.cpp optionspage_filetype.cpp \
 		optionspage_language.cpp \
-		optionspage_themes.cpp optionspage_transfer.cpp QueueView.cpp \
+		optionspage_themes.cpp optionspage_transfer.cpp \
+		optionspage_updatecheck.cpp QueueView.cpp \
 		quickconnectbar.cpp recentserverlist.cpp \
 		RemoteListView.cpp RemoteTreeView.cpp settingsdialog.cpp \
 		sitemanager.cpp state.cpp statuslinectrl.cpp StatusView.cpp \
@@ -45,7 +46,7 @@ noinst_HEADERS = aboutdialog.h asyncrequestqueue.h \
 		 optionspage_connection_active.h optionspage_filetype.h \
 		 optionspage_language.h \
 		 optionspage_themes.h optionspage_transfer.h \
-		 prefix.h QueueView.h \
+		 optionspage_updatecheck.h prefix.h QueueView.h \
 		 quickconnectbar.h recentserverlist.h \
 		 RemoteListView.h RemoteTreeView.h \
 		 settingsdialog.h sitemanager.h state.h \
