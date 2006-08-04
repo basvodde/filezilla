@@ -128,6 +128,9 @@ static char data[][110]={
 
 	"-r-xr-xr-x   2 root  root  96 2004.07.15   58-dotted-date file",
 
+	// VMS style listing with a different field order
+	"59-vms-altenrate-field-order-file;1   [SUMMARY]    1/3     2-AUG-2006 13:05  (RWE,RWE,RE,)",
+
 	""};
 
 #endif
@@ -1524,14 +1527,36 @@ bool CDirectoryListingParser::ParseAsVms(CLine *pLine, CDirentry &entry)
 		entry.name = token.GetString();
 	}
 
-	// Get size
+	// This field is either the size or a username (???) enclosed in [].
 	if (!pLine->GetToken(++index, token))
 		return false;
 
+	bool gotSize = false;
 	if (!token.IsNumeric() && !token.IsLeftNumeric())
-		return false;
+	{
+		const int len = token.GetLength();
+		if (len < 3 || token[0] != '[' || token[len - 1] != ']')
+			return false;
+		entry.ownerGroup = token.GetString().Mid(1, len - 2);
+	}
+	else
+	{
+		gotSize = true;
+		entry.size = token.GetNumber();
+	}
+	
+	if (!gotSize)
+	{
+		// Get size
+		if (!pLine->GetToken(++index, token))
+			return false;
 
-	entry.size = token.GetNumber();
+		bool gotSize = false;
+		if (!token.IsNumeric() && !token.IsLeftNumeric())
+			return false;
+	
+		entry.size = token.GetNumber();
+	}
 
 	// Get date
 	if (!pLine->GetToken(++index, token))
@@ -1562,13 +1587,25 @@ bool CDirectoryListingParser::ParseAsVms(CLine *pLine, CDirentry &entry)
 	// Owner / group
 	while (pLine->GetToken(++index, token))
 	{
-		int len = token.GetLength();
+		const int len = token.GetLength();
 		if (len > 2 && token[0] == '(' && token[len - 1] == ')')
+		{
+			if (entry.permissions != _T(""))
+				entry.permissions += _T(" ");
 			entry.permissions = token.GetString().Mid(1, len - 2);
+		}
 		else if (len > 2 && token[0] == '[' && token[len - 1] == ']')
+		{
+			if (entry.ownerGroup != _T(""))
+				entry.ownerGroup += _T(" ");
 			entry.ownerGroup = token.GetString().Mid(1, len - 2);
+		}
 		else
+		{
+			if (entry.permissions != _T(""))
+				entry.permissions += _T(" ");
 			entry.permissions = token.GetString();
+		}
 	}
 
 	return true;
