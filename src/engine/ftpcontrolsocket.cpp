@@ -114,7 +114,8 @@ CFtpControlSocket::CFtpControlSocket(CFileZillaEnginePrivate *pEngine) : CContro
 	m_pTransferSocket = 0;
 	m_sentRestartOffset = false;
 	m_bufferLen = 0;
-	m_skipOneReply = false;
+	m_repliesToSkip = 0;
+	m_pendingReplies = 1;
 }
 
 CFtpControlSocket::~CFtpControlSocket()
@@ -183,13 +184,6 @@ void CFtpControlSocket::ParseLine(wxString line)
 	LogMessage(Response, line);
 	SetAlive();
 
-	if (m_skipOneReply)
-	{
-		LogMessage(Debug_Info, _T("Skipping reply after cancel"));
-		m_skipOneReply = false;
-		SendNextCommand();
-	}
-
 	if (GetCurrentCommandId() == cmd_connect && m_pCurOpData)
 	{
 		CFtpLogonOpData* pData = reinterpret_cast<CFtpLogonOpData *>(m_pCurOpData);
@@ -246,11 +240,30 @@ void CFtpControlSocket::OnConnect(wxSocketEvent &event)
 {
 	SetAlive();
 	LogMessage(Status, _("Connection established, waiting for welcome message..."));
+	m_pendingReplies = 1;
+	m_repliesToSkip = 0;
 	Logon();
 }
 
 void CFtpControlSocket::ParseResponse()
 {
+	if (m_Response[0] != '1')
+	{
+		wxASSERT(m_pendingReplies > 0);
+		if (m_pendingReplies > 0)
+			m_pendingReplies--;
+		else
+			LogMessage(Debug_Warning, _T("Unexpected reply, no reply was pending."));
+	}
+
+	if (m_repliesToSkip)
+	{
+		LogMessage(Debug_Info, _T("Skipping reply after cancelled operation."));
+		if (m_Response[0] != '1')
+			m_repliesToSkip--;
+		return;
+	}
+
 	enum Command commandId = GetCurrentCommandId();
 	switch (commandId)
 	{
@@ -646,7 +659,10 @@ bool CFtpControlSocket::Send(wxString str, bool maskArgs /*=false*/)
 		return false;
 	}
 	unsigned int len = (unsigned int)strlen(buffer);
-	return CControlSocket::Send(buffer, len);
+	bool res = CControlSocket::Send(buffer, len);
+	if (res)
+		m_pendingReplies++;
+	return res;
 }
 
 class CFtpListOpData : public COpData, public CFtpTransferOpData
@@ -869,7 +885,7 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 	m_pIPResolver = 0;
 
 	if ((nErrorCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED && m_pCurOpData)
-		m_skipOneReply = true;
+		m_repliesToSkip = m_pendingReplies;
 
 	return CControlSocket::ResetOperation(nErrorCode);
 }
@@ -887,12 +903,6 @@ int CFtpControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
 	if (m_pCurOpData->waitForAsyncRequest)
 	{
 		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Waiting for async request, ignoring SendNextCommand"));
-		return FZ_REPLY_WOULDBLOCK;
-	}
-
-	// If already waiting for a reply, don't send next command yet
-	if (m_skipOneReply)
-	{
 		return FZ_REPLY_WOULDBLOCK;
 	}
 

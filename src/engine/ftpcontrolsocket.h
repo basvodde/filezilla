@@ -107,7 +107,9 @@ protected:
 
 	char m_receiveBuffer[RECVBUFFERSIZE];
 	int m_bufferLen;
-	bool m_skipOneReply; // Set to true if cancelling an action
+	int m_repliesToSkip; // Set to the amount of pending replies if cancelling an action
+
+	int m_pendingReplies;
 
 	CExternalIPResolver* m_pIPResolver;
 
