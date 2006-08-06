@@ -891,6 +891,10 @@ int CHttpControlSocket::ResetOperation(int nErrorCode)
 
 void CHttpControlSocket::OnClose(wxSocketEvent& event)
 {
+	char tmp[1];
+	for (Peek(tmp, 1); !Error() && LastCount(); Peek(tmp, 1))
+		OnReceive(event);
+
 	// HTTP socket isn't connected outside operations
 	if (!m_pCurOpData)
 		return;
