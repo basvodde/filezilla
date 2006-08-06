@@ -13,6 +13,7 @@ class CLed;
 class CThemeProvider;
 class CView;
 class CQuickconnectBar;
+class CUpdateWizard;
 
 class CMainFrame : public wxFrame
 {
@@ -65,6 +66,7 @@ protected:
 	CLed* m_pSendLed;
 	wxTimer m_transferStatusTimer;
 	CThemeProvider* m_pThemeProvider;
+	CUpdateWizard* m_pUpdateWizard;
 
 	// Event handlers
 	DECLARE_EVENT_TABLE()

@@ -4,6 +4,7 @@
 #include "Options.h"
 #include "buildinfo.h"
 #include <wx/stdpaths.h>
+#include "Mainfrm.h"
 
 #if !(wxMAJOR_VERSION > 2 || wxMINOR_VERSION > 6) && defined(__WXMSW__)
 	#include <shlobj.h>
@@ -36,17 +37,22 @@ CUpdateWizard::CUpdateWizard(wxWindow* pParent)
 	m_skipPageChanging = false;
 	m_currentPage = 0;
 
-#ifdef __WXMSW__
-	const wxChar system[] = _T("Win32");
-#else
-	const wxChar system[] = _T("Other");
-#endif
+	wxString host = CBuildInfo::GetHostname();
+	if (host == _T(""))
+		host = _T("unknown");
+
 	wxString version(PACKAGE_VERSION, wxConvLocal);
 	version.Replace(_T(" "), _T("%20"));
 	m_urlServer = _T("update.filezilla-project.org");
-	m_urlFile = wxString::Format(_T("/updatecheck.php?platform=%s&version=%s"), system, version.c_str());
+	m_urlFile = wxString::Format(_T("/updatecheck.php?platform=%s&version=%s"), host, version.c_str());
 
-	m_timer.SetOwner(this);
+	m_statusTimer.SetOwner(this, 0);
+	m_autoCheckTimer.SetOwner(this, 1);
+
+	m_autoUpdateCheckRunning = false;
+
+	m_loaded = false;
+	m_updateShown = false;
 }
 
 CUpdateWizard::~CUpdateWizard()
@@ -92,6 +98,8 @@ bool CUpdateWizard::Load()
 
 	XRCCTRL(*this, "ID_CHECKINGPROGRESS", wxGauge)->SetRange(MAXCHECKPROGRESS);
 
+	GetPageAreaSizer()->Add(m_pages[1]);
+	m_pages[1]->SetPrev(0);
 	for (int i = 2; i <= 4; i++)
 	{
 		m_pages[i]->SetPrev(0);
@@ -99,12 +107,30 @@ bool CUpdateWizard::Load()
 		GetPageAreaSizer()->Add(m_pages[i]);
 	}
 
+	m_loaded = true;
+
 	return true;
 }
 
 bool CUpdateWizard::Run()
 {
-	return RunWizard(m_pages.front());
+	COptions* pOptions = COptions::Get();
+
+	const wxString& newVersion = pOptions->GetOption(OPTION_UPDATECHECK_NEWVERSION);
+	if (newVersion == _T(""))
+		return RunWizard(m_pages.front());
+
+	if (CBuildInfo::ConvertToVersionNumber(newVersion) < CBuildInfo::ConvertToVersionNumber(CBuildInfo::GetVersion()))
+	{
+		pOptions->SetOption(OPTION_UPDATECHECK_NEWVERSION, _T(""));
+		pOptions->SetOption(OPTION_UPDATECHECK_URL, _T(""));
+		return RunWizard(m_pages.front());
+	}
+
+	PrepareUpdateAvailablePage(newVersion, pOptions->GetOption(OPTION_UPDATECHECK_URL));
+
+	m_currentPage = 1;
+	return RunWizard(m_pages[1]);
 }
 
 void CUpdateWizard::OnCheck(wxCommandEvent& event)
@@ -151,25 +177,7 @@ void CUpdateWizard::OnPageChanging(wxWizardEvent& event)
 
 		event.Veto();
 
-		int res = m_pEngine->Command(CConnectCommand(CServer(HTTP, DEFAULT, m_urlServer, 80)));
-		if (res == FZ_REPLY_OK)
-		{
-			m_inTransfer = true;
-			pText->SetLabel(_("Connecting to server"));
-			pProgress->SetValue(pProgress->GetValue() + 1);
-			CFileTransferCommand::t_transferSettings transferSettings;
-			
-			CServerPath path;
-			wxString file = m_urlFile;
-			path.SetPath(file, true);
-			
-			CFileTransferCommand cmd(_T(""), path, file, true, transferSettings);
-			res = m_pEngine->Command(cmd);
-		}
-		if (res == FZ_REPLY_OK)
-			ShowPage(m_pages[1]);
-		else if (res != FZ_REPLY_WOULDBLOCK)
-			FailedTransfer();
+		StartUpdateCheck();
 	}
 	if (event.GetPage() == m_pages[1] && m_pages[1]->GetNext())
 	{
@@ -287,6 +295,9 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 		{
 		case nId_logmsg:
 			{
+				if (!m_loaded)
+					break;
+
 				CLogmsgNotification* pLogMsg = reinterpret_cast<CLogmsgNotification *>(pNotification);
 				if (pLogMsg->msgType == Status || pLogMsg->msgType == Command)
 				{
@@ -328,7 +339,7 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 				{
 					m_inTransfer = true;
 
-					if (!m_currentPage)
+					if (m_loaded && !m_currentPage)
 					{
 						wxGauge* pProgress = XRCCTRL(*this, "ID_CHECKINGPROGRESS", wxGauge);
 						pProgress->SetValue(pProgress->GetValue() + 1);
@@ -351,7 +362,7 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 					}
 				}
 
-				if (!m_currentPage)
+				if (!m_loaded || !m_currentPage)
 				{
 					m_pEngine->Command(CDisconnectCommand());
 					ParseData();
@@ -412,6 +423,9 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 			}
 			break;
 		case nId_transferstatus:
+			if (!m_loaded)
+				break;
+
 			if (m_currentPage == 2)
 			{
 				CTransferStatusNotification *pTransferStatusNotification = reinterpret_cast<CTransferStatusNotification *>(pNotification);
@@ -479,6 +493,9 @@ void CUpdateWizard::ParseData()
 
 		if (type == _T("nightly"))
 		{
+			if (!m_loaded)
+				continue;
+
 			if (!XRCCTRL(*this, "ID_CHECKNIGHTLY", wxCheckBox)->GetValue())
 				continue;
 
@@ -508,8 +525,10 @@ void CUpdateWizard::ParseData()
 			// - Beta box is checked
 			// - Current version is a beta and no newer stable version exists
 
-			if (!XRCCTRL(*this, "ID_CHECKBETA", wxCheckBox)->GetValue() &&
-				!((ownVersionNumber & 0x0FFFFF) != 0 && newVersionNumber != 0))
+			const bool checkBeta = m_loaded ? XRCCTRL(*this, "ID_CHECKBETA", wxCheckBox)->GetValue() : false;
+
+			if (!checkBeta &&
+				((ownVersionNumber & 0x0FFFFF) == 0 || newVersionNumber != 0))
 				continue;
 
 			if (newVersionNumber >= CBuildInfo::ConvertToVersionNumber(versionOrDate))
@@ -518,13 +537,30 @@ void CUpdateWizard::ParseData()
 		else
 		{
 			// Final releases
-			if (CBuildInfo::ConvertToVersionNumber(versionOrDate) < newVersionNumber && XRCCTRL(*this, "ID_CHECKBETA", wxCheckBox)->GetValue())
-				continue;
+			if (m_loaded)
+			{
+				if (CBuildInfo::ConvertToVersionNumber(versionOrDate) < newVersionNumber && XRCCTRL(*this, "ID_CHECKBETA", wxCheckBox)->GetValue())
+					continue;
+			}
 		}
 
 		newVersion = versionOrDate;
 		newVersionNumber = CBuildInfo::ConvertToVersionNumber(versionOrDate);
 		newUrl = url;
+	}
+
+	if (!m_loaded)
+	{
+		if (newVersion == _T(""))
+			return;
+
+		COptions* pOptions = COptions::Get();
+		pOptions->SetOption(OPTION_UPDATECHECK_NEWVERSION, newVersion);
+		pOptions->SetOption(OPTION_UPDATECHECK_URL, newUrl);
+
+		DisplayUpdateAvailability(true);
+
+		return;
 	}
 
 	if (newVersion == _T(""))
@@ -536,44 +572,12 @@ void CUpdateWizard::ParseData()
 	}
 	else
 	{
-		XRCCTRL(*this, "ID_VERSION", wxStaticText)->SetLabel(newVersion);
-
-		if (newUrl == _T(""))
-		{
-			if (CBuildInfo::GetBuildType() == _T("official") || CBuildInfo::GetBuildType() == _T("nightly"))
-				XRCCTRL(*this, "ID_UPDATEDESC", wxStaticText)->SetLabel(_("Please visit http://filezilla-project.org to download the most recent version."));
-			else
-				XRCCTRL(*this, "ID_UPDATEDESC", wxStaticText)->SetLabel(_("Please check the package manager of your system for an updated package or visit http://filezilla-project.org to download the source code of FileZilla."));
-			m_pages[1]->SetNext(0);
-		}
-		else
-		{
-			if (!newUrl.Left(7).CmpNoCase(_T("http://")))
-				newUrl = newUrl.Mid(7);
-			int pos = newUrl.Find('/');
-			if (pos == -1)
-			{
-				XRCCTRL(*this, "ID_UPDATEDESC", wxStaticText)->SetLabel(_("Please visit http://filezilla-project.org to download the most recent version."));
-				m_pages[1]->SetNext(0);
-			}
-			else
-			{
-				XRCCTRL(*this, "ID_UPDATEDESC", wxStaticText)->SetLabel(_("Click on next to download the new version.\nAlternatively, visit http://filezilla-project.org to download the most recent version."));
-
-				m_urlServer = newUrl.Left(pos);
-				m_urlFile = newUrl.Mid(pos);
-			}
-		}
-		m_pages[1]->GetSizer()->Layout();
-		m_pages[1]->GetSizer()->Fit(m_pages[1]);
-		wxGetApp().GetWrapEngine()->WrapRecursive(m_pages[1], m_pages[1]->GetSizer(), wxGetApp().GetWrapEngine()->GetWidthFromCache("UpdateCheck"));
-
+		PrepareUpdateAvailablePage(newVersion, newUrl);
 
 		m_skipPageChanging = true;
 		ShowPage(m_pages[1]);
 		m_currentPage = 1;
 		m_skipPageChanging = false;
-
 	}
 
 	wxButton* pNext = wxDynamicCast(FindWindow(wxID_FORWARD), wxButton);
@@ -584,24 +588,40 @@ void CUpdateWizard::ParseData()
 
 void CUpdateWizard::OnTimer(wxTimerEvent& event)
 {
-	bool changed;
-	CTransferStatus status;
-	if (!m_pEngine)
-		m_timer.Stop();
-	else if (!m_pEngine->GetTransferStatus(status, changed))
-		SetTransferStatus(0);
-	else if (changed)
-		SetTransferStatus(&status);
-	else
-		m_timer.Stop();
+	if (!event.GetId())
+	{
+		bool changed;
+		CTransferStatus status;
+		if (!m_pEngine)
+			m_statusTimer.Stop();
+		else if (!m_pEngine->GetTransferStatus(status, changed))
+			SetTransferStatus(0);
+		else if (changed)
+			SetTransferStatus(&status);
+		else
+			m_statusTimer.Stop();
+	}
+	else if (event.GetId() == m_autoCheckTimer.GetId())
+	{
+		if (m_autoUpdateCheckRunning)
+			return;
+
+		if (CanAutoCheckForUpdateNow())
+		{
+			m_autoUpdateCheckRunning = true;
+			const wxDateTime& now = wxDateTime::Now();
+			COptions::Get()->SetOption(OPTION_UPDATECHECK_LASTDATE, now.FormatISODate() + _T(" ") + now.FormatISOTime());
+			StartUpdateCheck();
+		}
+	}
 }
 
 void CUpdateWizard::SetTransferStatus(const CTransferStatus* pStatus)
 {
 	if (!pStatus)
 	{
-		if (m_timer.IsRunning())
-			m_timer.Stop();
+		if (m_statusTimer.IsRunning())
+			m_statusTimer.Stop();
 		return;
 	}
 
@@ -648,8 +668,8 @@ void CUpdateWizard::SetTransferStatus(const CTransferStatus* pStatus)
 		XRCCTRL(*this, "ID_DOWNLOADPROGRESS", wxGauge)->SetValue(percent);
 	}
 
-	if (!m_timer.IsRunning())
-		m_timer.Start(100);
+	if (!m_statusTimer.IsRunning())
+		m_statusTimer.Start(100);
 }
 
 void CUpdateWizard::OnFinish(wxWizardEvent& event)
@@ -658,4 +678,145 @@ void CUpdateWizard::OnFinish(wxWizardEvent& event)
 	if (m_currentPage == 2)
 		wxExecute(m_localFile);
 #endif
+}
+
+void CUpdateWizard::InitAutoUpdateCheck()
+{
+	COptions* pOptions = COptions::Get();
+	wxASSERT(pOptions->GetOptionVal(OPTION_UPDATECHECK));
+
+	// Check every hour if allowed to check for updates
+
+	m_autoCheckTimer.Start(1000 * 3600);
+	if (!CanAutoCheckForUpdateNow())
+	{
+		DisplayUpdateAvailability(false);
+		return;
+	}
+	else
+	{
+		m_autoUpdateCheckRunning = true;
+		const wxDateTime& now = wxDateTime::Now();
+		pOptions->SetOption(OPTION_UPDATECHECK_LASTDATE, now.FormatISODate() + _T(" ") + now.FormatISOTime());
+		StartUpdateCheck();
+	}
+}
+
+bool CUpdateWizard::CanAutoCheckForUpdateNow()
+{
+	wxDateTime lastCheck;
+	lastCheck.ParseDateTime(COptions::Get()->GetOption(OPTION_UPDATECHECK_LASTDATE));
+	if (!lastCheck.IsValid())
+		return true;
+
+	wxTimeSpan span = wxDateTime::Now() - lastCheck;
+
+	if (span.GetSeconds() < 0)
+		// Last check in future
+		return true;
+	
+	const int days = COptions::Get()->GetOptionVal(OPTION_UPDATECHECK_INTERVAL) * 3600 * 24;
+	if (span.GetSeconds() >= days)
+		return true;
+
+	return false;
+}
+
+void CUpdateWizard::StartUpdateCheck()
+{
+	m_inTransfer = false;
+	int res = m_pEngine->Command(CConnectCommand(CServer(HTTP, DEFAULT, m_urlServer, 80)));
+	if (res == FZ_REPLY_OK)
+	{
+		m_inTransfer = true;
+		if (m_loaded)
+		{
+			XRCCTRL(*this, "ID_CHECKINGTEXTPROGRESS", wxStaticText)->SetLabel(_("Connecting to server"));
+			wxGauge* pProgress = XRCCTRL(*this, "ID_CHECKINGPROGRESS", wxGauge);
+			pProgress->SetValue(pProgress->GetValue() + 1);
+		}
+		CFileTransferCommand::t_transferSettings transferSettings;
+
+		CServerPath path;
+		wxString file = m_urlFile;
+		path.SetPath(file, true);
+
+		CFileTransferCommand cmd(_T(""), path, file, true, transferSettings);
+		res = m_pEngine->Command(cmd);
+	}
+	wxASSERT(res != FZ_REPLY_OK);
+	if (res != FZ_REPLY_WOULDBLOCK)
+		FailedTransfer();
+}
+
+void CUpdateWizard::DisplayUpdateAvailability(bool showDialog)
+{
+	if (m_updateShown)
+		return;
+
+	COptions* pOptions = COptions::Get();
+
+	const wxString& newVersion = pOptions->GetOption(OPTION_UPDATECHECK_NEWVERSION);
+	if (newVersion == _T(""))
+		return;
+
+	if (CBuildInfo::ConvertToVersionNumber(newVersion) < CBuildInfo::ConvertToVersionNumber(CBuildInfo::GetVersion()))
+	{
+		pOptions->SetOption(OPTION_UPDATECHECK_NEWVERSION, _T(""));
+		pOptions->SetOption(OPTION_UPDATECHECK_URL, _T(""));
+		return;
+	}
+
+	m_updateShown = true;
+
+	const int id = wxNewId();
+
+	CMainFrame* pFrame = (CMainFrame*)m_parent;
+		
+	wxMenu* pMenu = new wxMenu();
+	const wxString& name = wxString::Format(_("&Version %s"), pOptions->GetOption(OPTION_UPDATECHECK_NEWVERSION));
+	pMenu->Append(XRCID("ID_CHECKFORUPDATES"), name);
+	pFrame->GetMenuBar()->Append(pMenu, _("&New version available!"));
+
+	if (showDialog)
+	{
+		CUpdateWizard dlg(m_parent);
+		if (dlg.Load())
+			dlg.Run();
+	}
+}
+
+void CUpdateWizard::PrepareUpdateAvailablePage(const wxString &newVersion, wxString newUrl)
+{
+	XRCCTRL(*this, "ID_VERSION", wxStaticText)->SetLabel(newVersion);
+
+	if (newUrl == _T(""))
+	{
+		if (CBuildInfo::GetBuildType() == _T("official") || CBuildInfo::GetBuildType() == _T("nightly"))
+			XRCCTRL(*this, "ID_UPDATEDESC", wxStaticText)->SetLabel(_("Please visit http://filezilla-project.org to download the most recent version."));
+		else
+			XRCCTRL(*this, "ID_UPDATEDESC", wxStaticText)->SetLabel(_("Please check the package manager of your system for an updated package or visit http://filezilla-project.org to download the source code of FileZilla."));
+		m_pages[1]->SetNext(0);
+	}
+	else
+	{
+		if (!newUrl.Left(7).CmpNoCase(_T("http://")))
+			newUrl = newUrl.Mid(7);
+		int pos = newUrl.Find('/');
+		if (pos == -1)
+		{
+			XRCCTRL(*this, "ID_UPDATEDESC", wxStaticText)->SetLabel(_("Please visit http://filezilla-project.org to download the most recent version."));
+			m_pages[1]->SetNext(0);
+		}
+		else
+		{
+			XRCCTRL(*this, "ID_UPDATEDESC", wxStaticText)->SetLabel(_("Click on next to download the new version.\nAlternatively, visit http://filezilla-project.org to download the most recent version."));
+
+			m_urlServer = newUrl.Left(pos);
+			m_urlFile = newUrl.Mid(pos);
+		}
+	}
+	m_pages[1]->GetSizer()->Layout();
+	m_pages[1]->GetSizer()->Fit(m_pages[1]);
+	wxGetApp().GetWrapEngine()->WrapRecursive(m_pages[1], m_pages[1]->GetSizer(), wxGetApp().GetWrapEngine()->GetWidthFromCache("UpdateCheck"));
 }

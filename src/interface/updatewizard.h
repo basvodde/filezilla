@@ -13,9 +13,13 @@ public:
 	bool Load();
 	bool Run();
 
+	void InitAutoUpdateCheck();
+
 protected:
 	void FailedTransfer();
 	void ParseData();
+
+	void PrepareUpdateAvailablePage(const wxString &newVersion, wxString newUrl);
 
 	wxString m_data;
 
@@ -26,6 +30,8 @@ protected:
 	CFileZillaEngine* m_pEngine;
 
 	void SetTransferStatus(const CTransferStatus* pStatus);
+
+	void StartUpdateCheck();
 
 	DECLARE_EVENT_TABLE()
 	void OnCheck(wxCommandEvent& event);
@@ -44,7 +50,20 @@ protected:
 	wxString m_urlFile;
 	wxString m_localFile;
 
-	wxTimer m_timer;
+	wxTimer m_statusTimer;
+
+	bool m_loaded;
+
+	// Auto check related functions and variables
+	// ------------------------------------------
+
+	bool CanAutoCheckForUpdateNow();
+	void DisplayUpdateAvailability(bool showDialog);
+
+	wxTimer m_autoCheckTimer;
+
+	bool m_autoUpdateCheckRunning;
+	bool m_updateShown;
 };
 
 #endif //__UPDATEWIZARD_H__

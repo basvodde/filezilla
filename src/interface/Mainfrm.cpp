@@ -201,12 +201,21 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	entries[0].Set(wxACCEL_NORMAL, WXK_F5, XRCID("ID_TOOLBAR_REFRESH"));
 	wxAcceleratorTable accel(1, entries);
 	SetAcceleratorTable(accel);
+
+	if (COptions::Get()->GetOptionVal(OPTION_UPDATECHECK))
+	{
+		m_pUpdateWizard = new CUpdateWizard(this);
+		m_pUpdateWizard->InitAutoUpdateCheck();
+	}
+	else
+		m_pUpdateWizard = 0;
 }
 
 CMainFrame::~CMainFrame()
 {
 	delete m_pState;
 	delete m_pAsyncRequestQueue;
+	delete m_pUpdateWizard;
 }
 
 void CMainFrame::OnSize(wxSizeEvent &event)
@@ -838,6 +847,23 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 		CreateToolBar();
 	if (oldLang != newLang)
 		CreateMenus();
+
+	if (COptions::Get()->GetOptionVal(OPTION_UPDATECHECK))
+	{
+		if (!m_pUpdateWizard)
+		{
+			m_pUpdateWizard = new CUpdateWizard(this);
+			m_pUpdateWizard->InitAutoUpdateCheck();
+		}
+	}
+	else
+	{
+		if (m_pUpdateWizard)
+		{
+			delete m_pUpdateWizard;
+			m_pUpdateWizard = 0;
+		}
+	}
 }
 
 void CMainFrame::OnToggleLogView(wxCommandEvent& event)
