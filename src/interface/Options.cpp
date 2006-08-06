@@ -50,7 +50,10 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Max Concurrent Uploads", number, _T("0") },
 	{ "Max Concurrent Downloads", number, _T("0") },
 	{ "Update Check", number, _T("1") },
-	{ "Update Check Interval", number, _T("7") }
+	{ "Update Check Interval", number, _T("7") },
+	{ "Last automatic update check", string, _T("") },
+	{ "Update Check New Version", string, _T("") },
+	{ "Update Check Package URL", string, _T("") }
 };
 
 COptions::COptions()
