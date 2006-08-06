@@ -273,6 +273,9 @@ void CTransferSocket::OnSend()
 
 void CTransferSocket::OnClose(wxSocketEvent &event)
 {
+	if (!m_pSocket)
+		return;
+
 	m_pControlSocket->LogMessage(::Debug_Verbose, _T("OnClose"));
 	m_onCloseCalled = true;
 	m_pSocket->SetNotify(wxSOCKET_OUTPUT_FLAG | wxSOCKET_CONNECTION_FLAG | wxSOCKET_LOST_FLAG);
@@ -341,6 +344,9 @@ void CTransferSocket::SetActive()
 		if (pData && pData->pIOThread)
 			pData->pIOThread->SetEventHandler(this);
 	}
+
+	int value = 65536 * 2;
+	m_pSocket->SetOption(SOL_SOCKET, SO_SNDBUF, &value, sizeof(value));
 
 	m_bActive = true;
 	if (m_pSocket && m_pSocket->IsConnected())
