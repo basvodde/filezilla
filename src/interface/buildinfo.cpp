@@ -151,3 +151,13 @@ wxULongLong CBuildInfo::ConvertToVersionNumber(const wxChar* version)
 
 	return v;
 }
+
+wxString CBuildInfo::GetHostname()
+{
+#ifndef USED_HOST
+	return _T("");
+#else
+	wxString flags(USED_HOST, wxConvLocal);
+	return flags;
+#endif
+}

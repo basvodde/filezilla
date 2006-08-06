@@ -31,6 +31,9 @@ if ! test "$localesonly" = "yes"; then
   # Add build information to config.h
   # ---------------------------------
 
+  # Add host to config.h
+  AC_DEFINE_UNQUOTED(USED_HOST, ["$host"], [Host system under which the program will run.])
+
   # Add used CXXFLAGS to config.h
   AC_DEFINE_UNQUOTED(USED_CXXFLAGS, ["$CXXFLAGS"], [Define to the used CXXFLAGS to compile this package.])
 
