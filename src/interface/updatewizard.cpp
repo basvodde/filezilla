@@ -44,7 +44,7 @@ CUpdateWizard::CUpdateWizard(wxWindow* pParent)
 	wxString version(PACKAGE_VERSION, wxConvLocal);
 	version.Replace(_T(" "), _T("%20"));
 	m_urlServer = _T("update.filezilla-project.org");
-	m_urlFile = wxString::Format(_T("/updatecheck.php?platform=%s&version=%s"), host, version.c_str());
+	m_urlFile = wxString::Format(_T("/updatecheck.php?platform=%s&version=%s"), host.c_str(), version.c_str());
 
 	m_statusTimer.SetOwner(this, 0);
 	m_autoCheckTimer.SetOwner(this, 1);
