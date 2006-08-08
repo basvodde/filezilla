@@ -19,7 +19,7 @@ protected:
 							 const wxString &remoteFile, bool download,
 							 const CFileTransferCommand::t_transferSettings& transferSettings);
 	virtual int FileTransferSend(int prevResult = FZ_REPLY_OK);
-	virtual int FileTransferParseResponse(char* p, int len);
+	virtual int FileTransferParseResponse(char* p, unsigned int len);
 
 	int InternalConnect(const wxString& host, unsigned short port);
 	int DoInternalConnect();

@@ -179,7 +179,7 @@ bool CLocalListView::DisplayDir(wxString dirname)
 
 			found = dir.GetNext(&file);
 		}
-		if (GetItemCount() != m_indexMapping.size())
+		if ((unsigned int)GetItemCount() != m_indexMapping.size())
 			SetItemCount(m_indexMapping.size());
 	}
 

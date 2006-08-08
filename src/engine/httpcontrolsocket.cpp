@@ -498,7 +498,7 @@ int CHttpControlSocket::DoInternalConnect()
 	return FZ_REPLY_WOULDBLOCK;
 }
 
-int CHttpControlSocket::FileTransferParseResponse(char* p, int len)
+int CHttpControlSocket::FileTransferParseResponse(char* p, unsigned int len)
 {
 	LogMessage(Debug_Verbose, _T("CHttpControlSocket::FileTransferParseResponse(%p, %d)"), p, len);
 
