@@ -704,8 +704,12 @@ void CUpdateWizard::InitAutoUpdateCheck()
 
 bool CUpdateWizard::CanAutoCheckForUpdateNow()
 {
-	wxDateTime lastCheck;
-	lastCheck.ParseDateTime(COptions::Get()->GetOption(OPTION_UPDATECHECK_LASTDATE));
+	const wxString &lastCheckStr = COptions::Get()->GetOption(OPTION_UPDATECHECK_LASTDATE);
+	if (lastCheckStr == _T(""))
+		return true;
+
+	wxDateTime lastCheck;	
+	lastCheck.ParseDateTime(lastCheckStr);
 	if (!lastCheck.IsValid())
 		return true;
 
@@ -769,12 +773,10 @@ void CUpdateWizard::DisplayUpdateAvailability(bool showDialog)
 
 	m_updateShown = true;
 
-	const int id = wxNewId();
-
 	CMainFrame* pFrame = (CMainFrame*)m_parent;
 		
 	wxMenu* pMenu = new wxMenu();
-	const wxString& name = wxString::Format(_("&Version %s"), pOptions->GetOption(OPTION_UPDATECHECK_NEWVERSION));
+	const wxString& name = wxString::Format(_("&Version %s"), pOptions->GetOption(OPTION_UPDATECHECK_NEWVERSION).c_str());
 	pMenu->Append(XRCID("ID_CHECKFORUPDATES"), name);
 	pFrame->GetMenuBar()->Append(pMenu, _("&New version available!"));
 
