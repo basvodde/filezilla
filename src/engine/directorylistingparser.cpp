@@ -1551,7 +1551,6 @@ bool CDirectoryListingParser::ParseAsVms(CLine *pLine, CDirentry &entry)
 		if (!pLine->GetToken(++index, token))
 			return false;
 
-		bool gotSize = false;
 		if (!token.IsNumeric() && !token.IsLeftNumeric())
 			return false;
 	
