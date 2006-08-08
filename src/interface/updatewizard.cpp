@@ -610,7 +610,7 @@ void CUpdateWizard::OnTimer(wxTimerEvent& event)
 		{
 			m_autoUpdateCheckRunning = true;
 			const wxDateTime& now = wxDateTime::Now();
-			COptions::Get()->SetOption(OPTION_UPDATECHECK_LASTDATE, now.FormatISODate() + _T(" ") + now.FormatISOTime());
+			COptions::Get()->SetOption(OPTION_UPDATECHECK_LASTDATE, now.Format(_T("%Y-%m-%d %H:%M:%S")));
 			StartUpdateCheck();
 		}
 	}
@@ -697,7 +697,7 @@ void CUpdateWizard::InitAutoUpdateCheck()
 	{
 		m_autoUpdateCheckRunning = true;
 		const wxDateTime& now = wxDateTime::Now();
-		pOptions->SetOption(OPTION_UPDATECHECK_LASTDATE, now.FormatISODate() + _T(" ") + now.FormatISOTime());
+		pOptions->SetOption(OPTION_UPDATECHECK_LASTDATE, now.Format(_T("%Y-%m-%d %H:%M:%S")));
 		StartUpdateCheck();
 	}
 }
