@@ -61,10 +61,8 @@ protected:
 	{
 		wxMutexGuiEnter();
 		wxASSERT(m_pFolderItem->GetTopLevelItem() && m_pFolderItem->GetTopLevelItem()->GetType() == QueueItemType_Server);
-		const CServerItem* pServerItem = reinterpret_cast<CServerItem*>(m_pFolderItem->GetTopLevelItem());
 		wxMutexGuiLeave();
 
-		wxASSERT(pServerItem);
 		wxASSERT(!m_pFolderItem->Download());
 
 		while (!TestDestroy())

@@ -137,7 +137,7 @@ wxString CWrapEngine::WrapTextChinese(wxWindow* parent, const wxString &text, un
 			temp = temp.Mid(pos + 1);
 		}
 		parent->GetTextExtent(piece, &width, &height);
-		wxASSERT(width <= maxLength);
+		wxASSERT(width <= (int)maxLength);
 	}
 #endif
 
@@ -178,12 +178,10 @@ wxString CWrapEngine::WrapText(wxWindow* parent, const wxString &text, unsigned 
 	int spaceWidth = 0;
 	parent->GetTextExtent(_T(" "), &spaceWidth, &height);
 
-	const int maxLengthWithSpace = maxLength + spaceWidth;
-
 	int strLen = text.Length();
 	int wrapAfter = -1;
 	int start = 0;
-	int lineLength = 0;
+	unsigned int lineLength = 0;
 	for (int i = 0; i <= strLen; i++)
 	{
 		if (text[i] != ' ' && text[i] != 0)
@@ -206,7 +204,7 @@ wxString CWrapEngine::WrapText(wxWindow* parent, const wxString &text, unsigned 
 			if (wrappedText != _T(""))
 				wrappedText += _T("\n");
 			wrappedText += text.Mid(start, wrapAfter - start);
-			if (width + spaceWidth >= maxLength)
+			if (width + spaceWidth >= (int)maxLength)
 			{
 				if (i - wrapAfter + 1 > 0)
 				{
@@ -267,7 +265,7 @@ wxString CWrapEngine::WrapText(wxWindow* parent, const wxString &text, unsigned 
 			temp = temp.Mid(pos + 1);
 		}
 		parent->GetTextExtent(piece, &width, &height);
-		wxASSERT(width <= maxLength);
+		wxASSERT(width <= (int)maxLength);
 	}
 #endif
 
@@ -291,9 +289,6 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 
 	if (max <= 0)
 		return false;
-
-	const wxPoint& pos = sizer->GetPosition();
-	const wxSize& sizerSize = sizer->GetSize();
 
 	for (unsigned int i = 0; i < sizer->GetChildren().GetCount(); i++)
 	{
