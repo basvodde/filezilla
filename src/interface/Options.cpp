@@ -46,7 +46,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Auto Ascii dotfiles", number, _T("1") },
 	{ "Theme", string, _T("") },
 	{ "Language", string, _T("") },
-	{ "Last Server Password", string, _T("") },
+	{ "Last Server Path", string, _T("") },
 	{ "Max Concurrent Uploads", number, _T("0") },
 	{ "Max Concurrent Downloads", number, _T("0") },
 	{ "Update Check", number, _T("1") },
