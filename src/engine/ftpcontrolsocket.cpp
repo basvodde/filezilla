@@ -249,11 +249,13 @@ void CFtpControlSocket::ParseResponse()
 {
 	if (m_Response[0] != '1')
 	{
-		wxASSERT(m_pendingReplies > 0);
 		if (m_pendingReplies > 0)
 			m_pendingReplies--;
 		else
+		{
 			LogMessage(Debug_Warning, _T("Unexpected reply, no reply was pending."));
+			return;
+		}
 	}
 
 	if (m_repliesToSkip)
