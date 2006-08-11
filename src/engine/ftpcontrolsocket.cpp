@@ -303,7 +303,7 @@ void CFtpControlSocket::ParseResponse()
 		TransferParseResponse();
 		break;
 	case cmd_none:
-		LogMessage(Debug_Verbose, _T("Out-of-order reply, ignoring,"));
+		LogMessage(Debug_Verbose, _T("Out-of-order reply, ignoring."));
 		break;
 	default:
 		LogMessage(Debug_Warning, _T("No action for parsing replies to command %d"), (int)commandId);
