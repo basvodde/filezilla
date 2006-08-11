@@ -886,8 +886,7 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 	delete m_pIPResolver;
 	m_pIPResolver = 0;
 
-	if ((nErrorCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED && m_pCurOpData)
-		m_repliesToSkip = m_pendingReplies;
+	m_repliesToSkip = m_pendingReplies;
 
 	return CControlSocket::ResetOperation(nErrorCode);
 }
