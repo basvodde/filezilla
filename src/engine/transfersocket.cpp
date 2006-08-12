@@ -136,6 +136,9 @@ void CTransferSocket::OnConnect(wxSocketEvent &event)
 		m_pSocket->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_OUTPUT_FLAG | wxSOCKET_LOST_FLAG);
 		m_pSocket->Notify(true);
 	}
+
+	int value = 65536 * 2;
+	m_pSocket->SetOption(SOL_SOCKET, SO_SNDBUF, &value, sizeof(value));
 }
 
 void CTransferSocket::OnReceive()
@@ -344,9 +347,6 @@ void CTransferSocket::SetActive()
 		if (pData && pData->pIOThread)
 			pData->pIOThread->SetEventHandler(this);
 	}
-
-	int value = 65536 * 2;
-	m_pSocket->SetOption(SOL_SOCKET, SO_SNDBUF, &value, sizeof(value));
 
 	m_bActive = true;
 	if (m_pSocket && m_pSocket->IsConnected())
