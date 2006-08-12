@@ -31,6 +31,7 @@ INCLUDES = -I$(srcdir)/$(FRONTEND) -I../../config.h
 if SFTP_UNIX
   fzsftp_SOURCES += time.c
   fzsftp_LDADD = unix/libfzsftp_ux.a
+  fzsftp_CPPFLAGS = $(AM_CPPFLAGS) -D_FILE_OFFSET_BITS=64
 endif
 
 if SFTP_MINGW
