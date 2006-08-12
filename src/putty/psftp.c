@@ -204,7 +204,7 @@ int sftp_get_file(char *fname, char *outfname, int recurse, int restart)
     struct sftp_request *req, *rreq;
     struct fxp_xfer *xfer;
     uint64 offset;
-    WFILE *file;
+    WFile *file;
     int ret, shown_err = FALSE;
 
     /*
@@ -490,7 +490,7 @@ int sftp_put_file(char *fname, char *outfname, int recurse, int restart)
     struct sftp_packet *pktin;
     struct sftp_request *req, *rreq;
     uint64 offset;
-    RFILE *file;
+    RFile *file;
     int ret, err, eof;
 
     /*
