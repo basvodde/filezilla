@@ -10,15 +10,13 @@ END_EVENT_TABLE();
 
 bool COptionsPageLanguage::LoadPage()
 {
-	bool failure = false;
-
 	wxListBox* pListBox = XRCCTRL(*this, "ID_LANGUAGES", wxListBox);
 	if (!pListBox)
 		return false;
 
 	wxString localesDir = wxGetApp().GetLocalesDir();
 	wxDir dir(localesDir);
-	
+		
 	int language = wxGetApp().GetCurrentLanguage();
 
 	pListBox->Clear();
@@ -28,6 +26,9 @@ bool COptionsPageLanguage::LoadPage()
 	const wxLanguageInfo* pInfo = wxLocale::FindLanguageInfo(_T("en"));
 	if (pInfo && pInfo->Language == language)
 		pListBox->SetSelection(n);
+
+	if (!dir.IsOpened())
+		return true;
 
 	wxLogNull log;
 
@@ -51,7 +52,7 @@ bool COptionsPageLanguage::LoadPage()
 			pListBox->SetSelection(n);
 	}
 	
-	return !failure;
+	return true;
 }
 
 bool COptionsPageLanguage::SavePage()
