@@ -7,24 +7,27 @@
 // Since COptionsBase is virtual, the user of the engine has to create a
 // derived class which handles settings-reading and writing.
 
-#define OPTIONS_ENGINE_NUM 10
+enum engineOptions
+{
+	OPTION_USEPASV,			// Use passive mode unless overridden by 
+							// server settings
+	OPTION_LIMITPORTS,
+	OPTION_LIMITPORTS_LOW,
+	OPTION_LIMITPORTS_HIGH,
+	OPTION_EXTERNALIPMODE,		/* External IP Address mode for use in active mode
+								   Values: 0: ask operating system
+								           1: use provided IP
+										   2: use provided resolver
+							    */
+	OPTION_EXTERNALIP,
+	OPTION_EXTERNALIPRESOLVER,
+	OPTION_NOEXTERNALONLOCAL,	// Don't use external IP address if connection is
+								// coming from a local unroutable address
+	OPTION_PASVREPLYFALLBACKMODE,
+	OPTION_TIMEOUT,
 
-#define	OPTION_USEPASV 0			// Use passive mode unless overridden by 
-									// server settings
-#define OPTION_LIMITPORTS 1
-#define OPTION_LIMITPORTS_LOW 2
-#define OPTION_LIMITPORTS_HIGH 3
-#define OPTION_EXTERNALIPMODE 4		/* External IP Address mode for use in active mode
-									   Values: 0: ask operating system
-									           1: use provided IP
-											   2: use provided resolver
-								    */
-#define OPTION_EXTERNALIP 5
-#define OPTION_EXTERNALIPRESOLVER 6
-#define OPTION_NOEXTERNALONLOCAL 7	// Don't use external IP address if connection is
-									// coming from a local unroutable address
-#define OPTION_PASVREPLYFALLBACKMODE 8
-#define OPTION_TIMEOUT 9
+	OPTIONS_ENGINE_NUM
+};
 
 class COptionsBase
 {

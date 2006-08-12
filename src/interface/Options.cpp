@@ -53,7 +53,9 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Update Check Interval", number, _T("7") },
 	{ "Last automatic update check", string, _T("") },
 	{ "Update Check New Version", string, _T("") },
-	{ "Update Check Package URL", string, _T("") }
+	{ "Update Check Package URL", string, _T("") },
+	{ "Show debug menu", number, _T("0") },
+	{ "Debug level", number, _T("0") }
 };
 
 COptions::COptions()
@@ -326,6 +328,9 @@ int COptions::Validate(unsigned int nID, int value)
 		if (value < 7 || value > 9999)
 			value = 7;
 		break;
+	case OPTION_DEBUG_LEVEL:
+		if (value < 0 || value > 4)
+			value = 0;
 	}
 	return value;
 }
