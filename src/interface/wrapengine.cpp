@@ -848,37 +848,38 @@ bool CWrapEngine::LoadCache()
 
 
 	wxString localesDir = wxGetApp().GetLocalesDir();
-	dir.Open(localesDir);
-
-	wxString locale;
-	for (bool found = dir.GetFirst(&locale); found; found = dir.GetNext(&locale))
+	if (dir.Open(localesDir))
 	{
-		if (!wxFileName::FileExists(localesDir + locale + _T("/filezilla.mo")))
-			continue;
-
-		wxString name;
-		const wxLanguageInfo* pInfo = wxLocale::FindLanguageInfo(locale);
-		if (!pInfo)
-			continue;
-
-		wxFileName fn(localesDir + locale + _T("/filezilla.mo"));
-		wxDateTime date = fn.GetModificationTime();
-		wxLongLong ticks = date.GetTicks();
-
-		TiXmlElement* languageElement = FindElementWithAttribute(pElement, "Language", "id", pInfo->Language);
-		if (!languageElement)
+		wxString locale;
+		for (bool found = dir.GetFirst(&locale); found; found = dir.GetNext(&locale))
 		{
-			languageElement = pElement->InsertEndChild(TiXmlElement("Language"))->ToElement();
-			languageElement->SetAttribute("id", pInfo->Language);
-			languageElement->SetAttribute("date", ticks.ToString().mb_str());
-		}
-		else
-		{
-			const char* languageNodeDate = languageElement->Attribute("date");
-			if (!languageNodeDate || strcmp(languageNodeDate, ticks.ToString().mb_str()))
+			if (!wxFileName::FileExists(localesDir + locale + _T("/filezilla.mo")))
+				continue;
+
+			wxString name;
+			const wxLanguageInfo* pInfo = wxLocale::FindLanguageInfo(locale);
+			if (!pInfo)
+				continue;
+
+			wxFileName fn(localesDir + locale + _T("/filezilla.mo"));
+			wxDateTime date = fn.GetModificationTime();
+			wxLongLong ticks = date.GetTicks();
+
+			TiXmlElement* languageElement = FindElementWithAttribute(pElement, "Language", "id", pInfo->Language);
+			if (!languageElement)
 			{
+				languageElement = pElement->InsertEndChild(TiXmlElement("Language"))->ToElement();
+				languageElement->SetAttribute("id", pInfo->Language);
 				languageElement->SetAttribute("date", ticks.ToString().mb_str());
-				languageElement->Clear();
+			}
+			else
+			{
+				const char* languageNodeDate = languageElement->Attribute("date");
+				if (!languageNodeDate || strcmp(languageNodeDate, ticks.ToString().mb_str()))
+				{
+					languageElement->SetAttribute("date", ticks.ToString().mb_str());
+					languageElement->Clear();
+				}
 			}
 		}
 	}
