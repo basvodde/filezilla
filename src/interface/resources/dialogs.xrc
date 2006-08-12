@@ -1506,6 +1506,74 @@
       </object>
     </object>
   </object>
+  <object class="wxPanel" name="ID_SETTINGS_DEBUG">
+    <style></style>
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Debugging settings</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxVERTICAL</orient>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_DEBUGMENU">
+                  <label>&amp;Show debug menu</label>
+                </object>
+              </object>
+              <object class="spacer">
+                <size>0,10</size>
+              </object>
+              <object class="sizeritem">
+                <object class="wxBoxSizer">
+                  <orient>wxHORIZONTAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Debug information in message log:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="spacer">
+                    <size>5,0</size>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxChoice" name="ID_DEBUGLEVEL">
+                      <content>
+                        <item>0 - None</item>
+                        <item>1 - Warning</item>
+                        <item>2 - Info</item>
+                        <item>3 - Verbose</item>
+                        <item>4 - Debug</item>
+                      </content>
+                    </object>
+                    <flag>wxALIGN_CENTRE_HORIZONTAL</flag>
+                  </object>
+                </object>
+              </object>
+              <object class="spacer">
+                <size>0,5</size>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>The higher the debug level, the more information will be displayed in the message log. Displaying debug information has a negative impact on performance.</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>If reporting bugs, please provide logs with &quot;Verbose&quot; logging level.</label>
+                </object>
+              </object>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <option>1</option>
+        <flag>wxGROW</flag>
+      </object>
+    </object>
+  </object>
   <object class="wxDialog" name="ID_INPUTDIALOG">
     <title></title>
     <object class="wxBoxSizer">

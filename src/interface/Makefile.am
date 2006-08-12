@@ -18,7 +18,9 @@ filezilla_SOURCES = aboutdialog.cpp asyncrequestqueue.cpp \
 		LocalListView.cpp LocalTreeView.cpp Mainfrm.cpp netconfwizard.cpp \
 		Options.cpp \
 		optionspage.cpp	optionspage_connection.cpp \
-		optionspage_connection_active.cpp optionspage_filetype.cpp \
+		optionspage_connection_active.cpp \
+		optionspage_debug.cpp \
+		optionspage_filetype.cpp \
 		optionspage_language.cpp \
 		optionspage_themes.cpp optionspage_transfer.cpp \
 		optionspage_updatecheck.cpp QueueView.cpp \
@@ -42,8 +44,11 @@ noinst_HEADERS = aboutdialog.h asyncrequestqueue.h \
 		 inputdialog.h ipcmutex.h led.h \
 		 LocalListView.h LocalTreeView.h Mainfrm.h \
 		 netconfwizard.h Options.h \
-		 optionspage.h optionspage_connection.h \
-		 optionspage_connection_active.h optionspage_filetype.h \
+		 optionspage.h \
+		 optionspage_connection.h \
+		 optionspage_connection_active.h \
+		 optionspage_debug.h \
+		 optionspage_filetype.h \
 		 optionspage_language.h \
 		 optionspage_themes.h optionspage_transfer.h \
 		 optionspage_updatecheck.h prefix.h QueueView.h \
