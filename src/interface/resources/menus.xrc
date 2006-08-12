@@ -31,10 +31,6 @@
     </object>
     <object class="wxMenu">
       <label>&amp;Help</label>
-      <object class="wxMenuItem" name="ID_CRASH">
-        <label>&amp;Crash</label>
-        <help>Crashes FileZilla instantly. Only used to debug the exception handler</help>
-      </object>
       <object class="wxMenuItem" name="ID_CHECKFORUPDATES">
         <label>Check for &amp;updates...</label>
         <help>Check for newer versions of FileZilla</help>
@@ -148,6 +144,12 @@
     </object>
     <object class="wxMenuItem" name="ID_CLEARALL">
       <label>C&amp;lear all</label>
+    </object>
+  </object>
+  <object class="wxMenu" name="ID_MENU_DEBUG">
+    <object class="wxMenuItem" name="ID_CRASH">
+      <label>&amp;Crash</label>
+      <help>Crashes FileZilla instantly. Only used to debug the exception handler</help>
     </object>
   </object>
 </resource>

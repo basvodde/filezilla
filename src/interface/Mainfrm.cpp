@@ -90,6 +90,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_pRemoteSplitter = NULL;
 	m_bInitDone = false;
 	m_bQuit = false;
+	m_pUpdateWizard = 0;
 
 	m_lastLogViewSplitterPos = 0;
 	m_lastLocalTreeSplitterPos = 0;
@@ -285,7 +286,17 @@ bool CMainFrame::CreateMenus()
 	{
 		wxLogError(_("Cannot load main menu from resource file"));
 	}
+
+	if (COptions::Get()->GetOptionVal(OPTION_DEBUG_MENU))
+	{
+		wxMenu* pMenu = wxXmlResource::Get()->LoadMenu(_T("ID_MENU_DEBUG"));
+		if (pMenu)
+			m_pMenuBar->Append(pMenu, _("&Debug"));
+	}
+
 	SetMenuBar(m_pMenuBar);
+	if (m_pUpdateWizard)
+		m_pUpdateWizard->DisplayUpdateAvailability(false, true);
 
 	return true;
 }
@@ -828,14 +839,18 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 	if (!dlg.Create(this))
 		return;
 
-	wxString oldTheme = COptions::Get()->GetOption(OPTION_THEME);
+	COptions* pOptions = COptions::Get();
+
+	wxString oldTheme = pOptions->GetOption(OPTION_THEME);
 	int oldLang = wxGetApp().GetCurrentLanguage();
+
+	int oldShowDebugMenu = pOptions->GetOptionVal(OPTION_DEBUG_MENU) != 0;
 
 	int res = dlg.ShowModal();
 	if (res != wxID_OK)
 		return;
 
-	wxString newTheme = COptions::Get()->GetOption(OPTION_THEME);
+	wxString newTheme = pOptions->GetOption(OPTION_THEME);
 	int newLang = wxGetApp().GetCurrentLanguage();
 
 	if (oldTheme != newTheme)
@@ -845,10 +860,11 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 	}
 	if (oldTheme != newTheme || oldLang != newLang)
 		CreateToolBar();
-	if (oldLang != newLang)
+	if (oldLang != newLang ||
+		oldShowDebugMenu != pOptions->GetOptionVal(OPTION_DEBUG_MENU))
 		CreateMenus();
 
-	if (COptions::Get()->GetOptionVal(OPTION_UPDATECHECK))
+	if (pOptions->GetOptionVal(OPTION_UPDATECHECK))
 	{
 		if (!m_pUpdateWizard)
 		{

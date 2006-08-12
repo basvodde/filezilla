@@ -753,9 +753,9 @@ void CUpdateWizard::StartUpdateCheck()
 		FailedTransfer();
 }
 
-void CUpdateWizard::DisplayUpdateAvailability(bool showDialog)
+void CUpdateWizard::DisplayUpdateAvailability(bool showDialog, bool forceMenu /*=false*/)
 {
-	if (m_updateShown)
+	if (m_updateShown && !forceMenu)
 		return;
 
 	COptions* pOptions = COptions::Get();

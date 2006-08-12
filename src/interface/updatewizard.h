@@ -14,6 +14,7 @@ public:
 	bool Run();
 
 	void InitAutoUpdateCheck();
+	void DisplayUpdateAvailability(bool showDialog, bool forceMenu = false);
 
 protected:
 	void FailedTransfer();
@@ -58,7 +59,6 @@ protected:
 	// ------------------------------------------
 
 	bool CanAutoCheckForUpdateNow();
-	void DisplayUpdateAvailability(bool showDialog);
 
 	wxTimer m_autoCheckTimer;
 
