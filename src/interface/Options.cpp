@@ -36,6 +36,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "No external ip on local conn", number, _T("1") },
 	{ "Pasv reply fallback mode", number, _T("0") },
 	{ "Timeout", number, _T("15") },
+	{ "Logging Debug Level", number, _T("0") },
 
 	// Interface settings
 	{ "Number of Transfers", number, _T("2") },
@@ -54,8 +55,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Last automatic update check", string, _T("") },
 	{ "Update Check New Version", string, _T("") },
 	{ "Update Check Package URL", string, _T("") },
-	{ "Show debug menu", number, _T("0") },
-	{ "Debug level", number, _T("0") }
+	{ "Show debug menu", number, _T("0") }
 };
 
 COptions::COptions()
@@ -328,7 +328,7 @@ int COptions::Validate(unsigned int nID, int value)
 		if (value < 7 || value > 9999)
 			value = 7;
 		break;
-	case OPTION_DEBUG_LEVEL:
+	case OPTION_LOGGING_DEBUGLEVEL:
 		if (value < 0 || value > 4)
 			value = 0;
 	}

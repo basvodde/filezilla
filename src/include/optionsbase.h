@@ -25,6 +25,7 @@ enum engineOptions
 								// coming from a local unroutable address
 	OPTION_PASVREPLYFALLBACKMODE,
 	OPTION_TIMEOUT,
+	OPTION_LOGGING_DEBUGLEVEL,
 
 	OPTIONS_ENGINE_NUM
 };

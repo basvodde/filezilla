@@ -8,6 +8,27 @@ CLogging::CLogging(CFileZillaEnginePrivate *pEngine)
 
 void CLogging::LogMessage(MessageType nMessageType, const wxChar *msgFormat, ...) const
 {
+	const int debugLevel = m_pEngine->GetOptions()->GetOptionVal(OPTION_LOGGING_DEBUGLEVEL);
+	switch (nMessageType)
+	{
+	case Debug_Warning:
+		if (!debugLevel)
+			return;
+		break;
+	case Debug_Info:
+		if (debugLevel < 2)
+			return;
+		break;
+	case Debug_Verbose:
+		if (debugLevel < 3)
+			return;
+		break;
+	case Debug_Debug:
+		if (debugLevel != 4)
+			return;
+		break;
+	}
+
 	va_list ap;
     
     va_start(ap, msgFormat);
@@ -22,6 +43,27 @@ void CLogging::LogMessage(MessageType nMessageType, const wxChar *msgFormat, ...
 
 void CLogging::LogMessage(wxString SourceFile, int nSourceLine, void *pInstance, MessageType nMessageType, const wxChar *msgFormat, ...) const
 {
+	const int debugLevel = m_pEngine->GetOptions()->GetOptionVal(OPTION_LOGGING_DEBUGLEVEL);
+	switch (nMessageType)
+	{
+	case Debug_Warning:
+		if (!debugLevel)
+			return;
+		break;
+	case Debug_Info:
+		if (debugLevel < 2)
+			return;
+		break;
+	case Debug_Verbose:
+		if (debugLevel < 3)
+			return;
+		break;
+	case Debug_Debug:
+		if (debugLevel != 4)
+			return;
+		break;
+	}
+
 	int pos = SourceFile.Find('\\', true);
 	if (pos != -1)
 		SourceFile = SourceFile.Mid(pos+1);
