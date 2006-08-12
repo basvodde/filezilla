@@ -204,7 +204,7 @@ int sftp_get_file(char *fname, char *outfname, int recurse, int restart)
     struct sftp_request *req, *rreq;
     struct fxp_xfer *xfer;
     uint64 offset;
-    FILE *fp;
+    WFILE *file;
     int ret, shown_err = FALSE;
 
     /*
@@ -381,18 +381,18 @@ int sftp_get_file(char *fname, char *outfname, int recurse, int restart)
     fh = fxp_open_recv(pktin, rreq);
 
     if (!fh) {
-	fzprintf(sftpError, "%s: %s", fname, fxp_error());
+	fzprintf(sftpError, "%s: open for read: %s", fname, fxp_error());
 	return 0;
     }
 
     if (restart) {
-	fp = fopen(outfname, "rb+");
+	file = open_existing_wfile(outfname, NULL);
     } else {
-	fp = fopen(outfname, "wb");
+	file = open_new_file(outfname);
     }
 
-    if (!fp) {
-	fzprintf(sftpError, "local: unable to open %s\n", outfname);
+    if (!file) {
+	fzprintf(sftpError, "local: unable to open %s", outfname);
 
 	sftp_register(req = fxp_close_send(fh));
 	rreq = sftp_find_request(pktin = sftp_recv());
@@ -403,11 +403,21 @@ int sftp_get_file(char *fname, char *outfname, int recurse, int restart)
     }
 
     if (restart) {
-	long posn;
-	fseek(fp, 0L, SEEK_END);
-	posn = ftell(fp);
-	fzprintf(sftpStatus, "reget: restarting at file position %ld\n", posn);
-	offset = uint64_make(0, posn);
+	char decbuf[30];
+	if (seek_file(file, uint64_make(0,0) , FROM_END) == -1) {
+	    fzprintf(sftpError, "reget: cannot restart %s - file too large",
+		   outfname);
+	    	sftp_register(req = fxp_close_send(fh));
+		rreq = sftp_find_request(pktin = sftp_recv());
+		assert(rreq == req);
+		fxp_close_recv(pktin, rreq);
+		
+		return 0;
+	}
+	    
+	offset = get_file_posn(file);
+	uint64_decimal(offset, decbuf);
+	fzprintf(sftpStatus, "reget: restarting at file position %s", decbuf);
     } else {
 	offset = uint64_make(0, 0);
     }
@@ -442,7 +452,7 @@ int sftp_get_file(char *fname, char *outfname, int recurse, int restart)
 
 	    wpos = 0;
 	    while (wpos < len) {
-		wlen = fwrite(buf + wpos, 1, len - wpos, fp);
+		wlen = write_to_file(file, buf + wpos, len - wpos);
 		if (wlen <= 0) {
 		    fzprintf(sftpError, "error while writing local file");
 		    ret = 0;
@@ -463,7 +473,7 @@ int sftp_get_file(char *fname, char *outfname, int recurse, int restart)
 
     xfer_cleanup(xfer);
 
-    fclose(fp);
+    close_wfile(file);
 
     sftp_register(req = fxp_close_send(fh));
     rreq = sftp_find_request(pktin = sftp_recv());
@@ -480,7 +490,7 @@ int sftp_put_file(char *fname, char *outfname, int recurse, int restart)
     struct sftp_packet *pktin;
     struct sftp_request *req, *rreq;
     uint64 offset;
-    FILE *fp;
+    RFILE *file;
     int ret, err, eof;
 
     /*
@@ -610,8 +620,8 @@ int sftp_put_file(char *fname, char *outfname, int recurse, int restart)
 	return 1;
     }
 
-    fp = fopen(fname, "rb");
-    if (!fp) {
+    file = open_existing_file(fname, NULL, NULL, NULL);
+    if (!file) {
 	fzprintf(sftpError, "local: unable to open %s", fname);
 	return 0;
     }
@@ -626,7 +636,7 @@ int sftp_put_file(char *fname, char *outfname, int recurse, int restart)
     fh = fxp_open_recv(pktin, rreq);
 
     if (!fh) {
-	fzprintf(sftpError, "%s: %s", outfname, fxp_error());
+	fzprintf(sftpError, "%s: open for write: %s", outfname, fxp_error());
 	return 0;
     }
 
@@ -651,12 +661,8 @@ int sftp_put_file(char *fname, char *outfname, int recurse, int restart)
 	offset = attrs.size;
 	uint64_decimal(offset, decbuf);
 	fzprintf(sftpStatus, "reput: restarting at file position %s", decbuf);
-	if (uint64_compare(offset, uint64_make(0, LONG_MAX)) > 0) {
-	    fzprintf(sftpError, "reput: remote file is larger than we can deal with");
-	    return 0;
-	}
-	if (fseek(fp, offset.lo, SEEK_SET) != 0)
-	    fseek(fp, 0, SEEK_END);    /* *shrug* */
+	if (seek_file((WFile *)file, offset, FROM_START) != 0)
+	    seek_file((WFile *)file, uint64_make(0,0), FROM_END);    /* *shrug* */
     } else {
 	offset = uint64_make(0, 0);
     }
@@ -675,7 +681,7 @@ int sftp_put_file(char *fname, char *outfname, int recurse, int restart)
 	int len, ret;
 
 	while (xfer_upload_ready(xfer) && !err && !eof) {
-	    len = fread(buffer, 1, sizeof(buffer), fp);
+	    len = read_from_file(file, buffer, sizeof(buffer));
 	    if (len == -1) {
 		fzprintf(sftpError, "error while reading local file");
 		err = 1;
@@ -704,7 +710,7 @@ int sftp_put_file(char *fname, char *outfname, int recurse, int restart)
     assert(rreq == req);
     fxp_close_recv(pktin, rreq);
 
-    fclose(fp);
+    close_rfile(file);
 
     return ret;
 }
@@ -877,7 +883,7 @@ int wildcard_iterate(char *filename, int (*func)(void *, char *), void *ctx)
 	while ( (newname = sftp_wildcard_get_filename(swcm)) != NULL ) {
 	    cname = canonify(newname);
 	    if (!cname) {
-		fzprintf(sftpError, "%s: %sn", newname, fxp_error());
+		fzprintf(sftpError, "%s: canonify: %sn", newname, fxp_error());
 		ret = 0;
 	    }
 	    matched = TRUE;
@@ -894,7 +900,7 @@ int wildcard_iterate(char *filename, int (*func)(void *, char *), void *ctx)
     } else {
 	cname = canonify(unwcfname);
 	if (!cname) {
-	    fzprintf(sftpError, "%s: %s", filename, fxp_error());
+	    fzprintf(sftpError, "%s: canonify: %s", filename, fxp_error());
 	    ret = 0;
 	}
 	ret = func(ctx, cname);
@@ -1010,7 +1016,7 @@ int sftp_cmd_ls(struct sftp_command *cmd)
 
     cdir = canonify(dir);
     if (!cdir) {
-	fzprintf(sftpError, "%s: %s", dir, fxp_error());
+	fzprintf(sftpError, "%s: canonify: %s", dir, fxp_error());
 	sfree(unwcdir);
 	return 0;
     }
@@ -1108,7 +1114,7 @@ int sftp_cmd_cd(struct sftp_command *cmd)
 	dir = canonify(cmd->words[1]);
 
     if (!dir) {
-	fzprintf(sftpError, "%s: %s", dir, fxp_error());
+	fzprintf(sftpError, "%s: canonify: %s", dir, fxp_error());
 	return 0;
     }
 
@@ -1219,7 +1225,7 @@ int sftp_general_get(struct sftp_command *cmd, int restart, int multiple)
 	    fname = canonify(origwfname);
 
 	    if (!fname) {
-		fzprintf(sftpError, "%s: %s", origwfname, fxp_error());
+		fzprintf(sftpError, "%s: canonify: %s", origwfname, fxp_error());
 		sfree(unwcfname);
 		return 0;
 	    }
@@ -1332,7 +1338,7 @@ int sftp_general_put(struct sftp_command *cmd, int restart, int multiple)
 
 	    outfname = canonify(origoutfname);
 	    if (!outfname) {
-		fzprintf(sftpError, "%s: %s", origoutfname, fxp_error());
+		fzprintf(sftpError, "%s: canonify: %s", origoutfname, fxp_error());
 		if (wcm) {
 		    sfree(wfname);
 		    finish_wildcard_matching(wcm);
@@ -1397,7 +1403,7 @@ int sftp_cmd_mkdir(struct sftp_command *cmd)
     for (i = 1; i < cmd->nwords; i++) {
 	dir = canonify(cmd->words[i]);
 	if (!dir) {
-	    fzprintf(sftpError, "%s: %s", dir, fxp_error());
+	    fzprintf(sftpError, "%s: canonify: %s", dir, fxp_error());
 	    return 0;
 	}
 
@@ -1551,7 +1557,7 @@ static int sftp_action_mv(void *vctx, char *srcfname)
 	newname = dupcat(ctx->dstfname, "/", p, NULL);
 	newcanon = canonify(newname);
 	if (!newcanon) {
-	    fzprintf(sftpError, "%s: %s", newname, fxp_error());
+	    fzprintf(sftpError, "%s: canonify: %s", newname, fxp_error());
 	    sfree(newname);
 	    return 0;
 	}
@@ -1598,7 +1604,7 @@ int sftp_cmd_mv(struct sftp_command *cmd)
 
     ctx->dstfname = canonify(cmd->words[cmd->nwords-1]);
     if (!ctx->dstfname) {
-	fzprintf(sftpError, "%s: %s", ctx->dstfname, fxp_error());
+	fzprintf(sftpError, "%s: canonify: %s", ctx->dstfname, fxp_error());
 	return 0;
     }
 
@@ -2749,6 +2755,7 @@ static int psftp_connect(char *userhost, char *user, int portnumber)
 	cfg.username[sizeof(cfg.username) - 1] = '\0';
     }
     if (!cfg.username[0]) {
+	// Original psftp allows this though. But FZ always provides a username.
         fzprintf(sftpError, "psftp: no username, aborting");
         cleanup_exit(1);
     }
