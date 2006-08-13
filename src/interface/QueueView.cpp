@@ -36,6 +36,8 @@ EVT_MENU(XRCID("ID_PROCESSQUEUE"), CQueueView::OnProcessQueue)
 EVT_MENU(XRCID("ID_REMOVEALL"), CQueueView::OnStopAndClear)
 EVT_MENU(XRCID("ID_REMOVE"), CQueueView::OnRemoveSelected)
 
+EVT_ERASE_BACKGROUND(CQueueView::OnEraseBackground)
+
 END_EVENT_TABLE()
 
 class CFolderItem;
@@ -657,6 +659,7 @@ bool CFileItem::TryRemoveAll()
 CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame)
 	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN | wxLC_REPORT | wxLC_VIRTUAL | wxSUNKEN_BORDER)
 {
+	m_allowBackgroundErase = true;
 	m_pMainFrame = pMainFrame;
 
 	m_itemCount = 0;
@@ -1079,7 +1082,9 @@ bool CQueueView::TryStartNextTransfer()
 	
 	wxRect rect;
 	GetItemRect(lineIndex + 1, rect);
+	m_allowBackgroundErase = false;
 	CStatusLineCtrl* pStatusLineCtrl = new CStatusLineCtrl(this, engineData, rect);
+	m_allowBackgroundErase = true;
 	m_statusLineList.push_back(pStatusLineCtrl);
 	engineData.pStatusLineCtrl = pStatusLineCtrl;
 
@@ -1158,7 +1163,9 @@ void CQueueView::ResetEngine(t_EngineData& data, bool removeFileItem)
 				break;
 			}
 		}
+		m_allowBackgroundErase = false;
 		delete data.pStatusLineCtrl;
+		m_allowBackgroundErase = true;
 		data.pStatusLineCtrl = 0;
 	}
 	if (data.pItem)
@@ -1465,8 +1472,11 @@ void CQueueView::UpdateStatusLinePositions()
 			pCtrl->Show(false);
 			continue;
 		}
+		m_allowBackgroundErase = GetTopItem() + GetCountPerPage() + 1 >= m_itemCount;
 		pCtrl->SetSize(rect);
+		m_allowBackgroundErase = false;
 		pCtrl->Show();
+		m_allowBackgroundErase = true;
 	}
 }
 
@@ -1998,4 +2008,10 @@ void CQueueView::OnFolderThreadFiles(wxCommandEvent& event)
 	pItem->m_count += entryList.size();
 	pItem->m_statusMessage = wxString::Format(_("%d files added to queue"), pItem->GetCount());
 	RefreshItem(GetItemIndex(pItem));
+}
+
+void CQueueView::OnEraseBackground(wxEraseEvent& event)
+{
+	if (m_allowBackgroundErase)
+		event.Skip();
 }

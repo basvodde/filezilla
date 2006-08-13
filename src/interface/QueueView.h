@@ -321,6 +321,8 @@ protected:
 	int m_activeMode; // 0 inactive, 1 only immediate transfers, 2 all
 	bool m_quit;
 
+	bool m_allowBackgroundErase;
+
 	CMainFrame* m_pMainFrame;
 
 	std::list<wxString> m_asciiFiles;
@@ -339,6 +341,8 @@ protected:
 	void OnProcessQueue(wxCommandEvent& event);
 	void OnStopAndClear(wxCommandEvent& event);
 	void OnRemoveSelected(wxCommandEvent& event);
+
+	void OnEraseBackground(wxEraseEvent& event);
 };
 
 #endif
