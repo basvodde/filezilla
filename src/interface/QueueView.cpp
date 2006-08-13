@@ -1078,7 +1078,7 @@ bool CQueueView::TryStartNextTransfer()
 	int lineIndex = GetItemIndex(fileItem);
 	
 	wxRect rect;
-	GetItemRect(lineIndex, rect);
+	GetItemRect(lineIndex + 1, rect);
 	CStatusLineCtrl* pStatusLineCtrl = new CStatusLineCtrl(this, engineData, rect);
 	m_statusLineList.push_back(pStatusLineCtrl);
 	engineData.pStatusLineCtrl = pStatusLineCtrl;
@@ -1218,6 +1218,8 @@ void CQueueView::RemoveItem(CQueueItem* item)
 
 	int count = topLevelItem->GetChildrenCount(true);
 	topLevelItem->RemoveChild(item);
+
+	int oldCount = m_itemCount;
 	if (!topLevelItem->GetChild(0))
 	{
 		std::vector<CServerItem*>::iterator iter;
@@ -1232,7 +1234,6 @@ void CQueueView::RemoveItem(CQueueItem* item)
 
 		m_itemCount -= count + 1;
 		SetItemCount(m_itemCount);
-		Refresh();
 	}
 	else
 	{
@@ -1241,7 +1242,11 @@ void CQueueView::RemoveItem(CQueueItem* item)
 		SetItemCount(m_itemCount);
 	}
 
-	Refresh(false);
+	if (oldCount > m_itemCount)
+	{
+		bool eraseBackground = GetTopItem() + GetCountPerPage() + 1 >= m_itemCount;
+		Refresh(eraseBackground);
+	}
 
 	UpdateStatusLinePositions();
 }
