@@ -1,5 +1,6 @@
 #include "FileZilla.h"
 #include "StatusView.h"
+#include <wx/wupdlock.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -48,64 +49,26 @@ void CStatusView::AddToLog(CLogmsgNotification *pNotification)
 
 void CStatusView::AddToLog(enum MessageType messagetype, wxString message)
 {
-	wxTextAttr attr = m_defAttr;
 	wxString prefix;
-	int prefixLen;
 	
 	if (m_nLineCount)
-	{
 		prefix = _T("\n");
-		prefixLen = -1;
-	}
-	else
-		prefixLen = 0;
 	
 	if (m_nLineCount == MAX_LINECOUNT)
 	{
+		wxWindowUpdateLocker lock(m_pTextCtrl);
 		m_pTextCtrl->Remove(0, m_lineLengths.front() + 1);
 		m_lineLengths.pop_front();
 	}
 	else
 		m_nLineCount++;
-	
-	switch (messagetype)
-	{
-	case Error:
-		prefix += _("Error:");
-		attr.SetTextColour(wxColour(255, 0, 0));
-		break;
-	case Command:
-		prefix += _("Command:");
-		attr.SetTextColour(wxColour(0, 0, 128));
-		break;
-	case Response:
-		prefix += _("Response:");
-		attr.SetTextColour(wxColour(0, 128, 0));
-		break;
-	case Debug_Warning:
-	case Debug_Info:
-	case Debug_Verbose:
-	case Debug_Debug:
-		prefix += _("Trace:");
-		attr.SetTextColour(wxColour(128, 0, 128));
-		break;
-	case RawList:
-		prefix += _("Listing:");
-		attr.SetTextColour(wxColour(0, 128, 128));
-		break;
-	default:
-		prefix += _("Status:");
-		attr.SetTextColour(wxColour(0, 0, 0));
-		break;
-	}
-	prefix += _T("\t");
 
-	m_pTextCtrl->SetDefaultStyle(attr);
-	
-	prefixLen += prefix.Length() + message.Length();
+	m_pTextCtrl->SetDefaultStyle(m_attributeCache[messagetype].attr);
+
+	int prefixLen = m_attributeCache[messagetype].len + message.Length();
 	m_lineLengths.push_back(prefixLen);
 	
-	m_pTextCtrl->AppendText(prefix + message);
+	m_pTextCtrl->AppendText(prefix + m_attributeCache[messagetype].prefix + message);
 }
 
 void CStatusView::InitDefAttr()
@@ -139,10 +102,48 @@ void CStatusView::InitDefAttr()
 	maxWidth = dc.DeviceToLogicalX(maxWidth) + 20;	
 	wxArrayInt array;
 	array.Add(maxWidth);
-	m_defAttr.SetTabs(array);
-	m_defAttr.SetLeftIndent(0, maxWidth);
+	wxTextAttr defAttr;
+	defAttr.SetTabs(array);
+	defAttr.SetLeftIndent(0, maxWidth);
 
-	m_defAttr.SetBackgroundColour(dc.GetTextBackground());
+	defAttr.SetBackgroundColour(dc.GetTextBackground());
+	
+	for (int i = 0; i < MessageTypeCount; i++)
+	{
+		m_attributeCache[i].attr = defAttr;
+		switch (i)
+		{
+		case Error:
+			m_attributeCache[i].prefix = _("Error:");
+			m_attributeCache[i].attr.SetTextColour(wxColour(255, 0, 0));
+			break;
+		case Command:
+			m_attributeCache[i].prefix = _("Command:");
+			m_attributeCache[i].attr.SetTextColour(wxColour(0, 0, 128));
+			break;
+		case Response:
+			m_attributeCache[i].prefix = _("Response:");
+			m_attributeCache[i].attr.SetTextColour(wxColour(0, 128, 0));
+			break;
+		case Debug_Warning:
+		case Debug_Info:
+		case Debug_Verbose:
+		case Debug_Debug:
+			m_attributeCache[i].prefix = _("Trace:");
+			m_attributeCache[i].attr.SetTextColour(wxColour(128, 0, 128));
+			break;
+		case RawList:
+			m_attributeCache[i].prefix = _("Listing:");
+			m_attributeCache[i].attr.SetTextColour(wxColour(0, 128, 128));
+			break;
+		default:
+			m_attributeCache[i].prefix = _("Status:");
+			m_attributeCache[i].attr.SetTextColour(wxColour(0, 0, 0));
+			break;
+		}
+		m_attributeCache[i].prefix += _T("\t");
+		m_attributeCache[i].len = m_attributeCache[i].prefix.Length();
+	}
 }
 
 void CStatusView::OnContextMenu(wxContextMenuEvent& event)

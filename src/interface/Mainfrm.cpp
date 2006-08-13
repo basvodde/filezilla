@@ -862,7 +862,10 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 		CreateToolBar();
 	if (oldLang != newLang ||
 		oldShowDebugMenu != pOptions->GetOptionVal(OPTION_DEBUG_MENU))
+	{
+		m_pStatusView->InitDefAttr();
 		CreateMenus();
+	}
 
 	if (pOptions->GetOptionVal(OPTION_UPDATECHECK))
 	{

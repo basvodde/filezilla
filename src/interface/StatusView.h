@@ -10,14 +10,13 @@ public:
 	void AddToLog(CLogmsgNotification *pNotification);
 	void AddToLog(enum MessageType messagetype, wxString message);
 
+	void InitDefAttr();
 
 protected:
-	void InitDefAttr();
 
 	int m_nLineCount;
 	wxString m_Content;
 	wxTextCtrl *m_pTextCtrl;
-	wxTextAttr m_defAttr;
 
 	void OnSize(wxSizeEvent &event);
 
@@ -27,6 +26,13 @@ protected:
 	void OnCopy(wxCommandEvent& event);
 
 	std::list<int> m_lineLengths;
+
+	struct t_attributeCache
+	{
+		wxString prefix;
+		int len;
+		wxTextAttr attr;
+	} m_attributeCache[MessageTypeCount];
 };
 
 #endif
