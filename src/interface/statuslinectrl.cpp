@@ -90,11 +90,18 @@ void CStatusLineCtrl::OnPaint(wxPaintEvent& event)
 		return;
 	}
 
-	wxTimeSpan elapsed = wxDateTime::Now().Subtract(m_pStatus->started);
+	int elapsedSeconds;
+	if (m_pStatus->started.IsValid())
+	{
+		wxTimeSpan elapsed = wxDateTime::Now().Subtract(m_pStatus->started);
 
-	DrawRightAlignedText(dc, elapsed.Format(_("%H:%M:%S elapsed")), m_fieldOffsets[0], h);
+		DrawRightAlignedText(dc, elapsed.Format(_("%H:%M:%S elapsed")), m_fieldOffsets[0], h);
 
-	int elapsedSeconds = elapsed.GetSeconds().GetLo(); // Assume GetHi is always 0
+		elapsedSeconds = elapsed.GetSeconds().GetLo(); // Assume GetHi is always 0
+	}
+	else
+		elapsedSeconds = 0;
+
 	if (elapsedSeconds)
 	{
 		wxFileOffset rate = (m_pStatus->currentOffset - m_pStatus->startOffset) / elapsedSeconds;
@@ -170,7 +177,7 @@ void CStatusLineCtrl::SetTransferStatus(const CTransferStatus* pStatus)
 		if (!m_transferStatusTimer.IsRunning())
 			m_transferStatusTimer.Start(100);
 	}
-	Refresh();
+	Refresh(false);
 }
 
 void CStatusLineCtrl::OnTimer(wxTimerEvent& event)
