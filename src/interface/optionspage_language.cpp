@@ -14,9 +14,6 @@ bool COptionsPageLanguage::LoadPage()
 	if (!pListBox)
 		return false;
 
-	wxString localesDir = wxGetApp().GetLocalesDir();
-	wxDir dir(localesDir);
-		
 	int language = wxGetApp().GetCurrentLanguage();
 
 	pListBox->Clear();
@@ -27,10 +24,11 @@ bool COptionsPageLanguage::LoadPage()
 	if (pInfo && pInfo->Language == language)
 		pListBox->SetSelection(n);
 
-	if (!dir.IsOpened())
+	wxString localesDir = wxGetApp().GetLocalesDir();
+	if (!wxDir::Exists(localesDir))
 		return true;
 
-	wxLogNull log;
+	wxDir dir(localesDir);
 
 	wxString locale;
 	for (bool found = dir.GetFirst(&locale); found; found = dir.GetNext(&locale))
