@@ -12,7 +12,9 @@ enum MessageType
 	Debug_Verbose,
 	Debug_Debug,
 
-	RawList
+	RawList,
+
+	MessageTypeCount
 };
 
 #endif
