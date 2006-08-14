@@ -962,7 +962,7 @@ void CQueueView::OnEngineEvent(wxEvent &event)
 				CTransferStatusNotification *pTransferStatusNotification = reinterpret_cast<CTransferStatusNotification *>(pNotification);
 				const CTransferStatus *pStatus = pTransferStatusNotification->GetStatus();
 
-				if (data.pStatusLineCtrl)
+				if (data.active)
 					data.pStatusLineCtrl->SetTransferStatus(pStatus);
 
 				delete pNotification;
@@ -1083,10 +1083,16 @@ bool CQueueView::TryStartNextTransfer()
 	wxRect rect;
 	GetItemRect(lineIndex + 1, rect);
 	m_allowBackgroundErase = false;
-	CStatusLineCtrl* pStatusLineCtrl = new CStatusLineCtrl(this, engineData, rect);
+	if (!engineData.pStatusLineCtrl)
+		engineData.pStatusLineCtrl = new CStatusLineCtrl(this, engineData, rect);
+	else
+	{
+		engineData.pStatusLineCtrl->SetTransferStatus(0);
+		engineData.pStatusLineCtrl->SetSize(rect);
+		engineData.pStatusLineCtrl->Show();
+	}
 	m_allowBackgroundErase = true;
-	m_statusLineList.push_back(pStatusLineCtrl);
-	engineData.pStatusLineCtrl = pStatusLineCtrl;
+	m_statusLineList.push_back(engineData.pStatusLineCtrl);
 
 	SendNextCommand(engineData);
 	
@@ -1109,14 +1115,14 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 	{
 	case t_EngineData::disconnect:
 		engineData.state = t_EngineData::connect;
-		if (engineData.pStatusLineCtrl)
+		if (engineData.active)
 			engineData.pStatusLineCtrl->SetTransferStatus(0);
 		break;
 	case t_EngineData::connect:
 		if (replyCode == FZ_REPLY_OK)
 		{
 			engineData.state = t_EngineData::transfer;
-			if (engineData.pStatusLineCtrl)
+			if (engineData.active)
 				engineData.pStatusLineCtrl->SetTransferStatus(0);
 		}
 		else if (!IncreaseErrorCount(engineData))
@@ -1164,9 +1170,8 @@ void CQueueView::ResetEngine(t_EngineData& data, bool removeFileItem)
 			}
 		}
 		m_allowBackgroundErase = false;
-		delete data.pStatusLineCtrl;
+		data.pStatusLineCtrl->Hide();
 		m_allowBackgroundErase = true;
-		data.pStatusLineCtrl = 0;
 	}
 	if (data.pItem)
 	{
@@ -1269,7 +1274,7 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 				return;
 
 			engineData.state = t_EngineData::connect;
-			if (engineData.pStatusLineCtrl)
+			if (engineData.active)
 				engineData.pStatusLineCtrl->SetTransferStatus(0);
 		}
 
@@ -1290,7 +1295,7 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 			if (res == FZ_REPLY_OK)
 			{
 				engineData.state = t_EngineData::transfer;
-				if (engineData.pStatusLineCtrl)
+				if (engineData.active)
 					engineData.pStatusLineCtrl->SetTransferStatus(0);
 				break;
 			}
