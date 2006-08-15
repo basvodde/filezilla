@@ -132,7 +132,7 @@ static char data[][110]={
 	"-r-xr-xr-x   2 root  root  96 2004.07.15   58-dotted-date file",
 
 	// VMS style listing with a different field order
-	"59-vms-altenrate-field-order-file;1   [SUMMARY]    1/3     2-AUG-2006 13:05  (RWE,RWE,RE,)",
+	"59-vms-alternate-field-order-file;1   [SUMMARY]    1/3     2-AUG-2006 13:05  (RWE,RWE,RE,)",
 
 	""};
 
@@ -1549,6 +1549,7 @@ bool CDirectoryListingParser::ParseAsVms(CLine *pLine, CDirentry &entry)
 	}
 	else
 	{
+		entry.ownerGroup = _T("");
 		gotSize = true;
 		entry.size = token.GetNumber();
 	}
@@ -1591,7 +1592,8 @@ bool CDirectoryListingParser::ParseAsVms(CLine *pLine, CDirentry &entry)
 		index--;
 	}
 
-	// Owner / group
+	// Owner / group and permissions
+	entry.permissions = _T("");
 	while (pLine->GetToken(++index, token))
 	{
 		const int len = token.GetLength();
@@ -1599,19 +1601,19 @@ bool CDirectoryListingParser::ParseAsVms(CLine *pLine, CDirentry &entry)
 		{
 			if (entry.permissions != _T(""))
 				entry.permissions += _T(" ");
-			entry.permissions = token.GetString().Mid(1, len - 2);
+			entry.permissions += token.GetString().Mid(1, len - 2);
 		}
 		else if (len > 2 && token[0] == '[' && token[len - 1] == ']')
 		{
 			if (entry.ownerGroup != _T(""))
 				entry.ownerGroup += _T(" ");
-			entry.ownerGroup = token.GetString().Mid(1, len - 2);
+			entry.ownerGroup += token.GetString().Mid(1, len - 2);
 		}
 		else
 		{
 			if (entry.permissions != _T(""))
 				entry.permissions += _T(" ");
-			entry.permissions = token.GetString();
+			entry.permissions += token.GetString();
 		}
 	}
 
