@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: filezilla\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-07-26 17:21+0200\n"
-"PO-Revision-Date: 2006-07-24 21:12+0200\n"
+"POT-Creation-Date: 2006-08-11 09:50+0200\n"
+"PO-Revision-Date: 2006-08-13 22:42+0200\n"
 "Last-Translator: Andrus Lillemaa <andrus@taebla.ee>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -23,22 +23,30 @@ msgstr "Aega kulunud: %H:%M:%S"
 msgid "%H:%M:%S left"
 msgstr "Aega lõpuni: %H:%M:%S"
 
-#: ../../locales/../src/interface/QueueView.cpp:1988
+#: ../../locales/../src/interface/QueueView.cpp:1994
 #, c-format
 msgid "%d files added to queue"
 msgstr "%d faili lisatud järjekorda"
 
+#: ../../locales/../src/interface/updatewizard.cpp:658
+#, c-format
+msgid "%s bytes"
+msgstr "%s baiti"
+
 #: ../../locales/../src/interface/statuslinectrl.cpp:107
+#: ../../locales/../src/interface/updatewizard.cpp:642
 #, c-format
 msgid "%s bytes (%d B/s)"
 msgstr "%s baiti (%d B/s)"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:105
+#: ../../locales/../src/interface/updatewizard.cpp:640
 #, c-format
 msgid "%s bytes (%d.%d KB/s)"
 msgstr "%s baiti (%d.%d KB/s)"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:103
+#: ../../locales/../src/interface/updatewizard.cpp:638
 #, c-format
 msgid "%s bytes (%d.%d MB/s)"
 msgstr "%s baiti (%d.%d MB/s)"
@@ -48,7 +56,7 @@ msgstr "%s baiti (%d.%d MB/s)"
 msgid "%s bytes (? B/s)"
 msgstr "%s baiti (? B/s)"
 
-#: resources.h:274
+#: resources.h:280
 msgid "&About..."
 msgstr "&Programmist..."
 
@@ -56,15 +64,15 @@ msgstr "&Programmist..."
 msgid "&Account:"
 msgstr "&Konto:"
 
-#: resources.h:71 resources.h:117 resources.h:319
+#: resources.h:71 resources.h:117 resources.h:325
 msgid "&Active"
 msgstr "&Aktiivne"
 
-#: resources.h:278 resources.h:288
+#: resources.h:284 resources.h:294
 msgid "&Add files to queue"
 msgstr "&Lisage failid järjekorda"
 
-#: resources.h:179
+#: resources.h:185
 msgid "&Always trust this host, add this key to the cache"
 msgstr "&Usalda seda masinat alati ja lisa tema võti mällu"
 
@@ -88,12 +96,12 @@ msgstr "&Binaarne"
 msgid "&Browse..."
 msgstr "&Sirvi..."
 
-#: resources.h:31 resources.h:95 resources.h:99 resources.h:138
-#: resources.h:181 resources.h:193
+#: resources.h:31 resources.h:95 resources.h:99 resources.h:143
+#: resources.h:187 resources.h:199
 msgid "&Cancel"
 msgstr "&Loobu"
 
-#: resources.h:244
+#: resources.h:250
 msgid "&Check for beta versions of FileZilla"
 msgstr "&Kontrolli FileZilla beeta versioonide olemasolu"
 
@@ -101,47 +109,51 @@ msgstr "&Kontrolli FileZilla beeta versioonide olemasolu"
 msgid "&Connect"
 msgstr "&Ühenda"
 
-#: resources.h:214
+#: resources.h:220
 msgid "&Copy"
 msgstr "&Kopeeri"
 
-#: resources.h:308
+#: resources.h:314
 msgid "&Copy to clipboard"
 msgstr "&Kopeeri lõikemällu"
 
-#: resources.h:270
+#: resources.h:276
 msgid "&Crash"
 msgstr "&Avarii"
 
-#: resources.h:280 resources.h:290
+#: resources.h:286 resources.h:296
 msgid "&Create directory"
 msgstr "&Loo kataloog"
 
-#: resources.h:37 resources.h:196 resources.h:212
+#: resources.h:37 resources.h:202 resources.h:218
 msgid "&Delete"
 msgstr "&Kustuta"
 
-#: resources.h:286
+#: resources.h:292
 msgid "&Download"
-msgstr "&Allatõmbamine"
+msgstr "&Allalaadimine"
 
-#: resources.h:262
+#: resources.h:268
 msgid "&Edit"
 msgstr "&Muutmine"
 
-#: resources.h:198
+#: resources.h:204
 msgid "&Edit filters..."
 msgstr "&Filtrite muutmine..."
+
+#: resources.h:137
+msgid "&Enable automatic update check"
+msgstr "&Luba automaatne uuenduste kontroll"
 
 #: resources.h:81
 msgid "&Encoding:"
 msgstr "&Kodeering:"
 
-#: resources.h:307
+#: resources.h:313
 msgid "&Enter custom command..."
-msgstr "&Sisesta kohandatud käsk..."
+msgstr "&Sisesta oma käsk..."
 
-#: resources.h:144
+#: resources.h:149
 msgid "&Execute"
 msgstr "&Käivita"
 
@@ -149,39 +161,39 @@ msgstr "&Käivita"
 msgid "&Fall back to active mode"
 msgstr "&Tagasi aktiivse laadi juurde"
 
-#: resources.h:257
+#: resources.h:263
 msgid "&File"
 msgstr "&Fail"
 
-#: resources.h:296
+#: resources.h:302
 msgid "&File Attributes"
 msgstr "&Faili atribuudid"
 
-#: resources.h:195
+#: resources.h:201
 msgid "&Filter sets:"
 msgstr "&Filtrikogumik:"
 
-#: resources.h:210
+#: resources.h:216
 msgid "&Filters:"
 msgstr "&Filtrid:"
 
-#: resources.h:269
+#: resources.h:275
 msgid "&Help"
 msgstr "&Abi"
 
-#: resources.h:302
+#: resources.h:308
 msgid "&Highest"
 msgstr "&Tähtsaim"
 
-#: resources.h:231
+#: resources.h:237
 msgid "&Highest available port:"
 msgstr "&Kõrgeim vaba port:"
 
-#: resources.h:40 resources.h:355
+#: resources.h:40 resources.h:361
 msgid "&Host:"
 msgstr "&Masin:"
 
-#: resources.h:228
+#: resources.h:234
 msgid "&Limit local ports used by FileZilla"
 msgstr "&Filezilla poolt kasutatud kohalike portide arv"
 
@@ -193,7 +205,7 @@ msgstr "&Erinevate ühenduste limiitarv"
 msgid "&Logontype:"
 msgstr "&Sisselogimise tüüp:"
 
-#: resources.h:305
+#: resources.h:311
 msgid "&Low"
 msgstr "&Madal"
 
@@ -201,11 +213,11 @@ msgstr "&Madal"
 msgid "&Maximum number of connections:"
 msgstr "&Maksimaalne ühenduste arv:"
 
-#: resources.h:265
+#: resources.h:271
 msgid "&Network configuration wizard"
 msgstr "&Võrgu seadistamise nõustaja"
 
-#: resources.h:211
+#: resources.h:217
 msgid "&New"
 msgstr "&Uus"
 
@@ -213,11 +225,15 @@ msgstr "&Uus"
 msgid "&New Site"
 msgstr "&Uus koht"
 
-#: resources.h:304
+#: ../../locales/../src/interface/updatewizard.cpp:781
+msgid "&New version available!"
+msgstr "&Uus versioon saadaval!"
+
+#: resources.h:310
 msgid "&Normal"
 msgstr "&Normaalne"
 
-#: resources.h:153
+#: resources.h:158
 msgid "&Numeric value:"
 msgstr "&Numbriline väärtus:"
 
@@ -237,15 +253,15 @@ msgstr "&Passiivne"
 msgid "&Password:"
 msgstr "&Parool:"
 
-#: resources.h:41 resources.h:359
+#: resources.h:41 resources.h:365
 msgid "&Port:"
 msgstr "&Port:"
 
-#: resources.h:361
+#: resources.h:367
 msgid "&Quickconnect"
 msgstr "&Kiirühendus"
 
-#: resources.h:142
+#: resources.h:147
 msgid "&Read"
 msgstr "&Loe"
 
@@ -257,15 +273,15 @@ msgstr "&Jäta selleks seansiks parool meelde"
 msgid "&Remove"
 msgstr "&Eemalda"
 
-#: resources.h:300
+#: resources.h:306
 msgid "&Remove selected"
 msgstr "&Eemalda valitud"
 
-#: resources.h:36 resources.h:213 resources.h:284 resources.h:294
+#: resources.h:36 resources.h:219 resources.h:290 resources.h:300
 msgid "&Rename"
 msgstr "&Nimeta ümber"
 
-#: resources.h:354
+#: resources.h:360
 msgid "&Restart Wizard"
 msgstr "&Käivita nõustaja uuesti"
 
@@ -277,7 +293,11 @@ msgstr "&Jätka"
 msgid "&Run configuration wizard now..."
 msgstr "&Käivita võrgu seadistamise nõustaja..."
 
-#: resources.h:197
+#: resources.h:140
+msgid "&Run update check now..."
+msgstr "&Alusta praegu uuenduste kontrolliga ..."
+
+#: resources.h:203
 msgid "&Save as..."
 msgstr "&Salvesta uue nimega..."
 
@@ -285,15 +305,15 @@ msgstr "&Salvesta uue nimega..."
 msgid "&Select language:"
 msgstr "&Vali keel:"
 
-#: resources.h:266
+#: resources.h:272
 msgid "&Server"
 msgstr "&Server"
 
-#: resources.h:263
+#: resources.h:269
 msgid "&Settings"
 msgstr "&Seaded"
 
-#: resources.h:258
+#: resources.h:264
 msgid "&Site Manager"
 msgstr "&Saidihaldur"
 
@@ -317,11 +337,11 @@ msgstr "&Ülekande laad:"
 msgid "&Treat dotfiles (filenames starting with a dot) as Ascii files"
 msgstr "&Loe punktiga algavad failid ASCII failideks"
 
-#: resources.h:191
+#: resources.h:197
 msgid "&Update cached key for this host"
 msgstr "&Uuenda selle masina salvestatud võtit"
 
-#: resources.h:276
+#: resources.h:282
 msgid "&Upload"
 msgstr "&Üleslaadimine"
 
@@ -333,11 +353,16 @@ msgstr "&Kasuta selle asemel serveri välist IP aadressi"
 msgid "&User:"
 msgstr "&Kasutaja:"
 
-#: resources.h:357
+#: resources.h:363
 msgid "&Username:"
 msgstr "&Kasutajanimi:"
 
-#: resources.h:143
+#: ../../locales/../src/interface/updatewizard.cpp:779
+#, c-format
+msgid "&Version %s"
+msgstr "&Versioon %s"
+
+#: resources.h:148
 msgid "&Write"
 msgstr "&Kirjuta"
 
@@ -357,7 +382,19 @@ msgstr "(1-10)"
 msgid "(5-9999, 0 to disable)"
 msgstr "(5-9999, 0 keelamiseks)"
 
-#: resources.h:342
+#: resources.h:139
+msgid "(At least 7 days)"
+msgstr "(Vähemalt 7 päeva)"
+
+#: ../../locales/../src/interface/updatewizard.cpp:650
+msgid ", %H:%M:%S left"
+msgstr ", aega lõpuni: %H:%M:%S"
+
+#: ../../locales/../src/interface/updatewizard.cpp:654
+msgid ", --:--:-- left"
+msgstr ", aega lõpuni: --:--:-- "
+
+#: resources.h:348
 msgid "-"
 msgstr "-"
 
@@ -366,7 +403,7 @@ msgstr "-"
 msgid "--:--:-- left"
 msgstr "Aega lõpuni: --:--:-- "
 
-#: resources.h:316
+#: resources.h:322
 msgid ""
 "A few servers don't allow passive mode or are misconfigured. In such cases "
 "you would have to use active mode. In active mode, FileZilla opens a port "
@@ -388,7 +425,7 @@ msgstr ""
 "Kontrollige muutujate LC_CTYPE (või LC_ALL) seadistust.\n"
 "Kuni probleem pole lahendatud, võivad failid  nimekirjast puududa."
 
-#: resources.h:246
+#: resources.h:252
 msgid "A newer version of FileZilla is available:"
 msgstr "Uuem versioon FileZillast on kättesaadav:"
 
@@ -404,7 +441,7 @@ msgstr "R&akenda ainult allalaadimistele"
 msgid "A&pply only to uploads"
 msgstr "R&akenda ainult üleslaadimistele"
 
-#: resources.h:156
+#: resources.h:161
 msgid "A&pply to all files and directories"
 msgstr "R&akenda kõikidele failidele ja kataloogidele"
 
@@ -412,7 +449,7 @@ msgstr "R&akenda kõikidele failidele ja kataloogidele"
 msgid "A&scii"
 msgstr "A&scii"
 
-#: resources.h:161
+#: resources.h:166
 msgid "About FileZilla"
 msgstr "FileZillast"
 
@@ -424,7 +461,7 @@ msgstr "FileZillast"
 msgid "Account"
 msgstr "Konto"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:81
+#: ../../locales/../src/interface/settingsdialog.cpp:83
 msgid "Active mode"
 msgstr "Aktiivne laad"
 
@@ -452,15 +489,15 @@ msgstr ""
 "Aktiivse FTP laadi test ebaõnnestus. FileZilla küll teab korrektset välist "
 "IP aadressi, kuid teie ruuter muutis eksitavalt seda."
 
-#: resources.h:239
+#: resources.h:245
 msgid "Active mode IP"
 msgstr "Aktiivse laadi IP"
 
-#: resources.h:219
+#: resources.h:225
 msgid "Add &more"
 msgstr "Lisa &juurde"
 
-#: resources.h:279 resources.h:289
+#: resources.h:285 resources.h:295
 msgid "Add selected files and folders to the transfer queue"
 msgstr "Lisa valitud failid ja kataloogid ülekande järjekorda"
 
@@ -472,11 +509,11 @@ msgstr "Muuda serveri ajatsooni nihet:"
 msgid "Advanced"
 msgstr "Lisad"
 
-#: resources.h:243
+#: resources.h:249
 msgid "Advanced options:"
 msgstr "Täiendavad seaded:"
 
-#: resources.h:343
+#: resources.h:349
 msgid "All ports in the given range have to be between 1024 and 65535."
 msgstr "Kõik pordid antud piires peavad jääma vahemikku 1024 - 65535."
 
@@ -486,15 +523,15 @@ msgstr "Kõik pordid antud piires peavad jääma vahemikku 1024 - 65535."
 msgid "Anonymous"
 msgstr "Anonüümne"
 
-#: resources.h:218
+#: resources.h:224
 msgid "Any of the following"
 msgstr "Sobivad suvalise järgneva filtriga"
 
-#: resources.h:158
+#: resources.h:163
 msgid "App&ly to directories only"
 msgstr "Ra&kenda ainult kataloogidele"
 
-#: resources.h:208
+#: resources.h:214
 msgid "Apply"
 msgstr "Rakenda"
 
@@ -502,7 +539,7 @@ msgstr "Rakenda"
 msgid "Apply to &current queue only"
 msgstr "Rakenda ainult &käesolevale järjekorrale"
 
-#: resources.h:157
+#: resources.h:162
 msgid "Apply to &files only"
 msgstr "Rakenda ainult &failidele"
 
@@ -511,11 +548,11 @@ msgstr "Rakenda ainult &failidele"
 msgid "Ask for password"
 msgstr "Küsi parooli"
 
-#: resources.h:339
+#: resources.h:345
 msgid "Ask operating system for a port."
 msgstr "Küsi opsüsteemilt porti."
 
-#: resources.h:233 resources.h:329
+#: resources.h:239 resources.h:335
 msgid "Ask your operating system for the external IP address"
 msgstr "Küsi opsüsteemilt välist IP aadressi"
 
@@ -523,7 +560,7 @@ msgstr "Küsi opsüsteemilt välist IP aadressi"
 msgid "At least one filter condition is incomplete"
 msgstr "Vähemalt üks filtreerimistingimus on mittetäielik"
 
-#: resources.h:348
+#: resources.h:354
 msgid "At this point, all configuration should be complete."
 msgstr "Nüüd peaks kõik seadistused olema korras."
 
@@ -535,19 +572,23 @@ msgstr "Autor:"
 msgid "Automatic file type classification"
 msgstr "Automaatne failitüübi määramine"
 
+#: resources.h:136
+msgid "Automatic update check"
+msgstr "Automaatne uuenduste kontroll"
+
 #: ../../locales/../src/interface/state.cpp:186
 msgid "Break current connection?"
 msgstr "Kas katkestame praeguse ühenduse?"
 
-#: resources.h:167
+#: resources.h:173
 msgid "Build date:"
 msgstr "Versiooni kuupäev:"
 
-#: resources.h:166
+#: resources.h:171
 msgid "Build information"
 msgstr "Versiooni info"
 
-#: resources.h:229
+#: resources.h:235
 msgid ""
 "By default uses any available local port to establish transfers in active "
 "mode. If you want to limit FileZilla to use only a small range of ports, "
@@ -556,37 +597,37 @@ msgstr ""
 "Vaikimisi kasutatakse ülekanneteks aktiivses laadis suvalist vaba porti. Kui "
 "te tahate limiteerida portide kasutust, sisestage lubatud portide piirkond."
 
-#: resources.h:245
+#: resources.h:251
 msgid "C&heck for nightly builds of FileZilla"
 msgstr "K&ontrolli FileZilla ööversioonide olemasolu"
 
-#: resources.h:309
+#: resources.h:315
 msgid "C&lear all"
 msgstr "P&uhasta kõik"
 
-#: ../../locales/../src/engine/transfersocket.cpp:484
+#: ../../locales/../src/engine/transfersocket.cpp:490
 msgid "Can't read from file"
 msgstr "Ei saa faili lugeda"
 
-#: ../../locales/../src/engine/transfersocket.cpp:458
+#: ../../locales/../src/engine/transfersocket.cpp:464
 msgid "Can't write data to file, disk is full."
 msgstr "Ei saa kirjutada andmeid faili - ketas on täis."
 
-#: ../../locales/../src/engine/transfersocket.cpp:460
-#: ../../locales/../src/engine/transfersocket.cpp:463
-#: ../../locales/../src/engine/transfersocket.cpp:517
+#: ../../locales/../src/engine/transfersocket.cpp:466
+#: ../../locales/../src/engine/transfersocket.cpp:469
+#: ../../locales/../src/engine/transfersocket.cpp:523
 msgid "Can't write data to file."
 msgstr "Ei saa kirjutada andmeid faili."
 
-#: resources.h:160 resources.h:207 resources.h:226
+#: resources.h:165 resources.h:213 resources.h:232
 msgid "Cancel"
 msgstr "Loobu"
 
-#: resources.h:376
+#: resources.h:382
 msgid "Cancel current operation"
 msgstr "Tühista käesolev operatsioon"
 
-#: resources.h:377
+#: resources.h:383
 msgid "Cancels the current operation"
 msgstr "Tühista käesolev operatsioon"
 
@@ -594,15 +635,15 @@ msgstr "Tühista käesolev operatsioon"
 msgid "Cannot load Quickconnect bar from resource file"
 msgstr "Ei saa laadida kiirühenduse riba ressursifailist"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:277
+#: ../../locales/../src/interface/Mainfrm.cpp:286
 msgid "Cannot load main menu from resource file"
 msgstr "Ei saa laadida peamenüüd ressursifailist"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:415
+#: ../../locales/../src/interface/Mainfrm.cpp:424
 msgid "Cannot load toolbar from resource file"
 msgstr "Ei saa laadida tööriistariba ressursifailist"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1155
+#: ../../locales/../src/interface/RemoteListView.cpp:1156
 msgid "Cannot rename file"
 msgstr "Ei saa faili ümber nimetada"
 
@@ -610,11 +651,11 @@ msgstr "Ei saa faili ümber nimetada"
 msgid "Challenge:"
 msgstr "Väljakutse:"
 
-#: resources.h:139
+#: resources.h:144
 msgid "Change file attributes"
 msgstr "Muuda faili atribuute"
 
-#: resources.h:297
+#: resources.h:303
 msgid "Change the file permissions."
 msgstr "Muuda faili õigusi."
 
@@ -626,15 +667,15 @@ msgstr "Sümbolite kodeering"
 msgid "Charset"
 msgstr "Kooditabel"
 
-#: resources.h:272
+#: resources.h:278
 msgid "Check for &updates..."
 msgstr "Uuenduste &kontroll..."
 
-#: resources.h:273
+#: resources.h:279
 msgid "Check for newer versions of FileZilla"
 msgstr "Kontrolli FileZilla uuemate versioonide olemasolu"
 
-#: ../../locales/../src/interface/updatewizard.cpp:44
+#: ../../locales/../src/interface/updatewizard.cpp:65
 msgid "Check for updates"
 msgstr "Uuenduste kontroll"
 
@@ -642,7 +683,7 @@ msgstr "Uuenduste kontroll"
 msgid "Checking for correct external IP address"
 msgstr "Välise IP aadressi kontrollimine"
 
-#: resources.h:241
+#: resources.h:247
 msgid "Checking for updates"
 msgstr "Kontrollin uuendusi"
 
@@ -650,7 +691,7 @@ msgstr "Kontrollin uuendusi"
 msgid "Choose the default local directory"
 msgstr "Vali algne kohalik kataloog"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:629
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:803
 msgid "Chunk data improperly terminated"
 msgstr "Pinu andmed katkestati ebaõigelt"
 
@@ -666,7 +707,17 @@ msgstr "Puhasta kiirühenduse riba"
 msgid "Click on Finish to save your configuration."
 msgstr "Konfiguratsiooni salvestamiseks vajuta LÕPETA."
 
-#: resources.h:261
+#: ../../locales/../src/interface/updatewizard.cpp:815
+msgid ""
+"Click on next to download the new version.\n"
+"Alternatively, visit http://filezilla-project.org to download the most "
+"recent version."
+msgstr ""
+"Et alustada uue versiooni allalaadimist, klikkige nuppu järgmine.\n"
+"Või külastage kõige uuema versiooni allalaadimiseks saiti http://filezilla-"
+"project.org. "
+
+#: resources.h:267
 msgid "Close FileZilla"
 msgstr "Sulge FileZilla"
 
@@ -688,11 +739,11 @@ msgstr "Käsk:"
 msgid "Communication tainted by router"
 msgstr "Ruuter peab ühendust vigaseks"
 
-#: resources.h:168
+#: resources.h:174
 msgid "Compiled with:"
 msgstr "Kompileeritud:"
 
-#: resources.h:169
+#: resources.h:175
 msgid "Compiler flags:"
 msgstr "Kompileerimise lipud:"
 
@@ -700,24 +751,24 @@ msgstr "Kompileerimise lipud:"
 msgid "Concurrent transfers"
 msgstr "Konkureerivad ülekanded"
 
-#: resources.h:221
+#: resources.h:227
 msgid "Conditions are c&ase sensitive"
 msgstr "Tingimused on tõs&tutundlikud"
 
-#: resources.h:347
+#: resources.h:353
 msgid "Configuration test"
 msgstr "Seadistuse test"
 
-#: resources.h:321
+#: resources.h:327
 msgid "Configure passive mode"
 msgstr "Seadista passiivne laad"
 
-#: resources.h:337
+#: resources.h:343
 msgid "Configure port range"
 msgstr "Seadista portide vahemik"
 
 #: ../../locales/../src/interface/LocalListView.cpp:832
-#: ../../locales/../src/interface/RemoteListView.cpp:776
+#: ../../locales/../src/interface/RemoteListView.cpp:777
 msgid "Confirmation needed"
 msgstr "Vajalik kinnitus"
 
@@ -725,14 +776,14 @@ msgstr "Vajalik kinnitus"
 msgid "Congratulations, your configuration seems to be working."
 msgstr "Õnnitlused, teie programmi seadistus tundub töötavat."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:436
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:471
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:505
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:519
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:449
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:484
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:518
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:532
 msgid "Connected"
 msgstr "Ühendatud"
 
-#: ../../locales/../src/interface/QueueView.cpp:1260
+#: ../../locales/../src/interface/QueueView.cpp:1266
 msgid "Connecting"
 msgstr "Ühendumine"
 
@@ -743,17 +794,18 @@ msgid "Connecting to %s"
 msgstr "Ühendumine %s"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:169
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:333
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:485
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:247
 #, c-format
 msgid "Connecting to %s:%d..."
 msgstr "Ühendumine %s:%d..."
 
-#: ../../locales/../src/interface/updatewizard.cpp:138
+#: ../../locales/../src/interface/updatewizard.cpp:235
+#: ../../locales/../src/interface/updatewizard.cpp:738
 msgid "Connecting to server"
 msgstr "Ühendumine serveriga"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:80
+#: ../../locales/../src/interface/settingsdialog.cpp:82
 msgid "Connection"
 msgstr "Ühendus"
 
@@ -765,11 +817,11 @@ msgstr "Ühenduskatse katkestati kasutaja poolt"
 msgid "Connection closed"
 msgstr "Ühendus suletud"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:213
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:312
 msgid "Connection established, sending HTTP request"
 msgstr "Ühendus loodud, saadan HTTP päringut"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:248
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:242
 msgid "Connection established, waiting for welcome message..."
 msgstr "Ühendus loodud, ootan tervitusteadet..."
 
@@ -797,7 +849,7 @@ msgstr "Kop&eeri"
 msgid "Could not connect to server"
 msgstr "Ei suuda ühenduda serveriga"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2891
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2901
 msgid "Could not establish connection to server"
 msgstr "Ei suuda luua ühendust serveriga"
 
@@ -812,7 +864,7 @@ msgstr ""
 "Sa võid määrata andmete kataloogi kasutades käsurea võtit '--datadir "
 "<custompath>' või seadistada muutuja FZ_DATADIR."
 
-#: ../../locales/../src/interface/Options.cpp:68
+#: ../../locales/../src/interface/Options.cpp:73
 #, c-format
 msgid ""
 "Could not load \"%s\", make sure the file is valid.\n"
@@ -823,7 +875,7 @@ msgstr ""
 "Selle seansi jaoks kasutatakse vaikeväärtusi. Kõik tehtud muudatused "
 "seadistustes jäävad salvestamata."
 
-#: ../../locales/../src/interface/wrapengine.cpp:711
+#: ../../locales/../src/interface/wrapengine.cpp:724
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -855,8 +907,8 @@ msgstr ""
 "juurdepääsetavust.\n"
 "Kõik muudatused, mis tehakse saidihalduris, jäävad salvestamata."
 
-#: ../../locales/../src/interface/QueueView.cpp:1618
-#: ../../locales/../src/interface/QueueView.cpp:1654
+#: ../../locales/../src/interface/QueueView.cpp:1624
+#: ../../locales/../src/interface/QueueView.cpp:1660
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -871,16 +923,16 @@ msgstr ""
 msgid "Could not parse server address:"
 msgstr "Ei suuda lahendada serveri aadressi:"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1607
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1617
 #, c-format
 msgid "Could not seek to offset %s within file"
 msgstr "Ei leia failist nihet %s "
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1540
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1550
 msgid "Could not seek to the end of the file"
 msgstr "Ei leia faili lõppu"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1629
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1639
 msgid "Could not spawn IO thread"
 msgstr "Ei suuda lahendada IO lõimi"
 
@@ -893,33 +945,33 @@ msgstr ""
 "Ei saa kirjutada \"%s\", kõik muudatused saidihalduris jäävad salvestamata: %"
 "s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1637
-#: ../../locales/../src/interface/QueueView.cpp:1723
+#: ../../locales/../src/interface/QueueView.cpp:1643
+#: ../../locales/../src/interface/QueueView.cpp:1729
 #, c-format
 msgid "Could not write \"%s\", the queue could not be saved."
 msgstr "Ei saa kirjutada \"%s\", järjekorda ei salvestata."
 
-#: ../../locales/../src/interface/wrapengine.cpp:878
+#: ../../locales/../src/interface/wrapengine.cpp:891
 #, c-format
 msgid "Could not write \"%s\": %s"
 msgstr "Ei saa kirjutada \"%s\": %s"
 
-#: resources.h:271
+#: resources.h:277
 msgid "Crashes FileZilla instantly. Only used to debug the exception handler"
 msgstr ""
 "FileZilla kaotab koheselt töövõime. Kasutatakse ainult erandite halduri "
 "silumiseks."
 
-#: resources.h:281 resources.h:291
+#: resources.h:287 resources.h:297
 msgid "Create a new subdirectory in the current directory"
 msgstr "Loo jooksvasse kataloogi uus alamkataloog"
 
 #: ../../locales/../src/interface/LocalListView.cpp:731
-#: ../../locales/../src/interface/RemoteListView.cpp:715
+#: ../../locales/../src/interface/RemoteListView.cpp:716
 msgid "Create directory"
 msgstr "Loo kataloog"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2148
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2158
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1402
 #, c-format
 msgid "Creating directory '%s'..."
@@ -937,11 +989,11 @@ msgstr "Kohandatud filtrikogumik"
 msgid "D&efault"
 msgstr "V&aikeväärtused"
 
-#: resources.h:282 resources.h:292
+#: resources.h:288 resources.h:298
 msgid "D&elete"
 msgstr "K&ustuta"
 
-#: resources.h:201
+#: resources.h:207
 msgid "D&isable all"
 msgstr "K&eela kõik"
 
@@ -954,7 +1006,7 @@ msgstr "T&ühista"
 msgid "Data socket closed too early."
 msgstr "Andmeühendus suleti liiga vara."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:82
+#: ../../locales/../src/interface/RemoteListView.cpp:83
 msgid "Date"
 msgstr "Kuupäev"
 
@@ -978,7 +1030,7 @@ msgstr "Algne &kohalik kataloog:"
 msgid "Default r&emote directory:"
 msgstr "Algne k&auge kataloog:"
 
-#: resources.h:317
+#: resources.h:323
 msgid "Default transfer mode:"
 msgstr "Ülekande vaiketüüp: "
 
@@ -986,23 +1038,23 @@ msgstr "Ülekande vaiketüüp: "
 msgid "Default transfer type:"
 msgstr "Ülekande vaiketüüp: "
 
-#: resources.h:237 resources.h:334
+#: resources.h:243 resources.h:340
 msgid "Default: http://ip.filezilla-project.org/ip.php"
 msgstr "Vaikimisi: http://ip.filezilla-project.org/ip.php"
 
-#: resources.h:283 resources.h:293
+#: resources.h:289 resources.h:299
 msgid "Delete selected files and folders"
 msgstr "Kustuta valitud failid ja kaustad"
 
-#: resources.h:173
+#: resources.h:179
 msgid "Details"
 msgstr "Detailid"
 
-#: resources.h:185
+#: resources.h:191
 msgid "Details for new key:"
 msgstr "Uue võtme detailid:"
 
-#: resources.h:224
+#: resources.h:230
 msgid "Dire&ctories"
 msgstr "Kata&loogid"
 
@@ -1014,11 +1066,11 @@ msgstr "Suund"
 msgid "Directory listing aborted by user"
 msgstr "Kataloogi lehitsemine katkestati kasutaja poolt"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:289
+#: ../../locales/../src/interface/RemoteListView.cpp:290
 msgid "Directory listing failed"
 msgstr "Kataloogi sirvimine ebaõnnestus"
 
-#: resources.h:194
+#: resources.h:200
 msgid "Directory listing filters"
 msgstr "Kataloogide sirvimise filtrid"
 
@@ -1026,36 +1078,36 @@ msgstr "Kataloogide sirvimise filtrid"
 msgid "Directory listing successful"
 msgstr "Kataloogi lehitsemine õnnestus"
 
-#: resources.h:204
+#: resources.h:210
 msgid "Disa&ble all"
 msgstr "Keel&a kõik"
 
-#: resources.h:378
+#: resources.h:384
 msgid "Disconnect from server"
 msgstr "Katkesta ühendus serveriga"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:117
 #: ../../locales/../src/engine/ControlSocket.cpp:184
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:133
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:702
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:704
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:134
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:882
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:884
 msgid "Disconnected from server"
 msgstr "Ühendus serveriga katkestatud"
 
-#: ../../locales/../src/interface/QueueView.cpp:1249
+#: ../../locales/../src/interface/QueueView.cpp:1255
 #: ../../locales/../src/interface/statuslinectrl.cpp:145
 msgid "Disconnecting from previous server"
 msgstr "Lahtiühendumine eelmisest serverist"
 
-#: resources.h:379
+#: resources.h:385
 msgid "Disconnects from the currently visible server"
 msgstr "Katkesta ühendus praegu nähtava serveriga"
 
-#: resources.h:275
+#: resources.h:281
 msgid "Display about dialog"
 msgstr "Näita info dialoogi"
 
-#: ../../locales/../src/interface/updatewizard.cpp:94
+#: ../../locales/../src/interface/updatewizard.cpp:140
 msgid ""
 "Do you really want to check for beta versions?\n"
 "Unless you want to test new features, keep using stable versions."
@@ -1063,7 +1115,7 @@ msgstr ""
 "Kas te tõesti tahate kontrollida beetaversioone?\n"
 "Kui te just ei taha testida uusi võimalusi, kasutage stabiilset versiooni."
 
-#: resources.h:238 resources.h:336
+#: resources.h:244 resources.h:342
 msgid "Don't use external IP address on &local connections."
 msgstr "Ärge kasutage välist IP aadressi &kohalikel ühendustel."
 
@@ -1072,24 +1124,25 @@ msgstr "Ärge kasutage välist IP aadressi &kohalikel ühendustel."
 msgid "Dos"
 msgstr "DOS"
 
-#: resources.h:287
+#: resources.h:293
 msgid "Download selected files and folders"
 msgstr "Lae valitud failid ja kaustad alla"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:223
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:329
+#: ../../locales/../src/interface/updatewizard.cpp:227
 #, c-format
 msgid "Downloading %s"
 msgstr "%s -i allatõmbamine"
 
-#: resources.h:200
+#: resources.h:206
 msgid "E&nable all"
 msgstr "L&uba kõik"
 
-#: resources.h:148
+#: resources.h:153
 msgid "E&xecute"
 msgstr "K&äivita"
 
-#: resources.h:260
+#: resources.h:266
 msgid "E&xit"
 msgstr "V&älju"
 
@@ -1097,7 +1150,7 @@ msgstr "V&älju"
 msgid "Each filter needs at least one condition"
 msgstr "Igas filtris peab olema vähemalt üks tingimus"
 
-#: resources.h:209
+#: resources.h:215
 msgid "Edit filters"
 msgstr "Filtrite muutmine"
 
@@ -1105,19 +1158,19 @@ msgstr "Filtrite muutmine"
 msgid "Email:"
 msgstr "E-kiri:"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:291
+#: ../../locales/../src/interface/RemoteListView.cpp:292
 msgid "Empty directory listing"
 msgstr "Tühjenda kataloogi nimekiri"
 
-#: resources.h:203
+#: resources.h:209
 msgid "En&able all"
 msgstr "Lu&ba kõik"
 
-#: resources.h:267
+#: resources.h:273
 msgid "Enter &custom command..."
 msgstr "Sisesta &oma käsk..."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:314
+#: ../../locales/../src/interface/Mainfrm.cpp:323
 msgid "Enter custom command"
 msgstr "Sisesta oma käsk"
 
@@ -1129,7 +1182,7 @@ msgstr "Sisesta nimi filtrikogumikule"
 msgid "Enter password"
 msgstr "Sisesta parool"
 
-#: resources.h:356
+#: resources.h:362
 msgid ""
 "Enter the address of the server.\n"
 "To specify the server protocol, prepend the host with the protocol "
@@ -1145,7 +1198,7 @@ msgstr ""
 "Võid ka sisestada täieliku aadressi kujul protokoll://kasutaja:parool@masin:"
 "port"
 
-#: resources.h:360
+#: resources.h:366
 msgid ""
 "Enter the port on which the server listens.\n"
 "The default for FTP is 21, the default for SFTP is 22."
@@ -1160,19 +1213,19 @@ msgstr "Socketi kirjutamise viga %d"
 
 #: ../../locales/../src/interface/filter.cpp:161
 #: ../../locales/../src/interface/filter.cpp:245
-#: ../../locales/../src/interface/Options.cpp:69
-#: ../../locales/../src/interface/QueueView.cpp:1619
-#: ../../locales/../src/interface/QueueView.cpp:1655
+#: ../../locales/../src/interface/Options.cpp:74
+#: ../../locales/../src/interface/QueueView.cpp:1625
+#: ../../locales/../src/interface/QueueView.cpp:1661
 #: ../../locales/../src/interface/sitemanager.cpp:161
 #: ../../locales/../src/interface/sitemanager.cpp:252
-#: ../../locales/../src/interface/wrapengine.cpp:712
+#: ../../locales/../src/interface/wrapengine.cpp:725
 msgid "Error loading xml file"
 msgstr "XML faili laadimise viga"
 
-#: ../../locales/../src/interface/QueueView.cpp:1638
-#: ../../locales/../src/interface/QueueView.cpp:1724
+#: ../../locales/../src/interface/QueueView.cpp:1644
+#: ../../locales/../src/interface/QueueView.cpp:1730
 #: ../../locales/../src/interface/sitemanager.cpp:278
-#: ../../locales/../src/interface/wrapengine.cpp:879
+#: ../../locales/../src/interface/wrapengine.cpp:892
 msgid "Error writing xml file"
 msgstr "XML faili kirjutamise viga"
 
@@ -1181,17 +1234,17 @@ msgstr "XML faili kirjutamise viga"
 msgid "Error:"
 msgstr "Viga:"
 
-#: resources.h:152
+#: resources.h:157
 msgid "Exe&cute"
 msgstr "Käi&vita"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:981
+#: ../../locales/../src/interface/Mainfrm.cpp:1007
 msgid "Executable contains no version info, cannot check for updates."
 msgstr ""
 "Ei ole võimalik kontrollida uuenduste olemasolu, sest käivitusfail ei "
 "sisalda versiooniinfot."
 
-#: resources.h:215
+#: resources.h:221
 msgid "F&ilter name:"
 msgstr "F&iltri nimi:"
 
@@ -1205,7 +1258,7 @@ msgstr "FTP"
 msgid "FTP Engine not initialized, can't connect"
 msgstr "FTP mootor ei ole algväärtustatud - ei saa ühenduda"
 
-#: resources.h:314
+#: resources.h:320
 msgid ""
 "FTP uses secondary connections for data transfers. These additional "
 "connections can be established in two ways."
@@ -1218,7 +1271,7 @@ msgstr ""
 msgid "Failed to change language"
 msgstr "Keele vahetamine ebaõnnestus"
 
-#: ../../locales/../src/interface/updatewizard.cpp:156
+#: ../../locales/../src/interface/updatewizard.cpp:257
 msgid "Failed to check for newer version of FileZilla."
 msgstr "FileZilla uuema versiooni olemasolu kontroll ebaõnnestus"
 
@@ -1230,11 +1283,15 @@ msgstr "XML faili tagavarakoopia loomine ebaõnnestus"
 msgid "Failed to create listen socket, aborting"
 msgstr "Kuulava liidese (socket) loomine ebaõnnestus, katkestamine"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2870
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2874
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2880
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2884
 msgid "Failed to create listening socket for active mode transfer"
 msgstr ""
 "Kuulava liidese (socket) loomine aktiivset laadi ülekandele ebaõnnestus."
+
+#: ../../locales/../src/interface/updatewizard.cpp:259
+msgid "Failed to download the latest version of FileZilla."
+msgstr "FileZilla viimase versiooni allalaadimine ebaõnnestus."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:934
 msgid "Failed to get data peer address, connection closed."
@@ -1248,21 +1305,23 @@ msgstr "Partneri aadressi vastuvõtt ebaõnnestus, ühendus katkestati."
 msgid "Failed to initialize FTP engine"
 msgstr "FTP mootori algväärtustamine ebaõnnestus"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:140
+#: ../../locales/../src/interface/settingsdialog.cpp:143
 msgid "Failed to load panels, invalid resource files?"
 msgstr "Paneelide sisselugemine ebaõnnestus, vigased ressursifailid?"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1531
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1541
 #, c-format
 msgid "Failed to open \"%s\" for appending / writing"
 msgstr "\"%s\" avamine lisamiseks / kirjutamiseks ebaõnnestus"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1591
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1601
 #, c-format
 msgid "Failed to open \"%s\" for reading"
 msgstr "\"%s\" avamine lugemiseks ebaõnnestus"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1568
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1578
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:369
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:414
 #, c-format
 msgid "Failed to open \"%s\" for writing"
 msgstr "\"%s\" avamine kirjutamiseks ebaõnnestus"
@@ -1279,11 +1338,11 @@ msgstr "Kataloogi nimekirja vastuvõtt ebaõnnestus"
 msgid "Failed to retrieve external ip address, aborting"
 msgstr "Välise IP aadressi leidmine ebaõnnestus, katkestan"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2638
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2648
 msgid "Failed to retrieve external ip address, using local address"
 msgstr "Välise IP aadressi leidmine ebaõnnestus, kasutame kohalikku aadressi."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2657
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2667
 msgid "Failed to retrieve local ip address."
 msgstr "Kohaliku IP aadressi leidmine ebaõnnestus."
 
@@ -1309,32 +1368,37 @@ msgstr "Keele %s kasutuselevõtt ebaõnnestus, kasutatakse süsteemi vaikekeelt"
 msgid "Failed to validate settings"
 msgstr "Seadete kontroll ebaõnnestus"
 
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:538
+#, c-format
+msgid "Failed to write to file %s"
+msgstr "Faili %s kirjutamine ebaõnnestus"
+
 #: ../../locales/../src/interface/xmlfunctions.cpp:286
 msgid "Failed to write xml file"
 msgstr "XML faili kirjutamine ebaõnnestus"
 
-#: resources.h:327
+#: resources.h:333
 msgid "Fall back to active mode"
 msgstr "Tagasi aktiivse laadi juurde"
 
-#: resources.h:223
+#: resources.h:229
 msgid "Fil&es"
 msgstr "Fai&lid"
 
 #: ../../locales/../src/interface/LocalListView.cpp:394
 #: ../../locales/../src/interface/LocalListView.cpp:412
 #: ../../locales/../src/interface/LocalListView.cpp:416
-#: ../../locales/../src/interface/RemoteListView.cpp:490
-#: ../../locales/../src/interface/RemoteListView.cpp:508
-#: ../../locales/../src/interface/RemoteListView.cpp:512
+#: ../../locales/../src/interface/RemoteListView.cpp:491
+#: ../../locales/../src/interface/RemoteListView.cpp:509
+#: ../../locales/../src/interface/RemoteListView.cpp:513
 msgid "File"
 msgstr "Fail"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:83
+#: ../../locales/../src/interface/settingsdialog.cpp:85
 msgid "File Types"
 msgstr "Failide tüübid"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1170
+#: ../../locales/../src/interface/RemoteListView.cpp:1171
 msgid "File exists"
 msgstr "Fail on olemas"
 
@@ -1347,7 +1411,7 @@ msgstr "Faili ülekanne õnnestus"
 msgid "FileZilla Error"
 msgstr "FileZilla viga"
 
-#: resources.h:349
+#: resources.h:355
 msgid ""
 "FileZilla can test your configuration now to ensure everything is configured "
 "properly."
@@ -1355,15 +1419,15 @@ msgstr "FileZilla võib praegu kontrollida programmi seadistuste korrektsust."
 
 #: ../../locales/../src/interface/filteredit.cpp:5
 #: ../../locales/../src/interface/LocalListView.cpp:33
-#: ../../locales/../src/interface/RemoteListView.cpp:79
+#: ../../locales/../src/interface/RemoteListView.cpp:80
 msgid "Filename"
 msgstr "Failinimi"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1155
+#: ../../locales/../src/interface/RemoteListView.cpp:1156
 msgid "Filename invalid"
 msgstr "Vigane failinimi "
 
-#: ../../locales/../src/interface/asyncrequestqueue.cpp:88
+#: ../../locales/../src/interface/asyncrequestqueue.cpp:101
 msgid "Filename unchanged"
 msgstr "Failinime ei muudetud"
 
@@ -1379,20 +1443,20 @@ msgstr "Failinimes ei tohi kasutada järgnevaid sümboleid: / \\ : * ? \" < > |"
 
 #: ../../locales/../src/interface/filteredit.cpp:5
 #: ../../locales/../src/interface/LocalListView.cpp:34
-#: ../../locales/../src/interface/RemoteListView.cpp:80
+#: ../../locales/../src/interface/RemoteListView.cpp:81
 msgid "Filesize"
 msgstr "Faili suurus"
 
 #: ../../locales/../src/interface/LocalListView.cpp:35
-#: ../../locales/../src/interface/RemoteListView.cpp:81
+#: ../../locales/../src/interface/RemoteListView.cpp:82
 msgid "Filetype"
 msgstr "Faili tüüp"
 
-#: resources.h:216
+#: resources.h:222
 msgid "Filter &out all files that:"
 msgstr "Filtreeri &välja kõik failid, mis:"
 
-#: resources.h:222
+#: resources.h:228
 msgid "Filter applies to:"
 msgstr "Filter rakendub:"
 
@@ -1404,11 +1468,11 @@ msgstr "Sellise nimega filter juba olemas"
 msgid "Filter set already exists"
 msgstr "Selline filtrikogumik on juba olemas"
 
-#: resources.h:382 resources.h:383
+#: resources.h:388 resources.h:389
 msgid "Filter the directory listings"
 msgstr "Kataloogi sisu filtreerimine"
 
-#: resources.h:176 resources.h:188
+#: resources.h:182 resources.h:194
 msgid "Fingerprint:"
 msgstr "Sõrmejälg:"
 
@@ -1417,7 +1481,7 @@ msgid "Firewall and router configuration wizard"
 msgstr "Tulemüüri ja ruuteri seadistamise nõustaja"
 
 #: ../../locales/../src/interface/LocalListView.cpp:416
-#: ../../locales/../src/interface/RemoteListView.cpp:512
+#: ../../locales/../src/interface/RemoteListView.cpp:513
 msgid "Folder"
 msgstr "Kaust"
 
@@ -1429,7 +1493,7 @@ msgstr ""
 "Et saada lisainfot nende seadistuse toime kohta, käivitage võrguseadistuse "
 "nõustaja."
 
-#: resources.h:344
+#: resources.h:350
 msgid "For reliability you should specify a range of at least 10 ports."
 msgstr "Töökindluse huvides määrake vähemalt 10 -ne pordine vahemik."
 
@@ -1441,7 +1505,7 @@ msgstr "Eelista &UTF-8"
 msgid "General"
 msgstr "Põhiandmed"
 
-#: resources.h:236 resources.h:333
+#: resources.h:242 resources.h:339
 msgid "Get external IP address from the following URL:"
 msgstr "Võta väline IP aadress järgnevalt URL'ilt:"
 
@@ -1449,11 +1513,11 @@ msgstr "Võta väline IP aadress järgnevalt URL'ilt:"
 msgid "Given filterset name already exists, overwrite filter set?"
 msgstr "See nimi on juba kasutuses, kas kirjutame üle? "
 
-#: resources.h:145
+#: resources.h:150
 msgid "Group permissions"
 msgstr "Grupi õigused"
 
-#: resources.h:303
+#: resources.h:309
 msgid "H&igh"
 msgstr "K&õrge"
 
@@ -1469,21 +1533,21 @@ msgstr "Kõrgeim"
 msgid "Highest available port has to be a number between 1024 and 65535."
 msgstr "Kõrgeima vaba pordi number peab olema vahemikus 1024 kuni 65535."
 
-#: resources.h:205
+#: resources.h:211
 msgid ""
 "Hold the shift key to toggle the filter state on both sides simultanously."
 msgstr ""
 "Filtri seisu muutmiseks üheaegselt mõlemal pool, hoia all SHIFT klahvi."
 
-#: resources.h:164
+#: resources.h:169
 msgid "Homepage:"
 msgstr "Koduleht:"
 
-#: resources.h:182
+#: resources.h:188
 msgid "Host key mismatch"
 msgstr "Masina võti ei sobi"
 
-#: resources.h:89 resources.h:174 resources.h:186
+#: resources.h:89 resources.h:172 resources.h:180 resources.h:192
 msgid "Host:"
 msgstr "Masin:"
 
@@ -1499,7 +1563,7 @@ msgstr ""
 "Kui selle aja jooksul andmeid ei edastata ega võeta vastu, ühendus suletakse "
 "ja FileZilla püüab luua uut ühendust."
 
-#: resources.h:324
+#: resources.h:330
 msgid ""
 "If the automatic test at the end of this wizard succeeds, but you cannot "
 "transfer files to a particular server, the server might be misconfigured and "
@@ -1525,7 +1589,7 @@ msgstr "Kui see probleem ei lahendu, võtke ühendust ruuteri tootjaga."
 msgid "If you change the language, you should restart FileZilla."
 msgstr "Kui muudate kasutatavat keelt, tuleb programm uuesti käivitada."
 
-#: resources.h:350
+#: resources.h:356
 msgid ""
 "If you click on test, FileZilla will connect to probe.filezilla-project.org "
 "and will perform some simple tests."
@@ -1539,7 +1603,7 @@ msgid ""
 "transferred."
 msgstr "Kui sisestate vale failitüübi, võivad failid ülekandel kahjustuda."
 
-#: resources.h:351
+#: resources.h:357
 msgid "If you get any errors, your configuration is not correct."
 msgstr "Kui tekib mõni viga, ei ole seadistus korrektne."
 
@@ -1562,7 +1626,7 @@ msgstr ""
 "kasutada passivset laadi ja abi saamiseks võtke ühendust serveri "
 "administraatoriga."
 
-#: resources.h:312
+#: resources.h:318
 msgid ""
 "If you sucessfully complete the wizard and the final test succeeds, any "
 "firewalls and routers you have should be configured properly."
@@ -1570,7 +1634,7 @@ msgstr ""
 "Kui nõustajad ja testid on lõppenud edukalt, siis on kõik tulemüürid ja "
 "ruuterid seadistatud õigesti."
 
-#: resources.h:346
+#: resources.h:352
 msgid ""
 "If you use a firewall, make sure FileZilla is allowed to accept connection "
 "on all given ports."
@@ -1578,7 +1642,7 @@ msgstr ""
 "Kui kasutate tulemüüri, veenduge, et FileZillal on lubatud ühenduda kõigi "
 "märgitud portidega."
 
-#: resources.h:345
+#: resources.h:351
 msgid ""
 "If you use a router, make sure all these ports are forwarded to the machine "
 "you're running FileZilla on."
@@ -1592,7 +1656,7 @@ msgid ""
 "manufacturer."
 msgstr "Kui ruuter ikka muudab IP aadressi võtke ühendust tema tootjaga."
 
-#: resources.h:338
+#: resources.h:344
 msgid ""
 "In active mode, FileZilla has to listen on a port for data transfers. You "
 "have to specify which ports FileZilla will use."
@@ -1600,7 +1664,7 @@ msgstr ""
 "Aktiivse laadi puhul kuulab FileZilla ühte porti andmete transpordi jaoks. "
 "Te peate selle pordi määrama."
 
-#: resources.h:340
+#: resources.h:346
 msgid ""
 "In case you have a router, you will have to forward all available ports, as "
 "FileZilla has no influence on the ports your system chooses."
@@ -1608,7 +1672,7 @@ msgstr ""
 "Juhul kui teil on ruuter, peate kõik võimalikud pordid edasi suunama, sest "
 "FileZilla ei avalda mingit mõju teie süsteemi pordivalikule."
 
-#: resources.h:256
+#: resources.h:262
 msgid ""
 "In case you prefer automatic updates, you can enable automatic update checks "
 "in the settings dialog."
@@ -1616,13 +1680,13 @@ msgstr ""
 "Juhul kui te eelistate automaatset uuendamist, peate selle lubama "
 "seadistustes."
 
-#: resources.h:232 resources.h:328
+#: resources.h:238 resources.h:334
 msgid ""
 "In order to use active mode, FileZilla needs to know your external IP "
 "address."
 msgstr "Aktiivse laadi puhul peab FileZilla teadma teie välimist IP aadressi."
 
-#: resources.h:315
+#: resources.h:321
 msgid ""
 "In passive mode, which is recommended for most users, FileZilla asks the "
 "server for a port and connects to the given port. Not much configuration has "
@@ -1641,11 +1705,11 @@ msgstr "Interaktiivne"
 msgid "Interrupted by user"
 msgstr "Katkestatud kasutaja poolt"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:547
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:721
 msgid "Invalid Content-Length"
 msgstr "Vigane sisu pikkus"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:421
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:595
 msgid "Invalid HTTP Response"
 msgstr "Vigane HTTP vastus"
 
@@ -1658,7 +1722,7 @@ msgstr ""
 "Kuna võeti vastu vigane märgijada, keelatakse UTF-8. UTF-8 jõuga "
 "pealesurumiseks tee vastav valik saidihalduris. "
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:671
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:845
 msgid "Invalid chunk size"
 msgstr "Vigane pinu suurus"
 
@@ -1674,7 +1738,7 @@ msgid "Invalid filename"
 msgstr "Vigane failinimi"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:164
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:139
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:142
 msgid "Invalid hostname or host not found"
 msgstr "Vigane masina nimi või masinat ei leitud"
 
@@ -1690,7 +1754,7 @@ msgid ""
 "moment."
 msgstr "Vale protokoll. Hetkel on lubatud ftp:// ja sftp:// protokollid."
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:431
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:605
 msgid "Invalid response code"
 msgstr "Vigane vastuse kood"
 
@@ -1702,15 +1766,15 @@ msgstr "Tingimuse vigane suurus"
 msgid "Invalid username given."
 msgstr "Vigane kasutajanimi"
 
-#: resources.h:306
+#: resources.h:312
 msgid "L&owest"
 msgstr "M&adalaim"
 
-#: resources.h:230
+#: resources.h:236
 msgid "L&owest available port:"
 msgstr "M&adalaim vaba port:"
 
-#: resources.h:133 ../../locales/../src/interface/settingsdialog.cpp:85
+#: resources.h:133 ../../locales/../src/interface/settingsdialog.cpp:87
 msgid "Language"
 msgstr "Keel"
 
@@ -1730,11 +1794,11 @@ msgstr "Konkureerivate &allalaadimiste limiit:"
 msgid "Limit for concurrent &uploads:"
 msgstr "Konkureerivate &üleslaadimiste limiit:"
 
-#: resources.h:227
+#: resources.h:233
 msgid "Limit local ports"
 msgstr "Kohalike portide piirangud"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:614
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:788
 msgid "Line length exceeded"
 msgstr "Rea lubatud pikkus ületatud"
 
@@ -1747,7 +1811,7 @@ msgstr "Jälgitav ühendus suleti"
 msgid "Listing:"
 msgstr "Loetelu:"
 
-#: resources.h:199
+#: resources.h:205
 msgid "Local filters:"
 msgstr "Kohalikud filtrid:"
 
@@ -1755,7 +1819,7 @@ msgstr "Kohalikud filtrid:"
 msgid "Local site:"
 msgstr "Kohalik masin:"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:380
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:393
 msgid ""
 "Login data contains non-ascii characters and server might not be UTF-8 "
 "aware. Trying local charset."
@@ -1780,24 +1844,24 @@ msgstr "Väikseima vaba pordi number peab olema vahemikus 1024 kuni 65535."
 msgid "MVS"
 msgstr "MVS"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:602
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:614
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:629
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:671
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:776
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:788
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:803
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:845
 #, c-format
 msgid "Malformed chunk data: %s"
 msgstr "Sobimatud pinuandmed: %s"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:547
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:721
 #, c-format
 msgid "Malformed header: %s"
 msgstr "Sobimatu päis: %s"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:391
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:565
 msgid "Malformed reply, server not sending proper lineendings"
 msgstr "Sobimatu vastus, server ei saada korrektseid realõppe"
 
-#: resources.h:217
+#: resources.h:223
 msgid "Match all of the following"
 msgstr "Sobivad kõigi järgnevate filtritega"
 
@@ -1844,7 +1908,7 @@ msgstr "Uus &kaust"
 msgid "New filter"
 msgstr "Uus filter"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:729
+#: ../../locales/../src/interface/RemoteListView.cpp:730
 #: ../../locales/../src/interface/sitemanager.cpp:353
 #: ../../locales/../src/interface/sitemanager.cpp:376
 msgid "New folder"
@@ -1855,7 +1919,7 @@ msgstr "Uus kaust"
 msgid "New site"
 msgstr "Uus sait"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2615
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2625
 msgid "No external IP address set, trying default."
 msgstr "Välist IP aadressi pole seatud, proovime vaikeaadressi."
 
@@ -1880,16 +1944,20 @@ msgstr "Failis themes.xml pole ühtegi teemat."
 msgid "Normal"
 msgstr "Normaalne"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:318
+#: ../../locales/../src/interface/RemoteListView.cpp:319
 msgid "Not connected to any server"
 msgstr "Ei ole ühendust ühegi serveriga"
 
-#: resources.h:30 resources.h:137 resources.h:159 resources.h:170
-#: resources.h:180 resources.h:192 resources.h:206 resources.h:225
+#: resources.h:138
+msgid "Number of days between update checks:"
+msgstr "Päevade arv uuenduste kontrollimiste vahel:"
+
+#: resources.h:30 resources.h:142 resources.h:164 resources.h:176
+#: resources.h:186 resources.h:198 resources.h:212 resources.h:231
 msgid "OK"
 msgstr "OK"
 
-#: resources.h:320
+#: resources.h:326
 msgid ""
 "On the following pages, both active and passive mode will be configured, so "
 "you can connect to servers which reject either transfer mode."
@@ -1898,15 +1966,15 @@ msgstr ""
 "seadistamine, niiet on võimalik ühenduda nende serveritega, mis keelduvad "
 "emmast kummast ühenduse laadist."
 
-#: resources.h:362 resources.h:363
+#: resources.h:368 resources.h:369
 msgid "Open the Site Manager"
 msgstr "Ava saidihaldur"
 
-#: resources.h:264
+#: resources.h:270
 msgid "Open the settings dialog of FileZilla"
 msgstr "Avatakse FileZille seadistuste dialoog."
 
-#: resources.h:259
+#: resources.h:265
 msgid "Opens the Site Manager"
 msgstr "Avatakse saidihaldur"
 
@@ -1918,11 +1986,11 @@ msgstr "Ülevaade"
 msgid "Overwrite &if newer"
 msgstr "Kirjuta üle &kui uuem"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:85
+#: ../../locales/../src/interface/RemoteListView.cpp:86
 msgid "Owner / Group"
 msgstr "Omanik / grupp"
 
-#: resources.h:141
+#: resources.h:146
 msgid "Owner permissions"
 msgstr "Omaniku õigused"
 
@@ -1934,11 +2002,11 @@ msgstr "Käsklust PORT peab ruuter vigaseks"
 msgid "Pa&ssive (recommended)"
 msgstr "Pa&ssiivne (soovituslik)"
 
-#: resources.h:52 resources.h:358
+#: resources.h:52 resources.h:364
 msgid "Pass&word:"
 msgstr "Pa&rool:"
 
-#: resources.h:318
+#: resources.h:324
 msgid "Passive (recommended)"
 msgstr "Passiivne laad (soovituslik)"
 
@@ -1952,7 +2020,7 @@ msgstr "Passiivne laad"
 msgid "Passive mode has been set as default transfer mode."
 msgstr "Passiivne laad on seatud vaikimisi ülekande laadiks."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:84
+#: ../../locales/../src/interface/RemoteListView.cpp:85
 msgid "Permissions"
 msgstr "Õigused"
 
@@ -1964,7 +2032,7 @@ msgstr ""
 "Veenduge, et FileZillal on lubatud luua väljuvaid ühendusi ja et te "
 "kirjutasite aadressi lahendaja aadressi korrektselt."
 
-#: resources.h:253
+#: resources.h:259
 msgid ""
 "Please check http://filezilla-project.org for the most recent version of "
 "FileZilla."
@@ -1979,7 +2047,16 @@ msgstr ""
 "Kontrollige http://filezilla-project.org/probe.php peal serveri töösolekut "
 "ning vaadake hoolikalt veelkord üle oma seaded."
 
-#: resources.h:322
+#: ../../locales/../src/interface/updatewizard.cpp:800
+msgid ""
+"Please check the package manager of your system for an updated package or "
+"visit http://filezilla-project.org to download the source code of FileZilla."
+msgstr ""
+"Kontrollige oma süsteemi pakihalduriga uuendatud paki olemasolu või "
+"külastage saiti http://filezilla-project.org FileZilla lähtekoodi "
+"allalaadimiseks."
+
+#: resources.h:328
 msgid ""
 "Please configure any firewalls and routers so that FileZilla can establish "
 "outgoing connection to arbitrary ports."
@@ -2040,7 +2117,11 @@ msgstr "Sisestage sobiv pordivahemik."
 msgid "Please enter an URL where to get your external address from"
 msgstr "Sisestage URL, millelt saaks teie välise aadressi"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:314
+#: ../../locales/../src/interface/optionspage_updatecheck.cpp:35
+msgid "Please enter an update interval of at least 7 days"
+msgstr "Palun sisestage uuendamiste intervalliks vähemalt 7 päeva"
+
+#: ../../locales/../src/interface/Mainfrm.cpp:323
 msgid ""
 "Please enter raw FTP command.\n"
 "Using raw ftp commands will clear the directory cache."
@@ -2049,7 +2130,7 @@ msgstr ""
 "FTP otsekäskluste kasutamine tühjendab kataloogi vahemälu"
 
 #: ../../locales/../src/interface/LocalListView.cpp:731
-#: ../../locales/../src/interface/RemoteListView.cpp:715
+#: ../../locales/../src/interface/RemoteListView.cpp:716
 msgid "Please enter the name of the directory which should be created:"
 msgstr "Sisestage loodava kataloogi nimi:"
 
@@ -2068,7 +2149,7 @@ msgstr ""
 "kui teil on dünaamiline aadress või te ei tea oma aadressi, kasutage välist "
 "lahendajat."
 
-#: resources.h:311
+#: resources.h:317
 msgid ""
 "Please follow the instructions carefully, as wrong configuration will "
 "prevent successful FTP connections."
@@ -2106,7 +2187,7 @@ msgstr ""
 "seadistatud. Te peate kasutama manuaalset portide edastamist. Ärge kasutage "
 "ruuteris nn 'DMZ mode'-t või 'game mode'-t."
 
-#: resources.h:323
+#: resources.h:329
 msgid ""
 "Please note that FileZilla has no influence on the port the server chooses. "
 "So the server might choose a port which your firewall thinks is only used by "
@@ -2130,7 +2211,7 @@ msgstr ""
 msgid "Please select an action:"
 msgstr "Valige tegevus:"
 
-#: resources.h:313
+#: resources.h:319
 msgid "Please select the default transfer mode you would like to use."
 msgstr "Valige ülekande vaiketüüp."
 
@@ -2157,12 +2238,21 @@ msgstr "Seadke valitud kataloogidele ja failidele uued atribuudid."
 msgid "Please select the new attributes for the selected files."
 msgstr "Seadke valitud failidele uued atribuudid."
 
-#: resources.h:255
+#: resources.h:261
 msgid ""
 "Please visit http://filezilla-project.org for the more information about "
 "FileZilla."
 msgstr ""
 "Rohkem infot FileZilla kohta leiate saidilt http://filezilla-project.org"
+
+#: ../../locales/../src/interface/updatewizard.cpp:798
+#: ../../locales/../src/interface/updatewizard.cpp:810
+msgid ""
+"Please visit http://filezilla-project.org to download the most recent "
+"version."
+msgstr ""
+"FileZilla värskeima versiooni allalaadimiseks külastage saiti http://"
+"filezilla-project.org."
 
 #: resources.h:129
 msgid "Preview"
@@ -2172,34 +2262,34 @@ msgstr "Eelvaade"
 msgid "Priority"
 msgstr "Prioriteet"
 
-#: resources.h:298
+#: resources.h:304
 msgid "Process &Queue"
 msgstr "Järjekorra &täitmine"
 
-#: resources.h:149
+#: resources.h:154
 msgid "Public permissions"
 msgstr "Avalikud õigused"
 
-#: ../../locales/../src/interface/QueueView.cpp:1486
+#: ../../locales/../src/interface/QueueView.cpp:1492
 #, c-format
 msgid "Queue: %s%d KB"
 msgstr "Järjekord: %s%d KB"
 
-#: ../../locales/../src/interface/QueueView.cpp:1481
+#: ../../locales/../src/interface/QueueView.cpp:1487
 #, c-format
 msgid "Queue: %s%d MB"
 msgstr "Järjekord: %s%d MB"
 
-#: ../../locales/../src/interface/QueueView.cpp:1489
+#: ../../locales/../src/interface/QueueView.cpp:1495
 #, c-format
 msgid "Queue: %s%d bytes"
 msgstr "Järjekord: %s%d baiti"
 
-#: ../../locales/../src/interface/QueueView.cpp:1477
+#: ../../locales/../src/interface/QueueView.cpp:1483
 msgid "Queue: empty"
 msgstr "Järjekord: tühi"
 
-#: resources.h:146
+#: resources.h:151
 msgid "Re&ad"
 msgstr "Lo&e"
 
@@ -2207,20 +2297,20 @@ msgstr "Lo&e"
 msgid "Re&name"
 msgstr "Nimeta ü&mber"
 
-#: resources.h:150
+#: resources.h:155
 msgid "Rea&d"
 msgstr "Loe"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:448
+#: ../../locales/../src/interface/Mainfrm.cpp:457
 msgid "Really cancel current operation?"
 msgstr "Kas tõesti katkestame käesoleva operatsiooni?"
 
 #: ../../locales/../src/interface/LocalListView.cpp:832
-#: ../../locales/../src/interface/RemoteListView.cpp:776
+#: ../../locales/../src/interface/RemoteListView.cpp:777
 msgid "Really delete all selected files and/or directories?"
 msgstr "Kas tõesti kustutame kõik valitud failid ja/või kataloogid?"
 
-#: resources.h:155
+#: resources.h:160
 msgid "Rec&urse into subdirectories"
 msgstr "Kaasa alamkataloogid"
 
@@ -2230,15 +2320,15 @@ msgstr "Kaasa alamkataloogid"
 msgid "Received data tainted"
 msgstr "Vastuvõetud andmed vigased"
 
-#: resources.h:380 resources.h:381
+#: resources.h:386 resources.h:387
 msgid "Reconnects to the last used server"
 msgstr "Ühenda uuesti viimati kasutatud serveriga"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:496
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:670
 msgid "Redirection to invalid address"
 msgstr "Ümbersuunamine vigasele aadressile"
 
-#: resources.h:372 resources.h:373
+#: resources.h:378 resources.h:379
 msgid "Refresh the file and folder lists"
 msgstr "Värskenda failide ja kaustade nimekirja"
 
@@ -2246,7 +2336,7 @@ msgstr "Värskenda failide ja kaustade nimekirja"
 msgid "Remote file"
 msgstr "Kauge fail"
 
-#: resources.h:202
+#: resources.h:208
 msgid "Remote filters:"
 msgstr "Kaugkataloogi filtrid:"
 
@@ -2254,29 +2344,33 @@ msgstr "Kaugkataloogi filtrid:"
 msgid "Remote site:"
 msgstr "Kauge masin:"
 
-#: resources.h:220
+#: resources.h:226
 msgid "Remove &selected"
 msgstr "Eemalda &valitud"
 
-#: ../../locales/../src/interface/asyncrequestqueue.cpp:76
+#: ../../locales/../src/interface/asyncrequestqueue.cpp:89
 msgid "Rename file"
 msgstr "Faili ümbernimetamine"
 
-#: resources.h:285 resources.h:295
+#: resources.h:291 resources.h:301
 msgid "Rename selected files and folders"
 msgstr "Nimeta valitud failid ja kaustad ümber"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2343
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2353
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1826
 #, c-format
 msgid "Renaming '%s' to '%s'"
 msgstr "Ümbernimetamine '%s' -> '%s'"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:135
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:308
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:460
 #, c-format
 msgid "Resolving IP-Address for %s"
 msgstr "IP aadressi lahendamine %s -le"
+
+#: ../../locales/../src/interface/updatewizard.cpp:175
+msgid "Resolving hostname"
+msgstr "Masinanime lahendamine"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:384
 #: ../../locales/../src/interface/StatusView.cpp:82
@@ -2284,20 +2378,16 @@ msgstr "IP aadressi lahendamine %s -le"
 msgid "Response:"
 msgstr "Vastus:"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:685
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:701
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:624
 msgid "Retrieving directory listing..."
 msgstr "Laetakse kataloogi nimekirja..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2623
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2633
 #: ../../locales/../src/interface/netconfwizard.cpp:687
 #, c-format
 msgid "Retrieving external IP address from %s"
 msgstr "Välise IP aadressi vastuvõtt %s -lt"
-
-#: ../../locales/../src/interface/updatewizard.cpp:129
-msgid "Revolving hostname"
-msgstr "Masinanime pöördteisendamine"
 
 #: resources.h:44 ../../locales/../src/interface/sitemanager.cpp:403
 #: ../../locales/../src/interface/sitemanager.cpp:610
@@ -2309,11 +2399,11 @@ msgstr "SFTP"
 msgid "Save settings?"
 msgstr "Salvestame seaded?"
 
-#: ../../locales/../src/interface/QueueView.cpp:1548
+#: ../../locales/../src/interface/QueueView.cpp:1554
 msgid "Scanning for files to add to queue"
 msgstr "Skaneerin järjekorda seatavaid faile"
 
-#: ../../locales/../src/interface/QueueView.cpp:1550
+#: ../../locales/../src/interface/QueueView.cpp:1556
 msgid "Scanning for files to upload"
 msgstr "Skaneerin üleslaetavaid faile"
 
@@ -2329,7 +2419,11 @@ msgstr "Vali sisestus:"
 msgid "Select Theme"
 msgstr "Vali teema"
 
-#: resources.h:268
+#: ../../locales/../src/interface/updatewizard.cpp:208
+msgid "Select download location for package"
+msgstr "Valige koht paki allalaadimiseks "
+
+#: resources.h:274
 msgid "Send custom command to the server otherwise not available"
 msgstr "Saada oma käsklus serverisse, kui muu ei ole võimalik"
 
@@ -2337,12 +2431,12 @@ msgstr "Saada oma käsklus serverisse, kui muu ei ole võimalik"
 msgid "Server / Local file"
 msgstr "Server / kohalik fail"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2949
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2959
 #, c-format
 msgid "Server does not support resume of files > %d GB."
 msgstr "Server ei toeta suuremate kui %d GB failide ülekande jätkatavust."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2945
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2955
 #, c-format
 msgid ""
 "Server does not support resume of files > %d GB. End transfer since "
@@ -2351,15 +2445,15 @@ msgstr ""
 "Server ei toeta suuremate kui %d GB failide ülekande jätkatavust. Lõpeta "
 "ülekanne, kui faili suurus jõuab lubatud piirini."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1475
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1485
 msgid "Server does not support resume of files > 2GB."
 msgstr "Server ei toeta suuremate kui 2GB failide ülekande jätkatavust."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1470
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1480
 msgid "Server does not support resume of files > 4GB."
 msgstr "Server ei toeta suuremate kui 4GB failide ülekande jätkatavust."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2960
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2970
 #, c-format
 msgid ""
 "Server may not support resume of files > %d GB. End transfer since filesizes "
@@ -2368,7 +2462,7 @@ msgstr ""
 "Server võib mitte toetada suuremate kui %d GB failide ülekande jätkatavust. "
 "Lõpeta ülekanne, kui faili suurus jõuab lubatud piirini."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:575
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:588
 msgid ""
 "Server requires an account. Please specify an account using the Site Manager"
 msgstr "Server nõuab kontot. Palun kirjeldage konto kasutades Saidihaldurit"
@@ -2385,7 +2479,7 @@ msgstr "Server nõuab kontot. Palun kirjeldage konto kasutades Saidihaldurit"
 msgid "Server sent invalid reply."
 msgstr "Server saatis vigase vastuse."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2584
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2594
 msgid ""
 "Server sent passive reply with unroutable address. Using server address "
 "instead."
@@ -2397,11 +2491,11 @@ msgstr ""
 msgid "Server&type:"
 msgstr "Serveri &tüüp:"
 
-#: resources.h:301
+#: resources.h:307
 msgid "Set &Priority"
 msgstr "Sea &prioriteet"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2461
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2471
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1725
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
@@ -2430,16 +2524,20 @@ msgstr "Suurus"
 msgid "Size unknown"
 msgstr "Tundmatu suurus"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1747
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1832
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1757
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1842
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:201
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:241
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:462
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:535
 #, c-format
 msgid "Skipping download of %s"
 msgstr "%s allalaadimise vahelejätmine"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1751
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1836
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1761
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1846
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:205
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:245
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:466
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:539
 #, c-format
@@ -2450,7 +2548,7 @@ msgstr "%s üleslaadimise vahelejätmine"
 msgid "Small icons"
 msgstr "Väikesed ikoonid"
 
-#: resources.h:120 resources.h:325
+#: resources.h:120 resources.h:331
 msgid ""
 "Some misconfigured remote servers which are behind a router, may reply with "
 "their local ip address."
@@ -2458,13 +2556,13 @@ msgstr ""
 "Mõned kauged halvasti seadistatud serverid, mis asuvad ruuteri taga, võivad "
 "vastata oma lokaalse IP aadressiga."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1142
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1152
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1068
 #, c-format
 msgid "Starting download of %s"
 msgstr "%s allalaadimise alustamine"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1146
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1156
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1072
 #, c-format
 msgid "Starting upload of %s"
@@ -2479,7 +2577,7 @@ msgstr "Staatus"
 msgid "Status:"
 msgstr "Staatus:"
 
-#: resources.h:299
+#: resources.h:305
 msgid "Stop and remove &all"
 msgstr "Peatu ja eemalda &kõik"
 
@@ -2491,7 +2589,7 @@ msgstr ""
 "Saada vearaport, kui see probleem on olemas ka kasutades FileZilla viimast "
 "versiooni."
 
-#: resources.h:353
+#: resources.h:359
 msgid "Summary of test results:"
 msgstr "Testi tulemuste kokkuvõte:"
 
@@ -2503,15 +2601,15 @@ msgstr "Süntaksi viga"
 msgid "Target file already exists"
 msgstr "Sihtfail on juba olemas"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1170
+#: ../../locales/../src/interface/RemoteListView.cpp:1171
 msgid "Target filename already exists, really continue?"
 msgstr "Sihtfaili nimi on juba kasutuses, kas tõesti jätkame? "
 
-#: resources.h:352
+#: resources.h:358
 msgid "Test results"
 msgstr "Testi tulemused"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2966
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2976
 msgid "Testing resume capabilities of server"
 msgstr "Testitakse serveri võimalusi failide jätkatavuseks. "
 
@@ -2534,8 +2632,8 @@ msgstr "Aadress, mille sisestasite oli: %s"
 msgid "The extension '%s' does already exist in the list"
 msgstr "Laiend '%s' on juba nimekirjas"
 
-#: ../../locales/../src/interface/asyncrequestqueue.cpp:66
-#: ../../locales/../src/interface/asyncrequestqueue.cpp:73
+#: ../../locales/../src/interface/asyncrequestqueue.cpp:79
+#: ../../locales/../src/interface/asyncrequestqueue.cpp:86
 #, c-format
 msgid ""
 "The file %s already exists.\n"
@@ -2552,6 +2650,22 @@ msgstr ""
 "Väikseima vaba pordi number peaks olema väiksem või võrdne suurima vaba "
 "pordi numbriga."
 
+#: ../../locales/../src/interface/updatewizard.cpp:377
+msgid ""
+"The most recent version has been downloaded. Click on Finish to start the "
+"installation."
+msgstr ""
+"Kõige uuem versioon on alla laetud. Klikka Finish installeerimise "
+"käivitamiseks."
+
+#: ../../locales/../src/interface/updatewizard.cpp:379
+msgid ""
+"The most recent version has been downloaded. Please install like you did "
+"install this version."
+msgstr ""
+"Kõige uuem versioon on alla laetud. Palun installeerige see versioon "
+"tavalisel moel."
+
 #: ../../locales/../src/interface/netconfwizard.cpp:560
 msgid "The server sent an unrecognized reply."
 msgstr "Server saatis tuvastamatu vastuse."
@@ -2560,7 +2674,7 @@ msgstr "Server saatis tuvastamatu vastuse."
 msgid "The server uses following charset encoding for filenames:"
 msgstr "Server kasutab failinimede kodeerimiseks järgmist kooditabelit:"
 
-#: resources.h:184
+#: resources.h:190
 msgid ""
 "The server's host key does not match the key that has been cached. This "
 "means that either the administrator has changed the host key, or you are "
@@ -2574,7 +2688,7 @@ msgstr ""
 "Kui võtme muutumine ei ole ootuspärane, võtke ühendust serveri "
 "administraatoriga."
 
-#: resources.h:172
+#: resources.h:178
 msgid ""
 "The server's host key is not cached in the registry. You have no guarantee "
 "that the server is the computer you think it is."
@@ -2599,7 +2713,7 @@ msgstr "Test ei õnnestunud. Kas tõesti tahate seaded salvestada ?"
 msgid "Theme error"
 msgstr "Teema viga"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:84
+#: ../../locales/../src/interface/settingsdialog.cpp:86
 msgid "Themes"
 msgstr "Teemad"
 
@@ -2607,7 +2721,7 @@ msgstr "Teemad"
 msgid "This filter set cannot be removed"
 msgstr "Seda filtrikogumikku ei saa kustutada"
 
-#: resources.h:330
+#: resources.h:336
 msgid ""
 "This only works if you are not behind a router, else your system would just "
 "return your internal address."
@@ -2615,7 +2729,7 @@ msgstr ""
 "See töötab ainult siis, kui te ei ole ruuteri taga. Vastasel juhul tagastab "
 "süsteem ainult teie sisemise aadressi."
 
-#: resources.h:310
+#: resources.h:316
 msgid ""
 "This wizard will help you to properly configure any routers and firewalls "
 "you have and tests your configuration."
@@ -2623,7 +2737,7 @@ msgstr ""
 "See nõustaja aitab teil seadistada kõik ruuterid ja tulemüürid ning "
 "kontrollib teie kasutatavat seadistust."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:83
+#: ../../locales/../src/interface/RemoteListView.cpp:84
 msgid "Time"
 msgstr "Aeg"
 
@@ -2635,31 +2749,31 @@ msgstr "Aegu&mine sekundites:"
 msgid "Timeout"
 msgstr "Aegumine"
 
-#: resources.h:374 resources.h:375
+#: resources.h:380 resources.h:381
 msgid "Toggles processing of the transfer queue"
 msgstr "Vahetab ülekande järjekorra täitmist"
 
-#: resources.h:366 resources.h:367
+#: resources.h:372 resources.h:373
 msgid "Toggles the display of the local directory tree"
 msgstr "Vahetab kohaliku kataloogipuu näitamist"
 
-#: resources.h:364 resources.h:365
+#: resources.h:370 resources.h:371
 msgid "Toggles the display of the message log"
 msgstr "Vahetab teadete logi näitamist"
 
-#: resources.h:368 resources.h:369
+#: resources.h:374 resources.h:375
 msgid "Toggles the display of the remote directory tree"
 msgstr "Vahetab kauge kataloogipuu näitamist"
 
-#: resources.h:370 resources.h:371
+#: resources.h:376 resources.h:377
 msgid "Toggles the display of the transfer queue"
 msgstr "Vahetab ülekande järjekorra näitamist"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:403
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:577
 msgid "Too long header line"
 msgstr "Liiga pikk päise rida"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:464
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:638
 msgid "Too many redirects"
 msgstr "Liiga palju ümbersuunamisi"
 
@@ -2680,12 +2794,12 @@ msgstr "Ülekande seaded"
 msgid "Transferred data got tainted."
 msgstr "Ülekantud andmed on vigased"
 
-#: ../../locales/../src/interface/QueueView.cpp:1289
+#: ../../locales/../src/interface/QueueView.cpp:1295
 #: ../../locales/../src/interface/statuslinectrl.cpp:154
 msgid "Transferring"
 msgstr "Ülekanne"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:82
+#: ../../locales/../src/interface/settingsdialog.cpp:84
 msgid "Transfers"
 msgstr "Ülekanded"
 
@@ -2697,11 +2811,11 @@ msgstr "Loe &laiendita failid ASCII failideks"
 msgid "Treat the &following filetypes as Ascii files:"
 msgstr "Loe &järgnevad failitüübid ASCII failideks:"
 
-#: resources.h:190
+#: resources.h:196
 msgid "Trust the new key and carry on connecting?"
 msgstr "Kas usaldad uut võtit ja jätkad ühendust?"
 
-#: resources.h:178
+#: resources.h:184
 msgid "Trust this host and carry on connecting?"
 msgstr "Kas usaldad seda masinat ja jätkad ühendust?"
 
@@ -2710,7 +2824,7 @@ msgstr "Kas usaldad seda masinat ja jätkad ühendust?"
 msgid "Unix"
 msgstr "UNIX"
 
-#: resources.h:171
+#: resources.h:177
 msgid "Unknown host key"
 msgstr "Tundmatu masina võti"
 
@@ -2731,20 +2845,24 @@ msgstr ""
 "Kuni selle probleemi lahendamiseni aktiivne FTP laad ei tööta ning kasutuses "
 "on passiivne laad."
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:448
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:622
 msgid "Unsuppored redirect"
 msgstr "Mittelubatud ümbersuunamine"
 
-#: ../../locales/../src/interface/updatewizard.cpp:94
-#: ../../locales/../src/interface/updatewizard.cpp:102
+#: ../../locales/../src/interface/settingsdialog.cpp:88
+msgid "Update Check"
+msgstr "Uuenduste kontroll"
+
+#: ../../locales/../src/interface/updatewizard.cpp:140
+#: ../../locales/../src/interface/updatewizard.cpp:148
 msgid "Update wizard"
 msgstr "Täiendamise nõustaja"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:981
+#: ../../locales/../src/interface/Mainfrm.cpp:1007
 msgid "Updatecheck failed"
 msgstr "Uuenduste kontroll ebaõnnestus"
 
-#: resources.h:277
+#: resources.h:283
 msgid "Upload selected files and folders"
 msgstr "Valitud failide ja kaustade üleslaadimine"
 
@@ -2752,26 +2870,26 @@ msgstr "Valitud failide ja kaustade üleslaadimine"
 msgid "Use &custom charset"
 msgstr "Kasuta &valikulist kooditabelit"
 
-#: resources.h:234 resources.h:331
+#: resources.h:240 resources.h:337
 msgid "Use the following IP address:"
 msgstr "Kasuta järgmist IP aadressi:"
 
-#: resources.h:341
+#: resources.h:347
 msgid "Use the following port range:"
 msgstr "Kasuta järgmist portide vahemikku:"
 
-#: resources.h:326
+#: resources.h:332
 msgid "Use the server's external IP address instead"
 msgstr "Kasuta selle asemel serveri välist IP aadressi"
 
-#: resources.h:235 resources.h:332
+#: resources.h:241 resources.h:338
 msgid ""
 "Use this if you're behind a router and have a static external IP address."
 msgstr ""
 "Kasutage seda, kui te olete ruuteri taga ja omate staatilist välist IP "
 "aadressi."
 
-#: resources.h:335
+#: resources.h:341
 msgid ""
 "Use this option if you have a dynamic IP address. FileZilla will contact the "
 "above server once each session as soon as you use active mode for the first "
@@ -2797,7 +2915,7 @@ msgid ""
 "Using the wrong charset can result in filenames not displaying properly."
 msgstr "Vale kooditabeli puhul ei näidata failinimesid korrektselt. "
 
-#: resources.h:240
+#: resources.h:246
 msgid "Using this wizard you can check for available updates to FileZilla."
 msgstr ""
 "Kasutades seda nõustajat, võite kontrollida FileZilla uuenduste olemasolu."
@@ -2807,11 +2925,11 @@ msgstr ""
 msgid "VMS"
 msgstr "VMS"
 
-#: resources.h:147
+#: resources.h:152
 msgid "W&rite"
 msgstr "K&irjuta"
 
-#: ../../locales/../src/interface/QueueView.cpp:1508
+#: ../../locales/../src/interface/QueueView.cpp:1514
 msgid "Waiting"
 msgstr "Ootamine"
 
@@ -2823,7 +2941,7 @@ msgstr "Ootan ülekande katkestamist"
 msgid "Warning, ignoring data connection from wrong IP."
 msgstr "Hoiatus, ignoreerin andmeühendust valelt IP-lt."
 
-#: ../../locales/../src/interface/updatewizard.cpp:102
+#: ../../locales/../src/interface/updatewizard.cpp:148
 msgid ""
 "Warning, use nightly builds at your own risk.\n"
 "No support is given for nightly builds.\n"
@@ -2838,11 +2956,11 @@ msgstr ""
 "\n"
 "Kas te tõesti tahate kontrollida ööversioone?"
 
-#: resources.h:183
+#: resources.h:189
 msgid "Warning: Potential security breach!"
 msgstr "Hoiatus: Võimalik turvaprobleem!"
 
-#: resources.h:151
+#: resources.h:156
 msgid "Wr&ite"
 msgstr "Ki&rjuta"
 
@@ -2851,11 +2969,11 @@ msgstr "Ki&rjuta"
 msgid "Wrong external IP address"
 msgstr "Vale väline IP aadress"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:602
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:776
 msgid "Wrong lineendings"
 msgstr "Valed realõpud"
 
-#: resources.h:254
+#: resources.h:260
 msgid ""
 "You are already using the most recent version of FileZilla. Please check "
 "again in future."
@@ -2863,7 +2981,7 @@ msgstr ""
 "Te juba kasutate FileZilla värskeimat versiooni. Palun kontrollige tulevikus "
 "uuesti."
 
-#: resources.h:154
+#: resources.h:159
 msgid ""
 "You can use an x at any position to keep the permission the original files "
 "have."
@@ -2871,7 +2989,7 @@ msgstr ""
 "Te võite kasutada x -i suvalisel positsioonil, et hoida originaalfaili "
 "õigusi."
 
-#: ../../locales/../src/interface/asyncrequestqueue.cpp:88
+#: ../../locales/../src/interface/asyncrequestqueue.cpp:101
 msgid "You did not enter a new name for the file. Overwrite the file instead?"
 msgstr ""
 "Te ei ole failile uut nime andnud. Kas kirjutame faili sellegipoolest üle?"
@@ -2922,8 +3040,8 @@ msgstr "võrdub"
 
 #: ../../locales/../src/interface/LocalListView.cpp:391
 #: ../../locales/../src/interface/LocalListView.cpp:409
-#: ../../locales/../src/interface/RemoteListView.cpp:487
-#: ../../locales/../src/interface/RemoteListView.cpp:505
+#: ../../locales/../src/interface/RemoteListView.cpp:488
+#: ../../locales/../src/interface/RemoteListView.cpp:506
 msgid "file"
 msgstr "fail"
 
@@ -2954,3 +3072,47 @@ msgstr "Fail themes.xml puudub. Ei saa võtta teema andmeid."
 #: resources.h:17
 msgid "with the following file?"
 msgstr "järgneva failiga?"
+
+#~ msgid "&Debug"
+#~ msgstr "&Silumine"
+
+#~ msgid "&Show debug menu"
+#~ msgstr "&Näita siluri menüüd"
+
+#~ msgid "0 - None"
+#~ msgstr "0 - Puudub"
+
+#~ msgid "1 - Warning"
+#~ msgstr "1 - Hoiatus"
+
+#~ msgid "2 - Info"
+#~ msgstr "2 - Info"
+
+#~ msgid "3 - Verbose"
+#~ msgstr "3 - Paljusõnaline"
+
+#~ msgid "4 - Debug"
+#~ msgstr "4 - Silur"
+
+#~ msgid "Debug"
+#~ msgstr "Silur"
+
+#~ msgid "Debug information in message log:"
+#~ msgstr "Siluri info teadete logis:"
+
+#~ msgid "Debugging settings"
+#~ msgstr "Silumise seaded"
+
+#~ msgid ""
+#~ "If reporting bugs, please provide logs with \"Verbose\" logging level."
+#~ msgstr ""
+#~ "Kui näitate vigu, palun andke logi, kus on kasutatud \"Paljusõnalist\" "
+#~ "logimise taset."
+
+#~ msgid ""
+#~ "The higher the debug level, the more information will be displayed in the "
+#~ "message log. Displaying debug information has a negative impact on "
+#~ "performance."
+#~ msgstr ""
+#~ "Kõrgem siluri tase annab rohkem infot teadete logisse. Siluri info "
+#~ "näitamine mõjub negatiivselt töökiirusele."
