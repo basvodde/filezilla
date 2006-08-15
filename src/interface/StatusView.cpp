@@ -1,6 +1,8 @@
 #include "FileZilla.h"
 #include "StatusView.h"
+#if wxMAJOR_VERSION > 2 || wxMINOR_VERSION > 6
 #include <wx/wupdlock.h>
+#endif
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -56,9 +58,16 @@ void CStatusView::AddToLog(enum MessageType messagetype, wxString message)
 	
 	if (m_nLineCount == MAX_LINECOUNT)
 	{
+#if wxMAJOR_VERSION > 2 || wxMINOR_VERSION > 6
 		wxWindowUpdateLocker lock(m_pTextCtrl);
+#else
+		m_pTextCtrl->Freeze();
+#endif
 		m_pTextCtrl->Remove(0, m_lineLengths.front() + 1);
 		m_lineLengths.pop_front();
+#if !(wxMAJOR_VERSION > 2 || wxMINOR_VERSION > 6)
+		m_pTextCtrl->Thaw();
+#endif
 	}
 	else
 		m_nLineCount++;
