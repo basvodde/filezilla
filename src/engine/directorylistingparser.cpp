@@ -6,6 +6,9 @@
 #define new DEBUG_NEW
 #endif
 
+std::map<wxString, int> CDirectoryListingParser::m_MonthNamesMap;
+bool CDirectoryListingParser::m_MonthNamesMapInitialized = false;
+
 //#define LISTDEBUG
 #ifdef LISTDEBUG
 static char data[][110]={
@@ -539,186 +542,191 @@ CDirectoryListingParser::CDirectoryListingParser(CFileZillaEnginePrivate *pEngin
 	m_curLine = 0;
 	m_prevLine = 0;
 
-	//Fill the month names map
-
-	//English month names
-	m_MonthNamesMap[_T("jan")] = 1;
-	m_MonthNamesMap[_T("feb")] = 2;
-	m_MonthNamesMap[_T("mar")] = 3;
-	m_MonthNamesMap[_T("apr")] = 4;
-	m_MonthNamesMap[_T("may")] = 5;
-	m_MonthNamesMap[_T("jun")] = 6;
-	m_MonthNamesMap[_T("june")] = 6;
-	m_MonthNamesMap[_T("jul")] = 7;
-	m_MonthNamesMap[_T("july")] = 7;
-	m_MonthNamesMap[_T("aug")] = 8;
-	m_MonthNamesMap[_T("sep")] = 9;
-	m_MonthNamesMap[_T("sept")] = 9;
-	m_MonthNamesMap[_T("oct")] = 10;
-	m_MonthNamesMap[_T("nov")] = 11;
-	m_MonthNamesMap[_T("dec")] = 12;
-
-	//Numerical values for the month
-	m_MonthNamesMap[_T("1")] = 1;
-	m_MonthNamesMap[_T("01")] = 1;
-	m_MonthNamesMap[_T("2")] = 2;
-	m_MonthNamesMap[_T("02")] = 2;
-	m_MonthNamesMap[_T("3")] = 3;
-	m_MonthNamesMap[_T("03")] = 3;
-	m_MonthNamesMap[_T("4")] = 4;
-	m_MonthNamesMap[_T("04")] = 4;
-	m_MonthNamesMap[_T("5")] = 5;
-	m_MonthNamesMap[_T("05")] = 5;
-	m_MonthNamesMap[_T("6")] = 6;
-	m_MonthNamesMap[_T("06")] = 6;
-	m_MonthNamesMap[_T("7")] = 7;
-	m_MonthNamesMap[_T("07")] = 7;
-	m_MonthNamesMap[_T("8")] = 8;
-	m_MonthNamesMap[_T("08")] = 8;
-	m_MonthNamesMap[_T("9")] = 9;
-	m_MonthNamesMap[_T("09")] = 9;
-	m_MonthNamesMap[_T("10")] = 10;
-	m_MonthNamesMap[_T("11")] = 11;
-	m_MonthNamesMap[_T("12")] = 12;
-	
-	//German month names
-	m_MonthNamesMap[_T("mrz")] = 3;
-	m_MonthNamesMap[_T("m\xe4r")] = 3;
-	m_MonthNamesMap[_T("m\xe4rz")] = 3;
-	m_MonthNamesMap[_T("mai")] = 5;
-	m_MonthNamesMap[_T("juni")] = 5;
-	m_MonthNamesMap[_T("juli")] = 6;
-	m_MonthNamesMap[_T("okt")] = 10;
-	m_MonthNamesMap[_T("dez")] = 12;
-
-	//Austrian month names
-	m_MonthNamesMap[_T("j\xe4n")] = 1;
-	
-	//French month names
-	m_MonthNamesMap[_T("janv")] = 1;
-	m_MonthNamesMap[_T("f\xe9")_T("b")] = 1;
-	m_MonthNamesMap[_T("f\xe9v")] = 2;
-	m_MonthNamesMap[_T("fev")] = 2;
-	m_MonthNamesMap[_T("f\xe9vr")] = 2;
-	m_MonthNamesMap[_T("fevr")] = 2;
-	m_MonthNamesMap[_T("mars")] = 3;
-	m_MonthNamesMap[_T("mrs")] = 3;
-	m_MonthNamesMap[_T("avr")] = 4;
-	m_MonthNamesMap[_T("juin")] = 6;
-	m_MonthNamesMap[_T("juil")] = 7;
-	m_MonthNamesMap[_T("jui")] = 7;
-	m_MonthNamesMap[_T("ao\xfb")] = 8;
-	m_MonthNamesMap[_T("ao\xfbt")] = 8;
-	m_MonthNamesMap[_T("aout")] = 8;
-	m_MonthNamesMap[_T("d\xe9")_T("c")] = 12;
-	m_MonthNamesMap[_T("dec")] = 12;
-	
-	//Italian month names
-	m_MonthNamesMap[_T("gen")] = 1;
-	m_MonthNamesMap[_T("mag")] = 5;
-	m_MonthNamesMap[_T("giu")] = 6;
-	m_MonthNamesMap[_T("lug")] = 7;
-	m_MonthNamesMap[_T("ago")] = 8;
-	m_MonthNamesMap[_T("set")] = 9;
-	m_MonthNamesMap[_T("ott")] = 9;
-	m_MonthNamesMap[_T("dic")] = 12;
-
-	//Spanish month names
-	m_MonthNamesMap[_T("ene")] = 1;
-	m_MonthNamesMap[_T("fbro")] = 2;
-	m_MonthNamesMap[_T("mzo")] = 3;
-	m_MonthNamesMap[_T("ab")] = 4;
-	m_MonthNamesMap[_T("abr")] = 4;
-	m_MonthNamesMap[_T("agto")] = 8;
-	m_MonthNamesMap[_T("sbre")] = 9;
-	m_MonthNamesMap[_T("obre")] = 9;
-	m_MonthNamesMap[_T("nbre")] = 9;
-	m_MonthNamesMap[_T("dbre")] = 9;
-
-	//Polish month names
-	m_MonthNamesMap[_T("sty")] = 1;
-	m_MonthNamesMap[_T("lut")] = 2;
-	m_MonthNamesMap[_T("kwi")] = 4;
-	m_MonthNamesMap[_T("maj")] = 5;
-	m_MonthNamesMap[_T("cze")] = 6;
-	m_MonthNamesMap[_T("lip")] = 7;
-	m_MonthNamesMap[_T("sie")] = 8;
-	m_MonthNamesMap[_T("wrz")] = 9;
-	m_MonthNamesMap[_T("pa\x9f")] = 10;
-	m_MonthNamesMap[_T("lis")] = 11;
-	m_MonthNamesMap[_T("gru")] = 12;
-
-	//Russian month names
-	m_MonthNamesMap[_T("\xff\xed\xe2")] = 1;
-	m_MonthNamesMap[_T("\xf4\xe5\xe2")] = 2;
-	m_MonthNamesMap[_T("\xec\xe0\xf0")] = 3;
-	m_MonthNamesMap[_T("\xe0\xef\xf0")] = 4;
-	m_MonthNamesMap[_T("\xec\xe0\xe9")] = 5;
-	m_MonthNamesMap[_T("\xe8\xfe\xed")] = 6;
-	m_MonthNamesMap[_T("\xe8\xfe\xeb")] = 7;
-	m_MonthNamesMap[_T("\xe0\xe2\xe3")] = 8;
-	m_MonthNamesMap[_T("\xf1\xe5\xed")] = 9;
-	m_MonthNamesMap[_T("\xee\xea\xf2")] = 10;
-	m_MonthNamesMap[_T("\xed\xee\xff")] = 11;
-	m_MonthNamesMap[_T("\xe4\xe5\xea")] = 12;
-
-	//Dutch month names
-	m_MonthNamesMap[_T("mrt")] = 3;
-	m_MonthNamesMap[_T("mei")] = 5;
-
-	//Portuguese month names
-	m_MonthNamesMap[_T("out")] = 10;
-
-	//Finnish month names
-	m_MonthNamesMap[_T("tammi")] = 1;
-	m_MonthNamesMap[_T("helmi")] = 2;
-	m_MonthNamesMap[_T("maalis")] = 3;
-	m_MonthNamesMap[_T("huhti")] = 4;
-	m_MonthNamesMap[_T("touko")] = 5;
-	m_MonthNamesMap[_T("kes\xe4")] = 6;
-	m_MonthNamesMap[_T("hein\xe4")] = 7;
-	m_MonthNamesMap[_T("elo")] = 8;
-	m_MonthNamesMap[_T("syys")] = 9;
-	m_MonthNamesMap[_T("loka")] = 10;
-	m_MonthNamesMap[_T("marras")] = 11;
-	m_MonthNamesMap[_T("joulu")] = 12;
-
-	//There are more languages and thus month 
-	//names, but as long as knowbody reports a 
-	//problem, I won't add them, there are way 
-	//too many languages
-
-	// Some servers send a combination of month name and number,
-	// Add corresponding numbers to the month names.
-	std::map<wxString, int> combo;
-	for (std::map<wxString, int>::iterator iter = m_MonthNamesMap.begin(); iter != m_MonthNamesMap.end(); iter++)
+	if (!m_MonthNamesMapInitialized)
 	{
-		// January could be 1 or 0, depends how the server counts
-		combo[wxString::Format(_T("%s%02d"), iter->first.c_str(), iter->second)] = iter->second;
-		combo[wxString::Format(_T("%s%02d"), iter->first.c_str(), iter->second - 1)] = iter->second;
-		if (iter->second < 10)
-			combo[wxString::Format(_T("%s%d"), iter->first.c_str(), iter->second)] = iter->second;
-		else
-			combo[wxString::Format(_T("%s%d"), iter->first.c_str(), iter->second % 10)] = iter->second;
-		if (iter->second <= 10)
-			combo[wxString::Format(_T("%s%d"), iter->first.c_str(), iter->second - 1)] = iter->second;
-		else
-			combo[wxString::Format(_T("%s%d"), iter->first.c_str(), (iter->second - 1) % 10)] = iter->second;
-	}
-	m_MonthNamesMap.insert(combo.begin(), combo.end());
+		//Fill the month names map
 
-	m_MonthNamesMap[_T("1")] = 1;
-	m_MonthNamesMap[_T("2")] = 2;
-	m_MonthNamesMap[_T("3")] = 3;
-	m_MonthNamesMap[_T("4")] = 4;
-	m_MonthNamesMap[_T("5")] = 5;
-	m_MonthNamesMap[_T("6")] = 6;
-	m_MonthNamesMap[_T("7")] = 7;
-	m_MonthNamesMap[_T("8")] = 8;
-	m_MonthNamesMap[_T("9")] = 9;
-	m_MonthNamesMap[_T("10")] = 10;
-	m_MonthNamesMap[_T("11")] = 11;
-	m_MonthNamesMap[_T("12")] = 12;
+		//English month names
+		m_MonthNamesMap[_T("jan")] = 1;
+		m_MonthNamesMap[_T("feb")] = 2;
+		m_MonthNamesMap[_T("mar")] = 3;
+		m_MonthNamesMap[_T("apr")] = 4;
+		m_MonthNamesMap[_T("may")] = 5;
+		m_MonthNamesMap[_T("jun")] = 6;
+		m_MonthNamesMap[_T("june")] = 6;
+		m_MonthNamesMap[_T("jul")] = 7;
+		m_MonthNamesMap[_T("july")] = 7;
+		m_MonthNamesMap[_T("aug")] = 8;
+		m_MonthNamesMap[_T("sep")] = 9;
+		m_MonthNamesMap[_T("sept")] = 9;
+		m_MonthNamesMap[_T("oct")] = 10;
+		m_MonthNamesMap[_T("nov")] = 11;
+		m_MonthNamesMap[_T("dec")] = 12;
+
+		//Numerical values for the month
+		m_MonthNamesMap[_T("1")] = 1;
+		m_MonthNamesMap[_T("01")] = 1;
+		m_MonthNamesMap[_T("2")] = 2;
+		m_MonthNamesMap[_T("02")] = 2;
+		m_MonthNamesMap[_T("3")] = 3;
+		m_MonthNamesMap[_T("03")] = 3;
+		m_MonthNamesMap[_T("4")] = 4;
+		m_MonthNamesMap[_T("04")] = 4;
+		m_MonthNamesMap[_T("5")] = 5;
+		m_MonthNamesMap[_T("05")] = 5;
+		m_MonthNamesMap[_T("6")] = 6;
+		m_MonthNamesMap[_T("06")] = 6;
+		m_MonthNamesMap[_T("7")] = 7;
+		m_MonthNamesMap[_T("07")] = 7;
+		m_MonthNamesMap[_T("8")] = 8;
+		m_MonthNamesMap[_T("08")] = 8;
+		m_MonthNamesMap[_T("9")] = 9;
+		m_MonthNamesMap[_T("09")] = 9;
+		m_MonthNamesMap[_T("10")] = 10;
+		m_MonthNamesMap[_T("11")] = 11;
+		m_MonthNamesMap[_T("12")] = 12;
+
+		//German month names
+		m_MonthNamesMap[_T("mrz")] = 3;
+		m_MonthNamesMap[_T("m\xe4r")] = 3;
+		m_MonthNamesMap[_T("m\xe4rz")] = 3;
+		m_MonthNamesMap[_T("mai")] = 5;
+		m_MonthNamesMap[_T("juni")] = 5;
+		m_MonthNamesMap[_T("juli")] = 6;
+		m_MonthNamesMap[_T("okt")] = 10;
+		m_MonthNamesMap[_T("dez")] = 12;
+
+		//Austrian month names
+		m_MonthNamesMap[_T("j\xe4n")] = 1;
+
+		//French month names
+		m_MonthNamesMap[_T("janv")] = 1;
+		m_MonthNamesMap[_T("f\xe9")_T("b")] = 1;
+		m_MonthNamesMap[_T("f\xe9v")] = 2;
+		m_MonthNamesMap[_T("fev")] = 2;
+		m_MonthNamesMap[_T("f\xe9vr")] = 2;
+		m_MonthNamesMap[_T("fevr")] = 2;
+		m_MonthNamesMap[_T("mars")] = 3;
+		m_MonthNamesMap[_T("mrs")] = 3;
+		m_MonthNamesMap[_T("avr")] = 4;
+		m_MonthNamesMap[_T("juin")] = 6;
+		m_MonthNamesMap[_T("juil")] = 7;
+		m_MonthNamesMap[_T("jui")] = 7;
+		m_MonthNamesMap[_T("ao\xfb")] = 8;
+		m_MonthNamesMap[_T("ao\xfbt")] = 8;
+		m_MonthNamesMap[_T("aout")] = 8;
+		m_MonthNamesMap[_T("d\xe9")_T("c")] = 12;
+		m_MonthNamesMap[_T("dec")] = 12;
+
+		//Italian month names
+		m_MonthNamesMap[_T("gen")] = 1;
+		m_MonthNamesMap[_T("mag")] = 5;
+		m_MonthNamesMap[_T("giu")] = 6;
+		m_MonthNamesMap[_T("lug")] = 7;
+		m_MonthNamesMap[_T("ago")] = 8;
+		m_MonthNamesMap[_T("set")] = 9;
+		m_MonthNamesMap[_T("ott")] = 9;
+		m_MonthNamesMap[_T("dic")] = 12;
+
+		//Spanish month names
+		m_MonthNamesMap[_T("ene")] = 1;
+		m_MonthNamesMap[_T("fbro")] = 2;
+		m_MonthNamesMap[_T("mzo")] = 3;
+		m_MonthNamesMap[_T("ab")] = 4;
+		m_MonthNamesMap[_T("abr")] = 4;
+		m_MonthNamesMap[_T("agto")] = 8;
+		m_MonthNamesMap[_T("sbre")] = 9;
+		m_MonthNamesMap[_T("obre")] = 9;
+		m_MonthNamesMap[_T("nbre")] = 9;
+		m_MonthNamesMap[_T("dbre")] = 9;
+
+		//Polish month names
+		m_MonthNamesMap[_T("sty")] = 1;
+		m_MonthNamesMap[_T("lut")] = 2;
+		m_MonthNamesMap[_T("kwi")] = 4;
+		m_MonthNamesMap[_T("maj")] = 5;
+		m_MonthNamesMap[_T("cze")] = 6;
+		m_MonthNamesMap[_T("lip")] = 7;
+		m_MonthNamesMap[_T("sie")] = 8;
+		m_MonthNamesMap[_T("wrz")] = 9;
+		m_MonthNamesMap[_T("pa\x9f")] = 10;
+		m_MonthNamesMap[_T("lis")] = 11;
+		m_MonthNamesMap[_T("gru")] = 12;
+
+		//Russian month names
+		m_MonthNamesMap[_T("\xff\xed\xe2")] = 1;
+		m_MonthNamesMap[_T("\xf4\xe5\xe2")] = 2;
+		m_MonthNamesMap[_T("\xec\xe0\xf0")] = 3;
+		m_MonthNamesMap[_T("\xe0\xef\xf0")] = 4;
+		m_MonthNamesMap[_T("\xec\xe0\xe9")] = 5;
+		m_MonthNamesMap[_T("\xe8\xfe\xed")] = 6;
+		m_MonthNamesMap[_T("\xe8\xfe\xeb")] = 7;
+		m_MonthNamesMap[_T("\xe0\xe2\xe3")] = 8;
+		m_MonthNamesMap[_T("\xf1\xe5\xed")] = 9;
+		m_MonthNamesMap[_T("\xee\xea\xf2")] = 10;
+		m_MonthNamesMap[_T("\xed\xee\xff")] = 11;
+		m_MonthNamesMap[_T("\xe4\xe5\xea")] = 12;
+
+		//Dutch month names
+		m_MonthNamesMap[_T("mrt")] = 3;
+		m_MonthNamesMap[_T("mei")] = 5;
+
+		//Portuguese month names
+		m_MonthNamesMap[_T("out")] = 10;
+
+		//Finnish month names
+		m_MonthNamesMap[_T("tammi")] = 1;
+		m_MonthNamesMap[_T("helmi")] = 2;
+		m_MonthNamesMap[_T("maalis")] = 3;
+		m_MonthNamesMap[_T("huhti")] = 4;
+		m_MonthNamesMap[_T("touko")] = 5;
+		m_MonthNamesMap[_T("kes\xe4")] = 6;
+		m_MonthNamesMap[_T("hein\xe4")] = 7;
+		m_MonthNamesMap[_T("elo")] = 8;
+		m_MonthNamesMap[_T("syys")] = 9;
+		m_MonthNamesMap[_T("loka")] = 10;
+		m_MonthNamesMap[_T("marras")] = 11;
+		m_MonthNamesMap[_T("joulu")] = 12;
+
+		//There are more languages and thus month 
+		//names, but as long as knowbody reports a 
+		//problem, I won't add them, there are way 
+		//too many languages
+
+		// Some servers send a combination of month name and number,
+		// Add corresponding numbers to the month names.
+		std::map<wxString, int> combo;
+		for (std::map<wxString, int>::iterator iter = m_MonthNamesMap.begin(); iter != m_MonthNamesMap.end(); iter++)
+		{
+			// January could be 1 or 0, depends how the server counts
+			combo[wxString::Format(_T("%s%02d"), iter->first.c_str(), iter->second)] = iter->second;
+			combo[wxString::Format(_T("%s%02d"), iter->first.c_str(), iter->second - 1)] = iter->second;
+			if (iter->second < 10)
+				combo[wxString::Format(_T("%s%d"), iter->first.c_str(), iter->second)] = iter->second;
+			else
+				combo[wxString::Format(_T("%s%d"), iter->first.c_str(), iter->second % 10)] = iter->second;
+			if (iter->second <= 10)
+				combo[wxString::Format(_T("%s%d"), iter->first.c_str(), iter->second - 1)] = iter->second;
+			else
+				combo[wxString::Format(_T("%s%d"), iter->first.c_str(), (iter->second - 1) % 10)] = iter->second;
+		}
+		m_MonthNamesMap.insert(combo.begin(), combo.end());
+
+		m_MonthNamesMap[_T("1")] = 1;
+		m_MonthNamesMap[_T("2")] = 2;
+		m_MonthNamesMap[_T("3")] = 3;
+		m_MonthNamesMap[_T("4")] = 4;
+		m_MonthNamesMap[_T("5")] = 5;
+		m_MonthNamesMap[_T("6")] = 6;
+		m_MonthNamesMap[_T("7")] = 7;
+		m_MonthNamesMap[_T("8")] = 8;
+		m_MonthNamesMap[_T("9")] = 9;
+		m_MonthNamesMap[_T("10")] = 10;
+		m_MonthNamesMap[_T("11")] = 11;
+		m_MonthNamesMap[_T("12")] = 12;
+
+		m_MonthNamesMapInitialized = true;
+	}
 
 #ifdef LISTDEBUG
 	for (unsigned int i = 0; data[i][0]; i++)

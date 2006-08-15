@@ -40,7 +40,8 @@ protected:
 	CFileZillaEnginePrivate* m_pEngine;
 	CControlSocket* m_pControlSocket;
 
-	std::map<wxString, int> m_MonthNamesMap;
+	static std::map<wxString, int> m_MonthNamesMap;
+	static bool m_MonthNamesMapInitialized;
 
 	struct t_list
 	{
