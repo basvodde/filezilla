@@ -317,6 +317,9 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 			wxStaticText* text = wxDynamicCast(window, wxStaticText);
 			if (text)
 			{
+				if (max - rect.GetLeft() - rborder - 2 <= 0)
+					continue;
+
 				wxString str = text->GetLabel();
 				str = WrapText(text, str,  max - rect.GetLeft() - rborder - 2);
 				text->SetLabel(str);
@@ -345,8 +348,8 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 				continue;
 			}
 
-			if (item->GetMinSize().GetWidth() + item->GetPosition().x + rborder > max)
-				return false;
+			//if (item->GetMinSize().GetWidth() + item->GetPosition().x + rborder > max)
+			//	return false;
 		}
 		else if ((subSizer = item->GetSizer()))
 		{
@@ -896,4 +899,15 @@ bool CWrapEngine::LoadCache()
 	delete pDocument->GetDocument();
 
 	return true;
+}
+
+void CWrapEngine::ClearCache()
+{
+	// We have to synchronize access to layout.xml so that multiple processed don't write
+	// to the same file or one is reading while the other one writes.
+	CInterProcessMutex mutex(MUTEX_LAYOUT);
+
+	wxFileName file(wxGetApp().GetSettingsDir(), _T("layout.xml"));
+	if (file.FileExists())
+		wxRemoveFile(file.GetFullPath());
 }

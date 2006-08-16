@@ -9,6 +9,8 @@ public:
 
 	bool LoadCache();
 
+	static void ClearCache();
+
 	// Find all wxStaticText controls in the given window(s) and wrap them, so
 	// that the window has the right aspect ratio...
 	bool WrapRecursive(wxWindow* wnd, double ratio, const char* name = "", wxSize canvas = wxSize(), wxSize minRequested = wxSize());
