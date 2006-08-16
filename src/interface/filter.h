@@ -22,13 +22,20 @@ public:
 class CFilter
 {
 public:
+	enum t_matchType
+	{
+		all,
+		any,
+		none
+	};
+
 	CFilter();
 
 	wxString name;
 
 	bool filterFiles;
 	bool filterDirs;
-	bool matchAll;
+	enum t_matchType matchType;
 	bool matchCase;
 
 	std::vector<CFilterCondition> filters;

@@ -60,7 +60,7 @@ CFilterCondition& CFilterCondition::operator=(const CFilterCondition& cond)
 
 CFilter::CFilter()
 {
-	matchAll = false;
+	matchType = all;
 	filterDirs = true;
 	filterFiles = true;
 
@@ -179,8 +179,8 @@ void CFilterDialog::SaveFilters()
 
 		AddTextElement(pFilter, "Name", filter.name);
 		AddTextElement(pFilter, "ApplyToFiles", filter.filterFiles ? _T("1") : _T("0"));
-		AddTextElement(pFilter, "ApplyToDirs", filter.filterFiles ? _T("1") : _T("0"));
-		AddTextElement(pFilter, "MatchType", filter.matchAll ? _T("All") : _T("Any"));
+		AddTextElement(pFilter, "ApplyToDirs", filter.filterDirs ? _T("1") : _T("0"));
+		AddTextElement(pFilter, "MatchType", (filter.matchType == CFilter::any) ? _T("Any") : ((filter.matchType == CFilter::none) ? _T("None") : _T("All")));
 		AddTextElement(pFilter, "MatchCase", filter.matchCase ? _T("1") : _T("0"));
 
 		TiXmlElement* pConditions = pFilter->InsertEndChild(TiXmlElement("Conditions"))->ToElement();
@@ -269,7 +269,13 @@ void CFilterDialog::LoadFilters()
 		filter.filterFiles = GetTextElement(pFilter, "ApplyToFiles") == _T("1");
 		filter.filterDirs = GetTextElement(pFilter, "ApplyToDirs") == _T("1");
 
-		filter.matchAll = GetTextElement(pFilter, "MatchType") == _T("All");
+		wxString type = GetTextElement(pFilter, "MatchType");
+		if (type == _T("Any"))
+			filter.matchType = CFilter::any;
+		else if (type == _T("None"))
+			filter.matchType = CFilter::none;
+		else
+			filter.matchType = CFilter::all;
 		filter.matchCase = GetTextElement(pFilter, "MatchCase") == _T("1");
 
 		TiXmlElement *pConditions = pFilter->FirstChildElement("Conditions");
@@ -450,7 +456,7 @@ bool CFilterDialog::FilenameFilteredByFilter(const wxString& name, bool dir, wxL
 
 	if (dir && !filter.filterDirs)
 		return false;
-	else if (!filter.filterFiles)
+	else if (!dir && !filter.filterFiles)
 		return false;
     
 	for (std::vector<CFilterCondition>::const_iterator iter = filter.filters.begin(); iter != filter.filters.end(); iter++)
@@ -543,9 +549,17 @@ bool CFilterDialog::FilenameFilteredByFilter(const wxString& name, bool dir, wxL
 			}
 			break;
 		}
-		if (match && !filter.matchAll)
-			return true;
+		if (match)
+		{
+			if (filter.matchType == CFilter::any)
+				return true;
+			else if (filter.matchType == CFilter::none)
+				return false;
+		}
 	}
+
+	if (filter.matchType == CFilter::none)
+		return true;
 	
 	return false;
 }
