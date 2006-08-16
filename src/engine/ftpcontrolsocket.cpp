@@ -1587,10 +1587,8 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 
 				if (pData->resume)
 					pData->resumeOffset = pData->localFileSize;
-				else if (m_sentRestartOffset)
-					pData->resumeOffset = 0;
 				else
-					pData->resumeOffset = -1;
+					pData->resumeOffset = 0;
 
 				InitTransferStatus(pData->remoteFileSize, startOffset);
 			}
@@ -1625,8 +1623,6 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 				}
 				else
 					startOffset = 0;
-
-				pData->resumeOffset = -1;
 
 				wxFileOffset len = pFile->Length();
 				InitTransferStatus(len, startOffset);
@@ -2764,7 +2760,7 @@ int CFtpControlSocket::TransferParseResponse()
 				break;
 			}
 		}
-		if (pData->pOldData->resumeOffset != -1)
+		if (pData->pOldData->resumeOffset > 0 || m_sentRestartOffset)
 			pData->opState = rawtransfer_rest;
 		else
 			pData->opState = rawtransfer_transfer;
