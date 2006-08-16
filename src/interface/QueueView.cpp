@@ -9,6 +9,7 @@
 #include "filezillaapp.h"
 #include "ipcmutex.h"
 #include "state.h"
+#include "asyncrequestqueue.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -656,11 +657,12 @@ bool CFileItem::TryRemoveAll()
 	return false;
 }
 
-CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame)
-	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN | wxLC_REPORT | wxLC_VIRTUAL | wxSUNKEN_BORDER)
+CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame, CAsyncRequestQueue *pAsyncRequestQueue)
+	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN | wxLC_REPORT | wxLC_VIRTUAL | wxSUNKEN_BORDER),
+	  m_pMainFrame(pMainFrame),
+	  m_pAsyncRequestQueue(pAsyncRequestQueue)
 {
 	m_allowBackgroundErase = true;
-	m_pMainFrame = pMainFrame;
 
 	m_itemCount = 0;
 	m_activeCount = 0;
@@ -1101,6 +1103,9 @@ bool CQueueView::TryStartNextTransfer()
 
 void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* pNotification)
 {
+	// Cancel pending requests
+	m_pAsyncRequestQueue->ClearPending(engineData.pEngine);
+
 	// Process reply from the engine
 	int replyCode = pNotification->nReplyCode;
 

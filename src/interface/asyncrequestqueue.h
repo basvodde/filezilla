@@ -10,6 +10,7 @@ public:
 	~CAsyncRequestQueue();
 
 	void AddRequest(CFileZillaEngine *pEngine, CAsyncRequestNotification *pNotification);
+	void ClearPending(const CFileZillaEngine* pEngine);
 
 protected:
 	CMainFrame *m_pMainFrame;

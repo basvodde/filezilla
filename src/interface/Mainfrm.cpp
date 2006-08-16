@@ -134,6 +134,8 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 
 	m_ViewSplitterSashPos = 0.5;
 
+	m_pAsyncRequestQueue = new CAsyncRequestQueue(this);
+
 	if (!m_pState->CreateEngine())
 	{
 		wxMessageBox(_("Failed to initialize FTP engine"));
@@ -166,7 +168,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_pRemoteSplitter->SetSashGravity(0.7);
 
 	m_pStatusView = new CStatusView(m_pTopSplitter, -1);
-	m_pQueueView = new CQueueView(m_pBottomSplitter, -1, this);
+	m_pQueueView = new CQueueView(m_pBottomSplitter, -1, this, m_pAsyncRequestQueue);
 
 	m_pLocalTreeViewPanel = new CView(m_pLocalSplitter);
 	m_pLocalListViewPanel = new CView(m_pLocalSplitter);
@@ -195,8 +197,6 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	Layout();
 
 	m_pState->SetLocalDir(wxGetCwd());
-
-	m_pAsyncRequestQueue = new CAsyncRequestQueue(this);
 
 	wxAcceleratorEntry entries[1];
 	entries[0].Set(wxACCEL_NORMAL, WXK_F5, XRCID("ID_TOOLBAR_REFRESH"));

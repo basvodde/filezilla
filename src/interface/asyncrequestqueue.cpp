@@ -18,19 +18,8 @@ void CAsyncRequestQueue::AddRequest(CFileZillaEngine *pEngine, CAsyncRequestNoti
 	entry.pEngine = pEngine;
 	entry.pNotification = pNotification;
 
-	if (!m_requestList.empty())
-	{
-		// Remove older requests coming from the same engine, but never the first
-		// entry in the list as that one displays a dialog at this moment.
-		for (std::list<t_queueEntry>::iterator iter = m_requestList.begin()++; iter != m_requestList.end(); iter++)
-		{
-			if (iter->pEngine == pEngine)
-			{
-				m_requestList.erase(iter);
-				break;
-			}
-		}
-	}
+	ClearPending(pEngine);
+
 	m_requestList.push_back(entry);
 
 	if (m_requestList.size() == 1)
@@ -176,5 +165,24 @@ void CAsyncRequestQueue::ProcessNextRequest()
 		
 
 		m_requestList.pop_front();
+	}
+}
+
+void CAsyncRequestQueue::ClearPending(const CFileZillaEngine *pEngine)
+{
+	if (m_requestList.empty())
+		return;
+	
+	// Remove older requests coming from the same engine, but never the first
+	// entry in the list as that one displays a dialog at this moment.
+	for (std::list<t_queueEntry>::iterator iter = m_requestList.begin()++; iter != m_requestList.end(); iter++)
+	{
+		if (iter->pEngine == pEngine)
+		{
+			m_requestList.erase(iter);
+
+			// At most one pending request per engine
+			break;
+		}
 	}
 }

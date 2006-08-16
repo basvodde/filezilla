@@ -239,11 +239,13 @@ protected:
 class CMainFrame;
 class CStatusLineCtrl;
 class CFolderProcessingThread;
+class CAsyncRequestQueue;
+
 class CQueueView : public wxListCtrl
 {
 	friend class CFolderProcessingThread;
 public:
-	CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame);
+	CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame, CAsyncRequestQueue* pAsyncRequestQueue);
 	virtual ~CQueueView();
 	
 	bool QueueFile(bool queueOnly, bool download, const wxString& localFile, const wxString& remoteFile,
@@ -324,6 +326,7 @@ protected:
 	bool m_allowBackgroundErase;
 
 	CMainFrame* m_pMainFrame;
+	CAsyncRequestQueue* m_pAsyncRequestQueue;
 
 	std::list<wxString> m_asciiFiles;
 
