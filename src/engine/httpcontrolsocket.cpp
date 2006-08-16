@@ -286,6 +286,8 @@ void CHttpControlSocket::OnReceive(wxSocketEvent& event)
 		return;
 	}
 
+	m_pEngine->SetActive(true);
+
 	if (!m_pCurOpData || m_pCurOpData->opId == cmd_connect)
 	{
 		// Just ignore all further data
