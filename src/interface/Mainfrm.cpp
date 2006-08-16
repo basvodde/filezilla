@@ -341,17 +341,22 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	{
 		OnMenuEditSettings(event);
 	}
+	else if (event.GetId() == XRCID("ID_MENU_EDIT_NETCONFWIZARD"))
+	{
+		CNetConfWizard wizard(this, COptions::Get());
+		wizard.Load();
+		wizard.Run();
+	}
+	// Debug menu
 	else if (event.GetId() == XRCID("ID_CRASH"))
 	{
 		// Cause a crash
 		int *x = 0;
 		*x = 0;
 	}
-	else if (event.GetId() == XRCID("ID_MENU_EDIT_NETCONFWIZARD"))
+	else if (event.GetId() == XRCID("ID_CLEARCACHE_LAYOUT"))
 	{
-		CNetConfWizard wizard(this, COptions::Get());
-		wizard.Load();
-		wizard.Run();
+		CWrapEngine::ClearCache();
 	}
 	else
 		event.Skip();
@@ -403,7 +408,7 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 		case nId_transferstatus:
 			{
 				CTransferStatusNotification *pTransferStatusNotification = reinterpret_cast<CTransferStatusNotification *>(pNotification);
-				const CTransferStatus *pStatus = pTransferStatusNotification->GetStatus();
+				const CTransferStatus *pStatus = pTransferStatusNotification ? pTransferStatusNotification->GetStatus() : 0;
 				if (pStatus && !m_transferStatusTimer.IsRunning())
 					m_transferStatusTimer.Start(100);
 				else if (!pStatus && m_transferStatusTimer.IsRunning())
