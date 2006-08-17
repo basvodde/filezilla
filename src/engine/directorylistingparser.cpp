@@ -688,6 +688,9 @@ CDirectoryListingParser::CDirectoryListingParser(CFileZillaEnginePrivate *pEngin
 		m_MonthNamesMap[_T("marras")] = 11;
 		m_MonthNamesMap[_T("joulu")] = 12;
 
+		//Slovenian month names
+		m_MonthNamesMap[_T("avg")] = 8;
+
 		//There are more languages and thus month 
 		//names, but as long as knowbody reports a 
 		//problem, I won't add them, there are way 
