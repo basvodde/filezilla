@@ -27,6 +27,8 @@ void CLogging::LogMessage(MessageType nMessageType, const wxChar *msgFormat, ...
 		if (debugLevel != 4)
 			return;
 		break;
+	default:
+		break;
 	}
 
 	va_list ap;
@@ -61,6 +63,8 @@ void CLogging::LogMessage(wxString SourceFile, int nSourceLine, void *pInstance,
 	case Debug_Debug:
 		if (debugLevel != 4)
 			return;
+		break;
+	default:
 		break;
 	}
 
