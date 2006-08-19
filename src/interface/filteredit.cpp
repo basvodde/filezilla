@@ -329,7 +329,8 @@ void CFilterEditDialog::OnNew(wxCommandEvent& event)
 
 	int item = m_pFilterListCtrl->Append(newName);
 	m_pFilterListCtrl->Select(item);
-	OnFilterSelect(wxCommandEvent());
+	wxCommandEvent evt;
+	OnFilterSelect(evt);
 }
 
 void CFilterEditDialog::OnDelete(wxCommandEvent& event)
@@ -430,7 +431,8 @@ void CFilterEditDialog::OnCopy(wxCommandEvent& event)
 
 	int item = m_pFilterListCtrl->Append(newName);
 	m_pFilterListCtrl->Select(item);
-	OnFilterSelect(wxCommandEvent());
+	wxCommandEvent evt;
+	OnFilterSelect(evt);
 }
 
 void CFilterEditDialog::OnFilterSelect(wxCommandEvent& event)
