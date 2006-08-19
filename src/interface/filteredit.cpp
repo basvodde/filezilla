@@ -298,19 +298,27 @@ void CFilterEditDialog::SaveFilter(CFilter& filter)
 
 void CFilterEditDialog::OnNew(wxCommandEvent& event)
 {
-	CFilter filter;
-
 	int index = 1;
 	wxString name = _("New filter");
 	wxString newName = name;
 	while (m_pFilterListCtrl->FindString(newName) != wxNOT_FOUND)
 		newName = wxString::Format(_T("%s (%d)"), name.c_str(), ++index);
 
+	wxTextEntryDialog dlg(this, _("Please enter a name for the new filter."), _("Enter filter name"), newName);
+	if (dlg.ShowModal() != wxID_OK)
+		return;
+	newName = dlg.GetValue();
+
+	if (m_pFilterListCtrl->FindString(newName) != wxNOT_FOUND)
+	{
+		wxMessageBox(_("The entered filter name already exists."), _("Duplicate filter name"), wxICON_ERROR, this);
+		return;
+	}
+
+	CFilter filter;
 	filter.name = newName;
 
 	m_filters.push_back(filter);
-
-	m_pFilterListCtrl->Append(newName);
 
 	for (std::vector<CFilterSet>::iterator iter = m_filterSets.begin(); iter != m_filterSets.end(); iter++)
 	{
@@ -318,6 +326,10 @@ void CFilterEditDialog::OnNew(wxCommandEvent& event)
 		set.local.push_back(false);
 		set.remote.push_back(false);
 	}
+
+	int item = m_pFilterListCtrl->Append(newName);
+	m_pFilterListCtrl->Select(item);
+	OnFilterSelect(wxCommandEvent());
 }
 
 void CFilterEditDialog::OnDelete(wxCommandEvent& event)
@@ -343,10 +355,69 @@ void CFilterEditDialog::OnDelete(wxCommandEvent& event)
 
 void CFilterEditDialog::OnRename(wxCommandEvent& event)
 {
+	wxTextEntryDialog dlg(this, _("Please enter a new name for the filter."), _("Enter filter name"), m_currentFilter.name);
+	if (dlg.ShowModal() != wxID_OK)
+		return;
+
+	const wxString& newName = dlg.GetValue();
+
+	if (newName == m_currentFilter.name)
+		return;
+
+	if (m_pFilterListCtrl->FindString(newName) != wxNOT_FOUND)
+	{
+		wxMessageBox(_("The entered filter name already exists."), _("Duplicate filter name"), wxICON_ERROR, this);
+		return;
+	}
+
+	m_currentFilter.name = newName;
+	m_pFilterListCtrl->Delete(m_currentSelection);
+	m_pFilterListCtrl->Insert(newName, m_currentSelection);
+	m_pFilterListCtrl->Select(m_currentSelection);
 }
 
 void CFilterEditDialog::OnCopy(wxCommandEvent& event)
 {
+	CFilter filter;
+	if (m_currentSelection != -1)
+	{
+		if (!Validate())
+			return;
+		SaveFilter(filter);
+	}
+
+	int index = 1;
+	const wxString& name = m_currentFilter.name;
+	wxString newName = name;
+	while (m_pFilterListCtrl->FindString(newName) != wxNOT_FOUND)
+		newName = wxString::Format(_T("%s (%d)"), name.c_str(), ++index);
+
+	wxTextEntryDialog dlg(this, _("Please enter a new name for the copied filter."), _("Enter filter name"), newName);
+	if (dlg.ShowModal() != wxID_OK)
+		return;
+
+	newName = dlg.GetValue();
+
+	if (m_pFilterListCtrl->FindString(newName) != wxNOT_FOUND)
+	{
+		wxMessageBox(_("The entered filter name already exists."), _("Duplicate filter name"), wxICON_ERROR, this);
+		return;
+	}
+
+	filter.name = newName;
+
+	m_filters.push_back(filter);
+
+	for (std::vector<CFilterSet>::iterator iter = m_filterSets.begin(); iter != m_filterSets.end(); iter++)
+	{
+		CFilterSet& set = *iter;
+		set.local.push_back(false);
+		set.remote.push_back(false);
+	}
+
+	int item = m_pFilterListCtrl->Append(newName);
+	m_pFilterListCtrl->Select(item);
+	OnFilterSelect(wxCommandEvent());
 }
 
 void CFilterEditDialog::OnFilterSelect(wxCommandEvent& event)
@@ -389,6 +460,7 @@ void CFilterEditDialog::SetCtrlState(bool enabled)
 	m_pListCtrl->Enable(enabled);
 	XRCCTRL(*this, "ID_MATCHALL", wxRadioButton)->Enable(enabled);
 	XRCCTRL(*this, "ID_MATCHANY", wxRadioButton)->Enable(enabled);
+	XRCCTRL(*this, "ID_MATCHNONE", wxRadioButton)->Enable(enabled);
 	XRCCTRL(*this, "ID_MORE", wxButton)->Enable(enabled);
 	XRCCTRL(*this, "ID_REMOVE", wxButton)->Enable(enabled);
 	XRCCTRL(*this, "ID_FILES", wxCheckBox)->Enable(enabled);
