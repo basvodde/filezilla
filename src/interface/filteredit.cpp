@@ -513,7 +513,7 @@ bool CFilterEditDialog::Validate()
 	if (!size)
 	{
 		m_pFilterListCtrl->SetSelection(m_currentSelection);
-		wxMessageBox(_("Each filter needs at least one condition"));
+		wxMessageBox(_("Each filter needs at least one condition."), _("Filter validation failed"), wxICON_ERROR, this);
 		return false;
 	}
 	for (unsigned int i = 0; i < size; i++)
@@ -524,7 +524,7 @@ bool CFilterEditDialog::Validate()
 			m_pFilterListCtrl->SetSelection(m_currentSelection);
 			m_pListCtrl->SelectLine(i);
 			controls.pValue->SetFocus();
-			wxMessageBox(_("At least one filter condition is incomplete"));
+			wxMessageBox(_("At least one filter condition is incomplete"), _("Filter validation failed"), wxICON_ERROR, this);
 			return false;
 		}
 		if (controls.pType->GetSelection() == 1)
@@ -535,7 +535,7 @@ bool CFilterEditDialog::Validate()
 				m_pFilterListCtrl->SetSelection(m_currentSelection);
 				m_pListCtrl->SelectLine(i);
 				controls.pValue->SetFocus();
-				wxMessageBox(_("Invalid size in condition"));
+				wxMessageBox(_("Invalid size in condition"), _("Filter validation failed"), wxICON_ERROR, this);
 				return false;
 			}				
 		}
@@ -546,7 +546,7 @@ bool CFilterEditDialog::Validate()
 	{
 		m_pFilterListCtrl->SetSelection(m_currentSelection);
 		XRCCTRL(*this, "ID_NAME", wxTextCtrl)->SetFocus();
-		wxMessageBox(_("Need to enter filter name"));
+		wxMessageBox(_("Need to enter filter name"), _("Filter validation failed"), wxICON_ERROR, this);
 		return false;
 	}
 
@@ -555,7 +555,7 @@ bool CFilterEditDialog::Validate()
 	{
 		m_pFilterListCtrl->SetSelection(m_currentSelection);
 		XRCCTRL(*this, "ID_NAME", wxTextCtrl)->SetFocus();
-		wxMessageBox(_("Filter name already exists"));
+		wxMessageBox(_("Filter name already exists"), _("Filter validation failed"), wxICON_ERROR, this);
 		return false;
 	}
 
