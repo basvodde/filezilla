@@ -355,13 +355,20 @@ void CFilterEditDialog::OnDelete(wxCommandEvent& event)
 
 void CFilterEditDialog::OnRename(wxCommandEvent& event)
 {
-	wxTextEntryDialog dlg(this, _("Please enter a new name for the filter."), _("Enter filter name"), m_currentFilter.name);
+	const wxString& oldName = XRCCTRL(*this, "ID_NAME", wxTextCtrl)->GetValue();
+	wxTextEntryDialog dlg(this, _("Please enter a new name for the filter."), _("Enter filter name"), oldName);
 	if (dlg.ShowModal() != wxID_OK)
 		return;
 
 	const wxString& newName = dlg.GetValue();
 
-	if (newName == m_currentFilter.name)
+	if (newName == _T(""))
+	{
+		wxMessageBox(_("Empty filter names are not allowed."), _("Empty name"), wxICON_ERROR, this);
+		return;
+	}
+	
+	if (newName == oldName)
 		return;
 
 	if (m_pFilterListCtrl->FindString(newName) != wxNOT_FOUND)
@@ -371,6 +378,7 @@ void CFilterEditDialog::OnRename(wxCommandEvent& event)
 	}
 
 	m_currentFilter.name = newName;
+	XRCCTRL(*this, "ID_NAME", wxTextCtrl)->SetValue(newName);
 	m_pFilterListCtrl->Delete(m_currentSelection);
 	m_pFilterListCtrl->Insert(newName, m_currentSelection);
 	m_pFilterListCtrl->Select(m_currentSelection);
@@ -397,6 +405,11 @@ void CFilterEditDialog::OnCopy(wxCommandEvent& event)
 		return;
 
 	newName = dlg.GetValue();
+	if (newName == _T(""))
+	{
+		wxMessageBox(_("Empty filter names are not allowed."), _("Empty name"), wxICON_ERROR, this);
+		return;
+	}
 
 	if (m_pFilterListCtrl->FindString(newName) != wxNOT_FOUND)
 	{
