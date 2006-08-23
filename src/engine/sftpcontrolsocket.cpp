@@ -242,6 +242,18 @@ CSftpControlSocket::~CSftpControlSocket()
 	DoClose();
 }
 
+class CSftpConnectOpData : public COpData
+{
+public:
+	CSftpConnectOpData()
+		: COpData(cmd_connect)
+	{
+		gotInitialReply = false;
+	}
+
+	bool gotInitialReply;
+};
+
 int CSftpControlSocket::Connect(const CServer &server)
 {
 	LogMessage(Status, _("Connecting to %s:%d..."), server.GetHost().c_str(), server.GetPort());
@@ -251,6 +263,8 @@ int CSftpControlSocket::Connect(const CServer &server)
 		delete m_pCurrentServer;
 	m_pCurrentServer = new CServer(server);
 
+	m_pCurOpData = new CSftpConnectOpData;
+
 	m_pProcess = new wxProcess(this);
 	m_pProcess->Redirect();
 
@@ -259,7 +273,7 @@ int CSftpControlSocket::Connect(const CServer &server)
 	{
 		delete m_pProcess;
 		m_pProcess = 0;
-		LogMessage(::Error, _("fzsftp could not be started"));
+		ResetOperation(FZ_REPLY_ERROR);
 		return FZ_REPLY_ERROR;
 	}
 	
@@ -273,10 +287,48 @@ int CSftpControlSocket::Connect(const CServer &server)
 		return FZ_REPLY_ERROR;
 	}
 
-	wxString str;
-	Send(wxString::Format(_T("open %s@%s %d"), server.GetUser().c_str(), server.GetHost().c_str(), server.GetPort()));
-
 	return FZ_REPLY_WOULDBLOCK;
+}
+
+int CSftpControlSocket::ConnectParseResponse(bool successful, const wxString& reply)
+{
+	LogMessage(Debug_Verbose, _T("CSftpControlSocket::ConnectParseResponse(%s)"), reply.c_str());
+
+	if (!successful)
+	{
+		ResetOperation(FZ_REPLY_ERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	if (!m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	CSftpConnectOpData *pData = static_cast<CSftpConnectOpData *>(m_pCurOpData);
+	if (!pData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("m_pCurOpData of wrong type"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	if (pData->gotInitialReply)
+	{
+		ResetOperation(FZ_REPLY_OK);
+		return FZ_REPLY_OK;
+	}
+
+	pData->gotInitialReply = true;
+	
+	bool res = Send(wxString::Format(_T("open %s@%s %d"), m_pCurrentServer->GetUser().c_str(), m_pCurrentServer->GetHost().c_str(), m_pCurrentServer->GetPort()));
+
+	if (res)
+		return FZ_REPLY_WOULDBLOCK;
+	else
+		return FZ_REPLY_ERROR;
 }
 
 void CSftpControlSocket::OnSftpEvent(CSftpEvent& event)
@@ -981,10 +1033,7 @@ int CSftpControlSocket::ProcessReply(bool successful, const wxString& reply /*=_
 	switch (commandId)
 	{
 	case cmd_connect:
-		if (successful)
-			return ResetOperation(FZ_REPLY_OK);
-		else
-			return ResetOperation(FZ_REPLY_ERROR);
+		return ConnectParseResponse(successful, reply);
 	case cmd_list:
 		return ListParseResponse(successful, reply);
 	case cmd_transfer:
@@ -1010,6 +1059,13 @@ int CSftpControlSocket::ProcessReply(bool successful, const wxString& reply /*=_
 int CSftpControlSocket::ResetOperation(int nErrorCode)
 {
 	LogMessage(Debug_Verbose, _T("CSftpControlSocket::ResetOperation(%d)"), nErrorCode);
+
+	if (m_pCurOpData && m_pCurOpData->opId == cmd_connect)
+	{
+		CSftpConnectOpData *pData = static_cast<CSftpConnectOpData *>(m_pCurOpData);
+		if (!pData->gotInitialReply)
+			LogMessage(::Error, _("fzsftp could not be started"));
+	}
 
 	return CControlSocket::ResetOperation(nErrorCode);
 }

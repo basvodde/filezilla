@@ -2851,7 +2851,7 @@ int psftp_main(int argc, char *argv[])
     char *batchfile = NULL;
     int errors = 0;
 
-    fzprintf(sftpVerbose, "fzSftp started");
+    fzprintf(sftpReply, "fzSftp started");
 
     flags = FLAG_STDERR | FLAG_INTERACTIVE
 #ifdef FLAG_SYNCAGENT

@@ -94,6 +94,8 @@ protected:
 
 	int ProcessReply(bool successful, const wxString& reply = _T(""));
 
+	int ConnectParseResponse(bool successful, const wxString& reply);
+
 	int FileTransferSend(int prevResult = FZ_REPLY_OK);
 	int FileTransferParseResponse(bool successful, const wxString& reply);
 
