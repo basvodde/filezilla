@@ -271,6 +271,11 @@ AH_BOTTOM([
   else
     AC_MSG_RESULT([no])
   fi
+
+  # CppUnit tests
+  # -------------
+
+  AM_PATH_CPPUNIT([1.10.2], [has_cppunit="yes"])
 fi
 
 # Everything translation related
@@ -353,6 +358,7 @@ AM_CONDITIONAL(MACAPPBUNDLE, [test "$macappbundle" = "yes"])
 AM_CONDITIONAL(MAKENSISSCRIPT, [test "$makensisscript" = "yes"])
 AM_CONDITIONAL(USE_BINRELOC, test "$use_binreloc" = "yes")
 AM_CONDITIONAL(ENABLE_PRECOMP, test "x$use_precomp" = "xyes")
+AM_CONDITIONAL(HAS_CPPUNIT, [test "$has_cppunit" = "yes"])
 
 AC_CONFIG_FILES(Makefile src/Makefile src/engine/Makefile src/tinyxml/Makefile
 src/interface/Makefile src/interface/resources/Makefile src/include/Makefile
@@ -360,5 +366,6 @@ locales/Makefile src/interface/resources/16x16/Makefile
 src/interface/resources/32x32/Makefile data/Makefile
 src/interface/resources/cyril/Makefile
 src/interface/resources/cyril/16x16/Makefile
-src/putty/Makefile src/putty/unix/Makefile src/putty/windows/Makefile)
+src/putty/Makefile src/putty/unix/Makefile src/putty/windows/Makefile
+tests/Makefile)
 AC_OUTPUT

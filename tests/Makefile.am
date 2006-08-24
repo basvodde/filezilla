@@ -1,0 +1,11 @@
+# Rules for the test code (use `make check` to execute)
+
+TESTS = test
+check_PROGRAMS = $(TESTS)
+
+test_SOURCES = test.cpp
+test_CPPFLAGS = $(WX_CPPFLAGS)
+test_CXXFLAGS = $(WX_CXXFLAGS_ONLY) $(CPPUNIT_CFLAGS)
+test_LDFLAGS = $(CPPUNIT_LIBS)
+test_LDFLAGS += ../src/engine/libengine.a $(WX_LIBS) $(IDN_LIB)
+test_DEPENDENCIES = ../src/engine/libengine.a
