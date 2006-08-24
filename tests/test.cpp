@@ -1,7 +1,9 @@
+#include "FileZilla.h"
 #include <iostream>
-#include <wx/wx.h>
-#include <wx/app.h>
-
+#include <string>
+#include <cppunit/extensions/TestFactoryRegistry.h>
+#include <cppunit/ui/text/TestRunner.h>
+	
 int main(int argc, char* argv[])
 {
 	if (!wxInitialize())
@@ -10,6 +12,11 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
+	CppUnit::TextUi::TestRunner runner;
+	CppUnit::TestFactoryRegistry &registry = CppUnit::TestFactoryRegistry::getRegistry();
+	runner.addTest(registry.makeTest());
+	bool wasSuccessful = runner.run("", false);
+
 	wxUninitialize();
-	return 0;
+	return wasSuccessful ? 0 : 1;
 }
