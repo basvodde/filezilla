@@ -40,3 +40,46 @@ CDirectoryListing& CDirectoryListing::operator=(const CDirectoryListing &a)
 
 }
 
+bool CDirentry::operator==(const CDirentry &op) const
+{
+	if (name != op.name)
+		return false;
+
+	if (size != op.size)
+		return false;
+
+	if (permissions != op.permissions)
+		return false;
+
+	if (ownerGroup != op.ownerGroup)
+		return false;
+
+	if (dir != op.dir)
+		return false;
+
+	if (link != op.link)
+		return false;
+
+	if (target != op.target)
+		return false;
+
+	if (hasDate != op.hasDate)
+		return false;
+
+	if (hasTime != op.hasTime)
+		return false;
+
+	if (date.day != op.date.day ||
+		date.month != op.date.month ||
+		date.year != op.date.year)
+		return false;
+
+	if (time.hour != op.time.hour ||
+		time.minute != op.time.minute)
+		return false;
+
+	if (unsure != op.unsure)
+		return false;
+
+	return true;
+}
