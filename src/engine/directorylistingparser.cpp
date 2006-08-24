@@ -535,8 +535,8 @@ protected:
 	wxChar* m_pLine;
 };
 
-CDirectoryListingParser::CDirectoryListingParser(CFileZillaEnginePrivate *pEngine, CControlSocket* pControlSocket, const CServer& server)
-	: m_pEngine(pEngine), m_pControlSocket(pControlSocket), m_server(server)
+CDirectoryListingParser::CDirectoryListingParser(CControlSocket* pControlSocket, const CServer& server)
+	: m_pControlSocket(pControlSocket), m_server(server)
 {
 	startOffset = 0;
 	m_curLine = 0;

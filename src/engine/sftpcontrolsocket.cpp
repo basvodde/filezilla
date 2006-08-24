@@ -847,7 +847,7 @@ int CSftpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 
 	if (pData->opState == list_list)
 	{
-		pData->pParser = new CDirectoryListingParser(m_pEngine, this, *m_pCurrentServer);
+		pData->pParser = new CDirectoryListingParser(this, *m_pCurrentServer);
 		Send(_T("ls"));
 		return FZ_REPLY_WOULDBLOCK;
 	}

@@ -749,7 +749,7 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 
 	delete m_pTransferSocket;
 	m_pTransferSocket = new CTransferSocket(m_pEngine, this, ::list);
-	pData->m_pDirectoryListingParser = new CDirectoryListingParser(m_pEngine, this, *m_pCurrentServer);
+	pData->m_pDirectoryListingParser = new CDirectoryListingParser(this, *m_pCurrentServer);
 	m_pTransferSocket->m_pDirectoryListingParser = pData->m_pDirectoryListingParser;
 
 	InitTransferStatus(-1, 0);
@@ -800,7 +800,7 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 
 		delete m_pTransferSocket;
 		m_pTransferSocket = new CTransferSocket(m_pEngine, this, ::list);
-		pData->m_pDirectoryListingParser = new CDirectoryListingParser(m_pEngine, this, *m_pCurrentServer);
+		pData->m_pDirectoryListingParser = new CDirectoryListingParser(this, *m_pCurrentServer);
 		m_pTransferSocket->m_pDirectoryListingParser = pData->m_pDirectoryListingParser;
 
 		InitTransferStatus(-1, 0);

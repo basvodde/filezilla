@@ -7,7 +7,7 @@ class CControlSocket;
 class CDirectoryListingParser
 {
 public:
-	CDirectoryListingParser(CFileZillaEnginePrivate *pEngine, CControlSocket* pControlSocket, const CServer& server);
+	CDirectoryListingParser(CControlSocket* pControlSocket, const CServer& server);
 	~CDirectoryListingParser();
 
 	CDirectoryListing* Parse(const CServerPath &path);
@@ -37,7 +37,6 @@ protected:
 	// Parse file sizes given like this: 123.4M
 	bool ParseComplexFileSize(CToken& token, wxLongLong& size);
 
-	CFileZillaEnginePrivate* m_pEngine;
 	CControlSocket* m_pControlSocket;
 
 	static std::map<wxString, int> m_MonthNamesMap;
