@@ -2001,8 +2001,15 @@ CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
 		else
 			m_DataList.erase(m_DataList.begin(), iter);
 
-		wxChar* buffer = m_pControlSocket->ConvToLocalBuffer(res);
-
+		wxChar* buffer;
+		if (m_pControlSocket)
+			buffer = m_pControlSocket->ConvToLocalBuffer(res);
+		else
+		{
+			wxString str(res, wxConvUTF8);
+			buffer = new wxChar[str.Len() + 1];
+			wxStrcpy(buffer, str.c_str());
+		}
 		delete [] res;
 
 		if (!buffer)
