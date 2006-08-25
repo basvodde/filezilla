@@ -42,7 +42,7 @@ CDirectoryListing& CDirectoryListing::operator=(const CDirectoryListing &a)
 
 wxString CDirentry::dump() const
 {
-	wxString str = wxString::Format(_T("name=%s\nsize=%s\npermissions=%s\nownerGroup=:%s\ndir=%d\nlink=%d\ntarget=%s\nhasDate=%d\nhasTime=%d\n"),
+	wxString str = wxString::Format(_T("name=%s\nsize=%s\npermissions=%s\nownerGroup=%s\ndir=%d\nlink=%d\ntarget=%s\nhasDate=%d\nhasTime=%d\n"),
 				name.c_str(), size.ToString().c_str(), permissions.c_str(), ownerGroup.c_str(), dir, link,
 				target.c_str(), hasDate, hasTime, unsure);
 
