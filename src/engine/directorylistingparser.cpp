@@ -12,16 +12,6 @@ bool CDirectoryListingParser::m_MonthNamesMapInitialized = false;
 //#define LISTDEBUG
 #ifdef LISTDEBUG
 static char data[][110]={
-	"-rw-r--r--   1 root     other        531 3 29 03:26 01-unix-std file",
-	"dr-xr-xr-x   2 root     other        512 Apr  8  1994 02-unix-std dir",
-	"dr-xr-xr-x   2 root                  512 Apr  8  1994 03-unix-nogroup dir",
-	"lrwxrwxrwx   1 root     other          7 Jan 25 00:17 04-unix-std link -> usr/bin",
-		
-	/* Some listings with uncommon date/time format: */
-	"-rw-r--r--   1 root     other        531 09-26 2000 05-unix-date file",
-	"-rw-r--r--   1 root     other        531 09-26 13:45 06-unix-date file",
-	"-rw-r--r--   1 root     other        531 2005-06-07 21:22 07-unix-date file",
-		
 	/* Unix style with size information in kilobytes */
 	"-rw-r--r--   1 root     other  33.5k Oct 5 21:22 08-unix-namedsize file",
 
@@ -1149,14 +1139,17 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 		entry.time.hour = hour;
 		entry.time.minute = minute;
 
-		// Some servers use times only for files nweer than 6 months,
-		int year = wxDateTime::Now().GetYear();
-		int now = wxDateTime::Now().GetDay() + 31 * wxDateTime::Now().GetMonth();
-		int file = (entry.date.month - 1) * 31 + (entry.date.day - 1);
-		if (now > file)
-			entry.date.year = year;
-		else
-			entry.date.year = year - 1;
+		// Some servers use times only for files newer than 6 months
+		if (!entry.date.year)
+		{
+			int year = wxDateTime::Now().GetYear();
+			int now = wxDateTime::Now().GetDay() + 31 * wxDateTime::Now().GetMonth();
+			int file = (entry.date.month - 1) * 31 + (entry.date.day - 1);
+			if (now > file)
+				entry.date.year = year;
+			else
+				entry.date.year = year - 1;
+		}
 	}
 	else if (!entry.date.year)
 	{
