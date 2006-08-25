@@ -40,6 +40,20 @@ CDirectoryListing& CDirectoryListing::operator=(const CDirectoryListing &a)
 
 }
 
+wxString CDirentry::dump() const
+{
+	wxString str = wxString::Format(_T("name=%s\nsize=%s\npermissions=%s\nownerGroup=:%s\ndir=%d\nlink=%d\ntarget=%s\nhasDate=%d\nhasTime=%d\n"),
+				name.c_str(), size.ToString().c_str(), permissions.c_str(), ownerGroup.c_str(), dir, link,
+				target.c_str(), hasDate, hasTime, unsure);
+
+	if (hasDate)
+		str += wxString::Format(_T("date={%d, %d, %d}\n"), date.year, date.month, date.day);
+	if (hasTime)
+		str += wxString::Format(_T("time={%d, %d}\n"), time.hour, time.minute);
+	str += wxString::Format(_T("unsure=%d\n"), unsure);
+	return str;
+}
+
 bool CDirentry::operator==(const CDirentry &op) const
 {
 	if (name != op.name)
@@ -69,14 +83,20 @@ bool CDirentry::operator==(const CDirentry &op) const
 	if (hasTime != op.hasTime)
 		return false;
 
-	if (date.day != op.date.day ||
-		date.month != op.date.month ||
-		date.year != op.date.year)
-		return false;
+	if (hasDate)
+	{
+		if (date.day != op.date.day ||
+			date.month != op.date.month ||
+			date.year != op.date.year)
+			return false;
+	}
 
-	if (time.hour != op.time.hour ||
-		time.minute != op.time.minute)
-		return false;
+	if (hasTime)
+	{
+		if (time.hour != op.time.hour ||
+			time.minute != op.time.minute)
+			return false;
+	}
 
 	if (unsure != op.unsure)
 		return false;

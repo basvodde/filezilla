@@ -30,6 +30,7 @@ public:
 
 	bool unsure; // May be true on cached items if any changes were made to the file
 
+	wxString dump() const;
 	bool operator==(const CDirentry &op) const;
 };
 
