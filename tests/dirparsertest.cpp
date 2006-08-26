@@ -337,7 +337,7 @@ void CDirectoryListingParserTest::testIndividual()
 		const char* str = iter->data.c_str();
 		const int len = strlen(str);
 		char* data = new char[len];
-		strcpy(data, str);
+		memcpy(data, str, len);
 		parser.AddData(data, len);
 
 		CDirectoryListing* pListing = parser.Parse(CServerPath());
