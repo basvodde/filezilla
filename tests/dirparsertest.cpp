@@ -167,6 +167,128 @@ void CDirectoryListingParserTest::setUp()
 			}
 		});
 
+
+	// Unix style with size information in kilobytes
+	m_entries.push_back((t_entry){
+			"-rw-r--r--   1 root     other  33.5k Oct 5 21:22 08-unix-namedsize file",
+			{
+				_T("08-unix-namedsize file"),
+				335 * 1024 / 10,
+				_T("-rw-r--r--"),
+				_T("root other"),
+				false,
+				false,
+				_T(""),
+				true,
+				true,
+				{(10 > month) ? year - 1 : year, 10, 5},
+				{21, 22},
+				false
+			}
+		});
+
+	// NetWare style listings
+	// ----------------------
+
+	m_entries.push_back((t_entry){
+			"d [R----F--] supervisor            512       Jan 16 18:53    09-netware dir",
+			{
+				_T("09-netware dir"),
+				512,
+				_T("d [R----F--]"),
+				_T("supervisor"),
+				true,
+				false,
+				_T(""),
+				true,
+				true,
+				{(1 > month) ? year - 1 : year, 1, 16},
+				{18, 53},
+				false
+			}
+		});
+
+	m_entries.push_back((t_entry){
+			"- [R----F--] rhesus             214059       Oct 20 15:27    10-netware file",
+			{
+				_T("10-netware file"),
+				214059,
+				_T("- [R----F--]"),
+				_T("rhesus"),
+				false,
+				false,
+				_T(""),
+				true,
+				true,
+				{(10 > month) ? year - 1 : year, 10, 20},
+				{15, 27},
+				false
+			}
+		});
+		
+	// NetPresenz for the Mac
+	// ----------------------
+
+	// Actually this one isn't parse properly:
+	// The numerical username is mistaken as size. However,
+	// this is ambigous to the normal unix style listing.
+	// It's not possible to recognize both formats the right way.
+	m_entries.push_back((t_entry){
+			"-------r--         326  1391972  1392298 Nov 22  1995 11-netpresenz file",
+			{
+				_T("11-netpresenz file"),
+				1392298,
+				_T("-------r--"),
+				_T("1391972"),
+				false,
+				false,
+				_T(""),
+				true,
+				false,
+				{1995, 11, 22},
+				{0, 0},
+				false
+			}
+		});
+
+	m_entries.push_back((t_entry){
+			"drwxrwxr-x               folder        2 May 10  1996 12-netpresenz dir",
+			{
+				_T("12-netpresenz dir"),
+				2,
+				_T("drwxrwxr-x"),
+				_T("folder"),
+				true,
+				false,
+				_T(""),
+				true,
+				false,
+				{1996, 5, 10},
+				{0, 0},
+				false
+			}
+		});
+
+	// A format with domain field some windows servers send
+	m_entries.push_back((t_entry){
+			"-rw-r--r--   1 group domain user 531 Jan 29 03:26 13-unix-domain file",
+			{
+				_T("13-unix-domain file"),
+				531,
+				_T("-rw-r--r--"),
+				_T("group domain user"),
+				false,
+				false,
+				_T(""),
+				true,
+				true,
+				{(1 > month) ? year - 1 : year, 1, 29},
+				{3, 26},
+				false
+			}
+		});
+
+
 /*
 	wxString name;
 	wxLongLong size;
@@ -221,6 +343,7 @@ void CDirectoryListingParserTest::testIndividual()
 		CDirectoryListing* pListing = parser.Parse(CServerPath());
 
 		wxString msg = wxString::Format(_T("Data: %s, count: %d"), wxString(iter->data.c_str(), wxConvUTF8).c_str(), pListing->m_entryCount);
+		msg.Replace(_T("\r"), _T(""));
 		msg.Replace(_T("\n"), _T(""));
 		CPPUNIT_ASSERT_MESSAGE((const char*)msg.mb_str(), pListing->m_entryCount == 1);
 
