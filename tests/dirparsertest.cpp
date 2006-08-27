@@ -3,6 +3,13 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <list>
 
+/*
+ * This testsuite asserts the correctness of the directory listing parser.
+ * It's main purpose is to ensure that all known formats are recognized and
+ * parsed as expected. Due to the high amount of variety and unfortunately
+ * also ambiguity, the parser is very fragile.
+ */
+
 typedef struct
 {
 	std::string data;
@@ -12,21 +19,35 @@ typedef struct
 class CDirectoryListingParserTest : public CppUnit::TestFixture
 {
 	CPPUNIT_TEST_SUITE(CDirectoryListingParserTest);
-	CPPUNIT_TEST(testIndividual);
+	InitEntries();
+	for (unsigned int i = 0; i < m_entries.size(); i++)
+		CPPUNIT_TEST(testIndividual);
+	CPPUNIT_TEST(testAll);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
 	void setUp();
-	void tearDown();
+	void tearDown() {}
 
 	void testIndividual();
+	void testAll();
 
-	std::vector<t_entry> m_entries;
+	static std::vector<t_entry> m_entries;
+
+	static wxCriticalSection m_sync;
+
+protected:
+	static void InitEntries();
+
+	t_entry m_entry;
 };
+
+wxCriticalSection CDirectoryListingParserTest::m_sync;
+std::vector<t_entry> CDirectoryListingParserTest::m_entries;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(CDirectoryListingParserTest);
 
-void CDirectoryListingParserTest::setUp()
+void CDirectoryListingParserTest::InitEntries()
 {
 	const int year = wxDateTime::Now().GetYear();
 	const int month = wxDateTime::Now().GetMonth();
@@ -231,7 +252,7 @@ void CDirectoryListingParserTest::setUp()
 
 	// Actually this one isn't parse properly:
 	// The numerical username is mistaken as size. However,
-	// this is ambigous to the normal unix style listing.
+	// this is ambiguous to the normal unix style listing.
 	// It's not possible to recognize both formats the right way.
 	m_entries.push_back((t_entry){
 			"-------r--         326  1391972  1392298 Nov 22  1995 11-netpresenz file",
@@ -331,9 +352,9 @@ void CDirectoryListingParserTest::setUp()
 	// ----------------------------------
 
 	m_entries.push_back((t_entry){
-			"04-27-00  12:09PM       <DIR>          16-dos-dateambigious dir",
+			"04-27-00  12:09PM       <DIR>          16-dos-dateambiguous dir",
 			{
-				_T("16-dos-dateambigious dir"),
+				_T("16-dos-dateambiguous dir"),
 				-1,
 				_T(""),
 				_T(""),
@@ -348,11 +369,11 @@ void CDirectoryListingParserTest::setUp()
 			}
 		});
 	
-	// Ambigious date and AM/PM crap. Some evil manager must have forced the poor devs to implement this
+	// Ambiguous date and AM/PM crap. Some evil manager must have forced the poor devs to implement this
 	m_entries.push_back((t_entry){
-			"04-06-00  03:47PM                  589 17-dos-dateambigious file",
+			"04-06-00  03:47PM                  589 17-dos-dateambiguous file",
 			{
-				_T("17-dos-dateambigious file"),
+				_T("17-dos-dateambiguous file"),
 				589,
 				_T(""),
 				_T(""),
@@ -422,6 +443,238 @@ void CDirectoryListingParserTest::setUp()
 			}
 		});
 
+	// VShell servers
+	// --------------
+
+	m_entries.push_back((t_entry){
+			"206876  Apr 04, 2000 21:06 21-vshell-old file",
+			{
+				_T("21-vshell-old file"),
+				206876,
+				_T(""),
+				_T(""),
+				false,
+				false,
+				_T(""),
+				true,
+				true,
+				{2000, 4, 4},
+				{21, 6},
+				false
+			}
+		});
+	
+	m_entries.push_back((t_entry){
+			"0  Dec 12, 2002 02:13 22-vshell-old dir/",
+			{
+				_T("22-vshell-old dir"),
+				0,
+				_T(""),
+				_T(""),
+				true,
+				false,
+				_T(""),
+				true,
+				true,
+				{2002, 12, 12},
+				{2, 13},
+				false
+			}
+		});
+	
+	/* This type of directory listings is sent by some newer versions of VShell
+	 * both year and time in one line is uncommon. */
+	m_entries.push_back((t_entry){
+			"-rwxr-xr-x    1 user group        9 Oct 08, 2002 09:47 23-vshell-new file",
+			{
+				_T("23-vshell-new file"),
+				9,
+				_T("-rwxr-xr-x"),
+				_T("user group"),
+				false,
+				false,
+				_T(""),
+				true,
+				true,
+				{2002, 10, 8},
+				{9, 47},
+				false
+			}
+		});
+
+	// OS/2 server format
+	// ------------------
+	
+	// This server obviously isn't Y2K aware
+	m_entries.push_back((t_entry){
+			"36611      A    04-23-103  10:57  24-os2 file",
+			{
+				_T("24-os2 file"),
+				36611,
+				_T(""),
+				_T(""),
+				false,
+				false,
+				_T(""),
+				true,
+				true,
+				{2003, 4, 23},
+				{10, 57},
+				false
+			}
+		});
+
+	m_entries.push_back((t_entry){
+			" 1123      A    07-14-99   12:37  25-os2 file",
+			{
+				_T("25-os2 file"),
+				1123,
+				_T(""),
+				_T(""),
+				false,
+				false,
+				_T(""),
+				true,
+				true,
+				{1999, 7, 14},
+				{12, 37},
+				false
+			}
+		});
+
+	m_entries.push_back((t_entry){
+			"    0 DIR       02-11-103  16:15  26-os2 dir",
+			{
+				_T("26-os2 dir"),
+				0,
+				_T(""),
+				_T(""),
+				true,
+				false,
+				_T(""),
+				true,
+				true,
+				{2003, 2, 11},
+				{16, 15},
+				false
+			}
+		});
+
+	m_entries.push_back((t_entry){
+			" 1123 DIR  A    10-05-100  23:38  27-os2 dir",
+			{
+				_T("27-os2 dir"),
+				1123,
+				_T(""),
+				_T(""),
+				true,
+				false,
+				_T(""),
+				true,
+				true,
+				{2000, 10, 5},
+				{23, 38},
+				false
+			}
+		});
+
+	// Localized date formats
+	// ----------------------
+
+	m_entries.push_back((t_entry){
+			"dr-xr-xr-x   2 root     other      2235 26. Juli, 20:10 28-datetest-ger dir",
+			{
+				_T("28-datetest-ger dir"),
+				2235,
+				_T("dr-xr-xr-x"),
+				_T("root other"),
+				true,
+				false,
+				_T(""),
+				true,
+				true,
+				{(7 > month) ? year - 1 : year, 7, 26},
+				{20, 10},
+				false
+			}
+		});
+
+	m_entries.push_back((t_entry){
+			"-r-xr-xr-x   2 root     other      2235 2.   Okt.  2003 29-datetest-ger file",
+			{
+				_T("29-datetest-ger file"),
+				2235,
+				_T("-r-xr-xr-x"),
+				_T("root other"),
+				false,
+				false,
+				_T(""),
+				true,
+				false,
+				{2003, 10, 2},
+				{0, 0},
+				false
+			}
+		});
+
+	m_entries.push_back((t_entry){
+			"-r-xr-xr-x   2 root     other      2235 1999/10/12 17:12 30-datetest file",
+			{
+				_T("30-datetest file"),
+				2235,
+				_T("-r-xr-xr-x"),
+				_T("root other"),
+				false,
+				false,
+				_T(""),
+				true,
+				true,
+				{1999, 10, 12},
+				{17, 12},
+				false
+			}
+		});
+
+	m_entries.push_back((t_entry){
+			"-r-xr-xr-x   2 root     other      2235 24-04-2003 17:12 31-datetest file",
+			{
+				_T("31-datetest file"),
+				2235,
+				_T("-r-xr-xr-x"),
+				_T("root other"),
+				false,
+				false,
+				_T(""),
+				true,
+				true,
+				{2003, 4, 24},
+				{17, 12},
+				false
+			}
+		});
+
+	// Japanese listing
+	// Remark: I'v no idea in which encoding the foreign characters are, but
+	// it's not valid UTF-8. Parser has to be able to cope with it somehow.
+	m_entries.push_back((t_entry){
+			"-rw-r--r--   1 root       sys           8473  4\x8c\x8e 18\x93\xfa 2003\x94\x4e 32-datatest-japanese file",
+			{
+				_T("32-datatest-japanese file"),
+				8473,
+				_T("-rw-r--r--"),
+				_T("root sys"),
+				false,
+				false,
+				_T(""),
+				true,
+				false,
+				{2003, 4, 18},
+				{0, 0},
+				false
+			}
+		});
+
+
 /*
 	wxString name;
 	wxLongLong size;
@@ -455,33 +708,67 @@ void CDirectoryListingParserTest::setUp()
 		iter->data += "\r\n";
 }
 
-void CDirectoryListingParserTest::tearDown()
-{
-	m_entries.clear();
-}
-
 void CDirectoryListingParserTest::testIndividual()
 {
+	m_sync.Enter();
+
+	static int index = 0;
+	const t_entry &entry = m_entries[index++];
+
+	m_sync.Leave();
+
 	const CServer server;
+
+	CDirectoryListingParser parser(0, server);
+
+	const char* str = entry.data.c_str();
+	const int len = strlen(str);
+	char* data = new char[len];
+	memcpy(data, str, len);
+	parser.AddData(data, len);
+
+	CDirectoryListing* pListing = parser.Parse(CServerPath());
+
+	wxString msg = wxString::Format(_T("Data: %s, count: %d"), wxString(entry.data.c_str(), wxConvUTF8).c_str(), pListing->m_entryCount);
+	msg.Replace(_T("\r"), _T(""));
+	msg.Replace(_T("\n"), _T(""));
+	CPPUNIT_ASSERT_MESSAGE((const char*)msg.mb_str(), pListing->m_entryCount == 1);
+
+	msg = wxString::Format(_T("Data: %s  Expected:\n%s\n  Got:\n%s"), wxString(entry.data.c_str(), wxConvUTF8).c_str(), entry.reference.dump().c_str(), pListing->m_pEntries[0].dump().c_str());
+
+	CPPUNIT_ASSERT_MESSAGE((const char*)msg.mb_str(), pListing->m_pEntries[0] == entry.reference);
+
+	delete pListing;
+}
+
+void CDirectoryListingParserTest::testAll()
+{
+	const CServer server;
+	CDirectoryListingParser parser(0, server);
 	for (std::vector<t_entry>::const_iterator iter = m_entries.begin(); iter != m_entries.end(); iter++)
 	{
-		CDirectoryListingParser parser(0, server);
-
 		const char* str = iter->data.c_str();
 		const int len = strlen(str);
 		char* data = new char[len];
 		memcpy(data, str, len);
 		parser.AddData(data, len);
-
-		CDirectoryListing* pListing = parser.Parse(CServerPath());
-
-		wxString msg = wxString::Format(_T("Data: %s, count: %d"), wxString(iter->data.c_str(), wxConvUTF8).c_str(), pListing->m_entryCount);
-		msg.Replace(_T("\r"), _T(""));
-		msg.Replace(_T("\n"), _T(""));
-		CPPUNIT_ASSERT_MESSAGE((const char*)msg.mb_str(), pListing->m_entryCount == 1);
-
-		msg = wxString::Format(_T("Data: %s  Expected:\n%s\n  Got:\n%s"), wxString(iter->data.c_str(), wxConvUTF8).c_str(), iter->reference.dump().c_str(), pListing->m_pEntries[0].dump().c_str());
-
-		CPPUNIT_ASSERT_MESSAGE((const char*)msg.mb_str(), pListing->m_pEntries[0] == iter->reference);
 	}
+	CDirectoryListing* pListing = parser.Parse(CServerPath());
+
+	CPPUNIT_ASSERT(pListing->m_entryCount == m_entries.size());
+
+	unsigned int i = 0;
+	for (std::vector<t_entry>::const_iterator iter = m_entries.begin(); iter != m_entries.end(); iter++, i++)
+	{
+		wxString msg = wxString::Format(_T("Data: %s  Expected:\n%s\n  Got:\n%s"), wxString(iter->data.c_str(), wxConvUTF8).c_str(), iter->reference.dump().c_str(), pListing->m_pEntries[i].dump().c_str());
+
+		CPPUNIT_ASSERT_MESSAGE((const char*)msg.mb_str(), pListing->m_pEntries[i] == iter->reference);
+	}
+
+
+	delete pListing;
+}
+
+void CDirectoryListingParserTest::setUp()
+{
 }

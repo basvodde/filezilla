@@ -12,30 +12,6 @@ bool CDirectoryListingParser::m_MonthNamesMapInitialized = false;
 //#define LISTDEBUG
 #ifdef LISTDEBUG
 static char data[][110]={
-	/* This one is used by SSH-2.0-VShell_2_1_2_143, this is the old VShell format */
-	"206876  Apr 04, 2000 21:06 21-vshell-old file",
-	"0  Dec 12, 2002 02:13 22-vshell-old dir/",
-
-	/* This type of directory listings is sent by some newer versions of VShell
-	 * both year and time in one line is uncommon.
-	 */
-	"-rwxr-xr-x    1 user group        9 Oct 08, 2002 09:47 23-vshell-new file",
-
-	/* Next ones come from an OS/2 server. The server obviously isn't Y2K aware */
-	"36611      A    04-23-103  10:57  24-os2 file",
-	" 1123      A    07-14-99   12:37  25-os2 file",
-	"    0 DIR       02-11-103  16:15  26-os2 dir",
-	" 1123 DIR  A    10-05-100  23:38  27-os2 dir",
-
-	/* Some servers send localized date formats, here the German one: */
-	"dr-xr-xr-x   2 root     other      2235 26. Juli, 20:10 28-datetest-ger dir",
-	"-r-xr-xr-x   2 root     other      2235 2.   Okt.  2003 29-datetest-ger file",
-	"-r-xr-xr-x   2 root     other      2235 1999/10/12 17:12 30-datetest file",
-	"-r-xr-xr-x   2 root     other      2235 24-04-2003 17:12 31-datetest file",
-
-	/* Here a Japanese one: */
-	"-rw-r--r--   1 root       sys           8473  4\x8c\x8e 18\x93\xfa 2003\x94\x4e 32-datatest-japanese file",
-
 	/* VMS style listings */
 	"33-vms-dir.DIR;1  1 19-NOV-2001 21:41 [root,root] (RWE,RWE,RE,RE)",
 	"34-vms-file;1       155   2-JUL-2003 10:30:13.64",
@@ -552,8 +528,8 @@ CDirectoryListingParser::CDirectoryListingParser(CControlSocket* pControlSocket,
 		m_MonthNamesMap[_T("m\xe4r")] = 3;
 		m_MonthNamesMap[_T("m\xe4rz")] = 3;
 		m_MonthNamesMap[_T("mai")] = 5;
-		m_MonthNamesMap[_T("juni")] = 5;
-		m_MonthNamesMap[_T("juli")] = 6;
+		m_MonthNamesMap[_T("juni")] = 6;
+		m_MonthNamesMap[_T("juli")] = 7;
 		m_MonthNamesMap[_T("okt")] = 10;
 		m_MonthNamesMap[_T("dez")] = 12;
 
@@ -1826,6 +1802,10 @@ bool CDirectoryListingParser::ParseOther(CLine *pLine, CDirentry &entry)
 			else
 				entry.dir = false;
 		}
+		entry.link = false;
+		entry.target = _T("");
+		entry.ownerGroup = _T("");
+		entry.permissions = _T("");
 	}
 
 	return true;
@@ -1991,6 +1971,8 @@ CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
 		else
 		{
 			wxString str(res, wxConvUTF8);
+			if (str == _T(""))
+				str = wxString(res, wxConvLocal);
 			buffer = new wxChar[str.Len() + 1];
 			wxStrcpy(buffer, str.c_str());
 		}
