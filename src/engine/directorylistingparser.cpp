@@ -12,24 +12,6 @@ bool CDirectoryListingParser::m_MonthNamesMapInitialized = false;
 //#define LISTDEBUG
 #ifdef LISTDEBUG
 static char data[][110]={
-	/* Unix style with size information in kilobytes */
-	"-rw-r--r--   1 root     other  33.5k Oct 5 21:22 08-unix-namedsize file",
-
-	/* Also NetWare: */
-	"d [R----F--] supervisor            512       Jan 16 18:53    09-netware dir",
-	"- [R----F--] rhesus             214059       Oct 20 15:27    10-netware file",
-		
-	/* Also NetPresenz for the Mac: */
-	"-------r--         326  1391972  1392298 Nov 22  1995 11-netpresenz file",
-	"drwxrwxr-x               folder        2 May 10  1996 12-netpresenz dir",
-
-	/* A format with domain field some windows servers send */
-	"-rw-r--r--   1 group domain user 531 Jan 29 03:26 13-unix-domain file",
-
-	/* EPLF directory listings */
-	"+i8388621.48594,m825718503,r,s280,\t14-eplf file",
-	"+i8388621.50690,m824255907,/,\t15-eplf dir",
-
 	/* MSDOS type listing used by IIS */
 	"04-27-00  12:09PM       <DIR>          16-dos-dateambigious dir",
 	"04-14-00  03:47PM                  589 17-dos-dateambigious file",
@@ -1466,6 +1448,8 @@ bool CDirectoryListingParser::ParseAsEplf(CLine *pLine, CDirentry &entry)
 
 	entry.name = token.GetString().Mid(pos + 1);
 
+	entry.ownerGroup = _T("");
+	entry.permissions = _T("");
 	entry.dir = false;
 	entry.link = false;
 	entry.hasDate = false;
@@ -1473,10 +1457,21 @@ bool CDirectoryListingParser::ParseAsEplf(CLine *pLine, CDirentry &entry)
 	entry.size = -1;
 	
 	int fact = 1;
-	int separator = token.Find(',', fact);
-	while (separator != -1 && separator < pos)
+	while (fact < pos)
 	{
-		int len = separator - fact;
+		int separator = token.Find(',', fact);
+		int len;
+		if (separator == -1)
+			len = pos - fact;
+		else
+			len = separator - fact;
+
+		if (!len)
+		{
+			fact++;
+			continue;
+		}
+
 		char type = token[fact];
 
 		if (type == '/')
@@ -1488,7 +1483,7 @@ bool CDirectoryListingParser::ParseAsEplf(CLine *pLine, CDirentry &entry)
 			wxLongLong number = token.GetNumber(fact + 1, len - 1);
 			if (number < 0)
 				return false;
-			wxDateTime dateTime(number);
+			wxDateTime dateTime((time_t)number.GetValue());
 			entry.date.year = dateTime.GetYear();
 			entry.date.month = dateTime.GetMonth();
 			entry.date.day = dateTime.GetDay();
@@ -1501,8 +1496,7 @@ bool CDirectoryListingParser::ParseAsEplf(CLine *pLine, CDirentry &entry)
 		else if (type == 'u' && len > 2 && token[fact + 1] == 'p')
 			entry.permissions = token.GetString().Mid(fact + 2, len - 2);
 
-		fact = separator + 1;
-		separator = token.Find(',', fact);
+		fact += len + 1;
 	}
 
 	return true;
@@ -1716,7 +1710,7 @@ bool CDirectoryListingParser::ParseOther(CLine *pLine, CDirentry &entry)
 		wxLongLong number = token.GetNumber();
 		if (number < 0)
 			return false;
-		wxDateTime dateTime(number);
+		wxDateTime dateTime((time_t)number.GetValue());
 		entry.date.year = dateTime.GetYear();
 		entry.date.month = dateTime.GetMonth();
 		entry.date.day = dateTime.GetDay();
@@ -2347,20 +2341,20 @@ bool CDirectoryListingParser::ParseComplexFileSize(CToken& token, wxLongLong& si
 	{
 	case 'k':
 	case 'K':
-		size *= 1000;
+		size *= 1024;
 		break;
 	case 'm':
 	case 'M':
-		size *= 1000 * 1000;
+		size *= 1024 * 1024;
 		break;
 	case 'g':
 	case 'G':
-		size *= 1000 * 1000 * 1000;
+		size *= 1024 * 1024 * 1024;
 		break;
 	case 't':
 	case 'T':
-		size *= 1000 * 1000;
-		size *= 1000 * 1000;
+		size *= 1024 * 1024;
+		size *= 1024 * 1024;
 		break;
 	case 'b':
 	case 'B':

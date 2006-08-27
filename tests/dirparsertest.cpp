@@ -288,6 +288,44 @@ void CDirectoryListingParserTest::setUp()
 			}
 		});
 
+	// EPLF directory listings
+	// -----------------------
+
+	m_entries.push_back((t_entry){
+			"+i8388621.48594,m825718503,r,s280,up755\t14-eplf file",
+			{
+				_T("14-eplf file"),
+				280,
+				_T("755"),
+				_T(""),
+				false,
+				false,
+				_T(""),
+				true,
+				true,
+				{1996, 2, 1},
+				{23, 15},
+				false
+			}
+		});
+
+	m_entries.push_back((t_entry){
+        	"+i8388621.50690,m824255907,/,\t15-eplf dir",
+			{
+				_T("15-eplf dir"),
+				-1,
+				_T(""),
+				_T(""),
+				true,
+				false,
+				_T(""),
+				true,
+				true,
+				{1996, 1, 14},
+				{0, 58},
+				false
+			}
+		});
 
 /*
 	wxString name;
