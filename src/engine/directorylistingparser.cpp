@@ -12,17 +12,6 @@ bool CDirectoryListingParser::m_MonthNamesMapInitialized = false;
 //#define LISTDEBUG
 #ifdef LISTDEBUG
 static char data[][110]={
-	/* MSDOS type listing used by IIS */
-	"04-27-00  12:09PM       <DIR>          16-dos-dateambigious dir",
-	"04-14-00  03:47PM                  589 17-dos-dateambigious file",
-
-	/* Another type of MSDOS style listings */
-	"2002-09-02  18:48       <DIR>          18-dos-longyear dir",
-	"2002-09-02  19:06                9,730 19-dos-longyear file",
-
-	/* Numerical Unix style format */
-	"0100644   500  101   12345    123456789       20-unix-numerical file",
-
 	/* This one is used by SSH-2.0-VShell_2_1_2_143, this is the old VShell format */
 	"206876  Apr 04, 2000 21:06 21-vshell-old file",
 	"0  Dec 12, 2002 02:13 22-vshell-old dir/",
@@ -1395,6 +1384,11 @@ bool CDirectoryListingParser::ParseAsDos(CLine *pLine, CDirentry &entry)
 	if (!pLine->GetToken(++index, token, true))
 		return false;
 	entry.name = token.GetString();
+
+	entry.link = false;
+	entry.target = _T("");
+	entry.ownerGroup = _T("");
+	entry.permissions = _T("");
 	
 	return true;
 }
@@ -1725,6 +1719,9 @@ bool CDirectoryListingParser::ParseOther(CLine *pLine, CDirentry &entry)
 			return false;
 
 		entry.name = token.GetString();
+
+		entry.link = false;
+		entry.target = _T("");
 	}
 	else
 	{

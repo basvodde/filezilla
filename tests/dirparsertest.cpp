@@ -327,6 +327,101 @@ void CDirectoryListingParserTest::setUp()
 			}
 		});
 
+	// MSDOS type listing used by old IIS
+	// ----------------------------------
+
+	m_entries.push_back((t_entry){
+			"04-27-00  12:09PM       <DIR>          16-dos-dateambigious dir",
+			{
+				_T("16-dos-dateambigious dir"),
+				-1,
+				_T(""),
+				_T(""),
+				true,
+				false,
+				_T(""),
+				true,
+				true,
+				{2000, 4, 27},
+				{12, 9},
+				false
+			}
+		});
+	
+	// Ambigious date and AM/PM crap. Some evil manager must have forced the poor devs to implement this
+	m_entries.push_back((t_entry){
+			"04-06-00  03:47PM                  589 17-dos-dateambigious file",
+			{
+				_T("17-dos-dateambigious file"),
+				589,
+				_T(""),
+				_T(""),
+				false,
+				false,
+				_T(""),
+				true,
+				true,
+				{2000, 4, 6},
+				{15, 47},
+				false
+			}
+		});
+
+	m_entries.push_back((t_entry){
+			"2002-09-02  18:48       <DIR>          18-dos-longyear dir",
+			{
+				_T("18-dos-longyear dir"),
+				-1,
+				_T(""),
+				_T(""),
+				true,
+				false,
+				_T(""),
+				true,
+				true,
+				{2002, 9, 2},
+				{18, 48},
+				false
+			}
+		});
+
+	m_entries.push_back((t_entry){
+			"2002-09-02  19:06                9,730 19-dos-longyear file",
+			{
+				_T("19-dos-longyear file"),
+				9730,
+				_T(""),
+				_T(""),
+				false,
+				false,
+				_T(""),
+				true,
+				true,
+				{2002, 9, 2},
+				{19, 6},
+				false
+			}
+		});
+
+	// Numerical unix style listing
+	m_entries.push_back((t_entry){
+			"0100644   500  101   12345    123456789       20-unix-numerical file",
+			{
+				_T("20-unix-numerical file"),
+				12345,
+				_T("0100644"),
+				_T("500 101"),
+				false,
+				false,
+				_T(""),
+				true,
+				true,
+				{1973, 10, 29},
+				{22, 33},
+				false
+			}
+		});
+
 /*
 	wxString name;
 	wxLongLong size;
