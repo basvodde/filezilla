@@ -42,7 +42,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Number of Transfers", number, _T("2") },
 	{ "Transfer Retry Count", number, _T("5") },
 	{ "Ascii Binary mode", number, _T("0") },
-	{ "Auto Ascii files", string, _T("am|asp|bat|c|cfm|cgi|conf|cpp|css|dhtml|diz|h|hpp|htm|html|in|inc|js|mak|nfo|pas|patch|php|phtml|pl|py|qmail|sh|shtml|sql|tcl|tpl|txt|vbs|xml") },
+	{ "Auto Ascii files", string, _T("am|asp|bat|c|cfm|cgi|conf|cpp|css|dhtml|diz|h|hpp|htm|html|in|inc|js|m4|mak|nfo|nsi|pas|patch|php|phtml|pl|po|py|qmail|sh|shtml|sql|tcl|tpl|txt|vbs|xml|xrc") },
 	{ "Auto Ascii no extension", number, _T("1") },
 	{ "Auto Ascii dotfiles", number, _T("1") },
 	{ "Theme", string, _T("") },
@@ -55,7 +55,10 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Last automatic update check", string, _T("") },
 	{ "Update Check New Version", string, _T("") },
 	{ "Update Check Package URL", string, _T("") },
-	{ "Show debug menu", number, _T("0") }
+	{ "Show debug menu", number, _T("0") },
+	{ "File exists action download", number, _T("0") },
+	{ "File exists action upload", number, _T("0") },
+	{ "Allow ascii resume", number, _T("0") }
 };
 
 COptions::COptions()
