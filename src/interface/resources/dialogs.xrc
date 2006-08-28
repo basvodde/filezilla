@@ -2809,4 +2809,341 @@
       </object>
     </object>
   </object>
+  <object class="wxDialog" name="ID_DEFAULFILEEXISTSDLG">
+    <title>Default file exists action</title>
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>Select default action to perform if target file of a transfer already exists.</label>
+            </object>
+          </object>
+          <object class="spacer">
+            <size>0,5</size>
+          </object>
+          <object class="sizeritem">
+            <object class="wxGridSizer">
+              <object class="sizeritem">
+                <object class="wxStaticBoxSizer">
+                  <label>Downloads</label>
+                  <orient>wxVERTICAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxGridSizer">
+                      <object class="sizeritem">
+                        <object class="wxRadioButton" name="ID_DL_DEFAULT">
+                          <label>Use &amp;default</label>
+                          <style>wxRB_GROUP</style>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxRadioButton" name="ID_DL_ASK">
+                          <label>&amp;Ask for action</label>
+                          <style>wxRB_GROUP</style>
+                          <hidden>1</hidden>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxRadioButton" name="ID_DL_OVERWRITE">
+                          <label>&amp;Overwrite</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxRadioButton" name="ID_DL_OVERWRITEIFNEWER">
+                          <label>Ov&amp;erwrite if newer</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxRadioButton" name="ID_DL_RESUME">
+                          <label>&amp;Resume</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxRadioButton" name="ID_DL_RENAME">
+                          <label>Re&amp;name</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxRadioButton" name="ID_DL_SKIP">
+                          <label>S&amp;kip</label>
+                        </object>
+                      </object>
+                      <cols>1</cols>
+                      <vgap>5</vgap>
+                    </object>
+                    <flag>wxALL</flag>
+                    <border>3</border>
+                  </object>
+                </object>
+                <option>1</option>
+                <flag>wxALL|wxGROW</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticBoxSizer">
+                  <label>Uploads</label>
+                  <orient>wxVERTICAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxGridSizer">
+                      <object class="sizeritem">
+                        <object class="wxRadioButton" name="ID_UL_DEFAULT">
+                          <label>Use d&amp;efault</label>
+                          <style>wxRB_GROUP</style>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxRadioButton" name="ID_UL_ASK">
+                          <label>A&amp;sk for action</label>
+                          <style>wxRB_GROUP</style>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxRadioButton" name="ID_UL_OVERWRITE">
+                          <label>O&amp;verwrite</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxRadioButton" name="ID_UL_OVERWRITEIFNEWER">
+                          <label>Over&amp;write if newer</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxRadioButton" name="ID_UL_RESUME">
+                          <label>Res&amp;ume</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxRadioButton" name="ID_UL_RENAME">
+                          <label>Rena&amp;me</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxRadioButton" name="ID_UL_SKIP">
+                          <label>Sk&amp;ip</label>
+                        </object>
+                      </object>
+                      <cols>1</cols>
+                      <vgap>5</vgap>
+                    </object>
+                    <flag>wxALL</flag>
+                    <border>3</border>
+                  </object>
+                </object>
+                <option>1</option>
+                <flag>wxGROW</flag>
+              </object>
+              <cols>2</cols>
+              <hgap>5</hgap>
+            </object>
+            <flag>wxGROW</flag>
+          </object>
+          <object class="spacer">
+            <size>0,5</size>
+          </object>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>1</cols>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_ASCIIRESUME">
+                  <label>A&amp;llow resume of ascii files</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Resuming ascii files can cause problems if server uses a different line ending format than the client.</label>
+                </object>
+                <flag>wxLEFT</flag>
+                <border>17</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>If using 'overwrite if newer', the your system time has to be synchronized with the server. If the time differs (e.g. different timezone), specify a timezone offset in the site manager.</label>
+                </object>
+              </object>
+              <vgap>3</vgap>
+            </object>
+          </object>
+          <object class="spacer">
+            <size>0,10</size>
+          </object>
+          <object class="sizeritem">
+            <object class="wxGridSizer">
+              <cols>0</cols>
+              <object class="sizeritem">
+                <object class="wxButton" name="wxID_OK">
+                  <label></label>
+                  <default>1</default>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxButton" name="wxID_CANCEL">
+                  <label></label>
+                </object>
+              </object>
+              <hgap>5</hgap>
+            </object>
+            <flag>wxALIGN_CENTRE_HORIZONTAL</flag>
+          </object>
+        </object>
+        <flag>wxALL</flag>
+        <border>5</border>
+      </object>
+    </object>
+    <style></style>
+  </object>
+  <object class="wxPanel" name="ID_DEFAULTFILEEXISTS">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticText">
+          <label>Select default action to perform if target file of a transfer already exists.</label>
+        </object>
+      </object>
+      <object class="spacer">
+        <size>0,5</size>
+      </object>
+      <object class="sizeritem">
+        <object class="wxGridSizer">
+          <object class="sizeritem">
+            <object class="wxStaticBoxSizer">
+              <label>Downloads</label>
+              <orient>wxVERTICAL</orient>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <object class="sizeritem">
+                    <object class="wxRadioButton" name="ID_DL_DEFAULT">
+                      <label>Use &amp;default</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxRadioButton" name="ID_DL_ASK">
+                      <label>&amp;Ask for action</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxRadioButton" name="ID_DL_OVERWRITE">
+                      <label>&amp;Overwrite</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxRadioButton" name="ID_DL_OVERWRITEIFNEWER">
+                      <label>Ov&amp;erwrite if newer</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxRadioButton" name="ID_DL_RESUME">
+                      <label>&amp;Resume</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxRadioButton" name="ID_DL_RENAME">
+                      <label>Re&amp;name</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxRadioButton" name="ID_DL_SKIP">
+                      <label>S&amp;kip</label>
+                    </object>
+                  </object>
+                  <cols>1</cols>
+                  <vgap>5</vgap>
+                </object>
+                <flag>wxALL</flag>
+                <border>3</border>
+              </object>
+            </object>
+            <option>1</option>
+            <flag>wxALL|wxGROW</flag>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticBoxSizer">
+              <label>Uploads</label>
+              <orient>wxVERTICAL</orient>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <object class="sizeritem">
+                    <object class="wxRadioButton" name="ID_UL_DEFAULT">
+                      <label>Use d&amp;efault</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxRadioButton" name="ID_UL_ASK">
+                      <label>A&amp;sk for action</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxRadioButton" name="ID_UL_OVERWRITE">
+                      <label>O&amp;verwrite</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxRadioButton" name="ID_UL_OVERWRITEIFNEWER">
+                      <label>Over&amp;write if newer</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxRadioButton" name="ID_UL_RESUME">
+                      <label>Res&amp;ume</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxRadioButton" name="ID_UL_RENAME">
+                      <label>Rena&amp;me</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxRadioButton" name="ID_UL_SKIP">
+                      <label>Sk&amp;ip</label>
+                    </object>
+                  </object>
+                  <cols>1</cols>
+                  <vgap>5</vgap>
+                </object>
+                <flag>wxALL</flag>
+                <border>3</border>
+              </object>
+            </object>
+            <option>1</option>
+            <flag>wxGROW</flag>
+          </object>
+          <cols>2</cols>
+          <hgap>5</hgap>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+      <object class="spacer">
+        <size>0,5</size>
+      </object>
+      <object class="sizeritem">
+        <object class="wxFlexGridSizer">
+          <cols>1</cols>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>If using 'overwrite if newer', the your system time has to be synchronized with the server. If the time differs (e.g. different timezone), specify a timezone offset in the site manager.</label>
+            </object>
+          </object>
+          <object class="spacer">
+            <size>0,5</size>
+          </object>
+          <object class="sizeritem">
+            <object class="wxCheckBox" name="ID_ASCIIRESUME">
+              <label>A&amp;llow resume of ascii files</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText" name="ID_ASCIIRESUME_TEXT">
+              <label>Resuming ascii files can cause problems if server uses a different line ending format than the client.</label>
+            </object>
+            <flag>wxLEFT</flag>
+            <border>18</border>
+          </object>
+          <vgap>3</vgap>
+        </object>
+      </object>
+      <object class="spacer">
+        <size>0,10</size>
+      </object>
+    </object>
+  </object>
 </resource>

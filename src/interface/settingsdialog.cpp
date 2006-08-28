@@ -5,6 +5,7 @@
 #include "optionspage_connection.h"
 #include "optionspage_connection_active.h"
 #include "optionspage_filetype.h"
+#include "optionspage_fileexists.h"
 #include "optionspage_themes.h"
 #include "optionspage_language.h"
 #include "optionspage_transfer.h"
@@ -19,6 +20,7 @@ enum pagenames
 	page_connection_active,
 	page_transfer,
 	page_filetype,
+	page_fileexists,
 	page_themes,
 	page_language,
 	page_updatecheck,
@@ -85,6 +87,7 @@ bool CSettingsDialog::LoadPages()
 	ADD_PAGE(_("Active mode"), COptionsPageConnectionActive, page_connection);
 	ADD_PAGE(_("Transfers"), COptionsPageTransfer, page_none);
 	ADD_PAGE(_("File Types"), COptionsPageFiletype, page_transfer);
+	ADD_PAGE(_("File exists action"), COptionsPageFileExists, page_transfer);
 	ADD_PAGE(_("Themes"), COptionsPageThemes, page_none);
 	ADD_PAGE(_("Language"), COptionsPageLanguage, page_none);
 	ADD_PAGE(_("Update Check"), COptionsPageUpdateCheck, page_none);
@@ -104,6 +107,12 @@ bool CSettingsDialog::LoadPages()
 	{
 		if (!iter->page->CreatePage(m_pOptions, this, parentPanel, size))
 			return false;
+	}
+
+	if (!LoadSettings())
+	{
+		wxMessageBox(_("Failed to load panels, invalid resource files?"));
+		return false;
 	}
 
 	wxSize canvas;
@@ -140,12 +149,6 @@ bool CSettingsDialog::LoadPages()
 	// Pre-show dialog under GTK, else panels won't get initialized properly
 	Show();
 #endif
-
-	if (!LoadSettings())
-	{
-		wxMessageBox(_("Failed to load panels, invalid resource files?"));
-		return false;
-	}
 
 	for (std::vector<t_page>::iterator iter = m_pages.begin(); iter != m_pages.end(); iter++)
 		iter->page->Hide();

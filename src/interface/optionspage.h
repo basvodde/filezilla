@@ -1,6 +1,11 @@
 #ifndef __OPTIONSPAGE_H__
 #define __OPTIONSPAGE_H__
 
+#define SAFE_XRCCTRL(id, type) \
+	if (!XRCCTRL(*this, id, type)) \
+		return false; \
+	XRCCTRL(*this, id, type)
+
 // Default title of the validation failed message box
 extern wxString validationFailed;
 
