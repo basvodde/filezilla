@@ -27,6 +27,10 @@ void CLogging::LogMessage(MessageType nMessageType, const wxChar *msgFormat, ...
 		if (debugLevel != 4)
 			return;
 		break;
+	case RawList:
+		if (!m_pEngine->GetOptions()->GetOptionVal(OPTION_LOGGING_RAWLISTING))
+			return;
+		break;
 	default:
 		break;
 	}

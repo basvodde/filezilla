@@ -37,6 +37,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Pasv reply fallback mode", number, _T("0") },
 	{ "Timeout", number, _T("15") },
 	{ "Logging Debug Level", number, _T("0") },
+	{ "Logging Raw Listing", number, _T("0") },
 
 	// Interface settings
 	{ "Number of Transfers", number, _T("2") },

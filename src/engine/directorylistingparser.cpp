@@ -1967,7 +1967,10 @@ CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
 
 		wxChar* buffer;
 		if (m_pControlSocket)
+		{
 			buffer = m_pControlSocket->ConvToLocalBuffer(res);
+			m_pControlSocket->LogMessage(RawList, buffer);
+		}
 		else
 		{
 			wxString str(res, wxConvUTF8);
