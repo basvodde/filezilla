@@ -205,7 +205,7 @@ void CNetConfWizard::OnPageChanging(wxWizardEvent& event)
 
 		wxIPV4address addr;
 		addr.Hostname(_T("probe.filezilla-project.org"));
-		addr.Service(14148);
+		addr.Service(21);
 
 		m_socket->Connect(addr, false);
 	}
