@@ -122,7 +122,7 @@ void CTransferSocket::OnSocketEvent(wxSocketEvent &event)
 void CTransferSocket::OnConnect(wxSocketEvent &event)
 {
 	m_pControlSocket->SetAlive();
-	m_pControlSocket->LogMessage(::Debug_Verbose, _T("OnConnect"));
+	m_pControlSocket->LogMessage(::Debug_Verbose, _T("CTransferSocket::OnConnect"));
 	if (m_pSocketServer)
 	{
 		wxSocketBase *pSocket = m_pSocketServer->Accept(false);
@@ -279,7 +279,7 @@ void CTransferSocket::OnClose(wxSocketEvent &event)
 	if (!m_pSocket)
 		return;
 
-	m_pControlSocket->LogMessage(::Debug_Verbose, _T("OnClose"));
+	m_pControlSocket->LogMessage(::Debug_Verbose, _T("CTransferSocket::OnClose"));
 	m_onCloseCalled = true;
 	m_pSocket->SetNotify(wxSOCKET_OUTPUT_FLAG | wxSOCKET_CONNECTION_FLAG | wxSOCKET_LOST_FLAG);
 	char buffer;
