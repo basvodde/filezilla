@@ -365,10 +365,13 @@ protected:
 class CLine
 {
 public:
-	CLine(wxChar* p)
+	CLine(wxChar* p, int len = -1)
 	{
 		m_pLine = p;
-		m_len = wxStrlen(p);
+		if (len != -1)
+			m_len = len;
+		else
+			m_len = wxStrlen(p);
 
 		m_parsePos = 0;
 	}
@@ -457,11 +460,11 @@ public:
 	{
 		int newLen = m_len + pLine->m_len + 1;
 		wxChar* p = new wxChar[newLen];
-		memcpy(p, m_pLine, m_len);
+		memcpy(p, m_pLine, m_len * sizeof(wxChar));
 		p[m_len] = ' ';
-		memcpy(p + m_len + 1, pLine->m_pLine, pLine->m_len);
+		memcpy(p + m_len + 1, pLine->m_pLine, pLine->m_len * sizeof(wxChar));
 		
-		return new CLine(p);
+		return new CLine(p, m_len + pLine->m_len + 1);
 	}
 
 protected:
