@@ -22,6 +22,7 @@
 #include "netconfwizard.h"
 #include "quickconnectbar.h"
 #include "updatewizard.h"
+#include "defaultfileexistsdlg.h"
 
 #ifndef __WXMSW__
 #include "resources/filezilla.xpm"
@@ -357,6 +358,14 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	else if (event.GetId() == XRCID("ID_CLEARCACHE_LAYOUT"))
 	{
 		CWrapEngine::ClearCache();
+	}
+	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_FILEEXISTS"))
+	{
+		CDefaultFileExistsDlg dlg;
+		if (!dlg.Load(this))
+			return;
+
+		dlg.Run();
 	}
 	else
 		event.Skip();

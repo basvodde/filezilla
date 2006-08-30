@@ -8,27 +8,6 @@ bool COptionsPageFileExists::LoadPage()
 {
 	bool failure = false;
 
-	SAFE_XRCCTRL("ID_DL_DEFAULT", wxRadioButton)->Destroy();
-	SAFE_XRCCTRL("ID_UL_DEFAULT", wxRadioButton)->Destroy();
-
-	wxRadioButton *btn = XRCCTRL(*this, "ID_DL_ASK", wxRadioButton);
-	if (!btn)
-		return false;
-	
-	btn->SetWindowStyle(wxRB_GROUP);
-#if !(wxMAJOR_VERSION > 2 || wxMINOR_VERSION > 6) && defined(__WXMSW__)
-	::SetWindowLong((HWND)btn->GetHandle(), GWL_STYLE, ::GetWindowLong((HWND)btn->GetHandle(), GWL_STYLE) | WS_GROUP);
-#endif
-	
-	btn = XRCCTRL(*this, "ID_UL_ASK", wxRadioButton);
-	if (!btn)
-		return false;
-	
-	btn->SetWindowStyleFlag(wxRB_GROUP);
-#if !(wxMAJOR_VERSION > 2 || wxMINOR_VERSION > 6) && defined(__WXMSW__)
-	::SetWindowLong((HWND)btn->GetHandle(), GWL_STYLE, ::GetWindowLong((HWND)btn->GetHandle(), GWL_STYLE) | WS_GROUP);
-#endif
-
 	const int dlAction = m_pOptions->GetOptionVal(OPTION_FILEEXISTS_DOWNLOAD);
 	switch (dlAction)
 	{

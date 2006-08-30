@@ -311,7 +311,7 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 		    continue;
 
 		wxWindow* window;
-		wxSizer* subSizer;
+		wxSizer* subSizer = 0;
 		if ((window = item->GetWindow()))
 		{
 			wxStaticText* text = wxDynamicCast(window, wxStaticText);
@@ -347,15 +347,9 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 				}
 				continue;
 			}
-
-			//if (item->GetMinSize().GetWidth() + item->GetPosition().x + rborder > max)
-			//	return false;
 		}
-		else if ((subSizer = item->GetSizer()))
+		if ((subSizer = item->GetSizer()))
 		{
-			// FIXME: wxGridSizer not implemented
-			wxASSERT(wxDynamicCast(subSizer, wxFlexGridSizer) || !wxDynamicCast(subSizer, wxGridSizer));
-
 			int subBorder = 0;
 
 			// Add border of static box sizer
