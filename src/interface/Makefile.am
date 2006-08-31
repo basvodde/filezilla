@@ -11,7 +11,8 @@ bin_PROGRAMS = filezilla
 # the application source, library search path, and link libraries
 filezilla_SOURCES = aboutdialog.cpp asyncrequestqueue.cpp \
 		buildinfo.cpp chmoddialog.cpp \
-		commandqueue.cpp customheightlistctrl.cpp dialogex.cpp \
+		commandqueue.cpp customheightlistctrl.cpp \
+		defaultfileexistsdlg.cpp dialogex.cpp \
 		fileexistsdlg.cpp \
 		FileZilla.cpp filter.cpp filteredit.cpp inputdialog.cpp \
 		ipcmutex.cpp led.cpp \
@@ -40,6 +41,7 @@ endif
 noinst_HEADERS = aboutdialog.h asyncrequestqueue.h \
 		 buildinfo.h chmoddialog.h \
 		 commandqueue.h customheightlistctrl.h \
+		 defaultfileexistsdlg.h \
 		 dialogex.h fileexistsdlg.h \
 		 filezillaapp.h filter.h filteredit.h \
 		 inputdialog.h ipcmutex.h led.h \
