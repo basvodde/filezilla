@@ -70,7 +70,7 @@ bool COptionsPageFileExists::SavePage()
 		value = 3;
 	else if (GetRCheck(XRCID("ID_DL_RENAME")))
 		value = 4;
-	else if (GetRCheck(XRCID("ID_DL_ASK")))
+	else if (GetRCheck(XRCID("ID_DL_SKIP")))
 		value = 5;
 	else
 		value = 0;
@@ -84,7 +84,7 @@ bool COptionsPageFileExists::SavePage()
 		value = 3;
 	else if (GetRCheck(XRCID("ID_UL_RENAME")))
 		value = 4;
-	else if (GetRCheck(XRCID("ID_UL_ASK")))
+	else if (GetRCheck(XRCID("ID_UL_SKIP")))
 		value = 5;
 	else
 		value = 0;
