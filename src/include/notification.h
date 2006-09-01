@@ -141,6 +141,7 @@ public:
 	// overwriteAction will be set by the request handler
 	enum OverwriteAction
 	{
+		unknown = -1,
 		overwrite,
 		overwriteNewer,	// Overwrite if source file is newer than target file
 		resume,

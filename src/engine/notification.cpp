@@ -89,6 +89,7 @@ enum NotificationId CAsyncRequestNotification::GetID() const
 CFileExistsNotification::CFileExistsNotification()
 {
 	localSize = remoteSize = -1;
+	overwriteAction = unknown;
 }
 
 CFileExistsNotification::~CFileExistsNotification()
