@@ -897,6 +897,8 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 			m_pUpdateWizard = 0;
 		}
 	}
+
+	m_pAsyncRequestQueue->RecheckDefaults();
 }
 
 void CMainFrame::OnToggleLogView(wxCommandEvent& event)
