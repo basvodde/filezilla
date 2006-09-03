@@ -448,6 +448,9 @@ bool CMainFrame::CreateToolBar()
 	{
 		wxLogError(_("Cannot load toolbar from resource file"));
 	}
+
+	CFilterDialog dlg;
+	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), dlg.HasActiveFilters());
 	SetToolBar(m_pToolBar);
 
 	return true;
@@ -1029,8 +1032,10 @@ void CMainFrame::OnMenuHelpAbout(wxCommandEvent& event)
 void CMainFrame::OnFilter(wxCommandEvent& event)
 {
 	CFilterDialog dlg;
+	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), dlg.HasActiveFilters());
 	dlg.Create(this);
 	dlg.ShowModal();
+	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), dlg.HasActiveFilters());
 	m_pState->ApplyCurrentFilter();
 }
 

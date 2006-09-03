@@ -687,3 +687,19 @@ void CFilterDialog::OnApply(wxCommandEvent& event)
 
 	m_pMainFrame->GetState()->ApplyCurrentFilter();
 }
+
+bool CFilterDialog::HasActiveFilters() const
+{
+	wxASSERT(m_currentFilterSet < m_filterSets.size());
+
+	for (unsigned int i = 0; i < m_filters.size(); i++)
+	{
+		if (m_filterSets[m_currentFilterSet].local[i])
+			return true;
+
+		if (m_filterSets[m_currentFilterSet].remote[i])
+			return true;
+	}
+
+	return false;
+}

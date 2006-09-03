@@ -59,6 +59,7 @@ public:
 	bool Create(CMainFrame* parent);
 
 	bool FilenameFiltered(const wxString& name, bool dir, wxLongLong size, bool local) const;
+	bool HasActiveFilters() const;
 
 protected:
 
