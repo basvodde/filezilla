@@ -18,6 +18,7 @@ public:
 	void CreateControls();
 	
 	int GetAction() const;
+	bool Always(bool &directionOnly, bool &queueOnly) const;
 
 protected:
 	virtual void OnOK(wxCommandEvent& event);
@@ -28,6 +29,9 @@ protected:
 	CFileExistsNotification *m_pNotification;
 	wxRadioButton *m_pAction1, *m_pAction2, *m_pAction3, *m_pAction4, *m_pAction5;
 	int m_action;
+	bool m_always;
+	bool m_directionOnly;
+	bool m_queueOnly;
 };
 
 #endif //__FILEEXISTSDLG_H__

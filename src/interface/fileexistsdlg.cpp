@@ -11,6 +11,9 @@ CFileExistsDlg::CFileExistsDlg(CFileExistsNotification *pNotification)
 	m_pNotification = pNotification;
 	m_pAction1 = m_pAction2 = m_pAction3 = m_pAction4 = m_pAction5 = 0;
 	m_action = 0;
+	m_always = false;
+	m_queueOnly = false;
+	m_directionOnly = false;
 }
 
 bool CFileExistsDlg::Create(wxWindow* parent)
@@ -248,6 +251,9 @@ void CFileExistsDlg::OnOK(wxCommandEvent& event)
 	else
 		m_action = 0;
 	
+	m_always = XRCCTRL(*this, "ID_ALWAYS", wxCheckBox)->GetValue();
+	m_directionOnly = XRCCTRL(*this, "ID_UPDOWNONLY", wxCheckBox)->GetValue();
+	m_queueOnly = XRCCTRL(*this, "ID_QUEUEONLY", wxCheckBox)->GetValue();
 	EndModal(wxID_OK);
 }
 
@@ -260,4 +266,11 @@ void CFileExistsDlg::OnCancel(wxCommandEvent& event)
 {
 	m_action = 4;
 	EndModal(wxID_CANCEL);
+}
+
+bool CFileExistsDlg::Always(bool &directionOnly, bool &queueOnly) const
+{
+	directionOnly = m_directionOnly;
+	queueOnly = m_queueOnly;
+	return m_always;
 }

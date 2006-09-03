@@ -111,7 +111,35 @@ void CAsyncRequestQueue::ProcessNextRequest()
 				int res = dlg.ShowModal();
 
 				if (res == wxID_OK)
+				{
 					action = dlg.GetAction() + 1;
+
+					bool directionOnly, queueOnly;
+					if (dlg.Always(directionOnly, queueOnly))
+					{
+						if (!queueOnly)
+						{
+							if (pNotification->download || !directionOnly)
+								CDefaultFileExistsDlg::SetDefault(true, action);
+
+							if (!pNotification->download || !directionOnly)
+								CDefaultFileExistsDlg::SetDefault(false, action);
+						}
+						else
+						{
+							// For the notification already in the request queue, we have to set the queue action directly
+							for (std::list<t_queueEntry>::iterator iter = m_requestList.begin()++; iter != m_requestList.end(); iter++)
+							{
+								if (pNotification->GetRequestID() != reqId_fileexists)
+									continue;
+
+								reinterpret_cast<CFileExistsNotification *>(entry.pNotification)->overwriteAction = CFileExistsNotification::OverwriteAction(action - 1);
+							}
+		
+							// Todo: Pass value to queue
+						}
+					}
+				}
 				else
 					action = 5;
 			}
