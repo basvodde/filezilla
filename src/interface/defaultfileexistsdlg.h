@@ -11,6 +11,7 @@ public:
 	bool Load(wxWindow *parent);
 
 	static int GetDefault(bool download);
+	static void SetDefault(bool download, int action);
 
 	void Run();
 

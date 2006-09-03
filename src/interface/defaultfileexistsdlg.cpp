@@ -108,3 +108,10 @@ void CDefaultFileExistsDlg::Run()
 	else
 		m_defaults[1] = -1;
 }
+
+void CDefaultFileExistsDlg::SetDefault(bool download, int action)
+{
+	if (action < -1 || action > 5)
+		action = -1;
+	m_defaults[download ? 0 : 1] = action;
+}
