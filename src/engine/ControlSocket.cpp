@@ -574,6 +574,7 @@ int CControlSocket::CheckOverwriteFile()
 	pNotification->remotePath = pData->remotePath;
 	pNotification->localSize = pData->localFileSize;
 	pNotification->remoteSize = pData->remoteFileSize;
+	pNotification->ascii = !pData->transferSettings.binary;
 
 	wxStructStat buf;
 	int result;

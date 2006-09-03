@@ -30,15 +30,11 @@ CFtpTransferOpData::CFtpTransferOpData()
 	transferEndReason = 0;
 	tranferCommandSent = false;
 	resumeOffset = 0;
-	binary = true;
 }
 
 CFtpFileTransferOpData::CFtpFileTransferOpData()
 {
 	pIOThread = 0;
-	resume = false;
-	localFileSize = -1;
-	remoteFileSize = -1;
 }
 
 CFtpFileTransferOpData::~CFtpFileTransferOpData()
@@ -1520,7 +1516,6 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 			delete m_pTransferSocket;
 			m_pTransferSocket = 0;
 		}
-		pData->binary = pData->transferSettings.binary;
 
 		{
 			wxFile* pFile = new wxFile;

@@ -137,13 +137,7 @@ public:
 	CFtpFileTransferOpData();
 	virtual ~CFtpFileTransferOpData();
 
-	bool tryAbsolutePath;
-
-	bool resume;
-	
 	CIOThread *pIOThread;
-
-	CFileTransferCommand::t_transferSettings transferSettings;
 };
 
 class CRawTransferOpData : public COpData

@@ -90,6 +90,7 @@ CFileExistsNotification::CFileExistsNotification()
 {
 	localSize = remoteSize = -1;
 	overwriteAction = unknown;
+	ascii = false;
 }
 
 CFileExistsNotification::~CFileExistsNotification()

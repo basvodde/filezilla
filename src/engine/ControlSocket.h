@@ -32,6 +32,8 @@ public:
 	bool tryAbsolutePath;
 	bool resume;
 
+	CFileTransferCommand::t_transferSettings transferSettings;
+
 	// Set to true when sending the command which
 	// starts the actual transfer
 	bool transferInitiated;

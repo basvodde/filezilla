@@ -11,8 +11,6 @@ public:
 	CSftpFileTransferOpData()
 	{
 	}
-
-	CFileTransferCommand::t_transferSettings transferSettings;
 };
 
 enum filetransferStates
