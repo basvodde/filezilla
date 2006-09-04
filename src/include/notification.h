@@ -138,6 +138,8 @@ public:
 	wxLongLong remoteSize;
 	wxDateTime remoteTime;
 
+	bool ascii;
+
 	// overwriteAction will be set by the request handler
 	enum OverwriteAction
 	{
