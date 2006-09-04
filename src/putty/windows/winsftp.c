@@ -86,7 +86,7 @@ RFile *open_existing_file(char *name, uint64 *size,
     ret->h = h;
 
     if (size)
-	size->lo=GetFileSize(h, &(size->hi));
+        size->lo=GetFileSize(h, &(size->hi));
 
     if (mtime || atime) {
 	FILETIME actime, wrtime;
@@ -437,7 +437,7 @@ char *dir_file_cat(char *dir, char *file)
  * Be told what socket we're supposed to be using.
  */
 static SOCKET sftp_ssh_socket = INVALID_SOCKET;
-static HANDLE netevent = NULL;
+static HANDLE netevent = INVALID_HANDLE_VALUE;
 char *do_select(SOCKET skt, int startup)
 {
     int events;
@@ -469,19 +469,12 @@ extern int select_result(WPARAM, LPARAM);
 
 int do_eventsel_loop(HANDLE other_event)
 {
-    int n;
+    int n, nhandles, nallhandles, netindex, otherindex;
     long next, ticks;
-    HANDLE handles[2];
+    HANDLE *handles;
     SOCKET *sklist;
     int skcount;
     long now = GETTICKCOUNT();
-
-    if (!netevent) {
-	return -1;		       /* doom */
-    }
-
-    handles[0] = netevent;
-    handles[1] = other_event;
 
     if (run_timers(now, &next)) {
 	ticks = next - GETTICKCOUNT();
@@ -490,10 +483,25 @@ int do_eventsel_loop(HANDLE other_event)
 	ticks = INFINITE;
     }
 
-    n = MsgWaitForMultipleObjects(other_event ? 2 : 1, handles, FALSE, ticks,
+    handles = handle_get_events(&nhandles);
+    handles = sresize(handles, nhandles+2, HANDLE);
+    nallhandles = nhandles;
+
+    if (netevent != INVALID_HANDLE_VALUE)
+	handles[netindex = nallhandles++] = netevent;
+    else
+	netindex = -1;
+    if (other_event != INVALID_HANDLE_VALUE)
+	handles[otherindex = nallhandles++] = other_event;
+    else
+	otherindex = -1;
+
+    n = MsgWaitForMultipleObjects(nallhandles, handles, FALSE, ticks,
 				  QS_POSTMESSAGE);
 
-    if (n == WAIT_OBJECT_0 + 0) {
+    if ((unsigned)(n - WAIT_OBJECT_0) < (unsigned)nhandles) {
+	handle_got_event(handles[n - WAIT_OBJECT_0]);
+    } else if (netindex >= 0 && n == WAIT_OBJECT_0 + netindex) {
 	WSANETWORKEVENTS things;
 	SOCKET socket;
 	extern SOCKET first_socket(int *), next_socket(int *);
@@ -555,13 +563,15 @@ int do_eventsel_loop(HANDLE other_event)
 	sfree(sklist);
     }
 
+    sfree(handles);
+
     if (n == WAIT_TIMEOUT) {
 	now = next;
     } else {
 	now = GETTICKCOUNT();
     }
 
-    if (other_event && n == WAIT_OBJECT_0 + 1)
+    if (otherindex >= 0 && n == WAIT_OBJECT_0 + otherindex)
 	return 1;
 
     return 0;
@@ -578,13 +588,13 @@ int do_eventsel_loop(HANDLE other_event)
  */
 int ssh_sftp_loop_iteration(void)
 {
-    if (sftp_ssh_socket == INVALID_SOCKET)
-	return -1;		       /* doom */
-
     if (p_WSAEventSelect == NULL) {
 	fd_set readfds;
 	int ret;
 	long now = GETTICKCOUNT();
+
+	if (sftp_ssh_socket == INVALID_SOCKET)
+	    return -1;		       /* doom */
 
 	if (socket_writable(sftp_ssh_socket))
 	    select_result((WPARAM) sftp_ssh_socket, (LPARAM) FD_WRITE);
@@ -621,7 +631,7 @@ int ssh_sftp_loop_iteration(void)
 
 	return 0;
     } else {
-	return do_eventsel_loop(NULL);
+	return do_eventsel_loop(INVALID_HANDLE_VALUE);
     }
 }
 
@@ -656,7 +666,7 @@ char *ssh_sftp_get_cmdline(char *prompt, int no_fds_ok)
     struct command_read_ctx actx, *ctx = &actx;
     DWORD threadid;
 
-    /*
+    /* Not used in fzsftp
     fputs(prompt, stdout);
     fflush(stdout);
     */

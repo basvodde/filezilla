@@ -163,6 +163,7 @@ struct unicode_data {
 #define LGTYP_ASCII 1		       /* logmode: pure ascii */
 #define LGTYP_DEBUG 2		       /* logmode: all chars of traffic */
 #define LGTYP_PACKETS 3		       /* logmode: SSH data packets */
+#define LGTYP_SSHRAW 4		       /* logmode: SSH raw data */
 
 typedef enum {
     /* Actual special commands. Originally Telnet, but some codes have
@@ -298,7 +299,10 @@ enum {
 
 enum {
     /* Protocol back ends. (cfg.protocol) */
-    PROT_RAW, PROT_TELNET, PROT_RLOGIN, PROT_SSH
+    PROT_RAW, PROT_TELNET, PROT_RLOGIN, PROT_SSH,
+    /* PROT_SERIAL is supported on a subset of platforms, but it doesn't
+     * hurt to define it globally. */
+    PROT_SERIAL
 };
 
 enum {
@@ -330,6 +334,14 @@ enum {
     FQ_DEFAULT, FQ_ANTIALIASED, FQ_NONANTIALIASED, FQ_CLEARTYPE
 };
 
+enum {
+    SER_PAR_NONE, SER_PAR_ODD, SER_PAR_EVEN, SER_PAR_MARK, SER_PAR_SPACE
+};
+
+enum {
+    SER_FLOW_NONE, SER_FLOW_XONXOFF, SER_FLOW_RTSCTS, SER_FLOW_DSRDTR
+};
+
 extern const char *const ttymodes[];
 
 enum {
@@ -357,7 +369,7 @@ struct backend_tag {
     void (*size) (void *handle, int width, int height);
     void (*special) (void *handle, Telnet_Special code);
     const struct telnet_special *(*get_specials) (void *handle);
-    Socket(*socket) (void *handle);
+    int (*connected) (void *handle);
     int (*exitcode) (void *handle);
     /* If back->sendok() returns FALSE, data sent to it from the frontend
      * may be lost. */
@@ -447,6 +459,8 @@ struct config_tag {
     int ssh_subsys;		       /* run a subsystem rather than a command */
     int ssh_subsys2;		       /* fallback to go with remote_cmd2 */
     int ssh_no_shell;		       /* avoid running a shell */
+    char ssh_nc_host[512];	       /* host to connect to in `nc' mode */
+    int ssh_nc_port;		       /* port to connect to in `nc' mode */
     /* Telnet options */
     char termtype[32];
     char termspeed[32];
@@ -456,6 +470,12 @@ struct config_tag {
     char localusername[100];
     int rfc_environ;
     int passive_telnet;
+    /* Serial port options */
+    char serline[256];
+    int serspeed;
+    int serdatabits, serstopbits;
+    int serparity;
+    int serflow;
     /* Keyboard options */
     int bksp_is_delete;
     int rxvt_homeend;
@@ -908,6 +928,14 @@ void pinger_free(Pinger);
  */
 
 #include "misc.h"
+int cfg_launchable(const Config *cfg);
+char const *cfg_dest(const Config *cfg);
+
+/*
+ * Exports from sercfg.c.
+ */
+void ser_setup_config_box(struct controlbox *b, int midsession,
+			  int parity_mask, int flow_mask);
 
 /*
  * Exports from version.c.

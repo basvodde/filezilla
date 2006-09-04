@@ -7,7 +7,8 @@ libfzsftp_win_a_SOURCES = winnoise.c winpgntc.c \
 		       winstore.c winnet.c \
 		       windefs.c winmisc.c \
 		       wintime.c \
-		       winsftp.c wincons.c
+		       winsftp.c wincons.c \
+                       winhandl.c
 
 noinst_HEADERS = winstuff.h rcstuff.h
 

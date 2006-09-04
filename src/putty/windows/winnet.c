@@ -420,6 +420,7 @@ SockAddr sk_namelookup(const char *host, char **canonicalname,
 #ifndef NO_IPV6
     ret->ai = ret->ais = NULL;
 #endif
+    ret->addresses = NULL;
     ret_family = AF_UNSPEC;
     *realhost = '\0';
 
@@ -520,6 +521,7 @@ SockAddr sk_nonamelookup(const char *host)
 #ifndef NO_IPV6
     ret->ai = ret->ais = NULL;
 #endif
+    ret->addresses = NULL;
     ret->naddresses = 0;
     strncpy(ret->hostname, host, lenof(ret->hostname));
     ret->hostname[lenof(ret->hostname)-1] = '\0';

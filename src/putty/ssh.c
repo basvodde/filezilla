@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <assert.h>
+#include <limits.h>
 
 #include "putty.h"
 #include "tree234.h"
@@ -728,6 +729,7 @@ struct ssh_tag {
 
     tree234 *channels;		       /* indexed by local id */
     struct ssh_channel *mainchan;      /* primary session channel */
+    int ncmode;			       /* is primary channel direct-tcpip? */
     int exitcode;
     int close_expected;
     int clean_exit;
@@ -1440,11 +1442,17 @@ static int s_wrpkt_prepare(Ssh ssh, struct Packet *pkt, int *offset_p)
     return biglen + 4;		/* len(length+padding+type+data+CRC) */
 }
 
+static int s_write(Ssh ssh, void *data, int len)
+{
+    log_packet(ssh->logctx, PKT_OUTGOING, -1, NULL, data, len, 0, NULL);
+    return sk_write(ssh->s, (char *)data, len);
+}
+
 static void s_wrpkt(Ssh ssh, struct Packet *pkt)
 {
     int len, backlog, offset;
     len = s_wrpkt_prepare(ssh, pkt, &offset);
-    backlog = sk_write(ssh->s, (char *)pkt->data + offset, len);
+    backlog = s_write(ssh, pkt->data + offset, len);
     if (backlog > SSH_MAX_BACKLOG)
 	ssh_throttle_all(ssh, 1, backlog);
     ssh_free_packet(pkt);
@@ -1828,7 +1836,7 @@ static void ssh2_pkt_send_noqueue(Ssh ssh, struct Packet *pkt)
 	return;
     }
     len = ssh2_pkt_construct(ssh, pkt);
-    backlog = sk_write(ssh->s, (char *)pkt->data, len);
+    backlog = s_write(ssh, pkt->data, len);
     if (backlog > SSH_MAX_BACKLOG)
 	ssh_throttle_all(ssh, 1, backlog);
 
@@ -1926,8 +1934,7 @@ static void ssh2_pkt_defer(Ssh ssh, struct Packet *pkt)
 static void ssh_pkt_defersend(Ssh ssh)
 {
     int backlog;
-    backlog = sk_write(ssh->s, (char *)ssh->deferred_send_data,
-		       ssh->deferred_len);
+    backlog = s_write(ssh, ssh->deferred_send_data, ssh->deferred_len);
     ssh->deferred_len = ssh->deferred_size = 0;
     sfree(ssh->deferred_send_data);
     ssh->deferred_send_data = NULL;
@@ -2416,7 +2423,7 @@ static int do_ssh_init(Ssh ssh, unsigned char c)
         }
         logeventf(ssh, "We claim version: %.*s",
                   strcspn(verstring, "\015\012"), verstring);
-	sk_write(ssh->s, verstring, strlen(verstring));
+	s_write(ssh, verstring, strlen(verstring));
         sfree(verstring);
 	if (ssh->version == 2)
 	    do_ssh2_transport(ssh, NULL, -1, NULL);
@@ -2436,7 +2443,9 @@ static int do_ssh_init(Ssh ssh, unsigned char c)
 static void ssh_process_incoming_data(Ssh ssh,
 				      unsigned char **data, int *datalen)
 {
-    struct Packet *pktin = ssh->s_rdpkt(ssh, data, datalen);
+    struct Packet *pktin;
+
+    pktin = ssh->s_rdpkt(ssh, data, datalen);
     if (pktin) {
 	ssh->protocol(ssh, NULL, 0, pktin);
 	ssh_free_packet(pktin);
@@ -2479,6 +2488,9 @@ static void ssh_set_frozen(Ssh ssh, int frozen)
 
 static void ssh_gotdata(Ssh ssh, unsigned char *data, int datalen)
 {
+    /* Log raw data, if we're in that mode. */
+    log_packet(ssh->logctx, PKT_INCOMING, -1, NULL, data, datalen, 0, NULL);
+
     crBegin(ssh->ssh_gotdata_crstate);
 
     /*
@@ -7621,7 +7633,58 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
     /*
      * Create the main session channel.
      */
-    if (!ssh->cfg.ssh_no_shell) {
+    if (ssh->cfg.ssh_no_shell) {
+	ssh->mainchan = NULL;
+    } else if (*ssh->cfg.ssh_nc_host) {
+	/*
+	 * Just start a direct-tcpip channel and use it as the main
+	 * channel.
+	 */
+	ssh->mainchan = snew(struct ssh_channel);
+	ssh->mainchan->ssh = ssh;
+	ssh->mainchan->localid = alloc_channel_id(ssh);
+	logeventf(ssh,
+		  "Opening direct-tcpip channel to %s:%d in place of session",
+		  ssh->cfg.ssh_nc_host, ssh->cfg.ssh_nc_port);
+	s->pktout = ssh2_pkt_init(SSH2_MSG_CHANNEL_OPEN);
+	ssh2_pkt_addstring(s->pktout, "direct-tcpip");
+	ssh2_pkt_adduint32(s->pktout, ssh->mainchan->localid);
+	ssh->mainchan->v.v2.locwindow = OUR_V2_WINSIZE;
+	ssh2_pkt_adduint32(s->pktout, ssh->mainchan->v.v2.locwindow);/* our window size */
+	ssh2_pkt_adduint32(s->pktout, OUR_V2_MAXPKT);      /* our max pkt size */
+	ssh2_pkt_addstring(s->pktout, ssh->cfg.ssh_nc_host);
+	ssh2_pkt_adduint32(s->pktout, ssh->cfg.ssh_nc_port);
+	/*
+	 * There's nothing meaningful to put in the originator
+	 * fields, but some servers insist on syntactically correct
+	 * information.
+	 */
+	ssh2_pkt_addstring(s->pktout, "0.0.0.0");
+	ssh2_pkt_adduint32(s->pktout, 0);
+	ssh2_pkt_send(ssh, s->pktout);
+
+	crWaitUntilV(pktin);
+	if (pktin->type != SSH2_MSG_CHANNEL_OPEN_CONFIRMATION) {
+	    bombout(("Server refused to open a direct-tcpip channel"));
+	    crStopV;
+	    /* FIXME: error data comes back in FAILURE packet */
+	}
+	if (ssh_pkt_getuint32(pktin) != ssh->mainchan->localid) {
+	    bombout(("Server's channel confirmation cited wrong channel"));
+	    crStopV;
+	}
+	ssh->mainchan->remoteid = ssh_pkt_getuint32(pktin);
+	ssh->mainchan->halfopen = FALSE;
+	ssh->mainchan->type = CHAN_MAINSESSION;
+	ssh->mainchan->closes = 0;
+	ssh->mainchan->v.v2.remwindow = ssh_pkt_getuint32(pktin);
+	ssh->mainchan->v.v2.remmaxpkt = ssh_pkt_getuint32(pktin);
+	bufchain_init(&ssh->mainchan->v.v2.outbuffer);
+	add234(ssh->channels, ssh->mainchan);
+	update_specials_menu(ssh->frontend);
+	logevent("Opened direct-tcpip channel");
+	ssh->ncmode = TRUE;
+    } else {
 	ssh->mainchan = snew(struct ssh_channel);
 	ssh->mainchan->ssh = ssh;
 	ssh->mainchan->localid = alloc_channel_id(ssh);
@@ -7652,8 +7715,8 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 	add234(ssh->channels, ssh->mainchan);
 	update_specials_menu(ssh->frontend);
 	logevent("Opened channel for session");
-    } else
-	ssh->mainchan = NULL;
+	ssh->ncmode = FALSE;
+    }
 
     /*
      * Now we have a channel, make dispatch table entries for
@@ -7676,7 +7739,7 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
     /*
      * Potentially enable X11 forwarding.
      */
-    if (ssh->mainchan && ssh->cfg.x11_forward) {
+    if (ssh->mainchan && !ssh->ncmode && ssh->cfg.x11_forward) {
 	char proto[20], data[64];
 	logevent("Requesting X11 forwarding");
 	ssh->x11auth = x11_invent_auth(proto, sizeof(proto),
@@ -7724,7 +7787,7 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
     /*
      * Potentially enable agent forwarding.
      */
-    if (ssh->mainchan && ssh->cfg.agentfwd && agent_exists()) {
+    if (ssh->mainchan && !ssh->ncmode && ssh->cfg.agentfwd && agent_exists()) {
 	logevent("Requesting OpenSSH-style agent forwarding");
 	s->pktout = ssh2_pkt_init(SSH2_MSG_CHANNEL_REQUEST);
 	ssh2_pkt_adduint32(s->pktout, ssh->mainchan->remoteid);
@@ -7750,7 +7813,7 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
     /*
      * Now allocate a pty for the session.
      */
-    if (ssh->mainchan && !ssh->cfg.nopty) {
+    if (ssh->mainchan && !ssh->ncmode && !ssh->cfg.nopty) {
 	/* Unpick the terminal-speed string. */
 	/* XXX perhaps we should allow no speeds to be sent. */
         ssh->ospeed = 38400; ssh->ispeed = 38400; /* last-resort defaults */
@@ -7800,7 +7863,7 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
      * Simplest thing here is to send all the requests at once, and
      * then wait for a whole bunch of successes or failures.
      */
-    if (ssh->mainchan && *ssh->cfg.environmt) {
+    if (ssh->mainchan && !ssh->ncmode && *ssh->cfg.environmt) {
 	char *e = ssh->cfg.environmt;
 	char *var, *varend, *val;
 
@@ -7865,7 +7928,7 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
      * this twice if the config data has provided a second choice
      * of command.
      */
-    if (ssh->mainchan) while (1) {
+    if (ssh->mainchan && !ssh->ncmode) while (1) {
 	int subsys;
 	char *cmd;
 
@@ -8724,10 +8787,10 @@ void ssh_send_port_open(void *channel, char *hostname, int port, char *org)
     }
 }
 
-static Socket ssh_socket(void *handle)
+static int ssh_connected(void *handle)
 {
     Ssh ssh = (Ssh) handle;
-    return ssh->s;
+    return ssh->s != NULL;
 }
 
 static int ssh_sendok(void *handle)
@@ -8764,7 +8827,7 @@ static int ssh_return_exitcode(void *handle)
     if (ssh->s != NULL)
         return -1;
     else
-        return (ssh->exitcode >= 0 ? ssh->exitcode : 0);
+        return (ssh->exitcode >= 0 ? ssh->exitcode : INT_MAX);
 }
 
 /*
@@ -8797,7 +8860,7 @@ Backend ssh_backend = {
     ssh_size,
     ssh_special,
     ssh_get_specials,
-    ssh_socket,
+    ssh_connected,
     ssh_return_exitcode,
     ssh_sendok,
     ssh_ldisc,

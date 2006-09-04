@@ -121,7 +121,7 @@ void uxsel_input_remove(int id);
 
 /* uxcfg.c */
 struct controlbox;
-void unix_setup_config_box(struct controlbox *b, int midsession);
+void unix_setup_config_box(struct controlbox *b, int midsession, int protocol);
 
 /* gtkcfg.c */
 void gtk_setup_config_box(struct controlbox *b, int midsession, void *window);
@@ -164,5 +164,10 @@ void *sk_getxdmdata(void *sock, int *lenp);
     FD_SET(fd, &set); \
     if (max < fd + 1) max = fd + 1; \
 } while (0)
+
+/*
+ * Exports from winser.c.
+ * /
+extern Backend serial_backend;
 
 #endif

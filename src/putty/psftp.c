@@ -954,7 +954,7 @@ int sftp_cmd_close(struct sftp_command *cmd)
 	return 0;
     }
 
-    if (back != NULL && back->socket(backhandle) != NULL) {
+    if (back != NULL && back->connected(backhandle)) {
 	char ch;
 	back->special(backhandle, TS_EOF);
 	sftp_recvdata(&ch, 1);
@@ -2590,7 +2590,7 @@ int sftp_recvdata(char *buf, int len)
     }
 
     while (outlen > 0) {
-	if (ssh_sftp_loop_iteration() < 0)
+	if (back->exitcode(backhandle) >= 0 || ssh_sftp_loop_iteration() < 0)
 	    return 0;		       /* doom */
     }
 
@@ -2942,7 +2942,7 @@ int psftp_main(int argc, char *argv[])
 
     do_sftp(mode, modeflags, batchfile);
 
-    if (back != NULL && back->socket(backhandle) != NULL) {
+    if (back != NULL && back->connected(backhandle)) {
 	char ch;
 	back->special(backhandle, TS_EOF);
 	sftp_recvdata(&ch, 1);
