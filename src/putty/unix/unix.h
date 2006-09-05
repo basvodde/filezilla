@@ -167,7 +167,7 @@ void *sk_getxdmdata(void *sock, int *lenp);
 
 /*
  * Exports from winser.c.
- * /
+ */
 extern Backend serial_backend;
 
 #endif
