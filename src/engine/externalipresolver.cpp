@@ -32,7 +32,7 @@ CExternalIPResolver::CExternalIPResolver(wxEvtHandler* handler, int id /*=wxID_A
 	m_sendBufferPos = 0;
 	m_pRecvBuffer = 0;
 	m_recvBufferPos = 0;
-	
+
 	ResetHttpData(true);
 }
 
@@ -196,7 +196,7 @@ void CExternalIPResolver::OnReceive()
 		}
 		return;
 	}
-		
+
 	int read;
 	if (!(read = m_pSocket->LastCount()))
 	{
@@ -239,7 +239,7 @@ void CExternalIPResolver::OnSend()
 		}
 		return;
 	}
-	
+
 	unsigned int written;
 	if (!(written = m_pSocket->LastCount()))
 	{
@@ -273,9 +273,6 @@ void CExternalIPResolver::Close(bool successful)
 		return;
 
 	m_done = true;
-
-	if (m_checked)
-		return;
 
 	if (!successful)
 		m_ip = _T("");
@@ -370,14 +367,14 @@ void CExternalIPResolver::OnHeader()
 				{
 					delete m_pSocket;
 					m_pSocket = 0;
-					
+
 					delete [] m_pRecvBuffer;
 					m_pRecvBuffer = 0;
 
 					wxString location = m_location;
 
 					ResetHttpData(false);
-					
+
 					GetExternalIP(location);
 					return;
 				}
@@ -428,7 +425,7 @@ void CExternalIPResolver::OnData(char* buffer, unsigned int len)
 			if (buffer[i] == '\r' || buffer[i] == '\n')
 				break;
 		}
-	
+
 		if (i)
 			m_data += wxString(buffer, wxConvLocal, i);
 
@@ -448,7 +445,7 @@ void CExternalIPResolver::OnData(char* buffer, unsigned int len)
 		Close(false);
 		return;
 	}
-		
+
 	m_ip = regex.GetMatch(m_data, 2);
 	Close(true);
 }
@@ -543,7 +540,7 @@ void CExternalIPResolver::OnChunkedData()
 				m_recvBufferPos = 0;
 				return;
 			}
-			
+
 			// Ignore the trailer
 		}
 		else
