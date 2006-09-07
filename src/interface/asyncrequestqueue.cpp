@@ -288,7 +288,7 @@ void CAsyncRequestQueue::RecheckDefaults()
 		return;
 
 	std::list<t_queueEntry>::iterator cur, next;
-	cur = m_requestList.begin()++;
+	cur = ++m_requestList.begin();
 	while (cur != m_requestList.end())
 	{
 		next = cur;
