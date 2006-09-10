@@ -8,7 +8,7 @@
 #define new DEBUG_NEW
 #endif
 
-#define MAX_LINECOUNT 100
+#define MAX_LINECOUNT 1000
 
 BEGIN_EVENT_TABLE(CStatusView, wxWindow)
 	EVT_SIZE(CStatusView::OnSize)
