@@ -1,6 +1,7 @@
 #include "FileZilla.h"
 #include "QueueView.h"
 #include "statuslinectrl.h"
+#include <wx/dcbuffer.h>
 
 #define TRANSFERSTATUS_TIMER_ID (wxID_HIGHEST + 1)
 
@@ -65,14 +66,9 @@ CStatusLineCtrl::~CStatusLineCtrl()
 
 void CStatusLineCtrl::OnPaint(wxPaintEvent& event)
 {
-	wxPaintDC paintDc(this);
+	wxBufferedPaintDC dc(this);
 
 	wxRect rect = GetRect();
-
-	// Create memory DC to draw into to avoid flicker.
-	wxBitmap bmp(rect.GetWidth(), rect.GetHeight());
-	wxMemoryDC dc;
-	dc.SelectObject(bmp);
 
 	dc.SetFont(GetFont());
 	dc.SetPen(GetBackgroundColour());
@@ -86,7 +82,6 @@ void CStatusLineCtrl::OnPaint(wxPaintEvent& event)
 	if (!m_pStatus)
 	{
 		dc.DrawText(m_statusText, 50, h);
-		paintDc.Blit(0, 0, rect.GetWidth(), rect.GetHeight(), &dc, 0, 0);
 		return;
 	}
 
@@ -133,8 +128,6 @@ void CStatusLineCtrl::OnPaint(wxPaintEvent& event)
 	}
 
 	DrawProgressBar(dc, m_fieldOffsets[2], 1, rect.GetHeight() - 2);
-
-	paintDc.Blit(0, 0, rect.GetWidth(), rect.GetHeight(), &dc, 0, 0);
 }
 
 void CStatusLineCtrl::SetTransferStatus(const CTransferStatus* pStatus)
