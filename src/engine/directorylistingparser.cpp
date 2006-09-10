@@ -343,7 +343,7 @@ public:
 		}
 	}
 
-	char operator[](unsigned int n) const
+	wxChar operator[](unsigned int n) const
 	{
 		if (n >= m_len)
 			return 0;
@@ -822,7 +822,7 @@ bool CDirectoryListingParser::ParseAsUnix(CLine *pLine, CDirentry &entry)
 	if (!pLine->GetToken(index, token))
 		return false;
 
-	char chr = token[0];
+	wxChar chr = token[0];
 	if (chr != 'b' &&
 		chr != 'c' &&
 		chr != 'd' &&
