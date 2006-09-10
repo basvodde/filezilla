@@ -949,6 +949,10 @@ void CRemoteListView::ListingFailed()
 		return;
 
 	wxASSERT(!m_dirsToVisit.empty());
+	if (m_dirsToVisit.empty())
+		return;
+
+	m_dirsToVisit.pop_front();
 
 	NextOperation();
 }
