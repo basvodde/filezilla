@@ -8,7 +8,7 @@
 #define new DEBUG_NEW
 #endif
 
-#define MAX_LINECOUNT 1000
+#define MAX_LINECOUNT 100
 
 BEGIN_EVENT_TABLE(CStatusView, wxWindow)
 	EVT_SIZE(CStatusView::OnSize)
@@ -74,10 +74,36 @@ void CStatusView::AddToLog(enum MessageType messagetype, wxString message)
 
 	m_pTextCtrl->SetDefaultStyle(m_attributeCache[messagetype].attr);
 
-	int prefixLen = m_attributeCache[messagetype].len + message.Length();
-	m_lineLengths.push_back(prefixLen);
-	
-	m_pTextCtrl->AppendText(prefix + m_attributeCache[messagetype].prefix + message);
+	prefix += m_attributeCache[messagetype].prefix;
+
+	int lineLength = m_attributeCache[messagetype].len + message.Length();
+
+#if wxMAJOR_VERSION > 2 || wxMINOR_VERSION > 6
+	if (m_rtl)
+	{
+		// Unicode control characters that control reading direction
+		const wxChar LTR_MARK = 0x200e;
+		//const wxChar RTL_MARK = 0x200f;
+		const wxChar LTR_EMBED = 0x202A;
+		//const wxChar RTL_EMBED = 0x202B;
+		//const wxChar POP = 0x202c;
+		//const wxChar LTR_OVERRIDE = 0x202D;
+		//const wxChar RTL_OVERRIDE = 0x202E;
+
+		if (messagetype == Command || messagetype == Response || messagetype >= Debug_Warning)
+		{
+			// Commands, responses and debug message contain English text,
+			// set LTR reading order for them.
+			prefix += LTR_MARK;
+			prefix += LTR_EMBED;
+			lineLength += 2;
+		}
+	}
+#endif
+
+	m_lineLengths.push_back(lineLength);
+
+	m_pTextCtrl->AppendText(prefix + message);
 }
 
 void CStatusView::InitDefAttr()
@@ -153,6 +179,10 @@ void CStatusView::InitDefAttr()
 		m_attributeCache[i].prefix += _T("\t");
 		m_attributeCache[i].len = m_attributeCache[i].prefix.Length();
 	}
+
+#if wxMAJOR_VERSION > 2 || wxMINOR_VERSION > 6
+	m_rtl = wxTheApp->GetLayoutDirection() == wxLayout_RightToLeft;
+#endif
 }
 
 void CStatusView::OnContextMenu(wxContextMenuEvent& event)

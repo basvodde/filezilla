@@ -33,6 +33,10 @@ protected:
 		int len;
 		wxTextAttr attr;
 	} m_attributeCache[MessageTypeCount];
+
+#if wxMAJOR_VERSION > 2 || wxMINOR_VERSION > 6
+	bool m_rtl;
+#endif
 };
 
 #endif
