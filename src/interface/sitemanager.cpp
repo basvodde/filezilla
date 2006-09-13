@@ -400,12 +400,52 @@ bool CSiteManager::Verify()
 	if (!data)
 		return true;
 
-	if (XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->GetStringSelection() == _("SFTP") &&
+	const wxString& host = XRCCTRL(*this, "ID_HOST", wxTextCtrl)->GetValue();
+	if (host == _T(""))
+	{
+		XRCCTRL(*this, "ID_HOST", wxTextCtrl)->SetFocus();
+		wxMessageBox(_("You have to enter a hostname."));
+		return false;
+	}
+
+	const wxString& protocol = XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->GetStringSelection();
+	if (protocol == _("SFTP") &&
 		XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->GetStringSelection() == _("Account"))
 	{
 		XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetFocus();
 		wxMessageBox(_("'Account' logontype not supported by selected protocol"));
 		return false;
+	}
+
+	CServer server;
+	if (protocol == _("FTP"))
+		server.SetProtocol(FTP);
+	else if (protocol == _("SFTP"))
+		server.SetProtocol(SFTP);
+
+	unsigned long port;
+	XRCCTRL(*this, "ID_PORT", wxTextCtrl)->GetValue().ToULong(&port);
+	CServerPath path;
+	wxString error;
+	if (!server.ParseUrl(host, port, _T(""), _T(""), error, path))
+	{
+		XRCCTRL(*this, "ID_HOST", wxTextCtrl)->SetFocus();
+		wxMessageBox(error);
+		return false;
+	}
+	
+	XRCCTRL(*this, "ID_HOST", wxTextCtrl)->SetValue(server.GetHost());
+	XRCCTRL(*this, "ID_PORT", wxTextCtrl)->SetValue(wxString::Format(_T("%d"), server.GetPort()));
+
+	switch (server.GetProtocol())
+	{
+	case SFTP:
+		XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(_("SFTP"));
+		break;
+	case FTP:
+	default:
+		XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(_("FTP"));
+		break;
 	}
 
 	if (XRCCTRL(*this, "ID_CHARSET_CUSTOM", wxRadioButton)->GetValue())
@@ -430,10 +470,13 @@ void CSiteManager::OnBeginLabelEdit(wxTreeEvent& event)
 		return;
 	}
 	
-	if (!Verify())
+	if (event.GetItem() != pTree->GetSelection())
 	{
-		event.Veto();
-		return;
+		if (!Verify())
+		{
+			event.Veto();
+			return;
+		}
 	}
 		
 	wxTreeItemId item = event.GetItem();
@@ -453,10 +496,13 @@ void CSiteManager::OnEndLabelEdit(wxTreeEvent& event)
 		return;
 	}
 	
-	if (!Verify())
+	if (event.GetItem() != pTree->GetSelection())
 	{
-		event.Veto();
-		return;
+		if (!Verify())
+		{
+			event.Veto();
+			return;
+		}
 	}
 		
 	wxTreeItemId item = event.GetItem();
