@@ -763,7 +763,14 @@ int CSftpControlSocket::ListParseEntry(const wxString& entry)
 
 	if (!m_pCurOpData)
 	{
-		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Empty m_pCurOpData"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	if (m_pCurOpData->opId != cmd_list)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Listentry received, but current operation is not cmd_list"));
 		ResetOperation(FZ_REPLY_INTERNALERROR);
 		return FZ_REPLY_ERROR;
 	}
@@ -771,7 +778,7 @@ int CSftpControlSocket::ListParseEntry(const wxString& entry)
 	CSftpListOpData *pData = static_cast<CSftpListOpData *>(m_pCurOpData);
 	if (!pData)
 	{
-		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("m_pCurOpData of wrong type"));
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("m_pCurOpData of wrong type"));
 		ResetOperation(FZ_REPLY_INTERNALERROR);
 		return FZ_REPLY_ERROR;
 	}
