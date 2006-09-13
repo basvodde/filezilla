@@ -143,6 +143,8 @@ void CTransferSocket::OnConnect(wxSocketEvent &event)
 
 void CTransferSocket::OnReceive()
 {
+	m_pControlSocket->LogMessage(::Debug_Debug, _T("CTransferSocket::OnReceive()"));
+
 	if (!m_pSocket || !m_bActive)
 		return;
 
@@ -358,6 +360,8 @@ void CTransferSocket::SetActive()
 
 void CTransferSocket::TransferEnd(int reason)
 {
+	m_pControlSocket->LogMessage(::Debug_Verbose, _T("CTransferSocket::TransferEnd(%d)"), reason);
+
 	if (m_transferEnd)
 		return;
 	m_transferEnd = true;
