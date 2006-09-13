@@ -33,8 +33,6 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 			return false;
 		}
 	}
-	else
-		m_protocol = FTP;
 
 	pos = host.Find('@');
 	if (pos != -1)
@@ -105,6 +103,10 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 			case HTTP:
 				port = 80;
 				break;
+			case UNKNOWN:
+				// Assume FTP
+				port = 21;
+				break;
 			default:
 				// Shouldn't ever be here
 				wxASSERT(false);
@@ -135,6 +137,22 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 		m_logonType = ANONYMOUS;
 	else
 		m_logonType = NORMAL;
+
+	if (m_protocol == UNKNOWN)
+	{
+		switch (port)
+		{
+		case 22:
+			m_protocol = SFTP;
+			break;
+		case 80:
+			m_protocol = HTTP;
+			break;
+		default:
+			m_protocol = FTP;
+			break;
+		}
+	}
 
 	return true;
 }
@@ -340,6 +358,7 @@ void CServer::SetLogonType(enum LogonType logonType)
 
 void CServer::SetProtocol(enum ServerProtocol serverProtocol)
 {
+	wxASSERT(serverProtocol != UNKNOWN);
 	m_protocol = serverProtocol;
 }
 
@@ -353,6 +372,16 @@ bool CServer::SetHost(wxString host, unsigned int port)
 
 	m_host = host;
 	m_port = port;
+
+	if (m_protocol == UNKNOWN)
+	{
+		if (m_port == 22)
+			m_protocol = SFTP;
+		else if (m_port == 80)
+			m_protocol = HTTP;
+		else
+			m_protocol = FTP;
+	}
 	
 	return true;
 }
@@ -434,6 +463,7 @@ wxString CServer::FormatServer() const
 
 	switch (m_protocol)
 	{
+	default:
 	case FTP:
 		if (m_port != 21)
 			server += wxString::Format(_T(":%d"), m_port);
@@ -455,7 +485,7 @@ wxString CServer::FormatServer() const
 
 void CServer::Initialize()
 {
-	m_protocol = FTP;
+	m_protocol = UNKNOWN;
 	m_type = DEFAULT;
 	m_host = _T("");
 	m_port = 21;
