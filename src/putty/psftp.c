@@ -1511,7 +1511,7 @@ int sftp_cmd_rm(struct sftp_command *cmd)
 
     if (ret != 0)
 	fznotify1(sftpDone, ret);
-    return ret;
+    return 1;
 }
 
 static int check_is_dir(char *dstfname)
