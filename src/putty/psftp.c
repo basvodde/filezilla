@@ -1509,8 +1509,6 @@ int sftp_cmd_rm(struct sftp_command *cmd)
     for (i = 1; i < cmd->nwords; i++)
 	ret &= wildcard_iterate(cmd->words[i], sftp_action_rm, NULL);
 
-    if (ret != 0)
-	fznotify1(sftpDone, ret);
     return 1;
 }
 
