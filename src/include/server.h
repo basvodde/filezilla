@@ -3,6 +3,7 @@
 
 enum ServerProtocol
 {
+	UNKNOWN = -1,
 	FTP,
 	SFTP,
 	HTTP
