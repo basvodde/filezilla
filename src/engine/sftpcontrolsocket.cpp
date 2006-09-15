@@ -1661,7 +1661,7 @@ int CSftpControlSocket::Delete(const CServerPath& path /*=CServerPath()*/, const
 	CDirectoryCache cache;
 	cache.InvalidateFile(*m_pCurrentServer, path, file, false);
 
-	if (!Send(_T("rm ") + filename))
+	if (!Send(_T("rm ") + QuoteFilename(filename)))
 		return FZ_REPLY_ERROR;
 
 	return FZ_REPLY_WOULDBLOCK;
