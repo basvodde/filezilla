@@ -144,6 +144,7 @@ public:
 	enum OverwriteAction
 	{
 		unknown = -1,
+		ask,
 		overwrite,
 		overwriteNewer,	// Overwrite if source file is newer than target file
 		resume,

@@ -23,9 +23,7 @@ bool CAsyncRequestQueue::ProcessDefaults(CFileZillaEngine *pEngine, CAsyncReques
 		{
 			CFileExistsNotification *pFileExistsNotification = reinterpret_cast<CFileExistsNotification *>(pNotification);
 			int action = pFileExistsNotification->overwriteAction;
-			if (action != -1)
-				action++;
-			else
+			if (action == -1)
 				action = CDefaultFileExistsDlg::GetDefault(pFileExistsNotification->download);
 			if (action == -1)
 				action = COptions::Get()->GetOptionVal(pFileExistsNotification->download ? OPTION_FILEEXISTS_DOWNLOAD : OPTION_FILEEXISTS_UPLOAD);
@@ -34,22 +32,8 @@ bool CAsyncRequestQueue::ProcessDefaults(CFileZillaEngine *pEngine, CAsyncReques
 			if (!action || action == 4)
 				break;
 
-			switch (action)
-			{
-			default:
-				pFileExistsNotification->overwriteAction = CFileExistsNotification::overwrite;
-				break;
-			case 2:
-				pFileExistsNotification->overwriteAction = CFileExistsNotification::overwriteNewer;
-				break;
-			case 3:
-				pFileExistsNotification->overwriteAction = CFileExistsNotification::resume;
-				break;
-			case 5:
-				pFileExistsNotification->overwriteAction = CFileExistsNotification::skip;
-				break;
-			}
-
+			pFileExistsNotification->overwriteAction = (enum CFileExistsNotification::OverwriteAction)action;
+			
 			pEngine->SetAsyncRequestReply(pNotification);
 			delete pNotification;
 
@@ -97,9 +81,7 @@ void CAsyncRequestQueue::ProcessNextRequest()
 			CFileExistsNotification *pNotification = reinterpret_cast<CFileExistsNotification *>(entry.pNotification);
 
 			int action = pNotification->overwriteAction;
-			if (action != -1)
-				action++;
-			else
+			if (action == -1)
 				action = CDefaultFileExistsDlg::GetDefault(pNotification->download);
 			if (action == -1)
 				action = COptions::Get()->GetOptionVal(pNotification->download ? OPTION_FILEEXISTS_DOWNLOAD : OPTION_FILEEXISTS_UPLOAD);
@@ -149,15 +131,6 @@ void CAsyncRequestQueue::ProcessNextRequest()
 
 			switch (action)
 			{
-			case 1:
-				pNotification->overwriteAction = CFileExistsNotification::overwrite;
-				break;
-			case 2:
-				pNotification->overwriteAction = CFileExistsNotification::overwriteNewer;
-				break;
-			case 3:
-				pNotification->overwriteAction = CFileExistsNotification::resume;
-				break;
 			case 4:
 				{
 					wxString msg;
@@ -210,7 +183,7 @@ void CAsyncRequestQueue::ProcessNextRequest()
 				}
 				break;
 			default:
-				pNotification->overwriteAction = CFileExistsNotification::skip;
+				pNotification->overwriteAction = (enum CFileExistsNotification::OverwriteAction)action;
 				break;
 			}
 
