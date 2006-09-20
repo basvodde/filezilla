@@ -1181,7 +1181,7 @@ void CQueueView::ResetEngine(t_EngineData& data, bool removeFileItem)
 	if (data.pItem)
 	{
 		wxASSERT(data.pItem->IsActive());
-		wxASSERT(data.pItem->m_pEngineData = &data);
+		wxASSERT(data.pItem->m_pEngineData == &data);
 		if (data.pItem->IsActive())
 		{
 			data.pItem->SetActive(false);
