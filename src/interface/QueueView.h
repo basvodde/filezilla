@@ -99,6 +99,8 @@ public:
 
 	virtual void SaveItem(TiXmlElement* pElement) const;
 
+	void SetDefaultFileExistsAction(int action, const enum AcceptedTransferDirection direction);
+
 	int m_activeCount;
 
 protected:
@@ -144,6 +146,8 @@ public:
 
 	// Upload members
 	wxDir* m_pDir;
+
+	int m_defaultFileExistsAction;
 
 protected:
 	wxString m_localPath;
@@ -201,7 +205,7 @@ public:
 	wxString GetIndent() { return m_indent; }
 
 	enum ItemState GetItemState() const;
-	void SetItemState(enum ItemState itemState);
+	void SetItemState(const enum ItemState itemState);
 
 	virtual enum QueueItemType GetType() const { return QueueItemType_File; }
 
@@ -223,6 +227,8 @@ public:
 	CFileTransferCommand::t_transferSettings m_transferSettings;
 
 	t_EngineData* m_pEngineData;
+
+	int m_defaultFileExistsAction;
 
 protected:
 	enum QueuePriority m_priority;
@@ -248,19 +254,23 @@ public:
 	CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame, CAsyncRequestQueue* pAsyncRequestQueue);
 	virtual ~CQueueView();
 	
-	bool QueueFile(bool queueOnly, bool download, const wxString& localFile, const wxString& remoteFile,
-				const CServerPath& remotePath, const CServer& server, wxLongLong size);
-	bool QueueFiles(const std::list<t_newEntry> &entryList, bool queueOnly, bool download, CServerItem* pServerItem);
+	bool QueueFile(const bool queueOnly, const bool download, const wxString& localFile, const wxString& remoteFile,
+				const CServerPath& remotePath, const CServer& server, const wxLongLong size);
+	bool QueueFiles(const std::list<t_newEntry> &entryList, bool queueOnly, bool download, CServerItem* pServerItem, const int defaultFileExistsAction);
 	bool QueueFolder(bool queueOnly, bool download, const wxString& localPath, const CServerPath& remotePath, const CServer& server);
 	
 	bool IsEmpty() const;
 	int IsActive() const { return m_activeMode; }
-	bool SetActive(bool active = true);
+	bool SetActive(const bool active = true);
 	bool Quit();
 	
 	// If the settings are changed, this function will recalculate some
 	// data like the list of ascii file types
 	void SettingsChanged();
+
+	// This sets the default file exists action for all files currently in queue.
+	// This includes queued folders which are yet to be processed
+	void SetDefaultFileExistsAction(int action, const enum AcceptedTransferDirection direction);
 
 protected:
 
@@ -277,7 +287,7 @@ protected:
 
 	void ProcessReply(t_EngineData& engineData, COperationNotification* pNotification);
 	void SendNextCommand(t_EngineData& engineData);
-	void ResetEngine(t_EngineData& data, bool removeFileItem);
+	void ResetEngine(t_EngineData& data, const bool removeFileItem);
 	void ResetItem(CFileItem* item);
 	
 	void RemoveItem(CQueueItem* item);
@@ -344,6 +354,7 @@ protected:
 	void OnProcessQueue(wxCommandEvent& event);
 	void OnStopAndClear(wxCommandEvent& event);
 	void OnRemoveSelected(wxCommandEvent& event);
+	void OnSetDefaultFileExistsAction(wxCommandEvent& event);
 
 	void OnEraseBackground(wxEraseEvent& event);
 };

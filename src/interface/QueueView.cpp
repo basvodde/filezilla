@@ -10,6 +10,7 @@
 #include "ipcmutex.h"
 #include "state.h"
 #include "asyncrequestqueue.h"
+#include "defaultfileexistsdlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -36,6 +37,7 @@ EVT_CONTEXT_MENU(CQueueView::OnContextMenu)
 EVT_MENU(XRCID("ID_PROCESSQUEUE"), CQueueView::OnProcessQueue)
 EVT_MENU(XRCID("ID_REMOVEALL"), CQueueView::OnStopAndClear)
 EVT_MENU(XRCID("ID_REMOVE"), CQueueView::OnRemoveSelected)
+EVT_MENU(XRCID("ID_DEFAULT_FILEEXISTSACTION"), CQueueView::OnSetDefaultFileExistsAction)
 
 EVT_ERASE_BACKGROUND(CQueueView::OnEraseBackground)
 
@@ -379,6 +381,7 @@ CFileItem::CFileItem(CServerItem* parent, bool queued, bool download, const wxSt
 	m_errorCount = 0;
 	m_remove = false;
 	m_pEngineData = 0;
+	m_defaultFileExistsAction = -1;
 }
 
 CFileItem::~CFileItem()
@@ -395,7 +398,7 @@ enum ItemState CFileItem::GetItemState() const
 	return m_itemState;
 }
 
-void CFileItem::SetItemState(enum ItemState itemState)
+void CFileItem::SetItemState(const enum ItemState itemState)
 {
 	m_itemState = itemState;
 }
@@ -405,7 +408,7 @@ enum QueuePriority CFileItem::GetPriority() const
 	return m_priority;
 }
 
-void CFileItem::SetActive(bool active)
+void CFileItem::SetActive(const bool active)
 {
 	if (active && !m_active)
 	{
@@ -466,6 +469,29 @@ void CServerItem::AddFileItemToList(CFileItem* pItem)
 		return;
 
 	m_fileList[pItem->m_queued ? 0 : 1][pItem->GetPriority()].push_back(pItem);
+}
+
+void CServerItem::SetDefaultFileExistsAction(int action, const enum AcceptedTransferDirection direction)
+{
+	for (std::vector<CQueueItem*>::iterator iter = m_children.begin(); iter != m_children.end(); iter++)
+	{
+		CQueueItem *pItem = *iter;
+		if (pItem->GetType() == QueueItemType_File)
+		{
+			CFileItem* pFileItem = ((CFileItem *)pItem);
+			if (direction == upload && pFileItem->Download())
+				continue;
+			else if (direction == download && !pFileItem->Download())
+				continue;
+			pFileItem->m_defaultFileExistsAction = action;
+		}
+		else if (pItem->GetType() == QueueItemType_Folder)
+		{
+			if (direction == download)
+				continue;
+			((CFolderItem *)pItem)->m_defaultFileExistsAction = action;
+		}
+	}
 }
 
 CFileItem* CServerItem::GetIdleChild(bool immediateOnly, enum AcceptedTransferDirection direction)
@@ -611,6 +637,8 @@ CFolderItem::CFolderItem(CServerItem* parent, bool queued, bool download, const 
 	pair.localPath = localPath;
 	pair.remotePath = remotePath;
 	m_dirsToCheck.push_back(pair);
+
+	m_defaultFileExistsAction = -1;
 }
 
 bool CFolderItem::TryRemoveAll()
@@ -662,6 +690,9 @@ CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame, 
 	  m_pMainFrame(pMainFrame),
 	  m_pAsyncRequestQueue(pAsyncRequestQueue)
 {
+	if (m_pAsyncRequestQueue)
+		m_pAsyncRequestQueue->SetQueue(this);
+
 	m_allowBackgroundErase = true;
 
 	m_itemCount = 0;
@@ -727,9 +758,9 @@ CQueueView::~CQueueView()
 		delete m_engineData[engineIndex].pEngine;
 }
 
-bool CQueueView::QueueFile(bool queueOnly, bool download, const wxString& localFile, 
+bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxString& localFile, 
 						   const wxString& remoteFile, const CServerPath& remotePath,
-						   const CServer& server, wxLongLong size)
+						   const CServer& server, const wxLongLong size)
 {
 	CServerItem* item = GetServerItem(server);
 	if (!item)
@@ -947,6 +978,20 @@ void CQueueView::OnEngineEvent(wxEvent &event)
 			delete pNotification;
 			break;
 		case nId_asyncrequest:
+
+			switch (reinterpret_cast<CAsyncRequestNotification *>(pNotification)->GetRequestID())
+			{
+			case reqId_fileexists:
+				{
+					// Set default file exists action
+					CFileExistsNotification *pFileExistsNotification = reinterpret_cast<CFileExistsNotification *>(pNotification);
+					pFileExistsNotification->overwriteAction = (enum CFileExistsNotification::OverwriteAction)data.pItem->m_defaultFileExistsAction;
+				}
+				break;
+			default:
+				break;
+			}
+
 			m_pMainFrame->AddToRequestQueue(data.pEngine, reinterpret_cast<CAsyncRequestNotification *>(pNotification));
 			break;
 		case nId_active:
@@ -1157,7 +1202,7 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 	SendNextCommand(engineData);
 }
 
-void CQueueView::ResetEngine(t_EngineData& data, bool removeFileItem)
+void CQueueView::ResetEngine(t_EngineData& data, const bool removeFileItem)
 {
 	if (!data.active)
 		return;
@@ -1605,7 +1650,7 @@ void CQueueView::OnFolderThreadComplete(wxCommandEvent& event)
 	ProcessUploadFolderItems();
 }
 
-bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOnly, bool download, CServerItem* pServerItem)
+bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOnly, bool download, CServerItem* pServerItem, const int defaultFileExistsAction)
 {
 	wxASSERT(pServerItem);
 
@@ -1615,6 +1660,7 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOn
 
 		CFileItem* fileItem = new CFileItem(pServerItem, queueOnly, download, entry.localFile, entry.remoteFile, entry.remotePath, entry.size);
 		fileItem->m_transferSettings.binary = ShouldUseBinaryMode(download ? entry.remoteFile : wxFileName(entry.localFile).GetFullName());
+		fileItem->m_defaultFileExistsAction = defaultFileExistsAction;
 		pServerItem->AddChild(fileItem);
 		pServerItem->AddFileItemToList(fileItem);
 
@@ -1845,6 +1891,11 @@ void CQueueView::OnContextMenu(wxContextMenuEvent& event)
 		return;
 
 	pMenu->Check(XRCID("ID_PROCESSQUEUE"), IsActive() ? true : false);
+	pMenu->Enable(XRCID("ID_REMOVE"), GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1);
+
+	const bool hasSelection = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1;
+	pMenu->Enable(XRCID("ID_PRIORITY"), hasSelection);
+	pMenu->Enable(XRCID("ID_DEFAULT_FILEEXISTSACTION"), hasSelection);
 
 	PopupMenu(pMenu);
 	delete pMenu;
@@ -2013,7 +2064,7 @@ void CQueueView::OnFolderThreadFiles(wxCommandEvent& event)
 
 	std::list<t_newEntry> entryList;
 	m_pFolderProcessingThread->GetFiles(entryList);
-	QueueFiles(entryList, pItem->Queued(), false, (CServerItem*)pItem->GetTopLevelItem());
+	QueueFiles(entryList, pItem->Queued(), false, (CServerItem*)pItem->GetTopLevelItem(), pItem->m_defaultFileExistsAction);
 
 	pItem->m_count += entryList.size();
 	pItem->m_statusMessage = wxString::Format(_("%d files added to queue"), pItem->GetCount());
@@ -2024,4 +2075,62 @@ void CQueueView::OnEraseBackground(wxEraseEvent& event)
 {
 	if (m_allowBackgroundErase)
 		event.Skip();
+}
+
+void CQueueView::SetDefaultFileExistsAction(int action, const enum AcceptedTransferDirection direction)
+{
+	for (std::vector<CServerItem*>::iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
+		(*iter)->SetDefaultFileExistsAction(action, direction);
+}
+
+void CQueueView::OnSetDefaultFileExistsAction(wxCommandEvent &event)
+{
+	if (GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) == -1)
+		return;
+
+	CDefaultFileExistsDlg dlg;
+	if (!dlg.Load(this, true))
+		return;
+
+	int downloadAction, uploadAction;
+	if (!dlg.Run(&downloadAction, &uploadAction))
+		return;
+
+	std::list<long> selectedItems;
+	long item = -1;
+	while (true)
+	{
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		if (item == -1)
+			break;
+
+		CQueueItem* pItem = GetQueueItem(item);
+		if (!pItem)
+			continue;
+
+		switch (pItem->GetType())
+		{
+		case QueueItemType_Folder:
+			((CFolderItem*)pItem)->m_defaultFileExistsAction = uploadAction;
+			break;
+		case QueueItemType_File:
+			{
+				CFileItem *pFileItem = (CFileItem*)pItem;
+				if (pFileItem->Download())
+					pFileItem->m_defaultFileExistsAction = downloadAction;
+				else
+					pFileItem->m_defaultFileExistsAction = uploadAction;
+			}
+			break;
+		case QueueItemType_Server:
+			{
+				CServerItem *pServerItem = (CServerItem*)pItem;
+				pServerItem->SetDefaultFileExistsAction(downloadAction, download);
+				pServerItem->SetDefaultFileExistsAction(uploadAction, upload);
+			}
+			break;
+		default:
+			break;
+		}		
+	}
 }

@@ -8,12 +8,12 @@ class CDefaultFileExistsDlg : protected wxDialogEx
 public:
 	CDefaultFileExistsDlg();
 
-	bool Load(wxWindow *parent);
+	bool Load(wxWindow *parent, bool fromQueue);
 
 	static int GetDefault(bool download);
 	static void SetDefault(bool download, int action);
 
-	void Run();
+	bool Run(int *downloadAction = 0, int *uploadAction = 0);
 
 protected:
 	static int m_defaults[2];

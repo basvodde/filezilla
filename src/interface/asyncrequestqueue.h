@@ -3,6 +3,7 @@
 #define __ASYNCREQUESTQUEUE_H__
 
 class CMainFrame;
+class CQueueView;
 class CAsyncRequestQueue
 {
 public:
@@ -13,8 +14,11 @@ public:
 	void ClearPending(const CFileZillaEngine* pEngine);
 	void RecheckDefaults();
 
+	void SetQueue(CQueueView *pQueue);
+
 protected:
 	CMainFrame *m_pMainFrame;
+	CQueueView *m_pQueueView;
 
 	void ProcessNextRequest();
 	bool ProcessDefaults(CFileZillaEngine *pEngine, CAsyncRequestNotification *pNotification);

@@ -362,7 +362,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_FILEEXISTS"))
 	{
 		CDefaultFileExistsDlg dlg;
-		if (!dlg.Load(this))
+		if (!dlg.Load(this, false))
 			return;
 
 		dlg.Run();

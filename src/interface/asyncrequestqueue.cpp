@@ -4,10 +4,12 @@
 #include "Mainfrm.h"
 #include "defaultfileexistsdlg.h"
 #include "Options.h"
+#include "QueueView.h"
 
 CAsyncRequestQueue::CAsyncRequestQueue(CMainFrame *pMainFrame)
 {
 	m_pMainFrame = pMainFrame;
+	m_pQueueView = 0;
 }
 
 CAsyncRequestQueue::~CAsyncRequestQueue()
@@ -22,6 +24,8 @@ bool CAsyncRequestQueue::ProcessDefaults(CFileZillaEngine *pEngine, CAsyncReques
 	case reqId_fileexists:
 		{
 			CFileExistsNotification *pFileExistsNotification = reinterpret_cast<CFileExistsNotification *>(pNotification);
+
+			// Get the action, go up the hierarchy till one is found
 			int action = pFileExistsNotification->overwriteAction;
 			if (action == -1)
 				action = CDefaultFileExistsDlg::GetDefault(pFileExistsNotification->download);
@@ -80,6 +84,7 @@ void CAsyncRequestQueue::ProcessNextRequest()
 		{
 			CFileExistsNotification *pNotification = reinterpret_cast<CFileExistsNotification *>(entry.pNotification);
 
+			// Get the action, go up the hierarchy till one is found
 			int action = pNotification->overwriteAction;
 			if (action == -1)
 				action = CDefaultFileExistsDlg::GetDefault(pNotification->download);
@@ -109,7 +114,7 @@ void CAsyncRequestQueue::ProcessNextRequest()
 						}
 						else
 						{
-							// For the notification already in the request queue, we have to set the queue action directly
+							// For the notifications already in the request queue, we have to set the queue action directly
 							for (std::list<t_queueEntry>::iterator iter = m_requestList.begin()++; iter != m_requestList.end(); iter++)
 							{
 								if (pNotification->GetRequestID() != reqId_fileexists)
@@ -117,8 +122,20 @@ void CAsyncRequestQueue::ProcessNextRequest()
 
 								reinterpret_cast<CFileExistsNotification *>(entry.pNotification)->overwriteAction = CFileExistsNotification::OverwriteAction(action - 1);
 							}
+
+							enum AcceptedTransferDirection direction;
+							if (directionOnly)
+							{
+								if (pNotification->download)
+									direction = download;
+								else
+									direction = upload;
+							}
+							else
+								direction = all;
 		
-							// Todo: Pass value to queue
+							if (m_pQueueView)
+								m_pQueueView->SetDefaultFileExistsAction(action, direction);
 						}
 					}
 				}
@@ -149,7 +166,7 @@ void CAsyncRequestQueue::ProcessNextRequest()
 					}
 					wxTextEntryDialog dlg(m_pMainFrame, msg, _("Rename file"), defaultName);
 
-					// Repeat until user cancels or entery a new name
+					// Repeat until user cancels or enters a new name
 					while (1)
 					{
 						int res = dlg.ShowModal();
@@ -249,7 +266,8 @@ void CAsyncRequestQueue::ClearPending(const CFileZillaEngine *pEngine)
 		{
 			m_requestList.erase(iter);
 
-			// At most one pending request per engine
+			// At most one pending request per engine possible, 
+			// so we can stop here
 			break;
 		}
 	}
@@ -271,4 +289,9 @@ void CAsyncRequestQueue::RecheckDefaults()
 			m_requestList.erase(cur);
 		cur = next;
 	}
+}
+
+void CAsyncRequestQueue::SetQueue(CQueueView *pQueue)
+{
+	m_pQueueView = pQueue;
 }
