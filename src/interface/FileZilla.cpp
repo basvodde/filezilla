@@ -39,12 +39,14 @@ CFileZillaApp::~CFileZillaApp()
 
 bool CFileZillaApp::OnInit()
 {
+	wxIsPlatform64Bit();
 #if wxUSE_DEBUGREPORT && wxUSE_ON_FATAL_EXCEPTION
 	//wxHandleFatalExceptions();
 #endif
 	wxApp::OnInit();
 
-	wxSystemOptions::SetOption(wxT("msw.remap"), 0);
+	wxSystemOptions::SetOption(_T("msw.remap"), 0);
+	wxSystemOptions::SetOption(_T("mac.listctrl.always_use_generic"), 1);
 
 	LoadLocales();
     InitSettingsDir();
