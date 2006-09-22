@@ -199,13 +199,11 @@ void CFtpControlSocket::ParseLine(wxString line)
 			wxString up = line.Upper();
 			if (up == _T(" UTF8"))
 				CServerCapabilities::SetCapability(*m_pCurrentServer, utf8_command, yes);
-			else if (line == _T(" CLNT") || line.Left(5) == _T(" CLNT ")) 
+			else if (up == _T(" CLNT") || up.Left(6) == _T(" CLNT ")) 
 				CServerCapabilities::SetCapability(*m_pCurrentServer, clnt_command, yes);
-			else if (!line.CmpNoCase(_T(" CLNT")) || !line.Left(5).CmpNoCase(_T(" CLNT ")))
-				CServerCapabilities::SetCapability(*m_pCurrentServer, clnt_command, yes);
-			else if (!line.CmpNoCase(_T(" MLSD")) || !line.Left(5).CmpNoCase(_T(" MLSD ")))
+			else if (up == _T(" MLSD") || up.Left(6) == _T(" MLSD "))
 				CServerCapabilities::SetCapability(*m_pCurrentServer, mlsd_command, yes);
-			else if (!line.CmpNoCase(_T(" MLST")) || !line.Left(5).CmpNoCase(_T(" MLST ")))
+			else if (up == _T(" MLST") || up.Left(6) == _T(" MLST "))
 				CServerCapabilities::SetCapability(*m_pCurrentServer, mlsd_command, yes);
 		}
 	}
@@ -757,7 +755,12 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 	InitTransferStatus(-1, 0);
 
 	pData->opState = list_waittransfer;
-	return Transfer(_T("LIST"), pData);
+#if 0 // Disabled for now
+	if (CServerCapabilities::GetCapability(*m_pCurrentServer, mlsd_command) == yes)
+		return Transfer(_T("MLSD"), pData);
+	else
+#endif
+		return Transfer(_T("LIST"), pData);
 }
 
 int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
@@ -808,7 +811,12 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 		InitTransferStatus(-1, 0);
 
 		pData->opState = list_waittransfer;
-		return Transfer(_T("LIST"), pData);
+#if 0 // Disabled for now
+		if (CServerCapabilities::GetCapability(*m_pCurrentServer, mlsd_command) == yes)
+			return Transfer(_T("MLSD"), pData);
+		else
+#endif
+			return Transfer(_T("LIST"), pData);
 	}
 	else if (pData->opState == list_waittransfer)
 	{

@@ -755,6 +755,9 @@ bool CDirectoryListingParser::ParseLine(CLine *pLine, const enum ServerType serv
 	res = ParseAsDos(pLine, entry);
 	if (res)
 		goto done;
+	res = ParseAsMlsd(pLine, entry);
+	if (res)
+		goto done;
 	res = ParseAsEplf(pLine, entry);
 	if (res)
 		goto done;
@@ -2349,6 +2352,107 @@ bool CDirectoryListingParser::ParseComplexFileSize(CToken& token, wxLongLong& si
 	}
 	while (dot-- > 0)
 		size /= 10;
+
+	return true;
+}
+
+bool CDirectoryListingParser::ParseAsMlsd(CLine *pLine, CDirentry &entry)
+{
+	// MLSD format as described here: http://www.ietf.org/internet-drafts/draft-ietf-ftpext-mlst-16.txt
+	
+	// Parsing is done strict, abort on slightest error.
+
+	CToken token;
+
+	if (!pLine->GetToken(0, token))
+		return false;
+
+	wxString facts = token.GetString();
+	if (facts == _T(""))
+		return false;
+
+	entry.dir = false;
+	entry.link = false;
+	entry.size = -1;
+	entry.hasDate = false;
+	entry.hasTime = false;
+	entry.ownerGroup = _T("");
+	entry.permissions = _T("");
+
+	while (facts != _(""))
+	{
+		int delim = facts.Find(';');
+		if (delim < 3)
+			return false;
+
+		int pos = facts.Find('=');
+		if (pos < 1 || (pos + 2) >= delim)
+			return false;
+
+		wxString factname = facts.Left(pos).Lower();
+		wxString value = facts.Mid(pos + 1, delim - pos - 1);
+		if (factname == _T("type"))
+		{
+			if (!value.CmpNoCase(_T("dir")) ||
+				!value.CmpNoCase(_T("cdir")) ||
+				!value.CmpNoCase(_T("pdir")))
+				entry.dir = true;
+		}
+		else if (factname == _T("size"))
+		{
+			entry.size = 0;
+
+			for (unsigned int i = 0; i < value.Len(); i++)
+			{
+				if (value[i] < '0' || value[i] > '9')
+					return false;
+				entry.size *= 10;
+				entry.size += value[i] - '0';
+			}
+		}
+		else if (factname == _T("modify") ||
+			(!entry.hasDate && factname == _T("create")))
+		{
+			wxDateTime dateTime;
+			const wxChar* time = dateTime.ParseFormat(value, _T("%Y%m%d"));
+
+			if (!time)
+				return false;
+
+			if (*time)
+			{
+				if (!dateTime.ParseFormat(time, _T("%H%M"), dateTime))
+					return false;
+			}
+			
+			dateTime = dateTime.FromTimezone(wxDateTime::GMT0);
+
+			entry.date.year = dateTime.GetYear();
+			entry.date.month = dateTime.GetMonth() + 1;
+			entry.date.day = dateTime.GetDay();
+			entry.hasDate = true;
+
+			if (*time)
+			{
+				entry.hasTime = true;
+				entry.time.hour = dateTime.GetHour();
+				entry.time.minute = dateTime.GetMinute();
+			}
+			else
+				entry.hasTime = false;
+		}
+		else if (factname == _T("perm"))
+			entry.permissions = value;
+		
+		facts = facts.Mid(delim + 1);
+	}
+
+	if (!pLine->GetToken(1, token, true))
+		return false;
+
+	entry.name = token.GetString();
+
+	entry.unsure = false;
 
 	return true;
 }
