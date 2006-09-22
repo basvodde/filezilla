@@ -18,6 +18,7 @@ enum capabilityNames
 	feat_command,
 	clnt_command, // set to 'yes' if CLNT should be sent
 	utf8_command, // set to yes if OPTS UTF8 ON should be sent
+	mlsd_command
 };
 
 class CCapabilities

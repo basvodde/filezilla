@@ -201,6 +201,10 @@ void CFtpControlSocket::ParseLine(wxString line)
 				CServerCapabilities::SetCapability(*m_pCurrentServer, utf8_command, yes);
 			else if (line == _T(" CLNT") || line.Left(5) == _T(" CLNT ")) 
 				CServerCapabilities::SetCapability(*m_pCurrentServer, clnt_command, yes);
+			else if (!line.CmpNoCase(_T(" CLNT")) || !line.Left(5).CmpNoCase(_T(" CLNT ")))
+				CServerCapabilities::SetCapability(*m_pCurrentServer, clnt_command, yes);
+			else if (!line.CmpNoCase(_T(" MLSD")) || !line.Left(5).CmpNoCase(_T(" MLSD ")))
+				CServerCapabilities::SetCapability(*m_pCurrentServer, mlsd_command, yes);
 		}
 	}
 	//Check for multi-line responses
