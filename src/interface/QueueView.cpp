@@ -1308,6 +1308,8 @@ void CQueueView::RemoveItem(CQueueItem* item)
 	{
 		bool eraseBackground = GetTopItem() + GetCountPerPage() + 1 >= m_itemCount;
 		Refresh(eraseBackground);
+		if (eraseBackground)
+			Update();
 	}
 
 	UpdateStatusLinePositions();
