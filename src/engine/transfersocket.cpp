@@ -143,7 +143,7 @@ void CTransferSocket::OnConnect(wxSocketEvent &event)
 
 void CTransferSocket::OnReceive()
 {
-	m_pControlSocket->LogMessage(::Debug_Debug, _T("CTransferSocket::OnReceive()"));
+	m_pControlSocket->LogMessage(::Debug_Debug, _T("CTransferSocket::OnReceive(), m_transferMode=%d"), m_transferMode);
 
 	if (!m_pSocket || !m_bActive)
 		return;
@@ -159,7 +159,10 @@ void CTransferSocket::OnReceive()
 			if (error == wxSOCKET_NOERROR)
 				TransferEnd(0);
 			else if (error != wxSOCKET_WOULDBLOCK)
+			{
+				m_pControlSocket->LogMessage(Debug_Warning, _T("Read failed with error %d"), error);
 				TransferEnd(1);
+			}
 			return;
 		}
 		int numread = m_pSocket->LastCount();
@@ -176,7 +179,10 @@ void CTransferSocket::OnReceive()
 			if (!numread)
 				TransferEnd(0);
 			else if (numread < 0)
+			{
+				m_pControlSocket->LogMessage(Debug_Warning, _T("  numread < 0"));
 				TransferEnd(1);
+			}
 		}
 	}
 	else if (m_transferMode == download)
