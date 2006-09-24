@@ -4,13 +4,13 @@
 
 class CMainFrame;
 class CQueueView;
-class CAsyncRequestQueue
+class CAsyncRequestQueue : public wxEvtHandler
 {
 public:
 	CAsyncRequestQueue(CMainFrame *pMainFrame);
 	~CAsyncRequestQueue();
 
-	void AddRequest(CFileZillaEngine *pEngine, CAsyncRequestNotification *pNotification);
+	bool AddRequest(CFileZillaEngine *pEngine, CAsyncRequestNotification *pNotification);
 	void ClearPending(const CFileZillaEngine* pEngine);
 	void RecheckDefaults();
 
@@ -29,6 +29,9 @@ protected:
 		CAsyncRequestNotification *pNotification;
 	};
 	std::list<t_queueEntry> m_requestList;
+
+	DECLARE_EVENT_TABLE();
+	void OnProcessQueue(wxCommandEvent &event);
 };
 
 #endif //__ASYNCREQUESTQUEUE_H__

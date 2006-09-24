@@ -6,6 +6,13 @@
 #include "Options.h"
 #include "QueueView.h"
 
+DECLARE_EVENT_TYPE(fzEVT_PROCESSASYNCREQUESTQUEUE, -1)
+DEFINE_EVENT_TYPE(fzEVT_PROCESSASYNCREQUESTQUEUE)
+
+BEGIN_EVENT_TABLE(CAsyncRequestQueue, wxEvtHandler)
+EVT_COMMAND(wxID_ANY, fzEVT_PROCESSASYNCREQUESTQUEUE, CAsyncRequestQueue::OnProcessQueue)
+END_EVENT_TABLE()
+
 CAsyncRequestQueue::CAsyncRequestQueue(CMainFrame *pMainFrame)
 {
 	m_pMainFrame = pMainFrame;
@@ -50,12 +57,12 @@ bool CAsyncRequestQueue::ProcessDefaults(CFileZillaEngine *pEngine, CAsyncReques
 	return false;
 }
 
-void CAsyncRequestQueue::AddRequest(CFileZillaEngine *pEngine, CAsyncRequestNotification *pNotification)
+bool CAsyncRequestQueue::AddRequest(CFileZillaEngine *pEngine, CAsyncRequestNotification *pNotification)
 {
 	ClearPending(pEngine);
 
 	if (ProcessDefaults(pEngine, pNotification))
-		return;
+		return false;
 
 	t_queueEntry entry;
 	entry.pEngine = pEngine;
@@ -64,193 +71,197 @@ void CAsyncRequestQueue::AddRequest(CFileZillaEngine *pEngine, CAsyncRequestNoti
 	m_requestList.push_back(entry);
 
 	if (m_requestList.size() == 1)
-		ProcessNextRequest();
+	{
+		wxCommandEvent evt(fzEVT_PROCESSASYNCREQUESTQUEUE);
+		wxPostEvent(this, evt);
+	}
+
+	return true;
 }
 
 void CAsyncRequestQueue::ProcessNextRequest()
 {
-	while (!m_requestList.empty())
+	if (m_requestList.empty())
+		return;
+
+	t_queueEntry &entry = m_requestList.front();
+
+	if (!entry.pEngine->IsPendingAsyncRequestReply(entry.pNotification))
 	{
-		t_queueEntry &entry = m_requestList.front();
-
-		if (!entry.pEngine->IsPendingAsyncRequestReply(entry.pNotification))
-		{
-			delete entry.pNotification;
-			m_requestList.pop_front();
-			continue;
-		}
+		delete entry.pNotification;
+		m_requestList.pop_front();
+		return;
+	}
 		
-		if (entry.pNotification->GetRequestID() == reqId_fileexists)
+	if (entry.pNotification->GetRequestID() == reqId_fileexists)
+	{
+		CFileExistsNotification *pNotification = reinterpret_cast<CFileExistsNotification *>(entry.pNotification);
+
+		// Get the action, go up the hierarchy till one is found
+		int action = pNotification->overwriteAction;
+		if (action == -1)
+			action = CDefaultFileExistsDlg::GetDefault(pNotification->download);
+		if (action == -1)
+			action = COptions::Get()->GetOptionVal(pNotification->download ? OPTION_FILEEXISTS_DOWNLOAD : OPTION_FILEEXISTS_UPLOAD);
+
+		if (!action)
 		{
-			CFileExistsNotification *pNotification = reinterpret_cast<CFileExistsNotification *>(entry.pNotification);
-
-			// Get the action, go up the hierarchy till one is found
-			int action = pNotification->overwriteAction;
-			if (action == -1)
-				action = CDefaultFileExistsDlg::GetDefault(pNotification->download);
-			if (action == -1)
-				action = COptions::Get()->GetOptionVal(pNotification->download ? OPTION_FILEEXISTS_DOWNLOAD : OPTION_FILEEXISTS_UPLOAD);
-
-			if (!action)
-			{
-				CFileExistsDlg dlg(pNotification);
-				dlg.Create(m_pMainFrame);
-				int res = dlg.ShowModal();
-
-				if (res == wxID_OK)
-				{
-					action = dlg.GetAction() + 1;
-
-					bool directionOnly, queueOnly;
-					if (dlg.Always(directionOnly, queueOnly))
-					{
-						if (!queueOnly)
-						{
-							if (pNotification->download || !directionOnly)
-								CDefaultFileExistsDlg::SetDefault(true, action);
-
-							if (!pNotification->download || !directionOnly)
-								CDefaultFileExistsDlg::SetDefault(false, action);
-						}
-						else
-						{
-							// For the notifications already in the request queue, we have to set the queue action directly
-							for (std::list<t_queueEntry>::iterator iter = m_requestList.begin()++; iter != m_requestList.end(); iter++)
-							{
-								if (pNotification->GetRequestID() != reqId_fileexists)
-									continue;
-
-								reinterpret_cast<CFileExistsNotification *>(entry.pNotification)->overwriteAction = CFileExistsNotification::OverwriteAction(action - 1);
-							}
-
-							enum AcceptedTransferDirection direction;
-							if (directionOnly)
-							{
-								if (pNotification->download)
-									direction = download;
-								else
-									direction = upload;
-							}
-							else
-								direction = all;
-		
-							if (m_pQueueView)
-								m_pQueueView->SetDefaultFileExistsAction(action, direction);
-						}
-					}
-				}
-				else
-					action = 5;
-			}
-
-			if (action < 1 || action > 5)
-				action = 5;
-
-			switch (action)
-			{
-			case 4:
-				{
-					wxString msg;
-					wxString defaultName;
-					if (pNotification->download)
-					{
-						msg.Printf(_("The file %s already exists.\nPlease enter a new name:"), pNotification->localFile.c_str());
-						wxFileName fn = pNotification->localFile;
-						defaultName = fn.GetFullName();
-					}
-					else
-					{
-						wxString fullName = pNotification->remotePath.GetPath() + pNotification->remoteFile;
-						msg.Printf(_("The file %s already exists.\nPlease enter a new name:"), fullName.c_str());
-						defaultName = pNotification->remoteFile;
-					}
-					wxTextEntryDialog dlg(m_pMainFrame, msg, _("Rename file"), defaultName);
-
-					// Repeat until user cancels or enters a new name
-					while (1)
-					{
-						int res = dlg.ShowModal();
-						if (res == wxID_OK)
-						{
-							if (dlg.GetValue() == _T(""))
-								continue; // Disallow empty names
-							if (dlg.GetValue() == defaultName)
-							{
-								wxMessageDialog dlg2(m_pMainFrame, _("You did not enter a new name for the file. Overwrite the file instead?"), _("Filename unchanged"), 
-									wxYES_NO | wxNO_DEFAULT | wxICON_QUESTION | wxCANCEL);
-								int res = dlg2.ShowModal();
-
-								if (res == wxID_CANCEL)
-									pNotification->overwriteAction = CFileExistsNotification::skip;
-								else if (res == wxID_NO)
-									continue;
-								else
-									pNotification->overwriteAction = CFileExistsNotification::skip;
-							}
-							else
-							{
-								pNotification->overwriteAction = CFileExistsNotification::rename;
-								pNotification->newName = dlg.GetValue();
-							}
-						}
-						else
-							pNotification->overwriteAction = CFileExistsNotification::skip;
-						break;
-					}
-				}
-				break;
-			default:
-				pNotification->overwriteAction = (enum CFileExistsNotification::OverwriteAction)action;
-				break;
-			}
-
-			entry.pEngine->SetAsyncRequestReply(entry.pNotification);
-			delete pNotification;
-		}
-		else if (entry.pNotification->GetRequestID() == reqId_interactiveLogin)
-		{
-			CInteractiveLoginNotification* pNotification = reinterpret_cast<CInteractiveLoginNotification*>(entry.pNotification);
-
-			if (m_pMainFrame->GetPassword(pNotification->server, _T(""), pNotification->challenge))
-				pNotification->passwordSet = true;
-
-			entry.pEngine->SetAsyncRequestReply(pNotification);
-			delete pNotification;
-		}
-		else if (entry.pNotification->GetRequestID() == reqId_hostkey || entry.pNotification->GetRequestID() == reqId_hostkeyChanged)
-		{
-			CHostKeyNotification *pNotification = reinterpret_cast<CHostKeyNotification *>(entry.pNotification);
-
-			wxDialogEx* pDlg = new wxDialogEx;
-			if (pNotification->GetRequestID() == reqId_hostkey)
-				pDlg->Load(m_pMainFrame, _T("ID_HOSTKEY"));
-			else
-				pDlg->Load(m_pMainFrame, _T("ID_HOSTKEYCHANGED"));
-
-			pDlg->WrapText(pDlg, XRCID("ID_DESC"), 400);
-
-			pDlg->SetLabel(XRCID("ID_HOST"), wxString::Format(_T("%s:%d"), pNotification->GetHost().c_str(), pNotification->GetPort()));
-			pDlg->SetLabel(XRCID("ID_FINGERPRINT"), pNotification->GetFingerprint());
-
-			pDlg->GetSizer()->Fit(pDlg);
-			pDlg->GetSizer()->SetSizeHints(pDlg);
-
-			int res = pDlg->ShowModal();
+			CFileExistsDlg dlg(pNotification);
+			dlg.Create(m_pMainFrame);
+			int res = dlg.ShowModal();
 
 			if (res == wxID_OK)
 			{
-				pNotification->m_trust = true;
-				pNotification->m_alwaysTrust = XRCCTRL(*pDlg, "ID_ALWAYS", wxCheckBox)->GetValue();
-			}
-			
-			entry.pEngine->SetAsyncRequestReply(pNotification);
-			delete pNotification;
-		}
-		
+				action = dlg.GetAction() + 1;
 
-		RecheckDefaults();
-		m_requestList.pop_front();
+				bool directionOnly, queueOnly;
+				if (dlg.Always(directionOnly, queueOnly))
+				{
+					if (!queueOnly)
+					{
+						if (pNotification->download || !directionOnly)
+							CDefaultFileExistsDlg::SetDefault(true, action);
+
+						if (!pNotification->download || !directionOnly)
+							CDefaultFileExistsDlg::SetDefault(false, action);
+					}
+					else
+					{
+						// For the notifications already in the request queue, we have to set the queue action directly
+						for (std::list<t_queueEntry>::iterator iter = m_requestList.begin()++; iter != m_requestList.end(); iter++)
+						{
+							if (pNotification->GetRequestID() != reqId_fileexists)
+								continue;
+
+							reinterpret_cast<CFileExistsNotification *>(entry.pNotification)->overwriteAction = CFileExistsNotification::OverwriteAction(action - 1);
+						}
+
+						enum AcceptedTransferDirection direction;
+						if (directionOnly)
+						{
+							if (pNotification->download)
+								direction = download;
+							else
+								direction = upload;
+						}
+						else
+							direction = all;
+
+						if (m_pQueueView)
+							m_pQueueView->SetDefaultFileExistsAction(action, direction);
+					}
+				}
+			}
+			else
+				action = 5;
+		}
+
+		if (action < 1 || action > 5)
+			action = 5;
+
+		switch (action)
+		{
+		case 4:
+			{
+				wxString msg;
+				wxString defaultName;
+				if (pNotification->download)
+				{
+					msg.Printf(_("The file %s already exists.\nPlease enter a new name:"), pNotification->localFile.c_str());
+					wxFileName fn = pNotification->localFile;
+					defaultName = fn.GetFullName();
+				}
+				else
+				{
+					wxString fullName = pNotification->remotePath.GetPath() + pNotification->remoteFile;
+					msg.Printf(_("The file %s already exists.\nPlease enter a new name:"), fullName.c_str());
+					defaultName = pNotification->remoteFile;
+				}
+				wxTextEntryDialog dlg(m_pMainFrame, msg, _("Rename file"), defaultName);
+
+				// Repeat until user cancels or enters a new name
+				while (1)
+				{
+					int res = dlg.ShowModal();
+					if (res == wxID_OK)
+					{
+						if (dlg.GetValue() == _T(""))
+							continue; // Disallow empty names
+						if (dlg.GetValue() == defaultName)
+						{
+							wxMessageDialog dlg2(m_pMainFrame, _("You did not enter a new name for the file. Overwrite the file instead?"), _("Filename unchanged"), 
+								wxYES_NO | wxNO_DEFAULT | wxICON_QUESTION | wxCANCEL);
+							int res = dlg2.ShowModal();
+
+							if (res == wxID_CANCEL)
+								pNotification->overwriteAction = CFileExistsNotification::skip;
+							else if (res == wxID_NO)
+								continue;
+							else
+								pNotification->overwriteAction = CFileExistsNotification::skip;
+						}
+						else
+						{
+							pNotification->overwriteAction = CFileExistsNotification::rename;
+							pNotification->newName = dlg.GetValue();
+						}
+					}
+					else
+						pNotification->overwriteAction = CFileExistsNotification::skip;
+					break;
+				}
+			}
+			break;
+		default:
+			pNotification->overwriteAction = (enum CFileExistsNotification::OverwriteAction)action;
+			break;
+		}
+
+		entry.pEngine->SetAsyncRequestReply(entry.pNotification);
+		delete pNotification;
 	}
+	else if (entry.pNotification->GetRequestID() == reqId_interactiveLogin)
+	{
+		CInteractiveLoginNotification* pNotification = reinterpret_cast<CInteractiveLoginNotification*>(entry.pNotification);
+
+		if (m_pMainFrame->GetPassword(pNotification->server, _T(""), pNotification->challenge))
+			pNotification->passwordSet = true;
+
+		entry.pEngine->SetAsyncRequestReply(pNotification);
+		delete pNotification;
+	}
+	else if (entry.pNotification->GetRequestID() == reqId_hostkey || entry.pNotification->GetRequestID() == reqId_hostkeyChanged)
+	{
+		CHostKeyNotification *pNotification = reinterpret_cast<CHostKeyNotification *>(entry.pNotification);
+
+		wxDialogEx* pDlg = new wxDialogEx;
+		if (pNotification->GetRequestID() == reqId_hostkey)
+			pDlg->Load(m_pMainFrame, _T("ID_HOSTKEY"));
+		else
+			pDlg->Load(m_pMainFrame, _T("ID_HOSTKEYCHANGED"));
+
+		pDlg->WrapText(pDlg, XRCID("ID_DESC"), 400);
+
+		pDlg->SetLabel(XRCID("ID_HOST"), wxString::Format(_T("%s:%d"), pNotification->GetHost().c_str(), pNotification->GetPort()));
+		pDlg->SetLabel(XRCID("ID_FINGERPRINT"), pNotification->GetFingerprint());
+
+		pDlg->GetSizer()->Fit(pDlg);
+		pDlg->GetSizer()->SetSizeHints(pDlg);
+
+		int res = pDlg->ShowModal();
+
+		if (res == wxID_OK)
+		{
+			pNotification->m_trust = true;
+			pNotification->m_alwaysTrust = XRCCTRL(*pDlg, "ID_ALWAYS", wxCheckBox)->GetValue();
+		}
+
+		entry.pEngine->SetAsyncRequestReply(pNotification);
+		delete pNotification;
+	}
+
+	RecheckDefaults();
+	m_requestList.pop_front();
 }
 
 void CAsyncRequestQueue::ClearPending(const CFileZillaEngine *pEngine)
@@ -294,4 +305,15 @@ void CAsyncRequestQueue::RecheckDefaults()
 void CAsyncRequestQueue::SetQueue(CQueueView *pQueue)
 {
 	m_pQueueView = pQueue;
+}
+
+void CAsyncRequestQueue::OnProcessQueue(wxCommandEvent &event)
+{
+	ProcessNextRequest();
+
+	if (!m_requestList.empty())
+	{
+		wxCommandEvent evt(fzEVT_PROCESSASYNCREQUESTQUEUE);
+		wxPostEvent(this, evt);
+	}
 }
