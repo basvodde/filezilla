@@ -1851,13 +1851,22 @@ bool CQueueView::ShouldUseBinaryMode(wxString filename)
 	else if (mode == 2)
 		return true;
 
-	int pos = filename.find('.');
+	int pos = filename.Find('.');
 	if (pos == -1)
 		return COptions::Get()->GetOptionVal(OPTION_ASCIINOEXT) != 0;
 	else if (!pos)
 		return COptions::Get()->GetOptionVal(OPTION_ASCIIDOTFILE) != 0;
 	
-	wxString ext = filename.Mid(pos + 1);
+	wxString ext;
+	do
+	{
+		ext = filename.Mid(pos + 1);
+	}
+	while ((pos = ext.Find('.')) != -1);
+
+	if (ext == _T(""))
+		return true;
+
 	for (std::list<wxString>::const_iterator iter = m_asciiFiles.begin(); iter != m_asciiFiles.end(); iter++)
 		if (*iter == ext)
 			return false;
