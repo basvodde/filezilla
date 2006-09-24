@@ -2642,7 +2642,7 @@ int CFtpControlSocket::GetExternalIPAddress(wxString& address)
 			m_pIPResolver->GetExternalIP(resolverAddress, true);
 			if (!m_pIPResolver->Done())
 			{
-				LogMessage(::Debug_Info, _T("Got external IP address"));
+				LogMessage(::Debug_Verbose, _T("Waiting for resolver thread"));
 				return FZ_REPLY_WOULDBLOCK;
 			}
 		}
