@@ -992,7 +992,7 @@ void CQueueView::OnEngineEvent(wxEvent &event)
 				break;
 			}
 
-			m_pMainFrame->AddToRequestQueue(data.pEngine, reinterpret_cast<CAsyncRequestNotification *>(pNotification));
+			m_pAsyncRequestQueue->AddRequest(data.pEngine, reinterpret_cast<CAsyncRequestNotification *>(pNotification));
 			break;
 		case nId_active:
 			{
