@@ -71,6 +71,9 @@ protected:
 	// We now have to read all available data in the socket, ignoring any
 	// speed limits
 	bool m_onCloseCalled;
+
+	bool m_postponedReceive;
+	bool m_postponedSend;
 };
 
 #endif

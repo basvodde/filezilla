@@ -34,6 +34,9 @@ CTransferSocket::CTransferSocket(CFileZillaEnginePrivate *pEngine, CFtpControlSo
 	m_binaryMode = true;
 
 	m_onCloseCalled = false;
+
+	m_postponedReceive = false;
+	m_postponedSend = false;
 }
 
 CTransferSocket::~CTransferSocket()
@@ -94,7 +97,7 @@ wxString CTransferSocket::SetupActiveTransfer(const wxString& ip)
 	portArguments.Replace(_T("."), _T(","));
 
 	m_pSocketServer->SetEventHandler(*this);
-	m_pSocketServer->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_OUTPUT_FLAG | wxSOCKET_CONNECTION_FLAG | wxSOCKET_LOST_FLAG);
+	m_pSocketServer->SetNotify(wxSOCKET_CONNECTION_FLAG);
 	m_pSocketServer->Notify(true);
 
 	return portArguments;
@@ -145,8 +148,15 @@ void CTransferSocket::OnReceive()
 {
 	m_pControlSocket->LogMessage(::Debug_Debug, _T("CTransferSocket::OnReceive(), m_transferMode=%d"), m_transferMode);
 
-	if (!m_pSocket || !m_bActive)
+	if (!m_pSocket)
 		return;
+	
+	if (!m_bActive)
+	{
+		m_pControlSocket->LogMessage(::Debug_Verbose, _T("Postponing receive"));
+		m_postponedReceive = true;
+		return;
+	}
 
 	if (m_transferMode == list)
 	{
@@ -244,7 +254,11 @@ void CTransferSocket::OnSend()
 		return;
 
 	if (!m_bActive)
+	{
+		m_pControlSocket->LogMessage(::Debug_Verbose, _T("Postponing send"));
+		m_postponedSend = true;
 		return;
+	}
 	
 	if (m_transferMode != upload)
 		return;
@@ -359,8 +373,18 @@ void CTransferSocket::SetActive()
 	m_bActive = true;
 	if (m_pSocket && m_pSocket->IsConnected())
 	{
-		OnReceive();
-		OnSend();
+		if (m_postponedReceive)
+		{
+			m_pControlSocket->LogMessage(::Debug_Verbose, _T("Executing postponed receive"));
+			m_postponedReceive = false;
+			OnReceive();
+		}
+		if (m_postponedSend)
+		{
+			m_pControlSocket->LogMessage(::Debug_Verbose, _T("Executing postponed send"));
+			m_postponedSend = false;
+			OnSend();
+		}
 	}
 }
 
