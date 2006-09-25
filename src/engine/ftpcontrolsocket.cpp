@@ -1147,7 +1147,7 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 									const CFileTransferCommand::t_transferSettings& transferSettings)
 {
 	LogMessage(Debug_Verbose, _T("CFtpControlSocket::FileTransfer()"));
-
+	
 	if (localFile == _T(""))
 	{
 		if (!download)
@@ -1180,6 +1180,7 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 	pData->remoteFile = remoteFile;
 	pData->download = download;
 	pData->transferSettings = transferSettings;
+	pData->binary = transferSettings.binary;
 
 	pData->opState = filetransfer_waitcwd;
 
