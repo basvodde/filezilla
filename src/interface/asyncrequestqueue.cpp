@@ -43,6 +43,14 @@ bool CAsyncRequestQueue::ProcessDefaults(CFileZillaEngine *pEngine, CAsyncReques
 			if (!action || action == 4)
 				break;
 
+			if (action == 3 && pFileExistsNotification->ascii)
+			{
+				// Check if resuming ascii files is allowed
+				if (!COptions::Get()->GetOptionVal(OPTION_ASCIIRESUME))
+					// Overwrite instead
+					action = 1;
+			}
+
 			pFileExistsNotification->overwriteAction = (enum CFileExistsNotification::OverwriteAction)action;
 			
 			pEngine->SetAsyncRequestReply(pNotification);
@@ -158,6 +166,14 @@ void CAsyncRequestQueue::ProcessNextRequest()
 
 		if (action < 1 || action > 5)
 			action = 5;
+
+		if (action == 3 && pNotification->ascii)
+		{
+			// Check if resuming ascii files is allowed
+			if (!COptions::Get()->GetOptionVal(OPTION_ASCIIRESUME))
+				// Overwrite instead
+				action = 1;
+		}
 
 		switch (action)
 		{
