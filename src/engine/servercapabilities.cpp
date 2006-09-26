@@ -39,7 +39,7 @@ void CServerCapabilities::SetCapability(const CServer& server, enum capabilityNa
 	if (iter == m_serverMap.end())
 	{
 		CCapabilities capabilities;
-		capabilities.SetCapability(name, cap);
+		capabilities.SetCapability(name, cap, option);
 		m_serverMap[server] = capabilities;
 		return;
 	}
