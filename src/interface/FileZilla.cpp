@@ -39,7 +39,6 @@ CFileZillaApp::~CFileZillaApp()
 
 bool CFileZillaApp::OnInit()
 {
-	wxIsPlatform64Bit();
 #if wxUSE_DEBUGREPORT && wxUSE_ON_FATAL_EXCEPTION
 	//wxHandleFatalExceptions();
 #endif
