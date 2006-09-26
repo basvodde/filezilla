@@ -2379,7 +2379,7 @@ bool CDirectoryListingParser::ParseAsMlsd(CLine *pLine, CDirentry &entry)
 	entry.ownerGroup = _T("");
 	entry.permissions = _T("");
 
-	while (facts != _(""))
+	while (facts != _T(""))
 	{
 		int delim = facts.Find(';');
 		if (delim < 3)
