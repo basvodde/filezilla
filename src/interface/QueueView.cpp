@@ -1309,7 +1309,13 @@ void CQueueView::RemoveItem(CQueueItem* item)
 		bool eraseBackground = GetTopItem() + GetCountPerPage() + 1 >= m_itemCount;
 		Refresh(eraseBackground);
 		if (eraseBackground)
+#if (wxMAJOR_VERSION == 2) && (wxMINOR_VERSION <= 6) && \
+	(!defined(__WXMSW__) || defined(__WXUNIVERSAL__))
+			// work around bug in include/wx/generic/listctrl.h of wxWidgets 2.6.x
+			wxControl::Update();
+#else
 			Update();
+#endif
 	}
 
 	UpdateStatusLinePositions();
