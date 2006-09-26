@@ -39,3 +39,11 @@ if SFTP_MINGW
   fzsftp_CFLAGS = $(AM_CFLAGS) -D_WINDOWS
   fzsftp_LDADD = windows/libfzsftp_win.a $(RESOURCEFILE)
 endif
+
+if MACAPPBUNDLE
+noinst_DATA = $(top_builddir)/FileZilla.app/Contents/MacOS/fzsftp$(EXEEXT)
+endif
+ 
+$(top_builddir)/FileZilla.app/Contents/MacOS/fzsftp$(EXEEXT): fzsftp
+	mkdir -p $(top_builddir)/FileZilla.app/Contents/MacOS
+	cp -f fzsftp $(top_builddir)/FileZilla.app/Contents/MacOS/fzsftp
