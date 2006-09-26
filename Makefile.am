@@ -19,6 +19,8 @@ dist_noinst_SCRIPTS = autogen.sh
 
 dist_noinst_DATA = filezilla.kdevelop GPL.html
 
+dist_noinst_DATA += docs/iconspecs.htm
+
 if !LOCALES_ONLY
 if MACAPPBUNDLE
 clean-local:
