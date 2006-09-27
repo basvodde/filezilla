@@ -1865,10 +1865,10 @@ bool CQueueView::ShouldUseBinaryMode(wxString filename)
 	else if (!pos)
 		return COptions::Get()->GetOptionVal(OPTION_ASCIIDOTFILE) != 0;
 	
-	wxString ext;
+	wxString ext = filename;
 	do
 	{
-		ext = filename.Mid(pos + 1);
+		ext = ext.Mid(pos + 1);
 	}
 	while ((pos = ext.Find('.')) != -1);
 
