@@ -241,7 +241,11 @@ char *dupvprintf(const char *fmt, va_list ap)
 #ifdef _WINDOWS
 #define vsnprintf _vsnprintf
 #endif
-	len = vsnprintf(buf, size, fmt, ap);
+	va_list aq;
+
+	va_copy(aq, ap);
+	len = vsnprintf(buf, size, fmt, aq);
+	va_end(aq);
 	if (len >= 0 && len < size) {
 	    /* This is the C99-specified criterion for snprintf to have
 	     * been completely successful. */
