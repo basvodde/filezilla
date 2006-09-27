@@ -11,7 +11,7 @@ class CComboBoxEx : public wxComboBox
 {
 public:
 	CComboBoxEx(CViewHeader* parent)
-		: wxComboBox(parent, wxID_ANY, _T(""), wxDefaultPosition, wxDefaultSize, wxArrayString(), wxCB_DROPDOWN)
+		: wxComboBox(parent, wxID_ANY, _T(""), wxDefaultPosition, wxDefaultSize, wxArrayString(), wxCB_DROPDOWN | wxTE_PROCESS_ENTER)
 	{
 		m_parent = parent;
 	}
