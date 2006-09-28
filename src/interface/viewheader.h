@@ -19,8 +19,6 @@ public:
 	void SetLabel(const wxString& label);
 	wxString GetLabel() const;
 
-	virtual void CopyDataFrom(CViewHeader* pHeader);
-
 protected:
 	CComboBoxEx* m_pComboBox;
 	bool m_alreadyInPaint;

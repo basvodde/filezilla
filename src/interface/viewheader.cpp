@@ -230,13 +230,6 @@ void CViewHeader::Reparent(CViewHeader** pViewHeader, wxWindow* parent)
 #endif
 }
 
-void CViewHeader::CopyDataFrom(CViewHeader* pHeader)
-{
-	m_label = pHeader->m_label;
-	m_cbOffset = pHeader->m_cbOffset;
-	m_labelHeight = pHeader->m_labelHeight;
-}
-
 wxString CViewHeader::GetLabel() const
 {
 	return m_label;
