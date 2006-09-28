@@ -5,6 +5,10 @@
 #include "directorycache.h"
 #include "directorylistingparser.h"
 
+#ifdef __WXMAC__
+#include <wx/stdpaths.h>
+#endif
+
 class CSftpFileTransferOpData : public CFileTransferOpData
 {
 public:
@@ -266,7 +270,21 @@ int CSftpControlSocket::Connect(const CServer &server)
 	m_pProcess = new wxProcess(this);
 	m_pProcess->Redirect();
 
-	m_pid = wxExecute(_T("fzsftp -v"), wxEXEC_ASYNC, m_pProcess);
+	wxString executable = _T("fzsftp");
+
+#ifdef __WXMAC__
+	// Get application path within the bundle
+	wxFileName fn(wxStandardPaths::Get().GetDataDir() + _T("/../MacOS/"), executable);
+	fn.Normalize();
+	if (fn.FileExists())
+	{
+		executable = fn.GetFullPath();
+		if (executable.Find(' ') != -1)
+			executable = _T("\"") + executable + _T("\"");
+	}
+#endif
+
+	m_pid = wxExecute(executable + _T(" -v"), wxEXEC_ASYNC, m_pProcess);
 	if (!m_pid)
 	{
 		delete m_pProcess;
