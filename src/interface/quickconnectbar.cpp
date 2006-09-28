@@ -106,8 +106,10 @@ void CQuickconnectBar::OnQuickconnect(wxCommandEvent &event)
 void CQuickconnectBar::OnQuickconnectDropdown(wxCommandEvent& event)
 {
 	wxMenu* pMenu = new wxMenu;
-	pMenu->Append(0, _("Clear quickconnect bar"));
-	pMenu->Append(1, _("Clear history"));
+
+	// We have to start with id 1 since menu items with id 0 don't work under OS X
+	pMenu->Append(1, _("Clear quickconnect bar"));
+	pMenu->Append(2, _("Clear history"));
 	pMenu->AppendSeparator();
 
 	m_recentServers = CRecentServerList::GetMostRecentServers();
@@ -127,7 +129,7 @@ void CQuickconnectBar::OnQuickconnectDropdown(wxCommandEvent& event)
 void CQuickconnectBar::OnMenu(wxCommandEvent& event)
 {
 	const int id = event.GetId();
-	if (!id)
+	if (id == 1)
 	{
 		XRCCTRL(*this, "ID_QUICKCONNECT_HOST", wxTextCtrl)->SetValue(_T(""));
 		XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetValue(_T(""));
@@ -135,7 +137,7 @@ void CQuickconnectBar::OnMenu(wxCommandEvent& event)
 		XRCCTRL(*this, "ID_QUICKCONNECT_PASS", wxTextCtrl)->SetValue(_T(""));
 		return;
 	}
-	else if (id == 1)
+	else if (id == 2)
 	{
 		CRecentServerList::Clear();
 	}
