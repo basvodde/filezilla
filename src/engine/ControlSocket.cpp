@@ -544,24 +544,18 @@ int CControlSocket::CheckOverwriteFile()
 			return FZ_REPLY_OK;
 	}
 
-	CDirectoryListing listing;
+	CDirentry entry;
+	bool dirDidExist;
+	bool matchedCase;
 	CDirectoryCache cache;
-	bool foundListing = cache.Lookup(listing, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath);
+	bool found = cache.LookupFile(entry, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath, pData->remoteFile, dirDidExist, matchedCase);
 
-	bool found = false;
+	// Ignore entries with wrong case
+	if (!matchedCase)
+		found = false;
+
 	if (!pData->download)
 	{
-		if (foundListing)
-		{
-			for (unsigned int i = 0; i < listing.m_entryCount; i++)
-			{
-				if (listing.m_pEntries[i].name == pData->remoteFile)
-				{
-					found = true;
-					break;
-				}
-			}
-		}
 		if (!found && pData->remoteFileSize == -1 && !pData->fileTime.IsValid())
 			return FZ_REPLY_OK;
 	}
@@ -589,30 +583,23 @@ int CControlSocket::CheckOverwriteFile()
 	if (pData->fileTime.IsValid())
 		pNotification->remoteTime = pData->fileTime;
 
-	if (foundListing)
+	if (found)
 	{
-		for (unsigned int i = 0; i < listing.m_entryCount; i++)
+		if (!pData->fileTime.IsValid())
 		{
-			if (listing.m_pEntries[i].name == pData->remoteFile)
+			if (entry.hasDate)
 			{
-				if (!pData->fileTime.IsValid())
+				if (VerifySetDate(pNotification->remoteTime, entry.date.year, (enum wxDateTime::Month)(entry.date.month - 1), entry.date.day) && 
+					entry.hasTime)
 				{
-					if (listing.m_pEntries[i].hasDate)
-					{
-						if (VerifySetDate(pNotification->remoteTime, listing.m_pEntries[i].date.year, (enum wxDateTime::Month)(listing.m_pEntries[i].date.month - 1), listing.m_pEntries[i].date.day) && 
-							listing.m_pEntries[i].hasTime)
-						{
-							pNotification->remoteTime.SetHour(listing.m_pEntries[i].time.hour);
-							pNotification->remoteTime.SetMinute(listing.m_pEntries[i].time.minute);
-						}
-						if (pNotification->remoteTime.IsValid())
-							pData->fileTime = pNotification->remoteTime;
-					}
+					pNotification->remoteTime.SetHour(entry.time.hour);
+					pNotification->remoteTime.SetMinute(entry.time.minute);
 				}
+				if (pNotification->remoteTime.IsValid())
+					pData->fileTime = pNotification->remoteTime;
 			}
 		}
 	}
-
 
 	pNotification->requestNumber = m_pEngine->GetNextAsyncRequestNumber();
 	pData->waitForAsyncRequest = true;

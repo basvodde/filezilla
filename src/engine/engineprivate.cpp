@@ -274,7 +274,7 @@ void CFileZillaEnginePrivate::ResendModifiedListings()
 			continue;
 		
 		CDirectoryListing *pListing = new CDirectoryListing;
-		bool found = cache.Lookup(*pListing, *pServer, pEngine->m_lastListDir);
+		bool found = cache.Lookup(*pListing, *pServer, pEngine->m_lastListDir, true);
 		wxASSERT(found);
 		if (!found)
 			return;
@@ -384,22 +384,14 @@ int CFileZillaEnginePrivate::List(const CListCommand &command)
 		{
 			CDirectoryListing *pListing = new CDirectoryListing;
 			CDirectoryCache cache;
-			bool found = cache.Lookup(*pListing, *pServer, command.GetPath(), command.GetSubDir());
+			bool found = cache.Lookup(*pListing, *pServer, command.GetPath(), command.GetSubDir(), false);
 			if (found)
 			{
-				unsigned int i;
-				for (i = 0; i < pListing->m_entryCount; i++)
-					if (pListing->m_pEntries[i].unsure)
-						break;
-	
-				if (i == pListing->m_entryCount)
-				{
-					m_lastListDir = pListing->path;
-					m_lastListTime = wxDateTime::Now();
-					CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing);
-					AddNotification(pNotification);
-					return FZ_REPLY_OK;
-				}
+				m_lastListDir = pListing->path;
+				m_lastListTime = wxDateTime::Now();
+				CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing);
+				AddNotification(pNotification);
+				return FZ_REPLY_OK;
 			}
 			delete pListing;
 		}

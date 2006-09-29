@@ -725,26 +725,40 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 	if (!pData->refresh)
 	{
 		// Do a cache lookup now that we know the correct directory
-		CDirectoryListing *pListing = new CDirectoryListing;
 		CDirectoryCache cache;
-		bool found = cache.Lookup(*pListing, *m_pCurrentServer, m_CurrentPath);
-		if (found && !pListing->m_hasUnsureEntries)
+		if (pData->pNextOpData)
 		{
-			if (!pData->path.IsEmpty() && pData->subDir != _T(""))
-				cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
-			SendDirectoryListing(pListing);
-
-			if (pData->pNextOpData)
+			bool hasUnsureEntries;
+			bool found = cache.DoesExist(*m_pCurrentServer, m_CurrentPath, _T(""), hasUnsureEntries);
+			if (found && !hasUnsureEntries)
 			{
+				if (!pData->path.IsEmpty() && pData->subDir != _T(""))
+					cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
+				
 				delete pData;
 				m_pCurOpData = pData->pNextOpData;
+				
+				return FZ_REPLY_OK;
 			}
-			else
-				ResetOperation(FZ_REPLY_OK);
-			return FZ_REPLY_OK;
 		}
 		else
-			delete pListing;
+		{
+			CDirectoryListing *pListing = new CDirectoryListing;
+			CDirectoryCache cache;
+			bool found = cache.Lookup(*pListing, *m_pCurrentServer, m_CurrentPath, false);
+			if (found)
+			{
+				if (!pData->path.IsEmpty() && pData->subDir != _T(""))
+					cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
+				
+				SendDirectoryListing(pListing);
+				ResetOperation(FZ_REPLY_OK);
+				
+				return FZ_REPLY_OK;
+			}
+			else
+				delete pListing;
+		}
 	}
 
 	delete m_pTransferSocket;
@@ -788,19 +802,40 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 		if (!pData->refresh)
 		{
 			// Do a cache lookup now that we know the correct directory
-			CDirectoryListing *pListing = new CDirectoryListing;
 			CDirectoryCache cache;
-			bool found = cache.Lookup(*pListing, *m_pCurrentServer, m_CurrentPath);
-			if (found && !pListing->m_hasUnsureEntries)
+			if (pData->pNextOpData)
 			{
-				if (!pData->path.IsEmpty() && pData->subDir != _T(""))
-					cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
-				SendDirectoryListing(pListing);
-				ResetOperation(FZ_REPLY_OK);
-				return FZ_REPLY_OK;
+				bool hasUnsureEntries;
+				bool found = cache.DoesExist(*m_pCurrentServer, m_CurrentPath, _T(""), hasUnsureEntries);
+				if (found && !hasUnsureEntries)
+				{
+					if (!pData->path.IsEmpty() && pData->subDir != _T(""))
+						cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
+
+					delete pData;
+					m_pCurOpData = pData->pNextOpData;
+
+					return FZ_REPLY_OK;
+				}
 			}
 			else
-				delete pListing;
+			{
+				CDirectoryListing *pListing = new CDirectoryListing;
+				CDirectoryCache cache;
+				bool found = cache.Lookup(*pListing, *m_pCurrentServer, m_CurrentPath, false);
+				if (found)
+				{
+					if (!pData->path.IsEmpty() && pData->subDir != _T(""))
+						cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
+
+					SendDirectoryListing(pListing);
+					ResetOperation(FZ_REPLY_OK);
+
+					return FZ_REPLY_OK;
+				}
+				else
+					delete pListing;
+			}
 		}
 
 		delete m_pTransferSocket;
@@ -1201,47 +1236,34 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 
 	pData->opState = filetransfer_waitlist;
 
-	CDirectoryListing listing;
+	CDirentry entry;
+	bool dirDidExist;
+	bool matchedCase;
 	CDirectoryCache cache;
-	bool found = cache.Lookup(listing, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath);
+	bool found = cache.LookupFile(entry, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath, pData->remoteFile, dirDidExist, matchedCase);
 	bool shouldList = false;
 	if (!found)
-		shouldList = true;
+	{
+		if (!dirDidExist)
+			shouldList = true;
+	}
 	else
 	{
-		bool differentCase = false;
+		if (entry.unsure)
+			shouldList = true;
+		else
+		{
+			if (matchedCase)
+			{
+				pData->remoteFileSize = entry.size.GetLo() + ((wxFileOffset)entry.size.GetHi() << 32);
 
-		for (unsigned int i = 0; i < listing.m_entryCount; i++)
-		{
-			if (!listing.m_pEntries[i].name.CmpNoCase(pData->remoteFile))
-			{
-				if (listing.m_pEntries[i].unsure)
-				{
-					shouldList = true;
-					break;
-				}
-				if (listing.m_pEntries[i].name != pData->remoteFile)
-					differentCase = true;
-				else
-				{
-					wxLongLong size = listing.m_pEntries[i].size;
-					pData->remoteFileSize = size.GetLo() + ((wxFileOffset)size.GetHi() << 32);
-					differentCase = false;
-					break;
-				}
-			}
-		}
-		if (!shouldList)
-		{
-			if (differentCase)
-				pData->opState = filetransfer_size;
-			else
-			{
 				pData->opState = filetransfer_resumetest;
 				res = CheckOverwriteFile();
 				if (res != FZ_REPLY_OK)
 					return res;
 			}
+			else
+				pData->opState = filetransfer_size;
 		}
 	}
 	if (shouldList)
@@ -1351,47 +1373,34 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 		{
 			pData->opState = filetransfer_waitlist;
 
-			CDirectoryListing listing;
+			CDirentry entry;
+			bool dirDidExist;
+			bool matchedCase;
 			CDirectoryCache cache;
-			bool found = cache.Lookup(listing, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath);
+			bool found = cache.LookupFile(entry, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath, pData->remoteFile, dirDidExist, matchedCase);
 			bool shouldList = false;
 			if (!found)
-				shouldList = true;
+			{
+				if (!dirDidExist)
+					shouldList = true;
+			}
 			else
 			{
-				bool differentCase = false;
+				if (entry.unsure)
+					shouldList = true;
+				else
+				{
+					if (matchedCase)
+					{
+						pData->remoteFileSize = entry.size.GetLo() + ((wxFileOffset)entry.size.GetHi() << 32);
 
-				for (unsigned int i = 0; i < listing.m_entryCount; i++)
-				{
-					if (!listing.m_pEntries[i].name.CmpNoCase(pData->remoteFile))
-					{
-						if (listing.m_pEntries[i].unsure)
-						{
-							shouldList = true;
-							break;
-						}
-						if (listing.m_pEntries[i].name != pData->remoteFile)
-							differentCase = true;
-						else
-						{
-							wxLongLong size = listing.m_pEntries[i].size;
-							pData->remoteFileSize = size.GetLo() + ((wxFileOffset)size.GetHi() << 32);
-							differentCase = false;
-							break;
-						}
-					}
-				}
-				if (!shouldList)
-				{
-					if (differentCase)
-						pData->opState = filetransfer_size;
-					else
-					{
 						pData->opState = filetransfer_resumetest;
 						int res = CheckOverwriteFile();
 						if (res != FZ_REPLY_OK)
 							return res;
 					}
+					else
+						pData->opState = filetransfer_size;
 				}
 			}
 			if (shouldList)
@@ -1422,45 +1431,26 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 	{
 		if (prevResult == FZ_REPLY_OK)
 		{
-			CDirectoryListing listing;
+			CDirentry entry;
+			bool dirDidExist;
+			bool matchedCase;
 			CDirectoryCache cache;
-			bool found = cache.Lookup(listing, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath);
+			bool found = cache.LookupFile(entry, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath, pData->remoteFile, dirDidExist, matchedCase);
 			if (!found)
 				pData->opState = filetransfer_size;
 			else
 			{
-				bool differentCase = false;
+				if (matchedCase && !entry.unsure)
+				{
+					pData->remoteFileSize = entry.size.GetLo() + ((wxFileOffset)entry.size.GetHi() << 32);
 
-				for (unsigned int i = 0; i < listing.m_entryCount; i++)
-				{
-					if (!listing.m_pEntries[i].name.CmpNoCase(pData->remoteFile))
-					{
-						if (listing.m_pEntries[i].unsure)
-						{
-							differentCase = true;
-							break;
-						}
-						if (listing.m_pEntries[i].name != pData->remoteFile)
-							differentCase = true;
-						else
-						{
-							wxLongLong size = listing.m_pEntries[i].size;
-							pData->remoteFileSize = size.GetLo() + ((wxFileOffset)size.GetHi() << 32);
-							differentCase = false;
-							break;
-						}
-					}
-				}
-				if (differentCase)
-					pData->opState = filetransfer_size;
-				else
-				{
 					pData->opState = filetransfer_resumetest;
-
 					int res = CheckOverwriteFile();
 					if (res != FZ_REPLY_OK)
 						return res;
 				}
+				else
+					pData->opState = filetransfer_size;
 			}
 		}
 		else if (prevResult == FZ_REPLY_ERROR)
@@ -1801,7 +1791,7 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 
 					CDirectoryListing listing;
 					CDirectoryCache cache;
-					bool found = cache.Lookup(listing, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath);
+					bool found = cache.Lookup(listing, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath, true);
 					if (!found)
 					{
 						pData->opState = filetransfer_size;

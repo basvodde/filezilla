@@ -29,8 +29,10 @@ public:
 
 	void Store(const CDirectoryListing &listing, const CServer &server, CServerPath parentPath = CServerPath(), wxString subDir = _T(""));
 	bool HasChanged(CTimeEx since, const CServer &server, const CServerPath &path) const;
-	bool Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path);
-	bool Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, wxString subDir);
+	bool Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, bool allowUnsureEntries);
+	bool Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, wxString subDir, bool allowUnsureEntries);
+	bool DoesExist(const CServer &server, const CServerPath &path, wxString subDir, bool &hasUnsureEntries);
+	bool LookupFile(CDirentry &entry, const CServer &server, const CServerPath &path, const wxString& file, bool &dirDidExist, bool &matchedCase);
 	bool InvalidateFile(const CServer &server, const CServerPath &path, const wxString& filename, bool mayCreate, enum Filetype type = file, int size = -1);
 	bool RemoveFile(const CServer &server, const CServerPath &path, const wxString& filename);
 	void InvalidateServer(const CServer& server);
@@ -61,7 +63,9 @@ protected:
 	};
 
 	typedef std::list<CCacheEntry::t_parent>::iterator tParentsIter;
+	typedef std::list<CCacheEntry::t_parent>::const_iterator tParentsConstIter;
 	typedef std::list<CCacheEntry>::iterator tCacheIter;
+	typedef std::list<CCacheEntry>::const_iterator tCacheConstIter;
 
 	static std::list<CCacheEntry> m_CacheList;
 	

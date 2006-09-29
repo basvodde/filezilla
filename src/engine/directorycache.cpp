@@ -67,18 +67,18 @@ void CDirectoryCache::Store(const CDirectoryListing &listing, const CServer &ser
 	m_CacheList.push_front(entry);
 }
 
-bool CDirectoryCache::Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path)
+bool CDirectoryCache::Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, bool allowUnsureEntries)
 {
-	return Lookup(listing, server, path, _T(""));
+	return Lookup(listing, server, path, _T(""), allowUnsureEntries);
 }
 
-bool CDirectoryCache::Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, wxString subDir)
+bool CDirectoryCache::Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, wxString subDir, bool allowUnsureEntries)
 {
 	if (subDir != _T(".."))
 	{
-		for (tCacheIter iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
+		for (tCacheConstIter iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
 		{
-			CCacheEntry &entry = *iter;
+			const CCacheEntry &entry = *iter;
 			if (entry.server != server)
 				continue;
 
@@ -86,24 +86,24 @@ bool CDirectoryCache::Lookup(CDirectoryListing &listing, const CServer &server, 
 			{
 				if (entry.listing.path == path)
 				{
+					if (!allowUnsureEntries && entry.listing.m_hasUnsureEntries)
+						return false;
+
 					listing = entry.listing;
 					return true;
 				}
 			}
 			else
 			{
-				for (tParentsIter parentsIter = entry.parents.begin(); parentsIter != entry.parents.end(); parentsIter++)
+				for (tParentsConstIter parentsIter = entry.parents.begin(); parentsIter != entry.parents.end(); parentsIter++)
 				{
 					const CCacheEntry::t_parent &parent = *parentsIter;
 					if (parent.path != path || parent.subDir != subDir)
 						continue;
 
-					// TODO: Cache timeout
-					if (false)
-					{
-						m_CacheList.erase(iter);
+					if (!allowUnsureEntries && entry.listing.m_hasUnsureEntries)
 						return false;
-					}
+
 					listing = entry.listing;
 					return true;
 				}
@@ -113,15 +113,15 @@ bool CDirectoryCache::Lookup(CDirectoryListing &listing, const CServer &server, 
 	else
 	{
 		// Search own entry
-		tCacheIter iter;
+		tCacheConstIter iter;
 		for (iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
 		{
 			if (iter->server != server)
 				continue;
 
-			CCacheEntry &entry = *iter;
+			const CCacheEntry &entry = *iter;
 
-			tParentsIter parentsIter;
+			tParentsConstIter parentsIter;
 			for (parentsIter = entry.parents.begin(); parentsIter != entry.parents.end(); parentsIter++)
 			{
 				if (parentsIter->subDir == _T("..") && parentsIter->path == path)
@@ -133,9 +133,116 @@ bool CDirectoryCache::Lookup(CDirectoryListing &listing, const CServer &server, 
 		if (iter == m_CacheList.end())
 			return false;
 
-		bool res = Lookup(listing, server, iter->listing.path);
+		bool res = Lookup(listing, server, iter->listing.path, _T(""), allowUnsureEntries);
 		return res;
 	}
+	return false;
+}
+
+bool CDirectoryCache::DoesExist(const CServer &server, const CServerPath &path, wxString subDir, bool &hasUnsureEntries)
+{
+	if (subDir != _T(".."))
+	{
+		for (tCacheConstIter iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
+		{
+			const CCacheEntry &entry = *iter;
+			if (entry.server != server)
+				continue;
+
+			if (subDir == _T(""))
+			{
+				if (entry.listing.path == path)
+				{
+					hasUnsureEntries = entry.listing.m_hasUnsureEntries;
+					return true;
+				}
+			}
+			else
+			{
+				for (tParentsConstIter parentsIter = entry.parents.begin(); parentsIter != entry.parents.end(); parentsIter++)
+				{
+					const CCacheEntry::t_parent &parent = *parentsIter;
+					if (parent.path != path || parent.subDir != subDir)
+						continue;
+
+					hasUnsureEntries = entry.listing.m_hasUnsureEntries;
+					return true;
+				}
+			}
+		}
+	}
+	else
+	{
+		// Search own entry
+		tCacheConstIter iter;
+		for (iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
+		{
+			if (iter->server != server)
+				continue;
+
+			const CCacheEntry &entry = *iter;
+
+			tParentsConstIter parentsIter;
+			for (parentsIter = entry.parents.begin(); parentsIter != entry.parents.end(); parentsIter++)
+			{
+				if (parentsIter->subDir == _T("..") && parentsIter->path == path)
+					break;
+			}
+			if (parentsIter != entry.parents.end())
+				break;
+		}
+		if (iter == m_CacheList.end())
+			return false;
+
+		bool res = DoesExist(server, iter->listing.path, _T(""), hasUnsureEntries);
+		return res;
+	}
+	return false;
+}
+
+bool CDirectoryCache::LookupFile(CDirentry &entry, const CServer &server, const CServerPath &path, const wxString& file, bool &dirDidExist, bool &matchedCase)
+{
+	for (tCacheConstIter iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
+	{
+		const CCacheEntry &cacheEntry = *iter;
+		if (cacheEntry.server != server)
+			continue;
+
+		if (cacheEntry.listing.path == path)
+		{
+			dirDidExist = true;
+
+			const CDirectoryListing &listing = cacheEntry.listing;
+
+			bool found = false;
+			for (unsigned int i = 0; i < listing.m_entryCount; i++)
+			{
+				if (!listing.m_pEntries[i].name.CmpNoCase(file))
+				{
+					if (listing.m_pEntries[i].name == file)
+					{
+						entry = listing.m_pEntries[i];
+						matchedCase = true;
+						return true;
+					}
+					if (!found)
+					{
+						found = true;
+						entry = listing.m_pEntries[i];
+					}
+				}
+			}
+			if (found)
+			{
+				matchedCase = false;
+				return true;
+			}
+
+			return false;
+		}
+	}
+
+	dirDidExist = false;
 	return false;
 }
 
@@ -320,7 +427,7 @@ void CDirectoryCache::RemoveDir(const CServer& server, const CServerPath& path, 
 void CDirectoryCache::Rename(const CServer& server, const CServerPath& pathFrom, const wxString& fileFrom, const CServerPath& pathTo, const wxString& fileTo)
 {
 	CDirectoryListing listing;
-	bool found = Lookup(listing, server, pathFrom);
+	bool found = Lookup(listing, server, pathFrom, true);
 	if (found)
 	{
 		unsigned int i;
