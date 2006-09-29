@@ -136,7 +136,7 @@ void CAsyncRequestQueue::ProcessNextRequest()
 					else
 					{
 						// For the notifications already in the request queue, we have to set the queue action directly
-						for (std::list<t_queueEntry>::iterator iter = m_requestList.begin()++; iter != m_requestList.end(); iter++)
+						for (std::list<t_queueEntry>::iterator iter = ++m_requestList.begin(); iter != m_requestList.end(); iter++)
 						{
 							if (pNotification->GetRequestID() != reqId_fileexists)
 								continue;
