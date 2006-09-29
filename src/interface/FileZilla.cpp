@@ -4,6 +4,30 @@
 #include "Options.h"
 #include "wrapengine.h"
 
+#include <wx/xrc/xh_bmpbt.h>
+#include <wx/xrc/xh_bttn.h>
+#include <wx/xrc/xh_chckb.h>
+#include <wx/xrc/xh_chckl.h>
+#include <wx/xrc/xh_choic.h>
+#include <wx/xrc/xh_dlg.h>
+#include <wx/xrc/xh_gauge.h>
+#include <wx/xrc/xh_listb.h>
+#include <wx/xrc/xh_listc.h>
+#include <wx/xrc/xh_menu.h>
+#include <wx/xrc/xh_notbk.h>
+#include <wx/xrc/xh_panel.h>
+#include <wx/xrc/xh_radbt.h>
+#include <wx/xrc/xh_scwin.h>
+#include <wx/xrc/xh_sizer.h>
+#include <wx/xrc/xh_spin.h>
+#include <wx/xrc/xh_stbmp.h>
+#include <wx/xrc/xh_stbox.h>
+#include <wx/xrc/xh_stlin.h>
+#include <wx/xrc/xh_sttxt.h>
+#include <wx/xrc/xh_text.h>
+#include <wx/xrc/xh_toolb.h>
+#include <wx/xrc/xh_tree.h>
+
 #ifdef ENABLE_BINRELOC
 	#define BR_PTHREADS 0
 	#include "prefix.h"
@@ -231,8 +255,34 @@ bool CFileZillaApp::LoadResourceFiles()
 
 	m_resourceDir += _T("resources/");
 	
-	wxXmlResource::Get()->InitAllHandlers();
-	wxXmlResource::Get()->Load(m_resourceDir + _T("*.xrc"));
+	wxXmlResource *pResource = wxXmlResource::Get();
+
+    pResource->AddHandler(new wxMenuXmlHandler);
+    pResource->AddHandler(new wxMenuBarXmlHandler);
+	pResource->AddHandler(new wxDialogXmlHandler);
+	pResource->AddHandler(new wxPanelXmlHandler);
+	pResource->AddHandler(new wxSizerXmlHandler);
+	pResource->AddHandler(new wxButtonXmlHandler);
+	pResource->AddHandler(new wxBitmapButtonXmlHandler);
+    pResource->AddHandler(new wxStaticTextXmlHandler);
+    pResource->AddHandler(new wxStaticBoxXmlHandler);
+    pResource->AddHandler(new wxStaticBitmapXmlHandler);
+    pResource->AddHandler(new wxTreeCtrlXmlHandler);
+    pResource->AddHandler(new wxListCtrlXmlHandler);
+    pResource->AddHandler(new wxCheckListBoxXmlHandler);
+    pResource->AddHandler(new wxChoiceXmlHandler);
+    pResource->AddHandler(new wxGaugeXmlHandler);
+    pResource->AddHandler(new wxCheckBoxXmlHandler);
+    pResource->AddHandler(new wxSpinCtrlXmlHandler);
+    pResource->AddHandler(new wxRadioButtonXmlHandler);
+    pResource->AddHandler(new wxNotebookXmlHandler);
+    pResource->AddHandler(new wxTextCtrlXmlHandler);
+    pResource->AddHandler(new wxListBoxXmlHandler);
+    pResource->AddHandler(new wxToolBarXmlHandler);
+	pResource->AddHandler(new wxStaticLineXmlHandler);
+    pResource->AddHandler(new wxScrolledWindowXmlHandler);
+
+	pResource->Load(m_resourceDir + _T("*.xrc"));
 
 	return true;
 }
