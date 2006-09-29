@@ -877,11 +877,9 @@ int CNetConfWizard::CreateListenSocket(unsigned int port)
 	wxIPV4address addr;
 	if (!addr.AnyAddress())
 		return 0;
-	if (port)
-	{
-		if (!addr.Service(port))
-			return 0;
-	}
+
+	if (!addr.Service(port))
+		return 0;
 
 	m_pSocketServer = new wxSocketServer(addr, wxSOCKET_NOWAIT);
 	if (!m_pSocketServer->Ok())
