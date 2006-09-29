@@ -33,6 +33,9 @@ protected:
 	bool m_bLeftMousePressed;
 #endif //__WXMSW__
 
+	void AddRecentDirectory(const wxString &directory);
+	std::list<wxString> m_recentDirectories;
+
 	wxString m_label;
 	int m_cbOffset;
 	int m_labelHeight;
@@ -51,6 +54,7 @@ protected:
 	DECLARE_EVENT_TABLE();
 	void OnTextChanged(wxCommandEvent& event);
 	void OnTextEnter(wxCommandEvent& event);
+	void OnSelectionChanged(wxCommandEvent& event);
 };
 
 class CRemoteViewHeader : public CViewHeader, CStateEventHandler
@@ -66,6 +70,7 @@ protected:
 	DECLARE_EVENT_TABLE();
 	void OnTextChanged(wxCommandEvent& event);
 	void OnTextEnter(wxCommandEvent& event);
+	void OnSelectionChanged(wxCommandEvent& event);
 };
 
 #endif //__VIEWHEADER_H__

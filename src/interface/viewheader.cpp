@@ -11,7 +11,7 @@ class CComboBoxEx : public wxComboBox
 {
 public:
 	CComboBoxEx(CViewHeader* parent)
-		: wxComboBox(parent, wxID_ANY, _T(""), wxDefaultPosition, wxDefaultSize, wxArrayString(), wxCB_DROPDOWN | wxTE_PROCESS_ENTER)
+		: wxComboBox(parent, wxID_ANY, _T(""), wxDefaultPosition, wxDefaultSize, wxArrayString(), wxCB_DROPDOWN | wxTE_PROCESS_ENTER | wxCB_SORT)
 	{
 		m_parent = parent;
 	}
@@ -235,9 +235,33 @@ wxString CViewHeader::GetLabel() const
 	return m_label;
 }
 
+void CViewHeader::AddRecentDirectory(const wxString &directory)
+{
+	// Check if directory is already in the list
+	for (std::list<wxString>::const_iterator iter = m_recentDirectories.begin(); iter != m_recentDirectories.end(); iter++)
+	{
+		if (*iter == directory)
+			return;
+	}
+
+	if (m_recentDirectories.size() == 20)
+	{
+		wxString dirToRemove = m_recentDirectories.front();
+		m_recentDirectories.pop_front();
+
+		int item = m_pComboBox->FindString(dirToRemove, true);
+		if (item != wxNOT_FOUND)
+			m_pComboBox->Delete(item);
+	}
+
+	m_recentDirectories.push_back(directory);
+	m_pComboBox->Append(directory);
+}
+
 BEGIN_EVENT_TABLE(CLocalViewHeader, CViewHeader)
 EVT_TEXT(wxID_ANY, CLocalViewHeader::OnTextChanged)
 EVT_TEXT_ENTER(wxID_ANY, CLocalViewHeader::OnTextEnter)
+EVT_COMBOBOX(wxID_ANY, CLocalViewHeader::OnSelectionChanged)
 END_EVENT_TABLE()
 
 CLocalViewHeader::CLocalViewHeader(wxWindow* pParent, CState* pState)
@@ -247,6 +271,8 @@ CLocalViewHeader::CLocalViewHeader(wxWindow* pParent, CState* pState)
 
 void CLocalViewHeader::OnTextChanged(wxCommandEvent& event)
 {
+	// This function handles auto-completion
+
 	wxString str = m_pComboBox->GetValue();
 	if (str == _T("") || str.Right(1) == _T("/"))
 	{
@@ -307,14 +333,27 @@ void CLocalViewHeader::OnTextChanged(wxCommandEvent& event)
 		return;
 	}
 
-#ifdef __WXMSW__
-	m_pComboBox->SetValue(str + found.Mid(name.Length()) + _T("\\"));
-#else
-	m_pComboBox->SetValue(str + found.Mid(name.Length()) + _T("/"));
-#endif
+	m_pComboBox->SetValue(str + found.Mid(name.Length()) + wxFileName::GetPathSeparator());
 	m_pComboBox->SetSelection(str.Length(), m_pComboBox->GetValue().Length() + 1);
 
 	m_oldValue = str;
+}
+
+void CLocalViewHeader::OnSelectionChanged(wxCommandEvent& event)
+{
+	wxString dir = event.GetString();
+	if (!wxDir::Exists(dir))
+	{
+		const wxString& current = m_pState->GetLocalDir();
+		int item = m_pComboBox->FindString(current, true);
+		if (item != wxNOT_FOUND)
+			m_pComboBox->SetSelection(item);
+
+		wxBell();
+		return;
+	}
+	
+	m_pState->SetLocalDir(dir);
 }
 
 void CLocalViewHeader::OnTextEnter(wxCommandEvent& event)
@@ -337,10 +376,13 @@ void CLocalViewHeader::OnStateChange(unsigned int event)
 	const wxString& dir = m_pState->GetLocalDir();
 	m_pComboBox->SetValue(dir);
 	m_pComboBox->SetSelection(m_pComboBox->GetValue().Length(), m_pComboBox->GetValue().Length());
+
+	AddRecentDirectory(dir);
 }
 
 BEGIN_EVENT_TABLE(CRemoteViewHeader, CViewHeader)
 EVT_TEXT_ENTER(wxID_ANY, CRemoteViewHeader::OnTextEnter)
+EVT_COMBOBOX(wxID_ANY, CRemoteViewHeader::OnSelectionChanged)
 END_EVENT_TABLE()
 
 CRemoteViewHeader::CRemoteViewHeader(wxWindow* pParent, CState* pState)
@@ -357,6 +399,7 @@ void CRemoteViewHeader::OnStateChange(unsigned int event)
 	if (m_path.IsEmpty())
 	{
 		m_pComboBox->SetValue(_T(""));
+		m_pComboBox->Clear();
 		m_pComboBox->Disable();
 	}
 	else
@@ -364,6 +407,8 @@ void CRemoteViewHeader::OnStateChange(unsigned int event)
 		m_pComboBox->Enable();
 		m_pComboBox->SetValue(m_path.GetPath());
 		m_pComboBox->SetSelection(m_pComboBox->GetValue().Length(), m_pComboBox->GetValue().Length());
+		
+		AddRecentDirectory(m_path.GetPath());
 	}
 }
 
@@ -372,6 +417,24 @@ void CRemoteViewHeader::OnTextEnter(wxCommandEvent& event)
 	CServerPath path = m_path;
 	wxString value = m_pComboBox->GetValue();
 	if (value == _T("") || !path.ChangePath(value))
+	{
+		wxBell();
+		return;
+	}
+
+	if (!m_pState->m_pCommandQueue->Idle())
+	{
+		wxBell();
+		return;
+	}
+
+	m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(path));
+}
+
+void CRemoteViewHeader::OnSelectionChanged(wxCommandEvent& event)
+{
+	CServerPath path = m_path;
+	if (!path.SetPath(event.GetString()))
 	{
 		wxBell();
 		return;
