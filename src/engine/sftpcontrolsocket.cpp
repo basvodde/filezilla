@@ -283,7 +283,7 @@ int CSftpControlSocket::Connect(const CServer &server)
 			executable = _T("\"") + executable + _T("\"");
 	}
 #elif defined(__UNIX__)
-	const wxString prefix = wxStandardPaths::Get().GetInstallPrefix();
+	const wxString prefix = ((const wxStandardPaths&)wxStandardPaths::Get()).GetInstallPrefix();
 	if (prefix != _T("/usr/local"))
 	{
 		// /usr/local is the fallback value. /usr/local/bin is most likely in the PATH 
