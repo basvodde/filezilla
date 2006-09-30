@@ -28,7 +28,7 @@
 #include <wx/xrc/xh_toolb.h>
 #include <wx/xrc/xh_tree.h>
 
-#if defined(__WXMAC__) || defined(__WXUNIX)
+#if defined(__WXMAC__) || defined(__UNIX__)
 #include <wx/stdpaths.h>
 #endif
 
