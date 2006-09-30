@@ -28,6 +28,10 @@
 #include <wx/xrc/xh_toolb.h>
 #include <wx/xrc/xh_tree.h>
 
+#if defined(__WXMAC__) || defined(__WXUNIX)
+#include <wx/stdpaths.h>
+#endif
+
 #ifdef ENABLE_BINRELOC
 	#define BR_PTHREADS 0
 	#include "prefix.h"
@@ -97,6 +101,8 @@ USE AT OWN RISK"), _T("Important Information"));
 		COptions::Destroy();
 		return false;
 	}
+
+	CheckExistsFzsftp();
 
 	// Turn off idle events, we don't need them
 	wxIdleEvent::SetMode(wxIDLE_PROCESS_SPECIFIED);
@@ -416,4 +422,107 @@ void CFileZillaApp::DisplayEncodingWarning()
 CWrapEngine* CFileZillaApp::GetWrapEngine()
 {
 	return m_pWrapEngine;
+}
+
+void CFileZillaApp::CheckExistsFzsftp()
+{
+	// Get the correct path to the fzsftp executable
+
+	wxString program = _T("fzsftp");
+#ifdef __WXMSW__
+	program += _T(".exe");
+#endif
+
+	bool found = false;
+
+	// First check the FZ_FZSFTP environment variable
+	wxString executable;
+	if (wxGetEnv(_T("FZ_FZSFTP"), &executable))
+	{
+		if (wxFileName::FileExists(executable))
+			found = true;
+	}
+
+	if (!found)
+	{
+		wxPathList pathList;
+
+		// Add current working directory
+		const wxString &cwd = wxGetCwd();
+		pathList.Add(cwd);
+#ifdef __WXMSW__
+
+		// Add executable path
+		wxChar modulePath[1000];
+		DWORD len = GetModuleFileName(0, modulePath, 999);
+		if (len)
+		{
+			modulePath[len] = 0;
+			wxString path(modulePath);
+			int pos = path.Find('\\', true);
+			if (pos != -1)
+			{
+				path = path.Left(pos);
+				pathList.Add(path);
+			}
+		}
+#endif
+
+		// Add a few paths relative to the current working directory
+		pathList.Add(cwd + _T("/bin"));
+		pathList.Add(cwd + _T("/src/putty"));
+		pathList.Add(cwd + _T("/putty"));
+
+		executable = pathList.FindAbsoluteValidPath(program);
+		if (executable != _T(""))
+			found = true;
+	}
+	
+	if (!found)
+	{
+#ifdef __WXMAC__
+		// Get application path within the bundle
+		wxFileName fn(wxStandardPaths::Get().GetDataDir() + _T("/../MacOS/"), program);
+		fn.Normalize();
+		if (fn.FileExists())
+		{
+			executable = fn.GetFullPath();
+			found = true;
+		}
+#elif defined(__UNIX__)
+		const wxString prefix = ((const wxStandardPaths&)wxStandardPaths::Get()).GetInstallPrefix();
+		if (prefix != _T("/usr/local"))
+		{
+			// /usr/local is the fallback value. /usr/local/bin is most likely in the PATH 
+			// environment variable already so we don't have to check it. Furthermore, other
+			// directories might be listed before it (For example a developer's own 
+			// application prefix)
+			wxFileName fn(prefix + _T("/bin/"), program);
+			fn.Normalize();
+			if (fn.FileExists())
+			{
+				executable = fn.GetFullPath();
+				found = true;
+			}
+		}
+#endif
+	}
+
+	if (!found)
+	{
+		// Check PATH
+		wxPathList pathList;
+		pathList.AddEnvList(_T("PATH"));
+		executable = pathList.FindAbsoluteValidPath(program);
+		bool found = false;
+		if (executable != _T(""))
+			found = true;
+	}
+
+	if (!found)
+	{
+		wxMessageBox(wxString::Format(_("%s could not be found. Without this file, SFTP will not work.\nPlease make sure %s is either in a directory listed in your PATH environment variable\nor set the full path to it in the FZ_FZSFTP environment variable."), program.c_str(), program.c_str()));
+	}
+	else
+		COptions::Get()->SetOption(OPTION_FZSFTP_EXECUTABLE, executable);
 }

@@ -18,6 +18,8 @@ public:
 	wxString GetSettingsDir() const { return m_settingsDir; }
 	wxString GetLocalesDir() const { return m_localesDir; }
 
+	void CheckExistsFzsftp();
+
 	bool SetLocale(int language);
 	int GetCurrentLanguage() const;
 

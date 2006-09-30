@@ -38,6 +38,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Timeout", number, _T("15") },
 	{ "Logging Debug Level", number, _T("0") },
 	{ "Logging Raw Listing", number, _T("0") },
+	{ "fzsftp executable", string, _T("") },
 
 	// Interface settings
 	{ "Number of Transfers", number, _T("2") },

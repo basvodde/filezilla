@@ -28,6 +28,8 @@ enum engineOptions
 	OPTION_LOGGING_DEBUGLEVEL,
 	OPTION_LOGGING_RAWLISTING,
 
+	OPTION_FZSFTP_EXECUTABLE,	// full path to fzsftp executable
+
 	OPTIONS_ENGINE_NUM
 };
 
