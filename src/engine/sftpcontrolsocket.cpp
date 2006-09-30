@@ -5,7 +5,7 @@
 #include "directorycache.h"
 #include "directorylistingparser.h"
 
-#ifdef __WXMAC__
+#if defined(__WXMAC__) || defined(__UNIX__)
 #include <wx/stdpaths.h>
 #endif
 
@@ -281,6 +281,23 @@ int CSftpControlSocket::Connect(const CServer &server)
 		executable = fn.GetFullPath();
 		if (executable.Find(' ') != -1)
 			executable = _T("\"") + executable + _T("\"");
+	}
+#elif defined(__UNIX__)
+	const wxString prefix = wxStandardPaths::Get().GetInstallPrefix();
+	if (prefix != _T("/usr/local"))
+	{
+		// /usr/local is the fallback value. /usr/local/bin is most likely in the PATH 
+		// environment variable already so we don't have to check it. Furthermore, other
+		// directories might be listed before it (For example a developer's own 
+		// application prefix)
+		wxFileName fn(prefix + _T("/bin/"), executable);
+		fn.Normalize();
+		if (fn.FileExists())
+		{
+			executable = fn.GetFullPath();
+			if (executable.Find(' ') != -1)
+				executable = _T("\"") + executable + _T("\"");
+		}
 	}
 #endif
 
