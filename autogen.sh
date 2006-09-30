@@ -221,7 +221,7 @@ echo "3.4 Running autoconf... "
 $autoconf
 
 echo "3.5 Runing automake... "
-$automake -a -c -f
+$automake -a -c
 
 echo -n "4. Checking generate files... "
 if test ! -f configure || test ! -f config/ltmain.sh || test ! -f Makefile.in; then
