@@ -342,6 +342,9 @@ void CLocalViewHeader::OnTextChanged(wxCommandEvent& event)
 void CLocalViewHeader::OnSelectionChanged(wxCommandEvent& event)
 {
 	wxString dir = event.GetString();
+	if (dir == _T(""))
+		return;
+
 	if (!wxDir::Exists(dir))
 	{
 		const wxString& current = m_pState->GetLocalDir();
@@ -433,8 +436,12 @@ void CRemoteViewHeader::OnTextEnter(wxCommandEvent& event)
 
 void CRemoteViewHeader::OnSelectionChanged(wxCommandEvent& event)
 {
+	const wxString& dir = event.GetString();
+	if (dir == _T(""))
+		return;
+
 	CServerPath path = m_path;
-	if (!path.SetPath(event.GetString()))
+	if (!path.SetPath(dir))
 	{
 		wxBell();
 		return;
