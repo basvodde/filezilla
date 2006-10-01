@@ -306,7 +306,9 @@ protected:
 	void LoadQueue();
 	bool ShouldUseBinaryMode(wxString filename);
 
-	std::vector<t_EngineData> m_engineData;
+	t_EngineData* GetIdleEngine(const CServer* pServer = 0);
+
+	std::vector<t_EngineData*> m_engineData;
 	std::vector<CServerItem*> m_serverList;	
 	std::list<CStatusLineCtrl*> m_statusLineList;
 	

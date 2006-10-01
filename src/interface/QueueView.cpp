@@ -722,20 +722,27 @@ CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame, 
 	AssignImageList(pImageList, wxIMAGE_LIST_SMALL);
 
 	//Initialize the engine data
-	t_EngineData data;
-	data.active = false;
-	data.pEngine = 0; // TODO: Primary transfer engine data
-	data.pItem = 0;
-	data.pStatusLineCtrl = 0;
-	data.state = t_EngineData::none;
-	m_engineData.push_back(data);
+	t_EngineData *pData = new t_EngineData;
+	pData->active = false;
+	pData->pItem = 0;
+	pData->pStatusLineCtrl = 0;
+	pData->state = t_EngineData::none;
+	pData->pEngine = 0; // TODO: Primary transfer engine data
+	m_engineData.push_back(pData);
 	
 	int engineCount = COptions::Get()->GetOptionVal(OPTION_NUMTRANSFERS);
 	for (int i = 0; i < engineCount; i++)
 	{
-		data.pEngine = new CFileZillaEngine();
-		data.pEngine->Init(this, COptions::Get());
-		m_engineData.push_back(data);
+		t_EngineData *pData = new t_EngineData;
+		pData->active = false;
+		pData->pItem = 0;
+		pData->pStatusLineCtrl = 0;
+		pData->state = t_EngineData::none;
+		
+		pData->pEngine = new CFileZillaEngine();
+		pData->pEngine->Init(this, COptions::Get());
+		
+		m_engineData.push_back(pData);
 	}
 
 	SettingsChanged();
@@ -755,7 +762,9 @@ CQueueView::~CQueueView()
 		delete *iter;
 
 	for (unsigned int engineIndex = 1; engineIndex < m_engineData.size(); engineIndex++)
-		delete m_engineData[engineIndex].pEngine;
+		delete m_engineData[engineIndex]->pEngine;
+	for (unsigned int engineIndex = 1; engineIndex < m_engineData.size(); engineIndex++)
+		delete m_engineData[engineIndex];
 }
 
 bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxString& localFile, 
@@ -945,18 +954,18 @@ CQueueItem* CQueueView::GetQueueItem(unsigned int item)
 
 void CQueueView::OnEngineEvent(wxEvent &event)
 {
-	std::vector<t_EngineData>::iterator iter;
+	std::vector<t_EngineData*>::iterator iter;
 	for (iter = m_engineData.begin(); iter != m_engineData.end(); iter++)
 	{
-		if ((wxObject *)iter->pEngine == event.GetEventObject())
+		if ((wxObject *)(*iter)->pEngine == event.GetEventObject())
 			break;
 	}
 	if (iter == m_engineData.end())
 		return;
 
-	t_EngineData& data = *iter;
+	t_EngineData* const pEngineData = *iter;
 
-	CNotification *pNotification = data.pEngine->GetNextNotification();
+	CNotification *pNotification = pEngineData->pEngine->GetNextNotification();
 	while (pNotification)
 	{
 		switch (pNotification->GetID())
@@ -966,13 +975,13 @@ void CQueueView::OnEngineEvent(wxEvent &event)
 			delete pNotification;
 			break;
 		case nId_operation:
-			ProcessReply(*iter, reinterpret_cast<COperationNotification*>(pNotification));
+			ProcessReply(*pEngineData, reinterpret_cast<COperationNotification*>(pNotification));
 			delete pNotification;
 			break;
 		case nId_listing:
 			{
 				const CServer* const pServer = m_pMainFrame->GetState()->GetServer();
-				if (pServer && *pServer == data.lastServer)
+				if (pServer && *pServer == pEngineData->lastServer)
 					m_pMainFrame->GetState()->SetRemoteDir(reinterpret_cast<CDirectoryListingNotification *>(pNotification)->DetachDirectoryListing(), true);
 			}
 			delete pNotification;
@@ -985,14 +994,14 @@ void CQueueView::OnEngineEvent(wxEvent &event)
 				{
 					// Set default file exists action
 					CFileExistsNotification *pFileExistsNotification = reinterpret_cast<CFileExistsNotification *>(pNotification);
-					pFileExistsNotification->overwriteAction = (enum CFileExistsNotification::OverwriteAction)data.pItem->m_defaultFileExistsAction;
+					pFileExistsNotification->overwriteAction = (enum CFileExistsNotification::OverwriteAction)pEngineData->pItem->m_defaultFileExistsAction;
 				}
 				break;
 			default:
 				break;
 			}
 
-			m_pAsyncRequestQueue->AddRequest(data.pEngine, reinterpret_cast<CAsyncRequestNotification *>(pNotification));
+			m_pAsyncRequestQueue->AddRequest(pEngineData->pEngine, reinterpret_cast<CAsyncRequestNotification *>(pNotification));
 			break;
 		case nId_active:
 			{
@@ -1009,8 +1018,8 @@ void CQueueView::OnEngineEvent(wxEvent &event)
 				CTransferStatusNotification *pTransferStatusNotification = reinterpret_cast<CTransferStatusNotification *>(pNotification);
 				const CTransferStatus *pStatus = pTransferStatusNotification->GetStatus();
 
-				if (data.active)
-					data.pStatusLineCtrl->SetTransferStatus(pStatus);
+				if (pEngineData->active)
+					pEngineData->pStatusLineCtrl->SetTransferStatus(pStatus);
 
 				delete pNotification;
 			}
@@ -1020,10 +1029,10 @@ void CQueueView::OnEngineEvent(wxEvent &event)
 			break;
 		}
 
-		if (!data.pEngine || m_engineData.empty())
+		if (m_engineData.empty() || !pEngineData->pEngine)
 			break;
 
-		pNotification = data.pEngine->GetNextNotification();
+		pNotification = pEngineData->pEngine->GetNextNotification();
 	}
 }
 
@@ -1062,19 +1071,8 @@ bool CQueueView::TryStartNextTransfer()
 	else
 		wantedDirection = all;
 
-	// Find first idle server and assign a transfer to it.
-	unsigned int engineIndex;
-	for (engineIndex = 1; engineIndex < m_engineData.size(); engineIndex++)
-	{
-		if (!m_engineData[engineIndex].active)
-			break;
-	}
-	if (engineIndex >= m_engineData.size())
-		return false;
-
-	t_EngineData& engineData = m_engineData[engineIndex];
-
-	// Check all servers for the item with the highest priority
+	// Find inactive file. Check all servers for 
+	// the file with the highest priority
 	CFileItem* fileItem = 0;
 	CServerItem* serverItem = 0;
 	for (std::vector<CServerItem*>::iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
@@ -1099,14 +1097,21 @@ bool CQueueView::TryStartNextTransfer()
 	if (!fileItem)
 		return false;
 
-	// Found idle item
+	// Find idle engine
+	t_EngineData* pEngineData = GetIdleEngine(&serverItem->GetServer());
+	if (!pEngineData)
+		return false;
+
+	// Now we have both inactive engine and file.
+	// Assign the file to the engine.
+
 	fileItem->SetActive(true);
 	m_itemCount++;
 	SetItemCount(m_itemCount);
 
-	engineData.pItem = fileItem;
-	fileItem->m_pEngineData = &engineData;
-	engineData.active = true;
+	pEngineData->pItem = fileItem;
+	fileItem->m_pEngineData = pEngineData;
+	pEngineData->active = true;
 	serverItem->m_activeCount++;
 	m_activeCount++;
 	if (fileItem->Download())
@@ -1114,15 +1119,15 @@ bool CQueueView::TryStartNextTransfer()
 	else
 		m_activeCountUp++;
 
-	const CServer oldServer = engineData.lastServer;
-	engineData.lastServer = serverItem->GetServer();
+	const CServer oldServer = pEngineData->lastServer;
+	pEngineData->lastServer = serverItem->GetServer();
 	
-	if (!engineData.pEngine->IsConnected())
-		engineData.state = t_EngineData::connect;
+	if (!pEngineData->pEngine->IsConnected())
+		pEngineData->state = t_EngineData::connect;
 	else if (oldServer != serverItem->GetServer())
-		engineData.state = t_EngineData::disconnect;
+		pEngineData->state = t_EngineData::disconnect;
 	else
-		engineData.state = t_EngineData::transfer;
+		pEngineData->state = t_EngineData::transfer;
 
 	// Create status line
 	int lineIndex = GetItemIndex(fileItem);
@@ -1130,18 +1135,18 @@ bool CQueueView::TryStartNextTransfer()
 	wxRect rect;
 	GetItemRect(lineIndex + 1, rect);
 	m_allowBackgroundErase = false;
-	if (!engineData.pStatusLineCtrl)
-		engineData.pStatusLineCtrl = new CStatusLineCtrl(this, engineData, rect);
+	if (!pEngineData->pStatusLineCtrl)
+		pEngineData->pStatusLineCtrl = new CStatusLineCtrl(this, pEngineData, rect);
 	else
 	{
-		engineData.pStatusLineCtrl->SetTransferStatus(0);
-		engineData.pStatusLineCtrl->SetSize(rect);
-		engineData.pStatusLineCtrl->Show();
+		pEngineData->pStatusLineCtrl->SetTransferStatus(0);
+		pEngineData->pStatusLineCtrl->SetSize(rect);
+		pEngineData->pStatusLineCtrl->Show();
 	}
 	m_allowBackgroundErase = true;
-	m_statusLineList.push_back(engineData.pStatusLineCtrl);
+	m_statusLineList.push_back(pEngineData->pStatusLineCtrl);
 
-	SendNextCommand(engineData);
+	SendNextCommand(*pEngineData);
 	
 	return true;
 }
@@ -1407,9 +1412,9 @@ bool CQueueView::SetActive(bool active /*=true*/)
 		unsigned int engineIndex;
 		for (engineIndex = 1; engineIndex < m_engineData.size(); engineIndex++)
 		{
-			t_EngineData& data = m_engineData[engineIndex];
-			if (data.active)
-				data.pEngine->Command(CCancelCommand());
+			t_EngineData* const pEngineData = m_engineData[engineIndex];
+			if (pEngineData->active)
+				pEngineData->pEngine->Command(CCancelCommand());
 		}
 
 		return m_activeCount == 0;
@@ -1454,10 +1459,12 @@ bool CQueueView::Quit()
 
 	for (unsigned int engineIndex = 1; engineIndex < m_engineData.size(); engineIndex++)
 	{
-		t_EngineData& data = m_engineData[engineIndex];
-		delete data.pEngine;
-		data.pEngine = 0;
+		t_EngineData* const data = m_engineData[engineIndex];
+		delete data->pEngine;
+		data->pEngine = 0;
 	}
+	for (unsigned int engineIndex = 0; engineIndex < m_engineData.size(); engineIndex++)
+		delete m_engineData[engineIndex];
 	m_engineData.clear();
 
 	SaveQueue();
@@ -2150,4 +2157,27 @@ void CQueueView::OnSetDefaultFileExistsAction(wxCommandEvent &event)
 			break;
 		}		
 	}
+}
+
+t_EngineData* CQueueView::GetIdleEngine(const CServer* pServer /*=0*/)
+{
+	t_EngineData* pFirstIdle = 0;
+
+	// We start with 1, since 0 is the primary connection
+	for (unsigned int i = 1; i < m_engineData.size(); i++)
+	{
+		if (m_engineData[i]->active)
+			continue;
+
+		if (!pServer)
+			return m_engineData[i];
+
+		if (m_engineData[i]->pEngine->IsConnected() && m_engineData[i]->lastServer == *pServer)
+			return m_engineData[i];
+
+		if (!pFirstIdle)
+			pFirstIdle = m_engineData[i];
+	}
+
+	return pFirstIdle;
 }

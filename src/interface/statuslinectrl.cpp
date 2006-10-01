@@ -17,9 +17,11 @@ bool CStatusLineCtrl::m_initialized = false;
 
 #define PROGRESSBAR_WIDTH 100
 
-CStatusLineCtrl::CStatusLineCtrl(CQueueView* pParent, const t_EngineData& engineData, const wxRect& initialPosition)
-	: m_engineData(engineData)
+CStatusLineCtrl::CStatusLineCtrl(CQueueView* pParent, const t_EngineData* const pEngineData, const wxRect& initialPosition)
+	: m_pEngineData(pEngineData)
 {
+	wxASSERT(pEngineData);
+
 	Create(pParent, wxID_ANY, initialPosition.GetPosition(), initialPosition.GetSize());
 	SetOwnFont(pParent->GetFont());
 	SetBackgroundColour(pParent->GetBackgroundColour());
@@ -57,7 +59,7 @@ CStatusLineCtrl::CStatusLineCtrl(CQueueView* pParent, const t_EngineData& engine
 CStatusLineCtrl::~CStatusLineCtrl()
 {
 	if (m_pStatus && m_pStatus->totalSize >= 0)
-		m_engineData.pItem->SetSize(m_pStatus->totalSize);
+		m_pEngineData->pItem->SetSize(m_pStatus->totalSize);
 
 	if (m_transferStatusTimer.IsRunning())
 		m_transferStatusTimer.Stop();
@@ -135,11 +137,11 @@ void CStatusLineCtrl::SetTransferStatus(const CTransferStatus* pStatus)
 	if (!pStatus)
 	{
 		if (m_pStatus && m_pStatus->totalSize >= 0)
-			m_engineData.pItem->SetSize(m_pStatus->totalSize);
+			m_pEngineData->pItem->SetSize(m_pStatus->totalSize);
 		delete m_pStatus;
 		m_pStatus = 0;
 
-		switch (m_engineData.state)
+		switch (m_pEngineData->state)
 		{
 		case t_EngineData::disconnect:
 			m_statusText = _("Disconnecting from previous server");
@@ -148,7 +150,7 @@ void CStatusLineCtrl::SetTransferStatus(const CTransferStatus* pStatus)
 			m_statusText = _("Waiting for transfer to be canceled");
 			break;
 		case t_EngineData::connect:
-			m_statusText = wxString::Format(_("Connecting to %s"), m_engineData.lastServer.FormatServer().c_str());
+			m_statusText = wxString::Format(_("Connecting to %s"), m_pEngineData->lastServer.FormatServer().c_str());
 			break;
 		default:
 			m_statusText = _("Transferring");
@@ -177,7 +179,7 @@ void CStatusLineCtrl::OnTimer(wxTimerEvent& event)
 {
 	bool changed;
 	CTransferStatus status;
-	if (!m_engineData.pEngine->GetTransferStatus(status, changed))
+	if (!m_pEngineData->pEngine->GetTransferStatus(status, changed))
 		SetTransferStatus(0);
 	else if (changed)
 		SetTransferStatus(&status);
