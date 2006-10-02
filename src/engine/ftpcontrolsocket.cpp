@@ -761,6 +761,10 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 		}
 	}
 
+	// Try to lock cache
+	if (!TryLockCache(m_CurrentPath))
+		return FZ_REPLY_WOULDBLOCK;
+
 	delete m_pTransferSocket;
 	m_pTransferSocket = new CTransferSocket(m_pEngine, this, ::list);
 	pData->m_pDirectoryListingParser = new CDirectoryListingParser(this, *m_pCurrentServer);
@@ -812,9 +816,7 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 					if (!pData->path.IsEmpty() && pData->subDir != _T(""))
 						cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
 
-					delete pData;
-					m_pCurOpData = pData->pNextOpData;
-
+					ResetOperation(FZ_REPLY_OK);
 					return FZ_REPLY_OK;
 				}
 			}

@@ -175,8 +175,49 @@ protected:
 	// problems
 	int m_socketId;
 
+	// -------------------------
+	// Begin cache locking stuff
+	// -------------------------
+
+	// Tries to obtain lock. Returns true on success.
+	// On failure, caller has to pass control.
+	// SendNextCommand will be called once the lock gets available
+	// and engine could obtain it.
+	bool TryLockCache(const CServerPath& directory);
+
+	// Unlocks the cache. Can be called if not holding the lock
+	void UnlockCache();
+
+	// Called from the fzOBTAINLOCK event.
+	// Returns true iff engine is the first waiting engine
+	// and obtains the lock.
+	// On failure, the engine was not waiting for a lock.
+	bool ObtainLockFromEvent();
+
+#ifdef __VISUALC__
+	// Retarded compiler does not like my code
+	public:
+#endif
+	struct t_lockInfo
+	{
+		CControlSocket* pControlSocket;
+		CServerPath directory;
+		bool waiting;
+	};
+	static std::list<t_lockInfo> m_lockInfoList;
+#ifdef __VISUALC__
+	protected:
+#endif
+
+	const std::list<t_lockInfo>::iterator GetLockStatus();
+
+	// -----------------------
+	// End cache locking stuff
+	// -----------------------
+
 	DECLARE_EVENT_TABLE();
 	void OnTimer(wxTimerEvent& event);
+	void OnObtainLock(wxCommandEvent& event);
 };
 
 #endif

@@ -744,6 +744,10 @@ int CSftpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDi
 		}
 	}
 
+	// Try to lock cache
+	if (!TryLockCache(m_CurrentPath))
+		return FZ_REPLY_WOULDBLOCK;
+
 	pData->opState = list_list;
 
 	return ListSend();
@@ -885,9 +889,7 @@ int CSftpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 					if (!pData->path.IsEmpty() && pData->subDir != _T(""))
 						cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
 
-					delete pData;
-					m_pCurOpData = pData->pNextOpData;
-
+					ResetOperation(FZ_REPLY_OK);
 					return FZ_REPLY_OK;
 				}
 			}
