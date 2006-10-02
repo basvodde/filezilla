@@ -1271,13 +1271,13 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 		res = List(CServerPath(), _T(""), true);
 		if (res != FZ_REPLY_OK)
 			return res;
-
-		pData->opState = filetransfer_resumetest;
-
-		res = CheckOverwriteFile();
-		if (res != FZ_REPLY_OK)
-			return res;
 	}
+
+	pData->opState = filetransfer_resumetest;
+
+	res = CheckOverwriteFile();
+	if (res != FZ_REPLY_OK)
+		return res;
 
 	return SendNextCommand();
 }
@@ -1408,13 +1408,13 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 				int res = List();
 				if (res != FZ_REPLY_OK)
 					return res;
-
-				pData->opState = filetransfer_resumetest;
-
-				res = CheckOverwriteFile();
-				if (res != FZ_REPLY_OK)
-					return res;
 			}
+
+			pData->opState = filetransfer_resumetest;
+
+			int res = CheckOverwriteFile();
+			if (res != FZ_REPLY_OK)
+				return res;
 		}
 		else if (prevResult == FZ_REPLY_ERROR)
 		{
@@ -1437,7 +1437,17 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 			CDirectoryCache cache;
 			bool found = cache.LookupFile(entry, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath, pData->remoteFile, dirDidExist, matchedCase);
 			if (!found)
-				pData->opState = filetransfer_size;
+			{
+				if (!dirDidExist)
+                    pData->opState = filetransfer_size;
+				else
+				{
+					pData->opState = filetransfer_resumetest;
+					int res = CheckOverwriteFile();
+					if (res != FZ_REPLY_OK)
+						return res;
+				}
+			}
 			else
 			{
 				if (matchedCase && !entry.unsure)
