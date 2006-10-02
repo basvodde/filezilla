@@ -978,16 +978,12 @@ void CQueueView::OnEngineEvent(wxEvent &event)
 			ProcessReply(*pEngineData, reinterpret_cast<COperationNotification*>(pNotification));
 			delete pNotification;
 			break;
-		case nId_listing:
-			{
-				const CServer* const pServer = m_pMainFrame->GetState()->GetServer();
-				if (pServer && *pServer == pEngineData->lastServer)
-					m_pMainFrame->GetState()->SetRemoteDir(reinterpret_cast<CDirectoryListingNotification *>(pNotification)->DetachDirectoryListing(), true);
-			}
-			delete pNotification;
-			break;
 		case nId_asyncrequest:
-
+			if (!pEngineData->pItem)
+			{
+				delete pNotification;
+				break;
+			}
 			switch (reinterpret_cast<CAsyncRequestNotification *>(pNotification)->GetRequestID())
 			{
 			case reqId_fileexists:
@@ -1014,15 +1010,15 @@ void CQueueView::OnEngineEvent(wxEvent &event)
 			}
 			break;
 		case nId_transferstatus:
+			if (pEngineData->pItem)
 			{
 				CTransferStatusNotification *pTransferStatusNotification = reinterpret_cast<CTransferStatusNotification *>(pNotification);
 				const CTransferStatus *pStatus = pTransferStatusNotification->GetStatus();
 
 				if (pEngineData->active)
 					pEngineData->pStatusLineCtrl->SetTransferStatus(pStatus);
-
-				delete pNotification;
 			}
+			delete pNotification;
 			break;
 		default:
 			delete pNotification;
@@ -1194,6 +1190,9 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 		if (replyCode & FZ_REPLY_DISCONNECTED)
 			engineData.state = t_EngineData::connect;
 		break;
+	case t_EngineData::list:
+		ResetEngine(engineData, false);
+		return;
 	default:
 		return;
 	}
@@ -1256,6 +1255,10 @@ void CQueueView::ResetEngine(t_EngineData& data, const bool removeFileItem)
 		else
 			ResetItem(data.pItem);
 		data.pItem = 0;
+
+		wxASSERT(m_activeCount > 0);
+		if (m_activeCount > 0)
+			m_activeCount--;
 	}
 	data.active = false;
 	data.state = t_EngineData::none;
@@ -1266,7 +1269,6 @@ void CQueueView::ResetEngine(t_EngineData& data, const bool removeFileItem)
 		if (item->m_activeCount > 0)
 			item->m_activeCount--;
 	}
-	m_activeCount--;
 
 	while (TryStartNextTransfer());
 
@@ -2180,4 +2182,52 @@ t_EngineData* CQueueView::GetIdleEngine(const CServer* pServer /*=0*/)
 	}
 
 	return pFirstIdle;
+}
+
+void CQueueView::TryRefreshListings()
+{
+	// TODO: This function is currently unused
+
+	if (m_quit)
+		return;
+
+	const CState* const pState = m_pMainFrame->GetState();
+	const CServer* const pServer = pState->GetServer();
+	if (!pServer)
+		return;
+
+	const CDirectoryListing* const pListing = pState->GetRemoteDir();
+	if (!pListing || !pListing->m_hasUnsureEntries)
+		return;
+
+	// See if there's an engine with is already listing
+	for (unsigned int i = 1; i < m_engineData.size(); i++)
+	{
+		if (!m_engineData[i]->active)
+			continue;
+
+		if (m_engineData[i]->pItem)
+			continue;
+
+		if (m_engineData[i]->pEngine->IsConnected() && m_engineData[i]->lastServer == *pServer)
+		{
+			// This engine is already listing a directory on the current server
+			return;
+		}
+	}
+
+	t_EngineData* pEngineData = GetIdleEngine(pServer);
+	if (!pEngineData)
+		return;
+
+	if (!pEngineData->pEngine->IsConnected() || pEngineData->lastServer != *pServer)
+		return;
+
+	CListCommand command(pListing->path);
+	int res = pEngineData->pEngine->Command(command);
+	if (res != FZ_REPLY_WOULDBLOCK)
+		return;
+
+	pEngineData->active = true;
+	pEngineData->state = t_EngineData::list;
 }

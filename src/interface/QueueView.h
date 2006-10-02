@@ -176,7 +176,8 @@ struct t_EngineData
 		cancel,
 		disconnect,
 		connect,
-		transfer
+		transfer,
+		list
 	} state;
 
 	CFileItem* pItem;
@@ -271,6 +272,11 @@ public:
 	// This sets the default file exists action for all files currently in queue.
 	// This includes queued folders which are yet to be processed
 	void SetDefaultFileExistsAction(int action, const enum AcceptedTransferDirection direction);
+
+	// Tries to refresh the current remote directory listing
+	// if there's an idle engine connected to the current server of
+	// the primary connection.
+	void TryRefreshListings();
 
 protected:
 
