@@ -45,32 +45,18 @@ enum NotificationId COperationNotification::GetID() const
 	return nId_operation;
 }
 
-CDirectoryListingNotification::CDirectoryListingNotification(CDirectoryListing *pDirectoryListing, bool modified /*=false*/)
+CDirectoryListingNotification::CDirectoryListingNotification(const CServerPath& path, const bool modified /*=false*/, const bool failed /*=false*/)
+	: m_path(path), m_modified(modified), m_failed(failed)
 {
-	m_pDirectoryListing = pDirectoryListing;
-	this->modified = modified;
 }
 
 CDirectoryListingNotification::~CDirectoryListingNotification()
 {
-	delete m_pDirectoryListing;
 }
 
 enum NotificationId CDirectoryListingNotification::GetID() const
 {
 	return nId_listing;
-}
-
-const CDirectoryListing *CDirectoryListingNotification::GetDirectoryListing() const
-{
-	return m_pDirectoryListing;
-}
-
-const CDirectoryListing *CDirectoryListingNotification::DetachDirectoryListing()
-{
-	CDirectoryListing* pDirectoryListing = m_pDirectoryListing;
-	m_pDirectoryListing = 0;
-	return pDirectoryListing;
 }
 
 CAsyncRequestNotification::CAsyncRequestNotification()

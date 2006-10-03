@@ -96,16 +96,17 @@ class CDirectoryListing;
 class CDirectoryListingNotification : public CNotification
 {
 public:
-	CDirectoryListingNotification(CDirectoryListing *pDirectoryListing, bool modified = false);
+	CDirectoryListingNotification(const CServerPath& path, const bool modified = false, const bool failed = false);
 	virtual ~CDirectoryListingNotification();
 	virtual enum NotificationId GetID() const;
-	const CDirectoryListing *GetDirectoryListing() const;
-	const CDirectoryListing *DetachDirectoryListing();
-	bool Modified() const { return modified; }
+	bool Modified() const { return m_modified; }
+	bool Failed() const { return m_failed; }
+	const CServerPath GetPath() const { return m_path; }
 
 protected:
-	bool modified;
-	CDirectoryListing *m_pDirectoryListing;
+	bool m_modified;
+	bool m_failed;
+	CServerPath m_path;
 };
 
 class CAsyncRequestNotification : public CNotification

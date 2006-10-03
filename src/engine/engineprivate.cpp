@@ -280,7 +280,8 @@ void CFileZillaEnginePrivate::ResendModifiedListings()
 			return;
 		
 		pEngine->m_lastListTime = CTimeEx::Now();
-		CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing, true);
+		CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing->path, true);
+		delete pListing;
 		pEngine->AddNotification(pNotification);
 	}
 }
@@ -309,7 +310,16 @@ void CFileZillaEnginePrivate::SendDirectoryListing(CDirectoryListing* pListing)
 		m_lastListDir.Clear();
 
 	m_lastListTime = CTimeEx::Now();
-	CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing);
+	CDirectoryListingNotification *pNotification;
+	if (pListing)
+	{
+		pNotification = new CDirectoryListingNotification(pListing->path, false, pListing->m_failed);
+		delete pListing;
+	}
+	else
+	{
+		pNotification = new CDirectoryListingNotification(CServerPath());
+	}
 	AddNotification(pNotification);
 }
 
@@ -389,7 +399,7 @@ int CFileZillaEnginePrivate::List(const CListCommand &command)
 			{
 				m_lastListDir = pListing->path;
 				m_lastListTime = wxDateTime::Now();
-				CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing);
+				CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing->path);
 				AddNotification(pNotification);
 				return FZ_REPLY_OK;
 			}

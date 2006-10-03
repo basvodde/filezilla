@@ -396,10 +396,24 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 			break;
 		case nId_listing:
 			{
-				CDirectoryListingNotification* pListingNotification = reinterpret_cast<CDirectoryListingNotification *>(pNotification);
-				m_pState->SetRemoteDir(pListingNotification->DetachDirectoryListing(), pListingNotification->Modified());
-				delete pListingNotification;
+				const CDirectoryListingNotification* const pListingNotification = reinterpret_cast<CDirectoryListingNotification *>(pNotification);
+				
+				if (pListingNotification->GetPath().IsEmpty())
+					m_pState->SetRemoteDir(0, false);
+				else
+				{
+					CDirectoryListing* pListing = new CDirectoryListing;
+					if (pListingNotification->Failed() ||
+						m_pState->m_pEngine->CacheLookup(pListingNotification->GetPath(), *pListing) != FZ_REPLY_OK)
+					{
+						pListing->path = pListingNotification->GetPath();
+						pListing->m_failed = true;
+					}
+					
+					m_pState->SetRemoteDir(pListing, pListingNotification->Modified());
+				}
 			}
+			delete pNotification;
 			break;
 		case nId_asyncrequest:
 			m_pAsyncRequestQueue->AddRequest(m_pState->m_pEngine, reinterpret_cast<CAsyncRequestNotification *>(pNotification));
