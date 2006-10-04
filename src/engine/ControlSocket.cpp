@@ -262,7 +262,7 @@ int CControlSocket::ResetOperation(int nErrorCode)
 				CDirectoryCache cache;
 				cache.InvalidateFile(*m_pCurrentServer, pData->remotePath, pData->remoteFile, true, CDirectoryCache::file, (nErrorCode == FZ_REPLY_OK) ? pData->localFileSize : -1);
 
-				m_pEngine->ResendModifiedListings();
+				m_pEngine->SendDirectoryListingNotification(pData->remotePath, false, true, false);
 			}
 		}
 
@@ -328,7 +328,7 @@ int CControlSocket::DoClose(int nErrorCode /*=FZ_REPLY_DISCONNECTED*/)
 	delete m_pCurrentServer;
 	m_pCurrentServer = 0;
 
-	SendDirectoryListing(0);
+	m_pEngine->SendDisconnectNotification();
 
 	return nErrorCode;
 }
@@ -498,11 +498,6 @@ bool CControlSocket::GetTransferStatus(CTransferStatus &status, bool &changed)
 const CServer* CControlSocket::GetCurrentServer() const
 {
 	return m_pCurrentServer;
-}
-
-void CControlSocket::SendDirectoryListing(CDirectoryListing* pListing)
-{
-	m_pEngine->SendDirectoryListing(pListing);
 }
 
 bool CControlSocket::ParsePwdReply(wxString reply, bool unquoted /*=false*/)

@@ -382,9 +382,27 @@ bool CDirectoryCache::HasChanged(CTimeEx since, const CServer &server, const CSe
 	return false;
 }
 
+bool CDirectoryCache::GetChangeTime(CTimeEx& time, const CServer &server, const CServerPath &path) const
+{
+	for (tCacheIter iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
+	{
+		CCacheEntry &entry = *iter;
+		if (entry.server != server)
+			continue;
+		
+		if (entry.listing.path != path)
+			continue;
+
+		time = entry.modificationTime;
+		return true;
+	}
+
+	return false;
+}
+
 void CDirectoryCache::RemoveDir(const CServer& server, const CServerPath& path, const wxString& filename)
 {
-	// TODO: This is not 100% foolproof and my not work properly
+	// TODO: This is not 100% foolproof and may not work properly
 	// Perhaps just throw away the complete cache?
 
 	CServerPath absolutePath = path;

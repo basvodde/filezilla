@@ -130,12 +130,6 @@ protected:
 	// Called by ResetOperation if there's a queued operation
 	virtual int SendNextCommand(int prevResult = FZ_REPLY_OK);
 
-	// Send the directory listing to the interface.
-	// If the listing is a freshly received one, it should be stored
-	// in the cache before calling SendDirectoryListing, else
-	// list update logic will fail.
-	void SendDirectoryListing(CDirectoryListing* pListing);
-
 	// Easier functions to get the IP addresses
 	virtual wxString GetLocalIP() const;
 	virtual wxString GetPeerIP() const;

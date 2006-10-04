@@ -724,40 +724,22 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 
 	if (!pData->refresh)
 	{
+		wxASSERT(!pData->pNextOpData);
+
 		// Do a cache lookup now that we know the correct directory
 		CDirectoryCache cache;
-		if (pData->pNextOpData)
+
+		bool hasUnsureEntries;
+		bool found = cache.DoesExist(*m_pCurrentServer, m_CurrentPath, _T(""), hasUnsureEntries);
+		if (found)
 		{
-			bool hasUnsureEntries;
-			bool found = cache.DoesExist(*m_pCurrentServer, m_CurrentPath, _T(""), hasUnsureEntries);
-			if (found && !hasUnsureEntries)
-			{
-				if (!pData->path.IsEmpty() && pData->subDir != _T(""))
-					cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
-				
-				delete pData;
-				m_pCurOpData = pData->pNextOpData;
-				
-				return FZ_REPLY_OK;
-			}
-		}
-		else
-		{
-			CDirectoryListing *pListing = new CDirectoryListing;
-			CDirectoryCache cache;
-			bool found = cache.Lookup(*pListing, *m_pCurrentServer, m_CurrentPath, false);
-			if (found)
-			{
-				if (!pData->path.IsEmpty() && pData->subDir != _T(""))
-					cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
-				
-				SendDirectoryListing(pListing);
-				ResetOperation(FZ_REPLY_OK);
-				
-				return FZ_REPLY_OK;
-			}
-			else
-				delete pListing;
+			if (!pData->path.IsEmpty() && pData->subDir != _T(""))
+				cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
+
+			m_pEngine->SendDirectoryListingNotification(m_CurrentPath, true, false, false);
+			ResetOperation(FZ_REPLY_OK);
+
+			return FZ_REPLY_OK;
 		}
 	}
 
@@ -805,38 +787,22 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 
 		if (!pData->refresh)
 		{
+			wxASSERT(!pData->pNextOpData);
+
 			// Do a cache lookup now that we know the correct directory
 			CDirectoryCache cache;
-			if (pData->pNextOpData)
+			bool hasUnsureEntries;
+			bool found = cache.DoesExist(*m_pCurrentServer, m_CurrentPath, _T(""), hasUnsureEntries);
+			if (found)
 			{
-				bool hasUnsureEntries;
-				bool found = cache.DoesExist(*m_pCurrentServer, m_CurrentPath, _T(""), hasUnsureEntries);
-				if (found && !hasUnsureEntries)
-				{
-					if (!pData->path.IsEmpty() && pData->subDir != _T(""))
-						cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
+				if (!pData->path.IsEmpty() && pData->subDir != _T(""))
+					cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
 
-					ResetOperation(FZ_REPLY_OK);
-					return FZ_REPLY_OK;
-				}
-			}
-			else
-			{
-				CDirectoryListing *pListing = new CDirectoryListing;
-				CDirectoryCache cache;
-				bool found = cache.Lookup(*pListing, *m_pCurrentServer, m_CurrentPath, false);
-				if (found)
-				{
-					if (!pData->path.IsEmpty() && pData->subDir != _T(""))
-						cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
+				m_pEngine->SendDirectoryListingNotification(m_CurrentPath, true, false, false);
 
-					SendDirectoryListing(pListing);
-					ResetOperation(FZ_REPLY_OK);
+				ResetOperation(FZ_REPLY_OK);
 
-					return FZ_REPLY_OK;
-				}
-				else
-					delete pListing;
+				return FZ_REPLY_OK;
 			}
 		}
 
@@ -863,9 +829,9 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 
 			CDirectoryCache cache;
 			cache.Store(*pListing, *m_pCurrentServer, pData->path, pData->subDir);
+			delete pListing;
 
-			SendDirectoryListing(pListing);
-			m_pEngine->ResendModifiedListings();
+			m_pEngine->SendDirectoryListingNotification(m_CurrentPath, !pData->pNextOpData, true, false);
 
 			ResetOperation(FZ_REPLY_OK);
 			return FZ_REPLY_OK;
@@ -880,8 +846,7 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 				CDirectoryCache cache;
 				cache.Store(*pListing, *m_pCurrentServer, pData->path, pData->subDir);
 
-				SendDirectoryListing(pListing);
-				m_pEngine->ResendModifiedListings();
+				m_pEngine->SendDirectoryListingNotification(m_CurrentPath, !pData->pNextOpData, true, false);
 
 				ResetOperation(FZ_REPLY_OK);
 				return FZ_REPLY_OK;
@@ -889,12 +854,7 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 			else
 			{
 				if (prevResult & FZ_REPLY_ERROR)
-				{
-					CDirectoryListing *pListing = new CDirectoryListing;
-					pListing->m_failed = true;
-					pListing->path = m_CurrentPath;
-					SendDirectoryListing(pListing);
-				}
+					m_pEngine->SendDirectoryListingNotification(m_CurrentPath, !pData->pNextOpData, true, true);
 			}
 
 			ResetOperation(FZ_REPLY_ERROR);
@@ -1407,7 +1367,7 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 			}
 			if (shouldList)
 			{
-				int res = List();
+				int res = List(CServerPath(), _T(""), true);
 				if (res != FZ_REPLY_OK)
 					return res;
 			}
@@ -2044,7 +2004,7 @@ int CFtpControlSocket::DeleteParseResponse()
 
 	CDirectoryCache cache;
 	cache.RemoveFile(*m_pCurrentServer, pData->path, pData->file);
-	m_pEngine->ResendModifiedListings();
+	m_pEngine->SendDirectoryListingNotification(pData->path, false, true, false);
 
 	return ResetOperation(FZ_REPLY_OK);
 }
@@ -2142,7 +2102,7 @@ int CFtpControlSocket::RemoveDirParseResponse()
 
 	CDirectoryCache cache;
 	cache.RemoveDir(*m_pCurrentServer, pData->path, pData->subDir);
-	m_pEngine->ResendModifiedListings();
+	m_pEngine->SendDirectoryListingNotification(pData->path, false, true, false);
 
 	return ResetOperation(FZ_REPLY_OK);
 }
@@ -2240,7 +2200,7 @@ int CFtpControlSocket::MkdirParseResponse()
 			}
 			CDirectoryCache cache;
 			cache.InvalidateFile(*m_pCurrentServer, pData->currentPath, pData->segments.front(), true, CDirectoryCache::dir);
-			m_pEngine->ResendModifiedListings();
+			m_pEngine->SendDirectoryListingNotification(pData->currentPath, false, true, false);
 
 			pData->currentPath.AddSegment(pData->segments.front());
 			pData->segments.pop_front();
@@ -2394,9 +2354,14 @@ int CFtpControlSocket::RenameParseResponse()
 	else
 	{
 		CDirectoryCache cache;
-		cache.Rename(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile(), pData->m_cmd.GetToPath(), pData->m_cmd.GetToFile());
 
-		m_pEngine->ResendModifiedListings();
+		const CServerPath& fromPath = pData->m_cmd.GetFromPath();
+		const CServerPath& toPath = pData->m_cmd.GetToPath();
+		cache.Rename(*m_pCurrentServer, fromPath, pData->m_cmd.GetFromFile(), toPath, pData->m_cmd.GetToFile());
+
+		m_pEngine->SendDirectoryListingNotification(fromPath, false, true, false);
+		if (fromPath != toPath)
+			m_pEngine->SendDirectoryListingNotification(toPath, false, true, false);
 
 		ResetOperation(FZ_REPLY_OK);
 		return FZ_REPLY_OK;

@@ -254,38 +254,6 @@ void CFileZillaEnginePrivate::SetActive(bool recv)
 	m_lock.Leave();
 }
 
-void CFileZillaEnginePrivate::ResendModifiedListings()
-{
-	// Iterate through all engines and check if the last listed directory has 
-	// changed in the cache. If so, resend the listing
-
-	CDirectoryCache cache;
-	for (std::list<CFileZillaEnginePrivate*>::iterator iter = m_engineList.begin(); iter != m_engineList.end(); iter++)
-	{
-		CFileZillaEnginePrivate* pEngine = *iter;
-		if (pEngine->m_lastListDir.IsEmpty() || !pEngine->m_pControlSocket)
-			break;
-
-		const CServer* pServer = pEngine->m_pControlSocket->GetCurrentServer();
-		if (!pServer)
-			break;
-
-		if (!cache.HasChanged(pEngine->m_lastListTime, *pServer, pEngine->m_lastListDir))
-			continue;
-		
-		CDirectoryListing *pListing = new CDirectoryListing;
-		bool found = cache.Lookup(*pListing, *pServer, pEngine->m_lastListDir, true);
-		wxASSERT(found);
-		if (!found)
-			return;
-		
-		pEngine->m_lastListTime = CTimeEx::Now();
-		CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing->path, true);
-		delete pListing;
-		pEngine->AddNotification(pNotification);
-	}
-}
-
 unsigned int CFileZillaEnginePrivate::GetNextAsyncRequestNumber()
 {
 	wxCriticalSectionLocker lock(m_lock);
@@ -300,27 +268,6 @@ void CFileZillaEnginePrivate::AddNewAsyncHostResolver(CAsyncHostResolver* pResol
 		m_HostResolverThreads.front()->SetObsolete();
 	
 	m_HostResolverThreads.push_front(pResolver);
-}
-
-void CFileZillaEnginePrivate::SendDirectoryListing(CDirectoryListing* pListing)
-{
-	if (pListing)
-		m_lastListDir = pListing->path;
-	else
-		m_lastListDir.Clear();
-
-	m_lastListTime = CTimeEx::Now();
-	CDirectoryListingNotification *pNotification;
-	if (pListing)
-	{
-		pNotification = new CDirectoryListingNotification(pListing->path, false, pListing->m_failed);
-		delete pListing;
-	}
-	else
-	{
-		pNotification = new CDirectoryListingNotification(CServerPath());
-	}
-	AddNotification(pNotification);
 }
 
 // Command handlers
@@ -517,4 +464,69 @@ int CFileZillaEnginePrivate::Chmod(const CChmodCommand& command)
 
 	m_pCurrentCommand = command.Clone();
 	return m_pControlSocket->Chmod(command);
+}
+
+void CFileZillaEnginePrivate::SendDisconnectNotification()
+{
+	m_lastListDir.Clear();
+	CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(CServerPath());
+	AddNotification(pNotification);
+}
+
+void CFileZillaEnginePrivate::SendDirectoryListingNotification(const CServerPath& path, bool onList, bool modified, bool failed)
+{
+	wxASSERT(m_pControlSocket);
+	wxASSERT(onList || modified);
+	
+	const CServer* const pOwnServer = m_pControlSocket->GetCurrentServer();
+	wxASSERT(pOwnServer);
+
+	m_lastListDir = path;
+
+	if (failed)
+	{
+		wxASSERT(!modified && onList);
+
+		CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(path, false, true);
+		AddNotification(pNotification);
+		m_lastListTime = CTimeEx::Now();
+
+		// On failed messages, we don't notify other engines
+		return;
+	}
+
+	const CDirectoryCache cache;
+	
+	CTimeEx changeTime;
+	cache.GetChangeTime(changeTime, *pOwnServer, path);
+	
+	CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(path, !onList);
+	AddNotification(pNotification);
+	m_lastListTime = changeTime;
+
+	if (!modified)
+		return;
+
+	// Iterate over the other engine, send notification if last listing
+	// directory is the same
+	for (std::list<CFileZillaEnginePrivate*>::iterator iter = m_engineList.begin(); iter != m_engineList.end(); iter++)
+	{
+		CFileZillaEnginePrivate* const pEngine = *iter;
+		if (!pEngine->m_pControlSocket || pEngine->m_pControlSocket == m_pControlSocket)
+			continue;
+
+		const CServer* const pServer = pEngine->m_pControlSocket->GetCurrentServer();
+		if (!pServer || *pServer != *pOwnServer)
+			continue;
+
+		if (pEngine->m_lastListDir != path)
+			continue;
+
+		if (changeTime <= pEngine->m_lastListTime)
+			continue;
+		
+		pEngine->m_lastListTime = changeTime;
+		CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(path, true);
+		pEngine->AddNotification(pNotification);
+	}
 }

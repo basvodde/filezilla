@@ -16,10 +16,6 @@ class CLogging;
 class CFileZillaEnginePrivate : public wxEvtHandler
 {
 public:
-	// Resend all modified directory listings if they are available in the cache.
-	// This function affects all engines.
-	void ResendModifiedListings();
-
 	int ResetOperation(int nErrorCode);	
 	void SetActive(bool recv);
 
@@ -45,7 +41,8 @@ public:
 	// connection attempts, as removing the thread may take some time.
 	void AddNewAsyncHostResolver(CAsyncHostResolver* pThread);
 
-	void SendDirectoryListing(CDirectoryListing* pListing);
+	void SendDirectoryListingNotification(const CServerPath& path, bool onList, bool modified, bool failed);
+	void SendDisconnectNotification();
 
 protected:
 	CFileZillaEnginePrivate();

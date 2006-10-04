@@ -29,6 +29,7 @@ public:
 
 	void Store(const CDirectoryListing &listing, const CServer &server, CServerPath parentPath = CServerPath(), wxString subDir = _T(""));
 	bool HasChanged(CTimeEx since, const CServer &server, const CServerPath &path) const;
+	bool GetChangeTime(CTimeEx& time, const CServer &server, const CServerPath &path) const;
 	bool Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, bool allowUnsureEntries);
 	bool Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, wxString subDir, bool allowUnsureEntries);
 	bool DoesExist(const CServer &server, const CServerPath &path, wxString subDir, bool &hasUnsureEntries);
