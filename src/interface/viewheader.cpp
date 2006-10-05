@@ -407,6 +407,7 @@ END_EVENT_TABLE()
 CRemoteViewHeader::CRemoteViewHeader(wxWindow* pParent, CState* pState)
 	: CViewHeader(pParent, _("Remote site:")), CStateEventHandler(pState, STATECHANGE_REMOTE_DIR)
 {
+	m_pComboBox->Disable();
 }
 
 void CRemoteViewHeader::OnStateChange(unsigned int event)
