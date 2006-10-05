@@ -85,7 +85,7 @@ wxString CBuildInfo::GetCompilerFlags()
 wxString CBuildInfo::GetBuildType()
 {
 #ifdef BUILDTYPE
-	wxString buildtype = (BUILDTYPE, wxConvLocal);
+	wxString buildtype(BUILDTYPE, wxConvLocal);
 	if (buildtype == _T("official") || buildtype == _T("nightly"))
 		return buildtype;
 #endif
