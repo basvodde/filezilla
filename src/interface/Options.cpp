@@ -60,7 +60,8 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Show debug menu", number, _T("0") },
 	{ "File exists action download", number, _T("0") },
 	{ "File exists action upload", number, _T("0") },
-	{ "Allow ascii resume", number, _T("0") }
+	{ "Allow ascii resume", number, _T("0") },
+	{ "Greeting version", string, _T("") }
 };
 
 COptions::COptions()

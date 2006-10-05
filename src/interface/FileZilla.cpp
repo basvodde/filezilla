@@ -3,6 +3,7 @@
 #include "Mainfrm.h"
 #include "Options.h"
 #include "wrapengine.h"
+#include "buildinfo.h"
 
 #include <wx/xrc/xh_bmpbt.h>
 #include <wx/xrc/xh_bttn.h>
@@ -88,12 +89,30 @@ bool CFileZillaApp::OnInit()
 	}
 
 #ifndef _DEBUG
-	wxMessageBox(_T("This software is still alpha software in early development, don't expect anything to work\r\n\
+	const wxString& buildType = CBuildInfo::GetBuildType();
+	if (buildType == _T("nightly"))
+        wxMessageBox(_T("This software is still alpha software in early development, don't expect anything to work\r\n\
 DO NOT post bugreports,\r\n\
 DO NOT use it in production environments,\r\n\
 DO NOT distribute it,\r\n\
 DO NOT complain about it\r\n\
 USE AT OWN RISK"), _T("Important Information"));
+	else if (buildType == _T("official"))
+	{
+		wxString greetingVersion = COptions::Get()->GetOption(OPTION_GREETINGVERSION);
+		if (greetingVersion == _T("") || 
+			CBuildInfo::ConvertToVersionNumber(CBuildInfo::GetVersion()) > CBuildInfo::ConvertToVersionNumber(greetingVersion))
+		{
+			COptions::Get()->SetOption(OPTION_GREETINGVERSION, CBuildInfo::GetVersion());
+
+			wxMessageBox(wxString::Format(_T("Welcome to FileZilla %s\r\n\r\n\
+This is a beta release of FileZilla.\r\n\
+A lot of features are still in development.\r\n\r\n\
+Please report all bugs you find.\r\n\r\n\
+DO NOT post feature requests.\r\n\r\n\
+USE AT OWN RISK"), CBuildInfo::GetVersion().c_str()), _T("Important Information"));
+		}
+	}
 #endif
 
 	if (!LoadResourceFiles())
