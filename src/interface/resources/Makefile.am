@@ -14,14 +14,15 @@ nodist_noinst_DATA = filezilla.o
 
 filezilla.o: $(srcdir)/filezilla.rc
 	@if [ -f $@~ ]; then rm $@~; fi
-	@WINDRES@ --include-dir=$(srcdir) $(WINDRESFLAGS) $(srcdir)/filezilla.rc $@~
+	@WINDRES@ --include-dir=. --include-dir=$(srcdir) $(WINDRESFLAGS) $(srcdir)/filezilla.rc -D HAS_VERSIONRC $@~ || rm $@~
 	@if [ -f $@ ]; then rm $@; fi
 	mv $@~ $@
 endif
 
 
 dist_noinst_DATA = filezilla.rc FileZilla.ico \
-		FileZilla.icns MacInfo.plist
+		FileZilla.icns MacInfo.plist \
+		version.rc.in
 
 if MACAPPBUNDLE
 mac-copy-resources: $(dist_resources_DATA)
