@@ -70,16 +70,104 @@
 				AdditionalIncludeDirectories="../include/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				StringPooling="TRUE"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
 				OutputFile="../lib/engine.lib"/>
+			<Tool
+				Name="VCMIDLTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+		</Configuration>
+		<Configuration
+			Name="Debug Unicode|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="4"
+			CharacterSet="1">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="../include/"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;ENGINE"
+				MinimalRebuild="TRUE"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				BufferSecurityCheck="TRUE"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="FileZilla.h"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="FALSE"
+				DebugInformationFormat="4"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="../lib/engine_unicode_debug.lib"/>
+			<Tool
+				Name="VCMIDLTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+		</Configuration>
+		<Configuration
+			Name="Release Unicode|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="4"
+			CharacterSet="1">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				GlobalOptimizations="TRUE"
+				InlineFunctionExpansion="0"
+				OmitFramePointers="TRUE"
+				AdditionalIncludeDirectories="../include/"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
+				StringPooling="TRUE"
+				RuntimeLibrary="2"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="FALSE"
+				DebugInformationFormat="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="../lib/engine_unicode.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -129,10 +217,16 @@
 				RelativePath=".\engineprivate.cpp">
 			</File>
 			<File
+				RelativePath=".\externalipresolver.cpp">
+			</File>
+			<File
 				RelativePath=".\FileZillaEngine.cpp">
 			</File>
 			<File
 				RelativePath=".\ftpcontrolsocket.cpp">
+			</File>
+			<File
+				RelativePath=".\httpcontrolsocket.cpp">
 			</File>
 			<File
 				RelativePath=".\iothread.cpp">
@@ -150,10 +244,16 @@
 				RelativePath=".\server.cpp">
 			</File>
 			<File
+				RelativePath=".\servercapabilities.cpp">
+			</File>
+			<File
 				RelativePath=".\serverpath.cpp">
 			</File>
 			<File
 				RelativePath=".\sftpcontrolsocket.cpp">
+			</File>
+			<File
+				RelativePath=".\threadex.cpp">
 			</File>
 			<File
 				RelativePath=".\timeex.cpp">
@@ -167,7 +267,7 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath=".\asynchostresolver.h">
+				RelativePath="..\include\asynchostresolver.h">
 			</File>
 			<File
 				RelativePath="..\include\commands.h">
@@ -194,6 +294,9 @@
 				RelativePath="..\include\engineprivate.h">
 			</File>
 			<File
+				RelativePath="..\include\externalipresolver.h">
+			</File>
+			<File
 				RelativePath="..\include\FileZilla.h">
 			</File>
 			<File
@@ -201,6 +304,9 @@
 			</File>
 			<File
 				RelativePath=".\FtpControlSocket.h">
+			</File>
+			<File
+				RelativePath=".\httpcontrolsocket.h">
 			</File>
 			<File
 				RelativePath=".\iothread.h">
@@ -224,10 +330,16 @@
 				RelativePath="..\include\Server.h">
 			</File>
 			<File
+				RelativePath=".\servercapabilities.h">
+			</File>
+			<File
 				RelativePath="..\include\serverpath.h">
 			</File>
 			<File
 				RelativePath=".\sftpcontrolsocket.h">
+			</File>
+			<File
+				RelativePath="..\include\threadex.h">
 			</File>
 			<File
 				RelativePath="..\include\timeex.h">
