@@ -247,8 +247,15 @@ public:
 		: COpData(cmd_connect)
 	{
 		gotInitialReply = false;
+		pLastChallenge = 0;
 	}
 
+	virtual ~CSftpConnectOpData()
+	{
+		delete pLastChallenge;
+	}
+
+	wxString *pLastChallenge;
 	bool gotInitialReply;
 };
 
@@ -364,6 +371,12 @@ void CSftpControlSocket::OnSftpEvent(CSftpEvent& event)
 		switch(event.GetRequestType())
 		{
 		case sftpReqPassword:
+			if (!m_pCurOpData || m_pCurOpData->opId != cmd_connect)
+			{
+				LogMessage(Debug_Warning, _T("sftpReqPassword outside connect operation, ignoring."));
+				break;
+			}
+
 			if (m_pCurrentServer->GetLogonType() == INTERACTIVE)
 			{
 				CInteractiveLoginNotification *pNotification = new CInteractiveLoginNotification;
@@ -379,6 +392,24 @@ void CSftpControlSocket::OnSftpEvent(CSftpEvent& event)
 			}
 			else
 			{
+				CSftpConnectOpData *pData = reinterpret_cast<CSftpConnectOpData*>(m_pCurOpData);
+
+				const wxString newChallenge = m_requestPreamble + _T("\n") + m_requestInstruction;
+
+				if (pData->pLastChallenge)
+				{
+					// Check for same challenge. Will most likely fail as well, so abort early.
+					if (*pData->pLastChallenge == newChallenge)
+					{
+						LogMessage(::Error, _T("Authentication failed."));
+						DoClose(FZ_REPLY_CRITICALERROR);
+						return;
+					}
+					delete pData->pLastChallenge;
+				}
+				
+				pData->pLastChallenge = new wxString(newChallenge);
+				
 				const wxString pass = m_pCurrentServer->GetPass();
 				wxString show = _T("Pass: ");
 				show.Append('*', pass.Length());
@@ -612,12 +643,17 @@ bool CSftpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotifi
 			}
 
 			CHostKeyNotification *pHostKeyNotification = reinterpret_cast<CHostKeyNotification *>(pNotification);
-			if (!pHostKeyNotification->m_trust)
-				Send(_T(""));
-			else if (pHostKeyNotification->m_alwaysTrust)
-				Send(_T("y"));
+			wxString show;
+			if (requestId == reqId_hostkey)
+				show = _("Trust new Hostkey: ");
 			else
-				Send(_T("n"));
+				show = _("Trust changed Hostkey: ");
+			if (!pHostKeyNotification->m_trust)
+				Send(_T(""), show + _("No"));
+			else if (pHostKeyNotification->m_alwaysTrust)
+				Send(_T("y"), show + _("Yes"));
+			else
+				Send(_T("n"), show + _("Once"));
 		}
 		break;
 	case reqId_interactiveLogin:
