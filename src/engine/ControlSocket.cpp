@@ -789,7 +789,7 @@ void CControlSocket::OnTimer(wxTimerEvent& event)
 	{
 		
 		LogMessage(::Error, _("Connection timed out"));
-		ResetOperation(FZ_REPLY_TIMEOUT);
+		DoClose(FZ_REPLY_TIMEOUT);
 	}
 }
 
