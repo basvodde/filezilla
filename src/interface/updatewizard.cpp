@@ -120,7 +120,7 @@ bool CUpdateWizard::Run()
 	if (newVersion == _T(""))
 		return RunWizard(m_pages.front());
 
-	if (CBuildInfo::ConvertToVersionNumber(newVersion) < CBuildInfo::ConvertToVersionNumber(CBuildInfo::GetVersion()))
+	if (CBuildInfo::ConvertToVersionNumber(newVersion) <= CBuildInfo::ConvertToVersionNumber(CBuildInfo::GetVersion()))
 	{
 		pOptions->SetOption(OPTION_UPDATECHECK_NEWVERSION, _T(""));
 		pOptions->SetOption(OPTION_UPDATECHECK_URL, _T(""));
