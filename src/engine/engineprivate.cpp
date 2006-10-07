@@ -485,8 +485,6 @@ void CFileZillaEnginePrivate::SendDirectoryListingNotification(const CServerPath
 
 	if (failed)
 	{
-		wxASSERT(!modified && onList);
-
 		CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(path, false, true);
 		AddNotification(pNotification);
 		m_lastListTime = CTimeEx::Now();
