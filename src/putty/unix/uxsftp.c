@@ -159,10 +159,7 @@ RFile *open_existing_file(char *name, uint64 *size,
 
 int read_from_file(RFile *f, void *buffer, int length)
 {
-    int didread = read(f->fd, buffer, length);
-    if (didread > 0)
-	fzprintf(sftpRead, "%d", didread);
-    return didread;
+    return read(f->fd, buffer, length);
 }
 
 void close_rfile(RFile *f)

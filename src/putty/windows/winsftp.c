@@ -107,10 +107,7 @@ int read_from_file(RFile *f, void *buffer, int length)
     if (!ret)
 	return -1;		       /* error */
     else
-    {
-	fzprintf(sftpRead, "%d", read);
 	return read;
-    }
 }
 
 void close_rfile(RFile *f)
