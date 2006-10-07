@@ -243,7 +243,11 @@ char *dupvprintf(const char *fmt, va_list ap)
 #endif
 	va_list aq;
 
+#ifndef _MSC_VER
 	va_copy(aq, ap);
+#else
+	aq = ap;
+#endif
 	len = vsnprintf(buf, size, fmt, aq);
 	va_end(aq);
 	if (len >= 0 && len < size) {
