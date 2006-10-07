@@ -556,9 +556,14 @@ bool CFilterDialog::FilenameFilteredByFilter(const wxString& name, bool dir, wxL
 			else if (filter.matchType == CFilter::none)
 				return false;
 		}
+		else
+		{
+			if (filter.matchType == CFilter::all)
+				return false;
+		}
 	}
 
-	if (filter.matchType == CFilter::none)
+	if (filter.matchType != CFilter::any)
 		return true;
 	
 	return false;
