@@ -11,7 +11,10 @@ bool CAboutDialog::Create(wxWindow* parent)
 	if (!Load(parent, _T("ID_ABOUT")))
 		return false;
 
-	if (!SetLabel(XRCID("ID_VERSION"), CBuildInfo::GetVersion()))
+	wxString version = CBuildInfo::GetVersion();
+	if (CBuildInfo::GetBuildType() == _T("nightly"))
+		version += _T("-nightly");
+	if (!SetLabel(XRCID("ID_VERSION"), version))
 		return false;
 
 	wxStaticText* pHost = XRCCTRL(*this, "ID_HOST", wxStaticText);
