@@ -11,6 +11,7 @@
 #include "state.h"
 #include "asyncrequestqueue.h"
 #include "defaultfileexistsdlg.h"
+#include "filter.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -115,37 +116,43 @@ protected:
 			{
 				const wxString& fullName = m_pFolderItem->m_currentLocalPath + wxFileName::GetPathSeparator() + file;
 
-				wxStructStat buf;
-				int result;
-				result = wxStat(fullName, &buf);
-
 				if (wxDir::Exists(fullName))
 				{	
-					CFolderItem::t_dirPair pair;
-					pair.localPath = fullName;
-					pair.remotePath = m_pFolderItem->m_currentRemotePath;
-					pair.remotePath.AddSegment(file);
-					m_pFolderItem->m_dirsToCheck.push_back(pair);
+					if (!m_filters.FilenameFiltered(file, true, -1, true))
+					{
+						CFolderItem::t_dirPair pair;
+						pair.localPath = fullName;
+						pair.remotePath = m_pFolderItem->m_currentRemotePath;
+						pair.remotePath.AddSegment(file);
+						m_pFolderItem->m_dirsToCheck.push_back(pair);
+					}
 				}
 				else
 				{
-					t_newEntry entry;
-					entry.localFile = fullName;
-					entry.remoteFile = file;
-					entry.remotePath = m_pFolderItem->m_currentRemotePath;
-					entry.size = result ? -1 : buf.st_size;
+					wxStructStat buf;
+					int result;
+					result = wxStat(fullName, &buf);
 
-					bool send = false;
-					m_sync.Enter();;
-					if (!m_entryList.size())
-						send = true;
-					m_entryList.push_back(entry);
-					m_sync.Leave();
-					
-					if (send)
+					if (!m_filters.FilenameFiltered(file, false, result ? -1 : buf.st_size, true))
 					{
-						wxCommandEvent evt(fzEVT_FOLDERTHREAD_FILES, wxID_ANY);
-						wxPostEvent(m_pOwner, evt);
+						t_newEntry entry;
+						entry.localFile = fullName;
+						entry.remoteFile = file;
+						entry.remotePath = m_pFolderItem->m_currentRemotePath;
+						entry.size = result ? -1 : buf.st_size;
+
+						bool send = false;
+						m_sync.Enter();;
+						if (!m_entryList.size())
+							send = true;
+						m_entryList.push_back(entry);
+						m_sync.Leave();
+
+						if (send)
+						{
+							wxCommandEvent evt(fzEVT_FOLDERTHREAD_FILES, wxID_ANY);
+							wxPostEvent(m_pOwner, evt);
+						}
 					}
 				}
 
@@ -163,6 +170,8 @@ protected:
 
 	CQueueView* m_pOwner;
 	CFolderItem* m_pFolderItem;
+
+	CFilterDialog m_filters;
 
 	wxCriticalSection m_sync;
 };

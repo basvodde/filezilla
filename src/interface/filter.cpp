@@ -145,6 +145,7 @@ void CFilterDialog::OnEdit(wxCommandEvent& event)
 
 	m_filters = dlg.GetFilters();
 	m_filterSets = dlg.GetFilterSets();
+	CompileRegexes();
 
 	DisplayFilters();
 }
@@ -452,7 +453,7 @@ bool CFilterDialog::FilenameFiltered(const wxString& name, bool dir, wxLongLong 
 bool CFilterDialog::FilenameFilteredByFilter(const wxString& name, bool dir, wxLongLong size, unsigned int filterIndex) const
 {
 	wxRegEx regex;
-	const CFilter& filter = m_globalFilters[filterIndex];
+	const CFilter& filter = m_filters[filterIndex];
 
 	if (dir && !filter.filterDirs)
 		return false;
@@ -571,9 +572,9 @@ bool CFilterDialog::FilenameFilteredByFilter(const wxString& name, bool dir, wxL
 
 bool CFilterDialog::CompileRegexes()
 {
-	for (unsigned int i = 0; i < m_globalFilters.size(); i++)
+	for (unsigned int i = 0; i < m_filters.size(); i++)
 	{
-		CFilter& filter = m_globalFilters[i];
+		CFilter& filter = m_filters[i];
 		for (std::vector<CFilterCondition>::iterator iter = filter.filters.begin(); iter != filter.filters.end(); iter++)
 		{
 			CFilterCondition& condition = *iter;
@@ -684,7 +685,6 @@ void CFilterDialog::OnChangeAll(wxCommandEvent& event)
 void CFilterDialog::OnApply(wxCommandEvent& event)
 {
 	m_globalFilters = m_filters;
-	CompileRegexes();
 	m_globalFilterSets = m_filterSets;
 	m_globalCurrentFilterSet = m_currentFilterSet;
 
