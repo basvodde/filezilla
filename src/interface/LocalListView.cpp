@@ -110,6 +110,8 @@ bool CLocalListView::DisplayDir(wxString dirname)
 		selectedNames = RememberSelectedItems();
 	}
 
+	const int oldItemCount = m_indexMapping.size();
+
 	m_fileData.clear();
 	m_indexMapping.clear();
 
@@ -179,13 +181,17 @@ bool CLocalListView::DisplayDir(wxString dirname)
 
 			found = dir.GetNext(&file);
 		}
-		if ((unsigned int)GetItemCount() != m_indexMapping.size())
-			SetItemCount(m_indexMapping.size());
 	}
 
 	SortList();
 
 	ReselectItems(selectedNames);
+
+	const int count = m_indexMapping.size();
+	if (oldItemCount != count)
+		SetItemCount(count);
+
+	Refresh(false);
 
 	return true;
 }
@@ -351,7 +357,6 @@ void CLocalListView::DisplayDrives()
 #endif
 		count++;
 	}
-	SetItemCount(count);
 }
 #endif
 
@@ -483,7 +488,7 @@ void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 	}
 #endif
 
-	if (GetItemCount() < 3)
+	if (m_indexMapping.size() < 3)
 		return;
 
 	if (!m_sortColumn)
@@ -492,7 +497,6 @@ void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpSize);
 	else if (m_sortColumn == 2)
 		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpType);
-	Refresh(false);
 }
 
 void CLocalListView::OnColumnClicked(wxListEvent &event)
@@ -508,6 +512,7 @@ void CLocalListView::OnColumnClicked(wxListEvent &event)
 		dir = m_sortDirection;
 	
 	SortList(col, dir);
+	Refresh(false);
 }
 
 void CLocalListView::QSortList(const unsigned int dir, unsigned int anf, unsigned int ende, int (*comp)(CLocalListView *pList, unsigned int index, t_fileData &refData))
