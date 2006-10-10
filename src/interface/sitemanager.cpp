@@ -88,10 +88,7 @@ void CSiteManager::CreateControls()
 void CSiteManager::OnOK(wxCommandEvent& event)
 {
 	if (!Verify())
-	{
-		wxBell();
 		return;
-	}
 
 	UpdateServer();
 		
@@ -456,6 +453,15 @@ bool CSiteManager::Verify()
 			wxMessageBox(_("Need to specify a character encoding"));
 			return false;
 		}
+	}
+
+	// Require username for non-anonymous logon type
+	if (XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->GetStringSelection() != _("Anonymous") &&
+		XRCCTRL(*this, "ID_USER", wxTextCtrl)->GetValue() == _T(""))
+	{
+		XRCCTRL(*this, "ID_USER", wxTextCtrl)->SetFocus();
+		wxMessageBox(_("You have to specify a user name"));
+		return false;
 	}
 
 	return true;
