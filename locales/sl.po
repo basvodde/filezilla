@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-09-04 17:53+0200\n"
-"PO-Revision-Date: 2006-09-04 09:47+0100\n"
+"POT-Creation-Date: 2006-10-11 16:55+0200\n"
+"PO-Revision-Date: 2006-10-11 00:02+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Martin Srebotnjak, LUGOS <miles@filmsi.net>\n"
 "MIME-Version: 1.0\n"
@@ -19,17 +19,17 @@ msgstr ""
 "X-Poedit-Country: SLOVENIA\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
 
-#: ../../locales/../src/interface/statuslinectrl.cpp:44
-#: ../../locales/../src/interface/statuslinectrl.cpp:98
+#: ../../locales/../src/interface/statuslinectrl.cpp:47
+#: ../../locales/../src/interface/statuslinectrl.cpp:95
 msgid "%H:%M:%S elapsed"
 msgstr "Pretečeni čas: %H:%M:%S"
 
-#: ../../locales/../src/interface/statuslinectrl.cpp:48
-#: ../../locales/../src/interface/statuslinectrl.cpp:122
+#: ../../locales/../src/interface/statuslinectrl.cpp:51
+#: ../../locales/../src/interface/statuslinectrl.cpp:119
 msgid "%H:%M:%S left"
 msgstr "Preostali čas: %H:%M:%S"
 
-#: ../../locales/../src/interface/QueueView.cpp:2019
+#: ../../locales/../src/interface/QueueView.cpp:2105
 #, c-format
 msgid "%d files added to queue"
 msgstr "%d datotek dodanih v vrsto"
@@ -39,28 +39,44 @@ msgstr "%d datotek dodanih v vrsto"
 msgid "%s bytes"
 msgstr "%s bajtov"
 
-#: ../../locales/../src/interface/statuslinectrl.cpp:114
+#: ../../locales/../src/interface/statuslinectrl.cpp:111
 #: ../../locales/../src/interface/updatewizard.cpp:642
 #, c-format
 msgid "%s bytes (%d B/s)"
-msgstr "%s bajtov (%d KB/s)"
+msgstr "%s bajtov (%d B/s)"
 
-#: ../../locales/../src/interface/statuslinectrl.cpp:112
+#: ../../locales/../src/interface/statuslinectrl.cpp:109
 #: ../../locales/../src/interface/updatewizard.cpp:640
 #, c-format
 msgid "%s bytes (%d.%d KB/s)"
-msgstr "%s bajtov (%d.%d KB/s)"
+msgstr "%s bajtov (%d,%d KB/s)"
 
-#: ../../locales/../src/interface/statuslinectrl.cpp:110
+#: ../../locales/../src/interface/statuslinectrl.cpp:107
 #: ../../locales/../src/interface/updatewizard.cpp:638
 #, c-format
 msgid "%s bytes (%d.%d MB/s)"
-msgstr "%s bajtov (%d.%d MB/s)"
+msgstr "%s bajtov (%d,%d MB/s)"
 
-#: ../../locales/../src/interface/statuslinectrl.cpp:132
+#: ../../locales/../src/interface/statuslinectrl.cpp:129
 #, c-format
 msgid "%s bytes (? B/s)"
 msgstr "%s bajtov (? B/s)"
+
+#: ../../locales/../src/interface/FileZilla.cpp:547
+#, c-format
+msgid ""
+"%s could not be found. Without this component of FileZilla, SFTP will not "
+"work.\n"
+"\n"
+"Possible solutions:\n"
+"- Make sure %s is in a directory listed in your PATH environment variable.\n"
+"- Set the full path to %s in the FZ_FZSFTP environment variable."
+msgstr ""
+"%s ni mogoče najti. Brez te komponente FileZille SFTP ne bo deloval.\n"
+"\n"
+"Možne rešitve:\n"
+"- Preverite, da je %s v mapi, navedeni v okoljski spremenljivki PATH.\n"
+"- Nastavite polno pot do %s v okoljski spremenljivki FZ_FZSFTP."
 
 #: resources.h:331
 msgid "&About..."
@@ -70,7 +86,7 @@ msgstr "&O programu ..."
 msgid "&Account:"
 msgstr "R&ačun:"
 
-#: resources.h:71 resources.h:117 resources.h:379
+#: resources.h:71 resources.h:117 resources.h:380
 msgid "&Active"
 msgstr "&aktivni"
 
@@ -123,11 +139,11 @@ msgstr "&Poveži"
 msgid "&Copy"
 msgstr "&Kopiraj"
 
-#: resources.h:365
+#: resources.h:366
 msgid "&Copy to clipboard"
 msgstr "&Kopiraj na odložišče"
 
-#: resources.h:368
+#: resources.h:369
 msgid "&Crash"
 msgstr "&Sesutje"
 
@@ -141,11 +157,11 @@ msgstr "&Razhrošči"
 
 #: resources.h:143
 msgid "&Debug information in message log:"
-msgstr ""
+msgstr "&Podatki o razhroščevanju v dnevniku:"
 
-#: resources.h:324
+#: resources.h:324 resources.h:358
 msgid "&Default file exists action..."
-msgstr ""
+msgstr "&Privzeto dejanje, če obstaja datoteka ..."
 
 #: resources.h:37 resources.h:213 resources.h:229
 msgid "&Delete"
@@ -171,7 +187,7 @@ msgstr "&Omogoči samodejno preverjanje za posodobitvami"
 msgid "&Encoding:"
 msgstr "&Kodiranje:"
 
-#: resources.h:364
+#: resources.h:365
 msgid "&Enter custom command..."
 msgstr "&Vnesi ukaz po meri ..."
 
@@ -203,7 +219,7 @@ msgstr "&Filtri:"
 msgid "&Help"
 msgstr "&Pomoč"
 
-#: resources.h:359
+#: resources.h:360
 msgid "&Highest"
 msgstr "&najvišje"
 
@@ -211,7 +227,7 @@ msgstr "&najvišje"
 msgid "&Highest available port:"
 msgstr "&Najvišja vrata na voljo:"
 
-#: resources.h:40 resources.h:415
+#: resources.h:40 resources.h:416
 msgid "&Host:"
 msgstr "&Gostitelj:"
 
@@ -227,7 +243,7 @@ msgstr "&Omeji število hkratnih povezav"
 msgid "&Logontype:"
 msgstr "&Vrsta prijave:"
 
-#: resources.h:362
+#: resources.h:363
 msgid "&Low"
 msgstr "&nizko"
 
@@ -251,7 +267,7 @@ msgstr "&Nov strežnik"
 msgid "&New version available!"
 msgstr "&Na voljo je nova različica!"
 
-#: resources.h:361
+#: resources.h:362
 msgid "&Normal"
 msgstr "O&bičajno"
 
@@ -275,11 +291,11 @@ msgstr "&pasivni"
 msgid "&Password:"
 msgstr "&Geslo:"
 
-#: resources.h:41 resources.h:419
+#: resources.h:41 resources.h:420
 msgid "&Port:"
 msgstr "&Vrata:"
 
-#: resources.h:421
+#: resources.h:422
 msgid "&Quickconnect"
 msgstr "&Hitro poveži"
 
@@ -303,7 +319,7 @@ msgstr "Odstrani &izbrane"
 msgid "&Rename"
 msgstr "P&reimenuj"
 
-#: resources.h:414
+#: resources.h:415
 msgid "&Restart Wizard"
 msgstr "&Ponovno zaženi čarovnika"
 
@@ -385,7 +401,7 @@ msgstr "&Uporabi zunanji naslov IP strežnika"
 msgid "&User:"
 msgstr "&Uporabnik:"
 
-#: resources.h:417
+#: resources.h:418
 msgid "&Username:"
 msgstr "&Uporabniško ime:"
 
@@ -398,7 +414,7 @@ msgstr "&Različica %s"
 msgid "&Write"
 msgstr "&Zapiši"
 
-#: ../../locales/../src/interface/sitemanager.cpp:407
+#: ../../locales/../src/interface/sitemanager.cpp:413
 msgid "'Account' logontype not supported by selected protocol"
 msgstr "Izbrani protokol ne podpira prijave v račun"
 
@@ -426,12 +442,12 @@ msgstr ", %H:%M:%S preostalega časa"
 msgid ", --:--:-- left"
 msgstr ", --:--:-- preostalega časa"
 
-#: resources.h:402
+#: resources.h:403
 msgid "-"
 msgstr "-"
 
-#: ../../locales/../src/interface/statuslinectrl.cpp:126
-#: ../../locales/../src/interface/statuslinectrl.cpp:131
+#: ../../locales/../src/interface/statuslinectrl.cpp:123
+#: ../../locales/../src/interface/statuslinectrl.cpp:128
 msgid "--:--:-- left"
 msgstr "--:--:-- preostalega časa"
 
@@ -449,13 +465,13 @@ msgstr "2 - Informacije"
 
 #: resources.h:147
 msgid "3 - Verbose"
-msgstr ""
+msgstr "3 - Obširno"
 
 #: resources.h:148
 msgid "4 - Debug"
 msgstr "4 - Razhrošči"
 
-#: resources.h:376
+#: resources.h:377
 msgid ""
 "A few servers don't allow passive mode or are misconfigured. In such cases "
 "you would have to use active mode. In active mode, FileZilla opens a port "
@@ -465,7 +481,7 @@ msgstr ""
 "konfigurirani. V takšnih primerih morate uporabiti aktivni način. V aktivnem "
 "načinu FileZilla odpre vrata in povpraša strežnik, da se poveže nanja."
 
-#: ../../locales/../src/interface/FileZilla.cpp:362
+#: ../../locales/../src/interface/FileZilla.cpp:438
 msgid ""
 "A local filename could not be decoded.\n"
 "Please make sure the LC_CTYPE (or LC_ALL) environment variable is set "
@@ -516,11 +532,11 @@ msgstr "Vprašaj &za dejanje"
 msgid "About FileZilla"
 msgstr "O programu FileZilla"
 
-#: resources.h:50 ../../locales/../src/interface/sitemanager.cpp:404
-#: ../../locales/../src/interface/sitemanager.cpp:585
-#: ../../locales/../src/interface/sitemanager.cpp:586
-#: ../../locales/../src/interface/sitemanager.cpp:622
-#: ../../locales/../src/interface/sitemanager.cpp:825
+#: resources.h:50 ../../locales/../src/interface/sitemanager.cpp:410
+#: ../../locales/../src/interface/sitemanager.cpp:637
+#: ../../locales/../src/interface/sitemanager.cpp:638
+#: ../../locales/../src/interface/sitemanager.cpp:674
+#: ../../locales/../src/interface/sitemanager.cpp:877
 msgid "Account"
 msgstr "račun"
 
@@ -576,13 +592,14 @@ msgstr "Napredno"
 msgid "Advanced options:"
 msgstr "Napredne možnosti:"
 
-#: resources.h:403
+#: resources.h:404
 msgid "All ports in the given range have to be between 1024 and 65535."
 msgstr "Vsa vrata v danem razponu morajo biti med 1024 in 65535."
 
-#: resources.h:46 ../../locales/../src/interface/sitemanager.cpp:584
-#: ../../locales/../src/interface/sitemanager.cpp:769
-#: ../../locales/../src/interface/sitemanager.cpp:828
+#: resources.h:46 ../../locales/../src/interface/sitemanager.cpp:459
+#: ../../locales/../src/interface/sitemanager.cpp:636
+#: ../../locales/../src/interface/sitemanager.cpp:821
+#: ../../locales/../src/interface/sitemanager.cpp:880
 msgid "Anonymous"
 msgstr "anonimna"
 
@@ -606,16 +623,16 @@ msgstr "Uporabi le na &trenutni vrsti"
 msgid "Apply to &files only"
 msgstr "Uporabi le na &datotekah"
 
-#: resources.h:48 ../../locales/../src/interface/sitemanager.cpp:618
-#: ../../locales/../src/interface/sitemanager.cpp:819
+#: resources.h:48 ../../locales/../src/interface/sitemanager.cpp:670
+#: ../../locales/../src/interface/sitemanager.cpp:871
 msgid "Ask for password"
 msgstr "vprašaj za geslo"
 
-#: resources.h:399
+#: resources.h:400
 msgid "Ask operating system for a port."
 msgstr "Vprašaj operacijski sistem za vrata."
 
-#: resources.h:251 resources.h:389
+#: resources.h:251 resources.h:390
 msgid "Ask your operating system for the external IP address"
 msgstr "Vprašaj operacijski sistem za zunanji naslov IP"
 
@@ -623,7 +640,7 @@ msgstr "Vprašaj operacijski sistem za zunanji naslov IP"
 msgid "At least one filter condition is incomplete"
 msgstr "Vsaj en pogoj filtra ni popoln"
 
-#: resources.h:408
+#: resources.h:409
 msgid "At this point, all configuration should be complete."
 msgstr "Na tej točki bi morala biti nastavitev dokončana."
 
@@ -665,21 +682,21 @@ msgstr ""
 msgid "C&heck for nightly builds of FileZilla"
 msgstr "P&reveri za nočne gradnje FileZille"
 
-#: resources.h:366
+#: resources.h:367
 msgid "C&lear all"
 msgstr "I&zbriši vse"
 
-#: ../../locales/../src/engine/transfersocket.cpp:490
+#: ../../locales/../src/engine/transfersocket.cpp:524
 msgid "Can't read from file"
 msgstr "Iz datoteke ni mogoče brati"
 
-#: ../../locales/../src/engine/transfersocket.cpp:464
+#: ../../locales/../src/engine/transfersocket.cpp:498
 msgid "Can't write data to file, disk is full."
 msgstr "Podatkov ni možno zapisati v datoteko, ker je disk poln."
 
-#: ../../locales/../src/engine/transfersocket.cpp:466
-#: ../../locales/../src/engine/transfersocket.cpp:469
-#: ../../locales/../src/engine/transfersocket.cpp:523
+#: ../../locales/../src/engine/transfersocket.cpp:500
+#: ../../locales/../src/engine/transfersocket.cpp:503
+#: ../../locales/../src/engine/transfersocket.cpp:557
 msgid "Can't write data to file."
 msgstr "V datoteko ni mogoče zapisovati podatkov."
 
@@ -687,11 +704,11 @@ msgstr "V datoteko ni mogoče zapisovati podatkov."
 msgid "Cancel"
 msgstr "Prekliči"
 
-#: resources.h:436
+#: resources.h:437
 msgid "Cancel current operation"
 msgstr "Prekliči trenutno operacijo"
 
-#: resources.h:437
+#: resources.h:438
 msgid "Cancels the current operation"
 msgstr "Prekine trenutno operacijo."
 
@@ -703,11 +720,11 @@ msgstr "Vrstice Quickconnect ni mogoče naložiti iz datoteke virov."
 msgid "Cannot load main menu from resource file"
 msgstr "Glavnega menija ni mogoče naložiti iz datoteke virov."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:449
+#: ../../locales/../src/interface/Mainfrm.cpp:463
 msgid "Cannot load toolbar from resource file"
 msgstr "Orodne vrstice ni mogoče naložiti iz datoteke virov."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1156
+#: ../../locales/../src/interface/RemoteListView.cpp:1160
 msgid "Cannot rename file"
 msgstr "Datoteke ni mogoče preimenovati"
 
@@ -723,7 +740,7 @@ msgstr "Spremeni lastnosti datoteke"
 msgid "Change the file permissions."
 msgstr "Spremeni dovoljenja datotek."
 
-#: ../../locales/../src/interface/FileZilla.cpp:362
+#: ../../locales/../src/interface/FileZilla.cpp:438
 msgid "Character encoding issue"
 msgstr "Napaka kodiranja znakov"
 
@@ -751,23 +768,23 @@ msgstr "Preverjanje pravilnosti zunanjega naslova IP"
 msgid "Checking for updates"
 msgstr "Preverjanje za posodobitve"
 
-#: ../../locales/../src/interface/sitemanager.cpp:713
+#: ../../locales/../src/interface/sitemanager.cpp:765
 msgid "Choose the default local directory"
 msgstr "Izberite privzeto krajevno mapo"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:805
 msgid "Chunk data improperly terminated"
-msgstr ""
+msgstr "Košček podatkov nepravilno zaključen"
 
-#: resources.h:367
+#: resources.h:368
 msgid "Clear &layout cache"
 msgstr "Počisti &predpomnilnik postavitve"
 
-#: ../../locales/../src/interface/quickconnectbar.cpp:110
+#: ../../locales/../src/interface/quickconnectbar.cpp:112
 msgid "Clear history"
 msgstr "Počisti zgodovino"
 
-#: ../../locales/../src/interface/quickconnectbar.cpp:109
+#: ../../locales/../src/interface/quickconnectbar.cpp:111
 msgid "Clear quickconnect bar"
 msgstr "Počisti vrstico hitre povezave"
 
@@ -781,6 +798,9 @@ msgid ""
 "Alternatively, visit http://filezilla-project.org to download the most "
 "recent version."
 msgstr ""
+"Kliknite Naprej za prenos nove različice.\n"
+"Sicer lahko obiščete tudi http://filezilla-project.org za prenos najnovejše "
+"različice."
 
 #: resources.h:318
 msgid "Close FileZilla"
@@ -794,8 +814,8 @@ msgstr "Ko&mentarji:"
 msgid "Command not supported by this protocol"
 msgstr "Izbrani protokol ne podpira tega ukaza"
 
-#: ../../locales/../src/interface/StatusView.cpp:93
-#: ../../locales/../src/interface/StatusView.cpp:130
+#: ../../locales/../src/interface/StatusView.cpp:119
+#: ../../locales/../src/interface/StatusView.cpp:156
 msgid "Command:"
 msgstr "Ukaz:"
 
@@ -820,19 +840,19 @@ msgstr "Hkratni prenosi"
 msgid "Conditions are c&ase sensitive"
 msgstr "Pogoji razlikujejo velike/male &začetnice"
 
-#: resources.h:407
+#: resources.h:408
 msgid "Configuration test"
 msgstr "Preizkus nastavitev"
 
-#: resources.h:381
+#: resources.h:382
 msgid "Configure passive mode"
 msgstr "Prilagodi pasivni način"
 
-#: resources.h:397
+#: resources.h:398
 msgid "Configure port range"
 msgstr "Nastavi obseg vrat"
 
-#: ../../locales/../src/interface/LocalListView.cpp:832
+#: ../../locales/../src/interface/LocalListView.cpp:837
 #: ../../locales/../src/interface/RemoteListView.cpp:777
 msgid "Confirmation needed"
 msgstr "Potrditev je potrebna"
@@ -841,26 +861,26 @@ msgstr "Potrditev je potrebna"
 msgid "Congratulations, your configuration seems to be working."
 msgstr "Čestitamo, vaše nastavitve očitno delujejo."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:447
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:482
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:516
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:530
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:451
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:486
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:520
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:534
 msgid "Connected"
 msgstr "Povezano"
 
-#: ../../locales/../src/interface/QueueView.cpp:1288
+#: ../../locales/../src/interface/QueueView.cpp:1357
 msgid "Connecting"
 msgstr "Povezovanje v teku ..."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:199
-#: ../../locales/../src/interface/statuslinectrl.cpp:158
+#: ../../locales/../src/interface/statuslinectrl.cpp:153
 #, c-format
 msgid "Connecting to %s"
 msgstr "Povezovanje z %s"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:169
+#: ../../locales/../src/engine/ControlSocket.cpp:175
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:487
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:257
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:264
 #, c-format
 msgid "Connecting to %s:%d..."
 msgstr "Povezovanje z %s:%d ..."
@@ -874,7 +894,7 @@ msgstr "Povezovanje s strežnikom"
 msgid "Connection"
 msgstr "Povezava"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:271
+#: ../../locales/../src/engine/ControlSocket.cpp:282
 msgid "Connection attempt interrupted by user"
 msgstr "Poskus povezave prekinil uporabnik"
 
@@ -886,7 +906,7 @@ msgstr "Povezava zaprta"
 msgid "Connection established, sending HTTP request"
 msgstr "Povezava je vzpostavljena, pošiljanje zahteve HTTP"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:238
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:242
 msgid "Connection established, waiting for welcome message..."
 msgstr "Povezava je vzpostavljena, v pričakovanju pozdravnega sporočila ..."
 
@@ -894,7 +914,7 @@ msgstr "Povezava je vzpostavljena, v pričakovanju pozdravnega sporočila ..."
 msgid "Connection lost"
 msgstr "Povezava izgubljena"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:798
+#: ../../locales/../src/engine/ControlSocket.cpp:791
 msgid "Connection timed out"
 msgstr "Povezava je časovno potekla"
 
@@ -910,15 +930,15 @@ msgstr "Povezava s preizkusnim strežnikom ni uspela."
 msgid "Cop&y"
 msgstr "Kop&iraj"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:273
+#: ../../locales/../src/engine/ControlSocket.cpp:284
 msgid "Could not connect to server"
 msgstr "Povezava s strežnikom ni uspela"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2893
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2875
 msgid "Could not establish connection to server"
 msgstr "Povezave s strežnikom ni mogoče vzpostaviti"
 
-#: ../../locales/../src/interface/FileZilla.cpp:223
+#: ../../locales/../src/interface/FileZilla.cpp:273
 msgid ""
 "Could not find the resource files for FileZilla, closing FileZilla.\n"
 "You can set the data directory of FileZilla using the '--datadir "
@@ -930,7 +950,7 @@ msgstr ""
 "<poljubnapot>' v ukazni vrstici ali z nastavljanjem spremenljivke okolja "
 "FZ_DATADIR."
 
-#: ../../locales/../src/interface/Options.cpp:79
+#: ../../locales/../src/interface/Options.cpp:81
 #, c-format
 msgid ""
 "Could not load \"%s\", make sure the file is valid.\n"
@@ -950,9 +970,9 @@ msgstr ""
 "\"%s\" ni bilo mogoče naložiti, prosimo, preverite, da je datoteka veljavna "
 "in dosegljiva."
 
-#: ../../locales/../src/interface/filter.cpp:160
-#: ../../locales/../src/interface/filter.cpp:244
-#: ../../locales/../src/interface/sitemanager.cpp:251
+#: ../../locales/../src/interface/filter.cpp:161
+#: ../../locales/../src/interface/filter.cpp:245
+#: ../../locales/../src/interface/sitemanager.cpp:248
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -963,7 +983,7 @@ msgstr ""
 "dosegljiva.\n"
 "Vsakršne spremembe nastavitev ni bilo mogoče shraniti."
 
-#: ../../locales/../src/interface/sitemanager.cpp:160
+#: ../../locales/../src/interface/sitemanager.cpp:157
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -974,8 +994,8 @@ msgstr ""
 "dosegljiva.\n"
 "Vsakršne spremembe nastavitev ne bo mogoče shraniti."
 
-#: ../../locales/../src/interface/QueueView.cpp:1649
-#: ../../locales/../src/interface/QueueView.cpp:1685
+#: ../../locales/../src/interface/QueueView.cpp:1721
+#: ../../locales/../src/interface/QueueView.cpp:1757
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -990,20 +1010,20 @@ msgstr ""
 msgid "Could not parse server address:"
 msgstr "Naslova strežnika ni mogoče razbrati:"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1611
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1588
 #, c-format
 msgid "Could not seek to offset %s within file"
 msgstr "Iskanje do odmika %s v datoteki ni možno."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1546
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1523
 msgid "Could not seek to the end of the file"
 msgstr "Neizvedljivo iskanje do konca datoteke"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1631
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1608
 msgid "Could not spawn IO thread"
 msgstr "V/I niti ni mogoče razmnožiti"
 
-#: ../../locales/../src/interface/sitemanager.cpp:277
+#: ../../locales/../src/interface/sitemanager.cpp:274
 #, c-format
 msgid ""
 "Could not write \"%s\", any changes to the Site Manager could not be saved: %"
@@ -1012,8 +1032,8 @@ msgstr ""
 "Pisanje \"%s\" ni bilo možno, zato spremembe Upravljalca strežnikov niso "
 "shranjene: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1668
-#: ../../locales/../src/interface/QueueView.cpp:1754
+#: ../../locales/../src/interface/QueueView.cpp:1740
+#: ../../locales/../src/interface/QueueView.cpp:1826
 #, c-format
 msgid "Could not write \"%s\", the queue could not be saved."
 msgstr "Pisanje \"%s\" ni bilo možno, zato vrsta ni bila shranjena."
@@ -1023,7 +1043,7 @@ msgstr "Pisanje \"%s\" ni bilo možno, zato vrsta ni bila shranjena."
 msgid "Could not write \"%s\": %s"
 msgstr "Ni mogoče pisati \"%s\": %s"
 
-#: resources.h:369
+#: resources.h:370
 msgid "Crashes FileZilla instantly. Only used to debug the exception handler"
 msgstr ""
 "Sesuje FileZillo v trenutku. Uporabljeno le za razhroščevanje upravljalca "
@@ -1033,18 +1053,18 @@ msgstr ""
 msgid "Create a new subdirectory in the current directory"
 msgstr "Ustvari novo podmapo v trenutni mapi"
 
-#: ../../locales/../src/interface/LocalListView.cpp:731
+#: ../../locales/../src/interface/LocalListView.cpp:736
 #: ../../locales/../src/interface/RemoteListView.cpp:716
 msgid "Create directory"
 msgstr "Ustvari mapo"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2150
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1456
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2127
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1486
 #, c-format
 msgid "Creating directory '%s'..."
 msgstr "Ustvarjanje mape '%s' ..."
 
-#: ../../locales/../src/engine/ControlSocket.cpp:265
+#: ../../locales/../src/engine/ControlSocket.cpp:276
 msgid "Critical error"
 msgstr "Kritična napaka"
 
@@ -1068,8 +1088,8 @@ msgstr "Onemogoč&i vse"
 msgid "D&iscard"
 msgstr "&Opusti"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:961
-#: ../../locales/../src/interface/netconfwizard.cpp:1027
+#: ../../locales/../src/interface/netconfwizard.cpp:959
+#: ../../locales/../src/interface/netconfwizard.cpp:1025
 msgid "Data socket closed too early."
 msgstr "Podatkovna vrata prehitro zaprta."
 
@@ -1092,8 +1112,8 @@ msgstr "Razhrošči"
 msgid "Debugging settings"
 msgstr "Nastavitve razhroščevanja"
 
-#: resources.h:57 ../../locales/../src/interface/sitemanager.cpp:775
-#: ../../locales/../src/interface/sitemanager.cpp:852
+#: resources.h:57 ../../locales/../src/interface/sitemanager.cpp:827
+#: ../../locales/../src/interface/sitemanager.cpp:904
 msgid "Default"
 msgstr "privzeti"
 
@@ -1109,7 +1129,7 @@ msgstr "Dejanje privzeta datoteka obstaja"
 msgid "Default r&emote directory:"
 msgstr "Privzeta &oddaljena mapa:"
 
-#: resources.h:377
+#: resources.h:378
 msgid "Default transfer mode:"
 msgstr "Privzeti način prenosa:"
 
@@ -1117,7 +1137,7 @@ msgstr "Privzeti način prenosa:"
 msgid "Default transfer type:"
 msgstr "Privzeti način prenosa:"
 
-#: resources.h:255 resources.h:394
+#: resources.h:255 resources.h:395
 msgid "Default: http://ip.filezilla-project.org/ip.php"
 msgstr "Privzeto: http://ip.filezilla-project.org/ip.php"
 
@@ -1137,11 +1157,11 @@ msgstr "Podrobnosti za nov ključ:"
 msgid "Dire&ctories"
 msgstr "I&meniki"
 
-#: ../../locales/../src/interface/QueueView.cpp:677
+#: ../../locales/../src/interface/QueueView.cpp:717
 msgid "Direction"
 msgstr "Smer"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:277
+#: ../../locales/../src/engine/ControlSocket.cpp:288
 msgid "Directory listing aborted by user"
 msgstr "Pridobivanje seznama mape prekinil uporabnik"
 
@@ -1153,7 +1173,7 @@ msgstr "Izpis vsebine mape ni uspel"
 msgid "Directory listing filters"
 msgstr "Filtri seznama mape"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:294
+#: ../../locales/../src/engine/ControlSocket.cpp:305
 msgid "Directory listing successful"
 msgstr "Pridobivanje seznama mape uspešno."
 
@@ -1161,24 +1181,24 @@ msgstr "Pridobivanje seznama mape uspešno."
 msgid "Disa&ble all"
 msgstr "Onemogo&či vse"
 
-#: resources.h:438
+#: resources.h:439
 msgid "Disconnect from server"
 msgstr "Razveži s strežnikom"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:117
-#: ../../locales/../src/engine/ControlSocket.cpp:184
+#: ../../locales/../src/engine/ControlSocket.cpp:123
+#: ../../locales/../src/engine/ControlSocket.cpp:190
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:130
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:884
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:886
 msgid "Disconnected from server"
 msgstr "Razvezan s strežnikom"
 
-#: ../../locales/../src/interface/QueueView.cpp:1277
-#: ../../locales/../src/interface/statuslinectrl.cpp:152
+#: ../../locales/../src/interface/QueueView.cpp:1346
+#: ../../locales/../src/interface/statuslinectrl.cpp:147
 msgid "Disconnecting from previous server"
 msgstr "Prekini povezavo s prejšnjim strežnikom"
 
-#: resources.h:439
+#: resources.h:440
 msgid "Disconnects from the currently visible server"
 msgstr "Razveže povezavo od trenutno vidnega strežnika."
 
@@ -1195,12 +1215,12 @@ msgstr ""
 "Če ne nameravate preizkušati novih funkcionalnosti, uporabljajte raje "
 "stabilne različice."
 
-#: resources.h:256 resources.h:396
+#: resources.h:256 resources.h:397
 msgid "Don't use external IP address on &local connections."
 msgstr "Ne uporabljajte zunanjega naslova IP na &krajevnih povezavah."
 
-#: resources.h:61 ../../locales/../src/interface/sitemanager.cpp:636
-#: ../../locales/../src/interface/sitemanager.cpp:843
+#: resources.h:61 ../../locales/../src/interface/sitemanager.cpp:688
+#: ../../locales/../src/interface/sitemanager.cpp:895
 msgid "Dos"
 msgstr "Dos"
 
@@ -1280,7 +1300,7 @@ msgstr "Vnesi ukaz po meri"
 msgid "Enter filter name"
 msgstr "Vnesite ime filtra"
 
-#: ../../locales/../src/interface/filter.cpp:588
+#: ../../locales/../src/interface/filter.cpp:594
 msgid "Enter name for filterset"
 msgstr "Vnesite ime za sklop filtrov"
 
@@ -1288,7 +1308,7 @@ msgstr "Vnesite ime za sklop filtrov"
 msgid "Enter password"
 msgstr "Vnesite geslo"
 
-#: resources.h:416
+#: resources.h:417
 msgid ""
 "Enter the address of the server.\n"
 "To specify the server protocol, prepend the host with the protocol "
@@ -1304,7 +1324,7 @@ msgstr ""
 "Prav tako lahko tukaj vnesete celotne naslove URL v obliki protocol://user:"
 "pass@host:port, vrednosti v drugih poljih bodo s tem prepisane."
 
-#: resources.h:420
+#: resources.h:421
 msgid ""
 "Enter the port on which the server listens.\n"
 "The default for FTP is 21, the default for SFTP is 22."
@@ -1312,31 +1332,31 @@ msgstr ""
 "Vnesite vrata, na katerih posluša strežnik.\n"
 "Privzeta vrata za FTP so 21, privzeta vrednost za SFTP pa 22."
 
-#: ../../locales/../src/engine/transfersocket.cpp:271
+#: ../../locales/../src/engine/transfersocket.cpp:293
 #, c-format
 msgid "Error %d writing to socket"
 msgstr "Napaka %d pri pisanju na vrata"
 
-#: ../../locales/../src/interface/filter.cpp:161
-#: ../../locales/../src/interface/filter.cpp:245
-#: ../../locales/../src/interface/Options.cpp:80
-#: ../../locales/../src/interface/QueueView.cpp:1650
-#: ../../locales/../src/interface/QueueView.cpp:1686
-#: ../../locales/../src/interface/sitemanager.cpp:161
-#: ../../locales/../src/interface/sitemanager.cpp:252
+#: ../../locales/../src/interface/filter.cpp:162
+#: ../../locales/../src/interface/filter.cpp:246
+#: ../../locales/../src/interface/Options.cpp:82
+#: ../../locales/../src/interface/QueueView.cpp:1722
+#: ../../locales/../src/interface/QueueView.cpp:1758
+#: ../../locales/../src/interface/sitemanager.cpp:158
+#: ../../locales/../src/interface/sitemanager.cpp:249
 #: ../../locales/../src/interface/wrapengine.cpp:722
 msgid "Error loading xml file"
 msgstr "Napaka pri nalaganju datoteke xml"
 
-#: ../../locales/../src/interface/QueueView.cpp:1669
-#: ../../locales/../src/interface/QueueView.cpp:1755
-#: ../../locales/../src/interface/sitemanager.cpp:278
+#: ../../locales/../src/interface/QueueView.cpp:1741
+#: ../../locales/../src/interface/QueueView.cpp:1827
+#: ../../locales/../src/interface/sitemanager.cpp:275
 #: ../../locales/../src/interface/wrapengine.cpp:890
 msgid "Error writing xml file"
 msgstr "Napaka pri pisanju datoteke xml"
 
-#: ../../locales/../src/interface/StatusView.cpp:91
-#: ../../locales/../src/interface/StatusView.cpp:126
+#: ../../locales/../src/interface/StatusView.cpp:117
+#: ../../locales/../src/interface/StatusView.cpp:152
 msgid "Error:"
 msgstr "Napaka:"
 
@@ -1344,7 +1364,7 @@ msgstr "Napaka:"
 msgid "Exe&cute"
 msgstr "&Izvedi"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1047
+#: ../../locales/../src/interface/Mainfrm.cpp:1061
 msgid "Executable contains no version info, cannot check for updates."
 msgstr ""
 "Izvršilna datoteka ne vsebuje informacij o različici, preverjanje za "
@@ -1354,9 +1374,11 @@ msgstr ""
 msgid "F&ilter name:"
 msgstr "&Ime filtra:"
 
-#: resources.h:43 ../../locales/../src/interface/sitemanager.cpp:608
-#: ../../locales/../src/interface/sitemanager.cpp:768
-#: ../../locales/../src/interface/sitemanager.cpp:805
+#: resources.h:43 ../../locales/../src/interface/sitemanager.cpp:418
+#: ../../locales/../src/interface/sitemanager.cpp:444
+#: ../../locales/../src/interface/sitemanager.cpp:660
+#: ../../locales/../src/interface/sitemanager.cpp:820
+#: ../../locales/../src/interface/sitemanager.cpp:857
 msgid "FTP"
 msgstr "FTP"
 
@@ -1364,7 +1386,7 @@ msgstr "FTP"
 msgid "FTP Engine not initialized, can't connect"
 msgstr "Pogon FTP ni inicializiran, povezava ni možna"
 
-#: resources.h:374
+#: resources.h:375
 msgid ""
 "FTP uses secondary connections for data transfers. These additional "
 "connections can be established in two ways."
@@ -1372,7 +1394,7 @@ msgstr ""
 "FTP uporablja za prenos podatkov sekundarne povezave. Te dodatne povezave "
 "lahko vzpostavite na dva načina."
 
-#: ../../locales/../src/interface/FileZilla.cpp:58
+#: ../../locales/../src/interface/FileZilla.cpp:88
 #: ../../locales/../src/interface/optionspage_language.cpp:65
 msgid "Failed to change language"
 msgstr "Sprememba jezika ni uspela"
@@ -1389,8 +1411,8 @@ msgstr "Varnostne kopije datoteke xml ni mogoče ustvariti."
 msgid "Failed to create listen socket, aborting"
 msgstr "Ni mogoče ustvariti vrat za poslušanje, prekinjanje"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2872
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2876
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2854
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2858
 msgid "Failed to create listening socket for active mode transfer"
 msgstr "Za aktivni način prenosa ni mogoče ustvariti vrat za poslušanje"
 
@@ -1398,11 +1420,11 @@ msgstr "Za aktivni način prenosa ni mogoče ustvariti vrat za poslušanje"
 msgid "Failed to download the latest version of FileZilla."
 msgstr "Prenos novejše različice FileZille ni uspel."
 
-#: ../../locales/../src/interface/netconfwizard.cpp:934
+#: ../../locales/../src/interface/netconfwizard.cpp:932
 msgid "Failed to get data peer address, connection closed."
 msgstr "Podatkovnega naslova vrstnika' ni mogoče pridobiti, povezava zaprta."
 
-#: ../../locales/../src/interface/netconfwizard.cpp:926
+#: ../../locales/../src/interface/netconfwizard.cpp:924
 msgid "Failed to get peer address, connection closed."
 msgstr "Naslova vrstnika ni mogoče pridobiti, povezava zaprta."
 
@@ -1414,28 +1436,28 @@ msgstr "Pogona FTP ni mogoče inicializirati"
 msgid "Failed to load panels, invalid resource files?"
 msgstr "Razdelkov ni mogoče naložiti, neveljavne datoteke virov?"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1537
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1514
 #, c-format
 msgid "Failed to open \"%s\" for appending / writing"
 msgstr "\"%s\" ni mogoče odpreti za dopisovanje / pisanje"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1595
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1572
 #, c-format
 msgid "Failed to open \"%s\" for reading"
 msgstr "\"%s\" ni mogoče odpreti za branje"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1574
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1551
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:371
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:416
 #, c-format
 msgid "Failed to open \"%s\" for writing"
 msgstr "\"%s\" ni mogoče odpreti za pisanje"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:990
+#: ../../locales/../src/interface/netconfwizard.cpp:988
 msgid "Failed to receive data"
 msgstr "Podatki ni uspelo sprejeti"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:279
+#: ../../locales/../src/engine/ControlSocket.cpp:290
 msgid "Failed to retrieve directory listing"
 msgstr "Seznama mape ni mogoče pridobiti"
 
@@ -1443,12 +1465,12 @@ msgstr "Seznama mape ni mogoče pridobiti"
 msgid "Failed to retrieve external ip address, aborting"
 msgstr "Zunanjega naslova IP ni mogoče pridobiti, prekinitev"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2640
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2622
 msgid "Failed to retrieve external ip address, using local address"
 msgstr ""
 "Zunanjega naslova IP ni mogoče pridobiti, sledi uporaba krajevnega naslova"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2659
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2641
 msgid "Failed to retrieve local ip address."
 msgstr "Krajevnega naslova IP ni mogoče pridobiti."
 
@@ -1464,7 +1486,7 @@ msgstr "Zunanjega naslova IP ni mogoče pridobiti."
 msgid "Failed to send command."
 msgstr "Ukaza ni mogoče poslati."
 
-#: ../../locales/../src/interface/FileZilla.cpp:58
+#: ../../locales/../src/interface/FileZilla.cpp:88
 #: ../../locales/../src/interface/optionspage_language.cpp:65
 #, c-format
 msgid "Failed to set language to %s, using default system language"
@@ -1485,7 +1507,7 @@ msgstr "Zapisovanje v datoteko %s ni uspelo"
 msgid "Failed to write xml file"
 msgstr "V datoteko xml ni mogoče pisati."
 
-#: resources.h:387
+#: resources.h:388
 msgid "Fall back to active mode"
 msgstr "Povrnitev v aktivni način"
 
@@ -1493,9 +1515,9 @@ msgstr "Povrnitev v aktivni način"
 msgid "Fil&es"
 msgstr "&Datoteke"
 
-#: ../../locales/../src/interface/LocalListView.cpp:394
-#: ../../locales/../src/interface/LocalListView.cpp:412
-#: ../../locales/../src/interface/LocalListView.cpp:416
+#: ../../locales/../src/interface/LocalListView.cpp:399
+#: ../../locales/../src/interface/LocalListView.cpp:417
+#: ../../locales/../src/interface/LocalListView.cpp:421
 #: ../../locales/../src/interface/RemoteListView.cpp:491
 #: ../../locales/../src/interface/RemoteListView.cpp:509
 #: ../../locales/../src/interface/RemoteListView.cpp:513
@@ -1506,7 +1528,7 @@ msgstr "Datoteka"
 msgid "File Types"
 msgstr "Vrsta datotek"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1171
+#: ../../locales/../src/interface/RemoteListView.cpp:1175
 msgid "File exists"
 msgstr "Datoteka obstaja"
 
@@ -1514,16 +1536,20 @@ msgstr "Datoteka obstaja"
 msgid "File exists action"
 msgstr "Dejanje datoteka obstaja"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:297
+#: ../../locales/../src/interface/FileZilla.cpp:548
+msgid "File not found"
+msgstr "Datoteke ni mogoče najti"
+
+#: ../../locales/../src/engine/ControlSocket.cpp:308
 msgid "File transfer successful"
 msgstr "Prenos datoteke je bil uspešen"
 
-#: ../../locales/../src/interface/FileZilla.cpp:224
+#: ../../locales/../src/interface/FileZilla.cpp:274
 #: ../../locales/../src/interface/quickconnectbar.cpp:41
 msgid "FileZilla Error"
 msgstr "Napaka FileZilla"
 
-#: resources.h:409
+#: resources.h:410
 msgid ""
 "FileZilla can test your configuration now to ensure everything is configured "
 "properly."
@@ -1537,20 +1563,20 @@ msgstr ""
 msgid "Filename"
 msgstr "Ime datoteke"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1156
+#: ../../locales/../src/interface/RemoteListView.cpp:1160
 msgid "Filename invalid"
 msgstr "Ime datoteke ni veljavno"
 
-#: ../../locales/../src/interface/asyncrequestqueue.cpp:189
+#: ../../locales/../src/interface/asyncrequestqueue.cpp:208
 msgid "Filename unchanged"
 msgstr "Nespremenjeno ime datoteke"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1111
+#: ../../locales/../src/interface/LocalListView.cpp:1116
 msgid "Filenames may not contain any of the following characters: / * ? < > |"
 msgstr ""
 "Imena datotek ne smejo vsebovati nobenega od naslednjih znakov: / * ? < > |"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1076
+#: ../../locales/../src/interface/LocalListView.cpp:1081
 msgid ""
 "Filenames may not contain any of the following characters: / \\ : * ? \" < > "
 "|"
@@ -1581,11 +1607,11 @@ msgstr "Filter se nanaša na:"
 msgid "Filter name already exists"
 msgstr "Ime filtra že obstaja"
 
-#: ../../locales/../src/interface/filter.cpp:597
+#: ../../locales/../src/interface/filter.cpp:603
 msgid "Filter set already exists"
 msgstr "Sklop filtrov že obstaja"
 
-#: resources.h:442 resources.h:443
+#: resources.h:443 resources.h:444
 msgid "Filter the directory listings"
 msgstr "Filtriraj vsebino map"
 
@@ -1605,7 +1631,7 @@ msgstr "Prstni odtis:"
 msgid "Firewall and router configuration wizard"
 msgstr "Čarovnik za nastavitev požarnega zidu in usmerjevalnika"
 
-#: ../../locales/../src/interface/LocalListView.cpp:416
+#: ../../locales/../src/interface/LocalListView.cpp:421
 #: ../../locales/../src/interface/RemoteListView.cpp:513
 msgid "Folder"
 msgstr "Mapa"
@@ -1618,7 +1644,7 @@ msgstr ""
 "Za več podrobnosti o teh možnostih, prosimo, zaženite čarovnika za "
 "nastavitev omrežja."
 
-#: resources.h:404
+#: resources.h:405
 msgid "For reliability you should specify a range of at least 10 ports."
 msgstr ""
 "Zavoljo zanesljivosti je priporočljivo, da navedete obseg vsaj desetih vrat."
@@ -1631,11 +1657,11 @@ msgstr "Vsili &UTF-8"
 msgid "General"
 msgstr "Splošno"
 
-#: resources.h:254 resources.h:393
+#: resources.h:254 resources.h:394
 msgid "Get external IP address from the following URL:"
 msgstr "Pridobi zunanji naslov IP iz naslednjega URL:"
 
-#: ../../locales/../src/interface/filter.cpp:597
+#: ../../locales/../src/interface/filter.cpp:603
 msgid "Given filterset name already exists, overwrite filter set?"
 msgstr ""
 "Ime danega sklopa filtrov že obstaja, želite prepisati obstoječi sklop "
@@ -1645,15 +1671,15 @@ msgstr ""
 msgid "Group permissions"
 msgstr "Dovoljenja skupine"
 
-#: resources.h:360
+#: resources.h:361
 msgid "H&igh"
 msgstr "&visoko"
 
-#: ../../locales/../src/interface/QueueView.cpp:825
+#: ../../locales/../src/interface/QueueView.cpp:874
 msgid "High"
 msgstr "visoko"
 
-#: ../../locales/../src/interface/QueueView.cpp:827
+#: ../../locales/../src/interface/QueueView.cpp:876
 msgid "Highest"
 msgstr "najvišja"
 
@@ -1695,8 +1721,10 @@ msgstr ""
 #: resources.h:150
 msgid "If reporting bugs, please provide logs with \"Verbose\" logging level."
 msgstr ""
+"Če sporočate hrošče, ob tem zagotovite tudi dnevnike z ravnijo beleženja "
+"\"Obširno\"."
 
-#: resources.h:384
+#: resources.h:385
 msgid ""
 "If the automatic test at the end of this wizard succeeds, but you cannot "
 "transfer files to a particular server, the server might be misconfigured and "
@@ -1728,12 +1756,15 @@ msgid ""
 "the server. If the time differs (e.g. different timezone), specify a "
 "timezone offset in the site manager."
 msgstr ""
+"Če uporabljate 'prepiši, če je novejše', bo vaš sistemski čas obvezno "
+"sinhroniziran s strežnikom. Če se čas razlikuje (npr. drug časovni pas), "
+"določite zamik časovnega pasu v upravljalcu spletnih mest."
 
 #: resources.h:135
 msgid "If you change the language, you should restart FileZilla."
 msgstr "Če spremenite jezik, morate FileZillo ponovno zagnati."
 
-#: resources.h:410
+#: resources.h:411
 msgid ""
 "If you click on test, FileZilla will connect to probe.filezilla-project.org "
 "and will perform some simple tests."
@@ -1748,7 +1779,7 @@ msgid ""
 msgstr ""
 "Če vnesete napačne vrste datotek, se lahko te datoteke ob prenosu okvarijo."
 
-#: resources.h:411
+#: resources.h:412
 msgid "If you get any errors, your configuration is not correct."
 msgstr "Če pride do napak, vaše nastavitve niso pravilne."
 
@@ -1770,7 +1801,7 @@ msgstr ""
 "oddaljeni usmerjevalnik slabo nastavljen. V tem primeru poskusite preklopiti "
 "v pasivni način in vprašati upravljalca strežnika za pomoč."
 
-#: resources.h:372
+#: resources.h:373
 msgid ""
 "If you sucessfully complete the wizard and the final test succeeds, any "
 "firewalls and routers you have should be configured properly."
@@ -1778,7 +1809,7 @@ msgstr ""
 "Če se čarovnik uspešno dokonča in zaključni preizkus uspe, bi morali biti "
 "pravilno konfigurirani vsi požarni zidovi in usmerjevalniki."
 
-#: resources.h:406
+#: resources.h:407
 msgid ""
 "If you use a firewall, make sure FileZilla is allowed to accept connection "
 "on all given ports."
@@ -1786,7 +1817,7 @@ msgstr ""
 "Če uporabljate požarni zid, preverite, da lahko FileZilla sprejema povezave "
 "na vseh danih vratih."
 
-#: resources.h:405
+#: resources.h:406
 msgid ""
 "If you use a router, make sure all these ports are forwarded to the machine "
 "you're running FileZilla on."
@@ -1802,7 +1833,7 @@ msgstr ""
 "Če bo vaš usmerjevalnik še naprej zamenjaval naslov IP, prosimo, povprašajte "
 "proizvajalca svojega usmerjevalnika."
 
-#: resources.h:398
+#: resources.h:399
 msgid ""
 "In active mode, FileZilla has to listen on a port for data transfers. You "
 "have to specify which ports FileZilla will use."
@@ -1810,7 +1841,7 @@ msgstr ""
 "V aktivnem načinu mora FileZilla poslušati na vratih za prenos podatkov. "
 "Navesti morate, katera vrata bo FileZilla uporabljala."
 
-#: resources.h:400
+#: resources.h:401
 msgid ""
 "In case you have a router, you will have to forward all available ports, as "
 "FileZilla has no influence on the ports your system chooses."
@@ -1826,7 +1857,7 @@ msgstr ""
 "Če imate raje samodejne posodobitve, lahko omogočite samodejno preverjanje "
 "za posodobitvami v pogovornem oknu nastavitev."
 
-#: resources.h:250 resources.h:388
+#: resources.h:250 resources.h:389
 msgid ""
 "In order to use active mode, FileZilla needs to know your external IP "
 "address."
@@ -1834,7 +1865,7 @@ msgstr ""
 "Da bi lahko uporabili aktivni način, mora FileZilla poznati vaš notranji "
 "naslov IP."
 
-#: resources.h:375
+#: resources.h:376
 msgid ""
 "In passive mode, which is recommended for most users, FileZilla asks the "
 "server for a port and connects to the given port. Not much configuration has "
@@ -1844,12 +1875,12 @@ msgstr ""
 "strežnik za vrata in se poveže na dana vrata. Za to ni potrebnih nobenih "
 "posebnih nastavitev."
 
-#: resources.h:49 ../../locales/../src/interface/sitemanager.cpp:620
-#: ../../locales/../src/interface/sitemanager.cpp:822
+#: resources.h:49 ../../locales/../src/interface/sitemanager.cpp:672
+#: ../../locales/../src/interface/sitemanager.cpp:874
 msgid "Interactive"
 msgstr "interaktivna"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:285
+#: ../../locales/../src/engine/ControlSocket.cpp:296
 msgid "Interrupted by user"
 msgstr "Prekinil uporabnik"
 
@@ -1861,8 +1892,8 @@ msgstr "Neveljavna dolžina vsebine"
 msgid "Invalid HTTP Response"
 msgstr "Neveljaven odziv HTTP"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:651
-#: ../../locales/../src/engine/ControlSocket.cpp:708
+#: ../../locales/../src/engine/ControlSocket.cpp:644
+#: ../../locales/../src/engine/ControlSocket.cpp:701
 msgid ""
 "Invalid character sequence received, disabling UTF-8. Select UTF-8 option in "
 "site manager to force UTF-8."
@@ -1880,18 +1911,18 @@ msgstr "Neveljavna velikost koščka"
 msgid "Invalid data received"
 msgstr "Prejeti neveljavni podatki"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1076
-#: ../../locales/../src/interface/LocalListView.cpp:1111
+#: ../../locales/../src/interface/LocalListView.cpp:1081
+#: ../../locales/../src/interface/LocalListView.cpp:1116
 msgid "Invalid filename"
 msgstr "Neveljavno ime datoteke"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:164
+#: ../../locales/../src/engine/ControlSocket.cpp:170
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:142
 msgid "Invalid hostname or host not found"
 msgstr "Neveljavno ime gostitelja ali gostitelj ni bil najden"
 
-#: ../../locales/../src/engine/server.cpp:86
-#: ../../locales/../src/engine/server.cpp:115
+#: ../../locales/../src/engine/server.cpp:84
+#: ../../locales/../src/engine/server.cpp:117
 msgid "Invalid port given. The port has to be a value from 1 to 65535."
 msgstr ""
 "Podana so bila neveljavna vrata. Vrednost vrat mora biti število med 1 in "
@@ -1913,11 +1944,11 @@ msgstr "Neveljavna odzivna koda"
 msgid "Invalid size in condition"
 msgstr "Neustrezna velikost v pogoju"
 
-#: ../../locales/../src/engine/server.cpp:54
+#: ../../locales/../src/engine/server.cpp:52
 msgid "Invalid username given."
 msgstr "Podano uporabniško ime ni veljavno."
 
-#: resources.h:363
+#: resources.h:364
 msgid "L&owest"
 msgstr "Naj&nižje"
 
@@ -1957,8 +1988,8 @@ msgstr "Dolžina vrstice presežena"
 msgid "Listen socket closed"
 msgstr "Vrata za poslušanje zaprta"
 
-#: ../../locales/../src/interface/StatusView.cpp:102
-#: ../../locales/../src/interface/StatusView.cpp:145
+#: ../../locales/../src/interface/StatusView.cpp:128
+#: ../../locales/../src/interface/StatusView.cpp:171
 msgid "Listing:"
 msgstr "Seznam:"
 
@@ -1966,11 +1997,11 @@ msgstr "Seznam:"
 msgid "Local filters:"
 msgstr "Krajevni filtri:"
 
-#: ../../locales/../src/interface/viewheader.cpp:251
+#: ../../locales/../src/interface/viewheader.cpp:284
 msgid "Local site:"
 msgstr "Krajevni strežnik:"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:391
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:395
 msgid ""
 "Login data contains non-ascii characters and server might not be UTF-8 "
 "aware. Trying local charset."
@@ -1978,11 +2009,11 @@ msgstr ""
 "Prijavni podatki vsebujejo znake, ki niso v kodni tabeli ASCII, strežnik pa "
 "morda ne rapoznava znakov UTF-8. Poskus s krajevno kodno tabelo ..."
 
-#: ../../locales/../src/interface/QueueView.cpp:820
+#: ../../locales/../src/interface/QueueView.cpp:869
 msgid "Low"
 msgstr "nizko"
 
-#: ../../locales/../src/interface/QueueView.cpp:818
+#: ../../locales/../src/interface/QueueView.cpp:867
 msgid "Lowest"
 msgstr "najnižje"
 
@@ -1990,8 +2021,8 @@ msgstr "najnižje"
 msgid "Lowest available port has to be a number between 1024 and 65535."
 msgstr "Najnižja vrata na voljo morajo imeti številko med 1024 in 65535."
 
-#: resources.h:60 ../../locales/../src/interface/sitemanager.cpp:640
-#: ../../locales/../src/interface/sitemanager.cpp:846
+#: resources.h:60 ../../locales/../src/interface/sitemanager.cpp:692
+#: ../../locales/../src/interface/sitemanager.cpp:898
 msgid "MVS"
 msgstr "MVS"
 
@@ -2029,7 +2060,7 @@ msgstr "Srednje ikone"
 msgid "Minutes"
 msgstr "minut"
 
-#: ../../locales/../src/interface/sitemanager.cpp:147
+#: ../../locales/../src/interface/sitemanager.cpp:144
 msgid "My Sites"
 msgstr "Moji naslovi"
 
@@ -2048,7 +2079,7 @@ msgstr "Ime:"
 msgid "Need to enter filter name"
 msgstr "Vnesite ime filtra"
 
-#: ../../locales/../src/interface/sitemanager.cpp:416
+#: ../../locales/../src/interface/sitemanager.cpp:453
 msgid "Need to specify a character encoding"
 msgstr "Kodiranje znakov mora biti izbrano"
 
@@ -2061,23 +2092,27 @@ msgid "New filter"
 msgstr "Nov filter"
 
 #: ../../locales/../src/interface/RemoteListView.cpp:730
-#: ../../locales/../src/interface/sitemanager.cpp:353
-#: ../../locales/../src/interface/sitemanager.cpp:376
+#: ../../locales/../src/interface/sitemanager.cpp:350
+#: ../../locales/../src/interface/sitemanager.cpp:373
 msgid "New folder"
 msgstr "Nova mapa"
 
-#: ../../locales/../src/interface/sitemanager.cpp:537
-#: ../../locales/../src/interface/sitemanager.cpp:560
+#: ../../locales/../src/interface/sitemanager.cpp:589
+#: ../../locales/../src/interface/sitemanager.cpp:612
 msgid "New site"
 msgstr "Nov naslov"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2617
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:652
+msgid "No"
+msgstr "Ne"
+
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2599
 msgid "No external IP address set, trying default."
 msgstr "Ker zunanji naslov IP ni nastavljen, poskušamo s privzetim."
 
 #: ../../locales/../src/engine/server.cpp:14
-#: ../../locales/../src/engine/server.cpp:79
-#: ../../locales/../src/engine/server.cpp:125
+#: ../../locales/../src/engine/server.cpp:77
+#: ../../locales/../src/engine/server.cpp:127
 msgid "No host given, please enter a host."
 msgstr "Gostitelj ni podan, prosimo, vnesite gostitelja."
 
@@ -2093,10 +2128,10 @@ msgstr "Ni tem v themes.xml"
 msgid "None of the following"
 msgstr "Noben od naslednjih"
 
-#: resources.h:47 ../../locales/../src/interface/QueueView.cpp:823
-#: ../../locales/../src/interface/sitemanager.cpp:585
-#: ../../locales/../src/interface/sitemanager.cpp:616
-#: ../../locales/../src/interface/sitemanager.cpp:816
+#: resources.h:47 ../../locales/../src/interface/QueueView.cpp:872
+#: ../../locales/../src/interface/sitemanager.cpp:637
+#: ../../locales/../src/interface/sitemanager.cpp:668
+#: ../../locales/../src/interface/sitemanager.cpp:868
 msgid "Normal"
 msgstr "običajna"
 
@@ -2121,7 +2156,7 @@ msgstr "V redu"
 msgid "Ok"
 msgstr "V redu"
 
-#: resources.h:380
+#: resources.h:381
 msgid ""
 "On the following pages, both active and passive mode will be configured, so "
 "you can connect to servers which reject either transfer mode."
@@ -2129,7 +2164,11 @@ msgstr ""
 "Na naslednjih straneh boste nastavili aktivni in pasivni način, tako da se "
 "lahko prijavite na strežnike, ki enega od obeh načinov povezovanja zavračajo."
 
-#: resources.h:422 resources.h:423
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:656
+msgid "Once"
+msgstr "Enkrat"
+
+#: resources.h:423 resources.h:424
 msgid "Open the Site Manager"
 msgstr "Odpri Upravljalca naslovov"
 
@@ -2173,11 +2212,11 @@ msgstr "Ukaz PORT je onečedil usmerjevalnik"
 msgid "Pa&ssive (recommended)"
 msgstr "Pa&sivni (priporočeno)"
 
-#: resources.h:52 resources.h:418
+#: resources.h:52 resources.h:419
 msgid "Pass&word:"
 msgstr "Ge&slo:"
 
-#: resources.h:378
+#: resources.h:379
 msgid "Passive (recommended)"
 msgstr "Pasivni (priporočeno)"
 
@@ -2224,8 +2263,10 @@ msgid ""
 "Please check the package manager of your system for an updated package or "
 "visit http://filezilla-project.org to download the source code of FileZilla."
 msgstr ""
+"Preverite paketnega upravljalca svojega sistema za posodobljen paket ali "
+"obiščite http://filezilla-project.org za prenos izvorne kode FileZille."
 
-#: resources.h:382
+#: resources.h:383
 msgid ""
 "Please configure any firewalls and routers so that FileZilla can establish "
 "outgoing connection to arbitrary ports."
@@ -2291,7 +2332,7 @@ msgstr ""
 "Prosimo, vnesite pretek časa med 5 in 9999 sekundami ali 0 za onemogočen čas "
 "preteka."
 
-#: ../../locales/../src/interface/filter.cpp:588
+#: ../../locales/../src/interface/filter.cpp:594
 msgid "Please enter a unique name for this filter set"
 msgstr "Prosimo, vnesite ime za ta sklop filtrov"
 
@@ -2315,7 +2356,7 @@ msgstr ""
 "Prosimo, vnestite surov ukaz FTP.\n"
 "Z uporabo surovih ukazov se medpomnilnik mape počisti."
 
-#: ../../locales/../src/interface/LocalListView.cpp:731
+#: ../../locales/../src/interface/LocalListView.cpp:736
 #: ../../locales/../src/interface/RemoteListView.cpp:716
 msgid "Please enter the name of the directory which should be created:"
 msgstr "Prosimo, vnesite ime mape, ki naj bo ustvarjena:"
@@ -2335,7 +2376,7 @@ msgstr ""
 "čarovniku. V primeru, da imate dinamičen naslov ali zunanjega naslova ne "
 "poznate, uporabite možnost zunanjega razčlenilnika."
 
-#: resources.h:371
+#: resources.h:372
 msgid ""
 "Please follow the instructions carefully, as wrong configuration will "
 "prevent successful FTP connections."
@@ -2375,7 +2416,7 @@ msgstr ""
 "nastaviti posredovanje vrat. Ne uporabljajte usmerjevalnika v načinu DMZ ali "
 "načinu za igrice."
 
-#: resources.h:383
+#: resources.h:384
 msgid ""
 "Please note that FileZilla has no influence on the port the server chooses. "
 "So the server might choose a port which your firewall thinks is only used by "
@@ -2400,7 +2441,7 @@ msgstr ""
 msgid "Please select an action:"
 msgstr "Prosimo, izberite akcijo:"
 
-#: resources.h:373
+#: resources.h:374
 msgid "Please select the default transfer mode you would like to use."
 msgstr "Prosimo, izberite privzeti način prenosa."
 
@@ -2431,7 +2472,7 @@ msgstr "Prosimo, izberite nove atribute za izbrane datoteke."
 msgid ""
 "Please visit http://filezilla-project.org for the more information about "
 "FileZilla."
-msgstr ""
+msgstr "Obiščite http://filezilla-project.org za več podatkov o FileZilli."
 
 #: ../../locales/../src/interface/updatewizard.cpp:798
 #: ../../locales/../src/interface/updatewizard.cpp:810
@@ -2439,12 +2480,13 @@ msgid ""
 "Please visit http://filezilla-project.org to download the most recent "
 "version."
 msgstr ""
+"Obiščite http://filezilla-project.org za prenos najsodobnejše različice."
 
 #: resources.h:129
 msgid "Preview"
 msgstr "Predogled"
 
-#: ../../locales/../src/interface/QueueView.cpp:680
+#: ../../locales/../src/interface/QueueView.cpp:720
 msgid "Priority"
 msgstr "Prioriteta"
 
@@ -2456,22 +2498,22 @@ msgstr "Obdelaj &vrsto"
 msgid "Public permissions"
 msgstr "Javna dovoljenja"
 
-#: ../../locales/../src/interface/QueueView.cpp:1517
+#: ../../locales/../src/interface/QueueView.cpp:1588
 #, c-format
 msgid "Queue: %s%d KB"
 msgstr "Vrsta: %s%d KB"
 
-#: ../../locales/../src/interface/QueueView.cpp:1512
+#: ../../locales/../src/interface/QueueView.cpp:1583
 #, c-format
 msgid "Queue: %s%d MB"
 msgstr "Vrsta: %s%d MB"
 
-#: ../../locales/../src/interface/QueueView.cpp:1520
+#: ../../locales/../src/interface/QueueView.cpp:1591
 #, c-format
 msgid "Queue: %s%d bytes"
 msgstr "Vrsta: %s%d bajtov"
 
-#: ../../locales/../src/interface/QueueView.cpp:1508
+#: ../../locales/../src/interface/QueueView.cpp:1579
 msgid "Queue: empty"
 msgstr "Vrsta: prazna"
 
@@ -2487,11 +2529,11 @@ msgstr "Preime&nuj"
 msgid "Rea&d"
 msgstr "Pre&beri"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:485
+#: ../../locales/../src/interface/Mainfrm.cpp:499
 msgid "Really cancel current operation?"
 msgstr "Resnično želite prekinitev trenutne operacije?"
 
-#: ../../locales/../src/interface/LocalListView.cpp:832
+#: ../../locales/../src/interface/LocalListView.cpp:837
 #: ../../locales/../src/interface/RemoteListView.cpp:777
 msgid "Really delete all selected files and/or directories?"
 msgstr "Resnično želite izbrisati vse izbrane datotek in/ali mape?"
@@ -2500,13 +2542,13 @@ msgstr "Resnično želite izbrisati vse izbrane datotek in/ali mape?"
 msgid "Rec&urse into subdirectories"
 msgstr "Raz&vejaj v podmape"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:974
-#: ../../locales/../src/interface/netconfwizard.cpp:983
-#: ../../locales/../src/interface/netconfwizard.cpp:1007
+#: ../../locales/../src/interface/netconfwizard.cpp:972
+#: ../../locales/../src/interface/netconfwizard.cpp:981
+#: ../../locales/../src/interface/netconfwizard.cpp:1005
 msgid "Received data tainted"
 msgstr "Preneseni podatki okvarjeni"
 
-#: resources.h:440 resources.h:441
+#: resources.h:441 resources.h:442
 msgid "Reconnects to the last used server"
 msgstr "Ponovna povezava z nazadnje uporabljenim strežnikom"
 
@@ -2514,11 +2556,11 @@ msgstr "Ponovna povezava z nazadnje uporabljenim strežnikom"
 msgid "Redirection to invalid address"
 msgstr "Preusmeritev na neveljaven naslov"
 
-#: resources.h:432 resources.h:433
+#: resources.h:433 resources.h:434
 msgid "Refresh the file and folder lists"
 msgstr "Osveži sezname datotek in map"
 
-#: ../../locales/../src/interface/QueueView.cpp:678
+#: ../../locales/../src/interface/QueueView.cpp:718
 msgid "Remote file"
 msgstr "Oddaljena datoteka"
 
@@ -2526,7 +2568,7 @@ msgstr "Oddaljena datoteka"
 msgid "Remote filters:"
 msgstr "Oddaljeni filtri:"
 
-#: ../../locales/../src/interface/viewheader.cpp:354
+#: ../../locales/../src/interface/viewheader.cpp:408
 msgid "Remote site:"
 msgstr "Oddaljeni naslov:"
 
@@ -2538,7 +2580,7 @@ msgstr "Odstrani &izbrane"
 msgid "Rena&me"
 msgstr "Prei&menuj"
 
-#: ../../locales/../src/interface/asyncrequestqueue.cpp:177
+#: ../../locales/../src/interface/asyncrequestqueue.cpp:196
 msgid "Rename file"
 msgstr "Preimenuj datoteko"
 
@@ -2546,8 +2588,8 @@ msgstr "Preimenuj datoteko"
 msgid "Rename selected files and folders"
 msgstr "Preimenuj izbrane datoteke in mape"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2345
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1880
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2322
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1910
 #, c-format
 msgid "Renaming '%s' to '%s'"
 msgstr "Preimenovanje iz '%s' v '%s'"
@@ -2556,7 +2598,7 @@ msgstr "Preimenovanje iz '%s' v '%s'"
 msgid "Res&ume"
 msgstr "Nadalj&uj"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:135
+#: ../../locales/../src/engine/ControlSocket.cpp:141
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:462
 #, c-format
 msgid "Resolving IP-Address for %s"
@@ -2567,8 +2609,8 @@ msgid "Resolving hostname"
 msgstr "Razločevanje imena gostitelja"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:384
-#: ../../locales/../src/interface/StatusView.cpp:96
-#: ../../locales/../src/interface/StatusView.cpp:134
+#: ../../locales/../src/interface/StatusView.cpp:122
+#: ../../locales/../src/interface/StatusView.cpp:160
 msgid "Response:"
 msgstr "Odgovor:"
 
@@ -2577,13 +2619,15 @@ msgid ""
 "Resuming ascii files can cause problems if server uses a different line "
 "ending format than the client."
 msgstr ""
+"Nadaljevanje prenosa datotek ascii lahko povzroča težave, če strežnik "
+"uporablja drugačno obliko zaključevanja vrstic kot odjemalec."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:699
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:674
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:703
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:714
 msgid "Retrieving directory listing..."
 msgstr "Prenos seznama mape ..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2625
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2607
 #: ../../locales/../src/interface/netconfwizard.cpp:687
 #, c-format
 msgid "Retrieving external IP address from %s"
@@ -2593,9 +2637,11 @@ msgstr "Pridobivanje zunanjega naslova IP od %s"
 msgid "S&kip"
 msgstr "Pres&koči"
 
-#: resources.h:44 ../../locales/../src/interface/sitemanager.cpp:403
-#: ../../locales/../src/interface/sitemanager.cpp:610
-#: ../../locales/../src/interface/sitemanager.cpp:801
+#: resources.h:44 ../../locales/../src/interface/sitemanager.cpp:409
+#: ../../locales/../src/interface/sitemanager.cpp:420
+#: ../../locales/../src/interface/sitemanager.cpp:440
+#: ../../locales/../src/interface/sitemanager.cpp:662
+#: ../../locales/../src/interface/sitemanager.cpp:853
 msgid "SFTP"
 msgstr "SFTP"
 
@@ -2603,11 +2649,11 @@ msgstr "SFTP"
 msgid "Save settings?"
 msgstr "Želite shraniti nastavitve?"
 
-#: ../../locales/../src/interface/QueueView.cpp:1579
+#: ../../locales/../src/interface/QueueView.cpp:1650
 msgid "Scanning for files to add to queue"
 msgstr "Iskanje datotek za dodajanje v vrsto"
 
-#: ../../locales/../src/interface/QueueView.cpp:1581
+#: ../../locales/../src/interface/QueueView.cpp:1652
 msgid "Scanning for files to upload"
 msgstr "Iskanje datotek za prenos na strežnik"
 
@@ -2626,13 +2672,23 @@ msgstr "Izberite temo"
 #: resources.h:296
 msgid ""
 "Select default action to perform if target file of a transfer already exists."
-msgstr ""
+msgstr "Izberite privzeto dejanje, če ciljna datoteka prenosa že obstaja."
 
-#: ../../locales/../src/interface/defaultfileexistsdlg.cpp:15
+#: ../../locales/../src/interface/defaultfileexistsdlg.cpp:18
 msgid ""
 "Select default file exists action if the target file already exists. This "
 "selection is valid only for the current session."
 msgstr ""
+"Izberite privzeto dejanje, če obstaja datoteka, če ciljna datoteka že "
+"obstaja. Ta izbira je veljavna samo za trenutno sejo."
+
+#: ../../locales/../src/interface/defaultfileexistsdlg.cpp:16
+msgid ""
+"Select default file exists action only for the currently selected files in "
+"the queue."
+msgstr ""
+"Izberite privzeto dejanje, če obstaja datoteka, samo za trenutno izbrane "
+"datoteke v vrsti."
 
 #: ../../locales/../src/interface/updatewizard.cpp:208
 msgid "Select download location for package"
@@ -2642,16 +2698,16 @@ msgstr "Izberite mesto prenosa za paket"
 msgid "Send custom command to the server otherwise not available"
 msgstr "Pošiljanje ukaza po meri na strežnik sicer ni na voljo."
 
-#: ../../locales/../src/interface/QueueView.cpp:676
+#: ../../locales/../src/interface/QueueView.cpp:716
 msgid "Server / Local file"
 msgstr "Strežnik / krajevna datoteka"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2951
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2933
 #, c-format
 msgid "Server does not support resume of files > %d GB."
 msgstr "Strežnik ne podpira nadaljevanja prenosov za datoteke, večje kot %dGb."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2947
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2929
 #, c-format
 msgid ""
 "Server does not support resume of files > %d GB. End transfer since "
@@ -2660,15 +2716,15 @@ msgstr ""
 "Strežnik ne podpira nadaljevanja prenosov za datoteke, večje kot %dGb. "
 "Končajte prenos, saj se velikosti datotek ujemata."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1482
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1459
 msgid "Server does not support resume of files > 2GB."
 msgstr "Strežnik ne podpira nadaljevanja prenosov za datoteke, večje kot 2Gb."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1477
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1454
 msgid "Server does not support resume of files > 4GB."
 msgstr "Strežnik ne podpira nadaljevanja prenosov za datoteke, večje kot 4Gb."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2962
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2944
 #, c-format
 msgid ""
 "Server may not support resume of files > %d GB. End transfer since filesizes "
@@ -2677,7 +2733,7 @@ msgstr ""
 "Strežnik morda ne podpira nadaljevanja prenosov za datoteke, večje kot %dGb. "
 "Končajte prenos, saj se velikosti datotek ujemata."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:586
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:590
 msgid ""
 "Server requires an account. Please specify an account using the Site Manager"
 msgstr "Strežnik zahteva račun. Račun navedite v upravljalcu strežnikov."
@@ -2694,7 +2750,7 @@ msgstr "Strežnik zahteva račun. Račun navedite v upravljalcu strežnikov."
 msgid "Server sent invalid reply."
 msgstr "Strežnik je poslal neveljaven odgovor."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2586
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2568
 msgid ""
 "Server sent passive reply with unroutable address. Using server address "
 "instead."
@@ -2706,12 +2762,12 @@ msgstr ""
 msgid "Server&type:"
 msgstr "&Vrsta strežnika:"
 
-#: resources.h:358
+#: resources.h:359
 msgid "Set &Priority"
 msgstr "Nastavi &prioriteto"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2463
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1779
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2445
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1809
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
 msgstr "Nastavi dovoljenja iz '%s' v '%s'"
@@ -2732,7 +2788,7 @@ msgstr "Upravljalec naslovov"
 msgid "Site Manager already open"
 msgstr "Upravljalec naslovov je že odprt"
 
-#: ../../locales/../src/interface/QueueView.cpp:679
+#: ../../locales/../src/interface/QueueView.cpp:719
 msgid "Size"
 msgstr "Velikost"
 
@@ -2747,22 +2803,22 @@ msgstr "Velikost ni znana"
 msgid "Sk&ip"
 msgstr "Preskoč&i"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1749
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1834
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1726
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1811
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:201
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:241
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:512
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:585
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:547
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:620
 #, c-format
 msgid "Skipping download of %s"
 msgstr "Preskok dol potega %s"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1753
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1838
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1730
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1815
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:205
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:245
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:516
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:589
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:551
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:624
 #, c-format
 msgid "Skipping upload of %s"
 msgstr "Preskok gor potega %s"
@@ -2771,7 +2827,7 @@ msgstr "Preskok gor potega %s"
 msgid "Small icons"
 msgstr "Majhne ikone"
 
-#: resources.h:120 resources.h:385
+#: resources.h:120 resources.h:386
 msgid ""
 "Some misconfigured remote servers which are behind a router, may reply with "
 "their local ip address."
@@ -2779,24 +2835,24 @@ msgstr ""
 "Nekateri napačno nastavljeni oddaljeni strežniki za usmerjevalniki lahko "
 "odgovarjajo s svojim krajevnim naslovom IP."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1149
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1122
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1160
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1197
 #, c-format
 msgid "Starting download of %s"
 msgstr "Pričetek prenasanja %s na naslov"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1153
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1126
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1164
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1201
 #, c-format
 msgid "Starting upload of %s"
 msgstr "Pričetek prenašanja %s sem"
 
-#: ../../locales/../src/interface/QueueView.cpp:681
+#: ../../locales/../src/interface/QueueView.cpp:721
 msgid "Status"
 msgstr "Stanje"
 
-#: ../../locales/../src/interface/StatusView.cpp:105
-#: ../../locales/../src/interface/StatusView.cpp:149
+#: ../../locales/../src/interface/StatusView.cpp:131
+#: ../../locales/../src/interface/StatusView.cpp:175
 msgid "Status:"
 msgstr "Stanje:"
 
@@ -2812,7 +2868,7 @@ msgstr ""
 "Pošljite poročilo o napaki, če se ta težava ponavlja kljub najnovejši "
 "različici FileZille."
 
-#: resources.h:413
+#: resources.h:414
 msgid "Summary of test results:"
 msgstr "Povzetek rezultatov preizkusa:"
 
@@ -2824,15 +2880,15 @@ msgstr "Skladenjska napaka"
 msgid "Target file already exists"
 msgstr "Ciljna datoteka že obstaja"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1171
+#: ../../locales/../src/interface/RemoteListView.cpp:1175
 msgid "Target filename already exists, really continue?"
 msgstr "Ciljna datoteka že obstaja, resnično želite nadaljevati?"
 
-#: resources.h:412
+#: resources.h:413
 msgid "Test results"
 msgstr "Rezultati preizkusa"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2968
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2950
 msgid "Testing resume capabilities of server"
 msgstr "Preskušanje sposobnosti funkcije resume na strežniku"
 
@@ -2861,8 +2917,8 @@ msgstr "Vneseno ime filtra že obstaja."
 msgid "The extension '%s' does already exist in the list"
 msgstr "Razširitev '%s' že obstaja v seznamu"
 
-#: ../../locales/../src/interface/asyncrequestqueue.cpp:167
-#: ../../locales/../src/interface/asyncrequestqueue.cpp:174
+#: ../../locales/../src/interface/asyncrequestqueue.cpp:186
+#: ../../locales/../src/interface/asyncrequestqueue.cpp:193
 #, c-format
 msgid ""
 "The file %s already exists.\n"
@@ -2877,6 +2933,8 @@ msgid ""
 "message log. Displaying debug information has a negative impact on "
 "performance."
 msgstr ""
+"Višja kot je raven razhroščevanja, več informacij bo izpisanih v dnevniku. "
+"Prikaz informacij razhroščevanja lahko vpliva na hitrost delovanja programa."
 
 #: ../../locales/../src/interface/optionspage_connection_active.cpp:89
 msgid ""
@@ -2952,11 +3010,11 @@ msgstr "Napaka teme"
 msgid "Themes"
 msgstr "Teme"
 
-#: ../../locales/../src/interface/filter.cpp:625
+#: ../../locales/../src/interface/filter.cpp:631
 msgid "This filter set cannot be removed"
 msgstr "Tega sklopa filtrov ni mogoče odstraniti"
 
-#: resources.h:390
+#: resources.h:391
 msgid ""
 "This only works if you are not behind a router, else your system would just "
 "return your internal address."
@@ -2964,7 +3022,7 @@ msgstr ""
 "To deluje le v primeru, da se ne nahajate za usmerjevalnikom, sicer sistem "
 "vrne le vaš notranji naslov."
 
-#: resources.h:370
+#: resources.h:371
 msgid ""
 "This wizard will help you to properly configure any routers and firewalls "
 "you have and tests your configuration."
@@ -2984,23 +3042,23 @@ msgstr "Pretek &časa v sekundah:"
 msgid "Timeout"
 msgstr "Pretek časa"
 
-#: resources.h:434 resources.h:435
+#: resources.h:435 resources.h:436
 msgid "Toggles processing of the transfer queue"
 msgstr "Preklopi obdelovanje prenosne vrste"
 
-#: resources.h:426 resources.h:427
+#: resources.h:427 resources.h:428
 msgid "Toggles the display of the local directory tree"
 msgstr "Preklopi prikaz drevesa krajevnih map"
 
-#: resources.h:424 resources.h:425
+#: resources.h:425 resources.h:426
 msgid "Toggles the display of the message log"
 msgstr "Preklopi prikaz sporočil dnevnika"
 
-#: resources.h:428 resources.h:429
+#: resources.h:429 resources.h:430
 msgid "Toggles the display of the remote directory tree"
 msgstr "Preklopi prikaz drevesa oddaljene mape"
 
-#: resources.h:430 resources.h:431
+#: resources.h:431 resources.h:432
 msgid "Toggles the display of the transfer queue"
 msgstr "Preklopi prikaz vrste prenosov"
 
@@ -3012,8 +3070,8 @@ msgstr "Predolga vrstica glave"
 msgid "Too many redirects"
 msgstr "Preveč preusmeritev"
 
-#: ../../locales/../src/interface/StatusView.cpp:99
-#: ../../locales/../src/interface/StatusView.cpp:141
+#: ../../locales/../src/interface/StatusView.cpp:125
+#: ../../locales/../src/interface/StatusView.cpp:167
 msgid "Trace:"
 msgstr "Sledi:"
 
@@ -3029,8 +3087,8 @@ msgstr "Nastavitve prenosov"
 msgid "Transferred data got tainted."
 msgstr "Preneseni podatki so bili okvarjeni."
 
-#: ../../locales/../src/interface/QueueView.cpp:1317
-#: ../../locales/../src/interface/statuslinectrl.cpp:161
+#: ../../locales/../src/interface/QueueView.cpp:1386
+#: ../../locales/../src/interface/statuslinectrl.cpp:156
 msgid "Transferring"
 msgstr "Prenašanje v teku"
 
@@ -3046,6 +3104,14 @@ msgstr "Obravnavaj datoteke &brez končnice kot datoteke Ascii"
 msgid "Treat the &following filetypes as Ascii files:"
 msgstr "Obravnavaj &sledeče vrste datotek kot datoteke Ascii:"
 
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:650
+msgid "Trust changed Hostkey: "
+msgstr "Zaupaj spremenjenemu ključu gostitelja: "
+
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:648
+msgid "Trust new Hostkey: "
+msgstr "Zaupaj novemu ključu gostitelja: "
+
 #: resources.h:207
 msgid "Trust the new key and carry on connecting?"
 msgstr "Zaupate novemu ključu in želite nadaljevati s povezavo?"
@@ -3054,8 +3120,8 @@ msgstr "Zaupate novemu ključu in želite nadaljevati s povezavo?"
 msgid "Trust this host and carry on connecting?"
 msgstr "Zaupate gostitelju in želite nadaljevati s povezavo?"
 
-#: resources.h:58 ../../locales/../src/interface/sitemanager.cpp:634
-#: ../../locales/../src/interface/sitemanager.cpp:840
+#: resources.h:58 ../../locales/../src/interface/sitemanager.cpp:686
+#: ../../locales/../src/interface/sitemanager.cpp:892
 msgid "Unix"
 msgstr "Unix"
 
@@ -3093,7 +3159,7 @@ msgstr "Preverjanje posodobitev"
 msgid "Update wizard"
 msgstr "Čarovnik za posodobitev"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1047
+#: ../../locales/../src/interface/Mainfrm.cpp:1061
 msgid "Updatecheck failed"
 msgstr "Preverjanje posodobitev ni uspelo"
 
@@ -3117,25 +3183,25 @@ msgstr "Uporabi pri&vzeto"
 msgid "Use d&efault"
 msgstr "Uporabi priv&zeto"
 
-#: resources.h:252 resources.h:391
+#: resources.h:252 resources.h:392
 msgid "Use the following IP address:"
 msgstr "Uporabi naslednji naslov IP:"
 
-#: resources.h:401
+#: resources.h:402
 msgid "Use the following port range:"
 msgstr "Uporabi naslednji obseg vrat:"
 
-#: resources.h:386
+#: resources.h:387
 msgid "Use the server's external IP address instead"
 msgstr "Uporabi zunanji naslov IP strežnika"
 
-#: resources.h:253 resources.h:392
+#: resources.h:253 resources.h:393
 msgid ""
 "Use this if you're behind a router and have a static external IP address."
 msgstr ""
 "Uporabite, če ste za usmerjevalnikom in imate statičen zunanji naslov IP."
 
-#: resources.h:395
+#: resources.h:396
 msgid ""
 "Use this option if you have a dynamic IP address. FileZilla will contact the "
 "above server once each session as soon as you use active mode for the first "
@@ -3165,8 +3231,8 @@ msgid "Using this wizard you can check for available updates to FileZilla."
 msgstr ""
 "S tem čarovnikom lahko preverite, če so na voljo posodobitve za FileZillo."
 
-#: resources.h:59 ../../locales/../src/interface/sitemanager.cpp:638
-#: ../../locales/../src/interface/sitemanager.cpp:849
+#: resources.h:59 ../../locales/../src/interface/sitemanager.cpp:690
+#: ../../locales/../src/interface/sitemanager.cpp:901
 msgid "VMS"
 msgstr "VMS"
 
@@ -3174,15 +3240,15 @@ msgstr "VMS"
 msgid "W&rite"
 msgstr "&Zapiši"
 
-#: ../../locales/../src/interface/QueueView.cpp:1539
+#: ../../locales/../src/interface/QueueView.cpp:1610
 msgid "Waiting"
 msgstr "Čakanje"
 
-#: ../../locales/../src/interface/statuslinectrl.cpp:155
+#: ../../locales/../src/interface/statuslinectrl.cpp:150
 msgid "Waiting for transfer to be canceled"
 msgstr "Čakanje na prekinitev prenosa"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:942
+#: ../../locales/../src/interface/netconfwizard.cpp:940
 msgid "Warning, ignoring data connection from wrong IP."
 msgstr "Opozorilo, podatkovna povezava z napačnega IP bo prezrta."
 
@@ -3217,6 +3283,10 @@ msgstr "Napačen zunanji naslov IP"
 msgid "Wrong lineendings"
 msgstr "Napačne kode preloma vrstic"
 
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:654
+msgid "Yes"
+msgstr "Da"
+
 #: resources.h:272
 msgid ""
 "You are already using the most recent version of FileZilla. Please check "
@@ -3233,15 +3303,24 @@ msgstr ""
 "Uporabite lahko x na vsakem mestu, kjer želite ohraniti dovoljenje, kot ga "
 "ima izvorna datoteka."
 
-#: ../../locales/../src/interface/asyncrequestqueue.cpp:189
+#: ../../locales/../src/interface/asyncrequestqueue.cpp:208
 msgid "You did not enter a new name for the file. Overwrite the file instead?"
 msgstr ""
 "Niste vnesli novega imena datoteke. Želite prepisati obstoječo datoteko?"
+
+#: ../../locales/../src/interface/sitemanager.cpp:404
+msgid "You have to enter a hostname."
+msgstr "Vnesti morate ime gostitelja."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:141
 #: ../../locales/../src/interface/optionspage_connection_active.cpp:106
 msgid "You have to enter a valid IP address."
 msgstr "Vnesti morate veljaven naslov IP."
+
+#: ../../locales/../src/interface/sitemanager.cpp:463
+#, fuzzy
+msgid "You have to specify a user name"
+msgstr "Vnesti morate ime gostitelja."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:607
 msgid ""
@@ -3282,14 +3361,14 @@ msgstr "se konča z"
 msgid "equals"
 msgstr "je enak"
 
-#: ../../locales/../src/interface/LocalListView.cpp:391
-#: ../../locales/../src/interface/LocalListView.cpp:409
+#: ../../locales/../src/interface/LocalListView.cpp:396
+#: ../../locales/../src/interface/LocalListView.cpp:414
 #: ../../locales/../src/interface/RemoteListView.cpp:488
 #: ../../locales/../src/interface/RemoteListView.cpp:506
 msgid "file"
 msgstr "datoteka"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1065
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1140
 msgid "fzsftp could not be started"
 msgstr "fzsftp ni mogoče zagnati"
 
