@@ -312,12 +312,30 @@ void CLocalViewHeader::OnTextChanged(wxCommandEvent& event)
 		return;
 	}
 
+	if (str.Left(2) == _T("\\\\"))
+	{
+		int pos = str.Mid(2).Find('\\');
+		if (pos == -1)
+		{
+			// Partial UNC path, no full server yet, skip further processing
+			return;
+		}
+
+		pos = str.Mid(pos + 3).Find('\\');
+		if (pos == -1)
+		{
+			// Partial UNC path, no full share yet, skip further processing
+			return;
+		}
+	}
+
 	wxFileName fn(str);
 	if (!fn.IsOk())
 	{
 		m_oldValue = str;
 		return;
 	}
+
 	wxDir dir(fn.GetPath());
 	wxString name = fn.GetFullName();
 	if (!dir.IsOpened() || name == _T(""))
@@ -326,10 +344,14 @@ void CLocalViewHeader::OnTextChanged(wxCommandEvent& event)
 		return;
 	}
 	wxString found;
-	if (!dir.GetFirst(&found, name + _T("*"), wxDIR_DIRS))
+	
 	{
-		m_oldValue = str;
-		return;
+		wxLogNull noLog;
+		if (!dir.GetFirst(&found, name + _T("*"), wxDIR_DIRS))
+		{
+			m_oldValue = str;
+			return;
+		}
 	}
 
 	wxString tmp;
