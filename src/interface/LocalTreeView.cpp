@@ -72,6 +72,16 @@ void CLocalTreeView::SetDir(wxString localDir)
 		Refresh();
 		return;
 	}
+
+	if (localDir.Left(2) == _T("\\\\"))
+	{
+		// TODO: UNC path, don't display it yet
+		m_currentDir = _T("");
+		m_setSelection = true;
+		SelectItem(wxTreeItemId());
+		m_setSelection = false;
+		return;
+	}
 	m_currentDir = localDir;
 
 #ifdef __WXMSW__
