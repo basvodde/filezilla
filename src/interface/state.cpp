@@ -36,53 +36,62 @@ wxString CState::GetLocalDir() const
 
 bool CState::SetLocalDir(wxString dir)
 {
-	dir.Replace(_T("\\"), _T("/"));
-	if (dir != _T(".."))
-	{
 #ifdef __WXMSW__
-		if (dir == _T("") || dir == _T("/") || dir.c_str()[1] == ':' || m_localDir == _T("\\"))
-			m_localDir = dir;
-		else
-#else
-		if (dir.IsEmpty() || dir.c_str()[0] == '/')
-			m_localDir = dir;
-		else
-#endif
-			m_localDir += dir;
-
-		if (m_localDir.Right(1) != _T("/"))
-			m_localDir += _T("/");
+	if (dir == _T("\\") || dir == _T("/") || dir == _T(""))
+	{
+		m_localDir = _T("\\");
+		NotifyHandlers(STATECHANGE_LOCAL_DIR);
+		return true;
 	}
-	else
-	{
-#ifdef __WXMSW__
-		m_localDir.Replace(_T("\\"), _T("/"));
-#endif
 
-		if (m_localDir == _T("/"))
-			m_localDir.Clear();
-		else if (!m_localDir.IsEmpty())
+	// "Go up one level" is a little bit difficult under Windows due to 
+	// things like "My Computer" and "Desktop"
+	if (dir == _T(".."))
+	{
+		dir = m_localDir;
+		if (dir != _T("\\"))
 		{
-			m_localDir.Truncate(m_localDir.Length() - 1);
-			int pos = m_localDir.Find('/', true);
+			dir.Truncate(dir.Length() - 1);
+			int pos = dir.Find('\\', true);
 			if (pos == -1)
-				m_localDir = _T("/");
+				dir = _T("\\");
 			else
-				m_localDir = m_localDir.Left(pos + 1);
+				dir = dir.Left(pos + 1);
 		}
 	}
-
-#ifdef __WXMSW__
-
-	//Todo: Desktop and homedir
-	if (m_localDir == _T(""))
-		m_localDir = _T("\\");
-
-	m_localDir.Replace(_T("/"), _T("\\"));
-#else
-	if (m_localDir == _T(""))
-		m_localDir = _T("/");
+	else
 #endif
+	{
+		wxFileName newDir(dir, _T(""));
+		{
+			wxLogNull noLog;
+			if (!newDir.MakeAbsolute(m_localDir))
+				return false;
+		}
+		dir = newDir.GetFullPath();
+		if (dir.Right(1) != wxFileName::GetPathSeparator())
+			dir += wxFileName::GetPathSeparator();
+	}
+
+	// Check for partial UNC paths
+	if (dir.Left(2) == _T("\\\\"))
+	{
+		int pos = dir.Mid(2).Find('\\');
+		if (pos == -1)
+		{
+			// Partial UNC path, no full server yet, skip further processing
+			return false;
+		}
+
+		pos = dir.Mid(pos + 3).Find('\\');
+		if (pos == -1)
+		{
+			// Partial UNC path, no full share yet, skip further processing
+			return false;
+		}
+	}
+	
+	m_localDir = dir;
 
 	NotifyHandlers(STATECHANGE_LOCAL_DIR);
 
