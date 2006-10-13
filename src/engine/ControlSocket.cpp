@@ -595,14 +595,8 @@ int CControlSocket::CheckOverwriteFile()
 		{
 			if (entry.hasDate)
 			{
-				if (VerifySetDate(pNotification->remoteTime, entry.date.year, (enum wxDateTime::Month)(entry.date.month - 1), entry.date.day) && 
-					entry.hasTime)
-				{
-					pNotification->remoteTime.SetHour(entry.time.hour);
-					pNotification->remoteTime.SetMinute(entry.time.minute);
-				}
-				if (pNotification->remoteTime.IsValid())
-					pData->fileTime = pNotification->remoteTime;
+				pNotification->remoteTime = entry.time;
+				pData->fileTime = entry.time;
 			}
 		}
 	}

@@ -180,14 +180,14 @@ wxString CRemoteListView::OnGetItemText(long item, long column) const
 		if (!data->pDirEntry->hasDate)
 			return _T("");
 
-		return wxString::Format(_T("%04d-%02d-%02d"), data->pDirEntry->date.year, data->pDirEntry->date.month, data->pDirEntry->date.day);
+		return data->pDirEntry->time.FormatISODate();
 	}
 	else if (column == 4)
 	{
 		if (!data->pDirEntry->hasTime)
 			return _T("");
 
-		return wxString::Format(_T("%02d:%02d"), data->pDirEntry->time.hour, data->pDirEntry->time.minute);
+		return data->pDirEntry->time.FormatISOTime();
 	}
 	else if (column == 5)
 		return data->pDirEntry->permissions;
@@ -392,6 +392,8 @@ void CRemoteListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpSize);
 	else if (m_sortColumn == 2)
 		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpType);
+	else if (m_sortColumn == 5)
+		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpPermissions);
 	Refresh(false);
 }
 
@@ -570,6 +572,25 @@ int CRemoteListView::CmpSize(CRemoteListView *pList, unsigned int index, t_fileD
 		return -1;
 
 	return data.pDirEntry->name.CmpNoCase(refData.pDirEntry->name);
+}
+
+int CRemoteListView::CmpPermissions(CRemoteListView *pList, unsigned int index, t_fileData &refData)
+{
+	const t_fileData &data = pList->m_fileData[pList->m_indexMapping[index]];
+
+	if (data.pDirEntry->dir)
+	{
+		if (!refData.pDirEntry->dir)
+			return -1;
+	}
+	else if (refData.pDirEntry->dir)
+		return 1;
+
+	int res = data.pDirEntry->permissions.CmpNoCase(refData.pDirEntry->permissions);
+	if (!res)
+		return data.pDirEntry->name.CmpNoCase(refData.pDirEntry->name);
+
+	return res;
 }
 
 void CRemoteListView::OnItemActivated(wxListEvent &event)

@@ -65,6 +65,7 @@ protected:
 	static int CmpName(CRemoteListView *pList, unsigned int index, t_fileData &refData);
 	static int CmpType(CRemoteListView *pList, unsigned int index, t_fileData &refData);
 	static int CmpSize(CRemoteListView *pList, unsigned int index, t_fileData &refData);
+	static int CmpPermissions(CRemoteListView *pList, unsigned int index, t_fileData &refData);
 
 	// Processes the directory listing in case of a recursive operation
 	void ProcessDirectoryListing();

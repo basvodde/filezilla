@@ -47,9 +47,9 @@ wxString CDirentry::dump() const
 				target.c_str(), hasDate, hasTime, unsure);
 
 	if (hasDate)
-		str += wxString::Format(_T("date={%d, %d, %d}\n"), date.year, date.month, date.day);
+		str += _T("date=") + time.FormatISODate() + _T("\n");
 	if (hasTime)
-		str += wxString::Format(_T("time={%d, %d}\n"), time.hour, time.minute);
+		str += _T("time=") + time.FormatISOTime() + _T("\n");
 	str += wxString::Format(_T("unsure=%d\n"), unsure);
 	return str;
 }
@@ -83,21 +83,9 @@ bool CDirentry::operator==(const CDirentry &op) const
 	if (hasTime != op.hasTime)
 		return false;
 
-	if (hasDate)
-	{
-		if (date.day != op.date.day ||
-			date.month != op.date.month ||
-			date.year != op.date.year)
-			return false;
-	}
-
-	if (hasTime)
-	{
-		if (time.hour != op.time.hour ||
-			time.minute != op.time.minute)
-			return false;
-	}
-
+	if (time != op.time)
+		return false;
+	
 	if (unsure != op.unsure)
 		return false;
 

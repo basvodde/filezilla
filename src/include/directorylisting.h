@@ -14,19 +14,7 @@ public:
 
 	bool hasDate;
 	bool hasTime;
-
-	struct t_date
-	{
-		int year;
-		int month;
-		int day;
-	} date;
-
-	struct t_time
-	{
-		int hour;
-		int minute;
-	} time;
+	wxDateTime time;
 
 	bool unsure; // May be true on cached items if any changes were made to the file
 

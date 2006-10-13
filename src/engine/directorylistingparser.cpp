@@ -799,17 +799,8 @@ done:
 	if (offset && entry.hasTime)
 	{
 		// Apply timezone offset
-		wxDateTime time;
-		if (VerifySetDate(time, entry.date.year, (wxDateTime::Month)(wxDateTime::Jan + entry.date.month - 1), entry.date.day, entry.time.hour, entry.time.minute))
-		{
-			wxTimeSpan span(0, offset, 0, 0);
-			time.Add(span);
-			entry.date.year = time.GetYear();
-			entry.date.month = time.GetMonth() - wxDateTime::Jan + 1;
-			entry.date.day = time.GetDay();
-			entry.time.hour = time.GetHour();
-			entry.time.minute = time.GetMinute();
-		}
+		wxTimeSpan span(0, offset, 0, 0);
+		entry.time.Add(span);
 	}
 		
 	entry.unsure = false;
@@ -949,11 +940,11 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 	if (!pLine->GetToken(++index, token))
 		return false;
 
-	entry.date.year = 0;
-	entry.date.month = 0;
-	entry.date.day = 0;
-	entry.time.hour = 0;
-	entry.time.minute = 0;
+	int year = 0;
+	int month = 0;
+	int day = 0;
+	long hour = 0;
+	long minute = 0;
 
 	// Some servers use the following date formats:
 	// 26-05 2002, 2002-10-14, 01-jun-99 or 2004.07.15
@@ -967,10 +958,9 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 			if (token[pos] != '.')
 			{
 				// something like 26-05 2002
-				int day = token.GetNumber(pos + 1, token.GetLength() - pos - 1).GetLo();
+				day = token.GetNumber(pos + 1, token.GetLength() - pos - 1).GetLo();
 				if (day < 1 || day > 31)
 					return false;
-				entry.date.day = day;
 				dateMonth = CToken(token.GetToken(), pos);
 			}
 			else
@@ -988,6 +978,10 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 				entry.hasTime = false;
 				return true;
 			}
+
+			year = entry.time.GetYear();
+			month = entry.time.GetMonth() - wxDateTime::Jan + 1;
+			day = entry.time.GetDay();
 		}
 	}
 	else if (token.IsNumeric())
@@ -998,7 +992,7 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 			// 1) 2005 3 13
 			// 2) 2005 13 3
 			// assume first one.
-			entry.date.year = token.GetNumber().GetLo();
+			year = token.GetNumber().GetLo();
 			if (!pLine->GetToken(++index, dateMonth))
 				return false;
 			mayHaveTime = false;
@@ -1009,7 +1003,7 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 	else
 		dateMonth = token;
 
-	if (!entry.date.day)
+	if (!day)
 	{
 		// Get day field
 		if (!pLine->GetToken(++index, token))
@@ -1037,32 +1031,32 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 
 		if (dateDay < 1 || dateDay > 31)
 			return false;
-		entry.date.day = dateDay;
+		day = dateDay;
 	}
 
-	if (!entry.date.month)
+	if (!month)
 	{
-		wxString month = dateMonth.GetString();
-		if (dateMonth.IsLeftNumeric() && (unsigned int)month[month.Length() - 1] > 127)
+		wxString strMonth = dateMonth.GetString();
+		if (dateMonth.IsLeftNumeric() && (unsigned int)strMonth[strMonth.Length() - 1] > 127)
 		{
 			// Most likely an Asian server sending some unknown language specific 
 			// suffix at the end of the monthname. Filter it out.
 			int i;
-			for (i = month.Length() - 1; i > 0; i--)
+			for (i = strMonth.Length() - 1; i > 0; i--)
 			{
-				if (month[i] >= '0' && month[i] <= '9')
+				if (strMonth[i] >= '0' && strMonth[i] <= '9')
 					break;
 			}
-			month = month.Left(i + 1);
+			strMonth = strMonth.Left(i + 1);
 		}
 		// Check month name
-		if (month.Right(1) == _T(",") || month.Right(1) == _T("."))
-			month.RemoveLast();
-		month.MakeLower();
-		std::map<wxString, int>::iterator iter = m_MonthNamesMap.find(month);
+		if (strMonth.Right(1) == _T(",") || strMonth.Right(1) == _T("."))
+			strMonth.RemoveLast();
+		strMonth.MakeLower();
+		std::map<wxString, int>::iterator iter = m_MonthNamesMap.find(strMonth);
 		if (iter == m_MonthNamesMap.end())
 			return false;
-		entry.date.month = iter->second;
+		month = iter->second;
 	}
 
 	// Get time/year field
@@ -1077,7 +1071,6 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 			return false;
 
 		wxString str = token.GetString();
-		long hour, minute;
 		if (!str.Left(pos).ToLong(&hour))
 			return false;
 		if (!str.Mid(pos + 1).ToLong(&minute))
@@ -1089,34 +1082,29 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 			return false;
 
 		entry.hasTime = true;
-		entry.time.hour = hour;
-		entry.time.minute = minute;
 
 		// Some servers use times only for files newer than 6 months
-		if (!entry.date.year)
+		if (!year)
 		{
-			int year = wxDateTime::Now().GetYear();
-			int now = wxDateTime::Now().GetDay() + 31 * wxDateTime::Now().GetMonth();
-			int file = (entry.date.month - 1) * 31 + (entry.date.day - 1);
-			if (now > file)
-				entry.date.year = year;
-			else
-				entry.date.year = year - 1;
+			year = wxDateTime::Now().GetYear();
+			int currentDayOfYear = wxDateTime::Now().GetDay() + 31 * (wxDateTime::Now().GetMonth() - wxDateTime::Jan);
+			int fileDayOfYear = (month - 1) * 31 + (day - 1);
+			if (currentDayOfYear <= fileDayOfYear)
+				year -= 1;
 		}
 	}
-	else if (!entry.date.year)
+	else if (!year)
 	{
 		// token is a year
 		if (!token.IsNumeric() && !token.IsLeftNumeric())
 			return false;
 
-		wxLongLong year = token.GetNumber();
+		year = token.GetNumber().GetLo();
+
 		if (year > 3000)
 			return false;
 		if (year < 1000)
 			year += 1900;
-
-		entry.date.year = year.GetLo();
 
 		if (bHasYearAndTime)
 		{
@@ -1131,7 +1119,7 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 					return false;
 
 				wxString str = token.GetString();
-				long hour, minute;
+
 				if (!str.Left(pos).ToLong(&hour))
 					return false;
 				if (!str.Mid(pos + 1).ToLong(&minute))
@@ -1143,8 +1131,6 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 					return false;
 
 				entry.hasTime = true;
-				entry.time.hour = hour;
-				entry.time.minute = minute;
 			}
 			else
 			{
@@ -1158,6 +1144,9 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 	else
 		index--;
 
+	entry.time = wxDateTime();
+	if (!VerifySetDate(entry.time, year, (wxDateTime::Month)(wxDateTime::Jan + month - 1), day, hour, minute))
+		return false;
 	entry.hasDate = true;
 
 	return true;
@@ -1172,6 +1161,10 @@ bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry)
 	bool gotMonth = false;
 	bool gotDay = false;
 	bool gotMonthName = false;
+
+	int year = 0;
+	int month = 0;
+	int day = 0;
 
 	int value = 0;
 
@@ -1189,17 +1182,16 @@ bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry)
 		std::map<wxString, int>::iterator iter = m_MonthNamesMap.find(dateMonth);
 		if (iter == m_MonthNamesMap.end())
 			return false;
-		entry.date.month = iter->second;
+		month = iter->second;
 		gotMonth = true;
 		gotMonthName = true;
 	}
 	else if (pos == 4)
 	{
 		// Seems to be yyyy-mm-dd
-		wxLongLong year = token.GetNumber(0, pos);
+		year = token.GetNumber(0, pos).GetLo();
 		if (year < 1900 || year > 3000)
 			return false;
-		entry.date.year = year.GetLo();
 		gotYear = true;
 	}
 	else if (pos <= 2)
@@ -1210,7 +1202,7 @@ bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry)
 			// Maybe dd.mm.yyyy
 			if (value < 1900 || value > 3000)
 				return false;
-			entry.date.day = value.GetLo();
+			day = value.GetLo();
 			gotDay = true;
 		}
 		else
@@ -1224,12 +1216,12 @@ bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry)
 				if (value > 31)
 					return false;
 
-				entry.date.day = value.GetLo();
+				day = value.GetLo();
 				gotDay = true;
 			}
 			else
 			{
-				entry.date.month = value.GetLo();
+				month = value.GetLo();
 				gotMonth = true;
 			}
 		}			
@@ -1255,7 +1247,7 @@ bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry)
 
 		gotDay = true;
 		gotMonth = false;
-		entry.date.day = entry.date.month;
+		day = month;
 	}
 
 	if (gotYear || gotDay)
@@ -1267,7 +1259,7 @@ bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry)
 		std::map<wxString, int>::iterator iter = m_MonthNamesMap.find(dateMonth);
 		if (iter == m_MonthNamesMap.end())
 			return false;
-		entry.date.month = iter->second;
+		month = iter->second;
 		gotMonth = true;
 	}
 	else
@@ -1276,7 +1268,7 @@ bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry)
 		// Day field in mm-dd-yyyy
 		if (value < 1 || value > 31)
 			return false;
-		entry.date.day = value.GetLo();
+		day = value.GetLo();
 		gotDay = true;
 	}
 
@@ -1286,7 +1278,7 @@ bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry)
 		// Day field in yyy-mm-dd
 		if (!value || value > 31)
 			return false;
-		entry.date.day = value;
+		day = value;
 		gotDay = true;
 	}
 	else
@@ -1298,7 +1290,7 @@ bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry)
 			value += 2000;
 		else if (value < 1000)
 			value += 1900;
-		entry.date.year = value;
+		year = value;
 
 		gotYear = true;
 	}
@@ -1307,6 +1299,11 @@ bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry)
 
 	if (!gotMonth || !gotDay || !gotYear)
 		return false;
+
+	entry.time = wxDateTime();
+	if (!VerifySetDate(entry.time, year, (wxDateTime::Month)(wxDateTime::Jan + month - 1), day))
+		return false;
+	entry.hasDate = true;
 		
 	return true;
 }
@@ -1377,6 +1374,9 @@ bool CDirectoryListingParser::ParseAsDos(CLine *pLine, CDirentry &entry)
 
 bool CDirectoryListingParser::ParseTime(CToken &token, CDirentry &entry)
 {
+	if (!entry.hasDate)
+		return false;
+
 	int pos = token.Find(':');
 	if (pos < 1 || static_cast<unsigned int>(pos) >= (token.GetLength() - 1))
 		return false;
@@ -1402,8 +1402,8 @@ bool CDirectoryListingParser::ParseTime(CToken &token, CDirentry &entry)
 				hour = 0;
 	}
 
-	entry.time.hour = hour.GetLo();
-	entry.time.minute = minute.GetLo();
+	wxTimeSpan span(hour.GetLo(), minute.GetLo());
+	entry.time.Add(span);
 	entry.hasTime = true;
 
 	return true;
@@ -1459,12 +1459,7 @@ bool CDirectoryListingParser::ParseAsEplf(CLine *pLine, CDirentry &entry)
 			wxLongLong number = token.GetNumber(fact + 1, len - 1);
 			if (number < 0)
 				return false;
-			wxDateTime dateTime((time_t)number.GetValue());
-			entry.date.year = dateTime.GetYear();
-			entry.date.month = dateTime.GetMonth();
-			entry.date.day = dateTime.GetDay();
-			entry.time.hour = dateTime.GetHour();
-			entry.time.minute = dateTime.GetMinute();
+			entry.time = wxDateTime((time_t)number.GetValue());
 
 			entry.hasTime = true;
 			entry.hasDate = true;
@@ -1686,13 +1681,8 @@ bool CDirectoryListingParser::ParseOther(CLine *pLine, CDirentry &entry)
 		wxLongLong number = token.GetNumber();
 		if (number < 0)
 			return false;
-		wxDateTime dateTime((time_t)number.GetValue());
-		entry.date.year = dateTime.GetYear();
-		entry.date.month = dateTime.GetMonth();
-		entry.date.day = dateTime.GetDay();
-		entry.time.hour = dateTime.GetHour();
-		entry.time.minute = dateTime.GetMinute();
-
+		entry.time = wxDateTime((time_t)number.GetValue());
+		
 		entry.hasTime = true;
 		entry.hasDate = true;
 
@@ -1757,7 +1747,7 @@ bool CDirectoryListingParser::ParseOther(CLine *pLine, CDirentry &entry)
 		}
 		else
 		{
-			entry.date.month = iter->second;
+			int month = iter->second;
 
 			// Get day
 			if (!pLine->GetToken(++index, token))
@@ -1769,7 +1759,6 @@ bool CDirectoryListingParser::ParseOther(CLine *pLine, CDirentry &entry)
 			wxLongLong day = token.GetNumber();
 			if (day < 0 || day > 31)
 				return false;
-			entry.date.day = day.GetLo();
 
 			// Get Year
 			if (!pLine->GetToken(++index, token))
@@ -1783,7 +1772,10 @@ bool CDirectoryListingParser::ParseOther(CLine *pLine, CDirentry &entry)
 				year += 2000;
 			else if (year < 1000)
 				year += 1900;
-			entry.date.year = year.GetLo();
+			
+			entry.time = wxDateTime();
+			if (!VerifySetDate(entry.time, year.GetLo(), (wxDateTime::Month)month, day.GetLo()))
+				return false;
 
 			entry.hasDate = true;
 
@@ -2423,23 +2415,14 @@ bool CDirectoryListingParser::ParseAsMlsd(CLine *pLine, CDirentry &entry)
 			{
 				if (!dateTime.ParseFormat(time, _T("%H%M"), dateTime))
 					return false;
-			}
-			
-			dateTime = dateTime.FromTimezone(wxDateTime::GMT0);
-
-			entry.date.year = dateTime.GetYear();
-			entry.date.month = dateTime.GetMonth() + 1;
-			entry.date.day = dateTime.GetDay();
-			entry.hasDate = true;
-
-			if (*time)
-			{
 				entry.hasTime = true;
-				entry.time.hour = dateTime.GetHour();
-				entry.time.minute = dateTime.GetMinute();
 			}
 			else
 				entry.hasTime = false;
+			
+			entry.time = dateTime.FromTimezone(wxDateTime::GMT0);
+
+			entry.hasDate = true;
 		}
 		else if (factname == _T("perm"))
 			entry.permissions = value;
