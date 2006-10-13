@@ -31,7 +31,7 @@ bool CWrapEngine::CanWrapBefore(const wxChar& c)
 	return false;
 }
 
-wxString CWrapEngine::WrapTextChinese(wxWindow* parent, const wxString &text, unsigned long maxLength)
+bool CWrapEngine::WrapTextChinese(wxWindow* parent, wxString &text, unsigned long maxLength)
 {
 	// See comment at start of WrapText function what this function does
 	wxString wrappedText;
@@ -68,6 +68,8 @@ wxString CWrapEngine::WrapTextChinese(wxWindow* parent, const wxString &text, un
 			{
 				// Get width of all individual characters, record width of the current line
 				parent->GetTextExtent(*p, &width, &height);
+				if ((unsigned int)width > maxLength)
+					return false;
 				m_charWidths[*p] = width;
 				lineLength += width;
 			}
@@ -141,10 +143,12 @@ wxString CWrapEngine::WrapTextChinese(wxWindow* parent, const wxString &text, un
 	}
 #endif
 
-	return wrappedText;
+	text = wrappedText;
+
+	return true;
 }
 
-wxString CWrapEngine::WrapText(wxWindow* parent, const wxString &text, unsigned long maxLength)
+bool CWrapEngine::WrapText(wxWindow* parent, wxString& text, unsigned long maxLength)
 {
 	/*
 	This function wraps the given string so that it's width in pixels does
@@ -198,6 +202,9 @@ wxString CWrapEngine::WrapText(wxWindow* parent, const wxString &text, unsigned 
 
 		segment.Replace(_T("&"), _T(""));
 		parent->GetTextExtent(segment, &width, &height);
+
+		if ((unsigned int)width > maxLength)
+			return false;
 		
 		if (lineLength + spaceWidth + width > maxLength)
 		{
@@ -247,29 +254,9 @@ wxString CWrapEngine::WrapText(wxWindow* parent, const wxString &text, unsigned 
 		wrappedText += text.Mid(start);
 	}
 
-#ifdef __WXDEBUG__
-	wxString temp = wrappedText;
-	temp.Replace(_T("&"), _T(""));
-	while (temp != _T(""))
-	{
-		wxString piece;
-		int pos = temp.Find(_T("\n"));
-		if (pos == -1)
-		{
-			piece = temp;
-			temp = _T("");
-		}
-		else
-		{
-			piece = temp.Left(pos);
-			temp = temp.Mid(pos + 1);
-		}
-		parent->GetTextExtent(piece, &width, &height);
-		wxASSERT(width <= (int)maxLength);
-	}
-#endif
+	text = wrappedText;
 
-	return wrappedText;
+	return true;
 }
 
 bool CWrapEngine::WrapText(wxWindow* parent, int id, unsigned long maxLength)
@@ -278,7 +265,11 @@ bool CWrapEngine::WrapText(wxWindow* parent, int id, unsigned long maxLength)
 	if (!pText)
 		return false;
 
-	pText->SetLabel(WrapText(parent, pText->GetLabel(), maxLength));
+	wxString text = pText->GetLabel();
+	if (!WrapText(parent, text, maxLength))
+		return false;
+
+	pText->SetLabel(text);
 
 	return true;
 }
@@ -321,7 +312,8 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 					continue;
 
 				wxString str = text->GetLabel();
-				str = WrapText(text, str,  max - rect.GetLeft() - rborder - 2);
+				if (!WrapText(text, str, max - rect.GetLeft() - rborder - 2))
+					return false;
 				text->SetLabel(str);
 
 				continue;

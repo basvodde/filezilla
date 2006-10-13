@@ -23,8 +23,8 @@ public:
 	bool UnwrapRecursive(wxWindow* wnd, wxSizer* sizer);
 
 	// Wrap the given text so its length in pixels does not exceed maxLength
-	wxString WrapText(wxWindow* parent, const wxString &text, unsigned long maxLength);
-	wxString WrapTextChinese(wxWindow* parent, const wxString &text, unsigned long maxLength);
+	bool WrapText(wxWindow* parent, wxString &text, unsigned long maxLength);
+	bool WrapTextChinese(wxWindow* parent, wxString &text, unsigned long maxLength);
 	bool WrapText(wxWindow* parent, int id, unsigned long maxLength);
 
 	int GetWidthFromCache(const char* name);

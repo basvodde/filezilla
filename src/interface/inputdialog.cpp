@@ -7,7 +7,7 @@ EVT_BUTTON(XRCID("wxID_OK"), CInputDialog::OnOK)
 EVT_BUTTON(XRCID("wxID_CANCEL"), CInputDialog::OnCancel)
 END_EVENT_TABLE();
 
-bool CInputDialog::Create(wxWindow* parent, const wxString& title, const wxString& text)
+bool CInputDialog::Create(wxWindow* parent, const wxString& title, wxString text)
 {
 	m_allowEmpty = false;
 	SetParent(parent);
@@ -30,7 +30,8 @@ bool CInputDialog::Create(wxWindow* parent, const wxString& title, const wxStrin
 	if (!pText)
 		return false;
 
-	pText->SetLabel(WrapText(pText, text, 250));
+	WrapText(pText, text, 250);
+	pText->SetLabel(text);
 
 	GetSizer()->Fit(this);
 	GetSizer()->SetSizeHints(this);

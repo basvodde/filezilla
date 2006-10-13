@@ -37,7 +37,11 @@ bool wxDialogEx::SetLabel(int id, const wxString& label, unsigned long maxLength
 	if (!maxLength)
 		pText->SetLabel(label);
 	else
-		pText->SetLabel(WrapText(this, label, maxLength));
+	{
+		wxString wrapped = label;
+		WrapText(this, wrapped, maxLength);
+		pText->SetLabel(wrapped);
+	}
 
 	return true;
 }

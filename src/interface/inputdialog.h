@@ -9,7 +9,7 @@ public:
 	CInputDialog() {}
 	virtual ~CInputDialog() { }
 
-	bool Create(wxWindow* parent, const wxString& title, const wxString& text);
+	bool Create(wxWindow* parent, const wxString& title, wxString text);
 
 	bool SetPasswordMode(bool password);
 	void AllowEmpty(bool allowEmpty) { m_allowEmpty = allowEmpty; }

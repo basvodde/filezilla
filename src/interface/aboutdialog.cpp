@@ -55,7 +55,10 @@ bool CAboutDialog::Create(wxWindow* parent)
 		pCompilerFlagsDesc->Hide();
 	}
 	else
-		pCompilerFlags->SetLabel(WrapText(this, compilerFlags, 200));
+	{
+		WrapText(this, compilerFlags, 200);
+		pCompilerFlags->SetLabel(compilerFlags);
+	}
 
 	GetSizer()->Fit(this);
 	GetSizer()->SetSizeHints(this);
