@@ -80,10 +80,9 @@ CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState
 	InsertColumn(0, _("Filename"));
 	InsertColumn(1, _("Filesize"), wxLIST_FORMAT_RIGHT);
 	InsertColumn(2, _("Filetype"));
-	InsertColumn(3, _("Date"), wxLIST_FORMAT_LEFT, 50);
-	InsertColumn(4, _("Time"), wxLIST_FORMAT_LEFT, 50);
-	InsertColumn(5, _("Permissions"));
-	InsertColumn(6, _("Owner / Group"));
+	InsertColumn(3, _("Last modified"), wxLIST_FORMAT_LEFT, 100);
+	InsertColumn(4, _("Permissions"));
+	InsertColumn(5, _("Owner / Group"));
 
 	m_sortColumn = 0;
 	m_sortDirection = 0;
@@ -180,18 +179,14 @@ wxString CRemoteListView::OnGetItemText(long item, long column) const
 		if (!data->pDirEntry->hasDate)
 			return _T("");
 
-		return data->pDirEntry->time.FormatISODate();
+		if (data->pDirEntry->hasTime)
+			return data->pDirEntry->time.Format(_T("%c"));
+		else
+			return data->pDirEntry->time.Format(_T("%x"));
 	}
 	else if (column == 4)
-	{
-		if (!data->pDirEntry->hasTime)
-			return _T("");
-
-		return data->pDirEntry->time.FormatISOTime();
-	}
-	else if (column == 5)
 		return data->pDirEntry->permissions;
-	else if (column == 6)
+	else if (column == 5)
 		return data->pDirEntry->ownerGroup;
 	return _T("");
 }
@@ -392,7 +387,9 @@ void CRemoteListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpSize);
 	else if (m_sortColumn == 2)
 		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpType);
-	else if (m_sortColumn == 5)
+	else if (m_sortColumn == 3)
+		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpTime);
+	else if (m_sortColumn == 4)
 		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpPermissions);
 	Refresh(false);
 }
@@ -557,19 +554,51 @@ int CRemoteListView::CmpSize(CRemoteListView *pList, unsigned int index, t_fileD
 
 	if (data.pDirEntry->size == -1)
 	{
-		if (refData.pDirEntry->size == -1)
-			return 0;
-		else
+		if (refData.pDirEntry->size != -1)
 			return -1;
 	}
-	else if (refData.pDirEntry->size == -1)
+	else
+	{
+		if (refData.pDirEntry->size == -1)
+			return 1;
+
+		wxLongLong res = data.pDirEntry->size - refData.pDirEntry->size;
+		if (res > 0)
+			return 1;
+		else if (res < 0)
+			return -1;
+	}
+
+	return data.pDirEntry->name.CmpNoCase(refData.pDirEntry->name);
+}
+
+int CRemoteListView::CmpTime(CRemoteListView *pList, unsigned int index, t_fileData &refData)
+{
+	t_fileData &data = pList->m_fileData[pList->m_indexMapping[index]];
+
+	if (data.pDirEntry->dir)
+	{
+		if (!refData.pDirEntry->dir)
+			return -1;
+	}
+	else if (refData.pDirEntry->dir)
 		return 1;
 
-	wxLongLong res = data.pDirEntry->size - refData.pDirEntry->size;
-	if (res > 0)
-		return 1;
-	else if (res < 0)
-		return -1;
+	if (!data.pDirEntry->hasDate)
+	{
+		if (refData.pDirEntry->hasDate)
+			return -1;
+	}
+	else
+	{
+		if (!refData.pDirEntry->hasDate)
+			return 1;
+
+		if (data.pDirEntry->time < refData.pDirEntry->time)
+			return -1;
+		else if (data.pDirEntry->time > refData.pDirEntry->time)
+			return 1;
+	}
 
 	return data.pDirEntry->name.CmpNoCase(refData.pDirEntry->name);
 }

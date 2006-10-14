@@ -497,6 +497,8 @@ void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpSize);
 	else if (m_sortColumn == 2)
 		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpType);
+	else if (m_sortColumn == 3)
+		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpTime);
 }
 
 void CLocalListView::OnColumnClicked(wxListEvent &event)
@@ -615,19 +617,55 @@ int CLocalListView::CmpSize(CLocalListView *pList, unsigned int index, t_fileDat
 
 	if (data.size == -1)
 	{
-		if (refData.size == -1)
-			return 0;
-		else
+		if (refData.size != -1)
 			return -1;
 	}
-	else if (refData.size == -1)
+	else
+	{
+		if (refData.size == -1)
+			return 1;
+
+		wxLongLong res = data.size - refData.size;
+		if (res > 0)
+			return 1;
+		else if (res < 0)
+			return -1;
+	}
+
+#ifdef __WXMSW__
+	return data.name.CmpNoCase(refData.name);
+#else
+	return data.name.Cmp(refData.name);
+#endif
+}
+
+int CLocalListView::CmpTime(CLocalListView *pList, unsigned int index, t_fileData &refData)
+{
+	t_fileData &data = pList->m_fileData[pList->m_indexMapping[index]];
+
+	if (data.dir)
+	{
+		if (!refData.dir)
+			return -1;
+	}
+	else if (refData.dir)
 		return 1;
 
-	wxLongLong res = data.size - refData.size;
-	if (res > 0)
-		return 1;
-	else if (res < 0)
-		return -1;
+	if (!data.hasTime)
+	{
+		if (refData.hasTime)
+			return -1;
+	}
+	else
+	{
+		if (!refData.hasTime)
+			return 1;
+
+		if (data.lastModified < refData.lastModified)
+			return -1;
+		else if (data.lastModified > refData.lastModified)
+			return 1;
+	}
 
 #ifdef __WXMSW__
 	return data.name.CmpNoCase(refData.name);

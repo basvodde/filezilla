@@ -57,6 +57,7 @@ protected:
 	static int CmpName(CLocalListView *pList, unsigned int index, t_fileData &refData);
 	static int CmpType(CLocalListView *pList, unsigned int index, t_fileData &refData);
 	static int CmpSize(CLocalListView *pList, unsigned int index, t_fileData &refData);
+	static int CmpTime(CLocalListView *pList, unsigned int index, t_fileData &refData);
 
 	int FindItemWithPrefix(const wxString& prefix, int start);
 
