@@ -13,7 +13,6 @@
 #define PACKAGE_NAME "FileZilla"
 #endif
 
-#define PACKAGE_VERSION "3.0.0-beta1"
 #ifndef PACKAGE_VERSION
 #define PACKAGE_VERSION "custom build"
 #endif
