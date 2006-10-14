@@ -204,7 +204,76 @@ bool CWrapEngine::WrapText(wxWindow* parent, wxString& text, unsigned long maxLe
 		parent->GetTextExtent(segment, &width, &height);
 
 		if ((unsigned int)width > maxLength)
-			return false;
+		{
+			// Something quite long. Perhaps it's a URL we can wrap at slashes?
+
+			while (segment != _T(""))
+			{
+				// Find longest possible subsegment
+				// which can be appended to current line, if there is a current line
+				unsigned int j;
+				int best = -1;
+
+				for (j = 1; j < segment.Len() - 1; j++)
+				{
+					if (segment[j] == '/' && segment[j + 1] != '/')
+					{
+						wxString left = segment.Left(j + 1);
+						int lwidth;
+						parent->GetTextExtent(left, &lwidth, &height);
+						if ((unsigned)lwidth <= maxLength)
+						{
+							if (lineLength && lineLength + spaceWidth + lwidth > maxLength)
+							{
+								if (best == -1)
+								{
+									best = j;
+									width = lwidth;
+								}
+
+								break;
+							}
+
+							best = j;
+							width = lwidth;
+						}
+						else
+							break;
+					}
+				}
+				if (best == -1)
+				{
+					// No suitable slash found
+					return false;
+				}
+
+				if (wrappedText != _T(""))
+					wrappedText += _T("\n");
+
+				if (lineLength)
+					wrappedText += text.Mid(start, wrapAfter - start);
+
+				if (lineLength && lineLength + spaceWidth + width > maxLength)
+					wrappedText += _T("\n");
+				else
+					wrappedText += _T(" ");
+				lineLength = 0;
+				
+				wrappedText += segment.Left(best + 1);
+				segment = segment.Mid(best + 1);
+
+				parent->GetTextExtent(wrappedText, &width, &height);
+				parent->GetTextExtent(segment, &width, &height);
+				if ((unsigned)width <= maxLength)
+				{
+					break;
+				}
+			}
+
+			start = i - segment.Len();
+			wrapAfter = i;
+			lineLength = 0;
+		}
 		
 		if (lineLength + spaceWidth + width > maxLength)
 		{
@@ -213,12 +282,10 @@ bool CWrapEngine::WrapText(wxWindow* parent, wxString& text, unsigned long maxLe
 			wrappedText += text.Mid(start, wrapAfter - start);
 			if (width + spaceWidth >= (int)maxLength)
 			{
-				if (i - wrapAfter + 1 > 0)
-				{
-					if (wrappedText != _T(""))
-						wrappedText += _T("\n");
-					wrappedText += text.Mid(wrapAfter + 1, i - wrapAfter - 1);
-				}
+				if (wrappedText != _T(""))
+					wrappedText += _T("\n");
+				wrappedText += text.Mid(wrapAfter + 1, i - wrapAfter - 1);
+			
 				start = i + 1;
 				wrapAfter = -1;
 				lineLength = 0;
@@ -235,6 +302,8 @@ bool CWrapEngine::WrapText(wxWindow* parent, wxString& text, unsigned long maxLe
 			if (wrappedText != _T(""))
 				wrappedText += _T("\n");
 			wrappedText += text.Mid(start, i - start);
+			if (text[i] != ' ')
+				wrappedText += text[i];
 			start = i + 1;
 			wrapAfter = -1;
 			lineLength = 0;
@@ -312,7 +381,7 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 					continue;
 
 				wxString str = text->GetLabel();
-				if (!WrapText(text, str, max - rect.GetLeft() - rborder - 2))
+				if (!WrapText(text, str, max - wxMax(0, rect.GetLeft()) - rborder - 2))
 					return false;
 				text->SetLabel(str);
 

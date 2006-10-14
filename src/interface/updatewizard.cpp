@@ -209,6 +209,7 @@ void CUpdateWizard::OnPageChanging(wxWizardEvent& event)
 		if (dialog.ShowModal() != wxID_OK)
 		{
 			event.Veto();
+			m_skipPageChanging = false;
 			return;
 		}
 		m_localFile = dialog.GetPath();
@@ -222,12 +223,15 @@ void CUpdateWizard::OnPageChanged(wxWizardEvent& event)
 	if (event.GetPage() != m_pages[2])
 		return;
 
+	wxButton* pNext = wxDynamicCast(FindWindow(wxID_FORWARD), wxButton);
+	pNext->Disable();
+
 	m_currentPage = 2;
 
 	XRCCTRL(*this, "ID_DOWNLOADTEXT", wxStaticText)->SetLabel(wxString::Format(_("Downloading %s"), wxString(_T("http://") + m_urlServer + m_urlFile).c_str()));
-	m_pages[2]->GetSizer()->Layout();
-
+	
 	m_inTransfer = false;
+
 	int res = m_pEngine->Command(CConnectCommand(CServer(HTTP, DEFAULT, m_urlServer, 80)));
 	if (res == FZ_REPLY_OK)
 	{
@@ -248,6 +252,11 @@ void CUpdateWizard::OnPageChanged(wxWizardEvent& event)
 		ShowPage(m_pages[1]);
 	else if (res != FZ_REPLY_WOULDBLOCK)
 		FailedTransfer();
+	else
+	{
+		wxGetApp().GetWrapEngine()->WrapRecursive(m_pages[2], m_pages[2]->GetSizer(), m_pages[1]->GetSize().x);
+		m_pages[2]->GetSizer()->Layout();
+	}
 }
 
 void CUpdateWizard::FailedTransfer()
@@ -372,13 +381,18 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 					wxStaticText* pText = XRCCTRL(*this, "ID_DOWNLOADCOMPLETE", wxStaticText);
 					wxASSERT(pText);
 
+					wxButton* pNext = wxDynamicCast(FindWindow(wxID_FORWARD), wxButton);
+					pNext->Enable();
+
 					XRCCTRL(*this, "ID_DOWNLOADPROGRESS", wxGauge)->SetValue(100);
 #ifdef __WXMSW__
 					pText->SetLabel(_("The most recent version has been downloaded. Click on Finish to start the installation."));
 #else
 					pText->SetLabel(_("The most recent version has been downloaded. Please install like you did install this version."));
+
 #endif
 					pText->Show();
+					wxGetApp().GetWrapEngine()->WrapRecursive(m_pages[2], m_pages[2]->GetSizer(), m_pages[1]->GetSize().x);
 					m_pages[2]->GetSizer()->Layout();
 				}
 			}
@@ -820,5 +834,6 @@ void CUpdateWizard::PrepareUpdateAvailablePage(const wxString &newVersion, wxStr
 	}
 	m_pages[1]->GetSizer()->Layout();
 	m_pages[1]->GetSizer()->Fit(m_pages[1]);
-	wxGetApp().GetWrapEngine()->WrapRecursive(m_pages[1], m_pages[1]->GetSizer(), wxGetApp().GetWrapEngine()->GetWidthFromCache("UpdateCheck"));
+	wxGetApp().GetWrapEngine()->WrapRecursive(m_pages[1], m_pages[1]->GetSizer(), m_pages[0]->GetSize().x);
+	m_pages[1]->GetSizer()->Layout();
 }
