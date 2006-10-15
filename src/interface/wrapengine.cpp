@@ -200,7 +200,7 @@ bool CWrapEngine::WrapText(wxWindow* parent, wxString& text, unsigned long maxLe
 		else
 			segment = text.Mid(wrapAfter + 1, i - wrapAfter - 1);
 
-		segment.Replace(_T("&"), _T(""));
+		segment = wxStripMenuCodes(segment);
 		parent->GetTextExtent(segment, &width, &height);
 
 		if ((unsigned int)width > maxLength)
