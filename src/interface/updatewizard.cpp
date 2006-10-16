@@ -205,7 +205,19 @@ void CUpdateWizard::OnPageChanging(wxWizardEvent& event)
 #else
 		const int flags = wxSAVE | wxOVERWRITE_PROMPT;
 #endif
-		wxFileDialog dialog(this, _("Select download location for package"), defaultDir, filename, _T("*.*"), flags);
+
+		const wxString& ext = filename.Right(4);
+		wxString type;
+		if (ext == _T(".exe"))
+			type = _("Executable");
+		if (ext == _T(".bz2"))
+			type = _("Archive");
+		else
+			type = _("Package");
+
+		wxString filter = wxString::Format(_T("%s (*%s)|*%s"), type.c_str(), ext.c_str(), ext.c_str());
+
+		wxFileDialog dialog(this, _("Select download location for package"), defaultDir, filename, filter, flags);
 		if (dialog.ShowModal() != wxID_OK)
 		{
 			event.Veto();
