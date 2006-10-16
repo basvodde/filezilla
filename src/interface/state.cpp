@@ -97,7 +97,7 @@ bool CState::SetLocalDir(wxString dir, wxString *error /*=0*/)
 			return false;
 
 		if (error)
-			*error = wxString::Format(_("'%s' does not exist or cannot be accessed."), dir);
+			*error = wxString::Format(_("'%s' does not exist or cannot be accessed."), dir.c_str());
 
 #ifdef __WXMSW__
 		if (dir[0] == '\\')
@@ -109,7 +109,7 @@ bool CState::SetLocalDir(wxString dir, wxString *error /*=0*/)
 		int type = GetDriveType(dir.Left(3));
 		if (type == DRIVE_REMOVABLE || type == DRIVE_CDROM)
 
-			*error = wxString::Format(_("Cannot access '%s', no media inserted or drive not ready."), dir);
+			*error = wxString::Format(_("Cannot access '%s', no media inserted or drive not ready."), dir.c_str());
 #endif
 			
 		return false;
