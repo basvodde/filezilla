@@ -24,7 +24,7 @@ public:
 	void DestroyEngine();
 
 	wxString GetLocalDir() const;
-	bool SetLocalDir(wxString dir);
+	bool SetLocalDir(wxString dir, wxString *error = 0);
 
 	bool Connect(const CServer& server, bool askBreak, const CServerPath& path = CServerPath());
 

@@ -296,33 +296,36 @@ void CLocalListView::OnItemActivated(wxListEvent &event)
 	if (!data)
 		return;
 	
-	if (!item)
-		m_pState->SetLocalDir(data->name);
-	else
+	if (!item || data->dir)
 	{
-		if (data->dir)
-			m_pState->SetLocalDir(data->name);
-		else
+		wxString error;
+		if (!m_pState->SetLocalDir(data->name, &error))
 		{
-			const CServer* pServer = m_pState->GetServer();
-			if (!pServer)
-			{
+			if (error != _T(""))
+				wxMessageBox(error, _("Failed to change directory"), wxICON_INFORMATION);
+			else
 				wxBell();
-				return;
-			}
-
-			CServerPath path = m_pState->GetRemotePath();
-			if (path.IsEmpty())
-			{
-				wxBell();
-				return;
-			}
-
-			wxFileName fn(m_dir, data->name);
-
-			m_pQueue->QueueFile(false, false, fn.GetFullPath(), data->name, path, *pServer, data->size);
 		}
+		return;
 	}
+
+	const CServer* pServer = m_pState->GetServer();
+	if (!pServer)
+	{
+		wxBell();
+		return;
+	}
+
+	CServerPath path = m_pState->GetRemotePath();
+	if (path.IsEmpty())
+	{
+		wxBell();
+		return;
+	}
+
+	wxFileName fn(m_dir, data->name);
+
+	m_pQueue->QueueFile(false, false, fn.GetFullPath(), data->name, path, *pServer, data->size);
 }
 
 #ifdef __WXMSW__

@@ -400,13 +400,16 @@ void CLocalViewHeader::OnSelectionChanged(wxCommandEvent& event)
 void CLocalViewHeader::OnTextEnter(wxCommandEvent& event)
 {
 	wxString dir = m_pComboBox->GetValue();
-	if (!wxDir::Exists(dir))
-	{
-		wxBell();
-		return;
-	}
 	
-	m_pState->SetLocalDir(dir);
+	wxString error;
+	if (!m_pState->SetLocalDir(dir, &error))
+	{
+		if (error != _T(""))
+			wxMessageBox(error, _("Failed to change directory"), wxICON_INFORMATION);
+		else
+			wxBell();
+		m_pComboBox->SetValue(m_pState->GetLocalDir());
+	}
 }
 
 void CLocalViewHeader::OnStateChange(unsigned int event)

@@ -569,7 +569,17 @@ void CLocalTreeView::OnSelectionChanged(wxTreeEvent& event)
 
 	wxString dir = GetDirFromItem(item);
 
-	m_pState->SetLocalDir(dir);
+	wxString error;
+	if (!m_pState->SetLocalDir(dir, &error))
+	{
+		if (error != _T(""))
+			wxMessageBox(error, _("Failed to change directory"), wxICON_INFORMATION);
+		else
+			wxBell();
+		m_setSelection = true;
+		SelectItem(event.GetOldItem());
+		m_setSelection = false;
+	}
 }
 
 int CLocalTreeView::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2)
