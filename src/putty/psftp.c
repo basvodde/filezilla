@@ -129,7 +129,10 @@ char *canonify(char *name)
 	canonname = fxp_realpath_recv(pktin, rreq);
 
 	if (!canonname)
+	{
+	    fullname[i] = '/';	       /* put back the slash */
 	    return fullname;	       /* even that failed; give up */
+	}
 
 	/*
 	 * We have a canonical name for all but the last path
