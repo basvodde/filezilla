@@ -1167,6 +1167,8 @@ int CSftpControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
 		return FileTransferSend(prevResult);
 	case cmd_cwd:
 		return ChangeDirSend();
+	case cmd_mkdir:
+		return MkdirSend();
 	default:
 		LogMessage(::Debug_Warning, __TFILE__, __LINE__, _T("Unknown opID (%d) in SendNextCommand"), m_pCurOpData->opId);
 		ResetOperation(FZ_REPLY_INTERNALERROR);
