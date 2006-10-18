@@ -162,10 +162,7 @@ int write_to_file(WFile *f, void *buffer, int length)
     if (!ret)
 	return -1;		       /* error */
     else
-    {
-	fzprintf(sftpWrite, "%d", written);
 	return written;
-    }
 }
 
 void set_file_times(WFile *f, unsigned long mtime, unsigned long atime)

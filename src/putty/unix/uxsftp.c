@@ -226,11 +226,7 @@ int write_to_file(WFile *f, void *buffer, int length)
 	int ret = write(f->fd, p, length);
 
 	if (ret < 0)
-	{
-	    if (so_far > 0)
-		fzprintf(sftpWrite, "%d", so_far);
 	    return ret;
-	}
 
 	if (ret == 0)
 	    break;
@@ -239,9 +235,6 @@ int write_to_file(WFile *f, void *buffer, int length)
 	length -= ret;
 	so_far += ret;
     }
-
-    if (so_far > 0)
-	fzprintf(sftpWrite, "%d", so_far);
 
     return so_far;
 }
