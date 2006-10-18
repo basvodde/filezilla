@@ -334,6 +334,7 @@ int CFileZillaEnginePrivate::List(const CListCommand &command)
 	if (!IsConnected())
 		return FZ_REPLY_NOTCONNECTED;
 
+	bool refresh = command.Refresh();
 	if (!command.Refresh() && !command.GetPath().IsEmpty())
 	{
 		const CServer* pServer = m_pControlSocket->GetCurrentServer();
@@ -344,11 +345,18 @@ int CFileZillaEnginePrivate::List(const CListCommand &command)
 			bool found = cache.Lookup(*pListing, *pServer, command.GetPath(), command.GetSubDir(), false);
 			if (found)
 			{
-				m_lastListDir = pListing->path;
-				m_lastListTime = wxDateTime::Now();
-				CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing->path);
-				AddNotification(pNotification);
-				return FZ_REPLY_OK;
+				
+				if (pListing->m_hasUnsureEntries)
+					refresh = true;
+				else
+				{
+					m_lastListDir = pListing->path;
+					m_lastListTime = wxDateTime::Now();
+					CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing->path);
+					AddNotification(pNotification);
+					delete pListing;
+					return FZ_REPLY_OK;
+				}
 			}
 			delete pListing;
 		}
@@ -357,7 +365,7 @@ int CFileZillaEnginePrivate::List(const CListCommand &command)
 		return FZ_REPLY_BUSY;
 
 	m_pCurrentCommand = command.Clone();
-	return m_pControlSocket->List(command.GetPath(), command.GetSubDir(), command.Refresh());
+	return m_pControlSocket->List(command.GetPath(), command.GetSubDir(), refresh);
 }
 
 int CFileZillaEnginePrivate::FileTransfer(const CFileTransferCommand &command)
