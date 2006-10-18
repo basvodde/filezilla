@@ -528,7 +528,7 @@ void CFileZillaEnginePrivate::SendDirectoryListingNotification(const CServerPath
 		if (pEngine->m_lastListDir != path)
 			continue;
 
-		if (changeTime <= pEngine->m_lastListTime)
+		if (pEngine->m_lastListTime.GetTime().IsValid() && changeTime <= pEngine->m_lastListTime)
 			continue;
 		
 		pEngine->m_lastListTime = changeTime;
