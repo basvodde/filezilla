@@ -342,7 +342,7 @@ int CFileZillaEnginePrivate::List(const CListCommand &command)
 		{
 			CDirectoryListing *pListing = new CDirectoryListing;
 			CDirectoryCache cache;
-			bool found = cache.Lookup(*pListing, *pServer, command.GetPath(), command.GetSubDir(), false);
+			bool found = cache.Lookup(*pListing, *pServer, command.GetPath(), command.GetSubDir(), true);
 			if (found)
 			{
 				
