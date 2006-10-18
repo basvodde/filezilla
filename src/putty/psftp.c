@@ -692,7 +692,7 @@ int sftp_put_file(char *fname, char *outfname, int recurse, int restart)
 		eof = 1;
 	    } else {
 		fzprintf(sftpRead, "%d", len);
-		xfer_upload_data(xfer, buffer, len);
+		//xfer_upload_data(xfer, buffer, len);
 	    }
 	}
 

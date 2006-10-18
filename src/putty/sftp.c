@@ -13,6 +13,8 @@
 #include "tree234.h"
 #include "sftp.h"
 
+#include "fzsftp.h"
+
 struct sftp_packet {
     char *data;
     unsigned length, maxlen;
@@ -1401,6 +1403,7 @@ int xfer_upload_gotpkt(struct fxp_xfer *xfer, struct sftp_packet *pktin)
     else
 	xfer->tail = prev;
     xfer->req_totalsize -= rr->len;
+    fzprintf(sftpRead, "%d", rr->len);
     sfree(rr);
 
     if (!ret)
