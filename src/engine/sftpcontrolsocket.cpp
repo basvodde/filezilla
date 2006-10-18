@@ -907,11 +907,15 @@ int CSftpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 				if (!pData->path.IsEmpty() && pData->subDir != _T(""))
 					cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
 
-				m_pEngine->SendDirectoryListingNotification(m_CurrentPath, true, false, false);
+				// Continue with refresh if listing has unsure entries
+				if (!hasUnsureEntries)
+				{
+					m_pEngine->SendDirectoryListingNotification(m_CurrentPath, true, false, false);
 
-				ResetOperation(FZ_REPLY_OK);
+					ResetOperation(FZ_REPLY_OK);
 
-				return FZ_REPLY_OK;
+					return FZ_REPLY_OK;
+				}
 			}
 		}
 
@@ -993,7 +997,7 @@ int CSftpControlSocket::ChangeDir(CServerPath path /*=CServerPath()*/, wxString 
 
 int CSftpControlSocket::ChangeDirParseResponse(bool successful, const wxString& reply)
 {
-	if (!successful || !m_pCurOpData)
+	if (!m_pCurOpData)
 	{
 		ResetOperation(FZ_REPLY_ERROR);
 		return FZ_REPLY_ERROR;
@@ -1004,7 +1008,7 @@ int CSftpControlSocket::ChangeDirParseResponse(bool successful, const wxString& 
 	switch (pData->opState)
 	{
 	case cwd_pwd:
-		if (reply == _T(""))
+		if (!successful || reply == _T(""))
 			error = true;
 		if (ParsePwdReply(reply))
 		{
@@ -1015,7 +1019,7 @@ int CSftpControlSocket::ChangeDirParseResponse(bool successful, const wxString& 
 			error = true;
 		break;
 	case cwd_cwd:
-		if (reply == _T(""))
+		if (!successful)
 		{
 			// Create remote directory if part of a file upload
 			if (pData->pNextOpData && pData->pNextOpData->opId == cmd_transfer && 
@@ -1029,6 +1033,8 @@ int CSftpControlSocket::ChangeDirParseResponse(bool successful, const wxString& 
 			else
 				error = true;
 		}
+		else if (reply == _T(""))
+			error = true;
 		else if (ParsePwdReply(reply))
 			if (pData->subDir == _T(""))
 			{
@@ -1041,7 +1047,7 @@ int CSftpControlSocket::ChangeDirParseResponse(bool successful, const wxString& 
 			error = true;
 		break;
 	case cwd_cwd_subdir:
-		if (reply == _T(""))
+		if (!successful || reply == _T(""))
 			error = true;
 		else if (ParsePwdReply(reply))
 		{
@@ -1050,6 +1056,9 @@ int CSftpControlSocket::ChangeDirParseResponse(bool successful, const wxString& 
 		}
 		else
 			error = true;
+		break;
+	default:
+		error = true;
 		break;
 	}
 
@@ -1313,7 +1322,7 @@ int CSftpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 			}
 			if (shouldList)
 			{
-				int res = List();
+				int res = List(CServerPath(), _T(""), true);
 				if (res != FZ_REPLY_OK)
 					return res;
 			}

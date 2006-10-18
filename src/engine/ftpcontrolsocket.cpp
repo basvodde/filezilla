@@ -798,11 +798,15 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 				if (!pData->path.IsEmpty() && pData->subDir != _T(""))
 					cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
 
-				m_pEngine->SendDirectoryListingNotification(m_CurrentPath, true, false, false);
+				// Continue with refresh if listing has unsure entries
+				if (!hasUnsureEntries)
+				{
+					m_pEngine->SendDirectoryListingNotification(m_CurrentPath, true, false, false);
 
-				ResetOperation(FZ_REPLY_OK);
+					ResetOperation(FZ_REPLY_OK);
 
-				return FZ_REPLY_OK;
+					return FZ_REPLY_OK;
+				}
 			}
 		}
 
