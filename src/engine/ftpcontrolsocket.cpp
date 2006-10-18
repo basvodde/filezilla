@@ -1505,10 +1505,6 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 				// Be quiet
 				wxLogNull nullLog;
 
-				// Create local directory
-				wxFileName fn(pData->localFile);
-				wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
-
 				wxFileOffset startOffset;
 				if (pData->resume)
 				{
@@ -1549,6 +1545,10 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 				}
 				else
 				{
+					// Create local directory
+					wxFileName fn(pData->localFile);
+					wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
+
 					if (!pFile->Open(pData->localFile, wxFile::write))
 					{
 						delete pFile;
