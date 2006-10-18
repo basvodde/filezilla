@@ -1398,7 +1398,12 @@ int sftp_cmd_mkdir(struct sftp_command *cmd)
     }
 
     if (cmd->nwords < 2) {
-	fzprintf(sftpError, "mkdir: expects a directoryn");
+	fzprintf(sftpError, "mkdir: expects a directory");
+	return 0;
+    }
+
+    if (cmd->nwords > 2) {
+	fzprintf(sftpError, "mkdir: too many arguments");
 	return 0;
     }
 
@@ -1424,8 +1429,6 @@ int sftp_cmd_mkdir(struct sftp_command *cmd)
 	sfree(dir);
     }
 
-    if (ret != 0)
-	fznotify1(sftpDone, ret);
     return ret;
 }
 
@@ -1468,8 +1471,6 @@ int sftp_cmd_rmdir(struct sftp_command *cmd)
     for (i = 1; i < cmd->nwords; i++)
 	ret &= wildcard_iterate(cmd->words[i], sftp_action_rmdir, NULL);
 
-    if (ret != 0)
-	fznotify1(sftpDone, ret);
     return ret;
 }
 
@@ -1508,11 +1509,16 @@ int sftp_cmd_rm(struct sftp_command *cmd)
 	return 0;
     }
 
+    if (cmd->nwords > 2) {
+	fzprintf(sftpError, "rm: too many arguments");
+	return 0;
+    }
+
     ret = 1;
     for (i = 1; i < cmd->nwords; i++)
 	ret &= wildcard_iterate(cmd->words[i], sftp_action_rm, NULL);
 
-    return 1;
+    return ret;
 }
 
 static int check_is_dir(char *dstfname)
