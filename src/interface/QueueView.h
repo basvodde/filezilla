@@ -92,7 +92,7 @@ public:
 
 	CFileItem* GetIdleChild(bool immadiateOnly, enum AcceptedTransferDirection direction);
 	virtual bool RemoveChild(CQueueItem* pItem); // Removes a child item with is somewhere in the tree of children
-	wxLongLong GetTotalSize(bool& partialSizeInfo) const;
+	wxLongLong GetTotalSize(int& filesWithUnknownSize) const;
 
 	void QueueImmediateFiles();
 	void QueueImmediateFile(CFileItem* pItem);
@@ -307,7 +307,8 @@ protected:
 	void CheckQueueState();
 	bool IncreaseErrorCount(t_EngineData& engineData);
 	void UpdateStatusLinePositions();
-	void UpdateQueueSize();
+	void CalculateQueueSize();
+	void DisplayQueueSize();
 	void SaveQueue();
 	void LoadQueue();
 	bool ShouldUseBinaryMode(wxString filename);
@@ -342,6 +343,9 @@ protected:
 	bool m_quit;
 
 	bool m_allowBackgroundErase;
+
+	wxLongLong m_totalQueueSize;
+	int m_filesWithUnknownSize;
 
 	CMainFrame* m_pMainFrame;
 	CAsyncRequestQueue* m_pAsyncRequestQueue;

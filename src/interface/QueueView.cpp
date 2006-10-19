@@ -48,17 +48,29 @@ class CFolderItem;
 class CFolderProcessingThread : public wxThread
 {
 public:
-	CFolderProcessingThread(CQueueView* pOwner, CFolderItem* pFolderItem) : wxThread(wxTHREAD_JOINABLE) { 
+	CFolderProcessingThread(CQueueView* pOwner, CFolderItem* pFolderItem)
+		: wxThread(wxTHREAD_JOINABLE), m_condition(m_sync) { 
 		m_pOwner = pOwner;
 		m_pFolderItem = pFolderItem;
+
+		m_didSendEvent = false;
+		m_threadWaiting = false;
 	}
 	~CFolderProcessingThread() { }
 
 	void GetFiles(std::list<t_newEntry> &entryList)
 	{
 		wxASSERT(entryList.empty());
-		wxCriticalSectionLocker locker(m_sync);
+		wxMutexLocker locker(m_sync);
 		entryList.swap(m_entryList);
+		
+		m_didSendEvent = false;
+		
+		if (m_threadWaiting)
+		{
+			m_threadWaiting = false;
+			m_condition.Signal();
+		}
 	}
 
 protected:
@@ -141,15 +153,34 @@ protected:
 						entry.remotePath = m_pFolderItem->m_currentRemotePath;
 						entry.size = result ? -1 : buf.st_size;
 
-						bool send = false;
-						m_sync.Enter();;
-						if (!m_entryList.size())
-							send = true;
+						m_sync.Lock();
 						m_entryList.push_back(entry);
-						m_sync.Leave();
+
+						// Wait if there are more than 100 items to queue,
+						// don't send notification if there are less than 10.
+						// This reduces overhead
+						bool send;
+						if (m_didSendEvent)
+						{
+							send = false;
+							if (m_entryList.size() >= 100)
+							{
+								m_threadWaiting = true;
+								m_condition.Wait();
+							}
+						}
+						else if (m_entryList.size() < 10)
+							send = false;
+						else
+							send = true;
+						
+						m_sync.Unlock();
 
 						if (send)
 						{
+							// We send the notification after leaving the critical section, else we
+							// could get into a deadlock. wxWidgets event system does internal 
+							// locking.
 							wxCommandEvent evt(fzEVT_FOLDERTHREAD_FILES, wxID_ANY);
 							wxPostEvent(m_pOwner, evt);
 						}
@@ -158,6 +189,24 @@ protected:
 
 				found = m_pFolderItem->m_pDir->GetNext(&file);
 			}
+			
+			bool send;
+			m_sync.Lock();
+			if (!m_didSendEvent && m_entryList.size())
+				send = true;
+			else
+				send = false;
+			m_sync.Unlock();
+
+			if (send)
+			{
+				// We send the notification after leaving the critical section, else we
+				// could get into a deadlock. wxWidgets event system does internal 
+				// locking.
+				wxCommandEvent evt(fzEVT_FOLDERTHREAD_FILES, wxID_ANY);
+				wxPostEvent(m_pOwner, evt);
+			}
+
 			delete m_pFolderItem->m_pDir;
 			m_pFolderItem->m_pDir = 0;
 		}
@@ -173,7 +222,10 @@ protected:
 
 	CFilterDialog m_filters;
 
-	wxCriticalSection m_sync;
+	wxMutex m_sync;
+	wxCondition m_condition;
+	bool m_threadWaiting;
+	bool m_didSendEvent;
 };
 
 CQueueItem::CQueueItem()
@@ -659,7 +711,7 @@ bool CFolderItem::TryRemoveAll()
 	return false;
 }
 
-wxLongLong CServerItem::GetTotalSize(bool& partialSizeInfo) const
+wxLongLong CServerItem::GetTotalSize(int& filesWithUnknownSize) const
 {
 	wxLongLong totalSize = 0;
 	for (int i = 0; i < PRIORITY_COUNT; i++)
@@ -676,7 +728,7 @@ wxLongLong CServerItem::GetTotalSize(bool& partialSizeInfo) const
 					if (size >= 0)
 						totalSize += size;
 					else
-						partialSizeInfo = true;
+						filesWithUnknownSize++;
 				}
 			}
 		}
@@ -712,6 +764,9 @@ CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame, 
 	m_quit = false;
 	m_waitStatusLineUpdate = false;
 	m_pFolderProcessingThread = 0;
+
+	m_totalQueueSize = 0;
+	m_filesWithUnknownSize = 0;
 	
 	InsertColumn(0, _("Server / Local file"), wxLIST_FORMAT_LEFT, 150);
 	InsertColumn(1, _("Direction"), wxLIST_FORMAT_CENTER, 60);
@@ -805,7 +860,17 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 	m_waitStatusLineUpdate = false;
 	UpdateStatusLinePositions();
 
-	UpdateQueueSize();
+	if (size < 0)
+	{
+		m_filesWithUnknownSize++;
+		if (m_filesWithUnknownSize == 1)
+			DisplayQueueSize();
+	}
+	else if (size > 0)
+	{
+		m_totalQueueSize += size;
+		DisplayQueueSize();
+	}
 
 	return true;
 }
@@ -1283,14 +1348,29 @@ void CQueueView::ResetEngine(t_EngineData& data, const bool removeFileItem)
 
 	m_waitStatusLineUpdate = false;
 	UpdateStatusLinePositions();
-	UpdateQueueSize();
 
 	CheckQueueState();
 }
 
 void CQueueView::RemoveItem(CQueueItem* item)
 {
-	// RemoveItem assumes that the item has already removed from all engines
+	// RemoveItem assumes that the item has already been removed from all engines
+	if (item->GetType() == QueueItemType_File)
+	{
+		const CFileItem* const pFileItem = (const CFileItem* const)item;
+		const wxLongLong& size = pFileItem->GetSize();
+		if (size < 0)
+		{
+			m_filesWithUnknownSize--;
+			if (!m_filesWithUnknownSize)
+				DisplayQueueSize();
+		}
+		else if (size > 0)
+		{
+			m_totalQueueSize -= size;
+			DisplayQueueSize();
+		}
+	}
 
 	CQueueItem* topLevelItem = item->GetTopLevelItem();
 
@@ -1561,34 +1641,40 @@ void CQueueView::UpdateStatusLinePositions()
 	}
 }
 
-void CQueueView::UpdateQueueSize()
+void CQueueView::CalculateQueueSize()
+{
+	// Collect total queue size
+	m_totalQueueSize = 0;
+
+	m_filesWithUnknownSize = 0;
+	for (std::vector<CServerItem*>::const_iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
+		m_totalQueueSize += (*iter)->GetTotalSize(m_filesWithUnknownSize);
+
+	DisplayQueueSize();
+}
+
+void CQueueView::DisplayQueueSize()
 {
 	wxStatusBar *pStatusBar = m_pMainFrame->GetStatusBar();
 	if (!pStatusBar)
 		return;
 
-	// Collect total queue size
-	wxLongLong totalSize = 0;
-
-	bool partialSizeInfo = false;
-	for (std::vector<CServerItem*>::const_iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
-		totalSize += (*iter)->GetTotalSize(partialSizeInfo);
-
 	wxString queueSize;
-	if (totalSize == 0 && !partialSizeInfo)
+	wxLongLong totalSize = m_totalQueueSize;
+	if (totalSize == 0 && m_filesWithUnknownSize == 0)
 		queueSize = _("Queue: empty");
 	if (totalSize > (1000 * 1000))
 	{
 		totalSize /= 1000 * 1000;
-		queueSize.Printf(_("Queue: %s%d MB"), partialSizeInfo ? _T(">") : _T(""), totalSize.GetLo());
+		queueSize.Printf(_("Queue: %s%d MB"), (m_filesWithUnknownSize > 0) ? _T(">") : _T(""), totalSize.GetLo());
 	}
 	else if (totalSize > 1000)
 	{
 		totalSize /= 1000;
-		queueSize.Printf(_("Queue: %s%d KB"), partialSizeInfo ? _T(">") : _T(""), totalSize.GetLo());
+		queueSize.Printf(_("Queue: %s%d KB"), (m_filesWithUnknownSize > 0) ? _T(">") : _T(""), totalSize.GetLo());
 	}
 	else
-		queueSize.Printf(_("Queue: %s%d bytes"), partialSizeInfo ? _T(">") : _T(""), totalSize.GetLo());
+		queueSize.Printf(_("Queue: %s%d bytes"), (m_filesWithUnknownSize > 0) ? _T(">") : _T(""), totalSize.GetLo());
 	pStatusBar->SetStatusText(queueSize, 4);
 }
 
@@ -1690,6 +1776,11 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOn
 		pServerItem->AddChild(fileItem);
 		pServerItem->AddFileItemToList(fileItem);
 
+		if (entry.size < 0)
+			m_filesWithUnknownSize++;
+		else if (entry.size > 0)
+			m_totalQueueSize += entry.size;
+
 		m_itemCount++;
 	}
 
@@ -1703,7 +1794,7 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOn
 	m_waitStatusLineUpdate = false;
 	UpdateStatusLinePositions();
 
-	UpdateQueueSize();
+	DisplayQueueSize();
 
 	return true;
 }
@@ -1811,6 +1902,11 @@ void CQueueView::LoadQueue()
 					pServerItem->AddChild(fileItem);
 					pServerItem->AddFileItemToList(fileItem);
 					m_itemCount++;
+
+					if (size < 0)
+						m_filesWithUnknownSize++;
+					else if (size > 0)
+						m_totalQueueSize += size;
 				}
 
 				pFile = pFile->NextSiblingElement("File");
@@ -1830,7 +1926,7 @@ void CQueueView::LoadQueue()
 	delete pDocument->GetDocument();
 
 	SetItemCount(m_itemCount);
-	UpdateQueueSize();
+	DisplayQueueSize();
 }
 
 void CQueueView::SettingsChanged()
@@ -1967,7 +2063,11 @@ void CQueueView::RemoveAll()
 
 	m_serverList = newServerList;
 	UpdateStatusLinePositions();
-	UpdateQueueSize();
+
+	m_totalQueueSize = 0;
+	m_filesWithUnknownSize = 0;
+	DisplayQueueSize();
+
 	CheckQueueState();
 	Refresh();
 }
