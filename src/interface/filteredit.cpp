@@ -2,9 +2,9 @@
 #include "filteredit.h"
 #include "customheightlistctrl.h"
 
-const wxString filterTypes[] = { _("Filename"), _("Filesize") };
-const wxString stringConditionTypes[] = { _("contains"), _("is equal to"), _("begins with"), _("ends with"), _("matches regex") };
-const wxString sizeConditionTypes[] = { _("greater than"), _("equals"), _("less than") };
+static wxArrayString filterTypes;
+static wxArrayString stringConditionTypes;
+static wxArrayString sizeConditionTypes;
 
 CFilterControls::CFilterControls()
 {
@@ -47,6 +47,22 @@ void CFilterEditDialog::OnCancel(wxCommandEvent& event)
 
 bool CFilterEditDialog::Create(wxWindow* parent, const std::vector<CFilter>& filters, const std::vector<CFilterSet>& filterSets)
 {
+	if (filterTypes.IsEmpty())
+	{
+		filterTypes.Add(_("Filename"));
+		filterTypes.Add(_("Filesize"));
+
+		stringConditionTypes.Add(_("contains"));
+		stringConditionTypes.Add(_("is equal to"));
+		stringConditionTypes.Add(_("begins with"));
+		stringConditionTypes.Add(_("ends with"));
+		stringConditionTypes.Add(_("matches regex"));
+
+		sizeConditionTypes.Add(_("greater than"));
+		sizeConditionTypes.Add(_("equals"));
+		sizeConditionTypes.Add(_("less than"));
+	}
+
 	if (!Load(parent, _T("ID_EDITFILTER")))
 		return false;
 
@@ -173,12 +189,12 @@ void CFilterEditDialog::OnFilterTypeChange(wxCommandEvent& event)
 	controls.pCondition->Clear();
 	if (type == 1)
 	{
-		controls.pCondition->Append(wxArrayString(sizeof(sizeConditionTypes) / sizeof(wxString), sizeConditionTypes));
+		controls.pCondition->Append(sizeConditionTypes);
 		controls.pCondition->Select(1);
 	}
 	else
 	{
-		controls.pCondition->Append(wxArrayString(sizeof(stringConditionTypes) / sizeof(wxString), stringConditionTypes));
+		controls.pCondition->Append(stringConditionTypes);
 		controls.pCondition->Select(0);
 	}
 
@@ -199,7 +215,7 @@ void CFilterEditDialog::MakeControls(const CFilterCondition& condition)
 
 	CFilterControls controls;
 	controls.pType = new wxChoice();
-	controls.pType->Create(m_pListCtrl, m_filterControls.size(), wxPoint(10, posy), wxDefaultSize, sizeof(filterTypes) / sizeof(wxString), filterTypes);
+	controls.pType->Create(m_pListCtrl, m_filterControls.size(), wxPoint(10, posy), wxDefaultSize, filterTypes);
 	controls.pType->Select(condition.type);
 	wxRect typeRect = controls.pType->GetSize();
 
@@ -212,9 +228,9 @@ void CFilterEditDialog::MakeControls(const CFilterCondition& condition)
 
 	controls.pCondition = new wxChoice();
 	if (condition.type != 1)
-		controls.pCondition->Create(m_pListCtrl, wxID_ANY, wxPoint(20 + typeRect.GetWidth(), posy), wxDefaultSize, sizeof(stringConditionTypes) / sizeof(wxString), stringConditionTypes);
+		controls.pCondition->Create(m_pListCtrl, wxID_ANY, wxPoint(20 + typeRect.GetWidth(), posy), wxDefaultSize, stringConditionTypes);
 	else
-		controls.pCondition->Create(m_pListCtrl, wxID_ANY, wxPoint(20 + typeRect.GetWidth(), posy), wxDefaultSize, sizeof(sizeConditionTypes) / sizeof(wxString), sizeConditionTypes);
+		controls.pCondition->Create(m_pListCtrl, wxID_ANY, wxPoint(20 + typeRect.GetWidth(), posy), wxDefaultSize, sizeConditionTypes);
 	controls.pCondition->Select(condition.condition);
 	wxRect conditionsRect = controls.pCondition->GetSize();
 
