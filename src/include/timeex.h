@@ -20,6 +20,7 @@ public:
 	bool operator <= (const CTimeEx& op) const;
 	bool operator > (const CTimeEx& op) const; 
 	bool operator >= (const CTimeEx& op) const;
+	bool operator == (const CTimeEx& op) const;
 
 protected:
 	static wxDateTime m_lastTime;
