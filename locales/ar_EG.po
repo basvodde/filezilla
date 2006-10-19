@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-10-14 15:34+0200\n"
-"PO-Revision-Date: 2006-10-12 20:04+0200\n"
+"POT-Creation-Date: 2006-10-19 11:05+0200\n"
+"PO-Revision-Date: 2006-10-17 22:37+0200\n"
 "Last-Translator: Mohamed Magdy <alnokta@yahoo.com>\n"
 "Language-Team: Mohamed Magdy <alnokta@yahoo.com>\n"
 "MIME-Version: 1.0\n"
@@ -28,25 +28,25 @@ msgstr "%H:%M:%S left"
 msgid "%d files added to queue"
 msgstr "ملفات أضيفت الى قائمة الانتظار%d"
 
-#: ../../locales/../src/interface/updatewizard.cpp:658
+#: ../../locales/../src/interface/updatewizard.cpp:684
 #, c-format
 msgid "%s bytes"
 msgstr "%s bytes"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:111
-#: ../../locales/../src/interface/updatewizard.cpp:642
+#: ../../locales/../src/interface/updatewizard.cpp:668
 #, c-format
 msgid "%s bytes (%d B/s)"
 msgstr "%s bytes (%d B/s)"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:109
-#: ../../locales/../src/interface/updatewizard.cpp:640
+#: ../../locales/../src/interface/updatewizard.cpp:666
 #, c-format
 msgid "%s bytes (%d.%d KB/s)"
 msgstr "%s bytes (%d.%d KB/s)"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:107
-#: ../../locales/../src/interface/updatewizard.cpp:638
+#: ../../locales/../src/interface/updatewizard.cpp:664
 #, c-format
 msgid "%s bytes (%d.%d MB/s)"
 msgstr "%s bytes (%d.%d MB/s)"
@@ -257,7 +257,7 @@ msgstr "&جديد"
 msgid "&New Site"
 msgstr "&موقع جديد"
 
-#: ../../locales/../src/interface/updatewizard.cpp:781
+#: ../../locales/../src/interface/updatewizard.cpp:807
 msgid "&New version available!"
 msgstr "&نسخة جديدة متاحة"
 
@@ -397,7 +397,7 @@ msgstr "&مستخدم"
 msgid "&Username:"
 msgstr "&اسم المستخدم"
 
-#: ../../locales/../src/interface/updatewizard.cpp:779
+#: ../../locales/../src/interface/updatewizard.cpp:805
 #, c-format
 msgid "&Version %s"
 msgstr "%sالنسخة &"
@@ -405,6 +405,11 @@ msgstr "%sالنسخة &"
 #: resources.h:159
 msgid "&Write"
 msgstr "&كتابة"
+
+#: ../../locales/../src/interface/state.cpp:100
+#, c-format
+msgid "'%s' does not exist or cannot be accessed."
+msgstr "'%s' غير موجودة أصلا أو غير قادر على الوصول اليها."
 
 #: ../../locales/../src/interface/sitemanager.cpp:413
 msgid "'Account' logontype not supported by selected protocol"
@@ -426,11 +431,11 @@ msgstr "(5-9999, 0 to disable)"
 msgid "(At least 7 days)"
 msgstr "ـ على الأقل سبعة أيام ـ"
 
-#: ../../locales/../src/interface/updatewizard.cpp:650
+#: ../../locales/../src/interface/updatewizard.cpp:676
 msgid ", %H:%M:%S left"
 msgstr ", %H:%M:%S left"
 
-#: ../../locales/../src/interface/updatewizard.cpp:654
+#: ../../locales/../src/interface/updatewizard.cpp:680
 msgid ", --:--:-- left"
 msgstr ", --:--:-- left"
 
@@ -457,7 +462,7 @@ msgstr "2 - معلومات"
 
 #: resources.h:147
 msgid "3 - Verbose"
-msgstr "3 - مفصل"
+msgstr "3 - مطنب"
 
 #: resources.h:148
 msgid "4 - Debug"
@@ -614,6 +619,10 @@ msgstr "تطبيق على &قائمة الانتظار الحالية فقط"
 msgid "Apply to &files only"
 msgstr "تطبيق على& الملفات فقط"
 
+#: ../../locales/../src/interface/updatewizard.cpp:214
+msgid "Archive"
+msgstr "&أرشيف"
+
 #: resources.h:48 ../../locales/../src/interface/sitemanager.cpp:670
 #: ../../locales/../src/interface/sitemanager.cpp:883
 msgid "Ask for password"
@@ -647,7 +656,7 @@ msgstr "تقسيم نوع الملف تلقائيا"
 msgid "Automatic update check"
 msgstr "تحقق من التحديثات تلقائيا"
 
-#: ../../locales/../src/interface/state.cpp:195
+#: ../../locales/../src/interface/state.cpp:219
 msgid "Break current connection?"
 msgstr "قطع الاتصال الحالى؟"
 
@@ -702,6 +711,11 @@ msgstr "الغاء العملية الحالية"
 #: resources.h:438
 msgid "Cancels the current operation"
 msgstr "يلغى العملية الحالية"
+
+#: ../../locales/../src/interface/state.cpp:112
+#, c-format
+msgid "Cannot access '%s', no media inserted or drive not ready."
+msgstr "عاجز عن الوصول الى '%s', لا يوجد وسط مدخٌل أو المشغل غير جاهز."
 
 #: ../../locales/../src/interface/quickconnectbar.cpp:28
 msgid "Cannot load Quickconnect bar from resource file"
@@ -783,7 +797,7 @@ msgstr "مسح شريط الاتصال السريع"
 msgid "Click on Finish to save your configuration."
 msgstr "أضغط على انهاء لحفظ تخصيصاتك "
 
-#: ../../locales/../src/interface/updatewizard.cpp:815
+#: ../../locales/../src/interface/updatewizard.cpp:841
 msgid ""
 "Click on next to download the new version.\n"
 "Alternatively, visit http://filezilla-project.org to download the most "
@@ -843,7 +857,7 @@ msgstr "ضبط الوضعية الكامنة"
 msgid "Configure port range"
 msgstr "ضبط مجال المنافذ"
 
-#: ../../locales/../src/interface/LocalListView.cpp:875
+#: ../../locales/../src/interface/LocalListView.cpp:878
 #: ../../locales/../src/interface/RemoteListView.cpp:827
 msgid "Confirmation needed"
 msgstr "التأكيد مطلوب"
@@ -876,8 +890,8 @@ msgstr "%sجارى الاتصال ب"
 msgid "Connecting to %s:%d..."
 msgstr "%s:%d...جارى الاتصال ب"
 
-#: ../../locales/../src/interface/updatewizard.cpp:235
-#: ../../locales/../src/interface/updatewizard.cpp:738
+#: ../../locales/../src/interface/updatewizard.cpp:251
+#: ../../locales/../src/interface/updatewizard.cpp:764
 msgid "Connecting to server"
 msgstr "جارى الاتصال بالخادم"
 
@@ -925,7 +939,7 @@ msgstr "نس&خ"
 msgid "Could not connect to server"
 msgstr "غير قادر على الاتصال بالخادم"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2875
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2879
 msgid "Could not establish connection to server"
 msgstr "غير قادر على بناء اتصال مع الخادم"
 
@@ -950,7 +964,7 @@ msgstr ""
 "تأكد من ان الملف صالح  من أجل هذه الجلسة فان الخصائص الافتراضية سوف يتم "
 "استخدامها و اى تغييرات يتم عملها لن تحفظ \"%s\"غير قادر على تحميل"
 
-#: ../../locales/../src/interface/wrapengine.cpp:713
+#: ../../locales/../src/interface/wrapengine.cpp:782
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -995,7 +1009,7 @@ msgstr ""
 msgid "Could not parse server address:"
 msgstr "لم أستطع ادخال عنوان الخادم"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1588
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1592
 #, c-format
 msgid "Could not seek to offset %s within file"
 msgstr "داخل الملف%s  لم يمكن الوصول الى فرع"
@@ -1004,7 +1018,7 @@ msgstr "داخل الملف%s  لم يمكن الوصول الى فرع"
 msgid "Could not seek to the end of the file"
 msgstr "لم أستطع الوصول الى آخر الملف"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1608
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1612
 msgid "Could not spawn IO thread"
 msgstr "لم أستطع اعادة ثريدة الادخال و الاخراج"
 
@@ -1021,7 +1035,7 @@ msgstr "\"%s\"غير قادر على الكتابة%sأى تغييرات فى م
 msgid "Could not write \"%s\", the queue could not be saved."
 msgstr "لم أستطع حفظ قائمة الانتظار \"%s\" غير قادر على الكتابة"
 
-#: ../../locales/../src/interface/wrapengine.cpp:881
+#: ../../locales/../src/interface/wrapengine.cpp:950
 #, c-format
 msgid "Could not write \"%s\": %s"
 msgstr "\"%s\": %sغير قادر على الكتابة"
@@ -1034,13 +1048,13 @@ msgstr " فورا يستخدم فقط لتصليح معامل الاستثناء
 msgid "Create a new subdirectory in the current directory"
 msgstr "قم بتصنيع دليل فرعى فى الدليل الحالى"
 
-#: ../../locales/../src/interface/LocalListView.cpp:774
+#: ../../locales/../src/interface/LocalListView.cpp:777
 #: ../../locales/../src/interface/RemoteListView.cpp:766
 msgid "Create directory"
 msgstr "تصنيع دليل"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2127
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1486
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2131
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1504
 #, c-format
 msgid "Creating directory '%s'..."
 msgstr " '%s'... تصنيع الدليل"
@@ -1205,7 +1219,7 @@ msgid "Download selected files and folders"
 msgstr "تنزيل الملفات و الفلادر التى تم اختيارها"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:331
-#: ../../locales/../src/interface/updatewizard.cpp:227
+#: ../../locales/../src/interface/updatewizard.cpp:243
 #, c-format
 msgid "Downloading %s"
 msgstr "%s يتم التنزيل   "
@@ -1316,14 +1330,14 @@ msgstr "فى الكتابة الى المقبس%dخطأ"
 #: ../../locales/../src/interface/QueueView.cpp:1758
 #: ../../locales/../src/interface/sitemanager.cpp:158
 #: ../../locales/../src/interface/sitemanager.cpp:249
-#: ../../locales/../src/interface/wrapengine.cpp:714
+#: ../../locales/../src/interface/wrapengine.cpp:783
 msgid "Error loading xml file"
 msgstr "xmlخطأ فى تحميل ملف "
 
 #: ../../locales/../src/interface/QueueView.cpp:1741
 #: ../../locales/../src/interface/QueueView.cpp:1827
 #: ../../locales/../src/interface/sitemanager.cpp:275
-#: ../../locales/../src/interface/wrapengine.cpp:882
+#: ../../locales/../src/interface/wrapengine.cpp:951
 msgid "Error writing xml file"
 msgstr "xml خطأ فى كتابة ملف "
 
@@ -1335,6 +1349,10 @@ msgstr "خطأ"
 #: resources.h:168
 msgid "Exe&cute"
 msgstr "تنف&يذ"
+
+#: ../../locales/../src/interface/updatewizard.cpp:212
+msgid "Executable"
+msgstr "&ملف تنفيذى"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:1061
 msgid "Executable contains no version info, cannot check for updates."
@@ -1365,12 +1383,18 @@ msgstr ""
 "بروتوكول نقل الملفات يستخدم اتصالات ثانوية لنقل البيانات هذه الاتصالات "
 "الاضافية يمكن بدئها بطريقتين"
 
+#: ../../locales/../src/interface/LocalListView.cpp:305
+#: ../../locales/../src/interface/LocalTreeView.cpp:576
+#: ../../locales/../src/interface/viewheader.cpp:408
+msgid "Failed to change directory"
+msgstr "فشل فى تغيير الدليل"
+
 #: ../../locales/../src/interface/FileZilla.cpp:88
 #: ../../locales/../src/interface/optionspage_language.cpp:65
 msgid "Failed to change language"
 msgstr "فشل فى تغيير اللغة"
 
-#: ../../locales/../src/interface/updatewizard.cpp:257
+#: ../../locales/../src/interface/updatewizard.cpp:278
 msgid "Failed to check for newer version of FileZilla."
 msgstr "FileZillaفشل فى التحقق من نسخة جديدة من"
 
@@ -1382,12 +1406,12 @@ msgstr "xml فشل فى تصنيع نسخة احتياطية من ملف "
 msgid "Failed to create listen socket, aborting"
 msgstr " جارى الالغاءlisten socket فشل فى تصنيع "
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2854
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2858
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2862
 msgid "Failed to create listening socket for active mode transfer"
 msgstr "من اجل وضعية النقل النشطة listening socketفشل فى تصنيع"
 
-#: ../../locales/../src/interface/updatewizard.cpp:259
+#: ../../locales/../src/interface/updatewizard.cpp:280
 msgid "Failed to download the latest version of FileZilla."
 msgstr "FileZillaفشل فى تنزيل آخر نسخة من"
 
@@ -1412,12 +1436,12 @@ msgstr "فشل فى تحميل الالواح ،  ملفات موارد غير �
 msgid "Failed to open \"%s\" for appending / writing"
 msgstr "Failed to open \"%s\" for appending / writing"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1572
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1576
 #, c-format
 msgid "Failed to open \"%s\" for reading"
 msgstr "من اجل القراءة\"%s\"فشل فى فتح"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1551
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1555
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:371
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:416
 #, c-format
@@ -1436,12 +1460,12 @@ msgstr "فشل فى الحصول على عرض الفلادر"
 msgid "Failed to retrieve external ip address, aborting"
 msgstr "فشل فى الحصول على عنوان رقم الانترنت الخارجى ، جارى الالغاء"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2622
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2626
 msgid "Failed to retrieve external ip address, using local address"
 msgstr ""
 "فشل فى الحصول على عنوان رقم الانترنت الخارجى ، يتم استخدام العنوان المحلى"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2641
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2645
 msgid "Failed to retrieve local ip address."
 msgstr "فشل فى الحصول على عنوان رقم الانترنت المحلى"
 
@@ -1484,9 +1508,9 @@ msgstr "الرجوع الى الوضعية النشطة"
 msgid "Fil&es"
 msgstr "مل&فات"
 
-#: ../../locales/../src/interface/LocalListView.cpp:399
-#: ../../locales/../src/interface/LocalListView.cpp:417
-#: ../../locales/../src/interface/LocalListView.cpp:421
+#: ../../locales/../src/interface/LocalListView.cpp:402
+#: ../../locales/../src/interface/LocalListView.cpp:420
+#: ../../locales/../src/interface/LocalListView.cpp:424
 #: ../../locales/../src/interface/RemoteListView.cpp:490
 #: ../../locales/../src/interface/RemoteListView.cpp:508
 #: ../../locales/../src/interface/RemoteListView.cpp:512
@@ -1539,11 +1563,11 @@ msgstr "اسم ملف غير صالح"
 msgid "Filename unchanged"
 msgstr "لم يتغير اسم الملف"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1154
+#: ../../locales/../src/interface/LocalListView.cpp:1157
 msgid "Filenames may not contain any of the following characters: / * ? < > |"
 msgstr "/ * ? < > |أسماء الملفات لا يمكن ان تحتوى على رمز من الرموز الاتية"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1119
+#: ../../locales/../src/interface/LocalListView.cpp:1122
 msgid ""
 "Filenames may not contain any of the following characters: / \\ : * ? \" < > "
 "|"
@@ -1597,7 +1621,7 @@ msgstr "بصمة الاصبع"
 msgid "Firewall and router configuration wizard"
 msgstr "مساعد ضبط الجدار النارى و الموجه"
 
-#: ../../locales/../src/interface/LocalListView.cpp:421
+#: ../../locales/../src/interface/LocalListView.cpp:424
 #: ../../locales/../src/interface/RemoteListView.cpp:512
 msgid "Folder"
 msgstr "فولدر"
@@ -1867,8 +1891,8 @@ msgstr "chunk size غير صالح"
 msgid "Invalid data received"
 msgstr "تم استقبال بيانات غير صالحة"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1119
-#: ../../locales/../src/interface/LocalListView.cpp:1154
+#: ../../locales/../src/interface/LocalListView.cpp:1122
+#: ../../locales/../src/interface/LocalListView.cpp:1157
 msgid "Invalid filename"
 msgstr "اسم ملف غير صالح"
 
@@ -2059,7 +2083,7 @@ msgstr "موقع جديد"
 msgid "No"
 msgstr "لا"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2599
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2603
 msgid "No external IP address set, trying default."
 msgstr "لم يتم تحديد رقم انترنت خارجى ، يتم تجربة الافتراضى"
 
@@ -2165,6 +2189,10 @@ msgstr "PORT command tainted by router."
 msgid "Pa&ssive (recommended)"
 msgstr "ك&امن ــ ينصح به ــ"
 
+#: ../../locales/../src/interface/updatewizard.cpp:216
+msgid "Package"
+msgstr "حزمة"
+
 #: resources.h:52 resources.h:419
 msgid "Pass&word:"
 msgstr "كلمة &المرور"
@@ -2210,7 +2238,7 @@ msgstr ""
 "من ان الخادم مفعل و تأكد من الضبط بعناية مرة أخرىhttp://filezilla-project."
 "org/probe.php من فضلك تأكد عن طريق"
 
-#: ../../locales/../src/interface/updatewizard.cpp:800
+#: ../../locales/../src/interface/updatewizard.cpp:826
 msgid ""
 "Please check the package manager of your system for an updated package or "
 "visit http://filezilla-project.org to download the source code of FileZilla."
@@ -2300,7 +2328,7 @@ msgstr ""
 "من فضلك ادخل امر فتب خام.\n"
 "استخدام اوامر فتب خام سوف يمسح الفلادر المخزنة"
 
-#: ../../locales/../src/interface/LocalListView.cpp:774
+#: ../../locales/../src/interface/LocalListView.cpp:777
 #: ../../locales/../src/interface/RemoteListView.cpp:766
 msgid "Please enter the name of the directory which should be created:"
 msgstr "من فضلك أدخل اسم الدليل الذى تريد تصنيعه"
@@ -2417,8 +2445,8 @@ msgid ""
 msgstr ""
 " لمزيد من المعلومات عن البرنامجhttp://filezilla-project.org من فضلك قم بزيارة"
 
-#: ../../locales/../src/interface/updatewizard.cpp:798
-#: ../../locales/../src/interface/updatewizard.cpp:810
+#: ../../locales/../src/interface/updatewizard.cpp:824
+#: ../../locales/../src/interface/updatewizard.cpp:836
 msgid ""
 "Please visit http://filezilla-project.org to download the most recent "
 "version."
@@ -2475,7 +2503,7 @@ msgstr "قر&اءة"
 msgid "Really cancel current operation?"
 msgstr "الغاء العملية الحالية حقا؟"
 
-#: ../../locales/../src/interface/LocalListView.cpp:875
+#: ../../locales/../src/interface/LocalListView.cpp:878
 #: ../../locales/../src/interface/RemoteListView.cpp:827
 msgid "Really delete all selected files and/or directories?"
 msgstr "هل تريد حقا ازالة الملفات او الفلادر المختارة؟"
@@ -2510,7 +2538,7 @@ msgstr "الملف على الخادم "
 msgid "Remote filters:"
 msgstr "المرشحات للخادم"
 
-#: ../../locales/../src/interface/viewheader.cpp:430
+#: ../../locales/../src/interface/viewheader.cpp:433
 msgid "Remote site:"
 msgstr "الموقع الخارجى"
 
@@ -2530,8 +2558,8 @@ msgstr "اعادة تسمية ملف"
 msgid "Rename selected files and folders"
 msgstr "اعادة تسمية الملفات و الفلادر المختارة"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2322
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1910
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2326
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1928
 #, c-format
 msgid "Renaming '%s' to '%s'"
 msgstr " '%s' to '%s' اعادة تسمية"
@@ -2569,7 +2597,7 @@ msgstr ""
 msgid "Retrieving directory listing..."
 msgstr "أستخراج قائمة الادلة"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2607
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2611
 #: ../../locales/../src/interface/netconfwizard.cpp:687
 #, c-format
 msgid "Retrieving external IP address from %s"
@@ -2632,7 +2660,7 @@ msgid ""
 msgstr ""
 "أختر التصرف فى الملف الأفتراضى فقط للملفات المختارة حاليا فى قائمة الأنتظار"
 
-#: ../../locales/../src/interface/updatewizard.cpp:208
+#: ../../locales/../src/interface/updatewizard.cpp:220
 msgid "Select download location for package"
 msgstr "قم باختيار موقع التنزيل للحزمة"
 
@@ -2644,12 +2672,12 @@ msgstr "ارسال امر من قبل المستخدم الى الخادم ، غ
 msgid "Server / Local file"
 msgstr "الخادم / ملف محلى"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2933
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2937
 #, c-format
 msgid "Server does not support resume of files > %d GB."
 msgstr "> %d GBالخادم لا يدعم اكمال ملفات "
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2929
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2933
 #, c-format
 msgid ""
 "Server does not support resume of files > %d GB. End transfer since "
@@ -2657,15 +2685,15 @@ msgid ""
 msgstr ""
 " انهاء النقل حتى تتطابق احجام الملفات> %d GB الخادم لا يدعم اكمال ملفات"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1459
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1463
 msgid "Server does not support resume of files > 2GB."
 msgstr "> 2GBالخادم لا يدعم اكمال ملفات"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1454
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1458
 msgid "Server does not support resume of files > 4GB."
 msgstr "> 4GBالخادم لا يدعم اكمال ملفات"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2944
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2948
 #, c-format
 msgid ""
 "Server may not support resume of files > %d GB. End transfer since filesizes "
@@ -2689,7 +2717,7 @@ msgstr "الخادم يلزمه حساب. من فضلك قم بتحديد حسا
 msgid "Server sent invalid reply."
 msgstr "الخادم ارسل رد غير صالح"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2568
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2572
 msgid ""
 "Server sent passive reply with unroutable address. Using server address "
 "instead."
@@ -2705,8 +2733,8 @@ msgstr "نوع &الخادم:"
 msgid "Set &Priority"
 msgstr "وضع الاولوية"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2445
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1809
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2449
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1827
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
 msgstr " '%s' الى '%s' وضع التراخيص ل"
@@ -2742,8 +2770,8 @@ msgstr "الحجم مجهول"
 msgid "Sk&ip"
 msgstr "تخط&ى"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1726
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1811
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1730
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1815
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:201
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:241
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:547
@@ -2752,8 +2780,8 @@ msgstr "تخط&ى"
 msgid "Skipping download of %s"
 msgstr "%s تخطى عملية تنزيل ل"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1730
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1815
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1734
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1819
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:205
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:245
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:551
@@ -2774,14 +2802,14 @@ msgstr ""
 "بعض الخوادم الخارجية الغير مضبوطة جيدا و التى وراء موجه ، تقوم بالرد بعنوان "
 "رقم الانترنت المحلى"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1160
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1197
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1164
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1208
 #, c-format
 msgid "Starting download of %s"
 msgstr "%s بدأ تنزيل ل"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1164
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1201
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1168
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1212
 #, c-format
 msgid "Starting upload of %s"
 msgstr "بدأ رفع ل%s "
@@ -2827,7 +2855,7 @@ msgstr "الملف المستهدف موجود أصلا ، هل تريد الم�
 msgid "Test results"
 msgstr "نتائج الاختبار"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2950
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2954
 msgid "Testing resume capabilities of server"
 msgstr "جارى اختبار قدرات الخادم على الاستكمال"
 
@@ -2879,13 +2907,13 @@ msgid ""
 "port."
 msgstr "أقل قيمة متاحة للمنفذ يجب ان تكون اقل او تساوى اعلى قيمة متاحة للمنفذ"
 
-#: ../../locales/../src/interface/updatewizard.cpp:377
+#: ../../locales/../src/interface/updatewizard.cpp:401
 msgid ""
 "The most recent version has been downloaded. Click on Finish to start the "
 "installation."
 msgstr "لقد تم تنزيل أحدث نسخة . أضغط على انهاء لبدأ الاعداد"
 
-#: ../../locales/../src/interface/updatewizard.cpp:379
+#: ../../locales/../src/interface/updatewizard.cpp:403
 msgid ""
 "The most recent version has been downloaded. Please install like you did "
 "install this version."
@@ -3276,14 +3304,14 @@ msgstr "ينتهى ب"
 msgid "equals"
 msgstr "يساوى"
 
-#: ../../locales/../src/interface/LocalListView.cpp:396
-#: ../../locales/../src/interface/LocalListView.cpp:414
+#: ../../locales/../src/interface/LocalListView.cpp:399
+#: ../../locales/../src/interface/LocalListView.cpp:417
 #: ../../locales/../src/interface/RemoteListView.cpp:487
 #: ../../locales/../src/interface/RemoteListView.cpp:505
 msgid "file"
 msgstr "ملف"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1140
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1149
 msgid "fzsftp could not be started"
 msgstr "fzsftp غير قادر على تشغيل"
 
@@ -3310,9 +3338,3 @@ msgstr " مفقود ، غير قادر على الحصول على بيانات �
 #: resources.h:17
 msgid "with the following file?"
 msgstr "مع الملف التالى؟"
-
-#~ msgid "Date"
-#~ msgstr "تاريخ"
-
-#~ msgid "Time"
-#~ msgstr "الزمن"

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla 3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-10-07 15:20+0200\n"
-"PO-Revision-Date: 2006-10-07 13:04+0100\n"
+"POT-Creation-Date: 2006-10-19 11:05+0200\n"
+"PO-Revision-Date: 2006-10-19 00:01+0100\n"
 "Last-Translator: Michal Molhanec <michal@molhanec.net>\n"
 "Language-Team: Michal Molhanec <michal@molhanec.net>\n"
 "MIME-Version: 1.0\n"
@@ -22,30 +22,30 @@ msgstr "%H:%M:%S uběhlo"
 msgid "%H:%M:%S left"
 msgstr "%H:%M:%S zbývá"
 
-#: ../../locales/../src/interface/QueueView.cpp:2096
+#: ../../locales/../src/interface/QueueView.cpp:2105
 #, c-format
 msgid "%d files added to queue"
 msgstr "%d souborů přidáno do fronty"
 
-#: ../../locales/../src/interface/updatewizard.cpp:658
+#: ../../locales/../src/interface/updatewizard.cpp:684
 #, c-format
 msgid "%s bytes"
 msgstr "%s bajtů"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:111
-#: ../../locales/../src/interface/updatewizard.cpp:642
+#: ../../locales/../src/interface/updatewizard.cpp:668
 #, c-format
 msgid "%s bytes (%d B/s)"
 msgstr "%s bajtů (%d B/s)"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:109
-#: ../../locales/../src/interface/updatewizard.cpp:640
+#: ../../locales/../src/interface/updatewizard.cpp:666
 #, c-format
 msgid "%s bytes (%d.%d KB/s)"
 msgstr "%s bajtů (%d.%d KiB/s)"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:107
-#: ../../locales/../src/interface/updatewizard.cpp:638
+#: ../../locales/../src/interface/updatewizard.cpp:664
 #, c-format
 msgid "%s bytes (%d.%d MB/s)"
 msgstr "%s bajtů (%d.%d MiB/s)"
@@ -257,7 +257,7 @@ msgstr "&Nový"
 msgid "&New Site"
 msgstr "Nové &místo"
 
-#: ../../locales/../src/interface/updatewizard.cpp:781
+#: ../../locales/../src/interface/updatewizard.cpp:807
 msgid "&New version available!"
 msgstr "&Nová verze je k dispozici!"
 
@@ -397,7 +397,7 @@ msgstr "&Uživatelské jméno:"
 msgid "&Username:"
 msgstr "&Uživatelské jméno:"
 
-#: ../../locales/../src/interface/updatewizard.cpp:779
+#: ../../locales/../src/interface/updatewizard.cpp:805
 #, c-format
 msgid "&Version %s"
 msgstr "&Verze %s"
@@ -406,7 +406,12 @@ msgstr "&Verze %s"
 msgid "&Write"
 msgstr "&Zápis"
 
-#: ../../locales/../src/interface/sitemanager.cpp:416
+#: ../../locales/../src/interface/state.cpp:100
+#, c-format
+msgid "'%s' does not exist or cannot be accessed."
+msgstr "'%s' neexistuje nebo je nepřístupné."
+
+#: ../../locales/../src/interface/sitemanager.cpp:413
 msgid "'Account' logontype not supported by selected protocol"
 msgstr "Vybraný protokol nepodporuje způsob přihlašování 'Konto'"
 
@@ -426,11 +431,11 @@ msgstr "(5-9999, 0 pro vypnutí)"
 msgid "(At least 7 days)"
 msgstr "(Alespoň 7 dní)"
 
-#: ../../locales/../src/interface/updatewizard.cpp:650
+#: ../../locales/../src/interface/updatewizard.cpp:676
 msgid ", %H:%M:%S left"
 msgstr ", %H:%M:%S zbývá"
 
-#: ../../locales/../src/interface/updatewizard.cpp:654
+#: ../../locales/../src/interface/updatewizard.cpp:680
 msgid ", --:--:-- left"
 msgstr ", --:--:-- zbývá"
 
@@ -523,11 +528,11 @@ msgstr "Z&eptat se"
 msgid "About FileZilla"
 msgstr "O programu Filezilla"
 
-#: resources.h:50 ../../locales/../src/interface/sitemanager.cpp:413
-#: ../../locales/../src/interface/sitemanager.cpp:631
-#: ../../locales/../src/interface/sitemanager.cpp:632
-#: ../../locales/../src/interface/sitemanager.cpp:668
-#: ../../locales/../src/interface/sitemanager.cpp:871
+#: resources.h:50 ../../locales/../src/interface/sitemanager.cpp:410
+#: ../../locales/../src/interface/sitemanager.cpp:637
+#: ../../locales/../src/interface/sitemanager.cpp:638
+#: ../../locales/../src/interface/sitemanager.cpp:674
+#: ../../locales/../src/interface/sitemanager.cpp:889
 msgid "Account"
 msgstr "Konto"
 
@@ -586,9 +591,10 @@ msgstr "Pokročilé možnosti:"
 msgid "All ports in the given range have to be between 1024 and 65535."
 msgstr "Všechny zadané porty musí být mezi 1024 a 65535."
 
-#: resources.h:46 ../../locales/../src/interface/sitemanager.cpp:630
-#: ../../locales/../src/interface/sitemanager.cpp:815
-#: ../../locales/../src/interface/sitemanager.cpp:874
+#: resources.h:46 ../../locales/../src/interface/sitemanager.cpp:459
+#: ../../locales/../src/interface/sitemanager.cpp:636
+#: ../../locales/../src/interface/sitemanager.cpp:821
+#: ../../locales/../src/interface/sitemanager.cpp:892
 msgid "Anonymous"
 msgstr "Anonymní"
 
@@ -612,8 +618,12 @@ msgstr "Platí jen na &aktuální frontu"
 msgid "Apply to &files only"
 msgstr "Použít jen pro sou&bory"
 
-#: resources.h:48 ../../locales/../src/interface/sitemanager.cpp:664
-#: ../../locales/../src/interface/sitemanager.cpp:865
+#: ../../locales/../src/interface/updatewizard.cpp:214
+msgid "Archive"
+msgstr "Archiv"
+
+#: resources.h:48 ../../locales/../src/interface/sitemanager.cpp:670
+#: ../../locales/../src/interface/sitemanager.cpp:883
 msgid "Ask for password"
 msgstr "Zeptat se na heslo"
 
@@ -645,7 +655,7 @@ msgstr "Automatické rozpoznávání typů souborů"
 msgid "Automatic update check"
 msgstr "Automatická kontrola nových verzí"
 
-#: ../../locales/../src/interface/state.cpp:186
+#: ../../locales/../src/interface/state.cpp:219
 msgid "Break current connection?"
 msgstr "Přerušit současné spojení?"
 
@@ -704,6 +714,13 @@ msgstr "Stornuje aktuální operaci"
 msgid "Cancels the current operation"
 msgstr "Stornuje aktuální operaci"
 
+#: ../../locales/../src/interface/state.cpp:112
+#, c-format
+msgid "Cannot access '%s', no media inserted or drive not ready."
+msgstr ""
+"Nemohu přistoupit k '%s', nevložili jste médium nebo jednotka není "
+"připravena."
+
 #: ../../locales/../src/interface/quickconnectbar.cpp:28
 msgid "Cannot load Quickconnect bar from resource file"
 msgstr "Nemohu načíst lištu rychlého spojení ze souboru prostředků"
@@ -716,7 +733,7 @@ msgstr "Nemohu načíst hlavní menu ze souboru prostředků"
 msgid "Cannot load toolbar from resource file"
 msgstr "Nemohu načíst nástrojovou lištu ze souboru prostředků"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1160
+#: ../../locales/../src/interface/RemoteListView.cpp:1210
 msgid "Cannot rename file"
 msgstr "Nemohu přejmenovat soubor"
 
@@ -760,7 +777,7 @@ msgstr "Zjišťuji správnou externí IP adresu"
 msgid "Checking for updates"
 msgstr "Zjišťuji, zda existují novější verze"
 
-#: ../../locales/../src/interface/sitemanager.cpp:759
+#: ../../locales/../src/interface/sitemanager.cpp:765
 msgid "Choose the default local directory"
 msgstr "Vyberte výchozí lokální složku"
 
@@ -781,18 +798,16 @@ msgid "Clear quickconnect bar"
 msgstr "Odstranit lištu rychlého spojení"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:557
-#, fuzzy
 msgid "Click on Finish to save your configuration."
-msgstr "Klikněte na Finish pro uložení vašeho nastavení."
+msgstr "Klikněte na tlačítko Finish pro uložení vašeho nastavení."
 
-#: ../../locales/../src/interface/updatewizard.cpp:815
-#, fuzzy
+#: ../../locales/../src/interface/updatewizard.cpp:841
 msgid ""
 "Click on next to download the new version.\n"
 "Alternatively, visit http://filezilla-project.org to download the most "
 "recent version."
 msgstr ""
-"Klikněte na další pro stažení nové verze.\n"
+"Klikněte na tlačítko Next pro stažení nové verze.\n"
 "Pro stažení nejnovější verze můžete také navštívit http://filezilla-project."
 "org ."
 
@@ -846,8 +861,8 @@ msgstr "Nastavení pasivního režimu"
 msgid "Configure port range"
 msgstr "Nastavení rozsahu portů"
 
-#: ../../locales/../src/interface/LocalListView.cpp:832
-#: ../../locales/../src/interface/RemoteListView.cpp:777
+#: ../../locales/../src/interface/LocalListView.cpp:878
+#: ../../locales/../src/interface/RemoteListView.cpp:827
 msgid "Confirmation needed"
 msgstr "Vyžadováno potvrzení"
 
@@ -862,7 +877,7 @@ msgstr "Gratuluji, zdá se, že vaše nastavení funguje."
 msgid "Connected"
 msgstr "Připojen"
 
-#: ../../locales/../src/interface/QueueView.cpp:1348
+#: ../../locales/../src/interface/QueueView.cpp:1357
 msgid "Connecting"
 msgstr "Připojuji se"
 
@@ -879,8 +894,8 @@ msgstr "Připojuji se k %s"
 msgid "Connecting to %s:%d..."
 msgstr "Připojuji se k %s:%d..."
 
-#: ../../locales/../src/interface/updatewizard.cpp:235
-#: ../../locales/../src/interface/updatewizard.cpp:738
+#: ../../locales/../src/interface/updatewizard.cpp:251
+#: ../../locales/../src/interface/updatewizard.cpp:764
 msgid "Connecting to server"
 msgstr "Připojuji se k serveru"
 
@@ -908,7 +923,7 @@ msgstr "Spojení navázáno, čekám na uvítací zprávu..."
 msgid "Connection lost"
 msgstr "Spojení ztraceno"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:791
+#: ../../locales/../src/engine/ControlSocket.cpp:785
 msgid "Connection timed out"
 msgstr "Spojení překročilo časový limit"
 
@@ -928,7 +943,7 @@ msgstr "&Kopírovat"
 msgid "Could not connect to server"
 msgstr "Nemohu se spojit se serverem"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2875
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2879
 msgid "Could not establish connection to server"
 msgstr "Nemohu navázat spojení se serverem"
 
@@ -955,7 +970,7 @@ msgstr ""
 "Pro toto sezení budou použita výchozí nastavení a změny nastavení nebudou "
 "uloženy."
 
-#: ../../locales/../src/interface/wrapengine.cpp:721
+#: ../../locales/../src/interface/wrapengine.cpp:782
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -964,9 +979,9 @@ msgstr ""
 "Nemohu načíst \"%s\", ubezpečte se prosím, že je soubor platný a že je k "
 "němu přístup."
 
-#: ../../locales/../src/interface/filter.cpp:160
-#: ../../locales/../src/interface/filter.cpp:244
-#: ../../locales/../src/interface/sitemanager.cpp:251
+#: ../../locales/../src/interface/filter.cpp:161
+#: ../../locales/../src/interface/filter.cpp:245
+#: ../../locales/../src/interface/sitemanager.cpp:248
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -977,7 +992,7 @@ msgstr ""
 "němu přístup.\n"
 "Změny provedené ve správci míst nemohou být uloženy."
 
-#: ../../locales/../src/interface/sitemanager.cpp:160
+#: ../../locales/../src/interface/sitemanager.cpp:157
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -988,8 +1003,8 @@ msgstr ""
 "němu přístup.\n"
 "Změny provedené ve správci míst nebudou uloženy."
 
-#: ../../locales/../src/interface/QueueView.cpp:1712
-#: ../../locales/../src/interface/QueueView.cpp:1748
+#: ../../locales/../src/interface/QueueView.cpp:1721
+#: ../../locales/../src/interface/QueueView.cpp:1757
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1004,7 +1019,7 @@ msgstr ""
 msgid "Could not parse server address:"
 msgstr "Nemohu přečíst adresu serveru:"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1588
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1592
 #, c-format
 msgid "Could not seek to offset %s within file"
 msgstr "Nemohu se přesunou na ofset %s uvnitř souboru"
@@ -1013,24 +1028,24 @@ msgstr "Nemohu se přesunou na ofset %s uvnitř souboru"
 msgid "Could not seek to the end of the file"
 msgstr "Nemohu se přesunout na konec souboru"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1608
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1612
 msgid "Could not spawn IO thread"
 msgstr "Nemohu spustit vlákno pro vstup a výstup"
 
-#: ../../locales/../src/interface/sitemanager.cpp:277
+#: ../../locales/../src/interface/sitemanager.cpp:274
 #, c-format
 msgid ""
 "Could not write \"%s\", any changes to the Site Manager could not be saved: %"
 "s"
 msgstr "Nemohu zapsat \"%s\", změny ve správci míst nemohou být uloženy: %s."
 
-#: ../../locales/../src/interface/QueueView.cpp:1731
-#: ../../locales/../src/interface/QueueView.cpp:1817
+#: ../../locales/../src/interface/QueueView.cpp:1740
+#: ../../locales/../src/interface/QueueView.cpp:1826
 #, c-format
 msgid "Could not write \"%s\", the queue could not be saved."
 msgstr "Nemohu zapsat \"%s\", fronta nemůže být uložena."
 
-#: ../../locales/../src/interface/wrapengine.cpp:889
+#: ../../locales/../src/interface/wrapengine.cpp:950
 #, c-format
 msgid "Could not write \"%s\": %s"
 msgstr "Nemohu zapsat \"%s\": %s"
@@ -1043,13 +1058,13 @@ msgstr "Nechá FileZillu spadnout. Používá se k ladění obsluhy výjimek"
 msgid "Create a new subdirectory in the current directory"
 msgstr "Vytvořit novou vnořenou složku v aktuální složce"
 
-#: ../../locales/../src/interface/LocalListView.cpp:731
-#: ../../locales/../src/interface/RemoteListView.cpp:716
+#: ../../locales/../src/interface/LocalListView.cpp:777
+#: ../../locales/../src/interface/RemoteListView.cpp:766
 msgid "Create directory"
 msgstr "Vytvořit adresář"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2127
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1486
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2131
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1504
 #, c-format
 msgid "Creating directory '%s'..."
 msgstr "Vytvářím adresář '%s'..."
@@ -1083,10 +1098,6 @@ msgstr "Stor&no"
 msgid "Data socket closed too early."
 msgstr "Datový soket se uzavřel příliš brzy."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:83
-msgid "Date"
-msgstr "Datum"
-
 #: ../../locales/../src/interface/fileexistsdlg.cpp:62
 #: ../../locales/../src/interface/fileexistsdlg.cpp:86
 #: ../../locales/../src/interface/fileexistsdlg.cpp:118
@@ -1102,8 +1113,8 @@ msgstr "Ladění"
 msgid "Debugging settings"
 msgstr "Nastavení ladění"
 
-#: resources.h:57 ../../locales/../src/interface/sitemanager.cpp:821
-#: ../../locales/../src/interface/sitemanager.cpp:898
+#: resources.h:57 ../../locales/../src/interface/sitemanager.cpp:827
+#: ../../locales/../src/interface/sitemanager.cpp:916
 msgid "Default"
 msgstr "Výchozí"
 
@@ -1147,7 +1158,7 @@ msgstr "Detaily pro nový klíč:"
 msgid "Dire&ctories"
 msgstr "&Složky"
 
-#: ../../locales/../src/interface/QueueView.cpp:708
+#: ../../locales/../src/interface/QueueView.cpp:717
 msgid "Direction"
 msgstr "Směr"
 
@@ -1155,7 +1166,7 @@ msgstr "Směr"
 msgid "Directory listing aborted by user"
 msgstr "Výpis složky přerušen uživatelem"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:290
+#: ../../locales/../src/interface/RemoteListView.cpp:285
 msgid "Directory listing failed"
 msgstr "Výpis adresáře selhal"
 
@@ -1183,7 +1194,7 @@ msgstr "Odpojení od serveru"
 msgid "Disconnected from server"
 msgstr "Odpojen od serveru"
 
-#: ../../locales/../src/interface/QueueView.cpp:1337
+#: ../../locales/../src/interface/QueueView.cpp:1346
 #: ../../locales/../src/interface/statuslinectrl.cpp:147
 msgid "Disconnecting from previous server"
 msgstr "Odpojuji od předchozího serveru"
@@ -1208,8 +1219,8 @@ msgstr ""
 msgid "Don't use external IP address on &local connections."
 msgstr "Nepoužívat externí IP adresu pro &lokální spojení."
 
-#: resources.h:61 ../../locales/../src/interface/sitemanager.cpp:682
-#: ../../locales/../src/interface/sitemanager.cpp:889
+#: resources.h:61 ../../locales/../src/interface/sitemanager.cpp:688
+#: ../../locales/../src/interface/sitemanager.cpp:907
 msgid "Dos"
 msgstr "DOS"
 
@@ -1218,7 +1229,7 @@ msgid "Download selected files and folders"
 msgstr "Stáhnout vybrané soubory a složky"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:331
-#: ../../locales/../src/interface/updatewizard.cpp:227
+#: ../../locales/../src/interface/updatewizard.cpp:243
 #, c-format
 msgid "Downloading %s"
 msgstr "Stahuji %s"
@@ -1257,7 +1268,7 @@ msgstr "Upravit filtry"
 msgid "Email:"
 msgstr "Email:"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:292
+#: ../../locales/../src/interface/RemoteListView.cpp:287
 msgid "Empty directory listing"
 msgstr "Prázdný výpis adresáře"
 
@@ -1289,7 +1300,7 @@ msgstr "Zadat vlastní příkaz"
 msgid "Enter filter name"
 msgstr "Zadejte jméno filtru"
 
-#: ../../locales/../src/interface/filter.cpp:593
+#: ../../locales/../src/interface/filter.cpp:594
 msgid "Enter name for filterset"
 msgstr "Zadejte jméno sady filtrů"
 
@@ -1325,21 +1336,21 @@ msgstr ""
 msgid "Error %d writing to socket"
 msgstr "Chyba %d zápisu do soketu"
 
-#: ../../locales/../src/interface/filter.cpp:161
-#: ../../locales/../src/interface/filter.cpp:245
+#: ../../locales/../src/interface/filter.cpp:162
+#: ../../locales/../src/interface/filter.cpp:246
 #: ../../locales/../src/interface/Options.cpp:82
-#: ../../locales/../src/interface/QueueView.cpp:1713
-#: ../../locales/../src/interface/QueueView.cpp:1749
-#: ../../locales/../src/interface/sitemanager.cpp:161
-#: ../../locales/../src/interface/sitemanager.cpp:252
-#: ../../locales/../src/interface/wrapengine.cpp:722
+#: ../../locales/../src/interface/QueueView.cpp:1722
+#: ../../locales/../src/interface/QueueView.cpp:1758
+#: ../../locales/../src/interface/sitemanager.cpp:158
+#: ../../locales/../src/interface/sitemanager.cpp:249
+#: ../../locales/../src/interface/wrapengine.cpp:783
 msgid "Error loading xml file"
 msgstr "Chyba při načítání XML souboru"
 
-#: ../../locales/../src/interface/QueueView.cpp:1732
-#: ../../locales/../src/interface/QueueView.cpp:1818
-#: ../../locales/../src/interface/sitemanager.cpp:278
-#: ../../locales/../src/interface/wrapengine.cpp:890
+#: ../../locales/../src/interface/QueueView.cpp:1741
+#: ../../locales/../src/interface/QueueView.cpp:1827
+#: ../../locales/../src/interface/sitemanager.cpp:275
+#: ../../locales/../src/interface/wrapengine.cpp:951
 msgid "Error writing xml file"
 msgstr "Chyba při zápisu XML souboru"
 
@@ -1352,6 +1363,10 @@ msgstr "Chyba:"
 msgid "Exe&cute"
 msgstr "Spo&uštění"
 
+#: ../../locales/../src/interface/updatewizard.cpp:212
+msgid "Executable"
+msgstr "Spustitelný soubor"
+
 #: ../../locales/../src/interface/Mainfrm.cpp:1061
 msgid "Executable contains no version info, cannot check for updates."
 msgstr ""
@@ -1362,11 +1377,11 @@ msgstr ""
 msgid "F&ilter name:"
 msgstr "&Jméno filtru:"
 
-#: resources.h:43 ../../locales/../src/interface/sitemanager.cpp:421
-#: ../../locales/../src/interface/sitemanager.cpp:447
-#: ../../locales/../src/interface/sitemanager.cpp:654
-#: ../../locales/../src/interface/sitemanager.cpp:814
-#: ../../locales/../src/interface/sitemanager.cpp:851
+#: resources.h:43 ../../locales/../src/interface/sitemanager.cpp:418
+#: ../../locales/../src/interface/sitemanager.cpp:444
+#: ../../locales/../src/interface/sitemanager.cpp:660
+#: ../../locales/../src/interface/sitemanager.cpp:820
+#: ../../locales/../src/interface/sitemanager.cpp:863
 msgid "FTP"
 msgstr "FTP"
 
@@ -1382,12 +1397,18 @@ msgstr ""
 "FTP používá sekundární spojení pro přenos dat. Tato další spojení mohou být "
 "navázána dvěma způsoby."
 
+#: ../../locales/../src/interface/LocalListView.cpp:305
+#: ../../locales/../src/interface/LocalTreeView.cpp:576
+#: ../../locales/../src/interface/viewheader.cpp:408
+msgid "Failed to change directory"
+msgstr "Nepodařilo se změnit složku"
+
 #: ../../locales/../src/interface/FileZilla.cpp:88
 #: ../../locales/../src/interface/optionspage_language.cpp:65
 msgid "Failed to change language"
 msgstr "Nepodařilo se změnit jazyk"
 
-#: ../../locales/../src/interface/updatewizard.cpp:257
+#: ../../locales/../src/interface/updatewizard.cpp:278
 msgid "Failed to check for newer version of FileZilla."
 msgstr "Nepodařilo se zjistit, zda existuje novější verze FileZilly."
 
@@ -1399,12 +1420,12 @@ msgstr "Nemohu vytvořit záložní kopii XML souboru"
 msgid "Failed to create listen socket, aborting"
 msgstr "Nepodařilo se vytvořit naslouchající soket, končím."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2854
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2858
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2862
 msgid "Failed to create listening socket for active mode transfer"
 msgstr "Nepodařilo se vytvořit naslouchající soket pro aktivní režim přenosu"
 
-#: ../../locales/../src/interface/updatewizard.cpp:259
+#: ../../locales/../src/interface/updatewizard.cpp:280
 msgid "Failed to download the latest version of FileZilla."
 msgstr "Nepodařilo se stáhnout novější verzi FileZilly."
 
@@ -1429,12 +1450,12 @@ msgstr "Nemohu načíst panely, poškozené soubory prostředků?"
 msgid "Failed to open \"%s\" for appending / writing"
 msgstr "Nemohu otevřít \"%s\" pro přidavání / zapisování"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1572
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1576
 #, c-format
 msgid "Failed to open \"%s\" for reading"
 msgstr "Nemohu otevřít \"%s\" pro čtení"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1551
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1555
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:371
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:416
 #, c-format
@@ -1453,11 +1474,11 @@ msgstr "Nemohu získat výpis složky"
 msgid "Failed to retrieve external ip address, aborting"
 msgstr "Nepodařilo se získat externí IP adresu, končím"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2622
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2626
 msgid "Failed to retrieve external ip address, using local address"
 msgstr "Nepodařilo se získat externí IP adresu, použiji lokální"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2641
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2645
 msgid "Failed to retrieve local ip address."
 msgstr "Nepodařilo se získat lokální IP adresu."
 
@@ -1500,12 +1521,12 @@ msgstr "Vrátit se k aktivnímu režimu"
 msgid "Fil&es"
 msgstr "Sou&bory"
 
-#: ../../locales/../src/interface/LocalListView.cpp:394
-#: ../../locales/../src/interface/LocalListView.cpp:412
-#: ../../locales/../src/interface/LocalListView.cpp:416
-#: ../../locales/../src/interface/RemoteListView.cpp:491
-#: ../../locales/../src/interface/RemoteListView.cpp:509
-#: ../../locales/../src/interface/RemoteListView.cpp:513
+#: ../../locales/../src/interface/LocalListView.cpp:402
+#: ../../locales/../src/interface/LocalListView.cpp:420
+#: ../../locales/../src/interface/LocalListView.cpp:424
+#: ../../locales/../src/interface/RemoteListView.cpp:490
+#: ../../locales/../src/interface/RemoteListView.cpp:508
+#: ../../locales/../src/interface/RemoteListView.cpp:512
 msgid "File"
 msgstr "Soubor"
 
@@ -1513,7 +1534,7 @@ msgstr "Soubor"
 msgid "File Types"
 msgstr "Typy souborů"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1175
+#: ../../locales/../src/interface/RemoteListView.cpp:1225
 msgid "File exists"
 msgstr "Soubor existuje"
 
@@ -1548,7 +1569,7 @@ msgstr ""
 msgid "Filename"
 msgstr "Jméno souboru"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1160
+#: ../../locales/../src/interface/RemoteListView.cpp:1210
 msgid "Filename invalid"
 msgstr "Neplatné jméno souboru"
 
@@ -1556,11 +1577,11 @@ msgstr "Neplatné jméno souboru"
 msgid "Filename unchanged"
 msgstr "Jméno souboru nezměněno"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1111
+#: ../../locales/../src/interface/LocalListView.cpp:1157
 msgid "Filenames may not contain any of the following characters: / * ? < > |"
 msgstr "Jména souborů nesmí obsahovat žádný z těchto znaků: / * ? < > |"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1076
+#: ../../locales/../src/interface/LocalListView.cpp:1122
 msgid ""
 "Filenames may not contain any of the following characters: / \\ : * ? \" < > "
 "|"
@@ -1590,7 +1611,7 @@ msgstr "Filtr platí pro:"
 msgid "Filter name already exists"
 msgstr "Filtr s tímto jménem již existuje"
 
-#: ../../locales/../src/interface/filter.cpp:602
+#: ../../locales/../src/interface/filter.cpp:603
 msgid "Filter set already exists"
 msgstr "Sada filtrů s tímto jménem již existuje"
 
@@ -1614,8 +1635,8 @@ msgstr "Fingerprint:"
 msgid "Firewall and router configuration wizard"
 msgstr "Průvodce nastavením firewallu a routeru"
 
-#: ../../locales/../src/interface/LocalListView.cpp:416
-#: ../../locales/../src/interface/RemoteListView.cpp:513
+#: ../../locales/../src/interface/LocalListView.cpp:424
+#: ../../locales/../src/interface/RemoteListView.cpp:512
 msgid "Folder"
 msgstr "Složka"
 
@@ -1643,7 +1664,7 @@ msgstr "Základní"
 msgid "Get external IP address from the following URL:"
 msgstr "Získat externí IP adresu z následujícího URL:"
 
-#: ../../locales/../src/interface/filter.cpp:602
+#: ../../locales/../src/interface/filter.cpp:603
 msgid "Given filterset name already exists, overwrite filter set?"
 msgstr "Zadané jméno sady filtrů již existuje, přepsat?"
 
@@ -1655,11 +1676,11 @@ msgstr "Oprávnění skupiny"
 msgid "H&igh"
 msgstr "&Vysoká"
 
-#: ../../locales/../src/interface/QueueView.cpp:865
+#: ../../locales/../src/interface/QueueView.cpp:874
 msgid "High"
 msgstr "Vysoká"
 
-#: ../../locales/../src/interface/QueueView.cpp:867
+#: ../../locales/../src/interface/QueueView.cpp:876
 msgid "Highest"
 msgstr "Nejvyšší"
 
@@ -1851,8 +1872,8 @@ msgstr ""
 "zeptá serveru na port a pak se na něj připojí. K tomuto není potřeba mnoho "
 "nastavovat."
 
-#: resources.h:49 ../../locales/../src/interface/sitemanager.cpp:666
-#: ../../locales/../src/interface/sitemanager.cpp:868
+#: resources.h:49 ../../locales/../src/interface/sitemanager.cpp:672
+#: ../../locales/../src/interface/sitemanager.cpp:886
 msgid "Interactive"
 msgstr "Interaktivní"
 
@@ -1868,8 +1889,8 @@ msgstr "Neplatný Content-Length"
 msgid "Invalid HTTP Response"
 msgstr "Neplatná HTTP odpověď"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:644
-#: ../../locales/../src/engine/ControlSocket.cpp:701
+#: ../../locales/../src/engine/ControlSocket.cpp:638
+#: ../../locales/../src/engine/ControlSocket.cpp:695
 msgid ""
 "Invalid character sequence received, disabling UTF-8. Select UTF-8 option in "
 "site manager to force UTF-8."
@@ -1887,8 +1908,8 @@ msgstr "Neplatná velikost části"
 msgid "Invalid data received"
 msgstr "Přijata neplatná data"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1076
-#: ../../locales/../src/interface/LocalListView.cpp:1111
+#: ../../locales/../src/interface/LocalListView.cpp:1122
+#: ../../locales/../src/interface/LocalListView.cpp:1157
 msgid "Invalid filename"
 msgstr "Neplatné jméno souboru"
 
@@ -1938,6 +1959,7 @@ msgid "Large icons"
 msgstr "Velké ikony"
 
 #: ../../locales/../src/interface/LocalListView.cpp:36
+#: ../../locales/../src/interface/RemoteListView.cpp:83
 msgid "Last modified"
 msgstr "Poslední změna"
 
@@ -1982,11 +2004,11 @@ msgstr ""
 "Údaje pro přihlášení obsahují i jiné než ASCII znaky a server by nemusel "
 "podporovat UTF-8. Zkouším lokální znakovou sadu."
 
-#: ../../locales/../src/interface/QueueView.cpp:860
+#: ../../locales/../src/interface/QueueView.cpp:869
 msgid "Low"
 msgstr "Nízká"
 
-#: ../../locales/../src/interface/QueueView.cpp:858
+#: ../../locales/../src/interface/QueueView.cpp:867
 msgid "Lowest"
 msgstr "Nejnižší"
 
@@ -1994,8 +2016,8 @@ msgstr "Nejnižší"
 msgid "Lowest available port has to be a number between 1024 and 65535."
 msgstr "Nejnižší využitelný port musí být číslo mezi 1024 a 65535."
 
-#: resources.h:60 ../../locales/../src/interface/sitemanager.cpp:686
-#: ../../locales/../src/interface/sitemanager.cpp:892
+#: resources.h:60 ../../locales/../src/interface/sitemanager.cpp:692
+#: ../../locales/../src/interface/sitemanager.cpp:910
 msgid "MVS"
 msgstr "MVS"
 
@@ -2032,7 +2054,7 @@ msgstr "Středně velké ikony"
 msgid "Minutes"
 msgstr "minut"
 
-#: ../../locales/../src/interface/sitemanager.cpp:147
+#: ../../locales/../src/interface/sitemanager.cpp:144
 msgid "My Sites"
 msgstr "Moje místa"
 
@@ -2051,7 +2073,7 @@ msgstr "Název:"
 msgid "Need to enter filter name"
 msgstr "Musíte zadat jméno filtru"
 
-#: ../../locales/../src/interface/sitemanager.cpp:456
+#: ../../locales/../src/interface/sitemanager.cpp:453
 msgid "Need to specify a character encoding"
 msgstr "Musíte uvést znakovou sadu"
 
@@ -2063,14 +2085,14 @@ msgstr "Nová &složka"
 msgid "New filter"
 msgstr "Nový filtr"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:730
-#: ../../locales/../src/interface/sitemanager.cpp:353
-#: ../../locales/../src/interface/sitemanager.cpp:376
+#: ../../locales/../src/interface/RemoteListView.cpp:780
+#: ../../locales/../src/interface/sitemanager.cpp:350
+#: ../../locales/../src/interface/sitemanager.cpp:373
 msgid "New folder"
 msgstr "Nová složka"
 
-#: ../../locales/../src/interface/sitemanager.cpp:583
-#: ../../locales/../src/interface/sitemanager.cpp:606
+#: ../../locales/../src/interface/sitemanager.cpp:589
+#: ../../locales/../src/interface/sitemanager.cpp:612
 msgid "New site"
 msgstr "Nové místo"
 
@@ -2078,7 +2100,7 @@ msgstr "Nové místo"
 msgid "No"
 msgstr "ne"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2599
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2603
 msgid "No external IP address set, trying default."
 msgstr "Nezadána žádná externí IP adresa, zkouším výchozí."
 
@@ -2100,14 +2122,14 @@ msgstr "V themes.xml nejsou žádná témata"
 msgid "None of the following"
 msgstr "Nesplňují žádnou"
 
-#: resources.h:47 ../../locales/../src/interface/QueueView.cpp:863
-#: ../../locales/../src/interface/sitemanager.cpp:631
-#: ../../locales/../src/interface/sitemanager.cpp:662
-#: ../../locales/../src/interface/sitemanager.cpp:862
+#: resources.h:47 ../../locales/../src/interface/QueueView.cpp:872
+#: ../../locales/../src/interface/sitemanager.cpp:637
+#: ../../locales/../src/interface/sitemanager.cpp:668
+#: ../../locales/../src/interface/sitemanager.cpp:880
 msgid "Normal"
 msgstr "Normální"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:319
+#: ../../locales/../src/interface/RemoteListView.cpp:314
 msgid "Not connected to any server"
 msgstr "Nepřipojen k žádnému serveru"
 
@@ -2168,7 +2190,7 @@ msgstr "Přehled"
 msgid "Overwrite &if newer"
 msgstr "Přepsat, pokud je &novější"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:86
+#: ../../locales/../src/interface/RemoteListView.cpp:85
 msgid "Owner / Group"
 msgstr "Vlastník / skupina"
 
@@ -2183,6 +2205,10 @@ msgstr "Příkaz PORT poškozen routerem."
 #: resources.h:116
 msgid "Pa&ssive (recommended)"
 msgstr "&Pasivní (doporučený)"
+
+#: ../../locales/../src/interface/updatewizard.cpp:216
+msgid "Package"
+msgstr "Balík"
 
 #: resources.h:52 resources.h:419
 msgid "Pass&word:"
@@ -2202,7 +2228,7 @@ msgstr "Pasivní režim"
 msgid "Passive mode has been set as default transfer mode."
 msgstr "Pasivní režim byl nastaven jako výchozí přenosový režim."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:85
+#: ../../locales/../src/interface/RemoteListView.cpp:84
 msgid "Permissions"
 msgstr "Oprávnění"
 
@@ -2230,7 +2256,7 @@ msgstr ""
 "Prosím ověřte na stránce http://filezilla-project.org/probe.php, že server "
 "běží a znovu pečlivě zkontrolujte svá nastavení."
 
-#: ../../locales/../src/interface/updatewizard.cpp:800
+#: ../../locales/../src/interface/updatewizard.cpp:826
 msgid ""
 "Please check the package manager of your system for an updated package or "
 "visit http://filezilla-project.org to download the source code of FileZilla."
@@ -2301,7 +2327,7 @@ msgstr ""
 "Zadejte prosím časový limit mezi 5 a 9999 sekundami nebo 0 pokud nechcete "
 "časový limit používat."
 
-#: ../../locales/../src/interface/filter.cpp:593
+#: ../../locales/../src/interface/filter.cpp:594
 msgid "Please enter a unique name for this filter set"
 msgstr "Zadejte jedinečné jméno pro tuto sadu filtrů"
 
@@ -2325,8 +2351,8 @@ msgstr ""
 "Zadejte přímý FTP příkaz.\n"
 "Použití přímého FTP příkazu vymaže cache složek."
 
-#: ../../locales/../src/interface/LocalListView.cpp:731
-#: ../../locales/../src/interface/RemoteListView.cpp:716
+#: ../../locales/../src/interface/LocalListView.cpp:777
+#: ../../locales/../src/interface/RemoteListView.cpp:766
 msgid "Please enter the name of the directory which should be created:"
 msgstr "Zadejte prosím jméno složky, která má být vytvořena:"
 
@@ -2446,8 +2472,8 @@ msgstr ""
 "Pro získání více informací o FileZille, navštivte prosím http://filezilla-"
 "project.org ."
 
-#: ../../locales/../src/interface/updatewizard.cpp:798
-#: ../../locales/../src/interface/updatewizard.cpp:810
+#: ../../locales/../src/interface/updatewizard.cpp:824
+#: ../../locales/../src/interface/updatewizard.cpp:836
 msgid ""
 "Please visit http://filezilla-project.org to download the most recent "
 "version."
@@ -2459,7 +2485,7 @@ msgstr ""
 msgid "Preview"
 msgstr "Náhled"
 
-#: ../../locales/../src/interface/QueueView.cpp:711
+#: ../../locales/../src/interface/QueueView.cpp:720
 msgid "Priority"
 msgstr "Priorita"
 
@@ -2471,22 +2497,22 @@ msgstr "&Fronta procesů"
 msgid "Public permissions"
 msgstr "Oprávnění ostatních"
 
-#: ../../locales/../src/interface/QueueView.cpp:1579
+#: ../../locales/../src/interface/QueueView.cpp:1588
 #, c-format
 msgid "Queue: %s%d KB"
 msgstr "Fronta: %s%d KiB"
 
-#: ../../locales/../src/interface/QueueView.cpp:1574
+#: ../../locales/../src/interface/QueueView.cpp:1583
 #, c-format
 msgid "Queue: %s%d MB"
 msgstr "Fronta: %s%d MiB"
 
-#: ../../locales/../src/interface/QueueView.cpp:1582
+#: ../../locales/../src/interface/QueueView.cpp:1591
 #, c-format
 msgid "Queue: %s%d bytes"
 msgstr "Fronta: %s%d bajtů"
 
-#: ../../locales/../src/interface/QueueView.cpp:1570
+#: ../../locales/../src/interface/QueueView.cpp:1579
 msgid "Queue: empty"
 msgstr "Fronta: prázdná"
 
@@ -2506,8 +2532,8 @@ msgstr "Čte&ní"
 msgid "Really cancel current operation?"
 msgstr "Opravdu si přejete přerušit aktuální operaci?"
 
-#: ../../locales/../src/interface/LocalListView.cpp:832
-#: ../../locales/../src/interface/RemoteListView.cpp:777
+#: ../../locales/../src/interface/LocalListView.cpp:878
+#: ../../locales/../src/interface/RemoteListView.cpp:827
 msgid "Really delete all selected files and/or directories?"
 msgstr "Chcete opravdu odstranit všechny vybrané soubory a/nebo složky?"
 
@@ -2533,7 +2559,7 @@ msgstr "Přesměrování na neplatnou adresu"
 msgid "Refresh the file and folder lists"
 msgstr "Znovu načíst seznam souborů a složek"
 
-#: ../../locales/../src/interface/QueueView.cpp:709
+#: ../../locales/../src/interface/QueueView.cpp:718
 msgid "Remote file"
 msgstr "Vzdálený soubor"
 
@@ -2541,7 +2567,7 @@ msgstr "Vzdálený soubor"
 msgid "Remote filters:"
 msgstr "Vzdálené filtry:"
 
-#: ../../locales/../src/interface/viewheader.cpp:408
+#: ../../locales/../src/interface/viewheader.cpp:433
 msgid "Remote site:"
 msgstr "Vzdálená složka:"
 
@@ -2561,8 +2587,8 @@ msgstr "Přejmenovat soubor"
 msgid "Rename selected files and folders"
 msgstr "Přejmenovat vybrané soubory a složky"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2322
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1910
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2326
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1928
 #, c-format
 msgid "Renaming '%s' to '%s'"
 msgstr "Přejmenovávám '%s' na '%s'"
@@ -2600,7 +2626,7 @@ msgstr ""
 msgid "Retrieving directory listing..."
 msgstr "Přijímám výpis složky..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2607
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2611
 #: ../../locales/../src/interface/netconfwizard.cpp:687
 #, c-format
 msgid "Retrieving external IP address from %s"
@@ -2610,11 +2636,11 @@ msgstr "Získávám externí IP adresu z %s"
 msgid "S&kip"
 msgstr "Přeskoč&it"
 
-#: resources.h:44 ../../locales/../src/interface/sitemanager.cpp:412
-#: ../../locales/../src/interface/sitemanager.cpp:423
-#: ../../locales/../src/interface/sitemanager.cpp:443
-#: ../../locales/../src/interface/sitemanager.cpp:656
-#: ../../locales/../src/interface/sitemanager.cpp:847
+#: resources.h:44 ../../locales/../src/interface/sitemanager.cpp:409
+#: ../../locales/../src/interface/sitemanager.cpp:420
+#: ../../locales/../src/interface/sitemanager.cpp:440
+#: ../../locales/../src/interface/sitemanager.cpp:662
+#: ../../locales/../src/interface/sitemanager.cpp:857
 msgid "SFTP"
 msgstr "SFTP"
 
@@ -2622,11 +2648,11 @@ msgstr "SFTP"
 msgid "Save settings?"
 msgstr "Uložit nastavení?"
 
-#: ../../locales/../src/interface/QueueView.cpp:1641
+#: ../../locales/../src/interface/QueueView.cpp:1650
 msgid "Scanning for files to add to queue"
 msgstr "Hledám soubory pro přidání do fronty"
 
-#: ../../locales/../src/interface/QueueView.cpp:1643
+#: ../../locales/../src/interface/QueueView.cpp:1652
 msgid "Scanning for files to upload"
 msgstr "Hledám soubory pro nahrátí na server"
 
@@ -2663,7 +2689,7 @@ msgstr ""
 "Vyberte prosím výchozí chování pro případ, že cílový soubor již existuje. "
 "Bude platit pouze pro momentálně vybrané soubory ve frontě."
 
-#: ../../locales/../src/interface/updatewizard.cpp:208
+#: ../../locales/../src/interface/updatewizard.cpp:220
 msgid "Select download location for package"
 msgstr "Vyberte místo, kam se má balíček stáhnout"
 
@@ -2671,16 +2697,16 @@ msgstr "Vyberte místo, kam se má balíček stáhnout"
 msgid "Send custom command to the server otherwise not available"
 msgstr "Pošle uživatelem zadaný, jinými způsoby nedostupný, příkaz serveru"
 
-#: ../../locales/../src/interface/QueueView.cpp:707
+#: ../../locales/../src/interface/QueueView.cpp:716
 msgid "Server / Local file"
 msgstr "Server / lokální soubor"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2933
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2937
 #, c-format
 msgid "Server does not support resume of files > %d GB."
 msgstr "Server nepodporuje navazování souborů větších než %d GiB."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2929
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2933
 #, c-format
 msgid ""
 "Server does not support resume of files > %d GB. End transfer since "
@@ -2689,15 +2715,15 @@ msgstr ""
 "Server nepodporuje navazování souborů větších než %d GiB. Konec přenosu, "
 "protože velikosti souborů si odpovídají."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1459
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1463
 msgid "Server does not support resume of files > 2GB."
 msgstr "Server nepodporuje navazování souborů větších než 2 GiB."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1454
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1458
 msgid "Server does not support resume of files > 4GB."
 msgstr "Server nepodporuje navazování souborů větších než 4 GiB."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2944
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2948
 #, c-format
 msgid ""
 "Server may not support resume of files > %d GB. End transfer since filesizes "
@@ -2723,7 +2749,7 @@ msgstr "Server vyžaduje konto. Určete ho pomocí správce míst."
 msgid "Server sent invalid reply."
 msgstr "Server poslal chybnou odpověď."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2568
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2572
 msgid ""
 "Server sent passive reply with unroutable address. Using server address "
 "instead."
@@ -2739,8 +2765,8 @@ msgstr "T&yp serveru:"
 msgid "Set &Priority"
 msgstr "Nastav priorit&u"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2445
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1809
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2449
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1827
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
 msgstr "Nastav oprávnění '%s' na '%s'"
@@ -2761,7 +2787,7 @@ msgstr "Správce míst"
 msgid "Site Manager already open"
 msgstr "Správce míst již otevřen"
 
-#: ../../locales/../src/interface/QueueView.cpp:710
+#: ../../locales/../src/interface/QueueView.cpp:719
 msgid "Size"
 msgstr "Velikost"
 
@@ -2776,8 +2802,8 @@ msgstr "Neznámá velikost"
 msgid "Sk&ip"
 msgstr "Přeskoči&t"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1726
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1811
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1730
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1815
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:201
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:241
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:547
@@ -2786,8 +2812,8 @@ msgstr "Přeskoči&t"
 msgid "Skipping download of %s"
 msgstr "Přeskakuji stahování %s"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1730
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1815
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1734
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1819
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:205
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:245
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:551
@@ -2808,19 +2834,19 @@ msgstr ""
 "Některé špatně nastavené vzdálené servery, které jsou za routerem, mohou "
 "odpovědět svojí lokální IP adresu."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1160
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1197
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1164
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1208
 #, c-format
 msgid "Starting download of %s"
 msgstr "Začínám stahovat %s"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1164
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1201
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1168
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1212
 #, c-format
 msgid "Starting upload of %s"
 msgstr "Začínám %s nahrávat na server"
 
-#: ../../locales/../src/interface/QueueView.cpp:712
+#: ../../locales/../src/interface/QueueView.cpp:721
 msgid "Status"
 msgstr "Stav"
 
@@ -2853,7 +2879,7 @@ msgstr "Syntaktická chyba"
 msgid "Target file already exists"
 msgstr "Cílový soubor už existuje"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1175
+#: ../../locales/../src/interface/RemoteListView.cpp:1225
 msgid "Target filename already exists, really continue?"
 msgstr "Cílové jméno souboru už existuje, chcete opravdu pokračovat?"
 
@@ -2861,7 +2887,7 @@ msgstr "Cílové jméno souboru už existuje, chcete opravdu pokračovat?"
 msgid "Test results"
 msgstr "Výsledky testu"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2950
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2954
 msgid "Testing resume capabilities of server"
 msgstr "Testuji schopnost serveru navazovat soubory."
 
@@ -2917,14 +2943,14 @@ msgstr ""
 "Nejnižší využitelný port musí být nižší nebo roven nejvyššímu využitelnému "
 "portu."
 
-#: ../../locales/../src/interface/updatewizard.cpp:377
+#: ../../locales/../src/interface/updatewizard.cpp:401
 msgid ""
 "The most recent version has been downloaded. Click on Finish to start the "
 "installation."
 msgstr ""
 "Nejnovější verze byla stažena. Klikněte na Finish pro začátek instalace."
 
-#: ../../locales/../src/interface/updatewizard.cpp:379
+#: ../../locales/../src/interface/updatewizard.cpp:403
 msgid ""
 "The most recent version has been downloaded. Please install like you did "
 "install this version."
@@ -2984,7 +3010,7 @@ msgstr "Chyba témat"
 msgid "Themes"
 msgstr "Témata"
 
-#: ../../locales/../src/interface/filter.cpp:630
+#: ../../locales/../src/interface/filter.cpp:631
 msgid "This filter set cannot be removed"
 msgstr "Tato sada filtrů nemůže být odstraněna"
 
@@ -3003,10 +3029,6 @@ msgid ""
 msgstr ""
 "Tento průvodce vám pomůže správně nastavit vaše routery a firewally a "
 "otestovat vaše nastavení."
-
-#: ../../locales/../src/interface/RemoteListView.cpp:84
-msgid "Time"
-msgstr "Čas"
 
 #: resources.h:9
 msgid "Time&out in seconds:"
@@ -3061,7 +3083,7 @@ msgstr "Nastavení přenosu"
 msgid "Transferred data got tainted."
 msgstr "Přenesená data se poškodila."
 
-#: ../../locales/../src/interface/QueueView.cpp:1377
+#: ../../locales/../src/interface/QueueView.cpp:1386
 #: ../../locales/../src/interface/statuslinectrl.cpp:156
 msgid "Transferring"
 msgstr "Přenáším"
@@ -3094,8 +3116,8 @@ msgstr "Věřit novému klíči a pokračovat ve spojování?"
 msgid "Trust this host and carry on connecting?"
 msgstr "Věřit tomuto hostiteli a pokračovat ve spojování?"
 
-#: resources.h:58 ../../locales/../src/interface/sitemanager.cpp:680
-#: ../../locales/../src/interface/sitemanager.cpp:886
+#: resources.h:58 ../../locales/../src/interface/sitemanager.cpp:686
+#: ../../locales/../src/interface/sitemanager.cpp:904
 msgid "Unix"
 msgstr "Unix"
 
@@ -3203,8 +3225,8 @@ msgstr ""
 msgid "Using this wizard you can check for available updates to FileZilla."
 msgstr "Tento průvodce vám umožní zjistit, zda existují aktualizace FileZilly."
 
-#: resources.h:59 ../../locales/../src/interface/sitemanager.cpp:684
-#: ../../locales/../src/interface/sitemanager.cpp:895
+#: resources.h:59 ../../locales/../src/interface/sitemanager.cpp:690
+#: ../../locales/../src/interface/sitemanager.cpp:913
 msgid "VMS"
 msgstr "VMS"
 
@@ -3212,7 +3234,7 @@ msgstr "VMS"
 msgid "W&rite"
 msgstr "Zá&pis"
 
-#: ../../locales/../src/interface/QueueView.cpp:1601
+#: ../../locales/../src/interface/QueueView.cpp:1610
 msgid "Waiting"
 msgstr "Čekám"
 
@@ -3278,7 +3300,7 @@ msgid "You did not enter a new name for the file. Overwrite the file instead?"
 msgstr ""
 "Nezadal jste nový název pro soubor. Chcete ho raději místo toho přepsat?"
 
-#: ../../locales/../src/interface/sitemanager.cpp:407
+#: ../../locales/../src/interface/sitemanager.cpp:404
 msgid "You have to enter a hostname."
 msgstr "Musíte zadat hostitele."
 
@@ -3286,6 +3308,10 @@ msgstr "Musíte zadat hostitele."
 #: ../../locales/../src/interface/optionspage_connection_active.cpp:106
 msgid "You have to enter a valid IP address."
 msgstr "Musíte zadat platnou IP adresu."
+
+#: ../../locales/../src/interface/sitemanager.cpp:463
+msgid "You have to specify a user name"
+msgstr "Musíte zadat uživatelské jméno"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:607
 msgid ""
@@ -3325,14 +3351,14 @@ msgstr "končí s"
 msgid "equals"
 msgstr "je rovna"
 
-#: ../../locales/../src/interface/LocalListView.cpp:391
-#: ../../locales/../src/interface/LocalListView.cpp:409
-#: ../../locales/../src/interface/RemoteListView.cpp:488
-#: ../../locales/../src/interface/RemoteListView.cpp:506
+#: ../../locales/../src/interface/LocalListView.cpp:399
+#: ../../locales/../src/interface/LocalListView.cpp:417
+#: ../../locales/../src/interface/RemoteListView.cpp:487
+#: ../../locales/../src/interface/RemoteListView.cpp:505
 msgid "file"
 msgstr "soubor"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1140
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1149
 msgid "fzsftp could not be started"
 msgstr "Nemohu spustit fzsftp"
 
