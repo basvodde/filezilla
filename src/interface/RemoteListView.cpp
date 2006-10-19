@@ -912,20 +912,20 @@ void CRemoteListView::ProcessDirectoryListing()
 
 	wxASSERT(!m_dirsToVisit.empty());
 
-	if (!m_pDirectoryListing)
+	if (!m_pDirectoryListing || m_dirsToVisit.empty())
 	{
 		StopRecursiveOperation();
 		return;
 	}
+
+	t_newDir dir = m_dirsToVisit.front();
+	m_dirsToVisit.pop_front();
 
 	if (!m_pDirectoryListing->path.IsSubdirOf(m_startDir, false))
 	{
 		NextOperation();
 		return;
 	}
-
-	t_newDir dir = m_dirsToVisit.front();
-	m_dirsToVisit.pop_front();
 
 	// Check if we have already visited the directory
 	for (std::list<CServerPath>::const_iterator iter = m_visitedDirs.begin(); iter != m_visitedDirs.end(); iter++)
