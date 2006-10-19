@@ -729,7 +729,7 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 		// Do a cache lookup now that we know the correct directory
 		CDirectoryCache cache;
 
-		bool hasUnsureEntries;
+		int hasUnsureEntries;
 		bool found = cache.DoesExist(*m_pCurrentServer, m_CurrentPath, _T(""), hasUnsureEntries);
 		if (found)
 		{
@@ -791,7 +791,7 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 
 			// Do a cache lookup now that we know the correct directory
 			CDirectoryCache cache;
-			bool hasUnsureEntries;
+			int hasUnsureEntries;
 			bool found = cache.DoesExist(*m_pCurrentServer, m_CurrentPath, _T(""), hasUnsureEntries);
 			if (found)
 			{

@@ -139,7 +139,7 @@ bool CDirectoryCache::Lookup(CDirectoryListing &listing, const CServer &server, 
 	return false;
 }
 
-bool CDirectoryCache::DoesExist(const CServer &server, const CServerPath &path, wxString subDir, bool &hasUnsureEntries)
+bool CDirectoryCache::DoesExist(const CServer &server, const CServerPath &path, wxString subDir, int &hasUnsureEntries)
 {
 	if (subDir != _T(".."))
 	{
@@ -299,8 +299,10 @@ bool CDirectoryCache::InvalidateFile(const CServer &server, const CServerPath &p
 			entry.listing.m_entryCount++;
 			delete [] entry.listing.m_pEntries;
 			entry.listing.m_pEntries = listing;
+			entry.listing.m_hasUnsureEntries |= UNSURE_ADD;
 		}
-		entry.listing.m_hasUnsureEntries = true;
+		else
+			entry.listing.m_hasUnsureEntries |= UNSURE_CHANGE;
 		entry.modificationTime = CTimeEx::Now();
 	}
 
@@ -332,6 +334,7 @@ bool CDirectoryCache::RemoveFile(const CServer &server, const CServerPath &path,
 			for (i++; i < entry.listing.m_entryCount; i++)
 				entry.listing.m_pEntries[i - 1] = entry.listing.m_pEntries[i];
 			entry.listing.m_entryCount--;
+			entry.listing.m_hasUnsureEntries |= UNSURE_REMOVE;
 		}
 		else
 		{
@@ -342,8 +345,8 @@ bool CDirectoryCache::RemoveFile(const CServer &server, const CServerPath &path,
 					entry.listing.m_pEntries[i].unsure = true;
 				}				
 			}
+			entry.listing.m_hasUnsureEntries |= UNSURE_CONFUSED;
 		}
-		entry.listing.m_hasUnsureEntries = true;
 		entry.modificationTime = CTimeEx::Now();
 	}
 

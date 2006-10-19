@@ -36,6 +36,8 @@ CDirectoryListing& CDirectoryListing::operator=(const CDirectoryListing &a)
 	else
 		m_pEntries = 0;
 
+	m_firstListTime = a.m_firstListTime;
+
 	return *this;
 
 }

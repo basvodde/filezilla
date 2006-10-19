@@ -743,6 +743,8 @@ CDirectoryListing* CDirectoryListingParser::Parse(const CServerPath &path)
 	for (std::list<CDirentry>::iterator iter = m_entryList.begin(); iter != m_entryList.end(); iter++)
 		pListing->m_pEntries[i++] = *iter;
 
+	pListing->m_firstListTime = CTimeEx::Now();
+
 	return pListing;
 }
 

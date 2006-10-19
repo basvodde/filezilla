@@ -32,7 +32,7 @@ public:
 	bool GetChangeTime(CTimeEx& time, const CServer &server, const CServerPath &path) const;
 	bool Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, bool allowUnsureEntries);
 	bool Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, wxString subDir, bool allowUnsureEntries);
-	bool DoesExist(const CServer &server, const CServerPath &path, wxString subDir, bool &hasUnsureEntries);
+	bool DoesExist(const CServer &server, const CServerPath &path, wxString subDir, int &hasUnsureEntries);
 	bool LookupFile(CDirentry &entry, const CServer &server, const CServerPath &path, const wxString& file, bool &dirDidExist, bool &matchedCase);
 	bool InvalidateFile(const CServer &server, const CServerPath &path, const wxString& filename, bool mayCreate, enum Filetype type = file, int size = -1);
 	bool RemoveFile(const CServer &server, const CServerPath &path, const wxString& filename);
