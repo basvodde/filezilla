@@ -504,6 +504,33 @@ void CFileItem::SaveItem(TiXmlElement* pElement) const
 	pElement->InsertEndChild(file);
 }
 
+CFolderItem::CFolderItem(CServerItem* parent, bool queued, const wxString& localFile)
+	: CFileItem(parent, queued, true, localFile, _T(""), CServerPath(), -1)
+{
+}
+
+CFolderItem::CFolderItem(CServerItem* parent, bool queued, const CServerPath& remotePath, const wxString& remoteFile)
+	: CFileItem(parent, queued, false, _T(""), remoteFile, remotePath, -1)
+{
+}
+
+void CFolderItem::SaveItem(TiXmlElement* pElement) const
+{
+	if (GetItemState() == ItemState_Complete ||
+		GetItemState() == ItemState_Error)
+		return;
+
+	TiXmlElement file("Folder");
+
+	if (m_download)
+		AddTextElement(&file, "LocalFile", m_localFile);
+	else
+		AddTextElement(&file, "RemotePath", m_remotePath.GetSafePath());
+	AddTextElement(&file, "Download", m_download ? _T("1") : _T("0"));
+
+	pElement->InsertEndChild(file);
+}
+
 CServerItem::CServerItem(const CServer& server)
 {
 	m_server = server;
@@ -612,7 +639,7 @@ bool CServerItem::RemoveChild(CQueueItem* pItem)
 	if (!pItem)
 		return false;
 	
-	if (pItem->GetType() == QueueItemType_File)
+	if (pItem->GetType() == QueueItemType_File || pItem->GetType() == QueueItemType_Folder)
 	{
 		CFileItem* pFileItem = reinterpret_cast<CFileItem*>(pItem);
 		std::list<CFileItem*>& fileList = m_fileList[pFileItem->m_queued ? 0 : 1][pFileItem->GetPriority()];
@@ -976,6 +1003,54 @@ wxString CQueueView::OnGetItemText(long item, long column) const
 			}
 		}
 		break;
+	case QueueItemType_Folder:
+		{
+			CFileItem* pFolderItem = reinterpret_cast<CFolderItem*>(pItem);
+			switch (column)
+			{
+			case 0:
+				if (pFolderItem->Download())
+					return pFolderItem->GetIndent() + pFolderItem->GetLocalFile();
+				break;
+			case 1:
+				if (pFolderItem->Download())
+					if (pFolderItem->Queued())
+						return _T("<--");
+					else
+						return _T("<<--");
+				else
+					if (pFolderItem->Queued())
+						return _T("-->");
+					else
+						return _T("-->>");
+				break;
+			case 2:
+				if (!pFolderItem->Download())
+					return pFolderItem->GetRemotePath().FormatFilename(pFolderItem->GetRemoteFile());
+				break;
+			case 4:
+				switch (pFolderItem->GetPriority())
+				{
+				case 0:
+					return _("Lowest");
+				case 1:
+					return _("Low");
+				default:
+				case 2:
+					return _("Normal");
+				case 3:
+					return _("High");
+				case 4:
+					return _("Highest");
+				}
+				break;
+			case 5:
+				return pFolderItem->m_statusMessage;
+			default:
+				break;
+			}
+		}
+		break;
 	default:
 		break;
 	}
@@ -998,6 +1073,7 @@ int CQueueView::OnGetItemImage(long item) const
 	case QueueItemType_File:
 		return 1;
 	case QueueItemType_FolderScan:
+	case QueueItemType_Folder:
 			return 3;
 	default:
 		return -1;
@@ -1355,8 +1431,10 @@ void CQueueView::ResetEngine(t_EngineData& data, const bool removeFileItem)
 void CQueueView::RemoveItem(CQueueItem* item)
 {
 	// RemoveItem assumes that the item has already been removed from all engines
+	
 	if (item->GetType() == QueueItemType_File)
 	{
+		// Update size information
 		const CFileItem* const pFileItem = (const CFileItem* const)item;
 		const wxLongLong& size = pFileItem->GetSize();
 		if (size < 0)
@@ -1866,8 +1944,7 @@ void CQueueView::LoadQueue()
 		{
 			CServerItem *pServerItem = 0;
 
-			TiXmlElement* pFile = pServer->FirstChildElement("File");
-			while (pFile)
+			for (TiXmlElement* pFile = pServer->FirstChildElement("File"); pFile; pFile = pFile->NextSiblingElement("File"))
 			{
 				wxString localFile = GetTextElement(pFile, "LocalFile");
 				wxString remoteFile = GetTextElement(pFile, "RemoteFile");
@@ -1908,8 +1985,42 @@ void CQueueView::LoadQueue()
 					else if (size > 0)
 						m_totalQueueSize += size;
 				}
+			}
+			for (TiXmlElement* pFolder = pServer->FirstChildElement("Folder"); pFolder; pFolder = pFolder->NextSiblingElement("Folder"))
+			{
+				CFolderItem* folderItem;
 
-				pFile = pFile->NextSiblingElement("File");
+				bool download = GetTextElementInt(pFolder, "Download") != 0;
+				if (download)
+				{
+					wxString localFile = GetTextElement(pFile, "LocalFile");
+					if (localFile == _T(""))
+						continue;
+					folderItem = new CFolderItem(pServerItem, true, localFile);
+				}
+				else
+				{
+					wxString remoteFile = GetTextElement(pFile, "RemoteFile");
+					if (remoteFile == _T(""))
+						continue;
+
+					wxString safeRemotePath = GetTextElement(pFile, "RemotePath");
+					if (safeRemotePath == _T(""))
+						continue;
+
+					CServerPath remotePath;
+					if (!remotePath.SetSafePath(safeRemotePath))
+						continue;
+					folderItem = new CFolderItem(pServerItem, true, remotePath, remoteFile);
+				}
+				
+				unsigned int priority = GetTextElementInt(pFile, "Priority", priority_normal);
+				if (priority >= PRIORITY_COUNT)
+					continue;
+				folderItem->SetPriority((enum QueuePriority)priority);
+
+				pServerItem->AddChild(folderItem);
+				pServerItem->AddFileItemToList(folderItem);				
 			}
 		}
 
@@ -2116,7 +2227,8 @@ void CQueueView::OnRemoveSelected(wxCommandEvent& event)
 			// Server items get deleted automatically if all children are gone
 			continue;
 		}
-		else if (pItem->GetType() == QueueItemType_File)
+		else if (pItem->GetType() == QueueItemType_File ||
+				 pItem->GetType() == QueueItemType_Folder)
 		{
 			CFileItem* pFile = (CFileItem*)pItem;
 			if (pFile->IsActive())
@@ -2162,7 +2274,8 @@ bool CQueueView::StopItem(CServerItem* pServerItem)
 				continue;
 			}
 		}
-		else if (pItem->GetType() == QueueItemType_File)
+		else if (pItem->GetType() == QueueItemType_File ||
+				 pItem->GetType() == QueueItemType_Folder)
 		{
 			CFileItem* pFile = (CFileItem*)pItem;
 			if (pFile->IsActive())

@@ -15,6 +15,7 @@ enum QueueItemType
 {
 	QueueItemType_Server,
 	QueueItemType_File,
+	QueueItemType_Folder,
 	QueueItemType_FolderScan,
 	QueueItemType_Status
 };
@@ -218,7 +219,6 @@ public:
 	virtual bool TryRemoveAll(); // Removes a inactive childrens, queues active children for removal.
 								 // Returns true if item can be removed itself
 
-
 	bool m_queued;
 	int m_errorCount;
 	bool m_remove;
@@ -241,6 +241,17 @@ protected:
 	CServerPath m_remotePath;
 	wxLongLong m_size;
 	bool m_active;
+};
+
+class CFolderItem : public CFileItem
+{
+public:
+	CFolderItem(CServerItem* parent, bool queued, const wxString& localFile);
+	CFolderItem(CServerItem* parent, bool queued, const CServerPath& remotePath, const wxString& remoteFile);
+	
+	virtual enum QueueItemType GetType() const { return QueueItemType_Folder; }
+
+	virtual void SaveItem(TiXmlElement* pElement) const;
 };
 
 class CMainFrame;
