@@ -15,7 +15,7 @@ enum QueueItemType
 {
 	QueueItemType_Server,
 	QueueItemType_File,
-	QueueItemType_Folder,
+	QueueItemType_FolderScan,
 	QueueItemType_Status
 };
 
@@ -112,13 +112,13 @@ protected:
 	std::list<CFileItem*> m_fileList[2][PRIORITY_COUNT];
 };
 
-class CFolderItem : public CQueueItem
+class CFolderScanItem : public CQueueItem
 {
 public:
-	CFolderItem(CServerItem* parent, bool queued, bool download, const wxString& localPath, const CServerPath& remotePath);
-	virtual ~CFolderItem() { delete m_pDir; }
+	CFolderScanItem(CServerItem* parent, bool queued, bool download, const wxString& localPath, const CServerPath& remotePath);
+	virtual ~CFolderScanItem() { delete m_pDir; }
 
-	virtual enum QueueItemType GetType() const { return QueueItemType_Folder; }
+	virtual enum QueueItemType GetType() const { return QueueItemType_FolderScan; }
 	wxString GetLocalPath() const { return m_localPath; }
 	CServerPath GetRemotePath() const { return m_remotePath; }
 	bool Download() const { return m_download; }
@@ -324,7 +324,7 @@ protected:
 	 * Index 0 for downloads, index 1 for uploads.
 	 * For each type, only the first one can be active at any given time.
 	 */
-	std::list<CFolderItem*> m_queuedFolders[2];
+	std::list<CFolderScanItem*> m_queuedFolders[2];
 
 	CFolderProcessingThread *m_pFolderProcessingThread;
 	

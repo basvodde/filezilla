@@ -44,11 +44,11 @@ EVT_ERASE_BACKGROUND(CQueueView::OnEraseBackground)
 
 END_EVENT_TABLE()
 
-class CFolderItem;
+class CFolderScanItem;
 class CFolderProcessingThread : public wxThread
 {
 public:
-	CFolderProcessingThread(CQueueView* pOwner, CFolderItem* pFolderItem)
+	CFolderProcessingThread(CQueueView* pOwner, CFolderScanItem* pFolderItem)
 		: wxThread(wxTHREAD_JOINABLE), m_condition(m_sync) { 
 		m_pOwner = pOwner;
 		m_pFolderItem = pFolderItem;
@@ -97,7 +97,7 @@ protected:
 			{
 				if (!m_pFolderItem->m_dirsToCheck.empty())
 				{
-					const CFolderItem::t_dirPair& pair = m_pFolderItem->m_dirsToCheck.front();
+					const CFolderScanItem::t_dirPair& pair = m_pFolderItem->m_dirsToCheck.front();
 
 					wxLogNull nullLog;
 
@@ -132,7 +132,7 @@ protected:
 				{	
 					if (!m_filters.FilenameFiltered(file, true, -1, true))
 					{
-						CFolderItem::t_dirPair pair;
+						CFolderScanItem::t_dirPair pair;
 						pair.localPath = fullName;
 						pair.remotePath = m_pFolderItem->m_currentRemotePath;
 						pair.remotePath.AddSegment(file);
@@ -218,7 +218,7 @@ protected:
 	std::list<t_newEntry> m_entryList;
 
 	CQueueView* m_pOwner;
-	CFolderItem* m_pFolderItem;
+	CFolderScanItem* m_pFolderItem;
 
 	CFilterDialog m_filters;
 
@@ -546,11 +546,11 @@ void CServerItem::SetDefaultFileExistsAction(int action, const enum AcceptedTran
 				continue;
 			pFileItem->m_defaultFileExistsAction = action;
 		}
-		else if (pItem->GetType() == QueueItemType_Folder)
+		else if (pItem->GetType() == QueueItemType_FolderScan)
 		{
 			if (direction == download)
 				continue;
-			((CFolderItem *)pItem)->m_defaultFileExistsAction = action;
+			((CFolderScanItem *)pItem)->m_defaultFileExistsAction = action;
 		}
 	}
 }
@@ -681,7 +681,7 @@ void CServerItem::SaveItem(TiXmlElement* pElement) const
 	pElement->InsertEndChild(server);
 }
 
-CFolderItem::CFolderItem(CServerItem* parent, bool queued, bool download, const wxString& localPath, const CServerPath& remotePath)
+CFolderScanItem::CFolderScanItem(CServerItem* parent, bool queued, bool download, const wxString& localPath, const CServerPath& remotePath)
 {
 	m_parent = parent;
 
@@ -702,7 +702,7 @@ CFolderItem::CFolderItem(CServerItem* parent, bool queued, bool download, const 
 	m_defaultFileExistsAction = -1;
 }
 
-bool CFolderItem::TryRemoveAll()
+bool CFolderScanItem::TryRemoveAll()
 {
 	if (!m_active)
 		return true;
@@ -948,9 +948,9 @@ wxString CQueueView::OnGetItemText(long item, long column) const
 			}
 		}
 		break;
-	case QueueItemType_Folder:
+	case QueueItemType_FolderScan:
 		{
-			CFolderItem* pFolderItem = reinterpret_cast<CFolderItem*>(pItem);
+			CFolderScanItem* pFolderItem = reinterpret_cast<CFolderScanItem*>(pItem);
 			switch (column)
 			{
 			case 0:
@@ -997,7 +997,7 @@ int CQueueView::OnGetItemImage(long item) const
 		return 0;
 	case QueueItemType_File:
 		return 1;
-	case QueueItemType_Folder:
+	case QueueItemType_FolderScan:
 			return 3;
 	default:
 		return -1;
@@ -1538,7 +1538,7 @@ bool CQueueView::Quit()
 		if (!m_queuedFolders[i].empty())
 		{
 			canQuit = false;
-			for (std::list<CFolderItem*>::iterator iter = m_queuedFolders[i].begin(); iter != m_queuedFolders[i].end(); iter++)
+			for (std::list<CFolderScanItem*>::iterator iter = m_queuedFolders[i].begin(); iter != m_queuedFolders[i].end(); iter++)
 				(*iter)->m_remove = true;
 		}
 	}
@@ -1688,7 +1688,7 @@ bool CQueueView::QueueFolder(bool queueOnly, bool download, const wxString& loca
 		m_itemCount++;
 	}
 
-	CFolderItem* folderItem = new CFolderItem(item, queueOnly, download, localPath, remotePath);
+	CFolderScanItem* folderItem = new CFolderScanItem(item, queueOnly, download, localPath, remotePath);
 	item->AddChild(folderItem);
 
 	m_itemCount++;
@@ -1730,7 +1730,7 @@ void CQueueView::ProcessUploadFolderItems()
 	if (m_pFolderProcessingThread)
 		return;
 
-	CFolderItem* pItem = m_queuedFolders[1].front();
+	CFolderScanItem* pItem = m_queuedFolders[1].front();
 
 	if (pItem->Queued())
 		pItem->m_statusMessage = _("Scanning for files to add to queue");
@@ -1750,7 +1750,7 @@ void CQueueView::OnFolderThreadComplete(wxCommandEvent& event)
 		return;
 
 	wxASSERT(!m_queuedFolders[1].empty());
-	CFolderItem* pItem = m_queuedFolders[1].front();
+	CFolderScanItem* pItem = m_queuedFolders[1].front();
 	m_queuedFolders[1].pop_front();
 
 	RemoveItem(pItem);
@@ -2099,9 +2099,9 @@ void CQueueView::OnRemoveSelected(wxCommandEvent& event)
 
 		if (pItem->GetType() == QueueItemType_Status)
 			continue;
-		else if (pItem->GetType() == QueueItemType_Folder)
+		else if (pItem->GetType() == QueueItemType_FolderScan)
 		{
-			CFolderItem* pFolder = (CFolderItem*)pItem;
+			CFolderScanItem* pFolder = (CFolderScanItem*)pItem;
 			if (pFolder->m_active)
 			{
 				pFolder->m_remove = true;
@@ -2153,9 +2153,9 @@ bool CQueueView::StopItem(CServerItem* pServerItem)
 	for (unsigned int i = 0; i < pServerItem->GetChildrenCount(false); i++)
 	{
 		CQueueItem* pItem = pServerItem->GetChild(0, false);
-		if (pItem->GetType() == QueueItemType_Folder)
+		if (pItem->GetType() == QueueItemType_FolderScan)
 		{
-			CFolderItem* pFolder = (CFolderItem*)pItem;
+			CFolderScanItem* pFolder = (CFolderScanItem*)pItem;
 			if (pFolder->m_active)
 			{
 				pFolder->m_remove = true;
@@ -2195,7 +2195,7 @@ void CQueueView::OnFolderThreadFiles(wxCommandEvent& event)
 		return;
 
 	wxASSERT(!m_queuedFolders[1].empty());
-	CFolderItem* pItem = m_queuedFolders[1].front();
+	CFolderScanItem* pItem = m_queuedFolders[1].front();
 
 	std::list<t_newEntry> entryList;
 	m_pFolderProcessingThread->GetFiles(entryList);
@@ -2245,8 +2245,8 @@ void CQueueView::OnSetDefaultFileExistsAction(wxCommandEvent &event)
 
 		switch (pItem->GetType())
 		{
-		case QueueItemType_Folder:
-			((CFolderItem*)pItem)->m_defaultFileExistsAction = uploadAction;
+		case QueueItemType_FolderScan:
+			((CFolderScanItem*)pItem)->m_defaultFileExistsAction = uploadAction;
 			break;
 		case QueueItemType_File:
 			{
