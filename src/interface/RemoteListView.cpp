@@ -1075,6 +1075,13 @@ void CRemoteListView::ProcessDirectoryListing()
 	const CServer* pServer = m_pState->GetServer();
 	wxASSERT(pServer);
 
+	if (!m_pDirectoryListing->m_entryCount &&
+		m_operationMode == recursive_download)
+	{
+		wxFileName fn(dir.localDir, _T(""));
+		wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
+	}
+
 	for (unsigned int i = 0; i < m_pDirectoryListing->m_entryCount; i++)
 	{
 		const CDirentry& entry = m_pDirectoryListing->m_pEntries[i];
