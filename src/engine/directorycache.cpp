@@ -266,7 +266,32 @@ CDirectoryCache::CCacheEntry::CCacheEntry(const CDirectoryCache::CCacheEntry &en
 	parents = entry.parents;
 }
 
-bool CDirectoryCache::InvalidateFile(const CServer &server, const CServerPath &path, const wxString& filename, bool mayCreate, enum Filetype type /*=file*/, int size /*=-1*/)
+bool CDirectoryCache::InvalidateFile(const CServer &server, const CServerPath &path, const wxString& filename)
+{
+	for (tCacheIter iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
+	{
+		CCacheEntry &entry = *iter;
+		if (entry.server != server || path.CmpNoCase(entry.listing.path))
+			continue;
+
+		//bool matchCase = false;
+		for (unsigned int i = 0; i < entry.listing.m_entryCount; i++)
+		{
+			if (!filename.CmpNoCase(entry.listing.m_pEntries[i].name))
+			{
+				entry.listing.m_pEntries[i].unsure = true;
+				//if (entry.listing.m_pEntries[i].name == filename)
+					//matchCase = true;
+			}				
+		}
+		entry.listing.m_hasUnsureEntries |= UNSURE_UNSURE;
+		entry.modificationTime = CTimeEx::Now();
+	}
+
+	return true;
+}
+
+bool CDirectoryCache::UpdateFile(const CServer &server, const CServerPath &path, const wxString& filename, bool mayCreate, enum Filetype type /*=file*/, int size /*=-1*/)
 {
 	for (tCacheIter iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
 	{
@@ -462,12 +487,12 @@ void CDirectoryCache::Rename(const CServer& server, const CServerPath& pathFrom,
 			if (listing.m_pEntries[i].dir)
 			{
 				RemoveDir(server, pathFrom, fileFrom);
-				InvalidateFile(server, pathTo, fileTo, true, dir);
+				UpdateFile(server, pathTo, fileTo, true, dir);
 			}
 			else
 			{
 				RemoveFile(server, pathFrom, fileFrom);
-				InvalidateFile(server, pathTo, fileTo, true, file);
+				UpdateFile(server, pathTo, fileTo, true, file);
 			}
 		}
 		else

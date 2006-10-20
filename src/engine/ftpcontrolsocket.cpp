@@ -1981,7 +1981,7 @@ int CFtpControlSocket::DeleteSend(int prevResult /*=FZ_REPLY_OK*/)
 	}
 
 	CDirectoryCache cache;
-	cache.InvalidateFile(*m_pCurrentServer, pData->path, pData->file, false);
+	cache.InvalidateFile(*m_pCurrentServer, pData->path, pData->file);
 
 	if (!Send(_T("DELE ") + filename))
 		return FZ_REPLY_ERROR;
@@ -2070,7 +2070,7 @@ int CFtpControlSocket::RemoveDirSend(int prevResult /*=FZ_REPLY_OK*/)
 		pData->omitPath = false;
 
 	CDirectoryCache cache;
-	cache.InvalidateFile(*m_pCurrentServer, pData->path, pData->subDir, false, CDirectoryCache::dir);
+	cache.InvalidateFile(*m_pCurrentServer, pData->path, pData->subDir);
 
 	if (pData->omitPath)
 	{
@@ -2203,7 +2203,7 @@ int CFtpControlSocket::MkdirParseResponse()
 				return FZ_REPLY_ERROR;
 			}
 			CDirectoryCache cache;
-			cache.InvalidateFile(*m_pCurrentServer, pData->currentPath, pData->segments.front(), true, CDirectoryCache::dir);
+			cache.UpdateFile(*m_pCurrentServer, pData->currentPath, pData->segments.front(), true, CDirectoryCache::dir);
 			m_pEngine->SendDirectoryListingNotification(pData->currentPath, false, true, false);
 
 			pData->currentPath.AddSegment(pData->segments.front());
@@ -2396,8 +2396,8 @@ int CFtpControlSocket::RenameSend(int prevResult /*=FZ_REPLY_OK*/)
 	case rename_rnto:
 		{
 			CDirectoryCache cache;
-			cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile(), false);
-			cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetToPath(), pData->m_cmd.GetToFile(), false);
+			cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile());
+			cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetToPath(), pData->m_cmd.GetToFile());
 			res = Send(_T("RNTO ") + pData->m_cmd.GetToPath().FormatFilename(pData->m_cmd.GetToFile(), !pData->m_useAbsolute && pData->m_cmd.GetFromPath() == pData->m_cmd.GetToPath()));
 			break;
 		}
@@ -2477,7 +2477,7 @@ int CFtpControlSocket::ChmodParseResponse()
 	}
 
 	CDirectoryCache cache;
-	cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetPath(), pData->m_cmd.GetFile(), false, CDirectoryCache::unknown);
+	cache.UpdateFile(*m_pCurrentServer, pData->m_cmd.GetPath(), pData->m_cmd.GetFile(), false, CDirectoryCache::unknown);
 
 	ResetOperation(FZ_REPLY_OK);
 	return FZ_REPLY_OK;

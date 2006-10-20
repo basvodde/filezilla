@@ -22,10 +22,11 @@ public:
 	bool operator==(const CDirentry &op) const;
 };
 
-#define UNSURE_ADD		0x01
-#define UNSURE_REMOVE	0x02
-#define UNSURE_CHANGE	0x04
-#define UNSURE_CONFUSED	0x05
+#define UNSURE_UNSURE	0x01
+#define UNSURE_ADD		(0x02|UNSURE_UNSURE)
+#define UNSURE_REMOVE	(0x04|UNSURE_UNSURE)
+#define UNSURE_CHANGE	(0x08|UNSURE_UNSURE)
+#define UNSURE_CONFUSED	(0x10|UNSURE_UNSURE)
 
 class CDirectoryListing
 {

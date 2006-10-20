@@ -1574,7 +1574,7 @@ int CSftpControlSocket::MkdirParseResponse(bool successful, const wxString& repl
 				return FZ_REPLY_ERROR;
 			}
 			CDirectoryCache cache;
-			cache.InvalidateFile(*m_pCurrentServer, pData->currentPath, pData->segments.front(), true, CDirectoryCache::dir);
+			cache.UpdateFile(*m_pCurrentServer, pData->currentPath, pData->segments.front(), true, CDirectoryCache::dir);
 			m_pEngine->SendDirectoryListingNotification(pData->currentPath, false, true, false);
 
 			pData->currentPath.AddSegment(pData->segments.front());
@@ -1700,7 +1700,7 @@ int CSftpControlSocket::Delete(const CServerPath& path /*=CServerPath()*/, const
 	}
 
 	CDirectoryCache cache;
-	cache.InvalidateFile(*m_pCurrentServer, path, file, false);
+	cache.InvalidateFile(*m_pCurrentServer, path, file);
 
 	if (!Send(_T("rm ") + QuoteFilename(filename)))
 		return FZ_REPLY_ERROR;
@@ -1764,7 +1764,7 @@ int CSftpControlSocket::RemoveDir(const CServerPath& path /*=CServerPath()*/, co
 	}
 
 	CDirectoryCache cache;
-	cache.InvalidateFile(*m_pCurrentServer, path, subDir, false, CDirectoryCache::dir);
+	cache.InvalidateFile(*m_pCurrentServer, path, subDir);
 
 	if (!Send(_T("rmdir ") + QuoteFilename(fullPath.GetPath())))
 		return FZ_REPLY_ERROR;
@@ -1876,7 +1876,7 @@ int CSftpControlSocket::ChmodSend(int prevResult /*=FZ_REPLY_OK*/)
 	case chmod_chmod:
 		{
 			CDirectoryCache cache;
-			cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetPath(), pData->m_cmd.GetFile(), false, CDirectoryCache::unknown);
+			cache.UpdateFile(*m_pCurrentServer, pData->m_cmd.GetPath(), pData->m_cmd.GetFile(), false, CDirectoryCache::unknown);
 		}
 		res = Send(_T("chmod ") + pData->m_cmd.GetPermission() + _T(" ") + QuoteFilename(pData->m_cmd.GetPath().FormatFilename(pData->m_cmd.GetFile(), !pData->m_useAbsolute)));
 		break;
@@ -1987,8 +1987,8 @@ int CSftpControlSocket::RenameSend(int prevResult /*=FZ_REPLY_OK*/)
 	case rename_rename:
 		{
 			CDirectoryCache cache;
-			cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile(), false);
-			cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetToPath(), pData->m_cmd.GetToFile(), false);
+			cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile());
+			cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetToPath(), pData->m_cmd.GetToFile());
 		}
 
 		res = Send(_T("mv ") + QuoteFilename(pData->m_cmd.GetFromPath().FormatFilename(pData->m_cmd.GetFromFile(), !pData->m_useAbsolute))

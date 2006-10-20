@@ -51,22 +51,21 @@ protected:
 
 	struct t_fileData
 	{
-		CDirentry *pDirEntry;
 		int icon;
 		wxString fileType;
 	};
 
 	bool IsItemValid(unsigned int item) const;
-	t_fileData *GetData(unsigned int item);
+	int GetItemIndex(unsigned int item) const;
 
 	void SortList(int column = -1, int direction = -1);
-	void QSortList(const unsigned int dir, unsigned int anf, unsigned int ende, int (*comp)(CRemoteListView *pList, unsigned int index, t_fileData &refData));
+	void QSortList(const unsigned int dir, unsigned int anf, unsigned int ende, int (*comp)(CRemoteListView *pList, unsigned int index, unsigned int refIndex));
 
-	static int CmpName(CRemoteListView *pList, unsigned int index, t_fileData &refData);
-	static int CmpType(CRemoteListView *pList, unsigned int index, t_fileData &refData);
-	static int CmpSize(CRemoteListView *pList, unsigned int index, t_fileData &refData);
-	static int CmpTime(CRemoteListView *pList, unsigned int index, t_fileData &refData);
-	static int CmpPermissions(CRemoteListView *pList, unsigned int index, t_fileData &refData);
+	static int CmpName(CRemoteListView *pList, unsigned int index, unsigned int refIndex);
+	static int CmpType(CRemoteListView *pList, unsigned int index, unsigned int refIndex);
+	static int CmpSize(CRemoteListView *pList, unsigned int index, unsigned int refIndex);
+	static int CmpTime(CRemoteListView *pList, unsigned int index, unsigned int refIndex);
+	static int CmpPermissions(CRemoteListView *pList, unsigned int index, unsigned int refIndex);
 
 	// Processes the directory listing in case of a recursive operation
 	void ProcessDirectoryListing();
@@ -79,6 +78,8 @@ protected:
 	virtual void OnStateChange(unsigned int event);
 	void ApplyCurrentFilter();
 	void SetDirectoryListing(const CDirectoryListing *pDirectoryListing, bool modified = false);
+	bool UpdateDirectoryListing(const CDirectoryListing *pDirectoryListing);
+	void UpdateDirectoryListing_Removed(const CDirectoryListing *pDirectoryListing);
 
 	const CDirectoryListing *m_pDirectoryListing;
 	std::vector<t_fileData> m_fileData;

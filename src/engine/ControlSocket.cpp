@@ -260,7 +260,7 @@ int CControlSocket::ResetOperation(int nErrorCode)
 			if (!pData->download && pData->transferInitiated)
 			{
 				CDirectoryCache cache;
-				cache.InvalidateFile(*m_pCurrentServer, pData->remotePath, pData->remoteFile, true, CDirectoryCache::file, (nErrorCode == FZ_REPLY_OK) ? pData->localFileSize : -1);
+				cache.UpdateFile(*m_pCurrentServer, pData->remotePath, pData->remoteFile, true, CDirectoryCache::file, (nErrorCode == FZ_REPLY_OK) ? pData->localFileSize : -1);
 
 				m_pEngine->SendDirectoryListingNotification(pData->remotePath, false, true, false);
 			}
