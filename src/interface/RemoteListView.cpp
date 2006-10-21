@@ -246,7 +246,7 @@ bool CRemoteListView::IsItemValid(unsigned int item) const
 
 void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pDirectoryListing)
 {
-	std::list<int> removedItems;
+	std::list<unsigned int> removedItems;
 	
 	for (unsigned int i = 0, j = 0; i < pDirectoryListing->m_entryCount; i++, j++)
 	{
@@ -255,7 +255,7 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 		removedItems.push_back(j++);
 	}
 
-	for (std::list<int>::reverse_iterator iter = removedItems.rbegin(); iter != removedItems.rend(); iter++)
+	for (std::list<unsigned int>::reverse_iterator iter = removedItems.rbegin(); iter != removedItems.rend(); iter++)
 	{
 		m_fileData.erase(m_fileData.begin() + *iter);
 	}
@@ -272,7 +272,7 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 
 		// j is the offset to index has to be adjusted
 		int j = 1;
-		for (std::list<int>::const_iterator iter = removedItems.begin(); iter != removedItems.end(); iter++, j++)
+		for (std::list<unsigned int>::const_iterator iter = removedItems.begin(); iter != removedItems.end(); iter++, j++)
 		{
 			if (*iter > m_indexMapping[i])
 				continue;
@@ -289,7 +289,7 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 		}
 
 		// Update selection
-		bool isSelected = GetItemState(i, wxLIST_STATE_SELECTED);
+		bool isSelected = GetItemState(i, wxLIST_STATE_SELECTED) != 0;
 		bool needSelection;
 		if (selectedItems.empty())
 			needSelection = false;
@@ -1075,11 +1075,15 @@ void CRemoteListView::ProcessDirectoryListing()
 	const CServer* pServer = m_pState->GetServer();
 	wxASSERT(pServer);
 
-	if (!m_pDirectoryListing->m_entryCount &&
-		m_operationMode == recursive_download)
+	if (!m_pDirectoryListing->m_entryCount)
 	{
 		wxFileName fn(dir.localDir, _T(""));
-		wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
+		if (m_operationMode == recursive_download)
+		{
+			wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
+		}
+		else if (m_operationMode == recursive_addtoqueue)
+			m_pQueue->QueueFile(true, true, fn.GetFullPath(), _T(""), CServerPath(), *pServer, -1);
 	}
 
 	for (unsigned int i = 0; i < m_pDirectoryListing->m_entryCount; i++)

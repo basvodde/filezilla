@@ -870,8 +870,31 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 		m_itemCount++;
 	}
 
-	CFileItem* fileItem = new CFileItem(item, queueOnly, download, localFile, remoteFile, remotePath, size);
-	fileItem->m_transferSettings.binary = ShouldUseBinaryMode(download ? remoteFile : wxFileName(localFile).GetFullName());
+	CFileItem* fileItem;
+	if (localFile == _T("") || remotePath.IsEmpty())
+	{
+		if (download)
+			fileItem = new CFolderItem(item, queueOnly, localFile);
+		else
+			fileItem = new CFolderItem(item, queueOnly, remotePath, remoteFile);
+	}
+	else
+	{
+		fileItem = new CFileItem(item, queueOnly, download, localFile, remoteFile, remotePath, size);
+		fileItem->m_transferSettings.binary = ShouldUseBinaryMode(download ? remoteFile : wxFileName(localFile).GetFullName());
+
+		if (size < 0)
+		{
+			m_filesWithUnknownSize++;
+			if (m_filesWithUnknownSize == 1)
+				DisplayQueueSize();
+		}
+		else if (size > 0)
+		{
+			m_totalQueueSize += size;
+			DisplayQueueSize();
+		}
+	}
 	item->AddChild(fileItem);
 	item->AddFileItemToList(fileItem);
 
@@ -886,18 +909,6 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 	while (TryStartNextTransfer());
 	m_waitStatusLineUpdate = false;
 	UpdateStatusLinePositions();
-
-	if (size < 0)
-	{
-		m_filesWithUnknownSize++;
-		if (m_filesWithUnknownSize == 1)
-			DisplayQueueSize();
-	}
-	else if (size > 0)
-	{
-		m_totalQueueSize += size;
-		DisplayQueueSize();
-	}
 
 	return true;
 }
@@ -1229,6 +1240,21 @@ bool CQueueView::TryStartNextTransfer()
 			continue;
 
 		CFileItem* newFileItem = currentServerItem->GetIdleChild(m_activeMode == 1, wantedDirection);
+
+		while (newFileItem && newFileItem->Download() && newFileItem->GetType() == QueueItemType_Folder)
+		{
+			wxFileName fn(newFileItem->GetLocalFile(), _T(""));
+			wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
+			if (RemoveItem(newFileItem))
+			{
+				// Server got deleted. Unfortunately we have to start over now
+				if (m_serverList.empty())
+					return false;
+				iter = m_serverList.begin();
+			}
+			newFileItem = currentServerItem->GetIdleChild(m_activeMode == 1, wantedDirection);
+		}
+
 		if (!newFileItem)
 			continue;
 
@@ -1428,7 +1454,7 @@ void CQueueView::ResetEngine(t_EngineData& data, const bool removeFileItem)
 	CheckQueueState();
 }
 
-void CQueueView::RemoveItem(CQueueItem* item)
+bool CQueueView::RemoveItem(CQueueItem* item)
 {
 	// RemoveItem assumes that the item has already been removed from all engines
 	
@@ -1455,6 +1481,8 @@ void CQueueView::RemoveItem(CQueueItem* item)
 	int count = topLevelItem->GetChildrenCount(true);
 	topLevelItem->RemoveChild(item);
 
+	bool didRemoveParent;
+
 	int oldCount = m_itemCount;
 	if (!topLevelItem->GetChild(0))
 	{
@@ -1470,12 +1498,16 @@ void CQueueView::RemoveItem(CQueueItem* item)
 
 		m_itemCount -= count + 1;
 		SetItemCount(m_itemCount);
+		
+		didRemoveParent = true;
 	}
 	else
 	{
 		count -= topLevelItem->GetChildrenCount(true);
 		m_itemCount -= count;
 		SetItemCount(m_itemCount);
+
+		didRemoveParent = false;
 	}
 
 	if (oldCount > m_itemCount)
@@ -1493,6 +1525,8 @@ void CQueueView::RemoveItem(CQueueItem* item)
 	}
 
 	UpdateStatusLinePositions();
+
+	return didRemoveParent;
 }
 
 void CQueueView::SendNextCommand(t_EngineData& engineData)
@@ -1993,18 +2027,18 @@ void CQueueView::LoadQueue()
 				bool download = GetTextElementInt(pFolder, "Download") != 0;
 				if (download)
 				{
-					wxString localFile = GetTextElement(pFile, "LocalFile");
+					wxString localFile = GetTextElement(pFolder, "LocalFile");
 					if (localFile == _T(""))
 						continue;
 					folderItem = new CFolderItem(pServerItem, true, localFile);
 				}
 				else
 				{
-					wxString remoteFile = GetTextElement(pFile, "RemoteFile");
+					wxString remoteFile = GetTextElement(pFolder, "RemoteFile");
 					if (remoteFile == _T(""))
 						continue;
 
-					wxString safeRemotePath = GetTextElement(pFile, "RemotePath");
+					wxString safeRemotePath = GetTextElement(pFolder, "RemotePath");
 					if (safeRemotePath == _T(""))
 						continue;
 
@@ -2014,13 +2048,28 @@ void CQueueView::LoadQueue()
 					folderItem = new CFolderItem(pServerItem, true, remotePath, remoteFile);
 				}
 				
-				unsigned int priority = GetTextElementInt(pFile, "Priority", priority_normal);
+				unsigned int priority = GetTextElementInt(pFolder, "Priority", priority_normal);
 				if (priority >= PRIORITY_COUNT)
+				{
+					delete folderItem;
 					continue;
+				}
 				folderItem->SetPriority((enum QueuePriority)priority);
 
+				if (!pServerItem)
+				{
+					pServerItem = GetServerItem(server);
+					if (!pServerItem)
+					{
+						pServerItem = new CServerItem(server);
+						m_serverList.push_back(pServerItem);
+						m_itemCount++;
+					}
+				}
+
 				pServerItem->AddChild(folderItem);
-				pServerItem->AddFileItemToList(folderItem);				
+				pServerItem->AddFileItemToList(folderItem);
+				m_itemCount++;
 			}
 		}
 

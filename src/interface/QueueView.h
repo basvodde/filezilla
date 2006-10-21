@@ -307,7 +307,7 @@ protected:
 	void ResetEngine(t_EngineData& data, const bool removeFileItem);
 	void ResetItem(CFileItem* item);
 	
-	void RemoveItem(CQueueItem* item);
+	bool RemoveItem(CQueueItem* item);
 	void RemoveAll();
 
 	// Stops processing of given item
