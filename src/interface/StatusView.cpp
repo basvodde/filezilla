@@ -141,8 +141,6 @@ void CStatusView::InitDefAttr()
 	defAttr.SetTabs(array);
 	defAttr.SetLeftIndent(0, maxWidth);
 
-	defAttr.SetBackgroundColour(dc.GetTextBackground());
-	
 	for (int i = 0; i < MessageTypeCount; i++)
 	{
 		m_attributeCache[i].attr = defAttr;
