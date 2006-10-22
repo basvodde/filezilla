@@ -68,7 +68,11 @@ CStatusLineCtrl::~CStatusLineCtrl()
 
 void CStatusLineCtrl::OnPaint(wxPaintEvent& event)
 {
+#ifdef __WXMSW__ // TODO: Once depending on wx >= 2.7.3, use wxAutoBufferedPaintDC.
 	wxBufferedPaintDC dc(this);
+#else
+	wxPaintDC dc(this);
+#endif
 
 	wxRect rect = GetRect();
 
