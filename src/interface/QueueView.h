@@ -178,7 +178,8 @@ struct t_EngineData
 		disconnect,
 		connect,
 		transfer,
-		list
+		list,
+		mkdir
 	} state;
 
 	CFileItem* pItem;
@@ -212,7 +213,7 @@ public:
 	virtual enum QueueItemType GetType() const { return QueueItemType_File; }
 
 	bool IsActive() const { return m_active; }
-	void SetActive(bool active);
+	virtual void SetActive(bool active);
 	
 	virtual void SaveItem(TiXmlElement* pElement) const;
 
@@ -252,6 +253,8 @@ public:
 	virtual enum QueueItemType GetType() const { return QueueItemType_Folder; }
 
 	virtual void SaveItem(TiXmlElement* pElement) const;
+
+	virtual void SetActive(bool active);
 };
 
 class CMainFrame;
