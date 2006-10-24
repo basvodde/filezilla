@@ -883,17 +883,18 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 						   const wxString& remoteFile, const CServerPath& remotePath,
 						   const CServer& server, const wxLongLong size)
 {
-	int newServerIndex;
+	bool newServer;
 	CServerItem* item = GetServerItem(server);
 	if (!item)
 	{
 		item = new CServerItem(server);
 		m_serverList.push_back(item);
 		m_itemCount++;
-		newServerIndex = GetItemIndex(item);
+		newServer = true;
 	}
 	else
-		newServerIndex = -1;
+		newServer = false;
+	int serverIndex = GetItemIndex(item);
 
 	CFileItem* fileItem;
 	if (localFile == _T("") || remotePath.IsEmpty())
@@ -925,10 +926,10 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 
 	m_itemCount++;
 	SetItemCount(m_itemCount);
-	if (newServerIndex != -1)
-		UpdateSelections_ItemRangeAdded(newServerIndex, 2);
+	if (newServer)
+		UpdateSelections_ItemRangeAdded(serverIndex, 2);
 	else
-		UpdateSelections_ItemAdded(GetItemIndex(fileItem));
+		UpdateSelections_ItemAdded(serverIndex + item->GetChildrenCount(true));
 
 	if (!m_activeMode && !queueOnly)
 		m_activeMode = 1;
@@ -937,6 +938,8 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 	while (TryStartNextTransfer());
 	m_waitStatusLineUpdate = false;
 	UpdateStatusLinePositions();
+
+	Refresh(false);
 
 	return true;
 }
@@ -1920,6 +1923,8 @@ bool CQueueView::QueueFolder(bool queueOnly, bool download, const wxString& loca
 
 	ProcessFolderItems();
 
+	Refresh(false);
+
 	return true;
 }
 
@@ -2026,6 +2031,8 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOn
 	UpdateStatusLinePositions();
 
 	DisplayQueueSize();
+
+	Refresh(false);
 
 	return true;
 }
