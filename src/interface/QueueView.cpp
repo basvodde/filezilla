@@ -2642,29 +2642,30 @@ void CQueueView::UpdateSelections_ItemAdded(int added)
 
 	// Go through all items, keep record of the previous selected item
 	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	while (item != -1 && item < added)
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+
 	int prevItem = -1;
 	while (item != -1)
 	{
-		if (item >= added)
+		if (prevItem != -1)
 		{
-			if (prevItem != -1)
+			if (prevItem + 1 != item)
 			{
-				if (prevItem + 1 != item)
-				{
-					// Previous selected item was not the direct predecessor
-					// That means we have to select the successor of prevItem
-					// and unselect current item
-					SetItemState(prevItem + 1, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-					SetItemState(item, 0, wxLIST_STATE_SELECTED);
-				}
-			}
-			else
-			{
-				// First selected item, no predecessor yet. We have to unselect
+				// Previous selected item was not the direct predecessor
+				// That means we have to select the successor of prevItem
+				// and unselect current item
+				SetItemState(prevItem + 1, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 				SetItemState(item, 0, wxLIST_STATE_SELECTED);
 			}
-			prevItem = item;
 		}
+		else
+		{
+			// First selected item, no predecessor yet. We have to unselect
+			SetItemState(item, 0, wxLIST_STATE_SELECTED);
+		}
+		prevItem = item;
+
 		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	}
 	if (prevItem != -1 && prevItem < m_itemCount - 1)
@@ -2682,23 +2683,24 @@ void CQueueView::UpdateSelections_ItemRangeAdded(int added, int count)
 
 	// Go through all selected items
 	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	while (item != -1 && item < added)
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+
 	while (item != -1)
 	{
-		if (item >= added)
+		// Select new items preceeding to current one
+		while (!itemsToSelect.empty() && itemsToSelect.front() < item)
 		{
-			// Select new items preceeding to current one
-			while (!itemsToSelect.empty() && itemsToSelect.front() < item)
-			{
-				SetItemState(itemsToSelect.front(), wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-				itemsToSelect.pop_front();
-			}
-			if (itemsToSelect.empty())
-				SetItemState(item, 0, wxLIST_STATE_SELECTED);
-			else if (itemsToSelect.front() == item)
-				itemsToSelect.pop_front();
-			
-			itemsToSelect.push_back(item + count);
+			SetItemState(itemsToSelect.front(), wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+			itemsToSelect.pop_front();
 		}
+		if (itemsToSelect.empty())
+			SetItemState(item, 0, wxLIST_STATE_SELECTED);
+		else if (itemsToSelect.front() == item)
+			itemsToSelect.pop_front();
+
+		itemsToSelect.push_back(item + count);
+
 		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	}
 	for (std::list<int>::const_iterator iter = itemsToSelect.begin(); iter != itemsToSelect.end(); iter++)
@@ -2711,28 +2713,29 @@ void CQueueView::UpdateSelections_ItemRemoved(int removed)
 
 	int prevItem = -1;
 	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	while (item != -1 && item < removed)
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+
 	while (item != -1)
 	{
-		if (item >= removed)
+		if (prevItem != -1)
 		{
-			if (prevItem != -1)
+			if (prevItem + 1 != item)
 			{
-				if (prevItem + 1 != item)
-				{
-					// Previous selected item was not the direct predecessor
-					// That means we have to select our predecessor and unselect
-					// prevItem
-					SetItemState(prevItem, 0, wxLIST_STATE_SELECTED);
-					SetItemState(item - 1, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-				}
-			}
-			else
-			{
-				// First selected item, no predecessor yet. We have to unselect
+				// Previous selected item was not the direct predecessor
+				// That means we have to select our predecessor and unselect
+				// prevItem
+				SetItemState(prevItem, 0, wxLIST_STATE_SELECTED);
 				SetItemState(item - 1, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 			}
-			prevItem = item;
 		}
+		else
+		{
+			// First selected item, no predecessor yet. We have to unselect
+			SetItemState(item - 1, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+		}
+		prevItem = item;
+
 		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	}
 	if (prevItem != -1)
@@ -2748,26 +2751,27 @@ void CQueueView::UpdateSelections_ItemRangeRemoved(int removed, int count)
 	std::list<int> itemsToUnselect;
 
 	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	while (item != -1 && item < removed)
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+
 	while (item != -1)
 	{
-		if (item >= removed)
+		// Unselect new items preceeding to current one
+		while (!itemsToUnselect.empty() && itemsToUnselect.front() < item - count)
 		{
-			// Unselect new items preceeding to current one
-			while (!itemsToUnselect.empty() && itemsToUnselect.front() < item - count)
-			{
-				SetItemState(itemsToUnselect.front(), 0, wxLIST_STATE_SELECTED);
-				itemsToUnselect.pop_front();
-			}
-
-			if (itemsToUnselect.empty())
-				SetItemState(item - count, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-			else if (itemsToUnselect.front() == item - count)
-				itemsToUnselect.pop_front();
-			else
-				SetItemState(item - count, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-			
-			itemsToUnselect.push_back(item);
+			SetItemState(itemsToUnselect.front(), 0, wxLIST_STATE_SELECTED);
+			itemsToUnselect.pop_front();
 		}
+
+		if (itemsToUnselect.empty())
+			SetItemState(item - count, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+		else if (itemsToUnselect.front() == item - count)
+			itemsToUnselect.pop_front();
+		else
+			SetItemState(item - count, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+
+		itemsToUnselect.push_back(item);
+
 		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	}
 	for (std::list<int>::const_iterator iter = itemsToUnselect.begin(); iter != itemsToUnselect.end(); iter++)
