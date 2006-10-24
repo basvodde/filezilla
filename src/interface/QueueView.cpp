@@ -883,13 +883,17 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 						   const wxString& remoteFile, const CServerPath& remotePath,
 						   const CServer& server, const wxLongLong size)
 {
+	int newServerIndex;
 	CServerItem* item = GetServerItem(server);
 	if (!item)
 	{
 		item = new CServerItem(server);
 		m_serverList.push_back(item);
 		m_itemCount++;
+		newServerIndex = GetItemIndex(item);
 	}
+	else
+		newServerIndex = -1;
 
 	CFileItem* fileItem;
 	if (localFile == _T("") || remotePath.IsEmpty())
@@ -920,8 +924,11 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 	item->AddFileItemToList(fileItem);
 
 	m_itemCount++;
-
 	SetItemCount(m_itemCount);
+	if (newServerIndex != -1)
+		UpdateSelections_ItemRangeAdded(newServerIndex, 2);
+	else
+		UpdateSelections_ItemAdded(GetItemIndex(fileItem));
 
 	if (!m_activeMode && !queueOnly)
 		m_activeMode = 1;
@@ -1332,6 +1339,7 @@ bool CQueueView::TryStartNextTransfer()
 		m_itemCount++;
 		SetItemCount(m_itemCount);
 		int lineIndex = GetItemIndex(fileItem);
+		UpdateSelections_ItemAdded(lineIndex + 1);
 
 		wxRect rect;
 		GetItemRect(lineIndex + 1, rect);
@@ -1452,6 +1460,8 @@ void CQueueView::ResetEngine(t_EngineData& data, const bool removeFileItem)
 		data.pStatusLineCtrl->Hide();
 		m_allowBackgroundErase = true;
 		
+		UpdateSelections_ItemRemoved(GetItemIndex(data.pItem) + 1);
+
 		m_itemCount--;
 		SetItemCount(m_itemCount);
 	}
@@ -1524,6 +1534,8 @@ bool CQueueView::RemoveItem(CQueueItem* item)
 		}
 	}
 
+	const int index = GetItemIndex(item);
+
 	CQueueItem* topLevelItem = item->GetTopLevelItem();
 
 	int count = topLevelItem->GetChildrenCount(true);
@@ -1542,6 +1554,9 @@ bool CQueueView::RemoveItem(CQueueItem* item)
 		}
 		if (iter != m_serverList.end())
 			m_serverList.erase(iter);
+
+		UpdateSelections_ItemRangeRemoved(GetItemIndex(topLevelItem), count + 1);
+
 		delete topLevelItem;
 
 		m_itemCount -= count + 1;
@@ -1552,6 +1567,9 @@ bool CQueueView::RemoveItem(CQueueItem* item)
 	else
 	{
 		count -= topLevelItem->GetChildrenCount(true);
+
+		UpdateSelections_ItemRangeRemoved(index, count);
+
 		m_itemCount -= count;
 		SetItemCount(m_itemCount);
 
@@ -1874,12 +1892,16 @@ void CQueueView::DisplayQueueSize()
 bool CQueueView::QueueFolder(bool queueOnly, bool download, const wxString& localPath, const CServerPath& remotePath, const CServer& server)
 {
 	CServerItem* item = GetServerItem(server);
+	int newServerIndex;
 	if (!item)
 	{
 		item = new CServerItem(server);
 		m_serverList.push_back(item);
 		m_itemCount++;
+		newServerIndex = GetItemIndex(item);
 	}
+	else
+		newServerIndex = -1;
 
 	CFolderScanItem* folderItem = new CFolderScanItem(item, queueOnly, download, localPath, remotePath);
 	item->AddChild(folderItem);
@@ -1889,6 +1911,10 @@ bool CQueueView::QueueFolder(bool queueOnly, bool download, const wxString& loca
 	folderItem->m_statusMessage = _("Waiting");
 
 	SetItemCount(m_itemCount);
+	if (newServerIndex != -1)
+		UpdateSelections_ItemRangeAdded(newServerIndex, 2);
+	else
+		UpdateSelections_ItemAdded(GetItemIndex(folderItem));
 
 	m_queuedFolders[download ? 0 : 1].push_back(folderItem);
 
@@ -1959,6 +1985,7 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOn
 {
 	wxASSERT(pServerItem);
 
+	int start = -1;
 	for (std::list<t_newEntry>::const_iterator iter = entryList.begin(); iter != entryList.end(); iter++)
 	{
 		const t_newEntry& entry = *iter;
@@ -1981,9 +2008,13 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOn
 		pServerItem->AddChild(fileItem);
 		pServerItem->AddFileItemToList(fileItem);
 
+		if (start == -1)
+			start = GetItemIndex(fileItem);
+
 		m_itemCount++;
 	}
 
+	UpdateSelections_ItemRangeAdded(start, entryList.size());
 	SetItemCount(m_itemCount);
 
 	if (!m_activeMode && !queueOnly)
@@ -2293,6 +2324,12 @@ void CQueueView::RemoveAll()
 {
 	// This function removes all inactive items and queues active items
 	// for removal
+
+	// First, clear all selections
+	int item;
+	while ((item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
+		SetItemState(item, 0, wxLIST_STATE_SELECTED);
+
 	std::vector<CServerItem*> newServerList;
 	m_itemCount = 0;
 	for (std::vector<CServerItem*>::iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
@@ -2329,6 +2366,7 @@ void CQueueView::OnRemoveSelected(wxCommandEvent& event)
 			break;
 
 		selectedItems.push_front(item);
+		SetItemState(item, 0, wxLIST_STATE_SELECTED);
 	}
 
 	m_waitStatusLineUpdate = true;
@@ -2587,4 +2625,144 @@ void CQueueView::TryRefreshListings()
 
 	pEngineData->active = true;
 	pEngineData->state = t_EngineData::list;
+}
+
+void CQueueView::UpdateSelections_ItemAdded(int added)
+{
+	// This is the fastest algorithm I can think of to move all
+	// selections. Though worst case is still O(n), as with every algorithm to
+	// move selections.
+
+	// Go through all items, keep record of the previous selected item
+	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	int prevItem = -1;
+	while (item != -1)
+	{
+		if (item >= added)
+		{
+			if (prevItem != -1)
+			{
+				if (prevItem + 1 != item)
+				{
+					// Previous selected item was not the direct predecessor
+					// That means we have to select the successor of prevItem
+					// and unselect current item
+					SetItemState(prevItem + 1, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+					SetItemState(item, 0, wxLIST_STATE_SELECTED);
+				}
+			}
+			else
+			{
+				// First selected item, no predecessor yet. We have to unselect
+				SetItemState(item, 0, wxLIST_STATE_SELECTED);
+			}
+			prevItem = item;
+		}
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	}
+	if (prevItem != -1 && prevItem < m_itemCount - 1)
+	{
+		// Move the very last selected item
+		SetItemState(prevItem + 1, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+	}
+	
+	SetItemState(added, 0, wxLIST_STATE_SELECTED);
+}
+
+void CQueueView::UpdateSelections_ItemRangeAdded(int added, int count)
+{
+	std::list<int> itemsToSelect;
+
+	// Go through all selected items
+	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	while (item != -1)
+	{
+		if (item >= added)
+		{
+			// Select new items preceeding to current one
+			while (!itemsToSelect.empty() && itemsToSelect.front() < item)
+			{
+				SetItemState(itemsToSelect.front(), wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+				itemsToSelect.pop_front();
+			}
+			if (itemsToSelect.empty())
+				SetItemState(item, 0, wxLIST_STATE_SELECTED);
+			else if (itemsToSelect.front() == item)
+				itemsToSelect.pop_front();
+			
+			itemsToSelect.push_back(item + count);
+		}
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	}
+	for (std::list<int>::const_iterator iter = itemsToSelect.begin(); iter != itemsToSelect.end(); iter++)
+		SetItemState(*iter, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+}
+
+void CQueueView::UpdateSelections_ItemRemoved(int removed)
+{
+	SetItemState(removed, 0, wxLIST_STATE_SELECTED);
+
+	int prevItem = -1;
+	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	while (item != -1)
+	{
+		if (item >= removed)
+		{
+			if (prevItem != -1)
+			{
+				if (prevItem + 1 != item)
+				{
+					// Previous selected item was not the direct predecessor
+					// That means we have to select our predecessor and unselect
+					// prevItem
+					SetItemState(prevItem, 0, wxLIST_STATE_SELECTED);
+					SetItemState(item - 1, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+				}
+			}
+			else
+			{
+				// First selected item, no predecessor yet. We have to unselect
+				SetItemState(item - 1, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+			}
+			prevItem = item;
+		}
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	}
+	if (prevItem != -1)
+	{
+		SetItemState(prevItem, 0, wxLIST_STATE_SELECTED);
+	}
+}
+
+void CQueueView::UpdateSelections_ItemRangeRemoved(int removed, int count)
+{
+	SetItemState(removed, 0, wxLIST_STATE_SELECTED);
+
+	std::list<int> itemsToUnselect;
+
+	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	while (item != -1)
+	{
+		if (item >= removed)
+		{
+			// Unselect new items preceeding to current one
+			while (!itemsToUnselect.empty() && itemsToUnselect.front() < item - count)
+			{
+				SetItemState(itemsToUnselect.front(), 0, wxLIST_STATE_SELECTED);
+				itemsToUnselect.pop_front();
+			}
+
+			if (itemsToUnselect.empty())
+				SetItemState(item - count, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+			else if (itemsToUnselect.front() == item - count)
+				itemsToUnselect.pop_front();
+			else
+				SetItemState(item - count, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+			
+			itemsToUnselect.push_back(item);
+		}
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	}
+	for (std::list<int>::const_iterator iter = itemsToUnselect.begin(); iter != itemsToUnselect.end(); iter++)
+		SetItemState(*iter, 0, wxLIST_STATE_SELECTED);
 }

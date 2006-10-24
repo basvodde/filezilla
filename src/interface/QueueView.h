@@ -1,6 +1,8 @@
 #ifndef __QUEUEVIEW_H__
 #define __QUEUEVIEW_H__
 
+#include <set>
+
 #define PRIORITY_COUNT 5
 enum QueuePriority
 {
@@ -365,6 +367,12 @@ protected:
 	CAsyncRequestQueue* m_pAsyncRequestQueue;
 
 	std::list<wxString> m_asciiFiles;
+
+	// Selection management.
+	void UpdateSelections_ItemAdded(int added);
+	void UpdateSelections_ItemRangeAdded(int added, int count);
+	void UpdateSelections_ItemRemoved(int removed);
+	void UpdateSelections_ItemRangeRemoved(int removed, int count);
 
 	DECLARE_EVENT_TABLE();
 
