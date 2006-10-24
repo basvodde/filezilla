@@ -565,7 +565,7 @@ CDirectoryListingParser::CDirectoryListingParser(CControlSocket* pControlSocket,
 		m_MonthNamesMap[_T("lug")] = 7;
 		m_MonthNamesMap[_T("ago")] = 8;
 		m_MonthNamesMap[_T("set")] = 9;
-		m_MonthNamesMap[_T("ott")] = 9;
+		m_MonthNamesMap[_T("ott")] = 10;
 		m_MonthNamesMap[_T("dic")] = 12;
 
 		//Spanish month names
