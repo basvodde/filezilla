@@ -29,7 +29,7 @@ protected:
 		{
 			WXLRESULT res = wxComboBox::MSWDefWindowProc(nMsg, wParam, lParam);
 
-			if (!SendMessage((HWND)GetHWND(), CB_GETDROPPEDSTATE, 0, 0))
+			if (!SendMessage((HWND)GetHandle(), CB_GETDROPPEDSTATE, 0, 0))
 			{
 				m_parent->m_bLeftMousePressed = false;
 				Refresh();
@@ -123,7 +123,7 @@ void CViewHeader::OnComboPaint(wxPaintEvent& event)
 
 	if (m_bLeftMousePressed)
 	{
-		if (!SendMessage((HWND)box->GetHWND(), CB_GETDROPPEDSTATE, 0, 0))
+		if (!SendMessage((HWND)box->GetHandle(), CB_GETDROPPEDSTATE, 0, 0))
 			m_bLeftMousePressed = false;
 	}
 	

@@ -865,7 +865,7 @@ void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 	// Now we can delete the files in the buffer
 	SHFILEOPSTRUCT op;
 	memset(&op, 0, sizeof(op));
-	op.hwnd = (HWND)GetHWND();
+	op.hwnd = (HWND)GetHandle();
 	op.wFunc = FO_DELETE;
 	op.pFrom = pBuffer;
 

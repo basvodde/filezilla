@@ -31,7 +31,7 @@ CLocalTreeView::CLocalTreeView(wxWindow* parent, wxWindowID id, CState *pState, 
 
 #ifdef __WXMSW__
 	LPITEMIDLIST list;
-	SHGetSpecialFolderLocation(GetHwnd(), CSIDL_DRIVES, &list);
+	SHGetSpecialFolderLocation((HWND)GetHandle(), CSIDL_DRIVES, &list);
 	SHFILEINFO shFinfo;
 
 	SHGetFileInfo((LPCTSTR)list,0,&shFinfo,sizeof(shFinfo),SHGFI_PIDL|SHGFI_ICON|SHGFI_SMALLICON);
