@@ -138,7 +138,7 @@ protected:
 
 	int CheckOverwriteFile();
 
-	bool ParsePwdReply(wxString reply, bool unquoted = false);
+	bool ParsePwdReply(wxString reply, bool unquoted = false, const CServerPath& defaultPath = CServerPath());
 
 	COpData *m_pCurOpData;
 	int m_nOpState;

@@ -1061,8 +1061,10 @@ int CFtpControlSocket::ChangeDirParseResponse()
 		break;
 	case cwd_pwd_cwd:
 		if (code != 2 && code != 3)
-			error = true;
-		else if (ParsePwdReply(m_Response))
+		{
+			LogMessage(Debug_Warning, _T("PWD failed, assuming path is '%s'."), pData->path.GetPath().c_str());
+			m_CurrentPath = pData->path;
+
 			if (pData->subDir == _T(""))
 			{
 				ResetOperation(FZ_REPLY_OK);
@@ -1070,6 +1072,17 @@ int CFtpControlSocket::ChangeDirParseResponse()
 			}
 			else
 				pData->opState = cwd_cwd_subdir;
+		}
+		else if (ParsePwdReply(m_Response, false, pData->path))
+		{
+			if (pData->subDir == _T(""))
+			{
+				ResetOperation(FZ_REPLY_OK);
+				return FZ_REPLY_OK;
+			}
+			else
+				pData->opState = cwd_cwd_subdir;
+		}
 		else
 			error = true;
 		break;
@@ -1080,15 +1093,42 @@ int CFtpControlSocket::ChangeDirParseResponse()
 			pData->opState = cwd_pwd_subdir;
 		break;
 	case cwd_pwd_subdir:
-		if (code != 2 && code != 3)
-			error = true;
-		else if (ParsePwdReply(m_Response))
 		{
-			ResetOperation(FZ_REPLY_OK);
-			return FZ_REPLY_OK;
+			CServerPath assumedPath = pData->path;
+			if (pData->subDir == _T(".."))
+			{
+				if (!assumedPath.HasParent())
+					assumedPath.Clear();
+				else
+					assumedPath = assumedPath.GetParent();
+			}
+			else
+				assumedPath.AddSegment(pData->subDir);
+
+			if (code != 2 && code != 3)
+			{
+				if (!assumedPath.IsEmpty())
+				{
+					LogMessage(Debug_Warning, _T("PWD failed, assuming path is '%s'."), assumedPath.GetPath().c_str());
+					m_CurrentPath = assumedPath;
+
+					ResetOperation(FZ_REPLY_OK);
+					return FZ_REPLY_OK;
+				}
+				else
+				{
+					LogMessage(Debug_Warning, _T("PWD failed, unable to guess current path."));
+					error = true;
+				}
+			}		
+			else if (ParsePwdReply(m_Response, false, assumedPath))
+			{
+				ResetOperation(FZ_REPLY_OK);
+				return FZ_REPLY_OK;
+			}
+			else
+				error = true;
 		}
-		else
-			error = true;
 		break;
 	}
 

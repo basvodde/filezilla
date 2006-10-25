@@ -500,7 +500,7 @@ const CServer* CControlSocket::GetCurrentServer() const
 	return m_pCurrentServer;
 }
 
-bool CControlSocket::ParsePwdReply(wxString reply, bool unquoted /*=false*/)
+bool CControlSocket::ParsePwdReply(wxString reply, bool unquoted /*=false*/, const CServerPath& defaultPath /*=CServerPath()*/)
 {
 	if (!unquoted)
 	{
@@ -510,23 +510,34 @@ bool CControlSocket::ParsePwdReply(wxString reply, bool unquoted /*=false*/)
 		{
 			LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("No quoted path found in pwd reply, trying first token as path"));
 			pos1 = reply.Find(' ');
-			if (pos1 == -1)
+			if (pos1 != -1)
 			{
-				LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Can't parse path"));
-				return false;
+				pos2 = reply.Mid(pos1 + 1).Find(' ');
+				if (pos2 == -1)
+					pos2 = (int)reply.Length();
+				reply = reply.Mid(pos1 + 1, pos2 - pos1 - 1);
 			}
-
-			pos2 = reply.Mid(pos1 + 1).Find(' ');
-			if (pos2 == -1)
-				pos2 = (int)reply.Length();
+			else
+				reply = _T("");
 		}
-		reply = reply.Mid(pos1 + 1, pos2 - pos1 - 1);
+		else
+			reply = reply.Mid(pos1 + 1, pos2 - pos1 - 1);
 	}
 
 	m_CurrentPath.SetType(m_pCurrentServer->GetType());
-	if (!m_CurrentPath.SetPath(reply))
+	if (reply == _T("") || !m_CurrentPath.SetPath(reply))
 	{
-		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Can't parse path"));
+		if (reply != _T(""))
+			LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Failed to parse returned path."));
+		else
+			LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Server returned empty path."));
+
+		if (!defaultPath.IsEmpty())
+		{
+			LogMessage(Debug_Warning, _T("Assuming path is '%s'."), defaultPath.GetPath().c_str());
+			m_CurrentPath = defaultPath;
+			return true;
+		}
 		return false;
 	}
 
