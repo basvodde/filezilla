@@ -511,10 +511,13 @@ void CFileItem::SaveItem(TiXmlElement* pElement) const
 	AddTextElement(&file, "RemoteFile", m_remoteFile);
 	AddTextElement(&file, "RemotePath", m_remotePath.GetSafePath());
 	AddTextElement(&file, "Download", m_download ? _T("1") : _T("0"));
-	AddTextElement(&file, "Size", m_size.ToString());
-	AddTextElement(&file, "ErrorCount", wxString::Format(_T("%d"), m_errorCount));
+	if (m_size != -1)
+		AddTextElement(&file, "Size", m_size.ToString());
+	if (m_errorCount)
+		AddTextElement(&file, "ErrorCount", wxString::Format(_T("%d"), m_errorCount));
 	AddTextElement(&file, "Priority", wxString::Format(_T("%d"), m_priority));
-	AddTextElement(&file, "ItemState", wxString::Format(_T("%d"), m_itemState));
+	if (m_itemState)
+		AddTextElement(&file, "ItemState", wxString::Format(_T("%d"), m_itemState));
 	AddTextElement(&file, "TransferMode", m_transferSettings.binary ? _T("1") : _T("0"));
 
 	pElement->InsertEndChild(file);
@@ -1332,8 +1335,10 @@ bool CQueueView::TryStartNextTransfer()
 		pEngineData->state = t_EngineData::connect;
 	else if (oldServer != serverItem->GetServer())
 		pEngineData->state = t_EngineData::disconnect;
-	else
+	else if (pEngineData->pItem->GetType() == QueueItemType_File)
 		pEngineData->state = t_EngineData::transfer;
+	else
+		pEngineData->state = t_EngineData::mkdir;
 
 	if (fileItem->GetType() == QueueItemType_File)
 	{
