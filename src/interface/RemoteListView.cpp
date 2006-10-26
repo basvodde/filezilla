@@ -152,7 +152,7 @@ wxString CRemoteListView::OnGetItemText(long item, long column) const
 
 	if (!column)
 	{
-		if (index == m_pDirectoryListing->m_entryCount)
+		if (index == m_pDirectoryListing->GetCount())
 			return _T("..");
 		else
 			return m_pDirectoryListing->m_pEntries[index].name;
@@ -248,7 +248,7 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 {
 	std::list<unsigned int> removedItems;
 	
-	for (unsigned int i = 0, j = 0; i < pDirectoryListing->m_entryCount; i++, j++)
+	for (unsigned int i = 0, j = 0; i < pDirectoryListing->GetCount(); i++, j++)
 	{
 		if (pDirectoryListing->m_pEntries[i].name == m_pDirectoryListing->m_pEntries[j].name)
 			continue;
@@ -263,7 +263,7 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 	std::list<int> selectedItems;
 
 	// Number of items left to remove
-	int toRemove = m_pDirectoryListing->m_entryCount - pDirectoryListing->m_entryCount;
+	int toRemove = m_pDirectoryListing->GetCount() - pDirectoryListing->GetCount();
 
 	const int size = m_indexMapping.size();
 	for (int i = size - 1; i >= 0; i--)
@@ -341,7 +341,7 @@ bool CRemoteListView::UpdateDirectoryListing(const CDirectoryListing *pDirectory
 
 	if ((pDirectoryListing->m_hasUnsureEntries & UNSURE_REMOVE) == UNSURE_REMOVE)
 	{
-		wxASSERT(pDirectoryListing->m_entryCount < m_pDirectoryListing->m_entryCount);
+		wxASSERT(pDirectoryListing->GetCount() < m_pDirectoryListing->GetCount());
 		UpdateDirectoryListing_Removed(pDirectoryListing);
 		return true;
 	}
@@ -356,7 +356,7 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 		reset = true;
 	else if (m_pDirectoryListing->path != pDirectoryListing->path)
 		reset = true;
-	else if (m_pDirectoryListing->m_entryCount > 200 && m_pDirectoryListing->m_firstListTime == pDirectoryListing->m_firstListTime)
+	else if (m_pDirectoryListing->GetCount() > 200 && m_pDirectoryListing->m_firstListTime == pDirectoryListing->m_firstListTime)
 	{
 		// Updated directory listing. Check if we can use process it in a different,
 		// more efficient way.
@@ -405,15 +405,15 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 	{
 		if (m_pDirectoryListing->m_failed)
 			SetInfoText(_("Directory listing failed"));
-		else if (!m_pDirectoryListing->m_entryCount)
+		else if (!m_pDirectoryListing->GetCount())
 			SetInfoText(_("Empty directory listing"));
 		else
 			SetInfoText(_T(""));
 
-		m_indexMapping.push_back(m_pDirectoryListing->m_entryCount);
+		m_indexMapping.push_back(m_pDirectoryListing->GetCount());
 
 		CFilterDialog filter;
-		for (unsigned int i = 0; i < m_pDirectoryListing->m_entryCount; i++)
+		for (unsigned int i = 0; i < m_pDirectoryListing->GetCount(); i++)
 		{
 			CDirentry* pEntry = &m_pDirectoryListing->m_pEntries[i];
 			t_fileData data;
@@ -1075,7 +1075,7 @@ void CRemoteListView::ProcessDirectoryListing()
 	const CServer* pServer = m_pState->GetServer();
 	wxASSERT(pServer);
 
-	if (!m_pDirectoryListing->m_entryCount)
+	if (!m_pDirectoryListing->GetCount())
 	{
 		wxFileName fn(dir.localDir, _T(""));
 		if (m_operationMode == recursive_download)
@@ -1086,7 +1086,7 @@ void CRemoteListView::ProcessDirectoryListing()
 			m_pQueue->QueueFile(true, true, fn.GetFullPath(), _T(""), CServerPath(), *pServer, -1);
 	}
 
-	for (unsigned int i = 0; i < m_pDirectoryListing->m_entryCount; i++)
+	for (unsigned int i = 0; i < m_pDirectoryListing->GetCount(); i++)
 	{
 		const CDirentry& entry = m_pDirectoryListing->m_pEntries[i];
 		if (entry.dir)
@@ -1369,7 +1369,7 @@ void CRemoteListView::OnEndLabelEdit(wxListEvent& event)
 			return;
 
 		// Check if target file already exists
-		for (unsigned int i = 0; i < m_pDirectoryListing->m_entryCount; i++)
+		for (unsigned int i = 0; i < m_pDirectoryListing->GetCount(); i++)
 		{
 			if (newFile == m_pDirectoryListing->m_pEntries[i].name)
 			{

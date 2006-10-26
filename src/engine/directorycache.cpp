@@ -215,7 +215,7 @@ bool CDirectoryCache::LookupFile(CDirentry &entry, const CServer &server, const 
 			const CDirectoryListing &listing = cacheEntry.listing;
 
 			bool found = false;
-			for (unsigned int i = 0; i < listing.m_entryCount; i++)
+			for (unsigned int i = 0; i < listing.GetCount(); i++)
 			{
 				if (!listing.m_pEntries[i].name.CmpNoCase(file))
 				{
@@ -275,7 +275,7 @@ bool CDirectoryCache::InvalidateFile(const CServer &server, const CServerPath &p
 			continue;
 
 		//bool matchCase = false;
-		for (unsigned int i = 0; i < entry.listing.m_entryCount; i++)
+		for (unsigned int i = 0; i < entry.listing.GetCount(); i++)
 		{
 			if (!filename.CmpNoCase(entry.listing.m_pEntries[i].name))
 			{
@@ -300,7 +300,7 @@ bool CDirectoryCache::UpdateFile(const CServer &server, const CServerPath &path,
 			continue;
 
 		bool matchCase = false;
-		for (unsigned int i = 0; i < entry.listing.m_entryCount; i++)
+		for (unsigned int i = 0; i < entry.listing.GetCount(); i++)
 		{
 			if (!filename.CmpNoCase(entry.listing.m_pEntries[i].name))
 			{
@@ -311,17 +311,18 @@ bool CDirectoryCache::UpdateFile(const CServer &server, const CServerPath &path,
 		}
 		if (!matchCase && type != unknown && mayCreate)
 		{
-			CDirentry *listing = new CDirentry[entry.listing.m_entryCount + 1];
-			for (unsigned int i = 0; i < entry.listing.m_entryCount; i++)
+			const unsigned int count = entry.listing.GetCount();
+			CDirentry *listing = new CDirentry[count + 1];
+			for (unsigned int i = 0; i < count; i++)
 				listing[i] = entry.listing.m_pEntries[i];
-			listing[entry.listing.m_entryCount].name = filename;
-			listing[entry.listing.m_entryCount].hasDate = false;
-			listing[entry.listing.m_entryCount].hasTime = false;
-			listing[entry.listing.m_entryCount].size = size;
-			listing[entry.listing.m_entryCount].dir = (type == dir);
-			listing[entry.listing.m_entryCount].link = 0;
-			listing[entry.listing.m_entryCount].unsure = true;
-			entry.listing.m_entryCount++;
+			listing[count].name = filename;
+			listing[count].hasDate = false;
+			listing[count].hasTime = false;
+			listing[count].size = size;
+			listing[count].dir = (type == dir);
+			listing[count].link = 0;
+			listing[count].unsure = true;
+			entry.listing.SetCount(count + 1);
 			delete [] entry.listing.m_pEntries;
 			entry.listing.m_pEntries = listing;
 			entry.listing.m_hasUnsureEntries |= UNSURE_ADD;
@@ -343,7 +344,7 @@ bool CDirectoryCache::RemoveFile(const CServer &server, const CServerPath &path,
 			continue;
 
 		bool matchCase = false;
-		for (unsigned int i = 0; i < entry.listing.m_entryCount; i++)
+		for (unsigned int i = 0; i < entry.listing.GetCount(); i++)
 		{
 			if (entry.listing.m_pEntries[i].name == filename)
 				matchCase = true;
@@ -352,18 +353,18 @@ bool CDirectoryCache::RemoveFile(const CServer &server, const CServerPath &path,
 		if (matchCase)
 		{
 			unsigned int i;
-			for (i = 0; i < entry.listing.m_entryCount; i++)
+			for (i = 0; i < entry.listing.GetCount(); i++)
 				if (entry.listing.m_pEntries[i].name == filename)
 					break;
-			wxASSERT(i != entry.listing.m_entryCount);
-			for (i++; i < entry.listing.m_entryCount; i++)
+			wxASSERT(i != entry.listing.GetCount());
+			for (i++; i < entry.listing.GetCount(); i++)
 				entry.listing.m_pEntries[i - 1] = entry.listing.m_pEntries[i];
-			entry.listing.m_entryCount--;
+			entry.listing.SetCount(entry.listing.GetCount() - 1);
 			entry.listing.m_hasUnsureEntries |= UNSURE_REMOVE;
 		}
 		else
 		{
-			for (unsigned int i = 0; i < entry.listing.m_entryCount; i++)
+			for (unsigned int i = 0; i < entry.listing.GetCount(); i++)
 			{
 				if (!filename.CmpNoCase(entry.listing.m_pEntries[i].name))
 				{
@@ -477,12 +478,12 @@ void CDirectoryCache::Rename(const CServer& server, const CServerPath& pathFrom,
 	if (found)
 	{
 		unsigned int i;
-		for (i = 0; i < listing.m_entryCount; i++)
+		for (i = 0; i < listing.GetCount(); i++)
 		{
 			if (listing.m_pEntries[i].name == fileFrom)
 				break;
 		}
-		if (i != listing.m_entryCount)
+		if (i != listing.GetCount())
 		{
 			if (listing.m_pEntries[i].dir)
 			{

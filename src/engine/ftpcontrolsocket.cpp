@@ -1817,7 +1817,7 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 					{
 						bool differentCase = false;
 						bool found = false;
-						for (unsigned int i = 0; i < listing.m_entryCount; i++)
+						for (unsigned int i = 0; i < listing.GetCount(); i++)
 						{
 							if (!listing.m_pEntries[i].name.CmpNoCase(pData->remoteFile))
 							{

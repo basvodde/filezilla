@@ -93,3 +93,14 @@ bool CDirentry::operator==(const CDirentry &op) const
 
 	return true;
 }
+
+void CDirectoryListing::SetCount(unsigned int count)
+{
+	m_entryCount = count;
+}
+
+const CDirentry& CDirectoryListing::operator[](unsigned int index) const
+{
+	wxASSERT(index < m_entryCount);
+	return m_pEntries[index];
+}

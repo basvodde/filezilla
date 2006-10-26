@@ -736,7 +736,7 @@ CDirectoryListing* CDirectoryListingParser::Parse(const CServerPath &path)
 
 	CDirectoryListing *pListing = new CDirectoryListing;
 	pListing->path = path;
-	pListing->m_entryCount = static_cast<unsigned int>(m_entryList.size());
+	pListing->SetCount(m_entryList.size());
 	pListing->m_pEntries = new CDirentry[m_entryList.size()];
 	
 	int i = 0;

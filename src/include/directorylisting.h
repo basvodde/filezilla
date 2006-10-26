@@ -34,11 +34,14 @@ public:
 	CDirectoryListing();
 	~CDirectoryListing();
 
-	unsigned int m_entryCount;
-
 	CServerPath path;
 	CDirentry *m_pEntries;
 	CDirectoryListing& operator=(const CDirectoryListing &a);
+
+	const CDirentry& operator[](unsigned int index) const;
+
+	void SetCount(unsigned int count);
+	unsigned int GetCount() const { return m_entryCount; }
 
 	// Lowest bit indicates a file got added
 	// Next bit indicates a file got removed
@@ -52,7 +55,9 @@ public:
 	bool m_failed;
 
 	CTimeEx m_firstListTime;
+
+protected:
+	unsigned int m_entryCount;
 };
 
 #endif
-
