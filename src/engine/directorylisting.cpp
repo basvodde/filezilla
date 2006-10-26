@@ -6,11 +6,12 @@ CDirectoryListing::CDirectoryListing()
 	m_entryCount = 0;
 	m_hasUnsureEntries = false;
 	m_failed = false;
+	m_referenceCount = 0;
 }
 
 CDirectoryListing::~CDirectoryListing()
 {
-	delete [] m_pEntries;
+	Unref();
 }
 
 CDirectoryListing& CDirectoryListing::operator=(const CDirectoryListing &a)
@@ -18,8 +19,18 @@ CDirectoryListing& CDirectoryListing::operator=(const CDirectoryListing &a)
 	if (&a == this)
 		return *this;
 
-	if (m_pEntries)
-		delete [] m_pEntries;
+	if (m_referenceCount == a.m_referenceCount)
+	{
+		// References the same listing
+		return *this;
+	}
+
+	Unref();
+
+	m_referenceCount = a.m_referenceCount;
+	m_pEntries = a.m_pEntries;
+	if (m_referenceCount)
+		(*m_referenceCount)++;
 
 	path = a.path;
 
@@ -27,14 +38,6 @@ CDirectoryListing& CDirectoryListing::operator=(const CDirectoryListing &a)
 	m_failed = a.m_failed;
 
 	m_entryCount = a.m_entryCount;
-	if (m_entryCount)
-	{
-		m_pEntries = new CDirentry[m_entryCount];
-		for (unsigned int i = 0; i < m_entryCount; i++)
-			m_pEntries[i] = a.m_pEntries[i];
-	}
-	else
-		m_pEntries = 0;
 
 	m_firstListTime = a.m_firstListTime;
 
@@ -101,27 +104,16 @@ void CDirectoryListing::SetCount(unsigned int count)
 
 	if (!count)
 	{
-		if (!m_entryCount)
-			return;
-
-		delete [] m_pEntries;
-		m_pEntries = 0;
+		Unref();
 		m_entryCount = 0;
 		return;
 	}
-	else if (count > m_entryCount)
-	{
-		CDirentry *entries = new CDirentry[count];
-		
-		if (m_entryCount)
-		{
-			for (unsigned int i = 0; i < m_entryCount; i++)
-				entries[i] = m_pEntries[i];
-			delete [] m_pEntries;
-		}
-		m_pEntries = entries;
-	}
+	else
+		Copy();
 
+	wxASSERT(m_pEntries);
+	m_pEntries->resize(count);
+	
 	m_entryCount = count;
 }
 
@@ -129,12 +121,70 @@ const CDirentry& CDirectoryListing::operator[](unsigned int index) const
 {
 	// Commented out, too heavy speed penalty
 	// wxASSERT(index < m_entryCount);
-	return m_pEntries[index];
+	return (*m_pEntries)[index];
 }
 
 CDirentry& CDirectoryListing::operator[](unsigned int index)
 {
 	// Commented out, too heavy speed penalty
 	// wxASSERT(index < m_entryCount);
-	return m_pEntries[index];
+
+	Copy();
+
+	return (*m_pEntries)[index];
+}
+
+void CDirectoryListing::Unref()
+{
+	if (!m_referenceCount)
+		return;
+
+	wxASSERT(*m_referenceCount > 0);
+
+	if (*m_referenceCount > 1)
+	{
+		(*m_referenceCount)--;
+		return;
+	}
+
+	delete m_pEntries;
+	m_pEntries = 0;
+
+	delete m_referenceCount;
+	m_referenceCount = 0;
+}
+
+void CDirectoryListing::AddRef()
+{
+	if (!m_referenceCount)
+	{
+		// New object
+		m_referenceCount = new int(1);
+		m_pEntries = new std::vector<CDirentry>;
+		return;
+	}
+	(*m_referenceCount)++;
+}
+
+void CDirectoryListing::Copy()
+{
+	if (!m_referenceCount)
+	{
+		AddRef();
+		return;
+	}
+
+	if (*m_referenceCount == 1)
+	{
+		// Only instance
+		return;
+	}
+
+	(*m_referenceCount)--;
+	m_referenceCount = new int(1);
+	
+
+	std::vector<CDirentry>* pEntries = new std::vector<CDirentry>;
+	*pEntries = *m_pEntries;
+	m_pEntries = pEntries;
 }

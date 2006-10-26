@@ -58,8 +58,15 @@ public:
 
 protected:
 
-	CDirentry *m_pEntries;
+	void AddRef();
+	void Unref();
+	void Copy();
+
+	std::vector<CDirentry> *m_pEntries;
+
 	unsigned int m_entryCount;
+
+	int *m_referenceCount;
 };
 
 #endif
