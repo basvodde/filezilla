@@ -591,13 +591,13 @@ bool CSftpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotifi
 						bool found = false;
 						for (unsigned int i = 0; i < listing.GetCount(); i++)
 						{
-							if (!listing.m_pEntries[i].name.CmpNoCase(pData->remoteFile))
+							if (!listing[i].name.CmpNoCase(pData->remoteFile))
 							{
-								if (listing.m_pEntries[i].name != pData->remoteFile)
+								if (listing[i].name != pData->remoteFile)
 									differentCase = true;
 								else
 								{
-									wxLongLong size = listing.m_pEntries[i].size;	
+									wxLongLong size = listing[i].size;	
 									pData->remoteFileSize = size.GetLo() + ((wxFileOffset)size.GetHi() << 32);
 									found = true;
 									break;

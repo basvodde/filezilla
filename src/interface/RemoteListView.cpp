@@ -155,14 +155,14 @@ wxString CRemoteListView::OnGetItemText(long item, long column) const
 		if (index == m_pDirectoryListing->GetCount())
 			return _T("..");
 		else
-			return m_pDirectoryListing->m_pEntries[index].name;
+			return (*m_pDirectoryListing)[index].name;
 	}
 	if (!item)
 		return _T(""); //.. has no attributes
 
 	if (column == 1)
 	{
-		const CDirentry& entry = m_pDirectoryListing->m_pEntries[index];
+		const CDirentry& entry = (*m_pDirectoryListing)[index];
 		if (entry.dir || entry.size < 0)
 			return _T("");
 		else
@@ -173,7 +173,7 @@ wxString CRemoteListView::OnGetItemText(long item, long column) const
 		t_fileData& data = pThis->m_fileData[index];
 		if (data.fileType == _T(""))
 		{
-			const CDirentry& entry = m_pDirectoryListing->m_pEntries[index];
+			const CDirentry& entry = (*m_pDirectoryListing)[index];
 			data.fileType = pThis->GetType(entry.name, entry.dir);
 		}
 
@@ -181,7 +181,7 @@ wxString CRemoteListView::OnGetItemText(long item, long column) const
 	}
 	else if (column == 3)
 	{
-		const CDirentry& entry = m_pDirectoryListing->m_pEntries[index];
+		const CDirentry& entry = (*m_pDirectoryListing)[index];
 		if (!entry.hasDate)
 			return _T("");
 
@@ -191,9 +191,9 @@ wxString CRemoteListView::OnGetItemText(long item, long column) const
 			return entry.time.Format(_T("%x"));
 	}
 	else if (column == 4)
-		return m_pDirectoryListing->m_pEntries[index].permissions;
+		return (*m_pDirectoryListing)[index].permissions;
 	else if (column == 5)
-		return m_pDirectoryListing->m_pEntries[index].ownerGroup;
+		return (*m_pDirectoryListing)[index].ownerGroup;
 	return _T("");
 }
 
@@ -216,7 +216,7 @@ int CRemoteListView::OnGetItemImage(long item) const
 	if (icon != -2)
 		return icon;
 
-	icon = pThis->GetIconIndex(file, m_pDirectoryListing->m_pEntries[index].name, false);
+	icon = pThis->GetIconIndex(file, (*m_pDirectoryListing)[index].name, false);
 	return icon;
 }
 
@@ -250,7 +250,7 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 	
 	for (unsigned int i = 0, j = 0; i < pDirectoryListing->GetCount(); i++, j++)
 	{
-		if (pDirectoryListing->m_pEntries[i].name == m_pDirectoryListing->m_pEntries[j].name)
+		if ((*pDirectoryListing)[i].name == (*m_pDirectoryListing)[j].name)
 			continue;
 		removedItems.push_back(j++);
 	}
@@ -415,12 +415,12 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 		CFilterDialog filter;
 		for (unsigned int i = 0; i < m_pDirectoryListing->GetCount(); i++)
 		{
-			CDirentry* pEntry = &m_pDirectoryListing->m_pEntries[i];
+			const CDirentry& entry = (*m_pDirectoryListing)[i];
 			t_fileData data;
-			data.icon = pEntry->dir ? m_dirIcon : -2;
+			data.icon = entry.dir ? m_dirIcon : -2;
 			m_fileData.push_back(data);
 
-			if (!filter.FilenameFiltered(pEntry->name, pEntry->dir, pEntry->size, false))
+			if (!filter.FilenameFiltered(entry.name, entry.dir, entry.size, false))
 				m_indexMapping.push_back(i);
 		}
 
@@ -565,8 +565,8 @@ void CRemoteListView::QSortList(const unsigned int dir, unsigned int anf, unsign
 
 int CRemoteListView::CmpName(CRemoteListView *pList, unsigned int index, unsigned int refIndex)
 {
-	const CDirentry& entry = pList->m_pDirectoryListing->m_pEntries[index];
-	const CDirentry& refEntry = pList->m_pDirectoryListing->m_pEntries[refIndex];
+	const CDirentry& entry = (*pList->m_pDirectoryListing)[index];
+	const CDirentry& refEntry = (*pList->m_pDirectoryListing)[refIndex];
 
 	if (entry.dir)
 	{
@@ -638,8 +638,8 @@ wxString CRemoteListView::GetType(wxString name, bool dir)
 
 int CRemoteListView::CmpType(CRemoteListView *pList, unsigned int index, unsigned int refIndex)
 {
-	const CDirentry& entry = pList->m_pDirectoryListing->m_pEntries[index];
-	const CDirentry& refEntry = pList->m_pDirectoryListing->m_pEntries[refIndex];
+	const CDirentry& entry = (*pList->m_pDirectoryListing)[index];
+	const CDirentry& refEntry = (*pList->m_pDirectoryListing)[refIndex];
 	t_fileData &data = pList->m_fileData[index];
 	t_fileData &refData = pList->m_fileData[refIndex];
 
@@ -665,8 +665,8 @@ int CRemoteListView::CmpType(CRemoteListView *pList, unsigned int index, unsigne
 
 int CRemoteListView::CmpSize(CRemoteListView *pList, unsigned int index, unsigned int refIndex)
 {
-	const CDirentry& entry = pList->m_pDirectoryListing->m_pEntries[index];
-	const CDirentry& refEntry = pList->m_pDirectoryListing->m_pEntries[refIndex];
+	const CDirentry& entry = (*pList->m_pDirectoryListing)[index];
+	const CDirentry& refEntry = (*pList->m_pDirectoryListing)[refIndex];
 	
 	if (entry.dir)
 	{
@@ -700,8 +700,8 @@ int CRemoteListView::CmpSize(CRemoteListView *pList, unsigned int index, unsigne
 
 int CRemoteListView::CmpTime(CRemoteListView *pList, unsigned int index, unsigned int refIndex)
 {
-	const CDirentry& entry = pList->m_pDirectoryListing->m_pEntries[index];
-	const CDirentry& refEntry = pList->m_pDirectoryListing->m_pEntries[refIndex];
+	const CDirentry& entry = (*pList->m_pDirectoryListing)[index];
+	const CDirentry& refEntry = (*pList->m_pDirectoryListing)[refIndex];
 
 	if (entry.dir)
 	{
@@ -732,8 +732,8 @@ int CRemoteListView::CmpTime(CRemoteListView *pList, unsigned int index, unsigne
 
 int CRemoteListView::CmpPermissions(CRemoteListView *pList, unsigned int index, unsigned int refIndex)
 {
-	const CDirentry& entry = pList->m_pDirectoryListing->m_pEntries[index];
-	const CDirentry& refEntry = pList->m_pDirectoryListing->m_pEntries[refIndex];
+	const CDirentry& entry = (*pList->m_pDirectoryListing)[index];
+	const CDirentry& refEntry = (*pList->m_pDirectoryListing)[refIndex];
 	
 	if (entry.dir)
 	{
@@ -794,7 +794,7 @@ void CRemoteListView::OnItemActivated(wxListEvent &event)
 		if (index == -1)
 			return;
 
-		const CDirentry& entry = m_pDirectoryListing->m_pEntries[index];
+		const CDirentry& entry = (*m_pDirectoryListing)[index];
 		const wxString& name = entry.name;
 
 		if (entry.dir)
@@ -859,7 +859,7 @@ void CRemoteListView::OnMenuDownload(wxCommandEvent& event)
 		if (index == -1)
 			continue;
 
-		const CDirentry& entry = m_pDirectoryListing->m_pEntries[index];
+		const CDirentry& entry = (*m_pDirectoryListing)[index];
 		const wxString& name = entry.name;
 
 		const CServer* pServer = m_pState->GetServer();
@@ -967,7 +967,7 @@ void CRemoteListView::OnMenuDelete(wxCommandEvent& event)
 		if (index == -1)
 			continue;
 
-		const CDirentry& entry = m_pDirectoryListing->m_pEntries[index];
+		const CDirentry& entry = (*m_pDirectoryListing)[index];
 		const wxString& name = entry.name;
 
 		if (entry.dir)
@@ -1088,7 +1088,7 @@ void CRemoteListView::ProcessDirectoryListing()
 
 	for (unsigned int i = 0; i < m_pDirectoryListing->GetCount(); i++)
 	{
-		const CDirentry& entry = m_pDirectoryListing->m_pEntries[i];
+		const CDirentry& entry = (*m_pDirectoryListing)[i];
 		if (entry.dir)
 		{
 			t_newDir dirToVisit;
@@ -1218,7 +1218,7 @@ void CRemoteListView::OnChar(wxKeyEvent& event)
 			{
 				int index = GetItemIndex(item);
 				if (index != -1)
-					text = m_pDirectoryListing->m_pEntries[index].name;
+					text = (*m_pDirectoryListing)[index].name;
 			}
 			if (text.Length() >= m_prefix.Length() && !m_prefix.CmpNoCase(text.Left(m_prefix.Length())))
 				beep = true;
@@ -1277,7 +1277,7 @@ int CRemoteListView::FindItemWithPrefix(const wxString& prefix, int start)
 			if (index == -1)
 				continue;
 
-			fn = m_pDirectoryListing->m_pEntries[index].name.Left(prefix.Length());
+			fn = (*m_pDirectoryListing)[index].name.Left(prefix.Length());
 		}
 		if (!fn.CmpNoCase(prefix))
 			return i % GetItemCount();
@@ -1351,7 +1351,7 @@ void CRemoteListView::OnEndLabelEdit(wxListEvent& event)
 		return;
 	}
 
-	const CDirentry& entry = m_pDirectoryListing->m_pEntries[index];
+	const CDirentry& entry = (*m_pDirectoryListing)[index];
 
 	wxString newFile = event.GetLabel();
 
@@ -1371,7 +1371,7 @@ void CRemoteListView::OnEndLabelEdit(wxListEvent& event)
 		// Check if target file already exists
 		for (unsigned int i = 0; i < m_pDirectoryListing->GetCount(); i++)
 		{
-			if (newFile == m_pDirectoryListing->m_pEntries[i].name)
+			if (newFile == (*m_pDirectoryListing)[i].name)
 			{
 				if (wxMessageBox(_("Target filename already exists, really continue?"), _("File exists"), wxICON_QUESTION | wxYES_NO) != wxYES)
 				{
@@ -1416,7 +1416,7 @@ void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 		if (index == -1)
 			return;
 
-		const CDirentry& entry = m_pDirectoryListing->m_pEntries[index];
+		const CDirentry& entry = (*m_pDirectoryListing)[index];
 
 		if (entry.dir)
 			dirCount++;
@@ -1479,7 +1479,7 @@ void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 			return;
 		}
 
-		const CDirentry& entry = m_pDirectoryListing->m_pEntries[index];
+		const CDirentry& entry = (*m_pDirectoryListing)[index];
 
 		if (!applyType ||
 			(!entry.dir && applyType == 1) ||
@@ -1538,7 +1538,7 @@ void CRemoteListView::ApplyCurrentFilter()
 	m_indexMapping.push_back(0);
 	for (unsigned int i = 1; i < m_fileData.size(); i++)
 	{
-		const CDirentry& entry = m_pDirectoryListing->m_pEntries[i];
+		const CDirentry& entry = (*m_pDirectoryListing)[i];
 		if (!filter.FilenameFiltered(entry.name, entry.dir, entry.size, false))
 			m_indexMapping.push_back(i);
 	}
@@ -1566,7 +1566,7 @@ std::list<wxString> CRemoteListView::RememberSelectedItems(wxString& focused)
 			selectedNames.push_back(_T(".."));
 			continue;
 		}
-		const CDirentry& entry = m_pDirectoryListing->m_pEntries[m_indexMapping[item]];
+		const CDirentry& entry = (*m_pDirectoryListing)[m_indexMapping[item]];
 		if (!GetItemState(item, wxLIST_STATE_SELECTED))
 			continue;
 
@@ -1583,7 +1583,7 @@ std::list<wxString> CRemoteListView::RememberSelectedItems(wxString& focused)
 		if (!item)
 			focused = _T("..");
 		else
-			focused = m_pDirectoryListing->m_pEntries[m_indexMapping[item]].name;
+			focused = (*m_pDirectoryListing)[m_indexMapping[item]].name;
 
 		SetItemState(item, 0, wxLIST_STATE_FOCUSED);
 	}
@@ -1609,7 +1609,7 @@ void CRemoteListView::ReselectItems(std::list<wxString>& selectedNames, wxString
 			return;
 
 		for (unsigned int i = 1; i < m_indexMapping.size(); i++)
-			if (m_pDirectoryListing->m_pEntries[m_indexMapping[i]].name == focused)
+			if ((*m_pDirectoryListing)[m_indexMapping[i]].name == focused)
 			{
 				SetItemState(i, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
 				return;
@@ -1632,7 +1632,7 @@ void CRemoteListView::ReselectItems(std::list<wxString>& selectedNames, wxString
 	{
 		while (i < m_indexMapping.size())
 		{
-			const CDirentry& entry = m_pDirectoryListing->m_pEntries[m_indexMapping[i]];
+			const CDirentry& entry = (*m_pDirectoryListing)[m_indexMapping[i]];
 			if (entry.name == focused)
 			{
 				SetItemState(i, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);

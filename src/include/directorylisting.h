@@ -35,10 +35,10 @@ public:
 	~CDirectoryListing();
 
 	CServerPath path;
-	CDirentry *m_pEntries;
 	CDirectoryListing& operator=(const CDirectoryListing &a);
 
 	const CDirentry& operator[](unsigned int index) const;
+	CDirentry& operator[](unsigned int index);
 
 	void SetCount(unsigned int count);
 	unsigned int GetCount() const { return m_entryCount; }
@@ -57,6 +57,8 @@ public:
 	CTimeEx m_firstListTime;
 
 protected:
+
+	CDirentry *m_pEntries;
 	unsigned int m_entryCount;
 };
 

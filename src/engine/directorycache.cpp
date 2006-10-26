@@ -217,18 +217,18 @@ bool CDirectoryCache::LookupFile(CDirentry &entry, const CServer &server, const 
 			bool found = false;
 			for (unsigned int i = 0; i < listing.GetCount(); i++)
 			{
-				if (!listing.m_pEntries[i].name.CmpNoCase(file))
+				if (!listing[i].name.CmpNoCase(file))
 				{
-					if (listing.m_pEntries[i].name == file)
+					if (listing[i].name == file)
 					{
-						entry = listing.m_pEntries[i];
+						entry = listing[i];
 						matchedCase = true;
 						return true;
 					}
 					if (!found)
 					{
 						found = true;
-						entry = listing.m_pEntries[i];
+						entry = listing[i];
 					}
 				}
 			}
@@ -277,10 +277,10 @@ bool CDirectoryCache::InvalidateFile(const CServer &server, const CServerPath &p
 		//bool matchCase = false;
 		for (unsigned int i = 0; i < entry.listing.GetCount(); i++)
 		{
-			if (!filename.CmpNoCase(entry.listing.m_pEntries[i].name))
+			if (!filename.CmpNoCase(entry.listing[i].name))
 			{
-				entry.listing.m_pEntries[i].unsure = true;
-				//if (entry.listing.m_pEntries[i].name == filename)
+				entry.listing[i].unsure = true;
+				//if (entry.listing[i].name == filename)
 					//matchCase = true;
 			}				
 		}
@@ -302,29 +302,25 @@ bool CDirectoryCache::UpdateFile(const CServer &server, const CServerPath &path,
 		bool matchCase = false;
 		for (unsigned int i = 0; i < entry.listing.GetCount(); i++)
 		{
-			if (!filename.CmpNoCase(entry.listing.m_pEntries[i].name))
+			if (!filename.CmpNoCase(entry.listing[i].name))
 			{
-				entry.listing.m_pEntries[i].unsure = true;
-				if (entry.listing.m_pEntries[i].name == filename)
+				entry.listing[i].unsure = true;
+				if (entry.listing[i].name == filename)
 					matchCase = true;
 			}				
 		}
 		if (!matchCase && type != unknown && mayCreate)
 		{
 			const unsigned int count = entry.listing.GetCount();
-			CDirentry *listing = new CDirentry[count + 1];
-			for (unsigned int i = 0; i < count; i++)
-				listing[i] = entry.listing.m_pEntries[i];
-			listing[count].name = filename;
-			listing[count].hasDate = false;
-			listing[count].hasTime = false;
-			listing[count].size = size;
-			listing[count].dir = (type == dir);
-			listing[count].link = 0;
-			listing[count].unsure = true;
 			entry.listing.SetCount(count + 1);
-			delete [] entry.listing.m_pEntries;
-			entry.listing.m_pEntries = listing;
+			CDirentry& direntry = entry.listing[count];
+			direntry.name = filename;
+			direntry.hasDate = false;
+			direntry.hasTime = false;
+			direntry.size = size;
+			direntry.dir = (type == dir);
+			direntry.link = 0;
+			direntry.unsure = true;
 			entry.listing.m_hasUnsureEntries |= UNSURE_ADD;
 		}
 		else
@@ -346,7 +342,7 @@ bool CDirectoryCache::RemoveFile(const CServer &server, const CServerPath &path,
 		bool matchCase = false;
 		for (unsigned int i = 0; i < entry.listing.GetCount(); i++)
 		{
-			if (entry.listing.m_pEntries[i].name == filename)
+			if (entry.listing[i].name == filename)
 				matchCase = true;
 		}
 		
@@ -354,11 +350,11 @@ bool CDirectoryCache::RemoveFile(const CServer &server, const CServerPath &path,
 		{
 			unsigned int i;
 			for (i = 0; i < entry.listing.GetCount(); i++)
-				if (entry.listing.m_pEntries[i].name == filename)
+				if (entry.listing[i].name == filename)
 					break;
 			wxASSERT(i != entry.listing.GetCount());
 			for (i++; i < entry.listing.GetCount(); i++)
-				entry.listing.m_pEntries[i - 1] = entry.listing.m_pEntries[i];
+				entry.listing[i - 1] = entry.listing[i];
 			entry.listing.SetCount(entry.listing.GetCount() - 1);
 			entry.listing.m_hasUnsureEntries |= UNSURE_REMOVE;
 		}
@@ -366,9 +362,9 @@ bool CDirectoryCache::RemoveFile(const CServer &server, const CServerPath &path,
 		{
 			for (unsigned int i = 0; i < entry.listing.GetCount(); i++)
 			{
-				if (!filename.CmpNoCase(entry.listing.m_pEntries[i].name))
+				if (!filename.CmpNoCase(entry.listing[i].name))
 				{
-					entry.listing.m_pEntries[i].unsure = true;
+					entry.listing[i].unsure = true;
 				}				
 			}
 			entry.listing.m_hasUnsureEntries |= UNSURE_CONFUSED;
@@ -480,12 +476,12 @@ void CDirectoryCache::Rename(const CServer& server, const CServerPath& pathFrom,
 		unsigned int i;
 		for (i = 0; i < listing.GetCount(); i++)
 		{
-			if (listing.m_pEntries[i].name == fileFrom)
+			if (listing[i].name == fileFrom)
 				break;
 		}
 		if (i != listing.GetCount())
 		{
-			if (listing.m_pEntries[i].dir)
+			if (listing[i].dir)
 			{
 				RemoveDir(server, pathFrom, fileFrom);
 				UpdateFile(server, pathTo, fileTo, true, dir);

@@ -216,10 +216,10 @@ bool CRemoteTreeView::HasSubdirs(const CDirectoryListing& listing, const CFilter
 {
 	for (unsigned int i = 0; i < listing.GetCount(); i++)
 	{
-		if (!listing.m_pEntries[i].dir)
+		if (!listing[i].dir)
 			continue;
 
-		if (filter.FilenameFiltered(listing.m_pEntries[i].name, true, -1, false))
+		if (filter.FilenameFiltered(listing[i].name, true, -1, false))
 			continue;
 
 		return true;
@@ -235,13 +235,13 @@ void CRemoteTreeView::DisplayItem(wxTreeItemId parent, const CDirectoryListing& 
 	CFilterDialog filter;
 	for (unsigned int i = 0; i < listing.GetCount(); i++)
 	{
-		if (!listing.m_pEntries[i].dir)
+		if (!listing[i].dir)
 			continue;
 
-		if (filter.FilenameFiltered(listing.m_pEntries[i].name, true, -1, false))
+		if (filter.FilenameFiltered(listing[i].name, true, -1, false))
 			continue;
 
-		const wxString& name = listing.m_pEntries[i].name;
+		const wxString& name = listing[i].name;
 		CServerPath subdir = listing.path;
 		subdir.AddSegment(name);
 
@@ -292,11 +292,11 @@ void CRemoteTreeView::RefreshItem(wxTreeItemId parent, const CDirectoryListing& 
 	std::list<wxString> dirs;
 	for (unsigned int i = 0; i < listing.GetCount(); i++)
 	{
-		if (!listing.m_pEntries[i].dir)
+		if (!listing[i].dir)
 			continue;
 
-		if (!filter.FilenameFiltered(listing.m_pEntries[i].name, true, -1, false))
-			dirs.push_back(listing.m_pEntries[i].name);
+		if (!filter.FilenameFiltered(listing[i].name, true, -1, false))
+			dirs.push_back(listing[i].name);
 	}
 
 	dirs.sort(sortfunc);

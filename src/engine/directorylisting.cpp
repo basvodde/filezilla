@@ -96,11 +96,45 @@ bool CDirentry::operator==(const CDirentry &op) const
 
 void CDirectoryListing::SetCount(unsigned int count)
 {
+	if (count == m_entryCount)
+		return;
+
+	if (!count)
+	{
+		if (!m_entryCount)
+			return;
+
+		delete [] m_pEntries;
+		m_pEntries = 0;
+		m_entryCount = 0;
+		return;
+	}
+	else if (count > m_entryCount)
+	{
+		CDirentry *entries = new CDirentry[count];
+		
+		if (m_entryCount)
+		{
+			for (unsigned int i = 0; i < m_entryCount; i++)
+				entries[i] = m_pEntries[i];
+			delete [] m_pEntries;
+		}
+		m_pEntries = entries;
+	}
+
 	m_entryCount = count;
 }
 
 const CDirentry& CDirectoryListing::operator[](unsigned int index) const
 {
-	wxASSERT(index < m_entryCount);
+	// Commented out, too heavy speed penalty
+	// wxASSERT(index < m_entryCount);
+	return m_pEntries[index];
+}
+
+CDirentry& CDirectoryListing::operator[](unsigned int index)
+{
+	// Commented out, too heavy speed penalty
+	// wxASSERT(index < m_entryCount);
 	return m_pEntries[index];
 }
