@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: filezilla\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-10-19 11:05+0200\n"
-"PO-Revision-Date: 2006-10-15 23:54+0200\n"
+"POT-Creation-Date: 2006-10-27 09:58+0200\n"
+"PO-Revision-Date: 2006-10-21 01:01+0200\n"
 "Last-Translator: Andrus Lillemaa <andrus@taebla.ee>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -14,16 +14,16 @@ msgstr ""
 "X-Poedit-SourceCharset: utf-8\n"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:47
-#: ../../locales/../src/interface/statuslinectrl.cpp:95
+#: ../../locales/../src/interface/statuslinectrl.cpp:99
 msgid "%H:%M:%S elapsed"
 msgstr "Aega kulunud: %H:%M:%S"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:51
-#: ../../locales/../src/interface/statuslinectrl.cpp:119
+#: ../../locales/../src/interface/statuslinectrl.cpp:123
 msgid "%H:%M:%S left"
 msgstr "Aega lõpuni: %H:%M:%S"
 
-#: ../../locales/../src/interface/QueueView.cpp:2105
+#: ../../locales/../src/interface/QueueView.cpp:2503
 #, c-format
 msgid "%d files added to queue"
 msgstr "%d faili lisatud järjekorda"
@@ -33,25 +33,25 @@ msgstr "%d faili lisatud järjekorda"
 msgid "%s bytes"
 msgstr "%s baiti"
 
-#: ../../locales/../src/interface/statuslinectrl.cpp:111
+#: ../../locales/../src/interface/statuslinectrl.cpp:115
 #: ../../locales/../src/interface/updatewizard.cpp:668
 #, c-format
 msgid "%s bytes (%d B/s)"
 msgstr "%s baiti (%d B/s)"
 
-#: ../../locales/../src/interface/statuslinectrl.cpp:109
+#: ../../locales/../src/interface/statuslinectrl.cpp:113
 #: ../../locales/../src/interface/updatewizard.cpp:666
 #, c-format
 msgid "%s bytes (%d.%d KB/s)"
 msgstr "%s baiti (%d.%d KB/s)"
 
-#: ../../locales/../src/interface/statuslinectrl.cpp:107
+#: ../../locales/../src/interface/statuslinectrl.cpp:111
 #: ../../locales/../src/interface/updatewizard.cpp:664
 #, c-format
 msgid "%s bytes (%d.%d MB/s)"
 msgstr "%s baiti (%d.%d MB/s)"
 
-#: ../../locales/../src/interface/statuslinectrl.cpp:129
+#: ../../locales/../src/interface/statuslinectrl.cpp:133
 #, c-format
 msgid "%s bytes (? B/s)"
 msgstr "%s baiti (? B/s)"
@@ -327,7 +327,7 @@ msgstr "&Käivita võrgu seadistamise nõustaja..."
 
 #: resources.h:140
 msgid "&Run update check now..."
-msgstr "&Alusta praegu uuenduste kontrolliga ..."
+msgstr "&Kontrolli uuendusi kohe ..."
 
 #: resources.h:214
 msgid "&Save as..."
@@ -409,7 +409,7 @@ msgstr "&Kirjuta"
 #: ../../locales/../src/interface/state.cpp:100
 #, c-format
 msgid "'%s' does not exist or cannot be accessed."
-msgstr ""
+msgstr "'%s' ei eksisteeri või ei ole kättesaadav."
 
 #: ../../locales/../src/interface/sitemanager.cpp:413
 msgid "'Account' logontype not supported by selected protocol"
@@ -443,8 +443,8 @@ msgstr ", aega lõpuni: --:--:-- "
 msgid "-"
 msgstr "-"
 
-#: ../../locales/../src/interface/statuslinectrl.cpp:123
-#: ../../locales/../src/interface/statuslinectrl.cpp:128
+#: ../../locales/../src/interface/statuslinectrl.cpp:127
+#: ../../locales/../src/interface/statuslinectrl.cpp:132
 msgid "--:--:-- left"
 msgstr "Aega lõpuni: --:--:-- "
 
@@ -618,9 +618,8 @@ msgid "Apply to &files only"
 msgstr "Rakenda ainult &failidele"
 
 #: ../../locales/../src/interface/updatewizard.cpp:214
-#, fuzzy
 msgid "Archive"
-msgstr "&Aktiivne"
+msgstr "Arhiiv"
 
 #: resources.h:48 ../../locales/../src/interface/sitemanager.cpp:670
 #: ../../locales/../src/interface/sitemanager.cpp:883
@@ -635,7 +634,7 @@ msgstr "Küsi opsüsteemilt porti."
 msgid "Ask your operating system for the external IP address"
 msgstr "Küsi opsüsteemilt välist IP aadressi"
 
-#: ../../locales/../src/interface/filteredit.cpp:527
+#: ../../locales/../src/interface/filteredit.cpp:543
 msgid "At least one filter condition is incomplete"
 msgstr "Vähemalt üks filtreerimistingimus on mittetäielik"
 
@@ -714,6 +713,7 @@ msgstr "Tühista käesolev operatsioon"
 #, c-format
 msgid "Cannot access '%s', no media inserted or drive not ready."
 msgstr ""
+"'%s' -i ei saa lugeda, puudub loetav meedia või kettaseade ei ole korras."
 
 #: ../../locales/../src/interface/quickconnectbar.cpp:28
 msgid "Cannot load Quickconnect bar from resource file"
@@ -727,7 +727,7 @@ msgstr "Ei saa laadida peamenüüd ressursifailist"
 msgid "Cannot load toolbar from resource file"
 msgstr "Ei saa laadida tööriistariba ressursifailist"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1210
+#: ../../locales/../src/interface/RemoteListView.cpp:1361
 msgid "Cannot rename file"
 msgstr "Ei saa faili ümber nimetada"
 
@@ -818,7 +818,7 @@ msgid "Command not supported by this protocol"
 msgstr "Antud protokoll ei toeta seda korraldust"
 
 #: ../../locales/../src/interface/StatusView.cpp:119
-#: ../../locales/../src/interface/StatusView.cpp:156
+#: ../../locales/../src/interface/StatusView.cpp:154
 msgid "Command:"
 msgstr "Käsk:"
 
@@ -856,7 +856,7 @@ msgid "Configure port range"
 msgstr "Seadista portide vahemik"
 
 #: ../../locales/../src/interface/LocalListView.cpp:878
-#: ../../locales/../src/interface/RemoteListView.cpp:827
+#: ../../locales/../src/interface/RemoteListView.cpp:956
 msgid "Confirmation needed"
 msgstr "Vajalik kinnitus"
 
@@ -871,12 +871,12 @@ msgstr "Õnnitlused, teie programmi seadistus tundub töötavat."
 msgid "Connected"
 msgstr "Ühendatud"
 
-#: ../../locales/../src/interface/QueueView.cpp:1357
+#: ../../locales/../src/interface/QueueView.cpp:1623
 msgid "Connecting"
 msgstr "Ühendumine"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:199
-#: ../../locales/../src/interface/statuslinectrl.cpp:153
+#: ../../locales/../src/interface/statuslinectrl.cpp:157
 #, c-format
 msgid "Connecting to %s"
 msgstr "Ühendumine %s"
@@ -917,7 +917,7 @@ msgstr "Ühendus loodud, ootan tervitusteadet..."
 msgid "Connection lost"
 msgstr "Ühendus kadus"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:785
+#: ../../locales/../src/engine/ControlSocket.cpp:796
 msgid "Connection timed out"
 msgstr "Ühendus aegus"
 
@@ -937,7 +937,7 @@ msgstr "Kop&eeri"
 msgid "Could not connect to server"
 msgstr "Ei suuda ühenduda serveriga"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2879
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2919
 msgid "Could not establish connection to server"
 msgstr "Ei suuda luua ühendust serveriga"
 
@@ -995,8 +995,8 @@ msgstr ""
 "juurdepääsetavust.\n"
 "Kõik muudatused, mis tehakse saidihalduris, jäävad salvestamata."
 
-#: ../../locales/../src/interface/QueueView.cpp:1721
-#: ../../locales/../src/interface/QueueView.cpp:1757
+#: ../../locales/../src/interface/QueueView.cpp:2055
+#: ../../locales/../src/interface/QueueView.cpp:2091
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1011,16 +1011,16 @@ msgstr ""
 msgid "Could not parse server address:"
 msgstr "Ei suuda lahendada serveri aadressi:"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1592
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1632
 #, c-format
 msgid "Could not seek to offset %s within file"
 msgstr "Ei leia failist nihet %s "
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1523
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1563
 msgid "Could not seek to the end of the file"
 msgstr "Ei leia faili lõppu"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1612
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1652
 msgid "Could not spawn IO thread"
 msgstr "Ei suuda lahendada IO lõimi"
 
@@ -1033,8 +1033,8 @@ msgstr ""
 "Ei saa kirjutada \"%s\", kõik muudatused saidihalduris jäävad salvestamata: %"
 "s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1740
-#: ../../locales/../src/interface/QueueView.cpp:1826
+#: ../../locales/../src/interface/QueueView.cpp:2074
+#: ../../locales/../src/interface/QueueView.cpp:2211
 #, c-format
 msgid "Could not write \"%s\", the queue could not be saved."
 msgstr "Ei saa kirjutada \"%s\", järjekorda ei salvestata."
@@ -1055,11 +1055,16 @@ msgid "Create a new subdirectory in the current directory"
 msgstr "Loo jooksvasse kataloogi uus alamkataloog"
 
 #: ../../locales/../src/interface/LocalListView.cpp:777
-#: ../../locales/../src/interface/RemoteListView.cpp:766
+#: ../../locales/../src/interface/RemoteListView.cpp:901
 msgid "Create directory"
 msgstr "Loo kataloog"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2131
+#: ../../locales/../src/interface/QueueView.cpp:1685
+#, fuzzy
+msgid "Creating directory"
+msgstr "Loo kataloog"
+
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2171
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1504
 #, c-format
 msgid "Creating directory '%s'..."
@@ -1154,7 +1159,7 @@ msgstr "Uue võtme detailid:"
 msgid "Dire&ctories"
 msgstr "Kata&loogid"
 
-#: ../../locales/../src/interface/QueueView.cpp:717
+#: ../../locales/../src/interface/QueueView.cpp:823
 msgid "Direction"
 msgstr "Suund"
 
@@ -1162,7 +1167,7 @@ msgstr "Suund"
 msgid "Directory listing aborted by user"
 msgstr "Kataloogi lehitsemine katkestati kasutaja poolt"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:285
+#: ../../locales/../src/interface/RemoteListView.cpp:407
 msgid "Directory listing failed"
 msgstr "Kataloogi sirvimine ebaõnnestus"
 
@@ -1190,8 +1195,8 @@ msgstr "Katkesta ühendus serveriga"
 msgid "Disconnected from server"
 msgstr "Ühendus serveriga katkestatud"
 
-#: ../../locales/../src/interface/QueueView.cpp:1346
-#: ../../locales/../src/interface/statuslinectrl.cpp:147
+#: ../../locales/../src/interface/QueueView.cpp:1612
+#: ../../locales/../src/interface/statuslinectrl.cpp:151
 msgid "Disconnecting from previous server"
 msgstr "Lahtiühendumine eelmisest serverist"
 
@@ -1234,9 +1239,9 @@ msgstr "%s -i allatõmbamine"
 msgid "Downloads"
 msgstr "Allalaadimised"
 
-#: ../../locales/../src/interface/filteredit.cpp:314
-#: ../../locales/../src/interface/filteredit.cpp:377
-#: ../../locales/../src/interface/filteredit.cpp:417
+#: ../../locales/../src/interface/filteredit.cpp:330
+#: ../../locales/../src/interface/filteredit.cpp:393
+#: ../../locales/../src/interface/filteredit.cpp:433
 msgid "Duplicate filter name"
 msgstr "Korduv filtri nimi"
 
@@ -1252,7 +1257,7 @@ msgstr "K&äivita"
 msgid "E&xit"
 msgstr "V&älju"
 
-#: ../../locales/../src/interface/filteredit.cpp:516
+#: ../../locales/../src/interface/filteredit.cpp:532
 msgid "Each filter needs at least one condition."
 msgstr "Igas filtris peab olema vähemalt üks tingimus."
 
@@ -1264,17 +1269,17 @@ msgstr "Filtrite muutmine"
 msgid "Email:"
 msgstr "E-kiri:"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:287
+#: ../../locales/../src/interface/RemoteListView.cpp:409
 msgid "Empty directory listing"
 msgstr "Tühjenda kataloogi nimekiri"
 
-#: ../../locales/../src/interface/filteredit.cpp:368
-#: ../../locales/../src/interface/filteredit.cpp:411
+#: ../../locales/../src/interface/filteredit.cpp:384
+#: ../../locales/../src/interface/filteredit.cpp:427
 msgid "Empty filter names are not allowed."
 msgstr "Ilma nimeta filtrid ei ole lubatud."
 
-#: ../../locales/../src/interface/filteredit.cpp:368
-#: ../../locales/../src/interface/filteredit.cpp:411
+#: ../../locales/../src/interface/filteredit.cpp:384
+#: ../../locales/../src/interface/filteredit.cpp:427
 msgid "Empty name"
 msgstr "Nime koht tühi"
 
@@ -1290,9 +1295,9 @@ msgstr "Sisesta &oma käsk..."
 msgid "Enter custom command"
 msgstr "Sisesta oma käsk"
 
-#: ../../locales/../src/interface/filteredit.cpp:307
-#: ../../locales/../src/interface/filteredit.cpp:360
-#: ../../locales/../src/interface/filteredit.cpp:404
+#: ../../locales/../src/interface/filteredit.cpp:323
+#: ../../locales/../src/interface/filteredit.cpp:376
+#: ../../locales/../src/interface/filteredit.cpp:420
 msgid "Enter filter name"
 msgstr "Sisestage filtri nimi"
 
@@ -1336,23 +1341,23 @@ msgstr "Socketi kirjutamise viga %d"
 #: ../../locales/../src/interface/filter.cpp:162
 #: ../../locales/../src/interface/filter.cpp:246
 #: ../../locales/../src/interface/Options.cpp:82
-#: ../../locales/../src/interface/QueueView.cpp:1722
-#: ../../locales/../src/interface/QueueView.cpp:1758
+#: ../../locales/../src/interface/QueueView.cpp:2056
+#: ../../locales/../src/interface/QueueView.cpp:2092
 #: ../../locales/../src/interface/sitemanager.cpp:158
 #: ../../locales/../src/interface/sitemanager.cpp:249
 #: ../../locales/../src/interface/wrapengine.cpp:783
 msgid "Error loading xml file"
 msgstr "XML faili laadimise viga"
 
-#: ../../locales/../src/interface/QueueView.cpp:1741
-#: ../../locales/../src/interface/QueueView.cpp:1827
+#: ../../locales/../src/interface/QueueView.cpp:2075
+#: ../../locales/../src/interface/QueueView.cpp:2212
 #: ../../locales/../src/interface/sitemanager.cpp:275
 #: ../../locales/../src/interface/wrapengine.cpp:951
 msgid "Error writing xml file"
 msgstr "XML faili kirjutamise viga"
 
 #: ../../locales/../src/interface/StatusView.cpp:117
-#: ../../locales/../src/interface/StatusView.cpp:152
+#: ../../locales/../src/interface/StatusView.cpp:150
 msgid "Error:"
 msgstr "Viga:"
 
@@ -1361,9 +1366,8 @@ msgid "Exe&cute"
 msgstr "Käi&vita"
 
 #: ../../locales/../src/interface/updatewizard.cpp:212
-#, fuzzy
 msgid "Executable"
-msgstr "&Käivita"
+msgstr "Käivitatav"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:1061
 msgid "Executable contains no version info, cannot check for updates."
@@ -1392,15 +1396,14 @@ msgid ""
 "FTP uses secondary connections for data transfers. These additional "
 "connections can be established in two ways."
 msgstr ""
-"Andmete transpordiks kasutab FTP teisi ühendusi. Need lisaühendused võivad "
-"olla aktiveeritud kahel viisil."
+"Andmete transpordiks kasutab FTP kahekordseid ühendusi. Need lisaühendused "
+"võivad olla aktiveeritud kahel viisil."
 
 #: ../../locales/../src/interface/LocalListView.cpp:305
 #: ../../locales/../src/interface/LocalTreeView.cpp:576
 #: ../../locales/../src/interface/viewheader.cpp:408
-#, fuzzy
 msgid "Failed to change directory"
-msgstr "Keele vahetamine ebaõnnestus"
+msgstr "Kataloogi vahetamine ebaõnnestus"
 
 #: ../../locales/../src/interface/FileZilla.cpp:88
 #: ../../locales/../src/interface/optionspage_language.cpp:65
@@ -1419,8 +1422,8 @@ msgstr "XML faili tagavarakoopia loomine ebaõnnestus"
 msgid "Failed to create listen socket, aborting"
 msgstr "Kuulava liidese (socket) loomine ebaõnnestus, katkestamine"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2858
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2862
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2898
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2902
 msgid "Failed to create listening socket for active mode transfer"
 msgstr ""
 "Kuulava liidese (socket) loomine aktiivset laadi ülekandele ebaõnnestus."
@@ -1445,17 +1448,17 @@ msgstr "FTP mootori algväärtustamine ebaõnnestus"
 msgid "Failed to load panels, invalid resource files?"
 msgstr "Paneelide sisselugemine ebaõnnestus, vigased ressursifailid?"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1514
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1554
 #, c-format
 msgid "Failed to open \"%s\" for appending / writing"
 msgstr "\"%s\" avamine lisamiseks / kirjutamiseks ebaõnnestus"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1576
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1616
 #, c-format
 msgid "Failed to open \"%s\" for reading"
 msgstr "\"%s\" avamine lugemiseks ebaõnnestus"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1555
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1595
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:371
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:416
 #, c-format
@@ -1474,11 +1477,11 @@ msgstr "Kataloogi nimekirja vastuvõtt ebaõnnestus"
 msgid "Failed to retrieve external ip address, aborting"
 msgstr "Välise IP aadressi leidmine ebaõnnestus, katkestan"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2626
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2666
 msgid "Failed to retrieve external ip address, using local address"
 msgstr "Välise IP aadressi leidmine ebaõnnestus, kasutame kohalikku aadressi."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2645
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2685
 msgid "Failed to retrieve local ip address."
 msgstr "Kohaliku IP aadressi leidmine ebaõnnestus."
 
@@ -1524,9 +1527,9 @@ msgstr "Fai&lid"
 #: ../../locales/../src/interface/LocalListView.cpp:402
 #: ../../locales/../src/interface/LocalListView.cpp:420
 #: ../../locales/../src/interface/LocalListView.cpp:424
-#: ../../locales/../src/interface/RemoteListView.cpp:490
-#: ../../locales/../src/interface/RemoteListView.cpp:508
-#: ../../locales/../src/interface/RemoteListView.cpp:512
+#: ../../locales/../src/interface/RemoteListView.cpp:612
+#: ../../locales/../src/interface/RemoteListView.cpp:630
+#: ../../locales/../src/interface/RemoteListView.cpp:634
 msgid "File"
 msgstr "Fail"
 
@@ -1534,7 +1537,7 @@ msgstr "Fail"
 msgid "File Types"
 msgstr "Failide tüübid"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1225
+#: ../../locales/../src/interface/RemoteListView.cpp:1376
 msgid "File exists"
 msgstr "Fail on olemas"
 
@@ -1559,15 +1562,15 @@ msgstr "FileZilla viga"
 msgid ""
 "FileZilla can test your configuration now to ensure everything is configured "
 "properly."
-msgstr "FileZilla võib praegu kontrollida programmi seadistuste korrektsust."
+msgstr "FileZilla võib nüüd kontrollida programmi seadistuste korrektsust."
 
-#: ../../locales/../src/interface/filteredit.cpp:5
+#: ../../locales/../src/interface/filteredit.cpp:52
 #: ../../locales/../src/interface/LocalListView.cpp:33
 #: ../../locales/../src/interface/RemoteListView.cpp:80
 msgid "Filename"
 msgstr "Failinimi"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1210
+#: ../../locales/../src/interface/RemoteListView.cpp:1361
 msgid "Filename invalid"
 msgstr "Vigane failinimi "
 
@@ -1585,7 +1588,7 @@ msgid ""
 "|"
 msgstr "Failinimes ei tohi kasutada järgnevaid sümboleid: / \\ : * ? \" < > |"
 
-#: ../../locales/../src/interface/filteredit.cpp:5
+#: ../../locales/../src/interface/filteredit.cpp:53
 #: ../../locales/../src/interface/LocalListView.cpp:34
 #: ../../locales/../src/interface/RemoteListView.cpp:81
 msgid "Filesize"
@@ -1604,7 +1607,7 @@ msgstr "Filtreeri &välja kõik failid, mis:"
 msgid "Filter applies to:"
 msgstr "Filter rakendub:"
 
-#: ../../locales/../src/interface/filteredit.cpp:558
+#: ../../locales/../src/interface/filteredit.cpp:574
 msgid "Filter name already exists"
 msgstr "Sellise nimega filter juba olemas"
 
@@ -1616,11 +1619,11 @@ msgstr "Selline filtrikogumik on juba olemas"
 msgid "Filter the directory listings"
 msgstr "Kataloogi sisu filtreerimine"
 
-#: ../../locales/../src/interface/filteredit.cpp:516
-#: ../../locales/../src/interface/filteredit.cpp:527
-#: ../../locales/../src/interface/filteredit.cpp:538
-#: ../../locales/../src/interface/filteredit.cpp:549
-#: ../../locales/../src/interface/filteredit.cpp:558
+#: ../../locales/../src/interface/filteredit.cpp:532
+#: ../../locales/../src/interface/filteredit.cpp:543
+#: ../../locales/../src/interface/filteredit.cpp:554
+#: ../../locales/../src/interface/filteredit.cpp:565
+#: ../../locales/../src/interface/filteredit.cpp:574
 msgid "Filter validation failed"
 msgstr "Filtri õigsuse kontroll ebaõnnestus"
 
@@ -1633,7 +1636,7 @@ msgid "Firewall and router configuration wizard"
 msgstr "Tulemüüri ja ruuteri seadistamise nõustaja"
 
 #: ../../locales/../src/interface/LocalListView.cpp:424
-#: ../../locales/../src/interface/RemoteListView.cpp:512
+#: ../../locales/../src/interface/RemoteListView.cpp:634
 msgid "Folder"
 msgstr "Kaust"
 
@@ -1673,11 +1676,13 @@ msgstr "Grupi õigused"
 msgid "H&igh"
 msgstr "K&õrge"
 
-#: ../../locales/../src/interface/QueueView.cpp:874
+#: ../../locales/../src/interface/QueueView.cpp:1011
+#: ../../locales/../src/interface/QueueView.cpp:1092
 msgid "High"
 msgstr "Kõrge"
 
-#: ../../locales/../src/interface/QueueView.cpp:876
+#: ../../locales/../src/interface/QueueView.cpp:1013
+#: ../../locales/../src/interface/QueueView.cpp:1094
 msgid "Highest"
 msgstr "Kõrgeim"
 
@@ -1718,7 +1723,7 @@ msgstr ""
 #: resources.h:150
 msgid "If reporting bugs, please provide logs with \"Verbose\" logging level."
 msgstr ""
-"Kui näitate vigu, palun andke logi, kus on kasutatud \"Paljusõnalist\" "
+"Kui teatate vigadest, palun andke logi, kus on kasutatud \"Paljusõnalist\" "
 "logimise taset."
 
 #: resources.h:385
@@ -1762,8 +1767,8 @@ msgid ""
 "If you click on test, FileZilla will connect to probe.filezilla-project.org "
 "and will perform some simple tests."
 msgstr ""
-"Kui te vajutate testile, ühendub FileZilla probe.filezilla-project.org -iga "
-"ja teeb mõned lihtsad testid."
+"Kui te vajutate nuppu TEST, ühendub FileZilla probe.filezilla-project.org -"
+"iga ja teeb mõned lihtsad testid."
 
 #: resources.h:109
 msgid ""
@@ -1845,8 +1850,7 @@ msgid ""
 "In case you prefer automatic updates, you can enable automatic update checks "
 "in the settings dialog."
 msgstr ""
-"Juhul kui te eelistate automaatset uuendamist, peate selle lubama "
-"seadistustes."
+"Kui te eelistate automaatset uuendamist, peate selle lubama seadistustes."
 
 #: resources.h:250 resources.h:389
 msgid ""
@@ -1881,8 +1885,8 @@ msgstr "Vigane sisu pikkus"
 msgid "Invalid HTTP Response"
 msgstr "Vigane HTTP vastus"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:638
-#: ../../locales/../src/engine/ControlSocket.cpp:695
+#: ../../locales/../src/engine/ControlSocket.cpp:649
+#: ../../locales/../src/engine/ControlSocket.cpp:706
 msgid ""
 "Invalid character sequence received, disabling UTF-8. Select UTF-8 option in "
 "site manager to force UTF-8."
@@ -1926,7 +1930,7 @@ msgstr "Vale protokoll. Hetkel on lubatud ftp:// ja sftp:// protokollid."
 msgid "Invalid response code"
 msgstr "Vigane vastuse kood"
 
-#: ../../locales/../src/interface/filteredit.cpp:538
+#: ../../locales/../src/interface/filteredit.cpp:554
 msgid "Invalid size in condition"
 msgstr "Tingimuse vigane suurus"
 
@@ -1976,7 +1980,7 @@ msgid "Listen socket closed"
 msgstr "Jälgitav ühendus suleti"
 
 #: ../../locales/../src/interface/StatusView.cpp:128
-#: ../../locales/../src/interface/StatusView.cpp:171
+#: ../../locales/../src/interface/StatusView.cpp:169
 msgid "Listing:"
 msgstr "Loetelu:"
 
@@ -1996,11 +2000,13 @@ msgstr ""
 "Sisselogimise andmed sisaldavad mitte-ascii sümboleid ja server ei pruugi "
 "õigesti aru saada UTF-8-st. Proovin lokaalset kooditabelit."
 
-#: ../../locales/../src/interface/QueueView.cpp:869
+#: ../../locales/../src/interface/QueueView.cpp:1006
+#: ../../locales/../src/interface/QueueView.cpp:1087
 msgid "Low"
 msgstr "Madal"
 
-#: ../../locales/../src/interface/QueueView.cpp:867
+#: ../../locales/../src/interface/QueueView.cpp:1004
+#: ../../locales/../src/interface/QueueView.cpp:1085
 msgid "Lowest"
 msgstr "Madalaim"
 
@@ -2061,7 +2067,7 @@ msgstr "Kasutamatu"
 msgid "Name:"
 msgstr "Nimi:"
 
-#: ../../locales/../src/interface/filteredit.cpp:549
+#: ../../locales/../src/interface/filteredit.cpp:565
 msgid "Need to enter filter name"
 msgstr "Vaja sisestada filtri nimi"
 
@@ -2073,11 +2079,11 @@ msgstr "On vaja määrata sümbolite kodeering"
 msgid "New &Folder"
 msgstr "Uus &kaust"
 
-#: ../../locales/../src/interface/filteredit.cpp:302
+#: ../../locales/../src/interface/filteredit.cpp:318
 msgid "New filter"
 msgstr "Uus filter"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:780
+#: ../../locales/../src/interface/RemoteListView.cpp:915
 #: ../../locales/../src/interface/sitemanager.cpp:350
 #: ../../locales/../src/interface/sitemanager.cpp:373
 msgid "New folder"
@@ -2092,7 +2098,7 @@ msgstr "Uus sait"
 msgid "No"
 msgstr "Ei"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2603
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2643
 msgid "No external IP address set, trying default."
 msgstr "Välist IP aadressi pole seatud, proovime vaikeaadressi."
 
@@ -2114,14 +2120,15 @@ msgstr "Failis themes.xml pole ühtegi teemat."
 msgid "None of the following"
 msgstr "Mitte ükski järgnevatest"
 
-#: resources.h:47 ../../locales/../src/interface/QueueView.cpp:872
+#: resources.h:47 ../../locales/../src/interface/QueueView.cpp:1009
+#: ../../locales/../src/interface/QueueView.cpp:1090
 #: ../../locales/../src/interface/sitemanager.cpp:637
 #: ../../locales/../src/interface/sitemanager.cpp:668
 #: ../../locales/../src/interface/sitemanager.cpp:880
 msgid "Normal"
 msgstr "Normaalne"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:314
+#: ../../locales/../src/interface/RemoteListView.cpp:435
 msgid "Not connected to any server"
 msgstr "Ei ole ühendust ühegi serveriga"
 
@@ -2201,7 +2208,7 @@ msgstr "Pa&ssiivne (soovituslik)"
 
 #: ../../locales/../src/interface/updatewizard.cpp:216
 msgid "Package"
-msgstr ""
+msgstr "Pakett"
 
 #: resources.h:52 resources.h:419
 msgid "Pass&word:"
@@ -2278,15 +2285,15 @@ msgstr ""
 "Veenduge, et interneti ühendus toimib stabiilselt ja kontrollige http://"
 "filezilla-project.org/probe.php peal serveri töösolekut."
 
-#: ../../locales/../src/interface/filteredit.cpp:307
+#: ../../locales/../src/interface/filteredit.cpp:323
 msgid "Please enter a name for the new filter."
 msgstr "Palun sisestage nimi uuele filtrile."
 
-#: ../../locales/../src/interface/filteredit.cpp:404
+#: ../../locales/../src/interface/filteredit.cpp:420
 msgid "Please enter a new name for the copied filter."
 msgstr "Palun sisestage kopeeritud filtrile uus nimi."
 
-#: ../../locales/../src/interface/filteredit.cpp:360
+#: ../../locales/../src/interface/filteredit.cpp:376
 msgid "Please enter a new name for the filter."
 msgstr "Palun sisestage filtrile uus nimi."
 
@@ -2343,7 +2350,7 @@ msgstr ""
 "FTP otsekäskluste kasutamine tühjendab kataloogi vahemälu"
 
 #: ../../locales/../src/interface/LocalListView.cpp:777
-#: ../../locales/../src/interface/RemoteListView.cpp:766
+#: ../../locales/../src/interface/RemoteListView.cpp:901
 msgid "Please enter the name of the directory which should be created:"
 msgstr "Sisestage loodava kataloogi nimi:"
 
@@ -2471,7 +2478,7 @@ msgstr ""
 msgid "Preview"
 msgstr "Eelvaade"
 
-#: ../../locales/../src/interface/QueueView.cpp:720
+#: ../../locales/../src/interface/QueueView.cpp:826
 msgid "Priority"
 msgstr "Prioriteet"
 
@@ -2483,22 +2490,22 @@ msgstr "Järjekorra &täitmine"
 msgid "Public permissions"
 msgstr "Avalikud õigused"
 
-#: ../../locales/../src/interface/QueueView.cpp:1588
+#: ../../locales/../src/interface/QueueView.cpp:1893
 #, c-format
 msgid "Queue: %s%d KB"
 msgstr "Järjekord: %s%d KB"
 
-#: ../../locales/../src/interface/QueueView.cpp:1583
+#: ../../locales/../src/interface/QueueView.cpp:1888
 #, c-format
 msgid "Queue: %s%d MB"
 msgstr "Järjekord: %s%d MB"
 
-#: ../../locales/../src/interface/QueueView.cpp:1591
+#: ../../locales/../src/interface/QueueView.cpp:1896
 #, c-format
 msgid "Queue: %s%d bytes"
 msgstr "Järjekord: %s%d baiti"
 
-#: ../../locales/../src/interface/QueueView.cpp:1579
+#: ../../locales/../src/interface/QueueView.cpp:1884
 msgid "Queue: empty"
 msgstr "Järjekord: tühi"
 
@@ -2519,7 +2526,7 @@ msgid "Really cancel current operation?"
 msgstr "Kas tõesti katkestame käesoleva operatsiooni?"
 
 #: ../../locales/../src/interface/LocalListView.cpp:878
-#: ../../locales/../src/interface/RemoteListView.cpp:827
+#: ../../locales/../src/interface/RemoteListView.cpp:956
 msgid "Really delete all selected files and/or directories?"
 msgstr "Kas tõesti kustutame kõik valitud failid ja/või kataloogid?"
 
@@ -2545,7 +2552,7 @@ msgstr "Ümbersuunamine vigasele aadressile"
 msgid "Refresh the file and folder lists"
 msgstr "Värskenda failide ja kaustade nimekirja"
 
-#: ../../locales/../src/interface/QueueView.cpp:718
+#: ../../locales/../src/interface/QueueView.cpp:824
 msgid "Remote file"
 msgstr "Kauge fail"
 
@@ -2573,7 +2580,7 @@ msgstr "Faili ümbernimetamine"
 msgid "Rename selected files and folders"
 msgstr "Nimeta valitud failid ja kaustad ümber"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2326
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2366
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1928
 #, c-format
 msgid "Renaming '%s' to '%s'"
@@ -2595,7 +2602,7 @@ msgstr "Masinanime lahendamine"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:384
 #: ../../locales/../src/interface/StatusView.cpp:122
-#: ../../locales/../src/interface/StatusView.cpp:160
+#: ../../locales/../src/interface/StatusView.cpp:158
 msgid "Response:"
 msgstr "Vastus:"
 
@@ -2612,7 +2619,7 @@ msgstr ""
 msgid "Retrieving directory listing..."
 msgstr "Laetakse kataloogi nimekirja..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2611
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2651
 #: ../../locales/../src/interface/netconfwizard.cpp:687
 #, c-format
 msgid "Retrieving external IP address from %s"
@@ -2634,11 +2641,11 @@ msgstr "SFTP"
 msgid "Save settings?"
 msgstr "Salvestame seaded?"
 
-#: ../../locales/../src/interface/QueueView.cpp:1650
+#: ../../locales/../src/interface/QueueView.cpp:1965
 msgid "Scanning for files to add to queue"
 msgstr "Skaneerin järjekorda seatavaid faile"
 
-#: ../../locales/../src/interface/QueueView.cpp:1652
+#: ../../locales/../src/interface/QueueView.cpp:1967
 msgid "Scanning for files to upload"
 msgstr "Skaneerin üleslaetavaid faile"
 
@@ -2683,16 +2690,16 @@ msgstr "Valige koht paki allalaadimiseks "
 msgid "Send custom command to the server otherwise not available"
 msgstr "Saada oma käsklus serverisse, kui muu ei ole võimalik"
 
-#: ../../locales/../src/interface/QueueView.cpp:716
+#: ../../locales/../src/interface/QueueView.cpp:822
 msgid "Server / Local file"
 msgstr "Server / kohalik fail"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2937
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2977
 #, c-format
 msgid "Server does not support resume of files > %d GB."
 msgstr "Server ei toeta suuremate kui %d GB failide ülekande jätkatavust."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2933
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2973
 #, c-format
 msgid ""
 "Server does not support resume of files > %d GB. End transfer since "
@@ -2701,15 +2708,15 @@ msgstr ""
 "Server ei toeta suuremate kui %d GB failide ülekande jätkatavust. Lõpeta "
 "ülekanne, kui faili suurus jõuab lubatud piirini."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1463
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1503
 msgid "Server does not support resume of files > 2GB."
 msgstr "Server ei toeta suuremate kui 2GB failide ülekande jätkatavust."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1458
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1498
 msgid "Server does not support resume of files > 4GB."
 msgstr "Server ei toeta suuremate kui 4GB failide ülekande jätkatavust."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2948
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2988
 #, c-format
 msgid ""
 "Server may not support resume of files > %d GB. End transfer since filesizes "
@@ -2735,7 +2742,7 @@ msgstr "Server nõuab kontot. Palun kirjeldage konto kasutades Saidihaldurit"
 msgid "Server sent invalid reply."
 msgstr "Server saatis vigase vastuse."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2572
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2612
 msgid ""
 "Server sent passive reply with unroutable address. Using server address "
 "instead."
@@ -2751,7 +2758,7 @@ msgstr "Serveri &tüüp:"
 msgid "Set &Priority"
 msgstr "Sea &prioriteet"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2449
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2489
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1827
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
@@ -2773,7 +2780,7 @@ msgstr "Saidihaldur"
 msgid "Site Manager already open"
 msgstr "Saidihaldur on juba avatud"
 
-#: ../../locales/../src/interface/QueueView.cpp:719
+#: ../../locales/../src/interface/QueueView.cpp:825
 msgid "Size"
 msgstr "Suurus"
 
@@ -2788,8 +2795,8 @@ msgstr "Suurus tundmatu"
 msgid "Sk&ip"
 msgstr "Jä&ta vahele"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1730
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1815
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1770
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1855
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:201
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:241
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:547
@@ -2798,8 +2805,8 @@ msgstr "Jä&ta vahele"
 msgid "Skipping download of %s"
 msgstr "%s allalaadimise vahelejätmine"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1734
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1819
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1774
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1859
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:205
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:245
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:551
@@ -2820,24 +2827,24 @@ msgstr ""
 "Mõned kauged halvasti seadistatud serverid, mis asuvad ruuteri taga, võivad "
 "vastata oma lokaalse IP aadressiga."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1164
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1204
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1208
 #, c-format
 msgid "Starting download of %s"
 msgstr "%s allalaadimise alustamine"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1168
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1208
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1212
 #, c-format
 msgid "Starting upload of %s"
 msgstr "%s üleslaadimise alustamine"
 
-#: ../../locales/../src/interface/QueueView.cpp:721
+#: ../../locales/../src/interface/QueueView.cpp:827
 msgid "Status"
 msgstr "Staatus"
 
 #: ../../locales/../src/interface/StatusView.cpp:131
-#: ../../locales/../src/interface/StatusView.cpp:175
+#: ../../locales/../src/interface/StatusView.cpp:173
 msgid "Status:"
 msgstr "Staatus:"
 
@@ -2865,7 +2872,7 @@ msgstr "Süntaksi viga"
 msgid "Target file already exists"
 msgstr "Sihtfail on juba olemas"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1225
+#: ../../locales/../src/interface/RemoteListView.cpp:1376
 msgid "Target filename already exists, really continue?"
 msgstr "Sihtfaili nimi on juba kasutuses, kas tõesti jätkame? "
 
@@ -2873,7 +2880,7 @@ msgstr "Sihtfaili nimi on juba kasutuses, kas tõesti jätkame? "
 msgid "Test results"
 msgstr "Testi tulemused"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2954
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2994
 msgid "Testing resume capabilities of server"
 msgstr "Testitakse serveri võimalusi failide jätkatavuseks. "
 
@@ -2891,9 +2898,9 @@ msgstr ""
 msgid "The address you entered was: %s"
 msgstr "Aadress, mille sisestasite oli: %s"
 
-#: ../../locales/../src/interface/filteredit.cpp:314
-#: ../../locales/../src/interface/filteredit.cpp:377
-#: ../../locales/../src/interface/filteredit.cpp:417
+#: ../../locales/../src/interface/filteredit.cpp:330
+#: ../../locales/../src/interface/filteredit.cpp:393
+#: ../../locales/../src/interface/filteredit.cpp:433
 msgid "The entered filter name already exists."
 msgstr "Sellise nimega filter on juba olemas."
 
@@ -3053,7 +3060,7 @@ msgid "Too many redirects"
 msgstr "Liiga palju ümbersuunamisi"
 
 #: ../../locales/../src/interface/StatusView.cpp:125
-#: ../../locales/../src/interface/StatusView.cpp:167
+#: ../../locales/../src/interface/StatusView.cpp:165
 msgid "Trace:"
 msgstr "Täitmine:"
 
@@ -3069,8 +3076,8 @@ msgstr "Ülekande seaded"
 msgid "Transferred data got tainted."
 msgstr "Ülekantud andmed on vigased"
 
-#: ../../locales/../src/interface/QueueView.cpp:1386
-#: ../../locales/../src/interface/statuslinectrl.cpp:156
+#: ../../locales/../src/interface/QueueView.cpp:1657
+#: ../../locales/../src/interface/statuslinectrl.cpp:160
 msgid "Transferring"
 msgstr "Ülekanne"
 
@@ -3224,11 +3231,11 @@ msgstr "VMS"
 msgid "W&rite"
 msgstr "K&irjuta"
 
-#: ../../locales/../src/interface/QueueView.cpp:1610
+#: ../../locales/../src/interface/QueueView.cpp:1919
 msgid "Waiting"
 msgstr "Ootamine"
 
-#: ../../locales/../src/interface/statuslinectrl.cpp:150
+#: ../../locales/../src/interface/statuslinectrl.cpp:154
 msgid "Waiting for transfer to be canceled"
 msgstr "Ootan ülekande katkestamist"
 
@@ -3322,7 +3329,7 @@ msgstr ""
 "Teil ei tohiks olla probleeme ühendumisel teiste serveritega ja failide "
 "ülekanne peaks töötama korralikult."
 
-#: ../../locales/../src/interface/filteredit.cpp:6
+#: ../../locales/../src/interface/filteredit.cpp:57
 msgid "begins with"
 msgstr "alguses on"
 
@@ -3333,22 +3340,22 @@ msgstr "alguses on"
 msgid "bytes"
 msgstr "baiti"
 
-#: ../../locales/../src/interface/filteredit.cpp:6
+#: ../../locales/../src/interface/filteredit.cpp:55
 msgid "contains"
 msgstr "sisaldab"
 
-#: ../../locales/../src/interface/filteredit.cpp:6
+#: ../../locales/../src/interface/filteredit.cpp:58
 msgid "ends with"
 msgstr "lõpus on"
 
-#: ../../locales/../src/interface/filteredit.cpp:7
+#: ../../locales/../src/interface/filteredit.cpp:62
 msgid "equals"
 msgstr "võrdub"
 
 #: ../../locales/../src/interface/LocalListView.cpp:399
 #: ../../locales/../src/interface/LocalListView.cpp:417
-#: ../../locales/../src/interface/RemoteListView.cpp:487
-#: ../../locales/../src/interface/RemoteListView.cpp:505
+#: ../../locales/../src/interface/RemoteListView.cpp:609
+#: ../../locales/../src/interface/RemoteListView.cpp:627
 msgid "file"
 msgstr "fail"
 
@@ -3356,19 +3363,19 @@ msgstr "fail"
 msgid "fzsftp could not be started"
 msgstr "fzsftp startimine ebaõnnestus"
 
-#: ../../locales/../src/interface/filteredit.cpp:7
+#: ../../locales/../src/interface/filteredit.cpp:61
 msgid "greater than"
 msgstr "suurem kui"
 
-#: ../../locales/../src/interface/filteredit.cpp:6
+#: ../../locales/../src/interface/filteredit.cpp:56
 msgid "is equal to"
 msgstr "võrdub"
 
-#: ../../locales/../src/interface/filteredit.cpp:7
+#: ../../locales/../src/interface/filteredit.cpp:63
 msgid "less than"
 msgstr "väiksem kui"
 
-#: ../../locales/../src/interface/filteredit.cpp:6
+#: ../../locales/../src/interface/filteredit.cpp:59
 msgid "matches regex"
 msgstr "vastab regulaaravaldisele"
 
