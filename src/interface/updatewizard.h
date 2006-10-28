@@ -1,6 +1,8 @@
 #ifndef __UPDATEWIZARD_H__
 #define __UPDATEWIZARD_H__
 
+#if FZ_MANUALUPDATECHECK
+
 #include <wx/wizard.h>
 #include "wrapengine.h"
 
@@ -65,5 +67,7 @@ protected:
 	bool m_autoUpdateCheckRunning;
 	bool m_updateShown;
 };
+
+#endif //FZ_MANUALUPDATECHECK
 
 #endif //__UPDATEWIZARD_H__

@@ -71,7 +71,9 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_QUEUEVIEW"), CMainFrame::OnUpdateToggleQueueView)
 	EVT_MENU(wxID_ABOUT, CMainFrame::OnMenuHelpAbout)
 	EVT_TOOL(XRCID("ID_TOOLBAR_FILTER"), CMainFrame::OnFilter)
+#if FZ_MANUALUPDATECHECK
 	EVT_MENU(XRCID("ID_CHECKFORUPDATES"), CMainFrame::OnCheckForUpdates)
+#endif //FZ_MANUALUPDATECHECK
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
@@ -91,7 +93,9 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_pRemoteSplitter = NULL;
 	m_bInitDone = false;
 	m_bQuit = false;
+#if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	m_pUpdateWizard = 0;
+#endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 
 	m_lastLogViewSplitterPos = 0;
 	m_lastLocalTreeSplitterPos = 0;
@@ -204,6 +208,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	wxAcceleratorTable accel(1, entries);
 	SetAcceleratorTable(accel);
 
+#if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	if (COptions::Get()->GetOptionVal(OPTION_UPDATECHECK))
 	{
 		m_pUpdateWizard = new CUpdateWizard(this);
@@ -211,13 +216,16 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	}
 	else
 		m_pUpdateWizard = 0;
+#endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 }
 
 CMainFrame::~CMainFrame()
 {
 	delete m_pState;
 	delete m_pAsyncRequestQueue;
+#if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	delete m_pUpdateWizard;
+#endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 }
 
 void CMainFrame::OnSize(wxSizeEvent &event)
@@ -288,6 +296,13 @@ bool CMainFrame::CreateMenus()
 		wxLogError(_("Cannot load main menu from resource file"));
 	}
 
+#if !FZ_MANUALUPDATECHECK
+	wxMenu *helpMenu;
+	wxMenuItem* pUpdateItem = m_pMenuBar->FindItem(XRCID("ID_CHECKFORUPDATES"), &helpMenu);
+	if (pUpdateItem)
+		helpMenu->Delete(pUpdateItem);
+#endif //!FZ_MANUALUPDATECHECK
+
 	if (COptions::Get()->GetOptionVal(OPTION_DEBUG_MENU))
 	{
 		wxMenu* pMenu = wxXmlResource::Get()->LoadMenu(_T("ID_MENU_DEBUG"));
@@ -296,8 +311,10 @@ bool CMainFrame::CreateMenus()
 	}
 
 	SetMenuBar(m_pMenuBar);
+#if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	if (m_pUpdateWizard)
 		m_pUpdateWizard->DisplayUpdateAvailability(false, true);
+#endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 
 	return true;
 }
@@ -898,6 +915,7 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 		CreateMenus();
 	}
 
+#if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	if (pOptions->GetOptionVal(OPTION_UPDATECHECK))
 	{
 		if (!m_pUpdateWizard)
@@ -914,6 +932,7 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 			m_pUpdateWizard = 0;
 		}
 	}
+#endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 
 	m_pAsyncRequestQueue->RecheckDefaults();
 }
@@ -1053,6 +1072,7 @@ void CMainFrame::OnFilter(wxCommandEvent& event)
 	m_pState->ApplyCurrentFilter();
 }
 
+#if FZ_MANUALUPDATECHECK
 void CMainFrame::OnCheckForUpdates(wxCommandEvent& event)
 {
 	wxString version(PACKAGE_VERSION, wxConvLocal);
@@ -1068,3 +1088,4 @@ void CMainFrame::OnCheckForUpdates(wxCommandEvent& event)
 	
 	dlg.Run();
 }
+#endif FZ_MANUALUPDATECHECK

@@ -90,7 +90,9 @@ bool CSettingsDialog::LoadPages()
 	ADD_PAGE(_("File exists action"), COptionsPageFileExists, page_transfer);
 	ADD_PAGE(_("Themes"), COptionsPageThemes, page_none);
 	ADD_PAGE(_("Language"), COptionsPageLanguage, page_none);
+#if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	ADD_PAGE(_("Update Check"), COptionsPageUpdateCheck, page_none);
+#endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	ADD_PAGE(_("Debug"), COptionsPageDebug, page_none);
 
 	// Before we can initialize the pages, get the target panel in the settings

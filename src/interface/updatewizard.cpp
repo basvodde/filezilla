@@ -1,4 +1,7 @@
 #include "FileZilla.h"
+
+#if FZ_MANUALUPDATECHECK
+
 #include "updatewizard.h"
 #include "filezillaapp.h"
 #include "Options.h"
@@ -115,6 +118,9 @@ bool CUpdateWizard::Load()
 bool CUpdateWizard::Run()
 {
 	COptions* pOptions = COptions::Get();
+
+	if (CBuildInfo::GetVersion() == _T("custom build"))
+		return false;
 
 	const wxString& newVersion = pOptions->GetOption(OPTION_UPDATECHECK_NEWVERSION);
 	if (newVersion == _T(""))
@@ -786,6 +792,9 @@ void CUpdateWizard::DisplayUpdateAvailability(bool showDialog, bool forceMenu /*
 
 	COptions* pOptions = COptions::Get();
 
+	if (CBuildInfo::GetVersion() == _T("custom build"))
+		return;
+
 	const wxString& newVersion = pOptions->GetOption(OPTION_UPDATECHECK_NEWVERSION);
 	if (newVersion == _T(""))
 		return;
@@ -849,3 +858,5 @@ void CUpdateWizard::PrepareUpdateAvailablePage(const wxString &newVersion, wxStr
 	wxGetApp().GetWrapEngine()->WrapRecursive(m_pages[1], m_pages[1]->GetSizer(), m_pages[0]->GetSize().x);
 	m_pages[1]->GetSizer()->Layout();
 }
+
+#endif //FZ_MANUALUPDATECHECK

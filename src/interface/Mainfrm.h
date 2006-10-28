@@ -13,7 +13,9 @@ class CLed;
 class CThemeProvider;
 class CView;
 class CQuickconnectBar;
+#if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 class CUpdateWizard;
+#endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 
 class CMainFrame : public wxFrame
 {
@@ -66,7 +68,9 @@ protected:
 	CLed* m_pSendLed;
 	wxTimer m_transferStatusTimer;
 	CThemeProvider* m_pThemeProvider;
+#if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	CUpdateWizard* m_pUpdateWizard;
+#endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 
 	// Event handlers
 	DECLARE_EVENT_TABLE()
@@ -100,7 +104,9 @@ protected:
 	void OnUpdateToggleQueueView(wxUpdateUIEvent& event);
 	void OnMenuHelpAbout(wxCommandEvent& event);
 	void OnFilter(wxCommandEvent& event);
+#if FZ_MANUALUPDATECHECK
 	void OnCheckForUpdates(wxCommandEvent& event);
+#endif //FZ_MANUALUPDATECHECK
 
 	float m_ViewSplitterSashPos;
 	bool m_bInitDone;

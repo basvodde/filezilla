@@ -1,4 +1,7 @@
 #include "FileZilla.h"
+
+#if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
+
 #include "Options.h"
 #include "settingsdialog.h"
 #include "optionspage.h"
@@ -47,3 +50,5 @@ void COptionsPageUpdateCheck::OnRunUpdateCheck(wxCommandEvent &event)
 
 	dlg.Run();
 }
+
+#endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK

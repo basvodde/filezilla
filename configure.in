@@ -289,6 +289,30 @@ AH_BOTTOM([
   # -------------
 
   AM_PATH_CPPUNIT([1.10.2], [has_cppunit="yes"])
+
+  # Updatecheck related flags
+  # -------------------------
+
+  AC_ARG_ENABLE(manualupdatecheck, AC_HELP_STRING([--disable-manualupdatecheck], [Disallow the user to manually check for new versions. Implies --disable-autoupdatecheck]),
+	[manualupdatecheck=$enableval], [manualupdatecheck="yes"])
+
+  if test "$manualupdatecheck" = "no"; then
+    manualupdatecheck="0"
+  else
+    manualupdatecheck="1"
+  fi
+  AC_DEFINE_UNQUOTED(FZ_MANUALUPDATECHECK, $manualupdatecheck, [Set to 1 to enable user initiated update checks])
+
+  AC_ARG_ENABLE(autoupdatecheck, AC_HELP_STRING([--disable-autoupdatecheck], [Disables the ability of FileZilla to check for new versions automatically.]),
+	[autoupdatecheck=$enableval], [autoupdatecheck="yes"])
+
+  if test "$manualupdatecheck" = "1" -a "$autoupdatecheck" != "no"; then
+    autoupdatecheck="1"
+  else
+    autoupdatecheck="0"
+  fi
+  AC_DEFINE_UNQUOTED(FZ_AUTOUPDATECHECK, $autoupdatecheck, [Set to 1 to add support for automated update checks])
+
 fi
 
 # Everything translation related
