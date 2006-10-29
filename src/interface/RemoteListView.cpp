@@ -1562,14 +1562,10 @@ std::list<wxString> CRemoteListView::RememberSelectedItems(wxString& focused)
 			break;
 		if (!item)
 		{
-			if (!GetItemState(item, wxLIST_STATE_SELECTED))
-				continue;
 			selectedNames.push_back(_T(".."));
 			continue;
 		}
 		const CDirentry& entry = (*m_pDirectoryListing)[m_indexMapping[item]];
-		if (!GetItemState(item, wxLIST_STATE_SELECTED))
-			continue;
 
 		if (entry.dir)
 			selectedNames.push_back(_T("d") + entry.name);
