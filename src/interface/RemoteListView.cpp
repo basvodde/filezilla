@@ -1535,8 +1535,9 @@ void CRemoteListView::ApplyCurrentFilter()
 
 	CFilterDialog filter;
 	m_indexMapping.clear();
-	m_indexMapping.push_back(0);
-	for (unsigned int i = 1; i < m_fileData.size(); i++)
+	const unsigned int count = m_pDirectoryListing->GetCount();
+	m_indexMapping.push_back(count);
+	for (unsigned int i = 0; i < count; i++)
 	{
 		const CDirentry& entry = (*m_pDirectoryListing)[i];
 		if (!filter.FilenameFiltered(entry.name, entry.dir, entry.size, false))
