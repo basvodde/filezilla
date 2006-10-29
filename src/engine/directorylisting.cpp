@@ -19,7 +19,7 @@ CDirectoryListing& CDirectoryListing::operator=(const CDirectoryListing &a)
 	if (&a == this)
 		return *this;
 
-	if (m_referenceCount == a.m_referenceCount)
+	if (m_referenceCount && m_referenceCount == a.m_referenceCount)
 	{
 		// References the same listing
 		return *this;
