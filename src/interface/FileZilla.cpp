@@ -91,16 +91,17 @@ bool CFileZillaApp::OnInit()
 #ifndef _DEBUG
 	const wxString& buildType = CBuildInfo::GetBuildType();
 	if (buildType == _T("nightly"))
-        wxMessageBox(_T("This software is still alpha software in early development, don't expect anything to work\r\n\
+        wxMessageBox(_T("You are using a nightly development version of FileZilla 3, do not expect anything to work.\r\nPlease use the official releases instead.\r\n\r\n\
+Unless explicitly instructed otherwise,\r\n\
 DO NOT post bugreports,\r\n\
 DO NOT use it in production environments,\r\n\
-DO NOT distribute it,\r\n\
+DO NOT distribute the binaries,\r\n\
 DO NOT complain about it\r\n\
 USE AT OWN RISK"), _T("Important Information"));
 	else if (buildType == _T("official"))
 	{
 		wxString greetingVersion = COptions::Get()->GetOption(OPTION_GREETINGVERSION);
-		if (greetingVersion == _T("") || 
+		if (greetingVersion == _T("") ||
 			CBuildInfo::ConvertToVersionNumber(CBuildInfo::GetVersion()) > CBuildInfo::ConvertToVersionNumber(greetingVersion))
 		{
 			COptions::Get()->SetOption(OPTION_GREETINGVERSION, CBuildInfo::GetVersion());
@@ -178,15 +179,15 @@ wxString CFileZillaApp::GetDataDir(wxString fileToFind) const
 
 	wxPathList pathList;
 	// FIXME: --datadir cmdline
-	
+
 	// First try the user specified data dir.
 	pathList.AddEnvList(_T("FZ_DATADIR"));
-	
+
 	// Next try the current path and the current executable path.
 	// Without this, running development versions would be difficult.
-	
+
 	pathList.Add(wxGetCwd());
-	
+
 #ifdef ENABLE_BINRELOC
 	const char* path = SELFPATH;
 	if (path && *path)
@@ -241,7 +242,7 @@ wxString CFileZillaApp::GetDataDir(wxString fileToFind) const
 			return cur + _T("/FileZilla.app/Contents/SharedSupport");
 #endif
 	}
-	
+
 	for (node = pathList.begin(); node != pathList.end(); node++)
 	{
 		wxString cur = *node;
@@ -250,14 +251,14 @@ wxString CFileZillaApp::GetDataDir(wxString fileToFind) const
 		if (FileExists(cur + _T("/../share/filezilla") + fileToFind))
 			return cur + _T("/../share/filezilla");
 	}
-	
+
 	for (node = pathList.begin(); node != pathList.end(); node++)
 	{
 		wxString cur = *node;
 		if (FileExists(cur + _T("/../../") + fileToFind))
 			return cur + _T("/../..");
 	}
-	
+
 	return _T("");
 }
 
@@ -267,7 +268,7 @@ bool CFileZillaApp::LoadResourceFiles()
 
 	wxImage::AddHandler(new wxPNGHandler());
 	wxImage::AddHandler(new wxXPMHandler());
-	
+
 	if (m_resourceDir == _T(""))
 	{
 		wxString msg = _("Could not find the resource files for FileZilla, closing FileZilla.\nYou can set the data directory of FileZilla using the '--datadir <custompath>' commandline option or by setting the FZ_DATADIR environment variable.");
@@ -279,7 +280,7 @@ bool CFileZillaApp::LoadResourceFiles()
 		m_resourceDir += wxFileName::GetPathSeparator();
 
 	m_resourceDir += _T("resources/");
-	
+
 	wxXmlResource *pResource = wxXmlResource::Get();
 
     pResource->AddHandler(new wxMenuXmlHandler);
@@ -354,7 +355,7 @@ bool CFileZillaApp::LoadLocales()
 	wxLocale::AddCatalogLookupPathPrefix(m_localesDir);
 
 	SetLocale(wxLANGUAGE_DEFAULT);
-	
+
 	return true;
 }
 
@@ -434,7 +435,7 @@ void CFileZillaApp::DisplayEncodingWarning()
 		return;
 
 	displayedEncodingWarning = true;
-	
+
 	wxMessageBox(_("A local filename could not be decoded.\nPlease make sure the LC_CTYPE (or LC_ALL) environment variable is set correctly.\nUnless you fix this problem, files might be missing in the file listings.\nNo further warning will be displayed this session."), _("Character encoding issue"), wxICON_EXCLAMATION);
 }
 
@@ -496,7 +497,7 @@ void CFileZillaApp::CheckExistsFzsftp()
 		if (executable != _T(""))
 			found = true;
 	}
-	
+
 	if (!found)
 	{
 #ifdef __WXMAC__
@@ -512,9 +513,9 @@ void CFileZillaApp::CheckExistsFzsftp()
 		const wxString prefix = ((const wxStandardPaths&)wxStandardPaths::Get()).GetInstallPrefix();
 		if (prefix != _T("/usr/local"))
 		{
-			// /usr/local is the fallback value. /usr/local/bin is most likely in the PATH 
+			// /usr/local is the fallback value. /usr/local/bin is most likely in the PATH
 			// environment variable already so we don't have to check it. Furthermore, other
-			// directories might be listed before it (For example a developer's own 
+			// directories might be listed before it (For example a developer's own
 			// application prefix)
 			wxFileName fn(prefix + _T("/bin/"), program);
 			fn.Normalize();
@@ -533,7 +534,6 @@ void CFileZillaApp::CheckExistsFzsftp()
 		wxPathList pathList;
 		pathList.AddEnvList(_T("PATH"));
 		executable = pathList.FindAbsoluteValidPath(program);
-		bool found = false;
 		if (executable != _T(""))
 			found = true;
 	}
