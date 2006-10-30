@@ -36,6 +36,8 @@ bool CInputDialog::Create(wxWindow* parent, const wxString& title, wxString text
 	GetSizer()->Fit(this);
 	GetSizer()->SetSizeHints(this);
 
+	XRCCTRL(*this, "ID_STRING", wxTextCtrl)->SetFocus();
+
 	return true;
 }
 
@@ -58,6 +60,7 @@ wxString CInputDialog::GetValue() const
 bool CInputDialog::SelectText(int start, int end)
 {
 	Show();
+	XRCCTRL(*this, "ID_STRING", wxTextCtrl)->SetFocus();
 	XRCCTRL(*this, "ID_STRING", wxTextCtrl)->SetSelection(start, end);
 	return true;
 }
