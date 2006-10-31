@@ -23,7 +23,9 @@ enum pagenames
 	page_fileexists,
 	page_themes,
 	page_language,
+#if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	page_updatecheck,
+#endif
 	page_debug
 };
 
@@ -134,7 +136,7 @@ bool CSettingsDialog::LoadPages()
 	for (std::vector<t_page>::iterator iter = m_pages.begin(); iter != m_pages.end(); iter++)
 		size.IncTo(iter->page->GetSizer()->GetMinSize());
 
-	parentPanel->SetSizeHints(size);
+	parentPanel->SetInitialSize(size);
 
 	// Adjust pages sizes according to maximum size
 	for (std::vector<t_page>::iterator iter = m_pages.begin(); iter != m_pages.end(); iter++)

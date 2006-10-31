@@ -1088,4 +1088,4 @@ void CMainFrame::OnCheckForUpdates(wxCommandEvent& event)
 	
 	dlg.Run();
 }
-#endif FZ_MANUALUPDATECHECK
+#endif //FZ_MANUALUPDATECHECK
