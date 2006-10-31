@@ -6,6 +6,7 @@
 #include "inputdialog.h"
 #include "chmoddialog.h"
 #include "filter.h"
+#include <algorithm>
 
 #ifdef __WXMSW__
 #include "shellapi.h"
@@ -475,10 +476,12 @@ void CRemoteListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 			SendMessage(header, HDM_SETITEM, m_sortColumn, (LPARAM)&item);
 		}
 #endif
-		m_sortColumn = column;
 	}
-	if (direction != -1)
-		m_sortDirection = direction;
+	else
+		column = m_sortColumn;
+
+	if (direction == -1)
+		direction = m_sortDirection;
 
 #ifdef __WXMSW__
 	if (m_pHeaderImageList)
@@ -491,13 +494,27 @@ void CRemoteListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 		item.mask = HDI_TEXT | HDI_FORMAT;
 		item.pszText = buffer;
 		item.cchTextMax = 99;
-		SendMessage(header, HDM_GETITEM, m_sortColumn, (LPARAM)&item);
+		SendMessage(header, HDM_GETITEM, column, (LPARAM)&item);
 		item.mask |= HDI_IMAGE;
 		item.fmt |= HDF_IMAGE | HDF_BITMAP_ON_RIGHT;
-		item.iImage = m_sortDirection ? 2 : 1;
-		SendMessage(header, HDM_SETITEM, m_sortColumn, (LPARAM)&item);
+		item.iImage = direction ? 2 : 1;
+		SendMessage(header, HDM_SETITEM, column, (LPARAM)&item);
 	}
 #endif
+
+	if (column == m_sortColumn && direction != m_sortDirection && !m_indexMapping.empty())
+	{
+		// Simply reverse everything
+		m_sortDirection = direction;
+		m_sortColumn = column;
+		std::reverse(++m_indexMapping.begin(), m_indexMapping.end());
+
+		Refresh(false);
+		return;
+	}
+
+	m_sortDirection = direction;
+	m_sortColumn = column;
 
 	if (GetItemCount() < 3)
 		return;
