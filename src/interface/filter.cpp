@@ -232,6 +232,7 @@ void CFilterDialog::LoadFilters()
 	{
 		m_filters = m_globalFilters;
 		m_filterSets = m_globalFilterSets;
+		m_currentFilterSet = m_globalCurrentFilterSet;
 		return;
 	}
 	m_loaded = true;
