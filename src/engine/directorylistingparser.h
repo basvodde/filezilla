@@ -79,7 +79,7 @@ protected:
 		char *p;
 		int len;
 	};
-	int startOffset;
+	int m_currentOffset;
 
 	std::list<t_list> m_DataList;
 	std::list<CDirentry> m_entryList;

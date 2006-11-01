@@ -7,6 +7,7 @@ CDirectoryListing::CDirectoryListing()
 	m_hasUnsureEntries = false;
 	m_failed = false;
 	m_referenceCount = 0;
+	m_hasDirs = false;
 }
 
 CDirectoryListing::~CDirectoryListing()
@@ -40,6 +41,8 @@ CDirectoryListing& CDirectoryListing::operator=(const CDirectoryListing &a)
 	m_entryCount = a.m_entryCount;
 
 	m_firstListTime = a.m_firstListTime;
+
+	m_hasDirs = a.m_hasDirs;
 
 	return *this;
 
@@ -187,4 +190,22 @@ void CDirectoryListing::Copy()
 	std::vector<CDirentry>* pEntries = new std::vector<CDirentry>;
 	*pEntries = *m_pEntries;
 	m_pEntries = pEntries;
+}
+
+void CDirectoryListing::Assign(const std::list<CDirentry> &entries)
+{
+	Unref();
+	AddRef();
+
+	m_entryCount = entries.size();
+	m_pEntries->reserve(m_entryCount);
+	
+	m_hasDirs = false;
+	
+	for (std::list<CDirentry>::const_iterator iter = entries.begin(); iter != entries.end(); iter++)
+	{
+		if (iter->dir)
+			m_hasDirs = true;
+		m_pEntries->push_back(*iter);
+	}
 }

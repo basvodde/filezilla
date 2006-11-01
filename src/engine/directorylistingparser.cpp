@@ -478,7 +478,7 @@ protected:
 CDirectoryListingParser::CDirectoryListingParser(CControlSocket* pControlSocket, const CServer& server)
 	: m_pControlSocket(pControlSocket), m_server(server)
 {
-	startOffset = 0;
+	m_currentOffset = 0;
 	m_curLine = 0;
 	m_prevLine = 0;
 
@@ -738,9 +738,7 @@ CDirectoryListing* CDirectoryListingParser::Parse(const CServerPath &path)
 	pListing->path = path;
 	pListing->SetCount(m_entryList.size());
 	
-	int i = 0;
-	for (std::list<CDirentry>::iterator iter = m_entryList.begin(); iter != m_entryList.end(); iter++)
-		(*pListing)[i++] = *iter;
+	pListing->Assign(m_entryList);
 
 	pListing->m_firstListTime = CTimeEx::Now();
 
@@ -1866,14 +1864,14 @@ CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
 		// Trim empty lines and spaces
 		std::list<t_list>::iterator iter = m_DataList.begin();
 		int len = iter->len;
-		while (iter->p[startOffset]=='\r' || iter->p[startOffset]=='\n' || iter->p[startOffset]==' ' || iter->p[startOffset]=='\t')
+		while (iter->p[m_currentOffset]=='\r' || iter->p[m_currentOffset]=='\n' || iter->p[m_currentOffset]==' ' || iter->p[m_currentOffset]=='\t')
 		{
-			startOffset++;
-			if (startOffset >= len)
+			m_currentOffset++;
+			if (m_currentOffset >= len)
 			{
 				delete [] iter->p;
 				iter++;
-				startOffset = 0;
+				m_currentOffset = 0;
 				if (iter == m_DataList.end())
 				{
 					m_DataList.clear();
@@ -1886,15 +1884,15 @@ CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
 		iter = m_DataList.begin();
 
 		// Remember start offset and find next linebreak
-		int startpos = startOffset;
+		int startpos = m_currentOffset;
 		int reslen = 0;
 
 		int emptylen = 0;
 
-		int newStartOffset = startOffset;
-		while ((iter->p[newStartOffset] != '\n') && (iter->p[newStartOffset] != '\r'))
+		int currentOffset = m_currentOffset;
+		while ((iter->p[currentOffset] != '\n') && (iter->p[currentOffset] != '\r'))
 		{
-			if (iter->p[newStartOffset] != ' ' && iter->p[newStartOffset] != '\t')
+			if (iter->p[currentOffset] != ' ' && iter->p[currentOffset] != '\t')
 			{
 				reslen += emptylen + 1;
 				emptylen = 0;
@@ -1902,8 +1900,8 @@ CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
 			else
 				emptylen++;
 		
-			newStartOffset++;
-			if (newStartOffset >= len)
+			currentOffset++;
+			if (currentOffset >= len)
 			{
 				iter++;
 				if (iter == m_DataList.end())
@@ -1913,10 +1911,10 @@ CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
 					break;
 				}
 				len = iter->len;
-				newStartOffset = 0;
+				currentOffset = 0;
 			}
 		}
-		startOffset = newStartOffset;
+		m_currentOffset = currentOffset;
 
 		// Reslen is now the length of the line, excluding any terminating whitespace
 		char *res = new char[reslen + 1];
@@ -1949,7 +1947,7 @@ CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
 		// Copy last chunk
 		if (iter != m_DataList.end() && reslen)
 		{
-			int copylen = startOffset-startpos;
+			int copylen = m_currentOffset-startpos;
 			if (copylen>reslen)
 				copylen=reslen;
 			memcpy(&res[respos], &iter->p[startpos], copylen);
@@ -1981,7 +1979,10 @@ CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
 		delete [] res;
 
 		if (!buffer)
+		{
+			// Line contained no usable data, start over
 			continue;
+		}
 
 		return new CLine(buffer);
 	}
