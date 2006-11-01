@@ -26,10 +26,14 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 			m_protocol = FTP;
 		else if (protocol == _T("sftp"))
 			m_protocol = SFTP;
+		else if (protocol == _T("ftps"))
+			m_protocol = FTPS;
+		else if (protocol == _T("ftpes"))
+			m_protocol = FTPES;
 		else
 		{
 			// TODO: http:// once WebDAV is officially supported
-			error = _("Invalid protocol specified. Valid protocols are ftp:// and sftp:// at the moment.");
+			error = _("Invalid protocol specified. Valid protocols are:\nftp:// for normal FTP,\nsftp:// for SSH file transfer protocol,\nftps:// for FTP over SSL (implicit) and\nftpes:// for FTP over SSL (explicit).");
 			return false;
 		}
 	}
@@ -100,6 +104,12 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 			case SFTP:
 				port = 22;
 				break;
+			case FTPS:
+				port = 990;
+				break;
+			case FTPES:
+				port = 21;
+				break;
 			case HTTP:
 				port = 80;
 				break;
@@ -144,6 +154,9 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 		{
 		case 22:
 			m_protocol = SFTP;
+			break;
+		case 990:
+			m_protocol = FTPS;
 			break;
 		case 80:
 			m_protocol = HTTP;
@@ -379,6 +392,8 @@ bool CServer::SetHost(wxString host, unsigned int port)
 			m_protocol = SFTP;
 		else if (m_port == 80)
 			m_protocol = HTTP;
+		else if (m_port == 990)
+			m_protocol = FTPS;
 		else
 			m_protocol = FTP;
 	}
@@ -448,8 +463,28 @@ int CServer::MaximumMultipleConnections() const
 wxString CServer::FormatHost() const
 {
 	wxString host = m_host;
-	if (m_port != 21)
-		host += wxString::Format(_T(":%d"), m_port);
+
+	switch (m_protocol)
+	{
+	default:
+	case FTP:
+	case FTPES:
+		if (m_port != 21)
+			host += wxString::Format(_T(":%d"), m_port);
+		break;
+	case SFTP:
+		if (m_port != 22)
+			host += wxString::Format(_T(":%d"), m_port);
+		break;
+	case HTTP:
+		if (m_port != 80)
+			host += wxString::Format(_T(":%d"), m_port);
+		break;
+	case FTPS:
+		if (m_port != 990)
+			host += wxString::Format(_T(":%d"), m_port);
+		break;
+	}
 
 	return host;
 }
@@ -471,6 +506,16 @@ wxString CServer::FormatServer() const
 	case SFTP:
 		server = _T("sftp://") + server;
 		if (m_port != 22)
+			server += wxString::Format(_T(":%d"), m_port);
+		break;
+	case FTPS:
+		server = _T("ftps://") + server;
+		if (m_port != 990)
+			server += wxString::Format(_T(":%d"), m_port);
+		break;
+	case FTPES:
+		server = _T("ftpes://") + server;
+		if (m_port != 21)
 			server += wxString::Format(_T(":%d"), m_port);
 		break;
 	case HTTP:

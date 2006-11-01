@@ -6,7 +6,9 @@ enum ServerProtocol
 	UNKNOWN = -1,
 	FTP,
 	SFTP,
-	HTTP
+	HTTP,
+	FTPS, // Implicit SSL
+	FTPES // Explicit SSL
 };
 
 enum ServerType
