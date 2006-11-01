@@ -214,6 +214,9 @@ void CRemoteTreeView::CreateImageList()
 
 bool CRemoteTreeView::HasSubdirs(const CDirectoryListing& listing, const CFilterDialog& filter)
 {
+	if (!listing.m_hasDirs)
+		return false;
+
 	for (unsigned int i = 0; i < listing.GetCount(); i++)
 	{
 		if (!listing[i].dir)
