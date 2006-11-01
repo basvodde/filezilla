@@ -53,8 +53,11 @@ public:
 	// algorithm for modified listings
 	int m_hasUnsureEntries;
 	bool m_failed;
+	bool m_hasDirs;
 
 	CTimeEx m_firstListTime;
+
+	void Assign(const std::list<CDirentry> &entries);
 
 protected:
 
