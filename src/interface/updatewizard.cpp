@@ -717,6 +717,9 @@ void CUpdateWizard::InitAutoUpdateCheck()
 	COptions* pOptions = COptions::Get();
 	wxASSERT(pOptions->GetOptionVal(OPTION_UPDATECHECK));
 
+	if (CBuildInfo::GetVersion() == _T("custom build"))
+		return;
+
 	// Check every hour if allowed to check for updates
 
 	m_autoCheckTimer.Start(1000 * 3600);
