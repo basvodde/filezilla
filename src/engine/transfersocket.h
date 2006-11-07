@@ -2,6 +2,7 @@
 #define __TRANSFERSOCKET_H__
 
 #include "iothread.h"
+#include "backend.h"
 
 class CFileZillaEnginePrivate;
 class CFtpControlSocket;
@@ -74,6 +75,8 @@ protected:
 
 	bool m_postponedReceive;
 	bool m_postponedSend;
+
+	CBackend* m_pBackend;
 };
 
 #endif

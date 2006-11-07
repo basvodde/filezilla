@@ -18,6 +18,7 @@ CTransferSocket::CTransferSocket(CFileZillaEnginePrivate *pEngine, CFtpControlSo
 	m_pSocketClient = 0;
 	m_pSocketServer = 0;
 	m_pSocket = 0;
+	m_pBackend = 0;
 	
 	m_pDirectoryListingParser = 0;
 
@@ -50,6 +51,7 @@ CTransferSocket::~CTransferSocket()
 	m_pSocketClient = 0;
 	m_pSocketServer = 0;
 	m_pSocket = 0;
+	delete m_pBackend;
 
 	if (m_pControlSocket)
 	{
@@ -134,6 +136,7 @@ void CTransferSocket::OnConnect(wxSocketEvent &event)
 		delete m_pSocketServer;
 		m_pSocketServer = 0;
 		m_pSocket = pSocket;
+		m_pBackend = new CSocketBackend(pSocket);
 
 		m_pSocket->SetEventHandler(*this);
 		m_pSocket->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_OUTPUT_FLAG | wxSOCKET_LOST_FLAG);
@@ -148,7 +151,7 @@ void CTransferSocket::OnReceive()
 {
 	m_pControlSocket->LogMessage(::Debug_Debug, _T("CTransferSocket::OnReceive(), m_transferMode=%d"), m_transferMode);
 
-	if (!m_pSocket)
+	if (!m_pBackend)
 		return;
 	
 	if (!m_bActive)
@@ -161,11 +164,11 @@ void CTransferSocket::OnReceive()
 	if (m_transferMode == list)
 	{
 		char *pBuffer = new char[4096];
-		m_pSocket->Read(pBuffer, 4096);
-		if (m_pSocket->Error())
+		m_pBackend->Read(pBuffer, 4096);
+		if (m_pBackend->Error())
 		{
 			delete [] pBuffer;
-			int error = m_pSocket->LastError();
+			int error = m_pBackend->LastError();
 			if (error == wxSOCKET_NOERROR)
 				TransferEnd(0);
 			else if (error != wxSOCKET_WOULDBLOCK)
@@ -175,7 +178,7 @@ void CTransferSocket::OnReceive()
 			}
 			return;
 		}
-		int numread = m_pSocket->LastCount();
+		int numread = m_pBackend->LastCount();
 
 		if (numread > 0)
 		{
@@ -200,17 +203,17 @@ void CTransferSocket::OnReceive()
 		if (!CheckGetNextWriteBuffer())
 			return;
 		
-		m_pSocket->Read(m_pTransferBuffer, m_transferBufferLen);
-		if (m_pSocket->Error())
+		m_pBackend->Read(m_pTransferBuffer, m_transferBufferLen);
+		if (m_pBackend->Error())
 		{
-			int error = m_pSocket->LastError();
+			int error = m_pBackend->LastError();
 			if (error == wxSOCKET_NOERROR)
 				FinalizeWrite();
 			else if (error != wxSOCKET_WOULDBLOCK)
 				TransferEnd(1);
 			return;
 		}
-		int numread = m_pSocket->LastCount();
+		int numread = m_pBackend->LastCount();
 
 		if (numread > 0)
 		{
@@ -228,14 +231,14 @@ void CTransferSocket::OnReceive()
 	else if (m_transferMode == resumetest)
 	{
 		char buffer[2];
-		m_pSocket->Read(buffer, 2);
-		if (m_pSocket->Error())
+		m_pBackend->Read(buffer, 2);
+		if (m_pBackend->Error())
 		{
-			if (m_pSocket->LastError() != wxSOCKET_WOULDBLOCK)
+			if (m_pBackend->LastError() != wxSOCKET_WOULDBLOCK)
 				TransferEnd(1);
 			return;
 		}
-		int numread = m_pSocket->LastCount();
+		int numread = m_pBackend->LastCount();
 		if (!numread)
 		{
 			TransferEnd(0);
@@ -250,7 +253,7 @@ void CTransferSocket::OnReceive()
 
 void CTransferSocket::OnSend()
 {
-	if (!m_pSocket)
+	if (!m_pBackend)
 		return;
 
 	if (!m_bActive)
@@ -269,11 +272,11 @@ void CTransferSocket::OnSend()
 		if (!CheckGetNextReadBuffer())
 			return;
 
-		m_pSocket->Write(m_pTransferBuffer, m_transferBufferLen);
-		if (m_pSocket->Error())
+		m_pBackend->Write(m_pTransferBuffer, m_transferBufferLen);
+		if (m_pBackend->Error())
 			break;
 
-		numsent = m_pSocket->LastCount();
+		numsent = m_pBackend->LastCount();
 		if (numsent > 0)
 		{
 			m_pEngine->SetActive(false);
@@ -283,11 +286,11 @@ void CTransferSocket::OnSend()
 		m_pTransferBuffer += numsent;
 		m_transferBufferLen -= numsent;
 	}
-	while (!m_pSocket->Error() && numsent > 0);
+	while (!m_pBackend->Error() && numsent > 0);
 	
-	if (m_pSocket->Error())
+	if (m_pBackend->Error())
 	{
-		int error = m_pSocket->LastError();
+		int error = m_pBackend->LastError();
 		if (error != wxSOCKET_NOERROR && error != wxSOCKET_WOULDBLOCK)
 		{
 			m_pControlSocket->LogMessage(::Error, wxString::Format(_("Error %d writing to socket"), error));
@@ -357,6 +360,7 @@ bool CTransferSocket::SetupPassiveTransfer(wxString host, int port)
 	}
 
 	m_pSocket = m_pSocketClient;
+	m_pBackend = new CSocketBackend(m_pSocket);
 
 	return true;
 }
