@@ -46,7 +46,7 @@ enum NotificationId COperationNotification::GetID() const
 }
 
 CDirectoryListingNotification::CDirectoryListingNotification(const CServerPath& path, const bool modified /*=false*/, const bool failed /*=false*/)
-	: m_path(path), m_modified(modified), m_failed(failed)
+	: m_modified(modified), m_failed(failed), m_path(path)
 {
 }
 
