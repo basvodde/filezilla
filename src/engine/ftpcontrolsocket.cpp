@@ -507,7 +507,7 @@ int CFtpControlSocket::LogonParseResponse()
 		wxString system;
 		CServerCapabilities::GetCapability(*GetCurrentServer(), syst_command, &system);
 			
-		if (system.Find(_T("FileZilla")) != -1 &&
+		if (system.Find(_T("FileZilla")) == -1 &&
 			m_useUTF8 && CServerCapabilities::GetCapability(*GetCurrentServer(), utf8_command) == yes)
 		{
 			if (CServerCapabilities::GetCapability(*GetCurrentServer(), clnt_command) == yes)
