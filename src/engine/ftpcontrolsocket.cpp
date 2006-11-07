@@ -1545,7 +1545,7 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 				// Be quiet
 				wxLogNull nullLog;
 
-				wxFileOffset startOffset;
+				wxFileOffset startOffset = 0;
 				if (pData->resume)
 				{
 					if (!pFile->Open(pData->localFile, wxFile::write_append))
@@ -1598,7 +1598,6 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 					}
 
 					pData->localFileSize = pFile->Length();
-					startOffset = 0;
 				}
 
 				if (pData->resume)
