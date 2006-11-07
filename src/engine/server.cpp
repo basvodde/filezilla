@@ -95,33 +95,7 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 	else
 	{
 		if (!port)
-		{
-			switch (m_protocol)
-			{
-			case FTP:
-				port = 21;
-				break;
-			case SFTP:
-				port = 22;
-				break;
-			case FTPS:
-				port = 990;
-				break;
-			case FTPES:
-				port = 21;
-				break;
-			case HTTP:
-				port = 80;
-				break;
-			case UNKNOWN:
-				// Assume FTP
-				port = 21;
-				break;
-			default:
-				// Shouldn't ever be here
-				wxASSERT(false);
-			}
-		}
+			port = GetDefaultPort(m_protocol);
 		else if (port > 65535)
 		{
 			error = _("Invalid port given. The port has to be a value from 1 to 65535.");
@@ -149,23 +123,7 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 		m_logonType = NORMAL;
 
 	if (m_protocol == UNKNOWN)
-	{
-		switch (port)
-		{
-		case 22:
-			m_protocol = SFTP;
-			break;
-		case 990:
-			m_protocol = FTPS;
-			break;
-		case 80:
-			m_protocol = HTTP;
-			break;
-		default:
-			m_protocol = FTP;
-			break;
-		}
-	}
+		m_protocol = GetProtocolFromPort(port);
 
 	return true;
 }
@@ -387,16 +345,7 @@ bool CServer::SetHost(wxString host, unsigned int port)
 	m_port = port;
 
 	if (m_protocol == UNKNOWN)
-	{
-		if (m_port == 22)
-			m_protocol = SFTP;
-		else if (m_port == 80)
-			m_protocol = HTTP;
-		else if (m_port == 990)
-			m_protocol = FTPS;
-		else
-			m_protocol = FTP;
-	}
+		m_protocol = GetProtocolFromPort(m_port);
 	
 	return true;
 }
@@ -464,34 +413,15 @@ wxString CServer::FormatHost() const
 {
 	wxString host = m_host;
 
-	switch (m_protocol)
-	{
-	default:
-	case FTP:
-	case FTPES:
-		if (m_port != 21)
-			host += wxString::Format(_T(":%d"), m_port);
-		break;
-	case SFTP:
-		if (m_port != 22)
-			host += wxString::Format(_T(":%d"), m_port);
-		break;
-	case HTTP:
-		if (m_port != 80)
-			host += wxString::Format(_T(":%d"), m_port);
-		break;
-	case FTPS:
-		if (m_port != 990)
-			host += wxString::Format(_T(":%d"), m_port);
-		break;
-	}
+	if (m_port != GetDefaultPort(m_protocol))
+		host += wxString::Format(_T(":%d"), m_port);
 
 	return host;
 }
 
 wxString CServer::FormatServer() const
 {
-	wxString server = m_host;
+	wxString server = FormatHost();
 
 	if (m_logonType != ANONYMOUS)
 		server = GetUser() + _T("@") + server;
@@ -500,28 +430,18 @@ wxString CServer::FormatServer() const
 	{
 	default:
 	case FTP:
-		if (m_port != 21)
-			server += wxString::Format(_T(":%d"), m_port);
 		break;
 	case SFTP:
 		server = _T("sftp://") + server;
-		if (m_port != 22)
-			server += wxString::Format(_T(":%d"), m_port);
 		break;
 	case FTPS:
 		server = _T("ftps://") + server;
-		if (m_port != 990)
-			server += wxString::Format(_T(":%d"), m_port);
 		break;
 	case FTPES:
 		server = _T("ftpes://") + server;
-		if (m_port != 21)
-			server += wxString::Format(_T(":%d"), m_port);
 		break;
 	case HTTP:
 		server = _T("http://") + server;
-		if (m_port != 80)
-			server += wxString::Format(_T(":%d"), m_port);
 		break;
 	}
 
@@ -575,4 +495,40 @@ enum CharsetEncoding CServer::GetEncodingType() const
 wxString CServer::GetCustomEncoding() const
 {
 	return m_customEncoding;
+}
+
+unsigned int CServer::GetDefaultPort(enum ServerProtocol protocol)
+{
+	switch (protocol)
+	{
+	case FTP:
+	case FTPES:
+	case UNKNOWN: // Assume FTP
+		return 21;
+	case SFTP:
+		return 22;
+	case FTPS:
+		return 990;
+	case HTTP:
+		return 80;
+	default:
+		// Shouldn't ever be here
+		wxASSERT(false);
+		return 21;
+	}
+}
+
+enum ServerProtocol CServer::GetProtocolFromPort(unsigned int port)
+{
+	switch (port)
+	{
+	case 22:
+		return SFTP;
+	case 990:
+		return FTPS;
+	case 80:
+		return HTTP;
+	default:
+		return FTP;
+	}
 }

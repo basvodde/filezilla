@@ -846,29 +846,12 @@ void CSiteManager::SetCtrlState()
 		XRCCTRL(*this, "ID_CONNECT", wxWindow)->Enable(true);
 
 		XRCCTRL(*this, "ID_HOST", wxTextCtrl)->SetValue(data->m_server.GetHost());
-		int port = data->m_server.GetPort();
+		unsigned int port = data->m_server.GetPort();
 
-		bool showPort = true;
-		switch (data->m_server.GetProtocol())
-		{
-		case SFTP:
-			if (port == 22)
-				showPort = false;
-			XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(_("SFTP"));
-			break;
-		case FTP:
-		default:
-			if (port == 21)
-				showPort = false;
-			XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(_("FTP"));
-			break;
-		}
-
-		if (showPort)
+		if (port != CServer::GetDefaultPort(data->m_server.GetProtocol()))
 			XRCCTRL(*this, "ID_PORT", wxTextCtrl)->SetValue(wxString::Format(_T("%d"), port));
 		else
 			XRCCTRL(*this, "ID_PORT", wxTextCtrl)->SetValue(_T(""));
-
 
 		XRCCTRL(*this, "ID_USER", wxTextCtrl)->Enable(data->m_server.GetLogonType() != ANONYMOUS);
 		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->Enable(data->m_server.GetLogonType() == NORMAL || data->m_server.GetLogonType() == ACCOUNT);

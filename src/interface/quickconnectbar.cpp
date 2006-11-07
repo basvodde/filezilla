@@ -71,6 +71,12 @@ void CQuickconnectBar::OnQuickconnect(wxCommandEvent &event)
 	case SFTP:
 		host = _T("sftp://") + host;
 		break;
+	case FTPS:
+		host = _T("ftps://") + host;
+		break;
+	case FTPES:
+		host = _T("ftpes://") + host;
+		break;
 	case FTP:
 	default:
 		// do nothing
@@ -78,22 +84,11 @@ void CQuickconnectBar::OnQuickconnect(wxCommandEvent &event)
 	}
 	
 	XRCCTRL(*this, "ID_QUICKCONNECT_HOST", wxTextCtrl)->SetValue(host);
-	switch (protocol)
-	{
-	case SFTP:
-		if (server.GetPort() != 22)
-			XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetValue(wxString::Format(_T("%d"), numericPort));
-		else
-			XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetValue(_T(""));
-		break;
-	case FTP:
-	default:
-		if (server.GetPort() != 21)
-			XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetValue(wxString::Format(_T("%d"), numericPort));
-		else
-			XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetValue(_T(""));
-		break;
-	}
+	if (server.GetPort() != server.GetDefaultPort(server.GetProtocol()))
+		XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetValue(wxString::Format(_T("%d"), numericPort));
+	else
+		XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetValue(_T(""));
+
 	XRCCTRL(*this, "ID_QUICKCONNECT_USER", wxTextCtrl)->SetValue(server.GetUser());
 	XRCCTRL(*this, "ID_QUICKCONNECT_PASS", wxTextCtrl)->SetValue(server.GetPass());
 

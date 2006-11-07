@@ -97,6 +97,9 @@ public:
 	enum CharsetEncoding GetEncodingType() const;
 	wxString GetCustomEncoding() const;
 
+	static unsigned int GetDefaultPort(enum ServerProtocol protocol);
+	static enum ServerProtocol GetProtocolFromPort(unsigned int port);
+
 protected:
 	void Initialize();
 
