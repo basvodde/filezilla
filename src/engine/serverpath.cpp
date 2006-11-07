@@ -542,6 +542,7 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 					m_prefix = dir.Left(pos1);
 				else
 					m_prefix = _T("");
+				dir = dir.Mid(pos1 + 1);
 
 				m_Segments.clear();
 			}
