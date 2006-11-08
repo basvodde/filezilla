@@ -313,6 +313,17 @@ AH_BOTTOM([
   fi
   AC_DEFINE_UNQUOTED(FZ_AUTOUPDATECHECK, $autoupdatecheck, [Set to 1 to add support for automated update checks])
 
+  # GnuTLS
+  # ------
+
+  AM_PATH_LIBGNUTLS( 1.5.4,, AC_MSG_ERROR([[
+***
+*** libgnutls was not found. You may want to get it from
+*** ftp://ftp.gnutls.org/pub/gnutls/]]))
+
+  AC_SUBST(LIBGNUTLS_LIBS)
+  AC_SUBST(LIBGNUTLS_CFLAGS)
+
 fi
 
 # Everything translation related
