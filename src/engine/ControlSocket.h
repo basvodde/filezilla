@@ -58,6 +58,7 @@ public:
 };
 
 #include "logging_private.h"
+#include "backend.h"
 
 class CTransferStatus;
 class CControlSocket : public wxEvtHandler, public wxSocketClient, public CLogging
@@ -113,7 +114,6 @@ public:
 	
 	// Set to true if waiting for data
 	void SetWait(bool waiting);
-
 
 protected:
 	virtual int DoClose(int nErrorCode = FZ_REPLY_DISCONNECTED);
@@ -208,6 +208,8 @@ protected:
 	// -----------------------
 	// End cache locking stuff
 	// -----------------------
+
+	CBackend* m_pBackend;
 
 	DECLARE_EVENT_TABLE();
 	void OnTimer(wxTimerEvent& event);

@@ -76,6 +76,7 @@ filezilla_LDFLAGS += ../tinyxml/libtinyxml.a
 filezilla_LDFLAGS += $(WX_LIBS)
 filezilla_LDFLAGS += $(RESOURCEFILE)
 filezilla_LDFLAGS += $(IDN_LIB)
+filezilla_LDFLAGS += $(LIBGNUTLS_LIBS)
 
 filezilla_DEPENDENCIES = ../engine/libengine.a \
 			../tinyxml/libtinyxml.a

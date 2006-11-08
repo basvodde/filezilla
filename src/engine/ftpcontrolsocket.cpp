@@ -7,12 +7,17 @@
 #include <wx/regex.h>
 #include "externalipresolver.h"
 #include "servercapabilities.h"
+#include "tlssocket.h"
 
+#define LOGON_WELCOME	0
 #define LOGON_LOGON		1
-#define LOGON_SYST		2
-#define LOGON_FEAT		3
-#define LOGON_CLNT		4
-#define LOGON_OPTSUTF8	5
+#define LOGON_AUTH		2
+#define LOGON_SYST		3
+#define LOGON_FEAT		4
+#define LOGON_CLNT		5
+#define LOGON_OPTSUTF8	6
+#define LOGON_PBSZ		7
+#define LOGON_PROT		8
 
 BEGIN_EVENT_TABLE(CFtpControlSocket, CControlSocket)
 EVT_FZ_EXTERNALIPRESOLVE(wxID_ANY, CFtpControlSocket::OnExternalIPAddress)
@@ -112,20 +117,30 @@ CFtpControlSocket::CFtpControlSocket(CFileZillaEnginePrivate *pEngine) : CContro
 	m_bufferLen = 0;
 	m_repliesToSkip = 0;
 	m_pendingReplies = 1;
+	m_pTlsSocket = 0;
+	m_protectDataChannel = false;
 }
 
 CFtpControlSocket::~CFtpControlSocket()
 {
+	if (m_pTlsSocket)
+	{
+		if (m_pBackend == m_pTlsSocket)
+			m_pBackend = 0;
+		delete m_pTlsSocket;
+		m_pTlsSocket = 0;
+	}	
 }
 
 void CFtpControlSocket::OnReceive(wxSocketEvent &event)
 {
 	LogMessage(Debug_Verbose, _T("CFtpControlSocket::OnReceive()"));
 
-	Read(m_receiveBuffer + m_bufferLen, RECVBUFFERSIZE - m_bufferLen);
-	if (Error())
+	m_pBackend->Read(m_receiveBuffer + m_bufferLen, RECVBUFFERSIZE - m_bufferLen);
+	
+	if (m_pBackend->Error())
 	{
-		if (LastError() != wxSOCKET_WOULDBLOCK)
+		if (m_pBackend->LastError() != wxSOCKET_WOULDBLOCK)
 		{
 			LogMessage(::Error, _("Disconnected from server"));
 			DoClose();
@@ -133,7 +148,7 @@ void CFtpControlSocket::OnReceive(wxSocketEvent &event)
 		return;
 	}
 
-	int numread = LastCount();
+	int numread = m_pBackend->LastCount();
 	if (!numread)
 		return;
 
@@ -239,7 +254,44 @@ void CFtpControlSocket::ParseLine(wxString line)
 void CFtpControlSocket::OnConnect(wxSocketEvent &event)
 {
 	SetAlive();
-	LogMessage(Status, _("Connection established, waiting for welcome message..."));
+	if (m_pCurrentServer->GetProtocol() == FTPS)
+	{
+		if (!m_pTlsSocket)
+		{
+			LogMessage(Status, _("Connection established, initializing TLS..."));
+
+			wxASSERT(!m_pTlsSocket);
+			m_pTlsSocket = new CTlsSocket(this);
+
+			if (!m_pTlsSocket->Init())
+			{
+				LogMessage(::Error, _("Failed to initialize TLS."));
+				DoClose();
+				return;
+			}
+
+			m_pTlsSocket->SetSocket(this, this);
+			int res = m_pTlsSocket->Handshake();
+			if (res == FZ_REPLY_ERROR)
+				DoClose();
+			else
+			{
+				delete m_pBackend;
+				m_pBackend = m_pTlsSocket;
+			}
+
+			return;
+		}
+		else
+			LogMessage(Status, _("TLS/SSL connection established, waiting for welcome message..."));
+	}
+	else if (m_pCurrentServer->GetProtocol() == FTPES && m_pTlsSocket)
+	{
+		LogMessage(Status, _("TLS/SSL connection established."));
+		return;
+	}
+	else
+		LogMessage(Status, _("Connection established, waiting for welcome message..."));
 	m_pendingReplies = 1;
 	m_repliesToSkip = 0;
 	Logon();
@@ -361,12 +413,44 @@ int CFtpControlSocket::LogonParseResponse()
 
 	int code = GetReplyCode();
 
-	if (!pData->opState)
+	if (pData->opState == LOGON_WELCOME)
 	{
 		if (code != 2 && code != 3)
 		{
 			DoClose(FZ_REPLY_DISCONNECTED);
 			return FZ_REPLY_DISCONNECTED;
+		}
+
+		if (m_pCurrentServer->GetProtocol() == FTPES)
+			pData->opState = LOGON_AUTH;
+		else
+		{
+			pData->opState = LOGON_LOGON;
+			pData->nCommand = logonseq[pData->logonType][0];
+		}
+	}
+	else if (pData->opState == LOGON_AUTH)
+	{
+		LogMessage(Status, _("Initializing TLS..."));
+
+		wxASSERT(!m_pTlsSocket);
+		m_pTlsSocket = new CTlsSocket(this);
+
+		if (!m_pTlsSocket->Init())
+		{
+			LogMessage(::Error, _("Failed to initialize TLS."));
+			DoClose();
+			return FZ_REPLY_ERROR;
+		}
+
+		m_pTlsSocket->SetSocket(this, this);
+		int res = m_pTlsSocket->Handshake();
+		if (res == FZ_REPLY_ERROR)
+			DoClose();
+		else
+		{
+			delete m_pBackend;
+			m_pBackend = m_pTlsSocket;
 		}
 
 		pData->opState = LOGON_LOGON;
@@ -448,6 +532,11 @@ int CFtpControlSocket::LogonParseResponse()
 				return LogonSend();
 			}
 
+			if (m_pTlsSocket)
+			{
+				pData->opState = LOGON_PBSZ;
+				return LogonSend();
+			}
 			LogMessage(Status, _("Connected"));
 			ResetOperation(FZ_REPLY_OK);
 			return true;
@@ -480,6 +569,12 @@ int CFtpControlSocket::LogonParseResponse()
 				pData->opState = LOGON_CLNT;
 			else
 				pData->opState = LOGON_OPTSUTF8;
+			return LogonSend();
+		}
+
+		if (m_pTlsSocket)
+		{
+			pData->opState = LOGON_PBSZ;
 			return LogonSend();
 		}
 
@@ -517,6 +612,12 @@ int CFtpControlSocket::LogonParseResponse()
 			return LogonSend();
 		}
 
+		if (m_pTlsSocket)
+		{
+			pData->opState = LOGON_PBSZ;
+			return LogonSend();
+		}
+
 		LogMessage(Status, _("Connected"));
 		ResetOperation(FZ_REPLY_OK);
 		return true;
@@ -530,6 +631,23 @@ int CFtpControlSocket::LogonParseResponse()
 	{
 		// If server obeys RFC 2640 this command had no effect, return code
 		// is irrelevant
+
+		if (m_pTlsSocket)
+		{
+			pData->opState = LOGON_PBSZ;
+			return LogonSend();
+		}
+
+		LogMessage(Status, _("Connected"));
+		ResetOperation(FZ_REPLY_OK);
+		return true;
+	}
+	else if (pData->opState == LOGON_PBSZ)
+		pData->opState = LOGON_PROT;
+	else if (pData->opState == LOGON_PROT)
+	{
+		if (code == 2 || code == 3)
+			m_protectDataChannel = true;
 
 		LogMessage(Status, _("Connected"));
 		ResetOperation(FZ_REPLY_OK);
@@ -553,6 +671,9 @@ int CFtpControlSocket::LogonSend()
 	bool res;
 	switch (pData->opState)
 	{
+	case LOGON_AUTH:
+		res = Send(_T("AUTH TLS"));
+		break;
 	case LOGON_SYST:
 		res = Send(_T("SYST"));
 		break;
@@ -620,6 +741,12 @@ int CFtpControlSocket::LogonSend()
 		// http://www.ietf.org/proceedings/02nov/I-D/draft-ietf-ftpext-utf-8-option-00.txt
 		// Example servers are, amongst others, G6 FTP Server and RaidenFTPd.
 		res = Send(_T("OPTS UTF8 ON"));
+		break;
+	case LOGON_PBSZ:
+		res = Send(_T("PBSZ 0"));
+		break;
+	case LOGON_PROT:
+		res = Send(_T("PROT P"));
 		break;
 	default:
 		return FZ_REPLY_ERROR;

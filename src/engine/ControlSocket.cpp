@@ -38,6 +38,7 @@ COpData::~COpData()
 CControlSocket::CControlSocket(CFileZillaEnginePrivate *pEngine)
 	: wxSocketClient(wxSOCKET_NOWAIT), CLogging(pEngine)
 {
+	m_pBackend = new CSocketBackend(this);
 	m_socketId = 0;
 	m_pEngine = pEngine;
 	m_pCurOpData = 0;
@@ -61,9 +62,13 @@ CControlSocket::CControlSocket(CFileZillaEnginePrivate *pEngine)
 
 CControlSocket::~CControlSocket()
 {
-	delete m_pCSConv;
-
 	DoClose();
+
+	delete m_pBackend;
+	m_pBackend = 0;
+
+	delete m_pCSConv;
+	m_pCSConv = 0;
 }
 
 void CControlSocket::OnConnect(wxSocketEvent &event)
@@ -85,15 +90,15 @@ void CControlSocket::OnSend(wxSocketEvent &event)
 			return;
 		}
 
-		Write(m_pSendBuffer, m_nSendBufferLen);
-		if (Error())
+		m_pBackend->Write(m_pSendBuffer, m_nSendBufferLen);
+		if (m_pBackend->Error())
 		{
-			if (LastError() != wxSOCKET_WOULDBLOCK)
+			if (m_pBackend->LastError() != wxSOCKET_WOULDBLOCK)
 				DoClose();
 			return;
 		}
 
-		int numsent = LastCount();
+		int numsent = m_pBackend->LastCount();
 
 		if (numsent)
 		{
@@ -360,18 +365,18 @@ bool CControlSocket::Send(const char *buffer, int len)
 	}
 	else
 	{
-		Write(buffer, len);
+		m_pBackend->Write(buffer, len);
 		int numsent = 0;
-		if (Error())
+		if (m_pBackend->Error())
 		{
-			if (LastError() != wxSOCKET_WOULDBLOCK)
+			if (m_pBackend->LastError() != wxSOCKET_WOULDBLOCK)
 			{
 				DoClose();
 				return false;
 			}
 		}
 		else
-			numsent = LastCount();
+			numsent = m_pBackend->LastCount();
 
 		if (numsent)
 			m_pEngine->SetActive(false);

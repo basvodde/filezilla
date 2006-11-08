@@ -286,6 +286,8 @@ int CFileZillaEnginePrivate::Connect(const CConnectCommand &command)
 	switch (command.GetServer().GetProtocol())
 	{
 	case FTP:
+	case FTPS:
+	case FTPES:
 		m_pControlSocket = new CFtpControlSocket(this);
 		break;
 	case SFTP:

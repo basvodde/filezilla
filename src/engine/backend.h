@@ -9,6 +9,7 @@ public:
 	virtual bool Error() const = 0;
 	virtual int LastError() const = 0;
 	virtual unsigned int LastCount() const = 0;
+	virtual void Peek(void *buffer, unsigned int len) = 0;
 };
 
 class CSocketBackend : public CBackend
@@ -21,6 +22,7 @@ public:
 	virtual bool Error() const { return m_pSocket->Error(); }
 	virtual unsigned int LastCount() const { return m_pSocket->LastCount(); }
 	virtual int LastError() const { return m_pSocket->LastError(); }
+	virtual void Peek(void *buffer, unsigned int len) { m_pSocket->Peek(buffer, len); }
 
 protected:
 	wxSocketBase* m_pSocket;

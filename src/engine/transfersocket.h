@@ -17,6 +17,7 @@ enum TransferMode
 };
 
 class CIOThread;
+class CTlsSocket;
 class CTransferSocket : public wxEvtHandler
 {
 public:
@@ -38,6 +39,8 @@ protected:
 	void FinalizeWrite();
 
 	void TransferEnd(int reason);
+
+	bool InitTls();
 
 	virtual void OnSocketEvent(wxSocketEvent &event);
 	virtual void OnConnect(wxSocketEvent &event);
@@ -77,6 +80,9 @@ protected:
 	bool m_postponedSend;
 
 	CBackend* m_pBackend;
+	
+	CTlsSocket* m_pTlsSocket;
+	bool m_shutdown;
 };
 
 #endif

@@ -11,6 +11,7 @@
 class CTransferSocket;
 class CFtpTransferOpData;
 class CRawTransferOpData;
+class CTlsSocket;
 class CFtpControlSocket : public CControlSocket
 {
 	friend class CTransferSocket;
@@ -22,6 +23,7 @@ public:
 	virtual bool SetAsyncRequestReply(CAsyncRequestNotification *pNotification);
 
 protected:
+	
 	virtual int ResetOperation(int nErrorCode);
 
 	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T(""), bool refresh = false);
@@ -112,6 +114,9 @@ protected:
 	int m_pendingReplies;
 
 	CExternalIPResolver* m_pIPResolver;
+
+	CTlsSocket* m_pTlsSocket;
+	bool m_protectDataChannel;
 
 	DECLARE_EVENT_TABLE();
 	void OnExternalIPAddress(fzExternalIPResolveEvent& event);
