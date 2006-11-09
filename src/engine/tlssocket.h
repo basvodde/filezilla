@@ -93,8 +93,8 @@ protected:
 	unsigned int m_writeSkip;
 
 	// Peek data
-	void* m_peekData;
+	char* m_peekData;
 	unsigned int m_peekDataLen;
 };
 
-#endif __TLSSOCKET_H__
+#endif //__TLSSOCKET_H__

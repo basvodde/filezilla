@@ -1,6 +1,6 @@
 #include "FileZilla.h"
 #include "tlssocket.h"
-#include "controlsocket.h"
+#include "ControlSocket.h"
 
 #include <gnutls/gnutls.h>
 
@@ -265,35 +265,37 @@ void CTlsSocket::OnSocketEvent(wxSocketEvent& event)
 		OnSend();
 		break;
 	case wxSOCKET_LOST:
-        
-		char tmp[100];
-		m_pSocket->Peek(&tmp, 100);
-		if (!m_pSocket->Error())
 		{
-			int lastCount = m_pSocket->LastCount();
-
-			if (lastCount)
-				m_pOwner->LogMessage(Debug_Verbose, _T("CTlsSocket::OnSocketEvent(): pending data, postponing wxSOCKET_LOST"));
-			else
-				m_socketClosed = true;
-			OnRead();
-
-			if (lastCount)
+			char tmp[100];
+			m_pSocket->Peek(&tmp, 100);
+			if (!m_pSocket->Error())
 			{
-				wxSocketEvent evt;
-				evt.m_event = wxSOCKET_LOST;
-				wxPostEvent(this, evt);
-				return;
+				int lastCount = m_pSocket->LastCount();
+
+				if (lastCount)
+					m_pOwner->LogMessage(Debug_Verbose, _T("CTlsSocket::OnSocketEvent(): pending data, postponing wxSOCKET_LOST"));
+				else
+					m_socketClosed = true;
+				OnRead();
+
+				if (lastCount)
+				{
+					wxSocketEvent evt;
+					evt.m_event = wxSOCKET_LOST;
+					wxPostEvent(this, evt);
+					return;
+				}
 			}
+
+			m_pOwner->LogMessage(Debug_Info, _T("CTlsSocket::OnSocketEvent(): wxSOCKET_LOST received"));
+
+			//Uninit();
+			wxSocketEvent evt;
+			evt.m_event = wxSOCKET_LOST;
+			wxPostEvent(m_pEvtHandler, evt);
 		}
-
-		m_pOwner->LogMessage(Debug_Info, _T("CTlsSocket::OnSocketEvent(): wxSOCKET_LOST received"));
-		
-		//Uninit();
-		wxSocketEvent evt;
-		evt.m_event = wxSOCKET_LOST;
-		wxPostEvent(m_pEvtHandler, evt);
-
+		break;
+	default:
 		break;
 	}
 }
@@ -402,7 +404,7 @@ void CTlsSocket::Read(void *buffer, unsigned int len)
 		}
 		else
 		{
-			memmove(m_peekData, (char*)m_peekData + min, m_peekDataLen - min);
+			memmove(m_peekData, m_peekData + min, m_peekDataLen - min);
 			m_peekDataLen -= min;
 		}
 
