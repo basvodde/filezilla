@@ -3,6 +3,7 @@
 #include "ControlSocket.h"
 
 #include <gnutls/gnutls.h>
+#include <errno.h>
 
 BEGIN_EVENT_TABLE(CTlsSocket, wxEvtHandler)
 EVT_SOCKET(wxID_ANY, CTlsSocket::OnSocketEvent)
@@ -393,7 +394,7 @@ void CTlsSocket::Read(void *buffer, unsigned int len)
 
 	if (m_peekDataLen)
 	{
-		int min = wxMin(len, m_peekDataLen);
+		unsigned int min = wxMin(len, m_peekDataLen);
 		memcpy(buffer, m_peekData, min);
 		
 		if (min == m_peekDataLen)
