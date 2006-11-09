@@ -4,6 +4,7 @@
 class CBackend
 {
 public:
+	virtual ~CBackend() {}
 	virtual void Read(void *data, unsigned int len) = 0;
 	virtual void Write(const void *data, unsigned int len) = 0;
 	virtual bool Error() const = 0;
