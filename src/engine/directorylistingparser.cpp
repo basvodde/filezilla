@@ -68,8 +68,9 @@ static char data[][110]={
 
 	"-r-xr-xr-x   2 root  root  96 2004.07.15   58-dotted-date file",
 
-	// VMS style listing with a different field order
+	// VMS style listings with a different field order
 	"59-vms-alternate-field-order-file;1   [SUMMARY]    1/3     2-AUG-2006 13:05  (RWE,RWE,RE,)",
+	"60-vms-alternate-field-order-file;1       17-JUN-1994 17:25:37     6308/13     (RWED,RWED,R,) ",
 
 	""};
 
@@ -1495,41 +1496,40 @@ bool CDirectoryListingParser::ParseAsVms(CLine *pLine, CDirentry &entry)
 		entry.name = token.GetString();
 	}
 
-	// This field is either the size or a username (???) enclosed in [].
 	if (!pLine->GetToken(++index, token))
 		return false;
 
 	bool gotSize = false;
+	// This field can either be the filesize, a username (at least that's what I think) enclosed in [] or a date.
 	if (!token.IsNumeric() && !token.IsLeftNumeric())
 	{
+		// Must be username
+
 		const int len = token.GetLength();
 		if (len < 3 || token[0] != '[' || token[len - 1] != ']')
 			return false;
 		entry.ownerGroup = token.GetString().Mid(1, len - 2);
+
+		if (!pLine->GetToken(++index, token))
+			return false;
+		if (!token.IsNumeric() && !token.IsLeftNumeric())
+			return false;
 	}
-	else
+
+	// Current token is either size or date
+	pos = token.Find('/');
+	if (token.IsNumeric() || (pos != -1 && token.Find('/', pos + 1) == -1))
 	{
+		// Definitely size
 		entry.ownerGroup = _T("");
 		gotSize = true;
 		entry.size = token.GetNumber();
-	}
-	
-	if (!gotSize)
-	{
-		// Get size
+
 		if (!pLine->GetToken(++index, token))
 			return false;
-
-		if (!token.IsNumeric() && !token.IsLeftNumeric())
-			return false;
-	
-		entry.size = token.GetNumber();
 	}
 
 	// Get date
-	if (!pLine->GetToken(++index, token))
-		return false;
-
 	if (!ParseShortDate(token, entry))
 		return false;
 
@@ -1550,6 +1550,18 @@ bool CDirectoryListingParser::ParseAsVms(CLine *pLine, CDirentry &entry)
 			return false;
 		entry.hasTime = false;
 		index--;
+	}
+
+	if (!gotSize)
+	{
+		// Get size
+		if (!pLine->GetToken(++index, token))
+			return false;
+
+		if (!token.IsNumeric() && !token.IsLeftNumeric())
+			return false;
+	
+		entry.size = token.GetNumber();
 	}
 
 	// Owner / group and permissions
