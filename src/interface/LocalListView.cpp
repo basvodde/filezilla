@@ -90,6 +90,7 @@ CLocalListView::~CLocalListView()
 
 bool CLocalListView::DisplayDir(wxString dirname)
 {
+	wxString focused;
 	std::list<wxString> selectedNames;
 	if (m_dir != dirname)
 	{
@@ -108,7 +109,7 @@ bool CLocalListView::DisplayDir(wxString dirname)
 	else
 	{
 		// Remember which items were selected
-		selectedNames = RememberSelectedItems();
+		selectedNames = RememberSelectedItems(focused);
 	}
 
 	const int oldItemCount = m_indexMapping.size();
@@ -167,7 +168,7 @@ bool CLocalListView::DisplayDir(wxString dirname)
 				data.hasTime = true;
 				data.lastModified = wxDateTime(buf.st_mtime);
 			}
-			else              
+			else
 				data.hasTime = false;
 
 			if (data.dir)
@@ -186,7 +187,7 @@ bool CLocalListView::DisplayDir(wxString dirname)
 
 	SortList();
 
-	ReselectItems(selectedNames);
+	ReselectItems(selectedNames, focused);
 
 	const int count = m_indexMapping.size();
 	if (oldItemCount != count)
@@ -544,7 +545,7 @@ void CLocalListView::QSortList(const unsigned int dir, unsigned int anf, unsigne
 	const unsigned int ref = (l + r) / 2;
 	t_fileData &refData = m_fileData[m_indexMapping[ref]];
 	do
-    {
+	{
 		if (!dir)
 		{
 			while ((comp(this, l, refData) < 0) && (l<ende)) l++;
@@ -563,7 +564,7 @@ void CLocalListView::QSortList(const unsigned int dir, unsigned int anf, unsigne
 			l++;
 			r--;
 		}
-    } 
+	} 
 	while (l<=r);
 
 	if (anf<r) QSortList(dir, anf, r, comp);
@@ -845,7 +846,7 @@ void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 
 		if (!item)
 			continue;
-        
+
 		t_fileData *data = GetData(item);
 		if (!data)
 			continue;
@@ -867,7 +868,7 @@ void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 
 		if (!item)
 			continue;
-        
+
 		t_fileData *data = GetData(item);
 		if (!data)
 			continue;
@@ -913,7 +914,7 @@ void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 
 		if (!item)
 			continue;
-        
+
 		t_fileData *data = GetData(item);
 		if (!data)
 			continue;
@@ -1191,7 +1192,8 @@ void CLocalListView::ApplyCurrentFilter()
 	if (m_fileData.size() <= 1)
 		return;
 
-	const std::list<wxString>& selectedNames = RememberSelectedItems();
+	wxString focused;
+	const std::list<wxString>& selectedNames = RememberSelectedItems(focused);
 
 	CFilterDialog filter;
 	m_indexMapping.clear();
@@ -1206,10 +1208,10 @@ void CLocalListView::ApplyCurrentFilter()
 
 	SortList();
 
-	ReselectItems(selectedNames);
+	ReselectItems(selectedNames, focused);
 }
 
-std::list<wxString> CLocalListView::RememberSelectedItems()
+std::list<wxString> CLocalListView::RememberSelectedItems(wxString& focused)
 {
 	std::list<wxString> selectedNames;
 	// Remember which items were selected
@@ -1226,28 +1228,65 @@ std::list<wxString> CLocalListView::RememberSelectedItems()
 			selectedNames.push_back(_T("-") + data.name);
 		SetItemState(item, 0, wxLIST_STATE_SELECTED);
 	}
+	
+	item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
+	if (item != -1)
+	{
+		const t_fileData &data = m_fileData[m_indexMapping[item]];
+		focused = data.name;
+
+		SetItemState(item, 0, wxLIST_STATE_FOCUSED);
+	}
 
 	return selectedNames;
 }
 
-void CLocalListView::ReselectItems(const std::list<wxString>& selectedNames)
+void CLocalListView::ReselectItems(const std::list<wxString>& selectedNames, wxString focused)
 {
 	// Reselect previous items if neccessary.
 	// Sorting direction did not change. We just have to scan through items once
+	
+	if (selectedNames.empty())
+	{
+		if (focused == _T(""))
+			return;
+		for (unsigned int i = 1; i < m_indexMapping.size(); i++)
+		{
+			const t_fileData &data = m_fileData[m_indexMapping[i]];
+			if (data.name == focused)
+			{
+				SetItemState(i, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
+				return;
+			}
+		}
+		return;
+	}
+	
+	int firstSelected = -1;
+	
 	unsigned i = 0;
 	for (std::list<wxString>::const_iterator iter = selectedNames.begin(); iter != selectedNames.end(); iter++)
 	{
 		while (i < m_indexMapping.size())
 		{
 			const t_fileData &data = m_fileData[m_indexMapping[i]];
+			if (data.name == focused)
+			{
+				SetItemState(i, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
+				focused = _T("");
+			}
 			if (data.dir && *iter == (_T("d") + data.name))
 			{
+				if (firstSelected == -1)
+					firstSelected = i;
 				SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 				i++;
 				break;
 			}
 			else if (*iter == (_T("-") + data.name))
 			{
+				if (firstSelected == -1)
+					firstSelected = i;
 				SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 				i++;
 				break;
@@ -1257,6 +1296,13 @@ void CLocalListView::ReselectItems(const std::list<wxString>& selectedNames)
 		}
 		if (i == m_indexMapping.size())
 			break;
+	}
+	if (focused != _T(""))
+	{
+		if (firstSelected != -1)
+			SetItemState(firstSelected, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
+		else
+			SetItemState(0, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
 	}
 }
 

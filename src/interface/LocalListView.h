@@ -25,12 +25,12 @@ protected:
 	virtual int OnGetItemImage(long item) const;
 
 	// Clears all selections and returns the list of items that were selected
-	std::list<wxString> RememberSelectedItems();
+	std::list<wxString> RememberSelectedItems(wxString& focused);
 
 	// Select a list of items based in their names.
 	// Sort order may not change between call to RememberSelectedItems and
 	// ReselectItems
-	void ReselectItems(const std::list<wxString>& selectedNames);
+	void ReselectItems(const std::list<wxString>& selectedNames, wxString focused);
 
 #ifdef __WXMSW__
 	void DisplayDrives();
