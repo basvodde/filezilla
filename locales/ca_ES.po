@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla 3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-11-05 23:02+0100\n"
+"POT-Creation-Date: 2006-11-12 18:36+0100\n"
 "PO-Revision-Date: 2006-11-03 19:20+0100\n"
 "Last-Translator: Òscar Martínez Llobet <omllobet@telefonica.net>\n"
 "Language-Team: Òscar Martinez Llobet <omllobet@telefonica.net>\n"
@@ -542,7 +542,7 @@ msgstr "Quant al FileZilla"
 #: ../../locales/../src/interface/sitemanager.cpp:637
 #: ../../locales/../src/interface/sitemanager.cpp:638
 #: ../../locales/../src/interface/sitemanager.cpp:674
-#: ../../locales/../src/interface/sitemanager.cpp:889
+#: ../../locales/../src/interface/sitemanager.cpp:883
 msgid "Account"
 msgstr "Compte"
 
@@ -608,7 +608,7 @@ msgstr "Tots els ports del rang donat han d'estar entre 1024 i 65535."
 #: resources.h:46 ../../locales/../src/interface/sitemanager.cpp:459
 #: ../../locales/../src/interface/sitemanager.cpp:636
 #: ../../locales/../src/interface/sitemanager.cpp:821
-#: ../../locales/../src/interface/sitemanager.cpp:892
+#: ../../locales/../src/interface/sitemanager.cpp:886
 msgid "Anonymous"
 msgstr "Anònim, -a"
 
@@ -637,7 +637,7 @@ msgid "Archive"
 msgstr "Arxiva"
 
 #: resources.h:48 ../../locales/../src/interface/sitemanager.cpp:670
-#: ../../locales/../src/interface/sitemanager.cpp:883
+#: ../../locales/../src/interface/sitemanager.cpp:877
 msgid "Ask for password"
 msgstr "Demana contrasenya"
 
@@ -699,17 +699,17 @@ msgstr "Co&mprova els darrers muntatges del FileZilla"
 msgid "C&lear all"
 msgstr "&Neteja tot"
 
-#: ../../locales/../src/engine/transfersocket.cpp:524
+#: ../../locales/../src/engine/transfersocket.cpp:578
 msgid "Can't read from file"
 msgstr "No es pot llegir el fitxer"
 
-#: ../../locales/../src/engine/transfersocket.cpp:498
+#: ../../locales/../src/engine/transfersocket.cpp:552
 msgid "Can't write data to file, disk is full."
 msgstr "No es poden escriure les dades al fitxer, el disc és ple."
 
-#: ../../locales/../src/engine/transfersocket.cpp:500
-#: ../../locales/../src/engine/transfersocket.cpp:503
+#: ../../locales/../src/engine/transfersocket.cpp:554
 #: ../../locales/../src/engine/transfersocket.cpp:557
+#: ../../locales/../src/engine/transfersocket.cpp:622
 msgid "Can't write data to file."
 msgstr "No es poden escriure les dades al fitxer."
 
@@ -799,11 +799,11 @@ msgstr "Dades del fragment finalitzades de forma inadequada"
 msgid "Clear &layout cache"
 msgstr "Esborra e&l format de memòria cau"
 
-#: ../../locales/../src/interface/quickconnectbar.cpp:112
+#: ../../locales/../src/interface/quickconnectbar.cpp:107
 msgid "Clear history"
 msgstr "Neteja historial"
 
-#: ../../locales/../src/interface/quickconnectbar.cpp:111
+#: ../../locales/../src/interface/quickconnectbar.cpp:106
 msgid "Clear quickconnect bar"
 msgstr "Neteja la barra de connexió ràpida"
 
@@ -871,7 +871,7 @@ msgstr "Configura el mode passiu"
 msgid "Configure port range"
 msgstr "Configura el rang de ports"
 
-#: ../../locales/../src/interface/LocalListView.cpp:895
+#: ../../locales/../src/interface/LocalListView.cpp:896
 #: ../../locales/../src/interface/RemoteListView.cpp:973
 msgid "Confirmation needed"
 msgstr "Es necessita confirmació"
@@ -880,10 +880,11 @@ msgstr "Es necessita confirmació"
 msgid "Congratulations, your configuration seems to be working."
 msgstr "Felicitats, la vostra configuració sembla funcionar correctament."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:451
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:486
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:520
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:534
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:540
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:581
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:621
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:641
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:652
 msgid "Connected"
 msgstr "Connectat"
 
@@ -897,7 +898,7 @@ msgstr "S'està connectant"
 msgid "Connecting to %s"
 msgstr "S'està connectant amb %s"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:175
+#: ../../locales/../src/engine/ControlSocket.cpp:180
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:487
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:264
 #, c-format
@@ -913,7 +914,7 @@ msgstr "S'està connectant amb el servidor"
 msgid "Connection"
 msgstr "Connexió"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:282
+#: ../../locales/../src/engine/ControlSocket.cpp:287
 msgid "Connection attempt interrupted by user"
 msgstr "Intent de connexió cancel·lat per l'usuari/ària"
 
@@ -921,11 +922,16 @@ msgstr "Intent de connexió cancel·lat per l'usuari/ària"
 msgid "Connection closed"
 msgstr "Connexió tancada"
 
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:261
+#, fuzzy
+msgid "Connection established, initializing TLS..."
+msgstr "Connexió establerta, enviant petició HTTP"
+
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:314
 msgid "Connection established, sending HTTP request"
 msgstr "Connexió establerta, enviant petició HTTP"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:242
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:294
 msgid "Connection established, waiting for welcome message..."
 msgstr "Connexió establerta, esperant missatge de benvinguda..."
 
@@ -933,7 +939,7 @@ msgstr "Connexió establerta, esperant missatge de benvinguda..."
 msgid "Connection lost"
 msgstr "Connexió perduda"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:796
+#: ../../locales/../src/engine/ControlSocket.cpp:801
 msgid "Connection timed out"
 msgstr "La connexió ha excedit el temps d'espera"
 
@@ -949,11 +955,11 @@ msgstr "La connexió amb el servidor de prova ha fallat"
 msgid "Cop&y"
 msgstr "Cop&ia"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:284
+#: ../../locales/../src/engine/ControlSocket.cpp:289
 msgid "Could not connect to server"
 msgstr "No s'ha pogut connectar al servidor"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2919
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3045
 msgid "Could not establish connection to server"
 msgstr "No s'ha pogut establir la connexió al servidor"
 
@@ -1030,16 +1036,16 @@ msgstr ""
 msgid "Could not parse server address:"
 msgstr "No s'ha pogut analitzar l'adreça del servidor:"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1632
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1758
 #, c-format
 msgid "Could not seek to offset %s within file"
 msgstr "No s'ha pogut cercar a la compensació %s dins el fitxer"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1563
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1690
 msgid "Could not seek to the end of the file"
 msgstr "No s'ha pogut cercar fins al final del fitxer"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1652
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1778
 msgid "Could not spawn IO thread"
 msgstr "No s'ha pogut engendrar el fil d'E/S"
 
@@ -1073,7 +1079,7 @@ msgstr ""
 msgid "Create a new subdirectory in the current directory"
 msgstr "Crea un nou subdirectori en el directori actual"
 
-#: ../../locales/../src/interface/LocalListView.cpp:794
+#: ../../locales/../src/interface/LocalListView.cpp:795
 #: ../../locales/../src/interface/RemoteListView.cpp:918
 msgid "Create directory"
 msgstr "Crea un directori"
@@ -1082,13 +1088,13 @@ msgstr "Crea un directori"
 msgid "Creating directory"
 msgstr "S'està creant el directori"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2171
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2297
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1504
 #, c-format
 msgid "Creating directory '%s'..."
 msgstr "S'està creant el directori '%s'..."
 
-#: ../../locales/../src/engine/ControlSocket.cpp:276
+#: ../../locales/../src/engine/ControlSocket.cpp:281
 msgid "Critical error"
 msgstr "Error greu"
 
@@ -1133,7 +1139,7 @@ msgid "Debugging settings"
 msgstr "Paràmetres de depuració"
 
 #: resources.h:57 ../../locales/../src/interface/sitemanager.cpp:827
-#: ../../locales/../src/interface/sitemanager.cpp:916
+#: ../../locales/../src/interface/sitemanager.cpp:910
 msgid "Default"
 msgstr "Per defecte"
 
@@ -1181,7 +1187,7 @@ msgstr "Dire&ctoris"
 msgid "Direction"
 msgstr "Direcció"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:288
+#: ../../locales/../src/engine/ControlSocket.cpp:293
 msgid "Directory listing aborted by user"
 msgstr "Llistat dels directoris avortat per l'usuari/ària"
 
@@ -1193,7 +1199,7 @@ msgstr "El llistat de directoris ha fallat"
 msgid "Directory listing filters"
 msgstr "Filtres de llistat de directoris"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:305
+#: ../../locales/../src/engine/ControlSocket.cpp:310
 msgid "Directory listing successful"
 msgstr "Llistat dels directoris amb èxit"
 
@@ -1205,9 +1211,9 @@ msgstr "Inha&bilita tots"
 msgid "Disconnect from server"
 msgstr "Desconnecta't del servidor"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:123
-#: ../../locales/../src/engine/ControlSocket.cpp:190
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:130
+#: ../../locales/../src/engine/ControlSocket.cpp:128
+#: ../../locales/../src/engine/ControlSocket.cpp:195
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:145
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:884
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:886
 msgid "Disconnected from server"
@@ -1240,7 +1246,7 @@ msgid "Don't use external IP address on &local connections."
 msgstr "No utilitzis l'adreça IP externa a les connexions &locals."
 
 #: resources.h:61 ../../locales/../src/interface/sitemanager.cpp:688
-#: ../../locales/../src/interface/sitemanager.cpp:907
+#: ../../locales/../src/interface/sitemanager.cpp:901
 msgid "Dos"
 msgstr "Dos"
 
@@ -1353,7 +1359,7 @@ msgstr ""
 "Especifica el port d'escolta del servidor.\n"
 "El port per defecte per FTP és el 21 i per SFTP el 22"
 
-#: ../../locales/../src/engine/transfersocket.cpp:293
+#: ../../locales/../src/engine/transfersocket.cpp:316
 #, c-format
 msgid "Error %d writing to socket"
 msgstr "S'ha produït un error %d quan s'escrivia al sòcol."
@@ -1419,7 +1425,7 @@ msgstr ""
 "FTP utilitza connexions secundàries per transferències de dades. Aquestes "
 "connexions addicionals es poden establir de dues maneres."
 
-#: ../../locales/../src/interface/LocalListView.cpp:306
+#: ../../locales/../src/interface/LocalListView.cpp:307
 #: ../../locales/../src/interface/LocalTreeView.cpp:576
 #: ../../locales/../src/interface/viewheader.cpp:408
 msgid "Failed to change directory"
@@ -1442,8 +1448,8 @@ msgstr "La creació de la còpia del fitxer xml ha fallat"
 msgid "Failed to create listen socket, aborting"
 msgstr "No s'ha pogut crear un sòcol d'escolta, cancel·lant"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2898
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2902
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3024
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3028
 msgid "Failed to create listening socket for active mode transfer"
 msgstr "No s'ha pogut crear un sòcol d'escolta pel mode de transferència actiu"
 
@@ -1463,22 +1469,28 @@ msgstr "No s'ha pogut aconseguir l'adreça d'igual, connexió tancada."
 msgid "Failed to initialize FTP engine"
 msgstr "No s'ha pogut iniciar el motor FTP"
 
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:268
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:441
+#, fuzzy
+msgid "Failed to initialize TLS."
+msgstr "No s'ha pogut iniciar el motor FTP"
+
 #: ../../locales/../src/interface/settingsdialog.cpp:118
 msgid "Failed to load panels, invalid resource files?"
 msgstr ""
 "No es poden carregar el panells, teniu uns fitxers de recursos no vàlids?"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1554
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1681
 #, c-format
 msgid "Failed to open \"%s\" for appending / writing"
 msgstr "No s'ha pogut obrir \"%s\"  per afegir / escriure-hi."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1616
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1742
 #, c-format
 msgid "Failed to open \"%s\" for reading"
 msgstr "No s'ha pogut obrir \"%s\" per llegir-hi"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1595
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1722
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:371
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:416
 #, c-format
@@ -1489,7 +1501,7 @@ msgstr "No s'ha pogut obrir \"%s\" per escriure-hi"
 msgid "Failed to receive data"
 msgstr "No s'ha pogut rebre cap dada"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:290
+#: ../../locales/../src/engine/ControlSocket.cpp:295
 msgid "Failed to retrieve directory listing"
 msgstr "No s'ha pogut recuperar el llistat de directoris"
 
@@ -1497,11 +1509,11 @@ msgstr "No s'ha pogut recuperar el llistat de directoris"
 msgid "Failed to retrieve external ip address, aborting"
 msgstr "No s'ha pogut recuperar l'adreça IP externa"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2666
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2792
 msgid "Failed to retrieve external ip address, using local address"
 msgstr "No s'ha pogut recuperar l'adreça IP externa, s'usa l'adreça local"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2685
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2811
 msgid "Failed to retrieve local ip address."
 msgstr "No s'ha pogut recuperar l'adreça IP local."
 
@@ -1546,9 +1558,9 @@ msgstr "Retorna a mode actiu"
 msgid "Fil&es"
 msgstr "Fitx&ers"
 
-#: ../../locales/../src/interface/LocalListView.cpp:403
-#: ../../locales/../src/interface/LocalListView.cpp:421
-#: ../../locales/../src/interface/LocalListView.cpp:425
+#: ../../locales/../src/interface/LocalListView.cpp:404
+#: ../../locales/../src/interface/LocalListView.cpp:422
+#: ../../locales/../src/interface/LocalListView.cpp:426
 #: ../../locales/../src/interface/RemoteListView.cpp:629
 #: ../../locales/../src/interface/RemoteListView.cpp:647
 #: ../../locales/../src/interface/RemoteListView.cpp:651
@@ -1571,7 +1583,7 @@ msgstr "Acció per fitxer ja existent"
 msgid "File not found"
 msgstr "Fitxer no trobat"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:308
+#: ../../locales/../src/engine/ControlSocket.cpp:313
 msgid "File transfer successful"
 msgstr "La transferència del fitxer ha tingut èxit"
 
@@ -1602,11 +1614,11 @@ msgstr "Nom del fitxer no vàlid."
 msgid "Filename unchanged"
 msgstr "No s'ha canviat el nom del fitxer"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1174
+#: ../../locales/../src/interface/LocalListView.cpp:1175
 msgid "Filenames may not contain any of the following characters: / * ? < > |"
 msgstr "Els noms dels fitxers no poden contenir aquests caràcters: / * ? < > |"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1139
+#: ../../locales/../src/interface/LocalListView.cpp:1140
 msgid ""
 "Filenames may not contain any of the following characters: / \\ : * ? \" < > "
 "|"
@@ -1661,7 +1673,7 @@ msgstr "Emprempta:"
 msgid "Firewall and router configuration wizard"
 msgstr "Assistent de configuració del tallafocs i l'encaminador"
 
-#: ../../locales/../src/interface/LocalListView.cpp:425
+#: ../../locales/../src/interface/LocalListView.cpp:426
 #: ../../locales/../src/interface/RemoteListView.cpp:651
 msgid "Folder"
 msgstr "Carpeta"
@@ -1909,12 +1921,16 @@ msgstr ""
 "demana al sevidor un port i s'hi connecta. No cal realitzar gaire "
 "configuració per a aquest mode."
 
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:434
+msgid "Initializing TLS..."
+msgstr ""
+
 #: resources.h:49 ../../locales/../src/interface/sitemanager.cpp:672
-#: ../../locales/../src/interface/sitemanager.cpp:886
+#: ../../locales/../src/interface/sitemanager.cpp:880
 msgid "Interactive"
 msgstr "Interactiu"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:296
+#: ../../locales/../src/engine/ControlSocket.cpp:301
 msgid "Interrupted by user"
 msgstr "Cancel·lat per l'usuari"
 
@@ -1926,8 +1942,8 @@ msgstr "Contingut-mida no vàlid"
 msgid "Invalid HTTP Response"
 msgstr "Resposta HTTP no vàlida"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:649
-#: ../../locales/../src/engine/ControlSocket.cpp:706
+#: ../../locales/../src/engine/ControlSocket.cpp:654
+#: ../../locales/../src/engine/ControlSocket.cpp:711
 msgid ""
 "Invalid character sequence received, disabling UTF-8. Select UTF-8 option in "
 "site manager to force UTF-8."
@@ -1945,18 +1961,18 @@ msgstr "Mida de fragment no vàlida"
 msgid "Invalid data received"
 msgstr "S'han rebut dades no vàlides"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1139
-#: ../../locales/../src/interface/LocalListView.cpp:1174
+#: ../../locales/../src/interface/LocalListView.cpp:1140
+#: ../../locales/../src/interface/LocalListView.cpp:1175
 msgid "Invalid filename"
 msgstr "Nom del fitxer no vàlid."
 
-#: ../../locales/../src/engine/ControlSocket.cpp:170
+#: ../../locales/../src/engine/ControlSocket.cpp:175
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:142
 msgid "Invalid hostname or host not found"
 msgstr "Nom de l'amfitrió no vàlid o ordinador no trobat"
 
 #: ../../locales/../src/engine/server.cpp:88
-#: ../../locales/../src/engine/server.cpp:127
+#: ../../locales/../src/engine/server.cpp:101
 msgid "Invalid port given. The port has to be a value from 1 to 65535."
 msgstr "Port especificat no vàlid. El port ha de tenir un valor de 1 a 65535."
 
@@ -2040,7 +2056,7 @@ msgstr "Filtres locals:"
 msgid "Local site:"
 msgstr "Lloc local:"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:395
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:479
 msgid ""
 "Login data contains non-ascii characters and server might not be UTF-8 "
 "aware. Trying local charset."
@@ -2063,7 +2079,7 @@ msgid "Lowest available port has to be a number between 1024 and 65535."
 msgstr "El port més baix disponible ha de ser un número entre 1024 i 65535."
 
 #: resources.h:60 ../../locales/../src/interface/sitemanager.cpp:692
-#: ../../locales/../src/interface/sitemanager.cpp:910
+#: ../../locales/../src/interface/sitemanager.cpp:904
 msgid "MVS"
 msgstr "MVS"
 
@@ -2147,13 +2163,13 @@ msgstr "Nou lloc"
 msgid "No"
 msgstr "No"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2643
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2769
 msgid "No external IP address set, trying default."
 msgstr "No s'ha fixat cap adreça IP externa, intentant per defecte."
 
 #: ../../locales/../src/engine/server.cpp:14
 #: ../../locales/../src/engine/server.cpp:81
-#: ../../locales/../src/engine/server.cpp:137
+#: ../../locales/../src/engine/server.cpp:111
 msgid "No host given, please enter a host."
 msgstr "Si us plau introduïu un amfitrió."
 
@@ -2173,7 +2189,7 @@ msgstr "Cap dels següents"
 #: ../../locales/../src/interface/QueueView.cpp:1090
 #: ../../locales/../src/interface/sitemanager.cpp:637
 #: ../../locales/../src/interface/sitemanager.cpp:668
-#: ../../locales/../src/interface/sitemanager.cpp:880
+#: ../../locales/../src/interface/sitemanager.cpp:874
 msgid "Normal"
 msgstr "Normal"
 
@@ -2407,7 +2423,7 @@ msgstr ""
 "Si us plau especifiqueu una comanda FTP crua.\n"
 "Utilitzar comandes FTP crues esborrarà la memòria cau del directori."
 
-#: ../../locales/../src/interface/LocalListView.cpp:794
+#: ../../locales/../src/interface/LocalListView.cpp:795
 #: ../../locales/../src/interface/RemoteListView.cpp:918
 msgid "Please enter the name of the directory which should be created:"
 msgstr "Si us plau especifiqueu el nom del directori a crear:"
@@ -2594,7 +2610,7 @@ msgstr "&Llegeix"
 msgid "Really cancel current operation?"
 msgstr "Voleu cancel·lar l'operació actual?"
 
-#: ../../locales/../src/interface/LocalListView.cpp:895
+#: ../../locales/../src/interface/LocalListView.cpp:896
 #: ../../locales/../src/interface/RemoteListView.cpp:973
 msgid "Really delete all selected files and/or directories?"
 msgstr "Realment voleu esborrar els fitxers i/o directoris seleccionats?"
@@ -2649,7 +2665,7 @@ msgstr "Reanomena fitxer"
 msgid "Rename selected files and folders"
 msgstr "Reanomena fitxers i carpetes selecionats"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2366
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2492
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1928
 #, c-format
 msgid "Renaming '%s' to '%s'"
@@ -2659,7 +2675,7 @@ msgstr "S'està reanomenant '%s' a '%s'."
 msgid "Res&ume"
 msgstr "&Repren"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:141
+#: ../../locales/../src/engine/ControlSocket.cpp:146
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:462
 #, c-format
 msgid "Resolving IP-Address for %s"
@@ -2683,12 +2699,12 @@ msgstr ""
 "Reprendre fitxers ascii pot causar problemes si el servidor utilitza un "
 "format de fi de línia diferent al del client."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:703
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:830
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:714
 msgid "Retrieving directory listing..."
 msgstr "S'està obtenint el llistat del directori..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2651
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2777
 #: ../../locales/../src/interface/netconfwizard.cpp:687
 #, c-format
 msgid "Retrieving external IP address from %s"
@@ -2702,7 +2718,7 @@ msgstr "&Omet"
 #: ../../locales/../src/interface/sitemanager.cpp:420
 #: ../../locales/../src/interface/sitemanager.cpp:440
 #: ../../locales/../src/interface/sitemanager.cpp:662
-#: ../../locales/../src/interface/sitemanager.cpp:857
+#: ../../locales/../src/interface/sitemanager.cpp:859
 msgid "SFTP"
 msgstr "SFTP"
 
@@ -2767,12 +2783,12 @@ msgstr ""
 msgid "Server / Local file"
 msgstr "Fitxer Servidor / Local"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2977
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3103
 #, c-format
 msgid "Server does not support resume of files > %d GB."
 msgstr "El servidor no permet reprende fitxers > %d GB."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2973
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3099
 #, c-format
 msgid ""
 "Server does not support resume of files > %d GB. End transfer since "
@@ -2781,15 +2797,15 @@ msgstr ""
 "El servidor no permet reprende fitxers > %d GB. Es finalitzará la "
 "transferència quan les mides dels fitxers coincideixin."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1503
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1630
 msgid "Server does not support resume of files > 2GB."
 msgstr "El servidor no permet reprende fitxers > 2GB."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1498
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1625
 msgid "Server does not support resume of files > 4GB."
 msgstr "El servidor no permet reprende fitxers > 4GB."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2988
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3114
 #, c-format
 msgid ""
 "Server may not support resume of files > %d GB. End transfer since filesizes "
@@ -2798,7 +2814,7 @@ msgstr ""
 "El servidor podria no permetre reprende els fitxers > %d GB. Es finalitzará "
 "la transferència quan les mides dels fitxers coincideixin."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:590
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:711
 msgid ""
 "Server requires an account. Please specify an account using the Site Manager"
 msgstr ""
@@ -2817,7 +2833,7 @@ msgstr ""
 msgid "Server sent invalid reply."
 msgstr "El servidor ha enviat una resposta no vàlida."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2612
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2738
 msgid ""
 "Server sent passive reply with unroutable address. Using server address "
 "instead."
@@ -2833,7 +2849,7 @@ msgstr "&Tipus de servidor:"
 msgid "Set &Priority"
 msgstr "Estableix la &Prioritat"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2489
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2615
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1827
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
@@ -2870,8 +2886,8 @@ msgstr "Mida desconeguda"
 msgid "Sk&ip"
 msgstr "Ome&t"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1770
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1855
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1896
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1981
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:201
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:241
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:547
@@ -2880,8 +2896,8 @@ msgstr "Ome&t"
 msgid "Skipping download of %s"
 msgstr "S'està omentent la baixada de %s"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1774
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1859
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1900
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1985
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:205
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:245
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:551
@@ -2902,13 +2918,13 @@ msgstr ""
 "Alguns servidors remots mal configurats que són darrera d'un servidor, poden "
 "respondre la seva adreça IP local."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1204
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1331
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1208
 #, c-format
 msgid "Starting download of %s"
 msgstr "S'està iniciant la baixada de %s"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1208
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1335
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1212
 #, c-format
 msgid "Starting upload of %s"
@@ -2943,6 +2959,15 @@ msgstr "Resum dels resultats del test"
 msgid "Syntax error"
 msgstr "Error de sintaxi"
 
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:286
+#, fuzzy
+msgid "TLS/SSL connection established, waiting for welcome message..."
+msgstr "Connexió establerta, esperant missatge de benvinguda..."
+
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:290
+msgid "TLS/SSL connection established."
+msgstr ""
+
 #: resources.h:12
 msgid "Target file already exists"
 msgstr "El fitxer de destinació ja existeix."
@@ -2955,7 +2980,7 @@ msgstr "El fitxer de destinació ja existeix, voleu continuar?"
 msgid "Test results"
 msgstr "Resultats del test"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2994
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3120
 msgid "Testing resume capabilities of server"
 msgstr "Provant les capacitats de reprende fitxers del servidor"
 
@@ -3189,7 +3214,7 @@ msgid "Trust this host and carry on connecting?"
 msgstr "Confieu en aquest amfitrió i voleu continuar amb la connexió?"
 
 #: resources.h:58 ../../locales/../src/interface/sitemanager.cpp:686
-#: ../../locales/../src/interface/sitemanager.cpp:904
+#: ../../locales/../src/interface/sitemanager.cpp:898
 msgid "Unix"
 msgstr "Unix"
 
@@ -3305,7 +3330,7 @@ msgstr ""
 "FileZilla."
 
 #: resources.h:59 ../../locales/../src/interface/sitemanager.cpp:690
-#: ../../locales/../src/interface/sitemanager.cpp:913
+#: ../../locales/../src/interface/sitemanager.cpp:907
 msgid "VMS"
 msgstr "VMS"
 
@@ -3434,8 +3459,8 @@ msgstr "acaba amb"
 msgid "equals"
 msgstr "equival"
 
-#: ../../locales/../src/interface/LocalListView.cpp:400
-#: ../../locales/../src/interface/LocalListView.cpp:418
+#: ../../locales/../src/interface/LocalListView.cpp:401
+#: ../../locales/../src/interface/LocalListView.cpp:419
 #: ../../locales/../src/interface/RemoteListView.cpp:626
 #: ../../locales/../src/interface/RemoteListView.cpp:644
 msgid "file"
