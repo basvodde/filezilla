@@ -816,7 +816,7 @@ void CSiteManager::SetCtrlState()
 
 		// Empty all site information
 		XRCCTRL(*this, "ID_HOST", wxTextCtrl)->SetValue(_T(""));
-		XRCCTRL(*this, "ID_PORT", wxTextCtrl)->SetValue(_T("21"));
+		XRCCTRL(*this, "ID_PORT", wxTextCtrl)->SetValue(_T(""));
 		XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(_("FTP"));
 		XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetStringSelection(_("Anonymous"));
 		XRCCTRL(*this, "ID_USER", wxTextCtrl)->SetValue(_T(""));
@@ -852,6 +852,17 @@ void CSiteManager::SetCtrlState()
 			XRCCTRL(*this, "ID_PORT", wxTextCtrl)->SetValue(wxString::Format(_T("%d"), port));
 		else
 			XRCCTRL(*this, "ID_PORT", wxTextCtrl)->SetValue(_T(""));
+
+		switch (data->m_server.GetProtocol())
+		{
+		case SFTP:
+			XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(_("SFTP"));
+			break;
+		case FTP:
+		default:
+			XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(_("FTP"));
+			break;
+		}
 
 		XRCCTRL(*this, "ID_USER", wxTextCtrl)->Enable(data->m_server.GetLogonType() != ANONYMOUS);
 		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->Enable(data->m_server.GetLogonType() == NORMAL || data->m_server.GetLogonType() == ACCOUNT);
