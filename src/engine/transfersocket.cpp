@@ -150,7 +150,7 @@ void CTransferSocket::OnConnect(wxSocketEvent &event)
 
 		if (m_pControlSocket->m_protectDataChannel)
 		{
-			if (!InitTls())
+			if (!InitTls(m_pControlSocket->m_pTlsSocket))
 			{
 				TransferEnd(1);
 				return;
@@ -399,7 +399,7 @@ bool CTransferSocket::SetupPassiveTransfer(wxString host, int port)
 	m_pSocket = m_pSocketClient;
 	if (m_pControlSocket->m_protectDataChannel)
 	{
-		if (!InitTls())
+		if (!InitTls(m_pControlSocket->m_pTlsSocket))
 			return false;
 	}
 	else
@@ -624,7 +624,7 @@ void CTransferSocket::FinalizeWrite()
 	}
 }
 
-bool CTransferSocket::InitTls()
+bool CTransferSocket::InitTls(const CTlsSocket* pPrimaryTlsSocket)
 {
 	m_pTlsSocket = new CTlsSocket(m_pControlSocket);
 	
@@ -637,7 +637,7 @@ bool CTransferSocket::InitTls()
 
 	m_pTlsSocket->SetSocket(m_pSocket, this);
 
-	if (!m_pTlsSocket->Handshake())
+	if (!m_pTlsSocket->Handshake(pPrimaryTlsSocket))
 	{
 		delete m_pTlsSocket;
 		m_pTlsSocket = 0;

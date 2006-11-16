@@ -275,6 +275,18 @@ void CAsyncRequestQueue::ProcessNextRequest()
 		entry.pEngine->SetAsyncRequestReply(pNotification);
 		delete pNotification;
 	}
+	else if (entry.pNotification->GetRequestID() == reqId_certificate)
+	{
+		CCertificateNotification* pCertificateNotification = reinterpret_cast<CCertificateNotification *>(entry.pNotification);
+		pCertificateNotification->m_trusted = true;
+		entry.pEngine->SetAsyncRequestReply(entry.pNotification);
+		delete entry.pNotification;
+	}
+	else
+	{
+		entry.pEngine->SetAsyncRequestReply(entry.pNotification);
+		delete entry.pNotification;
+	}
 
 	RecheckDefaults();
 	m_requestList.pop_front();

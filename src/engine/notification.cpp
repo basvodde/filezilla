@@ -187,3 +187,43 @@ char* CDataNotification::Detach(int& len)
 	m_pData = 0;
 	return pData;
 }
+
+CCertificateNotification::CCertificateNotification(const unsigned char* rawData, unsigned int len,
+		wxDateTime activationTime, wxDateTime expirationTime,
+		const wxString& serial,
+		const wxString& pkalgoname, unsigned int bits,
+		const wxString& fingerprint_md5,
+		const wxString& fingerprint_sha1,
+		const wxString& subject,
+		const wxString& issuer)
+{
+	wxASSERT(len);
+	if (len)
+	{
+		m_rawData = new unsigned char[len];
+		memcpy(m_rawData, rawData, len);
+	}
+	else
+		m_rawData = 0;
+	m_len = len;
+
+	m_activationTime = activationTime;
+	m_expirationTime = expirationTime;
+
+	m_serial = serial;
+	m_pkalgoname = pkalgoname;
+	m_pkalgobits = bits;
+
+	m_fingerprint_md5 = fingerprint_md5;
+	m_fingerprint_sha1 = fingerprint_sha1;
+
+	m_subject = subject;
+	m_issuer = issuer;
+
+	m_trusted = false;
+}
+
+CCertificateNotification::~CCertificateNotification()
+{
+	delete [] m_rawData;
+}

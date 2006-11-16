@@ -54,7 +54,9 @@ enum RequestId
 	reqId_fileexists,		// Target file already exists, awaiting further instructions
 	reqId_interactiveLogin, // gives a challenge prompt for a password
 	reqId_hostkey,			// used only by SSH/SFTP to indicate new host key
-	reqId_hostkeyChanged	// used only by SSH/SFTP to indicate changed host key
+	reqId_hostkeyChanged,	// used only by SSH/SFTP to indicate changed host key
+	reqId_certificate		// sent after a successful TLS/SSL handshake to allow certificate
+							// validation
 };
 
 class CNotification
@@ -252,6 +254,55 @@ public:
 protected:
 	char* m_pData;
 	unsigned int m_len;
+};
+
+class CCertificateNotification : public CAsyncRequestNotification
+{
+public:
+	CCertificateNotification(const unsigned char* rawData, unsigned int len,
+		wxDateTime activationTime, wxDateTime expirationTime,
+		const wxString& serial,
+		const wxString& pkalgoname, unsigned int bits,
+		const wxString& fingerprint_md5,
+		const wxString& fingerprint_sha1,
+		const wxString& subject,
+		const wxString& issuer);
+	virtual ~CCertificateNotification();
+	virtual enum RequestId GetRequestID() const { return reqId_certificate; }
+
+
+	const unsigned char* const GetRawData(unsigned int& len) const { len = m_len; return m_rawData; }
+	wxDateTime GetActiviationTime() const { return m_activationTime; }
+	wxDateTime GetExpirationTime() const { return m_expirationTime; }
+
+	const wxString& GetSerial() const { return m_serial; }
+	const wxString& GetPkAlgoName() const { return m_pkalgoname; }
+	unsigned int GetPkAlgoBits() const { return m_pkalgobits; }
+
+	const wxString& GetFingerPrintMD5() const { return m_fingerprint_md5; }
+	const wxString& GetFingerPrintSHA1() const { return m_fingerprint_sha1; }
+
+	const wxString& GetSubject() const { return m_subject; }
+	const wxString& GetIssuer() const { return m_issuer; }
+
+	bool m_trusted;
+
+protected:
+	wxDateTime m_activationTime;
+	wxDateTime m_expirationTime;
+
+	unsigned char* m_rawData;
+	unsigned int m_len;
+
+	wxString m_serial;
+	wxString m_pkalgoname;
+	unsigned int m_pkalgobits;
+
+	wxString m_fingerprint_md5;
+	wxString m_fingerprint_sha1;
+
+	wxString m_subject;
+	wxString m_issuer;
 };
 
 #endif

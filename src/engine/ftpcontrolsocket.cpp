@@ -2021,6 +2021,18 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 			SendNextCommand();
 		}
 		break;
+	case reqId_certificate:
+		{
+			if (!m_pTlsSocket || m_pTlsSocket->GetState() != CTlsSocket::verifycert)
+			{
+				LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("No or invalid operation in progress, ignoring request reply %d"), pNotification->GetRequestID());
+				return false;				
+			}
+
+			CCertificateNotification* pCertificateNotification = reinterpret_cast<CCertificateNotification *>(pNotification);
+			m_pTlsSocket->TrustCurrentCert(pCertificateNotification->m_trusted);
+		}
+		break;
 	default:
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Unknown request %d"), pNotification->GetRequestID());
 		ResetOperation(FZ_REPLY_INTERNALERROR);

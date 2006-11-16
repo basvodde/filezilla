@@ -40,7 +40,7 @@ protected:
 
 	void TransferEnd(int reason);
 
-	bool InitTls();
+	bool InitTls(const CTlsSocket* pPrimaryTlsSocket);
 
 	virtual void OnSocketEvent(wxSocketEvent &event);
 	virtual void OnConnect(wxSocketEvent &event);

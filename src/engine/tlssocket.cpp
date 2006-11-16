@@ -3,6 +3,7 @@
 #include "ControlSocket.h"
 
 #include <gnutls/gnutls.h>
+#include <gnutls/x509.h>
 #include <errno.h>
 
 BEGIN_EVENT_TABLE(CTlsSocket, wxEvtHandler)
@@ -21,6 +22,7 @@ CTlsSocket::CTlsSocket(CControlSocket* pOwner)
 
 	m_canReadFromSocket = true;
 	m_canWriteToSocket = true;
+	m_canCheckCloseSocket = false;
 
 	m_canTriggerRead = true;
 	m_canTriggerWrite = true;
@@ -38,6 +40,9 @@ CTlsSocket::CTlsSocket(CControlSocket* pOwner)
 	m_peekDataLen = 0;
 
 	m_socketClosed = false;
+
+	m_implicitTrustedCert.data = 0;
+	m_implicitTrustedCert.size = 0;
 }
 
 CTlsSocket::~CTlsSocket()
@@ -128,6 +133,9 @@ void CTlsSocket::Uninit()
 	delete [] m_peekData;
 	m_peekData = 0;
 	m_peekDataLen = 0;
+
+	delete [] m_implicitTrustedCert.data;
+	m_implicitTrustedCert.data = 0;
 }
 
 void CTlsSocket::LogError(int code)
@@ -233,12 +241,26 @@ ssize_t CTlsSocket::PullFunction(void* data, size_t len)
 	{
 		if (m_pSocket->LastError() == wxSOCKET_WOULDBLOCK)
 		{
+			if (m_canCheckCloseSocket)
+			{
+				wxSocketEvent evt;
+				evt.m_event = wxSOCKET_LOST;
+				wxPostEvent(this, evt);
+			}
+
 			gnutls_transport_set_errno(m_session, EAGAIN);
 			return -1;
 		}
 
 		gnutls_transport_set_errno(m_session, 0);
 		return -1;
+	}
+
+	if (m_canCheckCloseSocket)
+	{
+		wxSocketEvent evt;
+		evt.m_event = wxSOCKET_LOST;
+		wxPostEvent(this, evt);
 	}
 
 	return m_pSocket->LastCount();
@@ -267,6 +289,7 @@ void CTlsSocket::OnSocketEvent(wxSocketEvent& event)
 		break;
 	case wxSOCKET_LOST:
 		{
+			m_canCheckCloseSocket = true;
 			char tmp[100];
 			m_pSocket->Peek(&tmp, 100);
 			if (!m_pSocket->Error())
@@ -280,12 +303,7 @@ void CTlsSocket::OnSocketEvent(wxSocketEvent& event)
 				OnRead();
 
 				if (lastCount)
-				{
-					wxSocketEvent evt;
-					evt.m_event = wxSOCKET_LOST;
-					wxPostEvent(this, evt);
 					return;
-				}
 			}
 
 			m_pOwner->LogMessage(Debug_Info, _T("CTlsSocket::OnSocketEvent(): wxSOCKET_LOST received"));
@@ -347,17 +365,34 @@ void CTlsSocket::OnSend()
 	}
 }
 
-int CTlsSocket::Handshake()
+int CTlsSocket::Handshake(const CTlsSocket* pPrimarySocket /*=0*/)
 {
 	m_pOwner->LogMessage(Debug_Verbose, _T("CTlsSocket::Handshake()"));
 	wxASSERT(m_session);
 
 	m_tlsState = handshake;
 
+	if (pPrimarySocket)
+	{
+		// Implicitly trust certificate of primary socket
+		unsigned int cert_list_size;
+		const gnutls_datum_t* const cert_list = gnutls_certificate_get_peers(pPrimarySocket->m_session, &cert_list_size);
+		if (cert_list && cert_list_size)
+		{
+			m_implicitTrustedCert.data = new unsigned char[cert_list[0].size];
+			memcpy(m_implicitTrustedCert.data, cert_list[0].data, cert_list[0].size);
+			m_implicitTrustedCert.size = cert_list[0].size;
+		}
+	}
+
 	int res = gnutls_handshake(m_session);
 	if (!res)
 	{
 		m_pOwner->LogMessage(Debug_Info, _T("Handshake successful"));
+
+		res = VerifyCertificate();
+		if (res != FZ_REPLY_OK)
+			return res;
 
 		m_tlsState = conn;
 
@@ -541,7 +576,8 @@ void CTlsSocket::CheckResumeFailedWrite()
 
 void CTlsSocket::Failure(int code)
 {
-	LogError(code);
+	if (code)
+		LogError(code);
 	Uninit();
 
 	wxSocketEvent evt;
@@ -632,4 +668,196 @@ void CTlsSocket::ContinueShutdown()
 
 	if (res != GNUTLS_E_INTERRUPTED && res != GNUTLS_E_AGAIN)
 		Failure(res);
+}
+
+void CTlsSocket::TrustCurrentCert(bool trusted)
+{
+	if (m_tlsState != verifycert)
+	{
+		m_pOwner->LogMessage(Debug_Warning, _T("TrustCurrentCert called at wrong time."));
+		return;
+	}
+
+	if (trusted)
+	{
+		m_tlsState = conn;
+
+		wxSocketEvent evt;
+		evt.m_event = wxSOCKET_CONNECTION;
+		wxPostEvent(m_pEvtHandler, evt);
+		TriggerEvents();
+		return;
+	}
+
+	m_pOwner->LogMessage(::Error, _("Remote certificate not trusted."));
+	Failure(0);
+}
+
+static wxString bin2hex(const unsigned char* in, size_t size)
+{
+	wxString str;
+	for (size_t i = 0; i < size; i++)
+	{
+		if (i)
+			str += _T(":");
+		str += wxString::Format(_T("%.2x"), (int)in[i]);
+	}
+
+	return str;
+}
+
+int CTlsSocket::VerifyCertificate()
+{
+	if (m_tlsState != handshake)
+	{
+		m_pOwner->LogMessage(Debug_Warning, _T("VerifyCertificate called at wrong time"));
+		return FZ_REPLY_ERROR;
+	}
+
+	m_tlsState = verifycert;
+
+	if (gnutls_certificate_type_get(m_session) != GNUTLS_CRT_X509)
+	{
+		m_pOwner->LogMessage(::Debug_Warning, _T("Unsupported certificate type"));
+		Failure(0);
+		return FZ_REPLY_ERROR;
+	}
+
+	unsigned int cert_list_size;
+	const gnutls_datum_t* const cert_list = gnutls_certificate_get_peers(m_session, &cert_list_size);
+	if (!cert_list || !cert_list_size)
+	{
+		m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_certificate_get_peers returned no certificates"));
+		Failure(0);
+		return FZ_REPLY_ERROR;
+	}
+
+	if (m_implicitTrustedCert.data)
+	{
+		if (m_implicitTrustedCert.size != cert_list[0].size ||
+			memcmp(m_implicitTrustedCert.data, cert_list[0].data, cert_list[0].size))
+		{
+			m_pOwner->LogMessage(::Error, _("Primary connection and data connection certificates don't match."));
+			Failure(0);
+			return FZ_REPLY_ERROR;
+		}
+		
+		TrustCurrentCert(true);
+		return FZ_REPLY_OK;
+	}
+
+	gnutls_x509_crt_t cert;
+	if (gnutls_x509_crt_init(&cert))
+	{
+		m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_x509_crt_init failed"));
+		Failure(0);
+		return FZ_REPLY_ERROR;
+	}
+
+	if (gnutls_x509_crt_import(cert, cert_list, GNUTLS_X509_FMT_DER))
+	{
+		m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_x509_crt_import failed"));
+		Failure(0);
+		gnutls_x509_crt_deinit(cert);
+		return FZ_REPLY_ERROR;
+	}
+
+	wxDateTime expirationTime = gnutls_x509_crt_get_expiration_time(cert);
+	wxDateTime activationTime = gnutls_x509_crt_get_activation_time(cert);
+
+	// Get the serial number of the certificate
+	unsigned char buffer[40];
+	size_t size = sizeof(buffer);
+	int res = gnutls_x509_crt_get_serial(cert, buffer, &size);
+
+	wxString serial = bin2hex(buffer, size);
+
+	unsigned int bits;
+	int algo = gnutls_x509_crt_get_pk_algorithm(cert, &bits);
+
+	wxString algoName;
+	const char* pAlgo = gnutls_pk_algorithm_get_name((gnutls_pk_algorithm_t)algo);
+	if (pAlgo)
+		algoName = wxString(pAlgo, wxConvUTF8);
+
+	int version = gnutls_x509_crt_get_version(cert);
+
+	wxString subject, issuer;
+
+	size = 0;
+	gnutls_x509_crt_get_dn(cert, 0, &size);
+	if (size)
+	{
+		char* dn = new char[size + 1];
+		dn[size] = 0;
+		if (!gnutls_x509_crt_get_dn(cert, dn, &size))
+		{
+			dn[size] = 0;
+			subject = wxString(dn, wxConvUTF8);
+		}
+		delete [] dn;
+	}
+	if (subject == _T(""))
+	{
+		m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_x509_get_dn failed"));
+		Failure(0);
+		gnutls_x509_crt_deinit(cert);
+		return FZ_REPLY_ERROR;
+	}
+
+	size = 0;
+	gnutls_x509_crt_get_issuer_dn(cert, 0, &size);
+	if (size)
+	{
+		char* dn = new char[size + 1];
+		dn[size] = 0;
+		if (!gnutls_x509_crt_get_issuer_dn(cert, dn, &size))
+		{
+			dn[size] = 0;
+			issuer = wxString(dn, wxConvUTF8);
+		}
+		delete [] dn;
+	}
+	if (issuer == _T(""))
+	{
+		m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_x509_get_issuer_dn failed"));
+		Failure(0);
+		gnutls_x509_crt_deinit(cert);
+		return FZ_REPLY_ERROR;
+	}
+
+	wxString fingerprint_md5;
+	wxString fingerprint_sha1;
+
+	char digest[100];
+	size = sizeof(digest) - 1;
+	if (gnutls_x509_crt_get_fingerprint(cert, GNUTLS_DIG_MD5, digest, &size))
+	{
+		digest[size] = 0;
+		fingerprint_md5 = wxString(digest, wxConvUTF8);
+	}
+	size = sizeof(digest) - 1;
+	if (gnutls_x509_crt_get_fingerprint(cert, GNUTLS_DIG_SHA1, digest, &size))
+	{
+		digest[size] = 0;
+		fingerprint_sha1 = wxString(digest, wxConvUTF8);
+	}
+
+	CCertificateNotification *pNotification = new CCertificateNotification(
+		cert_list->data, cert_list->size,
+		activationTime, expirationTime,
+		serial,
+		algoName, bits,
+		fingerprint_md5,
+		fingerprint_sha1,
+		subject,
+		issuer);
+
+	pNotification->requestNumber = m_pOwner->GetEngine()->GetNextAsyncRequestNumber();
+	
+	m_pOwner->GetEngine()->AddNotification(pNotification);
+
+	m_pOwner->LogMessage(Status, _("Verifying certificate..."));
+
+	return FZ_REPLY_WOULDBLOCK;
 }

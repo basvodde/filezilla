@@ -9,6 +9,15 @@ class CControlSocket;
 class CTlsSocket : protected wxEvtHandler, public CBackend
 {
 public:
+	enum TlsState
+	{
+		noconn,
+		handshake,
+		verifycert,
+		conn,
+		closing,
+		closed
+	};
 
 	CTlsSocket(CControlSocket* pOwner);
 	~CTlsSocket();
@@ -17,7 +26,7 @@ public:
 	void Uninit();
 
 	void SetSocket(wxSocketBase* pSocket, wxEvtHandler* pEvtHandler);
-	int Handshake();
+	int Handshake(const CTlsSocket* pPrimarySocket = 0);
 
 	virtual void Read(void *buffer, unsigned int len);
 	virtual void Write(const void *buffer, unsigned int len);
@@ -27,19 +36,18 @@ public:
 	virtual void Peek(void *buffer, unsigned int len);
 
 	void Shutdown();
+
+	void TrustCurrentCert(bool trusted);
+
+	enum TlsState GetState() const { return m_tlsState; }
 	
 protected:
 
 	void ContinueShutdown();
+	
+	int VerifyCertificate();
 
-	enum TlsState
-	{
-		noconn,
-		handshake,
-		conn,
-		closing,
-		closed
-	} m_tlsState;
+	enum TlsState m_tlsState;
 
 	CControlSocket* m_pOwner;
 
@@ -68,6 +76,7 @@ protected:
 
 	bool m_canReadFromSocket;
 	bool m_canWriteToSocket;
+	bool m_canCheckCloseSocket;
 
 	bool m_canTriggerRead;
 	bool m_canTriggerWrite;
@@ -95,6 +104,8 @@ protected:
 	// Peek data
 	char* m_peekData;
 	unsigned int m_peekDataLen;
+
+	gnutls_datum_t m_implicitTrustedCert;
 };
 
 #endif //__TLSSOCKET_H__

@@ -115,6 +115,9 @@ public:
 	// Set to true if waiting for data
 	void SetWait(bool waiting);
 
+	CFileZillaEnginePrivate* GetEngine() { return m_pEngine; }
+
+
 protected:
 	virtual int DoClose(int nErrorCode = FZ_REPLY_DISCONNECTED);
 	void ResetSocket();
