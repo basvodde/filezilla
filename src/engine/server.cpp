@@ -41,9 +41,30 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 	pos = host.Find('@');
 	if (pos != -1)
 	{
+		// Check if it's something like
+		//   user@name:password@host:port/path
+		// => If there are multiple at signs, username/port ends at last at before
+		// the first slash. (Since host and port never contain any at sign)
+
+		int slash = host.Mid(pos + 1).Find('/');
+		if (slash != -1)
+			slash += pos + 1;
+
+		int next_at = host.Mid(pos + 1).Find('@');
+		while (next_at != -1)
+		{
+			next_at += pos + 1;
+			if (slash != -1 && next_at > slash)
+				break;
+
+			pos = next_at;
+			next_at = host.Mid(pos + 1).Find('@');
+		}
+
 		user = host.Left(pos);
 		host = host.Mid(pos + 1);
 
+		// Extract password (if any) from username
 		pos = user.Find(':');
 		if (pos != -1)
 		{
