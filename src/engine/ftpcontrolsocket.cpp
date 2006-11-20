@@ -1085,6 +1085,7 @@ public:
 		: COpData(cmd_cwd)
 	{
 		triedMkd = false;
+		tried_cdup = false;
 	}
 
 	virtual ~CFtpChangeDirOpData()
@@ -1094,6 +1095,7 @@ public:
 	CServerPath path;
 	wxString subDir;
 	bool triedMkd;
+	bool tried_cdup;
 };
 
 enum cwdStates
@@ -1215,7 +1217,15 @@ int CFtpControlSocket::ChangeDirParseResponse()
 		break;
 	case cwd_cwd_subdir:
 		if (code != 2 && code != 3)
-			error = true;
+		{
+			if (pData->subDir == _T("..") && !pData->tried_cdup && m_Response.Left(2) == _T("50"))
+			{
+				// CDUP command not implemented, try again using CWD ..
+				pData->tried_cdup = true;
+			}
+			else
+				error = true;
+		}
 		else
 			pData->opState = cwd_pwd_subdir;
 		break;
@@ -1295,7 +1305,7 @@ int CFtpControlSocket::ChangeDirSend()
 			ResetOperation(FZ_REPLY_INTERNALERROR);
 			return FZ_REPLY_ERROR;
 		}
-		else if (pData->subDir == _T(".."))
+		else if (pData->subDir == _T("..") && !pData->tried_cdup)
 			cmd = _T("CDUP");
 		else
 			cmd = _T("CWD ") + pData->subDir;
