@@ -85,7 +85,14 @@ bool CServerPath::SetPath(wxString &newPath, bool isFile)
 				m_type = DOS;
 		else if (path.c_str()[0] == FTP_MVS_DOUBLE_QUOTE && path.Last() == FTP_MVS_DOUBLE_QUOTE)
 			m_type = MVS;
-		else
+		else if (path[0] == ':' && (pos1 = path.Mid(1).Find(':')) > 0)
+		{
+			int slash = path.Find('/');
+			if (slash == -1 || slash > pos1)
+				m_type = VXWORKS;
+		}
+		
+		if (m_type == DEFAULT)
 			m_type = UNIX;
 	}
 
@@ -182,6 +189,26 @@ bool CServerPath::SetPath(wxString &newPath, bool isFile)
 			}
 		}
 		break;
+	case VXWORKS:
+		{
+			int colon2;
+			if (path[0] != ':' || (colon2 = path.Mid(1).Find(':')) < 1)
+			{
+				m_bEmpty = true;
+				return false;
+			}
+			int slash = path.Find('/');
+			if (slash != -1 && slash <= colon2)
+			{
+				m_bEmpty = true;
+				return false;
+			}
+			
+			m_prefix = path.Left(colon2 + 2);
+			path = path.Mid(colon2 + 1);
+			goto set_path_default;
+		}
+		break;
 	case DOS:
 		// Check for starting drive letter
 		path.Replace(_T("\\"), _T("/"));
@@ -194,6 +221,7 @@ bool CServerPath::SetPath(wxString &newPath, bool isFile)
 		}
 		// No break on purpose!
 	default:
+set_path_default:
 		while (path.Replace(_T("//"), _T("/")));
 
 		if (path.c_str()[0] == '/')
@@ -280,8 +308,17 @@ wxString CServerPath::GetPath() const
 		}
 		path += m_prefix + _T("'");
 		break;
+	case VXWORKS:
+		path = m_prefix;
+		for (tConstSegmentIter iter = m_Segments.begin(); iter != m_Segments.end(); iter++)
+		{
+			if (iter != m_Segments.begin())
+				path += _T("/");
+			path += *iter;
+		}
+		break;
 	default:
-		path += _T("/");
+		path = _T("/");
 		for (tConstSegmentIter iter = m_Segments.begin(); iter != m_Segments.end(); iter++)
 			path += *iter + _T("/");
 
@@ -704,6 +741,36 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 		else
 			return false;
 		break;
+	case VXWORKS:
+		{
+			if (dir[0] != ':')
+			{
+				if (IsEmpty())
+					return false;
+			}
+			else
+			{
+				int colon2;
+				if ((colon2 = dir.Mid(1).Find(':')) < 1)
+					return false;
+
+				int slash = dir.Find('/');
+				if (slash != -1 && slash <= colon2)
+					return false;
+
+				m_prefix = dir.Left(colon2 + 2);
+				dir = dir.Mid(colon2 + 1);
+
+				if (dir[0] == '/')
+					return false;
+
+				m_Segments.clear();
+
+			}
+			if (isFile && dir.Find('/') == -1)
+				return false;
+		}
+		// No break on purpose
 	default:
 		{
 			while (dir.Replace(_T("//"), _T("/")));
@@ -817,6 +884,12 @@ wxString CServerPath::FormatFilename(const wxString &filename, bool omitPath /*=
 			fullpath += filename;
 		fullpath += _T("'");
 		break;
+	case VXWORKS:
+		if (omitPath)
+			fullpath = filename;
+		else
+			fullpath = GetPath() + _T("/") + filename;
+		break;
 	default:
 		if (omitPath)
 			fullpath = filename;
@@ -894,6 +967,4 @@ CServerPath CServerPath::GetCommonParent(const CServerPath& path) const
 	}
 
 	return parent;
-	
-
 }
