@@ -83,6 +83,14 @@ bool CSiteManager::Create(wxWindow* parent)
 void CSiteManager::CreateControls()
 {	
 	wxXmlResource::Get()->LoadDialog(this, GetParent(), _T("ID_SITEMANAGER"));
+
+	wxChoice *pChoice = XRCCTRL(*this, "ID_SERVERTYPE", wxChoice);
+	wxASSERT(pChoice);
+	pChoice->Append(_T("Unix"));
+	pChoice->Append(_T("VMS"));
+	pChoice->Append(_T("MVS"));
+	pChoice->Append(_T("Dos"));
+	pChoice->Append(_T("VxWorks"));
 }
 
 void CSiteManager::OnOK(wxCommandEvent& event)
@@ -683,14 +691,16 @@ bool CSiteManager::UpdateServer()
 	data->m_comments = XRCCTRL(*this, "ID_COMMENTS", wxTextCtrl)->GetValue();
 
 	wxString serverType = XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->GetStringSelection();
-	if (serverType == _("Unix"))
+	if (serverType == _T("Unix"))
 		data->m_server.SetType(UNIX);
-	else if (serverType == _("Dos"))
+	else if (serverType == _T("Dos"))
 		data->m_server.SetType(DOS);
-	else if (serverType == _("VMS"))
+	else if (serverType == _T("VMS"))
 		data->m_server.SetType(VMS);
-	else if (serverType == _("MVS"))
+	else if (serverType == _T("MVS"))
 		data->m_server.SetType(MVS);
+	else if (serverType == _T("VxWorks"))
+		data->m_server.SetType(VXWORKS);
 	else
 		data->m_server.SetType(DEFAULT);
 	
@@ -895,16 +905,19 @@ void CSiteManager::SetCtrlState()
 		switch (data->m_server.GetType())
 		{
 		case UNIX:
-			XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->SetStringSelection(_("Unix"));
+			XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->SetStringSelection(_T("Unix"));
 			break;
 		case DOS:
-			XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->SetStringSelection(_("Dos"));
+			XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->SetStringSelection(_T("Dos"));
 			break;
 		case MVS:
-			XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->SetStringSelection(_("MVS"));
+			XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->SetStringSelection(_T("MVS"));
 			break;
 		case VMS:
-			XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->SetStringSelection(_("VMS"));
+			XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->SetStringSelection(_T("VMS"));
+			break;
+		case VXWORKS:
+			XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->SetStringSelection(_T("VxWorks"));
 			break;
 		default:
 			XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->SetStringSelection(_("Default"));
