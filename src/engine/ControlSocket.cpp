@@ -795,6 +795,9 @@ void CControlSocket::OnTimer(wxTimerEvent& event)
 	if (!timeout)
 		return;
 
+	if (m_pCurOpData && m_pCurOpData->waitForAsyncRequest)
+		return;
+
 	if (m_stopWatch.Time() > (timeout * 1000))
 	{
 		
