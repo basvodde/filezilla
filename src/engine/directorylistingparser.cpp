@@ -62,6 +62,9 @@ static char data[][110]={
 	"54-MVSPDSMEMBER2 00B308 000411  00 FO                31    ANY",
 	"55-MVSPDSMEMBER3 00B308 000411  00 FO        RU      ANY    24",
 
+	// Migrated MVS file
+	"Migrated				SOME.FILE",
+
 	// Some asian listing format. Those >127 chars are just examples
 	"-rwxrwxrwx   1 root     staff          0 2003   3\xed\xef 20 56-asian date file",
 	"-r--r--r-- 1 root root 2096 8\xed 17 08:52 57-asian date file",
@@ -784,6 +787,9 @@ bool CDirectoryListingParser::ParseLine(CLine *pLine, const enum ServerType serv
 #endif //LISTDEBUG
 	{
 		res = ParseAsIBM_MVS_PDS2(pLine, entry);
+		if (res)
+			goto done;
+		res = ParseAsIBM_MVS_Migrated(pLine, entry);
 		if (res)
 			goto done;
 	}
@@ -2222,6 +2228,38 @@ bool CDirectoryListingParser::ParseAsIBM_MVS_PDS(CLine *pLine, CDirentry &entry)
 	entry.hasTime = false;
 	entry.link = false;
 	
+	return true;
+}
+
+bool CDirectoryListingParser::ParseAsIBM_MVS_Migrated(CLine *pLine, CDirentry &entry)
+{
+	// Migrated MVS file
+	// "Migrated				SOME.NAME"
+
+	int index = 0;
+	CToken token;
+	if (!pLine->GetToken(index, token))
+		return false;
+
+	if (token.GetString().CmpNoCase(_T("Migrated")))
+		return false;
+
+	if (!pLine->GetToken(++index, token))
+		return false;
+
+	entry.name = token.GetString();
+
+	entry.dir = false;
+	entry.link = false;
+	entry.ownerGroup = _T("");
+	entry.permissions = _T("");
+	entry.size = -1;
+	entry.hasDate = false;
+	entry.hasTime = false;
+
+	if (pLine->GetToken(++index, token))
+		return false;
+
 	return true;
 }
 
