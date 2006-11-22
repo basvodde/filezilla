@@ -114,9 +114,11 @@ noinst_DATA = $(top_builddir)/FileZilla.app/Contents/SharedSupport/locales
 $(top_builddir)/FileZilla.app/Contents/SharedSupport/locales: allmo
 	mkdir -p $(top_builddir)/FileZilla.app/Contents/SharedSupport/locales
 	for i in @FILEZILLA_LINGUAS@ ; do \
+	  mkdir -p $(top_builddir)/FileZilla.app/Contents/Resources/$$i.lproj; \
 	  mkdir -p $(top_builddir)/FileZilla.app/Contents/SharedSupport/locales/$$i; \
 	  cp -f $$i.mo $(top_builddir)/FileZilla.app/Contents/SharedSupport/locales/$$i/filezilla.mo; \
 	done
+	mkdir -p $(top_builddir)/FileZilla.app/Contents/Resources/en.lproj
 
 endif
 
