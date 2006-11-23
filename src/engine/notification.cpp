@@ -188,7 +188,8 @@ char* CDataNotification::Detach(int& len)
 	return pData;
 }
 
-CCertificateNotification::CCertificateNotification(const unsigned char* rawData, unsigned int len,
+CCertificateNotification::CCertificateNotification(const wxString& host, unsigned int port,
+		const unsigned char* rawData, unsigned int len,
 		wxDateTime activationTime, wxDateTime expirationTime,
 		const wxString& serial,
 		const wxString& pkalgoname, unsigned int bits,
@@ -197,6 +198,9 @@ CCertificateNotification::CCertificateNotification(const unsigned char* rawData,
 		const wxString& subject,
 		const wxString& issuer)
 {
+	m_host = host;
+	m_port = port;
+
 	wxASSERT(len);
 	if (len)
 	{

@@ -259,7 +259,8 @@ protected:
 class CCertificateNotification : public CAsyncRequestNotification
 {
 public:
-	CCertificateNotification(const unsigned char* rawData, unsigned int len,
+	CCertificateNotification(const wxString& host, unsigned int port,
+		const unsigned char* rawData, unsigned int len,
 		wxDateTime activationTime, wxDateTime expirationTime,
 		const wxString& serial,
 		const wxString& pkalgoname, unsigned int bits,
@@ -270,9 +271,11 @@ public:
 	virtual ~CCertificateNotification();
 	virtual enum RequestId GetRequestID() const { return reqId_certificate; }
 
+	const wxString& GetHost() const { return m_host; }
+	unsigned int GetPort() const { return m_port; }
 
 	const unsigned char* const GetRawData(unsigned int& len) const { len = m_len; return m_rawData; }
-	wxDateTime GetActiviationTime() const { return m_activationTime; }
+	wxDateTime GetActivationTime() const { return m_activationTime; }
 	wxDateTime GetExpirationTime() const { return m_expirationTime; }
 
 	const wxString& GetSerial() const { return m_serial; }
@@ -288,6 +291,9 @@ public:
 	bool m_trusted;
 
 protected:
+	wxString m_host;
+	unsigned int m_port;
+
 	wxDateTime m_activationTime;
 	wxDateTime m_expirationTime;
 

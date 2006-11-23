@@ -31,6 +31,7 @@ filezilla_SOURCES = aboutdialog.cpp asyncrequestqueue.cpp \
 		sitemanager.cpp state.cpp statuslinectrl.cpp StatusView.cpp \
 		systemimagelist.cpp \
 		themeprovider.cpp updatewizard.cpp \
+		verifycertdialog.cpp \
 		view.cpp viewheader.cpp wrapengine.cpp \
 		xmlfunctions.cpp
  
@@ -61,6 +62,7 @@ noinst_HEADERS = aboutdialog.h asyncrequestqueue.h \
 		 settingsdialog.h sitemanager.h state.h \
 		 statuslinectrl.h StatusView.h systemimagelist.h \
 		 themeprovider.h updatewizard.h \
+		 verifycertdialog.h \
 		 view.h viewheader.h wrapengine.h xmlfunctions.h
 
 if USE_RESOURCEFILE

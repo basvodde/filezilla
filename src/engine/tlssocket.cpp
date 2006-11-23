@@ -829,21 +829,23 @@ int CTlsSocket::VerifyCertificate()
 	wxString fingerprint_md5;
 	wxString fingerprint_sha1;
 
-	char digest[100];
+	unsigned char digest[100];
 	size = sizeof(digest) - 1;
-	if (gnutls_x509_crt_get_fingerprint(cert, GNUTLS_DIG_MD5, digest, &size))
+	if (!gnutls_x509_crt_get_fingerprint(cert, GNUTLS_DIG_MD5, digest, &size))
 	{
 		digest[size] = 0;
-		fingerprint_md5 = wxString(digest, wxConvUTF8);
+		fingerprint_md5 = bin2hex(digest, size);
 	}
 	size = sizeof(digest) - 1;
-	if (gnutls_x509_crt_get_fingerprint(cert, GNUTLS_DIG_SHA1, digest, &size))
+	if (!gnutls_x509_crt_get_fingerprint(cert, GNUTLS_DIG_SHA1, digest, &size))
 	{
 		digest[size] = 0;
-		fingerprint_sha1 = wxString(digest, wxConvUTF8);
+		fingerprint_sha1 = bin2hex(digest, size);
 	}
 
 	CCertificateNotification *pNotification = new CCertificateNotification(
+		m_pOwner->GetCurrentServer()->GetHost(),
+		m_pOwner->GetCurrentServer()->GetPort(),
 		cert_list->data, cert_list->size,
 		activationTime, expirationTime,
 		serial,

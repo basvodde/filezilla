@@ -5,6 +5,7 @@
 #include "defaultfileexistsdlg.h"
 #include "Options.h"
 #include "QueueView.h"
+#include "verifycertdialog.h"
 
 DECLARE_EVENT_TYPE(fzEVT_PROCESSASYNCREQUESTQUEUE, -1)
 DEFINE_EVENT_TYPE(fzEVT_PROCESSASYNCREQUESTQUEUE)
@@ -58,6 +59,21 @@ bool CAsyncRequestQueue::ProcessDefaults(CFileZillaEngine *pEngine, CAsyncReques
 
 			return true;
 		}
+	case reqId_certificate:
+		{
+			CCertificateNotification* pCertNotification = reinterpret_cast<CCertificateNotification *>(pNotification);
+
+			CVerifyCertDialog dlg;
+			if (!dlg.IsTrusted(pCertNotification))
+				break;
+
+			pCertNotification->m_trusted = true;
+			pEngine->SetAsyncRequestReply(pNotification);
+			delete pNotification;
+
+			return true;			
+		}
+		break;
 	default:
 		break;
 	}
@@ -277,8 +293,11 @@ void CAsyncRequestQueue::ProcessNextRequest()
 	}
 	else if (entry.pNotification->GetRequestID() == reqId_certificate)
 	{
-		CCertificateNotification* pCertificateNotification = reinterpret_cast<CCertificateNotification *>(entry.pNotification);
-		pCertificateNotification->m_trusted = true;
+		CCertificateNotification* pNotification = reinterpret_cast<CCertificateNotification *>(entry.pNotification);
+
+		CVerifyCertDialog dlg;
+		dlg.ShowVerificationDialog(pNotification);
+
 		entry.pEngine->SetAsyncRequestReply(entry.pNotification);
 		delete entry.pNotification;
 	}
