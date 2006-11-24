@@ -4,6 +4,7 @@
 #include "optionspage.h"
 #include "optionspage_connection.h"
 #include "optionspage_connection_active.h"
+#include "optionspage_connection_passive.h"
 #include "optionspage_filetype.h"
 #include "optionspage_fileexists.h"
 #include "optionspage_themes.h"
@@ -18,6 +19,7 @@ enum pagenames
 	page_none = -1,
 	page_connection = 0,
 	page_connection_active,
+	page_connection_passive,
 	page_transfer,
 	page_filetype,
 	page_fileexists,
@@ -87,6 +89,7 @@ bool CSettingsDialog::LoadPages()
 	t_page page;
 	ADD_PAGE(_("Connection"), COptionsPageConnection, page_none);
 	ADD_PAGE(_("Active mode"), COptionsPageConnectionActive, page_connection);
+	ADD_PAGE(_("Passive mode"), COptionsPageConnectionPassive, page_connection);
 	ADD_PAGE(_("Transfers"), COptionsPageTransfer, page_none);
 	ADD_PAGE(_("File Types"), COptionsPageFiletype, page_transfer);
 	ADD_PAGE(_("File exists action"), COptionsPageFileExists, page_transfer);
@@ -96,6 +99,9 @@ bool CSettingsDialog::LoadPages()
 	ADD_PAGE(_("Update Check"), COptionsPageUpdateCheck, page_none);
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	ADD_PAGE(_("Debug"), COptionsPageDebug, page_none);
+
+	treeCtrl->SetQuickBestSize(false);
+	treeCtrl->SetInitialSize();
 
 	// Before we can initialize the pages, get the target panel in the settings
 	// dialog.

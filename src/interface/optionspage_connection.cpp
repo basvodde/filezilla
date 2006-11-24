@@ -15,16 +15,12 @@ bool COptionsPageConnection::LoadPage()
 	SetRCheck(XRCID("ID_PASSIVE"), m_pOptions->GetOptionVal(OPTION_USEPASV) != 0, failure);
 	SetRCheck(XRCID("ID_ACTIVE"), m_pOptions->GetOptionVal(OPTION_USEPASV) == 0, failure);
 
-	SetRCheck(XRCID("ID_PASSIVE_FALLBACK1"), m_pOptions->GetOptionVal(OPTION_PASVREPLYFALLBACKMODE) == 0, failure);
-	SetRCheck(XRCID("ID_PASSIVE_FALLBACK2"), m_pOptions->GetOptionVal(OPTION_PASVREPLYFALLBACKMODE) != 0, failure);
-
 	return !failure;
 }
 
 bool COptionsPageConnection::SavePage()
 {
 	m_pOptions->SetOption(OPTION_USEPASV, GetRCheck(XRCID("ID_PASSIVE")) ? 1 : 0);
-	m_pOptions->SetOption(OPTION_PASVREPLYFALLBACKMODE, XRCCTRL(*this, "ID_PASSIVE_FALLBACK1", wxRadioButton)->GetValue() ? 0 : 1);
 
 	return true;
 }
