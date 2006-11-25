@@ -206,9 +206,9 @@ void CChmodDialog::OnNumericChanged(wxCommandEvent& event)
 			continue;
 		if (numeric[i] == 'x')
 		{
-			m_permissions[i] = 0;
-			m_permissions[i + 1] = 0;
-			m_permissions[i + 2] = 0;
+			m_permissions[i * 3] = 0;
+			m_permissions[i * 3 + 1] = 0;
+			m_permissions[i * 3 + 2] = 0;
 		}
 		else
 		{
@@ -248,7 +248,6 @@ wxString CChmodDialog::GetPermissions(const char* previousPermissions)
 	if (numeric.Length() < 3)
 		return numeric;
 
-	numeric = numeric.Right(3);
 	for (unsigned int i = numeric.Length() - 3; i < numeric.Length(); i++)
 	{
 		if ((numeric[i] < '0' || numeric[i] > '9') && numeric[i] != 'x')
@@ -272,9 +271,10 @@ wxString CChmodDialog::GetPermissions(const char* previousPermissions)
 	memcpy(perms, m_permissions, 9);
 
 	wxString permission = numeric.Left(numeric.Length() - 3);
-	for (unsigned int i = numeric.Length() - 3; i < numeric.Length(); i++)
+	unsigned int k = 0;
+	for (unsigned int i = numeric.Length() - 3; i < numeric.Length(); i++, k++)
 	{
-		for (unsigned int j = i * 3; j < i * 3 + 3; j++)
+		for (unsigned int j = k * 3; j < k * 3 + 3; j++)
 		{
 			if (!perms[j])
 			{
@@ -284,7 +284,7 @@ wxString CChmodDialog::GetPermissions(const char* previousPermissions)
 					perms[j] = defaultPerms[j];
 			}
 		}
-		permission += wxString::Format(_T("%d"), (int)(perms[i * 3] - 1) * 4 + (perms[i * 3 + 1] - 1) * 2 + (perms[i * 3 + 2] - 1) * 1);
+		permission += wxString::Format(_T("%d"), (int)(perms[k * 3] - 1) * 4 + (perms[k * 3 + 1] - 1) * 2 + (perms[k * 3 + 2] - 1) * 1);
 	}
 
 	return permission;
