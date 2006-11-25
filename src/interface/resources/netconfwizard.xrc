@@ -80,9 +80,27 @@
           <label>&amp;Active</label>
         </object>
       </object>
+      <object class="spacer">
+        <size>0,5</size>
+      </object>
+      <object class="sizeritem">
+        <object class="wxCheckBox" name="ID_FALLBACK">
+          <label>Allow fallback to other transfer mode on failure</label>
+        </object>
+        <flag>wxBOTTOM</flag>
+        <border>5</border>
+      </object>
       <object class="sizeritem">
         <object class="wxStaticText">
-          <label>On the following pages, both active and passive mode will be configured, so you can connect to servers which reject either transfer mode.</label>
+          <label>If the fallback option is enabled, you will be able to connect to misconfigured servers which reject the selected transfer mode.</label>
+        </object>
+      </object>
+      <object class="spacer">
+        <size>0,5</size>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticText">
+          <label>On the following pages, the selected transfer mode will be configured, as well as the fallback mode if enabled.</label>
         </object>
         <flag>wxTOP</flag>
         <border>5</border>

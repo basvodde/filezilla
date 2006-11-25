@@ -73,6 +73,9 @@ bool CNetConfWizard::Load()
 		XRCCTRL(*this, "ID_ACTIVE", wxRadioButton)->SetValue(true);
 		break;
 	}
+
+	XRCCTRL(*this, "ID_FALLBACK", wxCheckBox)->SetValue(m_pOptions->GetOptionVal(OPTION_ALLOW_TRANSFERMODEFALLBACK) != 0);
+
 	switch (m_pOptions->GetOptionVal(OPTION_PASVREPLYFALLBACKMODE))
 	{
 	default:
@@ -825,6 +828,7 @@ void CNetConfWizard::OnFinish(wxWizardEvent& event)
 	}
 
 	m_pOptions->SetOption(OPTION_USEPASV, XRCCTRL(*this, "ID_PASSIVE", wxRadioButton)->GetValue() ? 1 : 0);
+	m_pOptions->SetOption(OPTION_ALLOW_TRANSFERMODEFALLBACK, XRCCTRL(*this, "ID_FALLBACK", wxCheckBox)->GetValue() ? 1 : 0);
 
 	m_pOptions->SetOption(OPTION_PASVREPLYFALLBACKMODE, XRCCTRL(*this, "ID_PASSIVE_FALLBACK1", wxRadioButton)->GetValue() ? 0 : 1);
 
