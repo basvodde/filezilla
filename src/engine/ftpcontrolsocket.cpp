@@ -2909,6 +2909,12 @@ int CFtpControlSocket::TransferParseResponse()
 	case rawtransfer_port_pasv:
 		if (code != 2 && code != 3)
 		{
+			if (!m_pEngine->GetOptions()->GetOptionVal(OPTION_ALLOW_TRANSFERMODEFALLBACK))
+			{
+				error = true;
+				break;
+			}
+
 			if (pData->bTriedPasv)
 				if (pData->bTriedActive)
 					error = true;
@@ -2922,6 +2928,12 @@ int CFtpControlSocket::TransferParseResponse()
 		{
 			if (!ParsePasvResponse(pData))
 			{
+				if (!m_pEngine->GetOptions()->GetOptionVal(OPTION_ALLOW_TRANSFERMODEFALLBACK))
+				{
+					error = true;
+					break;
+				}
+
 				if (!pData->bTriedActive)
 					pData->bPasv = false;
 				else
@@ -3041,7 +3053,7 @@ int CFtpControlSocket::TransferSend(int prevResult /*=FZ_REPLY_OK*/)
 				}
 			}
 
-			if (pData->bTriedPasv)
+			if (!m_pEngine->GetOptions()->GetOptionVal(OPTION_ALLOW_TRANSFERMODEFALLBACK) || pData->bTriedPasv)
 			{
 				LogMessage(::Error, _("Failed to create listening socket for active mode transfer"));
 				ResetOperation(FZ_REPLY_ERROR);

@@ -30,6 +30,8 @@ enum engineOptions
 
 	OPTION_FZSFTP_EXECUTABLE,	// full path to fzsftp executable
 
+	OPTION_ALLOW_TRANSFERMODEFALLBACK, // If PORT fails, allow PASV and vice versa
+
 	OPTIONS_ENGINE_NUM
 };
 

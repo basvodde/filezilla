@@ -101,7 +101,8 @@ bool CSettingsDialog::LoadPages()
 	ADD_PAGE(_("Debug"), COptionsPageDebug, page_none);
 
 	treeCtrl->SetQuickBestSize(false);
-	treeCtrl->SetInitialSize();
+	treeCtrl->InvalidateBestSize();
+	//treeCtrl->SetInitialSize();
 
 	// Before we can initialize the pages, get the target panel in the settings
 	// dialog.
