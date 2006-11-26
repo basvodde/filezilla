@@ -417,7 +417,7 @@ int CFtpControlSocket::LogonParseResponse()
 	{
 		if (code != 2 && code != 3)
 		{
-			DoClose(FZ_REPLY_DISCONNECTED);
+			DoClose(code == 5 ? FZ_REPLY_CRITICALERROR : 0);
 			return FZ_REPLY_DISCONNECTED;
 		}
 
@@ -439,7 +439,7 @@ int CFtpControlSocket::LogonParseResponse()
 		if (!m_pTlsSocket->Init())
 		{
 			LogMessage(::Error, _("Failed to initialize TLS."));
-			DoClose();
+			DoClose(FZ_REPLY_INTERNALERROR);
 			return FZ_REPLY_ERROR;
 		}
 
@@ -498,7 +498,7 @@ int CFtpControlSocket::LogonParseResponse()
 		switch(pData->logonSequencePos)
 		{
 		case ER: // ER means something has gone wrong
-			DoClose();
+			DoClose(code == 5 ? FZ_REPLY_CRITICALERROR : 0);
 			return FZ_REPLY_ERROR;
 		case LO: //LO means we are logged on
 			wxString system;
