@@ -152,7 +152,7 @@ void CFilterDialog::OnEdit(wxCommandEvent& event)
 
 void CFilterDialog::SaveFilters()
 {
-	CInterProcessMutex(MUTEX_FILTERS);
+	CInterProcessMutex mutex(MUTEX_FILTERS);
 
 	wxFileName file(wxGetApp().GetSettingsDir(), _T("filters.xml"));
 	TiXmlElement* pDocument = GetXmlFile(file);
@@ -237,7 +237,7 @@ void CFilterDialog::LoadFilters()
 	}
 	m_loaded = true;
 
-	CInterProcessMutex(MUTEX_FILTERS);
+	CInterProcessMutex mutex(MUTEX_FILTERS);
 
 	wxFileName file(wxGetApp().GetSettingsDir(), _T("filters.xml"));
 	TiXmlElement* pDocument = GetXmlFile(file);
