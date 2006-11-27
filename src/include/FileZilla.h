@@ -19,8 +19,8 @@
 	// Disable updatechecks if we have no version information
 	#ifdef FZ_MANUALUPDATECHECK
 		#undef FZ_MANUALUPDATECHECK
-		#define FZ_MANUALUPDATECHECK 0
 	#endif
+	#define FZ_MANUALUPDATECHECK 0
 #endif
 
 #ifndef FZ_MANUALUPDATECHECK
