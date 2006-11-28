@@ -513,6 +513,14 @@ bool CControlSocket::ParsePwdReply(wxString reply, bool unquoted /*=false*/, con
 		int pos2 = reply.Find('"', true);
 		if (pos1 == -1 || pos1 >= pos2)
 		{
+			int pos1 = reply.Find('\'');
+			int pos2 = reply.Find('\'', true);
+
+			if (pos1 != -1 && pos1 < pos2)
+				LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Broken server sending single-quoted path instead of double-quoted path."));
+		}
+		if (pos1 == -1 || pos1 >= pos2)
+		{
 			LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("No quoted path found in pwd reply, trying first token as path"));
 			pos1 = reply.Find(' ');
 			if (pos1 != -1)
