@@ -102,7 +102,7 @@ bool CSettingsDialog::LoadPages()
 
 	treeCtrl->SetQuickBestSize(false);
 	treeCtrl->InvalidateBestSize();
-	//treeCtrl->SetInitialSize();
+	Layout();
 
 	// Before we can initialize the pages, get the target panel in the settings
 	// dialog.
