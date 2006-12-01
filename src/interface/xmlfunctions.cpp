@@ -65,8 +65,13 @@ bool CXmlFile::Reload(bool forceReload)
 	if (m_modificationTime.IsValid() && !forceReload)
 	{
 		wxLogNull log;
-		if (m_fileName.GetModificationTime() ==	m_modificationTime)
-			return false;
+		wxDateTime modificationTime;
+		if (m_fileName.FileExists())
+		{
+			modificationTime = m_fileName.GetModificationTime();
+			if (modificationTime.IsValid() && modificationTime == m_modificationTime)
+				return false;
+		}
 	}
 
 	wxFileName name = m_fileName;
