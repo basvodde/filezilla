@@ -25,14 +25,17 @@ TiXmlElement* CXmlFile::Load(const wxFileName& name)
 
 	m_fileName = name;
 	
+	TiXmlElement* pElement = GetXmlFile(m_fileName);
+	if (!pElement)
+	{
+		m_modificationTime = wxDateTime();
+		return 0;
+	}
+
 	{
 		wxLogNull log;
 		m_modificationTime = m_fileName.GetModificationTime();
 	}
-
-	TiXmlElement* pElement = GetXmlFile(m_fileName);
-	if (!pElement)
-		return 0;
 
 	m_pDocument = pElement->GetDocument();
 	return pElement;
@@ -40,6 +43,9 @@ TiXmlElement* CXmlFile::Load(const wxFileName& name)
 
 TiXmlElement* CXmlFile::GetElement()
 {
+	if (!m_pDocument)
+		return 0;
+
 	TiXmlElement* pElement = m_pDocument->FirstChildElement("FileZilla3");
 	if (!pElement)
 	{
@@ -56,14 +62,15 @@ bool CXmlFile::Reload(bool forceReload)
 	if (!m_fileName.IsOk())
 		return false;
 
-	if (!forceReload)
+	if (m_modificationTime.IsValid() && !forceReload)
 	{
 		wxLogNull log;
 		if (m_fileName.GetModificationTime() ==	m_modificationTime)
 			return false;
 	}
 
-	return Load(m_fileName) != 0;
+	wxFileName name = m_fileName;
+	return Load(name) != 0;
 }
 
 void CXmlFile::Close()
@@ -261,13 +268,15 @@ bool SaveXmlFile(const wxFileName& file, TiXmlNode* node, wxString* error /*=0*/
 	if (!node)
 		return true;
 
+	const wxString& fullPath = file.GetFullPath();
+
 	TiXmlDocument* pDocument = node->GetDocument();
 
 	bool exists = false;
-	if (wxFileExists(file.GetFullPath()))
+	if (wxFileExists(fullPath))
 	{
 		exists = true;
-		if (!wxCopyFile(file.GetFullPath(), file.GetFullPath() + _T("~")))
+		if (!wxCopyFile(fullPath, fullPath + _T("~")))
 		{
 			const wxString msg = _("Failed to create backup copy of xml file");
 			if (error)
@@ -278,11 +287,11 @@ bool SaveXmlFile(const wxFileName& file, TiXmlNode* node, wxString* error /*=0*/
 		}
 	}
 
-	if (!pDocument->SaveFile(file.GetFullPath().mb_str()))
+	if (!pDocument->SaveFile(fullPath.mb_str()))
 	{
-		wxRemoveFile(file.GetFullPath());
+		wxRemoveFile(fullPath);
 		if (exists)
-			wxRenameFile(file.GetFullPath() + _T("~"), file.GetFullPath());
+			wxRenameFile(fullPath + _T("~"), fullPath);
 		const wxString msg = _("Failed to write xml file");
 		if (error)
 			*error = msg;
@@ -292,7 +301,7 @@ bool SaveXmlFile(const wxFileName& file, TiXmlNode* node, wxString* error /*=0*/
 	}
 
 	if (exists)
-		wxRemoveFile(file.GetFullPath() + _T("~"));
+		wxRemoveFile(fullPath + _T("~"));
 
 	return true;
 }
