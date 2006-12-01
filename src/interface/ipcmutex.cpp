@@ -7,14 +7,15 @@ int CInterProcessMutex::m_fd = -1;
 int CInterProcessMutex::m_instanceCount = 0;
 #endif
 
-CInterProcessMutex::CInterProcessMutex(unsigned int mutexType, bool initialLock /*=true*/)
+std::list<CReentrantInterProcessMutexLocker::t_data> CReentrantInterProcessMutexLocker::m_mutexes;
+
+CInterProcessMutex::CInterProcessMutex(enum t_ipcMutexType mutexType, bool initialLock /*=true*/)
 {
 	m_locked = false;
 #ifdef __WXMSW__
 	// Create mutex_
 	hMutex = ::CreateMutex(0, false, wxString::Format(_T("FileZilla 3 Mutex Type %d"), mutexType));
 #else
-	m_type = mutexType;
 	if (!m_instanceCount)
 	{
 		// Open file only if this is the first instance
@@ -23,6 +24,7 @@ CInterProcessMutex::CInterProcessMutex(unsigned int mutexType, bool initialLock 
 	}
 	m_instanceCount++;
 #endif
+	m_type = mutexType;
 	if (initialLock)
 		Lock();
 }
@@ -127,3 +129,48 @@ void CInterProcessMutex::Unlock()
 #endif
 }
 
+CReentrantInterProcessMutexLocker::CReentrantInterProcessMutexLocker(enum t_ipcMutexType mutexType)
+{
+	m_type = mutexType;
+
+	std::list<t_data>::iterator iter;
+	for (iter = m_mutexes.begin(); iter != m_mutexes.end(); iter++)
+	{
+		if (iter->pMutex->GetType() == mutexType)
+			break;
+	}
+	
+	if (iter != m_mutexes.end())
+	{
+		iter->lockCount++;
+	}
+	else
+	{
+		t_data data;
+		data.lockCount = 1;
+		data.pMutex = new CInterProcessMutex(mutexType);
+		m_mutexes.push_back(data);
+	}
+}
+
+CReentrantInterProcessMutexLocker::~CReentrantInterProcessMutexLocker()
+{
+	std::list<t_data>::iterator iter;
+	for (iter = m_mutexes.begin(); iter != m_mutexes.end(); iter++)
+	{
+		if (iter->pMutex->GetType() == m_type)
+			break;
+	}
+	
+	wxASSERT(iter != m_mutexes.end());
+	if (iter == m_mutexes.end())
+		return;
+
+	if (iter->lockCount == 1)
+	{
+		delete iter->pMutex;
+		m_mutexes.erase(iter);
+	}
+	else
+		iter->lockCount--;
+}
