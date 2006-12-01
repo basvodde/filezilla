@@ -2,11 +2,20 @@
 #include "verifycertdialog.h"
 #include <wx/tokenzr.h>
 #include "dialogex.h"
+#include "ipcmutex.h"
 
-std::list<CVerifyCertDialog::t_certData> CVerifyCertDialog::m_trustedCerts;
+CVerifyCertDialog::~CVerifyCertDialog()
+{
+	for (std::list<t_certData>::iterator iter = m_trustedCerts.begin(); iter != m_trustedCerts.end(); iter++)
+		delete [] iter->data;
+	for (std::list<t_certData>::iterator iter = m_sessionTrustedCerts.begin(); iter != m_sessionTrustedCerts.end(); iter++)
+		delete [] iter->data;
+}
 
 void CVerifyCertDialog::ShowVerificationDialog(CCertificateNotification* pNotification)
 {
+	LoadTrustedCerts();
+
 	wxDialogEx* pDlg = new wxDialogEx;
 	pDlg->Load(0, _T("ID_VERIFYCERT"));
 
@@ -14,15 +23,38 @@ void CVerifyCertDialog::ShowVerificationDialog(CCertificateNotification* pNotifi
 
 	pDlg->SetLabel(XRCID("ID_HOST"), wxString::Format(_T("%s:%d"), pNotification->GetHost().c_str(), pNotification->GetPort()));
 
+	bool warning = false;
 	if (pNotification->GetActivationTime().IsValid())
-		pDlg->SetLabel(XRCID("ID_ACTIVATION_TIME"), pNotification->GetActivationTime().FormatDate());
+	{
+		if (pNotification->GetActivationTime() > wxDateTime::Now())
+		{
+			pDlg->SetLabel(XRCID("ID_ACTIVATION_TIME"), wxString::Format(_("%s - Not yet valid!"), pNotification->GetActivationTime().FormatDate().c_str()));
+			warning = true;
+		}
+		else
+			pDlg->SetLabel(XRCID("ID_ACTIVATION_TIME"), pNotification->GetActivationTime().FormatDate());
+	}
 	else
+	{
+		warning = true;
 		pDlg->SetLabel(XRCID("ID_ACTIVATION_TIME"), _("Invalid date"));
+	}
 
 	if (pNotification->GetExpirationTime().IsValid())
-		pDlg->SetLabel(XRCID("ID_EXPIRATION_TIME"), pNotification->GetExpirationTime().FormatDate());
+	{
+		if (pNotification->GetExpirationTime() < wxDateTime::Now())
+		{
+			pDlg->SetLabel(XRCID("ID_EXPIRATION_TIME"), wxString::Format(_("%s - Certificate expired!"), pNotification->GetExpirationTime().FormatDate().c_str()));
+			warning = true;
+		}
+		else
+			pDlg->SetLabel(XRCID("ID_EXPIRATION_TIME"), pNotification->GetExpirationTime().FormatDate());
+	}
 	else
+	{
+		warning = true;
 		pDlg->SetLabel(XRCID("ID_EXPIRATION_TIME"), _("Invalid date"));
+	}
 
 	if (pNotification->GetSerial() != _T(""))
 		pDlg->SetLabel(XRCID("ID_SERIAL"), pNotification->GetSerial());
@@ -42,6 +74,12 @@ void CVerifyCertDialog::ShowVerificationDialog(CCertificateNotification* pNotifi
 	ParseDN(pDlg, pNotification->GetIssuer(), pSizer);
 	XRCCTRL(*pDlg, "ID_ISSUER_DUMMY", wxStaticText)->Destroy();
 
+	//if (warning)
+	{
+	//	XRCCTRL(*pDlg, "ID_IMAGE", wxStaticBitmap)->SetBitmap(wxArtProvider::GetBitmap(wxART_WARNING));
+	}
+
+
 	pDlg->GetSizer()->Fit(pDlg);
 	pDlg->GetSizer()->SetSizeHints(pDlg);
 
@@ -53,11 +91,16 @@ void CVerifyCertDialog::ShowVerificationDialog(CCertificateNotification* pNotifi
 
 		pNotification->m_trusted = true;
 
-		t_certData cert;
-		const unsigned char* data = pNotification->GetRawData(cert.len);
-		cert.data = new unsigned char[cert.len];
-		memcpy(cert.data, data, cert.len);
-		m_trustedCerts.push_back(cert);
+		if (XRCCTRL(*pDlg, "ID_ALWAYS", wxCheckBox)->GetValue())
+			SetPermanentlyTrusted(pNotification);
+		else
+		{
+			t_certData cert;
+			const unsigned char* data = pNotification->GetRawData(cert.len);
+			cert.data = new unsigned char[cert.len];
+			memcpy(cert.data, data, cert.len);
+			m_sessionTrustedCerts.push_back(cert);
+		}
 	}
 	else
 		pNotification->m_trusted = false;
@@ -101,19 +144,35 @@ void CVerifyCertDialog::ParseDN_by_prefix(wxDialog* pDlg, std::list<wxString>& t
 	
 	wxString value;
 
+	bool append = false;
+
 	std::list<wxString>::iterator iter = tokens.begin();
 	while (iter != tokens.end())
 	{
-		if (iter->Left(len) != prefix)
+		if (!append)
 		{
-			iter++;
-			continue;
+			if (iter->Left(len) != prefix)
+			{
+				iter++;
+				continue;
+			}
+
+			if (value != _T(""))
+				value += _T("\n");
+		}
+		else
+		{
+			append = false;
+			value += _T(",");
 		}
 
-		if (value != _T(""))
-			value += _T("\n");
-
 		value += iter->Mid(len);
+
+		if (iter->Last() == '\\')
+		{
+			value.RemoveLast();
+			append = true;
+		}
 
 		std::list<wxString>::iterator remove = iter++;
 		tokens.erase(remove);
@@ -128,17 +187,214 @@ void CVerifyCertDialog::ParseDN_by_prefix(wxDialog* pDlg, std::list<wxString>& t
 
 bool CVerifyCertDialog::IsTrusted(CCertificateNotification* pNotification)
 {
+	LoadTrustedCerts();
+
+	wxASSERT(pNotification);
+
 	unsigned int len;
 	const unsigned char* data = pNotification->GetRawData(len);
 
+	return IsTrusted(data, len, false);
+}
+
+bool CVerifyCertDialog::IsTrusted(const unsigned char* data, unsigned int len, bool permanentOnly)
+{
 	for (std::list<t_certData>::const_iterator iter = m_trustedCerts.begin(); iter != m_trustedCerts.end(); iter++)
 	{
 		if (iter->len != len)
 			continue;
-		
+
+		if (!memcmp(iter->data, data, len))
+			return true;
+	}
+
+	if (permanentOnly)
+		return false;
+
+	for (std::list<t_certData>::const_iterator iter = m_sessionTrustedCerts.begin(); iter != m_sessionTrustedCerts.end(); iter++)
+	{
+		if (iter->len != len)
+			continue;
+
 		if (!memcmp(iter->data, data, len))
 			return true;
 	}
 
 	return false;
+}
+
+wxString CVerifyCertDialog::ConvertHexToString(const unsigned char* data, unsigned int len)
+{
+	wxString str;
+	for (unsigned int i = 0; i < len; i++)
+	{
+		const unsigned char& c = data[i];
+
+		const unsigned char low = c & 0x0F;
+		const unsigned char high = (c & 0xF0) >> 4;
+
+		if (high < 10)
+			str += '0' + high;
+		else
+			str += 'A' + high - 10;
+
+		if (low < 10)
+			str += '0' + low;
+		else
+			str += 'A' + low - 10;
+	}
+
+	return str;
+}
+
+unsigned char* CVerifyCertDialog::ConvertStringToHex(const wxString& str, unsigned int &len)
+{
+	len = str.Length() / 2;
+	unsigned char* data = new unsigned char[len];
+
+	unsigned int j = 0;
+	for (unsigned int i = 0; i < str.Length(); i++, j++)
+	{
+		wxChar high = str[i++];
+		wxChar low = str[i];
+
+		if (high >= '0' && high <= '9')
+			high -= '0';
+		else if (high >= 'A' && high <= 'F')
+			high -= 'A' - 10;
+		else
+		{
+			delete [] data;
+			return 0;
+		}
+
+		if (low >= '0' && low <= '9')
+			low -= '0';
+		else if (low >= 'A' && low <= 'F')
+			low -= 'A' - 10;
+		else
+		{
+			delete [] data;
+			return 0;
+		}
+
+		data[j] = ((unsigned char)high << 4) + (unsigned char)low;
+	}
+
+	return data;
+}
+
+void CVerifyCertDialog::LoadTrustedCerts(bool close /*=true*/)
+{
+	CReentrantInterProcessMutexLocker mutex(MUTEX_TRUSTEDCERTS);
+	if (!m_xmlFile.Loaded())
+		m_xmlFile.Load(_T("trustedcerts"));
+	else if (!m_xmlFile.Reload(false))
+		return;
+
+	TiXmlElement* pElement = m_xmlFile.GetElement();
+	if (!pElement || !(pElement = pElement->FirstChildElement("TrustedCerts")))
+	{
+		if (close)
+			m_xmlFile.Close();
+		return;
+	}
+
+	m_trustedCerts.clear();
+
+	bool modified = false;
+
+	TiXmlElement* pCert = pElement->FirstChildElement("Certificate");
+	while (pCert)
+	{
+		wxString value = GetTextElement(pCert, "Data");
+
+		TiXmlElement* pRemove = 0;
+		
+		t_certData data;
+		if (value == _T("") || !(data.data = ConvertStringToHex(value, data.len)))
+			pRemove = pCert;
+
+		wxLongLong activationTime = GetTextElementLongLong(pCert, "ActivationTime", 0);
+		if (activationTime == 0 || activationTime > wxDateTime::GetTimeNow())
+			pRemove = pCert;
+
+		wxLongLong expirationTime = GetTextElementLongLong(pCert, "ExpirationTime", 0);
+		if (expirationTime == 0 || expirationTime < wxDateTime::GetTimeNow())
+			pRemove = pCert;
+
+		if (IsTrusted(data.data, data.len, true))
+			pRemove = pCert;
+
+		if (!pRemove)
+			m_trustedCerts.push_back(data);
+		else
+			delete [] data.data;
+		
+		pCert = pCert->NextSiblingElement("Certificate");
+
+		if (pRemove)
+		{
+			modified = true;
+			pElement->RemoveChild(pRemove);
+		}
+	}
+
+	if (modified)
+		m_xmlFile.Save();
+
+	if (close)
+		m_xmlFile.Close();
+}
+
+void CVerifyCertDialog::SetPermanentlyTrusted(const CCertificateNotification* const pNotification)
+{
+	unsigned int len;
+	const unsigned char* const data = pNotification->GetRawData(len);
+
+	CReentrantInterProcessMutexLocker mutex(MUTEX_TRUSTEDCERTS);
+	LoadTrustedCerts(false);
+
+	if (IsTrusted(data, len, true))
+	{
+		m_xmlFile.Close();
+		return;
+	}
+
+	t_certData cert;
+	cert.len = len;
+	cert.data = new unsigned char[len];
+	memcpy(cert.data, data, len);
+	m_trustedCerts.push_back(cert);
+
+	TiXmlElement* pElement = m_xmlFile.GetElement();
+	if (!pElement)
+	{
+		m_xmlFile.Reload(true);
+		pElement = m_xmlFile.GetElement();
+	}
+
+	if (!pElement)
+	{
+		m_xmlFile.Close();
+		return;
+	}
+
+	TiXmlElement* pCerts = pElement->FirstChildElement("TrustedCerts");
+	if (!pCerts)
+		pCerts = pElement->InsertEndChild(TiXmlElement("TrustedCerts"))->ToElement();
+
+	TiXmlElement* pCert = pCerts->InsertEndChild(TiXmlElement("Certificate"))->ToElement();
+
+	AddTextElement(pCert, "Data", ConvertHexToString(data, len));
+
+
+	wxLongLong time = pNotification->GetActivationTime().GetTicks();
+	AddTextElement(pCert, "ActivationTime", time.ToString());
+
+	time = pNotification->GetExpirationTime().GetTicks();
+	AddTextElement(pCert, "ExpirationTime", time.ToString());
+
+	m_xmlFile.Save();
+	m_xmlFile.Close();
 }

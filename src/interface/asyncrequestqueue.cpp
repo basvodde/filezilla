@@ -18,10 +18,12 @@ CAsyncRequestQueue::CAsyncRequestQueue(CMainFrame *pMainFrame)
 {
 	m_pMainFrame = pMainFrame;
 	m_pQueueView = 0;
+	m_pVerifyCertDlg = new CVerifyCertDialog;
 }
 
 CAsyncRequestQueue::~CAsyncRequestQueue()
 {
+	delete m_pVerifyCertDlg;
 }
 
 bool CAsyncRequestQueue::ProcessDefaults(CFileZillaEngine *pEngine, CAsyncRequestNotification *pNotification)
@@ -63,8 +65,7 @@ bool CAsyncRequestQueue::ProcessDefaults(CFileZillaEngine *pEngine, CAsyncReques
 		{
 			CCertificateNotification* pCertNotification = reinterpret_cast<CCertificateNotification *>(pNotification);
 
-			CVerifyCertDialog dlg;
-			if (!dlg.IsTrusted(pCertNotification))
+			if (!m_pVerifyCertDlg->IsTrusted(pCertNotification))
 				break;
 
 			pCertNotification->m_trusted = true;
@@ -295,8 +296,7 @@ void CAsyncRequestQueue::ProcessNextRequest()
 	{
 		CCertificateNotification* pNotification = reinterpret_cast<CCertificateNotification *>(entry.pNotification);
 
-		CVerifyCertDialog dlg;
-		dlg.ShowVerificationDialog(pNotification);
+		m_pVerifyCertDlg->ShowVerificationDialog(pNotification);
 
 		entry.pEngine->SetAsyncRequestReply(entry.pNotification);
 		delete entry.pNotification;

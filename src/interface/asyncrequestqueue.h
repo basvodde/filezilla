@@ -4,6 +4,7 @@
 
 class CMainFrame;
 class CQueueView;
+class CVerifyCertDialog;
 class CAsyncRequestQueue : public wxEvtHandler
 {
 public:
@@ -19,6 +20,7 @@ public:
 protected:
 	CMainFrame *m_pMainFrame;
 	CQueueView *m_pQueueView;
+	CVerifyCertDialog *m_pVerifyCertDlg;
 
 	void ProcessNextRequest();
 	bool ProcessDefaults(CFileZillaEngine *pEngine, CAsyncRequestNotification *pNotification);
