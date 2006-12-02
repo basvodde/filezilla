@@ -147,7 +147,13 @@ void CTransferSocket::OnConnect(wxSocketEvent &event)
 		m_pSocket->SetEventHandler(*this);
 		m_pSocket->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_OUTPUT_FLAG | wxSOCKET_LOST_FLAG);
 		m_pSocket->Notify(true);
+	}
 
+	if (!m_pSocket)
+		return;
+	
+	if (!m_pBackend)
+	{
 		if (m_pControlSocket->m_protectDataChannel)
 		{
 			if (!InitTls(m_pControlSocket->m_pTlsSocket))
@@ -160,11 +166,8 @@ void CTransferSocket::OnConnect(wxSocketEvent &event)
 			m_pBackend = new CSocketBackend(m_pSocket);
 	}
 
-	if (m_pSocket)
-	{
-		int value = 65536 * 2;
-		m_pSocket->SetOption(SOL_SOCKET, SO_SNDBUF, &value, sizeof(value));
-	}
+	int value = 65536 * 2;
+	m_pSocket->SetOption(SOL_SOCKET, SO_SNDBUF, &value, sizeof(value));
 }
 
 void CTransferSocket::OnReceive()
@@ -397,13 +400,17 @@ bool CTransferSocket::SetupPassiveTransfer(wxString host, int port)
 	}
 
 	m_pSocket = m_pSocketClient;
-	if (m_pControlSocket->m_protectDataChannel)
+
+	if (res)
 	{
-		if (!InitTls(m_pControlSocket->m_pTlsSocket))
-			return false;
+		if (m_pControlSocket->m_protectDataChannel)
+		{
+			if (!InitTls(m_pControlSocket->m_pTlsSocket))
+				return false;
+		}
+		else
+			m_pBackend = new CSocketBackend(m_pSocket);
 	}
-	else
-		m_pBackend = new CSocketBackend(m_pSocket);
 
 	return true;
 }
