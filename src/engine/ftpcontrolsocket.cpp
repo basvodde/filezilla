@@ -11,13 +11,14 @@
 
 #define LOGON_WELCOME	0
 #define LOGON_LOGON		1
-#define LOGON_AUTH		2
-#define LOGON_SYST		3
-#define LOGON_FEAT		4
-#define LOGON_CLNT		5
-#define LOGON_OPTSUTF8	6
-#define LOGON_PBSZ		7
-#define LOGON_PROT		8
+#define LOGON_AUTH_TLS	2
+#define LOGON_AUTH_SSL	3
+#define LOGON_SYST		4
+#define LOGON_FEAT		5
+#define LOGON_CLNT		6
+#define LOGON_OPTSUTF8	7
+#define LOGON_PBSZ		8
+#define LOGON_PROT		9
 
 BEGIN_EVENT_TABLE(CFtpControlSocket, CControlSocket)
 EVT_FZ_EXTERNALIPRESOLVE(wxID_ANY, CFtpControlSocket::OnExternalIPAddress)
@@ -422,39 +423,54 @@ int CFtpControlSocket::LogonParseResponse()
 		}
 
 		if (m_pCurrentServer->GetProtocol() == FTPES)
-			pData->opState = LOGON_AUTH;
+			pData->opState = LOGON_AUTH_TLS;
 		else
 		{
 			pData->opState = LOGON_LOGON;
 			pData->nCommand = logonseq[pData->logonType][0];
 		}
 	}
-	else if (pData->opState == LOGON_AUTH)
+	else if (pData->opState == LOGON_AUTH_TLS ||
+			 pData->opState == LOGON_AUTH_SSL)
 	{
-		LogMessage(Status, _("Initializing TLS..."));
-
-		wxASSERT(!m_pTlsSocket);
-		m_pTlsSocket = new CTlsSocket(this);
-
-		if (!m_pTlsSocket->Init())
+		if (code != 2 && code != 3)
 		{
-			LogMessage(::Error, _("Failed to initialize TLS."));
-			DoClose(FZ_REPLY_INTERNALERROR);
-			return FZ_REPLY_ERROR;
+			if (pData->opState == LOGON_AUTH_TLS)
+				pData->opState = LOGON_AUTH_SSL;
+			else
+			{
+				DoClose(code == 5 ? FZ_REPLY_CRITICALERROR : 0);
+				return FZ_REPLY_DISCONNECTED;
+				return false;
+			}
 		}
-
-		m_pTlsSocket->SetSocket(this, this);
-		int res = m_pTlsSocket->Handshake();
-		if (res == FZ_REPLY_ERROR)
-			DoClose();
 		else
 		{
-			delete m_pBackend;
-			m_pBackend = m_pTlsSocket;
-		}
+			LogMessage(Status, _("Initializing TLS..."));
 
-		pData->opState = LOGON_LOGON;
-		pData->nCommand = logonseq[pData->logonType][0];
+			wxASSERT(!m_pTlsSocket);
+			m_pTlsSocket = new CTlsSocket(this);
+
+			if (!m_pTlsSocket->Init())
+			{
+				LogMessage(::Error, _("Failed to initialize TLS."));
+				DoClose(FZ_REPLY_INTERNALERROR);
+				return FZ_REPLY_ERROR;
+			}
+
+			m_pTlsSocket->SetSocket(this, this);
+			int res = m_pTlsSocket->Handshake();
+			if (res == FZ_REPLY_ERROR)
+				DoClose();
+			else
+			{
+				delete m_pBackend;
+				m_pBackend = m_pTlsSocket;
+			}
+
+			pData->opState = LOGON_LOGON;
+			pData->nCommand = logonseq[pData->logonType][0];
+		}
 	}
 	else if (pData->opState == LOGON_LOGON)
 	{
@@ -671,8 +687,11 @@ int CFtpControlSocket::LogonSend()
 	bool res;
 	switch (pData->opState)
 	{
-	case LOGON_AUTH:
+	case LOGON_AUTH_TLS:
 		res = Send(_T("AUTH TLS"));
+		break;
+	case LOGON_AUTH_SSL:
+		res = Send(_T("AUTH SSL"));
 		break;
 	case LOGON_SYST:
 		res = Send(_T("SYST"));
