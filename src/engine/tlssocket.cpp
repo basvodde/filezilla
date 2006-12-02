@@ -203,7 +203,8 @@ ssize_t CTlsSocket::PushFunction(const void* data, size_t len)
 
 	if (m_pSocket->Error())
 	{
-		if (m_pSocket->LastError() == wxSOCKET_WOULDBLOCK)
+		const wxSocketError error = m_pSocket->LastError();
+		if (error == wxSOCKET_WOULDBLOCK)
 		{
 			m_canWriteToSocket = false;
 			gnutls_transport_set_errno(m_session, EAGAIN);
@@ -785,18 +786,22 @@ int CTlsSocket::VerifyCertificate()
 	wxString subject, issuer;
 
 	size = 0;
-	gnutls_x509_crt_get_dn(cert, 0, &size);
+	res = gnutls_x509_crt_get_dn(cert, 0, &size);
 	if (size)
 	{
 		char* dn = new char[size + 1];
 		dn[size] = 0;
-		if (!gnutls_x509_crt_get_dn(cert, dn, &size))
+		if (!(res = gnutls_x509_crt_get_dn(cert, dn, &size)))
 		{
 			dn[size] = 0;
 			subject = wxString(dn, wxConvUTF8);
 		}
+		else
+			LogError(res);
 		delete [] dn;
 	}
+	else
+		LogError(res);
 	if (subject == _T(""))
 	{
 		m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_x509_get_dn failed"));
@@ -806,18 +811,22 @@ int CTlsSocket::VerifyCertificate()
 	}
 
 	size = 0;
-	gnutls_x509_crt_get_issuer_dn(cert, 0, &size);
+	res = gnutls_x509_crt_get_issuer_dn(cert, 0, &size);
 	if (size)
 	{
 		char* dn = new char[size + 1];
 		dn[size] = 0;
-		if (!gnutls_x509_crt_get_issuer_dn(cert, dn, &size))
+		if (!(res = gnutls_x509_crt_get_issuer_dn(cert, dn, &size)))
 		{
 			dn[size] = 0;
 			issuer = wxString(dn, wxConvUTF8);
 		}
+		else
+			LogError(res);
 		delete [] dn;
 	}
+	else
+		LogError(res);
 	if (issuer == _T(""))
 	{
 		m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_x509_get_issuer_dn failed"));
