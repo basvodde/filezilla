@@ -21,6 +21,7 @@ enum engineOptions
 							    */
 	OPTION_EXTERNALIP,
 	OPTION_EXTERNALIPRESOLVER,
+	OPTION_LASTRESOLVEDIP,
 	OPTION_NOEXTERNALONLOCAL,	// Don't use external IP address if connection is
 								// coming from a local unroutable address
 	OPTION_PASVREPLYFALLBACKMODE,

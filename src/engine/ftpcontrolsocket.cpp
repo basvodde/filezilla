@@ -2813,6 +2813,16 @@ int CFtpControlSocket::GetExternalIPAddress(wxString& address)
 	{
 		if (!m_pIPResolver)
 		{
+			const wxString& localAddress = GetLocalIP();
+
+			if (localAddress != _T("") && localAddress == m_pEngine->GetOptions()->GetOption(OPTION_LASTRESOLVEDIP))
+			{
+				LogMessage(::Debug_Verbose, _T("Using cached external IP address"));
+
+				address = localAddress;
+				return FZ_REPLY_OK;
+			}
+
 			wxString resolverAddress = m_pEngine->GetOptions()->GetOption(OPTION_EXTERNALIPRESOLVER);
 
 			LogMessage(::Debug_Info, _("Retrieving external IP address from %s"), resolverAddress.c_str());
@@ -2836,6 +2846,8 @@ int CFtpControlSocket::GetExternalIPAddress(wxString& address)
 		{
 			LogMessage(::Debug_Info, _T("Got external IP address"));
 			address = m_pIPResolver->GetIP();
+
+			m_pEngine->GetOptions()->SetOption(OPTION_LASTRESOLVEDIP, address);
 
 			delete m_pIPResolver;
 			m_pIPResolver = 0;
