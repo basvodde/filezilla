@@ -464,6 +464,8 @@ void CTransferSocket::TransferEnd(int reason)
         delete m_pTlsSocket;
 		m_pTlsSocket = 0;
 	}
+	delete m_pBackend;
+	m_pBackend = 0;
 
 	m_pEngine->SendEvent(engineTransferEnd, reason);
 }
