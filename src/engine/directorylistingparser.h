@@ -47,7 +47,10 @@ public:
 
 protected:
 	CLine *GetLine(bool breakAtEnd = false);
-	bool ParseLine(CLine *pLine, const enum ServerType serverType);
+
+	void ParseData(bool partial);
+
+	bool ParseLine(CLine *pLine, const enum ServerType serverType, bool concatenated);
 
 	bool ParseAsUnix(CLine *pLine, CDirentry &entry);
 	bool ParseAsDos(CLine *pLine, CDirentry &entry);
@@ -85,7 +88,6 @@ protected:
 	std::list<t_list> m_DataList;
 	std::list<CDirentry> m_entryList;
 
-	CLine *m_curLine;
 	CLine *m_prevLine;
 
 	const CServer& m_server;

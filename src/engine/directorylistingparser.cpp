@@ -483,7 +483,6 @@ CDirectoryListingParser::CDirectoryListingParser(CControlSocket* pControlSocket,
 	: m_pControlSocket(pControlSocket), m_server(server)
 {
 	m_currentOffset = 0;
-	m_curLine = 0;
 	m_prevLine = 0;
 
 	if (!m_MonthNamesMapInitialized)
@@ -692,51 +691,48 @@ CDirectoryListingParser::~CDirectoryListingParser()
 	for (std::list<t_list>::iterator iter = m_DataList.begin(); iter != m_DataList.end(); iter++)
 		delete [] iter->p;
 
-	delete m_curLine;
 	delete m_prevLine;
 }
 
-CDirectoryListing* CDirectoryListingParser::Parse(const CServerPath &path)
+void CDirectoryListingParser::ParseData(bool partial)
 {
-	CLine *pLine = GetLine();
-	m_curLine = pLine;
+	CLine *pLine = GetLine(partial);
 	while (pLine)
 	{
-		bool res = ParseLine(pLine, m_server.GetType());
+		bool res = ParseLine(pLine, m_server.GetType(), false);
 		if (!res)
 		{
 			if (m_prevLine)
 			{
-				if (m_curLine != pLine)
+				CLine* pConcatenatedLine = m_prevLine->Concat(pLine);
+				bool res = ParseLine(pConcatenatedLine, m_server.GetType(), true);
+				delete pConcatenatedLine;
+				delete m_prevLine;
+
+				if (res)
 				{
-					delete m_prevLine;
-					m_prevLine = m_curLine;
 					delete pLine;
-					
-					pLine = GetLine();
-					m_curLine = pLine;
+					m_prevLine = 0;
 				}
 				else
-					pLine = m_prevLine->Concat(m_curLine);
+					m_prevLine = pLine;
 			}
 			else
-			{
 				m_prevLine = pLine;
-
-				pLine = GetLine();
-				m_curLine = pLine;
-			}
 		}
 		else
 		{
 			delete m_prevLine;
 			m_prevLine = 0;
-			delete m_curLine;
-
-			pLine = GetLine();
-			m_curLine = pLine;
+			delete pLine;
 		}
+		pLine = GetLine(partial);
 	};
+}
+
+CDirectoryListing* CDirectoryListingParser::Parse(const CServerPath &path)
+{
+	ParseData(false);
 
 	CDirectoryListing *pListing = new CDirectoryListing;
 	pListing->path = path;
@@ -749,7 +745,7 @@ CDirectoryListing* CDirectoryListingParser::Parse(const CServerPath &path)
 	return pListing;
 }
 
-bool CDirectoryListingParser::ParseLine(CLine *pLine, const enum ServerType serverType)
+bool CDirectoryListingParser::ParseLine(CLine *pLine, const enum ServerType serverType, bool concatenated)
 {
 	CDirentry entry;
 	bool res = ParseAsUnix(pLine, entry);
@@ -1834,45 +1830,7 @@ void CDirectoryListingParser::AddData(char *pData, int len)
 
 	m_DataList.push_back(item);
 
-	CLine *pLine = GetLine(true);
-	m_curLine = pLine;
-	while (pLine)
-	{
-		bool res = ParseLine(pLine, m_server.GetType());
-		if (!res)
-		{
-			if (m_prevLine)
-			{
-				if (m_curLine != pLine)
-				{
-					delete m_prevLine;
-					m_prevLine = m_curLine;
-					delete pLine;
-					
-					pLine = GetLine(true);
-					m_curLine = pLine;
-				}
-				else
-					pLine = m_prevLine->Concat(m_curLine);
-			}
-			else
-			{
-				m_prevLine = pLine;
-
-				pLine = GetLine(true);
-				m_curLine = pLine;
-			}
-		}
-		else
-		{
-			delete m_prevLine;
-			m_prevLine = 0;
-			delete m_curLine;
-
-			pLine = GetLine(true);
-			m_curLine = pLine;
-		}
-	}
+	ParseData(true);
 }
 
 CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
