@@ -63,7 +63,9 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "File exists action download", number, _T("0") },
 	{ "File exists action upload", number, _T("0") },
 	{ "Allow ascii resume", number, _T("0") },
-	{ "Greeting version", string, _T("") }
+	{ "Greeting version", string, _T("") },
+	{ "Reconnect count", number, _T("5") },
+	{ "Reconnect delay", number, _T("5") }
 };
 
 COptions::COptions()
@@ -339,6 +341,15 @@ int COptions::Validate(unsigned int nID, int value)
 	case OPTION_LOGGING_DEBUGLEVEL:
 		if (value < 0 || value > 4)
 			value = 0;
+		break;
+	case OPTION_RECONNECTCOUNT:
+		if (value < 0 || value > 99)
+			value = 5;
+		break;
+	case OPTION_RECONNECTDELAY:
+		if (value < 0 || value > 999)
+			value = 5;
+		break;
 	}
 	return value;
 }
