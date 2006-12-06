@@ -76,8 +76,7 @@ protected:
 	CControlSocket* m_pControlSocket;
 
 	static std::map<wxString, int> m_MonthNamesMap;
-	static bool m_MonthNamesMapInitialized;
-
+	
 	struct t_list
 	{
 		char *p;

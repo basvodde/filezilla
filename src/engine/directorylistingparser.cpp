@@ -7,7 +7,6 @@
 #endif
 
 std::map<wxString, int> CDirectoryListingParser::m_MonthNamesMap;
-bool CDirectoryListingParser::m_MonthNamesMapInitialized = false;
 
 //#define LISTDEBUG
 #ifdef LISTDEBUG
@@ -486,7 +485,7 @@ CDirectoryListingParser::CDirectoryListingParser(CControlSocket* pControlSocket,
 	m_prevLine = 0;
 	m_fileListOnly = true;
 
-	if (!m_MonthNamesMapInitialized)
+	if (m_MonthNamesMap.empty())
 	{
 		//Fill the month names map
 
@@ -671,8 +670,6 @@ CDirectoryListingParser::CDirectoryListingParser(CControlSocket* pControlSocket,
 		m_MonthNamesMap[_T("10")] = 10;
 		m_MonthNamesMap[_T("11")] = 11;
 		m_MonthNamesMap[_T("12")] = 12;
-
-		m_MonthNamesMapInitialized = true;
 	}
 
 #ifdef LISTDEBUG
