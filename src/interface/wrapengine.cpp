@@ -434,7 +434,7 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, double ratio, const char* name /*
 {
 	std::vector<wxWindow*> windows;
 	windows.push_back(wnd);
-	return WrapRecursive(windows, ratio, name, canvas);
+	return WrapRecursive(windows, ratio, name, canvas, minRequestedSize);
 }
 
 bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, const char* name /*=""*/, wxSize canvas /*=wxSize()*/, wxSize minRequestedSize /*wxSize()*/)
