@@ -903,7 +903,7 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 
 	if (oldTheme != newTheme)
 	{
-		wxArtProvider::RemoveProvider(m_pThemeProvider);
+		wxArtProvider::Delete(m_pThemeProvider);
 		m_pThemeProvider = new CThemeProvider();
 	}
 	if (oldTheme != newTheme || oldLang != newLang)

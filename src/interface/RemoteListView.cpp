@@ -153,7 +153,7 @@ wxString CRemoteListView::OnGetItemText(long item, long column) const
 
 	if (!column)
 	{
-		if (index == m_pDirectoryListing->GetCount())
+		if ((unsigned int)index == m_pDirectoryListing->GetCount())
 			return _T("..");
 		else
 			return (*m_pDirectoryListing)[index].name;

@@ -39,22 +39,6 @@ protected:
 		return wxComboBox::MSWDefWindowProc(nMsg, wParam, lParam);
 	}
 #endif //__WXMSW__
-
-#if !(wxMAJOR_VERSION > 2 || wxMINOR_VERSION > 6)
-public:
-	// wxWidgets < 2.7.0 has no case sensitive search, so we have to do it manually
-	int FindString(const wxString& string, bool caseSensitive = false)
-	{
-		for (unsigned int i = 0; i < GetCount(); i++)
-		{
-			if (GetString(i) == string)
-				return i;
-		}
-
-		return wxNOT_FOUND;
-	}
-#endif
-
 };
 
 BEGIN_EVENT_TABLE(CViewHeader, wxWindow)

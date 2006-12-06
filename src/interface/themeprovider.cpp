@@ -6,7 +6,7 @@
 
 CThemeProvider::CThemeProvider()
 {
-	wxArtProvider::PushProvider(this);
+	wxArtProvider::Push(this);
 }
 
 wxBitmap CThemeProvider::CreateBitmap(const wxArtID& id, const wxArtClient& client, const wxSize& size)

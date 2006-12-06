@@ -9,15 +9,6 @@
 #include <wx/stdpaths.h>
 #include "Mainfrm.h"
 
-#if !(wxMAJOR_VERSION > 2 || wxMINOR_VERSION > 6) && defined(__WXMSW__)
-	#include <shlobj.h>
-
-	// Needed for MinGW:
-	#ifndef SHGFP_TYPE_CURRENT
-		#define SHGFP_TYPE_CURRENT 0
-	#endif
-#endif
-
 #define MAXCHECKPROGRESS 9 // Maximum value of progress bar
 
 BEGIN_EVENT_TABLE(CUpdateWizard, wxWizard)
@@ -192,25 +183,9 @@ void CUpdateWizard::OnPageChanging(wxWizardEvent& event)
 		if (pos != -1)
 			filename = filename.Mid(pos + 1);
 
-#if (wxMAJOR_VERSION > 2 || wxMINOR_VERSION > 6)
 		const wxString defaultDir = wxStandardPaths::Get().GetDocumentsDir();
-#else
-		wxString defaultDir;
-#ifdef __WXMSW__
-		wxChar buffer[MAX_PATH * 2 + 1];
 
-		if (SUCCEEDED(SHGetFolderPath(0, CSIDL_PERSONAL, 0, SHGFP_TYPE_CURRENT, buffer)))
-			defaultDir = buffer;
-		else
-#endif //__WXMSW__
-			defaultDir = wxGetHomeDir();
-#endif
-
-#if (wxMAJOR_VERSION > 2 || wxMINOR_VERSION > 6)
 		const int flags = wxFD_SAVE | wxFD_OVERWRITE_PROMPT;
-#else
-		const int flags = wxSAVE | wxOVERWRITE_PROMPT;
-#endif
 
 		const wxString& ext = filename.Right(4);
 		wxString type;
