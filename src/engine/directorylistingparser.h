@@ -91,6 +91,9 @@ protected:
 	CLine *m_prevLine;
 
 	const CServer& m_server;
+
+	bool m_fileListOnly;
+	std::list<wxString> m_fileList;
 };
 
 #endif

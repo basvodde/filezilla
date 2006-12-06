@@ -484,6 +484,7 @@ CDirectoryListingParser::CDirectoryListingParser(CControlSocket* pControlSocket,
 {
 	m_currentOffset = 0;
 	m_prevLine = 0;
+	m_fileListOnly = true;
 
 	if (!m_MonthNamesMapInitialized)
 	{
@@ -736,11 +737,32 @@ CDirectoryListing* CDirectoryListingParser::Parse(const CServerPath &path)
 
 	CDirectoryListing *pListing = new CDirectoryListing;
 	pListing->path = path;
-	pListing->SetCount(m_entryList.size());
-	
-	pListing->Assign(m_entryList);
-
 	pListing->m_firstListTime = CTimeEx::Now();
+	
+	if (!m_fileList.empty())
+	{
+		wxASSERT(m_entryList.empty());
+		
+		pListing->SetCount(m_fileList.size());
+		unsigned int i = 0;
+		for (std::list<wxString>::const_iterator iter = m_fileList.begin(); iter != m_fileList.end(); iter++, i++)
+		{
+			CDirentry entry;
+			entry.name = *iter;
+			entry.dir = false;
+			entry.hasDate = false;
+			entry.hasTime = false;
+			entry.link = false;
+			entry.size = -1;
+			entry.unsure = false;
+			(*pListing)[i] = entry;
+		}
+	}
+	else
+	{
+		pListing->SetCount(m_entryList.size());
+		pListing->Assign(m_entryList);
+	}
 
 	return pListing;
 }
@@ -790,8 +812,29 @@ bool CDirectoryListingParser::ParseLine(CLine *pLine, const enum ServerType serv
 			goto done;
 	}
 
+	// Some servers just send a list of filenames. If a line could not be parsed,
+	// check if it's a filename. If that's the case, store it for later, else clear
+	// list of stored files.
+	// If parsing finishes and no entries could be parsed and none of the lines 
+	// contained a space, assume it's a raw filelisting.
+
+	if (m_fileListOnly && !concatenated)
+	{
+		CToken token;
+		if (!pLine->GetToken(0, token, true) || token.Find(' ') != -1)
+		{
+			m_fileList.clear();
+			m_fileListOnly = false;
+		}
+		else
+			m_fileList.push_back(token.GetString());
+	}
+
 	return false;
 done:
+
+	m_fileList.clear();
+	m_fileListOnly = false;
 
 	// Don't add . or ..
 	if (entry.name == _T(".") || entry.name == _T(".."))
