@@ -6,6 +6,7 @@
 #include "Options.h"
 #include "QueueView.h"
 #include "verifycertdialog.h"
+#include "loginmanager.h"
 
 DECLARE_EVENT_TYPE(fzEVT_PROCESSASYNCREQUESTQUEUE, -1)
 DEFINE_EVENT_TYPE(fzEVT_PROCESSASYNCREQUESTQUEUE)
@@ -257,7 +258,7 @@ void CAsyncRequestQueue::ProcessNextRequest()
 	{
 		CInteractiveLoginNotification* pNotification = reinterpret_cast<CInteractiveLoginNotification*>(entry.pNotification);
 
-		if (m_pMainFrame->GetPassword(pNotification->server, _T(""), pNotification->challenge))
+		if (CLoginManager::Get().GetPassword(pNotification->server, _T(""), pNotification->challenge))
 			pNotification->passwordSet = true;
 
 		entry.pEngine->SetAsyncRequestReply(pNotification);

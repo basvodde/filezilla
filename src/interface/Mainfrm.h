@@ -23,9 +23,6 @@ public:
 	CMainFrame();
 	virtual ~CMainFrame();
 
-	bool GetPassword(CServer& server, wxString name = _T(""), wxString challenge = _T(""));
-	void CachedPasswordFailed(const CServer& server);
-
 	void UpdateSendLed();
 	void UpdateRecvLed();
 
@@ -120,16 +117,6 @@ protected:
 	int m_lastLocalTreeSplitterPos;
 	int m_lastRemoteTreeSplitterPos;
 	int m_lastQueueSplitterPos;
-
-	// Session password cache for Ask-type servers
-	struct t_passwordcache
-	{
-		wxString host;
-		unsigned int port;
-		wxString user;
-		wxString password;
-	};
-	std::list<t_passwordcache> m_passwordCache;
 
 #ifdef __WXMSW__
 	bool m_windowIsMaximized;

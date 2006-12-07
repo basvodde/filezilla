@@ -3,6 +3,7 @@
 #include "Mainfrm.h"
 #include "state.h"
 #include "RemoteListView.h"
+#include "loginmanager.h"
 
 CCommandQueue::CCommandQueue(CFileZillaEngine *pEngine, CMainFrame* pMainFrame)
 {
@@ -109,7 +110,7 @@ void CCommandQueue::Finish(COperationNotification *pNotification)
 	if (pNotification->nReplyCode & FZ_REPLY_DISCONNECTED)
 	{
 		if (pNotification->nReplyCode & FZ_REPLY_PASSWORDFAILED)
-			m_pMainFrame->CachedPasswordFailed(*m_pMainFrame->GetState()->GetServer());
+			CLoginManager::Get().CachedPasswordFailed(*m_pMainFrame->GetState()->GetServer());
 		m_pMainFrame->GetState()->SetServer(0);
 	}
 
