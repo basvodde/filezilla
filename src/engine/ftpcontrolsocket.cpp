@@ -976,6 +976,7 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 		if (prevResult == FZ_REPLY_OK)
 		{
 			CDirectoryListing *pListing = pData->m_pDirectoryListingParser->Parse(m_CurrentPath);
+			SetAlive();
 
 			CDirectoryCache cache;
 			cache.Store(*pListing, *m_pCurrentServer, pData->path, pData->subDir);
@@ -1863,6 +1864,9 @@ void CFtpControlSocket::TransferEnd(int reason)
 		ResetOperation(FZ_REPLY_ERROR);
 		return;
 	}
+
+	if (!reason)
+		SetAlive();
 
 	pData->pOldData->transferEndReason = reason;
 
