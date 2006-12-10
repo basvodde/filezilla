@@ -1250,7 +1250,7 @@ void CLocalListView::ReselectItems(const std::list<wxString>& selectedNames, wxS
 	{
 		if (focused == _T(""))
 			return;
-		for (unsigned int i = 1; i < m_indexMapping.size(); i++)
+		for (unsigned int i = 0; i < m_indexMapping.size(); i++)
 		{
 			const t_fileData &data = m_fileData[m_indexMapping[i]];
 			if (data.name == focused)
