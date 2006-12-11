@@ -347,7 +347,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	}
 	else if (event.GetId() == XRCID("ID_MENU_SERVER_CMD"))
 	{
-		if (!m_pState->m_pEngine || !m_pState->m_pEngine->IsConnected() || m_pState->m_pEngine->IsBusy() || !m_pState->m_pCommandQueue->Idle())
+		if (!m_pState->m_pEngine || !m_pState->m_pEngine->IsConnected() || !m_pState->m_pCommandQueue->Idle())
 			return;
 
 		wxTextEntryDialog dlg(this, _("Please enter raw FTP command.\nUsing raw ftp commands will clear the directory cache."), _("Enter custom command"));
@@ -490,7 +490,7 @@ bool CMainFrame::CreateToolBar()
 
 void CMainFrame::OnUpdateToolbarDisconnect(wxUpdateUIEvent& event)
 {
-	event.Enable(m_pState->m_pEngine && m_pState->m_pEngine->IsConnected() && !m_pState->m_pEngine->IsBusy());
+	event.Enable(m_pState->m_pEngine && m_pState->m_pEngine->IsConnected() && m_pState->m_pCommandQueue->Idle());
 }
 
 void CMainFrame::OnDisconnect(wxCommandEvent& event)
@@ -498,7 +498,7 @@ void CMainFrame::OnDisconnect(wxCommandEvent& event)
 	if (!m_pState->m_pEngine)
 		return;
 
-	if (m_pState->m_pEngine->IsBusy())
+	if (!m_pState->m_pCommandQueue->Idle())
 		return;
 
 	m_pState->m_pCommandQueue->ProcessCommand(new CDisconnectCommand());
@@ -506,12 +506,12 @@ void CMainFrame::OnDisconnect(wxCommandEvent& event)
 
 void CMainFrame::OnUpdateToolbarCancel(wxUpdateUIEvent& event)
 {
-	event.Enable(m_pState->m_pEngine && m_pState->m_pEngine->IsBusy());
+	event.Enable(!m_pState->m_pCommandQueue->Idle());
 }
 
 void CMainFrame::OnCancel(wxCommandEvent& event)
 {
-	if (!m_pState->m_pEngine || !m_pState->m_pEngine->IsBusy())
+	if (m_pState->m_pCommandQueue->Idle())
 		return;
 
 	if (wxMessageBox(_("Really cancel current operation?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) == wxYES)
@@ -592,7 +592,7 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 
 void CMainFrame::OnUpdateToolbarReconnect(wxUpdateUIEvent &event)
 {
-	if (!m_pState->m_pEngine || m_pState->m_pEngine->IsConnected() || m_pState->m_pEngine->IsBusy())
+	if (!m_pState->m_pEngine || m_pState->m_pEngine->IsConnected() || !m_pState->m_pCommandQueue->Idle())
 	{
 		event.Enable(false);
 		return;
@@ -604,7 +604,7 @@ void CMainFrame::OnUpdateToolbarReconnect(wxUpdateUIEvent &event)
 
 void CMainFrame::OnReconnect(wxCommandEvent &event)
 {
-	if (!m_pState->m_pEngine || m_pState->m_pEngine->IsConnected() || m_pState->m_pEngine->IsBusy())
+	if (!m_pState->m_pEngine || m_pState->m_pEngine->IsConnected() || !m_pState->m_pCommandQueue->Idle())
 		return;
 	
 	CServer server;
@@ -624,7 +624,7 @@ void CMainFrame::OnReconnect(wxCommandEvent &event)
 
 void CMainFrame::OnRefresh(wxCommandEvent &event)
 {
-	if (m_pState->m_pEngine && m_pState->m_pEngine->IsConnected() && !m_pState->m_pEngine->IsBusy())
+	if (m_pState->m_pEngine && m_pState->m_pEngine->IsConnected() && m_pState->m_pCommandQueue->Idle())
 		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_pState->GetRemotePath(), _T(""), true));
 
 	if (m_pState)
