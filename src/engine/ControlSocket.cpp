@@ -256,65 +256,55 @@ int CControlSocket::ResetOperation(int nErrorCode)
 		m_pCurOpData = pNext;
 		return SendNextCommand(nErrorCode);
 	}
-	
+
+	if ((nErrorCode & FZ_REPLY_CRITICALERROR) == FZ_REPLY_CRITICALERROR)
+		LogMessage(::Error, _("Critical error"));
+
 	if (m_pCurOpData)
 	{
-		if (m_pCurOpData->opId == cmd_transfer)
-		{
-			CFileTransferOpData *pData = static_cast<CFileTransferOpData *>(m_pCurOpData);
-			if (!pData->download && pData->transferInitiated)
-			{
-				CDirectoryCache cache;
-				cache.UpdateFile(*m_pCurrentServer, pData->remotePath, pData->remoteFile, true, CDirectoryCache::file, (nErrorCode == FZ_REPLY_OK) ? pData->localFileSize : -1);
-
-				m_pEngine->SendDirectoryListingNotification(pData->remotePath, false, true, false);
-			}
-		}
-
-		delete m_pCurOpData;
-		m_pCurOpData = 0;
-	}
-
-	if (nErrorCode != FZ_REPLY_OK)
-	{
-		if ((nErrorCode & FZ_REPLY_CRITICALERROR) == FZ_REPLY_CRITICALERROR)
-			LogMessage(::Error, _("Critical error"));
-		const enum Command commandId = GetCurrentCommandId();
+		const enum Command commandId = m_pCurOpData->opId;
 		switch (commandId)
 		{
+		case cmd_none:
+			break;
 		case cmd_connect:
 			if ((nErrorCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)
 				LogMessage(::Error, _("Connection attempt interrupted by user"));
-			else
+			else if (nErrorCode != FZ_REPLY_OK)
 				LogMessage(::Error, _("Could not connect to server"));
 			break;
 		case cmd_list:
 			if ((nErrorCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)
 				LogMessage(::Error, _("Directory listing aborted by user"));
-			else
+			else if (nErrorCode != FZ_REPLY_OK)
 				LogMessage(::Error, _("Failed to retrieve directory listing"));
+			else
+				LogMessage(Status, _("Directory listing successful"));
 			break;
-		case cmd_none:
+		case cmd_transfer:
+			{
+				CFileTransferOpData *pData = static_cast<CFileTransferOpData *>(m_pCurOpData);
+				if (!pData->download && pData->transferInitiated)
+				{
+					CDirectoryCache cache;
+					cache.UpdateFile(*m_pCurrentServer, pData->remotePath, pData->remoteFile, true, CDirectoryCache::file, (nErrorCode == FZ_REPLY_OK) ? pData->localFileSize : -1);
+
+					m_pEngine->SendDirectoryListingNotification(pData->remotePath, false, true, false);
+				}
+				if ((nErrorCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)
+					LogMessage(::Error, _("Transfer aborted by user"));
+				else if (nErrorCode == FZ_REPLY_OK)
+					LogMessage(Status, _("File transfer successful"));
+			}
 			break;
 		default:
 			if ((nErrorCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)
 				LogMessage(::Error, _("Interrupted by user"));
 			break;
 		}
-	}
-	else
-	{
-		switch (GetCurrentCommandId())
-		{
-		case cmd_list:
-			LogMessage(Status, _("Directory listing successful"));
-			break;
-		case cmd_transfer:
-			LogMessage(Status, _("File transfer successful"));
-			break;
-		default:
-			break;
-		}
+
+		delete m_pCurOpData;
+		m_pCurOpData = 0;
 	}
 
 	ResetTransferStatus();

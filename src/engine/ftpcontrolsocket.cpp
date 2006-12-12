@@ -196,7 +196,7 @@ void CFtpControlSocket::ParseLine(wxString line)
 	LogMessage(Response, line);
 	SetAlive();
 
-	if (GetCurrentCommandId() == cmd_connect && m_pCurOpData)
+	if (m_pCurOpData && m_pCurOpData->opId == cmd_connect)
 	{
 		CFtpLogonOpData* pData = reinterpret_cast<CFtpLogonOpData *>(m_pCurOpData);
 		if (pData->waitChallenge)
@@ -367,13 +367,6 @@ void CFtpControlSocket::ParseResponse()
 
 int CFtpControlSocket::Logon()
 {
-	if (m_pCurOpData)
-	{
-		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("deleting nonzero pData"));
-		delete m_pCurOpData;
-	}
-	m_pCurOpData = new CFtpLogonOpData;
-
 	const enum CharsetEncoding encoding = m_pCurrentServer->GetEncodingType();
 	if (encoding == ENCODING_AUTO && CServerCapabilities::GetCapability(*m_pCurrentServer, utf8_command) != no)
 		m_useUTF8 = true;
@@ -562,7 +555,10 @@ int CFtpControlSocket::LogonParseResponse()
 	}
 	else if (pData->opState == LOGON_SYST)
 	{
-		CServerCapabilities::SetCapability(*GetCurrentServer(), syst_command, (code == 2) ? yes : no, m_Response.Mid(4));
+		if (code == 2)
+			CServerCapabilities::SetCapability(*GetCurrentServer(), syst_command, yes, m_Response.Mid(4));
+		else
+			CServerCapabilities::SetCapability(*GetCurrentServer(), syst_command, no);
 
 		if (code == 2 && m_Response.Length() > 7 && m_Response.Mid(3, 4) == _T(" MVS"))
 		{
@@ -3203,4 +3199,16 @@ int CFtpControlSocket::FileTransferTestResumeCapability()
 	}
 
 	return FZ_REPLY_OK;
+}
+
+int CFtpControlSocket::Connect(const CServer &server)
+{
+	if (m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("deleting nonzero pData"));
+		delete m_pCurOpData;
+	}
+	m_pCurOpData = new CFtpLogonOpData;
+
+	return CControlSocket::Connect(server);
 }
