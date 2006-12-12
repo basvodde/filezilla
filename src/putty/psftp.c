@@ -1847,7 +1847,10 @@ static int sftp_cmd_open(struct sftp_command *cmd)
 	back = NULL;		       /* connection is already closed */
 	return -1;		       /* this is fatal */
     }
-    do_sftp_init();
+    if (do_sftp_init())
+    {
+	cleanup_exit(1);
+    }
     fznotify1(sftpDone, 1);
     return 1;
 }
@@ -2335,7 +2338,7 @@ static int do_sftp_init(void)
      */
     if (!fxp_init()) {
 	fzprintf(sftpError,
-		"Fatal: unable to initialise SFTP: %s\n", fxp_error());
+		"Fatal: unable to initialise SFTP on server: %s\n", fxp_error());
 	return 1;		       /* failure */
     }
 
