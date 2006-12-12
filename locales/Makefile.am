@@ -43,7 +43,7 @@ MSGMERGE=@msgmerge@
 XGETTEXT=@xgettext@
 
 # common xgettext args: C++ syntax, use the specified macro names as markers
-XGETTEXT_ARGS=-C -k_ -kwxGetTranslation -kwxTRANSLATE -s -j
+XGETTEXT_ARGS=-C -k_ -kwxGetTranslation -kwxTRANSLATE -kwxPLURAL:1,2 -s -j
 
 # implicit rules
 %.mo: %.po.new
