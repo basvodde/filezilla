@@ -333,12 +333,22 @@ int CFileZillaEnginePrivate::Cancel(const CCancelCommand &command)
 	if (m_retryTimer.IsRunning())
 	{
 		wxASSERT(m_pCurrentCommand && m_pCurrentCommand->GetId() == cmd_connect);
+
+		delete m_pControlSocket;
+		m_pControlSocket = 0;
+		
 		delete m_pCurrentCommand;
 		m_pCurrentCommand = 0;
-		
+
 		m_retryTimer.Stop();
 
-		return FZ_REPLY_OK;
+		m_pLogging->LogMessage(::Error, _("Connection attempt interrupted by user"));
+		COperationNotification *notification = new COperationNotification();
+		notification->nReplyCode = FZ_REPLY_DISCONNECTED|FZ_REPLY_CANCELED;
+		notification->commandId = cmd_connect;
+		AddNotification(notification);
+
+		return FZ_REPLY_WOULDBLOCK;
 	}
 
 	SendEvent(engineCancel);
