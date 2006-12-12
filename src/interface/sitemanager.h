@@ -65,6 +65,7 @@ protected:
 	virtual void OnLimitMultipleConnectionsChanged(wxCommandEvent& event);
 	virtual void OnCharsetChange(wxCommandEvent& event);
 	virtual void OnProtocolSelChanged(wxCommandEvent& event);
+	void OnCopySite(wxCommandEvent& event);
 	
 	CInterProcessMutex* m_pSiteManagerMutex;
 };

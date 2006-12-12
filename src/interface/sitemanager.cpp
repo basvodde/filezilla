@@ -27,6 +27,7 @@ EVT_RADIOBUTTON(XRCID("ID_CHARSET_AUTO"), CSiteManager::OnCharsetChange)
 EVT_RADIOBUTTON(XRCID("ID_CHARSET_UTF8"), CSiteManager::OnCharsetChange)
 EVT_RADIOBUTTON(XRCID("ID_CHARSET_CUSTOM"), CSiteManager::OnCharsetChange)
 EVT_CHOICE(XRCID("ID_PROTOCOL"), CSiteManager::OnProtocolSelChanged)
+EVT_BUTTON(XRCID("ID_COPY"), CSiteManager::OnCopySite)
 END_EVENT_TABLE()
 
 CSiteManager::CSiteManager()
@@ -526,7 +527,6 @@ void CSiteManager::OnEndLabelEdit(wxTreeEvent& event)
 		return;
 	}
 	
-	wxString newName = event.GetLabel();
 	wxTreeItemId parent = pTree->GetItemParent(item);
 		
 	pTree->SortChildren(parent);
@@ -975,4 +975,62 @@ void CSiteManager::OnCharsetChange(wxCommandEvent& event)
 
 void CSiteManager::OnProtocolSelChanged(wxCommandEvent& event)
 {
+}
+
+void CSiteManager::OnCopySite(wxCommandEvent& event)
+{
+	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
+	if (!pTree)
+		return;
+		
+	wxTreeItemId item = pTree->GetSelection();
+	if (!item.IsOk())
+		return;
+	
+	CSiteManagerItemData* data = reinterpret_cast<CSiteManagerItemData* >(pTree->GetItemData(item));
+	if (!data)
+		return;
+		
+	if (!Verify())
+		return;
+
+	if (!UpdateServer())
+		return;
+
+	wxTreeItemId parent = pTree->GetItemParent(item);
+
+	const wxString name = pTree->GetItemText(item);
+	wxString newName = wxString::Format(_("Copy of %s"), name.c_str());
+	int index = 2;
+	while (true)
+	{
+		wxTreeItemId child;
+		wxTreeItemIdValue cookie;
+		child = pTree->GetFirstChild(parent, cookie);
+		bool found = false;
+		while (child.IsOk())
+		{
+			wxString name = pTree->GetItemText(child);
+			int cmp = name.CmpNoCase(newName);
+			if (!cmp)
+			{
+				found = true;
+				break;
+			}
+							
+			child = pTree->GetNextChild(parent, cookie);
+		}
+		if (!found)
+			break;
+		
+		newName = wxString::Format(_("Copy (%d) of %s"), index++, name.c_str());
+	}
+
+	CSiteManagerItemData* newData = new CSiteManagerItemData();
+	*newData = *data;
+	wxTreeItemId newItem = pTree->AppendItem(parent, newName, 2, 2, newData);
+	pTree->SortChildren(parent);
+	pTree->SelectItem(newItem);
+	pTree->Expand(parent);
+	pTree->EditLabel(newItem);
 }
