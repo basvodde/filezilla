@@ -5,7 +5,6 @@
 // behaviour. These are:
 // - Password dialog for servers with ASK or INTERACTIVE logontype
 // - Storage of passwords for ASK servers for duration of current session
-// - Keep track of failed logins for the reconnection delay
 
 class CLoginManager
 {

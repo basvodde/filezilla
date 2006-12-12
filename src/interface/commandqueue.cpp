@@ -91,13 +91,14 @@ bool CCommandQueue::Cancel()
 
 	m_CommandList.clear();
 	m_CommandList.push_back(pCommand);
+
 	if (!m_pEngine)
 	{
 		delete pCommand;
 		m_CommandList.clear();
 		return true;
 	}
-	
+
 	int res = m_pEngine->Command(CCancelCommand());
 	if (res == FZ_REPLY_WOULDBLOCK)
 		return false;

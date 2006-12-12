@@ -41,6 +41,9 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Logging Raw Listing", number, _T("0") },
 	{ "fzsftp executable", string, _T("") },
 	{ "Allow transfermode fallback", number, _T("1") },
+	{ "Reconnect count", number, _T("2") },
+	{ "Reconnect delay", number, _T("5") },
+
 
 	// Interface settings
 	{ "Number of Transfers", number, _T("2") },
@@ -63,9 +66,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "File exists action download", number, _T("0") },
 	{ "File exists action upload", number, _T("0") },
 	{ "Allow ascii resume", number, _T("0") },
-	{ "Greeting version", string, _T("") },
-	{ "Reconnect count", number, _T("5") },
-	{ "Reconnect delay", number, _T("5") }
+	{ "Greeting version", string, _T("") }
 };
 
 COptions::COptions()

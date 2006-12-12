@@ -121,6 +121,7 @@ public:
 protected:
 	virtual int DoClose(int nErrorCode = FZ_REPLY_DISCONNECTED);
 	void ResetSocket();
+	bool m_closed;
 
 	virtual void OnSocketEvent(wxSocketEvent &event);
 	virtual void OnConnect(wxSocketEvent &event);

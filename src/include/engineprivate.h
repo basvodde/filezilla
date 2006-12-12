@@ -61,9 +61,12 @@ protected:
 	int Rename(const CRenameCommand& command);
 	int Chmod(const CChmodCommand& command);
 
+	int ContinueConnect();
+
 	DECLARE_EVENT_TABLE();
 	void OnEngineEvent(wxFzEngineEvent &event);
 	void OnAsyncHostResolver(fzAsyncHostResolveEvent& event);
+	void OnTimer(wxTimerEvent& event);
 
 	wxEvtHandler *m_pEventHandler;
 
@@ -97,6 +100,24 @@ protected:
 	wxCriticalSection m_lock;
 
 	CLogging* m_pLogging;
+
+	// Everything related to the retry code
+	// ------------------------------------
+
+	void RegisterFailedLoginAttempt(const CServer& server);
+
+	// Get the amount of time to wait till next reconnection attempt in milliseconds
+	unsigned int GetRemainingReconnectDelay(const CServer& server);
+
+	struct t_failedLogins
+	{
+		wxString host;
+		unsigned int port;
+		wxDateTime time;
+	};
+	static std::list<t_failedLogins> m_failedLogins;
+	int m_retryCount;
+	wxTimer m_retryTimer;
 };
 
 #endif //__FILEZILLAENGINEPRIVATE_H__

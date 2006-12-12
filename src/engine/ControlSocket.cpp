@@ -58,6 +58,8 @@ CControlSocket::CControlSocket(CFileZillaEnginePrivate *pEngine)
 	m_useUTF8 = false;
 
 	m_timer.SetOwner(this);
+	
+	m_closed = false;
 }
 
 CControlSocket::~CControlSocket()
@@ -316,6 +318,14 @@ int CControlSocket::ResetOperation(int nErrorCode)
 
 int CControlSocket::DoClose(int nErrorCode /*=FZ_REPLY_DISCONNECTED*/)
 {
+	if (m_closed)
+	{
+		wxASSERT(!m_pCurOpData);
+		return nErrorCode;
+	}
+	
+	m_closed = true;
+
 	nErrorCode = ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED | nErrorCode);
 	
 	ResetSocket();
