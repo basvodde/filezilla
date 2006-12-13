@@ -127,15 +127,15 @@ bool CState::SetRemoteDir(const CDirectoryListing *pDirectoryListing, bool modif
 	if (!pDirectoryListing)
 	{
 		if (modified)
-		{
-			delete pDirectoryListing;
 			return false;
-		}
 
-		const CDirectoryListing* pOldListing = m_pDirectoryListing;
-		m_pDirectoryListing = 0;
-		NotifyHandlers(STATECHANGE_REMOTE_DIR);
-		delete pOldListing;
+		if (m_pDirectoryListing)
+		{
+			const CDirectoryListing* pOldListing = m_pDirectoryListing;
+			m_pDirectoryListing = 0;
+			NotifyHandlers(STATECHANGE_REMOTE_DIR);
+			delete pOldListing;
+		}
 		return true;
 	}
 
@@ -192,7 +192,12 @@ void CState::RefreshLocal()
 
 void CState::SetServer(const CServer* server)
 {
-	delete m_pServer;
+	if (m_pServer)
+	{
+		SetRemoteDir(0);
+		delete m_pServer;
+	}
+
 	if (server)
 		m_pServer = new CServer(*server);
 	else
@@ -221,7 +226,6 @@ bool CState::Connect(const CServer& server, bool askBreak, const CServerPath& pa
 		m_pCommandQueue->Cancel();
 	}
 
-	SetServer(&server);
 	m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
 	m_pCommandQueue->ProcessCommand(new CListCommand(path));
 	

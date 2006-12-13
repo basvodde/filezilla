@@ -201,6 +201,9 @@ void CFileZillaEnginePrivate::AddNotification(CNotification *pNotification)
 
 int CFileZillaEnginePrivate::ResetOperation(int nErrorCode)
 {
+	if (nErrorCode & FZ_REPLY_DISCONNECTED)
+		m_lastListDir.Clear();
+
 	if (m_pCurrentCommand)
 	{
 		if ((nErrorCode & FZ_REPLY_NOTSUPPORTED) == FZ_REPLY_NOTSUPPORTED)
@@ -243,6 +246,15 @@ int CFileZillaEnginePrivate::ResetOperation(int nErrorCode)
 
 		delete m_pCurrentCommand;
 		m_pCurrentCommand = 0;
+	}
+	else if (nErrorCode & FZ_REPLY_DISCONNECTED)
+	{
+		wxASSERT(!m_bIsInCommand);
+		
+		COperationNotification *notification = new COperationNotification();
+		notification->nReplyCode = nErrorCode;
+		notification->commandId = cmd_none;
+		AddNotification(notification);
 	}
 
 	if (!m_HostResolverThreads.empty())
@@ -500,13 +512,6 @@ int CFileZillaEnginePrivate::Chmod(const CChmodCommand& command)
 
 	m_pCurrentCommand = command.Clone();
 	return m_pControlSocket->Chmod(command);
-}
-
-void CFileZillaEnginePrivate::SendDisconnectNotification()
-{
-	m_lastListDir.Clear();
-	CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(CServerPath());
-	AddNotification(pNotification);
 }
 
 void CFileZillaEnginePrivate::SendDirectoryListingNotification(const CServerPath& path, bool onList, bool modified, bool failed)

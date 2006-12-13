@@ -1371,6 +1371,13 @@ bool CQueueView::TryStartNextTransfer()
 
 void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* pNotification)
 {
+	if (pNotification->nReplyCode & FZ_REPLY_DISCONNECTED &&
+		pNotification->GetID() == cmd_none)
+	{
+		// Queue is not interested in disconnect notifications
+		return;
+	}
+
 	// Cancel pending requests
 	m_pAsyncRequestQueue->ClearPending(engineData.pEngine);
 

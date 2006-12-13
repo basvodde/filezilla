@@ -333,8 +333,6 @@ int CControlSocket::DoClose(int nErrorCode /*=FZ_REPLY_DISCONNECTED*/)
 	delete m_pCurrentServer;
 	m_pCurrentServer = 0;
 
-	m_pEngine->SendDisconnectNotification();
-
 	return nErrorCode;
 }
 

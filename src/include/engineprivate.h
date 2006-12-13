@@ -42,7 +42,6 @@ public:
 	void AddNewAsyncHostResolver(CAsyncHostResolver* pThread);
 
 	void SendDirectoryListingNotification(const CServerPath& path, bool onList, bool modified, bool failed);
-	void SendDisconnectNotification();
 
 protected:
 	CFileZillaEnginePrivate();

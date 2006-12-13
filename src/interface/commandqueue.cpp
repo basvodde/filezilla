@@ -39,6 +39,20 @@ void CCommandQueue::ProcessNextCommand()
 		CCommand *pCommand = m_CommandList.front();
 
 		int res = m_pEngine->Command(*pCommand);
+		
+		if (pCommand->GetId() == cmd_connect)
+		{
+			if (res == FZ_REPLY_WOULDBLOCK || res == FZ_REPLY_OK)
+			{
+				const CConnectCommand* pConnectCommand = (const CConnectCommand *)pCommand;
+				m_pMainFrame->GetState()->SetServer(&pConnectCommand->GetServer());
+			}
+		}
+		else if (pCommand->GetId() == cmd_disconnect)
+		{
+			m_pMainFrame->GetState()->SetServer(0);
+		}
+
 		if (res == FZ_REPLY_WOULDBLOCK)
 			break;
 		else if (res == FZ_REPLY_OK)
@@ -49,6 +63,7 @@ void CCommandQueue::ProcessNextCommand()
 		}
 		else if (res == FZ_REPLY_ALREADYCONNECTED)
 		{
+			m_pMainFrame->GetState()->SetServer(0);
 			res = m_pEngine->Command(CDisconnectCommand());
 			if (res == FZ_REPLY_WOULDBLOCK)
 			{
@@ -65,6 +80,9 @@ void CCommandQueue::ProcessNextCommand()
 		}
 		else
 		{
+			if ((res & FZ_REPLY_NOTCONNECTED) == FZ_REPLY_NOTCONNECTED)
+					m_pMainFrame->GetState()->SetServer(0);
+
 			wxBell();
 			
 			// Let the remote list view know if a LIST command failed,
@@ -110,6 +128,11 @@ void CCommandQueue::Finish(COperationNotification *pNotification)
 {
 	if (pNotification->nReplyCode & FZ_REPLY_DISCONNECTED)
 	{
+		if (pNotification->commandId == cmd_none && !m_CommandList.empty())
+		{
+			// Pending event, has no relevance during command execution
+			return;
+		}
 		if (pNotification->nReplyCode & FZ_REPLY_PASSWORDFAILED)
 			CLoginManager::Get().CachedPasswordFailed(*m_pMainFrame->GetState()->GetServer());
 		m_pMainFrame->GetState()->SetServer(0);
