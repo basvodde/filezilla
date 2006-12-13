@@ -24,6 +24,7 @@ CStatusLineCtrl::CStatusLineCtrl(CQueueView* pParent, const t_EngineData* const 
 
 	Create(pParent, wxID_ANY, initialPosition.GetPosition(), initialPosition.GetSize());
 	SetOwnFont(pParent->GetFont());
+	SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 	SetBackgroundColour(pParent->GetBackgroundColour());
 	
 	m_transferStatusTimer.SetOwner(this, TRANSFERSTATUS_TIMER_ID);
