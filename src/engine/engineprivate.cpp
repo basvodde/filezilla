@@ -214,6 +214,7 @@ int CFileZillaEnginePrivate::ResetOperation(int nErrorCode)
 			if ((nErrorCode & FZ_REPLY_CRITICALERROR) != FZ_REPLY_CRITICALERROR &&
 				(nErrorCode & FZ_REPLY_INTERNALERROR) != FZ_REPLY_INTERNALERROR &&
 				(nErrorCode & FZ_REPLY_CANCELED) != FZ_REPLY_CANCELED &&
+				nErrorCode & FZ_REPLY_ERROR &&
 				m_retryCount < m_pOptions->GetOptionVal(OPTION_RECONNECTCOUNT))
 			{
 				m_retryCount++;
