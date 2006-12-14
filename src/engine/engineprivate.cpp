@@ -214,10 +214,7 @@ int CFileZillaEnginePrivate::ResetOperation(int nErrorCode)
 
 		if (m_pCurrentCommand->GetId() == cmd_connect)
 		{
-			if ((nErrorCode & FZ_REPLY_CRITICALERROR) != FZ_REPLY_CRITICALERROR &&
-				(nErrorCode & FZ_REPLY_INTERNALERROR) != FZ_REPLY_INTERNALERROR &&
-				(nErrorCode & FZ_REPLY_CANCELED) != FZ_REPLY_CANCELED &&
-				nErrorCode & FZ_REPLY_ERROR &&
+			if (!(nErrorCode & ~(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED)) && 
 				m_retryCount < m_pOptions->GetOptionVal(OPTION_RECONNECTCOUNT))
 			{
 				m_retryCount++;
@@ -620,7 +617,11 @@ unsigned int CFileZillaEnginePrivate::GetRemainingReconnectDelay(const CServer& 
 
 void CFileZillaEnginePrivate::OnTimer(wxTimerEvent& event)
 {
-	wxASSERT(m_pCurrentCommand && m_pCurrentCommand->GetId() == cmd_connect);
+	if (!m_pCurrentCommand || m_pCurrentCommand->GetId() != cmd_connect)
+	{
+		wxFAIL_MSG(_T("CFileZillaEnginePrivate::OnTimer called without pending cmd_connect"));
+		return;
+	}
 	wxASSERT(!IsConnected());
 
 #ifdef __WXDEBUG__
@@ -641,6 +642,14 @@ int CFileZillaEnginePrivate::ContinueConnect()
 
 	const CConnectCommand *pConnectCommand = (CConnectCommand *)m_pCurrentCommand;
 	const CServer& server = pConnectCommand->GetServer();
+	unsigned int delay = GetRemainingReconnectDelay(server);
+	if (delay)
+	{
+		m_pLogging->LogMessage(Status, _("Delaying connection due to previously failed connection attempt..."));
+		m_retryTimer.Start(delay, true);
+		return FZ_REPLY_WOULDBLOCK;
+	}
+
 	switch (server.GetProtocol())
 	{
 	case FTP:
@@ -656,14 +665,6 @@ int CFileZillaEnginePrivate::ContinueConnect()
 		break;
 	default:
 		return FZ_REPLY_SYNTAXERROR;
-	}
-
-	unsigned int delay = GetRemainingReconnectDelay(server);
-	if (delay)
-	{
-		m_pLogging->LogMessage(Status, _("Delaying connection due to previously failed connection attempt..."));
-		m_retryTimer.Start(delay, true);
-		return FZ_REPLY_WOULDBLOCK;
 	}
 
 	int res = m_pControlSocket->Connect(server);

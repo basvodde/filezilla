@@ -282,7 +282,7 @@ int CSftpControlSocket::Connect(const CServer &server)
 	{
 		delete m_pProcess;
 		m_pProcess = 0;
-		ResetOperation(FZ_REPLY_ERROR);
+		DoClose();
 		return FZ_REPLY_ERROR;
 	}
 	
@@ -293,6 +293,7 @@ int CSftpControlSocket::Connect(const CServer &server)
 		m_pInputThread = 0;
 		m_pProcess->Detach();
 		m_pProcess = 0;
+		DoClose();
 		return FZ_REPLY_ERROR;
 	}
 

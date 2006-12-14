@@ -175,7 +175,7 @@ int CControlSocket::ContinueConnect(const wxIPV4address *address)
 	if (!address)
 	{
 		LogMessage(::Error, _("Invalid hostname or host not found"));
-		return ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_CRITICALERROR);
+		return DoClose(FZ_REPLY_ERROR | FZ_REPLY_CRITICALERROR);
 	}
 
 	const unsigned int port = m_pCurrentServer->GetPort();
@@ -187,7 +187,7 @@ int CControlSocket::ContinueConnect(const wxIPV4address *address)
 	bool res = wxSocketClient::Connect(addr, false);
 
 	if (!res && LastError() != wxSOCKET_WOULDBLOCK)
-		return ResetOperation(FZ_REPLY_ERROR);
+		return DoClose();
 
 	return FZ_REPLY_WOULDBLOCK;
 }
