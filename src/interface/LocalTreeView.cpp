@@ -97,7 +97,12 @@ void CLocalTreeView::SetDir(wxString localDir)
 	wxString subDirs = localDir;
 	wxTreeItemId parent = GetNearestParent(subDirs);
 	if (!parent)
+	{
+		m_setSelection = true;
+		SelectItem(wxTreeItemId());
+		m_setSelection = false;
 		return;
+	}
 
 	if (subDirs == _T(""))
 	{
@@ -200,7 +205,15 @@ bool CLocalTreeView::DisplayDrives()
 {
 	wxTreeItemId root = GetRootItem();
 
-	wxChar* pDrive;
+	long drivesToHide = 0;
+	// Adhere to the NODRIVES group policy
+	wxRegKey key(_T("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer"));
+	if (key.Exists())
+	{
+		if (!key.HasValue(_T("NoDrives")) || !key.QueryValue(_T("NoDrives"), &drivesToHide))
+			drivesToHide = 0;
+	}
+	drivesToHide = 16;
 
 	int len = GetLogicalDriveStrings(0, 0);
 	if (!len)
@@ -214,9 +227,26 @@ bool CLocalTreeView::DisplayDrives()
 		return false;
 	}
 
-	pDrive = drives;
+	const wxChar* pDrive = drives;
 	while (*pDrive)
 	{
+		// Check if drive should be hidden by default
+		if (pDrive[0] != 0&& pDrive[1] == ':')
+		{
+			int bit = -1;
+			char letter = pDrive[0];
+			if (letter >= 'A' && letter <= 'Z')
+				bit = 1 << (letter - 'A');
+			if (letter >= 'a' && letter <= 'z')
+				bit = 1 << (letter - 'a');
+
+			if (bit != -1 && drivesToHide & bit)
+			{
+				pDrive += wxStrlen(pDrive) + 1;
+				continue;
+			}
+		}
+
 		wxString drive = pDrive;
 		if (drive.Right(1) == _T("\\"))
 			drive = drive.RemoveLast();
@@ -234,8 +264,9 @@ bool CLocalTreeView::DisplayDrives()
 		}
 		wxTreeItemId item = AppendItem(GetRootItem(), drive, GetIconIndex(dir, pDrive));
 		AppendItem(item, _T(""));
-		pDrive += _tcslen( pDrive ) + 1;
 		SortChildren(GetRootItem());
+
+		pDrive += wxStrlen(pDrive) + 1;
 	}
 
 	delete [] drives;

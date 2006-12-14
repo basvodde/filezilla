@@ -333,20 +333,55 @@ void CLocalListView::OnItemActivated(wxListEvent &event)
 #ifdef __WXMSW__
 void CLocalListView::DisplayDrives()
 {
-	TCHAR  szDrives[128];
-	LPTSTR pDrive;
+	long drivesToHide = 0;
+	// Adhere to the NODRIVES group policy
+	wxRegKey key(_T("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer"));
+	if (key.Exists())
+	{
+		if (!key.HasValue(_T("NoDrives")) || !key.QueryValue(_T("NoDrives"), &drivesToHide))
+			drivesToHide = 0;
+	}
+	drivesToHide = 16;
 
-	GetLogicalDriveStrings( sizeof(szDrives), szDrives );
+	int len = GetLogicalDriveStrings(0, 0);
+	if (!len)
+		return;
+
+	wxChar* drives = new wxChar[len + 1];
+
+	if (!GetLogicalDriveStrings(len, drives))
+	{
+		delete [] drives;
+		return;
+	}
 	
-	pDrive = szDrives;
+	const wxChar* pDrive = drives;
+
 	int count = 1;
 	while(*pDrive)
 	{
+		// Check if drive should be hidden by default
+		if (pDrive[0] != 0 && pDrive[1] == ':')
+		{
+			int bit = -1;
+			char letter = pDrive[0];
+			if (letter >= 'A' && letter <= 'Z')
+				bit = 1 << (letter - 'A');
+			if (letter >= 'a' && letter <= 'z')
+				bit = 1 << (letter - 'a');
+
+			if (bit != -1 && drivesToHide & bit)
+			{
+				pDrive += wxStrlen(pDrive) + 1;
+				continue;
+			}
+		}
+
 		wxString path = pDrive;
-		t_fileData data;
 		if (path.Right(1) == _T("\\"))
 			path.Truncate(path.Length() - 1);
 
+		t_fileData data;
 		data.name = path;
 		data.dir = true;
 		data.icon = -2;
@@ -355,13 +390,11 @@ void CLocalListView::DisplayDrives()
 		
 		m_fileData.push_back(data);
 		m_indexMapping.push_back(count);
-#ifdef _tcslen
-		pDrive += _tcslen(pDrive) + 1;
-#else
-		pDrive += strlen(pDrive) + 1;
-#endif
+		pDrive += wxStrlen(pDrive) + 1;
 		count++;
 	}
+
+	delete [] drives;
 }
 #endif
 
