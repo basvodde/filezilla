@@ -214,7 +214,8 @@ int CFileZillaEnginePrivate::ResetOperation(int nErrorCode)
 
 		if (m_pCurrentCommand->GetId() == cmd_connect)
 		{
-			if (!(nErrorCode & ~(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED)) && 
+			if (!(nErrorCode & ~(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED | FZ_REPLY_TIMEOUT)) && 
+				nErrorCode & (FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED) &&
 				m_retryCount < m_pOptions->GetOptionVal(OPTION_RECONNECTCOUNT))
 			{
 				m_retryCount++;
