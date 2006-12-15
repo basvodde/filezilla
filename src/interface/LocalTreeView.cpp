@@ -213,8 +213,7 @@ bool CLocalTreeView::DisplayDrives()
 		if (!key.HasValue(_T("NoDrives")) || !key.QueryValue(_T("NoDrives"), &drivesToHide))
 			drivesToHide = 0;
 	}
-	drivesToHide = 16;
-
+	
 	int len = GetLogicalDriveStrings(0, 0);
 	if (!len)
 		return false;
