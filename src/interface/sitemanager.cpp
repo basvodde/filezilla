@@ -85,6 +85,12 @@ void CSiteManager::CreateControls()
 {	
 	wxXmlResource::Get()->LoadDialog(this, GetParent(), _T("ID_SITEMANAGER"));
 
+	wxChoice *pProtocol = XRCCTRL(*this, "ID_PROTOCOL", wxChoice);
+	pProtocol->Append(CServer::GetProtocolName(FTP));
+	pProtocol->Append(CServer::GetProtocolName(SFTP));
+	pProtocol->Append(CServer::GetProtocolName(FTPS));
+	pProtocol->Append(CServer::GetProtocolName(FTPES));
+
 	wxChoice *pChoice = XRCCTRL(*this, "ID_SERVERTYPE", wxChoice);
 	wxASSERT(pChoice);
 	pChoice->Append(_T("Unix"));
@@ -414,8 +420,9 @@ bool CSiteManager::Verify()
 		return false;
 	}
 
-	const wxString& protocol = XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->GetStringSelection();
-	if (protocol == _("SFTP") &&
+	wxString protocolName = XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->GetStringSelection();
+	enum ServerProtocol protocol = CServer::GetProtocolFromName(protocolName);
+	if (protocol == SFTP &&
 		XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->GetStringSelection() == _("Account"))
 	{
 		XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetFocus();
@@ -424,10 +431,8 @@ bool CSiteManager::Verify()
 	}
 
 	CServer server;
-	if (protocol == _("FTP"))
-		server.SetProtocol(FTP);
-	else if (protocol == _("SFTP"))
-		server.SetProtocol(SFTP);
+	if (protocol != UNKNOWN)
+		server.SetProtocol(protocol);
 
 	unsigned long port;
 	XRCCTRL(*this, "ID_PORT", wxTextCtrl)->GetValue().ToULong(&port);
@@ -443,16 +448,10 @@ bool CSiteManager::Verify()
 	XRCCTRL(*this, "ID_HOST", wxTextCtrl)->SetValue(server.GetHost());
 	XRCCTRL(*this, "ID_PORT", wxTextCtrl)->SetValue(wxString::Format(_T("%d"), server.GetPort()));
 
-	switch (server.GetProtocol())
-	{
-	case SFTP:
-		XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(_("SFTP"));
-		break;
-	case FTP:
-	default:
-		XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(_("FTP"));
-		break;
-	}
+	protocolName = CServer::GetProtocolName(server.GetProtocol());
+	if (protocolName == _T(""))
+		CServer::GetProtocolName(FTP);
+	XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(protocolName);
 
 	if (XRCCTRL(*this, "ID_CHARSET_CUSTOM", wxRadioButton)->GetValue())
 	{
@@ -664,11 +663,10 @@ bool CSiteManager::UpdateServer()
 	XRCCTRL(*this, "ID_PORT", wxTextCtrl)->GetValue().ToULong(&port);
 	data->m_server.SetHost(XRCCTRL(*this, "ID_HOST", wxTextCtrl)->GetValue(), port);
 
-	wxString protocol = XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->GetStringSelection();
-	if (protocol == _("FTP"))
-		data->m_server.SetProtocol(FTP);
-	else if (protocol == _("SFTP"))
-		data->m_server.SetProtocol(SFTP);
+	const wxString& protocolName = XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->GetStringSelection();
+	const enum ServerProtocol protocol = CServer::GetProtocolFromName(protocolName);
+	if (protocol != UNKNOWN)
+		data->m_server.SetProtocol(protocol);
 	else
 		data->m_server.SetProtocol(FTP);
 
@@ -863,16 +861,11 @@ void CSiteManager::SetCtrlState()
 		else
 			XRCCTRL(*this, "ID_PORT", wxTextCtrl)->SetValue(_T(""));
 
-		switch (data->m_server.GetProtocol())
-		{
-		case SFTP:
-			XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(_("SFTP"));
-			break;
-		case FTP:
-		default:
-			XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(_("FTP"));
-			break;
-		}
+		const wxString& protocolName = CServer::GetProtocolName(data->m_server.GetProtocol());
+		if (protocolName != _T(""))
+			XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(protocolName);
+		else
+			XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(CServer::GetProtocolName(FTP));
 
 		XRCCTRL(*this, "ID_USER", wxTextCtrl)->Enable(data->m_server.GetLogonType() != ANONYMOUS);
 		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->Enable(data->m_server.GetLogonType() == NORMAL || data->m_server.GetLogonType() == ACCOUNT);
