@@ -1,5 +1,21 @@
 #include "FileZilla.h"
 
+struct t_protocolInfo
+{
+	const bool translateable;
+	const enum ServerProtocol protocol;
+	const wxChar* const name;
+};
+
+static const t_protocolInfo protocolInfos[] = {
+	false, FTP, _T("FTP - File Transfer Protocol"),
+	false, SFTP, _T("SFTP - SSH File Transfer Protocol"),
+	true, FTPS, wxTRANSLATE("FTPS - FTP over implicit TLS/SSL"),
+	true, FTPES, wxTRANSLATE("FTPES - FTP over explicit TLS/SSL"),
+	true, SFTP, _T("SSH File Transfer Protocol (SFTP)"),
+	false, UNKNOWN, _T("")
+};
+
 CServer::CServer()
 {
 	Initialize();
@@ -552,4 +568,45 @@ enum ServerProtocol CServer::GetProtocolFromPort(unsigned int port)
 	default:
 		return FTP;
 	}
+}
+
+wxString CServer::GetProtocolName(enum ServerProtocol protocol)
+{
+	const t_protocolInfo *protocolInfo = protocolInfos;
+	while (protocolInfo->protocol != UNKNOWN)
+	{
+		if (protocolInfo->protocol != protocol)
+		{
+			protocolInfo++;
+			continue;
+		}
+
+		if (protocolInfo->translateable)
+			return wxGetTranslation(protocolInfo->name);
+		else
+			return protocolInfo->name;
+	}
+
+	return _T("");
+}
+
+enum ServerProtocol CServer::GetProtocolFromName(const wxString& name)
+{
+	const t_protocolInfo *protocolInfo = protocolInfos;
+	while (protocolInfo->protocol != UNKNOWN)
+	{
+		if (protocolInfo->translateable)
+		{
+			if (wxGetTranslation(protocolInfo->name) == name)
+				return protocolInfo->protocol;
+		}
+		else
+		{
+			if (protocolInfo->name == name)
+				return protocolInfo->protocol;
+		}
+		protocolInfo++;
+	}
+
+	return UNKNOWN;
 }

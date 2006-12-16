@@ -101,6 +101,9 @@ public:
 	static unsigned int GetDefaultPort(enum ServerProtocol protocol);
 	static enum ServerProtocol GetProtocolFromPort(unsigned int port);
 
+	static wxString GetProtocolName(enum ServerProtocol protocol);
+	static enum ServerProtocol GetProtocolFromName(const wxString& name);
+
 protected:
 	void Initialize();
 
