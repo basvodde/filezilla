@@ -35,6 +35,8 @@ protected:
 #ifdef __WXMSW__
 	void DisplayDrives();
 #endif
+
+public:
 	wxString GetType(wxString name, bool dir);
 
 	struct t_fileData
@@ -48,16 +50,11 @@ protected:
 		wxDateTime lastModified;
 	};
 
+protected:
 	bool IsItemValid(unsigned int item) const;
 	t_fileData *GetData(unsigned int item);
 
 	void SortList(int column = -1, int direction = -1);
-	void QSortList(const unsigned int dir, unsigned int anf, unsigned int ende, int (*comp)(CLocalListView *pList, unsigned int index, t_fileData &refData));
-
-	static int CmpName(CLocalListView *pList, unsigned int index, t_fileData &refData);
-	static int CmpType(CLocalListView *pList, unsigned int index, t_fileData &refData);
-	static int CmpSize(CLocalListView *pList, unsigned int index, t_fileData &refData);
-	static int CmpTime(CLocalListView *pList, unsigned int index, t_fileData &refData);
 
 	int FindItemWithPrefix(const wxString& prefix, int start);
 

@@ -479,6 +479,194 @@ bool CLocalListView::IsItemValid(unsigned int item) const
 	return true;
 }
 
+// Helper classes for fast sorting using std::sort
+// -----------------------------------------------
+
+class CLocalListViewSort : public std::binary_function<int,int,bool>
+{
+public:
+	CLocalListViewSort(std::vector<CLocalListView::t_fileData>& fileData) : m_fileData(fileData) {}
+
+	#define CMP(f, data1, data2) \
+		{\
+			int res = f(data1, data2);\
+			if (res == -1)\
+				return true;\
+			else if (res == 1)\
+				return false;\
+		}
+
+	#define CMP_LESS(f, data1, data2) \
+		{\
+			int res = f(data1, data2);\
+			if (res == -1)\
+				return true;\
+			else\
+				return false;\
+		}
+
+	inline int CmpDir(const CLocalListView::t_fileData &data1, const CLocalListView::t_fileData &data2) const
+	{
+		if (data1.dir)
+		{
+			if (!data2.dir)
+				return -1;
+			else
+				return 0;
+		}
+		else
+		{
+			if (data2.dir)
+				return 1;
+			else
+				return 0;
+		}
+	}
+
+	inline int CmpName(const CLocalListView::t_fileData &data1, const CLocalListView::t_fileData &data2) const
+	{
+#ifdef __WXMSW__
+		return data1.name.CmpNoCase(data2.name);
+#else
+		return data1.name.Cmp(data2.name);
+#endif
+	}
+
+	inline int CmpSize(const CLocalListView::t_fileData &data1, const CLocalListView::t_fileData &data2) const
+	{
+		const wxLongLong diff = data1.size - data2.size;
+		if (diff < 0)
+			return -1;
+		else if (diff > 0)
+			return 1;
+		else
+			return 0;
+	}
+
+	inline int CmpType(const CLocalListView::t_fileData &data1, const CLocalListView::t_fileData &data2) const
+	{
+		return data1.fileType.CmpNoCase(data2.fileType);
+	}
+
+	inline int CmpTime(const CLocalListView::t_fileData &data1, const CLocalListView::t_fileData &data2) const
+	{
+		if (!data1.hasTime)
+		{
+			if (data2.hasTime)
+				return -1;
+			else
+				return 0;
+		}
+		else
+		{
+			if (!data2.hasTime)
+				return 1;
+
+			if (data1.lastModified < data2.lastModified)
+				return -1;
+			else if (data1.lastModified > data2.lastModified)
+				return 1;
+			else
+				return 0;
+		}
+	}
+
+protected:
+	std::vector<CLocalListView::t_fileData>& m_fileData;
+};
+
+class CLocalListViewSortName : public CLocalListViewSort
+{
+public:
+	CLocalListViewSortName(std::vector<CLocalListView::t_fileData>& fileData)
+		: CLocalListViewSort(fileData)
+	{
+	}
+
+	bool operator()(int a, int b) const
+	{
+		const CLocalListView::t_fileData &data1 = m_fileData[a];
+		const CLocalListView::t_fileData &data2 = m_fileData[b];
+
+		CMP(CmpDir, data1, data2);
+
+		CMP_LESS(CmpName, data1, data2);
+	}
+};
+
+class CLocalListViewSortSize : public CLocalListViewSort
+{
+public:
+	CLocalListViewSortSize(std::vector<CLocalListView::t_fileData>& fileData)
+		: CLocalListViewSort(fileData)
+	{
+	}
+
+	bool operator()(int a, int b) const
+	{
+		const CLocalListView::t_fileData &data1 = m_fileData[a];
+		const CLocalListView::t_fileData &data2 = m_fileData[b];
+
+		CMP(CmpDir, data1, data2);
+
+		if (!data1.dir)
+			CMP(CmpSize, data1, data2)
+
+		CMP_LESS(CmpName, data1, data2);
+	}
+};
+
+class CLocalListViewSortType : public CLocalListViewSort
+{
+public:
+	CLocalListViewSortType(CLocalListView* pListView, std::vector<CLocalListView::t_fileData>& fileData)
+		: CLocalListViewSort(fileData)
+	{
+		m_pListView = pListView;
+	}
+
+	bool operator()(int a, int b) const
+	{
+		CLocalListView::t_fileData &data1 = m_fileData[a];
+		CLocalListView::t_fileData &data2 = m_fileData[b];
+
+		if (data1.fileType == _T(""))
+			data1.fileType = m_pListView->GetType(data1.name, data1.dir);
+		if (data2.fileType == _T(""))
+			data2.fileType = m_pListView->GetType(data2.name, data2.dir);
+
+		CMP(CmpDir, data1, data2);
+
+		CMP(CmpType, data1, data2)
+
+		CMP_LESS(CmpName, data1, data2);
+	}
+
+protected:
+	CLocalListView* m_pListView;
+};
+
+class CLocalListViewSortTime : public CLocalListViewSort
+{
+public:
+	CLocalListViewSortTime(std::vector<CLocalListView::t_fileData>& fileData)
+		: CLocalListViewSort(fileData)
+	{
+	}
+
+	bool operator()(int a, int b) const
+	{
+		const CLocalListView::t_fileData &data1 = m_fileData[a];
+		const CLocalListView::t_fileData &data2 = m_fileData[b];
+
+		CMP(CmpDir, data1, data2);
+
+		CMP(CmpTime, data1, data2)
+
+		CMP_LESS(CmpName, data1, data2);
+	}
+};
+
 void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 {
 	if (column != -1)
@@ -545,13 +733,13 @@ void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 		return;
 
 	if (!m_sortColumn)
-		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpName);
+		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CLocalListViewSortName(m_fileData));
 	else if (m_sortColumn == 1)
-		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpSize);
+		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CLocalListViewSortSize(m_fileData));
 	else if (m_sortColumn == 2)
-		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpType);
+		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CLocalListViewSortType(this, m_fileData));
 	else if (m_sortColumn == 3)
-		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpTime);
+		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CLocalListViewSortTime(m_fileData));
 }
 
 void CLocalListView::OnColumnClicked(wxListEvent &event)
@@ -568,163 +756,6 @@ void CLocalListView::OnColumnClicked(wxListEvent &event)
 	
 	SortList(col, dir);
 	Refresh(false);
-}
-
-void CLocalListView::QSortList(const unsigned int dir, unsigned int anf, unsigned int ende, int (*comp)(CLocalListView *pList, unsigned int index, t_fileData &refData))
-{
-	unsigned int l = anf;
-	unsigned int r = ende;
-	const unsigned int ref = (l + r) / 2;
-	t_fileData &refData = m_fileData[m_indexMapping[ref]];
-	do
-	{
-		if (!dir)
-		{
-			while ((comp(this, l, refData) < 0) && (l<ende)) l++;
-			while ((comp(this, r, refData) > 0) && (r>anf)) r--;
-		}
-		else
-		{
-			while ((comp(this, l, refData) > 0) && (l<ende)) l++;
-			while ((comp(this, r, refData) < 0) && (r>anf)) r--;
-		}
-		if (l<=r)
-		{
-			unsigned int tmp = m_indexMapping[l];
-			m_indexMapping[l] = m_indexMapping[r];
-			m_indexMapping[r] = tmp;
-			l++;
-			r--;
-		}
-	} 
-	while (l<=r);
-
-	if (anf<r) QSortList(dir, anf, r, comp);
-	if (l<ende) QSortList(dir, l, ende, comp);
-}
-
-int CLocalListView::CmpName(CLocalListView *pList, unsigned int index, t_fileData &refData)
-{
-	const t_fileData &data = pList->m_fileData[pList->m_indexMapping[index]];
-
-	if (data.dir)
-	{
-		if (!refData.dir)
-			return -1;
-	}
-	else if (refData.dir)
-		return 1;
-
-#ifdef __WXMSW__
-	return data.name.CmpNoCase(refData.name);
-#else
-	return data.name.Cmp(refData.name);
-#endif
-}
-
-int CLocalListView::CmpType(CLocalListView *pList, unsigned int index, t_fileData &refData)
-{
-	t_fileData &data = pList->m_fileData[pList->m_indexMapping[index]];
-
-	if (refData.fileType == _T(""))
-		refData.fileType = pList->GetType(refData.name, refData.dir);
-	if (data.fileType == _T(""))
-		data.fileType = pList->GetType(data.name, data.dir);
-
-	if (data.dir)
-	{
-		if (!refData.dir)
-			return -1;
-	}
-	else if (refData.dir)
-		return 1;
-
-	int res = data.fileType.CmpNoCase(refData.fileType);
-	if (res)
-		return res;
-	
-#ifdef __WXMSW__
-	return data.name.CmpNoCase(refData.name);
-#else
-	return data.name.Cmp(refData.name);
-#endif
-}
-
-int CLocalListView::CmpSize(CLocalListView *pList, unsigned int index, t_fileData &refData)
-{
-	t_fileData &data = pList->m_fileData[pList->m_indexMapping[index]];
-
-	if (data.dir)
-	{
-		if (!refData.dir)
-			return -1;
-		else
-#ifdef __WXMSW__
-			return data.name.CmpNoCase(refData.name);
-#else
-			return data.name.Cmp(refData.name);
-#endif
-	}
-	else if (refData.dir)
-		return 1;
-
-	if (data.size == -1)
-	{
-		if (refData.size != -1)
-			return -1;
-	}
-	else
-	{
-		if (refData.size == -1)
-			return 1;
-
-		wxLongLong res = data.size - refData.size;
-		if (res > 0)
-			return 1;
-		else if (res < 0)
-			return -1;
-	}
-
-#ifdef __WXMSW__
-	return data.name.CmpNoCase(refData.name);
-#else
-	return data.name.Cmp(refData.name);
-#endif
-}
-
-int CLocalListView::CmpTime(CLocalListView *pList, unsigned int index, t_fileData &refData)
-{
-	t_fileData &data = pList->m_fileData[pList->m_indexMapping[index]];
-
-	if (data.dir)
-	{
-		if (!refData.dir)
-			return -1;
-	}
-	else if (refData.dir)
-		return 1;
-
-	if (!data.hasTime)
-	{
-		if (refData.hasTime)
-			return -1;
-	}
-	else
-	{
-		if (!refData.hasTime)
-			return 1;
-
-		if (data.lastModified < refData.lastModified)
-			return -1;
-		else if (data.lastModified > refData.lastModified)
-			return 1;
-	}
-
-#ifdef __WXMSW__
-	return data.name.CmpNoCase(refData.name);
-#else
-	return data.name.Cmp(refData.name);
-#endif
 }
 
 void CLocalListView::OnContextMenu(wxContextMenuEvent& event)
