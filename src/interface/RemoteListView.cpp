@@ -454,6 +454,219 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 		ProcessDirectoryListing();
 }
 
+// Helper classes for fast sorting using std::sort
+// -----------------------------------------------
+
+class CRemoteListViewSort : public std::binary_function<int,int,bool>
+{
+public:
+	CRemoteListViewSort(const CDirectoryListing* const pDirectoryListing)
+		: m_pDirectoryListing(pDirectoryListing)
+	{
+	}
+
+	#define CMP(f, data1, data2) \
+		{\
+			int res = f(data1, data2);\
+			if (res == -1)\
+				return true;\
+			else if (res == 1)\
+				return false;\
+		}
+
+	#define CMP_LESS(f, data1, data2) \
+		{\
+			int res = f(data1, data2);\
+			if (res == -1)\
+				return true;\
+			else\
+				return false;\
+		}
+
+	inline int CmpDir(const CDirentry &data1, const CDirentry &data2) const
+	{
+		if (data1.dir)
+		{
+			if (!data2.dir)
+				return -1;
+			else
+				return 0;
+		}
+		else
+		{
+			if (data2.dir)
+				return 1;
+			else
+				return 0;
+		}
+	}
+
+	inline int CmpName(const CDirentry &data1, const CDirentry &data2) const
+	{
+#ifdef __WXMSW__
+		return data1.name.CmpNoCase(data2.name);
+#else
+		return data1.name.Cmp(data2.name);
+#endif
+	}
+
+	inline int CmpSize(const CDirentry &data1, const CDirentry &data2) const
+	{
+		const wxLongLong diff = data1.size - data2.size;
+		if (diff < 0)
+			return -1;
+		else if (diff > 0)
+			return 1;
+		else
+			return 0;
+	}
+
+	inline int CmpStringNoCase(const wxString &data1, const wxString &data2) const
+	{
+		return data1.CmpNoCase(data2);
+	}
+
+	inline int CmpTime(const CDirentry &data1, const CDirentry &data2) const
+	{
+		if (!data1.hasDate)
+		{
+			if (data2.hasDate)
+				return -1;
+			else
+				return 0;
+		}
+		else
+		{
+			if (!data2.hasDate)
+				return 1;
+
+			if (data1.time < data2.time)
+				return -1;
+			else if (data1.time > data2.time)
+				return 1;
+			else
+				return 0;
+		}
+	}
+
+protected:
+	const CDirectoryListing* const m_pDirectoryListing;
+};
+
+class CRemoteListViewSortName : public CRemoteListViewSort
+{
+public:
+	CRemoteListViewSortName(const CDirectoryListing* const pDirectoryListing)
+		: CRemoteListViewSort(pDirectoryListing)
+	{
+	}
+
+	bool operator()(int a, int b) const
+	{
+		const CDirentry& data1 = (*m_pDirectoryListing)[a];
+		const CDirentry& data2 = (*m_pDirectoryListing)[b];
+
+		CMP(CmpDir, data1, data2);
+
+		CMP_LESS(CmpName, data1, data2);
+	}
+};
+
+class CRemoteListViewSortSize : public CRemoteListViewSort
+{
+public:
+	CRemoteListViewSortSize(const CDirectoryListing* const pDirectoryListing)
+		: CRemoteListViewSort(pDirectoryListing)
+	{
+	}
+
+	bool operator()(int a, int b) const
+	{
+		const CDirentry& data1 = (*m_pDirectoryListing)[a];
+		const CDirentry& data2 = (*m_pDirectoryListing)[b];
+
+		CMP(CmpDir, data1, data2);
+
+		CMP(CmpSize, data1, data2);
+
+		CMP_LESS(CmpName, data1, data2);
+	}
+};
+
+class CRemoteListViewSortType : public CRemoteListViewSort
+{
+public:
+	CRemoteListViewSortType(CRemoteListView* const pRemoteListView, const CDirectoryListing* const pDirectoryListing, std::vector<CRemoteListView::t_fileData>& fileData)
+		: CRemoteListViewSort(pDirectoryListing), m_pRemoteListView(pRemoteListView), m_fileData(fileData)
+	{
+	}
+
+	bool operator()(int a, int b) const
+	{
+		const CDirentry& data1 = (*m_pDirectoryListing)[a];
+		const CDirentry& data2 = (*m_pDirectoryListing)[b];
+
+		CMP(CmpDir, data1, data2);
+
+		CRemoteListView::t_fileData &type1 = m_fileData[a];
+		CRemoteListView::t_fileData &type2 = m_fileData[b];
+		if (type1.fileType == _T(""))
+			type1.fileType = m_pRemoteListView->GetType(data1.name, data1.dir);
+		if (type2.fileType == _T(""))
+			type2.fileType = m_pRemoteListView->GetType(data2.name, data2.dir);
+
+		CMP(CmpStringNoCase, type1.fileType, type2.fileType);
+
+		CMP_LESS(CmpName, data1, data2);
+	}
+
+protected:
+	CRemoteListView* const m_pRemoteListView;
+	std::vector<CRemoteListView::t_fileData>& m_fileData;
+};
+
+class CRemoteListViewSortTime : public CRemoteListViewSort
+{
+public:
+	CRemoteListViewSortTime(const CDirectoryListing* const pDirectoryListing)
+		: CRemoteListViewSort(pDirectoryListing)
+	{
+	}
+
+	bool operator()(int a, int b) const
+	{
+		const CDirentry& data1 = (*m_pDirectoryListing)[a];
+		const CDirentry& data2 = (*m_pDirectoryListing)[b];
+
+		CMP(CmpDir, data1, data2);
+
+		CMP(CmpTime, data1, data2);
+
+		CMP_LESS(CmpName, data1, data2);
+	}
+};
+
+class CRemoteListViewSortPermissions : public CRemoteListViewSort
+{
+public:
+	CRemoteListViewSortPermissions(const CDirectoryListing* const pDirectoryListing)
+		: CRemoteListViewSort(pDirectoryListing)
+	{
+	}
+
+	bool operator()(int a, int b) const
+	{
+		const CDirentry& data1 = (*m_pDirectoryListing)[a];
+		const CDirentry& data2 = (*m_pDirectoryListing)[b];
+
+		CMP(CmpDir, data1, data2);
+
+		CMP(CmpStringNoCase, data1.permissions, data2.permissions);
+
+		CMP_LESS(CmpName, data1, data2);
+	}
+};
+
 void CRemoteListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 {
 	if (column != -1)
@@ -520,15 +733,19 @@ void CRemoteListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 		return;
 
 	if (!m_sortColumn)
-		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpName);
+		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CRemoteListViewSortName(m_pDirectoryListing));
 	else if (m_sortColumn == 1)
-		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpSize);
+		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CRemoteListViewSortSize(m_pDirectoryListing));
 	else if (m_sortColumn == 2)
-		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpType);
+		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CRemoteListViewSortType(this, m_pDirectoryListing, m_fileData));
 	else if (m_sortColumn == 3)
-		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpTime);
+		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CRemoteListViewSortTime(m_pDirectoryListing));
 	else if (m_sortColumn == 4)
-		QSortList(m_sortDirection, 1, m_indexMapping.size() - 1, CmpPermissions);
+		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CRemoteListViewSortPermissions(m_pDirectoryListing));
+	
+	if (m_sortDirection)
+		std::reverse(++m_indexMapping.begin(), m_indexMapping.end());
+	
 	Refresh(false);
 }
 
@@ -545,55 +762,6 @@ void CRemoteListView::OnColumnClicked(wxListEvent &event)
 		dir = m_sortDirection;
 
 	SortList(col, dir);
-}
-
-void CRemoteListView::QSortList(const unsigned int dir, unsigned int anf, unsigned int ende, int (*comp)(CRemoteListView *pList, unsigned int index, unsigned int refIndex))
-{
-	unsigned int l = anf;
-	unsigned int r = ende;
-	const unsigned int ref = (l + r) / 2;
-	int refIndex = m_indexMapping[ref];
-	do
-    {
-		if (!dir)
-		{
-			while ((comp(this, m_indexMapping[l], refIndex) < 0) && (l<ende)) l++;
-			while ((comp(this, m_indexMapping[r], refIndex) > 0) && (r>anf)) r--;
-		}
-		else
-		{
-			while ((comp(this, m_indexMapping[l], refIndex) > 0) && (l<ende)) l++;
-			while ((comp(this, m_indexMapping[r], refIndex) < 0) && (r>anf)) r--;
-		}
-		if (l<=r)
-		{
-			unsigned int tmp = m_indexMapping[l];
-			m_indexMapping[l] = m_indexMapping[r];
-			m_indexMapping[r] = tmp;
-			l++;
-			r--;
-		}
-    }
-	while (l<=r);
-
-	if (anf<r) QSortList(dir, anf, r, comp);
-	if (l<ende) QSortList(dir, l, ende, comp);
-}
-
-int CRemoteListView::CmpName(CRemoteListView *pList, unsigned int index, unsigned int refIndex)
-{
-	const CDirentry& entry = (*pList->m_pDirectoryListing)[index];
-	const CDirentry& refEntry = (*pList->m_pDirectoryListing)[refIndex];
-
-	if (entry.dir)
-	{
-		if (!refEntry.dir)
-			return -1;
-	}
-	else if (refEntry.dir)
-		return 1;
-
-	return entry.name.CmpNoCase(refEntry.name);
 }
 
 wxString CRemoteListView::GetType(wxString name, bool dir)
@@ -651,120 +819,6 @@ wxString CRemoteListView::GetType(wxString name, bool dir)
 	type = dir ? _("Folder") : _("File");
 #endif
 	return type;
-}
-
-int CRemoteListView::CmpType(CRemoteListView *pList, unsigned int index, unsigned int refIndex)
-{
-	const CDirentry& entry = (*pList->m_pDirectoryListing)[index];
-	const CDirentry& refEntry = (*pList->m_pDirectoryListing)[refIndex];
-	t_fileData &data = pList->m_fileData[index];
-	t_fileData &refData = pList->m_fileData[refIndex];
-
-	if (refData.fileType == _T(""))
-		refData.fileType = pList->GetType(refEntry.name, refEntry.dir);
-	if (data.fileType == _T(""))
-		data.fileType = pList->GetType(entry.name, entry.dir);
-
-	if (entry.dir)
-	{
-		if (!refEntry.dir)
-			return -1;
-	}
-	else if (refEntry.dir)
-		return 1;
-
-	int res = data.fileType.CmpNoCase(refData.fileType);
-	if (res)
-		return res;
-
-	return entry.name.CmpNoCase(refEntry.name);
-}
-
-int CRemoteListView::CmpSize(CRemoteListView *pList, unsigned int index, unsigned int refIndex)
-{
-	const CDirentry& entry = (*pList->m_pDirectoryListing)[index];
-	const CDirentry& refEntry = (*pList->m_pDirectoryListing)[refIndex];
-	
-	if (entry.dir)
-	{
-		if (!refEntry.dir)
-			return -1;
-		else
-			return entry.name.CmpNoCase(refEntry.name);
-	}
-	else if (refEntry.dir)
-		return 1;
-
-	if (entry.size == -1)
-	{
-		if (refEntry.size != -1)
-			return -1;
-	}
-	else
-	{
-		if (refEntry.size == -1)
-			return 1;
-
-		wxLongLong res = entry.size - refEntry.size;
-		if (res > 0)
-			return 1;
-		else if (res < 0)
-			return -1;
-	}
-
-	return entry.name.CmpNoCase(refEntry.name);
-}
-
-int CRemoteListView::CmpTime(CRemoteListView *pList, unsigned int index, unsigned int refIndex)
-{
-	const CDirentry& entry = (*pList->m_pDirectoryListing)[index];
-	const CDirentry& refEntry = (*pList->m_pDirectoryListing)[refIndex];
-
-	if (entry.dir)
-	{
-		if (!refEntry.dir)
-			return -1;
-	}
-	else if (refEntry.dir)
-		return 1;
-
-	if (!entry.hasDate)
-	{
-		if (refEntry.hasDate)
-			return -1;
-	}
-	else
-	{
-		if (!refEntry.hasDate)
-			return 1;
-
-		if (entry.time < refEntry.time)
-			return -1;
-		else if (entry.time > refEntry.time)
-			return 1;
-	}
-
-	return entry.name.CmpNoCase(refEntry.name);
-}
-
-int CRemoteListView::CmpPermissions(CRemoteListView *pList, unsigned int index, unsigned int refIndex)
-{
-	const CDirentry& entry = (*pList->m_pDirectoryListing)[index];
-	const CDirentry& refEntry = (*pList->m_pDirectoryListing)[refIndex];
-	
-	if (entry.dir)
-	{
-		if (!refEntry.dir)
-			return -1;
-	}
-	else if (refEntry.dir)
-		return 1;
-
-	int res = entry.permissions.CmpNoCase(refEntry.permissions);
-	if (!res)
-		return entry.name.CmpNoCase(refEntry.name);
-
-	return res;
 }
 
 void CRemoteListView::OnItemActivated(wxListEvent &event)

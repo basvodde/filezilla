@@ -740,6 +740,9 @@ void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CLocalListViewSortType(this, m_fileData));
 	else if (m_sortColumn == 3)
 		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CLocalListViewSortTime(m_fileData));
+
+	if (m_sortDirection)
+		std::reverse(++m_indexMapping.begin(), m_indexMapping.end());
 }
 
 void CLocalListView::OnColumnClicked(wxListEvent &event)

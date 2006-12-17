@@ -45,27 +45,22 @@ protected:
 	virtual wxString OnGetItemText(long item, long column) const;
 	virtual int OnGetItemImage(long item) const;
 
-	wxString GetType(wxString name, bool dir);
-
 	int FindItemWithPrefix(const wxString& prefix, int start);
 
+public:
 	struct t_fileData
 	{
 		int icon;
 		wxString fileType;
 	};
 
+	wxString GetType(wxString name, bool dir);
+
+protected:
 	bool IsItemValid(unsigned int item) const;
 	int GetItemIndex(unsigned int item) const;
 
 	void SortList(int column = -1, int direction = -1);
-	void QSortList(const unsigned int dir, unsigned int anf, unsigned int ende, int (*comp)(CRemoteListView *pList, unsigned int index, unsigned int refIndex));
-
-	static int CmpName(CRemoteListView *pList, unsigned int index, unsigned int refIndex);
-	static int CmpType(CRemoteListView *pList, unsigned int index, unsigned int refIndex);
-	static int CmpSize(CRemoteListView *pList, unsigned int index, unsigned int refIndex);
-	static int CmpTime(CRemoteListView *pList, unsigned int index, unsigned int refIndex);
-	static int CmpPermissions(CRemoteListView *pList, unsigned int index, unsigned int refIndex);
 
 	// Processes the directory listing in case of a recursive operation
 	void ProcessDirectoryListing();
