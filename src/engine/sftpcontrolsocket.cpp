@@ -92,12 +92,67 @@ public:
 	}
 	
 protected:
+
+	wxString ReadLine(wxInputStream* pInputStream, bool &error)
+	{
+		int read = 0;
+		const int buffersize = 4096;
+		char buffer[buffersize];
+
+		while(!pInputStream->Eof())
+		{
+			char c;
+			pInputStream->Read(&c, 1);
+			if (pInputStream->LastRead() != 1)
+			{
+				if (pInputStream->Eof())
+					m_pOwner->LogMessage(Debug_Warning, _T("Unexpected EOF."));
+				else
+					m_pOwner->LogMessage(Debug_Warning, _T("Uknown input stream error"));
+				error = true;
+				return _T("");
+			}
+
+			if (c == '\n')
+				break;
+
+			if (read == buffersize - 1)
+			{
+				// Cap string length
+				continue;
+			}
+			
+			buffer[read++] = c;
+		}
+		if (pInputStream->Eof())
+		{
+			m_pOwner->LogMessage(Debug_Warning, _T("Unexpected EOF."));
+			error = true;
+			return _T("");
+		}
+
+		if (read && buffer[read - 1] == '\r')
+			read--;
+
+		buffer[read] = 0;
+
+		const wxString line = m_pOwner->ConvToLocal(buffer);
+		if (read && line == _T(""))
+		{
+			m_pOwner->LogMessage(::Error, _T("Failed to convert reply to local character set."));
+			error = true;
+		}
+
+		return line;
+	}
+
 	virtual ExitCode Entry()
 	{
 		wxInputStream* pInputStream = m_pProcess->GetInputStream();
 		char eventType;
 
-		while(!pInputStream->Eof())
+		bool error = false;
+		while (!pInputStream->Eof() && !error)
 		{
 			pInputStream->Read(&eventType, 1);
 			if (pInputStream->LastRead() != 1)
@@ -112,75 +167,69 @@ protected:
 			case sftpRequestPreamble:
 			case sftpRequestInstruction:
 				{
-					wxTextInputStream textStream(*pInputStream);
-					wxString text = textStream.ReadLine();
-					if (pInputStream->LastRead() <= 0 || text == _T(""))
+					const wxString& line = ReadLine(pInputStream, error);
+					if (error)
 						goto loopexit;
-					CSftpEvent evt((sftpEventTypes)eventType, text);
+					CSftpEvent evt((sftpEventTypes)eventType, line);
 					wxPostEvent(m_pOwner, evt);
 				}
 				break;
 			case sftpError:
 				{
-					wxTextInputStream textStream(*pInputStream);
-					wxString text = textStream.ReadLine();
-					if (pInputStream->LastRead() <= 0 || text == _T(""))
+					const wxString& line = ReadLine(pInputStream, error);
+					if (error)
 						goto loopexit;
-					m_pOwner->LogMessage(::Error, text);
+					m_pOwner->LogMessage(::Error, line);
 				}
 				break;
 			case sftpVerbose:
 				{
-					wxTextInputStream textStream(*pInputStream);
-					wxString text = textStream.ReadLine();
-					if (pInputStream->LastRead() <= 0 || text == _T(""))
+					const wxString& line = ReadLine(pInputStream, error);
+					if (error)
 						goto loopexit;
-					m_pOwner->LogMessage(Debug_Info, text);
+					m_pOwner->LogMessage(Debug_Info, line);
 				}
 				break;
 			case sftpStatus:
 				{
-					wxTextInputStream textStream(*pInputStream);
-					wxString text = textStream.ReadLine();
-					if (pInputStream->LastRead() <= 0 || text == _T(""))
+					const wxString& line = ReadLine(pInputStream, error);
+					if (error)
 						goto loopexit;
-					m_pOwner->LogMessage(Status, text);
+					m_pOwner->LogMessage(Status, line);
 				}
 				break;
 			case sftpDone:
 				{
-					wxTextInputStream textStream(*pInputStream);
-					wxString text = textStream.ReadLine();
-					if (pInputStream->LastRead() <= 0 || text == _T(""))
+					const wxString& line = ReadLine(pInputStream, error);
+					if (error)
 						goto loopexit;
-					CSftpEvent evt((sftpEventTypes)eventType, text);
+					CSftpEvent evt((sftpEventTypes)eventType, line);
 					wxPostEvent(m_pOwner, evt);
 				}
 				break;
 			case sftpRequest:
 				{
-					wxTextInputStream textStream(*pInputStream);
-					wxString text = textStream.ReadLine();
-					if (pInputStream->LastRead() <= 0 || text == _T(""))
+					const wxString& line = ReadLine(pInputStream, error);
+					if (error)
 						goto loopexit;
-					int requestType = text[0] - '0';
+					int requestType = line[0] - '0';
 					if (requestType == sftpReqHostkey || requestType == sftpReqHostkeyChanged)
 					{
-						wxString strPort = textStream.ReadLine();
-						if (pInputStream->LastRead() <= 0 || strPort == _T(""))
+						const wxString& strPort = ReadLine(pInputStream, error);
+						if (error)
 							goto loopexit;
 						long port = 0;
 						if (!strPort.ToLong(&port))
 							goto loopexit;
-						wxString fingerprint = textStream.ReadLine();
-						if (pInputStream->LastRead() <= 0 || fingerprint == _T(""))
+						const wxString& fingerprint = ReadLine(pInputStream, error);
+						if (error)
 							goto loopexit;
 
-						m_pOwner->SendRequest(new CHostKeyNotification(text.Mid(1), port, fingerprint, requestType == sftpReqHostkeyChanged));
+						m_pOwner->SendRequest(new CHostKeyNotification(line.Mid(1), port, fingerprint, requestType == sftpReqHostkeyChanged));
 					}
 					else if (requestType == sftpReqPassword)
 					{
-						CSftpEvent evt(sftpRequest, sftpReqPassword, text.Mid(1));
+						CSftpEvent evt(sftpRequest, sftpReqPassword, line.Mid(1));
 						wxPostEvent(m_pOwner, evt);
 					}
 				}
@@ -825,10 +874,9 @@ int CSftpControlSocket::ListParseResponse(bool successful, const wxString& reply
 
 int CSftpControlSocket::ListParseEntry(const wxString& entry)
 {
-	LogMessage(RawList, entry);
-
 	if (!m_pCurOpData)
 	{
+		LogMessage(RawList, entry);
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Empty m_pCurOpData"));
 		ResetOperation(FZ_REPLY_INTERNALERROR);
 		return FZ_REPLY_ERROR;
@@ -836,6 +884,7 @@ int CSftpControlSocket::ListParseEntry(const wxString& entry)
 
 	if (m_pCurOpData->opId != cmd_list)
 	{
+		LogMessage(RawList, entry);
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Listentry received, but current operation is not cmd_list"));
 		ResetOperation(FZ_REPLY_INTERNALERROR);
 		return FZ_REPLY_ERROR;
@@ -844,6 +893,7 @@ int CSftpControlSocket::ListParseEntry(const wxString& entry)
 	CSftpListOpData *pData = static_cast<CSftpListOpData *>(m_pCurOpData);
 	if (!pData)
 	{
+		LogMessage(RawList, entry);
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("m_pCurOpData of wrong type"));
 		ResetOperation(FZ_REPLY_INTERNALERROR);
 		return FZ_REPLY_ERROR;
@@ -851,6 +901,7 @@ int CSftpControlSocket::ListParseEntry(const wxString& entry)
 
 	if (pData->opState != list_list)
 	{
+		LogMessage(RawList, entry);
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("ListParseResponse called at inproper time: %s"), pData->opState);
 		ResetOperation(FZ_REPLY_INTERNALERROR);
 		return FZ_REPLY_ERROR;
@@ -859,6 +910,7 @@ int CSftpControlSocket::ListParseEntry(const wxString& entry)
 
 	if (!pData->pParser)
 	{
+		LogMessage(RawList, entry);
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("pData->pParser is 0"));
 		return FZ_REPLY_INTERNALERROR;
 	}
