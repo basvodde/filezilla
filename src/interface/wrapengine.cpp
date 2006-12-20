@@ -116,6 +116,18 @@ bool CWrapEngine::WrapTextChinese(wxWindow* parent, wxString &text, unsigned lon
 		}
 		if (!*p)
 		{
+			if (lineLength > maxLength)
+			{
+				if (!wrappable)
+					return false;
+
+				const wxString& tmp = wxString(str, wrappable - str);
+				wrappedText += tmp + _T("\n");
+				if (*wrappable != ' ')
+					str = wrappable;
+				else
+					str = wrappable + 1;
+			}
 			wrappedText += str;
 			break;
 		}
@@ -743,25 +755,7 @@ void CWrapEngine::SetWidthToCache(const char* name, int width)
 
 CWrapEngine::CWrapEngine()
 {
-#if wxUSE_UNICODE
-	// Just don't bother with wrapping on anything other than UCS-2
-	// FIXME: Use charset conversion routines to convert into UCS-2 and back into
-	//        local charset if not using unicode.
-	int lang = wxGetApp().GetCurrentLanguage();
-	if (lang == wxLANGUAGE_CHINESE || lang == wxLANGUAGE_CHINESE_SIMPLIFIED ||
-		lang == wxLANGUAGE_CHINESE_TRADITIONAL || lang == wxLANGUAGE_CHINESE_HONGKONG ||
-		lang == wxLANGUAGE_CHINESE_MACAU || lang == wxLANGUAGE_CHINESE_SINGAPORE ||
-		lang == wxLANGUAGE_CHINESE_TAIWAN)
-	{
-		m_wrapOnEveryChar = true;
-		m_noWrapChars = noWrapChars_Chinese;
-	}
-	else
-#endif
-	{
-		m_wrapOnEveryChar = false;
-		m_noWrapChars = 0;
-	}
+	CheckLanguage();
 }
 
 CWrapEngine::~CWrapEngine()
@@ -965,4 +959,27 @@ void CWrapEngine::ClearCache()
 	wxFileName file(wxGetApp().GetSettingsDir(), _T("layout.xml"));
 	if (file.FileExists())
 		wxRemoveFile(file.GetFullPath());
+}
+
+void CWrapEngine::CheckLanguage()
+{
+	#if wxUSE_UNICODE
+	// Just don't bother with wrapping on anything other than UCS-2
+	// FIXME: Use charset conversion routines to convert into UCS-2 and back into
+	//        local charset if not using unicode.
+	int lang = wxGetApp().GetCurrentLanguage();
+	if (lang == wxLANGUAGE_CHINESE || lang == wxLANGUAGE_CHINESE_SIMPLIFIED ||
+		lang == wxLANGUAGE_CHINESE_TRADITIONAL || lang == wxLANGUAGE_CHINESE_HONGKONG ||
+		lang == wxLANGUAGE_CHINESE_MACAU || lang == wxLANGUAGE_CHINESE_SINGAPORE ||
+		lang == wxLANGUAGE_CHINESE_TAIWAN)
+	{
+		m_wrapOnEveryChar = true;
+		m_noWrapChars = noWrapChars_Chinese;
+	}
+	else
+#endif
+	{
+		m_wrapOnEveryChar = false;
+		m_noWrapChars = 0;
+	}
 }

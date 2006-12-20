@@ -29,6 +29,8 @@ public:
 
 	int GetWidthFromCache(const char* name);
 
+	void CheckLanguage();
+
 protected:
 	void SetWidthToCache(const char* name, int width);
 
