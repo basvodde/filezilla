@@ -56,13 +56,6 @@ bool CSiteManager::Create(wxWindow* parent)
 	SetExtraStyle(wxWS_EX_BLOCK_EVENTS);
 	SetParent(parent);
 	CreateControls();
-	wxGetApp().GetWrapEngine()->WrapRecursive(this, 1.33, "Site Manager");
-	
-	Load();
-
-	XRCCTRL(*this, "ID_TRANSFERMODE_DEFAULT", wxRadioButton)->Update();
-	XRCCTRL(*this, "ID_TRANSFERMODE_ACTIVE", wxRadioButton)->Update();
-	XRCCTRL(*this, "ID_TRANSFERMODE_PASSIVE", wxRadioButton)->Update();
 
 	// Now create the imagelist for the site tree
 	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
@@ -76,6 +69,16 @@ bool CSiteManager::Create(wxWindow* parent)
 	
 	pTree->AssignImageList(pImageList);
 	
+	Layout();
+	wxGetApp().GetWrapEngine()->WrapRecursive(this, 1.33, "Site Manager");
+	pTree->SetInitialSize(pTree->GetSize());
+	
+	Load();
+
+	XRCCTRL(*this, "ID_TRANSFERMODE_DEFAULT", wxRadioButton)->Update();
+	XRCCTRL(*this, "ID_TRANSFERMODE_ACTIVE", wxRadioButton)->Update();
+	XRCCTRL(*this, "ID_TRANSFERMODE_PASSIVE", wxRadioButton)->Update();
+
 	SetCtrlState();
 		
 	return true;
