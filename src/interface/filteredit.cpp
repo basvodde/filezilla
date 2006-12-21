@@ -70,6 +70,7 @@ bool CFilterEditDialog::Create(wxWindow* parent, const std::vector<CFilter>& fil
 	m_pListCtrl = new wxCustomHeightListCtrl(wnd, wxID_ANY, wxDefaultPosition, wnd->GetSize(), wxVSCROLL|wxSUNKEN_BORDER);
 	if (!m_pListCtrl)
 		return false;
+	CalcMinListWidth();
 
 	m_choiceBoxHeight = 0;
 
@@ -576,4 +577,28 @@ bool CFilterEditDialog::Validate()
 	}
 
 	return true;
+}
+
+void CFilterEditDialog::CalcMinListWidth()
+{
+	wxChoice *pType = new wxChoice(m_pListCtrl, wxID_ANY, wxDefaultPosition, wxDefaultSize, filterTypes);
+	int requiredWidth = pType->GetBestSize().GetWidth();
+	pType->Destroy();
+
+	wxChoice *pStringCondition = new wxChoice(m_pListCtrl, wxID_ANY, wxDefaultPosition, wxDefaultSize, stringConditionTypes);
+	wxChoice *pSizeCondition = new wxChoice(m_pListCtrl, wxID_ANY, wxDefaultPosition, wxDefaultSize, sizeConditionTypes);
+	requiredWidth += wxMax(pStringCondition->GetBestSize().GetWidth(), pSizeCondition->GetBestSize().GetWidth());
+	pStringCondition->Destroy();
+	pSizeCondition->Destroy();
+
+	requiredWidth += m_pListCtrl->GetWindowBorderSize().x;
+	requiredWidth += 40;
+	requiredWidth += 100;
+
+	wxSize minSize = m_pListCtrl->GetMinSize();
+	minSize.IncTo(wxSize(requiredWidth, -1));
+	m_pListCtrl->SetMinSize(minSize);
+	XRCCTRL(*this, "ID_CONDITIONS", wxScrolledWindow)->SetMinSize(minSize);
+	Layout();
+	Fit();
 }

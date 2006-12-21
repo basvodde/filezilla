@@ -48,6 +48,8 @@ protected:
 	void DestroyControls();
 	void UpdateCount();
 
+	void CalcMinListWidth();
+
 	void SetCtrlState(bool enabled);
 
 	wxCustomHeightListCtrl* m_pListCtrl;
