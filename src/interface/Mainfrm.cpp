@@ -24,6 +24,7 @@
 #include "updatewizard.h"
 #include "defaultfileexistsdlg.h"
 #include "loginmanager.h"
+#include "conditionaldialog.h"
 
 #ifndef __WXMSW__
 #include "resources/filezilla.xpm"
@@ -353,6 +354,20 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		wxTextEntryDialog dlg(this, _("Please enter raw FTP command.\nUsing raw ftp commands will clear the directory cache."), _("Enter custom command"));
 		if (dlg.ShowModal() != wxID_OK)
 			return;
+
+		const wxString &command = dlg.GetValue();
+		
+		if (!command.Left(5).CmpNoCase(_T("quote")) || !command.Left(6).CmpNoCase(_T("quote ")))
+		{
+			CConditionalDialog dlg(this, CConditionalDialog::rawcommand_quote, CConditionalDialog::yesno);
+			dlg.SetTitle(_("Raw FTP command"));
+
+			dlg.AddText(_("'quote' is usually a local command used by commandline clients to send the arguments following 'quote' to the server. You might want to enter the raw command without the leading 'quote'."));
+			dlg.AddText(wxString::Format(_("Do you really want to send '%s' to the server?"), command.c_str()));
+
+			if (!dlg.Run())
+				return;
+		}
 
 		m_pState->m_pCommandQueue->ProcessCommand(new CRawCommand(dlg.GetValue()));		
 	}
