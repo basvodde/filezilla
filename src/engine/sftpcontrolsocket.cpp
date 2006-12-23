@@ -722,6 +722,9 @@ bool CSftpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotifi
 			Send(pass, show);
 		}
 		break;
+	default:
+		LogMessage(Debug_Warning, _T("Unknown async request reply id: %d"), requestId);
+		return false;
 	}
 
 	return true;

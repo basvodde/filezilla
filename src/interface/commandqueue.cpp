@@ -45,7 +45,8 @@ void CCommandQueue::ProcessNextCommand()
 			if (res == FZ_REPLY_WOULDBLOCK || res == FZ_REPLY_OK)
 			{
 				const CConnectCommand* pConnectCommand = (const CConnectCommand *)pCommand;
-				m_pMainFrame->GetState()->SetServer(&pConnectCommand->GetServer());
+				const CServer& server = pConnectCommand->GetServer();
+				m_pMainFrame->GetState()->SetServer(&server);
 			}
 		}
 		else if (pCommand->GetId() == cmd_disconnect)
