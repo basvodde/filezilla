@@ -830,6 +830,11 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 		m_pStatusView->InitDefAttr();
 		CreateMenus();
 	}
+	if (oldLang != newLang)
+	{
+		CreateQuickconnectBar();
+		wxGetApp().GetWrapEngine()->CheckLanguage();
+	}
 
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	if (pOptions->GetOptionVal(OPTION_UPDATECHECK))
