@@ -777,7 +777,7 @@ void CUpdateWizard::DisplayUpdateAvailability(bool showDialog, bool forceMenu /*
 	if (newVersion == _T(""))
 		return;
 
-	if (CBuildInfo::ConvertToVersionNumber(newVersion) < CBuildInfo::ConvertToVersionNumber(CBuildInfo::GetVersion()))
+	if (CBuildInfo::ConvertToVersionNumber(newVersion) <= CBuildInfo::ConvertToVersionNumber(CBuildInfo::GetVersion()))
 	{
 		pOptions->SetOption(OPTION_UPDATECHECK_NEWVERSION, _T(""));
 		pOptions->SetOption(OPTION_UPDATECHECK_URL, _T(""));
