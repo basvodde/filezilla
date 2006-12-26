@@ -1703,8 +1703,7 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 
 			// Pointless to retry
 			ResetEngine(engineData, true);
-
-			continue;
+			return;
 		}
 	}
 }
