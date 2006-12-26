@@ -521,7 +521,7 @@ void CMainFrame::OnDisconnect(wxCommandEvent& event)
 
 void CMainFrame::OnUpdateToolbarCancel(wxUpdateUIEvent& event)
 {
-	event.Enable(!m_pState->m_pCommandQueue->Idle());
+	event.Enable(m_pState && m_pState->m_pCommandQueue && !m_pState->m_pCommandQueue->Idle());
 }
 
 void CMainFrame::OnCancel(wxCommandEvent& event)
