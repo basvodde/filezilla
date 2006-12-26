@@ -1,5 +1,6 @@
 #include "FileZilla.h"
 #include "loginmanager.h"
+#include "filezillaapp.h"
 
 CLoginManager CLoginManager::m_theLoginManager;
 
@@ -23,7 +24,7 @@ bool CLoginManager::GetPassword(CServer &server, wxString name /*=_T("")*/, wxSt
 	}
 
 	wxDialog pwdDlg;
-	wxXmlResource::Get()->LoadDialog(&pwdDlg, 0, _T("ID_ENTERPASSWORD"));
+	wxXmlResource::Get()->LoadDialog(&pwdDlg, wxGetApp().GetTopWindow(), _T("ID_ENTERPASSWORD"));
 	if (name == _T(""))
 	{
 		pwdDlg.GetSizer()->Show(XRCCTRL(pwdDlg, "ID_NAMELABEL", wxStaticText), false, true);
