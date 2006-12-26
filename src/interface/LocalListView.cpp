@@ -46,7 +46,7 @@ CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, 
 	m_pHeaderImageList = new wxImageListEx(8, 8, true, 3);
 
 	wxBitmap bmp;
-	
+
 	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("empty.png"), wxBITMAP_TYPE_PNG);
 	m_pHeaderImageList->Add(bmp);
 	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("up.png"), wxBITMAP_TYPE_PNG);
@@ -94,7 +94,7 @@ bool CLocalListView::DisplayDir(wxString dirname)
 	std::list<wxString> selectedNames;
 	if (m_dir != dirname)
 	{
-		// Clear selection
+// Clear selection
 		int item = -1;
 		while (true)
 		{
@@ -103,6 +103,7 @@ bool CLocalListView::DisplayDir(wxString dirname)
 				break;
 			SetItemState(item, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
 		}
+		focused = _T("..");
 
 		m_dir = dirname;
 	}
@@ -135,7 +136,7 @@ bool CLocalListView::DisplayDir(wxString dirname)
 #endif
 	{
 		CFilterDialog filter;
-		
+
 		wxDir dir(dirname);
 		if (!dir.IsOpened())
 		{
@@ -158,7 +159,7 @@ bool CLocalListView::DisplayDir(wxString dirname)
 			data.dir = wxFileName::DirExists(dirname + file);
 			data.icon = -2;
 			data.name = file;
-	
+
 			wxStructStat buf;
 			int result;
 			result = wxStat(dirname + file, &buf);
@@ -185,13 +186,13 @@ bool CLocalListView::DisplayDir(wxString dirname)
 		}
 	}
 
-	SortList();
-
-	ReselectItems(selectedNames, focused);
-
 	const int count = m_indexMapping.size();
 	if (oldItemCount != count)
 		SetItemCount(count);
+
+	SortList();
+
+	ReselectItems(selectedNames, focused);
 
 	Refresh(false);
 
@@ -293,11 +294,11 @@ void CLocalListView::OnItemActivated(wxListEvent &event)
 	}
 
 	item = event.GetIndex();
-	
+
 	t_fileData *data = GetData(item);
 	if (!data)
 		return;
-	
+
 	if (!item || data->dir)
 	{
 		wxString error;
@@ -353,7 +354,7 @@ void CLocalListView::DisplayDrives()
 		delete [] drives;
 		return;
 	}
-	
+
 	const wxChar* pDrive = drives;
 
 	int count = 1;
@@ -386,7 +387,7 @@ void CLocalListView::DisplayDrives()
 		data.icon = -2;
 		data.size = -1;
 		data.hasTime = false;
-		
+
 		m_fileData.push_back(data);
 		m_indexMapping.push_back(count);
 		pDrive += wxStrlen(pDrive) + 1;
@@ -414,7 +415,7 @@ wxString CLocalListView::GetType(wxString name, bool dir)
 	else
 		path = m_dir + name;
 
-	SHFILEINFO shFinfo;		
+	SHFILEINFO shFinfo;
 	memset(&shFinfo,0,sizeof(SHFILEINFO));
 	if (SHGetFileInfo(path,
 		dir ? FILE_ATTRIBUTE_DIRECTORY : FILE_ATTRIBUTE_NORMAL,
@@ -756,7 +757,7 @@ void CLocalListView::OnColumnClicked(wxListEvent &event)
 		dir = m_sortDirection ? 0 : 1;
 	else
 		dir = m_sortDirection;
-	
+
 	SortList(col, dir);
 	Refresh(false);
 }
@@ -818,7 +819,7 @@ void CLocalListView::OnMenuUpload(wxCommandEvent& event)
 		t_fileData *data = GetData(item);
 		if (!data)
 			return;
-	
+
 		if (!item)
 			m_pState->SetLocalDir(data->name);
 		else
@@ -872,9 +873,9 @@ void CLocalListView::OnMenuMkdir(wxCommandEvent& event)
 
 	wxFileName fn(dlg.GetValue(), _T(""));
 	fn.Normalize(wxPATH_NORM_ALL, m_dir);
-	
+
 	bool res;
-	
+
 	{
 		wxLogNull log;
 		res = fn.Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
@@ -916,7 +917,7 @@ void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 		t_fileData *data = GetData(item);
 		if (!data)
 			continue;
-	
+
 		len += dirLen + data->name.Length() + 1;
 	}
 
@@ -984,7 +985,7 @@ void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 		t_fileData *data = GetData(item);
 		if (!data)
 			continue;
-	
+
 		if (data->dir)
 		{
 			wxString subDir = dir + data->name + _T("/");
@@ -1022,7 +1023,7 @@ void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 				wxRemoveFile(filename + file);
 		}
 	}
-	
+
 	// Delete the now empty directories
 	for (std::list<wxString>::const_iterator iter = dirsToDelete.begin(); iter != dirsToDelete.end(); iter++)
 		wxRmdir(*iter);
@@ -1088,7 +1089,7 @@ void CLocalListView::OnChar(wxKeyEvent& event)
 #endif
 		tmp[1] = 0;
 		wxString newPrefix = m_prefix + tmp;
-		
+
 		bool beep = false;
 		int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 		if (item != -1)
@@ -1116,7 +1117,7 @@ void CLocalListView::OnChar(wxKeyEvent& event)
 			newPrefix = m_prefix;
 			newPos = FindItemWithPrefix(newPrefix, item + 1);
 		}
-	
+
 		m_prefix = newPrefix;
 		if (newPos == -1)
 		{
@@ -1182,7 +1183,7 @@ void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 		event.Veto();
 		return;
 	}
-	
+
 	if (event.GetLabel() == _T(""))
 	{
 		event.Veto();
@@ -1193,11 +1194,11 @@ void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 #ifdef __WXMSW__
 	newname = newname.Left(255);
 
-	if ((newname.Find('/') != -1) || 
+	if ((newname.Find('/') != -1) ||
 		(newname.Find('\\') != -1) ||
 		(newname.Find(':') != -1) ||
 		(newname.Find('*') != -1) ||
-		(newname.Find('?') != -1) || 
+		(newname.Find('?') != -1) ||
 		(newname.Find('"') != -1) ||
 		(newname.Find('<') != -1) ||
 		(newname.Find('>') != -1) ||
@@ -1207,7 +1208,7 @@ void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 		event.Veto();
 		return;
 	}
-	
+
 	SHFILEOPSTRUCT op;
 	memset(&op, 0, sizeof(op));
 
@@ -1231,9 +1232,9 @@ void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 		return;
 	}
 #else
-	if ((newname.Find('/') != -1) || 
+	if ((newname.Find('/') != -1) ||
 		(newname.Find('*') != -1) ||
-		(newname.Find('?') != -1) || 
+		(newname.Find('?') != -1) ||
 		(newname.Find('<') != -1) ||
 		(newname.Find('>') != -1) ||
 		(newname.Find('|') != -1))
@@ -1294,7 +1295,7 @@ std::list<wxString> CLocalListView::RememberSelectedItems(wxString& focused)
 			selectedNames.push_back(_T("-") + data.name);
 		SetItemState(item, 0, wxLIST_STATE_SELECTED);
 	}
-	
+
 	item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
 	if (item != -1)
 	{
@@ -1311,7 +1312,7 @@ void CLocalListView::ReselectItems(const std::list<wxString>& selectedNames, wxS
 {
 	// Reselect previous items if neccessary.
 	// Sorting direction did not change. We just have to scan through items once
-	
+
 	if (selectedNames.empty())
 	{
 		if (focused == _T(""))
@@ -1327,9 +1328,9 @@ void CLocalListView::ReselectItems(const std::list<wxString>& selectedNames, wxS
 		}
 		return;
 	}
-	
+
 	int firstSelected = -1;
-	
+
 	unsigned i = 0;
 	for (std::list<wxString>::const_iterator iter = selectedNames.begin(); iter != selectedNames.end(); iter++)
 	{
