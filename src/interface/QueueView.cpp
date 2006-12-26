@@ -49,7 +49,7 @@ class CFolderProcessingThread : public wxThread
 {
 public:
 	CFolderProcessingThread(CQueueView* pOwner, CFolderScanItem* pFolderItem)
-		: wxThread(wxTHREAD_JOINABLE), m_condition(m_sync) { 
+		: wxThread(wxTHREAD_JOINABLE), m_condition(m_sync) {
 		m_pOwner = pOwner;
 		m_pFolderItem = pFolderItem;
 
@@ -63,9 +63,9 @@ public:
 		wxASSERT(entryList.empty());
 		wxMutexLocker locker(m_sync);
 		entryList.swap(m_entryList);
-		
+
 		m_didSendEvent = false;
-		
+
 		if (m_threadWaiting)
 		{
 			m_threadWaiting = false;
@@ -104,7 +104,7 @@ protected:
 		if (send)
 		{
 			// We send the notification after leaving the critical section, else we
-			// could get into a deadlock. wxWidgets event system does internal 
+			// could get into a deadlock. wxWidgets event system does internal
 			// locking.
 			wxCommandEvent evt(fzEVT_FOLDERTHREAD_FILES, wxID_ANY);
 			wxPostEvent(m_pOwner, evt);
@@ -145,7 +145,7 @@ protected:
 						m_pFolderItem->m_currentRemotePath = pair.remotePath;
 
 						found = m_pFolderItem->m_pDir->GetFirst(&file);
-						
+
 						if (!found)
 						{
 							// Empty directory
@@ -175,7 +175,17 @@ protected:
 				const wxString& fullName = m_pFolderItem->m_currentLocalPath + wxFileName::GetPathSeparator() + file;
 
 				if (wxDir::Exists(fullName))
-				{	
+				{
+#ifdef S_ISLNK
+					wxStructStat buf;
+					const int result = wxLstat(fullName, &buf);
+					if (!result && S_ISLNK(buf.st_mode))
+					{
+						found = m_pFolderItem->m_pDir->GetNext(&file);
+						continue;
+					}
+#endif
+
 					if (!m_filters.FilenameFiltered(file, true, -1, true))
 					{
 						CFolderScanItem::t_dirPair pair;
@@ -205,7 +215,7 @@ protected:
 
 				found = m_pFolderItem->m_pDir->GetNext(&file);
 			}
-			
+
 			bool send;
 			m_sync.Lock();
 			if (!m_didSendEvent && m_entryList.size())
@@ -217,7 +227,7 @@ protected:
 			if (send)
 			{
 				// We send the notification after leaving the critical section, else we
-				// could get into a deadlock. wxWidgets event system does internal 
+				// could get into a deadlock. wxWidgets event system does internal
 				// locking.
 				wxCommandEvent evt(fzEVT_FOLDERTHREAD_FILES, wxID_ANY);
 				wxPostEvent(m_pOwner, evt);
@@ -293,14 +303,14 @@ CQueueItem* CQueueItem::GetChild(unsigned int item, bool recursive /*=true*/)
 	{
 		if (!item)
 			return *iter;
-		
+
 		unsigned int count = (*iter)->GetChildrenCount(true);
 		if (item > count)
 		{
 			item -= count + 1;
 			continue;
 		}
-		
+
 		return (*iter)->GetChild(item - 1);
 	}
 	return 0;
@@ -342,7 +352,7 @@ bool CQueueItem::RemoveChild(CQueueItem* pItem)
 				delete *iter;
 				m_children.erase(iter);
 			}
-			
+
 			deleted = true;
 			break;
 		}
@@ -357,7 +367,7 @@ bool CQueueItem::RemoveChild(CQueueItem* pItem)
 		parent->m_visibleOffspring -= oldVisibleOffspring - m_visibleOffspring;
 		parent = parent->GetParent();
 	}
-	
+
 	return true;
 }
 
@@ -622,7 +632,7 @@ CFileItem* CServerItem::GetIdleChild(bool immediateOnly, enum AcceptedTransferDi
 				return item;
 
 			if (direction == download)
-			{	
+			{
 				if (item->Download())
 					return item;
 			}
@@ -646,7 +656,7 @@ CFileItem* CServerItem::GetIdleChild(bool immediateOnly, enum AcceptedTransferDi
 				return item;
 
 			if (direction == download)
-			{	
+			{
 				if (item->Download())
 					return item;
 			}
@@ -654,7 +664,7 @@ CFileItem* CServerItem::GetIdleChild(bool immediateOnly, enum AcceptedTransferDi
 				return item;
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -662,7 +672,7 @@ bool CServerItem::RemoveChild(CQueueItem* pItem)
 {
 	if (!pItem)
 		return false;
-	
+
 	if (pItem->GetType() == QueueItemType_File || pItem->GetType() == QueueItemType_Folder)
 	{
 		CFileItem* pFileItem = reinterpret_cast<CFileItem*>(pItem);
@@ -818,7 +828,7 @@ CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame, 
 
 	m_totalQueueSize = 0;
 	m_filesWithUnknownSize = 0;
-	
+
 	InsertColumn(0, _("Server / Local file"), wxLIST_FORMAT_LEFT, 150);
 	InsertColumn(1, _("Direction"), wxLIST_FORMAT_CENTER, 60);
 	InsertColumn(2, _("Remote file"), wxLIST_FORMAT_LEFT, 150);
@@ -844,7 +854,7 @@ CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame, 
 	pData->state = t_EngineData::none;
 	pData->pEngine = 0; // TODO: Primary transfer engine data
 	m_engineData.push_back(pData);
-	
+
 	int engineCount = COptions::Get()->GetOptionVal(OPTION_NUMTRANSFERS);
 	for (int i = 0; i < engineCount; i++)
 	{
@@ -853,10 +863,10 @@ CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame, 
 		pData->pItem = 0;
 		pData->pStatusLineCtrl = 0;
 		pData->state = t_EngineData::none;
-		
+
 		pData->pEngine = new CFileZillaEngine();
 		pData->pEngine->Init(this, COptions::Get());
-		
+
 		m_engineData.push_back(pData);
 	}
 
@@ -882,7 +892,7 @@ CQueueView::~CQueueView()
 		delete m_engineData[engineIndex];
 }
 
-bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxString& localFile, 
+bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxString& localFile,
 						   const wxString& remoteFile, const CServerPath& remotePath,
 						   const CServer& server, const wxLongLong size)
 {
@@ -954,7 +964,7 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 wxString CQueueView::OnGetItemText(long item, long column) const
 {
 	CQueueView* pThis = const_cast<CQueueView*>(this);
-	
+
 	CQueueItem* pItem = pThis->GetQueueItem(item);
 	if (!pItem)
 		return _T("");
@@ -1139,14 +1149,14 @@ CQueueItem* CQueueView::GetQueueItem(unsigned int item)
 	{
 		if (!item)
 			return *iter;
-		
+
 		unsigned int count = (*iter)->GetChildrenCount(true);
 		if (item > count)
 		{
 			item -= count + 1;
 			continue;
 		}
-		
+
 		return (*iter)->GetChild(item - 1);
 	}
 	return 0;
@@ -1267,7 +1277,7 @@ bool CQueueView::TryStartNextTransfer()
 	else
 		wantedDirection = all;
 
-	// Find inactive file. Check all servers for 
+	// Find inactive file. Check all servers for
 	// the file with the highest priority
 	CFileItem* fileItem = 0;
 	CServerItem* serverItem = 0;
@@ -1330,7 +1340,7 @@ bool CQueueView::TryStartNextTransfer()
 
 	const CServer oldServer = pEngineData->lastServer;
 	pEngineData->lastServer = serverItem->GetServer();
-	
+
 	if (!pEngineData->pEngine->IsConnected())
 		pEngineData->state = t_EngineData::connect;
 	else if (oldServer != serverItem->GetServer())
@@ -1365,14 +1375,14 @@ bool CQueueView::TryStartNextTransfer()
 	}
 
 	SendNextCommand(*pEngineData);
-	
+
 	return true;
 }
 
 void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* pNotification)
 {
 	if (pNotification->nReplyCode & FZ_REPLY_DISCONNECTED &&
-		pNotification->GetID() == cmd_none)
+		pNotification->commandId == cmd_none)
 	{
 		// Queue is not interested in disconnect notifications
 		return;
@@ -1450,7 +1460,7 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 		ResetEngine(engineData, engineData.pItem ? engineData.pItem->m_remove : false);
 		return;
 	}
-	
+
 	SendNextCommand(engineData);
 }
 
@@ -1474,7 +1484,7 @@ void CQueueView::ResetEngine(t_EngineData& data, const bool removeFileItem)
 		m_allowBackgroundErase = false;
 		data.pStatusLineCtrl->Hide();
 		m_allowBackgroundErase = true;
-		
+
 		UpdateSelections_ItemRemoved(GetItemIndex(data.pItem) + 1);
 
 		m_itemCount--;
@@ -1530,7 +1540,7 @@ void CQueueView::ResetEngine(t_EngineData& data, const bool removeFileItem)
 bool CQueueView::RemoveItem(CQueueItem* item)
 {
 	// RemoveItem assumes that the item has already been removed from all engines
-	
+
 	if (item->GetType() == QueueItemType_File)
 	{
 		// Update size information
@@ -1576,7 +1586,7 @@ bool CQueueView::RemoveItem(CQueueItem* item)
 
 		m_itemCount -= count + 1;
 		SetItemCount(m_itemCount);
-		
+
 		didRemoveParent = true;
 	}
 	else
@@ -1657,7 +1667,7 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 
 			fileItem->m_statusMessage = _("Transferring");
 
-			int res = engineData.pEngine->Command(CFileTransferCommand(fileItem->GetLocalFile(), fileItem->GetRemotePath(), 
+			int res = engineData.pEngine->Command(CFileTransferCommand(fileItem->GetLocalFile(), fileItem->GetRemotePath(),
 												fileItem->GetRemoteFile(), fileItem->Download(), fileItem->m_transferSettings));
 			if (res == FZ_REPLY_WOULDBLOCK)
 				return;
@@ -1747,7 +1757,7 @@ bool CQueueView::SetActive(bool active /*=true*/)
 bool CQueueView::Quit()
 {
 	m_quit = true;
-	
+
 	bool canQuit = true;
 	if (!SetActive(false))
 		canQuit = false;
@@ -1983,7 +1993,7 @@ void CQueueView::OnFolderThreadComplete(wxCommandEvent& event)
 	m_queuedFolders[1].pop_front();
 
 	RemoveItem(pItem);
-	
+
 	m_pFolderProcessingThread->Wait();
 	delete m_pFolderProcessingThread;
 	m_pFolderProcessingThread = 0;
@@ -2014,7 +2024,7 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOn
 		}
 		else
 			fileItem = new CFolderItem(pServerItem, queueOnly, entry.remotePath, _T(""));
-		
+
 		pServerItem->AddChild(fileItem);
 		pServerItem->AddFileItemToList(fileItem);
 
@@ -2044,7 +2054,7 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOn
 
 void CQueueView::SaveQueue()
 {
-	// We have to synchronize access to queue.xml so that multiple processed don't write 
+	// We have to synchronize access to queue.xml so that multiple processed don't write
 	// to the same file or one is reading while the other one writes.
 	CInterProcessMutex mutex(MUTEX_QUEUE);
 
@@ -2080,7 +2090,7 @@ void CQueueView::SaveQueue()
 
 void CQueueView::LoadQueue()
 {
-	// We have to synchronize access to queue.xml so that multiple processed don't write 
+	// We have to synchronize access to queue.xml so that multiple processed don't write
 	// to the same file or one is reading while the other one writes.
 	CInterProcessMutex mutex(MUTEX_QUEUE);
 
@@ -2176,7 +2186,7 @@ void CQueueView::LoadQueue()
 						continue;
 					folderItem = new CFolderItem(pServerItem, true, remotePath, remoteFile);
 				}
-				
+
 				unsigned int priority = GetTextElementInt(pFolder, "Priority", priority_normal);
 				if (priority >= PRIORITY_COUNT)
 				{
@@ -2230,7 +2240,7 @@ void CQueueView::SettingsChanged()
 		{
 			if (ext != _T(""))
 			{
-				ext.Replace(_T("\\\\"), _T("\\")); 
+				ext.Replace(_T("\\\\"), _T("\\"));
 				m_asciiFiles.push_back(ext);
 				ext = _T("");
 			}
@@ -2238,7 +2248,7 @@ void CQueueView::SettingsChanged()
 		else if (extensions.c_str()[pos - 1] != '\\')
 		{
 			ext += extensions.Left(pos);
-			ext.Replace(_T("\\\\"), _T("\\")); 
+			ext.Replace(_T("\\\\"), _T("\\"));
 			m_asciiFiles.push_back(ext);
 			ext = _T("");
 		}
@@ -2250,7 +2260,7 @@ void CQueueView::SettingsChanged()
 		pos = extensions.Find(_T("|"));
 	}
 	ext += extensions;
-	ext.Replace(_T("\\\\"), _T("\\")); 
+	ext.Replace(_T("\\\\"), _T("\\"));
 	m_asciiFiles.push_back(ext);
 }
 
@@ -2267,7 +2277,7 @@ bool CQueueView::ShouldUseBinaryMode(wxString filename)
 		return COptions::Get()->GetOptionVal(OPTION_ASCIINOEXT) != 0;
 	else if (!pos)
 		return COptions::Get()->GetOptionVal(OPTION_ASCIIDOTFILE) != 0;
-	
+
 	wxString ext = filename;
 	do
 	{
@@ -2479,7 +2489,7 @@ bool CQueueView::StopItem(CServerItem* pServerItem)
 			RemoveItem(pItem);
 			return true;
 		}
-		
+
 		RemoveItem(pItem);
 		i--;
 	}
@@ -2564,7 +2574,7 @@ void CQueueView::OnSetDefaultFileExistsAction(wxCommandEvent &event)
 			break;
 		default:
 			break;
-		}		
+		}
 	}
 }
 
@@ -2678,7 +2688,7 @@ void CQueueView::UpdateSelections_ItemAdded(int added)
 		// Move the very last selected item
 		SetItemState(prevItem + 1, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 	}
-	
+
 	SetItemState(added, 0, wxLIST_STATE_SELECTED);
 }
 
