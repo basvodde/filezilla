@@ -7,8 +7,11 @@
 class CQueueView;
 class CChmodDialog;
 class CInfoText;
+class CRemoteListViewDropTarget;
+
 class CRemoteListView : public wxListCtrl, CSystemImageList, CStateEventHandler
 {
+	friend class CRemoteListViewDropTarget;
 protected:
 	enum OperationMode
 	{
@@ -115,6 +118,8 @@ protected:
 	void RepositionInfoText();
 	void SetInfoText(const wxString& text);
 
+	wxDropTarget* m_pDropTarget;
+
 	DECLARE_EVENT_TABLE()
 	void OnItemActivated(wxListEvent &event);
 	void OnColumnClicked(wxListEvent &event);
@@ -128,6 +133,8 @@ protected:
 	void OnEndLabelEdit(wxListEvent& event);
 	void OnMenuChmod(wxCommandEvent& event);
 	void OnSize(wxSizeEvent& event);
+
+	int m_dropTarget;
 };
 
 #endif

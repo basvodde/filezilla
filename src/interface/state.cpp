@@ -4,6 +4,7 @@
 #include "FileZillaEngine.h"
 #include "Options.h"
 #include "Mainfrm.h"
+#include "QueueView.h"
 
 CState::CState(CMainFrame* pMainFrame)
 {
@@ -312,4 +313,39 @@ CStateEventHandler::~CStateEventHandler()
 	if (!m_pState)
 		return;
 	m_pState->UnregisterHandler(this);
+}
+
+void CState::UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const wxString& subdir)
+{
+	if (!m_pServer || !m_pDirectoryListing)
+		return;
+
+	CServerPath path = m_pDirectoryListing->path;
+	if (subdir == _T("..") && path.HasParent())
+		path = path.GetParent();
+	else if (subdir != _T(""))
+		path.AddSegment(subdir);
+
+	const wxArrayString& files = pFileDataObject->GetFilenames();
+	
+	for (unsigned int i = 0; i < files.Count(); i++)
+	{
+		if (wxFile::Exists(files[i]))
+		{
+			const wxFileName name(files[i]);
+			const wxLongLong size = name.GetSize().GetValue();
+			m_pMainFrame->GetQueue()->QueueFile(false, false, files[i], name.GetFullName(), path, *m_pServer, size);
+		}
+		else if (wxDir::Exists(files[i]))
+		{
+			wxString name = files[i];
+			int pos = name.Find(wxFileName::GetPathSeparator(), true);
+			if (pos != -1)
+			{
+				name = name.Mid(pos + 1);
+				path.AddSegment(name);
+				m_pMainFrame->GetQueue()->QueueFolder(false, false, files[i], path, *m_pServer);
+			}
+		}
+	}
 }

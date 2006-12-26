@@ -31,6 +31,7 @@ public:
 	CStatusView* GetStatusView() { return m_pStatusView; }
 	CLocalListView* GetLocalListView() { return m_pLocalListView; }
 	CRemoteListView* GetRemoteListView() { return m_pRemoteListView; }
+	CQueueView* GetQueue() { return m_pQueueView; }
 
 protected:
 	bool CreateMenus();

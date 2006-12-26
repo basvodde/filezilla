@@ -46,6 +46,8 @@ public:
 	CFileZillaEngine* m_pEngine;
 	CCommandQueue* m_pCommandQueue;
 
+	void UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const wxString& subdir);
+
 protected:
 	void SetServer(const CServer* server);
 	void NotifyHandlers(unsigned int event);

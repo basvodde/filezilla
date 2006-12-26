@@ -7,6 +7,7 @@
 #include "chmoddialog.h"
 #include "filter.h"
 #include <algorithm>
+#include <wx/dnd.h>
 
 #ifdef __WXMSW__
 #include "shellapi.h"
@@ -16,6 +17,129 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+class CRemoteListViewDropTarget : public wxDropTarget
+{
+public:
+	CRemoteListViewDropTarget(CRemoteListView* pRemoteListView)
+		: m_pRemoteListView(pRemoteListView), m_pFileDataObject(new wxFileDataObject())
+	{
+		SetDataObject(m_pFileDataObject);
+	}
+
+	void ClearDropHighlight()
+	{
+		const int dropTarget = m_pRemoteListView->m_dropTarget;
+		if (dropTarget != -1)
+		{
+			m_pRemoteListView->SetItemState(dropTarget, 0, wxLIST_STATE_DROPHILITED);
+			m_pRemoteListView->m_dropTarget = -1;
+		}
+	}
+	
+	virtual wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def)
+	{
+		if (!m_pRemoteListView->m_pDirectoryListing)
+			return wxDragError;
+
+		GetData();
+
+		const wxArrayString& files = m_pFileDataObject->GetFilenames();
+
+		wxString subdir;
+		int flags;
+		int hit = m_pRemoteListView->HitTest(wxPoint(x, y), flags, 0);
+		if (hit != -1 && (flags & wxLIST_HITTEST_ONITEM) && hit != -1)
+		{
+			int index = m_pRemoteListView->GetItemIndex(hit);
+			if (index != -1)
+			{
+				if (index == m_pRemoteListView->m_pDirectoryListing->GetCount())
+					subdir = _T("..");
+				else if ((*m_pRemoteListView->m_pDirectoryListing)[index].dir)
+					subdir = (*m_pRemoteListView->m_pDirectoryListing)[index].name;
+			}
+		}
+
+		m_pRemoteListView->m_pState->UploadDroppedFiles(m_pFileDataObject, subdir);
+
+		return wxDragCopy;
+	}
+
+	virtual bool OnDrop(wxCoord x, wxCoord y)
+	{
+		ClearDropHighlight();
+
+		if (!m_pRemoteListView->m_pDirectoryListing)
+			return false;
+
+		return true;
+	}
+
+	void DisplayDropHighlight(wxPoint point)
+	{
+		int flags;
+		int hit = m_pRemoteListView->HitTest(point, flags, 0);
+		if (!(flags & wxLIST_HITTEST_ONITEM))
+			hit = -1;
+
+		if (hit != -1)
+		{
+			int index = m_pRemoteListView->GetItemIndex(hit);
+			if (index == -1)
+				hit = -1;
+			else if (index != m_pRemoteListView->m_pDirectoryListing->GetCount())
+			{
+				if (!(*m_pRemoteListView->m_pDirectoryListing)[index].dir)
+					hit = -1;
+			}
+		}
+		if (hit != m_pRemoteListView->m_dropTarget)
+		{
+			ClearDropHighlight();
+			if (hit != -1)
+			{
+				m_pRemoteListView->SetItemState(hit, wxLIST_STATE_DROPHILITED, wxLIST_STATE_DROPHILITED);
+				m_pRemoteListView->m_dropTarget = hit;
+			}
+		}
+	}
+
+	virtual wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult def)
+	{
+		if (!m_pRemoteListView->m_pDirectoryListing)
+		{
+			ClearDropHighlight();
+			return wxDragNone;
+		}
+
+		DisplayDropHighlight(wxPoint(x, y));
+
+		return wxDragCopy;
+	}
+
+	virtual void OnLeave()
+	{
+		ClearDropHighlight();
+	}
+
+	virtual wxDragResult OnEnter(wxCoord x, wxCoord y, wxDragResult def)
+	{
+		if (!m_pRemoteListView->m_pDirectoryListing)
+		{
+			ClearDropHighlight();
+			return wxDragNone;
+		}
+
+		DisplayDropHighlight(wxPoint(x, y));
+
+		return wxDragCopy;
+	}
+
+protected:
+	CRemoteListView *m_pRemoteListView;
+	wxFileDataObject* m_pFileDataObject;
+};
 
 class CInfoText : public wxWindow
 {
@@ -71,6 +195,8 @@ CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState
 	CSystemImageList(16),
 	CStateEventHandler(pState, STATECHANGE_REMOTE_DIR | STATECHANGE_REMOTE_DIR_MODIFIED | STATECHANGE_APPLYFILTER)
 {
+	m_dropTarget = -1;
+
 	m_pInfoText = 0;
 	m_pDirectoryListing = 0;
 	m_pChmodDlg = 0;
@@ -131,6 +257,8 @@ CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState
 #endif
 
 	SetDirectoryListing(0);
+
+	SetDropTarget(new CRemoteListViewDropTarget(this));
 }
 
 CRemoteListView::~CRemoteListView()
@@ -434,6 +562,23 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 		eraseBackground = true;
 		StopRecursiveOperation();
 		SetInfoText(_("Not connected to any server"));
+	}
+
+	if (m_dropTarget != -1)
+	{
+		bool resetDropTarget = false;
+		int index = GetItemIndex(m_dropTarget);
+		if (index == -1)
+			resetDropTarget = true;
+		else if (index != m_pDirectoryListing->GetCount())
+			if (!(*m_pDirectoryListing)[index].dir)
+				resetDropTarget = true;
+
+		if (resetDropTarget)
+		{
+			SetItemState(m_dropTarget, 0, wxLIST_STATE_DROPHILITED);
+			m_dropTarget = -1;
+		}
 	}
 
 	if ((unsigned int)GetItemCount() > m_indexMapping.size())
