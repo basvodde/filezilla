@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-12-16 15:29+0100\n"
-"PO-Revision-Date: 2006-12-14 19:46+0800\n"
-"Last-Translator: Kene Lin <kenelin@gmail.com>\n"
+"POT-Creation-Date: 2006-12-28 00:00+0100\n"
+"PO-Revision-Date: 2006-12-25 08:29+0800\n"
+"Last-Translator: Kene Lin <kenelin@gmal.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -22,7 +22,7 @@ msgstr "經過時間 %H:%M:%S"
 msgid "%H:%M:%S left"
 msgstr "剩餘時間 %H:%M:%S"
 
-#: ../../locales/../src/interface/QueueView.cpp:2504
+#: ../../locales/../src/interface/QueueView.cpp:2513
 #, c-format
 msgid "%d files added to queue"
 msgstr "%d 個檔案加入佇列"
@@ -163,7 +163,7 @@ msgstr "毀壞(&C)"
 msgid "&Create directory"
 msgstr "新增目錄(&C)"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:311
+#: ../../locales/../src/interface/Mainfrm.cpp:312
 msgid "&Debug"
 msgstr "偵錯(&D)"
 
@@ -178,6 +178,10 @@ msgstr "預設檔案存在動作(&D)..."
 #: resources.h:60 resources.h:233 resources.h:249
 msgid "&Delete"
 msgstr "刪除(&D)"
+
+#: ../../locales/../src/interface/conditionaldialog.cpp:22
+msgid "&Don't show this dialog again."
+msgstr "不再顯示此對話框(&D)."
 
 #: resources.h:363
 msgid "&Download"
@@ -424,14 +428,23 @@ msgstr "版本 %s (&V)"
 msgid "&Write"
 msgstr "寫入(&W)"
 
-#: ../../locales/../src/interface/state.cpp:100
+#: ../../locales/../src/interface/state.cpp:101
 #, c-format
 msgid "'%s' does not exist or cannot be accessed."
 msgstr "'%s' 不存在或是無法存取."
 
-#: ../../locales/../src/interface/sitemanager.cpp:429
+#: ../../locales/../src/interface/sitemanager.cpp:432
 msgid "'Account' logontype not supported by selected protocol"
 msgstr "選擇的協定不支援帳號 (Account) 登入型式"
+
+#: ../../locales/../src/interface/Mainfrm.cpp:365
+msgid ""
+"'quote' is usually a local command used by commandline clients to send the "
+"arguments following 'quote' to the server. You might want to enter the raw "
+"command without the leading 'quote'."
+msgstr ""
+"'quote' 通常是用於命令列客戶端本地指令, 用於傳送置於 'quote' 之後的參數給伺服"
+"器. 您也許想略過前頭的 'quote' 而直接輸入指令."
 
 #: resources.h:28 resources.h:30
 msgid "(0 for no limit)"
@@ -552,11 +565,11 @@ msgstr "詢問動作(&S)"
 msgid "About FileZilla"
 msgstr "關於 FileZilla"
 
-#: resources.h:71 ../../locales/../src/interface/sitemanager.cpp:426
-#: ../../locales/../src/interface/sitemanager.cpp:644
-#: ../../locales/../src/interface/sitemanager.cpp:645
-#: ../../locales/../src/interface/sitemanager.cpp:680
-#: ../../locales/../src/interface/sitemanager.cpp:886
+#: resources.h:71 ../../locales/../src/interface/sitemanager.cpp:429
+#: ../../locales/../src/interface/sitemanager.cpp:647
+#: ../../locales/../src/interface/sitemanager.cpp:648
+#: ../../locales/../src/interface/sitemanager.cpp:683
+#: ../../locales/../src/interface/sitemanager.cpp:889
 msgid "Account"
 msgstr "帳號"
 
@@ -622,10 +635,10 @@ msgstr "失敗時允許回復到其他傳輸模式"
 msgid "Allow fallback to other transfer mode on failure"
 msgstr "失敗時允許回復到其他傳輸模式"
 
-#: resources.h:67 ../../locales/../src/interface/sitemanager.cpp:467
-#: ../../locales/../src/interface/sitemanager.cpp:643
-#: ../../locales/../src/interface/sitemanager.cpp:829
-#: ../../locales/../src/interface/sitemanager.cpp:889
+#: resources.h:67 ../../locales/../src/interface/sitemanager.cpp:470
+#: ../../locales/../src/interface/sitemanager.cpp:646
+#: ../../locales/../src/interface/sitemanager.cpp:832
+#: ../../locales/../src/interface/sitemanager.cpp:892
 msgid "Anonymous"
 msgstr "匿名"
 
@@ -653,8 +666,8 @@ msgstr "只套用到檔案(&F)"
 msgid "Archive"
 msgstr "壓縮檔"
 
-#: resources.h:69 ../../locales/../src/interface/sitemanager.cpp:676
-#: ../../locales/../src/interface/sitemanager.cpp:880
+#: resources.h:69 ../../locales/../src/interface/sitemanager.cpp:679
+#: ../../locales/../src/interface/sitemanager.cpp:883
 msgid "Ask for password"
 msgstr "詢問密碼"
 
@@ -666,7 +679,7 @@ msgstr "對作業系統要求連接埠."
 msgid "Ask your operating system for the external IP address"
 msgstr "對您的作業系統詢問外部 IP Address"
 
-#: ../../locales/../src/interface/filteredit.cpp:543
+#: ../../locales/../src/interface/filteredit.cpp:544
 msgid "At least one filter condition is incomplete"
 msgstr "最少有一個篩選條件沒有完整"
 
@@ -686,7 +699,7 @@ msgstr "自動檔案分類"
 msgid "Automatic update check"
 msgstr "自動更新檢查"
 
-#: ../../locales/../src/interface/state.cpp:224
+#: ../../locales/../src/interface/state.cpp:225
 msgid "Break current connection?"
 msgstr "中斷目前的連線嗎?"
 
@@ -742,7 +755,7 @@ msgstr "取消目前的操作"
 msgid "Cancels the current operation"
 msgstr "取消目前的操作"
 
-#: ../../locales/../src/interface/state.cpp:112
+#: ../../locales/../src/interface/state.cpp:113
 #, c-format
 msgid "Cannot access '%s', no media inserted or drive not ready."
 msgstr "無法存取 '%s', 裝置未插入或是磁碟機尚未備妥."
@@ -751,15 +764,15 @@ msgstr "無法存取 '%s', 裝置未插入或是磁碟機尚未備妥."
 msgid "Cannot load Quickconnect bar from resource file"
 msgstr "無法從資源檔裡載入快速連線列"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:297
+#: ../../locales/../src/interface/Mainfrm.cpp:298
 msgid "Cannot load main menu from resource file"
 msgstr "無法從資源檔裡載入主選單"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:481
+#: ../../locales/../src/interface/Mainfrm.cpp:496
 msgid "Cannot load toolbar from resource file"
 msgstr "無法從資源檔裡載入工具列"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1378
+#: ../../locales/../src/interface/RemoteListView.cpp:1577
 msgid "Cannot rename file"
 msgstr "無法更名檔案"
 
@@ -807,7 +820,7 @@ msgstr "正在檢查正確的外部 IP Address"
 msgid "Checking for updates"
 msgstr "正在檢查更新"
 
-#: ../../locales/../src/interface/sitemanager.cpp:773
+#: ../../locales/../src/interface/sitemanager.cpp:776
 msgid "Choose the default local directory"
 msgstr "選擇預設的本地目錄"
 
@@ -894,8 +907,8 @@ msgstr "配置被動模式"
 msgid "Configure port range"
 msgstr "配置連接埠範圍"
 
-#: ../../locales/../src/interface/LocalListView.cpp:928
-#: ../../locales/../src/interface/RemoteListView.cpp:973
+#: ../../locales/../src/interface/LocalListView.cpp:963
+#: ../../locales/../src/interface/RemoteListView.cpp:1172
 msgid "Confirmation needed"
 msgstr "需要確認"
 
@@ -911,7 +924,7 @@ msgstr "恭喜您. 您的配置似乎已可正常運作."
 msgid "Connected"
 msgstr "已連線"
 
-#: ../../locales/../src/interface/QueueView.cpp:1624
+#: ../../locales/../src/interface/QueueView.cpp:1634
 msgid "Connecting"
 msgstr "連線中"
 
@@ -923,7 +936,7 @@ msgstr "正在連線到 %s"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:182
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:487
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:264
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:313
 #, c-format
 msgid "Connecting to %s:%d..."
 msgstr "正在連線到 %s:%d ..."
@@ -978,12 +991,12 @@ msgstr "與測試伺服器的連線失敗."
 msgid "Cop&y"
 msgstr "複製(&Y)"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1019
+#: ../../locales/../src/interface/sitemanager.cpp:1022
 #, c-format
 msgid "Copy (%d) of %s"
 msgstr "複製 (%d) - %s"
 
-#: ../../locales/../src/interface/sitemanager.cpp:996
+#: ../../locales/../src/interface/sitemanager.cpp:999
 #, c-format
 msgid "Copy of %s"
 msgstr "複製 - %s"
@@ -1007,7 +1020,7 @@ msgstr ""
 "您可以使用指令選項 '--datadir <custompath>' 或是設定 FZ_DATADIR 環境變數來指"
 "定 FileZilla 的資料目錄."
 
-#: ../../locales/../src/interface/Options.cpp:86
+#: ../../locales/../src/interface/Options.cpp:87
 #, c-format
 msgid ""
 "Could not load \"%s\", make sure the file is valid.\n"
@@ -1017,7 +1030,7 @@ msgstr ""
 "無法載入 \"%s\", 請確定檔案是否有效.\n"
 "在這次連線期間將會使用預設值, 且任何設定值的修改都不會永久保留."
 
-#: ../../locales/../src/interface/wrapengine.cpp:782
+#: ../../locales/../src/interface/wrapengine.cpp:776
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1026,7 +1039,7 @@ msgstr "無法載入 \"%s\", 請確定檔案是否有效並且可存取."
 
 #: ../../locales/../src/interface/filter.cpp:161
 #: ../../locales/../src/interface/filter.cpp:246
-#: ../../locales/../src/interface/sitemanager.cpp:263
+#: ../../locales/../src/interface/sitemanager.cpp:266
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1036,7 +1049,7 @@ msgstr ""
 "無法載入 \"%s\", 請確定檔案是否有效並且可存取.\n"
 "任何設定值的修改都不會永久保留."
 
-#: ../../locales/../src/interface/sitemanager.cpp:172
+#: ../../locales/../src/interface/sitemanager.cpp:175
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1046,8 +1059,8 @@ msgstr ""
 "無法載入 \"%s\", 請確定檔案是否有效並且可存取.\n"
 "對帳台管理員的任何修改都不永久保留."
 
-#: ../../locales/../src/interface/QueueView.cpp:2056
-#: ../../locales/../src/interface/QueueView.cpp:2092
+#: ../../locales/../src/interface/QueueView.cpp:2065
+#: ../../locales/../src/interface/QueueView.cpp:2101
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1074,20 +1087,20 @@ msgstr "無法找尋到檔案結尾"
 msgid "Could not spawn IO thread"
 msgstr "無法產生 I/O 執行緒"
 
-#: ../../locales/../src/interface/sitemanager.cpp:289
+#: ../../locales/../src/interface/sitemanager.cpp:292
 #, c-format
 msgid ""
 "Could not write \"%s\", any changes to the Site Manager could not be saved: %"
 "s"
 msgstr "無法寫入 \"%s\", 對站台管理員的任何變更都可能無法儲存: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:2075
-#: ../../locales/../src/interface/QueueView.cpp:2212
+#: ../../locales/../src/interface/QueueView.cpp:2084
+#: ../../locales/../src/interface/QueueView.cpp:2221
 #, c-format
 msgid "Could not write \"%s\", the queue could not be saved."
 msgstr "無法寫入 \"%s\", 佇列無法儲存."
 
-#: ../../locales/../src/interface/wrapengine.cpp:950
+#: ../../locales/../src/interface/wrapengine.cpp:944
 #, c-format
 msgid "Could not write \"%s\": %s"
 msgstr "無法寫入 \"%s\": %s"
@@ -1104,17 +1117,17 @@ msgstr "立即弄當 FileZilla. 只用於檢測例外處理機制"
 msgid "Create a new subdirectory in the current directory"
 msgstr "在現行目錄下建立子新的目錄"
 
-#: ../../locales/../src/interface/LocalListView.cpp:827
-#: ../../locales/../src/interface/RemoteListView.cpp:918
+#: ../../locales/../src/interface/LocalListView.cpp:862
+#: ../../locales/../src/interface/RemoteListView.cpp:1117
 msgid "Create directory"
 msgstr "建立目錄"
 
-#: ../../locales/../src/interface/QueueView.cpp:1686
+#: ../../locales/../src/interface/QueueView.cpp:1696
 msgid "Creating directory"
 msgstr "建立目錄中"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2338
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1505
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1560
 #, c-format
 msgid "Creating directory '%s'..."
 msgstr "建立目錄 '%s'..."
@@ -1163,8 +1176,8 @@ msgstr "偵錯"
 msgid "Debugging settings"
 msgstr "偵錯設定"
 
-#: resources.h:78 ../../locales/../src/interface/sitemanager.cpp:835
-#: ../../locales/../src/interface/sitemanager.cpp:916
+#: resources.h:78 ../../locales/../src/interface/sitemanager.cpp:838
+#: ../../locales/../src/interface/sitemanager.cpp:919
 msgid "Default"
 msgstr "預設"
 
@@ -1221,7 +1234,7 @@ msgstr "新 Host Key 的詳細內容:"
 msgid "Dire&ctories"
 msgstr "目錄(&C)"
 
-#: ../../locales/../src/interface/QueueView.cpp:823
+#: ../../locales/../src/interface/QueueView.cpp:833
 msgid "Direction"
 msgstr "方向"
 
@@ -1229,7 +1242,7 @@ msgstr "方向"
 msgid "Directory listing aborted by user"
 msgstr "使用者中止目錄列表"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:408
+#: ../../locales/../src/interface/RemoteListView.cpp:536
 msgid "Directory listing failed"
 msgstr "目錄列表失敗"
 
@@ -1257,7 +1270,7 @@ msgstr "從伺服器離線"
 msgid "Disconnected from server"
 msgstr "已從伺服器離線"
 
-#: ../../locales/../src/interface/QueueView.cpp:1613
+#: ../../locales/../src/interface/QueueView.cpp:1623
 #: ../../locales/../src/interface/statuslinectrl.cpp:148
 msgid "Disconnecting from previous server"
 msgstr "從先前伺服器離線中"
@@ -1278,6 +1291,11 @@ msgstr ""
 "您想檢查測試版嗎? 除非您想測試新功能,\n"
 "否則還是繼續使用穩定版本會比較好."
 
+#: ../../locales/../src/interface/Mainfrm.cpp:366
+#, c-format
+msgid "Do you really want to send '%s' to the server?"
+msgstr "您真的要傳送 '%s' 到伺服器?"
+
 #: resources.h:276 resources.h:419
 msgid "Don't use external IP address on &local connections."
 msgstr "不在本地端連線使用外部 IP Address (&L)."
@@ -1296,9 +1314,9 @@ msgstr "正在下載 %s"
 msgid "Downloads"
 msgstr "下載"
 
-#: ../../locales/../src/interface/filteredit.cpp:330
-#: ../../locales/../src/interface/filteredit.cpp:393
-#: ../../locales/../src/interface/filteredit.cpp:433
+#: ../../locales/../src/interface/filteredit.cpp:331
+#: ../../locales/../src/interface/filteredit.cpp:394
+#: ../../locales/../src/interface/filteredit.cpp:434
 msgid "Duplicate filter name"
 msgstr "重複的篩選器名稱"
 
@@ -1318,7 +1336,7 @@ msgstr "離開(&X)"
 msgid "E-Mail:"
 msgstr "電子郵件:"
 
-#: ../../locales/../src/interface/filteredit.cpp:532
+#: ../../locales/../src/interface/filteredit.cpp:533
 msgid "Each filter needs at least one condition."
 msgstr "每一個篩選器需要最少一個條件."
 
@@ -1330,17 +1348,17 @@ msgstr "編輯篩選器"
 msgid "Email:"
 msgstr "電子郵件:"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:410
+#: ../../locales/../src/interface/RemoteListView.cpp:538
 msgid "Empty directory listing"
 msgstr "空目錄列表"
 
-#: ../../locales/../src/interface/filteredit.cpp:384
-#: ../../locales/../src/interface/filteredit.cpp:427
+#: ../../locales/../src/interface/filteredit.cpp:385
+#: ../../locales/../src/interface/filteredit.cpp:428
 msgid "Empty filter names are not allowed."
 msgstr "不允許空的篩選器名稱."
 
-#: ../../locales/../src/interface/filteredit.cpp:384
-#: ../../locales/../src/interface/filteredit.cpp:427
+#: ../../locales/../src/interface/filteredit.cpp:385
+#: ../../locales/../src/interface/filteredit.cpp:428
 msgid "Empty name"
 msgstr "空的名稱"
 
@@ -1352,13 +1370,13 @@ msgstr "全部啟用(&A)"
 msgid "Enter &custom command..."
 msgstr "輸入自訂指令(&C)..."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:353
+#: ../../locales/../src/interface/Mainfrm.cpp:354
 msgid "Enter custom command"
 msgstr "輸入自訂指令"
 
-#: ../../locales/../src/interface/filteredit.cpp:323
-#: ../../locales/../src/interface/filteredit.cpp:376
-#: ../../locales/../src/interface/filteredit.cpp:420
+#: ../../locales/../src/interface/filteredit.cpp:324
+#: ../../locales/../src/interface/filteredit.cpp:377
+#: ../../locales/../src/interface/filteredit.cpp:421
 msgid "Enter filter name"
 msgstr "輸入篩選器名稱"
 
@@ -1400,19 +1418,19 @@ msgstr "錯誤 %d 寫入 Socket"
 
 #: ../../locales/../src/interface/filter.cpp:162
 #: ../../locales/../src/interface/filter.cpp:247
-#: ../../locales/../src/interface/Options.cpp:87
-#: ../../locales/../src/interface/QueueView.cpp:2057
-#: ../../locales/../src/interface/QueueView.cpp:2093
-#: ../../locales/../src/interface/sitemanager.cpp:173
-#: ../../locales/../src/interface/sitemanager.cpp:264
-#: ../../locales/../src/interface/wrapengine.cpp:783
+#: ../../locales/../src/interface/Options.cpp:88
+#: ../../locales/../src/interface/QueueView.cpp:2066
+#: ../../locales/../src/interface/QueueView.cpp:2102
+#: ../../locales/../src/interface/sitemanager.cpp:176
+#: ../../locales/../src/interface/sitemanager.cpp:267
+#: ../../locales/../src/interface/wrapengine.cpp:777
 msgid "Error loading xml file"
 msgstr "載入 XML 檔案錯誤"
 
-#: ../../locales/../src/interface/QueueView.cpp:2076
-#: ../../locales/../src/interface/QueueView.cpp:2213
-#: ../../locales/../src/interface/sitemanager.cpp:290
-#: ../../locales/../src/interface/wrapengine.cpp:951
+#: ../../locales/../src/interface/QueueView.cpp:2085
+#: ../../locales/../src/interface/QueueView.cpp:2222
+#: ../../locales/../src/interface/sitemanager.cpp:293
+#: ../../locales/../src/interface/wrapengine.cpp:945
 msgid "Error writing xml file"
 msgstr "寫入 XML 檔案錯誤"
 
@@ -1429,7 +1447,7 @@ msgstr "執行(&C)"
 msgid "Executable"
 msgstr "執行檔"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:997
+#: ../../locales/../src/interface/Mainfrm.cpp:1017
 msgid "Executable contains no version info, cannot check for updates."
 msgstr "執行檔未包含版本資訊, 無法檢查更新."
 
@@ -1437,7 +1455,7 @@ msgstr "執行檔未包含版本資訊, 無法檢查更新."
 msgid "F&ilter name:"
 msgstr "篩選器名稱(&I):"
 
-#: ../../locales/../src/interface/sitemanager.cpp:828
+#: ../../locales/../src/interface/sitemanager.cpp:831
 msgid "FTP"
 msgstr "FTP"
 
@@ -1453,13 +1471,13 @@ msgstr "FTP 使用第二個連線來提供資料傳輸. 這些額外的連線可
 
 #: ../../locales/../src/engine/server.cpp:14
 msgid "FTPES - FTP over explicit TLS/SSL"
-msgstr ""
+msgstr "FTPES - 透過外顯式 TLS/SSL 的 FTP"
 
 #: ../../locales/../src/engine/server.cpp:13
 msgid "FTPS - FTP over implicit TLS/SSL"
-msgstr ""
+msgstr "FTPS - 透過隱含式 TLS/SSL 的 FTP"
 
-#: ../../locales/../src/interface/LocalListView.cpp:307
+#: ../../locales/../src/interface/LocalListView.cpp:308
 #: ../../locales/../src/interface/LocalTreeView.cpp:606
 #: ../../locales/../src/interface/viewheader.cpp:392
 msgid "Failed to change directory"
@@ -1499,7 +1517,7 @@ msgstr "無法取得 peer data address. 連線關閉."
 msgid "Failed to get peer address, connection closed."
 msgstr "無法取得 peer address, 連線關閉."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:147
+#: ../../locales/../src/interface/Mainfrm.cpp:148
 msgid "Failed to initialize FTP engine"
 msgstr "無法初始 FTP 引擎"
 
@@ -1588,12 +1606,12 @@ msgstr "回復成主動模式"
 msgid "Fil&es"
 msgstr "檔案(&E)"
 
-#: ../../locales/../src/interface/LocalListView.cpp:436
-#: ../../locales/../src/interface/LocalListView.cpp:454
-#: ../../locales/../src/interface/LocalListView.cpp:458
-#: ../../locales/../src/interface/RemoteListView.cpp:629
-#: ../../locales/../src/interface/RemoteListView.cpp:647
-#: ../../locales/../src/interface/RemoteListView.cpp:651
+#: ../../locales/../src/interface/LocalListView.cpp:437
+#: ../../locales/../src/interface/LocalListView.cpp:455
+#: ../../locales/../src/interface/LocalListView.cpp:459
+#: ../../locales/../src/interface/RemoteListView.cpp:942
+#: ../../locales/../src/interface/RemoteListView.cpp:960
+#: ../../locales/../src/interface/RemoteListView.cpp:964
 msgid "File"
 msgstr "檔案"
 
@@ -1601,7 +1619,7 @@ msgstr "檔案"
 msgid "File Types"
 msgstr "檔案類別"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1393
+#: ../../locales/../src/interface/RemoteListView.cpp:1592
 msgid "File exists"
 msgstr "檔案存在"
 
@@ -1630,11 +1648,11 @@ msgstr "FileZilla 現在可以測試您的配置以確認是否都已正確."
 
 #: ../../locales/../src/interface/filteredit.cpp:52
 #: ../../locales/../src/interface/LocalListView.cpp:34
-#: ../../locales/../src/interface/RemoteListView.cpp:81
+#: ../../locales/../src/interface/RemoteListView.cpp:207
 msgid "Filename"
 msgstr "檔名"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1378
+#: ../../locales/../src/interface/RemoteListView.cpp:1577
 msgid "Filename invalid"
 msgstr "檔名無效"
 
@@ -1642,11 +1660,11 @@ msgstr "檔名無效"
 msgid "Filename unchanged"
 msgstr "檔名未改變"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1207
+#: ../../locales/../src/interface/LocalListView.cpp:1242
 msgid "Filenames may not contain any of the following characters: / * ? < > |"
 msgstr "檔名不能包含以下任何字元: / * ? < > |"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1172
+#: ../../locales/../src/interface/LocalListView.cpp:1207
 msgid ""
 "Filenames may not contain any of the following characters: / \\ : * ? \" < > "
 "|"
@@ -1654,12 +1672,12 @@ msgstr "檔名不能包含以下任何字元: / \\ : * ? \" < > |"
 
 #: ../../locales/../src/interface/filteredit.cpp:53
 #: ../../locales/../src/interface/LocalListView.cpp:35
-#: ../../locales/../src/interface/RemoteListView.cpp:82
+#: ../../locales/../src/interface/RemoteListView.cpp:208
 msgid "Filesize"
 msgstr "檔案大小"
 
 #: ../../locales/../src/interface/LocalListView.cpp:36
-#: ../../locales/../src/interface/RemoteListView.cpp:83
+#: ../../locales/../src/interface/RemoteListView.cpp:209
 msgid "Filetype"
 msgstr "檔案類別"
 
@@ -1671,7 +1689,7 @@ msgstr "篩選出檔案關於(&O):"
 msgid "Filter applies to:"
 msgstr "篩選器套用到:"
 
-#: ../../locales/../src/interface/filteredit.cpp:574
+#: ../../locales/../src/interface/filteredit.cpp:575
 msgid "Filter name already exists"
 msgstr "篩選器名稱已經存在"
 
@@ -1683,11 +1701,11 @@ msgstr "篩選集名稱已經存在"
 msgid "Filter the directory listings"
 msgstr "篩選目錄列表"
 
-#: ../../locales/../src/interface/filteredit.cpp:532
-#: ../../locales/../src/interface/filteredit.cpp:543
-#: ../../locales/../src/interface/filteredit.cpp:554
-#: ../../locales/../src/interface/filteredit.cpp:565
-#: ../../locales/../src/interface/filteredit.cpp:574
+#: ../../locales/../src/interface/filteredit.cpp:533
+#: ../../locales/../src/interface/filteredit.cpp:544
+#: ../../locales/../src/interface/filteredit.cpp:555
+#: ../../locales/../src/interface/filteredit.cpp:566
+#: ../../locales/../src/interface/filteredit.cpp:575
 msgid "Filter validation failed"
 msgstr "篩選器確認失敗"
 
@@ -1707,8 +1725,8 @@ msgstr "數位指紋:"
 msgid "Firewall and router configuration wizard"
 msgstr "防火牆與路由器配置精靈"
 
-#: ../../locales/../src/interface/LocalListView.cpp:458
-#: ../../locales/../src/interface/RemoteListView.cpp:651
+#: ../../locales/../src/interface/LocalListView.cpp:459
+#: ../../locales/../src/interface/RemoteListView.cpp:964
 msgid "Folder"
 msgstr "資料夾"
 
@@ -1746,13 +1764,13 @@ msgstr "群組權限"
 msgid "H&igh"
 msgstr "高(&I)"
 
-#: ../../locales/../src/interface/QueueView.cpp:1011
-#: ../../locales/../src/interface/QueueView.cpp:1092
+#: ../../locales/../src/interface/QueueView.cpp:1021
+#: ../../locales/../src/interface/QueueView.cpp:1102
 msgid "High"
 msgstr "高"
 
-#: ../../locales/../src/interface/QueueView.cpp:1013
-#: ../../locales/../src/interface/QueueView.cpp:1094
+#: ../../locales/../src/interface/QueueView.cpp:1023
+#: ../../locales/../src/interface/QueueView.cpp:1104
 msgid "Highest"
 msgstr "最高"
 
@@ -1931,8 +1949,8 @@ msgstr ""
 msgid "Initializing TLS..."
 msgstr "初始 TLS 加密中..."
 
-#: resources.h:70 ../../locales/../src/interface/sitemanager.cpp:678
-#: ../../locales/../src/interface/sitemanager.cpp:883
+#: resources.h:70 ../../locales/../src/interface/sitemanager.cpp:681
+#: ../../locales/../src/interface/sitemanager.cpp:886
 msgid "Interactive"
 msgstr "交談式"
 
@@ -1972,8 +1990,8 @@ msgstr "收到無效的資料"
 msgid "Invalid date"
 msgstr "無效的日期"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1172
 #: ../../locales/../src/interface/LocalListView.cpp:1207
+#: ../../locales/../src/interface/LocalListView.cpp:1242
 msgid "Invalid filename"
 msgstr "無效的檔名"
 
@@ -2005,7 +2023,7 @@ msgstr ""
 msgid "Invalid response code"
 msgstr "無效的回應碼"
 
-#: ../../locales/../src/interface/filteredit.cpp:554
+#: ../../locales/../src/interface/filteredit.cpp:555
 msgid "Invalid size in condition"
 msgstr "無效的檔案篩選大小"
 
@@ -2030,7 +2048,7 @@ msgid "Large icons"
 msgstr "大圖示"
 
 #: ../../locales/../src/interface/LocalListView.cpp:37
-#: ../../locales/../src/interface/RemoteListView.cpp:84
+#: ../../locales/../src/interface/RemoteListView.cpp:210
 msgid "Last modified"
 msgstr "最後修改時間"
 
@@ -2077,13 +2095,13 @@ msgid ""
 "aware. Trying local charset."
 msgstr "登入資料包含非 ASCII 字元且伺服器可能不認得 UTF-8. 嘗試使用本地字集."
 
-#: ../../locales/../src/interface/QueueView.cpp:1006
-#: ../../locales/../src/interface/QueueView.cpp:1087
+#: ../../locales/../src/interface/QueueView.cpp:1016
+#: ../../locales/../src/interface/QueueView.cpp:1097
 msgid "Low"
 msgstr "低"
 
-#: ../../locales/../src/interface/QueueView.cpp:1004
-#: ../../locales/../src/interface/QueueView.cpp:1085
+#: ../../locales/../src/interface/QueueView.cpp:1014
+#: ../../locales/../src/interface/QueueView.cpp:1095
 msgid "Lowest"
 msgstr "最低"
 
@@ -2128,7 +2146,7 @@ msgstr "中圖示"
 msgid "Minutes"
 msgstr "分鐘"
 
-#: ../../locales/../src/interface/sitemanager.cpp:159
+#: ../../locales/../src/interface/sitemanager.cpp:162
 msgid "My Sites"
 msgstr "我的站台"
 
@@ -2143,11 +2161,11 @@ msgstr "N/a"
 msgid "Name:"
 msgstr "名稱:"
 
-#: ../../locales/../src/interface/filteredit.cpp:565
+#: ../../locales/../src/interface/filteredit.cpp:566
 msgid "Need to enter filter name"
 msgstr "需要輸入篩選器名稱"
 
-#: ../../locales/../src/interface/sitemanager.cpp:461
+#: ../../locales/../src/interface/sitemanager.cpp:464
 msgid "Need to specify a character encoding"
 msgstr "需要指定字元編碼"
 
@@ -2155,22 +2173,22 @@ msgstr "需要指定字元編碼"
 msgid "New &Folder"
 msgstr "新增資料夾(&F)"
 
-#: ../../locales/../src/interface/filteredit.cpp:318
+#: ../../locales/../src/interface/filteredit.cpp:319
 msgid "New filter"
 msgstr "新篩選器"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:932
-#: ../../locales/../src/interface/sitemanager.cpp:365
-#: ../../locales/../src/interface/sitemanager.cpp:388
+#: ../../locales/../src/interface/RemoteListView.cpp:1131
+#: ../../locales/../src/interface/sitemanager.cpp:368
+#: ../../locales/../src/interface/sitemanager.cpp:391
 msgid "New folder"
 msgstr "新資料夾"
 
-#: ../../locales/../src/interface/sitemanager.cpp:596
-#: ../../locales/../src/interface/sitemanager.cpp:619
+#: ../../locales/../src/interface/sitemanager.cpp:599
+#: ../../locales/../src/interface/sitemanager.cpp:622
 msgid "New site"
 msgstr "新站台"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:653
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:702
 msgid "No"
 msgstr "否"
 
@@ -2200,15 +2218,15 @@ msgstr "無"
 msgid "None of the following"
 msgstr "以下皆否"
 
-#: resources.h:68 ../../locales/../src/interface/QueueView.cpp:1009
-#: ../../locales/../src/interface/QueueView.cpp:1090
-#: ../../locales/../src/interface/sitemanager.cpp:644
-#: ../../locales/../src/interface/sitemanager.cpp:674
-#: ../../locales/../src/interface/sitemanager.cpp:877
+#: resources.h:68 ../../locales/../src/interface/QueueView.cpp:1019
+#: ../../locales/../src/interface/QueueView.cpp:1100
+#: ../../locales/../src/interface/sitemanager.cpp:647
+#: ../../locales/../src/interface/sitemanager.cpp:677
+#: ../../locales/../src/interface/sitemanager.cpp:880
 msgid "Normal"
 msgstr "一般"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:436
+#: ../../locales/../src/interface/RemoteListView.cpp:564
 msgid "Not connected to any server"
 msgstr "未連線到任何伺服器"
 
@@ -2240,7 +2258,7 @@ msgid ""
 "well as the fallback mode if enabled."
 msgstr "在接下來的幾個頁面裡將要設定選擇的傳輸模式以及回復模式 (如果有啟用)."
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:657
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:706
 msgid "Once"
 msgstr "一次"
 
@@ -2280,7 +2298,7 @@ msgstr "預覽"
 msgid "Overwrite &if newer"
 msgstr "如果較新就覆寫(&I)"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:86
+#: ../../locales/../src/interface/RemoteListView.cpp:212
 msgid "Owner / Group"
 msgstr "擁有人 / 群組"
 
@@ -2318,7 +2336,7 @@ msgstr "被動模式"
 msgid "Passive mode has been set as default transfer mode."
 msgstr "被動模式已設定為預設傳輸模式."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:85
+#: ../../locales/../src/interface/RemoteListView.cpp:211
 msgid "Permissions"
 msgstr "權限"
 
@@ -2368,15 +2386,15 @@ msgid ""
 msgstr ""
 "請確定您有穩定的網路且檢查 http://filezilla-project.org/probe.php 有在運作."
 
-#: ../../locales/../src/interface/filteredit.cpp:323
+#: ../../locales/../src/interface/filteredit.cpp:324
 msgid "Please enter a name for the new filter."
 msgstr "請輸入新篩選器的名稱."
 
-#: ../../locales/../src/interface/filteredit.cpp:420
+#: ../../locales/../src/interface/filteredit.cpp:421
 msgid "Please enter a new name for the copied filter."
 msgstr "請輸入欲複製篩選器的新名稱."
 
-#: ../../locales/../src/interface/filteredit.cpp:376
+#: ../../locales/../src/interface/filteredit.cpp:377
 msgid "Please enter a new name for the filter."
 msgstr "請輸入篩選器的新名稱."
 
@@ -2422,7 +2440,7 @@ msgstr "請輸入可以取得外部 IP Address 的網址."
 msgid "Please enter an update interval of at least 7 days"
 msgstr "請輸入最少 7 日的更新間隔:"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:353
+#: ../../locales/../src/interface/Mainfrm.cpp:354
 msgid ""
 "Please enter raw FTP command.\n"
 "Using raw ftp commands will clear the directory cache."
@@ -2430,8 +2448,8 @@ msgstr ""
 "請直接輸入 FTP 指令.\n"
 "使用直接的 FTP 指令會清除目錄快取."
 
-#: ../../locales/../src/interface/LocalListView.cpp:827
-#: ../../locales/../src/interface/RemoteListView.cpp:918
+#: ../../locales/../src/interface/LocalListView.cpp:862
+#: ../../locales/../src/interface/RemoteListView.cpp:1117
 msgid "Please enter the name of the directory which should be created:"
 msgstr "請輸入欲建立的目錄名稱:"
 
@@ -2563,7 +2581,7 @@ msgstr "預覽"
 msgid "Primary connection and data connection certificates don't match."
 msgstr "初次連線與資料連線的憑證未相符."
 
-#: ../../locales/../src/interface/QueueView.cpp:826
+#: ../../locales/../src/interface/QueueView.cpp:836
 msgid "Priority"
 msgstr "優先權"
 
@@ -2579,24 +2597,28 @@ msgstr "公開金鑰演算法:"
 msgid "Public permissions"
 msgstr "公開權限"
 
-#: ../../locales/../src/interface/QueueView.cpp:1894
+#: ../../locales/../src/interface/QueueView.cpp:1903
 #, c-format
 msgid "Queue: %s%d KB"
 msgstr "佇列: %s%d KB"
 
-#: ../../locales/../src/interface/QueueView.cpp:1889
+#: ../../locales/../src/interface/QueueView.cpp:1898
 #, c-format
 msgid "Queue: %s%d MB"
 msgstr "佇列: %s%d MB"
 
-#: ../../locales/../src/interface/QueueView.cpp:1897
+#: ../../locales/../src/interface/QueueView.cpp:1906
 #, c-format
 msgid "Queue: %s%d bytes"
 msgstr "佇列: %s%d bytes"
 
-#: ../../locales/../src/interface/QueueView.cpp:1885
+#: ../../locales/../src/interface/QueueView.cpp:1894
 msgid "Queue: empty"
 msgstr "佇列: 空"
+
+#: ../../locales/../src/interface/Mainfrm.cpp:363
+msgid "Raw FTP command"
+msgstr "直接的 FTP 指令"
 
 #: resources.h:182
 msgid "Re&ad"
@@ -2610,12 +2632,12 @@ msgstr "更名(&N)"
 msgid "Rea&d"
 msgstr "讀取(&D)"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:517
+#: ../../locales/../src/interface/Mainfrm.cpp:532
 msgid "Really cancel current operation?"
 msgstr "真的要取消當前的操作?"
 
-#: ../../locales/../src/interface/LocalListView.cpp:928
-#: ../../locales/../src/interface/RemoteListView.cpp:973
+#: ../../locales/../src/interface/LocalListView.cpp:963
+#: ../../locales/../src/interface/RemoteListView.cpp:1172
 msgid "Really delete all selected files and/or directories?"
 msgstr "真的要刪除所有選擇的檔案/目錄?"
 
@@ -2649,7 +2671,7 @@ msgstr "重新整理檔案與資料夾列表"
 msgid "Remote certificate not trusted."
 msgstr "遠端憑證尚未信任."
 
-#: ../../locales/../src/interface/QueueView.cpp:824
+#: ../../locales/../src/interface/QueueView.cpp:834
 msgid "Remote file"
 msgstr "遠端檔案"
 
@@ -2678,7 +2700,7 @@ msgid "Rename selected files and folders"
 msgstr "更名選擇的檔案和資料夾"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2533
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1929
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1984
 #, c-format
 msgid "Renaming '%s' to '%s'"
 msgstr "'%s' 更名為 '%s'"
@@ -2710,7 +2732,7 @@ msgid ""
 msgstr "如果伺服器使用和客戶端不同的換行格式時, 回復文字檔案可能會造成問題."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:845
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:715
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:767
 msgid "Retrieving directory listing..."
 msgstr "正在取得目錄列表..."
 
@@ -2728,11 +2750,11 @@ msgstr "略過(&K)"
 msgid "Save settings?"
 msgstr "儲存設定?"
 
-#: ../../locales/../src/interface/QueueView.cpp:1966
+#: ../../locales/../src/interface/QueueView.cpp:1975
 msgid "Scanning for files to add to queue"
 msgstr "正在掃描欲加入佇列的檔案"
 
-#: ../../locales/../src/interface/QueueView.cpp:1968
+#: ../../locales/../src/interface/QueueView.cpp:1977
 msgid "Scanning for files to upload"
 msgstr "正在掃描欲上傳的檔案"
 
@@ -2777,7 +2799,7 @@ msgstr "送出自訂的命令到伺服器否則就不可用"
 msgid "Serial number:"
 msgstr "憑證序號:"
 
-#: ../../locales/../src/interface/QueueView.cpp:822
+#: ../../locales/../src/interface/QueueView.cpp:832
 msgid "Server / Local file"
 msgstr "伺服器 / 本地檔案"
 
@@ -2841,7 +2863,7 @@ msgid "Set &Priority"
 msgstr "設定優先權(&P)"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2656
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1828
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1883
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
 msgstr "修改 '%s' 權限為 '%s'"
@@ -2862,7 +2884,7 @@ msgstr "站台管理員"
 msgid "Site Manager already open"
 msgstr "已開啟站台管理員"
 
-#: ../../locales/../src/interface/QueueView.cpp:825
+#: ../../locales/../src/interface/QueueView.cpp:835
 msgid "Size"
 msgstr "大小"
 
@@ -2881,8 +2903,8 @@ msgstr "略過(&I)"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2010
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:201
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:241
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:548
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:621
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:597
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:670
 #, c-format
 msgid "Skipping download of %s"
 msgstr "略過 %s 的下載"
@@ -2891,8 +2913,8 @@ msgstr "略過 %s 的下載"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2014
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:205
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:245
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:552
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:625
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:601
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:674
 #, c-format
 msgid "Skipping upload of %s"
 msgstr "略過 %s 的上傳"
@@ -2909,13 +2931,13 @@ msgstr ""
 "一些位於路由器後方而配置錯誤的遠端伺服器也許會回應它們自己的本地 IP Address."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1357
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1209
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1264
 #, c-format
 msgid "Starting download of %s"
 msgstr "開始 %s 的下載"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1361
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1213
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1268
 #, c-format
 msgid "Starting upload of %s"
 msgstr "開始 %s 的上傳"
@@ -2924,7 +2946,7 @@ msgstr "開始 %s 的上傳"
 msgid "State:"
 msgstr "國名:"
 
-#: ../../locales/../src/interface/QueueView.cpp:827
+#: ../../locales/../src/interface/QueueView.cpp:837
 msgid "Status"
 msgstr "狀態"
 
@@ -2971,7 +2993,7 @@ msgstr "TLS/SSL 加密連線已建立."
 msgid "Target file already exists"
 msgstr "目標檔案已經存在"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1393
+#: ../../locales/../src/interface/RemoteListView.cpp:1592
 msgid "Target filename already exists, really continue?"
 msgstr "目標檔名已經存在, 確定要繼續?"
 
@@ -2997,9 +3019,9 @@ msgstr ""
 msgid "The address you entered was: %s"
 msgstr "您輸入的 IP Address 是: %s"
 
-#: ../../locales/../src/interface/filteredit.cpp:330
-#: ../../locales/../src/interface/filteredit.cpp:393
-#: ../../locales/../src/interface/filteredit.cpp:433
+#: ../../locales/../src/interface/filteredit.cpp:331
+#: ../../locales/../src/interface/filteredit.cpp:394
+#: ../../locales/../src/interface/filteredit.cpp:434
 msgid "The entered filter name already exists."
 msgstr "輸入的篩選器名稱已經存在."
 
@@ -3175,7 +3197,7 @@ msgstr "傳輸設定"
 msgid "Transferred data got tainted."
 msgstr "傳輸的資料遭受影響."
 
-#: ../../locales/../src/interface/QueueView.cpp:1658
+#: ../../locales/../src/interface/QueueView.cpp:1668
 #: ../../locales/../src/interface/statuslinectrl.cpp:157
 msgid "Transferring"
 msgstr "正在傳輸"
@@ -3192,11 +3214,11 @@ msgstr "將無副檔名的檔案視作文字檔案(&W)"
 msgid "Treat the &following filetypes as Ascii files:"
 msgstr "將以下的檔案類別視作文字檔案(&F):"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:651
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:700
 msgid "Trust changed Hostkey: "
 msgstr "信任已改變的 Host Key:"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:649
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:698
 msgid "Trust new Hostkey: "
 msgstr "信任新的 Host Key:"
 
@@ -3250,7 +3272,7 @@ msgstr "更新檢查"
 msgid "Update wizard"
 msgstr "更新精靈"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:997
+#: ../../locales/../src/interface/Mainfrm.cpp:1017
 msgid "Updatecheck failed"
 msgstr "更新檢查失敗"
 
@@ -3333,7 +3355,7 @@ msgstr "驗證憑證中..."
 msgid "W&rite"
 msgstr "寫入(&R)"
 
-#: ../../locales/../src/interface/QueueView.cpp:1920
+#: ../../locales/../src/interface/QueueView.cpp:1929
 msgid "Waiting"
 msgstr "等待中"
 
@@ -3380,7 +3402,7 @@ msgstr "錯誤的外部 IP Address"
 msgid "Wrong lineendings"
 msgstr "錯誤的換行格式"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:655
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:704
 msgid "Yes"
 msgstr "是"
 
@@ -3400,7 +3422,7 @@ msgstr "您可以在任何位置使用 x 來保持原來檔案所有的權限."
 msgid "You did not enter a new name for the file. Overwrite the file instead?"
 msgstr "您未為這個檔案輸入新的檔名. 是想要覆蓋這個檔案嗎?"
 
-#: ../../locales/../src/interface/sitemanager.cpp:419
+#: ../../locales/../src/interface/sitemanager.cpp:422
 msgid "You have to enter a hostname."
 msgstr "您必須輸入主機名稱."
 
@@ -3409,7 +3431,7 @@ msgstr "您必須輸入主機名稱."
 msgid "You have to enter a valid IP address."
 msgstr "您必須輸入有效的 IP Address."
 
-#: ../../locales/../src/interface/sitemanager.cpp:471
+#: ../../locales/../src/interface/sitemanager.cpp:474
 msgid "You have to specify a user name"
 msgstr "您必須指定使用者名稱"
 
@@ -3448,14 +3470,14 @@ msgstr "終止於"
 msgid "equals"
 msgstr "等同於"
 
-#: ../../locales/../src/interface/LocalListView.cpp:433
-#: ../../locales/../src/interface/LocalListView.cpp:451
-#: ../../locales/../src/interface/RemoteListView.cpp:626
-#: ../../locales/../src/interface/RemoteListView.cpp:644
+#: ../../locales/../src/interface/LocalListView.cpp:434
+#: ../../locales/../src/interface/LocalListView.cpp:452
+#: ../../locales/../src/interface/RemoteListView.cpp:939
+#: ../../locales/../src/interface/RemoteListView.cpp:957
 msgid "file"
 msgstr "檔案"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1150
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1205
 msgid "fzsftp could not be started"
 msgstr "無法啟動 fzsftp"
 
