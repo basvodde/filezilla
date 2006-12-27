@@ -647,7 +647,7 @@ wxString CControlSocket::ConvToLocal(const char* buffer)
 	if (m_useUTF8)
 	{
 		wxChar* out = ConvToLocalBuffer(buffer, wxConvUTF8);
-		if (buffer)
+		if (out)
 		{
 			wxString str = out;
 			delete [] out;
@@ -665,7 +665,7 @@ wxString CControlSocket::ConvToLocal(const char* buffer)
 	if (m_pCSConv)
 	{
 		wxChar* out = ConvToLocalBuffer(buffer, *m_pCSConv);
-		if (buffer)
+		if (out)
 		{
 			wxString str = out;
 			delete [] out;
