@@ -35,89 +35,92 @@ wxString CState::GetLocalDir() const
 	return m_localDir;
 }
 
-bool CState::SetLocalDir(wxString dir, wxString *error /*=0*/)
+wxString CState::Canonicalize(wxString oldDir, wxString newDir, wxString *error /*=0*/)
 {
 #ifdef __WXMSW__
-	if (dir == _T("\\") || dir == _T("/") || dir == _T(""))
-	{
-		m_localDir = _T("\\");
-		NotifyHandlers(STATECHANGE_LOCAL_DIR);
-		return true;
-	}
+	if (newDir == _T("\\") || newDir == _T("/") || newDir == _T(""))
+		return _T("\\");
 
 	// "Go up one level" is a little bit difficult under Windows due to 
 	// things like "My Computer" and "Desktop"
-	if (dir == _T(".."))
+	if (newDir == _T(".."))
 	{
-		dir = m_localDir;
-		if (dir != _T("\\"))
+		newDir = oldDir;
+		if (newDir != _T("\\"))
 		{
-			dir.Truncate(dir.Length() - 1);
-			int pos = dir.Find('\\', true);
+			newDir.RemoveLast();
+			int pos = newDir.Find('\\', true);
 			if (pos == -1)
-				dir = _T("\\");
+				return _T("\\");
 			else
-				dir = dir.Left(pos + 1);
+				newDir = newDir.Left(pos + 1);
 		}
 	}
 	else
 #endif
 	{
-		wxFileName newDir(dir, _T(""));
+		wxFileName dir(newDir, _T(""));
 		{
 			wxLogNull noLog;
-			if (!newDir.MakeAbsolute(m_localDir))
-				return false;
+			if (!dir.MakeAbsolute(oldDir))
+				return _T("");
 		}
-		dir = newDir.GetFullPath();
-		if (dir.Right(1) != wxFileName::GetPathSeparator())
-			dir += wxFileName::GetPathSeparator();
+		newDir = dir.GetFullPath();
+		if (newDir.Right(1) != wxFileName::GetPathSeparator())
+			newDir += wxFileName::GetPathSeparator();
 	}
 
 	// Check for partial UNC paths
-	if (dir.Left(2) == _T("\\\\"))
+	if (newDir.Left(2) == _T("\\\\"))
 	{
-		int pos = dir.Mid(2).Find('\\');
+		int pos = newDir.Mid(2).Find('\\');
 		if (pos == -1)
 		{
 			// Partial UNC path, no full server yet, skip further processing
-			return false;
+			return _T("");
 		}
 
-		pos = dir.Mid(pos + 3).Find('\\');
+		pos = newDir.Mid(pos + 3).Find('\\');
 		if (pos == -1)
 		{
 			// Partial UNC path, no full share yet, skip further processing
-			return false;
+			return _T("");
 		}
 	}
 
-	if (!wxDir::Exists(dir))
+	if (!wxDir::Exists(newDir))
 	{
 		if (!error)
-			return false;
+			return _T("");
 
-		if (error)
-			*error = wxString::Format(_("'%s' does not exist or cannot be accessed."), dir.c_str());
+		*error = wxString::Format(_("'%s' does not exist or cannot be accessed."), newDir.c_str());
 
 #ifdef __WXMSW__
-		if (dir[0] == '\\')
-			return false;
+		if (newDir[0] == '\\')
+			return _T("");
 
 		// Check for removable drive, display a more specific error message in that case
 		if (::GetLastError() != ERROR_NOT_READY)
-			return false;
-		int type = GetDriveType(dir.Left(3));
+			return _T("");
+		int type = GetDriveType(newDir.Left(3));
 		if (type == DRIVE_REMOVABLE || type == DRIVE_CDROM)
 
-			*error = wxString::Format(_("Cannot access '%s', no media inserted or drive not ready."), dir.c_str());
+			*error = wxString::Format(_("Cannot access '%s', no media inserted or drive not ready."), newDir.c_str());
 #endif
 			
-		return false;
+		return _T("");
 	}
-	
-	m_localDir = dir;
 
+	return newDir;
+}
+
+bool CState::SetLocalDir(wxString dir, wxString *error /*=0*/)
+{
+	dir = Canonicalize(m_localDir, dir, error);
+	if (dir == _T(""))
+		return false;
+
+	m_localDir = dir;
 	NotifyHandlers(STATECHANGE_LOCAL_DIR);
 
 	return true;
@@ -348,4 +351,42 @@ void CState::UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const w
 			}
 		}
 	}
+}
+
+void CState::HandleDroppedFiles(const wxFileDataObject* pFileDataObject, const wxString& path, bool copy)
+{
+	const wxArrayString &files = pFileDataObject->GetFilenames();
+	if (!files.Count())
+		return;
+
+#ifdef __WXMSW__
+	int len = 1;
+
+	for (unsigned int i = 0; i < files.Count(); i++)
+		len += files[i].Len() + 1;
+
+	wxChar* from = new wxChar[len];
+	wxChar* p = from;
+	for (unsigned int i = 0; i < files.Count(); i++)
+	{
+		wxStrcpy(p, files[i]);
+		p += files[i].Len() + 1;
+	}
+	*p = 0;
+
+	wxChar* to = new wxChar[path.Len() + 2];
+	wxStrcpy(to, path);
+	to[path.Len() + 1] = 0;
+
+	SHFILEOPSTRUCT op = {0};
+	op.pFrom = from;
+	op.pTo = to;
+	op.wFunc = copy ? FO_COPY : FO_MOVE;
+	op.hwnd = (HWND)m_pMainFrame->GetHandle();
+	SHFileOperation(&op);
+
+	delete [] to;
+	delete [] from;
+#else
+#endif
 }

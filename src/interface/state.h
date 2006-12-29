@@ -24,6 +24,7 @@ public:
 	void DestroyEngine();
 
 	wxString GetLocalDir() const;
+	static wxString Canonicalize(wxString oldDir, wxString newDir, wxString *error = 0);
 	bool SetLocalDir(wxString dir, wxString *error = 0);
 
 	bool Connect(const CServer& server, bool askBreak, const CServerPath& path = CServerPath());
@@ -47,6 +48,7 @@ public:
 	CCommandQueue* m_pCommandQueue;
 
 	void UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const wxString& subdir);
+	void HandleDroppedFiles(const wxFileDataObject* pFileDataObject, const wxString& path, bool copy);
 
 protected:
 	void SetServer(const CServer* server);
