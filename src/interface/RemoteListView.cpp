@@ -49,7 +49,7 @@ public:
 		wxString subdir;
 		int flags;
 		int hit = m_pRemoteListView->HitTest(wxPoint(x, y), flags, 0);
-		if (hit != -1 && (flags & wxLIST_HITTEST_ONITEM) && hit != -1)
+		if (hit != -1 && (flags & wxLIST_HITTEST_ONITEM))
 		{
 			int index = m_pRemoteListView->GetItemIndex(hit);
 			if (index != -1)

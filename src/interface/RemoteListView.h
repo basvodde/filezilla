@@ -119,6 +119,7 @@ protected:
 	void SetInfoText(const wxString& text);
 
 	wxDropTarget* m_pDropTarget;
+	int m_dropTarget;
 
 	DECLARE_EVENT_TABLE()
 	void OnItemActivated(wxListEvent &event);
@@ -133,8 +134,6 @@ protected:
 	void OnEndLabelEdit(wxListEvent& event);
 	void OnMenuChmod(wxCommandEvent& event);
 	void OnSize(wxSizeEvent& event);
-
-	int m_dropTarget;
 };
 
 #endif
