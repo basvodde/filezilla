@@ -5,10 +5,165 @@
 #include "filter.h"
 #include "inputdialog.h"
 #include <algorithm>
+#include <wx/dnd.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+class CLocalListViewDropTarget : public wxDropTarget
+{
+public:
+	CLocalListViewDropTarget(CLocalListView* pLocalListView)
+		: m_pLocalListView(pLocalListView), m_pFileDataObject(new wxFileDataObject())
+	{
+		SetDataObject(m_pFileDataObject);
+	}
+
+	void ClearDropHighlight()
+	{
+		const int dropTarget = m_pLocalListView->m_dropTarget;
+		if (dropTarget != -1)
+		{
+			m_pLocalListView->SetItemState(dropTarget, 0, wxLIST_STATE_DROPHILITED);
+			m_pLocalListView->m_dropTarget = -1;
+		}
+	}
+	
+	virtual wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def)
+	{
+		if (m_pLocalListView->m_fileData.empty())
+			return wxDragError;
+
+		if (def != wxDragCopy && def != wxDragMove)
+			return wxDragError;
+
+		wxString subdir;
+		int flags;
+		int hit = m_pLocalListView->HitTest(wxPoint(x, y), flags, 0);
+		if (hit != -1 && (flags & wxLIST_HITTEST_ONITEM))
+		{
+			const CLocalListView::t_fileData* const data = m_pLocalListView->GetData(hit);
+			if (data && data->dir)
+				subdir = data->name;
+		}
+
+		wxString dir;
+		if (subdir != _T(""))
+		{
+			dir = CState::Canonicalize(m_pLocalListView->m_dir, subdir);
+			if (dir == _T("") || dir == _T("\\"))
+				return wxDragError;
+		}
+		else
+			dir = m_pLocalListView->m_dir;
+
+		GetData();
+
+		const wxArrayString& files = m_pFileDataObject->GetFilenames();
+
+		m_pLocalListView->m_pState->HandleDroppedFiles(m_pFileDataObject, dir, def == wxDragCopy);
+
+		return def;
+	}
+
+	virtual bool OnDrop(wxCoord x, wxCoord y)
+	{
+		ClearDropHighlight();
+
+		if (m_pLocalListView->m_fileData.empty())
+			return false;
+
+		return true;
+	}
+
+	wxString DisplayDropHighlight(wxPoint point)
+	{
+		wxString subDir;
+
+		int flags;
+		int hit = m_pLocalListView->HitTest(point, flags, 0);
+		if (!(flags & wxLIST_HITTEST_ONITEM))
+			hit = -1;
+
+		if (hit != -1)
+		{
+			const CLocalListView::t_fileData* const data = m_pLocalListView->GetData(hit);
+			if (!data || !data->dir)
+				hit = -1;
+			else
+				subDir = data->name;
+		}
+		if (hit != m_pLocalListView->m_dropTarget)
+		{
+			ClearDropHighlight();
+			if (hit != -1)
+			{
+				m_pLocalListView->SetItemState(hit, wxLIST_STATE_DROPHILITED, wxLIST_STATE_DROPHILITED);
+				m_pLocalListView->m_dropTarget = hit;
+			}
+		}
+
+		return subDir;
+	}
+
+	virtual wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult def)
+	{
+		if (m_pLocalListView->m_fileData.empty())
+		{
+			ClearDropHighlight();
+			return wxDragNone;
+		}
+
+#ifdef __WXMSW__
+		const wxString& subdir = 
+#endif
+			DisplayDropHighlight(wxPoint(x, y));
+		
+#ifdef __WXMSW__
+		if ((subdir == _T("")) || subdir == _T("..") && m_pLocalListView->m_dir == _T("\\"))
+			return wxDragNone;
+#endif
+
+		if (def == wxDragLink)
+			def = wxDragCopy;
+
+		return def;
+	}
+
+	virtual void OnLeave()
+	{
+		ClearDropHighlight();
+	}
+
+	virtual wxDragResult OnEnter(wxCoord x, wxCoord y, wxDragResult def)
+	{
+		if (m_pLocalListView->m_fileData.empty())
+		{
+			ClearDropHighlight();
+			return wxDragNone;
+		}
+
+		#ifdef __WXMSW__
+		const wxString& subdir = 
+#endif
+			DisplayDropHighlight(wxPoint(x, y));
+		
+#ifdef __WXMSW__
+		if ((subdir == _T("")) || subdir == _T("..") && m_pLocalListView->m_dir == _T("\\"))
+			return wxDragNone;
+#endif
+
+		if (def == wxDragLink)
+			def = wxDragCopy;
+
+		return def;
+	}
+
+protected:
+	CLocalListView *m_pLocalListView;
+	wxFileDataObject* m_pFileDataObject;
+};
 
 BEGIN_EVENT_TABLE(CLocalListView, wxListCtrl)
 	EVT_LIST_ITEM_ACTIVATED(wxID_ANY, CLocalListView::OnItemActivated)
@@ -29,6 +184,8 @@ CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, 
 	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER | wxLC_EDIT_LABELS),
 	CSystemImageList(16), CStateEventHandler(pState, STATECHANGE_LOCAL_DIR | STATECHANGE_APPLYFILTER)
 {
+	m_dropTarget = -1;
+
 	m_pQueue = pQueue;
 
 	InsertColumn(0, _("Filename"));
@@ -79,6 +236,8 @@ CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, 
 
 	SendMessage(header, HDM_SETIMAGELIST, 0, (LPARAM)m_pHeaderImageList->GetHandle());
 #endif
+
+	SetDropTarget(new CLocalListViewDropTarget(this));
 }
 
 CLocalListView::~CLocalListView()
@@ -183,6 +342,16 @@ bool CLocalListView::DisplayDir(wxString dirname)
 			num++;
 
 			found = dir.GetNext(&file);
+		}
+	}
+
+	if (m_dropTarget != -1)
+	{
+		t_fileData* data = GetData(m_dropTarget);
+		if (!data || !data->dir)
+		{
+			SetItemState(m_dropTarget, 0, wxLIST_STATE_DROPHILITED);
+			m_dropTarget = -1;
 		}
 	}
 
@@ -1141,9 +1310,10 @@ void CLocalListView::OnChar(wxKeyEvent& event)
 
 int CLocalListView::FindItemWithPrefix(const wxString& prefix, int start)
 {
-	for (int i = start; i < (GetItemCount() + start); i++)
+	const int itemCount = m_fileData.size();
+	for (int i = start; i < (itemCount + start); i++)
 	{
-		int item = i % GetItemCount();
+		int item = i % itemCount;
 		wxString fn;
 		if (!item)
 		{
@@ -1158,7 +1328,7 @@ int CLocalListView::FindItemWithPrefix(const wxString& prefix, int start)
 			fn = data->name.Left(prefix.Length());
 		}
 		if (!fn.CmpNoCase(prefix))
-			return i % GetItemCount();
+			return i % itemCount;
 	}
 	return -1;
 }

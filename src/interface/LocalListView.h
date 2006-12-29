@@ -1,13 +1,16 @@
 #ifndef __LOCALLISTVIEW_H__
 #define __LOCALLISTVIEW_H__
 
-class CQueueView;
-
 #include "systemimagelist.h"
 #include "state.h"
 
+class CQueueView;
+class CLocalListViewDropTarget;
+
 class CLocalListView : public wxListCtrl, CSystemImageList, CStateEventHandler
 {
+	friend class CLocalListViewDropTarget;
+
 public:
 	CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView *pQueue);
 	virtual ~CLocalListView();
@@ -75,6 +78,9 @@ protected:
 
 	wxDateTime m_lastKeyPress;
 	wxString m_prefix;
+
+	wxDropTarget* m_pDropTarget;
+	int m_dropTarget;
 
 	// Event handlers
 	DECLARE_EVENT_TABLE();
