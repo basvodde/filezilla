@@ -5,6 +5,7 @@
 #include "Options.h"
 #include "Mainfrm.h"
 #include "QueueView.h"
+#include "filezillaapp.h"
 
 CState::CState(CMainFrame* pMainFrame)
 {
@@ -353,8 +354,11 @@ void CState::UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const w
 	}
 }
 
-void CState::HandleDroppedFiles(const wxFileDataObject* pFileDataObject, const wxString& path, bool copy)
+void CState::HandleDroppedFiles(const wxFileDataObject* pFileDataObject, wxString path, bool copy)
 {
+	if (path.Last() != wxFileName::GetPathSeparator())
+		path += wxFileName::GetPathSeparator();
+
 	const wxArrayString &files = pFileDataObject->GetFilenames();
 	if (!files.Count())
 		return;
@@ -388,5 +392,85 @@ void CState::HandleDroppedFiles(const wxFileDataObject* pFileDataObject, const w
 	delete [] to;
 	delete [] from;
 #else
+	for (unsigned int i = 0; i < files.Count(); i++)
+	{
+		const wxString& file = files[i];
+		if (wxFile::Exists(file))
+		{
+			int pos = file.Find(wxFileName::GetPathSeparator(), true);
+			if (pos == -1 || pos == file.Len() - 1)
+				continue;
+			const wxString& name = file.Mid(pos + 1);
+			if (copy)
+				wxCopyFile(file, path + name);
+			else
+				wxRenameFile(file, path + name);
+		}
+		else if (wxDir::Exists(file))
+		{
+			if (copy)
+				RecursiveCopy(file, path);
+			else
+			{
+				int pos = file.Find(wxFileName::GetPathSeparator(), true);
+				if (pos == -1 || pos == file.Len() - 1)
+					continue;
+				const wxString& name = file.Mid(pos + 1);
+				wxRenameFile(file, path + name);
+			}
+		}
+	}
 #endif
+
+	RefreshLocal();
+}
+
+bool CState::RecursiveCopy(wxString source, wxString target)
+{
+	if (target.Last() != wxFileName::GetPathSeparator())
+		target += wxFileName::GetPathSeparator();
+
+	if (source.Last() == wxFileName::GetPathSeparator())
+		source.RemoveLast();
+
+	if (source == _T(""))
+		return false;
+	
+	int pos = source.Find(wxFileName::GetPathSeparator(), true);
+	if (pos == -1 || pos == source.Len() - 1)
+		return false;
+
+	std::list<wxString> dirsToVisit;
+	dirsToVisit.push_back(source.Mid(pos + 1) + wxFileName::GetPathSeparator());
+	source = source.Left(pos + 1);
+
+	// Process any subdirs which still have to be visited
+	while (!dirsToVisit.empty())
+	{
+		wxString dirname = dirsToVisit.front();
+		dirsToVisit.pop_front();
+		wxMkdir(target + dirname);
+		wxDir dir;
+		if (!dir.Open(source + dirname))
+			continue;
+
+		wxString file;
+		for (bool found = dir.GetFirst(&file); found; found = dir.GetNext(&file))
+		{
+			if (file == _T(""))
+			{
+				wxGetApp().DisplayEncodingWarning();
+				continue;
+			}
+			if (wxFileName::DirExists(source + dirname + file))
+			{
+				const wxString subDir = dirname + file + wxFileName::GetPathSeparator();
+				dirsToVisit.push_back(subDir);
+			}
+			else
+				wxCopyFile(source + dirname + file, target + dirname + file);
+		}
+	}
+
+	return true;
 }

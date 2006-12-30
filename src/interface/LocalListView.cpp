@@ -121,7 +121,7 @@ public:
 			DisplayDropHighlight(wxPoint(x, y));
 		
 #ifdef __WXMSW__
-		if ((subdir == _T("")) || subdir == _T("..") && m_pLocalListView->m_dir == _T("\\"))
+		if ((subdir == _T("") || subdir == _T("..")) && m_pLocalListView->m_dir == _T("\\"))
 			return wxDragNone;
 #endif
 
@@ -150,7 +150,7 @@ public:
 			DisplayDropHighlight(wxPoint(x, y));
 		
 #ifdef __WXMSW__
-		if ((subdir == _T("")) || subdir == _T("..") && m_pLocalListView->m_dir == _T("\\"))
+		if ((subdir == _T("") || subdir == _T("..")) && m_pLocalListView->m_dir == _T("\\"))
 			return wxDragNone;
 #endif
 

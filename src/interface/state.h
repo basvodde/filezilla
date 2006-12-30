@@ -48,7 +48,9 @@ public:
 	CCommandQueue* m_pCommandQueue;
 
 	void UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const wxString& subdir);
-	void HandleDroppedFiles(const wxFileDataObject* pFileDataObject, const wxString& path, bool copy);
+	void HandleDroppedFiles(const wxFileDataObject* pFileDataObject, wxString path, bool copy);
+
+	static bool RecursiveCopy(wxString source, wxString target);
 
 protected:
 	void SetServer(const CServer* server);
