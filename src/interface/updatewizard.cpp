@@ -255,6 +255,10 @@ void CUpdateWizard::OnPageChanged(wxWizardEvent& event)
 void CUpdateWizard::FailedTransfer()
 {
 	m_inTransfer = false;
+
+	if (!m_loaded)
+		return;
+
 	if (!m_currentPage)
 		XRCCTRL(*this, "ID_FAILURE", wxStaticText)->SetLabel(_("Failed to check for newer version of FileZilla."));
 	else
