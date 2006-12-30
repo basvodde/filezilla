@@ -203,6 +203,9 @@ void log_eventlog(void *handle, const char *event)
     if ((flags & FLAG_STDERR) && (flags & FLAG_VERBOSE)) {
 	fzprintf(sftpVerbose, event);
     }
+    /* If we don't have a context yet (eg winnet.c init) then skip entirely */
+    if (!ctx)
+	return;
     if (ctx->cfg.logtype != LGTYP_PACKETS &&
 	ctx->cfg.logtype != LGTYP_SSHRAW)
 	return;
@@ -351,7 +354,7 @@ void log_reconfig(void *handle, Config *cfg)
  * translate format codes into time/date strings
  * and insert them into log file name
  *
- * "&Y":YYYY   "&m":MM   "&d":DD   "&T":hhmm   "&h":<hostname>   "&&":&
+ * "&Y":YYYY   "&m":MM   "&d":DD   "&T":hhmmss   "&h":<hostname>   "&&":&
  */
 static void xlatlognam(Filename *dest, Filename src,
 		       char *hostname, struct tm *tm) {

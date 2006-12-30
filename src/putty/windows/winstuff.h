@@ -97,6 +97,7 @@ typedef struct terminal_tag Terminal;
 #define PUTTY_REG_GPARENT_CHILD "SimonTatham"
 
 #define PUTTY_HELP_FILE "putty.hlp"
+#define PUTTY_CHM_FILE "putty.chm"
 #define PUTTY_HELP_CONTENTS "putty.cnt"
 
 #define GETTICKCOUNT GetTickCount
@@ -125,6 +126,15 @@ GLOBAL HINSTANCE hinst;
 GLOBAL char *help_path;
 GLOBAL int help_has_contents;
 GLOBAL int requested_help;
+
+/*
+ * Help file stuff in winhelp.c.
+ */
+void init_help(void);
+void shutdown_help(void);
+int has_help(void);
+void launch_help(HWND hwnd, const char *topic);
+void quit_help(HWND hwnd);
 
 /*
  * The terminal and logging context are notionally local to the
