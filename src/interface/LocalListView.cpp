@@ -32,6 +32,11 @@ public:
 	
 	virtual wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def)
 	{
+		if (def == wxDragError ||
+			def == wxDragNone ||
+			def == wxDragCancel)
+			return def;
+
 		if (m_pLocalListView->m_fileData.empty())
 			return wxDragError;
 
@@ -58,7 +63,8 @@ public:
 		else
 			dir = m_pLocalListView->m_dir;
 
-		GetData();
+		if (!GetData())
+			return wxDragError;
 
 		const wxArrayString& files = m_pFileDataObject->GetFilenames();
 
@@ -109,6 +115,14 @@ public:
 
 	virtual wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult def)
 	{
+		if (def == wxDragError ||
+			def == wxDragNone ||
+			def == wxDragCancel)
+		{
+			ClearDropHighlight();
+			return def;
+		}
+
 		if (m_pLocalListView->m_fileData.empty())
 		{
 			ClearDropHighlight();
@@ -138,26 +152,7 @@ public:
 
 	virtual wxDragResult OnEnter(wxCoord x, wxCoord y, wxDragResult def)
 	{
-		if (m_pLocalListView->m_fileData.empty())
-		{
-			ClearDropHighlight();
-			return wxDragNone;
-		}
-
-		#ifdef __WXMSW__
-		const wxString& subdir = 
-#endif
-			DisplayDropHighlight(wxPoint(x, y));
-		
-#ifdef __WXMSW__
-		if ((subdir == _T("") || subdir == _T("..")) && m_pLocalListView->m_dir == _T("\\"))
-			return wxDragNone;
-#endif
-
-		if (def == wxDragLink)
-			def = wxDragCopy;
-
-		return def;
+		return OnDragOver(x, y, def);
 	}
 
 protected:

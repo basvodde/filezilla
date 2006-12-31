@@ -134,6 +134,7 @@ protected:
 	void OnEndLabelEdit(wxListEvent& event);
 	void OnMenuChmod(wxCommandEvent& event);
 	void OnSize(wxSizeEvent& event);
+	void OnBeginDrag(wxListEvent& event);
 };
 
 #endif

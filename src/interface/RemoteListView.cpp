@@ -39,10 +39,16 @@ public:
 	
 	virtual wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def)
 	{
+		if (def == wxDragError ||
+			def == wxDragNone ||
+			def == wxDragCancel)
+			return def;
+
 		if (!m_pRemoteListView->m_pDirectoryListing)
 			return wxDragError;
 
-		GetData();
+		if (!GetData())
+			return wxDragError;
 
 		const wxArrayString& files = m_pFileDataObject->GetFilenames();
 
@@ -107,6 +113,14 @@ public:
 
 	virtual wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult def)
 	{
+		if (def == wxDragError ||
+			def == wxDragNone ||
+			def == wxDragCancel)
+		{
+			ClearDropHighlight();
+			return def;
+		}
+
 		if (!m_pRemoteListView->m_pDirectoryListing)
 		{
 			ClearDropHighlight();
@@ -125,15 +139,7 @@ public:
 
 	virtual wxDragResult OnEnter(wxCoord x, wxCoord y, wxDragResult def)
 	{
-		if (!m_pRemoteListView->m_pDirectoryListing)
-		{
-			ClearDropHighlight();
-			return wxDragNone;
-		}
-
-		DisplayDropHighlight(wxPoint(x, y));
-
-		return wxDragCopy;
+		return OnDragOver(x, y, def);
 	}
 
 protected:
@@ -188,6 +194,7 @@ BEGIN_EVENT_TABLE(CRemoteListView, wxListCtrl)
 	EVT_LIST_BEGIN_LABEL_EDIT(wxID_ANY, CRemoteListView::OnBeginLabelEdit)
 	EVT_LIST_END_LABEL_EDIT(wxID_ANY, CRemoteListView::OnEndLabelEdit)
 	EVT_SIZE(CRemoteListView::OnSize)
+	EVT_LIST_BEGIN_DRAG(wxID_ANY, CRemoteListView::OnBeginDrag)
 END_EVENT_TABLE()
 
 CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView* pQueue)
@@ -335,7 +342,7 @@ wxBitmap PrepareIcon(wxIcon icon, wxColour colour);
 // See comment to OnGetItemText
 int CRemoteListView::OnGetItemImage(long item) const
 {
-    CRemoteListView *pThis = const_cast<CRemoteListView *>(this);
+	CRemoteListView *pThis = const_cast<CRemoteListView *>(this);
 	int index = GetItemIndex(item);
 	if (index == -1)
 		return -1;
@@ -1731,7 +1738,7 @@ bool CRemoteListView::ConvertPermissions(const wxString rwx, char* permissions)
 	if (rwx.Length() != 10)
 		return false;
 
-    for (int i = 0; i < 9; i++)
+	for (int i = 0; i < 9; i++)
 	{
 		bool set = rwx[i + 1] == permchars[i % 3];
 		permissions[i] = set ? 2 : 1;
@@ -1939,4 +1946,12 @@ void CRemoteListView::SetInfoText(const wxString& text)
 
 	m_pInfoText->m_text = text;
 	m_pInfoText->Refresh();
+}
+
+void CRemoteListView::OnBeginDrag(wxListEvent& event)
+{
+	/*wxTextDataObject *obj = new wxTextDataObject(_T("foo"));
+	wxDropSource source(this);
+	source.SetData(*obj);
+	source.DoDragDrop();*/
 }
