@@ -475,6 +475,15 @@ bool CSiteManager::Verify()
 		return false;
 	}
 
+	// Require account for account logon type
+	if (XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->GetStringSelection() == _("Account") &&
+		XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->GetValue() == _T(""))
+	{
+		XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->SetFocus();
+		wxMessageBox(_("You have to enter an account name"));
+		return false;
+	}
+
 	return true;
 }
 
