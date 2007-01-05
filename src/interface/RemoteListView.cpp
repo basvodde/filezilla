@@ -1309,9 +1309,15 @@ void CRemoteListView::ProcessDirectoryListing()
 			m_pQueue->QueueFile(true, true, fn.GetFullPath(), _T(""), CServerPath(), *pServer, -1);
 	}
 
+	CFilterDialog filter;
+
 	for (unsigned int i = 0; i < m_pDirectoryListing->GetCount(); i++)
 	{
 		const CDirentry& entry = (*m_pDirectoryListing)[i];
+
+		if (filter.FilenameFiltered(entry.name, entry.dir, entry.size, false))
+			continue;
+
 		if (entry.dir)
 		{
 			t_newDir dirToVisit;
