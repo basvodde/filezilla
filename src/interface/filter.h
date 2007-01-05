@@ -8,6 +8,8 @@ class CFilterCondition
 {
 public:
 	CFilterCondition();
+	CFilterCondition(const CFilterCondition& cond);
+
 	virtual ~CFilterCondition();
 	int type;
 	int condition;

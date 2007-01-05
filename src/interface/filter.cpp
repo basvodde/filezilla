@@ -45,6 +45,12 @@ CFilterCondition::~CFilterCondition()
 	delete pRegEx;
 }
 
+CFilterCondition::CFilterCondition(const CFilterCondition& cond)
+{
+	pRegEx = 0;
+	*this = cond;
+}
+
 CFilterCondition& CFilterCondition::operator=(const CFilterCondition& cond)
 {
 	type = cond.type;
