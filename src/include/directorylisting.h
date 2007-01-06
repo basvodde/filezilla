@@ -32,6 +32,7 @@ class CDirectoryListing
 {
 public:
 	CDirectoryListing();
+	CDirectoryListing(const CDirectoryListing& listing);
 	~CDirectoryListing();
 
 	CServerPath path;

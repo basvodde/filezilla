@@ -10,6 +10,25 @@ CDirectoryListing::CDirectoryListing()
 	m_hasDirs = false;
 }
 
+CDirectoryListing::CDirectoryListing(const CDirectoryListing& listing)
+{
+	m_referenceCount = listing.m_referenceCount;
+	m_pEntries = listing.m_pEntries;
+	if (m_referenceCount)
+		(*m_referenceCount)++;
+
+	path = listing.path;
+
+	m_hasUnsureEntries = listing.m_hasUnsureEntries;
+	m_failed = listing.m_failed;
+
+	m_entryCount = listing.m_entryCount;
+
+	m_firstListTime = listing.m_firstListTime;
+
+	m_hasDirs = listing.m_hasDirs;
+}
+
 CDirectoryListing::~CDirectoryListing()
 {
 	Unref();
@@ -45,7 +64,6 @@ CDirectoryListing& CDirectoryListing::operator=(const CDirectoryListing &a)
 	m_hasDirs = a.m_hasDirs;
 
 	return *this;
-
 }
 
 wxString CDirentry::dump() const
