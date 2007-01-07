@@ -983,7 +983,7 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 			ResetOperation(FZ_REPLY_OK);
 			return FZ_REPLY_OK;
 		}
-		else
+		else if (prevResult == FZ_REPLY_ERROR)
 		{
 			if (pData->tranferCommandSent && IsMisleadingListResponse())
 			{
@@ -1006,6 +1006,11 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 
 			ResetOperation(FZ_REPLY_ERROR);
 			return FZ_REPLY_ERROR;
+		}
+		else
+		{
+			ResetOperation(FZ_REPLY_OK);
+			return FZ_REPLY_OK;
 		}
 	}
 
@@ -1820,6 +1825,10 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 
 		pData->opState = filetransfer_waittransfer;
 		return Transfer(cmd, pData);
+	default:
+		LogMessage(::Debug_Warning, _T("Unhandled opState: %d"), pData->opState);
+		ResetOperation(FZ_REPLY_ERROR);
+		return FZ_REPLY_ERROR;
 	}
 
 	if (cmd != _T(""))

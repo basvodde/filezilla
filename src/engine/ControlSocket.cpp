@@ -288,10 +288,15 @@ int CControlSocket::ResetOperation(int nErrorCode)
 				CFileTransferOpData *pData = static_cast<CFileTransferOpData *>(m_pCurOpData);
 				if (!pData->download && pData->transferInitiated)
 				{
-					CDirectoryCache cache;
-					cache.UpdateFile(*m_pCurrentServer, pData->remotePath, pData->remoteFile, true, CDirectoryCache::file, (nErrorCode == FZ_REPLY_OK) ? pData->localFileSize : -1);
+					if (!m_pCurrentServer)
+						LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("m_pCurrentServer is 0"));
+					else
+					{
+						CDirectoryCache cache;
+						cache.UpdateFile(*m_pCurrentServer, pData->remotePath, pData->remoteFile, true, CDirectoryCache::file, (nErrorCode == FZ_REPLY_OK) ? pData->localFileSize : -1);
 
-					m_pEngine->SendDirectoryListingNotification(pData->remotePath, false, true, false);
+						m_pEngine->SendDirectoryListingNotification(pData->remotePath, false, true, false);
+					}
 				}
 				if ((nErrorCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)
 					LogMessage(::Error, _("Transfer aborted by user"));
@@ -340,9 +345,12 @@ void CControlSocket::ResetSocket()
 {
 	Close();
 
-	delete [] m_pSendBuffer;
-	m_pSendBuffer = 0;
-	m_nSendBufferLen = 0;
+	if (m_pSendBuffer)
+	{
+		delete [] m_pSendBuffer;
+		m_pSendBuffer = 0;
+		m_nSendBufferLen = 0;
+	}
 
 	m_onConnectCalled = false;
 
@@ -806,9 +814,9 @@ void CControlSocket::OnTimer(wxTimerEvent& event)
 
 	if (m_stopWatch.Time() > (timeout * 1000))
 	{
-		
 		LogMessage(::Error, _("Connection timed out"));
 		DoClose(FZ_REPLY_TIMEOUT);
+		wxASSERT(!m_timer.IsRunning());
 	}
 }
 
