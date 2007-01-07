@@ -250,13 +250,20 @@ int CControlSocket::ResetOperation(int nErrorCode)
 		UnlockCache();
 	}
 
-	if (m_pCurOpData && m_pCurOpData->pNextOpData && (nErrorCode & FZ_REPLY_INTERNALERROR) != FZ_REPLY_INTERNALERROR)
+	if (m_pCurOpData && m_pCurOpData->pNextOpData)
 	{
 		COpData *pNext = m_pCurOpData->pNextOpData;
 		m_pCurOpData->pNextOpData = 0;
 		delete m_pCurOpData;
 		m_pCurOpData = pNext;
-		return SendNextCommand(nErrorCode);
+		if (nErrorCode == FZ_REPLY_OK ||
+			nErrorCode == FZ_REPLY_ERROR ||
+			nErrorCode == FZ_REPLY_CRITICALERROR)
+		{
+			return SendNextCommand(nErrorCode);
+		}
+		else
+			return ResetOperation(nErrorCode);
 	}
 
 	if ((nErrorCode & FZ_REPLY_CRITICALERROR) == FZ_REPLY_CRITICALERROR)

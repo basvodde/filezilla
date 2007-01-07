@@ -983,7 +983,7 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 			ResetOperation(FZ_REPLY_OK);
 			return FZ_REPLY_OK;
 		}
-		else if (prevResult == FZ_REPLY_ERROR)
+		else
 		{
 			if (pData->tranferCommandSent && IsMisleadingListResponse())
 			{
@@ -1006,11 +1006,6 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 
 			ResetOperation(FZ_REPLY_ERROR);
 			return FZ_REPLY_ERROR;
-		}
-		else
-		{
-			ResetOperation(FZ_REPLY_OK);
-			return FZ_REPLY_OK;
 		}
 	}
 
@@ -1046,6 +1041,13 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 	m_pIPResolver = 0;
 
 	m_repliesToSkip = m_pendingReplies;
+
+	if (m_pCurOpData->opId == cmd_transfer && m_pCurOpData->opState == filetransfer_waittransfer)
+	{
+		CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(m_pCurOpData);
+		if (pData->tranferCommandSent)
+			pData->transferInitiated = true;
+	}
 
 	return CControlSocket::ResetOperation(nErrorCode);
 }
@@ -1580,15 +1582,10 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 			if (res != FZ_REPLY_OK)
 				return res;
 		}
-		else if (prevResult == FZ_REPLY_ERROR)
+		else
 		{
 			pData->tryAbsolutePath = true;
 			pData->opState = filetransfer_size;
-		}
-		else
-		{
-			ResetOperation(prevResult);
-			return FZ_REPLY_ERROR;
 		}
 	}
 	else if (pData->opState == filetransfer_waitlist)
@@ -1627,20 +1624,11 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 					pData->opState = filetransfer_size;
 			}
 		}
-		else if (prevResult == FZ_REPLY_ERROR)
-		{
-			pData->opState = filetransfer_size;
-		}
 		else
-		{
-			ResetOperation(prevResult);
-			return FZ_REPLY_ERROR;
-		}
+			pData->opState = filetransfer_size;
 	}
 	else if (pData->opState == filetransfer_waittransfer)
 	{
-		if (pData->tranferCommandSent)
-			pData->transferInitiated = true;
 		ResetOperation(prevResult);
 		return prevResult;
 	}
@@ -2891,6 +2879,9 @@ void CFtpControlSocket::OnExternalIPAddress(fzExternalIPResolveEvent& event)
 
 int CFtpControlSocket::Transfer(const wxString& cmd, CFtpTransferOpData* oldData)
 {
+	wxASSERT(oldData);
+	oldData->tranferCommandSent = false;
+
 	CRawTransferOpData *pData = new CRawTransferOpData;
 	pData->pNextOpData = m_pCurOpData;
 	m_pCurOpData = pData;

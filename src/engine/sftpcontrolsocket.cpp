@@ -1389,7 +1389,7 @@ int CSftpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 			if (res != FZ_REPLY_OK)
 				return res;
 		}
-		else if (prevResult == FZ_REPLY_ERROR)
+		else
 		{
 			pData->tryAbsolutePath = true;
 			pData->opState = filetransfer_transfer;
@@ -1397,11 +1397,6 @@ int CSftpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 			int res = CheckOverwriteFile();
 			if (res != FZ_REPLY_OK)
 				return res;
-		}
-		else
-		{
-			ResetOperation(prevResult);
-			return FZ_REPLY_ERROR;
 		}
 	}
 	else if (pData->opState == filetransfer_waitlist)
@@ -1424,12 +1419,7 @@ int CSftpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 					return res;
 			}
 		}
-		else if (prevResult != FZ_REPLY_ERROR)
-		{
-			ResetOperation(prevResult);
-			return FZ_REPLY_ERROR;
-		}
-
+		
 		pData->opState = filetransfer_transfer;
 
 		int res = CheckOverwriteFile();
