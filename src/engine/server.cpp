@@ -8,12 +8,12 @@ struct t_protocolInfo
 };
 
 static const t_protocolInfo protocolInfos[] = {
-	false, FTP, _T("FTP - File Transfer Protocol"),
-	false, SFTP, _T("SFTP - SSH File Transfer Protocol"),
-	true, FTPS, wxTRANSLATE("FTPS - FTP over implicit TLS/SSL"),
-	true, FTPES, wxTRANSLATE("FTPES - FTP over explicit TLS/SSL"),
-	true, SFTP, _T("SSH File Transfer Protocol (SFTP)"),
-	false, UNKNOWN, _T("")
+	{ false, FTP, _T("FTP - File Transfer Protocol") },
+	{ false, SFTP, _T("SFTP - SSH File Transfer Protocol") },
+	{ true, FTPS, wxTRANSLATE("FTPS - FTP over implicit TLS/SSL") },
+	{ true, FTPES, wxTRANSLATE("FTPES - FTP over explicit TLS/SSL") },
+	{ true, SFTP, _T("SSH File Transfer Protocol (SFTP)") },
+	{ false, UNKNOWN, _T("") }
 };
 
 CServer::CServer()

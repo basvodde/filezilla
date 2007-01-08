@@ -398,7 +398,7 @@ void CState::HandleDroppedFiles(const wxFileDataObject* pFileDataObject, wxStrin
 		if (wxFile::Exists(file))
 		{
 			int pos = file.Find(wxFileName::GetPathSeparator(), true);
-			if (pos == -1 || pos == file.Len() - 1)
+			if (pos == -1 || pos == (int)file.Len() - 1)
 				continue;
 			const wxString& name = file.Mid(pos + 1);
 			if (copy)
@@ -413,7 +413,7 @@ void CState::HandleDroppedFiles(const wxFileDataObject* pFileDataObject, wxStrin
 			else
 			{
 				int pos = file.Find(wxFileName::GetPathSeparator(), true);
-				if (pos == -1 || pos == file.Len() - 1)
+				if (pos == -1 || pos == (int)file.Len() - 1)
 					continue;
 				const wxString& name = file.Mid(pos + 1);
 				wxRenameFile(file, path + name);
@@ -437,7 +437,7 @@ bool CState::RecursiveCopy(wxString source, wxString target)
 		return false;
 	
 	int pos = source.Find(wxFileName::GetPathSeparator(), true);
-	if (pos == -1 || pos == source.Len() - 1)
+	if (pos == -1 || pos == (int)source.Len() - 1)
 		return false;
 
 	std::list<wxString> dirsToVisit;

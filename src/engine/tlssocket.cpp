@@ -781,8 +781,8 @@ int CTlsSocket::VerifyCertificate()
 	if (pAlgo)
 		algoName = wxString(pAlgo, wxConvUTF8);
 
-	int version = gnutls_x509_crt_get_version(cert);
-
+	//int version = gnutls_x509_crt_get_version(cert);
+	
 	wxString subject, issuer;
 
 	size = 0;

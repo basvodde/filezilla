@@ -66,8 +66,6 @@ public:
 		if (!GetData())
 			return wxDragError;
 
-		const wxArrayString& files = m_pFileDataObject->GetFilenames();
-
 		m_pLocalListView->m_pState->HandleDroppedFiles(m_pFileDataObject, dir, def == wxDragCopy);
 
 		return def;
