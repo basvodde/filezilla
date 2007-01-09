@@ -1042,7 +1042,7 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 
 	m_repliesToSkip = m_pendingReplies;
 
-	if (m_pCurOpData->opId == cmd_transfer && m_pCurOpData->opState == filetransfer_waittransfer)
+	if (m_pCurOpData && m_pCurOpData->opId == cmd_transfer && m_pCurOpData->opState == filetransfer_waittransfer)
 	{
 		CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(m_pCurOpData);
 		if (pData->tranferCommandSent)
