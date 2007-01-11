@@ -11,20 +11,26 @@
 class CXmlFile
 {
 public:
-	CXmlFile();
+	CXmlFile(const wxString& fileName);
+	CXmlFile(const wxFileName& fileName = wxFileName());
+
 	virtual ~CXmlFile();
+
+	TiXmlElement* CreateEmpty();
+
+	void SetFileName(const wxString& name);
+	void SetFileName(const wxFileName& fileName);
+	
+	bool HasFileName() const { return m_fileName.IsOk(); }
 	
 	TiXmlElement* Load(const wxString& name);
-	TiXmlElement* Load(const wxFileName& name);
-	bool Loaded() const { return m_fileName.IsOk(); }
-
+	TiXmlElement* Load(const wxFileName& fileName = wxFileName());
+	
 	void Close();
 
 	TiXmlElement* GetElement();
 
-	// Unless forceReload is set, reloads file
-	// if modification time changed.
-	bool Reload(bool forceReload);
+	bool Modified();
 
     bool Save(wxString* error = 0);
 

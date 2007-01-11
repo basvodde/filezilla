@@ -2,9 +2,28 @@
 #include "xmlfunctions.h"
 #include "filezillaapp.h"
 
-CXmlFile::CXmlFile()
+CXmlFile::CXmlFile(const wxString& fileName)
 {
+	SetFileName(fileName);
 	m_pDocument = 0;
+}
+
+CXmlFile::CXmlFile(const wxFileName& fileName /*=wxFileName()*/)
+{
+	SetFileName(fileName);
+	m_pDocument = 0;
+}
+
+void CXmlFile::SetFileName(const wxString& name)
+{
+	wxFileName fileName(wxGetApp().GetSettingsDir(), name + _T(".xml"));
+	m_modificationTime = wxDateTime();
+}
+
+void CXmlFile::SetFileName(const wxFileName& fileName)
+{
+	m_fileName = fileName;
+	m_modificationTime = wxDateTime();
 }
 
 CXmlFile::~CXmlFile()
@@ -18,13 +37,16 @@ TiXmlElement* CXmlFile::Load(const wxString& name)
 	return Load(fileName);
 }
 
-TiXmlElement* CXmlFile::Load(const wxFileName& name)
+TiXmlElement* CXmlFile::Load(const wxFileName& fileName)
 {
+	if (fileName.IsOk())
+		SetFileName(fileName);
+
+	wxCHECK(m_fileName.IsOk(), 0);
+
 	delete m_pDocument;
 	m_pDocument = 0;
 
-	m_fileName = name;
-	
 	TiXmlElement* pElement = GetXmlFile(m_fileName);
 	if (!pElement)
 	{
@@ -57,25 +79,23 @@ TiXmlElement* CXmlFile::GetElement()
 		return pElement;
 }
 
-bool CXmlFile::Reload(bool forceReload)
+bool CXmlFile::Modified()
 {
-	if (!m_fileName.IsOk())
+	wxCHECK(m_fileName.IsOk(), false);
+
+	if (!m_modificationTime.IsValid())
 		return false;
 
-	if (m_modificationTime.IsValid() && !forceReload)
-	{
-		wxLogNull log;
-		wxDateTime modificationTime;
-		if (m_fileName.FileExists())
-		{
-			modificationTime = m_fileName.GetModificationTime();
-			if (modificationTime.IsValid() && modificationTime == m_modificationTime)
-				return false;
-		}
-	}
+	wxLogNull log;
+	wxDateTime modificationTime;
+	if (!m_fileName.FileExists())
+		return true;
 
-	wxFileName name = m_fileName;
-	return Load(name) != 0;
+	modificationTime = m_fileName.GetModificationTime();
+	if (modificationTime.IsValid() && modificationTime == m_modificationTime)
+		return false;
+
+	return true;
 }
 
 void CXmlFile::Close()
@@ -86,13 +106,24 @@ void CXmlFile::Close()
 
 bool CXmlFile::Save(wxString* error)
 {
-	if (!m_pDocument)
-		return false;
+	wxCHECK(m_fileName.IsOk(), false);
+
+	wxCHECK(m_pDocument, false);
 
 	bool res = SaveXmlFile(m_fileName, GetElement(), error);
 	wxLogNull log;
 	m_modificationTime = m_fileName.GetModificationTime();
 	return res;
+}
+
+TiXmlElement* CXmlFile::CreateEmpty()
+{
+	delete m_pDocument;
+
+	m_pDocument = new TiXmlDocument();
+	m_pDocument->InsertEndChild(TiXmlDeclaration("1.0", "UTF-8", "yes"));
+
+	return m_pDocument->InsertEndChild(TiXmlElement("FileZilla3"))->ToElement();
 }
 
 char* ConvUTF8(const wxString& value)
@@ -255,7 +286,6 @@ TiXmlElement* GetXmlFile(wxFileName file)
 		TiXmlDocument* pXmlDocument = new TiXmlDocument();
 		pXmlDocument->InsertEndChild(TiXmlDeclaration("1.0", "UTF-8", "yes"));
 	
-		TiXmlElement element("FileZilla3");
 		pXmlDocument->InsertEndChild(TiXmlElement("FileZilla3"));
 
 		if (!pXmlDocument->SaveFile(file.GetFullPath().mb_str()))

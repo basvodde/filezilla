@@ -13,9 +13,9 @@ const std::list<CServer> CRecentServerList::GetMostRecentServers(bool lockMutex 
 	if (lockMutex)
 		mutex.Lock();
 
-	if (!m_XmlFile.Loaded())
+	if (!m_XmlFile.HasFileName() || m_XmlFile.Modified())
 		m_XmlFile.Load(_T("recentservers"));
-	else if (!m_XmlFile.Reload(false))
+	else
 		return m_mostRecentServers;
 
 	TiXmlElement* pElement = m_XmlFile.GetElement();
@@ -108,18 +108,10 @@ void CRecentServerList::Clear()
 	m_mostRecentServers.clear();
 
 	CInterProcessMutex mutex(MUTEX_MOSTRECENTSERVERS);
-	if (!m_XmlFile.Loaded())
-		m_XmlFile.Load(_T("recentservers"));
+	if (!m_XmlFile.HasFileName())
+		m_XmlFile.SetFileName(_T("recentservers"));
 
-	TiXmlElement* pDocument = m_XmlFile.GetElement();
-	if (!pDocument)
-		return;
-	
-	TiXmlElement* pElement = pDocument->FirstChildElement("RecentServers");
-	if (!pElement)
-		pElement = pDocument->InsertEndChild(TiXmlElement("RecentServers"))->ToElement();
-
-	pElement->Clear();
+	TiXmlElement* pDocument = m_XmlFile.CreateEmpty();
 
 	wxString error;
 	m_XmlFile.Save(&error);

@@ -287,13 +287,13 @@ unsigned char* CVerifyCertDialog::ConvertStringToHex(const wxString& str, unsign
 void CVerifyCertDialog::LoadTrustedCerts(bool close /*=true*/)
 {
 	CReentrantInterProcessMutexLocker mutex(MUTEX_TRUSTEDCERTS);
-	if (!m_xmlFile.Loaded())
+	if (!m_xmlFile.HasFileName() || m_xmlFile.Modified())
 		m_xmlFile.Load(_T("trustedcerts"));
-	else if (!m_xmlFile.Reload(false))
+	else
 		return;
 
 	TiXmlElement* pElement = m_xmlFile.GetElement();
-	if (!pElement || !(pElement = pElement->FirstChildElement("TrustedCerts")))
+	if (!pElement)
 	{
 		if (close)
 			m_xmlFile.Close();
@@ -301,6 +301,9 @@ void CVerifyCertDialog::LoadTrustedCerts(bool close /*=true*/)
 	}
 
 	m_trustedCerts.clear();
+
+	if (!(pElement = pElement->FirstChildElement("TrustedCerts")))
+		return;
 
 	bool modified = false;
 
@@ -370,7 +373,7 @@ void CVerifyCertDialog::SetPermanentlyTrusted(const CCertificateNotification* co
 	TiXmlElement* pElement = m_xmlFile.GetElement();
 	if (!pElement)
 	{
-		m_xmlFile.Reload(true);
+		m_xmlFile.Load();
 		pElement = m_xmlFile.GetElement();
 	}
 
