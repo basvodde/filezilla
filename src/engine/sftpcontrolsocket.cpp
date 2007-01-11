@@ -179,7 +179,7 @@ protected:
 					const wxString& line = ReadLine(pInputStream, error);
 					if (error)
 						goto loopexit;
-					m_pOwner->LogMessage(::Error, line);
+					m_pOwner->LogMessageRaw(::Error, line);
 				}
 				break;
 			case sftpVerbose:
@@ -187,7 +187,7 @@ protected:
 					const wxString& line = ReadLine(pInputStream, error);
 					if (error)
 						goto loopexit;
-					m_pOwner->LogMessage(Debug_Info, line);
+					m_pOwner->LogMessageRaw(Debug_Info, line);
 				}
 				break;
 			case sftpStatus:
@@ -195,7 +195,7 @@ protected:
 					const wxString& line = ReadLine(pInputStream, error);
 					if (error)
 						goto loopexit;
-					m_pOwner->LogMessage(Status, line);
+					m_pOwner->LogMessageRaw(Status, line);
 				}
 				break;
 			case sftpDone:
@@ -398,7 +398,7 @@ void CSftpControlSocket::OnSftpEvent(CSftpEvent& event)
 	switch (event.GetType())
 	{
 	case sftpReply:
-		LogMessage(Response, event.GetText());
+		LogMessageRaw(Response, event.GetText());
 		ProcessReply(true, event.GetText());
 		break;
 	case sftpStatus:
@@ -515,9 +515,9 @@ bool CSftpControlSocket::Send(wxString cmd, const wxString& show /*=_T("")*/)
 	SetWait(true);
 
 	if (show != _T(""))
-		LogMessage(Command, show);
+		LogMessageRaw(Command, show);
 	else
-		LogMessage(Command, cmd);
+		LogMessageRaw(Command, cmd);
 
 	// Check for newlines in command
 	// a command like "ls\nrm foo/bar" is dangerous
@@ -879,7 +879,7 @@ int CSftpControlSocket::ListParseEntry(const wxString& entry)
 {
 	if (!m_pCurOpData)
 	{
-		LogMessage(RawList, entry);
+		LogMessageRaw(RawList, entry);
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Empty m_pCurOpData"));
 		ResetOperation(FZ_REPLY_INTERNALERROR);
 		return FZ_REPLY_ERROR;
@@ -887,7 +887,7 @@ int CSftpControlSocket::ListParseEntry(const wxString& entry)
 
 	if (m_pCurOpData->opId != cmd_list)
 	{
-		LogMessage(RawList, entry);
+		LogMessageRaw(RawList, entry);
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Listentry received, but current operation is not cmd_list"));
 		ResetOperation(FZ_REPLY_INTERNALERROR);
 		return FZ_REPLY_ERROR;
@@ -896,7 +896,7 @@ int CSftpControlSocket::ListParseEntry(const wxString& entry)
 	CSftpListOpData *pData = static_cast<CSftpListOpData *>(m_pCurOpData);
 	if (!pData)
 	{
-		LogMessage(RawList, entry);
+		LogMessageRaw(RawList, entry);
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("m_pCurOpData of wrong type"));
 		ResetOperation(FZ_REPLY_INTERNALERROR);
 		return FZ_REPLY_ERROR;
@@ -904,7 +904,7 @@ int CSftpControlSocket::ListParseEntry(const wxString& entry)
 
 	if (pData->opState != list_list)
 	{
-		LogMessage(RawList, entry);
+		LogMessageRaw(RawList, entry);
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("ListParseResponse called at inproper time: %s"), pData->opState);
 		ResetOperation(FZ_REPLY_INTERNALERROR);
 		return FZ_REPLY_ERROR;
@@ -913,7 +913,7 @@ int CSftpControlSocket::ListParseEntry(const wxString& entry)
 
 	if (!pData->pParser)
 	{
-		LogMessage(RawList, entry);
+		LogMessageRaw(RawList, entry);
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("pData->pParser is 0"));
 		return FZ_REPLY_INTERNALERROR;
 	}
@@ -1741,7 +1741,7 @@ int CSftpControlSocket::Delete(const CServerPath& path /*=CServerPath()*/, const
 	wxString filename = path.FormatFilename(file);
 	if (filename == _T(""))
 	{
-		LogMessage(::Error, wxString::Format(_T("Filename cannot be constructed for folder %s and filename %s"), path.GetPath().c_str(), file.c_str()));
+		LogMessage(::Error, _T("Filename cannot be constructed for folder %s and filename %s"), path.GetPath().c_str(), file.c_str());
 		return FZ_REPLY_ERROR;
 	}
 
@@ -1805,7 +1805,7 @@ int CSftpControlSocket::RemoveDir(const CServerPath& path /*=CServerPath()*/, co
 		
 	if (!fullPath.AddSegment(subDir))
 	{
-		LogMessage(::Error, wxString::Format(_T("Path cannot be constructed for folder %s and subdir %s"), path.GetPath().c_str(), subDir.c_str()));
+		LogMessage(::Error, _T("Path cannot be constructed for folder %s and subdir %s"), path.GetPath().c_str(), subDir.c_str());
 		return FZ_REPLY_ERROR;
 	}
 

@@ -47,6 +47,41 @@ void CLogging::LogMessage(MessageType nMessageType, const wxChar *msgFormat, ...
 	m_pEngine->AddNotification(notification);
 }
 
+void CLogging::LogMessageRaw(MessageType nMessageType, const wxChar *msg) const
+{
+	const int debugLevel = m_pEngine->GetOptions()->GetOptionVal(OPTION_LOGGING_DEBUGLEVEL);
+	switch (nMessageType)
+	{
+	case Debug_Warning:
+		if (!debugLevel)
+			return;
+		break;
+	case Debug_Info:
+		if (debugLevel < 2)
+			return;
+		break;
+	case Debug_Verbose:
+		if (debugLevel < 3)
+			return;
+		break;
+	case Debug_Debug:
+		if (debugLevel != 4)
+			return;
+		break;
+	case RawList:
+		if (!m_pEngine->GetOptions()->GetOptionVal(OPTION_LOGGING_RAWLISTING))
+			return;
+		break;
+	default:
+		break;
+	}
+
+	CLogmsgNotification *notification = new CLogmsgNotification;
+	notification->msgType = nMessageType;
+	notification->msg = msg;
+	m_pEngine->AddNotification(notification);
+}
+
 void CLogging::LogMessage(wxString SourceFile, int nSourceLine, void *pInstance, MessageType nMessageType, const wxChar *msgFormat, ...) const
 {
 	const int debugLevel = m_pEngine->GetOptions()->GetOptionVal(OPTION_LOGGING_DEBUGLEVEL);

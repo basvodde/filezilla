@@ -316,7 +316,7 @@ void CTransferSocket::OnSend()
 		int error = m_pBackend->LastError();
 		if (error != wxSOCKET_NOERROR && error != wxSOCKET_WOULDBLOCK)
 		{
-			m_pControlSocket->LogMessage(::Error, wxString::Format(_("Error %d writing to socket"), error));
+			m_pControlSocket->LogMessage(::Error, _("Error %d writing to socket"), error);
 			TransferEnd(1);
 		}
 	}

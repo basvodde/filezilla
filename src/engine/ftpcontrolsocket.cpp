@@ -193,7 +193,7 @@ void CFtpControlSocket::OnReceive(wxSocketEvent &event)
 
 void CFtpControlSocket::ParseLine(wxString line)
 {
-	LogMessage(Response, line);
+	LogMessageRaw(Response, line);
 	SetAlive();
 
 	if (m_pCurOpData && m_pCurOpData->opId == cmd_connect)
@@ -790,10 +790,10 @@ bool CFtpControlSocket::Send(wxString str, bool maskArgs /*=false*/)
 	if (maskArgs && (pos = str.Find(_T(" "))) != -1)
 	{
 		wxString stars('*', str.Length() - pos - 1);
-		LogMessage(Command, str.Left(pos + 1) + stars);
+		LogMessageRaw(Command, str.Left(pos + 1) + stars);
 	}
 	else
-		LogMessage(Command, str);
+		LogMessageRaw(Command, str);
 
 	str += _T("\r\n");
 	wxCharBuffer buffer = ConvToServer(str);
@@ -2179,7 +2179,7 @@ int CFtpControlSocket::DeleteSend(int prevResult /*=FZ_REPLY_OK*/)
 	wxString filename = pData->path.FormatFilename(pData->file, pData->omitPath);
 	if (filename == _T(""))
 	{
-		LogMessage(::Error, wxString::Format(_T("Filename cannot be constructed for folder %s and filename %s"), pData->path.GetPath().c_str(), pData->file.c_str()));
+		LogMessage(::Error, _T("Filename cannot be constructed for folder %s and filename %s"), pData->path.GetPath().c_str(), pData->file.c_str());
 		ResetOperation(FZ_REPLY_ERROR);
 		return FZ_REPLY_ERROR;
 	}
@@ -2245,7 +2245,7 @@ int CFtpControlSocket::RemoveDir(const CServerPath& path, const wxString& subDir
 
 	if (!pData->fullPath.AddSegment(subDir))
 	{
-		LogMessage(::Error, wxString::Format(_T("Path cannot be constructed for folder %s and subdir %s"), path.GetPath().c_str(), subDir.c_str()));
+		LogMessage(::Error, _T("Path cannot be constructed for folder %s and subdir %s"), path.GetPath().c_str(), subDir.c_str());
 		ResetOperation(FZ_REPLY_ERROR);
 		return FZ_REPLY_ERROR;
 	}
@@ -2259,7 +2259,7 @@ int CFtpControlSocket::RemoveDir(const CServerPath& path, const wxString& subDir
 
 int CFtpControlSocket::RemoveDirSend(int prevResult /*=FZ_REPLY_OK*/)
 {
-	LogMessage(Debug_Verbose, _T("CFtpControlSocket::RemoveDirSende()"));
+	LogMessage(Debug_Verbose, _T("CFtpControlSocket::RemoveDirSend()"));
 
 	if (!m_pCurOpData)
 	{

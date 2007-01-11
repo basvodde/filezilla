@@ -437,7 +437,7 @@ int CHttpControlSocket::FileTransferSend(int prevResult /*=FZ_RESULT_OK*/)
 	}
 
 	wxString action = wxString::Format(_T("GET %s HTTP/1.1"), location.c_str());
-	LogMessage(Command, action);
+	LogMessageRaw(Command, action);
 
 	wxString command = wxString::Format(_T("%s\r\nHost: %s\r\nUser-Agent: %s\r\nConnection: close\r\n\r\n"), action.c_str(), hostWithPort.c_str(), wxString(PACKAGE_STRING, wxConvLocal).c_str());
 
@@ -586,7 +586,7 @@ int CHttpControlSocket::ParseHeader(CHttpOpData* pData)
 		m_pRecvBuffer[i] = 0;
 		const wxString& line = wxString(m_pRecvBuffer, wxConvLocal);
 		if (line != _T(""))
-			LogMessage(Response, line);
+			LogMessageRaw(Response, line);
 
 		if (pData->m_responseCode == -1)
 		{

@@ -7,6 +7,7 @@ public:
 	CLogging(CFileZillaEnginePrivate *pEngine);
 
 	void LogMessage(MessageType nMessageType, const wxChar *msgFormat, ...) const;
+	void LogMessageRaw(MessageType nMessageType, const wxChar *msg) const;
 	void LogMessage(wxString sourceFile, int nSourceLine, void *pInstance, MessageType nMessageType, const wxChar *msgFormat, ...) const;
 
 private:

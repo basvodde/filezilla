@@ -1982,7 +1982,7 @@ CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
 		if (m_pControlSocket)
 		{
 			buffer = m_pControlSocket->ConvToLocalBuffer(res);
-			m_pControlSocket->LogMessage(RawList, buffer);
+			m_pControlSocket->LogMessageRaw(RawList, buffer);
 		}
 		else
 		{
