@@ -4,12 +4,14 @@
 
 CXmlFile::CXmlFile(const wxString& fileName)
 {
+	m_pPrinter = 0;
 	SetFileName(fileName);
 	m_pDocument = 0;
 }
 
 CXmlFile::CXmlFile(const wxFileName& fileName /*=wxFileName()*/)
 {
+	m_pPrinter = 0;
 	SetFileName(fileName);
 	m_pDocument = 0;
 }
@@ -28,6 +30,7 @@ void CXmlFile::SetFileName(const wxFileName& fileName)
 
 CXmlFile::~CXmlFile()
 {
+	delete m_pPrinter;
 	delete m_pDocument;
 }
 
@@ -567,4 +570,44 @@ int GetAttributeInt(TiXmlElement* node, const char* name)
 void SetAttributeInt(TiXmlElement* node, const char* name, int value)
 {
 	node->SetAttribute(name, value);
+}
+
+int CXmlFile::GetRawDataLength()
+{
+	if (!m_pDocument)
+		return 0;
+
+	delete m_pPrinter;
+	m_pPrinter = new TiXmlPrinter;
+	m_pPrinter->SetStreamPrinting();
+
+	m_pDocument->Accept(m_pPrinter);
+	return m_pPrinter->Size();
+}
+
+void CXmlFile::GetRawDataHere(char* p) // p has to big enough to hold at least GetRawDataLength() bytes
+{
+	if (!m_pPrinter)
+	{
+		wxFAIL;
+		return;
+	}
+
+	memcpy(p, m_pPrinter->CStr(), m_pPrinter->Size());
+}
+
+bool CXmlFile::ParseData(char* data)
+{
+	delete m_pDocument;
+	m_pDocument = new TiXmlDocument;
+	m_pDocument->Parse(data);
+	
+	if (!m_pDocument->FirstChildElement("FileZilla3"))
+	{
+		delete m_pDocument;
+		m_pDocument = 0;
+		return false;
+	}
+	
+	return true;
 }

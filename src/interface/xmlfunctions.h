@@ -25,6 +25,11 @@ public:
 	
 	TiXmlElement* Load(const wxString& name);
 	TiXmlElement* Load(const wxFileName& fileName = wxFileName());
+
+	int GetRawDataLength();
+	void GetRawDataHere(char* p); // p has to big enough to hold at least GetRawDataLength() bytes
+
+	bool ParseData(char* data); // data has to be 0-terminated
 	
 	void Close();
 
@@ -38,6 +43,7 @@ protected:
 	wxDateTime m_modificationTime;
 	wxFileName m_fileName;
 	TiXmlDocument* m_pDocument;
+	TiXmlPrinter *m_pPrinter;
 };
 
 // Convert the given string into an UTF-8 string. Returned string has to be deleted manually.
