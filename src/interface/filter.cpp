@@ -196,8 +196,8 @@ void CFilterDialog::SaveFilters()
 			const CFilterCondition& condition = *conditionIter;
 			TiXmlElement* pCondition = pConditions->InsertEndChild(TiXmlElement("Condition"))->ToElement();
 
-			AddTextElement(pCondition, "Type", wxString::Format(_T("%d"), condition.type));
-			AddTextElement(pCondition, "Condition", wxString::Format(_T("%d"), condition.condition));
+			AddTextElement(pCondition, "Type", condition.type);
+			AddTextElement(pCondition, "Condition", condition.condition);
 			AddTextElement(pCondition, "Value", condition.strValue);
 		}
 	}

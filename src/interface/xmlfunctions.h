@@ -34,6 +34,7 @@ public:
 	void Close();
 
 	TiXmlElement* GetElement();
+	const TiXmlElement* GetElement() const;
 
 	bool Modified();
 
@@ -63,6 +64,7 @@ TiXmlElement* FindElementWithAttribute(TiXmlElement* node, const char* element, 
 
 // Add a new element with the specified name and value to the xml document
 void AddTextElement(TiXmlElement* node, const char* name, const wxString& value);
+void AddTextElement(TiXmlElement* node, const char* name, int value);
 
 // Get string from named element
 wxString GetTextElement(TiXmlElement* node, const char* name);

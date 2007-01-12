@@ -82,6 +82,15 @@ TiXmlElement* CXmlFile::GetElement()
 		return pElement;
 }
 
+const TiXmlElement* CXmlFile::GetElement() const
+{
+	if (!m_pDocument)
+		return 0;
+
+	const TiXmlElement* pElement = m_pDocument->FirstChildElement("FileZilla3");
+	return pElement;
+}
+
 bool CXmlFile::Modified()
 {
 	wxCHECK(m_fileName.IsOk(), false);
@@ -164,6 +173,11 @@ void AddTextElement(TiXmlElement* node, const char* name, const wxString& value)
 	delete [] utf8;
 
 	node->InsertEndChild(element);
+}
+
+void AddTextElement(TiXmlElement* node, const char* name, int value)
+{
+	AddTextElement(node, name, wxString::Format(_T("%d"), value));
 }
 
 wxString GetTextElement(TiXmlElement* node, const char* name)
@@ -442,10 +456,10 @@ void SetServer(TiXmlElement *node, const CServer& server)
 	node->Clear();
 	
 	AddTextElement(node, "Host", server.GetHost());
-	AddTextElement(node, "Port", wxString::Format(_T("%d"), server.GetPort()));
-	AddTextElement(node, "Protocol", wxString::Format(_T("%d"), server.GetProtocol()));
-	AddTextElement(node, "Type", wxString::Format(_T("%d"), server.GetType()));
-	AddTextElement(node, "Logontype", wxString::Format(_T("%d"), server.GetLogonType()));
+	AddTextElement(node, "Port", server.GetPort());
+	AddTextElement(node, "Protocol", server.GetProtocol());
+	AddTextElement(node, "Type", server.GetType());
+	AddTextElement(node, "Logontype", server.GetLogonType());
 	
 	if (server.GetLogonType() != ANONYMOUS)
 	{
@@ -458,7 +472,7 @@ void SetServer(TiXmlElement *node, const CServer& server)
 			AddTextElement(node, "Account", server.GetAccount());
 	}
 
-	AddTextElement(node, "TimezoneOffset", wxString::Format(_T("%d"), server.GetTimezoneOffset()));
+	AddTextElement(node, "TimezoneOffset", server.GetTimezoneOffset());
 	switch (server.GetPasvMode())
 	{
 	case MODE_PASSIVE:
@@ -471,7 +485,7 @@ void SetServer(TiXmlElement *node, const CServer& server)
 		AddTextElement(node, "PasvMode", _T("MODE_DEFAULT"));
 		break;
 	}
-	AddTextElement(node, "MaximumMultipleConnections", wxString::Format(_T("%d"), server.MaximumMultipleConnections()));
+	AddTextElement(node, "MaximumMultipleConnections", server.MaximumMultipleConnections());
 
 	switch (server.GetEncodingType())
 	{
