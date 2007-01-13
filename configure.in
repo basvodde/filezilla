@@ -128,6 +128,11 @@ AH_BOTTOM([
 #endif
 ])
 
+  # Check MinGW builds
+  # ------------------
+
+  AM_CONDITIONAL([MINGW], [echo $host_os | grep "mingw"])
+
   # Check for windres on MinGW builds
   # ---------------------------------
 

@@ -8,6 +8,7 @@
 #include "filter.h"
 #include <algorithm>
 #include <wx/dnd.h>
+#include "dndobjects.h"
 
 #ifdef __WXMSW__
 #include "shellapi.h"
@@ -1956,8 +1957,56 @@ void CRemoteListView::SetInfoText(const wxString& text)
 
 void CRemoteListView::OnBeginDrag(wxListEvent& event)
 {
-	/*wxTextDataObject *obj = new wxTextDataObject(_T("foo"));
+	wxDataObjectComposite object;
+
+	const CServer* const pServer = m_pState->GetServer();
+	if (!pServer)
+		return;
+
+	CRemoteDataObject *pRemoteDataObject = new CRemoteDataObject(*pServer);
+	pRemoteDataObject->Finalize();
+
+	object.Add(pRemoteDataObject, true);
+
+#if FZ3_USESHELLEXT
+	CShelLExtensionInterface ext = new CShellExtensionInterface;
+	if (ext->IsLoaded())
+	{
+		wxString file = _T("c:\\fz3-xxx");
+	
+		ext->InitDrag(file);
+		wxFileDataObject *pFileDataObject = new wxFileDataObject;
+		pFileDataObject->AddFile(file);
+
+		object.Add(pFileDataObject);
+	}
+
+#endif
+	
 	wxDropSource source(this);
-	source.SetData(*obj);
-	source.DoDragDrop();*/
+	source.SetData(object);
+	if (source.DoDragDrop() != wxDragCopy)
+	{
+#if FZ3_USESHELLEXT
+		delete ext;
+		ext = 0;
+#endif
+		return;
+	}
+
+	const wxDataFormat fmt = object.GetReceivedFormat();
+
+#if FZ3_USESHELLEXT
+	if (ext)
+	{
+		if (!pRemoteDataObject->DidSendData())
+		{
+			wxString target = ext->GetTarget();
+			wxMessageBox(target);
+			delete ext;
+			ext = 0;
+			return;
+		}
+	}
+#endif
 }
