@@ -84,6 +84,9 @@ protected:
 	std::vector<unsigned int> m_indexMapping;
 	std::map<wxString, wxString> m_fileTypeMap;
 
+	// Caller is responsible to check selection is valid!
+	void TransferSelectedFiles(const wxString& localDir, bool queueOnly);
+
 	// Cache icon for directories, no need to calculate it multiple times
 	int m_dirIcon;
 

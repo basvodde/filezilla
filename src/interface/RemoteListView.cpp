@@ -1052,11 +1052,14 @@ void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
 
 void CRemoteListView::OnMenuDownload(wxCommandEvent& event)
 {
-	if (!m_pState->m_pCommandQueue->Idle() || IsBusy())
+	if (IsBusy())
 	{
 		wxBell();
 		return;
 	}
+
+	// Make sure selection is valid
+	bool idle = m_pState->m_pCommandQueue->Idle();
 
 	long item = -1;
 	while (true)
@@ -1065,14 +1068,30 @@ void CRemoteListView::OnMenuDownload(wxCommandEvent& event)
 		if (item == -1)
 			break;
 
-		if (!item || !IsItemValid(item))
+		if (!item)
+		{
+			wxBell();
+			return;
+		}
+
+		int index = GetItemIndex(item);
+		if (index == -1)
+			continue;
+		if ((*m_pDirectoryListing)[index].dir && !idle)
 		{
 			wxBell();
 			return;
 		}
 	}
 
-	item = -1;
+	TransferSelectedFiles(m_pState->GetLocalDir(), event.GetId() == XRCID("ID_ADDTOQUEUE"));
+}
+
+void CRemoteListView::TransferSelectedFiles(const wxString& localDir, bool queueOnly)
+{
+	wxASSERT(!IsBusy());
+
+	long item = -1;
 	while (true)
 	{
 		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
@@ -1095,13 +1114,13 @@ void CRemoteListView::OnMenuDownload(wxCommandEvent& event)
 
 		if (entry.dir)
 		{
-			wxFileName fn = wxFileName(m_pState->GetLocalDir(), _T(""));
+			wxFileName fn = wxFileName(localDir, _T(""));
 			fn.AppendDir(name);
 			CServerPath remotePath = m_pDirectoryListing->path;
 			if (remotePath.AddSegment(name))
 			{
 				//m_pQueue->QueueFolder(event.GetId() == XRCID("ID_ADDTOQUEUE"), true, fn.GetFullPath(), remotePath, *pServer);
-				m_operationMode = (event.GetId() == XRCID("ID_ADDTOQUEUE")) ? recursive_addtoqueue : recursive_download;
+				m_operationMode = queueOnly ? recursive_addtoqueue : recursive_download;
 				t_newDir dirToVisit;
 				dirToVisit.localDir = fn.GetFullPath();
 				dirToVisit.parent = m_pDirectoryListing->path;
@@ -1112,8 +1131,8 @@ void CRemoteListView::OnMenuDownload(wxCommandEvent& event)
 		}
 		else
 		{
-			wxFileName fn = wxFileName(m_pState->GetLocalDir(), name);
-			m_pQueue->QueueFile(event.GetId() == XRCID("ID_ADDTOQUEUE"), true, fn.GetFullPath(), name, m_pDirectoryListing->path, *pServer, entry.size);
+			wxFileName fn = wxFileName(localDir, name);
+			m_pQueue->QueueFile(queueOnly, true, fn.GetFullPath(), name, m_pDirectoryListing->path, *pServer, entry.size);
 		}
 	}
 	NextOperation();
@@ -1957,11 +1976,52 @@ void CRemoteListView::SetInfoText(const wxString& text)
 
 void CRemoteListView::OnBeginDrag(wxListEvent& event)
 {
+	if (IsBusy())
+	{
+		wxBell();
+		return;
+	}
+
+	if (GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) == -1)
+	{
+		// Nothing selected
+		return;
+	}
+
+	bool idle = m_pState->m_pCommandQueue->Idle();
+
+	long item = -1;
+	while (true)
+	{
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		if (item == -1)
+			break;
+
+		if (!item)
+		{
+			// Can't drag ".."
+			wxBell();
+			return;
+		}
+
+		int index = GetItemIndex(item);
+		if (index == -1)
+			continue;
+		if ((*m_pDirectoryListing)[index].dir && !idle)
+		{
+			// Drag could result in recursive operation, don't allow at this point
+			wxBell();
+			return;
+		}
+	}
+
 	wxDataObjectComposite object;
 
 	const CServer* const pServer = m_pState->GetServer();
 	if (!pServer)
 		return;
+	const CServer server = *pServer;
+	const CServerPath path = m_pDirectoryListing->path;
 
 	CRemoteDataObject *pRemoteDataObject = new CRemoteDataObject(*pServer);
 	pRemoteDataObject->Finalize();
@@ -1969,16 +2029,27 @@ void CRemoteListView::OnBeginDrag(wxListEvent& event)
 	object.Add(pRemoteDataObject, true);
 
 #if FZ3_USESHELLEXT
-	CShelLExtensionInterface ext = new CShellExtensionInterface;
-	if (ext->IsLoaded())
+	CShellExtensionInterface* ext = new CShellExtensionInterface;
+	if (!ext->IsLoaded())
 	{
-		wxString file = _T("c:\\fz3-xxx");
-	
-		ext->InitDrag(file);
-		wxFileDataObject *pFileDataObject = new wxFileDataObject;
-		pFileDataObject->AddFile(file);
+		delete ext;
+		ext = 0;
+	}
+	else
+	{
+		const wxString file = ext->InitDrag();
+		if (file == _T(""))
+		{
+			delete ext;
+			ext = 0;
+		}
+		else
+		{
+			wxFileDataObject *pFileDataObject = new wxFileDataObject;
+			pFileDataObject->AddFile(file);
 
-		object.Add(pFileDataObject);
+			object.Add(pFileDataObject);
+		}
 	}
 
 #endif
@@ -2001,12 +2072,67 @@ void CRemoteListView::OnBeginDrag(wxListEvent& event)
 	{
 		if (!pRemoteDataObject->DidSendData())
 		{
+			const CServer* pServer = m_pState->GetServer();
+			if (IsBusy() || 
+				!pServer || *pServer != server ||
+				!m_pDirectoryListing || m_pDirectoryListing->path != path)
+			{
+				// Remote listing has changed since drag started
+				wxBell();
+				delete ext;
+				ext = 0;
+				return;
+			}
+
+			// Same checks as before
+			bool idle = m_pState->m_pCommandQueue->Idle();
+
+			long item = -1;
+			while (true)
+			{
+				item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+				if (item == -1)
+					break;
+
+				if (!item)
+				{
+					// Can't drag ".."
+					wxBell();
+					delete ext;
+					ext = 0;
+					return;
+				}
+
+				int index = GetItemIndex(item);
+				if (index == -1)
+					continue;
+				if ((*m_pDirectoryListing)[index].dir && !idle)
+				{
+					// Drag could result in recursive operation, don't allow at this point
+					wxBell();
+					delete ext;
+					ext = 0;
+					return;
+				}
+			}
+
 			wxString target = ext->GetTarget();
-			wxMessageBox(target);
+			if (target == _T(""))
+			{
+				delete ext;
+				ext = 0;
+				wxMessageBox(_("Could not determine the target of the Drag&Drop operation.\nEither the shell extension is not installed properly or you didn't drop the files into an Explorer window."));
+				return;
+			}
+
+			TransferSelectedFiles(target, false);
+
 			delete ext;
 			ext = 0;
 			return;
 		}
+		delete ext;
+		ext = 0;
 	}
 #endif
 }

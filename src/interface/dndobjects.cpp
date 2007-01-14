@@ -6,6 +6,7 @@
 #include <initguid.h>
 #include "../fzshellext/shellext.h"
 #include <shlobj.h>
+#include <wx/stdpaths.h>
 
 CShellExtensionInterface::CShellExtensionInterface()
 {
@@ -36,47 +37,50 @@ CShellExtensionInterface::~CShellExtensionInterface()
 
 	if (m_hMutex)
 		CloseHandle(m_hMutex);
+
+	if (m_dragDirectory != _T(""))
+		RemoveDirectory(m_dragDirectory);
 }
 
-bool CShellExtensionInterface::InitDrag(const wxString& source)
+wxString CShellExtensionInterface::InitDrag()
 {
 	if (!m_shellExtension)
-		return false;
+		return _T("");
 
 	if (!m_hMutex)
-		return false;
+		return _T("");
 
-	if (source.Len() > MAX_PATH)
-		return false;
+	if (!CreateDragDirectory())
+		return _T("");
 
 	m_hMapping = CreateFileMapping(0, 0, PAGE_READWRITE, 0, DRAG_EXT_MAPPING_LENGTH, DRAG_EXT_MAPPING);
 	if (!m_hMapping)
-		return false;
+		return _T("");
 
 	char* data = (char*)MapViewOfFile(m_hMapping, FILE_MAP_READ | FILE_MAP_WRITE, 0, 0, DRAG_EXT_MAPPING_LENGTH);
 	if (!data)
 	{
 		CloseHandle(m_hMapping);
 		m_hMapping = 0;
-		return false;
+		return _T("");
 	}
 
 	DWORD result = WaitForSingleObject(m_hMutex, 250);
 	if (result != WAIT_OBJECT_0)
 	{
 		UnmapViewOfFile(data);
-		return false;
+		return _T("");
 	}
 
 	*data = DRAG_EXT_VERSION;
 	data[1] = 1;
-	wcscpy((wchar_t*)(data + 2), source.wc_str());
+	wcscpy((wchar_t*)(data + 2), m_dragDirectory.wc_str());
 
 	ReleaseMutex(m_hMutex);
 
 	UnmapViewOfFile(data);
 
-	return true;
+	return m_dragDirectory;
 }
 
 wxString CShellExtensionInterface::GetTarget()
@@ -121,7 +125,43 @@ wxString CShellExtensionInterface::GetTarget()
 
 	UnmapViewOfFile(data);
 
+	if (target == _T(""))
+		return target;
+
+	if (target.Last() == '\\')
+		target.RemoveLast();
+	int pos = target.Find('\\', true);
+	if (pos < 1)
+		return _T("");
+	target = target.Left(pos + 1);
+
 	return target;
+}
+
+bool CShellExtensionInterface::CreateDragDirectory()
+{
+	for (int i = 0; i < 10; i++)
+	{
+		wxDateTime now = wxDateTime::UNow();
+		wxLongLong value = now.GetTicks();
+		value *= 1000;
+		value += now.GetMillisecond();
+		value *= 10;
+		value += i;
+
+		wxString dir = wxStandardPaths::Get().GetTempDir() + _T("\\") + DRAG_EXT_DUMMY_DIR_PREFIX + value.ToString();
+
+		if (dir.Len() > MAX_PATH)
+			return false;
+
+		if (CreateDirectory(dir, 0))
+		{
+			m_dragDirectory = dir;
+			return true;
+		}
+	}
+
+	return true;
 }
 
 //{7BB79969-2C7E-4107-996C-36DB90890AB2}

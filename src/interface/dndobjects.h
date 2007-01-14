@@ -56,14 +56,18 @@ public:
 
 	bool IsLoaded() const { return m_shellExtension != 0; }
 
-	bool InitDrag(const wxString& source);
+	wxString InitDrag();
 	
 	wxString GetTarget();
 
 protected:
+	bool CreateDragDirectory();
+
 	void* m_shellExtension;
 	HANDLE m_hMutex;
 	HANDLE m_hMapping;
+
+	wxString m_dragDirectory;
 };
 
 #endif //__WXMSW__
