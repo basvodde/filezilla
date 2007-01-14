@@ -15,6 +15,7 @@ filezilla_SOURCES = aboutdialog.cpp asyncrequestqueue.cpp \
 		conditionaldialog.cpp \
 		customheightlistctrl.cpp \
 		defaultfileexistsdlg.cpp dialogex.cpp \
+		dndobjects.cpp \
 		fileexistsdlg.cpp \
 		FileZilla.cpp filter.cpp filteredit.cpp inputdialog.cpp \
 		ipcmutex.cpp led.cpp \
@@ -50,7 +51,9 @@ noinst_HEADERS = aboutdialog.h asyncrequestqueue.h \
 		 conditionaldialog.h \
 		 customheightlistctrl.h \
 		 defaultfileexistsdlg.h \
-		 dialogex.h fileexistsdlg.h \
+		 dialogex.h \
+		 dndobjects.h \
+		 fileexistsdlg.h \
 		 filezillaapp.h filter.h filteredit.h \
 		 inputdialog.h ipcmutex.h led.h \
 		 LocalListView.h LocalTreeView.h \
@@ -89,6 +92,10 @@ filezilla_LDFLAGS += $(WX_LIBS)
 filezilla_LDFLAGS += $(RESOURCEFILE)
 filezilla_LDFLAGS += $(IDN_LIB)
 filezilla_LDFLAGS += $(LIBGNUTLS_LIBS)
+
+if MINGW
+filezilla_LDFLAGS += -lole32 -luuid
+endif
 
 filezilla_DEPENDENCIES = ../engine/libengine.a \
 			../tinyxml/libtinyxml.a
