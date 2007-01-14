@@ -128,11 +128,6 @@ AH_BOTTOM([
 #endif
 ])
 
-  # Check MinGW builds
-  # ------------------
-
-  AM_CONDITIONAL([MINGW], [echo $host_os | grep "mingw"])
-
   # Check for windres on MinGW builds
   # ---------------------------------
 
@@ -400,6 +395,7 @@ AC_SUBST(FILEZILLA_LINGUAS_MO)
 # Output automake conditionals
 # ----------------------------
 
+AM_CONDITIONAL([MINGW], [echo $host_os | grep "mingw"])
 AM_CONDITIONAL([LOCALES_ONLY], [test "$localesonly" = "yes"])
 AM_CONDITIONAL([LOCALES], [test "$locales" = "yes"])
 AM_CONDITIONAL(SFTP_MINGW, [test "$sftpbuild" = "mingw"])
