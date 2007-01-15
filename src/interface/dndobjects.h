@@ -1,11 +1,11 @@
 #ifndef __DNDOBJECTS_H__
 #define __DNDOBJECTS_H__
 
-//#ifdef __WXMSW__
-//#define FZ3_USESHELLEXT 1
-//#else
+#ifdef __WXMSW__
+#define FZ3_USESHELLEXT 1
+#else
 #define FZ3_USESHELLEXT 0
-//#endif
+#endif
 
 #include "xmlfunctions.h"
 
