@@ -24,6 +24,8 @@ protected:
 
 	void PrepareUpdateAvailablePage(const wxString &newVersion, wxString newUrl);
 
+	void RewrapPage(int page);
+
 	wxString m_data;
 
 	wxWindow* m_parent;

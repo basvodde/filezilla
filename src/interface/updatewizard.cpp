@@ -247,8 +247,7 @@ void CUpdateWizard::OnPageChanged(wxWizardEvent& event)
 		FailedTransfer();
 	else
 	{
-		wxGetApp().GetWrapEngine()->WrapRecursive(m_pages[2], m_pages[2]->GetSizer(), m_pages[1]->GetSize().x);
-		m_pages[2]->GetSizer()->Layout();
+		RewrapPage(2);
 	}
 }
 
@@ -389,8 +388,7 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 
 #endif
 					pText->Show();
-					wxGetApp().GetWrapEngine()->WrapRecursive(m_pages[2], m_pages[2]->GetSizer(), m_pages[1]->GetSize().x);
-					m_pages[2]->GetSizer()->Layout();
+					RewrapPage(2);
 				}
 			}
 			break;
@@ -825,20 +823,32 @@ void CUpdateWizard::PrepareUpdateAvailablePage(const wxString &newVersion, wxStr
 		if (pos == -1)
 		{
 			XRCCTRL(*this, "ID_UPDATEDESC", wxStaticText)->SetLabel(_("Please visit http://filezilla-project.org to download the most recent version."));
+			XRCCTRL(*this, "ID_UPDATEDESC2", wxStaticText)->Hide();
 			m_pages[1]->SetNext(0);
 		}
 		else
 		{
-			XRCCTRL(*this, "ID_UPDATEDESC", wxStaticText)->SetLabel(_("Click on next to download the new version.\nAlternatively, visit http://filezilla-project.org to download the most recent version."));
+			XRCCTRL(*this, "ID_UPDATEDESC", wxStaticText)->SetLabel(_("Click on next to download the new version."));
+			XRCCTRL(*this, "ID_UPDATEDESC2", wxStaticText)->SetLabel(_("Alternatively, visit http://filezilla-project.org to download the most recent version."));
+			XRCCTRL(*this, "ID_UPDATEDESC2", wxStaticText)->Show();
 
 			m_urlServer = newUrl.Left(pos);
 			m_urlFile = newUrl.Mid(pos);
 		}
 	}
-	m_pages[1]->GetSizer()->Layout();
-	m_pages[1]->GetSizer()->Fit(m_pages[1]);
-	wxGetApp().GetWrapEngine()->WrapRecursive(m_pages[1], m_pages[1]->GetSizer(), m_pages[0]->GetSize().x);
-	m_pages[1]->GetSizer()->Layout();
+	RewrapPage(1);
+}
+
+void CUpdateWizard::RewrapPage(int page)
+{
+	m_pages[page]->GetSizer()->Layout();
+	m_pages[page]->GetSizer()->Fit(m_pages[page]);
+	wxSize size(0, 0);
+	for (int i = 0; i < 5; i++)
+		if (i != page)
+			size.IncTo(m_pages[i]->GetSize());
+	wxGetApp().GetWrapEngine()->WrapRecursive(m_pages[page], m_pages[page]->GetSizer(), size.x);
+	m_pages[page]->GetSizer()->Layout();
 }
 
 #endif //FZ_MANUALUPDATECHECK
