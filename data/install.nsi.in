@@ -14,6 +14,7 @@
 
   !include "MUI.nsh"
   !include "WordFunc.nsh"
+  !include Library.nsh
   !insertmacro VersionCompare
 
 ;--------------------------------
@@ -236,17 +237,28 @@ Section "Language files" SecLang
 
 SectionEnd
 
+Section "Shell Extension" SecShellExt
+
+  SetOutPath "$INSTDIR"
+  !define LIBRARY_SHELL_EXTENSION
+  !define LIBRARY_COM
+  !insertmacro InstallLib REGDLL NOTSHARED REBOOT_PROTECTED ..\src\fzshellext\.libs\libfzshellext-0.dll $INSTDIR\fzshellext.dll ""
+
+SectionEnd
+
 ;--------------------------------
 ;Descriptions
 
   ;Language strings
   LangString DESC_SecMain ${LANG_ENGLISH} "Required program files."
   LangString DESC_SecLang ${LANG_ENGLISH} "Language files files."
+  LangString DESC_SecShellExt ${LANG_ENGLISH} "Shell extension for advanced drag && drop support.\nRequired for drag && drop from FileZilla into Explorer."
 
   ;Assign language strings to sections
   !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
     !insertmacro MUI_DESCRIPTION_TEXT ${SecMain} $(DESC_SecMain)
     !insertmacro MUI_DESCRIPTION_TEXT ${SecLang} $(DESC_SecLang)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecShellExt} $(DESC_SecShellExt)
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;--------------------------------
@@ -260,6 +272,8 @@ SectionEnd
 !macroend
 
 Section "Uninstall"
+
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_PROTECTED "$INSTDIR\fzshellext.dll"
 
   Delete "$INSTDIR\filezilla.exe"
   Delete "$INSTDIR\fzsftp.exe"
@@ -288,7 +302,7 @@ Section "Uninstall"
   RMDir "$INSTDIR\resources\cyril\16x16"
   RMDir "$INSTDIR\resources\cyril"
   RMDir "$INSTDIR\resources"
-  RMDir "$INSTDIR"
+  RMDir /REBOOTOK "$INSTDIR"
 
   
   !insertmacro MUI_STARTMENU_GETFOLDER Application $MUI_TEMP
