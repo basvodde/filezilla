@@ -242,7 +242,7 @@ Section "Shell Extension" SecShellExt
   SetOutPath "$INSTDIR"
   !define LIBRARY_SHELL_EXTENSION
   !define LIBRARY_COM
-  !insertmacro InstallLib REGDLL NOTSHARED REBOOT_PROTECTED ..\src\fzshellext\.libs\libfzshellext-0.dll $INSTDIR\fzshellext.dll ""
+  !insertmacro InstallLib REGDLL NOTSHARED REBOOT_PROTECTED ../src/fzshellext/.libs/libfzshellext-0.dll $INSTDIR\fzshellext.dll ""
 
 SectionEnd
 
