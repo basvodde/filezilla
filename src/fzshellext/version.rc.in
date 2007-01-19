@@ -1,11 +1,6 @@
-//{{NO_DEPENDENCIES}}
-
-#ifdef HAS_VERSIONRC
-#include "version.rc"
-#else
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,0,0,0
- PRODUCTVERSION 3,0,0,0
+ FILEVERSION @PACKAGE_VERSION_MAJOR@,@PACKAGE_VERSION_MINOR@,@PACKAGE_VERSION_MICRO@,@PACKAGE_VERSION_NANO@
+ PRODUCTVERSION @PACKAGE_VERSION_MAJOR@,@PACKAGE_VERSION_MINOR@,@PACKAGE_VERSION_MICRO@,@PACKAGE_VERSION_NANO@
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -21,12 +16,13 @@ BEGIN
         BLOCK "000004b0"
         BEGIN
             VALUE "FileDescription", "fzshellext Dynamic Link Library"
-            VALUE "FileVersion", "3, 0, 0, 0"
             VALUE "InternalName", "fzshellext"
             VALUE "LegalCopyright", "Copyright (C) 2006"
             VALUE "OriginalFilename", "fzshellext.dll"
             VALUE "ProductName", " fzshellext Dynamic Link Library"
-            VALUE "ProductVersion", "3, 0, 0, 0"
+            VALUE "Comments", "Version @PACKAGE_VERSION@"
+            VALUE "FileVersion", "@PACKAGE_VERSION_MAJOR@, @PACKAGE_VERSION_MINOR@, @PACKAGE_VERSION_MICRO@, @PACKAGE_VERSION_NANO@"
+            VALUE "ProductVersion", "@PACKAGE_VERSION_MAJOR@, @PACKAGE_VERSION_MINOR@, @PACKAGE_VERSION_MICRO@, @PACKAGE_VERSION_NANO@"
         END
     END
     BLOCK "VarFileInfo"
@@ -34,4 +30,3 @@ BEGIN
         VALUE "Translation", 0x0, 1200
     END
 END
-#endif
