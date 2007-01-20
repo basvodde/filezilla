@@ -168,9 +168,9 @@ bool CShellExtensionInterface::CreateDragDirectory()
 
 #endif //__WXMSW__
 
-CRemoteDataObject::CRemoteDataObject(const CServer& server)
+CRemoteDataObject::CRemoteDataObject(const CServer& server, const CServerPath& path)
 	: wxDataObjectSimple(wxDataFormat(_T("FileZilla3RemoteDataObject"))),
-	  m_server(server)
+	  m_server(server), m_path(path)
 {
 	m_didSendData = false;
 }
@@ -214,6 +214,8 @@ void CRemoteDataObject::Finalize()
 
 	TiXmlElement* pServer = pElement->InsertEndChild(TiXmlElement("Server"))->ToElement();
 	SetServer(pServer, m_server);
+
+	AddTextElement(pElement, "Path", m_path.GetSafePath());
 }
 
 bool CRemoteDataObject::SetData(size_t len, const void* buf)

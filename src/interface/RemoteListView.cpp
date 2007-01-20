@@ -2023,7 +2023,7 @@ void CRemoteListView::OnBeginDrag(wxListEvent& event)
 	const CServer server = *pServer;
 	const CServerPath path = m_pDirectoryListing->path;
 
-	CRemoteDataObject *pRemoteDataObject = new CRemoteDataObject(*pServer);
+	CRemoteDataObject *pRemoteDataObject = new CRemoteDataObject(*pServer, m_pDirectoryListing->path);
 	pRemoteDataObject->Finalize();
 
 	object.Add(pRemoteDataObject, true);
