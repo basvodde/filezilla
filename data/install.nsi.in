@@ -63,9 +63,11 @@
   !insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
 
   !insertmacro MUI_PAGE_INSTFILES
+  !insertmacro MUI_PAGE_FINISH
   
   !insertmacro MUI_UNPAGE_CONFIRM
   !insertmacro MUI_UNPAGE_INSTFILES
+  !insertmacro MUI_UNPAGE_FINISH
 
 Function .onInit
 
@@ -242,7 +244,7 @@ Section "Shell Extension" SecShellExt
   SetOutPath "$INSTDIR"
   !define LIBRARY_SHELL_EXTENSION
   !define LIBRARY_COM
-  !insertmacro InstallLib REGDLL NOTSHARED REBOOT_PROTECTED ../src/fzshellext/.libs/libfzshellext-0.dll $INSTDIR\fzshellext.dll ""
+  !insertmacro InstallLib REGDLL NOTSHARED REBOOT_PROTECTED ../src/fzshellext/.libs\libfzshellext-0.dll $INSTDIR\fzshellext.dll ""
 
 SectionEnd
 
