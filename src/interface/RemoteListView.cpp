@@ -23,9 +23,14 @@ class CRemoteListViewDropTarget : public wxDropTarget
 {
 public:
 	CRemoteListViewDropTarget(CRemoteListView* pRemoteListView)
-		: m_pRemoteListView(pRemoteListView), m_pFileDataObject(new wxFileDataObject())
+		: m_pRemoteListView(pRemoteListView),
+		  m_pFileDataObject(new wxFileDataObject()),
+		  m_pRemoteDataObject(new CRemoteDataObject()),
+		  m_pDataObject(new wxDataObjectComposite())
 	{
-		SetDataObject(m_pFileDataObject);
+		m_pDataObject->Add(m_pRemoteDataObject, true);
+		m_pDataObject->Add(m_pFileDataObject);
+		SetDataObject(m_pDataObject);
 	}
 
 	void ClearDropHighlight()
@@ -51,26 +56,30 @@ public:
 		if (!GetData())
 			return wxDragError;
 
-		const wxArrayString& files = m_pFileDataObject->GetFilenames();
-
-		wxString subdir;
-		int flags;
-		int hit = m_pRemoteListView->HitTest(wxPoint(x, y), flags, 0);
-		if (hit != -1 && (flags & wxLIST_HITTEST_ONITEM))
+		if (m_pDataObject->GetReceivedFormat() == m_pFileDataObject->GetFormat())
 		{
-			int index = m_pRemoteListView->GetItemIndex(hit);
-			if (index != -1)
+			const wxArrayString& files = m_pFileDataObject->GetFilenames();
+
+			wxString subdir;
+			int flags;
+			int hit = m_pRemoteListView->HitTest(wxPoint(x, y), flags, 0);
+			if (hit != -1 && (flags & wxLIST_HITTEST_ONITEM))
 			{
-				if (index == m_pRemoteListView->m_pDirectoryListing->GetCount())
-					subdir = _T("..");
-				else if ((*m_pRemoteListView->m_pDirectoryListing)[index].dir)
-					subdir = (*m_pRemoteListView->m_pDirectoryListing)[index].name;
+				int index = m_pRemoteListView->GetItemIndex(hit);
+				if (index != -1)
+				{
+					if (index == m_pRemoteListView->m_pDirectoryListing->GetCount())
+						subdir = _T("..");
+					else if ((*m_pRemoteListView->m_pDirectoryListing)[index].dir)
+						subdir = (*m_pRemoteListView->m_pDirectoryListing)[index].name;
+				}
 			}
+
+			m_pRemoteListView->m_pState->UploadDroppedFiles(m_pFileDataObject, subdir);
+			return wxDragCopy;
 		}
 
-		m_pRemoteListView->m_pState->UploadDroppedFiles(m_pFileDataObject, subdir);
-
-		return wxDragCopy;
+		return wxDragNone;
 	}
 
 	virtual bool OnDrop(wxCoord x, wxCoord y)
@@ -146,6 +155,9 @@ public:
 protected:
 	CRemoteListView *m_pRemoteListView;
 	wxFileDataObject* m_pFileDataObject;
+	CRemoteDataObject* m_pRemoteDataObject;
+
+	wxDataObjectComposite* m_pDataObject;
 };
 
 class CInfoText : public wxWindow

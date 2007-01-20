@@ -22,9 +22,10 @@ class CRemoteDataObject : public wxDataObjectSimple
 {
 public:
 	CRemoteDataObject(const CServer& server, const CServerPath& path);
+	CRemoteDataObject();
 	
-	virtual size_t GetDataSize(const wxDataFormat& format ) const;
-	virtual bool GetDataHere(const wxDataFormat& format, void *buf ) const;
+	virtual size_t GetDataSize() const;
+	virtual bool GetDataHere(void *buf ) const;
 
 	virtual bool SetData(size_t len, const void* buf);
 
@@ -33,17 +34,19 @@ public:
 
 	bool DidSendData() const { return m_didSendData; }
 
+	const CServer& GetServer() const { return m_server; }
+	const CServerPath& GetServerPath() const { return m_path; }
+	int GetProcessId() const { return m_processId; }
+
 protected:
 	CServer m_server;
 	CServerPath m_path;
 
-	const wxRemoteDataFormat m_remoteFormat;
-
-	wxFileDataObject m_fileDataObject;
-
 	CXmlFile m_xmlFile;
 
 	bool m_didSendData;
+
+	int m_processId;
 };
 
 #if FZ3_USESHELLEXT

@@ -170,35 +170,34 @@ bool CShellExtensionInterface::CreateDragDirectory()
 
 CRemoteDataObject::CRemoteDataObject(const CServer& server, const CServerPath& path)
 	: wxDataObjectSimple(wxDataFormat(_T("FileZilla3RemoteDataObject"))),
-	  m_server(server), m_path(path)
+	  m_server(server), m_path(path), m_processId(wxGetProcessId())
 {
 	m_didSendData = false;
 }
 
-size_t CRemoteDataObject::GetDataSize(const wxDataFormat& format ) const
+CRemoteDataObject::CRemoteDataObject()
+	: wxDataObjectSimple(wxDataFormat(_T("FileZilla3RemoteDataObject")))
 {
-	if (format == m_fileDataObject.GetPreferredFormat())
-		return m_fileDataObject.GetDataSize(format);
+	m_didSendData = false;
+}
 
-	if (format != m_remoteFormat)
-		return 0;
+size_t CRemoteDataObject::GetDataSize() const
+{
+	wxASSERT(!m_path.IsEmpty());
 
 	wxCHECK(m_xmlFile.GetElement(), 0);
 
-	return const_cast<CRemoteDataObject*>(this)->m_xmlFile.GetRawDataLength();
+	return const_cast<CRemoteDataObject*>(this)->m_xmlFile.GetRawDataLength() + 1;
 }
 
-bool CRemoteDataObject::GetDataHere(const wxDataFormat& format, void *buf ) const
+bool CRemoteDataObject::GetDataHere(void *buf) const
 {
-	if (format == m_fileDataObject.GetPreferredFormat())
-		return m_fileDataObject.GetDataHere(format, buf);
-
-	if (format != m_remoteFormat)
-		return false;
+	wxASSERT(!m_path.IsEmpty());
 
 	wxCHECK(m_xmlFile.GetElement(), false);
 
 	const_cast<CRemoteDataObject*>(this)->m_xmlFile.GetRawDataHere((char*)buf);
+	((char*)buf)[const_cast<CRemoteDataObject*>(this)->m_xmlFile.GetRawDataLength() + 1] = 0;
 
 	const_cast<CRemoteDataObject*>(this)->m_didSendData = true;
 	return true;
@@ -210,7 +209,7 @@ void CRemoteDataObject::Finalize()
 	TiXmlElement* pElement = m_xmlFile.CreateEmpty();
 	pElement = pElement->InsertEndChild(TiXmlElement("RemoteDataObject"))->ToElement();
 
-	AddTextElement(pElement, "ProcessId", wxGetProcessId());
+	AddTextElement(pElement, "ProcessId", m_processId);
 
 	TiXmlElement* pServer = pElement->InsertEndChild(TiXmlElement("Server"))->ToElement();
 	SetServer(pServer, m_server);
@@ -224,5 +223,24 @@ bool CRemoteDataObject::SetData(size_t len, const void* buf)
 	if (data[len - 1] != 0)
 		return false;
 
-	return m_xmlFile.ParseData(data);
+	if (!m_xmlFile.ParseData(data))
+		return false;
+
+	TiXmlElement* pElement = m_xmlFile.GetElement();
+	if (!pElement || !(pElement = pElement->FirstChildElement("RemoteDataObject")))
+		return false;
+
+	m_processId = GetTextElementInt(pElement, "ProcessId", -1);
+	if (m_processId == -1)
+		return false;
+
+	TiXmlElement* pServer = pElement->FirstChildElement("Server");
+	if (!pServer || !::GetServer(pServer, m_server))
+		return false;
+	
+	wxString path = GetTextElement(pElement, "Path");
+	if (path == _T("") || !m_path.SetSafePath(path))
+		return false;
+
+	return true;
 }
