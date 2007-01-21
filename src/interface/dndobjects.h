@@ -38,6 +38,17 @@ public:
 	const CServerPath& GetServerPath() const { return m_path; }
 	int GetProcessId() const { return m_processId; }
 
+	struct t_fileInfo
+	{
+		wxString name;
+		bool dir;
+		wxLongLong size;
+	};
+
+	const std::list<t_fileInfo>& GetFiles() const { return m_fileList; }
+
+	void AddFile(wxString name, bool dir, wxLongLong size);
+
 protected:
 	CServer m_server;
 	CServerPath m_path;
@@ -47,6 +58,8 @@ protected:
 	bool m_didSendData;
 
 	int m_processId;
+
+	std::list<t_fileInfo> m_fileList;
 };
 
 #if FZ3_USESHELLEXT
