@@ -197,7 +197,7 @@ bool CRemoteDataObject::GetDataHere(void *buf) const
 	wxCHECK(m_xmlFile.GetElement(), false);
 
 	const_cast<CRemoteDataObject*>(this)->m_xmlFile.GetRawDataHere((char*)buf);
-	((char*)buf)[const_cast<CRemoteDataObject*>(this)->m_xmlFile.GetRawDataLength() + 1] = 0;
+	((char*)buf)[const_cast<CRemoteDataObject*>(this)->m_xmlFile.GetRawDataLength()] = 0;
 
 	const_cast<CRemoteDataObject*>(this)->m_didSendData = true;
 	return true;
@@ -215,6 +215,15 @@ void CRemoteDataObject::Finalize()
 	SetServer(pServer, m_server);
 
 	AddTextElement(pElement, "Path", m_path.GetSafePath());
+
+	TiXmlElement* pFiles = pElement->InsertEndChild(TiXmlElement("Files"))->ToElement();
+	for (std::list<t_fileInfo>::const_iterator iter = m_fileList.begin(); iter != m_fileList.end(); iter++)
+	{
+		TiXmlElement* pFile = pFiles->InsertEndChild(TiXmlElement("File"))->ToElement();
+		AddTextElement(pFile, "Name", iter->name);
+		AddTextElement(pFile, "Dir", iter->dir ? 1 : 0);
+		AddTextElement(pFile, "Size", iter->size.ToString());
+	}
 }
 
 bool CRemoteDataObject::SetData(size_t len, const void* buf)
@@ -242,5 +251,39 @@ bool CRemoteDataObject::SetData(size_t len, const void* buf)
 	if (path == _T("") || !m_path.SetSafePath(path))
 		return false;
 
+	m_fileList.clear();
+	TiXmlElement* pFiles = pElement->FirstChildElement("Files");
+	if (!pFiles)
+		return false;
+
+	for (TiXmlElement* pFile = pFiles->FirstChildElement("File"); pFile; pFile = pFile->NextSiblingElement("File"))
+	{
+		t_fileInfo info;
+		info.name = GetTextElement(pFile, "Name");
+		if (info.name == _T(""))
+			return false;
+
+		const int dir = GetTextElementInt(pFile, "Dir", -1);
+		if (dir == -1)
+			return false;
+		info.dir = dir == 1;
+
+		info.size = GetTextElementLongLong(pFile, "Size", -2);
+		if (info.size <= -2)
+			return false;
+
+		m_fileList.push_back(info);
+	}
+
 	return true;
+}
+
+void CRemoteDataObject::AddFile(wxString name, bool dir, wxLongLong size)
+{
+	t_fileInfo info;
+	info.name = name;
+	info.dir = dir;
+	info.size = size;
+
+	m_fileList.push_back(info);
 }
