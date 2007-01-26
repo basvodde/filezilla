@@ -1471,27 +1471,29 @@ void CQueueView::ResetEngine(t_EngineData& data, const bool removeFileItem)
 
 	m_waitStatusLineUpdate = true;
 
-	if (data.pStatusLineCtrl)
-	{
-		for (std::list<CStatusLineCtrl*>::iterator iter = m_statusLineList.begin(); iter != m_statusLineList.end(); iter++)
-		{
-			if (*iter == data.pStatusLineCtrl)
-			{
-				m_statusLineList.erase(iter);
-				break;
-			}
-		}
-		m_allowBackgroundErase = false;
-		data.pStatusLineCtrl->Hide();
-		m_allowBackgroundErase = true;
-
-		UpdateSelections_ItemRemoved(GetItemIndex(data.pItem) + 1);
-
-		m_itemCount--;
-		SetItemCount(m_itemCount);
-	}
 	if (data.pItem)
 	{
+		if (data.pItem->GetType() == QueueItemType_File)
+		{
+			wxASSERT(data.pStatusLineCtrl);
+			for (std::list<CStatusLineCtrl*>::iterator iter = m_statusLineList.begin(); iter != m_statusLineList.end(); iter++)
+			{
+				if (*iter == data.pStatusLineCtrl)
+				{
+					m_statusLineList.erase(iter);
+					break;
+				}
+			}
+			m_allowBackgroundErase = false;
+			data.pStatusLineCtrl->Hide();
+			m_allowBackgroundErase = true;
+
+			UpdateSelections_ItemRemoved(GetItemIndex(data.pItem) + 1);
+
+			m_itemCount--;
+			SetItemCount(m_itemCount);
+		}
+
 		wxASSERT(data.pItem->IsActive());
 		wxASSERT(data.pItem->m_pEngineData == &data);
 		if (data.pItem->IsActive())
