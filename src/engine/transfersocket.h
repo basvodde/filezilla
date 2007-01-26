@@ -78,6 +78,7 @@ protected:
 
 	bool m_postponedReceive;
 	bool m_postponedSend;
+	void TriggerPostponedEvents();
 
 	CBackend* m_pBackend;
 	

@@ -168,6 +168,9 @@ void CTransferSocket::OnConnect(wxSocketEvent &event)
 
 	int value = 65536 * 2;
 	m_pSocket->SetOption(SOL_SOCKET, SO_SNDBUF, &value, sizeof(value));
+
+	if (m_bActive)
+		TriggerPostponedEvents();
 }
 
 void CTransferSocket::OnReceive()
@@ -430,20 +433,7 @@ void CTransferSocket::SetActive()
 
 	m_bActive = true;
 	if (m_pSocket && m_pSocket->IsConnected())
-	{
-		if (m_postponedReceive)
-		{
-			m_pControlSocket->LogMessage(::Debug_Verbose, _T("Executing postponed receive"));
-			m_postponedReceive = false;
-			OnReceive();
-		}
-		if (m_postponedSend)
-		{
-			m_pControlSocket->LogMessage(::Debug_Verbose, _T("Executing postponed send"));
-			m_postponedSend = false;
-			OnSend();
-		}
-	}
+		TriggerPostponedEvents();
 }
 
 void CTransferSocket::TransferEnd(int reason)
@@ -659,4 +649,22 @@ bool CTransferSocket::InitTls(const CTlsSocket* pPrimaryTlsSocket)
 	m_pBackend = m_pTlsSocket;
 
 	return true;
+}
+
+void CTransferSocket::TriggerPostponedEvents()
+{
+	wxASSERT(m_bActive);
+
+	if (m_postponedReceive)
+	{
+		m_pControlSocket->LogMessage(::Debug_Verbose, _T("Executing postponed receive"));
+		m_postponedReceive = false;
+		OnReceive();
+	}
+	if (m_postponedSend)
+	{
+		m_pControlSocket->LogMessage(::Debug_Verbose, _T("Executing postponed send"));
+		m_postponedSend = false;
+		OnSend();
+	}
 }
