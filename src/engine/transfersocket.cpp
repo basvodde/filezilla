@@ -175,11 +175,15 @@ void CTransferSocket::OnReceive()
 	m_pControlSocket->LogMessage(::Debug_Debug, _T("CTransferSocket::OnReceive(), m_transferMode=%d"), m_transferMode);
 
 	if (!m_pBackend)
+	{
+		m_pControlSocket->LogMessage(::Debug_Verbose, _T("Postponing receive, m_pBackend was false."));
+		m_postponedReceive = true;
 		return;
+	}
 	
 	if (!m_bActive)
 	{
-		m_pControlSocket->LogMessage(::Debug_Verbose, _T("Postponing receive"));
+		m_pControlSocket->LogMessage(::Debug_Verbose, _T("Postponing receive, m_bActive was false."));
 		m_postponedReceive = true;
 		return;
 	}
@@ -332,7 +336,7 @@ void CTransferSocket::OnClose(wxSocketEvent &event)
 
 	if (m_transferMode == upload)
 	{
-		if (m_shutdown)
+		if (m_shutdown && m_pTlsSocket)
 		{
 			m_pTlsSocket->Shutdown();
 			if (m_pTlsSocket->Error())
