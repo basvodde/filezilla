@@ -1134,6 +1134,7 @@ void CRemoteListView::TransferSelectedFiles(const wxString& localDir, bool queue
 				//m_pQueue->QueueFolder(event.GetId() == XRCID("ID_ADDTOQUEUE"), true, fn.GetFullPath(), remotePath, *pServer);
 				m_operationMode = queueOnly ? recursive_addtoqueue : recursive_download;
 				t_newDir dirToVisit;
+				dirToVisit.doVisit = true;
 				dirToVisit.localDir = fn.GetFullPath();
 				dirToVisit.parent = m_pDirectoryListing->path;
 				dirToVisit.subdir = name;
@@ -1234,9 +1235,11 @@ void CRemoteListView::OnMenuDelete(wxCommandEvent& event)
 				t_newDir dirToVisit;
 				dirToVisit.parent = m_pDirectoryListing->path;
 				dirToVisit.subdir = name;
+				dirToVisit.doVisit = true;
+				m_dirsToVisit.push_back(dirToVisit);
+				dirToVisit.doVisit = false;
 				m_dirsToVisit.push_back(dirToVisit);
 				m_startDir = m_pDirectoryListing->path;
-				m_dirsToDelete.push_front(dirToVisit);
 			}
 		}
 		else
@@ -1274,24 +1277,23 @@ bool CRemoteListView::NextOperation()
 	if (m_operationMode == recursive_none)
 		return false;
 
-	if (m_dirsToVisit.empty())
+	while (!m_dirsToVisit.empty())
 	{
-		if (m_operationMode == recursive_delete)
+		const t_newDir& dirToVisit = m_dirsToVisit.front();
+		if (m_operationMode == recursive_delete && !dirToVisit.doVisit)
 		{
-			// Remove visited directories
-			for (std::list<t_newDir>::const_iterator iter = m_dirsToDelete.begin(); iter != m_dirsToDelete.end(); iter++)
-				m_pState->m_pCommandQueue->ProcessCommand(new CRemoveDirCommand(iter->parent, iter->subdir));
-
+			m_pState->m_pCommandQueue->ProcessCommand(new CRemoveDirCommand(dirToVisit.parent, dirToVisit.subdir));
+			m_dirsToVisit.pop_front();
+			continue;
 		}
-		StopRecursiveOperation();
-		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_startDir));
-		return false;
+
+		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(dirToVisit.parent, dirToVisit.subdir));
+		return true;
 	}
 
-	const t_newDir& dirToVisit = m_dirsToVisit.front();
-	m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(dirToVisit.parent, dirToVisit.subdir));
-
-	return true;
+	StopRecursiveOperation();
+	m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_startDir));
+	return false;
 }
 
 void CRemoteListView::ProcessDirectoryListing()
@@ -1343,7 +1345,7 @@ void CRemoteListView::ProcessDirectoryListing()
 
 	CFilterDialog filter;
 
-	for (unsigned int i = 0; i < m_pDirectoryListing->GetCount(); i++)
+	for (int i = m_pDirectoryListing->GetCount() - 1; i >= 0; i--)
 	{
 		const CDirentry& entry = (*m_pDirectoryListing)[i];
 
@@ -1358,9 +1360,13 @@ void CRemoteListView::ProcessDirectoryListing()
 			dirToVisit.parent = m_pDirectoryListing->path;
 			dirToVisit.subdir = entry.name;
 			dirToVisit.localDir = fn.GetFullPath();
-			m_dirsToVisit.push_back(dirToVisit);
 			if (m_operationMode == recursive_delete)
-				m_dirsToDelete.push_front(dirToVisit);
+			{
+				dirToVisit.doVisit = false;
+				m_dirsToVisit.push_front(dirToVisit);
+			}
+			dirToVisit.doVisit = true;
+			m_dirsToVisit.push_front(dirToVisit);
 		}
 		else
 		{
@@ -1418,7 +1424,6 @@ void CRemoteListView::StopRecursiveOperation()
 	m_operationMode = recursive_none;
 	m_dirsToVisit.clear();
 	m_visitedDirs.clear();
-	m_dirsToDelete.clear();
 
 	if (m_pChmodDlg)
 	{
@@ -1757,6 +1762,7 @@ void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 		{
 			m_operationMode = recursive_chmod;
 			t_newDir dirToVisit;
+			dirToVisit.doVisit = true;
 			dirToVisit.parent = m_pDirectoryListing->path;
 			dirToVisit.subdir = entry.name;
 			m_dirsToVisit.push_back(dirToVisit);
@@ -2036,6 +2042,21 @@ void CRemoteListView::OnBeginDrag(wxListEvent& event)
 	const CServerPath path = m_pDirectoryListing->path;
 
 	CRemoteDataObject *pRemoteDataObject = new CRemoteDataObject(*pServer, m_pDirectoryListing->path);
+
+	// Add files to remote data object
+	item = -1;
+	while (true)
+	{
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		if (item == -1)
+			break;
+
+		int index = GetItemIndex(item);
+		const CDirentry& entry = (*m_pDirectoryListing)[index];
+		
+		pRemoteDataObject->AddFile(entry.name, entry.dir, entry.size);
+	}
+
 	pRemoteDataObject->Finalize();
 
 	object.Add(pRemoteDataObject, true);

@@ -108,9 +108,9 @@ protected:
 		CServerPath parent;
 		wxString subdir;
 		wxString localDir;
+		bool doVisit;
 	};
 	std::list<t_newDir> m_dirsToVisit;
-	std::list<t_newDir> m_dirsToDelete;
 
 	wxDateTime m_lastKeyPress;
 	wxString m_prefix;
