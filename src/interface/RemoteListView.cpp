@@ -61,7 +61,7 @@ public:
 			const wxArrayString& files = m_pFileDataObject->GetFilenames();
 
 			wxString subdir;
-			int flags;
+			int flags = 0;
 			int hit = m_pRemoteListView->HitTest(wxPoint(x, y), flags, 0);
 			if (hit != -1 && (flags & wxLIST_HITTEST_ONITEM))
 			{
@@ -78,6 +78,80 @@ public:
 			m_pRemoteListView->m_pState->UploadDroppedFiles(m_pFileDataObject, subdir);
 			return wxDragCopy;
 		}
+		
+		// At this point it's the remote data object.
+
+		if (m_pRemoteDataObject->GetProcessId() != wxGetProcessId())
+		{
+			wxMessageBox(_("Drag&drop between different instances of FileZilla has not been implemented yet."));
+			return wxDragNone;
+		}
+
+		if (m_pRemoteDataObject->GetServer() != *m_pRemoteListView->m_pState->GetServer())
+		{
+			wxMessageBox(_("Drag&drop between different servers has not been implemented yet."));
+			return wxDragNone;
+		}
+
+		// Find drop directory (if it exists)
+		wxString subdir;
+		int flags = 0;
+		int hit = m_pRemoteListView->HitTest(wxPoint(x, y), flags, 0);
+		if (hit != -1 && (flags & wxLIST_HITTEST_ONITEM))
+		{
+			int index = m_pRemoteListView->GetItemIndex(hit);
+			if (index != -1)
+			{
+				if (index == m_pRemoteListView->m_pDirectoryListing->GetCount())
+					subdir = _T("..");
+				else if ((*m_pRemoteListView->m_pDirectoryListing)[index].dir)
+					subdir = (*m_pRemoteListView->m_pDirectoryListing)[index].name;
+			}
+		}
+
+		// Get target path
+		CServerPath target = m_pRemoteListView->m_pDirectoryListing->path;
+		if (subdir == _T(".."))
+		{
+			if (target.HasParent())
+				target = target.GetParent();
+		}
+		else if (subdir != _T(""))
+			target.AddSegment(subdir);
+
+		// Make sure target path is valid
+		if (target == m_pRemoteDataObject->GetServerPath())
+		{
+			wxMessageBox(_("Source and target of the drop operation are identical"));
+			return wxDragNone;
+		}
+
+		const std::list<CRemoteDataObject::t_fileInfo>& files = m_pRemoteDataObject->GetFiles();
+		for (std::list<CRemoteDataObject::t_fileInfo>::const_iterator iter = files.begin(); iter != files.end(); iter++)
+		{
+			const CRemoteDataObject::t_fileInfo& info = *iter;
+			if (info.dir)
+			{
+				CServerPath dir = m_pRemoteDataObject->GetServerPath();
+				dir.AddSegment(info.name);
+				if (dir == target || dir.IsParentOf(target, false))
+				{
+					wxMessageBox(_("A directory cannot be dragged into one if it's subdirectories."));
+					return wxDragNone;
+				}
+			}
+		}
+
+		for (std::list<CRemoteDataObject::t_fileInfo>::const_iterator iter = files.begin(); iter != files.end(); iter++)
+		{
+			const CRemoteDataObject::t_fileInfo& info = *iter;
+			m_pRemoteListView->m_pState->m_pCommandQueue->ProcessCommand(
+				new CRenameCommand(m_pRemoteDataObject->GetServerPath(), iter->name, target, iter->name)
+				);
+		}
+		m_pRemoteListView->m_pState->m_pCommandQueue->ProcessCommand(
+			new CListCommand()
+			);
 
 		return wxDragNone;
 	}
