@@ -317,6 +317,11 @@ int CFileZillaEnginePrivate::Connect(const CConnectCommand &command)
 
 	m_retryCount = 0;
 	m_pCurrentCommand = command.Clone();
+
+	ServerProtocol protocol = CServer::GetProtocolFromPort(command.GetServer().GetPort());
+	if (protocol != UNKNOWN && protocol != command.GetServer().GetProtocol())
+		m_pLogging->LogMessage(Debug_Warning, _("Warning: Selected port usually in use by a different protocol."));
+	
 	return ContinueConnect();
 }
 

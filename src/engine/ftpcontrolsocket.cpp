@@ -93,7 +93,7 @@ public:
 		waitChallenge = false;
 		gotPassword = false;
 		waitForAsyncRequest = false;
-
+		gotFirstWelcomeLine = false;
 	}
 
 	virtual ~CFtpLogonOpData()
@@ -108,6 +108,7 @@ public:
 	bool waitChallenge;
 	bool waitForAsyncRequest;
 	bool gotPassword;
+	bool gotFirstWelcomeLine;
 };
 
 CFtpControlSocket::CFtpControlSocket(CFileZillaEnginePrivate *pEngine) : CControlSocket(pEngine)
@@ -221,6 +222,19 @@ void CFtpControlSocket::ParseLine(wxString line)
 				CServerCapabilities::SetCapability(*m_pCurrentServer, mlsd_command, yes);
 			else if (up == _T(" MLST") || up.Left(6) == _T(" MLST "))
 				CServerCapabilities::SetCapability(*m_pCurrentServer, mlsd_command, yes);
+		}
+		else if (pData->opState == LOGON_WELCOME)
+		{
+			if (!pData->gotFirstWelcomeLine)
+			{
+				if (line.Upper().Left(3) == _T("SSH"))
+				{
+					LogMessage(::Error, _("Cannot establish FTP connection to an SFTP server. Please select proper protocol."));
+					DoClose(FZ_REPLY_CRITICALERROR);
+					return;
+				}
+				pData->gotFirstWelcomeLine = true;
+			}
 		}
 	}
 	//Check for multi-line responses

@@ -52,6 +52,7 @@ void CQuickconnectBar::OnQuickconnect(wxCommandEvent &event)
 		port.ToLong(&numericPort);
 	
 	CServer server;
+
 	wxString error;
 
 	CServerPath path;
@@ -79,7 +80,9 @@ void CQuickconnectBar::OnQuickconnect(wxCommandEvent &event)
 		break;
 	case FTP:
 	default:
-		// do nothing
+		if (CServer::GetProtocolFromPort(server.GetPort()) != FTP &&
+			CServer::GetProtocolFromPort(server.GetPort()) != UNKNOWN)
+			host = _T("ftp://") + host;
 		break;
 	}
 	
