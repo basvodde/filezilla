@@ -681,7 +681,10 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 		SetItemCount(m_indexMapping.size());
 
 	if (GetItemCount() && reset)
+	{
+		EnsureVisible(0);
 		SetItemState(0, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
+	}
 
 	SortList();
 
