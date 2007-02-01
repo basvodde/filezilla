@@ -837,6 +837,14 @@ done:
 	if (entry.name == _T(".") || entry.name == _T(".."))
 		return true;
 
+	if (serverType == VMS && entry.dir)
+	{
+		// Trim version information from directories
+		int pos = entry.name.Find(';', true);
+		if (pos > 0)
+			entry.name = entry.name.Left(pos);
+	}
+
 	int offset = m_server.GetTimezoneOffset();
 	if (offset && entry.hasTime)
 	{
