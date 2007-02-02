@@ -13,6 +13,7 @@ class CFileZillaEngine;
 class CCommandQueue;
 class CMainFrame;
 class CStateEventHandler;
+class CRemoteDataObject;
 class CState
 {
 	friend class CCommandQueue;
@@ -49,6 +50,7 @@ public:
 
 	void UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const wxString& subdir);
 	void HandleDroppedFiles(const wxFileDataObject* pFileDataObject, wxString path, bool copy);
+	bool DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, wxString path);
 
 	static bool RecursiveCopy(wxString source, wxString target);
 

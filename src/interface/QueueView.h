@@ -2,6 +2,7 @@
 #define __QUEUEVIEW_H__
 
 #include <set>
+#include "dndobjects.h"
 
 #define PRIORITY_COUNT 5
 enum QueuePriority
@@ -273,6 +274,7 @@ public:
 	
 	bool QueueFile(const bool queueOnly, const bool download, const wxString& localFile, const wxString& remoteFile,
 				const CServerPath& remotePath, const CServer& server, const wxLongLong size);
+	bool QueueFiles(const bool queueOnly, const wxString& localPath, const CRemoteDataObject& dataObject);
 	bool QueueFiles(const std::list<t_newEntry> &entryList, bool queueOnly, bool download, CServerItem* pServerItem, const int defaultFileExistsAction);
 	bool QueueFolder(bool queueOnly, bool download, const wxString& localPath, const CServerPath& remotePath, const CServer& server);
 	

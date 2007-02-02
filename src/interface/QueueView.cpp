@@ -12,6 +12,7 @@
 #include "asyncrequestqueue.h"
 #include "defaultfileexistsdlg.h"
 #include "filter.h"
+#include "dndobjects.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -951,6 +952,69 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 	while (TryStartNextTransfer());
 	m_waitStatusLineUpdate = false;
 	UpdateStatusLinePositions();
+
+	Refresh(false);
+
+	return true;
+}
+
+bool CQueueView::QueueFiles(const bool queueOnly, const wxString& localPath, const CRemoteDataObject& dataObject)
+{
+	bool newServer;
+	CServerItem* pServerItem = GetServerItem(dataObject.GetServer());
+	if (!pServerItem)
+	{
+		pServerItem = new CServerItem(dataObject.GetServer());
+		m_serverList.push_back(pServerItem);
+		m_itemCount++;
+		newServer = true;
+	}
+	else
+		newServer = false;
+	int serverIndex = GetItemIndex(pServerItem);
+
+	const std::list<CRemoteDataObject::t_fileInfo>& files = dataObject.GetFiles();
+
+	int start = -1;
+	int added = 0;
+	for (std::list<CRemoteDataObject::t_fileInfo>::const_iterator iter = files.begin(); iter != files.end(); iter++)
+	{
+		if (iter->dir)
+			continue;
+
+		added++;
+
+		CFileItem* fileItem;
+		fileItem = new CFileItem(pServerItem, queueOnly, true, localPath + iter->name, iter->name, dataObject.GetServerPath(), iter->size);
+		fileItem->m_transferSettings.binary = ShouldUseBinaryMode(iter->name);
+		
+		if (iter->size < 0)
+			m_filesWithUnknownSize++;
+		else if (iter->size > 0)
+			m_totalQueueSize += iter->size;
+
+		pServerItem->AddChild(fileItem);
+		pServerItem->AddFileItemToList(fileItem);
+
+		if (start == -1)
+			start = GetItemIndex(fileItem);
+
+		m_itemCount++;
+	}
+
+	wxASSERT(added);
+	UpdateSelections_ItemRangeAdded(start, added);
+	SetItemCount(m_itemCount);
+
+	if (!m_activeMode && !queueOnly)
+		m_activeMode = 1;
+
+	m_waitStatusLineUpdate = true;
+	while (TryStartNextTransfer());
+	m_waitStatusLineUpdate = false;
+	UpdateStatusLinePositions();
+
+	DisplayQueueSize();
 
 	Refresh(false);
 

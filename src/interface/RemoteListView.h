@@ -31,6 +31,8 @@ public:
 	void StopRecursiveOperation();
 	bool IsBusy() const { return m_operationMode != recursive_none; }
 
+	bool DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, wxString path);
+
 protected:
 	// Clears all selections and returns the list of items that were selected
 	std::list<wxString> RememberSelectedItems(wxString& focused);

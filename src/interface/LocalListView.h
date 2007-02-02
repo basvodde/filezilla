@@ -94,6 +94,7 @@ protected:
 	void OnChar(wxKeyEvent& event);
 	void OnBeginLabelEdit(wxListEvent& event);
 	void OnEndLabelEdit(wxListEvent& event);
+	void OnBeginDrag(wxListEvent& event);
 };
 
 #endif

@@ -6,6 +6,7 @@
 #include "inputdialog.h"
 #include <algorithm>
 #include <wx/dnd.h>
+#include "dndobjects.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -15,9 +16,13 @@ class CLocalListViewDropTarget : public wxDropTarget
 {
 public:
 	CLocalListViewDropTarget(CLocalListView* pLocalListView)
-		: m_pLocalListView(pLocalListView), m_pFileDataObject(new wxFileDataObject())
+		: m_pLocalListView(pLocalListView), m_pFileDataObject(new wxFileDataObject()),
+		m_pRemoteDataObject(new CRemoteDataObject())
 	{
-		SetDataObject(m_pFileDataObject);
+		m_pDataObject = new wxDataObjectComposite;
+		m_pDataObject->Add(m_pRemoteDataObject, true);
+		m_pDataObject->Add(m_pFileDataObject, false);
+		SetDataObject(m_pDataObject);
 	}
 
 	void ClearDropHighlight()
@@ -66,7 +71,25 @@ public:
 		if (!GetData())
 			return wxDragError;
 
-		m_pLocalListView->m_pState->HandleDroppedFiles(m_pFileDataObject, dir, def == wxDragCopy);
+		if (m_pDataObject->GetReceivedFormat() == m_pFileDataObject->GetFormat())
+			m_pLocalListView->m_pState->HandleDroppedFiles(m_pFileDataObject, dir, def == wxDragCopy);
+		else
+		{
+			if (m_pRemoteDataObject->GetProcessId() != wxGetProcessId())
+			{
+				wxMessageBox(_("Drag&drop between different instances of FileZilla has not been implemented yet."));
+				return wxDragNone;
+			}
+
+			if (!m_pLocalListView->m_pState->GetServer() || m_pRemoteDataObject->GetServer() != *m_pLocalListView->m_pState->GetServer())
+			{
+				wxMessageBox(_("Drag&drop between different servers has not been implemented yet."));
+				return wxDragNone;
+			}
+
+			if (!m_pLocalListView->m_pState->DownloadDroppedFiles(m_pRemoteDataObject, dir))
+				return wxDragNone;
+		}
 
 		return def;
 	}
@@ -156,6 +179,8 @@ public:
 protected:
 	CLocalListView *m_pLocalListView;
 	wxFileDataObject* m_pFileDataObject;
+	CRemoteDataObject* m_pRemoteDataObject;
+	wxDataObjectComposite* m_pDataObject;
 };
 
 BEGIN_EVENT_TABLE(CLocalListView, wxListCtrl)
@@ -171,6 +196,7 @@ BEGIN_EVENT_TABLE(CLocalListView, wxListCtrl)
 	EVT_CHAR(CLocalListView::OnChar)
 	EVT_LIST_BEGIN_LABEL_EDIT(wxID_ANY, CLocalListView::OnBeginLabelEdit)
 	EVT_LIST_END_LABEL_EDIT(wxID_ANY, CLocalListView::OnEndLabelEdit)
+	EVT_LIST_BEGIN_DRAG(wxID_ANY, CLocalListView::OnBeginDrag)
 END_EVENT_TABLE()
 
 CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView *pQueue)
@@ -246,7 +272,7 @@ bool CLocalListView::DisplayDir(wxString dirname)
 	std::list<wxString> selectedNames;
 	if (m_dir != dirname)
 	{
-// Clear selection
+		// Clear selection
 		int item = -1;
 		while (true)
 		{
@@ -257,6 +283,8 @@ bool CLocalListView::DisplayDir(wxString dirname)
 		}
 		focused = _T("..");
 
+		if (GetItemCount())
+			EnsureVisible(0);
 		m_dir = dirname;
 	}
 	else
@@ -1542,4 +1570,40 @@ void CLocalListView::OnStateChange(unsigned int event)
 		DisplayDir(m_pState->GetLocalDir());
 	else if (event == STATECHANGE_APPLYFILTER)
 		ApplyCurrentFilter();
+}
+
+void CLocalListView::OnBeginDrag(wxListEvent& event)
+{
+	long item = -1;
+	while (true)
+	{
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		if (item == -1)
+			break;
+
+		if (!item)
+			return;
+	}
+
+	wxFileDataObject obj;
+
+	item = -1;
+	while (true)
+	{
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		if (item == -1)
+			break;
+
+		t_fileData *data = GetData(item);
+		if (!data)
+			return;
+
+		obj.AddFile(m_dir + data->name);
+	}
+
+	wxDropSource source(this);
+	source.SetData(obj);
+	int res = source.DoDragDrop(wxDrag_AllowMove);
+	if (res == wxDragCopy || res == wxDragMove)
+		m_pState->RefreshLocal();
 }

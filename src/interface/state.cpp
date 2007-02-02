@@ -6,6 +6,7 @@
 #include "Mainfrm.h"
 #include "QueueView.h"
 #include "filezillaapp.h"
+#include "RemoteListView.h"
 
 CState::CState(CMainFrame* pMainFrame)
 {
@@ -473,4 +474,32 @@ bool CState::RecursiveCopy(wxString source, wxString target)
 	}
 
 	return true;
+}
+
+bool CState::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, wxString path)
+{
+	bool hasDirs = false;
+	bool hasFiles = false;
+	const std::list<CRemoteDataObject::t_fileInfo>& files = pRemoteDataObject->GetFiles();
+	for (std::list<CRemoteDataObject::t_fileInfo>::const_iterator iter = files.begin(); iter != files.end(); iter++)
+	{
+		if (iter->dir)
+			hasDirs = true;
+		else
+			hasFiles = true;
+	}
+
+	if (hasDirs)
+	{
+		if (!m_pEngine->IsConnected() || m_pEngine->IsBusy() || !m_pCommandQueue->Idle())
+			return false;
+	}
+
+	if (hasFiles)
+		m_pMainFrame->GetQueue()->QueueFiles(false, path, *pRemoteDataObject);
+
+	if (!hasDirs)
+		return true;
+
+	return m_pMainFrame->GetRemoteListView()->DownloadDroppedFiles(pRemoteDataObject, path);
 }

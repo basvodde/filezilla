@@ -2246,3 +2246,27 @@ void CRemoteListView::OnBeginDrag(wxListEvent& event)
 	}
 #endif
 }
+
+bool CRemoteListView::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, wxString path)
+{
+	if (IsBusy())
+		return false;
+
+	const std::list<CRemoteDataObject::t_fileInfo>& files = pRemoteDataObject->GetFiles();
+	for (std::list<CRemoteDataObject::t_fileInfo>::const_iterator iter = files.begin(); iter != files.end(); iter++)
+	{
+		if (!iter->dir)
+			continue;
+
+		t_newDir dirToVisit;
+		dirToVisit.doVisit = true;
+		dirToVisit.localDir = path + iter->name;
+		dirToVisit.parent = pRemoteDataObject->GetServerPath();
+		dirToVisit.subdir = iter->name;
+		m_dirsToVisit.push_back(dirToVisit);
+	}
+	m_operationMode = recursive_download;
+	m_startDir = pRemoteDataObject->GetServerPath();
+
+	NextOperation();
+}
