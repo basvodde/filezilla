@@ -278,6 +278,7 @@ BEGIN_EVENT_TABLE(CRemoteListView, wxListCtrl)
 	EVT_MENU(XRCID("ID_RENAME"), CRemoteListView::OnMenuRename)
 	EVT_MENU(XRCID("ID_CHMOD"), CRemoteListView::OnMenuChmod)
 	EVT_CHAR(CRemoteListView::OnChar)
+	EVT_KEY_DOWN(CRemoteListView::OnKeyDown)
 	EVT_LIST_BEGIN_LABEL_EDIT(wxID_ANY, CRemoteListView::OnBeginLabelEdit)
 	EVT_LIST_END_LABEL_EDIT(wxID_ANY, CRemoteListView::OnEndLabelEdit)
 	EVT_SIZE(CRemoteListView::OnSize)
@@ -1603,6 +1604,20 @@ void CRemoteListView::OnChar(wxKeyEvent& event)
 		event.Skip();
 }
 
+void CRemoteListView::OnKeyDown(wxKeyEvent& event)
+{
+	const int code = event.GetKeyCode();
+	if (code == 'A' && event.GetModifiers() == wxMOD_CMD)
+	{
+		for (int i = 1; i < GetItemCount(); i++)
+		{
+			SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+		}
+	}
+	else
+		event.Skip();
+}
+
 int CRemoteListView::FindItemWithPrefix(const wxString& prefix, int start)
 {
 	for (int i = start; i < (GetItemCount() + start); i++)
@@ -2269,4 +2284,6 @@ bool CRemoteListView::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataO
 	m_startDir = pRemoteDataObject->GetServerPath();
 
 	NextOperation();
+
+	return true;
 }

@@ -194,6 +194,7 @@ BEGIN_EVENT_TABLE(CLocalListView, wxListCtrl)
 	EVT_MENU(XRCID("ID_DELETE"), CLocalListView::OnMenuDelete)
 	EVT_MENU(XRCID("ID_RENAME"), CLocalListView::OnMenuRename)
 	EVT_CHAR(CLocalListView::OnChar)
+	EVT_KEY_DOWN(CLocalListView::OnKeyDown)
 	EVT_LIST_BEGIN_LABEL_EDIT(wxID_ANY, CLocalListView::OnBeginLabelEdit)
 	EVT_LIST_END_LABEL_EDIT(wxID_ANY, CLocalListView::OnEndLabelEdit)
 	EVT_LIST_BEGIN_DRAG(wxID_ANY, CLocalListView::OnBeginDrag)
@@ -1324,6 +1325,20 @@ void CLocalListView::OnChar(wxKeyEvent& event)
 		}
 		SetItemState(newPos, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
 		EnsureVisible(newPos);
+	}
+	else
+		event.Skip();
+}
+
+void CLocalListView::OnKeyDown(wxKeyEvent& event)
+{
+	const int code = event.GetKeyCode();
+	if (code == 'A' && event.GetModifiers() == wxMOD_CMD)
+	{
+		for (int i = 1; i < GetItemCount(); i++)
+		{
+			SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+		}
 	}
 	else
 		event.Skip();
