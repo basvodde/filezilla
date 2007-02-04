@@ -31,6 +31,15 @@
     </object>
     <object class="wxMenu" name="ID_MENU_SERVER">
       <label>&amp;Server</label>
+      <object class="wxMenuItem" name="ID_MENU_SERVER_RECONNECT">
+        <label>&amp;Reconnect</label>
+        <accel>CTRL+R</accel>
+      </object>
+      <object class="wxMenuItem" name="ID_MENU_SERVER_DISCONNECT">
+        <label>&amp;Disconnect</label>
+        <accel>CTRL+D</accel>
+      </object>
+      <object class="separator"/>
       <object class="wxMenuItem" name="ID_MENU_SERVER_CMD">
         <label>Enter &amp;custom command...</label>
         <help>Send custom command to the server otherwise not available</help>
