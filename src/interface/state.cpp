@@ -348,8 +348,9 @@ void CState::UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const w
 			if (pos != -1)
 			{
 				name = name.Mid(pos + 1);
-				path.AddSegment(name);
-				m_pMainFrame->GetQueue()->QueueFolder(false, false, files[i], path, *m_pServer);
+				CServerPath target = path;
+				target.AddSegment(name);
+				m_pMainFrame->GetQueue()->QueueFolder(false, false, files[i], target, *m_pServer);
 			}
 		}
 	}
