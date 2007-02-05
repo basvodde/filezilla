@@ -987,22 +987,8 @@ int CSftpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 	return FZ_REPLY_ERROR;
 }
 
-class CSftpChangeDirOpData : public COpData
+class CSftpChangeDirOpData : public CChangeDirOpData
 {
-public:
-	CSftpChangeDirOpData()
-		: COpData(cmd_cwd)
-	{
-		triedMkd = false;
-	}
-
-	virtual ~CSftpChangeDirOpData()
-	{
-	}
-
-	CServerPath path;
-	wxString subDir;
-	bool triedMkd;
 };
 
 enum cwdStates

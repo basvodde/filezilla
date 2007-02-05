@@ -57,6 +57,24 @@ public:
 	std::list<wxString> segments;
 };
 
+class CChangeDirOpData : public COpData
+{
+public:
+	CChangeDirOpData()
+		: COpData(cmd_cwd)
+	{
+		triedMkd = false;
+	}
+
+	virtual ~CChangeDirOpData()
+	{
+	}
+
+	CServerPath path;
+	wxString subDir;
+	bool triedMkd;
+};
+
 #include "logging_private.h"
 #include "backend.h"
 

@@ -1115,13 +1115,11 @@ int CFtpControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
 	return FZ_REPLY_ERROR;
 }
 
-class CFtpChangeDirOpData : public COpData
+class CFtpChangeDirOpData : public CChangeDirOpData
 {
 public:
 	CFtpChangeDirOpData()
-		: COpData(cmd_cwd)
 	{
-		triedMkd = false;
 		tried_cdup = false;
 	}
 
@@ -1129,9 +1127,6 @@ public:
 	{
 	}
 
-	CServerPath path;
-	wxString subDir;
-	bool triedMkd;
 	bool tried_cdup;
 };
 
