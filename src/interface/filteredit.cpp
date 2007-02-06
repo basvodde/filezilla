@@ -67,9 +67,12 @@ bool CFilterEditDialog::Create(wxWindow* parent, const std::vector<CFilter>& fil
 		return false;
 
 	wxScrolledWindow* wnd = XRCCTRL(*this, "ID_CONDITIONS", wxScrolledWindow);
-	m_pListCtrl = new wxCustomHeightListCtrl(wnd, wxID_ANY, wxDefaultPosition, wnd->GetSize(), wxVSCROLL|wxSUNKEN_BORDER);
+	wxSizerItem* pSizerItem = GetSizer()->GetItem(wnd, true);
+	m_pListCtrl = new wxCustomHeightListCtrl(this, wxID_ANY, wxDefaultPosition, wnd->GetSize(), wxVSCROLL|wxSUNKEN_BORDER);
 	if (!m_pListCtrl)
 		return false;
+	pSizerItem->SetWindow(m_pListCtrl);
+	wnd->Destroy();
 	CalcMinListWidth();
 
 	m_choiceBoxHeight = 0;
@@ -107,7 +110,7 @@ void CFilterEditDialog::OnRemove(wxCommandEvent& event)
 
 	std::vector<CFilterCondition> filters = m_currentFilter.filters;
 	m_currentFilter.filters.clear();
-	
+
 	int deleted = 0;
 	for (unsigned int i = 0; i < filterControls.size(); i++)
 	{
@@ -119,7 +122,7 @@ void CFilterEditDialog::OnRemove(wxCommandEvent& event)
 
 			// Reposition controls
 			wxPoint pos;
-			
+
 			pos = controls.pType->GetPosition();
 			pos.y -= deleted * (m_choiceBoxHeight + 6);
 			controls.pType->SetPosition(pos);
@@ -237,7 +240,7 @@ void CFilterEditDialog::MakeControls(const CFilterCondition& condition)
 
 	int textWidth = 30 + typeRect.GetWidth() + conditionsRect.GetWidth();
 	controls.pValue = new wxTextCtrl();
-	controls.pValue->Create(m_pListCtrl, wxID_ANY, _T(""), wxPoint(textWidth, posy), wxSize(size.GetWidth() - textWidth - 10, -1));	
+	controls.pValue->Create(m_pListCtrl, wxID_ANY, _T(""), wxPoint(textWidth, posy), wxSize(size.GetWidth() - textWidth - 10, -1));
 	controls.pValue->SetValue(condition.strValue);
 
 	m_filterControls.push_back(controls);
@@ -283,7 +286,7 @@ void CFilterEditDialog::SaveFilter(CFilter& filter)
 	{
 		const CFilterControls& controls = m_filterControls[i];
 		CFilterCondition condition = m_currentFilter.filters[i];
-		
+
 		condition.type = controls.pType->GetSelection();
 		condition.condition = controls.pCondition->GetSelection();
 		condition.strValue = controls.pValue->GetValue();
@@ -359,7 +362,7 @@ void CFilterEditDialog::OnDelete(wxCommandEvent& event)
 	m_currentSelection = -1;
 	m_pFilterListCtrl->Delete(item);
 	m_filters.erase(m_filters.begin() + item);
-	
+
 	// Remote filter from all filter sets
 	for (std::vector<CFilterSet>::iterator iter = m_filterSets.begin(); iter != m_filterSets.end(); iter++)
 	{
@@ -367,7 +370,7 @@ void CFilterEditDialog::OnDelete(wxCommandEvent& event)
 		set.local.erase(set.local.begin() + item);
 		set.remote.erase(set.remote.begin() + item);
 	}
-	
+
 	SetCtrlState(false);
 }
 
@@ -385,7 +388,7 @@ void CFilterEditDialog::OnRename(wxCommandEvent& event)
 		wxMessageBox(_("Empty filter names are not allowed."), _("Empty name"), wxICON_ERROR, this);
 		return;
 	}
-	
+
 	if (newName == oldName)
 		return;
 
@@ -465,7 +468,7 @@ void CFilterEditDialog::OnFilterSelect(wxCommandEvent& event)
 
 	if (item == m_currentSelection)
 		return;
-	
+
 	if (m_currentSelection != -1)
 	{
 		wxASSERT((unsigned int)m_currentSelection < m_filters.size());
@@ -554,7 +557,7 @@ bool CFilterEditDialog::Validate()
 				controls.pValue->SetFocus();
 				wxMessageBox(_("Invalid size in condition"), _("Filter validation failed"), wxICON_ERROR, this);
 				return false;
-			}				
+			}
 		}
 	}
 
@@ -598,7 +601,6 @@ void CFilterEditDialog::CalcMinListWidth()
 	wxSize minSize = m_pListCtrl->GetMinSize();
 	minSize.IncTo(wxSize(requiredWidth, -1));
 	m_pListCtrl->SetMinSize(minSize);
-	XRCCTRL(*this, "ID_CONDITIONS", wxScrolledWindow)->SetMinSize(minSize);
 	Layout();
 	Fit();
 }
