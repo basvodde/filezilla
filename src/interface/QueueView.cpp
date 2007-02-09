@@ -962,21 +962,26 @@ bool CQueueView::QueueFiles(const bool queueOnly, const wxString& localPath, con
 {
 	bool newServer;
 	CServerItem* pServerItem = GetServerItem(dataObject.GetServer());
+	int added;
+	int start;
 	if (!pServerItem)
 	{
 		pServerItem = new CServerItem(dataObject.GetServer());
 		m_serverList.push_back(pServerItem);
 		m_itemCount++;
 		newServer = true;
+		added = 1;
+		start = GetItemIndex(pServerItem);
 	}
 	else
+	{
+		added = 0;
+		start = -1;
 		newServer = false;
-	int serverIndex = GetItemIndex(pServerItem);
+	}
 
 	const std::list<CRemoteDataObject::t_fileInfo>& files = dataObject.GetFiles();
 
-	int start = -1;
-	int added = 0;
 	for (std::list<CRemoteDataObject::t_fileInfo>::const_iterator iter = files.begin(); iter != files.end(); iter++)
 	{
 		if (iter->dir)
