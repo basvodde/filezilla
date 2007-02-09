@@ -39,8 +39,8 @@
             <border>5</border>
             <object class="wxTextCtrl" name="ID_QUICKCONNECT_HOST">
               <size>-1,-1</size>
-              <style></style>
               <value></value>
+              <style>wxTE_PROCESS_ENTER</style>
               <tooltip>Enter the address of the server.
 To specify the server protocol, prepend the host with the protocol identifier. If no protocol is specified, the default protocol (ftp://) will be used.
 You can also enter complete URLS in the form protocol://user:pass@host:port here, the values in the other fields will be overwritten then.</tooltip>
@@ -51,7 +51,6 @@ You can also enter complete URLS in the form protocol://user:pass@host:port here
             <border>5</border>
             <object class="wxStaticText" name="wxID_STATIC">
               <size>-1,-1</size>
-              <style></style>
               <label>&amp;Username:</label>
             </object>
           </object>
@@ -60,6 +59,7 @@ You can also enter complete URLS in the form protocol://user:pass@host:port here
             <border>5</border>
             <object class="wxTextCtrl" name="ID_QUICKCONNECT_USER">
               <size>-1,-1</size>
+              <style>wxTE_PROCESS_ENTER</style>
             </object>
           </object>
           <object class="sizeritem">
@@ -74,7 +74,7 @@ You can also enter complete URLS in the form protocol://user:pass@host:port here
             <flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
             <border>5</border>
             <object class="wxTextCtrl" name="ID_QUICKCONNECT_PASS">
-              <style>wxTE_PASSWORD</style>
+              <style>wxTE_PASSWORD|wxTE_PROCESS_ENTER</style>
               <size>-1,-1</size>
             </object>
           </object>
@@ -91,6 +91,7 @@ You can also enter complete URLS in the form protocol://user:pass@host:port here
             <border>5</border>
             <object class="wxTextCtrl" name="ID_QUICKCONNECT_PORT">
               <size>38,-1</size>
+              <style>wxTE_PROCESS_ENTER</style>
               <tooltip>Enter the port on which the server listens.
 The default for FTP is 21, the default for SFTP is 22.</tooltip>
             </object>
@@ -104,9 +105,9 @@ The default for FTP is 21, the default for SFTP is 22.</tooltip>
                 <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
                 <border>0</border>
                 <object class="wxButton" name="ID_QUICKCONNECT_OK">
+                  <default>1</default>
                   <size>-1,-1</size>
                   <label>&amp;Quickconnect</label>
-                  <default>1</default>
                 </object>
               </object>
               <object class="sizeritem">

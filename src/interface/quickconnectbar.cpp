@@ -9,6 +9,7 @@ BEGIN_EVENT_TABLE(CQuickconnectBar, wxPanel)
 EVT_BUTTON(XRCID("ID_QUICKCONNECT_OK"), CQuickconnectBar::OnQuickconnect)
 EVT_BUTTON(XRCID("ID_QUICKCONNECT_DROPDOWN"), CQuickconnectBar::OnQuickconnectDropdown)
 EVT_MENU(wxID_ANY, CQuickconnectBar::OnMenu)
+EVT_TEXT_ENTER(wxID_ANY, CQuickconnectBar::OnQuickconnect)
 END_EVENT_TABLE();
 
 CQuickconnectBar::CQuickconnectBar()
@@ -29,12 +30,19 @@ bool CQuickconnectBar::Create(wxWindow* pParent, CState* pState)
 		return false;
 	}
 
+#ifdef __WXMAC__
+	// Under OS X default buttons are toplevel window wide, where under Windows / GTK they stop at the parent panel.
+	wxTopLevelWindow *tlw = wxDynamicCast(wxGetTopLevelParent(pParent), wxTopLevelWindow);
+	if (tlw)
+		tlw->SetDefaultItem(0);
+#endif
+
 	XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetMaxLength(5);
 
 	return true;
 }
 
-void CQuickconnectBar::OnQuickconnect(wxCommandEvent &event)
+void CQuickconnectBar::OnQuickconnect(wxCommandEvent& event)
 {	
 	if (!m_pState->m_pEngine)
 	{
