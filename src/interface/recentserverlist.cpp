@@ -111,7 +111,7 @@ void CRecentServerList::Clear()
 	if (!m_XmlFile.HasFileName())
 		m_XmlFile.SetFileName(_T("recentservers"));
 
-	TiXmlElement* pDocument = m_XmlFile.CreateEmpty();
+	m_XmlFile.CreateEmpty();
 
 	wxString error;
 	m_XmlFile.Save(&error);
