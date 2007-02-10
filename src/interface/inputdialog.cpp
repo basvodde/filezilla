@@ -59,7 +59,9 @@ wxString CInputDialog::GetValue() const
 
 bool CInputDialog::SelectText(int start, int end)
 {
+#ifdef __WXGTK__
 	Show();
+#endif
 	XRCCTRL(*this, "ID_STRING", wxTextCtrl)->SetFocus();
 	XRCCTRL(*this, "ID_STRING", wxTextCtrl)->SetSelection(start, end);
 	return true;
