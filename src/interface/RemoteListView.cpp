@@ -1136,6 +1136,25 @@ void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
 	if (!pMenu)
 		return;
 
+	if (!m_pDirectoryListing || IsBusy())
+	{
+		pMenu->Enable(XRCID("ID_DOWNLOAD"), false);
+		pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
+		pMenu->Enable(XRCID("ID_MKDIR"), false);
+		pMenu->Enable(XRCID("ID_DELETE"), false);
+		pMenu->Enable(XRCID("ID_RENAME"), false);
+		pMenu->Enable(XRCID("ID_CHMOD"), false);
+	}
+	else if (GetItemState(0, wxLIST_STATE_SELECTED) ||
+		GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) == -1)
+	{
+		pMenu->Enable(XRCID("ID_DOWNLOAD"), false);
+		pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
+		pMenu->Enable(XRCID("ID_DELETE"), false);
+		pMenu->Enable(XRCID("ID_RENAME"), false);
+		pMenu->Enable(XRCID("ID_CHMOD"), false);
+	}
+
 	PopupMenu(pMenu);
 	delete pMenu;
 }
@@ -1231,6 +1250,12 @@ void CRemoteListView::TransferSelectedFiles(const wxString& localDir, bool queue
 
 void CRemoteListView::OnMenuMkdir(wxCommandEvent& event)
 {
+	if (!m_pDirectoryListing || IsBusy())
+	{
+		wxBell();
+		return;
+	}
+
 	CInputDialog dlg;
 	if (!dlg.Create(this, _("Create directory"), _("Please enter the name of the directory which should be created:")))
 		return;
