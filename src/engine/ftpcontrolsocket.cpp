@@ -8,6 +8,7 @@
 #include "externalipresolver.h"
 #include "servercapabilities.h"
 #include "tlssocket.h"
+#include "pathcache.h"
 
 #define LOGON_WELCOME	0
 #define LOGON_LOGON		1
@@ -1147,6 +1148,7 @@ int CFtpControlSocket::ChangeDir(CServerPath path /*=CServerPath()*/, wxString s
 	if (path.GetType() == DEFAULT)
 		path.SetType(m_pCurrentServer->GetType());
 
+	CServerPath target;
 	if (path.IsEmpty())
 	{
 		if (m_CurrentPath.IsEmpty())
@@ -1156,14 +1158,40 @@ int CFtpControlSocket::ChangeDir(CServerPath path /*=CServerPath()*/, wxString s
 	}
 	else
 	{
-		if (m_CurrentPath != path)
-			state = cwd_cwd;
+		if (subDir != _T(""))
+		{
+			// Check if the target is in cache already
+			CPathCache cache;
+			target = cache.Lookup(*m_pCurrentServer, path, subDir);
+			if (!target.IsEmpty())
+			{
+				if (m_CurrentPath == target)
+					return FZ_REPLY_OK;
+
+				path = target;
+				subDir = _T("");
+				state = cwd_cwd;
+			}
+			else
+			{
+				// Target unknown, check for the parent's target
+				target = cache.Lookup(*m_pCurrentServer, path, _T(""));
+				if (m_CurrentPath == path || (!target.IsEmpty() && target == m_CurrentPath))
+				{
+					target.Clear();
+					state = cwd_cwd_subdir;
+				}
+				else
+					state = cwd_cwd;
+			}
+		}
 		else
 		{
-			if (subDir == _T(""))
+			CPathCache cache;
+			target = cache.Lookup(*m_pCurrentServer, path, _T(""));
+			if (m_CurrentPath == path || (!target.IsEmpty() && target == m_CurrentPath))
 				return FZ_REPLY_OK;
-			else
-				state = cwd_cwd_subdir;
+			state = cwd_cwd;
 		}
 	}
 
@@ -1172,10 +1200,11 @@ int CFtpControlSocket::ChangeDir(CServerPath path /*=CServerPath()*/, wxString s
 	pData->opState = state;
 	pData->path = path;
 	pData->subDir = subDir;
+	pData->target = target;
 
 	m_pCurOpData = pData;
 
-	return SendNextCommand();;
+	return SendNextCommand();
 }
 
 int CFtpControlSocket::ChangeDirParseResponse()
@@ -1218,13 +1247,34 @@ int CFtpControlSocket::ChangeDirParseResponse()
 				error = true;
 		}
 		else
-			pData->opState = cwd_pwd_cwd;
+		{
+			if (pData->target.IsEmpty())
+				pData->opState = cwd_pwd_cwd;
+			else
+			{
+				m_CurrentPath = pData->target;
+				if (pData->subDir == _T(""))
+				{
+					ResetOperation(FZ_REPLY_OK);
+					return FZ_REPLY_OK;
+				}
+
+				pData->target.Clear();
+				pData->opState = cwd_cwd_subdir;
+			}
+		}
 		break;
 	case cwd_pwd_cwd:
 		if (code != 2 && code != 3)
 		{
 			LogMessage(Debug_Warning, _T("PWD failed, assuming path is '%s'."), pData->path.GetPath().c_str());
 			m_CurrentPath = pData->path;
+
+			if (pData->target.IsEmpty())
+			{
+				CPathCache cache;
+				cache.Store(*m_pCurrentServer, m_CurrentPath, pData->path);
+			}
 
 			if (pData->subDir == _T(""))
 			{
@@ -1236,6 +1286,11 @@ int CFtpControlSocket::ChangeDirParseResponse()
 		}
 		else if (ParsePwdReply(m_Response, false, pData->path))
 		{
+			if (pData->target.IsEmpty())
+			{
+				CPathCache cache;
+				cache.Store(*m_pCurrentServer, m_CurrentPath, pData->path);
+			}
 			if (pData->subDir == _T(""))
 			{
 				ResetOperation(FZ_REPLY_OK);
@@ -1281,6 +1336,12 @@ int CFtpControlSocket::ChangeDirParseResponse()
 					LogMessage(Debug_Warning, _T("PWD failed, assuming path is '%s'."), assumedPath.GetPath().c_str());
 					m_CurrentPath = assumedPath;
 
+					if (pData->target.IsEmpty())
+					{
+						CPathCache cache;
+						cache.Store(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
+					}
+
 					ResetOperation(FZ_REPLY_OK);
 					return FZ_REPLY_OK;
 				}
@@ -1292,6 +1353,12 @@ int CFtpControlSocket::ChangeDirParseResponse()
 			}		
 			else if (ParsePwdReply(m_Response, false, assumedPath))
 			{
+				if (pData->target.IsEmpty())
+				{
+					CPathCache cache;
+					cache.Store(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
+				}
+
 				ResetOperation(FZ_REPLY_OK);
 				return FZ_REPLY_OK;
 			}
@@ -2284,6 +2351,9 @@ int CFtpControlSocket::RemoveDirSend(int prevResult /*=FZ_REPLY_OK*/)
 
 	CDirectoryCache cache;
 	cache.InvalidateFile(*m_pCurrentServer, pData->path, pData->subDir);
+
+	CPathCache pathCache;
+	pathCache.InvalidatePath(*m_pCurrentServer, pData->path, pData->subDir);
 
 	if (pData->omitPath)
 	{

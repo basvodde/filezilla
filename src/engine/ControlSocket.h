@@ -73,6 +73,7 @@ public:
 	CServerPath path;
 	wxString subDir;
 	bool triedMkd;
+	CServerPath target;
 };
 
 #include "logging_private.h"
