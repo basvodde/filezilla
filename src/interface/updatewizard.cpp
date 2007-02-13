@@ -382,7 +382,7 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 
 					XRCCTRL(*this, "ID_DOWNLOADPROGRESS", wxGauge)->SetValue(100);
 #ifdef __WXMSW__
-					pText->SetLabel(_("The most recent version has been downloaded. Click on Finish to start the installation."));
+					pText->SetLabel(_("The most recent version has been downloaded. Click on Finish to close FileZilla and to start the installation."));
 #else
 					pText->SetLabel(_("The most recent version has been downloaded. Please install like you did install this version."));
 
@@ -685,7 +685,11 @@ void CUpdateWizard::OnFinish(wxWizardEvent& event)
 {
 #ifdef __WXMSW__
 	if (m_currentPage == 2)
+	{
 		wxExecute(m_localFile);
+		CMainFrame* pFrame = (CMainFrame*)m_parent;
+		pFrame->Close();
+	}
 #endif
 }
 
