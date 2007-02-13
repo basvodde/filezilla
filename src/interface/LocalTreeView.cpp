@@ -3,6 +3,8 @@
 #include "QueueView.h"
 #include "filezillaapp.h"
 #include "filter.h"
+#include <wx/dnd.h>
+#include "dndobjects.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -11,6 +13,173 @@
 #ifdef __WXMSW__
 #include <shlobj.h>
 #endif
+
+class CLocalTreeViewDropTarget : public wxDropTarget
+{
+public:
+	CLocalTreeViewDropTarget(CLocalTreeView* pLocalTreeView)
+		: m_pLocalTreeView(pLocalTreeView), m_pFileDataObject(new wxFileDataObject()),
+		m_pRemoteDataObject(new CRemoteDataObject())
+	{
+		m_pDataObject = new wxDataObjectComposite;
+		m_pDataObject->Add(m_pRemoteDataObject, true);
+		m_pDataObject->Add(m_pFileDataObject, false);
+		SetDataObject(m_pDataObject);
+	}
+
+	void ClearDropHighlight()
+	{
+		const wxTreeItemId dropHighlight = m_pLocalTreeView->m_dropHighlight;
+		if (dropHighlight != wxTreeItemId())
+		{
+			m_pLocalTreeView->SetItemDropHighlight(dropHighlight, false);
+			m_pLocalTreeView->m_dropHighlight = wxTreeItemId();
+		}
+	}
+
+	wxString GetDirFromItem(const wxTreeItemId& item)
+	{
+		const wxString& dir = m_pLocalTreeView->GetDirFromItem(item);
+
+#ifdef __WXMSW__
+		if (dir == _T("/"))
+			return _T("");
+#endif
+
+		return dir;
+	}
+
+	wxTreeItemId GetHit(const wxPoint& point)
+	{
+		int flags = 0;
+		wxTreeItemId hit = m_pLocalTreeView->HitTest(point, flags);
+
+		if (flags & (wxTREE_HITTEST_ABOVE | wxTREE_HITTEST_BELOW | wxTREE_HITTEST_NOWHERE | wxTREE_HITTEST_TOLEFT | wxTREE_HITTEST_TORIGHT))
+			return wxTreeItemId();
+
+		return hit;
+	}
+	
+	virtual wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def)
+	{
+		if (def == wxDragError ||
+			def == wxDragNone ||
+			def == wxDragCancel)
+			return def;
+
+		wxTreeItemId hit = GetHit(wxPoint(x, y));
+		if (!hit)
+			return wxDragNone;
+
+		wxString dir = GetDirFromItem(hit);
+		if (dir == _T(""))
+			return wxDragNone;
+
+		if (!GetData())
+			return wxDragError;
+
+		if (m_pDataObject->GetReceivedFormat() == m_pFileDataObject->GetFormat())
+			m_pLocalTreeView->m_pState->HandleDroppedFiles(m_pFileDataObject, dir, def == wxDragCopy);
+		else
+		{
+			if (m_pRemoteDataObject->GetProcessId() != wxGetProcessId())
+			{
+				wxMessageBox(_("Drag&drop between different instances of FileZilla has not been implemented yet."));
+				return wxDragNone;
+			}
+
+			if (!m_pLocalTreeView->m_pState->GetServer() || m_pRemoteDataObject->GetServer() != *m_pLocalTreeView->m_pState->GetServer())
+			{
+				wxMessageBox(_("Drag&drop between different servers has not been implemented yet."));
+				return wxDragNone;
+			}
+
+			if (!m_pLocalTreeView->m_pState->DownloadDroppedFiles(m_pRemoteDataObject, dir))
+				return wxDragNone;
+		}
+
+		return def;
+	}
+
+	virtual bool OnDrop(wxCoord x, wxCoord y)
+	{
+		ClearDropHighlight();
+
+		wxTreeItemId hit = GetHit(wxPoint(x, y));
+		if (!hit)
+			return false;
+
+		wxString dir = GetDirFromItem(hit);
+		if (dir == _T(""))
+			return false;
+
+		return true;
+	}
+
+	wxString DisplayDropHighlight(wxPoint point)
+	{
+		wxTreeItemId hit = GetHit(point);
+		if (!hit)
+		{
+			ClearDropHighlight();
+			return _T("");
+		}
+
+		wxString dir = GetDirFromItem(hit);
+
+		if (dir == _T(""))
+		{
+			ClearDropHighlight();
+			return _T("");
+		}
+
+		const wxTreeItemId dropHighlight = m_pLocalTreeView->m_dropHighlight;
+		if (dropHighlight != wxTreeItemId())
+			m_pLocalTreeView->SetItemDropHighlight(dropHighlight, false);
+		
+		m_pLocalTreeView->SetItemDropHighlight(hit, true);
+		m_pLocalTreeView->m_dropHighlight = hit;
+
+
+		return dir;
+	}
+
+	virtual wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult def)
+	{
+		if (def == wxDragError ||
+			def == wxDragNone ||
+			def == wxDragCancel)
+		{
+			ClearDropHighlight();
+			return def;
+		}
+
+		const wxString& dir = DisplayDropHighlight(wxPoint(x, y));
+		if (dir == _T(""))
+			return wxDragNone;
+		
+		if (def == wxDragLink)
+			def = wxDragCopy;
+
+		return def;
+	}
+
+	virtual void OnLeave()
+	{
+		ClearDropHighlight();
+	}
+
+	virtual wxDragResult OnEnter(wxCoord x, wxCoord y, wxDragResult def)
+	{
+		return OnDragOver(x, y, def);
+	}
+
+protected:
+	CLocalTreeView *m_pLocalTreeView;
+	wxFileDataObject* m_pFileDataObject;
+	CRemoteDataObject* m_pRemoteDataObject;
+	wxDataObjectComposite* m_pDataObject;
+};
 
 IMPLEMENT_CLASS(CLocalTreeView, wxTreeCtrl)
 
@@ -59,6 +228,8 @@ CLocalTreeView::CLocalTreeView(wxWindow* parent, wxWindowID id, CState *pState, 
 	AddRoot(_T("/"), GetIconIndex(dir), GetIconIndex(opened_dir));
 	SetDir(_T("/"));
 #endif
+
+	SetDropTarget(new CLocalTreeViewDropTarget(this));
 }
 
 CLocalTreeView::~CLocalTreeView()

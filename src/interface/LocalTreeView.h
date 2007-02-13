@@ -10,6 +10,8 @@ class CLocalTreeView : public wxTreeCtrl, CSystemImageList, CStateEventHandler
 {
 	DECLARE_CLASS(CLocalTreeView)
 
+	friend class CLocalTreeViewDropTarget;
+
 public:
 	CLocalTreeView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView *pQueueView);
 	virtual ~CLocalTreeView();
@@ -42,6 +44,8 @@ protected:
 	CQueueView* m_pQueueView;
 
 	bool m_setSelection;
+
+	wxTreeItemId m_dropHighlight;
 };
 
 #endif
