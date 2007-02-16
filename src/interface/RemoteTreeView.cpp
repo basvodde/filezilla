@@ -1,10 +1,183 @@
 #include "FileZilla.h"
 #include "RemoteTreeView.h"
 #include "commandqueue.h"
+#include <wx/dnd.h>
+#include "dndobjects.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+class CItemData : public wxTreeItemData
+{
+public:
+	CItemData(CServerPath path) : m_path(path) {}
+	CServerPath m_path;
+};
+
+class CRemoteTreeViewDropTarget : public wxDropTarget
+{
+public:
+	CRemoteTreeViewDropTarget(CRemoteTreeView* pRemoteTreeView)
+		: m_pRemoteTreeView(pRemoteTreeView), m_pFileDataObject(new wxFileDataObject()),
+		m_pRemoteDataObject(new CRemoteDataObject())
+	{
+		m_pDataObject = new wxDataObjectComposite;
+		m_pDataObject->Add(m_pRemoteDataObject, true);
+		m_pDataObject->Add(m_pFileDataObject, false);
+		SetDataObject(m_pDataObject);
+	}
+
+	void ClearDropHighlight()
+	{
+		const wxTreeItemId dropHighlight = m_pRemoteTreeView->m_dropHighlight;
+		if (dropHighlight != wxTreeItemId())
+		{
+			m_pRemoteTreeView->SetItemDropHighlight(dropHighlight, false);
+			m_pRemoteTreeView->m_dropHighlight = wxTreeItemId();
+		}
+	}
+
+	CServerPath GetPathFromItem(const wxTreeItemId& item)
+	{
+		const CItemData* pData = (const CItemData*)m_pRemoteTreeView->GetItemData(item);
+		
+		if (!pData)
+			return CServerPath();
+
+		return pData->m_path;
+	}
+
+	wxTreeItemId GetHit(const wxPoint& point)
+	{
+		int flags = 0;
+		wxTreeItemId hit = m_pRemoteTreeView->HitTest(point, flags);
+
+		if (flags & (wxTREE_HITTEST_ABOVE | wxTREE_HITTEST_BELOW | wxTREE_HITTEST_NOWHERE | wxTREE_HITTEST_TOLEFT | wxTREE_HITTEST_TORIGHT))
+			return wxTreeItemId();
+
+		return hit;
+	}
+	
+	virtual wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def)
+	{
+		if (def == wxDragError ||
+			def == wxDragNone ||
+			def == wxDragCancel)
+			return def;
+
+		wxTreeItemId hit = GetHit(wxPoint(x, y));
+		if (!hit)
+			return wxDragNone;
+
+		CServerPath path = GetPathFromItem(hit);
+		if (path.IsEmpty())
+			return wxDragNone;
+
+		if (!GetData())
+			return wxDragError;
+
+		if (m_pDataObject->GetReceivedFormat() == m_pFileDataObject->GetFormat())
+			m_pRemoteTreeView->m_pState->UploadDroppedFiles(m_pFileDataObject, path);
+		else
+		{
+			if (m_pRemoteDataObject->GetProcessId() != wxGetProcessId())
+			{
+				wxMessageBox(_("Drag&drop between different instances of FileZilla has not been implemented yet."));
+				return wxDragNone;
+			}
+
+			if (!m_pRemoteTreeView->m_pState->GetServer() || m_pRemoteDataObject->GetServer() != *m_pRemoteTreeView->m_pState->GetServer())
+			{
+				wxMessageBox(_("Drag&drop between different servers has not been implemented yet."));
+				return wxDragNone;
+			}
+
+			wxMessageBox(_T("Not yet implemented"));
+			return wxDragNone;
+		}
+
+		return def;
+	}
+
+	virtual bool OnDrop(wxCoord x, wxCoord y)
+	{
+		ClearDropHighlight();
+
+		wxTreeItemId hit = GetHit(wxPoint(x, y));
+		if (!hit)
+			return false;
+
+		const CServerPath& path = GetPathFromItem(hit);
+		if (path.IsEmpty())
+			return false;
+
+		return true;
+	}
+
+	CServerPath DisplayDropHighlight(wxPoint point)
+	{
+		wxTreeItemId hit = GetHit(point);
+		if (!hit)
+		{
+			ClearDropHighlight();
+			return CServerPath();
+		}
+
+		const CServerPath& path = GetPathFromItem(hit);
+
+		if (path.IsEmpty())
+		{
+			ClearDropHighlight();
+			return CServerPath();
+		}
+
+		const wxTreeItemId dropHighlight = m_pRemoteTreeView->m_dropHighlight;
+		if (dropHighlight != wxTreeItemId())
+			m_pRemoteTreeView->SetItemDropHighlight(dropHighlight, false);
+		
+		m_pRemoteTreeView->SetItemDropHighlight(hit, true);
+		m_pRemoteTreeView->m_dropHighlight = hit;
+
+		return path;
+	}
+
+	virtual wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult def)
+	{
+		if (def == wxDragError ||
+			def == wxDragNone ||
+			def == wxDragCancel)
+		{
+			ClearDropHighlight();
+			return def;
+		}
+
+		const CServerPath& path = DisplayDropHighlight(wxPoint(x, y));
+		if (path.IsEmpty())
+			return wxDragNone;
+		
+		if (def == wxDragLink)
+			def = wxDragCopy;
+
+		return def;
+	}
+
+	virtual void OnLeave()
+	{
+		ClearDropHighlight();
+	}
+
+	virtual wxDragResult OnEnter(wxCoord x, wxCoord y, wxDragResult def)
+	{
+		return OnDragOver(x, y, def);
+	}
+
+protected:
+	CRemoteTreeView *m_pRemoteTreeView;
+	wxFileDataObject* m_pFileDataObject;
+	CRemoteDataObject* m_pRemoteDataObject;
+	wxDataObjectComposite* m_pDataObject;
+};
 
 IMPLEMENT_CLASS(CRemoteTreeView, wxTreeCtrl)
 
@@ -13,13 +186,6 @@ EVT_TREE_ITEM_EXPANDING(wxID_ANY, CRemoteTreeView::OnItemExpanding)
 EVT_TREE_SEL_CHANGED(wxID_ANY, CRemoteTreeView::OnSelectionChanged)
 EVT_TREE_ITEM_ACTIVATED(wxID_ANY, CRemoteTreeView::OnItemActivated)
 END_EVENT_TABLE()
-
-class CItemData : public wxTreeItemData
-{
-public:
-	CItemData(CServerPath path) : m_path(path) {}
-	CServerPath m_path;
-};
 
 CRemoteTreeView::CRemoteTreeView(wxWindow* parent, wxWindowID id, CState* pState, CQueueView* pQueue)
 	: wxTreeCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxTR_EDIT_LABELS | wxTR_LINES_AT_ROOT | wxTR_HAS_BUTTONS | wxNO_BORDER | wxTR_HIDE_ROOT),
@@ -32,6 +198,8 @@ CRemoteTreeView::CRemoteTreeView(wxWindow* parent, wxWindowID id, CState* pState
 	m_ExpandAfterList = wxTreeItemId();
 
 	CreateImageList();
+
+	SetDropTarget(new CRemoteTreeViewDropTarget(this));
 }
 
 CRemoteTreeView::~CRemoteTreeView()

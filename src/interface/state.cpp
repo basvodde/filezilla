@@ -331,6 +331,14 @@ void CState::UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const w
 	else if (subdir != _T(""))
 		path.AddSegment(subdir);
 
+	UploadDroppedFiles(pFileDataObject, path);
+}
+
+void CState::UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const CServerPath& path)
+{
+	if (!m_pServer)
+		return;
+
 	const wxArrayString& files = pFileDataObject->GetFilenames();
 	
 	for (unsigned int i = 0; i < files.Count(); i++)

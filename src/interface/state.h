@@ -49,6 +49,7 @@ public:
 	CCommandQueue* m_pCommandQueue;
 
 	void UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const wxString& subdir);
+	void UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const CServerPath& path);
 	void HandleDroppedFiles(const wxFileDataObject* pFileDataObject, wxString path, bool copy);
 	bool DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, wxString path);
 

@@ -10,6 +10,8 @@ class CRemoteTreeView : public wxTreeCtrl, CSystemImageList, CStateEventHandler
 {
 	DECLARE_CLASS(CRemoteTreeView)
 
+	friend class CRemoteTreeViewDropTarget;
+
 public:
 	CRemoteTreeView(wxWindow* parent, wxWindowID id, CState* pState, CQueueView* pQueue);
 	virtual ~CRemoteTreeView();
@@ -40,6 +42,8 @@ protected:
 	bool m_busy;
 
 	wxTreeItemId m_ExpandAfterList;
+
+	wxTreeItemId m_dropHighlight;
 
 	DECLARE_EVENT_TABLE()
 	void OnItemExpanding(wxTreeEvent& event);
