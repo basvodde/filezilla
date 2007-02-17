@@ -1620,6 +1620,7 @@ bool CQueueView::RemoveItem(CQueueItem* item)
 		if (size < 0)
 		{
 			m_filesWithUnknownSize--;
+			wxASSERT(m_filesWithUnknownSize >= 0);
 			if (!m_filesWithUnknownSize)
 				DisplayQueueSize();
 		}
@@ -1627,6 +1628,7 @@ bool CQueueView::RemoveItem(CQueueItem* item)
 		{
 			m_totalQueueSize -= size;
 			DisplayQueueSize();
+			wxASSERT(m_totalQueueSize >= 0);
 		}
 	}
 
@@ -2440,9 +2442,7 @@ void CQueueView::RemoveAll()
 	m_serverList = newServerList;
 	UpdateStatusLinePositions();
 
-	m_totalQueueSize = 0;
-	m_filesWithUnknownSize = 0;
-	DisplayQueueSize();
+	CalculateQueueSize();
 
 	CheckQueueState();
 	Refresh();
