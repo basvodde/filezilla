@@ -93,7 +93,37 @@ public:
 				return wxDragNone;
 			}
 
-			wxMessageBox(_T("Not yet implemented"));
+			// Make sure path path is valid
+			if (path == m_pRemoteDataObject->GetServerPath())
+			{
+				wxMessageBox(_("Source and path of the drop operation are identical"));
+				return wxDragNone;
+			}
+
+			const std::list<CRemoteDataObject::t_fileInfo>& files = m_pRemoteDataObject->GetFiles();
+			for (std::list<CRemoteDataObject::t_fileInfo>::const_iterator iter = files.begin(); iter != files.end(); iter++)
+			{
+				const CRemoteDataObject::t_fileInfo& info = *iter;
+				if (info.dir)
+				{
+					CServerPath dir = m_pRemoteDataObject->GetServerPath();
+					dir.AddSegment(info.name);
+					if (dir == path || dir.IsParentOf(path, false))
+					{
+						wxMessageBox(_("A directory cannot be dragged into one if its subdirectories."));
+						return wxDragNone;
+					}
+				}
+			}
+
+			for (std::list<CRemoteDataObject::t_fileInfo>::const_iterator iter = files.begin(); iter != files.end(); iter++)
+			{
+				const CRemoteDataObject::t_fileInfo& info = *iter;
+				m_pRemoteTreeView->m_pState->m_pCommandQueue->ProcessCommand(
+					new CRenameCommand(m_pRemoteDataObject->GetServerPath(), iter->name, path, iter->name)
+					);
+			}
+
 			return wxDragNone;
 		}
 
