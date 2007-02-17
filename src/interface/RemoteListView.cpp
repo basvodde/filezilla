@@ -2179,29 +2179,18 @@ void CRemoteListView::OnBeginDrag(wxListEvent& event)
 	object.Add(pRemoteDataObject, true);
 
 #if FZ3_USESHELLEXT
-	CShellExtensionInterface* ext = new CShellExtensionInterface;
-	if (!ext->IsLoaded())
+	CShellExtensionInterface* ext = CShellExtensionInterface::CreateInitialized();
+	if (ext)
 	{
-		delete ext;
-		ext = 0;
-	}
-	else
-	{
-		const wxString file = ext->InitDrag();
-		if (file == _T(""))
-		{
-			delete ext;
-			ext = 0;
-		}
-		else
-		{
-			wxFileDataObject *pFileDataObject = new wxFileDataObject;
-			pFileDataObject->AddFile(file);
+		const wxString& file = ext->GetDragDirectory();
 
-			object.Add(pFileDataObject);
-		}
-	}
+		wxASSERT(file != _T(""));
 
+		wxFileDataObject *pFileDataObject = new wxFileDataObject;
+		pFileDataObject->AddFile(file);
+
+		object.Add(pFileDataObject);
+	}
 #endif
 	
 	wxDropSource source(this);

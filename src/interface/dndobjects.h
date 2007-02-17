@@ -78,6 +78,10 @@ public:
 	
 	wxString GetTarget();
 
+	wxString GetDragDirectory() const { return m_dragDirectory; }
+
+	static CShellExtensionInterface* CreateInitialized();
+
 protected:
 	bool CreateDragDirectory();
 

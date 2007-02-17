@@ -164,6 +164,24 @@ bool CShellExtensionInterface::CreateDragDirectory()
 	return true;
 }
 
+CShellExtensionInterface* CShellExtensionInterface::CreateInitialized()
+{
+	CShellExtensionInterface* ext = new CShellExtensionInterface;
+	if (!ext->IsLoaded())
+	{
+		delete ext;
+		return 0;
+	}
+	
+	if (ext->InitDrag() == _T(""))
+	{
+		delete ext;
+		return 0;
+	}
+
+	return ext;
+}
+
 //{7BB79969-2C7E-4107-996C-36DB90890AB2}
 
 #endif //__WXMSW__
