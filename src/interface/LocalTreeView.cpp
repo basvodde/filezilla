@@ -186,6 +186,7 @@ IMPLEMENT_CLASS(CLocalTreeView, wxTreeCtrl)
 BEGIN_EVENT_TABLE(CLocalTreeView, wxTreeCtrl)
 EVT_TREE_ITEM_EXPANDING(wxID_ANY, CLocalTreeView::OnItemExpanding)
 EVT_TREE_SEL_CHANGED(wxID_ANY, CLocalTreeView::OnSelectionChanged)
+EVT_TREE_BEGIN_DRAG(wxID_ANY, CLocalTreeView::OnBeginDrag)
 END_EVENT_TABLE()
 
 CLocalTreeView::CLocalTreeView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView *pQueueView)
@@ -800,4 +801,33 @@ void CLocalTreeView::OnStateChange(unsigned int event)
 		SetDir(m_pState->GetLocalDir());
 	else if (event == STATECHANGE_APPLYFILTER)
 		Refresh();
+}
+
+void CLocalTreeView::OnBeginDrag(wxTreeEvent& event)
+{
+	wxTreeItemId item = event.GetItem();
+	if (!item)
+		return;
+
+	wxString dir = GetDirFromItem(item);
+	if (dir == _T("/"))
+		return;
+
+	if (dir.Last() == '\\')
+		dir.RemoveLast();
+
+#ifdef __WXMSW__
+	if (dir.Last() == ':')
+		return;
+#endif
+
+	wxFileDataObject obj;
+
+	obj.AddFile(dir);
+
+	wxDropSource source(this);
+	source.SetData(obj);
+	int res = source.DoDragDrop(wxDrag_AllowMove);
+	if (res == wxDragCopy || res == wxDragMove)
+		m_pState->RefreshLocal();
 }

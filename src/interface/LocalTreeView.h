@@ -38,6 +38,7 @@ protected:
 	DECLARE_EVENT_TABLE()
 	void OnItemExpanding(wxTreeEvent& event);
 	void OnSelectionChanged(wxTreeEvent& event);
+	void OnBeginDrag(wxTreeEvent& event);
 
 	wxString GetDirFromItem(wxTreeItemId item);
 
