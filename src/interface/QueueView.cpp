@@ -12,11 +12,118 @@
 #include "asyncrequestqueue.h"
 #include "defaultfileexistsdlg.h"
 #include "filter.h"
+#include <wx/dnd.h>
 #include "dndobjects.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+class CQueueViewDropTarget : public wxDropTarget
+{
+public:
+	CQueueViewDropTarget(CQueueView* pQueueView)
+		: m_pQueueView(pQueueView), m_pFileDataObject(new wxFileDataObject()),
+		m_pRemoteDataObject(new CRemoteDataObject())
+	{
+		m_pDataObject = new wxDataObjectComposite;
+		m_pDataObject->Add(m_pRemoteDataObject, true);
+		m_pDataObject->Add(m_pFileDataObject, false);
+		SetDataObject(m_pDataObject);
+	}
+
+	virtual wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def)
+	{
+		if (def == wxDragError ||
+			def == wxDragNone ||
+			def == wxDragCancel)
+			return def;
+
+		if (!GetData())
+			return wxDragError;
+
+		if (m_pDataObject->GetReceivedFormat() == m_pFileDataObject->GetFormat())
+		{
+			CState* const pState = m_pQueueView->m_pMainFrame->GetState();
+			const CServer* const pServer = pState->GetServer();
+			if (!pServer)
+				return wxDragNone;
+
+			const CServerPath& path = pState->GetRemotePath();
+			if (path.IsEmpty())
+				return wxDragNone;
+
+			pState->UploadDroppedFiles(m_pFileDataObject, path, true);
+		}
+		else
+		{
+			if (m_pRemoteDataObject->GetProcessId() != wxGetProcessId())
+			{
+				wxMessageBox(_("Drag&drop between different instances of FileZilla has not been implemented yet."));
+				return wxDragNone;
+			}
+
+			CState* const pState = m_pQueueView->m_pMainFrame->GetState();
+			const CServer* const pServer = pState->GetServer();
+			if (!pServer)
+				return wxDragNone;
+
+			if (*pServer != m_pRemoteDataObject->GetServer())
+			{
+				wxMessageBox(_("Drag&drop between different servers has not been implemented yet."));
+				return wxDragNone;
+			}
+
+			const wxString& target = pState->GetLocalDir();
+#ifdef __WXMSW__
+			if (target == _T("\\"))
+			{
+				wxBell();
+				return wxDragNone;
+			}
+#endif
+
+			if (!pState->DownloadDroppedFiles(m_pRemoteDataObject, target, true))
+				return wxDragNone;
+		}
+
+		return def;
+	}
+
+	virtual bool OnDrop(wxCoord x, wxCoord y)
+	{
+		return true;
+	}
+
+	virtual wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult def)
+	{
+		if (def == wxDragError ||
+			def == wxDragNone ||
+			def == wxDragCancel)
+		{
+			return def;
+		}
+
+		def = wxDragCopy;
+
+		return def;
+	}
+
+	virtual void OnLeave()
+	{
+	}
+
+	virtual wxDragResult OnEnter(wxCoord x, wxCoord y, wxDragResult def)
+	{
+		return OnDragOver(x, y, def);
+	}
+
+protected:
+	CQueueView *m_pQueueView;
+	wxFileDataObject* m_pFileDataObject;
+	CRemoteDataObject* m_pRemoteDataObject;
+	wxDataObjectComposite* m_pDataObject;
+};
 
 DECLARE_EVENT_TYPE(fzEVT_FOLDERTHREAD_COMPLETE, -1)
 DEFINE_EVENT_TYPE(fzEVT_FOLDERTHREAD_COMPLETE)
@@ -873,6 +980,8 @@ CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame, 
 
 	SettingsChanged();
 	LoadQueue();
+
+	SetDropTarget(new CQueueViewDropTarget(this));
 }
 
 CQueueView::~CQueueView()

@@ -48,10 +48,10 @@ public:
 	CFileZillaEngine* m_pEngine;
 	CCommandQueue* m_pCommandQueue;
 
-	void UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const wxString& subdir);
-	void UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const CServerPath& path);
+	void UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const wxString& subdir, bool queueOnly);
+	void UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const CServerPath& path, bool queueOnly);
 	void HandleDroppedFiles(const wxFileDataObject* pFileDataObject, wxString path, bool copy);
-	bool DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, wxString path);
+	bool DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, wxString path, bool queueOnly = false);
 
 	static bool RecursiveCopy(wxString source, wxString target);
 

@@ -75,7 +75,7 @@ public:
 				}
 			}
 
-			m_pRemoteListView->m_pState->UploadDroppedFiles(m_pFileDataObject, subdir);
+			m_pRemoteListView->m_pState->UploadDroppedFiles(m_pFileDataObject, subdir, false);
 			return wxDragCopy;
 		}
 		
@@ -2276,7 +2276,7 @@ void CRemoteListView::OnBeginDrag(wxListEvent& event)
 #endif
 }
 
-bool CRemoteListView::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, wxString path)
+bool CRemoteListView::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, wxString path, bool queueOnly)
 {
 	if (IsBusy())
 		return false;
@@ -2294,7 +2294,7 @@ bool CRemoteListView::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataO
 		dirToVisit.subdir = iter->name;
 		m_dirsToVisit.push_back(dirToVisit);
 	}
-	m_operationMode = recursive_download;
+	m_operationMode = queueOnly ? recursive_addtoqueue : recursive_download;
 	m_startDir = pRemoteDataObject->GetServerPath();
 
 	NextOperation();

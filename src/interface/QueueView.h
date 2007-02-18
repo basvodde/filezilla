@@ -268,6 +268,7 @@ class CAsyncRequestQueue;
 class CQueueView : public wxListCtrl
 {
 	friend class CFolderProcessingThread;
+	friend class CQueueViewDropTarget;
 public:
 	CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame, CAsyncRequestQueue* pAsyncRequestQueue);
 	virtual ~CQueueView();

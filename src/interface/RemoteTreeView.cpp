@@ -68,7 +68,7 @@ public:
 			return wxDragError;
 
 		if (m_pDataObject->GetReceivedFormat() == m_pFileDataObject->GetFormat())
-			m_pRemoteTreeView->m_pState->UploadDroppedFiles(m_pFileDataObject, path);
+			m_pRemoteTreeView->m_pState->UploadDroppedFiles(m_pFileDataObject, path, false);
 		else
 		{
 			if (m_pRemoteDataObject->GetProcessId() != wxGetProcessId())

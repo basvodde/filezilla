@@ -320,7 +320,7 @@ CStateEventHandler::~CStateEventHandler()
 	m_pState->UnregisterHandler(this);
 }
 
-void CState::UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const wxString& subdir)
+void CState::UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const wxString& subdir, bool queueOnly)
 {
 	if (!m_pServer || !m_pDirectoryListing)
 		return;
@@ -331,10 +331,10 @@ void CState::UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const w
 	else if (subdir != _T(""))
 		path.AddSegment(subdir);
 
-	UploadDroppedFiles(pFileDataObject, path);
+	UploadDroppedFiles(pFileDataObject, path, queueOnly);
 }
 
-void CState::UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const CServerPath& path)
+void CState::UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const CServerPath& path, bool queueOnly)
 {
 	if (!m_pServer)
 		return;
@@ -347,7 +347,7 @@ void CState::UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const C
 		{
 			const wxFileName name(files[i]);
 			const wxLongLong size = name.GetSize().GetValue();
-			m_pMainFrame->GetQueue()->QueueFile(false, false, files[i], name.GetFullName(), path, *m_pServer, size);
+			m_pMainFrame->GetQueue()->QueueFile(queueOnly, false, files[i], name.GetFullName(), path, *m_pServer, size);
 		}
 		else if (wxDir::Exists(files[i]))
 		{
@@ -358,7 +358,7 @@ void CState::UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const C
 				name = name.Mid(pos + 1);
 				CServerPath target = path;
 				target.AddSegment(name);
-				m_pMainFrame->GetQueue()->QueueFolder(false, false, files[i], target, *m_pServer);
+				m_pMainFrame->GetQueue()->QueueFolder(queueOnly, false, files[i], target, *m_pServer);
 			}
 		}
 	}
@@ -485,7 +485,7 @@ bool CState::RecursiveCopy(wxString source, wxString target)
 	return true;
 }
 
-bool CState::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, wxString path)
+bool CState::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, wxString path, bool queueOnly /*=false*/)
 {
 	bool hasDirs = false;
 	bool hasFiles = false;
@@ -505,10 +505,10 @@ bool CState::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, wx
 	}
 
 	if (hasFiles)
-		m_pMainFrame->GetQueue()->QueueFiles(false, path, *pRemoteDataObject);
+		m_pMainFrame->GetQueue()->QueueFiles(queueOnly, path, *pRemoteDataObject);
 
 	if (!hasDirs)
 		return true;
 
-	return m_pMainFrame->GetRemoteListView()->DownloadDroppedFiles(pRemoteDataObject, path);
+	return m_pMainFrame->GetRemoteListView()->DownloadDroppedFiles(pRemoteDataObject, path, queueOnly);
 }
