@@ -115,9 +115,11 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_pThemeProvider = new CThemeProvider();
 	m_pState = new CState(this);
 
-	m_pStatusBar = CreateStatusBar(6, wxST_SIZEGRIP);
+	m_pStatusBar = new wxStatusBar(this, wxID_ANY, wxST_SIZEGRIP);
 	if (m_pStatusBar)
 	{
+		m_pStatusBar->SetFieldsCount(6);
+
 		m_pStatusBar->Connect(wxID_ANY, wxEVT_SIZE, (wxObjectEventFunction)(wxEventFunction)(wxSizeEventFunction)&CMainFrame::OnStatusbarSize, 0, this);
 		int array[6];
 		for (int i = 1; i < 5; i++)
@@ -130,6 +132,8 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 		
 		m_pRecvLed = new CLed(m_pStatusBar, 1, m_pState);
 		m_pSendLed = new CLed(m_pStatusBar, 0, m_pState);
+
+		SetStatusBar(m_pStatusBar);
 	}
 	else
 	{
