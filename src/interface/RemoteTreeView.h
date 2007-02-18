@@ -30,6 +30,8 @@ protected:
 
 	virtual int OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2);
 
+	CServerPath GetPathFromItem(const wxTreeItemId& item) const;
+
 	CQueueView* m_pQueue;
 	const CDirectoryListing* m_pDirectoryListing;
 
@@ -49,6 +51,7 @@ protected:
 	void OnItemExpanding(wxTreeEvent& event);
 	void OnSelectionChanged(wxTreeEvent& event);
 	void OnItemActivated(wxTreeEvent& event);
+	void OnBeginDrag(wxTreeEvent& event);
 };
 
 #endif

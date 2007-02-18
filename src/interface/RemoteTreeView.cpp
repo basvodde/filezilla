@@ -38,16 +38,6 @@ public:
 		}
 	}
 
-	CServerPath GetPathFromItem(const wxTreeItemId& item)
-	{
-		const CItemData* pData = (const CItemData*)m_pRemoteTreeView->GetItemData(item);
-		
-		if (!pData)
-			return CServerPath();
-
-		return pData->m_path;
-	}
-
 	wxTreeItemId GetHit(const wxPoint& point)
 	{
 		int flags = 0;
@@ -70,7 +60,7 @@ public:
 		if (!hit)
 			return wxDragNone;
 
-		CServerPath path = GetPathFromItem(hit);
+		CServerPath path = m_pRemoteTreeView->GetPathFromItem(hit);
 		if (path.IsEmpty())
 			return wxDragNone;
 
@@ -138,7 +128,7 @@ public:
 		if (!hit)
 			return false;
 
-		const CServerPath& path = GetPathFromItem(hit);
+		const CServerPath& path = m_pRemoteTreeView->GetPathFromItem(hit);
 		if (path.IsEmpty())
 			return false;
 
@@ -154,7 +144,7 @@ public:
 			return CServerPath();
 		}
 
-		const CServerPath& path = GetPathFromItem(hit);
+		const CServerPath& path = m_pRemoteTreeView->GetPathFromItem(hit);
 
 		if (path.IsEmpty())
 		{
@@ -215,6 +205,7 @@ BEGIN_EVENT_TABLE(CRemoteTreeView, wxTreeCtrl)
 EVT_TREE_ITEM_EXPANDING(wxID_ANY, CRemoteTreeView::OnItemExpanding)
 EVT_TREE_SEL_CHANGED(wxID_ANY, CRemoteTreeView::OnSelectionChanged)
 EVT_TREE_ITEM_ACTIVATED(wxID_ANY, CRemoteTreeView::OnItemActivated)
+EVT_TREE_BEGIN_DRAG(wxID_ANY, CRemoteTreeView::OnBeginDrag)
 END_EVENT_TABLE()
 
 CRemoteTreeView::CRemoteTreeView(wxWindow* parent, wxWindowID id, CState* pState, CQueueView* pQueue)
@@ -714,4 +705,112 @@ void CRemoteTreeView::OnItemActivated(wxTreeEvent& event)
 {
 	m_ExpandAfterList = GetSelection();
 	event.Skip();
+}
+
+CServerPath CRemoteTreeView::GetPathFromItem(const wxTreeItemId& item) const
+{
+	const CItemData* const pData = (const CItemData*)GetItemData(item);
+
+	if (!pData)
+		return CServerPath();
+
+	return pData->m_path;
+}
+
+void CRemoteTreeView::OnBeginDrag(wxTreeEvent& event)
+{
+	// Drag could result in recursive operation, don't allow at this point
+	if (!m_pState->m_pCommandQueue->Idle())
+	{
+		wxBell();
+		return;
+	}
+
+	const wxTreeItemId& item = event.GetItem();
+	if (!item)
+		return;
+
+	const CServerPath& path = GetPathFromItem(item);
+	if (path.IsEmpty() || !path.HasParent())
+		return;
+
+	const CServerPath& parent = path.GetParent();
+	const wxString& lastSegment = path.GetLastSegment();
+	if (lastSegment == _T(""))
+		return;
+
+	wxDataObjectComposite object;
+
+	const CServer* const pServer = m_pState->GetServer();
+	if (!pServer)
+		return;
+
+	CRemoteDataObject *pRemoteDataObject = new CRemoteDataObject(*pServer, parent);
+	pRemoteDataObject->AddFile(lastSegment, true, -1);
+
+	pRemoteDataObject->Finalize();
+
+	object.Add(pRemoteDataObject, true);
+
+#if FZ3_USESHELLEXT
+	CShellExtensionInterface* ext = CShellExtensionInterface::CreateInitialized();
+	if (ext)
+	{
+		const wxString& file = ext->GetDragDirectory();
+
+		wxASSERT(file != _T(""));
+
+		wxFileDataObject *pFileDataObject = new wxFileDataObject;
+		pFileDataObject->AddFile(file);
+
+		object.Add(pFileDataObject);
+	}
+#endif
+	
+	wxDropSource source(this);
+	source.SetData(object);
+	if (source.DoDragDrop() != wxDragCopy)
+	{
+#if FZ3_USESHELLEXT
+		delete ext;
+		ext = 0;
+#endif
+		return;
+	}
+
+	const wxDataFormat fmt = object.GetReceivedFormat();
+
+#if FZ3_USESHELLEXT
+	if (ext)
+	{
+		if (!pRemoteDataObject->DidSendData())
+		{
+			const CServer* const pServer = m_pState->GetServer();
+			if (!pServer || !m_pState->m_pCommandQueue->Idle())
+			{
+				wxBell();
+				delete ext;
+				ext = 0;
+				return;
+			}
+
+			wxString target = ext->GetTarget();
+			if (target == _T(""))
+			{
+				delete ext;
+				ext = 0;
+				wxMessageBox(_("Could not determine the target of the Drag&Drop operation.\nEither the shell extension is not installed properly or you didn't drop the files into an Explorer window."));
+				return;
+			}
+
+			m_pState->DownloadDroppedFiles(pRemoteDataObject, target);
+
+			delete ext;
+			ext = 0;
+			return;
+		}
+		delete ext;
+		ext = 0;
+	}
+#endif
 }
