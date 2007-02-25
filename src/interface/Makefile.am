@@ -88,10 +88,10 @@ filezilla_CFLAGS = $(WX_CFLAGS_ONLY)
 
 filezilla_LDFLAGS = ../engine/libengine.a
 filezilla_LDFLAGS += ../tinyxml/libtinyxml.a
+filezilla_LDFLAGS += $(LIBGNUTLS_LIBS)
 filezilla_LDFLAGS += $(WX_LIBS)
 filezilla_LDFLAGS += $(RESOURCEFILE)
 filezilla_LDFLAGS += $(IDN_LIB)
-filezilla_LDFLAGS += $(LIBGNUTLS_LIBS)
 
 if MINGW
 filezilla_LDFLAGS += -lole32 -luuid

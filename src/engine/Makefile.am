@@ -4,7 +4,7 @@ noinst_LIBRARIES = libengine.a
 
 INCLUDES = -I$(srcdir)/../include
 
-libengine_a_CPPFLAGS = $(WX_CPPFLAGS) $(LIBGNUTLS_CFLAGS)
+libengine_a_CPPFLAGS = $(LIBGNUTLS_CFLAGS) $(WX_CPPFLAGS)
 libengine_a_CXXFLAGS = $(WX_CXXFLAGS_ONLY)
 libengine_a_CFLAGS = $(WX_CFLAGS_ONLY)
 
