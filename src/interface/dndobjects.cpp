@@ -149,7 +149,9 @@ bool CShellExtensionInterface::CreateDragDirectory()
 		value *= 10;
 		value += i;
 
-		wxString dir = wxStandardPaths::Get().GetTempDir() + _T("\\") + DRAG_EXT_DUMMY_DIR_PREFIX + value.ToString();
+		wxFileName dirname(wxStandardPaths::Get().GetTempDir(), DRAG_EXT_DUMMY_DIR_PREFIX + value.ToString());
+		dirname.Normalize();
+		wxString dir = dirname.GetFullPath();
 
 		if (dir.Len() > MAX_PATH)
 			return false;
