@@ -52,6 +52,13 @@
   { \
     Debug(MSG); \
   }
+
+#define DEBUG_MSG_W(MSG) \
+  if (GLogOn) \
+  { \
+    DebugW(MSG); \
+  }
+	
 //---------------------------------------------------------------------------
 #define DRAG_EXT_REG_KEY _T("Software\\FileZilla 3\\fzshellext")
 #define DRAG_EXT_NAME _T("FileZilla 3 Shell Extension")
@@ -158,6 +165,27 @@ void Debug(const char* Message)
     }
   }
 }
+
+void DebugW(const wchar_t* Message)
+{
+	int bytes = WideCharToMultiByte(CP_UTF8, 0, Message, -1, 0, 0, 0, 0);
+	if (bytes <= 0)
+	{
+		Debug("WideCharToMultiByte failed");
+		return;
+	}
+	char *buffer = new char[bytes + 1];
+	int written = WideCharToMultiByte(CP_UTF8, 0, Message, -1, buffer, bytes, 0, 0);
+	if (!written)
+		Debug("WideCharToMultiByte failed");
+	else
+	{
+        buffer[written] = 0;
+		Debug(buffer);
+	}
+	delete [] buffer;
+}
+
 //---------------------------------------------------------------------------
 void LogVersion(HINSTANCE HInstance)
 {
@@ -696,8 +724,8 @@ STDMETHODIMP_(UINT) CShellExt::CopyCallback(HWND Hwnd, UINT Func, UINT Flags,
 			DEBUG_MSG("CShellExt::CopyCallback interval elapsed");
 
 			DEBUG_MSG("CShellExt::CopyCallback source / dest:");
-			//DEBUG_MSG(T2A(SrcFile));
-			//DEBUG_MSG(T2A(DestFile));
+			DEBUG_MSG_W(SrcFile);
+			DEBUG_MSG_W(DestFile);
 
 			FLastTicks = Ticks;
 			LPCTSTR BackPtr = _tcsrchr(SrcFile, '\\');
