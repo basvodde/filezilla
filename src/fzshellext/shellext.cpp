@@ -758,7 +758,10 @@ STDMETHODIMP_(UINT) CShellExt::CopyCallback(HWND Hwnd, UINT Func, UINT Flags,
 								{
 									DEBUG_MSG("CShellExt::CopyCallback dragging");
 
-							  wchar_t* file = reinterpret_cast<wchar_t *>(data + 2);
+								wchar_t* file = reinterpret_cast<wchar_t *>(data + 2);
+								DEBUG_MSG("Dragged file:");
+								DEBUG_MSG_W(file);
+							
 							  if (wcscmp(file, SrcFile) == 0)
 							  {
 								  data[1] = 2;
