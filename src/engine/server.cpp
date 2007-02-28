@@ -250,7 +250,7 @@ bool CServer::operator==(const CServer &op) const
 			if (m_pass != op.m_pass)
 				return false;
 		}
-		else if (m_logonType == NORMAL)
+		else if (m_logonType == ACCOUNT)
 		{
 			if (m_pass != op.m_pass)
 				return false;
