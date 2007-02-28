@@ -4,8 +4,12 @@
 
 CLoginManager CLoginManager::m_theLoginManager;
 
-bool CLoginManager::GetPassword(CServer &server, wxString name /*=_T("")*/, wxString challenge /*=_T("")*/)
+bool CLoginManager::GetPassword(CServer &server, bool silent, wxString name /*=_T("")*/, wxString challenge /*=_T("")*/)
 {
+	wxASSERT(!silent || server.GetLogonType() == ASK);
+	wxASSERT(server.GetLogonType() != INTERACTIVE || challenge != _T(""));
+	wxASSERT(challenge == _T("") || server.GetLogonType() == INTERACTIVE);
+
 	if (server.GetLogonType() == ASK)
 	{
 		std::list<t_passwordcache>::const_iterator iter;
@@ -22,7 +26,14 @@ bool CLoginManager::GetPassword(CServer &server, wxString name /*=_T("")*/, wxSt
 			return true;
 		}
 	}
+	if (silent)
+		return false;
 
+	return DisplayDialog(server, name, challenge);
+}
+
+bool CLoginManager::DisplayDialog(CServer &server, wxString name, wxString challenge)
+{
 	wxDialog pwdDlg;
 	wxXmlResource::Get()->LoadDialog(&pwdDlg, wxGetApp().GetTopWindow(), _T("ID_ENTERPASSWORD"));
 	if (name == _T(""))

@@ -11,10 +11,13 @@ class CLoginManager
 public:
 	static CLoginManager& Get() { return m_theLoginManager; }
 
-	bool GetPassword(CServer& server, wxString name = _T(""), wxString challenge = _T(""));
+	bool GetPassword(CServer& server, bool silent, wxString name = _T(""), wxString challenge = _T(""));
+	
 	void CachedPasswordFailed(const CServer& server);
 
 protected:
+	bool DisplayDialog(CServer& server, wxString name, wxString challenge);
+
 	static CLoginManager m_theLoginManager;
 
 	// Session password cache for Ask-type servers

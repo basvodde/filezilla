@@ -636,7 +636,7 @@ void CMainFrame::OnReconnect(wxCommandEvent &event)
 
 	if (server.GetLogonType() == ASK)
 	{
-		if (!CLoginManager::Get().GetPassword(server))
+		if (!CLoginManager::Get().GetPassword(server, false))
 			return;
 	}
 
@@ -781,7 +781,7 @@ void CMainFrame::OnSiteManager(wxCommandEvent& event)
 
 		if (data.m_server.GetLogonType() == ASK)
 		{
-			if (!CLoginManager::Get().GetPassword(data.m_server, data.m_name))
+			if (!CLoginManager::Get().GetPassword(data.m_server, false, data.m_name))
 				return;
 		}
 
