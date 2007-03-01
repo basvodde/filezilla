@@ -14,6 +14,7 @@
 #include "filter.h"
 #include <wx/dnd.h>
 #include "dndobjects.h"
+#include "loginmanager.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -134,6 +135,9 @@ DEFINE_EVENT_TYPE(fzEVT_FOLDERTHREAD_FILES)
 DECLARE_EVENT_TYPE(fzEVT_UPDATE_STATUSLINES, -1)
 DEFINE_EVENT_TYPE(fzEVT_UPDATE_STATUSLINES)
 
+DECLARE_EVENT_TYPE(fzEVT_ASKFORPASSWORD, -1)
+DEFINE_EVENT_TYPE(fzEVT_ASKFORPASSWORD)
+
 BEGIN_EVENT_TABLE(CQueueView, wxListCtrl)
 EVT_FZ_NOTIFICATION(wxID_ANY, CQueueView::OnEngineEvent)
 EVT_COMMAND(wxID_ANY, fzEVT_FOLDERTHREAD_COMPLETE, CQueueView::OnFolderThreadComplete)
@@ -149,6 +153,8 @@ EVT_MENU(XRCID("ID_REMOVE"), CQueueView::OnRemoveSelected)
 EVT_MENU(XRCID("ID_DEFAULT_FILEEXISTSACTION"), CQueueView::OnSetDefaultFileExistsAction)
 
 EVT_ERASE_BACKGROUND(CQueueView::OnEraseBackground)
+
+EVT_COMMAND(wxID_ANY, fzEVT_ASKFORPASSWORD, OnAskPassword)
 
 END_EVENT_TABLE()
 
@@ -1520,7 +1526,17 @@ bool CQueueView::TryStartNextTransfer()
 	pEngineData->lastServer = serverItem->GetServer();
 
 	if (!pEngineData->pEngine->IsConnected())
-		pEngineData->state = t_EngineData::connect;
+	{
+		if (pEngineData->lastServer.GetLogonType() == ASK)
+		{
+			if (CLoginManager::Get().GetPassword(pEngineData->lastServer, true))
+				pEngineData->state = t_EngineData::connect;
+			else
+				pEngineData->state = t_EngineData::askpassword;
+		}
+		else
+			pEngineData->state = t_EngineData::connect;
+	}
 	else if (oldServer != serverItem->GetServer())
 		pEngineData->state = t_EngineData::disconnect;
 	else if (pEngineData->pItem->GetType() == QueueItemType_File)
@@ -1596,8 +1612,14 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 			if (engineData.active && engineData.pStatusLineCtrl)
 				engineData.pStatusLineCtrl->SetTransferStatus(0);
 		}
-		else if (!IncreaseErrorCount(engineData))
-			return;
+		else
+		{
+			if (replyCode & FZ_REPLY_PASSWORDFAILED)
+				CLoginManager::Get().CachedPasswordFailed(engineData.lastServer);
+
+			if (!IncreaseErrorCount(engineData))
+				return;
+		}
 		break;
 	case t_EngineData::transfer:
 		if (replyCode == FZ_REPLY_OK)
@@ -1631,6 +1653,12 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 		return;
 	default:
 		return;
+	}
+
+	if (engineData.state == t_EngineData::connect && engineData.lastServer.GetLogonType() == ASK)
+	{
+		if (!CLoginManager::Get().GetPassword(engineData.lastServer, true))
+			engineData.state = t_EngineData::askpassword;
 	}
 
 	if (!m_activeMode)
@@ -1809,6 +1837,17 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 			engineData.state = t_EngineData::connect;
 			if (engineData.active && engineData.pStatusLineCtrl)
 				engineData.pStatusLineCtrl->SetTransferStatus(0);
+		}
+
+		if (engineData.state == t_EngineData::askpassword)
+		{
+			if (m_waitingForPassword.empty())
+			{
+				wxCommandEvent evt(fzEVT_ASKFORPASSWORD);
+				wxPostEvent(this, evt);
+			}
+			m_waitingForPassword.push_back(engineData.pEngine);
+			return;
 		}
 
 		if (engineData.state == t_EngineData::connect)
@@ -2971,4 +3010,43 @@ void CQueueView::UpdateSelections_ItemRangeRemoved(int removed, int count)
 	}
 	for (std::list<int>::const_iterator iter = itemsToUnselect.begin(); iter != itemsToUnselect.end(); iter++)
 		SetItemState(*iter, 0, wxLIST_STATE_SELECTED);
+}
+
+void CQueueView::OnAskPassword(wxCommandEvent& event)
+{
+	while (!m_waitingForPassword.empty())
+	{
+		const CFileZillaEngine* const pEngine = m_waitingForPassword.front();
+
+		std::vector<t_EngineData*>::iterator iter;
+		for (iter = m_engineData.begin(); iter != m_engineData.end(); iter++)
+		{
+			if ((*iter)->pEngine == pEngine)
+				break;
+		}
+		if (iter == m_engineData.end())
+		{
+			m_waitingForPassword.pop_front();
+			continue;
+		}
+		
+		t_EngineData* pEngineData = *iter;
+
+		if (pEngineData->state != t_EngineData::askpassword)
+		{
+			m_waitingForPassword.pop_front();
+			continue;
+		}
+		
+		static std::list<void*> AskPasswordBusyList;
+		if (CLoginManager::Get().GetPassword(pEngineData->lastServer, false))
+		{
+			pEngineData->state = t_EngineData::connect;
+			SendNextCommand(*pEngineData);
+		}
+		else
+			ResetEngine(*pEngineData, true);
+
+		m_waitingForPassword.pop_front();
+	}
 }

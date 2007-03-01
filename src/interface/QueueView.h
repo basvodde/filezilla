@@ -182,7 +182,8 @@ struct t_EngineData
 		connect,
 		transfer,
 		list,
-		mkdir
+		mkdir,
+		askpassword
 	} state;
 
 	CFileItem* pItem;
@@ -371,6 +372,8 @@ protected:
 
 	std::list<wxString> m_asciiFiles;
 
+	std::list<CFileZillaEngine*> m_waitingForPassword;
+
 	// Selection management.
 	void UpdateSelections_ItemAdded(int added);
 	void UpdateSelections_ItemRangeAdded(int added, int count);
@@ -394,6 +397,8 @@ protected:
 	void OnSetDefaultFileExistsAction(wxCommandEvent& event);
 
 	void OnEraseBackground(wxEraseEvent& event);
+
+	void OnAskPassword(wxCommandEvent& event);
 };
 
 #endif
