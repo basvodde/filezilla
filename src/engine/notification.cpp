@@ -88,7 +88,8 @@ enum RequestId CFileExistsNotification::GetRequestID() const
 	return reqId_fileexists;
 }
 
-CInteractiveLoginNotification::CInteractiveLoginNotification()
+CInteractiveLoginNotification::CInteractiveLoginNotification(const wxString& challenge)
+	: m_challenge(challenge)
 {
 	passwordSet = false;
 }
@@ -103,8 +104,8 @@ enum RequestId CInteractiveLoginNotification::GetRequestID() const
 }
 
 CActiveNotification::CActiveNotification(bool recv)
+	: m_recv(recv)
 {
-	m_recv = recv;
 }
 
 CActiveNotification::~CActiveNotification()

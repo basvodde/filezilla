@@ -429,14 +429,15 @@ void CSftpControlSocket::OnSftpEvent(CSftpEvent& event)
 
 			if (m_pCurrentServer->GetLogonType() == INTERACTIVE)
 			{
-				CInteractiveLoginNotification *pNotification = new CInteractiveLoginNotification;
-				pNotification->server = *m_pCurrentServer;
+				wxString challenge;
 				if (m_requestPreamble != _T(""))
-					pNotification->challenge += m_requestPreamble + _T("\n");
+					challenge += m_requestPreamble + _T("\n");
 				if (m_requestInstruction != _T(""))
-					pNotification->challenge += m_requestInstruction + _T("\n");
+					challenge += m_requestInstruction + _T("\n");
 				if (event.GetText() != _T("Password:"))
-					pNotification->challenge += event.GetText();
+					challenge += event.GetText();
+				CInteractiveLoginNotification *pNotification = new CInteractiveLoginNotification(challenge);
+				pNotification->server = *m_pCurrentServer;
 				pNotification->requestNumber = m_pEngine->GetNextAsyncRequestNumber();
 				m_pEngine->AddNotification(pNotification);
 			}

@@ -258,7 +258,7 @@ void CAsyncRequestQueue::ProcessNextRequest()
 	{
 		CInteractiveLoginNotification* pNotification = reinterpret_cast<CInteractiveLoginNotification*>(entry.pNotification);
 
-		if (CLoginManager::Get().GetPassword(pNotification->server, false, _T(""), pNotification->challenge))
+		if (CLoginManager::Get().GetPassword(pNotification->server, false, _T(""), pNotification->GetChallenge()))
 			pNotification->passwordSet = true;
 
 		entry.pEngine->SetAsyncRequestReply(pNotification);

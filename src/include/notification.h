@@ -166,7 +166,7 @@ public:
 class CInteractiveLoginNotification : public CAsyncRequestNotification
 {
 public:
-	CInteractiveLoginNotification();
+	CInteractiveLoginNotification(const wxString& challenge);
 	virtual ~CInteractiveLoginNotification();
 	virtual enum RequestId GetRequestID() const;
 
@@ -176,8 +176,11 @@ public:
 	// Set password by calling server.SetUser
 	CServer server;
 
+	const wxString& GetChallenge() const { return m_challenge; }
+
+protected:
 	// Password prompt string as given by the server
-	wxString challenge;
+	const wxString m_challenge;
 };
 
 // Indicate network action.
@@ -189,7 +192,7 @@ public:
 	virtual enum NotificationId GetID() const;
 	bool IsRecv() const;
 protected:
-	bool m_recv;
+	const bool m_recv;
 };
 
 class CTransferStatus

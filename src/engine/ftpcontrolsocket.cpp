@@ -722,9 +722,8 @@ int CFtpControlSocket::LogonSend()
 		case 1:
 			if (pData->challenge != _T(""))
 			{
-				CInteractiveLoginNotification *pNotification = new CInteractiveLoginNotification;
+				CInteractiveLoginNotification *pNotification = new CInteractiveLoginNotification(pData->challenge);
 				pNotification->server = *m_pCurrentServer;
-				pNotification->challenge = pData->challenge;
 				pNotification->requestNumber = m_pEngine->GetNextAsyncRequestNumber();
 				pData->waitForAsyncRequest = true;
 				pData->challenge = _T("");
