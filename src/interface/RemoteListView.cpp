@@ -472,12 +472,15 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 {
 	std::list<unsigned int> removedItems;
 	
-	for (unsigned int i = 0, j = 0; i < pDirectoryListing->GetCount(); i++, j++)
+	int j = 0;
+	for (unsigned int i = 0; i < pDirectoryListing->GetCount(); i++, j++)
 	{
 		if ((*pDirectoryListing)[i].name == (*m_pDirectoryListing)[j].name)
 			continue;
 		removedItems.push_back(j++);
 	}
+	for (; j < m_pDirectoryListing->GetCount(); j++)
+		removedItems.push_back(j);
 
 	for (std::list<unsigned int>::reverse_iterator iter = removedItems.rbegin(); iter != removedItems.rend(); iter++)
 	{
@@ -488,6 +491,9 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 
 	// Number of items left to remove
 	int toRemove = m_pDirectoryListing->GetCount() - pDirectoryListing->GetCount();
+	wxASSERT(toRemove == removedItems.size());
+	
+	std::list<int> removedIndexes;
 
 	const int size = m_indexMapping.size();
 	for (int i = size - 1; i >= 0; i--)
@@ -495,22 +501,21 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 		bool removed = false;
 
 		// j is the offset to index has to be adjusted
-		int j = 1;
+		int j = 0;
 		for (std::list<unsigned int>::const_iterator iter = removedItems.begin(); iter != removedItems.end(); iter++, j++)
 		{
 			if (*iter > m_indexMapping[i])
-				continue;
+				break;
 
 			if (*iter == m_indexMapping[i])
 			{
+				removedIndexes.push_back(i);
 				removed = true;
 				toRemove--;
-				m_indexMapping.erase(m_indexMapping.begin() + i);
+				break;
 			}
-			else
-				m_indexMapping[i] -= j;
-			break;
 		}
+		m_indexMapping[i] -= j;
 
 		// Update selection
 		bool isSelected = GetItemState(i, wxLIST_STATE_SELECTED) != 0;
@@ -527,21 +532,25 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 
 		if (isSelected)
 		{
-			if (!needSelection)
+			if (!needSelection && toRemove)
 				SetItemState(i, 0, wxLIST_STATE_SELECTED);
 
-			if (!removed && toRemove)
+			if (!removed)
 				selectedItems.push_back(i - toRemove);
 		}
 		else if (needSelection)
 			SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 	}
 
+	wxASSERT(removedIndexes.size() == removedItems.size());
+	for (std::list<int>::reverse_iterator iter = removedIndexes.rbegin(); iter != removedIndexes.rend(); iter++)
+	{
+		m_indexMapping.erase(m_indexMapping.begin() + *iter);
+	}
+
 	m_pDirectoryListing = pDirectoryListing;
 
 	SetItemCount(m_indexMapping.size());
-
-	Refresh();
 }
 
 bool CRemoteListView::UpdateDirectoryListing(const CDirectoryListing *pDirectoryListing)
@@ -587,6 +596,14 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 		// Makes only sense for big listings though.
 		if (UpdateDirectoryListing(pDirectoryListing))
 		{
+			const CDirectoryListing* pOld = m_pDirectoryListing;
+			wxASSERT(GetItemCount() == m_indexMapping.size());
+			wxASSERT(GetItemCount() == m_fileData.size());
+			wxASSERT(m_pDirectoryListing->GetCount() + 1 >= GetItemCount());
+			wxASSERT(m_indexMapping[0] == m_pDirectoryListing->GetCount());
+
+			Refresh();
+
 			if (!modified)
 				ProcessDirectoryListing();
 			return;
