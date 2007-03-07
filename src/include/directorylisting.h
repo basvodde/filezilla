@@ -28,6 +28,27 @@ public:
 #define UNSURE_CHANGE	(0x08|UNSURE_UNSURE)
 #define UNSURE_CONFUSED	(0x10|UNSURE_UNSURE)
 
+class CDirentryObject
+{
+public:
+	CDirentryObject(const CDirentryObject& entryObject);
+	CDirentryObject(const CDirentry& entry);
+	CDirentryObject();
+	virtual ~CDirentryObject();
+	
+	CDirentryObject& operator=(const CDirentryObject &a);
+
+	const CDirentry& GetEntry() const;
+	CDirentry& GetEntry();
+
+protected:
+	void Unref();
+	void Copy();
+
+	int *m_pReferenceCount;
+	CDirentry* m_pEntry;
+};
+
 class CDirectoryListing
 {
 public:
@@ -60,13 +81,15 @@ public:
 
 	void Assign(const std::list<CDirentry> &entries);
 
+	bool RemoveEntry(unsigned int index);
+
 protected:
 
 	void AddRef();
 	void Unref();
 	void Copy();
 
-	std::vector<CDirentry> *m_pEntries;
+	std::vector<CDirentryObject> *m_pEntries;
 
 	unsigned int m_entryCount;
 

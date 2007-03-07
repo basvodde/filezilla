@@ -142,7 +142,8 @@ const CDirentry& CDirectoryListing::operator[](unsigned int index) const
 {
 	// Commented out, too heavy speed penalty
 	// wxASSERT(index < m_entryCount);
-	return (*m_pEntries)[index];
+	const CDirentryObject& entryObject = (*m_pEntries)[index];
+	return entryObject.GetEntry();
 }
 
 CDirentry& CDirectoryListing::operator[](unsigned int index)
@@ -152,7 +153,7 @@ CDirentry& CDirectoryListing::operator[](unsigned int index)
 
 	Copy();
 
-	return (*m_pEntries)[index];
+	return (*m_pEntries)[index].GetEntry();
 }
 
 void CDirectoryListing::Unref()
@@ -181,7 +182,7 @@ void CDirectoryListing::AddRef()
 	{
 		// New object
 		m_referenceCount = new int(1);
-		m_pEntries = new std::vector<CDirentry>;
+		m_pEntries = new std::vector<CDirentryObject>;
 		return;
 	}
 	(*m_referenceCount)++;
@@ -205,7 +206,7 @@ void CDirectoryListing::Copy()
 	m_referenceCount = new int(1);
 	
 
-	std::vector<CDirentry>* pEntries = new std::vector<CDirentry>;
+	std::vector<CDirentryObject>* pEntries = new std::vector<CDirentryObject>;
 	*pEntries = *m_pEntries;
 	m_pEntries = pEntries;
 }
@@ -226,4 +227,110 @@ void CDirectoryListing::Assign(const std::list<CDirentry> &entries)
 			m_hasDirs = true;
 		m_pEntries->push_back(*iter);
 	}
+}
+
+bool CDirectoryListing::RemoveEntry(unsigned int index)
+{
+	if (index >= GetCount())
+		return false;
+
+	Copy();
+
+	m_pEntries->erase(m_pEntries->begin() + index);
+
+	m_entryCount--;
+
+	m_hasUnsureEntries |= UNSURE_REMOVE;
+
+	return true;
+}
+
+CDirentryObject::CDirentryObject()
+{
+	m_pEntry = 0;
+	m_pReferenceCount = 0;
+}
+
+CDirentryObject::CDirentryObject(const CDirentryObject& entryObject)
+{
+	m_pEntry = entryObject.m_pEntry;
+	m_pReferenceCount = entryObject.m_pReferenceCount;
+	if (m_pReferenceCount)
+		(*m_pReferenceCount)++;
+}
+
+CDirentryObject::~CDirentryObject()
+{
+	Unref();
+}
+
+CDirentryObject& CDirentryObject::operator=(const CDirentryObject &a)
+{
+	if (&a == this)
+		return *this;
+
+	if (m_pReferenceCount && m_pReferenceCount == a.m_pReferenceCount)
+	{
+		// References the same listing
+		return *this;
+	}
+
+	Unref();
+
+	m_pEntry = a.m_pEntry;
+	m_pReferenceCount = a.m_pReferenceCount;
+	if (m_pReferenceCount)
+		(*m_pReferenceCount)++;
+
+	return *this;
+}
+
+void CDirentryObject::Unref()
+{
+	if (!m_pReferenceCount)
+		return;
+
+	if (*m_pReferenceCount > 1)
+	{
+		(*m_pReferenceCount)--;
+		return;
+	}
+
+	delete m_pReferenceCount;
+	m_pReferenceCount = 0;
+	delete m_pEntry;
+	m_pEntry = 0;
+}
+
+void CDirentryObject::Copy()
+{
+	if (!m_pReferenceCount)
+	{
+		m_pEntry = new CDirentry;
+		m_pReferenceCount = new int(1);
+		return;
+	}
+	if (*m_pReferenceCount == 1)
+		return;
+	
+	(*m_pReferenceCount)--;
+	m_pEntry = new CDirentry(*m_pEntry);
+	m_pReferenceCount = new int(1);
+}
+
+CDirentryObject::CDirentryObject(const CDirentry& entry)
+{
+	m_pEntry = new CDirentry(entry);
+	m_pReferenceCount = new int(1);
+}
+
+const CDirentry& CDirentryObject::GetEntry() const
+{
+	return *m_pEntry;
+}
+
+CDirentry& CDirentryObject::GetEntry()
+{
+	Copy();
+	return *m_pEntry;
 }

@@ -277,7 +277,7 @@ bool CDirectoryCache::InvalidateFile(const CServer &server, const CServerPath &p
 		//bool matchCase = false;
 		for (unsigned int i = 0; i < entry.listing.GetCount(); i++)
 		{
-			if (!filename.CmpNoCase(entry.listing[i].name))
+			if (!filename.CmpNoCase(((const CCacheEntry&)entry).listing[i].name))
 			{
 				entry.listing[i].unsure = true;
 				//if (entry.listing[i].name == filename)
@@ -296,17 +296,18 @@ bool CDirectoryCache::UpdateFile(const CServer &server, const CServerPath &path,
 	for (tCacheIter iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
 	{
 		CCacheEntry &entry = *iter;
+		const CCacheEntry &cEntry = *iter;
 		if (entry.server != server || path.CmpNoCase(entry.listing.path))
 			continue;
 
 		bool matchCase = false;
 		for (unsigned int i = 0; i < entry.listing.GetCount(); i++)
 		{
-			if (!filename.CmpNoCase(entry.listing[i].name))
+			if (!filename.CmpNoCase(cEntry.listing[i].name))
 			{
-				entry.listing[i].unsure = true;
-				if (entry.listing[i].name == filename)
+				if (cEntry.listing[i].name == filename)
 					matchCase = true;
+				entry.listing[i].unsure = true;
 			}				
 		}
 		if (!matchCase && type != unknown && mayCreate)
@@ -335,7 +336,7 @@ bool CDirectoryCache::RemoveFile(const CServer &server, const CServerPath &path,
 {
 	for (tCacheIter iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
 	{
-		CCacheEntry &entry = *iter;
+		const CCacheEntry &entry = *iter;
 		if (entry.server != server || path.CmpNoCase(entry.listing.path))
 			continue;
 
@@ -353,10 +354,9 @@ bool CDirectoryCache::RemoveFile(const CServer &server, const CServerPath &path,
 				if (entry.listing[i].name == filename)
 					break;
 			wxASSERT(i != entry.listing.GetCount());
-			for (i++; i < entry.listing.GetCount(); i++)
-				entry.listing[i - 1] = entry.listing[i];
-			entry.listing.SetCount(entry.listing.GetCount() - 1);
-			entry.listing.m_hasUnsureEntries |= UNSURE_REMOVE;
+
+			CDirectoryListing& listing = iter->listing;
+			listing.RemoveEntry(i);
 		}
 		else
 		{
@@ -364,12 +364,12 @@ bool CDirectoryCache::RemoveFile(const CServer &server, const CServerPath &path,
 			{
 				if (!filename.CmpNoCase(entry.listing[i].name))
 				{
-					entry.listing[i].unsure = true;
+					iter->listing[i].unsure = true;
 				}				
 			}
-			entry.listing.m_hasUnsureEntries |= UNSURE_CONFUSED;
+			iter->listing.m_hasUnsureEntries |= UNSURE_CONFUSED;
 		}
-		entry.modificationTime = CTimeEx::Now();
+		iter->modificationTime = CTimeEx::Now();
 	}
 
 	return true;
