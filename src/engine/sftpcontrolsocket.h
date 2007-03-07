@@ -122,6 +122,9 @@ protected:
 
 	bool Send(wxString cmd, const wxString& show = _T(""));
 
+	// see src/putty/wildcard.c
+	wxString WildcardEscape(const wxString& file);
+
 	wxProcess* m_pProcess;
 	CSftpInputThread* m_pInputThread;
 	int m_pid;

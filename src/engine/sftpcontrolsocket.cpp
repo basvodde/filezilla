@@ -1735,7 +1735,8 @@ int CSftpControlSocket::Delete(const CServerPath& path /*=CServerPath()*/, const
 	CDirectoryCache cache;
 	cache.InvalidateFile(*m_pCurrentServer, path, file);
 
-	if (!Send(_T("rm ") + QuoteFilename(filename)))
+	if (!Send(_T("rm ") + WildcardEscape(QuoteFilename(filename)),
+			  _T("rm ") + QuoteFilename(filename)))
 		return FZ_REPLY_ERROR;
 
 	return FZ_REPLY_WOULDBLOCK;
@@ -1799,7 +1800,8 @@ int CSftpControlSocket::RemoveDir(const CServerPath& path /*=CServerPath()*/, co
 	CDirectoryCache cache;
 	cache.InvalidateFile(*m_pCurrentServer, path, subDir);
 
-	if (!Send(_T("rmdir ") + QuoteFilename(fullPath.GetPath())))
+	if (!Send(_T("rmdir ") + WildcardEscape(QuoteFilename(fullPath.GetPath())),
+			  _T("rmdir ") + QuoteFilename(fullPath.GetPath())))
 		return FZ_REPLY_ERROR;
 
 	return FZ_REPLY_WOULDBLOCK;
@@ -1917,8 +1919,12 @@ int CSftpControlSocket::ChmodSend(int prevResult /*=FZ_REPLY_OK*/)
 		{
 			CDirectoryCache cache;
 			cache.UpdateFile(*m_pCurrentServer, pData->m_cmd.GetPath(), pData->m_cmd.GetFile(), false, CDirectoryCache::unknown);
+		
+			wxString quotedFilename = QuoteFilename(pData->m_cmd.GetPath().FormatFilename(pData->m_cmd.GetFile(), !pData->m_useAbsolute));
+
+			res = Send(_T("chmod ") + pData->m_cmd.GetPermission() + _T(" ") + WildcardEscape(quotedFilename),
+					   _T("chmod ") + pData->m_cmd.GetPermission() + _T(" ") + quotedFilename);
 		}
-		res = Send(_T("chmod ") + pData->m_cmd.GetPermission() + _T(" ") + QuoteFilename(pData->m_cmd.GetPath().FormatFilename(pData->m_cmd.GetFile(), !pData->m_useAbsolute)));
 		break;
 	default:
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("unknown op state: %d"), pData->opState);
@@ -2029,11 +2035,13 @@ int CSftpControlSocket::RenameSend(int prevResult /*=FZ_REPLY_OK*/)
 			CDirectoryCache cache;
 			cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile());
 			cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetToPath(), pData->m_cmd.GetToFile());
-		}
 
-		res = Send(_T("mv ") + QuoteFilename(pData->m_cmd.GetFromPath().FormatFilename(pData->m_cmd.GetFromFile(), !pData->m_useAbsolute))
-					+ _T(" ")
-					+ QuoteFilename(pData->m_cmd.GetToPath().FormatFilename(pData->m_cmd.GetToFile(), !pData->m_useAbsolute && pData->m_cmd.GetFromPath() == pData->m_cmd.GetToPath())));
+			wxString localQuoted = QuoteFilename(pData->m_cmd.GetFromPath().FormatFilename(pData->m_cmd.GetFromFile(), !pData->m_useAbsolute));
+			wxString remoteQuoted = QuoteFilename(pData->m_cmd.GetToPath().FormatFilename(pData->m_cmd.GetToFile(), !pData->m_useAbsolute && pData->m_cmd.GetFromPath() == pData->m_cmd.GetToPath()));
+
+			res = Send(_T("mv ") + WildcardEscape(localQuoted) + _T(" ") + remoteQuoted,
+					   _T("mv ") + localQuoted + _T(" ") + remoteQuoted);
+		}
 		break;
 	default:
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("unknown op state: %d"), pData->opState);
@@ -2048,4 +2056,30 @@ int CSftpControlSocket::RenameSend(int prevResult /*=FZ_REPLY_OK*/)
 	}
 
 	return FZ_REPLY_WOULDBLOCK;
+}
+
+wxString CSftpControlSocket::WildcardEscape(const wxString& file)
+{
+	// see src/putty/wildcard.c
+
+	wxString escapedFile;
+	escapedFile.Alloc(file.Len());
+	for (unsigned int i = 0; i < file.Len(); i++)
+	{
+		const char& c = file[i];
+		switch (c)
+		{
+		case '[':
+		case ']':
+		case '*':
+		case '?':
+		case '\\':
+			escapedFile.Append('\\');
+			break;
+		default:
+			break;
+		}
+		escapedFile.Append(c);
+	}
+	return escapedFile;
 }
