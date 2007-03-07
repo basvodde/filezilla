@@ -1820,6 +1820,13 @@ int CSftpControlSocket::RemoveDirParseResponse(bool successful, const wxString& 
 		ResetOperation(FZ_REPLY_ERROR);
 
 	CSftpRemoveDirOpData *pData = static_cast<CSftpRemoveDirOpData *>(m_pCurOpData);
+	if (pData->path.IsEmpty())
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty pData->path"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
 	CDirectoryCache cache;
 	cache.RemoveDir(*m_pCurrentServer, pData->path, pData->subDir);
 	m_pEngine->SendDirectoryListingNotification(pData->path, false, true, false);
