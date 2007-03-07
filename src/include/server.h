@@ -104,6 +104,10 @@ public:
 	static wxString GetProtocolName(enum ServerProtocol protocol);
 	static enum ServerProtocol GetProtocolFromName(const wxString& name);
 
+	// These commands will be executed after a successful login.
+	const std::vector<wxString>& GetPostLoginCommands() const { return m_postLoginCommands; }
+	bool SetPostLoginCommands(const std::vector<wxString>& postLoginCommands);
+
 protected:
 	void Initialize();
 
@@ -120,6 +124,8 @@ protected:
 	int m_maximumMultipleConnections;
 	enum CharsetEncoding m_encodingType;
 	wxString m_customEncoding;
+
+	std::vector<wxString> m_postLoginCommands;
 };
 
 #endif

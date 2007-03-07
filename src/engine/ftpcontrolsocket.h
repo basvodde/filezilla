@@ -89,7 +89,7 @@ protected:
 	int Logon();
 	int LogonParseResponse();
 	int LogonSend();
-
+	
 	bool ParsePasvResponse(CRawTransferOpData* pData);
 
 	// Some servers are broken. Instead of an empty listing, some MVS servers

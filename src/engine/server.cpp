@@ -12,7 +12,6 @@ static const t_protocolInfo protocolInfos[] = {
 	{ false, SFTP, _T("SFTP - SSH File Transfer Protocol") },
 	{ true, FTPS, wxTRANSLATE("FTPS - FTP over implicit TLS/SSL") },
 	{ true, FTPES, wxTRANSLATE("FTPES - FTP over explicit TLS/SSL") },
-	{ true, SFTP, _T("SSH File Transfer Protocol (SFTP)") },
 	{ false, UNKNOWN, _T("") }
 };
 
@@ -224,6 +223,7 @@ CServer& CServer::operator=(const CServer &op)
 	m_maximumMultipleConnections = op.m_maximumMultipleConnections;
 	m_encodingType = op.m_encodingType;
 	m_customEncoding = op.m_customEncoding;
+	m_postLoginCommands = op.m_postLoginCommands;
 
 	return *this;
 }
@@ -269,6 +269,8 @@ bool CServer::operator==(const CServer &op) const
 		if (m_customEncoding != op.m_customEncoding)
 			return false;
 	}
+	if (m_postLoginCommands != op.m_postLoginCommands)
+		return false;
 
 	// Do not compare number of allowed multiple connections
 
@@ -367,6 +369,10 @@ void CServer::SetLogonType(enum LogonType logonType)
 void CServer::SetProtocol(enum ServerProtocol serverProtocol)
 {
 	wxASSERT(serverProtocol != UNKNOWN);
+
+	if (m_protocol != FTP && m_protocol != FTPS && m_protocol != FTPES)
+		m_postLoginCommands.empty();
+
 	m_protocol = serverProtocol;
 }
 
@@ -609,4 +615,16 @@ enum ServerProtocol CServer::GetProtocolFromName(const wxString& name)
 	}
 
 	return UNKNOWN;
+}
+
+bool CServer::SetPostLoginCommands(const std::vector<wxString>& postLoginCommands)
+{
+	if (m_protocol != FTP && m_protocol != FTPS && m_protocol != FTPES)
+	{
+		// Currently, only regular FTP supports it
+		return false;
+	}
+
+	m_postLoginCommands = postLoginCommands;
+	return true;
 }

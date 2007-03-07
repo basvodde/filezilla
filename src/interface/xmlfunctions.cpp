@@ -444,6 +444,30 @@ bool GetServer(TiXmlElement *node, CServer& server)
 	}
 	else
 		server.SetEncodingType(ENCODING_AUTO);
+
+	if (protocol == FTP || protocol == FTPS || protocol == FTPES)
+	{
+		std::vector<wxString> postLoginCommands;
+		TiXmlElement* pElement = node->FirstChildElement("PostLoginCommands");
+		if (pElement)
+		{
+			TiXmlElement* pCommandElement = pElement->FirstChildElement("Command");
+			while (pCommandElement)
+			{
+				TiXmlNode* textNode = pCommandElement->FirstChild();
+				if (textNode && textNode->ToText())
+				{
+					wxString command = ConvLocal(textNode->Value());
+					if (command != _T(""))
+						postLoginCommands.push_back(command);
+				}
+
+				pCommandElement = pCommandElement->NextSiblingElement("Command");
+			}
+		}
+		if (!server.SetPostLoginCommands(postLoginCommands))
+			return false;
+	}
 	
 	return true;
 }
@@ -499,6 +523,18 @@ void SetServer(TiXmlElement *node, const CServer& server)
 		AddTextElement(node, "EncodingType", _T("Custom"));
 		AddTextElement(node, "CustomEncoding", server.GetCustomEncoding());
 		break;
+	}
+
+	const enum ServerProtocol protocol = server.GetProtocol();
+	if (protocol == FTP || protocol == FTPS || protocol == FTPES)
+	{
+		const std::vector<wxString>& postLoginCommands = server.GetPostLoginCommands();
+		if (!postLoginCommands.empty())
+		{
+			TiXmlElement* pElement = node->InsertEndChild(TiXmlElement("PostLoginCommands"))->ToElement();
+			for (std::vector<wxString>::const_iterator iter = postLoginCommands.begin(); iter != postLoginCommands.end(); iter++)
+				AddTextElement(pElement, "Command", *iter);
+		}
 	}
 }
 

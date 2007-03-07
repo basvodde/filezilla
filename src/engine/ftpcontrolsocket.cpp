@@ -11,15 +11,17 @@
 #include "pathcache.h"
 
 #define LOGON_WELCOME	0
-#define LOGON_LOGON		1
-#define LOGON_AUTH_TLS	2
-#define LOGON_AUTH_SSL	3
+#define LOGON_AUTH_TLS	1
+#define LOGON_AUTH_SSL	2
+#define LOGON_LOGON		3
 #define LOGON_SYST		4
 #define LOGON_FEAT		5
 #define LOGON_CLNT		6
 #define LOGON_OPTSUTF8	7
 #define LOGON_PBSZ		8
 #define LOGON_PROT		9
+#define LOGON_CUSTOMCOMMANDS 10
+#define LOGON_DONE		11
 
 BEGIN_EVENT_TABLE(CFtpControlSocket, CControlSocket)
 EVT_FZ_EXTERNALIPRESOLVE(wxID_ANY, CFtpControlSocket::OnExternalIPAddress)
@@ -95,6 +97,11 @@ public:
 		gotPassword = false;
 		waitForAsyncRequest = false;
 		gotFirstWelcomeLine = false;
+
+		customCommandIndex = 0;
+
+		for (int i = 0; i < LOGON_DONE; i++)
+			neededCommands[i] = 1;
 	}
 
 	virtual ~CFtpLogonOpData()
@@ -110,6 +117,10 @@ public:
 	bool waitForAsyncRequest;
 	bool gotPassword;
 	bool gotFirstWelcomeLine;
+
+	unsigned int customCommandIndex;
+
+	int neededCommands[LOGON_DONE];
 };
 
 CFtpControlSocket::CFtpControlSocket(CFileZillaEnginePrivate *pEngine) : CControlSocket(pEngine)
@@ -380,6 +391,24 @@ void CFtpControlSocket::ParseResponse()
 	}
 }
 
+const int LO = -2, ER = -1;
+const int NUMLOGIN = 9; // currently supports 9 different login sequences
+int logonseq[NUMLOGIN][20] = {
+	// this array stores all of the logon sequences for the various firewalls
+	// in blocks of 3 nums. 1st num is command to send, 2nd num is next point in logon sequence array
+	// if 200 series response is rec'd from server as the result of the command, 3rd num is next
+	// point in logon sequence if 300 series rec'd
+	{0,LO,3, 1,LO,6, 12,LO,ER}, // no firewall
+	{3,6,3,  4,6,ER, 5,9,9, 0,LO,12, 1,LO,ER}, // SITE hostname
+	{3,6,3,  4,6,ER, 6,LO,9, 1,LO,ER}, // USER after logon
+	{7,3,3,  0,LO,6, 1,LO,ER}, //proxy OPEN
+	{3,6,3,  4,6,ER, 0,LO,9, 1,LO,ER}, // Transparent
+	{6,LO,3, 1,LO,ER}, // USER remoteID@remotehost
+	{8,6,3,  4,6,ER, 0,LO,9, 1,LO,ER}, //USER fireID@remotehost
+	{9,ER,3, 1,LO,6, 2,LO,ER}, //USER remoteID@remotehost fireID
+	{10,LO,3,11,LO,6,2,LO,ER} // USER remoteID@fireID@remotehost
+};
+
 int CFtpControlSocket::Logon()
 {
 	const enum CharsetEncoding encoding = m_pCurrentServer->GetEncodingType();
@@ -402,24 +431,6 @@ int CFtpControlSocket::LogonParseResponse()
 
 	CFtpLogonOpData *pData = reinterpret_cast<CFtpLogonOpData *>(m_pCurOpData);
 
-	const int LO = -2, ER = -1;
-	const int NUMLOGIN = 9; // currently supports 9 different login sequences
-	int logonseq[NUMLOGIN][20] = {
-		// this array stores all of the logon sequences for the various firewalls
-		// in blocks of 3 nums. 1st num is command to send, 2nd num is next point in logon sequence array
-		// if 200 series response is rec'd from server as the result of the command, 3rd num is next
-		// point in logon sequence if 300 series rec'd
-		{0,LO,3, 1,LO,6, 12,LO,ER}, // no firewall
-		{3,6,3,  4,6,ER, 5,9,9, 0,LO,12, 1,LO,ER}, // SITE hostname
-		{3,6,3,  4,6,ER, 6,LO,9, 1,LO,ER}, // USER after logon
-		{7,3,3,  0,LO,6, 1,LO,ER}, //proxy OPEN
-		{3,6,3,  4,6,ER, 0,LO,9, 1,LO,ER}, // Transparent
-		{6,LO,3, 1,LO,ER}, // USER remoteID@remotehost
-		{8,6,3,  4,6,ER, 0,LO,9, 1,LO,ER}, //USER fireID@remotehost
-		{9,ER,3, 1,LO,6, 2,LO,ER}, //USER remoteID@remotehost fireID
-		{10,LO,3,11,LO,6,2,LO,ER} // USER remoteID@fireID@remotehost
-	};
-
 	int code = GetReplyCode();
 
 	if (pData->opState == LOGON_WELCOME)
@@ -429,23 +440,13 @@ int CFtpControlSocket::LogonParseResponse()
 			DoClose(code == 5 ? FZ_REPLY_CRITICALERROR : 0);
 			return FZ_REPLY_DISCONNECTED;
 		}
-
-		if (m_pCurrentServer->GetProtocol() == FTPES)
-			pData->opState = LOGON_AUTH_TLS;
-		else
-		{
-			pData->opState = LOGON_LOGON;
-			pData->nCommand = logonseq[pData->logonType][0];
-		}
 	}
 	else if (pData->opState == LOGON_AUTH_TLS ||
 			 pData->opState == LOGON_AUTH_SSL)
 	{
 		if (code != 2 && code != 3)
 		{
-			if (pData->opState == LOGON_AUTH_TLS)
-				pData->opState = LOGON_AUTH_SSL;
-			else
+			if (pData->opState == LOGON_AUTH_SSL)
 			{
 				DoClose(code == 5 ? FZ_REPLY_CRITICALERROR : 0);
 				return FZ_REPLY_DISCONNECTED;
@@ -476,8 +477,7 @@ int CFtpControlSocket::LogonParseResponse()
 				m_pBackend = m_pTlsSocket;
 			}
 
-			pData->opState = LOGON_LOGON;
-			pData->nCommand = logonseq[pData->logonType][0];
+			pData->neededCommands[LOGON_AUTH_SSL] = 0;
 		}
 	}
 	else if (pData->opState == LOGON_LOGON)
@@ -502,7 +502,6 @@ int CFtpControlSocket::LogonParseResponse()
 				{
 					LogMessage(Status, _("Login data contains non-ascii characters and server might not be UTF-8 aware. Trying local charset."), 0);
 					m_useUTF8 = false;
-					pData->opState = LOGON_LOGON;
 					pData->nCommand = logonseq[pData->logonType][0];
 					pData->logonSequencePos = 0;
 					return LogonSend();
@@ -525,48 +524,11 @@ int CFtpControlSocket::LogonParseResponse()
 			DoClose(code == 5 ? FZ_REPLY_CRITICALERROR : 0);
 			return FZ_REPLY_ERROR;
 		case LO: //LO means we are logged on
-			wxString system;
-			enum capabilities cap = CServerCapabilities::GetCapability(*GetCurrentServer(), syst_command, &system);
-			if (cap == unknown)
-			{
-				pData->opState = LOGON_SYST;
-				return LogonSend();
-			}
-			else if (cap == yes)
-			{
-				if (system.Left(3) == _T("MVS") && m_pCurrentServer->GetType() == DEFAULT)
-					m_pCurrentServer->SetType(MVS);
-			}
-
-			if (CServerCapabilities::GetCapability(*GetCurrentServer(), feat_command) == unknown)
-			{
-				pData->opState = LOGON_FEAT;
-				return LogonSend();
-			}
-
-			if (system.Find(_T("FileZilla")) == -1 &&
-				m_useUTF8 && CServerCapabilities::GetCapability(*GetCurrentServer(), utf8_command) == yes)
-			{
-				// If server is not FileZilla Server, we might have to send some extra commands to enable
-				// UTF-8
-				if (CServerCapabilities::GetCapability(*GetCurrentServer(), clnt_command) == yes)
-					pData->opState = LOGON_CLNT;
-				else
-					pData->opState = LOGON_OPTSUTF8;
-				return LogonSend();
-			}
-
-			if (m_pTlsSocket)
-			{
-				pData->opState = LOGON_PBSZ;
-				return LogonSend();
-			}
-			LogMessage(Status, _("Connected"));
-			ResetOperation(FZ_REPLY_OK);
-			return true;
+			break;
+		default:
+			pData->nCommand = logonseq[pData->logonType][pData->logonSequencePos];
+			return LogonSend();
 		}
-
-		pData->nCommand = logonseq[pData->logonType][pData->logonSequencePos];
 	}
 	else if (pData->opState == LOGON_SYST)
 	{
@@ -581,33 +543,11 @@ int CFtpControlSocket::LogonParseResponse()
 				m_pCurrentServer->SetType(MVS);
 		}
 
-		if (CServerCapabilities::GetCapability(*GetCurrentServer(), feat_command) == unknown)
+		if (m_Response.Find(_T("FileZilla")) != -1)
 		{
-			pData->opState = LOGON_FEAT;
-			return LogonSend();
+			pData->neededCommands[LOGON_CLNT] = 0;
+			pData->neededCommands[LOGON_OPTSUTF8] = 0;
 		}
-
-		if (m_Response.Find(_T("FileZilla")) == -1 &&
-			m_useUTF8 && CServerCapabilities::GetCapability(*GetCurrentServer(), utf8_command) == yes)
-		{
-			// If server is not FileZilla Server, we might have to send some extra commands to enable
-			// UTF-8
-			if (CServerCapabilities::GetCapability(*GetCurrentServer(), clnt_command) == yes)
-				pData->opState = LOGON_CLNT;
-			else
-				pData->opState = LOGON_OPTSUTF8;
-			return LogonSend();
-		}
-
-		if (m_pTlsSocket)
-		{
-			pData->opState = LOGON_PBSZ;
-			return LogonSend();
-		}
-
-		LogMessage(Status, _("Connected"));
-		ResetOperation(FZ_REPLY_OK);
-		return true;
 	}
 	else if (pData->opState == LOGON_FEAT)
 	{
@@ -625,60 +565,89 @@ int CFtpControlSocket::LogonParseResponse()
 		const enum CharsetEncoding encoding = m_pCurrentServer->GetEncodingType();
 		if (encoding == ENCODING_AUTO && CServerCapabilities::GetCapability(*m_pCurrentServer, utf8_command) != yes)
 			m_useUTF8 = false;
-
-		wxString system;
-		CServerCapabilities::GetCapability(*GetCurrentServer(), syst_command, &system);
-			
-		if (system.Find(_T("FileZilla")) == -1 &&
-			m_useUTF8 && CServerCapabilities::GetCapability(*GetCurrentServer(), utf8_command) == yes)
-		{
-			if (CServerCapabilities::GetCapability(*GetCurrentServer(), clnt_command) == yes)
-				pData->opState = LOGON_CLNT;
-			else
-				pData->opState = LOGON_OPTSUTF8;
-			return LogonSend();
-		}
-
-		if (m_pTlsSocket)
-		{
-			pData->opState = LOGON_PBSZ;
-			return LogonSend();
-		}
-
-		LogMessage(Status, _("Connected"));
-		ResetOperation(FZ_REPLY_OK);
-		return true;
 	}
+	/*
 	else if (pData->opState == LOGON_CLNT)
 	{
 		// Don't check return code, it has no meaning for us
-		pData->opState = LOGON_OPTSUTF8;
 	}
 	else if (pData->opState == LOGON_OPTSUTF8)
 	{
 		// If server obeys RFC 2640 this command had no effect, return code
 		// is irrelevant
-
-		if (m_pTlsSocket)
-		{
-			pData->opState = LOGON_PBSZ;
-			return LogonSend();
-		}
-
-		LogMessage(Status, _("Connected"));
-		ResetOperation(FZ_REPLY_OK);
-		return true;
 	}
 	else if (pData->opState == LOGON_PBSZ)
-		pData->opState = LOGON_PROT;
+	{
+		// Nothing to do
+	}
+	*/
 	else if (pData->opState == LOGON_PROT)
 	{
 		if (code == 2 || code == 3)
 			m_protectDataChannel = true;
+	}
+	else if (pData->opState == LOGON_CUSTOMCOMMANDS)
+	{
+		pData->customCommandIndex++;
+		if (pData->customCommandIndex < m_pCurrentServer->GetPostLoginCommands().size())
+			return LogonSend();
+	}
 
-		LogMessage(Status, _("Connected"));
-		ResetOperation(FZ_REPLY_OK);
-		return true;
+	while (true)
+	{
+		pData->opState++;
+
+		if (pData->opState == LOGON_DONE)
+		{
+			LogMessage(Status, _("Connected"));
+			ResetOperation(FZ_REPLY_OK);
+			return true;
+		}
+
+		if (!pData->neededCommands[pData->opState])
+			continue;
+		else if (pData->opState == LOGON_SYST)
+		{
+			wxString system;
+			enum capabilities cap = CServerCapabilities::GetCapability(*GetCurrentServer(), syst_command, &system);
+			if (cap == unknown)
+				break;
+			else if (cap == yes)
+			{
+				if (system.Left(3) == _T("MVS") && m_pCurrentServer->GetType() == DEFAULT)
+					m_pCurrentServer->SetType(MVS);
+
+				if (system.Find(_T("FileZilla")) != -1)
+				{
+					pData->neededCommands[LOGON_CLNT] = 0;
+					pData->neededCommands[LOGON_OPTSUTF8] = 0;
+				}
+			}
+		}
+		else if (pData->opState == LOGON_FEAT)
+		{
+			enum capabilities cap = CServerCapabilities::GetCapability(*GetCurrentServer(), feat_command);
+			if (cap == unknown)
+				break;
+		}
+		else if (pData->opState == LOGON_CLNT)
+		{
+			if (!m_useUTF8)
+				continue;
+
+			if (CServerCapabilities::GetCapability(*GetCurrentServer(), clnt_command) == yes)
+				break;
+		}
+		else if (pData->opState == LOGON_OPTSUTF8)
+		{
+			if (!m_useUTF8)
+				continue;
+
+			if (CServerCapabilities::GetCapability(*GetCurrentServer(), utf8_command) == yes)
+				break;
+		}
+		else
+			break;
 	}
 
 	return LogonSend();
@@ -777,6 +746,14 @@ int CFtpControlSocket::LogonSend()
 	case LOGON_PROT:
 		res = Send(_T("PROT P"));
 		break;
+	case LOGON_CUSTOMCOMMANDS:
+		if (pData->customCommandIndex >= m_pCurrentServer->GetPostLoginCommands().size())
+		{
+			LogMessage(Debug_Warning, _T("pData->customCommandIndex >= m_pCurrentServer->GetPostLoginCommands().size()"));
+			DoClose(FZ_REPLY_INTERNALERROR);
+			return FZ_REPLY_ERROR;
+		}
+		res = Send(m_pCurrentServer->GetPostLoginCommands()[pData->customCommandIndex]);
 	default:
 		return FZ_REPLY_ERROR;
 	}
@@ -3286,7 +3263,21 @@ int CFtpControlSocket::Connect(const CServer &server)
 		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("deleting nonzero pData"));
 		delete m_pCurOpData;
 	}
-	m_pCurOpData = new CFtpLogonOpData;
+		
+	CFtpLogonOpData* pData = new CFtpLogonOpData;
+	pData->nCommand = logonseq[pData->logonType][0];
+
+	if (server.GetProtocol() != FTPES)
+	{
+		pData->neededCommands[LOGON_AUTH_TLS] = 0;
+		pData->neededCommands[LOGON_AUTH_SSL] = 0;
+		pData->neededCommands[LOGON_PBSZ] = 0;
+		pData->neededCommands[LOGON_PROT] = 0;
+	}
+	if (server.GetPostLoginCommands().empty())
+		pData->neededCommands[LOGON_CUSTOMCOMMANDS] = 0;
+
+	m_pCurOpData = pData;
 
 	return CControlSocket::Connect(server);
 }
