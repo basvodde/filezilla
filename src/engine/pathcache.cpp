@@ -47,7 +47,13 @@ CServerPath CPathCache::Lookup(const CServer& server, const CServerPath& source,
 	if (iter == m_cache.end())
 		return CServerPath();
 
-	const CServerPath& result = Lookup(iter->second, source, subdir);
+	CServerPath result = Lookup(iter->second, source, subdir);
+	if (result.IsEmpty())
+	{
+		CServerPath path = source;
+		path.AddSegment(subdir);
+		result = Lookup(iter->second, path, _T(""));
+	}
 
 	if (result.IsEmpty())
 		m_misses++;
