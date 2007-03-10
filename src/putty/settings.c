@@ -231,7 +231,7 @@ static void wprefs(void *sesskey, char *name,
     write_setting_s(sesskey, name, buf);
 }
 
-char *save_settings(char *section, int do_host, Config * cfg)
+char *save_settings(char *section, Config * cfg)
 {
     void *sesskey;
     char *errmsg;
@@ -239,20 +239,18 @@ char *save_settings(char *section, int do_host, Config * cfg)
     sesskey = open_settings_w(section, &errmsg);
     if (!sesskey)
 	return errmsg;
-    save_open_settings(sesskey, do_host, cfg);
+    save_open_settings(sesskey, cfg);
     close_settings_w(sesskey);
     return NULL;
 }
 
-void save_open_settings(void *sesskey, int do_host, Config *cfg)
+void save_open_settings(void *sesskey, Config *cfg)
 {
     int i;
     char *p;
 
     write_setting_i(sesskey, "Present", 1);
-    if (do_host) {
-	write_setting_s(sesskey, "HostName", cfg->host);
-    }
+    write_setting_s(sesskey, "HostName", cfg->host);
     write_setting_filename(sesskey, "LogFileName", cfg->logfilename);
     write_setting_i(sesskey, "LogType", cfg->logtype);
     write_setting_i(sesskey, "LogFileClash", cfg->logxfovr);
@@ -324,7 +322,7 @@ void save_open_settings(void *sesskey, int do_host, Config *cfg)
     write_setting_i(sesskey, "NoRemoteResize", cfg->no_remote_resize);
     write_setting_i(sesskey, "NoAltScreen", cfg->no_alt_screen);
     write_setting_i(sesskey, "NoRemoteWinTitle", cfg->no_remote_wintitle);
-    write_setting_i(sesskey, "NoRemoteQTitle", cfg->no_remote_qtitle);
+    write_setting_i(sesskey, "RemoteQTitleAction", cfg->remote_qtitle_action);
     write_setting_i(sesskey, "NoDBackspace", cfg->no_dbackspace);
     write_setting_i(sesskey, "NoRemoteCharset", cfg->no_remote_charset);
     write_setting_i(sesskey, "ApplicationCursorKeys", cfg->app_cursor);
@@ -447,16 +445,16 @@ void save_open_settings(void *sesskey, int do_host, Config *cfg)
     write_setting_i(sesskey, "SerialFlowControl", cfg->serflow);
 }
 
-void load_settings(char *section, int do_host, Config * cfg)
+void load_settings(char *section, Config * cfg)
 {
     void *sesskey;
 
     sesskey = open_settings_r(section);
-    load_open_settings(sesskey, do_host, cfg);
+    load_open_settings(sesskey, cfg);
     close_settings_r(sesskey);
 }
 
-void load_open_settings(void *sesskey, int do_host, Config *cfg)
+void load_open_settings(void *sesskey, Config *cfg)
 {
     int i;
     char prot[10];
@@ -466,11 +464,7 @@ void load_open_settings(void *sesskey, int do_host, Config *cfg)
     cfg->remote_cmd_ptr2 = NULL;
     cfg->ssh_nc_host[0] = '\0';
 
-    if (do_host) {
-	gpps(sesskey, "HostName", "", cfg->host, sizeof(cfg->host));
-    } else {
-	cfg->host[0] = '\0';	       /* blank hostname */
-    }
+    gpps(sesskey, "HostName", "", cfg->host, sizeof(cfg->host));
     gppfile(sesskey, "LogFileName", &cfg->logfilename);
     gppi(sesskey, "LogType", 0, &cfg->logtype);
     gppi(sesskey, "LogFileClash", LGXF_ASK, &cfg->logxfovr);
@@ -606,7 +600,17 @@ void load_open_settings(void *sesskey, int do_host, Config *cfg)
     gppi(sesskey, "NoRemoteResize", 0, &cfg->no_remote_resize);
     gppi(sesskey, "NoAltScreen", 0, &cfg->no_alt_screen);
     gppi(sesskey, "NoRemoteWinTitle", 0, &cfg->no_remote_wintitle);
-    gppi(sesskey, "NoRemoteQTitle", 1, &cfg->no_remote_qtitle);
+    {
+	/* Backward compatibility */
+	int no_remote_qtitle;
+	gppi(sesskey, "NoRemoteQTitle", 1, &no_remote_qtitle);
+	/* We deliberately interpret the old setting of "no response" as
+	 * "empty string". This changes the behaviour, but hopefully for
+	 * the better; the user can always recover the old behaviour. */
+	gppi(sesskey, "RemoteQTitleAction",
+	     no_remote_qtitle ? TITLE_EMPTY : TITLE_REAL,
+	     &cfg->remote_qtitle_action);
+    }
     gppi(sesskey, "NoDBackspace", 0, &cfg->no_dbackspace);
     gppi(sesskey, "NoRemoteCharset", 0, &cfg->no_remote_charset);
     gppi(sesskey, "ApplicationCursorKeys", 0, &cfg->app_cursor);
@@ -775,7 +779,7 @@ void load_open_settings(void *sesskey, int do_host, Config *cfg)
 
 void do_defaults(char *session, Config * cfg)
 {
-    load_settings(session, (session != NULL && *session), cfg);
+    load_settings(session, cfg);
 }
 
 static int sessioncmp(const void *av, const void *bv)

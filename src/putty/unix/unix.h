@@ -27,7 +27,7 @@
 struct Filename {
     char path[FILENAME_MAX];
 };
-#define f_open(filename, mode) ( fopen((filename).path, (mode)) )
+FILE *f_open(struct Filename, char const *, int);
 
 struct FontSpec {
     char name[256];
@@ -96,7 +96,7 @@ int reallyclose(void *frontend);
 
 /* Things pterm.c needs from {ptermm,uxputty}.c */
 char *make_default_wintitle(char *hostname);
-int process_nonoption_arg(char *arg, Config *cfg);
+int process_nonoption_arg(char *arg, Config *cfg, int *allow_launch);
 
 /* pterm.c needs this special function in xkeysym.c */
 int keysym_to_unicode(int keysym);

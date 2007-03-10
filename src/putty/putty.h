@@ -298,6 +298,11 @@ enum {
 };
 
 enum {
+    /* Actions on remote window title query */
+    TITLE_NONE, TITLE_EMPTY, TITLE_REAL
+};
+
+enum {
     /* Protocol back ends. (cfg.protocol) */
     PROT_RAW, PROT_TELNET, PROT_RLOGIN, PROT_SSH,
     /* PROT_SERIAL is supported on a subset of platforms, but it doesn't
@@ -486,7 +491,7 @@ struct config_tag {
     int no_remote_wintitle;	       /* disable remote retitling */
     int no_dbackspace;		       /* disable destructive backspace */
     int no_remote_charset;	       /* disable remote charset config */
-    int no_remote_qtitle;	       /* disable remote win title query */
+    int remote_qtitle_action;	       /* remote win title query action */
     int app_cursor;
     int app_keypad;
     int nethack_keypad;
@@ -772,10 +777,10 @@ void random_destroy_seed(void);
 /*
  * Exports from settings.c.
  */
-char *save_settings(char *section, int do_host, Config * cfg);
-void save_open_settings(void *sesskey, int do_host, Config *cfg);
-void load_settings(char *section, int do_host, Config * cfg);
-void load_open_settings(void *sesskey, int do_host, Config *cfg);
+char *save_settings(char *section, Config * cfg);
+void save_open_settings(void *sesskey, Config *cfg);
+void load_settings(char *section, Config * cfg);
+void load_open_settings(void *sesskey, Config *cfg);
 void get_sesslist(struct sesslist *, int allocate);
 void do_defaults(char *, Config *);
 void registry_cleanup(void);

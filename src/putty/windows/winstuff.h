@@ -18,7 +18,7 @@
 struct Filename {
     char path[FILENAME_MAX];
 };
-#define f_open(filename, mode) ( fopen((filename).path, (mode)) )
+#define f_open(filename, mode, isprivate) ( fopen((filename).path, (mode)) )
 
 struct FontSpec {
     char name[64];
@@ -208,6 +208,8 @@ extern int (WINAPI *p_WSAEnumNetworkEvents)
     (SOCKET s, WSAEVENT hEventObject, LPWSANETWORKEVENTS lpNetworkEvents);
 
 extern int socket_writable(SOCKET skt);
+
+extern void socket_reselect_all(void);
 
 /*
  * Exports from winctrls.c.

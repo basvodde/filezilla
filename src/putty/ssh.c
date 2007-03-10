@@ -7,6 +7,7 @@
 #include <stdarg.h>
 #include <assert.h>
 #include <limits.h>
+#include <signal.h>
 
 #include "putty.h"
 #include "tree234.h"
@@ -1489,6 +1490,7 @@ static struct Packet *construct_packet(Ssh ssh, int pkttype, va_list ap)
 
     while ((argtype = va_arg(ap, int)) != PKT_END) {
 	unsigned char *argp, argchar;
+	char *sargp;
 	unsigned long argint;
 	int arglen;
 	switch (argtype) {
@@ -1507,8 +1509,8 @@ static struct Packet *construct_packet(Ssh ssh, int pkttype, va_list ap)
 	    ssh_pkt_adddata(pkt, argp, arglen);
 	    break;
 	  case PKT_STR:
-	    argp = va_arg(ap, unsigned char *);
-	    ssh_pkt_addstring(pkt, argp);
+	    sargp = va_arg(ap, char *);
+	    ssh_pkt_addstring(pkt, sargp);
 	    break;
 	  case PKT_BIGNUM:
 	    bn = va_arg(ap, Bignum);
@@ -1654,7 +1656,7 @@ static void ssh_pkt_addstring(struct Packet *pkt, char *data)
 static void ssh1_pkt_addmp(struct Packet *pkt, Bignum b)
 {
     int len = ssh1_bignum_length(b);
-    unsigned char *data = snewn(len, char);
+    unsigned char *data = snewn(len, unsigned char);
     (void) ssh1_write_bignum(data, b);
     ssh_pkt_adddata(pkt, data, len);
     sfree(data);
@@ -1862,6 +1864,7 @@ static void ssh2_pkt_defer_noqueue(Ssh ssh, struct Packet *pkt, int noignore)
 	 * get encrypted with a known IV.
 	 */
 	struct Packet *ipkt = ssh2_pkt_init(SSH2_MSG_IGNORE);
+	ssh2_pkt_addstring_start(ipkt);
 	ssh2_pkt_defer_noqueue(ssh, ipkt, TRUE);
     }
     len = ssh2_pkt_construct(ssh, pkt);
@@ -1904,7 +1907,6 @@ static void ssh2_pkt_send(Ssh ssh, struct Packet *pkt)
 	ssh2_pkt_send_noqueue(ssh, pkt);
 }
 
-#if 0 /* disused */
 /*
  * Either queue or defer a packet, depending on whether queueing is
  * set.
@@ -1916,7 +1918,6 @@ static void ssh2_pkt_defer(Ssh ssh, struct Packet *pkt)
     else
 	ssh2_pkt_defer_noqueue(ssh, pkt, FALSE);
 }
-#endif
 
 /*
  * Send the whole deferred data block constructed by
@@ -1947,6 +1948,74 @@ static void ssh_pkt_defersend(Ssh ssh)
 	ssh->outgoing_data_size > ssh->max_data_size)
 	do_ssh2_transport(ssh, "too much data sent", -1, NULL);
     ssh->deferred_data_size = 0;
+}
+
+/*
+ * Send a packet whose length needs to be disguised (typically
+ * passwords or keyboard-interactive responses).
+ */
+static void ssh2_pkt_send_with_padding(Ssh ssh, struct Packet *pkt,
+				       int padsize)
+{
+#if 0
+    if (0) {
+	/*
+	 * The simplest way to do this is to adjust the
+	 * variable-length padding field in the outgoing packet.
+	 * 
+	 * Currently compiled out, because some Cisco SSH servers
+	 * don't like excessively padded packets (bah, why's it
+	 * always Cisco?)
+	 */
+	pkt->forcepad = padsize;
+	ssh2_pkt_send(ssh, pkt);
+    } else
+#endif
+    {
+	/*
+	 * If we can't do that, however, an alternative approach is
+	 * to use the pkt_defer mechanism to bundle the packet
+	 * tightly together with an SSH_MSG_IGNORE such that their
+	 * combined length is a constant. So first we construct the
+	 * final form of this packet and defer its sending.
+	 */
+	ssh2_pkt_defer(ssh, pkt);
+
+	/*
+	 * Now construct an SSH_MSG_IGNORE which includes a string
+	 * that's an exact multiple of the cipher block size. (If
+	 * the cipher is NULL so that the block size is
+	 * unavailable, we don't do this trick at all, because we
+	 * gain nothing by it.)
+	 */
+	if (ssh->cscipher) {
+	    int stringlen, i;
+
+	    stringlen = (256 - ssh->deferred_len);
+	    stringlen += ssh->cscipher->blksize - 1;
+	    stringlen -= (stringlen % ssh->cscipher->blksize);
+	    if (ssh->cscomp) {
+		/*
+		 * Temporarily disable actual compression, so we
+		 * can guarantee to get this string exactly the
+		 * length we want it. The compression-disabling
+		 * routine should return an integer indicating how
+		 * many bytes we should adjust our string length
+		 * by.
+		 */
+		stringlen -=
+		    ssh->cscomp->disable_compression(ssh->cs_comp_ctx);
+	    }
+	    pkt = ssh2_pkt_init(SSH2_MSG_IGNORE);
+	    ssh2_pkt_addstring_start(pkt);
+	    for (i = 0; i < stringlen; i++) {
+		char c = (char) random_byte();
+		ssh2_pkt_addstring_data(pkt, &c, 1);
+	    }
+	    ssh2_pkt_defer(ssh, pkt);
+	}
+	ssh_pkt_defersend(ssh);
+    }
 }
 
 /*
@@ -2633,6 +2702,9 @@ static int ssh_closing(Plug plug, const char *error_msg, int error_code,
 	else
 	    error_msg = "Server closed network connection";
     }
+
+    if (ssh->close_expected && ssh->clean_exit && ssh->exitcode < 0)
+	ssh->exitcode = 0;
 
     if (need_notify)
         notify_remote_exit(ssh->frontend);
@@ -3493,6 +3565,7 @@ static int do_ssh1_login(Ssh ssh, unsigned char *in, int inlen,
 		    /* and try again */
 		} else {
 		    assert(0 && "unexpected return from loadrsakey()");
+		    got_passphrase = FALSE;   /* placate optimisers */
 		}
 	    }
 
@@ -4574,7 +4647,7 @@ static void ssh1_msg_channel_data(Ssh ssh, struct Packet *pktin)
 	    /* Data for an agent message. Buffer it. */
 	    while (len > 0) {
 		if (c->u.a.lensofar < 4) {
-		    unsigned int l = min(4 - c->u.a.lensofar, len);
+		    unsigned int l = min(4 - c->u.a.lensofar, (unsigned)len);
 		    memcpy(c->u.a.msglen + c->u.a.lensofar, p,
 			   l);
 		    p += l;
@@ -4591,7 +4664,7 @@ static void ssh1_msg_channel_data(Ssh ssh, struct Packet *pktin)
 		if (c->u.a.lensofar >= 4 && len > 0) {
 		    unsigned int l =
 			min(c->u.a.totallen - c->u.a.lensofar,
-			    len);
+			    (unsigned)len);
 		    memcpy(c->u.a.message + c->u.a.lensofar, p,
 			   l);
 		    p += l;
@@ -6011,7 +6084,8 @@ static void ssh2_msg_channel_data(Ssh ssh, struct Packet *pktin)
 	  case CHAN_AGENT:
 	    while (length > 0) {
 		if (c->u.a.lensofar < 4) {
-		    unsigned int l = min(4 - c->u.a.lensofar, length);
+		    unsigned int l = min(4 - c->u.a.lensofar,
+					 (unsigned)length);
 		    memcpy(c->u.a.msglen + c->u.a.lensofar,
 			   data, l);
 		    data += l;
@@ -6028,7 +6102,7 @@ static void ssh2_msg_channel_data(Ssh ssh, struct Packet *pktin)
 		if (c->u.a.lensofar >= 4 && length > 0) {
 		    unsigned int l =
 			min(c->u.a.totallen - c->u.a.lensofar,
-			    length);
+			    (unsigned)length);
 		    memcpy(c->u.a.message + c->u.a.lensofar,
 			   data, l);
 		    data += l;
@@ -6297,11 +6371,13 @@ static void ssh2_msg_channel_request(Ssh ssh, struct Packet *pktin)
 			is_plausible = FALSE;
 		}
 	    }
+	    ssh->exitcode = 128;       /* means `unknown signal' */
 	    if (is_plausible) {
 		if (is_int) {
 		    /* Old non-standard OpenSSH. */
 		    int signum = ssh_pkt_getuint32(pktin);
 		    fmt_sig = dupprintf(" %d", signum);
+		    ssh->exitcode = 128 + signum;
 		} else {
 		    /* As per the drafts. */
 		    char *sig;
@@ -6313,6 +6389,60 @@ static void ssh2_msg_channel_request(Ssh ssh, struct Packet *pktin)
 			fmt_sig = dupprintf(" \"%.*s\"",
 					    siglen, sig);
 		    }
+
+		    /*
+		     * Really hideous method of translating the
+		     * signal description back into a locally
+		     * meaningful number.
+		     */
+
+		    if (0)
+			;
+#define TRANSLATE_SIGNAL(s) \
+    else if (siglen == lenof(#s)-1 && !memcmp(sig, #s, siglen)) \
+        ssh->exitcode = 128 + SIG ## s
+#ifdef SIGABRT
+		    TRANSLATE_SIGNAL(ABRT);
+#endif
+#ifdef SIGALRM
+		    TRANSLATE_SIGNAL(ALRM);
+#endif
+#ifdef SIGFPE
+		    TRANSLATE_SIGNAL(FPE);
+#endif
+#ifdef SIGHUP
+		    TRANSLATE_SIGNAL(HUP);
+#endif
+#ifdef SIGILL
+		    TRANSLATE_SIGNAL(ILL);
+#endif
+#ifdef SIGINT
+		    TRANSLATE_SIGNAL(INT);
+#endif
+#ifdef SIGKILL
+		    TRANSLATE_SIGNAL(KILL);
+#endif
+#ifdef SIGPIPE
+		    TRANSLATE_SIGNAL(PIPE);
+#endif
+#ifdef SIGQUIT
+		    TRANSLATE_SIGNAL(QUIT);
+#endif
+#ifdef SIGSEGV
+		    TRANSLATE_SIGNAL(SEGV);
+#endif
+#ifdef SIGTERM
+		    TRANSLATE_SIGNAL(TERM);
+#endif
+#ifdef SIGUSR1
+		    TRANSLATE_SIGNAL(USR1);
+#endif
+#ifdef SIGUSR2
+		    TRANSLATE_SIGNAL(USR2);
+#endif
+#undef TRANSLATE_SIGNAL
+		    else
+			ssh->exitcode = 128;
 		}
 		core = ssh2_pkt_getbool(pktin);
 		ssh_pkt_getstring(pktin, &msg, &msglen);
@@ -7373,7 +7503,6 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 		     * Send the responses to the server.
 		     */
 		    s->pktout = ssh2_pkt_init(SSH2_MSG_USERAUTH_INFO_RESPONSE);
-		    s->pktout->forcepad = 256;
 		    ssh2_pkt_adduint32(s->pktout, s->num_prompts);
 		    for (i=0; i < s->num_prompts; i++) {
 			dont_log_password(ssh, s->pktout, PKTLOG_BLANK);
@@ -7381,7 +7510,7 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 					   s->cur_prompt->prompts[i]->result);
 			end_log_omission(ssh, s->pktout);
 		    }
-		    ssh2_pkt_send(ssh, s->pktout);
+		    ssh2_pkt_send_with_padding(ssh, s->pktout, 256);
 
 		    /*
 		     * Get the next packet in case it's another
@@ -7451,7 +7580,6 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 		 * people who find out how long their password is!
 		 */
 		s->pktout = ssh2_pkt_init(SSH2_MSG_USERAUTH_REQUEST);
-		s->pktout->forcepad = 256;
 		ssh2_pkt_addstring(s->pktout, s->username);
 		ssh2_pkt_addstring(s->pktout, "ssh-connection");
 							/* service requested */
@@ -7460,7 +7588,7 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 		dont_log_password(ssh, s->pktout, PKTLOG_BLANK);
 		ssh2_pkt_addstring(s->pktout, s->password);
 		end_log_omission(ssh, s->pktout);
-		ssh2_pkt_send(ssh, s->pktout);
+		ssh2_pkt_send_with_padding(ssh, s->pktout, 256);
 		logevent("Sent password");
 		s->type = AUTH_TYPE_PASSWORD;
 
@@ -7581,7 +7709,6 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 		     * (see above for padding rationale)
 		     */
 		    s->pktout = ssh2_pkt_init(SSH2_MSG_USERAUTH_REQUEST);
-		    s->pktout->forcepad = 256;
 		    ssh2_pkt_addstring(s->pktout, s->username);
 		    ssh2_pkt_addstring(s->pktout, "ssh-connection");
 							/* service requested */
@@ -7593,7 +7720,7 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 				       s->cur_prompt->prompts[1]->result);
 		    free_prompts(s->cur_prompt);
 		    end_log_omission(ssh, s->pktout);
-		    ssh2_pkt_send(ssh, s->pktout);
+		    ssh2_pkt_send_with_padding(ssh, s->pktout, 256);
 		    logevent("Sent new password");
 		    
 		    /*
@@ -8778,8 +8905,7 @@ static void ssh_unthrottle(void *handle, int bufsize)
 	    ssh1_throttle(ssh, -1);
 	}
     } else {
-	if (ssh->mainchan && ssh->mainchan->closes == 0)
-	    ssh2_set_window(ssh->mainchan, OUR_V2_WINSIZE - bufsize);
+	ssh2_set_window(ssh->mainchan, OUR_V2_WINSIZE - bufsize);
     }
 }
 

@@ -2,7 +2,9 @@ noinst_LIBRARIES = libfzsftp_win.a
 
 INCLUDES = -I$(srcdir)/..
 
-libfzsftp_win_a_CFLAGS = $(AM_CFLAGS) -D_WINDOWS -DNO_IPV6
+libfzsftp_win_a_CFLAGS = $(AM_CFLAGS) \
+			-D_WINDOWS -D_WIN32_IE=0x0500 -DWINVER=0x0500 -D_WIN32_WINDOWS=0x0410 -D_WIN32_WINNT=0x0500 \
+			-DNO_IPV6
 libfzsftp_win_a_SOURCES = winnoise.c winpgntc.c \
 		       winstore.c winnet.c \
 		       windefs.c winmisc.c \
