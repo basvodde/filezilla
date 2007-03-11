@@ -437,13 +437,19 @@ void CState::HandleDroppedFiles(const wxFileDataObject* pFileDataObject, wxStrin
 
 bool CState::RecursiveCopy(wxString source, wxString target)
 {
+	if (source == _T(""))
+		return false;
+
+	if (target == _T(""))
+		return false;
+
 	if (target.Last() != wxFileName::GetPathSeparator())
 		target += wxFileName::GetPathSeparator();
 
 	if (source.Last() == wxFileName::GetPathSeparator())
 		source.RemoveLast();
 
-	if (source == _T(""))
+	if (source == target)
 		return false;
 	
 	int pos = source.Find(wxFileName::GetPathSeparator(), true);
