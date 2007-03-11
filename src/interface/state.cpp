@@ -449,7 +449,10 @@ bool CState::RecursiveCopy(wxString source, wxString target)
 	if (source.Last() == wxFileName::GetPathSeparator())
 		source.RemoveLast();
 
-	if (source == target)
+	if (source + wxFileName::GetPathSeparator() == target)
+		return false;
+
+	if (target.Len() > source.Len() && source == target.Left(source.Len()) && target[source.Len()] == wxFileName::GetPathSeparator())
 		return false;
 	
 	int pos = source.Find(wxFileName::GetPathSeparator(), true);
