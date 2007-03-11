@@ -75,6 +75,7 @@ void CStatusLineCtrl::OnPaint(wxPaintEvent& event)
 
 	dc.SetFont(GetFont());
 	dc.SetPen(GetBackgroundColour());
+	dc.SetBrush(GetBackgroundColour());
 
 	// Get character height so that we can center the text vertically.
 	wxCoord h = (rect.GetHeight() - m_textHeight) / 2;
