@@ -234,6 +234,12 @@ void CFtpControlSocket::ParseLine(wxString line)
 				CServerCapabilities::SetCapability(*m_pCurrentServer, mlsd_command, yes);
 			else if (up == _T(" MLST") || up.Left(6) == _T(" MLST "))
 				CServerCapabilities::SetCapability(*m_pCurrentServer, mlsd_command, yes);
+			else if (up == _T(" MODE Z") || up.Left(6) == _T(" MODE Z "))
+				CServerCapabilities::SetCapability(*m_pCurrentServer, mode_z_support, yes);
+			else if (up == _T(" MFMT") || up.Left(6) == _T(" MFMT "))
+				CServerCapabilities::SetCapability(*m_pCurrentServer, mfmt_command, yes);
+			else if (up == _T(" PRET") || up.Left(6) == _T(" PRET "))
+				CServerCapabilities::SetCapability(*m_pCurrentServer, pret_command, yes);
 		}
 		else if (pData->opState == LOGON_WELCOME)
 		{
