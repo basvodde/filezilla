@@ -966,8 +966,8 @@ bool CDirectoryListingParser::ParseAsUnix(CLine *pLine, CDirentry &entry)
 			int pos;
 			if ((pos = entry.name.Find(_T(" -> "))) != -1)
 			{
-			    entry.target = entry.name.Mid(pos + 4);
-			    entry.name = entry.name.Left(pos);
+				entry.target = entry.name.Mid(pos + 4);
+				entry.name = entry.name.Left(pos);
 			}
 		}
 
@@ -1883,14 +1883,14 @@ void CDirectoryListingParser::AddData(char *pData, int len)
 
 void CDirectoryListingParser::AddLine(const wxChar* pLine)
 {
-    const int len = wxStrlen(pLine);
-    
-    wxChar* p = new wxChar[len + 1];
-    wxStrcpy(p, pLine);
-    
-    CLine line(p, len);
+	const int len = wxStrlen(pLine);
 
-    ParseLine(&line, m_server.GetType(), false);
+	wxChar* p = new wxChar[len + 1];
+	wxStrcpy(p, pLine);
+
+	CLine line(p, len);
+
+	ParseLine(&line, m_server.GetType(), false);
 }
 
 CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
