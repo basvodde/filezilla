@@ -44,6 +44,7 @@ public:
 	CDirectoryListing* Parse(const CServerPath &path);
 
 	void AddData(char *pData, int len);
+	void AddLine(const wxChar* pLine);
 
 protected:
 	CLine *GetLine(bool breakAtEnd = false);

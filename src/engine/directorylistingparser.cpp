@@ -1881,6 +1881,18 @@ void CDirectoryListingParser::AddData(char *pData, int len)
 	ParseData(true);
 }
 
+void CDirectoryListingParser::AddLine(const wxChar* pLine)
+{
+    const int len = wxStrlen(pLine);
+    
+    wxChar* p = new wxChar[len + 1];
+    wxStrcpy(p, pLine);
+    
+    CLine line(p, len);
+
+    ParseLine(&line, m_server.GetType(), false);
+}
+
 CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
 {
 	while (!m_DataList.empty())
