@@ -8,6 +8,10 @@
 #include <assert.h>
 #include <limits.h>
 
+#ifndef _WINDOWS
+#include <locale.h>
+#endif
+
 #define PUTTY_DO_GLOBALS
 #include "putty.h"
 #include "psftp.h"
@@ -1856,6 +1860,7 @@ static int sftp_cmd_open(struct sftp_command *cmd)
     return 1;
 }
 
+/* BEGINFZ UNUSED
 static int sftp_cmd_lcd(struct sftp_command *cmd)
 {
     char *currdir, *errmsg;
@@ -1889,6 +1894,8 @@ static int sftp_cmd_lpwd(struct sftp_command *cmd)
 
     return 1;
 }
+END FZ UNUSED */
+
 
 static int sftp_cmd_pling(struct sftp_command *cmd)
 {
@@ -2020,7 +2027,6 @@ static struct sftp_cmd_lookup {
 	    "  those particular commands.\n",
 	    sftp_cmd_help
     },
-/* END FZ UNUSED */
     {
 	"lcd", TRUE, "change local working directory",
 	    " <local-directory-name>\n"
@@ -2035,6 +2041,7 @@ static struct sftp_cmd_lookup {
 	    "  default location where the \"get\" command will save files).\n",
 	    sftp_cmd_lpwd
     },
+/* END FZ UNUSED */
     {
 	"ls", TRUE, "dir", NULL,
 	    sftp_cmd_ls
@@ -2853,6 +2860,10 @@ void cmdline_error(char *p, ...)
  */
 int psftp_main(int argc, char *argv[])
 {
+    #ifndef _WINDOWS
+    setlocale(LC_CTYPE, "C");
+    #endif
+
     int i;
     int portnumber = 0;
     char *userhost, *user;

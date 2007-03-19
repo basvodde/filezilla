@@ -278,6 +278,7 @@ loopexit:
 
 CSftpControlSocket::CSftpControlSocket(CFileZillaEnginePrivate *pEngine) : CControlSocket(pEngine)
 {
+	m_useUTF8 = true;
 	m_pProcess = 0;
 	m_pInputThread = 0;
 	m_pid = 0;
@@ -533,7 +534,7 @@ bool CSftpControlSocket::Send(wxString cmd, const wxString& show /*=_T("")*/)
 
 	cmd += _T("\n");
 
-	const wxCharBuffer str = cmd.mb_str();
+	const wxCharBuffer str = ConvToServer(cmd);
 	if (!m_pProcess)
 		return false;
 
@@ -920,12 +921,7 @@ int CSftpControlSocket::ListParseEntry(const wxString& entry)
 		return FZ_REPLY_INTERNALERROR;
 	}
 
-	wxCharBuffer str = entry.mb_str();
-	int len = strlen(str);
-	char* buffer = new char[len + 1];
-	strcpy(buffer, str);
-	buffer[len] = '\n';
-	pData->pParser->AddData(buffer, len + 1);
+	pData->pParser->AddLine(entry);
 
 	return FZ_REPLY_WOULDBLOCK;
 }

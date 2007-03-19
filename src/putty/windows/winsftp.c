@@ -23,6 +23,50 @@ int get_userpass_input(prompts_t *p, unsigned char *in, int inlen)
  * File access abstraction.
  */
 
+static wchar_t* utf8_to_wide(char* utf8)
+{
+    wchar_t *w;
+
+    int len = MultiByteToWideChar(CP_UTF8, 0, utf8, -1, 0, 0);
+    if (len <= 0)
+	return NULL;
+
+    w = snewn(len, wchar_t);
+
+    if (!w)
+	return NULL;
+
+    if (MultiByteToWideChar(CP_UTF8, 0, utf8, -1, w, len) <= 0)
+    {
+	sfree(w);
+	return NULL;
+    }
+
+    return w;
+}
+
+static char* wide_to_utf8(wchar_t* w)
+{
+    char* utf8;
+
+    int len = WideCharToMultiByte(CP_UTF8, 0, w, -1, 0, 0, 0, 0);
+    if (len <= 0)
+	return NULL;
+
+    utf8 = snewn(len, char);
+
+    if (!utf8)
+	return NULL;
+
+    if (WideCharToMultiByte(CP_UTF8, 0, w, -1, utf8, len, 0, 0) <= 0)
+    {
+	sfree(utf8);
+	return NULL;
+    }
+    
+    return utf8;
+}
+
 /*
  * Set local current directory. Returns NULL on success, or else an
  * error message which must be freed after printing.
@@ -31,7 +75,11 @@ char *psftp_lcd(char *dir)
 {
     char *ret = NULL;
 
-    if (!SetCurrentDirectory(dir)) {
+    wchar_t* w = utf8_to_wide(dir);
+    if (!w)
+	return dupstr("Failed to convert to wide character set");
+
+    if (!SetCurrentDirectoryW(w)) {
 	LPVOID message;
 	int i;
 	FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
@@ -44,6 +92,7 @@ char *psftp_lcd(char *dir)
 	ret = dupprintf("%.*s", i, (LPCTSTR)message);
 	LocalFree(message);
     }
+    sfree(w);
 
     return ret;
 }
@@ -54,11 +103,16 @@ char *psftp_lcd(char *dir)
  */
 char *psftp_getcwd(void)
 {
-    char *ret = snewn(256, char);
-    int len = GetCurrentDirectory(256, ret);
+    char* ret;
+    wchar_t *w = snewn(256, wchar_t);
+    int len = GetCurrentDirectoryW(256, w);
     if (len > 256)
-	ret = sresize(ret, len, char);
-    GetCurrentDirectory(len, ret);
+	w = sresize(w, len, wchar_t);
+    GetCurrentDirectoryW(len, w);
+
+    ret = wide_to_utf8(w);
+    sfree(w);
+
     return ret;
 }
 
@@ -77,8 +131,13 @@ RFile *open_existing_file(char *name, uint64 *size,
     HANDLE h;
     RFile *ret;
 
-    h = CreateFile(name, GENERIC_READ, FILE_SHARE_READ, NULL,
+    wchar_t* wname = utf8_to_wide(name);
+    if (!wname)
+	return NULL;
+
+    h = CreateFileW(wname, GENERIC_READ, FILE_SHARE_READ, NULL,
 		   OPEN_EXISTING, 0, 0);
+    sfree(wname);
     if (h == INVALID_HANDLE_VALUE)
 	return NULL;
 
@@ -125,8 +184,13 @@ WFile *open_new_file(char *name)
     HANDLE h;
     WFile *ret;
 
-    h = CreateFile(name, GENERIC_WRITE, 0, NULL,
+    wchar_t* wname = utf8_to_wide(name);
+    if (!wname)
+	return NULL;
+
+    h = CreateFileW(wname, GENERIC_WRITE, 0, NULL,
 		   CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+    sfree(wname);
     if (h == INVALID_HANDLE_VALUE)
 	return NULL;
 
@@ -141,8 +205,13 @@ WFile *open_existing_wfile(char *name, uint64 *size)
     HANDLE h;
     WFile *ret;
 
-    h = CreateFile(name, GENERIC_WRITE, FILE_SHARE_READ, NULL,
+    wchar_t* wname = utf8_to_wide(name);
+    if (!wname)
+	return NULL;
+
+    h = CreateFileW(wname, GENERIC_WRITE, FILE_SHARE_READ, NULL,
 		   OPEN_EXISTING, 0, 0);
+    sfree(wname);
     if (h == INVALID_HANDLE_VALUE)
 	return NULL;
 
@@ -220,7 +289,13 @@ uint64 get_file_posn(WFile *f)
 int file_type(char *name)
 {
     DWORD attr;
-    attr = GetFileAttributes(name);
+
+    wchar_t* wname = utf8_to_wide(name);
+    if (!wname)
+	return FILE_TYPE_NONEXISTENT;
+
+    attr = GetFileAttributesW(wname);
+    sfree(wname);
     /* We know of no `weird' files under Windows. */
     if (attr == (DWORD)-1)
 	return FILE_TYPE_NONEXISTENT;
@@ -238,20 +313,27 @@ struct DirHandle {
 DirHandle *open_directory(char *name)
 {
     HANDLE h;
-    WIN32_FIND_DATA fdat;
+    WIN32_FIND_DATAW fdat;
     char *findfile;
+    wchar_t *wfindfile;
     DirHandle *ret;
 
     /* Enumerate files in dir `foo'. */
     findfile = dupcat(name, "/*", NULL);
-    h = FindFirstFile(findfile, &fdat);
+
+    wfindfile = utf8_to_wide(findfile);
+    if (!wfindfile)
+	return NULL;
+
+    h = FindFirstFileW(wfindfile, &fdat);
     if (h == INVALID_HANDLE_VALUE)
 	return NULL;
+    sfree(wfindfile);
     sfree(findfile);
 
     ret = snew(DirHandle);
     ret->h = h;
-    ret->name = dupstr(fdat.cFileName);
+    ret->name = wide_to_utf8(fdat.cFileName);
     return ret;
 }
 
@@ -260,12 +342,12 @@ char *read_filename(DirHandle *dir)
     do {
 
 	if (!dir->name) {
-	    WIN32_FIND_DATA fdat;
-	    int ok = FindNextFile(dir->h, &fdat);
+	    WIN32_FIND_DATAW fdat;
+	    int ok = FindNextFileW(dir->h, &fdat);
 	    if (!ok)
 		return NULL;
 	    else
-		dir->name = dupstr(fdat.cFileName);
+		dir->name = wide_to_utf8(fdat.cFileName);
 	}
 
 	assert(dir->name);
@@ -297,16 +379,28 @@ void close_directory(DirHandle *dir)
 int test_wildcard(char *name, int cmdline)
 {
     HANDLE fh;
-    WIN32_FIND_DATA fdat;
+    WIN32_FIND_DATAW fdat;
+
+    wchar_t* wname = utf8_to_wide(name);
+    if (!wname)
+	return WCTYPE_NONEXISTENT;
 
     /* First see if the exact name exists. */
-    if (GetFileAttributes(name) != (DWORD)-1)
+    if (GetFileAttributesW(wname) != (DWORD)-1)
+    {
+	sfree(wname);
 	return WCTYPE_FILENAME;
+    }
 
     /* Otherwise see if a wildcard match finds anything. */
-    fh = FindFirstFile(name, &fdat);
+    fh = FindFirstFileW(wname, &fdat);
     if (fh == INVALID_HANDLE_VALUE)
+    {
+	sfree(wname);
 	return WCTYPE_NONEXISTENT;
+    }
+
+    sfree(wname);
 
     FindClose(fh);
     return WCTYPE_WILDCARD;
@@ -415,7 +509,16 @@ int vet_filename(char *name)
 
 int create_directory(char *name)
 {
-    return CreateDirectory(name, NULL) != 0;
+    int res;
+
+    wchar_t *wname = utf8_to_wide(name);
+    if (!wname)
+	return 0;
+
+    res = CreateDirectoryW(wname, NULL) != 0;
+    sfree(wname);
+
+    return res;
 }
 
 char *dir_file_cat(char *dir, char *file)
