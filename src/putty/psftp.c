@@ -2861,7 +2861,7 @@ static const char * const utf8suffixes[] = { ".utf8", ".utf-8", ".UTF8", ".UTF-8
 int psftp_init_utf8_locale()
 {
     unsigned int i;
-    char* locale = setlocale(LC_CTYPE, 0);
+    char* locale = setlocale(LC_CTYPE, "");
     if (locale)
     {
 	if (strcmp(locale, "C") && strcmp(locale, "POSIX"))
