@@ -1896,7 +1896,6 @@ static int sftp_cmd_lpwd(struct sftp_command *cmd)
 }
 END FZ UNUSED */
 
-
 static int sftp_cmd_pling(struct sftp_command *cmd)
 {
     int exitcode;
@@ -2855,15 +2854,97 @@ void cmdline_error(char *p, ...)
     exit(1);
 }
 
+#ifndef _WINDOWS
+
+static const char * const utf8suffixes[] = { ".utf8", ".utf-8", ".UTF8", ".UTF-8", "" };
+
+int psftp_init_utf8_locale()
+{
+    unsigned int i;
+    char* locale = setlocale(LC_CTYPE, 0);
+    if (locale)
+    {
+	if (strcmp(locale, "C") && strcmp(locale, "POSIX"))
+	{
+	    char *lang, *mod, *utf8locale;
+	    char *s;
+	    unsigned int i;
+
+	    for (i = 0; utf8suffixes[i]; i++)
+		if (strstr(locale, utf8suffixes[i]))
+		    return 0;
+
+	    // Locale is of the form 
+	    //   language[_territory][.code-set][@modifier]
+	    // Insert utf8 locale 
+	    lang = dupstr(locale);
+
+	    s = strchr(lang, '.');
+	    if (!s)
+		s = strchr(lang, '@');
+	    if (s)
+		*s = 0;
+
+	    s = strchr(locale, '@');
+	    if (s)
+		mod = dupstr(s);
+	    else
+		mod = dupstr("");
+
+	    for (i = 0; *utf8suffixes[i]; i++)
+	    {
+		utf8locale = dupprintf("%s%s%s", lang, utf8suffixes[i], mod);
+		
+		locale = setlocale(LC_CTYPE, utf8locale);
+		sfree(utf8locale);
+		if (!locale)
+		{
+		    utf8locale = dupprintf("%s%s", lang, utf8suffixes[i]);
+		    locale = setlocale(LC_CTYPE, utf8locale);
+		    sfree(utf8locale);
+		}
+
+		if (locale)
+		{
+		    sfree(lang);
+		    sfree(mod);
+		    return 0;
+		}
+	    }
+	    sfree(lang);
+	    sfree(mod);
+	}
+    }
+
+    // Try a few common locales
+    for (i = 0; *utf8suffixes[i]; i++)
+    {
+	char* utf8locale;
+
+	utf8locale = dupprintf("en_US%s", utf8suffixes[i]);
+	locale = setlocale(LC_CTYPE, utf8locale);
+	sfree(utf8locale);
+	if (locale)
+	    return 0;
+
+	utf8locale = dupprintf("en_GB%s", utf8suffixes[i]);
+	locale = setlocale(LC_CTYPE, utf8locale);
+	sfree(utf8locale);
+	if (locale)
+	    return 0;
+    }
+
+    // Fallback to C locale
+    setlocale(LC_CTYPE, "C");
+    return 1;
+}
+#endif
+
 /*
  * Main program. Parse arguments etc.
  */
 int psftp_main(int argc, char *argv[])
 {
-    #ifndef _WINDOWS
-    setlocale(LC_CTYPE, "C");
-    #endif
-
     int i;
     int portnumber = 0;
     char *userhost, *user;
@@ -2873,6 +2954,11 @@ int psftp_main(int argc, char *argv[])
     int errors = 0;
 
     fzprintf(sftpReply, "fzSftp started");
+
+#ifndef _WINDOWS
+    if (psftp_init_utf8_locale())
+	fzprintf(sftpVerbose, "Failed to select UTF-8 locale, filenames containing non-US-ASCII characters may cause problems.");
+#endif
 
     flags = FLAG_STDERR | FLAG_INTERACTIVE
 #ifdef FLAG_SYNCAGENT
