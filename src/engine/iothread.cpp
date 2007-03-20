@@ -27,6 +27,7 @@ CIOThread::CIOThread()
 	m_appWaiting = false;
 	m_threadWaiting = false;
 	m_destroyed = false;
+	m_wasCarriageReturn = false;
 }
 
 CIOThread::~CIOThread()
@@ -71,7 +72,7 @@ wxThreadEx::ExitCode CIOThread::Entry()
 	{
 		while (m_running)
 		{
-			int len = m_pFile->Read(m_buffers[m_curThreadBuf], BUFFERSIZE);
+			int len = ReadFromFile(m_buffers[m_curThreadBuf], BUFFERSIZE);
 
 			wxMutexLocker locker(m_mutex);
 			
@@ -278,94 +279,6 @@ int CIOThread::GetNextReadBuffer(char** pBuffer)
 	return m_bufferLens[newBuf];
 }
 
-/* Convert ascii net to local ascii
-#ifndef __WXMSW__
-			if (!m_binaryMode)
-			{
-				// On systems other than Windows, we have to convert the line endings from
-				// CRLF into LFs only. We do this by skipping every CR.
-				int i = 0;
-				while (i < numread && m_pTransferBuffer[i] != '\r')
-					i++;
-				int j = i;
-				while (i < numread)
-				{
-					if (m_pTransferBuffer[i] != '\r')
-						m_pTransferBuffer[j++] = m_pTransferBuffer[i];
-					i++;
-				}
-				m_pTransferBuffer += j;
-				m_transferBufferLen -= j;
-			}
-			else
-#endif
-*/
-
-/* convert local ascii to net ascii
-if (m_transferBufferPos * 2 < BUFFERSIZE)
-		{
-			if (pData->pFile)
-			{
-				wxFileOffset numread;
-#ifndef __WXMSW__
-				// Again, on  non-Windows systems perform ascii file conversion. This
-				// time we add CRs
-				if (!m_binaryMode)
-				{
-					int numToRead = (BUFFERSIZE - m_transferBufferPos) / 2;
-					char* tmp = new char[numToRead];
-					numread = pData->pFile->Read(tmp, numToRead);
-					if (numread < numToRead)
-					{
-						delete pData->pFile;
-						pData->pFile = 0;
-					}
-
-					char *p = m_pTransferBuffer + m_transferBufferPos;
-					for (int i = 0; i < numread; i++)
-					{
-						char c = tmp[i];
-						if (c == '\n')
-							*p++ = '\r';
-						*p++ = c;
-					}
-					delete [] tmp;
-					numread = p - (m_pTransferBuffer + m_transferBufferPos);
-				}
-				else
-#endif
-				{
-					numread = pData->pFile->Read(m_pTransferBuffer + m_transferBufferPos, BUFFERSIZE - m_transferBufferPos);
-					if (numread < BUFFERSIZE - m_transferBufferPos)
-					{
-						delete pData->pFile;
-						pData->pFile = 0;
-					}
-				}
-
-				if (numread > 0)
-					m_transferBufferPos += numread;
-				
-				if (numread < 0)
-				{
-					m_pControlSocket->LogMessage(::Error, _("Can't read from file"));
-					TransferEnd(1);
-					return;
-				}
-				else if (!numread && !m_transferBufferPos)
-				{
-					TransferEnd(0);
-					return;
-				}
-			}
-			else if (!m_transferBufferPos)
-			{
-				TransferEnd(0);
-				return;
-			}
-		}
-*/
-
 void CIOThread::Destroy()
 {
 	if (m_destroyed)
@@ -383,4 +296,51 @@ void CIOThread::Destroy()
 	m_mutex.Unlock();
 
 	Wait();
+}
+
+int CIOThread::ReadFromFile(char* pBuffer, int maxLen)
+{
+	// In binary mode, no conversion has to be done.
+	// Also, under Windows the native newline format is already identical
+	// to the newline format of the FTP protocol
+#ifndef __WXMSW__
+	if (m_binary)
+#endif
+		return m_pFile->Read(pBuffer, maxLen);
+
+#ifndef __WXMSW__
+
+	// In the worst case, length will doubled: If reading
+	// only LFs from the file
+	const int readLen = maxLen / 2;
+	const int offset = maxLen - readLen;
+
+	char* r = pBuffer + readLen;
+	int len = len = m_pFile->Read(r, readLen);
+	if (!len || len == wxInvalidOffset)
+		return len;
+
+	const char* const end = r + len;
+	char* w = pBuffer;
+
+	// Convert all stand-alone LFs into CRLF pairs.
+	while (r != end)
+	{
+		char c = *r++;
+		if (c == '\n')
+		{
+			if (!m_wasCarriageReturn)
+				*w++ = '\r';
+			m_wasCarriageReturn = false;
+		}
+		else if (c == '\r')
+			m_wasCarriageReturn = true;
+		else
+			m_wasCarriageReturn = false;
+
+		*w++ = c;
+	}
+
+	return w - pBuffer;
+#endif
 }

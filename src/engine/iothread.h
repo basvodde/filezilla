@@ -63,6 +63,8 @@ public:
 protected:
 	virtual ExitCode Entry();
 
+	int ReadFromFile(char* pBuffer, int maxLen);
+
 	wxEvtHandler* m_evtHandler;
 
 	bool m_read;
@@ -84,6 +86,8 @@ protected:
 	bool m_appWaiting;
 
 	bool m_destroyed;
+
+	bool m_wasCarriageReturn;
 };
 
 #endif //__IOTHREAD_H__
