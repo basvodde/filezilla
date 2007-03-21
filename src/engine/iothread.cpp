@@ -151,11 +151,11 @@ wxThreadEx::ExitCode CIOThread::Entry()
 			}
 			m_mutex.Unlock();
 
-			int written = m_pFile->Write(m_buffers[m_curThreadBuf], m_bufferLens[m_curThreadBuf]);
+			bool writeSuccessful = WriteToFile(m_buffers[m_curThreadBuf], m_bufferLens[m_curThreadBuf]);
 
 			wxMutexLocker locker(m_mutex);
 
-			if (written != (int)m_bufferLens[m_curThreadBuf])
+			if (!writeSuccessful)
 			{
 				m_error = true;
 				m_running = false;
@@ -238,10 +238,17 @@ bool CIOThread::Finalize(int len)
 	if (!len)
 		return true;
 
-	int written = m_pFile->Write(m_buffers[m_curAppBuf], len);
-	if (written != len)
+	if (!WriteToFile(m_buffers[m_curAppBuf], len))
 		return false;
 
+#ifndef __WXMSW__
+	if (!m_binary && m_wasCarriageReturn)
+	{
+		const char CR = '\r';
+		if (m_pFile->Write(&CR, 1) != 1)
+			return false;
+	}
+#endif
 	return true;
 }
 
@@ -342,5 +349,54 @@ int CIOThread::ReadFromFile(char* pBuffer, int maxLen)
 	}
 
 	return w - pBuffer;
+#endif
+}
+
+bool CIOThread::WriteToFile(char* pBuffer, int len)
+{
+	// In binary mode, no conversion has to be done.
+	// Also, under Windows the native newline format is already identical
+	// to the newline format of the FTP protocol
+#ifndef __WXMSW__
+	if (m_binary)
+	{
+#endif
+		int written = m_pFile->Write(pBuffer, len);
+		return written == len;
+#ifndef __WXMSW__
+	}
+	else
+	{
+		// On all CRLF pairs, omit the CR. Don't harm stand-alone CRs
+		// I assume disk access is buffered, otherwise the 1 byte writes are 
+		// going to hurt performance.
+		const char CR = '\r';
+		const char* const end = pBuffer + len;
+		for (char* r = pBuffer; r != end; r++)
+		{
+			char c = *r;
+			if (c == '\r')
+				m_wasCarriageReturn = true;
+			else if (c == '\n')
+			{
+				m_wasCarriageReturn = false;
+				if (m_pFile->Write(&c, 1) != 1)
+					return false;
+			}
+			else
+			{
+				if (m_wasCarriageReturn)
+				{
+					m_wasCarriageReturn = false;
+					if (m_pFile->Write(&CR, 1) != 1)
+						return false;
+				}
+				
+				if (m_pFile->Write(&c, 1) != 1)
+					return false;
+			}
+		}
+		return true;
+	}
 #endif
 }

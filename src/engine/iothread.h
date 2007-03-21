@@ -64,6 +64,7 @@ protected:
 	virtual ExitCode Entry();
 
 	int ReadFromFile(char* pBuffer, int maxLen);
+	bool WriteToFile(char* pBuffer, int len);
 
 	wxEvtHandler* m_evtHandler;
 
