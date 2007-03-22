@@ -852,7 +852,11 @@ void CUpdateWizard::RewrapPage(int page)
 		if (i != page)
 			size.IncTo(m_pages[i]->GetSize());
 	wxGetApp().GetWrapEngine()->WrapRecursive(m_pages[page], m_pages[page]->GetSizer(), size.x);
+	wxSize newSize = m_pages[page]->GetSizer()->GetMinSize();
+	newSize.IncTo(size);
+	m_pages[page]->GetSizer()->SetMinSize(newSize);
 	m_pages[page]->GetSizer()->Layout();
+	m_pages[page]->GetSizer()->Fit(m_pages[page]);
 }
 
 #endif //FZ_MANUALUPDATECHECK
