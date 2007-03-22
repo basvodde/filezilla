@@ -127,6 +127,8 @@ USE AT OWN RISK"), CBuildInfo::GetVersion().c_str()), _T("Important Information"
 	// Turn off idle events, we don't need them
 	wxIdleEvent::SetMode(wxIDLE_PROCESS_SPECIFIED);
 
+	wxUpdateUIEvent::SetMode(wxUPDATE_UI_PROCESS_SPECIFIED);
+
 	// Load the text wrapping engine
 	m_pWrapEngine = new CWrapEngine();
 	m_pWrapEngine->LoadCache();

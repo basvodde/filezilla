@@ -518,7 +518,9 @@ bool CMainFrame::CreateToolBar()
 	if (!m_pToolBar)
 	{
 		wxLogError(_("Cannot load toolbar from resource file"));
+		return false;
 	}
+	m_pToolBar->SetExtraStyle(wxWS_EX_PROCESS_UI_UPDATES);
 
 	CFilterDialog dlg;
 	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), dlg.HasActiveFilters());
