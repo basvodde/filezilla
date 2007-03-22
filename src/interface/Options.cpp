@@ -67,7 +67,9 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "File exists action upload", number, _T("0") },
 	{ "Allow ascii resume", number, _T("0") },
 	{ "Greeting version", string, _T("") },
-	{ "Onetime Dialogs", string, _T("") }
+	{ "Onetime Dialogs", string, _T("") },
+	{ "Show Tree Local", number, _T("1") },
+	{ "Show Tree Remote", number, _T("1") }
 };
 
 COptions::COptions()
