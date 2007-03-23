@@ -472,7 +472,7 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 {
 	std::list<unsigned int> removedItems;
 	
-	int j = 0;
+	unsigned int j = 0;
 	for (unsigned int i = 0; i < pDirectoryListing->GetCount(); i++, j++)
 	{
 		if ((*pDirectoryListing)[i].name == (*m_pDirectoryListing)[j].name)
@@ -599,7 +599,7 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 			const CDirectoryListing* pOld = m_pDirectoryListing;
 			wxASSERT(GetItemCount() == m_indexMapping.size());
 			wxASSERT(GetItemCount() == m_fileData.size());
-			wxASSERT(m_pDirectoryListing->GetCount() + 1 >= GetItemCount());
+			wxASSERT(m_pDirectoryListing->GetCount() + 1 >= (unsigned int)GetItemCount());
 			wxASSERT(m_indexMapping[0] == m_pDirectoryListing->GetCount());
 
 			Refresh();
