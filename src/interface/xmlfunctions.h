@@ -20,6 +20,7 @@ public:
 
 	void SetFileName(const wxString& name);
 	void SetFileName(const wxFileName& fileName);
+	const wxFileName& GetFileName() const { return m_fileName; }
 	
 	bool HasFileName() const { return m_fileName.IsOk(); }
 	

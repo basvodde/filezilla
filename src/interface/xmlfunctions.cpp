@@ -18,7 +18,7 @@ CXmlFile::CXmlFile(const wxFileName& fileName /*=wxFileName()*/)
 
 void CXmlFile::SetFileName(const wxString& name)
 {
-	wxFileName fileName(wxGetApp().GetSettingsDir(), name + _T(".xml"));
+	m_fileName = wxFileName(wxGetApp().GetSettingsDir(), name + _T(".xml"));
 	m_modificationTime = wxDateTime();
 }
 

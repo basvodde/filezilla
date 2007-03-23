@@ -168,25 +168,21 @@ bool CSiteManager::Load(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 		// to the same file or one is reading while the other one writes.
 		CInterProcessMutex mutex(MUTEX_SITEMANAGER);
 
-		wxFileName file(wxGetApp().GetSettingsDir(), _T("sitemanager.xml"));
-		TiXmlElement* pDocument = GetXmlFile(file);
+		CXmlFile file(_T("sitemanager"));
+		TiXmlElement* pDocument = file.Load();
 		if (!pDocument)
 		{
-			wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager will not be saved."), file.GetFullPath().c_str());
+			wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager will not be saved."), file.GetFileName().GetFullPath().c_str());
 			wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
 
 			return false;
 		}
+
 		pElement = pDocument->FirstChildElement("Servers");
 		if (!pElement)
-		{
-			delete pDocument->GetDocument();
 			return true;
-		}
 
 		bool res = Load(pElement, treeId);
-
-		delete pDocument->GetDocument();
 
 		pTree->SortChildren(treeId);
 		pTree->Expand(treeId);
