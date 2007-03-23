@@ -159,14 +159,21 @@ bool CSiteManager::Load(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 	if (!pElement || !treeId)
 	{
 		pTree->DeleteAllItems();
-		treeId = pTree->AddRoot(_("My Sites"), 0, 0);
-		pTree->SelectItem(treeId);
-		pTree->SetItemImage(treeId, 1, wxTreeItemIcon_Expanded);
-		pTree->SetItemImage(treeId, 1, wxTreeItemIcon_SelectedExpanded);
 
 		// We have to synchronize access to sitemanager.xml so that multiple processed don't write 
 		// to the same file or one is reading while the other one writes.
 		CInterProcessMutex mutex(MUTEX_SITEMANAGER);
+
+		// Load default sites
+		bool hasDefaultSites = LoadDefaultSites();
+		if (hasDefaultSites)
+			m_ownSites = pTree->AppendItem(pTree->GetRootItem(), _("My Sites"), 0, 0);
+		else
+			m_ownSites = pTree->AddRoot(_("My Sites"), 0, 0);
+		treeId = m_ownSites;
+		pTree->SelectItem(treeId);
+		pTree->SetItemImage(treeId, 1, wxTreeItemIcon_Expanded);
+		pTree->SetItemImage(treeId, 1, wxTreeItemIcon_SelectedExpanded);
 
 		CXmlFile file(_T("sitemanager"));
 		TiXmlElement* pDocument = file.Load();
@@ -280,7 +287,7 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 			return true;
 		}
 
-		bool res = Save(pElement, pTree->GetRootItem());
+		bool res = Save(pElement, m_ownSites);
 		
 		wxString error;
 		if (!SaveXmlFile(file, pDocument, &error))
@@ -502,7 +509,7 @@ void CSiteManager::OnBeginLabelEdit(wxTreeEvent& event)
 	}
 		
 	wxTreeItemId item = event.GetItem();
-	if (!item.IsOk() || item == pTree->GetRootItem())
+	if (!item.IsOk() || item == pTree->GetRootItem() || item == m_ownSites || IsPredefinedItem(item))
 	{
 		event.Veto();
 		return;
@@ -528,7 +535,7 @@ void CSiteManager::OnEndLabelEdit(wxTreeEvent& event)
 	}
 		
 	wxTreeItemId item = event.GetItem();
-	if (!item.IsOk() || item == pTree->GetRootItem())
+	if (!item.IsOk() || item == pTree->GetRootItem() || item == m_ownSites || IsPredefinedItem(item))
 	{
 		event.Veto();
 		return;
@@ -549,7 +556,7 @@ void CSiteManager::OnRename(wxCommandEvent& event)
 		return;
 		
 	wxTreeItemId item = pTree->GetSelection();
-	if (!item.IsOk() || item == pTree->GetRootItem())
+	if (!item.IsOk() || item == pTree->GetRootItem() || item == m_ownSites || IsPredefinedItem(item))
 		return;
 	
 	pTree->EditLabel(item);
@@ -562,7 +569,7 @@ void CSiteManager::OnDelete(wxCommandEvent& event)
 		return;
 		
 	wxTreeItemId item = pTree->GetSelection();
-	if (!item.IsOk() || item == pTree->GetRootItem())
+	if (!item.IsOk() || item == pTree->GetRootItem() || item == m_ownSites || IsPredefinedItem(item))
 		return;
 		
 	pTree->Delete(item);
@@ -592,7 +599,7 @@ void CSiteManager::OnNewSite(wxCommandEvent& event)
 		return;
 		
 	wxTreeItemId item = pTree->GetSelection();
-	if (!item.IsOk())
+	if (!item.IsOk() || IsPredefinedItem(item))
 		return;
 	
 	if (pTree->GetItemData(item))
@@ -666,6 +673,9 @@ bool CSiteManager::UpdateServer()
 	CSiteManagerItemData* data = reinterpret_cast<CSiteManagerItemData* >(pTree->GetItemData(item));
 	if (!data)
 		return false;
+
+	if (IsPredefinedItem(item))
+		return true;
 
 	unsigned long port;
 	XRCCTRL(*this, "ID_PORT", wxTextCtrl)->GetValue().ToULong(&port);
@@ -816,18 +826,22 @@ void CSiteManager::SetCtrlState()
 
 	wxTreeItemId item = pTree->GetSelection();
 	
+	const bool predefined = IsPredefinedItem(item);
+
 	CSiteManagerItemData* data = 0;
 	if (item.IsOk())
 		data = reinterpret_cast<CSiteManagerItemData* >(pTree->GetItemData(item));
 	if (!data)
 	{
 		// Set the control states according if it's possible to use the control
-		XRCCTRL(*this, "ID_RENAME", wxWindow)->Enable(item != pTree->GetRootItem());
-		XRCCTRL(*this, "ID_DELETE", wxWindow)->Enable(item != pTree->GetRootItem());
-		XRCCTRL(*this, "ID_COPY", wxWindow)->Enable(item != pTree->GetRootItem());
+		const bool root_or_predefined = (item == pTree->GetRootItem() || item == m_ownSites || predefined);
+
+		XRCCTRL(*this, "ID_RENAME", wxWindow)->Enable(!root_or_predefined);
+		XRCCTRL(*this, "ID_DELETE", wxWindow)->Enable(!root_or_predefined);
+		XRCCTRL(*this, "ID_COPY", wxWindow)->Enable(false);
 		XRCCTRL(*this, "ID_NOTEBOOK", wxWindow)->Enable(false);
-		XRCCTRL(*this, "ID_NEWFOLDER", wxWindow)->Enable(true);
-		XRCCTRL(*this, "ID_NEWSITE", wxWindow)->Enable(true);
+		XRCCTRL(*this, "ID_NEWFOLDER", wxWindow)->Enable(!predefined);
+		XRCCTRL(*this, "ID_NEWSITE", wxWindow)->Enable(!predefined);
 		XRCCTRL(*this, "ID_CONNECT", wxWindow)->Enable(false);
 
 		// Empty all site information
@@ -849,18 +863,22 @@ void CSiteManager::SetCtrlState()
 		XRCCTRL(*this, "ID_TRANSFERMODE_DEFAULT", wxRadioButton)->SetValue(true);
 		XRCCTRL(*this, "ID_LIMITMULTIPLE", wxCheckBox)->SetValue(false);
 		XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->SetValue(1);
+
+		XRCCTRL(*this, "ID_CHARSET_AUTO", wxRadioButton)->SetValue(true);
+		XRCCTRL(*this, "ID_ENCODING", wxTextCtrl)->SetValue(_T(""));
 	}
 	else
 	{
 		// Set the control states according if it's possible to use the control
-		XRCCTRL(*this, "ID_RENAME", wxWindow)->Enable(true);
-		XRCCTRL(*this, "ID_DELETE", wxWindow)->Enable(true);
+		XRCCTRL(*this, "ID_RENAME", wxWindow)->Enable(!predefined);
+		XRCCTRL(*this, "ID_DELETE", wxWindow)->Enable(!predefined);
 		XRCCTRL(*this, "ID_COPY", wxWindow)->Enable(true);
 		XRCCTRL(*this, "ID_NOTEBOOK", wxWindow)->Enable(true);
 		XRCCTRL(*this, "ID_NEWFOLDER", wxWindow)->Enable(false);
 		XRCCTRL(*this, "ID_NEWSITE", wxWindow)->Enable(false);
 		XRCCTRL(*this, "ID_CONNECT", wxWindow)->Enable(true);
 
+		XRCCTRL(*this, "ID_HOST", wxWindow)->Enable(!predefined);
 		XRCCTRL(*this, "ID_HOST", wxTextCtrl)->SetValue(data->m_server.GetHost());
 		unsigned int port = data->m_server.GetPort();
 
@@ -868,16 +886,18 @@ void CSiteManager::SetCtrlState()
 			XRCCTRL(*this, "ID_PORT", wxTextCtrl)->SetValue(wxString::Format(_T("%d"), port));
 		else
 			XRCCTRL(*this, "ID_PORT", wxTextCtrl)->SetValue(_T(""));
+		XRCCTRL(*this, "ID_PORT", wxWindow)->Enable(!predefined);
 
 		const wxString& protocolName = CServer::GetProtocolName(data->m_server.GetProtocol());
 		if (protocolName != _T(""))
 			XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(protocolName);
 		else
 			XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(CServer::GetProtocolName(FTP));
+		XRCCTRL(*this, "ID_PROTOCOL", wxWindow)->Enable(!predefined);
 
-		XRCCTRL(*this, "ID_USER", wxTextCtrl)->Enable(data->m_server.GetLogonType() != ANONYMOUS);
-		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->Enable(data->m_server.GetLogonType() == NORMAL || data->m_server.GetLogonType() == ACCOUNT);
-		XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->Enable(data->m_server.GetLogonType() == ACCOUNT);
+		XRCCTRL(*this, "ID_USER", wxTextCtrl)->Enable(!predefined && data->m_server.GetLogonType() != ANONYMOUS);
+		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->Enable(!predefined && data->m_server.GetLogonType() == NORMAL || data->m_server.GetLogonType() == ACCOUNT);
+		XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->Enable(!predefined && data->m_server.GetLogonType() == ACCOUNT);
 
 		switch (data->m_server.GetLogonType())
 		{
@@ -897,11 +917,13 @@ void CSiteManager::SetCtrlState()
 			XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetStringSelection(_("Anonymous"));
 			break;
 		}
+		XRCCTRL(*this, "ID_LOGONTYPE", wxWindow)->Enable(!predefined);
 
 		XRCCTRL(*this, "ID_USER", wxTextCtrl)->SetValue(data->m_server.GetUser());
 		XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->SetValue(data->m_server.GetAccount());
 		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->SetValue(data->m_server.GetPass());
 		XRCCTRL(*this, "ID_COMMENTS", wxTextCtrl)->SetValue(data->m_comments);
+		XRCCTRL(*this, "ID_COMMENTS", wxWindow)->Enable(!predefined);
 
 		switch (data->m_server.GetType())
 		{
@@ -924,10 +946,15 @@ void CSiteManager::SetCtrlState()
 			XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->SetStringSelection(_("Default"));
 			break;
 		}
+		XRCCTRL(*this, "ID_SERVERTYPE", wxWindow)->Enable(!predefined);
 		XRCCTRL(*this, "ID_LOCALDIR", wxTextCtrl)->SetValue(data->m_localDir);
+		XRCCTRL(*this, "ID_LOCALDIR", wxWindow)->Enable(!predefined);
 		XRCCTRL(*this, "ID_REMOTEDIR", wxTextCtrl)->SetValue(data->m_remoteDir.GetPath());
+		XRCCTRL(*this, "ID_REMOTEDIR", wxWindow)->Enable(!predefined);
 		XRCCTRL(*this, "ID_TIMEZONE_HOURS", wxSpinCtrl)->SetValue(data->m_server.GetTimezoneOffset() / 60);
+		XRCCTRL(*this, "ID_TIMEZONE_HOURS", wxWindow)->Enable(!predefined);
 		XRCCTRL(*this, "ID_TIMEZONE_MINUTES", wxSpinCtrl)->SetValue(data->m_server.GetTimezoneOffset() % 60);
+		XRCCTRL(*this, "ID_TIMEZONE_MINUTES", wxWindow)->Enable(!predefined);
 
 		enum PasvMode pasvMode = data->m_server.GetPasvMode();
 		if (pasvMode == MODE_ACTIVE)
@@ -936,12 +963,16 @@ void CSiteManager::SetCtrlState()
 			XRCCTRL(*this, "ID_TRANSFERMODE_PASSIVE", wxRadioButton)->SetValue(true);
 		else
 			XRCCTRL(*this, "ID_TRANSFERMODE_DEFAULT", wxRadioButton)->SetValue(true);
+		XRCCTRL(*this, "ID_TRANSFERMODE_ACTIVE", wxWindow)->Enable(!predefined);
+		XRCCTRL(*this, "ID_TRANSFERMODE_PASSIVE", wxWindow)->Enable(!predefined);
+		XRCCTRL(*this, "ID_TRANSFERMODE_DEFAULT", wxWindow)->Enable(!predefined);
 
 		int maxMultiple = data->m_server.MaximumMultipleConnections();
 		XRCCTRL(*this, "ID_LIMITMULTIPLE", wxCheckBox)->SetValue(maxMultiple != 0);
+		XRCCTRL(*this, "ID_LIMITMULTIPLE", wxWindow)->Enable(!predefined);
 		if (maxMultiple != 0)
 		{
-			XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->Enable(true);
+			XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->Enable(!predefined);
 			XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->SetValue(maxMultiple);
 		}
 		else
@@ -963,7 +994,10 @@ void CSiteManager::SetCtrlState()
 			XRCCTRL(*this, "ID_CHARSET_CUSTOM", wxRadioButton)->SetValue(true);
 			break;
 		}
-		XRCCTRL(*this, "ID_ENCODING", wxTextCtrl)->Enable(data->m_server.GetEncodingType() == ENCODING_CUSTOM);
+		XRCCTRL(*this, "ID_CHARSET_AUTO", wxWindow)->Enable(!predefined);
+		XRCCTRL(*this, "ID_CHARSET_UTF8", wxWindow)->Enable(!predefined);
+		XRCCTRL(*this, "ID_CHARSET_CUSTOM", wxWindow)->Enable(!predefined);
+		XRCCTRL(*this, "ID_ENCODING", wxTextCtrl)->Enable(!predefined && data->m_server.GetEncodingType() == ENCODING_CUSTOM);
 		XRCCTRL(*this, "ID_ENCODING", wxTextCtrl)->SetValue(data->m_server.GetCustomEncoding());
 	}
 }
@@ -998,7 +1032,11 @@ void CSiteManager::OnCopySite(wxCommandEvent& event)
 	if (!UpdateServer())
 		return;
 
-	wxTreeItemId parent = pTree->GetItemParent(item);
+	wxTreeItemId parent;
+	if (IsPredefinedItem(item))
+		parent = m_ownSites;
+	else
+		parent = pTree->GetItemParent(item);
 
 	const wxString name = pTree->GetItemText(item);
 	wxString newName = wxString::Format(_("Copy of %s"), name.c_str());
@@ -1034,4 +1072,55 @@ void CSiteManager::OnCopySite(wxCommandEvent& event)
 	pTree->SelectItem(newItem);
 	pTree->Expand(parent);
 	pTree->EditLabel(newItem);
+}
+
+bool CSiteManager::LoadDefaultSites()
+{
+	const wxString& defaultsDir = wxGetApp().GetDefaultsDir();
+	if (defaultsDir == _T(""))
+		return false;
+
+	wxFileName name(defaultsDir, _T("fzdefaults.xml"));
+	CXmlFile file(name);
+	
+	TiXmlElement* pDocument = file.Load();
+	if (!pDocument)
+		return false;
+
+	TiXmlElement* pElement = pDocument->FirstChildElement("Servers");
+	if (!pElement)
+		return false;
+
+	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
+	if (!pTree)
+		return false;
+
+	int style = pTree->GetWindowStyle();
+	pTree->SetWindowStyle(style | wxTR_HIDE_ROOT);
+	wxTreeItemId root = pTree->AddRoot(_T(""), 0, 0);
+
+	m_predefinedSites = pTree->AppendItem(root, _("Prefedined Sites"), 0, 0);
+	pTree->SetItemImage(m_predefinedSites, 1, wxTreeItemIcon_Expanded);
+	pTree->SetItemImage(m_predefinedSites, 1, wxTreeItemIcon_SelectedExpanded);
+
+	Load(pElement, m_predefinedSites);
+
+	return true;
+}
+
+bool CSiteManager::IsPredefinedItem(wxTreeItemId item)
+{
+	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
+	wxASSERT(pTree);
+	if (!pTree)
+		return false;
+
+	while (item)
+	{
+		if (item == m_predefinedSites)
+			return true;
+		item = pTree->GetItemParent(item);
+	}
+
+	return false;
 }

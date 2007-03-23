@@ -77,6 +77,7 @@ bool CFileZillaApp::OnInit()
 	wxSystemOptions::SetOption(_T("mac.listctrl.always_use_generic"), 1);
 
 	LoadLocales();
+	InitDefaultsDir();
     InitSettingsDir();
 
 	COptions::Init();
@@ -313,6 +314,13 @@ bool CFileZillaApp::LoadResourceFiles()
 	pResource->Load(m_resourceDir + _T("*.xrc"));
 
 	return true;
+}
+
+bool CFileZillaApp::InitDefaultsDir()
+{
+	m_defaultsDir = GetDataDir(_T("/fzdefaults.xml"));
+
+	return m_defaultsDir != _T("");
 }
 
 bool CFileZillaApp::InitSettingsDir()

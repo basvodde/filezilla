@@ -16,6 +16,7 @@ public:
 	
 	wxString GetResourceDir() const { return m_resourceDir; }
 	wxString GetSettingsDir() const { return m_settingsDir; }
+	wxString GetDefaultsDir() const { return m_defaultsDir; }
 	wxString GetLocalesDir() const { return m_localesDir; }
 
 	void CheckExistsFzsftp();
@@ -28,6 +29,7 @@ public:
 	CWrapEngine* GetWrapEngine();
 
 protected:
+	bool InitDefaultsDir();
 	bool InitSettingsDir();
 	bool LoadResourceFiles();
 	bool LoadLocales();
@@ -35,6 +37,7 @@ protected:
 	wxLocale* m_pLocale;
 
 	wxString m_resourceDir;
+	wxString m_defaultsDir;
 	wxString m_settingsDir;
 	wxString m_localesDir;
 

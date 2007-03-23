@@ -47,6 +47,9 @@ protected:
 	bool Load(TiXmlElement *pElement = 0, wxTreeItemId treeId = wxTreeItemId());
 	bool Save(TiXmlElement *pElement = 0, wxTreeItemId treeId = wxTreeItemId());
 	void SetCtrlState();
+	bool LoadDefaultSites();
+
+	bool IsPredefinedItem(wxTreeItemId item);
 	
 	virtual void OnOK(wxCommandEvent& event);
 	virtual void OnCancel(wxCommandEvent& event);
@@ -68,6 +71,9 @@ protected:
 	void OnCopySite(wxCommandEvent& event);
 	
 	CInterProcessMutex* m_pSiteManagerMutex;
+
+	wxTreeItemId m_predefinedSites;
+	wxTreeItemId m_ownSites;
 };
 
 #endif //__SITEMANAGER_H__
