@@ -320,10 +320,9 @@ int CIOThread::ReadFromFile(char* pBuffer, int maxLen)
 	// In the worst case, length will doubled: If reading
 	// only LFs from the file
 	const int readLen = maxLen / 2;
-	const int offset = maxLen - readLen;
 
 	char* r = pBuffer + readLen;
-	int len = len = m_pFile->Read(r, readLen);
+	int len = m_pFile->Read(r, readLen);
 	if (!len || len == wxInvalidOffset)
 		return len;
 
