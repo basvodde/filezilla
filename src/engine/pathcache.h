@@ -13,6 +13,8 @@ public:
 	// Invalidate path
 	void InvalidatePath(const CServer& server, const CServerPath& path, const wxString& subdir = _T(""));
 
+	void Clear();
+
 protected:
 	class CSourcePath
 	{
@@ -32,7 +34,7 @@ protected:
 	typedef std::map<CSourcePath, CServerPath> tServerCache;
 	typedef tServerCache::iterator tServerCacheIterator;
 	typedef tServerCache::const_iterator tServerCacheConstIterator;
-	typedef std::map<CServer, tServerCache> tCache;
+	typedef std::map<CServer, tServerCache*> tCache;
 	static tCache m_cache;
 	typedef tCache::iterator tCacheIterator;
 	typedef tCache::const_iterator tCacheConstIterator;

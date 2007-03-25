@@ -10,7 +10,16 @@ void CPathCache::Store(const CServer& server, const CServerPath& target, const C
 {
 	wxASSERT(!target.IsEmpty() && !source.IsEmpty());
 
-	tServerCache &serverCache = m_cache[server];
+	tServerCache *pServerCache;
+	tCacheIterator iter = m_cache.find(server);
+	if (iter != m_cache.end())
+		pServerCache = iter->second;
+	else
+	{
+		pServerCache = new tServerCache;
+		m_cache[server] = pServerCache;
+	}
+	tServerCache &serverCache = *pServerCache;
 
 	CSourcePath sourcePath;
 	
@@ -47,12 +56,12 @@ CServerPath CPathCache::Lookup(const CServer& server, const CServerPath& source,
 	if (iter == m_cache.end())
 		return CServerPath();
 
-	CServerPath result = Lookup(iter->second, source, subdir);
+	CServerPath result = Lookup(*iter->second, source, subdir);
 	if (result.IsEmpty())
 	{
 		CServerPath path = source;
 		path.AddSegment(subdir);
-		result = Lookup(iter->second, path, _T(""));
+		result = Lookup(*iter->second, path, _T(""));
 	}
 
 	if (result.IsEmpty())
@@ -90,6 +99,7 @@ void CPathCache::InvalidateServer(const CServer& server)
 	if (iter == m_cache.end())
 		return;
 
+	delete iter->second;
 	m_cache.erase(iter);
 }
 
@@ -106,19 +116,28 @@ void CPathCache::InvalidatePath(const CServer& server, const CServerPath& path, 
 
 	CSourcePath sourcePath;
 	
-	sourcePath.source = Lookup(iter->second, path, _T(""));
+	sourcePath.source = Lookup(*iter->second, path, _T(""));
 	if (sourcePath.source.IsEmpty())
 		sourcePath.source = path;
 
 	sourcePath.subdir = subdir;
 
-	tServerCacheIterator serverIter = iter->second.find(sourcePath);
-	if (serverIter != iter->second.end())
-		iter->second.erase(serverIter);
+	tServerCacheIterator serverIter = iter->second->find(sourcePath);
+	if (serverIter != iter->second->end())
+		iter->second->erase(serverIter);
 
 	sourcePath.source.AddSegment(subdir);
 	sourcePath.subdir = _T("");
-	serverIter = iter->second.find(sourcePath);
-	if (serverIter != iter->second.end())
-		iter->second.erase(serverIter);
+	serverIter = iter->second->find(sourcePath);
+	if (serverIter != iter->second->end())
+		iter->second->erase(serverIter);
 }
+
+void CPathCache::Clear()
+{
+	for (tCacheIterator iter = m_cache.begin(); iter != m_cache.end(); iter++)
+		delete iter->second;
+
+	m_cache.clear();
+}
+
