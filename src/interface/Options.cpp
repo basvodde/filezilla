@@ -69,7 +69,9 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Greeting version", string, _T("") },
 	{ "Onetime Dialogs", string, _T("") },
 	{ "Show Tree Local", number, _T("1") },
-	{ "Show Tree Remote", number, _T("1") }
+	{ "Show Tree Remote", number, _T("1") },
+	{ "File Pane Layout", number, _T("0") },
+	{ "File Panw Swap", number, _T("0") }
 };
 
 COptions::COptions()
@@ -353,6 +355,10 @@ int COptions::Validate(unsigned int nID, int value)
 	case OPTION_RECONNECTDELAY:
 		if (value < 0 || value > 999)
 			value = 5;
+		break;
+	case OPTION_FILEPANE_LAYOUT:
+		if (value < 0 || value > 2)
+			value = 0;
 		break;
 	}
 	return value;

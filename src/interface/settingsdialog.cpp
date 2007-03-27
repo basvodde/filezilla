@@ -12,7 +12,9 @@
 #include "optionspage_transfer.h"
 #include "optionspage_updatecheck.h"
 #include "optionspage_debug.h"
+#include "optionspage_interface.h"
 #include "filezillaapp.h"
+#include "Mainfrm.h"
 
 enum pagenames
 {
@@ -23,6 +25,7 @@ enum pagenames
 	page_transfer,
 	page_filetype,
 	page_fileexists,
+	page_interface,
 	page_themes,
 	page_language,
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
@@ -53,6 +56,7 @@ END_EVENT_TABLE()
 
 CSettingsDialog::CSettingsDialog()
 {
+	m_pMainFrame = 0;
 	m_pOptions = COptions::Get();
 	m_activePanel = 0;
 }
@@ -61,10 +65,12 @@ CSettingsDialog::~CSettingsDialog()
 {
 }
 
-bool CSettingsDialog::Create(wxWindow* parent)
+bool CSettingsDialog::Create(CMainFrame* pMainFrame)
 {
+	m_pMainFrame = pMainFrame;
+
 	SetExtraStyle(wxWS_EX_BLOCK_EVENTS);
-	SetParent(parent);
+	SetParent(pMainFrame);
 	if (!wxXmlResource::Get()->LoadDialog(this, GetParent(), _T("ID_SETTINGS")))
 		return false;
 
@@ -93,7 +99,8 @@ bool CSettingsDialog::LoadPages()
 	ADD_PAGE(_("Transfers"), COptionsPageTransfer, page_none);
 	ADD_PAGE(_("File Types"), COptionsPageFiletype, page_transfer);
 	ADD_PAGE(_("File exists action"), COptionsPageFileExists, page_transfer);
-	ADD_PAGE(_("Themes"), COptionsPageThemes, page_none);
+	ADD_PAGE(_("Interface"), COptionsPageInterface, page_none);
+	ADD_PAGE(_("Themes"), COptionsPageThemes, page_interface);
 	ADD_PAGE(_("Language"), COptionsPageLanguage, page_none);
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	ADD_PAGE(_("Update Check"), COptionsPageUpdateCheck, page_none);

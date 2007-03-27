@@ -5,14 +5,17 @@
 
 class COptions;
 class COptionsPage;
+class CMainFrame;
 class CSettingsDialog : public wxDialogEx
 {
 public:
 	CSettingsDialog();
 	virtual ~CSettingsDialog();
 
-	bool Create(wxWindow* parent);
+	bool Create(CMainFrame* pMainFrame);
 	bool LoadSettings();
+
+	CMainFrame* m_pMainFrame;
 
 protected:
 	bool LoadPages();

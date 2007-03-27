@@ -1422,6 +1422,53 @@
       </object>
     </object>
   </object>
+  <object class="wxPanel" name="ID_SETTINGS_INTERFACE">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Layout</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Layout of file and directory panes:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxChoice" name="ID_FILEPANELAYOUT">
+                      <content>
+                        <item>Classic</item>
+                        <item>Explorer</item>
+                        <item>Widescreen</item>
+                      </content>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <cols>2</cols>
+                  <hgap>5</hgap>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_FILEPANESWAP">
+                  <label>&amp;Swap local and remote panes</label>
+                </object>
+              </object>
+              <cols>1</cols>
+              <vgap>5</vgap>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+    </object>
+  </object>
   <object class="wxPanel" name="ID_SETTINGS_CONNECTION">
     <object class="wxBoxSizer">
       <orient>wxVERTICAL</orient>

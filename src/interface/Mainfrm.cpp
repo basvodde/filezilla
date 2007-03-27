@@ -201,11 +201,19 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	
 	m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter, 100);
 	m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueueView, 100);
-	m_pViewSplitter->SplitVertically(m_pLocalSplitter, m_pRemoteSplitter);
+
+	if (COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP))
+		m_pViewSplitter->SplitVertically(m_pRemoteSplitter, m_pLocalSplitter);
+	else
+		m_pViewSplitter->SplitVertically(m_pLocalSplitter, m_pRemoteSplitter);
+
 	if (COptions::Get()->GetOptionVal(OPTION_SHOW_TREE_LOCAL))
 	{
 		m_pLocalTreeViewPanel->SetHeader(new CLocalViewHeader(m_pLocalSplitter, m_pState));
-		m_pLocalSplitter->SplitHorizontally(m_pLocalTreeViewPanel, m_pLocalListViewPanel);
+		if (COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT))
+			m_pLocalSplitter->SplitVertically(m_pLocalTreeViewPanel, m_pLocalListViewPanel);
+		else
+			m_pLocalSplitter->SplitHorizontally(m_pLocalTreeViewPanel, m_pLocalListViewPanel);
 	}
 	else
 	{
@@ -215,7 +223,10 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	if (COptions::Get()->GetOptionVal(OPTION_SHOW_TREE_REMOTE))
 	{
 		m_pRemoteTreeViewPanel->SetHeader(new CRemoteViewHeader(m_pRemoteSplitter, m_pState));
-		m_pRemoteSplitter->SplitHorizontally(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel);
+		if (COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT))
+			m_pRemoteSplitter->SplitVertically(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel);
+		else
+			m_pRemoteSplitter->SplitHorizontally(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel);
 	}
 	else
 	{
@@ -853,7 +864,10 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 
 	int res = dlg.ShowModal();
 	if (res != wxID_OK)
+	{
+		UpdateLayout();
 		return;
+	}
 
 	wxString newTheme = pOptions->GetOption(OPTION_THEME);
 	int newLang = wxGetApp().GetCurrentLanguage();
@@ -895,6 +909,8 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 		}
 	}
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
+	
+	UpdateLayout();
 
 	m_pAsyncRequestQueue->RecheckDefaults();
 }
@@ -958,7 +974,10 @@ void CMainFrame::OnToggleLocalTreeView(wxCommandEvent& event)
 	{
 		m_pLocalTreeViewPanel->SetHeader(m_pLocalListViewPanel->DetachHeader());
 		wxSize size = m_pLocalSplitter->GetClientSize();
-		m_pLocalSplitter->SplitHorizontally(m_pLocalTreeViewPanel, m_pLocalListViewPanel, m_lastLocalTreeSplitterPos);
+		if (COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT))
+			m_pLocalSplitter->SplitVertically(m_pLocalTreeViewPanel, m_pLocalListViewPanel, m_lastLocalTreeSplitterPos);
+		else
+			m_pLocalSplitter->SplitHorizontally(m_pLocalTreeViewPanel, m_pLocalListViewPanel, m_lastLocalTreeSplitterPos);
 	}
 	COptions::Get()->SetOption(OPTION_SHOW_TREE_LOCAL, m_pLocalSplitter->IsSplit());
 }
@@ -983,7 +1002,10 @@ void CMainFrame::OnToggleRemoteTreeView(wxCommandEvent& event)
 	{
 		m_pRemoteTreeViewPanel->SetHeader(m_pRemoteListViewPanel->DetachHeader());
 		wxSize size = m_pRemoteSplitter->GetClientSize();
-		m_pRemoteSplitter->SplitHorizontally(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel, m_lastRemoteTreeSplitterPos);
+		if (COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT))
+			m_pRemoteSplitter->SplitHorizontally(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel, m_lastRemoteTreeSplitterPos);
+		else
+			m_pRemoteSplitter->SplitVertically(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel, m_lastRemoteTreeSplitterPos);
 	}
 	COptions::Get()->SetOption(OPTION_SHOW_TREE_REMOTE, m_pRemoteSplitter->IsSplit());
 }
@@ -1053,3 +1075,74 @@ void CMainFrame::OnCheckForUpdates(wxCommandEvent& event)
 	dlg.Run();
 }
 #endif //FZ_MANUALUPDATECHECK
+
+void CMainFrame::UpdateLayout(int layout /*=-1*/, int swap /*=-1*/)
+{
+	if (layout == -1)
+		layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
+	if (swap == -1)
+		swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
+
+	int mode;
+	if (!layout || layout == 2)
+		mode = wxSPLIT_VERTICAL;
+	else
+		mode = wxSPLIT_HORIZONTAL;
+
+	int isMode = m_pViewSplitter->GetSplitMode();
+
+	int isSwap = m_pViewSplitter->GetWindow1() == m_pRemoteSplitter ? 1 : 0;
+
+	if (mode != isMode || swap != isSwap)
+	{
+		m_pViewSplitter->Unsplit();
+		if (mode == wxSPLIT_VERTICAL)
+		{
+			if (swap)
+				m_pViewSplitter->SplitVertically(m_pRemoteSplitter, m_pLocalSplitter);
+			else
+				m_pViewSplitter->SplitVertically(m_pLocalSplitter, m_pRemoteSplitter);
+		}
+		else
+		{
+			if (swap)
+				m_pViewSplitter->SplitHorizontally(m_pRemoteSplitter, m_pLocalSplitter);
+			else
+				m_pViewSplitter->SplitHorizontally(m_pLocalSplitter, m_pRemoteSplitter);
+		}
+	}
+
+	if (m_pLocalSplitter->IsSplit())
+	{
+		if (!layout)
+			mode = wxSPLIT_HORIZONTAL;
+		else
+			mode = wxSPLIT_VERTICAL;
+
+		if (mode != m_pLocalSplitter->GetSplitMode())
+		{
+			m_pLocalSplitter->Unsplit();
+			if (mode == wxSPLIT_VERTICAL)
+				m_pLocalSplitter->SplitVertically(m_pLocalTreeViewPanel, m_pLocalListViewPanel, m_lastLocalTreeSplitterPos);
+			else
+				m_pLocalSplitter->SplitHorizontally(m_pLocalTreeViewPanel, m_pLocalListViewPanel, m_lastLocalTreeSplitterPos);
+		}
+	}
+
+	if (m_pRemoteSplitter->IsSplit())
+	{
+		if (!layout)
+			mode = wxSPLIT_HORIZONTAL;
+		else
+			mode = wxSPLIT_VERTICAL;
+
+		if (mode != m_pRemoteSplitter->GetSplitMode())
+		{
+			m_pRemoteSplitter->Unsplit();
+			if (mode == wxSPLIT_VERTICAL)
+				m_pRemoteSplitter->SplitVertically(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel, m_lastRemoteTreeSplitterPos);
+			else
+				m_pRemoteSplitter->SplitHorizontally(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel, m_lastRemoteTreeSplitterPos);
+		}
+	}
+}
