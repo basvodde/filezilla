@@ -6,8 +6,8 @@
 #include "Mainfrm.h"
 
 BEGIN_EVENT_TABLE(COptionsPageInterface, COptionsPage)
-EVT_CHECKBOX(XRCID("ID_FILEPANESWAP"), OnLayoutChange)
-EVT_CHOICE(XRCID("ID_FILEPANELAYOUT"), OnLayoutChange)
+EVT_CHECKBOX(XRCID("ID_FILEPANESWAP"), COptionsPageInterface::OnLayoutChange)
+EVT_CHOICE(XRCID("ID_FILEPANELAYOUT"), COptionsPageInterface::OnLayoutChange)
 END_EVENT_TABLE()
 
 bool COptionsPageInterface::LoadPage()
