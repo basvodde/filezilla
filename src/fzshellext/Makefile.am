@@ -13,7 +13,8 @@ libfzshellext_la_LDFLAGS = -Wl,--kill-at -lole32 -luuid -lversion -no-undefined 
 
 noinst_HEADERS = shellext.h resource.h
 
-dist_noinst_DATA = fzshellext.def fzshellext.vcproj fzshellext.rc version.rc.in
+dist_noinst_DATA = fzshellext.def fzshellext.vcproj fzshellext.rc version.rc.in \
+			fzshellext_64.dll fzshellext_64.dll.txt
 
 if USE_RESOURCEFILE
 
