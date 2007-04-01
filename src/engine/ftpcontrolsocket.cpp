@@ -3282,8 +3282,11 @@ int CFtpControlSocket::Connect(const CServer &server)
 	{
 		pData->neededCommands[LOGON_AUTH_TLS] = 0;
 		pData->neededCommands[LOGON_AUTH_SSL] = 0;
-		pData->neededCommands[LOGON_PBSZ] = 0;
-		pData->neededCommands[LOGON_PROT] = 0;
+		if (server.GetProtocol() != FTPS)
+		{
+			pData->neededCommands[LOGON_PBSZ] = 0;
+			pData->neededCommands[LOGON_PROT] = 0;
+		}
 	}
 	if (server.GetPostLoginCommands().empty())
 		pData->neededCommands[LOGON_CUSTOMCOMMANDS] = 0;
