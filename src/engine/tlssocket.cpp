@@ -458,7 +458,8 @@ void CTlsSocket::Read(void *buffer, unsigned int len)
 		m_lastSuccessful = true;
 		m_lastCount = res;
 
-		TriggerEvents();
+		if (res > 0)
+			TriggerEvents();
 
 		return;
 	}
