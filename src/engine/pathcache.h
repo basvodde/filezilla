@@ -4,6 +4,8 @@
 class CPathCache
 {
 public:
+	virtual ~CPathCache();
+
 	void Store(const CServer& server, const CServerPath& target, const CServerPath& source, const wxString subdir = _T(""));
 
 	CServerPath Lookup(const CServer& server, const CServerPath& source, const wxString subdir = _T(""));

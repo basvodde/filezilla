@@ -6,6 +6,11 @@ CPathCache::tCache CPathCache::m_cache;
 int CPathCache::m_hits = 0;
 int CPathCache::m_misses = 0;
 
+CPathCache::~CPathCache()
+{
+	Clear();
+}
+
 void CPathCache::Store(const CServer& server, const CServerPath& target, const CServerPath& source, const wxString subdir/*=_T("")*/)
 {
 	wxASSERT(!target.IsEmpty() && !source.IsEmpty());
