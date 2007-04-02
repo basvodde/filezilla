@@ -39,6 +39,7 @@ CFtpTransferOpData::CFtpTransferOpData()
 	transferEndReason = 0;
 	tranferCommandSent = false;
 	resumeOffset = 0;
+	binary = true;
 }
 
 CFtpFileTransferOpData::CFtpFileTransferOpData()
