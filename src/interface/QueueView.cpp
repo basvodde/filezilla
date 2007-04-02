@@ -2678,7 +2678,7 @@ bool CQueueView::StopItem(CServerItem* pServerItem)
 {
 	for (unsigned int i = 0; i < pServerItem->GetChildrenCount(false); i++)
 	{
-		CQueueItem* pItem = pServerItem->GetChild(0, false);
+		CQueueItem* pItem = pServerItem->GetChild(i, false);
 		if (pItem->GetType() == QueueItemType_FolderScan)
 		{
 			CFolderScanItem* pFolder = (CFolderScanItem*)pItem;
