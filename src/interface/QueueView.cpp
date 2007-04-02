@@ -839,7 +839,7 @@ void CServerItem::QueueImmediateFile(CFileItem* pItem)
 
 		pItem->m_queued = true;
 		fileList.erase(iter);
-		m_fileList[1][pItem->GetPriority()].push_back(pItem);
+		m_fileList[0][pItem->GetPriority()].push_back(pItem);
 		return;
 	}
 	wxASSERT(false);
