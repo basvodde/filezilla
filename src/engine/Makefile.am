@@ -17,6 +17,7 @@ libengine_a_SOURCES = asynchostresolver.cpp commands.cpp ControlSocket.cpp \
 		iothread.cpp logging.cpp \
 		misc.cpp notification.cpp \
 		pathcache.cpp \
+		ratelimiter.cpp \
 		server.cpp serverpath.cpp\
 		servercapabilities.cpp \
 		sftpcontrolsocket.cpp \
@@ -29,6 +30,7 @@ noinst_HEADERS = backend.h \
 		httpcontrolsocket.h iothread.h \
 		logging_private.h \
 		pathcache.h \
+		ratelimiter.h \
 		servercapabilities.h \
 		sftpcontrolsocket.h \
 		tlssocket.h \

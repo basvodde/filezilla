@@ -43,7 +43,8 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Allow transfermode fallback", number, _T("1") },
 	{ "Reconnect count", number, _T("2") },
 	{ "Reconnect delay", number, _T("5") },
-
+	{ "Speedlimit inbound", number, _T("0") },
+	{ "Speedlimit outbound", number, _T("0") },
 
 	// Interface settings
 	{ "Number of Transfers", number, _T("2") },
