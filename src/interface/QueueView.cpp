@@ -940,7 +940,7 @@ CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame, 
 	m_activeMode = 0;
 	m_quit = false;
 	m_waitStatusLineUpdate = false;
-	m_lastTopItem = -1
+	m_lastTopItem = -1;
 	m_pFolderProcessingThread = 0;
 
 	m_totalQueueSize = 0;
