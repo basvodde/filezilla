@@ -156,6 +156,8 @@ EVT_ERASE_BACKGROUND(CQueueView::OnEraseBackground)
 
 EVT_COMMAND(wxID_ANY, fzEVT_ASKFORPASSWORD, CQueueView::OnAskPassword)
 
+EVT_LIST_ITEM_FOCUSED(wxID_ANY, CQueueView::OnFocusItemChanged)
+
 END_EVENT_TABLE()
 
 class CFolderScanItem;
@@ -938,6 +940,7 @@ CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame, 
 	m_activeMode = 0;
 	m_quit = false;
 	m_waitStatusLineUpdate = false;
+	m_lastTopItem = -1
 	m_pFolderProcessingThread = 0;
 
 	m_totalQueueSize = 0;
@@ -953,7 +956,7 @@ CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame, 
 	// Create and assign the image list for the queue
 	wxImageList* pImageList = new wxImageList(16, 16);
 
-	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDERCLOSED"),  wxART_OTHER, wxSize(16, 16)));
+	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_SERVER"),  wxART_OTHER, wxSize(16, 16)));
 	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FILE"),  wxART_OTHER, wxSize(16, 16)));
 	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDERCLOSED"),  wxART_OTHER, wxSize(16, 16)));
 	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDER"),  wxART_OTHER, wxSize(16, 16)));
@@ -2064,14 +2067,14 @@ void CQueueView::UpdateStatusLinePositions()
 	if (m_waitStatusLineUpdate)
 		return;
 
-	int topItem = GetTopItem();
-	int bottomItem = topItem + GetCountPerPage();
+	m_lastTopItem = GetTopItem();
+	int bottomItem = m_lastTopItem + GetCountPerPage();
 
 	for (std::list<CStatusLineCtrl*>::iterator iter = m_statusLineList.begin(); iter != m_statusLineList.end(); iter++)
 	{
 		CStatusLineCtrl *pCtrl = *iter;
 		int index = GetItemIndex(pCtrl->GetItem()) + 1;
-		if (index < topItem || index > bottomItem)
+		if (index < m_lastTopItem || index > bottomItem)
 		{
 			pCtrl->Show(false);
 			continue;
@@ -2083,7 +2086,7 @@ void CQueueView::UpdateStatusLinePositions()
 			pCtrl->Show(false);
 			continue;
 		}
-		m_allowBackgroundErase = GetTopItem() + GetCountPerPage() + 1 >= m_itemCount;
+		m_allowBackgroundErase = bottomItem + 1 >= m_itemCount;
 		pCtrl->SetSize(rect);
 		m_allowBackgroundErase = false;
 		pCtrl->Show();
@@ -2525,7 +2528,8 @@ void CQueueView::OnScrollEvent(wxScrollWinEvent& event)
 
 void CQueueView::OnUpdateStatusLines(wxCommandEvent& event)
 {
-	UpdateStatusLinePositions();
+	if (GetTopItem() != m_lastTopItem)
+		UpdateStatusLinePositions();
 }
 
 void CQueueView::OnMouseWheel(wxMouseEvent& event)
@@ -3049,4 +3053,11 @@ void CQueueView::OnAskPassword(wxCommandEvent& event)
 
 		m_waitingForPassword.pop_front();
 	}
+}
+
+void CQueueView::OnFocusItemChanged(wxListEvent& event)
+{
+	event.Skip();
+	wxCommandEvent evt(fzEVT_UPDATE_STATUSLINES, wxID_ANY);
+	AddPendingEvent(evt);
 }

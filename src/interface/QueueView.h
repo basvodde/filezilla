@@ -355,6 +355,9 @@ protected:
 	 */
 	bool m_waitStatusLineUpdate;
 
+	// Remember last top item in UpdateStatusLinePositions()
+	int m_lastTopItem;
+
 	int m_itemCount;
 	int m_activeCount;
 	int m_activeCountDown;
@@ -388,6 +391,7 @@ protected:
 	void OnScrollEvent(wxScrollWinEvent& event);
 	void OnUpdateStatusLines(wxCommandEvent& event);
 	void OnMouseWheel(wxMouseEvent& event);
+	void OnFocusItemChanged(wxListEvent& event);
 	
 	// Context menu handlers
 	void OnContextMenu(wxContextMenuEvent& event);
