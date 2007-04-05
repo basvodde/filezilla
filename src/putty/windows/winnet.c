@@ -866,7 +866,8 @@ static DWORD try_connect(Actual_Socket sock)
 	p_setsockopt(s, SOL_SOCKET, SO_OOBINLINE, (void *) &b, sizeof(b));
     }
 
-    if (sock->nodelay) {
+    //if (sock->nodelay) 
+	{
 	BOOL b = TRUE;
 	p_setsockopt(s, IPPROTO_TCP, TCP_NODELAY, (void *) &b, sizeof(b));
     }
