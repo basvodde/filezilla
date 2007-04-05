@@ -71,7 +71,7 @@ CViewHeader::CViewHeader(wxWindow* pParent, const wxString& label)
 void CViewHeader::OnSize(wxSizeEvent& event)
 {
 	wxRect rect = GetClientRect();
-	
+
 	rect.SetWidth(rect.GetWidth() - m_cbOffset + 2);
 	rect.SetX(m_cbOffset);
 #ifndef __WXMSW__
@@ -92,7 +92,7 @@ void CViewHeader::OnComboPaint(wxPaintEvent& event)
 		event.Skip();
 		return;
 	}
-	
+
 	wxComboBox* box = m_pComboBox;
 
 	m_alreadyInPaint = true;
@@ -110,7 +110,7 @@ void CViewHeader::OnComboPaint(wxPaintEvent& event)
 		if (!SendMessage((HWND)box->GetHandle(), CB_GETDROPPEDSTATE, 0, 0))
 			m_bLeftMousePressed = false;
 	}
-	
+
 #if wxUSE_UXTHEME
 	wxUxThemeEngine *p = wxUxThemeEngine::Get();
 	if (p && p->IsThemeActive())
@@ -125,7 +125,7 @@ void CViewHeader::OnComboPaint(wxPaintEvent& event)
 		wxRect rect2 = rect;
 		rect2.SetWidth(rect.GetWidth() - thumbWidth);
 		dc.DrawRectangle(rect2);
-	
+
 		if (!m_bLeftMousePressed || !box->IsEnabled())
 		{
 			wxPoint topLeft = rect.GetTopLeft();
@@ -201,7 +201,7 @@ void CViewHeader::OnPaint(wxPaintEvent& event)
 	wxRect rect = GetClientRect();
 	wxPaintDC dc(this);
 	dc.SetPen(*wxBLACK_PEN);
-	
+
 #ifdef __WXMSW__
 	dc.DrawLine(rect.GetLeft(), rect.GetBottom(), m_cbOffset, rect.GetBottom());
 #else
@@ -258,10 +258,18 @@ void CViewHeader::AddRecentDirectory(const wxString &directory)
 	m_pComboBox->Append(directory);
 }
 
+#ifdef __WXGTK__
+DECLARE_EVENT_TYPE(fzEVT_LOCALVIEWHEADERSETTEXTSEL, -1)
+DEFINE_EVENT_TYPE(fzEVT_LOCALVIEWHEADERSETTEXTSEL)
+#endif
+
 BEGIN_EVENT_TABLE(CLocalViewHeader, CViewHeader)
 EVT_TEXT(wxID_ANY, CLocalViewHeader::OnTextChanged)
 EVT_TEXT_ENTER(wxID_ANY, CLocalViewHeader::OnTextEnter)
 EVT_COMBOBOX(wxID_ANY, CLocalViewHeader::OnSelectionChanged)
+#ifdef __WXGTK__
+EVT_COMMAND(wxID_ANY, fzEVT_LOCALVIEWHEADERSETTEXTSEL, CLocalViewHeader::OnSelectTextEvent)
+#endif
 END_EVENT_TABLE()
 
 CLocalViewHeader::CLocalViewHeader(wxWindow* pParent, CState* pState)
@@ -272,6 +280,10 @@ CLocalViewHeader::CLocalViewHeader(wxWindow* pParent, CState* pState)
 void CLocalViewHeader::OnTextChanged(wxCommandEvent& event)
 {
 	// This function handles auto-completion
+
+#ifdef __WXGTK__
+	m_autoCompletionText = _T("");
+#endif
 
 	wxString str = m_pComboBox->GetValue();
 	if (str == _T("") || str.Right(1) == _T("/"))
@@ -320,15 +332,17 @@ void CLocalViewHeader::OnTextChanged(wxCommandEvent& event)
 		return;
 	}
 
-	wxDir dir(fn.GetPath());
 	wxString name = fn.GetFullName();
-	if (!dir.IsOpened() || name == _T(""))
+	const wxString path = fn.GetPath();
+
+	wxDir dir;
+	if (name == _T("") || path == _T("") || !dir.Open(path) || !dir.IsOpened())
 	{
 		m_oldValue = str;
 		return;
 	}
 	wxString found;
-	
+
 	{
 		wxLogNull noLog;
 		if (!dir.GetFirst(&found, name + _T("*"), wxDIR_DIRS))
@@ -355,14 +369,43 @@ void CLocalViewHeader::OnTextChanged(wxCommandEvent& event)
 		return;
 	}
 
+#ifdef __WXGTK__
+	m_autoCompletionText = found.Mid(name.Length()) + wxFileName::GetPathSeparator();
+
+	wxCommandEvent evt(fzEVT_LOCALVIEWHEADERSETTEXTSEL);
+	wxPostEvent(this, evt);
+#else
 	m_pComboBox->SetValue(str + found.Mid(name.Length()) + wxFileName::GetPathSeparator());
 	m_pComboBox->SetSelection(str.Length(), m_pComboBox->GetValue().Length() + 1);
+#endif
 
 	m_oldValue = str;
 }
 
+#ifdef __WXGTK__
+void CLocalViewHeader::OnSelectTextEvent(wxCommandEvent& event)
+{
+	if (m_autoCompletionText == _T(""))
+		return;
+
+	const wxString& oldValue = m_pComboBox->GetValue();
+	const wxString completionText = m_autoCompletionText;
+	m_autoCompletionText = _T("");
+
+	if (m_pComboBox->GetInsertionPoint() != (int)oldValue.Len())
+		return;
+
+	m_pComboBox->SetValue(oldValue + completionText);
+	m_pComboBox->SetSelection(oldValue.Len(), oldValue.Len() + completionText.Len());
+}
+#endif
+
 void CLocalViewHeader::OnSelectionChanged(wxCommandEvent& event)
 {
+#ifdef __WXGTK__
+	m_autoCompletionText = _T("");
+#endif
+
 	wxString dir = event.GetString();
 	if (dir == _T(""))
 		return;
@@ -377,14 +420,18 @@ void CLocalViewHeader::OnSelectionChanged(wxCommandEvent& event)
 		wxBell();
 		return;
 	}
-	
+
 	m_pState->SetLocalDir(dir);
 }
 
 void CLocalViewHeader::OnTextEnter(wxCommandEvent& event)
 {
+#ifdef __WXGTK__
+	m_autoCompletionText = _T("");
+#endif
+
 	wxString dir = m_pComboBox->GetValue();
-	
+
 	wxString error;
 	if (!m_pState->SetLocalDir(dir, &error))
 	{
@@ -400,6 +447,10 @@ void CLocalViewHeader::OnStateChange(unsigned int event)
 {
 	if (event != STATECHANGE_LOCAL_DIR)
 		return;
+
+#ifdef __WXGTK__
+	m_autoCompletionText = _T("");
+#endif
 
 	const wxString& dir = m_pState->GetLocalDir();
 	m_pComboBox->SetValue(dir);
@@ -436,7 +487,7 @@ void CRemoteViewHeader::OnStateChange(unsigned int event)
 		m_pComboBox->Enable();
 		m_pComboBox->SetValue(m_path.GetPath());
 		m_pComboBox->SetSelection(m_pComboBox->GetValue().Length(), m_pComboBox->GetValue().Length());
-		
+
 		AddRecentDirectory(m_path.GetPath());
 	}
 }
