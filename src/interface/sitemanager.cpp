@@ -1099,7 +1099,7 @@ bool CSiteManager::LoadDefaultSites()
 	pTree->SetWindowStyle(style | wxTR_HIDE_ROOT);
 	wxTreeItemId root = pTree->AddRoot(_T(""), 0, 0);
 
-	m_predefinedSites = pTree->AppendItem(root, _("Prefedined Sites"), 0, 0);
+	m_predefinedSites = pTree->AppendItem(root, _("Predefined Sites"), 0, 0);
 	pTree->SetItemImage(m_predefinedSites, 1, wxTreeItemIcon_Expanded);
 	pTree->SetItemImage(m_predefinedSites, 1, wxTreeItemIcon_SelectedExpanded);
 
