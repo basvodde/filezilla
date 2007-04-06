@@ -23,6 +23,8 @@ public:
 	void RemoveObject(CRateLimiterObject* pObject, enum rate_direction direction);
 
 protected:
+	int GetBucketSize() const;
+
 	CRateLimiter(COptionsBase* pOptions);
 	virtual ~CRateLimiter();
 

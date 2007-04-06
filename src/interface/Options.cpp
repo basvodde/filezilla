@@ -45,6 +45,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Reconnect delay", number, _T("5") },
 	{ "Speedlimit inbound", number, _T("0") },
 	{ "Speedlimit outbound", number, _T("0") },
+	{ "Speedlimit burst tolerance", number, _T("0") },
 
 	// Interface settings
 	{ "Number of Transfers", number, _T("2") },
@@ -160,7 +161,7 @@ bool COptions::SetOption(unsigned int nID, int value)
 	if (options[nID].type != number)
 		return false;
 
-	Validate(nID, value);
+	value = Validate(nID, value);
 
 	m_optionsCache[nID].cached = true;
 	m_optionsCache[nID].numValue = value;
@@ -358,6 +359,15 @@ int COptions::Validate(unsigned int nID, int value)
 			value = 5;
 		break;
 	case OPTION_FILEPANE_LAYOUT:
+		if (value < 0 || value > 2)
+			value = 0;
+		break;
+	case OPTION_SPEEDLIMIT_INBOUND:
+	case OPTION_SPEEDLIMIT_OUTBOUND:
+		if (value < 0)
+			value = 0;
+		break;
+	case OPTION_SPEEDLIMIT_BURSTTOLERANCE:
 		if (value < 0 || value > 2)
 			value = 0;
 		break;

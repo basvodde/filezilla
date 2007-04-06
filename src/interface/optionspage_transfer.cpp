@@ -11,7 +11,14 @@ bool COptionsPageTransfer::LoadPage()
 	SetTextFromOption(XRCID("ID_NUMDOWNLOADS"), OPTION_CONCURRENTDOWNLOADLIMIT, failure);
 	SetTextFromOption(XRCID("ID_NUMUPLOADS"), OPTION_CONCURRENTUPLOADLIMIT, failure);
 	SetTextFromOption(XRCID("ID_TIMEOUT"), OPTION_TIMEOUT, failure);
-
+	SetTextFromOption(XRCID("ID_DOWNLOADLIMIT"), OPTION_SPEEDLIMIT_INBOUND, failure);
+	SetTextFromOption(XRCID("ID_UPLOADLIMIT"), OPTION_SPEEDLIMIT_OUTBOUND, failure);
+	
+	wxChoice* pChoice = XRCCTRL(*this, "ID_BURSTTOLERANCE", wxChoice);
+	if (!pChoice)
+		return false;
+	int selection = m_pOptions->GetOptionVal(OPTION_SPEEDLIMIT_BURSTTOLERANCE);
+	pChoice->SetSelection(selection);
 	return !failure;
 }
 
@@ -21,6 +28,11 @@ bool COptionsPageTransfer::SavePage()
 	SetOptionFromText(XRCID("ID_NUMDOWNLOADS"), OPTION_CONCURRENTDOWNLOADLIMIT);
 	SetOptionFromText(XRCID("ID_NUMUPLOADS"), OPTION_CONCURRENTUPLOADLIMIT);
 	SetOptionFromText(XRCID("ID_TIMEOUT"), OPTION_TIMEOUT);
+	SetOptionFromText(XRCID("ID_DOWNLOADLIMIT"), OPTION_SPEEDLIMIT_INBOUND);
+	SetOptionFromText(XRCID("ID_UPLOADLIMIT"), OPTION_SPEEDLIMIT_OUTBOUND);
+
+	wxChoice* pChoice = XRCCTRL(*this, "ID_BURSTTOLERANCE", wxChoice);
+	m_pOptions->SetOption(OPTION_SPEEDLIMIT_BURSTTOLERANCE, pChoice->GetSelection());
 
 	return true;
 }
@@ -59,6 +71,22 @@ bool COptionsPageTransfer::Validate()
 	{
 		pCtrl->SetFocus();
 		wxMessageBox(_("Please enter a timeout between 5 and 9999 seconds or 0 to disable timeouts."), validationFailed, wxICON_EXCLAMATION, this);
+		return false;
+	}
+
+	pCtrl = XRCCTRL(*this, "ID_DOWNLOADLIMIT", wxTextCtrl);
+	if (!pCtrl->GetValue().ToLong(&tmp) || (tmp < 0))
+	{
+		pCtrl->SetFocus();
+		wxMessageBox(_("Please enter a download speedlimit greater or equal to 0 KB/s."), validationFailed, wxICON_EXCLAMATION, this);
+		return false;
+	}
+
+	pCtrl = XRCCTRL(*this, "ID_UPLOADLIMIT", wxTextCtrl);
+	if (!pCtrl->GetValue().ToLong(&tmp) || (tmp < 0))
+	{
+		pCtrl->SetFocus();
+		wxMessageBox(_("Please enter an upload speedlimit greater or equal to 0 KB/s."), validationFailed, wxICON_EXCLAMATION, this);
 		return false;
 	}
 

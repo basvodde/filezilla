@@ -2,7 +2,6 @@
 #include "ratelimiter.h"
 
 static const int tickDelay = 250;
-static int bucketSize = 1000 / tickDelay;
 
 CRateLimiter* CRateLimiter::m_pTheRateLimiter = 0;
 
@@ -142,7 +141,7 @@ void CRateLimiter::OnTimer(wxTimerEvent& event)
 		int tokens = limit * tickDelay / 1000;
 		if (!tokens)
 			tokens = 1;
-		int maxTokens = tokens * bucketSize;
+		int maxTokens = tokens * GetBucketSize();
 
 		// Get amount of tokens for each object
 		int tokensPerObject = tokens / m_objectLists[i].size();
@@ -227,6 +226,26 @@ void CRateLimiter::WakeupWaitingObjects()
 			pObject->OnRateAvailable();
 		}
 	}
+}
+
+int CRateLimiter::GetBucketSize() const
+{
+	const int burst_tolerance = m_pOptions->GetOptionVal(OPTION_SPEEDLIMIT_BURSTTOLERANCE);
+
+	int bucket_size = 1000 / tickDelay;
+	switch (burst_tolerance)
+	{
+	case 1:
+		bucket_size *= 2;
+		break;
+	case 2:
+		bucket_size *= 5;
+		break;
+	default:
+		break;
+	}
+
+	return bucket_size;
 }
 
 CRateLimiterObject::CRateLimiterObject() :

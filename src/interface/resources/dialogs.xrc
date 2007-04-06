@@ -353,6 +353,76 @@
         </object>
         <flag>wxGROW</flag>
       </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Speed limits</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <vgap>5</vgap>
+              <hgap>5</hgap>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Download &amp;limit:</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="ID_DOWNLOADLIMIT">
+                  <size>60,-1</size>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>(in KB/s)</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>U&amp;pload limit:</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="ID_UPLOADLIMIT">
+                  <size>60,-1</size>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>(in KB/s)</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>&amp;Burst tolerance:</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxChoice" name="ID_BURSTTOLERANCE">
+                  <content>
+                    <item>Normal</item>
+                    <item>High</item>
+                    <item>Very high</item>
+                  </content>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label></label>
+                </object>
+              </object>
+              <cols>3</cols>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
     </object>
   </object>
   <object class="wxDialog" name="ID_FILEEXISTSDLG">
