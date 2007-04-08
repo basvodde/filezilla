@@ -688,7 +688,7 @@ wxString CControlSocket::ConvToLocal(const char* buffer)
 		}
 	}
 
-	wxCSConv conv(_T("ISO 8859-1"));
+	wxCSConv conv(_T("ISO-8859-1"));
 	wxString str = conv.cMB2WX(buffer);
 	if (str == _T(""))
 		str = wxConvCurrent->cMB2WX(buffer);
