@@ -12,7 +12,7 @@ public:
 
 	// Reparents the control.
 	// Calls wxWindow::Reparent under WXMSW and WXGTK. On other systems,
-	// a new instance is created with the same content (but with different 
+	// a new instance is created with the same content (but with different
 	// parent) and the provided pointer to pViewHeader will be modified.
 	static void Reparent(CViewHeader** pViewHeader, wxWindow* parent);
 
@@ -45,7 +45,7 @@ class CLocalViewHeader : public CViewHeader, CStateEventHandler
 {
 public:
 	CLocalViewHeader(wxWindow* pParent, CState* pState);
-	
+
 protected:
 	virtual void OnStateChange(unsigned int event);
 
@@ -55,13 +55,18 @@ protected:
 	void OnTextChanged(wxCommandEvent& event);
 	void OnTextEnter(wxCommandEvent& event);
 	void OnSelectionChanged(wxCommandEvent& event);
+#ifdef __WXGTK__
+	void OnSelectTextEvent(wxCommandEvent& event);
+
+	wxString m_autoCompletionText;
+#endif
 };
 
 class CRemoteViewHeader : public CViewHeader, CStateEventHandler
 {
 public:
 	CRemoteViewHeader(wxWindow* pParent, CState* pState);
-	
+
 protected:
 	virtual void OnStateChange(unsigned int event);
 
