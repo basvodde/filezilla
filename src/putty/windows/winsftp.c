@@ -188,7 +188,7 @@ WFile *open_new_file(char *name)
     if (!wname)
 	return NULL;
 
-    h = CreateFileW(wname, GENERIC_WRITE, 0, NULL,
+    h = CreateFileW(wname, GENERIC_WRITE, FILE_SHARE_READ, NULL,
 		   CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
     sfree(wname);
     if (h == INVALID_HANDLE_VALUE)
