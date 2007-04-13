@@ -22,6 +22,7 @@ int CFileZillaEngine::Init(wxEvtHandler *pEventHandler, COptionsBase *pOptions)
 {
 	m_pEventHandler = pEventHandler;
 	m_pOptions = pOptions;
+	m_pRateLimiter = CRateLimiter::Create(m_pOptions);
 
 	return FZ_REPLY_OK;
 }

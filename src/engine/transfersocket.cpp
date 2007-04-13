@@ -16,7 +16,6 @@ CTransferSocket::CTransferSocket(CFileZillaEnginePrivate *pEngine, CFtpControlSo
 	m_pEngine = pEngine;
 	m_pControlSocket = pControlSocket;
 
-	m_pSocketClient = 0;
 	m_pSocketServer = 0;
 	m_pSocket = 0;
 	m_pBackend = 0;
@@ -48,16 +47,13 @@ CTransferSocket::~CTransferSocket()
 {
 	m_transferEnd = true;
 
-	delete m_pSocketClient;
 	delete m_pSocketServer;
-	if (!m_pSocketClient && !m_pSocketServer)
-		delete m_pSocket;
-	m_pSocketClient = 0;
 	m_pSocketServer = 0;
+	delete m_pSocket;
 	m_pSocket = 0;
 	if (m_pTlsSocket)
 		delete m_pTlsSocket;
-	else		
+	else if (m_pBackend)
 		delete m_pBackend;
 
 	if (m_pControlSocket)
@@ -78,11 +74,8 @@ CTransferSocket::~CTransferSocket()
 wxString CTransferSocket::SetupActiveTransfer(const wxString& ip)
 {
 	// Void all previous attempts to createt a socket
-	if (!m_pSocketClient && !m_pSocketServer)
-		delete m_pSocket;
+	delete m_pSocket;
 	m_pSocket = 0;
-	delete m_pSocketClient;
-	m_pSocketClient = 0;
 	delete m_pSocketServer;
 	m_pSocketServer = 0;
 	
@@ -137,16 +130,14 @@ void CTransferSocket::OnConnect(wxSocketEvent &event)
 	m_pControlSocket->LogMessage(::Debug_Verbose, _T("CTransferSocket::OnConnect"));
 	if (m_pSocketServer)
 	{
-		wxSocketBase *pSocket = m_pSocketServer->Accept(false);
-		if (!pSocket)
+		m_pSocket = m_pSocketServer->Accept(false);
+		if (!m_pSocket)
+		{
+			TransferEnd(1);
 			return;
+		}
 		delete m_pSocketServer;
 		m_pSocketServer = 0;
-		m_pSocket = pSocket;
-
-		m_pSocket->SetEventHandler(*this);
-		m_pSocket->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_OUTPUT_FLAG | wxSOCKET_LOST_FLAG);
-		m_pSocket->Notify(true);
 	}
 
 	if (!m_pSocket)
@@ -163,7 +154,9 @@ void CTransferSocket::OnConnect(wxSocketEvent &event)
 			}
 		}
 		else
-			m_pBackend = new CSocketBackend(m_pSocket);
+			m_pBackend = new CSocketBackend(this, m_pSocket);
+
+		return;
 	}
 
 	int value = 65536 * 2;
@@ -379,34 +372,30 @@ void CTransferSocket::OnClose(wxSocketEvent &event)
 bool CTransferSocket::SetupPassiveTransfer(wxString host, int port)
 {
 	// Void all previous attempts to createt a socket
-	if (!m_pSocketClient && !m_pSocketServer)
-		delete m_pSocket;
+	delete m_pSocket;
 	m_pSocket = 0;
-	delete m_pSocketClient;
-	m_pSocketClient = 0;
 	delete m_pSocketServer;
 	m_pSocketServer = 0;
 
-	m_pSocketClient = new wxSocketClient(wxSOCKET_NOWAIT);
+	wxSocketClient* pSocketClient = new wxSocketClient(wxSOCKET_NOWAIT);
 
-	m_pSocketClient->SetEventHandler(*this);
-	m_pSocketClient->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_OUTPUT_FLAG | wxSOCKET_CONNECTION_FLAG | wxSOCKET_LOST_FLAG);
-	m_pSocketClient->Notify(true);
+	pSocketClient->SetEventHandler(*this);
+	pSocketClient->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_OUTPUT_FLAG | wxSOCKET_CONNECTION_FLAG | wxSOCKET_LOST_FLAG);
+	pSocketClient->Notify(true);
 
 	wxIPV4address addr;
 	addr.Hostname(host);
 	addr.Service(port);
 
-	bool res = m_pSocketClient->Connect(addr, false);
+	bool res = pSocketClient->Connect(addr, false);
 
-	if (!res && m_pSocketClient->LastError() != wxSOCKET_WOULDBLOCK)
+	if (!res && pSocketClient->LastError() != wxSOCKET_WOULDBLOCK)
 	{
-		delete m_pSocketClient;
-		m_pSocketClient = 0;
+		delete pSocketClient;
 		return false;
 	}
 
-	m_pSocket = m_pSocketClient;
+	m_pSocket = pSocketClient;
 
 	if (res)
 	{
@@ -416,7 +405,7 @@ bool CTransferSocket::SetupPassiveTransfer(wxString host, int port)
 				return false;
 		}
 		else
-			m_pBackend = new CSocketBackend(m_pSocket);
+			m_pBackend = new CSocketBackend(this, m_pSocket);
 	}
 
 	return true;
@@ -444,11 +433,8 @@ void CTransferSocket::TransferEnd(int reason)
 		return;
 	m_transferEnd = true;
 
-	if (!m_pSocketClient && !m_pSocketServer)
-		delete m_pSocket;
+	delete m_pSocket;
 	m_pSocket = 0;
-	delete m_pSocketClient;
-	m_pSocketClient = 0;
 	delete m_pSocketServer;
 	m_pSocketServer = 0;
 	if (m_pTlsSocket)
@@ -458,8 +444,11 @@ void CTransferSocket::TransferEnd(int reason)
         delete m_pTlsSocket;
 		m_pTlsSocket = 0;
 	}
-	delete m_pBackend;
-	m_pBackend = 0;
+	if (m_pBackend)
+	{
+		delete m_pBackend;
+		m_pBackend = 0;
+	}
 
 	m_pEngine->SendEvent(engineTransferEnd, reason);
 }
@@ -629,7 +618,8 @@ void CTransferSocket::FinalizeWrite()
 
 bool CTransferSocket::InitTls(const CTlsSocket* pPrimaryTlsSocket)
 {
-	m_pTlsSocket = new CTlsSocket(m_pControlSocket);
+	wxASSERT(!m_pBackend);
+	m_pTlsSocket = new CTlsSocket(this, m_pSocket, m_pControlSocket);
 	
 	if (!m_pTlsSocket->Init())
 	{
@@ -637,8 +627,6 @@ bool CTransferSocket::InitTls(const CTlsSocket* pPrimaryTlsSocket)
 		m_pTlsSocket = 0;
 		return false;
 	}
-
-	m_pTlsSocket->SetSocket(m_pSocket, this);
 
 	if (!m_pTlsSocket->Handshake(pPrimaryTlsSocket))
 	{

@@ -10,6 +10,7 @@ class CRateLimiter : protected wxEvtHandler
 {
 public:
 	static CRateLimiter* Create(COptionsBase *pOptions);
+	static CRateLimiter* Get();
 	void Free();
 
 	enum rate_direction

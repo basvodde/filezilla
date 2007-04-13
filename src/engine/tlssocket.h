@@ -19,13 +19,12 @@ public:
 		closed
 	};
 
-	CTlsSocket(CControlSocket* pOwner);
+	CTlsSocket(wxEvtHandler* pEvtHandler, wxSocketBase* pSocket, CControlSocket* pOwner);
 	~CTlsSocket();
 
 	bool Init();
 	void Uninit();
 
-	void SetSocket(wxSocketBase* pSocket, wxEvtHandler* pEvtHandler);
 	int Handshake(const CTlsSocket* pPrimarySocket = 0);
 
 	virtual void Read(void *buffer, unsigned int len);
@@ -42,6 +41,8 @@ public:
 	enum TlsState GetState() const { return m_tlsState; }
 	
 protected:
+
+	virtual void OnRateAvailable(enum CRateLimiter::rate_direction direction);
 
 	void ContinueShutdown();
 	
@@ -83,8 +84,8 @@ protected:
 
 	bool m_socketClosed;
 
+	CSocketBackend* m_pSocketBackend;
 	wxSocketBase* m_pSocket;
-	wxEvtHandler* m_pEvtHandler;
 
 	// Used by LastError() and LastCount()
 	int m_lastError;

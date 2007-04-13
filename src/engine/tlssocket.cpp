@@ -10,16 +10,16 @@ BEGIN_EVENT_TABLE(CTlsSocket, wxEvtHandler)
 EVT_SOCKET(wxID_ANY, CTlsSocket::OnSocketEvent)
 END_EVENT_TABLE()
 
-CTlsSocket::CTlsSocket(CControlSocket* pOwner)
-	: m_pOwner(pOwner)
+CTlsSocket::CTlsSocket(wxEvtHandler* pEvtHandler, wxSocketBase* pSocket, CControlSocket* pOwner)
+	: CBackend(pEvtHandler), m_pOwner(pOwner)
 {
+	m_pSocket = pSocket;
+	m_pSocketBackend = new CSocketBackend(this, m_pSocket);
+
 	m_session = 0;
 	m_initialized = false;
 	m_certCredentials = 0;
 	
-	m_pSocket = 0;
-	m_pEvtHandler = 0;
-
 	m_canReadFromSocket = true;
 	m_canWriteToSocket = true;
 	m_canCheckCloseSocket = false;
@@ -48,6 +48,7 @@ CTlsSocket::CTlsSocket(CControlSocket* pOwner)
 CTlsSocket::~CTlsSocket()
 {
 	Uninit();
+	delete m_pSocketBackend;
 }
 
 bool CTlsSocket::Init()
@@ -193,17 +194,17 @@ ssize_t CTlsSocket::PushFunction(const void* data, size_t len)
 		return -1;
 	}
 
-	if (!m_pSocket)
+	if (!m_pSocketBackend)
 	{
 		gnutls_transport_set_errno(m_session, 0);
 		return -1;
 	}
 
-	m_pSocket->Write(data, len);
+	m_pSocketBackend->Write(data, len);
 
-	if (m_pSocket->Error())
+	if (m_pSocketBackend->Error())
 	{
-		const wxSocketError error = m_pSocket->LastError();
+		const int error = m_pSocketBackend->LastError();
 		if (error == wxSOCKET_WOULDBLOCK)
 		{
 			m_canWriteToSocket = false;
@@ -215,12 +216,12 @@ ssize_t CTlsSocket::PushFunction(const void* data, size_t len)
 		return -1;
 	}
 
-	return m_pSocket->LastCount();
+	return m_pSocketBackend->LastCount();
 }
 
 ssize_t CTlsSocket::PullFunction(void* data, size_t len)
 {
-	if (!m_pSocket)
+	if (!m_pSocketBackend)
 	{
 		gnutls_transport_set_errno(m_session, 0);
 		return -1;
@@ -237,10 +238,10 @@ ssize_t CTlsSocket::PullFunction(void* data, size_t len)
 
 	m_canReadFromSocket = false;
 
-	m_pSocket->Read(data, len);
-	if (m_pSocket->Error())
+	m_pSocketBackend->Read(data, len);
+	if (m_pSocketBackend->Error())
 	{
-		if (m_pSocket->LastError() == wxSOCKET_WOULDBLOCK)
+		if (m_pSocketBackend->LastError() == wxSOCKET_WOULDBLOCK)
 		{
 			if (m_canCheckCloseSocket)
 			{
@@ -264,19 +265,12 @@ ssize_t CTlsSocket::PullFunction(void* data, size_t len)
 		wxPostEvent(this, evt);
 	}
 
-	return m_pSocket->LastCount();
-}
-
-void CTlsSocket::SetSocket(wxSocketBase* pSocket, wxEvtHandler* pEvtHandler)
-{
-	m_pEvtHandler = pEvtHandler;
-
-	m_pSocket = pSocket;
-	pSocket->SetEventHandler(*this);
+	return m_pSocketBackend->LastCount();
 }
 
 void CTlsSocket::OnSocketEvent(wxSocketEvent& event)
 {
+	wxASSERT(m_pSocket);
 	if (!m_session)
 		return;
 
@@ -292,10 +286,10 @@ void CTlsSocket::OnSocketEvent(wxSocketEvent& event)
 		{
 			m_canCheckCloseSocket = true;
 			char tmp[100];
-			m_pSocket->Peek(&tmp, 100);
-			if (!m_pSocket->Error())
+			m_pSocketBackend->Peek(&tmp, 100);
+			if (!m_pSocketBackend->Error())
 			{
-				int lastCount = m_pSocket->LastCount();
+				int lastCount = m_pSocketBackend->LastCount();
 
 				if (lastCount)
 					m_pOwner->LogMessage(Debug_Verbose, _T("CTlsSocket::OnSocketEvent(): pending data, postponing wxSOCKET_LOST"));
@@ -872,4 +866,8 @@ int CTlsSocket::VerifyCertificate()
 	m_pOwner->LogMessage(Status, _("Verifying certificate..."));
 
 	return FZ_REPLY_WOULDBLOCK;
+}
+
+void CTlsSocket::OnRateAvailable(enum CRateLimiter::rate_direction direction)
+{
 }

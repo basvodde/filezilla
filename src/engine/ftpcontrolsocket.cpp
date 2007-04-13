@@ -295,7 +295,9 @@ void CFtpControlSocket::OnConnect(wxSocketEvent &event)
 			LogMessage(Status, _("Connection established, initializing TLS..."));
 
 			wxASSERT(!m_pTlsSocket);
-			m_pTlsSocket = new CTlsSocket(this);
+			delete m_pBackend;
+			m_pBackend = 0;
+			m_pTlsSocket = new CTlsSocket(this, this, this);
 
 			if (!m_pTlsSocket->Init())
 			{
@@ -304,15 +306,11 @@ void CFtpControlSocket::OnConnect(wxSocketEvent &event)
 				return;
 			}
 
-			m_pTlsSocket->SetSocket(this, this);
 			int res = m_pTlsSocket->Handshake();
 			if (res == FZ_REPLY_ERROR)
 				DoClose();
 			else
-			{
-				delete m_pBackend;
 				m_pBackend = m_pTlsSocket;
-			}
 
 			return;
 		}
@@ -465,7 +463,7 @@ int CFtpControlSocket::LogonParseResponse()
 			LogMessage(Status, _("Initializing TLS..."));
 
 			wxASSERT(!m_pTlsSocket);
-			m_pTlsSocket = new CTlsSocket(this);
+			m_pTlsSocket = new CTlsSocket(this, this, this);
 
 			if (!m_pTlsSocket->Init())
 			{
@@ -474,7 +472,6 @@ int CFtpControlSocket::LogonParseResponse()
 				return FZ_REPLY_ERROR;
 			}
 
-			m_pTlsSocket->SetSocket(this, this);
 			int res = m_pTlsSocket->Handshake();
 			if (res == FZ_REPLY_ERROR)
 				DoClose();

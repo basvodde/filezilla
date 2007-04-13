@@ -56,8 +56,7 @@ protected:
 
 	wxSocketBase *m_pSocket; // Will point to either client or server socket
 
-	// Only one of the following will be non-zero
-	wxSocketClient *m_pSocketClient;
+	// Will be set only while creating active mode connections
 	wxSocketServer *m_pSocketServer;
 
 	CFileZillaEnginePrivate *m_pEngine;

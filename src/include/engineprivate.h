@@ -13,6 +13,7 @@ class wxFzEngineEvent;
 class CControlSocket;
 class CAsyncHostResolver;
 class CLogging;
+class CRateLimiter;
 class CFileZillaEnginePrivate : public wxEvtHandler
 {
 public:
@@ -117,6 +118,8 @@ protected:
 	static std::list<t_failedLogins> m_failedLogins;
 	int m_retryCount;
 	wxTimer m_retryTimer;
+
+	CRateLimiter* m_pRateLimiter;
 };
 
 #endif //__FILEZILLAENGINEPRIVATE_H__

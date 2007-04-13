@@ -12,6 +12,8 @@ public:
 	// Initialize the engine. Pass over the event handler that should receive notification
 	// events as defined in notification.h
 	// You also need to pass an options handler as defined in optionsbase.h
+	//
+	// The COptionsBase instance has to be the same for every instance of CFileZillaEngine
 	int Init(wxEvtHandler *pEventHandler, COptionsBase *pOptions);
 
 	// TODO: Init function with a function pointer for a callback function for 

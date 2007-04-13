@@ -6,6 +6,7 @@
 #include "directorycache.h"
 #include "logging_private.h"
 #include "httpcontrolsocket.h"
+#include "ratelimiter.h"
 
 class wxFzEngineEvent : public wxEvent
 {
@@ -55,6 +56,7 @@ END_EVENT_TABLE();
 CFileZillaEnginePrivate::CFileZillaEnginePrivate()
 	: m_retryTimer(this)
 {
+	m_pRateLimiter = 0;
 	m_maySendNotificationEvent = true;
 	m_pEventHandler = 0;
 	m_pControlSocket = 0;
@@ -94,6 +96,9 @@ CFileZillaEnginePrivate::~CFileZillaEnginePrivate()
 		}
 
 	delete m_pLogging;
+
+	if (m_pRateLimiter)
+		m_pRateLimiter->Free();
 }
 
 bool CFileZillaEnginePrivate::SendEvent(enum EngineNotificationType eventType, int data /*=0*/)

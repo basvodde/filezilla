@@ -38,7 +38,7 @@ COpData::~COpData()
 CControlSocket::CControlSocket(CFileZillaEnginePrivate *pEngine)
 	: wxSocketClient(wxSOCKET_NOWAIT), CLogging(pEngine)
 {
-	m_pBackend = new CSocketBackend(this);
+	m_pBackend = new CSocketBackend(this, this);
 	m_socketId = 0;
 	m_pEngine = pEngine;
 	m_pCurOpData = 0;

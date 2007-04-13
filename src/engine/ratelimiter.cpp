@@ -32,6 +32,11 @@ CRateLimiter* CRateLimiter::Create(COptionsBase* pOptions)
 	return m_pTheRateLimiter;
 }
 
+CRateLimiter* CRateLimiter::Get()
+{
+	return m_pTheRateLimiter;
+}
+
 void CRateLimiter::Free()
 {
 	wxASSERT(m_pTheRateLimiter);
