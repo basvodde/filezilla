@@ -18,9 +18,8 @@ public:
 		outbound
 	};
 
-	void AddObject(CRateLimiterObject* pObject, enum rate_direction direction);
+	void AddObject(CRateLimiterObject* pObject);
 	void RemoveObject(CRateLimiterObject* pObject);
-	void RemoveObject(CRateLimiterObject* pObject, enum rate_direction direction);
 
 protected:
 	int GetBucketSize() const;
@@ -28,7 +27,7 @@ protected:
 	CRateLimiter(COptionsBase* pOptions);
 	virtual ~CRateLimiter();
 
-	std::list<CRateLimiterObject*> m_objectLists[2];
+	std::list<CRateLimiterObject*> m_objectList;
 	std::list<CRateLimiterObject*> m_wakeupList[2];
 
 	wxTimer m_timer;
@@ -52,17 +51,17 @@ class CRateLimiterObject
 
 public:
 	CRateLimiterObject();
-	int GetAvailableBytes() const { return m_bytesAvailable; }
+	int GetAvailableBytes(enum CRateLimiter::rate_direction direction) const { return m_bytesAvailable[direction]; }
 
 protected:
-	void UpdateUsage(int usedBytes);
-	void Wait();
+	void UpdateUsage(enum CRateLimiter::rate_direction direction, int usedBytes);
+	void Wait(enum CRateLimiter::rate_direction direction);
 
-	virtual void OnRateAvailable() { }
+	virtual void OnRateAvailable(enum CRateLimiter::rate_direction direction) { }
 
 private:
-	bool m_waiting;
-	int m_bytesAvailable;
+	bool m_waiting[2];
+	int m_bytesAvailable[2];
 };
 
 #endif //__RATELIMITER_H__
