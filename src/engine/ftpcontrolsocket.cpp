@@ -463,6 +463,9 @@ int CFtpControlSocket::LogonParseResponse()
 			LogMessage(Status, _("Initializing TLS..."));
 
 			wxASSERT(!m_pTlsSocket);
+			delete m_pBackend;
+			m_pBackend = 0;
+
 			m_pTlsSocket = new CTlsSocket(this, this, this);
 
 			if (!m_pTlsSocket->Init())
@@ -477,7 +480,6 @@ int CFtpControlSocket::LogonParseResponse()
 				DoClose();
 			else
 			{
-				delete m_pBackend;
 				m_pBackend = m_pTlsSocket;
 			}
 
