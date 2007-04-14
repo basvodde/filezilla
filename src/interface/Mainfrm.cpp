@@ -238,7 +238,9 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	
 	Layout();
 
-	m_pState->SetLocalDir(wxGetCwd());
+	wxString localDir = COptions::Get()->GetOption(OPTION_LASTLOCALDIR);
+	if (!m_pState->SetLocalDir(localDir))
+		m_pState->SetLocalDir(_T("/"));
 
 	wxAcceleratorEntry entries[1];
 	entries[0].Set(wxACCEL_NORMAL, WXK_F5, XRCID("ID_TOOLBAR_REFRESH"));

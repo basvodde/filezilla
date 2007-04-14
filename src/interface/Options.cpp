@@ -73,7 +73,8 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Show Tree Local", number, _T("1") },
 	{ "Show Tree Remote", number, _T("1") },
 	{ "File Pane Layout", number, _T("0") },
-	{ "File Panw Swap", number, _T("0") }
+	{ "File Pane Swap", number, _T("0") },
+	{ "Last local directory", string, _T("") }
 };
 
 COptions::COptions()

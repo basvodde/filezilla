@@ -123,6 +123,9 @@ bool CState::SetLocalDir(wxString dir, wxString *error /*=0*/)
 		return false;
 
 	m_localDir = dir;
+
+	COptions::Get()->SetOption(OPTION_LASTLOCALDIR, dir);
+
 	NotifyHandlers(STATECHANGE_LOCAL_DIR);
 
 	return true;
