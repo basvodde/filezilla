@@ -360,7 +360,7 @@ int COptions::Validate(unsigned int nID, int value)
 			value = 5;
 		break;
 	case OPTION_FILEPANE_LAYOUT:
-		if (value < 0 || value > 2)
+		if (value < 0 || value > 3)
 			value = 0;
 		break;
 	case OPTION_SPEEDLIMIT_INBOUND:

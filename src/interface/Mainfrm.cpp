@@ -202,7 +202,8 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter, 100);
 	m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueueView, 100);
 
-	if (COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP))
+	const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
+	if (swap)
 		m_pViewSplitter->SplitVertically(m_pRemoteSplitter, m_pLocalSplitter);
 	else
 		m_pViewSplitter->SplitVertically(m_pLocalSplitter, m_pRemoteSplitter);
@@ -210,7 +211,10 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	if (COptions::Get()->GetOptionVal(OPTION_SHOW_TREE_LOCAL))
 	{
 		m_pLocalTreeViewPanel->SetHeader(new CLocalViewHeader(m_pLocalSplitter, m_pState));
-		if (COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT))
+		const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
+		if (layout == 3 && swap)
+			m_pLocalSplitter->SplitVertically(m_pLocalListViewPanel, m_pLocalTreeViewPanel);
+		else if (layout)
 			m_pLocalSplitter->SplitVertically(m_pLocalTreeViewPanel, m_pLocalListViewPanel);
 		else
 			m_pLocalSplitter->SplitHorizontally(m_pLocalTreeViewPanel, m_pLocalListViewPanel);
@@ -223,7 +227,10 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	if (COptions::Get()->GetOptionVal(OPTION_SHOW_TREE_REMOTE))
 	{
 		m_pRemoteTreeViewPanel->SetHeader(new CRemoteViewHeader(m_pRemoteSplitter, m_pState));
-		if (COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT))
+		const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
+		if (layout && !swap)
+			m_pRemoteSplitter->SplitVertically(m_pRemoteListViewPanel, m_pRemoteTreeViewPanel);
+		else if (layout)
 			m_pRemoteSplitter->SplitVertically(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel);
 		else
 			m_pRemoteSplitter->SplitHorizontally(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel);
@@ -976,7 +983,11 @@ void CMainFrame::OnToggleLocalTreeView(wxCommandEvent& event)
 	{
 		m_pLocalTreeViewPanel->SetHeader(m_pLocalListViewPanel->DetachHeader());
 		wxSize size = m_pLocalSplitter->GetClientSize();
-		if (COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT))
+		const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
+		const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
+		if (layout == 3 && swap)
+			m_pLocalSplitter->SplitVertically(m_pLocalListViewPanel, m_pLocalTreeViewPanel, m_lastLocalTreeSplitterPos);
+		else if (layout)
 			m_pLocalSplitter->SplitVertically(m_pLocalTreeViewPanel, m_pLocalListViewPanel, m_lastLocalTreeSplitterPos);
 		else
 			m_pLocalSplitter->SplitHorizontally(m_pLocalTreeViewPanel, m_pLocalListViewPanel, m_lastLocalTreeSplitterPos);
@@ -1004,10 +1015,14 @@ void CMainFrame::OnToggleRemoteTreeView(wxCommandEvent& event)
 	{
 		m_pRemoteTreeViewPanel->SetHeader(m_pRemoteListViewPanel->DetachHeader());
 		wxSize size = m_pRemoteSplitter->GetClientSize();
-		if (COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT))
-			m_pRemoteSplitter->SplitHorizontally(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel, m_lastRemoteTreeSplitterPos);
-		else
+		const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
+		const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
+		if (layout == 3 && !swap)
+			m_pRemoteSplitter->SplitVertically(m_pRemoteListViewPanel, m_pRemoteTreeViewPanel, m_lastRemoteTreeSplitterPos);
+		else if (layout)
 			m_pRemoteSplitter->SplitVertically(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel, m_lastRemoteTreeSplitterPos);
+		else
+			m_pRemoteSplitter->SplitHorizontally(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel, m_lastRemoteTreeSplitterPos);
 	}
 	COptions::Get()->SetOption(OPTION_SHOW_TREE_REMOTE, m_pRemoteSplitter->IsSplit());
 }
@@ -1086,7 +1101,7 @@ void CMainFrame::UpdateLayout(int layout /*=-1*/, int swap /*=-1*/)
 		swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
 
 	int mode;
-	if (!layout || layout == 2)
+	if (!layout || layout == 2 || layout == 3)
 		mode = wxSPLIT_VERTICAL;
 	else
 		mode = wxSPLIT_HORIZONTAL;
@@ -1121,13 +1136,26 @@ void CMainFrame::UpdateLayout(int layout /*=-1*/, int swap /*=-1*/)
 		else
 			mode = wxSPLIT_VERTICAL;
 
-		if (mode != m_pLocalSplitter->GetSplitMode())
+		wxWindow* pFirst;
+		wxWindow* pSecond;
+		if (layout == 3 && swap)
+		{
+			pFirst = m_pLocalListViewPanel;
+			pSecond = m_pLocalTreeViewPanel;
+		}
+		else
+		{
+			pFirst = m_pLocalTreeViewPanel;
+			pSecond = m_pLocalListViewPanel;
+		}
+
+		if (mode != m_pLocalSplitter->GetSplitMode() || pFirst != m_pLocalSplitter->GetWindow1())
 		{
 			m_pLocalSplitter->Unsplit();
 			if (mode == wxSPLIT_VERTICAL)
-				m_pLocalSplitter->SplitVertically(m_pLocalTreeViewPanel, m_pLocalListViewPanel, m_lastLocalTreeSplitterPos);
+				m_pLocalSplitter->SplitVertically(pFirst, pSecond, m_lastLocalTreeSplitterPos);
 			else
-				m_pLocalSplitter->SplitHorizontally(m_pLocalTreeViewPanel, m_pLocalListViewPanel, m_lastLocalTreeSplitterPos);
+				m_pLocalSplitter->SplitHorizontally(pFirst, pSecond, m_lastLocalTreeSplitterPos);
 		}
 	}
 
@@ -1138,13 +1166,26 @@ void CMainFrame::UpdateLayout(int layout /*=-1*/, int swap /*=-1*/)
 		else
 			mode = wxSPLIT_VERTICAL;
 
-		if (mode != m_pRemoteSplitter->GetSplitMode())
+		wxWindow* pFirst;
+		wxWindow* pSecond;
+		if (layout == 3 && !swap)
+		{
+			pFirst = m_pRemoteListViewPanel;
+			pSecond = m_pRemoteTreeViewPanel;
+		}
+		else
+		{
+			pFirst = m_pRemoteTreeViewPanel;
+			pSecond = m_pRemoteListViewPanel;
+		}
+
+		if (mode != m_pRemoteSplitter->GetSplitMode() || pFirst != m_pRemoteSplitter->GetWindow1())
 		{
 			m_pRemoteSplitter->Unsplit();
 			if (mode == wxSPLIT_VERTICAL)
-				m_pRemoteSplitter->SplitVertically(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel, m_lastRemoteTreeSplitterPos);
+				m_pRemoteSplitter->SplitVertically(pFirst, pSecond, m_lastRemoteTreeSplitterPos);
 			else
-				m_pRemoteSplitter->SplitHorizontally(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel, m_lastRemoteTreeSplitterPos);
+				m_pRemoteSplitter->SplitHorizontally(pFirst, pSecond, m_lastRemoteTreeSplitterPos);
 		}
 	}
 }
