@@ -80,14 +80,14 @@ public:
 #include "backend.h"
 
 class CTransferStatus;
-class CControlSocket : public wxEvtHandler, public wxSocketClient, public CLogging
+class CControlSocket: public wxEvtHandler, public CLogging
 {
 public:
 	CControlSocket(CFileZillaEnginePrivate *pEngine);
 	virtual ~CControlSocket();
 
-	virtual int Connect(const CServer &server);
-	virtual int ContinueConnect(const wxIPV4address *address);
+	virtual int Connect(const CServer &server) = 0;
+	virtual int ContinueConnect(const wxIPV4address *address) { return FZ_REPLY_ERROR; }
 	virtual int Disconnect();
 	virtual void Cancel();
 	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T(""), bool refresh = false) { return FZ_REPLY_NOTSUPPORTED; }
@@ -100,7 +100,7 @@ public:
 	virtual int Mkdir(const CServerPath& path) { return FZ_REPLY_NOTSUPPORTED; }
 	virtual int Rename(const CRenameCommand& command) { return FZ_REPLY_NOTSUPPORTED; }
 	virtual int Chmod(const CChmodCommand& command) { return FZ_REPLY_NOTSUPPORTED; }
-	virtual bool Connected() const { return IsConnected(); }
+	virtual bool Connected() const = 0;
 
 	// If m_pCurrentOpData is zero, this function returns the current command
 	// from the engine.
@@ -139,23 +139,12 @@ public:
 
 protected:
 	virtual int DoClose(int nErrorCode = FZ_REPLY_DISCONNECTED);
-	void ResetSocket();
 	bool m_closed;
 
-	virtual void OnSocketEvent(wxSocketEvent &event);
-	virtual void OnConnect(wxSocketEvent &event);
-	virtual void OnReceive(wxSocketEvent &event);
-	virtual void OnSend(wxSocketEvent &event);
-	virtual void OnClose(wxSocketEvent &event);
 	virtual int ResetOperation(int nErrorCode);
-	virtual bool Send(const char *buffer, int len);
 
 	// Called by ResetOperation if there's a queued operation
 	virtual int SendNextCommand(int prevResult = FZ_REPLY_OK);
-
-	// Easier functions to get the IP addresses
-	virtual wxString GetLocalIP() const;
-	virtual wxString GetPeerIP() const;
 
 	wxString ConvertDomainName(wxString domain);
 
@@ -170,27 +159,15 @@ protected:
 
 	CServerPath m_CurrentPath;
 	
-	char *m_pSendBuffer;
-	int m_nSendBufferLen;
-
 	CTransferStatus *m_pTransferStatus;
 	int m_transferStatusSendState;
 	
-	bool m_onConnectCalled;
-
 	wxCSConv *m_pCSConv;
 	bool m_useUTF8;
 
 	// Timeout data
 	wxTimer m_timer;
 	wxStopWatch m_stopWatch;
-
-	// Initialized with 0, incremented each time
-	// a new connection is created from the same instance.
-	// Mainly needed for CHttpControlSockets if server sends a redirects.
-	// Otherwise, lingering events from the previous connection will cause
-	// problems
-	int m_socketId;
 
 	// -------------------------
 	// Begin cache locking stuff
@@ -232,11 +209,45 @@ protected:
 	// End cache locking stuff
 	// -----------------------
 
-	CBackend* m_pBackend;
-
 	DECLARE_EVENT_TABLE();
 	void OnTimer(wxTimerEvent& event);
 	void OnObtainLock(wxCommandEvent& event);
+};
+
+class CRealControlSocket : public CControlSocket, public wxSocketClient
+{
+public:
+	CRealControlSocket(CFileZillaEnginePrivate *pEngine);
+	virtual ~CRealControlSocket();
+
+	virtual int Connect(const CServer &server);
+	virtual int ContinueConnect(const wxIPV4address *address);
+
+	virtual bool Connected() const { return IsConnected(); }
+
+protected:
+	virtual int DoClose(int nErrorCode = FZ_REPLY_DISCONNECTED);
+	void ResetSocket();
+
+	// Easier functions to get the IP addresses
+	virtual wxString GetLocalIP() const;
+	virtual wxString GetPeerIP() const;
+
+	DECLARE_EVENT_TABLE();
+	virtual void OnSocketEvent(wxSocketEvent &event);
+	virtual void OnConnect();
+	virtual void OnReceive();
+	virtual void OnSend();
+	virtual void OnClose();
+	
+	virtual bool Send(const char *buffer, int len);
+
+	CBackend* m_pBackend;
+
+	char *m_pSendBuffer;
+	int m_nSendBufferLen;
+
+	bool m_onConnectCalled;
 };
 
 #endif

@@ -2,7 +2,7 @@
 #define __HTTPCONTROLSOCKET_H__
 
 class CHttpOpData;
-class CHttpControlSocket : public CControlSocket
+class CHttpControlSocket : public CRealControlSocket
 {
 public:
 	CHttpControlSocket(CFileZillaEnginePrivate *pEngine);
@@ -24,9 +24,9 @@ protected:
 	int InternalConnect(const wxString& host, unsigned short port);
 	int DoInternalConnect();
 
-	virtual void OnConnect(wxSocketEvent& event);
-	virtual void OnClose(wxSocketEvent& event);
-	virtual void OnReceive(wxSocketEvent& event);
+	virtual void OnConnect();
+	virtual void OnClose();
+	virtual void OnReceive();
 
 	virtual int ResetOperation(int nErrorCode);
 	

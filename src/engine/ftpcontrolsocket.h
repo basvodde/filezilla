@@ -12,7 +12,7 @@ class CTransferSocket;
 class CFtpTransferOpData;
 class CRawTransferOpData;
 class CTlsSocket;
-class CFtpControlSocket : public CControlSocket
+class CFtpControlSocket : public CRealControlSocket
 {
 	friend class CTransferSocket;
 public:
@@ -70,8 +70,8 @@ protected:
 	virtual int TransferParseResponse();
 	virtual int TransferSend(int prevResult = FZ_REPLY_OK);
 	
-	virtual void OnConnect(wxSocketEvent &event);
-	virtual void OnReceive(wxSocketEvent &event);
+	virtual void OnConnect();
+	virtual void OnReceive();
 
 	virtual bool Send(wxString str, bool maskArgs = false);
 

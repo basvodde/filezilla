@@ -23,7 +23,7 @@
 #define LOGON_CUSTOMCOMMANDS 10
 #define LOGON_DONE		11
 
-BEGIN_EVENT_TABLE(CFtpControlSocket, CControlSocket)
+BEGIN_EVENT_TABLE(CFtpControlSocket, CRealControlSocket)
 EVT_FZ_EXTERNALIPRESOLVE(wxID_ANY, CFtpControlSocket::OnExternalIPAddress)
 END_EVENT_TABLE();
 
@@ -124,7 +124,7 @@ public:
 	int neededCommands[LOGON_DONE];
 };
 
-CFtpControlSocket::CFtpControlSocket(CFileZillaEnginePrivate *pEngine) : CControlSocket(pEngine)
+CFtpControlSocket::CFtpControlSocket(CFileZillaEnginePrivate *pEngine) : CRealControlSocket(pEngine)
 {
 	m_pIPResolver = 0;
 	m_pTransferSocket = 0;
@@ -138,16 +138,9 @@ CFtpControlSocket::CFtpControlSocket(CFileZillaEnginePrivate *pEngine) : CContro
 
 CFtpControlSocket::~CFtpControlSocket()
 {
-	if (m_pTlsSocket)
-	{
-		if (m_pBackend == m_pTlsSocket)
-			m_pBackend = 0;
-		delete m_pTlsSocket;
-		m_pTlsSocket = 0;
-	}	
 }
 
-void CFtpControlSocket::OnReceive(wxSocketEvent &event)
+void CFtpControlSocket::OnReceive()
 {
 	LogMessage(Debug_Verbose, _T("CFtpControlSocket::OnReceive()"));
 
@@ -285,7 +278,7 @@ void CFtpControlSocket::ParseLine(wxString line)
 	}
 }
 
-void CFtpControlSocket::OnConnect(wxSocketEvent &event)
+void CFtpControlSocket::OnConnect()
 {
 	SetAlive();
 	if (m_pCurrentServer->GetProtocol() == FTPS)
@@ -296,8 +289,8 @@ void CFtpControlSocket::OnConnect(wxSocketEvent &event)
 
 			wxASSERT(!m_pTlsSocket);
 			delete m_pBackend;
-			m_pBackend = 0;
 			m_pTlsSocket = new CTlsSocket(this, this, this);
+			m_pBackend = m_pTlsSocket;
 
 			if (!m_pTlsSocket->Init())
 			{
@@ -309,8 +302,6 @@ void CFtpControlSocket::OnConnect(wxSocketEvent &event)
 			int res = m_pTlsSocket->Handshake();
 			if (res == FZ_REPLY_ERROR)
 				DoClose();
-			else
-				m_pBackend = m_pTlsSocket;
 
 			return;
 		}
@@ -464,9 +455,9 @@ int CFtpControlSocket::LogonParseResponse()
 
 			wxASSERT(!m_pTlsSocket);
 			delete m_pBackend;
-			m_pBackend = 0;
-
+			
 			m_pTlsSocket = new CTlsSocket(this, this, this);
+			m_pBackend = m_pTlsSocket;
 
 			if (!m_pTlsSocket->Init())
 			{
@@ -478,10 +469,6 @@ int CFtpControlSocket::LogonParseResponse()
 			int res = m_pTlsSocket->Handshake();
 			if (res == FZ_REPLY_ERROR)
 				DoClose();
-			else
-			{
-				m_pBackend = m_pTlsSocket;
-			}
 
 			pData->neededCommands[LOGON_AUTH_SSL] = 0;
 		}
@@ -800,7 +787,7 @@ bool CFtpControlSocket::Send(wxString str, bool maskArgs /*=false*/)
 		return false;
 	}
 	unsigned int len = (unsigned int)strlen(buffer);
-	bool res = CControlSocket::Send(buffer, len);
+	bool res = CRealControlSocket::Send(buffer, len);
 	if (res)
 		m_pendingReplies++;
 	return res;
@@ -3293,5 +3280,5 @@ int CFtpControlSocket::Connect(const CServer &server)
 
 	m_pCurOpData = pData;
 
-	return CControlSocket::Connect(server);
+	return CRealControlSocket::Connect(server);
 }

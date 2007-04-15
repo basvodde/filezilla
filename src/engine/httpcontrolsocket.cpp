@@ -80,7 +80,7 @@ public:
 };
 
 CHttpControlSocket::CHttpControlSocket(CFileZillaEnginePrivate *pEngine)
-	: CControlSocket(pEngine)
+	: CRealControlSocket(pEngine)
 {
 	m_pRecvBuffer = 0;
 	m_pAddress = 0;
@@ -262,7 +262,7 @@ bool CHttpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotifi
 	return true;
 }
 
-void CHttpControlSocket::OnReceive(wxSocketEvent& event)
+void CHttpControlSocket::OnReceive()
 {
 	if (!m_pRecvBuffer)
 	{
@@ -309,7 +309,7 @@ void CHttpControlSocket::OnReceive(wxSocketEvent& event)
 	}
 }
 
-void CHttpControlSocket::OnConnect(wxSocketEvent& event)
+void CHttpControlSocket::OnConnect()
 {
 	LogMessage(Status, _("Connection established, sending HTTP request"));
 	ResetOperation(FZ_REPLY_OK);
@@ -485,6 +485,10 @@ int CHttpControlSocket::DoInternalConnect()
 
 	CHttpConnectOpData *pData = static_cast<CHttpConnectOpData *>(m_pCurOpData);
 	LogMessage(Status, _("Connecting to %s:%d..."), m_pAddress->IPAddress().c_str(), pData->port);
+
+	if (m_pBackend)
+		delete m_pBackend;
+	m_pBackend = new CSocketBackend(this, this);
 
 	wxIPV4address addr;
 	addr.Hostname(pData->host);
@@ -891,11 +895,11 @@ int CHttpControlSocket::ResetOperation(int nErrorCode)
 	return CControlSocket::ResetOperation(nErrorCode);
 }
 
-void CHttpControlSocket::OnClose(wxSocketEvent& event)
+void CHttpControlSocket::OnClose()
 {
 	char tmp[1];
 	for (Peek(tmp, 1); !Error() && LastCount(); Peek(tmp, 1))
-		OnReceive(event);
+		OnReceive();
 
 	// HTTP socket isn't connected outside operations
 	if (!m_pCurOpData)

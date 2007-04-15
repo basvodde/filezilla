@@ -15,7 +15,6 @@ DEFINE_EVENT_TYPE(fzOBTAINLOCK)
 std::list<CControlSocket::t_lockInfo> CControlSocket::m_lockInfoList;
 
 BEGIN_EVENT_TABLE(CControlSocket, wxEvtHandler)
-	EVT_SOCKET(wxID_ANY, CControlSocket::OnSocketEvent)
 	EVT_TIMER(wxID_ANY, CControlSocket::OnTimer)
 	EVT_COMMAND(wxID_ANY, fzOBTAINLOCK, CControlSocket::OnObtainLock)
 END_EVENT_TABLE();
@@ -36,23 +35,13 @@ COpData::~COpData()
 }
 
 CControlSocket::CControlSocket(CFileZillaEnginePrivate *pEngine)
-	: wxSocketClient(wxSOCKET_NOWAIT), CLogging(pEngine)
+	: CLogging(pEngine)
 {
-	m_pBackend = new CSocketBackend(this, this);
-	m_socketId = 0;
 	m_pEngine = pEngine;
 	m_pCurOpData = 0;
-	m_pSendBuffer = 0;
-	m_nSendBufferLen = 0;
 	m_pCurrentServer = 0;
 	m_pTransferStatus = 0;
 	m_transferStatusSendState = 0;
-	m_onConnectCalled = false;
-
-	SetEvtHandlerEnabled(true);
-	SetEventHandler(*this, m_socketId);
-	SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_OUTPUT_FLAG | wxSOCKET_CONNECTION_FLAG | wxSOCKET_LOST_FLAG);
-	Notify(true);
 
 	m_pCSConv = 0;
 	m_useUTF8 = false;
@@ -66,130 +55,8 @@ CControlSocket::~CControlSocket()
 {
 	DoClose();
 
-	delete m_pBackend;
-	m_pBackend = 0;
-
 	delete m_pCSConv;
 	m_pCSConv = 0;
-}
-
-void CControlSocket::OnConnect(wxSocketEvent &event)
-{
-}
-
-void CControlSocket::OnReceive(wxSocketEvent &event)
-{
-}
-
-void CControlSocket::OnSend(wxSocketEvent &event)
-{
-	if (m_pSendBuffer)
-	{
-		if (!m_nSendBufferLen)
-		{
-			delete [] m_pSendBuffer;
-			m_pSendBuffer = 0;
-			return;
-		}
-
-		m_pBackend->Write(m_pSendBuffer, m_nSendBufferLen);
-		if (m_pBackend->Error())
-		{
-			if (m_pBackend->LastError() != wxSOCKET_WOULDBLOCK)
-				DoClose();
-			return;
-		}
-
-		int numsent = m_pBackend->LastCount();
-
-		if (numsent)
-		{
-			SetAlive();
-			m_pEngine->SetActive(false);
-		}
-
-		if (numsent == m_nSendBufferLen)
-		{
-			m_nSendBufferLen = 0;
-			delete [] m_pSendBuffer;
-			m_pSendBuffer = 0;
-		}
-		else
-		{
-			memmove(m_pSendBuffer, m_pSendBuffer + numsent, m_nSendBufferLen - numsent);
-			m_nSendBufferLen -= numsent;
-		}
-	}
-}
-
-void CControlSocket::OnClose(wxSocketEvent &event)
-{
-	LogMessage(Debug_Verbose, _T("CControlSocket::OnClose()"));
-
-	if (GetCurrentCommandId() != cmd_connect)
-		LogMessage(::Error, _("Disconnected from server"));
-	DoClose();
-}
-
-int CControlSocket::Connect(const CServer &server)
-{
-	SetWait(true);
-
-	if (server.GetEncodingType() == ENCODING_CUSTOM)
-		m_pCSConv = new wxCSConv(server.GetCustomEncoding());
-
-	if (m_pCurrentServer)
-		delete m_pCurrentServer;
-	m_pCurrentServer = new CServer(server);
-
-	const wxString & host = server.GetHost();
-	if (!IsIpAddress(host))
-	{
-		LogMessage(Status, _("Resolving IP-Address for %s"), host.c_str());
-		CAsyncHostResolver *resolver = new CAsyncHostResolver(m_pEngine, ConvertDomainName(host));
-		m_pEngine->AddNewAsyncHostResolver(resolver);
-
-		resolver->Create();
-		resolver->Run();
-	}
-	else
-	{
-		wxIPV4address addr;
-		addr.Hostname(host);
-		return ContinueConnect(&addr);
-	}
-
-	return FZ_REPLY_WOULDBLOCK;
-}
-
-int CControlSocket::ContinueConnect(const wxIPV4address *address)
-{
-	LogMessage(__TFILE__, __LINE__, this, Debug_Verbose, _T("CControlSocket::ContinueConnect(%p) m_pEngine=%p"), address, m_pEngine);
-	if (GetCurrentCommandId() != cmd_connect ||
-		!m_pCurrentServer)
-	{
-		LogMessage(Debug_Warning, _T("Invalid context for call to ContinueConnect(), cmd=%d, m_pCurrentServer=%p"), GetCurrentCommandId(), m_pCurrentServer);
-		return DoClose(FZ_REPLY_INTERNALERROR);
-	}
-	
-	if (!address)
-	{
-		LogMessage(::Error, _("Invalid hostname or host not found"));
-		return DoClose(FZ_REPLY_ERROR | FZ_REPLY_CRITICALERROR);
-	}
-
-	const unsigned int port = m_pCurrentServer->GetPort();
-	LogMessage(Status, _("Connecting to %s:%d..."), address->IPAddress().c_str(), port);
-
-	wxIPV4address addr = *address;
-	addr.Service(port);
-
-	bool res = wxSocketClient::Connect(addr, false);
-
-	if (!res && LastError() != wxSOCKET_WOULDBLOCK)
-		return DoClose();
-
-	return FZ_REPLY_WOULDBLOCK;
 }
 
 int CControlSocket::Disconnect()
@@ -198,34 +65,6 @@ int CControlSocket::Disconnect()
 
 	DoClose();
 	return FZ_REPLY_OK;
-}
-
-void CControlSocket::OnSocketEvent(wxSocketEvent &event)
-{
-	if (event.GetId() != m_socketId)
-		return;
-
-	switch (event.GetSocketEvent())
-	{
-	case wxSOCKET_CONNECTION:
-		m_onConnectCalled = true;
-		OnConnect(event);
-		break;
-	case wxSOCKET_INPUT:
-		if (!m_onConnectCalled)
-		{
-			m_onConnectCalled = true;
-			OnConnect(event);
-		}
-		OnReceive(event);
-		break;
-	case wxSOCKET_OUTPUT:
-		OnSend(event);
-		break;
-	case wxSOCKET_LOST:
-		OnClose(event);
-		break;
-	}
 }
 
 enum Command CControlSocket::GetCurrentCommandId() const
@@ -340,72 +179,10 @@ int CControlSocket::DoClose(int nErrorCode /*=FZ_REPLY_DISCONNECTED*/)
 
 	nErrorCode = ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED | nErrorCode);
 	
-	ResetSocket();
-
 	delete m_pCurrentServer;
 	m_pCurrentServer = 0;
 
 	return nErrorCode;
-}
-
-void CControlSocket::ResetSocket()
-{
-	Close();
-
-	if (m_pSendBuffer)
-	{
-		delete [] m_pSendBuffer;
-		m_pSendBuffer = 0;
-		m_nSendBufferLen = 0;
-	}
-
-	m_onConnectCalled = false;
-
-	SetEventHandler(*this, ++m_socketId);
-}
-
-bool CControlSocket::Send(const char *buffer, int len)
-{
-	SetWait(true);
-	if (m_pSendBuffer)
-	{
-		char *tmp = m_pSendBuffer;
-		m_pSendBuffer = new char[m_nSendBufferLen + len];
-		memcpy(m_pSendBuffer, tmp, m_nSendBufferLen);
-		memcpy(m_pSendBuffer + m_nSendBufferLen, buffer, len);
-		m_nSendBufferLen += len;
-		delete [] tmp;
-	}
-	else
-	{
-		m_pBackend->Write(buffer, len);
-		int numsent = 0;
-		if (m_pBackend->Error())
-		{
-			if (m_pBackend->LastError() != wxSOCKET_WOULDBLOCK)
-			{
-				DoClose();
-				return false;
-			}
-		}
-		else
-			numsent = m_pBackend->LastCount();
-
-		if (numsent)
-			m_pEngine->SetActive(false);
-
-		if (numsent < len)
-		{
-			char *tmp = m_pSendBuffer;
-			m_pSendBuffer = new char[m_nSendBufferLen + len - numsent];
-			memcpy(m_pSendBuffer, tmp, m_nSendBufferLen);
-			memcpy(m_pSendBuffer + m_nSendBufferLen, buffer, len - numsent);
-			m_nSendBufferLen += len - numsent;
-			delete [] tmp;
-		}
-	}
-
-	return true;
 }
 
 wxString CControlSocket::ConvertDomainName(wxString domain)
@@ -795,24 +572,6 @@ wxCharBuffer CControlSocket::ConvToServer(const wxString& str)
 	return buffer;
 }
 
-wxString CControlSocket::GetLocalIP() const
-{
-	wxIPV4address addr;
-	if (!GetLocal(addr))
-		return _T("");
-
-	return addr.IPAddress();
-}
-
-wxString CControlSocket::GetPeerIP() const
-{
-	wxIPV4address addr;
-	if (!GetPeer(addr))
-		return _T("");
-
-	return addr.IPAddress();
-}
-
 void CControlSocket::OnTimer(wxTimerEvent& event)
 {
 	int timeout = m_pEngine->GetOptions()->GetOptionVal(OPTION_TIMEOUT);
@@ -949,4 +708,264 @@ void CControlSocket::OnObtainLock(wxCommandEvent& event)
 	SendNextCommand();
 
 	UnlockCache();
+}
+
+// ------------------
+// CRealControlSocket
+// ------------------
+
+BEGIN_EVENT_TABLE(CRealControlSocket, CControlSocket)
+	EVT_SOCKET(wxID_ANY, CRealControlSocket::OnSocketEvent)
+END_EVENT_TABLE()
+
+CRealControlSocket::CRealControlSocket(CFileZillaEnginePrivate *pEngine)
+	: CControlSocket(pEngine), wxSocketClient(wxSOCKET_NOWAIT)
+{
+	m_pBackend = new CSocketBackend(this, this);
+
+	m_pSendBuffer = 0;
+	m_nSendBufferLen = 0;
+	m_onConnectCalled = false;
+}
+
+CRealControlSocket::~CRealControlSocket()
+{
+	delete m_pBackend;
+	m_pBackend = 0;
+}
+
+bool CRealControlSocket::Send(const char *buffer, int len)
+{
+	SetWait(true);
+	if (m_pSendBuffer)
+	{
+		char *tmp = m_pSendBuffer;
+		m_pSendBuffer = new char[m_nSendBufferLen + len];
+		memcpy(m_pSendBuffer, tmp, m_nSendBufferLen);
+		memcpy(m_pSendBuffer + m_nSendBufferLen, buffer, len);
+		m_nSendBufferLen += len;
+		delete [] tmp;
+	}
+	else
+	{
+		m_pBackend->Write(buffer, len);
+		int numsent = 0;
+		if (m_pBackend->Error())
+		{
+			if (m_pBackend->LastError() != wxSOCKET_WOULDBLOCK)
+			{
+				DoClose();
+				return false;
+			}
+		}
+		else
+			numsent = m_pBackend->LastCount();
+
+		if (numsent)
+			m_pEngine->SetActive(false);
+
+		if (numsent < len)
+		{
+			char *tmp = m_pSendBuffer;
+			m_pSendBuffer = new char[m_nSendBufferLen + len - numsent];
+			memcpy(m_pSendBuffer, tmp, m_nSendBufferLen);
+			memcpy(m_pSendBuffer + m_nSendBufferLen, buffer, len - numsent);
+			m_nSendBufferLen += len - numsent;
+			delete [] tmp;
+		}
+	}
+
+	return true;
+}
+
+void CRealControlSocket::OnSocketEvent(wxSocketEvent &event)
+{
+	if (!m_pBackend)
+		return;
+
+	if (event.GetId() != m_pBackend->GetId())
+		return;
+
+	switch (event.GetSocketEvent())
+	{
+	case wxSOCKET_CONNECTION:
+		m_onConnectCalled = true;
+		OnConnect();
+		break;
+	case wxSOCKET_INPUT:
+		if (!m_onConnectCalled)
+		{
+			m_onConnectCalled = true;
+			OnConnect();
+		}
+		OnReceive();
+		break;
+	case wxSOCKET_OUTPUT:
+		OnSend();
+		break;
+	case wxSOCKET_LOST:
+		OnClose();
+		break;
+	}
+}
+
+void CRealControlSocket::OnConnect()
+{
+}
+
+void CRealControlSocket::OnReceive()
+{
+}
+
+void CRealControlSocket::OnSend()
+{
+	if (m_pSendBuffer)
+	{
+		if (!m_nSendBufferLen)
+		{
+			delete [] m_pSendBuffer;
+			m_pSendBuffer = 0;
+			return;
+		}
+
+		m_pBackend->Write(m_pSendBuffer, m_nSendBufferLen);
+		if (m_pBackend->Error())
+		{
+			if (m_pBackend->LastError() != wxSOCKET_WOULDBLOCK)
+				DoClose();
+			return;
+		}
+
+		int numsent = m_pBackend->LastCount();
+
+		if (numsent)
+		{
+			SetAlive();
+			m_pEngine->SetActive(false);
+		}
+
+		if (numsent == m_nSendBufferLen)
+		{
+			m_nSendBufferLen = 0;
+			delete [] m_pSendBuffer;
+			m_pSendBuffer = 0;
+		}
+		else
+		{
+			memmove(m_pSendBuffer, m_pSendBuffer + numsent, m_nSendBufferLen - numsent);
+			m_nSendBufferLen -= numsent;
+		}
+	}
+}
+
+void CRealControlSocket::OnClose()
+{
+	LogMessage(Debug_Verbose, _T("CRealControlSocket::OnClose()"));
+
+	if (GetCurrentCommandId() != cmd_connect)
+		LogMessage(::Error, _("Disconnected from server"));
+	DoClose();
+}
+
+int CRealControlSocket::Connect(const CServer &server)
+{
+	SetWait(true);
+
+	if (server.GetEncodingType() == ENCODING_CUSTOM)
+		m_pCSConv = new wxCSConv(server.GetCustomEncoding());
+
+	if (m_pCurrentServer)
+		delete m_pCurrentServer;
+	m_pCurrentServer = new CServer(server);
+
+	const wxString & host = server.GetHost();
+	if (!IsIpAddress(host))
+	{
+		LogMessage(Status, _("Resolving IP-Address for %s"), host.c_str());
+		CAsyncHostResolver *resolver = new CAsyncHostResolver(m_pEngine, ConvertDomainName(host));
+		m_pEngine->AddNewAsyncHostResolver(resolver);
+
+		resolver->Create();
+		resolver->Run();
+	}
+	else
+	{
+		wxIPV4address addr;
+		addr.Hostname(host);
+		return ContinueConnect(&addr);
+	}
+
+	return FZ_REPLY_WOULDBLOCK;
+}
+
+int CRealControlSocket::ContinueConnect(const wxIPV4address *address)
+{
+	LogMessage(__TFILE__, __LINE__, this, Debug_Verbose, _T("CRealControlSocket::ContinueConnect(%p) m_pEngine=%p"), address, m_pEngine);
+	if (GetCurrentCommandId() != cmd_connect ||
+		!m_pCurrentServer)
+	{
+		LogMessage(Debug_Warning, _T("Invalid context for call to ContinueConnect(), cmd=%d, m_pCurrentServer=%p"), GetCurrentCommandId(), m_pCurrentServer);
+		return DoClose(FZ_REPLY_INTERNALERROR);
+	}
+	
+	if (!address)
+	{
+		LogMessage(::Error, _("Invalid hostname or host not found"));
+		return DoClose(FZ_REPLY_ERROR | FZ_REPLY_CRITICALERROR);
+	}
+
+	const unsigned int port = m_pCurrentServer->GetPort();
+	LogMessage(Status, _("Connecting to %s:%d..."), address->IPAddress().c_str(), port);
+
+	wxIPV4address addr = *address;
+	addr.Service(port);
+
+	bool res = wxSocketClient::Connect(addr, false);
+
+	if (!res && LastError() != wxSOCKET_WOULDBLOCK)
+		return DoClose();
+
+	return FZ_REPLY_WOULDBLOCK;
+}
+
+int CRealControlSocket::DoClose(int nErrorCode /*=FZ_REPLY_DISCONNECTED*/)
+{
+	ResetSocket();
+	
+	return CControlSocket::DoClose(nErrorCode);
+}
+
+void CRealControlSocket::ResetSocket()
+{
+	Close();
+
+	if (m_pSendBuffer)
+	{
+		delete [] m_pSendBuffer;
+		m_pSendBuffer = 0;
+		m_nSendBufferLen = 0;
+	}
+
+	m_onConnectCalled = false;
+
+	delete m_pBackend;
+	m_pBackend = 0;
+}
+
+wxString CRealControlSocket::GetLocalIP() const
+{
+	wxIPV4address addr;
+	if (!GetLocal(addr))
+		return _T("");
+
+	return addr.IPAddress();
+}
+
+wxString CRealControlSocket::GetPeerIP() const
+{
+	wxIPV4address addr;
+	if (!GetPeer(addr))
+		return _T("");
+
+	return addr.IPAddress();
 }
