@@ -1,8 +1,13 @@
 #include "FileZilla.h"
 #include "backend.h"
 
+int CBackend::m_nextId = 0;
+
 CBackend::CBackend(wxEvtHandler* pEvtHandler) : m_pEvtHandler(pEvtHandler)
 {
+	m_Id = m_nextId++;
+	if (m_nextId < 0)
+		m_nextId = 0;
 }
 
 CSocketBackend::CSocketBackend(wxEvtHandler* pEvtHandler, wxSocketBase* pSocket) : CBackend(pEvtHandler), m_pSocket(pSocket)
@@ -11,7 +16,7 @@ CSocketBackend::CSocketBackend(wxEvtHandler* pEvtHandler, wxSocketBase* pSocket)
 	m_lastCount = 0;
 	m_lastError = 0;
 
-	m_pSocket->SetEventHandler(*pEvtHandler);
+	m_pSocket->SetEventHandler(*pEvtHandler, GetId());
 	m_pSocket->SetNotify(wxSOCKET_CONNECTION_FLAG | wxSOCKET_INPUT_FLAG | wxSOCKET_OUTPUT_FLAG | wxSOCKET_LOST_FLAG);
 	m_pSocket->Notify(true);
 
@@ -28,7 +33,6 @@ CSocketBackend::~CSocketBackend()
 	if (pRateLimiter)
 		pRateLimiter->RemoveObject(this);
 }
-
 
 void CSocketBackend::UpdateResults()
 {

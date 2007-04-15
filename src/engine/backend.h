@@ -17,8 +17,20 @@ public:
 
 	virtual void OnRateAvailable(enum CRateLimiter::rate_direction direction) = 0;
 
+	int GetId() const { return m_Id; }
+
 protected:
 	wxEvtHandler* const m_pEvtHandler;
+
+private:
+	int m_Id;
+
+	// Initialized with 0, incremented each time
+	// a new instance is created
+	// Mainly needed for CHttpControlSockets if server sends a redirects.
+	// Otherwise, lingering events from the previous connection will cause
+	// problems
+	static int m_nextId;
 };
 
 class CSocketBackend : public CBackend

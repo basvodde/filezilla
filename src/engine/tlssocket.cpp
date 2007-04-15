@@ -245,7 +245,7 @@ ssize_t CTlsSocket::PullFunction(void* data, size_t len)
 		{
 			if (m_canCheckCloseSocket)
 			{
-				wxSocketEvent evt;
+				wxSocketEvent evt(m_pSocketBackend->GetId());
 				evt.m_event = wxSOCKET_LOST;
 				wxPostEvent(this, evt);
 			}
@@ -260,7 +260,7 @@ ssize_t CTlsSocket::PullFunction(void* data, size_t len)
 
 	if (m_canCheckCloseSocket)
 	{
-		wxSocketEvent evt;
+		wxSocketEvent evt(m_pSocketBackend->GetId());
 		evt.m_event = wxSOCKET_LOST;
 		wxPostEvent(this, evt);
 	}
@@ -272,6 +272,9 @@ void CTlsSocket::OnSocketEvent(wxSocketEvent& event)
 {
 	wxASSERT(m_pSocket);
 	if (!m_session)
+		return;
+
+	if (event.GetId() != m_pSocketBackend->GetId())
 		return;
 
 	switch (event.GetSocketEvent())
@@ -304,7 +307,7 @@ void CTlsSocket::OnSocketEvent(wxSocketEvent& event)
 			m_pOwner->LogMessage(Debug_Info, _T("CTlsSocket::OnSocketEvent(): wxSOCKET_LOST received"));
 
 			//Uninit();
-			wxSocketEvent evt;
+			wxSocketEvent evt(GetId());
 			evt.m_event = wxSOCKET_LOST;
 			wxPostEvent(m_pEvtHandler, evt);
 		}
@@ -391,7 +394,7 @@ int CTlsSocket::Handshake(const CTlsSocket* pPrimarySocket /*=0*/)
 
 		m_tlsState = conn;
 
-		wxSocketEvent evt;
+		wxSocketEvent evt(GetId());
 		evt.m_event = wxSOCKET_CONNECTION;
 		wxPostEvent(m_pEvtHandler, evt);
 		TriggerEvents();
@@ -533,7 +536,7 @@ void CTlsSocket::TriggerEvents()
 
 	if (m_canTriggerRead)
 	{
-		wxSocketEvent evt;
+		wxSocketEvent evt(GetId());
 		evt.m_event = wxSOCKET_INPUT;
 		wxPostEvent(m_pEvtHandler, evt);
 		m_canTriggerRead = false;
@@ -541,7 +544,7 @@ void CTlsSocket::TriggerEvents()
 
 	if (m_canTriggerWrite)
 	{
-		wxSocketEvent evt;
+		wxSocketEvent evt(GetId());
 		evt.m_event = wxSOCKET_OUTPUT;
 		wxPostEvent(m_pEvtHandler, evt);
 		m_canTriggerWrite = false;
@@ -576,7 +579,7 @@ void CTlsSocket::Failure(int code)
 		LogError(code);
 	Uninit();
 
-	wxSocketEvent evt;
+	wxSocketEvent evt(GetId());
 	evt.m_event = wxSOCKET_LOST;
 	wxPostEvent(m_pEvtHandler, evt);
 }
@@ -655,7 +658,7 @@ void CTlsSocket::ContinueShutdown()
 	{
 		m_tlsState = closed;
 
-		wxSocketEvent evt;
+		wxSocketEvent evt(GetId());
 		evt.m_event = wxSOCKET_LOST;
 		wxPostEvent(m_pEvtHandler, evt);
 
@@ -678,7 +681,7 @@ void CTlsSocket::TrustCurrentCert(bool trusted)
 	{
 		m_tlsState = conn;
 
-		wxSocketEvent evt;
+		wxSocketEvent evt(GetId());
 		evt.m_event = wxSOCKET_CONNECTION;
 		wxPostEvent(m_pEvtHandler, evt);
 		TriggerEvents();
