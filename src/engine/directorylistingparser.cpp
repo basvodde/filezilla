@@ -11,39 +11,6 @@ std::map<wxString, int> CDirectoryListingParser::m_MonthNamesMap;
 //#define LISTDEBUG
 #ifdef LISTDEBUG
 static char data[][110]={
-	/* VMS style listings */
-	"33-vms-dir.DIR;1  1 19-NOV-2001 21:41 [root,root] (RWE,RWE,RE,RE)",
-	"34-vms-file;1       155   2-JUL-2003 10:30:13.64",
-
-	/* VMS style listings without time */
-	"35-vms-notime-file;1    2/8    15-JAN-2000    [IV2_XXX]   (RWED,RWED,RE,)",
-	"36-vms-notime-file;1    6/8    15-JUI-2002    PRONAS   (RWED,RWED,RE,)",
-
-	/* VMS multiline */
-	"37-vms-multiline-file;1\r\n170774/170775     24-APR-2003 08:16:15  [FTP_CLIENT,SCOT]      (RWED,RWED,RE,)",
-	"38-vms-multiline-file;1\r\n10			     2-JUL-2003 10:30:08.59  [FTP_CLIENT,SCOT]      (RWED,RWED,RE,)",
-
-	/* IBM AS/400 style listing */
-	"QSYS            77824 02/23/00 15:09:55 *DIR 39-ibm-as400 dir/",
-	"QSYS            77824 23/02/00 15:09:55 *FILE 40-ibm-as400-date file",
-
-	/* aligned directory listing with too long size */
-	"-r-xr-xr-x longowner longgroup123456 Feb 12 17:20 41-unix-concatsize file",
-
-	/* short directory listing with month name */
-	"-r-xr-xr-x 2 owner group 4512 01-jun-99 42_unix_shortdatemonth file",
-
-	/* the following format is sent by the Connect:Enterprise server by Sterling Commerce */
-	"-C--E-----FTP B BCC3I1       7670  1294495 Jan 13 07:42 43-conent file",
-	"-C--E-----FTS B BCC3I1       7670  1294495 Jan 13 07:42 44-conent-file",
-
-	"-AR--M----TCP B ceunix      17570  2313708 Mar 29 08:56 45-conent-file",
-
-	/* Nortel wfFtp router */
-	"46-nortel-wfftp-file       1014196  06/03/04  Thur.   10:20:03",
-
-	/* VxWorks based server used in Nortel routers */
-	"2048    Feb-28-1998  05:23:30   47-nortel-vxworks dir <DIR>",
 
 	/* IBM MVS listings */
 	// Volume Unit    Referred Ext Used Recfm Lrecl BlkSz Dsorg Dsname
@@ -63,16 +30,6 @@ static char data[][110]={
 
 	// Migrated MVS file
 	"Migrated				SOME.FILE",
-
-	// Some asian listing format. Those >127 chars are just examples
-	"-rwxrwxrwx   1 root     staff          0 2003   3\xed\xef 20 56-asian date file",
-	"-r--r--r-- 1 root root 2096 8\xed 17 08:52 57-asian date file",
-
-	"-r-xr-xr-x   2 root  root  96 2004.07.15   58-dotted-date file",
-
-	// VMS style listings with a different field order
-	"59-vms-alternate-field-order-file;1   [SUMMARY]    1/3     2-AUG-2006 13:05  (RWE,RWE,RE,)",
-	"60-vms-alternate-field-order-file;1       17-JUN-1994 17:25:37     6308/13     (RWED,RWED,R,) ",
 
 	""};
 
@@ -484,6 +441,7 @@ CDirectoryListingParser::CDirectoryListingParser(CControlSocket* pControlSocket,
 	m_currentOffset = 0;
 	m_prevLine = 0;
 	m_fileListOnly = true;
+	m_maybeMultilineVms = false;
 
 	if (m_MonthNamesMap.empty())
 	{
@@ -815,21 +773,29 @@ bool CDirectoryListingParser::ParseLine(CLine *pLine, const enum ServerType serv
 	// If parsing finishes and no entries could be parsed and none of the lines 
 	// contained a space, assume it's a raw filelisting.
 
-	if (m_fileListOnly && !concatenated)
+	if (!concatenated)
 	{
 		CToken token;
 		if (!pLine->GetToken(0, token, true) || token.Find(' ') != -1)
 		{
+			m_maybeMultilineVms = false;
 			m_fileList.clear();
 			m_fileListOnly = false;
 		}
 		else
-			m_fileList.push_back(token.GetString());
+		{
+			m_maybeMultilineVms = token.Find(';') != -1;
+			if (m_fileListOnly)
+				m_fileList.push_back(token.GetString());
+		}
 	}
+	else
+		m_maybeMultilineVms = false;
 
 	return false;
 done:
 
+	m_maybeMultilineVms = false;
 	m_fileList.clear();
 	m_fileListOnly = false;
 
@@ -1192,7 +1158,10 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 			entry.hasTime = false;
 	}
 	else
+	{
+		entry.hasTime = false;
 		index--;
+	}
 
 	entry.time = wxDateTime();
 	if (!VerifySetDate(entry.time, year, (wxDateTime::Month)(wxDateTime::Jan + month - 1), day, hour, minute))
@@ -1549,6 +1518,8 @@ bool CDirectoryListingParser::ParseAsVms(CLine *pLine, CDirentry &entry)
 	if (!pLine->GetToken(++index, token))
 		return false;
 
+	entry.ownerGroup = _T("");
+
 	bool gotSize = false;
 	// This field can either be the filesize, a username (at least that's what I think) enclosed in [] or a date.
 	if (!token.IsNumeric() && !token.IsLeftNumeric())
@@ -1571,7 +1542,6 @@ bool CDirectoryListingParser::ParseAsVms(CLine *pLine, CDirentry &entry)
 	if (token.IsNumeric() || (pos != -1 && token.Find('/', pos + 1) == -1))
 	{
 		// Definitely size
-		entry.ownerGroup = _T("");
 		gotSize = true;
 		entry.size = token.GetNumber();
 
@@ -1635,7 +1605,7 @@ bool CDirectoryListingParser::ParseAsVms(CLine *pLine, CDirentry &entry)
 		{
 			if (entry.permissions != _T(""))
 				entry.permissions += _T(" ");
-			entry.permissions += token.GetString();
+			entry.ownerGroup += token.GetString();
 		}
 	}
 
@@ -1758,6 +1728,10 @@ bool CDirectoryListingParser::ParseOther(CLine *pLine, CDirentry &entry)
 	}
 	else
 	{
+		// Possible conflict with multiline VMS listings
+		if (m_maybeMultilineVms)
+			return false;
+
 		// VShell, OS/2 or nortel.VxWorks style format
 		entry.size = firstToken.GetNumber();
 
@@ -1835,7 +1809,7 @@ bool CDirectoryListingParser::ParseOther(CLine *pLine, CDirentry &entry)
 				year += 1900;
 			
 			entry.time = wxDateTime();
-			if (!VerifySetDate(entry.time, year.GetLo(), (wxDateTime::Month)month, day.GetLo()))
+			if (!VerifySetDate(entry.time, year.GetLo(), (wxDateTime::Month)(month - 1), day.GetLo()))
 				return false;
 
 			entry.hasDate = true;

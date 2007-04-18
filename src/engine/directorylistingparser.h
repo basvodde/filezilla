@@ -94,6 +94,8 @@ protected:
 
 	bool m_fileListOnly;
 	std::list<wxString> m_fileList;
+	
+	bool m_maybeMultilineVms;
 };
 
 #endif
