@@ -982,6 +982,25 @@ void CDirectoryListingParserTest::InitEntries()
 			}
 		});
 
+	/* Microware OS-9
+	 * Notice the yy/mm/dd date format */
+	m_entries.push_back((t_entry){
+			"20.20 07/03/29 1026 d-ewrewr 2650 85920 51-OS-9 dir",
+			{
+				_T("51-OS-9 dir"),
+				85920,
+				_T("d-ewrewr"),
+				_T("20.20"),
+				true,
+				false,
+				_T(""),
+				true,
+				false,
+				wxDateTime(29, wxDateTime::Mar, 2007),
+				false
+			}
+		});
+
 /*
 	wxString name;
 	wxLongLong size;

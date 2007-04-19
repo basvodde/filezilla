@@ -8,6 +8,7 @@
 
 std::map<wxString, int> CDirectoryListingParser::m_MonthNamesMap;
 
+//#define LISTDEBUG_MVS
 //#define LISTDEBUG
 #ifdef LISTDEBUG
 static char data[][110]={
@@ -396,7 +397,7 @@ public:
 		{
 			if (m_LineEndTokens.size() > n)
 			{
-				token = *(m_Tokens[n]);
+				token = *(m_LineEndTokens[n]);
 				return true;
 			}
 			
@@ -755,9 +756,12 @@ bool CDirectoryListingParser::ParseLine(CLine *pLine, const enum ServerType serv
 	res = ParseAsIBM_MVS_PDS(pLine, entry);
 	if (res)
 		goto done;
-#ifndef LISTDEBUG
+	res = ParseAsOS9(pLine, entry);
+	if (res)
+		goto done;
+#ifndef LISTDEBUG_MVS
 	if (serverType == MVS)
-#endif //LISTDEBUG
+#endif //LISTDEBUG_MVS
 	{
 		res = ParseAsIBM_MVS_PDS2(pLine, entry);
 		if (res)
@@ -1171,7 +1175,7 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 	return true;
 }
 
-bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry)
+bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry, bool saneFieldOrder /*=false*/)
 {
 	if (token.GetLength() < 1)
 		return false;
@@ -1226,22 +1230,34 @@ bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry)
 		}
 		else
 		{
-			// Detect mm-dd-yyyy or mm/dd/yyyy and
-			// dd-mm-yyyy or dd/mm/yyyy
-			if (value < 1)
-				return false;
-			if (value > 12)
+			if (saneFieldOrder)
 			{
-				if (value > 31)
-					return false;
-
-				day = value.GetLo();
-				gotDay = true;
+				year = value.GetLo();
+				if (year < 50)
+					year += 2000;
+				else
+					year += 1900;
+				gotYear = true;
 			}
 			else
 			{
-				month = value.GetLo();
-				gotMonth = true;
+				// Detect mm-dd-yyyy or mm/dd/yyyy and
+				// dd-mm-yyyy or dd/mm/yyyy
+				if (value < 1)
+					return false;
+				if (value > 12)
+				{
+					if (value > 31)
+						return false;
+
+					day = value.GetLo();
+					gotDay = true;
+				}
+				else
+				{
+					month = value.GetLo();
+					gotMonth = true;
+				}
 			}
 		}			
 	}
@@ -2479,6 +2495,73 @@ bool CDirectoryListingParser::ParseAsMlsd(CLine *pLine, CDirentry &entry)
 
 	entry.name = token.GetString();
 
+	entry.unsure = false;
+
+	return true;
+}
+
+bool CDirectoryListingParser::ParseAsOS9(CLine *pLine, CDirentry &entry)
+{
+	int index = 0;
+	CToken token;
+
+	// Get owner
+	if (!pLine->GetToken(index++, token))
+		return false;
+
+	// Make sure it's number.number
+	int pos = token.Find('.');
+	if (pos == -1 || !pos || pos == ((int)token.GetLength() - 1))
+		return false;
+
+	if (!token.IsNumeric(0, pos))
+		return false;
+
+	if (!token.IsNumeric(pos + 1, token.GetLength() - pos - 1))
+		return false;
+
+	entry.ownerGroup = token.GetString();
+
+	// Get date
+	if (!pLine->GetToken(index++, token))
+		return false;
+
+	if (!ParseShortDate(token, entry, true))
+		return false;
+
+	// Unused token
+	if (!pLine->GetToken(index++, token))
+		return false;
+
+	// Get perms
+	if (!pLine->GetToken(index++, token))
+		return false;
+
+	entry.permissions = token.GetString();
+
+	entry.dir = token[0] == 'd';
+
+	// Unused token
+	if (!pLine->GetToken(index++, token))
+		return false;
+
+	// Get Size
+	if (!pLine->GetToken(index++, token))
+		return false;
+
+	if (!token.IsNumeric())
+		return false;
+
+	entry.size = token.GetNumber();
+
+	// Filename
+	if (!pLine->GetToken(index++, token, true))
+		return false;
+
+	entry.name = token.GetString();
+
+	entry.hasTime = false;
+	entry.link = false;
 	entry.unsure = false;
 
 	return true;
