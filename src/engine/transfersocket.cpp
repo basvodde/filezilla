@@ -141,7 +141,10 @@ void CTransferSocket::OnConnect(wxSocketEvent &event)
 	}
 
 	if (!m_pSocket)
+	{
+		m_pControlSocket->LogMessage(::Debug_Verbose, _T("CTransferSocket::OnConnect called without socket"));
 		return;
+	}
 	
 	if (!m_pBackend)
 	{
@@ -155,6 +158,9 @@ void CTransferSocket::OnConnect(wxSocketEvent &event)
 		}
 		else
 			m_pBackend = new CSocketBackend(this, m_pSocket);
+
+		if (m_bActive)
+			TriggerPostponedEvents();
 
 		return;
 	}
@@ -433,8 +439,6 @@ void CTransferSocket::TransferEnd(int reason)
 		return;
 	m_transferEnd = true;
 
-	delete m_pSocket;
-	m_pSocket = 0;
 	delete m_pSocketServer;
 	m_pSocketServer = 0;
 	if (m_pTlsSocket)
@@ -449,6 +453,8 @@ void CTransferSocket::TransferEnd(int reason)
 		delete m_pBackend;
 		m_pBackend = 0;
 	}
+	delete m_pSocket;
+	m_pSocket = 0;
 
 	m_pEngine->SendEvent(engineTransferEnd, reason);
 }
