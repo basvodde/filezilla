@@ -61,6 +61,7 @@
 	
 //---------------------------------------------------------------------------
 #define DRAG_EXT_REG_KEY _T("Software\\FileZilla 3\\fzshellext")
+#define DRAG_EXT_REG_KEY_PARENT _T("Software\\FileZilla 3")
 #define DRAG_EXT_NAME _T("FileZilla 3 Shell Extension")
 #define THREADING_MODEL _T("Apartment")
 #define CLSID_SIZE 39
@@ -411,72 +412,95 @@ STDEXPORTAPI DllRegisterServer()
   return Result;
 }
 //---------------------------------------------------------------------------
+static bool RegDeleteEmptyKey(HKEY root, LPCTSTR name)
+{
+	HKEY key;
+	
+	// Can't use SHDeleteEmptyKey, it gives a linking error
+	if (RegOpenKeyEx(root, name, 0, KEY_READ, &key) != ERROR_SUCCESS)
+		return false;
+
+	DWORD subKeys, values;
+	int ret = RegQueryInfoKey(key, 0, 0, 0, &subKeys, 0, 0, &values, 0, 0, 0,0);
+	
+	RegCloseKey(key);
+	
+	if (ret != ERROR_SUCCESS)
+		return false;
+	
+	if (subKeys || values)
+		return false;
+
+	RegDeleteKey(root, name);
+	
+	return true;
+}
+
 bool UnregisterServer(bool AllUsers)
 {
-  DEBUG_MSG("UnregisterServer enter");
+	DEBUG_MSG("UnregisterServer enter");
 
-  DEBUG_MSG(AllUsers ? "UnregisterServer all users" : "UnregisterServer current users");
+	DEBUG_MSG(AllUsers ? "UnregisterServer all users" : "UnregisterServer current users");
 
-  bool Result = false;
-  wchar_t ClassID[CLSID_SIZE];
+	bool Result = false;
+	wchar_t ClassID[CLSID_SIZE];
 
-  StringFromGUID2(CLSID_ShellExtension, ClassID, CLSID_SIZE);
+	StringFromGUID2(CLSID_ShellExtension, ClassID, CLSID_SIZE);
 
-  HKEY RootKey = AllUsers ? HKEY_LOCAL_MACHINE : HKEY_CURRENT_USER;
-  HKEY HKey;
+	HKEY RootKey = AllUsers ? HKEY_LOCAL_MACHINE : HKEY_CURRENT_USER;
+	HKEY HKey;
 
-  if ((RegOpenKeyEx(RootKey, _T("Software\\Classes"), 0, KEY_WRITE, &HKey) ==
-        ERROR_SUCCESS) &&
-      (RegOpenKeyEx(HKey, _T("directory\\shellex\\CopyHookHandlers"),
-        0, KEY_WRITE, &HKey) == ERROR_SUCCESS))
-  {
-    RegDeleteKey(HKey, _T("FileZilla3CopyHook"));
+	if ((RegOpenKeyEx(RootKey, _T("Software\\Classes"), 0, KEY_WRITE, &HKey) ==
+		ERROR_SUCCESS) &&
+		(RegOpenKeyEx(HKey, _T("directory\\shellex\\CopyHookHandlers"),
+		0, KEY_WRITE, &HKey) == ERROR_SUCCESS))
+	{
+		RegDeleteKey(HKey, _T("FileZilla3CopyHook"));
 
-    RegCloseKey(HKey);
-  }
+		RegCloseKey(HKey);
+	}
 
-  if ((RegOpenKeyEx(RootKey, _T("Software\\Classes"), 0, KEY_WRITE, &HKey) ==
-        ERROR_SUCCESS) &&
-      (RegOpenKeyEx(HKey, _T("CLSID"), 0, KEY_WRITE, &HKey) ==
-        ERROR_SUCCESS))
-  {
-    if (RegOpenKeyEx(HKey, ClassID, 0, KEY_WRITE, &HKey) == ERROR_SUCCESS)
-    {
-      RegDeleteKey(HKey, _T("InProcServer32"));
+	if ((RegOpenKeyEx(RootKey, _T("Software\\Classes"), 0, KEY_WRITE, &HKey) ==
+		ERROR_SUCCESS) &&
+		(RegOpenKeyEx(HKey, _T("CLSID"), 0, KEY_WRITE, &HKey) ==
+		ERROR_SUCCESS))
+	{
+		if (RegOpenKeyEx(HKey, ClassID, 0, KEY_WRITE, &HKey) == ERROR_SUCCESS)
+		{
+			RegDeleteKey(HKey, _T("InProcServer32"));
 
-      RegCloseKey(HKey);
+			RegCloseKey(HKey);
 
-      if ((RegOpenKeyEx(RootKey, _T("Software\\Classes"), 0, KEY_WRITE, &HKey) ==
-             ERROR_SUCCESS) &&
-          (RegOpenKeyEx(HKey, _T("CLSID"), 0, KEY_WRITE, &HKey) ==
-             ERROR_SUCCESS))
-      {
-        RegDeleteKey(HKey, ClassID);
+			if ((RegOpenKeyEx(RootKey, _T("Software\\Classes"), 0, KEY_WRITE, &HKey) ==
+				ERROR_SUCCESS) &&
+				(RegOpenKeyEx(HKey, _T("CLSID"), 0, KEY_WRITE, &HKey) ==
+				ERROR_SUCCESS))
+			{
+				RegDeleteKey(HKey, ClassID);
 
-        RegCloseKey(HKey);
+				RegCloseKey(HKey);
 
-        Result = true;
-      }
-    }
-  }
+				Result = true;
+			}
+		}
+	}
 
-  if ((RegOpenKeyEx(RootKey, DRAG_EXT_REG_KEY, 0, KEY_WRITE, &HKey) ==
-        ERROR_SUCCESS))
-  {
-    unsigned long Value = 0;
-    RegSetValueEx(HKey, _T("Enable"), 0, REG_DWORD,
-      reinterpret_cast<unsigned char*>(&Value), sizeof(Value));
+	if ((RegOpenKeyEx(RootKey, DRAG_EXT_REG_KEY, 0, KEY_WRITE, &HKey) ==
+		ERROR_SUCCESS))
+	{
+		RegDeleteValue(HKey, _T("Enable"));
+		RegCloseKey(HKey);
 
-    RegCloseKey(HKey);
+		Result = true;
+	}
+	RegDeleteEmptyKey(RootKey, DRAG_EXT_REG_KEY);
+	RegDeleteEmptyKey(RootKey, DRAG_EXT_REG_KEY_PARENT);
 
-    Result = true;
-  }
-  
-  SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, 0, 0);
+	SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, 0, 0);
 
-  DEBUG_MSG("UnregisterServer leave");
+	DEBUG_MSG("UnregisterServer leave");
 
-  return Result;
+	return Result;
 }
 //---------------------------------------------------------------------------
 STDEXPORTAPI DllUnregisterServer()
