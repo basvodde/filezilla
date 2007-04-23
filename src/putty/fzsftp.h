@@ -14,7 +14,9 @@ typedef enum
     sftpRead,
     sftpWrite,
     sftpRequestPreamble,
-    sftpRequestInstruction
+    sftpRequestInstruction,
+    sftpUsedQuotaRecv,
+    sftpUsedQuotaSend
 } sftpEventTypes;
 
 enum sftpRequestTypes
@@ -30,3 +32,6 @@ int fzprintf(sftpEventTypes type, const char* p, ...);
 int fzprintf_raw(sftpEventTypes type, const char* p, ...);
 int fzprintf_raw_untrusted(sftpEventTypes type, const char* p, ...);
 int fznotify1(sftpEventTypes type, int data);
+
+int RequestQuota(int i, int bytes);
+void UpdateQuota(int i, int bytes);

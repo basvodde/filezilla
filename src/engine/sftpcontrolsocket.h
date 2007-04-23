@@ -20,7 +20,9 @@ typedef enum
 	sftpRead,
 	sftpWrite,
 	sftpRequestPreamble,
-	sftpRequestInstruction
+	sftpRequestInstruction,
+	sftpUsedQuotaRecv,
+	sftpUsedQuotaSend
 } sftpEventTypes;
 
 enum sftpRequestTypes
@@ -55,7 +57,7 @@ protected:
 };
 
 class CSftpInputThread;
-class CSftpControlSocket : public CControlSocket
+class CSftpControlSocket : public CControlSocket, public CRateLimiterObject
 {
 public:
 	CSftpControlSocket(CFileZillaEnginePrivate* pEngine);
@@ -121,6 +123,10 @@ protected:
 	int RenameSend(int prevResult = FZ_REPLY_OK);
 
 	bool Send(wxString cmd, const wxString& show = _T(""));
+	bool AddToStream(const wxString& cmd);
+
+	virtual void OnRateAvailable(enum CRateLimiter::rate_direction direction);
+	void OnQuotaRequest(enum CRateLimiter::rate_direction direction);
 
 	// see src/putty/wildcard.c
 	wxString WildcardEscape(const wxString& file);

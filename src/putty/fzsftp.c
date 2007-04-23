@@ -111,3 +111,105 @@ int fznotify1(sftpEventTypes type, int data)
     fflush(stdout);
     return 0;
 }
+
+static int bytesAvailable[2] = { 0, 0 };
+
+static BOOL ReadQuotas(int i)
+{
+#ifdef _WINDOWS
+    HANDLE hin;
+    DWORD savemode, newmode;
+
+    hin = GetStdHandle(STD_INPUT_HANDLE);
+
+    GetConsoleMode(hin, &savemode);
+    newmode = savemode | ENABLE_PROCESSED_INPUT | ENABLE_LINE_INPUT;
+    newmode &= ~ENABLE_ECHO_INPUT;
+    SetConsoleMode(hin, newmode);
+
+    while (bytesAvailable[i] == 0)
+    {
+	int direction, number;
+	DWORD read, pos;
+	BOOL r;
+	char buffer[20];
+
+	r = ReadFile(hin, buffer, 20, &read, 0);
+	if (!r)
+	    fatalbox("ReadFile failed in ReadQuotas");
+
+	if (read < 3)
+	    continue;
+
+	if (buffer[0] != '-')
+	    continue;
+
+	if (buffer[1] == '0')
+	    direction = 0;
+	else if (buffer[1] == '1')
+	    direction = 1;
+	else
+	    fatalbox("Invalid data received in ReadQuotas: Unknown direction");
+
+	if (buffer[2] == '-')
+	{
+	    bytesAvailable[direction] = -1;
+	    continue;
+	}
+	
+	number = 0;
+	for (pos = 2; pos < read; pos++)
+	{
+	    if (buffer[pos] == '\r' || buffer[pos] == '\n')
+		break;
+	    if (buffer[pos] < '0' || buffer[pos] > '9')
+		fatalbox("Invalid data received in ReadQuotas: Bytecount not a number");
+
+	    number *= 10;
+	    number += buffer[pos] - '0';
+	}
+	if (bytesAvailable[direction] == -1)
+	    bytesAvailable[direction] = number;
+	else
+	    bytesAvailable[direction] += number;
+    }
+
+    SetConsoleMode(hin, savemode);
+#else
+    bytesAvailable[0] = -1;
+    bytesAvailable[1] = -1;
+#endif //_WINDOWS
+    return TRUE;
+}
+
+int RequestQuota(int i, int bytes)
+{
+    if (bytesAvailable[i] == 0)
+    {
+	bytesAvailable[i] = 0;
+	fznotify(sftpUsedQuotaRecv + i);
+    }
+    if (bytesAvailable[i] == 0)
+    {
+	ReadQuotas(i);
+    }
+
+    if (bytesAvailable[i] == -1)
+	return bytes;
+
+    if (bytesAvailable[i] > bytes)
+	return bytes;
+
+    return bytesAvailable[i];
+}
+
+void UpdateQuota(int i, int bytes)
+{
+    if (bytesAvailable[i] == -1)
+	return;
+
+    if (bytesAvailable[i] > bytes)
+	bytesAvailable[i] -= bytes;
+    else
+	bytesAvailable[i] = 0;
+}

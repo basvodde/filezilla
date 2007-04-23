@@ -252,6 +252,13 @@ protected:
 					wxPostEvent(m_pOwner, evt);
 				}
 				break;
+			case sftpUsedQuotaRecv:
+			case sftpUsedQuotaSend:
+				{
+					CSftpEvent evt((sftpEventTypes)eventType, _T(""));
+					wxPostEvent(m_pOwner, evt);
+				}
+				break;
 			default:
 				{
 					char tmp[2];
@@ -323,6 +330,8 @@ int CSftpControlSocket::Connect(const CServer &server)
 
 	m_pProcess = new wxProcess(this);
 	m_pProcess->Redirect();
+
+	CRateLimiter::Get()->AddObject(this);
 
 	wxString executable = m_pEngine->GetOptions()->GetOption(OPTION_FZSFTP_EXECUTABLE);
 	if (executable == _T(""))
@@ -481,6 +490,12 @@ void CSftpControlSocket::OnSftpEvent(CSftpEvent& event)
 	case sftpWrite:
 		UpdateTransferStatus(event.GetNumber());
 		break;
+	case sftpUsedQuotaRecv:
+		OnQuotaRequest(CRateLimiter::inbound);
+		break;
+	case sftpUsedQuotaSend:
+		OnQuotaRequest(CRateLimiter::outbound);
+		break;
 	default:
 		wxFAIL_MSG(_T("given notification codes not handled"));
 		break;
@@ -534,6 +549,11 @@ bool CSftpControlSocket::Send(wxString cmd, const wxString& show /*=_T("")*/)
 
 	cmd += _T("\n");
 
+	return AddToStream(cmd);
+}
+
+bool CSftpControlSocket::AddToStream(const wxString& cmd)
+{
 	const wxCharBuffer str = ConvToServer(cmd);
 	if (!m_pProcess)
 		return false;
@@ -1516,6 +1536,8 @@ int CSftpControlSocket::FileTransferParseResponse(bool successful, const wxStrin
 
 int CSftpControlSocket::DoClose(int nErrorCode /*=FZ_REPLY_DISCONNECTED*/)
 {
+	CRateLimiter::Get()->RemoveObject(this);
+
 	if (m_pInputThread)
 	{
 		wxThreadEx* pThread = m_pInputThread;
@@ -2123,4 +2145,23 @@ wxString CSftpControlSocket::WildcardEscape(const wxString& file)
 		escapedFile.Append(c);
 	}
 	return escapedFile;
+}
+
+void CSftpControlSocket::OnRateAvailable(enum CRateLimiter::rate_direction direction)
+{
+	OnQuotaRequest(direction);
+}
+
+void CSftpControlSocket::OnQuotaRequest(enum CRateLimiter::rate_direction direction)
+{
+	int bytes = GetAvailableBytes(direction);
+	if (bytes > 0)
+	{
+		AddToStream(wxString::Format(_T("-%d%d\n"), (int)direction, bytes));
+		UpdateUsage(direction, bytes);
+	}
+	else if (bytes < 0)
+		AddToStream(wxString::Format(_T("-%d-\n"), (int)direction, bytes));
+	else
+		Wait(direction);
 }

@@ -1269,6 +1269,7 @@ static void sk_tcp_close(Socket sock)
  */
 void try_send(Actual_Socket s)
 {
+    int toSend;
     while (s->sending_oob || bufchain_size(&s->output_data) > 0) {
 	int nsent;
 	DWORD err;
@@ -1283,7 +1284,8 @@ void try_send(Actual_Socket s)
 	    urgentflag = 0;
 	    bufchain_prefix(&s->output_data, &data, &len);
 	}
-	nsent = p_send(s->s, data, len, urgentflag);
+	toSend = RequestQuota(1, len);
+	nsent = p_send(s->s, data, toSend, urgentflag);
 	noise_ultralight(nsent);
 	if (nsent <= 0) {
 	    err = (nsent < 0 ? p_WSAGetLastError() : 0);
@@ -1320,6 +1322,7 @@ void try_send(Actual_Socket s)
 		fatalbox("%s", winsock_error_string(err));
 	    }
 	} else {
+	    UpdateQuota(1, nsent);
 	    SendNotification(s);
 	    if (s->sending_oob) {
 		if (nsent < len) {
@@ -1376,7 +1379,7 @@ static int sk_tcp_write_oob(Socket sock, const char *buf, int len)
 
 int select_result(WPARAM wParam, LPARAM lParam)
 {
-    int ret, open;
+    int ret, open, toRecv;
     DWORD err;
     char buf[20480];		       /* nice big buffer for plenty of speed */
     Actual_Socket s;
@@ -1450,7 +1453,8 @@ int select_result(WPARAM wParam, LPARAM lParam)
 	} else
 	    atmark = 1;
 
-	ret = p_recv(s->s, buf, sizeof(buf), 0);
+	toRecv = RequestQuota(0, sizeof(buf));
+	ret = p_recv(s->s, buf, toRecv, 0);
 	noise_ultralight(ret);
 	if (ret < 0) {
 	    err = p_WSAGetLastError();
@@ -1464,6 +1468,7 @@ int select_result(WPARAM wParam, LPARAM lParam)
 	} else if (0 == ret) {
 	    return plug_closing(s->plug, NULL, 0, 0);
 	} else {
+	    UpdateQuota(0, ret);
 	    RecvNotification(s);
 	    return plug_receive(s->plug, atmark ? 0 : 1, buf, ret);
 	}
@@ -1475,7 +1480,8 @@ int select_result(WPARAM wParam, LPARAM lParam)
 	 * and get back OOB data, which we will send to the back
 	 * end with type==2 (urgent data).
 	 */
-	ret = p_recv(s->s, buf, sizeof(buf), MSG_OOB);
+	toRecv = RequestQuota(0, sizeof(buf));
+	ret = p_recv(s->s, buf, toRecv, MSG_OOB);
 	noise_ultralight(ret);
 	if (ret <= 0) {
 	    char *str = (ret == 0 ? "Internal networking trouble" :
@@ -1485,6 +1491,7 @@ int select_result(WPARAM wParam, LPARAM lParam)
 	    logevent(NULL, str);
 	    fatalbox("%s", str);
 	} else {
+	    UpdateQuota(0, ret);
 	    RecvNotification(s);
 	    return plug_receive(s->plug, 2, buf, ret);
 	}
