@@ -202,16 +202,27 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter, 100);
 	m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueueView, 100);
 
+	const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
 	const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
-	if (swap)
-		m_pViewSplitter->SplitVertically(m_pRemoteSplitter, m_pLocalSplitter);
+	
+	if (layout == 1)
+	{
+		if (swap)
+			m_pViewSplitter->SplitHorizontally(m_pRemoteSplitter, m_pLocalSplitter);
+		else
+			m_pViewSplitter->SplitHorizontally(m_pLocalSplitter, m_pRemoteSplitter);
+	}
 	else
-		m_pViewSplitter->SplitVertically(m_pLocalSplitter, m_pRemoteSplitter);
+	{
+		if (swap)
+			m_pViewSplitter->SplitVertically(m_pRemoteSplitter, m_pLocalSplitter);
+		else
+			m_pViewSplitter->SplitVertically(m_pLocalSplitter, m_pRemoteSplitter);
+	}
 
 	if (COptions::Get()->GetOptionVal(OPTION_SHOW_TREE_LOCAL))
 	{
 		m_pLocalTreeViewPanel->SetHeader(new CLocalViewHeader(m_pLocalSplitter, m_pState));
-		const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
 		if (layout == 3 && swap)
 			m_pLocalSplitter->SplitVertically(m_pLocalListViewPanel, m_pLocalTreeViewPanel);
 		else if (layout)
@@ -227,7 +238,6 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	if (COptions::Get()->GetOptionVal(OPTION_SHOW_TREE_REMOTE))
 	{
 		m_pRemoteTreeViewPanel->SetHeader(new CRemoteViewHeader(m_pRemoteSplitter, m_pState));
-		const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
 		if (layout && !swap)
 			m_pRemoteSplitter->SplitVertically(m_pRemoteListViewPanel, m_pRemoteTreeViewPanel);
 		else if (layout)
@@ -305,11 +315,26 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 	if (m_pViewSplitter)
 	{
 		wxSize size = m_pViewSplitter->GetClientSize();
-		int pos = static_cast<int>(size.GetWidth() * m_ViewSplitterSashPos);
-		if (pos < 20)
-			pos = 20;
-		else if (pos > size.GetWidth() - 20)
-			pos = size.GetWidth() - 20;
+
+		const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
+	
+		int pos;
+		if (layout == 1)
+		{
+			pos = static_cast<int>(size.GetHeight() * m_ViewSplitterSashPos);
+			if (pos < 20)
+				pos = 20;
+			else if (pos > size.GetHeight() - 20)
+				pos = size.GetHeight() - 20;
+		}
+		else
+		{
+			pos = static_cast<int>(size.GetWidth() * m_ViewSplitterSashPos);
+			if (pos < 20)
+				pos = 20;
+			else if (pos > size.GetWidth() - 20)
+				pos = size.GetWidth() - 20;
+		}
 		m_pViewSplitter->SetSashPosition(pos);
 	}
 
@@ -326,7 +351,12 @@ void CMainFrame::OnViewSplitterPosChanged(wxSplitterEvent &event)
 
 	wxSize size = m_pViewSplitter->GetClientSize();
 	int pos = m_pViewSplitter->GetSashPosition();
-	m_ViewSplitterSashPos = pos / (float)size.GetWidth();
+	
+	const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
+	if (layout != 1)
+		m_ViewSplitterSashPos = pos / (float)size.GetWidth();
+	else
+		m_ViewSplitterSashPos = pos / (float)size.GetHeight();
 }
 
 bool CMainFrame::CreateMenus()
