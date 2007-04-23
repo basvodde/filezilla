@@ -162,6 +162,9 @@ void CTransferSocket::OnConnect(wxSocketEvent &event)
 		if (m_bActive)
 			TriggerPostponedEvents();
 
+		int value = 65536 * 2;
+		m_pSocket->SetOption(SOL_SOCKET, SO_SNDBUF, &value, sizeof(value));
+
 		return;
 	}
 
