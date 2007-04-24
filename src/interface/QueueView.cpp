@@ -2513,7 +2513,7 @@ bool CQueueView::ShouldUseBinaryMode(wxString filename)
 		return true;
 
 	for (std::list<wxString>::const_iterator iter = m_asciiFiles.begin(); iter != m_asciiFiles.end(); iter++)
-		if (*iter == ext)
+		if (!ext.CmpNoCase(*iter))
 			return false;
 
 	return true;
@@ -3060,4 +3060,37 @@ void CQueueView::OnFocusItemChanged(wxListEvent& event)
 	event.Skip();
 	wxCommandEvent evt(fzEVT_UPDATE_STATUSLINES, wxID_ANY);
 	AddPendingEvent(evt);
+}
+
+void CQueueView::UpdateItemSize(CFileItem* pItem, wxLongLong size)
+{
+	wxASSERT(pItem);
+
+	const wxLongLong oldSize = pItem->GetSize();
+	if (size == oldSize)
+		return;
+
+	if (oldSize == -1)
+	{
+		wxASSERT(m_filesWithUnknownSize);
+		if (m_filesWithUnknownSize)
+			m_filesWithUnknownSize--;
+	}
+	else
+	{
+		wxASSERT(m_totalQueueSize > oldSize);
+		if (m_totalQueueSize > oldSize)
+			m_totalQueueSize -= oldSize;
+		else
+			m_totalQueueSize = 0;
+	}
+	
+	if (size == -1)
+		m_filesWithUnknownSize++;
+	else
+		m_totalQueueSize += size;
+
+	pItem->SetSize(size);
+
+	DisplayQueueSize();
 }

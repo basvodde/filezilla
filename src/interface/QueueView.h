@@ -298,6 +298,8 @@ public:
 	// the primary connection.
 	void TryRefreshListings();
 
+	void UpdateItemSize(CFileItem* pItem, wxLongLong size);
+
 protected:
 
 	bool TryStartNextTransfer();

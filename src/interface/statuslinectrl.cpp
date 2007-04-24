@@ -139,7 +139,7 @@ void CStatusLineCtrl::SetTransferStatus(const CTransferStatus* pStatus)
 	if (!pStatus)
 	{
 		if (m_pStatus && m_pStatus->totalSize >= 0)
-			m_pEngineData->pItem->SetSize(m_pStatus->totalSize);
+			m_pParent->UpdateItemSize(m_pEngineData->pItem, m_pStatus->totalSize);
 		delete m_pStatus;
 		m_pStatus = 0;
 
