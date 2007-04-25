@@ -52,6 +52,7 @@ class CRateLimiterObject
 
 public:
 	CRateLimiterObject();
+	virtual CRateLimiterObject() { }
 	int GetAvailableBytes(enum CRateLimiter::rate_direction direction) const { return m_bytesAvailable[direction]; }
 
 protected:
