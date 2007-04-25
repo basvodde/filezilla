@@ -114,7 +114,7 @@ int fznotify1(sftpEventTypes type, int data)
 
 static int bytesAvailable[2] = { 0, 0 };
 
-static BOOL ReadQuotas(int i)
+static int ReadQuotas(int i)
 {
 #ifdef _WINDOWS
     HANDLE hin;
@@ -179,7 +179,7 @@ static BOOL ReadQuotas(int i)
     bytesAvailable[0] = -1;
     bytesAvailable[1] = -1;
 #endif //_WINDOWS
-    return TRUE;
+    return 1;
 }
 
 int RequestQuota(int i, int bytes)
