@@ -16,11 +16,7 @@ bool COptionsPageInterface::LoadPage()
 
 	SetCheck(XRCID("ID_FILEPANESWAP"), m_pOptions->GetOptionVal(OPTION_FILEPANE_SWAP) != 0, failure);
 
-	wxChoice* pChoice = XRCCTRL(*this, "ID_FILEPANELAYOUT", wxChoice);
-	if (!pChoice)
-		return false;
-	int selection = m_pOptions->GetOptionVal(OPTION_FILEPANE_LAYOUT);
-	pChoice->SetSelection(selection);
+	SetChoice(XRCID("ID_FILEPANELAYOUT"), m_pOptions->GetOptionVal(OPTION_FILEPANE_LAYOUT), failure);
 
 	return !failure;
 }
@@ -28,11 +24,7 @@ bool COptionsPageInterface::LoadPage()
 bool COptionsPageInterface::SavePage()
 {
 	m_pOptions->SetOption(OPTION_FILEPANE_SWAP, GetCheck(XRCID("ID_FILEPANESWAP")) ? 1 : 0);
-
-	wxChoice* pChoice = XRCCTRL(*this, "ID_FILEPANELAYOUT", wxChoice);
-	if (!pChoice)
-		return false;
-	m_pOptions->SetOption(OPTION_FILEPANE_LAYOUT, pChoice->GetSelection());
+	m_pOptions->SetOption(OPTION_FILEPANE_LAYOUT, GetChoice(XRCID("ID_FILEPANELAYOUT")));
 
 	return true;
 }
@@ -44,11 +36,7 @@ bool COptionsPageInterface::Validate()
 
 void COptionsPageInterface::OnLayoutChange(wxCommandEvent& event)
 {
-	wxChoice* pChoice = XRCCTRL(*this, "ID_FILEPANELAYOUT", wxChoice);
-	if (!pChoice)
-		return;
-	
-	int layout = pChoice->GetSelection();
+	int layout = GetChoice(XRCID("ID_FILEPANELAYOUT"));
 	int swap = GetCheck(XRCID("ID_FILEPANESWAP")) ? 1 : 0;
 
 	m_pOwner->m_pMainFrame->UpdateLayout(layout, swap);

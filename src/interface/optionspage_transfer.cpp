@@ -13,12 +13,8 @@ bool COptionsPageTransfer::LoadPage()
 	SetTextFromOption(XRCID("ID_TIMEOUT"), OPTION_TIMEOUT, failure);
 	SetTextFromOption(XRCID("ID_DOWNLOADLIMIT"), OPTION_SPEEDLIMIT_INBOUND, failure);
 	SetTextFromOption(XRCID("ID_UPLOADLIMIT"), OPTION_SPEEDLIMIT_OUTBOUND, failure);
-	
-	wxChoice* pChoice = XRCCTRL(*this, "ID_BURSTTOLERANCE", wxChoice);
-	if (!pChoice)
-		return false;
-	int selection = m_pOptions->GetOptionVal(OPTION_SPEEDLIMIT_BURSTTOLERANCE);
-	pChoice->SetSelection(selection);
+	SetChoice(XRCID("ID_BURSTTOLERANCE"), m_pOptions->GetOptionVal(OPTION_SPEEDLIMIT_BURSTTOLERANCE), failure);
+
 	return !failure;
 }
 
@@ -30,9 +26,7 @@ bool COptionsPageTransfer::SavePage()
 	SetOptionFromText(XRCID("ID_TIMEOUT"), OPTION_TIMEOUT);
 	SetOptionFromText(XRCID("ID_DOWNLOADLIMIT"), OPTION_SPEEDLIMIT_INBOUND);
 	SetOptionFromText(XRCID("ID_UPLOADLIMIT"), OPTION_SPEEDLIMIT_OUTBOUND);
-
-	wxChoice* pChoice = XRCCTRL(*this, "ID_BURSTTOLERANCE", wxChoice);
-	m_pOptions->SetOption(OPTION_SPEEDLIMIT_BURSTTOLERANCE, pChoice->GetSelection());
+	m_pOptions->SetOption(OPTION_SPEEDLIMIT_BURSTTOLERANCE, GetChoice(XRCID("ID_BURSTTOLERANCE")));
 
 	return true;
 }

@@ -25,6 +25,7 @@ public:
 	void SetRCheck(int id, bool checked, bool& failure);
 	void SetTextFromOption(int ctrlId, int optionId, bool& failure);
 	void SetStaticText(int id, const wxString& text, bool& failure);
+	void SetChoice(int id, int selection, bool& failure);
 
 	// The GetXXX functions do never return an error since the controls were 
 	// checked to exist while loading the dialog.
@@ -32,6 +33,7 @@ public:
 	bool GetRCheck(int id);
 	wxString GetText(int id);
 	wxString GetStaticText(int id);
+	int GetChoice(int id);
 
 	void SetOptionFromText(int ctrlId, int optionId);
 

@@ -113,3 +113,37 @@ void COptionsPage::SetOptionFromText(int ctrlId, int optionId)
 	const wxString& value = GetText(ctrlId);
 	m_pOptions->SetOption(optionId, value);
 }
+
+void COptionsPage::SetChoice(int id, int selection, bool& failure)
+{
+	if (selection < -1)
+	{
+		failure = true;
+		return;
+	}
+
+	wxChoice* pChoice = wxDynamicCast(FindWindow(id), wxChoice);
+	if (!pChoice)
+	{
+		failure = true;
+		return;
+	}
+
+	if (selection >= (int)pChoice->GetCount())
+	{
+		failure = true;
+		return;
+	}
+
+	pChoice->SetSelection(selection);
+}
+
+int COptionsPage::GetChoice(int id)
+{
+	wxChoice* pChoice = wxDynamicCast(FindWindow(id), wxChoice);
+	wxASSERT(pChoice);
+	if (!pChoice)
+		return 0;
+	
+	return pChoice->GetSelection();
+}
