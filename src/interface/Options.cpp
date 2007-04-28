@@ -74,7 +74,8 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Show Tree Remote", number, _T("1") },
 	{ "File Pane Layout", number, _T("0") },
 	{ "File Pane Swap", number, _T("0") },
-	{ "Last local directory", string, _T("") }
+	{ "Last local directory", string, _T("") },
+	{ "Filelist directory sort", number, _T("0") }
 };
 
 COptions::COptions()
@@ -369,6 +370,10 @@ int COptions::Validate(unsigned int nID, int value)
 			value = 0;
 		break;
 	case OPTION_SPEEDLIMIT_BURSTTOLERANCE:
+		if (value < 0 || value > 2)
+			value = 0;
+		break;
+	case OPTION_FILELIST_DIRSORT:
 		if (value < 0 || value > 2)
 			value = 0;
 		break;

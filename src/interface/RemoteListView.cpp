@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <wx/dnd.h>
 #include "dndobjects.h"
+#include "Options.h"
 
 #ifdef __WXMSW__
 #include "shellapi.h"
@@ -720,8 +721,16 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 class CRemoteListViewSort : public std::binary_function<int,int,bool>
 {
 public:
-	CRemoteListViewSort(const CDirectoryListing* const pDirectoryListing)
-		: m_pDirectoryListing(pDirectoryListing)
+
+	enum DirSortMode
+	{
+		dirsort_ontop,
+		dirsort_onbottom,
+		dirsort_inline
+	};
+
+	CRemoteListViewSort(const CDirectoryListing* const pDirectoryListing, enum DirSortMode dirSortMode)
+		: m_pDirectoryListing(pDirectoryListing), m_dirSortMode(dirSortMode)
 	{
 	}
 
@@ -745,19 +754,41 @@ public:
 
 	inline int CmpDir(const CDirentry &data1, const CDirentry &data2) const
 	{
-		if (data1.dir)
+		switch (m_dirSortMode)
 		{
-			if (!data2.dir)
-				return -1;
+		default:
+		case dirsort_ontop:
+			if (data1.dir)
+			{
+				if (!data2.dir)
+					return -1;
+				else
+					return 0;
+			}
 			else
-				return 0;
-		}
-		else
-		{
-			if (data2.dir)
-				return 1;
+			{
+				if (data2.dir)
+					return 1;
+				else
+					return 0;
+			}
+		case dirsort_onbottom:
+			if (data1.dir)
+			{
+				if (!data2.dir)
+					return 1;
+				else
+					return 0;
+			}
 			else
-				return 0;
+			{
+				if (data2.dir)
+					return -1;
+				else
+					return 0;
+			}
+		case dirsort_inline:
+			return 0;
 		}
 	}
 
@@ -811,13 +842,15 @@ public:
 
 protected:
 	const CDirectoryListing* const m_pDirectoryListing;
+
+	const enum DirSortMode m_dirSortMode;
 };
 
 class CRemoteListViewSortName : public CRemoteListViewSort
 {
 public:
-	CRemoteListViewSortName(const CDirectoryListing* const pDirectoryListing)
-		: CRemoteListViewSort(pDirectoryListing)
+	CRemoteListViewSortName(const CDirectoryListing* const pDirectoryListing, enum DirSortMode dirSortMode)
+		: CRemoteListViewSort(pDirectoryListing, dirSortMode)
 	{
 	}
 
@@ -835,8 +868,8 @@ public:
 class CRemoteListViewSortSize : public CRemoteListViewSort
 {
 public:
-	CRemoteListViewSortSize(const CDirectoryListing* const pDirectoryListing)
-		: CRemoteListViewSort(pDirectoryListing)
+	CRemoteListViewSortSize(const CDirectoryListing* const pDirectoryListing, enum DirSortMode dirSortMode)
+		: CRemoteListViewSort(pDirectoryListing, dirSortMode)
 	{
 	}
 
@@ -856,8 +889,8 @@ public:
 class CRemoteListViewSortType : public CRemoteListViewSort
 {
 public:
-	CRemoteListViewSortType(CRemoteListView* const pRemoteListView, const CDirectoryListing* const pDirectoryListing, std::vector<CRemoteListView::t_fileData>& fileData)
-		: CRemoteListViewSort(pDirectoryListing), m_pRemoteListView(pRemoteListView), m_fileData(fileData)
+	CRemoteListViewSortType(CRemoteListView* const pRemoteListView, enum DirSortMode dirSortMode, const CDirectoryListing* const pDirectoryListing, std::vector<CRemoteListView::t_fileData>& fileData)
+		: CRemoteListViewSort(pDirectoryListing, dirSortMode), m_pRemoteListView(pRemoteListView), m_fileData(fileData)
 	{
 	}
 
@@ -888,8 +921,8 @@ protected:
 class CRemoteListViewSortTime : public CRemoteListViewSort
 {
 public:
-	CRemoteListViewSortTime(const CDirectoryListing* const pDirectoryListing)
-		: CRemoteListViewSort(pDirectoryListing)
+	CRemoteListViewSortTime(const CDirectoryListing* const pDirectoryListing, enum DirSortMode dirSortMode)
+		: CRemoteListViewSort(pDirectoryListing, dirSortMode)
 	{
 	}
 
@@ -909,8 +942,8 @@ public:
 class CRemoteListViewSortPermissions : public CRemoteListViewSort
 {
 public:
-	CRemoteListViewSortPermissions(const CDirectoryListing* const pDirectoryListing)
-		: CRemoteListViewSort(pDirectoryListing)
+	CRemoteListViewSortPermissions(const CDirectoryListing* const pDirectoryListing, enum DirSortMode dirSortMode)
+		: CRemoteListViewSort(pDirectoryListing, dirSortMode)
 	{
 	}
 
@@ -975,7 +1008,10 @@ void CRemoteListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 	}
 #endif
 
-	if (column == m_sortColumn && direction != m_sortDirection && !m_indexMapping.empty())
+	const int dirSortOption = COptions::Get()->GetOptionVal(OPTION_FILELIST_DIRSORT);
+
+	if (column == m_sortColumn && direction != m_sortDirection && !m_indexMapping.empty() &&
+		dirSortOption != 1)
 	{
 		// Simply reverse everything
 		m_sortDirection = direction;
@@ -992,16 +1028,34 @@ void CRemoteListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 	if (GetItemCount() < 3)
 		return;
 
+	CRemoteListViewSort::DirSortMode dirSortMode;
+	switch (dirSortOption)
+	{
+	case 0:
+	default:
+		dirSortMode = CRemoteListViewSort::dirsort_ontop;
+		break;
+	case 1:
+		if (m_sortDirection)
+			dirSortMode = CRemoteListViewSort::dirsort_onbottom;
+		else
+			dirSortMode = CRemoteListViewSort::dirsort_ontop;
+		break;
+	case 2:
+		dirSortMode = CRemoteListViewSort::dirsort_inline;
+		break;
+	}
+
 	if (!m_sortColumn)
-		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CRemoteListViewSortName(m_pDirectoryListing));
+		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CRemoteListViewSortName(m_pDirectoryListing, dirSortMode));
 	else if (m_sortColumn == 1)
-		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CRemoteListViewSortSize(m_pDirectoryListing));
+		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CRemoteListViewSortSize(m_pDirectoryListing, dirSortMode));
 	else if (m_sortColumn == 2)
-		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CRemoteListViewSortType(this, m_pDirectoryListing, m_fileData));
+		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CRemoteListViewSortType(this, dirSortMode, m_pDirectoryListing, m_fileData));
 	else if (m_sortColumn == 3)
-		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CRemoteListViewSortTime(m_pDirectoryListing));
+		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CRemoteListViewSortTime(m_pDirectoryListing, dirSortMode));
 	else if (m_sortColumn == 4)
-		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CRemoteListViewSortPermissions(m_pDirectoryListing));
+		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CRemoteListViewSortPermissions(m_pDirectoryListing, dirSortMode));
 	
 	if (m_sortDirection)
 		std::reverse(++m_indexMapping.begin(), m_indexMapping.end());
