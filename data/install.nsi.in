@@ -1,6 +1,7 @@
-;NSIS Modern User Interface version 1.70
 ;FileZilla 3 installation script
-;Written by Tim Kosse <mailto:tim.kosse@gmx.de>
+;Written by Tim Kosse <mailto:tim.kosse@filezilla-project.org>
+;
+;Requires NSIS >= 2.26
 
 ;--------------------------------
 ; Build environment
@@ -62,6 +63,7 @@
   
   !insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
 
+  !define MUI_PAGE_CUSTOMFUNCTION_LEAVE PostInstPage
   !insertmacro MUI_PAGE_INSTFILES
   !insertmacro MUI_PAGE_FINISH
   
@@ -241,53 +243,36 @@ SectionEnd
 
 Section "Shell Extension" SecShellExt
 
-  SetOutPath "$INSTDIR"
+SetOutPath "$INSTDIR"
   !define LIBRARY_SHELL_EXTENSION
   !define LIBRARY_COM
-  !define LIBRARY_VERSION_NONE
+  !define LIBRARY_IGNORE_VERSION
   !insertmacro InstallLib REGDLL NOTSHARED REBOOT_PROTECTED ../src/fzshellext/.libs\libfzshellext-0.dll $INSTDIR\fzshellext.dll "$INSTDIR"
 
-  System::Call "kernel32::GetCurrentProcess() i .s"
-  System::Call "kernel32::IsWow64Process(i s, *i .r10)"
-  StrCmp $R0 "0" inst_shellext_is32bit inst_shellext_is64bit
-
-inst_shellext_is32bit:
-  !define LIBRARY_VERSION_NONE
-  !undef LIBRARY_VERSION_HIGH
-  !undef LIBRARY_VERSION_LOW
-  !insertmacro InstallLib DLL NOTSHARED REBOOT_PROTECTED "${top_srcdir}/src/fzshellext\fzshellext_64.dll" $INSTDIR\fzshellext_64.dll "$INSTDIR"
-  goto inst_shellext_done
-
-inst_shellext_is64bit:
-
-  IfRebootFlag +3
-    Push 0
-  goto +2
-    Push 1
-  SetRebootFlag false
-
-  !define LIBRARY_VERSION_NONE
-  !undef LIBRARY_VERSION_HIGH
-  !undef LIBRARY_VERSION_LOW
-  !insertmacro InstallLib DLL NOTSHARED REBOOT_PROTECTED "${top_srcdir}/src/fzshellext\fzshellext_64.dll" $INSTDIR\fzshellext_64.dll "$INSTDIR"
-
-  IfRebootFlag +4
-    Exec 'Regsvr32 /s "$INSTDIR\fzshellext_64.dll"'
-    System::Call 'Shell32::SHChangeNotify(i ${SHCNE_ASSOCCHANGED}, i ${SHCNF_IDLIST}, i 0, i 0)'
-    goto inst_shellext_is64bit_regdone
-  ;else  
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" \
-      "FileZilla3.fzshellext_64.dll.reg" 'regsvr32 /s "$INSTDIR\fzshellext_64.dll"'
-inst_shellext_is64bit_regdone:
-
-  Pop $R0
-  StrCmp $R0 0 +2
-    SetRebootFlag true
-
-
-inst_shellext_done:
+  !define LIBRARY_X64
+  ${If} ${RunningX64}
+    !insertmacro InstallLib REGDLL NOTSHARED REBOOT_PROTECTED "${top_srcdir}/src/fzshellext\fzshellext_64.dll" $INSTDIR\fzshellext_64.dll "$INSTDIR"
+  ${Else}
+    !insertmacro InstallLib DLL NOTSHARED REBOOT_PROTECTED "${top_srcdir}/src/fzshellext\fzshellext_64.dll" $INSTDIR\fzshellext_64.dll "$INSTDIR"
+  ${Endif}
+  !undef LIBRARY_X64
 
 SectionEnd
+
+;--------------------------------
+;Functions
+
+Function PostInstPage
+
+    FindWindow $MUI_TEMP1 "#32770" "" $HWNDPARENT
+    GetDlgItem $MUI_TEMP1 $MUI_TEMP1 1016
+    System::Call user32::IsWindowVisible(i$MUI_TEMP1)i.s
+    Pop $MUI_TEMP1
+
+    StrCmp $MUI_TEMP1 0 +2
+    SetAutoClose false
+
+FunctionEnd
 
 ;--------------------------------
 ;Descriptions
@@ -318,22 +303,13 @@ Section "Uninstall"
 
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_PROTECTED "$INSTDIR\fzshellext.dll"
 
-System::Call "kernel32::GetCurrentProcess() i .s"
-  System::Call "kernel32::IsWow64Process(i s, *i .r0)"
-  StrCmp $R0 "0" uninst_shellext_is32bit uninst_shellext_is64bit
-
-uninst_shellext_is32bit:
-  !insertmacro UnInstallLib DLL NOTSHARED REBOOT_PROTECTED "$INSTDIR\fzshellext_64.dll"
-  goto uninst_shellext_done
-
-uninst_shellext_is64bit:
-  ExecWait 'regsvr32 /s /u "$INSTDIR\fzshellext_64.dll"'
-  System::Call 'Shell32::SHChangeNotify(i ${SHCNE_ASSOCCHANGED}, i ${SHCNF_IDLIST}, i 0, i 0)'
-  System::Call 'Ole32::CoFreeUnusedLibraries()'
-
-  !insertmacro UnInstallLib DLL NOTSHARED REBOOT_PROTECTED "$INSTDIR\fzshellext_64.dll"
-
-uninst_shellext_done:
+  !define LIBRARY_X64
+  ${If} ${RunningX64}
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_PROTECTED "$INSTDIR\fzshellext_64.dll"
+  ${Else}
+    !insertmacro UnInstallLib DLL NOTSHARED REBOOT_PROTECTED "$INSTDIR\fzshellext_64.dll"
+  ${Endif}
+  !undef LIBRARY_X64
 
   Delete "$INSTDIR\filezilla.exe"
   Delete "$INSTDIR\fzsftp.exe"
