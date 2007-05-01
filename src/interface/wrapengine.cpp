@@ -33,6 +33,12 @@ bool CWrapEngine::CanWrapBefore(const wxChar& c)
 
 bool CWrapEngine::WrapTextChinese(wxWindow* parent, wxString &text, unsigned long maxLength)
 {
+	wxASSERT(text.Find(_T("  ")) == -1);
+	wxASSERT(text.Find(_T(" \n")) == -1);
+	wxASSERT(text.Find(_T("\n ")) == -1);
+	wxASSERT(text.Last() != ' ');
+	wxASSERT(text.Last() != '\n');
+
 	// See comment at start of WrapText function what this function does
 	wxString wrappedText;
 
@@ -103,7 +109,9 @@ bool CWrapEngine::WrapTextChinese(wxWindow* parent, wxString &text, unsigned lon
 
 			if (lineLength > maxLength && wrappable)
 			{
-				const wxString& tmp = wxString(str, wrappable - str);
+				wxString tmp = wxString(str, wrappable - str);
+				if (tmp.Last() == ' ')
+					tmp.RemoveLast();
 				wrappedText += tmp + _T("\n");
 				if (*wrappable != ' ')
 					str = wrappable;
@@ -135,6 +143,11 @@ bool CWrapEngine::WrapTextChinese(wxWindow* parent, wxString &text, unsigned lon
 
 #ifdef __WXDEBUG__
 	wxString temp = wrappedText;
+	wxASSERT(temp.Find(_T("  ")) == -1);
+	wxASSERT(temp.Find(_T(" \n")) == -1);
+	wxASSERT(temp.Find(_T("\n ")) == -1);
+	wxASSERT(temp.Last() != ' ');
+	wxASSERT(temp.Last() != '\n');
 	temp.Replace(_T("&"), _T(""));
 	while (temp != _T(""))
 	{
@@ -184,7 +197,15 @@ bool CWrapEngine::WrapText(wxWindow* parent, wxString& text, unsigned long maxLe
 
 	if (m_wrapOnEveryChar)
 	{
-		return WrapTextChinese(parent, text, maxLength);
+#ifdef __WXDEBUG__
+		const wxString& original = text;
+#endif
+		bool res = WrapTextChinese(parent, text, maxLength);
+#ifdef __WXDEBUG
+		wxString unwrapped = UnwrapText(text);
+		wxASSERT(original == unwrapped);
+#endif
+		return res;
 	}
 
 	wxString wrappedText;
@@ -588,6 +609,51 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 	return true;
 }
 
+wxString CWrapEngine::UnwrapText(const wxString& text)
+{
+	wxString unwrapped;
+#if wxUSE_UNICODE
+	int lang = wxGetApp().GetCurrentLanguage();
+	if (lang == wxLANGUAGE_CHINESE || lang == wxLANGUAGE_CHINESE_SIMPLIFIED ||
+		lang == wxLANGUAGE_CHINESE_TRADITIONAL || lang == wxLANGUAGE_CHINESE_HONGKONG ||
+		lang == wxLANGUAGE_CHINESE_MACAU || lang == wxLANGUAGE_CHINESE_SINGAPORE ||
+		lang == wxLANGUAGE_CHINESE_TAIWAN)
+	{
+		const wxChar* p = text;
+		bool wasAscii = false;
+		while (*p)
+		{
+			if (*p == '\n')
+			{
+				if (wasAscii)
+					unwrapped += ' ';
+				else if (*(p + 1) < 127)
+				{
+					if ((*(p + 1) != '(' || *(p + 2) != '&') && CanWrapBefore(*(p - 1)))
+						unwrapped += ' ';
+				}
+			}
+			else if (*p != '\r')
+				unwrapped += *p;
+
+			if (*p < 127)
+				wasAscii = true;
+			else
+				wasAscii = false;
+
+			p++;
+		}
+	}
+	else
+#endif
+	{
+		unwrapped = text;
+		unwrapped.Replace(_T("\n"), _T(" "));
+		unwrapped.Replace(_T("\r"), _T(""));
+	}
+	return unwrapped;
+}
+
 bool CWrapEngine::UnwrapRecursive(wxWindow* wnd, wxSizer* sizer)
 {
 	for (unsigned int i = 0; i < sizer->GetChildren().GetCount(); i++)
@@ -603,43 +669,9 @@ bool CWrapEngine::UnwrapRecursive(wxWindow* wnd, wxSizer* sizer)
 			wxStaticText* text = wxDynamicCast(window, wxStaticText);
 			if (text)
 			{
-				wxString str = text->GetLabel();
-#if wxUSE_UNICODE
-				int lang = wxGetApp().GetCurrentLanguage();
-				if (lang == wxLANGUAGE_CHINESE || lang == wxLANGUAGE_CHINESE_SIMPLIFIED ||
-					lang == wxLANGUAGE_CHINESE_TRADITIONAL || lang == wxLANGUAGE_CHINESE_HONGKONG ||
-					lang == wxLANGUAGE_CHINESE_MACAU || lang == wxLANGUAGE_CHINESE_SINGAPORE ||
-					lang == wxLANGUAGE_CHINESE_TAIWAN)
-				{
-					wxString unwrapped;
-					const wxChar* p = str;
-					bool wasAscii = false;
-					while (*p)
-					{
-						if (*p == '\n')
-						{
-							if (wasAscii || *(p + 1) < 127)
-								unwrapped += ' ';
-						}
-						else if (*p != '\r')
-							unwrapped += *p;
+				wxString unwrapped = UnwrapText(text->GetLabel());
+                text->SetLabel(unwrapped);
 
-						if (*p < 127)
-							wasAscii = true;
-						else
-							wasAscii = false;
-
-						p++;
-					}
-					text->SetLabel(unwrapped);
-				}
-				else
-	#endif
-				{
-					str.Replace(_T("\n"), _T(" "));
-					str.Replace(_T("\r"), _T(""));
-					text->SetLabel(str);
-				}
 				continue;
 			}
 

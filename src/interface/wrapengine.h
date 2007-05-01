@@ -26,6 +26,7 @@ public:
 	bool WrapText(wxWindow* parent, wxString &text, unsigned long maxLength);
 	bool WrapTextChinese(wxWindow* parent, wxString &text, unsigned long maxLength);
 	bool WrapText(wxWindow* parent, int id, unsigned long maxLength);
+	wxString UnwrapText(const wxString& text);
 
 	int GetWidthFromCache(const char* name);
 
