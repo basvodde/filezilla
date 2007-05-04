@@ -263,7 +263,7 @@ int seek_file(WFile *f, uint64 offset, int whence)
 {
     off_t fileofft;
     int lseek_whence;
-    
+
     fileofft = (((off_t) offset.hi << 16) << 16) + offset.lo;
 
     switch (whence) {
@@ -445,6 +445,9 @@ static int ssh_sftp_do_select(int include_stdin, int no_fds_ok)
     fdlist = NULL;
     fdcount = fdsize = 0;
 
+    if (include_stdin && has_input_pushback())
+	return 0;
+
     do {
 
 	/* Count the currently active fds. */
@@ -564,14 +567,12 @@ int ssh_sftp_loop_iteration(void)
  */
 char *ssh_sftp_get_cmdline(char *prompt, int no_fds_ok)
 {
-    char *buf;
-    int buflen, bufsize, ret;
+    int ret;
 
-    //fputs(prompt, stdout);
-    //fflush(stdout);
+    char* line = get_input_pushback();
+    if (line != 0)
+	return line;
 
-    buf = NULL;
-    buflen = bufsize = 0;
 
     while (1) {
 	ret = ssh_sftp_do_select(TRUE, no_fds_ok);
@@ -580,24 +581,21 @@ char *ssh_sftp_get_cmdline(char *prompt, int no_fds_ok)
 	    return NULL;	       /* woop woop */
 	}
 	if (ret > 0) {
-	    if (buflen >= bufsize) {
-		bufsize = buflen + 512;
-		buf = sresize(buf, bufsize, char);
-	    }
-	    ret = read(0, buf+buflen, 1);
-	    if (ret < 0) {
-		perror("read");
+	    int error = 0;
+	    line = read_input_line(0, &error);
+	    if (error)
 		return NULL;
-	    }
-	    if (ret == 0) {
-		/* eof on stdin; no error, but no answer either */
-		return NULL;
-	    }
 
-	    if (buf[buflen++] == '\n') {
-		/* we have a full line */
-		return buf;
+	    if (line == NULL)
+		continue;
+
+	    if (line[0] == '-')
+	    {
+		ProcessQuotaCmd(line);
+		sfree(line);
 	    }
+	    else
+		return line;
 	}
     }
 }

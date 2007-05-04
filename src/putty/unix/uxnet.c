@@ -363,7 +363,7 @@ static int sk_nextaddr(SockAddr addr)
     } else {
 	return FALSE;
     }
-#endif    
+#endif
 }
 
 void sk_getaddr(SockAddr addr, char *buf, int buflen)
@@ -646,14 +646,14 @@ static int try_connect(Actual_Socket sock)
 		if (err != EADDRINUSE) /* failed, for a bad reason */
 		  break;
 	    }
-	    
+
 	    if (localport == 0)
 	      break;		       /* we're only looping once */
 	    localport--;
 	    if (localport == 0)
 	      break;		       /* we might have got to the end */
 	}
-	
+
 	if (err)
 	    goto ret;
     }
@@ -1010,6 +1010,7 @@ void try_send(Actual_Socket s)
 	int err;
 	void *data;
 	int len, urgentflag;
+	int toSend;
 
 	if (s->sending_oob) {
 	    urgentflag = MSG_OOB;
@@ -1019,7 +1020,8 @@ void try_send(Actual_Socket s)
 	    urgentflag = 0;
 	    bufchain_prefix(&s->output_data, &data, &len);
 	}
-	nsent = send(s->s, data, len, urgentflag);
+	toSend = RequestQuota(1, len);
+	nsent = send(s->s, data, toSend, urgentflag);
 	noise_ultralight(nsent);
 	if (nsent <= 0) {
 	    err = (nsent < 0 ? errno : 0);
@@ -1043,6 +1045,7 @@ void try_send(Actual_Socket s)
 		return;
 	    }
 	} else {
+	    UpdateQuota(1, nsent);
 	    SendNotification(s);
 	    if (s->sending_oob) {
 		if (nsent < len) {
@@ -1116,6 +1119,7 @@ static int net_select_result(int fd, int event)
     char buf[20480];		       /* nice big buffer for plenty of speed */
     Actual_Socket s;
     u_long atmark;
+    int toRecv;
 
     /* Find the Socket structure */
     s = find234(sktree, &fd, cmpforsearch);
@@ -1133,13 +1137,15 @@ static int net_select_result(int fd, int event)
 	     * data, which we will send to the back end with
 	     * type==2 (urgent data).
 	     */
-	    ret = recv(s->s, buf, sizeof(buf), MSG_OOB);
+	    toRecv = RequestQuota(0, sizeof(buf));
+	    ret = recv(s->s, buf, toRecv, MSG_OOB);
 	    noise_ultralight(ret);
 	    if (ret <= 0) {
                 return plug_closing(s->plug,
 				    ret == 0 ? "Internal networking trouble" :
 				    strerror(errno), errno, 0);
 	    } else {
+		UpdateQuota(0, ret);
                 RecvNotification(s);
                 /*
                  * Receiving actual data on a socket means we can
@@ -1216,7 +1222,8 @@ static int net_select_result(int fd, int event)
 	} else
 	    atmark = 1;
 
-	ret = recv(s->s, buf, s->oobpending ? 1 : sizeof(buf), 0);
+	toRecv = RequestQuota(0, s->oobpending ? 1 : sizeof(buf));
+	ret = recv(s->s, buf, toRecv, 0);
 	noise_ultralight(ret);
 	if (ret < 0) {
 	    if (errno == EWOULDBLOCK) {
@@ -1242,6 +1249,7 @@ static int net_select_result(int fd, int event)
 	} else if (0 == ret) {
 	    return plug_closing(s->plug, NULL, 0, 0);
 	} else {
+	    UpdateQuota(0, ret);
             RecvNotification(s);
             /*
              * Receiving actual data on a socket means we can
@@ -1293,7 +1301,7 @@ void net_pending_errors(void)
      * others to be closed. (I can't think of any reason this might
      * happen in current SSH implementation, but to maintain
      * generality of this network layer I'll assume the worst.)
-     * 
+     *
      * So what we'll do is search the socket list for _one_ socket
      * with a pending error, and then handle it, and then search
      * the list again _from the beginning_. Repeat until we make a
