@@ -150,53 +150,125 @@ void CSiteManager::OnConnect(wxCommandEvent& event)
 	EndModal(wxID_YES);
 }
 
-bool CSiteManager::Load(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wxTreeItemId()*/)
+class CSiteManagerXmlHandler
+{
+public:
+	virtual ~CSiteManagerXmlHandler() {};
+	
+	// Adds a folder and descents
+	virtual bool AddFolder(const wxString& name) = 0;
+	virtual bool AddSite(const wxString& name, CSiteManagerItemData* data) = 0;
+
+	// Go up a level
+	virtual bool LevelUp() = 0; // *Ding*
+};
+
+class CSiteManagerXmlHandler_Tree : public CSiteManagerXmlHandler
+{
+public:
+	CSiteManagerXmlHandler_Tree(wxTreeCtrl* pTree, wxTreeItemId root)
+		: m_pTree(pTree), m_item(root)
+	{
+	}
+
+	virtual ~CSiteManagerXmlHandler_Tree()
+	{
+		m_pTree->SortChildren(m_item);
+		m_pTree->Expand(m_item);
+	}
+
+	virtual bool AddFolder(const wxString& name)
+	{
+		wxTreeItemId newItem = m_pTree->AppendItem(m_item, name, 0, 0);
+		m_pTree->SetItemImage(newItem, 1, wxTreeItemIcon_Expanded);
+		m_pTree->SetItemImage(newItem, 1, wxTreeItemIcon_SelectedExpanded);
+		
+		m_item = newItem;
+
+		return true;
+	}
+
+	virtual bool AddSite(const wxString& name, CSiteManagerItemData* data)
+	{
+		m_pTree->AppendItem(m_item, name, 2, 2, data);
+		
+		return true;
+	}
+
+	virtual bool LevelUp()
+	{
+		m_pTree->SortChildren(m_item);
+		m_pTree->Expand(m_item);
+
+		wxTreeItemId parent = m_pTree->GetItemParent(m_item);
+		if (!parent)
+			return false;
+
+		m_item = parent;
+		return true;
+	}
+
+protected:
+	wxTreeCtrl* m_pTree;
+	wxTreeItemId m_item;
+};
+
+bool CSiteManager::Load()
 {
 	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
 	if (!pTree)
 		return false;
+
+	pTree->DeleteAllItems();
+
+	// We have to synchronize access to sitemanager.xml so that multiple processed don't write 
+	// to the same file or one is reading while the other one writes.
+	CInterProcessMutex mutex(MUTEX_SITEMANAGER);
+
+	// Load default sites
+	bool hasDefaultSites = LoadDefaultSites();
+	if (hasDefaultSites)
+		m_ownSites = pTree->AppendItem(pTree->GetRootItem(), _("My Sites"), 0, 0);
+	else
+		m_ownSites = pTree->AddRoot(_("My Sites"), 0, 0);
 	
-	if (!pElement || !treeId)
+	wxTreeItemId treeId = m_ownSites;
+	pTree->SelectItem(treeId);
+	pTree->SetItemImage(treeId, 1, wxTreeItemIcon_Expanded);
+	pTree->SetItemImage(treeId, 1, wxTreeItemIcon_SelectedExpanded);
+
+	CXmlFile file(_T("sitemanager"));
+	TiXmlElement* pDocument = file.Load();
+	if (!pDocument)
 	{
-		pTree->DeleteAllItems();
+		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager will not be saved."), file.GetFileName().GetFullPath().c_str());
+		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
 
-		// We have to synchronize access to sitemanager.xml so that multiple processed don't write 
-		// to the same file or one is reading while the other one writes.
-		CInterProcessMutex mutex(MUTEX_SITEMANAGER);
-
-		// Load default sites
-		bool hasDefaultSites = LoadDefaultSites();
-		if (hasDefaultSites)
-			m_ownSites = pTree->AppendItem(pTree->GetRootItem(), _("My Sites"), 0, 0);
-		else
-			m_ownSites = pTree->AddRoot(_("My Sites"), 0, 0);
-		treeId = m_ownSites;
-		pTree->SelectItem(treeId);
-		pTree->SetItemImage(treeId, 1, wxTreeItemIcon_Expanded);
-		pTree->SetItemImage(treeId, 1, wxTreeItemIcon_SelectedExpanded);
-
-		CXmlFile file(_T("sitemanager"));
-		TiXmlElement* pDocument = file.Load();
-		if (!pDocument)
-		{
-			wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager will not be saved."), file.GetFileName().GetFullPath().c_str());
-			wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
-
-			return false;
-		}
-
-		pElement = pDocument->FirstChildElement("Servers");
-		if (!pElement)
-			return true;
-
-		bool res = Load(pElement, treeId);
-
-		pTree->SortChildren(treeId);
-		pTree->Expand(treeId);
-		pTree->SelectItem(treeId);
-		
-		return res;
+		return false;
 	}
+
+	TiXmlElement* pElement = pDocument->FirstChildElement("Servers");
+	if (!pElement)
+		return true;
+
+	CSiteManagerXmlHandler_Tree handler(pTree, treeId);
+
+	bool res = Load(pElement, &handler);
+
+	pTree->SortChildren(treeId);
+	pTree->Expand(treeId);
+	pTree->SelectItem(treeId);
+
+	return res;
+}
+
+bool CSiteManager::Load(TiXmlElement *pElement, CSiteManagerXmlHandler* pHandler)
+{
+	wxASSERT(pElement);
+	wxASSERT(pHandler);
+
+	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
+	wxASSERT(pTree);
 	
 	for (TiXmlElement* pChild = pElement->FirstChildElement(); pChild; pChild = pChild->NextSiblingElement())
 	{
@@ -211,40 +283,47 @@ bool CSiteManager::Load(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 		
 		if (!strcmp(pChild->Value(), "Folder"))
 		{
-			wxTreeItemId id = pTree->AppendItem(treeId, name, 0, 0);
-			pTree->SetItemImage(id, 1, wxTreeItemIcon_Expanded);
-			pTree->SetItemImage(id, 1, wxTreeItemIcon_SelectedExpanded);
-			Load(pChild, id);
+			if (!pHandler->AddFolder(name))
+				return false;
+			Load(pChild, pHandler);
+			if (!pHandler->LevelUp())
+				return false;
 		}
 		else if (!strcmp(pChild->Value(), "Server"))
 		{
-			CServer server;
-			if (!::GetServer(pChild, server))
-				continue;
+			CSiteManagerItemData* data = ReadServerElement(pChild);
 
-			CSiteManagerItemData* data = new CSiteManagerItemData(server);
-			
-			TiXmlHandle handle(pChild);
-
-			TiXmlText* comments = handle.FirstChildElement("Comments").FirstChild().Text();
-			if (comments)
-				data->m_comments = ConvLocal(comments->Value());
-			
-			TiXmlText* localDir = handle.FirstChildElement("LocalDir").FirstChild().Text();
-			if (localDir)
-				data->m_localDir = ConvLocal(localDir->Value());
-			
-			TiXmlText* remoteDir = handle.FirstChildElement("RemoteDir").FirstChild().Text();
-			if (remoteDir)
-				data->m_remoteDir.SetSafePath(ConvLocal(remoteDir->Value()));
-			
-			pTree->AppendItem(treeId, name, 2, 2, data);
+			if (data)
+				pHandler->AddSite(name, data);
 		}
 	}
-	pTree->SortChildren(treeId);
-	pTree->Expand(treeId);
 		
 	return true;
+}
+
+CSiteManagerItemData* CSiteManager::ReadServerElement(TiXmlElement *pElement)
+{
+	CServer server;
+	if (!::GetServer(pElement, server))
+		return 0;
+
+	CSiteManagerItemData* data = new CSiteManagerItemData(server);
+
+	TiXmlHandle handle(pElement);
+
+	TiXmlText* comments = handle.FirstChildElement("Comments").FirstChild().Text();
+	if (comments)
+		data->m_comments = ConvLocal(comments->Value());
+
+	TiXmlText* localDir = handle.FirstChildElement("LocalDir").FirstChild().Text();
+	if (localDir)
+		data->m_localDir = ConvLocal(localDir->Value());
+
+	TiXmlText* remoteDir = handle.FirstChildElement("RemoteDir").FirstChild().Text();
+	if (remoteDir)
+		data->m_remoteDir.SetSafePath(ConvLocal(remoteDir->Value()));
+
+	return data;
 }
 
 bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wxTreeItemId()*/)
@@ -1103,7 +1182,9 @@ bool CSiteManager::LoadDefaultSites()
 	pTree->SetItemImage(m_predefinedSites, 1, wxTreeItemIcon_Expanded);
 	pTree->SetItemImage(m_predefinedSites, 1, wxTreeItemIcon_SelectedExpanded);
 
-	Load(pElement, m_predefinedSites);
+	CSiteManagerXmlHandler_Tree handler(pTree, m_predefinedSites);
+
+	Load(pElement, &handler);
 
 	return true;
 }

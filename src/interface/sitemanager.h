@@ -24,6 +24,7 @@ public:
 
 class TiXmlElement;
 class CInterProcessMutex;
+class CSiteManagerXmlHandler;
 class CSiteManager: public wxDialogEx
 {	
 	DECLARE_EVENT_TABLE();
@@ -44,12 +45,15 @@ public:
 protected:
 	bool Verify();
 	bool UpdateServer();
-	bool Load(TiXmlElement *pElement = 0, wxTreeItemId treeId = wxTreeItemId());
+	bool Load();
+	bool Load(TiXmlElement *pElement, CSiteManagerXmlHandler* pHandler);
 	bool Save(TiXmlElement *pElement = 0, wxTreeItemId treeId = wxTreeItemId());
 	void SetCtrlState();
 	bool LoadDefaultSites();
 
 	bool IsPredefinedItem(wxTreeItemId item);
+
+	CSiteManagerItemData* ReadServerElement(TiXmlElement *pElement);
 	
 	virtual void OnOK(wxCommandEvent& event);
 	virtual void OnCancel(wxCommandEvent& event);
