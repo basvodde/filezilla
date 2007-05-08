@@ -504,6 +504,7 @@ void CTlsSocket::Write(const void *buffer, unsigned int len)
 	}
 
 	len -= m_writeSkip;
+	buffer = (char*)buffer + m_writeSkip;
 
 	int res = gnutls_record_send(m_session, buffer, len);
 	if (res >= 0)
@@ -518,15 +519,25 @@ void CTlsSocket::Write(const void *buffer, unsigned int len)
 
 	if (res == GNUTLS_E_INTERRUPTED || res == GNUTLS_E_AGAIN)
 	{
-		m_lastError = wxSOCKET_WOULDBLOCK;
-		m_lastWriteFailed = true;
+		if (m_writeSkip)
+		{
+			m_lastSuccessful = true;
+			m_lastCount = m_writeSkip;
+			m_writeSkip = 0;
+		}
+		else
+		{
+			m_lastSuccessful = false;
+			m_lastError = wxSOCKET_WOULDBLOCK;
+			m_lastWriteFailed = true;
+		}
 	}
 	else
 	{
+		m_lastSuccessful = false;
 		Failure(res);
 		m_lastError = wxSOCKET_IOERR;
 	}
-	m_lastSuccessful = false;
 }
 
 void CTlsSocket::TriggerEvents()
