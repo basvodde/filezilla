@@ -16,6 +16,7 @@ class CQuickconnectBar;
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 class CUpdateWizard;
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
+class CSiteManagerItemData;
 
 class CMainFrame : public wxFrame
 {
@@ -39,6 +40,7 @@ protected:
 	bool CreateQuickconnectBar();
 	bool CreateToolBar();
 	void SetProgress(const CTransferStatus* pStatus);
+	void ConnectToSite(CSiteManagerItemData* const pData);
 
 	// If resizing the window, make sure the individual splitter windows don't get too small
 	void ApplySplitterConstraints();
@@ -106,6 +108,7 @@ protected:
 #if FZ_MANUALUPDATECHECK
 	void OnCheckForUpdates(wxCommandEvent& event);
 #endif //FZ_MANUALUPDATECHECK
+	void OnSitemanagerDropdown(wxCommandEvent& event);
 
 	float m_ViewSplitterSashPos;
 	bool m_bInitDone;

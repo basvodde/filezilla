@@ -80,6 +80,10 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 #if FZ_MANUALUPDATECHECK
 	EVT_MENU(XRCID("ID_CHECKFORUPDATES"), CMainFrame::OnCheckForUpdates)
 #endif //FZ_MANUALUPDATECHECK
+	EVT_TOOL_RCLICKED(XRCID("ID_TOOLBAR_SITEMANAGER"), CMainFrame::OnSitemanagerDropdown)
+#ifdef EVT_TOOL_DROPDOWN
+	EVT_TOOL_DROPDOWN(XRCID("ID_TOOLBAR_SITEMANAGER"), CMainFrame::OnSitemanagerDropdown)
+#endif
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
@@ -475,7 +479,18 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		dlg.Run();
 	}
 	else
-		event.Skip();
+	{
+		CSiteManagerItemData* pData = CSiteManager::GetSiteById(event.GetId());
+
+		if (!pData)
+		{
+			event.Skip();
+			return;
+		}
+
+		ConnectToSite(pData);
+		delete pData;
+	}
 }
 
 void CMainFrame::OnEngineEvent(wxEvent &event)
@@ -571,6 +586,23 @@ bool CMainFrame::CreateToolBar()
 		return false;
 	}
 	m_pToolBar->SetExtraStyle(wxWS_EX_PROCESS_UI_UPDATES);
+
+#if defined(EVT_TOOL_DROPDOWN) && defined(__WXMSW__)
+	wxToolBarToolBase* pOldTool = m_pToolBar->FindById(XRCID("ID_TOOLBAR_SITEMANAGER"));
+	if (pOldTool)
+	{
+		wxToolBarToolBase* pTool = new wxToolBarToolBase(0, XRCID("ID_TOOLBAR_SITEMANAGER"),
+			pOldTool->GetLabel(), pOldTool->GetNormalBitmap(), pOldTool->GetDisabledBitmap(),
+			wxITEM_DROPDOWN, NULL, pOldTool->GetShortHelp(), pOldTool->GetLongHelp());
+
+		int pos = m_pToolBar->GetToolPos(XRCID("ID_TOOLBAR_SITEMANAGER"));
+		wxASSERT(pos != wxNOT_FOUND);
+
+		m_pToolBar->DeleteToolByPos(pos);
+		m_pToolBar->InsertTool(pos, pTool);
+		m_pToolBar->Realize();
+	}
+#endif
 
 	CFilterDialog dlg;
 	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), dlg.HasActiveFilters());
@@ -677,6 +709,8 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 		event.Veto();
 		return;
 	}
+
+	CSiteManager::ClearIdMap();
 
 	Destroy();
 }
@@ -847,16 +881,7 @@ void CMainFrame::OnSiteManager(wxCommandEvent& event)
 		if (!dlg.GetServer(data))
 			return;
 
-		if (data.m_server.GetLogonType() == ASK)
-		{
-			if (!CLoginManager::Get().GetPassword(data.m_server, false, data.m_name))
-				return;
-		}
-
-		m_pState->Connect(data.m_server, true, data.m_remoteDir);
-
-		if (data.m_localDir != _T(""))
-			m_pState->SetLocalDir(data.m_localDir);
+		ConnectToSite(&data);
 	}
 }
 
@@ -1218,4 +1243,46 @@ void CMainFrame::UpdateLayout(int layout /*=-1*/, int swap /*=-1*/)
 				m_pRemoteSplitter->SplitHorizontally(pFirst, pSecond, m_lastRemoteTreeSplitterPos);
 		}
 	}
+}
+
+void CMainFrame::OnSitemanagerDropdown(wxCommandEvent& event)
+{
+	wxMenu *pMenu = CSiteManager::GetSitesMenu();
+#ifdef EVT_TOOL_DROPDOWN
+	if (event.GetEventType() == wxEVT_COMMAND_TOOL_DROPDOWN_CLICKED)
+	{
+		m_pToolBar->SetDropdownMenu(XRCID("ID_TOOLBAR_SITEMANAGER"), pMenu);
+		event.Skip();
+	}
+	else
+#endif
+	{
+		if (!pMenu)
+			return;
+#ifdef __WXMSW__
+		RECT r;
+        if (::SendMessage((HWND)m_pToolBar->GetHandle(), TB_GETITEMRECT, m_pToolBar->GetToolPos(event.GetId()), (LPARAM)&r))
+			m_pToolBar->PopupMenu(pMenu, r.left, r.bottom);
+		else
+#endif
+		m_pToolBar->PopupMenu(pMenu);
+
+		delete pMenu;
+	}
+}
+
+void CMainFrame::ConnectToSite(CSiteManagerItemData* const pData)
+{
+	wxASSERT(pData);
+
+	if (pData->m_server.GetLogonType() == ASK)
+	{
+		if (!CLoginManager::Get().GetPassword(pData->m_server, false, pData->m_name))
+			return;
+	}
+
+	m_pState->Connect(pData->m_server, true, pData->m_remoteDir);
+
+	if (pData->m_localDir != _T(""))
+		m_pState->SetLocalDir(pData->m_localDir);
 }

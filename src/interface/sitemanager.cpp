@@ -7,6 +7,8 @@
 #include "ipcmutex.h"
 #include "wrapengine.h"
 
+std::map<int, CSiteManagerItemData*> CSiteManager::m_idMap;
+
 BEGIN_EVENT_TABLE(CSiteManager, wxDialogEx)
 EVT_BUTTON(XRCID("wxID_OK"), CSiteManager::OnOK)
 EVT_BUTTON(XRCID("wxID_CANCEL"), CSiteManager::OnCancel)
@@ -267,9 +269,6 @@ bool CSiteManager::Load(TiXmlElement *pElement, CSiteManagerXmlHandler* pHandler
 	wxASSERT(pElement);
 	wxASSERT(pHandler);
 
-	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
-	wxASSERT(pTree);
-	
 	for (TiXmlElement* pChild = pElement->FirstChildElement(); pChild; pChild = pChild->NextSiblingElement())
 	{
 		TiXmlNode* pNode = pChild->FirstChild();
@@ -1204,4 +1203,184 @@ bool CSiteManager::IsPredefinedItem(wxTreeItemId item)
 	}
 
 	return false;
+}
+
+class CSiteManagerXmlHandler_Menu : public CSiteManagerXmlHandler
+{
+public:
+	CSiteManagerXmlHandler_Menu(wxMenu* pMenu, std::map<int, CSiteManagerItemData*> *idMap)
+		: m_pMenu(pMenu), m_idMap(idMap)
+	{
+	}
+
+	virtual bool AddFolder(const wxString& name)
+	{
+		m_parents.push_back(m_pMenu);
+		m_childNames.push_back(name);
+
+		m_pMenu = new wxMenu;
+
+		return true;
+	}
+	
+	virtual bool AddSite(const wxString& name, CSiteManagerItemData* data)
+	{
+		wxMenuItem* pItem = m_pMenu->Append(wxID_ANY, name);
+		(*m_idMap)[pItem->GetId()] = data;
+
+		return true;
+	}
+
+	// Go up a level
+	virtual bool LevelUp()
+	{
+		if (m_parents.empty() || m_childNames.empty())
+			return false;
+		
+		wxMenu* pChild = m_pMenu;
+		m_pMenu = m_parents.back();
+		if (pChild->GetMenuItemCount())
+			m_pMenu->AppendSubMenu(pChild, m_childNames.back());
+		else
+			delete pChild;
+		m_childNames.pop_back();
+		m_parents.pop_back();
+
+		return true;
+	}
+
+protected:
+	wxMenu* m_pMenu;
+
+	std::map<int, CSiteManagerItemData*> *m_idMap;
+
+	std::list<wxMenu*> m_parents;
+	std::list<wxString> m_childNames;
+};
+
+wxMenu* CSiteManager::GetSitesMenu()
+{
+	ClearIdMap();
+
+	// We have to synchronize access to sitemanager.xml so that multiple processed don't write 
+	// to the same file or one is reading while the other one writes.
+	CInterProcessMutex mutex(MUTEX_SITEMANAGER);
+
+	wxMenu* predefinedSites = GetSitesMenu_Predefied(m_idMap);
+	
+	CXmlFile file(_T("sitemanager"));
+	TiXmlElement* pDocument = file.Load();
+	if (!pDocument)
+	{
+		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager will not be saved."), file.GetFileName().GetFullPath().c_str());
+		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
+
+		if (!predefinedSites)
+			return predefinedSites;
+
+		wxMenu *pMenu = new wxMenu;
+		wxMenuItem* pItem = pMenu->Append(wxID_ANY, _("No sites available"));
+		pItem->Enable(false);
+		return pMenu;
+	}
+
+	TiXmlElement* pElement = pDocument->FirstChildElement("Servers");
+	if (!pElement)
+	{
+		if (!predefinedSites)
+			return predefinedSites;
+
+		wxMenu *pMenu = new wxMenu;
+		wxMenuItem* pItem = pMenu->Append(wxID_ANY, _("No sites available"));
+		pItem->Enable(false);
+		return pMenu;
+	}
+
+	wxMenu* pMenu = new wxMenu;
+	CSiteManagerXmlHandler_Menu handler(pMenu, &m_idMap);
+
+	bool res = Load(pElement, &handler);
+
+	if (pMenu && !pMenu->GetMenuItemCount())
+	{
+		delete pMenu;
+		pMenu = 0;
+	}
+
+	if (pMenu)
+	{
+		if (!predefinedSites)
+			return pMenu;
+
+		wxMenu* pRootMenu = new wxMenu;
+		pRootMenu->AppendSubMenu(predefinedSites, _("Predefined Sites"));
+		pRootMenu->AppendSubMenu(pMenu, _("My Sites"));
+
+		return pRootMenu;
+	}
+	
+	if (predefinedSites)
+		return predefinedSites;
+
+	pMenu = new wxMenu;
+	wxMenuItem* pItem = pMenu->Append(wxID_ANY, _("No sites available"));
+	pItem->Enable(false);
+	return pMenu;
+}
+
+void CSiteManager::ClearIdMap()
+{
+	for (std::map<int, CSiteManagerItemData*>::iterator iter = m_idMap.begin(); iter != m_idMap.end(); iter++)
+		delete iter->second;
+
+	m_idMap.clear();
+}
+
+wxMenu* CSiteManager::GetSitesMenu_Predefied(std::map<int, CSiteManagerItemData*> &idMap)
+{
+	const wxString& defaultsDir = wxGetApp().GetDefaultsDir();
+	if (defaultsDir == _T(""))
+		return 0;
+
+	wxFileName name(defaultsDir, _T("fzdefaults.xml"));
+	CXmlFile file(name);
+	
+	TiXmlElement* pDocument = file.Load();
+	if (!pDocument)
+		return 0;
+
+	TiXmlElement* pElement = pDocument->FirstChildElement("Servers");
+	if (!pElement)
+		return 0;
+
+	wxMenu* pMenu = new wxMenu;
+	CSiteManagerXmlHandler_Menu handler(pMenu, &idMap);
+
+	Load(pElement, &handler);
+
+	if (!pMenu->GetMenuItemCount())
+	{
+		delete pMenu;
+		return 0;
+	}
+
+	return pMenu;
+}
+
+CSiteManagerItemData* CSiteManager::GetSiteById(int id)
+{
+	std::map<int, CSiteManagerItemData*>::iterator iter = m_idMap.find(id);
+
+	CSiteManagerItemData *pData;
+	if (iter != m_idMap.end())
+	{
+		pData = iter->second;
+		iter->second = 0;
+	}
+	else
+		pData = 0;
+
+	ClearIdMap();
+	
+	return pData;
 }

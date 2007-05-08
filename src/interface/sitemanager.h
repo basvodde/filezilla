@@ -41,19 +41,28 @@ public:
 	void CreateControls();
 	
 	bool GetServer(CSiteManagerItemData& data);
-	
+
+	static wxMenu* GetSitesMenu();
+	static void ClearIdMap();
+
+	// This function also clears the Id map
+	static CSiteManagerItemData* GetSiteById(int id);
+
 protected:
 	bool Verify();
 	bool UpdateServer();
 	bool Load();
-	bool Load(TiXmlElement *pElement, CSiteManagerXmlHandler* pHandler);
+	static bool Load(TiXmlElement *pElement, CSiteManagerXmlHandler* pHandler);
 	bool Save(TiXmlElement *pElement = 0, wxTreeItemId treeId = wxTreeItemId());
 	void SetCtrlState();
 	bool LoadDefaultSites();
 
+	// The map maps event id's to sites
+	static wxMenu* GetSitesMenu_Predefied(std::map<int, CSiteManagerItemData*> &idMap);
+
 	bool IsPredefinedItem(wxTreeItemId item);
 
-	CSiteManagerItemData* ReadServerElement(TiXmlElement *pElement);
+	static CSiteManagerItemData* ReadServerElement(TiXmlElement *pElement);
 	
 	virtual void OnOK(wxCommandEvent& event);
 	virtual void OnCancel(wxCommandEvent& event);
@@ -78,6 +87,9 @@ protected:
 
 	wxTreeItemId m_predefinedSites;
 	wxTreeItemId m_ownSites;
+
+	// Initialized by GetSitesMenu
+	static std::map<int, CSiteManagerItemData*> m_idMap;
 };
 
 #endif //__SITEMANAGER_H__
