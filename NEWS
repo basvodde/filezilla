@@ -1,5 +1,24 @@
 This file only lists a short summary of the changes between FileZilla versions. For a full list of changes, please read the ChangeLog file.
 
+Legend:
+  ! Security related or critical bugfix 
+  + New feature or important bugfix
+  - Bugfixes
+
+Beta 8 (2007-05-09):
+
+! Fix data corruption on FTPS uploads
++ Implement speed limits
++ Last used local directory will be remembered
++ New option for the sorting of the filelists. Directories can be kept on top or sorted inline.
++ Display warning if detecting a Windows system with a networking bug confirmed by Microsoft
++ Right-clicking the Sitemanager button in the toolbar displays a popup menu with the sites for quick access. On Windows, a dropdown arrow got added.
+- Directorylisting-parser fixes, including support for Microware OS-9
+- Small SFTP transfer speed improvement under Windows
+- Autocompletion did not work properly on GTK based systems
+- Uninstalling FileZilla on Windows should no longer leave registry keys behind 
+- lots of small bugfixes
+
 Beta 7 (2007-03-27):
 
 + New optionspage to change layout of file and directory panes
@@ -20,8 +39,8 @@ Beta 6 (2007-02-19):
 
 Beta 5 (2007-01-11):
 
-- Fix format string vulnerabilities
-- Partial drag and drop support.
+! Fix format string vulnerabilities
++ Partial drag and drop support.
 - Lots of small bugfixes
 
 Beta 4 (2006-12-14):
