@@ -1355,7 +1355,11 @@ wxMenu* CSiteManager::GetSitesMenu_Predefied(std::map<int, CSiteManagerItemData*
 	wxMenu* pMenu = new wxMenu;
 	CSiteManagerXmlHandler_Menu handler(pMenu, &idMap);
 
-	Load(pElement, &handler);
+	if (!Load(pElement, &handler))
+	{
+		delete pMenu;
+		return 0;
+	}
 
 	if (!pMenu->GetMenuItemCount())
 	{
