@@ -1300,8 +1300,7 @@ wxMenu* CSiteManager::GetSitesMenu()
 	CSiteManagerXmlHandler_Menu handler(pMenu, &m_idMap);
 
 	bool res = Load(pElement, &handler);
-
-	if (pMenu && !pMenu->GetMenuItemCount())
+	if (!res || !pMenu->GetMenuItemCount())
 	{
 		delete pMenu;
 		pMenu = 0;
