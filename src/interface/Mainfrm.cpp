@@ -83,6 +83,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_TOOL_RCLICKED(XRCID("ID_TOOLBAR_SITEMANAGER"), CMainFrame::OnSitemanagerDropdown)
 #ifdef EVT_TOOL_DROPDOWN
 	EVT_TOOL_DROPDOWN(XRCID("ID_TOOLBAR_SITEMANAGER"), CMainFrame::OnSitemanagerDropdown)
+	EVT_UPDATE_UI(XRCID("ID_MENU_SERVER_CMD"), CMainFrame::OnUpdateMenuCustomcommand)
 #endif
 END_EVENT_TABLE()
 
@@ -1285,4 +1286,12 @@ void CMainFrame::ConnectToSite(CSiteManagerItemData* const pData)
 
 	if (pData->m_localDir != _T(""))
 		m_pState->SetLocalDir(pData->m_localDir);
+}
+
+void CMainFrame::OnUpdateMenuCustomcommand(wxUpdateUIEvent& event)
+{
+	if (!m_pMenuBar)
+		return;
+
+	event.Enable(m_pState->m_pEngine && m_pState->m_pEngine->IsConnected() && m_pState->m_pCommandQueue->Idle());
 }
