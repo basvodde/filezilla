@@ -10,6 +10,8 @@ public:
 
 	bool Create(wxWindow* pParent, CState* pState);
 
+	void ClearFields();
+
 protected:
 	// Only valid while menu is being displayed
 	std::list<CServer> m_recentServers;

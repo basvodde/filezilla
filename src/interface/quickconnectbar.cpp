@@ -136,17 +136,9 @@ void CQuickconnectBar::OnMenu(wxCommandEvent& event)
 {
 	const int id = event.GetId();
 	if (id == 1)
-	{
-		XRCCTRL(*this, "ID_QUICKCONNECT_HOST", wxTextCtrl)->SetValue(_T(""));
-		XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetValue(_T(""));
-		XRCCTRL(*this, "ID_QUICKCONNECT_USER", wxTextCtrl)->SetValue(_T(""));
-		XRCCTRL(*this, "ID_QUICKCONNECT_PASS", wxTextCtrl)->SetValue(_T(""));
-		return;
-	}
+		ClearFields();
 	else if (id == 2)
-	{
 		CRecentServerList::Clear();
-	}
 
 	if (id < 10)
 		return;
@@ -159,4 +151,12 @@ void CQuickconnectBar::OnMenu(wxCommandEvent& event)
 	for (iter = m_recentServers.begin(); index; index--, iter++);
 
 	m_pState->Connect(*iter, true);
+}
+
+void CQuickconnectBar::ClearFields()
+{
+	XRCCTRL(*this, "ID_QUICKCONNECT_HOST", wxTextCtrl)->SetValue(_T(""));
+	XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetValue(_T(""));
+	XRCCTRL(*this, "ID_QUICKCONNECT_USER", wxTextCtrl)->SetValue(_T(""));
+	XRCCTRL(*this, "ID_QUICKCONNECT_PASS", wxTextCtrl)->SetValue(_T(""));
 }
