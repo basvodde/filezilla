@@ -56,8 +56,8 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_MENU(XRCID("ID_MENU_SERVER_DISCONNECT"), CMainFrame::OnDisconnect)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_CANCEL"), CMainFrame::OnUpdateToolbarCancel)
 	EVT_TOOL(XRCID("ID_TOOLBAR_CANCEL"), CMainFrame::OnCancel)
-	EVT_SPLITTER_SASH_POS_CHANGING(wxID_ANY, CMainFrame::OnSplitterSashPosChanging) 
-	EVT_SPLITTER_SASH_POS_CHANGED(wxID_ANY, CMainFrame::OnSplitterSashPosChanged) 
+	EVT_SPLITTER_SASH_POS_CHANGING(wxID_ANY, CMainFrame::OnSplitterSashPosChanging)
+	EVT_SPLITTER_SASH_POS_CHANGED(wxID_ANY, CMainFrame::OnSplitterSashPosChanged)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_RECONNECT"), CMainFrame::OnUpdateToolbarReconnect)
 	EVT_TOOL(XRCID("ID_TOOLBAR_RECONNECT"), CMainFrame::OnReconnect)
 	EVT_UPDATE_UI(XRCID("ID_MENU_SERVER_RECONNECT"), CMainFrame::OnUpdateToolbarReconnect)
@@ -84,8 +84,8 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_TOOL_RCLICKED(XRCID("ID_TOOLBAR_SITEMANAGER"), CMainFrame::OnSitemanagerDropdown)
 #ifdef EVT_TOOL_DROPDOWN
 	EVT_TOOL_DROPDOWN(XRCID("ID_TOOLBAR_SITEMANAGER"), CMainFrame::OnSitemanagerDropdown)
-	EVT_UPDATE_UI(XRCID("ID_MENU_SERVER_CMD"), CMainFrame::OnUpdateMenuCustomcommand)
 #endif
+	EVT_UPDATE_UI(XRCID("ID_MENU_SERVER_CMD"), CMainFrame::OnUpdateMenuCustomcommand)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
@@ -135,7 +135,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 		m_pStatusBar->SetStatusStyles(6, array);
 
 		m_pStatusBar->SetStatusWidths(6, statbarWidths);
-		
+
 		m_pRecvLed = new CLed(m_pStatusBar, 1, m_pState);
 		m_pSendLed = new CLed(m_pStatusBar, 0, m_pState);
 
@@ -179,7 +179,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 
 	m_pViewSplitter = new wxSplitterWindow(m_pBottomSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
 	m_pViewSplitter->SetMinimumPaneSize(20);
-	
+
 	m_pLocalSplitter = new wxSplitterWindow(m_pViewSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
 	m_pLocalSplitter->SetMinimumPaneSize(20);
 	m_pLocalSplitter->SetSashGravity(0.7);
@@ -197,20 +197,20 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_pLocalListView = new CLocalListView(m_pLocalListViewPanel, -1, m_pState, m_pQueueView);
 	m_pLocalTreeViewPanel->SetWindow(m_pLocalTreeView);
 	m_pLocalListViewPanel->SetWindow(m_pLocalListView);
-	
+
 	m_pRemoteTreeViewPanel = new CView(m_pRemoteSplitter);
 	m_pRemoteListViewPanel = new CView(m_pRemoteSplitter);
 	m_pRemoteTreeView = new CRemoteTreeView(m_pRemoteTreeViewPanel, -1, m_pState, m_pQueueView);
 	m_pRemoteListView = new CRemoteListView(m_pRemoteListViewPanel, -1, m_pState, m_pQueueView);
 	m_pRemoteTreeViewPanel->SetWindow(m_pRemoteTreeView);
 	m_pRemoteListViewPanel->SetWindow(m_pRemoteListView);
-	
+
 	m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter, 100);
 	m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueueView, 100);
 
 	const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
 	const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
-	
+
 	if (layout == 1)
 	{
 		if (swap)
@@ -258,7 +258,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	}
 	wxSize size = m_pBottomSplitter->GetClientSize();
 	m_pBottomSplitter->SetSashPosition(size.GetHeight() - 140);
-	
+
 	Layout();
 
 	wxString localDir = COptions::Get()->GetOption(OPTION_LASTLOCALDIR);
@@ -323,7 +323,7 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 		wxSize size = m_pViewSplitter->GetClientSize();
 
 		const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
-	
+
 		int pos;
 		if (layout == 1)
 		{
@@ -357,7 +357,7 @@ void CMainFrame::OnViewSplitterPosChanged(wxSplitterEvent &event)
 
 	wxSize size = m_pViewSplitter->GetClientSize();
 	int pos = m_pViewSplitter->GetSashPosition();
-	
+
 	const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
 	if (layout != 1)
 		m_ViewSplitterSashPos = pos / (float)size.GetWidth();
@@ -436,7 +436,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 			return;
 
 		const wxString &command = dlg.GetValue();
-		
+
 		if (!command.Left(5).CmpNoCase(_T("quote")) || !command.Left(6).CmpNoCase(_T("quote ")))
 		{
 			CConditionalDialog dlg(this, CConditionalDialog::rawcommand_quote, CConditionalDialog::yesno);
@@ -449,7 +449,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 				return;
 		}
 
-		m_pState->m_pCommandQueue->ProcessCommand(new CRawCommand(dlg.GetValue()));		
+		m_pState->m_pCommandQueue->ProcessCommand(new CRawCommand(dlg.GetValue()));
 	}
 	else if (event.GetId() == XRCID("wxID_PREFERENCES"))
 	{
@@ -530,7 +530,7 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 		case nId_listing:
 			{
 				const CDirectoryListingNotification* const pListingNotification = reinterpret_cast<CDirectoryListingNotification *>(pNotification);
-				
+
 				if (pListingNotification->GetPath().IsEmpty())
 					m_pState->SetRemoteDir(0, false);
 				else
@@ -542,7 +542,7 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 						pListing->path = pListingNotification->GetPath();
 						pListing->m_failed = true;
 					}
-					
+
 					m_pState->SetRemoteDir(pListing, pListingNotification->Modified());
 				}
 			}
@@ -569,7 +569,7 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 					m_transferStatusTimer.Start(100);
 				else if (!pStatus && m_transferStatusTimer.IsRunning())
 					m_transferStatusTimer.Stop();
-                
+
 				SetProgress(pStatus);
 				delete pNotification;
 			}
@@ -684,7 +684,7 @@ void CMainFrame::OnSplitterSashPosChanged(wxSplitterEvent& event)
 			event.Veto();
 		else if (newSize < 20)
 			m_pRemoteSplitter->SetSashPosition(m_pRemoteSplitter->GetSashPosition() - 20 + newSize);
-				
+
 		newSize = m_pLocalSplitter->GetClientSize().GetHeight() - m_pLocalSplitter->GetSashPosition() + delta;
 		if (newSize < 0)
 			event.Veto();
@@ -733,7 +733,7 @@ void CMainFrame::OnUpdateToolbarReconnect(wxUpdateUIEvent &event)
 		event.Enable(false);
 		return;
 	}
-	
+
 	CServer server;
 	event.Enable(COptions::Get()->GetLastServer(server));
 }
@@ -742,7 +742,7 @@ void CMainFrame::OnReconnect(wxCommandEvent &event)
 {
 	if (!m_pState->m_pEngine || m_pState->m_pEngine->IsConnected() || !m_pState->m_pCommandQueue->Idle())
 		return;
-	
+
 	CServer server;
 	if (!COptions::Get()->GetLastServer(server))
 		return;
@@ -785,7 +785,7 @@ void CMainFrame::OnStatusbarSize(wxSizeEvent& event)
 	else if (!IsMaximized() && m_windowIsMaximized)
 	{
 		m_windowIsMaximized = false;
-		
+
 		m_pStatusBar->SetStatusWidths(6, statbarWidths);
 		m_pStatusBar->Refresh();
 	}
@@ -845,7 +845,7 @@ void CMainFrame::SetProgress(const CTransferStatus *pStatus)
 		m_pStatusBar->SetStatusText(_T(""), 3);
 		return;
 	}
-	
+
 	wxTimeSpan elapsed = wxDateTime::Now().Subtract(pStatus->started);
 	m_pStatusBar->SetStatusText(elapsed.Format(_("%H:%M:%S elapsed")), 1);
 
@@ -984,7 +984,7 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 		}
 	}
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
-	
+
 	UpdateLayout();
 
 	m_pAsyncRequestQueue->RecheckDefaults();
@@ -1009,7 +1009,7 @@ void CMainFrame::OnToggleLogView(wxCommandEvent& event)
 
 		// Restore previous queue size
 		rect = m_pBottomSplitter->GetClientSize();
-		if (queueSplitterPos != (rect.GetHeight() - m_pBottomSplitter->GetSashPosition())) 
+		if (queueSplitterPos != (rect.GetHeight() - m_pBottomSplitter->GetSashPosition()))
 			m_pBottomSplitter->SetSashPosition(rect.GetHeight() - queueSplitterPos);
 
 		ApplySplitterConstraints();
@@ -1154,7 +1154,7 @@ void CMainFrame::OnCheckForUpdates(wxCommandEvent& event)
 	CUpdateWizard dlg(this);
 	if (!dlg.Load())
 		return;
-	
+
 	dlg.Run();
 }
 #endif //FZ_MANUALUPDATECHECK
