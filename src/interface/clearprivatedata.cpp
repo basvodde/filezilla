@@ -5,7 +5,7 @@
 #include "quickconnectbar.h"
 #include "state.h"
 #include "commandqueue.h"
-#include "options.h"
+#include "Options.h"
 #include "ipcmutex.h"
 #include "filezillaapp.h"
 #include "QueueView.h"

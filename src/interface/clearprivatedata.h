@@ -30,3 +30,4 @@ protected:
 };
 
 #endif //__CLEARPRIVATEDATA_H__
+
