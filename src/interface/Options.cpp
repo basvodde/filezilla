@@ -515,6 +515,9 @@ bool COptions::GetLastServer(CServer& server)
 	else
 	{
 		server = *m_pLastServer;
+		if (server == CServer())
+			return false;
+
 		return true;
 	}
 }

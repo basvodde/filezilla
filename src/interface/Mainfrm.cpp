@@ -25,6 +25,7 @@
 #include "defaultfileexistsdlg.h"
 #include "loginmanager.h"
 #include "conditionaldialog.h"
+#include "clearprivatedata.h"
 
 #ifndef __WXMSW__
 #include "resources/filezilla.xpm"
@@ -478,6 +479,15 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 			return;
 
 		dlg.Run();
+	}
+	else if (event.GetId() == XRCID("ID_MENU_EDIT_CLEARPRIVATEDATA"))
+	{
+		CClearPrivateDataDialog* pDlg = CClearPrivateDataDialog::Create(this);
+		if (!pDlg)
+			return;
+
+		pDlg->Show();
+		pDlg->Delete();
 	}
 	else
 	{

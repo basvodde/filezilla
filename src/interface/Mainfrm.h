@@ -33,6 +33,8 @@ public:
 	CLocalListView* GetLocalListView() { return m_pLocalListView; }
 	CRemoteListView* GetRemoteListView() { return m_pRemoteListView; }
 	CQueueView* GetQueue() { return m_pQueueView; }
+	CQuickconnectBar* GetQuickconnectBar() { return m_pQuickconnectBar; }
+
 	void UpdateLayout(int layout = -1, int swap = -1);
 
 protected:

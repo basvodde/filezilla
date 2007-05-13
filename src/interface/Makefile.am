@@ -11,6 +11,7 @@ bin_PROGRAMS = filezilla
 # the application source, library search path, and link libraries
 filezilla_SOURCES = aboutdialog.cpp asyncrequestqueue.cpp \
 		buildinfo.cpp chmoddialog.cpp \
+		clearprivatedata.cpp \
 		commandqueue.cpp \
 		conditionaldialog.cpp \
 		customheightlistctrl.cpp \
@@ -48,6 +49,7 @@ endif
 
 noinst_HEADERS = aboutdialog.h asyncrequestqueue.h \
 		 buildinfo.h chmoddialog.h \
+		 clearprivatedata.h \
 		 commandqueue.h \
 		 conditionaldialog.h \
 		 customheightlistctrl.h \

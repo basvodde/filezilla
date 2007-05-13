@@ -524,3 +524,19 @@ bool CState::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, wx
 
 	return m_pMainFrame->GetRemoteListView()->DownloadDroppedFiles(pRemoteDataObject, path, queueOnly);
 }
+
+bool CState::IsConnected() const
+{
+	if (!m_pEngine)
+		return false;
+
+	return m_pEngine->IsConnected();
+}
+
+bool CState::IsIdle() const
+{
+	if (!m_pCommandQueue)
+		return true;
+
+	return m_pCommandQueue->Idle();
+}

@@ -300,6 +300,8 @@ public:
 
 	void UpdateItemSize(CFileItem* pItem, wxLongLong size);
 
+	void RemoveAll();
+
 protected:
 
 	bool TryStartNextTransfer();
@@ -319,7 +321,6 @@ protected:
 	void ResetItem(CFileItem* item);
 	
 	bool RemoveItem(CQueueItem* item);
-	void RemoveAll();
 
 	// Stops processing of given item
 	// Returns true on success, false if it would block

@@ -3544,4 +3544,78 @@
       </object>
     </object>
   </object>
+  <object class="wxDialog" name="ID_CLEARPRIVATEDATA">
+    <title>Clear private data</title>
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxFlexGridSizer">
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>Select the private data you would like to delete.</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticBoxSizer">
+              <label>Categories</label>
+              <orient>wxVERTICAL</orient>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <cols>1</cols>
+                  <object class="sizeritem">
+                    <object class="wxCheckBox" name="ID_CLEARQUICKCONNECT">
+                      <label>Clear &amp;quickconnect history</label>
+                      <checked>1</checked>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxCheckBox" name="ID_CLEARRECONNECT">
+                      <label>Clear &amp;reconnect information</label>
+                      <checked>1</checked>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxCheckBox" name="ID_CLEARSITEMANAGER">
+                      <label>Clear &amp;Site Manager entries</label>
+                    </object>
+                  </object>
+                  <vgap>5</vgap>
+                  <object class="sizeritem">
+                    <object class="wxCheckBox" name="ID_CLEARQUEUE">
+                      <label>Clear &amp;transfer queue</label>
+                    </object>
+                  </object>
+                </object>
+                <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+                <border>5</border>
+              </object>
+            </object>
+            <flag>wxGROW</flag>
+          </object>
+          <object class="sizeritem">
+            <object class="wxGridSizer">
+              <object class="sizeritem">
+                <object class="wxButton" name="wxID_OK">
+                  <label>Ok</label>
+                  <default>1</default>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxButton" name="wxID_CANCEL">
+                  <label>Cancel</label>
+                </object>
+              </object>
+              <cols>2</cols>
+              <hgap>5</hgap>
+            </object>
+            <flag>wxALIGN_RIGHT</flag>
+          </object>
+          <cols>1</cols>
+          <vgap>5</vgap>
+        </object>
+        <flag>wxALL|wxGROW</flag>
+        <border>5</border>
+      </object>
+    </object>
+  </object>
 </resource>

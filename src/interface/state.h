@@ -55,6 +55,9 @@ public:
 
 	static bool RecursiveCopy(wxString source, wxString target);
 
+	bool IsConnected() const;
+	bool IsIdle() const;
+
 protected:
 	void SetServer(const CServer* server);
 	void NotifyHandlers(unsigned int event);
