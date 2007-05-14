@@ -1001,6 +1001,24 @@ void CDirectoryListingParserTest::InitEntries()
 			}
 		});
 
+	/* Localised Unix style listing. Month and day fields are swapped */
+	m_entries.push_back((t_entry){
+			"drwxr-xr-x 3 user group 512 01 oct 2004 52-swapped-daymonth file",
+			{
+				_T("52-swapped-daymonth file"),
+				512,
+				_T("drwxr-xr-x"),
+				_T("user group"),
+				true,
+				false,
+				_T(""),
+				true,
+				false,
+				wxDateTime(1, wxDateTime::Oct, 2004),
+				false
+			}
+		});
+
 /*
 	wxString name;
 	wxLongLong size;

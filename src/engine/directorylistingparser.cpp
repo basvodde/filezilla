@@ -12,7 +12,6 @@ std::map<wxString, int> CDirectoryListingParser::m_MonthNamesMap;
 //#define LISTDEBUG
 #ifdef LISTDEBUG
 static char data[][110]={
-
 	/* IBM MVS listings */
 	// Volume Unit    Referred Ext Used Recfm Lrecl BlkSz Dsorg Dsname
 	"  WYOSPT 3420   2003/05/21  1  200  FB      80  8053  PS  48-MVS.FILE",
@@ -1039,7 +1038,7 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 				offset++;
 			if (!dateMonth.IsNumeric(0, dateMonth.GetLength() - offset))
 				return false;
-			dateDay = dateMonth.GetNumber(0, dateMonth.GetLength() - 1).GetLo();
+			dateDay = dateMonth.GetNumber(0, dateMonth.GetLength() - offset).GetLo();
 			dateMonth = token;
 		}
 		else
