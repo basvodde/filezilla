@@ -71,7 +71,7 @@ public:
 			m_pRemoteTreeView->m_pState->UploadDroppedFiles(m_pFileDataObject, path, false);
 		else
 		{
-			if (m_pRemoteDataObject->GetProcessId() != wxGetProcessId())
+			if (m_pRemoteDataObject->GetProcessId() != (int)wxGetProcessId())
 			{
 				wxMessageBox(_("Drag&drop between different instances of FileZilla has not been implemented yet."));
 				return wxDragNone;
@@ -110,7 +110,7 @@ public:
 			{
 				const CRemoteDataObject::t_fileInfo& info = *iter;
 				m_pRemoteTreeView->m_pState->m_pCommandQueue->ProcessCommand(
-					new CRenameCommand(m_pRemoteDataObject->GetServerPath(), iter->name, path, iter->name)
+					new CRenameCommand(m_pRemoteDataObject->GetServerPath(), info.name, path, info.name)
 					);
 			}
 

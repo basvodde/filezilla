@@ -59,8 +59,6 @@ public:
 
 		if (m_pDataObject->GetReceivedFormat() == m_pFileDataObject->GetFormat())
 		{
-			const wxArrayString& files = m_pFileDataObject->GetFilenames();
-
 			wxString subdir;
 			int flags = 0;
 			int hit = m_pRemoteListView->HitTest(wxPoint(x, y), flags, 0);
@@ -69,7 +67,7 @@ public:
 				int index = m_pRemoteListView->GetItemIndex(hit);
 				if (index != -1)
 				{
-					if (index == m_pRemoteListView->m_pDirectoryListing->GetCount())
+					if (index == (int)m_pRemoteListView->m_pDirectoryListing->GetCount())
 						subdir = _T("..");
 					else if ((*m_pRemoteListView->m_pDirectoryListing)[index].dir)
 						subdir = (*m_pRemoteListView->m_pDirectoryListing)[index].name;
@@ -82,7 +80,7 @@ public:
 		
 		// At this point it's the remote data object.
 
-		if (m_pRemoteDataObject->GetProcessId() != wxGetProcessId())
+		if (m_pRemoteDataObject->GetProcessId() != (int)wxGetProcessId())
 		{
 			wxMessageBox(_("Drag&drop between different instances of FileZilla has not been implemented yet."));
 			return wxDragNone;
@@ -103,7 +101,7 @@ public:
 			int index = m_pRemoteListView->GetItemIndex(hit);
 			if (index != -1)
 			{
-				if (index == m_pRemoteListView->m_pDirectoryListing->GetCount())
+				if (index == (int)m_pRemoteListView->m_pDirectoryListing->GetCount())
 					subdir = _T("..");
 				else if ((*m_pRemoteListView->m_pDirectoryListing)[index].dir)
 					subdir = (*m_pRemoteListView->m_pDirectoryListing)[index].name;
@@ -147,7 +145,7 @@ public:
 		{
 			const CRemoteDataObject::t_fileInfo& info = *iter;
 			m_pRemoteListView->m_pState->m_pCommandQueue->ProcessCommand(
-				new CRenameCommand(m_pRemoteDataObject->GetServerPath(), iter->name, target, iter->name)
+				new CRenameCommand(m_pRemoteDataObject->GetServerPath(), info.name, target, info.name)
 				);
 		}
 		m_pRemoteListView->m_pState->m_pCommandQueue->ProcessCommand(
@@ -179,7 +177,7 @@ public:
 			int index = m_pRemoteListView->GetItemIndex(hit);
 			if (index == -1)
 				hit = -1;
-			else if (index != m_pRemoteListView->m_pDirectoryListing->GetCount())
+			else if (index != (int)m_pRemoteListView->m_pDirectoryListing->GetCount())
 			{
 				if (!(*m_pRemoteListView->m_pDirectoryListing)[index].dir)
 					hit = -1;
@@ -491,7 +489,7 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 	std::list<int> selectedItems;
 
 	// Number of items left to remove
-	int toRemove = m_pDirectoryListing->GetCount() - pDirectoryListing->GetCount();
+	unsigned int toRemove = m_pDirectoryListing->GetCount() - pDirectoryListing->GetCount();
 	wxASSERT(toRemove == removedItems.size());
 	
 	std::list<int> removedIndexes;
@@ -597,9 +595,8 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 		// Makes only sense for big listings though.
 		if (UpdateDirectoryListing(pDirectoryListing))
 		{
-			const CDirectoryListing* pOld = m_pDirectoryListing;
-			wxASSERT(GetItemCount() == m_indexMapping.size());
-			wxASSERT(GetItemCount() == m_fileData.size());
+			wxASSERT(GetItemCount() == (int)m_indexMapping.size());
+			wxASSERT(GetItemCount() == (int)m_fileData.size());
 			wxASSERT(m_pDirectoryListing->GetCount() + 1 >= (unsigned int)GetItemCount());
 			wxASSERT(m_indexMapping[0] == m_pDirectoryListing->GetCount());
 
@@ -683,7 +680,7 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 		int index = GetItemIndex(m_dropTarget);
 		if (index == -1)
 			resetDropTarget = true;
-		else if (index != m_pDirectoryListing->GetCount())
+		else if (index != (int)m_pDirectoryListing->GetCount())
 			if (!(*m_pDirectoryListing)[index].dir)
 				resetDropTarget = true;
 
