@@ -49,6 +49,7 @@ void CStatusView::AddToLog(CLogmsgNotification *pNotification)
 
 void CStatusView::AddToLog(enum MessageType messagetype, wxString message)
 {
+	wxWindowUpdateLocker *pLock = 0;
 	wxString prefix;
 	
 	if (m_nLineCount)
@@ -56,7 +57,7 @@ void CStatusView::AddToLog(enum MessageType messagetype, wxString message)
 	
 	if (m_nLineCount == MAX_LINECOUNT)
 	{
-		wxWindowUpdateLocker lock(m_pTextCtrl);
+		pLock = new wxWindowUpdateLocker(m_pTextCtrl);
 		m_pTextCtrl->Remove(0, m_lineLengths.front() + 1);
 		m_lineLengths.pop_front();
 	}
@@ -93,6 +94,8 @@ void CStatusView::AddToLog(enum MessageType messagetype, wxString message)
 	m_lineLengths.push_back(lineLength);
 
 	m_pTextCtrl->AppendText(prefix + message);
+
+	delete pLock;
 }
 
 void CStatusView::InitDefAttr()
