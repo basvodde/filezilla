@@ -700,6 +700,30 @@ bool CControlSocket::ObtainLockFromEvent()
 	return true;
 }
 
+bool CControlSocket::HasLock()
+{
+	std::list<t_lockInfo>::iterator own = GetLockStatus();
+	if (own == m_lockInfoList.end())
+		return false;
+
+	if (own->waiting)
+		return false;
+
+	for (std::list<t_lockInfo>::const_iterator iter = m_lockInfoList.begin(); iter != own; iter++)
+	{
+		if (*m_pCurrentServer != *iter->pControlSocket->m_pCurrentServer)
+			continue;
+
+		if (iter->directory != own->directory)
+			continue;
+
+		if (iter != own)
+			return true;
+	}
+
+	return false;
+}
+
 void CControlSocket::OnObtainLock(wxCommandEvent& event)
 {
 	if (!ObtainLockFromEvent())

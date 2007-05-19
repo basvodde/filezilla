@@ -936,6 +936,12 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 			}
 		}
 
+		if (!HasLock())
+		{
+			if (!TryLockCache(m_CurrentPath))
+				return FZ_REPLY_WOULDBLOCK;
+		}
+
 		delete m_pTransferSocket;
 		m_pTransferSocket = new CTransferSocket(m_pEngine, this, ::list);
 		pData->m_pDirectoryListingParser = new CDirectoryListingParser(this, *m_pCurrentServer);

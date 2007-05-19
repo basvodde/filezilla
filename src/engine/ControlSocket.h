@@ -188,6 +188,8 @@ protected:
 	// On failure, the engine was not waiting for a lock.
 	bool ObtainLockFromEvent();
 
+	bool HasLock();
+
 #ifdef __VISUALC__
 	// Retarded compiler does not like my code
 	public:
