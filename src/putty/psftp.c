@@ -2828,6 +2828,8 @@ static int psftp_connect(char *userhost, char *user, int portnumber)
     back->provide_logctx(backhandle, logctx);
     console_provide_logctx(logctx);
     while (!back->sendok(backhandle)) {
+	if (back->exitcode(backhandle) >= 0)
+	    return 1;
 	if (ssh_sftp_loop_iteration() < 0) {
 	    fzprintf(sftpError, "ssh_init: error during SSH connection setup");
 	    return 1;
