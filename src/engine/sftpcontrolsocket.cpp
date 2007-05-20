@@ -306,6 +306,7 @@ public:
 	{
 		gotInitialReply = false;
 		pLastChallenge = 0;
+		criticalFailure = false;
 	}
 
 	virtual ~CSftpConnectOpData()
@@ -315,6 +316,7 @@ public:
 
 	wxString *pLastChallenge;
 	bool gotInitialReply;
+	bool criticalFailure;
 };
 
 int CSftpControlSocket::Connect(const CServer &server)
@@ -722,7 +724,14 @@ bool CSftpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotifi
 			else
 				show = _("Trust changed Hostkey: ");
 			if (!pHostKeyNotification->m_trust)
+			{
 				Send(_T(""), show + _("No"));
+				if (m_pCurOpData && m_pCurOpData->opId == cmd_connect)
+				{
+					CSftpConnectOpData *pData = static_cast<CSftpConnectOpData *>(m_pCurOpData);
+					pData->criticalFailure = true;
+				}
+			}
 			else if (pHostKeyNotification->m_alwaysTrust)
 				Send(_T("y"), show + _("Yes"));
 			else
@@ -1244,6 +1253,8 @@ int CSftpControlSocket::ResetOperation(int nErrorCode)
 		CSftpConnectOpData *pData = static_cast<CSftpConnectOpData *>(m_pCurOpData);
 		if (!pData->gotInitialReply)
 			LogMessage(::Error, _("fzsftp could not be started"));
+		if (pData->criticalFailure)
+			nErrorCode |= FZ_REPLY_CRITICALERROR;
 	}
 
 	return CControlSocket::ResetOperation(nErrorCode);
