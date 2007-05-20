@@ -36,13 +36,19 @@ void CFileExistsDlg::CreateControls()
 	m_pAction4 = wxDynamicCast(FindWindow(XRCID("ID_ACTION4")), wxRadioButton);
 	m_pAction5 = wxDynamicCast(FindWindow(XRCID("ID_ACTION5")), wxRadioButton);
 
+	wxString localFile = m_pNotification->localFile;
+	localFile.Replace(_T("&"), _T("&&"));
+
+	wxString remoteFile = m_pNotification->remotePath.GetPath() + m_pNotification->remoteFile;
+	remoteFile.Replace(_T("&"), _T("&&"));
+
 	if (m_pNotification->download)
 	{
 		wxStaticText *pStatText;
 		
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE1_NAME")));
 		if (pStatText)
-			pStatText->SetLabel(m_pNotification->localFile);
+			pStatText->SetLabel(localFile);
 		
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE1_SIZE")));
 		if (pStatText)
@@ -66,7 +72,7 @@ void CFileExistsDlg::CreateControls()
 
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE2_NAME")));
 		if (pStatText)
-			pStatText->SetLabel(m_pNotification->remotePath.GetPath() + m_pNotification->remoteFile);
+			pStatText->SetLabel(remoteFile);
 		
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE2_SIZE")));
 		if (pStatText)
@@ -98,7 +104,7 @@ void CFileExistsDlg::CreateControls()
 
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE1_NAME")));
 		if (pStatText)
-			pStatText->SetLabel(m_pNotification->remotePath.GetPath() + m_pNotification->remoteFile);
+			pStatText->SetLabel(remoteFile);
 		
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE1_SIZE")));
 		if (pStatText)
@@ -108,7 +114,7 @@ void CFileExistsDlg::CreateControls()
 			else
 				pStatText->SetLabel(_("Size unknown"));
 		}
-		
+
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE1_TIME")));
 		if (pStatText)
 		{
@@ -122,8 +128,8 @@ void CFileExistsDlg::CreateControls()
 
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE2_NAME")));
 		if (pStatText)
-			pStatText->SetLabel(m_pNotification->localFile);
-		
+			pStatText->SetLabel(localFile);
+
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE2_SIZE")));
 		if (pStatText)
 		{
@@ -132,7 +138,7 @@ void CFileExistsDlg::CreateControls()
 			else
 				pStatText->SetLabel(_("Size unknown"));
 		}
-		
+
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE2_TIME")));
 		if (pStatText)
 		{
