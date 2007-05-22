@@ -49,15 +49,19 @@ void CStatusView::AddToLog(CLogmsgNotification *pNotification)
 
 void CStatusView::AddToLog(enum MessageType messagetype, wxString message)
 {
+#ifndef __WXGTK__
 	wxWindowUpdateLocker *pLock = 0;
+#endif //__WXGTK__
 	wxString prefix;
-	
+
 	if (m_nLineCount)
 		prefix = _T("\n");
-	
+
 	if (m_nLineCount == MAX_LINECOUNT)
 	{
+#ifndef __WXGTK__
 		pLock = new wxWindowUpdateLocker(m_pTextCtrl);
+#endif //__WXGTK__
 		m_pTextCtrl->Remove(0, m_lineLengths.front() + 1);
 		m_lineLengths.pop_front();
 	}
@@ -95,7 +99,9 @@ void CStatusView::AddToLog(enum MessageType messagetype, wxString message)
 
 	m_pTextCtrl->AppendText(prefix + message);
 
+#ifndef __WXGTK__
 	delete pLock;
+#endif //__WXGTK__
 }
 
 void CStatusView::InitDefAttr()
@@ -126,7 +132,7 @@ void CStatusView::InitDefAttr()
 
 	dc.SetMapMode(wxMM_LOMETRIC);
 
-	maxWidth = dc.DeviceToLogicalX(maxWidth) + 20;	
+	maxWidth = dc.DeviceToLogicalX(maxWidth) + 20;
 	wxArrayInt array;
 	array.Add(maxWidth);
 	wxTextAttr defAttr;
@@ -195,7 +201,7 @@ void CStatusView::OnCopy(wxCommandEvent& event)
 {
 	if (!m_pTextCtrl)
 		return;
-	
+
 	long from, to;
 	m_pTextCtrl->GetSelection(&from, &to);
 	if (from != to)
