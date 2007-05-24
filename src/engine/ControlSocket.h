@@ -76,6 +76,18 @@ public:
 	CServerPath target;
 };
 
+enum TransferEndReason
+{
+	successful,
+	timeout,
+	transfer_failure,					// Error during the transfer, like lost connection lack of diskspace and so on
+	pre_transfer_command_failure,		// If a command fails prior to sending the transfer command
+	transfer_command_failure_immediate,	// Used if server does not send the 150 reply after the transfer command
+	transfer_command_failure,			// Used if the transfer command fails, but after receiving a 150 first
+	failure,							// Other unspecific failure
+	failed_resumetest
+};
+
 #include "logging_private.h"
 #include "backend.h"
 
@@ -106,7 +118,7 @@ public:
 	// from the engine.
 	enum Command GetCurrentCommandId() const;
 
-	virtual void TransferEnd(int reason) { }
+	virtual void TransferEnd(enum TransferEndReason reason) { }
 
 	virtual bool SetAsyncRequestReply(CAsyncRequestNotification *pNotification) = 0;
 

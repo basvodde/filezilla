@@ -38,7 +38,7 @@ protected:
 	bool CheckGetNextReadBuffer();
 	void FinalizeWrite();
 
-	void TransferEnd(int reason);
+	void TransferEnd(enum TransferEndReason reason);
 
 	bool InitTls(const CTlsSocket* pPrimaryTlsSocket);
 

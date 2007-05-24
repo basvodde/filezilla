@@ -18,7 +18,7 @@ class CFtpControlSocket : public CRealControlSocket
 public:
 	CFtpControlSocket(CFileZillaEnginePrivate *pEngine);
 	virtual ~CFtpControlSocket();
-	virtual void TransferEnd(int reason);
+	virtual void TransferEnd(enum TransferEndReason reason);
 
 	virtual bool SetAsyncRequestReply(CAsyncRequestNotification *pNotification);
 
@@ -119,6 +119,8 @@ protected:
 	CTlsSocket* m_pTlsSocket;
 	bool m_protectDataChannel;
 
+	int m_lastTypeBinary;
+
 	DECLARE_EVENT_TABLE();
 	void OnExternalIPAddress(fzExternalIPResolveEvent& event);
 };
@@ -130,7 +132,7 @@ class CFtpTransferOpData
 public:
 	CFtpTransferOpData();
 
-	int transferEndReason;
+	enum TransferEndReason transferEndReason;
 	bool tranferCommandSent;
 
 	wxLongLong resumeOffset;

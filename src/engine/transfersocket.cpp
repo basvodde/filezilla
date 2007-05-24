@@ -133,7 +133,7 @@ void CTransferSocket::OnConnect(wxSocketEvent &event)
 		m_pSocket = m_pSocketServer->Accept(false);
 		if (!m_pSocket)
 		{
-			TransferEnd(1);
+			TransferEnd(transfer_failure);
 			return;
 		}
 		delete m_pSocketServer;
@@ -152,7 +152,7 @@ void CTransferSocket::OnConnect(wxSocketEvent &event)
 		{
 			if (!InitTls(m_pControlSocket->m_pTlsSocket))
 			{
-				TransferEnd(1);
+				TransferEnd(transfer_failure);
 				return;
 			}
 		}
@@ -202,11 +202,11 @@ void CTransferSocket::OnReceive()
 			delete [] pBuffer;
 			int error = m_pBackend->LastError();
 			if (error == wxSOCKET_NOERROR)
-				TransferEnd(0);
+				TransferEnd(successful);
 			else if (error != wxSOCKET_WOULDBLOCK)
 			{
 				m_pControlSocket->LogMessage(Debug_Warning, _T("Read failed with error %d"), error);
-				TransferEnd(1);
+				TransferEnd(transfer_failure);
 			}
 			return;
 		}
@@ -222,11 +222,11 @@ void CTransferSocket::OnReceive()
 		{
 			delete [] pBuffer;
 			if (!numread)
-				TransferEnd(0);
+				TransferEnd(successful);
 			else if (numread < 0)
 			{
 				m_pControlSocket->LogMessage(Debug_Warning, _T("  numread < 0"));
-				TransferEnd(1);
+				TransferEnd(transfer_failure);
 			}
 		}
 	}
@@ -242,7 +242,7 @@ void CTransferSocket::OnReceive()
 			if (error == wxSOCKET_NOERROR)
 				FinalizeWrite();
 			else if (error != wxSOCKET_WOULDBLOCK)
-				TransferEnd(1);
+				TransferEnd(transfer_failure);
 			return;
 		}
 		int numread = m_pBackend->LastCount();
@@ -267,19 +267,19 @@ void CTransferSocket::OnReceive()
 		if (m_pBackend->Error())
 		{
 			if (m_pBackend->LastError() != wxSOCKET_WOULDBLOCK)
-				TransferEnd(1);
+				TransferEnd(transfer_failure);
 			return;
 		}
 		int numread = m_pBackend->LastCount();
 		if (!numread)
 		{
-			TransferEnd(0);
+			TransferEnd(successful);
 			return;
 		}
 		m_transferBufferLen += numread;
 
 		if (m_transferBufferLen > 1)
-			TransferEnd(2);
+			TransferEnd(failed_resumetest);
 	}
 }
 
@@ -326,7 +326,7 @@ void CTransferSocket::OnSend()
 		if (error != wxSOCKET_NOERROR && error != wxSOCKET_WOULDBLOCK)
 		{
 			m_pControlSocket->LogMessage(::Error, _("Error %d writing to socket"), error);
-			TransferEnd(1);
+			TransferEnd(transfer_failure);
 		}
 	}
 }
@@ -345,12 +345,12 @@ void CTransferSocket::OnClose(wxSocketEvent &event)
 		{
 			m_pTlsSocket->Shutdown();
 			if (m_pTlsSocket->Error())
-				TransferEnd(1);
+				TransferEnd(transfer_failure);
 			else
-				TransferEnd(0);
+				TransferEnd(successful);
 		}
 		else
-			TransferEnd(1);
+			TransferEnd(transfer_failure);
 		return;
 	}
 	
@@ -371,11 +371,11 @@ void CTransferSocket::OnClose(wxSocketEvent &event)
 	{
 		if (m_transferBufferLen != 1)
 		{
-			TransferEnd(2);
+			TransferEnd(failed_resumetest);
 			return;
 		}
 	}
-	TransferEnd(0);
+	TransferEnd(successful);
 }
 
 bool CTransferSocket::SetupPassiveTransfer(wxString host, int port)
@@ -434,7 +434,7 @@ void CTransferSocket::SetActive()
 		TriggerPostponedEvents();
 }
 
-void CTransferSocket::TransferEnd(int reason)
+void CTransferSocket::TransferEnd(enum TransferEndReason reason)
 {
 	m_pControlSocket->LogMessage(::Debug_Verbose, _T("CTransferSocket::TransferEnd(%d)"), reason);
 
@@ -556,7 +556,7 @@ bool CTransferSocket::CheckGetNextWriteBuffer()
 			}
 			else
 				m_pControlSocket->LogMessage(::Error, _("Can't write data to file."));
-			TransferEnd(1);
+			TransferEnd(transfer_failure);
 			return false;
 		}
 
@@ -577,7 +577,7 @@ bool CTransferSocket::CheckGetNextReadBuffer()
 		else if (res == IO_Error)
 		{
 			m_pControlSocket->LogMessage(::Error, _("Can't read from file"));
-			TransferEnd(1);
+			TransferEnd(transfer_failure);
 			return false;
 		}
 		else if (res == IO_Success)
@@ -589,11 +589,11 @@ bool CTransferSocket::CheckGetNextReadBuffer()
 				if (m_pTlsSocket->Error())
 				{
 					if (m_pTlsSocket->LastError() != wxSOCKET_WOULDBLOCK)
-						TransferEnd(1);
+						TransferEnd(transfer_failure);
 					return false;
 				}
 			}
-			TransferEnd(0);
+			TransferEnd(successful);
 			return false;
 		}
 		m_transferBufferLen = res;
@@ -617,11 +617,11 @@ void CTransferSocket::FinalizeWrite()
 {
 	CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(static_cast<CRawTransferOpData *>(m_pControlSocket->m_pCurOpData)->pOldData);
 	if (pData->pIOThread->Finalize(BUFFERSIZE - m_transferBufferLen))
-		TransferEnd(0);
+		TransferEnd(successful);
 	else
 	{
 		m_pControlSocket->LogMessage(::Error, _("Can't write data to file."));
-		TransferEnd(1);
+		TransferEnd(transfer_failure);
 	}
 }
 

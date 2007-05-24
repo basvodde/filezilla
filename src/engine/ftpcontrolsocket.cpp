@@ -36,7 +36,7 @@ CRawTransferOpData::CRawTransferOpData()
 
 CFtpTransferOpData::CFtpTransferOpData()
 {
-	transferEndReason = 0;
+	transferEndReason = successful;
 	tranferCommandSent = false;
 	resumeOffset = 0;
 	binary = true;
@@ -134,6 +134,7 @@ CFtpControlSocket::CFtpControlSocket(CFileZillaEnginePrivate *pEngine) : CRealCo
 	m_pendingReplies = 1;
 	m_pTlsSocket = 0;
 	m_protectDataChannel = false;
+	m_lastTypeBinary = -1;
 }
 
 CFtpControlSocket::~CFtpControlSocket()
@@ -280,6 +281,8 @@ void CFtpControlSocket::ParseLine(wxString line)
 
 void CFtpControlSocket::OnConnect()
 {
+	m_lastTypeBinary = -1;
+
 	SetAlive();
 	if (m_pCurrentServer->GetProtocol() == FTPS)
 	{
@@ -1032,11 +1035,26 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 
 	m_repliesToSkip = m_pendingReplies;
 
-	if (m_pCurOpData && m_pCurOpData->opId == cmd_transfer && m_pCurOpData->opState == filetransfer_waittransfer)
+	if (m_pCurOpData && m_pCurOpData->opId == cmd_transfer)
 	{
 		CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(m_pCurOpData);
 		if (pData->tranferCommandSent)
 			pData->transferInitiated = true;
+	}
+
+	if (m_pCurOpData && m_pCurOpData->opId == cmd_rawtransfer && 
+		nErrorCode != FZ_REPLY_OK)
+	{
+		CRawTransferOpData *pData = static_cast<CRawTransferOpData *>(m_pCurOpData);
+		if (pData->pOldData->transferEndReason == successful)
+		{
+			if ((nErrorCode & FZ_REPLY_TIMEOUT) == FZ_REPLY_TIMEOUT)
+				pData->pOldData->transferEndReason = timeout;
+			else if (!pData->pOldData->tranferCommandSent)
+				pData->pOldData->transferEndReason = pre_transfer_command_failure;
+			else
+				pData->pOldData->transferEndReason = failure;
+		}
 	}
 
 	return CControlSocket::ResetOperation(nErrorCode);
@@ -1687,7 +1705,7 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 	{
 		if (prevResult != FZ_REPLY_OK)
 		{
-			if (pData->transferEndReason == 2)
+			if (pData->transferEndReason == failed_resumetest)
 			{
 				if (pData->localFileSize > ((wxFileOffset)1 << 32))
 				{
@@ -1877,7 +1895,7 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 	return FZ_REPLY_WOULDBLOCK;
 }
 
-void CFtpControlSocket::TransferEnd(int reason)
+void CFtpControlSocket::TransferEnd(enum TransferEndReason reason)
 {
 	LogMessage(Debug_Verbose, _T("CFtpControlSocket::TransferEnd(%d)"), reason);
 
@@ -1909,7 +1927,7 @@ void CFtpControlSocket::TransferEnd(int reason)
 		return;
 	}
 
-	if (!reason)
+	if (reason == successful)
 		SetAlive();
 
 	pData->pOldData->transferEndReason = reason;
@@ -1923,7 +1941,7 @@ void CFtpControlSocket::TransferEnd(int reason)
 		pData->opState = rawtransfer_waittransfer;
 		break;
 	case rawtransfer_waitsocket:
-		ResetOperation((!reason) ? FZ_REPLY_OK : FZ_REPLY_ERROR);
+		ResetOperation((reason == successful) ? FZ_REPLY_OK : FZ_REPLY_ERROR);
 		break;
 	default:
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Unknown op state"));
@@ -2947,7 +2965,7 @@ int CFtpControlSocket::Transfer(const wxString& cmd, CFtpTransferOpData* oldData
 
 	pData->cmd = cmd;
 	pData->pOldData = oldData;
-	pData->pOldData->transferEndReason = 0;
+	pData->pOldData->transferEndReason = successful;
 
 	switch (m_pCurrentServer->GetPasvMode())
 	{
@@ -2962,7 +2980,11 @@ int CFtpControlSocket::Transfer(const wxString& cmd, CFtpTransferOpData* oldData
 		break;
 	}
 
-	pData->opState = rawtransfer_type;
+	if ((pData->pOldData->binary && m_lastTypeBinary == 1) ||
+		(!pData->pOldData->binary && m_lastTypeBinary == 0))
+		pData->opState = rawtransfer_port_pasv;
+	else
+		pData->opState = rawtransfer_type;
 
 	return SendNextCommand();
 }
@@ -2994,7 +3016,10 @@ int CFtpControlSocket::TransferParseResponse()
 		if (code != 2 && code != 2)
 			error = true;
 		else
+		{
 			pData->opState = rawtransfer_port_pasv;
+			m_lastTypeBinary = pData->pOldData->binary ? 1 : 0;
+		}
 		break;
 	case rawtransfer_port_pasv:
 		if (code != 2 && code != 3)
@@ -3046,25 +3071,37 @@ int CFtpControlSocket::TransferParseResponse()
 		break;
 	case rawtransfer_transfer:
 		if (code != 1)
+		{
+			pData->pOldData->transferEndReason = transfer_command_failure_immediate;
 			error = true;
+		}
 		else
 			pData->opState = rawtransfer_waitfinish;
 		break;
 	case rawtransfer_waittransferpre:
 		if (code != 1)
+		{
+			pData->pOldData->transferEndReason = transfer_command_failure_immediate;
 			error = true;
+		}
 		else
 			pData->opState = rawtransfer_waittransfer;
 		break;
 	case rawtransfer_waitfinish:
 		if (code != 2 && code != 3)
+		{
+			pData->pOldData->transferEndReason = transfer_command_failure;
 			error = true;
+		}
 		else
 			pData->opState = rawtransfer_waitsocket;
 		break;
 	case rawtransfer_waittransfer:
 		if (code != 2 && code != 3)
+		{
+			pData->pOldData->transferEndReason = transfer_command_failure;
 			error = true;
+		}
 		else
 		{
 			if (pData->pOldData->transferEndReason)
@@ -3076,6 +3113,10 @@ int CFtpControlSocket::TransferParseResponse()
 			ResetOperation(FZ_REPLY_OK);
 			return FZ_REPLY_OK;
 		}
+		break;
+	case rawtransfer_waitsocket:
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Extra reply received during rawtransfer_waitsocket."));
+		error = true;
 		break;
 	default:
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Unknown op state"));
@@ -3115,6 +3156,7 @@ int CFtpControlSocket::TransferSend(int prevResult /*=FZ_REPLY_OK*/)
 	switch (pData->opState)
 	{
 	case rawtransfer_type:
+		m_lastTypeBinary = -1;
 		if (pData->pOldData->binary)
 			cmd = _T("TYPE I");
 		else
