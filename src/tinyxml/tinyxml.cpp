@@ -34,7 +34,21 @@ distribution.
 
 bool TiXmlBase::condenseWhiteSpace = true;
 
-void TiXmlBase::PutString( const TIXML_STRING& str, TIXML_STRING* outString )
+// Microsoft compiler security
+FILE* TiXmlFOpen( const char* filename, const char* mode )
+{
+	#if defined(_MSC_VER) && (_MSC_VER >= 1400 )
+		FILE* fp = 0;
+		errno_t err = fopen_s( &fp, filename, mode );
+		if ( !err && fp )
+			return fp;
+		return 0;
+	#else
+		return fopen( filename, mode );
+	#endif
+}
+
+void TiXmlBase::EncodeString( const TIXML_STRING& str, TIXML_STRING* outString )
 {
 	int i=0;
 
@@ -941,7 +955,7 @@ bool TiXmlDocument::LoadFile( const char* _filename, TiXmlEncoding encoding )
 	value = filename;
 
 	// reading in binary mode so that tinyxml can normalize the EOL
-	FILE* file = fopen( value.c_str (), "rb" );	
+	FILE* file = TiXmlFOpen( value.c_str (), "rb" );	
 
 	if ( file )
 	{
@@ -975,7 +989,7 @@ bool TiXmlDocument::LoadFile( FILE* file, TiXmlEncoding encoding )
 	fseek( file, 0, SEEK_SET );
 
 	// Strange case, but good to handle up front.
-	if ( length == 0 )
+	if ( length <= 0 )
 	{
 		SetError( TIXML_ERROR_DOCUMENT_EMPTY, 0, 0, TIXML_ENCODING_UNKNOWN );
 		return false;
@@ -1074,7 +1088,7 @@ bool TiXmlDocument::LoadFile( FILE* file, TiXmlEncoding encoding )
 bool TiXmlDocument::SaveFile( const char * filename ) const
 {
 	// The old c stuff lives on...
-	FILE* fp = fopen( filename, "w" );
+	FILE* fp = TiXmlFOpen( filename, "w" );
 	if ( fp )
 	{
 		bool result = SaveFile( fp );
@@ -1107,7 +1121,11 @@ void TiXmlDocument::CopyTo( TiXmlDocument* target ) const
 	TiXmlNode::CopyTo( target );
 
 	target->error = error;
-	target->errorDesc = errorDesc.c_str ();
+	target->errorId = errorId;
+	target->errorDesc = errorDesc;
+	target->tabsize = tabsize;
+	target->errorLocation = errorLocation;
+	target->useMicrosoftBOM = useMicrosoftBOM;
 
 	TiXmlNode* node = 0;
 	for ( node = firstChild; node; node = node->NextSibling() )
@@ -1197,8 +1215,8 @@ void TiXmlAttribute::Print( FILE* cfile, int /*depth*/, TIXML_STRING* str ) cons
 {
 	TIXML_STRING n, v;
 
-	PutString( name, &n );
-	PutString( value, &v );
+	EncodeString( name, &n );
+	EncodeString( value, &v );
 
 	if (value.find ('\"') == TIXML_STRING::npos) {
 		if ( cfile ) {
@@ -1221,14 +1239,14 @@ void TiXmlAttribute::Print( FILE* cfile, int /*depth*/, TIXML_STRING* str ) cons
 
 int TiXmlAttribute::QueryIntValue( int* ival ) const
 {
-	if ( sscanf( value.c_str(), "%d", ival ) == 1 )
+	if ( TIXML_SSCANF( value.c_str(), "%d", ival ) == 1 )
 		return TIXML_SUCCESS;
 	return TIXML_WRONG_TYPE;
 }
 
 int TiXmlAttribute::QueryDoubleValue( double* dval ) const
 {
-	if ( sscanf( value.c_str(), "%lf", dval ) == 1 )
+	if ( TIXML_SSCANF( value.c_str(), "%lf", dval ) == 1 )
 		return TIXML_SUCCESS;
 	return TIXML_WRONG_TYPE;
 }
@@ -1329,7 +1347,7 @@ void TiXmlText::Print( FILE* cfile, int depth ) const
 	else
 	{
 		TIXML_STRING buffer;
-		PutString( value, &buffer );
+		EncodeString( value, &buffer );
 		fprintf( cfile, "%s", buffer.c_str() );
 	}
 }
@@ -1822,12 +1840,16 @@ bool TiXmlPrinter::Visit( const TiXmlText& text )
 	}
 	else if ( simpleTextPrint )
 	{
-		buffer += text.Value();
+		TIXML_STRING str;
+		TiXmlBase::EncodeString( text.ValueTStr(), &str );
+		buffer += str;
 	}
 	else
 	{
 		DoIndent();
-		buffer += text.Value();
+		TIXML_STRING str;
+		TiXmlBase::EncodeString( text.ValueTStr(), &str );
+		buffer += str;
 		DoLineBreak();
 	}
 	return true;
