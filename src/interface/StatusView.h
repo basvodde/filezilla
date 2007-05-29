@@ -1,6 +1,7 @@
 #ifndef __STATUSVIEW_H__
 #define __STATUSVIEW_H__
 
+class CFastTextCtrl;
 class CStatusView :	public wxWindow
 {
 public:
@@ -16,7 +17,7 @@ protected:
 
 	int m_nLineCount;
 	wxString m_Content;
-	wxTextCtrl *m_pTextCtrl;
+	CFastTextCtrl *m_pTextCtrl;
 
 	void OnSize(wxSizeEvent &event);
 

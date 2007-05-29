@@ -14,13 +14,47 @@ BEGIN_EVENT_TABLE(CStatusView, wxWindow)
 	EVT_MENU(XRCID("ID_COPYTOCLIPBOARD"), CStatusView::OnCopy)
 END_EVENT_TABLE()
 
+class CFastTextCtrl : public wxTextCtrl
+{
+public:
+	CFastTextCtrl(wxWindow* parent)
+		: wxTextCtrl(parent, -1, _T(""), wxDefaultPosition, wxDefaultSize,
+					 wxNO_BORDER | wxVSCROLL | wxTE_MULTILINE |
+					 wxTE_READONLY | wxTE_RICH | wxTE_RICH2 | wxTE_NOHIDESEL)
+	{
+	}
+#ifdef __WXMSW__
+	// wxTextCtrl::Remove is somewhat slow, this is a faster version
+	virtual void Remove(long from, long to)
+	{
+		DoSetSelection(from, to, false);
+
+		m_updatesCount = -2;        // suppress any update event
+
+		::SendMessage((HWND)GetHandle(), EM_REPLACESEL, 0, (LPARAM)_T(""));
+	}
+#endif
+
+	DECLARE_EVENT_TABLE();
+
+	void OnText(wxCommandEvent& event)
+	{
+		// Do nothing here.
+		// Having this event handler prevents the event from propagating up the
+		// window hierarchy which saves a few CPU cycles.
+	}
+};
+
+BEGIN_EVENT_TABLE(CFastTextCtrl, wxTextCtrl)
+	EVT_TEXT(wxID_ANY, CFastTextCtrl::OnText)
+END_EVENT_TABLE()
+
+
 CStatusView::CStatusView(wxWindow* parent, wxWindowID id)
 	: wxWindow(parent, id, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER)
 {
 	m_pTextCtrl = 0;
-	m_pTextCtrl = new wxTextCtrl(this, -1, _T(""), wxDefaultPosition, wxDefaultSize,
-								wxNO_BORDER | wxVSCROLL | wxTE_MULTILINE |
-								wxTE_READONLY | wxTE_RICH | wxTE_RICH2 | wxTE_NOHIDESEL);
+	m_pTextCtrl = new CFastTextCtrl(this);
 	m_pTextCtrl->SetFont(GetFont());
 
 	m_pTextCtrl->Connect(wxID_ANY, wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(CStatusView::OnContextMenu), 0, this);
