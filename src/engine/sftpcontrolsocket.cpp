@@ -894,11 +894,10 @@ int CSftpControlSocket::ListParseResponse(bool successful, const wxString& reply
 		return FZ_REPLY_INTERNALERROR;
 	}
 
-	CDirectoryListing *pListing = pData->pParser->Parse(m_CurrentPath);
+	CDirectoryListing listing = pData->pParser->Parse(m_CurrentPath);
 
 	CDirectoryCache cache;
-	cache.Store(*pListing, *m_pCurrentServer, pData->path, pData->subDir);
-	delete pListing;
+	cache.Store(listing, *m_pCurrentServer, pData->path, pData->subDir);
 
 	m_pEngine->SendDirectoryListingNotification(m_CurrentPath, !pData->pNextOpData, true, false);
 
@@ -1000,6 +999,12 @@ int CSftpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 					return FZ_REPLY_OK;
 				}
 			}
+		}
+
+		if (!HasLock())
+		{
+			if (!TryLockCache(m_CurrentPath))
+				return FZ_REPLY_WOULDBLOCK;
 		}
 
 		pData->opState = list_list;
