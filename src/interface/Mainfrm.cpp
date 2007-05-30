@@ -86,6 +86,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_TOOL_DROPDOWN(XRCID("ID_TOOLBAR_SITEMANAGER"), CMainFrame::OnSitemanagerDropdown)
 #endif
 	EVT_UPDATE_UI(XRCID("ID_MENU_SERVER_CMD"), CMainFrame::OnUpdateMenuCustomcommand)
+	EVT_UPDATE_UI(XRCID("ID_MENU_SERVER_VIEWHIDDEN"), CMainFrame::OnUpdateMenuShowHidden)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
@@ -488,6 +489,22 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 
 		pDlg->Show();
 		pDlg->Delete();
+	}
+	else if (event.GetId() == XRCID("ID_MENU_SERVER_VIEWHIDDEN"))
+	{
+		bool showHidden = COptions::Get()->GetOptionVal(OPTION_VIEW_HIDDEN_FILES) ? 0 : 1;
+		if (showHidden)
+		{
+			CConditionalDialog dlg(this, CConditionalDialog::viewhidden, CConditionalDialog::ok, true);
+			dlg.SetTitle(_("View hidden files"));
+
+			dlg.AddText(_("Note that this feature is only supported using the FTP protocol."));
+			dlg.AddText(_("Also, not all servers support this feature and may return incorrect listings if 'View hidden files' is enabled. Although FileZilla performs some tests to see if the server supports this feature, the test may fail."));
+			dlg.AddText(_("Disable this option if you cannot see your files anymore."));
+			dlg.Run();
+		}
+
+		COptions::Get()->SetOption(OPTION_VIEW_HIDDEN_FILES, showHidden ? 1 : 0);
 	}
 	else
 	{
@@ -1304,4 +1321,26 @@ void CMainFrame::OnUpdateMenuCustomcommand(wxUpdateUIEvent& event)
 		return;
 
 	event.Enable(m_pState->m_pEngine && m_pState->m_pEngine->IsConnected() && m_pState->m_pCommandQueue->Idle());
+}
+
+void CMainFrame::OnUpdateMenuShowHidden(wxUpdateUIEvent& event)
+{
+	bool enable = true;
+
+	const CServer* pServer;
+	if (m_pState && (pServer = m_pState->GetServer()))
+	{
+		switch (pServer->GetProtocol())
+		{
+		case FTP:
+		case FTPS:
+		case FTPES:
+			break;
+		default:
+			enable = false;
+		}
+	}
+	event.Enable(enable);
+
+	event.Check(COptions::Get()->GetOptionVal(OPTION_VIEW_HIDDEN_FILES) != 0);
 }

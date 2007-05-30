@@ -112,6 +112,7 @@ protected:
 	void OnCheckForUpdates(wxCommandEvent& event);
 #endif //FZ_MANUALUPDATECHECK
 	void OnSitemanagerDropdown(wxCommandEvent& event);
+	void OnUpdateMenuShowHidden(wxUpdateUIEvent& event);
 
 	float m_ViewSplitterSashPos;
 	bool m_bInitDone;

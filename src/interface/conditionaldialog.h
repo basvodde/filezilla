@@ -12,10 +12,11 @@ public:
 
 	enum DialogType
 	{
-		rawcommand_quote
+		rawcommand_quote,
+		viewhidden
 	};
 
-	CConditionalDialog(wxWindow* parent, enum DialogType type, enum Modes mode);
+	CConditionalDialog(wxWindow* parent, enum DialogType type, enum Modes mode, bool checked = false);
 
 	void AddText(const wxString &text);
 

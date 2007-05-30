@@ -8,7 +8,7 @@ BEGIN_EVENT_TABLE(CConditionalDialog, wxDialog)
 EVT_BUTTON(wxID_ANY, CConditionalDialog::OnButton)
 END_EVENT_TABLE()
 
-CConditionalDialog::CConditionalDialog(wxWindow* parent, enum DialogType type, enum Modes mode)
+CConditionalDialog::CConditionalDialog(wxWindow* parent, enum DialogType type, enum Modes mode, bool checked /*=false*/)
 	: wxDialog(parent, wxID_ANY, _T(""), wxDefaultPosition), m_type(type)
 {
 	wxSizer* pMainSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -19,7 +19,9 @@ CConditionalDialog::CConditionalDialog(wxWindow* parent, enum DialogType type, e
 	m_pTextSizer = new wxFlexGridSizer(1, 5, 5);
 	pSizer->Add(m_pTextSizer);
 	
-	pSizer->Add(new wxCheckBox(this, wxID_HIGHEST + 1, _("&Don't show this dialog again.")), 0, wxTOP | wxBOTTOM, 5);
+	wxCheckBox *pCheckBox = new wxCheckBox(this, wxID_HIGHEST + 1, _("&Don't show this dialog again."));
+	pCheckBox->SetValue(checked);
+	pSizer->Add(pCheckBox, 0, wxTOP | wxBOTTOM, 5);
 
 	if (mode == ok)
 	{
