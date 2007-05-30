@@ -686,19 +686,19 @@ void CDirectoryListingParser::ParseData(bool partial)
 	};
 }
 
-CDirectoryListing* CDirectoryListingParser::Parse(const CServerPath &path)
+CDirectoryListing CDirectoryListingParser::Parse(const CServerPath &path)
 {
 	ParseData(false);
 
-	CDirectoryListing *pListing = new CDirectoryListing;
-	pListing->path = path;
-	pListing->m_firstListTime = CTimeEx::Now();
+	CDirectoryListing listing;
+	listing.path = path;
+	listing.m_firstListTime = CTimeEx::Now();
 	
 	if (!m_fileList.empty())
 	{
 		wxASSERT(m_entryList.empty());
 		
-		pListing->SetCount(m_fileList.size());
+		listing.SetCount(m_fileList.size());
 		unsigned int i = 0;
 		for (std::list<wxString>::const_iterator iter = m_fileList.begin(); iter != m_fileList.end(); iter++, i++)
 		{
@@ -710,16 +710,16 @@ CDirectoryListing* CDirectoryListingParser::Parse(const CServerPath &path)
 			entry.link = false;
 			entry.size = -1;
 			entry.unsure = false;
-			(*pListing)[i] = entry;
+			listing[i] = entry;
 		}
 	}
 	else
 	{
-		pListing->SetCount(m_entryList.size());
-		pListing->Assign(m_entryList);
+		listing.SetCount(m_entryList.size());
+		listing.Assign(m_entryList);
 	}
 
-	return pListing;
+	return listing;
 }
 
 bool CDirectoryListingParser::ParseLine(CLine *pLine, const enum ServerType serverType, bool concatenated)
@@ -2564,4 +2564,20 @@ bool CDirectoryListingParser::ParseAsOS9(CLine *pLine, CDirentry &entry)
 	entry.unsure = false;
 
 	return true;
+}
+
+void CDirectoryListingParser::Reset()
+{
+	for (std::list<t_list>::iterator iter = m_DataList.begin(); iter != m_DataList.end(); iter++)
+		delete [] iter->p;
+	m_DataList.clear();
+
+	delete m_prevLine;
+	m_prevLine = 0;
+
+	m_entryList.clear();
+	m_fileList.clear();
+	m_currentOffset = 0;
+	m_fileListOnly = true;
+	m_maybeMultilineVms = false;
 }
