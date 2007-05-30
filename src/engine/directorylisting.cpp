@@ -334,3 +334,10 @@ CDirentry& CDirentryObject::GetEntry()
 	Copy();
 	return *m_pEntry;
 }
+
+void CDirectoryListing::GetFilenames(std::vector<wxString> &names) const
+{
+	names.reserve(GetCount());
+	for (unsigned int i = 0; i < GetCount(); i++)
+		names.push_back((*this)[i].name);
+}

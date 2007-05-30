@@ -22,7 +22,9 @@ enum capabilityNames
 	mfmt_command,
 	pret_command,
 
-	mode_z_support
+	mode_z_support,
+
+	list_hidden_support // LIST -a command
 };
 
 class CCapabilities

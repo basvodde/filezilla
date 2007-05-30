@@ -99,6 +99,9 @@ protected:
 
 	int GetExternalIPAddress(wxString& address);
 
+	// Checks if listing2 is a subset of listing1. Compares only filenames.
+	bool CheckInclusion(const CDirectoryListing& listing1, const CDirectoryListing& listing2);
+
 	wxString m_Response;
 	wxString m_MultilineResponseCode;
 

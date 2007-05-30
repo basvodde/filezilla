@@ -46,6 +46,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Speedlimit inbound", number, _T("0") },
 	{ "Speedlimit outbound", number, _T("0") },
 	{ "Speedlimit burst tolerance", number, _T("0") },
+	{ "View hidden files", number, _T("0") },
 
 	// Interface settings
 	{ "Number of Transfers", number, _T("2") },

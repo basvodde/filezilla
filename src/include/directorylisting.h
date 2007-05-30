@@ -83,6 +83,8 @@ public:
 
 	bool RemoveEntry(unsigned int index);
 
+	void GetFilenames(std::vector<wxString> &names) const;
+
 protected:
 
 	void AddRef();

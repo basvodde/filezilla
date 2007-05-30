@@ -9,6 +9,7 @@
 #include "servercapabilities.h"
 #include "tlssocket.h"
 #include "pathcache.h"
+#include <algorithm>
 
 #define LOGON_WELCOME	0
 #define LOGON_AUTH_TLS	1
@@ -802,6 +803,8 @@ public:
 	CFtpListOpData()
 		: COpData(cmd_list)
 	{
+		viewHiddenCheck = false;
+		viewHidden = false;
 		m_pDirectoryListingParser = 0;
 	}
 
@@ -814,10 +817,15 @@ public:
 	wxString subDir;
 
 	CDirectoryListingParser* m_pDirectoryListingParser;
+	
+	CDirectoryListing directoryListing;
 
 	// Set to true to get a directory listing even if a cache
 	// lookup can be made after finding out true remote directory
 	bool refresh;
+
+	bool viewHiddenCheck;
+	bool viewHidden; // Uses LIST -a command
 };
 
 enum listStates
@@ -889,7 +897,23 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 		return Transfer(_T("MLSD"), pData);
 	else
 #endif
-		return Transfer(_T("LIST"), pData);
+	{
+		if (m_pEngine->GetOptions()->GetOptionVal(OPTION_VIEW_HIDDEN_FILES))
+		{
+			enum capabilities cap = CServerCapabilities::GetCapability(*m_pCurrentServer, list_hidden_support);
+			if (cap == unknown)
+				pData->viewHiddenCheck = true;
+			else if (cap == yes)
+				pData->viewHidden = true;
+			else
+				LogMessage(Debug_Info, _("View hidden option set, but unsupported by server"));
+		}
+
+		if (pData->viewHidden)
+			return Transfer(_T("LIST -a"), pData);
+		else
+			return Transfer(_T("LIST"), pData);
+	}
 }
 
 int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
@@ -958,19 +982,69 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 			return Transfer(_T("MLSD"), pData);
 		else
 #endif
-			return Transfer(_T("LIST"), pData);
+		{
+			if (m_pEngine->GetOptions()->GetOptionVal(OPTION_VIEW_HIDDEN_FILES))
+			{
+				enum capabilities cap = CServerCapabilities::GetCapability(*m_pCurrentServer, list_hidden_support);
+				if (cap == unknown)
+					pData->viewHiddenCheck = true;
+				else if (cap == yes)
+					pData->viewHidden = true;
+				else
+					LogMessage(Debug_Info, _("View hidden option set, but unsupported by server"));
+			}
+
+			if (pData->viewHidden)
+				return Transfer(_T("LIST -a"), pData);
+			else
+				return Transfer(_T("LIST"), pData);
+		}
 	}
 	else if (pData->opState == list_waittransfer)
 	{
 		if (prevResult == FZ_REPLY_OK)
 		{
-			CDirectoryListing *pListing = pData->m_pDirectoryListingParser->Parse(m_CurrentPath);
+			CDirectoryListing listing = pData->m_pDirectoryListingParser->Parse(m_CurrentPath);
+
+			if (pData->viewHiddenCheck)
+			{
+				if (!pData->viewHidden)
+				{
+					// Repeat with LIST -a
+					pData->viewHidden = true;
+					pData->directoryListing = listing;
+
+					// Reset status
+					pData->transferEndReason = successful;
+					pData->tranferCommandSent = false;
+					delete m_pTransferSocket;
+					m_pTransferSocket = new CTransferSocket(m_pEngine, this, ::list);
+					pData->m_pDirectoryListingParser->Reset();
+					m_pTransferSocket->m_pDirectoryListingParser = pData->m_pDirectoryListingParser;
+
+					return Transfer(_T("LIST -a"), pData);
+				}
+				else
+				{
+					if (CheckInclusion(listing, pData->directoryListing))
+					{
+						LogMessage(Debug_Info, _T("Server seems to support LIST -a"));
+						CServerCapabilities::SetCapability(*m_pCurrentServer, list_hidden_support, yes);
+					}
+					else
+					{
+						LogMessage(Debug_Info, _T("Server does not seem to support LIST -a"));
+						CServerCapabilities::SetCapability(*m_pCurrentServer, list_hidden_support, no);
+						listing = pData->directoryListing;
+					}
+				}
+			}
+			
 			SetAlive();
 
 			CDirectoryCache cache;
-			cache.Store(*pListing, *m_pCurrentServer, pData->path, pData->subDir);
-			delete pListing;
-
+			cache.Store(listing, *m_pCurrentServer, pData->path, pData->subDir);
+			
 			m_pEngine->SendDirectoryListingNotification(m_CurrentPath, !pData->pNextOpData, true, false);
 
 			ResetOperation(FZ_REPLY_OK);
@@ -980,11 +1054,41 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 		{
 			if (pData->tranferCommandSent && IsMisleadingListResponse())
 			{
-				CDirectoryListing *pListing = new CDirectoryListing();
-				pListing->path = m_CurrentPath;
+				if (pData->viewHiddenCheck)
+				{
+					if (pData->viewHidden)
+					{
+						if (pData->directoryListing.GetCount())
+						{
+							// Less files with LIST -a
+							// Not supported
+							LogMessage(Debug_Info, _T("Server does not seem to support LIST -a"));
+							CServerCapabilities::SetCapability(*m_pCurrentServer, list_hidden_support, no);
+						}
+						else
+						{
+							LogMessage(Debug_Info, _T("Server seems to support LIST -a"));
+							CServerCapabilities::SetCapability(*m_pCurrentServer, list_hidden_support, yes);
+						}
+					}
+					else
+					{
+						// Reset status
+						pData->transferEndReason = successful;
+						pData->tranferCommandSent = false;
+						delete m_pTransferSocket;
+						m_pTransferSocket = new CTransferSocket(m_pEngine, this, ::list);
+						pData->m_pDirectoryListingParser->Reset();
+						m_pTransferSocket->m_pDirectoryListingParser = pData->m_pDirectoryListingParser;
 
+						// Repeat with LIST -a
+						pData->viewHidden = true;
+						return Transfer(_T("LIST -a"), pData);
+					}
+				}
+				
 				CDirectoryCache cache;
-				cache.Store(*pListing, *m_pCurrentServer, pData->path, pData->subDir);
+				cache.Store(pData->directoryListing, *m_pCurrentServer, pData->path, pData->subDir);
 
 				m_pEngine->SendDirectoryListingNotification(m_CurrentPath, !pData->pNextOpData, true, false);
 
@@ -993,6 +1097,26 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 			}
 			else
 			{
+				if (pData->viewHiddenCheck)
+				{
+					// If server does not support LIST -a, the server might reject this command
+					// straight away. In this case, back to the previously retrieved listing.
+					// On other failures like timeouts and such, return an error
+					if (pData->viewHidden &&
+						pData->transferEndReason == transfer_command_failure_immediate)
+					{
+						CServerCapabilities::SetCapability(*m_pCurrentServer, list_hidden_support, no);
+
+						CDirectoryCache cache;
+						cache.Store(pData->directoryListing, *m_pCurrentServer, pData->path, pData->subDir);
+
+						m_pEngine->SendDirectoryListingNotification(m_CurrentPath, !pData->pNextOpData, true, false);
+
+						ResetOperation(FZ_REPLY_OK);
+						return FZ_REPLY_OK;
+					}
+				}
+
 				if (prevResult & FZ_REPLY_ERROR)
 					m_pEngine->SendDirectoryListingNotification(m_CurrentPath, !pData->pNextOpData, true, true);
 			}
@@ -3329,4 +3453,38 @@ int CFtpControlSocket::Connect(const CServer &server)
 	m_pCurOpData = pData;
 
 	return CRealControlSocket::Connect(server);
+}
+
+bool CFtpControlSocket::CheckInclusion(const CDirectoryListing& listing1, const CDirectoryListing& listing2)
+{
+	// Check if listing2 is contained within listing1
+
+	if (listing2.GetCount() > listing1.GetCount())
+		return false;
+
+	std::vector<wxString> names1, names2;
+	listing1.GetFilenames(names1);
+	listing2.GetFilenames(names2);
+	std::sort(names1.begin(), names1.end());
+	std::sort(names2.begin(), names2.end());
+
+	std::vector<wxString>::const_iterator iter1, iter2;
+	iter1 = names1.begin();
+	iter2 = names2.begin();
+	while (iter2 != names2.begin())
+	{
+		if (iter1 == names1.end())
+			return false;
+
+		if (*iter1 != *iter2)
+		{
+			iter1++;
+			continue;
+		}
+
+		iter1++;
+		iter2++;
+	}
+
+	return true;
 }
