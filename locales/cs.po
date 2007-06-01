@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla 3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-30 14:47+0200\n"
-"PO-Revision-Date: 2007-05-16 17:32+0100\n"
+"POT-Creation-Date: 2007-06-01 22:52+0200\n"
+"PO-Revision-Date: 2007-05-31 15:52+0100\n"
 "Last-Translator: Michal Molhanec <michal@molhanec.net>\n"
 "Language-Team: Michal Molhanec <michal@molhanec.net>\n"
 "MIME-Version: 1.0\n"
@@ -11,6 +11,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: Czech\n"
 "X-Poedit-Country: CZECH REPUBLIC\n"
+"X-Poedit-Bookmarks: -1,-1,-1,-1,-1,-1,-1,746,-1,-1\n"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:48
 #: ../../locales/../src/interface/statuslinectrl.cpp:97
@@ -22,7 +23,7 @@ msgstr "%H.%M:%S uběhlo"
 msgid "%H:%M:%S left"
 msgstr "%H.%M:%S zbývá"
 
-#: ../../locales/../src/interface/QueueView.cpp:2736
+#: ../../locales/../src/interface/QueueView.cpp:2745
 #, c-format
 msgid "%d files added to queue"
 msgstr "%d souborů přidáno do fronty"
@@ -194,7 +195,7 @@ msgstr "&Odpojit"
 
 #: ../../locales/../src/interface/conditionaldialog.cpp:22
 msgid "&Don't show this dialog again."
-msgstr "&Příště se už neptat."
+msgstr "&Příště už nezobrazovat toto okno."
 
 #: resources.h:398
 msgid "&Download"
@@ -676,6 +677,9 @@ msgid ""
 "if 'View hidden files' is enabled. Although FileZilla performs some tests to "
 "see if the server supports this feature, the test may fail."
 msgstr ""
+"Některé servery nemusí tuto vlastnost podporovat a mohou vracet špatné "
+"seznamy souborů, pokud je toto nastavení aktivní. FileZilla se sice snaží "
+"server otestovat, zda tuto vlastnost podporuje, ale tyto testy mohou selhat."
 
 #: ../../locales/../src/interface/updatewizard.cpp:836
 msgid ""
@@ -1014,7 +1018,7 @@ msgstr "Gratuluji, zdá se, že vaše nastavení funguje."
 msgid "Connected"
 msgstr "Připojen"
 
-#: ../../locales/../src/interface/QueueView.cpp:1858
+#: ../../locales/../src/interface/QueueView.cpp:1862
 msgid "Connecting"
 msgstr "Připojuji se"
 
@@ -1167,8 +1171,8 @@ msgstr ""
 "němu přístup.\n"
 "Změny provedené ve správci míst nebudou uloženy."
 
-#: ../../locales/../src/interface/QueueView.cpp:2289
-#: ../../locales/../src/interface/QueueView.cpp:2325
+#: ../../locales/../src/interface/QueueView.cpp:2298
+#: ../../locales/../src/interface/QueueView.cpp:2334
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1203,8 +1207,8 @@ msgid ""
 "s"
 msgstr "Nemohu zapsat \"%s\", změny ve správci míst nemohou být uloženy: %s."
 
-#: ../../locales/../src/interface/QueueView.cpp:2308
-#: ../../locales/../src/interface/QueueView.cpp:2445
+#: ../../locales/../src/interface/QueueView.cpp:2317
+#: ../../locales/../src/interface/QueueView.cpp:2454
 #, c-format
 msgid "Could not write \"%s\", the queue could not be saved."
 msgstr "Nemohu zapsat \"%s\", fronta nemůže být uložena."
@@ -1231,7 +1235,7 @@ msgstr "Vytvořit novou vnořenou složku v aktuální složce"
 msgid "Create directory"
 msgstr "Nová složka"
 
-#: ../../locales/../src/interface/QueueView.cpp:1920
+#: ../../locales/../src/interface/QueueView.cpp:1927
 msgid "Creating directory"
 msgstr "Vytvářím složku"
 
@@ -1370,7 +1374,7 @@ msgstr "Z&akázat všechny"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:503
 msgid "Disable this option if you cannot see your files anymore."
-msgstr ""
+msgstr "Pokud se vám přestanou zobrazovat soubory, vypněte toto nastavení."
 
 #: resources.h:496
 msgid "Disconnect from server"
@@ -1384,7 +1388,7 @@ msgstr "Odpojení od serveru"
 msgid "Disconnected from server"
 msgstr "Odpojen od serveru"
 
-#: ../../locales/../src/interface/QueueView.cpp:1836
+#: ../../locales/../src/interface/QueueView.cpp:1840
 #: ../../locales/../src/interface/statuslinectrl.cpp:149
 msgid "Disconnecting from previous server"
 msgstr "Odpojuji od předchozího serveru"
@@ -1571,8 +1575,8 @@ msgstr "Chyba %d zápisu do soketu"
 #: ../../locales/../src/interface/filter.cpp:168
 #: ../../locales/../src/interface/filter.cpp:253
 #: ../../locales/../src/interface/Options.cpp:97
-#: ../../locales/../src/interface/QueueView.cpp:2290
-#: ../../locales/../src/interface/QueueView.cpp:2326
+#: ../../locales/../src/interface/QueueView.cpp:2299
+#: ../../locales/../src/interface/QueueView.cpp:2335
 #: ../../locales/../src/interface/sitemanager.cpp:247
 #: ../../locales/../src/interface/sitemanager.cpp:348
 #: ../../locales/../src/interface/sitemanager.cpp:1276
@@ -1580,8 +1584,8 @@ msgstr "Chyba %d zápisu do soketu"
 msgid "Error loading xml file"
 msgstr "Chyba při načítání XML souboru"
 
-#: ../../locales/../src/interface/QueueView.cpp:2309
-#: ../../locales/../src/interface/QueueView.cpp:2446
+#: ../../locales/../src/interface/QueueView.cpp:2318
+#: ../../locales/../src/interface/QueueView.cpp:2455
 #: ../../locales/../src/interface/sitemanager.cpp:374
 #: ../../locales/../src/interface/wrapengine.cpp:977
 msgid "Error writing xml file"
@@ -2456,6 +2460,8 @@ msgstr "Nepřipojen k žádnému serveru"
 #: ../../locales/../src/interface/Mainfrm.cpp:501
 msgid "Note that this feature is only supported using the FTP protocol."
 msgstr ""
+"Upozornění: zobrazování skrytých souborů je podporováno pouze u FTP "
+"protokolu."
 
 #: resources.h:179
 msgid "Number of days between update checks:"
@@ -2871,22 +2877,22 @@ msgstr "Algoritmus veřejného klíče:"
 msgid "Public permissions"
 msgstr "Oprávnění ostatních"
 
-#: ../../locales/../src/interface/QueueView.cpp:2127
+#: ../../locales/../src/interface/QueueView.cpp:2136
 #, c-format
 msgid "Queue: %s%d KB"
 msgstr "Fronta: %s%d KiB"
 
-#: ../../locales/../src/interface/QueueView.cpp:2122
+#: ../../locales/../src/interface/QueueView.cpp:2131
 #, c-format
 msgid "Queue: %s%d MB"
 msgstr "Fronta: %s%d MiB"
 
-#: ../../locales/../src/interface/QueueView.cpp:2130
+#: ../../locales/../src/interface/QueueView.cpp:2139
 #, c-format
 msgid "Queue: %s%d bytes"
 msgstr "Fronta: %s%d bajtů"
 
-#: ../../locales/../src/interface/QueueView.cpp:2118
+#: ../../locales/../src/interface/QueueView.cpp:2127
 msgid "Queue: empty"
 msgstr "Fronta: prázdná"
 
@@ -3034,11 +3040,11 @@ msgstr "Přeskoč&it"
 msgid "Save settings?"
 msgstr "Uložit nastavení?"
 
-#: ../../locales/../src/interface/QueueView.cpp:2199
+#: ../../locales/../src/interface/QueueView.cpp:2208
 msgid "Scanning for files to add to queue"
 msgstr "Hledám soubory pro přidání do fronty"
 
-#: ../../locales/../src/interface/QueueView.cpp:2201
+#: ../../locales/../src/interface/QueueView.cpp:2210
 msgid "Scanning for files to upload"
 msgstr "Hledám soubory pro nahrátí na server"
 
@@ -3353,7 +3359,7 @@ msgstr "Zadal jste adresu: %s"
 msgid "The entered filter name already exists."
 msgstr "Filtr s tímto jménem již existuje."
 
-#: ../../locales/../src/interface/optionspage_filetype.cpp:159
+#: ../../locales/../src/interface/optionspage_filetype.cpp:160
 #, c-format
 msgid "The extension '%s' does already exist in the list"
 msgstr "Přípona '%s' již v seznamu existuje"
@@ -3542,7 +3548,7 @@ msgstr "Nastavení přenosu"
 msgid "Transferred data got tainted."
 msgstr "Přenesená data se poškodila."
 
-#: ../../locales/../src/interface/QueueView.cpp:1892
+#: ../../locales/../src/interface/QueueView.cpp:1898
 #: ../../locales/../src/interface/statuslinectrl.cpp:158
 msgid "Transferring"
 msgstr "Přenáším"
@@ -3713,22 +3719,23 @@ msgstr "Velmi vysoká"
 
 #: resources.h:382
 msgid "View &hidden files"
-msgstr ""
+msgstr "Zobrazovat s&kryté soubory"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:499
 msgid "View hidden files"
-msgstr ""
+msgstr "Zobrazovat skryté soubory"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:909
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:994
 msgid "View hidden option set, but unsupported by server"
 msgstr ""
+"Zobrazování skrytých souborů je sice povoleno, ale server ho nepodporuje"
 
 #: resources.h:204
 msgid "W&rite"
 msgstr "Zá&pis"
 
-#: ../../locales/../src/interface/QueueView.cpp:2153
+#: ../../locales/../src/interface/QueueView.cpp:2162
 msgid "Waiting"
 msgstr "Čekám"
 
