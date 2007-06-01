@@ -1,0 +1,56 @@
+#! /bin/sh
+
+FILEZILLA_LINGUAS="@FILEZILLA_LINGUAS@"
+PACKAGE_VERSION="@PACKAGE_VERSION@"
+top_builddir="@top_builddir@"
+top_srcdir="@top_srcdir@"
+
+# Creates a zip file with the Win32 binaries
+
+if [ -e "win32zip" ]; then
+  echo "Target directory already exists"
+  exit 1
+fi
+
+install_prefix=$1
+if [ -z "$install_prefix" ]; then
+  echo "Install prefix not given"
+  exit 1
+elif ! [ -d "$install_prefix" ]; then
+  echo "Install prefix does not exist"
+  exit 1
+fi
+
+targetdir="win32zip/FileZilla-$PACKAGE_VERSION"
+mkdir -p "$targetdir" || exit 1
+
+echo Copying executables
+cp "$top_builddir/src/interface/filezilla.exe" "$targetdir/filezilla.exe" || exit 1
+cp "$top_builddir/src/putty/fzsftp.exe" "$targetdir/fzsftp.exe" || exit 1
+cp "$top_builddir/src/fzshellext/.libs/libfzshellext-0.dll" "$targetdir/fzshellext.dll" || exit 1
+cp "$top_srcdir/src/fzshellext/fzshellext_64.dll" "$targetdir/fzshellext_64.dll" || exit 1
+cp "$top_srcdir/data/mingwm10.dll" "$targetdir" || exit 1
+
+echo Copying locales
+
+mkdir -p $targetdir/locales || exit 1
+for i in $FILEZILLA_LINGUAS; do
+
+  mkdir -p "$targetdir/locales/$i" || exit 1
+
+  cp "$top_builddir/locales/$i.mo" "$targetdir/locales/$i/filezilla.mo" || exit 1
+done
+
+echo Copying resources
+cp -r "$install_prefix/share/filezilla/resources" "$targetdir/resources" || exit 1
+
+echo Copying other files
+cp "$top_srcdir/GPL.html" "$targetdir" || exit 1
+cp "$top_srcdir/AUTHORS" "$targetdir" || exit 1
+cp "$top_srcdir/NEWS" "$targetdir" || exit 1
+
+cd win32zip
+zip -r -9 ../FileZilla.zip "$FileZilla-$PACKAGE_VERSION" || exit 1
+cd ..
+
+rm -rf win32zip

@@ -1,4 +1,4 @@
-AC_INIT(FileZilla, 3.0.0-beta8, tim.kosse@gmx.de)
+AC_INIT(FileZilla, 3.0.0-beta9, tim.kosse@gmx.de)
 AC_CONFIG_HEADERS([src/include/config.h])
 AC_CONFIG_AUX_DIR(config)
 AM_INIT_AUTOMAKE([dist-bzip2])
@@ -209,6 +209,7 @@ AH_BOTTOM([
 
   if echo $host_os | grep "mingw" > /dev/null 2>&1; then
     AC_CONFIG_FILES(data/install.nsi)
+    AC_CONFIG_FILES(data/makezip.sh)
   fi
 
   # Libidn checks
