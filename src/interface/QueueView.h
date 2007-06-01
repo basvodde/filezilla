@@ -304,6 +304,7 @@ public:
 
 protected:
 
+	void AdvanceQueue();
 	bool TryStartNextTransfer();
 	bool ProcessFolderItems(int type = -1);
 	void ProcessUploadFolderItems();

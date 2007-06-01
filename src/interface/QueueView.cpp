@@ -1067,7 +1067,7 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 		m_activeMode = 1;
 
 	m_waitStatusLineUpdate = true;
-	while (TryStartNextTransfer());
+	AdvanceQueue();
 	m_waitStatusLineUpdate = false;
 	UpdateStatusLinePositions();
 
@@ -1133,7 +1133,7 @@ bool CQueueView::QueueFiles(const bool queueOnly, const wxString& localPath, con
 		m_activeMode = 1;
 
 	m_waitStatusLineUpdate = true;
-	while (TryStartNextTransfer());
+	AdvanceQueue();
 	m_waitStatusLineUpdate = false;
 	UpdateStatusLinePositions();
 
@@ -1648,7 +1648,11 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 			engineData.state = t_EngineData::connect;
 		}
 		else
+		{
+			// Cannot retry
 			ResetEngine(engineData, true);
+			return;
+		}
 
 		break;
 	case t_EngineData::list:
@@ -1740,7 +1744,7 @@ void CQueueView::ResetEngine(t_EngineData& data, const bool removeFileItem)
 			item->m_activeCount--;
 	}
 
-	while (TryStartNextTransfer());
+	AdvanceQueue();
 
 	m_waitStatusLineUpdate = false;
 	UpdateStatusLinePositions();
@@ -1857,7 +1861,9 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 		{
 			engineData.pItem->m_statusMessage = _("Connecting");
 
-			int	res = engineData.pEngine->Command(CConnectCommand(engineData.lastServer));
+			int res = engineData.pEngine->Command(CConnectCommand(engineData.lastServer));
+			
+			wxASSERT((res & FZ_REPLY_BUSY) != FZ_REPLY_BUSY);
 			if (res == FZ_REPLY_WOULDBLOCK)
 				return;
 
@@ -1893,6 +1899,7 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 
 			int res = engineData.pEngine->Command(CFileTransferCommand(fileItem->GetLocalFile(), fileItem->GetRemotePath(),
 												fileItem->GetRemoteFile(), fileItem->Download(), fileItem->m_transferSettings));
+			wxASSERT((res & FZ_REPLY_BUSY) != FZ_REPLY_BUSY);
 			if (res == FZ_REPLY_WOULDBLOCK)
 				return;
 
@@ -1920,6 +1927,8 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 			fileItem->m_statusMessage = _("Creating directory");
 
 			int res = engineData.pEngine->Command(CMkdirCommand(fileItem->GetRemotePath()));
+
+			wxASSERT((res & FZ_REPLY_BUSY) != FZ_REPLY_BUSY);
 			if (res == FZ_REPLY_WOULDBLOCK)
 				return;
 
@@ -1968,7 +1977,7 @@ bool CQueueView::SetActive(bool active /*=true*/)
 		m_activeMode = 2;
 
 		m_waitStatusLineUpdate = true;
-		while (TryStartNextTransfer());
+		AdvanceQueue();
 		m_waitStatusLineUpdate = false;
 		UpdateStatusLinePositions();
 
@@ -2265,7 +2274,7 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOn
 		m_activeMode = 1;
 
 	m_waitStatusLineUpdate = true;
-	while (TryStartNextTransfer());
+	AdvanceQueue();
 	m_waitStatusLineUpdate = false;
 	UpdateStatusLinePositions();
 
@@ -3093,4 +3102,17 @@ void CQueueView::UpdateItemSize(CFileItem* pItem, wxLongLong size)
 	pItem->SetSize(size);
 
 	DisplayQueueSize();
+}
+
+void CQueueView::AdvanceQueue()
+{
+	static bool insideAdvanceQueue = false;
+	if (insideAdvanceQueue)
+		return;
+
+	insideAdvanceQueue = true;
+	while (TryStartNextTransfer())
+	{
+	}
+	insideAdvanceQueue = false;
 }
