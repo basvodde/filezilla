@@ -50,7 +50,7 @@ cp "$top_srcdir/AUTHORS" "$targetdir" || exit 1
 cp "$top_srcdir/NEWS" "$targetdir" || exit 1
 
 cd win32zip
-zip -r -9 ../FileZilla.zip "$FileZilla-$PACKAGE_VERSION" || exit 1
+zip -r -9 ../FileZilla.zip "FileZilla-$PACKAGE_VERSION" || exit 1
 cd ..
 
 rm -rf win32zip
