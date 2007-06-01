@@ -68,7 +68,8 @@ if ! test "$localesonly" = "yes"; then
 
   AM_OPTIONS_WXCONFIG
 
-  AM_PATH_WXCONFIG(2.8.4, wxWin=1, , [xrc,std])
+  MIN_WX_VERSION="2.8.4"
+  AM_PATH_WXCONFIG($MIN_WX_VERSION, wxWin=1, , [xrc,std])
   if test "$wxWin" != 1; then
 	AC_MSG_ERROR([
         	wxWidgets must be installed on your system
@@ -77,7 +78,7 @@ if ! test "$localesonly" = "yes"; then
 		Please check that wx-config is in path, the directory
 		where wxWidgets libraries are installed (returned by
 		'wx-config --libs' command) is in LD_LIBRARY_PATH or
-		equivalent variable and wxWidgets version is 2.5.3 or above.
+		equivalent variable and wxWidgets version is $MIN_WX_VERSION or above.
 	])
   fi
 
