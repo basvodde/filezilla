@@ -76,6 +76,11 @@ public:
 		pFile = 0;
 	}
 
+	virtual ~CHttpFileTransferOpData()
+	{
+		delete pFile;
+	}
+
 	wxFile* pFile;
 };
 
@@ -880,6 +885,7 @@ int CHttpControlSocket::ResetOperation(int nErrorCode)
 	{
 		CHttpFileTransferOpData *pData = static_cast<CHttpFileTransferOpData *>(m_pCurOpData);
 		delete pData->pFile;
+		pData->pFile = 0;
 	}
 
 	if (!m_pCurOpData || !m_pCurOpData->pNextOpData)
