@@ -119,7 +119,7 @@ void COptionsPageFiletype::SetCtrlState()
 {
 	wxListCtrl* pListCtrl = XRCCTRL(*this, "ID_EXTENSIONS", wxListCtrl);
 	wxASSERT(pListCtrl);
-	pListCtrl->SetColumnWidth(0, wxLIST_AUTOSIZE_USEHEADER);
+	pListCtrl->SetColumnWidth(0, wxLIST_AUTOSIZE);
 
 	FindWindow(XRCID("ID_REMOVE"))->Enable(pListCtrl->GetSelectedItemCount() != 0);
 	FindWindow(XRCID("ID_ADD"))->Enable(GetText(XRCID("ID_EXTENSION")) != _T(""));
