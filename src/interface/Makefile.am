@@ -10,6 +10,7 @@ bin_PROGRAMS = filezilla
 
 # the application source, library search path, and link libraries
 filezilla_SOURCES = aboutdialog.cpp asyncrequestqueue.cpp \
+		aui_notebook_ex.cpp \
 		buildinfo.cpp chmoddialog.cpp \
 		clearprivatedata.cpp \
 		commandqueue.cpp \
@@ -48,6 +49,7 @@ filezilla_SOURCES += prefix.cpp
 endif
 
 noinst_HEADERS = aboutdialog.h asyncrequestqueue.h \
+		 aui_notebook_ex.h \
 		 buildinfo.h chmoddialog.h \
 		 clearprivatedata.h \
 		 commandqueue.h \

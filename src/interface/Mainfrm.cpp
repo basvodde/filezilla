@@ -26,6 +26,8 @@
 #include "loginmanager.h"
 #include "conditionaldialog.h"
 #include "clearprivatedata.h"
+#include "wx/aui/aui.h"
+#include "aui_notebook_ex.h"
 
 #ifndef __WXMSW__
 #include "resources/filezilla.xpm"
@@ -114,6 +116,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_lastLocalTreeSplitterPos = 0;
 	m_lastRemoteTreeSplitterPos = 0;
 	m_lastQueueSplitterPos = 0;
+	m_pAuiManager = 0;
 
 #ifdef __WXMSW__
 	m_windowIsMaximized = false;
@@ -190,7 +193,19 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_pRemoteSplitter->SetSashGravity(0.7);
 
 	m_pStatusView = new CStatusView(m_pTopSplitter, -1);
-	m_pQueueView = new CQueueView(m_pBottomSplitter, -1, this, m_pAsyncRequestQueue);
+	m_pQueuePane = new wxWindow(m_pBottomSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER);
+	
+	wxAuiNotebookEx* m_pAuiNotebook = new wxAuiNotebookEx;
+	m_pAuiNotebook->Create(m_pQueuePane, -1, wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxAUI_NB_BOTTOM);
+	m_pAuiNotebook->SetExArtProvider();
+
+	m_pQueueView = new CQueueView(m_pAuiNotebook, -1, this, m_pAsyncRequestQueue);
+	m_pAuiNotebook->AddPage(m_pQueueView, _("Queued files"));
+
+	m_pAuiNotebook->AddPage(new wxWindow(m_pAuiNotebook, -1), _("Failed transfers"));
+	m_pAuiNotebook->AddPage(new wxWindow(m_pAuiNotebook, -1), _("Successful transfers"));
+
+	m_pAuiNotebook->RemoveExtraBorders();
 
 	m_pLocalTreeViewPanel = new CView(m_pLocalSplitter);
 	m_pLocalListViewPanel = new CView(m_pLocalSplitter);
@@ -207,7 +222,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_pRemoteListViewPanel->SetWindow(m_pRemoteListView);
 
 	m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter, 100);
-	m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueueView, 100);
+	m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueuePane);
 
 	const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
 	const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
@@ -258,7 +273,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 		m_pRemoteSplitter->Initialize(m_pRemoteListViewPanel);
 	}
 	wxSize size = m_pBottomSplitter->GetClientSize();
-	m_pBottomSplitter->SetSashPosition(size.GetHeight() - 140);
+	m_pBottomSplitter->SetSashPosition(size.GetHeight() - 170);
 
 	Layout();
 
@@ -280,6 +295,10 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	else
 		m_pUpdateWizard = 0;
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
+
+	m_pAuiManager = new wxAuiManager(m_pQueuePane);
+	m_pAuiManager->AddPane(m_pAuiNotebook, wxAuiPaneInfo().Center().CaptionVisible(false));
+	m_pAuiManager->Update();
 }
 
 CMainFrame::~CMainFrame()
@@ -740,6 +759,8 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 
 	CSiteManager::ClearIdMap();
 
+	m_pAuiManager->UnInit();
+	delete m_pAuiManager;
 	Destroy();
 }
 

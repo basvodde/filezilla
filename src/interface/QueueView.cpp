@@ -15,6 +15,7 @@
 #include <wx/dnd.h>
 #include "dndobjects.h"
 #include "loginmanager.h"
+#include "aui_notebook_ex.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -888,7 +889,7 @@ bool CFolderScanItem::TryRemoveAll()
 	return false;
 }
 
-wxLongLong CServerItem::GetTotalSize(int& filesWithUnknownSize) const
+wxLongLong CServerItem::GetTotalSize(int& filesWithUnknownSize, int& queuedFiles) const
 {
 	wxLongLong totalSize = 0;
 	for (int i = 0; i < PRIORITY_COUNT; i++)
@@ -896,6 +897,7 @@ wxLongLong CServerItem::GetTotalSize(int& filesWithUnknownSize) const
 		for (int j = 0; j < 2; j++)
 		{
 			const std::list<CFileItem*>& fileList = m_fileList[j][i];
+			queuedFiles += fileList.size();
 			for (std::list<CFileItem*>::const_iterator iter = fileList.begin(); iter != fileList.end(); iter++)
 			{
 				const CFileItem* item = *iter;
@@ -923,10 +925,11 @@ bool CFileItem::TryRemoveAll()
 	return false;
 }
 
-CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame, CAsyncRequestQueue *pAsyncRequestQueue)
-	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN | wxLC_REPORT | wxLC_VIRTUAL | wxSUNKEN_BORDER),
+CQueueView::CQueueView(wxAuiNotebookEx* parent, wxWindowID id, CMainFrame* pMainFrame, CAsyncRequestQueue *pAsyncRequestQueue)
+	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN | wxLC_REPORT | wxLC_VIRTUAL | wxNO_BORDER),
 	  m_pMainFrame(pMainFrame),
-	  m_pAsyncRequestQueue(pAsyncRequestQueue)
+	  m_pAsyncRequestQueue(pAsyncRequestQueue),
+	  m_pAuiNotebook(parent)
 {
 	if (m_pAsyncRequestQueue)
 		m_pAsyncRequestQueue->SetQueue(this);
@@ -945,6 +948,7 @@ CQueueView::CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame, 
 
 	m_totalQueueSize = 0;
 	m_filesWithUnknownSize = 0;
+	m_queuedFiles = 0;
 
 	InsertColumn(0, _("Server / Local file"), wxLIST_FORMAT_LEFT, 150);
 	InsertColumn(1, _("Direction"), wxLIST_FORMAT_CENTER, 60);
@@ -1056,6 +1060,9 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 	item->AddChild(fileItem);
 	item->AddFileItemToList(fileItem);
 
+	m_queuedFiles++;
+	DisplayNumberQueuedFiles();
+
 	m_itemCount++;
 	SetItemCount(m_itemCount);
 	if (newServer)
@@ -1122,6 +1129,8 @@ bool CQueueView::QueueFiles(const bool queueOnly, const wxString& localPath, con
 		if (start == -1)
 			start = GetItemIndex(fileItem);
 
+		m_queuedFiles++;
+
 		m_itemCount++;
 	}
 
@@ -1138,6 +1147,7 @@ bool CQueueView::QueueFiles(const bool queueOnly, const wxString& localPath, con
 	UpdateStatusLinePositions();
 
 	DisplayQueueSize();
+	DisplayNumberQueuedFiles();
 
 	Refresh(false);
 
@@ -1775,6 +1785,12 @@ bool CQueueView::RemoveItem(CQueueItem* item)
 			wxASSERT(m_totalQueueSize >= 0);
 		}
 	}
+	if (item->GetType() == QueueItemType_File || item->GetType() == QueueItemType_Folder)
+	{
+		wxASSERT(m_queuedFiles > 0);
+		m_queuedFiles--;
+		DisplayNumberQueuedFiles();
+	}
 
 	const int index = GetItemIndex(item);
 
@@ -2107,12 +2123,14 @@ void CQueueView::CalculateQueueSize()
 {
 	// Collect total queue size
 	m_totalQueueSize = 0;
+	m_queuedFiles = 0;
 
 	m_filesWithUnknownSize = 0;
 	for (std::vector<CServerItem*>::const_iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
-		m_totalQueueSize += (*iter)->GetTotalSize(m_filesWithUnknownSize);
+		m_totalQueueSize += (*iter)->GetTotalSize(m_filesWithUnknownSize, m_queuedFiles);
 
 	DisplayQueueSize();
+	DisplayNumberQueuedFiles();
 }
 
 void CQueueView::DisplayQueueSize()
@@ -2138,6 +2156,22 @@ void CQueueView::DisplayQueueSize()
 	else
 		queueSize.Printf(_("Queue: %s%d bytes"), (m_filesWithUnknownSize > 0) ? _T(">") : _T(""), totalSize.GetLo());
 	pStatusBar->SetStatusText(queueSize, 4);
+}
+
+void CQueueView::DisplayNumberQueuedFiles()
+{
+	const wxString& name = _("Queued files");
+	wxString str;
+	if (m_queuedFiles > 0)
+	{
+		if (m_queuedFolders[0].empty() && m_queuedFolders[1].empty())
+			str.Printf(name + _T(" (%d)"), m_queuedFiles);
+		else
+			str.Printf(name + _T(" (%d+)"), m_queuedFiles);
+	}
+	else
+		str = name;
+	m_pAuiNotebook->SetPageText(0, str);
 }
 
 bool CQueueView::QueueFolder(bool queueOnly, bool download, const wxString& localPath, const CServerPath& remotePath, const CServer& server)
@@ -2168,6 +2202,8 @@ bool CQueueView::QueueFolder(bool queueOnly, bool download, const wxString& loca
 		UpdateSelections_ItemAdded(GetItemIndex(folderItem));
 
 	m_queuedFolders[download ? 0 : 1].push_back(folderItem);
+	if ((m_queuedFolders[0].size() + m_queuedFolders[1].size()) == 1)
+		DisplayNumberQueuedFiles();
 
 	ProcessFolderItems();
 
@@ -2227,6 +2263,9 @@ void CQueueView::OnFolderThreadComplete(wxCommandEvent& event)
 
 	RemoveItem(pItem);
 
+	if (m_queuedFolders[0].empty() && m_queuedFolders[1].empty())
+		DisplayNumberQueuedFiles();
+
 	m_pFolderProcessingThread->Wait();
 	delete m_pFolderProcessingThread;
 	m_pFolderProcessingThread = 0;
@@ -2258,6 +2297,8 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOn
 		else
 			fileItem = new CFolderItem(pServerItem, queueOnly, entry.remotePath, _T(""));
 
+		m_queuedFiles++;
+
 		pServerItem->AddChild(fileItem);
 		pServerItem->AddFileItemToList(fileItem);
 
@@ -2279,6 +2320,7 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOn
 	UpdateStatusLinePositions();
 
 	DisplayQueueSize();
+	DisplayNumberQueuedFiles();
 
 	Refresh(false);
 
@@ -2390,6 +2432,7 @@ void CQueueView::LoadQueue()
 						m_filesWithUnknownSize++;
 					else if (size > 0)
 						m_totalQueueSize += size;
+					m_queuedFiles++;
 				}
 			}
 			for (TiXmlElement* pFolder = pServer->FirstChildElement("Folder"); pFolder; pFolder = pFolder->NextSiblingElement("Folder"))
@@ -2459,6 +2502,7 @@ void CQueueView::LoadQueue()
 
 	SetItemCount(m_itemCount);
 	DisplayQueueSize();
+	DisplayNumberQueuedFiles();
 }
 
 void CQueueView::SettingsChanged()

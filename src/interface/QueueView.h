@@ -96,7 +96,7 @@ public:
 
 	CFileItem* GetIdleChild(bool immadiateOnly, enum AcceptedTransferDirection direction);
 	virtual bool RemoveChild(CQueueItem* pItem); // Removes a child item with is somewhere in the tree of children
-	wxLongLong GetTotalSize(int& filesWithUnknownSize) const;
+	wxLongLong GetTotalSize(int& filesWithUnknownSize, int& queuedFiles) const;
 
 	void QueueImmediateFiles();
 	void QueueImmediateFile(CFileItem* pItem);
@@ -265,13 +265,14 @@ class CMainFrame;
 class CStatusLineCtrl;
 class CFolderProcessingThread;
 class CAsyncRequestQueue;
+class wxAuiNotebookEx;
 
 class CQueueView : public wxListCtrl
 {
 	friend class CFolderProcessingThread;
 	friend class CQueueViewDropTarget;
 public:
-	CQueueView(wxWindow* parent, wxWindowID id, CMainFrame* pMainFrame, CAsyncRequestQueue* pAsyncRequestQueue);
+	CQueueView(wxAuiNotebookEx* parent, wxWindowID id, CMainFrame* pMainFrame, CAsyncRequestQueue* pAsyncRequestQueue);
 	virtual ~CQueueView();
 	
 	bool QueueFile(const bool queueOnly, const bool download, const wxString& localFile, const wxString& remoteFile,
@@ -333,6 +334,7 @@ protected:
 	void UpdateStatusLinePositions();
 	void CalculateQueueSize();
 	void DisplayQueueSize();
+	void DisplayNumberQueuedFiles();
 	void SaveQueue();
 	void LoadQueue();
 	bool ShouldUseBinaryMode(wxString filename);
@@ -373,6 +375,7 @@ protected:
 
 	wxLongLong m_totalQueueSize;
 	int m_filesWithUnknownSize;
+	int m_queuedFiles;
 
 	CMainFrame* m_pMainFrame;
 	CAsyncRequestQueue* m_pAsyncRequestQueue;
@@ -407,6 +410,8 @@ protected:
 	void OnEraseBackground(wxEraseEvent& event);
 
 	void OnAskPassword(wxCommandEvent& event);
+
+	wxAuiNotebookEx* m_pAuiNotebook;
 };
 
 #endif
