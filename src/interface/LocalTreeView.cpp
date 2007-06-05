@@ -1,6 +1,6 @@
 #include "FileZilla.h"
 #include "LocalTreeView.h"
-#include "QueueView.h"
+#include "queue.h"
 #include "filezillaapp.h"
 #include "filter.h"
 #include <wx/dnd.h>

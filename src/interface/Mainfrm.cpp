@@ -4,7 +4,7 @@
 #include "RemoteTreeView.h"
 #include "RemoteListView.h"
 #include "StatusView.h"
-#include "QueueView.h"
+#include "queue.h"
 #include "Mainfrm.h"
 #include "state.h"
 #include "Options.h"

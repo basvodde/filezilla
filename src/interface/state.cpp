@@ -4,7 +4,7 @@
 #include "FileZillaEngine.h"
 #include "Options.h"
 #include "Mainfrm.h"
-#include "QueueView.h"
+#include "queue.h"
 #include "filezillaapp.h"
 #include "RemoteListView.h"
 

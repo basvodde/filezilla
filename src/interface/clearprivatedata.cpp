@@ -8,7 +8,7 @@
 #include "Options.h"
 #include "ipcmutex.h"
 #include "filezillaapp.h"
-#include "QueueView.h"
+#include "queue.h"
 
 BEGIN_EVENT_TABLE(CClearPrivateDataDialog, wxDialogEx)
 EVT_TIMER(1, CClearPrivateDataDialog::OnTimer)

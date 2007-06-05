@@ -1,7 +1,7 @@
 #include "FileZilla.h"
 #include "RemoteListView.h"
 #include "commandqueue.h"
-#include "QueueView.h"
+#include "queue.h"
 #include "filezillaapp.h"
 #include "inputdialog.h"
 #include "chmoddialog.h"

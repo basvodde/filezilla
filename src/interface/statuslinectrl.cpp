@@ -1,5 +1,5 @@
 #include "FileZilla.h"
-#include "QueueView.h"
+#include "queue.h"
 #include "statuslinectrl.h"
 #include <wx/dcbuffer.h>
 

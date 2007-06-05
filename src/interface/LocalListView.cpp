@@ -1,6 +1,6 @@
 #include "FileZilla.h"
 #include "LocalListView.h"
-#include "QueueView.h"
+#include "queue.h"
 #include "filezillaapp.h"
 #include "filter.h"
 #include "inputdialog.h"

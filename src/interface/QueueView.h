@@ -4,168 +4,12 @@
 #include <set>
 #include "dndobjects.h"
 
-#define PRIORITY_COUNT 5
-enum QueuePriority
-{
-	priority_lowest = 0,
-	priority_low = 1,
-	priority_normal = 2,
-	priority_high = 3,
-	priority_highest = 4
-};
-
-enum QueueItemType
-{
-	QueueItemType_Server,
-	QueueItemType_File,
-	QueueItemType_Folder,
-	QueueItemType_FolderScan,
-	QueueItemType_Status
-};
-
-#define ITEMSTATE_COUNT 4
-enum ItemState
-{
-	ItemState_Wait = 0,
-	ItemState_Active = 1,
-	ItemState_Complete = 2,
-	ItemState_Error = 3
-};
-
 struct t_newEntry
 {
 	wxString localFile;
 	wxString remoteFile;
 	CServerPath remotePath;
 	wxLongLong size;
-};
-
-enum AcceptedTransferDirection
-{
-	all,
-	download,
-	upload
-};
-
-class TiXmlElement;
-class CQueueItem
-{
-public:
-	virtual ~CQueueItem();
-
-	virtual void SetPriority(enum QueuePriority priority);
-
-	void AddChild(CQueueItem* pItem);
-	unsigned int GetChildrenCount(bool recursive);
-	CQueueItem* GetChild(unsigned int item, bool recursive = true);
-	CQueueItem* GetParent() { return m_parent; }
-	const CQueueItem* GetParent() const { return m_parent; }
-	virtual bool RemoveChild(CQueueItem* pItem); // Removes a child item with is somewhere in the tree of children.
-	virtual bool TryRemoveAll(); // Removes a inactive childrens, queues active children for removal.
-								 // Returns true if item can be removed itself
-	CQueueItem* GetTopLevelItem();
-	const CQueueItem* GetTopLevelItem() const;
-	int GetItemIndex() const; // Return the visible item index relative to the topmost parent item.
-	virtual void SaveItem(TiXmlElement* pElement) const { }
-
-	virtual enum QueueItemType GetType() const = 0;
-
-protected:
-	CQueueItem();
-	wxString GetIndent();
-
-	CQueueItem* m_parent;
-
-	std::vector<CQueueItem*> m_children;
-	int m_visibleOffspring; // Visible offspring over all sublevels
-	wxString m_indent;
-};
-
-class CFileItem;
-class CServerItem : public CQueueItem
-{
-public:
-	CServerItem(const CServer& server);
-	virtual ~CServerItem();
-	virtual enum QueueItemType GetType() const { return QueueItemType_Server; }
-
-	const CServer& GetServer() const;
-	wxString GetName() const;
-
-	void AddFileItemToList(CFileItem* pItem);
-
-	CFileItem* GetIdleChild(bool immadiateOnly, enum AcceptedTransferDirection direction);
-	virtual bool RemoveChild(CQueueItem* pItem); // Removes a child item with is somewhere in the tree of children
-	wxLongLong GetTotalSize(int& filesWithUnknownSize, int& queuedFiles) const;
-
-	void QueueImmediateFiles();
-	void QueueImmediateFile(CFileItem* pItem);
-
-	virtual void SaveItem(TiXmlElement* pElement) const;
-
-	void SetDefaultFileExistsAction(int action, const enum AcceptedTransferDirection direction);
-
-	int m_activeCount;
-
-protected:
-	CServer m_server;
-
-	// array of item lists, sorted by priority. Used by scheduler to find
-	// next file to transfer
-	// First index specifies whether the item is queued (0) or immediate (1)
-	std::list<CFileItem*> m_fileList[2][PRIORITY_COUNT];
-};
-
-class CFolderScanItem : public CQueueItem
-{
-public:
-	CFolderScanItem(CServerItem* parent, bool queued, bool download, const wxString& localPath, const CServerPath& remotePath);
-	virtual ~CFolderScanItem() { delete m_pDir; }
-
-	virtual enum QueueItemType GetType() const { return QueueItemType_FolderScan; }
-	wxString GetLocalPath() const { return m_localPath; }
-	CServerPath GetRemotePath() const { return m_remotePath; }
-	bool Download() const { return m_download; }
-	bool Queued() const { return m_queued; }
-	int GetCount() const { return m_count; }
-	virtual bool TryRemoveAll();
-
-	wxString m_statusMessage;
-
-	bool m_queued;
-	volatile bool m_remove;
-	bool m_active;
-
-	int m_count;
-
-	struct t_dirPair
-	{
-		wxString localPath;
-		CServerPath remotePath;
-	};
-	std::list<t_dirPair> m_dirsToCheck;
-
-	wxString m_currentLocalPath;
-	CServerPath m_currentRemotePath;
-
-	// Upload members
-	wxDir* m_pDir;
-
-	int m_defaultFileExistsAction;
-
-protected:
-	wxString m_localPath;
-	CServerPath m_remotePath;
-	bool m_download;
-};
-
-class CStatusItem : public CQueueItem
-{
-public:
-	CStatusItem() {}
-	~CStatusItem() {}
-
-	virtual enum QueueItemType GetType() const { return QueueItemType_Status; }
 };
 
 class CStatusLineCtrl;
@@ -189,76 +33,6 @@ struct t_EngineData
 	CFileItem* pItem;
 	CServer lastServer;
 	CStatusLineCtrl* pStatusLineCtrl;
-};
-
-class CFileItem : public CQueueItem
-{
-public:
-	CFileItem(CServerItem* parent, bool queued, bool download, const wxString& localFile,
-			const wxString& remoteFile, const CServerPath& remotePath, wxLongLong size);
-	virtual ~CFileItem();
-
-	virtual void SetPriority(enum QueuePriority priority);
-	enum QueuePriority GetPriority() const;
-
-	wxString GetLocalFile() const { return m_localFile; }
-	wxString GetRemoteFile() const { return m_remoteFile; }
-	CServerPath GetRemotePath() const { return m_remotePath; }
-	wxLongLong GetSize() const { return m_size; }
-	void SetSize(wxLongLong size) { m_size = size; }
-	bool Download() const { return m_download; }
-	bool Queued() const { return m_queued; }
-
-	wxString GetIndent() { return m_indent; }
-
-	enum ItemState GetItemState() const;
-	void SetItemState(const enum ItemState itemState);
-
-	virtual enum QueueItemType GetType() const { return QueueItemType_File; }
-
-	bool IsActive() const { return m_active; }
-	virtual void SetActive(bool active);
-	
-	virtual void SaveItem(TiXmlElement* pElement) const;
-
-	virtual bool TryRemoveAll(); // Removes a inactive childrens, queues active children for removal.
-								 // Returns true if item can be removed itself
-
-	bool m_queued;
-	int m_errorCount;
-	bool m_remove;
-
-	wxString m_statusMessage;
-
-	CFileTransferCommand::t_transferSettings m_transferSettings;
-
-	t_EngineData* m_pEngineData;
-
-	int m_defaultFileExistsAction;
-
-protected:
-	enum QueuePriority m_priority;
-	enum ItemState m_itemState;
-
-	bool m_download;
-	wxString m_localFile;
-	wxString m_remoteFile;
-	CServerPath m_remotePath;
-	wxLongLong m_size;
-	bool m_active;
-};
-
-class CFolderItem : public CFileItem
-{
-public:
-	CFolderItem(CServerItem* parent, bool queued, const wxString& localFile);
-	CFolderItem(CServerItem* parent, bool queued, const CServerPath& remotePath, const wxString& remoteFile);
-	
-	virtual enum QueueItemType GetType() const { return QueueItemType_Folder; }
-
-	virtual void SaveItem(TiXmlElement* pElement) const;
-
-	virtual void SetActive(bool active);
 };
 
 class CMainFrame;
@@ -292,7 +66,7 @@ public:
 
 	// This sets the default file exists action for all files currently in queue.
 	// This includes queued folders which are yet to be processed
-	void SetDefaultFileExistsAction(int action, const enum AcceptedTransferDirection direction);
+	void SetDefaultFileExistsAction(int action, const enum TransferDirection direction);
 
 	// Tries to refresh the current remote directory listing
 	// if there's an idle engine connected to the current server of

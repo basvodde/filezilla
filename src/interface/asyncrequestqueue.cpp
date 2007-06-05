@@ -4,7 +4,7 @@
 #include "Mainfrm.h"
 #include "defaultfileexistsdlg.h"
 #include "Options.h"
-#include "QueueView.h"
+#include "queue.h"
 #include "verifycertdialog.h"
 #include "loginmanager.h"
 
@@ -162,7 +162,7 @@ void CAsyncRequestQueue::ProcessNextRequest()
 							reinterpret_cast<CFileExistsNotification *>(entry.pNotification)->overwriteAction = CFileExistsNotification::OverwriteAction(action - 1);
 						}
 
-						enum AcceptedTransferDirection direction;
+						enum TransferDirection direction;
 						if (directionOnly)
 						{
 							if (pNotification->download)
@@ -171,7 +171,7 @@ void CAsyncRequestQueue::ProcessNextRequest()
 								direction = upload;
 						}
 						else
-							direction = all;
+							direction = both;
 
 						if (m_pQueueView)
 							m_pQueueView->SetDefaultFileExistsAction(action, direction);
