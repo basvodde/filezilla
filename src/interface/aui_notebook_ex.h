@@ -15,4 +15,4 @@ public:
 	void SetExArtProvider();
 };
 
-#endif __AUI_NOTEBOOK_EX_H__
+#endif //__AUI_NOTEBOOK_EX_H__

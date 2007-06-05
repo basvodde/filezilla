@@ -5,7 +5,7 @@
 class wxAuiTabArtEx : public wxAuiDefaultTabArt
 {
 public:
-	virtual wxAuiTabArt* wxAuiTabArt::Clone()
+	virtual wxAuiTabArt* Clone()
 	{
 		return new wxAuiTabArtEx();
 	}
