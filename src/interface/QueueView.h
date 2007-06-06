@@ -41,7 +41,7 @@ class CFolderProcessingThread;
 class CAsyncRequestQueue;
 class wxAuiNotebookEx;
 
-class CQueueView : public wxListCtrl
+class CQueueView : public CQueueViewBase
 {
 	friend class CFolderProcessingThread;
 	friend class CQueueViewDropTarget;
@@ -84,10 +84,6 @@ protected:
 	bool ProcessFolderItems(int type = -1);
 	void ProcessUploadFolderItems();
 	
-	virtual wxString OnGetItemText(long item, long column) const;
-	virtual int OnGetItemImage(long item) const;
-
-	CQueueItem* GetQueueItem(unsigned int item);
 	CServerItem* GetServerItem(const CServer& server);
 	int GetItemIndex(const CQueueItem* item);
 
@@ -116,7 +112,6 @@ protected:
 	t_EngineData* GetIdleEngine(const CServer* pServer = 0);
 
 	std::vector<t_EngineData*> m_engineData;
-	std::vector<CServerItem*> m_serverList;	
 	std::list<CStatusLineCtrl*> m_statusLineList;
 	
 	/*
@@ -138,14 +133,11 @@ protected:
 	// Remember last top item in UpdateStatusLinePositions()
 	int m_lastTopItem;
 
-	int m_itemCount;
 	int m_activeCount;
 	int m_activeCountDown;
 	int m_activeCountUp;
 	int m_activeMode; // 0 inactive, 1 only immediate transfers, 2 all
 	bool m_quit;
-
-	bool m_allowBackgroundErase;
 
 	wxLongLong m_totalQueueSize;
 	int m_filesWithUnknownSize;
@@ -157,12 +149,6 @@ protected:
 	std::list<wxString> m_asciiFiles;
 
 	std::list<CFileZillaEngine*> m_waitingForPassword;
-
-	// Selection management.
-	void UpdateSelections_ItemAdded(int added);
-	void UpdateSelections_ItemRangeAdded(int added, int count);
-	void UpdateSelections_ItemRemoved(int removed);
-	void UpdateSelections_ItemRangeRemoved(int removed, int count);
 
 	DECLARE_EVENT_TABLE();
 
@@ -180,8 +166,6 @@ protected:
 	void OnStopAndClear(wxCommandEvent& event);
 	void OnRemoveSelected(wxCommandEvent& event);
 	void OnSetDefaultFileExistsAction(wxCommandEvent& event);
-
-	void OnEraseBackground(wxEraseEvent& event);
 
 	void OnAskPassword(wxCommandEvent& event);
 

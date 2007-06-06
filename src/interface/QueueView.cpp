@@ -139,7 +139,7 @@ DEFINE_EVENT_TYPE(fzEVT_UPDATE_STATUSLINES)
 DECLARE_EVENT_TYPE(fzEVT_ASKFORPASSWORD, -1)
 DEFINE_EVENT_TYPE(fzEVT_ASKFORPASSWORD)
 
-BEGIN_EVENT_TABLE(CQueueView, wxListCtrl)
+BEGIN_EVENT_TABLE(CQueueView, CQueueViewBase)
 EVT_FZ_NOTIFICATION(wxID_ANY, CQueueView::OnEngineEvent)
 EVT_COMMAND(wxID_ANY, fzEVT_FOLDERTHREAD_COMPLETE, CQueueView::OnFolderThreadComplete)
 EVT_COMMAND(wxID_ANY, fzEVT_FOLDERTHREAD_FILES, CQueueView::OnFolderThreadFiles)
@@ -152,8 +152,6 @@ EVT_MENU(XRCID("ID_PROCESSQUEUE"), CQueueView::OnProcessQueue)
 EVT_MENU(XRCID("ID_REMOVEALL"), CQueueView::OnStopAndClear)
 EVT_MENU(XRCID("ID_REMOVE"), CQueueView::OnRemoveSelected)
 EVT_MENU(XRCID("ID_DEFAULT_FILEEXISTSACTION"), CQueueView::OnSetDefaultFileExistsAction)
-
-EVT_ERASE_BACKGROUND(CQueueView::OnEraseBackground)
 
 EVT_COMMAND(wxID_ANY, fzEVT_ASKFORPASSWORD, CQueueView::OnAskPassword)
 
@@ -371,7 +369,7 @@ protected:
 };
 
 CQueueView::CQueueView(wxAuiNotebookEx* parent, wxWindowID id, CMainFrame* pMainFrame, CAsyncRequestQueue *pAsyncRequestQueue)
-	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN | wxLC_REPORT | wxLC_VIRTUAL | wxNO_BORDER),
+	: CQueueViewBase(parent, id),
 	  m_pMainFrame(pMainFrame),
 	  m_pAsyncRequestQueue(pAsyncRequestQueue),
 	  m_pAuiNotebook(parent)
@@ -379,9 +377,6 @@ CQueueView::CQueueView(wxAuiNotebookEx* parent, wxWindowID id, CMainFrame* pMain
 	if (m_pAsyncRequestQueue)
 		m_pAsyncRequestQueue->SetQueue(this);
 
-	m_allowBackgroundErase = true;
-
-	m_itemCount = 0;
 	m_activeCount = 0;
 	m_activeCountDown = 0;
 	m_activeCountUp = 0;
@@ -395,12 +390,7 @@ CQueueView::CQueueView(wxAuiNotebookEx* parent, wxWindowID id, CMainFrame* pMain
 	m_filesWithUnknownSize = 0;
 	m_queuedFiles = 0;
 
-	InsertColumn(0, _("Server / Local file"), wxLIST_FORMAT_LEFT, 150);
-	InsertColumn(1, _("Direction"), wxLIST_FORMAT_CENTER, 60);
-	InsertColumn(2, _("Remote file"), wxLIST_FORMAT_LEFT, 150);
-	InsertColumn(3, _("Size"), wxLIST_FORMAT_RIGHT, 70);
-	InsertColumn(4, _("Priority"), wxLIST_FORMAT_LEFT, 60);
-	InsertColumn(5, _("Status"), wxLIST_FORMAT_LEFT, 150);
+	CreateColumns(_("Status"));
 
 	// Create and assign the image list for the queue
 	wxImageList* pImageList = new wxImageList(16, 16);
@@ -451,9 +441,6 @@ CQueueView::~CQueueView()
 		delete m_pFolderProcessingThread;
 	}
 
-	for (std::vector<CServerItem*>::iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
-		delete *iter;
-
 	for (unsigned int engineIndex = 1; engineIndex < m_engineData.size(); engineIndex++)
 		delete m_engineData[engineIndex]->pEngine;
 	for (unsigned int engineIndex = 1; engineIndex < m_engineData.size(); engineIndex++)
@@ -503,7 +490,6 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 		}
 	}
 	item->AddChild(fileItem);
-	item->AddFileItemToList(fileItem);
 
 	m_queuedFiles++;
 	DisplayNumberQueuedFiles();
@@ -569,7 +555,6 @@ bool CQueueView::QueueFiles(const bool queueOnly, const wxString& localPath, con
 			m_totalQueueSize += iter->size;
 
 		pServerItem->AddChild(fileItem);
-		pServerItem->AddFileItemToList(fileItem);
 
 		if (start == -1)
 			start = GetItemIndex(fileItem);
@@ -597,211 +582,6 @@ bool CQueueView::QueueFiles(const bool queueOnly, const wxString& localPath, con
 	Refresh(false);
 
 	return true;
-}
-
-// Declared const due to design error in wxWidgets.
-// Won't be fixed since a fix would break backwards compatibility
-// Both functions use a const_cast<CQueueView *>(this) and modify
-// the instance.
-wxString CQueueView::OnGetItemText(long item, long column) const
-{
-	CQueueView* pThis = const_cast<CQueueView*>(this);
-
-	CQueueItem* pItem = pThis->GetQueueItem(item);
-	if (!pItem)
-		return _T("");
-
-	switch (pItem->GetType())
-	{
-	case QueueItemType_Server:
-		{
-			CServerItem* pServerItem = reinterpret_cast<CServerItem*>(pItem);
-			if (!column)
-				return pServerItem->GetName();
-		}
-		break;
-	case QueueItemType_File:
-		{
-			CFileItem* pFileItem = reinterpret_cast<CFileItem*>(pItem);
-			switch (column)
-			{
-			case 0:
-				return pFileItem->GetIndent() + pFileItem->GetLocalFile();
-			case 1:
-				if (pFileItem->Download())
-					if (pFileItem->Queued())
-						return _T("<--");
-					else
-						return _T("<<--");
-				else
-					if (pFileItem->Queued())
-						return _T("-->");
-					else
-						return _T("-->>");
-				break;
-			case 2:
-				return pFileItem->GetRemotePath().FormatFilename(pFileItem->GetRemoteFile());
-			case 3:
-				{
-					wxLongLong size = pFileItem->GetSize();
-					if (size >= 0)
-						return size.ToString();
-					else
-						return _T("?");
-				}
-			case 4:
-				switch (pFileItem->GetPriority())
-				{
-				case 0:
-					return _("Lowest");
-				case 1:
-					return _("Low");
-				default:
-				case 2:
-					return _("Normal");
-				case 3:
-					return _("High");
-				case 4:
-					return _("Highest");
-				}
-				break;
-			case 5:
-				return pFileItem->m_statusMessage;
-			default:
-				break;
-			}
-		}
-		break;
-	case QueueItemType_FolderScan:
-		{
-			CFolderScanItem* pFolderItem = reinterpret_cast<CFolderScanItem*>(pItem);
-			switch (column)
-			{
-			case 0:
-				return _T("  ") + pFolderItem->GetLocalPath();
-			case 1:
-				if (pFolderItem->Download())
-					if (pFolderItem->Queued())
-						return _T("<--");
-					else
-						return _T("<<--");
-				else
-					if (pFolderItem->Queued())
-						return _T("-->");
-					else
-						return _T("-->>");
-				break;
-			case 2:
-				return pFolderItem->GetRemotePath().GetPath();
-			case 5:
-				return pFolderItem->m_statusMessage;
-			default:
-				break;
-			}
-		}
-		break;
-	case QueueItemType_Folder:
-		{
-			CFileItem* pFolderItem = reinterpret_cast<CFolderItem*>(pItem);
-			switch (column)
-			{
-			case 0:
-				if (pFolderItem->Download())
-					return pFolderItem->GetIndent() + pFolderItem->GetLocalFile();
-				break;
-			case 1:
-				if (pFolderItem->Download())
-					if (pFolderItem->Queued())
-						return _T("<--");
-					else
-						return _T("<<--");
-				else
-					if (pFolderItem->Queued())
-						return _T("-->");
-					else
-						return _T("-->>");
-				break;
-			case 2:
-				if (!pFolderItem->Download())
-				{
-					if (pFolderItem->GetRemoteFile() == _T(""))
-						return pFolderItem->GetRemotePath().GetPath();
-					else
-						return pFolderItem->GetRemotePath().FormatFilename(pFolderItem->GetRemoteFile());
-				}
-				break;
-			case 4:
-				switch (pFolderItem->GetPriority())
-				{
-				case 0:
-					return _("Lowest");
-				case 1:
-					return _("Low");
-				default:
-				case 2:
-					return _("Normal");
-				case 3:
-					return _("High");
-				case 4:
-					return _("Highest");
-				}
-				break;
-			case 5:
-				return pFolderItem->m_statusMessage;
-			default:
-				break;
-			}
-		}
-		break;
-	default:
-		break;
-	}
-
-	return _T("");
-}
-
-int CQueueView::OnGetItemImage(long item) const
-{
-	CQueueView* pThis = const_cast<CQueueView*>(this);
-
-	CQueueItem* pItem = pThis->GetQueueItem(item);
-	if (!pItem)
-		return -1;
-
-	switch (pItem->GetType())
-	{
-	case QueueItemType_Server:
-		return 0;
-	case QueueItemType_File:
-		return 1;
-	case QueueItemType_FolderScan:
-	case QueueItemType_Folder:
-			return 3;
-	default:
-		return -1;
-	}
-
-	return -1;
-}
-
-CQueueItem* CQueueView::GetQueueItem(unsigned int item)
-{
-	std::vector<CServerItem*>::iterator iter;
-	for (iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
-	{
-		if (!item)
-			return *iter;
-
-		unsigned int count = (*iter)->GetChildrenCount(true);
-		if (item > count)
-		{
-			item -= count + 1;
-			continue;
-		}
-
-		return (*iter)->GetChild(item - 1);
-	}
-	return 0;
 }
 
 void CQueueView::OnEngineEvent(wxEvent &event)
@@ -1745,7 +1525,6 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOn
 		m_queuedFiles++;
 
 		pServerItem->AddChild(fileItem);
-		pServerItem->AddFileItemToList(fileItem);
 
 		if (start == -1)
 			start = GetItemIndex(fileItem);
@@ -1870,7 +1649,6 @@ void CQueueView::LoadQueue()
 					fileItem->SetItemState((enum ItemState)itemState);
 					fileItem->m_errorCount = errorCount;
 					pServerItem->AddChild(fileItem);
-					pServerItem->AddFileItemToList(fileItem);
 					m_itemCount++;
 
 					if (size < 0)
@@ -1917,7 +1695,6 @@ void CQueueView::LoadQueue()
 				folderItem->SetPriority((enum QueuePriority)priority);
 
 				pServerItem->AddChild(folderItem);
-				pServerItem->AddFileItemToList(folderItem);
 				m_itemCount++;
 			}
 
@@ -2235,12 +2012,6 @@ void CQueueView::OnFolderThreadFiles(wxCommandEvent& event)
 	RefreshItem(GetItemIndex(pItem));
 }
 
-void CQueueView::OnEraseBackground(wxEraseEvent& event)
-{
-	if (m_allowBackgroundErase)
-		event.Skip();
-}
-
 void CQueueView::SetDefaultFileExistsAction(int action, const enum TransferDirection direction)
 {
 	for (std::vector<CServerItem*>::iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
@@ -2368,150 +2139,6 @@ void CQueueView::TryRefreshListings()
 
 	pEngineData->active = true;
 	pEngineData->state = t_EngineData::list;
-}
-
-void CQueueView::UpdateSelections_ItemAdded(int added)
-{
-	// This is the fastest algorithm I can think of to move all
-	// selections. Though worst case is still O(n), as with every algorithm to
-	// move selections.
-
-	// Go through all items, keep record of the previous selected item
-	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-	while (item != -1 && item < added)
-		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-
-	int prevItem = -1;
-	while (item != -1)
-	{
-		if (prevItem != -1)
-		{
-			if (prevItem + 1 != item)
-			{
-				// Previous selected item was not the direct predecessor
-				// That means we have to select the successor of prevItem
-				// and unselect current item
-				SetItemState(prevItem + 1, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-				SetItemState(item, 0, wxLIST_STATE_SELECTED);
-			}
-		}
-		else
-		{
-			// First selected item, no predecessor yet. We have to unselect
-			SetItemState(item, 0, wxLIST_STATE_SELECTED);
-		}
-		prevItem = item;
-
-		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-	}
-	if (prevItem != -1 && prevItem < m_itemCount - 1)
-	{
-		// Move the very last selected item
-		SetItemState(prevItem + 1, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-	}
-
-	SetItemState(added, 0, wxLIST_STATE_SELECTED);
-}
-
-void CQueueView::UpdateSelections_ItemRangeAdded(int added, int count)
-{
-	std::list<int> itemsToSelect;
-
-	// Go through all selected items
-	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-	while (item != -1 && item < added)
-		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-
-	while (item != -1)
-	{
-		// Select new items preceeding to current one
-		while (!itemsToSelect.empty() && itemsToSelect.front() < item)
-		{
-			SetItemState(itemsToSelect.front(), wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-			itemsToSelect.pop_front();
-		}
-		if (itemsToSelect.empty())
-			SetItemState(item, 0, wxLIST_STATE_SELECTED);
-		else if (itemsToSelect.front() == item)
-			itemsToSelect.pop_front();
-
-		itemsToSelect.push_back(item + count);
-
-		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-	}
-	for (std::list<int>::const_iterator iter = itemsToSelect.begin(); iter != itemsToSelect.end(); iter++)
-		SetItemState(*iter, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-}
-
-void CQueueView::UpdateSelections_ItemRemoved(int removed)
-{
-	SetItemState(removed, 0, wxLIST_STATE_SELECTED);
-
-	int prevItem = -1;
-	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-	while (item != -1 && item < removed)
-		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-
-	while (item != -1)
-	{
-		if (prevItem != -1)
-		{
-			if (prevItem + 1 != item)
-			{
-				// Previous selected item was not the direct predecessor
-				// That means we have to select our predecessor and unselect
-				// prevItem
-				SetItemState(prevItem, 0, wxLIST_STATE_SELECTED);
-				SetItemState(item - 1, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-			}
-		}
-		else
-		{
-			// First selected item, no predecessor yet. We have to unselect
-			SetItemState(item - 1, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-		}
-		prevItem = item;
-
-		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-	}
-	if (prevItem != -1)
-	{
-		SetItemState(prevItem, 0, wxLIST_STATE_SELECTED);
-	}
-}
-
-void CQueueView::UpdateSelections_ItemRangeRemoved(int removed, int count)
-{
-	SetItemState(removed, 0, wxLIST_STATE_SELECTED);
-
-	std::list<int> itemsToUnselect;
-
-	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-	while (item != -1 && item < removed)
-		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-
-	while (item != -1)
-	{
-		// Unselect new items preceeding to current one
-		while (!itemsToUnselect.empty() && itemsToUnselect.front() < item - count)
-		{
-			SetItemState(itemsToUnselect.front(), 0, wxLIST_STATE_SELECTED);
-			itemsToUnselect.pop_front();
-		}
-
-		if (itemsToUnselect.empty())
-			SetItemState(item - count, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-		else if (itemsToUnselect.front() == item - count)
-			itemsToUnselect.pop_front();
-		else
-			SetItemState(item - count, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-
-		itemsToUnselect.push_back(item);
-
-		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-	}
-	for (std::list<int>::const_iterator iter = itemsToUnselect.begin(); iter != itemsToUnselect.end(); iter++)
-		SetItemState(*iter, 0, wxLIST_STATE_SELECTED);
 }
 
 void CQueueView::OnAskPassword(wxCommandEvent& event)

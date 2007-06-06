@@ -17,8 +17,7 @@ class CQuickconnectBar;
 class CUpdateWizard;
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 class CSiteManagerItemData;
-class wxAuiManager;
-class wxAuiNotebookEx;
+class CQueue;
 
 class CMainFrame : public wxFrame
 {
@@ -77,8 +76,6 @@ protected:
 	CUpdateWizard* m_pUpdateWizard;
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 
-	wxWindow* m_pQueuePane;
-
 	// Event handlers
 	DECLARE_EVENT_TABLE()
 	void OnSize(wxSizeEvent& event);
@@ -135,8 +132,7 @@ protected:
 	bool m_windowIsMaximized;
 #endif
 
-	wxAuiManager* m_pAuiManager;
-	wxAuiNotebookEx* m_pAuiNotebook;
+	CQueue* m_pQueuePane;
 };
 
 #endif

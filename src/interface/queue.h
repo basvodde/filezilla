@@ -1,6 +1,8 @@
 #ifndef __QUEUE_H__
 #define __QUEUE_H__
 
+#include "aui_notebook_ex.h"
+
 #define PRIORITY_COUNT 5
 enum QueuePriority
 {
@@ -44,7 +46,7 @@ public:
 
 	virtual void SetPriority(enum QueuePriority priority);
 
-	void AddChild(CQueueItem* pItem);
+	virtual void AddChild(CQueueItem* pItem);
 	unsigned int GetChildrenCount(bool recursive);
 	CQueueItem* GetChild(unsigned int item, bool recursive = true);
 	CQueueItem* GetParent() { return m_parent; }
@@ -81,7 +83,7 @@ public:
 	const CServer& GetServer() const;
 	wxString GetName() const;
 
-	void AddFileItemToList(CFileItem* pItem);
+	virtual void AddChild(CQueueItem* pItem);
 
 	CFileItem* GetIdleChild(bool immadiateOnly, enum TransferDirection direction);
 	virtual bool RemoveChild(CQueueItem* pItem); // Removes a child item with is somewhere in the tree of children
@@ -97,6 +99,9 @@ public:
 	int m_activeCount;
 
 protected:
+	void AddFileItemToList(CFileItem* pItem);
+	void RemoveFileItemFromList(CFileItem* pItem);
+
 	CServer m_server;
 
 	// array of item lists, sorted by priority. Used by scheduler to find
@@ -224,9 +229,54 @@ class CStatusItem : public CQueueItem
 {
 public:
 	CStatusItem() {}
-	~CStatusItem() {}
+	virtual ~CStatusItem() {}
 
 	virtual enum QueueItemType GetType() const { return QueueItemType_Status; }
+};
+
+class CQueueViewBase : public wxListCtrl
+{
+public:
+	CQueueViewBase(wxWindow* parent, int id);
+	virtual ~CQueueViewBase();
+
+protected:
+	void CreateColumns(const wxString& lastColumnName);
+
+	CQueueItem* GetQueueItem(unsigned int item);
+
+	virtual wxString OnGetItemText(long item, long column) const;
+	virtual int OnGetItemImage(long item) const;
+
+	// Selection management.
+	void UpdateSelections_ItemAdded(int added);
+	void UpdateSelections_ItemRangeAdded(int added, int count);
+	void UpdateSelections_ItemRemoved(int removed);
+	void UpdateSelections_ItemRangeRemoved(int removed, int count);
+
+	int m_itemCount;
+	bool m_allowBackgroundErase;
+
+	std::vector<CServerItem*> m_serverList;
+
+	DECLARE_EVENT_TABLE();
+	void OnEraseBackground(wxEraseEvent& event);
+};
+
+class CQueueView;
+
+class CMainFrame;
+class CAsyncRequestQueue;
+class CQueue : public wxAuiNotebookEx
+{
+public:
+	CQueue(wxWindow* parent, CMainFrame* pMainFrame, CAsyncRequestQueue* pAsyncRequestQueue);
+	//virtual ~CQueue();
+
+	inline CQueueView* GetQueueView() { return m_pQueueView; }
+protected:
+
+	CQueueView* m_pQueueView;
 };
 
 #include "QueueView.h"

@@ -341,12 +341,34 @@ wxString CServerItem::GetName() const
 	return m_server.FormatServer();
 }
 
+void CServerItem::AddChild(CQueueItem* pItem)
+{
+	CQueueItem::AddChild(pItem);
+	if (pItem->GetType() == QueueItemType_File ||
+		pItem->GetType() == QueueItemType_Folder)
+		AddFileItemToList((CFileItem*)pItem);
+}
+
 void CServerItem::AddFileItemToList(CFileItem* pItem)
 {
 	if (!pItem)
 		return;
 
 	m_fileList[pItem->m_queued ? 0 : 1][pItem->GetPriority()].push_back(pItem);
+}
+
+void CServerItem::RemoveFileItemFromList(CFileItem* pItem)
+{
+	std::list<CFileItem*>& fileList = m_fileList[pItem->m_queued ? 0 : 1][pItem->GetPriority()];
+	for (std::list<CFileItem*>::iterator iter = fileList.begin(); iter != fileList.end(); iter++)
+	{
+		if (*iter == pItem)
+		{
+			fileList.erase(iter);
+			return;
+		}
+	}
+	wxFAIL_MSG(_T("File item not deleted from m_fileList"));
 }
 
 void CServerItem::SetDefaultFileExistsAction(int action, const enum TransferDirection direction)
@@ -432,15 +454,7 @@ bool CServerItem::RemoveChild(CQueueItem* pItem)
 	if (pItem->GetType() == QueueItemType_File || pItem->GetType() == QueueItemType_Folder)
 	{
 		CFileItem* pFileItem = reinterpret_cast<CFileItem*>(pItem);
-		std::list<CFileItem*>& fileList = m_fileList[pFileItem->m_queued ? 0 : 1][pFileItem->GetPriority()];
-		for (std::list<CFileItem*>::iterator iter = fileList.begin(); iter != fileList.end(); iter++)
-		{
-			if (*iter == pFileItem)
-			{
-				fileList.erase(iter);
-				break;
-			}
-		}
+		RemoveFileItemFromList(pFileItem);
 	}
 
 	return CQueueItem::RemoveChild(pItem);
@@ -553,4 +567,405 @@ bool CFolderScanItem::TryRemoveAll()
 
 	m_remove = true;
 	return false;
+}
+
+// --------------
+// CQueueViewBase
+// --------------
+
+BEGIN_EVENT_TABLE(CQueueViewBase, wxListCtrl)
+EVT_ERASE_BACKGROUND(CQueueViewBase::OnEraseBackground)
+END_EVENT_TABLE()
+
+CQueueViewBase::CQueueViewBase(wxWindow* parent, int id)
+	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN | wxLC_REPORT | wxLC_VIRTUAL | wxSUNKEN_BORDER)
+{
+	m_itemCount = 0;
+	m_allowBackgroundErase = true;
+}
+
+CQueueViewBase::~CQueueViewBase()
+{
+	for (std::vector<CServerItem*>::iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
+		delete *iter;
+}
+
+CQueueItem* CQueueViewBase::GetQueueItem(unsigned int item)
+{
+	std::vector<CServerItem*>::iterator iter;
+	for (iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
+	{
+		if (!item)
+			return *iter;
+
+		unsigned int count = (*iter)->GetChildrenCount(true);
+		if (item > count)
+		{
+			item -= count + 1;
+			continue;
+		}
+
+		return (*iter)->GetChild(item - 1);
+	}
+	return 0;
+}
+
+void CQueueViewBase::OnEraseBackground(wxEraseEvent& event)
+{
+	if (m_allowBackgroundErase)
+		event.Skip();
+}
+
+wxString CQueueViewBase::OnGetItemText(long item, long column) const
+{
+	CQueueViewBase* pThis = const_cast<CQueueViewBase*>(this);
+
+	CQueueItem* pItem = pThis->GetQueueItem(item);
+	if (!pItem)
+		return _T("");
+
+	switch (pItem->GetType())
+	{
+	case QueueItemType_Server:
+		{
+			CServerItem* pServerItem = reinterpret_cast<CServerItem*>(pItem);
+			if (!column)
+				return pServerItem->GetName();
+		}
+		break;
+	case QueueItemType_File:
+		{
+			CFileItem* pFileItem = reinterpret_cast<CFileItem*>(pItem);
+			switch (column)
+			{
+			case 0:
+				return pFileItem->GetIndent() + pFileItem->GetLocalFile();
+			case 1:
+				if (pFileItem->Download())
+					if (pFileItem->Queued())
+						return _T("<--");
+					else
+						return _T("<<--");
+				else
+					if (pFileItem->Queued())
+						return _T("-->");
+					else
+						return _T("-->>");
+				break;
+			case 2:
+				return pFileItem->GetRemotePath().FormatFilename(pFileItem->GetRemoteFile());
+			case 3:
+				{
+					wxLongLong size = pFileItem->GetSize();
+					if (size >= 0)
+						return size.ToString();
+					else
+						return _T("?");
+				}
+			case 4:
+				switch (pFileItem->GetPriority())
+				{
+				case 0:
+					return _("Lowest");
+				case 1:
+					return _("Low");
+				default:
+				case 2:
+					return _("Normal");
+				case 3:
+					return _("High");
+				case 4:
+					return _("Highest");
+				}
+				break;
+			case 5:
+				return pFileItem->m_statusMessage;
+			default:
+				break;
+			}
+		}
+		break;
+	case QueueItemType_FolderScan:
+		{
+			CFolderScanItem* pFolderItem = reinterpret_cast<CFolderScanItem*>(pItem);
+			switch (column)
+			{
+			case 0:
+				return _T("  ") + pFolderItem->GetLocalPath();
+			case 1:
+				if (pFolderItem->Download())
+					if (pFolderItem->Queued())
+						return _T("<--");
+					else
+						return _T("<<--");
+				else
+					if (pFolderItem->Queued())
+						return _T("-->");
+					else
+						return _T("-->>");
+				break;
+			case 2:
+				return pFolderItem->GetRemotePath().GetPath();
+			case 5:
+				return pFolderItem->m_statusMessage;
+			default:
+				break;
+			}
+		}
+		break;
+	case QueueItemType_Folder:
+		{
+			CFileItem* pFolderItem = reinterpret_cast<CFolderItem*>(pItem);
+			switch (column)
+			{
+			case 0:
+				if (pFolderItem->Download())
+					return pFolderItem->GetIndent() + pFolderItem->GetLocalFile();
+				break;
+			case 1:
+				if (pFolderItem->Download())
+					if (pFolderItem->Queued())
+						return _T("<--");
+					else
+						return _T("<<--");
+				else
+					if (pFolderItem->Queued())
+						return _T("-->");
+					else
+						return _T("-->>");
+				break;
+			case 2:
+				if (!pFolderItem->Download())
+				{
+					if (pFolderItem->GetRemoteFile() == _T(""))
+						return pFolderItem->GetRemotePath().GetPath();
+					else
+						return pFolderItem->GetRemotePath().FormatFilename(pFolderItem->GetRemoteFile());
+				}
+				break;
+			case 4:
+				switch (pFolderItem->GetPriority())
+				{
+				case 0:
+					return _("Lowest");
+				case 1:
+					return _("Low");
+				default:
+				case 2:
+					return _("Normal");
+				case 3:
+					return _("High");
+				case 4:
+					return _("Highest");
+				}
+				break;
+			case 5:
+				return pFolderItem->m_statusMessage;
+			default:
+				break;
+			}
+		}
+		break;
+	default:
+		break;
+	}
+
+	return _T("");
+}
+
+int CQueueViewBase::OnGetItemImage(long item) const
+{
+	CQueueViewBase* pThis = const_cast<CQueueViewBase*>(this);
+
+	CQueueItem* pItem = pThis->GetQueueItem(item);
+	if (!pItem)
+		return -1;
+
+	switch (pItem->GetType())
+	{
+	case QueueItemType_Server:
+		return 0;
+	case QueueItemType_File:
+		return 1;
+	case QueueItemType_FolderScan:
+	case QueueItemType_Folder:
+			return 3;
+	default:
+		return -1;
+	}
+
+	return -1;
+}
+
+void CQueueViewBase::UpdateSelections_ItemAdded(int added)
+{
+	// This is the fastest algorithm I can think of to move all
+	// selections. Though worst case is still O(n), as with every algorithm to
+	// move selections.
+
+	// Go through all items, keep record of the previous selected item
+	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	while (item != -1 && item < added)
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+
+	int prevItem = -1;
+	while (item != -1)
+	{
+		if (prevItem != -1)
+		{
+			if (prevItem + 1 != item)
+			{
+				// Previous selected item was not the direct predecessor
+				// That means we have to select the successor of prevItem
+				// and unselect current item
+				SetItemState(prevItem + 1, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+				SetItemState(item, 0, wxLIST_STATE_SELECTED);
+			}
+		}
+		else
+		{
+			// First selected item, no predecessor yet. We have to unselect
+			SetItemState(item, 0, wxLIST_STATE_SELECTED);
+		}
+		prevItem = item;
+
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	}
+	if (prevItem != -1 && prevItem < m_itemCount - 1)
+	{
+		// Move the very last selected item
+		SetItemState(prevItem + 1, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+	}
+
+	SetItemState(added, 0, wxLIST_STATE_SELECTED);
+}
+
+void CQueueViewBase::UpdateSelections_ItemRangeAdded(int added, int count)
+{
+	std::list<int> itemsToSelect;
+
+	// Go through all selected items
+	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	while (item != -1 && item < added)
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+
+	while (item != -1)
+	{
+		// Select new items preceeding to current one
+		while (!itemsToSelect.empty() && itemsToSelect.front() < item)
+		{
+			SetItemState(itemsToSelect.front(), wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+			itemsToSelect.pop_front();
+		}
+		if (itemsToSelect.empty())
+			SetItemState(item, 0, wxLIST_STATE_SELECTED);
+		else if (itemsToSelect.front() == item)
+			itemsToSelect.pop_front();
+
+		itemsToSelect.push_back(item + count);
+
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	}
+	for (std::list<int>::const_iterator iter = itemsToSelect.begin(); iter != itemsToSelect.end(); iter++)
+		SetItemState(*iter, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+}
+
+void CQueueViewBase::UpdateSelections_ItemRemoved(int removed)
+{
+	SetItemState(removed, 0, wxLIST_STATE_SELECTED);
+
+	int prevItem = -1;
+	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	while (item != -1 && item < removed)
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+
+	while (item != -1)
+	{
+		if (prevItem != -1)
+		{
+			if (prevItem + 1 != item)
+			{
+				// Previous selected item was not the direct predecessor
+				// That means we have to select our predecessor and unselect
+				// prevItem
+				SetItemState(prevItem, 0, wxLIST_STATE_SELECTED);
+				SetItemState(item - 1, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+			}
+		}
+		else
+		{
+			// First selected item, no predecessor yet. We have to unselect
+			SetItemState(item - 1, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+		}
+		prevItem = item;
+
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	}
+	if (prevItem != -1)
+	{
+		SetItemState(prevItem, 0, wxLIST_STATE_SELECTED);
+	}
+}
+
+void CQueueViewBase::UpdateSelections_ItemRangeRemoved(int removed, int count)
+{
+	SetItemState(removed, 0, wxLIST_STATE_SELECTED);
+
+	std::list<int> itemsToUnselect;
+
+	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	while (item != -1 && item < removed)
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+
+	while (item != -1)
+	{
+		// Unselect new items preceeding to current one
+		while (!itemsToUnselect.empty() && itemsToUnselect.front() < item - count)
+		{
+			SetItemState(itemsToUnselect.front(), 0, wxLIST_STATE_SELECTED);
+			itemsToUnselect.pop_front();
+		}
+
+		if (itemsToUnselect.empty())
+			SetItemState(item - count, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+		else if (itemsToUnselect.front() == item - count)
+			itemsToUnselect.pop_front();
+		else
+			SetItemState(item - count, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+
+		itemsToUnselect.push_back(item);
+
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	}
+	for (std::list<int>::const_iterator iter = itemsToUnselect.begin(); iter != itemsToUnselect.end(); iter++)
+		SetItemState(*iter, 0, wxLIST_STATE_SELECTED);
+}
+
+void CQueueViewBase::CreateColumns(const wxString& lastColumnName)
+{
+	InsertColumn(0, _("Server / Local file"), wxLIST_FORMAT_LEFT, 150);
+	InsertColumn(1, _("Direction"), wxLIST_FORMAT_CENTER, 60);
+	InsertColumn(2, _("Remote file"), wxLIST_FORMAT_LEFT, 150);
+	InsertColumn(3, _("Size"), wxLIST_FORMAT_RIGHT, 70);
+	InsertColumn(4, _("Priority"), wxLIST_FORMAT_LEFT, 60);
+	if (lastColumnName != _T(""))
+		InsertColumn(5, lastColumnName, wxLIST_FORMAT_LEFT, 150);
+}
+
+// ------
+// CQueue
+// ------
+
+CQueue::CQueue(wxWindow* parent, CMainFrame *pMainFrame, CAsyncRequestQueue *pAsyncRequestQueue)
+{
+	Create(parent, -1, wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxAUI_NB_BOTTOM);
+	SetExArtProvider();
+
+	m_pQueueView = new CQueueView(this, -1, pMainFrame, pAsyncRequestQueue);
+	AddPage(m_pQueueView, _("Queued files"));
+
+	AddPage(new CQueueViewBase(this, -1), _("Failed transfers"));
+	AddPage(new CQueueViewBase(this, -1), _("Successful transfers"));
+
+	RemoveExtraBorders();
 }
