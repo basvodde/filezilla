@@ -2594,7 +2594,23 @@ int CFtpControlSocket::MkdirParseResponse()
 			pData->opState = mkd_tryfull;
 		break;
 	case mkd_mkdsub:
-		if (code == 2 || code == 3)
+		if (code != 2 && code != 3)
+		{
+			// Don't fall back to using the full path if the error message
+			// is "already exists".
+			// Case 1: Full response a known "already exists" message.
+			// Case 2: Substrng of response contains "already exists". pData->path may not 
+			//         contain this substring as the path might be returned in the reply.
+			if (m_Response.Mid(4).CmpNoCase(_T("directory already exists")) &&
+				(pData->path.GetPath().Lower().Find(_T("already exists")) != -1 ||
+				 m_Response.Lower().Find(_T("already exists")) == -1)
+				)
+			{
+				pData->opState = mkd_tryfull;
+				break;
+			}
+		}
+		
 		{
 			if (pData->segments.empty())
 			{
@@ -2617,8 +2633,6 @@ int CFtpControlSocket::MkdirParseResponse()
 			else
 				pData->opState = mkd_cwdsub;
 		}
-		else
-			pData->opState = mkd_tryfull;
 		break;
 	case mkd_cwdsub:
 		if (code == 2 || code == 3)
