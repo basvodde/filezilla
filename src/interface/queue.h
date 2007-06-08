@@ -240,13 +240,33 @@ public:
 	CQueueViewBase(wxWindow* parent, int id);
 	virtual ~CQueueViewBase();
 
+	void CreateColumns(const wxString& lastColumnName = _T(""));
 protected:
-	void CreateColumns(const wxString& lastColumnName);
 
+	// Gets item for given server
+	CServerItem* GetServerItem(const CServer& server);
+
+	// Gets item for given server or creates new if it doesn't exist
+	CServerItem* CreateServerItem(const CServer& server);
+
+	void InsertItem(CServerItem* pServerItem, CQueueItem* pItem);
+
+	// Gets item with given index
 	CQueueItem* GetQueueItem(unsigned int item);
+
+	// Get index for given queue item
+	int GetItemIndex(const CQueueItem* item);
 
 	virtual wxString OnGetItemText(long item, long column) const;
 	virtual int OnGetItemImage(long item) const;
+
+	// Has to be called after adding or removing items. Also updates
+	// item count and selections.
+	void CommitChanges();
+
+	// Position at which insertions start and number of insertions
+	int m_insertionStart;
+	unsigned int m_insertionCount;
 
 	// Selection management.
 	void UpdateSelections_ItemAdded(int added);
@@ -259,11 +279,13 @@ protected:
 
 	std::vector<CServerItem*> m_serverList;
 
+
 	DECLARE_EVENT_TABLE();
 	void OnEraseBackground(wxEraseEvent& event);
 };
 
 class CQueueView;
+class CQueueViewFailed;
 
 class CMainFrame;
 class CAsyncRequestQueue;
@@ -277,6 +299,8 @@ public:
 protected:
 
 	CQueueView* m_pQueueView;
+	CQueueViewFailed* m_pQueueView_Failed;
+	CQueueViewBase* m_pQueueView_Successful;
 };
 
 #include "QueueView.h"

@@ -1,5 +1,6 @@
 #include "FileZilla.h"
 #include "queue.h"
+#include "queueview_failed.h"
 
 CQueueItem::CQueueItem()
 {
@@ -580,6 +581,8 @@ END_EVENT_TABLE()
 CQueueViewBase::CQueueViewBase(wxWindow* parent, int id)
 	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN | wxLC_REPORT | wxLC_VIRTUAL | wxSUNKEN_BORDER)
 {
+	m_insertionStart = -1;
+	m_insertionCount = 0;
 	m_itemCount = 0;
 	m_allowBackgroundErase = true;
 }
@@ -608,6 +611,22 @@ CQueueItem* CQueueViewBase::GetQueueItem(unsigned int item)
 		return (*iter)->GetChild(item - 1);
 	}
 	return 0;
+}
+
+int CQueueViewBase::GetItemIndex(const CQueueItem* item)
+{
+	const CQueueItem* pTopLevelItem = item->GetTopLevelItem();
+
+	int index = 0;
+	for (std::vector<CServerItem*>::const_iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
+	{
+		if (pTopLevelItem == *iter)
+			break;
+
+		index += (*iter)->GetChildrenCount(true) + 1;
+	}
+
+	return index + item->GetItemIndex();
 }
 
 void CQueueViewBase::OnEraseBackground(wxEraseEvent& event)
@@ -952,6 +971,63 @@ void CQueueViewBase::CreateColumns(const wxString& lastColumnName)
 		InsertColumn(5, lastColumnName, wxLIST_FORMAT_LEFT, 150);
 }
 
+CServerItem* CQueueViewBase::GetServerItem(const CServer& server)
+{
+	for (std::vector<CServerItem*>::iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
+	{
+		if ((*iter)->GetServer() == server)
+			return *iter;
+	}
+	return NULL;
+}
+
+CServerItem* CQueueViewBase::CreateServerItem(const CServer& server)
+{
+	CServerItem* pItem = GetServerItem(server);
+
+	if (!pItem)
+	{
+		pItem = new CServerItem(server);
+		m_serverList.push_back(pItem);
+		m_itemCount++;
+
+		wxASSERT(m_insertionStart == -1);
+		wxASSERT(m_insertionCount == 0);
+
+		m_insertionStart = GetItemIndex(pItem);
+		m_insertionCount = 1;
+	}
+
+	return pItem;
+}
+
+void CQueueViewBase::CommitChanges()
+{
+	SetItemCount(m_itemCount);
+
+	if (m_insertionStart != -1)
+	{
+		wxASSERT(m_insertionCount != 0);
+		if (m_insertionCount == 1)
+			UpdateSelections_ItemAdded(m_insertionStart);
+		else
+			UpdateSelections_ItemRangeAdded(m_insertionStart, m_insertionCount);
+
+		m_insertionStart = -1;
+		m_insertionCount = 0;
+	}
+}
+
+void CQueueViewBase::InsertItem(CServerItem* pServerItem, CQueueItem* pItem)
+{
+	pServerItem->AddChild(pItem);
+	m_itemCount++;
+
+	if (m_insertionStart == -1)
+		m_insertionStart = GetItemIndex(pItem);
+	m_insertionCount++;
+}
+
 // ------
 // CQueue
 // ------
@@ -964,8 +1040,11 @@ CQueue::CQueue(wxWindow* parent, CMainFrame *pMainFrame, CAsyncRequestQueue *pAs
 	m_pQueueView = new CQueueView(this, -1, pMainFrame, pAsyncRequestQueue);
 	AddPage(m_pQueueView, _("Queued files"));
 
-	AddPage(new CQueueViewBase(this, -1), _("Failed transfers"));
-	AddPage(new CQueueViewBase(this, -1), _("Successful transfers"));
+	m_pQueueView_Failed = new CQueueViewFailed(this, -1);
+	AddPage(m_pQueueView_Failed, _("Failed transfers"));
+	m_pQueueView_Successful = new CQueueViewBase(this, -1);
+	m_pQueueView_Successful->CreateColumns();
+	AddPage(m_pQueueView_Successful, _("Successful transfers"));
 
 	RemoveExtraBorders();
 }

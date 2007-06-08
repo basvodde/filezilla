@@ -451,30 +451,19 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 						   const wxString& remoteFile, const CServerPath& remotePath,
 						   const CServer& server, const wxLongLong size)
 {
-	bool newServer;
-	CServerItem* item = GetServerItem(server);
-	if (!item)
-	{
-		item = new CServerItem(server);
-		m_serverList.push_back(item);
-		m_itemCount++;
-		newServer = true;
-	}
-	else
-		newServer = false;
-	int serverIndex = GetItemIndex(item);
+	CServerItem* pServerItem = CreateServerItem(server);
 
 	CFileItem* fileItem;
 	if (localFile == _T("") || remotePath.IsEmpty())
 	{
 		if (download)
-			fileItem = new CFolderItem(item, queueOnly, localFile);
+			fileItem = new CFolderItem(pServerItem, queueOnly, localFile);
 		else
-			fileItem = new CFolderItem(item, queueOnly, remotePath, remoteFile);
+			fileItem = new CFolderItem(pServerItem, queueOnly, remotePath, remoteFile);
 	}
 	else
 	{
-		fileItem = new CFileItem(item, queueOnly, download, localFile, remoteFile, remotePath, size);
+		fileItem = new CFileItem(pServerItem, queueOnly, download, localFile, remoteFile, remotePath, size);
 		fileItem->m_transferSettings.binary = ShouldUseBinaryMode(download ? remoteFile : wxFileName(localFile).GetFullName());
 
 		if (size < 0)
@@ -489,17 +478,13 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 			DisplayQueueSize();
 		}
 	}
-	item->AddChild(fileItem);
+
+	InsertItem(pServerItem, fileItem);
+
+	CommitChanges();
 
 	m_queuedFiles++;
 	DisplayNumberQueuedFiles();
-
-	m_itemCount++;
-	SetItemCount(m_itemCount);
-	if (newServer)
-		UpdateSelections_ItemRangeAdded(serverIndex, 2);
-	else
-		UpdateSelections_ItemAdded(serverIndex + item->GetChildrenCount(true));
 
 	if (!m_activeMode && !queueOnly)
 		m_activeMode = 1;
@@ -516,25 +501,7 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 
 bool CQueueView::QueueFiles(const bool queueOnly, const wxString& localPath, const CRemoteDataObject& dataObject)
 {
-	bool newServer;
-	CServerItem* pServerItem = GetServerItem(dataObject.GetServer());
-	int added;
-	int start;
-	if (!pServerItem)
-	{
-		pServerItem = new CServerItem(dataObject.GetServer());
-		m_serverList.push_back(pServerItem);
-		m_itemCount++;
-		newServer = true;
-		added = 1;
-		start = GetItemIndex(pServerItem);
-	}
-	else
-	{
-		added = 0;
-		start = -1;
-		newServer = false;
-	}
+	CServerItem* pServerItem = CreateServerItem(dataObject.GetServer());
 
 	const std::list<CRemoteDataObject::t_fileInfo>& files = dataObject.GetFiles();
 
@@ -542,8 +509,6 @@ bool CQueueView::QueueFiles(const bool queueOnly, const wxString& localPath, con
 	{
 		if (iter->dir)
 			continue;
-
-		added++;
 
 		CFileItem* fileItem;
 		fileItem = new CFileItem(pServerItem, queueOnly, true, localPath + iter->name, iter->name, dataObject.GetServerPath(), iter->size);
@@ -554,19 +519,12 @@ bool CQueueView::QueueFiles(const bool queueOnly, const wxString& localPath, con
 		else if (iter->size > 0)
 			m_totalQueueSize += iter->size;
 
-		pServerItem->AddChild(fileItem);
-
-		if (start == -1)
-			start = GetItemIndex(fileItem);
+		InsertItem(pServerItem, fileItem);
 
 		m_queuedFiles++;
-
-		m_itemCount++;
 	}
 
-	wxASSERT(added);
-	UpdateSelections_ItemRangeAdded(start, added);
-	SetItemCount(m_itemCount);
+	CommitChanges();
 
 	if (!m_activeMode && !queueOnly)
 		m_activeMode = 1;
@@ -662,16 +620,6 @@ void CQueueView::OnEngineEvent(wxEvent &event)
 
 		pNotification = pEngineData->pEngine->GetNextNotification();
 	}
-}
-
-CServerItem* CQueueView::GetServerItem(const CServer& server)
-{
-	for (std::vector<CServerItem*>::iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
-	{
-		if ((*iter)->GetServer() == server)
-			return *iter;
-	}
-	return NULL;
 }
 
 bool CQueueView::TryStartNextTransfer()
@@ -1296,22 +1244,6 @@ void CQueueView::ResetItem(CFileItem* item)
 	UpdateStatusLinePositions();
 }
 
-int CQueueView::GetItemIndex(const CQueueItem* item)
-{
-	const CQueueItem* pTopLevelItem = item->GetTopLevelItem();
-
-	int index = 0;
-	for (std::vector<CServerItem*>::const_iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
-	{
-		if (pTopLevelItem == *iter)
-			break;
-
-		index += (*iter)->GetChildrenCount(true) + 1;
-	}
-
-	return index + item->GetItemIndex();
-}
-
 void CQueueView::UpdateStatusLinePositions()
 {
 	if (m_waitStatusLineUpdate)
@@ -1401,30 +1333,14 @@ void CQueueView::DisplayNumberQueuedFiles()
 
 bool CQueueView::QueueFolder(bool queueOnly, bool download, const wxString& localPath, const CServerPath& remotePath, const CServer& server)
 {
-	CServerItem* item = GetServerItem(server);
-	int newServerIndex;
-	if (!item)
-	{
-		item = new CServerItem(server);
-		m_serverList.push_back(item);
-		m_itemCount++;
-		newServerIndex = GetItemIndex(item);
-	}
-	else
-		newServerIndex = -1;
+	CServerItem* pServerItem = CreateServerItem(server);
 
-	CFolderScanItem* folderItem = new CFolderScanItem(item, queueOnly, download, localPath, remotePath);
-	item->AddChild(folderItem);
-
-	m_itemCount++;
+	CFolderScanItem* folderItem = new CFolderScanItem(pServerItem, queueOnly, download, localPath, remotePath);
+	InsertItem(pServerItem, folderItem);
 
 	folderItem->m_statusMessage = _("Waiting");
 
-	SetItemCount(m_itemCount);
-	if (newServerIndex != -1)
-		UpdateSelections_ItemRangeAdded(newServerIndex, 2);
-	else
-		UpdateSelections_ItemAdded(GetItemIndex(folderItem));
+	CommitChanges();
 
 	m_queuedFolders[download ? 0 : 1].push_back(folderItem);
 	if ((m_queuedFolders[0].size() + m_queuedFolders[1].size()) == 1)
@@ -1502,7 +1418,6 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOn
 {
 	wxASSERT(pServerItem);
 
-	int start = -1;
 	for (std::list<t_newEntry>::const_iterator iter = entryList.begin(); iter != entryList.end(); iter++)
 	{
 		const t_newEntry& entry = *iter;
@@ -1524,17 +1439,11 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOn
 
 		m_queuedFiles++;
 
-		pServerItem->AddChild(fileItem);
-
-		if (start == -1)
-			start = GetItemIndex(fileItem);
-
-		m_itemCount++;
+		InsertItem(pServerItem, fileItem);
 	}
 
-	UpdateSelections_ItemRangeAdded(start, entryList.size());
-	SetItemCount(m_itemCount);
-
+	CommitChanges();
+	
 	if (!m_activeMode && !queueOnly)
 		m_activeMode = 1;
 

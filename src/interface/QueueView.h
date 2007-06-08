@@ -83,9 +83,6 @@ protected:
 	bool TryStartNextTransfer();
 	bool ProcessFolderItems(int type = -1);
 	void ProcessUploadFolderItems();
-	
-	CServerItem* GetServerItem(const CServer& server);
-	int GetItemIndex(const CQueueItem* item);
 
 	void ProcessReply(t_EngineData& engineData, COperationNotification* pNotification);
 	void SendNextCommand(t_EngineData& engineData);
