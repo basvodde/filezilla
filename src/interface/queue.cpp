@@ -311,7 +311,10 @@ void CFolderItem::SaveItem(TiXmlElement* pElement) const
 	if (m_download)
 		AddTextElement(&file, "LocalFile", m_localFile);
 	else
+	{
+		AddTextElement(&file, "RemoteFile", m_remoteFile);
 		AddTextElement(&file, "RemotePath", m_remotePath.GetSafePath());
+	}
 	AddTextElement(&file, "Download", m_download ? _T("1") : _T("0"));
 
 	pElement->InsertEndChild(file);
@@ -513,7 +516,7 @@ void CServerItem::SaveItem(TiXmlElement* pElement) const
 	pElement->InsertEndChild(server);
 }
 
-wxLongLong CServerItem::GetTotalSize(int& filesWithUnknownSize, int& queuedFiles) const
+wxLongLong CServerItem::GetTotalSize(int& filesWithUnknownSize, int& queuedFiles, int& folderScanCount) const
 {
 	wxLongLong totalSize = 0;
 	for (int i = 0; i < PRIORITY_COUNT; i++)
@@ -535,6 +538,15 @@ wxLongLong CServerItem::GetTotalSize(int& filesWithUnknownSize, int& queuedFiles
 				}
 			}
 		}
+	}
+
+	for (std::vector<CQueueItem*>::const_iterator iter = m_children.begin(); iter != m_children.end(); iter++)
+	{
+		if ((*iter)->GetType() == QueueItemType_File ||
+			(*iter)->GetType() == QueueItemType_Folder)
+			queuedFiles++;
+		else if ((*iter)->GetType() == QueueItemType_FolderScan)
+			folderScanCount++;
 	}
 
 	return totalSize;
@@ -578,13 +590,19 @@ BEGIN_EVENT_TABLE(CQueueViewBase, wxListCtrl)
 EVT_ERASE_BACKGROUND(CQueueViewBase::OnEraseBackground)
 END_EVENT_TABLE()
 
-CQueueViewBase::CQueueViewBase(wxWindow* parent, int id)
+CQueueViewBase::CQueueViewBase(wxAuiNotebookEx* parent, int id)
 	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN | wxLC_REPORT | wxLC_VIRTUAL | wxSUNKEN_BORDER)
 {
+	m_pAuiNotebook = parent;
 	m_insertionStart = -1;
 	m_insertionCount = 0;
 	m_itemCount = 0;
 	m_allowBackgroundErase = true;
+
+	m_fileCount = 0;
+	m_folderScanCount = 0;
+	m_fileCountChanged = false;
+	m_folderScanCountChanged = false;
 }
 
 CQueueViewBase::~CQueueViewBase()
@@ -1016,6 +1034,33 @@ void CQueueViewBase::CommitChanges()
 		m_insertionStart = -1;
 		m_insertionCount = 0;
 	}
+
+	if (m_fileCountChanged || m_folderScanCountChanged)
+		DisplayNumberQueuedFiles();
+}
+
+void CQueueViewBase::DisplayNumberQueuedFiles()
+{
+	const wxString& name = _("Queued files");
+	wxString str;
+	if (m_fileCount > 0)
+	{
+		if (!m_folderScanCount)
+			str.Printf(name + _T(" (%d)"), m_fileCount);
+		else
+			str.Printf(name + _T(" (%d+)"), m_fileCount);
+	}
+	else
+	{
+		if (m_folderScanCount)
+			str.Printf(name + _T(" (0+)"), m_fileCount);
+		else
+			str = name;
+	}
+	m_pAuiNotebook->SetPageText(0, str);
+
+	m_fileCountChanged = false;
+	m_folderScanCountChanged = false;
 }
 
 void CQueueViewBase::InsertItem(CServerItem* pServerItem, CQueueItem* pItem)
@@ -1026,6 +1071,17 @@ void CQueueViewBase::InsertItem(CServerItem* pServerItem, CQueueItem* pItem)
 	if (m_insertionStart == -1)
 		m_insertionStart = GetItemIndex(pItem);
 	m_insertionCount++;
+
+	if (pItem->GetType() == QueueItemType_File || pItem->GetType() == QueueItemType_Folder)
+	{
+		m_fileCount++;
+		m_fileCountChanged = true;
+	}
+	else if (pItem->GetType() == QueueItemType_FolderScan)
+	{
+		m_folderScanCount++;
+		m_folderScanCountChanged = true;
+	}
 }
 
 // ------

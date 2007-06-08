@@ -388,7 +388,6 @@ CQueueView::CQueueView(wxAuiNotebookEx* parent, wxWindowID id, CMainFrame* pMain
 
 	m_totalQueueSize = 0;
 	m_filesWithUnknownSize = 0;
-	m_queuedFiles = 0;
 
 	CreateColumns(_("Status"));
 
@@ -483,9 +482,6 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 
 	CommitChanges();
 
-	m_queuedFiles++;
-	DisplayNumberQueuedFiles();
-
 	if (!m_activeMode && !queueOnly)
 		m_activeMode = 1;
 
@@ -520,8 +516,6 @@ bool CQueueView::QueueFiles(const bool queueOnly, const wxString& localPath, con
 			m_totalQueueSize += iter->size;
 
 		InsertItem(pServerItem, fileItem);
-
-		m_queuedFiles++;
 	}
 
 	CommitChanges();
@@ -669,7 +663,8 @@ bool CQueueView::TryStartNextTransfer()
 				// Server got deleted. Unfortunately we have to start over now
 				if (m_serverList.empty())
 					return false;
-				iter = m_serverList.begin();
+
+				return true;
 			}
 			newFileItem = currentServerItem->GetIdleChild(m_activeMode == 1, wantedDirection);
 		}
@@ -960,8 +955,16 @@ bool CQueueView::RemoveItem(CQueueItem* item)
 	}
 	if (item->GetType() == QueueItemType_File || item->GetType() == QueueItemType_Folder)
 	{
-		wxASSERT(m_queuedFiles > 0);
-		m_queuedFiles--;
+		wxASSERT(m_fileCount > 0);
+		m_fileCount--;
+		m_fileCountChanged = true;
+		DisplayNumberQueuedFiles();
+	}
+	else if (item->GetType() == QueueItemType_FolderScan)
+	{
+		wxASSERT(m_folderScanCount > 0);
+		m_folderScanCount--;
+		m_folderScanCountChanged = true;
 		DisplayNumberQueuedFiles();
 	}
 
@@ -1280,11 +1283,12 @@ void CQueueView::CalculateQueueSize()
 {
 	// Collect total queue size
 	m_totalQueueSize = 0;
-	m_queuedFiles = 0;
+	m_fileCount = 0;
+	m_folderScanCount = 0;
 
 	m_filesWithUnknownSize = 0;
 	for (std::vector<CServerItem*>::const_iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
-		m_totalQueueSize += (*iter)->GetTotalSize(m_filesWithUnknownSize, m_queuedFiles);
+		m_totalQueueSize += (*iter)->GetTotalSize(m_filesWithUnknownSize, m_fileCount, m_folderScanCount);
 
 	DisplayQueueSize();
 	DisplayNumberQueuedFiles();
@@ -1315,22 +1319,6 @@ void CQueueView::DisplayQueueSize()
 	pStatusBar->SetStatusText(queueSize, 4);
 }
 
-void CQueueView::DisplayNumberQueuedFiles()
-{
-	const wxString& name = _("Queued files");
-	wxString str;
-	if (m_queuedFiles > 0)
-	{
-		if (m_queuedFolders[0].empty() && m_queuedFolders[1].empty())
-			str.Printf(name + _T(" (%d)"), m_queuedFiles);
-		else
-			str.Printf(name + _T(" (%d+)"), m_queuedFiles);
-	}
-	else
-		str = name;
-	m_pAuiNotebook->SetPageText(0, str);
-}
-
 bool CQueueView::QueueFolder(bool queueOnly, bool download, const wxString& localPath, const CServerPath& remotePath, const CServer& server)
 {
 	CServerItem* pServerItem = CreateServerItem(server);
@@ -1343,9 +1331,6 @@ bool CQueueView::QueueFolder(bool queueOnly, bool download, const wxString& loca
 	CommitChanges();
 
 	m_queuedFolders[download ? 0 : 1].push_back(folderItem);
-	if ((m_queuedFolders[0].size() + m_queuedFolders[1].size()) == 1)
-		DisplayNumberQueuedFiles();
-
 	ProcessFolderItems();
 
 	Refresh(false);
@@ -1404,9 +1389,6 @@ void CQueueView::OnFolderThreadComplete(wxCommandEvent& event)
 
 	RemoveItem(pItem);
 
-	if (m_queuedFolders[0].empty() && m_queuedFolders[1].empty())
-		DisplayNumberQueuedFiles();
-
 	m_pFolderProcessingThread->Wait();
 	delete m_pFolderProcessingThread;
 	m_pFolderProcessingThread = 0;
@@ -1436,8 +1418,6 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOn
 		}
 		else
 			fileItem = new CFolderItem(pServerItem, queueOnly, entry.remotePath, _T(""));
-
-		m_queuedFiles++;
 
 		InsertItem(pServerItem, fileItem);
 	}
@@ -1525,15 +1505,9 @@ void CQueueView::LoadQueue()
 		CServer server;
 		if (GetServer(pServer, server))
 		{
-			CServerItem *pServerItem = GetServerItem(server);
-			bool newServer;
-			if (!pServerItem)
-			{
-				newServer = true;
-				pServerItem = new CServerItem(server);
-			}
-			else
-				newServer = false;
+			m_insertionStart = -1;
+			m_insertionCount = 0;
+			CServerItem *pServerItem = CreateServerItem(server);
 
 			for (TiXmlElement* pFile = pServer->FirstChildElement("File"); pFile; pFile = pFile->NextSiblingElement("File"))
 			{
@@ -1557,14 +1531,12 @@ void CQueueView::LoadQueue()
 					fileItem->SetPriority((enum QueuePriority)priority);
 					fileItem->SetItemState((enum ItemState)itemState);
 					fileItem->m_errorCount = errorCount;
-					pServerItem->AddChild(fileItem);
-					m_itemCount++;
+					InsertItem(pServerItem, fileItem);
 
 					if (size < 0)
 						m_filesWithUnknownSize++;
 					else if (size > 0)
 						m_totalQueueSize += size;
-					m_queuedFiles++;
 				}
 			}
 			for (TiXmlElement* pFolder = pServer->FirstChildElement("Folder"); pFolder; pFolder = pFolder->NextSiblingElement("Folder"))
@@ -1582,9 +1554,6 @@ void CQueueView::LoadQueue()
 				else
 				{
 					wxString remoteFile = GetTextElement(pFolder, "RemoteFile");
-					if (remoteFile == _T(""))
-						continue;
-
 					wxString safeRemotePath = GetTextElement(pFolder, "RemotePath");
 					if (safeRemotePath == _T(""))
 						continue;
@@ -1603,19 +1572,14 @@ void CQueueView::LoadQueue()
 				}
 				folderItem->SetPriority((enum QueuePriority)priority);
 
-				pServerItem->AddChild(folderItem);
-				m_itemCount++;
+				InsertItem(pServerItem, folderItem);
 			}
 
-			if (newServer)
+			if (!pServerItem->GetChild(0))
 			{
-				if (pServerItem->GetChild(0))
-				{
-					m_serverList.push_back(pServerItem);
-					m_itemCount++;
-				}
-				else
-					delete pServerItem;
+				m_itemCount--;
+				m_serverList.pop_back();
+				delete pServerItem;
 			}
 		}
 
@@ -1631,9 +1595,11 @@ void CQueueView::LoadQueue()
 
 	delete pDocument->GetDocument();
 
-	SetItemCount(m_itemCount);
+	m_insertionStart = -1;
+	m_insertionCount = 0;
+	CommitChanges();
+
 	DisplayQueueSize();
-	DisplayNumberQueuedFiles();
 }
 
 void CQueueView::SettingsChanged()
@@ -1864,7 +1830,8 @@ bool CQueueView::StopItem(CFileItem* item)
 
 bool CQueueView::StopItem(CServerItem* pServerItem)
 {
-	for (unsigned int i = 0; i < pServerItem->GetChildrenCount(false); i++)
+	unsigned int i = 0;
+	while (i < pServerItem->GetChildrenCount(false))
 	{
 		CQueueItem* pItem = pServerItem->GetChild(i, false);
 		if (pItem->GetType() == QueueItemType_FolderScan)
@@ -1873,6 +1840,7 @@ bool CQueueView::StopItem(CServerItem* pServerItem)
 			if (pFolder->m_active)
 			{
 				pFolder->m_remove = true;
+				i++;
 				continue;
 			}
 		}
@@ -1884,6 +1852,7 @@ bool CQueueView::StopItem(CServerItem* pServerItem)
 			{
 				StopItem(pFile);
 				pFile->m_remove = true;
+				i++;
 				continue;
 			}
 		}
@@ -1891,17 +1860,11 @@ bool CQueueView::StopItem(CServerItem* pServerItem)
 			// Unknown type, shouldn't be here.
 			wxASSERT(false);
 
-		if (pServerItem->GetChildrenCount(false) == 1)
-		{
-			RemoveItem(pItem);
+		if (RemoveItem(pItem))
 			return true;
-		}
-
-		RemoveItem(pItem);
-		i--;
 	}
 
-	return pServerItem->GetChildrenCount(false) == 0;
+	return false;
 }
 
 void CQueueView::OnFolderThreadFiles(wxCommandEvent& event)

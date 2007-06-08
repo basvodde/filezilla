@@ -87,7 +87,7 @@ public:
 
 	CFileItem* GetIdleChild(bool immadiateOnly, enum TransferDirection direction);
 	virtual bool RemoveChild(CQueueItem* pItem); // Removes a child item with is somewhere in the tree of children
-	wxLongLong GetTotalSize(int& filesWithUnknownSize, int& queuedFiles) const;
+	wxLongLong GetTotalSize(int& filesWithUnknownSize, int& queuedFiles, int& folderScanCount) const;
 
 	void QueueImmediateFiles();
 	void QueueImmediateFile(CFileItem* pItem);
@@ -237,7 +237,7 @@ public:
 class CQueueViewBase : public wxListCtrl
 {
 public:
-	CQueueViewBase(wxWindow* parent, int id);
+	CQueueViewBase(wxAuiNotebookEx* parent, int id);
 	virtual ~CQueueViewBase();
 
 	void CreateColumns(const wxString& lastColumnName = _T(""));
@@ -264,9 +264,16 @@ protected:
 	// item count and selections.
 	void CommitChanges();
 
+	void DisplayNumberQueuedFiles();
+
 	// Position at which insertions start and number of insertions
 	int m_insertionStart;
 	unsigned int m_insertionCount;
+
+	int m_fileCount;
+	int m_folderScanCount;
+	bool m_fileCountChanged;
+	bool m_folderScanCountChanged;
 
 	// Selection management.
 	void UpdateSelections_ItemAdded(int added);
@@ -279,6 +286,7 @@ protected:
 
 	std::vector<CServerItem*> m_serverList;
 
+	wxAuiNotebookEx* m_pAuiNotebook;
 
 	DECLARE_EVENT_TABLE();
 	void OnEraseBackground(wxEraseEvent& event);

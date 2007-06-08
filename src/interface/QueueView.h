@@ -101,7 +101,6 @@ protected:
 	void UpdateStatusLinePositions();
 	void CalculateQueueSize();
 	void DisplayQueueSize();
-	void DisplayNumberQueuedFiles();
 	void SaveQueue();
 	void LoadQueue();
 	bool ShouldUseBinaryMode(wxString filename);
@@ -138,7 +137,6 @@ protected:
 
 	wxLongLong m_totalQueueSize;
 	int m_filesWithUnknownSize;
-	int m_queuedFiles;
 
 	CMainFrame* m_pMainFrame;
 	CAsyncRequestQueue* m_pAsyncRequestQueue;
