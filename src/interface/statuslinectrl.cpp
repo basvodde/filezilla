@@ -29,6 +29,7 @@ CStatusLineCtrl::CStatusLineCtrl(CQueueView* pParent, const t_EngineData* const 
 	
 	m_transferStatusTimer.SetOwner(this, TRANSFERSTATUS_TIMER_ID);
 
+	m_madeProgress = false;
 	m_pParent = pParent;
 	m_pStatus = 0;
 	m_lastOffset = -1;
@@ -170,6 +171,9 @@ void CStatusLineCtrl::SetTransferStatus(const CTransferStatus* pStatus)
 			*m_pStatus = *pStatus;
 
 		m_lastOffset = pStatus->currentOffset;
+
+		if (!m_madeProgress && pStatus->currentOffset - pStatus->startOffset > 16384)
+			m_madeProgress = true;
 
 		if (!m_transferStatusTimer.IsRunning())
 			m_transferStatusTimer.Start(100);

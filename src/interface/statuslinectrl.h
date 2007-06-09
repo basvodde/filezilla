@@ -15,6 +15,9 @@ public:
 	wxLongLong GetTotalSize() const { return m_pStatus ? m_pStatus->totalSize : -1; }
 	wxLongLong GetSpeed() const;
 
+	// Returns true if some progress has been made since transfer started
+	bool MadeProgress() const { return m_madeProgress; }
+
 protected:
 	void DrawRightAlignedText(wxDC& dc, wxString text, int x, int y);
 	void DrawProgressBar(wxDC& dc, int x, int y, int height);
@@ -29,6 +32,8 @@ protected:
 	static int m_fieldOffsets[4];
 	static wxCoord m_textHeight;
 	static bool m_initialized;
+
+	bool m_madeProgress;
 
 	wxLongLong m_lastOffset; // Stores the last transfer offset so that the total queue size can be accurately calculated.
 

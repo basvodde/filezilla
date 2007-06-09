@@ -762,6 +762,7 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 		// Queue is not interested in disconnect notifications
 		return;
 	}
+	wxASSERT(pNotification->commandId != cmd_none);
 
 	// Cancel pending requests
 	m_pAsyncRequestQueue->ClearPending(engineData.pEngine);
@@ -808,8 +809,13 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 			ResetEngine(engineData, true);
 			return;
 		}
-		else if (!IncreaseErrorCount(engineData))
-			return;
+		// Increase error count only if item didn't make any progress. This keeps
+		// user interaction at a minimum if connection is unstable.
+		else if (!engineData.pStatusLineCtrl || !engineData.pStatusLineCtrl->MadeProgress())
+		{
+			if (!IncreaseErrorCount(engineData))
+				return;
+		}
 		if (replyCode & FZ_REPLY_DISCONNECTED)
 			engineData.state = t_EngineData::connect;
 		break;
