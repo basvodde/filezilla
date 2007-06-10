@@ -1894,7 +1894,10 @@ int CSftpControlSocket::RemoveDirParseResponse(bool successful, const wxString& 
 	}
 
 	if (!successful)
+	{
 		ResetOperation(FZ_REPLY_ERROR);
+		return FZ_REPLY_ERROR;
+	}
 
 	CSftpRemoveDirOpData *pData = static_cast<CSftpRemoveDirOpData *>(m_pCurOpData);
 	if (pData->path.IsEmpty())
