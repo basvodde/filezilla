@@ -658,7 +658,7 @@ bool CQueueView::TryStartNextTransfer()
 		{
 			wxFileName fn(newFileItem->GetLocalFile(), _T(""));
 			wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
-			if (RemoveItem(newFileItem))
+			if (RemoveItem(newFileItem, true))
 			{
 				// Server got deleted. Unfortunately we have to start over now
 				if (m_serverList.empty())
@@ -909,7 +909,7 @@ void CQueueView::ResetEngine(t_EngineData& data, const bool removeFileItem)
 		}
 
 		if (removeFileItem)
-			RemoveItem(data.pItem);
+			RemoveItem(data.pItem, true);
 		else
 			ResetItem(data.pItem);
 		data.pItem = 0;
@@ -936,7 +936,7 @@ void CQueueView::ResetEngine(t_EngineData& data, const bool removeFileItem)
 	CheckQueueState();
 }
 
-bool CQueueView::RemoveItem(CQueueItem* item)
+bool CQueueView::RemoveItem(CQueueItem* item, bool destroy)
 {
 	// RemoveItem assumes that the item has already been removed from all engines
 
@@ -959,70 +959,8 @@ bool CQueueView::RemoveItem(CQueueItem* item)
 			wxASSERT(m_totalQueueSize >= 0);
 		}
 	}
-	if (item->GetType() == QueueItemType_File || item->GetType() == QueueItemType_Folder)
-	{
-		wxASSERT(m_fileCount > 0);
-		m_fileCount--;
-		m_fileCountChanged = true;
-		DisplayNumberQueuedFiles();
-	}
-	else if (item->GetType() == QueueItemType_FolderScan)
-	{
-		wxASSERT(m_folderScanCount > 0);
-		m_folderScanCount--;
-		m_folderScanCountChanged = true;
-		DisplayNumberQueuedFiles();
-	}
-
-	const int index = GetItemIndex(item);
-
-	CQueueItem* topLevelItem = item->GetTopLevelItem();
-
-	int count = topLevelItem->GetChildrenCount(true);
-	topLevelItem->RemoveChild(item);
-
-	bool didRemoveParent;
-
-	int oldCount = m_itemCount;
-	if (!topLevelItem->GetChild(0))
-	{
-		std::vector<CServerItem*>::iterator iter;
-		for (iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
-		{
-			if (*iter == topLevelItem)
-				break;
-		}
-		if (iter != m_serverList.end())
-			m_serverList.erase(iter);
-
-		UpdateSelections_ItemRangeRemoved(GetItemIndex(topLevelItem), count + 1);
-
-		delete topLevelItem;
-
-		m_itemCount -= count + 1;
-		SetItemCount(m_itemCount);
-
-		didRemoveParent = true;
-	}
-	else
-	{
-		count -= topLevelItem->GetChildrenCount(true);
-
-		UpdateSelections_ItemRangeRemoved(index, count);
-
-		m_itemCount -= count;
-		SetItemCount(m_itemCount);
-
-		didRemoveParent = false;
-	}
-
-	if (oldCount > m_itemCount)
-	{
-		bool eraseBackground = GetTopItem() + GetCountPerPage() + 1 >= m_itemCount;
-		Refresh(eraseBackground);
-		if (eraseBackground)
-			Update();
-	}
+	
+	bool didRemoveParent = CQueueViewBase::RemoveItem(item, destroy);
 
 	UpdateStatusLinePositions();
 
@@ -1393,7 +1331,7 @@ void CQueueView::OnFolderThreadComplete(wxCommandEvent& event)
 	CFolderScanItem* pItem = m_queuedFolders[1].front();
 	m_queuedFolders[1].pop_front();
 
-	RemoveItem(pItem);
+	RemoveItem(pItem, true);
 
 	m_pFolderProcessingThread->Wait();
 	delete m_pFolderProcessingThread;
@@ -1817,7 +1755,7 @@ void CQueueView::OnRemoveSelected(wxCommandEvent& event)
 		if (!pTopLevelItem->GetChild(1))
 			// Parent will get deleted, skip it so it doesn't get deleted twice.
 			skip = GetItemIndex(pTopLevelItem);
-		RemoveItem(pItem);
+		RemoveItem(pItem, true);
 	}
 
 	m_waitStatusLineUpdate = false;
@@ -1866,7 +1804,7 @@ bool CQueueView::StopItem(CServerItem* pServerItem)
 			// Unknown type, shouldn't be here.
 			wxASSERT(false);
 
-		if (RemoveItem(pItem))
+		if (RemoveItem(pItem, true))
 			return true;
 	}
 

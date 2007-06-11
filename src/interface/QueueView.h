@@ -89,7 +89,7 @@ protected:
 	void ResetEngine(t_EngineData& data, const bool removeFileItem);
 	void ResetItem(CFileItem* item);
 	
-	bool RemoveItem(CQueueItem* item);
+	virtual bool RemoveItem(CQueueItem* item, bool destroy);
 
 	// Stops processing of given item
 	// Returns true on success, false if it would block

@@ -72,7 +72,7 @@ unsigned int CQueueItem::GetChildrenCount(bool recursive)
 	return m_visibleOffspring;
 }
 
-bool CQueueItem::RemoveChild(CQueueItem* pItem)
+bool CQueueItem::RemoveChild(CQueueItem* pItem, bool destroy /*=true*/)
 {
 	int oldVisibleOffspring = m_visibleOffspring;
 	std::vector<CQueueItem*>::iterator iter;
@@ -83,7 +83,8 @@ bool CQueueItem::RemoveChild(CQueueItem* pItem)
 		{
 			m_visibleOffspring -= 1;
 			m_visibleOffspring -= pItem->m_visibleOffspring;
-			delete pItem;
+			if (destroy)
+				delete pItem;
 			m_children.erase(iter);
 
 			deleted = true;
@@ -91,7 +92,7 @@ bool CQueueItem::RemoveChild(CQueueItem* pItem)
 		}
 
 		int visibleOffspring = (*iter)->m_visibleOffspring;
-		if ((*iter)->RemoveChild(pItem))
+		if ((*iter)->RemoveChild(pItem, destroy))
 		{
 			m_visibleOffspring -= visibleOffspring - (*iter)->m_visibleOffspring;
 			if (!(*iter)->m_children.size())
@@ -450,7 +451,7 @@ CFileItem* CServerItem::GetIdleChild(bool immediateOnly, enum TransferDirection 
 	return 0;
 }
 
-bool CServerItem::RemoveChild(CQueueItem* pItem)
+bool CServerItem::RemoveChild(CQueueItem* pItem, bool destroy /*=true*/)
 {
 	if (!pItem)
 		return false;
@@ -461,7 +462,7 @@ bool CServerItem::RemoveChild(CQueueItem* pItem)
 		RemoveFileItemFromList(pFileItem);
 	}
 
-	return CQueueItem::RemoveChild(pItem);
+	return CQueueItem::RemoveChild(pItem, destroy);
 }
 
 void CServerItem::QueueImmediateFiles()
@@ -1082,6 +1083,76 @@ void CQueueViewBase::InsertItem(CServerItem* pServerItem, CQueueItem* pItem)
 		m_folderScanCount++;
 		m_folderScanCountChanged = true;
 	}
+}
+
+bool CQueueViewBase::RemoveItem(CQueueItem* pItem, bool destroy)
+{
+	if (pItem->GetType() == QueueItemType_File || pItem->GetType() == QueueItemType_Folder)
+	{
+		wxASSERT(m_fileCount > 0);
+		m_fileCount--;
+		m_fileCountChanged = true;
+		DisplayNumberQueuedFiles();
+	}
+	else if (pItem->GetType() == QueueItemType_FolderScan)
+	{
+		wxASSERT(m_folderScanCount > 0);
+		m_folderScanCount--;
+		m_folderScanCountChanged = true;
+		DisplayNumberQueuedFiles();
+	}
+
+	const int index = GetItemIndex(pItem);
+
+	CQueueItem* topLevelItem = pItem->GetTopLevelItem();
+
+	int count = topLevelItem->GetChildrenCount(true);
+	topLevelItem->RemoveChild(pItem, destroy);
+
+	bool didRemoveParent;
+
+	int oldCount = m_itemCount;
+	if (!topLevelItem->GetChild(0))
+	{
+		std::vector<CServerItem*>::iterator iter;
+		for (iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
+		{
+			if (*iter == topLevelItem)
+				break;
+		}
+		if (iter != m_serverList.end())
+			m_serverList.erase(iter);
+
+		UpdateSelections_ItemRangeRemoved(GetItemIndex(topLevelItem), count + 1);
+
+		delete topLevelItem;
+
+		m_itemCount -= count + 1;
+		SetItemCount(m_itemCount);
+
+		didRemoveParent = true;
+	}
+	else
+	{
+		count -= topLevelItem->GetChildrenCount(true);
+
+		UpdateSelections_ItemRangeRemoved(index, count);
+
+		m_itemCount -= count;
+		SetItemCount(m_itemCount);
+
+		didRemoveParent = false;
+	}
+
+	if (oldCount > m_itemCount)
+	{
+		bool eraseBackground = GetTopItem() + GetCountPerPage() + 1 >= m_itemCount;
+		Refresh(eraseBackground);
+		if (eraseBackground)
+			Update();
+	}
+
+	return didRemoveParent;
 }
 
 // ------

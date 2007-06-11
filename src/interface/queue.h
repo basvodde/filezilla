@@ -51,7 +51,8 @@ public:
 	CQueueItem* GetChild(unsigned int item, bool recursive = true);
 	CQueueItem* GetParent() { return m_parent; }
 	const CQueueItem* GetParent() const { return m_parent; }
-	virtual bool RemoveChild(CQueueItem* pItem); // Removes a child item with is somewhere in the tree of children.
+	void SetParent(CQueueItem* parent) { m_parent = parent; }
+	virtual bool RemoveChild(CQueueItem* pItem, bool destroy = true); // Removes a child item with is somewhere in the tree of children.
 	virtual bool TryRemoveAll(); // Removes a inactive childrens, queues active children for removal.
 								 // Returns true if item can be removed itself
 	CQueueItem* GetTopLevelItem();
@@ -86,7 +87,7 @@ public:
 	virtual void AddChild(CQueueItem* pItem);
 
 	CFileItem* GetIdleChild(bool immadiateOnly, enum TransferDirection direction);
-	virtual bool RemoveChild(CQueueItem* pItem); // Removes a child item with is somewhere in the tree of children
+	virtual bool RemoveChild(CQueueItem* pItem, bool destroy = true); // Removes a child item with is somewhere in the tree of children
 	wxLongLong GetTotalSize(int& filesWithUnknownSize, int& queuedFiles, int& folderScanCount) const;
 
 	void QueueImmediateFiles();
@@ -250,6 +251,8 @@ protected:
 	CServerItem* CreateServerItem(const CServer& server);
 
 	void InsertItem(CServerItem* pServerItem, CQueueItem* pItem);
+
+	virtual bool RemoveItem(CQueueItem* pItem, bool destroy);
 
 	// Gets item with given index
 	CQueueItem* GetQueueItem(unsigned int item);
