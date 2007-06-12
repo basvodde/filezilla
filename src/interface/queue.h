@@ -263,6 +263,8 @@ protected:
 	virtual wxString OnGetItemText(long item, long column) const;
 	virtual int OnGetItemImage(long item) const;
 
+	void RefreshItem(const CQueueItem* pItem);
+
 	// Has to be called after adding or removing items. Also updates
 	// item count and selections.
 	void CommitChanges();

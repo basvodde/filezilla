@@ -1155,6 +1155,14 @@ bool CQueueViewBase::RemoveItem(CQueueItem* pItem, bool destroy)
 	return didRemoveParent;
 }
 
+void CQueueViewBase::RefreshItem(const CQueueItem* pItem)
+{
+	wxASSERT(pItem);
+	int index = GetItemIndex(pItem);
+
+	wxListCtrl::RefreshItem(index);
+}
+
 // ------
 // CQueue
 // ------

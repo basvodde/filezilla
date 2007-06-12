@@ -799,6 +799,17 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 			if (replyCode & FZ_REPLY_PASSWORDFAILED)
 				CLoginManager::Get().CachedPasswordFailed(engineData.lastServer);
 
+			if ((replyCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)
+				engineData.pItem->m_statusMessage = _T("");
+			else if (replyCode & FZ_REPLY_PASSWORDFAILED)
+				engineData.pItem->m_statusMessage = _("Incorrect password");
+			else if ((replyCode & FZ_REPLY_TIMEOUT) == FZ_REPLY_TIMEOUT)
+				engineData.pItem->m_statusMessage = _("Timeout");
+			else if (replyCode & FZ_REPLY_DISCONNECTED)
+				engineData.pItem->m_statusMessage = _("Disconnected from server");
+			else
+				engineData.pItem->m_statusMessage = _("Connection attempt failed");
+
 			if (!IncreaseErrorCount(engineData))
 				return;
 		}
@@ -813,6 +824,14 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 		// user interaction at a minimum if connection is unstable.
 		else if (!engineData.pStatusLineCtrl || !engineData.pStatusLineCtrl->MadeProgress())
 		{
+			if ((replyCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)
+				engineData.pItem->m_statusMessage = _T("");
+			else if ((replyCode & FZ_REPLY_TIMEOUT) == FZ_REPLY_TIMEOUT)
+				engineData.pItem->m_statusMessage = _("Timeout");
+			else if (replyCode & FZ_REPLY_DISCONNECTED)
+				engineData.pItem->m_statusMessage = _("Disconnected from server");
+			else
+				engineData.pItem->m_statusMessage = _("Could not start transfer");
 			if (!IncreaseErrorCount(engineData))
 				return;
 		}
@@ -974,6 +993,7 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 		if (engineData.state == t_EngineData::disconnect)
 		{
 			engineData.pItem->m_statusMessage = _("Disconnecting from previous server");
+			RefreshItem(engineData.pItem);
 			if (engineData.pEngine->Command(CDisconnectCommand()) == FZ_REPLY_WOULDBLOCK)
 				return;
 
@@ -984,6 +1004,8 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 
 		if (engineData.state == t_EngineData::askpassword)
 		{
+			engineData.pItem->m_statusMessage = _("Waiting for password");
+			RefreshItem(engineData.pItem);
 			if (m_waitingForPassword.empty())
 			{
 				wxCommandEvent evt(fzEVT_ASKFORPASSWORD);
@@ -996,6 +1018,7 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 		if (engineData.state == t_EngineData::connect)
 		{
 			engineData.pItem->m_statusMessage = _("Connecting");
+			RefreshItem(engineData.pItem);
 
 			int res = engineData.pEngine->Command(CConnectCommand(engineData.lastServer));
 			
@@ -1032,6 +1055,7 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 			CFileItem* fileItem = engineData.pItem;
 
 			fileItem->m_statusMessage = _("Transferring");
+			RefreshItem(engineData.pItem);
 
 			int res = engineData.pEngine->Command(CFileTransferCommand(fileItem->GetLocalFile(), fileItem->GetRemotePath(),
 												fileItem->GetRemoteFile(), fileItem->Download(), fileItem->m_transferSettings));
@@ -1061,6 +1085,7 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 			CFileItem* fileItem = engineData.pItem;
 
 			fileItem->m_statusMessage = _("Creating directory");
+			RefreshItem(engineData.pItem);
 
 			int res = engineData.pEngine->Command(CMkdirCommand(fileItem->GetRemotePath()));
 
@@ -1314,6 +1339,7 @@ void CQueueView::ProcessUploadFolderItems()
 		pItem->m_statusMessage = _("Scanning for files to add to queue");
 	else
 		pItem->m_statusMessage = _("Scanning for files to upload");
+	RefreshItem(pItem);
 	pItem->m_active = true;
 	m_pFolderProcessingThread = new CFolderProcessingThread(this, pItem);
 	m_pFolderProcessingThread->Create();
@@ -1825,7 +1851,7 @@ void CQueueView::OnFolderThreadFiles(wxCommandEvent& event)
 
 	pItem->m_count += entryList.size();
 	pItem->m_statusMessage = wxString::Format(_("%d files added to queue"), pItem->GetCount());
-	RefreshItem(GetItemIndex(pItem));
+	RefreshItem(pItem);
 }
 
 void CQueueView::SetDefaultFileExistsAction(int action, const enum TransferDirection direction)
