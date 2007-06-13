@@ -32,7 +32,7 @@ CTransferSocket::CTransferSocket(CFileZillaEnginePrivate *pEngine, CFtpControlSo
 	m_pTransferBuffer = 0;
 	m_transferBufferLen = 0;
 		
-	m_transferEnd = false;
+	m_transferEndReason = none;
 	m_binaryMode = true;
 
 	m_onCloseCalled = false;
@@ -45,8 +45,8 @@ CTransferSocket::CTransferSocket(CFileZillaEnginePrivate *pEngine, CFtpControlSo
 
 CTransferSocket::~CTransferSocket()
 {
-	m_transferEnd = true;
-
+	if (m_transferEndReason == none)
+		m_transferEndReason = successful;
 	delete m_pSocketServer;
 	m_pSocketServer = 0;
 	delete m_pSocket;
@@ -438,9 +438,9 @@ void CTransferSocket::TransferEnd(enum TransferEndReason reason)
 {
 	m_pControlSocket->LogMessage(::Debug_Verbose, _T("CTransferSocket::TransferEnd(%d)"), reason);
 
-	if (m_transferEnd)
+	if (m_transferEndReason != none)
 		return;
-	m_transferEnd = true;
+	m_transferEndReason = reason;
 
 	delete m_pSocketServer;
 	m_pSocketServer = 0;
@@ -459,7 +459,7 @@ void CTransferSocket::TransferEnd(enum TransferEndReason reason)
 	delete m_pSocket;
 	m_pSocket = 0;
 
-	m_pEngine->SendEvent(engineTransferEnd, reason);
+	m_pEngine->SendEvent(engineTransferEnd);
 }
 
 wxSocketServer* CTransferSocket::CreateSocketServer()
@@ -604,7 +604,7 @@ bool CTransferSocket::CheckGetNextReadBuffer()
 
 void CTransferSocket::OnIOThreadEvent(CIOThreadEvent& event)
 {
-	if (!m_bActive || m_transferEnd)
+	if (!m_bActive || m_transferEndReason != none)
 		return;
 
 	if (m_transferMode == download)

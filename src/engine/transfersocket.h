@@ -34,6 +34,8 @@ public:
 
 	bool m_binaryMode;
 
+	enum TransferEndReason GetTransferEndreason() const { return m_transferEndReason; }
+
 protected:
 	bool CheckGetNextWriteBuffer();
 	bool CheckGetNextReadBuffer();
@@ -64,7 +66,7 @@ protected:
 	CFtpControlSocket *m_pControlSocket;
 
 	bool m_bActive;
-	bool m_transferEnd; // Set to true if TransferEnd was called
+	enum TransferEndReason m_transferEndReason;
 
 	enum TransferMode m_transferMode;
 

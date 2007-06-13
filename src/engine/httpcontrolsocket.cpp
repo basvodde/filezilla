@@ -530,7 +530,7 @@ int CHttpControlSocket::FileTransferParseResponse(char* p, unsigned int len)
 
 	if (!m_pTransferStatus)
 	{
-		InitTransferStatus(pData->m_totalSize.GetLo() + ((wxFileOffset)pData->m_totalSize.GetHi() << 32), 0);
+		InitTransferStatus(pData->m_totalSize.GetLo() + ((wxFileOffset)pData->m_totalSize.GetHi() << 32), 0, false);
 		SetTransferStatusStartTime();
 	}
 

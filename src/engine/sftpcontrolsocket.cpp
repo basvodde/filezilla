@@ -1496,14 +1496,14 @@ int CSftpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 			wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
 		}
 
-		InitTransferStatus(pData->remoteFileSize, pData->resume ? pData->localFileSize : 0);
+		InitTransferStatus(pData->remoteFileSize, pData->resume ? pData->localFileSize : 0, false);
 		cmd += _T("get ");
 		cmd += QuoteFilename(pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath)) + _T(" ");
 		cmd += QuoteFilename(pData->localFile);
 	}
 	else
 	{
-		InitTransferStatus(pData->localFileSize, pData->resume ? pData->remoteFileSize : 0);
+		InitTransferStatus(pData->localFileSize, pData->resume ? pData->remoteFileSize : 0, false);
 		cmd += _T("put ");
 		cmd += QuoteFilename(pData->localFile) + _T(" ");
 		cmd += QuoteFilename(pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath));

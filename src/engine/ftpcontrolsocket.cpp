@@ -236,6 +236,10 @@ void CFtpControlSocket::ParseLine(wxString line)
 				CServerCapabilities::SetCapability(*m_pCurrentServer, mfmt_command, yes);
 			else if (up == _T(" PRET") || up.Left(6) == _T(" PRET "))
 				CServerCapabilities::SetCapability(*m_pCurrentServer, pret_command, yes);
+			else if (up == _T(" MDTM") || up.Left(6) == _T(" MDTM "))
+				CServerCapabilities::SetCapability(*m_pCurrentServer, mdtm_command, yes);
+			else if (up == _T(" SIZE") || up.Left(6) == _T(" SIZE "))
+				CServerCapabilities::SetCapability(*m_pCurrentServer, size_command, yes);
 		}
 		else if (pData->opState == LOGON_WELCOME)
 		{
@@ -889,7 +893,7 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 	pData->m_pDirectoryListingParser = new CDirectoryListingParser(this, *m_pCurrentServer);
 	m_pTransferSocket->m_pDirectoryListingParser = pData->m_pDirectoryListingParser;
 
-	InitTransferStatus(-1, 0);
+	InitTransferStatus(-1, 0, true);
 
 	pData->opState = list_waittransfer;
 #if 0 // Disabled for now
@@ -974,7 +978,7 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 		pData->m_pDirectoryListingParser = new CDirectoryListingParser(this, *m_pCurrentServer);
 		m_pTransferSocket->m_pDirectoryListingParser = pData->m_pDirectoryListingParser;
 
-		InitTransferStatus(-1, 0);
+		InitTransferStatus(-1, 0, true);
 
 		pData->opState = list_waittransfer;
 #if 0 // Disabled for now
@@ -1944,7 +1948,7 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 				else
 					pData->resumeOffset = 0;
 
-				InitTransferStatus(pData->remoteFileSize, startOffset);
+				InitTransferStatus(pData->remoteFileSize, startOffset, false);
 			}
 			else
 			{
@@ -1979,7 +1983,7 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 					startOffset = 0;
 
 				wxFileOffset len = pFile->Length();
-				InitTransferStatus(len, startOffset);
+				InitTransferStatus(len, startOffset, false);
 			}
 			pData->pIOThread = new CIOThread;
 			if (!pData->pIOThread->Create(pFile, !pData->download, pData->binary))
@@ -2019,44 +2023,34 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 	return FZ_REPLY_WOULDBLOCK;
 }
 
-void CFtpControlSocket::TransferEnd(enum TransferEndReason reason)
+void CFtpControlSocket::TransferEnd()
 {
-	LogMessage(Debug_Verbose, _T("CFtpControlSocket::TransferEnd(%d)"), reason);
+	LogMessage(Debug_Verbose, _T("CFtpControlSocket::TransferEnd()"));
 
 	// If m_pTransferSocket is zero, the message was sent by the previous command.
 	// We can safely ignore it.
 	// It does not cause problems, since before creating the next transfer socket, other
 	// messages which were added to the queue later than this one will be processed first.
-	if (!m_pCurOpData || !m_pTransferSocket)
+	if (!m_pCurOpData || !m_pTransferSocket || GetCurrentCommandId() != cmd_rawtransfer)
 	{
-		LogMessage(Debug_Verbose, _T("TransferEnd message from previous operation"), reason);
+		LogMessage(Debug_Verbose, _T("Call to TransferEnd at unusual time, ignoring"));
 		return;
 	}
 
-	if (GetCurrentCommandId() != cmd_rawtransfer)
+	enum TransferEndReason reason = m_pTransferSocket->GetTransferEndreason();
+	if (reason == none)
 	{
 		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Call to TransferEnd at unusual time"));
-		ResetOperation(FZ_REPLY_ERROR);
-		return;
-	}
-
-	// Even if reason indicates a failure, don't reset operation
-	// yet, wait for the reply to the LIST/RETR/... commands
-
-	CRawTransferOpData *pData = static_cast<CRawTransferOpData *>(m_pCurOpData);
-	if (pData->opState < rawtransfer_transfer || pData->opState == rawtransfer_waittransfer || pData->opState == rawtransfer_waittransferpre)
-	{
-		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Call to TransferEnd at unusual time"));
-		ResetOperation(FZ_REPLY_ERROR);
 		return;
 	}
 
 	if (reason == successful)
 		SetAlive();
 
+	CRawTransferOpData *pData = static_cast<CRawTransferOpData *>(m_pCurOpData);
 	pData->pOldData->transferEndReason = reason;
 
-	switch (pData->opState)
+	switch (m_pCurOpData->opState)
 	{
 	case rawtransfer_transfer:
 		pData->opState = rawtransfer_waittransferpre;
@@ -2068,8 +2062,8 @@ void CFtpControlSocket::TransferEnd(enum TransferEndReason reason)
 		ResetOperation((reason == successful) ? FZ_REPLY_OK : FZ_REPLY_ERROR);
 		break;
 	default:
-		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Unknown op state"));
-		ResetOperation(FZ_REPLY_ERROR);
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("TransferEnd at unusual op state, ignoring"));
+		break;
 	}
 }
 
@@ -3243,7 +3237,7 @@ int CFtpControlSocket::TransferParseResponse()
 		}
 		else
 		{
-			if (pData->pOldData->transferEndReason)
+			if (pData->pOldData->transferEndReason != successful)
 			{
 				error = true;
 				break;

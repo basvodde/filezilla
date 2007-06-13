@@ -21,6 +21,8 @@ enum capabilityNames
 	mlsd_command,
 	mfmt_command,
 	pret_command,
+	mdtm_command,
+	size_command,
 
 	mode_z_support,
 

@@ -120,7 +120,7 @@ void CFileZillaEnginePrivate::OnEngineEvent(wxFzEngineEvent &event)
 		break;
 	case engineTransferEnd:
 		if (m_pControlSocket)
-			m_pControlSocket->TransferEnd((enum TransferEndReason)event.data);
+			m_pControlSocket->TransferEnd();
 	default:
 		break;
 	}

@@ -78,6 +78,7 @@ public:
 
 enum TransferEndReason
 {
+	none,
 	successful,
 	timeout,
 	transfer_failure,					// Error during the transfer, like lost connection lack of diskspace and so on
@@ -118,11 +119,11 @@ public:
 	// from the engine.
 	enum Command GetCurrentCommandId() const;
 
-	virtual void TransferEnd(enum TransferEndReason reason) { }
+	virtual void TransferEnd() { }
 
 	virtual bool SetAsyncRequestReply(CAsyncRequestNotification *pNotification) = 0;
 
-	void InitTransferStatus(wxFileOffset totalSize, wxFileOffset startOffset);
+	void InitTransferStatus(wxFileOffset totalSize, wxFileOffset startOffset, bool list);
 	void SetTransferStatusStartTime();
 	void UpdateTransferStatus(wxFileOffset transferredBytes);
 	void ResetTransferStatus();

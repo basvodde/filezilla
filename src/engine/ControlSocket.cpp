@@ -232,7 +232,7 @@ void CControlSocket::ResetTransferStatus()
 	m_transferStatusSendState = 0;
 }
 
-void CControlSocket::InitTransferStatus(wxFileOffset totalSize, wxFileOffset startOffset)
+void CControlSocket::InitTransferStatus(wxFileOffset totalSize, wxFileOffset startOffset, bool list)
 {
 	if (startOffset < 0)
 		startOffset = 0;
@@ -240,6 +240,7 @@ void CControlSocket::InitTransferStatus(wxFileOffset totalSize, wxFileOffset sta
 	delete m_pTransferStatus;
 	m_pTransferStatus = new CTransferStatus();
 
+	m_pTransferStatus->list = list;
 	m_pTransferStatus->totalSize = totalSize;
 	m_pTransferStatus->startOffset = startOffset;
 	m_pTransferStatus->currentOffset = startOffset;
