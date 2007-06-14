@@ -139,9 +139,10 @@ int CControlSocket::ResetOperation(int nErrorCode)
 					else
 					{
 						CDirectoryCache cache;
-						cache.UpdateFile(*m_pCurrentServer, pData->remotePath, pData->remoteFile, true, CDirectoryCache::file, (nErrorCode == FZ_REPLY_OK) ? pData->localFileSize : -1);
+						bool updated = cache.UpdateFile(*m_pCurrentServer, pData->remotePath, pData->remoteFile, true, CDirectoryCache::file, (nErrorCode == FZ_REPLY_OK) ? pData->localFileSize : -1);
 
-						m_pEngine->SendDirectoryListingNotification(pData->remotePath, false, true, false);
+						if (updated)
+							m_pEngine->SendDirectoryListingNotification(pData->remotePath, false, true, false);
 					}
 				}
 				if ((nErrorCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)

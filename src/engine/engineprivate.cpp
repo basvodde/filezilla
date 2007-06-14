@@ -545,7 +545,8 @@ void CFileZillaEnginePrivate::SendDirectoryListingNotification(const CServerPath
 	const CDirectoryCache cache;
 	
 	CTimeEx changeTime;
-	cache.GetChangeTime(changeTime, *pOwnServer, path);
+	if (!cache.GetChangeTime(changeTime, *pOwnServer, path))
+		return;
 	
 	CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(path, !onList);
 	AddNotification(pNotification);

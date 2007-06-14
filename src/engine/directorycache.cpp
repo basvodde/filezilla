@@ -293,6 +293,8 @@ bool CDirectoryCache::InvalidateFile(const CServer &server, const CServerPath &p
 
 bool CDirectoryCache::UpdateFile(const CServer &server, const CServerPath &path, const wxString& filename, bool mayCreate, enum Filetype type /*=file*/, int size /*=-1*/)
 {
+	bool updated = false;
+
 	for (tCacheIter iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
 	{
 		CCacheEntry &entry = *iter;
@@ -327,9 +329,11 @@ bool CDirectoryCache::UpdateFile(const CServer &server, const CServerPath &path,
 		else
 			entry.listing.m_hasUnsureEntries |= UNSURE_CHANGE;
 		entry.modificationTime = CTimeEx::Now();
+
+		updated = true;
 	}
 
-	return true;
+	return updated;
 }
 
 bool CDirectoryCache::RemoveFile(const CServer &server, const CServerPath &path, const wxString& filename)

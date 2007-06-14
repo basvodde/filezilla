@@ -1665,25 +1665,48 @@ int CFtpControlSocket::FileTransferParseResponse()
 	switch (pData->opState)
 	{
 	case filetransfer_size:
-		pData->opState = filetransfer_mdtm;
-		if (m_Response.Left(4) == _T("213 ") && m_Response.Length() > 4)
+		if (code != 2 && code != 3)
 		{
-			wxString str = m_Response.Mid(4);
-			wxFileOffset size = 0;
-			const wxChar *buf = str.c_str();
-			while (*buf)
+			if (CServerCapabilities::GetCapability(*m_pCurrentServer, size_command) == yes ||
+				!m_Response.Mid(4).CmpNoCase(_T("file not found")) ||
+				(pData->remotePath.FormatFilename(pData->remoteFile).Lower().Find(_T("file not found")) == -1 &&
+				 m_Response.Lower().Find(_T("file not found")) != -1))
 			{
-				if (*buf < '0' || *buf > '9')
-					break;
+				// Server supports SIZE command but command failed. Most likely MDTM will fail as well, so
+				// skip it.
+				pData->opState = filetransfer_resumetest;
 
-				size *= 10;
-				size += *buf - '0';
-				buf++;
+				int res = CheckOverwriteFile();
+				if (res != FZ_REPLY_OK)
+					return res;
 			}
-			pData->remoteFileSize = size;
+			else
+				pData->opState = filetransfer_mdtm;
 		}
-		else if (code == 2 || code == 3)
-			LogMessage(Debug_Info, _T("Invalid SIZE reply"));
+		else
+		{
+			pData->opState = filetransfer_mdtm;
+			if (m_Response.Left(4) == _T("213 ") && m_Response.Length() > 4)
+			{
+				if (CServerCapabilities::GetCapability(*m_pCurrentServer, size_command) == unknown)
+					CServerCapabilities::SetCapability(*m_pCurrentServer, size_command, yes);
+				wxString str = m_Response.Mid(4);
+				wxFileOffset size = 0;
+				const wxChar *buf = str.c_str();
+				while (*buf)
+				{
+					if (*buf < '0' || *buf > '9')
+						break;
+
+					size *= 10;
+					size += *buf - '0';
+					buf++;
+				}
+				pData->remoteFileSize = size;
+			}
+			else
+				LogMessage(Debug_Info, _T("Invalid SIZE reply"));
+		}
 		break;
 	case filetransfer_mdtm:
 		pData->opState = filetransfer_resumetest;
