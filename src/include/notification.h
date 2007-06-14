@@ -202,6 +202,7 @@ public:
 	wxFileOffset totalSize;		// Total size of the file to transfer, -1 if unknown
 	wxFileOffset startOffset;
 	wxFileOffset currentOffset;
+	bool list;
 };
 
 class CTransferStatusNotification : public CNotification
