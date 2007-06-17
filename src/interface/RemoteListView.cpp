@@ -1901,10 +1901,14 @@ void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 
 	if (m_pChmodDlg->ShowModal() != wxID_OK)
 	{
-		m_pChmodDlg->Destroy();
-		m_pChmodDlg = 0;
-		return;
+		if (m_pChmodDlg)
+		{
+			m_pChmodDlg->Destroy();
+			m_pChmodDlg = 0;
+		}
 	}
+	if (!m_pChmodDlg)
+		return;
 
 	const int applyType = m_pChmodDlg->GetApplyType();
 
