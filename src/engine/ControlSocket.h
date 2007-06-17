@@ -149,6 +149,8 @@ public:
 
 	CFileZillaEnginePrivate* GetEngine() { return m_pEngine; }
 
+	// Only called from the engine, see there for description
+	void InvalidateCurrentWorkingDir(const CServerPath& path);
 
 protected:
 	virtual int DoClose(int nErrorCode = FZ_REPLY_DISCONNECTED);
@@ -223,6 +225,8 @@ protected:
 	// -----------------------
 	// End cache locking stuff
 	// -----------------------
+
+	bool m_invalidateCurrentPath;
 
 	DECLARE_EVENT_TABLE();
 	void OnTimer(wxTimerEvent& event);

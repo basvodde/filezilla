@@ -685,3 +685,26 @@ int CFileZillaEnginePrivate::ContinueConnect()
 
 	return res;
 }
+
+void CFileZillaEnginePrivate::InvalidateCurrentWorkingDirs(const CServerPath& path)
+{
+	wxASSERT(m_pControlSocket);
+	const CServer* const pOwnServer = m_pControlSocket->GetCurrentServer();
+	wxASSERT(pOwnServer);
+
+	for (std::list<CFileZillaEnginePrivate*>::iterator iter = m_engineList.begin(); iter != m_engineList.end(); iter++)
+	{
+		if (*iter == this)
+			continue;
+
+		CFileZillaEnginePrivate* pEngine = *iter;
+		if (!pEngine->m_pControlSocket)
+			continue;
+
+		const CServer* const pServer = pEngine->m_pControlSocket->GetCurrentServer();
+		if (!pServer || *pServer != *pOwnServer)
+			continue;
+
+		pEngine->m_pControlSocket->InvalidateCurrentWorkingDir(path);
+	}
+}

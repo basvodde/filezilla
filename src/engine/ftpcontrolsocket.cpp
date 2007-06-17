@@ -2487,6 +2487,14 @@ int CFtpControlSocket::RemoveDirSend(int prevResult /*=FZ_REPLY_OK*/)
 	cache.InvalidateFile(*m_pCurrentServer, pData->path, pData->subDir);
 
 	CPathCache pathCache;
+	CServerPath path = pathCache.Lookup(*m_pCurrentServer, pData->path, pData->subDir);
+	if (path.IsEmpty())
+	{
+		path = pData->path;
+		path.AddSegment(pData->subDir);
+	}
+	m_pEngine->InvalidateCurrentWorkingDirs(path);
+
 	pathCache.InvalidatePath(*m_pCurrentServer, pData->path, pData->subDir);
 
 	if (pData->omitPath)
@@ -2828,10 +2836,23 @@ int CFtpControlSocket::RenameSend(int prevResult /*=FZ_REPLY_OK*/)
 	case rename_rnto:
 		{
 			CDirectoryCache cache;
-			cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile());
+			bool wasDir = false;
+			cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile(), &wasDir);
 			cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetToPath(), pData->m_cmd.GetToFile());
 
 			CPathCache pathCache;
+
+			if (wasDir)
+			{
+				CServerPath path = pathCache.Lookup(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile());
+				if (path.IsEmpty())
+				{
+					path = pData->m_cmd.GetFromPath();
+					path.AddSegment(pData->m_cmd.GetFromFile());
+				}
+				m_pEngine->InvalidateCurrentWorkingDirs(path);
+			}
+
 			pathCache.InvalidatePath(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile());
 			pathCache.InvalidatePath(*m_pCurrentServer, pData->m_cmd.GetToPath(), pData->m_cmd.GetToFile());
 

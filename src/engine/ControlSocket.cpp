@@ -49,6 +49,8 @@ CControlSocket::CControlSocket(CFileZillaEnginePrivate *pEngine)
 	m_timer.SetOwner(this);
 	
 	m_closed = false;
+
+	m_invalidateCurrentPath = false;
 }
 
 CControlSocket::~CControlSocket()
@@ -164,6 +166,12 @@ int CControlSocket::ResetOperation(int nErrorCode)
 	ResetTransferStatus();
 
 	SetWait(false);
+
+	if (m_invalidateCurrentPath)
+	{
+		m_CurrentPath.Clear();
+		m_invalidateCurrentPath = false;
+	}
 
 	return m_pEngine->ResetOperation(nErrorCode);
 }
@@ -730,6 +738,21 @@ void CControlSocket::OnObtainLock(wxCommandEvent& event)
 	SendNextCommand();
 
 	UnlockCache();
+}
+
+void CControlSocket::InvalidateCurrentWorkingDir(const CServerPath& path)
+{
+	wxASSERT(!path.IsEmpty());
+	if (m_CurrentPath.IsEmpty())
+		return;
+
+	if (m_CurrentPath == path || path.IsParentOf(m_CurrentPath, false))
+	{
+		if (m_pCurOpData)
+			m_invalidateCurrentPath = true;
+		else
+			m_CurrentPath.Clear();
+	}
 }
 
 // ------------------

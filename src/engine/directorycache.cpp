@@ -266,7 +266,7 @@ CDirectoryCache::CCacheEntry::CCacheEntry(const CDirectoryCache::CCacheEntry &en
 	parents = entry.parents;
 }
 
-bool CDirectoryCache::InvalidateFile(const CServer &server, const CServerPath &path, const wxString& filename)
+bool CDirectoryCache::InvalidateFile(const CServer &server, const CServerPath &path, const wxString& filename, bool *wasDir /*=false*/)
 {
 	for (tCacheIter iter = m_CacheList.begin(); iter != m_CacheList.end(); iter++)
 	{
@@ -279,6 +279,8 @@ bool CDirectoryCache::InvalidateFile(const CServer &server, const CServerPath &p
 		{
 			if (!filename.CmpNoCase(((const CCacheEntry&)entry).listing[i].name))
 			{
+				if (wasDir)
+					*wasDir = entry.listing[i].dir;
 				entry.listing[i].unsure = true;
 				//if (entry.listing[i].name == filename)
 					//matchCase = true;

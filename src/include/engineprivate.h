@@ -44,6 +44,15 @@ public:
 
 	void SendDirectoryListingNotification(const CServerPath& path, bool onList, bool modified, bool failed);
 
+	// If deleting or renaming a directory, it could be possible that another
+	// engine's CControlSocket instance still has that directory as
+	// current working directory (m_CurrentPath)
+	// Since this would cause problems, this function interate over all engines
+	// connected ot the same server and invalidates the current working 
+	// directories if they match or if it is a subdirectory of the changed
+	// directory.
+	void InvalidateCurrentWorkingDirs(const CServerPath& path);
+
 protected:
 	CFileZillaEnginePrivate();
 	virtual ~CFileZillaEnginePrivate();
