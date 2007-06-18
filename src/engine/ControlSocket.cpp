@@ -381,7 +381,7 @@ int CControlSocket::CheckOverwriteFile()
 	bool found = cache.LookupFile(entry, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath, pData->remoteFile, dirDidExist, matchedCase);
 
 	// Ignore entries with wrong case
-	if (!matchedCase)
+	if (found && !matchedCase)
 		found = false;
 
 	if (!pData->download)
