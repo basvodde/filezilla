@@ -20,7 +20,7 @@ CTransferSocket::CTransferSocket(CFileZillaEnginePrivate *pEngine, CFtpControlSo
 	m_pSocket = 0;
 	m_pBackend = 0;
 	m_pTlsSocket = 0;
-	
+
 	m_pDirectoryListingParser = 0;
 
 	m_bActive = false;
@@ -31,7 +31,7 @@ CTransferSocket::CTransferSocket(CFileZillaEnginePrivate *pEngine, CFtpControlSo
 
 	m_pTransferBuffer = 0;
 	m_transferBufferLen = 0;
-		
+
 	m_transferEndReason = none;
 	m_binaryMode = true;
 
@@ -78,7 +78,7 @@ wxString CTransferSocket::SetupActiveTransfer(const wxString& ip)
 	m_pSocket = 0;
 	delete m_pSocketServer;
 	m_pSocketServer = 0;
-	
+
 	wxIPV4address addr;
 	addr.AnyAddress();
 	addr.Service(0);
@@ -145,31 +145,15 @@ void CTransferSocket::OnConnect(wxSocketEvent &event)
 		m_pControlSocket->LogMessage(::Debug_Verbose, _T("CTransferSocket::OnConnect called without socket"));
 		return;
 	}
-	
+
 	if (!m_pBackend)
 	{
-		if (m_pControlSocket->m_protectDataChannel)
+		if (!InitBackend())
 		{
-			if (!InitTls(m_pControlSocket->m_pTlsSocket))
-			{
-				TransferEnd(transfer_failure);
-				return;
-			}
+			TransferEnd(transfer_failure);
+			return;
 		}
-		else
-			m_pBackend = new CSocketBackend(this, m_pSocket);
-
-		if (m_bActive)
-			TriggerPostponedEvents();
-
-		int value = 65536 * 2;
-		m_pSocket->SetOption(SOL_SOCKET, SO_SNDBUF, &value, sizeof(value));
-
-		return;
 	}
-
-	int value = 65536 * 2;
-	m_pSocket->SetOption(SOL_SOCKET, SO_SNDBUF, &value, sizeof(value));
 
 	if (m_bActive)
 		TriggerPostponedEvents();
@@ -185,7 +169,7 @@ void CTransferSocket::OnReceive()
 		m_postponedReceive = true;
 		return;
 	}
-	
+
 	if (!m_bActive)
 	{
 		m_pControlSocket->LogMessage(::Debug_Verbose, _T("Postponing receive, m_bActive was false."));
@@ -234,7 +218,7 @@ void CTransferSocket::OnReceive()
 	{
 		if (!CheckGetNextWriteBuffer())
 			return;
-		
+
 		m_pBackend->Read(m_pTransferBuffer, m_transferBufferLen);
 		if (m_pBackend->Error())
 		{
@@ -294,10 +278,10 @@ void CTransferSocket::OnSend()
 		m_postponedSend = true;
 		return;
 	}
-	
+
 	if (m_transferMode != upload)
 		return;
-	
+
 	int numsent = 0;
 	do
 	{
@@ -319,7 +303,7 @@ void CTransferSocket::OnSend()
 		m_transferBufferLen -= numsent;
 	}
 	while (!m_pBackend->Error() && numsent > 0);
-	
+
 	if (m_pBackend->Error())
 	{
 		int error = m_pBackend->LastError();
@@ -333,11 +317,20 @@ void CTransferSocket::OnSend()
 
 void CTransferSocket::OnClose(wxSocketEvent &event)
 {
-	if (!m_pBackend)
-		return;
-
 	m_pControlSocket->LogMessage(::Debug_Verbose, _T("CTransferSocket::OnClose"));
 	m_onCloseCalled = true;
+
+	if (m_transferEndReason != none)
+		return;
+
+	if (!m_pBackend)
+	{
+		if (!InitBackend())
+		{
+			TransferEnd(transfer_failure);
+			return;
+		}
+	}
 
 	if (m_transferMode == upload)
 	{
@@ -353,7 +346,7 @@ void CTransferSocket::OnClose(wxSocketEvent &event)
 			TransferEnd(transfer_failure);
 		return;
 	}
-	
+
 	if (!m_pTlsSocket)
 		m_pSocket->SetNotify(wxSOCKET_OUTPUT_FLAG | wxSOCKET_CONNECTION_FLAG | wxSOCKET_LOST_FLAG);
 	char buffer[100];
@@ -408,13 +401,8 @@ bool CTransferSocket::SetupPassiveTransfer(wxString host, int port)
 
 	if (res)
 	{
-		if (m_pControlSocket->m_protectDataChannel)
-		{
-			if (!InitTls(m_pControlSocket->m_pTlsSocket))
-				return false;
-		}
-		else
-			m_pBackend = new CSocketBackend(this, m_pSocket);
+		if (!InitBackend())
+			return false;
 	}
 
 	return true;
@@ -484,11 +472,11 @@ wxSocketServer* CTransferSocket::CreateSocketServer()
 	// Try out all ports in the port range.
 	// Upon first call, we try to use a random port fist, after that
 	// increase the port step by step
-	
+
 	// Windows only: I think there's a bug in the socket implementation of
 	// Windows: Even if using wxSOCKET_REUSEADDR, using the same local address
-	// twice will fail unless there are a couple of minutes between the 
-	// connection attempts. This may cause problems if transferring lots of 
+	// twice will fail unless there are a couple of minutes between the
+	// connection attempts. This may cause problems if transferring lots of
 	// files with a narrow port range.
 
 	static int start = 0;
@@ -513,7 +501,7 @@ wxSocketServer* CTransferSocket::CreateSocketServer()
 				start = low;
 			return pServer;
 		}
-		
+
 		delete pServer;
 	}
 
@@ -528,10 +516,10 @@ wxSocketServer* CTransferSocket::CreateSocketServer()
 				start = low;
 			return pServer;
 		}
-		
+
 		delete pServer;
 	}
-	
+
 	return 0;
 }
 
@@ -629,7 +617,7 @@ bool CTransferSocket::InitTls(const CTlsSocket* pPrimaryTlsSocket)
 {
 	wxASSERT(!m_pBackend);
 	m_pTlsSocket = new CTlsSocket(this, m_pSocket, m_pControlSocket);
-	
+
 	if (!m_pTlsSocket->Init())
 	{
 		delete m_pTlsSocket;
@@ -664,4 +652,23 @@ void CTransferSocket::TriggerPostponedEvents()
 		m_postponedSend = false;
 		OnSend();
 	}
+}
+
+bool CTransferSocket::InitBackend()
+{
+	if (m_pBackend)
+		return true;
+
+	if (m_pControlSocket->m_protectDataChannel)
+	{
+		if (!InitTls(m_pControlSocket->m_pTlsSocket))
+			return false;
+	}
+	else
+		m_pBackend = new CSocketBackend(this, m_pSocket);
+
+	int value = 65536 * 2;
+	m_pSocket->SetOption(SOL_SOCKET, SO_SNDBUF, &value, sizeof(value));
+
+	return true;
 }

@@ -43,6 +43,7 @@ protected:
 
 	void TransferEnd(enum TransferEndReason reason);
 
+	bool InitBackend();
 	bool InitTls(const CTlsSocket* pPrimaryTlsSocket);
 
 	virtual void OnSocketEvent(wxSocketEvent &event);
@@ -83,7 +84,7 @@ protected:
 	void TriggerPostponedEvents();
 
 	CBackend* m_pBackend;
-	
+
 	CTlsSocket* m_pTlsSocket;
 	bool m_shutdown;
 };
