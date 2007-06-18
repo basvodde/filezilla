@@ -564,11 +564,9 @@ CFolderScanItem::CFolderScanItem(CServerItem* parent, bool queued, bool download
 	m_remove = false;
 	m_active = false;
 	m_count = 0;
-	m_pDir = 0;
-
 	t_dirPair pair;
-	pair.localPath = localPath;
-	pair.remotePath = remotePath;
+	pair.localPath = localPath.c_str();
+	pair.remotePath.SetSafePath(remotePath.GetSafePath().c_str());
 	m_dirsToCheck.push_back(pair);
 
 	m_defaultFileExistsAction = -1;

@@ -233,17 +233,25 @@ protected:
 
 		wxASSERT(!m_pFolderItem->Download());
 
+		wxString currentLocalPath;
+		CServerPath currentRemotePath;
+
+		wxDir* pDir = 0;
+
 		while (!TestDestroy())
 		{
 			if (m_pFolderItem->m_remove)
 			{
 				wxCommandEvent evt(fzEVT_FOLDERTHREAD_COMPLETE, wxID_ANY);
 				wxPostEvent(m_pOwner, evt);
+
+				delete pDir;
+
 				return 0;
 			}
 			bool found;
 			wxString file;
-			if (!m_pFolderItem->m_pDir)
+			if (!pDir)
 			{
 				if (!m_pFolderItem->m_dirsToCheck.empty())
 				{
@@ -251,21 +259,21 @@ protected:
 
 					wxLogNull nullLog;
 
-					m_pFolderItem->m_pDir = new wxDir(pair.localPath);
+					pDir = new wxDir(pair.localPath);
 
-					if (m_pFolderItem->m_pDir->IsOpened())
+					if (pDir->IsOpened())
 					{
-						m_pFolderItem->m_currentLocalPath = pair.localPath;
-						m_pFolderItem->m_currentRemotePath = pair.remotePath;
+						currentLocalPath = pair.localPath;
+						currentRemotePath = pair.remotePath;
 
-						found = m_pFolderItem->m_pDir->GetFirst(&file);
+						found = pDir->GetFirst(&file);
 
 						if (!found)
 						{
 							// Empty directory
 
 							t_newEntry entry;
-							entry.remotePath = pair.remotePath;
+							entry.remotePath.SetSafePath(pair.remotePath.GetSafePath().c_str());
 
 							AddEntry(entry);
 						}
@@ -278,15 +286,18 @@ protected:
 				{
 					wxCommandEvent evt(fzEVT_FOLDERTHREAD_COMPLETE, wxID_ANY);
 					wxPostEvent(m_pOwner, evt);
+
+					if (pDir)
+						delete pDir;
 					return 0;
 				}
 			}
 			else
-				found = m_pFolderItem->m_pDir->GetNext(&file);
+				found = pDir->GetNext(&file);
 
 			while (found && !TestDestroy() && !m_pFolderItem->m_remove)
 			{
-				const wxString& fullName = m_pFolderItem->m_currentLocalPath + wxFileName::GetPathSeparator() + file;
+				const wxString& fullName = currentLocalPath + wxFileName::GetPathSeparator() + file;
 
 				if (wxDir::Exists(fullName))
 				{
@@ -295,7 +306,7 @@ protected:
 					const int result = wxLstat(fullName, &buf);
 					if (!result && S_ISLNK(buf.st_mode))
 					{
-						found = m_pFolderItem->m_pDir->GetNext(&file);
+						found = pDir->GetNext(&file);
 						continue;
 					}
 #endif
@@ -304,7 +315,7 @@ protected:
 					{
 						CFolderScanItem::t_dirPair pair;
 						pair.localPath = fullName;
-						pair.remotePath = m_pFolderItem->m_currentRemotePath;
+						pair.remotePath = currentRemotePath;
 						pair.remotePath.AddSegment(file);
 						m_pFolderItem->m_dirsToCheck.push_back(pair);
 					}
@@ -318,16 +329,16 @@ protected:
 					if (!m_filters.FilenameFiltered(file, false, result ? -1 : buf.st_size, true))
 					{
 						t_newEntry entry;
-						entry.localFile = fullName;
-						entry.remoteFile = file;
-						entry.remotePath = m_pFolderItem->m_currentRemotePath;
+						entry.localFile = fullName.c_str();
+						entry.remoteFile = file.c_str();
+						entry.remotePath.SetSafePath(currentRemotePath.GetSafePath().c_str());
 						entry.size = result ? -1 : buf.st_size;
 
 						AddEntry(entry);
 					}
 				}
 
-				found = m_pFolderItem->m_pDir->GetNext(&file);
+				found = pDir->GetNext(&file);
 			}
 
 			bool send;
@@ -347,8 +358,8 @@ protected:
 				wxPostEvent(m_pOwner, evt);
 			}
 
-			delete m_pFolderItem->m_pDir;
-			m_pFolderItem->m_pDir = 0;
+			delete pDir;
+			pDir = 0;
 		}
 
 		return 0;

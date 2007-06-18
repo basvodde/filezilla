@@ -187,7 +187,7 @@ class CFolderScanItem : public CQueueItem
 {
 public:
 	CFolderScanItem(CServerItem* parent, bool queued, bool download, const wxString& localPath, const CServerPath& remotePath);
-	virtual ~CFolderScanItem() { delete m_pDir; }
+	virtual ~CFolderScanItem() { }
 
 	virtual enum QueueItemType GetType() const { return QueueItemType_FolderScan; }
 	wxString GetLocalPath() const { return m_localPath; }
@@ -211,12 +211,6 @@ public:
 		CServerPath remotePath;
 	};
 	std::list<t_dirPair> m_dirsToCheck;
-
-	wxString m_currentLocalPath;
-	CServerPath m_currentRemotePath;
-
-	// Upload members
-	wxDir* m_pDir;
 
 	int m_defaultFileExistsAction;
 
