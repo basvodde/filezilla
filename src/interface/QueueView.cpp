@@ -16,6 +16,7 @@
 #include "dndobjects.h"
 #include "loginmanager.h"
 #include "aui_notebook_ex.h"
+#include "queueview_failed.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -379,11 +380,10 @@ protected:
 	bool m_didSendEvent;
 };
 
-CQueueView::CQueueView(wxAuiNotebookEx* parent, wxWindowID id, CMainFrame* pMainFrame, CAsyncRequestQueue *pAsyncRequestQueue)
-	: CQueueViewBase(parent, id),
+CQueueView::CQueueView(CQueue* parent, int index, CMainFrame* pMainFrame, CAsyncRequestQueue *pAsyncRequestQueue)
+	: CQueueViewBase(parent, index, _("Queued files")),
 	  m_pMainFrame(pMainFrame),
-	  m_pAsyncRequestQueue(pAsyncRequestQueue),
-	  m_pAuiNotebook(parent)
+	  m_pAsyncRequestQueue(pAsyncRequestQueue)
 {
 	if (m_pAsyncRequestQueue)
 		m_pAsyncRequestQueue->SetQueue(this);
@@ -401,16 +401,6 @@ CQueueView::CQueueView(wxAuiNotebookEx* parent, wxWindowID id, CMainFrame* pMain
 	m_filesWithUnknownSize = 0;
 
 	CreateColumns(_("Status"));
-
-	// Create and assign the image list for the queue
-	wxImageList* pImageList = new wxImageList(16, 16);
-
-	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_SERVER"),  wxART_OTHER, wxSize(16, 16)));
-	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FILE"),  wxART_OTHER, wxSize(16, 16)));
-	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDERCLOSED"),  wxART_OTHER, wxSize(16, 16)));
-	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDER"),  wxART_OTHER, wxSize(16, 16)));
-
-	AssignImageList(pImageList, wxIMAGE_LIST_SMALL);
 
 	//Initialize the engine data
 	t_EngineData *pData = new t_EngineData;
@@ -437,7 +427,6 @@ CQueueView::CQueueView(wxAuiNotebookEx* parent, wxWindowID id, CMainFrame* pMain
 	}
 
 	SettingsChanged();
-	LoadQueue();
 
 	SetDropTarget(new CQueueViewDropTarget(this));
 }
@@ -783,7 +772,12 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 
 	if ((replyCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)
 	{
-		ResetEngine(engineData, engineData.pItem ? engineData.pItem->m_remove : false);
+		enum ResetReason reason;
+		if (engineData.pItem && engineData.pItem->m_remove)
+			reason = remove;
+		else
+			reason = reset;
+		ResetEngine(engineData, reason);
 		return;
 	}
 
@@ -828,12 +822,14 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 	case t_EngineData::transfer:
 		if (replyCode == FZ_REPLY_OK)
 		{
-			ResetEngine(engineData, true);
+			ResetEngine(engineData, success);
 			return;
 		}
 		// Increase error count only if item didn't make any progress. This keeps
 		// user interaction at a minimum if connection is unstable.
-		else if (!engineData.pStatusLineCtrl || !engineData.pStatusLineCtrl->MadeProgress())
+		
+		// FIXME: Disabled since detection isn't reliable (yet)
+		//else if (!engineData.pStatusLineCtrl || !engineData.pStatusLineCtrl->MadeProgress())
 		{
 			if ((replyCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)
 				engineData.pItem->m_statusMessage = _T("");
@@ -852,7 +848,7 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 	case t_EngineData::mkdir:
 		if (replyCode == FZ_REPLY_OK)
 		{
-			ResetEngine(engineData, true);
+			ResetEngine(engineData, success);
 			return;
 		}
 		if (replyCode & FZ_REPLY_DISCONNECTED)
@@ -864,13 +860,13 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 		else
 		{
 			// Cannot retry
-			ResetEngine(engineData, true);
+			ResetEngine(engineData, failure);
 			return;
 		}
 
 		break;
 	case t_EngineData::list:
-		ResetEngine(engineData, false);
+		ResetEngine(engineData, remove);
 		return;
 	default:
 		return;
@@ -884,14 +880,19 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 
 	if (!m_activeMode)
 	{
-		ResetEngine(engineData, engineData.pItem ? engineData.pItem->m_remove : false);
+		enum ResetReason reason;
+		if (engineData.pItem && engineData.pItem->m_remove)
+			reason = remove;
+		else
+			reason = reset;
+		ResetEngine(engineData, reason);
 		return;
 	}
 
 	SendNextCommand(engineData);
 }
 
-void CQueueView::ResetEngine(t_EngineData& data, const bool removeFileItem)
+void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
 {
 	if (!data.active)
 		return;
@@ -938,10 +939,28 @@ void CQueueView::ResetEngine(t_EngineData& data, const bool removeFileItem)
 				m_activeCountUp--;
 		}
 
-		if (removeFileItem)
-			RemoveItem(data.pItem, true);
+		if (reason == reset)
+		{
+			if (!data.pItem->Queued())
+				reinterpret_cast<CServerItem*>(data.pItem->GetTopLevelItem())->QueueImmediateFile(data.pItem);
+		}
+		else if (reason == failure)
+		{
+			if (data.pItem->GetType() == QueueItemType_File || data.pItem->GetType() == QueueItemType_Folder)
+			{
+				const CServer server = ((CServerItem*)data.pItem->GetTopLevelItem())->GetServer();
+
+				RemoveItem(data.pItem, false);
+				
+				CQueueViewFailed* pQueueViewFailed = m_pQueue->GetQueueView_Failed();
+				CServerItem* pServerItem = pQueueViewFailed->CreateServerItem(server);
+				data.pItem->SetParent(pServerItem);
+				pQueueViewFailed->InsertItem(pServerItem, data.pItem);
+				pQueueViewFailed->CommitChanges();
+			}
+		}
 		else
-			ResetItem(data.pItem);
+			RemoveItem(data.pItem, true);
 		data.pItem = 0;
 
 		wxASSERT(m_activeCount > 0);
@@ -1082,7 +1101,7 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 
 			if (res == FZ_REPLY_OK)
 			{
-				ResetEngine(engineData, true);
+				ResetEngine(engineData, success);
 				return;
 			}
 
@@ -1112,12 +1131,12 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 
 			if (res == FZ_REPLY_OK)
 			{
-				ResetEngine(engineData, true);
+				ResetEngine(engineData, success);
 				return;
 			}
 
 			// Pointless to retry
-			ResetEngine(engineData, true);
+			ResetEngine(engineData, failure);
 			return;
 		}
 	}
@@ -1199,8 +1218,22 @@ bool CQueueView::Quit()
 
 void CQueueView::CheckQueueState()
 {
-	if (!m_activeCount)
+	if (m_activeCount)
+		return;
+	
+	if (m_activeMode)
+	{
 		m_activeMode = 0;
+		if (!m_pQueue->GetSelection())
+		{
+			CQueueViewBase* pFailed = m_pQueue->GetQueueView_Failed();
+			CQueueViewBase* pSuccessful = m_pQueue->GetQueueView_Successful();
+			if (pFailed->GetItemCount())
+				m_pQueue->SetSelection(1);
+			else if (pSuccessful->GetItemCount())
+				m_pQueue->SetSelection(2);
+		}
+	}
 
 	if (m_quit)
 		m_pMainFrame->Close();
@@ -1212,19 +1245,9 @@ bool CQueueView::IncreaseErrorCount(t_EngineData& engineData)
 	if (engineData.pItem->m_errorCount <= COptions::Get()->GetOptionVal(OPTION_TRANSFERRETRYCOUNT))
 		return true;
 
-	ResetEngine(engineData, true);
-
-	//TODO: Error description?
+	ResetEngine(engineData, failure);
 
 	return false;
-}
-
-void CQueueView::ResetItem(CFileItem* item)
-{
-	if (!item->Queued())
-		reinterpret_cast<CServerItem*>(item->GetTopLevelItem())->QueueImmediateFiles();
-
-	UpdateStatusLinePositions();
 }
 
 void CQueueView::UpdateStatusLinePositions()
@@ -2027,7 +2050,7 @@ void CQueueView::OnAskPassword(wxCommandEvent& event)
 			SendNextCommand(*pEngineData);
 		}
 		else
-			ResetEngine(*pEngineData, true);
+			ResetEngine(*pEngineData, remove);
 
 		m_waitingForPassword.pop_front();
 	}

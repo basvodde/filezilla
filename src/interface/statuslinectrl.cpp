@@ -172,7 +172,7 @@ void CStatusLineCtrl::SetTransferStatus(const CTransferStatus* pStatus)
 
 		m_lastOffset = pStatus->currentOffset;
 
-		if (!m_madeProgress && pStatus->currentOffset - pStatus->startOffset > 16384)
+		if (!m_madeProgress && !pStatus->list && pStatus->currentOffset - pStatus->startOffset > 16384)
 			m_madeProgress = true;
 
 		if (!m_transferStatusTimer.IsRunning())

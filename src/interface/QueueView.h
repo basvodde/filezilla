@@ -39,14 +39,14 @@ class CMainFrame;
 class CStatusLineCtrl;
 class CFolderProcessingThread;
 class CAsyncRequestQueue;
-class wxAuiNotebookEx;
+class CQueue;
 
 class CQueueView : public CQueueViewBase
 {
 	friend class CFolderProcessingThread;
 	friend class CQueueViewDropTarget;
 public:
-	CQueueView(wxAuiNotebookEx* parent, wxWindowID id, CMainFrame* pMainFrame, CAsyncRequestQueue* pAsyncRequestQueue);
+	CQueueView(CQueue* parent, int index, CMainFrame* pMainFrame, CAsyncRequestQueue* pAsyncRequestQueue);
 	virtual ~CQueueView();
 	
 	bool QueueFile(const bool queueOnly, const bool download, const wxString& localFile, const wxString& remoteFile,
@@ -77,6 +77,8 @@ public:
 
 	void RemoveAll();
 
+	void LoadQueue();
+
 protected:
 
 	void AdvanceQueue();
@@ -86,8 +88,16 @@ protected:
 
 	void ProcessReply(t_EngineData& engineData, COperationNotification* pNotification);
 	void SendNextCommand(t_EngineData& engineData);
-	void ResetEngine(t_EngineData& data, const bool removeFileItem);
-	void ResetItem(CFileItem* item);
+
+	enum ResetReason
+	{
+		success,
+		failure,
+		reset,
+		remove
+	};
+
+	void ResetEngine(t_EngineData& data, const enum ResetReason reason);
 	
 	virtual bool RemoveItem(CQueueItem* item, bool destroy);
 
@@ -102,7 +112,6 @@ protected:
 	void CalculateQueueSize();
 	void DisplayQueueSize();
 	void SaveQueue();
-	void LoadQueue();
 	bool ShouldUseBinaryMode(wxString filename);
 
 	t_EngineData* GetIdleEngine(const CServer* pServer = 0);
@@ -163,8 +172,6 @@ protected:
 	void OnSetDefaultFileExistsAction(wxCommandEvent& event);
 
 	void OnAskPassword(wxCommandEvent& event);
-
-	wxAuiNotebookEx* m_pAuiNotebook;
 };
 
 #endif

@@ -229,22 +229,30 @@ public:
 	virtual enum QueueItemType GetType() const { return QueueItemType_Status; }
 };
 
+class CQueue;
 class CQueueViewBase : public wxListCtrl
 {
 public:
-	CQueueViewBase(wxAuiNotebookEx* parent, int id);
+	CQueueViewBase(CQueue* parent, int index, const wxString& title);
 	virtual ~CQueueViewBase();
 
 	void CreateColumns(const wxString& lastColumnName = _T(""));
-protected:
-
-	// Gets item for given server
-	CServerItem* GetServerItem(const CServer& server);
 
 	// Gets item for given server or creates new if it doesn't exist
 	CServerItem* CreateServerItem(const CServer& server);
 
 	void InsertItem(CServerItem* pServerItem, CQueueItem* pItem);
+
+	// Has to be called after adding or removing items. Also updates
+	// item count and selections.
+	void CommitChanges();
+
+	wxString GetTitle() const { return m_title; }
+
+protected:
+
+	// Gets item for given server
+	CServerItem* GetServerItem(const CServer& server);
 
 	virtual bool RemoveItem(CQueueItem* pItem, bool destroy);
 
@@ -258,10 +266,6 @@ protected:
 	virtual int OnGetItemImage(long item) const;
 
 	void RefreshItem(const CQueueItem* pItem);
-
-	// Has to be called after adding or removing items. Also updates
-	// item count and selections.
-	void CommitChanges();
 
 	void DisplayNumberQueuedFiles();
 
@@ -285,7 +289,11 @@ protected:
 
 	std::vector<CServerItem*> m_serverList;
 
-	wxAuiNotebookEx* m_pAuiNotebook;
+	CQueue* m_pQueue;
+
+	const int m_pageIndex;
+
+	const wxString m_title;
 
 	DECLARE_EVENT_TABLE();
 	void OnEraseBackground(wxEraseEvent& event);
@@ -300,9 +308,11 @@ class CQueue : public wxAuiNotebookEx
 {
 public:
 	CQueue(wxWindow* parent, CMainFrame* pMainFrame, CAsyncRequestQueue* pAsyncRequestQueue);
-	//virtual ~CQueue();
+	virtual ~CQueue() {}
 
 	inline CQueueView* GetQueueView() { return m_pQueueView; }
+	inline CQueueViewFailed* GetQueueView_Failed() { return m_pQueueView_Failed; }
+	inline CQueueViewBase* GetQueueView_Successful() { return m_pQueueView_Successful; }
 protected:
 
 	CQueueView* m_pQueueView;

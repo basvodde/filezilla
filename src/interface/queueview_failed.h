@@ -4,7 +4,7 @@
 class CQueueViewFailed : public CQueueViewBase
 {
 public:
-	CQueueViewFailed(wxAuiNotebookEx* parent, int id);
+	CQueueViewFailed(CQueue* parent, int index);
 };
 
 #endif //__QUEUEVIEW_FAILED_H__

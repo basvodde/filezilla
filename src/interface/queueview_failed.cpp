@@ -2,8 +2,8 @@
 #include "queue.h"
 #include "queueview_failed.h"
 
-CQueueViewFailed::CQueueViewFailed(wxAuiNotebookEx* parent, int id)
-	: CQueueViewBase(parent, id)
+CQueueViewFailed::CQueueViewFailed(CQueue* parent, int index)
+	: CQueueViewBase(parent, index, _("Failed transfers"))
 {
 	CreateColumns(_("Reason"));
 }

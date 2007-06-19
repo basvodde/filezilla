@@ -589,10 +589,11 @@ BEGIN_EVENT_TABLE(CQueueViewBase, wxListCtrl)
 EVT_ERASE_BACKGROUND(CQueueViewBase::OnEraseBackground)
 END_EVENT_TABLE()
 
-CQueueViewBase::CQueueViewBase(wxAuiNotebookEx* parent, int id)
-	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN | wxLC_REPORT | wxLC_VIRTUAL | wxSUNKEN_BORDER)
+CQueueViewBase::CQueueViewBase(CQueue* parent, int index, const wxString& title)
+	: wxListCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN | wxLC_REPORT | wxLC_VIRTUAL | wxSUNKEN_BORDER),
+	  m_pageIndex(index), m_title(title)
 {
-	m_pAuiNotebook = parent;
+	m_pQueue = parent;
 	m_insertionStart = -1;
 	m_insertionCount = 0;
 	m_itemCount = 0;
@@ -602,6 +603,16 @@ CQueueViewBase::CQueueViewBase(wxAuiNotebookEx* parent, int id)
 	m_folderScanCount = 0;
 	m_fileCountChanged = false;
 	m_folderScanCountChanged = false;
+
+	// Create and assign the image list for the queue
+	wxImageList* pImageList = new wxImageList(16, 16);
+
+	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_SERVER"),  wxART_OTHER, wxSize(16, 16)));
+	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FILE"),  wxART_OTHER, wxSize(16, 16)));
+	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDERCLOSED"),  wxART_OTHER, wxSize(16, 16)));
+	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDER"),  wxART_OTHER, wxSize(16, 16)));
+
+	AssignImageList(pImageList, wxIMAGE_LIST_SMALL);
 }
 
 CQueueViewBase::~CQueueViewBase()
@@ -1040,23 +1051,22 @@ void CQueueViewBase::CommitChanges()
 
 void CQueueViewBase::DisplayNumberQueuedFiles()
 {
-	const wxString& name = _("Queued files");
 	wxString str;
 	if (m_fileCount > 0)
 	{
 		if (!m_folderScanCount)
-			str.Printf(name + _T(" (%d)"), m_fileCount);
+			str.Printf(m_title + _T(" (%d)"), m_fileCount);
 		else
-			str.Printf(name + _T(" (%d+)"), m_fileCount);
+			str.Printf(m_title + _T(" (%d+)"), m_fileCount);
 	}
 	else
 	{
 		if (m_folderScanCount)
-			str.Printf(name + _T(" (0+)"), m_fileCount);
+			str.Printf(m_title + _T(" (0+)"), m_fileCount);
 		else
-			str = name;
+			str = m_title;
 	}
-	m_pAuiNotebook->SetPageText(0, str);
+	m_pQueue->SetPageText(m_pageIndex, str);
 
 	m_fileCountChanged = false;
 	m_folderScanCountChanged = false;
@@ -1170,14 +1180,16 @@ CQueue::CQueue(wxWindow* parent, CMainFrame *pMainFrame, CAsyncRequestQueue *pAs
 	Create(parent, -1, wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxAUI_NB_BOTTOM);
 	SetExArtProvider();
 
-	m_pQueueView = new CQueueView(this, -1, pMainFrame, pAsyncRequestQueue);
-	AddPage(m_pQueueView, _("Queued files"));
+	m_pQueueView = new CQueueView(this, 0, pMainFrame, pAsyncRequestQueue);
+	AddPage(m_pQueueView, m_pQueueView->GetTitle());
 
-	m_pQueueView_Failed = new CQueueViewFailed(this, -1);
-	AddPage(m_pQueueView_Failed, _("Failed transfers"));
-	m_pQueueView_Successful = new CQueueViewBase(this, -1);
+	m_pQueueView_Failed = new CQueueViewFailed(this, 1);
+	AddPage(m_pQueueView_Failed, m_pQueueView_Failed->GetTitle());
+	m_pQueueView_Successful = new CQueueViewBase(this, 2, _("Successful transfers"));
 	m_pQueueView_Successful->CreateColumns();
-	AddPage(m_pQueueView_Successful, _("Successful transfers"));
+	AddPage(m_pQueueView_Successful, m_pQueueView_Successful->GetTitle());
 
 	RemoveExtraBorders();
+
+	m_pQueueView->LoadQueue();
 }
