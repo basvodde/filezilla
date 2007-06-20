@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr_FR\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-30 14:47+0200\n"
-"PO-Revision-Date: 2007-05-16 23:02+0100\n"
+"POT-Creation-Date: 2007-06-01 22:52+0200\n"
+"PO-Revision-Date: 2007-06-16 19:51+0100\n"
 "Last-Translator: Jean-Sébastien Bour <sufflope@sufflope.net>\n"
 "Language-Team:  <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -26,7 +26,7 @@ msgstr "%H:%M:%S écoulée(s)"
 msgid "%H:%M:%S left"
 msgstr "%H:%M:%S restante(s)"
 
-#: ../../locales/../src/interface/QueueView.cpp:2736
+#: ../../locales/../src/interface/QueueView.cpp:2745
 #, c-format
 msgid "%d files added to queue"
 msgstr "%d fichiers ajoutés à la file d'attente"
@@ -690,6 +690,10 @@ msgid ""
 "if 'View hidden files' is enabled. Although FileZilla performs some tests to "
 "see if the server supports this feature, the test may fail."
 msgstr ""
+"De plus, tous les serveurs ne comprennent pas cette option, et pourraient "
+"renvoyer des listes de fichiers erronées si elle est activée. FileZilla "
+"effectue quelques tests pour vérifier si le serveur comprend cette option, "
+"mais ces tests pourraient échouer."
 
 #: ../../locales/../src/interface/updatewizard.cpp:836
 msgid ""
@@ -1025,7 +1029,7 @@ msgstr "Félicitations, votre configuration semble fonctionnelle."
 msgid "Connected"
 msgstr "Connecté"
 
-#: ../../locales/../src/interface/QueueView.cpp:1858
+#: ../../locales/../src/interface/QueueView.cpp:1862
 msgid "Connecting"
 msgstr "Connexion en cours"
 
@@ -1179,8 +1183,8 @@ msgstr ""
 "accessible.\n"
 "Tout changement dans le Gestionnaire de Sites ne pourra pas être sauvegardé."
 
-#: ../../locales/../src/interface/QueueView.cpp:2289
-#: ../../locales/../src/interface/QueueView.cpp:2325
+#: ../../locales/../src/interface/QueueView.cpp:2298
+#: ../../locales/../src/interface/QueueView.cpp:2334
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1217,8 +1221,8 @@ msgstr ""
 "Erreur d'écriture sur \"%s\", les changements ne pourront être sauvegardés : "
 "%s"
 
-#: ../../locales/../src/interface/QueueView.cpp:2308
-#: ../../locales/../src/interface/QueueView.cpp:2445
+#: ../../locales/../src/interface/QueueView.cpp:2317
+#: ../../locales/../src/interface/QueueView.cpp:2454
 #, c-format
 msgid "Could not write \"%s\", the queue could not be saved."
 msgstr ""
@@ -1249,7 +1253,7 @@ msgstr "Créer un nouveau sous-répertoire dans le répertoire courant."
 msgid "Create directory"
 msgstr "Nouveau dossier"
 
-#: ../../locales/../src/interface/QueueView.cpp:1920
+#: ../../locales/../src/interface/QueueView.cpp:1927
 msgid "Creating directory"
 msgstr "Création d'un répertoire"
 
@@ -1389,7 +1393,7 @@ msgstr "Tout &désactiver"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:503
 msgid "Disable this option if you cannot see your files anymore."
-msgstr ""
+msgstr "Désactivez cette option si vous ne voyez plus vos fichiers."
 
 #: resources.h:496
 msgid "Disconnect from server"
@@ -1403,7 +1407,7 @@ msgstr "Déconnexion du serveur"
 msgid "Disconnected from server"
 msgstr "Déconnecté du serveur."
 
-#: ../../locales/../src/interface/QueueView.cpp:1836
+#: ../../locales/../src/interface/QueueView.cpp:1840
 #: ../../locales/../src/interface/statuslinectrl.cpp:149
 msgid "Disconnecting from previous server"
 msgstr "Déconnexion du serveur précédent"
@@ -1596,8 +1600,8 @@ msgstr "Erreur %d à l'écriture sur le socket"
 #: ../../locales/../src/interface/filter.cpp:168
 #: ../../locales/../src/interface/filter.cpp:253
 #: ../../locales/../src/interface/Options.cpp:97
-#: ../../locales/../src/interface/QueueView.cpp:2290
-#: ../../locales/../src/interface/QueueView.cpp:2326
+#: ../../locales/../src/interface/QueueView.cpp:2299
+#: ../../locales/../src/interface/QueueView.cpp:2335
 #: ../../locales/../src/interface/sitemanager.cpp:247
 #: ../../locales/../src/interface/sitemanager.cpp:348
 #: ../../locales/../src/interface/sitemanager.cpp:1276
@@ -1605,8 +1609,8 @@ msgstr "Erreur %d à l'écriture sur le socket"
 msgid "Error loading xml file"
 msgstr "Erreur au chargement du fichier xml"
 
-#: ../../locales/../src/interface/QueueView.cpp:2309
-#: ../../locales/../src/interface/QueueView.cpp:2446
+#: ../../locales/../src/interface/QueueView.cpp:2318
+#: ../../locales/../src/interface/QueueView.cpp:2455
 #: ../../locales/../src/interface/sitemanager.cpp:374
 #: ../../locales/../src/interface/wrapengine.cpp:977
 msgid "Error writing xml file"
@@ -2501,7 +2505,7 @@ msgstr "Connecté à aucun serveur"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:501
 msgid "Note that this feature is only supported using the FTP protocol."
-msgstr ""
+msgstr "Veuillez noter que ceci ne fonctionne qu'avec le protocole FTP."
 
 #: resources.h:179
 msgid "Number of days between update checks:"
@@ -2912,7 +2916,7 @@ msgstr ""
 
 #: resources.h:147
 msgid "Prioritize directories (default)"
-msgstr "Les dossiers ensemble (par défaut)"
+msgstr "Les dossiers ensembles (par défaut)"
 
 #: ../../locales/../src/interface/QueueView.cpp:953
 msgid "Priority"
@@ -2930,22 +2934,22 @@ msgstr "Algorithme de la clé publique :"
 msgid "Public permissions"
 msgstr "Droits publics"
 
-#: ../../locales/../src/interface/QueueView.cpp:2127
+#: ../../locales/../src/interface/QueueView.cpp:2136
 #, c-format
 msgid "Queue: %s%d KB"
 msgstr "File : %s%d Ko"
 
-#: ../../locales/../src/interface/QueueView.cpp:2122
+#: ../../locales/../src/interface/QueueView.cpp:2131
 #, c-format
 msgid "Queue: %s%d MB"
 msgstr "File : %s%d Mo"
 
-#: ../../locales/../src/interface/QueueView.cpp:2130
+#: ../../locales/../src/interface/QueueView.cpp:2139
 #, c-format
 msgid "Queue: %s%d bytes"
 msgstr "File : %s%d octets"
 
-#: ../../locales/../src/interface/QueueView.cpp:2118
+#: ../../locales/../src/interface/QueueView.cpp:2127
 msgid "Queue: empty"
 msgstr "File : vide"
 
@@ -3096,11 +3100,11 @@ msgstr "&Passer"
 msgid "Save settings?"
 msgstr "Sauvegarder la configuration ?"
 
-#: ../../locales/../src/interface/QueueView.cpp:2199
+#: ../../locales/../src/interface/QueueView.cpp:2208
 msgid "Scanning for files to add to queue"
 msgstr "Examen des fichiers à ajouter à la file"
 
-#: ../../locales/../src/interface/QueueView.cpp:2201
+#: ../../locales/../src/interface/QueueView.cpp:2210
 msgid "Scanning for files to upload"
 msgstr "Examen des fichiers à envoyer"
 
@@ -3427,7 +3431,7 @@ msgstr "Vous avez entré l'adresse : %s"
 msgid "The entered filter name already exists."
 msgstr "Ce nom de filtre existe déjà."
 
-#: ../../locales/../src/interface/optionspage_filetype.cpp:159
+#: ../../locales/../src/interface/optionspage_filetype.cpp:160
 #, c-format
 msgid "The extension '%s' does already exist in the list"
 msgstr "L'extension '%s' est déjà présente dans la liste"
@@ -3617,7 +3621,7 @@ msgstr "Paramètres de transfert"
 msgid "Transferred data got tainted."
 msgstr "Les données transferrées ont été corrompues"
 
-#: ../../locales/../src/interface/QueueView.cpp:1892
+#: ../../locales/../src/interface/QueueView.cpp:1898
 #: ../../locales/../src/interface/statuslinectrl.cpp:158
 msgid "Transferring"
 msgstr "Transfert en cours"
@@ -3794,22 +3798,24 @@ msgstr "très haute"
 
 #: resources.h:382
 msgid "View &hidden files"
-msgstr ""
+msgstr "Afficher les fichiers cac&hés"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:499
 msgid "View hidden files"
-msgstr ""
+msgstr "Afficher les fichiers cachés"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:909
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:994
 msgid "View hidden option set, but unsupported by server"
 msgstr ""
+"L'option « afficher les fichiers cachés » est activée, mais le serveur ne la "
+"comprend pas"
 
 #: resources.h:204
 msgid "W&rite"
 msgstr "Éc&rire"
 
-#: ../../locales/../src/interface/QueueView.cpp:2153
+#: ../../locales/../src/interface/QueueView.cpp:2162
 msgid "Waiting"
 msgstr "En attente"
 
@@ -4008,3 +4014,12 @@ msgstr "themes.xml manquant, ne peut charger les données du thème"
 #: resources.h:49
 msgid "with the following file?"
 msgstr "avec le fichier suivant ?"
+
+#~ msgid "Failed transfers"
+#~ msgstr "Transferts échoués"
+
+#~ msgid "Queued files"
+#~ msgstr "Fichiers dans la file"
+
+#~ msgid "Successful transfers"
+#~ msgstr "Transferts réussis"
