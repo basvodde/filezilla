@@ -47,14 +47,14 @@ CTransferSocket::~CTransferSocket()
 {
 	if (m_transferEndReason == none)
 		m_transferEndReason = successful;
-	delete m_pSocketServer;
-	m_pSocketServer = 0;
-	delete m_pSocket;
-	m_pSocket = 0;
 	if (m_pTlsSocket)
 		delete m_pTlsSocket;
 	else if (m_pBackend)
 		delete m_pBackend;
+	delete m_pSocketServer;
+	m_pSocketServer = 0;
+	delete m_pSocket;
+	m_pSocket = 0;
 
 	if (m_pControlSocket)
 	{
