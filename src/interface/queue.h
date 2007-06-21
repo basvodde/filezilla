@@ -71,6 +71,9 @@ protected:
 	std::vector<CQueueItem*> m_children;
 	int m_visibleOffspring; // Visible offspring over all sublevels
 	wxString m_indent;
+
+
+	friend class CServerItem;
 };
 
 class CFileItem;
@@ -98,6 +101,8 @@ public:
 	void SetDefaultFileExistsAction(int action, const enum TransferDirection direction);
 
 	int m_activeCount;
+
+	virtual bool TryRemoveAll();
 
 protected:
 	void AddFileItemToList(CFileItem* pItem);
@@ -254,7 +259,7 @@ protected:
 	// Gets item for given server
 	CServerItem* GetServerItem(const CServer& server);
 
-	virtual bool RemoveItem(CQueueItem* pItem, bool destroy);
+	virtual bool RemoveItem(CQueueItem* pItem, bool destroy, bool updateItemCount = true);
 
 	// Gets item with given index
 	CQueueItem* GetQueueItem(unsigned int item);

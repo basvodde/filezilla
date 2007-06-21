@@ -525,7 +525,6 @@ wxLongLong CServerItem::GetTotalSize(int& filesWithUnknownSize, int& queuedFiles
 		for (int j = 0; j < 2; j++)
 		{
 			const std::list<CFileItem*>& fileList = m_fileList[j][i];
-			queuedFiles += fileList.size();
 			for (std::list<CFileItem*>::const_iterator iter = fileList.begin(); iter != fileList.end(); iter++)
 			{
 				const CFileItem* item = *iter;
@@ -551,6 +550,43 @@ wxLongLong CServerItem::GetTotalSize(int& filesWithUnknownSize, int& queuedFiles
 	}
 
 	return totalSize;
+}
+
+bool CServerItem::TryRemoveAll()
+{
+	const int oldVisibleOffspring = m_visibleOffspring;
+	std::vector<CQueueItem*>::iterator iter;
+	std::vector<CQueueItem*> keepChildren;
+	m_visibleOffspring = 0;
+	for (iter = m_children.begin(); iter != m_children.end(); iter++)
+	{
+		CQueueItem* pItem = *iter;
+		if (pItem->TryRemoveAll())
+		{
+			if (pItem->GetType() == QueueItemType_File || pItem->GetType() == QueueItemType_Folder)
+			{
+				CFileItem* pFileItem = reinterpret_cast<CFileItem*>(pItem);
+				RemoveFileItemFromList(pFileItem);
+			}
+			delete pItem;
+		}
+		else
+		{
+			keepChildren.push_back(pItem);
+			m_visibleOffspring++;
+			m_visibleOffspring += pItem->GetChildrenCount(true);
+		}
+	}
+	m_children = keepChildren;
+
+	CQueueItem* parent = GetParent();
+	while (parent)
+	{
+		parent->m_visibleOffspring -= oldVisibleOffspring - m_visibleOffspring;
+		parent = parent->GetParent();
+	}
+
+	return m_children.empty();
 }
 
 CFolderScanItem::CFolderScanItem(CServerItem* parent, bool queued, bool download, const wxString& localPath, const CServerPath& remotePath)
@@ -1093,21 +1129,20 @@ void CQueueViewBase::InsertItem(CServerItem* pServerItem, CQueueItem* pItem)
 	}
 }
 
-bool CQueueViewBase::RemoveItem(CQueueItem* pItem, bool destroy)
+bool CQueueViewBase::RemoveItem(CQueueItem* pItem, bool destroy, bool updateItemCount /*=true*/)
 {
 	if (pItem->GetType() == QueueItemType_File || pItem->GetType() == QueueItemType_Folder)
 	{
 		wxASSERT(m_fileCount > 0);
 		m_fileCount--;
 		m_fileCountChanged = true;
-		DisplayNumberQueuedFiles();
 	}
 	else if (pItem->GetType() == QueueItemType_FolderScan)
 	{
 		wxASSERT(m_folderScanCount > 0);
 		m_folderScanCount--;
 		m_folderScanCountChanged = true;
-		DisplayNumberQueuedFiles();
+		
 	}
 
 	const int index = GetItemIndex(pItem);
@@ -1136,7 +1171,8 @@ bool CQueueViewBase::RemoveItem(CQueueItem* pItem, bool destroy)
 		delete topLevelItem;
 
 		m_itemCount -= count + 1;
-		SetItemCount(m_itemCount);
+		if (updateItemCount)
+			SetItemCount(m_itemCount);
 
 		didRemoveParent = true;
 	}
@@ -1147,17 +1183,23 @@ bool CQueueViewBase::RemoveItem(CQueueItem* pItem, bool destroy)
 		UpdateSelections_ItemRangeRemoved(index, count);
 
 		m_itemCount -= count;
-		SetItemCount(m_itemCount);
+		if (updateItemCount)
+			SetItemCount(m_itemCount);
 
 		didRemoveParent = false;
 	}
 
-	if (oldCount > m_itemCount)
+	if (updateItemCount)
 	{
-		bool eraseBackground = GetTopItem() + GetCountPerPage() + 1 >= m_itemCount;
-		Refresh(eraseBackground);
-		if (eraseBackground)
-			Update();
+		if (m_fileCountChanged || m_folderScanCountChanged)
+			DisplayNumberQueuedFiles();
+		if (oldCount > m_itemCount)
+		{
+			bool eraseBackground = GetTopItem() + GetCountPerPage() + 1 >= m_itemCount;
+			Refresh(eraseBackground);
+			if (eraseBackground)
+				Update();
+		}
 	}
 
 	return didRemoveParent;

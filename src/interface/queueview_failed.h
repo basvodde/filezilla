@@ -5,6 +5,15 @@ class CQueueViewFailed : public CQueueViewBase
 {
 public:
 	CQueueViewFailed(CQueue* parent, int index);
+
+protected:
+
+	DECLARE_EVENT_TABLE();
+	void OnContextMenu(wxContextMenuEvent& event);
+	void OnRemoveAll(wxCommandEvent& event);
+	void OnRemoveSelected(wxCommandEvent& event);
+	void OnRequeueSelected(wxCommandEvent& event);
+
 };
 
 #endif //__QUEUEVIEW_FAILED_H__
