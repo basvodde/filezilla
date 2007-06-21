@@ -393,7 +393,13 @@ bool CFileZillaApp::LoadResourceFiles()
 	pResource->AddHandler(new wxStaticLineXmlHandler);
     pResource->AddHandler(new wxScrolledWindowXmlHandler);
 
-	pResource->Load(m_resourceDir + _T("*.xrc"));
+	wxString resourceDir = m_resourceDir;
+#if wxUSE_FILESYSTEM
+	resourceDir.Replace(_T("%"), _T("%25"));
+	resourceDir.Replace(_T(":"), _T("%3A"));
+	resourceDir.Replace(_T("#"), _T("%23"));
+#endif
+	pResource->Load(resourceDir + _T("*.xrc"));
 
 	return true;
 }
