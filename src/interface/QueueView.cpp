@@ -985,7 +985,7 @@ void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
 	CheckQueueState();
 }
 
-bool CQueueView::RemoveItem(CQueueItem* item, bool destroy)
+bool CQueueView::RemoveItem(CQueueItem* item, bool destroy, bool updateItemCount /*=true*/, bool updateSelections /*=true*/)
 {
 	// RemoveItem assumes that the item has already been removed from all engines
 
@@ -998,18 +998,19 @@ bool CQueueView::RemoveItem(CQueueItem* item, bool destroy)
 		{
 			m_filesWithUnknownSize--;
 			wxASSERT(m_filesWithUnknownSize >= 0);
-			if (!m_filesWithUnknownSize)
+			if (!m_filesWithUnknownSize && updateItemCount)
 				DisplayQueueSize();
 		}
 		else if (size > 0)
 		{
 			m_totalQueueSize -= size;
-			DisplayQueueSize();
+			if (updateItemCount)
+				DisplayQueueSize();
 			wxASSERT(m_totalQueueSize >= 0);
 		}
 	}
 	
-	bool didRemoveParent = CQueueViewBase::RemoveItem(item, destroy);
+	bool didRemoveParent = CQueueViewBase::RemoveItem(item, destroy, updateItemCount, updateSelections);
 
 	UpdateStatusLinePositions();
 
@@ -1756,7 +1757,7 @@ void CQueueView::RemoveAll()
 
 void CQueueView::OnRemoveSelected(wxCommandEvent& event)
 {
-	std::list<long> selectedItems;
+	std::list<CQueueItem*> selectedItems;
 	long item = -1;
 	while (true)
 	{
@@ -1764,21 +1765,16 @@ void CQueueView::OnRemoveSelected(wxCommandEvent& event)
 		if (item == -1)
 			break;
 
-		selectedItems.push_front(item);
+		selectedItems.push_front(GetQueueItem(item));
 		SetItemState(item, 0, wxLIST_STATE_SELECTED);
 	}
 
 	m_waitStatusLineUpdate = true;
 
-	long skip = -1;
-	for (std::list<long>::const_iterator iter = selectedItems.begin(); iter != selectedItems.end(); iter++)
+	while (!selectedItems.empty())
 	{
-		if (*iter == skip)
-			continue;
-
-		CQueueItem* pItem = GetQueueItem(*iter);
-		if (!pItem)
-			continue;
+		CQueueItem* pItem = selectedItems.front();
+		selectedItems.pop_front();
 
 		if (pItem->GetType() == QueueItemType_Status)
 			continue;
@@ -1813,10 +1809,16 @@ void CQueueView::OnRemoveSelected(wxCommandEvent& event)
 
 		CQueueItem* pTopLevelItem = pItem->GetTopLevelItem();
 		if (!pTopLevelItem->GetChild(1))
-			// Parent will get deleted, skip it so it doesn't get deleted twice.
-			skip = GetItemIndex(pTopLevelItem);
-		RemoveItem(pItem, true);
+		{
+			// Parent will get deleted
+			// If next selected item is parent, remove it from list
+			if (!selectedItems.empty() && selectedItems.front() == pTopLevelItem)
+				selectedItems.pop_front();
+		}
+		RemoveItem(pItem, true, false, false);
 	}
+	DisplayNumberQueuedFiles();
+	SetItemCount(m_itemCount);
 
 	m_waitStatusLineUpdate = false;
 	UpdateStatusLinePositions();

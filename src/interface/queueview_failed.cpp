@@ -51,7 +51,7 @@ void CQueueViewFailed::OnRemoveAll(wxCommandEvent& event)
 
 void CQueueViewFailed::OnRemoveSelected(wxCommandEvent& event)
 {
-	std::list<long> selectedItems;
+	std::list<CQueueItem*> selectedItems;
 	long item = -1;
 	while (true)
 	{
@@ -59,25 +59,24 @@ void CQueueViewFailed::OnRemoveSelected(wxCommandEvent& event)
 		if (item == -1)
 			break;
 
-		selectedItems.push_front(item);
+		selectedItems.push_front(GetQueueItem(item));
 		SetItemState(item, 0, wxLIST_STATE_SELECTED);
 	}
 
-	long skip = -1;
-	for (std::list<long>::const_iterator iter = selectedItems.begin(); iter != selectedItems.end(); iter++)
+	while (!selectedItems.empty())
 	{
-		if (*iter == skip)
-			continue;
-
-		CQueueItem* pItem = GetQueueItem(*iter);
-		if (!pItem)
-			continue;
+		CQueueItem* pItem = selectedItems.front();
+		selectedItems.pop_front();
 
 		CQueueItem* pTopLevelItem = pItem->GetTopLevelItem();
 		if (!pTopLevelItem->GetChild(1))
-			// Parent will get deleted, skip it so it doesn't get deleted twice.
-			skip = GetItemIndex(pTopLevelItem);
-		RemoveItem(pItem, true, false);
+		{
+			// Parent will get deleted
+			// If next selected item is parent, remove it from list
+			if (!selectedItems.empty() && selectedItems.front() == pTopLevelItem)
+				selectedItems.pop_front();
+		}
+		RemoveItem(pItem, true, false, false);
 	}
 	DisplayNumberQueuedFiles();
 	SetItemCount(m_itemCount);

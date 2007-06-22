@@ -99,7 +99,7 @@ protected:
 
 	void ResetEngine(t_EngineData& data, const enum ResetReason reason);
 	
-	virtual bool RemoveItem(CQueueItem* item, bool destroy);
+	virtual bool RemoveItem(CQueueItem* item, bool destroy, bool updateItemCount = true, bool updateSelections = true);
 
 	// Stops processing of given item
 	// Returns true on success, false if it would block

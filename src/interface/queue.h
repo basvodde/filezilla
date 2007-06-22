@@ -72,6 +72,14 @@ protected:
 	int m_visibleOffspring; // Visible offspring over all sublevels
 	wxString m_indent;
 
+	int m_maxCachedIndex;
+
+	struct t_cacheItem
+	{
+		int index;
+		int child;
+	};
+	std::vector<t_cacheItem> m_lookupCache;
 
 	friend class CServerItem;
 };
@@ -259,7 +267,7 @@ protected:
 	// Gets item for given server
 	CServerItem* GetServerItem(const CServer& server);
 
-	virtual bool RemoveItem(CQueueItem* pItem, bool destroy, bool updateItemCount = true);
+	virtual bool RemoveItem(CQueueItem* pItem, bool destroy, bool updateItemCount = true, bool updateSelections = true);
 
 	// Gets item with given index
 	CQueueItem* GetQueueItem(unsigned int item);
