@@ -1822,6 +1822,8 @@ void CQueueView::OnRemoveSelected(wxCommandEvent& event)
 
 	m_waitStatusLineUpdate = false;
 	UpdateStatusLinePositions();
+
+	Refresh();
 }
 
 bool CQueueView::StopItem(CFileItem* item)
@@ -1836,17 +1838,19 @@ bool CQueueView::StopItem(CFileItem* item)
 
 bool CQueueView::StopItem(CServerItem* pServerItem)
 {
-	unsigned int i = 0;
-	while (i < pServerItem->GetChildrenCount(false))
+	std::list<CQueueItem*> items;
+	for (unsigned int i = 0; i < pServerItem->GetChildrenCount(false); i++)
+		items.push_back(pServerItem->GetChild(i, false));
+
+	for (std::list<CQueueItem*>::reverse_iterator iter = items.rbegin(); iter != items.rend(); iter++)
 	{
-		CQueueItem* pItem = pServerItem->GetChild(i, false);
+		CQueueItem* pItem = *iter;
 		if (pItem->GetType() == QueueItemType_FolderScan)
 		{
 			CFolderScanItem* pFolder = (CFolderScanItem*)pItem;
 			if (pFolder->m_active)
 			{
 				pFolder->m_remove = true;
-				i++;
 				continue;
 			}
 		}
@@ -1858,7 +1862,6 @@ bool CQueueView::StopItem(CServerItem* pServerItem)
 			{
 				StopItem(pFile);
 				pFile->m_remove = true;
-				i++;
 				continue;
 			}
 		}
@@ -1866,9 +1869,15 @@ bool CQueueView::StopItem(CServerItem* pServerItem)
 			// Unknown type, shouldn't be here.
 			wxASSERT(false);
 
-		if (RemoveItem(pItem, true))
+		if (RemoveItem(pItem, true, false))
+		{
+			DisplayNumberQueuedFiles();
+			SetItemCount(m_itemCount);
 			return true;
+		}
 	}
+	DisplayNumberQueuedFiles();
+	SetItemCount(m_itemCount);
 
 	return false;
 }
