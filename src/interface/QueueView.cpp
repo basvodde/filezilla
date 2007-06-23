@@ -467,7 +467,6 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 	}
 
 	InsertItem(pServerItem, fileItem);
-	DisplayQueueSize();
 
 	CommitChanges();
 
@@ -511,9 +510,6 @@ bool CQueueView::QueueFiles(const bool queueOnly, const wxString& localPath, con
 	AdvanceQueue();
 	m_waitStatusLineUpdate = false;
 	UpdateStatusLinePositions();
-
-	DisplayQueueSize();
-	DisplayNumberQueuedFiles();
 
 	Refresh(false);
 
@@ -1416,9 +1412,6 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOn
 	m_waitStatusLineUpdate = false;
 	UpdateStatusLinePositions();
 
-	DisplayQueueSize();
-	DisplayNumberQueuedFiles();
-
 	Refresh(false);
 
 	return true;
@@ -1577,8 +1570,6 @@ void CQueueView::LoadQueue()
 	m_insertionStart = -1;
 	m_insertionCount = 0;
 	CommitChanges();
-
-	DisplayQueueSize();
 }
 
 void CQueueView::SettingsChanged()
@@ -1792,6 +1783,7 @@ void CQueueView::OnRemoveSelected(wxCommandEvent& event)
 		RemoveItem(pItem, true, false, false);
 	}
 	DisplayNumberQueuedFiles();
+	DisplayQueueSize();
 	SetItemCount(m_itemCount);
 
 	m_waitStatusLineUpdate = false;
@@ -2108,4 +2100,11 @@ void CQueueView::InsertItem(CServerItem* pServerItem, CQueueItem* pItem)
 		else if (size > 0)
 			m_totalQueueSize += size;
 	}
+}
+
+void CQueueView::CommitChanges()
+{
+	CQueueViewBase::CommitChanges();
+
+	DisplayQueueSize();
 }

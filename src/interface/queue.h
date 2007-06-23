@@ -260,7 +260,7 @@ public:
 
 	// Has to be called after adding or removing items. Also updates
 	// item count and selections.
-	void CommitChanges();
+	virtual void CommitChanges();
 
 	wxString GetTitle() const { return m_title; }
 

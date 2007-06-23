@@ -81,6 +81,8 @@ public:
 
 	virtual void InsertItem(CServerItem* pServerItem, CQueueItem* pItem);
 
+	virtual void CommitChanges();
+
 protected:
 
 	void AdvanceQueue();
