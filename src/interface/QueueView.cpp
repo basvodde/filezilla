@@ -464,21 +464,10 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 	{
 		fileItem = new CFileItem(pServerItem, queueOnly, download, localFile, remoteFile, remotePath, size);
 		fileItem->m_transferSettings.binary = ShouldUseBinaryMode(download ? remoteFile : wxFileName(localFile).GetFullName());
-
-		if (size < 0)
-		{
-			m_filesWithUnknownSize++;
-			if (m_filesWithUnknownSize == 1)
-				DisplayQueueSize();
-		}
-		else if (size > 0)
-		{
-			m_totalQueueSize += size;
-			DisplayQueueSize();
-		}
 	}
 
 	InsertItem(pServerItem, fileItem);
+	DisplayQueueSize();
 
 	CommitChanges();
 
@@ -509,11 +498,6 @@ bool CQueueView::QueueFiles(const bool queueOnly, const wxString& localPath, con
 		CFileItem* fileItem;
 		fileItem = new CFileItem(pServerItem, queueOnly, true, localPath + iter->name, iter->name, dataObject.GetServerPath(), iter->size);
 		fileItem->m_transferSettings.binary = ShouldUseBinaryMode(iter->name);
-		
-		if (iter->size < 0)
-			m_filesWithUnknownSize++;
-		else if (iter->size > 0)
-			m_totalQueueSize += iter->size;
 
 		InsertItem(pServerItem, fileItem);
 	}
@@ -1415,11 +1399,6 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOn
 			fileItem = new CFileItem(pServerItem, queueOnly, download, entry.localFile, entry.remoteFile, entry.remotePath, entry.size);
 			fileItem->m_transferSettings.binary = ShouldUseBinaryMode(download ? entry.remoteFile : wxFileName(entry.localFile).GetFullName());
 			fileItem->m_defaultFileExistsAction = defaultFileExistsAction;
-
-			if (entry.size < 0)
-				m_filesWithUnknownSize++;
-			else if (entry.size > 0)
-				m_totalQueueSize += entry.size;
 		}
 		else
 			fileItem = new CFolderItem(pServerItem, queueOnly, entry.remotePath, _T(""));
@@ -1537,11 +1516,6 @@ void CQueueView::LoadQueue()
 					fileItem->SetItemState((enum ItemState)itemState);
 					fileItem->m_errorCount = errorCount;
 					InsertItem(pServerItem, fileItem);
-
-					if (size < 0)
-						m_filesWithUnknownSize++;
-					else if (size > 0)
-						m_totalQueueSize += size;
 				}
 			}
 			for (TiXmlElement* pFolder = pServer->FirstChildElement("Folder"); pFolder; pFolder = pFolder->NextSiblingElement("Folder"))
@@ -2118,4 +2092,20 @@ void CQueueView::AdvanceQueue()
 	{
 	}
 	insideAdvanceQueue = false;
+}
+
+void CQueueView::InsertItem(CServerItem* pServerItem, CQueueItem* pItem)
+{
+	CQueueViewBase::InsertItem(pServerItem, pItem);
+
+	if (pItem->GetType() == QueueItemType_File)
+	{
+		CFileItem* pFileItem = (CFileItem*)pItem;
+
+		const wxLongLong& size = pFileItem->GetSize();
+		if (size < 0)
+			m_filesWithUnknownSize++;
+		else if (size > 0)
+			m_totalQueueSize += size;
+	}
 }

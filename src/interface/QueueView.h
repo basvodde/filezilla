@@ -79,6 +79,8 @@ public:
 
 	void LoadQueue();
 
+	virtual void InsertItem(CServerItem* pServerItem, CQueueItem* pItem);
+
 protected:
 
 	void AdvanceQueue();

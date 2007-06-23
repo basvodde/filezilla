@@ -112,6 +112,8 @@ public:
 
 	virtual bool TryRemoveAll();
 
+	void DetachChildren();
+
 protected:
 	void AddFileItemToList(CFileItem* pItem);
 	void RemoveFileItemFromList(CFileItem* pItem);
@@ -254,7 +256,7 @@ public:
 	// Gets item for given server or creates new if it doesn't exist
 	CServerItem* CreateServerItem(const CServer& server);
 
-	void InsertItem(CServerItem* pServerItem, CQueueItem* pItem);
+	virtual void InsertItem(CServerItem* pServerItem, CQueueItem* pItem);
 
 	// Has to be called after adding or removing items. Also updates
 	// item count and selections.

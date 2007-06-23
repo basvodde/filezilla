@@ -636,6 +636,19 @@ bool CServerItem::TryRemoveAll()
 	return m_children.empty();
 }
 
+void CServerItem::DetachChildren()
+{
+	wxASSERT(!m_activeCount);
+
+	m_children.clear();
+	m_visibleOffspring = 0;
+	m_maxCachedIndex = -1;
+
+	for (int i = 0; i < 2; i++)
+		for (int j = 0; j < PRIORITY_COUNT; j++)
+			m_fileList[i][j].clear();
+}
+
 CFolderScanItem::CFolderScanItem(CServerItem* parent, bool queued, bool download, const wxString& localPath, const CServerPath& remotePath)
 {
 	m_parent = parent;
