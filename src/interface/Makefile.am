@@ -38,6 +38,7 @@ filezilla_SOURCES = aboutdialog.cpp asyncrequestqueue.cpp \
 		queue.cpp \
 		QueueView.cpp \
 		queueview_failed.cpp \
+		queueview_successful.cpp \
 		quickconnectbar.cpp recentserverlist.cpp \
 		RemoteListView.cpp RemoteTreeView.cpp settingsdialog.cpp \
 		sitemanager.cpp state.cpp statuslinectrl.cpp StatusView.cpp \
@@ -82,6 +83,7 @@ noinst_HEADERS = aboutdialog.h asyncrequestqueue.h \
 		 queue.h \
 		 QueueView.h \
 		 queueview_failed.h \
+		 queueview_successful.h \
 		 quickconnectbar.h recentserverlist.h \
 		 RemoteListView.h RemoteTreeView.h \
 		 settingsdialog.h sitemanager.h state.h \

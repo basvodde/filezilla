@@ -316,6 +316,7 @@ protected:
 
 class CQueueView;
 class CQueueViewFailed;
+class CQueueViewSuccessful;
 
 class CMainFrame;
 class CAsyncRequestQueue;
@@ -327,12 +328,12 @@ public:
 
 	inline CQueueView* GetQueueView() { return m_pQueueView; }
 	inline CQueueViewFailed* GetQueueView_Failed() { return m_pQueueView_Failed; }
-	inline CQueueViewBase* GetQueueView_Successful() { return m_pQueueView_Successful; }
+	inline CQueueViewSuccessful* GetQueueView_Successful() { return m_pQueueView_Successful; }
 protected:
 
 	CQueueView* m_pQueueView;
 	CQueueViewFailed* m_pQueueView_Failed;
-	CQueueViewBase* m_pQueueView_Successful;
+	CQueueViewSuccessful* m_pQueueView_Successful;
 };
 
 #include "QueueView.h"

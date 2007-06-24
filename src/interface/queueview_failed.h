@@ -5,6 +5,7 @@ class CQueueViewFailed : public CQueueViewBase
 {
 public:
 	CQueueViewFailed(CQueue* parent, int index);
+	CQueueViewFailed(CQueue* parent, int index, const wxString& title);
 
 protected:
 
@@ -13,7 +14,6 @@ protected:
 	void OnRemoveAll(wxCommandEvent& event);
 	void OnRemoveSelected(wxCommandEvent& event);
 	void OnRequeueSelected(wxCommandEvent& event);
-
 };
 
 #endif //__QUEUEVIEW_FAILED_H__

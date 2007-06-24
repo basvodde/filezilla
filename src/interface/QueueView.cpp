@@ -17,6 +17,7 @@
 #include "loginmanager.h"
 #include "aui_notebook_ex.h"
 #include "queueview_failed.h"
+#include "queueview_successful.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -938,6 +939,28 @@ void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
 				pQueueViewFailed->InsertItem(pServerItem, data.pItem);
 				pQueueViewFailed->CommitChanges();
 			}
+		}
+		else if (reason == success)
+		{
+			if (data.pItem->GetType() == QueueItemType_File || data.pItem->GetType() == QueueItemType_Folder)
+			{
+				CQueueViewSuccessful* pQueueViewSuccessful = m_pQueue->GetQueueView_Successful();
+				if (pQueueViewSuccessful->AutoClear())
+					RemoveItem(data.pItem, true);
+				else
+				{
+					const CServer server = ((CServerItem*)data.pItem->GetTopLevelItem())->GetServer();
+
+					RemoveItem(data.pItem, false);
+
+					CServerItem* pServerItem = pQueueViewSuccessful->CreateServerItem(server);
+					data.pItem->SetParent(pServerItem);
+					pQueueViewSuccessful->InsertItem(pServerItem, data.pItem);
+					pQueueViewSuccessful->CommitChanges();
+				}
+			}
+			else
+				RemoveItem(data.pItem, true);
 		}
 		else
 			RemoveItem(data.pItem, true);

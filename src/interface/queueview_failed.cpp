@@ -15,6 +15,11 @@ CQueueViewFailed::CQueueViewFailed(CQueue* parent, int index)
 	CreateColumns(_("Reason"));
 }
 
+CQueueViewFailed::CQueueViewFailed(CQueue* parent, int index, const wxString& title)
+	: CQueueViewBase(parent, index, title)
+{
+}
+
 void CQueueViewFailed::OnContextMenu(wxContextMenuEvent& event)
 {
 	wxMenu* pMenu = wxXmlResource::Get()->LoadMenu(_T("ID_MENU_QUEUE_FAILED"));

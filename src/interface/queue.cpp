@@ -1,6 +1,7 @@
 #include "FileZilla.h"
 #include "queue.h"
 #include "queueview_failed.h"
+#include "queueview_successful.h"
 
 CQueueItem::CQueueItem()
 {
@@ -1290,7 +1291,7 @@ CQueue::CQueue(wxWindow* parent, CMainFrame *pMainFrame, CAsyncRequestQueue *pAs
 
 	m_pQueueView_Failed = new CQueueViewFailed(this, 1);
 	AddPage(m_pQueueView_Failed, m_pQueueView_Failed->GetTitle());
-	m_pQueueView_Successful = new CQueueViewBase(this, 2, _("Successful transfers"));
+	m_pQueueView_Successful = new CQueueViewSuccessful(this, 2);
 	m_pQueueView_Successful->CreateColumns();
 	AddPage(m_pQueueView_Successful, m_pQueueView_Successful->GetTitle());
 
