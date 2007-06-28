@@ -33,6 +33,7 @@ struct t_EngineData
 	CFileItem* pItem;
 	CServer lastServer;
 	CStatusLineCtrl* pStatusLineCtrl;
+	wxTimer* m_idleDisconnectTimer;
 };
 
 class CMainFrame;
@@ -102,6 +103,7 @@ protected:
 	};
 
 	void ResetEngine(t_EngineData& data, const enum ResetReason reason);
+	void DeleteEngines();
 	
 	virtual bool RemoveItem(CQueueItem* item, bool destroy, bool updateItemCount = true, bool updateSelections = true);
 
@@ -176,6 +178,7 @@ protected:
 	void OnSetDefaultFileExistsAction(wxCommandEvent& event);
 
 	void OnAskPassword(wxCommandEvent& event);
+	void OnTimer(wxTimerEvent& evnet);
 };
 
 #endif

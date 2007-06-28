@@ -159,6 +159,8 @@ EVT_COMMAND(wxID_ANY, fzEVT_ASKFORPASSWORD, CQueueView::OnAskPassword)
 
 EVT_LIST_ITEM_FOCUSED(wxID_ANY, CQueueView::OnFocusItemChanged)
 
+EVT_TIMER(wxID_ANY, CQueueView::OnTimer)
+
 END_EVENT_TABLE()
 
 class CFolderProcessingThread : public wxThread
@@ -410,6 +412,7 @@ CQueueView::CQueueView(CQueue* parent, int index, CMainFrame* pMainFrame, CAsync
 	pData->pStatusLineCtrl = 0;
 	pData->state = t_EngineData::none;
 	pData->pEngine = 0; // TODO: Primary transfer engine data
+	pData->m_idleDisconnectTimer = 0;
 	m_engineData.push_back(pData);
 
 	int engineCount = COptions::Get()->GetOptionVal(OPTION_NUMTRANSFERS);
@@ -420,6 +423,7 @@ CQueueView::CQueueView(CQueue* parent, int index, CMainFrame* pMainFrame, CAsync
 		pData->pItem = 0;
 		pData->pStatusLineCtrl = 0;
 		pData->state = t_EngineData::none;
+		pData->m_idleDisconnectTimer = 0;
 
 		pData->pEngine = new CFileZillaEngine();
 		pData->pEngine->Init(this, COptions::Get());
@@ -441,10 +445,7 @@ CQueueView::~CQueueView()
 		delete m_pFolderProcessingThread;
 	}
 
-	for (unsigned int engineIndex = 1; engineIndex < m_engineData.size(); engineIndex++)
-		delete m_engineData[engineIndex]->pEngine;
-	for (unsigned int engineIndex = 1; engineIndex < m_engineData.size(); engineIndex++)
-		delete m_engineData[engineIndex];
+	DeleteEngines();
 }
 
 bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxString& localFile,
@@ -677,6 +678,8 @@ bool CQueueView::TryStartNextTransfer()
 	pEngineData->pItem = fileItem;
 	fileItem->m_pEngineData = pEngineData;
 	pEngineData->active = true;
+	delete pEngineData->m_idleDisconnectTimer;
+	pEngineData->m_idleDisconnectTimer = 0;
 	serverItem->m_activeCount++;
 	m_activeCount++;
 	if (fileItem->Download())
@@ -766,9 +769,13 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 	switch (engineData.state)
 	{
 	case t_EngineData::disconnect:
-		engineData.state = t_EngineData::connect;
 		if (engineData.active)
+		{
+			engineData.state = t_EngineData::connect;
 			engineData.pStatusLineCtrl->SetTransferStatus(0);
+		}
+		else
+			engineData.state = t_EngineData::none;
 		break;
 	case t_EngineData::connect:
 		if (replyCode == FZ_REPLY_OK)
@@ -1205,15 +1212,7 @@ bool CQueueView::Quit()
 	if (!canQuit)
 		return false;
 
-	for (unsigned int engineIndex = 1; engineIndex < m_engineData.size(); engineIndex++)
-	{
-		t_EngineData* const data = m_engineData[engineIndex];
-		delete data->pEngine;
-		data->pEngine = 0;
-	}
-	for (unsigned int engineIndex = 0; engineIndex < m_engineData.size(); engineIndex++)
-		delete m_engineData[engineIndex];
-	m_engineData.clear();
+	DeleteEngines();
 
 	SaveQueue();
 
@@ -2106,6 +2105,31 @@ void CQueueView::AdvanceQueue()
 	while (TryStartNextTransfer())
 	{
 	}
+
+	// Set timer for connected, idle engines
+	for (unsigned int i = 1; i < m_engineData.size(); i++)
+	{
+		if (m_engineData[i]->active)
+			continue;
+
+		if (m_engineData[i]->m_idleDisconnectTimer)
+		{
+			if (m_engineData[i]->pEngine->IsConnected())
+				continue;
+
+			delete m_engineData[i]->m_idleDisconnectTimer;
+			m_engineData[i]->m_idleDisconnectTimer = 0;
+		}
+		else
+		{
+			if (!m_engineData[i]->pEngine->IsConnected())
+				continue;
+
+			m_engineData[i]->m_idleDisconnectTimer = new wxTimer(this);
+			m_engineData[i]->m_idleDisconnectTimer->Start(30000, true);			
+		}
+	}
+
 	insideAdvanceQueue = false;
 }
 
@@ -2130,4 +2154,35 @@ void CQueueView::CommitChanges()
 	CQueueViewBase::CommitChanges();
 
 	DisplayQueueSize();
+}
+
+void CQueueView::OnTimer(wxTimerEvent& event)
+{
+	for (unsigned int i = 1; i < m_engineData.size(); i++)
+	{
+		t_EngineData* pData = m_engineData[i];
+		if (pData->m_idleDisconnectTimer && !pData->m_idleDisconnectTimer->IsRunning())
+		{
+			delete pData->m_idleDisconnectTimer;
+			pData->m_idleDisconnectTimer = 0;
+
+			if (pData->pEngine->IsConnected())
+				pData->pEngine->Command(CDisconnectCommand());
+		}
+	}
+}
+
+void CQueueView::DeleteEngines()
+{
+	for (unsigned int engineIndex = 1; engineIndex < m_engineData.size(); engineIndex++)
+	{
+		t_EngineData* const data = m_engineData[engineIndex];
+		delete data->pEngine;
+		data->pEngine = 0;
+		delete data->m_idleDisconnectTimer;
+		data->m_idleDisconnectTimer = 0;
+	}
+	for (unsigned int engineIndex = 0; engineIndex < m_engineData.size(); engineIndex++)
+		delete m_engineData[engineIndex];
+	m_engineData.clear();
 }
