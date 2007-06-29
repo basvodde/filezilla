@@ -616,7 +616,7 @@ bool CQueueView::TryStartNextTransfer()
 		if (maxUploads && m_activeCountUp >= maxUploads)
 			return false;
 		else
-			wantedDirection = both;
+			wantedDirection = upload;
 	}
 	else if (maxUploads && m_activeCountUp >= maxUploads)
 		wantedDirection = download;
