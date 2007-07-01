@@ -84,6 +84,8 @@ public:
 
 	virtual void CommitChanges();
 
+	void WriteToFile(TiXmlElement* pElement) const;
+
 protected:
 
 	void AdvanceQueue();

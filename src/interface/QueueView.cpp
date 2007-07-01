@@ -1455,16 +1455,7 @@ void CQueueView::SaveQueue()
 		return;
 	}
 
-	TiXmlElement* pQueue = pDocument->FirstChildElement("Queue");
-	if (!pQueue)
-	{
-		pQueue = pDocument->InsertEndChild(TiXmlElement("Queue"))->ToElement();
-	}
-
-	wxASSERT(pQueue);
-
-	for (std::vector<CServerItem*>::iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
-		(*iter)->SaveItem(pQueue);
+	WriteToFile(pDocument);
 
 	if (!pDocument->GetDocument()->SaveFile(file.GetFullPath().mb_str()))
 	{
@@ -2185,4 +2176,18 @@ void CQueueView::DeleteEngines()
 	for (unsigned int engineIndex = 0; engineIndex < m_engineData.size(); engineIndex++)
 		delete m_engineData[engineIndex];
 	m_engineData.clear();
+}
+
+void CQueueView::WriteToFile(TiXmlElement* pElement) const
+{
+	TiXmlElement* pQueue = pElement->FirstChildElement("Queue");
+	if (!pQueue)
+	{
+		pQueue = pElement->InsertEndChild(TiXmlElement("Queue"))->ToElement();
+	}
+
+	wxASSERT(pQueue);
+
+	for (std::vector<CServerItem*>::const_iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
+		(*iter)->SaveItem(pQueue);
 }

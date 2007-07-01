@@ -26,6 +26,7 @@
 #include "loginmanager.h"
 #include "conditionaldialog.h"
 #include "clearprivatedata.h"
+#include "export.h"
 
 #ifndef __WXMSW__
 #include "resources/filezilla.xpm"
@@ -507,6 +508,11 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		}
 
 		COptions::Get()->SetOption(OPTION_VIEW_HIDDEN_FILES, showHidden ? 1 : 0);
+	}
+	else if (event.GetId() == XRCID("ID_EXPORT"))
+	{
+		CExportDialog dlg(this, m_pQueueView);
+		dlg.Show();
 	}
 	else
 	{
