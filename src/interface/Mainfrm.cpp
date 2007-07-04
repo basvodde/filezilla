@@ -27,6 +27,7 @@
 #include "conditionaldialog.h"
 #include "clearprivatedata.h"
 #include "export.h"
+#include "import.h"
 
 #ifndef __WXMSW__
 #include "resources/filezilla.xpm"
@@ -512,6 +513,11 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	else if (event.GetId() == XRCID("ID_EXPORT"))
 	{
 		CExportDialog dlg(this, m_pQueueView);
+		dlg.Show();
+	}
+	else if (event.GetId() == XRCID("ID_IMPORT"))
+	{
+		CImportDialog dlg(this);
 		dlg.Show();
 	}
 	else

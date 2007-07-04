@@ -18,8 +18,11 @@ filezilla_SOURCES = aboutdialog.cpp asyncrequestqueue.cpp \
 		customheightlistctrl.cpp \
 		defaultfileexistsdlg.cpp dialogex.cpp \
 		dndobjects.cpp \
+		export.cpp \
 		fileexistsdlg.cpp \
-		FileZilla.cpp filter.cpp filteredit.cpp inputdialog.cpp \
+		FileZilla.cpp filter.cpp filteredit.cpp \
+		import.cpp \
+		inputdialog.cpp \
 		ipcmutex.cpp led.cpp \
 		LocalListView.cpp LocalTreeView.cpp \
 		loginmanager.cpp \
@@ -62,8 +65,10 @@ noinst_HEADERS = aboutdialog.h asyncrequestqueue.h \
 		 defaultfileexistsdlg.h \
 		 dialogex.h \
 		 dndobjects.h \
+		 export.h \
 		 fileexistsdlg.h \
 		 filezillaapp.h filter.h filteredit.h \
+		 import.h \
 		 inputdialog.h ipcmutex.h led.h \
 		 LocalListView.h LocalTreeView.h \
 		 loginmanager.h \
