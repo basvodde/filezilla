@@ -3,6 +3,7 @@
 
 #include "dialogex.h"
 
+class TiXmlElement;
 class CImportDialog : public wxDialogEx
 {
 public:
@@ -11,6 +12,9 @@ public:
 	void Show();
 
 protected:
+	bool ImportLegacy(TiXmlElement* pSites);
+	bool ImportLegacy(TiXmlElement* pSitesToImport, TiXmlElement* pExistingSites);
+
 	wxWindow* const m_parent;
 };
 
