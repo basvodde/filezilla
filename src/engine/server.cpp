@@ -2,17 +2,19 @@
 
 struct t_protocolInfo
 {
-	const bool translateable;
 	const enum ServerProtocol protocol;
+	const wxString prefix;
+	const bool translateable;
 	const wxChar* const name;
 };
 
 static const t_protocolInfo protocolInfos[] = {
-	{ false, FTP, _T("FTP - File Transfer Protocol") },
-	{ false, SFTP, _T("SFTP - SSH File Transfer Protocol") },
-	{ true, FTPS, wxTRANSLATE("FTPS - FTP over implicit TLS/SSL") },
-	{ true, FTPES, wxTRANSLATE("FTPES - FTP over explicit TLS/SSL") },
-	{ false, UNKNOWN, _T("") }
+	{ FTP,     _T("ftp"),   false, _T("FTP - File Transfer Protocol") },
+	{ SFTP,    _T("sftp"),  false, _T("SFTP - SSH File Transfer Protocol") },
+	{ HTTP,    _T("http"),  false, _T("HTTP - Hypertext Transfer Protocol") },
+	{ FTPS,    _T("ftps"),  true,  wxTRANSLATE("FTPS - FTP over implicit TLS/SSL") },
+	{ FTPES,   _T("ftpes"), true,  wxTRANSLATE("FTPES - FTP over explicit TLS/SSL") },
+	{ UNKNOWN, _T(""),      false, _T("") }
 };
 
 CServer::CServer()
@@ -627,4 +629,26 @@ bool CServer::SetPostLoginCommands(const std::vector<wxString>& postLoginCommand
 
 	m_postLoginCommands = postLoginCommands;
 	return true;
+}
+
+enum ServerProtocol CServer::GetProtocolFromPrefix(const wxString& prefix)
+{
+	for (unsigned int i = 0; protocolInfos[i].protocol != UNKNOWN; i++)
+	{
+		if (!protocolInfos[i].prefix.CmpNoCase(prefix))
+			return protocolInfos[i].protocol;
+	}
+
+	return UNKNOWN;
+}
+
+wxString CServer::GetPrefixFromProtocol(const wxString& protocol)
+{
+	for (unsigned int i = 0; protocolInfos[i].protocol != UNKNOWN; i++)
+	{
+		if (protocolInfos[i].protocol == protocol)
+			return protocolInfos[i].prefix;
+	}
+
+	return _T("");
 }
