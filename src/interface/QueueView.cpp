@@ -61,7 +61,7 @@ public:
 		}
 		else
 		{
-			if (m_pRemoteDataObject->GetProcessId() != wxGetProcessId())
+			if (m_pRemoteDataObject->GetProcessId() != (int)wxGetProcessId())
 			{
 				wxMessageBox(_("Drag&drop between different instances of FileZilla has not been implemented yet."));
 				return wxDragNone;

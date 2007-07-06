@@ -1206,7 +1206,7 @@ bool CQueueViewBase::RemoveItem(CQueueItem* pItem, bool destroy, bool updateItem
 		
 	}
 
-	int index;
+	int index = 0;
 	if (updateSelections)
 		index = GetItemIndex(pItem);
 	

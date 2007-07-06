@@ -91,7 +91,6 @@ void CQueueViewFailed::OnRemoveSelected(wxCommandEvent& event)
 void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 {
 	std::list<CQueueItem*> selectedItems;
-	CQueueItem* pServer = 0;
 	long item = -1;
 	long skipTo = -1;
 	while (true)
