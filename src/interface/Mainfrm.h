@@ -38,6 +38,8 @@ public:
 
 	void UpdateLayout(int layout = -1, int swap = -1);
 
+	void CheckChangedSettings();
+
 protected:
 	bool CreateMenus();
 	bool CreateQuickconnectBar();

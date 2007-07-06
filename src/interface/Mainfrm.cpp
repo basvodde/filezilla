@@ -997,28 +997,7 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 		wxGetApp().GetWrapEngine()->CheckLanguage();
 	}
 
-#if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
-	if (pOptions->GetOptionVal(OPTION_UPDATECHECK))
-	{
-		if (!m_pUpdateWizard)
-		{
-			m_pUpdateWizard = new CUpdateWizard(this);
-			m_pUpdateWizard->InitAutoUpdateCheck();
-		}
-	}
-	else
-	{
-		if (m_pUpdateWizard)
-		{
-			delete m_pUpdateWizard;
-			m_pUpdateWizard = 0;
-		}
-	}
-#endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
-
-	UpdateLayout();
-
-	m_pAsyncRequestQueue->RecheckDefaults();
+	CheckChangedSettings();
 }
 
 void CMainFrame::OnToggleLogView(wxCommandEvent& event)
@@ -1357,4 +1336,30 @@ void CMainFrame::OnUpdateMenuShowHidden(wxUpdateUIEvent& event)
 	event.Enable(enable);
 
 	event.Check(COptions::Get()->GetOptionVal(OPTION_VIEW_HIDDEN_FILES) != 0);
+}
+
+void CMainFrame::CheckChangedSettings()
+{
+#if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
+	if (COptions::Get()->GetOptionVal(OPTION_UPDATECHECK))
+	{
+		if (!m_pUpdateWizard)
+		{
+			m_pUpdateWizard = new CUpdateWizard(this);
+			m_pUpdateWizard->InitAutoUpdateCheck();
+		}
+	}
+	else
+	{
+		if (m_pUpdateWizard)
+		{
+			delete m_pUpdateWizard;
+			m_pUpdateWizard = 0;
+		}
+	}
+#endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
+
+	UpdateLayout();
+
+	m_pAsyncRequestQueue->RecheckDefaults();
 }

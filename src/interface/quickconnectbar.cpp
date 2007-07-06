@@ -77,20 +77,18 @@ void CQuickconnectBar::OnQuickconnect(wxCommandEvent& event)
 	ServerProtocol protocol = server.GetProtocol();
 	switch (protocol)
 	{
-	case SFTP:
-		host = _T("sftp://") + host;
-		break;
-	case FTPS:
-		host = _T("ftps://") + host;
-		break;
-	case FTPES:
-		host = _T("ftpes://") + host;
-		break;
 	case FTP:
-	default:
+	case UNKNOWN:
 		if (CServer::GetProtocolFromPort(server.GetPort()) != FTP &&
 			CServer::GetProtocolFromPort(server.GetPort()) != UNKNOWN)
 			host = _T("ftp://") + host;
+		break;
+	default:
+		{
+			const wxString prefix = server.GetPrefixFromProtocol(protocol);
+			if (prefix != _T(""))
+				host = prefix + _T("://") + host;
+		}
 		break;
 	}
 	
@@ -102,6 +100,12 @@ void CQuickconnectBar::OnQuickconnect(wxCommandEvent& event)
 
 	XRCCTRL(*this, "ID_QUICKCONNECT_USER", wxTextCtrl)->SetValue(server.GetUser());
 	XRCCTRL(*this, "ID_QUICKCONNECT_PASS", wxTextCtrl)->SetValue(server.GetPass());
+
+	if (protocol == HTTP)
+	{
+		wxMessageBox(_("FileZilla does not support the HTTP protocol"), _("Syntax error"), wxICON_EXCLAMATION);
+		return;
+	}
 
 	if (!m_pState->Connect(server, true))
 		return;

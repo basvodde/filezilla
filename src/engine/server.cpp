@@ -4,17 +4,18 @@ struct t_protocolInfo
 {
 	const enum ServerProtocol protocol;
 	const wxString prefix;
+	int defaultPort;
 	const bool translateable;
 	const wxChar* const name;
 };
 
 static const t_protocolInfo protocolInfos[] = {
-	{ FTP,     _T("ftp"),   false, _T("FTP - File Transfer Protocol") },
-	{ SFTP,    _T("sftp"),  false, _T("SFTP - SSH File Transfer Protocol") },
-	{ HTTP,    _T("http"),  false, _T("HTTP - Hypertext Transfer Protocol") },
-	{ FTPS,    _T("ftps"),  true,  wxTRANSLATE("FTPS - FTP over implicit TLS/SSL") },
-	{ FTPES,   _T("ftpes"), true,  wxTRANSLATE("FTPES - FTP over explicit TLS/SSL") },
-	{ UNKNOWN, _T(""),      false, _T("") }
+	{ FTP,     _T("ftp"),   21,  false, _T("FTP - File Transfer Protocol") },
+	{ SFTP,    _T("sftp"),  22,  false, _T("SFTP - SSH File Transfer Protocol") },
+	{ HTTP,    _T("http"),  80,  false, _T("HTTP - Hypertext Transfer Protocol") },
+	{ FTPS,    _T("ftps"),  990, true,  wxTRANSLATE("FTPS - FTP over implicit TLS/SSL") },
+	{ FTPES,   _T("ftpes"), 21,  true,  wxTRANSLATE("FTPES - FTP over explicit TLS/SSL") },
+	{ UNKNOWN, _T(""),      21,  false, _T("") }
 };
 
 CServer::CServer()
@@ -39,15 +40,8 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 		host = host.Mid(pos + 3);
 		if (protocol.Left(3) == _T("fz_"))
 			protocol = protocol.Mid(3);
-		if (protocol == _T("ftp"))
-			m_protocol = FTP;
-		else if (protocol == _T("sftp"))
-			m_protocol = SFTP;
-		else if (protocol == _T("ftps"))
-			m_protocol = FTPS;
-		else if (protocol == _T("ftpes"))
-			m_protocol = FTPES;
-		else
+		m_protocol = GetProtocolFromPrefix(protocol.Lower());
+		if (m_protocol == UNKNOWN)
 		{
 			// TODO: http:// once WebDAV is officially supported
 			error = _("Invalid protocol specified. Valid protocols are:\nftp:// for normal FTP,\nsftp:// for SSH file transfer protocol,\nftps:// for FTP over SSL (implicit) and\nftpes:// for FTP over SSL (explicit).");
@@ -474,19 +468,15 @@ wxString CServer::FormatServer() const
 	switch (m_protocol)
 	{
 	default:
+		{
+			wxString prefix = GetPrefixFromProtocol(m_protocol);
+			if (prefix != _T(""))
+				server = prefix + _T("://") + server;
+		}
+		break;
 	case FTP:
-		break;
-	case SFTP:
-		server = _T("sftp://") + server;
-		break;
-	case FTPS:
-		server = _T("ftps://") + server;
-		break;
-	case FTPES:
-		server = _T("ftpes://") + server;
-		break;
-	case HTTP:
-		server = _T("http://") + server;
+		if (GetProtocolFromPort(m_port) != FTP && GetProtocolFromPort(m_port) != UNKNOWN)
+			server = _T("ftp://") + server;
 		break;
 	}
 
@@ -544,38 +534,26 @@ wxString CServer::GetCustomEncoding() const
 
 unsigned int CServer::GetDefaultPort(enum ServerProtocol protocol)
 {
-	switch (protocol)
+	for (unsigned int i = 0; protocolInfos[i].protocol != UNKNOWN; i++)
 	{
-	case FTP:
-	case FTPES:
-	case UNKNOWN: // Assume FTP
-		return 21;
-	case SFTP:
-		return 22;
-	case FTPS:
-		return 990;
-	case HTTP:
-		return 80;
-	default:
-		// Shouldn't ever be here
-		wxASSERT(false);
-		return 21;
+		if (protocolInfos[i].protocol == protocol)
+			return protocolInfos[i].defaultPort;
 	}
+
+	// Assume FTP
+	return 21;
 }
 
 enum ServerProtocol CServer::GetProtocolFromPort(unsigned int port)
 {
-	switch (port)
+	for (unsigned int i = 0; protocolInfos[i].protocol != UNKNOWN; i++)
 	{
-	case 22:
-		return SFTP;
-	case 990:
-		return FTPS;
-	case 80:
-		return HTTP;
-	default:
-		return FTP;
+		if (protocolInfos[i].defaultPort == port)
+			return protocolInfos[i].protocol;
 	}
+	
+	// Default to FTP
+	return FTP;
 }
 
 wxString CServer::GetProtocolName(enum ServerProtocol protocol)
@@ -642,7 +620,7 @@ enum ServerProtocol CServer::GetProtocolFromPrefix(const wxString& prefix)
 	return UNKNOWN;
 }
 
-wxString CServer::GetPrefixFromProtocol(const wxString& protocol)
+wxString CServer::GetPrefixFromProtocol(const enum ServerProtocol protocol)
 {
 	for (unsigned int i = 0; protocolInfos[i].protocol != UNKNOWN; i++)
 	{
