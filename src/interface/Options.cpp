@@ -89,13 +89,13 @@ COptions::COptions()
 	for (unsigned int i = 0; i < OPTIONS_NUM; i++)
 		m_optionsCache[i].cached = false;
 
-	wxFileName file = wxFileName(wxGetApp().GetSettingsDir(), _T("filezilla.xml"));
-	m_pXmlDocument = GetXmlFile(file)->GetDocument();
-
-	if (!m_pXmlDocument)
+	m_pXmlFile = new CXmlFile(_T("filezilla"));
+	if (!m_pXmlFile->Load())
 	{
-		wxString msg = wxString::Format(_("Could not load \"%s\", make sure the file is valid.\nFor this session, default settings will be used and any changes to the settings are not persistent."), file.GetFullPath().c_str());
+		wxString msg = wxString::Format(_("Could not load \"%s\", make sure the file is valid.\nFor this session, default settings will be used and any changes to the settings are not persistent."), m_pXmlFile->GetFileName().GetFullPath().c_str());
 		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
+		delete m_pXmlFile;
+		m_pXmlFile = 0;
 	}
 	else
 		CreateSettingsXmlElement();
@@ -104,7 +104,7 @@ COptions::COptions()
 COptions::~COptions()
 {
 	delete m_pLastServer;
-	delete m_pXmlDocument;
+	delete m_pXmlFile;
 }
 
 int COptions::GetOptionVal(unsigned int nID)
@@ -159,6 +159,17 @@ wxString COptions::GetOption(unsigned int nID)
 
 bool COptions::SetOption(unsigned int nID, int value)
 {
+	if (!SetOptionNoSave(nID, value))
+		return false;
+
+	if (m_pXmlFile)
+		m_pXmlFile->Save();
+
+	return true;
+}
+
+bool COptions::SetOptionNoSave(unsigned int nID, int value)
+{
 	if (nID >= OPTIONS_NUM)
 		return false;
 
@@ -170,17 +181,24 @@ bool COptions::SetOption(unsigned int nID, int value)
 	m_optionsCache[nID].cached = true;
 	m_optionsCache[nID].numValue = value;
 
-	if (m_pXmlDocument)
-	{
+	if (m_pXmlFile)
 		SetXmlValue(nID, wxString::Format(_T("%d"), value));
-		wxFileName file = wxFileName(wxGetApp().GetSettingsDir(), _T("filezilla.xml"));
-		m_pXmlDocument->SaveFile(file.GetFullPath().mb_str());
-	}
 
 	return true;
 }
 
 bool COptions::SetOption(unsigned int nID, wxString value)
+{
+	if (!SetOptionNoSave(nID, value))
+		return false;
+	
+	if (m_pXmlFile)
+		m_pXmlFile->Save();
+
+	return true;
+}
+
+bool COptions::SetOptionNoSave(unsigned int nID, wxString value)
 {
 	if (nID >= OPTIONS_NUM)
 		return false;
@@ -199,25 +217,22 @@ bool COptions::SetOption(unsigned int nID, wxString value)
 	m_optionsCache[nID].cached = true;
 	m_optionsCache[nID].strValue = value;
 
-	if (m_pXmlDocument)
-	{
+	if (m_pXmlFile)
 		SetXmlValue(nID, value);
-		wxFileName file = wxFileName(wxGetApp().GetSettingsDir(), _T("filezilla.xml"));
-		m_pXmlDocument->SaveFile(file.GetFullPath().mb_str());
-	}
+
 
 	return true;
 }
 
 void COptions::CreateSettingsXmlElement()
 {
-	if (!m_pXmlDocument)
+	if (!m_pXmlFile)
 		return;
 
-	if (m_pXmlDocument->FirstChildElement("FileZilla3")->FirstChildElement("Settings"))
+	TiXmlElement *element = m_pXmlFile->GetElement();
+	if (element->FirstChildElement("Settings"))
 		return;
 
-	TiXmlElement *element = m_pXmlDocument->FirstChildElement("FileZilla3");
 	TiXmlElement settings("Settings");
 	element->InsertEndChild(settings);
 
@@ -235,14 +250,12 @@ void COptions::CreateSettingsXmlElement()
 		SetXmlValue(i, options[i].defaultValue);
 	}
 
-	wxFileName file = wxFileName(wxGetApp().GetSettingsDir(), _T("filezilla.xml"));
-	m_pXmlDocument->SaveFile(file.GetFullPath().mb_str());
+	m_pXmlFile->Save();
 }
 
 void COptions::SetXmlValue(unsigned int nID, wxString value)
 {
-	wxASSERT(m_pXmlDocument);
-	if (!m_pXmlDocument)
+	if (!m_pXmlFile)
 		return;
 
 	// No checks are made about the validity of the value, that's done in SetOption
@@ -251,10 +264,10 @@ void COptions::SetXmlValue(unsigned int nID, wxString value)
 	if (!utf8)
 		return;
 
-	TiXmlElement *settings = m_pXmlDocument->FirstChildElement("FileZilla3")->FirstChildElement("Settings");
+	TiXmlElement *settings = m_pXmlFile->GetElement()->FirstChildElement("Settings");
 	if (!settings)
 	{
-		TiXmlNode *node = m_pXmlDocument->FirstChildElement("FileZilla3")->InsertEndChild(TiXmlElement("Settings"));
+		TiXmlNode *node = m_pXmlFile->GetElement()->InsertEndChild(TiXmlElement("Settings"));
 		if (!node)
 		{
 			delete [] utf8;
@@ -300,21 +313,23 @@ void COptions::SetXmlValue(unsigned int nID, wxString value)
 	delete [] utf8;
 }
 
-bool COptions::GetXmlValue(unsigned int nID, wxString &value)
+bool COptions::GetXmlValue(unsigned int nID, wxString &value, TiXmlElement *settings /*=0*/)
 {
-	wxASSERT(m_pXmlDocument);
-	if (!m_pXmlDocument)
-		return false;
-
-	TiXmlElement *settings = m_pXmlDocument->FirstChildElement("FileZilla3")->FirstChildElement("Settings");
 	if (!settings)
 	{
-		TiXmlNode *node = m_pXmlDocument->FirstChildElement("FileZilla3")->InsertEndChild(TiXmlElement("Settings"));
-		if (!node)
+		if (!m_pXmlFile)
 			return false;
-		settings = node->ToElement();
+
+		settings = m_pXmlFile->GetElement()->FirstChildElement("Settings");
 		if (!settings)
-			return false;
+		{
+			TiXmlNode *node = m_pXmlFile->GetElement()->InsertEndChild(TiXmlElement("Settings"));
+			if (!node)
+				return false;
+			settings = node->ToElement();
+			if (!settings)
+				return false;
+		}
 	}
 
 	TiXmlNode *node = 0;
@@ -388,38 +403,16 @@ wxString COptions::Validate(unsigned int nID, wxString value)
 	return value;
 }
 
-TiXmlElement *COptions::GetXml()
-{
-	if (m_acquired)
-		return 0;
-
-	if (!m_pXmlDocument)
-		return 0;
-
-	return m_pXmlDocument->FirstChildElement("FileZilla3");
-}
-
-void COptions::FreeXml(bool save)
-{
-	if (!m_pXmlDocument)
-		return;
-
-	m_acquired = false;
-
-	if (save)
-	{
-		wxFileName file = wxFileName(wxGetApp().GetSettingsDir(), _T("filezilla.xml"));
-		m_pXmlDocument->SaveFile(file.GetFullPath().mb_str());
-	}
-}
-
 void COptions::SetServer(wxString path, const CServer& server)
 {
+	if (!m_pXmlFile)
+		return;
+
 	if (path == _T(""))
 		return;
 
-	TiXmlElement *element = GetXml();
-
+	TiXmlElement *element = m_pXmlFile->GetElement();
+	
 	while (path != _T(""))
 	{
 		wxString sub;
@@ -456,7 +449,7 @@ void COptions::SetServer(wxString path, const CServer& server)
 
 	::SetServer(element, server);
 
-	FreeXml(true);
+	m_pXmlFile->Save();
 }
 
 bool COptions::GetServer(wxString path, CServer& server)
@@ -464,7 +457,9 @@ bool COptions::GetServer(wxString path, CServer& server)
 	if (path == _T(""))
 		return false;
 
-	TiXmlElement *element = GetXml();
+	if (!m_pXmlFile)
+		return false;
+	TiXmlElement *element = m_pXmlFile->GetElement();
 
 	while (path != _T(""))
 	{
@@ -490,8 +485,6 @@ bool COptions::GetServer(wxString path, CServer& server)
 	}
 
 	bool res = ::GetServer(element, server);
-
-	FreeXml(false);
 
 	return res;
 }
@@ -542,4 +535,19 @@ void COptions::Destroy()
 COptions* COptions::Get()
 {
 	return m_theOptions;
+}
+
+void COptions::Import(TiXmlElement* pElement)
+{
+	for (int i = 0; i < OPTIONS_NUM; i++)
+	{
+		wxString value;
+		if (!GetXmlValue(i, value, pElement))
+			continue;
+
+		SetOptionNoSave(i, value);
+	}
+
+	if (m_pXmlFile)
+		m_pXmlFile->Save();
 }

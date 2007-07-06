@@ -2,6 +2,7 @@
 #include "import.h"
 #include "xmlfunctions.h"
 #include "ipcmutex.h"
+#include "Options.h"
 
 CImportDialog::CImportDialog(wxWindow* parent)
 	: m_parent(parent)
@@ -32,6 +33,12 @@ void CImportDialog::Show()
 		bool settings = fz3Root->FirstChildElement("Settings") != 0;
 		bool queue = fz3Root->FirstChildElement("Queue") != 0;
 		bool sites = fz3Root->FirstChildElement("Servers") != 0;
+
+		if (settings)
+		{
+			COptions::Get()->Import(fz3Root->FirstChildElement("Settings"));
+			wxMessageBox(_("The settings have been imported. You have to restart FileZilla for all settings to have effect."));
+		}
 
 		if (settings || queue || sites)
 		{

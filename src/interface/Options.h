@@ -44,7 +44,7 @@ struct t_OptionsCache
 	wxString strValue;
 };
 
-class TiXmlDocument;
+class CXmlFile;
 class TiXmlElement;
 class COptions : public COptionsBase
 {
@@ -55,12 +55,8 @@ public:
 	virtual bool SetOption(unsigned int nID, int value);
 	virtual bool SetOption(unsigned int nID, wxString value);
 	
-	TiXmlElement* GetXml();
-	void FreeXml(bool save);
-	
-	// path is element path below document root, separated by slashes
-	void SetServer(wxString path, const CServer& server);
-	bool GetServer(wxString path, CServer& server);
+	bool SetOptionNoSave(unsigned int nID, int value);
+	bool SetOptionNoSave(unsigned int nID, wxString value);
 
 	void SetLastServer(const CServer& server);
 	bool GetLastServer(CServer& server);
@@ -68,6 +64,8 @@ public:
 	static COptions* Get();
 	static void Init();
 	static void Destroy();
+
+	void Import(TiXmlElement* pElement);
 	
 protected:
 	COptions();
@@ -77,11 +75,15 @@ protected:
 	wxString Validate(unsigned int nID, wxString value);
 
 	void SetXmlValue(unsigned int nID, wxString value);
-	bool GetXmlValue(unsigned int nID, wxString &value);
+	bool GetXmlValue(unsigned int nID, wxString &value, TiXmlElement* settings = 0);
+
+	// path is element path below document root, separated by slashes
+	void SetServer(wxString path, const CServer& server);
+	bool GetServer(wxString path, CServer& server);
 
 	void CreateSettingsXmlElement();
 
-	TiXmlDocument *m_pXmlDocument;
+	CXmlFile* m_pXmlFile;
 
 	t_OptionsCache m_optionsCache[OPTIONS_NUM];
 	bool m_acquired;
