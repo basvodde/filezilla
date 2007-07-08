@@ -180,6 +180,32 @@ void AddTextElement(TiXmlElement* node, const char* name, int value)
 	AddTextElement(node, name, wxString::Format(_T("%d"), value));
 }
 
+void AddTextElement(TiXmlElement* node, const wxString& value)
+{
+	wxASSERT(node);
+
+	char* utf8 = ConvUTF8(value);
+	if (!utf8)
+		return;
+
+	for (TiXmlNode* pChild = node->FirstChild(); pChild; pChild = pChild->NextSibling())
+	{
+		if (!pChild->ToText())
+			continue;
+
+		node->RemoveChild(pChild);
+		break;
+	}
+	
+    node->InsertEndChild(TiXmlText(utf8));
+	delete [] utf8;
+}
+
+void AddTextElement(TiXmlElement* node, int value)
+{
+	AddTextElement(node, wxString::Format(_T("%d"), value));
+}
+
 wxString GetTextElement(TiXmlElement* node, const char* name)
 {
 	wxASSERT(node);
@@ -193,6 +219,21 @@ wxString GetTextElement(TiXmlElement* node, const char* name)
 		return _T("");
 
 	return ConvLocal(textNode->Value());
+}
+
+wxString GetTextElement(TiXmlElement* node)
+{
+	wxASSERT(node);
+
+	for (TiXmlNode* pChild = node->FirstChild(); pChild; pChild = pChild->NextSibling())
+	{
+		if (!pChild->ToText())
+			continue;
+
+		return ConvLocal(pChild->Value());
+	}
+
+	return _T("");
 }
 
 int GetTextElementInt(TiXmlElement* node, const char* name, int defValue /*=0*/)

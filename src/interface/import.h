@@ -12,8 +12,15 @@ public:
 	void Show();
 
 protected:
-	bool ImportLegacy(TiXmlElement* pSites);
-	bool ImportLegacy(TiXmlElement* pSitesToImport, TiXmlElement* pExistingSites);
+
+	// Import function for Site Manager
+	bool HasEntryWithName(TiXmlElement* pElement, const wxString& name);
+	TiXmlElement* GetFolderWithName(TiXmlElement* pElement, const wxString& name);
+	bool ImportSites(TiXmlElement* pSites);
+	bool ImportSites(TiXmlElement* pSitesToImport, TiXmlElement* pExistingSites);
+	bool ImportLegacySites(TiXmlElement* pSites);
+	bool ImportLegacySites(TiXmlElement* pSitesToImport, TiXmlElement* pExistingSites);
+	wxString DecodeLegacyPassword(wxString pass);
 
 	wxWindow* const m_parent;
 };

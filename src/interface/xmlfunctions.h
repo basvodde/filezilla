@@ -63,12 +63,19 @@ void SetAttributeInt(TiXmlElement* node, const char* name, int value);
 TiXmlElement* FindElementWithAttribute(TiXmlElement* node, const char* element, const char* attribute, const char* value);
 TiXmlElement* FindElementWithAttribute(TiXmlElement* node, const char* element, const char* attribute, int value);
 
-// Add a new element with the specified name and value to the xml document
+// Add a new child element with the specified name and value to the xml document
 void AddTextElement(TiXmlElement* node, const char* name, const wxString& value);
 void AddTextElement(TiXmlElement* node, const char* name, int value);
 
-// Get string from named element
+// Set the current element's text value
+void AddTextElement(TiXmlElement* node, const wxString& value);
+void AddTextElement(TiXmlElement* node, int value);
+
+// Get string from named child element
 wxString GetTextElement(TiXmlElement* node, const char* name);
+
+// Get string from current element
+wxString GetTextElement(TiXmlElement* node);
 
 // Get (64-bit) integer from named element
 int GetTextElementInt(TiXmlElement* node, const char* name, int defValue = 0);

@@ -596,14 +596,18 @@ void CSiteManager::OnBeginLabelEdit(wxTreeEvent& event)
 
 void CSiteManager::OnEndLabelEdit(wxTreeEvent& event)
 {
+	if (event.IsEditCancelled())
+		return;
+
 	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
 	if (!pTree)
 	{
 		event.Veto();
 		return;
 	}
-	
-	if (event.GetItem() != pTree->GetSelection())
+
+	wxTreeItemId item = event.GetItem();
+	if (item != pTree->GetSelection())
 	{
 		if (!Verify())
 		{
@@ -611,16 +615,31 @@ void CSiteManager::OnEndLabelEdit(wxTreeEvent& event)
 			return;
 		}
 	}
-		
-	wxTreeItemId item = event.GetItem();
+
 	if (!item.IsOk() || item == pTree->GetRootItem() || item == m_ownSites || IsPredefinedItem(item))
 	{
 		event.Veto();
 		return;
 	}
-	
+
+	wxString name = event.GetLabel();
+
 	wxTreeItemId parent = pTree->GetItemParent(item);
 		
+	wxTreeItemId child;
+	wxTreeItemIdValue cookie;
+	for (wxTreeItemId child = pTree->GetFirstChild(parent, cookie); child.IsOk(); child = pTree->GetNextChild(parent, cookie))
+	{
+		if (child == item)
+			continue;
+		if (!name.CmpNoCase(pTree->GetItemText(child)))
+		{
+			wxMessageBox(_("Name already exists"), _("Cannot rename entry"), wxICON_EXCLAMATION, this);
+			event.Veto();
+			return;
+		}
+	}
+	
 	pTree->SortChildren(parent);
 }
 
@@ -630,9 +649,6 @@ void CSiteManager::OnRename(wxCommandEvent& event)
 	if (!pTree)
 		return;
 	
-	if (!Verify())
-		return;
-		
 	wxTreeItemId item = pTree->GetSelection();
 	if (!item.IsOk() || item == pTree->GetRootItem() || item == m_ownSites || IsPredefinedItem(item))
 		return;
