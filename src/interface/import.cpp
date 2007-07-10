@@ -3,9 +3,10 @@
 #include "xmlfunctions.h"
 #include "ipcmutex.h"
 #include "Options.h"
+#include "queue.h"
 
-CImportDialog::CImportDialog(wxWindow* parent)
-	: m_parent(parent)
+CImportDialog::CImportDialog(wxWindow* parent, CQueueView* pQueueView)
+	: m_parent(parent), m_pQueueView(pQueueView)
 {
 }
 
@@ -33,6 +34,11 @@ void CImportDialog::Show()
 		bool settings = fz3Root->FirstChildElement("Settings") != 0;
 		bool queue = fz3Root->FirstChildElement("Queue") != 0;
 		bool sites = fz3Root->FirstChildElement("Servers") != 0;
+
+		if (queue)
+		{
+			m_pQueueView->ImportQueue(fz3Root->FirstChildElement("Queue"), true);
+		}
 
 		if (sites)
 		{

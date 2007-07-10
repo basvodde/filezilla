@@ -1489,7 +1489,22 @@ void CQueueView::LoadQueue()
 		return;
 	}
 
-	TiXmlElement* pServer = pQueue->FirstChildElement("Server");
+	ImportQueue(pQueue, false);
+
+	pDocument->RemoveChild(pQueue);
+
+	if (!pDocument->GetDocument()->SaveFile(file.GetFullPath().mb_str()))
+	{
+		wxString msg = wxString::Format(_("Could not write \"%s\", the queue could not be saved."), file.GetFullPath().c_str());
+		wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
+	}
+
+	delete pDocument->GetDocument();
+}
+
+void CQueueView::ImportQueue(TiXmlElement* pElement, bool updateSelections)
+{
+	TiXmlElement* pServer = pElement->FirstChildElement("Server");
 	while (pServer)
 	{
 		CServer server;
@@ -1566,23 +1581,21 @@ void CQueueView::LoadQueue()
 				m_serverList.pop_back();
 				delete pServerItem;
 			}
+			else if (updateSelections)
+				CommitChanges();
 		}
 
 		pServer = pServer->NextSiblingElement("Server");
 	}
-	pDocument->RemoveChild(pQueue);
 
-	if (!pDocument->GetDocument()->SaveFile(file.GetFullPath().mb_str()))
+	if (!updateSelections)
 	{
-		wxString msg = wxString::Format(_("Could not write \"%s\", the queue could not be saved."), file.GetFullPath().c_str());
-		wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
+		m_insertionStart = -1;
+		m_insertionCount = 0;
+		CommitChanges();
 	}
-
-	delete pDocument->GetDocument();
-
-	m_insertionStart = -1;
-	m_insertionCount = 0;
-	CommitChanges();
+	else
+		Refresh();
 }
 
 void CQueueView::SettingsChanged()

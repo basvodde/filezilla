@@ -4,10 +4,11 @@
 #include "dialogex.h"
 
 class TiXmlElement;
+class CQueueView;
 class CImportDialog : public wxDialogEx
 {
 public:
-	CImportDialog(wxWindow* parent);
+	CImportDialog(wxWindow* parent, CQueueView* pQueueView);
 
 	void Show();
 
@@ -23,6 +24,7 @@ protected:
 	wxString DecodeLegacyPassword(wxString pass);
 
 	wxWindow* const m_parent;
+	CQueueView* m_pQueueView;
 };
 
 #endif //__IMPORT_H__

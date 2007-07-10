@@ -517,7 +517,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	}
 	else if (event.GetId() == XRCID("ID_IMPORT"))
 	{
-		CImportDialog dlg(this);
+		CImportDialog dlg(this, m_pQueueView);
 		dlg.Show();
 	}
 	else
