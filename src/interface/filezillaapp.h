@@ -31,6 +31,7 @@ public:
 protected:
 	bool InitDefaultsDir();
 	bool InitSettingsDir();
+	wxString GetSettingsDirFromDefaults();
 	bool LoadResourceFiles();
 	bool LoadLocales();
 

@@ -7,6 +7,8 @@
 #ifdef __WXMSW__
 #include <wx/msw/registry.h> // Needed by CheckForWin2003FirewallBug
 #endif
+#include "xmlfunctions.h"
+#include <wx/tokenzr.h>
 
 #include <wx/xrc/xh_bmpbt.h>
 #include <wx/xrc/xh_bttn.h>
@@ -411,31 +413,93 @@ bool CFileZillaApp::InitDefaultsDir()
 	return m_defaultsDir != _T("");
 }
 
+wxString CFileZillaApp::GetSettingsDirFromDefaults()
+{
+	if (GetDefaultsDir() == _T(""))
+		return _T("");
+
+	wxFileName fn(GetDefaultsDir(), _T("fzdefaults.xml"));
+	if (!fn.IsOk() || !fn.FileExists())
+		return _T("");
+
+	CXmlFile file(fn);
+	TiXmlElement* element = file.Load();
+	if (!element)
+		return _T("");
+	
+	TiXmlElement* settings = element->FirstChildElement("Settings");
+	if (!settings)
+		return _T("");
+
+	TiXmlElement* setting = FindElementWithAttribute(settings, "Setting", "name", "Config Location");
+	if (!setting)
+		return _T("");
+
+	wxString location = GetTextElement(setting);
+	if (location == _T(""))
+		return _T("");
+
+	wxStringTokenizer tokenizer(location, _T("/\\"), wxTOKEN_RET_EMPTY_ALL);
+	location = _T("");
+	while (tokenizer.HasMoreTokens())
+	{
+		wxString token = tokenizer.GetNextToken();
+		if (token[0] == '$')
+		{
+			if (token[1] == '$')
+				token = token.Mid(1);
+			else
+			{
+				wxString value;
+				if (wxGetEnv(token.Mid(1), &value))
+					token = value;
+			}
+		}
+		location += token;
+		const wxChar delimiter = tokenizer.GetLastDelimiter();
+		if (delimiter)
+			location += delimiter;
+
+	}
+
+	wxFileName norm(location, _T(""));
+	norm.Normalize(wxPATH_NORM_ALL, fn.GetPath());
+	
+	location = norm.GetFullPath();
+	return location;
+}
+
 bool CFileZillaApp::InitSettingsDir()
 {
-#ifdef __WXMSW__
-	wxChar buffer[MAX_PATH * 2 + 1];
-	wxFileName fn;
+	m_settingsDir = GetSettingsDirFromDefaults();
 
-	if (SUCCEEDED(SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, buffer)))
-	{
-		fn = wxFileName(buffer, _T(""));
-		fn.AppendDir(_T("FileZilla"));
-		if (!fn.DirExists())
-			wxMkdir(fn.GetPath(), 0700);
-	}
+	wxFileName fn;
+	if (m_settingsDir != _T(""))
+		fn = wxFileName(m_settingsDir, _T(""));
 	else
 	{
-		// Fall back to directory where the executable is
-		if (GetModuleFileName(0, buffer, MAX_PATH * 2))
-			fn = buffer;
-	}
+
+#ifdef __WXMSW__
+		wxChar buffer[MAX_PATH * 2 + 1];
+
+		if (SUCCEEDED(SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, buffer)))
+		{
+			fn = wxFileName(buffer, _T(""));
+			fn.AppendDir(_T("FileZilla"));
+		}
+		else
+		{
+			// Fall back to directory where the executable is
+			if (GetModuleFileName(0, buffer, MAX_PATH * 2))
+				fn = buffer;
+		}
 #else
-	wxFileName fn = wxFileName(wxGetHomeDir(), _T(""));
-	fn.AppendDir(_T(".filezilla"));
+		fn = wxFileName(wxGetHomeDir(), _T(""));
+		fn.AppendDir(_T(".filezilla"));
+#endif
+	}
 	if (!fn.DirExists())
 		wxMkdir(fn.GetPath(), 0700);
-#endif
 	m_settingsDir = fn.GetPath();
 
 	return true;

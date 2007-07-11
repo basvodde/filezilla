@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<!-- fzdefaults.xml documentation
+
+  The file fzdefaults.xml is used to provide system-wide default settings for
+  FileZilla.
+
+  Usage:
+  
+    - Windows:
+
+      Put the file fzdefaults.xml into the same directory as filezilla.exe
+
+    - OS X:
+
+      Modify the app bundle, put fzdefaults.xml into the
+      Contents/SharedSupport/ subdirectory
+
+    - Other:
+
+      Put fzdefaults.xml into the share/filezilla subdirectory of the install prefix.
+
+  Default site manager entries:
+
+    Create some new Site Manager entires and export the list of sites. Rename
+    the resulting XML file to fzdefaults.xml or copy the <Servers> block in it
+    to fzdefaults.xml. See example below.
+
+  Location of settings directory:
+
+    By default, FileZilla stores it's settings in the user's home directory. If
+    you want to change this location, modify the "Config Location" setting (see
+    below).
+
+    "Config Location" either accepts absolute paths or paths relative to the
+    location of fzdefaults.xml
+    You can also use environment variables by preceeding them with the dollar
+    sign, e.g. "$HOME/foo".
+    Use $$ to denote a path containing dollar signs, e.g. "c:\$$foobar\" if
+    settings should be located in "c:\$foobar".
+    A single dot denotes the directory containing fzdefaults.xml
+
+-->   
+
+<FileZilla3>
+    <Settings>
+      <Setting name="Config Location">$SOMEDIR/filezilla/</Setting>
+    </Settings>
+    <Servers>
+        <Server>
+            <Host>ftp.gnu.org</Host>
+            <Port>21</Port>
+            <Protocol>0</Protocol>
+            <Type>0</Type>
+            <Logontype>0</Logontype>
+            <User>anonymous</User>
+            <Pass>someone@example.com</Pass>
+            <TimezoneOffset>0</TimezoneOffset>
+            <PasvMode>MODE_DEFAULT</PasvMode>
+            <MaximumMultipleConnections>0</MaximumMultipleConnections>
+            <EncodingType>Auto</EncodingType>
+            <Comments></Comments>
+            <LocalDir></LocalDir>
+            <RemoteDir></RemoteDir>Primary GNU download server
+        </Server>
+    </Servers>
+</FileZilla3>
