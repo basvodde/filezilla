@@ -35,24 +35,38 @@ void CImportDialog::Show()
 		bool queue = fz3Root->FirstChildElement("Queue") != 0;
 		bool sites = fz3Root->FirstChildElement("Servers") != 0;
 
-		if (queue)
-		{
-			m_pQueueView->ImportQueue(fz3Root->FirstChildElement("Queue"), true);
-		}
-
-		if (sites)
-		{
-			ImportSites(fz3Root->FirstChildElement("Servers"));
-		}
-
-		if (settings)
-		{
-			COptions::Get()->Import(fz3Root->FirstChildElement("Settings"));
-			wxMessageBox(_("The settings have been imported. You have to restart FileZilla for all settings to have effect."));
-		}
-
 		if (settings || queue || sites)
 		{
+			Load(m_parent, _T("ID_IMPORT"));
+			if (!queue)
+				XRCCTRL(*this, "ID_QUEUE", wxCheckBox)->Hide();
+			if (!sites)
+				XRCCTRL(*this, "ID_SITEMANAGER", wxCheckBox)->Hide();
+			if (!settings)
+				XRCCTRL(*this, "ID_SETTINGS", wxCheckBox)->Hide();
+			Fit();
+
+			if (ShowModal() != wxID_OK)
+				return;
+
+			if (queue && XRCCTRL(*this, "ID_QUEUE", wxCheckBox)->IsChecked())
+			{
+				m_pQueueView->ImportQueue(fz3Root->FirstChildElement("Queue"), true);
+			}
+
+			if (sites && XRCCTRL(*this, "ID_SITEMANAGER", wxCheckBox)->IsChecked())
+			{
+				ImportSites(fz3Root->FirstChildElement("Servers"));
+			}
+
+			if (settings && XRCCTRL(*this, "ID_SETTINGS", wxCheckBox)->IsChecked())
+			{
+				COptions::Get()->Import(fz3Root->FirstChildElement("Settings"));
+				wxMessageBox(_("The settings have been imported. You have to restart FileZilla for all settings to have effect."), _("Import successful"), wxOK, this);
+			}
+			
+			wxMessageBox(_("The selected categories have been imported."), _("Import successful"), wxOK, this);
+
 			return;
 		}
 	}

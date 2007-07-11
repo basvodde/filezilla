@@ -3672,4 +3672,66 @@
       </object>
     </object>
   </object>
+  <object class="wxDialog" name="ID_IMPORT">
+    <title>Import settings</title>
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxFlexGridSizer">
+          <cols>1</cols>
+          <object class="sizeritem">
+            <object class="wxStaticText" name="">
+              <label>The selected file contains importable data for the following categories:</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxCheckBox" name="ID_SITEMANAGER">
+              <label>Site &amp;Manager entries</label>
+              <checked>1</checked>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxCheckBox" name="ID_SETTINGS">
+              <label>&amp;Settings</label>
+              <checked>1</checked>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxCheckBox" name="ID_QUEUE">
+              <label>&amp;Queue</label>
+              <checked>1</checked>
+            </object>
+          </object>
+          <rows>2</rows>
+          <vgap>5</vgap>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>Please select the categories you would like to import.</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxGridSizer">
+              <cols>2</cols>
+              <object class="sizeritem">
+                <object class="wxButton" name="wxID_OK">
+                  <label>OK</label>
+                  <default>1</default>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxButton" name="wxID_CANCEL">
+                  <label>Cancel</label>
+                </object>
+              </object>
+              <hgap>5</hgap>
+            </object>
+            <flag>wxTOP|wxALIGN_RIGHT</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <flag>wxALL</flag>
+        <border>5</border>
+      </object>
+    </object>
+  </object>
 </resource>
