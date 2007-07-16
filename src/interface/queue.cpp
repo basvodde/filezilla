@@ -274,6 +274,16 @@ CFileItem::~CFileItem()
 
 void CFileItem::SetPriority(enum QueuePriority priority)
 {
+	if (priority == m_priority)
+		return;
+
+	CServerItem* parent = (CServerItem*)m_parent;
+	parent->SetChildPriority(this, m_priority, priority);
+	m_priority = priority;
+}
+
+void CFileItem::SetPriorityRaw(enum QueuePriority priority)
+{
 	m_priority = priority;
 }
 
@@ -648,6 +658,40 @@ void CServerItem::DetachChildren()
 	for (int i = 0; i < 2; i++)
 		for (int j = 0; j < PRIORITY_COUNT; j++)
 			m_fileList[i][j].clear();
+}
+
+void CServerItem::SetPriority(enum QueuePriority priority)
+{
+	std::vector<CQueueItem*>::iterator iter;
+	for (iter = m_children.begin(); iter != m_children.end(); iter++)
+	{
+		if ((*iter)->GetType() == QueueItemType_File)
+			((CFileItem*)(*iter))->SetPriorityRaw(priority);
+		else
+			(*iter)->SetPriority(priority);
+	}
+
+	for (int i = 0; i < 2; i++)
+		for (int j = 0; j < PRIORITY_COUNT; j++)
+			if (j != priority)
+				m_fileList[i][priority].splice(m_fileList[i][priority].end(), m_fileList[i][j]);
+}
+
+void CServerItem::SetChildPriority(CFileItem* pItem, enum QueuePriority oldPriority, enum QueuePriority newPriority)
+{
+	int i = pItem->Queued() ? 0 : 1;
+
+	for (std::list<CFileItem*>::iterator iter = m_fileList[i][oldPriority].begin(); iter != m_fileList[i][oldPriority].end(); iter++)
+	{
+		if (*iter != pItem)
+			continue;
+
+		m_fileList[i][oldPriority].erase(iter);
+		m_fileList[i][newPriority].push_back(pItem);
+		return;
+	}
+
+	wxFAIL;
 }
 
 CFolderScanItem::CFolderScanItem(CServerItem* parent, bool queued, bool download, const wxString& localPath, const CServerPath& remotePath)

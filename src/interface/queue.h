@@ -114,6 +114,10 @@ public:
 
 	void DetachChildren();
 
+	virtual void SetPriority(enum QueuePriority priority);
+
+	void SetChildPriority(CFileItem* pItem, enum QueuePriority oldPriority, enum QueuePriority newPriority);
+
 protected:
 	void AddFileItemToList(CFileItem* pItem);
 	void RemoveFileItemFromList(CFileItem* pItem);
@@ -136,6 +140,7 @@ public:
 	virtual ~CFileItem();
 
 	virtual void SetPriority(enum QueuePriority priority);
+	void SetPriorityRaw(enum QueuePriority priority);
 	enum QueuePriority GetPriority() const;
 
 	wxString GetLocalFile() const { return m_localFile; }

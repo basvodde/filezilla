@@ -182,6 +182,8 @@ protected:
 
 	void OnAskPassword(wxCommandEvent& event);
 	void OnTimer(wxTimerEvent& evnet);
+
+	void OnSetPriority(wxCommandEvent& event);
 };
 
 #endif

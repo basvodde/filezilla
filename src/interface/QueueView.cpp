@@ -161,6 +161,12 @@ EVT_LIST_ITEM_FOCUSED(wxID_ANY, CQueueView::OnFocusItemChanged)
 
 EVT_TIMER(wxID_ANY, CQueueView::OnTimer)
 
+EVT_MENU(XRCID("ID_PRIORITY_HIGHEST"), CQueueView::OnSetPriority)
+EVT_MENU(XRCID("ID_PRIORITY_HIGH"), CQueueView::OnSetPriority)
+EVT_MENU(XRCID("ID_PRIORITY_NORMAL"), CQueueView::OnSetPriority)
+EVT_MENU(XRCID("ID_PRIORITY_LOW"), CQueueView::OnSetPriority)
+EVT_MENU(XRCID("ID_PRIORITY_LOWEST"), CQueueView::OnSetPriority)
+
 END_EVENT_TABLE()
 
 class CFolderProcessingThread : public wxThread
@@ -2203,4 +2209,40 @@ void CQueueView::WriteToFile(TiXmlElement* pElement) const
 
 	for (std::vector<CServerItem*>::const_iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
 		(*iter)->SaveItem(pQueue);
+}
+
+void CQueueView::OnSetPriority(wxCommandEvent& event)
+{
+	enum QueuePriority priority;
+
+	const int id = event.GetId();
+	if (id == XRCID("ID_PRIORITY_LOWEST"))
+		priority = priority_lowest;
+	else if (id == XRCID("ID_PRIORITY_LOW"))
+		priority = priority_low;
+	else if (id == XRCID("ID_PRIORITY_HIGH"))
+		priority = priority_high;
+	else if (id == XRCID("ID_PRIORITY_HIGHEST"))
+		priority = priority_highest;
+	else
+		priority = priority_normal;
+
+
+	CQueueItem* pSkip = 0;
+	long item = -1;
+	while (-1 != (item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)))
+	{
+		CQueueItem* pItem = GetQueueItem(item);
+		if (!pItem)
+			continue;
+
+		if (pItem->GetType() == QueueItemType_Server)
+			pSkip = pItem;
+		else if (pItem->GetTopLevelItem() == pSkip)
+			continue;
+		else
+			pSkip = 0;
+
+		pItem->SetPriority(priority);
+	}
 }
