@@ -1037,7 +1037,10 @@ void CRemoteListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 	m_sortColumn = column;
 
 	if (GetItemCount() < 3)
+	{
+		delete [] selected;
 		return;
+	}
 
 	CRemoteListViewSort::DirSortMode dirSortMode;
 	switch (dirSortOption)

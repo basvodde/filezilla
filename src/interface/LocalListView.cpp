@@ -974,7 +974,10 @@ void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 	m_sortColumn = column;
 
 	if (m_indexMapping.size() < 3)
+	{
+		delete [] selected;
 		return;
+	}
 
 	CLocalListViewSort::DirSortMode dirSortMode;
 	switch (dirSortOption)
