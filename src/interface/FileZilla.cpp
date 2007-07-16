@@ -370,6 +370,10 @@ bool CFileZillaApp::LoadResourceFiles()
 
 	wxXmlResource *pResource = wxXmlResource::Get();
 
+#ifndef __WXDEBUG__
+	pResource->SetFlags(pResource->GetFlags() | wxXRC_NO_RELOADING);
+#endif
+
     pResource->AddHandler(new wxMenuXmlHandler);
     pResource->AddHandler(new wxMenuBarXmlHandler);
 	pResource->AddHandler(new wxDialogXmlHandler);
