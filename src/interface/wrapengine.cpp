@@ -198,10 +198,10 @@ bool CWrapEngine::WrapText(wxWindow* parent, wxString& text, unsigned long maxLe
 	if (m_wrapOnEveryChar)
 	{
 #ifdef __WXDEBUG__
-		const wxString& original = text;
+		const wxString original = text;
 #endif
 		bool res = WrapTextChinese(parent, text, maxLength);
-#ifdef __WXDEBUG
+#ifdef __WXDEBUG__
 		wxString unwrapped = UnwrapText(text);
 		wxASSERT(original == unwrapped);
 #endif
@@ -398,9 +398,12 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 
 		wxRect rect = item->GetRect();
 
-		wxASSERT(item->GetMinSize().GetWidth() + rborder + lborder <= sizer->GetMinSize().GetWidth());
+		wxSize min = item->GetMinSize();
+		if (!min.IsFullySpecified())
+			min = item->CalcMin();
+		wxASSERT(min.GetWidth() + rborder + lborder <= sizer->GetMinSize().GetWidth());
 
-		if (item->GetMinSize().GetWidth() + item->GetPosition().x + lborder + rborder <= max)
+		if (min.GetWidth() + item->GetPosition().x + lborder + rborder <= max)
 		    continue;
 
 		wxWindow* window;
@@ -541,6 +544,12 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 			if (max - min < 5)
 				break;
 			desiredWidth = (min + max) / 2;
+
+			for (std::vector<wxWindow*>::iterator iter = windows.begin(); iter != windows.end(); iter++)
+			{
+				UnwrapRecursive(*iter, (*iter)->GetSizer());
+				(*iter)->GetSizer()->Layout();
+			}
 			continue;
 		}
 		actualWidth = size.GetWidth();
