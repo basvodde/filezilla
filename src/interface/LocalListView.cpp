@@ -943,6 +943,17 @@ void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 	}
 #endif
 
+	// Remember which files are selected
+	bool *selected = new bool[GetItemCount()];
+	memset(selected, 0, sizeof(bool) * GetItemCount());
+
+	int item = -1;
+	while ((item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
+		selected[m_indexMapping[item]] = 1;
+	int focused = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
+	if (focused != -1)
+		focused = m_indexMapping[focused];
+
 	const int dirSortOption = COptions::Get()->GetOptionVal(OPTION_FILELIST_DIRSORT);
 
 	if (column == m_sortColumn && direction != m_sortDirection && !m_indexMapping.empty() &&
@@ -952,6 +963,9 @@ void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 		m_sortDirection = direction;
 		m_sortColumn = column;
 		std::reverse(++m_indexMapping.begin(), m_indexMapping.end());
+
+		SortList_UpdateSelections(selected, focused);
+		delete [] selected;
 
 		return;
 	}
@@ -992,6 +1006,33 @@ void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 
 	if (m_sortDirection)
 		std::reverse(++m_indexMapping.begin(), m_indexMapping.end());
+
+	SortList_UpdateSelections(selected, focused);
+	delete [] selected;
+}
+
+void CLocalListView::SortList_UpdateSelections(bool* selections, int focus)
+{
+	for (int i = 1; i < GetItemCount(); i++)
+	{
+		const int state = GetItemState(i, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+		const bool selected = (state & wxLIST_STATE_SELECTED) != 0;
+		const bool focused = (state & wxLIST_STATE_FOCUSED) != 0;
+
+		int item = m_indexMapping[i];
+		if (selections[item] != selected)
+			SetItemState(i, selections[item] ? wxLIST_STATE_SELECTED : 0, wxLIST_STATE_SELECTED);
+		if (focused)
+		{
+			if (item != focus)
+				SetItemState(i, 0, wxLIST_STATE_FOCUSED);
+		}
+		else
+		{
+			if (item == focus)
+				SetItemState(i, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
+		}
+	}
 }
 
 void CLocalListView::OnColumnClicked(wxListEvent &event)

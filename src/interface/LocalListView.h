@@ -58,6 +58,7 @@ protected:
 	t_fileData *GetData(unsigned int item);
 
 	void SortList(int column = -1, int direction = -1);
+	void SortList_UpdateSelections(bool* selections, int focus);
 
 	int FindItemWithPrefix(const wxString& prefix, int start);
 

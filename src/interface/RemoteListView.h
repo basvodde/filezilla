@@ -66,6 +66,7 @@ protected:
 	int GetItemIndex(unsigned int item) const;
 
 	void SortList(int column = -1, int direction = -1);
+	void SortList_UpdateSelections(bool* selections, int focus);
 
 	// Processes the directory listing in case of a recursive operation
 	void ProcessDirectoryListing();
