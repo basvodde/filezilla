@@ -21,6 +21,10 @@ dist_noinst_DATA = filezilla.kdevelop GPL.html
 
 dist_noinst_DATA += docs/iconspecs.htm
 
+docsdir = $(pkgdatadir)/docs
+
+dist_docs_DATA = docs/fzdefaults.xml.example
+
 if !LOCALES_ONLY
 if MACAPPBUNDLE
 clean-local:

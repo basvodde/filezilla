@@ -44,6 +44,10 @@ done
 echo Copying resources
 cp -r "$install_prefix/share/filezilla/resources" "$targetdir/resources" || exit 1
 
+echo Copy docs
+mkdir -p "$targetdir/docs"
+cp "$top_srcdir/docs/fzdefaults.xml.example" "$targetdir/docs" || exit 1
+
 echo Copying other files
 cp "$top_srcdir/GPL.html" "$targetdir" || exit 1
 cp "$top_srcdir/AUTHORS" "$targetdir" || exit 1

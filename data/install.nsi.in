@@ -217,9 +217,13 @@ Section "FileZilla Client" SecMain
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "NoModify" "1"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "NoRepair" "1"
 
+  SetOutPath "$INSTDIR\docs"
+  File "${top_srcdir}\docs\fzdefaults.xml.example"
+
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     
   ;Create shortcuts
+  SetOutPath "$INSTDIR"
   CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
   CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
   CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\FileZilla.lnk" "$INSTDIR\filezilla.exe"
@@ -335,6 +339,8 @@ Section "Uninstall"
 
   Delete "$INSTDIR\uninstall.exe"
 
+  Delete "$INSTDIR\docs\fzdefaults.xml.example"
+
   RMDir "$INSTDIR\locales"
   RMDir "$INSTDIR\resources\32x32"
   RMDir "$INSTDIR\resources\16x16"
@@ -342,6 +348,7 @@ Section "Uninstall"
   RMDir "$INSTDIR\resources\cyril\16x16"
   RMDir "$INSTDIR\resources\cyril"
   RMDir "$INSTDIR\resources"
+  RMDir "$INSTDIR\resources\docs"
   RMDir /REBOOTOK "$INSTDIR"
 
   
