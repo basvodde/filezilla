@@ -45,17 +45,41 @@ public:
 		// window hierarchy which saves a few CPU cycles.
 	}
 
+#ifdef __WXMSW__
 	void OnNavigationKey(wxNavigationKeyEvent& event)
 	{
 		wxWindow* parent = GetParent();
 		event.SetEventObject(parent);
 		parent->ProcessEvent(event);
 	}
+#else
+	void OnKeyDown(wxKeyEvent& event)
+	{
+		if (event.GetKeyCode() != WXK_TAB)
+		{
+			event.Skip();
+			return;
+		}
+
+		wxWindow* parent = GetParent();
+
+		wxNavigationKeyEvent navEvent;
+		navEvent.SetEventObject(parent);
+		navEvent.SetDirection(!event.ShiftDown());
+		navEvent.SetFromTab(true);
+		navEvent.ResumePropagation(1);
+		parent->ProcessEvent(navEvent);
+	}
+#endif
 };
 
 BEGIN_EVENT_TABLE(CFastTextCtrl, wxTextCtrl)
 	EVT_TEXT(wxID_ANY, CFastTextCtrl::OnText)
+#ifdef __WXMSW__
 	EVT_NAVIGATION_KEY(CFastTextCtrl::OnNavigationKey)
+#else
+	EVT_KEY_DOWN(CFastTextCtrl::OnKeyDown)
+#endif
 END_EVENT_TABLE()
 
 

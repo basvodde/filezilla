@@ -27,7 +27,7 @@ protected:
 #endif
 
 	virtual int OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2);
-	
+
 	wxTreeItemId GetNearestParent(wxString& localDir);
 	wxTreeItemId GetSubdir(wxTreeItemId parent, const wxString& subDir);
 	void DisplayDir(wxTreeItemId parent, const wxString& dirname, const wxString& filterException = _T(""));
@@ -39,6 +39,9 @@ protected:
 	void OnItemExpanding(wxTreeEvent& event);
 	void OnSelectionChanged(wxTreeEvent& event);
 	void OnBeginDrag(wxTreeEvent& event);
+#ifndef __WXMSW__
+	void OnKeyDown(wxKeyEvent& event);
+#endif
 
 	wxString GetDirFromItem(wxTreeItemId item);
 

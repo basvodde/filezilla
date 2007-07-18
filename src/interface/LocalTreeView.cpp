@@ -59,7 +59,7 @@ public:
 
 		return hit;
 	}
-	
+
 	virtual wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def)
 	{
 		if (def == wxDragError ||
@@ -82,7 +82,7 @@ public:
 			m_pLocalTreeView->m_pState->HandleDroppedFiles(m_pFileDataObject, dir, def == wxDragCopy);
 		else
 		{
-			if (m_pRemoteDataObject->GetProcessId() != wxGetProcessId())
+			if (m_pRemoteDataObject->GetProcessId() != (int)wxGetProcessId())
 			{
 				wxMessageBox(_("Drag&drop between different instances of FileZilla has not been implemented yet."));
 				return wxDragNone;
@@ -136,7 +136,7 @@ public:
 		const wxTreeItemId dropHighlight = m_pLocalTreeView->m_dropHighlight;
 		if (dropHighlight != wxTreeItemId())
 			m_pLocalTreeView->SetItemDropHighlight(dropHighlight, false);
-		
+
 		m_pLocalTreeView->SetItemDropHighlight(hit, true);
 		m_pLocalTreeView->m_dropHighlight = hit;
 
@@ -157,7 +157,7 @@ public:
 		const wxString& dir = DisplayDropHighlight(wxPoint(x, y));
 		if (dir == _T(""))
 			return wxDragNone;
-		
+
 		if (def == wxDragLink)
 			def = wxDragCopy;
 
@@ -187,6 +187,9 @@ BEGIN_EVENT_TABLE(CLocalTreeView, wxTreeCtrl)
 EVT_TREE_ITEM_EXPANDING(wxID_ANY, CLocalTreeView::OnItemExpanding)
 EVT_TREE_SEL_CHANGED(wxID_ANY, CLocalTreeView::OnSelectionChanged)
 EVT_TREE_BEGIN_DRAG(wxID_ANY, CLocalTreeView::OnBeginDrag)
+#ifndef __WXMSW__
+EVT_KEY_DOWN(CLocalTreeView::OnKeyDown)
+#endif //__WXMSW__
 END_EVENT_TABLE()
 
 CLocalTreeView::CLocalTreeView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView *pQueueView)
@@ -385,7 +388,7 @@ bool CLocalTreeView::DisplayDrives()
 		if (!key.HasValue(_T("NoDrives")) || !key.QueryValue(_T("NoDrives"), &drivesToHide))
 			drivesToHide = 0;
 	}
-	
+
 	int len = GetLogicalDriveStrings(0, 0);
 	if (!len)
 		return false;
@@ -483,14 +486,14 @@ void CLocalTreeView::DisplayDir(wxTreeItemId parent, const wxString& dirname, co
 				size = buf.st_size;
 			else
 				size = -1;
-	
+
 			if (filter.FilenameFiltered(file, isDir, size, true))
 				continue;
 		}
 
 		wxTreeItemId item = AppendItem(parent, file, GetIconIndex(::dir, fullName), GetIconIndex(opened_dir, fullName));
 		if (HasSubdir(fullName))
-			AppendItem(item, _T(""));		
+			AppendItem(item, _T(""));
 	}
 	SortChildren(parent);
 }
@@ -541,7 +544,7 @@ wxTreeItemId CLocalTreeView::MakeSubdirs(wxTreeItemId parent, wxString dirname, 
 		parent = item;
 		dirname += segment + separator;
 	}
-	
+
 	DisplayDir(parent, dirname);
 	return parent;
 }
@@ -660,7 +663,7 @@ void CLocalTreeView::Refresh()
 			const bool isDir = fn.DirExists();
 
 			wxLongLong size;
-			
+
 			wxStructStat buf;
 			if (!isDir && !wxStat(fn.GetFullPath(), &buf))
 				size = buf.st_size;
@@ -830,4 +833,20 @@ void CLocalTreeView::OnBeginDrag(wxTreeEvent& event)
 	int res = source.DoDragDrop(wxDrag_AllowMove);
 	if (res == wxDragCopy || res == wxDragMove)
 		m_pState->RefreshLocal();
+}
+
+void CLocalTreeView::OnKeyDown(wxKeyEvent& event)
+{
+	if (event.GetKeyCode() != WXK_TAB)
+	{
+		event.Skip();
+		return;
+	}
+
+	wxNavigationKeyEvent navEvent;
+	navEvent.SetEventObject(this);
+	navEvent.SetDirection(!event.ShiftDown());
+	navEvent.SetFromTab(true);
+	navEvent.ResumePropagation(1);
+	ProcessEvent(navEvent);
 }

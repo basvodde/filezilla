@@ -48,7 +48,7 @@ public:
 
 		return hit;
 	}
-	
+
 	virtual wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def)
 	{
 		if (def == wxDragError ||
@@ -155,7 +155,7 @@ public:
 		const wxTreeItemId dropHighlight = m_pRemoteTreeView->m_dropHighlight;
 		if (dropHighlight != wxTreeItemId())
 			m_pRemoteTreeView->SetItemDropHighlight(dropHighlight, false);
-		
+
 		m_pRemoteTreeView->SetItemDropHighlight(hit, true);
 		m_pRemoteTreeView->m_dropHighlight = hit;
 
@@ -175,7 +175,7 @@ public:
 		const CServerPath& path = DisplayDropHighlight(wxPoint(x, y));
 		if (path.IsEmpty())
 			return wxDragNone;
-		
+
 		if (def == wxDragLink)
 			def = wxDragCopy;
 
@@ -206,6 +206,9 @@ EVT_TREE_ITEM_EXPANDING(wxID_ANY, CRemoteTreeView::OnItemExpanding)
 EVT_TREE_SEL_CHANGED(wxID_ANY, CRemoteTreeView::OnSelectionChanged)
 EVT_TREE_ITEM_ACTIVATED(wxID_ANY, CRemoteTreeView::OnItemActivated)
 EVT_TREE_BEGIN_DRAG(wxID_ANY, CRemoteTreeView::OnBeginDrag)
+#ifndef __WXMSW__
+EVT_KEY_DOWN(CRemoteTreeView::OnKeyDown)
+#endif //__WXMSW__
 END_EVENT_TABLE()
 
 CRemoteTreeView::CRemoteTreeView(wxWindow* parent, wxWindowID id, CState* pState, CQueueView* pQueue)
@@ -766,7 +769,7 @@ void CRemoteTreeView::OnBeginDrag(wxTreeEvent& event)
 		object.Add(pFileDataObject);
 	}
 #endif
-	
+
 	wxDropSource source(this);
 	source.SetData(object);
 	if (source.DoDragDrop() != wxDragCopy)
@@ -813,4 +816,20 @@ void CRemoteTreeView::OnBeginDrag(wxTreeEvent& event)
 		ext = 0;
 	}
 #endif
+}
+
+void CRemoteTreeView::OnKeyDown(wxKeyEvent& event)
+{
+	if (event.GetKeyCode() != WXK_TAB)
+	{
+		event.Skip();
+		return;
+	}
+
+	wxNavigationKeyEvent navEvent;
+	navEvent.SetEventObject(this);
+	navEvent.SetDirection(!event.ShiftDown());
+	navEvent.SetFromTab(true);
+	navEvent.ResumePropagation(1);
+	ProcessEvent(navEvent);
 }

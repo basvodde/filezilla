@@ -52,6 +52,9 @@ protected:
 	void OnSelectionChanged(wxTreeEvent& event);
 	void OnItemActivated(wxTreeEvent& event);
 	void OnBeginDrag(wxTreeEvent& event);
+#ifndef __WXMSW__
+	void OnKeyDown(wxKeyEvent& event);
+#endif
 };
 
 #endif
