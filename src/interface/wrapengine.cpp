@@ -485,7 +485,10 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 				continue;
 
 			pSizer->Layout();
-			bool res = WrapRecursive(*iter, pSizer, maxWidth);
+#ifdef __WXDEBUG__
+			bool res = 
+#endif
+			WrapRecursive(*iter, pSizer, maxWidth);
 			wxASSERT(res);
 			pSizer->Layout();
 			pSizer->Fit(*iter);
