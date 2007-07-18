@@ -10,6 +10,7 @@ EVT_BUTTON(XRCID("ID_QUICKCONNECT_OK"), CQuickconnectBar::OnQuickconnect)
 EVT_BUTTON(XRCID("ID_QUICKCONNECT_DROPDOWN"), CQuickconnectBar::OnQuickconnectDropdown)
 EVT_MENU(wxID_ANY, CQuickconnectBar::OnMenu)
 EVT_TEXT_ENTER(wxID_ANY, CQuickconnectBar::OnQuickconnect)
+EVT_NAVIGATION_KEY(CQuickconnectBar::OnKeyboardNavigation)
 END_EVENT_TABLE();
 
 CQuickconnectBar::CQuickconnectBar()
@@ -163,4 +164,20 @@ void CQuickconnectBar::ClearFields()
 	XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetValue(_T(""));
 	XRCCTRL(*this, "ID_QUICKCONNECT_USER", wxTextCtrl)->SetValue(_T(""));
 	XRCCTRL(*this, "ID_QUICKCONNECT_PASS", wxTextCtrl)->SetValue(_T(""));
+}
+
+void CQuickconnectBar::OnKeyboardNavigation(wxNavigationKeyEvent& event)
+{
+	if (event.GetDirection() && event.GetEventObject() == XRCCTRL(*this, "ID_QUICKCONNECT_DROPDOWN", wxButton))
+	{
+		event.SetEventObject(this);
+		GetParent()->ProcessEvent(event);
+	}
+	else if (!event.GetDirection() && event.GetEventObject() == XRCCTRL(*this, "ID_QUICKCONNECT_HOST", wxTextCtrl))
+	{
+		event.SetEventObject(this);
+		GetParent()->ProcessEvent(event);
+	}
+	else
+		event.Skip();
 }

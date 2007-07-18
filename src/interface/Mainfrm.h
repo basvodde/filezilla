@@ -18,6 +18,7 @@ class CUpdateWizard;
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 class CSiteManagerItemData;
 class CQueue;
+class CViewHeader;
 
 class CMainFrame : public wxFrame
 {
@@ -39,6 +40,8 @@ public:
 	void UpdateLayout(int layout = -1, int swap = -1);
 
 	void CheckChangedSettings();
+
+	void ConnectNavigationHandler(wxEvtHandler* handler);
 
 protected:
 	bool CreateMenus();
@@ -70,6 +73,8 @@ protected:
 	CView* m_pRemoteListViewPanel;
 	CRemoteTreeView* m_pRemoteTreeView;
 	CRemoteListView* m_pRemoteListView;
+	CViewHeader* m_pLocalViewHeader;
+	CViewHeader* m_pRemoteViewHeader;
 	CLed* m_pRecvLed;
 	CLed* m_pSendLed;
 	wxTimer m_transferStatusTimer;
@@ -116,6 +121,8 @@ protected:
 #endif //FZ_MANUALUPDATECHECK
 	void OnSitemanagerDropdown(wxCommandEvent& event);
 	void OnUpdateMenuShowHidden(wxUpdateUIEvent& event);
+	void OnNavigationKeyEvent(wxNavigationKeyEvent& event);
+	void OnGetFocus(wxFocusEvent& event);
 
 	float m_ViewSplitterSashPos;
 	bool m_bInitDone;

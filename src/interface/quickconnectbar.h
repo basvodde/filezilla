@@ -22,6 +22,7 @@ protected:
 	void OnQuickconnect(wxCommandEvent& event);
 	void OnQuickconnectDropdown(wxCommandEvent& event);
 	void OnMenu(wxCommandEvent& event);
+	void OnKeyboardNavigation(wxNavigationKeyEvent& event);
 };
 
 

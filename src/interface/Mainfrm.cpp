@@ -89,6 +89,8 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 #endif
 	EVT_UPDATE_UI(XRCID("ID_MENU_SERVER_CMD"), CMainFrame::OnUpdateMenuCustomcommand)
 	EVT_UPDATE_UI(XRCID("ID_MENU_SERVER_VIEWHIDDEN"), CMainFrame::OnUpdateMenuShowHidden)
+	EVT_NAVIGATION_KEY(CMainFrame::OnNavigationKeyEvent)
+	EVT_SET_FOCUS(CMainFrame::OnGetFocus)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
@@ -230,9 +232,10 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 			m_pViewSplitter->SplitVertically(m_pLocalSplitter, m_pRemoteSplitter);
 	}
 
+	m_pLocalViewHeader = new CLocalViewHeader(m_pLocalSplitter, m_pState);
 	if (COptions::Get()->GetOptionVal(OPTION_SHOW_TREE_LOCAL))
 	{
-		m_pLocalTreeViewPanel->SetHeader(new CLocalViewHeader(m_pLocalSplitter, m_pState));
+		m_pLocalTreeViewPanel->SetHeader(m_pLocalViewHeader);
 		if (layout == 3 && swap)
 			m_pLocalSplitter->SplitVertically(m_pLocalListViewPanel, m_pLocalTreeViewPanel);
 		else if (layout)
@@ -242,12 +245,15 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	}
 	else
 	{
-		m_pLocalListViewPanel->SetHeader(new CLocalViewHeader(m_pLocalSplitter, m_pState));
+		m_pLocalTreeViewPanel->Hide();
+		m_pLocalListViewPanel->SetHeader(m_pLocalViewHeader);
 		m_pLocalSplitter->Initialize(m_pLocalListViewPanel);
 	}
+	
+	m_pRemoteViewHeader = new CRemoteViewHeader(m_pRemoteSplitter, m_pState);
 	if (COptions::Get()->GetOptionVal(OPTION_SHOW_TREE_REMOTE))
 	{
-		m_pRemoteTreeViewPanel->SetHeader(new CRemoteViewHeader(m_pRemoteSplitter, m_pState));
+		m_pRemoteTreeViewPanel->SetHeader(m_pRemoteViewHeader);
 		if (layout == 3 && !swap)
 			m_pRemoteSplitter->SplitVertically(m_pRemoteListViewPanel, m_pRemoteTreeViewPanel);
 		else if (layout)
@@ -257,9 +263,11 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	}
 	else
 	{
-		m_pRemoteListViewPanel->SetHeader(new CRemoteViewHeader(m_pRemoteSplitter, m_pState));
+		m_pRemoteTreeViewPanel->Hide();
+		m_pRemoteListViewPanel->SetHeader(m_pRemoteViewHeader);
 		m_pRemoteSplitter->Initialize(m_pRemoteListViewPanel);
 	}
+
 	wxSize size = m_pBottomSplitter->GetClientSize();
 	m_pBottomSplitter->SetSashPosition(size.GetHeight() - 170);
 
@@ -284,6 +292,17 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 		m_pUpdateWizard = 0;
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 
+	ConnectNavigationHandler(m_pStatusView);
+	ConnectNavigationHandler(m_pLocalListView);
+	ConnectNavigationHandler(m_pRemoteListView);
+	ConnectNavigationHandler(m_pLocalTreeView);
+	ConnectNavigationHandler(m_pRemoteTreeView);
+	ConnectNavigationHandler(m_pLocalViewHeader);
+	ConnectNavigationHandler(m_pRemoteViewHeader);
+
+	wxNavigationKeyEvent evt;
+	evt.SetDirection(true);
+	AddPendingEvent(evt);
 }
 
 CMainFrame::~CMainFrame()
@@ -1362,4 +1381,74 @@ void CMainFrame::CheckChangedSettings()
 	UpdateLayout();
 
 	m_pAsyncRequestQueue->RecheckDefaults();
+}
+
+void CMainFrame::ConnectNavigationHandler(wxEvtHandler* handler)
+{
+	if (!handler)
+		return;
+
+	handler->Connect(wxEVT_NAVIGATION_KEY, wxNavigationKeyEventHandler(CMainFrame::OnNavigationKeyEvent), 0, this);
+}
+
+void CMainFrame::OnNavigationKeyEvent(wxNavigationKeyEvent& event)
+{
+	std::list<wxWindow*> windowOrder;
+	windowOrder.push_back(m_pQuickconnectBar);
+	windowOrder.push_back(m_pStatusView);
+	if (COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP) == 0)
+	{
+		windowOrder.push_back(m_pLocalViewHeader);
+		windowOrder.push_back(m_pLocalTreeView);
+		windowOrder.push_back(m_pLocalListView);
+		windowOrder.push_back(m_pRemoteViewHeader);
+		windowOrder.push_back(m_pRemoteTreeView);
+		windowOrder.push_back(m_pRemoteListView);
+	}
+	else
+	{
+		windowOrder.push_back(m_pRemoteViewHeader);
+		windowOrder.push_back(m_pRemoteTreeView);
+		windowOrder.push_back(m_pRemoteListView);
+		windowOrder.push_back(m_pLocalViewHeader);
+		windowOrder.push_back(m_pLocalTreeView);
+		windowOrder.push_back(m_pLocalListView);
+	}
+
+	std::list<wxWindow*>::iterator iter;
+	for (iter = windowOrder.begin(); iter != windowOrder.end(); iter++)
+	{
+		if (*iter == event.GetEventObject())
+			break;
+	}
+
+	do
+	{
+		if (iter == windowOrder.end())
+			iter = windowOrder.begin();
+		else
+		{
+			if (event.GetDirection())
+			{
+				iter++;
+				if (iter == windowOrder.end())
+					iter = windowOrder.begin();
+			}
+			else
+			{
+				if (iter == windowOrder.begin())
+					iter = windowOrder.end();
+				iter--;
+			}	
+		}
+	}
+	while (!(*iter)->IsShownOnScreen() || !(*iter)->IsEnabled());
+
+	(*iter)->SetFocus();
+}
+
+void CMainFrame::OnGetFocus(wxFocusEvent& event)
+{
+	wxNavigationKeyEvent evt;
+	OnNavigationKeyEvent(evt);
 }

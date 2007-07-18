@@ -13,6 +13,8 @@ public:
 
 	void InitDefAttr();
 
+	virtual void SetFocus();
+
 protected:
 
 	int m_nLineCount;

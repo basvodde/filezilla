@@ -39,7 +39,37 @@ protected:
 		return wxComboBox::MSWDefWindowProc(nMsg, wParam, lParam);
 	}
 #endif //__WXMSW__
+
+	DECLARE_EVENT_TABLE();
+	void OnKeyDown(wxKeyEvent& event)
+	{
+		if (event.GetKeyCode() != WXK_TAB)
+		{
+			event.Skip();
+			return;
+		}
+
+		wxNavigationKeyEvent navEvent;
+		navEvent.SetEventObject(m_parent);
+		navEvent.SetDirection(!event.ShiftDown());
+		navEvent.SetFromTab(true);
+		navEvent.ResumePropagation(1);
+		m_parent->ProcessEvent(navEvent);
+	}
+
+	void OnChar(wxKeyEvent& event)
+	{
+		if (event.GetKeyCode() == WXK_TAB)
+			return;
+
+		event.Skip();
+	}
 };
+
+BEGIN_EVENT_TABLE(CComboBoxEx, wxComboBox)
+EVT_KEY_DOWN(CComboBoxEx::OnKeyDown)
+EVT_CHAR(CComboBoxEx::OnChar)
+END_EVENT_TABLE()
 
 BEGIN_EVENT_TABLE(CViewHeader, wxWindow)
 EVT_SIZE(CViewHeader::OnSize)
@@ -256,6 +286,16 @@ void CViewHeader::AddRecentDirectory(const wxString &directory)
 
 	m_recentDirectories.push_back(directory);
 	m_pComboBox->Append(directory);
+}
+
+void CViewHeader::SetFocus()
+{
+	m_pComboBox->SetFocus();
+}
+
+bool CViewHeader::IsEnabled() const
+{
+	return m_pComboBox->IsEnabled();
 }
 
 #ifdef __WXGTK__

@@ -20,7 +20,8 @@ public:
 	CFastTextCtrl(wxWindow* parent)
 		: wxTextCtrl(parent, -1, _T(""), wxDefaultPosition, wxDefaultSize,
 					 wxNO_BORDER | wxVSCROLL | wxTE_MULTILINE |
-					 wxTE_READONLY | wxTE_RICH | wxTE_RICH2 | wxTE_NOHIDESEL)
+					 wxTE_READONLY | wxTE_RICH | wxTE_RICH2 | wxTE_NOHIDESEL |
+					 wxTAB_TRAVERSAL)
 	{
 	}
 #ifdef __WXMSW__
@@ -43,10 +44,18 @@ public:
 		// Having this event handler prevents the event from propagating up the
 		// window hierarchy which saves a few CPU cycles.
 	}
+
+	void OnNavigationKey(wxNavigationKeyEvent& event)
+	{
+		wxWindow* parent = GetParent();
+		event.SetEventObject(parent);
+		parent->ProcessEvent(event);
+	}
 };
 
 BEGIN_EVENT_TABLE(CFastTextCtrl, wxTextCtrl)
 	EVT_TEXT(wxID_ANY, CFastTextCtrl::OnText)
+	EVT_NAVIGATION_KEY(CFastTextCtrl::OnNavigationKey)
 END_EVENT_TABLE()
 
 
@@ -248,4 +257,9 @@ void CStatusView::OnCopy(wxCommandEvent& event)
 		m_pTextCtrl->SetSelection(from, to);
 		m_pTextCtrl->Thaw();
 	}
+}
+
+void CStatusView::SetFocus()
+{
+	m_pTextCtrl->SetFocus();
 }

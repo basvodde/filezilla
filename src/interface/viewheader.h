@@ -19,6 +19,10 @@ public:
 	void SetLabel(const wxString& label);
 	wxString GetLabel() const;
 
+	virtual void SetFocus();
+
+	virtual bool IsEnabled() const;
+
 protected:
 	CComboBoxEx* m_pComboBox;
 	bool m_alreadyInPaint;
