@@ -835,6 +835,7 @@ void CLocalTreeView::OnBeginDrag(wxTreeEvent& event)
 		m_pState->RefreshLocal();
 }
 
+#ifndef __WXMSW__
 void CLocalTreeView::OnKeyDown(wxKeyEvent& event)
 {
 	if (event.GetKeyCode() != WXK_TAB)
@@ -850,3 +851,4 @@ void CLocalTreeView::OnKeyDown(wxKeyEvent& event)
 	navEvent.ResumePropagation(1);
 	ProcessEvent(navEvent);
 }
+#endif

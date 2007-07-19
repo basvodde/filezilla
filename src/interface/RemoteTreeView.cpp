@@ -818,6 +818,7 @@ void CRemoteTreeView::OnBeginDrag(wxTreeEvent& event)
 #endif
 }
 
+#ifndef __WXMSW__
 void CRemoteTreeView::OnKeyDown(wxKeyEvent& event)
 {
 	if (event.GetKeyCode() != WXK_TAB)
@@ -833,3 +834,4 @@ void CRemoteTreeView::OnKeyDown(wxKeyEvent& event)
 	navEvent.ResumePropagation(1);
 	ProcessEvent(navEvent);
 }
+#endif
