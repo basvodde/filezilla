@@ -53,6 +53,8 @@ protected:
 	// If resizing the window, make sure the individual splitter windows don't get too small
 	void ApplySplitterConstraints();
 
+	void FocusNextEnabled(std::list<wxWindow*>& windowOrder, std::list<wxWindow*>::iterator iter, bool skipFirst, bool forward);
+
 	wxStatusBar* m_pStatusBar;
 	wxMenuBar* m_pMenuBar;
 	wxToolBar* m_pToolBar;
@@ -123,6 +125,7 @@ protected:
 	void OnUpdateMenuShowHidden(wxUpdateUIEvent& event);
 	void OnNavigationKeyEvent(wxNavigationKeyEvent& event);
 	void OnGetFocus(wxFocusEvent& event);
+	void OnChar(wxKeyEvent& event);
 
 	float m_ViewSplitterSashPos;
 	bool m_bInitDone;

@@ -91,6 +91,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_UPDATE_UI(XRCID("ID_MENU_SERVER_VIEWHIDDEN"), CMainFrame::OnUpdateMenuShowHidden)
 	EVT_NAVIGATION_KEY(CMainFrame::OnNavigationKeyEvent)
 	EVT_SET_FOCUS(CMainFrame::OnGetFocus)
+	EVT_CHAR_HOOK(CMainFrame::OnChar)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
@@ -1422,33 +1423,95 @@ void CMainFrame::OnNavigationKeyEvent(wxNavigationKeyEvent& event)
 			break;
 	}
 
-	do
+	bool skipFirst;
+	if (iter == windowOrder.end())
 	{
-		if (iter == windowOrder.end())
-			iter = windowOrder.begin();
-		else
-		{
-			if (event.GetDirection())
-			{
-				iter++;
-				if (iter == windowOrder.end())
-					iter = windowOrder.begin();
-			}
-			else
-			{
-				if (iter == windowOrder.begin())
-					iter = windowOrder.end();
-				iter--;
-			}	
-		}
+		iter = windowOrder.begin();
+		skipFirst = false;
 	}
-	while (!(*iter)->IsShownOnScreen() || !(*iter)->IsEnabled());
+	else
+		skipFirst = true;
 
-	(*iter)->SetFocus();
+	FocusNextEnabled(windowOrder, iter, skipFirst, event.GetDirection());
 }
 
 void CMainFrame::OnGetFocus(wxFocusEvent& event)
 {
 	wxNavigationKeyEvent evt;
 	OnNavigationKeyEvent(evt);
+}
+
+void CMainFrame::OnChar(wxKeyEvent& event)
+{
+	if (event.GetKeyCode() != WXK_F6)
+	{
+		event.Skip();
+		return;
+	}
+
+	// Jump between quickconnect bar and view headers
+
+	std::list<wxWindow*> windowOrder;
+	windowOrder.push_back(m_pQuickconnectBar);
+	windowOrder.push_back(m_pLocalViewHeader);
+	windowOrder.push_back(m_pRemoteViewHeader);
+
+	wxWindow* focused = FindFocus();
+
+	bool skipFirst;
+	std::list<wxWindow*>::iterator iter;
+	if (!focused)
+	{
+		iter = windowOrder.begin();
+		skipFirst = false;
+	}
+	else
+	{
+		wxWindow *parent = focused->GetParent();
+		for (iter = windowOrder.begin(); iter != windowOrder.end(); iter++)
+		{
+			if (*iter == focused || *iter == parent)
+			{
+				skipFirst = true;
+				break;
+			}
+		}
+		if (iter == windowOrder.end())
+		{
+			iter = windowOrder.begin();
+			skipFirst = false;
+		}
+	}
+
+	FocusNextEnabled(windowOrder, iter, skipFirst, !event.ShiftDown());
+}
+
+void CMainFrame::FocusNextEnabled(std::list<wxWindow*>& windowOrder, std::list<wxWindow*>::iterator iter, bool skipFirst, bool forward)
+{
+	std::list<wxWindow*>::iterator start = iter;
+
+	while (skipFirst || !(*iter)->IsShownOnScreen() || !(*iter)->IsEnabled())
+	{
+		skipFirst = false;
+		if (forward)
+		{
+			iter++;
+			if (iter == windowOrder.end())
+				iter = windowOrder.begin();
+		}
+		else
+		{
+			if (iter == windowOrder.begin())
+				iter = windowOrder.end();
+			iter--;
+		}
+
+		if (iter == start)
+		{
+			wxBell();
+			return;
+		}
+	}
+
+	(*iter)->SetFocus();
 }
