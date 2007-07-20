@@ -1341,7 +1341,7 @@ void CQueueViewBase::OnChar(wxKeyEvent& event)
 	int selection = m_pQueue->GetSelection();
 	if (selection > 0 && code == WXK_LEFT)
 		selection--;
-	else if (selection < m_pQueue->GetPageCount() - 1 && code == WXK_RIGHT)
+	else if (selection < (int)m_pQueue->GetPageCount() - 1 && code == WXK_RIGHT)
 		selection++;
 	else
 		return;
