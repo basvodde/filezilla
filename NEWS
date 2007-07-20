@@ -1,9 +1,24 @@
 This file only lists a short summary of the changes between FileZilla versions. For a full list of changes, please read the ChangeLog file.
 
 Legend:
-  ! Security related or critical bugfix 
+  ! Security related bugfix or otherwise critical bugfix 
   + New feature or important bugfix
   - Bugfixes
+
+Beta 11 (2007-07-20):
+
++ Improved queue
++ Import and export dialogs including import of Sitemanager data from legacy FZ 2.x
++ Tab key can be used to switch between panes
++ F6 toggles between quickconnect bar and local/remote path edit fields
++ Location of settings directory can be specified in fzdefaults.xml
+- Engine state could get mixed up if transfers failed
+- Transfer of empty files could incorrectly time out
+- Fix directory cache coherency if removing/renaming directories
+- Work around lack of thread-safety in wxWidgets causing random misbehaviour
+- Properly disconnect idle transfer engines after 30 seconds
+- Update selections if changing sort order of file lists
+- Various minor fixes
 
 Beta 10 (2007-06-03):
 
