@@ -729,6 +729,7 @@ bool CFolderScanItem::TryRemoveAll()
 BEGIN_EVENT_TABLE(CQueueViewBase, wxListCtrl)
 EVT_ERASE_BACKGROUND(CQueueViewBase::OnEraseBackground)
 EVT_NAVIGATION_KEY(CQueueViewBase::OnNavigationKey)
+EVT_CHAR(CQueueViewBase::OnChar)
 END_EVENT_TABLE()
 
 CQueueViewBase::CQueueViewBase(CQueue* parent, int index, const wxString& title)
@@ -1326,6 +1327,26 @@ void CQueueViewBase::OnNavigationKey(wxNavigationKeyEvent& event)
 {
 	event.SetEventObject(m_pQueue);
 	m_pQueue->ProcessEvent(event);
+}
+
+void CQueueViewBase::OnChar(wxKeyEvent& event)
+{
+	const int code = event.GetKeyCode();
+	if (code != WXK_LEFT && code != WXK_RIGHT)
+	{
+		event.Skip();
+		return;
+	}
+
+	int selection = m_pQueue->GetSelection();
+	if (selection > 0 && code == WXK_LEFT)
+		selection--;
+	else if (selection < m_pQueue->GetPageCount() - 1 && code == WXK_RIGHT)
+		selection++;
+	else
+		return;
+
+	m_pQueue->SetSelection(selection);
 }
 
 // ------

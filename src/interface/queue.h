@@ -318,6 +318,7 @@ protected:
 	DECLARE_EVENT_TABLE();
 	void OnEraseBackground(wxEraseEvent& event);
 	void OnNavigationKey(wxNavigationKeyEvent& event);
+	void OnChar(wxKeyEvent& event);
 };
 
 class CQueueView;
