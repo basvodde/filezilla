@@ -300,6 +300,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	ConnectNavigationHandler(m_pRemoteTreeView);
 	ConnectNavigationHandler(m_pLocalViewHeader);
 	ConnectNavigationHandler(m_pRemoteViewHeader);
+	ConnectNavigationHandler(m_pQueuePane);
 
 	wxNavigationKeyEvent evt;
 	evt.SetDirection(true);
@@ -1415,6 +1416,7 @@ void CMainFrame::OnNavigationKeyEvent(wxNavigationKeyEvent& event)
 		windowOrder.push_back(m_pLocalTreeView);
 		windowOrder.push_back(m_pLocalListView);
 	}
+	windowOrder.push_back(m_pQueuePane);
 
 	std::list<wxWindow*>::iterator iter;
 	for (iter = windowOrder.begin(); iter != windowOrder.end(); iter++)

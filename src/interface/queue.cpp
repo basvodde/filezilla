@@ -728,10 +728,11 @@ bool CFolderScanItem::TryRemoveAll()
 
 BEGIN_EVENT_TABLE(CQueueViewBase, wxListCtrl)
 EVT_ERASE_BACKGROUND(CQueueViewBase::OnEraseBackground)
+EVT_NAVIGATION_KEY(CQueueViewBase::OnNavigationKey)
 END_EVENT_TABLE()
 
 CQueueViewBase::CQueueViewBase(CQueue* parent, int index, const wxString& title)
-	: wxListCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN | wxLC_REPORT | wxLC_VIRTUAL | wxSUNKEN_BORDER),
+	: wxListCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN | wxLC_REPORT | wxLC_VIRTUAL | wxSUNKEN_BORDER | wxTAB_TRAVERSAL),
 	  m_pageIndex(index), m_title(title)
 {
 	m_pQueue = parent;
@@ -1321,6 +1322,12 @@ void CQueueViewBase::RefreshItem(const CQueueItem* pItem)
 	wxListCtrl::RefreshItem(index);
 }
 
+void CQueueViewBase::OnNavigationKey(wxNavigationKeyEvent& event)
+{
+	event.SetEventObject(m_pQueue);
+	m_pQueue->ProcessEvent(event);
+}
+
 // ------
 // CQueue
 // ------
@@ -1341,4 +1348,9 @@ CQueue::CQueue(wxWindow* parent, CMainFrame *pMainFrame, CAsyncRequestQueue *pAs
 	RemoveExtraBorders();
 
 	m_pQueueView->LoadQueue();
+}
+
+void CQueue::SetFocus()
+{
+	GetPage(GetSelection())->SetFocus();
 }

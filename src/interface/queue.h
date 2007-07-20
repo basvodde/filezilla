@@ -317,6 +317,7 @@ protected:
 
 	DECLARE_EVENT_TABLE();
 	void OnEraseBackground(wxEraseEvent& event);
+	void OnNavigationKey(wxNavigationKeyEvent& event);
 };
 
 class CQueueView;
@@ -334,6 +335,8 @@ public:
 	inline CQueueView* GetQueueView() { return m_pQueueView; }
 	inline CQueueViewFailed* GetQueueView_Failed() { return m_pQueueView_Failed; }
 	inline CQueueViewSuccessful* GetQueueView_Successful() { return m_pQueueView_Successful; }
+
+	virtual void SetFocus();
 protected:
 
 	CQueueView* m_pQueueView;
