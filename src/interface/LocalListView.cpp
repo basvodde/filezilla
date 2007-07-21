@@ -8,6 +8,9 @@
 #include <wx/dnd.h>
 #include "dndobjects.h"
 #include "Options.h"
+#ifdef __WXMSW__
+#include "lm.h"
+#endif
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -76,7 +79,7 @@ public:
 			m_pLocalListView->m_pState->HandleDroppedFiles(m_pFileDataObject, dir, def == wxDragCopy);
 		else
 		{
-			if (m_pRemoteDataObject->GetProcessId() != wxGetProcessId())
+			if (m_pRemoteDataObject->GetProcessId() != (int)wxGetProcessId())
 			{
 				wxMessageBox(_("Drag&drop between different instances of FileZilla has not been implemented yet."));
 				return wxDragNone;
@@ -314,9 +317,20 @@ bool CLocalListView::DisplayDir(wxString dirname)
 	{
 		DisplayDrives();
 	}
+	else if (dirname.Left(2) == _T("\\\\"))
+	{
+		int pos = dirname.Mid(2).Find('\\');
+		int l = dirname.Len();
+		if (pos != -1 && pos + 3 != dirname.Len())
+			goto regular_dir;
+
+		// UNC path without shares
+		DisplayShares(dirname);
+	}
 	else
 #endif
 	{
+regular_dir:
 		CFilterDialog filter;
 
 		wxDir dir(dirname);
@@ -588,6 +602,48 @@ void CLocalListView::DisplayDrives()
 
 	delete [] drives;
 }
+
+void CLocalListView::DisplayShares(wxString computer)
+{
+	SHARE_INFO_1* pShareInfo = 0;
+
+	DWORD read, total;
+	DWORD resume_handle = 0;
+
+	if (computer.Last() == '\\')
+		computer.RemoveLast();
+
+	int j = 1;
+	int res = 0;
+	do
+	{
+		res = NetShareEnum((TCHAR*)computer.c_str(), 1, (LPBYTE*)&pShareInfo, MAX_PREFERRED_LENGTH, &read, &total, &resume_handle);
+
+		if (res != ERROR_SUCCESS && res != ERROR_MORE_DATA)
+			break;
+
+		SHARE_INFO_1* p = pShareInfo;
+		for (unsigned int i = 0; i < read; i++, p++)
+		{
+			if (p->shi1_type != STYPE_DISKTREE)
+				continue;
+
+			t_fileData data;
+			data.name = p->shi1_netname;
+			data.dir = true;
+			data.icon = -2;
+			data.size = -1;
+			data.hasTime = false;
+
+			m_fileData.push_back(data);
+			m_indexMapping.push_back(j++);
+		}
+
+		NetApiBufferFree(pShareInfo);
+	}
+	while (res == ERROR_MORE_DATA);
+}
+
 #endif
 
 wxString CLocalListView::GetType(wxString name, bool dir)

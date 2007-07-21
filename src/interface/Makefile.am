@@ -113,7 +113,7 @@ filezilla_LDFLAGS += $(RESOURCEFILE)
 filezilla_LDFLAGS += $(IDN_LIB)
 
 if MINGW
-filezilla_LDFLAGS += -lole32 -luuid
+filezilla_LDFLAGS += -lole32 -luuid -lnetapi32
 endif
 
 filezilla_DEPENDENCIES = ../engine/libengine.a \

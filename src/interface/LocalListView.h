@@ -37,6 +37,7 @@ protected:
 
 #ifdef __WXMSW__
 	void DisplayDrives();
+	void DisplayShares(wxString computer);
 #endif
 
 public:

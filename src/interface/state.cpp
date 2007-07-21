@@ -76,10 +76,10 @@ wxString CState::Canonicalize(wxString oldDir, wxString newDir, wxString *error 
 	if (newDir.Left(2) == _T("\\\\"))
 	{
 		int pos = newDir.Mid(2).Find('\\');
-		if (pos == -1)
+		if (pos == -1 || pos + 3 == newDir.Len())
 		{
-			// Partial UNC path, no full server yet, skip further processing
-			return _T("");
+			// Partial UNC path, no share given
+			return newDir;
 		}
 
 		pos = newDir.Mid(pos + 3).Find('\\');
