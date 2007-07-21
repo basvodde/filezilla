@@ -1138,12 +1138,12 @@ void CMainFrame::OnToggleQueueView(wxCommandEvent& event)
 	{
 		wxRect rect = m_pBottomSplitter->GetClientSize();
 		m_lastQueueSplitterPos = rect.GetHeight() - m_pBottomSplitter->GetSashPosition();
-		m_pBottomSplitter->Unsplit(m_pQueueView);
+		m_pBottomSplitter->Unsplit(m_pQueuePane);
 	}
 	else
 	{
 		wxRect rect = m_pBottomSplitter->GetClientSize();
-		m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueueView, rect.GetHeight() - m_lastQueueSplitterPos);
+		m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueuePane, rect.GetHeight() - m_lastQueueSplitterPos);
 		ApplySplitterConstraints();
 	}
 }
