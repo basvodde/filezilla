@@ -75,7 +75,7 @@ void CImportDialog::Show()
 		bool sites_fz2 = fz2Root->FirstChildElement("Sites") != 0;
 		if (sites_fz2)
 		{
-			int res = wxMessageBox(_("The file you have selected contains site manager data from a previous version of FileZilla.\nDue to differences in the storage formt, only host, port, username and password will be imported.\nContinue with the import?"),
+			int res = wxMessageBox(_("The file you have selected contains site manager data from a previous version of FileZilla.\nDue to differences in the storage format, only host, port, username and password will be imported.\nContinue with the import?"),
 				_("Import data from older version"), wxICON_QUESTION | wxYES_NO);
 			
 			if (res == wxYES)
