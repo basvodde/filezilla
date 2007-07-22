@@ -72,7 +72,7 @@ public:
 			return wxDragNone;
 
 		wxString dir = GetDirFromItem(hit);
-		if (dir == _T(""))
+		if (dir == _T("") || !CState::LocalDirIsWriteable(dir))
 			return wxDragNone;
 
 		if (!GetData())
@@ -110,7 +110,7 @@ public:
 			return false;
 
 		wxString dir = GetDirFromItem(hit);
-		if (dir == _T(""))
+		if (dir == _T("") || !CState::LocalDirIsWriteable(dir))
 			return false;
 
 		return true;

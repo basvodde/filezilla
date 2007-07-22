@@ -28,6 +28,12 @@ public:
 	static wxString Canonicalize(wxString oldDir, wxString newDir, wxString *error = 0);
 	bool SetLocalDir(wxString dir, wxString *error = 0);
 
+	// These functions only operate on the path syntax, they don't
+	// check the actual filesystem properties.
+	// Passed directory should be in canonical form.
+	static bool LocalDirHasParent(const wxString& dir);
+	static bool LocalDirIsWriteable(const wxString& dir);
+
 	bool Connect(const CServer& server, bool askBreak, const CServerPath& path = CServerPath());
 
 	bool SetRemoteDir(const CDirectoryListing *m_pDirectoryListing, bool modified = false);

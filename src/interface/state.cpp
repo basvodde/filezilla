@@ -540,3 +540,25 @@ bool CState::IsIdle() const
 
 	return m_pCommandQueue->Idle();
 }
+
+bool CState::LocalDirHasParent(const wxString& dir)
+{
+	return true;
+}
+
+bool CState::LocalDirIsWriteable(const wxString& dir)
+{
+#ifdef __WXMSW__
+	if (dir == _T("\\"))
+		return false;
+
+	if (dir.Left(2) == _T("\\\\"))
+	{
+		int pos = dir.Mid(2).Find('\\');
+		if (pos == -1 || pos + 3 == dir.Len())
+			return false;
+	}
+#endif
+
+	return true;
+}

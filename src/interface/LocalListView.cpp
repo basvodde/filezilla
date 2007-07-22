@@ -66,11 +66,14 @@ public:
 		if (subdir != _T(""))
 		{
 			dir = CState::Canonicalize(m_pLocalListView->m_dir, subdir);
-			if (dir == _T("") || dir == _T("\\"))
+			if (dir == _T(""))
 				return wxDragError;
 		}
 		else
 			dir = m_pLocalListView->m_dir;
+
+		if (!CState::LocalDirIsWriteable(dir))
+			return wxDragError;
 
 		if (!GetData())
 			return wxDragError;
@@ -159,10 +162,17 @@ public:
 #endif
 			DisplayDropHighlight(wxPoint(x, y));
 		
-#ifdef __WXMSW__
-		if ((subdir == _T("") || subdir == _T("..")) && m_pLocalListView->m_dir == _T("\\"))
-			return wxDragNone;
-#endif
+		if (subdir == _T(""))
+		{
+			if (!CState::LocalDirIsWriteable(m_pLocalListView->m_dir))
+				return wxDragNone;
+		}
+		else
+		{
+			wxString dir = CState::Canonicalize(m_pLocalListView->m_dir, subdir);
+			if (dir == _T("") || !CState::LocalDirIsWriteable(dir))
+				return wxDragNone;
+		}
 
 		if (def == wxDragLink)
 			def = wxDragCopy;
