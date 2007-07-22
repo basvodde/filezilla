@@ -207,7 +207,6 @@ BEGIN_EVENT_TABLE(CLocalListView, wxListCtrl)
 	EVT_MENU(XRCID("ID_MKDIR"), CLocalListView::OnMenuMkdir)
 	EVT_MENU(XRCID("ID_DELETE"), CLocalListView::OnMenuDelete)
 	EVT_MENU(XRCID("ID_RENAME"), CLocalListView::OnMenuRename)
-	EVT_CHAR(CLocalListView::OnChar)
 	EVT_KEY_DOWN(CLocalListView::OnKeyDown)
 	EVT_LIST_BEGIN_LABEL_EDIT(wxID_ANY, CLocalListView::OnBeginLabelEdit)
 	EVT_LIST_END_LABEL_EDIT(wxID_ANY, CLocalListView::OnEndLabelEdit)
@@ -219,6 +218,8 @@ CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, 
 	CSystemImageList(16), CStateEventHandler(pState, STATECHANGE_LOCAL_DIR | STATECHANGE_APPLYFILTER)
 {
 	m_dropTarget = -1;
+
+	m_hasParent = true;
 
 	m_pQueue = pQueue;
 
@@ -313,14 +314,19 @@ bool CLocalListView::DisplayDir(wxString dirname)
 	m_fileData.clear();
 	m_indexMapping.clear();
 
-	t_fileData data;
-	data.dir = true;
-	data.icon = -2;
-	data.name = _T("..");
-	data.size = -1;
-	data.hasTime = 0;
-	m_fileData.push_back(data);
-	m_indexMapping.push_back(0);
+	m_hasParent = CState::LocalDirHasParent(dirname);
+
+	if (m_hasParent)
+	{
+		t_fileData data;
+		data.dir = true;
+		data.icon = -2;
+		data.name = _T("..");
+		data.size = -1;
+		data.hasTime = 0;
+		m_fileData.push_back(data);
+		m_indexMapping.push_back(0);
+	}
 
 #ifdef __WXMSW__
 	if (dirname == _T("\\"))
@@ -351,7 +357,7 @@ regular_dir:
 		}
 		wxString file;
 		bool found = dir.GetFirst(&file);
-		int num = 1;
+		int num = m_fileData.size();
 		while (found)
 		{
 			if (file == _T(""))
@@ -410,7 +416,7 @@ regular_dir:
 
 	ReselectItems(selectedNames, focused);
 
-	Refresh(false);
+	Refresh();
 
 	return true;
 }
@@ -435,8 +441,11 @@ wxString CLocalListView::OnGetItemText(long item, long column) const
 		else
 			return wxLongLong(data->size).ToString();
 	}
-	else if (column == 2 && item)
+	else if (column == 2)
 	{
+		if (!item && m_hasParent)
+			return _T("");
+
 		if (data->fileType == _T(""))
 			data->fileType = pThis->GetType(data->name, data->dir);
 
@@ -493,7 +502,7 @@ void CLocalListView::OnItemActivated(wxListEvent &event)
 
 		count++;
 
-		if (!item)
+		if (!item && m_hasParent)
 			back = true;
 	}
 	if (count > 1)
@@ -515,7 +524,7 @@ void CLocalListView::OnItemActivated(wxListEvent &event)
 	if (!data)
 		return;
 
-	if (!item || data->dir)
+	if (data->dir)
 	{
 		wxString error;
 		if (!m_pState->SetLocalDir(data->name, &error))
@@ -573,7 +582,7 @@ void CLocalListView::DisplayDrives()
 
 	const wxChar* pDrive = drives;
 
-	int count = 1;
+	int count = m_fileData.size();
 	while(*pDrive)
 	{
 		// Check if drive should be hidden by default
@@ -623,7 +632,7 @@ void CLocalListView::DisplayShares(wxString computer)
 	if (computer.Last() == '\\')
 		computer.RemoveLast();
 
-	int j = 1;
+	int j = m_fileData.size();
 	int res = 0;
 	do
 	{
@@ -674,7 +683,7 @@ wxString CLocalListView::GetType(wxString name, bool dir)
 		path = m_dir + name;
 
 	SHFILEINFO shFinfo;
-	memset(&shFinfo,0,sizeof(SHFILEINFO));
+	memset(&shFinfo, 0, sizeof(SHFILEINFO));
 	if (SHGetFileInfo(path,
 		dir ? FILE_ATTRIBUTE_DIRECTORY : FILE_ATTRIBUTE_NORMAL,
 		&shFinfo,
@@ -1028,7 +1037,10 @@ void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 		// Simply reverse everything
 		m_sortDirection = direction;
 		m_sortColumn = column;
-		std::reverse(++m_indexMapping.begin(), m_indexMapping.end());
+		std::vector<unsigned int>::iterator start = m_indexMapping.begin();
+		if (m_hasParent)
+			start++;
+		std::reverse(start, m_indexMapping.end());
 
 		SortList_UpdateSelections(selected, focused);
 		delete [] selected;
@@ -1039,7 +1051,8 @@ void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 	m_sortDirection = direction;
 	m_sortColumn = column;
 
-	if (m_indexMapping.size() < 3)
+	const unsigned int minsize = m_hasParent ? 3 : 2;
+	if (m_indexMapping.size() < minsize)
 	{
 		delete [] selected;
 		return;
@@ -1063,18 +1076,20 @@ void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 		break;
 	}
 
-
+	std::vector<unsigned int>::iterator start = m_indexMapping.begin();
+	if (m_hasParent)
+		start++;
 	if (!m_sortColumn)
-		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CLocalListViewSortName(m_fileData, dirSortMode));
+		std::sort(start, m_indexMapping.end(), CLocalListViewSortName(m_fileData, dirSortMode));
 	else if (m_sortColumn == 1)
-		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CLocalListViewSortSize(m_fileData, dirSortMode));
+		std::sort(start, m_indexMapping.end(), CLocalListViewSortSize(m_fileData, dirSortMode));
 	else if (m_sortColumn == 2)
-		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CLocalListViewSortType(m_fileData, dirSortMode, this));
+		std::sort(start, m_indexMapping.end(), CLocalListViewSortType(m_fileData, dirSortMode, this));
 	else if (m_sortColumn == 3)
-		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CLocalListViewSortTime(m_fileData, dirSortMode));
+		std::sort(start, m_indexMapping.end(), CLocalListViewSortTime(m_fileData, dirSortMode));
 
 	if (m_sortDirection)
-		std::reverse(++m_indexMapping.begin(), m_indexMapping.end());
+		std::reverse(start, m_indexMapping.end());
 
 	SortList_UpdateSelections(selected, focused);
 	delete [] selected;
@@ -1082,7 +1097,7 @@ void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 
 void CLocalListView::SortList_UpdateSelections(bool* selections, int focus)
 {
-	for (int i = 1; i < GetItemCount(); i++)
+	for (int i = m_hasParent ? 1 : 0; i < GetItemCount(); i++)
 	{
 		const int state = GetItemState(i, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
 		const bool selected = (state & wxLIST_STATE_SELECTED) != 0;
@@ -1131,7 +1146,7 @@ void CLocalListView::OnContextMenu(wxContextMenuEvent& event)
 	while (index != -1)
 	{
 		count++;
-		if (!index)
+		if (!index && m_hasParent)
 		{
 			pMenu->Enable(XRCID("ID_UPLOAD"), false);
 			pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
@@ -1163,7 +1178,7 @@ void CLocalListView::OnMenuUpload(wxCommandEvent& event)
 		if (item == -1)
 			break;
 
-		if (!item)
+		if (!item && m_hasParent)
 			return;
 	}
 
@@ -1178,7 +1193,7 @@ void CLocalListView::OnMenuUpload(wxCommandEvent& event)
 		if (!data)
 			return;
 
-		if (!item)
+		if (!item && m_hasParent)
 			m_pState->SetLocalDir(data->name);
 		else
 		{
@@ -1269,7 +1284,7 @@ void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 		if (item == -1)
 			break;
 
-		if (!item)
+		if (!item && m_hasParent)
 			continue;
 
 		t_fileData *data = GetData(item);
@@ -1291,7 +1306,7 @@ void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 		if (item == -1)
 			break;
 
-		if (!item)
+		if (!item && m_hasParent)
 			continue;
 
 		t_fileData *data = GetData(item);
@@ -1337,7 +1352,7 @@ void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 		if (item == -1)
 			break;
 
-		if (!item)
+		if (!item && m_hasParent)
 			continue;
 
 		t_fileData *data = GetData(item);
@@ -1393,7 +1408,7 @@ void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 void CLocalListView::OnMenuRename(wxCommandEvent& event)
 {
 	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-	if (item <= 0)
+	if (item < 0 || (!item && m_hasParent))
 	{
 		wxBell();
 		return;
@@ -1452,11 +1467,7 @@ void CLocalListView::OnChar(wxKeyEvent& event)
 		int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 		if (item != -1)
 		{
-			wxString text;
-			if (!item)
-				text = _T("..");
-			else
-				text = GetData(item)->name;
+			wxString text = GetData(item)->name;
 			if (text.Length() >= m_prefix.Length() && !m_prefix.CmpNoCase(text.Left(m_prefix.Length())))
 				beep = true;
 		}
@@ -1467,7 +1478,7 @@ void CLocalListView::OnChar(wxKeyEvent& event)
 		if (start < 0)
 			start = 0;
 
-		int newPos = FindItemWithPrefix(newPrefix, (item >= 0) ? item : 0);
+		int newPos = FindItemWithPrefix(newPrefix, start);
 
 		if (newPos == -1 && m_prefix == tmp && item != -1 && beep)
 		{
@@ -1502,13 +1513,14 @@ void CLocalListView::OnKeyDown(wxKeyEvent& event)
 	const int code = event.GetKeyCode();
 	if (code == 'A' && event.GetModifiers() == wxMOD_CMD)
 	{
-		for (int i = 1; i < GetItemCount(); i++)
+		for (int i = m_hasParent ? 1 : 0; i < GetItemCount(); i++)
 		{
 			SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 		}
 	}
 	else
-		event.Skip();
+		OnChar(event);
+		//event.Skip();
 }
 
 int CLocalListView::FindItemWithPrefix(const wxString& prefix, int start)
@@ -1518,18 +1530,12 @@ int CLocalListView::FindItemWithPrefix(const wxString& prefix, int start)
 	{
 		int item = i % itemCount;
 		wxString fn;
-		if (!item)
-		{
-			fn = _T("..");
-			fn = fn.Left(prefix.Length());
-		}
-		else
-		{
-			t_fileData* data = GetData(item);
-			if (!data)
-				continue;
-			fn = data->name.Left(prefix.Length());
-		}
+
+		t_fileData* data = GetData(item);
+		if (!data)
+			continue;
+		fn = data->name.Left(prefix.Length());
+
 		if (!fn.CmpNoCase(prefix))
 			return i % itemCount;
 	}
@@ -1538,6 +1544,9 @@ int CLocalListView::FindItemWithPrefix(const wxString& prefix, int start)
 
 void CLocalListView::OnBeginLabelEdit(wxListEvent& event)
 {
+	if (!m_hasParent)
+		return;
+
 	if (event.GetIndex() == 0)
 	{
 		event.Veto();
@@ -1551,7 +1560,7 @@ void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 		return;
 
 	int index = event.GetIndex();
-	if (!index)
+	if (!index && m_hasParent)
 	{
 		event.Veto();
 		return;
@@ -1629,7 +1638,8 @@ void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 
 void CLocalListView::ApplyCurrentFilter()
 {
-	if (m_fileData.size() <= 1)
+	unsigned int min = m_hasParent ? 1 : 0;
+	if (m_fileData.size() <= min)
 		return;
 
 	wxString focused;
@@ -1638,7 +1648,7 @@ void CLocalListView::ApplyCurrentFilter()
 	CFilterDialog filter;
 	m_indexMapping.clear();
 	m_indexMapping.push_back(0);
-	for (unsigned int i = 1; i < m_fileData.size(); i++)
+	for (unsigned int i = min; i < m_fileData.size(); i++)
 	{
 		const t_fileData& data = m_fileData[i];
 		if (!filter.FilenameFiltered(data.name, data.dir, data.size, true))
@@ -1763,7 +1773,7 @@ void CLocalListView::OnBeginDrag(wxListEvent& event)
 		if (item == -1)
 			break;
 
-		if (!item)
+		if (!item && m_hasParent)
 			return;
 	}
 

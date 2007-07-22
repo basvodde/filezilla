@@ -84,6 +84,8 @@ protected:
 	wxDropTarget* m_pDropTarget;
 	int m_dropTarget;
 
+	bool m_hasParent;
+
 	// Event handlers
 	DECLARE_EVENT_TABLE();
 	void OnItemActivated(wxListEvent& event);

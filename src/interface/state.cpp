@@ -543,6 +543,20 @@ bool CState::IsIdle() const
 
 bool CState::LocalDirHasParent(const wxString& dir)
 {
+#ifdef __WXMSW__
+	if (dir.Left(2) == _T("\\\\"))
+	{
+		int pos = dir.Mid(2).Find('\\');
+		if (pos == -1 || pos + 3 == dir.Len())
+			return false;
+	}
+	if (dir == _T("\\"))
+		return false;
+#endif
+
+	if (dir == _T("/"))
+		return false;
+
 	return true;
 }
 
