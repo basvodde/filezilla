@@ -319,6 +319,7 @@ protected:
 	void OnEraseBackground(wxEraseEvent& event);
 	void OnNavigationKey(wxNavigationKeyEvent& event);
 	void OnChar(wxKeyEvent& event);
+	void OnEndColumnDrag(wxListEvent& event);
 };
 
 class CQueueView;

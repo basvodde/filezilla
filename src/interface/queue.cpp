@@ -730,6 +730,7 @@ BEGIN_EVENT_TABLE(CQueueViewBase, wxListCtrl)
 EVT_ERASE_BACKGROUND(CQueueViewBase::OnEraseBackground)
 EVT_NAVIGATION_KEY(CQueueViewBase::OnNavigationKey)
 EVT_CHAR(CQueueViewBase::OnChar)
+EVT_LIST_COL_END_DRAG(wxID_ANY, CQueueViewBase::OnEndColumnDrag)
 END_EVENT_TABLE()
 
 CQueueViewBase::CQueueViewBase(CQueue* parent, int index, const wxString& title)
@@ -1133,10 +1134,10 @@ void CQueueViewBase::UpdateSelections_ItemRangeRemoved(int removed, int count)
 
 void CQueueViewBase::CreateColumns(const wxString& lastColumnName)
 {
-	InsertColumn(0, _("Server / Local file"), wxLIST_FORMAT_LEFT, 150);
+	InsertColumn(0, _("Server / Local file"), wxLIST_FORMAT_LEFT, 180);
 	InsertColumn(1, _("Direction"), wxLIST_FORMAT_CENTER, 60);
-	InsertColumn(2, _("Remote file"), wxLIST_FORMAT_LEFT, 150);
-	InsertColumn(3, _("Size"), wxLIST_FORMAT_RIGHT, 70);
+	InsertColumn(2, _("Remote file"), wxLIST_FORMAT_LEFT, 180);
+	InsertColumn(3, _("Size"), wxLIST_FORMAT_RIGHT, 80);
 	InsertColumn(4, _("Priority"), wxLIST_FORMAT_LEFT, 60);
 	if (lastColumnName != _T(""))
 		InsertColumn(5, lastColumnName, wxLIST_FORMAT_LEFT, 150);
@@ -1347,6 +1348,19 @@ void CQueueViewBase::OnChar(wxKeyEvent& event)
 		return;
 
 	m_pQueue->SetSelection(selection);
+}
+
+void CQueueViewBase::OnEndColumnDrag(wxListEvent& event)
+{
+	for (unsigned int i = 0; i < m_pQueue->GetPageCount(); i++)
+	{
+		CQueueViewBase* page = (CQueueViewBase*)m_pQueue->GetPage(i);
+		if (!page || page == this)
+			continue;
+
+		for (int col = 0; col < wxMin(GetColumnCount(), page->GetColumnCount()); col++)
+			page->SetColumnWidth(col, GetColumnWidth(col));
+	}
 }
 
 // ------
