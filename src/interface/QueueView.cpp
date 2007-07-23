@@ -1545,7 +1545,7 @@ void CQueueView::ImportQueue(TiXmlElement* pElement, bool updateSelections)
 				{
 					CFileItem* fileItem = new CFileItem(pServerItem, true, download, localFile, remoteFile, remotePath, size);
 					fileItem->m_transferSettings.binary = binary;
-					fileItem->SetPriority((enum QueuePriority)priority);
+					fileItem->SetPriorityRaw((enum QueuePriority)priority);
 					fileItem->SetItemState((enum ItemState)itemState);
 					fileItem->m_errorCount = errorCount;
 					InsertItem(pServerItem, fileItem);
@@ -2251,4 +2251,6 @@ void CQueueView::OnSetPriority(wxCommandEvent& event)
 
 		pItem->SetPriority(priority);
 	}
+
+	Refresh();
 }
