@@ -1167,7 +1167,15 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 	{
 		CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(m_pCurOpData);
 		if (pData->tranferCommandSent)
-			pData->transferInitiated = true;
+		{
+			if (pData->transferEndReason != transfer_command_failure_immediate || GetReplyCode() != 5)
+				pData->transferInitiated = true;
+			else
+			{
+				if (nErrorCode == FZ_REPLY_ERROR)
+					nErrorCode |= FZ_REPLY_CRITICALERROR;
+			}
+		}
 	}
 
 	if (m_pCurOpData && m_pCurOpData->opId == cmd_rawtransfer && 

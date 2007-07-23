@@ -831,6 +831,12 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 				engineData.pItem->m_statusMessage = _("Timeout");
 			else if (replyCode & FZ_REPLY_DISCONNECTED)
 				engineData.pItem->m_statusMessage = _("Disconnected from server");
+			else if ((replyCode & FZ_REPLY_CRITICALERROR) == FZ_REPLY_CRITICALERROR)
+			{
+				engineData.pItem->m_statusMessage = _("Could not start transfer");
+				ResetEngine(engineData, failure);
+				return;
+			}
 			else
 				engineData.pItem->m_statusMessage = _("Could not start transfer");
 			if (!IncreaseErrorCount(engineData))
