@@ -157,10 +157,7 @@ public:
 			return wxDragNone;
 		}
 
-#ifdef __WXMSW__
-		const wxString& subdir = 
-#endif
-			DisplayDropHighlight(wxPoint(x, y));
+		const wxString& subdir = DisplayDropHighlight(wxPoint(x, y));
 		
 		if (subdir == _T(""))
 		{
