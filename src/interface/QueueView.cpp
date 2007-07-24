@@ -1228,6 +1228,8 @@ bool CQueueView::Quit()
 
 	SaveQueue();
 
+	SaveColumnWidths();
+
 	return true;
 }
 

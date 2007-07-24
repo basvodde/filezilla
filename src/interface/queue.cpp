@@ -2,6 +2,8 @@
 #include "queue.h"
 #include "queueview_failed.h"
 #include "queueview_successful.h"
+#include "Options.h"
+#include <wx/tokenzr.h>
 
 CQueueItem::CQueueItem()
 {
@@ -1134,13 +1136,58 @@ void CQueueViewBase::UpdateSelections_ItemRangeRemoved(int removed, int count)
 
 void CQueueViewBase::CreateColumns(const wxString& lastColumnName)
 {
-	InsertColumn(0, _("Server / Local file"), wxLIST_FORMAT_LEFT, 180);
-	InsertColumn(1, _("Direction"), wxLIST_FORMAT_CENTER, 60);
-	InsertColumn(2, _("Remote file"), wxLIST_FORMAT_LEFT, 180);
-	InsertColumn(3, _("Size"), wxLIST_FORMAT_RIGHT, 80);
-	InsertColumn(4, _("Priority"), wxLIST_FORMAT_LEFT, 60);
+	static unsigned long widths[6] = { 180, 60, 180, 80, 60, 150 };
+	static bool widths_loaded = false;
+
+	if (!widths_loaded)
+	{
+		widths_loaded = true;
+
+		wxString savedWidths = COptions::Get()->GetOption(OPTION_QUEUE_COLUMN_WIDTHS);
+		wxStringTokenizer tokens(savedWidths, _T(" "));
+		if (tokens.CountTokens() == 6)
+		{
+			bool valid = true;
+			unsigned long newWidths[6];
+			for (int i = 0; i < 6; i++)
+			{
+				wxString token = tokens.GetNextToken();
+				if (!token.ToULong(&newWidths[i]))
+				{
+					valid = false;
+					break;
+				}
+				if (newWidths[i] > 5000)
+				{
+					valid = false;
+					break;
+				}
+			}
+			if (valid)
+			{
+				for (int i = 0; i < 6; i++)
+					widths[i] = newWidths[i];
+			}
+		}
+	}
+
+	InsertColumn(0, _("Server / Local file"), wxLIST_FORMAT_LEFT, widths[0]);
+	InsertColumn(1, _("Direction"), wxLIST_FORMAT_CENTER, widths[1]);
+	InsertColumn(2, _("Remote file"), wxLIST_FORMAT_LEFT, widths[2]);
+	InsertColumn(3, _("Size"), wxLIST_FORMAT_RIGHT, widths[3]);
+	InsertColumn(4, _("Priority"), wxLIST_FORMAT_LEFT, widths[4]);
 	if (lastColumnName != _T(""))
-		InsertColumn(5, lastColumnName, wxLIST_FORMAT_LEFT, 150);
+		InsertColumn(5, lastColumnName, wxLIST_FORMAT_LEFT, widths[5]);
+}
+
+void CQueueViewBase::SaveColumnWidths()
+{
+	wxString widths;
+	for (int i = 0; i < GetColumnCount(); i++)
+		widths += wxString::Format(_T("%d "), GetColumnWidth(i));
+	widths.RemoveLast();
+
+	COptions::Get()->SetOption(OPTION_QUEUE_COLUMN_WIDTHS, widths);
 }
 
 CServerItem* CQueueViewBase::GetServerItem(const CServer& server)

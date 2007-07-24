@@ -77,7 +77,8 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "File Pane Swap", number, _T("0") },
 	{ "Last local directory", string, _T("") },
 	{ "Filelist directory sort", number, _T("0") },
-	{ "Queue successful autoclear", number, _T("0") }
+	{ "Queue successful autoclear", number, _T("0") },
+	{ "Queue column widths", string, _T("") }
 };
 
 COptions::COptions()
