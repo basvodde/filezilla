@@ -23,7 +23,13 @@ protected:
 	void Refresh();
 
 #ifdef __WXMSW__
-	bool DisplayDrives();
+	bool CreateRoot();
+	bool DisplayDrives(wxTreeItemId parent);
+	wxString GetSpecialFolder(int folder, int &iconIndex, int &openIconIndex);
+
+	wxTreeItemId m_desktop;
+	wxTreeItemId m_drives;
+	wxTreeItemId m_documents;
 #endif
 
 	virtual int OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2);

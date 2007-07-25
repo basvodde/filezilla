@@ -203,31 +203,7 @@ CLocalTreeView::CLocalTreeView(wxWindow* parent, wxWindowID id, CState *pState, 
 	SetImageList(GetSystemImageList());
 
 #ifdef __WXMSW__
-	LPITEMIDLIST list;
-	SHGetSpecialFolderLocation((HWND)GetHandle(), CSIDL_DRIVES, &list);
-	SHFILEINFO shFinfo;
-
-	SHGetFileInfo((LPCTSTR)list,0,&shFinfo,sizeof(shFinfo),SHGFI_PIDL|SHGFI_ICON|SHGFI_SMALLICON);
-	DestroyIcon(shFinfo.hIcon);
-	int iIcon=shFinfo.iIcon;
-	SHGetFileInfo((LPCTSTR)list,0,&shFinfo,sizeof(shFinfo),SHGFI_PIDL|SHGFI_ICON|SHGFI_SMALLICON|SHGFI_OPENICON|SHGFI_DISPLAYNAME);
-	DestroyIcon(shFinfo.hIcon);
-
-	AddRoot(shFinfo.szDisplayName, iIcon, shFinfo.iIcon);
-
-	LPMALLOC pMalloc;
-    SHGetMalloc(&pMalloc);
-
-	if (pMalloc)
-	{
-		pMalloc->Free(list);
-		pMalloc->Release();
-	}
-	else
-		wxLogLastError(wxT("SHGetMalloc"));
-
-	DisplayDrives();
-	Expand(GetRootItem());
+	CreateRoot();
 #else
 	AddRoot(_T("/"), GetIconIndex(dir), GetIconIndex(opened_dir));
 	SetDir(_T("/"));
@@ -263,7 +239,7 @@ void CLocalTreeView::SetDir(wxString localDir)
 	if (localDir == _T("\\"))
 	{
 		m_setSelection = true;
-		SelectItem(GetRootItem());
+		SelectItem(m_drives);
 		m_setSelection = false;
 		return;
 	}
@@ -316,7 +292,7 @@ wxTreeItemId CLocalTreeView::GetNearestParent(wxString& localDir)
 	localDir = localDir.Mid(pos + 1);
 
 	wxTreeItemIdValue value;
-	wxTreeItemId root = GetFirstChild(GetRootItem(), value);
+	wxTreeItemId root = GetFirstChild(m_drives, value);
 	while (root)
 	{
 		if (!GetItemText(root).Left(drive.Length()).CmpNoCase(drive))
@@ -376,10 +352,8 @@ wxTreeItemId CLocalTreeView::GetSubdir(wxTreeItemId parent, const wxString& subD
 
 #ifdef __WXMSW__
 
-bool CLocalTreeView::DisplayDrives()
+bool CLocalTreeView::DisplayDrives(wxTreeItemId parent)
 {
-	wxTreeItemId root = GetRootItem();
-
 	long drivesToHide = 0;
 	// Adhere to the NODRIVES group policy
 	wxRegKey key(_T("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer"));
@@ -405,7 +379,7 @@ bool CLocalTreeView::DisplayDrives()
 	while (*pDrive)
 	{
 		// Check if drive should be hidden by default
-		if (pDrive[0] != 0&& pDrive[1] == ':')
+		if (pDrive[0] != 0 && pDrive[1] == ':')
 		{
 			int bit = -1;
 			char letter = pDrive[0];
@@ -436,9 +410,9 @@ bool CLocalTreeView::DisplayDrives()
 			drive += buffer;
 			drive += _T(")");
 		}
-		wxTreeItemId item = AppendItem(GetRootItem(), drive, GetIconIndex(dir, pDrive));
+		wxTreeItemId item = AppendItem(parent, drive, GetIconIndex(dir, pDrive));
 		AppendItem(item, _T(""));
-		SortChildren(GetRootItem());
+		SortChildren(parent);
 
 		pDrive += wxStrlen(pDrive) + 1;
 	}
@@ -566,7 +540,35 @@ wxString CLocalTreeView::GetDirFromItem(wxTreeItemId item)
 	while (item)
 	{
 #ifdef __WXMSW__
-		if (GetItemParent(item) == GetRootItem())
+		if (item == m_desktop)
+		{
+			wxChar path[MAX_PATH + 1];
+			if (SHGetFolderPath(0, CSIDL_DESKTOP, 0, SHGFP_TYPE_CURRENT, path) != S_OK)
+			{
+				wxMessageBox(_("Failed to get desktop path"));
+				return _T("/");
+			}
+			dir = path;
+			if (dir.Last() != separator)
+				dir += separator;
+			return dir;
+		}
+		else if (item == m_documents)
+		{
+			wxChar path[MAX_PATH + 1];
+			if (SHGetFolderPath(0, CSIDL_PERSONAL, 0, SHGFP_TYPE_CURRENT, path) != S_OK)
+			{
+				wxMessageBox(_("Failed to get 'My Documents' path"));
+				return _T("/");
+			}
+			dir = path;
+			if (dir.Last() != separator)
+				dir += separator;
+			return dir;
+		}
+		else if (item == m_drives)
+			return _T("/");
+		else if (GetItemParent(item) == m_drives)
 		{
 			wxString text = GetItemText(item);
 			int pos = text.Find(_T(" "));
@@ -615,7 +617,7 @@ void CLocalTreeView::Refresh()
 	int prevErrorMode = SetErrorMode(SEM_FAILCRITICALERRORS);
 
 	wxTreeItemIdValue tmp;
-	wxTreeItemId child = GetFirstChild(GetRootItem(), tmp);
+	wxTreeItemId child = GetFirstChild(m_drives, tmp);
 	while (child)
 	{
 		if (IsExpanded(child))
@@ -812,6 +814,11 @@ void CLocalTreeView::OnBeginDrag(wxTreeEvent& event)
 	if (!item)
 		return;
 
+#ifdef __WXMSW__
+	if (item == m_drives || item == m_desktop || item == m_documents)
+		return;
+#endif
+
 	wxString dir = GetDirFromItem(item);
 	if (dir == _T("/"))
 		return;
@@ -851,4 +858,81 @@ void CLocalTreeView::OnKeyDown(wxKeyEvent& event)
 	navEvent.ResumePropagation(1);
 	ProcessEvent(navEvent);
 }
+#endif
+
+#ifdef __WXMSW__
+
+wxString CLocalTreeView::GetSpecialFolder(int folder, int &iconIndex, int &openIconIndex)
+{
+	LPITEMIDLIST list;
+	if (SHGetSpecialFolderLocation((HWND)GetHandle(), folder, &list) != S_OK)
+		return _T("");
+
+	SHFILEINFO shFinfo;
+	if (!SHGetFileInfo((LPCTSTR)list, 0, &shFinfo, sizeof(shFinfo), SHGFI_PIDL | SHGFI_ICON | SHGFI_SMALLICON))
+		return _T("");
+
+	DestroyIcon(shFinfo.hIcon);
+	iconIndex = shFinfo.iIcon;
+
+	if (!SHGetFileInfo((LPCTSTR)list, 0, &shFinfo, sizeof(shFinfo), SHGFI_PIDL | SHGFI_ICON | SHGFI_SMALLICON | SHGFI_OPENICON | SHGFI_DISPLAYNAME))
+		return _T("");
+
+	DestroyIcon(shFinfo.hIcon);
+	openIconIndex = shFinfo.iIcon;
+
+	wxString name = shFinfo.szDisplayName;
+
+	LPMALLOC pMalloc;
+    SHGetMalloc(&pMalloc);
+
+	if (pMalloc)
+	{
+		pMalloc->Free(list);
+		pMalloc->Release();
+	}
+	else
+		wxLogLastError(wxT("SHGetMalloc"));
+
+	return name;
+}
+
+bool CLocalTreeView::CreateRoot()
+{
+	int iconIndex, openIconIndex;
+	wxString name = GetSpecialFolder(CSIDL_DESKTOP, iconIndex, openIconIndex);
+	if (name == _T(""))
+	{
+		name = _("Desktop");
+		iconIndex = openIconIndex = -1;
+	}
+	
+	m_desktop = AddRoot(name, iconIndex, openIconIndex);
+
+	name = GetSpecialFolder(CSIDL_PERSONAL, iconIndex, openIconIndex);
+	if (name == _T(""))
+	{
+		name = _("My Documents");
+		iconIndex = openIconIndex = -1;
+	}
+	
+	m_documents = AppendItem(m_desktop, name, iconIndex, openIconIndex);
+
+
+	name = GetSpecialFolder(CSIDL_DRIVES, iconIndex, openIconIndex);
+	if (name == _T(""))
+	{
+		name = _("My Computer");
+		iconIndex = openIconIndex = -1;
+	}
+	
+	m_drives = AppendItem(m_desktop, name, iconIndex, openIconIndex);
+
+	DisplayDrives(m_drives);
+	Expand(m_desktop);
+	Expand(m_drives);
+
+	return true;
+}
+
 #endif
