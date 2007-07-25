@@ -637,7 +637,11 @@ bool CQueueView::TryStartNextTransfer()
 	{
 		CServerItem* currentServerItem = *iter;
 		int maxCount = currentServerItem->GetServer().MaximumMultipleConnections();
-		if (maxCount && currentServerItem->m_activeCount >= maxCount)
+		int activeCount = currentServerItem->m_activeCount;
+		const CServer* pPrimaryServer = m_pMainFrame->GetState()->GetServer();
+		if (pPrimaryServer && currentServerItem->GetServer() == *pPrimaryServer)
+			activeCount++;
+		if (maxCount && activeCount >= maxCount)
 			continue;
 
 		CFileItem* newFileItem = currentServerItem->GetIdleChild(m_activeMode == 1, wantedDirection);
