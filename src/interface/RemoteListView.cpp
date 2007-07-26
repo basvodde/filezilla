@@ -2002,6 +2002,12 @@ void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 			m_startDir = m_pDirectoryListing->path;
 		}
 	}
+
+	// Refresh listing. This gets done implicitely by the recursive operation, so
+	// only it if not recursing.
+	if (m_operationMode != recursive_chmod)
+		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path));
+
 	NextOperation();
 }
 
