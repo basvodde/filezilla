@@ -125,7 +125,7 @@
       <help>Rename selected files and folders</help>
     </object>
     <object class="wxMenuItem" name="ID_CHMOD">
-      <label>&amp;File Attributes</label>
+      <label>&amp;File Attributes...</label>
       <help>Change the file permissions.</help>
     </object>
   </object>
@@ -217,6 +217,36 @@
     <object class="wxMenuItem" name="ID_AUTOCLEAR">
       <label>&amp;Automatically remove successful transfers</label>
       <checkable>1</checkable>
+    </object>
+  </object>
+  <object class="wxMenu" name="ID_MENU_REMOTETREE">
+    <object class="wxMenuItem" name="ID_DOWNLOAD">
+      <label>&amp;Download</label>
+      <bitmap stock_id="ART_DOWNLOAD"></bitmap>
+      <help>Download selected directory</help>
+    </object>
+    <object class="wxMenuItem" name="ID_ADDTOQUEUE">
+      <label>&amp;Add files to queue</label>
+      <bitmap stock_id="ART_DOWNLOADADD"></bitmap>
+      <help>Add selected directory to the transfer queue</help>
+    </object>
+    <object class="separator"/>
+    <object class="wxMenuItem" name="ID_MKDIR">
+      <label>&amp;Create directory</label>
+      <help>Create a new subdirectory in the current directory</help>
+    </object>
+    <object class="separator"/>
+    <object class="wxMenuItem" name="ID_DELETE">
+      <label>D&amp;elete</label>
+      <help>Delete selected directory</help>
+    </object>
+    <object class="wxMenuItem" name="ID_RENAME">
+      <label>&amp;Rename</label>
+      <help>Rename selected directory</help>
+    </object>
+    <object class="wxMenuItem" name="ID_CHMOD">
+      <label>&amp;File Attributes...</label>
+      <help>Change the file permissions.</help>
     </object>
   </object>
 </resource>
