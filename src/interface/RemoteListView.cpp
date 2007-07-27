@@ -2197,7 +2197,7 @@ void CRemoteListView::RepositionInfoText()
 	m_pInfoText->SetSize(rect);
 }
 
-void CRemoteListView::OnStateChange(unsigned int event)
+void CRemoteListView::OnStateChange(unsigned int event, const wxString& data)
 {
 	wxASSERT(m_pState);
 	if (event == STATECHANGE_REMOTE_DIR)

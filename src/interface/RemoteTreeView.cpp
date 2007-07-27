@@ -231,7 +231,7 @@ CRemoteTreeView::~CRemoteTreeView()
 	delete m_pImageList;
 }
 
-void CRemoteTreeView::OnStateChange(unsigned int event)
+void CRemoteTreeView::OnStateChange(unsigned int event, const wxString& data)
 {
 	if (event == STATECHANGE_REMOTE_DIR)
 		SetDirectoryListing(m_pState->GetRemoteDir(), false);

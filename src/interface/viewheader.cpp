@@ -483,7 +483,7 @@ void CLocalViewHeader::OnTextEnter(wxCommandEvent& event)
 	}
 }
 
-void CLocalViewHeader::OnStateChange(unsigned int event)
+void CLocalViewHeader::OnStateChange(unsigned int event, const wxString& data)
 {
 	if (event != STATECHANGE_LOCAL_DIR)
 		return;
@@ -510,7 +510,7 @@ CRemoteViewHeader::CRemoteViewHeader(wxWindow* pParent, CState* pState)
 	m_pComboBox->Disable();
 }
 
-void CRemoteViewHeader::OnStateChange(unsigned int event)
+void CRemoteViewHeader::OnStateChange(unsigned int event, const wxString& data)
 {
 	if (event != STATECHANGE_REMOTE_DIR)
 		return;

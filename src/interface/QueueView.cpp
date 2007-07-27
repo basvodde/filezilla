@@ -924,6 +924,10 @@ void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
 
 			m_itemCount--;
 			SetItemCount(m_itemCount);
+
+			const CFileItem* const pFileItem = (CFileItem*)data.pItem;
+			if (pFileItem->Download())
+				m_pMainFrame->GetState()->RefreshLocalFile(pFileItem->GetLocalFile());
 		}
 
 		wxASSERT(data.pItem->IsActive());

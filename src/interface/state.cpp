@@ -199,6 +199,25 @@ void CState::RefreshLocal()
 	NotifyHandlers(STATECHANGE_LOCAL_DIR);
 }
 
+void CState::RefreshLocalFile(wxString file)
+{
+	wxFileName fn(file);
+	if (!fn.IsOk())
+		return;
+	if (!fn.IsAbsolute())
+		return;
+
+	wxString path = fn.GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
+	file = fn.GetFullName();
+	if (file.IsEmpty())
+		return;
+
+	if (path != m_localDir)
+		return;
+
+	NotifyHandlers(STATECHANGE_LOCAL_REFRESH_FILE, file);
+}
+
 void CState::SetServer(const CServer* server)
 {
 	if (m_pServer)
@@ -293,12 +312,12 @@ void CState::UnregisterHandler(CStateEventHandler* pHandler)
 	}
 }
 
-void CState::NotifyHandlers(unsigned int event)
+void CState::NotifyHandlers(unsigned int event, const wxString& data /*=_T("")*/)
 {
 	for (std::list<CStateEventHandler*>::iterator iter = m_handlers.begin(); iter != m_handlers.end(); iter++)
 	{
 		if ((*iter)->m_eventMask & event)
-			(*iter)->OnStateChange(event);
+			(*iter)->OnStateChange(event, data);
 	}
 }
 

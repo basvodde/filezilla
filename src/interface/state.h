@@ -6,6 +6,10 @@
 #define STATECHANGE_REMOTE_RECV			0x0010
 #define STATECHANGE_REMOTE_SEND			0x0020
 #define STATECHANGE_LOCAL_DIR			0x0100
+
+// data contains name (excluding path) of file to refresh
+#define STATECHANGE_LOCAL_REFRESH_FILE	0x0200
+
 #define STATECHANGE_APPLYFILTER			0x1000
 
 class CDirectoryListing;
@@ -43,6 +47,7 @@ public:
 	const CServer* GetServer() const;
 
 	void RefreshLocal();
+	void RefreshLocalFile(wxString file);
 
 	void ApplyCurrentFilter();
 
@@ -66,7 +71,7 @@ public:
 
 protected:
 	void SetServer(const CServer* server);
-	void NotifyHandlers(unsigned int event);
+	void NotifyHandlers(unsigned int event, const wxString& data = _T(""));
 
 	wxString m_localDir;
 	const CDirectoryListing *m_pDirectoryListing;
@@ -88,7 +93,7 @@ public:
 
 	int m_eventMask;
 	
-	virtual void OnStateChange(unsigned int event) = 0;
+	virtual void OnStateChange(unsigned int event, const wxString& data) = 0;
 };
 
 #endif

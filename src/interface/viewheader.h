@@ -51,7 +51,7 @@ public:
 	CLocalViewHeader(wxWindow* pParent, CState* pState);
 
 protected:
-	virtual void OnStateChange(unsigned int event);
+	virtual void OnStateChange(unsigned int event, const wxString& data);
 
 	wxString m_oldValue;
 
@@ -72,7 +72,7 @@ public:
 	CRemoteViewHeader(wxWindow* pParent, CState* pState);
 
 protected:
-	virtual void OnStateChange(unsigned int event);
+	virtual void OnStateChange(unsigned int event, const wxString& data);
 
 	CServerPath m_path;
 

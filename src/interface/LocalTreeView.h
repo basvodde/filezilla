@@ -17,7 +17,7 @@ public:
 	virtual ~CLocalTreeView();
 
 protected:
-	virtual void OnStateChange(unsigned int event);
+	virtual void OnStateChange(unsigned int event, const wxString& data);
 
 	void SetDir(wxString localDir);
 	void Refresh();

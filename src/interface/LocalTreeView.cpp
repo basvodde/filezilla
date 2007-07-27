@@ -800,7 +800,7 @@ int CLocalTreeView::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId
 #endif
 }
 
-void CLocalTreeView::OnStateChange(unsigned int event)
+void CLocalTreeView::OnStateChange(unsigned int event, const wxString& data)
 {
 	if (event == STATECHANGE_LOCAL_DIR)
 		SetDir(m_pState->GetLocalDir());

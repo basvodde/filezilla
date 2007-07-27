@@ -212,7 +212,7 @@ END_EVENT_TABLE()
 
 CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView *pQueue)
 	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER | wxLC_EDIT_LABELS),
-	CSystemImageList(16), CStateEventHandler(pState, STATECHANGE_LOCAL_DIR | STATECHANGE_APPLYFILTER)
+	CSystemImageList(16), CStateEventHandler(pState, STATECHANGE_LOCAL_DIR | STATECHANGE_APPLYFILTER | STATECHANGE_LOCAL_REFRESH_FILE)
 {
 	m_dropTarget = -1;
 
@@ -747,7 +747,7 @@ bool CLocalListView::IsItemValid(unsigned int item) const
 // Helper classes for fast sorting using std::sort
 // -----------------------------------------------
 
-class CLocalListViewSort : public std::binary_function<int,int,bool>
+class CLocalListViewSort //: public std::binary_function<int,int,bool>
 {
 public:
 	enum DirSortMode
@@ -761,6 +761,8 @@ public:
 		: m_fileData(fileData), m_dirSortMode(dirSortMode)
 	{
 	}
+
+	virtual bool operator()(int a, int b) const = 0;
 
 	#define CMP(f, data1, data2) \
 		{\
@@ -874,10 +876,45 @@ protected:
 	DirSortMode m_dirSortMode;
 };
 
+class CLocalListViewSortObject : public std::binary_function<int,int,bool>
+{
+public:
+	CLocalListViewSortObject(CLocalListViewSort* pObject)
+		: m_pObject(pObject)
+	{
+	}
+
+	void Destroy()
+	{
+		delete m_pObject;
+	}
+
+	inline bool operator()(int a, int b)
+	{
+		return m_pObject->operator ()(a, b);
+	}
+protected:
+	CLocalListViewSort* m_pObject;
+};
+
+template<class T> class CReverseSort : public T
+{
+public:
+	CReverseSort(std::vector<CLocalListView::t_fileData>& fileData, enum CLocalListViewSort::DirSortMode dirSortMode, CLocalListView* pListView)
+		: T(fileData, dirSortMode, pListView)
+	{
+	}
+
+	inline bool operator()(int a, int b) const
+	{
+		return T::operator()(b, a);
+	}
+};
+
 class CLocalListViewSortName : public CLocalListViewSort
 {
 public:
-	CLocalListViewSortName(std::vector<CLocalListView::t_fileData>& fileData, enum DirSortMode dirSortMode)
+	CLocalListViewSortName(std::vector<CLocalListView::t_fileData>& fileData, enum DirSortMode dirSortMode, CLocalListView* pListView)
 		: CLocalListViewSort(fileData, dirSortMode)
 	{
 	}
@@ -892,11 +929,12 @@ public:
 		CMP_LESS(CmpName, data1, data2);
 	}
 };
+typedef CReverseSort<CLocalListViewSortName> CLocalListViewSortName_Reverse;
 
 class CLocalListViewSortSize : public CLocalListViewSort
 {
 public:
-	CLocalListViewSortSize(std::vector<CLocalListView::t_fileData>& fileData, enum DirSortMode dirSortMode)
+	CLocalListViewSortSize(std::vector<CLocalListView::t_fileData>& fileData, enum DirSortMode dirSortMode, CLocalListView* pListView)
 		: CLocalListViewSort(fileData, dirSortMode)
 	{
 	}
@@ -914,6 +952,7 @@ public:
 		CMP_LESS(CmpName, data1, data2);
 	}
 };
+typedef CReverseSort<CLocalListViewSortSize> CLocalListViewSortSize_Reverse;
 
 class CLocalListViewSortType : public CLocalListViewSort
 {
@@ -944,11 +983,12 @@ public:
 protected:
 	CLocalListView* m_pListView;
 };
+typedef CReverseSort<CLocalListViewSortType> CLocalListViewSortType_Reverse;
 
 class CLocalListViewSortTime : public CLocalListViewSort
 {
 public:
-	CLocalListViewSortTime(std::vector<CLocalListView::t_fileData>& fileData, enum DirSortMode dirSortMode)
+	CLocalListViewSortTime(std::vector<CLocalListView::t_fileData>& fileData, enum DirSortMode dirSortMode, CLocalListView* pListView)
 		: CLocalListViewSort(fileData, dirSortMode)
 	{
 	}
@@ -965,6 +1005,53 @@ public:
 		CMP_LESS(CmpName, data1, data2);
 	}
 };
+typedef CReverseSort<CLocalListViewSortTime> CLocalListViewSortTime_Reverse;
+
+CLocalListViewSortObject CLocalListView::GetComparisonObject()
+{
+	const int dirSortOption = COptions::Get()->GetOptionVal(OPTION_FILELIST_DIRSORT);
+
+	CLocalListViewSort::DirSortMode dirSortMode;
+	switch (dirSortOption)
+	{
+	case 0:
+	default:
+		dirSortMode = CLocalListViewSort::dirsort_ontop;
+		break;
+	case 1:
+		if (m_sortDirection)
+			dirSortMode = CLocalListViewSort::dirsort_onbottom;
+		else
+			dirSortMode = CLocalListViewSort::dirsort_ontop;
+		break;
+	case 2:
+		dirSortMode = CLocalListViewSort::dirsort_inline;
+		break;
+	}
+
+	if (!m_sortDirection)
+	{
+		if (m_sortColumn == 1)
+			return CLocalListViewSortObject(new CLocalListViewSortSize(m_fileData, dirSortMode, this));
+		else if (m_sortColumn == 2)
+			return CLocalListViewSortObject(new CLocalListViewSortType(m_fileData, dirSortMode, this));
+		else if (m_sortColumn == 3)
+			return CLocalListViewSortObject(new CLocalListViewSortTime(m_fileData, dirSortMode, this));
+		else
+			return CLocalListViewSortObject(new CLocalListViewSortName(m_fileData, dirSortMode, this));
+	}
+	else
+	{
+		if (m_sortColumn == 1)
+			return CLocalListViewSortObject(new CLocalListViewSortSize_Reverse(m_fileData, dirSortMode, this));
+		else if (m_sortColumn == 2)
+			return CLocalListViewSortObject(new CLocalListViewSortType_Reverse(m_fileData, dirSortMode, this));
+		else if (m_sortColumn == 3)
+			return CLocalListViewSortObject(new CLocalListViewSortTime_Reverse(m_fileData, dirSortMode, this));
+		else
+			return CLocalListViewSortObject(new CLocalListViewSortName_Reverse(m_fileData, dirSortMode, this));
+	}
+}
 
 void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 {
@@ -1055,38 +1142,12 @@ void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 		return;
 	}
 
-	CLocalListViewSort::DirSortMode dirSortMode;
-	switch (dirSortOption)
-	{
-	case 0:
-	default:
-		dirSortMode = CLocalListViewSort::dirsort_ontop;
-		break;
-	case 1:
-		if (m_sortDirection)
-			dirSortMode = CLocalListViewSort::dirsort_onbottom;
-		else
-			dirSortMode = CLocalListViewSort::dirsort_ontop;
-		break;
-	case 2:
-		dirSortMode = CLocalListViewSort::dirsort_inline;
-		break;
-	}
-
 	std::vector<unsigned int>::iterator start = m_indexMapping.begin();
 	if (m_hasParent)
 		start++;
-	if (!m_sortColumn)
-		std::sort(start, m_indexMapping.end(), CLocalListViewSortName(m_fileData, dirSortMode));
-	else if (m_sortColumn == 1)
-		std::sort(start, m_indexMapping.end(), CLocalListViewSortSize(m_fileData, dirSortMode));
-	else if (m_sortColumn == 2)
-		std::sort(start, m_indexMapping.end(), CLocalListViewSortType(m_fileData, dirSortMode, this));
-	else if (m_sortColumn == 3)
-		std::sort(start, m_indexMapping.end(), CLocalListViewSortTime(m_fileData, dirSortMode));
-
-	if (m_sortDirection)
-		std::reverse(start, m_indexMapping.end());
+	CLocalListViewSortObject object = GetComparisonObject();
+	std::sort(start, m_indexMapping.end(), object);
+	object.Destroy();
 
 	SortList_UpdateSelections(selected, focused);
 	delete [] selected;
@@ -1753,12 +1814,14 @@ void CLocalListView::ReselectItems(const std::list<wxString>& selectedNames, wxS
 	}
 }
 
-void CLocalListView::OnStateChange(unsigned int event)
+void CLocalListView::OnStateChange(unsigned int event, const wxString& data)
 {
 	if (event == STATECHANGE_LOCAL_DIR)
 		DisplayDir(m_pState->GetLocalDir());
 	else if (event == STATECHANGE_APPLYFILTER)
 		ApplyCurrentFilter();
+	else if (event == STATECHANGE_LOCAL_REFRESH_FILE)
+		RefreshFile(data);
 }
 
 void CLocalListView::OnBeginDrag(wxListEvent& event)
@@ -1795,4 +1858,79 @@ void CLocalListView::OnBeginDrag(wxListEvent& event)
 	int res = source.DoDragDrop(wxDrag_AllowMove);
 	if (res == wxDragCopy || res == wxDragMove)
 		m_pState->RefreshLocal();
+}
+
+void CLocalListView::RefreshFile(const wxString& file)
+{
+	if (!wxFileName::FileExists(m_dir + file))
+		return;
+
+	t_fileData data;
+
+	data.dir = wxFileName::DirExists(m_dir + file);
+	data.icon = -2;
+	data.name = file;
+
+	wxStructStat buf;
+	int result = wxStat(m_dir + file, &buf);
+
+	if (!result)
+	{
+		data.hasTime = true;
+		data.lastModified = wxDateTime(buf.st_mtime);
+	}
+	else
+		data.hasTime = false;
+
+	if (data.dir)
+		data.size = -1;
+	else
+		data.size = result ? -1 : buf.st_size;
+
+	// Look if file data already exists
+	for (std::vector<t_fileData>::iterator iter = m_fileData.begin(); iter != m_fileData.end(); iter++)
+	{
+		const t_fileData& oldData = *iter;
+		if (oldData.name != file)
+			continue;
+
+		// It exists, update entry
+		data.fileType = oldData.fileType;
+
+		*iter = data;
+		if (m_sortColumn)
+			SortList();
+		Refresh(false);
+		return;
+	}
+
+	// Insert new entry
+	int index = m_fileData.size();
+	m_fileData.push_back(data);
+	
+	// Find correct position in index mapping
+	std::vector<unsigned int>::iterator start = m_indexMapping.begin();
+	if (m_hasParent)
+		start++;
+	CLocalListViewSortObject compare = GetComparisonObject();
+	std::vector<unsigned int>::iterator insertPos = std::lower_bound(start, m_indexMapping.end(), index, compare);
+	compare.Destroy();
+
+	const int item = insertPos - m_indexMapping.begin();
+	m_indexMapping.insert(insertPos, index);
+	SetItemCount(m_indexMapping.size());
+	
+	// Move selections
+	int prevState = 0;
+	for (unsigned int i = item; i < m_indexMapping.size(); i++)
+	{
+		int state = GetItemState(i, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+		if (state != prevState)
+		{
+			SetItemState(i, prevState, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+			prevState = state;
+		}
+	}
+
+	Refresh(false);
 }

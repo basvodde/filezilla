@@ -76,7 +76,7 @@ protected:
 	// Permission has to be at least 9 bytes long
 	bool ConvertPermissions(const wxString rwx, char* permissions);
 
-	virtual void OnStateChange(unsigned int event);
+	virtual void OnStateChange(unsigned int event, const wxString& data);
 	void ApplyCurrentFilter();
 	void SetDirectoryListing(const CDirectoryListing *pDirectoryListing, bool modified = false);
 	bool UpdateDirectoryListing(const CDirectoryListing *pDirectoryListing);

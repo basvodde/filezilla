@@ -6,6 +6,7 @@
 
 class CQueueView;
 class CLocalListViewDropTarget;
+class CLocalListViewSortObject;
 
 class CLocalListView : public wxListCtrl, CSystemImageList, CStateEventHandler
 {
@@ -16,7 +17,7 @@ public:
 	virtual ~CLocalListView();
 
 protected:
-	void OnStateChange(unsigned int event);
+	void OnStateChange(unsigned int event, const wxString& data);
 	bool DisplayDir(wxString dirname);
 	void ApplyCurrentFilter();
 
@@ -60,8 +61,11 @@ protected:
 
 	void SortList(int column = -1, int direction = -1);
 	void SortList_UpdateSelections(bool* selections, int focus);
+	CLocalListViewSortObject GetComparisonObject();
 
 	int FindItemWithPrefix(const wxString& prefix, int start);
+
+	void RefreshFile(const wxString& file);
 
 	wxString m_dir;
 
