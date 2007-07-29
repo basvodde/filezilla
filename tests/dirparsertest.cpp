@@ -1059,18 +1059,16 @@ void CDirectoryListingParserTest::testIndividual()
 	memcpy(data, str, len);
 	parser.AddData(data, len);
 
-	CDirectoryListing* pListing = parser.Parse(CServerPath());
+	CDirectoryListing listing = parser.Parse(CServerPath());
 
-	wxString msg = wxString::Format(_T("Data: %s, count: %d"), wxString(entry.data.c_str(), wxConvUTF8).c_str(), pListing->GetCount());
+	wxString msg = wxString::Format(_T("Data: %s, count: %d"), wxString(entry.data.c_str(), wxConvUTF8).c_str(), listing.GetCount());
 	msg.Replace(_T("\r"), _T(""));
 	msg.Replace(_T("\n"), _T(""));
-	CPPUNIT_ASSERT_MESSAGE((const char*)msg.mb_str(), pListing->GetCount() == 1);
+	CPPUNIT_ASSERT_MESSAGE((const char*)msg.mb_str(), listing.GetCount() == 1);
 
-	msg = wxString::Format(_T("Data: %s  Expected:\n%s\n  Got:\n%s"), wxString(entry.data.c_str(), wxConvUTF8).c_str(), entry.reference.dump().c_str(), (*pListing)[0].dump().c_str());
+	msg = wxString::Format(_T("Data: %s  Expected:\n%s\n  Got:\n%s"), wxString(entry.data.c_str(), wxConvUTF8).c_str(), entry.reference.dump().c_str(), listing[0].dump().c_str());
 
-	CPPUNIT_ASSERT_MESSAGE((const char*)msg.mb_str(), (*pListing)[0] == entry.reference);
-
-	delete pListing;
+	CPPUNIT_ASSERT_MESSAGE((const char*)msg.mb_str(), listing[0] == entry.reference);
 }
 
 void CDirectoryListingParserTest::testAll()
@@ -1085,20 +1083,17 @@ void CDirectoryListingParserTest::testAll()
 		memcpy(data, str, len);
 		parser.AddData(data, len);
 	}
-	CDirectoryListing* pListing = parser.Parse(CServerPath());
+	CDirectoryListing listing = parser.Parse(CServerPath());
 
-	CPPUNIT_ASSERT(pListing->GetCount() == m_entries.size());
+	CPPUNIT_ASSERT(listing.GetCount() == m_entries.size());
 
 	unsigned int i = 0;
 	for (std::vector<t_entry>::const_iterator iter = m_entries.begin(); iter != m_entries.end(); iter++, i++)
 	{
-		wxString msg = wxString::Format(_T("Data: %s  Expected:\n%s\n  Got:\n%s"), wxString(iter->data.c_str(), wxConvUTF8).c_str(), iter->reference.dump().c_str(), (*pListing)[i].dump().c_str());
+		wxString msg = wxString::Format(_T("Data: %s  Expected:\n%s\n  Got:\n%s"), wxString(iter->data.c_str(), wxConvUTF8).c_str(), iter->reference.dump().c_str(), listing[i].dump().c_str());
 
-		CPPUNIT_ASSERT_MESSAGE((const char*)msg.mb_str(), (*pListing)[i] == iter->reference);
+		CPPUNIT_ASSERT_MESSAGE((const char*)msg.mb_str(), listing[i] == iter->reference);
 	}
-
-
-	delete pListing;
 }
 
 void CDirectoryListingParserTest::setUp()
