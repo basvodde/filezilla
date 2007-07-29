@@ -153,7 +153,7 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 		if (filter.FilenameFiltered(entry.name, entry.dir, entry.size, false))
 			continue;
 
-		if (entry.dir)
+		if (entry.dir && !entry.link)
 		{
 			t_newDir dirToVisit;
 			wxFileName fn(dir.localDir, _T(""));
