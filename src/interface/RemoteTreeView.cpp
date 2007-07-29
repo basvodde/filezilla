@@ -3,6 +3,7 @@
 #include "commandqueue.h"
 #include <wx/dnd.h>
 #include "dndobjects.h"
+#include "chmoddialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -209,6 +210,8 @@ EVT_TREE_BEGIN_DRAG(wxID_ANY, CRemoteTreeView::OnBeginDrag)
 #ifndef __WXMSW__
 EVT_KEY_DOWN(CRemoteTreeView::OnKeyDown)
 #endif //__WXMSW__
+EVT_TREE_ITEM_MENU(wxID_ANY, CRemoteTreeView::OnContextMenu)
+EVT_MENU(XRCID("ID_CHMOD"), CRemoteTreeView::OnMenuChmod)
 END_EVENT_TABLE()
 
 CRemoteTreeView::CRemoteTreeView(wxWindow* parent, wxWindowID id, CState* pState, CQueueView* pQueue)
@@ -224,6 +227,8 @@ CRemoteTreeView::CRemoteTreeView(wxWindow* parent, wxWindowID id, CState* pState
 	CreateImageList();
 
 	SetDropTarget(new CRemoteTreeViewDropTarget(this));
+
+	Enable(false);
 }
 
 CRemoteTreeView::~CRemoteTreeView()
@@ -251,8 +256,18 @@ void CRemoteTreeView::SetDirectoryListing(const CDirectoryListing* pListing, boo
 		DeleteAllItems();
 		AddRoot(_T(""));
 		m_busy = false;
+		if (FindFocus() == this)
+		{
+			wxNavigationKeyEvent evt;
+			evt.SetFromTab(true);
+			evt.SetEventObject(this);
+			evt.SetDirection(true);
+			AddPendingEvent(evt);
+		}
+		Enable(false);
 		return;
 	}
+	Enable(true);
 
 	wxTreeItemId parent = MakeParent(pListing->path, !modified);
 	if (!parent)
@@ -276,7 +291,6 @@ void CRemoteTreeView::SetDirectoryListing(const CDirectoryListing* pListing, boo
 			Expand(parent);
 	}
 	m_ExpandAfterList = wxTreeItemId();
-
 
 	SetItemImages(parent, false);
 
@@ -835,3 +849,33 @@ void CRemoteTreeView::OnKeyDown(wxKeyEvent& event)
 	ProcessEvent(navEvent);
 }
 #endif
+
+void CRemoteTreeView::OnContextMenu(wxTreeEvent& event)
+{
+	m_contextMenuItem = event.GetItem();
+	wxMenu* pMenu = wxXmlResource::Get()->LoadMenu(_T("ID_MENU_REMOTETREE"));
+	if (!pMenu)
+		return;
+
+	if (!m_pState->IsRemoteIdle())
+	{
+		pMenu->Enable(XRCID("ID_DOWNLOAD"), false);
+		pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
+		pMenu->Enable(XRCID("ID_MKDIR"), false);
+		pMenu->Enable(XRCID("ID_DELETE"), false);
+		pMenu->Enable(XRCID("ID_RENAME"), false);
+		pMenu->Enable(XRCID("ID_CHMOD"), false);
+	}
+
+	PopupMenu(pMenu);
+	delete pMenu;
+}
+
+void CRemoteTreeView::OnMenuChmod(wxCommandEvent& event)
+{
+	if (!m_pState->IsRemoteIdle())
+		return;
+
+	if (!m_contextMenuItem)
+		return;
+}

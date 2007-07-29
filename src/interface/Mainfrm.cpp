@@ -28,6 +28,7 @@
 #include "clearprivatedata.h"
 #include "export.h"
 #include "import.h"
+#include "recursive_operation.h"
 
 #ifndef __WXMSW__
 #include "resources/filezilla.xpm"
@@ -292,6 +293,8 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	else
 		m_pUpdateWizard = 0;
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
+
+	m_pState->GetRecursiveOperationHandler()->SetQueue(m_pQueueView);
 
 	ConnectNavigationHandler(m_pStatusView);
 	ConnectNavigationHandler(m_pLocalListView);
@@ -703,7 +706,7 @@ void CMainFrame::OnCancel(wxCommandEvent& event)
 	if (wxMessageBox(_("Really cancel current operation?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) == wxYES)
 	{
 		m_pState->m_pCommandQueue->Cancel();
-		GetRemoteListView()->StopRecursiveOperation();
+		m_pState->GetRecursiveOperationHandler()->StopRecursiveOperation();
 	}
 }
 

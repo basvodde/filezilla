@@ -55,6 +55,10 @@ protected:
 #ifndef __WXMSW__
 	void OnKeyDown(wxKeyEvent& event);
 #endif
+	void OnContextMenu(wxTreeEvent& event);
+	void OnMenuChmod(wxCommandEvent& event);
+
+	wxTreeItemId m_contextMenuItem;
 };
 
 #endif

@@ -18,6 +18,8 @@ class CCommandQueue;
 class CMainFrame;
 class CStateEventHandler;
 class CRemoteDataObject;
+class CRecursiveOperation;
+
 class CState
 {
 	friend class CCommandQueue;
@@ -66,8 +68,10 @@ public:
 
 	static bool RecursiveCopy(wxString source, wxString target);
 
-	bool IsConnected() const;
-	bool IsIdle() const;
+	bool IsRemoteConnected() const;
+	bool IsRemoteIdle() const;
+
+	CRecursiveOperation* GetRecursiveOperationHandler() { return m_pRecursiveOperation; }
 
 protected:
 	void SetServer(const CServer* server);
@@ -79,6 +83,8 @@ protected:
 	CServer* m_pServer;
 
 	CMainFrame* m_pMainFrame;
+
+	CRecursiveOperation* m_pRecursiveOperation;
 
 	std::list<CStateEventHandler*> m_handlers;
 };

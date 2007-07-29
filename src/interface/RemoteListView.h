@@ -12,24 +12,11 @@ class CRemoteListViewDropTarget;
 class CRemoteListView : public wxListCtrl, CSystemImageList, CStateEventHandler
 {
 	friend class CRemoteListViewDropTarget;
-protected:
-	enum OperationMode
-	{
-		recursive_none,
-		recursive_download,
-		recursive_addtoqueue,
-		recursive_delete,
-		recursive_chmod
-	} m_operationMode;
-
 public:
 	CRemoteListView(wxWindow* parent, wxWindowID id, CState* pState, CQueueView* pQueue);
 	virtual ~CRemoteListView();
 
 	void ListingFailed();
-
-	void StopRecursiveOperation();
-	bool IsBusy() const { return m_operationMode != recursive_none; }
 
 	bool DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, wxString path, bool queueOnly);
 
@@ -68,14 +55,6 @@ protected:
 	void SortList(int column = -1, int direction = -1);
 	void SortList_UpdateSelections(bool* selections, int focus);
 
-	// Processes the directory listing in case of a recursive operation
-	void ProcessDirectoryListing();
-	bool NextOperation();
-
-	// Convert permissions from rwx style into an array.
-	// Permission has to be at least 9 bytes long
-	bool ConvertPermissions(const wxString rwx, char* permissions);
-
 	virtual void OnStateChange(unsigned int event, const wxString& data);
 	void ApplyCurrentFilter();
 	void SetDirectoryListing(const CDirectoryListing *pDirectoryListing, bool modified = false);
@@ -102,23 +81,8 @@ protected:
 	int m_sortColumn;
 	int m_sortDirection;
 
-	// Variables for recursive operations
-	CServerPath m_startDir;
-	std::list<CServerPath> m_visitedDirs;
-
-	struct t_newDir
-	{
-		CServerPath parent;
-		wxString subdir;
-		wxString localDir;
-		bool doVisit;
-	};
-	std::list<t_newDir> m_dirsToVisit;
-
 	wxDateTime m_lastKeyPress;
 	wxString m_prefix;
-
-	CChmodDialog* m_pChmodDlg;
 
 	CInfoText* m_pInfoText;
 	void RepositionInfoText();

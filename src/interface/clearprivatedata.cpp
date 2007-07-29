@@ -63,7 +63,7 @@ void CClearPrivateDataDialog::Show()
 	if (pCheck->GetValue())
 	{
 		CState* pState = m_pMainFrame->GetState();
-		if (pState->IsConnected() || !pState->IsIdle())
+		if (pState->IsRemoteConnected() || !pState->IsRemoteIdle())
 		{
 			int res = wxMessageBox(_("Reconnect information cannot be cleared while connected to a server.\nIf you continue, your connection will be disconnected."), _("Clear private data"), wxOK | wxCANCEL);
 			if (res != wxOK)
@@ -109,7 +109,7 @@ void CClearPrivateDataDialog::OnTimer(wxTimerEvent& event)
 {
 	CState* pState = m_pMainFrame->GetState();
 
-	if (pState->IsConnected() || !pState->IsIdle())
+	if (pState->IsRemoteConnected() || !pState->IsRemoteIdle())
 	{
 		if (!pState->m_pCommandQueue->Cancel())
 			return;
@@ -117,7 +117,7 @@ void CClearPrivateDataDialog::OnTimer(wxTimerEvent& event)
 		pState->m_pCommandQueue->ProcessCommand(new CDisconnectCommand());
 	}
 
-	if (pState->IsConnected() || !pState->IsIdle())
+	if (pState->IsRemoteConnected() || !pState->IsRemoteIdle())
 		return;
 
 	m_timer.Stop();

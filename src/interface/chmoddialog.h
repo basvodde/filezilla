@@ -17,6 +17,13 @@ public:
 	bool Recursive() const ;
 	int GetApplyType() const { return m_applyType; }
 
+	// Converts permission string into a series of chars
+	// The permissions parameter has to be able to hold at least
+	// 9 characters.
+	// Example:
+	//   drwxr--r-- gets converted into 222211211
+	bool ConvertPermissions(const wxString rwx, char* permissions);
+
 protected:
 
 	DECLARE_EVENT_TABLE();

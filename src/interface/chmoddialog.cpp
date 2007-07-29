@@ -305,3 +305,22 @@ void CChmodDialog::OnRecurseChanged(wxCommandEvent& event)
 	pApplyFiles->Enable(pRecurse->GetValue());
 	pApplyDirs->Enable(pRecurse->GetValue());
 }
+
+bool CChmodDialog::ConvertPermissions(const wxString rwx, char* permissions)
+{
+	if (!permissions)
+		return false;
+
+	const unsigned char permchars[3] = {'r', 'w', 'x'};
+
+	if (rwx.Length() != 10)
+		return false;
+
+	for (int i = 0; i < 9; i++)
+	{
+		bool set = rwx[i + 1] == permchars[i % 3];
+		permissions[i] = set ? 2 : 1;
+	}
+
+	return true;
+}

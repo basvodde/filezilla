@@ -2,7 +2,7 @@
 #include "commandqueue.h"
 #include "Mainfrm.h"
 #include "state.h"
-#include "RemoteListView.h"
+#include "recursive_operation.h"
 #include "loginmanager.h"
 
 CCommandQueue::CCommandQueue(CFileZillaEngine *pEngine, CMainFrame* pMainFrame)
@@ -89,7 +89,7 @@ void CCommandQueue::ProcessNextCommand()
 			// Let the remote list view know if a LIST command failed,
 			// so that it may issue the next command in recursive operations.
 			if (pCommand->GetId() == cmd_list)
-				m_pMainFrame->GetRemoteListView()->ListingFailed();
+				m_pMainFrame->GetState()->GetRecursiveOperationHandler()->ListingFailed();
 
 			m_CommandList.pop_front();
 			delete pCommand;
@@ -147,7 +147,7 @@ void CCommandQueue::Finish(COperationNotification *pNotification)
 	// Let the remote list view know if a LIST command failed,
 	// so that it may issue the next command in recursive operations.
 	if (pCommand->GetId() == cmd_list && pNotification->nReplyCode != FZ_REPLY_OK)
-		m_pMainFrame->GetRemoteListView()->ListingFailed();
+		m_pMainFrame->GetState()->GetRecursiveOperationHandler()->ListingFailed();
 	
 	delete m_CommandList.front();
 	m_CommandList.pop_front();

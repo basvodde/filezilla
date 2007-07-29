@@ -7,6 +7,7 @@
 #include "queue.h"
 #include "filezillaapp.h"
 #include "RemoteListView.h"
+#include "recursive_operation.h"
 
 CState::CState(CMainFrame* pMainFrame)
 {
@@ -17,6 +18,8 @@ CState::CState(CMainFrame* pMainFrame)
 
 	m_pEngine = 0;
 	m_pCommandQueue = 0;
+
+	m_pRecursiveOperation = new CRecursiveOperation(this);
 }
 
 CState::~CState()
@@ -544,7 +547,7 @@ bool CState::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, wx
 	return m_pMainFrame->GetRemoteListView()->DownloadDroppedFiles(pRemoteDataObject, path, queueOnly);
 }
 
-bool CState::IsConnected() const
+bool CState::IsRemoteConnected() const
 {
 	if (!m_pEngine)
 		return false;
@@ -552,8 +555,11 @@ bool CState::IsConnected() const
 	return m_pEngine->IsConnected();
 }
 
-bool CState::IsIdle() const
+bool CState::IsRemoteIdle() const
 {
+	if (m_pRecursiveOperation->GetOperationMode() != CRecursiveOperation::recursive_none)
+		return false;
+
 	if (!m_pCommandQueue)
 		return true;
 
