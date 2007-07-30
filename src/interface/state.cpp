@@ -33,6 +33,8 @@ CState::~CState()
 	// Unregister all handlers
 	for (std::list<CStateEventHandler*>::iterator iter = m_handlers.begin(); iter != m_handlers.end(); iter++)
 		(*iter)->m_pState = 0;
+
+	delete m_pRecursiveOperation;
 }
 
 wxString CState::GetLocalDir() const

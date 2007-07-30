@@ -4,6 +4,7 @@
 #include <wx/dnd.h>
 #include "dndobjects.h"
 #include "chmoddialog.h"
+#include "recursive_operation.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -857,7 +858,8 @@ void CRemoteTreeView::OnContextMenu(wxTreeEvent& event)
 	if (!pMenu)
 		return;
 
-	if (!m_pState->IsRemoteIdle())
+	const CServerPath& path = GetPathFromItem(m_contextMenuItem);
+	if (!m_pState->IsRemoteIdle() || path.IsEmpty())
 	{
 		pMenu->Enable(XRCID("ID_DOWNLOAD"), false);
 		pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
@@ -865,6 +867,14 @@ void CRemoteTreeView::OnContextMenu(wxTreeEvent& event)
 		pMenu->Enable(XRCID("ID_DELETE"), false);
 		pMenu->Enable(XRCID("ID_RENAME"), false);
 		pMenu->Enable(XRCID("ID_CHMOD"), false);
+	}
+	else if (!path.HasParent())
+	{
+		pMenu->Enable(XRCID("ID_DOWNLOAD"), false);
+		pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
+		pMenu->Enable(XRCID("ID_MKDIR"), false);
+		pMenu->Enable(XRCID("ID_DELETE"), false);
+		pMenu->Enable(XRCID("ID_RENAME"), false);
 	}
 
 	PopupMenu(pMenu);
@@ -878,4 +888,94 @@ void CRemoteTreeView::OnMenuChmod(wxCommandEvent& event)
 
 	if (!m_contextMenuItem)
 		return;
+
+	const CServerPath& path = GetPathFromItem(m_contextMenuItem);
+	if (path.IsEmpty())
+		return;
+
+	bool hasParent = path.HasParent();
+
+	CChmodDialog* pChmodDlg = new CChmodDialog;
+
+	// Get current permissions of directory
+	const wxString& name = GetItemText(m_contextMenuItem);
+	char permissions[9] = {0};
+	bool cached = false;
+
+	if (hasParent)
+	{
+		const CServerPath& parentPath = path.GetParent();
+		CDirectoryListing listing;
+
+		cached = m_pState->m_pEngine->CacheLookup(parentPath, listing) == FZ_REPLY_OK;
+		if (cached)
+		{
+			for (unsigned int i = 0; i < listing.GetCount(); i++)
+			{
+				if (listing[i].name != name)
+					continue;
+
+				pChmodDlg->ConvertPermissions(listing[i].permissions, permissions);
+			}
+		}
+	}
+
+	if (!pChmodDlg->Create(this, 0, 1, name, permissions))
+	{
+		pChmodDlg->Destroy();
+		pChmodDlg = 0;
+		return;
+	}
+
+	if (pChmodDlg->ShowModal() != wxID_OK)
+	{
+		pChmodDlg->Destroy();
+		pChmodDlg = 0;
+		return;
+	}
+
+	// State may have changed while chmod dialog was shown
+	if (!m_contextMenuItem || !m_pState->IsRemoteConnected() || !m_pState->IsRemoteIdle())
+	{
+		pChmodDlg->Destroy();
+		pChmodDlg = 0;
+		return;
+	}
+
+	const int applyType = pChmodDlg->GetApplyType();
+
+	CRecursiveOperation* pRecursiveOperation = m_pState->GetRecursiveOperationHandler();
+
+	if (cached)
+	{
+		if (!applyType || applyType == 2)
+		{
+			wxString newPerms = pChmodDlg->GetPermissions(permissions);
+
+			m_pState->m_pCommandQueue->ProcessCommand(new CChmodCommand(path.GetParent(), name, newPerms));
+		}
+
+		if (pChmodDlg->Recursive())
+			pRecursiveOperation->AddDirectoryToVisit(path, _T(""), _T(""));
+	}
+	else
+	{
+		if (hasParent)
+			pRecursiveOperation->AddDirectoryToVisitRestricted(path.GetParent(), name, pChmodDlg->Recursive());
+		else
+			pRecursiveOperation->AddDirectoryToVisitRestricted(path, _T(""), pChmodDlg->Recursive());
+	}
+
+	if (!cached || pChmodDlg->Recursive())
+	{
+		pRecursiveOperation->SetChmodDialog(pChmodDlg);
+
+		CServerPath currentPath;
+		wxTreeItemId selected = GetSelection();
+		if (selected)
+			currentPath = GetPathFromItem(selected);
+		pRecursiveOperation->StartRecursiveOperation(CRecursiveOperation::recursive_chmod, hasParent ? path.GetParent() : path, !cached, currentPath);
+	}
+	else
+		pChmodDlg->Destroy();
 }

@@ -1703,7 +1703,7 @@ void CRemoteListView::OnEndLabelEdit(wxListEvent& event)
 
 void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 {
-	if (!m_pState->IsRemoteIdle())
+	if (!m_pState->IsRemoteConnected() || !m_pState->IsRemoteIdle())
 	{
 		wxBell();
 		return;
@@ -1764,14 +1764,19 @@ void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 
 	if (pChmodDlg->ShowModal() != wxID_OK)
 	{
-		if (pChmodDlg)
-		{
-			pChmodDlg->Destroy();
-			pChmodDlg = 0;
-		}
-	}
-	if (!pChmodDlg)
+		pChmodDlg->Destroy();
+		pChmodDlg = 0;
 		return;
+	}
+	
+	// State may have changed while chmod dialog was shown
+	if (!m_pState->IsRemoteConnected() || !m_pState->IsRemoteIdle())
+	{
+		pChmodDlg->Destroy();
+		pChmodDlg = 0;
+		wxBell();
+		return;
+	}
 
 	const int applyType = pChmodDlg->GetApplyType();
 
@@ -1817,13 +1822,19 @@ void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 			pRecursiveOperation->AddDirectoryToVisit(m_pDirectoryListing->path, entry.name);
 	}
 	
-	pRecursiveOperation->SetChmodDialog(pChmodDlg);
-	pRecursiveOperation->StartRecursiveOperation(CRecursiveOperation::recursive_chmod, m_pDirectoryListing->path);
+	if (pChmodDlg->Recursive())
+	{
+		pRecursiveOperation->SetChmodDialog(pChmodDlg);
+		pRecursiveOperation->StartRecursiveOperation(CRecursiveOperation::recursive_chmod, m_pDirectoryListing->path);
 
-	// Refresh listing. This gets done implicitely by the recursive operation, so
-	// only it if not recursing.
-	if (pRecursiveOperation->GetOperationMode() != CRecursiveOperation::recursive_chmod)
-		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path));
+		// Refresh listing. This gets done implicitely by the recursive operation, so
+		// only it if not recursing.
+		if (pRecursiveOperation->GetOperationMode() != CRecursiveOperation::recursive_chmod)
+			m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path));
+	}
+	else
+		pChmodDlg->Destroy();
+
 }
 
 void CRemoteListView::ApplyCurrentFilter()

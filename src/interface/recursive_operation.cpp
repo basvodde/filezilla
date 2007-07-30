@@ -5,6 +5,11 @@
 #include "filter.h"
 #include "queue.h"
 
+CRecursiveOperation::CNewDir::CNewDir()
+{
+	recurse = true;
+}
+
 CRecursiveOperation::CRecursiveOperation(CState* pState)
 	: CStateEventHandler(pState, STATECHANGE_REMOTE_DIR),
 	  m_operationMode(recursive_none), m_pState(pState)
@@ -29,7 +34,7 @@ void CRecursiveOperation::OnStateChange(unsigned int event, const wxString& data
 		ProcessDirectoryListing(m_pState->GetRemoteDir());
 }
 
-void CRecursiveOperation::StartRecursiveOperation(enum OperationMode mode, const CServerPath& startDir)
+void CRecursiveOperation::StartRecursiveOperation(enum OperationMode mode, const CServerPath& startDir, bool allowParent /*=false*/, const CServerPath& finalDir /*=CServerPath()*/)
 {
 	wxCHECK_RET(m_operationMode == recursive_none, _T("StartRecursiveOperation called with m_operationMode != recursive_none"));
 	wxCHECK_RET(m_pState->IsRemoteConnected(), _T("StartRecursiveOperation while disconnected"));
@@ -44,17 +49,35 @@ void CRecursiveOperation::StartRecursiveOperation(enum OperationMode mode, const
 	m_operationMode = mode;
 
 	m_startDir = startDir;
-	
+
+	if (finalDir.IsEmpty())
+		m_finalDir = startDir;
+	else
+		m_finalDir = finalDir;
+
+	m_allowParent = allowParent;
+
 	NextOperation();
 }
 
 void CRecursiveOperation::AddDirectoryToVisit(const CServerPath& path, const wxString& subdir, const wxString& localDir /*=_T("")*/)
 {
-	t_newDir dirToVisit;
+	CNewDir dirToVisit;
 	dirToVisit.doVisit = true;
 	dirToVisit.localDir = localDir;
 	dirToVisit.parent = path;
 	dirToVisit.subdir = subdir;
+	m_dirsToVisit.push_back(dirToVisit);
+}
+
+void CRecursiveOperation::AddDirectoryToVisitRestricted(const CServerPath& path, const wxString& restrict, bool recurse)
+{
+	CNewDir dirToVisit;
+	dirToVisit.doVisit = true;
+	dirToVisit.localDir;
+	dirToVisit.parent = path;
+	dirToVisit.recurse = recurse;
+	dirToVisit.restrict = restrict;
 	m_dirsToVisit.push_back(dirToVisit);
 }
 
@@ -65,7 +88,7 @@ bool CRecursiveOperation::NextOperation()
 
 	while (!m_dirsToVisit.empty())
 	{
-		const t_newDir& dirToVisit = m_dirsToVisit.front();
+		const CNewDir& dirToVisit = m_dirsToVisit.front();
 		if (m_operationMode == recursive_delete && !dirToVisit.doVisit)
 		{
 			m_pState->m_pCommandQueue->ProcessCommand(new CRemoveDirCommand(dirToVisit.parent, dirToVisit.subdir));
@@ -78,7 +101,7 @@ bool CRecursiveOperation::NextOperation()
 	}
 
 	StopRecursiveOperation();
-	m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_startDir));
+	m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_finalDir));
 	return false;
 }
 
@@ -101,20 +124,25 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 		return;
 	}
 
-	t_newDir dir = m_dirsToVisit.front();
+	CNewDir dir = m_dirsToVisit.front();
 	m_dirsToVisit.pop_front();
 
 	if (!pDirectoryListing->path.IsSubdirOf(m_startDir, false))
 	{
-		NextOperation();
-		return;
+		// In some cases (chmod from tree for example) it is neccessary to list the 
+		// parent first
+		if (pDirectoryListing->path != m_startDir || !m_allowParent)
+		{
+			NextOperation();
+			return;
+		}
 	}
 
 	if (m_operationMode == recursive_delete && dir.doVisit)
 	{
 		// After recursing into directory to delete its contents, delete directory itself
 		// Gets handled in NextOperation
-		t_newDir dir2 = dir;
+		CNewDir dir2 = dir;
 		dir2.doVisit = false;
 		m_dirsToVisit.push_front(dir2);
 	}
@@ -146,23 +174,34 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 
 	CFilterDialog filter;
 
+	// Is operation restricted to a single child?
+	bool restrict = !dir.restrict.IsEmpty();
+
 	for (int i = pDirectoryListing->GetCount() - 1; i >= 0; i--)
 	{
 		const CDirentry& entry = (*pDirectoryListing)[i];
 
-		if (filter.FilenameFiltered(entry.name, entry.dir, entry.size, false))
+		if (restrict)
+		{
+			if (entry.name != dir.restrict)
+				continue;
+		}
+		else if (filter.FilenameFiltered(entry.name, entry.dir, entry.size, false))
 			continue;
 
 		if (entry.dir && !entry.link)
 		{
-			t_newDir dirToVisit;
-			wxFileName fn(dir.localDir, _T(""));
-			fn.AppendDir(entry.name);
-			dirToVisit.parent = pDirectoryListing->path;
-			dirToVisit.subdir = entry.name;
-			dirToVisit.localDir = fn.GetFullPath();
-			dirToVisit.doVisit = true;
-			m_dirsToVisit.push_front(dirToVisit);
+			if (dir.recurse)
+			{
+				CNewDir dirToVisit;
+				wxFileName fn(dir.localDir, _T(""));
+				fn.AppendDir(entry.name);
+				dirToVisit.parent = pDirectoryListing->path;
+				dirToVisit.subdir = entry.name;
+				dirToVisit.localDir = fn.GetFullPath();
+				dirToVisit.doVisit = true;
+				m_dirsToVisit.push_front(dirToVisit);
+			}
 		}
 		else
 		{
@@ -226,7 +265,7 @@ void CRecursiveOperation::StopRecursiveOperation()
 
 void CRecursiveOperation::ListingFailed()
 {
-	if (m_operationMode != recursive_none)
+	if (m_operationMode == recursive_none)
 		return;
 
 	wxASSERT(!m_dirsToVisit.empty());

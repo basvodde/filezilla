@@ -21,10 +21,11 @@ public:
 		recursive_chmod
 	};
 
-	void StartRecursiveOperation(enum OperationMode mode, const CServerPath& startDir);
+	void StartRecursiveOperation(enum OperationMode mode, const CServerPath& startDir, bool allowParent = false, const CServerPath& finalDir = CServerPath());
 	void StopRecursiveOperation();
 
 	void AddDirectoryToVisit(const CServerPath& path, const wxString& subdir, const wxString& localDir = _T(""));
+	void AddDirectoryToVisitRestricted(const CServerPath& path, const wxString& restrict, bool recurse);
 
 	enum OperationMode GetOperationMode() const { return m_operationMode; }
 
@@ -46,17 +47,25 @@ protected:
 
 	CState* m_pState;
 
-	struct t_newDir
+	class CNewDir
 	{
+	public:
+		CNewDir();
 		CServerPath parent;
 		wxString subdir;
 		wxString localDir;
 		bool doVisit;
+
+		bool recurse;
+		wxString restrict;
 	};
 
 	CServerPath m_startDir;
+	CServerPath m_finalDir;
 	std::list<CServerPath> m_visitedDirs;
-	std::list<t_newDir> m_dirsToVisit;
+	std::list<CNewDir> m_dirsToVisit;
+
+	bool m_allowParent;
 
 	// Needed for recursive_chmod
 	CChmodDialog* m_pChmodDlg;
