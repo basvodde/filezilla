@@ -213,6 +213,8 @@ EVT_KEY_DOWN(CRemoteTreeView::OnKeyDown)
 #endif //__WXMSW__
 EVT_TREE_ITEM_MENU(wxID_ANY, CRemoteTreeView::OnContextMenu)
 EVT_MENU(XRCID("ID_CHMOD"), CRemoteTreeView::OnMenuChmod)
+EVT_MENU(XRCID("ID_DOWNLOAD"), CRemoteTreeView::OnMenuDownload)
+EVT_MENU(XRCID("ID_ADDTOQUEUE"), CRemoteTreeView::OnMenuDownload)
 END_EVENT_TABLE()
 
 CRemoteTreeView::CRemoteTreeView(wxWindow* parent, wxWindowID id, CState* pState, CQueueView* pQueue)
@@ -870,8 +872,6 @@ void CRemoteTreeView::OnContextMenu(wxTreeEvent& event)
 	}
 	else if (!path.HasParent())
 	{
-		pMenu->Enable(XRCID("ID_DOWNLOAD"), false);
-		pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
 		pMenu->Enable(XRCID("ID_MKDIR"), false);
 		pMenu->Enable(XRCID("ID_DELETE"), false);
 		pMenu->Enable(XRCID("ID_RENAME"), false);
@@ -893,7 +893,7 @@ void CRemoteTreeView::OnMenuChmod(wxCommandEvent& event)
 	if (path.IsEmpty())
 		return;
 
-	bool hasParent = path.HasParent();
+	const bool hasParent = path.HasParent();
 
 	CChmodDialog* pChmodDlg = new CChmodDialog;
 
@@ -902,11 +902,13 @@ void CRemoteTreeView::OnMenuChmod(wxCommandEvent& event)
 	char permissions[9] = {0};
 	bool cached = false;
 
+	// Obviously item needs to have a parent directory...
 	if (hasParent)
 	{
 		const CServerPath& parentPath = path.GetParent();
 		CDirectoryListing listing;
 
+		// ... and it needs to be cached
 		cached = m_pState->m_pEngine->CacheLookup(parentPath, listing) == FZ_REPLY_OK;
 		if (cached)
 		{
@@ -946,8 +948,9 @@ void CRemoteTreeView::OnMenuChmod(wxCommandEvent& event)
 
 	CRecursiveOperation* pRecursiveOperation = m_pState->GetRecursiveOperationHandler();
 
-	if (cached)
+	if (cached) // Implies hasParent
 	{
+		// Change directory permissions
 		if (!applyType || applyType == 2)
 		{
 			wxString newPerms = pChmodDlg->GetPermissions(permissions);
@@ -956,6 +959,7 @@ void CRemoteTreeView::OnMenuChmod(wxCommandEvent& event)
 		}
 
 		if (pChmodDlg->Recursive())
+			// Start recursion
 			pRecursiveOperation->AddDirectoryToVisit(path, _T(""), _T(""));
 	}
 	else
@@ -971,11 +975,46 @@ void CRemoteTreeView::OnMenuChmod(wxCommandEvent& event)
 		pRecursiveOperation->SetChmodDialog(pChmodDlg);
 
 		CServerPath currentPath;
-		wxTreeItemId selected = GetSelection();
+		const wxTreeItemId selected = GetSelection();
 		if (selected)
 			currentPath = GetPathFromItem(selected);
 		pRecursiveOperation->StartRecursiveOperation(CRecursiveOperation::recursive_chmod, hasParent ? path.GetParent() : path, !cached, currentPath);
 	}
 	else
 		pChmodDlg->Destroy();
+}
+
+void CRemoteTreeView::OnMenuDownload(wxCommandEvent& event)
+{
+	if (!m_pState->IsRemoteIdle())
+		return;
+
+	if (!m_contextMenuItem)
+		return;
+
+	const CServerPath& path = GetPathFromItem(m_contextMenuItem);
+	if (path.IsEmpty())
+		return;
+
+	const bool hasParent = path.HasParent();
+
+	const wxString localDir = m_pState->GetLocalDir();
+
+	const wxString& name = GetItemText(m_contextMenuItem);
+
+	wxFileName fn = wxFileName(localDir, _T(""));
+	
+	if (hasParent)
+		fn.AppendDir(name);	
+
+	CRecursiveOperation* pRecursiveOperation = m_pState->GetRecursiveOperationHandler();
+	pRecursiveOperation->AddDirectoryToVisit(path, _T(""), fn.GetFullPath());
+
+	CServerPath currentPath;
+	const wxTreeItemId selected = GetSelection();
+	if (selected)
+		currentPath = GetPathFromItem(selected);
+
+	const bool addOnly = event.GetId() == XRCID("ID_ADDTOQUEUE");
+	pRecursiveOperation->StartRecursiveOperation(addOnly ? CRecursiveOperation::recursive_addtoqueue : CRecursiveOperation::recursive_download, path, true, currentPath);
 }

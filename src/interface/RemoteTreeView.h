@@ -57,6 +57,7 @@ protected:
 #endif
 	void OnContextMenu(wxTreeEvent& event);
 	void OnMenuChmod(wxCommandEvent& event);
+	void OnMenuDownload(wxCommandEvent& event);
 
 	wxTreeItemId m_contextMenuItem;
 };
