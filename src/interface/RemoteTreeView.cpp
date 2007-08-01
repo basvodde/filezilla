@@ -215,6 +215,7 @@ EVT_TREE_ITEM_MENU(wxID_ANY, CRemoteTreeView::OnContextMenu)
 EVT_MENU(XRCID("ID_CHMOD"), CRemoteTreeView::OnMenuChmod)
 EVT_MENU(XRCID("ID_DOWNLOAD"), CRemoteTreeView::OnMenuDownload)
 EVT_MENU(XRCID("ID_ADDTOQUEUE"), CRemoteTreeView::OnMenuDownload)
+EVT_MENU(XRCID("ID_DELETE"), CRemoteTreeView::OnMenuDelete)
 END_EVENT_TABLE()
 
 CRemoteTreeView::CRemoteTreeView(wxWindow* parent, wxWindowID id, CState* pState, CQueueView* pQueue)
@@ -703,7 +704,7 @@ void CRemoteTreeView::OnSelectionChanged(wxTreeEvent& event)
 	if (m_busy)
 		return;
 
-	if (!m_pState->m_pCommandQueue->Idle())
+	if (!m_pState->IsRemoteIdle())
 	{
 		wxBell();
 		return;
@@ -740,7 +741,7 @@ CServerPath CRemoteTreeView::GetPathFromItem(const wxTreeItemId& item) const
 void CRemoteTreeView::OnBeginDrag(wxTreeEvent& event)
 {
 	// Drag could result in recursive operation, don't allow at this point
-	if (!m_pState->m_pCommandQueue->Idle())
+	if (!m_pState->IsRemoteIdle())
 	{
 		wxBell();
 		return;
@@ -806,7 +807,7 @@ void CRemoteTreeView::OnBeginDrag(wxTreeEvent& event)
 		if (!pRemoteDataObject->DidSendData())
 		{
 			const CServer* const pServer = m_pState->GetServer();
-			if (!pServer || !m_pState->m_pCommandQueue->Idle())
+			if (!pServer || !m_pState->IsRemoteIdle())
 			{
 				wxBell();
 				delete ext;
@@ -873,7 +874,6 @@ void CRemoteTreeView::OnContextMenu(wxTreeEvent& event)
 	else if (!path.HasParent())
 	{
 		pMenu->Enable(XRCID("ID_MKDIR"), false);
-		pMenu->Enable(XRCID("ID_DELETE"), false);
 		pMenu->Enable(XRCID("ID_RENAME"), false);
 	}
 
@@ -1017,4 +1017,43 @@ void CRemoteTreeView::OnMenuDownload(wxCommandEvent& event)
 
 	const bool addOnly = event.GetId() == XRCID("ID_ADDTOQUEUE");
 	pRecursiveOperation->StartRecursiveOperation(addOnly ? CRecursiveOperation::recursive_addtoqueue : CRecursiveOperation::recursive_download, path, true, currentPath);
+}
+
+void CRemoteTreeView::OnMenuDelete(wxCommandEvent& event)
+{
+	if (!m_pState->IsRemoteIdle())
+		return;
+
+	if (!m_contextMenuItem)
+		return;
+
+	const CServerPath& path = GetPathFromItem(m_contextMenuItem);
+	if (path.IsEmpty())
+		return;
+
+	const bool hasParent = path.HasParent();
+
+	CRecursiveOperation* pRecursiveOperation = m_pState->GetRecursiveOperationHandler();
+	
+	CServerPath startDir;
+	if (hasParent)
+	{
+		const wxString& name = GetItemText(m_contextMenuItem);
+		startDir = path.GetParent();
+		pRecursiveOperation->AddDirectoryToVisit(startDir, name);
+	}
+	else
+	{
+		startDir = path;
+		pRecursiveOperation->AddDirectoryToVisit(startDir, _T(""));
+	}
+
+	CServerPath currentPath;
+	const wxTreeItemId selected = GetSelection();
+	if (selected)
+		currentPath = GetPathFromItem(selected);
+	if (!currentPath.IsEmpty() && path.IsParentOf(currentPath, false))
+		currentPath = startDir;
+
+	pRecursiveOperation->StartRecursiveOperation(CRecursiveOperation::recursive_delete, startDir, !hasParent, currentPath);
 }

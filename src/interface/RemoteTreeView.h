@@ -58,6 +58,7 @@ protected:
 	void OnContextMenu(wxTreeEvent& event);
 	void OnMenuChmod(wxCommandEvent& event);
 	void OnMenuDownload(wxCommandEvent& event);
+	void OnMenuDelete(wxCommandEvent& event);
 
 	wxTreeItemId m_contextMenuItem;
 };

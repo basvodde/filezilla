@@ -138,7 +138,7 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 		}
 	}
 
-	if (m_operationMode == recursive_delete && dir.doVisit)
+	if (m_operationMode == recursive_delete && dir.doVisit && dir.subdir != _T(""))
 	{
 		// After recursing into directory to delete its contents, delete directory itself
 		// Gets handled in NextOperation
