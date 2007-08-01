@@ -51,7 +51,7 @@ bool COptionsPageConnection::Validate()
 	wxASSERT(pDelay);
 
 	long delay;
-	if (!pDelay->GetValue().ToLong(&delay) || delay < 0 || delay > 99)
+	if (!pDelay->GetValue().ToLong(&delay) || delay < 0 || delay > 999)
 	{
 		pDelay->SetFocus();
 		wxMessageBox(_("Delay between failed connection attempts has to be between 1 and 999 seconds."), validationFailed, wxICON_EXCLAMATION, this);
