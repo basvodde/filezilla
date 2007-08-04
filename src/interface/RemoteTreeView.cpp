@@ -216,6 +216,9 @@ EVT_MENU(XRCID("ID_CHMOD"), CRemoteTreeView::OnMenuChmod)
 EVT_MENU(XRCID("ID_DOWNLOAD"), CRemoteTreeView::OnMenuDownload)
 EVT_MENU(XRCID("ID_ADDTOQUEUE"), CRemoteTreeView::OnMenuDownload)
 EVT_MENU(XRCID("ID_DELETE"), CRemoteTreeView::OnMenuDelete)
+EVT_MENU(XRCID("ID_RENAME"), CRemoteTreeView::OnMenuRename)
+EVT_TREE_BEGIN_LABEL_EDIT(wxID_ANY, CRemoteTreeView::OnBeginLabelEdit)
+EVT_TREE_END_LABEL_EDIT(wxID_ANY, CRemoteTreeView::OnEndLabelEdit)
 END_EVENT_TABLE()
 
 CRemoteTreeView::CRemoteTreeView(wxWindow* parent, wxWindowID id, CState* pState, CQueueView* pQueue)
@@ -269,6 +272,7 @@ void CRemoteTreeView::SetDirectoryListing(const CDirectoryListing* pListing, boo
 			AddPendingEvent(evt);
 		}
 		Enable(false);
+		m_contextMenuItem = wxTreeItemId();
 		return;
 	}
 	Enable(true);
@@ -1056,4 +1060,116 @@ void CRemoteTreeView::OnMenuDelete(wxCommandEvent& event)
 		currentPath = startDir;
 
 	pRecursiveOperation->StartRecursiveOperation(CRecursiveOperation::recursive_delete, startDir, !hasParent, currentPath);
+}
+
+void CRemoteTreeView::OnMenuRename(wxCommandEvent& event)
+{
+	if (!m_pState->IsRemoteIdle())
+		return;
+
+	if (!m_contextMenuItem)
+		return;
+
+	const CServerPath& path = GetPathFromItem(m_contextMenuItem);
+	if (path.IsEmpty())
+		return;
+
+	if (!path.HasParent())
+		return;
+
+	EditLabel(m_contextMenuItem);
+}
+
+void CRemoteTreeView::OnBeginLabelEdit(wxTreeEvent& event)
+{
+	if (!m_pState->IsRemoteIdle())
+	{
+		event.Veto();
+		return;
+	}
+
+	const CServerPath& path = GetPathFromItem(event.GetItem());
+	if (path.IsEmpty())
+	{
+		event.Veto();
+		return;
+	}
+
+	if (!path.HasParent())
+	{
+		event.Veto();
+		return;
+	}
+}
+
+void CRemoteTreeView::OnEndLabelEdit(wxTreeEvent& event)
+{
+	if (event.IsEditCancelled())
+	{
+		event.Veto();
+		return;
+	}
+
+	if (!m_pState->IsRemoteIdle())
+	{
+		event.Veto();
+		return;
+	}
+
+	const CServerPath& path = GetPathFromItem(event.GetItem());
+	if (path.IsEmpty())
+	{
+		event.Veto();
+		return;
+	}
+
+	if (!path.HasParent())
+	{
+		event.Veto();
+		return;
+	}
+
+	CServerPath parent = path.GetParent();
+
+	const wxString& oldName = GetItemText(event.GetItem());
+	const wxString& newName = event.GetLabel();
+	if (oldName == newName)
+	{
+		event.Veto();
+		return;
+	}
+
+	m_pState->m_pCommandQueue->ProcessCommand(new CRenameCommand(parent, oldName, parent, newName));
+	m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(parent));
+
+	CServerPath currentPath;
+	const wxTreeItemId selected = GetSelection();
+	if (selected)
+		currentPath = GetPathFromItem(selected);
+	if (currentPath.IsEmpty())
+		return;
+
+	if (currentPath == path || currentPath.IsSubdirOf(path, false))
+	{
+		// Previously selected path was below renamed one, list the new one
+
+		std::list<wxString> subdirs;
+		while (currentPath != path)
+		{
+			if (!currentPath.HasParent())
+			{
+				// Abort just in case
+				return;
+			}
+			subdirs.push_front(currentPath.GetLastSegment());
+			currentPath = currentPath.GetParent();
+		}
+		currentPath = parent;
+		currentPath.AddSegment(newName);
+		for (std::list<wxString>::const_iterator iter = subdirs.begin(); iter != subdirs.end(); iter++)
+			currentPath.AddSegment(*iter);
+		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(currentPath));
+	}
+	else if (currentPath != parent)
+		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(currentPath));
 }

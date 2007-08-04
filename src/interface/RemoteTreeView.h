@@ -59,6 +59,9 @@ protected:
 	void OnMenuChmod(wxCommandEvent& event);
 	void OnMenuDownload(wxCommandEvent& event);
 	void OnMenuDelete(wxCommandEvent& event);
+	void OnMenuRename(wxCommandEvent& event);
+	void OnBeginLabelEdit(wxTreeEvent& event);
+	void OnEndLabelEdit(wxTreeEvent& event);
 
 	wxTreeItemId m_contextMenuItem;
 };
