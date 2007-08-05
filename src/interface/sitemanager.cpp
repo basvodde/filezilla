@@ -73,8 +73,14 @@ bool CSiteManager::Create(wxWindow* parent)
 	
 	Layout();
 	wxGetApp().GetWrapEngine()->WrapRecursive(this, 1.33, "Site Manager");
-	pTree->SetInitialSize(pTree->GetSize());
 	
+	wxSize minSize = GetSizer()->GetMinSize();
+
+	wxSize size = GetSize();
+	wxSize clientSize = GetClientSize();
+	SetMinSize(GetSizer()->GetMinSize() + size - clientSize);
+	SetClientSize(minSize);
+
 	Load();
 
 	XRCCTRL(*this, "ID_TRANSFERMODE_DEFAULT", wxRadioButton)->Update();

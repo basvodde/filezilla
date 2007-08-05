@@ -669,7 +669,7 @@
   </object>
   <object class="wxDialog" name="ID_SITEMANAGER">
     <centered>1</centered>
-    <style>wxCAPTION|wxSYSTEM_MENU|wxWS_EX_BLOCK_EVENTS|wxCLOSE_BOX</style>
+    <style>wxCAPTION|wxSYSTEM_MENU|wxRESIZE_BORDER|wxCLOSE_BOX|wxWS_EX_BLOCK_EVENTS</style>
     <exstyle>wxWS_EX_BLOCK_EVENTS</exstyle>
     <title>Site Manager</title>
     <object class="wxBoxSizer">
@@ -730,10 +730,11 @@
                   <vgap>5</vgap>
                   <hgap>5</hgap>
                 </object>
-                <flag></flag>
+                <flag>wxALIGN_CENTRE_HORIZONTAL</flag>
                 <border>5</border>
               </object>
             </object>
+            <option>1</option>
             <flag>wxRIGHT|wxGROW</flag>
             <border>5</border>
           </object>
@@ -1154,7 +1155,7 @@
             <border>5</border>
           </object>
         </object>
-        <flag>wxALL</flag>
+        <flag>wxALL|wxGROW</flag>
         <border>5</border>
       </object>
       <object class="sizeritem">
