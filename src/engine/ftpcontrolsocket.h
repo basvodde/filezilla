@@ -151,6 +151,7 @@ public:
 	virtual ~CFtpFileTransferOpData();
 
 	CIOThread *pIOThread;
+	bool fileDidExist;
 };
 
 class CRawTransferOpData : public COpData

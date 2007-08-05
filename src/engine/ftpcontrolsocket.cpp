@@ -46,6 +46,7 @@ CFtpTransferOpData::CFtpTransferOpData()
 CFtpFileTransferOpData::CFtpFileTransferOpData()
 {
 	pIOThread = 0;
+	fileDidExist = true;
 }
 
 CFtpFileTransferOpData::~CFtpFileTransferOpData()
@@ -1176,6 +1177,20 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 					nErrorCode |= FZ_REPLY_CRITICALERROR;
 			}
 		}
+		if (nErrorCode != FZ_REPLY_OK && pData->download && !pData->fileDidExist)
+		{
+			wxStructStat stats;
+			if (!wxStat(pData->localFile, &stats) && !stats.st_size)
+			{
+				// Download failed and a new local file was created before, but
+				// nothing has been written to it. Remove it again, so we don't
+				// leave a bunch of empty files all over the place.
+				LogMessage(Debug_Verbose, _T("Deleting empty file"));
+				delete pData->pIOThread;
+				pData->pIOThread = 0;
+				wxRemoveFile(pData->localFile);
+			}
+		}
 	}
 
 	if (m_pCurOpData && m_pCurOpData->opId == cmd_rawtransfer && 
@@ -1920,6 +1935,10 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 				wxLogNull nullLog;
 
 				wxFileOffset startOffset = 0;
+
+				// Potentially racy
+				bool didExist = wxFile::Exists(pData->localFile);
+
 				if (pData->resume)
 				{
 					if (!pFile->Open(pData->localFile, wxFile::write_append))
@@ -1929,6 +1948,8 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 						ResetOperation(FZ_REPLY_ERROR);
 						return FZ_REPLY_ERROR;
 					}
+
+					pData->fileDidExist = didExist;
 
 					startOffset = pFile->SeekEnd(0);
 					if (startOffset == wxInvalidOffset)
@@ -1971,6 +1992,7 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 						return FZ_REPLY_ERROR;
 					}
 
+					pData->fileDidExist = didExist;
 					pData->localFileSize = pFile->Length();
 				}
 
