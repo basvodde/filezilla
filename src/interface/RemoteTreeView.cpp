@@ -5,6 +5,7 @@
 #include "dndobjects.h"
 #include "chmoddialog.h"
 #include "recursive_operation.h"
+#include "inputdialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -219,6 +220,7 @@ EVT_MENU(XRCID("ID_DELETE"), CRemoteTreeView::OnMenuDelete)
 EVT_MENU(XRCID("ID_RENAME"), CRemoteTreeView::OnMenuRename)
 EVT_TREE_BEGIN_LABEL_EDIT(wxID_ANY, CRemoteTreeView::OnBeginLabelEdit)
 EVT_TREE_END_LABEL_EDIT(wxID_ANY, CRemoteTreeView::OnEndLabelEdit)
+EVT_MENU(XRCID("ID_MKDIR"), CRemoteTreeView::OnMkdir)
 END_EVENT_TABLE()
 
 CRemoteTreeView::CRemoteTreeView(wxWindow* parent, wxWindowID id, CState* pState, CQueueView* pQueue)
@@ -872,12 +874,12 @@ void CRemoteTreeView::OnContextMenu(wxTreeEvent& event)
 		pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
 		pMenu->Enable(XRCID("ID_MKDIR"), false);
 		pMenu->Enable(XRCID("ID_DELETE"), false);
-		pMenu->Enable(XRCID("ID_RENAME"), false);
 		pMenu->Enable(XRCID("ID_CHMOD"), false);
+		pMenu->Enable(XRCID("ID_MKDIR"), false);
+		pMenu->Enable(XRCID("ID_RENAME"), false);
 	}
 	else if (!path.HasParent())
 	{
-		pMenu->Enable(XRCID("ID_MKDIR"), false);
 		pMenu->Enable(XRCID("ID_RENAME"), false);
 	}
 
@@ -1171,5 +1173,64 @@ void CRemoteTreeView::OnEndLabelEdit(wxTreeEvent& event)
 		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(currentPath));
 	}
 	else if (currentPath != parent)
+		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(currentPath));
+}
+
+void CRemoteTreeView::OnMkdir(wxCommandEvent& event)
+{
+	if (!m_pState->IsRemoteIdle())
+		return;
+
+	if (!m_contextMenuItem)
+		return;
+
+	const CServerPath& path = GetPathFromItem(m_contextMenuItem);
+	if (path.IsEmpty())
+		return;
+
+	CInputDialog dlg;
+	if (!dlg.Create(this, _("Create directory"), _("Please enter the name of the directory which should be created:")))
+		return;
+
+	CServerPath newPath = path;
+
+	// Append a long segment which does (most likely) not exist in the path and
+	// replace it with "New folder" later. This way we get the exact position of
+	// "New folder" and can preselect it in the dialog.
+	wxString tmpName = _T("25CF809E56B343b5A12D1F0466E3B37A49A9087FDCF8412AA9AF8D1E849D01CF");
+	if (newPath.AddSegment(tmpName))
+	{
+		wxString pathName = newPath.GetPath();
+		int pos = pathName.Find(tmpName);
+		wxASSERT(pos != -1);
+		wxString newName = _("New folder");
+		pathName.Replace(tmpName, newName);
+		dlg.SetValue(pathName);
+		dlg.SelectText(pos, pos + newName.Length());
+	}
+
+	if (dlg.ShowModal() != wxID_OK)
+		return;
+
+	newPath = path;
+	if (!newPath.ChangePath(dlg.GetValue()))
+	{
+		wxBell();
+		return;
+	}
+
+	m_pState->m_pCommandQueue->ProcessCommand(new CMkdirCommand(newPath));
+	CServerPath listed;
+	if (newPath.HasParent())
+	{
+		listed = newPath.GetParent();
+		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(listed));
+	}
+
+	CServerPath currentPath;
+	const wxTreeItemId selected = GetSelection();
+	if (selected)
+		currentPath = GetPathFromItem(selected);
+	if (!currentPath.IsEmpty() && currentPath != listed)
 		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(currentPath));
 }
