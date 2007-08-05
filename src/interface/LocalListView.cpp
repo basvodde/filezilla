@@ -10,6 +10,7 @@
 #include "Options.h"
 #ifdef __WXMSW__
 #include "lm.h"
+#include <wx/msw/registry.h>
 #endif
 
 #ifdef _DEBUG

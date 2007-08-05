@@ -11,6 +11,7 @@
 #endif
 
 #ifdef __WXMSW__
+#include <wx/msw/registry.h>
 #include <shlobj.h>
 #endif
 
