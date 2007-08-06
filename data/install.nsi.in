@@ -1,7 +1,7 @@
 ;FileZilla 3 installation script
 ;Written by Tim Kosse <mailto:tim.kosse@filezilla-project.org>
 ;
-;Requires NSIS >= 2.26
+;Requires NSIS >= 2.29
 
 ;--------------------------------
 ; Build environment
@@ -9,15 +9,6 @@
   !define top_srcdir @top_srcdir@
   !define srcdir @srcdir@
   !define VERSION @PACKAGE_VERSION@
-
-;--------------------------------
-;Include Modern UI
-
-  !include "MUI.nsh"
-  !include "WordFunc.nsh"
-  !include Library.nsh
-  !include "WinVer.nsh"
-  !insertmacro VersionCompare
 
 ;--------------------------------
 ;General
@@ -35,10 +26,22 @@
   InstallDirRegKey HKLM "Software\FileZilla Client" ""
 
 ;--------------------------------
+;Include Modern UI
+
+  !include "MUI.nsh"
+  !include "WordFunc.nsh"
+  !include Library.nsh
+  !include "WinVer.nsh"
+  !include "nsDialogs.nsh"
+  !insertmacro VersionCompare
+
+;--------------------------------
 ;Variables
 
   Var MUI_TEMP
   Var STARTMENU_FOLDER
+  Var ALL_USERS
+  Var ALL_USERS_BUTTON
 
 ;--------------------------------
 ;Interface Settings
@@ -53,6 +56,7 @@
 
   !insertmacro MUI_PAGE_LICENSE "${top_srcdir}\COPYING"
   Page custom PageReinstall PageLeaveReinstall
+  Page custom PageAllUsers PageLeaveAllUsers
   !insertmacro MUI_PAGE_COMPONENTS
   !insertmacro MUI_PAGE_DIRECTORY
 
@@ -81,6 +85,8 @@ Function .onInit
 installonoldwindows:
   ${EndIf}
   
+  strcpy $ALL_USERS "1"
+
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${srcdir}\reinstall.ini" reinstall.ini
 
 FunctionEnd
@@ -170,6 +176,48 @@ Function PageLeaveReinstall
 
 FunctionEnd
   
+Function PageAllUsers
+
+  !insertmacro MUI_HEADER_TEXT "Choose Installation Options" "Who should this application be installed for?"
+
+  nsDialogs::Create /NOUNLOAD 1018
+  Pop $0
+
+  nsDialogs::CreateItem /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 0 0 100% 30 "Please select whether you wish to make this software available to all users or just yourself."
+  Pop $R0
+  
+  nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_VCENTER}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}|${WS_GROUP}|${WS_TABSTOP} 0 10 55 100% 30 "&Anyone who uses this computer (all users)"
+  Pop $ALL_USERS_BUTTON
+  
+  nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_TOP}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 10 85 100% 50 "&Only for me"
+  Pop $R0
+  
+  nsDialogs::CreateItem /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 0 -30 100% 30 "Installation for all users may require Administrator privileges."
+  Pop $R1
+
+  ${If} $ALL_USERS == "1"
+    SendMessage $ALL_USERS_BUTTON ${BM_SETCHECK} 1 0
+  ${Else}
+    SendMessage $R0 ${BM_SETCHECK} 1 0
+  ${EndIf}
+  
+  nsDialogs::Show
+
+FunctionEnd
+
+Function PageLeaveAllUsers
+
+  SendMessage $ALL_USERS_BUTTON ${BM_GETCHECK} 0 0 $R0
+  ${If} $R0 == 0
+    StrCpy $ALL_USERS "0"
+    SetShellVarContext current
+  ${Else}
+    StrCpy $ALL_USERS "1"
+    SetShellVarContext all
+  ${EndIf}
+
+FunctionEnd
+
 ;--------------------------------
 ;Languages
  
@@ -362,6 +410,14 @@ Section "Uninstall"
   
   !insertmacro MUI_STARTMENU_GETFOLDER Application $MUI_TEMP
     
+  SetShellVarContext current
+  Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
+  Delete "$SMPROGRAMS\$MUI_TEMP\FileZilla.lnk"
+  
+  ;Delete empty start menu parent diretories
+  StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
+
+  SetShellVarContext all
   Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
   Delete "$SMPROGRAMS\$MUI_TEMP\FileZilla.lnk"
   
