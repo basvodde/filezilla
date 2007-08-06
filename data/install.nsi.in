@@ -16,6 +16,7 @@
   !include "MUI.nsh"
   !include "WordFunc.nsh"
   !include Library.nsh
+  !include "WinVer.nsh"
   !insertmacro VersionCompare
 
 ;--------------------------------
@@ -73,6 +74,13 @@
 
 Function .onInit
 
+  ${If} ${AtLeastWin2000}
+  ${Else}
+    MessageBox MB_YESNO|MB_ICONSTOP "Unsupported operating system. FileZilla ${VERSION} requires at least Windows 2000. It may not work correctly on your system. Do you really want to continue with the installation?" IDYES installonoldwindows
+    Abort
+installonoldwindows:
+  ${EndIf}
+  
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${srcdir}\reinstall.ini" reinstall.ini
 
 FunctionEnd
