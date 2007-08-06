@@ -334,8 +334,7 @@ bool CLocalListView::DisplayDir(wxString dirname)
 	else if (dirname.Left(2) == _T("\\\\"))
 	{
 		int pos = dirname.Mid(2).Find('\\');
-		int l = dirname.Len();
-		if (pos != -1 && pos + 3 != dirname.Len())
+		if (pos != -1 && pos + 3 != (int)dirname.Len())
 			goto regular_dir;
 
 		// UNC path without shares

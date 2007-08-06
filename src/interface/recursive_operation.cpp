@@ -74,7 +74,6 @@ void CRecursiveOperation::AddDirectoryToVisitRestricted(const CServerPath& path,
 {
 	CNewDir dirToVisit;
 	dirToVisit.doVisit = true;
-	dirToVisit.localDir;
 	dirToVisit.parent = path;
 	dirToVisit.recurse = recurse;
 	dirToVisit.restrict = restrict;

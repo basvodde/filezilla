@@ -1463,7 +1463,7 @@ void CMainFrame::OnChar(wxKeyEvent& event)
 
 	wxWindow* focused = FindFocus();
 
-	bool skipFirst;
+	bool skipFirst = false;
 	std::list<wxWindow*>::iterator iter;
 	if (!focused)
 	{

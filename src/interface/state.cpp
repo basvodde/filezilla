@@ -81,7 +81,7 @@ wxString CState::Canonicalize(wxString oldDir, wxString newDir, wxString *error 
 	if (newDir.Left(2) == _T("\\\\"))
 	{
 		int pos = newDir.Mid(2).Find('\\');
-		if (pos == -1 || pos + 3 == newDir.Len())
+		if (pos == -1 || pos + 3 == (int)newDir.Len())
 		{
 			// Partial UNC path, no share given
 			return newDir;
@@ -574,7 +574,7 @@ bool CState::LocalDirHasParent(const wxString& dir)
 	if (dir.Left(2) == _T("\\\\"))
 	{
 		int pos = dir.Mid(2).Find('\\');
-		if (pos == -1 || pos + 3 == dir.Len())
+		if (pos == -1 || pos + 3 == (int)dir.Len())
 			return false;
 	}
 	if (dir == _T("\\"))
@@ -596,7 +596,7 @@ bool CState::LocalDirIsWriteable(const wxString& dir)
 	if (dir.Left(2) == _T("\\\\"))
 	{
 		int pos = dir.Mid(2).Find('\\');
-		if (pos == -1 || pos + 3 == dir.Len())
+		if (pos == -1 || pos + 3 == (int)dir.Len())
 			return false;
 	}
 #endif
