@@ -40,7 +40,10 @@
 
   Var MUI_TEMP
   Var STARTMENU_FOLDER
+  Var PREVIOUS_INSTALLDIR
+  Var PREVIOUS_VERSION
   Var ALL_USERS
+  Var ALL_USERS_FIXED
   Var ALL_USERS_BUTTON
 
 ;--------------------------------
@@ -61,9 +64,9 @@
   !insertmacro MUI_PAGE_DIRECTORY
 
   ;Start Menu Folder Page Configuration
-  !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKLM"
+  !define MUI_STARTMENUPAGE_REGISTRY_ROOT "SHCTX"
   !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\FileZilla Client"
-  !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "FileZilla Client"
+  !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Startmenu"
   !define MUI_STARTMENUPAGE_DEFAULTFOLDER "FileZilla Client"
   
   !insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
@@ -76,16 +79,52 @@
   !insertmacro MUI_UNPAGE_INSTFILES
   !insertmacro MUI_UNPAGE_FINISH
 
+Function ReadPreviousVersion
+
+  ReadRegStr $PREVIOUS_INSTALLDIR HKLM "Software\FileZilla Client" ""
+
+  ${If} $PREVIOUS_INSTALLDIR != ""
+    ;Detect version
+    ReadRegStr $PREVIOUS_VERSION HKLM "Software\FileZilla Client" "Version"
+    ${If} $PREVIOUS_VERSION != ""
+      StrCpy $ALL_USERS 1
+      StrCpy $ALL_USERS_FIXED 1
+      SetShellVarContext all
+      return
+    ${EndIf}
+  ${EndIf}
+  
+  ReadRegStr $PREVIOUS_INSTALLDIR HKCU "Software\FileZilla Client" ""
+
+  ${If} $PREVIOUS_INSTALLDIR != ""
+    ;Detect version
+    ReadRegStr $PREVIOUS_VERSION HKCU "Software\FileZilla Client" "Version"
+    ${If} $PREVIOUS_VERSION != ""
+      StrCpy $ALL_USERS 0
+      StrCpy $ALL_USERS_FIXED 1
+      SetShellVarContext current
+      return
+    ${EndIf}
+  ${EndIf}
+
+  StrCpy $ALL_USERS 1
+
+FunctionEnd
+
 Function .onInit
 
   ${If} ${AtLeastWin2000}
   ${Else}
-    MessageBox MB_YESNO|MB_ICONSTOP "Unsupported operating system. FileZilla ${VERSION} requires at least Windows 2000. It may not work correctly on your system. Do you really want to continue with the installation?" IDYES installonoldwindows
+    MessageBox MB_YESNO|MB_ICONSTOP "Unsupported operating system.$\nFileZilla ${VERSION} requires at least Windows 2000 and may not work correctly on your system.$\nDo you really want to continue with the installation?" IDYES installonoldwindows
     Abort
 installonoldwindows:
   ${EndIf}
   
-  strcpy $ALL_USERS "1"
+  Call ReadPreviousVersion
+
+  ${If} $PREVIOUS_INSTALLDIR != ""
+    StrCpy $INSTDIR $PREVIOUS_INSTALLDIR
+  ${EndIf}
 
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${srcdir}\reinstall.ini" reinstall.ini
 
@@ -93,19 +132,12 @@ FunctionEnd
 
 Function PageReinstall
 
-  ReadRegStr $R0 HKLM "Software\FileZilla Client" ""
-
-  StrCmp $R0 "" 0 +2
+  ${If} $PREVIOUS_VERSION == ""
     Abort
+  ${EndIf}
 
-  ;Detect version
-  ClearErrors
-  ReadRegStr $R0 HKLM "Software\FileZilla Client" "Version"
-  IfErrors 0 +2
-    Abort
-
-  ${VersionCompare} "${VERSION}" $R0 $R1
-  IntCmp $R1 1 new_version same_version older_version
+  ${VersionCompare} "${VERSION}" $PREVIOUS_VERSION $R0
+  IntCmp $R0 1 new_version same_version older_version
 
   new_version:
 
@@ -150,7 +182,7 @@ Function PageLeaveReinstall
     StrCmp $R1 "1" reinst_done reinst_uninstall
 
   reinst_uninstall:
-  ReadRegStr $R1 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "UninstallString"
+  ReadRegStr $R1 SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "UninstallString"
 
   ;Run uninstaller
   HideWindow
@@ -175,8 +207,31 @@ Function PageLeaveReinstall
   reinst_done:
 
 FunctionEnd
-  
+
+Function GetUserName
+
+  ; Puts username of current user on top of stack
+
+  Push $0
+  Push $1
+  System::Call "advapi32::GetUserName(t .r0, *i ${NSIS_MAX_STRLEN}) i.r1"
+  ${If} $1 == 0
+    Pop $1
+    Pop $0
+    Push ""
+    return
+  ${EndIf}
+
+  Push $0
+  Exch
+  Pop $0
+FunctionEnd
+
 Function PageAllUsers
+
+  ${If} $ALL_USERS_FIXED == 1
+    Abort
+  ${EndIf}
 
   !insertmacro MUI_HEADER_TEXT "Choose Installation Options" "Who should this application be installed for?"
 
@@ -189,7 +244,13 @@ Function PageAllUsers
   nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_VCENTER}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}|${WS_GROUP}|${WS_TABSTOP} 0 10 55 100% 30 "&Anyone who uses this computer (all users)"
   Pop $ALL_USERS_BUTTON
   
-  nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_TOP}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 10 85 100% 50 "&Only for me"
+  Call GetUserName
+  Pop $R0
+  ${If} $R0 != ""
+    nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_TOP}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 10 85 100% 50 "&Only for me ($R0)"
+  ${Else}
+    nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_TOP}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 10 85 100% 50 "&Only for me"
+  ${EndIf}
   Pop $R0
   
   nsDialogs::CreateItem /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 0 -30 100% 30 "Installation for all users may require Administrator privileges."
@@ -255,23 +316,21 @@ Section "FileZilla Client" SecMain
   SetOutPath "$INSTDIR\resources\cyril\32x32"
 ;  File "${top_srcdir}/src\interface\resources\cyril\32x32\*.png"
   
-  ;Store installation folder
-  WriteRegStr HKLM "Software\FileZilla Client" "" $INSTDIR
-
-  WriteRegStr HKLM "Software\FileZilla Client" "Version" "${VERSION}"
-  
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\uninstall.exe"
 
-  WriteRegExpandStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "UninstallString" "$INSTDIR\uninstall.exe"
-  WriteRegExpandStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "InstallLocation" "$INSTDIR"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "DisplayName" "FileZilla Client ${VERSION}"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "DisplayIcon" "$INSTDIR\FileZilla.exe"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "DisplayVersion" "${VERSION}"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "URLInfoAbout" "http://filezilla-project.org/"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "HelpLink" "http://filezilla-project.org"
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "NoModify" "1"
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "NoRepair" "1"
+  WriteRegStr SHCTX "Software\FileZilla Client" "" $INSTDIR
+  WriteRegStr SHCTX "Software\FileZilla Client" "Version" "${VERSION}"
+
+  WriteRegExpandStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "UninstallString" "$INSTDIR\uninstall.exe"
+  WriteRegExpandStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "InstallLocation" "$INSTDIR"
+  WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "DisplayName" "FileZilla Client ${VERSION}"
+  WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "DisplayIcon" "$INSTDIR\FileZilla.exe"
+  WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "DisplayVersion" "${VERSION}"
+  WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "URLInfoAbout" "http://filezilla-project.org/"
+  WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "HelpLink" "http://filezilla-project.org"
+  WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "NoModify" "1"
+  WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "NoRepair" "1"
 
   SetOutPath "$INSTDIR\docs"
   File "${top_srcdir}\docs\fzdefaults.xml.example"
@@ -352,6 +411,84 @@ FunctionEnd
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;--------------------------------
+;Uninstaller Functions
+
+Var un.REMOVE_ALL_USERS
+Var un.REMOVE_CURRENT_USER
+
+;--------------------------------
+;Uninstaller Functions
+
+Function un.ReadPreviousVersion
+
+  ReadRegStr $R0 HKLM "Software\FileZilla Client" ""
+
+  ${If} $R0 != ""
+    ;Detect version
+    ReadRegStr $R2 HKLM "Software\FileZilla Client" "Version"
+    ${If} $R2 == ""
+      StrCpy $R0 ""
+    ${EndIf}
+  ${EndIf}
+
+  ReadRegStr $R1 HKCU "Software\FileZilla Client" ""
+  
+  ${If} $R1 != ""
+    ;Detect version
+    ReadRegStr $R2 HKCU "Software\FileZilla Client" "Version"
+    ${If} $R2 == ""
+      StrCpy $R1 ""
+    ${EndIf}
+  ${EndIf}
+
+  ${If} $R1 == $INSTDIR
+    Strcpy $un.REMOVE_CURRENT_USER 1
+  ${EndIf}
+  ${If} $R0 == $INSTDIR
+    Strcpy $un.REMOVE_ALL_USERS 1
+  ${EndIf}
+  ${If} $un.REMOVE_CURRENT_USER != 1
+  ${AndIf} $un.REMOVE_ALL_USERS != 1
+    ${If} $R1 != ""
+      Strcpy $un.REMOVE_CURRENT_USER 1
+      ${If} $R0 == $R1
+        Strcpy $un.REMOVE_ALL_USERS 1
+      ${EndIf}
+    ${Else}
+      StrCpy $un.REMOVE_ALL_USERS = 1
+    ${EndIf}
+  ${EndIf}
+
+FunctionEnd
+
+Function un.onInit
+
+  Call un.ReadPreviousVersion
+  
+FunctionEnd
+
+Function un.RemoveStartmenu
+
+  !insertmacro MUI_STARTMENU_GETFOLDER Application $MUI_TEMP
+  
+  Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
+  Delete "$SMPROGRAMS\$MUI_TEMP\FileZilla.lnk"
+  
+  ;Delete empty start menu parent diretories
+  StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
+ 
+  startMenuDeleteLoop:
+    RMDir $MUI_TEMP
+    GetFullPathName $MUI_TEMP "$MUI_TEMP\.."
+    
+    IfErrors startMenuDeleteLoopDone
+  
+    StrCmp $MUI_TEMP $SMPROGRAMS startMenuDeleteLoopDone startMenuDeleteLoop
+  startMenuDeleteLoopDone:
+
+FunctionEnd
+
+;--------------------------------
 ;Uninstaller Section
 
 !macro UNINSTALLLANGFILE LANG
@@ -404,37 +541,22 @@ Section "Uninstall"
   RMDir "$INSTDIR\resources\cyril\16x16"
   RMDir "$INSTDIR\resources\cyril"
   RMDir "$INSTDIR\resources"
-  RMDir "$INSTDIR\resources\docs"
+  RMDir "$INSTDIR\docs"
   RMDir /REBOOTOK "$INSTDIR"
 
-  
-  !insertmacro MUI_STARTMENU_GETFOLDER Application $MUI_TEMP
-    
-  SetShellVarContext current
-  Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
-  Delete "$SMPROGRAMS\$MUI_TEMP\FileZilla.lnk"
-  
-  ;Delete empty start menu parent diretories
-  StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
+  ${If} $un.REMOVE_ALL_USERS == 1
+    SetShellVarContext all
+    Call un.RemoveStartmenu
 
-  SetShellVarContext all
-  Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
-  Delete "$SMPROGRAMS\$MUI_TEMP\FileZilla.lnk"
-  
-  ;Delete empty start menu parent diretories
-  StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
- 
-  startMenuDeleteLoop:
-    RMDir $MUI_TEMP
-    GetFullPathName $MUI_TEMP "$MUI_TEMP\.."
-    
-    IfErrors startMenuDeleteLoopDone
-  
-    StrCmp $MUI_TEMP $SMPROGRAMS startMenuDeleteLoopDone startMenuDeleteLoop
-  startMenuDeleteLoopDone:
+    DeleteRegKey /ifempty HKLM "Software\FileZilla Client"
+    DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client"
+  ${EndIf}
+  ${If} $un.REMOVE_CURRENT_USER == 1
+    SetShellVarContext current
+    Call un.RemoveStartmenu
 
-  DeleteRegKey /ifempty HKLM "Software\FileZilla Client"
-  DeleteRegKey /ifempty HKCU "Software\FileZilla Client"
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client"
+    DeleteRegKey /ifempty HKCU "Software\FileZilla Client"
+    DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client"
+  ${EndIf}
 
 SectionEnd
