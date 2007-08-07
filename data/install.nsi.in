@@ -407,6 +407,12 @@ SetOutPath "$INSTDIR"
 
 SectionEnd
 
+Section /o "Desktop Icon" SecDesktop
+
+  CreateShortCut "$DESKTOP\FileZilla Client.lnk" "$INSTDIR\filezilla.exe" "" "$INSTDIR\filezilla.exe" 0
+
+SectionEnd
+
 ;--------------------------------
 ;Functions
 
@@ -429,12 +435,14 @@ FunctionEnd
   LangString DESC_SecMain ${LANG_ENGLISH} "Required program files."
   LangString DESC_SecLang ${LANG_ENGLISH} "Language files files."
   LangString DESC_SecShellExt ${LANG_ENGLISH} "Shell extension for advanced drag && drop support. Required for drag && drop from FileZilla into Explorer."
+  LangString DESC_SecDesktop ${LANG_ENGLISH} "Create desktop icon for FileZilla"
 
   ;Assign language strings to sections
   !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
     !insertmacro MUI_DESCRIPTION_TEXT ${SecMain} $(DESC_SecMain)
     !insertmacro MUI_DESCRIPTION_TEXT ${SecLang} $(DESC_SecLang)
     !insertmacro MUI_DESCRIPTION_TEXT ${SecShellExt} $(DESC_SecShellExt)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecDesktop} $(DESC_SecDesktop)
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;--------------------------------
@@ -577,6 +585,8 @@ Section "Uninstall"
 
     DeleteRegKey /ifempty HKLM "Software\FileZilla Client"
     DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client"
+
+    Delete "$DESKTOP\FileZilla Client.lnk"
   ${EndIf}
   ${If} $un.REMOVE_CURRENT_USER == 1
     SetShellVarContext current
@@ -584,6 +594,8 @@ Section "Uninstall"
 
     DeleteRegKey /ifempty HKCU "Software\FileZilla Client"
     DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client"
+
+    Delete "$DESKTOP\FileZilla Client.lnk"
   ${EndIf}
 
 SectionEnd
