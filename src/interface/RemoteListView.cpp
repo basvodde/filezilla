@@ -1017,7 +1017,8 @@ void CRemoteListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 		// Simply reverse everything
 		m_sortDirection = direction;
 		m_sortColumn = column;
-		std::reverse(++m_indexMapping.begin(), m_indexMapping.end());
+		std::vector<unsigned int>::iterator iter = m_indexMapping.begin();
+		std::reverse(++iter, m_indexMapping.end());
 
 		SortList_UpdateSelections(selected, focused);
 		delete [] selected;
@@ -1053,19 +1054,23 @@ void CRemoteListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 		break;
 	}
 
+	std::vector<unsigned int>::iterator iter = m_indexMapping.begin();
 	if (!m_sortColumn)
-		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CRemoteListViewSortName(m_pDirectoryListing, dirSortMode));
+		std::sort(++iter, m_indexMapping.end(), CRemoteListViewSortName(m_pDirectoryListing, dirSortMode));
 	else if (m_sortColumn == 1)
-		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CRemoteListViewSortSize(m_pDirectoryListing, dirSortMode));
+		std::sort(++iter, m_indexMapping.end(), CRemoteListViewSortSize(m_pDirectoryListing, dirSortMode));
 	else if (m_sortColumn == 2)
-		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CRemoteListViewSortType(this, dirSortMode, m_pDirectoryListing, m_fileData));
+		std::sort(++iter, m_indexMapping.end(), CRemoteListViewSortType(this, dirSortMode, m_pDirectoryListing, m_fileData));
 	else if (m_sortColumn == 3)
-		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CRemoteListViewSortTime(m_pDirectoryListing, dirSortMode));
+		std::sort(++iter, m_indexMapping.end(), CRemoteListViewSortTime(m_pDirectoryListing, dirSortMode));
 	else if (m_sortColumn == 4)
-		std::sort(++m_indexMapping.begin(), m_indexMapping.end(), CRemoteListViewSortPermissions(m_pDirectoryListing, dirSortMode));
+		std::sort(++iter, m_indexMapping.end(), CRemoteListViewSortPermissions(m_pDirectoryListing, dirSortMode));
 	
 	if (m_sortDirection)
-		std::reverse(++m_indexMapping.begin(), m_indexMapping.end());
+	{
+		std::vector<unsigned int>::iterator iter = m_indexMapping.begin();
+		std::reverse(++iter, m_indexMapping.end());
+	}
 
 	SortList_UpdateSelections(selected, focused);
 	delete [] selected;
