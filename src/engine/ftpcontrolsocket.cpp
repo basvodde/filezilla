@@ -477,7 +477,10 @@ int CFtpControlSocket::LogonParseResponse()
 
 			int res = m_pTlsSocket->Handshake();
 			if (res == FZ_REPLY_ERROR)
+			{
 				DoClose();
+				return FZ_REPLY_ERROR;
+			}
 
 			pData->neededCommands[LOGON_AUTH_SSL] = 0;
 		}
