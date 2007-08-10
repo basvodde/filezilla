@@ -1374,7 +1374,7 @@ bool CDirectoryListingParser::ParseAsDos(CLine *pLine, CDirentry &entry)
 	else if (token.IsNumeric() || token.IsLeftNumeric())
 	{
 		// Convert size, filter out separators
-		int size = 0;
+		wxLongLong size = 0;
 		int len = token.GetLength();
 		for (int i = 0; i < len; i++)
 		{
