@@ -43,6 +43,8 @@ CTlsSocket::CTlsSocket(wxEvtHandler* pEvtHandler, wxSocketBase* pSocket, CContro
 
 	m_implicitTrustedCert.data = 0;
 	m_implicitTrustedCert.size = 0;
+
+	m_shutdown_requested = false;
 }
 
 CTlsSocket::~CTlsSocket()
@@ -103,6 +105,8 @@ bool CTlsSocket::Init()
 	gnutls_transport_set_pull_function(m_session, PullFunction);
 	gnutls_transport_set_ptr(m_session, (gnutls_transport_ptr_t)this);
 	gnutls_transport_set_lowat(m_session, 0);
+
+	m_shutdown_requested = false;
 
 	// At this point, we can start shaking hands.
 
@@ -414,6 +418,18 @@ int CTlsSocket::Handshake(const CTlsSocket* pPrimarySocket /*=0*/)
 		evt.m_event = wxSOCKET_CONNECTION;
 		wxPostEvent(m_pEvtHandler, evt);
 		TriggerEvents();
+
+		if (m_shutdown_requested)
+		{
+			Shutdown();
+			if (!Error() || LastError() != wxSOCKET_WOULDBLOCK)
+			{
+				wxSocketEvent evt(GetId());
+				evt.m_event = wxSOCKET_LOST;
+				wxPostEvent(m_pEvtHandler, evt);
+			}
+		}
+
 		return FZ_REPLY_OK;
 	}
 	else if (res == GNUTLS_E_AGAIN || res == GNUTLS_E_INTERRUPTED)
@@ -644,6 +660,16 @@ void CTlsSocket::Shutdown()
 
 	if (m_tlsState == closing)
 	{
+		m_lastSuccessful = false;
+		m_lastError = wxSOCKET_WOULDBLOCK;
+		return;
+	}
+
+	if (m_tlsState == handshake || m_tlsState == verifycert)
+	{
+		// Shutdown during handshake is not a good idea.
+		m_pOwner->LogMessage(Debug_Verbose, _T("Shutdown during handshake, postponing"));
+		m_shutdown_requested = true;
 		m_lastSuccessful = false;
 		m_lastError = wxSOCKET_WOULDBLOCK;
 		return;

@@ -91,6 +91,7 @@ protected:
 	int m_lastError;
 	unsigned int m_lastCount;
 	bool m_lastSuccessful;
+	bool m_shutdown_requested;
 
 	// Due to the strange gnutls_record_send semantics, call it again
 	// with 0 data and 0 length after GNUTLS_E_AGAIN and store the number
