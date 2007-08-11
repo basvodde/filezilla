@@ -576,7 +576,7 @@ bool COptions::ReadColumnWidths(unsigned int optionId, unsigned int count, unsig
 		return false;
 
 	unsigned long* newWidths = new unsigned long[count];
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < count; i++)
 	{
 		wxString token = tokens.GetNextToken();
 		if (!token.ToULong(newWidths + i) || newWidths[i] > 5000)
@@ -586,7 +586,7 @@ bool COptions::ReadColumnWidths(unsigned int optionId, unsigned int count, unsig
 		}
 	}
 
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < count; i++)
 		widths[i] = newWidths[i];
 
 	delete [] newWidths;
