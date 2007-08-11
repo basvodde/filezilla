@@ -95,7 +95,7 @@ void CQuickconnectBar::OnQuickconnect(wxCommandEvent& event)
 	
 	XRCCTRL(*this, "ID_QUICKCONNECT_HOST", wxTextCtrl)->SetValue(host);
 	if (server.GetPort() != server.GetDefaultPort(server.GetProtocol()))
-		XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetValue(wxString::Format(_T("%d"), numericPort));
+		XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetValue(wxString::Format(_T("%d"), server.GetPort()));
 	else
 		XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetValue(_T(""));
 
