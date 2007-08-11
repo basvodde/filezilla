@@ -5,6 +5,22 @@ Legend:
   + New feature or important bugfix
   - Bugfixes
 
+3.0.0-rc1 (2007-08-11)
+
+! Fix remotely triggered memory corruption if connection gets terminated during TLS handshake.
++ Windows: Add choice between "All Users" and "Current User" to installer
++ Windows: Add Desktop and My Documents links links to directory tree
++ Windows: Ability to list shares on Network computers
++ Column withs in all list views will be saved
++ Refresh local file list after a successful file transfer
++ Add context menu to remote directory tree
++ Make Site Manager resizable
+- Don't leave empty files behind on failed downloads
+- Fix retry and cache logic if transfer command fails with 5yz reply
+- Limit number of simultaneous connections did not work properly
+- Refresh listing after chmod
+- Fix upload of empty files over TLS connections
+
 Beta 11 (2007-07-20):
 
 + Improved queue
