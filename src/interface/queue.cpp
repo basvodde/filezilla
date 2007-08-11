@@ -3,7 +3,6 @@
 #include "queueview_failed.h"
 #include "queueview_successful.h"
 #include "Options.h"
-#include <wx/tokenzr.h>
 
 CQueueItem::CQueueItem()
 {
@@ -1143,32 +1142,7 @@ void CQueueViewBase::CreateColumns(const wxString& lastColumnName)
 	{
 		widths_loaded = true;
 
-		wxString savedWidths = COptions::Get()->GetOption(OPTION_QUEUE_COLUMN_WIDTHS);
-		wxStringTokenizer tokens(savedWidths, _T(" "));
-		if (tokens.CountTokens() == 6)
-		{
-			bool valid = true;
-			unsigned long newWidths[6];
-			for (int i = 0; i < 6; i++)
-			{
-				wxString token = tokens.GetNextToken();
-				if (!token.ToULong(&newWidths[i]))
-				{
-					valid = false;
-					break;
-				}
-				if (newWidths[i] > 5000)
-				{
-					valid = false;
-					break;
-				}
-			}
-			if (valid)
-			{
-				for (int i = 0; i < 6; i++)
-					widths[i] = newWidths[i];
-			}
-		}
+		COptions::Get()->ReadColumnWidths(OPTION_QUEUE_COLUMN_WIDTHS, 6, widths);
 	}
 
 	InsertColumn(0, _("Server / Local file"), wxLIST_FORMAT_LEFT, widths[0]);
@@ -1178,16 +1152,6 @@ void CQueueViewBase::CreateColumns(const wxString& lastColumnName)
 	InsertColumn(4, _("Priority"), wxLIST_FORMAT_LEFT, widths[4]);
 	if (lastColumnName != _T(""))
 		InsertColumn(5, lastColumnName, wxLIST_FORMAT_LEFT, widths[5]);
-}
-
-void CQueueViewBase::SaveColumnWidths()
-{
-	wxString widths;
-	for (int i = 0; i < GetColumnCount(); i++)
-		widths += wxString::Format(_T("%d "), GetColumnWidth(i));
-	widths.RemoveLast();
-
-	COptions::Get()->SetOption(OPTION_QUEUE_COLUMN_WIDTHS, widths);
 }
 
 CServerItem* CQueueViewBase::GetServerItem(const CServer& server)

@@ -33,6 +33,8 @@ enum interfaceOptions
 	OPTION_FILELIST_DIRSORT,
 	OPTION_QUEUE_SUCCESSFUL_AUTOCLEAR,
 	OPTION_QUEUE_COLUMN_WIDTHS,
+	OPTION_LOCALFILELIST_COLUMN_WIDTHS,
+	OPTION_REMOTEFILELIST_COLUMN_WIDTHS,
 
 	// Has to be last element
 	OPTIONS_NUM
@@ -67,6 +69,9 @@ public:
 	static void Destroy();
 
 	void Import(TiXmlElement* pElement);
+
+	void SaveColumnWidths(const wxListCtrl* const pListCtrl, unsigned int optionId);
+	bool ReadColumnWidths(unsigned int optionId, unsigned int count, unsigned long* widths);
 	
 protected:
 	COptions();

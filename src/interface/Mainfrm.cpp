@@ -778,6 +778,9 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 
 	CSiteManager::ClearIdMap();
 
+	COptions::Get()->SaveColumnWidths(m_pLocalListView, OPTION_LOCALFILELIST_COLUMN_WIDTHS);
+	COptions::Get()->SaveColumnWidths(m_pRemoteListView, OPTION_REMOTEFILELIST_COLUMN_WIDTHS);
+
 	Destroy();
 }
 

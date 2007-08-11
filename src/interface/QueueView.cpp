@@ -1236,7 +1236,7 @@ bool CQueueView::Quit()
 
 	SaveQueue();
 
-	SaveColumnWidths();
+	COptions::Get()->SaveColumnWidths(this, OPTION_QUEUE_COLUMN_WIDTHS);
 
 	return true;
 }

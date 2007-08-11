@@ -269,8 +269,6 @@ public:
 
 	wxString GetTitle() const { return m_title; }
 
-	void SaveColumnWidths();
-
 protected:
 
 	// Gets item for given server

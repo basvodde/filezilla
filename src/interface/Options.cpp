@@ -3,6 +3,7 @@
 #include "../tinyxml/tinyxml.h"
 #include "xmlfunctions.h"
 #include "filezillaapp.h"
+#include <wx/tokenzr.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -78,7 +79,9 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Last local directory", string, _T("") },
 	{ "Filelist directory sort", number, _T("0") },
 	{ "Queue successful autoclear", number, _T("0") },
-	{ "Queue column widths", string, _T("") }
+	{ "Queue column widths", string, _T("") },
+	{ "Local filelist colwidths", string, _T("") },
+	{ "Remote filelist colwidths", string, _T("") }
 };
 
 COptions::COptions()
@@ -551,4 +554,41 @@ void COptions::Import(TiXmlElement* pElement)
 
 	if (m_pXmlFile)
 		m_pXmlFile->Save();
+}
+
+void COptions::SaveColumnWidths(const wxListCtrl* const pListCtrl, unsigned int optionId)
+{
+	wxCHECK_RET(pListCtrl, _T("SaveColumnWidths called with !pListCtrl"));
+
+	wxString widths;
+	for (int i = 0; i < pListCtrl->GetColumnCount(); i++)
+		widths += wxString::Format(_T("%d "), pListCtrl->GetColumnWidth(i));
+	widths.RemoveLast();
+
+	SetOption(optionId, widths);
+}
+
+bool COptions::ReadColumnWidths(unsigned int optionId, unsigned int count, unsigned long* widths)
+{
+	wxString savedWidths = GetOption(optionId);
+	wxStringTokenizer tokens(savedWidths, _T(" "));
+	if (tokens.CountTokens() != count)
+		return false;
+
+	unsigned long* newWidths = new unsigned long[count];
+	for (int i = 0; i < 6; i++)
+	{
+		wxString token = tokens.GetNextToken();
+		if (!token.ToULong(newWidths + i) || newWidths[i] > 5000)
+		{
+			delete [] newWidths;
+			return false;
+		}
+	}
+
+	for (int i = 0; i < 6; i++)
+		widths[i] = newWidths[i];
+
+	delete [] newWidths;
+	return true;
 }
