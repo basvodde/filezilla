@@ -33,6 +33,7 @@
 #include <wx/xrc/xh_text.h>
 #include <wx/xrc/xh_toolb.h>
 #include <wx/xrc/xh_tree.h>
+#include <wx/xrc/xh_hyperlink.h>
 
 #if defined(__WXMAC__) || defined(__UNIX__)
 #include <wx/stdpaths.h>
@@ -398,6 +399,7 @@ bool CFileZillaApp::LoadResourceFiles()
     pResource->AddHandler(new wxToolBarXmlHandler);
 	pResource->AddHandler(new wxStaticLineXmlHandler);
     pResource->AddHandler(new wxScrolledWindowXmlHandler);
+    pResource->AddHandler(new wxHyperlinkCtrlXmlHandler);
 
 	wxString resourceDir = m_resourceDir;
 #if wxUSE_FILESYSTEM

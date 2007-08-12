@@ -1,6 +1,7 @@
 #include "FileZilla.h"
 #include "aboutdialog.h"
 #include "buildinfo.h"
+#include <wx/hyperlink.h>
 
 BEGIN_EVENT_TABLE(CAboutDialog, wxDialogEx)
 EVT_BUTTON(XRCID("wxID_OK"), CAboutDialog::OnOK)
@@ -10,6 +11,10 @@ bool CAboutDialog::Create(wxWindow* parent)
 {
 	if (!Load(parent, _T("ID_ABOUT")))
 		return false;
+
+	XRCCTRL(*this, "ID_URL", wxHyperlinkCtrl)->SetLabel(_T("http://filezilla-project.org"));
+
+	XRCCTRL(*this, "ID_COPYRIGHT", wxStaticText)->SetLabel(_T("Copyright (C) 2004-2007  Tim Kosse"));
 
 	wxString version = CBuildInfo::GetVersion();
 	if (CBuildInfo::GetBuildType() == _T("nightly"))
