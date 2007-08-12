@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/sh
 
 while test $# != 0; do
   case $1 in 
@@ -19,25 +19,26 @@ while test $# != 0; do
   shift
 done
 
-echo -e " --- FileZilla 3 autogen script ---\n"
-echo -e "\033[1mHINT:\033[0m If this script fails, please download a recent source tarball from \033[1mhttp://filezilla-project.org/nightly.php\033[0m\n"
+echo '--- FileZilla 3 autogen script ---'
+echo ''
+printf '\033[1mHINT:\033[0m If this script fails, please download a recent source tarball from \033[1mhttp://filezilla-project.org/nightly.php\033[0m\n\n'
 
 failedAclocal()
 {
-  echo -e "\n\033[1;31m*** Failed to execute aclocal\033[0m"
-  echo "" 
+  printf '\n\033[1;31m*** Failed to execute aclocal\033[0m\n'
+  echo '' 
   echo '    If you get errors about undefined symbols, make sure'
   echo '    that the corresponding .m4 file is in your aclocal search'
   echo '    directory.'
   echo '    Especially if you get an error about undefined'
   echo '    AC_PROG_LIBTOOL, search for a .m4 file with libtool in'
   echo '    its name and copy the file to the directory,'
-  echo -e '    \033[1maclocal --print-ac-dir\033[0m prints.'
+  printf '    \033[1maclocal --print-ac-dir\033[0m prints.\n'
 
   exit 1
 }
 
-echo -n "1. Cleaning previous files... "
+printf '1. Cleaning previous files... '
 
 rm -rf  configure config.log aclocal.m4 \
   config.status config autom4te.cache libtool
@@ -91,10 +92,10 @@ version_check()
   if [ ! -z "$MICRO" ]; then VERSION=$VERSION.$MICRO; else MICRO=0; fi
   
   if [ x$SILENT != x2 ]; then
-    if [ ! -z $VERSION ]; then
-      echo -n "Checking for $PACKAGE >= $VERSION ... "
+    if [ ! -z "$VERSION" ]; then
+      printf "Checking for $PACKAGE >= $VERSION ... "
     else
-      echo -n "Checking for $PACKAGE ... "
+      printf "Checking for $PACKAGE ... "
     fi
   fi
 
@@ -108,19 +109,19 @@ version_check()
         version_check usesuffix $PACKAGE $MAJOR $MINOR $MICRO 2
         return
       fi
-      echo -e "\033[1;31mnot found\033[0m\n"
-      echo -e "\033[1m$PACKAGENAME\033[0m could not be found. On some systems \033[1m$PACKAGENAME\033[0m might be installed but"
-      echo -e "has a suffix with the version number, for example \033[1m$PACKAGEMA;E-$VERSION\033[0m."
-      echo -e "If that is the case, create a symlink to \033[1m$PACKAGENAME\033[0m."
+      printf '\033[1;31mnot found\033[0m\n\n'
+      printf "\033[1m$PACKAGENAME\033[0m could not be found. On some systems \033[1m$PACKAGENAME\033[0m might be installed but\n"
+      printf "has a suffix with the version number, for example \033[1m$PACKAGEMA;E-$VERSION\033[0m.\n"
+      printf "If that is the case, create a symlink to \033[1m$PACKAGENAME\033[0m.\n"
       exit 1
     }
   else
     findsuffix ||
     {
-      echo -e "\033[1;31mnot found\033[0m\n"
-      echo -e "\033[1m$PACKAGENAME\033[0m could not be found. On some systems \033[1m$PACKAGENAME\033[0m might be installed but"
-      echo -e "has a suffix with the version number, for example \033[1m$PACKAGENAME-$VERSION\033[0m."
-      echo -e "If that is the case, create a symlink to \033[1m$PACKAGE\033[0m."
+      printf "\033[1;31mnot found\033[0m\n\n"
+      printf "\033[1m$PACKAGENAME\033[0m could not be found. On some systems \033[1m$PACKAGENAME\033[0m might be installed but\n"
+      printf "has a suffix with the version number, for example \033[1m$PACKAGENAME-$VERSION\033[0m.\n"
+      printf "If that is the case, create a symlink to \033[1m$PACKAGE\033[0m.\n"
       exit 1
     }
   fi
@@ -159,10 +160,10 @@ version_check()
     if [ x$SILENT = x1 ]; then
       return 2;
     fi
-    echo -e "\033[1mfound $pkg_version, not ok !\033[0m"
+    printf "\033[1mfound $pkg_version, not ok !\033[0m\n"
     echo "You must have $PACKAGENAME $VERSION or greater to generate the configure script."
-    echo -e "If \033[1m$PACKAGENAME\033[0m is a symlink, make sure it points to the correct version."
-    echo -e "Please update your installation or get a recent source tarball from \033[1mhttp://filezilla-project.org/nightly.php\033[0m"
+    printf "If \033[1m$PACKAGENAME\033[0m is a symlink, make sure it points to the correct version.\n"
+    printf "Please update your installation or get a recent source tarball from \033[1mhttp://filezilla-project.org/nightly.php\033[0m\n"
     exit 2
   else
     echo "found $pkg_version, ok."
@@ -186,7 +187,7 @@ checkTools()
 
   echo "$N. Checking required tools... "
 
-  echo -n "$N.1 "; version_check automake 1 8 0 1
+  printf "$N.1 "; version_check automake 1 8 0 1
   if [ x$? = x2 ]; then
     WANT_AUTOMAKE=1.8
     export WANT_AUTOMAKE
@@ -194,19 +195,16 @@ checkTools()
   fi
   automake="$PACKAGE"
 
-  echo -n "$N.2 "; version_check aclocal; aclocal=$PACKAGE
-  echo -n "$N.3 "; version_check autoheader; autoheader=$PACKAGE
-  echo -n "$N.4 "; version_check autoconf 2 5; autoconf=$PACKAGE
-  echo -n "$N.5 "; version_check libtoolize 1 4; libtoolize=$PACKAGE
+  printf "$N.2 "; version_check aclocal; aclocal=$PACKAGE
+  printf "$N.3 "; version_check autoheader; autoheader=$PACKAGE
+  printf "$N.4 "; version_check autoconf 2 5; autoconf=$PACKAGE
+  printf "$N.5 "; version_check libtoolize 1 4; libtoolize=$PACKAGE
 }
 
 checkTools 2
 
 echo "3. Creating configure and friends... "
-if [ ! -e config ]
-then
-  mkdir config
-fi
+mkdir -p config
 
 echo "3.1 Running aclocal... "
 $aclocal -I . || failedAclocal
@@ -223,19 +221,19 @@ $autoconf
 echo "3.5 Runing automake... "
 $automake -a -c
 
-echo -n "4. Checking generate files... "
+printf "4. Checking generate files... "
 if test ! -f configure || test ! -f config/ltmain.sh || test ! -f Makefile.in; then
-  echo -e "\033[1;31mfailed"
-  echo -e "\nError: Unable to generate all required files!\033[0m\n"
+  printf "\033[1;31mfailed\n"
+  printf "\nError: Unable to generate all required files!\033[0m\n\n"
   echo "Please make sure you have you have autoconf 2.5, automake 1.7, libtool 1.5,"
   echo "autoheader and aclocal installed."
-  echo -e "If you don't have access to these tools, please get a recent source tarball from \033[1mhttp://filezilla-project.org/nightly.php\033[0m instead."
+  printf "If you don't have access to these tools, please get a recent source tarball from \033[1mhttp://filezilla-project.org/nightly.php\033[0m instead.\n"
   echo "script which will download the generated files, just remember to call it from"
   echo "time to time, it will only download if some files have been changed"
 
   exit 1
 fi
 echo done
-echo -e "\nScript completed successfully."
-echo -e "Now run \033[1m./configure\033[0m, see \033[1m./configure --help\033[0m for more information"
+printf "\nScript completed successfully.\n"
+printf "Now run \033[1m./configure\033[0m, see \033[1m./configure --help\033[0m for more information\n"
 
