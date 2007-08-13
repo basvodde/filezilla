@@ -102,9 +102,12 @@ if ! test "$localesonly" = "yes"; then
   #include <utmp.h>])
 
   AC_SEARCH_LIBS([socket], [xnet])
+  AC_SEARCH_LIBS([getaddrinfo], [xnet])
+  AC_SEARCH_LIBS([in6addr_loopback], [socket])
 
   AC_CHECK_FUNCS([getaddrinfo ptsname setresuid strsignal updwtmpx])
   AC_CHECK_FUNCS([gettimeofday ftime])
+  AC_CHECK_FUNCS([in6addr_loopback in6addr_any])
 
 AH_BOTTOM([
 /* Convert autoconf definitions to ones that PuTTY wants. */
