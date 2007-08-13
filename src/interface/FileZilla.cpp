@@ -121,7 +121,7 @@ bool CheckForWin2003FirewallBug()
 		return false;
 
 	wxRegKey key(_T("HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\StandardProfile"));
-	if (!key.Open(wxRegKey::Read))
+	if (!key.Exists() || !key.Open(wxRegKey::Read))
 		return false;
 
 	long value;
