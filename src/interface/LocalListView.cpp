@@ -347,7 +347,9 @@ bool CLocalListView::DisplayDir(wxString dirname)
 	else
 #endif
 	{
+#ifdef __WXMSW__
 regular_dir:
+#endif
 		CFilterDialog filter;
 
 		wxDir dir(dirname);
@@ -765,6 +767,8 @@ public:
 		: m_fileData(fileData), m_dirSortMode(dirSortMode)
 	{
 	}
+
+	virtual ~CLocalListViewSort() { }
 
 	virtual bool operator()(int a, int b) const = 0;
 

@@ -4,7 +4,7 @@ struct t_protocolInfo
 {
 	const enum ServerProtocol protocol;
 	const wxString prefix;
-	int defaultPort;
+	unsigned int defaultPort;
 	const bool translateable;
 	const wxChar* const name;
 };
