@@ -12,6 +12,7 @@ std::map<wxString, int> CDirectoryListingParser::m_MonthNamesMap;
 //#define LISTDEBUG
 #ifdef LISTDEBUG
 static char data[][110]={
+
 	/* IBM MVS listings */
 	// Volume Unit    Referred Ext Used Recfm Lrecl BlkSz Dsorg Dsname
 	"  WYOSPT 3420   2003/05/21  1  200  FB      80  8053  PS  48-MVS.FILE",
@@ -870,7 +871,7 @@ bool CDirectoryListingParser::ParseAsUnix(CLine *pLine, CDirentry &entry)
 	int numOwnerGroup = 3;
 	if (!netware)
 	{
-		// Filter out groupid, we don't need it
+		// Filter out link count, we don't need it
 		if (!pLine->GetToken(++index, token))
 			return false;
 
@@ -942,7 +943,7 @@ bool CDirectoryListingParser::ParseAsUnix(CLine *pLine, CDirentry &entry)
 
 		return true;
 	}
-	while (--numOwnerGroup);
+	while (numOwnerGroup--);
 
 	return false;
 }

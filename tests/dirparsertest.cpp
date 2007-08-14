@@ -1003,9 +1003,9 @@ void CDirectoryListingParserTest::InitEntries()
 
 	/* Localised Unix style listing. Month and day fields are swapped */
 	m_entries.push_back((t_entry){
-			"drwxr-xr-x 3 user group 512 01 oct 2004 52-swapped-daymonth file",
+			"drwxr-xr-x 3 user group 512 01 oct 2004 52-swapped-daymonth dir",
 			{
-				_T("52-swapped-daymonth file"),
+				_T("52-swapped-daymonth dir"),
 				512,
 				_T("drwxr-xr-x"),
 				_T("user group"),
@@ -1019,6 +1019,22 @@ void CDirectoryListingParserTest::InitEntries()
 			}
 		});
 
+	m_entries.push_back((t_entry){
+			"-r--r--r-- 0125039 12 Nov 11 2005 53-noownergroup file",
+			{
+				_T("53-noownergroup file"),
+				12,
+				_T("-r--r--r--"),
+				_T(""),
+				false,
+				false,
+				_T(""),
+				true,
+				false,
+				wxDateTime(11, wxDateTime::Nov, 2005),
+				false
+			}
+		});
 /*
 	wxString name;
 	wxLongLong size;
