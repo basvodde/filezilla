@@ -1644,7 +1644,10 @@ void CMainFrame::RestoreSizes()
 
 			// We need to call SetClientSize here too. Since window isn't yet shown here, Maximize
 			// doesn't actually resize the window till it is shown
-			SetClientSize(client_width, client_height);
+
+			// The slight off-size is needed to ensure the client sizes gets changed at least once.
+			// Otherwise all the splitters would have default size still.
+			SetClientSize(client_width + 1, client_height);
 
 			// A 2nd call is neccessary, for some reason the first call
 			// doesn't fully set the height properly at least under wxMSW
@@ -1655,7 +1658,10 @@ void CMainFrame::RestoreSizes()
 		else 
 		{
 			Move(pos_x, pos_y);
-			SetClientSize(client_width, client_height);
+
+			// The slight off-size is needed to ensure the client sizes gets changed at least once.
+			// Otherwise all the splitters would have default size still.
+			SetClientSize(client_width + 1, client_height);
 
 			// A 2nd call is neccessary, for some reason the first call
 			// doesn't fully set the height properly at least under wxMSW
