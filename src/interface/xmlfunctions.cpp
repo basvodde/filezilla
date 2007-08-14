@@ -312,7 +312,7 @@ wxLongLong GetTextElementLongLong(TiXmlElement* node, const char* name, int defV
 // Returns 0 on error.
 TiXmlElement* GetXmlFile(wxFileName file)
 {
-	if (wxFileExists(file.GetFullPath()))
+	if (wxFileExists(file.GetFullPath()) && file.GetSize() > 0)
 	{
 		// File does exist, open it
 
