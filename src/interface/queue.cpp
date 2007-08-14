@@ -1142,7 +1142,8 @@ void CQueueViewBase::CreateColumns(const wxString& lastColumnName)
 	{
 		widths_loaded = true;
 
-		COptions::Get()->ReadColumnWidths(OPTION_QUEUE_COLUMN_WIDTHS, 6, widths);
+		if (!wxGetKeyState(WXK_SHIFT) || !wxGetKeyState(WXK_ALT) || !wxGetKeyState(WXK_CONTROL))
+			COptions::Get()->ReadColumnWidths(OPTION_QUEUE_COLUMN_WIDTHS, 6, widths);
 	}
 
 	InsertColumn(0, _("Server / Local file"), wxLIST_FORMAT_LEFT, widths[0]);

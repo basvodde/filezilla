@@ -81,7 +81,8 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Queue successful autoclear", number, _T("0") },
 	{ "Queue column widths", string, _T("") },
 	{ "Local filelist colwidths", string, _T("") },
-	{ "Remote filelist colwidths", string, _T("") }
+	{ "Remote filelist colwidths", string, _T("") },
+	{ "Window position and size", string, _T("") }
 };
 
 COptions::COptions()

@@ -223,7 +223,8 @@ CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, 
 
 	unsigned long widths[4] = { 120, 80, 100, 120 };
 
-	COptions::Get()->ReadColumnWidths(OPTION_LOCALFILELIST_COLUMN_WIDTHS, 4, widths);
+	if (!wxGetKeyState(WXK_SHIFT) || !wxGetKeyState(WXK_ALT) || !wxGetKeyState(WXK_CONTROL))
+		COptions::Get()->ReadColumnWidths(OPTION_LOCALFILELIST_COLUMN_WIDTHS, 4, widths);
 
 	InsertColumn(0, _("Filename"), wxLIST_FORMAT_LEFT, widths[0]);
 	InsertColumn(1, _("Filesize"), wxLIST_FORMAT_RIGHT, widths[1]);

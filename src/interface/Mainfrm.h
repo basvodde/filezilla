@@ -39,6 +39,10 @@ public:
 
 	void UpdateLayout(int layout = -1, int swap = -1);
 
+	// Window size and position as well as pane sizes
+	void RememberSizes();
+	void RestoreSizes();
+
 	void CheckChangedSettings();
 
 	void ConnectNavigationHandler(wxEvtHandler* handler);

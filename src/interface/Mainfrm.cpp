@@ -29,6 +29,10 @@
 #include "export.h"
 #include "import.h"
 #include "recursive_operation.h"
+#include <wx/tokenzr.h>
+#if wxUSE_DISPLAY
+#include <wx/display.h>
+#endif
 
 #ifndef __WXMSW__
 #include "resources/filezilla.xpm"
@@ -274,6 +278,8 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_pBottomSplitter->SetSashPosition(size.GetHeight() - 170);
 
 	Layout();
+
+	RestoreSizes();
 
 	wxString localDir = COptions::Get()->GetOption(OPTION_LASTLOCALDIR);
 	if (!m_pState->SetLocalDir(localDir))
@@ -750,8 +756,14 @@ void CMainFrame::OnSplitterSashPosChanged(wxSplitterEvent& event)
 
 void CMainFrame::OnClose(wxCloseEvent &event)
 {
+	if (!m_bQuit)
+	{
+		RememberSizes();
+		m_bQuit = true;
+	}
+
 	Show(false);
-	m_bQuit = true;
+	
 	delete m_pSendLed;
 	delete m_pRecvLed;
 	m_pSendLed = 0;
@@ -1522,4 +1534,153 @@ void CMainFrame::FocusNextEnabled(std::list<wxWindow*>& windowOrder, std::list<w
 	}
 
 	(*iter)->SetFocus();
+}
+
+void CMainFrame::RememberSizes()
+{
+	wxString posString;
+	
+	// is_maximized
+	posString += wxString::Format(_T("%d "), IsMaximized() ? 1 : 0);
+	int x, y;
+	
+	// pos_x pos_y
+	GetPosition(&x, &y);
+	posString += wxString::Format(_T("%d %d "), x, y);
+	
+	// pos_width pos_height
+	GetClientSize(&x, &y);
+	posString += wxString::Format(_T("%d %d "), x, y);
+	
+	// top_pos
+	posString += wxString::Format(_T("%d "), m_pTopSplitter->IsSplit() ? m_pTopSplitter->GetSashPosition() : m_lastLogViewSplitterPos);
+	
+	// bottom_height
+	m_pBottomSplitter->GetClientSize(&x, &y);
+	if (m_pBottomSplitter->IsSplit())
+		y -= m_pBottomSplitter->GetSashPosition();
+	else
+		y -= m_lastQueueSplitterPos;
+	posString += wxString::Format(_T("%d "), y);
+	
+	// view_pos
+	posString += wxString::Format(_T("%d "), m_pViewSplitter->GetSashPosition());
+	
+	// view_height_width
+	m_pViewSplitter->GetClientSize(&x, &y);
+	if (COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT) != 1)
+		posString += wxString::Format(_T("%d "), x);
+	else
+		posString += wxString::Format(_T("%d "), y);
+	
+	// local_pos
+	posString += wxString::Format(_T("%d "), m_pLocalSplitter->IsSplit() ? m_pLocalSplitter->GetSashPosition() : m_lastLocalTreeSplitterPos);
+	
+	// remote_pos
+	posString += wxString::Format(_T("%d"), m_pRemoteSplitter->IsSplit() ? m_pRemoteSplitter->GetSashPosition() : m_lastRemoteTreeSplitterPos);
+
+	COptions::Get()->SetOption(OPTION_WINDOW_POSITION, posString);
+}
+
+void CMainFrame::RestoreSizes()
+{
+	if (wxGetKeyState(WXK_SHIFT) && wxGetKeyState(WXK_ALT) && wxGetKeyState(WXK_CONTROL))
+		return;
+
+#if wxUSE_DISPLAY
+	int min_x = 1000000000;
+	int min_y = 1000000000;
+	int max_x = 0;
+	int max_y = 0;
+
+	for (unsigned int i = 0; i < wxDisplay::GetCount(); i++)
+	{
+		wxDisplay display(i);
+		wxRect rect = display.GetGeometry();
+		min_x = wxMin(min_x, rect.GetLeft());
+		min_y = wxMin(min_y, rect.GetTop());
+		max_x = wxMax(max_x, rect.GetRight());
+		max_y = wxMax(max_y, rect.GetBottom());
+	}
+#else
+	int min_x = 0;
+	int min_y = 0;
+	int max_x = 1000000000;
+	int max_y = 1000000000;
+#endif
+
+	// is_maximized win_x win_y win_width win_height top_pos bottom_height view_pos view_height_width local_pos remote_pos
+	wxString posString = COptions::Get()->GetOption(OPTION_WINDOW_POSITION);
+	wxStringTokenizer tokens(posString, _T(" "));
+	int count = tokens.CountTokens();
+	if (count == 11)
+	{
+		long * aPosValues = new long[count];
+		for (int i = 0; i < count; i++)
+		{
+			wxString token = tokens.GetNextToken();
+			if (!token.ToLong(aPosValues + i))
+			{
+				delete [] aPosValues;
+				return;
+			}
+		}
+
+		// Make sure position is (somewhat) sane
+		int pos_x = wxMin(max_x - 30, aPosValues[1]);
+		int pos_y = wxMin(max_y - 30, aPosValues[2]);
+		int client_width = aPosValues[3];
+		int client_height = aPosValues[4];
+
+		if (pos_x + client_width - 30 < min_x)
+			pos_x = min_x;
+		if (pos_y + client_height - 30 < min_y)
+			pos_y = min_y;
+
+		if (aPosValues[0])
+		{
+			// We need to move so it appears on the proper display on multi-monitor systems
+			Move(pos_x, pos_y);
+
+			// We need to call SetClientSize here too. Since window isn't yet shown here, Maximize
+			// doesn't actually resize the window till it is shown
+			SetClientSize(client_width, client_height);
+
+			// A 2nd call is neccessary, for some reason the first call
+			// doesn't fully set the height properly at least under wxMSW
+			SetClientSize(client_width, client_height);
+
+			Maximize();
+		}
+		else 
+		{
+			Move(pos_x, pos_y);
+			SetClientSize(client_width, client_height);
+
+			// A 2nd call is neccessary, for some reason the first call
+			// doesn't fully set the height properly at least under wxMSW
+			SetClientSize(client_width, client_height);
+		}
+
+		m_lastLogViewSplitterPos = aPosValues[5];
+		m_pTopSplitter->SetSashPosition(m_lastLogViewSplitterPos);
+
+		int x, y;
+		m_pBottomSplitter->GetClientSize(&x, &y);
+		y -= aPosValues[6];
+		if (y < 100)
+			y = 100;
+		m_lastQueueSplitterPos = y;
+
+		m_pBottomSplitter->SetSashPosition(m_lastQueueSplitterPos);
+
+		m_ViewSplitterSashPos = (float)aPosValues[7] / aPosValues[8];
+		m_pViewSplitter->SetSashPosition(aPosValues[7]);
+
+		m_lastLocalTreeSplitterPos = aPosValues[9];
+		m_lastRemoteTreeSplitterPos = aPosValues[10];
+		m_pLocalSplitter->SetSashPosition(m_lastLocalTreeSplitterPos);
+		m_pRemoteSplitter->SetSashPosition(m_lastRemoteTreeSplitterPos);
+		delete [] aPosValues;
+	}
 }
