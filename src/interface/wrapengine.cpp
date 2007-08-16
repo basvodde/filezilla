@@ -183,7 +183,7 @@ bool CWrapEngine::WrapText(wxWindow* parent, wxString& text, unsigned long maxLe
 	too long.
 	It has to be done wordwise, as with some languages/fonts, the width in
 	pixels of a line is smaller than the sum of the widths of every character.
-	
+
 	A special case are some languages, e.g. Chinese, which don't separate words
 	with spaces. In such languages it is allowed to break lines after any
 	character.
@@ -291,7 +291,7 @@ bool CWrapEngine::WrapText(wxWindow* parent, wxString& text, unsigned long maxLe
 				else
 					wrappedText += _T(" ");
 				lineLength = 0;
-				
+
 				wrappedText += segment.Left(best + 1);
 				segment = segment.Mid(best + 1);
 
@@ -307,7 +307,7 @@ bool CWrapEngine::WrapText(wxWindow* parent, wxString& text, unsigned long maxLe
 			wrapAfter = i;
 			lineLength = 0;
 		}
-		
+
 		if (lineLength + spaceWidth + width > maxLength)
 		{
 			if (wrappedText != _T(""))
@@ -318,7 +318,7 @@ bool CWrapEngine::WrapText(wxWindow* parent, wxString& text, unsigned long maxLe
 				if (wrappedText != _T(""))
 					wrappedText += _T("\n");
 				wrappedText += text.Mid(wrapAfter + 1, i - wrapAfter - 1);
-			
+
 				start = i + 1;
 				wrapAfter = -1;
 				lineLength = 0;
@@ -486,7 +486,7 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 
 			pSizer->Layout();
 #ifdef __WXDEBUG__
-			bool res = 
+			bool res =
 #endif
 			WrapRecursive(*iter, pSizer, maxWidth);
 			wxASSERT(res);
@@ -944,7 +944,7 @@ bool CWrapEngine::LoadCache()
 
 
 	wxString localesDir = wxGetApp().GetLocalesDir();
-	if (dir.Open(localesDir))
+	if (localesDir != _T("") && dir.Open(localesDir))
 	{
 		wxString locale;
 		for (bool found = dir.GetFirst(&locale); found; found = dir.GetNext(&locale))

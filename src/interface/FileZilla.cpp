@@ -432,7 +432,7 @@ wxString CFileZillaApp::GetSettingsDirFromDefaults()
 	TiXmlElement* element = file.Load();
 	if (!element)
 		return _T("");
-	
+
 	TiXmlElement* settings = element->FirstChildElement("Settings");
 	if (!settings)
 		return _T("");
@@ -470,7 +470,7 @@ wxString CFileZillaApp::GetSettingsDirFromDefaults()
 
 	wxFileName norm(location, _T(""));
 	norm.Normalize(wxPATH_NORM_ALL, fn.GetPath());
-	
+
 	location = norm.GetFullPath();
 	return location;
 }
@@ -513,14 +513,34 @@ bool CFileZillaApp::InitSettingsDir()
 
 bool CFileZillaApp::LoadLocales()
 {
-	m_localesDir = GetDataDir(_T("/locales/*/filezilla.mo"));
+	m_localesDir = GetDataDir(_T("/../locale/*/filezilla.mo"));
+	if (m_localesDir != _T(""))
+	{
+		if (m_localesDir[m_localesDir.Length() - 1] != wxFileName::GetPathSeparator())
+			m_localesDir += wxFileName::GetPathSeparator();
 
-	if (!m_localesDir.Length() || m_localesDir[m_localesDir.Length() - 1] != wxFileName::GetPathSeparator())
-		m_localesDir += wxFileName::GetPathSeparator();
+		m_localesDir += _T("../locale");
+	}
+	else
+	{
+		m_localesDir = GetDataDir(_T("/locales/*/filezilla.mo"));
+		if (m_localesDir != _T(""))
+		{
+			if (m_localesDir[m_localesDir.Length() - 1] != wxFileName::GetPathSeparator())
+				m_localesDir += wxFileName::GetPathSeparator();
 
-	m_localesDir += _T("locales/");
+			m_localesDir += _T("locale");
+		}
+	}
 
-	wxLocale::AddCatalogLookupPathPrefix(m_localesDir);
+	if (m_localesDir != _T(""))
+	{
+		wxFileName fn(m_localesDir, _T(""));
+		fn.Normalize();
+		m_localesDir = fn.GetFullPath();
+
+		wxLocale::AddCatalogLookupPathPrefix(m_localesDir);
+	}
 
 	SetLocale(wxLANGUAGE_DEFAULT);
 

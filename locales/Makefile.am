@@ -1,5 +1,3 @@
-localesdir = $(pkgdatadir)/locales
-
 CLEANFILES = *.po.new *.mo resources.h filezilla.pot filezilla.pot.new filezilla.pot~
 
 dist_noinst_DATA = filezilla.pot @FILEZILLA_LINGUAS_PO@ 
@@ -9,13 +7,13 @@ install-data-local: install-filezilla-catalogs
 
 install-filezilla-catalogs: allmo
 	for i in @FILEZILLA_LINGUAS@ ; do \
-	  $(mkinstalldirs) $(DESTDIR)$(localesdir)/$$i ; \
-	  $(INSTALL_DATA) $$i.mo $(DESTDIR)$(localesdir)/$$i/filezilla.mo ; \
+	  $(mkinstalldirs) $(DESTDIR)$(localedir)/$$i ; \
+	  $(INSTALL_DATA) $$i.mo $(DESTDIR)$(localedir)/$$i/filezilla.mo ; \
 	done
 
 uninstall-local:
 	for i in @FILEZILLA_LINGUAS@ ; do \
-	  rm $(DESTDIR)$(localesdir)/$$i/filezilla.mo ; \
+	  rm $(DESTDIR)$(localedir)/$$i/filezilla.mo ; \
 	done
 
 
@@ -24,8 +22,8 @@ uninstall-local:
 
 #install-wxstd-catalogs:
 #	for i in $(WXWIN_LINGUAS) ; do \
-#	  $(mkinstalldirs) $(DESTDIR)$(localesdir)/$$i ; \
-#	  $(INSTALL_DATA) wxwin/$$i.mo $(DESTDIR)$(localesdir)/$$i/filezilla-wxstd.mo ; \
+#	  $(mkinstalldirs) $(DESTDIR)$(localedir)/$$i ; \
+#	  $(INSTALL_DATA) wxwin/$$i.mo $(DESTDIR)$(localedir)/$$i/filezilla-wxstd.mo ; \
 #	done
 
 

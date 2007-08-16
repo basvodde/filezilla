@@ -25,7 +25,7 @@ bool COptionsPageLanguage::LoadPage()
 		pListBox->SetSelection(n);
 
 	wxString localesDir = wxGetApp().GetLocalesDir();
-	if (!wxDir::Exists(localesDir))
+	if (localesDir == _T("") || !wxDir::Exists(localesDir))
 		return true;
 
 	wxDir dir(localesDir);
@@ -35,7 +35,7 @@ bool COptionsPageLanguage::LoadPage()
 	{
 		if (!wxFileName::FileExists(localesDir + locale + _T("/filezilla.mo")))
 			continue;
-		
+
 		wxString name;
 		const wxLanguageInfo* pInfo = wxLocale::FindLanguageInfo(locale);
 		if (!pInfo)
@@ -49,7 +49,7 @@ bool COptionsPageLanguage::LoadPage()
 		if (pInfo->Language == language)
 			pListBox->SetSelection(n);
 	}
-	
+
 	return true;
 }
 
@@ -70,6 +70,6 @@ bool COptionsPageLanguage::SavePage()
 
 bool COptionsPageLanguage::Validate()
 {
-	
+
 	return true;
 }
