@@ -34,3 +34,8 @@ mac-copy-resources: $(dist_resources_DATA)
 	$(MAKE) -C 32x32 mac-copy-resources
 	$(MAKE) -C cyril mac-copy-resources
 endif
+
+pixmapsdir = $(datadir)/pixmaps
+
+pixmaps_DATA = filezilla.png
+

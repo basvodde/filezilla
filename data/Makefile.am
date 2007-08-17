@@ -19,3 +19,7 @@ uninstalllangfiles.nsh: Makefile
 CLEANFILES = installlangfiles.nsh uninstalllangfiles.nsh
 
 endif
+
+desktopentrydir = $(datadir)/applications
+dist_desktopentry_DATA = filezilla.desktop
+
