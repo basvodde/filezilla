@@ -105,6 +105,7 @@ void CSocketBackend::Peek(void *buffer, unsigned int len)
 void CSocketBackend::OnRateAvailable(enum CRateLimiter::rate_direction direction)
 {
 	wxSocketEvent evt;
+	evt.SetId(GetId());
 	if (direction == CRateLimiter::outbound)
 		evt.m_event = wxSOCKET_OUTPUT;
 	else
