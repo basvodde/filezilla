@@ -194,16 +194,14 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 
 	m_pLocalSplitter = new wxSplitterWindow(m_pViewSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
 	m_pLocalSplitter->SetMinimumPaneSize(20);
-	m_pLocalSplitter->SetSashGravity(0.7);
 
 	m_pRemoteSplitter = new wxSplitterWindow(m_pViewSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
 	m_pRemoteSplitter->SetMinimumPaneSize(20);
-	m_pRemoteSplitter->SetSashGravity(0.7);
 
 	m_pStatusView = new CStatusView(m_pTopSplitter, -1);
 	m_pQueuePane = new CQueue(m_pBottomSplitter, this, m_pAsyncRequestQueue);
 	m_pQueueView = m_pQueuePane->GetQueueView();
-	
+
 	m_pLocalTreeViewPanel = new CView(m_pLocalSplitter);
 	m_pLocalListViewPanel = new CView(m_pLocalSplitter);
 	m_pLocalTreeView = new CLocalTreeView(m_pLocalTreeViewPanel, -1, m_pState, m_pQueueView);
@@ -256,7 +254,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 		m_pLocalListViewPanel->SetHeader(m_pLocalViewHeader);
 		m_pLocalSplitter->Initialize(m_pLocalListViewPanel);
 	}
-	
+
 	m_pRemoteViewHeader = new CRemoteViewHeader(m_pRemoteSplitter, m_pState);
 	if (COptions::Get()->GetOptionVal(OPTION_SHOW_TREE_REMOTE))
 	{
@@ -334,6 +332,17 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 	float ViewSplitterSashPos = m_ViewSplitterSashPos;
 
 	wxFrame::OnSize(event);
+
+	static bool shown = false;
+	if (!shown)
+	{
+		if (IsShown())
+		{
+			shown = true;
+			m_pLocalSplitter->SetSashGravity(0.5);
+			m_pRemoteSplitter->SetSashGravity(0.5);
+		}
+	}
 
 	wxSize clientSize = GetClientSize();
 	if (m_pQuickconnectBar)
@@ -764,7 +773,7 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 	}
 
 	Show(false);
-	
+
 	delete m_pSendLed;
 	delete m_pRecvLed;
 	m_pSendLed = 0;
@@ -1540,22 +1549,22 @@ void CMainFrame::FocusNextEnabled(std::list<wxWindow*>& windowOrder, std::list<w
 void CMainFrame::RememberSizes()
 {
 	wxString posString;
-	
+
 	// is_maximized
 	posString += wxString::Format(_T("%d "), IsMaximized() ? 1 : 0);
 	int x, y;
-	
+
 	// pos_x pos_y
 	GetPosition(&x, &y);
 	posString += wxString::Format(_T("%d %d "), x, y);
-	
+
 	// pos_width pos_height
 	GetClientSize(&x, &y);
 	posString += wxString::Format(_T("%d %d "), x, y);
-	
+
 	// top_pos
 	posString += wxString::Format(_T("%d "), m_pTopSplitter->IsSplit() ? m_pTopSplitter->GetSashPosition() : m_lastLogViewSplitterPos);
-	
+
 	// bottom_height
 	m_pBottomSplitter->GetClientSize(&x, &y);
 	if (m_pBottomSplitter->IsSplit())
@@ -1563,20 +1572,20 @@ void CMainFrame::RememberSizes()
 	else
 		y -= m_lastQueueSplitterPos;
 	posString += wxString::Format(_T("%d "), y);
-	
+
 	// view_pos
 	posString += wxString::Format(_T("%d "), m_pViewSplitter->GetSashPosition());
-	
+
 	// view_height_width
 	m_pViewSplitter->GetClientSize(&x, &y);
 	if (COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT) != 1)
 		posString += wxString::Format(_T("%d "), x);
 	else
 		posString += wxString::Format(_T("%d "), y);
-	
+
 	// local_pos
 	posString += wxString::Format(_T("%d "), m_pLocalSplitter->IsSplit() ? m_pLocalSplitter->GetSashPosition() : m_lastLocalTreeSplitterPos);
-	
+
 	// remote_pos
 	posString += wxString::Format(_T("%d"), m_pRemoteSplitter->IsSplit() ? m_pRemoteSplitter->GetSashPosition() : m_lastRemoteTreeSplitterPos);
 
@@ -1656,7 +1665,7 @@ void CMainFrame::RestoreSizes()
 
 			Maximize();
 		}
-		else 
+		else
 		{
 			Move(pos_x, pos_y);
 
