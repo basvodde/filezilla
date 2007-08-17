@@ -97,6 +97,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_NAVIGATION_KEY(CMainFrame::OnNavigationKeyEvent)
 	EVT_SET_FOCUS(CMainFrame::OnGetFocus)
 	EVT_CHAR_HOOK(CMainFrame::OnChar)
+	EVT_MENU(XRCID("ID_MENU_EDIT_FILTERS"), CMainFrame::OnFilter)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
