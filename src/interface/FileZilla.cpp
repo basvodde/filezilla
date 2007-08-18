@@ -125,7 +125,7 @@ bool CheckForWin2003FirewallBug()
 		return false;
 
 	long value;
-	if (!key.QueryValue(_T("EnableFirewall"), &value))
+	if (!key.HasValue(_T("EnableFirewall")) || !key.QueryValue(_T("EnableFirewall"), &value))
 		return false;
 
 	if (!value)
