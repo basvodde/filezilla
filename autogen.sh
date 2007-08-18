@@ -71,6 +71,21 @@ findsuffix()
   return 1
 }
 
+printerror_notfound()
+{
+  if [ -z "$WRONGVERSION" ]; then
+    printf '\033[1;31mnot found\033[0m\n\n'
+    printf "\033[1m$PACKAGENAME\033[0m could not be found. On some systems \033[1m$PACKAGENAME\033[0m might be installed but\n"
+    printf "has a suffix with the version number, for example \033[1m$PACKAGEMA;E-$VERSION\033[0m.\n"
+    printf "If that is the case, create a symlink to \033[1m$PACKAGENAME\033[0m.\n"
+  else
+    printf "\033[1;31mfound $WRONGVERSION, not ok !\033[0m\n"
+    echo "You must have $PACKAGENAME $VERSION or greater to generate the configure script."
+    printf "If \033[1m$PACKAGENAME\033[0m is a symlink, make sure it points to the correct version.\n"
+    printf "Please update your installation or get a recent source tarball from \033[1mhttp://filezilla-project.org/nightly.php\033[0m\n"
+  fi
+}
+
 version_check()
 {
   local USESUFFIX=""
@@ -85,6 +100,7 @@ version_check()
   MINOR=$3
   MICRO=$4
   SILENT=$5
+  WRONGVERSION=$6
 
   VERSION=$MAJOR
 
@@ -109,19 +125,13 @@ version_check()
         version_check usesuffix $PACKAGE $MAJOR $MINOR $MICRO 2
         return
       fi
-      printf '\033[1;31mnot found\033[0m\n\n'
-      printf "\033[1m$PACKAGENAME\033[0m could not be found. On some systems \033[1m$PACKAGENAME\033[0m might be installed but\n"
-      printf "has a suffix with the version number, for example \033[1m$PACKAGEMA;E-$VERSION\033[0m.\n"
-      printf "If that is the case, create a symlink to \033[1m$PACKAGENAME\033[0m.\n"
+      printerror_notfound
       exit 1
     }
   else
     findsuffix ||
     {
-      printf "\033[1;31mnot found\033[0m\n\n"
-      printf "\033[1m$PACKAGENAME\033[0m could not be found. On some systems \033[1m$PACKAGENAME\033[0m might be installed but\n"
-      printf "has a suffix with the version number, for example \033[1m$PACKAGENAME-$VERSION\033[0m.\n"
-      printf "If that is the case, create a symlink to \033[1m$PACKAGE\033[0m.\n"
+      printerror_notfound
       exit 1
     }
   fi
@@ -152,18 +162,16 @@ version_check()
   fi
 
   if [ ! -z "$WRONG" ]; then
+    WRONGVERSION=$pkg_version
     # Retry again, append a suffix if needed
     if [ -z "$USESUFFIX" ]; then
-      version_check usesuffix $PACKAGE $MAJOR $MINOR $MICRO 2
+      version_check usesuffix $PACKAGE $MAJOR $MINOR $MICRO 2 "$pkg_version"
       return
     fi
     if [ x$SILENT = x1 ]; then
       return 2;
     fi
-    printf "\033[1mfound $pkg_version, not ok !\033[0m\n"
-    echo "You must have $PACKAGENAME $VERSION or greater to generate the configure script."
-    printf "If \033[1m$PACKAGENAME\033[0m is a symlink, make sure it points to the correct version.\n"
-    printf "Please update your installation or get a recent source tarball from \033[1mhttp://filezilla-project.org/nightly.php\033[0m\n"
+    printerror_notfound
     exit 2
   else
     echo "found $pkg_version, ok."
@@ -197,7 +205,7 @@ checkTools()
 
   printf "$N.2 "; version_check aclocal; aclocal=$PACKAGE
   printf "$N.3 "; version_check autoheader; autoheader=$PACKAGE
-  printf "$N.4 "; version_check autoconf 2 5; autoconf=$PACKAGE
+  printf "$N.4 "; version_check autoconf 2 60; autoconf=$PACKAGE
   printf "$N.5 "; version_check libtoolize 1 4; libtoolize=$PACKAGE
 }
 
