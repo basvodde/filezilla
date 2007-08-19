@@ -1,4 +1,4 @@
-SUBDIRS = 16x16 32x32 cyril
+SUBDIRS = 16x16 32x32 cyril blukis
 
 CLEANFILES = filezilla.o
 
@@ -33,6 +33,7 @@ mac-copy-resources: $(dist_resources_DATA)
 	$(MAKE) -C 16x16 mac-copy-resources
 	$(MAKE) -C 32x32 mac-copy-resources
 	$(MAKE) -C cyril mac-copy-resources
+	$(MAKE) -C blukis mac-copy-resources
 endif
 
 pixmapsdir = $(datadir)/pixmaps

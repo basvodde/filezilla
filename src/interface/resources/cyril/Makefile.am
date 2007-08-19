@@ -1,7 +1,5 @@
 SUBDIRS = 16x16
 
-CLEANFILES = filezilla.o
-
 resourcesdir = $(pkgdatadir)/resources/cyril
 
 dist_resources_DATA = 

@@ -89,7 +89,7 @@ std::list<wxBitmap*> CThemeProvider::GetAllImages(const wxString& theme, wxSize&
 	wxString strSize;
 	if (size.GetWidth() >= 40)
 		path += _T("48x48/");
-	if (size.GetWidth() >= 24)
+	else if (size.GetWidth() >= 24)
 		path += _T("32x32/");
 	else
 		path += _T("16x16/");
