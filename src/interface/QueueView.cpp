@@ -486,6 +486,8 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 	m_waitStatusLineUpdate = false;
 	UpdateStatusLinePositions();
 
+	CheckQueueState();
+
 	Refresh(false);
 
 	return true;
@@ -518,6 +520,8 @@ bool CQueueView::QueueFiles(const bool queueOnly, const wxString& localPath, con
 	AdvanceQueue();
 	m_waitStatusLineUpdate = false;
 	UpdateStatusLinePositions();
+
+	CheckQueueState();
 
 	Refresh(false);
 
@@ -629,12 +633,18 @@ bool CQueueView::TryStartNextTransfer()
 	else
 		wantedDirection = both;
 
+	struct t_bestMatch
+	{
+		CFileItem* fileItem;
+		CServerItem* serverItem;
+		t_EngineData* pEngineData;		
+	} bestMatch = {0};
+
 	// Find inactive file. Check all servers for
 	// the file with the highest priority
-	CFileItem* fileItem = 0;
-	CServerItem* serverItem = 0;
 	for (std::vector<CServerItem*>::iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
 	{
+		t_EngineData* pEngineData = 0;
 		CServerItem* currentServerItem = *iter;
 		int maxCount = currentServerItem->GetServer().MaximumMultipleConnections();
 		int activeCount = currentServerItem->m_activeCount;
@@ -642,7 +652,18 @@ bool CQueueView::TryStartNextTransfer()
 		if (pPrimaryServer && currentServerItem->GetServer() == *pPrimaryServer)
 			activeCount++;
 		if (maxCount && activeCount >= maxCount)
-			continue;
+		{
+			// If we got an idle engine connected to this very server, start the 
+			// transfer anyhow. Let's not get this connection go to waste.
+			pEngineData = GetIdleEngine(&(*iter)->GetServer());
+			if (!pEngineData)
+			{
+				// We can stop right here
+				return false;
+			}
+			if (!pEngineData->pEngine->IsConnected() || pEngineData->lastServer != (*iter)->GetServer())			
+				continue;
+		}
 
 		CFileItem* newFileItem = currentServerItem->GetIdleChild(m_activeMode == 1, wantedDirection);
 
@@ -664,41 +685,48 @@ bool CQueueView::TryStartNextTransfer()
 		if (!newFileItem)
 			continue;
 
-		if (!fileItem || newFileItem->GetPriority() > fileItem->GetPriority())
+		if (!bestMatch.fileItem || newFileItem->GetPriority() > bestMatch.fileItem->GetPriority())
 		{
-			serverItem = currentServerItem;
-			fileItem = newFileItem;
-			if (fileItem->GetPriority() == priority_highest)
+			bestMatch.serverItem = currentServerItem;
+			bestMatch.fileItem = newFileItem;
+			bestMatch.pEngineData = pEngineData;
+			if (newFileItem->GetPriority() == priority_highest)
 				break;
 		}
 	}
-	if (!fileItem)
+	if (!bestMatch.fileItem)
 		return false;
 
 	// Find idle engine
-	t_EngineData* pEngineData = GetIdleEngine(&serverItem->GetServer());
-	if (!pEngineData)
-		return false;
+	t_EngineData* pEngineData;
+	if (bestMatch.pEngineData)
+		pEngineData = bestMatch.pEngineData;
+	else
+	{
+		pEngineData = GetIdleEngine(&bestMatch.serverItem->GetServer());
+		if (!pEngineData)
+			return false;
+	}
 
 	// Now we have both inactive engine and file.
 	// Assign the file to the engine.
 
-	fileItem->SetActive(true);
+	bestMatch.fileItem->SetActive(true);
 
-	pEngineData->pItem = fileItem;
-	fileItem->m_pEngineData = pEngineData;
+	pEngineData->pItem = bestMatch.fileItem;
+	bestMatch.fileItem->m_pEngineData = pEngineData;
 	pEngineData->active = true;
 	delete pEngineData->m_idleDisconnectTimer;
 	pEngineData->m_idleDisconnectTimer = 0;
-	serverItem->m_activeCount++;
+	bestMatch.serverItem->m_activeCount++;
 	m_activeCount++;
-	if (fileItem->Download())
+	if (bestMatch.fileItem->Download())
 		m_activeCountDown++;
 	else
 		m_activeCountUp++;
 
 	const CServer oldServer = pEngineData->lastServer;
-	pEngineData->lastServer = serverItem->GetServer();
+	pEngineData->lastServer = bestMatch.serverItem->GetServer();
 
 	if (!pEngineData->pEngine->IsConnected())
 	{
@@ -712,20 +740,20 @@ bool CQueueView::TryStartNextTransfer()
 		else
 			pEngineData->state = t_EngineData::connect;
 	}
-	else if (oldServer != serverItem->GetServer())
+	else if (oldServer != bestMatch.serverItem->GetServer())
 		pEngineData->state = t_EngineData::disconnect;
 	else if (pEngineData->pItem->GetType() == QueueItemType_File)
 		pEngineData->state = t_EngineData::transfer;
 	else
 		pEngineData->state = t_EngineData::mkdir;
 
-	if (fileItem->GetType() == QueueItemType_File)
+	if (bestMatch.fileItem->GetType() == QueueItemType_File)
 	{
 		// Create status line
 
 		m_itemCount++;
 		SetItemCount(m_itemCount);
-		int lineIndex = GetItemIndex(fileItem);
+		int lineIndex = GetItemIndex(bestMatch.fileItem);
 		UpdateSelections_ItemAdded(lineIndex + 1);
 
 		wxRect rect;
@@ -1455,6 +1483,8 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOn
 	AdvanceQueue();
 	m_waitStatusLineUpdate = false;
 	UpdateStatusLinePositions();
+
+	CheckQueueState();
 
 	Refresh(false);
 
