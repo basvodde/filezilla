@@ -100,7 +100,7 @@
 				AdditionalIncludeDirectories="../include/"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;__WXDEBUG__;__WXMSW__"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
+				RuntimeLibrary="3"
 				BufferSecurityCheck="TRUE"
 				EnableFunctionLevelLinking="TRUE"
 				UsePrecompiledHeader="2"
@@ -116,7 +116,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libidn.a odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib ..\lib\engine_debug.lib"
+				AdditionalDependencies="libgnutls-13.lib libidn.a odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib ..\lib\engine_debug.lib Netapi32.lib"
 				OutputFile="../bin/FileZilla_dbg.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"

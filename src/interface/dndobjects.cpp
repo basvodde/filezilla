@@ -74,7 +74,7 @@ wxString CShellExtensionInterface::InitDrag()
 
 	*data = DRAG_EXT_VERSION;
 	data[1] = 1;
-	wcscpy((wchar_t*)(data + 2), m_dragDirectory.wc_str());
+	wcscpy((wchar_t*)(data + 2), m_dragDirectory.wc_str(wxConvLocal));
 
 	ReleaseMutex(m_hMutex);
 
