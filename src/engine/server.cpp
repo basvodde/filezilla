@@ -83,6 +83,10 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 			user = user.Left(pos);
 		}
 
+		// Remove leading and trailing whitespace
+		user.Trim(true);
+		user.Trim(false);
+
 		if (user == _T(""))
 		{
 			error = _("Invalid username given.");
@@ -91,6 +95,10 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 	}
 	else
 	{
+		// Remove leading and trailing whitespace
+		user.Trim(true);
+		user.Trim(false);
+
 		if (user == _T(""))
 		{
 			user = _T("anonymous");

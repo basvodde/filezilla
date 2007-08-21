@@ -395,7 +395,7 @@ int CSftpControlSocket::ConnectParseResponse(bool successful, const wxString& re
 
 	pData->gotInitialReply = true;
 	
-	bool res = Send(wxString::Format(_T("open %s@%s %d"), m_pCurrentServer->GetUser().c_str(), m_pCurrentServer->GetHost().c_str(), m_pCurrentServer->GetPort()));
+	bool res = Send(wxString::Format(_T("open \"%s@%s\" %d"), m_pCurrentServer->GetUser().c_str(), m_pCurrentServer->GetHost().c_str(), m_pCurrentServer->GetPort()));
 
 	if (res)
 		return FZ_REPLY_WOULDBLOCK;
