@@ -640,7 +640,7 @@ void CLocalListView::DisplayShares(wxString computer)
 	int res = 0;
 	do
 	{
-		wxWX2WCbuf buf = computer.wc_str(wxConvLocal);
+		const wxWX2WCbuf buf = computer.wc_str(wxConvLocal);
 		res = NetShareEnum((wchar_t*)(const wchar_t*)buf, 1, (LPBYTE*)&pShareInfo, MAX_PREFERRED_LENGTH, &read, &total, &resume_handle);
 
 		if (res != ERROR_SUCCESS && res != ERROR_MORE_DATA)
