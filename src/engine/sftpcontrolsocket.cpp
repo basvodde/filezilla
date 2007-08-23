@@ -946,12 +946,15 @@ int CSftpControlSocket::ListParseEntry(const wxString& entry)
 	{
 		LogMessageRaw(RawList, entry);
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("pData->pParser is 0"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
 		return FZ_REPLY_INTERNALERROR;
 	}
 
 	if (entry.Find('\r') != -1 || entry.Find('\n') != -1)
 	{
+		LogMessageRaw(RawList, entry);
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Listing entry contains \\r at pos %d and \\n at pos %d. Please contect FileZilla team."), entry.Find('\r'), entry.Find('\n'));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
 		return FZ_REPLY_INTERNALERROR;
 	}
 
