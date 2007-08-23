@@ -949,6 +949,12 @@ int CSftpControlSocket::ListParseEntry(const wxString& entry)
 		return FZ_REPLY_INTERNALERROR;
 	}
 
+	if (entry.Find('\r') != -1 || entry.Find('\n') != -1)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Listing entry contains \\r at pos %d and \\n at pos %d. Please contect FileZilla team."), entry.Find('\r'), entry.Find('\n'));
+		return FZ_REPLY_INTERNALERROR;
+	}
+
 	pData->pParser->AddLine(entry);
 
 	return FZ_REPLY_WOULDBLOCK;
