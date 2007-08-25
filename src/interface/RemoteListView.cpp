@@ -309,8 +309,19 @@ CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState
 	InsertColumn(4, _("Permissions"), wxLIST_FORMAT_LEFT, widths[4]);
 	InsertColumn(5, _("Owner / Group"), wxLIST_FORMAT_LEFT, widths[5]);
 
-	m_sortColumn = 0;
-	m_sortDirection = 0;
+	wxString sortInfo = COptions::Get()->GetOption(OPTION_REMOTEFILELIST_SORTORDER);
+	m_sortDirection = sortInfo[0] - '0';
+	if (m_sortDirection < 0 || m_sortDirection > 1)
+		m_sortDirection = 0;
+
+	if (sortInfo.Len() == 3)
+	{
+		m_sortColumn = sortInfo[2] - '0';
+		if (m_sortColumn < 0 || m_sortColumn > 5)
+			m_sortColumn = 0;		
+	}
+	else
+		m_sortColumn = 0;
 
 	m_dirIcon = GetIconIndex(dir);
 	SetImageList(GetSystemImageList(), wxIMAGE_LIST_SMALL);
@@ -361,6 +372,8 @@ CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState
 
 CRemoteListView::~CRemoteListView()
 {
+	wxString str = wxString::Format(_T("%d %d"), m_sortDirection, m_sortColumn);
+	COptions::Get()->SetOption(OPTION_REMOTEFILELIST_SORTORDER, str);
 #ifdef __WXMSW__
 	delete m_pHeaderImageList;
 #endif

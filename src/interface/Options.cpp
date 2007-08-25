@@ -82,7 +82,9 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Queue column widths", string, _T("") },
 	{ "Local filelist colwidths", string, _T("") },
 	{ "Remote filelist colwidths", string, _T("") },
-	{ "Window position and size", string, _T("") }
+	{ "Window position and size", string, _T("") },
+	{ "Local filelist sortorder", string, _T("") },
+	{ "Remote filelist sortorder", string, _T("") }
 };
 
 COptions::COptions()

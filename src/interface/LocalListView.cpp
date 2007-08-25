@@ -231,8 +231,19 @@ CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, 
 	InsertColumn(2, _("Filetype"), wxLIST_FORMAT_LEFT, widths[2]);
 	InsertColumn(3, _("Last modified"), wxLIST_FORMAT_LEFT, widths[3]);
 
-	m_sortColumn = 0;
-	m_sortDirection = 0;
+	wxString sortInfo = COptions::Get()->GetOption(OPTION_LOCALFILELIST_SORTORDER);
+	m_sortDirection = sortInfo[0] - '0';
+	if (m_sortDirection < 0 || m_sortDirection > 1)
+		m_sortDirection = 0;
+
+	if (sortInfo.Len() == 3)
+	{
+		m_sortColumn = sortInfo[2] - '0';
+		if (m_sortColumn < 0 || m_sortColumn > 3)
+			m_sortColumn = 0;		
+	}
+	else
+		m_sortColumn = 0;
 
 	SetImageList(GetSystemImageList(), wxIMAGE_LIST_SMALL);
 
@@ -280,6 +291,8 @@ CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, 
 
 CLocalListView::~CLocalListView()
 {
+	wxString str = wxString::Format(_T("%d %d"), m_sortDirection, m_sortColumn);
+	COptions::Get()->SetOption(OPTION_LOCALFILELIST_SORTORDER, str);
 #ifdef __WXMSW__
 	delete m_pHeaderImageList;
 #endif
