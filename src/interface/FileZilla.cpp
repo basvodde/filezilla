@@ -529,7 +529,7 @@ bool CFileZillaApp::LoadLocales()
 			if (m_localesDir[m_localesDir.Length() - 1] != wxFileName::GetPathSeparator())
 				m_localesDir += wxFileName::GetPathSeparator();
 
-			m_localesDir += _T("locale");
+			m_localesDir += _T("locales");
 		}
 	}
 
