@@ -591,7 +591,6 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 			break;
 		case nId_operation:
 			m_pState->m_pCommandQueue->Finish(reinterpret_cast<COperationNotification*>(pNotification));
-			delete pNotification;
 			if (m_bQuit)
 			{
 				Close();
@@ -620,7 +619,13 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 			delete pNotification;
 			break;
 		case nId_asyncrequest:
-			m_pAsyncRequestQueue->AddRequest(m_pState->m_pEngine, reinterpret_cast<CAsyncRequestNotification *>(pNotification));
+			{
+				CAsyncRequestNotification* pAsyncRequest = reinterpret_cast<CAsyncRequestNotification *>(pNotification);
+				if (pAsyncRequest->GetRequestID() == reqId_fileexists)
+					m_pQueueView->ProcessNotification(pNotification);
+				else
+					m_pAsyncRequestQueue->AddRequest(m_pState->m_pEngine, pAsyncRequest);
+			}
 			break;
 		case nId_active:
 			{
@@ -634,6 +639,8 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 			break;
 		case nId_transferstatus:
 			{
+				m_pQueueView->ProcessNotification(pNotification);
+				/*
 				CTransferStatusNotification *pTransferStatusNotification = reinterpret_cast<CTransferStatusNotification *>(pNotification);
 				const CTransferStatus *pStatus = pTransferStatusNotification ? pTransferStatusNotification->GetStatus() : 0;
 				if (pStatus && !m_transferStatusTimer.IsRunning())
@@ -642,7 +649,7 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 					m_transferStatusTimer.Stop();
 
 				SetProgress(pStatus);
-				delete pNotification;
+				delete pNotification;*/
 			}
 			break;
 		default:
@@ -781,6 +788,12 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 
 	m_transferStatusTimer.Stop();
 
+	if (!m_pQueueView->Quit())
+	{
+		event.Veto();
+		return;
+	}
+
 	bool res = true;
 	if (m_pState->m_pCommandQueue)
 		res = m_pState->m_pCommandQueue->Cancel();
@@ -790,13 +803,8 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 		event.Veto();
 		return;
 	}
-	m_pState->DestroyEngine();
 
-	if (!m_pQueueView->Quit())
-	{
-		event.Veto();
-		return;
-	}
+	m_pState->DestroyEngine();
 
 	CSiteManager::ClearIdMap();
 

@@ -27,7 +27,8 @@ struct t_EngineData
 		transfer,
 		list,
 		mkdir,
-		askpassword
+		askpassword,
+		waitprimary
 	} state;
 
 	CFileItem* pItem;
@@ -87,6 +88,8 @@ public:
 
 	void WriteToFile(TiXmlElement* pElement) const;
 
+	void ProcessNotification(CNotification* pNotification);
+
 protected:
 
 	void AdvanceQueue();
@@ -102,6 +105,7 @@ protected:
 		success,
 		failure,
 		reset,
+		retry,
 		remove
 	};
 
@@ -122,6 +126,8 @@ protected:
 	void DisplayQueueSize();
 	void SaveQueue();
 	bool ShouldUseBinaryMode(wxString filename);
+
+	void ProcessNotification(t_EngineData* pEngineData, CNotification* pNotification);
 
 	t_EngineData* GetIdleEngine(const CServer* pServer = 0);
 
@@ -184,6 +190,8 @@ protected:
 	void OnTimer(wxTimerEvent& evnet);
 
 	void OnSetPriority(wxCommandEvent& event);
+
+	void OnExclusiveEngineRequestGranted(wxCommandEvent& event);
 };
 
 #endif

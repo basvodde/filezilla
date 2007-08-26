@@ -4,11 +4,17 @@
 #include "state.h"
 #include "recursive_operation.h"
 #include "loginmanager.h"
+#include "queue.h"
+
+DEFINE_EVENT_TYPE(fzEVT_GRANTEXCLUSIVEENGINEACCESS)
 
 CCommandQueue::CCommandQueue(CFileZillaEngine *pEngine, CMainFrame* pMainFrame)
 {
 	m_pEngine = pEngine;
 	m_pMainFrame = pMainFrame;
+	m_exclusiveEngineRequest = false;
+	m_exclusiveEngineLock = false;
+	m_requestId = 0;
 }
 
 CCommandQueue::~CCommandQueue()
@@ -19,7 +25,7 @@ CCommandQueue::~CCommandQueue()
 
 bool CCommandQueue::Idle() const
 {
-	return m_CommandList.empty();
+	return m_CommandList.empty() && !m_exclusiveEngineLock;
 }
 
 void CCommandQueue::ProcessCommand(CCommand *pCommand)
@@ -31,6 +37,9 @@ void CCommandQueue::ProcessCommand(CCommand *pCommand)
 
 void CCommandQueue::ProcessNextCommand()
 {
+	if (m_exclusiveEngineLock)
+		return;
+
 	if (m_pEngine->IsBusy())
 		return;
 
@@ -95,10 +104,18 @@ void CCommandQueue::ProcessNextCommand()
 			delete pCommand;
 		}
 	}
+
+	if (m_CommandList.empty() && m_exclusiveEngineRequest)
+	{
+		GrantExclusiveEngineRequest();
+	}
 }
 
 bool CCommandQueue::Cancel()
 {
+	if (m_exclusiveEngineLock)
+		return false;
+
 	if (m_CommandList.empty())
 		return true;
 	
@@ -132,6 +149,7 @@ void CCommandQueue::Finish(COperationNotification *pNotification)
 		if (pNotification->commandId == cmd_none && !m_CommandList.empty())
 		{
 			// Pending event, has no relevance during command execution
+			delete pNotification;
 			return;
 		}
 		if (pNotification->nReplyCode & FZ_REPLY_PASSWORDFAILED)
@@ -139,8 +157,17 @@ void CCommandQueue::Finish(COperationNotification *pNotification)
 		m_pMainFrame->GetState()->SetServer(0);
 	}
 
-	if (m_CommandList.empty())
+	if (m_exclusiveEngineLock)
+	{
+		m_pMainFrame->GetQueue()->ProcessNotification(pNotification);
 		return;
+	}
+
+	if (m_CommandList.empty())
+	{
+		delete pNotification;
+		return;
+	}
 
 	CCommand* pCommand = m_CommandList.front();
 
@@ -152,5 +179,57 @@ void CCommandQueue::Finish(COperationNotification *pNotification)
 	delete m_CommandList.front();
 	m_CommandList.pop_front();
 	
+	delete pNotification;
+
+	ProcessNextCommand();
+}
+
+void CCommandQueue::RequestExclusiveEngine(bool requestExclusive)
+{
+	wxASSERT(!m_exclusiveEngineLock || !requestExclusive);
+
+	if (!m_exclusiveEngineRequest && requestExclusive)
+	{
+		m_requestId++;
+		if (m_requestId < 0)
+			m_requestId = 0;
+		if (m_CommandList.empty())
+		{
+			GrantExclusiveEngineRequest();
+			return;
+		}
+	}
+	if (!requestExclusive)
+		m_exclusiveEngineLock = false;
+	m_exclusiveEngineRequest = requestExclusive;
+}
+
+void CCommandQueue::GrantExclusiveEngineRequest()
+{
+	wxASSERT(!m_exclusiveEngineLock);
+	m_exclusiveEngineLock = true;
+	m_exclusiveEngineRequest = false;
+
+	wxCommandEvent evt(fzEVT_GRANTEXCLUSIVEENGINEACCESS);
+	evt.SetId(m_requestId);
+	m_pMainFrame->GetQueue()->AddPendingEvent(evt);
+}
+
+CFileZillaEngine* CCommandQueue::GetEngineExclusive(int requestId)
+{
+	if (!m_exclusiveEngineLock)
+		return 0;
+
+	if (requestId != m_requestId)
+		return 0;
+
+	return m_pEngine;
+}
+
+
+void CCommandQueue::ReleaseEngine()
+{
+	m_exclusiveEngineLock = false;
+
 	ProcessNextCommand();
 }

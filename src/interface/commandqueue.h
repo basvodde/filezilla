@@ -5,6 +5,8 @@ class CFileZillaEngine;
 class CNotification;
 class CMainFrame;
 
+DECLARE_EVENT_TYPE(fzEVT_GRANTEXCLUSIVEENGINEACCESS, -1)
+
 class CCommandQueue
 {
 public:
@@ -17,9 +19,20 @@ public:
 	bool Cancel();
 	void Finish(COperationNotification *pNotification);
 
+	void RequestExclusiveEngine(bool requestExclusive);
+
+	CFileZillaEngine* GetEngineExclusive(int requestId);
+	void ReleaseEngine();
+	bool EngineLocked() const { return m_exclusiveEngineLock; }
+
 protected:
+	void GrantExclusiveEngineRequest();
+
 	CFileZillaEngine *m_pEngine;
 	CMainFrame* m_pMainFrame;
+	bool m_exclusiveEngineRequest;
+	bool m_exclusiveEngineLock;
+	int m_requestId;
 
 	std::list<CCommand *> m_CommandList;
 };
