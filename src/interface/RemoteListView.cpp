@@ -1594,7 +1594,8 @@ void CRemoteListView::OnKeyDown(wxKeyEvent& event)
 		}
 	}
 	else
-		event.Skip();
+		OnChar(event);
+		//event.Skip();
 }
 
 int CRemoteListView::FindItemWithPrefix(const wxString& prefix, int start)
