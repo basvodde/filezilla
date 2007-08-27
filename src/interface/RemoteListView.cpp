@@ -1017,8 +1017,9 @@ void CRemoteListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 #endif
 
 	// Remember which files are selected
-	bool *selected = new bool[GetItemCount()];
-	memset(selected, 0, sizeof(bool) * GetItemCount());
+	int count = 1 + (m_pDirectoryListing ? m_pDirectoryListing->GetCount() : 0);
+	bool *selected = new bool[count];
+	memset(selected, 0, sizeof(bool) * count);
 
 	int item = -1;
 	while ((item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)

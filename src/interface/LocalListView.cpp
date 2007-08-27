@@ -1126,8 +1126,8 @@ void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 #endif
 
 	// Remember which files are selected
-	bool *selected = new bool[GetItemCount()];
-	memset(selected, 0, sizeof(bool) * GetItemCount());
+	bool *selected = new bool[m_fileData.size()];
+	memset(selected, 0, sizeof(bool) * m_fileData.size());
 
 	int item = -1;
 	while ((item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
