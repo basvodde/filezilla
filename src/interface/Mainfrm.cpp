@@ -693,6 +693,13 @@ bool CMainFrame::CreateToolBar()
 	}
 #endif
 
+#ifdef __WXMSW__
+	int majorVersion, minorVersion;
+	wxGetOsVersion(& majorVersion, & minorVersion);
+	if (majorVersion < 6)
+		m_pToolBar->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+#endif
+
 	CFilterDialog dlg;
 	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), dlg.HasActiveFilters());
 	SetToolBar(m_pToolBar);
