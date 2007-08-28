@@ -50,18 +50,18 @@ class CQueueView : public CQueueViewBase
 public:
 	CQueueView(CQueue* parent, int index, CMainFrame* pMainFrame, CAsyncRequestQueue* pAsyncRequestQueue);
 	virtual ~CQueueView();
-	
+
 	bool QueueFile(const bool queueOnly, const bool download, const wxString& localFile, const wxString& remoteFile,
 				const CServerPath& remotePath, const CServer& server, const wxLongLong size);
 	bool QueueFiles(const bool queueOnly, const wxString& localPath, const CRemoteDataObject& dataObject);
 	bool QueueFiles(const std::list<t_newEntry> &entryList, bool queueOnly, bool download, CServerItem* pServerItem, const int defaultFileExistsAction);
 	bool QueueFolder(bool queueOnly, bool download, const wxString& localPath, const CServerPath& remotePath, const CServer& server);
-	
+
 	bool IsEmpty() const;
 	int IsActive() const { return m_activeMode; }
 	bool SetActive(const bool active = true);
 	bool Quit();
-	
+
 	// If the settings are changed, this function will recalculate some
 	// data like the list of ascii file types
 	void SettingsChanged();
@@ -111,14 +111,14 @@ protected:
 
 	void ResetEngine(t_EngineData& data, const enum ResetReason reason);
 	void DeleteEngines();
-	
+
 	virtual bool RemoveItem(CQueueItem* item, bool destroy, bool updateItemCount = true, bool updateSelections = true);
 
 	// Stops processing of given item
 	// Returns true on success, false if it would block
-	bool StopItem(CFileItem* item); 
-	bool StopItem(CServerItem* pServerItem); 
-	
+	bool StopItem(CFileItem* item);
+	bool StopItem(CServerItem* pServerItem);
+
 	void CheckQueueState();
 	bool IncreaseErrorCount(t_EngineData& engineData);
 	void UpdateStatusLinePositions();
@@ -133,7 +133,7 @@ protected:
 
 	std::vector<t_EngineData*> m_engineData;
 	std::list<CStatusLineCtrl*> m_statusLineList;
-	
+
 	/*
 	 * List of queued folders used to populate the queue.
 	 * Index 0 for downloads, index 1 for uploads.
@@ -142,7 +142,7 @@ protected:
 	std::list<CFolderScanItem*> m_queuedFolders[2];
 
 	CFolderProcessingThread *m_pFolderProcessingThread;
-	
+
 	/*
 	 * Don't update status line positions if m_waitStatusLineUpdate is true.
 	 * This assures we are updating the status line positions only once,
@@ -178,7 +178,7 @@ protected:
 	void OnUpdateStatusLines(wxCommandEvent& event);
 	void OnMouseWheel(wxMouseEvent& event);
 	void OnFocusItemChanged(wxListEvent& event);
-	
+
 	// Context menu handlers
 	void OnContextMenu(wxContextMenuEvent& event);
 	void OnProcessQueue(wxCommandEvent& event);

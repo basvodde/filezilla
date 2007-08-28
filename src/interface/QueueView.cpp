@@ -443,6 +443,18 @@ CQueueView::CQueueView(CQueue* parent, int index, CMainFrame* pMainFrame, CAsync
 	SettingsChanged();
 
 	SetDropTarget(new CQueueViewDropTarget(this));
+
+#if (!defined(__WIN32__) && !defined(__WXMAC__)) || defined(__WXUNIVERSAL__)
+
+	// The generic list control a scrolled child window. In order to receive
+	// scroll events, we have to connect the event handler to it.
+	((wxWindow*)m_mainWin)->Connect(-1, wxEVT_SCROLLWIN_TOP, wxScrollWinEventHandler(CQueueView::OnScrollEvent), 0, this);
+	((wxWindow*)m_mainWin)->Connect(-1, wxEVT_SCROLLWIN_BOTTOM, wxScrollWinEventHandler(CQueueView::OnScrollEvent), 0, this);
+	((wxWindow*)m_mainWin)->Connect(-1, wxEVT_SCROLLWIN_LINEUP, wxScrollWinEventHandler(CQueueView::OnScrollEvent), 0, this);
+	((wxWindow*)m_mainWin)->Connect(-1, wxEVT_SCROLLWIN_LINEDOWN, wxScrollWinEventHandler(CQueueView::OnScrollEvent), 0, this);
+	((wxWindow*)m_mainWin)->Connect(-1, wxEVT_SCROLLWIN_PAGEUP, wxScrollWinEventHandler(CQueueView::OnScrollEvent), 0, this);
+	((wxWindow*)m_mainWin)->Connect(-1, wxEVT_SCROLLWIN_PAGEDOWN, wxScrollWinEventHandler(CQueueView::OnScrollEvent), 0, this);
+#endif
 }
 
 CQueueView::~CQueueView()
@@ -674,12 +686,12 @@ bool CQueueView::TryStartNextTransfer()
 		}
 		if (maxCount && activeCount >= maxCount)
 		{
-			// If we got an idle engine connected to this very server, start the 
+			// If we got an idle engine connected to this very server, start the
 			// transfer anyhow. Let's not get this connection go to waste.
 			pEngineData = GetIdleEngine(&(*iter)->GetServer());
 			if (pEngineData)
 			{
-				if (!pEngineData->pEngine->IsConnected() || pEngineData->lastServer != (*iter)->GetServer())			
+				if (!pEngineData->pEngine->IsConnected() || pEngineData->lastServer != (*iter)->GetServer())
 				{
 					// If the browsing connection is connected to this server and idle, use it
 					if (browsingOnSame && activeCount == 1)
@@ -899,7 +911,7 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 		}
 		// Increase error count only if item didn't make any progress. This keeps
 		// user interaction at a minimum if connection is unstable.
-		
+
 		// FIXME: Disabled since detection isn't reliable (yet)
 		//else if (!engineData.pStatusLineCtrl || !engineData.pStatusLineCtrl->MadeProgress())
 		{
@@ -1046,7 +1058,7 @@ void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
 				const CServer server = ((CServerItem*)data.pItem->GetTopLevelItem())->GetServer();
 
 				RemoveItem(data.pItem, false);
-				
+
 				CQueueViewFailed* pQueueViewFailed = m_pQueue->GetQueueView_Failed();
 				CServerItem* pServerItem = pQueueViewFailed->CreateServerItem(server);
 				data.pItem->SetParent(pServerItem);
@@ -1135,7 +1147,7 @@ bool CQueueView::RemoveItem(CQueueItem* item, bool destroy, bool updateItemCount
 			wxASSERT(m_totalQueueSize >= 0);
 		}
 	}
-	
+
 	bool didRemoveParent = CQueueViewBase::RemoveItem(item, destroy, updateItemCount, updateSelections);
 
 	UpdateStatusLinePositions();
@@ -1187,7 +1199,7 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 			RefreshItem(engineData.pItem);
 
 			int res = engineData.pEngine->Command(CConnectCommand(engineData.lastServer));
-			
+
 			wxASSERT((res & FZ_REPLY_BUSY) != FZ_REPLY_BUSY);
 			if (res == FZ_REPLY_WOULDBLOCK)
 				return;
@@ -1382,7 +1394,7 @@ void CQueueView::CheckQueueState()
 
 	if (m_activeCount)
 		return;
-	
+
 	if (m_activeMode)
 	{
 		m_activeMode = 0;
@@ -1584,7 +1596,7 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOn
 	}
 
 	CommitChanges();
-	
+
 	if (!m_activeMode && !queueOnly)
 		m_activeMode = 1;
 
@@ -2212,7 +2224,7 @@ void CQueueView::OnAskPassword(wxCommandEvent& event)
 			m_waitingForPassword.pop_front();
 			continue;
 		}
-		
+
 		t_EngineData* pEngineData = *iter;
 
 		if (pEngineData->state != t_EngineData::askpassword)
@@ -2220,7 +2232,7 @@ void CQueueView::OnAskPassword(wxCommandEvent& event)
 			m_waitingForPassword.pop_front();
 			continue;
 		}
-		
+
 		static std::list<void*> AskPasswordBusyList;
 		if (CLoginManager::Get().GetPassword(pEngineData->lastServer, false))
 		{
@@ -2263,7 +2275,7 @@ void CQueueView::UpdateItemSize(CFileItem* pItem, wxLongLong size)
 		else
 			m_totalQueueSize = 0;
 	}
-	
+
 	if (size == -1)
 		m_filesWithUnknownSize++;
 	else
@@ -2305,7 +2317,7 @@ void CQueueView::AdvanceQueue()
 				continue;
 
 			m_engineData[i]->m_idleDisconnectTimer = new wxTimer(this);
-			m_engineData[i]->m_idleDisconnectTimer->Start(30000, true);			
+			m_engineData[i]->m_idleDisconnectTimer->Start(30000, true);
 		}
 	}
 
@@ -2425,7 +2437,7 @@ void CQueueView::OnExclusiveEngineRequestGranted(wxCommandEvent& event)
 	CCommandQueue* pCommandQueue = m_pMainFrame->GetState()->m_pCommandQueue;
 	if (!pCommandQueue)
 		return;
-	
+
 	CFileZillaEngine* pEngine = pCommandQueue->GetEngineExclusive(event.GetId());
 
 	t_EngineData* pEngineData = m_engineData[0];
