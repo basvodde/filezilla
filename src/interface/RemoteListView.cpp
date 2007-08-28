@@ -1510,6 +1510,22 @@ void CRemoteListView::OnChar(wxKeyEvent& event)
 		wxCommandEvent tmp;
 		OnMenuRename(tmp);
 	}
+	else if (code == WXK_BACK)
+	{
+		if (!m_pState->IsRemoteIdle())
+		{
+			wxBell();
+			return;
+		}
+
+		if (!m_pDirectoryListing)
+		{
+			wxBell();
+			return;
+		}
+
+		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path, _T("..")));
+	}
 	else if (code > 32 && code < 300 && !event.HasModifiers())
 	{
 		// Keyboard navigation within items

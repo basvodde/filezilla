@@ -1523,6 +1523,22 @@ void CLocalListView::OnChar(wxKeyEvent& event)
 		wxCommandEvent tmp;
 		OnMenuRename(tmp);
 	}
+	else if (code == WXK_BACK)
+	{
+		if (!m_hasParent)
+		{
+			wxBell();
+			return;
+		}
+		wxString error;
+		if (!m_pState->SetLocalDir(_T(".."), &error))
+		{
+			if (error != _T(""))
+				wxMessageBox(error, _("Failed to change directory"), wxICON_INFORMATION);
+			else
+				wxBell();
+		}
+	}
 	else if (code > 32 && code < 300 && !event.HasModifiers())
 	{
 		// Keyboard navigation within items
