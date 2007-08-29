@@ -1873,6 +1873,9 @@ void CDirectoryListingParser::AddData(char *pData, int len)
 
 void CDirectoryListingParser::AddLine(const wxChar* pLine)
 {
+	if (m_pControlSocket)
+		m_pControlSocket->LogMessageRaw(RawList, pLine);
+
 	const int len = wxStrlen(pLine);
 
 	wxChar* p = new wxChar[len + 1];
