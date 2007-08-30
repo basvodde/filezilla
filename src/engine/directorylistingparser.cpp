@@ -1876,9 +1876,16 @@ void CDirectoryListingParser::AddLine(const wxChar* pLine)
 	if (m_pControlSocket)
 		m_pControlSocket->LogMessageRaw(RawList, pLine);
 
+	while (*pLine == ' ' || *pLine == '\t')
+		pLine++;
+
+	if (!*pLine)
+		return;
+
 	const int len = wxStrlen(pLine);
 
 	wxChar* p = new wxChar[len + 1];
+
 	wxStrcpy(p, pLine);
 
 	CLine line(p, len);
