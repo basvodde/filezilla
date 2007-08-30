@@ -1274,7 +1274,7 @@ void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
 		pMenu->Enable(XRCID("ID_RENAME"), false);
 		pMenu->Enable(XRCID("ID_CHMOD"), false);
 	}
-	else if (GetItemState(0, wxLIST_STATE_SELECTED) ||
+	else if ((GetItemCount() && GetItemState(0, wxLIST_STATE_SELECTED)) ||
 		GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) == -1)
 	{
 		pMenu->Enable(XRCID("ID_DOWNLOAD"), false);
@@ -1283,6 +1283,8 @@ void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
 		pMenu->Enable(XRCID("ID_RENAME"), false);
 		pMenu->Enable(XRCID("ID_CHMOD"), false);
 	}
+	if (!m_pDirectoryListing)
+		pMenu->Enable(XRCID("ID_MKDIR"), false);
 
 	PopupMenu(pMenu);
 	delete pMenu;
