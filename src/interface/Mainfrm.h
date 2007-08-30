@@ -149,6 +149,10 @@ protected:
 #endif
 
 	CQueue* m_pQueuePane;
+
+	bool m_lastMaximized;
+	wxPoint m_lastWindowPosition;
+	wxSize m_lastWindowSize;
 };
 
 #endif

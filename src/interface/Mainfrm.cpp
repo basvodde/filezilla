@@ -125,6 +125,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_lastLocalTreeSplitterPos = 0;
 	m_lastRemoteTreeSplitterPos = 0;
 	m_lastQueueSplitterPos = 0;
+	m_lastMaximized = false;
 
 #ifdef __WXMSW__
 	m_windowIsMaximized = false;
@@ -390,6 +391,16 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 	}
 
 	ApplySplitterConstraints();
+
+	if (!IsIconized())
+	{
+		m_lastMaximized = IsMaximized();
+		if (!m_lastMaximized)
+		{
+			m_lastWindowPosition = GetPosition();
+			m_lastWindowSize = GetClientSize();
+		}
+	}
 }
 
 void CMainFrame::OnViewSplitterPosChanged(wxSplitterEvent &event)
@@ -1563,24 +1574,25 @@ void CMainFrame::FocusNextEnabled(std::list<wxWindow*>& windowOrder, std::list<w
 
 void CMainFrame::RememberSizes()
 {
+	if (!m_lastWindowSize.IsFullySpecified())
+		return;
+
 	wxString posString;
 
 	// is_maximized
-	posString += wxString::Format(_T("%d "), IsMaximized() ? 1 : 0);
-	int x, y;
+	posString += wxString::Format(_T("%d "), m_lastMaximized ? 1 : 0);
 
 	// pos_x pos_y
-	GetPosition(&x, &y);
-	posString += wxString::Format(_T("%d %d "), x, y);
+	posString += wxString::Format(_T("%d %d "), m_lastWindowPosition.x, m_lastWindowPosition.y);
 
 	// pos_width pos_height
-	GetClientSize(&x, &y);
-	posString += wxString::Format(_T("%d %d "), x, y);
+	posString += wxString::Format(_T("%d %d "), m_lastWindowSize.x, m_lastWindowSize.y);
 
 	// top_pos
 	posString += wxString::Format(_T("%d "), m_pTopSplitter->IsSplit() ? m_pTopSplitter->GetSashPosition() : m_lastLogViewSplitterPos);
 
 	// bottom_height
+	int x, y;
 	m_pBottomSplitter->GetClientSize(&x, &y);
 	if (m_pBottomSplitter->IsSplit())
 		y -= m_pBottomSplitter->GetSashPosition();
