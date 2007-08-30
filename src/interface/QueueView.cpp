@@ -567,11 +567,17 @@ void CQueueView::OnEngineEvent(wxEvent &event)
 void CQueueView::ProcessNotification(CNotification* pNotification)
 {
 	if (m_engineData.empty())
+	{
+		delete pNotification;
 		return;
+	}
 
 	t_EngineData* pEngineData = m_engineData[0];
 	if (!pEngineData->active)
+	{
+		delete pNotification;
 		return;
+	}
 
 	ProcessNotification(pEngineData, pNotification);
 }
