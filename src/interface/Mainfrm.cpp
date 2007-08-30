@@ -720,15 +720,15 @@ bool CMainFrame::CreateToolBar()
 
 void CMainFrame::OnUpdateToolbarDisconnect(wxUpdateUIEvent& event)
 {
-	event.Enable(m_pState->m_pEngine && m_pState->m_pEngine->IsConnected() && m_pState->m_pCommandQueue->Idle());
+	event.Enable(m_pState->IsRemoteConnected() && m_pState->IsRemoteIdle());
 }
 
 void CMainFrame::OnDisconnect(wxCommandEvent& event)
 {
-	if (!m_pState->m_pEngine)
+	if (!m_pState->IsRemoteConnected())
 		return;
 
-	if (!m_pState->m_pCommandQueue->Idle())
+	if (!m_pState->IsRemoteIdle())
 		return;
 
 	m_pState->m_pCommandQueue->ProcessCommand(new CDisconnectCommand());
