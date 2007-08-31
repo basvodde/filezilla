@@ -5,6 +5,17 @@ Legend:
   + New feature or important bugfix
   - Bugfixes
 
+3.0.0-rc3 (2007-08-31)
+
+! Fix buffer overflow if directory lisiting filters were enabled, causing FileZilla to crash.
++ Backspace key can be used to goes to parent directory in file lists
+- Fix file selection by entering filename prefix
+- Restore correct window size if FileZilla gets closed while minimized
+- Disable "Create directory" entry in remote filelist context menu while disconnected
+- Improve compatibility with SFTP servers using exotic listing formats
+- MSW: Fix locales not working
+- *nix: Fix queue scrolling
+
 3.0.0-rc2 (2007-08-25)
 
 + Remember Window size and position
