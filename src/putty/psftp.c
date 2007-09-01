@@ -2691,6 +2691,7 @@ static int psftp_connect(char *userhost, char *user, int portnumber)
 	cfg2.host[0] = '\0';
 	do_defaults(host, &cfg2);
 	if (cfg2.host[0] != '\0') {
+	    fzprintf(sftpVerbose, "psftp: Implicit session load.");
 	    /* Settings present and include hostname */
 	    /* Re-load data into the real config. */
 	    do_defaults(host, &cfg);
@@ -2701,6 +2702,7 @@ static int psftp_connect(char *userhost, char *user, int portnumber)
 	    cfg.host[sizeof(cfg.host) - 1] = '\0';
 	}
     } else {
+	fzprintf(sftpVerbose, "psftp: Using previously loaded session.");
 	/* Patch in hostname `host' to session details. */
 	strncpy(cfg.host, host, sizeof(cfg.host) - 1);
 	cfg.host[sizeof(cfg.host) - 1] = '\0';
@@ -2742,6 +2744,7 @@ static int psftp_connect(char *userhost, char *user, int portnumber)
 	char *atsign = strrchr(cfg.host, '@');
 	/* Make sure we're not overflowing the user field */
 	if (atsign) {
+	    fzprintf(sftpVerbose, "psftp: Host still has atsign: %s", cfg.host);
 	    if (atsign - cfg.host < sizeof cfg.username) {
 		strncpy(cfg.username, cfg.host, atsign - cfg.host);
 		cfg.username[atsign - cfg.host] = '\0';
@@ -3043,6 +3046,7 @@ int psftp_main(int argc, char *argv[])
      * it now.
      */
     if (userhost) {
+	fzprintf(sftpVerbose, "pstp: Using userhost passed on commandline: %s", userhost);
 	int ret;
 	ret = psftp_connect(userhost, user, portnumber);
 	sfree(userhost);
