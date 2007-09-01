@@ -338,6 +338,7 @@ int CSftpControlSocket::Connect(const CServer &server)
 	wxString executable = m_pEngine->GetOptions()->GetOption(OPTION_FZSFTP_EXECUTABLE);
 	if (executable == _T(""))
 		executable = _T("fzsftp");
+	LogMessage(Debug_Verbose, _T("Going to execute %s"), executable);
 
 	m_pid = wxExecute(executable + _T(" -v"), wxEXEC_ASYNC, m_pProcess);
 	if (!m_pid)
