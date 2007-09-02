@@ -7,8 +7,10 @@ resourcesdir = $(pkgdatadir)/resources
 dist_resources_DATA = dialogs.xrc down.png dropdown.png empty.png \
 		leds.png menus.xrc netconfwizard.xrc \
 		quickconnectbar.xrc \
-		themes.xml toolbar.xrc up.png \
-		48x48/filezilla.png
+		themes.xml toolbar.xrc up.png
+
+resources48dir = $(pkgdatadir)/resources/48x48
+dist_resources48_DATA = 48x48/filezilla.png
 
 if USE_RESOURCEFILE
 nodist_noinst_DATA = filezilla.o
@@ -28,7 +30,11 @@ dist_noinst_DATA = filezilla.rc FileZilla.ico \
 if MACAPPBUNDLE
 mac-copy-resources: $(dist_resources_DATA)
 	for i in $(dist_resources_DATA); \
-		do cp -f $(srcdir)/$$i $(top_builddir)/FileZilla.app/Contents/SharedSupport/resources; \
+		do cp -f "$(srcdir)/$$i" "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources"; \
+	done
+	mkdir -p "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/48x48"
+	for i in $(dist_resources48_DATA); \
+		do cp -f "$(srcdir)/$$i" "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/48x48"; \
 	done
 	
 	$(MAKE) -C 16x16 mac-copy-resources
