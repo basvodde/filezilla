@@ -44,7 +44,7 @@ public:
 			m_pRemoteListView->m_dropTarget = -1;
 		}
 	}
-	
+
 	virtual wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def)
 	{
 		if (def == wxDragError ||
@@ -78,7 +78,7 @@ public:
 			m_pRemoteListView->m_pState->UploadDroppedFiles(m_pFileDataObject, subdir, false);
 			return wxDragCopy;
 		}
-		
+
 		// At this point it's the remote data object.
 
 		if (m_pRemoteDataObject->GetProcessId() != (int)wxGetProcessId())
@@ -318,7 +318,7 @@ CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState
 	{
 		m_sortColumn = sortInfo[2] - '0';
 		if (m_sortColumn < 0 || m_sortColumn > 5)
-			m_sortColumn = 0;		
+			m_sortColumn = 0;
 	}
 	else
 		m_sortColumn = 0;
@@ -487,7 +487,7 @@ bool CRemoteListView::IsItemValid(unsigned int item) const
 void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pDirectoryListing)
 {
 	std::list<unsigned int> removedItems;
-	
+
 	unsigned int j = 0;
 	for (unsigned int i = 0; i < pDirectoryListing->GetCount(); i++, j++)
 	{
@@ -508,7 +508,7 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 	// Number of items left to remove
 	unsigned int toRemove = m_pDirectoryListing->GetCount() - pDirectoryListing->GetCount();
 	wxASSERT(toRemove == removedItems.size());
-	
+
 	std::list<int> removedIndexes;
 
 	const int size = m_indexMapping.size();
@@ -1084,7 +1084,7 @@ void CRemoteListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 		std::sort(++iter, m_indexMapping.end(), CRemoteListViewSortTime(m_pDirectoryListing, dirSortMode));
 	else if (m_sortColumn == 4)
 		std::sort(++iter, m_indexMapping.end(), CRemoteListViewSortPermissions(m_pDirectoryListing, dirSortMode));
-	
+
 	if (m_sortDirection)
 	{
 		std::vector<unsigned int>::iterator iter = m_indexMapping.begin();
@@ -1093,7 +1093,7 @@ void CRemoteListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 
 	SortList_UpdateSelections(selected, focused);
 	delete [] selected;
-	
+
 	Refresh(false);
 }
 
@@ -1138,8 +1138,8 @@ void CRemoteListView::OnColumnClicked(wxListEvent &event)
 
 wxString CRemoteListView::GetType(wxString name, bool dir)
 {
-	wxString type;
 #ifdef __WXMSW__
+	wxString type;
 	wxString ext = wxFileName(name).GetExt();
 	ext.MakeLower();
 	std::map<wxString, wxString>::iterator typeIter = m_fileTypeMap.find(ext);
@@ -1187,10 +1187,26 @@ wxString CRemoteListView::GetType(wxString name, bool dir)
 				type = _("File");
 		}
 	}
-#else
-	type = dir ? _("Folder") : _("File");
-#endif
 	return type;
+#else
+	if (dir)
+		return _("Folder");
+
+	wxFileName fn(name);
+	wxString ext = fn.GetExt();
+	if (ext == _T(""))
+		return _("File");
+
+	wxFileType *pType = wxTheMimeTypesManager->GetFileTypeFromExtension(ext);
+	if (!pType)
+		return _("File");
+
+	wxString desc;
+	if (pType->GetDescription(&desc) && desc != _T(""))
+		return desc;
+
+	return _T("File");
+#endif
 }
 
 void CRemoteListView::OnItemActivated(wxListEvent &event)
@@ -1811,7 +1827,7 @@ void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 		pChmodDlg = 0;
 		return;
 	}
-	
+
 	// State may have changed while chmod dialog was shown
 	if (!m_pState->IsRemoteConnected() || !m_pState->IsRemoteIdle())
 	{
@@ -1864,7 +1880,7 @@ void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 		if (pChmodDlg->Recursive() && entry.dir)
 			pRecursiveOperation->AddDirectoryToVisit(m_pDirectoryListing->path, entry.name);
 	}
-	
+
 	if (pChmodDlg->Recursive())
 	{
 		pRecursiveOperation->SetChmodDialog(pChmodDlg);
@@ -1939,7 +1955,7 @@ std::list<wxString> CRemoteListView::RememberSelectedItems(wxString& focused)
 
 		SetItemState(item, 0, wxLIST_STATE_FOCUSED);
 	}
-	
+
 	return selectedNames;
 }
 
@@ -2141,7 +2157,7 @@ void CRemoteListView::OnBeginDrag(wxListEvent& event)
 
 		int index = GetItemIndex(item);
 		const CDirentry& entry = (*m_pDirectoryListing)[index];
-		
+
 		pRemoteDataObject->AddFile(entry.name, entry.dir, entry.size);
 	}
 
@@ -2163,7 +2179,7 @@ void CRemoteListView::OnBeginDrag(wxListEvent& event)
 		object.Add(pFileDataObject);
 	}
 #endif
-	
+
 	wxDropSource source(this);
 	source.SetData(object);
 	if (source.DoDragDrop() != wxDragCopy)
@@ -2183,7 +2199,7 @@ void CRemoteListView::OnBeginDrag(wxListEvent& event)
 		if (!pRemoteDataObject->DidSendData())
 		{
 			const CServer* pServer = m_pState->GetServer();
-			if (!m_pState->IsRemoteIdle() || 
+			if (!m_pState->IsRemoteIdle() ||
 				!pServer || *pServer != server ||
 				!m_pDirectoryListing || m_pDirectoryListing->path != path)
 			{

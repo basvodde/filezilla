@@ -39,7 +39,7 @@ public:
 			m_pLocalListView->m_dropTarget = -1;
 		}
 	}
-	
+
 	virtual wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def)
 	{
 		if (def == wxDragError ||
@@ -159,7 +159,7 @@ public:
 		}
 
 		const wxString& subdir = DisplayDropHighlight(wxPoint(x, y));
-		
+
 		if (subdir == _T(""))
 		{
 			if (!CState::LocalDirIsWriteable(m_pLocalListView->m_dir))
@@ -240,7 +240,7 @@ CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, 
 	{
 		m_sortColumn = sortInfo[2] - '0';
 		if (m_sortColumn < 0 || m_sortColumn > 3)
-			m_sortColumn = 0;		
+			m_sortColumn = 0;
 	}
 	else
 		m_sortColumn = 0;
@@ -741,7 +741,23 @@ wxString CLocalListView::GetType(wxString name, bool dir)
 	}
 	return type;
 #else
-	return dir ? _("Folder") : _("File");
+	if (dir)
+		return _("Folder");
+
+	wxFileName fn(name);
+	wxString ext = fn.GetExt();
+	if (ext == _T(""))
+		return _("File");
+
+	wxFileType *pType = wxTheMimeTypesManager->GetFileTypeFromExtension(ext);
+	if (!pType)
+		return _("File");
+
+	wxString desc;
+	if (pType->GetDescription(&desc) && desc != _T(""))
+		return desc;
+
+	return _T("File");
 #endif
 }
 
@@ -1946,7 +1962,7 @@ void CLocalListView::RefreshFile(const wxString& file)
 	// Insert new entry
 	int index = m_fileData.size();
 	m_fileData.push_back(data);
-	
+
 	// Find correct position in index mapping
 	std::vector<unsigned int>::iterator start = m_indexMapping.begin();
 	if (m_hasParent)
@@ -1958,7 +1974,7 @@ void CLocalListView::RefreshFile(const wxString& file)
 	const int item = insertPos - m_indexMapping.begin();
 	m_indexMapping.insert(insertPos, index);
 	SetItemCount(m_indexMapping.size());
-	
+
 	// Move selections
 	int prevState = 0;
 	for (unsigned int i = item; i < m_indexMapping.size(); i++)

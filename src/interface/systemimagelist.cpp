@@ -23,7 +23,7 @@ HIMAGELIST wxImageListEx::Detach()
 CSystemImageList::CSystemImageList(int size)
 {
 #ifdef __WXMSW__
-	SHFILEINFO shFinfo;	
+	SHFILEINFO shFinfo;
 	wxChar buffer[MAX_PATH + 10];
 	if (!GetWindowsDirectory(buffer, MAX_PATH))
 #ifdef _tcscpy
@@ -108,6 +108,8 @@ int CSystemImageList::GetIconIndex(enum filetype type, const wxString& fileName 
 
 	wxFileName fn(fileName);
 	wxString ext = fn.GetExt();
+	if (ext == _T(""))
+		return icon;
 
 	wxFileType *pType = wxTheMimeTypesManager->GetFileTypeFromExtension(ext);
 	if (pType)
@@ -117,7 +119,7 @@ int CSystemImageList::GetIconIndex(enum filetype type, const wxString& fileName 
 		{
 			wxLogNull nul;
 			wxIcon newIcon(loc);
-				
+
 			if (newIcon.Ok())
 			{
 				wxBitmap bmp = PrepareIcon(newIcon, wxSize(16, 16));
