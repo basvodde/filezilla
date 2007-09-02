@@ -368,6 +368,12 @@ CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState
 	SetDirectoryListing(0);
 
 	SetDropTarget(new CRemoteListViewDropTarget(this));
+
+#if (!defined(__WIN32__) && !defined(__WXMAC__)) || defined(__WXUNIVERSAL__)
+	// The generic list control a scrolled child window. In order to receive
+	// scroll events, we have to connect the event handler to it.
+	((wxWindow*)m_mainWin)->Connect(-1, wxEVT_KEY_DOWN, wxKeyEventHandler(CRemoteListView::OnKeyDown), 0, this);
+#endif
 }
 
 CRemoteListView::~CRemoteListView()

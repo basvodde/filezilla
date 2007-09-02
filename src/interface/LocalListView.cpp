@@ -287,6 +287,12 @@ CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, 
 #endif
 
 	SetDropTarget(new CLocalListViewDropTarget(this));
+
+#if (!defined(__WIN32__) && !defined(__WXMAC__)) || defined(__WXUNIVERSAL__)
+	// The generic list control a scrolled child window. In order to receive
+	// scroll events, we have to connect the event handler to it.
+	((wxWindow*)m_mainWin)->Connect(-1, wxEVT_KEY_DOWN, wxKeyEventHandler(CLocalListView::OnKeyDown), 0, this);
+#endif
 }
 
 CLocalListView::~CLocalListView()
