@@ -1,7 +1,9 @@
 resourcesdir = $(pkgdatadir)/resources/16x16
 
 dist_resources_DATA = cancel.png disconnect.png download.png downloadadd.png \
-		file.png filter.png folder.png folderclosed.png localtreeview.png \
+		file.png \
+		filezilla.png \
+		filter.png folder.png folderclosed.png localtreeview.png \
 		logview.png processqueue.png queueview.png reconnect.png \
 		refresh.png remotetreeview.png server.png sitemanager.png \
 		unknown.png upload.png uploadadd.png

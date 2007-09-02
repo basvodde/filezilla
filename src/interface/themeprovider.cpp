@@ -147,7 +147,7 @@ wxString CThemeProvider::GetThemePath(const wxString& theme)
 			delete pDocument->GetDocument();
 			if (subdir == _T(""))
 				return wxGetApp().GetResourceDir();
-			else 
+			else
 				return wxGetApp().GetResourceDir() + subdir + _T("/");
 		}
 	}
@@ -187,4 +187,36 @@ bool CThemeProvider::GetThemeData(const wxString& theme, wxString& author, wxStr
 	delete pDocument->GetDocument();
 
 	return false;
+}
+
+wxIconBundle CThemeProvider::GetIconBundle(const wxArtID& id, const wxArtClient& client /*=wxART_OTHER*/)
+{
+	wxIconBundle iconBundle;
+
+	if (id.Left(4) != _T("ART_"))
+		return iconBundle;
+
+	const wxString& name = id.Mid(4).Lower();
+
+	wxChar* dirs[3] = { _T("16x16/"), _T("32x32/"), _T("48x48/") };
+
+	wxString themePath = GetThemePath(COptions::Get()->GetOption(OPTION_THEME));
+	wxString resourcePath = wxGetApp().GetResourceDir();
+
+	for (int i = 0; i < 3; i++)
+	{
+		wxString file = themePath + dirs[i] + name + _T(".png");
+		if (!wxFileName::FileExists(file))
+		{
+			if (themePath == resourcePath)
+				continue;
+			file = resourcePath + dirs[i] + name + _T(".png");
+		}
+		if (!wxFileName::FileExists(file))
+			continue;
+
+		iconBundle.AddIcon(wxIcon(file));
+	}
+
+	return iconBundle;
 }

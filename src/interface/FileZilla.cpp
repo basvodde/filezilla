@@ -355,7 +355,6 @@ bool CFileZillaApp::LoadResourceFiles()
 	m_resourceDir = GetDataDir(_T("/resources/menus.xrc"));
 
 	wxImage::AddHandler(new wxPNGHandler());
-	wxImage::AddHandler(new wxXPMHandler());
 
 	if (m_resourceDir == _T(""))
 	{

@@ -368,7 +368,6 @@ Section "FileZilla Client" SecMain
   SetOutPath "$INSTDIR\resources"
   File "${top_srcdir}/src\interface\resources\*.xrc"
   File "${top_srcdir}/src\interface\resources\*.png"
-  File "${top_srcdir}/src\interface\resources\*.xpm"
   File "${top_srcdir}/src\interface\resources\themes.xml"
 
   SetOutPath "$INSTDIR\resources\16x16"
@@ -376,6 +375,9 @@ Section "FileZilla Client" SecMain
 
   SetOutPath "$INSTDIR\resources\32x32"
   File "${top_srcdir}/src\interface\resources\32x32\*.png"
+  
+  SetOutPath "$INSTDIR\resources\48x48"
+  File "${top_srcdir}/src\interface\resources\48x48\*.png"
   
   SetOutPath "$INSTDIR\resources\cyril\16x16"
   File "${top_srcdir}/src\interface\resources\cyril\16x16\*.png"
@@ -630,10 +632,10 @@ Section "Uninstall"
   Delete "$INSTDIR\AUTHORS"
   Delete "$INSTDIR\resources\*.xrc"
   Delete "$INSTDIR\resources\*.png"
-  Delete "$INSTDIR\resources\*.xpm"
   Delete "$INSTDIR\resources\themes.xml"
   Delete "$INSTDIR\resources\16x16\*.png"
   Delete "$INSTDIR\resources\32x32\*.png"
+  Delete "$INSTDIR\resources\48x48\*.png"
   Delete "$INSTDIR\resources\cyril\16x16\*.png"
   Delete "$INSTDIR\resources\cyril\32x32\*.png"
   Delete "$INSTDIR\resources\blukis\16x16\*.png"
@@ -649,6 +651,7 @@ Section "Uninstall"
   Delete "$INSTDIR\docs\fzdefaults.xml.example"
 
   RMDir "$INSTDIR\locales"
+  RMDir "$INSTDIR\resources\48x48"
   RMDir "$INSTDIR\resources\32x32"
   RMDir "$INSTDIR\resources\16x16"
   RMDir "$INSTDIR\resources\cyril\32x32"

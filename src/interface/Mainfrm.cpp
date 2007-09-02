@@ -34,10 +34,6 @@
 #include <wx/display.h>
 #endif
 
-#ifndef __WXMSW__
-#include "resources/filezilla.xpm"
-#endif
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -104,7 +100,11 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 {
 	SetSizeHints(250, 250);
 
+#ifdef __WXMSW__
 	SetIcon(wxICON(appicon));
+#else
+	SetIcons(CThemeProvider::GetIconBundle(_T("ART_FILEZILLA")));
+#endif
 
 	m_pStatusBar = NULL;
 	m_pMenuBar = NULL;

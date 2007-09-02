@@ -10,6 +10,7 @@ public:
 	static std::list<wxString> GetThemes();
 	static std::list<wxBitmap*> GetAllImages(const wxString& theme, wxSize& size);
 	static bool GetThemeData(const wxString& theme, wxString& author, wxString& email);
+	static wxIconBundle GetIconBundle(const wxArtID& id, const wxArtClient& client = wxART_OTHER);
 
 protected:
 	static wxString GetThemePath(const wxString& theme);

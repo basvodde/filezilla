@@ -5,9 +5,10 @@ CLEANFILES = filezilla.o
 resourcesdir = $(pkgdatadir)/resources
 
 dist_resources_DATA = dialogs.xrc down.png dropdown.png empty.png \
-		filezilla.xpm leds.png menus.xrc netconfwizard.xrc \
+		leds.png menus.xrc netconfwizard.xrc \
 		quickconnectbar.xrc \
-		themes.xml toolbar.xrc up.png filezilla.png	  
+		themes.xml toolbar.xrc up.png \
+		48x48/filezilla.png
 
 if USE_RESOURCEFILE
 nodist_noinst_DATA = filezilla.o
@@ -38,5 +39,5 @@ endif
 
 pixmapsdir = $(datadir)/pixmaps
 
-pixmaps_DATA = filezilla.png
+pixmaps_DATA = 48x48/filezilla.png
 
