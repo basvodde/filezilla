@@ -11,18 +11,19 @@ CThemeProvider::CThemeProvider()
 
 wxBitmap CThemeProvider::CreateBitmap(const wxArtID& id, const wxArtClient& client, const wxSize& size)
 {
+	if (id.Left(4) != _T("ART_"))
+		return wxNullBitmap;
+
 	wxString path = GetThemePath(COptions::Get()->GetOption(OPTION_THEME));
 
 	wxString strSize;
 	if (size.GetWidth() >= 40)
 		strSize = _T("48x48/");
-	if (size.GetWidth() >= 24)
+	else if (size.GetWidth() >= 24)
 		strSize = _T("32x32/");
 	else
 		strSize = _T("16x16/");
 
-	if (id.Left(4) != _T("ART_"))
-		return wxNullBitmap;
 	wxString name = id.Mid(4);
 	name.MakeLower();
 
