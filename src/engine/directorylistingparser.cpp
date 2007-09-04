@@ -45,7 +45,7 @@ protected:
 		Yes,
 		No
 	};
-	
+
 public:
 	CToken()
 	{
@@ -194,7 +194,7 @@ public:
 	{
 		if (!chr)
 			return -1;
-		
+
 		for (unsigned int i = start; i < m_len; i++)
 		{
 			for (int c = 0; chr[c]; c++)
@@ -205,7 +205,7 @@ public:
 		}
 		return -1;
 	}
-	
+
 	int Find(wxChar chr, int start = 0) const
 	{
 		if (!m_pToken)
@@ -214,7 +214,7 @@ public:
 		for (unsigned int i = start; i < m_len; i++)
 			if (m_pToken[i] == chr)
 				return i;
-		
+
 		return -1;
 	}
 
@@ -347,7 +347,7 @@ public:
 		for (iter = m_LineEndTokens.begin(); iter != m_LineEndTokens.end(); iter++)
 			delete *iter;
 	}
-	
+
 	bool GetToken(unsigned int n, CToken &token, bool toEnd = false)
 	{
 		if (!toEnd)
@@ -365,13 +365,13 @@ public:
 				{
 					CToken *pToken = new CToken(m_pLine + start, m_parsePos - start);
 					m_Tokens.push_back(pToken);
-					
+
 					while (m_pLine[m_parsePos] == ' ' && m_parsePos < m_len)
 						m_parsePos++;
 
 					if (m_Tokens.size() > n)
 					{
-						token = *(m_Tokens[n]); 
+						token = *(m_Tokens[n]);
 						return true;
 					}
 
@@ -387,7 +387,7 @@ public:
 
 			if (m_Tokens.size() > n)
 			{
-				token = *(m_Tokens[n]); 
+				token = *(m_Tokens[n]);
 				return true;
 			}
 
@@ -400,7 +400,7 @@ public:
 				token = *(m_LineEndTokens[n]);
 				return true;
 			}
-			
+
 			if (m_Tokens.size() <= n)
 				if (!GetToken(n, token))
 					return false;
@@ -424,7 +424,7 @@ public:
 		memcpy(p, m_pLine, m_len * sizeof(wxChar));
 		p[m_len] = ' ';
 		memcpy(p + m_len + 1, pLine->m_pLine, pLine->m_len * sizeof(wxChar));
-		
+
 		return new CLine(p, m_len + pLine->m_len + 1);
 	}
 
@@ -593,9 +593,9 @@ CDirectoryListingParser::CDirectoryListingParser(CControlSocket* pControlSocket,
 		//Slovenian month names
 		m_MonthNamesMap[_T("avg")] = 8;
 
-		//There are more languages and thus month 
-		//names, but as long as knowbody reports a 
-		//problem, I won't add them, there are way 
+		//There are more languages and thus month
+		//names, but as long as knowbody reports a
+		//problem, I won't add them, there are way
 		//too many languages
 
 		// Some servers send a combination of month name and number,
@@ -694,11 +694,11 @@ CDirectoryListing CDirectoryListingParser::Parse(const CServerPath &path)
 	CDirectoryListing listing;
 	listing.path = path;
 	listing.m_firstListTime = CTimeEx::Now();
-	
+
 	if (!m_fileList.empty())
 	{
 		wxASSERT(m_entryList.empty());
-		
+
 		listing.SetCount(m_fileList.size());
 		unsigned int i = 0;
 		for (std::list<wxString>::const_iterator iter = m_fileList.begin(); iter != m_fileList.end(); iter++, i++)
@@ -774,7 +774,7 @@ bool CDirectoryListingParser::ParseLine(CLine *pLine, const enum ServerType serv
 	// Some servers just send a list of filenames. If a line could not be parsed,
 	// check if it's a filename. If that's the case, store it for later, else clear
 	// list of stored files.
-	// If parsing finishes and no entries could be parsed and none of the lines 
+	// If parsing finishes and no entries could be parsed and none of the lines
 	// contained a space, assume it's a raw filelisting.
 
 	if (!concatenated)
@@ -822,7 +822,7 @@ done:
 		wxTimeSpan span(0, offset, 0, 0);
 		entry.time.Add(span);
 	}
-		
+
 	entry.unsure = false;
 	m_entryList.push_back(entry);
 
@@ -1043,9 +1043,9 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 		// Get day field
 		if (!pLine->GetToken(++index, token))
 			return false;
-	
+
 		int dateDay;
-	
+
 		// Check for non-numeric day
 		if (!token.IsNumeric() && !token.IsLeftNumeric())
 		{
@@ -1074,7 +1074,7 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 		wxString strMonth = dateMonth.GetString();
 		if (dateMonth.IsLeftNumeric() && (unsigned int)strMonth[strMonth.Length() - 1] > 127)
 		{
-			// Most likely an Asian server sending some unknown language specific 
+			// Most likely an Asian server sending some unknown language specific
 			// suffix at the end of the monthname. Filter it out.
 			int i;
 			for (i = strMonth.Length() - 1; i > 0; i--)
@@ -1213,7 +1213,7 @@ bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry, bo
 	if (!token.IsNumeric(0, pos))
 	{
 		// Seems to be monthname-dd-yy
-		
+
 		// Check month name
 		wxString dateMonth = token.GetString().Mid(0, pos);
 		dateMonth.MakeLower();
@@ -1274,7 +1274,7 @@ bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry, bo
 					gotMonth = true;
 				}
 			}
-		}			
+		}
 	}
 	else
 		return false;
@@ -1285,7 +1285,7 @@ bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry, bo
 	if (static_cast<size_t>(pos2) == (token.GetLength() - 1))
 		return false;
 
-	// If we already got the month and the second field is not numeric, 
+	// If we already got the month and the second field is not numeric,
 	// change old month into day and use new token as month
 	if (!token.IsNumeric(pos + 1, pos2 - pos - 1) && gotMonth)
 	{
@@ -1354,7 +1354,7 @@ bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry, bo
 	if (!VerifySetDate(entry.time, year, (wxDateTime::Month)(wxDateTime::Jan + month - 1), day))
 		return false;
 	entry.hasDate = true;
-		
+
 	return true;
 }
 
@@ -1418,7 +1418,7 @@ bool CDirectoryListingParser::ParseAsDos(CLine *pLine, CDirentry &entry)
 	entry.target = _T("");
 	entry.ownerGroup = _T("");
 	entry.permissions = _T("");
-	
+
 	return true;
 }
 
@@ -1481,7 +1481,7 @@ bool CDirectoryListingParser::ParseAsEplf(CLine *pLine, CDirentry &entry)
 	entry.hasDate = false;
 	entry.hasTime = false;
 	entry.size = -1;
-	
+
 	int fact = 1;
 	while (fact < pos)
 	{
@@ -1611,7 +1611,7 @@ bool CDirectoryListingParser::ParseAsVms(CLine *pLine, CDirentry &entry)
 
 		if (!token.IsNumeric() && !token.IsLeftNumeric())
 			return false;
-	
+
 		entry.size = token.GetNumber();
 	}
 
@@ -1680,7 +1680,7 @@ bool CDirectoryListingParser::ParseAsIbm(CLine *pLine, CDirentry &entry)
 	// Get filename
 	if (!pLine->GetToken(index + 2, token, 1))
 		return false;
-	
+
 	entry.name = token.GetString();
 	if (token[token.GetLength() - 1] == '/')
 	{
@@ -1744,7 +1744,7 @@ bool CDirectoryListingParser::ParseOther(CLine *pLine, CDirentry &entry)
 		if (number < 0)
 			return false;
 		entry.time = wxDateTime((time_t)number.GetValue());
-		
+
 		entry.hasTime = true;
 		entry.hasDate = true;
 
@@ -1838,7 +1838,7 @@ bool CDirectoryListingParser::ParseOther(CLine *pLine, CDirentry &entry)
 				year += 2000;
 			else if (year < 1000)
 				year += 1900;
-			
+
 			entry.time = wxDateTime();
 			if (!VerifySetDate(entry.time, year.GetLo(), (wxDateTime::Month)(month - 1), day.GetLo()))
 				return false;
@@ -1911,7 +1911,7 @@ void CDirectoryListingParser::AddLine(const wxChar* pLine)
 CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
 {
 	while (!m_DataList.empty())
-	{	
+	{
 		// Trim empty lines and spaces
 		std::list<t_list>::iterator iter = m_DataList.begin();
 		int len = iter->len;
@@ -1950,7 +1950,7 @@ CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
 			}
 			else
 				emptylen++;
-		
+
 			currentOffset++;
 			if (currentOffset >= len)
 			{
@@ -2023,7 +2023,11 @@ CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
 		{
 			wxString str(res, wxConvUTF8);
 			if (str == _T(""))
+			{
 				str = wxString(res, wxConvLocal);
+				if (str == _T(""))
+					str = wxString(res, wxConvISO8859_1);
+			}
 			buffer = new wxChar[str.Len() + 1];
 			wxStrcpy(buffer, str.c_str());
 		}
@@ -2086,7 +2090,7 @@ bool CDirectoryListingParser::ParseAsWfFtp(CLine *pLine, CDirentry &entry)
 	entry.link = false;
 	entry.ownerGroup = _T("");
 	entry.permissions = _T("");
-	
+
 	return true;
 }
 
@@ -2169,7 +2173,7 @@ bool CDirectoryListingParser::ParseAsIBM_MVS(CLine *pLine, CDirentry &entry)
 	if (!pLine->GetToken(index++, token))
 		return false;
 	if (!token.IsNumeric())
-		return false; 
+		return false;
 
 	// dsorg
 	if (!pLine->GetToken(index++, token))
@@ -2185,7 +2189,7 @@ bool CDirectoryListingParser::ParseAsIBM_MVS(CLine *pLine, CDirentry &entry)
 		entry.dir = false;
 		entry.size = 100;
 	}
-	
+
 	// name of dataset or sequential file
 	if (!pLine->GetToken(index++, token, true))
 		return false;
@@ -2196,7 +2200,7 @@ bool CDirectoryListingParser::ParseAsIBM_MVS(CLine *pLine, CDirentry &entry)
 	entry.permissions = _T("");
 	entry.hasTime = false;
 	entry.link = false;
-	
+
 	return true;
 }
 
@@ -2213,7 +2217,7 @@ bool CDirectoryListingParser::ParseAsIBM_MVS_PDS(CLine *pLine, CDirentry &entry)
 	// vv.mm
 	if (!pLine->GetToken(index++, token))
 		return false;
-	
+
 	// creation date
 	if (!pLine->GetToken(index++, token))
 		return false;
@@ -2253,14 +2257,14 @@ bool CDirectoryListingParser::ParseAsIBM_MVS_PDS(CLine *pLine, CDirentry &entry)
 
 	// id
 	if (!pLine->GetToken(index++, token, true))
-		return false;	
-	
+		return false;
+
 	entry.dir = false;
 	entry.ownerGroup = _T("");
 	entry.permissions = _T("");
 	entry.hasTime = false;
 	entry.link = false;
-	
+
 	return true;
 }
 
@@ -2331,7 +2335,7 @@ bool CDirectoryListingParser::ParseAsIBM_MVS_PDS2(CLine *pLine, CDirentry &entry
 		return false;
 	if (!token.IsNumeric())
 		return false;
-	
+
 	int start = ++index;
 	while (pLine->GetToken(index, token))
 	{
@@ -2436,7 +2440,7 @@ bool CDirectoryListingParser::ParseComplexFileSize(CToken& token, wxLongLong& si
 bool CDirectoryListingParser::ParseAsMlsd(CLine *pLine, CDirentry &entry)
 {
 	// MLSD format as described here: http://www.ietf.org/internet-drafts/draft-ietf-ftpext-mlst-16.txt
-	
+
 	// Parsing is done strict, abort on slightest error.
 
 	CToken token;
@@ -2504,14 +2508,14 @@ bool CDirectoryListingParser::ParseAsMlsd(CLine *pLine, CDirentry &entry)
 			}
 			else
 				entry.hasTime = false;
-			
+
 			entry.time = dateTime.FromTimezone(wxDateTime::GMT0);
 
 			entry.hasDate = true;
 		}
 		else if (factname == _T("perm"))
 			entry.permissions = value;
-		
+
 		facts = facts.Mid(delim + 1);
 	}
 

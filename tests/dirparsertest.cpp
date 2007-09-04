@@ -248,7 +248,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false
 			}
 		});
-		
+
 	// NetPresenz for the Mac
 	// ----------------------
 
@@ -456,7 +456,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false
 			}
 		});
-	
+
 	m_entries.push_back((t_entry){
 			"0  Dec 12, 2002 02:13 22-vshell-old dir/",
 			{
@@ -473,7 +473,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false
 			}
 		});
-	
+
 	/* This type of directory listings is sent by some newer versions of VShell
 	 * both year and time in one line is uncommon. */
 	m_entries.push_back((t_entry){
@@ -495,7 +495,7 @@ void CDirectoryListingParserTest::InitEntries()
 
 	// OS/2 server format
 	// ------------------
-	
+
 	// This server obviously isn't Y2K aware
 	m_entries.push_back((t_entry){
 			"36611      A    04-23-103  10:57  24-os2 file",
@@ -1038,7 +1038,7 @@ void CDirectoryListingParserTest::InitEntries()
 
 	m_entries.push_back((t_entry){
 			// Valid UTF-8 encoding
-			"rwxr-xr-x   5 root     sys          512 2005\xEB\x85\x84 ",// 1\xEC\x9B\x94  6\xEC\x9D\xBC 54-asian date year first dir",
+			"drwxr-xr-x   5 root     sys          512 2005\xEB\x85\x84  1\xEC\x9B\x94  6\xEC\x9D\xBC 54-asian date year first dir",
 			{
 				_T("54-asian date year first dir"),
 				512,
@@ -1099,11 +1099,12 @@ void CDirectoryListingParserTest::testIndividual()
 	wxString msg = wxString::Format(_T("Data: %s, count: %d"), wxString(entry.data.c_str(), wxConvUTF8).c_str(), listing.GetCount());
 	msg.Replace(_T("\r"), _T(""));
 	msg.Replace(_T("\n"), _T(""));
-	CPPUNIT_ASSERT_MESSAGE((const char*)msg.mb_str(), listing.GetCount() == 1);
+	wxWX2MBbuf mb_buf = msg.mb_str(wxConvUTF8);
+	CPPUNIT_ASSERT_MESSAGE((const char*)mb_buf, listing.GetCount() == 1);
 
 	msg = wxString::Format(_T("Data: %s  Expected:\n%s\n  Got:\n%s"), wxString(entry.data.c_str(), wxConvUTF8).c_str(), entry.reference.dump().c_str(), listing[0].dump().c_str());
-
-	CPPUNIT_ASSERT_MESSAGE((const char*)msg.mb_str(), listing[0] == entry.reference);
+	mb_buf = msg.mb_str(wxConvUTF8);
+	CPPUNIT_ASSERT_MESSAGE((const char*)mb_buf, listing[0] == entry.reference);
 }
 
 void CDirectoryListingParserTest::testAll()
@@ -1127,7 +1128,7 @@ void CDirectoryListingParserTest::testAll()
 	{
 		wxString msg = wxString::Format(_T("Data: %s  Expected:\n%s\n  Got:\n%s"), wxString(iter->data.c_str(), wxConvUTF8).c_str(), iter->reference.dump().c_str(), listing[i].dump().c_str());
 
-		CPPUNIT_ASSERT_MESSAGE((const char*)msg.mb_str(), listing[i] == iter->reference);
+		CPPUNIT_ASSERT_MESSAGE((const char*)msg.mb_str(wxConvUTF8), listing[i] == iter->reference);
 	}
 }
 
