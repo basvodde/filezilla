@@ -1035,6 +1035,25 @@ void CDirectoryListingParserTest::InitEntries()
 				false
 			}
 		});
+
+	m_entries.push_back((t_entry){
+			// Valid UTF-8 encoding
+			"rwxr-xr-x   5 root     sys          512 2005\xEB\x85\x84 ",// 1\xEC\x9B\x94  6\xEC\x9D\xBC 54-asian date year first dir",
+			{
+				_T("54-asian date year first dir"),
+				512,
+				_T("drwxr-xr-x"),
+				_T("root sys"),
+				true,
+				false,
+				_T(""),
+				true,
+				false,
+				wxDateTime(6, wxDateTime::Jan, 2005),
+				false
+			}
+		});
+
 /*
 	wxString name;
 	wxLongLong size;

@@ -1021,7 +1021,22 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 			dateMonth = token;
 	}
 	else
-		dateMonth = token;
+	{
+		if (token.IsLeftNumeric() && (unsigned int)token[token.GetLength() - 1] > 127 &&
+			token.GetNumber() > 1000)
+		{
+			if (token.GetNumber() > 10000)
+				return false;
+
+			// Asian date format: 2005xxx 5xx 20xxx with some non-ascii characters following
+			year = token.GetNumber().GetLo();
+			if (!pLine->GetToken(++index, dateMonth))
+				return false;
+			mayHaveTime = false;
+		}
+		else
+			dateMonth = token;
+	}
 
 	if (!day)
 	{
