@@ -26,7 +26,7 @@ class TiXmlElement;
 class CInterProcessMutex;
 class CSiteManagerXmlHandler;
 class CSiteManager: public wxDialogEx
-{	
+{
 	DECLARE_EVENT_TABLE();
 
 public:
@@ -39,7 +39,7 @@ public:
 
 	/// Creates the controls and sizers
 	void CreateControls();
-	
+
 	bool GetServer(CSiteManagerItemData& data);
 
 	static wxMenu* GetSitesMenu();
@@ -63,7 +63,7 @@ protected:
 	bool IsPredefinedItem(wxTreeItemId item);
 
 	static CSiteManagerItemData* ReadServerElement(TiXmlElement *pElement);
-	
+
 	virtual void OnOK(wxCommandEvent& event);
 	virtual void OnCancel(wxCommandEvent& event);
 	virtual void OnConnect(wxCommandEvent& event);
@@ -82,7 +82,7 @@ protected:
 	virtual void OnCharsetChange(wxCommandEvent& event);
 	virtual void OnProtocolSelChanged(wxCommandEvent& event);
 	void OnCopySite(wxCommandEvent& event);
-	
+
 	CInterProcessMutex* m_pSiteManagerMutex;
 
 	wxTreeItemId m_predefinedSites;
@@ -90,6 +90,13 @@ protected:
 
 	// Initialized by GetSitesMenu
 	static std::map<int, CSiteManagerItemData*> m_idMap;
+
+#ifdef __WXGTK__
+	// wxSpinCtrl::SetValue(x); wxASSERT(wxSpinControl::GetValue() == x) failes on GTK
+	bool m_timezoneOffsetHoursChanged;
+	bool m_timezoneOffsetMinutesChanged;
+	void OnTimezoneOffsetChanged(wxSpinEvent& event);
+#endif
 };
 
 #endif //__SITEMANAGER_H__

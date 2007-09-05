@@ -30,11 +30,18 @@ EVT_RADIOBUTTON(XRCID("ID_CHARSET_UTF8"), CSiteManager::OnCharsetChange)
 EVT_RADIOBUTTON(XRCID("ID_CHARSET_CUSTOM"), CSiteManager::OnCharsetChange)
 EVT_CHOICE(XRCID("ID_PROTOCOL"), CSiteManager::OnProtocolSelChanged)
 EVT_BUTTON(XRCID("ID_COPY"), CSiteManager::OnCopySite)
+#ifdef __WXGTK__
+EVT_SPINCTRL(-1, CSiteManager::OnTimezoneOffsetChanged)
+#endif
 END_EVENT_TABLE()
 
 CSiteManager::CSiteManager()
 {
 	m_pSiteManagerMutex = 0;
+#ifdef __WXGTK__
+	m_timezoneOffsetHoursChanged;
+	m_timezoneOffsetMinutesChanged;
+#endif
 }
 
 CSiteManager::~CSiteManager()
@@ -49,7 +56,7 @@ bool CSiteManager::Create(wxWindow* parent)
 	{
 		int answer = wxMessageBox(_("The Site Manager is opened in another instance of FileZilla 3.\nDo you want to continue? Any changes made in the Site Manager won't be saved then."),
 								  _("Site Manager already open"), wxYES_NO | wxICON_QUESTION);
-		if (answer != wxYES)					
+		if (answer != wxYES)
 			return false;
 
 		delete m_pSiteManagerMutex;
@@ -68,12 +75,12 @@ bool CSiteManager::Create(wxWindow* parent)
 	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDERCLOSED"),  wxART_OTHER, wxSize(16, 16)));
 	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDER"),  wxART_OTHER, wxSize(16, 16)));
 	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_SERVER"),  wxART_OTHER, wxSize(16, 16)));
-	
+
 	pTree->AssignImageList(pImageList);
-	
+
 	Layout();
 	wxGetApp().GetWrapEngine()->WrapRecursive(this, 1.33, "Site Manager");
-	
+
 	wxSize minSize = GetSizer()->GetMinSize();
 
 	wxSize size = GetSize();
@@ -88,12 +95,12 @@ bool CSiteManager::Create(wxWindow* parent)
 	XRCCTRL(*this, "ID_TRANSFERMODE_PASSIVE", wxRadioButton)->Update();
 
 	SetCtrlState();
-		
+
 	return true;
 }
 
 void CSiteManager::CreateControls()
-{	
+{
 	wxXmlResource::Get()->LoadDialog(this, GetParent(), _T("ID_SITEMANAGER"));
 
 	wxChoice *pProtocol = XRCCTRL(*this, "ID_PROTOCOL", wxChoice);
@@ -117,9 +124,9 @@ void CSiteManager::OnOK(wxCommandEvent& event)
 		return;
 
 	UpdateServer();
-		
+
 	Save();
-	
+
 	EndModal(wxID_OK);
 }
 
@@ -144,7 +151,7 @@ void CSiteManager::OnConnect(wxCommandEvent& event)
 		wxBell();
 		return;
 	}
-	
+
 	if (!Verify())
 	{
 		wxBell();
@@ -152,9 +159,9 @@ void CSiteManager::OnConnect(wxCommandEvent& event)
 	}
 
 	UpdateServer();
-		
+
 	Save();
-	
+
 	EndModal(wxID_YES);
 }
 
@@ -162,7 +169,7 @@ class CSiteManagerXmlHandler
 {
 public:
 	virtual ~CSiteManagerXmlHandler() {};
-	
+
 	// Adds a folder and descents
 	virtual bool AddFolder(const wxString& name) = 0;
 	virtual bool AddSite(const wxString& name, CSiteManagerItemData* data) = 0;
@@ -190,7 +197,7 @@ public:
 		wxTreeItemId newItem = m_pTree->AppendItem(m_item, name, 0, 0);
 		m_pTree->SetItemImage(newItem, 1, wxTreeItemIcon_Expanded);
 		m_pTree->SetItemImage(newItem, 1, wxTreeItemIcon_SelectedExpanded);
-		
+
 		m_item = newItem;
 
 		return true;
@@ -199,7 +206,7 @@ public:
 	virtual bool AddSite(const wxString& name, CSiteManagerItemData* data)
 	{
 		m_pTree->AppendItem(m_item, name, 2, 2, data);
-		
+
 		return true;
 	}
 
@@ -229,7 +236,7 @@ bool CSiteManager::Load()
 
 	pTree->DeleteAllItems();
 
-	// We have to synchronize access to sitemanager.xml so that multiple processed don't write 
+	// We have to synchronize access to sitemanager.xml so that multiple processed don't write
 	// to the same file or one is reading while the other one writes.
 	CInterProcessMutex mutex(MUTEX_SITEMANAGER);
 
@@ -239,7 +246,7 @@ bool CSiteManager::Load()
 		m_ownSites = pTree->AppendItem(pTree->GetRootItem(), _("My Sites"), 0, 0);
 	else
 		m_ownSites = pTree->AddRoot(_("My Sites"), 0, 0);
-	
+
 	wxTreeItemId treeId = m_ownSites;
 	pTree->SelectItem(treeId);
 	pTree->SetItemImage(treeId, 1, wxTreeItemIcon_Expanded);
@@ -280,12 +287,12 @@ bool CSiteManager::Load(TiXmlElement *pElement, CSiteManagerXmlHandler* pHandler
 		TiXmlNode* pNode = pChild->FirstChild();
 		while (pNode && !pNode->ToText())
 			pNode = pNode->NextSibling();
-			
+
 		if (!pNode)
 			continue;
-	
+
 		wxString name = ConvLocal(pNode->ToText()->Value());
-		
+
 		if (!strcmp(pChild->Value(), "Folder"))
 		{
 			if (!pHandler->AddFolder(name))
@@ -302,7 +309,7 @@ bool CSiteManager::Load(TiXmlElement *pElement, CSiteManagerXmlHandler* pHandler
 				pHandler->AddSite(name, data);
 		}
 	}
-		
+
 	return true;
 }
 
@@ -339,10 +346,10 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
 	if (!pTree)
 		return false;
-		
+
 	if (!pElement || !treeId)
 	{
-		// We have to synchronize access to sitemanager.xml so that multiple processed don't write 
+		// We have to synchronize access to sitemanager.xml so that multiple processed don't write
 		// to the same file or one is reading while the other one writes.
 		CInterProcessMutex mutex(MUTEX_SITEMANAGER);
 
@@ -372,7 +379,7 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 		}
 
 		bool res = Save(pElement, m_ownSites);
-		
+
 		wxString error;
 		if (!SaveXmlFile(file, pDocument, &error))
 		{
@@ -383,7 +390,7 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 		delete pDocument->GetDocument();
 		return res;
 	}
-	
+
 	wxTreeItemId child;
 	wxTreeItemIdValue cookie;
 	child = pTree->GetFirstChild(treeId, cookie);
@@ -391,14 +398,14 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 	{
 		wxString name = pTree->GetItemText(child);
 		char* utf8 = ConvUTF8(name);
-		
+
 		CSiteManagerItemData* data = reinterpret_cast<CSiteManagerItemData* >(pTree->GetItemData(child));
 		if (!data)
 		{
 			TiXmlNode* pNode = pElement->InsertEndChild(TiXmlElement("Folder"));
 			pNode->InsertEndChild(TiXmlText(utf8));
 			delete [] utf8;
-		
+
 			Save(pNode->ToElement(), child);
 		}
 		else
@@ -429,10 +436,10 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 			pNode->InsertEndChild(TiXmlText(utf8));
 			delete [] utf8;
 		}
-		
+
 		child = pTree->GetNextChild(treeId, cookie);
 	}
-	
+
 	return false;
 }
 
@@ -441,17 +448,17 @@ void CSiteManager::OnNewFolder(wxCommandEvent&event)
 	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
 	if (!pTree)
 		return;
-		
+
 	wxTreeItemId item = pTree->GetSelection();
 	if (!item.IsOk())
 		return;
-	
+
 	if (pTree->GetItemData(item))
 		return;
-		
+
 	if (!Verify())
 		return;
-	
+
 	wxString newName = _("New folder");
 	int index = 2;
 	while (true)
@@ -469,12 +476,12 @@ void CSiteManager::OnNewFolder(wxCommandEvent&event)
 				found = true;
 				break;
 			}
-							
+
 			child = pTree->GetNextChild(item, cookie);
 		}
 		if (!found)
 			break;
-		
+
 		newName = _("New folder") + wxString::Format(_T(" %d"), index++);
 	}
 
@@ -493,7 +500,7 @@ bool CSiteManager::Verify()
 	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
 	if (!pTree)
 		return true;
-		
+
 	wxTreeItemId item = pTree->GetSelection();
 	if (!item.IsOk())
 		return true;
@@ -534,7 +541,7 @@ bool CSiteManager::Verify()
 		wxMessageBox(error);
 		return false;
 	}
-	
+
 	XRCCTRL(*this, "ID_HOST", wxTextCtrl)->SetValue(server.GetHost());
 	XRCCTRL(*this, "ID_PORT", wxTextCtrl)->SetValue(wxString::Format(_T("%d"), server.GetPort()));
 
@@ -582,7 +589,7 @@ void CSiteManager::OnBeginLabelEdit(wxTreeEvent& event)
 		event.Veto();
 		return;
 	}
-	
+
 	if (event.GetItem() != pTree->GetSelection())
 	{
 		if (!Verify())
@@ -591,7 +598,7 @@ void CSiteManager::OnBeginLabelEdit(wxTreeEvent& event)
 			return;
 		}
 	}
-		
+
 	wxTreeItemId item = event.GetItem();
 	if (!item.IsOk() || item == pTree->GetRootItem() || item == m_ownSites || IsPredefinedItem(item))
 	{
@@ -631,7 +638,7 @@ void CSiteManager::OnEndLabelEdit(wxTreeEvent& event)
 	wxString name = event.GetLabel();
 
 	wxTreeItemId parent = pTree->GetItemParent(item);
-		
+
 	wxTreeItemId child;
 	wxTreeItemIdValue cookie;
 	for (wxTreeItemId child = pTree->GetFirstChild(parent, cookie); child.IsOk(); child = pTree->GetNextChild(parent, cookie))
@@ -645,7 +652,7 @@ void CSiteManager::OnEndLabelEdit(wxTreeEvent& event)
 			return;
 		}
 	}
-	
+
 	pTree->SortChildren(parent);
 }
 
@@ -654,11 +661,11 @@ void CSiteManager::OnRename(wxCommandEvent& event)
 	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
 	if (!pTree)
 		return;
-	
+
 	wxTreeItemId item = pTree->GetSelection();
 	if (!item.IsOk() || item == pTree->GetRootItem() || item == m_ownSites || IsPredefinedItem(item))
 		return;
-	
+
 	pTree->EditLabel(item);
 }
 
@@ -667,11 +674,11 @@ void CSiteManager::OnDelete(wxCommandEvent& event)
 	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
 	if (!pTree)
 		return;
-		
+
 	wxTreeItemId item = pTree->GetSelection();
 	if (!item.IsOk() || item == pTree->GetRootItem() || item == m_ownSites || IsPredefinedItem(item))
 		return;
-		
+
 	pTree->Delete(item);
 }
 
@@ -697,17 +704,17 @@ void CSiteManager::OnNewSite(wxCommandEvent& event)
 	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
 	if (!pTree)
 		return;
-		
+
 	wxTreeItemId item = pTree->GetSelection();
 	if (!item.IsOk() || IsPredefinedItem(item))
 		return;
-	
+
 	if (pTree->GetItemData(item))
 		return;
-		
+
 	if (!Verify())
 		return;
-	
+
 	wxString newName = _("New site");
 	int index = 2;
 	while (true)
@@ -725,12 +732,12 @@ void CSiteManager::OnNewSite(wxCommandEvent& event)
 				found = true;
 				break;
 			}
-							
+
 			child = pTree->GetNextChild(item, cookie);
 		}
 		if (!found)
 			break;
-		
+
 		newName = _("New site") + wxString::Format(_T(" %d"), index++);
 	}
 
@@ -803,7 +810,7 @@ bool CSiteManager::UpdateServer()
 	data->m_server.SetUser(XRCCTRL(*this, "ID_USER", wxTextCtrl)->GetValue(),
 						   XRCCTRL(*this, "ID_PASS", wxTextCtrl)->GetValue());
 	data->m_server.SetAccount(XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->GetValue());
-	
+
 	data->m_comments = XRCCTRL(*this, "ID_COMMENTS", wxTextCtrl)->GetValue();
 
 	wxString serverType = XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->GetStringSelection();
@@ -819,13 +826,26 @@ bool CSiteManager::UpdateServer()
 		data->m_server.SetType(VXWORKS);
 	else
 		data->m_server.SetType(DEFAULT);
-	
+
 	data->m_localDir = XRCCTRL(*this, "ID_LOCALDIR", wxTextCtrl)->GetValue();
 	data->m_remoteDir = CServerPath();
 	data->m_remoteDir.SetType(data->m_server.GetType());
 	data->m_remoteDir.SetPath(XRCCTRL(*this, "ID_REMOTEDIR", wxTextCtrl)->GetValue());
-	data->m_server.SetTimezoneOffset(XRCCTRL(*this, "ID_TIMEZONE_HOURS", wxSpinCtrl)->GetValue() * 60 + 
-									 XRCCTRL(*this, "ID_TIMEZONE_MINUTES", wxSpinCtrl)->GetValue());
+	int hours, minutes;
+#ifdef __WXGTK__
+	if (!m_timezoneOffsetHoursChanged)
+		hours = data->m_server.GetTimezoneOffset() / 60;
+	else
+#endif
+		hours = XRCCTRL(*this, "ID_TIMEZONE_HOURS", wxSpinCtrl)->GetValue();
+#ifdef __WXGTK__
+	if (!m_timezoneOffsetMinutesChanged)
+		minutes = data->m_server.GetTimezoneOffset() % 60;
+	else
+#endif
+		minutes = XRCCTRL(*this, "ID_TIMEZONE_MINUTES", wxSpinCtrl)->GetValue();
+
+	data->m_server.SetTimezoneOffset(hours * 60 + minutes);
 
 	if (XRCCTRL(*this, "ID_TRANSFERMODE_ACTIVE", wxRadioButton)->GetValue())
 		data->m_server.SetPasvMode(MODE_ACTIVE);
@@ -925,7 +945,7 @@ void CSiteManager::SetCtrlState()
 		return;
 
 	wxTreeItemId item = pTree->GetSelection();
-	
+
 	const bool predefined = IsPredefinedItem(item);
 
 	CSiteManagerItemData* data = 0;
@@ -953,7 +973,7 @@ void CSiteManager::SetCtrlState()
 		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->SetValue(_T(""));
 		XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->SetValue(_T(""));
 		XRCCTRL(*this, "ID_COMMENTS", wxTextCtrl)->SetValue(_T(""));
-		
+
 		XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->SetStringSelection(_("Default"));
 		XRCCTRL(*this, "ID_LOCALDIR", wxTextCtrl)->SetValue(_T(""));
 		XRCCTRL(*this, "ID_REMOTEDIR", wxTextCtrl)->SetValue(_T(""));
@@ -1055,6 +1075,10 @@ void CSiteManager::SetCtrlState()
 		XRCCTRL(*this, "ID_TIMEZONE_HOURS", wxWindow)->Enable(!predefined);
 		XRCCTRL(*this, "ID_TIMEZONE_MINUTES", wxSpinCtrl)->SetValue(data->m_server.GetTimezoneOffset() % 60);
 		XRCCTRL(*this, "ID_TIMEZONE_MINUTES", wxWindow)->Enable(!predefined);
+#ifdef __WXGTK__
+		m_timezoneOffsetHoursChanged = false;
+		m_timezoneOffsetMinutesChanged = false;
+#endif
 
 		enum PasvMode pasvMode = data->m_server.GetPasvMode();
 		if (pasvMode == MODE_ACTIVE)
@@ -1117,15 +1141,15 @@ void CSiteManager::OnCopySite(wxCommandEvent& event)
 	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
 	if (!pTree)
 		return;
-		
+
 	wxTreeItemId item = pTree->GetSelection();
 	if (!item.IsOk())
 		return;
-	
+
 	CSiteManagerItemData* data = reinterpret_cast<CSiteManagerItemData* >(pTree->GetItemData(item));
 	if (!data)
 		return;
-		
+
 	if (!Verify())
 		return;
 
@@ -1156,12 +1180,12 @@ void CSiteManager::OnCopySite(wxCommandEvent& event)
 				found = true;
 				break;
 			}
-							
+
 			child = pTree->GetNextChild(parent, cookie);
 		}
 		if (!found)
 			break;
-		
+
 		newName = wxString::Format(_("Copy (%d) of %s"), index++, name.c_str());
 	}
 
@@ -1182,7 +1206,7 @@ bool CSiteManager::LoadDefaultSites()
 
 	wxFileName name(defaultsDir, _T("fzdefaults.xml"));
 	CXmlFile file(name);
-	
+
 	TiXmlElement* pDocument = file.Load();
 	if (!pDocument)
 		return false;
@@ -1244,7 +1268,7 @@ public:
 
 		return true;
 	}
-	
+
 	virtual bool AddSite(const wxString& name, CSiteManagerItemData* data)
 	{
 		wxMenuItem* pItem = m_pMenu->Append(wxID_ANY, name);
@@ -1258,7 +1282,7 @@ public:
 	{
 		if (m_parents.empty() || m_childNames.empty())
 			return false;
-		
+
 		wxMenu* pChild = m_pMenu;
 		m_pMenu = m_parents.back();
 		if (pChild->GetMenuItemCount())
@@ -1284,12 +1308,12 @@ wxMenu* CSiteManager::GetSitesMenu()
 {
 	ClearIdMap();
 
-	// We have to synchronize access to sitemanager.xml so that multiple processed don't write 
+	// We have to synchronize access to sitemanager.xml so that multiple processed don't write
 	// to the same file or one is reading while the other one writes.
 	CInterProcessMutex mutex(MUTEX_SITEMANAGER);
 
 	wxMenu* predefinedSites = GetSitesMenu_Predefied(m_idMap);
-	
+
 	CXmlFile file(_T("sitemanager"));
 	TiXmlElement* pDocument = file.Load();
 	if (!pDocument)
@@ -1339,7 +1363,7 @@ wxMenu* CSiteManager::GetSitesMenu()
 
 		return pRootMenu;
 	}
-	
+
 	if (predefinedSites)
 		return predefinedSites;
 
@@ -1365,7 +1389,7 @@ wxMenu* CSiteManager::GetSitesMenu_Predefied(std::map<int, CSiteManagerItemData*
 
 	wxFileName name(defaultsDir, _T("fzdefaults.xml"));
 	CXmlFile file(name);
-	
+
 	TiXmlElement* pDocument = file.Load();
 	if (!pDocument)
 		return 0;
@@ -1406,6 +1430,17 @@ CSiteManagerItemData* CSiteManager::GetSiteById(int id)
 		pData = 0;
 
 	ClearIdMap();
-	
+
 	return pData;
 }
+
+#ifdef __WXGTK__
+void CSiteManager::OnTimezoneOffsetChanged(wxSpinEvent& event)
+{
+	if (event.GetId() == XRCID("ID_TIMEZONE_HOURS"))
+		m_timezoneOffsetHoursChanged = true;
+	else
+		m_timezoneOffsetMinutesChanged = true;
+	event.Skip();
+}
+#endif
