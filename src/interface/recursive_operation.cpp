@@ -45,7 +45,13 @@ void CRecursiveOperation::StartRecursiveOperation(enum OperationMode mode, const
 
 	if ((mode == recursive_download || mode == recursive_addtoqueue) && !m_pQueue)
 		return;
-	
+
+	if (m_dirsToVisit.empty())
+	{
+		// Nothing to do in this case
+		return;
+	}
+
 	m_operationMode = mode;
 
 	m_startDir = startDir;
@@ -128,7 +134,7 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 
 	if (!pDirectoryListing->path.IsSubdirOf(m_startDir, false))
 	{
-		// In some cases (chmod from tree for example) it is neccessary to list the 
+		// In some cases (chmod from tree for example) it is neccessary to list the
 		// parent first
 		if (pDirectoryListing->path != m_startDir || !m_allowParent)
 		{
