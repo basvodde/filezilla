@@ -95,6 +95,7 @@ protected:
 	// wxSpinCtrl::SetValue(x); wxASSERT(wxSpinControl::GetValue() == x) failes on GTK
 	bool m_timezoneOffsetHoursChanged;
 	bool m_timezoneOffsetMinutesChanged;
+	bool m_limitConnectionsChanged;
 	void OnTimezoneOffsetChanged(wxSpinEvent& event);
 #endif
 };

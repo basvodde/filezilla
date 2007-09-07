@@ -41,6 +41,7 @@ CSiteManager::CSiteManager()
 #ifdef __WXGTK__
 	m_timezoneOffsetHoursChanged;
 	m_timezoneOffsetMinutesChanged;
+	m_limitConnectionsChanged;
 #endif
 }
 
@@ -856,7 +857,10 @@ bool CSiteManager::UpdateServer()
 
 	if (XRCCTRL(*this, "ID_LIMITMULTIPLE", wxCheckBox)->GetValue())
 	{
-		data->m_server.MaximumMultipleConnections(XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->GetValue());
+#ifdef __WXGTK__
+		if (m_limitConnectionsChanged)
+#endif
+			data->m_server.MaximumMultipleConnections(XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->GetValue());
 	}
 	else
 		data->m_server.MaximumMultipleConnections(0);
@@ -1078,6 +1082,7 @@ void CSiteManager::SetCtrlState()
 #ifdef __WXGTK__
 		m_timezoneOffsetHoursChanged = false;
 		m_timezoneOffsetMinutesChanged = false;
+		m_limitConnectionsChanged = false;
 #endif
 
 		enum PasvMode pasvMode = data->m_server.GetPasvMode();
@@ -1437,7 +1442,9 @@ CSiteManagerItemData* CSiteManager::GetSiteById(int id)
 #ifdef __WXGTK__
 void CSiteManager::OnTimezoneOffsetChanged(wxSpinEvent& event)
 {
-	if (event.GetId() == XRCID("ID_TIMEZONE_HOURS"))
+	if (event.GetId() == XRCID("ID_LIMITMULTIPLE"))
+		m_limitConnectionsChanged = true;
+	else if (event.GetId() == XRCID("ID_TIMEZONE_HOURS"))
 		m_timezoneOffsetHoursChanged = true;
 	else
 		m_timezoneOffsetMinutesChanged = true;
