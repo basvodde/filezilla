@@ -35,7 +35,6 @@
   !include Library.nsh
   !include "WinVer.nsh"
   !include "nsDialogs.nsh"
-  !insertmacro VersionCompare
 
 ;--------------------------------
 ;Variables
@@ -170,6 +169,99 @@ installonoldwindows:
 
 FunctionEnd
 
+Function FZVersionCompare
+
+  Exch $1
+  Exch
+  Exch $0
+
+  Push $2
+  Push $3
+  Push $4
+
+versioncomparebegin:
+  ${If} $0 == ""
+  ${AndIf} $1 == ""
+    Push 0
+    goto versioncomparedone
+  ${EndIf}
+
+  StrCpy $2 0
+  StrCpy $3 0
+
+  ; Parse rc / beta suffixes for segments
+  StrCpy $4 $0 2
+  ${If} $4 == "rc"
+    StrCpy $2 100
+    StrCpy $0 $0 "" 2
+  ${Else}
+    StrCpy $4 $0 4
+    ${If} $4 == "beta"
+      StrCpy $0 $0 "" 4
+    ${Else}
+      StrCpy $2 10000
+    ${EndIf}
+  ${EndIf}
+
+  StrCpy $4 $1 2
+  ${If} $4 == "rc"
+    StrCpy $3 100
+    StrCpy $1 $1 "" 2
+  ${Else}
+    StrCpy $4 $1 4
+    ${If} $4 == "beta"
+      StrCpy $1 $1 "" 4
+    ${Else}
+      StrCpy $3 10000
+    ${EndIf}
+  ${EndIf}
+
+split1loop:
+
+  StrCmp $0 "" split1loopdone
+  StrCpy $4 $0 1
+  StrCpy $0 $0 "" 1
+  StrCmp $4 "." split1loopdone
+  StrCmp $4 "-" split1loopdone
+  StrCpy $2 $2$4
+  goto split1loop
+split1loopdone:
+
+split2loop:
+
+  StrCmp $1 "" split2loopdone
+  StrCpy $4 $1 1
+  StrCpy $1 $1 "" 1
+  StrCmp $4 "." split2loopdone
+  StrCmp $4 "-" split2loopdone
+  StrCpy $3 $3$4
+  goto split2loop
+split2loopdone:
+
+  ${If} $2 > $3
+    Push 1
+  ${ElseIf} $3 > $2
+    Push -1
+  ${Else}
+    goto versioncomparebegin
+  ${EndIf}
+
+
+versioncomparedone:
+
+  Exch
+  Pop $4
+  Exch
+  Pop $3
+  Exch
+  Pop $2
+  Exch
+  Pop $1
+  Exch
+  Pop $0
+
+FunctionEnd
+
 Function PageReinstall
 
   ${If} $PREVIOUS_VERSION == ""
@@ -179,8 +271,11 @@ Function PageReinstall
   nsDialogs::Create /NOUNLOAD 1018
   Pop $0
 
-  ${VersionCompare} "${VERSION}" $PREVIOUS_VERSION $R0
-  IntCmp $R0 1 new_version same_version older_version
+  Push "${VERSION}"
+  Push $PREVIOUS_VERSION
+  Call FZVersionCompare
+  Pop $R0
+  IntCmp $R0 0 same_version older_version new_version
 
  new_version:
 
@@ -266,8 +361,11 @@ Function PageLeaveReinstall
 
     no_remove_uninstaller:
 
-    ${VersionCompare} "${VERSION}" $PREVIOUS_VERSION $R0
-    IntCmp $R0 1 +2 0 +2
+    Push "${Version}"
+    Push $PREVIOUS_VERSION
+    Call FZVersionCompare
+    Pop $R0
+    IntCmp $R0 0 0 +2 +2
     Quit
 
     BringToFront
