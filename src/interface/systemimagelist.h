@@ -40,6 +40,10 @@ public:
 
 protected:
 	wxImageListEx *m_pImageList;
+
+#ifndef __WXMSW__
+	std::map<wxString, int> m_iconCache;
+#endif
 };
 
 #endif //__SYSTEMIMAGELIST_H__

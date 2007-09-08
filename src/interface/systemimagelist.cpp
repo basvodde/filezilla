@@ -111,25 +111,34 @@ int CSystemImageList::GetIconIndex(enum filetype type, const wxString& fileName 
 	if (ext == _T(""))
 		return icon;
 
-	wxFileType *pType = wxTheMimeTypesManager->GetFileTypeFromExtension(ext);
-	if (pType)
-	{
-		wxIconLocation loc;
-		if (pType->GetIcon(&loc) && loc.IsOk())
-		{
-			wxLogNull nul;
-			wxIcon newIcon(loc);
+	std::map<wxString, int>::iterator cacheIter = m_iconCache.find(ext);
+	if (cacheIter != m_iconCache.end())
+		return cacheIter->second;
 
-			if (newIcon.Ok())
-			{
-				wxBitmap bmp = PrepareIcon(newIcon, wxSize(16, 16));
-				int index = m_pImageList->Add(bmp);
-				if (index > 0)
-					icon = index;
-			}
-		}
-		delete pType;
+	wxFileType *pType = wxTheMimeTypesManager->GetFileTypeFromExtension(ext);
+	if (!pType)
+	{
+		m_iconCache[ext] = icon;
+		return icon;
 	}
+	
+	wxIconLocation loc;
+	if (pType->GetIcon(&loc) && loc.IsOk())
+	{
+		wxLogNull nul;
+		wxIcon newIcon(loc);
+
+		if (newIcon.Ok())
+		{
+			wxBitmap bmp = PrepareIcon(newIcon, wxSize(16, 16));
+			int index = m_pImageList->Add(bmp);
+			if (index > 0)
+				icon = index;
+		}
+	}
+	delete pType;
+
+	m_iconCache[ext] = icon;
 	return icon;
 #endif
 	return -1;

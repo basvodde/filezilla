@@ -755,15 +755,29 @@ wxString CLocalListView::GetType(wxString name, bool dir)
 	if (ext == _T(""))
 		return _("File");
 
-	wxFileType *pType = wxTheMimeTypesManager->GetFileTypeFromExtension(ext);
-	if (!pType)
-		return _("File");
+	std::map<wxString, wxString>::iterator typeIter = m_fileTypeMap.find(ext);
+	if (typeIter != m_fileTypeMap.end())
+		return typeIter->second;
 
 	wxString desc;
-	if (pType->GetDescription(&desc) && desc != _T(""))
+	wxFileType *pType = wxTheMimeTypesManager->GetFileTypeFromExtension(ext);
+	if (!pType)
+	{
+		m_fileTypeMap[ext] = desc;
 		return desc;
+	}
 
-	return _T("File");
+	if (pType->GetDescription(&desc) && desc != _T(""))
+	{
+		delete pType;
+		m_fileTypeMap[ext] = desc;
+		return desc;
+	}
+	delete pType;
+
+	desc = _("File");
+	m_fileTypeMap[ext.MakeLower()] = desc;
+	return desc;
 #endif
 }
 
