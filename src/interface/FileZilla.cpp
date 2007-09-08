@@ -177,11 +177,8 @@ USE AT OWN RISK"), _T("Important Information"));
 			COptions::Get()->SetOption(OPTION_GREETINGVERSION, CBuildInfo::GetVersion());
 
 			wxMessageBox(wxString::Format(_T("Welcome to FileZilla %s\r\n\r\n\
-This is a beta release of FileZilla.\r\n\
-A lot of features are still in development.\r\n\r\n\
-Please report all bugs you find.\r\n\r\n\
-DO NOT post feature requests.\r\n\r\n\
-USE AT OWN RISK"), CBuildInfo::GetVersion().c_str()), _T("Important Information"));
+Please report all bugs you may encounter.\
+"), CBuildInfo::GetVersion().c_str()), _T("Welcome"));
 		}
 	}
 #endif
