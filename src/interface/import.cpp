@@ -190,11 +190,15 @@ bool CImportDialog::ImportLegacySites(TiXmlElement* pSitesToImport, TiXmlElement
 			break;
 		}
 
+		bool dontSavePass = GetAttributeInt(pImportSite, "DontSavePass") == 1;
+
 		int logontype = GetAttributeInt(pImportSite, "Logontype");
 		if (logontype < 0 || logontype > 2)
 			continue;
 		if (logontype == 2)
 			logontype = 4;
+		if (logontype == 1 && dontSavePass)
+			logontype = 2;
 
 		wxString user = GetTextAttribute(pImportSite, "User");
 		wxString pass = DecodeLegacyPassword(GetTextAttribute(pImportSite, "Pass"));
