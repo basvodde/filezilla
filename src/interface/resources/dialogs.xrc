@@ -1811,7 +1811,6 @@
     </object>
   </object>
   <object class="wxPanel" name="ID_SETTINGS_LANGUAGE">
-    <style></style>
     <object class="wxBoxSizer">
       <orient>wxVERTICAL</orient>
       <object class="sizeritem">
@@ -1848,7 +1847,6 @@
     </object>
   </object>
   <object class="wxPanel" name="ID_SETTINGS_UPDATECHECK">
-    <style></style>
     <object class="wxBoxSizer">
       <orient>wxVERTICAL</orient>
       <object class="sizeritem">
@@ -1903,6 +1901,123 @@
           </object>
         </object>
         <option>1</option>
+        <flag>wxGROW</flag>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_FORMATTING">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Date formatting</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_DATEFORMAT_DEFAULT">
+                  <label>Use system &amp;defaults</label>
+                  <style>wxRB_GROUP</style>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_DATEFORMAT_ISO">
+                  <label>&amp;ISO 8601 (example: 2007-09-15)</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_DATEFORMAT_CUSTOM">
+                  <label>C&amp;ustom</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_CUSTOM_DATEFORMAT"/>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <cols>2</cols>
+                  <hgap>5</hgap>
+                  <object class="sizeritem">
+                    <object class="wxStaticText" name="ID_CUSTOM_DATEFORMAT_EXAMPLE">
+                      <label>(example: %%Y-%%m-%%d)</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                </object>
+                <flag>wxLEFT</flag>
+                <border>17</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Please read http://filezilla-project.org/wiki/index.php/Date__and__Time__formatting for details</label>
+                </object>
+                <flag>wxLEFT</flag>
+                <border>17</border>
+              </object>
+              <cols>1</cols>
+              <vgap>5</vgap>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Time formatting</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_TIMEFORMAT_DEFAULT">
+                  <label>U&amp;se system defaults</label>
+                  <style>wxRB_GROUP</style>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_TIMEFORMAT_ISO">
+                  <label>I&amp;SO 8601 (example: 15:47:33)</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_TIMEFORMAT_CUSTOM">
+                  <label>Cus&amp;tom</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_CUSTOM_TIMEFORMAT"/>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <cols>2</cols>
+                  <hgap>5</hgap>
+                  <object class="sizeritem">
+                    <object class="wxStaticText" name="ID_CUSTOM_TIMEFORMAT_EXAMPLE">
+                      <label>(example: %%H:%%M)</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                </object>
+                <flag>wxLEFT</flag>
+                <border>17</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Please read http://filezilla-project.org/wiki/index.php/Date_and_Time_formatting for details</label>
+                </object>
+                <flag>wxLEFT</flag>
+                <border>17</border>
+              </object>
+              <cols>1</cols>
+              <vgap>5</vgap>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+        </object>
         <flag>wxGROW</flag>
       </object>
     </object>
