@@ -57,6 +57,8 @@ wxString wxDialogEx::GetLabel(int id)
 
 int wxDialogEx::ShowModal()
 {
+	CenterOnParent();
+
 #ifdef __WXMSW__
 	::EndMenu();
 #endif
