@@ -190,6 +190,8 @@ EVT_TREE_SEL_CHANGED(wxID_ANY, CLocalTreeView::OnSelectionChanged)
 EVT_TREE_BEGIN_DRAG(wxID_ANY, CLocalTreeView::OnBeginDrag)
 #ifndef __WXMSW__
 EVT_KEY_DOWN(CLocalTreeView::OnKeyDown)
+#else
+EVT_COMMAND(-1, fzEVT_VOLUMESENUMERATED, CLocalTreeView::OnVolumesEnumerated)
 #endif //__WXMSW__
 END_EVENT_TABLE()
 
@@ -204,6 +206,8 @@ CLocalTreeView::CLocalTreeView(wxWindow* parent, wxWindowID id, CState *pState, 
 	SetImageList(GetSystemImageList());
 
 #ifdef __WXMSW__
+	m_pVolumeEnumeratorThread = 0;
+
 	CreateRoot();
 #else
 	AddRoot(_T("/"), GetIconIndex(dir), GetIconIndex(opened_dir));
@@ -215,6 +219,9 @@ CLocalTreeView::CLocalTreeView(wxWindow* parent, wxWindowID id, CState *pState, 
 
 CLocalTreeView::~CLocalTreeView()
 {
+#ifdef __WXMSW__
+	delete m_pVolumeEnumeratorThread;
+#endif
 }
 
 void CLocalTreeView::SetDir(wxString localDir)
@@ -376,6 +383,13 @@ bool CLocalTreeView::DisplayDrives(wxTreeItemId parent)
 		return false;
 	}
 
+	m_pVolumeEnumeratorThread = new CVolumeDescriptionEnumeratorThread(this);
+	if (m_pVolumeEnumeratorThread->Failed())
+	{
+		delete m_pVolumeEnumeratorThread;
+		m_pVolumeEnumeratorThread = 0;
+	}
+
 	const wxChar* pDrive = drives;
 	while (*pDrive)
 	{
@@ -400,17 +414,6 @@ bool CLocalTreeView::DisplayDrives(wxTreeItemId parent)
 		if (drive.Right(1) == _T("\\"))
 			drive = drive.RemoveLast();
 
-		// Get the label of the drive
-		wxChar buffer[501];
-		BOOL res = GetVolumeInformation(pDrive, buffer, 500, 0, 0, 0, 0, 0);
-		int oldErrorMode = SetErrorMode(SEM_FAILCRITICALERRORS);
-		SetErrorMode(oldErrorMode);
-		if (res && buffer[0])
-		{
-			drive += _T(" (");
-			drive += buffer;
-			drive += _T(")");
-		}
 		wxTreeItemId item = AppendItem(parent, drive, GetIconIndex(dir, pDrive));
 		AppendItem(item, _T(""));
 		SortChildren(parent);
@@ -934,6 +937,188 @@ bool CLocalTreeView::CreateRoot()
 	Expand(m_drives);
 
 	return true;
+}
+
+void CLocalTreeView::OnVolumesEnumerated(wxCommandEvent& event)
+{
+	if (!m_pVolumeEnumeratorThread)
+		return;
+
+	std::list<CVolumeDescriptionEnumeratorThread::t_VolumeInfo> volumeInfo;
+	volumeInfo = m_pVolumeEnumeratorThread->GetVolumes();
+
+	delete m_pVolumeEnumeratorThread;
+	m_pVolumeEnumeratorThread = 0;
+
+	for (std::list<CVolumeDescriptionEnumeratorThread::t_VolumeInfo>::const_iterator iter = volumeInfo.begin(); iter != volumeInfo.end(); iter++)
+	{
+		wxString drive = iter->volume;
+
+		wxTreeItemIdValue tmp;
+		wxTreeItemId item = GetFirstChild(m_drives, tmp);
+		while (item)
+		{
+			wxString name = GetItemText(item);
+			if (name == drive || name.Left(drive.Len() + 1) == drive + _T(" "))
+			{
+				SetItemText(item, drive + _T(" (") + iter->volumeName + _T(")"));
+				break;
+			}
+			item = GetNextChild(m_drives, tmp);
+		}
+	}
+}
+
+DEFINE_EVENT_TYPE(fzEVT_VOLUMESENUMERATED)
+
+CVolumeDescriptionEnumeratorThread::CVolumeDescriptionEnumeratorThread(wxEvtHandler* pEvtHandler)
+	: wxThreadEx(wxTHREAD_JOINABLE),
+	  m_pEvtHandler(pEvtHandler)
+{
+	m_failure = false;
+	m_stop = false;
+	m_running = true;
+
+	if (Create() != wxTHREAD_NO_ERROR)
+	{
+		m_running = false;
+		m_failure = true;
+	}
+	Run();
+}
+
+CVolumeDescriptionEnumeratorThread::~CVolumeDescriptionEnumeratorThread()
+{
+	m_stop = true;
+	Wait();
+
+	for (std::list<t_VolumeInfoInternal>::const_iterator iter = m_volumeInfo.begin(); iter != m_volumeInfo.end(); iter++)
+	{
+		delete [] iter->pVolume;
+		delete [] iter->pVolumeName;
+	}
+	m_volumeInfo.clear();
+}
+
+wxThread::ExitCode CVolumeDescriptionEnumeratorThread::Entry()
+{
+	if (!GetDrives())
+		m_failure = true;
+
+	m_running = false;
+
+	wxCommandEvent evt(fzEVT_VOLUMESENUMERATED);
+	m_pEvtHandler->AddPendingEvent(evt);
+
+	return 0;
+}
+
+bool CVolumeDescriptionEnumeratorThread::GetDrives()
+{
+	long drivesToHide = 0;
+	// Adhere to the NODRIVES group policy
+	wxRegKey key(_T("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer"));
+	if (key.Exists())
+	{
+		if (!key.HasValue(_T("NoDrives")) || !key.QueryValue(_T("NoDrives"), &drivesToHide))
+			drivesToHide = 0;
+	}
+
+	int len = GetLogicalDriveStrings(0, 0);
+	if (!len)
+		return false;
+
+	wxChar* drives = new wxChar[len + 1];
+
+	if (!GetLogicalDriveStrings(len, drives))
+	{
+		delete [] drives;
+		return false;
+	}
+
+	const wxChar* pDrive = drives;
+	while (*pDrive)
+	{
+		if (m_stop)
+		{
+			delete [] drives;
+			return false;
+		}
+
+		// Check if drive should be hidden by default
+		if (pDrive[0] != 0 && pDrive[1] == ':')
+		{
+			int bit = -1;
+			char letter = pDrive[0];
+			if (letter >= 'A' && letter <= 'Z')
+				bit = 1 << (letter - 'A');
+			if (letter >= 'a' && letter <= 'z')
+				bit = 1 << (letter - 'a');
+
+			if (bit != -1 && drivesToHide & bit)
+			{
+				pDrive += wxStrlen(pDrive) + 1;
+				continue;
+			}
+		}
+
+		int len = wxStrlen(pDrive);
+		wxChar* pVolume = new wxChar[len + 1];
+		wxStrcpy(pVolume, pDrive);
+		if (pVolume[len - 1] == '\\')
+			pVolume[len - 1] = 0;
+		if (!*pVolume)
+		{
+			delete [] pVolume;
+			pDrive += len + 1;
+			continue;
+		}
+
+		// Get the label of the drive
+		wxChar* pVolumeName = new wxChar[501];
+		int oldErrorMode = SetErrorMode(SEM_FAILCRITICALERRORS);
+		BOOL res = GetVolumeInformation(pDrive, pVolumeName, 500, 0, 0, 0, 0, 0);
+		SetErrorMode(oldErrorMode);
+		if (res && pVolumeName[0])
+		{
+			t_VolumeInfoInternal volumeInfo;
+			volumeInfo.pVolume = pVolume;
+			volumeInfo.pVolumeName = pVolumeName;
+			m_volumeInfo.push_back(volumeInfo);
+		}
+		else
+		{
+			delete [] pVolumeName;
+			delete [] pVolume;
+		}
+
+		pDrive += wxStrlen(pDrive) + 1;
+	}
+
+	delete [] drives;
+
+	return true;
+}
+
+std::list<CVolumeDescriptionEnumeratorThread::t_VolumeInfo> CVolumeDescriptionEnumeratorThread::GetVolumes()
+{
+	std::list<t_VolumeInfo> volumeInfo;
+
+	if (m_running)
+		return volumeInfo;
+
+	for (std::list<t_VolumeInfoInternal>::const_iterator iter = m_volumeInfo.begin(); iter != m_volumeInfo.end(); iter++)
+	{
+		t_VolumeInfo info;
+		info.volume = iter->pVolume;
+		delete [] iter->pVolume;
+		info.volumeName = iter->pVolumeName;
+		delete [] iter->pVolumeName;
+		volumeInfo.push_back(info);
+	}
+	m_volumeInfo.clear();
+
+	return volumeInfo;
 }
 
 #endif
