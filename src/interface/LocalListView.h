@@ -55,6 +55,8 @@ public:
 		wxDateTime lastModified;
 	};
 
+	void InitDateFormat();
+
 protected:
 	bool IsItemValid(unsigned int item) const;
 	t_fileData *GetData(unsigned int item);
@@ -89,6 +91,8 @@ protected:
 	int m_dropTarget;
 
 	bool m_hasParent;
+
+	wxString m_dateFormat;
 
 	// Event handlers
 	DECLARE_EVENT_TABLE();

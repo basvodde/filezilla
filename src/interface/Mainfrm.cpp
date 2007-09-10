@@ -1437,6 +1437,9 @@ void CMainFrame::CheckChangedSettings()
 	UpdateLayout();
 
 	m_pAsyncRequestQueue->RecheckDefaults();
+
+	m_pLocalListView->InitDateFormat();
+	m_pRemoteListView->InitDateFormat();
 }
 
 void CMainFrame::ConnectNavigationHandler(wxEvtHandler* handler)

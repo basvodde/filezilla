@@ -20,6 +20,8 @@ public:
 
 	bool DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, wxString path, bool queueOnly);
 
+	void InitDateFormat();
+
 protected:
 	// Clears all selections and returns the list of items that were selected
 	std::list<wxString> RememberSelectedItems(wxString& focused);
@@ -90,6 +92,9 @@ protected:
 
 	wxDropTarget* m_pDropTarget;
 	int m_dropTarget;
+
+	wxString m_dateFormat;
+	wxString m_timeFormat;
 
 	DECLARE_EVENT_TABLE()
 	void OnItemActivated(wxListEvent &event);

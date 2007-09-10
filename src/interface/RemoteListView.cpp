@@ -374,6 +374,8 @@ CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState
 	// scroll events, we have to connect the event handler to it.
 	((wxWindow*)m_mainWin)->Connect(-1, wxEVT_KEY_DOWN, wxKeyEventHandler(CRemoteListView::OnKeyDown), 0, this);
 #endif
+
+	InitDateFormat();
 }
 
 CRemoteListView::~CRemoteListView()
@@ -432,9 +434,9 @@ wxString CRemoteListView::OnGetItemText(long item, long column) const
 			return _T("");
 
 		if (entry.hasTime)
-			return entry.time.Format(_T("%c"));
+			return entry.time.Format(m_timeFormat);
 		else
-			return entry.time.Format(_T("%x"));
+			return entry.time.Format(m_dateFormat);
 	}
 	else if (column == 4)
 		return (*m_pDirectoryListing)[index].permissions;
@@ -2303,4 +2305,24 @@ bool CRemoteListView::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataO
 	pRecursiveOperation->StartRecursiveOperation(queueOnly ? CRecursiveOperation::recursive_addtoqueue : CRecursiveOperation::recursive_download, pRemoteDataObject->GetServerPath());
 
 	return true;
+}
+
+void CRemoteListView::InitDateFormat()
+{
+	const wxString& dateFormat = COptions::Get()->GetOption(OPTION_DATE_FORMAT);
+	const wxString& timeFormat = COptions::Get()->GetOption(OPTION_TIME_FORMAT);
+	
+	if (dateFormat == _T("1"))
+		m_dateFormat = _T("%Y-%m-%d");
+	else if (dateFormat[0] == '2')
+		m_dateFormat = dateFormat.Mid(1);
+	else
+		m_dateFormat = _T("%x");
+
+	if (timeFormat == _T("1"))
+		m_timeFormat = m_dateFormat + _T(" %H:%M");
+	else if (timeFormat[0] == '2')
+		m_timeFormat = m_dateFormat + _T(" ") + timeFormat.Mid(1);
+	else
+		m_timeFormat = m_dateFormat + _T(" %X");
 }

@@ -293,6 +293,8 @@ CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, 
 	// scroll events, we have to connect the event handler to it.
 	((wxWindow*)m_mainWin)->Connect(-1, wxEVT_KEY_DOWN, wxKeyEventHandler(CLocalListView::OnKeyDown), 0, this);
 #endif
+
+	InitDateFormat();
 }
 
 CLocalListView::~CLocalListView()
@@ -479,7 +481,7 @@ wxString CLocalListView::OnGetItemText(long item, long column) const
 		if (!data->hasTime)
 			return _T("");
 
-		return data->lastModified.Format(_T("%c"));
+		return data->lastModified.Format(m_dateFormat);
 	}
 	return _T("");
 }
@@ -2008,4 +2010,26 @@ void CLocalListView::RefreshFile(const wxString& file)
 	}
 
 	Refresh(false);
+}
+
+void CLocalListView::InitDateFormat()
+{
+	const wxString& dateFormat = COptions::Get()->GetOption(OPTION_DATE_FORMAT);
+	const wxString& timeFormat = COptions::Get()->GetOption(OPTION_TIME_FORMAT);
+	
+	if (dateFormat == _T("1"))
+		m_dateFormat = _T("%Y-%m-%d");
+	else if (dateFormat[0] == '2')
+		m_dateFormat = dateFormat.Mid(1);
+	else
+		m_dateFormat = _T("%x");
+
+	m_dateFormat += ' ';
+
+	if (timeFormat == _T("1"))
+		m_dateFormat += _T("%H:%M");
+	else if (timeFormat[0] == '2')
+		m_dateFormat += timeFormat.Mid(1);
+	else
+		m_dateFormat += _T("%X");
 }
