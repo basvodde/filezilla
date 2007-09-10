@@ -63,6 +63,20 @@ wxString COptionsPage::GetText(int id)
 	return pTextCtrl->GetValue();
 }
 
+bool COptionsPage::SetText(int id, const wxString& text, bool& failure)
+{
+	wxTextCtrl* pTextCtrl = wxDynamicCast(FindWindow(id), wxTextCtrl);
+	if (!pTextCtrl)
+	{
+		failure = true;
+		return false;
+	}
+
+	pTextCtrl->SetValue(text);
+
+	return true;
+}
+
 void COptionsPage::SetRCheck(int id, bool checked, bool& failure)
 {
 	wxRadioButton* pRadioButton = wxDynamicCast(FindWindow(id), wxRadioButton);

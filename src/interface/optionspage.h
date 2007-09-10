@@ -32,6 +32,7 @@ public:
 	bool GetCheck(int id);
 	bool GetRCheck(int id);
 	wxString GetText(int id);
+	bool SetText(int id, const wxString& text, bool& failure);
 	wxString GetStaticText(int id);
 	int GetChoice(int id);
 
