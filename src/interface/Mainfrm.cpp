@@ -217,8 +217,20 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	m_pRemoteTreeViewPanel->SetWindow(m_pRemoteTreeView);
 	m_pRemoteListViewPanel->SetWindow(m_pRemoteListView);
 
-	m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter, 100);
-	m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueuePane);
+	if (COptions::Get()->GetOptionVal(OPTION_SHOW_MESSAGELOG))
+		m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter, 100);
+	else
+	{
+		m_pStatusView->Hide();
+		m_pTopSplitter->Initialize(m_pBottomSplitter);
+	}
+	if (COptions::Get()->GetOptionVal(OPTION_SHOW_QUEUE))
+		m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueuePane);
+	else
+	{
+		m_pQueuePane->Hide();
+		m_pBottomSplitter->Initialize(m_pViewSplitter);
+	}
 
 	const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
 	const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
@@ -1099,6 +1111,7 @@ void CMainFrame::OnToggleLogView(wxCommandEvent& event)
 
 		ApplySplitterConstraints();
 	}
+	COptions::Get()->SetOption(OPTION_SHOW_MESSAGELOG, m_pTopSplitter->IsSplit());
 }
 
 void CMainFrame::OnUpdateToggleLogView(wxUpdateUIEvent& event)
@@ -1200,6 +1213,7 @@ void CMainFrame::OnToggleQueueView(wxCommandEvent& event)
 		m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueuePane, rect.GetHeight() - m_lastQueueSplitterPos);
 		ApplySplitterConstraints();
 	}
+	COptions::Get()->SetOption(OPTION_SHOW_QUEUE, m_pBottomSplitter->IsSplit());
 }
 
 void CMainFrame::OnUpdateToggleQueueView(wxUpdateUIEvent& event)

@@ -86,7 +86,9 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Local filelist sortorder", string, _T("") },
 	{ "Remote filelist sortorder", string, _T("") },
 	{ "Date format", string, _T("") },
-	{ "Time format", string, _T("") }
+	{ "Time format", string, _T("") },
+	{ "Show message log", number, _T("1") },
+	{ "Show queue", number, _T("1") }
 };
 
 COptions::COptions()
