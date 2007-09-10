@@ -1015,7 +1015,8 @@ void CWrapEngine::CheckLanguage()
 	if (lang == wxLANGUAGE_CHINESE || lang == wxLANGUAGE_CHINESE_SIMPLIFIED ||
 		lang == wxLANGUAGE_CHINESE_TRADITIONAL || lang == wxLANGUAGE_CHINESE_HONGKONG ||
 		lang == wxLANGUAGE_CHINESE_MACAU || lang == wxLANGUAGE_CHINESE_SINGAPORE ||
-		lang == wxLANGUAGE_CHINESE_TAIWAN)
+		lang == wxLANGUAGE_CHINESE_TAIWAN ||
+		lang == wxLANGUAGE_JAPANESE)
 	{
 		m_wrapOnEveryChar = true;
 		m_noWrapChars = noWrapChars_Chinese;

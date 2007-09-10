@@ -48,7 +48,9 @@ bool CChmodDialog::Create(wxWindow* parent, int fileCount, int dirCount,
 		return false;
 
 	if (!WrapText(this, XRCID("ID_DESC"), 300))
-		return false;
+	{
+		wxFAIL_MSG(_T("Wrapping of ID_DESC failed"));
+	}
 
 	if (!XRCCTRL(*this, "wxID_OK", wxButton))
 		return false;
@@ -60,7 +62,9 @@ bool CChmodDialog::Create(wxWindow* parent, int fileCount, int dirCount,
 		return false;
 
 	if (!WrapText(this, XRCID("ID_NUMERICTEXT"), 300))
-		return false;
+	{
+		wxFAIL_MSG(_T("Wrapping of ID_NUMERICTEXT failed"));
+	}
 
 	wxCheckBox* pRecurse = XRCCTRL(*this, "ID_RECURSE", wxCheckBox);
 	wxRadioButton* pApplyAll = XRCCTRL(*this, "ID_APPLYALL", wxRadioButton);
