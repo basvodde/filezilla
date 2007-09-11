@@ -280,3 +280,8 @@ void CRateLimiterObject::Wait(enum CRateLimiter::rate_direction direction)
 	wxASSERT(m_bytesAvailable[direction] == 0);
 	m_waiting[direction] = true;
 }
+
+bool CRateLimiterObject::IsWaiting(enum CRateLimiter::rate_direction direction) const
+{
+	return m_waiting[direction];
+}

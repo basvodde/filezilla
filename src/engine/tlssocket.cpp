@@ -247,7 +247,7 @@ ssize_t CTlsSocket::PullFunction(void* data, size_t len)
 	{
 		if (m_pSocketBackend->LastError() == wxSOCKET_WOULDBLOCK)
 		{
-			if (m_canCheckCloseSocket)
+			if (m_canCheckCloseSocket && !m_pSocketBackend->IsWaiting(CRateLimiter::inbound))
 			{
 				wxSocketEvent evt(m_pSocketBackend->GetId());
 				evt.m_event = wxSOCKET_LOST;

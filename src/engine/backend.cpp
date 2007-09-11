@@ -84,22 +84,8 @@ void CSocketBackend::Read(void *buffer, unsigned int len)
 
 void CSocketBackend::Peek(void *buffer, unsigned int len)
 {
-	int max = GetAvailableBytes(CRateLimiter::inbound);
-	if (!max)
-	{
-		Wait(CRateLimiter::inbound);
-		m_error = true;
-		m_lastError = wxSOCKET_WOULDBLOCK;
-		return;
-	}
-	else if (max > 0 && (unsigned int)max < len)
-		len = max;
-
 	m_pSocket->Peek(buffer, len);
 	UpdateResults();
-
-	if (!m_error && max != -1)
-		UpdateUsage(CRateLimiter::inbound, m_lastCount);
 }
 
 void CSocketBackend::OnRateAvailable(enum CRateLimiter::rate_direction direction)

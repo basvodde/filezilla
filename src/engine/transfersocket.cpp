@@ -192,6 +192,12 @@ void CTransferSocket::OnReceive()
 				m_pControlSocket->LogMessage(Debug_Warning, _T("Read failed with error %d"), error);
 				TransferEnd(transfer_failure);
 			}
+			else if (m_onCloseCalled && !m_pBackend->IsWaiting(CRateLimiter::inbound))
+			{
+				wxSocketEvent evt(m_pBackend->GetId());
+				evt.m_event = wxSOCKET_LOST;
+				wxPostEvent(this, evt);
+			}
 			return;
 		}
 		int numread = m_pBackend->LastCount();
@@ -201,6 +207,12 @@ void CTransferSocket::OnReceive()
 			m_pDirectoryListingParser->AddData(pBuffer, numread);
 			m_pEngine->SetActive(true);
 			m_pControlSocket->UpdateTransferStatus(numread);
+			if (m_onCloseCalled)
+			{
+				wxSocketEvent evt(m_pBackend->GetId());
+				evt.m_event = wxSOCKET_LOST;
+				wxPostEvent(this, evt);
+			}
 		}
 		else
 		{
@@ -227,6 +239,12 @@ void CTransferSocket::OnReceive()
 				FinalizeWrite();
 			else if (error != wxSOCKET_WOULDBLOCK)
 				TransferEnd(transfer_failure);
+			else if (m_onCloseCalled && !m_pBackend->IsWaiting(CRateLimiter::inbound))
+			{
+				wxSocketEvent evt(m_pBackend->GetId());
+				evt.m_event = wxSOCKET_LOST;
+				wxPostEvent(this, evt);
+			}
 			return;
 		}
 		int numread = m_pBackend->LastCount();
@@ -240,6 +258,13 @@ void CTransferSocket::OnReceive()
 			m_transferBufferLen -= numread;
 
 			CheckGetNextWriteBuffer();
+
+			if (m_onCloseCalled && m_transferEndReason == none)
+			{
+				wxSocketEvent evt(m_pBackend->GetId());
+				evt.m_event = wxSOCKET_LOST;
+				wxPostEvent(this, evt);
+			}
 		}
 		else //!numread
 			FinalizeWrite();
@@ -252,6 +277,12 @@ void CTransferSocket::OnReceive()
 		{
 			if (m_pBackend->LastError() != wxSOCKET_WOULDBLOCK)
 				TransferEnd(transfer_failure);
+			else if (m_onCloseCalled && !m_pBackend->IsWaiting(CRateLimiter::inbound))
+			{
+				wxSocketEvent evt(m_pBackend->GetId());
+				evt.m_event = wxSOCKET_LOST;
+				wxPostEvent(this, evt);
+			}
 			return;
 		}
 		int numread = m_pBackend->LastCount();
@@ -264,6 +295,12 @@ void CTransferSocket::OnReceive()
 
 		if (m_transferBufferLen > 1)
 			TransferEnd(failed_resumetest);
+		else if (m_onCloseCalled)
+		{
+			wxSocketEvent evt(m_pBackend->GetId());
+			evt.m_event = wxSOCKET_LOST;
+			wxPostEvent(this, evt);
+		}
 	}
 }
 
@@ -349,15 +386,14 @@ void CTransferSocket::OnClose(wxSocketEvent &event)
 
 	if (!m_pTlsSocket)
 		m_pSocket->SetNotify(wxSOCKET_OUTPUT_FLAG | wxSOCKET_CONNECTION_FLAG | wxSOCKET_LOST_FLAG);
+
 	char buffer[100];
 	m_pBackend->Peek(&buffer, 100);
-	while (!m_pBackend->Error() && m_pBackend->LastCount())
+	if (!m_pBackend->Error() && m_pBackend->LastCount())
 	{
 		OnReceive();
-		if (!m_pBackend)
-			break;
 
-		m_pBackend->Peek(&buffer, 100);
+		return;
 	}
 
 	if (m_transferMode == resumetest)
