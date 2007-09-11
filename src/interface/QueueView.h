@@ -3,6 +3,7 @@
 
 #include <set>
 #include "dndobjects.h"
+#include <wx/progdlg.h>
 
 struct t_newEntry
 {
@@ -10,6 +11,21 @@ struct t_newEntry
 	wxString remoteFile;
 	CServerPath remotePath;
 	wxLongLong size;
+};
+
+enum ActionAfterState
+{
+	ActionAfterState_Disabled,
+	ActionAfterState_Close,
+	ActionAfterState_Disconnect,
+	ActionAfterState_RunCommand,
+	ActionAfterState_ShowMessage,
+	ActionAfterState_PlaySound,
+// On Windows, wx can reboot or shutdown the system as well.
+#ifdef __WXMSW__
+	ActionAfterState_Reboot,
+	ActionAfterState_Shutdown
+#endif
 };
 
 class CStatusLineCtrl;
@@ -108,6 +124,8 @@ protected:
 		retry,
 		remove
 	};
+	
+	enum ActionAfterState GetActionAfterState() const;
 
 	void ResetEngine(t_EngineData& data, const enum ResetReason reason);
 	void DeleteEngines();
@@ -126,6 +144,12 @@ protected:
 	void DisplayQueueSize();
 	void SaveQueue();
 	bool ShouldUseBinaryMode(wxString filename);
+	
+	bool IsActionAfter(enum ActionAfterState);
+	void ActionAfter(bool warned = false);
+#ifdef __WXMSW__
+	void ActionAfterWarnUser(wxString message);
+#endif
 
 	void ProcessNotification(t_EngineData* pEngineData, CNotification* pNotification);
 
@@ -158,6 +182,15 @@ protected:
 	int m_activeCountUp;
 	int m_activeMode; // 0 inactive, 1 only immediate transfers, 2 all
 	bool m_quit;
+
+	enum ActionAfterState m_actionAfterState;
+	wxString m_actionAfterRunCommand;
+#ifdef __WXMSW__
+	wxTimer* m_actionAfterTimer;
+	wxProgressDialog* m_actionAfterWarnDialog;
+	int m_actionAfterTimerCount;
+	int m_actionAfterTimerId;
+#endif
 
 	wxLongLong m_totalQueueSize;
 	int m_filesWithUnknownSize;
@@ -192,6 +225,9 @@ protected:
 	void OnSetPriority(wxCommandEvent& event);
 
 	void OnExclusiveEngineRequestGranted(wxCommandEvent& event);
+
+	void OnActionAfter(wxCommandEvent& event);
+	void OnActionAfterTimerTick();
 };
 
 #endif

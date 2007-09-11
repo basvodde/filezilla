@@ -19,6 +19,9 @@
 #include "queueview_failed.h"
 #include "queueview_successful.h"
 #include "commandqueue.h"
+#include <wx/utils.h>
+#include <wx/progdlg.h>
+#include <wx/sound.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -155,6 +158,14 @@ EVT_MENU(XRCID("ID_PROCESSQUEUE"), CQueueView::OnProcessQueue)
 EVT_MENU(XRCID("ID_REMOVEALL"), CQueueView::OnStopAndClear)
 EVT_MENU(XRCID("ID_REMOVE"), CQueueView::OnRemoveSelected)
 EVT_MENU(XRCID("ID_DEFAULT_FILEEXISTSACTION"), CQueueView::OnSetDefaultFileExistsAction)
+EVT_MENU(XRCID("ID_ACTIONAFTER_DISABLE"), CQueueView::OnActionAfter)
+EVT_MENU(XRCID("ID_ACTIONAFTER_CLOSE"), CQueueView::OnActionAfter)
+EVT_MENU(XRCID("ID_ACTIONAFTER_DISCONNECT"), CQueueView::OnActionAfter)
+EVT_MENU(XRCID("ID_ACTIONAFTER_RUNCOMMAND"), CQueueView::OnActionAfter)
+EVT_MENU(XRCID("ID_ACTIONAFTER_SHOWMESSAGE"), CQueueView::OnActionAfter)
+EVT_MENU(XRCID("ID_ACTIONAFTER_PLAYSOUND"), CQueueView::OnActionAfter)
+EVT_MENU(XRCID("ID_ACTIONAFTER_REBOOT"), CQueueView::OnActionAfter)
+EVT_MENU(XRCID("ID_ACTIONAFTER_SHUTDOWN"), CQueueView::OnActionAfter)
 
 EVT_COMMAND(wxID_ANY, fzEVT_ASKFORPASSWORD, CQueueView::OnAskPassword)
 
@@ -411,6 +422,13 @@ CQueueView::CQueueView(CQueue* parent, int index, CMainFrame* pMainFrame, CAsync
 
 	m_totalQueueSize = 0;
 	m_filesWithUnknownSize = 0;
+	
+	m_actionAfterState = ActionAfterState_Disabled;
+#ifdef __WXMSW__
+	m_actionAfterWarnDialog = 0;
+	m_actionAfterTimer = 0;
+	m_actionAfterTimerId = -1;
+#endif
 
 	CreateColumns(_("Status"));
 
@@ -1360,6 +1378,16 @@ bool CQueueView::Quit()
 {
 	m_quit = true;
 
+#ifdef __WXMSW__
+	if (m_actionAfterWarnDialog)
+	{
+		m_actionAfterWarnDialog->Destroy();
+		m_actionAfterWarnDialog = 0;
+	}
+	delete m_actionAfterTimer;
+	m_actionAfterTimer = 0;
+#endif
+
 	bool canQuit = true;
 	if (!SetActive(false))
 		canQuit = false;
@@ -1413,6 +1441,8 @@ void CQueueView::CheckQueueState()
 			else if (pSuccessful->GetItemCount())
 				m_pQueue->SetSelection(2);
 		}
+		if (!m_quit)
+			ActionAfter();
 	}
 
 	if (m_quit)
@@ -1869,11 +1899,25 @@ void CQueueView::OnContextMenu(wxContextMenuEvent& event)
 		return;
 
 	pMenu->Check(XRCID("ID_PROCESSQUEUE"), IsActive() ? true : false);
+	pMenu->Check(XRCID("ID_ACTIONAFTER_DISABLE"), IsActionAfter(ActionAfterState_Disabled));
+	pMenu->Check(XRCID("ID_ACTIONAFTER_CLOSE"), IsActionAfter(ActionAfterState_Close));
+	pMenu->Check(XRCID("ID_ACTIONAFTER_DISCONNECT"), IsActionAfter(ActionAfterState_Disconnect));
+	pMenu->Check(XRCID("ID_ACTIONAFTER_RUNCOMMAND"), IsActionAfter(ActionAfterState_RunCommand));
+	pMenu->Check(XRCID("ID_ACTIONAFTER_SHOWMESSAGE"), IsActionAfter(ActionAfterState_ShowMessage));
+	pMenu->Check(XRCID("ID_ACTIONAFTER_PLAYSOUND"), IsActionAfter(ActionAfterState_PlaySound));
+#ifdef __WXMSW__
+	pMenu->Check(XRCID("ID_ACTIONAFTER_REBOOT"), IsActionAfter(ActionAfterState_Reboot));
+	pMenu->Check(XRCID("ID_ACTIONAFTER_SHUTDOWN"), IsActionAfter(ActionAfterState_Shutdown));
+#endif
 	pMenu->Enable(XRCID("ID_REMOVE"), GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1);
 
 	const bool hasSelection = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1;
+	
 	pMenu->Enable(XRCID("ID_PRIORITY"), hasSelection);
 	pMenu->Enable(XRCID("ID_DEFAULT_FILEEXISTSACTION"), hasSelection);
+#ifdef __WXMSW__
+	pMenu->Enable(XRCID("ID_ACTIONAFTER"), m_actionAfterWarnDialog == NULL);
+#endif
 
 	PopupMenu(pMenu);
 	delete pMenu;
@@ -1888,6 +1932,71 @@ void CQueueView::OnStopAndClear(wxCommandEvent& event)
 {
 	SetActive(false);
 	RemoveAll();
+}
+
+void CQueueView::OnActionAfter(wxCommandEvent& event)
+{
+	if (!event.IsChecked() || event.GetId() == XRCID("ID_ACTIONAFTER_DISABLE"))
+	{ // Goes from checked to non-checked or disable is pressed
+		m_actionAfterState = ActionAfterState_Disabled;
+		m_actionAfterRunCommand = _T("");
+
+#ifdef __WXMSW__
+		if (m_actionAfterWarnDialog)
+		{
+			m_actionAfterWarnDialog->Destroy();
+			m_actionAfterWarnDialog = 0;
+		}
+		delete m_actionAfterTimer;
+		m_actionAfterTimer = 0;
+#endif
+	}
+	else if (event.GetId() == XRCID("ID_ACTIONAFTER_DISABLE"))
+		m_actionAfterState = ActionAfterState_Disabled;
+	
+	else if (event.GetId() == XRCID("ID_ACTIONAFTER_CLOSE"))
+		m_actionAfterState = ActionAfterState_Close;
+	
+	else if (event.GetId() == XRCID("ID_ACTIONAFTER_DISCONNECT"))
+		m_actionAfterState = ActionAfterState_Disconnect;
+	
+	else if (event.GetId() == XRCID("ID_ACTIONAFTER_SHOWMESSAGE"))
+		m_actionAfterState = ActionAfterState_ShowMessage;
+	
+	else if (event.GetId() == XRCID("ID_ACTIONAFTER_PLAYSOUND"))
+		m_actionAfterState = ActionAfterState_PlaySound;
+		
+	else if (event.GetId() == XRCID("ID_ACTIONAFTER_RUNCOMMAND"))
+	{	
+		m_actionAfterState = ActionAfterState_RunCommand;
+		wxTextEntryDialog dlg(m_pMainFrame, _("Please enter a path and executable to run.\nE.g. c:\\somePath\\file.exe under MS Windows or /somePath/file under Unix.\nYou can also optionally specify program arguments."), _("Enter command"));
+		
+		if (dlg.ShowModal() != wxID_OK)
+		{
+			m_actionAfterState = ActionAfterState_Disabled;
+			return;
+		}
+		const wxString &command = dlg.GetValue();
+		
+		if (command == _T(""))
+		{
+			wxMessageBox(_("No command given, aborting."), _("Empty command"), wxICON_ERROR, m_pMainFrame);
+			m_actionAfterState = ActionAfterState_Disabled;
+			return;
+		}
+		m_actionAfterRunCommand = command;
+	}
+
+#ifdef __WXMSW__
+	
+	else if (event.GetId() == XRCID("ID_ACTIONAFTER_REBOOT"))
+		m_actionAfterState = ActionAfterState_Reboot;
+		
+	else if (event.GetId() == XRCID("ID_ACTIONAFTER_SHUTDOWN"))
+		m_actionAfterState = ActionAfterState_Shutdown;
+
+#endif
+
 }
 
 void CQueueView::RemoveAll()
@@ -1913,6 +2022,7 @@ void CQueueView::RemoveAll()
 		}
 	}
 	SetItemCount(m_itemCount);
+	m_actionAfterState = ActionAfterState_Disabled;
 
 	m_serverList = newServerList;
 	UpdateStatusLinePositions();
@@ -2357,6 +2467,17 @@ void CQueueView::CommitChanges()
 
 void CQueueView::OnTimer(wxTimerEvent& event)
 {
+	const int id = event.GetId();
+	if (id == -1)
+		return;
+#ifdef __WXMSW__
+	if (id == m_actionAfterTimerId)
+	{
+		OnActionAfterTimerTick();
+		return;
+	}
+#endif
+
 	for (unsigned int i = 1; i < m_engineData.size(); i++)
 	{
 		t_EngineData* pData = m_engineData[i];
@@ -2487,3 +2608,127 @@ void CQueueView::OnExclusiveEngineRequestGranted(wxCommandEvent& event)
 
 	SendNextCommand(*pEngineData);
 }
+
+enum ActionAfterState CQueueView::GetActionAfterState() const
+{
+	return m_actionAfterState;
+}
+
+bool CQueueView::IsActionAfter(enum ActionAfterState state)
+{
+	return m_actionAfterState == state;
+}
+
+void CQueueView::ActionAfter(bool warned /*=false*/)
+{
+	switch (m_actionAfterState)
+	{
+		case ActionAfterState_Close:
+		{
+			m_pMainFrame->Close();
+			break;
+		}
+		case ActionAfterState_Disconnect:
+		{
+			if (m_pMainFrame->GetState()->IsRemoteConnected() && m_pMainFrame->GetState()->IsRemoteIdle()) 
+				m_pMainFrame->GetState()->m_pCommandQueue->ProcessCommand(new CDisconnectCommand());
+			break;
+		}
+		case ActionAfterState_RunCommand:
+		{
+			wxExecute(m_actionAfterRunCommand);
+			break;
+		}
+		case ActionAfterState_ShowMessage:
+		{
+			wxMessageDialog* dialog = new wxMessageDialog(m_pMainFrame, _T("No more files in the queue!"), _T("Queue completion"), wxOK | wxICON_INFORMATION);
+			dialog->ShowModal();
+			m_pMainFrame->RequestUserAttention(wxUSER_ATTENTION_ERROR);
+			break;
+		}
+		case ActionAfterState_PlaySound:
+		{
+			wxSound(wxGetApp().GetResourceDir() + _T("finished.wav")).Play(wxSOUND_ASYNC);
+			break;
+		}
+#ifdef __WXMSW__
+		case ActionAfterState_Reboot:
+		{
+			if (!warned)
+				ActionAfterWarnUser(_T("The system will soon reboot unless you press cancel."));
+			else
+				wxShutdown(wxSHUTDOWN_REBOOT);
+			break;
+		}
+
+		case ActionAfterState_Shutdown:
+		{
+			if (!warned)
+				ActionAfterWarnUser(_T("The system will soon shutdown unless you press cancel."));
+			else
+				wxShutdown(wxSHUTDOWN_POWEROFF);
+			break;
+		}
+#endif
+
+	}
+	m_actionAfterState = ActionAfterState_Disabled; // Resetting the state.
+}
+
+#ifdef __WXMSW__
+void CQueueView::ActionAfterWarnUser(wxString message)
+{
+	if (m_actionAfterWarnDialog != NULL)
+		return;
+
+	m_actionAfterWarnDialog = new wxProgressDialog(_T("Queue completion dialog"), message, 150, m_pMainFrame, wxPD_CAN_ABORT | wxPD_AUTO_HIDE | wxPD_CAN_SKIP | wxPD_APP_MODAL);
+	wxSize dialogSize = m_actionAfterWarnDialog->GetSize();
+	m_actionAfterWarnDialog->SetSize(dialogSize.GetWidth() / 2, dialogSize.GetHeight());
+	m_actionAfterWarnDialog->CentreOnParent();
+	m_actionAfterWarnDialog->SetFocus();
+	m_pMainFrame->RequestUserAttention(wxUSER_ATTENTION_ERROR);
+
+	wxASSERT(!m_actionAfterTimer);
+	m_actionAfterTimer = new wxTimer(this, m_actionAfterTimerId);
+	m_actionAfterTimerId = m_actionAfterTimer->GetId();
+	m_actionAfterTimerCount = 0;
+	m_actionAfterTimer->Start(100, wxTIMER_CONTINUOUS);
+}
+
+void CQueueView::OnActionAfterTimerTick()
+{
+	if (!m_actionAfterWarnDialog)
+	{
+		delete m_actionAfterTimer;
+		m_actionAfterTimer = 0;
+		return;
+	}
+
+	bool skipped = false;
+	if (m_actionAfterTimerCount > 150)
+	{
+		m_actionAfterWarnDialog->Destroy();
+		m_actionAfterWarnDialog = 0;
+		delete m_actionAfterTimer;
+		m_actionAfterTimer = 0;
+		ActionAfter(true);
+	}
+	else if (!m_actionAfterWarnDialog->Update(m_actionAfterTimerCount++, _T(""), &skipped))
+	{
+		// User has pressed cancel!
+		m_actionAfterState = ActionAfterState_Disabled; // resetting to disabled
+		m_actionAfterWarnDialog->Destroy();
+		m_actionAfterWarnDialog = 0;
+		delete m_actionAfterTimer;
+		m_actionAfterTimer = 0;
+	}
+	else if (skipped)
+	{
+		m_actionAfterWarnDialog->Destroy();
+		m_actionAfterWarnDialog = 0;
+		delete m_actionAfterTimer;
+		m_actionAfterTimer = 0;
+		ActionAfter(true);
+	}
+}
+#endif //__WXMSW__

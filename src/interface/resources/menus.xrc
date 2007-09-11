@@ -171,6 +171,42 @@
         <checkable>1</checkable>
       </object>
     </object>
+    <object class="wxMenu" name="ID_ACTIONAFTER">
+      <label>Action after queue &amp;completion</label>
+      <object class="wxMenuItem" name="ID_ACTIONAFTER_CLOSE">
+        <label>&amp;Close FileZilla</label>
+        <checkable>1</checkable>
+      </object>
+      <object class="wxMenuItem" name="ID_ACTIONAFTER_DISCONNECT">
+        <label>&amp;Disconnect from server</label>
+        <checkable>1</checkable>
+      </object>
+      <object class="wxMenuItem" name="ID_ACTIONAFTER_RUNCOMMAND">
+        <label>&amp;Run command...</label>
+        <checkable>1</checkable>
+      </object>
+      <object class="wxMenuItem" name="ID_ACTIONAFTER_SHOWMESSAGE">
+        <label>&amp;Show message</label>
+        <checkable>1</checkable>
+      </object>
+      <object class="wxMenuItem" name="ID_ACTIONAFTER_PLAYSOUND">
+        <label>&amp;Play sound</label>
+        <checkable>1</checkable>
+      </object>
+      <object class="wxMenuItem" name="ID_ACTIONAFTER_REBOOT" platform="win">
+        <label>R&amp;eboot system</label>
+        <checkable>1</checkable>
+      </object>
+      <object class="wxMenuItem" name="ID_ACTIONAFTER_SHUTDOWN" platform="win">
+        <label>S&amp;hutdown system</label>
+        <checkable>1</checkable>
+      </object>
+      <object class="separator"/>
+      <object class="wxMenuItem" name="ID_ACTIONAFTER_DISABLE" platform="win">
+        <label>Do &amp;nothing</label>
+        <checkable>1</checkable>
+      </object>
+    </object>
   </object>
   <object class="wxMenu" name="ID_MENU_LOG">
     <object class="wxMenuItem" name="ID_MENU_SERVER_CMD">
