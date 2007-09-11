@@ -1432,6 +1432,8 @@ void CQueueView::CheckQueueState()
 	if (m_activeMode)
 	{
 		m_activeMode = 0;
+		/* Users don't seem to like this, so comment it out for now.
+		 * maybe make it configureable in future?
 		if (!m_pQueue->GetSelection())
 		{
 			CQueueViewBase* pFailed = m_pQueue->GetQueueView_Failed();
@@ -1441,6 +1443,7 @@ void CQueueView::CheckQueueState()
 			else if (pSuccessful->GetItemCount())
 				m_pQueue->SetSelection(2);
 		}
+		*/
 		if (!m_quit)
 			ActionAfter();
 	}
