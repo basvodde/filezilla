@@ -1939,12 +1939,13 @@ void CLocalListView::OnBeginDrag(wxListEvent& event)
 
 void CLocalListView::RefreshFile(const wxString& file)
 {
-	if (!wxFileName::FileExists(m_dir + file))
+	bool fileExists;
+	if (!(fileExists = wxFileName::FileExists(m_dir + file)) && !wxFileName::DirExists(m_dir + file))
 		return;
 
 	t_fileData data;
 
-	data.dir = wxFileName::DirExists(m_dir + file);
+	data.dir = !fileExists;
 	data.icon = -2;
 	data.name = file;
 

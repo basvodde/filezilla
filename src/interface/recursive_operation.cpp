@@ -172,6 +172,7 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 		if (m_operationMode == recursive_download)
 		{
 			wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
+			m_pState->RefreshLocalFile(fn.GetFullPath());
 		}
 		else if (m_operationMode == recursive_addtoqueue)
 			m_pQueue->QueueFile(true, true, fn.GetFullPath(), _T(""), CServerPath(), *pServer, -1);

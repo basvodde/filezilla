@@ -213,12 +213,24 @@ void CState::RefreshLocalFile(wxString file)
 		return;
 
 	wxString path = fn.GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
-	file = fn.GetFullName();
-	if (file.IsEmpty())
+	if (path == _T(""))
 		return;
 
-	if (path != m_localDir)
-		return;
+	if (path == m_localDir)
+	{
+		file = fn.GetFullName();
+		if (file == _T(""))
+			return;
+	}
+	else if (path.Left(m_localDir.Len()) == m_localDir)
+	{
+		path = path.Mid(m_localDir.Len());
+		int pos = path.Find(wxFileName::GetPathSeparator());
+		if (pos < 1)
+			return;
+
+		file = path.Left(pos);
+	}
 
 	NotifyHandlers(STATECHANGE_LOCAL_REFRESH_FILE, file);
 }

@@ -748,6 +748,8 @@ bool CQueueView::TryStartNextTransfer()
 		{
 			wxFileName fn(newFileItem->GetLocalFile(), _T(""));
 			wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
+			CState* const pState = m_pMainFrame->GetState();
+			pState->RefreshLocalFile(fn.GetFullPath());
 			if (RemoveItem(newFileItem, true))
 			{
 				// Server got deleted. Unfortunately we have to start over now
