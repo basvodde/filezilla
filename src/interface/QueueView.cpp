@@ -1457,7 +1457,7 @@ void CQueueView::CheckQueueState()
 bool CQueueView::IncreaseErrorCount(t_EngineData& engineData)
 {
 	engineData.pItem->m_errorCount++;
-	if (engineData.pItem->m_errorCount <= COptions::Get()->GetOptionVal(OPTION_TRANSFERRETRYCOUNT))
+	if (engineData.pItem->m_errorCount <= COptions::Get()->GetOptionVal(OPTION_RECONNECTCOUNT))
 		return true;
 
 	ResetEngine(engineData, failure);
