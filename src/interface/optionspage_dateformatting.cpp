@@ -4,7 +4,6 @@
 #include "settingsdialog.h"
 #include "optionspage.h"
 #include "optionspage_dateformatting.h"
-#include "updatewizard.h"
 
 BEGIN_EVENT_TABLE(COptionsPageDateFormatting, COptionsPage)
 EVT_RADIOBUTTON(wxID_ANY, COptionsPageDateFormatting::OnRadioChanged)

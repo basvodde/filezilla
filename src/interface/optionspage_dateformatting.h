@@ -17,4 +17,4 @@ protected:
 	void OnRadioChanged(wxCommandEvent& event);
 };
 
-#endif //__OPTIONSPAGE_UPDATECHECK_H__
+#endif //__OPTIONSPAGE_DATEFORMATTING_H__
