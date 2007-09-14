@@ -184,20 +184,20 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	wxSize clientSize = GetClientSize();
 
 	m_pTopSplitter = new wxSplitterWindow(this, -1, wxDefaultPosition, clientSize, style);
-	m_pTopSplitter->SetMinimumPaneSize(20);
+	m_pTopSplitter->SetMinimumPaneSize(50);
 
 	m_pBottomSplitter = new wxSplitterWindow(m_pTopSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
-	m_pBottomSplitter->SetMinimumPaneSize(20);
+	m_pBottomSplitter->SetMinimumPaneSize(50);
 	m_pBottomSplitter->SetSashGravity(1.0);
 
 	m_pViewSplitter = new wxSplitterWindow(m_pBottomSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
-	m_pViewSplitter->SetMinimumPaneSize(20);
+	m_pViewSplitter->SetMinimumPaneSize(50);
 
 	m_pLocalSplitter = new wxSplitterWindow(m_pViewSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
-	m_pLocalSplitter->SetMinimumPaneSize(20);
+	m_pLocalSplitter->SetMinimumPaneSize(50);
 
 	m_pRemoteSplitter = new wxSplitterWindow(m_pViewSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
-	m_pRemoteSplitter->SetMinimumPaneSize(20);
+	m_pRemoteSplitter->SetMinimumPaneSize(50);
 
 	m_pStatusView = new CStatusView(m_pTopSplitter, -1);
 	m_pQueuePane = new CQueue(m_pBottomSplitter, this, m_pAsyncRequestQueue);
@@ -345,17 +345,6 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 	float ViewSplitterSashPos = m_ViewSplitterSashPos;
 
 	wxFrame::OnSize(event);
-
-	static bool shown = false;
-	if (!shown)
-	{
-		if (IsShown())
-		{
-			shown = true;
-			m_pLocalSplitter->SetSashGravity(0.5);
-			m_pRemoteSplitter->SetSashGravity(0.5);
-		}
-	}
 
 	wxSize clientSize = GetClientSize();
 	if (m_pQuickconnectBar)
@@ -1130,6 +1119,12 @@ void CMainFrame::ApplySplitterConstraints()
 
 	if (m_pBottomSplitter->GetSashPosition() < 45)
 		m_pBottomSplitter->SetSashPosition(45);
+
+	if (m_pLocalSplitter->IsSplit() && m_pLocalSplitter->GetSashPosition() < 50)
+		m_pLocalSplitter->SetSashPosition(50);
+
+	if (m_pRemoteSplitter->IsSplit() && m_pRemoteSplitter->GetSashPosition() < 50)
+		m_pRemoteSplitter->SetSashPosition(50);
 }
 
 void CMainFrame::OnToggleLocalTreeView(wxCommandEvent& event)
