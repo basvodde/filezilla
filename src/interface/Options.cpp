@@ -87,7 +87,9 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Date format", string, _T("") },
 	{ "Time format", string, _T("") },
 	{ "Show message log", number, _T("1") },
-	{ "Show queue", number, _T("1") }
+	{ "Show queue", number, _T("1") },
+	{ "Size format", number, _T("0") },
+	{ "Size thousands separator", number, _T("1") }
 };
 
 COptions::COptions()

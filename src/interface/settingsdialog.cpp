@@ -14,6 +14,7 @@
 #include "optionspage_debug.h"
 #include "optionspage_interface.h"
 #include "optionspage_dateformatting.h"
+#include "optionspage_sizeformatting.h"
 #include "filezillaapp.h"
 #include "Mainfrm.h"
 
@@ -29,6 +30,7 @@ enum pagenames
 	page_interface,
 	page_themes,
 	page_dateformatting,
+	page_sizeformatting,
 	page_language,
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	page_updatecheck,
@@ -104,6 +106,7 @@ bool CSettingsDialog::LoadPages()
 	ADD_PAGE(_("Interface"), COptionsPageInterface, page_none);
 	ADD_PAGE(_("Themes"), COptionsPageThemes, page_interface);
 	ADD_PAGE(_("Date/time format"), COptionsPageDateFormatting, page_interface);
+	ADD_PAGE(_("Filesize format"), COptionsPageSizeFormatting, page_interface);
 	ADD_PAGE(_("Language"), COptionsPageLanguage, page_none);
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	ADD_PAGE(_("Update Check"), COptionsPageUpdateCheck, page_none);

@@ -2022,6 +2022,52 @@
       </object>
     </object>
   </object>
+  <object class="wxPanel" name="ID_SETTINGS_SIZEFORMATTING">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Size formatting</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_SIZEFORMAT_BYTES">
+                  <label>&amp;Display size in bytes</label>
+                  <style>wxRB_GROUP</style>
+                </object>
+              </object>
+              <cols>1</cols>
+              <vgap>5</vgap>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_SIZEFORMAT_IEC">
+                  <label>&amp;IEC binary prefixes (e.g. 1 KiB = 1024 bytes)</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_SIZEFORMAT_SI_BINARY">
+                  <label>&amp;Binary prefixes using SI symbols. (e.g. 1 KB = 1024 bytes.)</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_SIZEFORMAT_SI_DECIMAL">
+                  <label>&amp;Decimal prefixes using SI symbols (e.g. 1 KB = 1000 bytes)</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_SIZEFORMAT_SEPARATE_THOUTHANDS">
+                  <label>&amp;Use thousands separator</label>
+                </object>
+              </object>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+    </object>
+  </object>
   <object class="wxPanel" name="ID_SETTINGS_DEBUG">
     <style></style>
     <object class="wxBoxSizer">
