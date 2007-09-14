@@ -11,6 +11,8 @@
 #ifdef __WXMSW__
 #include "lm.h"
 #include <wx/msw/registry.h>
+#else
+#include <langinfo.h>
 #endif
 
 #ifdef _DEBUG
@@ -446,6 +448,82 @@ regular_dir:
 	return true;
 }
 
+wxString FormatSize(const wxLongLong& size)
+{
+	COptions* const pOptions = COptions::Get();
+	const int format = pOptions->GetOptionVal(OPTION_SIZE_FORMAT);
+
+	if (!format)
+	{
+		if (!pOptions->GetOptionVal(OPTION_SIZE_USETHOUSANDSEP))
+			return size.ToString();
+
+		wxChar sep[5];
+#ifdef __WXMSW__
+		int count = ::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_STHOUSAND, sep, 5);
+		if (!count)
+			return size.ToString();
+#else
+		char* chr = nl_langinfo(THOUSEP);
+		if (!chr || !*chr)
+			return size.ToString();
+		wxChar sep = chr[0];
+#endif
+
+		wxString tmp = size.ToString();
+		const int len = tmp.Len();
+		if (len <= 3)
+			return tmp;
+
+		wxString result;
+		int i = (len - 1) % 3 + 1;
+		result = tmp.Left(i);
+		while (i < len)
+		{
+			result += sep + tmp.Mid(i, 3);
+			i += 3;
+		}
+
+		return result;
+	}
+
+	int divider;
+	if (format == 3)
+		divider = 1000;
+	else
+		divider = 1024;
+
+	bool r2 = false;
+	int p = 0;
+	wxLongLong r = size;
+	while (r > divider || p == 6)
+	{
+		const wxLongLong rr = r / divider;
+		if (rr * divider != r)
+			r2 = true;
+		r = rr;
+		p++;
+	}
+	if (r2)
+		r++;
+
+	wxString result = r.ToString();
+	result += ' ';
+	if (!p)
+		return result + _T("B");
+
+	// We stop at Exa. If someone has files bigger than that, he can afford to 
+	// make a donation to have this changed ;)
+	wxChar prefix[] = { ' ', 'K', 'M', 'G', 'T', 'P', 'E' };
+
+	result += prefix[p];
+	if (format == 1)
+		result += 'i';
+	result += 'B';
+
+	return result;
+}
+
 // Declared const due to design error in wxWidgets.
 // Won't be fixed since a fix would break backwards compatibility
 // Both functions use a const_cast<CLocalListView *>(this) and modify
@@ -464,7 +542,7 @@ wxString CLocalListView::OnGetItemText(long item, long column) const
 		if (data->size < 0)
 			return _T("");
 		else
-			return wxLongLong(data->size).ToString();
+			return FormatSize(data->size);
 	}
 	else if (column == 2)
 	{

@@ -808,6 +808,9 @@ void CQueueViewBase::OnEraseBackground(wxEraseEvent& event)
 		event.Skip();
 }
 
+// Defined in LocalListView.cpp
+extern wxString FormatSize(const wxLongLong& size);
+
 wxString CQueueViewBase::OnGetItemText(long item, long column) const
 {
 	CQueueViewBase* pThis = const_cast<CQueueViewBase*>(this);
@@ -848,9 +851,9 @@ wxString CQueueViewBase::OnGetItemText(long item, long column) const
 				return pFileItem->GetRemotePath().FormatFilename(pFileItem->GetRemoteFile());
 			case 3:
 				{
-					wxLongLong size = pFileItem->GetSize();
+					const wxLongLong& size = pFileItem->GetSize();
 					if (size >= 0)
-						return size.ToString();
+						return FormatSize(size);
 					else
 						return _T("?");
 				}

@@ -387,10 +387,9 @@ CRemoteListView::~CRemoteListView()
 #endif
 }
 
-// Declared const due to design error in wxWidgets.
-// Won't be fixed since a fix would break backwards compatibility
-// Both functions use a const_cast<CRemoteListView *>(this) and modify
-// the instance.
+// Defined in LocalListView.cpp
+extern wxString FormatSize(const wxLongLong& size);
+
 wxString CRemoteListView::OnGetItemText(long item, long column) const
 {
 	CRemoteListView *pThis = const_cast<CRemoteListView *>(this);
@@ -414,7 +413,7 @@ wxString CRemoteListView::OnGetItemText(long item, long column) const
 		if (entry.dir || entry.size < 0)
 			return _T("");
 		else
-			return entry.size.ToString();
+			return FormatSize(entry.size);
 	}
 	else if (column == 2)
 	{
