@@ -48,8 +48,16 @@ static const int statbarWidths[6] = {
 #endif
 };
 
+#ifdef __WXMSW__
+DECLARE_EVENT_TYPE(fzEVT_ONSIZE_POST, -1)
+DEFINE_EVENT_TYPE(fzEVT_ONSIZE_POST)
+#endif
+
 BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_SIZE(CMainFrame::OnSize)
+#ifdef __WXMSW__
+	EVT_COMMAND(wxID_ANY, fzEVT_ONSIZE_POST, CMainFrame::OnSizePost)
+#endif
 	EVT_SPLITTER_SASH_POS_CHANGED(wxID_ANY, CMainFrame::OnViewSplitterPosChanged)
 	EVT_MENU(wxID_ANY, CMainFrame::OnMenuHandler)
 	EVT_FZ_NOTIFICATION(wxID_ANY, CMainFrame::OnEngineEvent)
@@ -129,6 +137,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 
 #ifdef __WXMSW__
 	m_windowIsMaximized = false;
+	m_pendingPostSizing = false;
 #endif
 
 	m_pThemeProvider = new CThemeProvider();
@@ -342,8 +351,6 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 	if (!m_pBottomSplitter)
 		return;
 
-	float ViewSplitterSashPos = m_ViewSplitterSashPos;
-
 	wxFrame::OnSize(event);
 
 	wxSize clientSize = GetClientSize();
@@ -363,10 +370,16 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 		}
 	}
 
-	m_ViewSplitterSashPos = ViewSplitterSashPos;
-
+#ifdef __WXMSW__
+	if (!m_pendingPostSizing)
+	{
+		m_pendingPostSizing = true;
+		AddPendingEvent(wxCommandEvent(fzEVT_ONSIZE_POST));
+	}
+#else
 	if (m_pViewSplitter)
 	{
+		Layout();
 		wxSize size = m_pViewSplitter->GetClientSize();
 
 		const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
@@ -392,6 +405,7 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 	}
 
 	ApplySplitterConstraints();
+#endif
 
 	if (!IsIconized())
 	{
@@ -404,6 +418,41 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 	}
 }
 
+#ifdef __WXMSW__
+void CMainFrame::OnSizePost(wxCommandEvent& event)
+{
+	m_pendingPostSizing = false;
+	if (m_pViewSplitter)
+	{
+		Layout();
+		wxSize size = m_pViewSplitter->GetClientSize();
+
+		const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
+
+		int pos;
+		if (layout == 1)
+		{
+			pos = static_cast<int>(size.GetHeight() * m_ViewSplitterSashPos);
+			if (pos < 20)
+				pos = 20;
+			else if (pos > size.GetHeight() - 20)
+				pos = size.GetHeight() - 20;
+		}
+		else
+		{
+			pos = static_cast<int>(size.GetWidth() * m_ViewSplitterSashPos);
+			if (pos < 20)
+				pos = 20;
+			else if (pos > size.GetWidth() - 20)
+				pos = size.GetWidth() - 20;
+		}
+		m_pViewSplitter->SetSashPosition(pos);
+	}
+
+	ApplySplitterConstraints();
+}
+#endif
+
 void CMainFrame::OnViewSplitterPosChanged(wxSplitterEvent &event)
 {
 	if (event.GetEventObject() != m_pViewSplitter)
@@ -411,6 +460,10 @@ void CMainFrame::OnViewSplitterPosChanged(wxSplitterEvent &event)
 		event.Skip();
 		return;
 	}
+#ifdef __WXMSW__
+	if (m_pendingPostSizing)
+		return;
+#endif
 
 	wxSize size = m_pViewSplitter->GetClientSize();
 	int pos = m_pViewSplitter->GetSashPosition();

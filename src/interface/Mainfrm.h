@@ -130,6 +130,11 @@ protected:
 	void OnNavigationKeyEvent(wxNavigationKeyEvent& event);
 	void OnGetFocus(wxFocusEvent& event);
 	void OnChar(wxKeyEvent& event);
+#ifdef __WXMSW__
+	void OnSizePost(wxCommandEvent& event);
+
+	bool m_pendingPostSizing;
+#endif
 
 	float m_ViewSplitterSashPos;
 	bool m_bInitDone;
