@@ -37,7 +37,7 @@ filezilla_SOURCES = aboutdialog.cpp asyncrequestqueue.cpp \
 		optionspage_filetype.cpp \
 		optionspage_interface.cpp \
 		optionspage_language.cpp \
-		optionspage_sizeformatting \
+		optionspage_sizeformatting.cpp \
 		optionspage_themes.cpp optionspage_transfer.cpp \
 		optionspage_updatecheck.cpp \
 		queue.cpp \
@@ -87,7 +87,7 @@ noinst_HEADERS = aboutdialog.h asyncrequestqueue.h \
 		 optionspage_filetype.h \
 		 optionspage_interface.h \
 		 optionspage_language.h \
-		 optionspage_sizeformatting \
+		 optionspage_sizeformatting.h \
 		 optionspage_themes.h optionspage_transfer.h \
 		 optionspage_updatecheck.h prefix.h \
 		 queue.h \
