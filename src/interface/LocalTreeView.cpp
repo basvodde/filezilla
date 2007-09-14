@@ -547,10 +547,13 @@ wxString CLocalTreeView::GetDirFromItem(wxTreeItemId item)
 		if (item == m_desktop)
 		{
 			wxChar path[MAX_PATH + 1];
-			if (SHGetFolderPath(0, CSIDL_DESKTOP, 0, SHGFP_TYPE_CURRENT, path) != S_OK)
+			if (SHGetFolderPath(0, CSIDL_DESKTOPDIRECTORY, 0, SHGFP_TYPE_CURRENT, path) != S_OK)
 			{
-				wxMessageBox(_("Failed to get desktop path"));
-				return _T("/");
+				if (SHGetFolderPath(0, CSIDL_DESKTOP, 0, SHGFP_TYPE_CURRENT, path) != S_OK)
+				{
+					wxMessageBox(_("Failed to get desktop path"));
+					return _T("/");
+				}
 			}
 			dir = path;
 			if (dir.Last() != separator)
