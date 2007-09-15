@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-02 19:01+0200\n"
-"PO-Revision-Date: 2007-09-02 08:34+0800\n"
+"POT-Creation-Date: 2007-09-15 20:40+0200\n"
+"PO-Revision-Date: 2007-09-13 12:38+0800\n"
 "Last-Translator: Kene Lin <kenelin@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -22,7 +22,7 @@ msgstr "經過時間 %H:%M:%S"
 msgid "%H:%M:%S left"
 msgstr "剩餘時間 %H:%M:%S"
 
-#: ../../locales/../src/interface/QueueView.cpp:2083
+#: ../../locales/../src/interface/QueueView.cpp:2198
 #, c-format
 msgid "%d files added to queue"
 msgstr "%d 個檔案加入佇列"
@@ -65,7 +65,7 @@ msgstr "%s bytes (%d.%d MB/s)"
 msgid "%s bytes (? B/s)"
 msgstr "%s bytes (? B/s)"
 
-#: ../../locales/../src/interface/FileZilla.cpp:735
+#: ../../locales/../src/interface/FileZilla.cpp:731
 #, c-format
 msgid ""
 "%s could not be found. Without this component of FileZilla, SFTP will not "
@@ -86,7 +86,7 @@ msgstr ""
 msgid "%s with %d bits"
 msgstr "%s with %d bits"
 
-#: resources.h:403
+#: resources.h:421
 msgid "&About..."
 msgstr "關於(&A)..."
 
@@ -94,11 +94,11 @@ msgstr "關於(&A)..."
 msgid "&Account:"
 msgstr "帳號(&A):"
 
-#: resources.h:97 resources.h:154 resources.h:471
+#: resources.h:97 resources.h:154 resources.h:498
 msgid "&Active"
 msgstr "主動模式(&A)"
 
-#: resources.h:407 resources.h:417 resources.h:452
+#: resources.h:425 resources.h:435 resources.h:479
 msgid "&Add files to queue"
 msgstr "加入檔案到佇列(&A)"
 
@@ -106,7 +106,7 @@ msgstr "加入檔案到佇列(&A)"
 msgid "&Always trust certificate in future sessions."
 msgstr "總是信任未來連線的憑證(&A)"
 
-#: resources.h:236
+#: resources.h:254
 msgid "&Always trust this host, add this key to the cache"
 msgstr "總是信任這台主機, 並且加入其 Host Key 到快取裡(&A)"
 
@@ -114,7 +114,7 @@ msgstr "總是信任這台主機, 並且加入其 Host Key 到快取裡(&A)"
 msgid "&Always use this action"
 msgstr "總是使用這個動作(&A)"
 
-#: resources.h:320 resources.h:339
+#: resources.h:338 resources.h:357
 msgid "&Ask for action"
 msgstr "詢問動作(&A)"
 
@@ -126,13 +126,17 @@ msgstr "自動(&A)"
 msgid "&Autodetect"
 msgstr "自動偵測(&A)"
 
-#: resources.h:449
+#: resources.h:476
 msgid "&Automatically remove successful transfers"
 msgstr "自動移除成功的傳輸(&A)"
 
 #: resources.h:129
 msgid "&Binary"
 msgstr "二進位檔案(&B)"
+
+#: resources.h:196
+msgid "&Binary prefixes using SI symbols. (e.g. 1 KB = 1024 bytes.)"
+msgstr ""
 
 #: resources.h:89
 msgid "&Browse..."
@@ -142,72 +146,88 @@ msgstr "瀏覽(&B)..."
 msgid "&Burst tolerance:"
 msgstr "暴衝容忍度(&B)"
 
-#: resources.h:63 resources.h:121 resources.h:125 resources.h:194
-#: resources.h:238 resources.h:250
+#: resources.h:63 resources.h:121 resources.h:125 resources.h:212
+#: resources.h:256 resources.h:268
 msgid "&Cancel"
 msgstr "取消(&C)"
 
-#: resources.h:302
+#: resources.h:320
 msgid "&Check for beta versions of FileZilla"
 msgstr "檢查 Beta 測試版本的 FileZilla(&C)"
 
-#: resources.h:391
+#: resources.h:409
 msgid "&Clear private data..."
 msgstr "清除私人資料(&C)..."
+
+#: resources.h:456
+msgid "&Close FileZilla"
+msgstr "關閉 FileZilla (&C)"
 
 #: resources.h:109
 msgid "&Connect"
 msgstr "連線(&C)"
 
-#: resources.h:271
+#: resources.h:289
 msgid "&Copy"
 msgstr "複製(&C)"
 
-#: resources.h:438
+#: resources.h:465
 msgid "&Copy to clipboard"
 msgstr "複製到剪貼簿(&C)"
 
-#: resources.h:441
+#: resources.h:468
 msgid "&Crash"
 msgstr "毀壞(&C)"
 
-#: resources.h:409 resources.h:419 resources.h:454
+#: resources.h:427 resources.h:437 resources.h:481
 msgid "&Create directory"
 msgstr "新增目錄(&C)"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:448
+#: ../../locales/../src/interface/Mainfrm.cpp:503
 msgid "&Debug"
 msgstr "偵錯(&D)"
 
-#: resources.h:183
+#: resources.h:201
 msgid "&Debug information in message log:"
 msgstr "訊息記錄中的偵錯資訊(&D):"
 
-#: resources.h:393 resources.h:430
+#: resources.h:197
+msgid "&Decimal prefixes using SI symbols (e.g. 1 KB = 1000 bytes)"
+msgstr ""
+
+#: resources.h:411 resources.h:448
 msgid "&Default file exists action..."
 msgstr "預設檔案存在動作(&D)..."
 
-#: resources.h:69 resources.h:253 resources.h:269
+#: resources.h:69 resources.h:271 resources.h:287
 msgid "&Delete"
 msgstr "刪除(&D)"
 
-#: resources.h:396
+#: resources.h:414
 msgid "&Disconnect"
 msgstr "中斷連線(&D)"
+
+#: resources.h:457
+msgid "&Disconnect from server"
+msgstr "從伺服器離線(&D)"
+
+#: resources.h:194
+msgid "&Display size in bytes"
+msgstr ""
 
 #: ../../locales/../src/interface/conditionaldialog.cpp:22
 msgid "&Don't show this dialog again."
 msgstr "不再顯示此對話框(&D)."
 
-#: resources.h:415 resources.h:450
+#: resources.h:433 resources.h:477
 msgid "&Download"
 msgstr "下載(&D)"
 
-#: resources.h:384
+#: resources.h:402
 msgid "&Edit"
 msgstr "編輯(&E)"
 
-#: resources.h:255
+#: resources.h:273
 msgid "&Edit filters..."
 msgstr "編輯篩選器(&E)..."
 
@@ -219,19 +239,19 @@ msgstr "啟用自動更新檢查(&E)"
 msgid "&Encoding:"
 msgstr "編碼(&E):"
 
-#: resources.h:437
+#: resources.h:464
 msgid "&Enter custom command..."
 msgstr "輸入自訂指令(&E)..."
 
-#: resources.h:200
+#: resources.h:218
 msgid "&Execute"
 msgstr "執行(&E)"
 
-#: resources.h:366
+#: resources.h:384
 msgid "&Export Site Manager entries"
 msgstr "匯出站台管理員欄位(&E)"
 
-#: resources.h:389
+#: resources.h:407
 msgid "&Export..."
 msgstr "匯出(&E)..."
 
@@ -239,43 +259,51 @@ msgstr "匯出(&E)..."
 msgid "&Fall back to active mode"
 msgstr "回復為主動模式(&F)"
 
-#: resources.h:379
+#: resources.h:397
 msgid "&File"
 msgstr "檔案(&F)"
 
-#: resources.h:425 resources.h:460
+#: resources.h:443 resources.h:487
 msgid "&File Attributes..."
 msgstr "檔案屬性(&F)..."
 
-#: resources.h:252
+#: resources.h:270
 msgid "&Filter sets:"
 msgstr "篩選集(&F):"
 
-#: resources.h:267
+#: resources.h:285
 msgid "&Filters:"
 msgstr "篩選器(&F):"
 
-#: resources.h:400
+#: resources.h:418
 msgid "&Help"
 msgstr "說明(&H)"
 
-#: resources.h:432
+#: resources.h:450
 msgid "&Highest"
 msgstr "最高(&H)"
 
-#: resources.h:289
+#: resources.h:307
 msgid "&Highest available port:"
 msgstr "最高可用連接埠(&H):"
 
-#: resources.h:72 resources.h:509
+#: resources.h:72 resources.h:536
 msgid "&Host:"
 msgstr "主機(&H):"
 
-#: resources.h:390
+#: resources.h:195
+msgid "&IEC binary prefixes (e.g. 1 KiB = 1024 bytes)"
+msgstr ""
+
+#: resources.h:183
+msgid "&ISO 8601 (example: 2007-09-15)"
+msgstr "ISO 8601 (例: 2007-09-15) (&I)"
+
+#: resources.h:408
 msgid "&Import..."
 msgstr "匯入(&I)..."
 
-#: resources.h:286
+#: resources.h:304
 msgid "&Limit local ports used by FileZilla"
 msgstr "限制 FileZilla 使用的本地連接埠(&L)"
 
@@ -287,7 +315,7 @@ msgstr "限制同時連線數(&L)"
 msgid "&Logontype:"
 msgstr "登入型式(&L):"
 
-#: resources.h:435
+#: resources.h:453
 msgid "&Low"
 msgstr "低(&L)"
 
@@ -295,11 +323,11 @@ msgstr "低(&L)"
 msgid "&Maximum number of connections:"
 msgstr "最大連線數(&M):"
 
-#: resources.h:387
+#: resources.h:405
 msgid "&Network configuration wizard..."
 msgstr "網路配置精靈(&N)..."
 
-#: resources.h:268
+#: resources.h:286
 msgid "&New"
 msgstr "新增(&N)"
 
@@ -311,11 +339,11 @@ msgstr "新增站台(&N)"
 msgid "&New version available!"
 msgstr "有新版本!(&N)"
 
-#: resources.h:434
+#: resources.h:452
 msgid "&Normal"
 msgstr "一般(&N)"
 
-#: resources.h:209
+#: resources.h:227
 msgid "&Numeric value:"
 msgstr "數值(&N):"
 
@@ -323,7 +351,7 @@ msgstr "數值(&N):"
 msgid "&OK"
 msgstr "確認(&O)"
 
-#: resources.h:54 resources.h:321 resources.h:340
+#: resources.h:54 resources.h:339 resources.h:358
 msgid "&Overwrite"
 msgstr "覆寫(&O)"
 
@@ -335,23 +363,27 @@ msgstr "被動模式(&P)"
 msgid "&Password:"
 msgstr "密碼(&P):"
 
-#: resources.h:73 resources.h:513
+#: resources.h:460
+msgid "&Play sound"
+msgstr "播放音效(&P)"
+
+#: resources.h:73 resources.h:540
 msgid "&Port:"
 msgstr "連接埠(&P):"
 
-#: resources.h:375
+#: resources.h:393
 msgid "&Queue"
 msgstr "佇列(&Q)"
 
-#: resources.h:515
+#: resources.h:542
 msgid "&Quickconnect"
 msgstr "快速連線(&Q)"
 
-#: resources.h:198
+#: resources.h:216
 msgid "&Read"
 msgstr "讀取(&R)"
 
-#: resources.h:395
+#: resources.h:413
 msgid "&Reconnect"
 msgstr "重新連線(&R)"
 
@@ -363,22 +395,26 @@ msgstr "記住這次連線的密碼(&R)"
 msgid "&Remove"
 msgstr "移除(&R)"
 
-#: resources.h:429
+#: resources.h:447
 msgid "&Remove selected"
 msgstr "移除選擇項目(&R)"
 
-#: resources.h:68 resources.h:270 resources.h:413 resources.h:423
-#: resources.h:458
+#: resources.h:68 resources.h:288 resources.h:431 resources.h:441
+#: resources.h:485
 msgid "&Rename"
 msgstr "更名(&R)"
 
-#: resources.h:508
+#: resources.h:535
 msgid "&Restart Wizard"
 msgstr "再次執行配置精靈(&R)"
 
-#: resources.h:56 resources.h:323 resources.h:342
+#: resources.h:56 resources.h:341 resources.h:360
 msgid "&Resume"
 msgstr "回復(&R)"
+
+#: resources.h:458
+msgid "&Run command..."
+msgstr "執行指令(&E)..."
 
 #: resources.h:151
 msgid "&Run configuration wizard now..."
@@ -388,7 +424,7 @@ msgstr "立即執行配置精靈(&R)..."
 msgid "&Run update check now..."
 msgstr "立刻執行更新檢查(&R)..."
 
-#: resources.h:254
+#: resources.h:272
 msgid "&Save as..."
 msgstr "儲存為(&S)..."
 
@@ -396,23 +432,27 @@ msgstr "儲存為(&S)..."
 msgid "&Select language:"
 msgstr "選擇語系(&S):"
 
-#: resources.h:394
+#: resources.h:412
 msgid "&Server"
 msgstr "伺服器(&S)"
 
-#: resources.h:374
+#: resources.h:392
 msgid "&Settings"
 msgstr "設定(&S)"
 
-#: resources.h:385
+#: resources.h:403
 msgid "&Settings..."
 msgstr "設定(&S)..."
 
-#: resources.h:182
+#: resources.h:200
 msgid "&Show debug menu"
 msgstr "顯示偵錯選單(&S)"
 
-#: resources.h:380
+#: resources.h:459
+msgid "&Show message"
+msgstr "顯示訊息(&S)"
+
+#: resources.h:398
 msgid "&Site Manager..."
 msgstr "站台管理員(&S)..."
 
@@ -432,7 +472,7 @@ msgstr "測試(&T)"
 msgid "&Theme:"
 msgstr "佈景主題(&T):"
 
-#: resources.h:392
+#: resources.h:410
 msgid "&Transfer"
 msgstr "傳輸(&T)"
 
@@ -444,11 +484,11 @@ msgstr "傳輸模式(&U):"
 msgid "&Treat dotfiles (filenames starting with a dot) as Ascii files"
 msgstr "將 \".\"  開頭的檔案視作文字檔案(&T)"
 
-#: resources.h:248
+#: resources.h:266
 msgid "&Update cached key for this host"
 msgstr "更新該主機快取的 Host Key(&U)"
 
-#: resources.h:405
+#: resources.h:423
 msgid "&Upload"
 msgstr "上傳(&U)"
 
@@ -456,11 +496,15 @@ msgstr "上傳(&U)"
 msgid "&Use the server's external IP address instead"
 msgstr "改為使用伺服器的外部 IP Address(&U)"
 
+#: resources.h:198
+msgid "&Use thousands separator"
+msgstr ""
+
 #: resources.h:81
 msgid "&User:"
 msgstr "使用者(&U):"
 
-#: resources.h:511
+#: resources.h:538
 msgid "&Username:"
 msgstr "使用者名稱(&U):"
 
@@ -469,7 +513,7 @@ msgstr "使用者名稱(&U):"
 msgid "&Version %s"
 msgstr "版本 %s(&V)"
 
-#: resources.h:199
+#: resources.h:217
 msgid "&Write"
 msgstr "寫入(&W)"
 
@@ -478,11 +522,11 @@ msgstr "寫入(&W)"
 msgid "'%s' does not exist or cannot be accessed."
 msgstr "'%s' 不存在或是無法存取."
 
-#: ../../locales/../src/interface/sitemanager.cpp:519
+#: ../../locales/../src/interface/sitemanager.cpp:528
 msgid "'Account' logontype not supported by selected protocol"
 msgstr "所選的協定不支援帳號 (Account) 登入型式"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:501
+#: ../../locales/../src/interface/Mainfrm.cpp:556
 msgid ""
 "'quote' is usually a local command used by commandline clients to send the "
 "arguments following 'quote' to the server. You might want to enter the raw "
@@ -515,6 +559,14 @@ msgstr "(5-9999, 0 則停用)"
 msgid "(At least 7 days)"
 msgstr "(最少 7 日)"
 
+#: resources.h:191
+msgid "(example: %H:%M)"
+msgstr "(例: %H:%M)"
+
+#: resources.h:185
+msgid "(example: %Y-%m-%d)"
+msgstr "(例: %Y-%m-%d)"
+
 #: resources.h:37 resources.h:39
 msgid "(in KB/s)"
 msgstr "(單位 KB/s)"
@@ -527,7 +579,7 @@ msgstr ", 剩餘時間 %H:%M:%S"
 msgid ", --:--:-- left"
 msgstr ", 剩餘時間 --:--:--"
 
-#: resources.h:496
+#: resources.h:523
 msgid "-"
 msgstr "-"
 
@@ -536,23 +588,23 @@ msgstr "-"
 msgid "--:--:-- left"
 msgstr "剩餘時間 --:--:--"
 
-#: resources.h:184
+#: resources.h:202
 msgid "0 - None"
 msgstr "0 - 無"
 
-#: resources.h:185
+#: resources.h:203
 msgid "1 - Warning"
 msgstr "1 - 警告"
 
-#: resources.h:186
+#: resources.h:204
 msgid "2 - Info"
 msgstr "2 - 資訊"
 
-#: resources.h:187
+#: resources.h:205
 msgid "3 - Verbose"
 msgstr "3 - 詳述"
 
-#: resources.h:188
+#: resources.h:206
 msgid "4 - Debug"
 msgstr "4 - 偵錯"
 
@@ -561,7 +613,7 @@ msgstr "4 - 偵錯"
 msgid "A directory cannot be dragged into one if its subdirectories."
 msgstr "一個目錄不能拖曳到其子目錄下."
 
-#: resources.h:468
+#: resources.h:495
 msgid ""
 "A few servers don't allow passive mode or are misconfigured. In such cases "
 "you would have to use active mode. In active mode, FileZilla opens a port "
@@ -570,7 +622,7 @@ msgstr ""
 "一些伺服器不允許被動模式或是設定有誤. 這些情況下您可能得使用主動模式. 在主動"
 "模式下, FileZilla 會開啟一個連接埠要求伺服器連線."
 
-#: ../../locales/../src/interface/FileZilla.cpp:627
+#: ../../locales/../src/interface/FileZilla.cpp:623
 msgid ""
 "A local filename could not be decoded.\n"
 "Please make sure the LC_CTYPE (or LC_ALL) environment variable is set "
@@ -583,7 +635,7 @@ msgstr ""
 "除非您解決這個問題, 否則檔案可能不會顯示於檔案列表內.\n"
 "此次連線不再顯示更多的警告."
 
-#: resources.h:304
+#: resources.h:322
 msgid "A newer version of FileZilla is available:"
 msgstr "有新版的 FileZilla 可用:"
 
@@ -591,7 +643,7 @@ msgstr "有新版的 FileZilla 可用:"
 msgid "A&dd"
 msgstr "新增(&D)"
 
-#: resources.h:353
+#: resources.h:371
 msgid "A&llow resume of ascii files"
 msgstr "允許文字檔案的回復(&L)"
 
@@ -603,7 +655,7 @@ msgstr "只套用到下載(&P)"
 msgid "A&pply only to uploads"
 msgstr "只套用到上傳(&P)"
 
-#: resources.h:212
+#: resources.h:230
 msgid "A&pply to all files and directories"
 msgstr "套用到所有的檔案與目錄(&P)"
 
@@ -611,24 +663,28 @@ msgstr "套用到所有的檔案與目錄(&P)"
 msgid "A&scii"
 msgstr "文字類檔案(&S)"
 
-#: resources.h:328 resources.h:346
+#: resources.h:346 resources.h:364
 msgid "A&sk for action"
 msgstr "詢問動作(&S)"
 
-#: resources.h:217
+#: resources.h:235
 msgid "About FileZilla"
 msgstr "關於 FileZilla"
 
-#: resources.h:80 ../../locales/../src/interface/sitemanager.cpp:516
-#: ../../locales/../src/interface/sitemanager.cpp:566
-#: ../../locales/../src/interface/sitemanager.cpp:759
-#: ../../locales/../src/interface/sitemanager.cpp:760
-#: ../../locales/../src/interface/sitemanager.cpp:798
-#: ../../locales/../src/interface/sitemanager.cpp:1014
+#: resources.h:80 ../../locales/../src/interface/sitemanager.cpp:525
+#: ../../locales/../src/interface/sitemanager.cpp:575
+#: ../../locales/../src/interface/sitemanager.cpp:776
+#: ../../locales/../src/interface/sitemanager.cpp:777
+#: ../../locales/../src/interface/sitemanager.cpp:815
+#: ../../locales/../src/interface/sitemanager.cpp:1047
 msgid "Account"
 msgstr "帳號"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:97
+#: resources.h:455
+msgid "Action after queue &completion"
+msgstr "佇列完成後執行動作(&C)"
+
+#: ../../locales/../src/interface/settingsdialog.cpp:101
 msgid "Active mode"
 msgstr "主動模式"
 
@@ -654,19 +710,19 @@ msgstr ""
 "FTP 主動模式測試失敗. FileZilla 知道正確的外部 IP Address, 但您的路由器改錯了"
 "傳送位址."
 
-#: resources.h:297
+#: resources.h:315
 msgid "Active mode IP"
 msgstr "主動模式 IP Address"
 
-#: resources.h:277
+#: resources.h:295
 msgid "Add &more"
 msgstr "新增更多項目(&M)"
 
-#: resources.h:453
+#: resources.h:480
 msgid "Add selected directory to the transfer queue"
 msgstr "加入選擇的資料夾到傳輸佇列"
 
-#: resources.h:408 resources.h:418
+#: resources.h:426 resources.h:436
 msgid "Add selected files and folders to the transfer queue"
 msgstr "加入所選的檔案與資料夾到傳輸佇列"
 
@@ -678,11 +734,11 @@ msgstr "調整伺服器時區偏移量:"
 msgid "Advanced"
 msgstr "進階設定"
 
-#: resources.h:301
+#: resources.h:319
 msgid "Advanced options:"
 msgstr "進階選項:"
 
-#: resources.h:497
+#: resources.h:524
 msgid "All ports in the given range have to be between 1024 and 65535."
 msgstr "所有範圍內的連接埠號碼必須在 1024 到 65535 之間."
 
@@ -690,11 +746,11 @@ msgstr "所有範圍內的連接埠號碼必須在 1024 到 65535 之間."
 msgid "Allow fall back to other transfer mode on failure"
 msgstr "失敗時允許回復到其他傳輸模式"
 
-#: resources.h:472
+#: resources.h:499
 msgid "Allow fallback to other transfer mode on failure"
 msgstr "失敗時允許回復到其他傳輸模式"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:557
+#: ../../locales/../src/interface/Mainfrm.cpp:612
 msgid ""
 "Also, not all servers support this feature and may return incorrect listings "
 "if 'View hidden files' is enabled. Although FileZilla performs some tests to "
@@ -710,22 +766,22 @@ msgid ""
 "recent version."
 msgstr "也可以拜訪 http://filezilla-project.org 下載最近的版本."
 
-#: resources.h:76 ../../locales/../src/interface/sitemanager.cpp:557
-#: ../../locales/../src/interface/sitemanager.cpp:758
-#: ../../locales/../src/interface/sitemanager.cpp:951
-#: ../../locales/../src/interface/sitemanager.cpp:1017
+#: resources.h:76 ../../locales/../src/interface/sitemanager.cpp:566
+#: ../../locales/../src/interface/sitemanager.cpp:775
+#: ../../locales/../src/interface/sitemanager.cpp:984
+#: ../../locales/../src/interface/sitemanager.cpp:1050
 msgid "Anonymous"
 msgstr "匿名"
 
-#: resources.h:275
+#: resources.h:293
 msgid "Any of the following"
 msgstr "以下任何"
 
-#: resources.h:214
+#: resources.h:232
 msgid "App&ly to directories only"
 msgstr "只套用到目錄(&L)"
 
-#: resources.h:265
+#: resources.h:283
 msgid "Apply"
 msgstr "套用"
 
@@ -733,7 +789,7 @@ msgstr "套用"
 msgid "Apply to &current queue only"
 msgstr "只套用到目前的佇列(&C)"
 
-#: resources.h:213
+#: resources.h:231
 msgid "Apply to &files only"
 msgstr "只套用到檔案(&F)"
 
@@ -741,16 +797,16 @@ msgstr "只套用到檔案(&F)"
 msgid "Archive"
 msgstr "壓縮檔"
 
-#: resources.h:78 ../../locales/../src/interface/sitemanager.cpp:794
-#: ../../locales/../src/interface/sitemanager.cpp:1008
+#: resources.h:78 ../../locales/../src/interface/sitemanager.cpp:811
+#: ../../locales/../src/interface/sitemanager.cpp:1041
 msgid "Ask for password"
 msgstr "詢問密碼"
 
-#: resources.h:493
+#: resources.h:520
 msgid "Ask operating system for a port."
 msgstr "對作業系統要求連接埠."
 
-#: resources.h:291 resources.h:483
+#: resources.h:309 resources.h:510
 msgid "Ask your operating system for the external IP address"
 msgstr "對您的作業系統詢問外部 IP Address"
 
@@ -758,7 +814,7 @@ msgstr "對您的作業系統詢問外部 IP Address"
 msgid "At least one filter condition is incomplete"
 msgstr "最少有一個篩選條件沒有完整"
 
-#: resources.h:502
+#: resources.h:529
 msgid "At this point, all required information has been gathered."
 msgstr "此時所有必備的資訊皆已收集完成."
 
@@ -778,19 +834,19 @@ msgstr "自動更新檢查"
 msgid "Blackboard"
 msgstr "黑板"
 
-#: ../../locales/../src/interface/state.cpp:257
+#: ../../locales/../src/interface/state.cpp:269
 msgid "Break current connection?"
 msgstr "中斷目前的連線嗎?"
 
-#: resources.h:224
+#: resources.h:242
 msgid "Build date:"
 msgstr "組建日期: "
 
-#: resources.h:222
+#: resources.h:240
 msgid "Build information"
 msgstr "組建資訊"
 
-#: resources.h:287
+#: resources.h:305
 msgid ""
 "By default uses any available local port to establish transfers in active "
 "mode. If you want to limit FileZilla to use only a small range of ports, "
@@ -799,38 +855,42 @@ msgstr ""
 "預設情形下主動模式使用任何可用的本地連接埠. 如果您想限制 FileZilla 只使用小範"
 "圍的連接埠, 請在下方輸入連接埠範圍."
 
-#: resources.h:303
+#: resources.h:321
 msgid "C&heck for nightly builds of FileZilla"
 msgstr "檢查每日組建版的 FileZilla (&H)"
 
-#: resources.h:439
+#: resources.h:466
 msgid "C&lear all"
 msgstr "全部清除(&L)"
 
-#: ../../locales/../src/engine/transfersocket.cpp:567
+#: resources.h:184
+msgid "C&ustom"
+msgstr "自訂(&U)"
+
+#: ../../locales/../src/engine/transfersocket.cpp:603
 msgid "Can't read from file"
 msgstr "無法讀取檔案"
 
-#: ../../locales/../src/engine/transfersocket.cpp:541
+#: ../../locales/../src/engine/transfersocket.cpp:577
 msgid "Can't write data to file, disk is full."
 msgstr "無法寫入資料, 磁碟已滿."
 
-#: ../../locales/../src/engine/transfersocket.cpp:543
-#: ../../locales/../src/engine/transfersocket.cpp:546
-#: ../../locales/../src/engine/transfersocket.cpp:611
+#: ../../locales/../src/engine/transfersocket.cpp:579
+#: ../../locales/../src/engine/transfersocket.cpp:582
+#: ../../locales/../src/engine/transfersocket.cpp:647
 msgid "Can't write data to file."
 msgstr "無法寫入檔案."
 
-#: resources.h:23 resources.h:216 resources.h:264 resources.h:284
-#: resources.h:336 resources.h:363 resources.h:370 resources.h:378
+#: resources.h:23 resources.h:234 resources.h:282 resources.h:302
+#: resources.h:354 resources.h:381 resources.h:388 resources.h:396
 msgid "Cancel"
 msgstr "取消"
 
-#: resources.h:530
+#: resources.h:557
 msgid "Cancel current operation"
 msgstr "取消目前的操作"
 
-#: resources.h:531
+#: resources.h:558
 msgid "Cancels the current operation"
 msgstr "取消目前的操作"
 
@@ -853,23 +913,23 @@ msgstr "無法從資源檔裡載入快速連線列"
 msgid "Cannot load file, not a valid XML file."
 msgstr "無法載入檔案, 這不是個有效的 XML 檔案."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:434
+#: ../../locales/../src/interface/Mainfrm.cpp:489
 msgid "Cannot load main menu from resource file"
 msgstr "無法從資源檔裡載入主選單"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:685
+#: ../../locales/../src/interface/Mainfrm.cpp:740
 msgid "Cannot load toolbar from resource file"
 msgstr "無法從資源檔裡載入工具列"
 
-#: ../../locales/../src/interface/sitemanager.cpp:643
+#: ../../locales/../src/interface/sitemanager.cpp:652
 msgid "Cannot rename entry"
 msgstr "無法更名欄位"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1718
+#: ../../locales/../src/interface/RemoteListView.cpp:1755
 msgid "Cannot rename file"
 msgstr "無法更名檔案"
 
-#: resources.h:357
+#: resources.h:375
 msgid "Categories"
 msgstr "分類目錄"
 
@@ -881,15 +941,15 @@ msgstr "憑證發行者"
 msgid "Challenge:"
 msgstr "需要確認:"
 
-#: resources.h:195
+#: resources.h:213
 msgid "Change file attributes"
 msgstr "變更檔案屬性"
 
-#: resources.h:426 resources.h:461
+#: resources.h:444 resources.h:488
 msgid "Change the file permissions."
 msgstr "變更檔案權限."
 
-#: ../../locales/../src/interface/FileZilla.cpp:627
+#: ../../locales/../src/interface/FileZilla.cpp:623
 msgid "Character encoding issue"
 msgstr "字元編碼議題"
 
@@ -897,11 +957,11 @@ msgstr "字元編碼議題"
 msgid "Charset"
 msgstr "字碼集"
 
-#: resources.h:401
+#: resources.h:419
 msgid "Check for &updates..."
 msgstr "檢查更新(&U)..."
 
-#: resources.h:402
+#: resources.h:420
 msgid "Check for newer versions of FileZilla"
 msgstr "檢查新版的 FileZilla"
 
@@ -913,11 +973,11 @@ msgstr "檢查更新"
 msgid "Checking for correct external IP address"
 msgstr "正在檢查正確的外部 IP Address"
 
-#: resources.h:299
+#: resources.h:317
 msgid "Checking for updates"
 msgstr "正在檢查更新"
 
-#: ../../locales/../src/interface/sitemanager.cpp:891
+#: ../../locales/../src/interface/sitemanager.cpp:924
 msgid "Choose the default local directory"
 msgstr "選擇預設的本地目錄"
 
@@ -929,23 +989,23 @@ msgstr "區塊資料不正確結束"
 msgid "Classic"
 msgstr "傳統模式"
 
-#: resources.h:360
+#: resources.h:378
 msgid "Clear &Site Manager entries"
 msgstr "清除站台管理員裡的欄位(&S)"
 
-#: resources.h:440
+#: resources.h:467
 msgid "Clear &layout cache"
 msgstr "清除版面快取(&L)"
 
-#: resources.h:358
+#: resources.h:376
 msgid "Clear &quickconnect history"
 msgstr "清除快速連線列裡的歷程(&Q)"
 
-#: resources.h:359
+#: resources.h:377
 msgid "Clear &reconnect information"
 msgstr "清除重新連線資訊(&R)"
 
-#: resources.h:361
+#: resources.h:379
 msgid "Clear &transfer queue"
 msgstr "清除傳輸佇列(&T)"
 
@@ -953,7 +1013,7 @@ msgstr "清除傳輸佇列(&T)"
 msgid "Clear history"
 msgstr "清除歷程"
 
-#: resources.h:355 ../../locales/../src/interface/clearprivatedata.cpp:34
+#: resources.h:373 ../../locales/../src/interface/clearprivatedata.cpp:34
 #: ../../locales/../src/interface/clearprivatedata.cpp:40
 #: ../../locales/../src/interface/clearprivatedata.cpp:46
 #: ../../locales/../src/interface/clearprivatedata.cpp:68
@@ -973,7 +1033,7 @@ msgstr "按 Finish 來儲存您的配置."
 msgid "Click on next to download the new version."
 msgstr "按 Next 下載新版本."
 
-#: resources.h:383
+#: resources.h:401 ../../locales/../src/interface/Mainfrm.cpp:854
 msgid "Close FileZilla"
 msgstr "關閉 FileZilla"
 
@@ -999,11 +1059,11 @@ msgstr "憑證名稱:"
 msgid "Communication tainted by router"
 msgstr "通訊已被路由器影響"
 
-#: resources.h:225
+#: resources.h:243
 msgid "Compiled with:"
 msgstr "編譯於:"
 
-#: resources.h:226
+#: resources.h:244
 msgid "Compiler flags:"
 msgstr "編譯器旗標:"
 
@@ -1011,24 +1071,24 @@ msgstr "編譯器旗標:"
 msgid "Concurrent transfers"
 msgstr "並行傳輸"
 
-#: resources.h:279
+#: resources.h:297
 msgid "Conditions are c&ase sensitive"
 msgstr "篩選條件是分大小寫的(&A)"
 
-#: resources.h:501
+#: resources.h:528
 msgid "Configuration test"
 msgstr "配置測試"
 
-#: resources.h:475
+#: resources.h:502
 msgid "Configure passive mode"
 msgstr "配置被動模式"
 
-#: resources.h:491
+#: resources.h:518
 msgid "Configure port range"
 msgstr "配置連接埠範圍"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1417
-#: ../../locales/../src/interface/RemoteListView.cpp:1438
+#: ../../locales/../src/interface/LocalListView.cpp:1533
+#: ../../locales/../src/interface/RemoteListView.cpp:1475
 msgid "Confirmation needed"
 msgstr "需要確認"
 
@@ -1040,7 +1100,7 @@ msgstr "恭喜您. 您的配置似乎已可正常運作."
 msgid "Connected"
 msgstr "已連線"
 
-#: ../../locales/../src/interface/QueueView.cpp:1204
+#: ../../locales/../src/interface/QueueView.cpp:1224
 msgid "Connecting"
 msgstr "連線中"
 
@@ -1062,11 +1122,11 @@ msgstr "正在連線到 %s:%d ..."
 msgid "Connecting to server"
 msgstr "正在連線到伺服器"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:96
+#: ../../locales/../src/interface/settingsdialog.cpp:100
 msgid "Connection"
 msgstr "連線"
 
-#: ../../locales/../src/interface/QueueView.cpp:906
+#: ../../locales/../src/interface/QueueView.cpp:926
 msgid "Connection attempt failed"
 msgstr "連線嘗試失敗"
 
@@ -1111,12 +1171,12 @@ msgstr "與測試伺服器的連線失敗."
 msgid "Cop&y"
 msgstr "複製(&Y)"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1165
+#: ../../locales/../src/interface/sitemanager.cpp:1203
 #, c-format
 msgid "Copy (%d) of %s"
 msgstr "複製 (%d) - %s"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1142
+#: ../../locales/../src/interface/sitemanager.cpp:1180
 #, c-format
 msgid "Copy of %s"
 msgstr "複製 - %s"
@@ -1125,7 +1185,7 @@ msgstr "複製 - %s"
 msgid "Could not connect to server"
 msgstr "無法連線到伺服器"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2234
+#: ../../locales/../src/interface/RemoteListView.cpp:2271
 #: ../../locales/../src/interface/RemoteTreeView.cpp:829
 msgid ""
 "Could not determine the target of the Drag&Drop operation.\n"
@@ -1139,7 +1199,7 @@ msgstr ""
 msgid "Could not establish connection to server"
 msgstr "無法建立與伺服器的連線"
 
-#: ../../locales/../src/interface/FileZilla.cpp:362
+#: ../../locales/../src/interface/FileZilla.cpp:358
 msgid ""
 "Could not find the resource files for FileZilla, closing FileZilla.\n"
 "You can set the data directory of FileZilla using the '--datadir "
@@ -1150,7 +1210,7 @@ msgstr ""
 "您可以使用指令選項 '--datadir <custompath>' 或是設定 FZ_DATADIR 環境變數來指"
 "定 FileZilla 的資料目錄."
 
-#: ../../locales/../src/interface/Options.cpp:102
+#: ../../locales/../src/interface/Options.cpp:107
 #, c-format
 msgid ""
 "Could not load \"%s\", make sure the file is valid.\n"
@@ -1169,7 +1229,7 @@ msgstr "無法載入 \"%s\", 請確定檔案是否有效並且可存取."
 
 #: ../../locales/../src/interface/filter.cpp:167
 #: ../../locales/../src/interface/filter.cpp:252
-#: ../../locales/../src/interface/sitemanager.cpp:353
+#: ../../locales/../src/interface/sitemanager.cpp:362
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1180,9 +1240,9 @@ msgstr ""
 "任何設定值的修改都不會永久保留."
 
 #: ../../locales/../src/interface/import.cpp:99
-#: ../../locales/../src/interface/import.cpp:278
-#: ../../locales/../src/interface/sitemanager.cpp:252
-#: ../../locales/../src/interface/sitemanager.cpp:1297
+#: ../../locales/../src/interface/import.cpp:282
+#: ../../locales/../src/interface/sitemanager.cpp:261
+#: ../../locales/../src/interface/sitemanager.cpp:1335
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1192,8 +1252,8 @@ msgstr ""
 "無法載入 \"%s\", 請確定檔案是否有效並且可存取.\n"
 "對帳台管理員的任何修改都不永久保留."
 
-#: ../../locales/../src/interface/QueueView.cpp:1629
-#: ../../locales/../src/interface/QueueView.cpp:1656
+#: ../../locales/../src/interface/QueueView.cpp:1664
+#: ../../locales/../src/interface/QueueView.cpp:1691
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1220,20 +1280,20 @@ msgstr "無法找尋到檔案結尾"
 msgid "Could not spawn IO thread"
 msgstr "無法產生 I/O 執行緒"
 
-#: ../../locales/../src/interface/QueueView.cpp:932
-#: ../../locales/../src/interface/QueueView.cpp:937
+#: ../../locales/../src/interface/QueueView.cpp:952
+#: ../../locales/../src/interface/QueueView.cpp:957
 msgid "Could not start transfer"
 msgstr "無法啟動傳輸"
 
-#: ../../locales/../src/interface/sitemanager.cpp:379
+#: ../../locales/../src/interface/sitemanager.cpp:388
 #, c-format
 msgid ""
 "Could not write \"%s\", any changes to the Site Manager could not be saved: %"
 "s"
 msgstr "無法寫入 \"%s\", 對站台管理員的任何變更都可能無法儲存: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1639
-#: ../../locales/../src/interface/QueueView.cpp:1675
+#: ../../locales/../src/interface/QueueView.cpp:1674
+#: ../../locales/../src/interface/QueueView.cpp:1710
 #, c-format
 msgid "Could not write \"%s\", the queue could not be saved."
 msgstr "無法寫入 \"%s\", 佇列無法儲存."
@@ -1247,21 +1307,21 @@ msgstr "無法寫入 \"%s\": %s"
 msgid "Country:"
 msgstr "國家:"
 
-#: resources.h:442
+#: resources.h:469
 msgid "Crashes FileZilla instantly. Only used to debug the exception handler"
 msgstr "立即弄當 FileZilla. 只用於檢測例外處理機制"
 
-#: resources.h:410 resources.h:420 resources.h:455
+#: resources.h:428 resources.h:438 resources.h:482
 msgid "Create a new subdirectory in the current directory"
 msgstr "在現行目錄下建立子新的目錄"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1316
-#: ../../locales/../src/interface/RemoteListView.cpp:1383
+#: ../../locales/../src/interface/LocalListView.cpp:1432
+#: ../../locales/../src/interface/RemoteListView.cpp:1420
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1192
 msgid "Create directory"
 msgstr "建立目錄"
 
-#: ../../locales/../src/interface/QueueView.cpp:1277
+#: ../../locales/../src/interface/QueueView.cpp:1297
 msgid "Creating directory"
 msgstr "建立目錄中"
 
@@ -1275,6 +1335,10 @@ msgstr "建立目錄 '%s'..."
 msgid "Critical error"
 msgstr "嚴重錯誤"
 
+#: resources.h:190
+msgid "Cus&tom"
+msgstr "自訂(&T)"
+
 #: ../../locales/../src/interface/filter.cpp:116
 msgid "Custom filter set"
 msgstr "自訂篩選集"
@@ -1283,11 +1347,11 @@ msgstr "自訂篩選集"
 msgid "D&efault"
 msgstr "預設(&E)"
 
-#: resources.h:411 resources.h:421 resources.h:456
+#: resources.h:429 resources.h:439 resources.h:483
 msgid "D&elete"
 msgstr "刪除(&E)"
 
-#: resources.h:258
+#: resources.h:276
 msgid "D&isable all"
 msgstr "全部關閉(&I)"
 
@@ -1300,6 +1364,14 @@ msgstr "忽略(&I)"
 msgid "Data socket closed too early."
 msgstr "Data Socket 過早關閉."
 
+#: resources.h:181
+msgid "Date formatting"
+msgstr "日期格式"
+
+#: ../../locales/../src/interface/settingsdialog.cpp:108
+msgid "Date/time format"
+msgstr "日期/時間格式"
+
 #: ../../locales/../src/interface/fileexistsdlg.cpp:68
 #: ../../locales/../src/interface/fileexistsdlg.cpp:92
 #: ../../locales/../src/interface/fileexistsdlg.cpp:124
@@ -1307,16 +1379,16 @@ msgstr "Data Socket 過早關閉."
 msgid "Date/time unknown"
 msgstr "未知日期/時間"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:108
+#: ../../locales/../src/interface/settingsdialog.cpp:114
 msgid "Debug"
 msgstr "偵錯"
 
-#: resources.h:181
+#: resources.h:199
 msgid "Debugging settings"
 msgstr "偵錯設定"
 
-#: resources.h:87 ../../locales/../src/interface/sitemanager.cpp:957
-#: ../../locales/../src/interface/sitemanager.cpp:1046
+#: resources.h:87 ../../locales/../src/interface/sitemanager.cpp:990
+#: ../../locales/../src/interface/sitemanager.cpp:1079
 msgid "Default"
 msgstr "預設"
 
@@ -1324,7 +1396,7 @@ msgstr "預設"
 msgid "Default &local directory:"
 msgstr "預設本地目錄(&L):"
 
-#: resources.h:316
+#: resources.h:334
 msgid "Default file exists action"
 msgstr "預設檔案存在動作"
 
@@ -1332,7 +1404,7 @@ msgstr "預設檔案存在動作"
 msgid "Default r&emote directory:"
 msgstr "預設遠端目錄(&E):"
 
-#: resources.h:469
+#: resources.h:496
 msgid "Default transfer mode:"
 msgstr "預設傳輸模式:"
 
@@ -1340,7 +1412,7 @@ msgstr "預設傳輸模式:"
 msgid "Default transfer type:"
 msgstr "預設傳輸形式:"
 
-#: resources.h:295 resources.h:488
+#: resources.h:313 resources.h:515
 msgid "Default: http://ip.filezilla-project.org/ip.php"
 msgstr "預設: http://ip.filezilla-project.org/ip.php"
 
@@ -1357,31 +1429,36 @@ msgstr "登入嘗試失敗之間的延遲:"
 msgid "Delaying connection due to previously failed connection attempt..."
 msgstr "因先前登入嘗試失敗而暫作延遲中..."
 
-#: resources.h:457
+#: ../../locales/../src/interface/sitemanager.cpp:685
+#, fuzzy
+msgid "Delete Site Manager entry"
+msgstr "清除站台管理員裡的欄位(&S)"
+
+#: resources.h:484
 msgid "Delete selected directory"
 msgstr "刪除所選的資料夾"
 
-#: resources.h:412 resources.h:422
+#: resources.h:430 resources.h:440
 msgid "Delete selected files and folders"
 msgstr "刪除選擇的檔案與資料夾"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:907
+#: ../../locales/../src/interface/LocalTreeView.cpp:913
 msgid "Desktop"
 msgstr "桌面"
 
-#: resources.h:7 resources.h:230
+#: resources.h:7 resources.h:248
 msgid "Details"
 msgstr "詳細內容"
 
-#: resources.h:242
+#: resources.h:260
 msgid "Details for new key:"
 msgstr "新 Host Key 的詳細內容:"
 
-#: resources.h:282
+#: resources.h:300
 msgid "Dire&ctories"
 msgstr "目錄(&C)"
 
-#: ../../locales/../src/interface/queue.cpp:1150
+#: ../../locales/../src/interface/queue.cpp:1153
 msgid "Direction"
 msgstr "方向"
 
@@ -1389,11 +1466,11 @@ msgstr "方向"
 msgid "Directory listing aborted by user"
 msgstr "使用者中止目錄列表"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:661
+#: ../../locales/../src/interface/RemoteListView.cpp:668
 msgid "Directory listing failed"
 msgstr "目錄列表失敗"
 
-#: resources.h:251
+#: resources.h:269
 msgid "Directory listing filters"
 msgstr "目錄列表篩選器"
 
@@ -1401,15 +1478,15 @@ msgstr "目錄列表篩選器"
 msgid "Directory listing successful"
 msgstr "成功取得目錄列表"
 
-#: resources.h:261
+#: resources.h:279
 msgid "Disa&ble all"
 msgstr "全部停用(&B)"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:558
+#: ../../locales/../src/interface/Mainfrm.cpp:613
 msgid "Disable this option if you cannot see your files anymore."
 msgstr "若您無法再看見檔案時請停用此選項."
 
-#: resources.h:532
+#: resources.h:559
 msgid "Disconnect from server"
 msgstr "從伺服器離線"
 
@@ -1418,23 +1495,27 @@ msgstr "從伺服器離線"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:156
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:894
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:896
-#: ../../locales/../src/interface/QueueView.cpp:904
-#: ../../locales/../src/interface/QueueView.cpp:929
+#: ../../locales/../src/interface/QueueView.cpp:924
+#: ../../locales/../src/interface/QueueView.cpp:949
 msgid "Disconnected from server"
 msgstr "已從伺服器離線"
 
-#: ../../locales/../src/interface/QueueView.cpp:1179
+#: ../../locales/../src/interface/QueueView.cpp:1199
 #: ../../locales/../src/interface/statuslinectrl.cpp:150
 msgid "Disconnecting from previous server"
 msgstr "從先前伺服器離線中"
 
-#: resources.h:533
+#: resources.h:560
 msgid "Disconnects from the currently visible server"
 msgstr "從當前伺服器離線"
 
-#: resources.h:404
+#: resources.h:422
 msgid "Display about dialog"
 msgstr "顯示 FileZilla 相關資訊"
+
+#: resources.h:463
+msgid "Do &nothing"
+msgstr "什麼都不做(&N)"
 
 #: ../../locales/../src/interface/updatewizard.cpp:137
 msgid ""
@@ -1443,6 +1524,11 @@ msgid ""
 msgstr ""
 "您想檢查測試版嗎? 除非您想測試新功能,\n"
 "否則還是繼續使用穩定版本會比較好."
+
+#: ../../locales/../src/interface/Mainfrm.cpp:857
+#, fuzzy
+msgid "Do you really want to close FileZilla?"
+msgstr "您真的要刪除傳輸佇列?"
 
 #: ../../locales/../src/interface/clearprivatedata.cpp:34
 msgid ""
@@ -1453,16 +1539,21 @@ msgstr "您真的要刪除所有站台管理員裡的欄位和傳輸佇列?"
 msgid "Do you really want to delete all Site Manager entries?"
 msgstr "您真的要刪除所有站台管理員裡的欄位?"
 
+#: ../../locales/../src/interface/sitemanager.cpp:687
+#, fuzzy
+msgid "Do you really want to delete selected entry?"
+msgstr "您真的要刪除所有站台管理員裡的欄位?"
+
 #: ../../locales/../src/interface/clearprivatedata.cpp:40
 msgid "Do you really want to delete the transfer queue?"
 msgstr "您真的要刪除傳輸佇列?"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:502
+#: ../../locales/../src/interface/Mainfrm.cpp:557
 #, c-format
 msgid "Do you really want to send '%s' to the server?"
 msgstr "您真的要傳送 '%s' 到伺服器?"
 
-#: resources.h:296 resources.h:490
+#: resources.h:314 resources.h:517
 msgid "Don't use external IP address on &local connections."
 msgstr "不在本地端連線使用外部 IP Address(&L)."
 
@@ -1470,11 +1561,11 @@ msgstr "不在本地端連線使用外部 IP Address(&L)."
 msgid "Download &limit:"
 msgstr "下載限制(&L)"
 
-#: resources.h:451
+#: resources.h:478
 msgid "Download selected directory"
 msgstr "下載所選的資料夾"
 
-#: resources.h:416
+#: resources.h:434
 msgid "Download selected files and folders"
 msgstr "下載選擇的檔案與資料夾"
 
@@ -1484,13 +1575,13 @@ msgstr "下載選擇的檔案與資料夾"
 msgid "Downloading %s"
 msgstr "正在下載 %s"
 
-#: resources.h:318 resources.h:338
+#: resources.h:336 resources.h:356
 msgid "Downloads"
 msgstr "下載"
 
-#: ../../locales/../src/interface/LocalListView.cpp:88
+#: ../../locales/../src/interface/LocalListView.cpp:90
 #: ../../locales/../src/interface/LocalTreeView.cpp:88
-#: ../../locales/../src/interface/QueueView.cpp:67
+#: ../../locales/../src/interface/QueueView.cpp:70
 #: ../../locales/../src/interface/RemoteListView.cpp:86
 #: ../../locales/../src/interface/RemoteTreeView.cpp:79
 msgid ""
@@ -1498,9 +1589,9 @@ msgid ""
 "yet."
 msgstr "尚未實作在不同 FileZilla 程式實體間的拖曳功能."
 
-#: ../../locales/../src/interface/LocalListView.cpp:94
+#: ../../locales/../src/interface/LocalListView.cpp:96
 #: ../../locales/../src/interface/LocalTreeView.cpp:94
-#: ../../locales/../src/interface/QueueView.cpp:78
+#: ../../locales/../src/interface/QueueView.cpp:81
 #: ../../locales/../src/interface/RemoteListView.cpp:92
 #: ../../locales/../src/interface/RemoteTreeView.cpp:85
 msgid "Drag&drop between different servers has not been implemented yet."
@@ -1512,15 +1603,15 @@ msgstr "尚未實作在不同伺服器間的拖曳功能."
 msgid "Duplicate filter name"
 msgstr "重複的篩選器名稱"
 
-#: resources.h:257
+#: resources.h:275
 msgid "E&nable all"
 msgstr "全部啟用(&N)"
 
-#: resources.h:204
+#: resources.h:222
 msgid "E&xecute"
 msgstr "執行(&X)"
 
-#: resources.h:382
+#: resources.h:400
 msgid "E&xit"
 msgstr "離開(&X)"
 
@@ -1532,7 +1623,7 @@ msgstr "電子郵件:"
 msgid "Each filter needs at least one condition."
 msgstr "每一個篩選器需要最少一個條件."
 
-#: resources.h:266
+#: resources.h:284
 msgid "Edit filters"
 msgstr "編輯篩選器"
 
@@ -1540,7 +1631,11 @@ msgstr "編輯篩選器"
 msgid "Email:"
 msgstr "電子郵件:"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:663
+#: ../../locales/../src/interface/QueueView.cpp:1988
+msgid "Empty command"
+msgstr "空的指令"
+
+#: ../../locales/../src/interface/RemoteListView.cpp:670
 msgid "Empty directory listing"
 msgstr "空目錄列表"
 
@@ -1554,15 +1649,19 @@ msgstr "不允許空的篩選器名稱."
 msgid "Empty name"
 msgstr "空的名稱"
 
-#: resources.h:260
+#: resources.h:278
 msgid "En&able all"
 msgstr "全部啟用(&A)"
 
-#: resources.h:397
+#: resources.h:415
 msgid "Enter &custom command..."
 msgstr "輸入自訂指令(&C)..."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:490
+#: ../../locales/../src/interface/QueueView.cpp:1977
+msgid "Enter command"
+msgstr "輸入指令"
+
+#: ../../locales/../src/interface/Mainfrm.cpp:545
 msgid "Enter custom command"
 msgstr "輸入自訂指令"
 
@@ -1580,7 +1679,7 @@ msgstr "輸入篩選集的名稱"
 msgid "Enter password"
 msgstr "輸入密碼"
 
-#: resources.h:510
+#: resources.h:537
 msgid ""
 "Enter the address of the server.\n"
 "To specify the server protocol, prepend the host with the protocol "
@@ -1595,7 +1694,7 @@ msgstr ""
 "您可以輸入完整的 URL 格式, 如 protocol://user:pass@host:port 這樣, 其它欄位的"
 "資料則會被此格式覆寫."
 
-#: resources.h:514
+#: resources.h:541
 msgid ""
 "Enter the port on which the server listens.\n"
 "The default for FTP is 21, the default for SFTP is 22."
@@ -1603,7 +1702,7 @@ msgstr ""
 "輸入伺服器接收的連接埠\n"
 "預設 FTP 是用 21, 而 SFTP 是用 22."
 
-#: ../../locales/../src/engine/transfersocket.cpp:312
+#: ../../locales/../src/engine/transfersocket.cpp:349
 #, c-format
 msgid "Error %d writing to socket"
 msgstr "錯誤 %d 寫入 Socket"
@@ -1620,20 +1719,20 @@ msgstr "匯入錯誤"
 #: ../../locales/../src/interface/filter.cpp:168
 #: ../../locales/../src/interface/filter.cpp:253
 #: ../../locales/../src/interface/import.cpp:100
-#: ../../locales/../src/interface/import.cpp:279
-#: ../../locales/../src/interface/Options.cpp:103
-#: ../../locales/../src/interface/QueueView.cpp:1630
-#: ../../locales/../src/interface/QueueView.cpp:1657
-#: ../../locales/../src/interface/sitemanager.cpp:253
-#: ../../locales/../src/interface/sitemanager.cpp:354
-#: ../../locales/../src/interface/sitemanager.cpp:1298
+#: ../../locales/../src/interface/import.cpp:283
+#: ../../locales/../src/interface/Options.cpp:108
+#: ../../locales/../src/interface/QueueView.cpp:1665
+#: ../../locales/../src/interface/QueueView.cpp:1692
+#: ../../locales/../src/interface/sitemanager.cpp:262
+#: ../../locales/../src/interface/sitemanager.cpp:363
+#: ../../locales/../src/interface/sitemanager.cpp:1336
 #: ../../locales/../src/interface/wrapengine.cpp:821
 msgid "Error loading xml file"
 msgstr "載入 XML 檔案錯誤"
 
-#: ../../locales/../src/interface/QueueView.cpp:1640
-#: ../../locales/../src/interface/QueueView.cpp:1676
-#: ../../locales/../src/interface/sitemanager.cpp:380
+#: ../../locales/../src/interface/QueueView.cpp:1675
+#: ../../locales/../src/interface/QueueView.cpp:1711
+#: ../../locales/../src/interface/sitemanager.cpp:389
 #: ../../locales/../src/interface/wrapengine.cpp:989
 msgid "Error writing xml file"
 msgstr "寫入 XML 檔案錯誤"
@@ -1643,7 +1742,7 @@ msgstr "寫入 XML 檔案錯誤"
 msgid "Error:"
 msgstr "錯誤:"
 
-#: resources.h:208
+#: resources.h:226
 msgid "Exe&cute"
 msgstr "執行(&C)"
 
@@ -1651,7 +1750,7 @@ msgstr "執行(&C)"
 msgid "Executable"
 msgstr "執行檔"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1235
+#: ../../locales/../src/interface/Mainfrm.cpp:1313
 msgid "Executable contains no version info, cannot check for updates."
 msgstr "執行檔未包含版本資訊, 無法檢查更新."
 
@@ -1659,23 +1758,23 @@ msgstr "執行檔未包含版本資訊, 無法檢查更新."
 msgid "Explorer"
 msgstr "檔案總管"
 
-#: resources.h:368
+#: resources.h:386
 msgid "Export &Queue"
 msgstr "匯出佇列(&Q)"
 
-#: resources.h:367
+#: resources.h:385
 msgid "Export &Settings"
 msgstr "匯出設定(&S)"
 
-#: resources.h:364
+#: resources.h:382
 msgid "Export settings"
 msgstr "設定匯出"
 
-#: resources.h:272
+#: resources.h:290
 msgid "F&ilter name:"
 msgstr "篩選器名稱(&I):"
 
-#: ../../locales/../src/interface/sitemanager.cpp:950
+#: ../../locales/../src/interface/sitemanager.cpp:983
 msgid "FTP"
 msgstr "FTP"
 
@@ -1683,7 +1782,7 @@ msgstr "FTP"
 msgid "FTP Engine not initialized, can't connect"
 msgstr "未初始 FTP 引擎, 無法連線"
 
-#: resources.h:466
+#: resources.h:493
 msgid ""
 "FTP uses secondary connections for data transfers. These additional "
 "connections can be established in two ways."
@@ -1697,9 +1796,9 @@ msgstr "FTPES - 透過外顯式 TLS/SSL 的 FTP"
 msgid "FTPS - FTP over implicit TLS/SSL"
 msgstr "FTPS - 透過隱含式 TLS/SSL 的 FTP"
 
-#: ../../locales/../src/interface/LocalListView.cpp:550
-#: ../../locales/../src/interface/LocalListView.cpp:1537
-#: ../../locales/../src/interface/LocalTreeView.cpp:784
+#: ../../locales/../src/interface/LocalListView.cpp:636
+#: ../../locales/../src/interface/LocalListView.cpp:1653
+#: ../../locales/../src/interface/LocalTreeView.cpp:790
 #: ../../locales/../src/interface/viewheader.cpp:479
 msgid "Failed to change directory"
 msgstr "變更目錄失敗"
@@ -1730,7 +1829,7 @@ msgstr "以主動傳輸模式建立 socket 失敗"
 msgid "Failed to download the latest version of FileZilla."
 msgstr "無法下載最新版的 FileZilla"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:562
+#: ../../locales/../src/interface/LocalTreeView.cpp:568
 msgid "Failed to get 'My Documents' path"
 msgstr "取得 '我的文件' 路徑失敗"
 
@@ -1738,7 +1837,7 @@ msgstr "取得 '我的文件' 路徑失敗"
 msgid "Failed to get data peer address, connection closed."
 msgstr "無法取得 peer data address. 連線關閉."
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:549
+#: ../../locales/../src/interface/LocalTreeView.cpp:554
 msgid "Failed to get desktop path"
 msgstr "取得桌面路徑失敗"
 
@@ -1746,7 +1845,7 @@ msgstr "取得桌面路徑失敗"
 msgid "Failed to get peer address, connection closed."
 msgstr "無法取得 peer address, 連線關閉."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:175
+#: ../../locales/../src/interface/Mainfrm.cpp:184
 msgid "Failed to initialize FTP engine"
 msgstr "無法初始 FTP 引擎"
 
@@ -1755,7 +1854,7 @@ msgstr "無法初始 FTP 引擎"
 msgid "Failed to initialize TLS."
 msgstr "無法初始 TLS 加密."
 
-#: ../../locales/../src/interface/settingsdialog.cpp:133
+#: ../../locales/../src/interface/settingsdialog.cpp:139
 msgid "Failed to load panels, invalid resource files?"
 msgstr "無法載入面板選單, 是資源檔無效?"
 
@@ -1831,24 +1930,26 @@ msgstr "無法寫入 XML 檔案"
 msgid "Failed transfers"
 msgstr "傳輸失敗"
 
-#: resources.h:481
+#: resources.h:508
 msgid "Fall back to active mode"
 msgstr "回復成主動模式"
 
-#: resources.h:281
+#: resources.h:299
 msgid "Fil&es"
 msgstr "檔案(&E)"
 
-#: ../../locales/../src/interface/LocalListView.cpp:722
-#: ../../locales/../src/interface/LocalListView.cpp:740
-#: ../../locales/../src/interface/LocalListView.cpp:744
-#: ../../locales/../src/interface/RemoteListView.cpp:1169
-#: ../../locales/../src/interface/RemoteListView.cpp:1187
-#: ../../locales/../src/interface/RemoteListView.cpp:1191
+#: ../../locales/../src/interface/LocalListView.cpp:808
+#: ../../locales/../src/interface/LocalListView.cpp:826
+#: ../../locales/../src/interface/LocalListView.cpp:836
+#: ../../locales/../src/interface/LocalListView.cpp:858
+#: ../../locales/../src/interface/RemoteListView.cpp:1176
+#: ../../locales/../src/interface/RemoteListView.cpp:1194
+#: ../../locales/../src/interface/RemoteListView.cpp:1205
+#: ../../locales/../src/interface/RemoteListView.cpp:1227
 msgid "File"
 msgstr "檔案"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:100
+#: ../../locales/../src/interface/settingsdialog.cpp:104
 msgid "File Types"
 msgstr "檔案類別"
 
@@ -1856,15 +1957,15 @@ msgstr "檔案類別"
 msgid "File does not contain any importable data."
 msgstr "檔案不包含任何可匯入的資料."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1733
+#: ../../locales/../src/interface/RemoteListView.cpp:1770
 msgid "File exists"
 msgstr "檔案存在"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:101
+#: ../../locales/../src/interface/settingsdialog.cpp:105
 msgid "File exists action"
 msgstr "檔案存在動作"
 
-#: ../../locales/../src/interface/FileZilla.cpp:736
+#: ../../locales/../src/interface/FileZilla.cpp:732
 msgid "File not found"
 msgstr "找不到檔案"
 
@@ -1872,12 +1973,17 @@ msgstr "找不到檔案"
 msgid "File transfer successful"
 msgstr "檔案傳輸成功"
 
-#: ../../locales/../src/interface/FileZilla.cpp:363
+#: ../../locales/../src/interface/Mainfrm.cpp:856
+#, fuzzy
+msgid "File transfers still in progress."
+msgstr "檔案傳輸成功"
+
+#: ../../locales/../src/interface/FileZilla.cpp:359
 #: ../../locales/../src/interface/quickconnectbar.cpp:50
 msgid "FileZilla Error"
 msgstr "FileZilla 錯誤"
 
-#: resources.h:503
+#: resources.h:530
 msgid ""
 "FileZilla can now test your configuration to ensure everything is configured "
 "properly."
@@ -1892,16 +1998,16 @@ msgid "Filelists"
 msgstr "檔案列表"
 
 #: ../../locales/../src/interface/filteredit.cpp:52
-#: ../../locales/../src/interface/LocalListView.cpp:229
+#: ../../locales/../src/interface/LocalListView.cpp:231
 #: ../../locales/../src/interface/RemoteListView.cpp:305
 msgid "Filename"
 msgstr "檔名"
 
-#: resources.h:388
+#: resources.h:406
 msgid "Filename &filters..."
 msgstr "檔名篩選器(&F)..."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1718
+#: ../../locales/../src/interface/RemoteListView.cpp:1755
 msgid "Filename invalid"
 msgstr "檔名無效"
 
@@ -1909,32 +2015,37 @@ msgstr "檔名無效"
 msgid "Filename unchanged"
 msgstr "檔名未改變"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1721
+#: ../../locales/../src/interface/LocalListView.cpp:1837
 msgid "Filenames may not contain any of the following characters: / * ? < > |"
 msgstr "檔名不能包含以下任何字元: / * ? < > |"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1686
+#: ../../locales/../src/interface/LocalListView.cpp:1802
 msgid ""
 "Filenames may not contain any of the following characters: / \\ : * ? \" < > "
 "|"
 msgstr "檔名不能包含以下任何字元: / \\ : * ? \" < > |"
 
 #: ../../locales/../src/interface/filteredit.cpp:53
-#: ../../locales/../src/interface/LocalListView.cpp:230
+#: ../../locales/../src/interface/LocalListView.cpp:232
 #: ../../locales/../src/interface/RemoteListView.cpp:306
 msgid "Filesize"
 msgstr "檔案大小"
 
-#: ../../locales/../src/interface/LocalListView.cpp:231
+#: ../../locales/../src/interface/settingsdialog.cpp:109
+#, fuzzy
+msgid "Filesize format"
+msgstr "檔案大小"
+
+#: ../../locales/../src/interface/LocalListView.cpp:233
 #: ../../locales/../src/interface/RemoteListView.cpp:307
 msgid "Filetype"
 msgstr "檔案類別"
 
-#: resources.h:273
+#: resources.h:291
 msgid "Filter &out all files that:"
 msgstr "篩選出檔案關於(&O):"
 
-#: resources.h:280
+#: resources.h:298
 msgid "Filter applies to:"
 msgstr "篩選器套用到:"
 
@@ -1946,7 +2057,7 @@ msgstr "篩選器名稱已經存在"
 msgid "Filter set already exists"
 msgstr "篩選集名稱已經存在"
 
-#: resources.h:536 resources.h:537
+#: resources.h:563 resources.h:564
 msgid "Filter the directory listings"
 msgstr "篩選目錄列表"
 
@@ -1966,7 +2077,7 @@ msgstr "數位指紋 (MD5):"
 msgid "Fingerprint (SHA-1):"
 msgstr "數位指紋 (SHA-1):"
 
-#: resources.h:233 resources.h:245
+#: resources.h:251 resources.h:263
 msgid "Fingerprint:"
 msgstr "數位指紋:"
 
@@ -1974,8 +2085,8 @@ msgstr "數位指紋:"
 msgid "Firewall and router configuration wizard"
 msgstr "防火牆與路由器配置精靈"
 
-#: ../../locales/../src/interface/LocalListView.cpp:744
-#: ../../locales/../src/interface/RemoteListView.cpp:1191
+#: ../../locales/../src/interface/LocalListView.cpp:831
+#: ../../locales/../src/interface/RemoteListView.cpp:1200
 msgid "Folder"
 msgstr "資料夾"
 
@@ -1985,7 +2096,7 @@ msgid ""
 "network configuration wizard."
 msgstr "想知道更多關於這些選項的詳細資訊, 請執行網路配置精靈."
 
-#: resources.h:498
+#: resources.h:525
 msgid "For reliability you should specify a range of at least 10 ports."
 msgstr "為了穩定性您必須指定最少十個的連接埠範圍."
 
@@ -1997,7 +2108,7 @@ msgstr "強制使用 UTF-8(&U)"
 msgid "General"
 msgstr "一般設定"
 
-#: resources.h:294 resources.h:487
+#: resources.h:312 resources.h:514
 msgid "Get external IP address from the following URL:"
 msgstr "從下列網址取得外部 IP Address:"
 
@@ -2005,21 +2116,21 @@ msgstr "從下列網址取得外部 IP Address:"
 msgid "Given filterset name already exists, overwrite filter set?"
 msgstr "指定的篩選集名稱已經存在, 要複寫嗎?"
 
-#: resources.h:201
+#: resources.h:219
 msgid "Group permissions"
 msgstr "群組權限"
 
-#: resources.h:433
+#: resources.h:451
 msgid "H&igh"
 msgstr "高(&I)"
 
-#: resources.h:42 ../../locales/../src/interface/queue.cpp:868
-#: ../../locales/../src/interface/queue.cpp:949
+#: resources.h:42 ../../locales/../src/interface/queue.cpp:871
+#: ../../locales/../src/interface/queue.cpp:952
 msgid "High"
 msgstr "高"
 
-#: ../../locales/../src/interface/queue.cpp:870
-#: ../../locales/../src/interface/queue.cpp:951
+#: ../../locales/../src/interface/queue.cpp:873
+#: ../../locales/../src/interface/queue.cpp:954
 msgid "Highest"
 msgstr "最高"
 
@@ -2027,27 +2138,31 @@ msgstr "最高"
 msgid "Highest available port has to be a number between 1024 and 65535."
 msgstr "最高可用連接埠必須在 1024 到 65535 之間."
 
-#: resources.h:262
+#: resources.h:280
 msgid ""
 "Hold the shift key to toggle the filter state on both sides simultanously."
 msgstr "按住 Shift 鍵來同時切換兩邊的篩選器狀態."
 
-#: resources.h:220
+#: resources.h:238
 msgid "Homepage:"
 msgstr "首頁: "
 
-#: resources.h:239
+#: resources.h:257
 msgid "Host key mismatch"
 msgstr "Host Key 不吻合"
 
-#: resources.h:8 resources.h:115 resources.h:223 resources.h:231
-#: resources.h:243
+#: resources.h:8 resources.h:115 resources.h:241 resources.h:249
+#: resources.h:261
 msgid "Host:"
 msgstr "主機:"
 
 #: resources.h:92
 msgid "Hours,"
 msgstr "小時,"
+
+#: resources.h:189
+msgid "I&SO 8601 (example: 15:47)"
+msgstr "ISO 8601 (例: 15:47) (&S)"
 
 #: resources.h:34
 msgid ""
@@ -2056,11 +2171,11 @@ msgid ""
 msgstr ""
 "如果這段時間內沒有傳送或是接收資料, 連線會關閉而 FileZilla 會嘗試重新連線."
 
-#: resources.h:190
+#: resources.h:208
 msgid "If reporting bugs, please provide logs with \"Verbose\" logging level."
 msgstr "如果要回報錯誤, 請提供\"詳述\"等級的記錄."
 
-#: resources.h:478
+#: resources.h:505
 msgid ""
 "If the automatic test at the end of this wizard succeeds, but you cannot "
 "transfer files to a particular server, the server might be misconfigured and "
@@ -2070,7 +2185,7 @@ msgstr ""
 "如果精靈最後的自動測試成功, 您卻無法到特定的伺服器, 該伺服器可能設置錯誤, 而"
 "您應嘗試使用主動模式. 您可以在站台管理員裡面設定各伺服器的傳輸模式."
 
-#: resources.h:473
+#: resources.h:500
 msgid ""
 "If the fallback option is enabled, you will be able to connect to "
 "misconfigured servers which reject the selected transfer mode."
@@ -2086,7 +2201,7 @@ msgstr "若問題依舊持續, 請聯絡您的路由器或防火牆製造商以�
 msgid "If this problem stays, please contact your router manufacturer."
 msgstr "若問題依舊持續, 請聯絡您的路由器製造商."
 
-#: resources.h:334 resources.h:352
+#: resources.h:352 resources.h:370
 msgid ""
 "If using 'overwrite if newer', your system time has to be synchronized with "
 "the server. If the time differs (e.g. different timezone), specify a "
@@ -2099,7 +2214,7 @@ msgstr ""
 msgid "If you change the language, you should restart FileZilla."
 msgstr "如果您變更了語系, 您應重新啟動 FileZilla."
 
-#: resources.h:504
+#: resources.h:531
 msgid ""
 "If you click on test, FileZilla will connect to probe.filezilla-project.org "
 "and will perform some simple tests."
@@ -2113,7 +2228,7 @@ msgid ""
 "transferred."
 msgstr "如果您輸入錯誤的檔案類別, 那該類檔案在傳輸的過程中就可能會發生毀損."
 
-#: resources.h:505
+#: resources.h:532
 msgid "If you get any errors, your configuration is not correct."
 msgstr "如果遇到了任何錯誤, 那您的設定即不正確."
 
@@ -2132,20 +2247,20 @@ msgstr ""
 "若您在某台伺服器上持預遇到錯誤, 此伺服器本身或某台遠端路由器可能配置有誤. 在"
 "這情況下請切換為被動模式並請連絡伺服器管理者協助."
 
-#: resources.h:464
+#: resources.h:491
 msgid ""
 "If you sucessfully complete the wizard and the final test succeeds, any "
 "firewalls and routers you have should be configured properly."
 msgstr ""
 "如果您成功地執行完精靈且最後的測試是成功的, 您應已正確設定您的防火牆或路由器."
 
-#: resources.h:500
+#: resources.h:527
 msgid ""
 "If you use a firewall, make sure FileZilla is allowed to accept connection "
 "on all given ports."
 msgstr "如果您有用防火牆, 請確定有允許 FileZilla 在指定的連接埠上連線."
 
-#: resources.h:499
+#: resources.h:526
 msgid ""
 "If you use a router, make sure all these ports are forwarded to the machine "
 "you're running FileZilla on."
@@ -2161,7 +2276,7 @@ msgstr "若您的路由器一直改變 IP Address, 請聯絡您的路由器製�
 msgid "Import data from older version"
 msgstr "從舊版匯入資料"
 
-#: resources.h:371
+#: resources.h:389
 msgid "Import settings"
 msgstr "設定匯入"
 
@@ -2170,7 +2285,7 @@ msgstr "設定匯入"
 msgid "Import successful"
 msgstr "匯入成功"
 
-#: resources.h:492
+#: resources.h:519
 msgid ""
 "In active mode, FileZilla has to listen on a port for data transfers. You "
 "have to specify which ports FileZilla will use."
@@ -2178,7 +2293,7 @@ msgstr ""
 "在主動模式下, FileZilla 必須聆聽一個連接埠以供資料傳輸. 您必須指定一個給 "
 "FileZilla 用的連接埠."
 
-#: resources.h:494
+#: resources.h:521
 msgid ""
 "In case you have a router, you will have to forward all available ports, as "
 "FileZilla has no influence on the ports your system chooses."
@@ -2186,19 +2301,19 @@ msgstr ""
 "假如您有路由器, 您要轉送所有可用的連接埠使得 FileZilla 不受您系統所選的連接埠"
 "影響."
 
-#: resources.h:315
+#: resources.h:333
 msgid ""
 "In case you prefer automatic updates, you can enable automatic update checks "
 "in the settings dialog."
 msgstr "如果您較喜歡自動更新, 您可以在設定對話框內啟用自動更新檢查."
 
-#: resources.h:290 resources.h:482
+#: resources.h:308 resources.h:509
 msgid ""
 "In order to use active mode, FileZilla needs to know your external IP "
 "address."
 msgstr "為了要使用主動模式, FileZilla 需要知道您的外部 IP Address."
 
-#: resources.h:467
+#: resources.h:494
 msgid ""
 "In passive mode, which is recommended for most users, FileZilla asks the "
 "server for a port and connects to the given port. Not much configuration has "
@@ -2207,7 +2322,7 @@ msgstr ""
 "在被動模式 (建議大部分使用者使用) 下, FileZilla 會對伺服器要求一個連接埠以供"
 "連線. 無須額外的設定."
 
-#: ../../locales/../src/interface/QueueView.cpp:900
+#: ../../locales/../src/interface/QueueView.cpp:920
 msgid "Incorrect password"
 msgstr "密碼不正確"
 
@@ -2215,18 +2330,18 @@ msgstr "密碼不正確"
 msgid "Initializing TLS..."
 msgstr "初始 TLS 加密中..."
 
-#: resources.h:79 ../../locales/../src/interface/sitemanager.cpp:796
-#: ../../locales/../src/interface/sitemanager.cpp:1011
+#: resources.h:79 ../../locales/../src/interface/sitemanager.cpp:813
+#: ../../locales/../src/interface/sitemanager.cpp:1044
 msgid "Interactive"
 msgstr "交談式"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:102
+#: ../../locales/../src/interface/settingsdialog.cpp:106
 msgid "Interface"
 msgstr "介面"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:158
-#: ../../locales/../src/interface/QueueView.cpp:865
-#: ../../locales/../src/interface/QueueView.cpp:1332
+#: ../../locales/../src/interface/QueueView.cpp:885
+#: ../../locales/../src/interface/QueueView.cpp:1352
 msgid "Interrupted by user"
 msgstr "被使用者中斷"
 
@@ -2262,8 +2377,8 @@ msgstr "收到無效的資料"
 msgid "Invalid date"
 msgstr "無效的日期"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1686
-#: ../../locales/../src/interface/LocalListView.cpp:1721
+#: ../../locales/../src/interface/LocalListView.cpp:1802
+#: ../../locales/../src/interface/LocalListView.cpp:1837
 msgid "Invalid filename"
 msgstr "無效的檔名"
 
@@ -2307,15 +2422,15 @@ msgstr "無效的使用者名稱."
 msgid "Keep directories on top"
 msgstr "保持目錄在最上方"
 
-#: resources.h:436
+#: resources.h:454
 msgid "L&owest"
 msgstr "最低(&O)"
 
-#: resources.h:288
+#: resources.h:306
 msgid "L&owest available port:"
 msgstr "最低可用連接埠(&O):"
 
-#: resources.h:173 ../../locales/../src/interface/settingsdialog.cpp:104
+#: resources.h:173 ../../locales/../src/interface/settingsdialog.cpp:110
 msgid "Language"
 msgstr "語系"
 
@@ -2323,7 +2438,7 @@ msgstr "語系"
 msgid "Large icons"
 msgstr "大圖示"
 
-#: ../../locales/../src/interface/LocalListView.cpp:232
+#: ../../locales/../src/interface/LocalListView.cpp:234
 #: ../../locales/../src/interface/RemoteListView.cpp:308
 msgid "Last modified"
 msgstr "最後修改時間"
@@ -2344,7 +2459,7 @@ msgstr "並行下載限制(&D):"
 msgid "Limit for concurrent &uploads:"
 msgstr "並行上傳限制(&U):"
 
-#: resources.h:285
+#: resources.h:303
 msgid "Limit local ports"
 msgstr "限制本地連接埠"
 
@@ -2361,7 +2476,7 @@ msgstr "Listen Socket 關閉"
 msgid "Listing:"
 msgstr "列表:"
 
-#: resources.h:256
+#: resources.h:274
 msgid "Local filters:"
 msgstr "本地篩選器:"
 
@@ -2379,13 +2494,13 @@ msgid ""
 "aware. Trying local charset."
 msgstr "登入資料包含非 ASCII 字元且伺服器可能不認得 UTF-8. 嘗試使用本地字集."
 
-#: ../../locales/../src/interface/queue.cpp:863
-#: ../../locales/../src/interface/queue.cpp:944
+#: ../../locales/../src/interface/queue.cpp:866
+#: ../../locales/../src/interface/queue.cpp:947
 msgid "Low"
 msgstr "低"
 
-#: ../../locales/../src/interface/queue.cpp:861
-#: ../../locales/../src/interface/queue.cpp:942
+#: ../../locales/../src/interface/queue.cpp:864
+#: ../../locales/../src/interface/queue.cpp:945
 msgid "Lowest"
 msgstr "最低"
 
@@ -2410,7 +2525,7 @@ msgstr "格式有誤的標頭: %s"
 msgid "Malformed reply, server not sending proper lineendings"
 msgstr "格式有誤的回應, 伺服器未傳送正確的換行格式"
 
-#: resources.h:274
+#: resources.h:292
 msgid "Match all of the following"
 msgstr "比對以下所有項目"
 
@@ -2430,17 +2545,17 @@ msgstr "中圖示"
 msgid "Minutes"
 msgstr "分鐘"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:926
+#: ../../locales/../src/interface/LocalTreeView.cpp:932
 msgid "My Computer"
 msgstr "我的電腦"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:916
+#: ../../locales/../src/interface/LocalTreeView.cpp:922
 msgid "My Documents"
 msgstr "我的文件"
 
-#: ../../locales/../src/interface/sitemanager.cpp:239
-#: ../../locales/../src/interface/sitemanager.cpp:241
-#: ../../locales/../src/interface/sitemanager.cpp:1338
+#: ../../locales/../src/interface/sitemanager.cpp:248
+#: ../../locales/../src/interface/sitemanager.cpp:250
+#: ../../locales/../src/interface/sitemanager.cpp:1376
 msgid "My Sites"
 msgstr "我的站台"
 
@@ -2451,7 +2566,7 @@ msgstr "我的站台"
 msgid "N/a"
 msgstr "N/a"
 
-#: ../../locales/../src/interface/sitemanager.cpp:643
+#: ../../locales/../src/interface/sitemanager.cpp:652
 msgid "Name already exists"
 msgstr "名稱已存在"
 
@@ -2463,7 +2578,7 @@ msgstr "名稱:"
 msgid "Need to enter filter name"
 msgstr "需要輸入篩選器名稱"
 
-#: ../../locales/../src/interface/sitemanager.cpp:551
+#: ../../locales/../src/interface/sitemanager.cpp:560
 msgid "Need to specify a character encoding"
 msgstr "需要指定字元編碼"
 
@@ -2475,15 +2590,15 @@ msgstr "新增資料夾(&F)"
 msgid "New filter"
 msgstr "新篩選器"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1397
+#: ../../locales/../src/interface/RemoteListView.cpp:1434
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1206
-#: ../../locales/../src/interface/sitemanager.cpp:455
-#: ../../locales/../src/interface/sitemanager.cpp:478
+#: ../../locales/../src/interface/sitemanager.cpp:464
+#: ../../locales/../src/interface/sitemanager.cpp:487
 msgid "New folder"
 msgstr "新資料夾"
 
-#: ../../locales/../src/interface/sitemanager.cpp:711
-#: ../../locales/../src/interface/sitemanager.cpp:734
+#: ../../locales/../src/interface/sitemanager.cpp:728
+#: ../../locales/../src/interface/sitemanager.cpp:751
 msgid "New site"
 msgstr "新站台"
 
@@ -2494,6 +2609,10 @@ msgstr "否"
 #: ../../locales/../src/interface/export.cpp:26
 msgid "No category to export selected"
 msgstr "沒有選定要匯出的分類目錄"
+
+#: ../../locales/../src/interface/QueueView.cpp:1988
+msgid "No command given, aborting."
+msgstr "沒有給定指令, 正在中止."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3094
 msgid "No external IP address set, trying default."
@@ -2509,13 +2628,13 @@ msgstr "未填入主機, 請輸入主機名稱."
 msgid "No images available"
 msgstr "沒有可用的圖示"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1304
-#: ../../locales/../src/interface/sitemanager.cpp:1316
-#: ../../locales/../src/interface/sitemanager.cpp:1347
+#: ../../locales/../src/interface/sitemanager.cpp:1342
+#: ../../locales/../src/interface/sitemanager.cpp:1354
+#: ../../locales/../src/interface/sitemanager.cpp:1385
 msgid "No sites available"
 msgstr "沒有可用的站台"
 
-#: ../../locales/../src/interface/themeprovider.cpp:76
+#: ../../locales/../src/interface/themeprovider.cpp:77
 msgid "No themes in themes.xml"
 msgstr "themes.xml 中無佈景主題"
 
@@ -2523,23 +2642,23 @@ msgstr "themes.xml 中無佈景主題"
 msgid "None"
 msgstr "無"
 
-#: resources.h:276
+#: resources.h:294
 msgid "None of the following"
 msgstr "以下皆否"
 
-#: resources.h:41 resources.h:77 ../../locales/../src/interface/queue.cpp:866
-#: ../../locales/../src/interface/queue.cpp:947
-#: ../../locales/../src/interface/sitemanager.cpp:759
-#: ../../locales/../src/interface/sitemanager.cpp:792
-#: ../../locales/../src/interface/sitemanager.cpp:1005
+#: resources.h:41 resources.h:77 ../../locales/../src/interface/queue.cpp:869
+#: ../../locales/../src/interface/queue.cpp:950
+#: ../../locales/../src/interface/sitemanager.cpp:776
+#: ../../locales/../src/interface/sitemanager.cpp:809
+#: ../../locales/../src/interface/sitemanager.cpp:1038
 msgid "Normal"
 msgstr "一般"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:688
+#: ../../locales/../src/interface/RemoteListView.cpp:695
 msgid "Not connected to any server"
 msgstr "未連線到任何伺服器"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:556
+#: ../../locales/../src/interface/Mainfrm.cpp:611
 msgid "Note that this feature is only supported using the FTP protocol."
 msgstr "請注意這個功能只在使用 FTP 協定時才支援."
 
@@ -2551,21 +2670,21 @@ msgstr "更新檢查間隔日數:"
 msgid "Number of retries has to be between 0 and 99."
 msgstr "重試次數 (介於 0 到 99 之間)"
 
-#: resources.h:329 resources.h:347
+#: resources.h:347 resources.h:365
 msgid "O&verwrite"
 msgstr "覆寫(&V)"
 
-#: resources.h:22 resources.h:62 resources.h:193 resources.h:215
-#: resources.h:227 resources.h:237 resources.h:249 resources.h:263
-#: resources.h:283 resources.h:362 resources.h:369 resources.h:377
+#: resources.h:22 resources.h:62 resources.h:211 resources.h:233
+#: resources.h:245 resources.h:255 resources.h:267 resources.h:281
+#: resources.h:301 resources.h:380 resources.h:387 resources.h:395
 msgid "OK"
 msgstr "確認"
 
-#: resources.h:335
+#: resources.h:353
 msgid "Ok"
 msgstr "確認"
 
-#: resources.h:474
+#: resources.h:501
 msgid ""
 "On the following pages, the selected transfer mode will be configured, as "
 "well as the fallback mode if enabled."
@@ -2575,19 +2694,19 @@ msgstr "在接下來的幾個頁面裡將要設定選擇的傳輸模式以及回
 msgid "Once"
 msgstr "一次"
 
-#: resources.h:516 resources.h:517
+#: resources.h:543 resources.h:544
 msgid "Open the Site Manager"
 msgstr "開啟站台管理員"
 
-#: resources.h:386
+#: resources.h:404
 msgid "Open the settings dialog of FileZilla"
 msgstr "開啟 FileZilla 設定對話框"
 
-#: resources.h:381
+#: resources.h:399
 msgid "Opens the Site Manager"
 msgstr "開啟站台管理員"
 
-#: ../../locales/../src/interface/FileZilla.cpp:209
+#: ../../locales/../src/interface/FileZilla.cpp:206
 msgid "Operating system problem detected"
 msgstr "偵測到作業系統問題"
 
@@ -2599,11 +2718,11 @@ msgstr "組織:"
 msgid "Other:"
 msgstr "其它:"
 
-#: resources.h:322 resources.h:341
+#: resources.h:340 resources.h:359
 msgid "Ov&erwrite if newer"
 msgstr "如果較新就覆寫(&E)"
 
-#: resources.h:330 resources.h:348
+#: resources.h:348 resources.h:366
 msgid "Over&write if newer"
 msgstr "如果較新就覆寫(&W)"
 
@@ -2619,7 +2738,7 @@ msgstr "如果較新就覆寫(&I)"
 msgid "Owner / Group"
 msgstr "擁有人 / 群組"
 
-#: resources.h:197
+#: resources.h:215
 msgid "Owner permissions"
 msgstr "擁有人權限"
 
@@ -2635,15 +2754,15 @@ msgstr "被動模式 (推薦)(&S)"
 msgid "Package"
 msgstr "套件"
 
-#: resources.h:82 resources.h:512
+#: resources.h:82 resources.h:539
 msgid "Pass&word:"
 msgstr "密碼(&W):"
 
-#: resources.h:470
+#: resources.h:497
 msgid "Passive (recommended)"
 msgstr "被動模式 (推薦)"
 
-#: resources.h:1 ../../locales/../src/interface/settingsdialog.cpp:98
+#: resources.h:1 ../../locales/../src/interface/settingsdialog.cpp:102
 msgid "Passive mode"
 msgstr "被動模式"
 
@@ -2664,7 +2783,7 @@ msgid ""
 msgstr ""
 "請確認已允許 FileZilla 建立對外連線以及您已正確鍵入名稱解析器的 IP Address."
 
-#: resources.h:312
+#: resources.h:330
 msgid ""
 "Please check http://filezilla-project.org for the most recent version of "
 "FileZilla."
@@ -2686,7 +2805,7 @@ msgstr ""
 "請檢查您系統的套件管理程式來更新套件, 或是拜訪 http://filezilla-project.org "
 "下載 FileZilla 的原始碼."
 
-#: resources.h:476
+#: resources.h:503
 msgid ""
 "Please configure any firewalls and routers so that FileZilla can establish "
 "outgoing connection to arbitrary ports."
@@ -2702,6 +2821,14 @@ msgid ""
 "filezilla-project.org/probe.php that the server is running."
 msgstr ""
 "請確定您有穩定的網路且檢查 http://filezilla-project.org/probe.php 有在運作."
+
+#: ../../locales/../src/interface/optionspage_dateformatting.cpp:72
+msgid "Please enter a custom date format."
+msgstr "請輸入自訂的日期格式."
+
+#: ../../locales/../src/interface/optionspage_dateformatting.cpp:79
+msgid "Please enter a custom time format."
+msgstr "請輸入自訂的時間格式."
 
 #: ../../locales/../src/interface/optionspage_transfer.cpp:75
 msgid "Please enter a download speedlimit greater or equal to 0 KB/s."
@@ -2740,6 +2867,17 @@ msgstr "請輸入 0 到 10 之間的整數做為並行傳輸數目."
 msgid "Please enter a password for this server:"
 msgstr "請輸入這台主機的密碼:"
 
+#: ../../locales/../src/interface/QueueView.cpp:1977
+msgid ""
+"Please enter a path and executable to run.\n"
+"E.g. c:\\somePath\\file.exe under MS Windows or /somePath/file under Unix.\n"
+"You can also optionally specify program arguments."
+msgstr ""
+"請輸入要執行的路徑與執行檔.\n"
+"就像 MS Windows 下的 c:\\somePath\\file.exe 或是 Unix 下的 /somePath/file 這"
+"樣.\n"
+"你也可以指定一些程式參數."
+
 #: ../../locales/../src/interface/optionspage_transfer.cpp:67
 msgid ""
 "Please enter a timeout between 5 and 9999 seconds or 0 to disable timeouts."
@@ -2765,7 +2903,7 @@ msgstr "請輸入最少 7 日的更新間隔:"
 msgid "Please enter an upload speedlimit greater or equal to 0 KB/s."
 msgstr "請輸入大於等於 0 KB/s 的上傳速限"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:490
+#: ../../locales/../src/interface/Mainfrm.cpp:545
 msgid ""
 "Please enter raw FTP command.\n"
 "Using raw ftp commands will clear the directory cache."
@@ -2773,8 +2911,8 @@ msgstr ""
 "請直接輸入 FTP 指令.\n"
 "使用直接的 FTP 指令會清除目錄快取."
 
-#: ../../locales/../src/interface/LocalListView.cpp:1316
-#: ../../locales/../src/interface/RemoteListView.cpp:1383
+#: ../../locales/../src/interface/LocalListView.cpp:1432
+#: ../../locales/../src/interface/RemoteListView.cpp:1420
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1192
 msgid "Please enter the name of the directory which should be created:"
 msgstr "請輸入欲建立的目錄名稱:"
@@ -2793,7 +2931,7 @@ msgstr ""
 "請在此精靈的主動模式頁面下輸入您的外部 IP Address. 若您使用動態 IP 或是您不知"
 "道您的外部 IP Address, 請使用外部解析器這選項."
 
-#: resources.h:463
+#: resources.h:490
 msgid ""
 "Please follow the instructions carefully, as wrong configuration will "
 "prevent successful FTP connections."
@@ -2828,7 +2966,7 @@ msgstr ""
 "連接埠轉送 (port forwarding). 別在 \"DMZ mode\" 或 \"game mode\" 下執行您的伺"
 "服器."
 
-#: resources.h:477
+#: resources.h:504
 msgid ""
 "Please note that FileZilla has no influence on the port the server chooses. "
 "So the server might choose a port which your firewall thinks is only used by "
@@ -2846,6 +2984,14 @@ msgid ""
 msgstr ""
 "請留意若您重新連線過於頻繁或是在太短的時間間隔內, 部份伺服器可能會擋掉您."
 
+#: resources.h:186 resources.h:192
+msgid ""
+"Please read http://filezilla-project.org/wiki/index.php/"
+"Date_and_Time_formatting for details"
+msgstr ""
+"請參閱 http://filezilla-project.org/wiki/index.php/Date_and_Time_formatting "
+"以獲得更多資訊."
+
 #: ../../locales/../src/interface/netconfwizard.cpp:559
 msgid ""
 "Please run this wizard again should you change your network environment or "
@@ -2859,11 +3005,11 @@ msgstr ""
 msgid "Please select an action:"
 msgstr "請選擇動作:"
 
-#: resources.h:376
+#: resources.h:394
 msgid "Please select the categories you would like to import."
 msgstr "請選擇您想要匯入的分類目錄."
 
-#: resources.h:465
+#: resources.h:492
 msgid "Please select the default transfer mode you would like to use."
 msgstr "請選擇您想要的預設傳輸模式."
 
@@ -2890,7 +3036,7 @@ msgstr "請為選擇選取的檔案與目錄的新屬性."
 msgid "Please select the new attributes for the selected files."
 msgstr "請為選擇選取的檔案的新屬性."
 
-#: resources.h:314
+#: resources.h:332
 msgid ""
 "Please visit http://filezilla-project.org for more information about "
 "FileZilla."
@@ -2903,8 +3049,8 @@ msgid ""
 "version."
 msgstr "請到 http://filezilla-project.org 下載最近的版本."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1202
-#: ../../locales/../src/interface/sitemanager.cpp:1337
+#: ../../locales/../src/interface/sitemanager.cpp:1240
+#: ../../locales/../src/interface/sitemanager.cpp:1375
 msgid "Predefined Sites"
 msgstr "預先定義的站台"
 
@@ -2920,11 +3066,11 @@ msgstr "初次連線與資料連線的憑證未相符."
 msgid "Prioritize directories (default)"
 msgstr "目錄優先(預設)"
 
-#: ../../locales/../src/interface/queue.cpp:1153
+#: ../../locales/../src/interface/queue.cpp:1156
 msgid "Priority"
 msgstr "優先權"
 
-#: resources.h:427
+#: resources.h:445
 msgid "Process &Queue"
 msgstr "處理佇列(&Q)"
 
@@ -2932,55 +3078,59 @@ msgstr "處理佇列(&Q)"
 msgid "Public key algorithm:"
 msgstr "公開金鑰演算法:"
 
-#: resources.h:205
+#: resources.h:223
 msgid "Public permissions"
 msgstr "公開權限"
 
-#: ../../locales/../src/interface/QueueView.cpp:1498
+#: ../../locales/../src/interface/QueueView.cpp:1533
 #, c-format
 msgid "Queue: %s%d KB"
 msgstr "佇列: %s%d KB"
 
-#: ../../locales/../src/interface/QueueView.cpp:1493
+#: ../../locales/../src/interface/QueueView.cpp:1528
 #, c-format
 msgid "Queue: %s%d MB"
 msgstr "佇列: %s%d MB"
 
-#: ../../locales/../src/interface/QueueView.cpp:1501
+#: ../../locales/../src/interface/QueueView.cpp:1536
 #, c-format
 msgid "Queue: %s%d bytes"
 msgstr "佇列: %s%d bytes"
 
-#: ../../locales/../src/interface/QueueView.cpp:1489
+#: ../../locales/../src/interface/QueueView.cpp:1524
 msgid "Queue: empty"
 msgstr "佇列: 空"
 
-#: ../../locales/../src/interface/QueueView.cpp:396
+#: ../../locales/../src/interface/QueueView.cpp:407
 msgid "Queued files"
 msgstr "等候的檔案"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:499
+#: resources.h:461
+msgid "R&eboot system"
+msgstr "重新啟動系統(&E)"
+
+#: ../../locales/../src/interface/Mainfrm.cpp:554
 msgid "Raw FTP command"
 msgstr "直接的 FTP 指令"
 
-#: resources.h:202
+#: resources.h:220
 msgid "Re&ad"
 msgstr "讀取(&A)"
 
-#: resources.h:57 resources.h:324 resources.h:343
+#: resources.h:57 resources.h:342 resources.h:361
 msgid "Re&name"
 msgstr "更名(&N)"
 
-#: resources.h:206
+#: resources.h:224
 msgid "Rea&d"
 msgstr "讀取(&D)"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:747
+#: ../../locales/../src/interface/Mainfrm.cpp:802
 msgid "Really cancel current operation?"
 msgstr "真的要取消當前的操作?"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1417
-#: ../../locales/../src/interface/RemoteListView.cpp:1438
+#: ../../locales/../src/interface/LocalListView.cpp:1533
+#: ../../locales/../src/interface/RemoteListView.cpp:1475
 msgid "Really delete all selected files and/or directories?"
 msgstr "真的要刪除所有選擇的檔案/目錄?"
 
@@ -2988,7 +3138,7 @@ msgstr "真的要刪除所有選擇的檔案/目錄?"
 msgid "Reason"
 msgstr "原因"
 
-#: resources.h:211
+#: resources.h:229
 msgid "Rec&urse into subdirectories"
 msgstr "包含子目錄(&U)"
 
@@ -3010,7 +3160,7 @@ msgstr ""
 msgid "Reconnection settings"
 msgstr "重新連線設定"
 
-#: resources.h:534 resources.h:535
+#: resources.h:561 resources.h:562
 msgid "Reconnects to the last used server"
 msgstr "重新連線到先前的伺服器"
 
@@ -3018,7 +3168,7 @@ msgstr "重新連線到先前的伺服器"
 msgid "Redirection to invalid address"
 msgstr "重導至無效的位址"
 
-#: resources.h:526 resources.h:527
+#: resources.h:553 resources.h:554
 msgid "Refresh the file and folder lists"
 msgstr "重新整理檔案與資料夾列表"
 
@@ -3026,11 +3176,11 @@ msgstr "重新整理檔案與資料夾列表"
 msgid "Remote certificate not trusted."
 msgstr "遠端憑證尚未信任."
 
-#: ../../locales/../src/interface/queue.cpp:1151
+#: ../../locales/../src/interface/queue.cpp:1154
 msgid "Remote file"
 msgstr "遠端檔案"
 
-#: resources.h:259
+#: resources.h:277
 msgid "Remote filters:"
 msgstr "遠端篩選器:"
 
@@ -3038,15 +3188,15 @@ msgstr "遠端篩選器:"
 msgid "Remote site:"
 msgstr "遠端站台:"
 
-#: resources.h:443 resources.h:446
+#: resources.h:470 resources.h:473
 msgid "Remove &all"
 msgstr "全部移除(&A)"
 
-#: resources.h:278 resources.h:444 resources.h:447
+#: resources.h:296 resources.h:471 resources.h:474
 msgid "Remove &selected"
 msgstr "移除選擇項目(&S)"
 
-#: resources.h:332 resources.h:350
+#: resources.h:350 resources.h:368
 msgid "Rena&me"
 msgstr "更名(&M)"
 
@@ -3054,11 +3204,11 @@ msgstr "更名(&M)"
 msgid "Rename file"
 msgstr "更名檔案"
 
-#: resources.h:459
+#: resources.h:486
 msgid "Rename selected directory"
 msgstr "更名所選的資料夾"
 
-#: resources.h:414 resources.h:424
+#: resources.h:432 resources.h:442
 msgid "Rename selected files and folders"
 msgstr "更名選擇的檔案和資料夾"
 
@@ -3068,11 +3218,11 @@ msgstr "更名選擇的檔案和資料夾"
 msgid "Renaming '%s' to '%s'"
 msgstr "'%s' 更名為 '%s'"
 
-#: resources.h:331 resources.h:349
+#: resources.h:349 resources.h:367
 msgid "Res&ume"
 msgstr "回復(&U)"
 
-#: resources.h:445 resources.h:448
+#: resources.h:472 resources.h:475
 msgid "Reset and requeue selected files"
 msgstr "重設與重排選擇的檔案"
 
@@ -3092,7 +3242,7 @@ msgstr "正在解析主機名稱"
 msgid "Response:"
 msgstr "回應:"
 
-#: resources.h:354
+#: resources.h:372
 msgid ""
 "Resuming ascii files can cause problems if server uses a different line "
 "ending format than the client."
@@ -3109,7 +3259,11 @@ msgstr "正在取得目錄列表..."
 msgid "Retrieving external IP address from %s"
 msgstr "正從 %s 取得外部 IP Address"
 
-#: resources.h:325 resources.h:344
+#: resources.h:462
+msgid "S&hutdown system"
+msgstr "系統關機(&H)"
+
+#: resources.h:343 resources.h:362
 msgid "S&kip"
 msgstr "略過(&K)"
 
@@ -3117,11 +3271,11 @@ msgstr "略過(&K)"
 msgid "Save settings?"
 msgstr "儲存設定?"
 
-#: ../../locales/../src/interface/QueueView.cpp:1553
+#: ../../locales/../src/interface/QueueView.cpp:1588
 msgid "Scanning for files to add to queue"
 msgstr "正在掃描欲加入佇列的檔案"
 
-#: ../../locales/../src/interface/QueueView.cpp:1555
+#: ../../locales/../src/interface/QueueView.cpp:1590
 msgid "Scanning for files to upload"
 msgstr "正在掃描欲上傳的檔案"
 
@@ -3137,7 +3291,7 @@ msgstr "選擇欄位:"
 msgid "Select Theme"
 msgstr "選擇佈景主題"
 
-#: resources.h:337
+#: resources.h:355
 msgid ""
 "Select default action to perform if target file of a transfer already exists."
 msgstr "請選擇如果欲傳輸的目標檔案已存在時的預設處理動作."
@@ -3166,11 +3320,11 @@ msgstr "選擇用以匯出設定的檔案"
 msgid "Select file to import settings from"
 msgstr "選擇用以匯入設定的檔案"
 
-#: resources.h:365
+#: resources.h:383
 msgid "Select the categories to export:"
 msgstr "選擇要匯出的分類目錄:"
 
-#: resources.h:356
+#: resources.h:374
 msgid "Select the private data you would like to delete."
 msgstr "請選擇您要刪除的私人資料."
 
@@ -3178,7 +3332,7 @@ msgstr "請選擇您要刪除的私人資料."
 msgid "Selected port usually in use by a different protocol."
 msgstr "所選的連接埠通常是使用於其它協定."
 
-#: resources.h:398
+#: resources.h:416
 msgid "Send custom command to the server otherwise not available"
 msgstr "送出自訂的命令到伺服器否則就不可用"
 
@@ -3186,7 +3340,7 @@ msgstr "送出自訂的命令到伺服器否則就不可用"
 msgid "Serial number:"
 msgstr "憑證序號:"
 
-#: ../../locales/../src/interface/queue.cpp:1149
+#: ../../locales/../src/interface/queue.cpp:1152
 msgid "Server / Local file"
 msgstr "伺服器 / 本地檔案"
 
@@ -3245,7 +3399,7 @@ msgstr ""
 msgid "Server&type:"
 msgstr "伺服器種類(&T):"
 
-#: resources.h:431
+#: resources.h:449
 msgid "Set &Priority"
 msgstr "設定優先權(&P)"
 
@@ -3259,11 +3413,11 @@ msgstr "修改 '%s' 權限為 '%s'"
 msgid "Settings"
 msgstr "設定"
 
-#: resources.h:191
+#: resources.h:209
 msgid "Show &raw directory listing"
 msgstr "顯示原始目錄列表(&R)"
 
-#: resources.h:373
+#: resources.h:391
 msgid "Site &Manager entries"
 msgstr "站台管理員欄位(&M)"
 
@@ -3271,13 +3425,18 @@ msgstr "站台管理員欄位(&M)"
 msgid "Site Manager"
 msgstr "站台管理員"
 
-#: ../../locales/../src/interface/sitemanager.cpp:51
+#: ../../locales/../src/interface/sitemanager.cpp:60
 msgid "Site Manager already open"
 msgstr "已開啟站台管理員"
 
-#: ../../locales/../src/interface/queue.cpp:1152
+#: ../../locales/../src/interface/queue.cpp:1155
 msgid "Size"
 msgstr "大小"
+
+#: resources.h:193
+#, fuzzy
+msgid "Size formatting"
+msgstr "時間格式"
 
 #: ../../locales/../src/interface/fileexistsdlg.cpp:59
 #: ../../locales/../src/interface/fileexistsdlg.cpp:83
@@ -3286,7 +3445,7 @@ msgstr "大小"
 msgid "Size unknown"
 msgstr "未知大小"
 
-#: resources.h:333 resources.h:351
+#: resources.h:351 resources.h:369
 msgid "Sk&ip"
 msgstr "略過(&I)"
 
@@ -3314,7 +3473,7 @@ msgstr "略過 %s 的上傳"
 msgid "Small icons"
 msgstr "小圖示"
 
-#: resources.h:2 resources.h:479
+#: resources.h:2 resources.h:506
 msgid ""
 "Some misconfigured remote servers which are behind a router, may reply with "
 "their local ip address."
@@ -3357,7 +3516,7 @@ msgstr "開始 %s 的上傳"
 msgid "State:"
 msgstr "國名:"
 
-#: ../../locales/../src/interface/QueueView.cpp:415
+#: ../../locales/../src/interface/QueueView.cpp:433
 msgid "Status"
 msgstr "狀態"
 
@@ -3366,7 +3525,7 @@ msgstr "狀態"
 msgid "Status:"
 msgstr "狀態:"
 
-#: resources.h:428
+#: resources.h:446
 msgid "Stop and remove &all"
 msgstr "停止且全部移除(&A)"
 
@@ -3388,7 +3547,7 @@ msgstr "若是這個問題即使在最新版的 FileZilla 上也一直持續存�
 msgid "Successful transfers"
 msgstr "傳輸成功"
 
-#: resources.h:507
+#: resources.h:534
 msgid "Summary of test results:"
 msgstr "測試結果摘要:"
 
@@ -3409,11 +3568,11 @@ msgstr "TLS/SSL 加密連線已建立."
 msgid "Target file already exists"
 msgstr "目標檔案已經存在"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1733
+#: ../../locales/../src/interface/RemoteListView.cpp:1770
 msgid "Target filename already exists, really continue?"
 msgstr "目標檔名已經存在, 確定要繼續?"
 
-#: resources.h:506
+#: resources.h:533
 msgid "Test results"
 msgstr "測試結果"
 
@@ -3421,7 +3580,7 @@ msgstr "測試結果"
 msgid "Testing resume capabilities of server"
 msgstr "測試伺服器的續傳相容性"
 
-#: ../../locales/../src/interface/sitemanager.cpp:50
+#: ../../locales/../src/interface/sitemanager.cpp:59
 msgid ""
 "The Site Manager is opened in another instance of FileZilla 3.\n"
 "Do you want to continue? Any changes made in the Site Manager won't be saved "
@@ -3476,7 +3635,7 @@ msgstr ""
 "由於儲存格式上的不同, 只有主機位址, 連接埠, 使用者名稱與密碼能匯入.\n"
 "要繼續匯入嗎?"
 
-#: resources.h:189
+#: resources.h:207
 msgid ""
 "The higher the debug level, the more information will be displayed in the "
 "message log. Displaying debug information has a negative impact on "
@@ -3506,7 +3665,7 @@ msgstr "已經下載了最近的版本. 請以安裝目前版本的方式安裝.
 msgid "The selected categories have been imported."
 msgstr "已匯入選定的分類目錄."
 
-#: resources.h:372
+#: resources.h:390
 msgid ""
 "The selected file contains importable data for the following categories:"
 msgstr "選定的檔案可匯入以下分類目錄:"
@@ -3525,7 +3684,7 @@ msgid ""
 "certificate to make sure the server can be trusted."
 msgstr "這個伺服器的憑證不明. 請留心測試憑證以確保伺服器可以信任."
 
-#: resources.h:241
+#: resources.h:259
 msgid ""
 "The server's host key does not match the key that has been cached. This "
 "means that either the administrator has changed the host key, or you are "
@@ -3537,7 +3696,7 @@ msgstr ""
 "是其他台電腦偽裝成此伺服器.\n"
 "如果這不是預期的改變, 請聯絡機器管理者."
 
-#: resources.h:229
+#: resources.h:247
 msgid ""
 "The server's host key is not cached in the registry. You have no guarantee "
 "that the server is the computer you think it is."
@@ -3561,12 +3720,12 @@ msgstr ""
 msgid "The test did not succeed. Do you really want to save the settings?"
 msgstr "測試未成功. 您真的要儲存設定嗎?"
 
-#: ../../locales/../src/interface/themeprovider.cpp:57
-#: ../../locales/../src/interface/themeprovider.cpp:76
+#: ../../locales/../src/interface/themeprovider.cpp:58
+#: ../../locales/../src/interface/themeprovider.cpp:77
 msgid "Theme error"
 msgstr "佈景主題錯誤"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:103
+#: ../../locales/../src/interface/settingsdialog.cpp:107
 msgid "Themes"
 msgstr "佈景主題"
 
@@ -3574,25 +3733,29 @@ msgstr "佈景主題"
 msgid "This filter set cannot be removed"
 msgstr "此篩選集無法移除"
 
-#: resources.h:484
+#: resources.h:511
 msgid ""
 "This only works if you are not behind a router, else your system would just "
 "return your internal address."
 msgstr ""
 "這只當您不在路由器後方時才能運作, 不然系統可能只回傳您的內部 IP Address."
 
-#: resources.h:462
+#: resources.h:489
 msgid ""
 "This wizard will help you to properly configure any routers and firewalls "
 "you have and tests your configuration."
 msgstr "這個精靈將會幫助你正確地配置您的任何路由器與防火牆並且測試您的組態."
 
+#: resources.h:187
+msgid "Time formatting"
+msgstr "時間格式"
+
 #: resources.h:32
 msgid "Time&out in seconds:"
 msgstr "多少秒內逾時:"
 
-#: resources.h:31 ../../locales/../src/interface/QueueView.cpp:902
-#: ../../locales/../src/interface/QueueView.cpp:927
+#: resources.h:31 ../../locales/../src/interface/QueueView.cpp:922
+#: ../../locales/../src/interface/QueueView.cpp:947
 msgid "Timeout"
 msgstr "逾時時間"
 
@@ -3600,23 +3763,23 @@ msgstr "逾時時間"
 msgid "Title:"
 msgstr "標題:"
 
-#: resources.h:528 resources.h:529
+#: resources.h:555 resources.h:556
 msgid "Toggles processing of the transfer queue"
 msgstr "切換處理傳輸佇列"
 
-#: resources.h:520 resources.h:521
+#: resources.h:547 resources.h:548
 msgid "Toggles the display of the local directory tree"
 msgstr "切換顯示本地樹狀目錄"
 
-#: resources.h:518 resources.h:519
+#: resources.h:545 resources.h:546
 msgid "Toggles the display of the message log"
 msgstr "切換顯示訊息記錄"
 
-#: resources.h:522 resources.h:523
+#: resources.h:549 resources.h:550
 msgid "Toggles the display of the remote directory tree"
 msgstr "切換顯示遠端樹狀目錄"
 
-#: resources.h:524 resources.h:525
+#: resources.h:551 resources.h:552
 msgid "Toggles the display of the transfer queue"
 msgstr "切換顯示傳輸佇列"
 
@@ -3649,12 +3812,12 @@ msgstr "傳輸設定"
 msgid "Transferred data got tainted."
 msgstr "傳輸的資料遭受影響."
 
-#: ../../locales/../src/interface/QueueView.cpp:1241
+#: ../../locales/../src/interface/QueueView.cpp:1261
 #: ../../locales/../src/interface/statuslinectrl.cpp:159
 msgid "Transferring"
 msgstr "正在傳輸"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:99
+#: ../../locales/../src/interface/settingsdialog.cpp:103
 msgid "Transfers"
 msgstr "傳輸"
 
@@ -3674,7 +3837,7 @@ msgstr "信任已改變的 Host Key:"
 msgid "Trust new Hostkey: "
 msgstr "信任新的 Host Key:"
 
-#: resources.h:247
+#: resources.h:265
 msgid "Trust the new key and carry on connecting?"
 msgstr "要信任新的 Host Key 並且繼續連線?"
 
@@ -3682,13 +3845,17 @@ msgstr "要信任新的 Host Key 並且繼續連線?"
 msgid "Trust this certificate and carry on connecting"
 msgstr "信任這個憑證並且繼續連線"
 
-#: resources.h:235
+#: resources.h:253
 msgid "Trust this host and carry on connecting?"
 msgstr "要信任這台主機並且繼續連線?"
 
 #: resources.h:38
 msgid "U&pload limit:"
 msgstr "上傳限制(&P)"
+
+#: resources.h:188
+msgid "U&se system defaults"
+msgstr "使用系統預設值(&S)"
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:122
 msgid "Unit:"
@@ -3698,7 +3865,7 @@ msgstr "單位:"
 msgid "Unknown certificate"
 msgstr "未知的憑證"
 
-#: resources.h:228
+#: resources.h:246
 msgid "Unknown host key"
 msgstr "未知的 Host Key"
 
@@ -3719,7 +3886,7 @@ msgstr "除非這個問題解決了, 否則 FTP 主動模式不會運作並且�
 msgid "Unsuppored redirect"
 msgstr "未支援的重導"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:106
+#: ../../locales/../src/interface/settingsdialog.cpp:112
 msgid "Update Check"
 msgstr "更新檢查"
 
@@ -3728,15 +3895,15 @@ msgstr "更新檢查"
 msgid "Update wizard"
 msgstr "更新精靈"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1235
+#: ../../locales/../src/interface/Mainfrm.cpp:1313
 msgid "Updatecheck failed"
 msgstr "更新檢查失敗"
 
-#: resources.h:406
+#: resources.h:424
 msgid "Upload selected files and folders"
 msgstr "上傳選取的檔案與資料夾"
 
-#: resources.h:326 resources.h:345
+#: resources.h:344 resources.h:363
 msgid "Uploads"
 msgstr "上傳"
 
@@ -3744,32 +3911,36 @@ msgstr "上傳"
 msgid "Use &custom charset"
 msgstr "使用自訂字碼集(&C)"
 
-#: resources.h:319
+#: resources.h:337
 msgid "Use &default"
 msgstr "使用預設值(&D)"
 
-#: resources.h:327
+#: resources.h:345
 msgid "Use d&efault"
 msgstr "使用預設值(&E)"
 
-#: resources.h:292 resources.h:485
+#: resources.h:182
+msgid "Use system &defaults"
+msgstr "使用系統預設值(&D)"
+
+#: resources.h:310 resources.h:512
 msgid "Use the following IP address:"
 msgstr "使用以下的 IP Address:"
 
-#: resources.h:495
+#: resources.h:522
 msgid "Use the following port range:"
 msgstr "使用以下的連接埠範圍:"
 
-#: resources.h:480
+#: resources.h:507
 msgid "Use the server's external IP address instead"
 msgstr "改為使用伺服器的外部 IP Address"
 
-#: resources.h:293 resources.h:486
+#: resources.h:311 resources.h:513
 msgid ""
 "Use this if you're behind a router and have a static external IP address."
 msgstr "當您位在路由器後方並且有個靜態外部 IP Address 時才用."
 
-#: resources.h:489
+#: resources.h:516
 msgid ""
 "Use this option if you have a dynamic IP address. FileZilla will contact the "
 "above server once each session as soon as you use active mode for the first "
@@ -3791,7 +3962,7 @@ msgid ""
 "Using the wrong charset can result in filenames not displaying properly."
 msgstr "使用錯誤的字碼集會導致檔名無法正確顯示."
 
-#: resources.h:298
+#: resources.h:316
 msgid "Using this wizard you can check for available updates to FileZilla."
 msgstr "使用這個精靈您可以檢查 FileZilla 可用的更新."
 
@@ -3811,11 +3982,11 @@ msgstr "驗證憑證中..."
 msgid "Very high"
 msgstr "非常高"
 
-#: resources.h:399
+#: resources.h:417
 msgid "View &hidden files"
 msgstr "顯示隱藏檔案(&H)"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:554
+#: ../../locales/../src/interface/Mainfrm.cpp:609
 msgid "View hidden files"
 msgstr "顯示隱藏檔案"
 
@@ -3824,19 +3995,19 @@ msgstr "顯示隱藏檔案"
 msgid "View hidden option set, but unsupported by server"
 msgstr "已經設定了顯示隱藏的選項, 但是伺服器端並未支援"
 
-#: resources.h:203
+#: resources.h:221
 msgid "W&rite"
 msgstr "寫入(&R)"
 
-#: ../../locales/../src/interface/QueueView.cpp:1512
+#: ../../locales/../src/interface/QueueView.cpp:1547
 msgid "Waiting"
 msgstr "等待中"
 
-#: ../../locales/../src/interface/QueueView.cpp:1170
+#: ../../locales/../src/interface/QueueView.cpp:1190
 msgid "Waiting for browsing connection"
 msgstr "等待瀏覽連線"
 
-#: ../../locales/../src/interface/QueueView.cpp:1191
+#: ../../locales/../src/interface/QueueView.cpp:1211
 msgid "Waiting for password"
 msgstr "等待密碼"
 
@@ -3848,7 +4019,7 @@ msgstr "正在等待傳輸取消"
 msgid "Waiting to retry..."
 msgstr "等待重試中..."
 
-#: ../../locales/../src/interface/FileZilla.cpp:200
+#: ../../locales/../src/interface/FileZilla.cpp:197
 msgid ""
 "Warning!\n"
 "\n"
@@ -3895,7 +4066,7 @@ msgstr ""
 "\n"
 "您真的要檢查每日組建版?"
 
-#: resources.h:240
+#: resources.h:258
 msgid "Warning: Potential security breach!"
 msgstr "警告: 可能有潛藏的安全性漏洞!"
 
@@ -3903,7 +4074,7 @@ msgstr "警告: 可能有潛藏的安全性漏洞!"
 msgid "Widescreen"
 msgstr "寬螢幕"
 
-#: resources.h:207
+#: resources.h:225
 msgid "Wr&ite"
 msgstr "寫入(&I)"
 
@@ -3920,13 +4091,13 @@ msgstr "錯誤的換行格式"
 msgid "Yes"
 msgstr "是"
 
-#: resources.h:313
+#: resources.h:331
 msgid ""
 "You are already using the most recent version of FileZilla. Please check "
 "again in future."
 msgstr "您已在使用最近版本的 FileZilla. 請於未來再次檢查."
 
-#: resources.h:210
+#: resources.h:228
 msgid ""
 "You can use an x at any position to keep the permission the original files "
 "have."
@@ -3936,7 +4107,7 @@ msgstr "您可以在任何位置使用 x 來保持原來檔案所有的權限."
 msgid "You did not enter a new name for the file. Overwrite the file instead?"
 msgstr "您未為這個檔案輸入新的檔名. 是想要覆蓋這個檔案嗎?"
 
-#: ../../locales/../src/interface/sitemanager.cpp:509
+#: ../../locales/../src/interface/sitemanager.cpp:518
 msgid "You have to enter a hostname."
 msgstr "您必須輸入主機名稱."
 
@@ -3945,11 +4116,11 @@ msgstr "您必須輸入主機名稱."
 msgid "You have to enter a valid IP address."
 msgstr "您必須輸入有效的 IP Address."
 
-#: ../../locales/../src/interface/sitemanager.cpp:570
+#: ../../locales/../src/interface/sitemanager.cpp:579
 msgid "You have to enter an account name"
 msgstr "您必須輸入帳號名稱."
 
-#: ../../locales/../src/interface/sitemanager.cpp:561
+#: ../../locales/../src/interface/sitemanager.cpp:570
 msgid "You have to specify a user name"
 msgstr "您必須指定使用者名稱"
 
@@ -3988,10 +4159,10 @@ msgstr "終止於"
 msgid "equals"
 msgstr "等同於"
 
-#: ../../locales/../src/interface/LocalListView.cpp:719
-#: ../../locales/../src/interface/LocalListView.cpp:737
-#: ../../locales/../src/interface/RemoteListView.cpp:1166
-#: ../../locales/../src/interface/RemoteListView.cpp:1184
+#: ../../locales/../src/interface/LocalListView.cpp:805
+#: ../../locales/../src/interface/LocalListView.cpp:823
+#: ../../locales/../src/interface/RemoteListView.cpp:1173
+#: ../../locales/../src/interface/RemoteListView.cpp:1191
 msgid "file"
 msgstr "檔案"
 
@@ -4015,7 +4186,7 @@ msgstr "小於"
 msgid "matches regex"
 msgstr "比對常規表示法 (regex)"
 
-#: ../../locales/../src/interface/themeprovider.cpp:57
+#: ../../locales/../src/interface/themeprovider.cpp:58
 msgid "themes.xml missing, can not get theme data"
 msgstr "檔案 themes.xml 遺失, 無法取得佈景主題資料."
 

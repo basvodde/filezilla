@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla 3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-03 21:02+0200\n"
-"PO-Revision-Date: 2007-08-28 00:29+0100\n"
+"POT-Creation-Date: 2007-09-15 20:40+0200\n"
+"PO-Revision-Date: 2007-09-14 18:15+0100\n"
 "Last-Translator: Òscar Martínez Llobet <omllobet@telefonica.net>\n"
 "Language-Team: Òscar Martinez Llobet <omllobet@telefonica.net>\n"
 "MIME-Version: 1.0\n"
@@ -28,7 +28,7 @@ msgstr "%H:%M:%S transcorregut"
 msgid "%H:%M:%S left"
 msgstr "queden %H:%M:%S"
 
-#: ../../locales/../src/interface/QueueView.cpp:2083
+#: ../../locales/../src/interface/QueueView.cpp:2198
 #, c-format
 msgid "%d files added to queue"
 msgstr "%d fitxers afegits a la cua"
@@ -71,7 +71,7 @@ msgstr "%s bytes (%d.%d MB/s)"
 msgid "%s bytes (? B/s)"
 msgstr "%s bytes (? B/s)"
 
-#: ../../locales/../src/interface/FileZilla.cpp:734
+#: ../../locales/../src/interface/FileZilla.cpp:731
 #, c-format
 msgid ""
 "%s could not be found. Without this component of FileZilla, SFTP will not "
@@ -94,7 +94,7 @@ msgstr ""
 msgid "%s with %d bits"
 msgstr "%s amb %d bits"
 
-#: resources.h:403
+#: resources.h:421
 msgid "&About..."
 msgstr "Qu&ant a..."
 
@@ -102,11 +102,11 @@ msgstr "Qu&ant a..."
 msgid "&Account:"
 msgstr "&Compte:"
 
-#: resources.h:97 resources.h:154 resources.h:471
+#: resources.h:97 resources.h:154 resources.h:498
 msgid "&Active"
 msgstr "&Actiu"
 
-#: resources.h:407 resources.h:417 resources.h:452
+#: resources.h:425 resources.h:435 resources.h:479
 msgid "&Add files to queue"
 msgstr "&Afegeix fitxers a la cua"
 
@@ -114,7 +114,7 @@ msgstr "&Afegeix fitxers a la cua"
 msgid "&Always trust certificate in future sessions."
 msgstr "Sempre confi&ar en el certificat en sessions futures."
 
-#: resources.h:236
+#: resources.h:254
 msgid "&Always trust this host, add this key to the cache"
 msgstr ""
 "Sempre confi&a en aquest amfitrió, afegeix aquesta clau a la  memòria cau"
@@ -123,7 +123,7 @@ msgstr ""
 msgid "&Always use this action"
 msgstr "Sempre utilitz&a aquesta acció"
 
-#: resources.h:320 resources.h:339
+#: resources.h:338 resources.h:357
 msgid "&Ask for action"
 msgstr "Dem&ana una acció"
 
@@ -135,13 +135,17 @@ msgstr "&Auto"
 msgid "&Autodetect"
 msgstr "&Autodetecta"
 
-#: resources.h:449
+#: resources.h:476
 msgid "&Automatically remove successful transfers"
-msgstr "Esborra automàticament les transferència exitoses"
+msgstr "Esborra automàticament les transferències exitoses"
 
 #: resources.h:129
 msgid "&Binary"
 msgstr "&Binari"
+
+#: resources.h:196
+msgid "&Binary prefixes using SI symbols. (e.g. 1 KB = 1024 bytes.)"
+msgstr ""
 
 #: resources.h:89
 msgid "&Browse..."
@@ -151,72 +155,88 @@ msgstr "&Navega..."
 msgid "&Burst tolerance:"
 msgstr "Tolerància de la velocitat de &bits:"
 
-#: resources.h:63 resources.h:121 resources.h:125 resources.h:194
-#: resources.h:238 resources.h:250
+#: resources.h:63 resources.h:121 resources.h:125 resources.h:212
+#: resources.h:256 resources.h:268
 msgid "&Cancel"
 msgstr "&Cancel·la"
 
-#: resources.h:302
+#: resources.h:320
 msgid "&Check for beta versions of FileZilla"
 msgstr "&Comprova actualitzacions per versió beta"
 
-#: resources.h:391
+#: resources.h:409
 msgid "&Clear private data..."
 msgstr "Nete&ja les dades personals..."
+
+#: resources.h:456
+msgid "&Close FileZilla"
+msgstr "Tan&ca el FileZilla"
 
 #: resources.h:109
 msgid "&Connect"
 msgstr "&Connecta"
 
-#: resources.h:271
+#: resources.h:289
 msgid "&Copy"
 msgstr "&Copia"
 
-#: resources.h:438
+#: resources.h:465
 msgid "&Copy to clipboard"
 msgstr "&Copia al porta-retalls"
 
-#: resources.h:441
+#: resources.h:468
 msgid "&Crash"
 msgstr "&Fes fallada"
 
-#: resources.h:409 resources.h:419 resources.h:454
+#: resources.h:427 resources.h:437 resources.h:481
 msgid "&Create directory"
 msgstr "&Crea un directori"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:448
+#: ../../locales/../src/interface/Mainfrm.cpp:503
 msgid "&Debug"
 msgstr "&Depuració"
 
-#: resources.h:183
+#: resources.h:201
 msgid "&Debug information in message log:"
 msgstr "Informació de &depuració al registre de missatges:"
 
-#: resources.h:393 resources.h:430
+#: resources.h:197
+msgid "&Decimal prefixes using SI symbols (e.g. 1 KB = 1000 bytes)"
+msgstr ""
+
+#: resources.h:411 resources.h:448
 msgid "&Default file exists action..."
 msgstr "Acció &de fitxer existent per defecte..."
 
-#: resources.h:69 resources.h:253 resources.h:269
+#: resources.h:69 resources.h:271 resources.h:287
 msgid "&Delete"
 msgstr "&Suprimeix"
 
-#: resources.h:396
+#: resources.h:414
 msgid "&Disconnect"
 msgstr "&Desconnecta"
+
+#: resources.h:457
+msgid "&Disconnect from server"
+msgstr "&Desconnecta't del servidor"
+
+#: resources.h:194
+msgid "&Display size in bytes"
+msgstr ""
 
 #: ../../locales/../src/interface/conditionaldialog.cpp:22
 msgid "&Don't show this dialog again."
 msgstr "No tornis a mostrar aquest &diàleg."
 
-#: resources.h:415 resources.h:450
+#: resources.h:433 resources.h:477
 msgid "&Download"
 msgstr "&Baixa"
 
-#: resources.h:384
+#: resources.h:402
 msgid "&Edit"
 msgstr "&Edita"
 
-#: resources.h:255
+#: resources.h:273
 msgid "&Edit filters..."
 msgstr "&Edita filtres..."
 
@@ -228,19 +248,19 @@ msgstr "&Habilita la comprovació automàtica d'actualitzacions."
 msgid "&Encoding:"
 msgstr "C&odificació:"
 
-#: resources.h:437
+#: resources.h:464
 msgid "&Enter custom command..."
 msgstr "Introdueix la comanda &específica..."
 
-#: resources.h:200
+#: resources.h:218
 msgid "&Execute"
 msgstr "&Executa"
 
-#: resources.h:366
+#: resources.h:384
 msgid "&Export Site Manager entries"
 msgstr "&Exporta les entrades del Gestor de Llocs FTP"
 
-#: resources.h:389
+#: resources.h:407
 msgid "&Export..."
 msgstr "&Exporta..."
 
@@ -248,43 +268,51 @@ msgstr "&Exporta..."
 msgid "&Fall back to active mode"
 msgstr "&Retorna a mode actiu"
 
-#: resources.h:379
+#: resources.h:397
 msgid "&File"
 msgstr "&Fitxer"
 
-#: resources.h:425 resources.h:460
+#: resources.h:443 resources.h:487
 msgid "&File Attributes..."
 msgstr "Atributs del &fitxer..."
 
-#: resources.h:252
+#: resources.h:270
 msgid "&Filter sets:"
 msgstr "Configuració de &filtres:"
 
-#: resources.h:267
+#: resources.h:285
 msgid "&Filters:"
 msgstr "&Filtres"
 
-#: resources.h:400
+#: resources.h:418
 msgid "&Help"
 msgstr "&Ajuda"
 
-#: resources.h:432
+#: resources.h:450
 msgid "&Highest"
 msgstr "Mé&s alt"
 
-#: resources.h:289
+#: resources.h:307
 msgid "&Highest available port:"
 msgstr "&Port més alt disponible:"
 
-#: resources.h:72 resources.h:509
+#: resources.h:72 resources.h:536
 msgid "&Host:"
 msgstr "&Amfitrió:"
 
-#: resources.h:390
+#: resources.h:195
+msgid "&IEC binary prefixes (e.g. 1 KiB = 1024 bytes)"
+msgstr ""
+
+#: resources.h:183
+msgid "&ISO 8601 (example: 2007-09-15)"
+msgstr "&ISO 8601 (exemple: 2007-09-15)"
+
+#: resources.h:408
 msgid "&Import..."
 msgstr "&Importa..."
 
-#: resources.h:286
+#: resources.h:304
 msgid "&Limit local ports used by FileZilla"
 msgstr "&Limita els port locals utilitzats pel FileZilla"
 
@@ -296,7 +324,7 @@ msgstr "&Limita el nombre de connexions simultànies"
 msgid "&Logontype:"
 msgstr "&Tipus d'entrada:"
 
-#: resources.h:435
+#: resources.h:453
 msgid "&Low"
 msgstr "&Baix"
 
@@ -304,11 +332,11 @@ msgstr "&Baix"
 msgid "&Maximum number of connections:"
 msgstr "&Màxim nombre de connexions:"
 
-#: resources.h:387
+#: resources.h:405
 msgid "&Network configuration wizard..."
 msgstr "Assistent de co&nfiguració de la xarxa..."
 
-#: resources.h:268
+#: resources.h:286
 msgid "&New"
 msgstr "&Nou"
 
@@ -320,11 +348,11 @@ msgstr "&Nou lloc"
 msgid "&New version available!"
 msgstr "&Nova versió disponible!"
 
-#: resources.h:434
+#: resources.h:452
 msgid "&Normal"
 msgstr "&Normal"
 
-#: resources.h:209
+#: resources.h:227
 msgid "&Numeric value:"
 msgstr "Valor &numèric:"
 
@@ -332,7 +360,7 @@ msgstr "Valor &numèric:"
 msgid "&OK"
 msgstr "D'ac&ord"
 
-#: resources.h:54 resources.h:321 resources.h:340
+#: resources.h:54 resources.h:339 resources.h:358
 msgid "&Overwrite"
 msgstr "S&obreescriu"
 
@@ -344,23 +372,27 @@ msgstr "&Passiu"
 msgid "&Password:"
 msgstr "&Contrasenya:"
 
-#: resources.h:73 resources.h:513
+#: resources.h:460
+msgid "&Play sound"
+msgstr "A&vís sonor"
+
+#: resources.h:73 resources.h:540
 msgid "&Port:"
 msgstr "&Port:"
 
-#: resources.h:375
+#: resources.h:393
 msgid "&Queue"
 msgstr "&Cua"
 
-#: resources.h:515
+#: resources.h:542
 msgid "&Quickconnect"
 msgstr "&Connexió ràpida"
 
-#: resources.h:198
+#: resources.h:216
 msgid "&Read"
 msgstr "&Llegeix"
 
-#: resources.h:395
+#: resources.h:413
 msgid "&Reconnect"
 msgstr "&Reconnecta"
 
@@ -372,22 +404,26 @@ msgstr "&Recorda aquesta contrasenya la resta de la sessió"
 msgid "&Remove"
 msgstr "&Elimina"
 
-#: resources.h:429
+#: resources.h:447
 msgid "&Remove selected"
 msgstr "Esbo&rra seleccionats"
 
-#: resources.h:68 resources.h:270 resources.h:413 resources.h:423
-#: resources.h:458
+#: resources.h:68 resources.h:288 resources.h:431 resources.h:441
+#: resources.h:485
 msgid "&Rename"
 msgstr "&Reanomena"
 
-#: resources.h:508
+#: resources.h:535
 msgid "&Restart Wizard"
 msgstr "&Reinicia l'assistent"
 
-#: resources.h:56 resources.h:323 resources.h:342
+#: resources.h:56 resources.h:341 resources.h:360
 msgid "&Resume"
 msgstr "&Repren"
+
+#: resources.h:458
+msgid "&Run command..."
+msgstr "E&xecuta la comanda..."
 
 #: resources.h:151
 msgid "&Run configuration wizard now..."
@@ -397,7 +433,7 @@ msgstr "Executa l'assistent de co&nfiguració ara..."
 msgid "&Run update check now..."
 msgstr "&Executa la comprovació d'actualitzacions ara..."
 
-#: resources.h:254
+#: resources.h:272
 msgid "&Save as..."
 msgstr "Anomena i de&sa..."
 
@@ -405,23 +441,27 @@ msgstr "Anomena i de&sa..."
 msgid "&Select language:"
 msgstr "&Selecciona l'idioma"
 
-#: resources.h:394
+#: resources.h:412
 msgid "&Server"
 msgstr "&Servidor "
 
-#: resources.h:374
+#: resources.h:392
 msgid "&Settings"
 msgstr "C&onfiguració"
 
-#: resources.h:385
+#: resources.h:403
 msgid "&Settings..."
 msgstr "Paràmetre&s..."
 
-#: resources.h:182
+#: resources.h:200
 msgid "&Show debug menu"
 msgstr "Mo&stra el menú de depuració"
 
-#: resources.h:380
+#: resources.h:459
+msgid "&Show message"
+msgstr "Mo&stra el missatge"
+
+#: resources.h:398
 msgid "&Site Manager..."
 msgstr "Administrador de lloc&s..."
 
@@ -441,7 +481,7 @@ msgstr "&Prova"
 msgid "&Theme:"
 msgstr "&Tema:"
 
-#: resources.h:392
+#: resources.h:410
 msgid "&Transfer"
 msgstr "&Transfereix"
 
@@ -454,11 +494,11 @@ msgid "&Treat dotfiles (filenames starting with a dot) as Ascii files"
 msgstr ""
 "Tracta els puntfitxers (noms de fitxer començant per punt) com fitxers Ascii"
 
-#: resources.h:248
+#: resources.h:266
 msgid "&Update cached key for this host"
 msgstr "Act&ualitza la clau de la memòria cau per a aquest amfitrió"
 
-#: resources.h:405
+#: resources.h:423
 msgid "&Upload"
 msgstr "&Penja"
 
@@ -466,11 +506,15 @@ msgstr "&Penja"
 msgid "&Use the server's external IP address instead"
 msgstr "&Utilitza l'adreça IP externa del servidor en lloc de"
 
+#: resources.h:198
+msgid "&Use thousands separator"
+msgstr ""
+
 #: resources.h:81
 msgid "&User:"
 msgstr "&Usuari:"
 
-#: resources.h:511
+#: resources.h:538
 msgid "&Username:"
 msgstr "Nom d'&usuari:"
 
@@ -479,7 +523,7 @@ msgstr "Nom d'&usuari:"
 msgid "&Version %s"
 msgstr "&Versió %s"
 
-#: resources.h:199
+#: resources.h:217
 msgid "&Write"
 msgstr "&Escriu"
 
@@ -488,11 +532,11 @@ msgstr "&Escriu"
 msgid "'%s' does not exist or cannot be accessed."
 msgstr "El fitxer '%s' no existeix o no ha pogut ser obert."
 
-#: ../../locales/../src/interface/sitemanager.cpp:519
+#: ../../locales/../src/interface/sitemanager.cpp:528
 msgid "'Account' logontype not supported by selected protocol"
 msgstr "Tipus d'entrada del 'Compte' no compatible amb el protocol seleccionat"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:501
+#: ../../locales/../src/interface/Mainfrm.cpp:556
 msgid ""
 "'quote' is usually a local command used by commandline clients to send the "
 "arguments following 'quote' to the server. You might want to enter the raw "
@@ -526,6 +570,14 @@ msgstr "(5-9999, 0 per desactivar)"
 msgid "(At least 7 days)"
 msgstr "(Com a mínim 7 dies)"
 
+#: resources.h:191
+msgid "(example: %H:%M)"
+msgstr "(exemple: %H:%M)"
+
+#: resources.h:185
+msgid "(example: %Y-%m-%d)"
+msgstr "(exemple: %Y-%m-%d)"
+
 #: resources.h:37 resources.h:39
 msgid "(in KB/s)"
 msgstr "(en KB/s)"
@@ -538,7 +590,7 @@ msgstr ", queden %H:%M:%S"
 msgid ", --:--:-- left"
 msgstr ", queden --:--:--"
 
-#: resources.h:496
+#: resources.h:523
 msgid "-"
 msgstr "-"
 
@@ -547,23 +599,23 @@ msgstr "-"
 msgid "--:--:-- left"
 msgstr "queden --:--:--"
 
-#: resources.h:184
+#: resources.h:202
 msgid "0 - None"
 msgstr "0 - Cap"
 
-#: resources.h:185
+#: resources.h:203
 msgid "1 - Warning"
 msgstr "1 - Advertiment"
 
-#: resources.h:186
+#: resources.h:204
 msgid "2 - Info"
 msgstr "2 - Info"
 
-#: resources.h:187
+#: resources.h:205
 msgid "3 - Verbose"
 msgstr "3 - Detallat"
 
-#: resources.h:188
+#: resources.h:206
 msgid "4 - Debug"
 msgstr "4 - Depuració"
 
@@ -572,7 +624,7 @@ msgstr "4 - Depuració"
 msgid "A directory cannot be dragged into one if its subdirectories."
 msgstr "Un directori no pot ser arrossegat dins un dels seus subdirectoris."
 
-#: resources.h:468
+#: resources.h:495
 msgid ""
 "A few servers don't allow passive mode or are misconfigured. In such cases "
 "you would have to use active mode. In active mode, FileZilla opens a port "
@@ -582,7 +634,7 @@ msgstr ""
 "aquests casos haureu d'utilitzar el mode actiu. En mode actiu, FileZilla "
 "obre un port i li demana al servidor que s'hi connecti."
 
-#: ../../locales/../src/interface/FileZilla.cpp:626
+#: ../../locales/../src/interface/FileZilla.cpp:623
 msgid ""
 "A local filename could not be decoded.\n"
 "Please make sure the LC_CTYPE (or LC_ALL) environment variable is set "
@@ -597,7 +649,7 @@ msgstr ""
 "fitxers.\n"
 "No es mostrarà cap més avís durant aquesta sessió."
 
-#: resources.h:304
+#: resources.h:322
 msgid "A newer version of FileZilla is available:"
 msgstr "Una nova versió del FileZilla està disponible:"
 
@@ -605,7 +657,7 @@ msgstr "Una nova versió del FileZilla està disponible:"
 msgid "A&dd"
 msgstr "Afegei&x"
 
-#: resources.h:353
+#: resources.h:371
 msgid "A&llow resume of ascii files"
 msgstr "&Permet reprendre fitxers ascii"
 
@@ -617,7 +669,7 @@ msgstr "A&plica només a les descàrregues"
 msgid "A&pply only to uploads"
 msgstr "A&plica només a les càrregues"
 
-#: resources.h:212
+#: resources.h:230
 msgid "A&pply to all files and directories"
 msgstr "A&plica a tots els fitxers i directoris."
 
@@ -625,24 +677,28 @@ msgstr "A&plica a tots els fitxers i directoris."
 msgid "A&scii"
 msgstr "A&scii"
 
-#: resources.h:328 resources.h:346
+#: resources.h:346 resources.h:364
 msgid "A&sk for action"
 msgstr "De&mana una acció"
 
-#: resources.h:217
+#: resources.h:235
 msgid "About FileZilla"
 msgstr "Quant al FileZilla"
 
-#: resources.h:80 ../../locales/../src/interface/sitemanager.cpp:516
-#: ../../locales/../src/interface/sitemanager.cpp:566
-#: ../../locales/../src/interface/sitemanager.cpp:759
-#: ../../locales/../src/interface/sitemanager.cpp:760
-#: ../../locales/../src/interface/sitemanager.cpp:798
-#: ../../locales/../src/interface/sitemanager.cpp:1014
+#: resources.h:80 ../../locales/../src/interface/sitemanager.cpp:525
+#: ../../locales/../src/interface/sitemanager.cpp:575
+#: ../../locales/../src/interface/sitemanager.cpp:776
+#: ../../locales/../src/interface/sitemanager.cpp:777
+#: ../../locales/../src/interface/sitemanager.cpp:815
+#: ../../locales/../src/interface/sitemanager.cpp:1047
 msgid "Account"
 msgstr "Compte"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:97
+#: resources.h:455
+msgid "Action after queue &completion"
+msgstr "A&cció després de completar la cua"
+
+#: ../../locales/../src/interface/settingsdialog.cpp:101
 msgid "Active mode"
 msgstr "Mode actiu"
 
@@ -672,19 +728,19 @@ msgstr ""
 "adreça IP externa correcta, però el vostre encaminador (router) ha modificat "
 "l'adreça enviada."
 
-#: resources.h:297
+#: resources.h:315
 msgid "Active mode IP"
 msgstr "Mode actiu IP"
 
-#: resources.h:277
+#: resources.h:295
 msgid "Add &more"
 msgstr "Afegeix &més"
 
-#: resources.h:453
+#: resources.h:480
 msgid "Add selected directory to the transfer queue"
 msgstr "Afegeix a la cua de transferències el directori seleccionat"
 
-#: resources.h:408 resources.h:418
+#: resources.h:426 resources.h:436
 msgid "Add selected files and folders to the transfer queue"
 msgstr ""
 "Afegeix a la cua de transferències els fitxers i les carpetes seleccionats"
@@ -697,11 +753,11 @@ msgstr "Ajusta la compensació del fus horari del servidor:"
 msgid "Advanced"
 msgstr "Avançat"
 
-#: resources.h:301
+#: resources.h:319
 msgid "Advanced options:"
 msgstr "Opcions avançades:"
 
-#: resources.h:497
+#: resources.h:524
 msgid "All ports in the given range have to be between 1024 and 65535."
 msgstr "Tots els ports del rang donat han d'estar entre 1024 i 65535."
 
@@ -710,12 +766,12 @@ msgid "Allow fall back to other transfer mode on failure"
 msgstr ""
 "Permeteu utilitzar el mode de transferència alternatiu en cas de fallada"
 
-#: resources.h:472
+#: resources.h:499
 msgid "Allow fallback to other transfer mode on failure"
 msgstr ""
 "Permeteu utilitzar el mode de transferència alternatiu en cas de fallada"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:557
+#: ../../locales/../src/interface/Mainfrm.cpp:612
 msgid ""
 "Also, not all servers support this feature and may return incorrect listings "
 "if 'View hidden files' is enabled. Although FileZilla performs some tests to "
@@ -734,22 +790,22 @@ msgstr ""
 "Alternativament, visiteu  http://filezilla-project.org per descarregar-vos "
 "la darrera versió."
 
-#: resources.h:76 ../../locales/../src/interface/sitemanager.cpp:557
-#: ../../locales/../src/interface/sitemanager.cpp:758
-#: ../../locales/../src/interface/sitemanager.cpp:951
-#: ../../locales/../src/interface/sitemanager.cpp:1017
+#: resources.h:76 ../../locales/../src/interface/sitemanager.cpp:566
+#: ../../locales/../src/interface/sitemanager.cpp:775
+#: ../../locales/../src/interface/sitemanager.cpp:984
+#: ../../locales/../src/interface/sitemanager.cpp:1050
 msgid "Anonymous"
 msgstr "Anònim, -a"
 
-#: resources.h:275
+#: resources.h:293
 msgid "Any of the following"
 msgstr "Qualsevol dels següents"
 
-#: resources.h:214
+#: resources.h:232
 msgid "App&ly to directories only"
 msgstr "Ap&lica només a directoris"
 
-#: resources.h:265
+#: resources.h:283
 msgid "Apply"
 msgstr "Aplica"
 
@@ -757,7 +813,7 @@ msgstr "Aplica"
 msgid "Apply to &current queue only"
 msgstr "Aplica només a la cua actual"
 
-#: resources.h:213
+#: resources.h:231
 msgid "Apply to &files only"
 msgstr "Aplica només a &fitxers"
 
@@ -765,16 +821,16 @@ msgstr "Aplica només a &fitxers"
 msgid "Archive"
 msgstr "Arxiva"
 
-#: resources.h:78 ../../locales/../src/interface/sitemanager.cpp:794
-#: ../../locales/../src/interface/sitemanager.cpp:1008
+#: resources.h:78 ../../locales/../src/interface/sitemanager.cpp:811
+#: ../../locales/../src/interface/sitemanager.cpp:1041
 msgid "Ask for password"
 msgstr "Demana contrasenya"
 
-#: resources.h:493
+#: resources.h:520
 msgid "Ask operating system for a port."
 msgstr "Demana un port al sistema operatiu."
 
-#: resources.h:291 resources.h:483
+#: resources.h:309 resources.h:510
 msgid "Ask your operating system for the external IP address"
 msgstr "Demana l'adreça IP externa al sistema operatiu"
 
@@ -782,7 +838,7 @@ msgstr "Demana l'adreça IP externa al sistema operatiu"
 msgid "At least one filter condition is incomplete"
 msgstr "Com a mínim una condició del filtre és incompleta"
 
-#: resources.h:502
+#: resources.h:529
 msgid "At this point, all required information has been gathered."
 msgstr "En aquest punt, tota la informació requerida ha estat recollida."
 
@@ -802,19 +858,19 @@ msgstr "Comprovació automàtica d'actualitzacions"
 msgid "Blackboard"
 msgstr "Pissarra"
 
-#: ../../locales/../src/interface/state.cpp:257
+#: ../../locales/../src/interface/state.cpp:269
 msgid "Break current connection?"
 msgstr "Voleu interrompre la connexió actual?"
 
-#: resources.h:224
+#: resources.h:242
 msgid "Build date:"
 msgstr "Versió i data de muntatge:"
 
-#: resources.h:222
+#: resources.h:240
 msgid "Build information"
 msgstr "Informació del muntatge"
 
-#: resources.h:287
+#: resources.h:305
 msgid ""
 "By default uses any available local port to establish transfers in active "
 "mode. If you want to limit FileZilla to use only a small range of ports, "
@@ -824,38 +880,42 @@ msgstr ""
 "en mode actiu. Si voleu limitar FileZilla a només utilitzar un petit rang de "
 "ports, si us plau especifiqueu el rang de ports aquí sota."
 
-#: resources.h:303
+#: resources.h:321
 msgid "C&heck for nightly builds of FileZilla"
 msgstr "Co&mprova els darrers muntatges del FileZilla"
 
-#: resources.h:439
+#: resources.h:466
 msgid "C&lear all"
 msgstr "&Neteja tot"
 
-#: ../../locales/../src/engine/transfersocket.cpp:567
+#: resources.h:184
+msgid "C&ustom"
+msgstr "A &mida"
+
+#: ../../locales/../src/engine/transfersocket.cpp:603
 msgid "Can't read from file"
 msgstr "No es pot llegir el fitxer"
 
-#: ../../locales/../src/engine/transfersocket.cpp:541
+#: ../../locales/../src/engine/transfersocket.cpp:577
 msgid "Can't write data to file, disk is full."
 msgstr "No es poden escriure les dades al fitxer, el disc és ple."
 
-#: ../../locales/../src/engine/transfersocket.cpp:543
-#: ../../locales/../src/engine/transfersocket.cpp:546
-#: ../../locales/../src/engine/transfersocket.cpp:611
+#: ../../locales/../src/engine/transfersocket.cpp:579
+#: ../../locales/../src/engine/transfersocket.cpp:582
+#: ../../locales/../src/engine/transfersocket.cpp:647
 msgid "Can't write data to file."
 msgstr "No es poden escriure les dades al fitxer."
 
-#: resources.h:23 resources.h:216 resources.h:264 resources.h:284
-#: resources.h:336 resources.h:363 resources.h:370 resources.h:378
+#: resources.h:23 resources.h:234 resources.h:282 resources.h:302
+#: resources.h:354 resources.h:381 resources.h:388 resources.h:396
 msgid "Cancel"
 msgstr "Cancel·la"
 
-#: resources.h:530
+#: resources.h:557
 msgid "Cancel current operation"
 msgstr "Cancel·la l'operació actual"
 
-#: resources.h:531
+#: resources.h:558
 msgid "Cancels the current operation"
 msgstr "Cancel·la l'operació actual"
 
@@ -881,23 +941,23 @@ msgstr ""
 msgid "Cannot load file, not a valid XML file."
 msgstr "No es pot carregar el fitxer, no es un fitxer XML vàlid."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:434
+#: ../../locales/../src/interface/Mainfrm.cpp:489
 msgid "Cannot load main menu from resource file"
 msgstr "No es pot carregar el menú principal des del fitxer de recursos"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:685
+#: ../../locales/../src/interface/Mainfrm.cpp:740
 msgid "Cannot load toolbar from resource file"
 msgstr "No es pot carregat la barra d'eines des del fitxer de recursos"
 
-#: ../../locales/../src/interface/sitemanager.cpp:643
+#: ../../locales/../src/interface/sitemanager.cpp:652
 msgid "Cannot rename entry"
 msgstr "No es pot reanomenar l'entrada"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1740
+#: ../../locales/../src/interface/RemoteListView.cpp:1755
 msgid "Cannot rename file"
 msgstr "No es pot reanomenar el fitxer"
 
-#: resources.h:357
+#: resources.h:375
 msgid "Categories"
 msgstr "Categories"
 
@@ -909,15 +969,15 @@ msgstr "Emissor del certificat"
 msgid "Challenge:"
 msgstr "Desafiament:"
 
-#: resources.h:195
+#: resources.h:213
 msgid "Change file attributes"
 msgstr "Canvia els atributs del fitxer"
 
-#: resources.h:426 resources.h:461
+#: resources.h:444 resources.h:488
 msgid "Change the file permissions."
 msgstr "Canvia els permisos del fitxer."
 
-#: ../../locales/../src/interface/FileZilla.cpp:626
+#: ../../locales/../src/interface/FileZilla.cpp:623
 msgid "Character encoding issue"
 msgstr "Problema de codificació de caràcters"
 
@@ -925,11 +985,11 @@ msgstr "Problema de codificació de caràcters"
 msgid "Charset"
 msgstr "Joc de caràcters"
 
-#: resources.h:401
+#: resources.h:419
 msgid "Check for &updates..."
 msgstr "Comprova si hi ha act&ualitzacions..."
 
-#: resources.h:402
+#: resources.h:420
 msgid "Check for newer versions of FileZilla"
 msgstr "Comprova si hi ha noves versions del FileZilla"
 
@@ -941,11 +1001,11 @@ msgstr "Comprova si hi ha actualitzacions"
 msgid "Checking for correct external IP address"
 msgstr "Comprovant per corregir l'adreça externa IP"
 
-#: resources.h:299
+#: resources.h:317
 msgid "Checking for updates"
 msgstr "Comprovant si hi ha actualitzacions"
 
-#: ../../locales/../src/interface/sitemanager.cpp:891
+#: ../../locales/../src/interface/sitemanager.cpp:924
 msgid "Choose the default local directory"
 msgstr "Tria el directori local per defecte"
 
@@ -957,23 +1017,23 @@ msgstr "Dades del fragment finalitzades de forma inadequada"
 msgid "Classic"
 msgstr "Clàssic"
 
-#: resources.h:360
+#: resources.h:378
 msgid "Clear &Site Manager entries"
 msgstr "Netejar les entrades del gestor de lloc&s"
 
-#: resources.h:440
+#: resources.h:467
 msgid "Clear &layout cache"
 msgstr "Esborra e&l format de memòria cau"
 
-#: resources.h:358
+#: resources.h:376
 msgid "Clear &quickconnect history"
 msgstr "Neteja l'historial de connexió rà&pida"
 
-#: resources.h:359
+#: resources.h:377
 msgid "Clear &reconnect information"
 msgstr "Neteja la informació de &reconnexió"
 
-#: resources.h:361
+#: resources.h:379
 msgid "Clear &transfer queue"
 msgstr "Neteja la cua de &transferència"
 
@@ -981,7 +1041,7 @@ msgstr "Neteja la cua de &transferència"
 msgid "Clear history"
 msgstr "Neteja historial"
 
-#: resources.h:355 ../../locales/../src/interface/clearprivatedata.cpp:34
+#: resources.h:373 ../../locales/../src/interface/clearprivatedata.cpp:34
 #: ../../locales/../src/interface/clearprivatedata.cpp:40
 #: ../../locales/../src/interface/clearprivatedata.cpp:46
 #: ../../locales/../src/interface/clearprivatedata.cpp:68
@@ -1001,7 +1061,7 @@ msgstr "Cliqueu a Finalitzar per desar la vostra configuració."
 msgid "Click on next to download the new version."
 msgstr "Ciqueu a següent per descarregar la nova versió."
 
-#: resources.h:383
+#: resources.h:401 ../../locales/../src/interface/Mainfrm.cpp:854
 msgid "Close FileZilla"
 msgstr "Tanca el FileZilla"
 
@@ -1027,11 +1087,11 @@ msgstr "Nom comú:"
 msgid "Communication tainted by router"
 msgstr "Comunicació interferida pel router (encaminador)"
 
-#: resources.h:225
+#: resources.h:243
 msgid "Compiled with:"
 msgstr "Compilat amb:"
 
-#: resources.h:226
+#: resources.h:244
 msgid "Compiler flags:"
 msgstr "Paràmetres del compilador:"
 
@@ -1039,24 +1099,24 @@ msgstr "Paràmetres del compilador:"
 msgid "Concurrent transfers"
 msgstr "Transferències simultànies"
 
-#: resources.h:279
+#: resources.h:297
 msgid "Conditions are c&ase sensitive"
 msgstr "Les condicions distingeixen entre m&ajúscules i minúscules"
 
-#: resources.h:501
+#: resources.h:528
 msgid "Configuration test"
 msgstr "Test de configuració"
 
-#: resources.h:475
+#: resources.h:502
 msgid "Configure passive mode"
 msgstr "Configura el mode passiu"
 
-#: resources.h:491
+#: resources.h:518
 msgid "Configure port range"
 msgstr "Configura el rang de ports"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1439
-#: ../../locales/../src/interface/RemoteListView.cpp:1460
+#: ../../locales/../src/interface/LocalListView.cpp:1533
+#: ../../locales/../src/interface/RemoteListView.cpp:1475
 msgid "Confirmation needed"
 msgstr "Es necessita confirmació"
 
@@ -1068,7 +1128,7 @@ msgstr "Felicitats, la vostra configuració sembla funcionar correctament."
 msgid "Connected"
 msgstr "Connectat"
 
-#: ../../locales/../src/interface/QueueView.cpp:1204
+#: ../../locales/../src/interface/QueueView.cpp:1224
 msgid "Connecting"
 msgstr "S'està connectant"
 
@@ -1090,11 +1150,11 @@ msgstr "S'està connectant amb %s:%d..."
 msgid "Connecting to server"
 msgstr "S'està connectant amb el servidor"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:96
+#: ../../locales/../src/interface/settingsdialog.cpp:100
 msgid "Connection"
 msgstr "Connexió"
 
-#: ../../locales/../src/interface/QueueView.cpp:906
+#: ../../locales/../src/interface/QueueView.cpp:926
 msgid "Connection attempt failed"
 msgstr "Ha fallat l'intent de connexió"
 
@@ -1139,12 +1199,12 @@ msgstr "La connexió amb el servidor de prova ha fallat"
 msgid "Cop&y"
 msgstr "Cop&ia"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1165
+#: ../../locales/../src/interface/sitemanager.cpp:1203
 #, c-format
 msgid "Copy (%d) of %s"
 msgstr "Còpia (%d) de %s"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1142
+#: ../../locales/../src/interface/sitemanager.cpp:1180
 #, c-format
 msgid "Copy of %s"
 msgstr "Còpia de %s"
@@ -1153,7 +1213,7 @@ msgstr "Còpia de %s"
 msgid "Could not connect to server"
 msgstr "No s'ha pogut connectar al servidor"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2256
+#: ../../locales/../src/interface/RemoteListView.cpp:2271
 #: ../../locales/../src/interface/RemoteTreeView.cpp:829
 msgid ""
 "Could not determine the target of the Drag&Drop operation.\n"
@@ -1169,7 +1229,7 @@ msgstr ""
 msgid "Could not establish connection to server"
 msgstr "No s'ha pogut establir la connexió al servidor"
 
-#: ../../locales/../src/interface/FileZilla.cpp:361
+#: ../../locales/../src/interface/FileZilla.cpp:358
 msgid ""
 "Could not find the resource files for FileZilla, closing FileZilla.\n"
 "You can set the data directory of FileZilla using the '--datadir "
@@ -1182,7 +1242,7 @@ msgstr ""
 "comandes '--datadir <camípersonalitzat>' o configurant la variable d'entorn "
 "FZ_DATADIR"
 
-#: ../../locales/../src/interface/Options.cpp:102
+#: ../../locales/../src/interface/Options.cpp:107
 #, c-format
 msgid ""
 "Could not load \"%s\", make sure the file is valid.\n"
@@ -1204,7 +1264,7 @@ msgstr ""
 
 #: ../../locales/../src/interface/filter.cpp:167
 #: ../../locales/../src/interface/filter.cpp:252
-#: ../../locales/../src/interface/sitemanager.cpp:353
+#: ../../locales/../src/interface/sitemanager.cpp:362
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1216,9 +1276,9 @@ msgstr ""
 "Qualsevol canvi fet al Gestor de Llocs no es podrà desar."
 
 #: ../../locales/../src/interface/import.cpp:99
-#: ../../locales/../src/interface/import.cpp:278
-#: ../../locales/../src/interface/sitemanager.cpp:252
-#: ../../locales/../src/interface/sitemanager.cpp:1297
+#: ../../locales/../src/interface/import.cpp:282
+#: ../../locales/../src/interface/sitemanager.cpp:261
+#: ../../locales/../src/interface/sitemanager.cpp:1335
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1229,8 +1289,8 @@ msgstr ""
 "s'hi pot accedir.\n"
 "Qualsevol canvi fet al Gestor de Llocs no serà desat."
 
-#: ../../locales/../src/interface/QueueView.cpp:1629
-#: ../../locales/../src/interface/QueueView.cpp:1656
+#: ../../locales/../src/interface/QueueView.cpp:1664
+#: ../../locales/../src/interface/QueueView.cpp:1691
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1258,12 +1318,12 @@ msgstr "No s'ha pogut cercar fins al final del fitxer"
 msgid "Could not spawn IO thread"
 msgstr "No s'ha pogut engendrar el fil d'E/S"
 
-#: ../../locales/../src/interface/QueueView.cpp:932
-#: ../../locales/../src/interface/QueueView.cpp:937
+#: ../../locales/../src/interface/QueueView.cpp:952
+#: ../../locales/../src/interface/QueueView.cpp:957
 msgid "Could not start transfer"
 msgstr "No s'ha pogut iniciar la transferència"
 
-#: ../../locales/../src/interface/sitemanager.cpp:379
+#: ../../locales/../src/interface/sitemanager.cpp:388
 #, c-format
 msgid ""
 "Could not write \"%s\", any changes to the Site Manager could not be saved: %"
@@ -1272,8 +1332,8 @@ msgstr ""
 "No s'ha pogut escriure \"%s\", qualsevol canvi al Gestor de Llocs no podrà "
 "ser desat: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1639
-#: ../../locales/../src/interface/QueueView.cpp:1675
+#: ../../locales/../src/interface/QueueView.cpp:1674
+#: ../../locales/../src/interface/QueueView.cpp:1710
 #, c-format
 msgid "Could not write \"%s\", the queue could not be saved."
 msgstr "No s'ha pogut escriure  \"%s\", la cua no s'ha pogut desar."
@@ -1287,23 +1347,23 @@ msgstr "No s'ha pogut escriure \"%s\": %s"
 msgid "Country:"
 msgstr "País:"
 
-#: resources.h:442
+#: resources.h:469
 msgid "Crashes FileZilla instantly. Only used to debug the exception handler"
 msgstr ""
 "Fa fallar el FileZilla instantàniament. Només utilitzat per depurar el "
 "gestor d'excepcions"
 
-#: resources.h:410 resources.h:420 resources.h:455
+#: resources.h:428 resources.h:438 resources.h:482
 msgid "Create a new subdirectory in the current directory"
 msgstr "Crea un nou subdirectori en el directori actual"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1338
-#: ../../locales/../src/interface/RemoteListView.cpp:1405
+#: ../../locales/../src/interface/LocalListView.cpp:1432
+#: ../../locales/../src/interface/RemoteListView.cpp:1420
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1192
 msgid "Create directory"
 msgstr "Crea un directori"
 
-#: ../../locales/../src/interface/QueueView.cpp:1277
+#: ../../locales/../src/interface/QueueView.cpp:1297
 msgid "Creating directory"
 msgstr "S'està creant el directori"
 
@@ -1317,6 +1377,10 @@ msgstr "S'està creant el directori '%s'..."
 msgid "Critical error"
 msgstr "Error greu"
 
+#: resources.h:190
+msgid "Cus&tom"
+msgstr "Personali&tza"
+
 #: ../../locales/../src/interface/filter.cpp:116
 msgid "Custom filter set"
 msgstr "Filtres personalitzats"
@@ -1325,11 +1389,11 @@ msgstr "Filtres personalitzats"
 msgid "D&efault"
 msgstr "P&er defecte"
 
-#: resources.h:411 resources.h:421 resources.h:456
+#: resources.h:429 resources.h:439 resources.h:483
 msgid "D&elete"
 msgstr "&Esborra"
 
-#: resources.h:258
+#: resources.h:276
 msgid "D&isable all"
 msgstr "&Inhabilita tots"
 
@@ -1342,6 +1406,14 @@ msgstr "Descar&ta"
 msgid "Data socket closed too early."
 msgstr "El sòcol de dades s'ha tancat massa aviat."
 
+#: resources.h:181
+msgid "Date formatting"
+msgstr "Formatació de Data"
+
+#: ../../locales/../src/interface/settingsdialog.cpp:108
+msgid "Date/time format"
+msgstr "Format de data i hora"
+
 #: ../../locales/../src/interface/fileexistsdlg.cpp:68
 #: ../../locales/../src/interface/fileexistsdlg.cpp:92
 #: ../../locales/../src/interface/fileexistsdlg.cpp:124
@@ -1349,16 +1421,16 @@ msgstr "El sòcol de dades s'ha tancat massa aviat."
 msgid "Date/time unknown"
 msgstr "Data/hora desconegudes"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:108
+#: ../../locales/../src/interface/settingsdialog.cpp:114
 msgid "Debug"
 msgstr "Depuració"
 
-#: resources.h:181
+#: resources.h:199
 msgid "Debugging settings"
 msgstr "Paràmetres de depuració"
 
-#: resources.h:87 ../../locales/../src/interface/sitemanager.cpp:957
-#: ../../locales/../src/interface/sitemanager.cpp:1046
+#: resources.h:87 ../../locales/../src/interface/sitemanager.cpp:990
+#: ../../locales/../src/interface/sitemanager.cpp:1079
 msgid "Default"
 msgstr "Per defecte"
 
@@ -1366,7 +1438,7 @@ msgstr "Per defecte"
 msgid "Default &local directory:"
 msgstr "Directori &local per defecte:"
 
-#: resources.h:316
+#: resources.h:334
 msgid "Default file exists action"
 msgstr "Acció de fitxer existent per defecte"
 
@@ -1374,7 +1446,7 @@ msgstr "Acció de fitxer existent per defecte"
 msgid "Default r&emote directory:"
 msgstr "Directori r&emot per defecte:"
 
-#: resources.h:469
+#: resources.h:496
 msgid "Default transfer mode:"
 msgstr "Mode de transferència per defecte:"
 
@@ -1382,7 +1454,7 @@ msgstr "Mode de transferència per defecte:"
 msgid "Default transfer type:"
 msgstr "Tipus de transferència per defecte:"
 
-#: resources.h:295 resources.h:488
+#: resources.h:313 resources.h:515
 msgid "Default: http://ip.filezilla-project.org/ip.php"
 msgstr "Defecte: http://ip.filezilla-project.org/ip.php"
 
@@ -1401,31 +1473,36 @@ msgid "Delaying connection due to previously failed connection attempt..."
 msgstr ""
 "Retardant la connexió per la fallada de l'intent de connexió anterior..."
 
-#: resources.h:457
+#: ../../locales/../src/interface/sitemanager.cpp:685
+#, fuzzy
+msgid "Delete Site Manager entry"
+msgstr "Netejar les entrades del gestor de lloc&s"
+
+#: resources.h:484
 msgid "Delete selected directory"
 msgstr "Esborra el directori seleccionat"
 
-#: resources.h:412 resources.h:422
+#: resources.h:430 resources.h:440
 msgid "Delete selected files and folders"
 msgstr "Esborra els fitxers i carpetes seleccionats"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:907
+#: ../../locales/../src/interface/LocalTreeView.cpp:913
 msgid "Desktop"
 msgstr "Escriptori"
 
-#: resources.h:7 resources.h:230
+#: resources.h:7 resources.h:248
 msgid "Details"
 msgstr "Detalls"
 
-#: resources.h:242
+#: resources.h:260
 msgid "Details for new key:"
 msgstr "Detalls per la nova clau:"
 
-#: resources.h:282
+#: resources.h:300
 msgid "Dire&ctories"
 msgstr "Dire&ctoris"
 
-#: ../../locales/../src/interface/queue.cpp:1150
+#: ../../locales/../src/interface/queue.cpp:1153
 msgid "Direction"
 msgstr "Direcció"
 
@@ -1433,11 +1510,11 @@ msgstr "Direcció"
 msgid "Directory listing aborted by user"
 msgstr "Llistat dels directoris avortat per l'usuari/ària"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:667
+#: ../../locales/../src/interface/RemoteListView.cpp:668
 msgid "Directory listing failed"
 msgstr "El llistat de directoris ha fallat"
 
-#: resources.h:251
+#: resources.h:269
 msgid "Directory listing filters"
 msgstr "Filtres de llistat de directoris"
 
@@ -1445,15 +1522,15 @@ msgstr "Filtres de llistat de directoris"
 msgid "Directory listing successful"
 msgstr "Llistat dels directoris amb èxit"
 
-#: resources.h:261
+#: resources.h:279
 msgid "Disa&ble all"
 msgstr "Inha&bilita tots"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:558
+#: ../../locales/../src/interface/Mainfrm.cpp:613
 msgid "Disable this option if you cannot see your files anymore."
 msgstr "Desactiveu aquesta opció si no podeu veure els vostres fitxers"
 
-#: resources.h:532
+#: resources.h:559
 msgid "Disconnect from server"
 msgstr "Desconnecta't del servidor"
 
@@ -1462,23 +1539,27 @@ msgstr "Desconnecta't del servidor"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:156
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:894
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:896
-#: ../../locales/../src/interface/QueueView.cpp:904
-#: ../../locales/../src/interface/QueueView.cpp:929
+#: ../../locales/../src/interface/QueueView.cpp:924
+#: ../../locales/../src/interface/QueueView.cpp:949
 msgid "Disconnected from server"
 msgstr "S'ha desconnectat del servidor"
 
-#: ../../locales/../src/interface/QueueView.cpp:1179
+#: ../../locales/../src/interface/QueueView.cpp:1199
 #: ../../locales/../src/interface/statuslinectrl.cpp:150
 msgid "Disconnecting from previous server"
 msgstr "S'està desconnectant del servidor anterior"
 
-#: resources.h:533
+#: resources.h:560
 msgid "Disconnects from the currently visible server"
 msgstr "Desconnecta del servidor visible actual"
 
-#: resources.h:404
+#: resources.h:422
 msgid "Display about dialog"
 msgstr "Mostra el diàleg Quant a"
+
+#: resources.h:463
+msgid "Do &nothing"
+msgstr "&No facis res"
 
 #: ../../locales/../src/interface/updatewizard.cpp:137
 msgid ""
@@ -1488,6 +1569,11 @@ msgstr ""
 "Esteu segurs que voleu comprovar per versions beta?\n"
 "A no ser que vulgueu provar noves característiques, seguiu utilitzant la "
 "versió estable."
+
+#: ../../locales/../src/interface/Mainfrm.cpp:857
+#, fuzzy
+msgid "Do you really want to close FileZilla?"
+msgstr "Realment voleu eliminar la cua de transferència?"
 
 #: ../../locales/../src/interface/clearprivatedata.cpp:34
 msgid ""
@@ -1500,16 +1586,21 @@ msgstr ""
 msgid "Do you really want to delete all Site Manager entries?"
 msgstr "Segur que voleu esborrar totes les entrades del Gestor de Llocs?"
 
+#: ../../locales/../src/interface/sitemanager.cpp:687
+#, fuzzy
+msgid "Do you really want to delete selected entry?"
+msgstr "Segur que voleu esborrar totes les entrades del Gestor de Llocs?"
+
 #: ../../locales/../src/interface/clearprivatedata.cpp:40
 msgid "Do you really want to delete the transfer queue?"
 msgstr "Realment voleu eliminar la cua de transferència?"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:502
+#: ../../locales/../src/interface/Mainfrm.cpp:557
 #, c-format
 msgid "Do you really want to send '%s' to the server?"
 msgstr "Segur que voleu enviar  '%s' al servidor?"
 
-#: resources.h:296 resources.h:490
+#: resources.h:314 resources.h:517
 msgid "Don't use external IP address on &local connections."
 msgstr "No utilitzis l'adreça IP externa a les connexions &locals."
 
@@ -1517,11 +1608,11 @@ msgstr "No utilitzis l'adreça IP externa a les connexions &locals."
 msgid "Download &limit:"
 msgstr "&Límit de Baixada:"
 
-#: resources.h:451
+#: resources.h:478
 msgid "Download selected directory"
 msgstr "Descarrega el directori seleccionat"
 
-#: resources.h:416
+#: resources.h:434
 msgid "Download selected files and folders"
 msgstr "Descarrega els fitxers i carpetes seleccionats"
 
@@ -1531,13 +1622,13 @@ msgstr "Descarrega els fitxers i carpetes seleccionats"
 msgid "Downloading %s"
 msgstr "Descarregant %s"
 
-#: resources.h:318 resources.h:338
+#: resources.h:336 resources.h:356
 msgid "Downloads"
 msgstr "Descàrregues"
 
-#: ../../locales/../src/interface/LocalListView.cpp:88
+#: ../../locales/../src/interface/LocalListView.cpp:90
 #: ../../locales/../src/interface/LocalTreeView.cpp:88
-#: ../../locales/../src/interface/QueueView.cpp:67
+#: ../../locales/../src/interface/QueueView.cpp:70
 #: ../../locales/../src/interface/RemoteListView.cpp:86
 #: ../../locales/../src/interface/RemoteTreeView.cpp:79
 msgid ""
@@ -1547,9 +1638,9 @@ msgstr ""
 "arrossegar i deixar anar entre diferents instàncies del FileZilla encara no "
 "ha estat implementat."
 
-#: ../../locales/../src/interface/LocalListView.cpp:94
+#: ../../locales/../src/interface/LocalListView.cpp:96
 #: ../../locales/../src/interface/LocalTreeView.cpp:94
-#: ../../locales/../src/interface/QueueView.cpp:78
+#: ../../locales/../src/interface/QueueView.cpp:81
 #: ../../locales/../src/interface/RemoteListView.cpp:92
 #: ../../locales/../src/interface/RemoteTreeView.cpp:85
 msgid "Drag&drop between different servers has not been implemented yet."
@@ -1563,15 +1654,15 @@ msgstr ""
 msgid "Duplicate filter name"
 msgstr "Duplicar el nom del filtre"
 
-#: resources.h:257
+#: resources.h:275
 msgid "E&nable all"
 msgstr "Hab&ilita totes"
 
-#: resources.h:204
+#: resources.h:222
 msgid "E&xecute"
 msgstr "E&xecuta"
 
-#: resources.h:382
+#: resources.h:400
 msgid "E&xit"
 msgstr "&Surt"
 
@@ -1583,7 +1674,7 @@ msgstr "Adreça electrònica:"
 msgid "Each filter needs at least one condition."
 msgstr "Cada filtre necessita com a mínim una condició."
 
-#: resources.h:266
+#: resources.h:284
 msgid "Edit filters"
 msgstr "Edita filtres"
 
@@ -1591,7 +1682,11 @@ msgstr "Edita filtres"
 msgid "Email:"
 msgstr "Adreça electrònica:"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:669
+#: ../../locales/../src/interface/QueueView.cpp:1988
+msgid "Empty command"
+msgstr "Buidar l'ordre"
+
+#: ../../locales/../src/interface/RemoteListView.cpp:670
 msgid "Empty directory listing"
 msgstr "Llistat de directoris buit"
 
@@ -1605,15 +1700,19 @@ msgstr "Els noms de filtres buits no estan permesos."
 msgid "Empty name"
 msgstr "Nom buit"
 
-#: resources.h:260
+#: resources.h:278
 msgid "En&able all"
 msgstr "H&abilita totes"
 
-#: resources.h:397
+#: resources.h:415
 msgid "Enter &custom command..."
 msgstr "Introdueix la &comanda específica"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:490
+#: ../../locales/../src/interface/QueueView.cpp:1977
+msgid "Enter command"
+msgstr "Introduir l'ordre"
+
+#: ../../locales/../src/interface/Mainfrm.cpp:545
 msgid "Enter custom command"
 msgstr "Introdueix la comanda específica"
 
@@ -1631,7 +1730,7 @@ msgstr "Introduïu un nom pel filtre"
 msgid "Enter password"
 msgstr "Introdueix la contrasenya"
 
-#: resources.h:510
+#: resources.h:537
 msgid ""
 "Enter the address of the server.\n"
 "To specify the server protocol, prepend the host with the protocol "
@@ -1648,7 +1747,7 @@ msgstr ""
 "protocol://usuari:contrasenya@servidor:port. Els valors del camps es "
 "sobreescriuran."
 
-#: resources.h:514
+#: resources.h:541
 msgid ""
 "Enter the port on which the server listens.\n"
 "The default for FTP is 21, the default for SFTP is 22."
@@ -1656,7 +1755,7 @@ msgstr ""
 "Especifica el port d'escolta del servidor.\n"
 "El port per defecte per FTP és el 21 i per SFTP el 22"
 
-#: ../../locales/../src/engine/transfersocket.cpp:312
+#: ../../locales/../src/engine/transfersocket.cpp:349
 #, c-format
 msgid "Error %d writing to socket"
 msgstr "S'ha produït un error %d quan s'escrivia al sòcol."
@@ -1673,20 +1772,20 @@ msgstr "S'ha produït un error en importar"
 #: ../../locales/../src/interface/filter.cpp:168
 #: ../../locales/../src/interface/filter.cpp:253
 #: ../../locales/../src/interface/import.cpp:100
-#: ../../locales/../src/interface/import.cpp:279
-#: ../../locales/../src/interface/Options.cpp:103
-#: ../../locales/../src/interface/QueueView.cpp:1630
-#: ../../locales/../src/interface/QueueView.cpp:1657
-#: ../../locales/../src/interface/sitemanager.cpp:253
-#: ../../locales/../src/interface/sitemanager.cpp:354
-#: ../../locales/../src/interface/sitemanager.cpp:1298
+#: ../../locales/../src/interface/import.cpp:283
+#: ../../locales/../src/interface/Options.cpp:108
+#: ../../locales/../src/interface/QueueView.cpp:1665
+#: ../../locales/../src/interface/QueueView.cpp:1692
+#: ../../locales/../src/interface/sitemanager.cpp:262
+#: ../../locales/../src/interface/sitemanager.cpp:363
+#: ../../locales/../src/interface/sitemanager.cpp:1336
 #: ../../locales/../src/interface/wrapengine.cpp:821
 msgid "Error loading xml file"
 msgstr "S'ha produït un error en carregar el fitxer XML"
 
-#: ../../locales/../src/interface/QueueView.cpp:1640
-#: ../../locales/../src/interface/QueueView.cpp:1676
-#: ../../locales/../src/interface/sitemanager.cpp:380
+#: ../../locales/../src/interface/QueueView.cpp:1675
+#: ../../locales/../src/interface/QueueView.cpp:1711
+#: ../../locales/../src/interface/sitemanager.cpp:389
 #: ../../locales/../src/interface/wrapengine.cpp:989
 msgid "Error writing xml file"
 msgstr "S'ha produït un error en escriure el fitxer XML"
@@ -1696,7 +1795,7 @@ msgstr "S'ha produït un error en escriure el fitxer XML"
 msgid "Error:"
 msgstr "Error:"
 
-#: resources.h:208
+#: resources.h:226
 msgid "Exe&cute"
 msgstr "Exe&cuta"
 
@@ -1704,7 +1803,7 @@ msgstr "Exe&cuta"
 msgid "Executable"
 msgstr "Executable"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1235
+#: ../../locales/../src/interface/Mainfrm.cpp:1313
 msgid "Executable contains no version info, cannot check for updates."
 msgstr ""
 "L'executable no té la informació de la versió, no es pot comprovar si hi ha "
@@ -1714,23 +1813,23 @@ msgstr ""
 msgid "Explorer"
 msgstr "Explorador"
 
-#: resources.h:368
+#: resources.h:386
 msgid "Export &Queue"
 msgstr "Exporta la &Cua"
 
-#: resources.h:367
+#: resources.h:385
 msgid "Export &Settings"
 msgstr "Exporta con&figuració"
 
-#: resources.h:364
+#: resources.h:382
 msgid "Export settings"
 msgstr "Exporta configuració"
 
-#: resources.h:272
+#: resources.h:290
 msgid "F&ilter name:"
 msgstr "Nom del f&iltre:"
 
-#: ../../locales/../src/interface/sitemanager.cpp:950
+#: ../../locales/../src/interface/sitemanager.cpp:983
 msgid "FTP"
 msgstr "FTP"
 
@@ -1738,7 +1837,7 @@ msgstr "FTP"
 msgid "FTP Engine not initialized, can't connect"
 msgstr "El motor FTP no està iniciat, no es pot connectar"
 
-#: resources.h:466
+#: resources.h:493
 msgid ""
 "FTP uses secondary connections for data transfers. These additional "
 "connections can be established in two ways."
@@ -1754,9 +1853,9 @@ msgstr "FTPES - FTP sobre TLS/SSL explícit"
 msgid "FTPS - FTP over implicit TLS/SSL"
 msgstr "FTPS - FTP sobre TLS/SSL implícit"
 
-#: ../../locales/../src/interface/LocalListView.cpp:556
-#: ../../locales/../src/interface/LocalListView.cpp:1559
-#: ../../locales/../src/interface/LocalTreeView.cpp:784
+#: ../../locales/../src/interface/LocalListView.cpp:636
+#: ../../locales/../src/interface/LocalListView.cpp:1653
+#: ../../locales/../src/interface/LocalTreeView.cpp:790
 #: ../../locales/../src/interface/viewheader.cpp:479
 msgid "Failed to change directory"
 msgstr "No s'ha pogut canviar de directori "
@@ -1787,7 +1886,7 @@ msgstr "No s'ha pogut crear un sòcol d'escolta pel mode de transferència actiu
 msgid "Failed to download the latest version of FileZilla."
 msgstr "La descàrrega de la darrera versió del FileZilla ha fallat."
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:562
+#: ../../locales/../src/interface/LocalTreeView.cpp:568
 msgid "Failed to get 'My Documents' path"
 msgstr "No s'ha pogut obtenir el camí de \"Els meus Documents\""
 
@@ -1795,7 +1894,7 @@ msgstr "No s'ha pogut obtenir el camí de \"Els meus Documents\""
 msgid "Failed to get data peer address, connection closed."
 msgstr "No s'ha pogut aconseguir l'adreça de dades d'igual, connexió tancada."
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:549
+#: ../../locales/../src/interface/LocalTreeView.cpp:554
 msgid "Failed to get desktop path"
 msgstr "No s'ha pogut obtenir el camí de l'\"Escriptori\""
 
@@ -1803,7 +1902,7 @@ msgstr "No s'ha pogut obtenir el camí de l'\"Escriptori\""
 msgid "Failed to get peer address, connection closed."
 msgstr "No s'ha pogut aconseguir l'adreça d'igual, connexió tancada."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:175
+#: ../../locales/../src/interface/Mainfrm.cpp:184
 msgid "Failed to initialize FTP engine"
 msgstr "No s'ha pogut iniciar el motor FTP"
 
@@ -1812,7 +1911,7 @@ msgstr "No s'ha pogut iniciar el motor FTP"
 msgid "Failed to initialize TLS."
 msgstr "Ha fallat la inicialització de TLS."
 
-#: ../../locales/../src/interface/settingsdialog.cpp:133
+#: ../../locales/../src/interface/settingsdialog.cpp:139
 msgid "Failed to load panels, invalid resource files?"
 msgstr ""
 "No es poden carregar el panells, teniu uns fitxers de recursos no vàlids?"
@@ -1891,26 +1990,26 @@ msgstr "S'ha produït un error en escriure el fitxer xml"
 msgid "Failed transfers"
 msgstr "Transferències fallides"
 
-#: resources.h:481
+#: resources.h:508
 msgid "Fall back to active mode"
 msgstr "Retorna a mode actiu"
 
-#: resources.h:281
+#: resources.h:299
 msgid "Fil&es"
 msgstr "Fitx&ers"
 
-#: ../../locales/../src/interface/LocalListView.cpp:728
-#: ../../locales/../src/interface/LocalListView.cpp:746
-#: ../../locales/../src/interface/LocalListView.cpp:756
-#: ../../locales/../src/interface/LocalListView.cpp:760
-#: ../../locales/../src/interface/RemoteListView.cpp:1175
-#: ../../locales/../src/interface/RemoteListView.cpp:1193
-#: ../../locales/../src/interface/RemoteListView.cpp:1204
-#: ../../locales/../src/interface/RemoteListView.cpp:1208
+#: ../../locales/../src/interface/LocalListView.cpp:808
+#: ../../locales/../src/interface/LocalListView.cpp:826
+#: ../../locales/../src/interface/LocalListView.cpp:836
+#: ../../locales/../src/interface/LocalListView.cpp:858
+#: ../../locales/../src/interface/RemoteListView.cpp:1176
+#: ../../locales/../src/interface/RemoteListView.cpp:1194
+#: ../../locales/../src/interface/RemoteListView.cpp:1205
+#: ../../locales/../src/interface/RemoteListView.cpp:1227
 msgid "File"
 msgstr "Fitxer"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:100
+#: ../../locales/../src/interface/settingsdialog.cpp:104
 msgid "File Types"
 msgstr "Tipus de fitxers"
 
@@ -1918,15 +2017,15 @@ msgstr "Tipus de fitxers"
 msgid "File does not contain any importable data."
 msgstr "El fitxer no conté dades importables."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1755
+#: ../../locales/../src/interface/RemoteListView.cpp:1770
 msgid "File exists"
 msgstr "El fitxer ja existeix"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:101
+#: ../../locales/../src/interface/settingsdialog.cpp:105
 msgid "File exists action"
 msgstr "Acció per fitxer ja existent"
 
-#: ../../locales/../src/interface/FileZilla.cpp:735
+#: ../../locales/../src/interface/FileZilla.cpp:732
 msgid "File not found"
 msgstr "Fitxer no trobat"
 
@@ -1934,12 +2033,17 @@ msgstr "Fitxer no trobat"
 msgid "File transfer successful"
 msgstr "La transferència del fitxer ha tingut èxit"
 
-#: ../../locales/../src/interface/FileZilla.cpp:362
+#: ../../locales/../src/interface/Mainfrm.cpp:856
+#, fuzzy
+msgid "File transfers still in progress."
+msgstr "La transferència del fitxer ha tingut èxit"
+
+#: ../../locales/../src/interface/FileZilla.cpp:359
 #: ../../locales/../src/interface/quickconnectbar.cpp:50
 msgid "FileZilla Error"
 msgstr "Error del FileZilla"
 
-#: resources.h:503
+#: resources.h:530
 msgid ""
 "FileZilla can now test your configuration to ensure everything is configured "
 "properly."
@@ -1956,16 +2060,16 @@ msgid "Filelists"
 msgstr "Llistes de fitxers"
 
 #: ../../locales/../src/interface/filteredit.cpp:52
-#: ../../locales/../src/interface/LocalListView.cpp:229
+#: ../../locales/../src/interface/LocalListView.cpp:231
 #: ../../locales/../src/interface/RemoteListView.cpp:305
 msgid "Filename"
 msgstr "Nom de fitxer"
 
-#: resources.h:388
+#: resources.h:406
 msgid "Filename &filters..."
 msgstr "&Filtres de nom de fitxer..."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1740
+#: ../../locales/../src/interface/RemoteListView.cpp:1755
 msgid "Filename invalid"
 msgstr "Nom del fitxer no vàlid."
 
@@ -1973,11 +2077,11 @@ msgstr "Nom del fitxer no vàlid."
 msgid "Filename unchanged"
 msgstr "No s'ha canviat el nom del fitxer"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1743
+#: ../../locales/../src/interface/LocalListView.cpp:1837
 msgid "Filenames may not contain any of the following characters: / * ? < > |"
 msgstr "Els noms dels fitxers no poden contenir aquests caràcters: / * ? < > |"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1708
+#: ../../locales/../src/interface/LocalListView.cpp:1802
 msgid ""
 "Filenames may not contain any of the following characters: / \\ : * ? \" < > "
 "|"
@@ -1986,21 +2090,26 @@ msgstr ""
 "|"
 
 #: ../../locales/../src/interface/filteredit.cpp:53
-#: ../../locales/../src/interface/LocalListView.cpp:230
+#: ../../locales/../src/interface/LocalListView.cpp:232
 #: ../../locales/../src/interface/RemoteListView.cpp:306
 msgid "Filesize"
 msgstr "Mida del fitxer"
 
-#: ../../locales/../src/interface/LocalListView.cpp:231
+#: ../../locales/../src/interface/settingsdialog.cpp:109
+#, fuzzy
+msgid "Filesize format"
+msgstr "Mida del fitxer"
+
+#: ../../locales/../src/interface/LocalListView.cpp:233
 #: ../../locales/../src/interface/RemoteListView.cpp:307
 msgid "Filetype"
 msgstr "Tipus de fitxer"
 
-#: resources.h:273
+#: resources.h:291
 msgid "Filter &out all files that:"
 msgstr "Filtra f&ora tots els fitxers que:"
 
-#: resources.h:280
+#: resources.h:298
 msgid "Filter applies to:"
 msgstr "Filtre s'aplica a:"
 
@@ -2012,7 +2121,7 @@ msgstr "El nom del filtre ja existeix"
 msgid "Filter set already exists"
 msgstr "El nom del filtre ja existeix"
 
-#: resources.h:536 resources.h:537
+#: resources.h:563 resources.h:564
 msgid "Filter the directory listings"
 msgstr "Filtra el llistat de directoris"
 
@@ -2032,7 +2141,7 @@ msgstr "Empremta digital (MD5):"
 msgid "Fingerprint (SHA-1):"
 msgstr "Empremta digital (SHA-1):"
 
-#: resources.h:233 resources.h:245
+#: resources.h:251 resources.h:263
 msgid "Fingerprint:"
 msgstr "Emprempta:"
 
@@ -2040,8 +2149,8 @@ msgstr "Emprempta:"
 msgid "Firewall and router configuration wizard"
 msgstr "Assistent de configuració del tallafocs i l'encaminador"
 
-#: ../../locales/../src/interface/LocalListView.cpp:751
-#: ../../locales/../src/interface/RemoteListView.cpp:1199
+#: ../../locales/../src/interface/LocalListView.cpp:831
+#: ../../locales/../src/interface/RemoteListView.cpp:1200
 msgid "Folder"
 msgstr "Carpeta"
 
@@ -2053,7 +2162,7 @@ msgstr ""
 "Per tenir informació més detallada sobre el que fan aquestes opcions, si us "
 "plau, executeu l'assistent de configuració de xarxa."
 
-#: resources.h:498
+#: resources.h:525
 msgid "For reliability you should specify a range of at least 10 ports."
 msgstr "Per fiabilitat hauríeu d'especificar un rang de com a mínim 10 ports."
 
@@ -2065,7 +2174,7 @@ msgstr "Força &UTF-8"
 msgid "General"
 msgstr "General"
 
-#: resources.h:294 resources.h:487
+#: resources.h:312 resources.h:514
 msgid "Get external IP address from the following URL:"
 msgstr "Agafa l'adreça IP externa d'aquesta adreça:"
 
@@ -2073,21 +2182,21 @@ msgstr "Agafa l'adreça IP externa d'aquesta adreça:"
 msgid "Given filterset name already exists, overwrite filter set?"
 msgstr "El nom del filtre ja existeix, voleu sobreescriure'l?"
 
-#: resources.h:201
+#: resources.h:219
 msgid "Group permissions"
 msgstr "Permisos de grups"
 
-#: resources.h:433
+#: resources.h:451
 msgid "H&igh"
 msgstr "A&lt"
 
-#: resources.h:42 ../../locales/../src/interface/queue.cpp:868
-#: ../../locales/../src/interface/queue.cpp:949
+#: resources.h:42 ../../locales/../src/interface/queue.cpp:871
+#: ../../locales/../src/interface/queue.cpp:952
 msgid "High"
 msgstr "Alt"
 
-#: ../../locales/../src/interface/queue.cpp:870
-#: ../../locales/../src/interface/queue.cpp:951
+#: ../../locales/../src/interface/queue.cpp:873
+#: ../../locales/../src/interface/queue.cpp:954
 msgid "Highest"
 msgstr "El més alt"
 
@@ -2095,29 +2204,33 @@ msgstr "El més alt"
 msgid "Highest available port has to be a number between 1024 and 65535."
 msgstr "El port més alt disponible ha de ser un número entre 1024 i 65535."
 
-#: resources.h:262
+#: resources.h:280
 msgid ""
 "Hold the shift key to toggle the filter state on both sides simultanously."
 msgstr ""
 "Mantingueu premuda la tecla majúscula per commutar l'estat del filtre en "
 "ambdós llocs simultàniament."
 
-#: resources.h:220
+#: resources.h:238
 msgid "Homepage:"
 msgstr "Pàgina del projecte:"
 
-#: resources.h:239
+#: resources.h:257
 msgid "Host key mismatch"
 msgstr "Clau de l'amfitrió no coincident"
 
-#: resources.h:8 resources.h:115 resources.h:223 resources.h:231
-#: resources.h:243
+#: resources.h:8 resources.h:115 resources.h:241 resources.h:249
+#: resources.h:261
 msgid "Host:"
 msgstr "Ordinador central:"
 
 #: resources.h:92
 msgid "Hours,"
 msgstr "Hores,"
+
+#: resources.h:189
+msgid "I&SO 8601 (example: 15:47)"
+msgstr "I&SO 8601 (exemple: 15:47)"
 
 #: resources.h:34
 msgid ""
@@ -2127,12 +2240,12 @@ msgstr ""
 "Si cap dada no pot ser enviada o rebuda en aquest periode de temps, la "
 "connexió es tancarà i el FileZilla provarà a reconnectar-se."
 
-#: resources.h:190
+#: resources.h:208
 msgid "If reporting bugs, please provide logs with \"Verbose\" logging level."
 msgstr ""
 "Si informeu d'errors, si us plau proveiu el registre amb nivell \"Detallat\"."
 
-#: resources.h:478
+#: resources.h:505
 msgid ""
 "If the automatic test at the end of this wizard succeeds, but you cannot "
 "transfer files to a particular server, the server might be misconfigured and "
@@ -2144,7 +2257,7 @@ msgstr ""
 "configurat erròniament i hauríeu de provar el mode actiu. Podeu definir el "
 "mode de transferència basat en servidor al Gestor de Llocs."
 
-#: resources.h:473
+#: resources.h:500
 msgid ""
 "If the fallback option is enabled, you will be able to connect to "
 "misconfigured servers which reject the selected transfer mode."
@@ -2166,7 +2279,7 @@ msgstr ""
 "si el problema persisteix, si us plau contacteu el vostre fabricant de "
 "l'encaminador (router)."
 
-#: resources.h:334 resources.h:352
+#: resources.h:352 resources.h:370
 msgid ""
 "If using 'overwrite if newer', your system time has to be synchronized with "
 "the server. If the time differs (e.g. different timezone), specify a "
@@ -2181,7 +2294,7 @@ msgstr ""
 msgid "If you change the language, you should restart FileZilla."
 msgstr "Si canvieu l'idioma, hauríeu de reiniciar el FileZilla."
 
-#: resources.h:504
+#: resources.h:531
 msgid ""
 "If you click on test, FileZilla will connect to probe.filezilla-project.org "
 "and will perform some simple tests."
@@ -2197,7 +2310,7 @@ msgstr ""
 "Si especifiqueu els tipus de fitxers incorrectes, aquests fitxers podríen "
 "ser corrumputs durant la transferència."
 
-#: resources.h:505
+#: resources.h:532
 msgid "If you get any errors, your configuration is not correct."
 msgstr "Si teniu cap error, la configuració no es correcta."
 
@@ -2220,7 +2333,7 @@ msgstr ""
 "intenteu commutar el mode a passiu i contacteu l'administrador del servidor "
 "per ajuda."
 
-#: resources.h:464
+#: resources.h:491
 msgid ""
 "If you sucessfully complete the wizard and the final test succeeds, any "
 "firewalls and routers you have should be configured properly."
@@ -2229,7 +2342,7 @@ msgstr ""
 "tallafocs i encaminadors (routers) que tingueu hauran estat configurats "
 "correctament."
 
-#: resources.h:500
+#: resources.h:527
 msgid ""
 "If you use a firewall, make sure FileZilla is allowed to accept connection "
 "on all given ports."
@@ -2237,7 +2350,7 @@ msgstr ""
 "Si utilitzeu un tallafocs, assegureu-vos que al FileZilla se li permeti "
 "acceptar connexions a tots els ports subministrats."
 
-#: resources.h:499
+#: resources.h:526
 msgid ""
 "If you use a router, make sure all these ports are forwarded to the machine "
 "you're running FileZilla on."
@@ -2257,7 +2370,7 @@ msgstr ""
 msgid "Import data from older version"
 msgstr "Importa dades d'un versió més antiga"
 
-#: resources.h:371
+#: resources.h:389
 msgid "Import settings"
 msgstr "Importa configuració"
 
@@ -2266,7 +2379,7 @@ msgstr "Importa configuració"
 msgid "Import successful"
 msgstr "Importació correcta"
 
-#: resources.h:492
+#: resources.h:519
 msgid ""
 "In active mode, FileZilla has to listen on a port for data transfers. You "
 "have to specify which ports FileZilla will use."
@@ -2275,7 +2388,7 @@ msgstr ""
 "transferències de dades. Heu d'especificar quins ports utilitzarà el "
 "FileZilla."
 
-#: resources.h:494
+#: resources.h:521
 msgid ""
 "In case you have a router, you will have to forward all available ports, as "
 "FileZilla has no influence on the ports your system chooses."
@@ -2284,7 +2397,7 @@ msgstr ""
 "els ports disponibles, ja que FileZilla no influeix en els ports que el "
 "sistema tria."
 
-#: resources.h:315
+#: resources.h:333
 msgid ""
 "In case you prefer automatic updates, you can enable automatic update checks "
 "in the settings dialog."
@@ -2292,7 +2405,7 @@ msgstr ""
 "Si preferiu actualitzacions automàtiques, habiliteu la comprovació "
 "d'actualitzacions al diàleg de paràmetres."
 
-#: resources.h:290 resources.h:482
+#: resources.h:308 resources.h:509
 msgid ""
 "In order to use active mode, FileZilla needs to know your external IP "
 "address."
@@ -2300,7 +2413,7 @@ msgstr ""
 "Per poder utilitzar el mode actiu, FileZilla necessita saber la vostra "
 "adreça IP externa."
 
-#: resources.h:467
+#: resources.h:494
 msgid ""
 "In passive mode, which is recommended for most users, FileZilla asks the "
 "server for a port and connects to the given port. Not much configuration has "
@@ -2310,7 +2423,7 @@ msgstr ""
 "demana al sevidor un port i s'hi connecta. No cal realitzar gaire "
 "configuració per a aquest mode."
 
-#: ../../locales/../src/interface/QueueView.cpp:900
+#: ../../locales/../src/interface/QueueView.cpp:920
 msgid "Incorrect password"
 msgstr "Contrasenya incorrecta."
 
@@ -2318,18 +2431,18 @@ msgstr "Contrasenya incorrecta."
 msgid "Initializing TLS..."
 msgstr "Inicialitzant TLS..."
 
-#: resources.h:79 ../../locales/../src/interface/sitemanager.cpp:796
-#: ../../locales/../src/interface/sitemanager.cpp:1011
+#: resources.h:79 ../../locales/../src/interface/sitemanager.cpp:813
+#: ../../locales/../src/interface/sitemanager.cpp:1044
 msgid "Interactive"
 msgstr "Interactiu"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:102
+#: ../../locales/../src/interface/settingsdialog.cpp:106
 msgid "Interface"
 msgstr "Interfície"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:158
-#: ../../locales/../src/interface/QueueView.cpp:865
-#: ../../locales/../src/interface/QueueView.cpp:1332
+#: ../../locales/../src/interface/QueueView.cpp:885
+#: ../../locales/../src/interface/QueueView.cpp:1352
 msgid "Interrupted by user"
 msgstr "Cancel·lat per l'usuari"
 
@@ -2365,8 +2478,8 @@ msgstr "S'han rebut dades no vàlides"
 msgid "Invalid date"
 msgstr "Data no vàlida"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1708
-#: ../../locales/../src/interface/LocalListView.cpp:1743
+#: ../../locales/../src/interface/LocalListView.cpp:1802
+#: ../../locales/../src/interface/LocalListView.cpp:1837
 msgid "Invalid filename"
 msgstr "Nom del fitxer no vàlid."
 
@@ -2410,15 +2523,15 @@ msgstr "El nom d'usuari no és vàlid."
 msgid "Keep directories on top"
 msgstr "Conserva els directoris amunt"
 
-#: resources.h:436
+#: resources.h:454
 msgid "L&owest"
 msgstr "Men&or"
 
-#: resources.h:288
+#: resources.h:306
 msgid "L&owest available port:"
 msgstr "P&ort més baix disponible:"
 
-#: resources.h:173 ../../locales/../src/interface/settingsdialog.cpp:104
+#: resources.h:173 ../../locales/../src/interface/settingsdialog.cpp:110
 msgid "Language"
 msgstr "Idioma"
 
@@ -2426,7 +2539,7 @@ msgstr "Idioma"
 msgid "Large icons"
 msgstr "Icones grans"
 
-#: ../../locales/../src/interface/LocalListView.cpp:232
+#: ../../locales/../src/interface/LocalListView.cpp:234
 #: ../../locales/../src/interface/RemoteListView.cpp:308
 msgid "Last modified"
 msgstr "Darrera modificació"
@@ -2447,7 +2560,7 @@ msgstr "Límit de &descàrregues simultànies:"
 msgid "Limit for concurrent &uploads:"
 msgstr "Límit de p&ujades simultànies:"
 
-#: resources.h:285
+#: resources.h:303
 msgid "Limit local ports"
 msgstr "Limitar ports locals"
 
@@ -2464,7 +2577,7 @@ msgstr "Sòcol d'escolta tancat."
 msgid "Listing:"
 msgstr "Llistant:"
 
-#: resources.h:256
+#: resources.h:274
 msgid "Local filters:"
 msgstr "Filtres locals:"
 
@@ -2484,13 +2597,13 @@ msgstr ""
 "La data d'inici de sessió conté caràcters no ascii i el servidor podria no "
 "suportat UTF-8. Intentant joc de caràcters local."
 
-#: ../../locales/../src/interface/queue.cpp:863
-#: ../../locales/../src/interface/queue.cpp:944
+#: ../../locales/../src/interface/queue.cpp:866
+#: ../../locales/../src/interface/queue.cpp:947
 msgid "Low"
 msgstr "Baixa"
 
-#: ../../locales/../src/interface/queue.cpp:861
-#: ../../locales/../src/interface/queue.cpp:942
+#: ../../locales/../src/interface/queue.cpp:864
+#: ../../locales/../src/interface/queue.cpp:945
 msgid "Lowest"
 msgstr "El més baix"
 
@@ -2516,7 +2629,7 @@ msgid "Malformed reply, server not sending proper lineendings"
 msgstr ""
 "Resposta incorrecta, el servidor no està enviant els finals de línia adequats"
 
-#: resources.h:274
+#: resources.h:292
 msgid "Match all of the following"
 msgstr "Coincideix amb tots els següents"
 
@@ -2536,17 +2649,17 @@ msgstr "Icones mitjanes"
 msgid "Minutes"
 msgstr "Minuts"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:926
+#: ../../locales/../src/interface/LocalTreeView.cpp:932
 msgid "My Computer"
 msgstr "El meu ordinador"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:916
+#: ../../locales/../src/interface/LocalTreeView.cpp:922
 msgid "My Documents"
 msgstr "Els meus documents"
 
-#: ../../locales/../src/interface/sitemanager.cpp:239
-#: ../../locales/../src/interface/sitemanager.cpp:241
-#: ../../locales/../src/interface/sitemanager.cpp:1338
+#: ../../locales/../src/interface/sitemanager.cpp:248
+#: ../../locales/../src/interface/sitemanager.cpp:250
+#: ../../locales/../src/interface/sitemanager.cpp:1376
 msgid "My Sites"
 msgstr "Els meus llocs web"
 
@@ -2557,7 +2670,7 @@ msgstr "Els meus llocs web"
 msgid "N/a"
 msgstr "N/a"
 
-#: ../../locales/../src/interface/sitemanager.cpp:643
+#: ../../locales/../src/interface/sitemanager.cpp:652
 msgid "Name already exists"
 msgstr "Aquest nom ja existeix"
 
@@ -2569,7 +2682,7 @@ msgstr "Nom:"
 msgid "Need to enter filter name"
 msgstr "Necessites especificar el nom del filtre"
 
-#: ../../locales/../src/interface/sitemanager.cpp:551
+#: ../../locales/../src/interface/sitemanager.cpp:560
 msgid "Need to specify a character encoding"
 msgstr "Necessites especificar una codificació de caràcters"
 
@@ -2581,15 +2694,15 @@ msgstr "Nova &carpeta"
 msgid "New filter"
 msgstr "Nou filtre"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1419
+#: ../../locales/../src/interface/RemoteListView.cpp:1434
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1206
-#: ../../locales/../src/interface/sitemanager.cpp:455
-#: ../../locales/../src/interface/sitemanager.cpp:478
+#: ../../locales/../src/interface/sitemanager.cpp:464
+#: ../../locales/../src/interface/sitemanager.cpp:487
 msgid "New folder"
 msgstr "Nova carpeta"
 
-#: ../../locales/../src/interface/sitemanager.cpp:711
-#: ../../locales/../src/interface/sitemanager.cpp:734
+#: ../../locales/../src/interface/sitemanager.cpp:728
+#: ../../locales/../src/interface/sitemanager.cpp:751
 msgid "New site"
 msgstr "Nou lloc"
 
@@ -2600,6 +2713,10 @@ msgstr "No"
 #: ../../locales/../src/interface/export.cpp:26
 msgid "No category to export selected"
 msgstr "No s'ha seleccionat cap categoria per exportar"
+
+#: ../../locales/../src/interface/QueueView.cpp:1988
+msgid "No command given, aborting."
+msgstr "No hi ha cap ordre donada, cancel·lant."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3094
 msgid "No external IP address set, trying default."
@@ -2615,9 +2732,9 @@ msgstr "Si us plau introduïu un amfitrió."
 msgid "No images available"
 msgstr "Cap imatge disponible"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1304
-#: ../../locales/../src/interface/sitemanager.cpp:1316
-#: ../../locales/../src/interface/sitemanager.cpp:1347
+#: ../../locales/../src/interface/sitemanager.cpp:1342
+#: ../../locales/../src/interface/sitemanager.cpp:1354
+#: ../../locales/../src/interface/sitemanager.cpp:1385
 msgid "No sites available"
 msgstr "Cap lloc disponible"
 
@@ -2629,23 +2746,23 @@ msgstr "No hi ha temes a themes.xml"
 msgid "None"
 msgstr "Cap"
 
-#: resources.h:276
+#: resources.h:294
 msgid "None of the following"
 msgstr "Cap dels següents"
 
-#: resources.h:41 resources.h:77 ../../locales/../src/interface/queue.cpp:866
-#: ../../locales/../src/interface/queue.cpp:947
-#: ../../locales/../src/interface/sitemanager.cpp:759
-#: ../../locales/../src/interface/sitemanager.cpp:792
-#: ../../locales/../src/interface/sitemanager.cpp:1005
+#: resources.h:41 resources.h:77 ../../locales/../src/interface/queue.cpp:869
+#: ../../locales/../src/interface/queue.cpp:950
+#: ../../locales/../src/interface/sitemanager.cpp:776
+#: ../../locales/../src/interface/sitemanager.cpp:809
+#: ../../locales/../src/interface/sitemanager.cpp:1038
 msgid "Normal"
 msgstr "Normal"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:694
+#: ../../locales/../src/interface/RemoteListView.cpp:695
 msgid "Not connected to any server"
 msgstr "No s'està connectat a cap servidor"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:556
+#: ../../locales/../src/interface/Mainfrm.cpp:611
 msgid "Note that this feature is only supported using the FTP protocol."
 msgstr ""
 "Teniu en compte que aquesta característica només funciona utilitzant el "
@@ -2659,21 +2776,21 @@ msgstr "Nombre de dies entre comprovacions d'actualitzacions:"
 msgid "Number of retries has to be between 0 and 99."
 msgstr "El nombre d'intents ha d'estar entre 0 i 99,"
 
-#: resources.h:329 resources.h:347
+#: resources.h:347 resources.h:365
 msgid "O&verwrite"
 msgstr "S&obreescriu"
 
-#: resources.h:22 resources.h:62 resources.h:193 resources.h:215
-#: resources.h:227 resources.h:237 resources.h:249 resources.h:263
-#: resources.h:283 resources.h:362 resources.h:369 resources.h:377
+#: resources.h:22 resources.h:62 resources.h:211 resources.h:233
+#: resources.h:245 resources.h:255 resources.h:267 resources.h:281
+#: resources.h:301 resources.h:380 resources.h:387 resources.h:395
 msgid "OK"
 msgstr "D'acord"
 
-#: resources.h:335
+#: resources.h:353
 msgid "Ok"
 msgstr "D'acord"
 
-#: resources.h:474
+#: resources.h:501
 msgid ""
 "On the following pages, the selected transfer mode will be configured, as "
 "well as the fallback mode if enabled."
@@ -2685,19 +2802,19 @@ msgstr ""
 msgid "Once"
 msgstr "Un cop"
 
-#: resources.h:516 resources.h:517
+#: resources.h:543 resources.h:544
 msgid "Open the Site Manager"
 msgstr "Obre l'Administrador de llocs"
 
-#: resources.h:386
+#: resources.h:404
 msgid "Open the settings dialog of FileZilla"
 msgstr "Obre el diàleg de paràmetres de FileZilla"
 
-#: resources.h:381
+#: resources.h:399
 msgid "Opens the Site Manager"
 msgstr "Obre l'Administrador de llocs"
 
-#: ../../locales/../src/interface/FileZilla.cpp:209
+#: ../../locales/../src/interface/FileZilla.cpp:206
 msgid "Operating system problem detected"
 msgstr "S'ha trobat un problema del sistema operatiu"
 
@@ -2709,11 +2826,11 @@ msgstr "Organització:"
 msgid "Other:"
 msgstr "Altre:"
 
-#: resources.h:322 resources.h:341
+#: resources.h:340 resources.h:359
 msgid "Ov&erwrite if newer"
 msgstr "Sobreescriu s&i és més recent"
 
-#: resources.h:330 resources.h:348
+#: resources.h:348 resources.h:366
 msgid "Over&write if newer"
 msgstr "So&breescriu si és més recent"
 
@@ -2729,7 +2846,7 @@ msgstr "Sobreescriu s&i és més recent"
 msgid "Owner / Group"
 msgstr "Propietari / grup"
 
-#: resources.h:197
+#: resources.h:215
 msgid "Owner permissions"
 msgstr "Propietari de permisos"
 
@@ -2745,15 +2862,15 @@ msgstr "Pa&ssiu (recomenat)"
 msgid "Package"
 msgstr "Paquet"
 
-#: resources.h:82 resources.h:512
+#: resources.h:82 resources.h:539
 msgid "Pass&word:"
 msgstr "Contrasen&ya:"
 
-#: resources.h:470
+#: resources.h:497
 msgid "Passive (recommended)"
 msgstr "Passiu (recomenat)"
 
-#: resources.h:1 ../../locales/../src/interface/settingsdialog.cpp:98
+#: resources.h:1 ../../locales/../src/interface/settingsdialog.cpp:102
 msgid "Passive mode"
 msgstr "Mode passiu"
 
@@ -2776,7 +2893,7 @@ msgstr ""
 "Si us plau, assegureu-vos que el FileZilla té permís per establir connexions "
 "sortints i que heu escrit l'adreça del sistema de resolució correctament."
 
-#: resources.h:312
+#: resources.h:330
 msgid ""
 "Please check http://filezilla-project.org for the most recent version of "
 "FileZilla."
@@ -2801,7 +2918,7 @@ msgstr ""
 "actualitzat o visiteu  http://filezilla-project.org per descarregar-vos el "
 "codi font del FileZilla."
 
-#: resources.h:476
+#: resources.h:503
 msgid ""
 "Please configure any firewalls and routers so that FileZilla can establish "
 "outgoing connection to arbitrary ports."
@@ -2823,6 +2940,14 @@ msgstr ""
 "Si us plau assegureu-vos que teniu una connexió estable a internet i "
 "comproveu a http://filezilla-project.org/probe.php que el servidor s'està "
 "executant."
+
+#: ../../locales/../src/interface/optionspage_dateformatting.cpp:72
+msgid "Please enter a custom date format."
+msgstr "Si us plau introduïu el format de data personalitzat:"
+
+#: ../../locales/../src/interface/optionspage_dateformatting.cpp:79
+msgid "Please enter a custom time format."
+msgstr "Si us plau introduïu el format d'hora personalitzat:"
 
 #: ../../locales/../src/interface/optionspage_transfer.cpp:75
 msgid "Please enter a download speedlimit greater or equal to 0 KB/s."
@@ -2869,6 +2994,16 @@ msgstr ""
 msgid "Please enter a password for this server:"
 msgstr "Si us plau especifiqueu una contrasenya per a l'accés al servidor:"
 
+#: ../../locales/../src/interface/QueueView.cpp:1977
+msgid ""
+"Please enter a path and executable to run.\n"
+"E.g. c:\\somePath\\file.exe under MS Windows or /somePath/file under Unix.\n"
+"You can also optionally specify program arguments."
+msgstr ""
+"Si us plau introduïu el camí i l'executable a executar.\n"
+"P.e. c:\\cami\\fitxer.exe sota MS Windows o /cami/fitxer sota Unix.\n"
+"També podeu especificar opcionalment paràmetres del programa."
+
 #: ../../locales/../src/interface/optionspage_transfer.cpp:67
 msgid ""
 "Please enter a timeout between 5 and 9999 seconds or 0 to disable timeouts."
@@ -2897,7 +3032,7 @@ msgid "Please enter an upload speedlimit greater or equal to 0 KB/s."
 msgstr ""
 "Si us plau inseriu un límit de velocitat de pujada més gran o igual a 0 KB/s."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:490
+#: ../../locales/../src/interface/Mainfrm.cpp:545
 msgid ""
 "Please enter raw FTP command.\n"
 "Using raw ftp commands will clear the directory cache."
@@ -2905,8 +3040,8 @@ msgstr ""
 "Si us plau especifiqueu una comanda FTP crua.\n"
 "Utilitzar comandes FTP crues esborrarà la memòria cau del directori."
 
-#: ../../locales/../src/interface/LocalListView.cpp:1338
-#: ../../locales/../src/interface/RemoteListView.cpp:1405
+#: ../../locales/../src/interface/LocalListView.cpp:1432
+#: ../../locales/../src/interface/RemoteListView.cpp:1420
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1192
 msgid "Please enter the name of the directory which should be created:"
 msgstr "Si us plau especifiqueu el nom del directori a crear:"
@@ -2927,7 +3062,7 @@ msgstr ""
 "conegueu la vostra adreça externa, useu la opció de sistema de resolució "
 "extern."
 
-#: resources.h:463
+#: resources.h:490
 msgid ""
 "Please follow the instructions carefully, as wrong configuration will "
 "prevent successful FTP connections."
@@ -2967,7 +3102,7 @@ msgstr ""
 "configurat correctament. Hauríeu d'encaminar els ports manualment. No "
 "executeu l'encaminador (router) en el 'mode DMZ' o 'mode joc'."
 
-#: resources.h:477
+#: resources.h:504
 msgid ""
 "Please note that FileZilla has no influence on the port the server chooses. "
 "So the server might choose a port which your firewall thinks is only used by "
@@ -2988,6 +3123,14 @@ msgstr ""
 "Si us plau adoneu-vos que alguns servidors us podrien bloquejar si intenteu "
 "connectar-vos massa sovint o en intervals massa curts."
 
+#: resources.h:186 resources.h:192
+msgid ""
+"Please read http://filezilla-project.org/wiki/index.php/"
+"Date_and_Time_formatting for details"
+msgstr ""
+"Si us plau llegiu  http://filezilla-project.org/wiki/index.php/"
+"Date_and_Time_formatting pels detalls"
+
 #: ../../locales/../src/interface/netconfwizard.cpp:559
 msgid ""
 "Please run this wizard again should you change your network environment or "
@@ -3002,11 +3145,11 @@ msgstr ""
 msgid "Please select an action:"
 msgstr "Si us plau seleccioneu una acció:"
 
-#: resources.h:376
+#: resources.h:394
 msgid "Please select the categories you would like to import."
 msgstr "Si us plau seleccioneu les categories que voleu importar."
 
-#: resources.h:465
+#: resources.h:492
 msgid "Please select the default transfer mode you would like to use."
 msgstr ""
 "Si us plau seleccioneu el mode de transferència per defecte que vulgueu "
@@ -3037,7 +3180,7 @@ msgstr ""
 msgid "Please select the new attributes for the selected files."
 msgstr "Si us plau seleccioneu els atributs nous pel fitxer seleccionat."
 
-#: resources.h:314
+#: resources.h:332
 msgid ""
 "Please visit http://filezilla-project.org for more information about "
 "FileZilla."
@@ -3054,8 +3197,8 @@ msgstr ""
 "Si us plau visiteu  http://filezilla-project.org per descarregar-vos la "
 "darrera versió."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1202
-#: ../../locales/../src/interface/sitemanager.cpp:1337
+#: ../../locales/../src/interface/sitemanager.cpp:1240
+#: ../../locales/../src/interface/sitemanager.cpp:1375
 msgid "Predefined Sites"
 msgstr "Llocs web predefinits"
 
@@ -3073,11 +3216,11 @@ msgstr ""
 msgid "Prioritize directories (default)"
 msgstr "Prioritza els directoris (per defecte)"
 
-#: ../../locales/../src/interface/queue.cpp:1153
+#: ../../locales/../src/interface/queue.cpp:1156
 msgid "Priority"
 msgstr "Prioritat"
 
-#: resources.h:427
+#: resources.h:445
 msgid "Process &Queue"
 msgstr "Processa la &Cua"
 
@@ -3085,55 +3228,59 @@ msgstr "Processa la &Cua"
 msgid "Public key algorithm:"
 msgstr "Algorisme de la clau pública:"
 
-#: resources.h:205
+#: resources.h:223
 msgid "Public permissions"
 msgstr "Permisos públics"
 
-#: ../../locales/../src/interface/QueueView.cpp:1498
+#: ../../locales/../src/interface/QueueView.cpp:1533
 #, c-format
 msgid "Queue: %s%d KB"
 msgstr "Cua: %s%d KB"
 
-#: ../../locales/../src/interface/QueueView.cpp:1493
+#: ../../locales/../src/interface/QueueView.cpp:1528
 #, c-format
 msgid "Queue: %s%d MB"
 msgstr "Cua: %s%d MB"
 
-#: ../../locales/../src/interface/QueueView.cpp:1501
+#: ../../locales/../src/interface/QueueView.cpp:1536
 #, c-format
 msgid "Queue: %s%d bytes"
 msgstr "Cua: %s%d bytes"
 
-#: ../../locales/../src/interface/QueueView.cpp:1489
+#: ../../locales/../src/interface/QueueView.cpp:1524
 msgid "Queue: empty"
 msgstr "Cua: buida"
 
-#: ../../locales/../src/interface/QueueView.cpp:396
+#: ../../locales/../src/interface/QueueView.cpp:407
 msgid "Queued files"
 msgstr "Fitxers a la cua"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:499
+#: resources.h:461
+msgid "R&eboot system"
+msgstr "R&eengega el sistema"
+
+#: ../../locales/../src/interface/Mainfrm.cpp:554
 msgid "Raw FTP command"
 msgstr "Introdueix la comanda FTP específica..."
 
-#: resources.h:202
+#: resources.h:220
 msgid "Re&ad"
 msgstr "&Llegeix"
 
-#: resources.h:57 resources.h:324 resources.h:343
+#: resources.h:57 resources.h:342 resources.h:361
 msgid "Re&name"
 msgstr "Ca&nvia el nom"
 
-#: resources.h:206
+#: resources.h:224
 msgid "Rea&d"
 msgstr "&Llegeix"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:747
+#: ../../locales/../src/interface/Mainfrm.cpp:802
 msgid "Really cancel current operation?"
 msgstr "Voleu cancel·lar l'operació actual?"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1439
-#: ../../locales/../src/interface/RemoteListView.cpp:1460
+#: ../../locales/../src/interface/LocalListView.cpp:1533
+#: ../../locales/../src/interface/RemoteListView.cpp:1475
 msgid "Really delete all selected files and/or directories?"
 msgstr "Realment voleu esborrar els fitxers i/o directoris seleccionats?"
 
@@ -3141,7 +3288,7 @@ msgstr "Realment voleu esborrar els fitxers i/o directoris seleccionats?"
 msgid "Reason"
 msgstr "Raó"
 
-#: resources.h:211
+#: resources.h:229
 msgid "Rec&urse into subdirectories"
 msgstr "Inclou s&ubdirectoris"
 
@@ -3164,7 +3311,7 @@ msgstr ""
 msgid "Reconnection settings"
 msgstr "Paràmetres de reconnexió"
 
-#: resources.h:534 resources.h:535
+#: resources.h:561 resources.h:562
 msgid "Reconnects to the last used server"
 msgstr "Reconnecta al darrer servidor utilitzat"
 
@@ -3172,7 +3319,7 @@ msgstr "Reconnecta al darrer servidor utilitzat"
 msgid "Redirection to invalid address"
 msgstr "Redirecció a una adreça no vàlida"
 
-#: resources.h:526 resources.h:527
+#: resources.h:553 resources.h:554
 msgid "Refresh the file and folder lists"
 msgstr "Refresca la llista de fitxers i directoris"
 
@@ -3180,11 +3327,11 @@ msgstr "Refresca la llista de fitxers i directoris"
 msgid "Remote certificate not trusted."
 msgstr "No s'ha validat el certificat remot."
 
-#: ../../locales/../src/interface/queue.cpp:1151
+#: ../../locales/../src/interface/queue.cpp:1154
 msgid "Remote file"
 msgstr "Fitxer remot"
 
-#: resources.h:259
+#: resources.h:277
 msgid "Remote filters:"
 msgstr "Filtres remots:"
 
@@ -3192,15 +3339,15 @@ msgstr "Filtres remots:"
 msgid "Remote site:"
 msgstr "Lloc remot:"
 
-#: resources.h:443 resources.h:446
+#: resources.h:470 resources.h:473
 msgid "Remove &all"
 msgstr "Elimin&a-ho tot"
 
-#: resources.h:278 resources.h:444 resources.h:447
+#: resources.h:296 resources.h:471 resources.h:474
 msgid "Remove &selected"
 msgstr "Esborra &seleccionats"
 
-#: resources.h:332 resources.h:350
+#: resources.h:350 resources.h:368
 msgid "Rena&me"
 msgstr "Reano&mena"
 
@@ -3208,11 +3355,11 @@ msgstr "Reano&mena"
 msgid "Rename file"
 msgstr "Reanomena fitxer"
 
-#: resources.h:459
+#: resources.h:486
 msgid "Rename selected directory"
 msgstr "Canvia el nom del directori seleccionat"
 
-#: resources.h:414 resources.h:424
+#: resources.h:432 resources.h:442
 msgid "Rename selected files and folders"
 msgstr "Reanomena fitxers i carpetes selecionats"
 
@@ -3222,11 +3369,11 @@ msgstr "Reanomena fitxers i carpetes selecionats"
 msgid "Renaming '%s' to '%s'"
 msgstr "S'està reanomenant '%s' a '%s'."
 
-#: resources.h:331 resources.h:349
+#: resources.h:349 resources.h:367
 msgid "Res&ume"
 msgstr "&Repren"
 
-#: resources.h:445 resources.h:448
+#: resources.h:472 resources.h:475
 msgid "Reset and requeue selected files"
 msgstr "Reseteja i reencua els fitxers seleccionats"
 
@@ -3246,7 +3393,7 @@ msgstr "Resolent nom de l'amfitrió"
 msgid "Response:"
 msgstr "Resposta:"
 
-#: resources.h:354
+#: resources.h:372
 msgid ""
 "Resuming ascii files can cause problems if server uses a different line "
 "ending format than the client."
@@ -3265,7 +3412,11 @@ msgstr "S'està obtenint el llistat del directori..."
 msgid "Retrieving external IP address from %s"
 msgstr "Recuperant l'adreça IP externa des de %s"
 
-#: resources.h:325 resources.h:344
+#: resources.h:462
+msgid "S&hutdown system"
+msgstr "A&paga el sistema"
+
+#: resources.h:343 resources.h:362
 msgid "S&kip"
 msgstr "&Omet"
 
@@ -3273,11 +3424,11 @@ msgstr "&Omet"
 msgid "Save settings?"
 msgstr "Desar paràmetres?"
 
-#: ../../locales/../src/interface/QueueView.cpp:1553
+#: ../../locales/../src/interface/QueueView.cpp:1588
 msgid "Scanning for files to add to queue"
 msgstr "Escanejant per trobar fitxers per afegir a la cua"
 
-#: ../../locales/../src/interface/QueueView.cpp:1555
+#: ../../locales/../src/interface/QueueView.cpp:1590
 msgid "Scanning for files to upload"
 msgstr "Escanejant per trobar fitxers per penjar"
 
@@ -3293,7 +3444,7 @@ msgstr "Selecciona entrada:"
 msgid "Select Theme"
 msgstr "Selecciona un tema:"
 
-#: resources.h:337
+#: resources.h:355
 msgid ""
 "Select default action to perform if target file of a transfer already exists."
 msgstr ""
@@ -3328,11 +3479,11 @@ msgstr "Selecciona el fitxer per la configuració exportada"
 msgid "Select file to import settings from"
 msgstr "Seleccioneu el fitxer des d'on s'ha d'importar la configuració."
 
-#: resources.h:365
+#: resources.h:383
 msgid "Select the categories to export:"
 msgstr "Selecciona les categories a exportar:"
 
-#: resources.h:356
+#: resources.h:374
 msgid "Select the private data you would like to delete."
 msgstr "Seleccioneu les dades privades que vulgueu esborrar."
 
@@ -3340,7 +3491,7 @@ msgstr "Seleccioneu les dades privades que vulgueu esborrar."
 msgid "Selected port usually in use by a different protocol."
 msgstr "El port seleccionat normalment és utilitzat per un altre protocol."
 
-#: resources.h:398
+#: resources.h:416
 msgid "Send custom command to the server otherwise not available"
 msgstr ""
 "Envia una comanda personalitzada al servidor que d'una altra manera no "
@@ -3350,7 +3501,7 @@ msgstr ""
 msgid "Serial number:"
 msgstr "Número de sèrie:"
 
-#: ../../locales/../src/interface/queue.cpp:1149
+#: ../../locales/../src/interface/queue.cpp:1152
 msgid "Server / Local file"
 msgstr "Fitxer Servidor / Local"
 
@@ -3416,7 +3567,7 @@ msgstr ""
 msgid "Server&type:"
 msgstr "&Tipus de servidor:"
 
-#: resources.h:431
+#: resources.h:449
 msgid "Set &Priority"
 msgstr "Estableix la &Prioritat"
 
@@ -3430,11 +3581,11 @@ msgstr "Estableix els permisos de  '%s' a '%s' "
 msgid "Settings"
 msgstr "Paràmetres"
 
-#: resources.h:191
+#: resources.h:209
 msgid "Show &raw directory listing"
 msgstr "Most&ra el llistat de directoris cru"
 
-#: resources.h:373
+#: resources.h:391
 msgid "Site &Manager entries"
 msgstr "Entrades de l'Ad&ministrador de llocs"
 
@@ -3442,13 +3593,18 @@ msgstr "Entrades de l'Ad&ministrador de llocs"
 msgid "Site Manager"
 msgstr "Administrador de llocs"
 
-#: ../../locales/../src/interface/sitemanager.cpp:51
+#: ../../locales/../src/interface/sitemanager.cpp:60
 msgid "Site Manager already open"
 msgstr "El gestor de llocs ja està obert"
 
-#: ../../locales/../src/interface/queue.cpp:1152
+#: ../../locales/../src/interface/queue.cpp:1155
 msgid "Size"
 msgstr "Mida"
+
+#: resources.h:193
+#, fuzzy
+msgid "Size formatting"
+msgstr "Format de l'hora"
 
 #: ../../locales/../src/interface/fileexistsdlg.cpp:59
 #: ../../locales/../src/interface/fileexistsdlg.cpp:83
@@ -3457,7 +3613,7 @@ msgstr "Mida"
 msgid "Size unknown"
 msgstr "Mida desconeguda"
 
-#: resources.h:333 resources.h:351
+#: resources.h:351 resources.h:369
 msgid "Sk&ip"
 msgstr "Ome&t"
 
@@ -3485,7 +3641,7 @@ msgstr "S'està ometent la pujada de %s"
 msgid "Small icons"
 msgstr "Icones petites"
 
-#: resources.h:2 resources.h:479
+#: resources.h:2 resources.h:506
 msgid ""
 "Some misconfigured remote servers which are behind a router, may reply with "
 "their local ip address."
@@ -3529,7 +3685,7 @@ msgstr "S'està iniciant la pujada de %s"
 msgid "State:"
 msgstr "Comarca:"
 
-#: ../../locales/../src/interface/QueueView.cpp:415
+#: ../../locales/../src/interface/QueueView.cpp:433
 msgid "Status"
 msgstr "Estat"
 
@@ -3538,7 +3694,7 @@ msgstr "Estat"
 msgid "Status:"
 msgstr "Estat:"
 
-#: resources.h:428
+#: resources.h:446
 msgid "Stop and remove &all"
 msgstr "&Atura i suprimeix tots"
 
@@ -3562,7 +3718,7 @@ msgstr ""
 msgid "Successful transfers"
 msgstr "Transferències exitoses"
 
-#: resources.h:507
+#: resources.h:534
 msgid "Summary of test results:"
 msgstr "Resum dels resultats del test"
 
@@ -3583,11 +3739,11 @@ msgstr "Connexió TLS/SSL establerta."
 msgid "Target file already exists"
 msgstr "El fitxer de destinació ja existeix."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1755
+#: ../../locales/../src/interface/RemoteListView.cpp:1770
 msgid "Target filename already exists, really continue?"
 msgstr "El fitxer de destinació ja existeix, voleu continuar?"
 
-#: resources.h:506
+#: resources.h:533
 msgid "Test results"
 msgstr "Resultats del test"
 
@@ -3595,7 +3751,7 @@ msgstr "Resultats del test"
 msgid "Testing resume capabilities of server"
 msgstr "Provant les capacitats de reprende fitxers del servidor"
 
-#: ../../locales/../src/interface/sitemanager.cpp:50
+#: ../../locales/../src/interface/sitemanager.cpp:59
 msgid ""
 "The Site Manager is opened in another instance of FileZilla 3.\n"
 "Do you want to continue? Any changes made in the Site Manager won't be saved "
@@ -3653,7 +3809,7 @@ msgstr ""
 "usuari i contrasenya seran importats.\n"
 "Voleu continuar amb la importació?"
 
-#: resources.h:189
+#: resources.h:207
 msgid ""
 "The higher the debug level, the more information will be displayed in the "
 "message log. Displaying debug information has a negative impact on "
@@ -3691,7 +3847,7 @@ msgstr ""
 msgid "The selected categories have been imported."
 msgstr "Les categories seleccionades s'han importat."
 
-#: resources.h:372
+#: resources.h:390
 msgid ""
 "The selected file contains importable data for the following categories:"
 msgstr ""
@@ -3713,7 +3869,7 @@ msgstr ""
 "El certificat del servidor és desconegut. Si us plau examineu curosament el "
 "certificat per assegurar-vos que podeu confiar en el servidor."
 
-#: resources.h:241
+#: resources.h:259
 msgid ""
 "The server's host key does not match the key that has been cached. This "
 "means that either the administrator has changed the host key, or you are "
@@ -3728,7 +3884,7 @@ msgstr ""
 "Si el canvi de clau ha estat inesperat, si us plau contacteu l'administrador "
 "del servidor."
 
-#: resources.h:229
+#: resources.h:247
 msgid ""
 "The server's host key is not cached in the registry. You have no guarantee "
 "that the server is the computer you think it is."
@@ -3762,7 +3918,7 @@ msgstr ""
 msgid "Theme error"
 msgstr "Error de tema"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:103
+#: ../../locales/../src/interface/settingsdialog.cpp:107
 msgid "Themes"
 msgstr "Temes"
 
@@ -3770,7 +3926,7 @@ msgstr "Temes"
 msgid "This filter set cannot be removed"
 msgstr "Aquest filtre no es pot suprimir"
 
-#: resources.h:484
+#: resources.h:511
 msgid ""
 "This only works if you are not behind a router, else your system would just "
 "return your internal address."
@@ -3778,7 +3934,7 @@ msgstr ""
 "Això només fuciona si no sou darrera un encaminador (router), sinó el vostre "
 "sistema retornarà l'adreça interna."
 
-#: resources.h:462
+#: resources.h:489
 msgid ""
 "This wizard will help you to properly configure any routers and firewalls "
 "you have and tests your configuration."
@@ -3786,12 +3942,16 @@ msgstr ""
 "Aquest assistent us ajudarà a configurar correctament qualsevol encaminador "
 "(router) o tallafocs que tingueu i provar la vostra configuració."
 
+#: resources.h:187
+msgid "Time formatting"
+msgstr "Format de l'hora"
+
 #: resources.h:32
 msgid "Time&out in seconds:"
 msgstr "Temps d'espera en seg&ons:"
 
-#: resources.h:31 ../../locales/../src/interface/QueueView.cpp:902
-#: ../../locales/../src/interface/QueueView.cpp:927
+#: resources.h:31 ../../locales/../src/interface/QueueView.cpp:922
+#: ../../locales/../src/interface/QueueView.cpp:947
 msgid "Timeout"
 msgstr "Temps d'espera"
 
@@ -3799,23 +3959,23 @@ msgstr "Temps d'espera"
 msgid "Title:"
 msgstr "Títol:"
 
-#: resources.h:528 resources.h:529
+#: resources.h:555 resources.h:556
 msgid "Toggles processing of the transfer queue"
 msgstr "Commuta el processament de la cua de transferència"
 
-#: resources.h:520 resources.h:521
+#: resources.h:547 resources.h:548
 msgid "Toggles the display of the local directory tree"
 msgstr "Commuta la visualització de l'arbre de directoris local"
 
-#: resources.h:518 resources.h:519
+#: resources.h:545 resources.h:546
 msgid "Toggles the display of the message log"
 msgstr "Canvia la pantalla de la bitàcora"
 
-#: resources.h:522 resources.h:523
+#: resources.h:549 resources.h:550
 msgid "Toggles the display of the remote directory tree"
 msgstr "Commuta la visualització de l'arbre de directoris remot"
 
-#: resources.h:524 resources.h:525
+#: resources.h:551 resources.h:552
 msgid "Toggles the display of the transfer queue"
 msgstr "Commuta la visualització de la cua de transferències"
 
@@ -3848,12 +4008,12 @@ msgstr "Paràmetres de transferència"
 msgid "Transferred data got tainted."
 msgstr "Les dades rebudes han estat interferides."
 
-#: ../../locales/../src/interface/QueueView.cpp:1241
+#: ../../locales/../src/interface/QueueView.cpp:1261
 #: ../../locales/../src/interface/statuslinectrl.cpp:159
 msgid "Transferring"
 msgstr "S'està transferint..."
 
-#: ../../locales/../src/interface/settingsdialog.cpp:99
+#: ../../locales/../src/interface/settingsdialog.cpp:103
 msgid "Transfers"
 msgstr "Transferències"
 
@@ -3873,7 +4033,7 @@ msgstr "Confiar en la clau canviada de l'amfitrió:"
 msgid "Trust new Hostkey: "
 msgstr "Confiar en la nova clau de l'amfitrió:"
 
-#: resources.h:247
+#: resources.h:265
 msgid "Trust the new key and carry on connecting?"
 msgstr "Confieu en la nova clau i voleu continuar amb la connexió?"
 
@@ -3881,13 +4041,17 @@ msgstr "Confieu en la nova clau i voleu continuar amb la connexió?"
 msgid "Trust this certificate and carry on connecting"
 msgstr "Confiar en aquest certificat i continuar la connexió"
 
-#: resources.h:235
+#: resources.h:253
 msgid "Trust this host and carry on connecting?"
 msgstr "Confieu en aquest amfitrió i voleu continuar amb la connexió?"
 
 #: resources.h:38
 msgid "U&pload limit:"
 msgstr "Límit de &pujada:"
+
+#: resources.h:188
+msgid "U&se system defaults"
+msgstr "Utilitza el&s valors del sistema per defecte"
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:122
 msgid "Unit:"
@@ -3897,7 +4061,7 @@ msgstr "Unitat:"
 msgid "Unknown certificate"
 msgstr "Certificat desconegut"
 
-#: resources.h:228
+#: resources.h:246
 msgid "Unknown host key"
 msgstr "Clau de l'amfitrió desconeguda"
 
@@ -3922,7 +4086,7 @@ msgstr ""
 msgid "Unsuppored redirect"
 msgstr "Redirecció no compatible"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:106
+#: ../../locales/../src/interface/settingsdialog.cpp:112
 msgid "Update Check"
 msgstr "Comprovació d'actualitzacions"
 
@@ -3931,15 +4095,15 @@ msgstr "Comprovació d'actualitzacions"
 msgid "Update wizard"
 msgstr "Assistent d'actualització"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1235
+#: ../../locales/../src/interface/Mainfrm.cpp:1313
 msgid "Updatecheck failed"
 msgstr "Ha fallat la comprovació d'actualitzacions"
 
-#: resources.h:406
+#: resources.h:424
 msgid "Upload selected files and folders"
 msgstr "Puja els fitxers i carpetes seleccionats"
 
-#: resources.h:326 resources.h:345
+#: resources.h:344 resources.h:363
 msgid "Uploads"
 msgstr "Pujades"
 
@@ -3947,34 +4111,38 @@ msgstr "Pujades"
 msgid "Use &custom charset"
 msgstr "Utilitza un joc de &caràcters personalitzat"
 
-#: resources.h:319
+#: resources.h:337
 msgid "Use &default"
 msgstr "Utilitza per &defecte"
 
-#: resources.h:327
+#: resources.h:345
 msgid "Use d&efault"
 msgstr "Utilitza p&er defecte"
 
-#: resources.h:292 resources.h:485
+#: resources.h:182
+msgid "Use system &defaults"
+msgstr "Refresca valors del sistema per &defecte"
+
+#: resources.h:310 resources.h:512
 msgid "Use the following IP address:"
 msgstr "Utilitza aquesta adreça IP:"
 
-#: resources.h:495
+#: resources.h:522
 msgid "Use the following port range:"
 msgstr "Utilitza aquest rang de ports:"
 
-#: resources.h:480
+#: resources.h:507
 msgid "Use the server's external IP address instead"
 msgstr "Utilitza l'adreça IP externa del servidor en lloc de"
 
-#: resources.h:293 resources.h:486
+#: resources.h:311 resources.h:513
 msgid ""
 "Use this if you're behind a router and have a static external IP address."
 msgstr ""
 "Utilitza aquest si ets darrera un encaminador (router) i tens una adreça IP "
 "externa estàtica."
 
-#: resources.h:489
+#: resources.h:516
 msgid ""
 "Use this option if you have a dynamic IP address. FileZilla will contact the "
 "above server once each session as soon as you use active mode for the first "
@@ -4002,7 +4170,7 @@ msgstr ""
 "Utilitzar el joc de caràcters equivocat pot provocar que els noms dels "
 "fitxers no es mostrin correctament."
 
-#: resources.h:298
+#: resources.h:316
 msgid "Using this wizard you can check for available updates to FileZilla."
 msgstr ""
 "Utilitzant aquest assistent podeu comprovar si hi ha actualitzacions pel "
@@ -4024,11 +4192,11 @@ msgstr "Verificant el certificat..."
 msgid "Very high"
 msgstr "Molt alta"
 
-#: resources.h:399
+#: resources.h:417
 msgid "View &hidden files"
 msgstr "Mostra els &fitxers ocults"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:554
+#: ../../locales/../src/interface/Mainfrm.cpp:609
 msgid "View hidden files"
 msgstr "Mostra els fitxers ocults"
 
@@ -4039,19 +4207,19 @@ msgstr ""
 "La opció per mostrar els fitxers ocults està activada però no és compatible "
 "amb el servidor"
 
-#: resources.h:203
+#: resources.h:221
 msgid "W&rite"
 msgstr "Esc&riu"
 
-#: ../../locales/../src/interface/QueueView.cpp:1512
+#: ../../locales/../src/interface/QueueView.cpp:1547
 msgid "Waiting"
 msgstr "S'està esperant"
 
-#: ../../locales/../src/interface/QueueView.cpp:1170
+#: ../../locales/../src/interface/QueueView.cpp:1190
 msgid "Waiting for browsing connection"
 msgstr "S'està esperant la connexió del navegador"
 
-#: ../../locales/../src/interface/QueueView.cpp:1191
+#: ../../locales/../src/interface/QueueView.cpp:1211
 msgid "Waiting for password"
 msgstr "S'està esperant la contrasenya"
 
@@ -4063,7 +4231,7 @@ msgstr "S'està esperant la cancel·lació de la transferència"
 msgid "Waiting to retry..."
 msgstr "Esperant per a tornar a provar..."
 
-#: ../../locales/../src/interface/FileZilla.cpp:200
+#: ../../locales/../src/interface/FileZilla.cpp:197
 msgid ""
 "Warning!\n"
 "\n"
@@ -4113,7 +4281,7 @@ msgstr ""
 "\n"
 "Esteu segurs o segures que voleu comprovar pels darrers muntatges?"
 
-#: resources.h:240
+#: resources.h:258
 msgid "Warning: Potential security breach!"
 msgstr "Avís: possible bretxa de seguretat!"
 
@@ -4121,7 +4289,7 @@ msgstr "Avís: possible bretxa de seguretat!"
 msgid "Widescreen"
 msgstr "Pantalla ampla"
 
-#: resources.h:207
+#: resources.h:225
 msgid "Wr&ite"
 msgstr "Escr&iu"
 
@@ -4138,7 +4306,7 @@ msgstr "Finals de línia equivocats"
 msgid "Yes"
 msgstr "Sí"
 
-#: resources.h:313
+#: resources.h:331
 msgid ""
 "You are already using the most recent version of FileZilla. Please check "
 "again in future."
@@ -4146,7 +4314,7 @@ msgstr ""
 "Ja esteu utilitzant la darrera versió del FileZilla. Si us plau, torneu a "
 "comprovar-ho en el futur."
 
-#: resources.h:210
+#: resources.h:228
 msgid ""
 "You can use an x at any position to keep the permission the original files "
 "have."
@@ -4159,7 +4327,7 @@ msgid "You did not enter a new name for the file. Overwrite the file instead?"
 msgstr ""
 "No heu especificat un nou nom pel fitxer. Voleu sobreescriure el fitxer?"
 
-#: ../../locales/../src/interface/sitemanager.cpp:509
+#: ../../locales/../src/interface/sitemanager.cpp:518
 msgid "You have to enter a hostname."
 msgstr "Heu d'especificar un nom d'amfitrió vàlid."
 
@@ -4168,11 +4336,11 @@ msgstr "Heu d'especificar un nom d'amfitrió vàlid."
 msgid "You have to enter a valid IP address."
 msgstr "Heu d'introduir una adreça IP vàlida."
 
-#: ../../locales/../src/interface/sitemanager.cpp:570
+#: ../../locales/../src/interface/sitemanager.cpp:579
 msgid "You have to enter an account name"
 msgstr "Heu d'introduir un nom de compte"
 
-#: ../../locales/../src/interface/sitemanager.cpp:561
+#: ../../locales/../src/interface/sitemanager.cpp:570
 msgid "You have to specify a user name"
 msgstr "Heu d'especificar un nom d'usuari"
 
@@ -4215,10 +4383,10 @@ msgstr "acaba amb"
 msgid "equals"
 msgstr "equival"
 
-#: ../../locales/../src/interface/LocalListView.cpp:725
-#: ../../locales/../src/interface/LocalListView.cpp:743
-#: ../../locales/../src/interface/RemoteListView.cpp:1172
-#: ../../locales/../src/interface/RemoteListView.cpp:1190
+#: ../../locales/../src/interface/LocalListView.cpp:805
+#: ../../locales/../src/interface/LocalListView.cpp:823
+#: ../../locales/../src/interface/RemoteListView.cpp:1173
+#: ../../locales/../src/interface/RemoteListView.cpp:1191
 msgid "file"
 msgstr "fitxer"
 
