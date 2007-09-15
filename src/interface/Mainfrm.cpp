@@ -374,7 +374,8 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 	if (!m_pendingPostSizing)
 	{
 		m_pendingPostSizing = true;
-		AddPendingEvent(wxCommandEvent(fzEVT_ONSIZE_POST));
+		wxCommandEvent evt(fzEVT_ONSIZE_POST);
+		AddPendingEvent(evt);
 	}
 #else
 	if (m_pViewSplitter)

@@ -458,8 +458,8 @@ wxString FormatSize(const wxLongLong& size)
 		if (!pOptions->GetOptionVal(OPTION_SIZE_USETHOUSANDSEP))
 			return size.ToString();
 
-		wxChar sep[5];
 #ifdef __WXMSW__
+		wxChar sep[5];
 		int count = ::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_STHOUSAND, sep, 5);
 		if (!count)
 			return size.ToString();
