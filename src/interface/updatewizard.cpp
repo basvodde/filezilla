@@ -537,7 +537,7 @@ void CUpdateWizard::ParseData()
 			const bool checkBeta = m_loaded ? XRCCTRL(*this, "ID_CHECKBETA", wxCheckBox)->GetValue() : false;
 
 			if (!checkBeta &&
-				((ownVersionNumber & 0x0FFFFF) == 0 || newVersionNumber != 0))
+				((ownVersionNumber & 0x07FFFF) == 0 || newVersionNumber != 0))
 				continue;
 
 			if (newVersionNumber >= CBuildInfo::ConvertToVersionNumber(versionOrDate))

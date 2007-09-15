@@ -105,7 +105,7 @@ wxULongLong CBuildInfo::ConvertToVersionNumber(const wxChar* version)
 	// Only either rc or beta can exist at the same time)
 	//
 	// The version string A.B.C.D-rcE-betaF expands to the following binary representation:
-	// aaaaaaaaaabbbbbbbbbbccccccccccddddddddddexeeeeeeefffffffff
+	// 0000aaaaaaaaaabbbbbbbbbbccccccccccddddddddddxeeeeeeeeeffffffffff
 	//
 	// x will be set to 1 if neither rc nor beta are set. 0 otherwise.
 	//
