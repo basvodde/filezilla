@@ -848,6 +848,21 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 {
 	if (!m_bQuit)
 	{
+		if (m_pQueueView && m_pQueueView->IsActive())
+		{
+			CConditionalDialog dlg(this, CConditionalDialog::confirmexit, CConditionalDialog::yesno);
+			dlg.SetTitle(_("Close FileZilla"));
+
+			dlg.AddText(_("File transfers still in progress."));
+			dlg.AddText(_("Do you really want to close FileZilla?"));
+
+			if (!dlg.Run())
+			{
+				event.Veto();
+				return;
+			}
+		}
+
 		RememberSizes();
 		m_bQuit = true;
 	}

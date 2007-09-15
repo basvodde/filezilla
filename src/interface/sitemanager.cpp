@@ -6,6 +6,7 @@
 #include "filezillaapp.h"
 #include "ipcmutex.h"
 #include "wrapengine.h"
+#include "conditionaldialog.h"
 
 std::map<int, CSiteManagerItemData*> CSiteManager::m_idMap;
 
@@ -678,6 +679,14 @@ void CSiteManager::OnDelete(wxCommandEvent& event)
 
 	wxTreeItemId item = pTree->GetSelection();
 	if (!item.IsOk() || item == pTree->GetRootItem() || item == m_ownSites || IsPredefinedItem(item))
+		return;
+
+	CConditionalDialog dlg(this, CConditionalDialog::sitemanager_confirmdelete, CConditionalDialog::yesno);
+	dlg.SetTitle(_("Delete Site Manager entry"));
+
+	dlg.AddText(_("Do you really want to delete selected entry?"));
+
+	if (!dlg.Run())
 		return;
 
 	pTree->Delete(item);

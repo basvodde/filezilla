@@ -13,7 +13,9 @@ public:
 	enum DialogType
 	{
 		rawcommand_quote,
-		viewhidden
+		viewhidden,
+		confirmexit,
+		sitemanager_confirmdelete
 	};
 
 	CConditionalDialog(wxWindow* parent, enum DialogType type, enum Modes mode, bool checked = false);
