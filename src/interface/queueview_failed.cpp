@@ -133,6 +133,7 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 			for (unsigned int i = 0; i < childrenCount; i++)
 			{
 				CFileItem* pFileItem = (CFileItem*)pItem->GetChild(i, false);
+				pFileItem->m_errorCount = 0;
 				pFileItem->m_statusMessage.Clear();
 				pFileItem->SetParent(pServerItem);
 				pQueueView->InsertItem(pServerItem, pFileItem);
@@ -155,6 +156,7 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 		else
 		{
 			CFileItem* pFileItem = (CFileItem*)pItem;
+			pFileItem->m_errorCount = 0;
 			pFileItem->m_statusMessage.Clear();
 
 			CServerItem* pOldServerItem = (CServerItem*)pItem->GetTopLevelItem();
