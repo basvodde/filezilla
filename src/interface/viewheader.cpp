@@ -278,7 +278,12 @@ void CViewHeader::AddRecentDirectory(const wxString &directory)
 	{
 		wxString dirToRemove = m_recentDirectories.front();
 		m_recentDirectories.pop_front();
-
+		if (dirToRemove == directory)
+		{
+			m_recentDirectories.push_back(directory);
+			return;
+		}
+		
 		int item = m_pComboBox->FindString(dirToRemove, true);
 		if (item != wxNOT_FOUND)
 			m_pComboBox->Delete(item);
@@ -492,11 +497,10 @@ void CLocalViewHeader::OnStateChange(unsigned int event, const wxString& data)
 	m_autoCompletionText = _T("");
 #endif
 
-	const wxString& dir = m_pState->GetLocalDir();
+	wxString dir = m_pState->GetLocalDir();
+	AddRecentDirectory(dir);
 	m_pComboBox->SetValue(dir);
 	m_pComboBox->SetSelection(m_pComboBox->GetValue().Length(), m_pComboBox->GetValue().Length());
-
-	AddRecentDirectory(dir);
 }
 
 BEGIN_EVENT_TABLE(CRemoteViewHeader, CViewHeader)
@@ -524,11 +528,14 @@ void CRemoteViewHeader::OnStateChange(unsigned int event, const wxString& data)
 	}
 	else
 	{
+		AddRecentDirectory(m_path.GetPath());
 		m_pComboBox->Enable();
 		m_pComboBox->SetValue(m_path.GetPath());
+		wxString path = m_path.GetPath();
+		wxString v = m_pComboBox->GetValue();
+		wxASSERT(v == path);
 		m_pComboBox->SetSelection(m_pComboBox->GetValue().Length(), m_pComboBox->GetValue().Length());
 
-		AddRecentDirectory(m_path.GetPath());
 	}
 }
 
