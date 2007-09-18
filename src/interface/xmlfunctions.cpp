@@ -133,6 +133,7 @@ TiXmlElement* CXmlFile::CreateEmpty()
 	delete m_pDocument;
 
 	m_pDocument = new TiXmlDocument();
+	m_pDocument->SetCondenseWhiteSpace(false);
 	m_pDocument->InsertEndChild(TiXmlDeclaration("1.0", "UTF-8", "yes"));
 
 	return m_pDocument->InsertEndChild(TiXmlElement("FileZilla3"))->ToElement();
@@ -317,6 +318,7 @@ TiXmlElement* GetXmlFile(wxFileName file)
 		// File does exist, open it
 
 		TiXmlDocument* pXmlDocument = new TiXmlDocument();
+		pXmlDocument->SetCondenseWhiteSpace(false);
 		if (!pXmlDocument->LoadFile(file.GetFullPath().mb_str()))
 		{
 			delete pXmlDocument;
@@ -342,6 +344,7 @@ TiXmlElement* GetXmlFile(wxFileName file)
 		// File does not exist, create new XML document
 
 		TiXmlDocument* pXmlDocument = new TiXmlDocument();
+		pXmlDocument->SetCondenseWhiteSpace(false);
 		pXmlDocument->InsertEndChild(TiXmlDeclaration("1.0", "UTF-8", "yes"));
 	
 		pXmlDocument->InsertEndChild(TiXmlElement("FileZilla3"));
@@ -691,6 +694,7 @@ bool CXmlFile::ParseData(char* data)
 {
 	delete m_pDocument;
 	m_pDocument = new TiXmlDocument;
+	m_pDocument->SetCondenseWhiteSpace(false);
 	m_pDocument->Parse(data);
 	
 	if (!m_pDocument->FirstChildElement("FileZilla3"))

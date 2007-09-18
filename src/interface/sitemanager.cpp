@@ -294,6 +294,8 @@ bool CSiteManager::Load(TiXmlElement *pElement, CSiteManagerXmlHandler* pHandler
 			continue;
 
 		wxString name = ConvLocal(pNode->ToText()->Value());
+		name.Trim(true);
+		name.Trim(false);
 
 		if (!strcmp(pChild->Value(), "Folder"))
 		{
