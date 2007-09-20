@@ -423,7 +423,7 @@ bool CServer::SetAccount(const wxString& account)
 
 bool CServer::SetTimezoneOffset(int minutes)
 {
-	if (minutes > (60 * 13) || minutes < (-60 * 30))
+	if (minutes > (60 * 24) || minutes < (-60 * 24))
 		return false;
 
 	m_timezoneOffset = minutes;
