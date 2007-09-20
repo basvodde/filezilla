@@ -102,6 +102,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_SET_FOCUS(CMainFrame::OnGetFocus)
 	EVT_CHAR_HOOK(CMainFrame::OnChar)
 	EVT_MENU(XRCID("ID_MENU_EDIT_FILTERS"), CMainFrame::OnFilter)
+	EVT_MOVE(CMainFrame::OnMoveEvent)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
@@ -1806,5 +1807,14 @@ void CMainFrame::RestoreSizes()
 		m_pLocalSplitter->SetSashPosition(m_lastLocalTreeSplitterPos);
 		m_pRemoteSplitter->SetSashPosition(m_lastRemoteTreeSplitterPos);
 		delete [] aPosValues;
+	}
+}
+
+void CMainFrame::OnMoveEvent(wxMoveEvent& event)
+{
+	if (!IsIconized() && !IsMaximized())
+	{
+		m_lastWindowPosition = GetPosition();
+		m_lastWindowSize = GetClientSize();
 	}
 }

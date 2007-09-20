@@ -132,6 +132,7 @@ protected:
 	void OnChar(wxKeyEvent& event);
 #ifdef __WXMSW__
 	void OnSizePost(wxCommandEvent& event);
+	void OnMoveEvent(wxMoveEvent& event);
 
 	bool m_pendingPostSizing;
 #endif
