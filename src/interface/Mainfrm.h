@@ -130,9 +130,10 @@ protected:
 	void OnNavigationKeyEvent(wxNavigationKeyEvent& event);
 	void OnGetFocus(wxFocusEvent& event);
 	void OnChar(wxKeyEvent& event);
+	void OnMoveEvent(wxMoveEvent& event);
 #ifdef __WXMSW__
 	void OnSizePost(wxCommandEvent& event);
-	void OnMoveEvent(wxMoveEvent& event);
+
 
 	bool m_pendingPostSizing;
 #endif
