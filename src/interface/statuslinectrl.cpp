@@ -3,6 +3,9 @@
 #include "statuslinectrl.h"
 #include <wx/dcbuffer.h>
 #include "Options.h"
+#ifndef __WXMSW__
+#include <langinfo.h>
+#endif
 
 #define TRANSFERSTATUS_TIMER_ID (wxID_HIGHEST + 1)
 
