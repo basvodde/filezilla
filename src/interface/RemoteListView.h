@@ -111,6 +111,7 @@ protected:
 	void OnMenuChmod(wxCommandEvent& event);
 	void OnSize(wxSizeEvent& event);
 	void OnBeginDrag(wxListEvent& event);
+	void OnMenuEdit(wxCommandEvent& event);
 };
 
 #endif

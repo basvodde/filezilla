@@ -1,6 +1,7 @@
 #include "FileZilla.h"
 #include "queue.h"
 #include "queueview_failed.h"
+#include "edithandler.h"
 
 BEGIN_EVENT_TABLE(CQueueViewFailed, CQueueViewBase)
 EVT_CONTEXT_MENU(CQueueViewFailed::OnContextMenu)
@@ -96,6 +97,7 @@ void CQueueViewFailed::OnRemoveSelected(wxCommandEvent& event)
 
 void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 {
+	bool failedToRequeueAll = false;
 	std::list<CQueueItem*> selectedItems;
 	long item = -1;
 	long skipTo = -1;
@@ -135,6 +137,26 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 				CFileItem* pFileItem = (CFileItem*)pItem->GetChild(i, false);
 				pFileItem->m_errorCount = 0;
 				pFileItem->m_statusMessage.Clear();
+
+				if (pFileItem->m_edit)
+				{
+					CEditHandler* pEditHandler = CEditHandler::Get();
+					if (!pEditHandler)
+					{
+						failedToRequeueAll = true;
+						delete pFileItem;
+						continue;
+					}
+					wxFileName fn(pFileItem->GetLocalFile());
+					if (pEditHandler->GetFileState(fn.GetFullName()) != CEditHandler::unknown ||
+						!pEditHandler->AddFile(fn.GetFullName()))
+					{
+						failedToRequeueAll = true;
+						delete pFileItem;
+						continue;
+					}
+				}
+
 				pFileItem->SetParent(pServerItem);
 				pQueueView->InsertItem(pServerItem, pFileItem);
 			}
@@ -152,6 +174,12 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 			}
 			if (iter != m_serverList.end())
 				m_serverList.erase(iter);
+
+			if (!pServerItem->GetChildrenCount(false))
+			{
+				pQueueView->CommitChanges();
+				pQueueView->RemoveItem(pServerItem, true, true, true);
+			}
 		}
 		else
 		{
@@ -162,6 +190,37 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 			CServerItem* pOldServerItem = (CServerItem*)pItem->GetTopLevelItem();
 			CServerItem* pServerItem = pQueueView->CreateServerItem(pOldServerItem->GetServer());
 			RemoveItem(pItem, false, false, false);
+
+			if (pFileItem->m_edit)
+			{
+				CEditHandler* pEditHandler = CEditHandler::Get();
+				if (!pEditHandler)
+				{
+					if (!pServerItem->GetChildrenCount(false))
+					{
+						pQueueView->CommitChanges();
+						pQueueView->RemoveItem(pServerItem, true, true, true);
+					}
+					
+					failedToRequeueAll = true;
+					delete pItem;
+					continue;
+				}
+				wxFileName fn(pFileItem->GetLocalFile());
+				if (pEditHandler->GetFileState(fn.GetFullName()) != CEditHandler::unknown ||
+					!pEditHandler->AddFile(fn.GetFullName()))
+				{
+					if (!pServerItem->GetChildrenCount(false))
+					{
+						pQueueView->CommitChanges();
+						pQueueView->RemoveItem(pServerItem, true, true, true);
+					}
+
+					failedToRequeueAll = true;
+					delete pItem;
+					continue;
+				}
+			}
 
 			pItem->SetParent(pServerItem);
 			pQueueView->InsertItem(pServerItem, pItem);
@@ -177,4 +236,7 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 
 	if (!m_itemCount && m_pQueue->GetQueueView()->GetItemCount())
 		m_pQueue->SetSelection(0);
+
+	if (failedToRequeueAll)
+		wxMessageBox(_("Not all items could be requeued for viewing / editing."));
 }

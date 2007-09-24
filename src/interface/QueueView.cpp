@@ -22,6 +22,7 @@
 #include <wx/utils.h>
 #include <wx/progdlg.h>
 #include <wx/sound.h>
+#include "edithandler.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -489,7 +490,7 @@ CQueueView::~CQueueView()
 
 bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxString& localFile,
 						   const wxString& remoteFile, const CServerPath& remotePath,
-						   const CServer& server, const wxLongLong size)
+						   const CServer& server, const wxLongLong size, bool edit /*=false*/)
 {
 	CServerItem* pServerItem = CreateServerItem(server);
 
@@ -500,11 +501,13 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 			fileItem = new CFolderItem(pServerItem, queueOnly, localFile);
 		else
 			fileItem = new CFolderItem(pServerItem, queueOnly, remotePath, remoteFile);
+		wxASSERT(!edit);
 	}
 	else
 	{
 		fileItem = new CFileItem(pServerItem, queueOnly, download, localFile, remoteFile, remotePath, size);
 		fileItem->m_transferSettings.binary = ShouldUseBinaryMode(download ? remoteFile : wxFileName(localFile).GetFullName());
+		fileItem->m_edit = edit;
 	}
 
 	InsertItem(pServerItem, fileItem);
@@ -1053,6 +1056,14 @@ void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
 			const CFileItem* const pFileItem = (CFileItem*)data.pItem;
 			if (pFileItem->Download())
 				m_pMainFrame->GetState()->RefreshLocalFile(pFileItem->GetLocalFile());
+
+			if (pFileItem->m_edit && reason != retry && reason != reset)
+			{
+				CEditHandler* pEditHandler = CEditHandler::Get();
+				wxASSERT(pEditHandler);
+				wxFileName fn(pFileItem->GetLocalFile());
+				pEditHandler->FinishTransfer(reason == success, fn.GetFullName());
+			}
 		}
 
 		wxASSERT(data.pItem->IsActive());
@@ -1735,18 +1746,15 @@ void CQueueView::ImportQueue(TiXmlElement* pElement, bool updateSelections)
 				wxLongLong size = GetTextElementLongLong(pFile, "Size", -1);
 				unsigned int errorCount = GetTextElementInt(pFile, "ErrorCount");
 				unsigned int priority = GetTextElementInt(pFile, "Priority", priority_normal);
-				unsigned int itemState = GetTextElementInt(pFile, "ItemState", ItemState_Wait);
 				bool binary = GetTextElementInt(pFile, "TransferMode", 1) != 0;
 
 				CServerPath remotePath;
 				if (localFile != _T("") && remoteFile != _T("") && remotePath.SetSafePath(safeRemotePath) &&
-					size >= -1 && priority < PRIORITY_COUNT &&
-					(itemState == ItemState_Wait || itemState == ItemState_Error))
+					size >= -1 && priority < PRIORITY_COUNT)
 				{
 					CFileItem* fileItem = new CFileItem(pServerItem, true, download, localFile, remoteFile, remotePath, size);
 					fileItem->m_transferSettings.binary = binary;
 					fileItem->SetPriorityRaw((enum QueuePriority)priority);
-					fileItem->SetItemState((enum ItemState)itemState);
 					fileItem->m_errorCount = errorCount;
 					InsertItem(pServerItem, fileItem);
 				}

@@ -11,6 +11,7 @@
 #include "dndobjects.h"
 #include "Options.h"
 #include "recursive_operation.h"
+#include "edithandler.h"
 
 #ifdef __WXMSW__
 #include "shellapi.h"
@@ -283,6 +284,7 @@ BEGIN_EVENT_TABLE(CRemoteListView, wxListCtrl)
 	EVT_LIST_END_LABEL_EDIT(wxID_ANY, CRemoteListView::OnEndLabelEdit)
 	EVT_SIZE(CRemoteListView::OnSize)
 	EVT_LIST_BEGIN_DRAG(wxID_ANY, CRemoteListView::OnBeginDrag)
+	EVT_MENU(XRCID("ID_EDIT"), CRemoteListView::OnMenuEdit)
 END_EVENT_TABLE()
 
 CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView* pQueue)
@@ -1302,7 +1304,7 @@ void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
 	if (!pMenu)
 		return;
 
-	if (!m_pState->IsRemoteIdle())
+	if (!m_pState->IsRemoteConnected() || !m_pState->IsRemoteIdle())
 	{
 		pMenu->Enable(XRCID("ID_DOWNLOAD"), false);
 		pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
@@ -1310,6 +1312,7 @@ void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
 		pMenu->Enable(XRCID("ID_DELETE"), false);
 		pMenu->Enable(XRCID("ID_RENAME"), false);
 		pMenu->Enable(XRCID("ID_CHMOD"), false);
+		pMenu->Enable(XRCID("ID_EDIT"), false);
 	}
 	else if ((GetItemCount() && GetItemState(0, wxLIST_STATE_SELECTED)) ||
 		GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) == -1)
@@ -1319,9 +1322,21 @@ void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
 		pMenu->Enable(XRCID("ID_DELETE"), false);
 		pMenu->Enable(XRCID("ID_RENAME"), false);
 		pMenu->Enable(XRCID("ID_CHMOD"), false);
+		pMenu->Enable(XRCID("ID_EDIT"), false);
 	}
-	if (!m_pDirectoryListing)
-		pMenu->Enable(XRCID("ID_MKDIR"), false);
+	else
+	{
+		// Guaranteed to be at least one item selected
+		int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		if (GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1)
+			pMenu->Enable(XRCID("ID_EDIT"), false);
+		else
+		{
+			int index = GetItemIndex(item);
+			if (index != -1 && (*m_pDirectoryListing)[index].dir)
+				pMenu->Enable(XRCID("ID_EDIT"), false);
+		}
+	}
 
 	PopupMenu(pMenu);
 	delete pMenu;
@@ -2324,4 +2339,86 @@ void CRemoteListView::InitDateFormat()
 		m_timeFormat = m_dateFormat + _T(" ") + timeFormat.Mid(1);
 	else
 		m_timeFormat = m_dateFormat + _T(" %X");
+}
+
+void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
+{
+	if (!m_pState->IsRemoteConnected())
+	{
+		wxBell();
+		return;
+	}
+
+	long item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	if (item < 1)
+	{
+		wxBell();
+		return;
+	}
+
+	if (GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1)
+	{
+		wxBell();
+		return;
+	}
+
+	int index = GetItemIndex(item);
+	if (index == -1)
+	{
+		wxBell();
+		return;
+	}
+
+	const CDirentry entry = (*m_pDirectoryListing)[index];
+	if (entry.dir)
+	{
+		wxBell();
+		return;
+	}
+
+	CEditHandler* pEditHandler = CEditHandler::Get();
+	if (!pEditHandler)
+	{
+		wxBell();
+		return;
+	}
+
+	const wxString& localDir = pEditHandler->GetLocalDirectory();
+	if (localDir == _T(""))
+	{
+		wxMessageBox(_("Could not get temporary directory to download file into."), _("Cannot edit file"), wxICON_STOP);
+		return;
+	}
+
+	CEditHandler::fileState state = pEditHandler->GetFileState(entry.name);
+	switch (state)
+	{
+	case CEditHandler::download:
+	case CEditHandler::upload:
+	case CEditHandler::upload_and_remove:
+		wxMessageBox(_("A file with that name is already being transferred."), _("Cannot view / edit selected file"), wxICON_EXCLAMATION);
+		return;
+	case CEditHandler::removing:
+		if (!pEditHandler)
+		{
+			wxMessageBox(_("A file with that name is still being edited. Please close it and try again."), _("Selected file already still opened."), wxICON_EXCLAMATION);
+			return;
+		}
+		break;
+	case CEditHandler::edit:
+		wxMessageBox(_("A file with that name is already being edited. Discard old file and download the new file?"), _("Selected file already being edited"), wxICON_QUESTION | wxYES_NO);
+		break;
+	default:
+		break;
+	}
+
+	if (!pEditHandler->AddFile(entry.name))
+	{
+		wxFAIL;
+		wxBell();
+		return;
+	}
+
+	wxFileName fn = wxFileName(localDir, entry.name);
+	m_pQueue->QueueFile(false, true, fn.GetFullPath(), entry.name, m_pDirectoryListing->path, *m_pState->GetServer(), entry.size, true);
 }

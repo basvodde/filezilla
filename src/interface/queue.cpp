@@ -260,13 +260,13 @@ CFileItem::CFileItem(CServerItem* parent, bool queued, bool download, const wxSt
 	m_remoteFile = remoteFile;
 	m_remotePath = remotePath;
 	m_size = size;
-	m_itemState = ItemState_Wait;
 	m_queued = queued;
 	m_active = false;
 	m_errorCount = 0;
 	m_remove = false;
 	m_pEngineData = 0;
 	m_defaultFileExistsAction = -1;
+	m_edit = false;
 }
 
 CFileItem::~CFileItem()
@@ -286,16 +286,6 @@ void CFileItem::SetPriority(enum QueuePriority priority)
 void CFileItem::SetPriorityRaw(enum QueuePriority priority)
 {
 	m_priority = priority;
-}
-
-enum ItemState CFileItem::GetItemState() const
-{
-	return m_itemState;
-}
-
-void CFileItem::SetItemState(const enum ItemState itemState)
-{
-	m_itemState = itemState;
 }
 
 enum QueuePriority CFileItem::GetPriority() const
@@ -319,10 +309,9 @@ void CFileItem::SetActive(const bool active)
 
 void CFileItem::SaveItem(TiXmlElement* pElement) const
 {
-	if (GetItemState() == ItemState_Complete)
+	if (m_edit)
 		return;
 
-	//TODO: Save error items?
 	TiXmlElement file("File");
 
 	AddTextElement(&file, "LocalFile", m_localFile);
@@ -334,8 +323,6 @@ void CFileItem::SaveItem(TiXmlElement* pElement) const
 	if (m_errorCount)
 		AddTextElement(&file, "ErrorCount", m_errorCount);
 	AddTextElement(&file, "Priority", m_priority);
-	if (m_itemState)
-		AddTextElement(&file, "ItemState", m_itemState);
 	AddTextElement(&file, "TransferMode", m_transferSettings.binary ? _T("1") : _T("0"));
 
 	pElement->InsertEndChild(file);
@@ -362,10 +349,6 @@ CFolderItem::CFolderItem(CServerItem* parent, bool queued, const CServerPath& re
 
 void CFolderItem::SaveItem(TiXmlElement* pElement) const
 {
-	if (GetItemState() == ItemState_Complete ||
-		GetItemState() == ItemState_Error)
-		return;
-
 	TiXmlElement file("Folder");
 
 	if (m_download)
@@ -587,14 +570,11 @@ wxLongLong CServerItem::GetTotalSize(int& filesWithUnknownSize, int& queuedFiles
 			for (std::list<CFileItem*>::const_iterator iter = fileList.begin(); iter != fileList.end(); iter++)
 			{
 				const CFileItem* item = *iter;
-				if (item->GetItemState() != ItemState_Complete)
-				{
-					wxLongLong size = item->GetSize();
-					if (size >= 0)
-						totalSize += size;
-					else
-						filesWithUnknownSize++;
-				}
+				wxLongLong size = item->GetSize();
+				if (size >= 0)
+					totalSize += size;
+				else
+					filesWithUnknownSize++;
 			}
 		}
 	}

@@ -68,7 +68,7 @@ public:
 	virtual ~CQueueView();
 
 	bool QueueFile(const bool queueOnly, const bool download, const wxString& localFile, const wxString& remoteFile,
-				const CServerPath& remotePath, const CServer& server, const wxLongLong size);
+				const CServerPath& remotePath, const CServer& server, const wxLongLong size, bool edit = false);
 	bool QueueFiles(const bool queueOnly, const wxString& localPath, const CRemoteDataObject& dataObject);
 	bool QueueFiles(const std::list<t_newEntry> &entryList, bool queueOnly, bool download, CServerItem* pServerItem, const int defaultFileExistsAction);
 	bool QueueFolder(bool queueOnly, bool download, const wxString& localPath, const CServerPath& remotePath, const CServer& server);

@@ -33,6 +33,7 @@
 #if wxUSE_DISPLAY
 #include <wx/display.h>
 #endif
+#include "edithandler.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -336,6 +337,8 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	wxNavigationKeyEvent evt;
 	evt.SetDirection(true);
 	AddPendingEvent(evt);
+
+	CEditHandler::Create();
 }
 
 CMainFrame::~CMainFrame()

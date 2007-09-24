@@ -22,15 +22,6 @@ enum QueueItemType
 	QueueItemType_Status
 };
 
-#define ITEMSTATE_COUNT 4
-enum ItemState
-{
-	ItemState_Wait = 0,
-	ItemState_Active = 1,
-	ItemState_Complete = 2,
-	ItemState_Error = 3
-};
-
 enum TransferDirection
 {
 	both,
@@ -153,9 +144,6 @@ public:
 
 	wxString GetIndent() { return m_indent; }
 
-	enum ItemState GetItemState() const;
-	void SetItemState(const enum ItemState itemState);
-
 	virtual enum QueueItemType GetType() const { return QueueItemType_File; }
 
 	bool IsActive() const { return m_active; }
@@ -169,6 +157,7 @@ public:
 	bool m_queued;
 	int m_errorCount;
 	bool m_remove;
+	bool m_edit;
 
 	wxString m_statusMessage;
 
@@ -180,7 +169,6 @@ public:
 
 protected:
 	enum QueuePriority m_priority;
-	enum ItemState m_itemState;
 
 	bool m_download;
 	wxString m_localFile;
@@ -262,6 +250,7 @@ public:
 	CServerItem* CreateServerItem(const CServer& server);
 
 	virtual void InsertItem(CServerItem* pServerItem, CQueueItem* pItem);
+	virtual bool RemoveItem(CQueueItem* pItem, bool destroy, bool updateItemCount = true, bool updateSelections = true);
 
 	// Has to be called after adding or removing items. Also updates
 	// item count and selections.
@@ -273,8 +262,6 @@ protected:
 
 	// Gets item for given server
 	CServerItem* GetServerItem(const CServer& server);
-
-	virtual bool RemoveItem(CQueueItem* pItem, bool destroy, bool updateItemCount = true, bool updateSelections = true);
 
 	// Gets item with given index
 	CQueueItem* GetQueueItem(unsigned int item);
