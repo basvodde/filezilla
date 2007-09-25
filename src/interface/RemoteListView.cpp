@@ -2406,7 +2406,19 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 		}
 		break;
 	case CEditHandler::edit:
-		wxMessageBox(_("A file with that name is already being edited. Discard old file and download the new file?"), _("Selected file already being edited"), wxICON_QUESTION | wxYES_NO);
+		{
+			int res = wxMessageBox(_("A file with that name is already being edited. Discard old file and download the new file?"), _("Selected file already being edited"), wxICON_QUESTION | wxYES_NO);
+			if (res != wxYES)
+			{
+				wxBell();
+				return;
+			}
+			if (!pEditHandler->Remove(entry.name))
+			{
+				wxMessageBox(_("The selected file is still opened in some other program, please close it."), _("Selected file still being edited"), wxICON_EXCLAMATION);
+				return;
+			}
+		}
 		break;
 	default:
 		break;

@@ -39,7 +39,7 @@ wxString CEditHandler::GetLocalDirectory()
 		if (!wxMkdir(newDir, 0700))
 			return _T("");
 
-		m_localDir = newDir;
+		m_localDir = newDir + wxFileName::GetPathSeparator();
 		break;
 	} while (true);
 
@@ -163,9 +163,58 @@ std::list<CEditHandler::t_fileData>::const_iterator CEditHandler::GetFile(const 
 
 void CEditHandler::FinishTransfer(bool successful, const wxString& fileName)
 {
-	std::list<t_fileData>::const_iterator iter = GetFile(fileName);
+	std::list<t_fileData>::iterator iter = GetFile(fileName);
 	if (iter == m_fileDataList.end())
 		return;
 
-	wxRemoveFile(m_localDir + fileName);
+	wxASSERT(iter->state == download || iter->state == upload || iter->state == upload_and_remove);
+
+	switch (iter->state)
+	{
+	case upload_and_remove:
+		if (wxFileName::FileExists(m_localDir + fileName) && !wxRemoveFile(m_localDir + fileName))
+			iter->state = removing;
+		else
+			m_fileDataList.erase(iter);
+		break;
+	case upload:
+		if (wxFileName::FileExists(m_localDir + fileName))
+			iter->state = edit;
+		else
+			m_fileDataList.erase(iter);
+		break;
+	case download:
+		if (wxFileName::FileExists(m_localDir + fileName))
+		{
+			iter->state = edit;
+			if (StartEditing(*iter))
+				break;
+		}
+		if (wxFileName::FileExists(m_localDir + fileName) && !wxRemoveFile(m_localDir + fileName))
+			iter->state = removing;
+		else
+			m_fileDataList.erase(iter);
+		break;
+	}
+}
+
+bool CEditHandler::StartEditing(t_fileData& data)
+{
+	wxASSERT(data.state == edit);
+
+	wxFileName fn(m_localDir, data.name);
+	wxFileType* pType = wxTheMimeTypesManager->GetFileTypeFromExtension(fn.GetExt());
+	if (!pType)
+		return false;
+
+	wxString cmd;
+	if (!pType->GetOpenCommand(&cmd, wxFileType::MessageParameters(m_localDir + data.name)))
+		return false;
+	if (cmd == _T(""))
+		return false;
+	
+	if (!wxExecute(cmd))
+		return false;
+
+	return true;
 }
