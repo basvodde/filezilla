@@ -246,7 +246,11 @@ void CState::SetServer(const CServer* server)
 	if (server)
 		m_pServer = new CServer(*server);
 	else
+	{
+		if (m_pServer)
+			m_pMainFrame->SetTitle(_T("FileZilla"));
 		m_pServer = 0;
+	}
 }
 
 const CServer* CState::GetServer() const
@@ -276,6 +280,8 @@ bool CState::Connect(const CServer& server, bool askBreak, const CServerPath& pa
 	
 	COptions::Get()->SetLastServer(server);
 	COptions::Get()->SetOption(OPTION_LASTSERVERPATH, path.GetSafePath());
+
+	m_pMainFrame->SetTitle(server.FormatServer() + _T(" - FileZilla"));
 
 	return true;
 }
