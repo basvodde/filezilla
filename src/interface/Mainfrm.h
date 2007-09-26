@@ -131,9 +131,9 @@ protected:
 	void OnGetFocus(wxFocusEvent& event);
 	void OnChar(wxKeyEvent& event);
 	void OnMoveEvent(wxMoveEvent& event);
+	void OnActivate(wxActivateEvent& event);
 #ifdef __WXMSW__
 	void OnSizePost(wxCommandEvent& event);
-	void OnActivate(wxActivateEvent& event);
 
 	bool m_pendingPostSizing;
 #endif
