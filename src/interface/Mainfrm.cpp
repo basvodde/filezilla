@@ -104,6 +104,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_CHAR_HOOK(CMainFrame::OnChar)
 	EVT_MENU(XRCID("ID_MENU_EDIT_FILTERS"), CMainFrame::OnFilter)
 	EVT_MOVE(CMainFrame::OnMoveEvent)
+	EVT_ACTIVATE(CMainFrame::OnActivate)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
@@ -338,7 +339,7 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	evt.SetDirection(true);
 	AddPendingEvent(evt);
 
-	CEditHandler::Create();
+	CEditHandler::Create()->SetQueue(m_pQueueView);
 }
 
 CMainFrame::~CMainFrame()
@@ -348,6 +349,14 @@ CMainFrame::~CMainFrame()
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	delete m_pUpdateWizard;
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
+
+	CEditHandler* pEditHandler = CEditHandler::Get();
+	if (pEditHandler)
+	{
+		// This might leave temporary files behind,
+		// edit handler should clean them on next startup
+		pEditHandler->Release();
+	}
 }
 
 void CMainFrame::OnSize(wxSizeEvent &event)
@@ -1820,4 +1829,17 @@ void CMainFrame::OnMoveEvent(wxMoveEvent& event)
 		m_lastWindowPosition = GetPosition();
 		m_lastWindowSize = GetClientSize();
 	}
+}
+
+void CMainFrame::OnActivate(wxActivateEvent& event)
+{
+	// According to the wx docs we should do this
+	event.Skip();
+
+	if (!event.GetActive())
+		return;
+
+	CEditHandler* pEditHandler = CEditHandler::Get();
+	if (pEditHandler)
+		pEditHandler->CheckForModifications();
 }

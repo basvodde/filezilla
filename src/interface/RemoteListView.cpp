@@ -2424,7 +2424,7 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 		break;
 	}
 
-	if (!pEditHandler->AddFile(entry.name))
+	if (!pEditHandler->AddFile(entry.name, m_pDirectoryListing->path, *m_pState->GetServer()))
 	{
 		wxFAIL;
 		wxBell();

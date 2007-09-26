@@ -1,7 +1,15 @@
 #include "FileZilla.h"
 #include "edithandler.h"
+#include "dialogex.h"
+#include "filezillaapp.h"
+#include "queue.h"
 
 CEditHandler* CEditHandler::m_pEditHandler = 0;
+
+CEditHandler::CEditHandler()
+{
+	m_pQueue = 0;
+}
 
 CEditHandler* CEditHandler::Create()
 {
@@ -71,7 +79,7 @@ int CEditHandler::GetFileCount() const
 	return m_fileDataList.size();
 }
 
-bool CEditHandler::AddFile(const wxString& fileName)
+bool CEditHandler::AddFile(const wxString& fileName, const CServerPath& remotePath, const CServer& server)
 {
 	wxASSERT(GetFileState(fileName) == unknown);
 	if (GetFileState(fileName) != unknown)
@@ -80,6 +88,8 @@ bool CEditHandler::AddFile(const wxString& fileName)
 	t_fileData data;
 	data.name = fileName;
 	data.state = download;
+	data.remotePath = remotePath;
+	data.server = server;
 	m_fileDataList.push_back(data);
 
 	return true;
@@ -203,6 +213,9 @@ bool CEditHandler::StartEditing(t_fileData& data)
 	wxASSERT(data.state == edit);
 
 	wxFileName fn(m_localDir, data.name);
+
+	data.modificationTime = fn.GetModificationTime();
+
 	wxFileType* pType = wxTheMimeTypesManager->GetFileTypeFromExtension(fn.GetExt());
 	if (!pType)
 		return false;
@@ -217,4 +230,53 @@ bool CEditHandler::StartEditing(t_fileData& data)
 		return false;
 
 	return true;
+}
+
+void CEditHandler::CheckForModifications()
+{
+	static bool insideCheckForModifications = false;
+	if (insideCheckForModifications)
+		return;
+
+	insideCheckForModifications = true;
+
+checkmodifications:
+	for (std::list<t_fileData>::iterator iter = m_fileDataList.begin(); iter != m_fileDataList.end(); iter++)
+	{
+		if (iter->state != edit)
+			continue;
+
+		wxFileName fn(m_localDir, iter->name);
+		if (!fn.FileExists())
+		{
+			m_fileDataList.erase(iter);
+			
+			// Evil goto. Imo the next C++ standard needs a comefrom keyword.
+			goto checkmodifications;
+		}
+
+		wxDateTime mtime = fn.GetModificationTime();
+		if (!mtime.IsValid())
+			continue;
+
+		if (iter->modificationTime.IsValid() & iter->modificationTime >= mtime)
+			continue;
+		
+		// File has changed, ask user what to do
+		wxDialogEx dlg;
+		if (!dlg.Load(wxTheApp->GetTopWindow(), _T("ID_CHANGEDFILE")))
+			continue;
+		
+		dlg.ShowModal();
+		//TODO: error checking
+
+		iter->state = upload;
+		iter->modificationTime = mtime;
+
+		wxASSERT(m_pQueue);
+		wxULongLong size = fn.GetSize();
+		m_pQueue->QueueFile(false, false, m_localDir + iter->name, iter->name, iter->remotePath, iter->server, wxLongLong(size.GetHi(), size.GetLo()), true);
+	}
+
+	insideCheckForModifications = false;
 }

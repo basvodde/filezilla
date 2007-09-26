@@ -3,6 +3,7 @@
 
 // Handles all aspects about remote file viewing/editing
 
+class CQueueView;
 class CEditHandler
 {
 public:
@@ -32,7 +33,7 @@ public:
 
 	// Adds the file that doesn't exist yet. (Has to be in unknown state)
 	// The initial state will be download
-	bool AddFile(const wxString& fileName);
+	bool AddFile(const wxString& fileName, const CServerPath& remotePath, const CServer& server);
 
 	// Tries to unedit and remove file
 	bool Remove(const wxString& fileName);
@@ -40,8 +41,12 @@ public:
 
 	void FinishTransfer(bool successful, const wxString& fileName);
 
+	void CheckForModifications();
+
+	void SetQueue(CQueueView* pQueue) { m_pQueue = pQueue; }
+
 protected:
-	CEditHandler() { }
+	CEditHandler();
 	virtual ~CEditHandler() { }
 
 	static CEditHandler* m_pEditHandler;
@@ -53,12 +58,18 @@ protected:
 		wxString name;
 		fileState state;
 		wxDateTime modificationTime;
+		CServerPath remotePath;
+		CServer server;
 	};
+
+	bool StartEditing(t_fileData &data);
 
 	std::list<t_fileData> m_fileDataList;
 
 	std::list<t_fileData>::iterator GetFile(const wxString& fileName);
 	std::list<t_fileData>::const_iterator GetFile(const wxString& fileName) const;
+
+	CQueueView* m_pQueue;
 };
 
 #endif //__EDITHANDLER_H__

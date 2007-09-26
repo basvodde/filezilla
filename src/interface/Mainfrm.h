@@ -133,7 +133,7 @@ protected:
 	void OnMoveEvent(wxMoveEvent& event);
 #ifdef __WXMSW__
 	void OnSizePost(wxCommandEvent& event);
-
+	void OnActivate(wxActivateEvent& event);
 
 	bool m_pendingPostSizing;
 #endif

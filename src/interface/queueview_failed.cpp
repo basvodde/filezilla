@@ -149,7 +149,7 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 					}
 					wxFileName fn(pFileItem->GetLocalFile());
 					if (pEditHandler->GetFileState(fn.GetFullName()) != CEditHandler::unknown ||
-						!pEditHandler->AddFile(fn.GetFullName()))
+						!pEditHandler->AddFile(fn.GetFullName(), pFileItem->GetRemotePath(), pServerItem->GetServer()))
 					{
 						failedToRequeueAll = true;
 						delete pFileItem;
@@ -208,7 +208,7 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 				}
 				wxFileName fn(pFileItem->GetLocalFile());
 				if (pEditHandler->GetFileState(fn.GetFullName()) != CEditHandler::unknown ||
-					!pEditHandler->AddFile(fn.GetFullName()))
+					!pEditHandler->AddFile(fn.GetFullName(), pFileItem->GetRemotePath(), pServerItem->GetServer()))
 				{
 					if (!pServerItem->GetChildrenCount(false))
 					{

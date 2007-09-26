@@ -3890,4 +3890,57 @@
       </object>
     </object>
   </object>
+  <object class="wxDialog" name="ID_CHANGEDFILE">
+    <title>File has changed</title>
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxFlexGridSizer">
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>A file previously opened has been changed:</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText" name="ID_FILENAME">
+              <label>&lt;filename&gt;</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>Upload this file back to the server?</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxCheckBox" name="ID_DELETE">
+              <label>&amp;Finish editing and delete local file</label>
+            </object>
+          </object>
+          <cols>1</cols>
+          <vgap>5</vgap>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxHORIZONTAL</orient>
+              <object class="sizeritem">
+                <object class="wxButton" name="wxID_YES">
+                  <label>&amp;Yes</label>
+                  <default>1</default>
+                </object>
+                <flag>wxRIGHT</flag>
+                <border>5</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxButton" name="wxID_NO">
+                  <label>&amp;No</label>
+                </object>
+              </object>
+            </object>
+            <flag>wxALIGN_CENTRE_HORIZONTAL</flag>
+          </object>
+        </object>
+        <flag>wxALL</flag>
+        <border>5</border>
+      </object>
+    </object>
+  </object>
 </resource>
