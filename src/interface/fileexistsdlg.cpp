@@ -24,7 +24,7 @@ bool CFileExistsDlg::Create(wxWindow* parent)
 	GetSizer()->Fit(this);
 	GetSizer()->SetSizeHints(this);
 	
-	return TRUE;
+	return true;
 }
 
 void CFileExistsDlg::CreateControls()
