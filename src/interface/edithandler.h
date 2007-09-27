@@ -4,7 +4,7 @@
 // Handles all aspects about remote file viewing/editing
 
 class CQueueView;
-class CEditHandler
+class CEditHandler : protected wxEvtHandler
 {
 public:
 	enum fileState
@@ -64,12 +64,19 @@ protected:
 
 	bool StartEditing(t_fileData &data);
 
+	void SetTimerState();
+
 	std::list<t_fileData> m_fileDataList;
 
 	std::list<t_fileData>::iterator GetFile(const wxString& fileName);
 	std::list<t_fileData>::const_iterator GetFile(const wxString& fileName) const;
 
 	CQueueView* m_pQueue;
+
+	wxTimer m_timer;
+
+	DECLARE_EVENT_TABLE()
+	void OnTimerEvent(wxTimerEvent& event);
 };
 
 #endif //__EDITHANDLER_H__

@@ -4,11 +4,41 @@
 #include "filezillaapp.h"
 #include "queue.h"
 
+class CChangedFileDialog : public wxDialogEx
+{
+	DECLARE_EVENT_TABLE();
+	void OnYes(wxCommandEvent& event);
+	void OnNo(wxCommandEvent& event);
+};
+
+BEGIN_EVENT_TABLE(CChangedFileDialog, wxDialogEx)
+EVT_BUTTON(wxID_YES, CChangedFileDialog::OnYes)
+EVT_BUTTON(wxID_NO, CChangedFileDialog::OnNo)
+END_EVENT_TABLE()
+
+void CChangedFileDialog::OnYes(wxCommandEvent& event)
+{
+	EndDialog(wxID_YES);
+}
+
+void CChangedFileDialog::OnNo(wxCommandEvent& event)
+{
+	EndDialog(wxID_NO);
+}
+
+//-------------
+
+BEGIN_EVENT_TABLE(CEditHandler, wxEvtHandler)
+EVT_TIMER(wxID_ANY, CEditHandler::OnTimerEvent)
+END_EVENT_TABLE()
+
 CEditHandler* CEditHandler::m_pEditHandler = 0;
 
 CEditHandler::CEditHandler()
 {
 	m_pQueue = 0;
+
+	m_timer.SetOwner(this);
 }
 
 CEditHandler* CEditHandler::Create()
@@ -206,6 +236,8 @@ void CEditHandler::FinishTransfer(bool successful, const wxString& fileName)
 			m_fileDataList.erase(iter);
 		break;
 	}
+
+	SetTimerState();
 }
 
 bool CEditHandler::StartEditing(t_fileData& data)
@@ -263,20 +295,60 @@ checkmodifications:
 			continue;
 		
 		// File has changed, ask user what to do
-		wxDialogEx dlg;
+		CChangedFileDialog dlg;
 		if (!dlg.Load(wxTheApp->GetTopWindow(), _T("ID_CHANGEDFILE")))
 			continue;
 		
-		dlg.ShowModal();
-		//TODO: error checking
+		dlg.SetLabel(XRCID("ID_FILENAME"), iter->name);
+		
+		int res = dlg.ShowModal();
 
-		iter->state = upload;
-		iter->modificationTime = mtime;
+		const bool remove = XRCCTRL(dlg, "ID_DELETE", wxCheckBox)->IsChecked();
+		
+		if (res == wxID_YES)
+		{
+			iter->state = remove ? upload_and_remove : upload;
+			iter->modificationTime = mtime;
 
-		wxASSERT(m_pQueue);
-		wxULongLong size = fn.GetSize();
-		m_pQueue->QueueFile(false, false, m_localDir + iter->name, iter->name, iter->remotePath, iter->server, wxLongLong(size.GetHi(), size.GetLo()), true);
+			wxASSERT(m_pQueue);
+			wxULongLong size = fn.GetSize();
+			m_pQueue->QueueFile(false, false, m_localDir + iter->name, iter->name, iter->remotePath, iter->server, wxLongLong(size.GetHi(), size.GetLo()), true);
+		}
+		else
+		{
+			if (!fn.FileExists() || wxRemoveFile(fn.GetFullPath()))
+			{
+				m_fileDataList.erase(iter);
+				goto checkmodifications;
+			}
+
+			iter->state = removing;
+		}
 	}
 
+	SetTimerState();
+
 	insideCheckForModifications = false;
+}
+
+void CEditHandler::OnTimerEvent(wxTimerEvent& event)
+{
+	CheckForModifications();
+}
+
+void CEditHandler::SetTimerState()
+{
+	bool editing = false;
+	for (std::list<t_fileData>::const_iterator iter = m_fileDataList.begin(); iter != m_fileDataList.end(); iter++)
+	{
+		if (iter->state == edit)
+			editing = true;
+	}
+	if (m_timer.IsRunning())
+	{
+		if (!editing)
+			m_timer.Stop();
+	}
+	else if (editing)
+		m_timer.Start(15000);
 }
