@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla 3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-08-26 16:04+0200\n"
-"PO-Revision-Date: 2007-08-19 23:22+0900\n"
+"POT-Creation-Date: 2007-09-27 15:06+0200\n"
+"PO-Revision-Date: 2007-09-27 01:50+0900\n"
 "Last-Translator: Kazunari INOUE <inoue@jseek.org>\n"
 "Language-Team: Kazunari INOUE <inoue@jseek.org>\n"
 "MIME-Version: 1.0\n"
@@ -18,17 +18,17 @@ msgstr ""
 "X-Poedit-Country: JAPAN\n"
 "X-Poedit-Bookmarks: 466,471,-1,-1,-1,-1,-1,-1,-1,-1\n"
 
-#: ../../locales/../src/interface/statuslinectrl.cpp:49
-#: ../../locales/../src/interface/statuslinectrl.cpp:98
+#: ../../locales/../src/interface/statuslinectrl.cpp:53
+#: ../../locales/../src/interface/statuslinectrl.cpp:136
 msgid "%H:%M:%S elapsed"
 msgstr "%H:%M:%S 経過"
 
-#: ../../locales/../src/interface/statuslinectrl.cpp:53
-#: ../../locales/../src/interface/statuslinectrl.cpp:122
+#: ../../locales/../src/interface/statuslinectrl.cpp:57
+#: ../../locales/../src/interface/statuslinectrl.cpp:161
 msgid "%H:%M:%S left"
 msgstr "%H:%M:%S 経過"
 
-#: ../../locales/../src/interface/QueueView.cpp:2065
+#: ../../locales/../src/interface/QueueView.cpp:2206
 #, c-format
 msgid "%d files added to queue"
 msgstr "%d 個のファイルをキューへ追加"
@@ -48,30 +48,30 @@ msgstr "%s - まだ適切ではありません"
 msgid "%s bytes"
 msgstr "%s バイト"
 
-#: ../../locales/../src/interface/statuslinectrl.cpp:114
+#: ../../locales/../src/interface/statuslinectrl.cpp:153
 #: ../../locales/../src/interface/updatewizard.cpp:651
 #, c-format
 msgid "%s bytes (%d B/s)"
 msgstr "%s バイト (%d B/s)"
 
-#: ../../locales/../src/interface/statuslinectrl.cpp:112
+#: ../../locales/../src/interface/statuslinectrl.cpp:151
 #: ../../locales/../src/interface/updatewizard.cpp:649
 #, c-format
 msgid "%s bytes (%d.%d KB/s)"
 msgstr "%s bytes (%d.%d KB/s)"
 
-#: ../../locales/../src/interface/statuslinectrl.cpp:110
+#: ../../locales/../src/interface/statuslinectrl.cpp:149
 #: ../../locales/../src/interface/updatewizard.cpp:647
 #, c-format
 msgid "%s bytes (%d.%d MB/s)"
 msgstr "%s バイト (%d.%d MB/s)"
 
-#: ../../locales/../src/interface/statuslinectrl.cpp:132
+#: ../../locales/../src/interface/statuslinectrl.cpp:171
 #, c-format
 msgid "%s bytes (? B/s)"
 msgstr "%s バイト (? B/s)"
 
-#: ../../locales/../src/interface/FileZilla.cpp:735
+#: ../../locales/../src/interface/FileZilla.cpp:731
 #, c-format
 msgid ""
 "%s could not be found. Without this component of FileZilla, SFTP will not "
@@ -92,7 +92,7 @@ msgstr ""
 msgid "%s with %d bits"
 msgstr "%s は %d bitsともなう"
 
-#: resources.h:403
+#: resources.h:428
 msgid "&About..."
 msgstr "FilaZillaについて...(&A)"
 
@@ -100,11 +100,11 @@ msgstr "FilaZillaについて...(&A)"
 msgid "&Account:"
 msgstr "アカウント(&A):"
 
-#: resources.h:97 resources.h:154 resources.h:471
+#: resources.h:97 resources.h:154 resources.h:506
 msgid "&Active"
 msgstr "アクティブ(&A)"
 
-#: resources.h:407 resources.h:417 resources.h:452
+#: resources.h:432 resources.h:442 resources.h:487
 msgid "&Add files to queue"
 msgstr "ファイルをキューに加える(&A)"
 
@@ -112,7 +112,7 @@ msgstr "ファイルをキューに加える(&A)"
 msgid "&Always trust certificate in future sessions."
 msgstr "将来にわたって常に証明書を信用する(&A)"
 
-#: resources.h:236
+#: resources.h:254
 msgid "&Always trust this host, add this key to the cache"
 msgstr "常にこのホストを信用し、このキーをキャッシュに加える(&A)"
 
@@ -120,7 +120,7 @@ msgstr "常にこのホストを信用し、このキーをキャッシュに加
 msgid "&Always use this action"
 msgstr "常にこのアクションを利用する(&A)"
 
-#: resources.h:320 resources.h:339
+#: resources.h:338 resources.h:357
 msgid "&Ask for action"
 msgstr "動作を尋ねる(&A)"
 
@@ -132,13 +132,17 @@ msgstr "自動(&A)"
 msgid "&Autodetect"
 msgstr "自動判別(&A)"
 
-#: resources.h:449
+#: resources.h:484
 msgid "&Automatically remove successful transfers"
 msgstr "自動的に成功した転送を削除(&A)"
 
 #: resources.h:129
 msgid "&Binary"
 msgstr "バイナリ(&B)"
+
+#: resources.h:196
+msgid "&Binary prefixes using SI symbols. (e.g. 1 KB = 1024 bytes.)"
+msgstr "２の乗数は10進表記を使います.(たとえば 1 KB = 1024 bytes.)"
 
 #: resources.h:89
 msgid "&Browse..."
@@ -148,72 +152,88 @@ msgstr "ブラウズ...(&B)"
 msgid "&Burst tolerance:"
 msgstr "耐性破裂(&B):"
 
-#: resources.h:63 resources.h:121 resources.h:125 resources.h:194
-#: resources.h:238 resources.h:250
+#: resources.h:63 resources.h:121 resources.h:125 resources.h:212
+#: resources.h:256 resources.h:268
 msgid "&Cancel"
 msgstr "キャンセル(&C)"
 
-#: resources.h:302
+#: resources.h:320
 msgid "&Check for beta versions of FileZilla"
 msgstr "FileZillaのベータバージョンをチェック(&C)"
 
-#: resources.h:391
+#: resources.h:416
 msgid "&Clear private data..."
-msgstr "個人データのの除去...(&C)"
+msgstr "個人データの除去...(&C)"
+
+#: resources.h:464
+msgid "&Close FileZilla"
+msgstr "FileZillaを閉じる(&C)"
 
 #: resources.h:109
 msgid "&Connect"
 msgstr "接続(&C)"
 
-#: resources.h:271
+#: resources.h:289
 msgid "&Copy"
 msgstr "コピー(&C)"
 
-#: resources.h:438
+#: resources.h:473
 msgid "&Copy to clipboard"
 msgstr "クリップボードにコピー(&C)"
 
-#: resources.h:441
+#: resources.h:476
 msgid "&Crash"
 msgstr "クラッシュ(&C)"
 
-#: resources.h:409 resources.h:419 resources.h:454
+#: resources.h:434 resources.h:445 resources.h:489
 msgid "&Create directory"
 msgstr "ディレクトリを作る(&C)"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:437
+#: ../../locales/../src/interface/Mainfrm.cpp:516
 msgid "&Debug"
 msgstr "デバッグ(&D)"
 
-#: resources.h:183
+#: resources.h:201
 msgid "&Debug information in message log:"
 msgstr "メッセージログのデバッグ情報"
 
-#: resources.h:393 resources.h:430
+#: resources.h:197
+msgid "&Decimal prefixes using SI symbols (e.g. 1 KB = 1000 bytes)"
+msgstr "10の乗数は10進表記を使います.(たとえば 1 KB = 1024 bytes.)"
+
+#: resources.h:418 resources.h:456
 msgid "&Default file exists action..."
 msgstr "ファイル存在時の標準動作..."
 
-#: resources.h:69 resources.h:253 resources.h:269
+#: resources.h:69 resources.h:271 resources.h:287
 msgid "&Delete"
 msgstr "削除(&D)"
 
-#: resources.h:396
+#: resources.h:421
 msgid "&Disconnect"
 msgstr "切断(&D)"
+
+#: resources.h:465
+msgid "&Disconnect from server"
+msgstr "サーバから切断(&D)"
+
+#: resources.h:194
+msgid "&Display size in bytes"
+msgstr "バイトにおけるサイズ表示(&D)"
 
 #: ../../locales/../src/interface/conditionaldialog.cpp:22
 msgid "&Don't show this dialog again."
 msgstr "再度このダイアログを見せない"
 
-#: resources.h:415 resources.h:450
+#: resources.h:440 resources.h:485
 msgid "&Download"
 msgstr "ダウンロード(&D)"
 
-#: resources.h:384
+#: resources.h:409
 msgid "&Edit"
 msgstr "編集(&E)"
 
-#: resources.h:255
+#: resources.h:273
 msgid "&Edit filters..."
 msgstr "フィルタを編集...(&E)"
 
@@ -225,19 +245,19 @@ msgstr "自動アップデートチェックを有効にする(&E)"
 msgid "&Encoding:"
 msgstr "エンコーディング(&E)"
 
-#: resources.h:437
+#: resources.h:472
 msgid "&Enter custom command..."
 msgstr "カスタムコマンドを入力...(&E)"
 
-#: resources.h:200
+#: resources.h:218
 msgid "&Execute"
 msgstr "実行(&E)"
 
-#: resources.h:366
+#: resources.h:384
 msgid "&Export Site Manager entries"
 msgstr "サイトマネージャ エントリの書き出し(&E)"
 
-#: resources.h:389
+#: resources.h:414
 msgid "&Export..."
 msgstr "書き出し...(&E)"
 
@@ -245,43 +265,55 @@ msgstr "書き出し...(&E)"
 msgid "&Fall back to active mode"
 msgstr "アクティブモードに戻る(&F)"
 
-#: resources.h:379
+#: resources.h:404
 msgid "&File"
 msgstr "ファイル(&F)"
 
-#: resources.h:425 resources.h:460
+#: resources.h:451 resources.h:495
 msgid "&File Attributes..."
 msgstr "ファイル属性...(&F)"
 
-#: resources.h:252
+#: resources.h:270
 msgid "&Filter sets:"
 msgstr "フィルタ設定(&F)"
 
-#: resources.h:267
+#: resources.h:285
 msgid "&Filters:"
 msgstr "フィルタ(&F):"
 
-#: resources.h:400
+#: resources.h:401
+msgid "&Finish editing and delete local file"
+msgstr ""
+
+#: resources.h:425
 msgid "&Help"
 msgstr "ヘルプ(&H)"
 
-#: resources.h:432
+#: resources.h:458
 msgid "&Highest"
 msgstr "最高(&H)"
 
-#: resources.h:289
+#: resources.h:307
 msgid "&Highest available port:"
 msgstr "利用可能な最高のポート(&H)"
 
-#: resources.h:72 resources.h:509
+#: resources.h:72 resources.h:544
 msgid "&Host:"
 msgstr "ホスト(&H):"
 
-#: resources.h:390
+#: resources.h:195
+msgid "&IEC binary prefixes (e.g. 1 KiB = 1024 bytes)"
+msgstr "IECの２の乗数 (たとえば 1 KiB = 1024 bytes)"
+
+#: resources.h:183
+msgid "&ISO 8601 (example: 2007-09-15)"
+msgstr "ISO 8601 (例: 2007-09-15)(&I)"
+
+#: resources.h:415
 msgid "&Import..."
 msgstr "取り込み...(&I)"
 
-#: resources.h:286
+#: resources.h:304
 msgid "&Limit local ports used by FileZilla"
 msgstr "FileZillaによって使われるローカルポートを制限する(&L)"
 
@@ -293,7 +325,7 @@ msgstr "同時接続の数を制限(&L)"
 msgid "&Logontype:"
 msgstr "ログオンの種類(&L):"
 
-#: resources.h:435
+#: resources.h:461
 msgid "&Low"
 msgstr "低い(&L)"
 
@@ -301,11 +333,11 @@ msgstr "低い(&L)"
 msgid "&Maximum number of connections:"
 msgstr "最大接続数(&M):"
 
-#: resources.h:387
+#: resources.h:412
 msgid "&Network configuration wizard..."
 msgstr "ネットワーク設定ウィザード(&N)"
 
-#: resources.h:268
+#: resources.h:286
 msgid "&New"
 msgstr "新規(&N)"
 
@@ -317,11 +349,16 @@ msgstr "新しいサイト(&N)"
 msgid "&New version available!"
 msgstr "新しいバージョンが利用可能! (&N)"
 
-#: resources.h:434
+#: resources.h:403
+#, fuzzy
+msgid "&No"
+msgstr "いいえ"
+
+#: resources.h:460
 msgid "&Normal"
 msgstr "通常(&N)"
 
-#: resources.h:209
+#: resources.h:227
 msgid "&Numeric value:"
 msgstr "数値(&N):"
 
@@ -329,7 +366,7 @@ msgstr "数値(&N):"
 msgid "&OK"
 msgstr "了解(&O)"
 
-#: resources.h:54 resources.h:321 resources.h:340
+#: resources.h:54 resources.h:339 resources.h:358
 msgid "&Overwrite"
 msgstr "上書き(&O)"
 
@@ -341,23 +378,27 @@ msgstr "パッシブ(&P)"
 msgid "&Password:"
 msgstr "パスワード(&P):"
 
-#: resources.h:73 resources.h:513
+#: resources.h:468
+msgid "&Play sound"
+msgstr "音を鳴らす(&P)"
+
+#: resources.h:73 resources.h:548
 msgid "&Port:"
 msgstr "ポート(&P):"
 
-#: resources.h:375
+#: resources.h:393
 msgid "&Queue"
 msgstr "キュー(&Q)"
 
-#: resources.h:515
+#: resources.h:550
 msgid "&Quickconnect"
 msgstr "クイック接続(&Q)"
 
-#: resources.h:198
+#: resources.h:216
 msgid "&Read"
 msgstr "読む(&R)"
 
-#: resources.h:395
+#: resources.h:420
 msgid "&Reconnect"
 msgstr "再接続(&R)"
 
@@ -369,22 +410,26 @@ msgstr "このセッションのパスワードを記録する(&R)"
 msgid "&Remove"
 msgstr "削除(&R)"
 
-#: resources.h:429
+#: resources.h:455
 msgid "&Remove selected"
 msgstr "選択されたものを削除(&R)"
 
-#: resources.h:68 resources.h:270 resources.h:413 resources.h:423
-#: resources.h:458
+#: resources.h:68 resources.h:288 resources.h:438 resources.h:449
+#: resources.h:493
 msgid "&Rename"
 msgstr "名前の変更(&R)"
 
-#: resources.h:508
+#: resources.h:543
 msgid "&Restart Wizard"
 msgstr "ウィザードを再起動(&F)"
 
-#: resources.h:56 resources.h:323 resources.h:342
+#: resources.h:56 resources.h:341 resources.h:360
 msgid "&Resume"
 msgstr "レジューム(&R)"
+
+#: resources.h:466
+msgid "&Run command..."
+msgstr "コマンドを実行(&R)"
 
 #: resources.h:151
 msgid "&Run configuration wizard now..."
@@ -394,7 +439,7 @@ msgstr "今すぐ設定ウィザードを起動...(&R)"
 msgid "&Run update check now..."
 msgstr "今すぐアップデートチェックを実行する..."
 
-#: resources.h:254
+#: resources.h:272
 msgid "&Save as..."
 msgstr "名前をつけて保存(&S)"
 
@@ -402,23 +447,27 @@ msgstr "名前をつけて保存(&S)"
 msgid "&Select language:"
 msgstr "言語の選択(&S):"
 
-#: resources.h:394
+#: resources.h:419
 msgid "&Server"
 msgstr "サーバ(&S)"
 
-#: resources.h:374
+#: resources.h:392
 msgid "&Settings"
 msgstr "設定(&S)"
 
-#: resources.h:385
+#: resources.h:410
 msgid "&Settings..."
 msgstr "設定...(&S)"
 
-#: resources.h:182
+#: resources.h:200
 msgid "&Show debug menu"
 msgstr "デバッグメニューの表示(&S)"
 
-#: resources.h:380
+#: resources.h:467
+msgid "&Show message"
+msgstr "メッセージを表示(&S)"
+
+#: resources.h:405
 msgid "&Site Manager..."
 msgstr "サイトマネージャ...(&S)"
 
@@ -438,7 +487,7 @@ msgstr "テスト(&R)"
 msgid "&Theme:"
 msgstr "テーマ(&T):"
 
-#: resources.h:392
+#: resources.h:417
 msgid "&Transfer"
 msgstr "転送(&T)"
 
@@ -452,11 +501,11 @@ msgstr ""
 "ドットファイル(ファイル名がドットで始まっているもの)をアスキーファイルとして"
 "扱う(&T)"
 
-#: resources.h:248
+#: resources.h:266
 msgid "&Update cached key for this host"
 msgstr "キャッシュされたこのホストのキーを更新(&U)"
 
-#: resources.h:405
+#: resources.h:430
 msgid "&Upload"
 msgstr "アップロード(&U)"
 
@@ -464,11 +513,15 @@ msgstr "アップロード(&U)"
 msgid "&Use the server's external IP address instead"
 msgstr "代わりにサーバの外部IPアドレスを使う(&U)"
 
+#: resources.h:198
+msgid "&Use thousands separator"
+msgstr "無数の区切りを使う(&U)"
+
 #: resources.h:81
 msgid "&User:"
 msgstr "ユーザ(&U):"
 
-#: resources.h:511
+#: resources.h:546
 msgid "&Username:"
 msgstr "ユーザ名(&U):"
 
@@ -477,21 +530,30 @@ msgstr "ユーザ名(&U):"
 msgid "&Version %s"
 msgstr "バージョン %s (&V)"
 
-#: resources.h:199
+#: resources.h:444
+msgid "&View / Edit"
+msgstr "表示 / 編集（&V）"
+
+#: resources.h:217
 msgid "&Write"
 msgstr "書く(&W)"
+
+#: resources.h:402
+#, fuzzy
+msgid "&Yes"
+msgstr "はい"
 
 #: ../../locales/../src/interface/state.cpp:103
 #, c-format
 msgid "'%s' does not exist or cannot be accessed."
 msgstr "%s は存在しないかアクセスすることができません."
 
-#: ../../locales/../src/interface/sitemanager.cpp:519
+#: ../../locales/../src/interface/sitemanager.cpp:530
 msgid "'Account' logontype not supported by selected protocol"
 msgstr ""
 "選択されたプロトコルでは'アカウント'ログオン種別はサポートされていません"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:490
+#: ../../locales/../src/interface/Mainfrm.cpp:569
 msgid ""
 "'quote' is usually a local command used by commandline clients to send the "
 "arguments following 'quote' to the server. You might want to enter the raw "
@@ -525,6 +587,14 @@ msgstr "(5-9999, 0は無効)"
 msgid "(At least 7 days)"
 msgstr "(最少7日間)"
 
+#: resources.h:191
+msgid "(example: %H:%M)"
+msgstr "(例: %H:%M)"
+
+#: resources.h:185
+msgid "(example: %Y-%m-%d)"
+msgstr "(例: %Y-%m-%d)"
+
 #: resources.h:37 resources.h:39
 msgid "(in KB/s)"
 msgstr "(KB/sで)"
@@ -537,41 +607,41 @@ msgstr ", %H:%M:%S 経過"
 msgid ", --:--:-- left"
 msgstr ", --:--:-- 経過"
 
-#: resources.h:496
+#: resources.h:531
 msgid "-"
 msgstr "-"
 
-#: ../../locales/../src/interface/statuslinectrl.cpp:126
-#: ../../locales/../src/interface/statuslinectrl.cpp:131
+#: ../../locales/../src/interface/statuslinectrl.cpp:165
+#: ../../locales/../src/interface/statuslinectrl.cpp:170
 msgid "--:--:-- left"
 msgstr "--:--:-- 経過"
 
-#: resources.h:184
+#: resources.h:202
 msgid "0 - None"
 msgstr "0 - なし"
 
-#: resources.h:185
+#: resources.h:203
 msgid "1 - Warning"
 msgstr "1 - 警告"
 
-#: resources.h:186
+#: resources.h:204
 msgid "2 - Info"
 msgstr "2 - 情報 "
 
-#: resources.h:187
+#: resources.h:205
 msgid "3 - Verbose"
 msgstr "3 - 詳細"
 
-#: resources.h:188
+#: resources.h:206
 msgid "4 - Debug"
 msgstr "4 - デバッグ"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:139
+#: ../../locales/../src/interface/RemoteListView.cpp:140
 #: ../../locales/../src/interface/RemoteTreeView.cpp:106
 msgid "A directory cannot be dragged into one if its subdirectories."
 msgstr "もしサブディレクトリがあればディレクトリをその中にドラッグできません."
 
-#: resources.h:468
+#: resources.h:503
 msgid ""
 "A few servers don't allow passive mode or are misconfigured. In such cases "
 "you would have to use active mode. In active mode, FileZilla opens a port "
@@ -581,7 +651,29 @@ msgstr ""
 "な場合アクティブモードを使うべきです.アクティブモードにおいて,FileZillaはポー"
 "トを開いてサーバに接続を要求します."
 
-#: ../../locales/../src/interface/FileZilla.cpp:627
+#: resources.h:398
+msgid "A file previously opened has been changed:"
+msgstr ""
+
+#: ../../locales/../src/interface/RemoteListView.cpp:2410
+msgid ""
+"A file with that name is already being edited. Discard old file and download "
+"the new file?"
+msgstr ""
+"その名前のファイルはすでに編集されています. 古いファイルを破棄し新しいファイ"
+"ルをダウンロードしますか?"
+
+#: ../../locales/../src/interface/RemoteListView.cpp:2399
+msgid "A file with that name is already being transferred."
+msgstr "その名前のファイルはすでに転送されています."
+
+#: ../../locales/../src/interface/RemoteListView.cpp:2404
+msgid ""
+"A file with that name is still being edited. Please close it and try again."
+msgstr ""
+"その名前のファイルはすでに編集されています. 閉じてから再度試してみてください."
+
+#: ../../locales/../src/interface/FileZilla.cpp:623
 msgid ""
 "A local filename could not be decoded.\n"
 "Please make sure the LC_CTYPE (or LC_ALL) environment variable is set "
@@ -594,7 +686,7 @@ msgstr ""
 "この問題を解決するまで, ファイル一覧表示においてファイルは見えないでしょう.\n"
 "これ以上の警告はこのセッションでは表示されないでしょう."
 
-#: resources.h:304
+#: resources.h:322
 msgid "A newer version of FileZilla is available:"
 msgstr "新しいバージョンのFileZillaが利用可能です : "
 
@@ -602,7 +694,7 @@ msgstr "新しいバージョンのFileZillaが利用可能です : "
 msgid "A&dd"
 msgstr "加える(&d)"
 
-#: resources.h:353
+#: resources.h:371
 msgid "A&llow resume of ascii files"
 msgstr "アスキーファイルのレジュームを認める(&l)"
 
@@ -614,7 +706,7 @@ msgstr "ダウンロードにだけ適用(&p)"
 msgid "A&pply only to uploads"
 msgstr "アップロードにだけ適用(&p)"
 
-#: resources.h:212
+#: resources.h:230
 msgid "A&pply to all files and directories"
 msgstr "すべてのファイルとディレクトリに適用(&p)"
 
@@ -622,24 +714,28 @@ msgstr "すべてのファイルとディレクトリに適用(&p)"
 msgid "A&scii"
 msgstr "アスキー(&A)"
 
-#: resources.h:328 resources.h:346
+#: resources.h:346 resources.h:364
 msgid "A&sk for action"
 msgstr "動作を尋ねる(&s)"
 
-#: resources.h:217
+#: resources.h:235
 msgid "About FileZilla"
 msgstr "FileZillaについて"
 
-#: resources.h:80 ../../locales/../src/interface/sitemanager.cpp:516
-#: ../../locales/../src/interface/sitemanager.cpp:566
-#: ../../locales/../src/interface/sitemanager.cpp:759
-#: ../../locales/../src/interface/sitemanager.cpp:760
-#: ../../locales/../src/interface/sitemanager.cpp:798
-#: ../../locales/../src/interface/sitemanager.cpp:1014
+#: resources.h:80 ../../locales/../src/interface/sitemanager.cpp:527
+#: ../../locales/../src/interface/sitemanager.cpp:577
+#: ../../locales/../src/interface/sitemanager.cpp:778
+#: ../../locales/../src/interface/sitemanager.cpp:779
+#: ../../locales/../src/interface/sitemanager.cpp:817
+#: ../../locales/../src/interface/sitemanager.cpp:1049
 msgid "Account"
 msgstr "アカウント"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:97
+#: resources.h:463
+msgid "Action after queue &completion"
+msgstr "キュー完了後の動作(&c)"
+
+#: ../../locales/../src/interface/settingsdialog.cpp:101
 msgid "Active mode"
 msgstr "アクティブモード"
 
@@ -667,19 +763,19 @@ msgstr ""
 "アクティブモードFTPのテストに失敗しました.FileZillaは正しい外部IPアドレスを"
 "知っていますが,ルータが誤解を招くようなアドレスを送信しています."
 
-#: resources.h:297
+#: resources.h:315
 msgid "Active mode IP"
 msgstr "アクティブモードIP"
 
-#: resources.h:277
+#: resources.h:295
 msgid "Add &more"
 msgstr "さらに加える(&m)"
 
-#: resources.h:453
+#: resources.h:488
 msgid "Add selected directory to the transfer queue"
 msgstr "選択されたディレクトリを転送キューへ追加"
 
-#: resources.h:408 resources.h:418
+#: resources.h:433 resources.h:443
 msgid "Add selected files and folders to the transfer queue"
 msgstr "選択されたファイルとフォルダを転送キューへ追加"
 
@@ -691,11 +787,11 @@ msgstr "サーバのタイムゾーンオフセットの調整:"
 msgid "Advanced"
 msgstr "アドバンスド"
 
-#: resources.h:301
+#: resources.h:319
 msgid "Advanced options:"
 msgstr "アドバンスド　オプション:"
 
-#: resources.h:497
+#: resources.h:532
 msgid "All ports in the given range have to be between 1024 and 65535."
 msgstr "与えられた範囲のすべてのポートは1から65535の間でなければならない."
 
@@ -703,11 +799,11 @@ msgstr "与えられた範囲のすべてのポートは1から65535の間でな
 msgid "Allow fall back to other transfer mode on failure"
 msgstr "失敗時に他の転送モードへ戻ることを認める"
 
-#: resources.h:472
+#: resources.h:507
 msgid "Allow fallback to other transfer mode on failure"
 msgstr "失敗時に他の転送モードへのフォールバックを認める"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:546
+#: ../../locales/../src/interface/Mainfrm.cpp:625
 msgid ""
 "Also, not all servers support this feature and may return incorrect listings "
 "if 'View hidden files' is enabled. Although FileZilla performs some tests to "
@@ -726,22 +822,22 @@ msgstr ""
 "選択的に最新バージョンをダウンロードするには http://filezilla-project.org を"
 "訪問して下さい."
 
-#: resources.h:76 ../../locales/../src/interface/sitemanager.cpp:557
-#: ../../locales/../src/interface/sitemanager.cpp:758
-#: ../../locales/../src/interface/sitemanager.cpp:951
-#: ../../locales/../src/interface/sitemanager.cpp:1017
+#: resources.h:76 ../../locales/../src/interface/sitemanager.cpp:568
+#: ../../locales/../src/interface/sitemanager.cpp:777
+#: ../../locales/../src/interface/sitemanager.cpp:986
+#: ../../locales/../src/interface/sitemanager.cpp:1052
 msgid "Anonymous"
 msgstr "匿名"
 
-#: resources.h:275
+#: resources.h:293
 msgid "Any of the following"
 msgstr "以下のもの"
 
-#: resources.h:214
+#: resources.h:232
 msgid "App&ly to directories only"
 msgstr "ディレクトリのみに適用(&l)"
 
-#: resources.h:265
+#: resources.h:283
 msgid "Apply"
 msgstr "適用"
 
@@ -749,7 +845,7 @@ msgstr "適用"
 msgid "Apply to &current queue only"
 msgstr "現在のキューだけに適用(&c)"
 
-#: resources.h:213
+#: resources.h:231
 msgid "Apply to &files only"
 msgstr "ファイルにのみ適用(&f)"
 
@@ -757,16 +853,16 @@ msgstr "ファイルにのみ適用(&f)"
 msgid "Archive"
 msgstr "Archive"
 
-#: resources.h:78 ../../locales/../src/interface/sitemanager.cpp:794
-#: ../../locales/../src/interface/sitemanager.cpp:1008
+#: resources.h:78 ../../locales/../src/interface/sitemanager.cpp:813
+#: ../../locales/../src/interface/sitemanager.cpp:1043
 msgid "Ask for password"
 msgstr "パスワードを尋ねる"
 
-#: resources.h:493
+#: resources.h:528
 msgid "Ask operating system for a port."
 msgstr "オペレーティングシステムのポートを尋ねる."
 
-#: resources.h:291 resources.h:483
+#: resources.h:309 resources.h:518
 msgid "Ask your operating system for the external IP address"
 msgstr "オペレーティングシステムの外部IPアドレスを尋ねる"
 
@@ -774,7 +870,7 @@ msgstr "オペレーティングシステムの外部IPアドレスを尋ねる"
 msgid "At least one filter condition is incomplete"
 msgstr "少なくともフィルタの状態は不完全です"
 
-#: resources.h:502
+#: resources.h:537
 msgid "At this point, all required information has been gathered."
 msgstr "いまのところ, すべての必要情報は集まっています."
 
@@ -794,19 +890,19 @@ msgstr "自動アップデートチェック"
 msgid "Blackboard"
 msgstr "黒板"
 
-#: ../../locales/../src/interface/state.cpp:257
+#: ../../locales/../src/interface/state.cpp:273
 msgid "Break current connection?"
 msgstr "現在の接続を切断しますか?"
 
-#: resources.h:224
+#: resources.h:242
 msgid "Build date:"
 msgstr "ビルドした日:"
 
-#: resources.h:222
+#: resources.h:240
 msgid "Build information"
 msgstr "ビルド情報"
 
-#: resources.h:287
+#: resources.h:305
 msgid ""
 "By default uses any available local port to establish transfers in active "
 "mode. If you want to limit FileZilla to use only a small range of ports, "
@@ -816,38 +912,42 @@ msgstr ""
 "います.もし小さい範囲のポートだけを使うという制限をFilezillaにかけたいなら, "
 "下のポート範囲を入力して下さい."
 
-#: resources.h:303
+#: resources.h:321
 msgid "C&heck for nightly builds of FileZilla"
 msgstr "FileZillaのnightly buildをチェック(&h)"
 
-#: resources.h:439
+#: resources.h:474
 msgid "C&lear all"
 msgstr "すべてクリア(&l)"
 
-#: ../../locales/../src/engine/transfersocket.cpp:567
+#: resources.h:184
+msgid "C&ustom"
+msgstr "カスタム(&u)"
+
+#: ../../locales/../src/engine/transfersocket.cpp:603
 msgid "Can't read from file"
 msgstr "ファイルから読めません"
 
-#: ../../locales/../src/engine/transfersocket.cpp:541
+#: ../../locales/../src/engine/transfersocket.cpp:577
 msgid "Can't write data to file, disk is full."
 msgstr "ディスクが一杯でファイルにデータを書けません"
 
-#: ../../locales/../src/engine/transfersocket.cpp:543
-#: ../../locales/../src/engine/transfersocket.cpp:546
-#: ../../locales/../src/engine/transfersocket.cpp:611
+#: ../../locales/../src/engine/transfersocket.cpp:579
+#: ../../locales/../src/engine/transfersocket.cpp:582
+#: ../../locales/../src/engine/transfersocket.cpp:647
 msgid "Can't write data to file."
 msgstr "ファイルにデータを書けません"
 
-#: resources.h:23 resources.h:216 resources.h:264 resources.h:284
-#: resources.h:336 resources.h:363 resources.h:370 resources.h:378
+#: resources.h:23 resources.h:234 resources.h:282 resources.h:302
+#: resources.h:354 resources.h:381 resources.h:388 resources.h:396
 msgid "Cancel"
 msgstr "キャンセル"
 
-#: resources.h:530
+#: resources.h:565
 msgid "Cancel current operation"
 msgstr "現在の操作を中止する"
 
-#: resources.h:531
+#: resources.h:566
 msgid "Cancels the current operation"
 msgstr "現在の操作を中止する"
 
@@ -857,6 +957,10 @@ msgid "Cannot access '%s', no media inserted or drive not ready."
 msgstr ""
 "'%s' にアクセスできません, メディアが挿入されていないかドライブの準備ができて"
 "いません."
+
+#: ../../locales/../src/interface/RemoteListView.cpp:2389
+msgid "Cannot edit file"
+msgstr "ファイルを編集できません"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:251
 msgid ""
@@ -869,27 +973,31 @@ msgstr ""
 msgid "Cannot load Quickconnect bar from resource file"
 msgstr "リソースファイルからクイック接続バーをロードできません"
 
-#: ../../locales/../src/interface/import.cpp:25
+#: ../../locales/../src/interface/import.cpp:26
 msgid "Cannot load file, not a valid XML file."
 msgstr "適切なXMLファイルではないため, ファイルが読み込めません."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:423
+#: ../../locales/../src/interface/Mainfrm.cpp:502
 msgid "Cannot load main menu from resource file"
 msgstr "リソースファイルからツールバーをロードできません"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:674
+#: ../../locales/../src/interface/Mainfrm.cpp:753
 msgid "Cannot load toolbar from resource file"
 msgstr "リソースファイルからツールバーをロードできません"
 
-#: ../../locales/../src/interface/sitemanager.cpp:643
+#: ../../locales/../src/interface/sitemanager.cpp:654
 msgid "Cannot rename entry"
 msgstr "エントリの名前を変えることができません"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1698
+#: ../../locales/../src/interface/RemoteListView.cpp:1770
 msgid "Cannot rename file"
 msgstr "ファイルの名前を変えることができない"
 
-#: resources.h:357
+#: ../../locales/../src/interface/RemoteListView.cpp:2399
+msgid "Cannot view / edit selected file"
+msgstr "選択されたファイルは表示/編集できません"
+
+#: resources.h:375
 msgid "Categories"
 msgstr "カテゴリ"
 
@@ -901,15 +1009,15 @@ msgstr "証明書発行者"
 msgid "Challenge:"
 msgstr "チャレンジ:"
 
-#: resources.h:195
+#: resources.h:213
 msgid "Change file attributes"
 msgstr "ファイルの属性を変更"
 
-#: resources.h:426 resources.h:461
+#: resources.h:452 resources.h:496
 msgid "Change the file permissions."
 msgstr "ファイルのパーミッションを選択"
 
-#: ../../locales/../src/interface/FileZilla.cpp:627
+#: ../../locales/../src/interface/FileZilla.cpp:623
 msgid "Character encoding issue"
 msgstr "文字エンコーディングの問題"
 
@@ -917,11 +1025,11 @@ msgstr "文字エンコーディングの問題"
 msgid "Charset"
 msgstr "文字セット"
 
-#: resources.h:401
+#: resources.h:426
 msgid "Check for &updates..."
 msgstr "アップデートをチェック...(&u)"
 
-#: resources.h:402
+#: resources.h:427
 msgid "Check for newer versions of FileZilla"
 msgstr "FileZillaの新しいバージョンをチェック"
 
@@ -933,11 +1041,11 @@ msgstr "アップデートをチェック"
 msgid "Checking for correct external IP address"
 msgstr "正しい外部IPアドレスを調べています."
 
-#: resources.h:299
+#: resources.h:317
 msgid "Checking for updates"
 msgstr "アップデートをチェックしています."
 
-#: ../../locales/../src/interface/sitemanager.cpp:891
+#: ../../locales/../src/interface/sitemanager.cpp:926
 msgid "Choose the default local directory"
 msgstr "標準のローカルディレクトリを選択"
 
@@ -949,23 +1057,23 @@ msgstr "チャンクデータは不適切に終了しました"
 msgid "Classic"
 msgstr "クラシック"
 
-#: resources.h:360
+#: resources.h:378
 msgid "Clear &Site Manager entries"
 msgstr "サイトマネージャ エントリを除去（&S)"
 
-#: resources.h:440
+#: resources.h:475
 msgid "Clear &layout cache"
 msgstr "レイアウトキャッシュをクリア(&l)"
 
-#: resources.h:358
+#: resources.h:376
 msgid "Clear &quickconnect history"
 msgstr "クイック接続履歴を除去(&q)"
 
-#: resources.h:359
+#: resources.h:377
 msgid "Clear &reconnect information"
 msgstr "再接続情報を除去(&r)"
 
-#: resources.h:361
+#: resources.h:379
 msgid "Clear &transfer queue"
 msgstr "転送キューを除去(&t)"
 
@@ -973,7 +1081,7 @@ msgstr "転送キューを除去(&t)"
 msgid "Clear history"
 msgstr "履歴をクリア"
 
-#: resources.h:355 ../../locales/../src/interface/clearprivatedata.cpp:34
+#: resources.h:373 ../../locales/../src/interface/clearprivatedata.cpp:34
 #: ../../locales/../src/interface/clearprivatedata.cpp:40
 #: ../../locales/../src/interface/clearprivatedata.cpp:46
 #: ../../locales/../src/interface/clearprivatedata.cpp:68
@@ -993,7 +1101,7 @@ msgstr "設定を保存し終了するにはクリックしてください."
 msgid "Click on next to download the new version."
 msgstr "最新バージョンをダウンロードするために次へをクリックして下さい."
 
-#: resources.h:383
+#: resources.h:408 ../../locales/../src/interface/Mainfrm.cpp:867
 msgid "Close FileZilla"
 msgstr "FileZillaを閉じる"
 
@@ -1012,18 +1120,18 @@ msgstr "コマンド:"
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:120
 msgid "Common name:"
-msgstr "Common name:"
+msgstr "共有名:"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:418
 #: ../../locales/../src/interface/netconfwizard.cpp:433
 msgid "Communication tainted by router"
 msgstr "ルータによって通信を失いました."
 
-#: resources.h:225
+#: resources.h:243
 msgid "Compiled with:"
 msgstr "コンパイラ:"
 
-#: resources.h:226
+#: resources.h:244
 msgid "Compiler flags:"
 msgstr "コンパイル フラグ:"
 
@@ -1031,24 +1139,24 @@ msgstr "コンパイル フラグ:"
 msgid "Concurrent transfers"
 msgstr "集中転送"
 
-#: resources.h:279
+#: resources.h:297
 msgid "Conditions are c&ase sensitive"
 msgstr "状態は大文字と小文字を区別します"
 
-#: resources.h:501
+#: resources.h:536
 msgid "Configuration test"
 msgstr "設定テスト"
 
-#: resources.h:475
+#: resources.h:510
 msgid "Configure passive mode"
 msgstr "パッシブモードに設定する"
 
-#: resources.h:491
+#: resources.h:526
 msgid "Configure port range"
 msgstr "ポート範囲設定"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1417
-#: ../../locales/../src/interface/RemoteListView.cpp:1435
+#: ../../locales/../src/interface/LocalListView.cpp:1533
+#: ../../locales/../src/interface/RemoteListView.cpp:1490
 msgid "Confirmation needed"
 msgstr "必要な確認"
 
@@ -1060,12 +1168,12 @@ msgstr "おめでとうございます.設定は正しく機能しているよ�
 msgid "Connected"
 msgstr "接続されました"
 
-#: ../../locales/../src/interface/QueueView.cpp:1186
+#: ../../locales/../src/interface/QueueView.cpp:1235
 msgid "Connecting"
 msgstr "接続しています"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:202
-#: ../../locales/../src/interface/statuslinectrl.cpp:156
+#: ../../locales/../src/interface/statuslinectrl.cpp:195
 #, c-format
 msgid "Connecting to %s"
 msgstr "%s に接続しています"
@@ -1082,11 +1190,11 @@ msgstr "%s:%d　に接続しています..."
 msgid "Connecting to server"
 msgstr "サーバに接続しています"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:96
+#: ../../locales/../src/interface/settingsdialog.cpp:100
 msgid "Connection"
 msgstr "接続"
 
-#: ../../locales/../src/interface/QueueView.cpp:888
+#: ../../locales/../src/interface/QueueView.cpp:929
 msgid "Connection attempt failed"
 msgstr "接続を試みましたが失敗しました"
 
@@ -1131,12 +1239,12 @@ msgstr "テストサーバへの接続に失敗しました."
 msgid "Cop&y"
 msgstr "コピー(&y)"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1165
+#: ../../locales/../src/interface/sitemanager.cpp:1205
 #, c-format
 msgid "Copy (%d) of %s"
-msgstr "Copy (%d) of %s"
+msgstr "複製 (%d) 元の %s"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1142
+#: ../../locales/../src/interface/sitemanager.cpp:1182
 #, c-format
 msgid "Copy of %s"
 msgstr "%s の複製"
@@ -1145,7 +1253,7 @@ msgstr "%s の複製"
 msgid "Could not connect to server"
 msgstr "サーバに接続することができませんでした"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2214
+#: ../../locales/../src/interface/RemoteListView.cpp:2286
 #: ../../locales/../src/interface/RemoteTreeView.cpp:829
 msgid ""
 "Could not determine the target of the Drag&Drop operation.\n"
@@ -1160,7 +1268,7 @@ msgstr ""
 msgid "Could not establish connection to server"
 msgstr "サーバとの接続を確立できませんでした"
 
-#: ../../locales/../src/interface/FileZilla.cpp:362
+#: ../../locales/../src/interface/FileZilla.cpp:358
 msgid ""
 "Could not find the resource files for FileZilla, closing FileZilla.\n"
 "You can set the data directory of FileZilla using the '--datadir "
@@ -1172,7 +1280,12 @@ msgstr ""
 "コマンドラインオプション '--datadir <custompath>'を使うか環境変数FZ_DATADIRを"
 "設定することによってFileZillaのデータディレクトリを設定することができます."
 
-#: ../../locales/../src/interface/Options.cpp:102
+#: ../../locales/../src/interface/RemoteListView.cpp:2389
+msgid "Could not get temporary directory to download file into."
+msgstr ""
+"ダウンロードファイルを入れるためのテンポラリのディレクトリを取得できません."
+
+#: ../../locales/../src/interface/Options.cpp:107
 #, c-format
 msgid ""
 "Could not load \"%s\", make sure the file is valid.\n"
@@ -1194,7 +1307,7 @@ msgstr ""
 
 #: ../../locales/../src/interface/filter.cpp:167
 #: ../../locales/../src/interface/filter.cpp:252
-#: ../../locales/../src/interface/sitemanager.cpp:353
+#: ../../locales/../src/interface/sitemanager.cpp:364
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1205,10 +1318,10 @@ msgstr ""
 "確認してください. \n"
 "サイトマネージャで行われた変更は保存することができませんでした."
 
-#: ../../locales/../src/interface/import.cpp:99
-#: ../../locales/../src/interface/import.cpp:278
-#: ../../locales/../src/interface/sitemanager.cpp:252
-#: ../../locales/../src/interface/sitemanager.cpp:1297
+#: ../../locales/../src/interface/import.cpp:100
+#: ../../locales/../src/interface/import.cpp:283
+#: ../../locales/../src/interface/sitemanager.cpp:261
+#: ../../locales/../src/interface/sitemanager.cpp:1337
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1219,8 +1332,8 @@ msgstr ""
 "きることを確認してください.\n"
 "サイトマネージャで行われた変更は保存されません."
 
-#: ../../locales/../src/interface/QueueView.cpp:1611
-#: ../../locales/../src/interface/QueueView.cpp:1638
+#: ../../locales/../src/interface/QueueView.cpp:1675
+#: ../../locales/../src/interface/QueueView.cpp:1702
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1248,12 +1361,12 @@ msgstr "ファイルの終わりを見つけられませんでした"
 msgid "Could not spawn IO thread"
 msgstr "IOスレッドを作成できません"
 
-#: ../../locales/../src/interface/QueueView.cpp:914
-#: ../../locales/../src/interface/QueueView.cpp:919
+#: ../../locales/../src/interface/QueueView.cpp:955
+#: ../../locales/../src/interface/QueueView.cpp:960
 msgid "Could not start transfer"
 msgstr "転送を始めることができません"
 
-#: ../../locales/../src/interface/sitemanager.cpp:379
+#: ../../locales/../src/interface/sitemanager.cpp:390
 #, c-format
 msgid ""
 "Could not write \"%s\", any changes to the Site Manager could not be saved: %"
@@ -1261,8 +1374,8 @@ msgid ""
 msgstr ""
 "\"%s\"に書くことができずサイトマネージャへの変更は保存されませんでした: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1621
-#: ../../locales/../src/interface/QueueView.cpp:1657
+#: ../../locales/../src/interface/QueueView.cpp:1685
+#: ../../locales/../src/interface/QueueView.cpp:1721
 #, c-format
 msgid "Could not write \"%s\", the queue could not be saved."
 msgstr "\"%s\"が書けませんでしたので, キューは保存されません."
@@ -1276,26 +1389,26 @@ msgstr " \"%s\" を書くことができませんでした:  %s"
 msgid "Country:"
 msgstr "国:"
 
-#: resources.h:442
+#: resources.h:477
 msgid "Crashes FileZilla instantly. Only used to debug the exception handler"
 msgstr "例外ハンドラをデバックするためだけにFileZillaは即座にクラッシュします"
 
-#: resources.h:410 resources.h:420 resources.h:455
+#: resources.h:435 resources.h:446 resources.h:490
 msgid "Create a new subdirectory in the current directory"
 msgstr "現在のディレクトリに新しいサブディレクトリを作成する"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1316
-#: ../../locales/../src/interface/RemoteListView.cpp:1380
+#: ../../locales/../src/interface/LocalListView.cpp:1432
+#: ../../locales/../src/interface/RemoteListView.cpp:1435
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1192
 msgid "Create directory"
 msgstr "ディレクトリを作成"
 
-#: ../../locales/../src/interface/QueueView.cpp:1259
+#: ../../locales/../src/interface/QueueView.cpp:1308
 msgid "Creating directory"
 msgstr "ディレクトリを作成しています"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2589
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1618
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1619
 #, c-format
 msgid "Creating directory '%s'..."
 msgstr "ディレクトリ '%s' を作成..."
@@ -1303,6 +1416,10 @@ msgstr "ディレクトリ '%s' を作成..."
 #: ../../locales/../src/engine/ControlSocket.cpp:111
 msgid "Critical error"
 msgstr "重大なエラー"
+
+#: resources.h:190
+msgid "Cus&tom"
+msgstr "カスタム(&t)"
 
 #: ../../locales/../src/interface/filter.cpp:116
 msgid "Custom filter set"
@@ -1312,11 +1429,11 @@ msgstr "カスタムフィルタセット"
 msgid "D&efault"
 msgstr "標準(&e)"
 
-#: resources.h:411 resources.h:421 resources.h:456
+#: resources.h:436 resources.h:447 resources.h:491
 msgid "D&elete"
 msgstr "削除(&e)"
 
-#: resources.h:258
+#: resources.h:276
 msgid "D&isable all"
 msgstr "すべて無効にする(&i)"
 
@@ -1329,6 +1446,14 @@ msgstr "破棄する(&i)"
 msgid "Data socket closed too early."
 msgstr "早々にデータソケットは切断されました."
 
+#: resources.h:181
+msgid "Date formatting"
+msgstr "日付書式"
+
+#: ../../locales/../src/interface/settingsdialog.cpp:108
+msgid "Date/time format"
+msgstr "日付/時刻 書式"
+
 #: ../../locales/../src/interface/fileexistsdlg.cpp:68
 #: ../../locales/../src/interface/fileexistsdlg.cpp:92
 #: ../../locales/../src/interface/fileexistsdlg.cpp:124
@@ -1336,16 +1461,16 @@ msgstr "早々にデータソケットは切断されました."
 msgid "Date/time unknown"
 msgstr "日付/時刻 不明"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:108
+#: ../../locales/../src/interface/settingsdialog.cpp:114
 msgid "Debug"
 msgstr "デバッグ"
 
-#: resources.h:181
+#: resources.h:199
 msgid "Debugging settings"
 msgstr "デバッグの設定"
 
-#: resources.h:87 ../../locales/../src/interface/sitemanager.cpp:957
-#: ../../locales/../src/interface/sitemanager.cpp:1046
+#: resources.h:87 ../../locales/../src/interface/sitemanager.cpp:992
+#: ../../locales/../src/interface/sitemanager.cpp:1081
 msgid "Default"
 msgstr "標準"
 
@@ -1353,7 +1478,7 @@ msgstr "標準"
 msgid "Default &local directory:"
 msgstr "標準のローカルディレクトリ(&l):"
 
-#: resources.h:316
+#: resources.h:334
 msgid "Default file exists action"
 msgstr "ファイル存在時の標準動作"
 
@@ -1361,7 +1486,7 @@ msgstr "ファイル存在時の標準動作"
 msgid "Default r&emote directory:"
 msgstr "標準のリモートディレクトリ(&e):"
 
-#: resources.h:469
+#: resources.h:504
 msgid "Default transfer mode:"
 msgstr "標準転送モード:"
 
@@ -1369,7 +1494,7 @@ msgstr "標準転送モード:"
 msgid "Default transfer type:"
 msgstr "標準の転送タイプ"
 
-#: resources.h:295 resources.h:488
+#: resources.h:313 resources.h:523
 msgid "Default: http://ip.filezilla-project.org/ip.php"
 msgstr "標準: http://ip.filezilla-project.org/ip.php"
 
@@ -1386,31 +1511,35 @@ msgstr "ログイン試行失敗中の遅延:"
 msgid "Delaying connection due to previously failed connection attempt..."
 msgstr "以前の接続試行失敗にしたがって接続を遅らせています..."
 
-#: resources.h:457
+#: ../../locales/../src/interface/sitemanager.cpp:687
+msgid "Delete Site Manager entry"
+msgstr "サイトマネージャ エントリを削除"
+
+#: resources.h:492
 msgid "Delete selected directory"
 msgstr "選択されたディレクトリを削除"
 
-#: resources.h:412 resources.h:422
+#: resources.h:437 resources.h:448
 msgid "Delete selected files and folders"
 msgstr "選択されたファイルとフォルダを削除"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:907
+#: ../../locales/../src/interface/LocalTreeView.cpp:913
 msgid "Desktop"
 msgstr "デスクトップ"
 
-#: resources.h:7 resources.h:230
+#: resources.h:7 resources.h:248
 msgid "Details"
 msgstr "詳細"
 
-#: resources.h:242
+#: resources.h:260
 msgid "Details for new key:"
 msgstr "新しい鍵の詳細:"
 
-#: resources.h:282
+#: resources.h:300
 msgid "Dire&ctories"
 msgstr "ディレクトリ(&c)"
 
-#: ../../locales/../src/interface/queue.cpp:1150
+#: ../../locales/../src/interface/queue.cpp:1133
 msgid "Direction"
 msgstr "指示"
 
@@ -1418,11 +1547,11 @@ msgstr "指示"
 msgid "Directory listing aborted by user"
 msgstr "ディレクトリ一覧の表示はユーザにより中断されました"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:661
+#: ../../locales/../src/interface/RemoteListView.cpp:670
 msgid "Directory listing failed"
 msgstr "ディレクトリ一覧取得に失敗しました"
 
-#: resources.h:251
+#: resources.h:269
 msgid "Directory listing filters"
 msgstr "ディレクトリリスト フィルタ"
 
@@ -1430,15 +1559,15 @@ msgstr "ディレクトリリスト フィルタ"
 msgid "Directory listing successful"
 msgstr "ディレクトリ一覧の表示成功"
 
-#: resources.h:261
+#: resources.h:279
 msgid "Disa&ble all"
 msgstr "すべて無効にする(&b)"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:547
+#: ../../locales/../src/interface/Mainfrm.cpp:626
 msgid "Disable this option if you cannot see your files anymore."
 msgstr "今後ファイルを見れないようであればこのオプションを無効にして下さい."
 
-#: resources.h:532
+#: resources.h:567
 msgid "Disconnect from server"
 msgstr "サーバから切断"
 
@@ -1447,23 +1576,27 @@ msgstr "サーバから切断"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:156
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:894
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:896
-#: ../../locales/../src/interface/QueueView.cpp:886
-#: ../../locales/../src/interface/QueueView.cpp:911
+#: ../../locales/../src/interface/QueueView.cpp:927
+#: ../../locales/../src/interface/QueueView.cpp:952
 msgid "Disconnected from server"
 msgstr "サーバから切断されました"
 
-#: ../../locales/../src/interface/QueueView.cpp:1161
-#: ../../locales/../src/interface/statuslinectrl.cpp:150
+#: ../../locales/../src/interface/QueueView.cpp:1210
+#: ../../locales/../src/interface/statuslinectrl.cpp:189
 msgid "Disconnecting from previous server"
 msgstr "以前のサーバから切断しています"
 
-#: resources.h:533
+#: resources.h:568
 msgid "Disconnects from the currently visible server"
 msgstr "現在見えているサーバから切断"
 
-#: resources.h:404
+#: resources.h:429
 msgid "Display about dialog"
 msgstr "ダイアログについて表示"
+
+#: resources.h:471
+msgid "Do &nothing"
+msgstr "何もしない(&n)"
 
 #: ../../locales/../src/interface/updatewizard.cpp:137
 msgid ""
@@ -1472,6 +1605,10 @@ msgid ""
 msgstr ""
 "本当にベータバージョンが欲しいですか？ \n"
 "新機能をテストしたいのでなければ,安定バージョンを使い続けてください."
+
+#: ../../locales/../src/interface/Mainfrm.cpp:870
+msgid "Do you really want to close FileZilla?"
+msgstr "本当にFileZillaを閉じますか?"
 
 #: ../../locales/../src/interface/clearprivatedata.cpp:34
 msgid ""
@@ -1482,16 +1619,20 @@ msgstr "本当にサイトマネージャ エントリと転送キューの削�
 msgid "Do you really want to delete all Site Manager entries?"
 msgstr "本当にすべてのサイトマネージャ　エントリを削除してもいいですか?"
 
+#: ../../locales/../src/interface/sitemanager.cpp:689
+msgid "Do you really want to delete selected entry?"
+msgstr "本当に選択されたエントリを削除してもいいですか?"
+
 #: ../../locales/../src/interface/clearprivatedata.cpp:40
 msgid "Do you really want to delete the transfer queue?"
 msgstr "本当に転送キューを削除しますか？"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:491
+#: ../../locales/../src/interface/Mainfrm.cpp:570
 #, c-format
 msgid "Do you really want to send '%s' to the server?"
 msgstr "本当に' %s 'をサーバに送りますか?"
 
-#: resources.h:296 resources.h:490
+#: resources.h:314 resources.h:525
 msgid "Don't use external IP address on &local connections."
 msgstr "ローカル接続に外部IPアドレスを使いません. (&l)"
 
@@ -1499,11 +1640,11 @@ msgstr "ローカル接続に外部IPアドレスを使いません. (&l)"
 msgid "Download &limit:"
 msgstr "ダウンロード制限(&l)"
 
-#: resources.h:451
+#: resources.h:486
 msgid "Download selected directory"
 msgstr "選択したディレクトリをダウンロード"
 
-#: resources.h:416
+#: resources.h:441
 msgid "Download selected files and folders"
 msgstr "選択したファイルとフォルダをダウンロード"
 
@@ -1513,14 +1654,14 @@ msgstr "選択したファイルとフォルダをダウンロード"
 msgid "Downloading %s"
 msgstr "%s をダウンロードしています"
 
-#: resources.h:318 resources.h:338
+#: resources.h:336 resources.h:356
 msgid "Downloads"
 msgstr "ダウンロード"
 
-#: ../../locales/../src/interface/LocalListView.cpp:88
+#: ../../locales/../src/interface/LocalListView.cpp:90
 #: ../../locales/../src/interface/LocalTreeView.cpp:88
-#: ../../locales/../src/interface/QueueView.cpp:67
-#: ../../locales/../src/interface/RemoteListView.cpp:86
+#: ../../locales/../src/interface/QueueView.cpp:71
+#: ../../locales/../src/interface/RemoteListView.cpp:87
 #: ../../locales/../src/interface/RemoteTreeView.cpp:79
 msgid ""
 "Drag&drop between different instances of FileZilla has not been implemented "
@@ -1529,10 +1670,10 @@ msgstr ""
 "FileZillaの違うインスタンス間でのドラッグ アンド ドロップはまだ実装されていま"
 "せん."
 
-#: ../../locales/../src/interface/LocalListView.cpp:94
+#: ../../locales/../src/interface/LocalListView.cpp:96
 #: ../../locales/../src/interface/LocalTreeView.cpp:94
-#: ../../locales/../src/interface/QueueView.cpp:78
-#: ../../locales/../src/interface/RemoteListView.cpp:92
+#: ../../locales/../src/interface/QueueView.cpp:82
+#: ../../locales/../src/interface/RemoteListView.cpp:93
 #: ../../locales/../src/interface/RemoteTreeView.cpp:85
 msgid "Drag&drop between different servers has not been implemented yet."
 msgstr "違うサーバ間でのドラッグ アンド ドロップはまだ実装されていません."
@@ -1543,15 +1684,15 @@ msgstr "違うサーバ間でのドラッグ アンド ドロップはまだ実�
 msgid "Duplicate filter name"
 msgstr "フィルタ名が重複しています"
 
-#: resources.h:257
+#: resources.h:275
 msgid "E&nable all"
 msgstr "すべて有効にする(&n)"
 
-#: resources.h:204
+#: resources.h:222
 msgid "E&xecute"
 msgstr "実行(&E)"
 
-#: resources.h:382
+#: resources.h:407
 msgid "E&xit"
 msgstr "終了(&x)"
 
@@ -1563,7 +1704,7 @@ msgstr "電子メール:"
 msgid "Each filter needs at least one condition."
 msgstr "それぞれのフィルタは少なくとも1つの状態を必要とします."
 
-#: resources.h:266
+#: resources.h:284
 msgid "Edit filters"
 msgstr "フィルタを編集"
 
@@ -1571,7 +1712,11 @@ msgstr "フィルタを編集"
 msgid "Email:"
 msgstr "電子メール:"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:663
+#: ../../locales/../src/interface/QueueView.cpp:1996
+msgid "Empty command"
+msgstr "空コマンド"
+
+#: ../../locales/../src/interface/RemoteListView.cpp:672
 msgid "Empty directory listing"
 msgstr "空のディレクトリ一覧取得"
 
@@ -1585,15 +1730,19 @@ msgstr "空のフィルタ名は認められていません."
 msgid "Empty name"
 msgstr "名前を空にする"
 
-#: resources.h:260
+#: resources.h:278
 msgid "En&able all"
 msgstr "すべて有効にする(&a)"
 
-#: resources.h:397
+#: resources.h:422
 msgid "Enter &custom command..."
 msgstr "カスタムコマンドを入力...(&c)"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:479
+#: ../../locales/../src/interface/QueueView.cpp:1985
+msgid "Enter command"
+msgstr "コマンドを入力"
+
+#: ../../locales/../src/interface/Mainfrm.cpp:558
 msgid "Enter custom command"
 msgstr "カスタムコマンドを入力"
 
@@ -1611,7 +1760,7 @@ msgstr "フィルタセットの名前を入力してください"
 msgid "Enter password"
 msgstr "パスワードを入力"
 
-#: resources.h:510
+#: resources.h:545
 msgid ""
 "Enter the address of the server.\n"
 "To specify the server protocol, prepend the host with the protocol "
@@ -1626,7 +1775,7 @@ msgstr ""
 "ここではフォームに完全なURLSを入力するkともできますprotocol://user:pass@host:"
 "port , このとき他のフィールドの値も上書きされます."
 
-#: resources.h:514
+#: resources.h:549
 msgid ""
 "Enter the port on which the server listens.\n"
 "The default for FTP is 21, the default for SFTP is 22."
@@ -1634,7 +1783,7 @@ msgstr ""
 "サーバの受け付けているポートを入力して下さい.\n"
 "FTPの標準は21番で, SFTPの標準は22番です."
 
-#: ../../locales/../src/engine/transfersocket.cpp:312
+#: ../../locales/../src/engine/transfersocket.cpp:349
 #, c-format
 msgid "Error %d writing to socket"
 msgstr "エラー %d ソケットへの書き込み"
@@ -1643,28 +1792,28 @@ msgstr "エラー %d ソケットへの書き込み"
 msgid "Error exporting settings"
 msgstr "設定の書き出しエラー"
 
-#: ../../locales/../src/interface/import.cpp:25
-#: ../../locales/../src/interface/import.cpp:88
+#: ../../locales/../src/interface/import.cpp:26
+#: ../../locales/../src/interface/import.cpp:89
 msgid "Error importing"
 msgstr "取り込みエラー"
 
 #: ../../locales/../src/interface/filter.cpp:168
 #: ../../locales/../src/interface/filter.cpp:253
-#: ../../locales/../src/interface/import.cpp:100
-#: ../../locales/../src/interface/import.cpp:279
-#: ../../locales/../src/interface/Options.cpp:103
-#: ../../locales/../src/interface/QueueView.cpp:1612
-#: ../../locales/../src/interface/QueueView.cpp:1639
-#: ../../locales/../src/interface/sitemanager.cpp:253
-#: ../../locales/../src/interface/sitemanager.cpp:354
-#: ../../locales/../src/interface/sitemanager.cpp:1298
+#: ../../locales/../src/interface/import.cpp:101
+#: ../../locales/../src/interface/import.cpp:284
+#: ../../locales/../src/interface/Options.cpp:108
+#: ../../locales/../src/interface/QueueView.cpp:1676
+#: ../../locales/../src/interface/QueueView.cpp:1703
+#: ../../locales/../src/interface/sitemanager.cpp:262
+#: ../../locales/../src/interface/sitemanager.cpp:365
+#: ../../locales/../src/interface/sitemanager.cpp:1338
 #: ../../locales/../src/interface/wrapengine.cpp:821
 msgid "Error loading xml file"
 msgstr "xmlファイルの読み込みエラー"
 
-#: ../../locales/../src/interface/QueueView.cpp:1622
-#: ../../locales/../src/interface/QueueView.cpp:1658
-#: ../../locales/../src/interface/sitemanager.cpp:380
+#: ../../locales/../src/interface/QueueView.cpp:1686
+#: ../../locales/../src/interface/QueueView.cpp:1722
+#: ../../locales/../src/interface/sitemanager.cpp:391
 #: ../../locales/../src/interface/wrapengine.cpp:989
 msgid "Error writing xml file"
 msgstr "xmlファイルの書き込みエラー"
@@ -1674,7 +1823,7 @@ msgstr "xmlファイルの書き込みエラー"
 msgid "Error:"
 msgstr "エラー:"
 
-#: resources.h:208
+#: resources.h:226
 msgid "Exe&cute"
 msgstr "実行(&c)"
 
@@ -1682,7 +1831,7 @@ msgstr "実行(&c)"
 msgid "Executable"
 msgstr "実行可能"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1217
+#: ../../locales/../src/interface/Mainfrm.cpp:1326
 msgid "Executable contains no version info, cannot check for updates."
 msgstr ""
 "実行可能なものはバージョン情報を含んでおらず, アップデートをチェックできませ"
@@ -1692,23 +1841,23 @@ msgstr ""
 msgid "Explorer"
 msgstr "エクスプローラ"
 
-#: resources.h:368
+#: resources.h:386
 msgid "Export &Queue"
 msgstr "キューの書き出し(&Q)"
 
-#: resources.h:367
+#: resources.h:385
 msgid "Export &Settings"
 msgstr "設定を書き出します(&S)"
 
-#: resources.h:364
+#: resources.h:382
 msgid "Export settings"
 msgstr "設定を書き出します"
 
-#: resources.h:272
+#: resources.h:290
 msgid "F&ilter name:"
 msgstr "フィルタ名(&i):"
 
-#: ../../locales/../src/interface/sitemanager.cpp:950
+#: ../../locales/../src/interface/sitemanager.cpp:985
 msgid "FTP"
 msgstr "FTP"
 
@@ -1716,7 +1865,7 @@ msgstr "FTP"
 msgid "FTP Engine not initialized, can't connect"
 msgstr "FTPエンジンは初期化されておらず接続できません."
 
-#: resources.h:466
+#: resources.h:501
 msgid ""
 "FTP uses secondary connections for data transfers. These additional "
 "connections can be established in two ways."
@@ -1732,9 +1881,10 @@ msgstr "FTPES - 明示的なTLS/SSL上のFTP"
 msgid "FTPS - FTP over implicit TLS/SSL"
 msgstr "FTPS - 暗黙のTLS/SSL上のFTP"
 
-#: ../../locales/../src/interface/LocalListView.cpp:550
-#: ../../locales/../src/interface/LocalTreeView.cpp:784
-#: ../../locales/../src/interface/viewheader.cpp:479
+#: ../../locales/../src/interface/LocalListView.cpp:636
+#: ../../locales/../src/interface/LocalListView.cpp:1653
+#: ../../locales/../src/interface/LocalTreeView.cpp:790
+#: ../../locales/../src/interface/viewheader.cpp:484
 msgid "Failed to change directory"
 msgstr "ディレクトリ変更に失敗しました"
 
@@ -1747,7 +1897,7 @@ msgstr "言語変更に失敗しました"
 msgid "Failed to check for newer version of FileZilla."
 msgstr "FileZillaの新しいバージョンのチェックに失敗しました."
 
-#: ../../locales/../src/interface/xmlfunctions.cpp:374
+#: ../../locales/../src/interface/xmlfunctions.cpp:377
 msgid "Failed to create backup copy of xml file"
 msgstr "xmlファイルの複製の作成に失敗しました"
 
@@ -1764,7 +1914,7 @@ msgstr "アクティブモード転送のためのリスニングソケット生
 msgid "Failed to download the latest version of FileZilla."
 msgstr "最新バージョンのFileZillaのダウンロードに失敗しました."
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:562
+#: ../../locales/../src/interface/LocalTreeView.cpp:568
 msgid "Failed to get 'My Documents' path"
 msgstr "'マイ　ドキュメント'のパス取得に失敗しました"
 
@@ -1772,7 +1922,7 @@ msgstr "'マイ　ドキュメント'のパス取得に失敗しました"
 msgid "Failed to get data peer address, connection closed."
 msgstr "データに対するアドレス取得に失敗しましたので,接続を切断しました."
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:549
+#: ../../locales/../src/interface/LocalTreeView.cpp:554
 msgid "Failed to get desktop path"
 msgstr "デスクトップへのパスの取得に失敗しました"
 
@@ -1780,7 +1930,7 @@ msgstr "デスクトップへのパスの取得に失敗しました"
 msgid "Failed to get peer address, connection closed."
 msgstr "対するアドレスの取得に失敗しましたので,接続を切断しました."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:174
+#: ../../locales/../src/interface/Mainfrm.cpp:187
 msgid "Failed to initialize FTP engine"
 msgstr "FTPエンジンの初期化に失敗しました."
 
@@ -1789,7 +1939,7 @@ msgstr "FTPエンジンの初期化に失敗しました."
 msgid "Failed to initialize TLS."
 msgstr "TLSの初期化に失敗しました."
 
-#: ../../locales/../src/interface/settingsdialog.cpp:133
+#: ../../locales/../src/interface/settingsdialog.cpp:139
 msgid "Failed to load panels, invalid resource files?"
 msgstr "パネルのロードに失敗しました.リソースファイルが不適切ですか？"
 
@@ -1858,48 +2008,55 @@ msgstr "設定を有効にするのに失敗しました"
 msgid "Failed to write to file %s"
 msgstr "ファイル %s への書き込みに失敗しました"
 
-#: ../../locales/../src/interface/xmlfunctions.cpp:388
+#: ../../locales/../src/interface/xmlfunctions.cpp:391
 msgid "Failed to write xml file"
 msgstr "xmlファイルへの書き込みに失敗しました"
 
-#: ../../locales/../src/interface/queueview_failed.cpp:13
+#: ../../locales/../src/interface/queueview_failed.cpp:14
 msgid "Failed transfers"
 msgstr "転送に失敗しました"
 
-#: resources.h:481
+#: resources.h:516
 msgid "Fall back to active mode"
 msgstr "アクティブモードに戻る"
 
-#: resources.h:281
+#: resources.h:299
 msgid "Fil&es"
 msgstr "ファイル(&e)"
 
-#: ../../locales/../src/interface/LocalListView.cpp:722
-#: ../../locales/../src/interface/LocalListView.cpp:740
-#: ../../locales/../src/interface/LocalListView.cpp:744
-#: ../../locales/../src/interface/RemoteListView.cpp:1168
-#: ../../locales/../src/interface/RemoteListView.cpp:1186
-#: ../../locales/../src/interface/RemoteListView.cpp:1190
+#: ../../locales/../src/interface/LocalListView.cpp:808
+#: ../../locales/../src/interface/LocalListView.cpp:826
+#: ../../locales/../src/interface/LocalListView.cpp:836
+#: ../../locales/../src/interface/LocalListView.cpp:858
+#: ../../locales/../src/interface/RemoteListView.cpp:1178
+#: ../../locales/../src/interface/RemoteListView.cpp:1196
+#: ../../locales/../src/interface/RemoteListView.cpp:1207
+#: ../../locales/../src/interface/RemoteListView.cpp:1229
 msgid "File"
 msgstr "ファイル"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:100
+#: ../../locales/../src/interface/settingsdialog.cpp:104
 msgid "File Types"
 msgstr "ファイルタイプ"
 
-#: ../../locales/../src/interface/import.cpp:88
+#: ../../locales/../src/interface/import.cpp:89
 msgid "File does not contain any importable data."
 msgstr "ファイルは取り込み可能なデータを含んでいません"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1713
+#: ../../locales/../src/interface/RemoteListView.cpp:1785
 msgid "File exists"
 msgstr "ファイルが存在します"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:101
+#: ../../locales/../src/interface/settingsdialog.cpp:105
 msgid "File exists action"
 msgstr "ファイル存在時の動作"
 
-#: ../../locales/../src/interface/FileZilla.cpp:736
+#: resources.h:397
+#, fuzzy
+msgid "File has changed"
+msgstr "ファイル名は変更されませんでした"
+
+#: ../../locales/../src/interface/FileZilla.cpp:732
 msgid "File not found"
 msgstr "ファイルが見つかりません"
 
@@ -1907,12 +2064,16 @@ msgstr "ファイルが見つかりません"
 msgid "File transfer successful"
 msgstr "ファイルの転送が成功しました"
 
-#: ../../locales/../src/interface/FileZilla.cpp:363
+#: ../../locales/../src/interface/Mainfrm.cpp:869
+msgid "File transfers still in progress."
+msgstr "ファイルの転送の途中進捗"
+
+#: ../../locales/../src/interface/FileZilla.cpp:359
 #: ../../locales/../src/interface/quickconnectbar.cpp:50
 msgid "FileZilla Error"
 msgstr "Filezillaエラー"
 
-#: resources.h:503
+#: resources.h:538
 msgid ""
 "FileZilla can now test your configuration to ensure everything is configured "
 "properly."
@@ -1929,17 +2090,16 @@ msgid "Filelists"
 msgstr "ファイル一覧"
 
 #: ../../locales/../src/interface/filteredit.cpp:52
-#: ../../locales/../src/interface/LocalListView.cpp:229
-#: ../../locales/../src/interface/RemoteListView.cpp:305
+#: ../../locales/../src/interface/LocalListView.cpp:231
+#: ../../locales/../src/interface/RemoteListView.cpp:307
 msgid "Filename"
 msgstr "ファイル名"
 
-#: resources.h:388
-#, fuzzy
+#: resources.h:413
 msgid "Filename &filters..."
-msgstr "フィルタを編集...(&E)"
+msgstr "ファイル名フィルタ(&f)..."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1698
+#: ../../locales/../src/interface/RemoteListView.cpp:1770
 msgid "Filename invalid"
 msgstr "ファイル名が不正です"
 
@@ -1947,32 +2107,36 @@ msgstr "ファイル名が不正です"
 msgid "Filename unchanged"
 msgstr "ファイル名は変更されませんでした"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1705
+#: ../../locales/../src/interface/LocalListView.cpp:1837
 msgid "Filenames may not contain any of the following characters: / * ? < > |"
 msgstr "ファイル名に次の文字は使えません: / * ? < > |"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1670
+#: ../../locales/../src/interface/LocalListView.cpp:1802
 msgid ""
 "Filenames may not contain any of the following characters: / \\ : * ? \" < > "
 "|"
 msgstr "ファイル名に次の文字は使えません: / \\ : * ? \" < > |"
 
 #: ../../locales/../src/interface/filteredit.cpp:53
-#: ../../locales/../src/interface/LocalListView.cpp:230
-#: ../../locales/../src/interface/RemoteListView.cpp:306
+#: ../../locales/../src/interface/LocalListView.cpp:232
+#: ../../locales/../src/interface/RemoteListView.cpp:308
 msgid "Filesize"
 msgstr "ファイルサイズ"
 
-#: ../../locales/../src/interface/LocalListView.cpp:231
-#: ../../locales/../src/interface/RemoteListView.cpp:307
+#: ../../locales/../src/interface/settingsdialog.cpp:109
+msgid "Filesize format"
+msgstr "ファイルサイズ書式"
+
+#: ../../locales/../src/interface/LocalListView.cpp:233
+#: ../../locales/../src/interface/RemoteListView.cpp:309
 msgid "Filetype"
 msgstr "ファイルタイプ"
 
-#: resources.h:273
+#: resources.h:291
 msgid "Filter &out all files that:"
 msgstr "すべてのファイルを除去する:"
 
-#: resources.h:280
+#: resources.h:298
 msgid "Filter applies to:"
 msgstr "フィルタ適用先:"
 
@@ -1984,7 +2148,7 @@ msgstr "フィルタ名はすでに存在しています"
 msgid "Filter set already exists"
 msgstr "フィルタセットはすでに存在しています"
 
-#: resources.h:536 resources.h:537
+#: resources.h:571 resources.h:572
 msgid "Filter the directory listings"
 msgstr "ディレクトリ一覧表示フィルタ"
 
@@ -2004,7 +2168,7 @@ msgstr "指紋(MD5):"
 msgid "Fingerprint (SHA-1):"
 msgstr "指紋(SHA-1):"
 
-#: resources.h:233 resources.h:245
+#: resources.h:251 resources.h:263
 msgid "Fingerprint:"
 msgstr "指紋"
 
@@ -2012,8 +2176,8 @@ msgstr "指紋"
 msgid "Firewall and router configuration wizard"
 msgstr "ファイアウォールとルータ設定ウィザード"
 
-#: ../../locales/../src/interface/LocalListView.cpp:744
-#: ../../locales/../src/interface/RemoteListView.cpp:1190
+#: ../../locales/../src/interface/LocalListView.cpp:831
+#: ../../locales/../src/interface/RemoteListView.cpp:1202
 msgid "Folder"
 msgstr "フォルダ"
 
@@ -2025,7 +2189,7 @@ msgstr ""
 "これらのオプション設定に関するより詳細な情報のためにネットワーク接続ウィザー"
 "ドを起動して下さい."
 
-#: resources.h:498
+#: resources.h:533
 msgid "For reliability you should specify a range of at least 10 ports."
 msgstr "信頼性のために少なくとも10ポートぼ範囲指定は指定すべきです."
 
@@ -2037,7 +2201,7 @@ msgstr "UTF-8を強制する(&U)"
 msgid "General"
 msgstr "一般"
 
-#: resources.h:294 resources.h:487
+#: resources.h:312 resources.h:522
 msgid "Get external IP address from the following URL:"
 msgstr "以下のURLから外部IPアドレスを取得:"
 
@@ -2047,51 +2211,54 @@ msgstr ""
 "与えられたフィルタセットの名前はすでに存在しています,フィルタセットを上書きし"
 "ますか?"
 
-#: resources.h:201
+#: resources.h:219
 msgid "Group permissions"
 msgstr "グループ属性"
 
-#: resources.h:433
+#: resources.h:459
 msgid "H&igh"
 msgstr "高い(&i)"
 
-#: resources.h:42 ../../locales/../src/interface/queue.cpp:868
-#: ../../locales/../src/interface/queue.cpp:949
+#: resources.h:42 ../../locales/../src/interface/queue.cpp:851
+#: ../../locales/../src/interface/queue.cpp:932
 msgid "High"
 msgstr "高い"
 
-#: ../../locales/../src/interface/queue.cpp:870
-#: ../../locales/../src/interface/queue.cpp:951
+#: ../../locales/../src/interface/queue.cpp:853
+#: ../../locales/../src/interface/queue.cpp:934
 msgid "Highest"
 msgstr "最高"
 
 #: ../../locales/../src/interface/optionspage_connection_active.cpp:82
 msgid "Highest available port has to be a number between 1024 and 65535."
-msgstr ""
-"利用可能な一番上ののポートは1024番から65535の間の数でなければいけません."
+msgstr "利用可能な一番上のポートは1024番から65535の間の数でなければいけません."
 
-#: resources.h:262
+#: resources.h:280
 msgid ""
 "Hold the shift key to toggle the filter state on both sides simultanously."
 msgstr ""
 "同時に両サイド上でフィルタの状態を留めるためにシフトキーを保持してください."
 
-#: resources.h:220
+#: resources.h:238
 msgid "Homepage:"
 msgstr "ホームページ:"
 
-#: resources.h:239
+#: resources.h:257
 msgid "Host key mismatch"
 msgstr "ホストキーが一致しません"
 
-#: resources.h:8 resources.h:115 resources.h:223 resources.h:231
-#: resources.h:243
+#: resources.h:8 resources.h:115 resources.h:241 resources.h:249
+#: resources.h:261
 msgid "Host:"
 msgstr "ホスト:"
 
 #: resources.h:92
 msgid "Hours,"
 msgstr "時間"
+
+#: resources.h:189
+msgid "I&SO 8601 (example: 15:47)"
+msgstr "I&SO 8601 (例: 15:47)(&S)"
 
 #: resources.h:34
 msgid ""
@@ -2101,11 +2268,11 @@ msgstr ""
 "この時間の間にデータが送受信されていないのであれば,接続が閉じておりFileZilla"
 "は再接続するでしょう."
 
-#: resources.h:190
+#: resources.h:208
 msgid "If reporting bugs, please provide logs with \"Verbose\" logging level."
 msgstr "バグを報告するなら\"詳細\"ロギングレベルのログを提供して下さい."
 
-#: resources.h:478
+#: resources.h:513
 msgid ""
 "If the automatic test at the end of this wizard succeeds, but you cannot "
 "transfer files to a particular server, the server might be misconfigured and "
@@ -2117,7 +2284,7 @@ msgstr ""
 "モードで試行してみてください.サイトマネージャのサーバごとの基本設定で転送モー"
 "ドを設定することができます."
 
-#: resources.h:473
+#: resources.h:508
 msgid ""
 "If the fallback option is enabled, you will be able to connect to "
 "misconfigured servers which reject the selected transfer mode."
@@ -2137,7 +2304,7 @@ msgstr ""
 msgid "If this problem stays, please contact your router manufacturer."
 msgstr "この問題が残るようなら,ルータの製造者に連絡を取ってください."
 
-#: resources.h:334 resources.h:352
+#: resources.h:352 resources.h:370
 msgid ""
 "If using 'overwrite if newer', your system time has to be synchronized with "
 "the server. If the time differs (e.g. different timezone), specify a "
@@ -2151,7 +2318,7 @@ msgstr ""
 msgid "If you change the language, you should restart FileZilla."
 msgstr "言語を変えるなら, FileZillaの再起動が必要になります."
 
-#: resources.h:504
+#: resources.h:539
 msgid ""
 "If you click on test, FileZilla will connect to probe.filezilla-project.org "
 "and will perform some simple tests."
@@ -2167,7 +2334,7 @@ msgstr ""
 "間違ったファイルタイプを入力すると, 転送時にファイルを破損してしまうかもしれ"
 "ません."
 
-#: resources.h:505
+#: resources.h:540
 msgid "If you get any errors, your configuration is not correct."
 msgstr "もしいくつかのエラーが出るなら, 設定は正しくありません."
 
@@ -2189,7 +2356,7 @@ msgstr ""
 "間違いがあるかも知れません.この場合,パッシブモードに切り替えて挑戦したりサー"
 "バ管理者に助けを求たりしてみて下さい."
 
-#: resources.h:464
+#: resources.h:499
 msgid ""
 "If you sucessfully complete the wizard and the final test succeeds, any "
 "firewalls and routers you have should be configured properly."
@@ -2197,7 +2364,7 @@ msgstr ""
 "ウィザードがうまく完了しテストが最終テストが成功したなら,あなたのもつルータや"
 "ファイアウォールは適切に設定されるべきである."
 
-#: resources.h:500
+#: resources.h:535
 msgid ""
 "If you use a firewall, make sure FileZilla is allowed to accept connection "
 "on all given ports."
@@ -2205,7 +2372,7 @@ msgstr ""
 "もしファイアウォールを利用しているなら,もちろんFileZillaはすべてのポートにお"
 "いて接続を受けることを認めます."
 
-#: resources.h:499
+#: resources.h:534
 msgid ""
 "If you use a router, make sure all these ports are forwarded to the machine "
 "you're running FileZilla on."
@@ -2220,20 +2387,20 @@ msgid ""
 msgstr ""
 "ルータのIPアドレスがコロコロからるなら,ルータの製造者に連絡を取ってください."
 
-#: ../../locales/../src/interface/import.cpp:79
+#: ../../locales/../src/interface/import.cpp:80
 msgid "Import data from older version"
 msgstr "古いバージョンからデータを取り込みます"
 
-#: resources.h:371
+#: resources.h:389
 msgid "Import settings"
 msgstr "取り込み設定"
 
-#: ../../locales/../src/interface/import.cpp:65
-#: ../../locales/../src/interface/import.cpp:68
+#: ../../locales/../src/interface/import.cpp:66
+#: ../../locales/../src/interface/import.cpp:69
 msgid "Import successful"
 msgstr "取り込み成功"
 
-#: resources.h:492
+#: resources.h:527
 msgid ""
 "In active mode, FileZilla has to listen on a port for data transfers. You "
 "have to specify which ports FileZilla will use."
@@ -2241,7 +2408,7 @@ msgstr ""
 "アクティブモードで,FileZillaはデータ転送のためにポートを開かなければいけませ"
 "ん.FileZillaの使うポートを指定しなければいけません."
 
-#: resources.h:494
+#: resources.h:529
 msgid ""
 "In case you have a router, you will have to forward all available ports, as "
 "FileZilla has no influence on the ports your system chooses."
@@ -2249,7 +2416,7 @@ msgstr ""
 "ルータがある場合は,システムの選んだポートにFileZillaは影響を持たないものとし"
 "て,すべての可能なすべてのポートに転送すべきでしょう."
 
-#: resources.h:315
+#: resources.h:333
 msgid ""
 "In case you prefer automatic updates, you can enable automatic update checks "
 "in the settings dialog."
@@ -2257,13 +2424,13 @@ msgstr ""
 "自動的にアップデートを参照したい時は, 設定ダイアログの自動アップデートチェッ"
 "クを有効にして下さい."
 
-#: resources.h:290 resources.h:482
+#: resources.h:308 resources.h:517
 msgid ""
 "In order to use active mode, FileZilla needs to know your external IP "
 "address."
 msgstr "パッシブモードを使うのにFileZillaは外部IPアドレスを知る必要があります."
 
-#: resources.h:467
+#: resources.h:502
 msgid ""
 "In passive mode, which is recommended for most users, FileZilla asks the "
 "server for a port and connects to the given port. Not much configuration has "
@@ -2273,7 +2440,7 @@ msgstr ""
 "えられたポートに接続します.ほとんどの設定はこのために行われなければいけませ"
 "ん."
 
-#: ../../locales/../src/interface/QueueView.cpp:882
+#: ../../locales/../src/interface/QueueView.cpp:923
 msgid "Incorrect password"
 msgstr "パスワードが間違っています"
 
@@ -2281,18 +2448,18 @@ msgstr "パスワードが間違っています"
 msgid "Initializing TLS..."
 msgstr "TLSを初期化しています..."
 
-#: resources.h:79 ../../locales/../src/interface/sitemanager.cpp:796
-#: ../../locales/../src/interface/sitemanager.cpp:1011
+#: resources.h:79 ../../locales/../src/interface/sitemanager.cpp:815
+#: ../../locales/../src/interface/sitemanager.cpp:1046
 msgid "Interactive"
 msgstr "インタラクティブ"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:102
+#: ../../locales/../src/interface/settingsdialog.cpp:106
 msgid "Interface"
 msgstr "インターフェース"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:158
-#: ../../locales/../src/interface/QueueView.cpp:847
-#: ../../locales/../src/interface/QueueView.cpp:1314
+#: ../../locales/../src/interface/QueueView.cpp:888
+#: ../../locales/../src/interface/QueueView.cpp:1363
 msgid "Interrupted by user"
 msgstr "ユーザにより中断されました"
 
@@ -2328,8 +2495,8 @@ msgstr "不適切なデータを受信しました."
 msgid "Invalid date"
 msgstr "不適切な日付"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1670
-#: ../../locales/../src/interface/LocalListView.cpp:1705
+#: ../../locales/../src/interface/LocalListView.cpp:1802
+#: ../../locales/../src/interface/LocalListView.cpp:1837
 msgid "Invalid filename"
 msgstr "ファイル名が適切ではありません"
 
@@ -2375,15 +2542,15 @@ msgstr "適切ではないユーザ名が与えられました."
 msgid "Keep directories on top"
 msgstr "トップにディレクトリを保持する"
 
-#: resources.h:436
+#: resources.h:462
 msgid "L&owest"
 msgstr "最低(&o)"
 
-#: resources.h:288
+#: resources.h:306
 msgid "L&owest available port:"
 msgstr "利用可能な最低のポート(&o):"
 
-#: resources.h:173 ../../locales/../src/interface/settingsdialog.cpp:104
+#: resources.h:173 ../../locales/../src/interface/settingsdialog.cpp:110
 msgid "Language"
 msgstr "言語"
 
@@ -2391,8 +2558,8 @@ msgstr "言語"
 msgid "Large icons"
 msgstr "大きいアイコン"
 
-#: ../../locales/../src/interface/LocalListView.cpp:232
-#: ../../locales/../src/interface/RemoteListView.cpp:308
+#: ../../locales/../src/interface/LocalListView.cpp:234
+#: ../../locales/../src/interface/RemoteListView.cpp:310
 msgid "Last modified"
 msgstr "最終修正日"
 
@@ -2412,7 +2579,7 @@ msgstr "並列ダウンロードの制限(&d) :"
 msgid "Limit for concurrent &uploads:"
 msgstr "並列アップロードの制限(&u) :"
 
-#: resources.h:285
+#: resources.h:303
 msgid "Limit local ports"
 msgstr "ローカルポートを制限する"
 
@@ -2429,11 +2596,11 @@ msgstr "リッスンソケットを閉じました."
 msgid "Listing:"
 msgstr "リスト:"
 
-#: resources.h:256
+#: resources.h:274
 msgid "Local filters:"
 msgstr "ローカルフィルタ:"
 
-#: ../../locales/../src/interface/viewheader.cpp:316
+#: ../../locales/../src/interface/viewheader.cpp:321
 msgid "Local site:"
 msgstr "ローカルサイト:"
 
@@ -2449,13 +2616,13 @@ msgstr ""
 "ログインデータには非アスキー文字セットが含まれていてサーバはUTF-8に気づかない"
 "かも知れません.ローカル文字セットをタイプしてください."
 
-#: ../../locales/../src/interface/queue.cpp:863
-#: ../../locales/../src/interface/queue.cpp:944
+#: ../../locales/../src/interface/queue.cpp:846
+#: ../../locales/../src/interface/queue.cpp:927
 msgid "Low"
 msgstr "低い"
 
-#: ../../locales/../src/interface/queue.cpp:861
-#: ../../locales/../src/interface/queue.cpp:942
+#: ../../locales/../src/interface/queue.cpp:844
+#: ../../locales/../src/interface/queue.cpp:925
 msgid "Lowest"
 msgstr "最低"
 
@@ -2480,7 +2647,7 @@ msgstr "不正なヘッダ: %s"
 msgid "Malformed reply, server not sending proper lineendings"
 msgstr "不適切な応答, サーバは適切な行末を送っていません."
 
-#: resources.h:274
+#: resources.h:292
 msgid "Match all of the following"
 msgstr "以下のすべてに一致する"
 
@@ -2500,17 +2667,17 @@ msgstr "中サイズのアイコン"
 msgid "Minutes"
 msgstr "分"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:926
+#: ../../locales/../src/interface/LocalTreeView.cpp:932
 msgid "My Computer"
 msgstr "マイ　コンピュータ"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:916
+#: ../../locales/../src/interface/LocalTreeView.cpp:922
 msgid "My Documents"
 msgstr "マイ　ドキュメント"
 
-#: ../../locales/../src/interface/sitemanager.cpp:239
-#: ../../locales/../src/interface/sitemanager.cpp:241
-#: ../../locales/../src/interface/sitemanager.cpp:1338
+#: ../../locales/../src/interface/sitemanager.cpp:248
+#: ../../locales/../src/interface/sitemanager.cpp:250
+#: ../../locales/../src/interface/sitemanager.cpp:1378
 msgid "My Sites"
 msgstr "自分のサイト"
 
@@ -2521,7 +2688,7 @@ msgstr "自分のサイト"
 msgid "N/a"
 msgstr "何もありません"
 
-#: ../../locales/../src/interface/sitemanager.cpp:643
+#: ../../locales/../src/interface/sitemanager.cpp:654
 msgid "Name already exists"
 msgstr "名前はすでに存在しています"
 
@@ -2533,7 +2700,7 @@ msgstr "名前:"
 msgid "Need to enter filter name"
 msgstr "フィルタ名を入力する必要があります"
 
-#: ../../locales/../src/interface/sitemanager.cpp:551
+#: ../../locales/../src/interface/sitemanager.cpp:562
 msgid "Need to specify a character encoding"
 msgstr "文字エンコーディングを明確にする必要があります"
 
@@ -2545,25 +2712,29 @@ msgstr "新しいフォルダ(&F)"
 msgid "New filter"
 msgstr "新しいフィルタ"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1394
+#: ../../locales/../src/interface/RemoteListView.cpp:1449
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1206
-#: ../../locales/../src/interface/sitemanager.cpp:455
-#: ../../locales/../src/interface/sitemanager.cpp:478
+#: ../../locales/../src/interface/sitemanager.cpp:466
+#: ../../locales/../src/interface/sitemanager.cpp:489
 msgid "New folder"
 msgstr "新規フォルダ"
 
-#: ../../locales/../src/interface/sitemanager.cpp:711
-#: ../../locales/../src/interface/sitemanager.cpp:734
+#: ../../locales/../src/interface/sitemanager.cpp:730
+#: ../../locales/../src/interface/sitemanager.cpp:753
 msgid "New site"
 msgstr "新規サイト"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:728
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:729
 msgid "No"
 msgstr "いいえ"
 
 #: ../../locales/../src/interface/export.cpp:26
 msgid "No category to export selected"
 msgstr "選択されたものを書き出すカテゴリがありません"
+
+#: ../../locales/../src/interface/QueueView.cpp:1996
+msgid "No command given, aborting."
+msgstr "コマンドは与えられていません, 抜けます."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3094
 msgid "No external IP address set, trying default."
@@ -2579,13 +2750,13 @@ msgstr "ホストが与えられませんでした. ホストを入力して下�
 msgid "No images available"
 msgstr "利用可能なイメージがありません"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1304
-#: ../../locales/../src/interface/sitemanager.cpp:1316
-#: ../../locales/../src/interface/sitemanager.cpp:1347
+#: ../../locales/../src/interface/sitemanager.cpp:1344
+#: ../../locales/../src/interface/sitemanager.cpp:1356
+#: ../../locales/../src/interface/sitemanager.cpp:1387
 msgid "No sites available"
 msgstr "利用可能なサイトがありません"
 
-#: ../../locales/../src/interface/themeprovider.cpp:76
+#: ../../locales/../src/interface/themeprovider.cpp:77
 msgid "No themes in themes.xml"
 msgstr "themes.xmlにテーマがありません"
 
@@ -2593,23 +2764,27 @@ msgstr "themes.xmlにテーマがありません"
 msgid "None"
 msgstr "なし"
 
-#: resources.h:276
+#: resources.h:294
 msgid "None of the following"
 msgstr "続くものはありません."
 
-#: resources.h:41 resources.h:77 ../../locales/../src/interface/queue.cpp:866
-#: ../../locales/../src/interface/queue.cpp:947
-#: ../../locales/../src/interface/sitemanager.cpp:759
-#: ../../locales/../src/interface/sitemanager.cpp:792
-#: ../../locales/../src/interface/sitemanager.cpp:1005
+#: resources.h:41 resources.h:77 ../../locales/../src/interface/queue.cpp:849
+#: ../../locales/../src/interface/queue.cpp:930
+#: ../../locales/../src/interface/sitemanager.cpp:778
+#: ../../locales/../src/interface/sitemanager.cpp:811
+#: ../../locales/../src/interface/sitemanager.cpp:1040
 msgid "Normal"
 msgstr "通常"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:688
+#: ../../locales/../src/interface/queueview_failed.cpp:241
+msgid "Not all items could be requeued for viewing / editing."
+msgstr "すべての項目は表示/編集を必要とすることはありません."
+
+#: ../../locales/../src/interface/RemoteListView.cpp:697
 msgid "Not connected to any server"
 msgstr "どのサーバにも接続されていません."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:545
+#: ../../locales/../src/interface/Mainfrm.cpp:624
 msgid "Note that this feature is only supported using the FTP protocol."
 msgstr ""
 "この特徴はFTPプロトコルの利用のみがサポートされているということを知らせていま"
@@ -2623,21 +2798,21 @@ msgstr "アップデートチェックの日数間隔"
 msgid "Number of retries has to be between 0 and 99."
 msgstr "再試行回数は0から99になります."
 
-#: resources.h:329 resources.h:347
+#: resources.h:347 resources.h:365
 msgid "O&verwrite"
 msgstr "上書き(&v)"
 
-#: resources.h:22 resources.h:62 resources.h:193 resources.h:215
-#: resources.h:227 resources.h:237 resources.h:249 resources.h:263
-#: resources.h:283 resources.h:362 resources.h:369 resources.h:377
+#: resources.h:22 resources.h:62 resources.h:211 resources.h:233
+#: resources.h:245 resources.h:255 resources.h:267 resources.h:281
+#: resources.h:301 resources.h:380 resources.h:387 resources.h:395
 msgid "OK"
 msgstr "了解"
 
-#: resources.h:335
+#: resources.h:353
 msgid "Ok"
 msgstr "了解"
 
-#: resources.h:474
+#: resources.h:509
 msgid ""
 "On the following pages, the selected transfer mode will be configured, as "
 "well as the fallback mode if enabled."
@@ -2645,23 +2820,23 @@ msgstr ""
 "有効になっている場合, 次のページで選択された転送モードはフォールバックモード"
 "として設定されます."
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:738
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:739
 msgid "Once"
 msgstr "一度だけ"
 
-#: resources.h:516 resources.h:517
+#: resources.h:551 resources.h:552
 msgid "Open the Site Manager"
 msgstr "サイトマネージャを開く"
 
-#: resources.h:386
+#: resources.h:411
 msgid "Open the settings dialog of FileZilla"
 msgstr "FileZillaの設定ダイアログを開く"
 
-#: resources.h:381
+#: resources.h:406
 msgid "Opens the Site Manager"
 msgstr "サイトマネージャを開く"
 
-#: ../../locales/../src/interface/FileZilla.cpp:209
+#: ../../locales/../src/interface/FileZilla.cpp:206
 msgid "Operating system problem detected"
 msgstr "オペレーティングシステムの問題が検知されました"
 
@@ -2673,11 +2848,11 @@ msgstr "組織:"
 msgid "Other:"
 msgstr "その他:"
 
-#: resources.h:322 resources.h:341
+#: resources.h:340 resources.h:359
 msgid "Ov&erwrite if newer"
 msgstr "もし新しいなら上書きする(&e)"
 
-#: resources.h:330 resources.h:348
+#: resources.h:348 resources.h:366
 msgid "Over&write if newer"
 msgstr "もし新しいなら上書きする(&w)"
 
@@ -2689,11 +2864,11 @@ msgstr "概要"
 msgid "Overwrite &if newer"
 msgstr "もし新しいなら上書きする(&i)"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:310
+#: ../../locales/../src/interface/RemoteListView.cpp:312
 msgid "Owner / Group"
 msgstr "オーナ / グループ"
 
-#: resources.h:197
+#: resources.h:215
 msgid "Owner permissions"
 msgstr "オーナのパーミッション"
 
@@ -2709,15 +2884,15 @@ msgstr "パッシブ（推奨）(&s)"
 msgid "Package"
 msgstr "パッケージ"
 
-#: resources.h:82 resources.h:512
+#: resources.h:82 resources.h:547
 msgid "Pass&word:"
 msgstr "パスワード(&w):"
 
-#: resources.h:470
+#: resources.h:505
 msgid "Passive (recommended)"
 msgstr "パッシブ（推奨）"
 
-#: resources.h:1 ../../locales/../src/interface/settingsdialog.cpp:98
+#: resources.h:1 ../../locales/../src/interface/settingsdialog.cpp:102
 msgid "Passive mode"
 msgstr "パッシブモード"
 
@@ -2727,7 +2902,7 @@ msgstr "パッシブモード"
 msgid "Passive mode has been set as default transfer mode."
 msgstr "パッシブモードがデフォルトの転送モードとして設定されています."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:309
+#: ../../locales/../src/interface/RemoteListView.cpp:311
 msgid "Permissions"
 msgstr "パーミッション"
 
@@ -2739,7 +2914,7 @@ msgstr ""
 "FileZillaが外部への接続確立を許可されていることとアドレスリゾルバのアドレスが"
 "正しくタイプされていることを確認して下さい."
 
-#: resources.h:312
+#: resources.h:330
 msgid ""
 "Please check http://filezilla-project.org for the most recent version of "
 "FileZilla."
@@ -2764,7 +2939,7 @@ msgstr ""
 "FileZillaのソースコードをダウンロードするために http://filezilla-project.org "
 "を訪問して下さい."
 
-#: resources.h:476
+#: resources.h:511
 msgid ""
 "Please configure any firewalls and routers so that FileZilla can establish "
 "outgoing connection to arbitrary ports."
@@ -2784,6 +2959,14 @@ msgid ""
 msgstr ""
 "安定したインターネット接続を保証し http://filezilla-project.org/probe.php 上"
 "でサーバの挙動をチェックしてください."
+
+#: ../../locales/../src/interface/optionspage_dateformatting.cpp:72
+msgid "Please enter a custom date format."
+msgstr "慣習の日時書式を入力してください"
+
+#: ../../locales/../src/interface/optionspage_dateformatting.cpp:79
+msgid "Please enter a custom time format."
+msgstr "慣習の時刻書式を入力してください"
 
 #: ../../locales/../src/interface/optionspage_transfer.cpp:75
 msgid "Please enter a download speedlimit greater or equal to 0 KB/s."
@@ -2824,6 +3007,17 @@ msgstr "並列転送の数として1から10の間の数字を入力してくだ
 msgid "Please enter a password for this server:"
 msgstr "このサーバのパスワードを入力してください"
 
+#: ../../locales/../src/interface/QueueView.cpp:1985
+msgid ""
+"Please enter a path and executable to run.\n"
+"E.g. c:\\somePath\\file.exe under MS Windows or /somePath/file under Unix.\n"
+"You can also optionally specify program arguments."
+msgstr ""
+"実行可能なパスを入力してください. \n"
+"たとえばMS Windows環境ではc:\\somePath\\file.exe UNIX環境では/somePath/"
+"file. \n"
+"また，特定のプログラム引数を追加することができます."
+
 #: ../../locales/../src/interface/optionspage_transfer.cpp:67
 msgid ""
 "Please enter a timeout between 5 and 9999 seconds or 0 to disable timeouts."
@@ -2853,7 +3047,7 @@ msgstr ""
 "アップロードのスピード制限が非常に大きい もしくは 0KB/sに等しいと入力してくだ"
 "さい."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:479
+#: ../../locales/../src/interface/Mainfrm.cpp:558
 msgid ""
 "Please enter raw FTP command.\n"
 "Using raw ftp commands will clear the directory cache."
@@ -2861,8 +3055,8 @@ msgstr ""
 "生のFTPコマンドを入力してください.\n"
 "生のftpコマンドを使うことによりディレクトリのキャッシュを消せるでしょう."
 
-#: ../../locales/../src/interface/LocalListView.cpp:1316
-#: ../../locales/../src/interface/RemoteListView.cpp:1380
+#: ../../locales/../src/interface/LocalListView.cpp:1432
+#: ../../locales/../src/interface/RemoteListView.cpp:1435
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1192
 msgid "Please enter the name of the directory which should be created:"
 msgstr "作成しようとするディレクトリの名前を入力してください"
@@ -2882,7 +3076,7 @@ msgstr ""
 "アドレスを利用していたり外部アドレスがわからない場合は,外部リゾルバオプション"
 "を使ってください."
 
-#: resources.h:463
+#: resources.h:498
 msgid ""
 "Please follow the instructions carefully, as wrong configuration will "
 "prevent successful FTP connections."
@@ -2918,7 +3112,7 @@ msgstr ""
 "切に設定すべきです.手動ポート転送を利用すべきでしょう. 'DMZモード' や 'ゲーム"
 "モード'と呼ばれるものをルータで起動してはいけません."
 
-#: resources.h:477
+#: resources.h:512
 msgid ""
 "Please note that FileZilla has no influence on the port the server chooses. "
 "So the server might choose a port which your firewall thinks is only used by "
@@ -2938,6 +3132,14 @@ msgstr ""
 "あまりにも多かったり, あまりにも短い間隔で再接続しようとするとサーバは接続を"
 "切るかもしれないことに注意してください."
 
+#: resources.h:186 resources.h:192
+msgid ""
+"Please read http://filezilla-project.org/wiki/index.php/"
+"Date_and_Time_formatting for details"
+msgstr ""
+"詳しくは http://filezilla-project.org/wiki/index.php/"
+"Date_and_Time_formatting を読んでください"
+
 #: ../../locales/../src/interface/netconfwizard.cpp:559
 msgid ""
 "Please run this wizard again should you change your network environment or "
@@ -2951,11 +3153,11 @@ msgstr ""
 msgid "Please select an action:"
 msgstr "アクションを選択してください:"
 
-#: resources.h:376
+#: resources.h:394
 msgid "Please select the categories you would like to import."
 msgstr "取り込みたいカテゴリを選択して下さい."
 
-#: resources.h:465
+#: resources.h:500
 msgid "Please select the default transfer mode you would like to use."
 msgstr "利用したいデフォルトの転送モードを選択してください."
 
@@ -2982,7 +3184,7 @@ msgstr "選択されたファイルとディレクトリの新しい属性を選
 msgid "Please select the new attributes for the selected files."
 msgstr "選択されたファイルの新しい属性を選んでください"
 
-#: resources.h:314
+#: resources.h:332
 msgid ""
 "Please visit http://filezilla-project.org for more information about "
 "FileZilla."
@@ -2999,8 +3201,8 @@ msgstr ""
 "最新バージョンをダウンロードするには http://filezilla-project.org を訪問して"
 "下さい."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1202
-#: ../../locales/../src/interface/sitemanager.cpp:1337
+#: ../../locales/../src/interface/sitemanager.cpp:1242
+#: ../../locales/../src/interface/sitemanager.cpp:1377
 msgid "Predefined Sites"
 msgstr "所定のサイト"
 
@@ -3016,11 +3218,11 @@ msgstr "プライマリ接続とデータ接続証明は一致しません."
 msgid "Prioritize directories (default)"
 msgstr "優先ディレクトリ（標準）"
 
-#: ../../locales/../src/interface/queue.cpp:1153
+#: ../../locales/../src/interface/queue.cpp:1136
 msgid "Priority"
 msgstr "優先度"
 
-#: resources.h:427
+#: resources.h:453
 msgid "Process &Queue"
 msgstr "キューを処理する(&Q)"
 
@@ -3028,65 +3230,69 @@ msgstr "キューを処理する(&Q)"
 msgid "Public key algorithm:"
 msgstr "公開鍵アルゴリズム:"
 
-#: resources.h:205
+#: resources.h:223
 msgid "Public permissions"
 msgstr "公開パーミッション"
 
-#: ../../locales/../src/interface/QueueView.cpp:1480
+#: ../../locales/../src/interface/QueueView.cpp:1544
 #, c-format
 msgid "Queue: %s%d KB"
 msgstr "キュー: %s%d KB"
 
-#: ../../locales/../src/interface/QueueView.cpp:1475
+#: ../../locales/../src/interface/QueueView.cpp:1539
 #, c-format
 msgid "Queue: %s%d MB"
 msgstr "キュー: %s%d MB"
 
-#: ../../locales/../src/interface/QueueView.cpp:1483
+#: ../../locales/../src/interface/QueueView.cpp:1547
 #, c-format
 msgid "Queue: %s%d bytes"
 msgstr "キュー: %s%d MB"
 
-#: ../../locales/../src/interface/QueueView.cpp:1471
+#: ../../locales/../src/interface/QueueView.cpp:1535
 msgid "Queue: empty"
 msgstr "キュー: ありません"
 
-#: ../../locales/../src/interface/QueueView.cpp:396
+#: ../../locales/../src/interface/QueueView.cpp:408
 msgid "Queued files"
 msgstr "キューファイル"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:488
+#: resources.h:469
+msgid "R&eboot system"
+msgstr "システムを再起動(&e)"
+
+#: ../../locales/../src/interface/Mainfrm.cpp:567
 msgid "Raw FTP command"
 msgstr "純粋なFTPコマンド"
 
-#: resources.h:202
+#: resources.h:220
 msgid "Re&ad"
 msgstr "読む(&a)"
 
-#: resources.h:57 resources.h:324 resources.h:343
+#: resources.h:57 resources.h:342 resources.h:361
 msgid "Re&name"
 msgstr "名前を変更(&n)"
 
-#: resources.h:206
+#: resources.h:224
 msgid "Rea&d"
 msgstr "読む(&d)"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:729
+#: ../../locales/../src/interface/Mainfrm.cpp:815
 msgid "Really cancel current operation?"
 msgstr "本当に現在の操作を中止しますか?"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1417
-#: ../../locales/../src/interface/RemoteListView.cpp:1435
+#: ../../locales/../src/interface/LocalListView.cpp:1533
+#: ../../locales/../src/interface/RemoteListView.cpp:1490
 msgid "Really delete all selected files and/or directories?"
 msgstr ""
 "本当に選択されたファイルとディレクトリ（もしくはファイルかディレクトリ）のす"
 "べてを削除しますか"
 
-#: ../../locales/../src/interface/queueview_failed.cpp:15
+#: ../../locales/../src/interface/queueview_failed.cpp:16
 msgid "Reason"
 msgstr "理由"
 
-#: resources.h:211
+#: resources.h:229
 msgid "Rec&urse into subdirectories"
 msgstr "サブディレクトリの中の再帰"
 
@@ -3108,7 +3314,7 @@ msgstr ""
 msgid "Reconnection settings"
 msgstr "再接続設定"
 
-#: resources.h:534 resources.h:535
+#: resources.h:569 resources.h:570
 msgid "Reconnects to the last used server"
 msgstr "最後に使ったサーバに再接続"
 
@@ -3116,7 +3322,7 @@ msgstr "最後に使ったサーバに再接続"
 msgid "Redirection to invalid address"
 msgstr "不適切なアドレスへの出力先変更"
 
-#: resources.h:526 resources.h:527
+#: resources.h:561 resources.h:562
 msgid "Refresh the file and folder lists"
 msgstr "ファイルとフォルダの一覧を一新する"
 
@@ -3124,27 +3330,27 @@ msgstr "ファイルとフォルダの一覧を一新する"
 msgid "Remote certificate not trusted."
 msgstr "リモート証明書は信用されていません."
 
-#: ../../locales/../src/interface/queue.cpp:1151
+#: ../../locales/../src/interface/queue.cpp:1134
 msgid "Remote file"
 msgstr "リモートファイル"
 
-#: resources.h:259
+#: resources.h:277
 msgid "Remote filters:"
 msgstr "リモートフィルタ:"
 
-#: ../../locales/../src/interface/viewheader.cpp:508
+#: ../../locales/../src/interface/viewheader.cpp:512
 msgid "Remote site:"
 msgstr "リモートサイト:"
 
-#: resources.h:443 resources.h:446
+#: resources.h:478 resources.h:481
 msgid "Remove &all"
 msgstr "すべて削除(&a)"
 
-#: resources.h:278 resources.h:444 resources.h:447
+#: resources.h:296 resources.h:479 resources.h:482
 msgid "Remove &selected"
 msgstr "選択されてたものを削除(&s)"
 
-#: resources.h:332 resources.h:350
+#: resources.h:350 resources.h:368
 msgid "Rena&me"
 msgstr "名前の変更(&m)"
 
@@ -3152,25 +3358,25 @@ msgstr "名前の変更(&m)"
 msgid "Rename file"
 msgstr "ファイル名の変更"
 
-#: resources.h:459
+#: resources.h:494
 msgid "Rename selected directory"
 msgstr "選択されたディレクトリの名前を変えます."
 
-#: resources.h:414 resources.h:424
+#: resources.h:439 resources.h:450
 msgid "Rename selected files and folders"
 msgstr "選択されたファイルとフォルダの名前を変更"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2799
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2061
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2062
 #, c-format
 msgid "Renaming '%s' to '%s'"
 msgstr " '%s' の名前を '%s' に変更しています"
 
-#: resources.h:331 resources.h:349
+#: resources.h:349 resources.h:367
 msgid "Res&ume"
 msgstr "レジューム(&u)"
 
-#: resources.h:445 resources.h:448
+#: resources.h:480 resources.h:483
 msgid "Reset and requeue selected files"
 msgstr "リセットして選択されたファイルを再びキューに入れます"
 
@@ -3190,7 +3396,7 @@ msgstr "ホスト名を解決しています"
 msgid "Response:"
 msgstr "応答:"
 
-#: resources.h:354
+#: resources.h:372
 msgid ""
 "Resuming ascii files can cause problems if server uses a different line "
 "ending format than the client."
@@ -3199,7 +3405,7 @@ msgstr ""
 "に起こる問題をレジュームします."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:848
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:799
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:800
 msgid "Retrieving directory listing..."
 msgstr "ディレクトリ一覧を読み出しています"
 
@@ -3209,7 +3415,11 @@ msgstr "ディレクトリ一覧を読み出しています"
 msgid "Retrieving external IP address from %s"
 msgstr "%s から外部のIPアドレスを取得しています."
 
-#: resources.h:325 resources.h:344
+#: resources.h:470
+msgid "S&hutdown system"
+msgstr "システムのシャットダウン(&h)"
+
+#: resources.h:343 resources.h:362
 msgid "S&kip"
 msgstr "スキップ(&k)"
 
@@ -3217,11 +3427,11 @@ msgstr "スキップ(&k)"
 msgid "Save settings?"
 msgstr "設定を保存しますか？"
 
-#: ../../locales/../src/interface/QueueView.cpp:1535
+#: ../../locales/../src/interface/QueueView.cpp:1599
 msgid "Scanning for files to add to queue"
 msgstr "キューに加えるファイルをスキャンしています"
 
-#: ../../locales/../src/interface/QueueView.cpp:1537
+#: ../../locales/../src/interface/QueueView.cpp:1601
 msgid "Scanning for files to upload"
 msgstr "アップロードするファイルをスキャンしています"
 
@@ -3237,7 +3447,7 @@ msgstr "エントリーの選択:"
 msgid "Select Theme"
 msgstr "テーマの選択"
 
-#: resources.h:337
+#: resources.h:355
 msgid ""
 "Select default action to perform if target file of a transfer already exists."
 msgstr ""
@@ -3271,19 +3481,31 @@ msgstr "書き出した設定ファイルを選択して下さい"
 msgid "Select file to import settings from"
 msgstr "設定を取り込むためにファイルを選択して下さい"
 
-#: resources.h:365
+#: resources.h:383
 msgid "Select the categories to export:"
 msgstr "書き出すためにカテゴリを選択して下さい:"
 
-#: resources.h:356
+#: resources.h:374
 msgid "Select the private data you would like to delete."
 msgstr "削除したい個人データを選択してください."
+
+#: ../../locales/../src/interface/RemoteListView.cpp:2410
+msgid "Selected file already being edited"
+msgstr "選択されたファイルはすでに編集されています"
+
+#: ../../locales/../src/interface/RemoteListView.cpp:2404
+msgid "Selected file already still opened."
+msgstr "選択されたファイルはすでに開いています"
+
+#: ../../locales/../src/interface/RemoteListView.cpp:2418
+msgid "Selected file still being edited"
+msgstr "選択されたファイルはまだ編集されています"
 
 #: ../../locales/../src/engine/engineprivate.cpp:330
 msgid "Selected port usually in use by a different protocol."
 msgstr "選択されたポートは通常違うプロトコルによって利用されています."
 
-#: resources.h:398
+#: resources.h:423
 msgid "Send custom command to the server otherwise not available"
 msgstr "不可能でなければサーバにカスタムコマンドを送る"
 
@@ -3291,7 +3513,7 @@ msgstr "不可能でなければサーバにカスタムコマンドを送る"
 msgid "Serial number:"
 msgstr "シリアルナンバ: "
 
-#: ../../locales/../src/interface/queue.cpp:1149
+#: ../../locales/../src/interface/queue.cpp:1132
 msgid "Server / Local file"
 msgstr "サーバ / ローカルファイル"
 
@@ -3357,12 +3579,12 @@ msgstr ""
 msgid "Server&type:"
 msgstr "サーバの種類(&t):"
 
-#: resources.h:431
+#: resources.h:457
 msgid "Set &Priority"
 msgstr "優先度の設定(&P)"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2940
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1956
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1957
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
 msgstr "'%s'のパーミッションを'%s'に設定"
@@ -3371,11 +3593,11 @@ msgstr "'%s'のパーミッションを'%s'に設定"
 msgid "Settings"
 msgstr "設定"
 
-#: resources.h:191
+#: resources.h:209
 msgid "Show &raw directory listing"
 msgstr "そのままのディレクトリ一覧を見せる"
 
-#: resources.h:373
+#: resources.h:391
 msgid "Site &Manager entries"
 msgstr "サイトマネージャ　エントリ(&M)"
 
@@ -3383,13 +3605,17 @@ msgstr "サイトマネージャ　エントリ(&M)"
 msgid "Site Manager"
 msgstr "サイトマネージャ"
 
-#: ../../locales/../src/interface/sitemanager.cpp:51
+#: ../../locales/../src/interface/sitemanager.cpp:60
 msgid "Site Manager already open"
 msgstr "サイトマネージャはすでに開いています"
 
-#: ../../locales/../src/interface/queue.cpp:1152
+#: ../../locales/../src/interface/queue.cpp:1135
 msgid "Size"
 msgstr "サイズ"
+
+#: resources.h:193
+msgid "Size formatting"
+msgstr "サイズ書式"
 
 #: ../../locales/../src/interface/fileexistsdlg.cpp:59
 #: ../../locales/../src/interface/fileexistsdlg.cpp:83
@@ -3398,7 +3624,7 @@ msgstr "サイズ"
 msgid "Size unknown"
 msgstr "サイズ不明"
 
-#: resources.h:333 resources.h:351
+#: resources.h:351 resources.h:369
 msgid "Sk&ip"
 msgstr "スキップ(&i)"
 
@@ -3406,8 +3632,8 @@ msgstr "スキップ(&i)"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2250
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:206
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:246
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:622
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:695
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:623
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:696
 #, c-format
 msgid "Skipping download of %s"
 msgstr "%sのダウンロードをスキップします"
@@ -3416,8 +3642,8 @@ msgstr "%sのダウンロードをスキップします"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2254
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:210
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:250
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:626
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:699
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:627
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:700
 #, c-format
 msgid "Skipping upload of %s"
 msgstr "%sのアップロードをスキップします"
@@ -3426,7 +3652,7 @@ msgstr "%sのアップロードをスキップします"
 msgid "Small icons"
 msgstr "小さいアイコン"
 
-#: resources.h:2 resources.h:479
+#: resources.h:2 resources.h:514
 msgid ""
 "Some misconfigured remote servers which are behind a router, may reply with "
 "their local ip address."
@@ -3446,7 +3672,7 @@ msgstr "並び替えモード:"
 msgid "Source and path of the drop operation are identical"
 msgstr "元とドロップ操作されたパスは同一です"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:125
+#: ../../locales/../src/interface/RemoteListView.cpp:126
 msgid "Source and target of the drop operation are identical"
 msgstr "ドロップの元と先が同一です"
 
@@ -3455,13 +3681,13 @@ msgid "Speed limits"
 msgstr "スピード制限"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1587
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1330
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1331
 #, c-format
 msgid "Starting download of %s"
 msgstr "%sのダウンロードを始めています"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1591
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1334
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1335
 #, c-format
 msgid "Starting upload of %s"
 msgstr "%sのアップロードを始めています"
@@ -3470,7 +3696,7 @@ msgstr "%sのアップロードを始めています"
 msgid "State:"
 msgstr "状態:"
 
-#: ../../locales/../src/interface/QueueView.cpp:415
+#: ../../locales/../src/interface/QueueView.cpp:434
 msgid "Status"
 msgstr "状態"
 
@@ -3479,7 +3705,7 @@ msgstr "状態"
 msgid "Status:"
 msgstr "状態:"
 
-#: resources.h:428
+#: resources.h:454
 msgid "Stop and remove &all"
 msgstr "すべてを停止し削除します(&a)"
 
@@ -3502,7 +3728,7 @@ msgstr ""
 msgid "Successful transfers"
 msgstr "転送成功"
 
-#: resources.h:507
+#: resources.h:542
 msgid "Summary of test results:"
 msgstr "テスト結果の概要"
 
@@ -3523,11 +3749,11 @@ msgstr "TLS/SSL接続が確立されました."
 msgid "Target file already exists"
 msgstr "対象のファイルはすでに存在しています"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1713
+#: ../../locales/../src/interface/RemoteListView.cpp:1785
 msgid "Target filename already exists, really continue?"
 msgstr "対象のファイルはすでに存在しています, 本当に続けますか?"
 
-#: resources.h:506
+#: resources.h:541
 msgid "Test results"
 msgstr "テスト結果"
 
@@ -3535,7 +3761,7 @@ msgstr "テスト結果"
 msgid "Testing resume capabilities of server"
 msgstr "サーバのレジューム互換性をテストしています."
 
-#: ../../locales/../src/interface/sitemanager.cpp:50
+#: ../../locales/../src/interface/sitemanager.cpp:59
 msgid ""
 "The Site Manager is opened in another instance of FileZilla 3.\n"
 "Do you want to continue? Any changes made in the Site Manager won't be saved "
@@ -3579,7 +3805,7 @@ msgstr ""
 "ファイル %s はすでに存在しています.\n"
 "新しい名前を入力してください:"
 
-#: ../../locales/../src/interface/import.cpp:78
+#: ../../locales/../src/interface/import.cpp:79
 msgid ""
 "The file you have selected contains site manager data from a previous "
 "version of FileZilla.\n"
@@ -3593,7 +3819,7 @@ msgstr ""
 "パスワードも取り込まれます. \n"
 "取り込みを続けますか?"
 
-#: resources.h:189
+#: resources.h:207
 msgid ""
 "The higher the debug level, the more information will be displayed in the "
 "message log. Displaying debug information has a negative impact on "
@@ -3626,15 +3852,22 @@ msgstr ""
 "最新バージョンはすでにダウンロードされています.このバージョンをインストールし"
 "たときのようにインストールして下さい."
 
-#: ../../locales/../src/interface/import.cpp:68
+#: ../../locales/../src/interface/import.cpp:69
 msgid "The selected categories have been imported."
 msgstr "選択されたカテゴリは取り込まれています."
 
-#: resources.h:372
+#: resources.h:390
 msgid ""
 "The selected file contains importable data for the following categories:"
 msgstr ""
 "次のカテゴリにおける取り込み可能なデータを含むファイルが選択されています."
+
+#: ../../locales/../src/interface/RemoteListView.cpp:2418
+msgid ""
+"The selected file is still opened in some other program, please close it."
+msgstr ""
+"選択されたファイルは他の何らかのプログラムに開かれていますので, それを閉じて"
+"下さい."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:563
 msgid "The server sent an unrecognized reply."
@@ -3652,7 +3885,7 @@ msgstr ""
 "サーバの証明書は不明です. 信用できるサーバか確認するために注意深く証明書を調"
 "べて下さい."
 
-#: resources.h:241
+#: resources.h:259
 msgid ""
 "The server's host key does not match the key that has been cached. This "
 "means that either the administrator has changed the host key, or you are "
@@ -3665,7 +3898,7 @@ msgstr ""
 "とを意味します. ホスト鍵が変わっていることが予想されるなら, サーバ管理者へ連"
 "絡してください."
 
-#: resources.h:229
+#: resources.h:247
 msgid ""
 "The server's host key is not cached in the registry. You have no guarantee "
 "that the server is the computer you think it is."
@@ -3673,7 +3906,7 @@ msgstr ""
 "サーバのホスト鍵はレジストリにキャッシュされていません. サーバはあなたの思っ"
 "ている計算機であるという保障はありません."
 
-#: ../../locales/../src/interface/import.cpp:65
+#: ../../locales/../src/interface/import.cpp:66
 msgid ""
 "The settings have been imported. You have to restart FileZilla for all "
 "settings to have effect."
@@ -3692,12 +3925,12 @@ msgstr ""
 msgid "The test did not succeed. Do you really want to save the settings?"
 msgstr "テストは成功しませんでした.本当に設定を保存しますか？"
 
-#: ../../locales/../src/interface/themeprovider.cpp:57
-#: ../../locales/../src/interface/themeprovider.cpp:76
+#: ../../locales/../src/interface/themeprovider.cpp:58
+#: ../../locales/../src/interface/themeprovider.cpp:77
 msgid "Theme error"
 msgstr "テーマエラー"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:103
+#: ../../locales/../src/interface/settingsdialog.cpp:107
 msgid "Themes"
 msgstr "テーマ"
 
@@ -3705,7 +3938,7 @@ msgstr "テーマ"
 msgid "This filter set cannot be removed"
 msgstr "このフィルタ設定は削除することができません"
 
-#: resources.h:484
+#: resources.h:519
 msgid ""
 "This only works if you are not behind a router, else your system would just "
 "return your internal address."
@@ -3713,7 +3946,7 @@ msgstr ""
 "もしルータの下にいないなら,これは単に動作するだけす.,そうでなければシステムは"
 "内部アドレスを返します."
 
-#: resources.h:462
+#: resources.h:497
 msgid ""
 "This wizard will help you to properly configure any routers and firewalls "
 "you have and tests your configuration."
@@ -3721,12 +3954,16 @@ msgstr ""
 "このウィザードはあなたのもつルータやファイアウォールを適切に設定しテストする"
 "のを手助けします."
 
+#: resources.h:187
+msgid "Time formatting"
+msgstr "時刻書式"
+
 #: resources.h:32
 msgid "Time&out in seconds:"
 msgstr "タイムアウト時間 (&o) :"
 
-#: resources.h:31 ../../locales/../src/interface/QueueView.cpp:884
-#: ../../locales/../src/interface/QueueView.cpp:909
+#: resources.h:31 ../../locales/../src/interface/QueueView.cpp:925
+#: ../../locales/../src/interface/QueueView.cpp:950
 msgid "Timeout"
 msgstr "タイムアウト"
 
@@ -3734,23 +3971,23 @@ msgstr "タイムアウト"
 msgid "Title:"
 msgstr "タイトル:"
 
-#: resources.h:528 resources.h:529
+#: resources.h:563 resources.h:564
 msgid "Toggles processing of the transfer queue"
 msgstr "転送キューの処理を留める"
 
-#: resources.h:520 resources.h:521
+#: resources.h:555 resources.h:556
 msgid "Toggles the display of the local directory tree"
 msgstr "ローカルディレクトリツリーの表示を留める"
 
-#: resources.h:518 resources.h:519
+#: resources.h:553 resources.h:554
 msgid "Toggles the display of the message log"
 msgstr "メッセージログの表示を留める"
 
-#: resources.h:522 resources.h:523
+#: resources.h:557 resources.h:558
 msgid "Toggles the display of the remote directory tree"
 msgstr "リモートディレクトリツリーの表示を留める"
 
-#: resources.h:524 resources.h:525
+#: resources.h:559 resources.h:560
 msgid "Toggles the display of the transfer queue"
 msgstr "転送キューの表示を留める"
 
@@ -3783,12 +4020,12 @@ msgstr "転送設定"
 msgid "Transferred data got tainted."
 msgstr "転送データは失われました."
 
-#: ../../locales/../src/interface/QueueView.cpp:1223
-#: ../../locales/../src/interface/statuslinectrl.cpp:159
+#: ../../locales/../src/interface/QueueView.cpp:1272
+#: ../../locales/../src/interface/statuslinectrl.cpp:198
 msgid "Transferring"
 msgstr "転送中"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:99
+#: ../../locales/../src/interface/settingsdialog.cpp:103
 msgid "Transfers"
 msgstr "転送"
 
@@ -3800,15 +4037,15 @@ msgstr "拡張子無しのファイルをアスキーファイルとして扱う
 msgid "Treat the &following filetypes as Ascii files:"
 msgstr "次のファイルの種類をアスキーファイルとして扱う(&f)"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:725
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:726
 msgid "Trust changed Hostkey: "
 msgstr "変更されたホストキーを信用する"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:723
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:724
 msgid "Trust new Hostkey: "
 msgstr "新しいホストキーを信用する"
 
-#: resources.h:247
+#: resources.h:265
 msgid "Trust the new key and carry on connecting?"
 msgstr "新しい鍵をつかって接続を続行しますか?"
 
@@ -3816,13 +4053,17 @@ msgstr "新しい鍵をつかって接続を続行しますか?"
 msgid "Trust this certificate and carry on connecting"
 msgstr "この証明書を信用して接続を行います"
 
-#: resources.h:235
+#: resources.h:253
 msgid "Trust this host and carry on connecting?"
 msgstr "このホストを信用し接続を続行しますか?"
 
 #: resources.h:38
 msgid "U&pload limit:"
 msgstr "アップロード制限(&p)"
+
+#: resources.h:188
+msgid "U&se system defaults"
+msgstr "システム標準を使う(&s)"
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:122
 msgid "Unit:"
@@ -3832,7 +4073,7 @@ msgstr "ユニット:"
 msgid "Unknown certificate"
 msgstr "不明な証明書"
 
-#: resources.h:228
+#: resources.h:246
 msgid "Unknown host key"
 msgstr "不明なホスト鍵"
 
@@ -3857,7 +4098,7 @@ msgstr ""
 msgid "Unsuppored redirect"
 msgstr "サポートされない出力先変更: "
 
-#: ../../locales/../src/interface/settingsdialog.cpp:106
+#: ../../locales/../src/interface/settingsdialog.cpp:112
 msgid "Update Check"
 msgstr "アップデートのチェック"
 
@@ -3866,15 +4107,19 @@ msgstr "アップデートのチェック"
 msgid "Update wizard"
 msgstr "アップデートウィザード"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1217
+#: ../../locales/../src/interface/Mainfrm.cpp:1326
 msgid "Updatecheck failed"
 msgstr "アップデートチェックに失敗しました"
 
-#: resources.h:406
+#: resources.h:431
 msgid "Upload selected files and folders"
 msgstr "選択されたファイルとフォルダをアップロード"
 
-#: resources.h:326 resources.h:345
+#: resources.h:400
+msgid "Upload this file back to the server?"
+msgstr ""
+
+#: resources.h:344 resources.h:363
 msgid "Uploads"
 msgstr "アップロード"
 
@@ -3882,32 +4127,36 @@ msgstr "アップロード"
 msgid "Use &custom charset"
 msgstr "カスタム文字セットを使う(&c)"
 
-#: resources.h:319
+#: resources.h:337
 msgid "Use &default"
 msgstr "標準を使う(&d)"
 
-#: resources.h:327
+#: resources.h:345
 msgid "Use d&efault"
 msgstr "標準を使う(&e)"
 
-#: resources.h:292 resources.h:485
+#: resources.h:182
+msgid "Use system &defaults"
+msgstr "システム標準を使う(&d)"
+
+#: resources.h:310 resources.h:520
 msgid "Use the following IP address:"
 msgstr "以下のIPアドレスを使う:"
 
-#: resources.h:495
+#: resources.h:530
 msgid "Use the following port range:"
 msgstr "以下のポート範囲を使う:"
 
-#: resources.h:480
+#: resources.h:515
 msgid "Use the server's external IP address instead"
 msgstr "代わりにサーバの外部IPアドレスを使用します."
 
-#: resources.h:293 resources.h:486
+#: resources.h:311 resources.h:521
 msgid ""
 "Use this if you're behind a router and have a static external IP address."
 msgstr "もしルータの下にいて静的な外部IPアドレスをもつなら,これを利用する."
 
-#: resources.h:489
+#: resources.h:524
 msgid ""
 "Use this option if you have a dynamic IP address. FileZilla will contact the "
 "above server once each session as soon as you use active mode for the first "
@@ -3934,7 +4183,7 @@ msgstr ""
 "間違った文字セットを使っていれば結果としてファイル名におけるプロパティの表示"
 "はできません."
 
-#: resources.h:298
+#: resources.h:316
 msgid "Using this wizard you can check for available updates to FileZilla."
 msgstr ""
 "このウィザードを使うことによりFileZillaの利用可能なアップデートをチェックする"
@@ -3956,11 +4205,11 @@ msgstr "証明書を検証中..."
 msgid "Very high"
 msgstr "非常に高い"
 
-#: resources.h:399
+#: resources.h:424
 msgid "View &hidden files"
 msgstr "隠しファイルを見せる(&h)"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:543
+#: ../../locales/../src/interface/Mainfrm.cpp:622
 msgid "View hidden files"
 msgstr "隠しファイルを見せる"
 
@@ -3971,23 +4220,23 @@ msgstr ""
 "隠しファイルオプションの設定が見受けられますが, サーバ側でサポートされていま"
 "せん"
 
-#: resources.h:203
+#: resources.h:221
 msgid "W&rite"
 msgstr "書く(&r)"
 
-#: ../../locales/../src/interface/QueueView.cpp:1494
+#: ../../locales/../src/interface/QueueView.cpp:1558
 msgid "Waiting"
 msgstr "待っています"
 
-#: ../../locales/../src/interface/QueueView.cpp:1152
+#: ../../locales/../src/interface/QueueView.cpp:1201
 msgid "Waiting for browsing connection"
-msgstr ""
+msgstr "接続一覧を待ってください"
 
-#: ../../locales/../src/interface/QueueView.cpp:1173
+#: ../../locales/../src/interface/QueueView.cpp:1222
 msgid "Waiting for password"
 msgstr "パスワードを待っています"
 
-#: ../../locales/../src/interface/statuslinectrl.cpp:153
+#: ../../locales/../src/interface/statuslinectrl.cpp:192
 msgid "Waiting for transfer to be canceled"
 msgstr "中止されるのを待っています"
 
@@ -3995,7 +4244,7 @@ msgstr "中止されるのを待っています"
 msgid "Waiting to retry..."
 msgstr "再試行をまっています..."
 
-#: ../../locales/../src/interface/FileZilla.cpp:200
+#: ../../locales/../src/interface/FileZilla.cpp:197
 msgid ""
 "Warning!\n"
 "\n"
@@ -4042,7 +4291,7 @@ msgstr ""
 "せん. \n"
 "本当にnightly buildsをチェックしたいですか?"
 
-#: resources.h:240
+#: resources.h:258
 msgid "Warning: Potential security breach!"
 msgstr "警告: セキュリティ違反の可能性"
 
@@ -4050,7 +4299,7 @@ msgstr "警告: セキュリティ違反の可能性"
 msgid "Widescreen"
 msgstr "ワイドスクリーン"
 
-#: resources.h:207
+#: resources.h:225
 msgid "Wr&ite"
 msgstr "書く(&r)"
 
@@ -4063,17 +4312,17 @@ msgstr "間違った外部IPアドレス"
 msgid "Wrong lineendings"
 msgstr "間違った行末"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:736
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:737
 msgid "Yes"
 msgstr "はい"
 
-#: resources.h:313
+#: resources.h:331
 msgid ""
 "You are already using the most recent version of FileZilla. Please check "
 "again in future."
 msgstr "すでに最新のFileZillaを利用しています. いずれまたチェックをして下さい."
 
-#: resources.h:210
+#: resources.h:228
 msgid ""
 "You can use an x at any position to keep the permission the original files "
 "have."
@@ -4087,7 +4336,7 @@ msgstr ""
 "ファイルの新しい名前を入力しませんでした. その代わりにファイルを上書きします"
 "か?"
 
-#: ../../locales/../src/interface/sitemanager.cpp:509
+#: ../../locales/../src/interface/sitemanager.cpp:520
 msgid "You have to enter a hostname."
 msgstr "ホスト名を入力しなければなりません."
 
@@ -4096,11 +4345,11 @@ msgstr "ホスト名を入力しなければなりません."
 msgid "You have to enter a valid IP address."
 msgstr "適切なIPアドレスを入力しなければなりません."
 
-#: ../../locales/../src/interface/sitemanager.cpp:570
+#: ../../locales/../src/interface/sitemanager.cpp:581
 msgid "You have to enter an account name"
 msgstr "アカウント名を入力しなければなりません."
 
-#: ../../locales/../src/interface/sitemanager.cpp:561
+#: ../../locales/../src/interface/sitemanager.cpp:572
 msgid "You have to specify a user name"
 msgstr "ユーザ名を明確にしなければいけません."
 
@@ -4141,14 +4390,14 @@ msgstr "最後に"
 msgid "equals"
 msgstr "等しい"
 
-#: ../../locales/../src/interface/LocalListView.cpp:719
-#: ../../locales/../src/interface/LocalListView.cpp:737
-#: ../../locales/../src/interface/RemoteListView.cpp:1165
-#: ../../locales/../src/interface/RemoteListView.cpp:1183
+#: ../../locales/../src/interface/LocalListView.cpp:805
+#: ../../locales/../src/interface/LocalListView.cpp:823
+#: ../../locales/../src/interface/RemoteListView.cpp:1175
+#: ../../locales/../src/interface/RemoteListView.cpp:1193
 msgid "file"
 msgstr "ファイル"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1269
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1270
 msgid "fzsftp could not be started"
 msgstr "fzsftpは始められません"
 
@@ -4168,7 +4417,7 @@ msgstr "より小さい"
 msgid "matches regex"
 msgstr "正規表現に一致します"
 
-#: ../../locales/../src/interface/themeprovider.cpp:57
+#: ../../locales/../src/interface/themeprovider.cpp:58
 msgid "themes.xml missing, can not get theme data"
 msgstr "themes.xmlを失って, テーマデータを得られません"
 
