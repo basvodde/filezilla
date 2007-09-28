@@ -813,7 +813,7 @@ STDMETHODIMP_(UINT) CShellExt::CopyCallback(HWND Hwnd, UINT Func, UINT Flags,
 					DEBUG_MSG("Dragged file:");
 					DEBUG_MSG_W(file);
 
-					if (wcscmp(file, SrcFile) == 0)
+					if (_wcsicmp(file, SrcFile) == 0)
 					{
 						data[1] = 2;
 						if (_tcslen(DestFile) > MAX_PATH)
