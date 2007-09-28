@@ -1716,7 +1716,10 @@ void CMainFrame::RememberSizes()
 void CMainFrame::RestoreSizes()
 {
 	if (wxGetKeyState(WXK_SHIFT) && wxGetKeyState(WXK_ALT) && wxGetKeyState(WXK_CONTROL))
+	{
+		CenterOnScreen(wxBOTH);
 		return;
+	}
 
 #if wxUSE_DISPLAY
 	int min_x = 1000000000;
@@ -1753,6 +1756,7 @@ void CMainFrame::RestoreSizes()
 			if (!token.ToLong(aPosValues + i))
 			{
 				delete [] aPosValues;
+				CenterOnScreen(wxBOTH);
 				return;
 			}
 		}
