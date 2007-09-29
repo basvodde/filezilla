@@ -499,7 +499,7 @@ void CLocalViewHeader::OnStateChange(unsigned int event, const wxString& data)
 
 	wxString dir = m_pState->GetLocalDir();
 	AddRecentDirectory(dir);
-	m_pComboBox->SetValue(dir);
+	m_pComboBox->SetStringSelection(dir);
 	m_pComboBox->SetSelection(m_pComboBox->GetValue().Length(), m_pComboBox->GetValue().Length());
 }
 
@@ -523,19 +523,22 @@ void CRemoteViewHeader::OnStateChange(unsigned int event, const wxString& data)
 	if (m_path.IsEmpty())
 	{
 		m_pComboBox->SetValue(_T(""));
-		m_pComboBox->Clear();
 		m_pComboBox->Disable();
 	}
 	else
 	{
-		AddRecentDirectory(m_path.GetPath());
+		const CServer* const pServer = m_pState->GetServer();
+		if (pServer && *pServer != m_lastServer)
+		{
+			m_pComboBox->Clear();
+			m_recentDirectories.clear();
+			m_lastServer = *pServer;
+		}
 		m_pComboBox->Enable();
-		m_pComboBox->SetValue(m_path.GetPath());
+		AddRecentDirectory(m_path.GetPath());
+		m_pComboBox->SetStringSelection(m_path.GetPath());
 		wxString path = m_path.GetPath();
-		wxString v = m_pComboBox->GetValue();
-		wxASSERT(v == path);
 		m_pComboBox->SetSelection(m_pComboBox->GetValue().Length(), m_pComboBox->GetValue().Length());
-
 	}
 }
 

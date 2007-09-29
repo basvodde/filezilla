@@ -74,6 +74,7 @@ public:
 protected:
 	virtual void OnStateChange(unsigned int event, const wxString& data);
 
+	CServer m_lastServer;
 	CServerPath m_path;
 
 	DECLARE_EVENT_TABLE();
