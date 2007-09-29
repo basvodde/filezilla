@@ -1928,7 +1928,10 @@ void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 			m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path));
 	}
 	else
+	{
 		pChmodDlg->Destroy();
+		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path));
+	}
 
 }
 
