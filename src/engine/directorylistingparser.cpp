@@ -1124,7 +1124,14 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 			year = wxDateTime::Now().GetYear();
 			int currentDayOfYear = wxDateTime::Now().GetDay() + 31 * (wxDateTime::Now().GetMonth() - wxDateTime::Jan);
 			int fileDayOfYear = (month - 1) * 31 + (day - 1);
-			if (currentDayOfYear <= fileDayOfYear)
+
+			// We have to compare with an offset of one. In the worst case,
+			// the server's timezone might be up to 24 hours ahead of the 
+			// client.
+			// Problem: Servers which do send the time but not the year even
+			// one day away from getting 1 year old. This is far more uncommon
+			// however.
+			if (currentDayOfYear <= (fileDayOfYear + 1))
 				year -= 1;
 		}
 	}
