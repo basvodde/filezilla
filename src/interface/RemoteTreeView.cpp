@@ -1037,6 +1037,9 @@ void CRemoteTreeView::OnMenuDelete(wxCommandEvent& event)
 	if (path.IsEmpty())
 		return;
 
+	if (wxMessageBox(_("Really delete all selected files and/or directories?"), _("Confirmation needed"), wxICON_QUESTION | wxYES_NO, this) != wxYES)
+		return;
+
 	const bool hasParent = path.HasParent();
 
 	CRecursiveOperation* pRecursiveOperation = m_pState->GetRecursiveOperationHandler();
