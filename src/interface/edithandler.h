@@ -28,8 +28,8 @@ public:
 
 	enum fileState GetFileState(const wxString& fileName);
 
-	// Returns the number of files in either known state
-	int GetFileCount() const;
+	// Returns the number of files in given state
+	int GetFileCount(enum fileState state) const;
 
 	// Adds the file that doesn't exist yet. (Has to be in unknown state)
 	// The initial state will be download
@@ -37,7 +37,7 @@ public:
 
 	// Tries to unedit and remove file
 	bool Remove(const wxString& fileName);
-	bool RemoveAll(const wxString& fileName);
+	bool RemoveAll(bool force);
 
 	void FinishTransfer(bool successful, const wxString& fileName);
 

@@ -88,10 +88,11 @@ void CEditHandler::Release()
 {
 	if (m_localDir != _T(""))
 	{
-		// TODO: Delete files
+		RemoveAll(true);
 		wxRmdir(m_localDir);
 	}
 
+	m_pEditHandler = 0;
 	delete this;
 }
 
@@ -104,9 +105,19 @@ enum CEditHandler::fileState CEditHandler::GetFileState(const wxString& fileName
 	return iter->state;
 }
 
-int CEditHandler::GetFileCount() const
+int CEditHandler::GetFileCount(enum CEditHandler::fileState state) const
 {
-	return m_fileDataList.size();
+	if (state == unknown)
+		return m_fileDataList.size();
+
+	int count = 0;
+	for (std::list<t_fileData>::const_iterator iter = m_fileDataList.begin(); iter != m_fileDataList.end(); iter++)
+	{
+		if (iter->state == state)
+			count++;
+	}
+
+	return count;
 }
 
 bool CEditHandler::AddFile(const wxString& fileName, const CServerPath& remotePath, const CServer& server)
@@ -149,13 +160,13 @@ bool CEditHandler::Remove(const wxString& fileName)
 	return true;
 }
 
-bool CEditHandler::RemoveAll(const wxString& fileName)
+bool CEditHandler::RemoveAll(bool force)
 {
 	std::list<t_fileData> keep;
 
 	for (std::list<t_fileData>::iterator iter = m_fileDataList.begin(); iter != m_fileDataList.end(); iter++)
 	{
-		if (iter->state == download || iter->state == upload || iter->state == upload_and_remove)
+		if (!force && (iter->state == download || iter->state == upload || iter->state == upload_and_remove))
 		{
 			keep.push_back(*iter);
 			continue;

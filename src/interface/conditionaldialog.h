@@ -15,7 +15,8 @@ public:
 		rawcommand_quote,
 		viewhidden,
 		confirmexit,
-		sitemanager_confirmdelete
+		sitemanager_confirmdelete,
+		confirmexit_edit // Confirm closing FileZilla while files are still being edited
 	};
 
 	CConditionalDialog(wxWindow* parent, enum DialogType type, enum Modes mode, bool checked = false);
