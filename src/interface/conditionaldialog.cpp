@@ -11,7 +11,10 @@ END_EVENT_TABLE()
 CConditionalDialog::CConditionalDialog(wxWindow* parent, enum DialogType type, enum Modes mode, bool checked /*=false*/)
 	: wxDialog(parent, wxID_ANY, _T(""), wxDefaultPosition), m_type(type)
 {
+	wxSizer* pVertSizer = new wxBoxSizer(wxVERTICAL);
+
 	wxSizer* pMainSizer = new wxBoxSizer(wxHORIZONTAL);
+	pVertSizer->Add(pMainSizer);
 
 	pMainSizer->AddSpacer(5);
 	wxSizer* pSizer = new wxBoxSizer(wxVERTICAL);
@@ -38,7 +41,7 @@ CConditionalDialog::CConditionalDialog(wxWindow* parent, enum DialogType type, e
 		pMainSizer->Prepend(new wxStaticBitmap(this, wxID_ANY, wxArtProvider::GetBitmap(wxART_QUESTION)), 0, wxLEFT | wxBOTTOM | wxTOP, 10);
 
 		wxSizer* pGrid = new wxGridSizer(2, 5, 5);
-		pSizer->Add(pGrid, 0, wxALIGN_CENTER_HORIZONTAL);
+		pVertSizer->Add(pGrid, 0, wxLEFT | wxRIGHT | wxBOTTOM | wxALIGN_CENTER_HORIZONTAL, 5);
 		
 		wxButton* pYes = new wxButton(this, wxID_YES);
 		pYes->SetDefault();
@@ -49,7 +52,7 @@ CConditionalDialog::CConditionalDialog(wxWindow* parent, enum DialogType type, e
 		SetEscapeId(wxID_NO);
 	}
 
-	SetSizer(pMainSizer);
+	SetSizer(pVertSizer);
 }
 
 bool CConditionalDialog::Run()
