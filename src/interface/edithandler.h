@@ -45,6 +45,12 @@ public:
 
 	void SetQueue(CQueueView* pQueue) { m_pQueue = pQueue; }
 
+	// Checks if file can be opened. One of these conditions has to be true:
+	// - Filetype association of system has to exist
+	// - Custom association for that filetype
+	// - Default editor set
+	bool CanOpen(const wxString& fileName);
+
 protected:
 	CEditHandler();
 	virtual ~CEditHandler() { }
@@ -64,6 +70,8 @@ protected:
 
 	bool StartEditing(t_fileData &data);
 
+	wxString GetSystemOpenCommand(const wxString& file);
+
 	void SetTimerState();
 
 	std::list<t_fileData> m_fileDataList;
@@ -74,6 +82,12 @@ protected:
 	CQueueView* m_pQueue;
 
 	wxTimer m_timer;
+
+	void RemoveTemporaryFiles(const wxString& temp);
+
+#ifdef __WXMSW__
+	HANDLE m_lockfile_handle;
+#endif
 
 	DECLARE_EVENT_TABLE()
 	void OnTimerEvent(wxTimerEvent& event);

@@ -2144,6 +2144,109 @@
       </object>
     </object>
   </object>
+  <object class="wxPanel" name="ID_SETTINGS_EDIT">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxFlexGridSizer">
+          <cols>1</cols>
+          <vgap>5</vgap>
+          <object class="sizeritem">
+            <object class="wxStaticText" name="">
+              <label>Default editor:</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxHORIZONTAL</orient>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="ID_EDITOR"/>
+                <option>1</option>
+                <flag>wxRIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                <border>5</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxButton">
+                  <label>&amp;Browse...</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+            </object>
+            <flag>wxGROW</flag>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>Command and its arguments should be properly quoted.</label>
+            </object>
+          </object>
+          <growablecols>0</growablecols>
+          <object class="sizeritem">
+            <object class="wxRadioButton">
+              <label>Use filetype associations if available</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxRadioButton">
+              <label>Always use default editor</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticBoxSizer">
+              <label>Filetype asociations</label>
+              <orient>wxVERTICAL</orient>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <object class="sizeritem">
+                    <object class="wxCheckBox">
+                      <label>Inherit system's filetype associations</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>C&amp;ustom filetype associtations:</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl"/>
+                    <option>1</option>
+                    <flag>wxGROW</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Format: Extension followed by properly quoted command and arguments.</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Example:</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>png &quot;c:\program files\viewer\viewer.exe&quot; -open</label>
+                    </object>
+                  </object>
+                  <cols>1</cols>
+                  <vgap>5</vgap>
+                  <growablerows>2</growablerows>
+                  <growablecols>0</growablecols>
+                </object>
+                <option>1</option>
+                <flag>wxALL|wxGROW</flag>
+                <border>5</border>
+              </object>
+            </object>
+            <option>1</option>
+            <flag>wxGROW</flag>
+          </object>
+          <growablerows>5</growablerows>
+        </object>
+        <option>1</option>
+        <flag>wxALL|wxGROW</flag>
+        <border>5</border>
+      </object>
+    </object>
+  </object>
   <object class="wxDialog" name="ID_INPUTDIALOG">
     <title></title>
     <object class="wxBoxSizer">

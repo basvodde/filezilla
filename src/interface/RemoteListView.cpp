@@ -2393,6 +2393,12 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 		return;
 	}
 
+	if (!pEditHandler->CanOpen(entry.name))
+	{
+		wxMessageBox(_("Selected file cannot be opened.\nNo default editor has been set or filetype association is missing or incorrect."), _("Cannot edit file"), wxICON_STOP);
+		return;
+	}
+
 	CEditHandler::fileState state = pEditHandler->GetFileState(entry.name);
 	switch (state)
 	{

@@ -39,6 +39,10 @@ CEditHandler::CEditHandler()
 	m_pQueue = 0;
 
 	m_timer.SetOwner(this);
+
+#ifdef __WXMSW__
+	m_lockfile_handle = INVALID_HANDLE_VALUE;
+#endif
 }
 
 CEditHandler* CEditHandler::Create()
@@ -54,14 +58,52 @@ CEditHandler* CEditHandler::Get()
 	return m_pEditHandler;
 }
 
+void CEditHandler::RemoveTemporaryFiles(const wxString& temp)
+{
+	wxDir dir(temp);
+	if (!dir.IsOpened())
+		return;
+
+	wxString file;
+	if (!dir.GetFirst(&file, _T("fz3temp-*"), wxDIR_DIRS))
+		return;
+
+	const wxChar& sep = wxFileName::GetPathSeparator();
+	do
+	{
+		const wxString lockfile = temp + file + sep + _("fz3temp-lockfile");
+		if (wxFileName::FileExists(lockfile))
+		{
+#ifndef __WXMSW__
+			// TODO
+#endif
+			wxRemoveFile(lockfile);
+			if (wxFileName::FileExists(lockfile))
+				continue;
+		}
+
+		{
+			wxString file2;
+			wxDir dir2(temp + file);
+			bool res;
+			for ((res = dir2.GetFirst(&file2, _T(""), wxDIR_FILES)); res; res = dir2.GetNext(&file2));
+				wxRemoveFile(temp + file + sep + file2);
+		}
+		
+		wxRmdir(temp + file + sep);
+	} while (dir.GetNext(&file));
+}
+
 wxString CEditHandler::GetLocalDirectory()
 {
 	wxString dir = wxFileName::GetTempDir();
-	if (dir == _T(""))
+	if (dir == _T("") || !wxFileName::DirExists(dir))
 		return _T("");
 
 	if (dir.Last() != wxFileName::GetPathSeparator())
 		dir += wxFileName::GetPathSeparator();
+
+	RemoveTemporaryFiles(dir);
 
 	// On POSIX, the permissions of the created directory (700) ensure 
 	// that this is a safe operation.
@@ -81,13 +123,33 @@ wxString CEditHandler::GetLocalDirectory()
 		break;
 	} while (true);
 
+#ifdef __WXMSW__
+	m_lockfile_handle = ::CreateFile(m_localDir + _T("fz3temp-lockfile"), GENERIC_WRITE, 0, 0, CREATE_NEW, FILE_ATTRIBUTE_TEMPORARY, 0);
+	if (m_lockfile_handle == INVALID_HANDLE_VALUE)
+	{
+		wxRmdir(m_localDir);
+		m_localDir = _T("");
+	}
+#else
+//TODO
+#endif
+
 	return m_localDir;
 }
 
 void CEditHandler::Release()
 {
+	if (m_timer.IsRunning())
+		m_timer.Stop();
+
 	if (m_localDir != _T(""))
 	{
+#ifdef __WXMSW__
+		if (m_lockfile_handle != INVALID_HANDLE_VALUE)
+			CloseHandle(m_lockfile_handle);
+		wxRemoveFile(m_localDir + _T("fz3temp-lockfile"));
+#endif
+
 		RemoveAll(true);
 		wxRmdir(m_localDir);
 	}
@@ -256,16 +318,9 @@ bool CEditHandler::StartEditing(t_fileData& data)
 	wxASSERT(data.state == edit);
 
 	wxFileName fn(m_localDir, data.name);
-
 	data.modificationTime = fn.GetModificationTime();
 
-	wxFileType* pType = wxTheMimeTypesManager->GetFileTypeFromExtension(fn.GetExt());
-	if (!pType)
-		return false;
-
-	wxString cmd;
-	if (!pType->GetOpenCommand(&cmd, wxFileType::MessageParameters(m_localDir + data.name)))
-		return false;
+	wxString cmd = GetSystemOpenCommand(data.name);
 	if (cmd == _T(""))
 		return false;
 	
@@ -362,4 +417,28 @@ void CEditHandler::SetTimerState()
 	}
 	else if (editing)
 		m_timer.Start(15000);
+}
+
+bool CEditHandler::CanOpen(const wxString& fileName)
+{
+	return GetSystemOpenCommand(fileName) != _T("");
+}
+
+wxString CEditHandler::GetSystemOpenCommand(const wxString& file)
+{
+	wxFileName fn(m_localDir, file);
+
+	const wxString& ext = fn.GetExt();
+	if (ext == _T(""))
+		return _T("");
+
+	wxFileType* pType = wxTheMimeTypesManager->GetFileTypeFromExtension(ext);
+	if (!pType)
+		return _T("");
+
+	wxString cmd;
+	if (!pType->GetOpenCommand(&cmd, wxFileType::MessageParameters(m_localDir + file)))
+		return _T("");
+
+	return cmd;
 }

@@ -876,6 +876,27 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 			}
 		}
 
+		CEditHandler* pEditHandler = CEditHandler::Get();
+		if (pEditHandler)
+		{
+			if (pEditHandler->GetFileCount(CEditHandler::edit) || pEditHandler->GetFileCount(CEditHandler::upload) ||
+				pEditHandler->GetFileCount(CEditHandler::upload_and_remove))
+			{
+				CConditionalDialog dlg(this, CConditionalDialog::confirmexit_edit, CConditionalDialog::yesno);
+				dlg.SetTitle(_("Close FileZilla"));
+
+				dlg.AddText(_("Some remote files are still being edited or need to be uploaded."));
+				dlg.AddText(_("If you close FileZilla, your changes will be lost."));
+				dlg.AddText(_("Do you really want to close FileZilla?"));
+
+				if (!dlg.Run())
+				{
+					event.Veto();
+					return;
+				}
+			}
+		}
+
 		RememberSizes();
 		m_bQuit = true;
 	}
@@ -893,6 +914,13 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 	{
 		event.Veto();
 		return;
+	}
+
+	CEditHandler* pEditHandler = CEditHandler::Get();
+	if (pEditHandler)
+	{
+		pEditHandler->RemoveAll(true);
+		pEditHandler->Release();
 	}
 
 	bool res = true;
