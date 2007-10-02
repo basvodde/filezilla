@@ -467,7 +467,7 @@ void CSftpControlSocket::OnSftpEvent(CSftpEvent& event)
 					if (*pData->pLastChallenge == newChallenge)
 					{
 						LogMessage(::Error, _T("Authentication failed."));
-						DoClose(FZ_REPLY_CRITICALERROR);
+						DoClose(FZ_REPLY_CRITICALERROR | FZ_REPLY_PASSWORDFAILED);
 						return;
 					}
 					delete pData->pLastChallenge;
