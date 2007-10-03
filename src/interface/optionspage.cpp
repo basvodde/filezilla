@@ -44,6 +44,12 @@ bool COptionsPage::GetCheck(int id)
 
 void COptionsPage::SetTextFromOption(int ctrlId, int optionId, bool& failure)
 {
+	if (ctrlId == -1)
+	{
+		failure = true;
+		return;
+	}
+
 	wxTextCtrl* pTextCtrl = wxDynamicCast(FindWindow(ctrlId), wxTextCtrl);
 	if (!pTextCtrl)
 	{
@@ -160,4 +166,19 @@ int COptionsPage::GetChoice(int id)
 		return 0;
 	
 	return pChoice->GetSelection();
+}
+
+bool COptionsPage::DisplayError(const wxString& controlToFocus, const wxString& error)
+{
+	int id = wxXmlResource::GetXRCID(controlToFocus);
+	if (id != -1)
+	{
+		wxWindow* wnd = FindWindow(id);
+		if (wnd)
+			wnd->SetFocus();
+	}
+
+	wxMessageBox(error, validationFailed, wxICON_EXCLAMATION, this);
+
+	return false;
 }

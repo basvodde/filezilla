@@ -89,7 +89,11 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Show message log", number, _T("1") },
 	{ "Show queue", number, _T("1") },
 	{ "Size format", number, _T("0") },
-	{ "Size thousands separator", number, _T("1") }
+	{ "Size thousands separator", number, _T("1") },
+	{ "Default editor", string, _T("") },
+	{ "Always use default editor", number, _T("0") },
+	{ "Inherit system associations", number, _T("1") },
+	{ "Custom file associations", string, _T("") }
 };
 
 COptions::COptions()

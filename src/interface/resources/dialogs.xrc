@@ -2153,7 +2153,7 @@
           <vgap>5</vgap>
           <object class="sizeritem">
             <object class="wxStaticText" name="">
-              <label>Default editor:</label>
+              <label>&amp;Default editor:</label>
             </object>
           </object>
           <object class="sizeritem">
@@ -2181,13 +2181,13 @@
           </object>
           <growablecols>0</growablecols>
           <object class="sizeritem">
-            <object class="wxRadioButton">
-              <label>Use filetype associations if available</label>
+            <object class="wxRadioButton" name="ID_USEASSOCIATIONS">
+              <label>U&amp;se filetype associations if available</label>
             </object>
           </object>
           <object class="sizeritem">
-            <object class="wxRadioButton">
-              <label>Always use default editor</label>
+            <object class="wxRadioButton" name="ID_USEDEFAULT">
+              <label>&amp;Always use default editor</label>
             </object>
           </object>
           <object class="sizeritem">
@@ -2197,17 +2197,19 @@
               <object class="sizeritem">
                 <object class="wxFlexGridSizer">
                   <object class="sizeritem">
-                    <object class="wxCheckBox">
-                      <label>Inherit system's filetype associations</label>
+                    <object class="wxCheckBox" name="ID_INHERIT">
+                      <label>&amp;Inherit system's filetype associations</label>
                     </object>
                   </object>
                   <object class="sizeritem">
                     <object class="wxStaticText">
-                      <label>C&amp;ustom filetype associtations:</label>
+                      <label>C&amp;ustom filetype associations:</label>
                     </object>
                   </object>
                   <object class="sizeritem">
-                    <object class="wxTextCtrl"/>
+                    <object class="wxTextCtrl" name="ID_ASSOCIATIONS">
+                      <style>wxTE_MULTILINE</style>
+                    </object>
                     <option>1</option>
                     <flag>wxGROW</flag>
                   </object>

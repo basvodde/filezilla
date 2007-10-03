@@ -40,6 +40,9 @@ public:
 
 	void ReloadSettings();
 
+	// Always returns false
+	bool DisplayError(const wxString& controlToFocus, const wxString& error);
+
 protected:
 	COptions* m_pOptions;
 	CSettingsDialog* m_pOwner;

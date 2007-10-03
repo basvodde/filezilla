@@ -34,6 +34,7 @@ filezilla_SOURCES = aboutdialog.cpp asyncrequestqueue.cpp \
 		optionspage_connection_passive.cpp \
 		optionspage_dateformatting.cpp \
 		optionspage_debug.cpp \
+		optionspage_edit.cpp \
 		optionspage_fileexists.cpp \
 		optionspage_filetype.cpp \
 		optionspage_interface.cpp \
@@ -85,6 +86,7 @@ noinst_HEADERS = aboutdialog.h asyncrequestqueue.h \
 		 optionspage_connection_passive.h \
 		 optionspage_dateformatting.h \
 		 optionspage_debug.h \
+		 optionspage_edit.h \
 		 optionspage_fileexists.h \
 		 optionspage_filetype.h \
 		 optionspage_interface.h \

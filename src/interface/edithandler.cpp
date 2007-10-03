@@ -4,6 +4,9 @@
 #include "filezillaapp.h"
 #include "queue.h"
 
+// Defined in optionspage_edit.cpp
+bool UnquoteCommand(wxString& command, wxString& arguments);
+
 class CChangedFileDialog : public wxDialogEx
 {
 	DECLARE_EVENT_TABLE();
