@@ -62,33 +62,19 @@ bool COptionsPageConnectionActive::Validate()
 	if (GetCheck(XRCID("ID_LIMITPORTS")))
 	{
 		wxTextCtrl* pLow = XRCCTRL(*this, "ID_LOWESTPORT", wxTextCtrl);
-		wxASSERT(pLow);
 
 		long low;
 		if (!pLow->GetValue().ToLong(&low) || low < 1024 || low > 65535)
-		{
-			pLow->SetFocus();
-			wxMessageBox(_("Lowest available port has to be a number between 1024 and 65535."), validationFailed, wxICON_EXCLAMATION, this);
-			return false;
-		}
+			return DisplayError(pLow, _("Lowest available port has to be a number between 1024 and 65535."));
 
 		wxTextCtrl* pHigh = XRCCTRL(*this, "ID_LOWESTPORT", wxTextCtrl);
-		wxASSERT(pHigh);
 
 		long high;
 		if (!pHigh->GetValue().ToLong(&high) || high < 1024 || high > 65535)
-		{
-			pHigh->SetFocus();
-			wxMessageBox(_("Highest available port has to be a number between 1024 and 65535."), validationFailed, wxICON_EXCLAMATION, this);
-			return false;
-		}
+			return DisplayError(pHigh, _("Highest available port has to be a number between 1024 and 65535."));
 
 		if (low > high)
-		{
-			pLow->SetFocus();
-			wxMessageBox(_("The lowest available port has to be less or equal than the highest available port."), validationFailed, wxICON_EXCLAMATION, this);
-			return false;
-		}
+			return DisplayError(pLow, _("The lowest available port has to be less or equal than the highest available port."));
 	}
 
 	int mode;
@@ -101,11 +87,7 @@ bool COptionsPageConnectionActive::Validate()
 	{
 		wxTextCtrl* pActiveIP = XRCCTRL(*this, "ID_ACTIVEIP", wxTextCtrl);
 		if (!IsIpAddress(pActiveIP->GetValue()))
-		{
-			pActiveIP->SetFocus();
-			wxMessageBox(_("You have to enter a valid IP address."));
-			return false;
-		}
+			return DisplayError(pActiveIP, _("You have to enter a valid IP address."));
 	}
 	
 	return true;

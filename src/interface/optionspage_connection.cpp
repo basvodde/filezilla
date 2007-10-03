@@ -37,26 +37,16 @@ bool COptionsPageConnection::SavePage()
 bool COptionsPageConnection::Validate()
 {
 	wxTextCtrl* pRetries = XRCCTRL(*this, "ID_RETRIES", wxTextCtrl);
-	wxASSERT(pRetries);
 
 	long retries;
 	if (!pRetries->GetValue().ToLong(&retries) || retries < 0 || retries > 99)
-	{
-		pRetries->SetFocus();
-		wxMessageBox(_("Number of retries has to be between 0 and 99."), validationFailed, wxICON_EXCLAMATION, this);
-		return false;
-	}
+		return DisplayError(pRetries, _("Number of retries has to be between 0 and 99."));
 
 	wxTextCtrl* pDelay = XRCCTRL(*this, "ID_RETRYDELAY", wxTextCtrl);
-	wxASSERT(pDelay);
 
 	long delay;
 	if (!pDelay->GetValue().ToLong(&delay) || delay < 0 || delay > 999)
-	{
-		pDelay->SetFocus();
-		wxMessageBox(_("Delay between failed connection attempts has to be between 1 and 999 seconds."), validationFailed, wxICON_EXCLAMATION, this);
-		return false;
-	}
+		return DisplayError(pDelay, _("Delay between failed connection attempts has to be between 1 and 999 seconds."));
 
 	return true;
 }

@@ -67,18 +67,10 @@ bool COptionsPageDateFormatting::SavePage()
 bool COptionsPageDateFormatting::Validate()
 {
 	if (GetRCheck(XRCID("ID_DATEFORMAT_CUSTOM")) && XRCCTRL(*this, "ID_CUSTOM_DATEFORMAT", wxTextCtrl)->GetValue() == _T(""))
-	{
-		XRCCTRL(*this, "ID_CUSTOM_DATEFORMAT", wxTextCtrl)->SetFocus();
-		wxMessageBox(_("Please enter a custom date format."), validationFailed, wxICON_EXCLAMATION, this);
-		return false;
-	}
+		return DisplayError(_T("ID_CUSTOM_DATEFORMAT"), _("Please enter a custom date format."));
 
 	if (GetRCheck(XRCID("ID_TIMEFORMAT_CUSTOM")) && XRCCTRL(*this, "ID_CUSTOM_TIMEFORMAT", wxTextCtrl)->GetValue() == _T(""))
-	{
-		XRCCTRL(*this, "ID_CUSTOM_TIMEFORMAT", wxTextCtrl)->SetFocus();
-		wxMessageBox(_("Please enter a custom time format."), validationFailed, wxICON_EXCLAMATION, this);
-		return false;
-	}
+		return DisplayError(_T("ID_CUSTOM_TIMEFORMAT"), _("Please enter a custom time format."));
 
 	return true;
 }

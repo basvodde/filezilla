@@ -171,12 +171,18 @@ int COptionsPage::GetChoice(int id)
 bool COptionsPage::DisplayError(const wxString& controlToFocus, const wxString& error)
 {
 	int id = wxXmlResource::GetXRCID(controlToFocus);
-	if (id != -1)
-	{
-		wxWindow* wnd = FindWindow(id);
-		if (wnd)
-			wnd->SetFocus();
-	}
+	if (id == -1)
+		DisplayError(0, error);
+	else
+		DisplayError(FindWindow(id), error);
+
+	return false;
+}
+
+bool COptionsPage::DisplayError(wxWindow* pWnd, const wxString& error)
+{
+	if (pWnd)
+		pWnd->SetFocus();
 
 	wxMessageBox(error, validationFailed, wxICON_EXCLAMATION, this);
 

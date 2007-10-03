@@ -42,6 +42,7 @@ public:
 
 	// Always returns false
 	bool DisplayError(const wxString& controlToFocus, const wxString& error);
+	bool DisplayError(wxWindow* pWnd, const wxString& error);
 
 protected:
 	COptions* m_pOptions;

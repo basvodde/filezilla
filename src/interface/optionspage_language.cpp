@@ -70,6 +70,5 @@ bool COptionsPageLanguage::SavePage()
 
 bool COptionsPageLanguage::Validate()
 {
-
 	return true;
 }
