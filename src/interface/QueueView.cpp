@@ -2661,7 +2661,8 @@ void CQueueView::ActionAfter(bool warned /*=false*/)
 		}
 		case ActionAfterState_PlaySound:
 		{
-			wxSound(wxGetApp().GetResourceDir() + _T("finished.wav")).Play(wxSOUND_ASYNC);
+			wxSound sound(wxGetApp().GetResourceDir() + _T("finished.wav"));
+			sound.Play(wxSOUND_ASYNC);
 			break;
 		}
 #ifdef __WXMSW__
