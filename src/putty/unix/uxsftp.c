@@ -131,7 +131,10 @@ RFile *open_existing_file(char *name, uint64 *size,
 
     fd = open(name, O_RDONLY);
     if (fd < 0)
+    {
+	fzprintf(sftpStatus, "%s: open: %s", name, strerror(errno));
 	return NULL;
+    }
 
     ret = snew(RFile);
     ret->fd = fd;
@@ -139,7 +142,7 @@ RFile *open_existing_file(char *name, uint64 *size,
     if (size || mtime || atime) {
 	struct stat statbuf;
 	if (fstat(fd, &statbuf) < 0) {
-	    fprintf(stderr, "%s: stat: %s\n", name, strerror(errno));
+	    fzprintf(sftpStatus, "%s: stat: %s", name, strerror(errno));
 	    memset(&statbuf, 0, sizeof(statbuf));
 	}
 
