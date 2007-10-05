@@ -56,7 +56,7 @@ static int calcYear(int month, int day)
 	// Not exact but good enough for our purpose
 	const int day_of_year = month * 31 + day;
 	const int cur_day_of_year = cur_month * 31 + cur_day;
-	if (day_of_year > cur_day_of_year)
+	if (day_of_year > (cur_day_of_year + 1))
 		return cur_year - 1;
 	else
 		return cur_year;
@@ -313,6 +313,8 @@ void CDirectoryListingParserTest::InitEntries()
 
 	// See http://cr.yp.to/ftp/list/eplf.html (mirrored at http://filezilla-project.org/specs/eplf.html)
 
+	wxDateTime utc(1, wxDateTime::Mar, 1996, 22, 15, 3);
+	utc.MakeFromTimezone(wxDateTime::UTC);
 	m_entries.push_back((t_entry){
 			"+i8388621.48594,m825718503,r,s280,up755\t14-eplf file",
 			{
@@ -325,11 +327,13 @@ void CDirectoryListingParserTest::InitEntries()
 				_T(""),
 				true,
 				true,
-				wxDateTime(1, wxDateTime::Mar, 1996, 23, 15, 3),
+				utc,
 				false
 			}
 		});
 
+	utc = wxDateTime(13, wxDateTime::Feb, 1996, 23, 58, 27);
+	utc.MakeFromTimezone(wxDateTime::UTC);
 	m_entries.push_back((t_entry){
         	"+i8388621.50690,m824255907,/,\t15-eplf dir",
 			{
@@ -342,7 +346,7 @@ void CDirectoryListingParserTest::InitEntries()
 				_T(""),
 				true,
 				true,
-				wxDateTime(14, wxDateTime::Feb, 1996, 0, 58, 27),
+				utc,
 				false
 			}
 		});
@@ -420,6 +424,8 @@ void CDirectoryListingParserTest::InitEntries()
 		});
 
 	// Numerical unix style listing
+	utc = wxDateTime(29, wxDateTime::Nov, 1973, 21, 33, 9);
+	utc.MakeFromTimezone(wxDateTime::UTC);
 	m_entries.push_back((t_entry){
 			"0100644   500  101   12345    123456789       20-unix-numerical file",
 			{
@@ -432,7 +438,7 @@ void CDirectoryListingParserTest::InitEntries()
 				_T(""),
 				true,
 				true,
-				wxDateTime(29, wxDateTime::Nov, 1973, 22, 33, 9),
+				utc,
 				false
 			}
 		});
