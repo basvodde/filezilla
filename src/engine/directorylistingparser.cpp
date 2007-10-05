@@ -1131,7 +1131,7 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 			// Problem: Servers which do send the time but not the year even
 			// one day away from getting 1 year old. This is far more uncommon
 			// however.
-			if (currentDayOfYear <= (fileDayOfYear + 1))
+			if ((currentDayOfYear + 1) <= fileDayOfYear + 1)
 				year -= 1;
 		}
 	}
