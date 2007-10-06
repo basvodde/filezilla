@@ -70,7 +70,9 @@ protected:
 
 	bool StartEditing(t_fileData &data);
 
+	wxString GetOpenCommand(const wxString& file);
 	wxString GetSystemOpenCommand(const wxString& file);
+	wxString GetCustomOpenCommand(const wxString& file);
 
 	void SetTimerState();
 

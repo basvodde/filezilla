@@ -3,6 +3,7 @@
 #include "dialogex.h"
 #include "filezillaapp.h"
 #include "queue.h"
+#include "Options.h"
 
 // Defined in optionspage_edit.cpp
 bool UnquoteCommand(wxString& command, wxString& arguments);
@@ -323,7 +324,7 @@ bool CEditHandler::StartEditing(t_fileData& data)
 	wxFileName fn(m_localDir, data.name);
 	data.modificationTime = fn.GetModificationTime();
 
-	wxString cmd = GetSystemOpenCommand(data.name);
+	wxString cmd = GetOpenCommand(data.name);
 	if (cmd == _T(""))
 		return false;
 	
@@ -424,7 +425,38 @@ void CEditHandler::SetTimerState()
 
 bool CEditHandler::CanOpen(const wxString& fileName)
 {
-	return GetSystemOpenCommand(fileName) != _T("");
+	return GetOpenCommand(fileName) != _T("");
+}
+
+wxString CEditHandler::GetOpenCommand(const wxString& file)
+{
+	if (!COptions::Get()->GetOptionVal(OPTION_EDIT_ALWAYSDEFAULT))
+	{
+		if (COptions::Get()->GetOptionVal(OPTION_EDIT_INHERITASSOCIATIONS))
+		{
+			const wxString command = GetSystemOpenCommand(file);
+			if (command != _T(""))
+				return command;
+		}
+
+		const wxString command = GetCustomOpenCommand(file);
+		if (command != _T(""))
+			return command;
+	}
+
+	wxString command = COptions::Get()->GetOption(OPTION_EDIT_DEFAULTEDITOR);
+	if (command == _T(""))
+		return _T("");
+
+	wxString args;
+	wxString editor = command;
+	if (!UnquoteCommand(editor, args))
+		return _T("");
+
+	if (!wxFileName::FileExists(editor))
+		return _T("");
+
+	return command + _T(" \"") + m_localDir + file + _T("\"");
 }
 
 wxString CEditHandler::GetSystemOpenCommand(const wxString& file)
@@ -444,4 +476,46 @@ wxString CEditHandler::GetSystemOpenCommand(const wxString& file)
 		return _T("");
 
 	return cmd;
+}
+
+wxString CEditHandler::GetCustomOpenCommand(const wxString& file)
+{
+	wxFileName fn(m_localDir, file);
+
+	const wxString& ext = fn.GetExt();
+	if (ext == _T(""))
+		return _T("");
+
+	wxString associations = COptions::Get()->GetOption(OPTION_EDIT_CUSTOMASSOCIATIONS) + _T("\n");
+	associations.Replace(_T("\r"), _T(""));
+	int pos;
+	while ((pos = associations.Find('\n')) != -1)
+	{
+		wxString assoc = associations.Left(pos);
+		associations = associations.Mid(pos + 1);
+
+		if (assoc == _T(""))
+			continue;
+
+		wxString command;
+		if (!UnquoteCommand(assoc, command))
+			continue;
+
+		if (assoc != ext)
+			continue;
+
+		wxString args;
+		if (!UnquoteCommand(command, args))
+			return _T("");
+		
+		if (command == _T(""))
+			return _T("");
+
+		if (!wxFileName::FileExists(command))
+			return _T("");
+
+		return command + _T(" \"") + fn.GetFullPath() + _T("\"");
+	}
+
+	return _T("");
 }
