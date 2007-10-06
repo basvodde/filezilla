@@ -1865,7 +1865,7 @@ static int sftp_cmd_open(struct sftp_command *cmd)
     return 1;
 }
 
-/* BEGINFZ UNUSED
+/* BEGIN FZ UNUSED
 static int sftp_cmd_lcd(struct sftp_command *cmd)
 {
     char *currdir, *errmsg;
@@ -3037,16 +3037,18 @@ int psftp_main(int argc, char *argv[])
      * otherwise been specified, pop it in `userhost' so that
      * `psftp -load sessname' is sufficient to start a session.
      */
+    /* BEGIN FZ UNUSED
     if (!userhost && cfg.host[0] != '\0') {
 	userhost = dupstr(cfg.host);
     }
+    END FZ UNUSED */
 
     /*
      * If a user@host string has already been provided, connect to
      * it now.
      */
     if (userhost) {
-	fzprintf(sftpVerbose, "pstp: Using userhost passed on commandline: %s", userhost);
+	fzprintf(sftpVerbose, "psftp: Using userhost passed on commandline: %s", userhost);
 	int ret;
 	ret = psftp_connect(userhost, user, portnumber);
 	sfree(userhost);
