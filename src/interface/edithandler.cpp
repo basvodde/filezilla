@@ -423,9 +423,22 @@ void CEditHandler::SetTimerState()
 		m_timer.Start(15000);
 }
 
-bool CEditHandler::CanOpen(const wxString& fileName)
+bool CEditHandler::CanOpen(const wxString& fileName, bool &dangerous)
 {
-	return GetOpenCommand(fileName) != _T("");
+	wxString command = GetOpenCommand(fileName);
+	if (command == _T(""))
+		return false;
+
+	wxFileName fn(m_localDir, fileName);
+	wxString name = fn.GetFullPath();
+	wxString tmp = command;
+	wxString args;
+	if (UnquoteCommand(tmp, args) && tmp == name)
+		dangerous = true;
+	else
+		dangerous = false;
+
+	return true;
 }
 
 wxString CEditHandler::GetOpenCommand(const wxString& file)
@@ -473,7 +486,11 @@ wxString CEditHandler::GetSystemOpenCommand(const wxString& file)
 
 	wxString cmd;
 	if (!pType->GetOpenCommand(&cmd, wxFileType::MessageParameters(m_localDir + file)))
+	{
+		delete pType;
 		return _T("");
+	}
+	delete pType;
 
 	return cmd;
 }

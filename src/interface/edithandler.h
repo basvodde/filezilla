@@ -45,11 +45,15 @@ public:
 
 	void SetQueue(CQueueView* pQueue) { m_pQueue = pQueue; }
 
-	// Checks if file can be opened. One of these conditions has to be true:
-	// - Filetype association of system has to exist
-	// - Custom association for that filetype
-	// - Default editor set
-	bool CanOpen(const wxString& fileName);
+	/* Checks if file can be opened. One of these conditions has to be true:
+	 * - Filetype association of system has to exist
+	 * - Custom association for that filetype
+	 * - Default editor set
+	 *
+	 * The dangerous argument will be set to true on some filetypes,
+	 * e.g. executables.
+	 */
+	bool CanOpen(const wxString& fileName, bool &dangerous);
 
 protected:
 	CEditHandler();

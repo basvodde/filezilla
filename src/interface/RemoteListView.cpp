@@ -2393,10 +2393,20 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 		return;
 	}
 
-	if (!pEditHandler->CanOpen(entry.name))
+	bool dangerous = false;
+	if (!pEditHandler->CanOpen(entry.name, dangerous))
 	{
 		wxMessageBox(_("Selected file cannot be opened.\nNo default editor has been set or filetype association is missing or incorrect."), _("Cannot edit file"), wxICON_STOP);
 		return;
+	}
+	if (dangerous)
+	{
+		int res = wxMessageBox(_("The selected file would be executed directly.\nThis can be dangerous and damage your system.\nDo you really want to continue?"), _("Dangerous filetype"), wxICON_QUESTION | wxYES_NO);
+		if (res != wxYES)
+		{
+			wxBell();
+			return;
+		}
 	}
 
 	CEditHandler::fileState state = pEditHandler->GetFileState(entry.name);
