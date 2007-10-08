@@ -12,6 +12,7 @@ public:
 protected:
 
 	DECLARE_EVENT_TABLE();
+	void OnBrowseEditor(wxCommandEvent& event);
 };
 
 #endif //__OPTIONSPAGE_EDIT_H__

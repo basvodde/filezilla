@@ -312,6 +312,8 @@ void CEditHandler::FinishTransfer(bool successful, const wxString& fileName)
 		else
 			m_fileDataList.erase(iter);
 		break;
+	default:
+		return;
 	}
 
 	SetTimerState();
