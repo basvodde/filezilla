@@ -4,6 +4,7 @@
 #include "xmlfunctions.h"
 #include "filezillaapp.h"
 #include <wx/tokenzr.h>
+#include "ipcmutex.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -105,6 +106,7 @@ COptions::COptions()
 	for (unsigned int i = 0; i < OPTIONS_NUM; i++)
 		m_optionsCache[i].cached = false;
 
+	CInterProcessMutex mutex(MUTEX_OPTIONS);
 	m_pXmlFile = new CXmlFile(_T("filezilla"));
 	if (!m_pXmlFile->Load())
 	{
@@ -179,7 +181,10 @@ bool COptions::SetOption(unsigned int nID, int value)
 		return false;
 
 	if (m_pXmlFile)
+	{
+		CInterProcessMutex mutex(MUTEX_OPTIONS);
 		m_pXmlFile->Save();
+	}
 
 	return true;
 }
@@ -209,7 +214,10 @@ bool COptions::SetOption(unsigned int nID, wxString value)
 		return false;
 	
 	if (m_pXmlFile)
+	{
+		CInterProcessMutex mutex(MUTEX_OPTIONS);
 		m_pXmlFile->Save();
+	}
 
 	return true;
 }
@@ -465,6 +473,7 @@ void COptions::SetServer(wxString path, const CServer& server)
 
 	::SetServer(element, server);
 
+	CInterProcessMutex mutex(MUTEX_OPTIONS);
 	m_pXmlFile->Save();
 }
 
@@ -565,7 +574,10 @@ void COptions::Import(TiXmlElement* pElement)
 	}
 
 	if (m_pXmlFile)
+	{
+		CInterProcessMutex mutex(MUTEX_OPTIONS);
 		m_pXmlFile->Save();
+	}
 }
 
 void COptions::SaveColumnWidths(const wxListCtrl* const pListCtrl, unsigned int optionId)
