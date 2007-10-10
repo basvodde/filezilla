@@ -1,6 +1,8 @@
 #ifndef __EDITHANDLER_H__
 #define __EDITHANDLER_H__
 
+#include "dialogex.h"
+
 // Handles all aspects about remote file viewing/editing
 
 class CQueueView;
@@ -26,7 +28,7 @@ public:
 	// If files are locked, they won't be removed though
 	void Release();
 
-	enum fileState GetFileState(const wxString& fileName);
+	enum fileState GetFileState(const wxString& fileName) const;
 
 	// Returns the number of files in given state
 	int GetFileCount(enum fileState state) const;
@@ -55,14 +57,6 @@ public:
 	 */
 	bool CanOpen(const wxString& fileName, bool &dangerous);
 
-protected:
-	CEditHandler();
-	virtual ~CEditHandler() { }
-
-	static CEditHandler* m_pEditHandler;
-
-	wxString m_localDir;
-
 	struct t_fileData
 	{
 		wxString name;
@@ -71,6 +65,18 @@ protected:
 		CServerPath remotePath;
 		CServer server;
 	};
+
+	const std::list<t_fileData>& GetFiles() const { return m_fileDataList; }
+
+	bool UploadFile(const wxString& fileName, bool unedit);
+
+protected:
+	CEditHandler();
+	virtual ~CEditHandler() { }
+
+	static CEditHandler* m_pEditHandler;
+
+	wxString m_localDir;
 
 	bool StartEditing(t_fileData &data);
 
@@ -97,6 +103,25 @@ protected:
 
 	DECLARE_EVENT_TABLE()
 	void OnTimerEvent(wxTimerEvent& event);
+};
+
+class CEditHandlerStatusDialog : protected wxDialogEx
+{
+public:
+	CEditHandlerStatusDialog(wxWindow* parent);
+
+	virtual int ShowModal();
+
+protected:
+	void SetCtrlState();
+
+	wxWindow* m_pParent;
+
+	DECLARE_EVENT_TABLE()
+	void OnSelectionChanged(wxListEvent& event);
+	void OnUnedit(wxCommandEvent& event);
+	void OnUpload(wxCommandEvent& event);
+	void OnUploadAndUnedit(wxCommandEvent& event);
 };
 
 #endif //__EDITHANDLER_H__

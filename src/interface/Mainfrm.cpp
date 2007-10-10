@@ -639,6 +639,11 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		CImportDialog dlg(this, m_pQueueView);
 		dlg.Show();
 	}
+	else if (event.GetId() == XRCID("ID_MENU_FILE_EDITED"))
+	{
+		CEditHandlerStatusDialog dlg(this);
+		dlg.ShowModal();
+	}
 	else
 	{
 		CSiteManagerItemData* pData = CSiteManager::GetSiteById(event.GetId());
