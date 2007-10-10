@@ -46,6 +46,8 @@ CEditHandler::CEditHandler()
 
 #ifdef __WXMSW__
 	m_lockfile_handle = INVALID_HANDLE_VALUE;
+#else
+	m_lockfile_descriptor = -1;
 #endif
 }
 
@@ -79,7 +81,23 @@ void CEditHandler::RemoveTemporaryFiles(const wxString& temp)
 		if (wxFileName::FileExists(lockfile))
 		{
 #ifndef __WXMSW__
-			// TODO
+			int fd = open(lockfile.mb_str(), O_RDWR, 0);
+			if (fd >= 0)
+			{
+				// Try to lock 1 byte region in the lockfile. m_type specifies the byte to lock.
+				struct flock f = {0};
+				f.l_type = F_WRLCK;
+				f.l_whence = SEEK_SET;
+				f.l_start = 0;
+				f.l_len = 1;
+				f.l_pid = getpid();
+				if (fcntl(fd, F_SETLK, &f))
+				{
+					// In use by other process
+					continue;
+				}
+				close(fd);
+			}
 #endif
 			wxRemoveFile(lockfile);
 			if (wxFileName::FileExists(lockfile))
@@ -93,7 +111,7 @@ void CEditHandler::RemoveTemporaryFiles(const wxString& temp)
 			for ((res = dir2.GetFirst(&file2, _T(""), wxDIR_FILES)); res; res = dir2.GetNext(&file2));
 				wxRemoveFile(temp + file + sep + file2);
 		}
-		
+
 		wxRmdir(temp + file + sep);
 	} while (dir.GetNext(&file));
 }
@@ -112,7 +130,7 @@ wxString CEditHandler::GetLocalDirectory()
 
 	RemoveTemporaryFiles(dir);
 
-	// On POSIX, the permissions of the created directory (700) ensure 
+	// On POSIX, the permissions of the created directory (700) ensure
 	// that this is a safe operation.
 	// On Windows, the user's profile directory and associated temp dir
 	// already has the correct permissions which get inherited.
@@ -122,7 +140,7 @@ wxString CEditHandler::GetLocalDirectory()
 		wxString newDir = dir + wxString::Format(_T("fz3temp-%d"), i++);
 		if (wxFileName::FileExists(newDir) || wxFileName::DirExists(newDir))
 			continue;
-		
+
 		if (!wxMkdir(newDir, 0700))
 			return _T("");
 
@@ -138,7 +156,19 @@ wxString CEditHandler::GetLocalDirectory()
 		m_localDir = _T("");
 	}
 #else
-//TODO
+	wxString file = m_localDir + _T("fz3temp-lockfile");
+	m_lockfile_descriptor = open(file.mb_str(), O_CREAT | O_RDWR, 0600);
+	if (m_lockfile_descriptor >= 0)
+	{
+		// Lock 1 byte region in the lockfile.
+		struct flock f = {0};
+		f.l_type = F_WRLCK;
+		f.l_whence = SEEK_SET;
+		f.l_start = 0;
+		f.l_len = 1;
+		f.l_pid = getpid();
+		fcntl(m_lockfile_descriptor, F_SETLKW, &f);
+	}
 #endif
 
 	return m_localDir;
@@ -155,6 +185,10 @@ void CEditHandler::Release()
 		if (m_lockfile_handle != INVALID_HANDLE_VALUE)
 			CloseHandle(m_lockfile_handle);
 		wxRemoveFile(m_localDir + _T("fz3temp-lockfile"));
+#else
+		wxRemoveFile(m_localDir + _T("fz3temp-lockfile"));
+		if (m_lockfile_descriptor >= 0)
+			close(m_lockfile_descriptor);
 #endif
 
 		RemoveAll(true);
@@ -170,7 +204,7 @@ enum CEditHandler::fileState CEditHandler::GetFileState(const wxString& fileName
 	std::list<t_fileData>::const_iterator iter = GetFile(fileName);
 	if (iter == m_fileDataList.end())
 		return unknown;
-	
+
 	return iter->state;
 }
 
@@ -240,7 +274,7 @@ bool CEditHandler::RemoveAll(bool force)
 			keep.push_back(*iter);
 			continue;
 		}
-		
+
 		if (wxFileName::FileExists(m_localDir + iter->name))
 		{
 			if (!wxRemoveFile(m_localDir + iter->name))
@@ -343,7 +377,7 @@ bool CEditHandler::StartEditing(t_fileData& data)
 	wxString cmd = GetOpenCommand(data.name);
 	if (cmd == _T(""))
 		return false;
-	
+
 	if (!wxExecute(cmd))
 		return false;
 
@@ -368,7 +402,7 @@ checkmodifications:
 		if (!fn.FileExists())
 		{
 			m_fileDataList.erase(iter);
-			
+
 			// Evil goto. Imo the next C++ standard needs a comefrom keyword.
 			goto checkmodifications;
 		}
@@ -379,18 +413,18 @@ checkmodifications:
 
 		if (iter->modificationTime.IsValid() & iter->modificationTime >= mtime)
 			continue;
-		
+
 		// File has changed, ask user what to do
 		CChangedFileDialog dlg;
 		if (!dlg.Load(wxTheApp->GetTopWindow(), _T("ID_CHANGEDFILE")))
 			continue;
-		
+
 		dlg.SetLabel(XRCID("ID_FILENAME"), iter->name);
-		
+
 		int res = dlg.ShowModal();
 
 		const bool remove = XRCCTRL(dlg, "ID_DELETE", wxCheckBox)->IsChecked();
-		
+
 		if (res == wxID_YES)
 		{
 			UploadFile(iter->name, remove);
@@ -567,7 +601,7 @@ wxString CEditHandler::GetCustomOpenCommand(const wxString& file)
 		wxString args;
 		if (!UnquoteCommand(command, args))
 			return _T("");
-		
+
 		if (command == _T(""))
 			return _T("");
 
@@ -823,7 +857,7 @@ void CEditHandlerStatusDialog::OnEdit(wxCommandEvent& event)
 				pListCtrl->DeleteItem(i);
 			else
 				pListCtrl->SetItem(i, 1, _("Pending removal"));
-		}		
+		}
 	}
 
 	SetCtrlState();

@@ -100,6 +100,8 @@ protected:
 
 #ifdef __WXMSW__
 	HANDLE m_lockfile_handle;
+#else
+	int m_lockfile_descriptor;
 #endif
 
 	DECLARE_EVENT_TABLE()
