@@ -62,6 +62,10 @@
 #define SSH1_SMSG_AUTH_CCARD_CHALLENGE            71	/* 0x47 */
 #define SSH1_CMSG_AUTH_CCARD_RESPONSE             72	/* 0x48 */
 
+#define SSH1_AUTH_RHOSTS                          1	/* 0x1 */
+#define SSH1_AUTH_RSA                             2	/* 0x2 */
+#define SSH1_AUTH_PASSWORD                        3	/* 0x3 */
+#define SSH1_AUTH_RHOSTS_RSA                      4	/* 0x4 */
 #define SSH1_AUTH_TIS                             5	/* 0x5 */
 #define SSH1_AUTH_CCARD                           16	/* 0x10 */
 
@@ -529,6 +533,14 @@ enum {				       /* channel types */
 };
 
 /*
+ * little structure to keep track of outstanding WINDOW_ADJUSTs
+ */
+struct winadj {
+    struct winadj *next;
+    unsigned size;
+};
+
+/*
  * 2-3-4 tree storing channels.
  */
 struct ssh_channel {
@@ -548,15 +560,29 @@ struct ssh_channel {
      * A channel is completely finished with when all four bits are set.
      */
     int closes;
+    /*
+     * True if this channel is causing the underlying connection to be
+     * throttled.
+     */
+    int throttling_conn;
     union {
-	struct ssh1_data_channel {
-	    int throttling;
-	} v1;
 	struct ssh2_data_channel {
 	    bufchain outbuffer;
 	    unsigned remwindow, remmaxpkt;
 	    /* locwindow is signed so we can cope with excess data. */
 	    int locwindow, locmaxwin;
+	    /*
+	     * remlocwin is the amount of local window that we think
+	     * the remote end had available to it after it sent the
+	     * last data packet or window adjust ack.
+	     */
+	    int remlocwin;
+	    /*
+	     * These store the list of window adjusts that haven't
+	     * been acked.
+	     */
+	    struct winadj *winadj_head, *winadj_tail;
+	    enum { THROTTLED, UNTHROTTLING, UNTHROTTLED } throttle_state;
 	} v2;
     } v;
     union {
@@ -786,7 +812,7 @@ struct ssh_tag {
     void *x11auth;
 
     int version;
-    int v1_throttle_count;
+    int conn_throttle_count;
     int overall_bufsize;
     int throttled_all;
     int v1_stdout_throttling;
@@ -2849,14 +2875,14 @@ static const char *connect_to_host(Ssh ssh, char *host, int port,
 /*
  * Throttle or unthrottle the SSH connection.
  */
-static void ssh1_throttle(Ssh ssh, int adjust)
+static void ssh_throttle_conn(Ssh ssh, int adjust)
 {
-    int old_count = ssh->v1_throttle_count;
-    ssh->v1_throttle_count += adjust;
-    assert(ssh->v1_throttle_count >= 0);
-    if (ssh->v1_throttle_count && !old_count) {
+    int old_count = ssh->conn_throttle_count;
+    ssh->conn_throttle_count += adjust;
+    assert(ssh->conn_throttle_count >= 0);
+    if (ssh->conn_throttle_count && !old_count) {
 	ssh_set_frozen(ssh, 1);
-    } else if (!ssh->v1_throttle_count && old_count) {
+    } else if (!ssh->conn_throttle_count && old_count) {
 	ssh_set_frozen(ssh, 0);
     }
 }
@@ -3066,6 +3092,8 @@ static int do_ssh1_login(Ssh ssh, unsigned char *in, int inlen,
     ssh->v1_remote_protoflags = ssh_pkt_getuint32(pktin);
     s->supported_ciphers_mask = ssh_pkt_getuint32(pktin);
     s->supported_auths_mask = ssh_pkt_getuint32(pktin);
+    if ((ssh->remote_bugs & BUG_CHOKES_ON_RSA))
+	s->supported_auths_mask &= ~(1 << SSH1_AUTH_RSA);
 
     ssh->v1_local_protoflags =
 	ssh->v1_remote_protoflags & SSH1_PROTOFLAGS_SUPPORTED;
@@ -3319,7 +3347,7 @@ static int do_ssh1_login(Ssh ssh, unsigned char *in, int inlen,
 
     crWaitUntil(pktin);
 
-    if ((ssh->remote_bugs & BUG_CHOKES_ON_RSA)) {
+    if ((s->supported_auths_mask & (1 << SSH1_AUTH_RSA)) == 0) {
 	/* We must not attempt PK auth. Pretend we've already tried it. */
 	s->tried_publickey = s->tried_agent = 1;
     } else {
@@ -3776,6 +3804,10 @@ static int do_ssh1_login(Ssh ssh, unsigned char *in, int inlen,
 	    }
 	}
 	if (s->pwpkt_type == SSH1_CMSG_AUTH_PASSWORD) {
+	    if ((s->supported_auths_mask & (1 << SSH1_AUTH_PASSWORD)) == 0) {
+		bombout(("No supported authentication methods available"));
+		crStop(0);
+	    }
 	    s->cur_prompt->to_server = TRUE;
 	    s->cur_prompt->name = dupstr("SSH password");
 	    add_prompt(s->cur_prompt, dupprintf("%.90s@%.90s's password: ",
@@ -4024,17 +4056,20 @@ int sshfwd_write(struct ssh_channel *c, char *buf, int len)
 void sshfwd_unthrottle(struct ssh_channel *c, int bufsize)
 {
     Ssh ssh = c->ssh;
+    int buflimit;
 
     if (ssh->state == SSH_STATE_CLOSED)
 	return;
 
     if (ssh->version == 1) {
-	if (c->v.v1.throttling && bufsize < SSH1_BUFFER_LIMIT) {
-	    c->v.v1.throttling = 0;
-	    ssh1_throttle(ssh, -1);
-	}
+	buflimit = SSH1_BUFFER_LIMIT;
     } else {
-	ssh2_set_window(c, c->v.v2.locmaxwin - bufsize);
+	buflimit = c->v.v2.locmaxwin;
+	ssh2_set_window(c, bufsize < buflimit ? buflimit - bufsize : 0);
+    }
+    if (c->throttling_conn && bufsize <= buflimit) {
+	c->throttling_conn = 0;
+	ssh_throttle_conn(ssh, -1);
     }
 }
 
@@ -4463,7 +4498,7 @@ static void ssh1_smsg_stdout_stderr_data(Ssh ssh, struct Packet *pktin)
 			   string, stringlen);
     if (!ssh->v1_stdout_throttling && bufsize > SSH1_BUFFER_LIMIT) {
 	ssh->v1_stdout_throttling = 1;
-	ssh1_throttle(ssh, +1);
+	ssh_throttle_conn(ssh, +1);
     }
 }
 
@@ -4497,7 +4532,7 @@ static void ssh1_smsg_x11_open(Ssh ssh, struct Packet *pktin)
 	    c->halfopen = FALSE;
 	    c->localid = alloc_channel_id(ssh);
 	    c->closes = 0;
-	    c->v.v1.throttling = 0;
+	    c->throttling_conn = 0;
 	    c->type = CHAN_X11;	/* identify channel type */
 	    add234(ssh->channels, c);
 	    send_packet(ssh, SSH1_MSG_CHANNEL_OPEN_CONFIRMATION,
@@ -4526,7 +4561,7 @@ static void ssh1_smsg_agent_open(Ssh ssh, struct Packet *pktin)
 	c->halfopen = FALSE;
 	c->localid = alloc_channel_id(ssh);
 	c->closes = 0;
-	c->v.v1.throttling = 0;
+	c->throttling_conn = 0;
 	c->type = CHAN_AGENT;	/* identify channel type */
 	c->u.a.lensofar = 0;
 	add234(ssh->channels, c);
@@ -4580,7 +4615,7 @@ static void ssh1_msg_port_open(Ssh ssh, struct Packet *pktin)
 	    c->halfopen = FALSE;
 	    c->localid = alloc_channel_id(ssh);
 	    c->closes = 0;
-	    c->v.v1.throttling = 0;
+	    c->throttling_conn = 0;
 	    c->type = CHAN_SOCKDATA;	/* identify channel type */
 	    add234(ssh->channels, c);
 	    send_packet(ssh, SSH1_MSG_CHANNEL_OPEN_CONFIRMATION,
@@ -4602,7 +4637,7 @@ static void ssh1_msg_channel_open_confirmation(Ssh ssh, struct Packet *pktin)
 	c->remoteid = localid;
 	c->halfopen = FALSE;
 	c->type = CHAN_SOCKDATA;
-	c->v.v1.throttling = 0;
+	c->throttling_conn = 0;
 	pfd_confirm(c->u.pfd.s);
     }
 
@@ -4738,9 +4773,9 @@ static void ssh1_msg_channel_data(Ssh ssh, struct Packet *pktin)
 	    bufsize = 0;   /* agent channels never back up */
 	    break;
 	}
-	if (!c->v.v1.throttling && bufsize > SSH1_BUFFER_LIMIT) {
-	    c->v.v1.throttling = 1;
-	    ssh1_throttle(ssh, +1);
+	if (!c->throttling_conn && bufsize > SSH1_BUFFER_LIMIT) {
+	    c->throttling_conn = 1;
+	    ssh_throttle_conn(ssh, +1);
 	}
     }
 }
@@ -6170,6 +6205,22 @@ static void ssh2_try_send_and_unthrottle(struct ssh_channel *c)
 }
 
 /*
+ * Set up most of a new ssh_channel for SSH-2.
+ */
+static void ssh2_channel_init(struct ssh_channel *c)
+{
+    Ssh ssh = c->ssh;
+    c->localid = alloc_channel_id(ssh);
+    c->closes = 0;
+    c->throttling_conn = FALSE;
+    c->v.v2.locwindow = c->v.v2.locmaxwin = c->v.v2.remlocwin =
+	ssh->cfg.ssh_simple ? OUR_V2_BIGWIN : OUR_V2_WINSIZE;
+    c->v.v2.winadj_head = c->v.v2.winadj_tail = NULL;
+    c->v.v2.throttle_state = UNTHROTTLED;
+    bufchain_init(&c->v.v2.outbuffer);
+}
+
+/*
  * Potentially enlarge the window on an SSH-2 channel.
  */
 static void ssh2_set_window(struct ssh_channel *c, int newwin)
@@ -6193,7 +6244,51 @@ static void ssh2_set_window(struct ssh_channel *c, int newwin)
      */
     if (newwin / 2 >= c->v.v2.locwindow) {
 	struct Packet *pktout;
+	struct winadj *wa;
 
+	/*
+	 * In order to keep track of how much window the client
+	 * actually has available, we'd like it to acknowledge each
+	 * WINDOW_ADJUST.  We can't do that directly, so we accompany
+	 * it with a CHANNEL_REQUEST that has to be acknowledged.
+	 *
+	 * This is only necessary if we're opening the window wide.
+	 * If we're not, then throughput is being constrained by
+	 * something other than the maximum window size anyway.
+	 *
+	 * We also only send this if the main channel has finished its
+	 * initial CHANNEL_REQUESTs and installed the default
+	 * CHANNEL_FAILURE handler, so as not to risk giving it
+	 * unexpected CHANNEL_FAILUREs.
+	 */
+	if (newwin == c->v.v2.locmaxwin &&
+	    ssh->packet_dispatch[SSH2_MSG_CHANNEL_FAILURE]) {
+	    pktout = ssh2_pkt_init(SSH2_MSG_CHANNEL_REQUEST);
+	    ssh2_pkt_adduint32(pktout, c->remoteid);
+	    ssh2_pkt_addstring(pktout, "winadj@putty.projects.tartarus.org");
+	    ssh2_pkt_addbool(pktout, TRUE);
+	    ssh2_pkt_send(ssh, pktout);
+
+	    /*
+	     * CHANNEL_FAILURE doesn't come with any indication of
+	     * what message caused it, so we have to keep track of the
+	     * outstanding CHANNEL_REQUESTs ourselves.
+	     */
+	    wa = snew(struct winadj);
+	    wa->size = newwin - c->v.v2.locwindow;
+	    wa->next = NULL;
+	    if (!c->v.v2.winadj_head)
+		c->v.v2.winadj_head = wa;
+	    else
+		c->v.v2.winadj_tail->next = wa;
+	    c->v.v2.winadj_tail = wa;
+	    if (c->v.v2.throttle_state != UNTHROTTLED)
+		c->v.v2.throttle_state = UNTHROTTLING;
+	} else {
+	    /* Pretend the WINDOW_ADJUST was acked immediately. */
+	    c->v.v2.remlocwin = newwin;
+	    c->v.v2.throttle_state = THROTTLED;
+	}
 	pktout = ssh2_pkt_init(SSH2_MSG_CHANNEL_WINDOW_ADJUST);
 	ssh2_pkt_adduint32(pktout, c->remoteid);
 	ssh2_pkt_adduint32(pktout, newwin - c->v.v2.locwindow);
@@ -6202,12 +6297,94 @@ static void ssh2_set_window(struct ssh_channel *c, int newwin)
     }
 }
 
+/*
+ * Find the channel associated with a message.  If there's no channel,
+ * or it's not properly open, make a noise about it and return NULL.
+ */
+static struct ssh_channel *ssh2_channel_msg(Ssh ssh, struct Packet *pktin)
+{
+    unsigned localid = ssh_pkt_getuint32(pktin);
+    struct ssh_channel *c;
+
+    c = find234(ssh->channels, &localid, ssh_channelfind);
+    if (!c ||
+	(c->halfopen && pktin->type != SSH2_MSG_CHANNEL_OPEN_CONFIRMATION &&
+	 pktin->type != SSH2_MSG_CHANNEL_OPEN_FAILURE)) {
+	char *buf = dupprintf("Received %s for %s channel %u",
+			      ssh2_pkt_type(ssh->pkt_kctx, ssh->pkt_actx,
+					    pktin->type),
+			      c ? "half-open" : "nonexistent", localid);
+	ssh_disconnect(ssh, NULL, buf, SSH2_DISCONNECT_PROTOCOL_ERROR, FALSE);
+	sfree(buf);
+	return NULL;
+    }
+    return c;
+}
+
+static void ssh2_msg_channel_success(Ssh ssh, struct Packet *pktin)
+{
+    /*
+     * This should never get called.  All channel requests are either
+     * sent with want_reply false or are sent before this handler gets
+     * installed.
+     */
+    struct ssh_channel *c;
+    struct winadj *wa;
+
+    c = ssh2_channel_msg(ssh, pktin);
+    if (!c)
+	return;
+    wa = c->v.v2.winadj_head;
+    if (wa)
+	ssh_disconnect(ssh, NULL, "Received SSH_MSG_CHANNEL_SUCCESS for "
+		       "\"winadj@putty.projects.tartarus.org\"",
+		       SSH2_DISCONNECT_PROTOCOL_ERROR, FALSE);
+    else
+	ssh_disconnect(ssh, NULL,
+		       "Received unsolicited SSH_MSG_CHANNEL_SUCCESS",
+		       SSH2_DISCONNECT_PROTOCOL_ERROR, FALSE);
+}
+
+static void ssh2_msg_channel_failure(Ssh ssh, struct Packet *pktin)
+{
+    /*
+     * The only time this should get called is for "winadj@putty"
+     * messages sent above.  All other channel requests are either
+     * sent with want_reply false or are sent before this handler gets
+     * installed.
+     */
+    struct ssh_channel *c;
+    struct winadj *wa;
+
+    c = ssh2_channel_msg(ssh, pktin);
+    if (!c)
+	return;
+    wa = c->v.v2.winadj_head;
+    if (!wa) {
+	ssh_disconnect(ssh, NULL,
+		       "Received unsolicited SSH_MSG_CHANNEL_FAILURE",
+		       SSH2_DISCONNECT_PROTOCOL_ERROR, FALSE);
+	return;
+    }
+    c->v.v2.winadj_head = wa->next;
+    c->v.v2.remlocwin += wa->size;
+    sfree(wa);
+    /*
+     * winadj messages are only sent when the window is fully open, so
+     * if we get an ack of one, we know any pending unthrottle is
+     * complete.
+     */
+    if (c->v.v2.throttle_state == UNTHROTTLING)
+	c->v.v2.throttle_state = UNTHROTTLED;
+}
+
 static void ssh2_msg_channel_window_adjust(Ssh ssh, struct Packet *pktin)
 {
-    unsigned i = ssh_pkt_getuint32(pktin);
     struct ssh_channel *c;
-    c = find234(ssh->channels, &i, ssh_channelfind);
-    if (c && !c->closes) {
+    c = ssh2_channel_msg(ssh, pktin);
+    if (!c)
+	return;
+    if (!c->closes) {
 	c->v.v2.remwindow += ssh_pkt_getuint32(pktin);
 	ssh2_try_send_and_unthrottle(c);
     }
@@ -6217,11 +6394,10 @@ static void ssh2_msg_channel_data(Ssh ssh, struct Packet *pktin)
 {
     char *data;
     int length;
-    unsigned i = ssh_pkt_getuint32(pktin);
     struct ssh_channel *c;
-    c = find234(ssh->channels, &i, ssh_channelfind);
+    c = ssh2_channel_msg(ssh, pktin);
     if (!c)
-	return;			       /* nonexistent channel */
+	return;
     if (pktin->type == SSH2_MSG_CHANNEL_EXTENDED_DATA &&
 	ssh_pkt_getuint32(pktin) != SSH2_EXTENDED_DATA_STDERR)
 	return;			       /* extended but not stderr */
@@ -6229,6 +6405,7 @@ static void ssh2_msg_channel_data(Ssh ssh, struct Packet *pktin)
     if (data) {
 	int bufsize = 0;
 	c->v.v2.locwindow -= length;
+	c->v.v2.remlocwin -= length;
 	switch (c->type) {
 	  case CHAN_MAINSESSION:
 	    bufsize =
@@ -6286,6 +6463,14 @@ static void ssh2_msg_channel_data(Ssh ssh, struct Packet *pktin)
 	    break;
 	}
 	/*
+	 * If it looks like the remote end hit the end of its window,
+	 * and we didn't want it to do that, think about using a
+	 * larger window.
+	 */
+	if (c->v.v2.remlocwin <= 0 && c->v.v2.throttle_state == UNTHROTTLED &&
+	    c->v.v2.locmaxwin < 0x40000000)
+	    c->v.v2.locmaxwin += OUR_V2_WINSIZE;
+	/*
 	 * If we are not buffering too much data,
 	 * enlarge the window again at the remote side.
 	 * If we are buffering too much, we may still
@@ -6294,17 +6479,27 @@ static void ssh2_msg_channel_data(Ssh ssh, struct Packet *pktin)
 	 */
 	ssh2_set_window(c, bufsize < c->v.v2.locmaxwin ?
 			c->v.v2.locmaxwin - bufsize : 0);
+	/*
+	 * If we're either buffering way too much data, or if we're
+	 * buffering anything at all and we're in "simple" mode,
+	 * throttle the whole channel.
+	 */
+	if ((bufsize > c->v.v2.locmaxwin ||
+	     (ssh->cfg.ssh_simple && bufsize > 0)) &&
+	    !c->throttling_conn) {
+	    c->throttling_conn = 1;
+	    ssh_throttle_conn(ssh, +1);
+	}
     }
 }
 
 static void ssh2_msg_channel_eof(Ssh ssh, struct Packet *pktin)
 {
-    unsigned i = ssh_pkt_getuint32(pktin);
     struct ssh_channel *c;
 
-    c = find234(ssh->channels, &i, ssh_channelfind);
+    c = ssh2_channel_msg(ssh, pktin);
     if (!c)
-	return;			       /* nonexistent channel */
+	return;
 
     if (c->type == CHAN_X11) {
 	/*
@@ -6323,16 +6518,12 @@ static void ssh2_msg_channel_eof(Ssh ssh, struct Packet *pktin)
 
 static void ssh2_msg_channel_close(Ssh ssh, struct Packet *pktin)
 {
-    unsigned i = ssh_pkt_getuint32(pktin);
     struct ssh_channel *c;
     struct Packet *pktout;
 
-    c = find234(ssh->channels, &i, ssh_channelfind);
-    if (!c || c->halfopen) {
-	bombout(("Received CHANNEL_CLOSE for %s channel %d\n",
-		 c ? "half-open" : "nonexistent", i));
+    c = ssh2_channel_msg(ssh, pktin);
+    if (!c)
 	return;
-    }
     /* Do pre-close processing on the channel. */
     switch (c->type) {
       case CHAN_MAINSESSION:
@@ -6385,13 +6576,12 @@ static void ssh2_msg_channel_close(Ssh ssh, struct Packet *pktin)
 
 static void ssh2_msg_channel_open_confirmation(Ssh ssh, struct Packet *pktin)
 {
-    unsigned i = ssh_pkt_getuint32(pktin);
     struct ssh_channel *c;
     struct Packet *pktout;
 
-    c = find234(ssh->channels, &i, ssh_channelfind);
+    c = ssh2_channel_msg(ssh, pktin);
     if (!c)
-	return;			       /* nonexistent channel */
+	return;
     if (c->type != CHAN_SOCKDATA_DORMANT)
 	return;			       /* dunno why they're confirming this */
     c->remoteid = ssh_pkt_getuint32(pktin);
@@ -6423,14 +6613,13 @@ static void ssh2_msg_channel_open_failure(Ssh ssh, struct Packet *pktin)
 	    "Unknown channel type",
 	    "Resource shortage",
     };
-    unsigned i = ssh_pkt_getuint32(pktin);
     unsigned reason_code;
     char *reason_string;
     int reason_length;
     struct ssh_channel *c;
-    c = find234(ssh->channels, &i, ssh_channelfind);
+    c = ssh2_channel_msg(ssh, pktin);
     if (!c)
-	return;			       /* nonexistent channel */
+	return;
     if (c->type != CHAN_SOCKDATA_DORMANT)
 	return;			       /* dunno why they're failing this */
 
@@ -6449,29 +6638,17 @@ static void ssh2_msg_channel_open_failure(Ssh ssh, struct Packet *pktin)
 
 static void ssh2_msg_channel_request(Ssh ssh, struct Packet *pktin)
 {
-    unsigned localid;
     char *type;
     int typelen, want_reply;
     int reply = SSH2_MSG_CHANNEL_FAILURE; /* default */
     struct ssh_channel *c;
     struct Packet *pktout;
 
-    localid = ssh_pkt_getuint32(pktin);
+    c = ssh2_channel_msg(ssh, pktin);
+    if (!c)
+	return;
     ssh_pkt_getstring(pktin, &type, &typelen);
     want_reply = ssh2_pkt_getbool(pktin);
-
-    /*
-     * First, check that the channel exists. Otherwise,
-     * we can instantly disconnect with a rude message.
-     */
-    c = find234(ssh->channels, &localid, ssh_channelfind);
-    if (!c) {
-	char *buf = dupprintf("Received channel request for nonexistent"
-			      " channel %d", localid);
-	ssh_disconnect(ssh, NULL, buf, SSH2_DISCONNECT_PROTOCOL_ERROR, FALSE);
-	sfree(buf);
-	return;
-    }
 
     /*
      * Having got the channel number, we now look at
@@ -6500,7 +6677,7 @@ static void ssh2_msg_channel_request(Ssh ssh, struct Packet *pktin)
 	    int msglen = 0, core = FALSE;
 	    /* ICK: older versions of OpenSSH (e.g. 3.4p1)
 	     * provide an `int' for the signal, despite its
-	     * having been a `string' in the drafts since at
+	     * having been a `string' in the drafts of RFC 4254 since at
 	     * least 2001. (Fixed in session.c 1.147.) Try to
 	     * infer which we can safely parse it as. */
 	    {
@@ -6543,7 +6720,7 @@ static void ssh2_msg_channel_request(Ssh ssh, struct Packet *pktin)
 		    fmt_sig = dupprintf(" %d", signum);
 		    ssh->exitcode = 128 + signum;
 		} else {
-		    /* As per the drafts. */
+		    /* As per RFC 4254. */
 		    char *sig;
 		    int siglen;
 		    ssh_pkt_getstring(pktin, &sig, &siglen);
@@ -6758,12 +6935,9 @@ static void ssh2_msg_channel_open(Ssh ssh, struct Packet *pktin)
 	logeventf(ssh, "Rejected channel open: %s", error);
 	sfree(c);
     } else {
-	c->localid = alloc_channel_id(ssh);
-	c->closes = 0;
-	c->v.v2.locwindow = c->v.v2.locmaxwin = OUR_V2_WINSIZE;
+	ssh2_channel_init(c);
 	c->v.v2.remwindow = winsize;
 	c->v.v2.remmaxpkt = pktsize;
-	bufchain_init(&c->v.v2.outbuffer);
 	add234(ssh->channels, c);
 	pktout = ssh2_pkt_init(SSH2_MSG_CHANNEL_OPEN_CONFIRMATION);
 	ssh2_pkt_adduint32(pktout, c->remoteid);
@@ -7964,15 +8138,13 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 	 */
 	ssh->mainchan = snew(struct ssh_channel);
 	ssh->mainchan->ssh = ssh;
-	ssh->mainchan->localid = alloc_channel_id(ssh);
+	ssh2_channel_init(ssh->mainchan);
 	logeventf(ssh,
 		  "Opening direct-tcpip channel to %s:%d in place of session",
 		  ssh->cfg.ssh_nc_host, ssh->cfg.ssh_nc_port);
 	s->pktout = ssh2_pkt_init(SSH2_MSG_CHANNEL_OPEN);
 	ssh2_pkt_addstring(s->pktout, "direct-tcpip");
 	ssh2_pkt_adduint32(s->pktout, ssh->mainchan->localid);
-	ssh->mainchan->v.v2.locwindow = ssh->mainchan->v.v2.locmaxwin =
-	    ssh->cfg.ssh_simple ? OUR_V2_BIGWIN : OUR_V2_WINSIZE;
 	ssh2_pkt_adduint32(s->pktout, ssh->mainchan->v.v2.locwindow);/* our window size */
 	ssh2_pkt_adduint32(s->pktout, OUR_V2_MAXPKT);      /* our max pkt size */
 	ssh2_pkt_addstring(s->pktout, ssh->cfg.ssh_nc_host);
@@ -7999,10 +8171,8 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 	ssh->mainchan->remoteid = ssh_pkt_getuint32(pktin);
 	ssh->mainchan->halfopen = FALSE;
 	ssh->mainchan->type = CHAN_MAINSESSION;
-	ssh->mainchan->closes = 0;
 	ssh->mainchan->v.v2.remwindow = ssh_pkt_getuint32(pktin);
 	ssh->mainchan->v.v2.remmaxpkt = ssh_pkt_getuint32(pktin);
-	bufchain_init(&ssh->mainchan->v.v2.outbuffer);
 	add234(ssh->channels, ssh->mainchan);
 	update_specials_menu(ssh->frontend);
 	logevent("Opened direct-tcpip channel");
@@ -8010,12 +8180,10 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
     } else {
 	ssh->mainchan = snew(struct ssh_channel);
 	ssh->mainchan->ssh = ssh;
-	ssh->mainchan->localid = alloc_channel_id(ssh);
+	ssh2_channel_init(ssh->mainchan);
 	s->pktout = ssh2_pkt_init(SSH2_MSG_CHANNEL_OPEN);
 	ssh2_pkt_addstring(s->pktout, "session");
 	ssh2_pkt_adduint32(s->pktout, ssh->mainchan->localid);
-	ssh->mainchan->v.v2.locwindow = ssh->mainchan->v.v2.locmaxwin =
-	    ssh->cfg.ssh_simple ? OUR_V2_BIGWIN : OUR_V2_WINSIZE;
 	ssh2_pkt_adduint32(s->pktout, ssh->mainchan->v.v2.locwindow);/* our window size */
 	ssh2_pkt_adduint32(s->pktout, OUR_V2_MAXPKT);    /* our max pkt size */
 	ssh2_pkt_send(ssh, s->pktout);
@@ -8032,10 +8200,8 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 	ssh->mainchan->remoteid = ssh_pkt_getuint32(pktin);
 	ssh->mainchan->halfopen = FALSE;
 	ssh->mainchan->type = CHAN_MAINSESSION;
-	ssh->mainchan->closes = 0;
 	ssh->mainchan->v.v2.remwindow = ssh_pkt_getuint32(pktin);
 	ssh->mainchan->v.v2.remmaxpkt = ssh_pkt_getuint32(pktin);
-	bufchain_init(&ssh->mainchan->v.v2.outbuffer);
 	add234(ssh->channels, ssh->mainchan);
 	update_specials_menu(ssh->frontend);
 	logevent("Opened channel for session");
@@ -8327,6 +8493,13 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 	ssh_size(ssh, ssh->term_width, ssh->term_height);
     if (ssh->eof_needed)
 	ssh_special(ssh, TS_EOF);
+
+    /*
+     * All the initial channel requests are done, so install the default
+     * failure handler.
+     */
+    ssh->packet_dispatch[SSH2_MSG_CHANNEL_SUCCESS] = ssh2_msg_channel_success;
+    ssh->packet_dispatch[SSH2_MSG_CHANNEL_FAILURE] = ssh2_msg_channel_failure;
 
     /*
      * Transfer data!
@@ -8629,7 +8802,7 @@ static const char *ssh_init(void *frontend_handle, void **backend_handle,
     ssh->send_ok = 0;
     ssh->editing = 0;
     ssh->echoing = 0;
-    ssh->v1_throttle_count = 0;
+    ssh->conn_throttle_count = 0;
     ssh->overall_bufsize = 0;
     ssh->fallback_cmd = 0;
 
@@ -8906,7 +9079,7 @@ static const struct telnet_special *ssh_get_specials(void *handle)
     static const struct telnet_special ssh2_session_specials[] = {
 	{NULL, TS_SEP},
 	{"Break", TS_BRK},
-	/* These are the signal names defined by draft-ietf-secsh-connect-23.
+	/* These are the signal names defined by RFC 4254.
 	 * They include all the ISO C signals, but are a subset of the POSIX
 	 * required signals. */
 	{"SIGINT (Interrupt)", TS_SIGINT},
@@ -9055,17 +9228,13 @@ void *new_sock_channel(void *handle, Socket s)
     Ssh ssh = (Ssh) handle;
     struct ssh_channel *c;
     c = snew(struct ssh_channel);
-    c->ssh = ssh;
 
-    if (c) {
-	c->halfopen = TRUE;
-	c->localid = alloc_channel_id(ssh);
-	c->closes = 0;
-	c->type = CHAN_SOCKDATA_DORMANT;/* identify channel type */
-	c->u.pfd.s = s;
-	bufchain_init(&c->v.v2.outbuffer);
-	add234(ssh->channels, c);
-    }
+    c->ssh = ssh;
+    ssh2_channel_init(c);
+    c->halfopen = TRUE;
+    c->type = CHAN_SOCKDATA_DORMANT;/* identify channel type */
+    c->u.pfd.s = s;
+    add234(ssh->channels, c);
     return c;
 }
 
@@ -9076,15 +9245,27 @@ void *new_sock_channel(void *handle, Socket s)
 static void ssh_unthrottle(void *handle, int bufsize)
 {
     Ssh ssh = (Ssh) handle;
+    int buflimit;
+
     if (ssh->version == 1) {
 	if (ssh->v1_stdout_throttling && bufsize < SSH1_BUFFER_LIMIT) {
 	    ssh->v1_stdout_throttling = 0;
-	    ssh1_throttle(ssh, -1);
+	    ssh_throttle_conn(ssh, -1);
 	}
     } else {
-	if (ssh->mainchan)
+	if (ssh->mainchan) {
 	    ssh2_set_window(ssh->mainchan,
-			    ssh->mainchan->v.v2.locmaxwin - bufsize);
+			    bufsize < ssh->mainchan->v.v2.locmaxwin ?
+			    ssh->mainchan->v.v2.locmaxwin - bufsize : 0);
+	    if (ssh->cfg.ssh_simple)
+		buflimit = 0;
+	    else
+		buflimit = ssh->mainchan->v.v2.locmaxwin;
+	    if (ssh->mainchan->throttling_conn && bufsize <= buflimit) {
+		ssh->mainchan->throttling_conn = 0;
+		ssh_throttle_conn(ssh, -1);
+	    }
+	}
     }
 }
 
@@ -9107,7 +9288,6 @@ void ssh_send_port_open(void *channel, char *hostname, int port, char *org)
 	pktout = ssh2_pkt_init(SSH2_MSG_CHANNEL_OPEN);
 	ssh2_pkt_addstring(pktout, "direct-tcpip");
 	ssh2_pkt_adduint32(pktout, c->localid);
-	c->v.v2.locwindow = c->v.v2.locmaxwin = OUR_V2_WINSIZE;
 	ssh2_pkt_adduint32(pktout, c->v.v2.locwindow);/* our window size */
 	ssh2_pkt_adduint32(pktout, OUR_V2_MAXPKT);      /* our max pkt size */
 	ssh2_pkt_addstring(pktout, hostname);
