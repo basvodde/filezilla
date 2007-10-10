@@ -5,6 +5,22 @@ Legend:
   + New feature or important bugfix
   - Bugfixes
 
+3.0.2-rc1 (2007-10-10)
+
++ Remote file viewing / editing
++ Display current server in window title
+- Don't remember incorrect password on SFTP connections with ASK logontype
+- MSW: Fix drag&drop to explorer in case of case-mismatch between requested and reported path.
+- *nix: Fix Makefiles so SFTP properly supports files > 2GB
+- Ascii filetype setting for extensionless files and dotfiles had negated effect
+- Fix error message if using multiple running instances save the settings at the same time
+- Fix parsing of very new files in directory listings if server is in a timezone ahead of the client
+- Fix range of timezone offset setting
+- Fix problems with remote path combobox if reconnecting after a disconnect
+- Display confirmation dialog if deleting file from remote directory tree context menu
+- Refresh remote directory listing after refreshing a single file
+- On very first startup, center FileZilla on screen
+
 3.0.1 (2007-09-19)
 
 - Fix parsing of settings or site XML data containing double, leading or trailing whitespace.
