@@ -56,6 +56,7 @@ public:
 	 * e.g. executables.
 	 */
 	bool CanOpen(const wxString& fileName, bool &dangerous);
+	bool StartEditing(const wxString& file);
 
 	struct t_fileData
 	{
@@ -122,6 +123,7 @@ protected:
 	void OnUnedit(wxCommandEvent& event);
 	void OnUpload(wxCommandEvent& event);
 	void OnUploadAndUnedit(wxCommandEvent& event);
+	void OnEdit(wxCommandEvent& event);
 };
 
 #endif //__EDITHANDLER_H__
