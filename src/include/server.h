@@ -18,7 +18,8 @@ enum ServerType
 	VMS,
 	DOS,
 	MVS,
-	VXWORKS
+	VXWORKS,
+	ZVM
 };
 
 enum LogonType

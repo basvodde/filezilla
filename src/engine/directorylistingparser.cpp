@@ -32,6 +32,25 @@ static char data[][110]={
 	// Migrated MVS file
 	"Migrated				SOME.FILE",
 
+	// z/VM, another IBM abomination. Description by Alexandre Charbey
+	// 
+	// ACTAPI
+	//   is a filename
+	// TRACE
+	//   is a filetype (extension, like exe or com or jpg...)
+	// V
+	//   is the file format. Designates how records are arranged in a file. F=Fixed and V=Variable. I don't think you care
+	// 65
+	//   is the logical record length.
+	// 107
+	//   is Number of records in a file.
+	// 2
+	//   (seems wrong) is the block size ( iirc 1 is 127, 2 is 381, 3 is 1028 and 4 is 4072 - not sure - the numbers are not the usual binary numbers)
+	// there is the date/time
+	// 060191
+	//   I think it is some internal stuff saying who the file belongs to.  191 is the "handle" of the user's disk. I don't know what 060 is. This 060191 is what FZ shows in its file list.
+	"ACTAPI  TRACE   V        65      107        2 2005-10-04 15:28:42 060191",
+
 	""};
 
 #endif
@@ -726,7 +745,16 @@ CDirectoryListing CDirectoryListingParser::Parse(const CServerPath &path)
 bool CDirectoryListingParser::ParseLine(CLine *pLine, const enum ServerType serverType, bool concatenated)
 {
 	CDirentry entry;
-	bool res = ParseAsUnix(pLine, entry);
+	bool res;
+
+	if (serverType == ZVM)
+	{
+		res = ParseAsZVM(pLine, entry);
+		if (res)
+			goto done;
+	}
+
+	res = ParseAsUnix(pLine, entry);
 	if (res)
 		goto done;
 	res = ParseAsDos(pLine, entry);
@@ -2531,8 +2559,6 @@ bool CDirectoryListingParser::ParseAsMlsd(CLine *pLine, CDirentry &entry)
 
 	entry.name = token.GetString();
 
-	entry.unsure = false;
-
 	return true;
 }
 
@@ -2598,7 +2624,6 @@ bool CDirectoryListingParser::ParseAsOS9(CLine *pLine, CDirentry &entry)
 
 	entry.hasTime = false;
 	entry.link = false;
-	entry.unsure = false;
 
 	return true;
 }
@@ -2617,4 +2642,86 @@ void CDirectoryListingParser::Reset()
 	m_currentOffset = 0;
 	m_fileListOnly = true;
 	m_maybeMultilineVms = false;
+}
+
+bool CDirectoryListingParser::ParseAsZVM(CLine* pLine, CDirentry &entry)
+{
+	int index = 0;
+	CToken token;
+
+	// Get name
+	if (!pLine->GetToken(index, token))
+		return false;
+
+	entry.name = token.GetString();
+
+	// Unused. Appears to be some filetype indicator
+	if (!pLine->GetToken(++index, token))
+		return false;
+
+	// File format. Unused
+	if (!pLine->GetToken(++index, token))
+		return false;
+	wxString format = token.GetString();
+	if (format != _T("V") && format != _T("F"))
+		return false;
+
+	// Record length
+	if (!pLine->GetToken(++index, token))
+		return false;
+
+	if (!token.IsNumeric())
+		return false;
+
+	entry.size = token.GetNumber();
+
+	// Number of records
+	if (!pLine->GetToken(++index, token))
+		return false;
+
+	if (!token.IsNumeric())
+		return false;
+
+	entry.size *= token.GetNumber();
+
+	// Unused (Block size?)
+	if (!pLine->GetToken(++index, token))
+		return false;
+
+	if (!token.IsNumeric())
+		return false;
+
+	// Date
+	if (!pLine->GetToken(++index, token))
+		return false;
+
+	if (!ParseShortDate(token, entry, true))
+		return false;
+
+	// Time
+	if (!pLine->GetToken(++index, token))
+		return false;
+
+	if (!ParseTime(token, entry))
+		return false;
+
+	// Owner
+	if (!pLine->GetToken(++index, token))
+		return false;
+
+	if (!token.IsNumeric())
+		return false;
+
+	entry.ownerGroup = token.GetString();
+
+	// No further token!
+	if (pLine->GetToken(++index, token))
+		return false;
+
+	entry.dir = false;
+	entry.link = false;
+	entry.permissions = _T("");
+	entry.target = _T("");
+
+	return true;
 }

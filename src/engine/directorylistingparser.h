@@ -68,6 +68,10 @@ protected:
 	bool ParseAsIBM_MVS_Migrated(CLine *pLine, CDirentry &entry);
 	bool ParseAsMlsd(CLine *pLine, CDirentry &entry);
 	bool ParseAsOS9(CLine *pLine, CDirentry &entry);
+	
+	// Only call this if servertype set to ZVM since it conflicts
+	// with other formats.
+	bool ParseAsZVM(CLine *pLine, CDirentry &entry);
 
 	// Date / time parsers
 	bool ParseUnixDateTime(CLine *pLine, int &index, CDirentry &entry);

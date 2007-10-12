@@ -268,13 +268,17 @@ void CFtpControlSocket::ParseLine(wxString line)
 				m_Response = line;
 				ParseResponse();
 				m_Response = _T("");
+				m_MultilineResponseLines.clear();
 			}
+			else
+				m_MultilineResponseLines.push_back(line);
 		}
 		// start of new multi-line
 		else if (line.GetChar(3) == '-')
 		{
 			// DDD<SP> is the end of a multi-line response
 			m_MultilineResponseCode = line.Left(3) + _T(" ");
+			m_MultilineResponseLines.push_back(line);
 		}
 		else
 		{
@@ -542,10 +546,16 @@ int CFtpControlSocket::LogonParseResponse()
 		else
 			CServerCapabilities::SetCapability(*GetCurrentServer(), syst_command, no);
 
-		if (code == 2 && m_Response.Length() > 7 && m_Response.Mid(3, 4) == _T(" MVS"))
+		if (m_pCurrentServer->GetType() == DEFAULT && code == 2)
 		{
-			if (m_pCurrentServer->GetType() == DEFAULT)
+			if (m_Response.Length() > 7 && m_Response.Mid(3, 4) == _T(" MVS"))
 				m_pCurrentServer->SetType(MVS);
+
+			if (!m_MultilineResponseLines.empty() && m_MultilineResponseLines.front().Mid(4, 4).Upper() == _T("Z/VM"))
+			{
+				CServerCapabilities::SetCapability(*GetCurrentServer(), syst_command, yes, m_MultilineResponseLines.front().Mid(4) + _T(" ") + m_Response.Mid(4));
+				m_pCurrentServer->SetType(ZVM);
+			}
 		}
 
 		if (m_Response.Find(_T("FileZilla")) != -1)
@@ -619,8 +629,13 @@ int CFtpControlSocket::LogonParseResponse()
 				break;
 			else if (cap == yes)
 			{
-				if (system.Left(3) == _T("MVS") && m_pCurrentServer->GetType() == DEFAULT)
-					m_pCurrentServer->SetType(MVS);
+				if (m_pCurrentServer->GetType() == DEFAULT)
+				{
+					if (system.Left(3) == _T("MVS"))
+						m_pCurrentServer->SetType(MVS);
+					else if (system.Left(4).Upper() == _T("Z/VM"))
+						m_pCurrentServer->SetType(ZVM);
+				}
 
 				if (system.Find(_T("FileZilla")) != -1)
 				{
