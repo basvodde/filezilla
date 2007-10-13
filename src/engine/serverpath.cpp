@@ -858,11 +858,23 @@ bool CServerPath::operator!=(const CServerPath &op) const
 bool CServerPath::operator<(const CServerPath &op) const
 {
 	if (m_bEmpty)
+	{
+		if (!op.m_bEmpty)
+			return false;
+	}
+	else if (op.m_bEmpty)
+		return true;
+
+	const int cmp = m_prefix.Cmp(op.m_prefix);
+	if (cmp < 0)
+		return true;
+	if (cmp > 0)
 		return false;
-	else if (m_prefix >= op.m_prefix)
+	
+	if (m_type > op.m_type)
 		return false;
-	else if (m_type >= op.m_type)
-		return false;
+	else if (m_type < op.m_type)
+		return true;
 
 	std::list<wxString>::const_iterator iter1, iter2;
 	for (iter1 = m_Segments.begin(), iter2 = op.m_Segments.begin(); iter1 != op.m_Segments.end(); iter1++, iter2++)
@@ -870,7 +882,10 @@ bool CServerPath::operator<(const CServerPath &op) const
 		if (iter2 == m_Segments.end())
 			return false;
 
-		if (*iter1 >= *iter2)
+		const int cmp = iter1->Cmp(*iter2);
+		if (cmp < 0)
+			return true;
+		if (cmp > 0)
 			return false;
 	}
 

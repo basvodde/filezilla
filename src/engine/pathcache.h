@@ -26,7 +26,10 @@ protected:
 
 		bool operator<(const CSourcePath& op) const
 		{
-			if (subdir >= op.subdir)
+			const int cmp = subdir.Cmp(op.subdir);
+			if (cmp < 0)
+				return true;
+			if (cmp > 0)
 				return false;
 
 			return source < op.source;
