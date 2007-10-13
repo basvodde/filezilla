@@ -1389,7 +1389,7 @@ int CSftpControlSocket::FileTransfer(const wxString localFile, const CServerPath
 	}
 	if (shouldList)
 	{
-		res = List();
+		res = List(pData->remotePath, _T(""), true);
 		if (res != FZ_REPLY_OK)
 			return res;
 	}
