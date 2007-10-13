@@ -165,7 +165,6 @@ bool CFileZillaEngine::IsPendingAsyncRequestReply(const CAsyncRequestNotificatio
 
 bool CFileZillaEngine::IsActive(bool recv)
 {
-	wxCriticalSectionLocker lock(m_lock);
 	if (recv)
 	{
 		if (m_activeStatusRecv == 2)

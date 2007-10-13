@@ -33,29 +33,6 @@ enum sftpRequestTypes
 	sftpReqUnknown
 };
 
-class CSftpEvent : public wxEvent
-{
-public:
-	CSftpEvent(sftpEventTypes type, const wxString& text);
-	CSftpEvent(sftpEventTypes type, sftpRequestTypes reqType, const wxString& text1, const wxString& text2 = _T(""), const wxString& text3 = _T(""), const wxString& text4 = _T(""));
-	virtual ~CSftpEvent() {}
-
-	virtual wxEvent* Clone() const
-	{
-		return new CSftpEvent(m_type, m_reqType, m_text[0]);
-	}
-
-	sftpEventTypes GetType() const { return m_type; }
-	sftpRequestTypes GetRequestType() const { return m_reqType; }
-	wxString GetText(int index = 0) const { return m_text[index]; }
-	int GetNumber() const;
-
-protected:
-	wxString m_text[4];
-	sftpEventTypes m_type;
-	sftpRequestTypes m_reqType;
-};
-
 class CSftpInputThread;
 class CSftpControlSocket : public CControlSocket, public CRateLimiterObject
 {
@@ -136,8 +113,8 @@ protected:
 	int m_pid;
 
 	DECLARE_EVENT_TABLE();
-	void OnSftpEvent(CSftpEvent& event);
 	void OnTerminate(wxProcessEvent& event);
+	void OnSftpEvent(wxCommandEvent& event);
 
 	// Set to true in destructor of CSftpControlSocket
 	// If sftp process dies (or gets killed), OnTerminate will be called. 

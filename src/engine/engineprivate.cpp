@@ -271,15 +271,12 @@ void CFileZillaEnginePrivate::SetActive(bool recv)
 	if (m_pControlSocket)
 		m_pControlSocket->SetAlive();
 
-	m_lock.Enter();
 	if (recv)
 	{
 		if (!m_activeStatusRecv)
 		{
 			m_activeStatusRecv = 2;
-			m_lock.Leave();
 			AddNotification(new CActiveNotification(true));
-			return;
 		}
 	}
 	else
@@ -287,12 +284,9 @@ void CFileZillaEnginePrivate::SetActive(bool recv)
 		if (!m_activeStatusSend)
 		{
 			m_activeStatusSend = 2;
-			m_lock.Leave();
 			AddNotification(new CActiveNotification(false));
-			return;
 		}
 	}
-	m_lock.Leave();
 }
 
 unsigned int CFileZillaEnginePrivate::GetNextAsyncRequestNumber()
