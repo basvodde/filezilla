@@ -36,6 +36,7 @@ public:
 
 	bool operator==(const CServerPath &op) const;
 	bool operator!=(const CServerPath &op) const;
+	bool operator<(const CServerPath &op) const;
 
 	int CmpNoCase(const CServerPath &op) const;
 

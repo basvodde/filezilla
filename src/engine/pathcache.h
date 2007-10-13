@@ -26,10 +26,10 @@ protected:
 
 		bool operator<(const CSourcePath& op) const
 		{
-			if (source.GetSafePath() < op.source.GetSafePath())
-				return true;
+			if (subdir >= op.subdir)
+				return false;
 
-			return subdir < op.subdir;
+			return source < op.source;
 		}
 	};
 	

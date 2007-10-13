@@ -855,6 +855,28 @@ bool CServerPath::operator!=(const CServerPath &op) const
 	return !(*this == op);
 }
 
+bool CServerPath::operator<(const CServerPath &op) const
+{
+	if (m_bEmpty)
+		return false;
+	else if (m_prefix >= op.m_prefix)
+		return false;
+	else if (m_type >= op.m_type)
+		return false;
+
+	std::list<wxString>::const_iterator iter1, iter2;
+	for (iter1 = m_Segments.begin(), iter2 = op.m_Segments.begin(); iter1 != op.m_Segments.end(); iter1++, iter2++)
+	{
+		if (iter2 == m_Segments.end())
+			return false;
+
+		if (*iter1 >= *iter2)
+			return false;
+	}
+
+	return iter2 != op.m_Segments.end();
+}
+
 wxString CServerPath::FormatFilename(const wxString &filename, bool omitPath /*=false*/) const
 {
 	if (m_bEmpty)
