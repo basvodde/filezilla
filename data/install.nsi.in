@@ -35,6 +35,7 @@
   !include Library.nsh
   !include "WinVer.nsh"
   !include "nsDialogs.nsh"
+  !include "FileFunc.nsh"
 
 ;--------------------------------
 ;Variables
@@ -107,6 +108,43 @@ Function GetUserInfo
 
 FunctionEnd
 
+!insertmacro GetParameters
+!insertmacro GetOptions
+
+Function ReadAllUsersCommandline
+
+  ${GetParameters} $R0
+
+  ${GetOptions} $R0 "/user" $R1
+
+  ${Unless} ${Errors}
+    ${If} $R1 == "current"
+    ${OrIf} $R1 == "=current"
+      ${If} $ALL_USERS_FIXED == 1
+      ${AndIf} $ALL_USERS == 1
+        MessageBox MB_ICONSTOP "Cannot install for current user only. FileZilla has been previously installed for all users.$\nPlease install this version for all users or uninstall previous version first."
+        Abort
+      ${EndIf}
+      SetShellVarContext current
+      StrCpy $ALL_USERS 0
+      StrCpy $ALL_USERS_FIXED 1
+    ${ElseIf} $R1 == "all"
+    ${OrIf} $R1 == "=all"
+      ${If} $ALL_USERS_FIXED == 1
+      ${AndIf} $ALL_USERS == 0
+        MessageBox MB_ICONSTOP "Cannot install for all users. FileZilla has been previously installed for the current user only.$\nPlease install this version for the current user only or uninstall previous version first."
+        Abort
+      ${EndIf}
+      StrCpy $ALL_USERS 1
+      StrCpy $ALL_USERS_FIXED 1
+      SetShellVarContext all
+    ${Else}
+      MessageBox MB_ICONSTOP "Invalid option for /user. Has to be either /user=all or /user=current"
+      Abort
+    ${EndIf}
+  ${EndUnless}
+FunctionEnd
+
 Function ReadPreviousVersion
 
   ReadRegStr $PREVIOUS_INSTALLDIR HKLM "Software\FileZilla Client" ""
@@ -134,22 +172,23 @@ Function ReadPreviousVersion
       return
     ${EndIf}
   ${EndIf}
-
+ 
+  SetShellVarContext all
   StrCpy $ALL_USERS 1
 
 FunctionEnd
 
 Function .onInit
 
-  ${If} ${AtLeastWin2000}
-  ${Else}
+  ${Unless} ${AtLeastWin2000}
     MessageBox MB_YESNO|MB_ICONSTOP "Unsupported operating system.$\nFileZilla ${VERSION} requires at least Windows 2000 and may not work correctly on your system.$\nDo you really want to continue with the installation?" IDYES installonoldwindows
     Abort
 installonoldwindows:
-  ${EndIf}
+  ${EndUnless}
   
   Call GetUserInfo
   Call ReadPreviousVersion
+  Call ReadAllUsersCommandline
 
   ${If} $ALL_USERS == 1
     ${If} $IS_ADMIN == 0
