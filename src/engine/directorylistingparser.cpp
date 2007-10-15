@@ -2655,9 +2655,10 @@ bool CDirectoryListingParser::ParseAsZVM(CLine* pLine, CDirentry &entry)
 
 	entry.name = token.GetString();
 
-	// Unused. Appears to be some filetype indicator
+	// Get filename extension
 	if (!pLine->GetToken(++index, token))
 		return false;
+	entry.name += _T(".") + token.GetString();
 
 	// File format. Unused
 	if (!pLine->GetToken(++index, token))
