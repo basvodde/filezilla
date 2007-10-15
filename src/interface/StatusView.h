@@ -15,6 +15,8 @@ public:
 
 	virtual void SetFocus();
 
+	virtual bool Show(bool show = true);
+
 protected:
 
 	int m_nLineCount;
@@ -38,6 +40,17 @@ protected:
 	} m_attributeCache[MessageTypeCount];
 
 	bool m_rtl;
+	
+	bool m_shown;
+
+	// Don't update actual log window if not shown,
+	// do it later when showing the window.
+	struct t_line
+	{
+		MessageType messagetype;
+		wxString message;
+	};
+	std::list<t_line> m_hiddenLines;
 };
 
 #endif

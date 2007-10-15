@@ -95,6 +95,8 @@ CStatusView::CStatusView(wxWindow* parent, wxWindowID id)
 	m_nLineCount = 0;
 
 	InitDefAttr();
+
+	m_shown = false;
 }
 
 CStatusView::~CStatusView()
@@ -116,6 +118,18 @@ void CStatusView::AddToLog(CLogmsgNotification *pNotification)
 
 void CStatusView::AddToLog(enum MessageType messagetype, wxString message)
 {
+	if (!m_shown)
+	{
+		struct t_line line;
+		line.messagetype = messagetype;
+		line.message = message;
+
+		m_hiddenLines.push_back(line);
+		if (m_hiddenLines.size() > MAX_LINECOUNT)
+			m_hiddenLines.pop_front();
+		return;
+	}
+
 #ifndef __WXGTK__
 	wxWindowUpdateLocker *pLock = 0;
 #endif //__WXGTK__
@@ -286,4 +300,28 @@ void CStatusView::OnCopy(wxCommandEvent& event)
 void CStatusView::SetFocus()
 {
 	m_pTextCtrl->SetFocus();
+}
+
+bool CStatusView::Show(bool show /*=true*/)
+{
+	m_shown = show;
+
+	if (show)
+	{
+		if (m_hiddenLines.size() == MAX_LINECOUNT)
+		{
+			if (m_pTextCtrl)
+				m_pTextCtrl->Clear();
+			m_nLineCount = 0;
+			m_lineLengths.clear();
+		}
+
+		for (std::list<t_line>::const_iterator iter = m_hiddenLines.begin(); iter != m_hiddenLines.end(); iter++)
+		{
+			AddToLog(iter->messagetype, iter->message);
+		}
+		m_hiddenLines.clear();
+	}
+
+	return wxWindow::Show(show);
 }
