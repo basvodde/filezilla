@@ -613,7 +613,7 @@ CDirectoryListingParser::CDirectoryListingParser(CControlSocket* pControlSocket,
 		m_MonthNamesMap[_T("avg")] = 8;
 
 		//There are more languages and thus month
-		//names, but as long as knowbody reports a
+		//names, but as long as nobody reports a
 		//problem, I won't add them, there are way
 		//too many languages
 
