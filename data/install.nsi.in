@@ -28,7 +28,7 @@
   RequestExecutionLevel highest
 
 ;--------------------------------
-;Include Modern UI
+;Include Modern UI and functions
 
   !include "MUI.nsh"
   !include "WordFunc.nsh"
@@ -38,12 +38,21 @@
   !include "FileFunc.nsh"
 
 ;--------------------------------
+;Required functions
+
+  !insertmacro GetParameters
+  !insertmacro GetOptions
+  !insertmacro un.GetParameters
+  !insertmacro un.GetOptions
+
+;--------------------------------
 ;Variables
 
   Var MUI_TEMP
   Var STARTMENU_FOLDER
   Var PREVIOUS_INSTALLDIR
   Var PREVIOUS_VERSION
+  Var PREVIOUS_VERSION_STATE
   Var REINSTALL_UNINSTALL
   Var REINSTALL_UNINSTALLBUTTON
   Var ALL_USERS
@@ -77,12 +86,15 @@
   
   !insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
 
+  !define MUI_PAGE_CUSTOMFUNCTION_SHOW PageInstfilesShow
   !define MUI_PAGE_CUSTOMFUNCTION_LEAVE PostInstPage
   !insertmacro MUI_PAGE_INSTFILES
   !insertmacro MUI_PAGE_FINISH
   
+  !define MUI_PAGE_CUSTOMFUNCTION_PRE un.ConfirmPagePre
   !insertmacro MUI_UNPAGE_CONFIRM
   !insertmacro MUI_UNPAGE_INSTFILES
+  !define MUI_PAGE_CUSTOMFUNCTION_PRE un.FinishPagePre
   !insertmacro MUI_UNPAGE_FINISH
 
 Function GetUserInfo
@@ -107,9 +119,6 @@ Function GetUserInfo
   ${EndSwitch}
 
 FunctionEnd
-
-!insertmacro GetParameters
-!insertmacro GetOptions
 
 Function ReadAllUsersCommandline
 
@@ -206,6 +215,14 @@ installonoldwindows:
     StrCpy $INSTDIR $PREVIOUS_INSTALLDIR
   ${EndIf}
 
+  ${Unless} $PREVIOUS_VERSION == ""
+
+    Push "${VERSION}"
+    Push $PREVIOUS_VERSION
+    Call FZVersionCompare
+
+  ${EndUnless}
+
 FunctionEnd
 
 Function FZVersionCompare
@@ -221,7 +238,7 @@ Function FZVersionCompare
 versioncomparebegin:
   ${If} $0 == ""
   ${AndIf} $1 == ""
-    Push 0
+    StrCpy $PREVIOUS_VERSION_STATE "same"
     goto versioncomparedone
   ${EndIf}
 
@@ -278,9 +295,9 @@ split2loop:
 split2loopdone:
 
   ${If} $2 > $3
-    Push 1
+    StrCpy $PREVIOUS_VERSION_STATE "newer"
   ${ElseIf} $3 > $2
-    Push -1
+    StrCpy $PREVIOUS_VERSION_STATE "older"
   ${Else}
     goto versioncomparebegin
   ${EndIf}
@@ -288,15 +305,10 @@ split2loopdone:
 
 versioncomparedone:
 
-  Exch
   Pop $4
-  Exch
   Pop $3
-  Exch
   Pop $2
-  Exch
   Pop $1
-  Exch
   Pop $0
 
 FunctionEnd
@@ -310,54 +322,51 @@ Function PageReinstall
   nsDialogs::Create /NOUNLOAD 1018
   Pop $0
 
-  Push "${VERSION}"
-  Push $PREVIOUS_VERSION
-  Call FZVersionCompare
-  Pop $R0
-  IntCmp $R0 0 same_version older_version new_version
+  ${If} $PREVIOUS_VERSION_STATE == "newer"
 
- new_version:
+    !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose how you want to install FileZilla."
+    nsDialogs::CreateItem /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 0 0 100% 40 "An older version of FileZilla is installed on your system. It's recommended that you uninstall the current version before installing. Select the operation you want to perform and click Next to continue."
+    Pop $R0
+    nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_VCENTER}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}|${WS_GROUP}|${WS_TABSTOP} 0 10 55 100% 30 "Uninstall before installing"
+    Pop $REINSTALL_UNINSTALLBUTTON
+    nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_TOP}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 10 85 100% 50 "Do not uninstall"
+    Pop $R0
+    ${If} $REINSTALL_UNINSTALL == ""
+      StrCpy $REINSTALL_UNINSTALL 1
+    ${EndIf}
 
-  !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose how you want to install FileZilla."
-  nsDialogs::CreateItem /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 0 0 100% 40 "An older version of FileZilla is installed on your system. It's recommended that you uninstall the current version before installing. Select the operation you want to perform and click Next to continue."
-  Pop $R0
-  nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_VCENTER}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}|${WS_GROUP}|${WS_TABSTOP} 0 10 55 100% 30 "Uninstall before installing"
-  Pop $REINSTALL_UNINSTALLBUTTON
-  nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_TOP}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 10 85 100% 50 "Do not uninstall"
-  Pop $R0
-  ${If} $REINSTALL_UNINSTALL == ""
-    StrCpy $REINSTALL_UNINSTALL 1
+  ${ElseIf} $PREVIOUS_VERSION_STATE == "older"
+
+    !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose how you want to install FileZilla."
+    nsDialogs::CreateItem /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 0 0 100% 40 "A newer version of FileZilla is already installed! It is not recommended that you install an older version. If you really want to install this older version, it's better to uninstall the current version first. Select the operation you want to perform and click Next to continue."
+    Pop $R0
+    nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_VCENTER}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}|${WS_GROUP}|${WS_TABSTOP} 0 10 55 100% 30 "Uninstall before installing"
+    Pop $REINSTALL_UNINSTALLBUTTON
+    nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_TOP}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 10 85 100% 50 "Do not uninstall"
+    Pop $R0
+    ${If} $REINSTALL_UNINSTALL == ""
+      StrCpy $REINSTALL_UNINSTALL 1
+    ${EndIf}
+  
+  ${ElseIf} $PREVIOUS_VERSION_STATE == "same"
+
+    !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose the maintenance option to perform."
+    nsDialogs::CreateItem /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 0 0 100% 40 "FileZilla ${VERSION} is already installed. Select the operation you want to perform and click Next to continue."
+    Pop $R0
+    nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_VCENTER}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}|${WS_GROUP}|${WS_TABSTOP} 0 10 55 100% 30 "Add/Reinstall components"
+    Pop $R0
+    nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_TOP}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 10 85 100% 50 "Uninstall FileZilla"
+    Pop $REINSTALL_UNINSTALLBUTTON
+    ${If} $REINSTALL_UNINSTALL == ""
+      StrCpy $REINSTALL_UNINSTALL 1
+    ${EndIf}
+
+  ${Else}
+
+    MessageBox MB_ICONSTOP "Unknown value of PREVIOUS_VERSION_STATE, aborting"
+    Abort
+
   ${EndIf}
-  Goto reinst_start
-
- older_version:
-
-  !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose how you want to install FileZilla."
-  nsDialogs::CreateItem /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 0 0 100% 40 "A newer version of FileZilla is already installed! It is not recommended that you install an older version. If you really want to install this older version, it's better to uninstall the current version first. Select the operation you want to perform and click Next to continue."
-  Pop $R0
-  nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_VCENTER}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}|${WS_GROUP}|${WS_TABSTOP} 0 10 55 100% 30 "Uninstall before installing"
-  Pop $REINSTALL_UNINSTALLBUTTON
-  nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_TOP}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 10 85 100% 50 "Do not uninstall"
-  Pop $R0
-  ${If} $REINSTALL_UNINSTALL == ""
-    StrCpy $REINSTALL_UNINSTALL 1
-  ${EndIf}
-  Goto reinst_start
-
- same_version:
-
-  !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose the maintenance option to perform."
-  nsDialogs::CreateItem /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 0 0 100% 40 "FileZilla ${VERSION} is already installed. Select the operation you want to perform and click Next to continue."
-  Pop $R0
-  nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_VCENTER}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}|${WS_GROUP}|${WS_TABSTOP} 0 10 55 100% 30 "Add/Reinstall components"
-  Pop $R0
-  nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_TOP}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 10 85 100% 50 "Uninstall FileZilla"
-  Pop $REINSTALL_UNINSTALLBUTTON
-  ${If} $REINSTALL_UNINSTALL == ""
-    StrCpy $REINSTALL_UNINSTALL 2
-  ${EndIf}
-
- reinst_start:
 
   ${If} $REINSTALL_UNINSTALL == "1"
     SendMessage $REINSTALL_UNINSTALLBUTTON ${BM_SETCHECK} 1 0
@@ -366,6 +375,36 @@ Function PageReinstall
   ${EndIf}
   
   nsDialogs::Show
+
+FunctionEnd
+
+Function RunUninstaller
+
+  ReadRegStr $R1 SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "UninstallString"
+
+  ${If} $R1 == ""
+    Return
+  ${EndIf}
+
+  ;Run uninstaller
+  HideWindow
+
+  ClearErrors
+
+  ${If} $PREVIOUS_VERSION_STATE == "same"
+    ExecWait '$R1 _?=$INSTDIR'
+  ${Else}
+    ExecWait '$R1 /frominstall _?=$INSTDIR'
+  ${EndIf}
+
+  IfErrors no_remove_uninstaller
+
+  IfFileExists "$INSTDIR\uninstall.exe" 0 no_remove_uninstaller
+
+    Delete "$R1"
+    RMDir $INSTDIR
+
+ no_remove_uninstaller:
 
 FunctionEnd
 
@@ -379,35 +418,11 @@ Function PageLeaveReinstall
   ${EndIf}
 
   ${If} $REINSTALL_UNINSTALL == 1
-    ReadRegStr $R1 SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "UninstallString"
+  ${AndIf} $PREVIOUS_VERSION_STATE == "same"
 
-    ${If} $R1 == ""
-      Return
-    ${EndIf}
-
-    ;Run uninstaller
-    HideWindow
-
-    ClearErrors
-    ExecWait '$R1 _?=$INSTDIR'
-
-    IfErrors no_remove_uninstaller
-
-    IfFileExists "$INSTDIR\uninstall.exe" 0 no_remove_uninstaller
-
-      Delete "$R1"
-      RMDir $INSTDIR
-
-    no_remove_uninstaller:
-
-    Push "${Version}"
-    Push $PREVIOUS_VERSION
-    Call FZVersionCompare
-    Pop $R0
-    IntCmp $R0 0 0 +2 +2
+    Call RunUninstaller
     Quit
 
-    BringToFront
   ${EndIf}
 
 FunctionEnd
@@ -479,6 +494,17 @@ Function PageLeaveAllUsers
   ${Else}
     StrCpy $ALL_USERS "1"
     SetShellVarContext all
+  ${EndIf}
+
+FunctionEnd
+
+Function PageInstfilesShow
+
+  ${If} $REINSTALL_UNINSTALL == 1
+
+    Call RunUninstaller
+    BringToFront
+
   ${EndIf}
 
 FunctionEnd
@@ -736,6 +762,29 @@ Function un.RemoveStartmenu
   
     StrCmp $MUI_TEMP $SMPROGRAMS startMenuDeleteLoopDone startMenuDeleteLoop
   startMenuDeleteLoopDone:
+
+FunctionEnd
+
+Function un.ConfirmPagePre
+  
+  ${un.GetParameters} $R0
+
+  ${un.GetOptions} $R0 "/frominstall" $R1
+  ${Unless} ${Errors}
+    Abort
+  ${EndUnless}
+
+FunctionEnd
+
+Function un.FinishPagePre
+  
+  ${un.GetParameters} $R0
+
+  ${un.GetOptions} $R0 "/frominstall" $R1
+  ${Unless} ${Errors}
+    SetRebootFlag false
+    Abort
+  ${EndUnless}
 
 FunctionEnd
 
