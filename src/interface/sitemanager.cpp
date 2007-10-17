@@ -40,9 +40,9 @@ CSiteManager::CSiteManager()
 {
 	m_pSiteManagerMutex = 0;
 #ifdef __WXGTK__
-	m_timezoneOffsetHoursChanged;
-	m_timezoneOffsetMinutesChanged;
-	m_limitConnectionsChanged;
+	m_timezoneOffsetHoursChanged = false;
+	m_timezoneOffsetMinutesChanged = false;
+	m_limitConnectionsChanged = false;
 #endif
 }
 
