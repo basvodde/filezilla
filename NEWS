@@ -5,6 +5,16 @@ Legend:
   + New feature or important bugfix
   - Bugfixes
 
+3.0.2 (2007-10-17)
+
++ MSW: Added /user=all and /user=current options to installer
++ Experimental support for z/VM servers
+- Fix typo in option handling code. Due to this, settings for date/time formatting have been reset.
+- Fix performance problem if FileZilla gets started with message log hidden
+- Work around possible race conditions in SFTP input thread leading to crashes
+- MSW: Fix issue with installer where reboot after uninstalling previous version disrupted installation. Fix will only work if uninstalling 3.0.2 or greater.
+- OSX: Use new icon
+
 3.0.2-rc1 (2007-10-10)
 
 + Remote file viewing / editing
