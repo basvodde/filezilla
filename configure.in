@@ -181,10 +181,28 @@ AH_BOTTOM([
   # version.rc.in needs a major, minor and micro version number
   vnumber=${PACKAGE_VERSION%-*}
   PACKAGE_VERSION_MAJOR=${vnumber%%.*}
-  PACKAGE_VERSION_MICRO=${vnumber##*.}
-  PACKAGE_VERSION_MINOR=${vnumber#*.}
-  PACKAGE_VERSION_MINOR=${PACKAGE_VERSION_MINOR%.*}
-  PACKAGE_VERSION_NANO=0
+  vnumber=${vnumber#$PACKAGE_VERSION_MAJOR}
+  vnumber=${vnumber#.}
+  PACKAGE_VERSION_MINOR=${vnumber%%.*}
+  vnumber=${vnumber#$PACKAGE_VERSION_MINOR}
+  vnumber=${vnumber#.}
+  PACKAGE_VERSION_MICRO=${vnumber%%.*}
+  vnumber=${vnumber#$PACKAGE_VERSION_MICRO}
+  vnumber=${vnumber#.}
+  PACKAGE_VERSION_NANO=${vnumber%%.*}
+
+  if test -z "$PACKAGE_VERSION_MAJOR"; then
+    PACKAGE_VERSION_MAJOR=0
+  fi
+  if test -z "$PACKAGE_VERSION_MINOR"; then
+    PACKAGE_VERSION_MINOR=0
+  fi
+  if test -z "$PACKAGE_VERSION_MICRO"; then
+    PACKAGE_VERSION_MICRO=0
+  f i
+ if test -z "$PACKAGE_VERSION_NANO"; then
+    PACKAGE_VERSION_NANO=0
+  fi
 
   AC_SUBST(PACKAGE_VERSION_MAJOR)
   AC_SUBST(PACKAGE_VERSION_MINOR)
