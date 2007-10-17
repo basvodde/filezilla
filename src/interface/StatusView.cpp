@@ -96,7 +96,7 @@ CStatusView::CStatusView(wxWindow* parent, wxWindowID id)
 
 	InitDefAttr();
 
-	m_shown = false;
+	m_shown = IsShown();
 }
 
 CStatusView::~CStatusView()
