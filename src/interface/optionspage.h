@@ -6,9 +6,6 @@
 		return false; \
 	XRCCTRL(*this, id, type)
 
-// Default title of the validation failed message box
-extern wxString validationFailed;
-
 class COptions;
 class CSettingsDialog;
 class COptionsPage : public wxPanel

@@ -3,8 +3,6 @@
 #include "settingsdialog.h"
 #include "optionspage.h"
 
-wxString validationFailed = _("Failed to validate settings");
-
 bool COptionsPage::CreatePage(COptions* pOptions, CSettingsDialog* pOwner, wxWindow* parent, wxSize& maxSize)
 {
 	m_pOwner = pOwner;
@@ -184,7 +182,7 @@ bool COptionsPage::DisplayError(wxWindow* pWnd, const wxString& error)
 	if (pWnd)
 		pWnd->SetFocus();
 
-	wxMessageBox(error, validationFailed, wxICON_EXCLAMATION, this);
+	wxMessageBox(error, _("Failed to validate settings"), wxICON_EXCLAMATION, this);
 
 	return false;
 }
