@@ -449,11 +449,11 @@ int CFileZillaEnginePrivate::Delete(const CDeleteCommand& command)
 		return FZ_REPLY_BUSY;
 
 	if (command.GetPath().IsEmpty() ||
-		command.GetFile() == _T(""))
+		command.GetFiles().empty())
 		return FZ_REPLY_SYNTAXERROR;
 
 	m_pCurrentCommand = command.Clone();
-	return m_pControlSocket->Delete(command.GetPath(), command.GetFile());
+	return m_pControlSocket->Delete(command.GetPath(), command.GetFiles());
 }
 
 int CFileZillaEnginePrivate::RemoveDir(const CRemoveDirCommand& command)

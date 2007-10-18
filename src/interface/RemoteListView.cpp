@@ -1493,6 +1493,8 @@ void CRemoteListView::OnMenuDelete(wxCommandEvent& event)
 	CRecursiveOperation* pRecursiveOperation = m_pState->GetRecursiveOperationHandler();
 	wxASSERT(pRecursiveOperation);
 
+	std::list<wxString> filesToDelete;
+
 	item = -1;
 	while (true)
 	{
@@ -1514,8 +1516,11 @@ void CRemoteListView::OnMenuDelete(wxCommandEvent& event)
 				pRecursiveOperation->AddDirectoryToVisit(m_pDirectoryListing->path, name);
 		}
 		else
-			m_pState->m_pCommandQueue->ProcessCommand(new CDeleteCommand(m_pDirectoryListing->path, name));
+			filesToDelete.push_back(name);
 	}
+
+	if (!filesToDelete.empty())
+		m_pState->m_pCommandQueue->ProcessCommand(new CDeleteCommand(m_pDirectoryListing->path, filesToDelete));
 
 	pRecursiveOperation->StartRecursiveOperation(CRecursiveOperation::recursive_delete, m_pDirectoryListing->path);
 }

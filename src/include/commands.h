@@ -139,15 +139,15 @@ protected:
 };
 
 DECLARE_COMMAND(CDeleteCommand, cmd_delete)
-	CDeleteCommand(const CServerPath& path, const wxString& file);
+	CDeleteCommand(const CServerPath& path, const std::list<wxString>& files);
 	
 	CServerPath GetPath() const { return m_path; }
-	wxString GetFile() const { return m_file; }
+	const std::list<wxString>& GetFiles() const { return m_files; }
 
 protected:
 
-	CServerPath m_path;
-	wxString m_file;
+	const CServerPath m_path;
+	const std::list<wxString> m_files;
 };
 
 DECLARE_COMMAND(CRemoveDirCommand, cmd_removedir)

@@ -126,6 +126,32 @@ public:
 	int neededCommands[LOGON_DONE];
 };
 
+class CFtpDeleteOpData : public COpData
+{
+public:
+	CFtpDeleteOpData()
+		: COpData(cmd_delete)
+	{
+		m_needSendListing = false;
+		m_deleteFailed = false;
+	}
+
+	virtual ~CFtpDeleteOpData() { }
+
+	CServerPath path;
+	std::list<wxString> files;
+	bool omitPath;
+
+	// Set to wxDateTime::UNow initially and after
+	// sending an updated listing to the UI.
+	wxDateTime m_time;
+
+	bool m_needSendListing;
+
+	// Set to true if deletion of at least one file failed
+	bool m_deleteFailed;
+};
+
 CFtpControlSocket::CFtpControlSocket(CFileZillaEnginePrivate *pEngine) : CRealControlSocket(pEngine)
 {
 	m_pIPResolver = 0;
@@ -1209,6 +1235,12 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 				wxRemoveFile(pData->localFile);
 			}
 		}
+	}
+	if (m_pCurOpData && m_pCurOpData->opId == cmd_delete && !(nErrorCode & FZ_REPLY_DISCONNECTED))
+	{
+		CFtpDeleteOpData *pData = static_cast<CFtpDeleteOpData *>(m_pCurOpData);
+		if (pData->m_needSendListing)
+			m_pEngine->SendDirectoryListingNotification(pData->path, false, true, false);
 	}
 
 	if (m_pCurOpData && m_pCurOpData->opId == cmd_rawtransfer && 
@@ -2387,33 +2419,21 @@ int CFtpControlSocket::RawCommandParseResponse()
 	}
 }
 
-class CFtpDeleteOpData : public COpData
-{
-public:
-	CFtpDeleteOpData()
-		: COpData(cmd_delete)
-	{
-	}
-
-	virtual ~CFtpDeleteOpData() { }
-
-	CServerPath path;
-	wxString file;
-	bool omitPath;
-};
-
-int CFtpControlSocket::Delete(const CServerPath& path /*=CServerPath()*/, const wxString& file /*=_T("")*/)
+int CFtpControlSocket::Delete(const CServerPath& path, const std::list<wxString>& files)
 {
 	wxASSERT(!m_pCurOpData);
 	CFtpDeleteOpData *pData = new CFtpDeleteOpData();
 	m_pCurOpData = pData;
 	pData->path = path;
-	pData->file = file;
+	pData->files = files;
 	pData->omitPath = true;
 
 	int res = ChangeDir(pData->path);
 	if (res != FZ_REPLY_OK)
 		return res;
+
+	// CFileZillaEnginePrivate should have checked this already
+	wxASSERT(!files.empty());
 
 	return SendNextCommand();
 }
@@ -2434,16 +2454,27 @@ int CFtpControlSocket::DeleteSend(int prevResult /*=FZ_REPLY_OK*/)
 	if (prevResult != FZ_REPLY_OK)
 		pData->omitPath = false;
 
-	wxString filename = pData->path.FormatFilename(pData->file, pData->omitPath);
+	const wxString& file = pData->files.front();
+	if (file == _T(""))
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty filename"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	wxString filename = pData->path.FormatFilename(file, pData->omitPath);
 	if (filename == _T(""))
 	{
-		LogMessage(::Error, _T("Filename cannot be constructed for folder %s and filename %s"), pData->path.GetPath().c_str(), pData->file.c_str());
+		LogMessage(::Error, _T("Filename cannot be constructed for folder %s and filename %s"), pData->path.GetPath().c_str(), file.c_str());
 		ResetOperation(FZ_REPLY_ERROR);
 		return FZ_REPLY_ERROR;
 	}
 
+	if (!pData->m_time.IsValid())
+		pData->m_time = wxDateTime::UNow();
+
 	CDirectoryCache cache;
-	cache.InvalidateFile(*m_pCurrentServer, pData->path, pData->file);
+	cache.InvalidateFile(*m_pCurrentServer, pData->path, file);
 
 	if (!Send(_T("DELE ") + filename))
 		return FZ_REPLY_ERROR;
@@ -2466,13 +2497,31 @@ int CFtpControlSocket::DeleteParseResponse()
 
 	int code = GetReplyCode();
 	if (code != 2 && code != 3)
-		return ResetOperation(FZ_REPLY_ERROR);
+		pData->m_deleteFailed = true;
+	else
+	{
+		const wxString& file = pData->files.front();
 
-	CDirectoryCache cache;
-	cache.RemoveFile(*m_pCurrentServer, pData->path, pData->file);
-	m_pEngine->SendDirectoryListingNotification(pData->path, false, true, false);
+		CDirectoryCache cache;
+		cache.RemoveFile(*m_pCurrentServer, pData->path, file);
 
-	return ResetOperation(FZ_REPLY_OK);
+		wxDateTime now = wxDateTime::UNow();
+		if (now.IsValid() && pData->m_time.IsValid() && (now - pData->m_time).GetSeconds() >= 1)
+		{
+			m_pEngine->SendDirectoryListingNotification(pData->path, false, true, false);
+			pData->m_time = now;
+			pData->m_needSendListing = false;
+		}
+		else
+			pData->m_needSendListing = true;
+	}
+
+	pData->files.pop_front();
+	
+	if (!pData->files.empty())
+		return SendNextCommand();
+
+	return ResetOperation(pData->m_deleteFailed ? FZ_REPLY_ERROR : FZ_REPLY_OK);
 }
 
 class CFtpRemoveDirOpData : public COpData

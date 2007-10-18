@@ -183,6 +183,8 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 	// Is operation restricted to a single child?
 	bool restrict = !dir.restrict.IsEmpty();
 
+	std::list<wxString> filesToDelete;
+	
 	for (int i = pDirectoryListing->GetCount() - 1; i >= 0; i--)
 	{
 		const CDirentry& entry = (*pDirectoryListing)[i];
@@ -221,7 +223,7 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 				}
 				break;
 			case recursive_delete:
-				m_pState->m_pCommandQueue->ProcessCommand(new CDeleteCommand(pDirectoryListing->path, entry.name));
+				filesToDelete.push_back(entry.name);
 				break;
 			default:
 				break;
@@ -242,6 +244,9 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 			}
 		}
 	}
+
+	if (m_operationMode == recursive_delete && !filesToDelete.empty())
+		m_pState->m_pCommandQueue->ProcessCommand(new CDeleteCommand(pDirectoryListing->path, filesToDelete));
 
 	NextOperation();
 }

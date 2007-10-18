@@ -46,7 +46,7 @@ protected:
 	int RawCommandSend();
 	int RawCommandParseResponse();
 
-	virtual int Delete(const CServerPath& path, const wxString& file);
+	virtual int Delete(const CServerPath& path, const std::list<wxString>& files);
 	int DeleteSend(int prevResult = FZ_REPLY_OK);
 	int DeleteParseResponse();
 	

@@ -108,7 +108,7 @@ public:
 							 const wxString &remoteFile, bool download,
 							 const CFileTransferCommand::t_transferSettings& transferSettings) { return FZ_REPLY_NOTSUPPORTED; }
 	virtual int RawCommand(const wxString& command = _T("")) { return FZ_REPLY_NOTSUPPORTED; }
-	virtual int Delete(const CServerPath& path = CServerPath(), const wxString& file = _T("")) { return FZ_REPLY_NOTSUPPORTED; }
+	virtual int Delete(const CServerPath& path, const std::list<wxString>& files) { return FZ_REPLY_NOTSUPPORTED; }
 	virtual int RemoveDir(const CServerPath& path = CServerPath(), const wxString& subDir = _T("")) { return FZ_REPLY_NOTSUPPORTED; }
 	virtual int Mkdir(const CServerPath& path) { return FZ_REPLY_NOTSUPPORTED; }
 	virtual int Rename(const CRenameCommand& command) { return FZ_REPLY_NOTSUPPORTED; }

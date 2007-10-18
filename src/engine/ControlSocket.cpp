@@ -195,7 +195,8 @@ int CControlSocket::DoClose(int nErrorCode /*=FZ_REPLY_DISCONNECTED*/)
 }
 
 wxString CControlSocket::ConvertDomainName(wxString domain)
-{
+{return domain;
+/*
 	const wxWCharBuffer buffer = wxConvCurrent->cWX2WC(domain);
 
 	int len = 0;
@@ -217,7 +218,7 @@ wxString CControlSocket::ConvertDomainName(wxString domain)
 
 	wxString result = wxConvCurrent->cMB2WX(output);
 	free(output);
-	return result;
+	return result;*/
 }
 
 void CControlSocket::Cancel()
