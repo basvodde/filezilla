@@ -35,7 +35,7 @@ bool COptionsPageUpdateCheck::Validate()
 	if (!GetText(XRCID("ID_DAYS")).ToULong(&days) || days < 7)
 	{
 		XRCCTRL(*this, "ID_DAYS", wxTextCtrl)->SetFocus();
-		wxMessageBox(_("Please enter an update interval of at least 7 days"), validationFailed, wxICON_EXCLAMATION, this);
+		DisplayError(_T("ID_DAYS"), _("Please enter an update interval of at least 7 days"));
 		return false;
 	}
 
