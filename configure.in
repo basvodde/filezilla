@@ -68,7 +68,7 @@ if ! test "$localesonly" = "yes"; then
 
   AM_OPTIONS_WXCONFIG
 
-  MIN_WX_VERSION="2.8.4"
+  MIN_WX_VERSION="2.8.6"
   AM_PATH_WXCONFIG($MIN_WX_VERSION, wxWin=1, , [xrc,std])
   if test "$wxWin" != 1; then
 	AC_MSG_ERROR([
