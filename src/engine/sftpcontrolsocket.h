@@ -46,7 +46,7 @@ public:
 	virtual int FileTransfer(const wxString localFile, const CServerPath &remotePath,
 							 const wxString &remoteFile, bool download,
 							 const CFileTransferCommand::t_transferSettings& transferSettings);
-	virtual int Delete(const CServerPath& path = CServerPath(), const wxString& file = _T(""));
+	virtual int Delete(const CServerPath& path, const std::list<wxString>& files);
 	virtual int RemoveDir(const CServerPath& path = CServerPath(), const wxString& subDir = _T(""));
 	virtual int Mkdir(const CServerPath& path);
 	virtual int Rename(const CRenameCommand& command);
@@ -90,6 +90,7 @@ protected:
 	int MkdirSend();
 
 	int DeleteParseResponse(bool successful, const wxString& reply);
+	int DeleteSend();
 
 	int RemoveDirParseResponse(bool successful, const wxString& reply);
 

@@ -278,6 +278,31 @@ loopexit:
 	wxCriticalSection m_criticalSection;
 };
 
+class CSftpDeleteOpData : public COpData
+{
+public:
+	CSftpDeleteOpData()
+		: COpData(cmd_delete)
+	{
+		m_needSendListing = false;
+		m_deleteFailed = false;
+	}
+
+	virtual ~CSftpDeleteOpData() { }
+
+	CServerPath path;
+	std::list<wxString> files;
+
+	// Set to wxDateTime::UNow initially and after
+	// sending an updated listing to the UI.
+	wxDateTime m_time;
+
+	bool m_needSendListing;
+
+	// Set to true if deletion of at least one file failed
+	bool m_deleteFailed;
+};
+
 CSftpControlSocket::CSftpControlSocket(CFileZillaEnginePrivate *pEngine) : CControlSocket(pEngine)
 {
 	m_useUTF8 = true;
@@ -1293,6 +1318,12 @@ int CSftpControlSocket::ResetOperation(int nErrorCode)
 		if (pData->criticalFailure)
 			nErrorCode |= FZ_REPLY_CRITICALERROR;
 	}
+	if (m_pCurOpData && m_pCurOpData->opId == cmd_delete && !(nErrorCode & FZ_REPLY_DISCONNECTED))
+	{
+		CSftpDeleteOpData *pData = static_cast<CSftpDeleteOpData *>(m_pCurOpData);
+		if (pData->m_needSendListing)
+			m_pEngine->SendDirectoryListingNotification(pData->path, false, true, false);
+	}
 
 	return CControlSocket::ResetOperation(nErrorCode);
 }
@@ -1806,44 +1837,19 @@ wxString CSftpControlSocket::QuoteFilename(wxString filename)
 	return _T("\"") + filename + _T("\"");
 }
 
-class CSftpDeleteOpData : public COpData
-	{
-	public:
-		CSftpDeleteOpData()
-			: COpData(cmd_delete)
-		{
-		}
-
-		virtual ~CSftpDeleteOpData() { }
-
-		CServerPath path;
-		wxString file;
-	};
-
-int CSftpControlSocket::Delete(const CServerPath& path /*=CServerPath()*/, const wxString& file /*=_T("")*/)
+int CSftpControlSocket::Delete(const CServerPath& path, const std::list<wxString>& files)
 {
 	LogMessage(Debug_Verbose, _T("CSftpControlSocket::Delete"));
 	wxASSERT(!m_pCurOpData);
 	CSftpDeleteOpData *pData = new CSftpDeleteOpData();
 	m_pCurOpData = pData;
 	pData->path = path;
-	pData->file = file;
+	pData->files = files;
 
-	wxString filename = path.FormatFilename(file);
-	if (filename == _T(""))
-	{
-		LogMessage(::Error, _T("Filename cannot be constructed for folder %s and filename %s"), path.GetPath().c_str(), file.c_str());
-		return FZ_REPLY_ERROR;
-	}
+	// CFileZillaEnginePrivate should have checked this already
+	wxASSERT(!files.empty());
 
-	CDirectoryCache cache;
-	cache.InvalidateFile(*m_pCurrentServer, path, file);
-
-	if (!Send(_T("rm ") + WildcardEscape(QuoteFilename(filename)),
-			  _T("rm ") + QuoteFilename(filename)))
-		return FZ_REPLY_ERROR;
-
-	return FZ_REPLY_WOULDBLOCK;
+	return DeleteSend();
 }
 
 int CSftpControlSocket::DeleteParseResponse(bool successful, const wxString& reply)
@@ -1857,16 +1863,71 @@ int CSftpControlSocket::DeleteParseResponse(bool successful, const wxString& rep
 		return FZ_REPLY_ERROR;
 	}
 
-	if (!successful)
-		return ResetOperation(FZ_REPLY_ERROR);
-
 	CSftpDeleteOpData *pData = static_cast<CSftpDeleteOpData *>(m_pCurOpData);
 
-	CDirectoryCache cache;
-	cache.RemoveFile(*m_pCurrentServer, pData->path, pData->file);
-	m_pEngine->SendDirectoryListingNotification(pData->path, false, true, false);
+	if (!successful)
+		pData->m_deleteFailed = true;
+	else
+	{
+		const wxString& file = pData->files.front();
 
-	return ResetOperation(FZ_REPLY_OK);
+		CDirectoryCache cache;
+		cache.RemoveFile(*m_pCurrentServer, pData->path, file);
+		
+		wxDateTime now = wxDateTime::UNow();
+		if (now.IsValid() && pData->m_time.IsValid() && (now - pData->m_time).GetSeconds() >= 1)
+		{
+			m_pEngine->SendDirectoryListingNotification(pData->path, false, true, false);
+			pData->m_time = now;
+			pData->m_needSendListing = false;
+		}
+		else
+			pData->m_needSendListing = true;
+	}
+
+	pData->files.pop_front();
+	
+	if (!pData->files.empty())
+		return DeleteSend();
+
+	return ResetOperation(pData->m_deleteFailed ? FZ_REPLY_ERROR : FZ_REPLY_OK);
+}
+
+int CSftpControlSocket::DeleteSend()
+{
+	LogMessage(Debug_Verbose, _T("CSftpControlSocket::DeleteSend"));
+
+	if (!m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+	CSftpDeleteOpData *pData = static_cast<CSftpDeleteOpData *>(m_pCurOpData);
+
+	const wxString& file = pData->files.front();
+	if (file == _T(""))
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty filename"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	wxString filename = pData->path.FormatFilename(file);
+	if (filename == _T(""))
+	{
+		LogMessage(::Error, _T("Filename cannot be constructed for folder %s and filename %s"), pData->path.GetPath().c_str(), file.c_str());
+		return FZ_REPLY_ERROR;
+	}
+
+	CDirectoryCache cache;
+	cache.InvalidateFile(*m_pCurrentServer, pData->path, file);
+
+	if (!Send(_T("rm ") + WildcardEscape(QuoteFilename(filename)),
+			  _T("rm ") + QuoteFilename(filename)))
+		return FZ_REPLY_ERROR;
+
+	return FZ_REPLY_WOULDBLOCK;
 }
 
 class CSftpRemoveDirOpData : public COpData
