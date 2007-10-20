@@ -61,6 +61,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 #endif
 	EVT_SPLITTER_SASH_POS_CHANGED(wxID_ANY, CMainFrame::OnViewSplitterPosChanged)
 	EVT_MENU(wxID_ANY, CMainFrame::OnMenuHandler)
+	EVT_MENU_OPEN(CMainFrame::OnMenuOpenHandler)
 	EVT_FZ_NOTIFICATION(wxID_ANY, CMainFrame::OnEngineEvent)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_DISCONNECT"), CMainFrame::OnUpdateToolbarDisconnect)
 	EVT_TOOL(XRCID("ID_TOOLBAR_DISCONNECT"), CMainFrame::OnDisconnect)
@@ -644,6 +645,21 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		CEditHandlerStatusDialog dlg(this);
 		dlg.ShowModal();
 	}
+	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_TYPE_AUTO"))
+	{
+		COptions::Get()->SetOption(OPTION_ASCIIBINARY, 0);
+		m_pMenuBar->FindItem(XRCID("ID_MENU_TRANSFER_TYPE_AUTO"))->Check();
+	}
+	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_TYPE_ASCII"))
+	{
+		COptions::Get()->SetOption(OPTION_ASCIIBINARY, 1);
+		m_pMenuBar->FindItem(XRCID("ID_MENU_TRANSFER_TYPE_ASCII"))->Check();
+	}
+	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_TYPE_BINARY"))
+	{
+		COptions::Get()->SetOption(OPTION_ASCIIBINARY, 2);
+		m_pMenuBar->FindItem(XRCID("ID_MENU_TRANSFER_TYPE_BINARY"))->Check();
+	}
 	else
 	{
 		CSiteManagerItemData* pData = CSiteManager::GetSiteById(event.GetId());
@@ -657,6 +673,40 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		ConnectToSite(pData);
 		delete pData;
 	}
+}
+
+void CMainFrame::OnMenuOpenHandler(wxMenuEvent& event)
+{
+	wxMenu* pMenu = event.GetMenu();
+	if (!pMenu)
+		return;
+	wxMenuItem* pItem = pMenu->FindItem(XRCID("ID_MENU_TRANSFER_TYPE"));
+	if (!pItem)
+		return;
+
+	const CServer* pServer = 0;
+	if (m_pState)
+		pServer = m_pState->GetServer();
+
+	if (!pServer || pServer->GetProtocol() == FTP || pServer->GetProtocol() == FTPS || pServer->GetProtocol() == FTPES)
+	{
+		pItem->Enable(true);
+		int mode = COptions::Get()->GetOptionVal(OPTION_ASCIIBINARY);
+		switch (mode)
+		{
+		case 1:
+			pMenu->FindItem(XRCID("ID_MENU_TRANSFER_TYPE_ASCII"))->Check();
+			break;
+		case 2:
+			pMenu->FindItem(XRCID("ID_MENU_TRANSFER_TYPE_BINARY"))->Check();
+			break;
+		default:
+			pMenu->FindItem(XRCID("ID_MENU_TRANSFER_TYPE_AUTO"))->Check();
+			break;
+		}
+	}
+	else
+		pItem->Enable(false);
 }
 
 void CMainFrame::OnEngineEvent(wxEvent &event)

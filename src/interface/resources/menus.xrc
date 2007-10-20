@@ -42,10 +42,25 @@
         <label>&amp;Clear private data...</label>
       </object>
     </object>
-    <object class="wxMenu">
+    <object class="wxMenu" name="ID_MENU_TRANSFER">
       <label>&amp;Transfer</label>
       <object class="wxMenuItem" name="ID_MENU_TRANSFER_FILEEXISTS">
         <label>&amp;Default file exists action...</label>
+      </object>
+      <object class="wxMenu" name="ID_MENU_TRANSFER_TYPE">
+        <label>Transfer &amp;type</label>
+        <object class="wxMenuItem" name="ID_MENU_TRANSFER_TYPE_AUTO">
+          <label>&amp;Auto</label>
+          <radio>1</radio>
+        </object>
+        <object class="wxMenuItem" name="ID_MENU_TRANSFER_TYPE_ASCII">
+          <label>A&amp;SCII</label>
+          <radio>1</radio>
+        </object>
+        <object class="wxMenuItem" name="ID_MENU_TRANSFER_TYPE_BINARY">
+          <label>&amp;Binary</label>
+          <radio>1</radio>
+        </object>
       </object>
     </object>
     <object class="wxMenu" name="ID_MENU_SERVER">

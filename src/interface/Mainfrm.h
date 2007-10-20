@@ -94,6 +94,7 @@ protected:
 	void OnSize(wxSizeEvent& event);
 	void OnViewSplitterPosChanged(wxSplitterEvent& event);
 	void OnMenuHandler(wxCommandEvent& event);
+	void OnMenuOpenHandler(wxMenuEvent& event);
 	void OnEngineEvent(wxEvent& event);
 	void OnUpdateToolbarDisconnect(wxUpdateUIEvent& event);
 	void OnDisconnect(wxCommandEvent& event);
