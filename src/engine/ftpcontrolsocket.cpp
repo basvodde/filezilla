@@ -367,7 +367,7 @@ void CFtpControlSocket::OnConnect()
 
 	// Enable SO_KEEPALIVE, lots of clueless users have broken routers and
 	// firewalls which terminate the control connection on long transfers.
-	BOOL enabled = 1;
+	int enabled = 1;
 	SetOption(SOL_SOCKET, SO_KEEPALIVE, &enabled, sizeof(enabled));
 
 #ifdef __WXMSW__
