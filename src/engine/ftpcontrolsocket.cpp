@@ -1,4 +1,16 @@
+#include <wx/wx.h>
+
+#ifdef __WXMSW__
+// wxWidgets offers us no way to get the socket handle.
+#define WriteMsg UsefulDefineHackToGetFd(int* fd) { *fd = m_socket->m_fd; return *this; } wxSocketBase& WriteMsg
+#endif
+
 #include "FileZilla.h"
+
+#ifdef __WXMSW__
+#undef WriteMsg
+#endif //__WXMSW__
+
 #include "ftpcontrolsocket.h"
 #include "transfersocket.h"
 #include "directorylistingparser.h"
@@ -23,6 +35,38 @@
 #define LOGON_PROT		9
 #define LOGON_CUSTOMCOMMANDS 10
 #define LOGON_DONE		11
+
+
+#ifdef __WXMSW__
+
+// Define values for SIO_KEEPALIVE_VALS
+
+#ifndef IOC_VENDOR
+#define IOC_VENDOR 0x18000000
+#endif
+
+#ifndef _WSAIOW
+#define _WSAIOW(x, y)	(IOC_IN|(x)|(y))
+#endif
+
+#ifndef SIO_KEEPALIVE_VALS
+#define SIO_KEEPALIVE_VALS _WSAIOW(IOC_VENDOR, 4)
+
+struct tcp_keepalive
+{
+	u_long  onoff;
+	u_long  keepalivetime;
+	u_long  keepaliveinterval;
+};
+
+#endif
+
+#ifdef _MSC_VER
+// Only needed on MSVC, MinGW already brings this along
+extern "C" int WINAPI WSAIoctl(SOCKET, DWORD, LPVOID, DWORD, LPVOID, DWORD, LPDWORD, void*, void*);
+#endif
+
+#endif //__WXMSW__
 
 BEGIN_EVENT_TABLE(CFtpControlSocket, CRealControlSocket)
 EVT_FZ_EXTERNALIPRESOLVE(wxID_ANY, CFtpControlSocket::OnExternalIPAddress)
@@ -320,6 +364,30 @@ void CFtpControlSocket::OnConnect()
 	m_lastTypeBinary = -1;
 
 	SetAlive();
+
+	// Enable SO_KEEPALIVE, lots of clueless users have broken routers and
+	// firewalls which terminate the control connection on long transfers.
+	BOOL enabled = 1;
+	SetOption(SOL_SOCKET, SO_KEEPALIVE, &enabled, sizeof(enabled));
+
+#ifdef __WXMSW__
+	// Also set the keepalive timeout to 10 minutes since lots of broken
+	// routers and firewalls kill the connection after 15 minutes
+	int fd = 0;
+	UsefulDefineHackToGetFd(&fd);
+
+	struct tcp_keepalive data = {0};
+	data.onoff = 1;
+	data.keepalivetime = 60 * 10 * 1000; // 10 minutes
+	data.keepaliveinterval = 1000;
+
+	int len = sizeof(tcp_keepalive);
+	DWORD out = 0;
+	int res = WSAIoctl(fd, SIO_KEEPALIVE_VALS, &data, len, 0, 0, &out, 0, 0);
+	if (res)
+		LogMessage(::Debug_Info, _T("WSAIoctl with SIO_KEEPALIVE_VALS failed with %d"), (int)WSAGetLastError());
+#endif //__WXMSW__
+
 	if (m_pCurrentServer->GetProtocol() == FTPS)
 	{
 		if (!m_pTlsSocket)
