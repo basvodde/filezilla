@@ -969,6 +969,9 @@ bool CDirectoryListingParser::ParseAsUnix(CLine *pLine, CDirentry &entry)
 			}
 		}
 
+		if (entry.hasTime)
+			entry.time.Add(m_timezoneOffset);
+
 		return true;
 	}
 	while (numOwnerGroup--);
@@ -1454,6 +1457,9 @@ bool CDirectoryListingParser::ParseAsDos(CLine *pLine, CDirentry &entry)
 	entry.ownerGroup = _T("");
 	entry.permissions = _T("");
 
+	if (entry.hasTime)
+		entry.time.Add(m_timezoneOffset);
+
 	return true;
 }
 
@@ -1675,6 +1681,9 @@ bool CDirectoryListingParser::ParseAsVms(CLine *pLine, CDirentry &entry)
 		}
 	}
 
+	if (entry.hasTime)
+		entry.time.Add(m_timezoneOffset);
+
 	return true;
 }
 
@@ -1724,6 +1733,9 @@ bool CDirectoryListingParser::ParseAsIbm(CLine *pLine, CDirentry &entry)
 	}
 	else
 		entry.dir = false;
+
+	if (entry.hasTime)
+		entry.time.Add(m_timezoneOffset);
 
 	return true;
 }
@@ -1905,6 +1917,9 @@ bool CDirectoryListingParser::ParseOther(CLine *pLine, CDirentry &entry)
 		entry.target = _T("");
 		entry.ownerGroup = _T("");
 		entry.permissions = _T("");
+
+		if (entry.hasTime)
+			entry.time.Add(m_timezoneOffset);
 	}
 
 	return true;
@@ -2126,6 +2141,9 @@ bool CDirectoryListingParser::ParseAsWfFtp(CLine *pLine, CDirentry &entry)
 	entry.ownerGroup = _T("");
 	entry.permissions = _T("");
 
+	if (entry.hasTime)
+		entry.time.Add(m_timezoneOffset);
+
 	return true;
 }
 
@@ -2297,8 +2315,10 @@ bool CDirectoryListingParser::ParseAsIBM_MVS_PDS(CLine *pLine, CDirentry &entry)
 	entry.dir = false;
 	entry.ownerGroup = _T("");
 	entry.permissions = _T("");
-	entry.hasTime = false;
 	entry.link = false;
+
+	if (entry.hasTime)
+		entry.time.Add(m_timezoneOffset);
 
 	return true;
 }
@@ -2723,6 +2743,9 @@ bool CDirectoryListingParser::ParseAsZVM(CLine* pLine, CDirentry &entry)
 	entry.link = false;
 	entry.permissions = _T("");
 	entry.target = _T("");
+
+	if (entry.hasTime)
+		entry.time.Add(m_timezoneOffset);
 
 	return true;
 }

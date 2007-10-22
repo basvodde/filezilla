@@ -48,6 +48,8 @@ public:
 
 	void Reset();
 
+	void SetTimezoneOffset(const wxTimeSpan& span) { m_timezoneOffset = span; }
+
 protected:
 	CLine *GetLine(bool breakAtEnd = false);
 
@@ -103,6 +105,8 @@ protected:
 	std::list<wxString> m_fileList;
 	
 	bool m_maybeMultilineVms;
+
+	wxTimeSpan m_timezoneOffset;
 };
 
 #endif
