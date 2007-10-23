@@ -649,7 +649,7 @@
         <object class="wxBoxSizer">
           <orient>wxHORIZONTAL</orient>
           <object class="sizeritem">
-            <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+            <flag>wxALIGN_CENTER_VERTICAL|wxALL|wxGROW</flag>
             <border>5</border>
             <object class="wxButton" name="wxID_OK">
               <label>OK</label>
@@ -657,7 +657,7 @@
             </object>
           </object>
           <object class="sizeritem">
-            <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+            <flag>wxALIGN_CENTER_VERTICAL|wxALL|wxGROW</flag>
             <border>5</border>
             <object class="wxButton" name="wxID_CANCEL">
               <label>&amp;Cancel</label>
@@ -1302,14 +1302,14 @@
               <label>&amp;OK</label>
               <default>1</default>
             </object>
-            <flag>wxALL</flag>
+            <flag>wxALL|wxGROW</flag>
             <border>5</border>
           </object>
           <object class="sizeritem">
             <object class="wxButton" name="wxID_CANCEL">
               <label>&amp;Cancel</label>
             </object>
-            <flag>wxALL</flag>
+            <flag>wxALL| wxGROW</flag>
             <border>5</border>
           </object>
         </object>
@@ -2280,11 +2280,13 @@
               <label>OK</label>
               <default>1</default>
             </object>
+            <flag>wxGROW</flag>
           </object>
           <object class="sizeritem">
             <object class="wxButton" name="wxID_CANCEL">
               <label>&amp;Cancel</label>
             </object>
+            <flag>wxGROW</flag>
           </object>
           <hgap>5</hgap>
         </object>
@@ -2475,13 +2477,14 @@
               <label>OK</label>
               <default>1</default>
             </object>
-            <flag>wxRIGHT</flag>
+            <flag>wxRIGHT|wxGROW</flag>
             <border>5</border>
           </object>
           <object class="sizeritem">
             <object class="wxButton" name="wxID_CANCEL">
               <label>Cancel</label>
             </object>
+            <flag>wxGROW</flag>
           </object>
         </object>
         <flag>wxALL|wxALIGN_CENTRE_HORIZONTAL</flag>
@@ -2700,7 +2703,7 @@
         <object class="wxBoxSizer">
           <orient>wxHORIZONTAL</orient>
           <object class="sizeritem">
-            <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+            <flag>wxALIGN_CENTER_VERTICAL|wxALL|wxGROW</flag>
             <border>5</border>
             <object class="wxButton" name="wxID_OK">
               <label>OK</label>
@@ -2708,7 +2711,7 @@
             </object>
           </object>
           <object class="sizeritem">
-            <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+            <flag>wxALIGN_CENTER_VERTICAL|wxALL|wxGROW</flag>
             <border>5</border>
             <object class="wxButton" name="wxID_CANCEL">
               <label>&amp;Cancel</label>
@@ -2809,7 +2812,7 @@
         <object class="wxBoxSizer">
           <orient>wxHORIZONTAL</orient>
           <object class="sizeritem">
-            <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+            <flag>wxALIGN_CENTER_VERTICAL|wxALL|wxGROW</flag>
             <border>5</border>
             <object class="wxButton" name="wxID_OK">
               <label>OK</label>
@@ -2817,7 +2820,7 @@
             </object>
           </object>
           <object class="sizeritem">
-            <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+            <flag>wxALIGN_CENTER_VERTICAL|wxALL|wxGROW</flag>
             <border>5</border>
             <object class="wxButton" name="wxID_CANCEL">
               <label>&amp;Cancel</label>
@@ -3644,14 +3647,16 @@
               <cols>2</cols>
               <object class="sizeritem">
                 <object class="wxButton" name="wxID_OK">
-                  <label>Ok</label>
+                  <label>OK</label>
                   <default>1</default>
                 </object>
+                <flag>wxGROW</flag>
               </object>
               <object class="sizeritem">
                 <object class="wxButton" name="wxID_CANCEL">
                   <label>Cancel</label>
                 </object>
+                <flag>wxGROW</flag>
               </object>
               <hgap>5</hgap>
             </object>
@@ -3865,11 +3870,13 @@
                   <label>OK</label>
                   <default>1</default>
                 </object>
+                <flag>wxGROW</flag>
               </object>
               <object class="sizeritem">
                 <object class="wxButton" name="wxID_CANCEL">
                   <label>Cancel</label>
                 </object>
+                <flag>wxGROW</flag>
               </object>
               <cols>2</cols>
               <hgap>5</hgap>
@@ -3921,11 +3928,13 @@
                   <label>OK</label>
                   <default>1</default>
                 </object>
+                <flag>wxGROW</flag>
               </object>
               <object class="sizeritem">
                 <object class="wxButton" name="wxID_CANCEL">
                   <label>Cancel</label>
                 </object>
+                <flag>wxGROW</flag>
               </object>
               <hgap>5</hgap>
             </object>
@@ -3983,11 +3992,13 @@
                   <label>OK</label>
                   <default>1</default>
                 </object>
+                <flag>wxGROW</flag>
               </object>
               <object class="sizeritem">
                 <object class="wxButton" name="wxID_CANCEL">
                   <label>Cancel</label>
                 </object>
+                <flag>wxGROW</flag>
               </object>
               <hgap>5</hgap>
             </object>
@@ -4036,13 +4047,14 @@
                   <label>&amp;Yes</label>
                   <default>1</default>
                 </object>
-                <flag>wxRIGHT</flag>
+                <flag>wxRIGHT|wxGROW</flag>
                 <border>5</border>
               </object>
               <object class="sizeritem">
                 <object class="wxButton" name="wxID_NO">
                   <label>&amp;No</label>
                 </object>
+                <flag>wxGROW</flag>
               </object>
             </object>
             <flag>wxALIGN_CENTRE_HORIZONTAL</flag>
