@@ -30,6 +30,7 @@ protected:
 	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T(""), bool refresh = false);
 	int ListParseResponse();
 	int ListSend(int prevResult = FZ_REPLY_OK);
+	int ListCheckTimezoneDetection(CDirectoryListing& listing);
 
 	int ChangeDir(CServerPath path = CServerPath(), wxString subDir = _T(""));
 	int ChangeDirParseResponse();

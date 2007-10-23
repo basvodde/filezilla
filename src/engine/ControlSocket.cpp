@@ -4,6 +4,7 @@
 #include <idna.h>
 #include "asynchostresolver.h"
 #include "directorycache.h"
+#include "servercapabilities.h"
 
 DECLARE_EVENT_TYPE(fzOBTAINLOCK, -1)
 DEFINE_EVENT_TYPE(fzOBTAINLOCK)
@@ -754,6 +755,18 @@ void CControlSocket::InvalidateCurrentWorkingDir(const CServerPath& path)
 		else
 			m_CurrentPath.Clear();
 	}
+}
+
+wxTimeSpan CControlSocket::GetTimezoneOffset()
+{
+	if (!m_pCurrentServer)
+		return wxTimeSpan();
+
+	int seconds = 0;
+	if (CServerCapabilities::GetCapability(*m_pCurrentServer, timezone_offset, &seconds) != yes)
+		return wxTimeSpan();
+	
+	return wxTimeSpan(0, 0, seconds);
 }
 
 // ------------------

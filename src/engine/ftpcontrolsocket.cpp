@@ -943,6 +943,9 @@ public:
 
 	bool viewHiddenCheck;
 	bool viewHidden; // Uses LIST -a command
+
+	// Listing index for list_mdtm
+	int mdtm_index;
 };
 
 enum listStates
@@ -950,6 +953,7 @@ enum listStates
 	list_init = 0,
 	list_waitcwd,
 	list_waittransfer,
+	list_mdtm
 };
 
 int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/, bool refresh /*=false*/)
@@ -1004,6 +1008,7 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 	delete m_pTransferSocket;
 	m_pTransferSocket = new CTransferSocket(m_pEngine, this, ::list);
 	pData->m_pDirectoryListingParser = new CDirectoryListingParser(this, *m_pCurrentServer);
+	pData->m_pDirectoryListingParser->SetTimezoneOffset(GetTimezoneOffset());
 	m_pTransferSocket->m_pDirectoryListingParser = pData->m_pDirectoryListingParser;
 
 	InitTransferStatus(-1, 0, true);
@@ -1089,6 +1094,7 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 		delete m_pTransferSocket;
 		m_pTransferSocket = new CTransferSocket(m_pEngine, this, ::list);
 		pData->m_pDirectoryListingParser = new CDirectoryListingParser(this, *m_pCurrentServer);
+		pData->m_pDirectoryListingParser->SetTimezoneOffset(GetTimezoneOffset());
 		m_pTransferSocket->m_pDirectoryListingParser = pData->m_pDirectoryListingParser;
 
 		InitTransferStatus(-1, 0, true);
@@ -1159,7 +1165,11 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 			
 			SetAlive();
 
-			CDirectoryCache cache;
+			int res = ListCheckTimezoneDetection(listing);
+			if (res != FZ_REPLY_OK)
+				return res;
+
+            CDirectoryCache cache;
 			cache.Store(listing, *m_pCurrentServer, pData->path, pData->subDir);
 			
 			m_pEngine->SendDirectoryListingNotification(m_CurrentPath, !pData->pNextOpData, true, false);
@@ -1203,6 +1213,10 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 						return Transfer(_T("LIST -a"), pData);
 					}
 				}
+
+				int res = ListCheckTimezoneDetection(pData->directoryListing);
+				if (res != FZ_REPLY_OK)
+					return res;
 				
 				CDirectoryCache cache;
 				cache.Store(pData->directoryListing, *m_pCurrentServer, pData->path, pData->subDir);
@@ -1224,6 +1238,10 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 					{
 						CServerCapabilities::SetCapability(*m_pCurrentServer, list_hidden_support, no);
 
+						int res = ListCheckTimezoneDetection(pData->directoryListing);
+						if (res != FZ_REPLY_OK)
+							return res;
+
 						CDirectoryCache cache;
 						cache.Store(pData->directoryListing, *m_pCurrentServer, pData->path, pData->subDir);
 
@@ -1242,6 +1260,16 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 			return FZ_REPLY_ERROR;
 		}
 	}
+	else if (pData->opState == list_mdtm)
+	{
+		LogMessage(Status, _("Calculating timezone offset of server..."));
+		wxString cmd = _T("MDTM ") + m_CurrentPath.FormatFilename(pData->directoryListing[pData->mdtm_index].name, true);
+		if (!Send(cmd))
+			return FZ_REPLY_ERROR;
+		else
+			return FZ_REPLY_WOULDBLOCK;
+
+	}
 
 	LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("invalid opstate"));
 	ResetOperation(FZ_REPLY_INTERNALERROR);
@@ -1259,9 +1287,98 @@ int CFtpControlSocket::ListParseResponse()
 		return FZ_REPLY_ERROR;
 	}
 
-	LogMessage(Debug_Warning, _T("ListParseResponse should never be called"));
-	ResetOperation(FZ_REPLY_INTERNALERROR);
-	return FZ_REPLY_ERROR;
+	CFtpListOpData *pData = static_cast<CFtpListOpData *>(m_pCurOpData);
+
+	if (pData->opState != list_mdtm)
+	{
+		LogMessage(Debug_Warning, _T("ListParseResponse should never be called if opState != list_mdtm"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+
+	// First condition prevents problems with concurrent MDTM
+	if (CServerCapabilities::GetCapability(*m_pCurrentServer, timezone_offset) == unknown && 
+		m_Response.Left(4) == _T("213 ") && m_Response.Length() > 16)
+	{
+		wxDateTime date;
+		const wxChar *res = date.ParseFormat(m_Response.Mid(4), _T("%Y%m%d%H%M"));
+		if (res && date.IsValid())
+		{
+			wxASSERT(pData->directoryListing[pData->mdtm_index].hasTime);
+			wxDateTime listTime = pData->directoryListing[pData->mdtm_index].time;
+			listTime -= wxTimeSpan(0, 0, m_pCurrentServer->GetTimezoneOffset());
+
+			int serveroffset = (date - listTime).GetSeconds().GetLo();
+
+			wxDateTime now = wxDateTime::Now();
+			wxDateTime now_utc = now.ToTimezone(wxDateTime::GMT0);
+
+			int localoffset = (now - now_utc).GetSeconds().GetLo();
+			int offset = serveroffset + localoffset;
+
+			LogMessage(Status, _("Timezone offsets: Server: %d seconds. Local: %d seconds. Difference: %d seconds."), -serveroffset, localoffset, offset);
+
+			wxTimeSpan span(0, 0, offset);
+			const int count = pData->directoryListing.GetCount();
+			for (int i = 0; i < count; i++)
+			{
+				CDirentry& entry = pData->directoryListing[i];
+				if (!entry.hasTime)
+					continue;
+
+				entry.time += span;
+			}
+
+			// TODO: Correct cached listings
+			
+			CServerCapabilities::SetCapability(*m_pCurrentServer, timezone_offset, yes, offset);
+		}
+		else
+		{
+			CServerCapabilities::SetCapability(*m_pCurrentServer, mdtm_command, no);
+			CServerCapabilities::SetCapability(*m_pCurrentServer, timezone_offset, no);
+		}
+	}
+	else
+		CServerCapabilities::SetCapability(*m_pCurrentServer, timezone_offset, no);
+
+	CDirectoryCache cache;
+	cache.Store(pData->directoryListing, *m_pCurrentServer, pData->path, pData->subDir);
+
+	m_pEngine->SendDirectoryListingNotification(m_CurrentPath, !pData->pNextOpData, true, false);
+
+	ResetOperation(FZ_REPLY_OK);
+	return FZ_REPLY_OK;
+}
+
+int CFtpControlSocket::ListCheckTimezoneDetection(CDirectoryListing& listing)
+{
+	wxASSERT(m_pCurOpData);
+
+	CFtpListOpData *pData = static_cast<CFtpListOpData *>(m_pCurOpData);
+
+	if (CServerCapabilities::GetCapability(*m_pCurrentServer, timezone_offset) == unknown)
+	{
+		if (CServerCapabilities::GetCapability(*m_pCurrentServer, mdtm_command) != yes)
+			CServerCapabilities::SetCapability(*m_pCurrentServer, timezone_offset, no);
+		else
+		{
+			const int count = listing.GetCount();
+			for (int i = 0; i < count; i++)
+			{
+				if (!listing[i].dir && listing[i].hasTime)
+				{
+					pData->opState = list_mdtm;
+					pData->directoryListing = listing;
+					pData->mdtm_index = i;
+					return ListSend(FZ_REPLY_OK);
+				}
+			}
+		}
+	}
+
+	return FZ_REPLY_OK;
 }
 
 int CFtpControlSocket::ResetOperation(int nErrorCode)
