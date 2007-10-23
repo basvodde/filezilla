@@ -2406,7 +2406,7 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 	}
 	if (dangerous)
 	{
-		int res = wxMessageBox(_("The selected file would be executed directly.\nThis can be dangerous and damage your system.\nDo you really want to continue?"), _("Dangerous filetype"), wxICON_QUESTION | wxYES_NO);
+		int res = wxMessageBox(_("The selected file would be executed directly.\nThis can be dangerous and damage your system.\nDo you really want to continue?"), _("Dangerous filetype"), wxICON_EXCLAMATION | wxYES_NO);
 		if (res != wxYES)
 		{
 			wxBell();
