@@ -1878,6 +1878,8 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 			if (matchedCase)
 			{
 				pData->remoteFileSize = entry.size.GetLo() + ((wxFileOffset)entry.size.GetHi() << 32);
+				if (entry.hasDate)
+					pData->fileTime = entry.time;
 
 				pData->opState = filetransfer_resumetest;
 				res = CheckOverwriteFile();
@@ -2041,6 +2043,8 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 					if (matchedCase)
 					{
 						pData->remoteFileSize = entry.size.GetLo() + ((wxFileOffset)entry.size.GetHi() << 32);
+						if (entry.hasDate)
+							pData->fileTime = entry.time;
 
 						pData->opState = filetransfer_resumetest;
 						int res = CheckOverwriteFile();
@@ -2096,6 +2100,8 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 				if (matchedCase && !entry.unsure)
 				{
 					pData->remoteFileSize = entry.size.GetLo() + ((wxFileOffset)entry.size.GetHi() << 32);
+					if (entry.hasDate)
+						pData->fileTime = entry.time;
 
 					pData->opState = filetransfer_resumetest;
 					int res = CheckOverwriteFile();
@@ -2111,18 +2117,32 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 	}
 	else if (pData->opState == filetransfer_waittransfer)
 	{
-		if (!pData->download && prevResult == FZ_REPLY_OK && 
-			m_pEngine->GetOptions()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS) &&
-			CServerCapabilities::GetCapability(*m_pCurrentServer, mfmt_command) == yes)
+		if (prevResult == FZ_REPLY_OK && m_pEngine->GetOptions()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS))
 		{
-			wxFileName fn(pData->localFile);
-			if (fn.FileExists())
+			if (!pData->download && 
+				CServerCapabilities::GetCapability(*m_pCurrentServer, mfmt_command) == yes)
 			{
-				pData->fileTime = fn.GetModificationTime();
-				if (pData->fileTime.IsValid())
+				wxFileName fn(pData->localFile);
+				if (fn.FileExists())
 				{
-					pData->opState = filetransfer_mfmt;
-					return FileTransferSend();
+					pData->fileTime = fn.GetModificationTime();
+					if (pData->fileTime.IsValid())
+					{
+						pData->opState = filetransfer_mfmt;
+						return FileTransferSend();
+					}
+				}
+			}
+			else if (pData->download && pData->fileTime.IsValid())
+			{
+				wxFileName fn(pData->localFile);
+				if (fn.FileExists())
+				{
+					// Need to close file first
+					delete pData->pIOThread;
+					pData->pIOThread = 0;
+
+					fn.SetTimes(&pData->fileTime, &pData->fileTime, 0);
 				}
 			}
 		}
