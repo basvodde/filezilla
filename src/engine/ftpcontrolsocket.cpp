@@ -114,7 +114,8 @@ enum filetransferStates
 	filetransfer_resumetest,
 	filetransfer_transfer,
 	filetransfer_waittransfer,
-	filetransfer_waitresumetest
+	filetransfer_waitresumetest,
+	filetransfer_mfmt
 };
 
 enum rawtransferStates
@@ -1983,6 +1984,9 @@ int CFtpControlSocket::FileTransferParseResponse()
 		}
 
 		break;
+	case filetransfer_mfmt:
+		ResetOperation(FZ_REPLY_OK);
+		return FZ_REPLY_OK;
 	default:
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Unknown op state"));
 		error = true;
@@ -2107,6 +2111,21 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 	}
 	else if (pData->opState == filetransfer_waittransfer)
 	{
+		if (!pData->download && prevResult == FZ_REPLY_OK && 
+			m_pEngine->GetOptions()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS) &&
+			CServerCapabilities::GetCapability(*m_pCurrentServer, mfmt_command) == yes)
+		{
+			wxFileName fn(pData->localFile);
+			if (fn.FileExists())
+			{
+				pData->fileTime = fn.GetModificationTime();
+				if (pData->fileTime.IsValid())
+				{
+					pData->opState = filetransfer_mfmt;
+					return FileTransferSend();
+				}
+			}
+		}
 		ResetOperation(prevResult);
 		return prevResult;
 	}
@@ -2298,6 +2317,14 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 
 		pData->opState = filetransfer_waittransfer;
 		return Transfer(cmd, pData);
+	case filetransfer_mfmt:
+		{
+			cmd = _T("MFMT ");
+			cmd += pData->fileTime.ToTimezone(wxDateTime::GMT0).Format(_T("%Y%m%d%H%M%S "));
+			cmd += pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath);
+
+			break;
+		}
 	default:
 		LogMessage(::Debug_Warning, _T("Unhandled opState: %d"), pData->opState);
 		ResetOperation(FZ_REPLY_ERROR);

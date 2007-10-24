@@ -660,6 +660,17 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		COptions::Get()->SetOption(OPTION_ASCIIBINARY, 2);
 		m_pMenuBar->FindItem(XRCID("ID_MENU_TRANSFER_TYPE_BINARY"))->Check();
 	}
+	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_PRESERVETIMES"))
+	{
+		if (event.IsChecked())
+		{
+			CConditionalDialog dlg(this, CConditionalDialog::confirm_preserve_timestamps, CConditionalDialog::ok, true);
+			dlg.SetTitle(_("Preserving file timestamps"));
+			dlg.AddText(_("Please note that preserving timestamps on uploads only works on FTP, FTPS and FTPES servers (but not SFTP) supporting the MFMT command."));
+			dlg.Run();
+		}
+		COptions::Get()->SetOption(OPTION_PRESERVE_TIMESTAMPS, event.IsChecked() ? 1 : 0);
+	}
 	else
 	{
 		CSiteManagerItemData* pData = CSiteManager::GetSiteById(event.GetId());
@@ -707,6 +718,8 @@ void CMainFrame::OnMenuOpenHandler(wxMenuEvent& event)
 	}
 	else
 		pItem->Enable(false);
+
+	pMenu->FindItem(XRCID("ID_MENU_TRANSFER_PRESERVETIMES"))->Check(COptions::Get()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS) ? true : false);
 }
 
 void CMainFrame::OnEngineEvent(wxEvent &event)
