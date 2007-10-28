@@ -47,9 +47,9 @@ bool CChmodDialog::Create(wxWindow* parent, int fileCount, int dirCount,
 	if (!wxXmlResource::Get()->LoadDialog(this, parent, _T("ID_CHMODDIALOG")))
 		return false;
 
-	if (!WrapText(this, XRCID("ID_DESC"), 300))
+	if (!this->SetLabel(XRCID("ID_DESC"), title, 300))
 	{
-		wxFAIL_MSG(_T("Wrapping of ID_DESC failed"));
+		wxFAIL_MSG(_T("Could not set ID_DESC"));
 	}
 
 	if (!XRCCTRL(*this, "wxID_OK", wxButton))
