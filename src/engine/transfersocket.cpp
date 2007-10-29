@@ -703,8 +703,20 @@ bool CTransferSocket::InitBackend()
 	else
 		m_pBackend = new CSocketBackend(this, m_pSocket);
 
-	int value = 65536 * 2;
-	m_pSocket->SetOption(SOL_SOCKET, SO_SNDBUF, &value, sizeof(value));
+	SetSocketBufferSizes();
 
 	return true;
+}
+
+void CTransferSocket::SetSocketBufferSizes()
+{
+	wxCHECK_RET(m_pSocket, _("SetSocketBufferSize called without socket"));
+	if (!m_pSocket)
+		return;
+
+	int value = m_pEngine->GetOptions()->GetOptionVal(OPTION_SOCKET_BUFFERSIZE_SEND);
+	m_pSocket->SetOption(SOL_SOCKET, SO_SNDBUF, &value, sizeof(value));
+
+	value = m_pEngine->GetOptions()->GetOptionVal(OPTION_SOCKET_BUFFERSIZE_RECV);
+	m_pSocket->SetOption(SOL_SOCKET, SO_RCVBUF, &value, sizeof(value));
 }

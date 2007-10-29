@@ -50,6 +50,8 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Speedlimit burst tolerance", number, _T("0") },
 	{ "View hidden files", number, _T("0") },
 	{ "Preserve timestamps", number, _T("0") },
+	{ "Socket recv buffer size", number, _T("-1") },
+	{ "Socket send buffer size", number, _T("131072") },
 
 	// Interface settings
 	{ "Number of Transfers", number, _T("2") },
@@ -418,6 +420,14 @@ int COptions::Validate(unsigned int nID, int value)
 	case OPTION_FILELIST_DIRSORT:
 		if (value < 0 || value > 2)
 			value = 0;
+		break;
+	case OPTION_SOCKET_BUFFERSIZE_RECV:
+		if (value != -1 && (value < 4096 || value > 4096 * 1024))
+			value = -1;
+		break;
+	case OPTION_SOCKET_BUFFERSIZE_SEND:
+		if (value != -1 && (value < 4096 || value > 4096 * 1024))
+			value = 131072;
 		break;
 	}
 	return value;

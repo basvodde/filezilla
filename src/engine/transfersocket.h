@@ -56,6 +56,8 @@ protected:
 	// Create a socket server
 	wxSocketServer* CreateSocketServer();
 
+	void SetSocketBufferSizes();
+
 	DECLARE_EVENT_TABLE();
 
 	wxSocketBase *m_pSocket; // Will point to either client or server socket
