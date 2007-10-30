@@ -2213,15 +2213,15 @@ int CSftpControlSocket::RenameSend(int prevResult /*=FZ_REPLY_OK*/)
 			cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile());
 			cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetToPath(), pData->m_cmd.GetToFile());
 
-			wxString localQuoted = QuoteFilename(pData->m_cmd.GetFromPath().FormatFilename(pData->m_cmd.GetFromFile(), !pData->m_useAbsolute));
-			wxString remoteQuoted = QuoteFilename(pData->m_cmd.GetToPath().FormatFilename(pData->m_cmd.GetToFile(), !pData->m_useAbsolute && pData->m_cmd.GetFromPath() == pData->m_cmd.GetToPath()));
+			wxString fromQuoted = QuoteFilename(pData->m_cmd.GetFromPath().FormatFilename(pData->m_cmd.GetFromFile(), !pData->m_useAbsolute));
+			wxString toQuoted = QuoteFilename(pData->m_cmd.GetToPath().FormatFilename(pData->m_cmd.GetToFile(), !pData->m_useAbsolute && pData->m_cmd.GetFromPath() == pData->m_cmd.GetToPath()));
 
 			CPathCache pathCache;
 			pathCache.InvalidatePath(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile());
 			pathCache.InvalidatePath(*m_pCurrentServer, pData->m_cmd.GetToPath(), pData->m_cmd.GetToFile());
 
-			res = Send(_T("mv ") + WildcardEscape(localQuoted) + _T(" ") + remoteQuoted,
-					   _T("mv ") + localQuoted + _T(" ") + remoteQuoted);
+			res = Send(_T("mv ") + WildcardEscape(fromQuoted) + _T(" ") + toQuoted,
+					   _T("mv ") + fromQuoted + _T(" ") + toQuoted);
 		}
 		break;
 	default:
