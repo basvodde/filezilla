@@ -608,6 +608,12 @@ bool CSftpControlSocket::AddToStream(const wxString& cmd)
 	if (!m_pProcess)
 		return false;
 
+	if (!str)
+	{
+		LogMessage(::Error, _("Could not convert command to server encoding"));
+		return false;
+	}
+
 	wxOutputStream* pStream = m_pProcess->GetOutputStream();
 	if (!pStream)
 		return false;
@@ -2241,7 +2247,7 @@ wxString CSftpControlSocket::WildcardEscape(const wxString& file)
 	escapedFile.Alloc(file.Len());
 	for (unsigned int i = 0; i < file.Len(); i++)
 	{
-		const char& c = file[i];
+		const wxChar& c = file[i];
 		switch (c)
 		{
 		case '[':
