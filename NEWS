@@ -5,6 +5,19 @@ Legend:
   + New feature or important bugfix
   - Bugfixes
 
+3.0.3-rc1 (2007-10-31)
+
++ Automatic server timezone detection. Custom offset in the Site Manager may need to be adjusted. FTP only.
++ Option to preserve file timestamps on downloads (all protocols)
++ Option to preserve file timestamps on uploads on FTP servers supporting the MFMT command
++ Add transfer type (ascii/binary/auto) selection to transfer menu
+- Shorten very long filenames on file exists dialog
+- Attempt at working around broken routers and firewalls disconnecting the control connection of the transfer session on transfers
+- Deleting directories containing lots of files should be faster now
+- Disallow settings/site import from files located in the settings storage directory
+- Fix nullpointer dereference on non-UTF8 enabled SFTP servers
+- *nix: Fix button height inconsistencies on dialogs with certain artwork (e.g. Ubuntu 7.10)
+
 3.0.2.1 (2007-10-17)
 
 - Fix issue with message log not working properly
