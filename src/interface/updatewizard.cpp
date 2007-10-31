@@ -817,6 +817,7 @@ void CUpdateWizard::PrepareUpdateAvailablePage(const wxString &newVersion, wxStr
 			XRCCTRL(*this, "ID_UPDATEDESC", wxStaticText)->SetLabel(_("Please visit http://filezilla-project.org to download the most recent version."));
 		else
 			XRCCTRL(*this, "ID_UPDATEDESC", wxStaticText)->SetLabel(_("Please check the package manager of your system for an updated package or visit http://filezilla-project.org to download the source code of FileZilla."));
+		XRCCTRL(*this, "ID_UPDATEDESC2", wxStaticText)->SetLabel(_T(""));
 		m_pages[1]->SetNext(0);
 	}
 	else
