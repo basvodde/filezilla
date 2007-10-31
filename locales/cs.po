@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla 3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-10-27 22:30+0200\n"
-"PO-Revision-Date: 2007-10-24 13:24+0100\n"
+"POT-Creation-Date: 2007-10-31 11:18+0100\n"
+"PO-Revision-Date: 2007-10-30 17:52+0100\n"
 "Last-Translator: Michal Molhanec <michal@molhanec.net>\n"
 "Language-Team: Michal Molhanec <michal@molhanec.net>\n"
 "MIME-Version: 1.0\n"
@@ -394,7 +394,7 @@ msgstr "Po&rt:"
 
 #: resources.h:443
 msgid "&Preserve timestamps of transferred files"
-msgstr ""
+msgstr "&Zachovávat časy u přenášených souborů"
 
 #: resources.h:404
 msgid "&Queue"
@@ -716,11 +716,11 @@ msgstr "&Přidat"
 msgid "A&llow resume of ascii files"
 msgstr "Povo&lit navazování ASCII souborů"
 
-#: ../../locales/../src/interface/fileexistsdlg.cpp:99
+#: ../../locales/../src/interface/fileexistsdlg.cpp:105
 msgid "A&pply only to downloads"
 msgstr "Platí jen při &stahování"
 
-#: ../../locales/../src/interface/fileexistsdlg.cpp:155
+#: ../../locales/../src/interface/fileexistsdlg.cpp:161
 msgid "A&pply only to uploads"
 msgstr "Platí jen při nahrávání na &server"
 
@@ -1303,6 +1303,11 @@ msgstr "Kopie %s"
 msgid "Could not connect to server"
 msgstr "Nemohu se spojit se serverem"
 
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:613
+#, fuzzy
+msgid "Could not convert command to server encoding"
+msgstr "Nemohu se spojit se serverem"
+
 #: ../../locales/../src/interface/RemoteListView.cpp:2294
 #: ../../locales/../src/interface/RemoteTreeView.cpp:829
 msgid ""
@@ -1335,7 +1340,7 @@ msgid "Could not get temporary directory to download file into."
 msgstr ""
 "Nemohu získat složku pro dočasné soubory, do které měl být soubor stažen."
 
-#: ../../locales/../src/interface/Options.cpp:114
+#: ../../locales/../src/interface/Options.cpp:116
 #, c-format
 msgid ""
 "Could not load \"%s\", make sure the file is valid.\n"
@@ -1457,7 +1462,7 @@ msgid "Creating directory"
 msgstr "Vytvářím složku"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2885
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1672
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1678
 #, c-format
 msgid "Creating directory '%s'..."
 msgstr "Vytvářím složku '%s'..."
@@ -1507,10 +1512,10 @@ msgstr "Formátování data"
 msgid "Date/time format"
 msgstr "Formátování času a data"
 
-#: ../../locales/../src/interface/fileexistsdlg.cpp:68
-#: ../../locales/../src/interface/fileexistsdlg.cpp:92
-#: ../../locales/../src/interface/fileexistsdlg.cpp:124
-#: ../../locales/../src/interface/fileexistsdlg.cpp:148
+#: ../../locales/../src/interface/fileexistsdlg.cpp:74
+#: ../../locales/../src/interface/fileexistsdlg.cpp:98
+#: ../../locales/../src/interface/fileexistsdlg.cpp:130
+#: ../../locales/../src/interface/fileexistsdlg.cpp:154
 msgid "Date/time unknown"
 msgstr "Neznámé datum a čas"
 
@@ -1878,7 +1883,7 @@ msgstr "Během importování nastala chyba"
 #: ../../locales/../src/interface/filter.cpp:253
 #: ../../locales/../src/interface/import.cpp:111
 #: ../../locales/../src/interface/import.cpp:294
-#: ../../locales/../src/interface/Options.cpp:115
+#: ../../locales/../src/interface/Options.cpp:117
 #: ../../locales/../src/interface/QueueView.cpp:1676
 #: ../../locales/../src/interface/QueueView.cpp:1703
 #: ../../locales/../src/interface/sitemanager.cpp:262
@@ -2827,7 +2832,7 @@ msgstr "Nová složka"
 msgid "New site"
 msgstr "Nové místo"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:776
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:782
 msgid "No"
 msgstr "ne"
 
@@ -2929,7 +2934,7 @@ msgstr ""
 "Na následujících stránkách bude nastaven vybraný režim přenosu a pokud jste "
 "povolili návrat k druhému režimu přenosu, pak i ten."
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:786
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:792
 msgid "Once"
 msgstr "jedenkrát"
 
@@ -3245,6 +3250,9 @@ msgid ""
 "Please note that preserving timestamps on uploads only works on FTP, FTPS "
 "and FTPES servers (but not SFTP) supporting the MFMT command."
 msgstr ""
+"Upozornění: zachování času souborů při nahrávání na server je podporováno "
+"pouze FTP, FTPS a FTPES servery (ale nikoli SFTP), které podporují příkaz "
+"MFMT."
 
 #: resources.h:162
 msgid ""
@@ -3331,7 +3339,7 @@ msgstr "Předdefinovaná místa"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:668
 msgid "Preserving file timestamps"
-msgstr ""
+msgstr "Zachovávání času souborů"
 
 #: resources.h:169
 msgid "Preview"
@@ -3497,7 +3505,7 @@ msgid "Rename selected files and folders"
 msgstr "Přejmenovat vybrané soubory a složky"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3095
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2145
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2151
 #, c-format
 msgid "Renaming '%s' to '%s'"
 msgstr "Přejmenovávám '%s' na '%s'"
@@ -3535,7 +3543,7 @@ msgstr ""
 "formát konce řádků než klient."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:962
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:847
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:853
 msgid "Retrieving directory listing..."
 msgstr "Přijímám výpis složky..."
 
@@ -3737,10 +3745,14 @@ msgid "Set &Priority"
 msgstr "Nastav priorit&u"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3236
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2040
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2046
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
 msgstr "Nastav oprávnění '%s' na '%s'"
+
+#: ../../locales/../src/engine/transfersocket.cpp:713
+msgid "SetSocketBufferSize called without socket"
+msgstr "SetSocketBufferSize voláno bez uvedení soketu"
 
 #: resources.h:122
 msgid "Settings"
@@ -3770,10 +3782,10 @@ msgstr "Velikost"
 msgid "Size formatting"
 msgstr "Formátování velikostí"
 
-#: ../../locales/../src/interface/fileexistsdlg.cpp:59
-#: ../../locales/../src/interface/fileexistsdlg.cpp:83
-#: ../../locales/../src/interface/fileexistsdlg.cpp:115
-#: ../../locales/../src/interface/fileexistsdlg.cpp:139
+#: ../../locales/../src/interface/fileexistsdlg.cpp:65
+#: ../../locales/../src/interface/fileexistsdlg.cpp:89
+#: ../../locales/../src/interface/fileexistsdlg.cpp:121
+#: ../../locales/../src/interface/fileexistsdlg.cpp:145
 msgid "Size unknown"
 msgstr "Neznámá velikost"
 
@@ -3785,8 +3797,8 @@ msgstr "Přeskoči&t"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2529
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:206
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:246
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:670
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:743
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:676
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:749
 #, c-format
 msgid "Skipping download of %s"
 msgstr "Přeskakuji stahování %s"
@@ -3795,8 +3807,8 @@ msgstr "Přeskakuji stahování %s"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2533
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:210
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:250
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:674
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:747
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:680
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:753
 #, c-format
 msgid "Skipping upload of %s"
 msgstr "Přeskakuji nahrávání %s na server"
@@ -3840,13 +3852,13 @@ msgid "Speed limits"
 msgstr "Rychlostní limity"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1820
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1384
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1390
 #, c-format
 msgid "Starting download of %s"
 msgstr "Začínám stahovat %s"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1824
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1388
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1394
 #, c-format
 msgid "Starting upload of %s"
 msgstr "Začínám %s nahrávat na server"
@@ -4224,11 +4236,11 @@ msgstr "Rozpoznávat soubory bez přípony jako ASCII soubory"
 msgid "Treat the &following filetypes as Ascii files:"
 msgstr "&Rozpoznávat následující typy souborů jako ASCII soubory:"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:773
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:779
 msgid "Trust changed Hostkey: "
 msgstr "Veřit změněnému hostitelskému klíči:"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:771
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:777
 msgid "Trust new Hostkey: "
 msgstr "Veřit novému hostitelskému klíči:"
 
@@ -4521,7 +4533,7 @@ msgstr "Neplatná externí IP adresa"
 msgid "Wrong lineendings"
 msgstr "Špatné konce řádků"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:784
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:790
 msgid "Yes"
 msgstr "ano"
 
@@ -4542,6 +4554,7 @@ msgstr "Na libovolné pozici můžete použít x pro zachování původního opr
 #: ../../locales/../src/interface/import.cpp:28
 msgid "You cannot import settings from FileZilla's own settings directory."
 msgstr ""
+"Nelze importovat nastavení ze složky s nastavením, které se právě používá."
 
 #: ../../locales/../src/interface/asyncrequestqueue.cpp:226
 msgid "You did not enter a new name for the file. Overwrite the file instead?"
@@ -4584,10 +4597,10 @@ msgstr ""
 msgid "begins with"
 msgstr "začíná na"
 
-#: ../../locales/../src/interface/fileexistsdlg.cpp:57
-#: ../../locales/../src/interface/fileexistsdlg.cpp:81
-#: ../../locales/../src/interface/fileexistsdlg.cpp:113
-#: ../../locales/../src/interface/fileexistsdlg.cpp:137
+#: ../../locales/../src/interface/fileexistsdlg.cpp:63
+#: ../../locales/../src/interface/fileexistsdlg.cpp:87
+#: ../../locales/../src/interface/fileexistsdlg.cpp:119
+#: ../../locales/../src/interface/fileexistsdlg.cpp:143
 msgid "bytes"
 msgstr "bajtů"
 
@@ -4614,7 +4627,7 @@ msgstr "soubor"
 msgid "fz3temp-lockfile"
 msgstr "fz3temp-lockfile"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1317
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1323
 msgid "fzsftp could not be started"
 msgstr "Nemohu spustit fzsftp"
 

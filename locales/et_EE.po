@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: filezilla\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-10-27 22:30+0200\n"
-"PO-Revision-Date: 2007-10-26 00:15+0200\n"
+"POT-Creation-Date: 2007-10-31 11:18+0100\n"
+"PO-Revision-Date: 2007-10-29 14:26+0200\n"
 "Last-Translator: Janek Hortla <peemot@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -714,11 +714,11 @@ msgstr "L&isa"
 msgid "A&llow resume of ascii files"
 msgstr "L&uba ASCII failide ülekande jätkamist"
 
-#: ../../locales/../src/interface/fileexistsdlg.cpp:99
+#: ../../locales/../src/interface/fileexistsdlg.cpp:105
 msgid "A&pply only to downloads"
 msgstr "R&akenda ainult allalaadimistele"
 
-#: ../../locales/../src/interface/fileexistsdlg.cpp:155
+#: ../../locales/../src/interface/fileexistsdlg.cpp:161
 msgid "A&pply only to uploads"
 msgstr "R&akenda ainult üleslaadimistele"
 
@@ -1297,6 +1297,11 @@ msgstr "%s koopia"
 msgid "Could not connect to server"
 msgstr "Ei suuda ühenduda serveriga"
 
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:613
+#, fuzzy
+msgid "Could not convert command to server encoding"
+msgstr "Ei suuda ühenduda serveriga"
+
 #: ../../locales/../src/interface/RemoteListView.cpp:2294
 #: ../../locales/../src/interface/RemoteTreeView.cpp:829
 msgid ""
@@ -1327,7 +1332,7 @@ msgstr ""
 msgid "Could not get temporary directory to download file into."
 msgstr "Ei leia ajutist kataloogi faili allalaadimiseks."
 
-#: ../../locales/../src/interface/Options.cpp:114
+#: ../../locales/../src/interface/Options.cpp:116
 #, c-format
 msgid ""
 "Could not load \"%s\", make sure the file is valid.\n"
@@ -1452,7 +1457,7 @@ msgid "Creating directory"
 msgstr "Kataloogi loomine"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2885
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1672
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1678
 #, c-format
 msgid "Creating directory '%s'..."
 msgstr "Kataloogi '%s' loomine..."
@@ -1502,10 +1507,10 @@ msgstr "Kuupäeva vorming"
 msgid "Date/time format"
 msgstr "Kuupäeva/kellaaja vorming "
 
-#: ../../locales/../src/interface/fileexistsdlg.cpp:68
-#: ../../locales/../src/interface/fileexistsdlg.cpp:92
-#: ../../locales/../src/interface/fileexistsdlg.cpp:124
-#: ../../locales/../src/interface/fileexistsdlg.cpp:148
+#: ../../locales/../src/interface/fileexistsdlg.cpp:74
+#: ../../locales/../src/interface/fileexistsdlg.cpp:98
+#: ../../locales/../src/interface/fileexistsdlg.cpp:130
+#: ../../locales/../src/interface/fileexistsdlg.cpp:154
 msgid "Date/time unknown"
 msgstr "Tundmatu kuupäev/aeg "
 
@@ -1875,7 +1880,7 @@ msgstr "Viga importimisel"
 #: ../../locales/../src/interface/filter.cpp:253
 #: ../../locales/../src/interface/import.cpp:111
 #: ../../locales/../src/interface/import.cpp:294
-#: ../../locales/../src/interface/Options.cpp:115
+#: ../../locales/../src/interface/Options.cpp:117
 #: ../../locales/../src/interface/QueueView.cpp:1676
 #: ../../locales/../src/interface/QueueView.cpp:1703
 #: ../../locales/../src/interface/sitemanager.cpp:262
@@ -2817,7 +2822,7 @@ msgstr "Uus kaust"
 msgid "New site"
 msgstr "Uus sait"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:776
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:782
 msgid "No"
 msgstr "Ei"
 
@@ -2916,7 +2921,7 @@ msgstr ""
 "Järgmistel lehtedel toimub valitud ülekande laadi seadistamine, kui seadete "
 "ennistamine on lubatud."
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:786
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:792
 msgid "Once"
 msgstr "Ükskord"
 
@@ -3480,7 +3485,7 @@ msgid "Rename selected files and folders"
 msgstr "Nimeta valitud failid ja kaustad ümber"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3095
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2145
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2151
 #, c-format
 msgid "Renaming '%s' to '%s'"
 msgstr "Ümbernimetamine '%s' -> '%s'"
@@ -3518,7 +3523,7 @@ msgstr ""
 "kliendist erinevat realõpu formaati."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:962
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:847
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:853
 msgid "Retrieving directory listing..."
 msgstr "Laetakse kataloogi nimekirja..."
 
@@ -3720,10 +3725,14 @@ msgid "Set &Priority"
 msgstr "Sea &prioriteet"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3236
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2040
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2046
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
 msgstr "Sea õigused '%s' -> '%s'"
+
+#: ../../locales/../src/engine/transfersocket.cpp:713
+msgid "SetSocketBufferSize called without socket"
+msgstr ""
 
 #: resources.h:122
 msgid "Settings"
@@ -3753,10 +3762,10 @@ msgstr "Suurus"
 msgid "Size formatting"
 msgstr "Failisuuruse vormindamine"
 
-#: ../../locales/../src/interface/fileexistsdlg.cpp:59
-#: ../../locales/../src/interface/fileexistsdlg.cpp:83
-#: ../../locales/../src/interface/fileexistsdlg.cpp:115
-#: ../../locales/../src/interface/fileexistsdlg.cpp:139
+#: ../../locales/../src/interface/fileexistsdlg.cpp:65
+#: ../../locales/../src/interface/fileexistsdlg.cpp:89
+#: ../../locales/../src/interface/fileexistsdlg.cpp:121
+#: ../../locales/../src/interface/fileexistsdlg.cpp:145
 msgid "Size unknown"
 msgstr "Suurus tundmatu"
 
@@ -3768,8 +3777,8 @@ msgstr "Jä&ta vahele"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2529
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:206
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:246
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:670
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:743
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:676
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:749
 #, c-format
 msgid "Skipping download of %s"
 msgstr "%s allalaadimise vahelejätmine"
@@ -3778,8 +3787,8 @@ msgstr "%s allalaadimise vahelejätmine"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2533
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:210
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:250
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:674
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:747
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:680
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:753
 #, c-format
 msgid "Skipping upload of %s"
 msgstr "%s üleslaadimise vahelejätmine"
@@ -3821,13 +3830,13 @@ msgid "Speed limits"
 msgstr "Kiiruste piirväärtused"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1820
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1384
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1390
 #, c-format
 msgid "Starting download of %s"
 msgstr "%s allalaadimise alustamine"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1824
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1388
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1394
 #, c-format
 msgid "Starting upload of %s"
 msgstr "%s üleslaadimise alustamine"
@@ -4202,11 +4211,11 @@ msgstr "Loe &laiendita failid ASCII failideks"
 msgid "Treat the &following filetypes as Ascii files:"
 msgstr "Loe &järgnevad failitüübid ASCII failideks:"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:773
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:779
 msgid "Trust changed Hostkey: "
 msgstr "Usalda muudetud hostivõtit:"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:771
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:777
 msgid "Trust new Hostkey: "
 msgstr "Usalda uut hostivõtit:"
 
@@ -4503,7 +4512,7 @@ msgstr "Vale väline IP aadress"
 msgid "Wrong lineendings"
 msgstr "Valed realõpud"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:784
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:790
 msgid "Yes"
 msgstr "Jah"
 
@@ -4525,7 +4534,7 @@ msgstr ""
 
 #: ../../locales/../src/interface/import.cpp:28
 msgid "You cannot import settings from FileZilla's own settings directory."
-msgstr ""
+msgstr "Sa ei saa importida seadeid FileZilla enda seadete kataloogist."
 
 #: ../../locales/../src/interface/asyncrequestqueue.cpp:226
 msgid "You did not enter a new name for the file. Overwrite the file instead?"
@@ -4569,10 +4578,10 @@ msgstr ""
 msgid "begins with"
 msgstr "alguses on"
 
-#: ../../locales/../src/interface/fileexistsdlg.cpp:57
-#: ../../locales/../src/interface/fileexistsdlg.cpp:81
-#: ../../locales/../src/interface/fileexistsdlg.cpp:113
-#: ../../locales/../src/interface/fileexistsdlg.cpp:137
+#: ../../locales/../src/interface/fileexistsdlg.cpp:63
+#: ../../locales/../src/interface/fileexistsdlg.cpp:87
+#: ../../locales/../src/interface/fileexistsdlg.cpp:119
+#: ../../locales/../src/interface/fileexistsdlg.cpp:143
 msgid "bytes"
 msgstr "baiti"
 
@@ -4599,7 +4608,7 @@ msgstr "fail"
 msgid "fz3temp-lockfile"
 msgstr "fz3temp-lockfile"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1317
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1323
 msgid "fzsftp could not be started"
 msgstr "fzsftp startimine ebaõnnestus"
 

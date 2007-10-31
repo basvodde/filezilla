@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-10-27 22:30+0200\n"
+"POT-Creation-Date: 2007-10-31 11:18+0100\n"
 "PO-Revision-Date: 2006-12-18 11:12+0100\n"
 "Last-Translator: Timothy Kuun <timothy.kuun@arcor.de>\n"
 "Language-Team: Kay Urbach <Kay.Urbach@gmx.de>\n"
@@ -397,7 +397,7 @@ msgstr "&Port:"
 
 #: resources.h:443
 msgid "&Preserve timestamps of transferred files"
-msgstr ""
+msgstr "&Zeitstempel der übertragenen Dateien beibehalten"
 
 #: resources.h:404
 msgid "&Queue"
@@ -727,11 +727,11 @@ msgstr "&Hinzufügen"
 msgid "A&llow resume of ascii files"
 msgstr "Fortsetzen von ascii Dateien er&lauben"
 
-#: ../../locales/../src/interface/fileexistsdlg.cpp:99
+#: ../../locales/../src/interface/fileexistsdlg.cpp:105
 msgid "A&pply only to downloads"
 msgstr "&Nur auf Downloads anwenden"
 
-#: ../../locales/../src/interface/fileexistsdlg.cpp:155
+#: ../../locales/../src/interface/fileexistsdlg.cpp:161
 msgid "A&pply only to uploads"
 msgstr "&Nur auf Uploads anwenden"
 
@@ -1316,6 +1316,11 @@ msgstr "Kopie von %s"
 msgid "Could not connect to server"
 msgstr "Verbindung mit Server fehlgeschlagen"
 
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:613
+#, fuzzy
+msgid "Could not convert command to server encoding"
+msgstr "Verbindung mit Server fehlgeschlagen"
+
 #: ../../locales/../src/interface/RemoteListView.cpp:2294
 #: ../../locales/../src/interface/RemoteTreeView.cpp:829
 msgid ""
@@ -1348,7 +1353,7 @@ msgstr ""
 msgid "Could not get temporary directory to download file into."
 msgstr "Kann temporäres Download-Verzeichnis nicht finden."
 
-#: ../../locales/../src/interface/Options.cpp:114
+#: ../../locales/../src/interface/Options.cpp:116
 #, c-format
 msgid ""
 "Could not load \"%s\", make sure the file is valid.\n"
@@ -1477,7 +1482,7 @@ msgid "Creating directory"
 msgstr "Erstelle Ordner"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2885
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1672
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1678
 #, c-format
 msgid "Creating directory '%s'..."
 msgstr "Erstelle Ordner '%s'..."
@@ -1527,10 +1532,10 @@ msgstr "Datumsformat"
 msgid "Date/time format"
 msgstr "Datum/Zeit - Format"
 
-#: ../../locales/../src/interface/fileexistsdlg.cpp:68
-#: ../../locales/../src/interface/fileexistsdlg.cpp:92
-#: ../../locales/../src/interface/fileexistsdlg.cpp:124
-#: ../../locales/../src/interface/fileexistsdlg.cpp:148
+#: ../../locales/../src/interface/fileexistsdlg.cpp:74
+#: ../../locales/../src/interface/fileexistsdlg.cpp:98
+#: ../../locales/../src/interface/fileexistsdlg.cpp:130
+#: ../../locales/../src/interface/fileexistsdlg.cpp:154
 msgid "Date/time unknown"
 msgstr "Datum/Zeit unbekannt"
 
@@ -1903,7 +1908,7 @@ msgstr "Importfehler"
 #: ../../locales/../src/interface/filter.cpp:253
 #: ../../locales/../src/interface/import.cpp:111
 #: ../../locales/../src/interface/import.cpp:294
-#: ../../locales/../src/interface/Options.cpp:115
+#: ../../locales/../src/interface/Options.cpp:117
 #: ../../locales/../src/interface/QueueView.cpp:1676
 #: ../../locales/../src/interface/QueueView.cpp:1703
 #: ../../locales/../src/interface/sitemanager.cpp:262
@@ -2879,7 +2884,7 @@ msgstr "Neuer Ordner"
 msgid "New site"
 msgstr "Neuer Server"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:776
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:782
 msgid "No"
 msgstr "Nein"
 
@@ -2981,7 +2986,7 @@ msgstr ""
 "Auf den folgenden Seiten werden die Einstellungen für den Transfermodus und "
 "dessen Fehlerbehandlung definiert."
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:786
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:792
 msgid "Once"
 msgstr "Einmal"
 
@@ -3308,6 +3313,9 @@ msgid ""
 "Please note that preserving timestamps on uploads only works on FTP, FTPS "
 "and FTPES servers (but not SFTP) supporting the MFMT command."
 msgstr ""
+"Bitte beachten Sie, dass die Beibehaltung des Zeitstempels beim Hochladen "
+"nur bei FTP, FTPS und FTPES Servern (keine SFTP!) funktioniert, welche das "
+"MFMT-Kommando unterstützen."
 
 #: resources.h:162
 msgid ""
@@ -3397,7 +3405,7 @@ msgstr "Vordefinierte Verbindungen"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:668
 msgid "Preserving file timestamps"
-msgstr ""
+msgstr "Datei-Zeitstempel beibehalten"
 
 #: resources.h:169
 msgid "Preview"
@@ -3566,7 +3574,7 @@ msgid "Rename selected files and folders"
 msgstr "Ausgewählte Dateien und Ordner umbenennen"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3095
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2145
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2151
 #, c-format
 msgid "Renaming '%s' to '%s'"
 msgstr "'%s' wird in '%s' umbenannt"
@@ -3604,7 +3612,7 @@ msgstr ""
 "ein anderes Zeilenumbruchformat hat als der Client."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:962
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:847
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:853
 msgid "Retrieving directory listing..."
 msgstr "Empfange Dateilisten..."
 
@@ -3814,10 +3822,14 @@ msgid "Set &Priority"
 msgstr "&Priorität setzen"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3236
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2040
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2046
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
 msgstr "Berechtigungen für '%s' werden auf '%s' gesetzt"
+
+#: ../../locales/../src/engine/transfersocket.cpp:713
+msgid "SetSocketBufferSize called without socket"
+msgstr ""
 
 #: resources.h:122
 msgid "Settings"
@@ -3847,10 +3859,10 @@ msgstr "Größe"
 msgid "Size formatting"
 msgstr "Größenformatierung"
 
-#: ../../locales/../src/interface/fileexistsdlg.cpp:59
-#: ../../locales/../src/interface/fileexistsdlg.cpp:83
-#: ../../locales/../src/interface/fileexistsdlg.cpp:115
-#: ../../locales/../src/interface/fileexistsdlg.cpp:139
+#: ../../locales/../src/interface/fileexistsdlg.cpp:65
+#: ../../locales/../src/interface/fileexistsdlg.cpp:89
+#: ../../locales/../src/interface/fileexistsdlg.cpp:121
+#: ../../locales/../src/interface/fileexistsdlg.cpp:145
 msgid "Size unknown"
 msgstr "Dateigröße unbekannt"
 
@@ -3862,8 +3874,8 @@ msgstr "Überspr&ingen"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2529
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:206
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:246
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:670
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:743
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:676
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:749
 #, c-format
 msgid "Skipping download of %s"
 msgstr "Überspringe Download von %s"
@@ -3872,8 +3884,8 @@ msgstr "Überspringe Download von %s"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2533
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:210
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:250
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:674
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:747
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:680
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:753
 #, c-format
 msgid "Skipping upload of %s"
 msgstr "Überspringe Upload von %s"
@@ -3917,13 +3929,13 @@ msgid "Speed limits"
 msgstr "Geschwindigkeitsbegrenzungen"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1820
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1384
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1390
 #, c-format
 msgid "Starting download of %s"
 msgstr "Starte Download von %s"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1824
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1388
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1394
 #, c-format
 msgid "Starting upload of %s"
 msgstr "Starte Upload von %s"
@@ -4310,11 +4322,11 @@ msgstr "Behandle Dateien &ohne Endung als Ascii-Dateien"
 msgid "Treat the &following filetypes as Ascii files:"
 msgstr "&Folgende Dateitypen als Ascii-Dateien behandeln:"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:773
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:779
 msgid "Trust changed Hostkey: "
 msgstr "Verändertem Hostkey vertrauen:"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:771
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:777
 msgid "Trust new Hostkey: "
 msgstr "Neuem Hostkey vertrauen:"
 
@@ -4612,7 +4624,7 @@ msgstr "Falsche externe IP-Adresse"
 msgid "Wrong lineendings"
 msgstr "Falsche Zeilenenden"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:784
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:790
 msgid "Yes"
 msgstr "Ja"
 
@@ -4634,6 +4646,8 @@ msgstr ""
 #: ../../locales/../src/interface/import.cpp:28
 msgid "You cannot import settings from FileZilla's own settings directory."
 msgstr ""
+"Sie können keine Einstellungen von dem FileZilla-Verzeichnis importieren "
+"nach welchem die FileZilla-Einstellungen gespeichert werden sollen."
 
 #: ../../locales/../src/interface/asyncrequestqueue.cpp:226
 msgid "You did not enter a new name for the file. Overwrite the file instead?"
@@ -4678,10 +4692,10 @@ msgstr ""
 msgid "begins with"
 msgstr "beginnt mit"
 
-#: ../../locales/../src/interface/fileexistsdlg.cpp:57
-#: ../../locales/../src/interface/fileexistsdlg.cpp:81
-#: ../../locales/../src/interface/fileexistsdlg.cpp:113
-#: ../../locales/../src/interface/fileexistsdlg.cpp:137
+#: ../../locales/../src/interface/fileexistsdlg.cpp:63
+#: ../../locales/../src/interface/fileexistsdlg.cpp:87
+#: ../../locales/../src/interface/fileexistsdlg.cpp:119
+#: ../../locales/../src/interface/fileexistsdlg.cpp:143
 msgid "bytes"
 msgstr "Bytes"
 
@@ -4708,7 +4722,7 @@ msgstr "Datei"
 msgid "fz3temp-lockfile"
 msgstr "fz3temp-Sperrdatei"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1317
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1323
 msgid "fzsftp could not be started"
 msgstr "fzsftp konnte nicht gestartet werden"
 
