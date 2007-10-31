@@ -1,6 +1,9 @@
 #include "FileZilla.h"
 #include "fileexistsdlg.h"
 
+#include <wx/display.h>
+#include <wx/string.h>
+
 BEGIN_EVENT_TABLE(CFileExistsDlg, wxDialogEx)
 EVT_BUTTON(XRCID("wxID_OK"), CFileExistsDlg::OnOK)
 EVT_BUTTON(XRCID("wxID_CANCEL"), CFileExistsDlg::OnCancel)
@@ -37,11 +40,14 @@ void CFileExistsDlg::CreateControls()
 	m_pAction5 = wxDynamicCast(FindWindow(XRCID("ID_ACTION5")), wxRadioButton);
 
 	wxString localFile = m_pNotification->localFile;
-	localFile.Replace(_T("&"), _T("&&"));
 
 	wxString remoteFile = m_pNotification->remotePath.GetPath() + m_pNotification->remoteFile;
-	remoteFile.Replace(_T("&"), _T("&&"));
+    localFile = GetPathEllipsis(localFile, FindWindow(XRCID("ID_FILE1_NAME")));
+    remoteFile = GetPathEllipsis(remoteFile, FindWindow(XRCID("ID_FILE2_NAME")));
 
+	localFile.Replace(_T("&"), _T("&&"));
+	remoteFile.Replace(_T("&"), _T("&&"));
+	
 	if (m_pNotification->download)
 	{
 		wxStaticText *pStatText;
@@ -279,4 +285,62 @@ bool CFileExistsDlg::Always(bool &directionOnly, bool &queueOnly) const
 	directionOnly = m_directionOnly;
 	queueOnly = m_queueOnly;
 	return m_always;
+}
+
+wxString CFileExistsDlg::GetPathEllipsis(wxString path, wxWindow *window)
+{
+	int string_width; // width of the path string in pixels
+	int y;            // dummy variable
+	window->GetTextExtent(path, &string_width, &y);
+
+	wxDisplay display(wxDisplay::GetFromWindow(window));
+	wxRect rect = display.GetClientArea();
+	const int DESKTOP_WIDTH = rect.GetWidth(); // width of the desktop in pixels
+	const int maxWidth = DESKTOP_WIDTH * 0.75;
+
+	// If the path is already short enough, don't change it
+	if (string_width <= maxWidth || path.Length() < 20)
+		return path;
+
+	wxString fill = _T(" ");
+#if wxUSE_UNICODE
+	fill += 0x2026; //unicode ellipsis character
+	int fillLength = 3;
+#else
+	fill += _T("...");
+	int fillLength = 5;
+#endif
+	fill += _T(" ");
+
+	int fillWidth;
+	window->GetTextExtent(fill, &fillWidth, &y);
+
+	// Do initial split roughly in the middle of the string
+	int middle = path.Length() / 2;
+	wxString left = path.Left(middle);
+	wxString right = path.Mid(middle);
+
+	int leftWidth, rightWidth;
+	window->GetTextExtent(left, &leftWidth, &y);
+	window->GetTextExtent(right, &rightWidth, &y);
+
+	// continue removing two characters at a time around the fill until path string is small enough
+	while ((leftWidth + fillWidth + rightWidth) > maxWidth)
+	{
+		if (leftWidth > rightWidth && left.Len() > 10)
+		{
+			left.RemoveLast();
+			window->GetTextExtent(left, &leftWidth, &y);
+		}
+		else
+		{
+			if (right.Len() <= 10)
+				break;
+
+			right = right.Mid(1);
+			window->GetTextExtent(right, &rightWidth, &y);
+		}
+	}
+
+	return left + fill + right;
 }
