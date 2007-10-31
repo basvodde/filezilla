@@ -424,24 +424,23 @@ bool CServerPath::SetSafePath(wxString path)
 	if (len)
 	{
 		m_prefix = path.Left(len);
-		path = path.Mid(len);
+		path = path.Mid(len + 1);
 	}
 
 	while (path != _T(""))
 	{
 		pos = path.Find(' ');
-		if (pos < 1)
+		if (pos == -1)
 			return false;
+		if (!pos)
+		{
+			path = path.Mid(1);
+			continue;
+		}
 		
-		if (!path.Left(pos).ToULong(&len))
+		if (!path.Left(pos).ToULong(&len) || !len)
 			return false;
 		path = path.Mid(pos + 1);
-		if (path.Length() < len)
-			return false;
-
-		if (!len)
-			return false;
-
 		if (path.Length() < len)
 			return false;
 
