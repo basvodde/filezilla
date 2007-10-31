@@ -2684,6 +2684,8 @@ void CQueueView::ActionAfter(bool warned /*=false*/)
 			break;
 		}
 #endif
+		default:
+			break;
 
 	}
 	m_actionAfterState = ActionAfterState_Disabled; // Resetting the state.
