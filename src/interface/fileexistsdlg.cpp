@@ -324,7 +324,7 @@ wxString CFileExistsDlg::GetPathEllipsis(wxString path, wxWindow *window)
 	window->GetTextExtent(left, &leftWidth, &y);
 	window->GetTextExtent(right, &rightWidth, &y);
 
-	// continue removing two characters at a time around the fill until path string is small enough
+	// continue removing one character at a time around the fill until path string is small enough
 	while ((leftWidth + fillWidth + rightWidth) > maxWidth)
 	{
 		if (leftWidth > rightWidth && left.Len() > 10)
