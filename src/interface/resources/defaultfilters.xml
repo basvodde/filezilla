@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<!--
+  These filters are used by default if filter.xml doesn't exist in the user's
+  settings directory.
+-->
+
+<FileZilla3>
+    <Filters>
+        <Filter>
+            <Name>CVS and SVN directories</Name>
+            <ApplyToFiles>0</ApplyToFiles>
+            <ApplyToDirs>1</ApplyToDirs>
+            <MatchType>Any</MatchType>
+            <MatchCase>1</MatchCase>
+            <Conditions>
+                <Condition>
+                    <Type>0</Type>
+                    <Condition>1</Condition>
+                    <Value>CVS</Value>
+                </Condition>
+                <Condition>
+                    <Type>0</Type>
+                    <Condition>1</Condition>
+                    <Value>.svn</Value>
+                </Condition>
+            </Conditions>
+        </Filter>
+        <Filter>
+            <Name>Useless Explorer files</Name>
+            <ApplyToFiles>1</ApplyToFiles>
+            <ApplyToDirs>0</ApplyToDirs>
+            <MatchType>Any</MatchType>
+            <MatchCase>1</MatchCase>
+            <Conditions>
+                <Condition>
+                    <Type>0</Type>
+                    <Condition>1</Condition>
+                    <Value>Thumbs.db</Value>
+                </Condition>
+                <Condition>
+                    <Type>0</Type>
+                    <Condition>1</Condition>
+                    <Value>desktop.ini</Value>
+                </Condition>
+                <Condition>
+                    <Type>0</Type>
+                    <Condition>1</Condition>
+                    <Value>ehthumbs.db</Value>
+                </Condition>
+            </Conditions>
+        </Filter>
+        <Filter>
+            <Name>Temporary and backup files</Name>
+            <ApplyToFiles>1</ApplyToFiles>
+            <ApplyToDirs>0</ApplyToDirs>
+            <MatchType>Any</MatchType>
+            <MatchCase>1</MatchCase>
+            <Conditions>
+                <Condition>
+                    <Type>0</Type>
+                    <Condition>3</Condition>
+                    <Value>~</Value>
+                </Condition>
+                <Condition>
+                    <Type>0</Type>
+                    <Condition>3</Condition>
+                    <Value>.bak</Value>
+                </Condition>
+            </Conditions>
+        </Filter>
+        <Filter>
+            <Name>Configuration files</Name>
+            <ApplyToFiles>1</ApplyToFiles>
+            <ApplyToDirs>1</ApplyToDirs>
+            <MatchType>All</MatchType>
+            <MatchCase>0</MatchCase>
+            <Conditions>
+                <Condition>
+                    <Type>0</Type>
+                    <Condition>2</Condition>
+                    <Value>.</Value>
+                </Condition>
+            </Conditions>
+        </Filter>
+        <Filter>
+            <Name>Show only images</Name>
+            <ApplyToFiles>1</ApplyToFiles>
+            <ApplyToDirs>0</ApplyToDirs>
+            <MatchType>None</MatchType>
+            <MatchCase>0</MatchCase>
+            <Conditions>
+                <Condition>
+                    <Type>0</Type>
+                    <Condition>3</Condition>
+                    <Value>.png</Value>
+                </Condition>
+                <Condition>
+                    <Type>0</Type>
+                    <Condition>3</Condition>
+                    <Value>.gif</Value>
+                </Condition>
+                <Condition>
+                    <Type>0</Type>
+                    <Condition>3</Condition>
+                    <Value>.jpg</Value>
+                </Condition>
+                <Condition>
+                    <Type>0</Type>
+                    <Condition>3</Condition>
+                    <Value>.bmp</Value>
+                </Condition>
+            </Conditions>
+        </Filter>
+    </Filters>
+    <Sets Current="0">
+        <Set>
+            <Item>
+                <Local>0</Local>
+                <Remote>0</Remote>
+            </Item>
+            <Item>
+                <Local>0</Local>
+                <Remote>0</Remote>
+            </Item>
+            <Item>
+                <Local>0</Local>
+                <Remote>0</Remote>
+            </Item>
+            <Item>
+                <Local>0</Local>
+                <Remote>0</Remote>
+            </Item>
+            <Item>
+                <Local>0</Local>
+                <Remote>0</Remote>
+            </Item>
+        </Set>
+    </Sets>
+</FileZilla3>

@@ -246,6 +246,17 @@ void CFilterDialog::LoadFilters()
 	CInterProcessMutex mutex(MUTEX_FILTERS);
 
 	wxFileName file(wxGetApp().GetSettingsDir(), _T("filters.xml"));
+	if (!file.FileExists())
+	{
+		wxFileName defaults(wxGetApp().GetResourceDir(), _T("defaultfilters.xml"));
+		if (defaults.FileExists())
+		{
+			TiXmlElement* pDocument = GetXmlFile(defaults);
+			if (pDocument)
+				SaveXmlFile(file, pDocument);
+		}
+	}
+
 	TiXmlElement* pDocument = GetXmlFile(file);
 	if (!pDocument)
 	{
