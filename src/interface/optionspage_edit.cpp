@@ -83,6 +83,19 @@ bool UnquoteCommand(wxString& command, wxString& arguments)
 	return true;
 }
 
+bool ProgramExists(const wxString& editor)
+{
+	if (wxFileName::FileExists(editor))
+		return true;
+
+#ifdef __WXMAC__
+	if (editor.Right(4) == _T(".app") && wxFileName::DirExists(editor))
+		return true;
+#endif
+
+	return false;
+}
+
 bool COptionsPageEdit::Validate()
 {
 	bool failure = false;
@@ -101,7 +114,7 @@ bool COptionsPageEdit::Validate()
 		if (editor == _T(""))
 			return DisplayError(_T("ID_EDITOR"), _("Empty quoted string."));
 
-		if (!wxFileName::FileExists(editor))
+		if (!ProgramExists(editor))
 			return DisplayError(_T("ID_EDITOR"), _("Selected file does not exist."));
 	}
 
@@ -133,7 +146,7 @@ bool COptionsPageEdit::Validate()
 		if (command == _T(""))
 			return DisplayError(_T("ID_ASSOCIATIONS"), _("Empty command."));
 
-		if (!wxFileName::FileExists(command))
+		if (!ProgramExists(command))
 		{
 			wxString error = _("Associated program not found:");
 			error += '\n';
@@ -150,6 +163,8 @@ void COptionsPageEdit::OnBrowseEditor(wxCommandEvent& event)
 	wxFileDialog dlg(this, _("Select default editor"), _T(""), _T(""),
 #ifdef __WXMSW__
 		_T("Executable file (*.exe)|*.exe"),
+#elif __WXMAC__
+		_T("Applications (*.app)|*.app"),
 #else
 		_T("*.*"),
 #endif
@@ -162,7 +177,7 @@ void COptionsPageEdit::OnBrowseEditor(wxCommandEvent& event)
 	if (editor == _T(""))
 		return;
 
-	if (!wxFileName::FileExists(editor))
+	if (!ProgramExists(editor))
 	{
 		XRCCTRL(*this, "ID_EDITOR", wxWindow)->SetFocus();
 		wxMessageBox(_("Selected editor does not exist"), _("File not found"), wxICON_EXCLAMATION, this);

@@ -7,6 +7,7 @@
 
 // Defined in optionspage_edit.cpp
 bool UnquoteCommand(wxString& command, wxString& arguments);
+bool ProgramExists(const wxString& editor);
 
 class CChangedFileDialog : public wxDialogEx
 {
@@ -543,7 +544,7 @@ wxString CEditHandler::GetOpenCommand(const wxString& file)
 	if (!UnquoteCommand(editor, args))
 		return _T("");
 
-	if (!wxFileName::FileExists(editor))
+	if (!ProgramExists(editor))
 		return _T("");
 
 	return command + _T(" \"") + m_localDir + file + _T("\"");
@@ -605,7 +606,7 @@ wxString CEditHandler::GetCustomOpenCommand(const wxString& file)
 		if (command == _T(""))
 			return _T("");
 
-		if (!wxFileName::FileExists(command))
+		if (!ProgramExists(command))
 			return _T("");
 
 		return command + _T(" \"") + fn.GetFullPath() + _T("\"");
