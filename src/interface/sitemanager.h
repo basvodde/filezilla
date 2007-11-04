@@ -90,14 +90,6 @@ protected:
 
 	// Initialized by GetSitesMenu
 	static std::map<int, CSiteManagerItemData*> m_idMap;
-
-#ifdef __WXGTK__
-	// wxSpinCtrl::SetValue(x); wxASSERT(wxSpinControl::GetValue() == x) failes on GTK
-	bool m_timezoneOffsetHoursChanged;
-	bool m_timezoneOffsetMinutesChanged;
-	bool m_limitConnectionsChanged;
-	void OnTimezoneOffsetChanged(wxSpinEvent& event);
-#endif
 };
 
 #endif //__SITEMANAGER_H__

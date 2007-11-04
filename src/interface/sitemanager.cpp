@@ -31,19 +31,11 @@ EVT_RADIOBUTTON(XRCID("ID_CHARSET_UTF8"), CSiteManager::OnCharsetChange)
 EVT_RADIOBUTTON(XRCID("ID_CHARSET_CUSTOM"), CSiteManager::OnCharsetChange)
 EVT_CHOICE(XRCID("ID_PROTOCOL"), CSiteManager::OnProtocolSelChanged)
 EVT_BUTTON(XRCID("ID_COPY"), CSiteManager::OnCopySite)
-#ifdef __WXGTK__
-EVT_SPINCTRL(-1, CSiteManager::OnTimezoneOffsetChanged)
-#endif
 END_EVENT_TABLE()
 
 CSiteManager::CSiteManager()
 {
 	m_pSiteManagerMutex = 0;
-#ifdef __WXGTK__
-	m_timezoneOffsetHoursChanged = false;
-	m_timezoneOffsetMinutesChanged = false;
-	m_limitConnectionsChanged = false;
-#endif
 }
 
 CSiteManager::~CSiteManager()
@@ -844,18 +836,8 @@ bool CSiteManager::UpdateServer()
 	data->m_remoteDir.SetType(data->m_server.GetType());
 	data->m_remoteDir.SetPath(XRCCTRL(*this, "ID_REMOTEDIR", wxTextCtrl)->GetValue());
 	int hours, minutes;
-#ifdef __WXGTK__
-	if (!m_timezoneOffsetHoursChanged)
-		hours = data->m_server.GetTimezoneOffset() / 60;
-	else
-#endif
-		hours = XRCCTRL(*this, "ID_TIMEZONE_HOURS", wxSpinCtrl)->GetValue();
-#ifdef __WXGTK__
-	if (!m_timezoneOffsetMinutesChanged)
-		minutes = data->m_server.GetTimezoneOffset() % 60;
-	else
-#endif
-		minutes = XRCCTRL(*this, "ID_TIMEZONE_MINUTES", wxSpinCtrl)->GetValue();
+	hours = XRCCTRL(*this, "ID_TIMEZONE_HOURS", wxSpinCtrl)->GetValue();
+	minutes = XRCCTRL(*this, "ID_TIMEZONE_MINUTES", wxSpinCtrl)->GetValue();
 
 	data->m_server.SetTimezoneOffset(hours * 60 + minutes);
 
@@ -868,10 +850,7 @@ bool CSiteManager::UpdateServer()
 
 	if (XRCCTRL(*this, "ID_LIMITMULTIPLE", wxCheckBox)->GetValue())
 	{
-#ifdef __WXGTK__
-		if (m_limitConnectionsChanged)
-#endif
-			data->m_server.MaximumMultipleConnections(XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->GetValue());
+		data->m_server.MaximumMultipleConnections(XRCCTRL(*this, "ID_MAXMULTIPLE", wxSpinCtrl)->GetValue());
 	}
 	else
 		data->m_server.MaximumMultipleConnections(0);
@@ -1090,11 +1069,6 @@ void CSiteManager::SetCtrlState()
 		XRCCTRL(*this, "ID_TIMEZONE_HOURS", wxWindow)->Enable(!predefined);
 		XRCCTRL(*this, "ID_TIMEZONE_MINUTES", wxSpinCtrl)->SetValue(data->m_server.GetTimezoneOffset() % 60);
 		XRCCTRL(*this, "ID_TIMEZONE_MINUTES", wxWindow)->Enable(!predefined);
-#ifdef __WXGTK__
-		m_timezoneOffsetHoursChanged = false;
-		m_timezoneOffsetMinutesChanged = false;
-		m_limitConnectionsChanged = false;
-#endif
 
 		enum PasvMode pasvMode = data->m_server.GetPasvMode();
 		if (pasvMode == MODE_ACTIVE)
@@ -1449,16 +1423,3 @@ CSiteManagerItemData* CSiteManager::GetSiteById(int id)
 
 	return pData;
 }
-
-#ifdef __WXGTK__
-void CSiteManager::OnTimezoneOffsetChanged(wxSpinEvent& event)
-{
-	if (event.GetId() == XRCID("ID_LIMITMULTIPLE"))
-		m_limitConnectionsChanged = true;
-	else if (event.GetId() == XRCID("ID_TIMEZONE_HOURS"))
-		m_timezoneOffsetHoursChanged = true;
-	else
-		m_timezoneOffsetMinutesChanged = true;
-	event.Skip();
-}
-#endif
