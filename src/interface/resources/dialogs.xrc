@@ -2272,23 +2272,22 @@
         <border>5</border>
       </object>
       <object class="sizeritem">
-        <object class="wxBoxSizer">
+        <object class="wxGridSizer">
+          <cols>2</cols>
           <object class="sizeritem">
             <object class="wxButton" name="wxID_OK">
               <label>OK</label>
               <default>1</default>
             </object>
-            <flag>wxGROW|wxALL</flag>
-            <border>5</border>
+            <flag>wxGROW</flag>
           </object>
           <object class="sizeritem">
             <object class="wxButton" name="wxID_CANCEL">
               <label>&amp;Cancel</label>
             </object>
-            <flag>wxALL|wxGROW</flag>
-            <border>5</border>
+            <flag>wxGROW</flag>
           </object>
-          <orient>wxHORIZONTAL</orient>
+          <hgap>5</hgap>
         </object>
         <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxALIGN_CENTRE_HORIZONTAL</flag>
         <border>5</border>

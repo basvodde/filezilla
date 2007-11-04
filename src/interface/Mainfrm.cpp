@@ -34,6 +34,7 @@
 #include <wx/display.h>
 #endif
 #include "edithandler.h"
+#include "inputdialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -556,7 +557,8 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		if (!m_pState->m_pEngine || !m_pState->m_pEngine->IsConnected() || !m_pState->m_pCommandQueue->Idle())
 			return;
 
-		wxTextEntryDialog dlg(this, _("Please enter raw FTP command.\nUsing raw ftp commands will clear the directory cache."), _("Enter custom command"));
+		CInputDialog dlg;
+		dlg.Create(this, _("Enter custom command"), _("Please enter raw FTP command.\nUsing raw ftp commands will clear the directory cache."));
 		if (dlg.ShowModal() != wxID_OK)
 			return;
 

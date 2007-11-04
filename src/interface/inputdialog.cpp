@@ -30,7 +30,7 @@ bool CInputDialog::Create(wxWindow* parent, const wxString& title, wxString text
 	if (!pText)
 		return false;
 
-	WrapText(pText, text, 250);
+	WrapRecursive(this, 2.0);
 	pText->SetLabel(text);
 
 	GetSizer()->Fit(this);
