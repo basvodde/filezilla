@@ -410,7 +410,16 @@ bool CFileZillaApp::LoadResourceFiles()
 
 bool CFileZillaApp::InitDefaultsDir()
 {
-	m_defaultsDir = GetDataDir(_T("/fzdefaults.xml"));
+#ifdef __WXGTK__
+	wxFileName fn = wxFileName(wxGetHomeDir(), _T("fzdefaults.xml"));
+	fn.AppendDir(_T(".filezilla"));
+	if (fn.FileExists())
+		m_defaultsDir = fn.GetPath();
+	else if (wxFileName::FileExists(_T("/etc/filezilla/fzdefaults.xml")))
+		m_defaultsDir = _T("/etc/filezilla");
+	else
+#endif
+		m_defaultsDir = GetDataDir(_T("/fzdefaults.xml"));
 
 	return m_defaultsDir != _T("");
 }
