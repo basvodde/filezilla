@@ -1564,6 +1564,24 @@ bool CDirectoryListingParser::ParseAsEplf(CLine *pLine, CDirentry &entry)
 	return true;
 }
 
+wxString Unescape(const wxString& str, wxChar escape)
+{
+	wxString res;
+	for (unsigned int i = 0; i < str.Len(); i++)
+	{
+		wxChar c = str[i];
+		if (c == escape)
+		{
+			c = str[++i];
+			if (!c)
+				break;
+		}
+		res += c;
+	}
+
+	return res;
+}
+
 bool CDirectoryListingParser::ParseAsVms(CLine *pLine, CDirentry &entry)
 {
 	CToken token;
@@ -1586,6 +1604,9 @@ bool CDirectoryListingParser::ParseAsVms(CLine *pLine, CDirentry &entry)
 		entry.dir = false;
 		entry.name = token.GetString();
 	}
+
+	// Some VMS servers escape special characters like additional dots with ^
+	entry.name = Unescape(entry.name, '^');
 
 	if (!pLine->GetToken(++index, token))
 		return false;
