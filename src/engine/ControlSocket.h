@@ -135,7 +135,7 @@ public:
 	wxString ConvToLocal(const char* buffer);
 	wxChar* ConvToLocalBuffer(const char* buffer);
 	wxChar* ConvToLocalBuffer(const char* buffer, wxMBConv& conv);
-	wxCharBuffer ConvToServer(const wxString& str);
+	wxCharBuffer ConvToServer(const wxString& str, bool force_utf8 = false);
 
 	// ---
 	// The following two functions control the timeout behaviour:

@@ -344,6 +344,19 @@ int CSftpControlSocket::Connect(const CServer &server)
 	LogMessage(Status, _("Connecting to %s:%d..."), server.GetHost().c_str(), server.GetPort());
 	SetWait(true);
 
+	delete m_pCSConv;
+	if (server.GetEncodingType() == ENCODING_CUSTOM)
+	{
+		m_pCSConv = new wxCSConv(server.GetCustomEncoding());
+		m_useUTF8 = false;
+	}
+	else
+	{
+		m_pCSConv = 0;
+		m_useUTF8 = true;
+	}
+
+
 	if (m_pCurrentServer)
 		delete m_pCurrentServer;
 	m_pCurrentServer = new CServer(server);
@@ -602,9 +615,10 @@ bool CSftpControlSocket::Send(wxString cmd, const wxString& show /*=_T("")*/)
 	return AddToStream(cmd);
 }
 
-bool CSftpControlSocket::AddToStream(const wxString& cmd)
+bool CSftpControlSocket::AddToStream(const wxString& cmd, bool force_utf8 /*=false*/)
 {
-	const wxCharBuffer str = ConvToServer(cmd);
+	const wxCharBuffer str = ConvToServer(cmd, force_utf8);
+	
 	if (!m_pProcess)
 		return false;
 
@@ -1568,24 +1582,42 @@ int CSftpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 		InitTransferStatus(pData->remoteFileSize, pData->resume ? pData->localFileSize : 0, false);
 		cmd += _T("get ");
 		cmd += QuoteFilename(pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath)) + _T(" ");
-		cmd += QuoteFilename(pData->localFile);
+
+		wxString localFile = QuoteFilename(pData->localFile);
+		wxString logstr = cmd;
+		logstr += localFile;
+		LogMessageRaw(Command, logstr);
+
+		if (!AddToStream(cmd) || !AddToStream(localFile + _T("\n"), true))
+		{
+			ResetOperation(FZ_REPLY_ERROR);
+			return FZ_REPLY_ERROR;
+		}
 	}
 	else
 	{
 		InitTransferStatus(pData->localFileSize, pData->resume ? pData->remoteFileSize : 0, false);
 		cmd += _T("put ");
-		cmd += QuoteFilename(pData->localFile) + _T(" ");
-		cmd += QuoteFilename(pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath));
+
+		wxString logstr = cmd;
+		wxString localFile = QuoteFilename(pData->localFile) + _T(" ");
+		wxString remoteFile = QuoteFilename(pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath));
+		
+		logstr += localFile;
+		logstr += remoteFile;
+		LogMessageRaw(Command, logstr);
+
+		if (!AddToStream(cmd) || !AddToStream(localFile, true) ||
+			!AddToStream(remoteFile + _T("\n")))
+		{
+			ResetOperation(FZ_REPLY_ERROR);
+			return FZ_REPLY_ERROR;
+		}
 	}
 	SetTransferStatusStartTime();
 
 	pData->transferInitiated = true;
-	if (!Send(cmd))
-	{
-		ResetOperation(FZ_REPLY_ERROR);
-		return FZ_REPLY_ERROR;
-	}
-
+	
 	return FZ_REPLY_WOULDBLOCK;
 }
 

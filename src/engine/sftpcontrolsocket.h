@@ -101,7 +101,7 @@ protected:
 	int RenameSend(int prevResult = FZ_REPLY_OK);
 
 	bool Send(wxString cmd, const wxString& show = _T(""));
-	bool AddToStream(const wxString& cmd);
+	bool AddToStream(const wxString& cmd, bool force_utf8 = false);
 
 	virtual void OnRateAvailable(enum CRateLimiter::rate_direction direction);
 	void OnQuotaRequest(enum CRateLimiter::rate_direction direction);

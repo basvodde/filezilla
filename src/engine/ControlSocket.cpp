@@ -545,9 +545,9 @@ wxChar* CControlSocket::ConvToLocalBuffer(const char* buffer)
 	return res;
 }
 
-wxCharBuffer CControlSocket::ConvToServer(const wxString& str)
+wxCharBuffer CControlSocket::ConvToServer(const wxString& str, bool force_utf8 /*=false*/)
 {
-	if (m_useUTF8)
+	if (m_useUTF8 || force_utf8)
 	{
 #if wxUSE_UNICODE
 		wxCharBuffer buffer = wxConvUTF8.cWX2MB(str);
@@ -558,7 +558,7 @@ wxCharBuffer CControlSocket::ConvToServer(const wxString& str)
 			 buffer = wxConvUTF8.cWC2MB(unicode);
 #endif
 
-		if (buffer)
+		if (buffer || force_utf8)
 			return buffer;
 	}
 
