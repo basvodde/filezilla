@@ -79,7 +79,7 @@ printerror_notfound()
     printf "has a suffix with the version number, for example \033[1m$PACKAGEMA;E-$VERSION\033[0m.\n"
     printf "If that is the case, create a symlink to \033[1m$PACKAGENAME\033[0m.\n"
   else
-    printf "\033[1;31mfound $WRONGVERSION, not ok !\033[0m\n"
+    printf "\033[1;31mfound $WRONGVERSION, not ok!\033[0m\n"
     echo "You must have $PACKAGENAME $VERSION or greater to generate the configure script."
     printf "If \033[1m$PACKAGENAME\033[0m is a symlink, make sure it points to the correct version.\n"
     printf "Please update your installation or get a recent source tarball from \033[1mhttp://filezilla-project.org/nightly.php\033[0m\n"
