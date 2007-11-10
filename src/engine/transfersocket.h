@@ -55,8 +55,9 @@ protected:
 
 	// Create a socket server
 	wxSocketServer* CreateSocketServer();
+	wxSocketServer* CreateSocketServer(const wxIPV4address& addr);
 
-	void SetSocketBufferSizes();
+	void SetSocketBufferSizes(wxSocketBase* pSocket);
 
 	DECLARE_EVENT_TABLE();
 

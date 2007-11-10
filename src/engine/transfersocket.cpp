@@ -433,6 +433,8 @@ bool CTransferSocket::SetupPassiveTransfer(wxString host, int port)
 		return false;
 	}
 
+	SetSocketBufferSizes(pSocketClient);
+
 	m_pSocket = pSocketClient;
 
 	if (res)
@@ -486,6 +488,21 @@ void CTransferSocket::TransferEnd(enum TransferEndReason reason)
 	m_pEngine->SendEvent(engineTransferEnd);
 }
 
+wxSocketServer* CTransferSocket::CreateSocketServer(const wxIPV4address& addr)
+{
+	wxSocketServer* pServer = new wxSocketServer(addr, wxSOCKET_NOWAIT | wxSOCKET_REUSEADDR);
+	if (!pServer->Ok())
+	{
+		delete pServer;
+		pServer = 0;
+		return 0;
+	}
+
+	SetSocketBufferSizes(pServer);
+
+	return pServer;
+}
+
 wxSocketServer* CTransferSocket::CreateSocketServer()
 {
 	wxIPV4address addr, controladdr;
@@ -495,14 +512,9 @@ wxSocketServer* CTransferSocket::CreateSocketServer()
 	{
 		// Ask the systen for a port
 		addr.Service(0);
-		wxSocketServer* pServer = new wxSocketServer(addr, wxSOCKET_NOWAIT | wxSOCKET_REUSEADDR);
-		if (!pServer->Ok())
-		{
-			delete pServer;
-			pServer = 0;
-			return 0;
-		}
-		return pServer;
+		wxSocketServer* pServer = CreateSocketServer(addr);
+		if (pServer)
+			return pServer;
 	}
 
 	// Try out all ports in the port range.
@@ -519,6 +531,8 @@ wxSocketServer* CTransferSocket::CreateSocketServer()
 
 	int low = m_pEngine->GetOptions()->GetOptionVal(OPTION_LIMITPORTS_LOW);
 	int high = m_pEngine->GetOptions()->GetOptionVal(OPTION_LIMITPORTS_HIGH);
+	if (low > high)
+		low = high;
 
 	if (start < low || start > high)
 	{
@@ -526,37 +540,20 @@ wxSocketServer* CTransferSocket::CreateSocketServer()
 		start = rand() * (high - low) / (RAND_MAX + 1) + low;
 	}
 
-	for (int i = start; i <= high; i++)
+	wxSocketServer* pServer = 0;
+
+	int count = high - low + 1;
+	while (count--)
 	{
-		addr.Service(i);
-		wxSocketServer* pServer = new wxSocketServer(addr, wxSOCKET_NOWAIT | wxSOCKET_REUSEADDR);
-		if (pServer->Ok())
-		{
-			start = i + 1;
-			if (start > high)
-				start = low;
-			return pServer;
-		}
-
-		delete pServer;
+		addr.Service(start++);
+		pServer = CreateSocketServer(addr);
+		if (pServer)
+			break;
 	}
+	if (start > high)
+		start = low;
 
-	for (int i = low; i < start; i++)
-	{
-		addr.Service(i);
-		wxSocketServer* pServer = new wxSocketServer(addr, wxSOCKET_NOWAIT | wxSOCKET_REUSEADDR);
-		if (pServer->Ok())
-		{
-			start = i + 1;
-			if (start > high)
-				start = low;
-			return pServer;
-		}
-
-		delete pServer;
-	}
-
-	return 0;
+	return pServer;
 }
 
 bool CTransferSocket::CheckGetNextWriteBuffer()
@@ -703,20 +700,16 @@ bool CTransferSocket::InitBackend()
 	else
 		m_pBackend = new CSocketBackend(this, m_pSocket);
 
-	SetSocketBufferSizes();
-
 	return true;
 }
 
-void CTransferSocket::SetSocketBufferSizes()
+void CTransferSocket::SetSocketBufferSizes(wxSocketBase* pSocket)
 {
-	wxCHECK_RET(m_pSocket, _("SetSocketBufferSize called without socket"));
-	if (!m_pSocket)
-		return;
-
+	wxCHECK_RET(pSocket, _("SetSocketBufferSize called without socket"));
+	
 	int value = m_pEngine->GetOptions()->GetOptionVal(OPTION_SOCKET_BUFFERSIZE_SEND);
-	m_pSocket->SetOption(SOL_SOCKET, SO_SNDBUF, &value, sizeof(value));
+	pSocket->SetOption(SOL_SOCKET, SO_SNDBUF, &value, sizeof(value));
 
 	value = m_pEngine->GetOptions()->GetOptionVal(OPTION_SOCKET_BUFFERSIZE_RECV);
-	m_pSocket->SetOption(SOL_SOCKET, SO_RCVBUF, &value, sizeof(value));
+	pSocket->SetOption(SOL_SOCKET, SO_RCVBUF, &value, sizeof(value));
 }
