@@ -50,7 +50,8 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Speedlimit burst tolerance", number, _T("0") },
 	{ "View hidden files", number, _T("0") },
 	{ "Preserve timestamps", number, _T("0") },
-	{ "Socket recv buffer size", number, _T("-1") },
+	{ "Socket recv buffer size", number, _T("131072") }, // Make it large enough by default 
+														 // to enable a large TCP window scale
 	{ "Socket send buffer size", number, _T("131072") },
 
 	// Interface settings
@@ -97,7 +98,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Default editor", string, _T("") },
 	{ "Always use default editor", number, _T("0") },
 	{ "Inherit system associations", number, _T("1") },
-	{ "Custom file associations", string, _T("") }
+	{ "Custom file associations", string, _T("") },
 };
 
 COptions::COptions()
