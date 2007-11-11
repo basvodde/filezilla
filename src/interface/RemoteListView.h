@@ -63,6 +63,10 @@ protected:
 	bool UpdateDirectoryListing(const CDirectoryListing *pDirectoryListing);
 	void UpdateDirectoryListing_Removed(const CDirectoryListing *pDirectoryListing);
 
+#ifdef __WXDEBUG__
+	void ValidateIndexMapping();
+#endif
+
 	const CDirectoryListing *m_pDirectoryListing;
 	std::vector<t_fileData> m_fileData;
 	std::vector<unsigned int> m_indexMapping;

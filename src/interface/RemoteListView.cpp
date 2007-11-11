@@ -495,18 +495,33 @@ bool CRemoteListView::IsItemValid(unsigned int item) const
 
 void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pDirectoryListing)
 {
+	const unsigned int removed = m_pDirectoryListing->GetCount() - pDirectoryListing->GetCount();
+	wxASSERT(removed);
+
 	std::list<unsigned int> removedItems;
 
+	// Get indexes of the removed items in the listing
 	unsigned int j = 0;
-	for (unsigned int i = 0; i < pDirectoryListing->GetCount(); i++, j++)
+	unsigned int i = 0;
+	while (i < pDirectoryListing->GetCount() && j < m_pDirectoryListing->GetCount())
 	{
-		if ((*pDirectoryListing)[i].name == (*m_pDirectoryListing)[j].name)
+		const wxString& oldName = (*m_pDirectoryListing)[j].name;
+		const wxString& newName = (*pDirectoryListing)[i].name;
+		if (oldName == newName)
+		{
+			i++;
+			j++;
 			continue;
+		}
+
 		removedItems.push_back(j++);
 	}
 	for (; j < m_pDirectoryListing->GetCount(); j++)
 		removedItems.push_back(j);
 
+	wxASSERT(removedItems.size() == removed);
+
+	// Remove corresponding file data
 	for (std::list<unsigned int>::reverse_iterator iter = removedItems.rbegin(); iter != removedItems.rend(); iter++)
 	{
 		m_fileData.erase(m_fileData.begin() + *iter);
@@ -515,8 +530,7 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 	std::list<int> selectedItems;
 
 	// Number of items left to remove
-	unsigned int toRemove = m_pDirectoryListing->GetCount() - pDirectoryListing->GetCount();
-	wxASSERT(toRemove == removedItems.size());
+	unsigned int toRemove = removed;
 
 	std::list<int> removedIndexes;
 
@@ -525,7 +539,7 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 	{
 		bool removed = false;
 
-		// j is the offset to index has to be adjusted
+		// j is the offset the index has to be adjusted
 		int j = 0;
 		for (std::list<unsigned int>::const_iterator iter = removedItems.begin(); iter != removedItems.end(); iter++, j++)
 		{
@@ -567,11 +581,14 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 			SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 	}
 
-	wxASSERT(removedIndexes.size() == removedItems.size());
-	for (std::list<int>::reverse_iterator iter = removedIndexes.rbegin(); iter != removedIndexes.rend(); iter++)
+	wxASSERT(!toRemove);
+	wxASSERT(removedIndexes.size() == removed);
+	for (std::list<int>::iterator iter = removedIndexes.begin(); iter != removedIndexes.end(); iter++)
 	{
 		m_indexMapping.erase(m_indexMapping.begin() + *iter);
 	}
+
+	wxASSERT(m_indexMapping.size() == pDirectoryListing->GetCount() + 1);
 
 	m_pDirectoryListing = pDirectoryListing;
 
@@ -584,7 +601,7 @@ bool CRemoteListView::UpdateDirectoryListing(const CDirectoryListing *pDirectory
 	{
 		if (m_sortColumn && m_sortColumn != 2)
 		{
-			// If now sorted by file or type, changing file attributes can influence
+			// If not sorted by file or type, changing file attributes can influence
 			// sort order.
 			return false;
 		}
@@ -1958,6 +1975,7 @@ void CRemoteListView::ApplyCurrentFilter()
 		if (!filter.FilenameFiltered(entry.name, entry.dir, entry.size, false))
 			m_indexMapping.push_back(i);
 	}
+
 	SetItemCount(m_indexMapping.size());
 
 	SortList();
@@ -2458,3 +2476,40 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 	wxFileName fn = wxFileName(localDir, entry.name);
 	m_pQueue->QueueFile(false, true, fn.GetFullPath(), entry.name, m_pDirectoryListing->path, *m_pState->GetServer(), entry.size, true);
 }
+
+#ifdef __WXDEBUG__
+void CRemoteListView::ValidateIndexMapping()
+{
+	// This ensures that the index mapping is a bijection.
+    // Beware: This assumes NO filter is selected!
+
+	char* buffer = new char[m_pDirectoryListing->GetCount() + 1];
+	memset(buffer, 0, m_pDirectoryListing->GetCount() + 1);
+
+	// Injectivity
+	for (unsigned int i = 0; i < m_indexMapping.size(); i++)
+	{
+		int item = m_indexMapping[i];
+		if (item > m_pDirectoryListing->GetCount())
+		{
+			int *x = 0;
+			*x = 0;
+		}
+		if (buffer[item])
+		{
+			int *x = 0;
+			*x = 0;
+		}
+
+		buffer[item] = 1;
+	}
+
+	// Surjectivity
+	for (unsigned int i = 0; i < m_pDirectoryListing->GetCount() + 1; i++)
+	{
+		wxASSERT(buffer[i] != 0);
+	}
+
+	delete [] buffer;
+}
+#endif
