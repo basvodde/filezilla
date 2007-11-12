@@ -1476,9 +1476,31 @@ bool CDirectoryListingParser::ParseTime(CToken &token, CDirentry &entry)
 	if (hour < 0 || hour > 23)
 		return false;
 
-	wxLongLong minute = token.GetNumber(pos + 1, -1);
+	// See if we got seconds
+	int pos2 = token.Find(':', pos + 1);
+	int len;
+	if (pos2 == -1)
+		len = -1;
+	else
+		len = pos2 - pos - 1;
+
+	if (!len)
+		return false;
+
+	wxLongLong minute = token.GetNumber(pos + 1, len);
 	if (minute < 0 || minute > 59)
 		return false;
+
+	wxLongLong seconds;
+	if (pos2 == -1)
+		seconds = 0;
+	else
+	{
+		// Parse seconds
+		seconds = token.GetNumber(pos2 + 1, -1);
+		if (seconds < 0 || seconds > 59)
+			return false;
+	}
 
 	// Convert to 24h format
 	if (!token.IsRightNumeric())
@@ -1493,7 +1515,7 @@ bool CDirectoryListingParser::ParseTime(CToken &token, CDirentry &entry)
 				hour = 0;
 	}
 
-	wxTimeSpan span(hour.GetLo(), minute.GetLo());
+	wxTimeSpan span(hour.GetLo(), minute.GetLo(), seconds.GetLo());
 	entry.time.Add(span);
 	entry.hasTime = true;
 
@@ -2749,9 +2771,6 @@ bool CDirectoryListingParser::ParseAsZVM(CLine* pLine, CDirentry &entry)
 
 	// Owner
 	if (!pLine->GetToken(++index, token))
-		return false;
-
-	if (!token.IsNumeric())
 		return false;
 
 	entry.ownerGroup = token.GetString();
