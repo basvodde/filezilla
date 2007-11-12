@@ -19,6 +19,8 @@ bool COptionsPageConnection::LoadPage()
 	SetTextFromOption(XRCID("ID_RETRIES"), OPTION_RECONNECTCOUNT, failure);
 	SetTextFromOption(XRCID("ID_RETRYDELAY"), OPTION_RECONNECTDELAY, failure);
 
+	SetCheck(XRCID("ID_USEKEEPALIVE"), m_pOptions->GetOptionVal(OPTION_FTP_SENDKEEPALIVE) != 0, failure);
+
 	return !failure;
 }
 
@@ -30,6 +32,8 @@ bool COptionsPageConnection::SavePage()
 	long tmp;
 	GetText(XRCID("ID_RETRIES")).ToLong(&tmp); m_pOptions->SetOption(OPTION_RECONNECTCOUNT, tmp);
 	GetText(XRCID("ID_RETRYDELAY")).ToLong(&tmp); m_pOptions->SetOption(OPTION_RECONNECTDELAY, tmp);
+
+	m_pOptions->SetOption(OPTION_FTP_SENDKEEPALIVE, GetCheck(XRCID("ID_USEKEEPALIVE")) ? 1 : 0);
 
 	return true;
 }

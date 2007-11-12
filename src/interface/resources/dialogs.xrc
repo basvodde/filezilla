@@ -1684,6 +1684,32 @@
             <border>4</border>
           </object>
         </object>
+        <flag>wxGROW</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>FTP Keep-alive</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxGridSizer">
+              <cols>1</cols>
+              <vgap>5</vgap>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_USEKEEPALIVE">
+                  <label>Send FTP Keep-alive commands</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="">
+                  <label>A proper server does not require this. Contact the server administrator if you need this.</label>
+                </object>
+                <flag>wxALIGN_TOP</flag>
+              </object>
+            </object>
+            <flag>wxALL</flag>
+            <border>4</border>
+          </object>
+        </object>
         <option>1</option>
         <flag>wxGROW</flag>
       </object>

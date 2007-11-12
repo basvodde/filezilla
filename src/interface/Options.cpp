@@ -53,6 +53,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Socket recv buffer size", number, _T("131072") }, // Make it large enough by default 
 														 // to enable a large TCP window scale
 	{ "Socket send buffer size", number, _T("131072") },
+	{ "FTP Keep-alive commands", number, _T("0") },
 
 	// Interface settings
 	{ "Number of Transfers", number, _T("2") },
