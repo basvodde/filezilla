@@ -103,6 +103,8 @@ protected:
 	// Checks if listing2 is a subset of listing1. Compares only filenames.
 	bool CheckInclusion(const CDirectoryListing& listing1, const CDirectoryListing& listing2);
 
+	void StartKeepaliveTimer();
+
 	wxString m_Response;
 	wxString m_MultilineResponseCode;
 	std::list<wxString> m_MultilineResponseLines;
@@ -128,8 +130,15 @@ protected:
 
 	int m_pendingTransferEndEvents;
 
+	// Used by keepalive code so that we're not using keep alive
+	// till the end of time. Stop after a couple of minutes.
+	wxDateTime m_lastCommandCompletionTime;
+
+	wxTimer m_idleTimer;
+
 	DECLARE_EVENT_TABLE();
 	void OnExternalIPAddress(fzExternalIPResolveEvent& event);
+	void OnIdleTimer(wxTimerEvent& event);
 };
 
 class CIOThread;

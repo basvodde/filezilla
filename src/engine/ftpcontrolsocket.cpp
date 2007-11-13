@@ -70,6 +70,7 @@ extern "C" int WINAPI WSAIoctl(SOCKET, DWORD, LPVOID, DWORD, LPVOID, DWORD, LPDW
 
 BEGIN_EVENT_TABLE(CFtpControlSocket, CRealControlSocket)
 EVT_FZ_EXTERNALIPRESOLVE(wxID_ANY, CFtpControlSocket::OnExternalIPAddress)
+EVT_TIMER(wxID_ANY, CFtpControlSocket::OnIdleTimer)
 END_EVENT_TABLE();
 
 CRawTransferOpData::CRawTransferOpData()
@@ -208,6 +209,7 @@ CFtpControlSocket::CFtpControlSocket(CFileZillaEnginePrivate *pEngine) : CRealCo
 	m_pTlsSocket = 0;
 	m_protectDataChannel = false;
 	m_lastTypeBinary = -1;
+	m_idleTimer.SetOwner(this);
 }
 
 CFtpControlSocket::~CFtpControlSocket()
@@ -443,9 +445,13 @@ void CFtpControlSocket::ParseResponse()
 
 	if (m_repliesToSkip)
 	{
-		LogMessage(Debug_Info, _T("Skipping reply after cancelled operation."));
+		LogMessage(Debug_Info, _T("Skipping reply after cancelled operation or keepalive command."));
 		if (m_Response[0] != '1')
 			m_repliesToSkip--;
+
+		if (!m_pCurOpData)
+			StartKeepaliveTimer();
+
 		return;
 	}
 
@@ -1443,6 +1449,10 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 				pData->pOldData->transferEndReason = failure;
 		}
 	}
+
+	m_lastCommandCompletionTime = wxDateTime::Now();
+	if (m_pCurOpData && !(nErrorCode & FZ_REPLY_DISCONNECTED))
+		StartKeepaliveTimer();
 
 	return CControlSocket::ResetOperation(nErrorCode);
 }
@@ -3869,4 +3879,54 @@ bool CFtpControlSocket::CheckInclusion(const CDirectoryListing& listing1, const 
 	}
 
 	return true;
+}
+
+void CFtpControlSocket::OnIdleTimer(wxTimerEvent& event)
+{
+	if (event.GetId() != m_idleTimer.GetId())
+		return;
+
+	if (m_pCurOpData)
+		return;
+
+	if (m_pendingReplies || m_repliesToSkip)
+		return;
+
+	LogMessage(Status, _("Sending keep-alive command"));
+	
+	wxString cmd;
+	int i = rand() * 3 / (RAND_MAX + 1);
+	if (!i)
+		cmd = _T("NOOP");
+	else if (i == 1)
+	{
+		if (m_lastTypeBinary)
+			cmd = _T("TYPE I");
+		else
+			cmd = _T("TYPE A");
+	}
+	else
+		cmd = _T("PWD");
+	
+	if (!Send(cmd))
+		return;
+	m_repliesToSkip++;
+}
+
+void CFtpControlSocket::StartKeepaliveTimer()
+{
+	if (!m_pEngine->GetOptions()->GetOptionVal(OPTION_FTP_SENDKEEPALIVE))
+		return;
+
+	if (m_repliesToSkip || m_pendingReplies)
+		return;
+
+	if (!m_lastCommandCompletionTime.IsValid())
+		return;
+	
+	wxTimeSpan span = wxDateTime::Now() - m_lastCommandCompletionTime;
+	if (span.GetSeconds() >= (60 * 30))
+		return;
+
+	m_idleTimer.Start(30000, true);
 }
