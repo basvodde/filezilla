@@ -723,7 +723,7 @@ void CDirectoryListingParserTest::InitEntries()
 	m_entries.push_back((t_entry){
 			"36-vms-dir.DIR;1  1 19-NOV-2001 21:41 [root,root] (RWE,RWE,RE,RE)",
 			{
-				_T("36-vms-dir;1"),
+				_T("36-vms-dir"),
 				1,
 				_T("RWE,RWE,RE,RE"),
 				_T("root,root"),
