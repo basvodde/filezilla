@@ -1852,6 +1852,8 @@ void CQueueView::SettingsChanged()
 	ext += extensions;
 	ext.Replace(_T("\\\\"), _T("\\"));
 	m_asciiFiles.push_back(ext);
+
+	TryStartNextTransfer();
 }
 
 bool CQueueView::ShouldUseBinaryMode(wxString filename)

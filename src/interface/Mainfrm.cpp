@@ -1629,6 +1629,8 @@ void CMainFrame::CheckChangedSettings()
 
 	m_pLocalListView->InitDateFormat();
 	m_pRemoteListView->InitDateFormat();
+
+	m_pQueueView->SettingsChanged();
 }
 
 void CMainFrame::ConnectNavigationHandler(wxEvtHandler* handler)
