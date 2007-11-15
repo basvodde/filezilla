@@ -44,6 +44,9 @@ public:
 	// always use absolute filenames including the full path
 	wxString FormatFilename(const wxString &filename, bool omitPath = false) const;
 
+	// Returns identity on all but VMS. On VMS it esscapes dots
+	wxString FormatSubdir(const wxString &subdir) const;
+
 	bool AddSegment(const wxString& segment);
 
 protected:

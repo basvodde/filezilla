@@ -1797,7 +1797,7 @@ int CFtpControlSocket::ChangeDirSend()
 		else if (pData->subDir == _T("..") && !pData->tried_cdup)
 			cmd = _T("CDUP");
 		else
-			cmd = _T("CWD ") + pData->subDir;
+			cmd = _T("CWD ") + pData->path.FormatSubdir(pData->subDir);
 		m_CurrentPath.Clear();
 		break;
 	}
@@ -2838,7 +2838,7 @@ int CFtpControlSocket::RemoveDirSend(int prevResult /*=FZ_REPLY_OK*/)
 
 	if (pData->omitPath)
 	{
-		if (!Send(_T("RMD ") + pData->subDir))
+		if (!Send(_T("RMD ") + pData->path.FormatSubdir(pData->subDir)))
 			return FZ_REPLY_ERROR;
 	}
 	else
@@ -3054,7 +3054,7 @@ int CFtpControlSocket::MkdirSend()
 		res = Send(_T("CWD ") + pData->currentPath.GetPath());
 		break;
 	case mkd_mkdsub:
-		res = Send(_T("MKD ") + pData->segments.front());
+		res = Send(_T("MKD ") + pData->currentPath.FormatSubdir(pData->segments.front()));
 		break;
 	case mkd_tryfull:
 		res = Send(_T("MKD ") + pData->path.GetPath());

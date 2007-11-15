@@ -117,19 +117,43 @@ bool CServerPath::SetPath(wxString &newPath, bool isFile)
 			m_bEmpty = true;
 			return false;
 		}
-		path.RemoveLast();
-		if (pos)
-			m_prefix = path.Left(pos);
-		path = path.Mid(pos + 1);
-		pos = path.Find(_T("."));
-		while (pos != -1)
+		else
 		{
-			m_Segments.push_back(path.Left(pos));
+			path.RemoveLast();
+			if (pos)
+				m_prefix = path.Left(pos);
 			path = path.Mid(pos + 1);
 			pos = path.Find(_T("."));
+			bool append = false;
+			while (pos != -1)
+			{
+				bool wasAppend = append;
+				wxString segment = path.Left(pos);
+				if (segment.Last() == '^')
+				{
+					append = true;
+					segment.RemoveLast();
+					segment += _T(".");
+				}
+				else
+					append = false;
+
+				if (wasAppend)
+					m_Segments.back() += segment;
+				else
+					m_Segments.push_back(segment);					
+
+				path = path.Mid(pos + 1);
+				pos = path.Find(_T("."));
+			}
+			if (path != _T(""))
+			{
+				if (append)
+					m_Segments.back() += path;
+				else
+					m_Segments.push_back(path);
+			}
 		}
-		if (path != _T(""))
-			m_Segments.push_back(path);
 		break;
 	case MVS:
 		{
@@ -287,7 +311,11 @@ wxString CServerPath::GetPath() const
 		{
 			path = m_prefix + _T("[");
 			for (tConstSegmentIter iter = m_Segments.begin(); iter != m_Segments.end(); iter++)
-				path += *iter + _T(".");
+			{
+				wxString segment = *iter;
+				segment.Replace(_T("."), _T("^."));
+				path += segment + _T(".");
+			}
 			path.RemoveLast();
 			path += _T("]");
 		}
@@ -583,14 +611,35 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 				m_Segments.clear();
 			}
 			int pos = dir.Find(_T("."));
+			bool append = false;
 			while (pos != -1)
 			{
-				m_Segments.push_back(dir.Left(pos));
+				bool wasAppend = append;
+				wxString segment = dir.Left(pos);
+				if (segment.Last() == '^')
+				{
+					append = true;
+					segment.RemoveLast();
+					segment += _T(".");
+				}
+				else
+					append = false;
+
+				if (wasAppend)
+					m_Segments.back() += segment;
+				else
+					m_Segments.push_back(segment);					
+
 				dir = dir.Mid(pos + 1);
 				pos = dir.Find(_T("."));
 			}
 			if (dir != _T(""))
-				m_Segments.push_back(dir);
+			{
+				if (append)
+					m_Segments.back() += dir;
+				else
+					m_Segments.push_back(dir);
+			}
 		}
 		break;
 	case DOS:
@@ -1003,4 +1052,15 @@ CServerPath CServerPath::GetCommonParent(const CServerPath& path) const
 	}
 
 	return parent;
+}
+
+wxString CServerPath::FormatSubdir(const wxString &subdir) const
+{
+	if (m_type != VMS)
+		return subdir;
+
+	wxString res = subdir;
+	res.Replace(_T("."), _T("^."));
+
+	return res;
 }
