@@ -36,6 +36,7 @@ protected:
 	void OnExternalIPAddress(fzExternalIPResolveEvent& event);
 	void OnRestart(wxCommandEvent& event);
 	void OnFinish(wxWizardEvent& event);
+	void OnTimer(wxTimerEvent& event);
 	
 	void OnReceive();
 	void ParseResponse(const char* line);
@@ -89,6 +90,8 @@ protected:
 	int m_data;
 
 	char* m_pSendBuffer;
+
+	wxTimer m_timer;
 };
 
 #endif //__NETCONFWIZARD_H__

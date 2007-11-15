@@ -12,6 +12,7 @@ EVT_SOCKET(wxID_ANY, CNetConfWizard::OnSocketEvent)
 EVT_FZ_EXTERNALIPRESOLVE(wxID_ANY, CNetConfWizard::OnExternalIPAddress)
 EVT_BUTTON(XRCID("ID_RESTART"), CNetConfWizard::OnRestart)
 EVT_WIZARD_FINISHED(wxID_ANY, CNetConfWizard::OnFinish)
+EVT_TIMER(wxID_ANY, CNetConfWizard::OnTimer)
 END_EVENT_TABLE()
 
 CNetConfWizard::CNetConfWizard(wxWindow* parent, COptions* pOptions)
@@ -22,6 +23,8 @@ CNetConfWizard::CNetConfWizard(wxWindow* parent, COptions* pOptions)
 	m_pSendBuffer = 0;
 	m_pSocketServer = 0;
 	m_pDataSocket = 0;
+
+	m_timer.SetOwner(this);
 
 	ResetTest();
 }
@@ -382,6 +385,9 @@ void CNetConfWizard::OnReceive()
 
 void CNetConfWizard::ParseResponse(const char* line)
 {
+	if (m_timer.IsRunning())
+		m_timer.Stop();
+
 	const int len = strlen(line);
 	wxString msg(line, wxConvLocal);
 	wxString str = _("Response:");
@@ -415,7 +421,7 @@ void CNetConfWizard::ParseResponse(const char* line)
 
 		if (line[1] == '0' && line[2] == '1')
 		{
-			PrintMessage(_("Communication tainted by router"), 1);
+			PrintMessage(_("Communication tainted by router or firewall"), 1);
 			m_testResult = tainted;
 			CloseSocket();
 			return;
@@ -430,7 +436,7 @@ void CNetConfWizard::ParseResponse(const char* line)
 		else if (line[1] == '1' && line[2] == '1')
 		{
 			PrintMessage(_("Wrong external IP address"), 1);
-			PrintMessage(_("Communication tainted by router"), 1);
+			PrintMessage(_("Communication tainted by router or firewall"), 1);
 			m_testResult = mismatchandtainted;
 			CloseSocket();
 			return;
@@ -444,24 +450,7 @@ void CNetConfWizard::ParseResponse(const char* line)
 		}
 		break;
 	case 4:
-		if (line[0] == '5' && line[1] == '0')
-		{
-			if (line[2] == '1' || line[2] == '2')
-			{
-				m_testResult = tainted;
-				PrintMessage(_("PORT command tainted by router."), 1);
-				CloseSocket();
-				return;
-			}
-		}
-		if (line[0] != '2' && line[0] != '3')
-		{
-			m_testResult = servererror;
-			PrintMessage(_("Server sent invalid reply."), 1);
-			CloseSocket();
-			return;
-		}
-		if (len < 4)
+		if (line[0] != '2')
 		{
 			m_testResult = servererror;
 			PrintMessage(_("Server sent invalid reply."), 1);
@@ -486,6 +475,23 @@ void CNetConfWizard::ParseResponse(const char* line)
 				m_data = m_data * 10 + *p - '0';
 		}
 		break;
+	case 5:
+		if (line[0] == '2')
+			break;
+
+
+		if (line[0] == '5' && line[1] == '0' && (line[2] == '1' || line[2] == '2'))
+		{
+			m_testResult = tainted;
+			PrintMessage(_("PORT command tainted by router or firewall."), 1);
+			CloseSocket();
+			return;
+		}
+
+		m_testResult = servererror;
+		PrintMessage(_("Server sent invalid reply."), 1);
+		CloseSocket();
+		return;
 	case 6:
 		if (line[0] != '2' && line[0] != '3')
 		{
@@ -555,7 +561,7 @@ void CNetConfWizard::CloseSocket()
 		case successful:
 			text[0] = _("Congratulations, your configuration seems to be working.");
 			text[1] = _("You should have no problems connecting to other servers, file transfers should work properly.");
-			text[2] = _("If you keep having problems with a specific server, the server itself or a remote router might be misconfigured. In this case try to toggle passive mode and contact the server administrator for help.");
+			text[2] = _("If you keep having problems with a specific server, the server itself or a remote router or firewall might be misconfigured. In this case try to toggle passive mode and contact the server administrator for help.");
 			text[3] = _("Please run this wizard again should you change your network environment or in case you suddenly encounter problems with servers that did work previously.");
 			text[4] = _("Click on Finish to save your configuration.");
 			break;
@@ -565,8 +571,8 @@ void CNetConfWizard::CloseSocket()
 			text[2] = _("Submit a bug report if this problem persists even with the latest version of FileZilla.");
 			break;
 		case tainted:
-			text[0] = _("Active mode FTP test failed. FileZilla knows the correct external IP address, but your router has misleadingly modified the sent address.");
-			text[1] = _("Please make sure your router is using the latest available firmware. Furthermore, your router has to be configured properly. You will have to use manual port forwarding. Don't run your router in the so called 'DMZ mode' or 'game mode'.");
+			text[0] = _("Active mode FTP test failed. FileZilla knows the correct external IP address, but your router or firewall has misleadingly modified the sent address.");
+			text[1] = _("Please update your firewall and make sure your router is using the latest available firmware. Furthermore, your router has to be configured properly. You will have to use manual port forwarding. Don't run your router in the so called 'DMZ mode' or 'game mode'. Things like protocol inspection or protocol specific 'fixups' have to be disabled");
 			text[2] = _("If this problem stays, please contact your router manufacturer.");
 			text[3] = _("Unless this problem gets fixed, active mode FTP will not work and passive mode has to be used.");
 			if (XRCCTRL(*this, "ID_ACTIVE", wxRadioButton)->GetValue())
@@ -637,6 +643,9 @@ void CNetConfWizard::CloseSocket()
 
 	delete m_pDataSocket;
 	m_pDataSocket = 0;
+
+	if (m_timer.IsRunning())
+		m_timer.Stop();
 }
 
 bool CNetConfWizard::Send(wxString cmd)
@@ -653,6 +662,8 @@ bool CNetConfWizard::Send(wxString cmd)
 	unsigned int len = strlen(buffer);
 	m_pSendBuffer = new char[len + 1];
 	memcpy(m_pSendBuffer, buffer, len + 1);
+
+	m_timer.Start(15000, true);
 	OnSend();
 
 	return m_socket != 0;
@@ -807,6 +818,9 @@ void CNetConfWizard::OnRestart(wxCommandEvent& event)
 
 void CNetConfWizard::ResetTest()
 {
+	if (m_timer.IsRunning())
+		m_timer.Stop();
+
 	m_state = 0;
 	m_connectSuccessful = false;
 
@@ -1038,4 +1052,13 @@ void CNetConfWizard::OnDataClose()
 		m_state++;
 		SendNextCommand();
 	}
+}
+
+void CNetConfWizard::OnTimer(wxTimerEvent& event)
+{
+	if (event.GetId() != m_timer.GetId())
+		return;
+
+	PrintMessage(_("Connection timed out."), 0);
+	CloseSocket();
 }
