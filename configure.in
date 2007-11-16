@@ -337,9 +337,9 @@ AH_BOTTOM([
   # GnuTLS
   # ------
 
-  AM_PATH_LIBGNUTLS( 1.5.4,, AC_MSG_ERROR([[
+  AM_PATH_LIBGNUTLS(2.0.4,, AC_MSG_ERROR([[
 ***
-*** libgnutls was not found. You may want to get it from
+*** libgnutls 2.0.4 or greater was not found. You may want to get it from
 *** ftp://ftp.gnutls.org/pub/gnutls/]]))
 
   AC_SUBST(LIBGNUTLS_LIBS)
