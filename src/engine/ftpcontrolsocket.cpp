@@ -554,7 +554,7 @@ bool CFtpControlSocket::GetLoginSequence(const CServer& server)
 			pData->loginSequence.push_back(cmd);
 		}
 		// User@host
-		t_loginCommand cmd = {false, false, user, wxString::Format(_T("USER %s@%s"), server.GetUser(), server.FormatHost())};
+		t_loginCommand cmd = {false, false, user, wxString::Format(_T("USER %s@%s"), server.GetUser().c_str(), server.FormatHost().c_str())};
 		pData->loginSequence.push_back(cmd);
 
 		// Password
@@ -972,6 +972,9 @@ int CFtpControlSocket::LogonSend()
 			case other:
 				wxASSERT(cmd.command != _T(""));
 				res = Send(cmd.command, cmd.hide_arguments);
+				break;
+			default:
+				res = false;
 				break;
 			}
 		}
@@ -3987,7 +3990,7 @@ int CFtpControlSocket::Connect(const CServer &server)
 		pData->host = m_pEngine->GetOptions()->GetOption(OPTION_FTP_PROXY_HOST);
 		pData->port = server.GetPort();
 
-		LogMessage(Status, _("Using proxy %s"), m_pEngine->GetOptions()->GetOption(OPTION_FTP_PROXY_HOST));
+		LogMessage(Status, _("Using proxy %s"), m_pEngine->GetOptions()->GetOption(OPTION_FTP_PROXY_HOST).c_str());
 	}
 	else
 	{
