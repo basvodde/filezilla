@@ -54,6 +54,10 @@ static const t_Option options[OPTIONS_NUM] =
 														 // to enable a large TCP window scale
 	{ "Socket send buffer size", number, _T("131072") },
 	{ "FTP Keep-alive commands", number, _T("0") },
+	{ "FTP Proxy type", number, _T("0") },
+	{ "FTP Proxy host", string, _T("") },
+	{ "FTP Proxy user", string, _T("") },
+	{ "FTP Proxy password", string, _T("") },
 
 	// Interface settings
 	{ "Number of Transfers", number, _T("2") },

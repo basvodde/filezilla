@@ -15,6 +15,18 @@ public:
 	COpData *pNextOpData;
 };
 
+class CConnectOpData : public COpData
+{
+public:
+	CConnectOpData()
+		: COpData(cmd_connect)
+	{
+	}
+
+	wxString host;
+	unsigned int port;
+};
+
 class CFileTransferOpData : public COpData
 {
 public:

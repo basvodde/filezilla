@@ -132,20 +132,33 @@ enum rawtransferStates
 	rawtransfer_waitsocket
 };
 
-class CFtpLogonOpData : public COpData
+enum loginCommandType
+{
+	user,
+	pass,
+	account,
+	other
+};
+
+struct t_loginCommand
+{
+	bool optional;
+	bool hide_arguments;
+	enum loginCommandType type;
+
+	wxString command;
+};
+
+class CFtpLogonOpData : public CConnectOpData
 {
 public:
 	CFtpLogonOpData()
-		: COpData(cmd_connect)
 	{
-		logonSequencePos = 0;
-		logonType = 0;
-		nCommand = 0;
-
 		waitChallenge = false;
 		gotPassword = false;
 		waitForAsyncRequest = false;
 		gotFirstWelcomeLine = false;
+		usingProxy = false;
 
 		customCommandIndex = 0;
 
@@ -157,10 +170,6 @@ public:
 	{
 	}
 
-	int logonSequencePos;
-	int logonType;
-	int nCommand; // Next command to send in the current logon sequence
-
 	wxString challenge; // Used for interactive logons
 	bool waitChallenge;
 	bool waitForAsyncRequest;
@@ -170,6 +179,10 @@ public:
 	unsigned int customCommandIndex;
 
 	int neededCommands[LOGON_DONE];
+
+	std::list<t_loginCommand> loginSequence;
+	
+	bool usingProxy;
 };
 
 class CFtpDeleteOpData : public COpData
@@ -501,23 +514,113 @@ void CFtpControlSocket::ParseResponse()
 	}
 }
 
-const int LO = -2, ER = -1;
-const int NUMLOGIN = 9; // currently supports 9 different login sequences
-int logonseq[NUMLOGIN][20] = {
-	// this array stores all of the logon sequences for the various firewalls
-	// in blocks of 3 nums. 1st num is command to send, 2nd num is next point in logon sequence array
-	// if 200 series response is rec'd from server as the result of the command, 3rd num is next
-	// point in logon sequence if 300 series rec'd
-	{0,LO,3, 1,LO,6, 12,LO,ER}, // no firewall
-	{3,6,3,  4,6,ER, 5,9,9, 0,LO,12, 1,LO,ER}, // SITE hostname
-	{3,6,3,  4,6,ER, 6,LO,9, 1,LO,ER}, // USER after logon
-	{7,3,3,  0,LO,6, 1,LO,ER}, //proxy OPEN
-	{3,6,3,  4,6,ER, 0,LO,9, 1,LO,ER}, // Transparent
-	{6,LO,3, 1,LO,ER}, // USER remoteID@remotehost
-	{8,6,3,  4,6,ER, 0,LO,9, 1,LO,ER}, //USER fireID@remotehost
-	{9,ER,3, 1,LO,6, 2,LO,ER}, //USER remoteID@remotehost fireID
-	{10,LO,3,11,LO,6,2,LO,ER} // USER remoteID@fireID@remotehost
-};
+bool CFtpControlSocket::GetLoginSequence(const CServer& server)
+{
+	CFtpLogonOpData *pData = reinterpret_cast<CFtpLogonOpData *>(m_pCurOpData);
+	pData->loginSequence.clear();
+
+	int proxyType = m_pEngine->GetOptions()->GetOptionVal(OPTION_FTP_PROXY_TYPE);
+	if (!proxyType)
+	{
+		// User
+		t_loginCommand cmd = {false, false, user, _T("")};
+		pData->loginSequence.push_back(cmd);
+
+		// Password
+		cmd.optional = true;
+		cmd.hide_arguments = true;
+		cmd.type = pass;
+		pData->loginSequence.push_back(cmd);
+
+		// Optional account
+		if (server.GetAccount() != _T(""))
+		{
+			cmd.hide_arguments = false;
+			cmd.type = account;
+			pData->loginSequence.push_back(cmd);
+		}
+	}
+	else if (proxyType == 1)
+	{
+		const wxString& proxyUser = m_pEngine->GetOptions()->GetOption(OPTION_FTP_PROXY_USER);
+		if (proxyUser != _T(""))
+		{
+			// Proxy logon (if credendials are set)
+			t_loginCommand cmd = {false, false, other, _T("USER ") + proxyUser};
+			pData->loginSequence.push_back(cmd);
+			cmd.optional = true;
+			cmd.hide_arguments = true;
+			cmd.command = _T("PASS ") + m_pEngine->GetOptions()->GetOption(OPTION_FTP_PROXY_PASS);
+			pData->loginSequence.push_back(cmd);
+		}
+		// User@host
+		t_loginCommand cmd = {false, false, user, wxString::Format(_T("USER %s@%s"), server.GetUser(), server.FormatHost())};
+		pData->loginSequence.push_back(cmd);
+
+		// Password
+		cmd.optional = true;
+		cmd.hide_arguments = true;
+		cmd.type = pass;
+		cmd.command = _T("");
+		pData->loginSequence.push_back(cmd);
+
+		// Optional account
+		if (server.GetAccount() != _T(""))
+		{
+			cmd.hide_arguments = false;
+			cmd.type = account;
+			pData->loginSequence.push_back(cmd);
+		}
+	}
+	else if (proxyType == 2 || proxyType == 3)
+	{
+		const wxString& proxyUser = m_pEngine->GetOptions()->GetOption(OPTION_FTP_PROXY_USER);
+		if (proxyUser != _T(""))
+		{
+			// Proxy logon (if credendials are set)
+			t_loginCommand cmd = {false, false, other, _T("USER ") + proxyUser};
+			pData->loginSequence.push_back(cmd);
+			cmd.optional = true;
+			cmd.hide_arguments = true;
+			cmd.command = _T("PASS ") + m_pEngine->GetOptions()->GetOption(OPTION_FTP_PROXY_PASS);
+			pData->loginSequence.push_back(cmd);
+		}
+
+		// Site or Open
+		t_loginCommand cmd = {false, false, user, _T("")};
+		if (proxyType == 2)
+			cmd.command = _T("SITE ") + server.FormatHost();
+		else
+			cmd.command = _T("OPEN ") + server.FormatHost();
+		pData->loginSequence.push_back(cmd);
+
+		// User
+		cmd.type = user;
+		cmd.command = _T("");
+		pData->loginSequence.push_back(cmd);
+
+		// Password
+		cmd.optional = true;
+		cmd.hide_arguments = true;
+		cmd.type = pass;
+		pData->loginSequence.push_back(cmd);
+
+		// Optional account
+		if (server.GetAccount() != _T(""))
+		{
+			cmd.hide_arguments = false;
+			cmd.type = account;
+			pData->loginSequence.push_back(cmd);
+		}
+	}
+	else
+	{
+		LogMessage(::Error, _("Unknown FTP proxy type, cannot generate login pData->loginSequence."));
+		return false;
+	}
+
+	return true;
+}
 
 int CFtpControlSocket::Logon()
 {
@@ -592,6 +695,8 @@ int CFtpControlSocket::LogonParseResponse()
 	}
 	else if (pData->opState == LOGON_LOGON)
 	{
+		t_loginCommand cmd = pData->loginSequence.front();
+
 		if (code != 2 && code != 3)
 		{
 			if (m_pCurrentServer->GetEncodingType() == ENCODING_AUTO && m_useUTF8)
@@ -610,33 +715,55 @@ int CFtpControlSocket::LogonParseResponse()
 						asciiOnly = false;
 				if (!asciiOnly)
 				{
+					if (pData->usingProxy)
+					{
+						LogMessage(Status, _("Login data contains non-ascii characters and server might not be UTF-8 aware. Cannot fall back to local charset since using proxy."), 0);
+						int error = FZ_REPLY_DISCONNECTED;
+						if (cmd.type == pass && code == 5)
+							error |= FZ_REPLY_PASSWORDFAILED;
+						DoClose(error);
+						return FZ_REPLY_ERROR;
+					}
 					LogMessage(Status, _("Login data contains non-ascii characters and server might not be UTF-8 aware. Trying local charset."), 0);
 					m_useUTF8 = false;
-					pData->nCommand = logonseq[pData->logonType][0];
-					pData->logonSequencePos = 0;
+					if (!GetLoginSequence(*m_pCurrentServer))
+					{
+						int error = FZ_REPLY_DISCONNECTED;
+						if (cmd.type == pass && code == 5)
+							error |= FZ_REPLY_PASSWORDFAILED;
+						DoClose(error);
+						return FZ_REPLY_ERROR;
+					}
 					return LogonSend();
 				}
 			}
 
 			int error = FZ_REPLY_DISCONNECTED;
-			if (pData->nCommand == 1 && code == 5)
+			if (cmd.type == pass && code == 5)
 				error |= FZ_REPLY_PASSWORDFAILED;
 			DoClose(error);
 			return FZ_REPLY_ERROR;
 		}
 
-		pData->waitChallenge = false;
-		pData->logonSequencePos = logonseq[pData->logonType][pData->logonSequencePos + code - 1];
-
-		switch(pData->logonSequencePos)
+		pData->loginSequence.pop_front();
+		if (code == 2)
 		{
-		case ER: // ER means something has gone wrong
-			DoClose(code == 5 ? FZ_REPLY_CRITICALERROR : 0);
+			while (!pData->loginSequence.empty() && pData->loginSequence.front().optional)
+				pData->loginSequence.pop_front();
+		}
+		else if (code == 3 && pData->loginSequence.empty())
+		{
+			LogMessage(::Error, _("Login sequence fully executed yet not logged in. Aborting."));
+			if (cmd.type == pass && m_pCurrentServer->GetAccount() == _T(""))
+				LogMessage(::Error, _("Server might require an account. Try specifying an account using the Site Manager"));
+			DoClose(FZ_REPLY_CRITICALERROR);
 			return FZ_REPLY_ERROR;
-		case LO: //LO means we are logged on
-			break;
-		default:
-			pData->nCommand = logonseq[pData->logonType][pData->logonSequencePos];
+		}
+		
+		if (!pData->loginSequence.empty())
+		{
+			pData->waitChallenge = false;
+		
 			return LogonSend();
 		}
 	}
@@ -798,48 +925,55 @@ int CFtpControlSocket::LogonSend()
 		res = Send(_T("SYST"));
 		break;
 	case LOGON_LOGON:
-		switch (pData->nCommand)
 		{
-		case 0:
-			res = Send(_T("USER ") + m_pCurrentServer->GetUser());
-
-			if (m_pCurrentServer->GetLogonType() == INTERACTIVE)
+			t_loginCommand cmd = pData->loginSequence.front();
+			switch (cmd.type)
 			{
-				pData->waitChallenge = true;
-				pData->challenge = _T("");
-			}
-			break;
-		case 1:
-			if (pData->challenge != _T(""))
-			{
-				CInteractiveLoginNotification *pNotification = new CInteractiveLoginNotification(pData->challenge);
-				pNotification->server = *m_pCurrentServer;
-				pNotification->requestNumber = m_pEngine->GetNextAsyncRequestNumber();
-				pData->waitForAsyncRequest = true;
-				pData->challenge = _T("");
-				m_pEngine->AddNotification(pNotification);
+			case user:
+				if (m_pCurrentServer->GetLogonType() == INTERACTIVE)
+				{
+					pData->waitChallenge = true;
+					pData->challenge = _T("");
+				}
 
-				return FZ_REPLY_WOULDBLOCK;
-			}
+				if (cmd.command == _T(""))
+					res = Send(_T("USER ") + m_pCurrentServer->GetUser());
+				else
+					res = Send(cmd.command);
+				break;
+			case pass:
+				if (pData->challenge != _T(""))
+				{
+					CInteractiveLoginNotification *pNotification = new CInteractiveLoginNotification(pData->challenge);
+					pNotification->server = *m_pCurrentServer;
+					pNotification->requestNumber = m_pEngine->GetNextAsyncRequestNumber();
+					pData->waitForAsyncRequest = true;
+					pData->challenge = _T("");
+					m_pEngine->AddNotification(pNotification);
 
-			res = Send(_T("PASS ") + m_pCurrentServer->GetPass(), true);
-			break;
-		case 12:
-			if (m_pCurrentServer->GetAccount() == _T(""))
-			{
-				LogMessage(::Error, _("Server requires an account. Please specify an account using the Site Manager"));
-				DoClose(FZ_REPLY_DISCONNECTED);
-				res = false;
+					return FZ_REPLY_WOULDBLOCK;
+				}
+
+				if (cmd.command == _T(""))
+					res = Send(_T("PASS ") + m_pCurrentServer->GetPass(), true);
+				else
+				{
+					wxString c = cmd.command;
+					c.Replace(_T("%p"), m_pCurrentServer->GetPass());
+					res = Send(c, true);
+				}
+				break;
+			case account:
+				if (cmd.command == _T(""))
+					res = Send(_T("ACCT ") + m_pCurrentServer->GetAccount());
+				else
+					res = Send(cmd.command);
+				break;
+			case other:
+				wxASSERT(cmd.command != _T(""));
+				res = Send(cmd.command, cmd.hide_arguments);
 				break;
 			}
-
-			res = Send(_T("ACCT ") + m_pCurrentServer->GetAccount());
-			break;
-
-		default:
-			ResetOperation(FZ_REPLY_INTERNALERROR);
-			res = false;
-			break;
 		}
 		break;
 	case LOGON_FEAT:
@@ -3827,7 +3961,39 @@ int CFtpControlSocket::Connect(const CServer &server)
 	}
 		
 	CFtpLogonOpData* pData = new CFtpLogonOpData;
-	pData->nCommand = logonseq[pData->logonType][0];
+	m_pCurOpData = pData;
+
+	if (m_pEngine->GetOptions()->GetOptionVal(OPTION_FTP_PROXY_TYPE))
+	{
+		pData->host = m_pEngine->GetOptions()->GetOption(OPTION_FTP_PROXY_HOST);
+		int pos = pData->host.Find(':');
+		if (pos != -1)
+		{
+			unsigned long port = 0;
+			if (!pData->host.Mid(pos + 1).ToULong(&port))
+				port = 0;
+			pData->host = pData->host.Left(pos);
+			pData->port = port;
+		}
+		else
+			pData->port = 21;
+
+		if (pData->host == _T("") || pData->port < 1 || pData->port > 65535)
+		{
+			LogMessage(::Error, _("Proxy set but proxy host or port invalid"));
+			DoClose(FZ_REPLY_CRITICALERROR);
+			return FZ_REPLY_ERROR;
+		}
+		pData->host = m_pEngine->GetOptions()->GetOption(OPTION_FTP_PROXY_HOST);
+		pData->port = server.GetPort();
+
+		LogMessage(Status, _("Using proxy %s"), m_pEngine->GetOptions()->GetOption(OPTION_FTP_PROXY_HOST));
+	}
+	else
+	{
+		pData->host = server.GetHost();
+		pData->port = server.GetPort();
+	}
 
 	if (server.GetProtocol() != FTPES)
 	{
@@ -3842,7 +4008,8 @@ int CFtpControlSocket::Connect(const CServer &server)
 	if (server.GetPostLoginCommands().empty())
 		pData->neededCommands[LOGON_CUSTOMCOMMANDS] = 0;
 
-	m_pCurOpData = pData;
+	if (!GetLoginSequence(server))
+		return DoClose(FZ_REPLY_INTERNALERROR);
 
 	return CRealControlSocket::Connect(server);
 }

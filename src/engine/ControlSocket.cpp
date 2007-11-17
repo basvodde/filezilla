@@ -937,7 +937,13 @@ int CRealControlSocket::Connect(const CServer &server)
 		delete m_pCurrentServer;
 	m_pCurrentServer = new CServer(server);
 
-	const wxString & host = server.GetHost();
+	CConnectOpData* pData;
+	if (!m_pCurOpData || m_pCurOpData->opId != cmd_connect)
+		pData = 0;
+	else
+		pData = static_cast<CConnectOpData *>(m_pCurOpData);
+	
+	const wxString& host = pData ? pData->host : server.GetHost();
 	if (!IsIpAddress(host))
 	{
 		LogMessage(Status, _("Resolving IP-Address for %s"), host.c_str());
@@ -973,7 +979,13 @@ int CRealControlSocket::ContinueConnect(const wxIPV4address *address)
 		return DoClose(FZ_REPLY_ERROR | FZ_REPLY_CRITICALERROR);
 	}
 
-	const unsigned int port = m_pCurrentServer->GetPort();
+	CConnectOpData* pData;
+	if (!m_pCurOpData || m_pCurOpData->opId != cmd_connect)
+		pData = 0;
+	else
+		pData = static_cast<CConnectOpData *>(m_pCurOpData);
+
+	const unsigned int port = pData ? pData->port : m_pCurrentServer->GetPort();
 	LogMessage(Status, _("Connecting to %s:%d..."), address->IPAddress().c_str(), port);
 
 	wxIPV4address addr = *address;
