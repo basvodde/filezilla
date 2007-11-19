@@ -252,12 +252,13 @@ int CFileZillaEnginePrivate::ResetOperation(int nErrorCode)
 	}
 	else if (nErrorCode & FZ_REPLY_DISCONNECTED)
 	{
-		wxASSERT(!m_bIsInCommand);
-		
-		COperationNotification *notification = new COperationNotification();
-		notification->nReplyCode = nErrorCode;
-		notification->commandId = cmd_none;
-		AddNotification(notification);
+		if (!m_bIsInCommand)
+		{
+			COperationNotification *notification = new COperationNotification();
+			notification->nReplyCode = nErrorCode;
+			notification->commandId = cmd_none;
+			AddNotification(notification);
+		}
 	}
 
 	if (!m_HostResolverThreads.empty())
