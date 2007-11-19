@@ -8,6 +8,14 @@ public:
 	virtual bool LoadPage();
 	virtual bool SavePage();
 	virtual bool Validate();
+
+protected:
+
+	void SetCtrlState();
+
+	DECLARE_EVENT_TABLE();
+	void OnProxyTypeChanged(wxCommandEvent& event);
+	void OnLoginSequenceChanged(wxCommandEvent& event);
 };
 
 #endif //__OPTIONSPAGE_FTPPROXY_H__
