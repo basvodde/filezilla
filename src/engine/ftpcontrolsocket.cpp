@@ -22,6 +22,7 @@
 #include "tlssocket.h"
 #include "pathcache.h"
 #include <algorithm>
+#include <wx/tokenzr.h>
 
 #define LOGON_WELCOME	0
 #define LOGON_AUTH_TLS	1
@@ -613,9 +614,112 @@ bool CFtpControlSocket::GetLoginSequence(const CServer& server)
 			pData->loginSequence.push_back(cmd);
 		}
 	}
+	else if (proxyType == 4)
+	{
+		wxString proxyUser = m_pEngine->GetOptions()->GetOption(OPTION_FTP_PROXY_USER);
+		wxString proxyPass = m_pEngine->GetOptions()->GetOption(OPTION_FTP_PROXY_PASS);
+		wxString host = server.FormatHost();
+		wxString user = server.GetUser();
+		wxString account = server.GetAccount();
+		proxyUser.Replace(_T("%"), _T("%%"));
+		proxyPass.Replace(_T("%"), _T("%%"));
+		host.Replace(_T("%"), _T("%%"));
+		user.Replace(_T("%"), _T("%%"));
+		account.Replace(_T("%"), _T("%%"));
+
+		wxString loginSequence = m_pEngine->GetOptions()->GetOption(OPTION_FTP_PROXY_CUSTOMLOGINSEQUENCE);
+		wxStringTokenizer tokens(loginSequence, _T("\n"), wxTOKEN_STRTOK);
+
+		while (tokens.HasMoreTokens())
+		{
+			wxString token = tokens.GetNextToken();
+			token.Trim(true);
+			token.Trim(false);
+
+			if (token == _T(""))
+				continue;
+
+			bool isHost = false;
+			bool isUser = false;
+			bool password = false;
+			bool isProxyUser = false;
+			bool isProxyPass = false;
+			if (token.Find(_T("%h")) != -1)
+				isHost = true;
+			if (token.Find(_T("%u")) != -1)
+				isUser = true;
+			if (token.Find(_T("%p")) != -1)
+				password = true;
+			if (token.Find(_T("%s")) != -1)
+				isProxyUser = true;
+			if (token.Find(_T("%w")) != -1)
+				isProxyPass = true;
+
+			// Skip account if empty
+			bool isAccount = false;
+			if (token.Find(_T("%a")) != -1)
+			{
+				if (account == _T(""))
+					continue;
+				else
+					isAccount = true;
+			}
+
+			if (isProxyUser && !isHost && !isUser && proxyUser == _T(""))
+				continue;
+			if (isProxyPass && !isHost && !isUser && proxyUser == _T(""))
+				continue;
+
+			token.Replace(_T("%s"), proxyUser);
+			token.Replace(_T("%w"), proxyPass);
+			token.Replace(_T("%h"), host);
+			token.Replace(_T("%u"), user);
+			// Pass will be replaced before sending to cope with interactve login
+
+			if (!password)
+				token.Replace(_T("%%"), _T("%"));
+
+			t_loginCommand cmd;
+			if (password || isProxyPass)
+				cmd.hide_arguments = true;
+			else
+				cmd.hide_arguments = false;
+
+			if (isUser && !pass && !isAccount)
+			{
+				cmd.optional = false;
+				cmd.type = ::user;
+			}
+			else if (pass && !isUser && !isAccount)
+			{
+				cmd.optional = true;
+				cmd.type = ::pass;
+			}
+			else if (isAccount && !isUser && !pass)
+			{
+				cmd.optional = true;
+				cmd.type = ::account;
+			}
+			else
+			{
+				cmd.optional = false;
+				cmd.type = other;
+			}
+
+			cmd.command = token;
+
+			pData->loginSequence.push_back(cmd);
+		}
+
+		if (pData->loginSequence.empty())
+		{
+			LogMessage(::Error, _("Could not generate custom login sequence."));
+			return false;
+		}
+	}
 	else
 	{
-		LogMessage(::Error, _("Unknown FTP proxy type, cannot generate login pData->loginSequence."));
+		LogMessage(::Error, _("Unknown FTP proxy type, cannot generate login sequence."));
 		return false;
 	}
 
@@ -959,7 +1063,10 @@ int CFtpControlSocket::LogonSend()
 				else
 				{
 					wxString c = cmd.command;
-					c.Replace(_T("%p"), m_pCurrentServer->GetPass());
+					wxString pass = m_pCurrentServer->GetPass();
+					pass.Replace(_T("%"), _T("%%"));
+					c.Replace(_T("%p"), pass);
+					c.Replace(_T("%%"), _T("%"));
 					res = Send(c, true);
 				}
 				break;
