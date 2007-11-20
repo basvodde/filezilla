@@ -5,9 +5,14 @@ Legend:
   + New feature or important bugfix
   - Bugfixes
 
-3.0.4-rc1 (2007-??-??)
+3.0.4-rc1 (2007-11-20)
 
++ Implement FTP Proxy support. Note that using a properly configured NAT router is recommended instead.
++ Implement FTP keep alive for those connecting to improperly configured servers
+- Fix crashes if deletig files in directories with more than 200 entries
+- Compatility improvements with VMS and z/VM servers
 - Now requires GnuTLS 2.0.4 which fixes a problem with servers using compression.
+- Changing list of ascii files or increasing number of concurrent transfers had no effect until restart of FileZilla
 
 3.0.3 (2007-11-06)
 
