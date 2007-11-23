@@ -105,7 +105,7 @@ protected:
 
 	void StartKeepaliveTimer();
 
-	bool CFtpControlSocket::GetLoginSequence(const CServer& server);
+	bool GetLoginSequence(const CServer& server);
 
 	wxString m_Response;
 	wxString m_MultilineResponseCode;
