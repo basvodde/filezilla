@@ -9,7 +9,8 @@ RESOURCEFILE = -Wl,fzshellext.o
 libfzshellext_la_DEPENCENCIES = fzshellext.o
 endif
 
-libfzshellext_la_LDFLAGS = -Wl,--kill-at -lole32 -luuid -lversion -no-undefined -version-info 0:0:0 $(RESOURCEFILE)
+# Due to a braindead Libtool, we _NEED_ to use -Wl to link with some win32 system libraries
+libfzshellext_la_LDFLAGS = -Wl,--kill-at -Wl,-lole32 -Wl,-luuid -Wl,-lversion -no-undefined -version-info 0:0:0 $(RESOURCEFILE)
 
 noinst_HEADERS = shellext.h resource.h
 
