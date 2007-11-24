@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: FileZilla 3\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-11-20 12:02+0100\n"
-"PO-Revision-Date: 2007-11-20 11:35+0100\n"
-"Last-Translator: Ondrej Kotecky <kotecky@hotmail.com>\n"
+"PO-Revision-Date: 2007-11-24 15:58+0100\n"
+"Last-Translator: Michal Molhanec <michal@molhanec.net>\n"
 "Language-Team: Michal Molhanec <michal@molhanec.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -28,8 +28,8 @@ msgid ""
 "%a - Account (Lines containing this will be omitted if not using Account "
 "logontype)"
 msgstr ""
-"%a - Účet (Pokud nepoužíváte Způsob přihlašování k účtu, řádky obsahující "
-"tyto informace budou vynechány.)"
+"%a - konto (pokud nepoužíváte tento typ přihlášení, budou řádky obsahující "
+"toto vynechány)"
 
 #: ../../locales/../src/interface/QueueView.cpp:2208
 #, c-format
@@ -38,12 +38,12 @@ msgstr "%d souborů přidáno do fronty"
 
 #: resources.h:231
 msgid "%h - Host"
-msgstr "%h - Hostitel"
+msgstr "%h - hostitel"
 
 #: resources.h:233
 #, c-format
 msgid "%p - Password"
-msgstr "%p - Heslo"
+msgstr "%p - heslo"
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:47
 #, c-format
@@ -58,7 +58,7 @@ msgstr "%s - Ještě neplatná!"
 #: resources.h:235
 #, c-format
 msgid "%s - Proxy user"
-msgstr "%s - Proxy uživatel"
+msgstr "%s - uživatelské jméno pro proxy"
 
 #: ../../locales/../src/interface/updatewizard.cpp:667
 #, c-format
@@ -113,11 +113,11 @@ msgstr "%s s %d bity"
 #: resources.h:232
 #, c-format
 msgid "%u - Username"
-msgstr "%u - Uživatelské jméno"
+msgstr "%u - uživatelské jméno"
 
 #: resources.h:236
 msgid "%w - Proxy password"
-msgstr "%w - Heslo k proxy"
+msgstr "%w - heslo pro proxy"
 
 #: resources.h:473
 msgid "&About..."
@@ -394,7 +394,7 @@ msgstr "&Ne"
 
 #: resources.h:225
 msgid "&None"
-msgstr "&Nic"
+msgstr "Žá&dná"
 
 #: resources.h:505
 msgid "&Normal"
@@ -410,7 +410,7 @@ msgstr "&OK"
 
 #: resources.h:228
 msgid "&OPEN"
-msgstr ""
+msgstr "O&PEN"
 
 #: resources.h:54 resources.h:370 resources.h:389
 msgid "&Overwrite"
@@ -438,7 +438,7 @@ msgstr "&Zachovávat časy u přenášených souborů"
 
 #: resources.h:239
 msgid "&Proxy password:"
-msgstr "&Heslo k proxy:"
+msgstr "Proxy h&eslo:"
 
 #: resources.h:424
 msgid "&Queue"
@@ -495,7 +495,7 @@ msgstr "Spustit &kontrolu nových verzí nyní..."
 
 #: resources.h:227
 msgid "&SITE"
-msgstr ""
+msgstr "S&ITE"
 
 #: resources.h:303
 msgid "&Save as..."
@@ -1400,9 +1400,8 @@ msgstr ""
 "FZ_DATADIR."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:716
-#, fuzzy
 msgid "Could not generate custom login sequence."
-msgstr "Nemohu převést příkaz do kódování používaného serverem"
+msgstr "Nemohu vytvořit vlastní přihlašovací sekvenci."
 
 #: ../../locales/../src/interface/RemoteListView.cpp:2415
 msgid "Could not get temporary directory to download file into."
@@ -2026,7 +2025,7 @@ msgstr "Udržuj spojení FTP"
 
 #: ../../locales/../src/interface/settingsdialog.cpp:107
 msgid "FTP Proxy"
-msgstr "FTP Proxy"
+msgstr "FTP proxy"
 
 #: resources.h:546
 msgid ""
@@ -2371,7 +2370,7 @@ msgstr "Vynutit &UTF-8"
 
 #: resources.h:230
 msgid "Format specifications:"
-msgstr "Specifikace formátu:"
+msgstr "Pravidla formátu:"
 
 #: resources.h:221
 msgid "Format: Extension followed by properly quoted command and arguments."
@@ -2536,7 +2535,7 @@ msgid ""
 "passive mode and contact the server administrator for help."
 msgstr ""
 "Pokud potíže s daným serverem setrvávají, pak tento server nebo vzdálený "
-"router nebo firewall mohou být špatně nastaveny. Zkuste změnit pasivní režim "
+"router nebo firewall může být špatně nastaven. Zkuste nastavit pasivní režim "
 "a kontaktujte administrátora serveru pro pomoc."
 
 #: resources.h:544
@@ -2803,7 +2802,8 @@ msgid ""
 "aware. Cannot fall back to local charset since using proxy."
 msgstr ""
 "Údaje pro přihlášení obsahují i jiné než ASCII znaky a server by nemusel "
-"podporovat UTF-8. Kvůli použití proxy zkouším místní znakovou sadu."
+"podporovat UTF-8. Nemohu se vrátit k místní znakové sadě, protože je použito "
+"proxy."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:831
 msgid ""
@@ -2815,7 +2815,8 @@ msgstr ""
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:860
 msgid "Login sequence fully executed yet not logged in. Aborting."
-msgstr "Logovací sekvence proběhla, ale nalogování se nezdařilo. Ruším."
+msgstr ""
+"Přihlašovací sekvence byla dokončena, ale přesto nejste přihlášen. Stornuji."
 
 #: ../../locales/../src/interface/queue.cpp:846
 #: ../../locales/../src/interface/queue.cpp:927
@@ -2998,8 +2999,7 @@ msgstr ""
 
 #: resources.h:240
 msgid "Note: This only works with plain, unencrypted FTP connections."
-msgstr ""
-"Poznámka: toto je možné použít jen s obyčejným, nekryptovaným FTP spojením."
+msgstr "Upozornění: toto funguje jen s nešifrovanými FTP spojeními."
 
 #: resources.h:181
 msgid "Number of days between update checks:"
@@ -3413,11 +3413,11 @@ msgid ""
 "called 'DMZ mode' or 'game mode'. Things like protocol inspection or "
 "protocol specific 'fixups' have to be disabled"
 msgstr ""
-"Aktualizujte váš firewall a ubezpečte se prosím, že váš server používá "
+"Aktualizujte svůj firewall a ubezpečte se prosím, že váš router používá "
 "poslední dostupnou verzi firmware. Kromě toho musí být váš server správně "
 "nastaven. Musí být povoleno manuální forwardování portů. Nespouštějte router "
-"v tzv. 'DMZ režimu' nebo 'herním režimu'. Nastavení kontroly protokolu nebo "
-"přesměrování týkající se protokolů musí být vypnuty."
+"v tzv. 'DMZ režimu' nebo 'herním režimu'. Možnosti typu inspekce protokolu "
+"nebo pro protokol specifické 'záplaty' musí být vypnuty."
 
 #: resources.h:363
 msgid ""
@@ -3463,7 +3463,7 @@ msgstr "Priorita"
 
 #: resources.h:498
 msgid "Process &Queue"
-msgstr "Zpracovat &frontu"
+msgstr "&Fronta procesů"
 
 #: resources.h:238
 msgid "Proxy &user:"
@@ -3471,7 +3471,7 @@ msgstr "Proxy &uživatel:"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:4093
 msgid "Proxy set but proxy host or port invalid"
-msgstr "Proxy nastaveno ale proxy hostitel nebo port nejsou platné"
+msgstr "Proxy je nastavena, ale buď proxy hostitel nebo port není platný"
 
 #: resources.h:13
 msgid "Public key algorithm:"
@@ -3835,7 +3835,7 @@ msgstr ""
 msgid ""
 "Server might require an account. Try specifying an account using the Site "
 "Manager"
-msgstr "Server vyžaduje účet. Určete ho pomocí Správce míst."
+msgstr "Server možná vyžaduje konto. Zkuste ho určit pomocí správce míst."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:401
 #: ../../locales/../src/interface/netconfwizard.cpp:408
@@ -4079,7 +4079,7 @@ msgstr "Zadal jste adresu: %s"
 
 #: ../../locales/../src/interface/optionspage_ftpproxy.cpp:88
 msgid "The custom login sequence cannot be empty."
-msgstr "Vlastní logovací sekvence nemůže být prázdná."
+msgstr "Vlastní přihlašovací sekcence nemůže být prázdná."
 
 #: ../../locales/../src/interface/filteredit.cpp:334
 #: ../../locales/../src/interface/filteredit.cpp:397
@@ -4383,7 +4383,7 @@ msgstr "Věřit tomuto hostiteli a pokračovat ve spojování?"
 
 #: resources.h:224
 msgid "Type of FTP Proxy:"
-msgstr "Druh FTP Proxy:"
+msgstr "Typ FTP proxy:"
 
 #: resources.h:439
 msgid "U&pload"
@@ -4403,7 +4403,7 @@ msgstr "Použít nastavení sys&tému"
 
 #: resources.h:226
 msgid "USER@&HOST"
-msgstr ""
+msgstr "UŽIVATEL@&HOSTITEL"
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:122
 msgid "Unit:"
@@ -4414,10 +4414,8 @@ msgid "Unknown"
 msgstr "Neznámý"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:722
-#, fuzzy
 msgid "Unknown FTP proxy type, cannot generate login sequence."
-msgstr ""
-"Neznámý typ FTP proxy, není možné vygenerovat login pData->loginSequence."
+msgstr "Neznámý typ FTP proxy, nemohu vytvořit přihlašovací sekvenci."
 
 #: resources.h:5
 msgid "Unknown certificate"
@@ -4541,7 +4539,7 @@ msgstr "Použije UTF-8 pokud ho server podporuje, jinak místní znakovou sadu."
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:4100
 #, c-format
 msgid "Using proxy %s"
-msgstr "Using proxy %s"
+msgstr "Užívám proxy %s"
 
 #: resources.h:108
 msgid ""
@@ -4731,7 +4729,7 @@ msgstr ""
 
 #: ../../locales/../src/interface/optionspage_ftpproxy.cpp:81
 msgid "You need to enter a proxy host."
-msgstr "Musíte zadat hostitele proxy."
+msgstr "Musíte zadat proxy hostitele."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:563
 msgid ""

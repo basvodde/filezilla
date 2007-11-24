@@ -29,6 +29,8 @@ msgid ""
 "%a - Account (Lines containing this will be omitted if not using Account "
 "logontype)"
 msgstr ""
+"%a - Konto (Zeilen die dies beinhalten werden ausgelassen, falls kein "
+"Kontozugangstyp benutzt wird)"
 
 #: ../../locales/../src/interface/QueueView.cpp:2208
 #, c-format
@@ -37,12 +39,12 @@ msgstr "%d Dateien zur Warteschlange hinzugefügt"
 
 #: resources.h:231
 msgid "%h - Host"
-msgstr ""
+msgstr "%h - Server"
 
 #: resources.h:233
-#, fuzzy, c-format
+#, c-format
 msgid "%p - Password"
-msgstr "Pass&wort:"
+msgstr "%p - Passwort"
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:47
 #, c-format
@@ -57,7 +59,7 @@ msgstr "%s - Noch nicht gültig!"
 #: resources.h:235
 #, c-format
 msgid "%s - Proxy user"
-msgstr ""
+msgstr "%s - Proxy Benutzer"
 
 #: ../../locales/../src/interface/updatewizard.cpp:667
 #, c-format
@@ -112,14 +114,13 @@ msgid "%s with %d bits"
 msgstr "%s mit %d bits"
 
 #: resources.h:232
-#, fuzzy, c-format
+#, c-format
 msgid "%u - Username"
-msgstr "Ben&utzername:"
+msgstr "%u - Benutzername"
 
 #: resources.h:236
-#, fuzzy
 msgid "%w - Proxy password"
-msgstr "Nach Passwort fragen"
+msgstr "%w - Proxy Passwort"
 
 #: resources.h:473
 msgid "&About..."
@@ -395,9 +396,8 @@ msgid "&No"
 msgstr "&Nein"
 
 #: resources.h:225
-#, fuzzy
 msgid "&None"
-msgstr "Keine"
+msgstr "Kei&ne"
 
 #: resources.h:505
 msgid "&Normal"
@@ -413,7 +413,7 @@ msgstr "&OK"
 
 #: resources.h:228
 msgid "&OPEN"
-msgstr ""
+msgstr "&OPEN"
 
 #: resources.h:54 resources.h:370 resources.h:389
 msgid "&Overwrite"
@@ -440,9 +440,8 @@ msgid "&Preserve timestamps of transferred files"
 msgstr "&Zeitstempel der übertragenen Dateien beibehalten"
 
 #: resources.h:239
-#, fuzzy
 msgid "&Proxy password:"
-msgstr "&Passwort:"
+msgstr "&Proxy Passwort:"
 
 #: resources.h:424
 msgid "&Queue"
@@ -499,7 +498,7 @@ msgstr "Jetzt Updateüberprüfung ausfüh&ren..."
 
 #: resources.h:227
 msgid "&SITE"
-msgstr ""
+msgstr "&SITE"
 
 #: resources.h:303
 msgid "&Save as..."
@@ -852,15 +851,14 @@ msgstr ""
 "verändert."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:574
-#, fuzzy
 msgid ""
 "Active mode FTP test failed. FileZilla knows the correct external IP "
 "address, but your router or firewall has misleadingly modified the sent "
 "address."
 msgstr ""
 "Test für den aktiven FTP-Modus fehlgeschlagen. FileZilla kennt die korrekte "
-"externe IP-Adresse, aber Ihr Router hat fälschlicherweise die Sendeadresse "
-"verändert."
+"externe IP-Adresse, aber Ihr Router oder die Firewall hat fälschlicherweise "
+"die Sendeadresse verändert."
 
 #: resources.h:346
 msgid "Active mode IP"
@@ -1250,9 +1248,8 @@ msgstr "Gemeinsamer Name:"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:424
 #: ../../locales/../src/interface/netconfwizard.cpp:439
-#, fuzzy
 msgid "Communication tainted by router or firewall"
-msgstr "Kommunikation vom Router beschädigt"
+msgstr "Kommunikation vom Router oder der Firewall beeinträchtigt"
 
 #: resources.h:274
 msgid "Compiled with:"
@@ -1356,9 +1353,8 @@ msgid "Connection timed out"
 msgstr "Verbindung wegen Zeitüberschreitung verloren"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:1062
-#, fuzzy
 msgid "Connection timed out."
-msgstr "Verbindung wegen Zeitüberschreitung verloren"
+msgstr "Zeitüberschreitung der Verbindung."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:558
 msgid "Connection with server got closed prematurely."
@@ -1419,9 +1415,8 @@ msgstr ""
 "Umgebungsvariable 'FZ_DATADIR'."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:716
-#, fuzzy
 msgid "Could not generate custom login sequence."
-msgstr "Kann Kommando zur Serververschlüsselung nicht konvertieren"
+msgstr "Es kann keine benutzerdefinierte Anmeldesequenz erstellt werden."
 
 #: ../../locales/../src/interface/RemoteListView.cpp:2415
 msgid "Could not get temporary directory to download file into."
@@ -1952,7 +1947,7 @@ msgstr ""
 "Servernamen einfügen. Wenn kein Protokoll angegeben wird, wird das "
 "Standardprotokoll ftp:// verwendet.\n"
 "Sie können auch eine komplette URL in der Form protokoll://benutzer:"
-"passwort@host:port angeben. Die Werte in den anderen Feldern werden dann "
+"passwort@server:port angeben. Die Werte in den anderen Feldern werden dann "
 "überschrieben."
 
 #: resources.h:594
@@ -2056,7 +2051,7 @@ msgstr "Verbindungserhaltung"
 
 #: ../../locales/../src/interface/settingsdialog.cpp:107
 msgid "FTP Proxy"
-msgstr ""
+msgstr "FTP Proxy"
 
 #: resources.h:546
 msgid ""
@@ -2414,9 +2409,8 @@ msgid "Force &UTF-8"
 msgstr "&UTF-8 erzwingen"
 
 #: resources.h:230
-#, fuzzy
 msgid "Format specifications:"
-msgstr "Automatische Dateityp Klassifikation"
+msgstr "Formatspezifikationen:"
 
 #: resources.h:221
 msgid "Format: Extension followed by properly quoted command and arguments."
@@ -2472,12 +2466,12 @@ msgstr "Homepage:"
 
 #: resources.h:288
 msgid "Host key mismatch"
-msgstr "Host-Schlüssel stimmt nicht überein"
+msgstr "Server-Schlüssel stimmt nicht überein"
 
 #: resources.h:8 resources.h:115 resources.h:272 resources.h:280
 #: resources.h:292
 msgid "Host:"
-msgstr "Host:"
+msgstr "Server:"
 
 #: resources.h:92
 msgid "Hours,"
@@ -2585,16 +2579,15 @@ msgstr ""
 "versuchen sie es mit geändertem Standard-Transfermodus."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:564
-#, fuzzy
 msgid ""
 "If you keep having problems with a specific server, the server itself or a "
 "remote router or firewall might be misconfigured. In this case try to toggle "
 "passive mode and contact the server administrator for help."
 msgstr ""
 "Wenn Sie wiederholt Probleme mit einem bestimmten Server haben, könnte der "
-"der Server selbst oder der dortige Router falsch konfiguriert sein.In diesem "
-"Fall versuchen Sie zum passiven Modus tz wechseln, und wenden sich an den "
-"Server Administrator für Hilfe"
+"Server selbst oder der dortige Router oder die Firewall falsch konfiguriert "
+"sein.In diesem Fall versuchen Sie zum passiven Modus zu wechseln, und wenden "
+"sich an den Serveradministrator für Hilfe."
 
 #: resources.h:544
 msgid ""
@@ -2857,20 +2850,20 @@ msgid "Locality:"
 msgstr "Ort:"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:824
-#, fuzzy
 msgid ""
 "Login data contains non-ascii characters and server might not be UTF-8 "
 "aware. Cannot fall back to local charset since using proxy."
 msgstr ""
-"Login-Daten enthalten nicht ascii konforme Zeichen. Vielleicht unterstützt "
-"der Server kein UTF-8. Versuche lokalen Zeichensatz."
+"Anmeldedaten enthalten nicht ascii konforme Zeichen. Vielleicht unterstützt "
+"der Server kein UTF-8. Kann nicht zu lokalem Zeichennsatz zurückkehren seit "
+"Proxy genutzt wird."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:831
 msgid ""
 "Login data contains non-ascii characters and server might not be UTF-8 "
 "aware. Trying local charset."
 msgstr ""
-"Login-Daten enthalten nicht ascii konforme Zeichen. Vielleicht unterstützt "
+"Anmeldedaten enthalten nicht ascii konforme Zeichen. Vielleicht unterstützt "
 "der Server kein UTF-8. Versuche lokalen Zeichensatz."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:860
@@ -3059,6 +3052,8 @@ msgstr ""
 #: resources.h:240
 msgid "Note: This only works with plain, unencrypted FTP connections."
 msgstr ""
+"Anmerkung: Dies funktioniert nur mit reinen, unverschlüsselten FTP-"
+"Verbindungen."
 
 #: resources.h:181
 msgid "Number of days between update checks:"
@@ -3145,12 +3140,11 @@ msgstr "Besitzer-Berechtigungen"
 
 #: resources.h:237
 msgid "P&roxy host:"
-msgstr ""
+msgstr "P&roxy Server:"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:486
-#, fuzzy
 msgid "PORT command tainted by router or firewall."
-msgstr "PORT Befehl wurde vom Router zurückgewiesen."
+msgstr "PORT Befehl wurde vom Router oder der Firewall beeinträchtigt."
 
 #: resources.h:153
 msgid "Pa&ssive (recommended)"
@@ -3480,7 +3474,6 @@ msgid "Please select the new attributes for the selected files."
 msgstr "Bitte wählen Sie die neuen Attribute für die ausgewählten Dateien."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:575
-#, fuzzy
 msgid ""
 "Please update your firewall and make sure your router is using the latest "
 "available firmware. Furthermore, your router has to be configured properly. "
@@ -3488,10 +3481,12 @@ msgid ""
 "called 'DMZ mode' or 'game mode'. Things like protocol inspection or "
 "protocol specific 'fixups' have to be disabled"
 msgstr ""
-"Bitte stellen Sie sicher, dass auf Ihrem Router die neueste Firmware "
-"installiert ist. Aktivieren Sie in Ihrem Router die manuelle Port-"
+"Bitte aktualisieren Sie Ihre Firewall und stellen Sie sicher, dass auf Ihrem "
+"Router die neueste Firmware installiert ist. Zudem muss Ihr Router korrekt "
+"eingerichtet sein. Aktivieren Sie in Ihrem Router die manuelle Port-"
 "Weiterleitung ('port forwarding'). Verwenden Sie Ihren Router nicht im "
-"sogenannten 'DMZ Modus' oder im 'Game Modus'."
+"sogenannten 'DMZ Modus' oder im 'Game Modus'. Dinge wie Protokolprüfungen "
+"oder protokollspezifische Korrekturen müssen deaktiviert sein."
 
 #: resources.h:363
 msgid ""
@@ -3543,11 +3538,11 @@ msgstr "Warteschlange &abarbeiten"
 
 #: resources.h:238
 msgid "Proxy &user:"
-msgstr ""
+msgstr "Proxy Ben&utzer:"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:4093
 msgid "Proxy set but proxy host or port invalid"
-msgstr ""
+msgstr "Proxy wurde gesetzt, aber der Proxyserver oder -port ist ungültig"
 
 #: resources.h:13
 msgid "Public key algorithm:"
@@ -3715,7 +3710,7 @@ msgstr "Auflösen der IP-Adresse für %s"
 
 #: ../../locales/../src/interface/updatewizard.cpp:172
 msgid "Resolving hostname"
-msgstr "Auflösen des Hostnamens"
+msgstr "Auflösen des Servernamens"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:393
 #: ../../locales/../src/interface/StatusView.cpp:201
@@ -3916,12 +3911,12 @@ msgstr ""
 "bis %d GB. Die Übertragung wird beendet, da die Dateigrößen übereinstimmen."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:862
-#, fuzzy
 msgid ""
 "Server might require an account. Try specifying an account using the Site "
 "Manager"
 msgstr ""
-"Server benötigt ein Konto. Bitte geben Sie ein Konto im Servermanager an."
+"Der Server benötigt möglicherweise ein Konto. Bitte geben Sie ein Konto im "
+"Servermanager an."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:401
 #: ../../locales/../src/interface/netconfwizard.cpp:408
@@ -4168,7 +4163,7 @@ msgstr "Die eingegebene Adresse lautet: %s"
 
 #: ../../locales/../src/interface/optionspage_ftpproxy.cpp:88
 msgid "The custom login sequence cannot be empty."
-msgstr ""
+msgstr "Die benutzerdefinierte Anmeldesequenz darf nicht leer sein."
 
 #: ../../locales/../src/interface/filteredit.cpp:334
 #: ../../locales/../src/interface/filteredit.cpp:397
@@ -4458,11 +4453,11 @@ msgstr "&Folgende Dateitypen als Ascii-Dateien behandeln:"
 
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:793
 msgid "Trust changed Hostkey: "
-msgstr "Verändertem Hostkey vertrauen:"
+msgstr "Verändertem Serverschlüssel vertrauen:"
 
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:791
 msgid "Trust new Hostkey: "
-msgstr "Neuem Hostkey vertrauen:"
+msgstr "Neuem Serverschlüssel vertrauen:"
 
 #: resources.h:296
 msgid "Trust the new key and carry on connecting?"
@@ -4478,7 +4473,7 @@ msgstr "Diesem Server vertrauen und Verbindung herstellen?"
 
 #: resources.h:224
 msgid "Type of FTP Proxy:"
-msgstr ""
+msgstr "FTP-Proxy-Typ:"
 
 #: resources.h:439
 msgid "U&pload"
@@ -4498,7 +4493,7 @@ msgstr "Stan&dardeinstellung verwenden"
 
 #: resources.h:226
 msgid "USER@&HOST"
-msgstr ""
+msgstr "BENUTZER@&SERVER"
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:122
 msgid "Unit:"
@@ -4511,6 +4506,7 @@ msgstr "Unbekannt"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:722
 msgid "Unknown FTP proxy type, cannot generate login sequence."
 msgstr ""
+"Unbekannter FTP-Proxy-Typ. Es kann keine Anmeldesequenz erstellt werden."
 
 #: resources.h:5
 msgid "Unknown certificate"
@@ -4639,7 +4635,7 @@ msgstr ""
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:4100
 #, c-format
 msgid "Using proxy %s"
-msgstr ""
+msgstr "Benutze Proxy %s"
 
 #: resources.h:108
 msgid ""
@@ -4808,7 +4804,7 @@ msgstr ""
 
 #: ../../locales/../src/interface/sitemanager.cpp:512
 msgid "You have to enter a hostname."
-msgstr "Sie müssen einen Hostnamen angeben."
+msgstr "Sie müssen einen Servernamen angeben."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:147
 #: ../../locales/../src/interface/optionspage_connection_active.cpp:90
@@ -4832,9 +4828,8 @@ msgstr ""
 "irrtümlicherweise die übermittelten Daten verändert hat."
 
 #: ../../locales/../src/interface/optionspage_ftpproxy.cpp:81
-#, fuzzy
 msgid "You need to enter a proxy host."
-msgstr "Sie müssen einen Hostnamen angeben."
+msgstr "Sie müssen einen Proxy-Servernamen angeben."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:563
 msgid ""
