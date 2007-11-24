@@ -159,7 +159,7 @@ void Debug(const char* Message)
 
 		fprintf(GLogHandle, "[%2d/%2d/%4d %2d:%02d:%02d.%03d][%04x] %s\n",
 			Time.wDay, Time.wMonth, Time.wYear, Time.wHour, Time.wMinute,
-			Time.wSecond, Time.wMilliseconds, GetCurrentThreadId(), Message);
+			Time.wSecond, Time.wMilliseconds, (unsigned int)GetCurrentThreadId(), Message);
 	}
 	catch(...)
 	{
@@ -207,7 +207,7 @@ void LogVersion(HINSTANCE HInstance)
 		return;
 	}
 
-	void* Info;
+	char* Info;
 	Info = new char[Size];
 	if (!GetFileVersionInfoA(FileName, InfoHandle, Size, Info))
 	{
