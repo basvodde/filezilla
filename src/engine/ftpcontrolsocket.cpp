@@ -3610,11 +3610,14 @@ bool CFtpControlSocket::ParsePasvResponse(CRawTransferOpData* pData)
 	{
 		if (!m_pEngine->GetOptions()->GetOptionVal(OPTION_PASVREPLYFALLBACKMODE) || pData->bTriedActive)
 		{
-			LogMessage(Debug_Verbose, _("Server sent passive reply with unroutable address. Using server address instead."));
+			LogMessage(Debug_Verbose, _T("Server sent passive reply with unroutable address. Using server address instead. Reply: %s, peer: %s"), pData->host.c_str(), peerIP.c_str());
 			pData->host = peerIP;
 		}
 		else
+		{
+			LogMessage(Debug_Verbose, _T("Server sent passive reply with unroutable address. Passive mode failed. Reply: %s, peer: %s"), pData->host.c_str(), peerIP.c_str());
 			return false;
+		}
 	}
 
 	return true;
