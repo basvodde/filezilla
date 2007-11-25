@@ -199,7 +199,7 @@ wxIconBundle CThemeProvider::GetIconBundle(const wxArtID& id, const wxArtClient&
 
 	const wxString& name = id.Mid(4).Lower();
 
-	wxChar* dirs[3] = { _T("16x16/"), _T("32x32/"), _T("48x48/") };
+	const wxChar* dirs[3] = { _T("16x16/"), _T("32x32/"), _T("48x48/") };
 
 	wxString themePath = GetThemePath(COptions::Get()->GetOption(OPTION_THEME));
 	wxString resourcePath = wxGetApp().GetResourceDir();

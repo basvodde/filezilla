@@ -26,12 +26,12 @@ bool CFileExistsDlg::Create(wxWindow* parent)
 	CreateControls();
 	GetSizer()->Fit(this);
 	GetSizer()->SetSizeHints(this);
-	
+
 	return true;
 }
 
 void CFileExistsDlg::CreateControls()
-{	
+{
 	wxXmlResource::Get()->LoadDialog(this, GetParent(), _T("ID_FILEEXISTSDLG"));
 	m_pAction1 = wxDynamicCast(FindWindow(XRCID("ID_ACTION1")), wxRadioButton);
 	m_pAction2 = wxDynamicCast(FindWindow(XRCID("ID_ACTION2")), wxRadioButton);
@@ -47,15 +47,15 @@ void CFileExistsDlg::CreateControls()
 
 	localFile.Replace(_T("&"), _T("&&"));
 	remoteFile.Replace(_T("&"), _T("&&"));
-	
+
 	if (m_pNotification->download)
 	{
 		wxStaticText *pStatText;
-		
+
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE1_NAME")));
 		if (pStatText)
 			pStatText->SetLabel(localFile);
-		
+
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE1_SIZE")));
 		if (pStatText)
 		{
@@ -64,7 +64,7 @@ void CFileExistsDlg::CreateControls()
 			else
 				pStatText->SetLabel(_("Size unknown"));
 		}
-		
+
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE1_TIME")));
 		if (pStatText)
 		{
@@ -79,7 +79,7 @@ void CFileExistsDlg::CreateControls()
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE2_NAME")));
 		if (pStatText)
 			pStatText->SetLabel(remoteFile);
-		
+
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE2_SIZE")));
 		if (pStatText)
 		{
@@ -88,7 +88,7 @@ void CFileExistsDlg::CreateControls()
 			else
 				pStatText->SetLabel(_("Size unknown"));
 		}
-		
+
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE2_TIME")));
 		if (pStatText)
 		{
@@ -111,7 +111,7 @@ void CFileExistsDlg::CreateControls()
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE1_NAME")));
 		if (pStatText)
 			pStatText->SetLabel(remoteFile);
-		
+
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE1_SIZE")));
 		if (pStatText)
 		{
@@ -167,7 +167,7 @@ void CFileExistsDlg::LoadIcon(int id, const wxString &file)
 	wxStaticBitmap *pStatBmp = reinterpret_cast<wxStaticBitmap *>(FindWindow(id));
 	if (!pStatBmp)
 		return;
-	
+
 #ifdef __WXMSW__
 	SHFILEINFO fileinfo;
 	memset(&fileinfo,0,sizeof(fileinfo));
@@ -262,7 +262,7 @@ void CFileExistsDlg::OnOK(wxCommandEvent& event)
 		m_action = 4;
 	else
 		m_action = 0;
-	
+
 	m_always = XRCCTRL(*this, "ID_ALWAYS", wxCheckBox)->GetValue();
 	m_directionOnly = XRCCTRL(*this, "ID_UPDOWNONLY", wxCheckBox)->GetValue();
 	m_queueOnly = XRCCTRL(*this, "ID_QUEUEONLY", wxCheckBox)->GetValue();
@@ -305,10 +305,8 @@ wxString CFileExistsDlg::GetPathEllipsis(wxString path, wxWindow *window)
 	wxString fill = _T(" ");
 #if wxUSE_UNICODE
 	fill += 0x2026; //unicode ellipsis character
-	int fillLength = 3;
 #else
 	fill += _T("...");
-	int fillLength = 5;
 #endif
 	fill += _T(" ");
 

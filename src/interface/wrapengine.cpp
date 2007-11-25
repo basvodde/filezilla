@@ -709,7 +709,7 @@ bool CWrapEngine::UnwrapRecursive(wxWindow* wnd, wxSizer* sizer)
 
 int CWrapEngine::GetWidthFromCache(const char* name)
 {
-	if (!name || name == "")
+	if (!name || !*name)
 		return 0;
 
 	// We have to synchronize access to layout.xml so that multiple processed don't write
@@ -754,7 +754,7 @@ int CWrapEngine::GetWidthFromCache(const char* name)
 
 void CWrapEngine::SetWidthToCache(const char* name, int width)
 {
-	if (!name || name == "")
+	if (!name || !*name)
 		return;
 
 	// We have to synchronize access to layout.xml so that multiple processed don't write
