@@ -423,7 +423,7 @@ CQueueView::CQueueView(CQueue* parent, int index, CMainFrame* pMainFrame, CAsync
 
 	m_totalQueueSize = 0;
 	m_filesWithUnknownSize = 0;
-	
+
 	m_actionAfterState = ActionAfterState_Disabled;
 #ifdef __WXMSW__
 	m_actionAfterWarnDialog = 0;
@@ -442,22 +442,6 @@ CQueueView::CQueueView(CQueue* parent, int index, CMainFrame* pMainFrame, CAsync
 	pData->pEngine = 0; // TODO: Primary transfer engine data
 	pData->m_idleDisconnectTimer = 0;
 	m_engineData.push_back(pData);
-
-	int engineCount = COptions::Get()->GetOptionVal(OPTION_NUMTRANSFERS);
-	for (int i = 0; i < engineCount; i++)
-	{
-		t_EngineData *pData = new t_EngineData;
-		pData->active = false;
-		pData->pItem = 0;
-		pData->pStatusLineCtrl = 0;
-		pData->state = t_EngineData::none;
-		pData->m_idleDisconnectTimer = 0;
-
-		pData->pEngine = new CFileZillaEngine();
-		pData->pEngine->Init(this, COptions::Get());
-
-		m_engineData.push_back(pData);
-	}
 
 	SettingsChanged();
 
@@ -1820,6 +1804,27 @@ void CQueueView::ImportQueue(TiXmlElement* pElement, bool updateSelections)
 
 void CQueueView::SettingsChanged()
 {
+	// Create missing engines if needed
+	const int engineCount = m_engineData.size();
+	const int newEngineCount = COptions::Get()->GetOptionVal(OPTION_NUMTRANSFERS);
+	if (newEngineCount >= engineCount)
+	{
+		for (int i = 0; i < (newEngineCount - engineCount + 1); i++)
+		{
+			t_EngineData *pData = new t_EngineData;
+			pData->active = false;
+			pData->pItem = 0;
+			pData->pStatusLineCtrl = 0;
+			pData->state = t_EngineData::none;
+			pData->m_idleDisconnectTimer = 0;
+
+			pData->pEngine = new CFileZillaEngine();
+			pData->pEngine->Init(this, COptions::Get());
+
+			m_engineData.push_back(pData);
+		}
+	}
+
 	m_asciiFiles.clear();
 	wxString extensions = COptions::Get()->GetOption(OPTION_ASCIIFILES);
 	wxString ext;
@@ -1927,7 +1932,7 @@ void CQueueView::OnContextMenu(wxContextMenuEvent& event)
 	pMenu->Enable(XRCID("ID_REMOVE"), GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1);
 
 	const bool hasSelection = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1;
-	
+
 	pMenu->Enable(XRCID("ID_PRIORITY"), hasSelection);
 	pMenu->Enable(XRCID("ID_DEFAULT_FILEEXISTSACTION"), hasSelection);
 #ifdef __WXMSW__
@@ -1968,31 +1973,31 @@ void CQueueView::OnActionAfter(wxCommandEvent& event)
 	}
 	else if (event.GetId() == XRCID("ID_ACTIONAFTER_DISABLE"))
 		m_actionAfterState = ActionAfterState_Disabled;
-	
+
 	else if (event.GetId() == XRCID("ID_ACTIONAFTER_CLOSE"))
 		m_actionAfterState = ActionAfterState_Close;
-	
+
 	else if (event.GetId() == XRCID("ID_ACTIONAFTER_DISCONNECT"))
 		m_actionAfterState = ActionAfterState_Disconnect;
-	
+
 	else if (event.GetId() == XRCID("ID_ACTIONAFTER_SHOWMESSAGE"))
 		m_actionAfterState = ActionAfterState_ShowMessage;
-	
+
 	else if (event.GetId() == XRCID("ID_ACTIONAFTER_PLAYSOUND"))
 		m_actionAfterState = ActionAfterState_PlaySound;
-		
+
 	else if (event.GetId() == XRCID("ID_ACTIONAFTER_RUNCOMMAND"))
-	{	
+	{
 		m_actionAfterState = ActionAfterState_RunCommand;
 		wxTextEntryDialog dlg(m_pMainFrame, _("Please enter a path and executable to run.\nE.g. c:\\somePath\\file.exe under MS Windows or /somePath/file under Unix.\nYou can also optionally specify program arguments."), _("Enter command"));
-		
+
 		if (dlg.ShowModal() != wxID_OK)
 		{
 			m_actionAfterState = ActionAfterState_Disabled;
 			return;
 		}
 		const wxString &command = dlg.GetValue();
-		
+
 		if (command == _T(""))
 		{
 			wxMessageBox(_("No command given, aborting."), _("Empty command"), wxICON_ERROR, m_pMainFrame);
@@ -2003,10 +2008,10 @@ void CQueueView::OnActionAfter(wxCommandEvent& event)
 	}
 
 #ifdef __WXMSW__
-	
+
 	else if (event.GetId() == XRCID("ID_ACTIONAFTER_REBOOT"))
 		m_actionAfterState = ActionAfterState_Reboot;
-		
+
 	else if (event.GetId() == XRCID("ID_ACTIONAFTER_SHUTDOWN"))
 		m_actionAfterState = ActionAfterState_Shutdown;
 
@@ -2645,7 +2650,7 @@ void CQueueView::ActionAfter(bool warned /*=false*/)
 		}
 		case ActionAfterState_Disconnect:
 		{
-			if (m_pMainFrame->GetState()->IsRemoteConnected() && m_pMainFrame->GetState()->IsRemoteIdle()) 
+			if (m_pMainFrame->GetState()->IsRemoteConnected() && m_pMainFrame->GetState()->IsRemoteIdle())
 				m_pMainFrame->GetState()->m_pCommandQueue->ProcessCommand(new CDisconnectCommand());
 			break;
 		}
