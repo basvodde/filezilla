@@ -161,40 +161,19 @@ protected:
 			case sftpRequestPreamble:
 			case sftpRequestInstruction:
 			case sftpDone:
+			case sftpError:
+			case sftpVerbose:
+			case sftpStatus:
 				{
 					sftp_message* message = new sftp_message;
 					message->type = (sftpEventTypes)eventType;
-					message->text = ReadLine(pInputStream, error);
+					message->text = ReadLine(pInputStream, error).c_str();
 					if (error)
 					{
 						delete message;
 						goto loopexit;
 					}
 					SendMessage(message);
-				}
-				break;
-			case sftpError:
-				{
-					const wxString& line = ReadLine(pInputStream, error);
-					if (error)
-						goto loopexit;
-					m_pOwner->LogMessageRaw(::Error, line);
-				}
-				break;
-			case sftpVerbose:
-				{
-					const wxString& line = ReadLine(pInputStream, error);
-					if (error)
-						goto loopexit;
-					m_pOwner->LogMessageRaw(Debug_Info, line);
-				}
-				break;
-			case sftpStatus:
-				{
-					const wxString& line = ReadLine(pInputStream, error);
-					if (error)
-						goto loopexit;
-					m_pOwner->LogMessageRaw(Status, line);
 				}
 				break;
 			case sftpRequest:
@@ -464,9 +443,13 @@ void CSftpControlSocket::OnSftpEvent(wxCommandEvent& event)
 			ProcessReply(true, message->text);
 			break;
 		case sftpStatus:
+			LogMessageRaw(Status, message->text);
+			break;
 		case sftpError:
+			LogMessageRaw(::Error, message->text);
+			break;
 		case sftpVerbose:
-			wxFAIL_MSG(_T("given notification codes should have been handled by thread"));
+			LogMessageRaw(Debug_Info, message->text);
 			break;
 		case sftpDone:
 			{
