@@ -38,7 +38,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Last resolved IP", string, _T("") },
 	{ "No external ip on local conn", number, _T("1") },
 	{ "Pasv reply fallback mode", number, _T("0") },
-	{ "Timeout", number, _T("15") },
+	{ "Timeout", number, _T("20") },
 	{ "Logging Debug Level", number, _T("0") },
 	{ "Logging Raw Listing", number, _T("0") },
 	{ "fzsftp executable", string, _T("") },
