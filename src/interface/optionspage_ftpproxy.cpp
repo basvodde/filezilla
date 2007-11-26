@@ -10,6 +10,7 @@ EVT_RADIOBUTTON(XRCID("ID_PROXYTYPE_NONE"), COptionsPageFtpProxy::OnProxyTypeCha
 EVT_RADIOBUTTON(XRCID("ID_PROXYTYPE_USER"), COptionsPageFtpProxy::OnProxyTypeChanged)
 EVT_RADIOBUTTON(XRCID("ID_PROXYTYPE_SITE"), COptionsPageFtpProxy::OnProxyTypeChanged)
 EVT_RADIOBUTTON(XRCID("ID_PROXYTYPE_OPEN"), COptionsPageFtpProxy::OnProxyTypeChanged)
+EVT_RADIOBUTTON(XRCID("ID_PROXYTYPE_CUSTOM"), COptionsPageFtpProxy::OnProxyTypeChanged)
 EVT_TEXT(XRCID("ID_LOGINSEQUENCE"), COptionsPageFtpProxy::OnLoginSequenceChanged)
 END_EVENT_TABLE()
 
@@ -102,10 +103,17 @@ void COptionsPageFtpProxy::SetCtrlState()
 		pTextCtrl->ChangeValue(_T(""));
 		pTextCtrl->Enable(false);
 		pTextCtrl->SetEditable(false);
+#ifdef __WXMSW__
+		pTextCtrl->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+#endif
 		return;
 	}
 
 	pTextCtrl->Enable(true);
+	pTextCtrl->SetEditable(true);
+#ifdef __WXMSW__
+	pTextCtrl->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+#endif
 	if (XRCCTRL(*this, "ID_PROXYTYPE_CUSTOM", wxRadioButton)->GetValue())
 		return;
 
