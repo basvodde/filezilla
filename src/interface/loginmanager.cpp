@@ -53,7 +53,7 @@ bool CLoginManager::DisplayDialog(CServer &server, wxString name, wxString chall
 #ifdef __WXMSW__
 		challenge.Replace(_T("\n"), _T("\r\n"));
 #endif
-		XRCCTRL(pwdDlg, "ID_CHALLENGE", wxTextCtrl)->SetLabel(challenge);
+		XRCCTRL(pwdDlg, "ID_CHALLENGE", wxTextCtrl)->ChangeValue(challenge);
 		pwdDlg.GetSizer()->Show(XRCCTRL(pwdDlg, "ID_REMEMBER", wxCheckBox), false, true);
 		XRCCTRL(pwdDlg, "ID_CHALLENGE", wxTextCtrl)->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 	}
