@@ -106,6 +106,10 @@ void COptionsPageFtpProxy::SetCtrlState()
 #ifdef __WXMSW__
 		pTextCtrl->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 #endif
+
+		XRCCTRL(*this, "ID_PROXY_HOST", wxTextCtrl)->Enable(false);
+		XRCCTRL(*this, "ID_PROXY_USER", wxTextCtrl)->Enable(false);
+		XRCCTRL(*this, "ID_PROXY_PASS", wxTextCtrl)->Enable(false);
 		return;
 	}
 
@@ -114,6 +118,11 @@ void COptionsPageFtpProxy::SetCtrlState()
 #ifdef __WXMSW__
 	pTextCtrl->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 #endif
+
+	XRCCTRL(*this, "ID_PROXY_HOST", wxTextCtrl)->Enable(true);
+	XRCCTRL(*this, "ID_PROXY_USER", wxTextCtrl)->Enable(true);
+	XRCCTRL(*this, "ID_PROXY_PASS", wxTextCtrl)->Enable(true);
+
 	if (XRCCTRL(*this, "ID_PROXYTYPE_CUSTOM", wxRadioButton)->GetValue())
 		return;
 
