@@ -7,6 +7,7 @@
 BEGIN_EVENT_TABLE(CFileExistsDlg, wxDialogEx)
 EVT_BUTTON(XRCID("wxID_OK"), CFileExistsDlg::OnOK)
 EVT_BUTTON(XRCID("wxID_CANCEL"), CFileExistsDlg::OnCancel)
+EVT_CHECKBOX(wxID_ANY, CFileExistsDlg::OnCheck)
 END_EVENT_TABLE()
 
 CFileExistsDlg::CFileExistsDlg(CFileExistsNotification *pNotification)
@@ -341,4 +342,13 @@ wxString CFileExistsDlg::GetPathEllipsis(wxString path, wxWindow *window)
 	}
 
 	return left + fill + right;
+}
+
+void CFileExistsDlg::OnCheck(wxCommandEvent& event)
+{
+	if (event.GetId() != XRCID("ID_UPDOWNONLY") && event.GetId() != XRCID("ID_QUEUEONLY"))
+		return;
+
+	if (event.IsChecked())
+		XRCCTRL(*this, "ID_ALWAYS", wxCheckBox)->SetValue(true);
 }

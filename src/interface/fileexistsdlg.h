@@ -21,8 +21,9 @@ public:
 	bool Always(bool &directionOnly, bool &queueOnly) const;
 
 protected:
-	virtual void OnOK(wxCommandEvent& event);
-	virtual void OnCancel(wxCommandEvent& event);
+	void OnOK(wxCommandEvent& event);
+	void OnCancel(wxCommandEvent& event);
+	void OnCheck(wxCommandEvent& event);
 	
 	void LoadIcon(int id, const wxString &file);
 	wxString GetPathEllipsis(wxString path, wxWindow *window);
