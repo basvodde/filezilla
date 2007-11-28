@@ -63,6 +63,8 @@ public:
 	bool FilenameFiltered(const wxString& name, bool dir, wxLongLong size, bool local) const;
 	bool HasActiveFilters() const;
 
+	bool HasSameLocalAndRemoteFilters() const;
+
 protected:
 
 	bool CompileRegexes();

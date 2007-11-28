@@ -448,18 +448,20 @@ bool CFilterDialog::FilenameFiltered(const wxString& name, bool dir, wxLongLong 
 {
 	wxASSERT(m_currentFilterSet < m_filterSets.size());
 
+	const CFilterSet& set = m_filterSets[m_currentFilterSet];
+
 	// Check active filters
 	for (unsigned int i = 0; i < m_filters.size(); i++)
 	{
 		if (local)
 		{
-			if (m_filterSets[m_currentFilterSet].local[i])
+			if (set.local[i])
 				if (FilenameFilteredByFilter(name, dir, size, i))
 					return true;
 		}
 		else
 		{
-			if (m_filterSets[m_currentFilterSet].remote[i])
+			if (set.remote[i])
 				if (FilenameFilteredByFilter(name, dir, size, i))
 					return true;
 		}
@@ -715,14 +717,32 @@ bool CFilterDialog::HasActiveFilters() const
 {
 	wxASSERT(m_currentFilterSet < m_filterSets.size());
 
+	const CFilterSet& set = m_filterSets[m_currentFilterSet];
 	for (unsigned int i = 0; i < m_filters.size(); i++)
 	{
-		if (m_filterSets[m_currentFilterSet].local[i])
+		if (set.local[i])
 			return true;
 
-		if (m_filterSets[m_currentFilterSet].remote[i])
+		if (set.remote[i])
 			return true;
 	}
 
 	return false;
+}
+
+bool CFilterDialog::HasSameLocalAndRemoteFilters() const
+{
+	const CFilterSet& set = m_filterSets[m_currentFilterSet];
+	for (unsigned int i = 0; i < m_filters.size(); i++)
+	{
+		if (set.local[i])
+		{
+			if (!set.remote[i])
+				return false;
+		}
+		else if (set.remote[i])
+			return false;
+	}
+
+	return true;
 }
