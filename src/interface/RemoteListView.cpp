@@ -290,8 +290,10 @@ END_EVENT_TABLE()
 CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView* pQueue)
 	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER | wxLC_EDIT_LABELS),
 	CSystemImageList(16),
-	CStateEventHandler(pState, STATECHANGE_REMOTE_DIR | STATECHANGE_REMOTE_DIR_MODIFIED | STATECHANGE_APPLYFILTER)
+	CStateEventHandler(pState, STATECHANGE_REMOTE_DIR | STATECHANGE_REMOTE_DIR_MODIFIED | STATECHANGE_APPLYFILTER),
+	CComparableListing(this)
 {
+	m_comparisonIndex = -1;
 	m_dropTarget = -1;
 
 	m_pInfoText = 0;
@@ -403,11 +405,16 @@ wxString CRemoteListView::OnGetItemText(long item, long column) const
 	{
 		if ((unsigned int)index == m_pDirectoryListing->GetCount())
 			return _T("..");
-		else
+		else if ((unsigned int)index < m_pDirectoryListing->GetCount())
 			return (*m_pDirectoryListing)[index].name;
+		else
+			return _T("");
 	}
 	if (!item)
 		return _T(""); //.. has no attributes
+
+	if ((unsigned int)index >= m_pDirectoryListing->GetCount())
+		return _T("");
 
 	if (column == 1)
 	{
@@ -697,6 +704,7 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 		{
 			const CDirentry& entry = (*m_pDirectoryListing)[i];
 			t_fileData data;
+			data.flags = normal;
 			data.icon = entry.dir ? m_dirIcon : -2;
 			m_fileData.push_back(data);
 
@@ -705,6 +713,7 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 		}
 
 		t_fileData data;
+		data.flags = normal;
 		data.icon = m_dirIcon;
 		m_fileData.push_back(data);
 	}
@@ -2489,7 +2498,7 @@ void CRemoteListView::ValidateIndexMapping()
 	// Injectivity
 	for (unsigned int i = 0; i < m_indexMapping.size(); i++)
 	{
-		int item = m_indexMapping[i];
+		unsigned int item = m_indexMapping[i];
 		if (item > m_pDirectoryListing->GetCount())
 		{
 			int *x = 0;
@@ -2513,3 +2522,97 @@ void CRemoteListView::ValidateIndexMapping()
 	delete [] buffer;
 }
 #endif
+
+bool CRemoteListView::CanStartComparison(wxString* pError)
+{
+	if (!m_pDirectoryListing)
+	{
+		if (pError)
+			*pError = _("Cannot compare directories, not connected to a server.");
+		return false;
+	}
+
+	return true;
+}
+
+void CRemoteListView::StartComparison()
+{
+	if (m_originalIndexMapping.empty())
+		m_originalIndexMapping.swap(m_indexMapping);
+	else
+		m_indexMapping.clear();
+
+	m_comparisonIndex = -1;
+
+	const t_fileData& last = m_fileData[m_fileData.size() - 1];
+	if (last.flags != fill)
+	{
+		t_fileData data;
+		data.icon = -1;
+		data.flags = fill;
+		m_fileData.push_back(data);
+	}
+}
+
+bool CRemoteListView::GetNextFile(wxString& name, bool& dir, wxLongLong& size)
+{
+	if (++m_comparisonIndex >= (int)m_originalIndexMapping.size())
+		return false;
+
+	const unsigned int index = m_originalIndexMapping[m_comparisonIndex];
+	if (index >= m_fileData.size())
+		return false;
+
+	if (index == m_pDirectoryListing->GetCount())
+	{
+		name = _T("..");
+		dir = true;
+		size = -1;
+		return true;
+	}
+
+	const CDirentry& entry = (*m_pDirectoryListing)[index];
+
+	name = entry.name;
+	dir = entry.dir;
+	size = entry.size;
+
+	return true;
+}
+
+void CRemoteListView::CompareAddFile(t_fileEntryFlags flags)
+{
+	if (flags == fill)
+	{
+		m_indexMapping.push_back(m_fileData.size() - 1);
+		return;
+	}
+
+	int index = m_originalIndexMapping[m_comparisonIndex];
+	m_fileData[index].flags = flags;
+
+	m_indexMapping.push_back(index);
+}
+
+void CRemoteListView::FinishComparison()
+{
+	SetItemCount(m_indexMapping.size());
+	Refresh();
+}
+
+wxListItemAttr* CRemoteListView::OnGetItemAttr(long item) const
+{
+	CRemoteListView *pThis = const_cast<CRemoteListView *>(this);
+	int index = GetItemIndex(item);
+
+	if (index == -1)
+		return 0;
+
+	const t_fileData& data = m_fileData[index];
+
+	if (data.flags == normal || data.flags == fill)
+		return 0;
+	
+	const int i = (data.flags == different) ? 0 : 1;
+	return &pThis->m_comparisonBackgrounds[i];
+}

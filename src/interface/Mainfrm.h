@@ -133,6 +133,7 @@ protected:
 	void OnChar(wxKeyEvent& event);
 	void OnMoveEvent(wxMoveEvent& event);
 	void OnActivate(wxActivateEvent& event);
+	void OnToolbarComparison(wxCommandEvent& event);
 #ifdef __WXMSW__
 	void OnSizePost(wxCommandEvent& event);
 

@@ -3,12 +3,13 @@
 
 #include "systemimagelist.h"
 #include "state.h"
+#include "listingcomparison.h"
 
 class CQueueView;
 class CLocalListViewDropTarget;
 class CLocalListViewSortObject;
 
-class CLocalListView : public wxListCtrl, CSystemImageList, CStateEventHandler
+class CLocalListView : public wxListCtrl, CSystemImageList, CStateEventHandler, public CComparableListing
 {
 	friend class CLocalListViewDropTarget;
 
@@ -27,6 +28,7 @@ protected:
 	// the instance.
 	virtual wxString OnGetItemText(long item, long column) const;
 	virtual int OnGetItemImage(long item) const;
+	virtual wxListItemAttr* OnGetItemAttr(long item) const;
 
 	// Clears all selections and returns the list of items that were selected
 	std::list<wxString> RememberSelectedItems(wxString& focused);
@@ -53,9 +55,19 @@ public:
 		wxString fileType;
 		bool hasTime;
 		wxDateTime lastModified;
+
+		// t_fileEntryFlags is defined in state.h as it will be used for
+		// both local and remote listings
+		t_fileEntryFlags flags;
 	};
 
 	void InitDateFormat();
+
+	virtual bool CanStartComparison(wxString* pError);
+	virtual void StartComparison();
+	virtual bool GetNextFile(wxString& name, bool &dir, wxLongLong &size);
+	virtual void CompareAddFile(t_fileEntryFlags flags);
+	virtual void FinishComparison();
 
 protected:
 	bool IsItemValid(unsigned int item) const;
@@ -73,7 +85,10 @@ protected:
 
 	std::vector<t_fileData> m_fileData;
 	std::vector<unsigned int> m_indexMapping;
+	std::vector<unsigned int> m_originalIndexMapping;
 	std::map<wxString, wxString> m_fileTypeMap;
+
+	int m_comparisonIndex;
 
 #ifdef __WXMSW__
 	wxImageListEx *m_pHeaderImageList;

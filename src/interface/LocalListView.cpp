@@ -215,7 +215,8 @@ END_EVENT_TABLE()
 
 CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView *pQueue)
 	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER | wxLC_EDIT_LABELS),
-	CSystemImageList(16), CStateEventHandler(pState, STATECHANGE_LOCAL_DIR | STATECHANGE_APPLYFILTER | STATECHANGE_LOCAL_REFRESH_FILE)
+	CSystemImageList(16), CStateEventHandler(pState, STATECHANGE_LOCAL_DIR | STATECHANGE_APPLYFILTER | STATECHANGE_LOCAL_REFRESH_FILE),
+	CComparableListing(this)
 {
 	m_dropTarget = -1;
 
@@ -297,6 +298,8 @@ CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, 
 #endif
 
 	InitDateFormat();
+
+	m_comparisonIndex = -1;
 }
 
 CLocalListView::~CLocalListView()
@@ -345,6 +348,7 @@ bool CLocalListView::DisplayDir(wxString dirname)
 	if (m_hasParent)
 	{
 		t_fileData data;
+		data.flags = normal;
 		data.dir = true;
 		data.icon = -2;
 		data.name = _T("..");
@@ -395,6 +399,7 @@ regular_dir:
 			}
 			t_fileData data;
 
+			data.flags = normal;
 			data.dir = wxFileName::DirExists(dirname + file);
 			data.icon = -2;
 			data.name = file;
@@ -547,6 +552,9 @@ wxString CLocalListView::OnGetItemText(long item, long column) const
 	else if (column == 2)
 	{
 		if (!item && m_hasParent)
+			return _T("");
+
+		if (data->flags == fill)
 			return _T("");
 
 		if (data->fileType == _T(""))
@@ -710,6 +718,7 @@ void CLocalListView::DisplayDrives()
 			path.Truncate(path.Length() - 1);
 
 		t_fileData data;
+		data.flags = normal;
 		data.name = path;
 		data.dir = true;
 		data.icon = -2;
@@ -752,6 +761,7 @@ void CLocalListView::DisplayShares(wxString computer)
 				continue;
 
 			t_fileData data;
+			data.flags = normal;
 			data.name = p->shi1_netname;
 			data.dir = true;
 			data.icon = -2;
@@ -2023,6 +2033,7 @@ void CLocalListView::RefreshFile(const wxString& file)
 
 	t_fileData data;
 
+	data.flags = normal;
 	data.dir = !fileExists;
 	data.icon = -2;
 	data.name = file;
@@ -2111,4 +2122,84 @@ void CLocalListView::InitDateFormat()
 		m_dateFormat += timeFormat.Mid(1);
 	else
 		m_dateFormat += _T("%X");
+}
+
+wxListItemAttr* CLocalListView::OnGetItemAttr(long item) const
+{
+	CLocalListView *pThis = const_cast<CLocalListView *>(this);
+	t_fileData* data = pThis->GetData((unsigned int)item);
+
+	if (!data)
+		return 0;
+
+	if (data->flags == normal || data->flags == fill)
+		return 0;
+	
+	const int i = (data->flags == different) ? 0 : 1;
+	return &pThis->m_comparisonBackgrounds[i];
+}
+
+void CLocalListView::StartComparison()
+{
+	if (m_originalIndexMapping.empty())
+		m_originalIndexMapping.swap(m_indexMapping);
+	else
+		m_indexMapping.clear();
+
+	m_comparisonIndex = -1;
+
+	const t_fileData& last = m_fileData[m_fileData.size() - 1];
+	if (last.flags != fill)
+	{
+		t_fileData data;
+		data.dir = false;
+		data.icon = -1;
+		data.hasTime = false;
+		data.size = -1;
+		data.flags = fill;
+		m_fileData.push_back(data);
+	}
+}
+
+bool CLocalListView::GetNextFile(wxString& name, bool& dir, wxLongLong& size)
+{
+	if (++m_comparisonIndex >= (int)m_originalIndexMapping.size())
+		return false;
+
+	const unsigned int index = m_originalIndexMapping[m_comparisonIndex];
+	if (index >= m_fileData.size())
+		return false;
+
+	const t_fileData& data = m_fileData[index];
+
+	name = data.name;
+	dir = data.dir;
+	size = data.size;
+
+	return true;
+}
+
+void CLocalListView::CompareAddFile(t_fileEntryFlags flags)
+{
+	if (flags == fill)
+	{
+		m_indexMapping.push_back(m_fileData.size() - 1);
+		return;
+	}
+
+	int index = m_originalIndexMapping[m_comparisonIndex];
+	m_fileData[index].flags = flags;
+
+	m_indexMapping.push_back(index);
+}
+
+void CLocalListView::FinishComparison()
+{
+	SetItemCount(m_indexMapping.size());
+	Refresh();
+}
+
+bool CLocalListView::CanStartComparison(wxString* pError)
+{
+	return true;
 }

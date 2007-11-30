@@ -107,6 +107,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_MENU(XRCID("ID_MENU_EDIT_FILTERS"), CMainFrame::OnFilter)
 	EVT_MOVE(CMainFrame::OnMoveEvent)
 	EVT_ACTIVATE(CMainFrame::OnActivate)
+	EVT_TOOL(XRCID("ID_TOOLBAR_COMPARISON"), CMainFrame::OnToolbarComparison)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
@@ -1946,4 +1947,13 @@ void CMainFrame::OnActivate(wxActivateEvent& event)
 	CEditHandler* pEditHandler = CEditHandler::Get();
 	if (pEditHandler)
 		pEditHandler->CheckForModifications();
+}
+
+void CMainFrame::OnToolbarComparison(wxCommandEvent& event)
+{
+	if (!m_pState)
+		return;
+
+	CComparisonManager comparisonManager(m_pLocalListView, m_pRemoteListView);
+	comparisonManager.CompareListings();
 }

@@ -3,13 +3,14 @@
 
 #include "systemimagelist.h"
 #include "state.h"
+#include "listingcomparison.h"
 
 class CQueueView;
 class CChmodDialog;
 class CInfoText;
 class CRemoteListViewDropTarget;
 
-class CRemoteListView : public wxListCtrl, CSystemImageList, CStateEventHandler
+class CRemoteListView : public wxListCtrl, CSystemImageList, CStateEventHandler, public CComparableListing
 {
 	friend class CRemoteListViewDropTarget;
 public:
@@ -21,6 +22,12 @@ public:
 	bool DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, wxString path, bool queueOnly);
 
 	void InitDateFormat();
+
+	virtual bool CanStartComparison(wxString* pError);
+	virtual void StartComparison();
+	virtual bool GetNextFile(wxString& name, bool &dir, wxLongLong &size);
+	virtual void CompareAddFile(t_fileEntryFlags flags);
+	virtual void FinishComparison();
 
 protected:
 	// Clears all selections and returns the list of items that were selected
@@ -37,6 +44,7 @@ protected:
 	// Both functions use a const_cast<CLocalListView *>(this) and modify
 	// the instance.
 	virtual wxString OnGetItemText(long item, long column) const;
+	virtual wxListItemAttr* OnGetItemAttr(long item) const;
 	virtual int OnGetItemImage(long item) const;
 
 	int FindItemWithPrefix(const wxString& prefix, int start);
@@ -46,6 +54,7 @@ public:
 	{
 		int icon;
 		wxString fileType;
+		t_fileEntryFlags flags;
 	};
 
 	wxString GetType(wxString name, bool dir);
@@ -69,8 +78,12 @@ protected:
 
 	const CDirectoryListing *m_pDirectoryListing;
 	std::vector<t_fileData> m_fileData;
+
 	std::vector<unsigned int> m_indexMapping;
+	std::vector<unsigned int> m_originalIndexMapping; // m_originalIndexMapping will only be set on comparisons
 	std::map<wxString, wxString> m_fileTypeMap;
+
+	int m_comparisonIndex;
 
 	// Caller is responsible to check selection is valid!
 	void TransferSelectedFiles(const wxString& localDir, bool queueOnly);
