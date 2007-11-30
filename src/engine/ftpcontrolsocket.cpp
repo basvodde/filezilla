@@ -1558,7 +1558,7 @@ int CFtpControlSocket::ListParseResponse()
 		{
 			wxASSERT(pData->directoryListing[pData->mdtm_index].hasTime);
 			wxDateTime listTime = pData->directoryListing[pData->mdtm_index].time;
-			listTime -= wxTimeSpan(0, 0, m_pCurrentServer->GetTimezoneOffset());
+			listTime -= wxTimeSpan(0, m_pCurrentServer->GetTimezoneOffset(), 0);
 
 			int serveroffset = (date - listTime).GetSeconds().GetLo();
 
