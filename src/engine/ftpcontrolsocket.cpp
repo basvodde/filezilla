@@ -4097,8 +4097,6 @@ int CFtpControlSocket::Connect(const CServer &server)
 			DoClose(FZ_REPLY_CRITICALERROR);
 			return FZ_REPLY_ERROR;
 		}
-		pData->host = m_pEngine->GetOptions()->GetOption(OPTION_FTP_PROXY_HOST);
-		pData->port = server.GetPort();
 
 		LogMessage(Status, _("Using proxy %s"), m_pEngine->GetOptions()->GetOption(OPTION_FTP_PROXY_HOST).c_str());
 	}
