@@ -633,6 +633,10 @@ bool CRemoteListView::UpdateDirectoryListing(const CDirectoryListing *pDirectory
 
 void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryListing, bool modified /*=false*/)
 {
+#ifdef __WXMSW__
+	EndEditLabel(true);
+#endif
+	
 	bool reset = false;
 	if (!pDirectoryListing || !m_pDirectoryListing)
 		reset = true;
