@@ -1,7 +1,7 @@
 resourcesdir = $(pkgdatadir)/resources/16x16
 
 dist_resources_DATA = cancel.png \
-		compare.pnp \
+		compare.png \
 		disconnect.png download.png downloadadd.png \
 		file.png \
 		filezilla.png \
