@@ -100,7 +100,7 @@ public:
 	wxString GetCustomEncoding() const;
 
 	static unsigned int GetDefaultPort(enum ServerProtocol protocol);
-	static enum ServerProtocol GetProtocolFromPort(unsigned int port);
+	static enum ServerProtocol GetProtocolFromPort(unsigned int port, bool defaultOnly = false);
 
 	static wxString GetProtocolName(enum ServerProtocol protocol);
 	static enum ServerProtocol GetProtocolFromName(const wxString& name);
