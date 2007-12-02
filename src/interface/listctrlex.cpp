@@ -22,7 +22,6 @@ wxListCtrlEx::wxListCtrlEx(wxWindow *parent,
 						   : wxListCtrl(parent, id, pos, size, style, validator, name)
 {
 #if (!defined(__WIN32__) && !defined(__WXMAC__)) || defined(__WXUNIVERSAL__)
-
 	// The generic list control a scrolled child window. In order to receive
 	// scroll events, we have to connect the event handler to it.
 	((wxWindow*)m_mainWin)->Connect(-1, wxEVT_SCROLLWIN_TOP, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
@@ -36,12 +35,14 @@ wxListCtrlEx::wxListCtrlEx(wxWindow *parent,
 
 wxListCtrlEx::~wxListCtrlEx()
 {
+#if (!defined(__WIN32__) && !defined(__WXMAC__)) || defined(__WXUNIVERSAL__)
 	((wxWindow*)m_mainWin)->Disconnect(-1, wxEVT_SCROLLWIN_TOP, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
 	((wxWindow*)m_mainWin)->Disconnect(-1, wxEVT_SCROLLWIN_BOTTOM, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
 	((wxWindow*)m_mainWin)->Disconnect(-1, wxEVT_SCROLLWIN_LINEUP, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
 	((wxWindow*)m_mainWin)->Disconnect(-1, wxEVT_SCROLLWIN_LINEDOWN, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
 	((wxWindow*)m_mainWin)->Disconnect(-1, wxEVT_SCROLLWIN_PAGEUP, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
 	((wxWindow*)m_mainWin)->Disconnect(-1, wxEVT_SCROLLWIN_PAGEDOWN, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
+#endif
 }
 
 
