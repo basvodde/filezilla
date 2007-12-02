@@ -4,13 +4,14 @@
 #include "systemimagelist.h"
 #include "state.h"
 #include "listingcomparison.h"
+#include "listctrlex.h"
 
 class CQueueView;
 class CChmodDialog;
 class CInfoText;
 class CRemoteListViewDropTarget;
 
-class CRemoteListView : public wxListCtrl, CSystemImageList, CStateEventHandler, public CComparableListing
+class CRemoteListView : public wxListCtrlEx, CSystemImageList, CStateEventHandler, public CComparableListing
 {
 	friend class CRemoteListViewDropTarget;
 public:
@@ -114,6 +115,8 @@ protected:
 	wxString m_dateFormat;
 	wxString m_timeFormat;
 
+	virtual void OnPostScroll();
+
 	DECLARE_EVENT_TABLE()
 	void OnItemActivated(wxListEvent &event);
 	void OnColumnClicked(wxListEvent &event);
@@ -130,10 +133,6 @@ protected:
 	void OnSize(wxSizeEvent& event);
 	void OnBeginDrag(wxListEvent& event);
 	void OnMenuEdit(wxCommandEvent& event);
-	void OnPostScroll(wxCommandEvent& event);
-	void OnScrollEvent(wxScrollWinEvent& event);
-	void OnMouseWheel(wxMouseEvent& event);
-	void OnSelectionChanged(wxListEvent& event);
 };
 
 #endif

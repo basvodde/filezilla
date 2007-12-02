@@ -18,9 +18,6 @@
 #include "commctrl.h"
 #endif
 
-DECLARE_EVENT_TYPE(fzEVT_REMOTE_POSTSCROLL, -1)
-DEFINE_EVENT_TYPE(fzEVT_REMOTE_POSTSCROLL)
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -270,7 +267,7 @@ BEGIN_EVENT_TABLE(CInfoText, wxWindow)
 EVT_PAINT(CInfoText::OnPaint)
 END_EVENT_TABLE()
 
-BEGIN_EVENT_TABLE(CRemoteListView, wxListCtrl)
+BEGIN_EVENT_TABLE(CRemoteListView, wxListCtrlEx)
 	EVT_LIST_ITEM_ACTIVATED(wxID_ANY, CRemoteListView::OnItemActivated)
 	EVT_LIST_COL_CLICK(wxID_ANY, CRemoteListView::OnColumnClicked)
 	EVT_CONTEXT_MENU(CRemoteListView::OnContextMenu)
@@ -288,15 +285,10 @@ BEGIN_EVENT_TABLE(CRemoteListView, wxListCtrl)
 	EVT_SIZE(CRemoteListView::OnSize)
 	EVT_LIST_BEGIN_DRAG(wxID_ANY, CRemoteListView::OnBeginDrag)
 	EVT_MENU(XRCID("ID_EDIT"), CRemoteListView::OnMenuEdit)
-	EVT_COMMAND(wxID_ANY, fzEVT_REMOTE_POSTSCROLL, CRemoteListView::OnPostScroll)
-	EVT_SCROLLWIN(CRemoteListView::OnScrollEvent)
-	EVT_MOUSEWHEEL(CRemoteListView::OnMouseWheel)
-	EVT_LIST_ITEM_FOCUSED(wxID_ANY, CRemoteListView::OnSelectionChanged)
-	EVT_LIST_ITEM_SELECTED(wxID_ANY, CRemoteListView::OnSelectionChanged)
 END_EVENT_TABLE()
 
 CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView* pQueue)
-	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER | wxLC_EDIT_LABELS),
+	: wxListCtrlEx(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER | wxLC_EDIT_LABELS),
 	CSystemImageList(16),
 	CStateEventHandler(pState, STATECHANGE_REMOTE_DIR | STATECHANGE_REMOTE_DIR_MODIFIED | STATECHANGE_APPLYFILTER),
 	CComparableListing(this)
@@ -2647,32 +2639,11 @@ void CRemoteListView::ScrollTopItem(int item)
 	ScrollList(0, delta);
 }
 
-void CRemoteListView::OnPostScroll(wxCommandEvent& event)
+void CRemoteListView::OnPostScroll()
 {
 	CComparableListing* pOther = GetOther();
 	if (!pOther)
 		return;
 
 	pOther->ScrollTopItem(GetTopItem());
-}
-
-void CRemoteListView::OnScrollEvent(wxScrollWinEvent& event)
-{
-	event.Skip();
-	wxCommandEvent evt(fzEVT_REMOTE_POSTSCROLL, wxID_ANY);
-	AddPendingEvent(evt);
-}
-
-void CRemoteListView::OnMouseWheel(wxMouseEvent& event)
-{
-	event.Skip();
-	wxCommandEvent evt(fzEVT_REMOTE_POSTSCROLL, wxID_ANY);
-	AddPendingEvent(evt);
-}
-
-void CRemoteListView::OnSelectionChanged(wxListEvent& event)
-{
-	event.Skip();
-	wxCommandEvent evt(fzEVT_REMOTE_POSTSCROLL, wxID_ANY);
-	AddPendingEvent(evt);
 }

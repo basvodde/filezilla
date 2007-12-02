@@ -202,15 +202,12 @@ protected:
 
 	std::list<CFileZillaEngine*> m_waitingForPassword;
 
-	DECLARE_EVENT_TABLE();
+	virtual void OnPostScroll();
 
+	DECLARE_EVENT_TABLE();
 	void OnEngineEvent(wxEvent &event);
 	void OnFolderThreadComplete(wxCommandEvent& event);
 	void OnFolderThreadFiles(wxCommandEvent& event);
-	void OnScrollEvent(wxScrollWinEvent& event);
-	void OnUpdateStatusLines(wxCommandEvent& event);
-	void OnMouseWheel(wxMouseEvent& event);
-	void OnFocusItemChanged(wxListEvent& event);
 
 	// Context menu handlers
 	void OnContextMenu(wxContextMenuEvent& event);

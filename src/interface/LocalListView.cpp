@@ -19,9 +19,6 @@
 #define new DEBUG_NEW
 #endif
 
-DECLARE_EVENT_TYPE(fzEVT_LOCAL_POSTSCROLL, -1)
-DEFINE_EVENT_TYPE(fzEVT_LOCAL_POSTSCROLL)
-
 class CLocalListViewDropTarget : public wxDropTarget
 {
 public:
@@ -200,7 +197,7 @@ protected:
 	wxDataObjectComposite* m_pDataObject;
 };
 
-BEGIN_EVENT_TABLE(CLocalListView, wxListCtrl)
+BEGIN_EVENT_TABLE(CLocalListView, wxListCtrlEx)
 	EVT_LIST_ITEM_ACTIVATED(wxID_ANY, CLocalListView::OnItemActivated)
 	EVT_LIST_COL_CLICK(wxID_ANY, CLocalListView::OnColumnClicked)
 	EVT_CONTEXT_MENU(CLocalListView::OnContextMenu)
@@ -214,15 +211,10 @@ BEGIN_EVENT_TABLE(CLocalListView, wxListCtrl)
 	EVT_LIST_BEGIN_LABEL_EDIT(wxID_ANY, CLocalListView::OnBeginLabelEdit)
 	EVT_LIST_END_LABEL_EDIT(wxID_ANY, CLocalListView::OnEndLabelEdit)
 	EVT_LIST_BEGIN_DRAG(wxID_ANY, CLocalListView::OnBeginDrag)
-	EVT_COMMAND(wxID_ANY, fzEVT_LOCAL_POSTSCROLL, CLocalListView::OnPostScroll)
-	EVT_SCROLLWIN(CLocalListView::OnScrollEvent)
-	EVT_MOUSEWHEEL(CLocalListView::OnMouseWheel)
-	EVT_LIST_ITEM_FOCUSED(wxID_ANY, CLocalListView::OnSelectionChanged)
-	EVT_LIST_ITEM_SELECTED(wxID_ANY, CLocalListView::OnSelectionChanged)
 END_EVENT_TABLE()
 
 CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView *pQueue)
-	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER | wxLC_EDIT_LABELS),
+	: wxListCtrlEx(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER | wxLC_EDIT_LABELS),
 	CSystemImageList(16), CStateEventHandler(pState, STATECHANGE_LOCAL_DIR | STATECHANGE_APPLYFILTER | STATECHANGE_LOCAL_REFRESH_FILE),
 	CComparableListing(this)
 {
@@ -2215,7 +2207,7 @@ bool CLocalListView::CanStartComparison(wxString* pError)
 	return true;
 }
 
-void CLocalListView::OnPostScroll(wxCommandEvent& event)
+void CLocalListView::OnPostScroll()
 {
 	CComparableListing* pOther = GetOther();
 	if (!pOther)
@@ -2237,25 +2229,4 @@ void CLocalListView::ScrollTopItem(int item)
 	delta *= rect.GetHeight();
 
 	ScrollList(0, delta);
-}
-
-void CLocalListView::OnScrollEvent(wxScrollWinEvent& event)
-{
-	event.Skip();
-	wxCommandEvent evt(fzEVT_LOCAL_POSTSCROLL, wxID_ANY);
-	AddPendingEvent(evt);
-}
-
-void CLocalListView::OnMouseWheel(wxMouseEvent& event)
-{
-	event.Skip();
-	wxCommandEvent evt(fzEVT_LOCAL_POSTSCROLL, wxID_ANY);
-	AddPendingEvent(evt);
-}
-
-void CLocalListView::OnSelectionChanged(wxListEvent& event)
-{
-	event.Skip();
-	wxCommandEvent evt(fzEVT_LOCAL_POSTSCROLL, wxID_ANY);
-	AddPendingEvent(evt);
 }

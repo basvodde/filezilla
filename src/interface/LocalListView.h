@@ -4,12 +4,13 @@
 #include "systemimagelist.h"
 #include "state.h"
 #include "listingcomparison.h"
+#include "listctrlex.h"
 
 class CQueueView;
 class CLocalListViewDropTarget;
 class CLocalListViewSortObject;
 
-class CLocalListView : public wxListCtrl, CSystemImageList, CStateEventHandler, public CComparableListing
+class CLocalListView : public wxListCtrlEx, CSystemImageList, CStateEventHandler, public CComparableListing
 {
 	friend class CLocalListViewDropTarget;
 
@@ -110,6 +111,8 @@ protected:
 
 	wxString m_dateFormat;
 
+	virtual void OnPostScroll();
+
 	// Event handlers
 	DECLARE_EVENT_TABLE();
 	void OnItemActivated(wxListEvent& event);
@@ -124,10 +127,6 @@ protected:
 	void OnBeginLabelEdit(wxListEvent& event);
 	void OnEndLabelEdit(wxListEvent& event);
 	void OnBeginDrag(wxListEvent& event);
-	void OnPostScroll(wxCommandEvent& event);
-	void OnScrollEvent(wxScrollWinEvent& event);
-	void OnMouseWheel(wxMouseEvent& event);
-	void OnSelectionChanged(wxListEvent& event);
 };
 
 #endif

@@ -2,6 +2,7 @@
 #define __QUEUE_H__
 
 #include "aui_notebook_ex.h"
+#include "listctrlex.h"
 
 #define PRIORITY_COUNT 5
 enum QueuePriority
@@ -238,7 +239,7 @@ public:
 };
 
 class CQueue;
-class CQueueViewBase : public wxListCtrl
+class CQueueViewBase : public wxListCtrlEx
 {
 public:
 	CQueueViewBase(CQueue* parent, int index, const wxString& title);

@@ -140,9 +140,6 @@ DEFINE_EVENT_TYPE(fzEVT_FOLDERTHREAD_COMPLETE)
 DECLARE_EVENT_TYPE(fzEVT_FOLDERTHREAD_FILES, -1)
 DEFINE_EVENT_TYPE(fzEVT_FOLDERTHREAD_FILES)
 
-DECLARE_EVENT_TYPE(fzEVT_UPDATE_STATUSLINES, -1)
-DEFINE_EVENT_TYPE(fzEVT_UPDATE_STATUSLINES)
-
 DECLARE_EVENT_TYPE(fzEVT_ASKFORPASSWORD, -1)
 DEFINE_EVENT_TYPE(fzEVT_ASKFORPASSWORD)
 
@@ -150,9 +147,6 @@ BEGIN_EVENT_TABLE(CQueueView, CQueueViewBase)
 EVT_FZ_NOTIFICATION(wxID_ANY, CQueueView::OnEngineEvent)
 EVT_COMMAND(wxID_ANY, fzEVT_FOLDERTHREAD_COMPLETE, CQueueView::OnFolderThreadComplete)
 EVT_COMMAND(wxID_ANY, fzEVT_FOLDERTHREAD_FILES, CQueueView::OnFolderThreadFiles)
-EVT_SCROLLWIN(CQueueView::OnScrollEvent)
-EVT_COMMAND(wxID_ANY, fzEVT_UPDATE_STATUSLINES, CQueueView::OnUpdateStatusLines)
-EVT_MOUSEWHEEL(CQueueView::OnMouseWheel)
 
 EVT_CONTEXT_MENU(CQueueView::OnContextMenu)
 EVT_MENU(XRCID("ID_PROCESSQUEUE"), CQueueView::OnProcessQueue)
@@ -169,8 +163,6 @@ EVT_MENU(XRCID("ID_ACTIONAFTER_REBOOT"), CQueueView::OnActionAfter)
 EVT_MENU(XRCID("ID_ACTIONAFTER_SHUTDOWN"), CQueueView::OnActionAfter)
 
 EVT_COMMAND(wxID_ANY, fzEVT_ASKFORPASSWORD, CQueueView::OnAskPassword)
-
-EVT_LIST_ITEM_FOCUSED(wxID_ANY, CQueueView::OnFocusItemChanged)
 
 EVT_TIMER(wxID_ANY, CQueueView::OnTimer)
 
@@ -446,18 +438,6 @@ CQueueView::CQueueView(CQueue* parent, int index, CMainFrame* pMainFrame, CAsync
 	SettingsChanged();
 
 	SetDropTarget(new CQueueViewDropTarget(this));
-
-#if (!defined(__WIN32__) && !defined(__WXMAC__)) || defined(__WXUNIVERSAL__)
-
-	// The generic list control a scrolled child window. In order to receive
-	// scroll events, we have to connect the event handler to it.
-	((wxWindow*)m_mainWin)->Connect(-1, wxEVT_SCROLLWIN_TOP, wxScrollWinEventHandler(CQueueView::OnScrollEvent), 0, this);
-	((wxWindow*)m_mainWin)->Connect(-1, wxEVT_SCROLLWIN_BOTTOM, wxScrollWinEventHandler(CQueueView::OnScrollEvent), 0, this);
-	((wxWindow*)m_mainWin)->Connect(-1, wxEVT_SCROLLWIN_LINEUP, wxScrollWinEventHandler(CQueueView::OnScrollEvent), 0, this);
-	((wxWindow*)m_mainWin)->Connect(-1, wxEVT_SCROLLWIN_LINEDOWN, wxScrollWinEventHandler(CQueueView::OnScrollEvent), 0, this);
-	((wxWindow*)m_mainWin)->Connect(-1, wxEVT_SCROLLWIN_PAGEUP, wxScrollWinEventHandler(CQueueView::OnScrollEvent), 0, this);
-	((wxWindow*)m_mainWin)->Connect(-1, wxEVT_SCROLLWIN_PAGEDOWN, wxScrollWinEventHandler(CQueueView::OnScrollEvent), 0, this);
-#endif
 }
 
 CQueueView::~CQueueView()
@@ -1892,24 +1872,10 @@ bool CQueueView::ShouldUseBinaryMode(wxString filename)
 	return true;
 }
 
-void CQueueView::OnScrollEvent(wxScrollWinEvent& event)
-{
-	event.Skip();
-	wxCommandEvent evt(fzEVT_UPDATE_STATUSLINES, wxID_ANY);
-	AddPendingEvent(evt);
-}
-
-void CQueueView::OnUpdateStatusLines(wxCommandEvent& event)
+void CQueueView::OnPostScroll()
 {
 	if (GetTopItem() != m_lastTopItem)
 		UpdateStatusLinePositions();
-}
-
-void CQueueView::OnMouseWheel(wxMouseEvent& event)
-{
-	event.Skip();
-	wxCommandEvent evt(fzEVT_UPDATE_STATUSLINES, wxID_ANY);
-	AddPendingEvent(evt);
 }
 
 void CQueueView::OnContextMenu(wxContextMenuEvent& event)
@@ -2380,13 +2346,6 @@ void CQueueView::OnAskPassword(wxCommandEvent& event)
 
 		m_waitingForPassword.pop_front();
 	}
-}
-
-void CQueueView::OnFocusItemChanged(wxListEvent& event)
-{
-	event.Skip();
-	wxCommandEvent evt(fzEVT_UPDATE_STATUSLINES, wxID_ANY);
-	AddPendingEvent(evt);
 }
 
 void CQueueView::UpdateItemSize(CFileItem* pItem, wxLongLong size)

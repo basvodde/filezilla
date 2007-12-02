@@ -707,7 +707,7 @@ bool CFolderScanItem::TryRemoveAll()
 // CQueueViewBase
 // --------------
 
-BEGIN_EVENT_TABLE(CQueueViewBase, wxListCtrl)
+BEGIN_EVENT_TABLE(CQueueViewBase, wxListCtrlEx)
 EVT_ERASE_BACKGROUND(CQueueViewBase::OnEraseBackground)
 EVT_NAVIGATION_KEY(CQueueViewBase::OnNavigationKey)
 EVT_CHAR(CQueueViewBase::OnChar)
@@ -715,7 +715,7 @@ EVT_LIST_COL_END_DRAG(wxID_ANY, CQueueViewBase::OnEndColumnDrag)
 END_EVENT_TABLE()
 
 CQueueViewBase::CQueueViewBase(CQueue* parent, int index, const wxString& title)
-	: wxListCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN | wxLC_REPORT | wxLC_VIRTUAL | wxSUNKEN_BORDER | wxTAB_TRAVERSAL),
+	: wxListCtrlEx(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN | wxLC_REPORT | wxLC_VIRTUAL | wxSUNKEN_BORDER | wxTAB_TRAVERSAL),
 	  m_pageIndex(index), m_title(title)
 {
 	m_pQueue = parent;
