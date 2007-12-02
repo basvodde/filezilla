@@ -592,7 +592,7 @@ unsigned int CServer::GetDefaultPort(enum ServerProtocol protocol)
 	return 21;
 }
 
-enum ServerProtocol CServer::GetProtocolFromPort(unsigned int port)
+enum ServerProtocol CServer::GetProtocolFromPort(unsigned int port, bool defaultOnly /*=false*/)
 {
 	for (unsigned int i = 0; protocolInfos[i].protocol != UNKNOWN; i++)
 	{
@@ -600,7 +600,10 @@ enum ServerProtocol CServer::GetProtocolFromPort(unsigned int port)
 			return protocolInfos[i].protocol;
 	}
 	
-	// Default to FTP
+	if (defaultOnly)
+		return UNKNOWN;
+
+	// Else default to FTP
 	return FTP;
 }
 

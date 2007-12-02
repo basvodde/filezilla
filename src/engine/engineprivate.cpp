@@ -320,7 +320,7 @@ int CFileZillaEnginePrivate::Connect(const CConnectCommand &command)
 
 	if (command.GetServer().GetPort() != CServer::GetDefaultPort(command.GetServer().GetProtocol()))
 	{
-		ServerProtocol protocol = CServer::GetProtocolFromPort(command.GetServer().GetPort());
+		ServerProtocol protocol = CServer::GetProtocolFromPort(command.GetServer().GetPort(), true);
 		if (protocol != UNKNOWN && protocol != command.GetServer().GetProtocol())
 			m_pLogging->LogMessage(Status, _("Selected port usually in use by a different protocol."));
 	}
