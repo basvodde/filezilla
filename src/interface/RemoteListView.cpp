@@ -2626,17 +2626,7 @@ wxListItemAttr* CRemoteListView::OnGetItemAttr(long item) const
 
 void CRemoteListView::ScrollTopItem(int item)
 {
-	const int current = GetTopItem();
-	int delta = item - current;
-	if (!delta)
-		return;
-
-	wxRect rect;
-	GetItemRect(current, rect, wxLIST_RECT_BOUNDS);
-
-	delta *= rect.GetHeight();
-
-	ScrollList(0, delta);
+	wxListCtrlEx::ScrollTopItem(item);
 }
 
 void CRemoteListView::OnPostScroll()

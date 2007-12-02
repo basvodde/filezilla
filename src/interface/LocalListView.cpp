@@ -2218,15 +2218,5 @@ void CLocalListView::OnPostScroll()
 
 void CLocalListView::ScrollTopItem(int item)
 {
-	const int current = GetTopItem();
-	int delta = item - current;
-	if (!delta)
-		return;
-
-	wxRect rect;
-	GetItemRect(current, rect, wxLIST_RECT_BOUNDS);
-
-	delta *= rect.GetHeight();
-
-	ScrollList(0, delta);
+	wxListCtrlEx::ScrollTopItem(item);
 }

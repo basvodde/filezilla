@@ -21,7 +21,7 @@ wxListCtrlEx::wxListCtrlEx(wxWindow *parent,
 						   const wxString& name)
 						   : wxListCtrl(parent, id, pos, size, style, validator, name)
 {
-#if 0//(!defined(__WIN32__) && !defined(__WXMAC__)) || defined(__WXUNIVERSAL__)
+#if (!defined(__WIN32__) && !defined(__WXMAC__)) || defined(__WXUNIVERSAL__)
 
 	// The generic list control a scrolled child window. In order to receive
 	// scroll events, we have to connect the event handler to it.
@@ -32,6 +32,16 @@ wxListCtrlEx::wxListCtrlEx(wxWindow *parent,
 	((wxWindow*)m_mainWin)->Connect(-1, wxEVT_SCROLLWIN_PAGEUP, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
 	((wxWindow*)m_mainWin)->Connect(-1, wxEVT_SCROLLWIN_PAGEDOWN, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
 #endif
+}
+
+wxListCtrlEx::~wxListCtrlEx()
+{
+	((wxWindow*)m_mainWin)->Disconnect(-1, wxEVT_SCROLLWIN_TOP, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
+	((wxWindow*)m_mainWin)->Disconnect(-1, wxEVT_SCROLLWIN_BOTTOM, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
+	((wxWindow*)m_mainWin)->Disconnect(-1, wxEVT_SCROLLWIN_LINEUP, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
+	((wxWindow*)m_mainWin)->Disconnect(-1, wxEVT_SCROLLWIN_LINEDOWN, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
+	((wxWindow*)m_mainWin)->Disconnect(-1, wxEVT_SCROLLWIN_PAGEUP, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
+	((wxWindow*)m_mainWin)->Disconnect(-1, wxEVT_SCROLLWIN_PAGEDOWN, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
 }
 
 
@@ -71,4 +81,24 @@ void wxListCtrlEx::OnSelectionChanged(wxListEvent& event)
 {
 	event.Skip();
 	OnPreEmitPostScrollEvent();
+}
+
+void wxListCtrlEx::ScrollTopItem(int item)
+{
+#ifdef __WXMSW__
+	const int current = GetTopItem();
+
+	int delta = item - current;
+	if (!delta)
+		return;
+
+	wxRect rect;
+	GetItemRect(current, rect, wxLIST_RECT_BOUNDS);
+
+	delta *= rect.GetHeight();
+	ScrollList(0, delta);
+#else
+	((wxScrolledWindow*)m_mainWin)->Scroll(0, item);
+	EnsureVisible(item);
+#endif
 }

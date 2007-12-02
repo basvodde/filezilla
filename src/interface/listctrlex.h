@@ -11,6 +11,9 @@ public:
 		long style = wxLC_ICON,
 		const wxValidator& validator = wxDefaultValidator,
 		const wxString& name = wxListCtrlNameStr);
+	~wxListCtrlEx();
+
+	void ScrollTopItem(int item);
 
 protected:
 	virtual void OnPostScroll();
