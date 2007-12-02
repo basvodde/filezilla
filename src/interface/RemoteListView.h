@@ -28,6 +28,7 @@ public:
 	virtual bool GetNextFile(wxString& name, bool &dir, wxLongLong &size);
 	virtual void CompareAddFile(t_fileEntryFlags flags);
 	virtual void FinishComparison();
+	virtual void ScrollTopItem(int item);
 
 protected:
 	// Clears all selections and returns the list of items that were selected
@@ -129,6 +130,10 @@ protected:
 	void OnSize(wxSizeEvent& event);
 	void OnBeginDrag(wxListEvent& event);
 	void OnMenuEdit(wxCommandEvent& event);
+	void OnPostScroll(wxCommandEvent& event);
+	void OnScrollEvent(wxScrollWinEvent& event);
+	void OnMouseWheel(wxMouseEvent& event);
+	void OnSelectionChanged(wxListEvent& event);
 };
 
 #endif

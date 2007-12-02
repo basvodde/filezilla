@@ -1320,19 +1320,26 @@ void CMainFrame::OnToggleLocalTreeView(wxCommandEvent& event)
 		m_pLocalSplitter->Unsplit(m_pLocalTreeViewPanel);
 	}
 	else
-	{
-		m_pLocalTreeViewPanel->SetHeader(m_pLocalListViewPanel->DetachHeader());
-		wxSize size = m_pLocalSplitter->GetClientSize();
-		const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
-		const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
-		if (layout == 3 && swap)
-			m_pLocalSplitter->SplitVertically(m_pLocalListViewPanel, m_pLocalTreeViewPanel, m_lastLocalTreeSplitterPos);
-		else if (layout)
-			m_pLocalSplitter->SplitVertically(m_pLocalTreeViewPanel, m_pLocalListViewPanel, m_lastLocalTreeSplitterPos);
-		else
-			m_pLocalSplitter->SplitHorizontally(m_pLocalTreeViewPanel, m_pLocalListViewPanel, m_lastLocalTreeSplitterPos);
-	}
+		ShowLocalTree();
+
 	COptions::Get()->SetOption(OPTION_SHOW_TREE_LOCAL, m_pLocalSplitter->IsSplit());
+}
+
+void CMainFrame::ShowLocalTree()
+{
+	if (m_pLocalSplitter->IsSplit())
+		return;
+
+	m_pLocalTreeViewPanel->SetHeader(m_pLocalListViewPanel->DetachHeader());
+	wxSize size = m_pLocalSplitter->GetClientSize();
+	const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
+	const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
+	if (layout == 3 && swap)
+		m_pLocalSplitter->SplitVertically(m_pLocalListViewPanel, m_pLocalTreeViewPanel, m_lastLocalTreeSplitterPos);
+	else if (layout)
+		m_pLocalSplitter->SplitVertically(m_pLocalTreeViewPanel, m_pLocalListViewPanel, m_lastLocalTreeSplitterPos);
+	else
+		m_pLocalSplitter->SplitHorizontally(m_pLocalTreeViewPanel, m_pLocalListViewPanel, m_lastLocalTreeSplitterPos);
 }
 
 void CMainFrame::OnUpdateToggleLocalTreeView(wxUpdateUIEvent& event)
@@ -1352,19 +1359,26 @@ void CMainFrame::OnToggleRemoteTreeView(wxCommandEvent& event)
 		m_pRemoteSplitter->Unsplit(m_pRemoteTreeViewPanel);
 	}
 	else
-	{
-		m_pRemoteTreeViewPanel->SetHeader(m_pRemoteListViewPanel->DetachHeader());
-		wxSize size = m_pRemoteSplitter->GetClientSize();
-		const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
-		const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
-		if (layout == 3 && !swap)
-			m_pRemoteSplitter->SplitVertically(m_pRemoteListViewPanel, m_pRemoteTreeViewPanel, m_lastRemoteTreeSplitterPos);
-		else if (layout)
-			m_pRemoteSplitter->SplitVertically(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel, m_lastRemoteTreeSplitterPos);
-		else
-			m_pRemoteSplitter->SplitHorizontally(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel, m_lastRemoteTreeSplitterPos);
-	}
+		ShowRemoteTree();
+
 	COptions::Get()->SetOption(OPTION_SHOW_TREE_REMOTE, m_pRemoteSplitter->IsSplit());
+}
+
+void CMainFrame::ShowRemoteTree()
+{
+	if (m_pRemoteSplitter->IsSplit())
+		return;
+
+	m_pRemoteTreeViewPanel->SetHeader(m_pRemoteListViewPanel->DetachHeader());
+	wxSize size = m_pRemoteSplitter->GetClientSize();
+	const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
+	const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
+	if (layout == 3 && !swap)
+		m_pRemoteSplitter->SplitVertically(m_pRemoteListViewPanel, m_pRemoteTreeViewPanel, m_lastRemoteTreeSplitterPos);
+	else if (layout)
+		m_pRemoteSplitter->SplitVertically(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel, m_lastRemoteTreeSplitterPos);
+	else
+		m_pRemoteSplitter->SplitHorizontally(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel, m_lastRemoteTreeSplitterPos);
 }
 
 void CMainFrame::OnUpdateToggleRemoteTreeView(wxUpdateUIEvent& event)
@@ -1953,6 +1967,27 @@ void CMainFrame::OnToolbarComparison(wxCommandEvent& event)
 {
 	if (!m_pState)
 		return;
+
+	if (!COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT))
+	{
+		if ((m_pLocalSplitter->IsSplit() && !m_pRemoteSplitter->IsSplit()) ||
+			(!m_pLocalSplitter->IsSplit() && m_pRemoteSplitter->IsSplit()))
+		{
+			CConditionalDialog dlg(this, CConditionalDialog::compare_treeviewmismatch, CConditionalDialog::yesno);
+			dlg.SetTitle(_("Directory comparison"));
+			dlg.AddText(_("To compare directories, both file lists have to be aligned."));
+			dlg.AddText(_("To do this, the directory trees need to be both shown or both hidden."));
+			dlg.AddText(_("Show both directory trees and continue comparing?"));
+			if (!dlg.Run())
+				return;
+
+			ShowLocalTree();
+			ShowRemoteTree();
+		}
+		int pos = (m_pLocalSplitter->GetSashPosition() + m_pRemoteSplitter->GetSashPosition()) / 2;
+		m_pLocalSplitter->SetSashPosition(pos);
+		m_pRemoteSplitter->SetSashPosition(pos);
+	}
 
 	CComparisonManager comparisonManager(m_pLocalListView, m_pRemoteListView);
 	comparisonManager.CompareListings();

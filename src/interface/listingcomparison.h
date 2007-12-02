@@ -19,6 +19,10 @@ public:
 	virtual bool GetNextFile(wxString& name, bool &dir, wxLongLong &size) = 0;
 	virtual void CompareAddFile(t_fileEntryFlags flags) = 0;
 	virtual void FinishComparison() = 0;
+	virtual void ScrollTopItem(int item) = 0;
+
+	void SetOther(CComparableListing* pOther) { m_pOther = pOther; }
+	CComparableListing* GetOther() { return m_pOther; }
 
 protected:
 
@@ -26,6 +30,8 @@ protected:
 
 private:
 	wxWindow* m_pParent;
+
+	CComparableListing* m_pOther;
 };
 
 class CComparisonManager

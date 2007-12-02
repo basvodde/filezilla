@@ -89,6 +89,9 @@ protected:
 	CUpdateWizard* m_pUpdateWizard;
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 
+	void ShowLocalTree();
+	void ShowRemoteTree();
+
 	// Event handlers
 	DECLARE_EVENT_TABLE()
 	void OnSize(wxSizeEvent& event);

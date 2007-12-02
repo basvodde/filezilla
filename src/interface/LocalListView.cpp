@@ -19,6 +19,9 @@
 #define new DEBUG_NEW
 #endif
 
+DECLARE_EVENT_TYPE(fzEVT_LOCAL_POSTSCROLL, -1)
+DEFINE_EVENT_TYPE(fzEVT_LOCAL_POSTSCROLL)
+
 class CLocalListViewDropTarget : public wxDropTarget
 {
 public:
@@ -211,6 +214,11 @@ BEGIN_EVENT_TABLE(CLocalListView, wxListCtrl)
 	EVT_LIST_BEGIN_LABEL_EDIT(wxID_ANY, CLocalListView::OnBeginLabelEdit)
 	EVT_LIST_END_LABEL_EDIT(wxID_ANY, CLocalListView::OnEndLabelEdit)
 	EVT_LIST_BEGIN_DRAG(wxID_ANY, CLocalListView::OnBeginDrag)
+	EVT_COMMAND(wxID_ANY, fzEVT_LOCAL_POSTSCROLL, CLocalListView::OnPostScroll)
+	EVT_SCROLLWIN(CLocalListView::OnScrollEvent)
+	EVT_MOUSEWHEEL(CLocalListView::OnMouseWheel)
+	EVT_LIST_ITEM_FOCUSED(wxID_ANY, CLocalListView::OnSelectionChanged)
+	EVT_LIST_ITEM_SELECTED(wxID_ANY, CLocalListView::OnSelectionChanged)
 END_EVENT_TABLE()
 
 CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView *pQueue)
@@ -2141,6 +2149,9 @@ wxListItemAttr* CLocalListView::OnGetItemAttr(long item) const
 
 void CLocalListView::StartComparison()
 {
+	if (m_sortDirection || m_sortColumn)
+		SortList(0, 0);
+
 	if (m_originalIndexMapping.empty())
 		m_originalIndexMapping.swap(m_indexMapping);
 	else
@@ -2202,4 +2213,49 @@ void CLocalListView::FinishComparison()
 bool CLocalListView::CanStartComparison(wxString* pError)
 {
 	return true;
+}
+
+void CLocalListView::OnPostScroll(wxCommandEvent& event)
+{
+	CComparableListing* pOther = GetOther();
+	if (!pOther)
+		return;
+
+	pOther->ScrollTopItem(GetTopItem());
+}
+
+void CLocalListView::ScrollTopItem(int item)
+{
+	const int current = GetTopItem();
+	int delta = item - current;
+	if (!delta)
+		return;
+
+	wxRect rect;
+	GetItemRect(current, rect, wxLIST_RECT_BOUNDS);
+
+	delta *= rect.GetHeight();
+
+	ScrollList(0, delta);
+}
+
+void CLocalListView::OnScrollEvent(wxScrollWinEvent& event)
+{
+	event.Skip();
+	wxCommandEvent evt(fzEVT_LOCAL_POSTSCROLL, wxID_ANY);
+	AddPendingEvent(evt);
+}
+
+void CLocalListView::OnMouseWheel(wxMouseEvent& event)
+{
+	event.Skip();
+	wxCommandEvent evt(fzEVT_LOCAL_POSTSCROLL, wxID_ANY);
+	AddPendingEvent(evt);
+}
+
+void CLocalListView::OnSelectionChanged(wxListEvent& event)
+{
+	event.Skip();
+	wxCommandEvent evt(fzEVT_LOCAL_POSTSCROLL, wxID_ANY);
+	AddPendingEvent(evt);
 }

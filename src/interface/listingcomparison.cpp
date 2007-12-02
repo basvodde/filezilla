@@ -21,6 +21,8 @@ CComparableListing::CComparableListing(wxWindow* pParent)
 		m_comparisonBackgrounds[0].SetBackgroundColour(wxColour(192, 64, 64));
 		m_comparisonBackgrounds[1].SetBackgroundColour(wxColour(192, 192, 64));
 	}
+
+	m_pOther = 0;
 }
 
 bool CComparisonManager::CompareListings()
@@ -134,4 +136,6 @@ int CComparisonManager::CompareFiles(const int dirSortMode, const wxString& loca
 CComparisonManager::CComparisonManager(CComparableListing* pLeft, CComparableListing* pRight)
 	: m_pLeft(pLeft), m_pRight(pRight)
 {
+	m_pLeft->SetOther(m_pRight);
+	m_pRight->SetOther(m_pLeft);
 }

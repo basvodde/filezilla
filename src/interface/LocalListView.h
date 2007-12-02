@@ -68,6 +68,7 @@ public:
 	virtual bool GetNextFile(wxString& name, bool &dir, wxLongLong &size);
 	virtual void CompareAddFile(t_fileEntryFlags flags);
 	virtual void FinishComparison();
+	virtual void ScrollTopItem(int item);
 
 protected:
 	bool IsItemValid(unsigned int item) const;
@@ -123,6 +124,10 @@ protected:
 	void OnBeginLabelEdit(wxListEvent& event);
 	void OnEndLabelEdit(wxListEvent& event);
 	void OnBeginDrag(wxListEvent& event);
+	void OnPostScroll(wxCommandEvent& event);
+	void OnScrollEvent(wxScrollWinEvent& event);
+	void OnMouseWheel(wxMouseEvent& event);
+	void OnSelectionChanged(wxListEvent& event);
 };
 
 #endif
