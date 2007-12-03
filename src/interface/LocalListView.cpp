@@ -1870,7 +1870,8 @@ void CLocalListView::ApplyCurrentFilter()
 
 	CFilterDialog filter;
 	m_indexMapping.clear();
-	m_indexMapping.push_back(0);
+	if (m_hasParent)
+		m_indexMapping.push_back(0);
 	for (unsigned int i = min; i < m_fileData.size(); i++)
 	{
 		const t_fileData& data = m_fileData[i];
