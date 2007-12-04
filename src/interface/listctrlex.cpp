@@ -29,7 +29,7 @@ wxListCtrlEx::wxListCtrlEx(wxWindow *parent,
 	GetMainWindow()->Connect(-1, wxEVT_SCROLLWIN_LINEUP, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
 	GetMainWindow()->Connect(-1, wxEVT_SCROLLWIN_LINEDOWN, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
 	GetMainWindow()->Connect(-1, wxEVT_SCROLLWIN_PAGEUP, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
-	(GetMainWindow()->Connect(-1, wxEVT_SCROLLWIN_PAGEDOWN, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
+	GetMainWindow()->Connect(-1, wxEVT_SCROLLWIN_PAGEDOWN, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
 #endif
 }
 
@@ -46,7 +46,7 @@ wxListCtrlEx::~wxListCtrlEx()
 }
 
 #ifndef __WXMSW__
-static wxWindow* wxListCtrlEx::GetMainWindow()
+wxWindow* wxListCtrlEx::GetMainWindow()
 {
 #ifdef __WXMAC__
 	return (wxWindow*)m_genericImpl->m_mainWin;
