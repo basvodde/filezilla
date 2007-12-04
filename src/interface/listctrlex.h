@@ -21,6 +21,10 @@ protected:
 	void EmitPostScrollEvent();
 
 private:
+#ifndef __WXMSW__
+	wxWindow* GetMainWindow();
+#endif
+
 	DECLARE_EVENT_TABLE();
 	void OnPostScrollEvent(wxCommandEvent& event);
 	void OnScrollEvent(wxScrollWinEvent& event);
