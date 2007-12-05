@@ -46,12 +46,12 @@ wxListCtrlEx::~wxListCtrlEx()
 }
 
 #ifndef __WXMSW__
-wxWindow* wxListCtrlEx::GetMainWindow()
+wxScrolledWindow* wxListCtrlEx::GetMainWindow()
 {
 #ifdef __WXMAC__
-	return (wxWindow*)m_genericImpl->m_mainWin;
+	return (wxScrolledWindow*)m_genericImpl->m_mainWin;
 #else
-	return (wxWindow*)m_mainWin;
+	return (wxScrolledWindow*)m_mainWin;
 #endif
 }
 #endif
@@ -109,7 +109,7 @@ void wxListCtrlEx::ScrollTopItem(int item)
 	delta *= rect.GetHeight();
 	ScrollList(0, delta);
 #else
-	((wxScrolledWindow*)m_mainWin)->Scroll(0, item);
+	GetMainWindow()->Scroll(0, item);
 	EnsureVisible(item);
 #endif
 }

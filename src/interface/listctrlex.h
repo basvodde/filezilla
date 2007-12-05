@@ -22,7 +22,7 @@ protected:
 
 private:
 #ifndef __WXMSW__
-	wxWindow* GetMainWindow();
+	wxScrolledWindow* GetMainWindow();
 #endif
 
 	DECLARE_EVENT_TABLE();
