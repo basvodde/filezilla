@@ -297,7 +297,7 @@ wxString CFileExistsDlg::GetPathEllipsis(wxString path, wxWindow *window)
 	wxDisplay display(wxDisplay::GetFromWindow(window));
 	wxRect rect = display.GetClientArea();
 	const int DESKTOP_WIDTH = rect.GetWidth(); // width of the desktop in pixels
-	const int maxWidth = DESKTOP_WIDTH * 0.75;
+	const int maxWidth = (int)(DESKTOP_WIDTH * 0.75);
 
 	// If the path is already short enough, don't change it
 	if (string_width <= maxWidth || path.Length() < 20)
