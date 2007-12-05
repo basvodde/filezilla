@@ -20,7 +20,7 @@
   SetCompressor /SOLID LZMA
 
   ;Default installation folder
-  InstallDir "$PROGRAMFILES\FileZilla Client"
+  InstallDir "$PROGRAMFILES\FileZilla FTP Client"
   
   ;Get installation folder from registry if available
   InstallDirRegKey HKLM "Software\FileZilla Client" ""
@@ -82,7 +82,7 @@
   !define MUI_STARTMENUPAGE_REGISTRY_ROOT "SHCTX"
   !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\FileZilla Client"
   !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Startmenu"
-  !define MUI_STARTMENUPAGE_DEFAULTFOLDER "FileZilla Client"
+  !define MUI_STARTMENUPAGE_DEFAULTFOLDER "FileZilla FTP Client"
   
   !insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
 
