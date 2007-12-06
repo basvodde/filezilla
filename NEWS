@@ -5,6 +5,14 @@ Legend:
   + New feature or important bugfix
   - Bugfixes
 
+3.0.5-rc1 (2007-12-??)
+
++ Directory listing comparison
+- Fix issue with proxies in combination with nonstandard ports
+- Fix timezone offset detection if user has specified a custom offset
+- MSW: Cancel remote renaming of files if listing changes
+- Fix prefix search in file listings not working with all keys
+
 3.0.4 (2007-11-26)
 
 - Linux: Fix empty challenge text if using interactive login
@@ -13,7 +21,7 @@ Legend:
 
 + Implement FTP Proxy support. Note that using a properly configured NAT router is recommended instead.
 + Implement FTP keep alive for those connecting to improperly configured servers
-- Fix crashes if deletig files in directories with more than 200 entries
+- Fix crashes if deleting files in directories with more than 200 entries
 - Compatility improvements with VMS and z/VM servers
 - Now requires GnuTLS 2.0.4 which fixes a problem with servers using compression.
 - Changing list of ascii files or increasing number of concurrent transfers had no effect until restart of FileZilla
