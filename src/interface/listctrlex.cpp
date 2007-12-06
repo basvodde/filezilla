@@ -23,35 +23,10 @@ wxListCtrlEx::wxListCtrlEx(wxWindow *parent,
 						   : wxListCtrl(parent, id, pos, size, style, validator, name)
 {
 	m_prefixSearch_enabled = false;
-
-#ifndef __WXMSW__
-	// The generic list control a scrolled child window. In order to receive
-	// scroll events, we have to connect the event handler to it.
-	GetMainWindow()->Connect(-1, wxEVT_SCROLLWIN_TOP, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
-	GetMainWindow()->Connect(-1, wxEVT_SCROLLWIN_BOTTOM, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
-	GetMainWindow()->Connect(-1, wxEVT_SCROLLWIN_LINEUP, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
-	GetMainWindow()->Connect(-1, wxEVT_SCROLLWIN_LINEDOWN, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
-	GetMainWindow()->Connect(-1, wxEVT_SCROLLWIN_PAGEUP, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
-	GetMainWindow()->Connect(-1, wxEVT_SCROLLWIN_PAGEDOWN, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
-
-	// Same with key down events
-	GetMainWindow()->Connect(-1, wxEVT_KEY_DOWN, wxKeyEventHandler(CRemoteListView::OnKeyDown), 0, this);
-#endif
 }
 
 wxListCtrlEx::~wxListCtrlEx()
 {
-#ifndef __WXMSW__
-	GetMainWindow()->Disconnect(-1, wxEVT_SCROLLWIN_TOP, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
-	GetMainWindow()->Disconnect(-1, wxEVT_SCROLLWIN_BOTTOM, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
-	GetMainWindow()->Disconnect(-1, wxEVT_SCROLLWIN_LINEUP, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
-	GetMainWindow()->Disconnect(-1, wxEVT_SCROLLWIN_LINEDOWN, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
-	GetMainWindow()->Disconnect(-1, wxEVT_SCROLLWIN_PAGEUP, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
-	GetMainWindow()->Disconnect(-1, wxEVT_SCROLLWIN_PAGEDOWN, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
-
-	// Same with key down events
-	GetMainWindow()->Disconnect(-1, wxEVT_KEY_DOWN, wxKeyEventHandler(CRemoteListView::OnKeyDown), 0, this);
-#endif
 }
 
 #ifndef __WXMSW__
@@ -105,7 +80,7 @@ void wxListCtrlEx::OnSelectionChanged(wxListEvent& event)
 
 void wxListCtrlEx::ScrollTopItem(int item)
 {
-#ifdef __WXMSW__
+#ifndef __WXMSW__
 	const int current = GetTopItem();
 
 	int delta = item - current;
@@ -126,6 +101,8 @@ void wxListCtrlEx::ScrollTopItem(int item)
 
 void wxListCtrlEx::HandlePrefixSearch(wxChar character)
 {
+	wxASSERT(character);
+
 	// Keyboard navigation within items
 	wxDateTime now = wxDateTime::UNow();
 	if (m_prefixSearch_lastKeyPress.IsValid())
@@ -202,10 +179,11 @@ void wxListCtrlEx::OnKeyDown(wxKeyEvent& event)
 	if (code > 32 && code < 300 && !event.HasModifiers())
 	{
 #if wxUSE_UNICODE
-		HandlePrefixSearch(event.GetUnicodeKey());
-#else
+		int unicodeKey = event.GetUnicodeKey();
+		if (unicodeKey)
+			code = unicodeKey;
+#endif
 		HandlePrefixSearch(code);
-#endif //wxUSE_UNICODE
 	}
 	else
 		event.Skip();
