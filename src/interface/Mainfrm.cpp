@@ -1989,6 +1989,6 @@ void CMainFrame::OnToolbarComparison(wxCommandEvent& event)
 		m_pRemoteSplitter->SetSashPosition(pos);
 	}
 
-	CComparisonManager comparisonManager(m_pLocalListView, m_pRemoteListView);
-	comparisonManager.CompareListings();
+	CComparisonManager* pComparisonManager = new CComparisonManager(m_pLocalListView, m_pRemoteListView);
+	pComparisonManager->CompareListings();
 }

@@ -14,6 +14,7 @@
 #else
 #include <langinfo.h>
 #endif
+#include "conditionaldialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -1332,6 +1333,17 @@ void CLocalListView::OnColumnClicked(wxListEvent &event)
 	if (col == -1)
 		return;
 
+	if (IsComparing())
+	{
+		CConditionalDialog dlg(this, CConditionalDialog::compare_changesorting, CConditionalDialog::yesno);
+		dlg.SetTitle(_("Directory comparison"));
+		dlg.AddText(_("Sort order cannot be changed if comparing directories."));
+		dlg.AddText(_("End comparison and change sorting order?"));
+		if (!dlg.Run())
+			return;
+		ExitComparisonMode();
+	}
+
 	int dir;
 	if (col == m_sortColumn)
 		dir = m_sortDirection ? 0 : 1;
@@ -2201,6 +2213,12 @@ void CLocalListView::FinishComparison()
 {
 	SetItemCount(m_indexMapping.size());
 	Refresh();
+
+	CComparableListing* pOther = GetOther();
+	if (!pOther)
+		return;
+
+	pOther->ScrollTopItem(GetTopItem());
 }
 
 bool CLocalListView::CanStartComparison(wxString* pError)
@@ -2210,6 +2228,9 @@ bool CLocalListView::CanStartComparison(wxString* pError)
 
 void CLocalListView::OnPostScroll()
 {
+	if (!IsComparing())
+		return;
+
 	CComparableListing* pOther = GetOther();
 	if (!pOther)
 		return;
@@ -2220,4 +2241,18 @@ void CLocalListView::OnPostScroll()
 void CLocalListView::ScrollTopItem(int item)
 {
 	wxListCtrlEx::ScrollTopItem(item);
+}
+
+void CLocalListView::OnExitComparisonMode()
+{
+	wxASSERT(!m_originalIndexMapping.empty());
+	m_indexMapping.clear();
+	m_indexMapping.swap(m_originalIndexMapping);
+
+	for (unsigned int i = 0; i < m_fileData.size() - 1; i++)
+		m_fileData[i].flags = normal;
+
+	SetItemCount(m_indexMapping.size());
+
+	Refresh();
 }

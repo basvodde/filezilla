@@ -1,8 +1,10 @@
 #ifndef __LISTINGCOMPARISON_H__
 #define __LISTINGCOMPARISON_H__
 
+class CComparisonManager;
 class CComparableListing
 {
+	friend class CComparisonManager;
 public:
 	CComparableListing(wxWindow* pParent);
 	virtual ~CComparableListing() {}
@@ -21,6 +23,11 @@ public:
 	virtual void CompareAddFile(t_fileEntryFlags flags) = 0;
 	virtual void FinishComparison() = 0;
 	virtual void ScrollTopItem(int item) = 0;
+	virtual void OnExitComparisonMode() = 0;
+	
+	void ExitComparisonMode();
+
+	bool IsComparing() const;
 
 	void SetOther(CComparableListing* pOther) { m_pOther = pOther; }
 	CComparableListing* GetOther() { return m_pOther; }
@@ -33,6 +40,7 @@ private:
 	wxWindow* m_pParent;
 
 	CComparableListing* m_pOther;
+	CComparisonManager* m_pComparisonManager;
 };
 
 class CComparisonManager
@@ -41,6 +49,9 @@ public:
 	CComparisonManager(CComparableListing* pLeft, CComparableListing* pRight);
 
 	bool CompareListings();
+	bool IsComparing() const { return m_isComparing; }
+
+	void ExitComparisonMode();
 
 protected:
 	int CompareFiles(const int dirSortMode, const wxString& local, const wxString& remote, bool localDir, bool remoteDir);
@@ -48,6 +59,8 @@ protected:
 	// Left/right, first/second, a/b, doesn't matter
 	CComparableListing* m_pLeft;
 	CComparableListing* m_pRight;
+
+	bool m_isComparing;
 };
 
 #endif //__LISTINGCOMPARISON_H__

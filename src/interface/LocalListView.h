@@ -70,6 +70,7 @@ public:
 	virtual void CompareAddFile(t_fileEntryFlags flags);
 	virtual void FinishComparison();
 	virtual void ScrollTopItem(int item);
+	virtual void OnExitComparisonMode();
 
 protected:
 	bool IsItemValid(unsigned int item) const;

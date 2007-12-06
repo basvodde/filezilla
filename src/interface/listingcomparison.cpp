@@ -5,6 +5,7 @@
 
 CComparableListing::CComparableListing(wxWindow* pParent)
 {
+	m_pComparisonManager = 0;
 	m_pParent = pParent;
 
 	// Init backgrounds for directory comparison
@@ -23,6 +24,22 @@ CComparableListing::CComparableListing(wxWindow* pParent)
 	}
 
 	m_pOther = 0;
+}
+
+bool CComparableListing::IsComparing() const
+{
+	if (!m_pComparisonManager)
+		return false;
+
+	return m_pComparisonManager->IsComparing();
+}
+
+void CComparableListing::ExitComparisonMode()
+{
+	if (!m_pComparisonManager)
+		return;
+
+	m_pComparisonManager->ExitComparisonMode();
 }
 
 bool CComparisonManager::CompareListings()
@@ -48,6 +65,11 @@ bool CComparisonManager::CompareListings()
 		wxMessageBox(error, _("Directory comparison failed"), wxICON_EXCLAMATION);
 		return false;
 	}
+	
+	m_pLeft->m_pComparisonManager = this;
+	m_pRight->m_pComparisonManager = this;
+
+	m_isComparing = true;
 
 	m_pLeft->StartComparison();
 	m_pRight->StartComparison();
@@ -100,8 +122,8 @@ bool CComparisonManager::CompareListings()
 		gotRemote = m_pRight->GetNextFile(remoteFile, remoteDir, remoteSize);
 	}
 
-	m_pLeft->FinishComparison();
 	m_pRight->FinishComparison();
+	m_pLeft->FinishComparison();
 
 	return false;
 }
@@ -136,6 +158,19 @@ int CComparisonManager::CompareFiles(const int dirSortMode, const wxString& loca
 CComparisonManager::CComparisonManager(CComparableListing* pLeft, CComparableListing* pRight)
 	: m_pLeft(pLeft), m_pRight(pRight)
 {
+	m_isComparing = false;
 	m_pLeft->SetOther(m_pRight);
 	m_pRight->SetOther(m_pLeft);
+}
+
+void CComparisonManager::ExitComparisonMode()
+{
+	if (!IsComparing())
+		return;
+
+	if (m_pLeft)
+		m_pLeft->OnExitComparisonMode();
+	if (m_pRight)
+		m_pRight->OnExitComparisonMode();
+	m_isComparing = false;
 }

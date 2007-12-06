@@ -12,6 +12,7 @@
 #include "Options.h"
 #include "recursive_operation.h"
 #include "edithandler.h"
+#include "conditionaldialog.h"
 
 #ifdef __WXMSW__
 #include "shellapi.h"
@@ -1165,6 +1166,17 @@ void CRemoteListView::OnColumnClicked(wxListEvent &event)
 	int col = event.GetColumn();
 	if (col == -1)
 		return;
+
+	if (IsComparing())
+	{
+		CConditionalDialog dlg(this, CConditionalDialog::compare_changesorting, CConditionalDialog::yesno);
+		dlg.SetTitle(_("Directory comparison"));
+		dlg.AddText(_("Sort order cannot be changed if comparing directories."));
+		dlg.AddText(_("End comparison and change sorting order?"));
+		if (!dlg.Run())
+			return;
+		ExitComparisonMode();
+	}
 
 	int dir;
 	if (col == m_sortColumn)
@@ -2631,9 +2643,26 @@ void CRemoteListView::ScrollTopItem(int item)
 
 void CRemoteListView::OnPostScroll()
 {
+	if (!IsComparing())
+		return;
+
 	CComparableListing* pOther = GetOther();
 	if (!pOther)
 		return;
 
 	pOther->ScrollTopItem(GetTopItem());
+}
+
+void CRemoteListView::OnExitComparisonMode()
+{
+	wxASSERT(!m_originalIndexMapping.empty());
+	m_indexMapping.clear();
+	m_indexMapping.swap(m_originalIndexMapping);
+
+	for (unsigned int i = 0; i < m_fileData.size() - 1; i++)
+		m_fileData[i].flags = normal;
+
+	SetItemCount(m_indexMapping.size());
+
+	Refresh();
 }
