@@ -1579,31 +1579,6 @@ void CRemoteListView::OnKeyDown(wxKeyEvent& event)
 		OnChar(event);
 }
 
-int CRemoteListView::FindItemWithPrefix(const wxString& prefix, int start)
-{
-	for (int i = start; i < (GetItemCount() + start); i++)
-	{
-		int item = i % GetItemCount();
-		wxString fn;
-		if (!item)
-		{
-			fn = _T("..");
-			fn = fn.Left(prefix.Length());
-		}
-		else
-		{
-			int index = GetItemIndex(item);
-			if (index == -1)
-				continue;
-
-			fn = (*m_pDirectoryListing)[index].name.Left(prefix.Length());
-		}
-		if (!fn.CmpNoCase(prefix))
-			return i % GetItemCount();
-	}
-	return -1;
-}
-
 void CRemoteListView::OnBeginLabelEdit(wxListEvent& event)
 {
 	if (!m_pState->IsRemoteIdle())

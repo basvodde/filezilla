@@ -221,3 +221,16 @@ wxString wxListCtrlEx::OnGetItemText(long item, long column) const
 	wxListCtrlEx *pThis = const_cast<wxListCtrlEx *>(this);
 	return pThis->GetItemText(item, (unsigned int)column);
 }
+
+int wxListCtrlEx::FindItemWithPrefix(const wxString& searchPrefix, int start)
+{
+	const int count = GetItemCount();
+	for (int i = start; i < (count + start); i++)
+	{
+		int item = i % count;
+		wxString namePrefix = GetItemText(item, 0).Left(searchPrefix.Length());
+		if (!namePrefix.CmpNoCase(searchPrefix))
+			return i % count;
+	}
+	return -1;
+}

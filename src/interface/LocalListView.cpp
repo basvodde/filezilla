@@ -1648,25 +1648,6 @@ void CLocalListView::OnKeyDown(wxKeyEvent& event)
 		OnChar(event);
 }
 
-int CLocalListView::FindItemWithPrefix(const wxString& prefix, int start)
-{
-	const int itemCount = m_fileData.size();
-	for (int i = start; i < (itemCount + start); i++)
-	{
-		int item = i % itemCount;
-		wxString fn;
-
-		t_fileData* data = GetData(item);
-		if (!data)
-			continue;
-		fn = data->name.Left(prefix.Length());
-
-		if (!fn.CmpNoCase(prefix))
-			return i % itemCount;
-	}
-	return -1;
-}
-
 void CLocalListView::OnBeginLabelEdit(wxListEvent& event)
 {
 	if (!m_hasParent)

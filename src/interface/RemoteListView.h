@@ -51,8 +51,6 @@ protected:
 	virtual wxListItemAttr* OnGetItemAttr(long item) const;
 	virtual int OnGetItemImage(long item) const;
 
-	virtual int FindItemWithPrefix(const wxString& prefix, int start);
-
 public:
 	struct t_fileData
 	{

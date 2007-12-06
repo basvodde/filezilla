@@ -81,8 +81,6 @@ protected:
 	void SortList_UpdateSelections(bool* selections, int focus);
 	CLocalListViewSortObject GetComparisonObject();
 
-	virtual int FindItemWithPrefix(const wxString& prefix, int start);
-
 	void RefreshFile(const wxString& file);
 
 	wxString m_dir;

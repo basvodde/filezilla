@@ -23,9 +23,6 @@ protected:
 	virtual void OnPreEmitPostScrollEvent();
 	void EmitPostScrollEvent();
 
-	// Used by keybord prefix search
-	// Return -1 if not found
-	virtual int FindItemWithPrefix(const wxString& prefix, int start) { return -1; }
 
 	virtual wxString GetItemText(int item, unsigned int column) { return _T(""); }
 
@@ -33,6 +30,7 @@ protected:
 private:
 	// Keyboard prefix search
 	void HandlePrefixSearch(wxChar character);
+	int FindItemWithPrefix(const wxString& searchPrefix, int start);
 
 #ifndef __WXMSW__
 	wxScrolledWindow* GetMainWindow();
