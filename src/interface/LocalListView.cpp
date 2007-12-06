@@ -292,15 +292,11 @@ CLocalListView::CLocalListView(wxWindow* parent, wxWindowID id, CState *pState, 
 
 	SetDropTarget(new CLocalListViewDropTarget(this));
 
-#if (!defined(__WIN32__) && !defined(__WXMAC__)) || defined(__WXUNIVERSAL__)
-	// The generic list control a scrolled child window. In order to receive
-	// scroll events, we have to connect the event handler to it.
-	((wxWindow*)m_mainWin)->Connect(-1, wxEVT_KEY_DOWN, wxKeyEventHandler(CLocalListView::OnKeyDown), 0, this);
-#endif
-
 	InitDateFormat();
 
 	m_comparisonIndex = -1;
+
+	EnablePrefixSearch(true);
 }
 
 CLocalListView::~CLocalListView()
@@ -528,49 +524,6 @@ wxString FormatSize(const wxLongLong& size)
 	result += 'B';
 
 	return result;
-}
-
-// Declared const due to design error in wxWidgets.
-// Won't be fixed since a fix would break backwards compatibility
-// Both functions use a const_cast<CLocalListView *>(this) and modify
-// the instance.
-wxString CLocalListView::OnGetItemText(long item, long column) const
-{
-	CLocalListView *pThis = const_cast<CLocalListView *>(this);
-	t_fileData *data = pThis->GetData(item);
-	if (!data)
-		return _T("");
-
-	if (!column)
-		return data->name;
-	else if (column == 1)
-	{
-		if (data->size < 0)
-			return _T("");
-		else
-			return FormatSize(data->size);
-	}
-	else if (column == 2)
-	{
-		if (!item && m_hasParent)
-			return _T("");
-
-		if (data->flags == fill)
-			return _T("");
-
-		if (data->fileType == _T(""))
-			data->fileType = pThis->GetType(data->name, data->dir);
-
-		return data->fileType;
-	}
-	else if (column == 3)
-	{
-		if (!data->hasTime)
-			return _T("");
-
-		return data->lastModified.Format(m_dateFormat);
-	}
-	return _T("");
 }
 
 // See comment to OnGetItemText
@@ -1677,68 +1630,6 @@ void CLocalListView::OnChar(wxKeyEvent& event)
 				wxBell();
 		}
 	}
-	else if (code > 32 && code < 300 && !event.HasModifiers())
-	{
-		// Keyboard navigation within items
-		wxDateTime now = wxDateTime::UNow();
-		if (m_lastKeyPress.IsValid())
-		{
-			wxTimeSpan span = now - m_lastKeyPress;
-			if (span.GetSeconds() >= 1)
-				m_prefix = _T("");
-		}
-		m_lastKeyPress = now;
-
-		wxChar tmp[2];
-#if wxUSE_UNICODE
-		tmp[0] = event.GetUnicodeKey();
-#else
-		tmp[0] = code;
-#endif
-		tmp[1] = 0;
-		wxString newPrefix = m_prefix + tmp;
-
-		bool beep = false;
-		int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-		if (item != -1)
-		{
-			wxString text = GetData(item)->name;
-			if (text.Length() >= m_prefix.Length() && !m_prefix.CmpNoCase(text.Left(m_prefix.Length())))
-				beep = true;
-		}
-		else if (m_prefix == _T(""))
-			beep = true;
-
-		int start = item;
-		if (start < 0)
-			start = 0;
-
-		int newPos = FindItemWithPrefix(newPrefix, start);
-
-		if (newPos == -1 && m_prefix == tmp && item != -1 && beep)
-		{
-			// Search the next item that starts with the same letter
-			newPrefix = m_prefix;
-			newPos = FindItemWithPrefix(newPrefix, item + 1);
-		}
-
-		m_prefix = newPrefix;
-		if (newPos == -1)
-		{
-			if (beep)
-				wxBell();
-			return;
-		}
-
-		item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-		while (item != -1)
-		{
-			SetItemState(item, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
-			item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-		}
-		SetItemState(newPos, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
-		EnsureVisible(newPos);
-	}
 	else
 		event.Skip();
 }
@@ -1755,7 +1646,6 @@ void CLocalListView::OnKeyDown(wxKeyEvent& event)
 	}
 	else
 		OnChar(event);
-		//event.Skip();
 }
 
 int CLocalListView::FindItemWithPrefix(const wxString& prefix, int start)
@@ -2255,4 +2145,42 @@ void CLocalListView::OnExitComparisonMode()
 	SetItemCount(m_indexMapping.size());
 
 	Refresh();
+}
+
+wxString CLocalListView::GetItemText(int item, unsigned int column)
+{
+	t_fileData *data = GetData(item);
+	if (!data)
+		return _T("");
+
+	if (!column)
+		return data->name;
+	else if (column == 1)
+	{
+		if (data->size < 0)
+			return _T("");
+		else
+			return FormatSize(data->size);
+	}
+	else if (column == 2)
+	{
+		if (!item && m_hasParent)
+			return _T("");
+
+		if (data->flags == fill)
+			return _T("");
+
+		if (data->fileType == _T(""))
+			data->fileType = GetType(data->name, data->dir);
+
+		return data->fileType;
+	}
+	else if (column == 3)
+	{
+		if (!data->hasTime)
+			return _T("");
+
+		return data->lastModified.Format(m_dateFormat);
+	}
+	return _T("");
 }

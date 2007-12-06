@@ -374,13 +374,9 @@ CRemoteListView::CRemoteListView(wxWindow* parent, wxWindowID id, CState *pState
 
 	SetDropTarget(new CRemoteListViewDropTarget(this));
 
-#if (!defined(__WIN32__) && !defined(__WXMAC__)) || defined(__WXUNIVERSAL__)
-	// The generic list control a scrolled child window. In order to receive
-	// scroll events, we have to connect the event handler to it.
-	((wxWindow*)m_mainWin)->Connect(-1, wxEVT_KEY_DOWN, wxKeyEventHandler(CRemoteListView::OnKeyDown), 0, this);
-#endif
-
 	InitDateFormat();
+
+	EnablePrefixSearch(true);
 }
 
 CRemoteListView::~CRemoteListView()
@@ -390,68 +386,6 @@ CRemoteListView::~CRemoteListView()
 #ifdef __WXMSW__
 	delete m_pHeaderImageList;
 #endif
-}
-
-// Defined in LocalListView.cpp
-extern wxString FormatSize(const wxLongLong& size);
-
-wxString CRemoteListView::OnGetItemText(long item, long column) const
-{
-	CRemoteListView *pThis = const_cast<CRemoteListView *>(this);
-	int index = pThis->GetItemIndex(item);
-	if (index == -1)
-		return _T("");
-
-	if (!column)
-	{
-		if ((unsigned int)index == m_pDirectoryListing->GetCount())
-			return _T("..");
-		else if ((unsigned int)index < m_pDirectoryListing->GetCount())
-			return (*m_pDirectoryListing)[index].name;
-		else
-			return _T("");
-	}
-	if (!item)
-		return _T(""); //.. has no attributes
-
-	if ((unsigned int)index >= m_pDirectoryListing->GetCount())
-		return _T("");
-
-	if (column == 1)
-	{
-		const CDirentry& entry = (*m_pDirectoryListing)[index];
-		if (entry.dir || entry.size < 0)
-			return _T("");
-		else
-			return FormatSize(entry.size);
-	}
-	else if (column == 2)
-	{
-		t_fileData& data = pThis->m_fileData[index];
-		if (data.fileType == _T(""))
-		{
-			const CDirentry& entry = (*m_pDirectoryListing)[index];
-			data.fileType = pThis->GetType(entry.name, entry.dir);
-		}
-
-		return data.fileType;
-	}
-	else if (column == 3)
-	{
-		const CDirentry& entry = (*m_pDirectoryListing)[index];
-		if (!entry.hasDate)
-			return _T("");
-
-		if (entry.hasTime)
-			return entry.time.Format(m_timeFormat);
-		else
-			return entry.time.Format(m_dateFormat);
-	}
-	else if (column == 4)
-		return (*m_pDirectoryListing)[index].permissions;
-	else if (column == 5)
-		return (*m_pDirectoryListing)[index].ownerGroup;
-	return _T("");
 }
 
 #ifndef __WXMSW__
@@ -1627,76 +1561,6 @@ void CRemoteListView::OnChar(wxKeyEvent& event)
 
 		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path, _T("..")));
 	}
-	else if (code > 32 && code < 300 && !event.HasModifiers())
-	{
-		// Keyboard navigation within items
-		wxDateTime now = wxDateTime::UNow();
-		if (m_lastKeyPress.IsValid())
-		{
-			wxTimeSpan span = now - m_lastKeyPress;
-			if (span.GetSeconds() >= 1)
-				m_prefix = _T("");
-		}
-		m_lastKeyPress = now;
-
-		wxChar tmp[2];
-#if wxUSE_UNICODE
-		tmp[0] = event.GetUnicodeKey();
-#else
-		tmp[0] = code;
-#endif
-		tmp[1] = 0;
-		wxString newPrefix = m_prefix + tmp;
-
-		bool beep = false;
-		int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-		if (item != -1)
-		{
-			wxString text;
-			if (!item)
-				text = _T("..");
-			else
-			{
-				int index = GetItemIndex(item);
-				if (index != -1)
-					text = (*m_pDirectoryListing)[index].name;
-			}
-			if (text.Length() >= m_prefix.Length() && !m_prefix.CmpNoCase(text.Left(m_prefix.Length())))
-				beep = true;
-		}
-		else if (m_prefix == _T(""))
-			beep = true;
-
-		int start = item;
-		if (start < 0)
-			start = 0;
-
-		int newPos = FindItemWithPrefix(newPrefix, (item >= 0) ? item : 0);
-
-		if (newPos == -1 && m_prefix == tmp && item != -1 && beep)
-		{
-			// Search the next item that starts with the same letter
-			newPrefix = m_prefix;
-			newPos = FindItemWithPrefix(newPrefix, item + 1);
-		}
-
-		m_prefix = newPrefix;
-		if (newPos == -1)
-		{
-			if (beep)
-				wxBell();
-			return;
-		}
-
-		item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-		while (item != -1)
-		{
-			SetItemState(item, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
-			item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-		}
-		SetItemState(newPos, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
-		EnsureVisible(newPos);
-	}
 	else
 		event.Skip();
 }
@@ -1713,7 +1577,6 @@ void CRemoteListView::OnKeyDown(wxKeyEvent& event)
 	}
 	else
 		OnChar(event);
-		//event.Skip();
 }
 
 int CRemoteListView::FindItemWithPrefix(const wxString& prefix, int start)
@@ -2665,4 +2528,65 @@ void CRemoteListView::OnExitComparisonMode()
 	SetItemCount(m_indexMapping.size());
 
 	Refresh();
+}
+
+// Defined in LocalListView.cpp
+extern wxString FormatSize(const wxLongLong& size);
+
+wxString CRemoteListView::GetItemText(int item, unsigned int column)
+{
+	int index = GetItemIndex(item);
+	if (index == -1)
+		return _T("");
+
+	if (!column)
+	{
+		if ((unsigned int)index == m_pDirectoryListing->GetCount())
+			return _T("..");
+		else if ((unsigned int)index < m_pDirectoryListing->GetCount())
+			return (*m_pDirectoryListing)[index].name;
+		else
+			return _T("");
+	}
+	if (!item)
+		return _T(""); //.. has no attributes
+
+	if ((unsigned int)index >= m_pDirectoryListing->GetCount())
+		return _T("");
+
+	if (column == 1)
+	{
+		const CDirentry& entry = (*m_pDirectoryListing)[index];
+		if (entry.dir || entry.size < 0)
+			return _T("");
+		else
+			return FormatSize(entry.size);
+	}
+	else if (column == 2)
+	{
+		t_fileData& data = m_fileData[index];
+		if (data.fileType == _T(""))
+		{
+			const CDirentry& entry = (*m_pDirectoryListing)[index];
+			data.fileType = GetType(entry.name, entry.dir);
+		}
+
+		return data.fileType;
+	}
+	else if (column == 3)
+	{
+		const CDirentry& entry = (*m_pDirectoryListing)[index];
+		if (!entry.hasDate)
+			return _T("");
+
+		if (entry.hasTime)
+			return entry.time.Format(m_timeFormat);
+		else
+			return entry.time.Format(m_dateFormat);
+	}
+	else if (column == 4)
+		return (*m_pDirectoryListing)[index].permissions;
+	else if (column == 5)
+		return (*m_pDirectoryListing)[index].ownerGroup;
+	return _T("");
 }

@@ -13,14 +13,27 @@ public:
 		const wxString& name = wxListCtrlNameStr);
 	~wxListCtrlEx();
 
+	// Ensure that the given item is the first in the list
 	void ScrollTopItem(int item);
+
+	void EnablePrefixSearch(bool enable) { m_prefixSearch_enabled = enable; }
 
 protected:
 	virtual void OnPostScroll();
 	virtual void OnPreEmitPostScrollEvent();
 	void EmitPostScrollEvent();
 
+	// Used by keybord prefix search
+	// Return -1 if not found
+	virtual int FindItemWithPrefix(const wxString& prefix, int start) { return -1; }
+
+	virtual wxString GetItemText(int item, unsigned int column) { return _T(""); }
+
+	virtual wxString OnGetItemText(long item, long column) const;
 private:
+	// Keyboard prefix search
+	void HandlePrefixSearch(wxChar character);
+
 #ifndef __WXMSW__
 	wxScrolledWindow* GetMainWindow();
 #endif
@@ -30,6 +43,11 @@ private:
 	void OnScrollEvent(wxScrollWinEvent& event);
 	void OnMouseWheel(wxMouseEvent& event);
 	void OnSelectionChanged(wxListEvent& event);
+	void OnKeyDown(wxKeyEvent& event);
+
+	bool m_prefixSearch_enabled;
+	wxDateTime m_prefixSearch_lastKeyPress;
+	wxString m_prefixSearch_prefix;
 };
 
 #endif //__LISTCTRLEX_H__

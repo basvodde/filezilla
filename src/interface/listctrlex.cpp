@@ -10,6 +10,7 @@ EVT_SCROLLWIN(wxListCtrlEx::OnScrollEvent)
 EVT_MOUSEWHEEL(wxListCtrlEx::OnMouseWheel)
 EVT_LIST_ITEM_FOCUSED(wxID_ANY, wxListCtrlEx::OnSelectionChanged)
 EVT_LIST_ITEM_SELECTED(wxID_ANY, wxListCtrlEx::OnSelectionChanged)
+EVT_KEY_DOWN(wxListCtrlEx::OnKeyDown)
 END_EVENT_TABLE()
 
 wxListCtrlEx::wxListCtrlEx(wxWindow *parent,
@@ -21,6 +22,8 @@ wxListCtrlEx::wxListCtrlEx(wxWindow *parent,
 						   const wxString& name)
 						   : wxListCtrl(parent, id, pos, size, style, validator, name)
 {
+	m_prefixSearch_enabled = false;
+
 #ifndef __WXMSW__
 	// The generic list control a scrolled child window. In order to receive
 	// scroll events, we have to connect the event handler to it.
@@ -30,6 +33,9 @@ wxListCtrlEx::wxListCtrlEx(wxWindow *parent,
 	GetMainWindow()->Connect(-1, wxEVT_SCROLLWIN_LINEDOWN, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
 	GetMainWindow()->Connect(-1, wxEVT_SCROLLWIN_PAGEUP, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
 	GetMainWindow()->Connect(-1, wxEVT_SCROLLWIN_PAGEDOWN, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
+
+	// Same with key down events
+	GetMainWindow()->Connect(-1, wxEVT_KEY_DOWN, wxKeyEventHandler(CRemoteListView::OnKeyDown), 0, this);
 #endif
 }
 
@@ -42,6 +48,9 @@ wxListCtrlEx::~wxListCtrlEx()
 	GetMainWindow()->Disconnect(-1, wxEVT_SCROLLWIN_LINEDOWN, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
 	GetMainWindow()->Disconnect(-1, wxEVT_SCROLLWIN_PAGEUP, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
 	GetMainWindow()->Disconnect(-1, wxEVT_SCROLLWIN_PAGEDOWN, wxScrollWinEventHandler(wxListCtrlEx::OnScrollEvent), 0, this);
+
+	// Same with key down events
+	GetMainWindow()->Disconnect(-1, wxEVT_KEY_DOWN, wxKeyEventHandler(CRemoteListView::OnKeyDown), 0, this);
 #endif
 }
 
@@ -112,4 +121,103 @@ void wxListCtrlEx::ScrollTopItem(int item)
 	GetMainWindow()->Scroll(0, item);
 	EnsureVisible(item);
 #endif
+}
+
+
+void wxListCtrlEx::HandlePrefixSearch(wxChar character)
+{
+	// Keyboard navigation within items
+	wxDateTime now = wxDateTime::UNow();
+	if (m_prefixSearch_lastKeyPress.IsValid())
+	{
+		wxTimeSpan span = now - m_prefixSearch_lastKeyPress;
+		if (span.GetSeconds() >= 1)
+			m_prefixSearch_prefix = _T("");
+	}
+	m_prefixSearch_lastKeyPress = now;
+
+	wxString newPrefix = m_prefixSearch_prefix + character;
+
+	bool beep = false;
+	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	if (item != -1)
+	{
+		wxString text = GetItemText(item, 0);
+		if (text.Length() >= m_prefixSearch_prefix.Length() && !m_prefixSearch_prefix.CmpNoCase(text.Left(m_prefixSearch_prefix.Length())))
+			beep = true;
+	}
+	else if (m_prefixSearch_prefix == _T(""))
+		beep = true;
+
+	int start = item;
+	if (start < 0)
+		start = 0;
+
+	int newPos = FindItemWithPrefix(newPrefix, start);
+
+	if (newPos == -1 && m_prefixSearch_prefix[0] == character && !m_prefixSearch_prefix[1] && item != -1 && beep)
+	{
+		// Search the next item that starts with the same letter
+		newPrefix = m_prefixSearch_prefix;
+		newPos = FindItemWithPrefix(newPrefix, item + 1);
+	}
+
+	m_prefixSearch_prefix = newPrefix;
+	if (newPos == -1)
+	{
+		if (beep)
+			wxBell();
+		return;
+	}
+
+	item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	while (item != -1)
+	{
+		SetItemState(item, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+		item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	}
+	SetItemState(newPos, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+	EnsureVisible(newPos);
+}
+
+void wxListCtrlEx::OnKeyDown(wxKeyEvent& event)
+{
+	if (!m_prefixSearch_enabled)
+	{
+		event.Skip();
+		return;
+	}
+
+#if defined(__WXMSW__) && wxUSE_UNICODE
+	wxChar key = MapVirtualKey(event.GetUnicodeKey(), 2);
+	if (!key)
+	{
+		event.Skip();
+		return;
+	}
+	HandlePrefixSearch(key);
+	return;
+#else
+	int code = event.GetKeyCode();
+	if (code > 32 && code < 300 && !event.HasModifiers())
+	{
+#if wxUSE_UNICODE
+		HandlePrefixSearch(event.GetUnicodeKey());
+#else
+		HandlePrefixSearch(code);
+#endif //wxUSE_UNICODE
+	}
+	else
+		event.Skip();
+#endif //defined(__WXMSW__) && wxUSE_UNICODE
+}
+
+// Declared const due to design error in wxWidgets.
+// Won't be fixed since a fix would break backwards compatibility
+// Both functions use a const_cast<CLocalListView *>(this) and modify
+// the instance.
+wxString wxListCtrlEx::OnGetItemText(long item, long column) const
+{
+	wxListCtrlEx *pThis = const_cast<wxListCtrlEx *>(this);
+	return pThis->GetItemText(item, (unsigned int)column);
 }

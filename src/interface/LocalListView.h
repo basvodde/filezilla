@@ -27,7 +27,6 @@ protected:
 	// Won't be fixed since a fix would break backwards compatibility
 	// Both functions use a const_cast<CLocalListView *>(this) and modify
 	// the instance.
-	virtual wxString OnGetItemText(long item, long column) const;
 	virtual int OnGetItemImage(long item) const;
 	virtual wxListItemAttr* OnGetItemAttr(long item) const;
 
@@ -73,6 +72,8 @@ public:
 	virtual void OnExitComparisonMode();
 
 protected:
+	virtual wxString GetItemText(int item, unsigned int column);
+
 	bool IsItemValid(unsigned int item) const;
 	t_fileData *GetData(unsigned int item);
 
@@ -80,7 +81,7 @@ protected:
 	void SortList_UpdateSelections(bool* selections, int focus);
 	CLocalListViewSortObject GetComparisonObject();
 
-	int FindItemWithPrefix(const wxString& prefix, int start);
+	virtual int FindItemWithPrefix(const wxString& prefix, int start);
 
 	void RefreshFile(const wxString& file);
 
@@ -101,9 +102,6 @@ protected:
 
 	int m_sortColumn;
 	int m_sortDirection;
-
-	wxDateTime m_lastKeyPress;
-	wxString m_prefix;
 
 	wxDropTarget* m_pDropTarget;
 	int m_dropTarget;

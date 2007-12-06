@@ -33,6 +33,8 @@ public:
 	virtual void OnExitComparisonMode();
 
 protected:
+	virtual wxString GetItemText(int item, unsigned int column);
+
 	// Clears all selections and returns the list of items that were selected
 	std::list<wxString> RememberSelectedItems(wxString& focused);
 
@@ -46,11 +48,10 @@ protected:
 	// Won't be fixed since a fix would break backwards compatibility
 	// Both functions use a const_cast<CLocalListView *>(this) and modify
 	// the instance.
-	virtual wxString OnGetItemText(long item, long column) const;
 	virtual wxListItemAttr* OnGetItemAttr(long item) const;
 	virtual int OnGetItemImage(long item) const;
 
-	int FindItemWithPrefix(const wxString& prefix, int start);
+	virtual int FindItemWithPrefix(const wxString& prefix, int start);
 
 public:
 	struct t_fileData
@@ -102,9 +103,6 @@ protected:
 
 	int m_sortColumn;
 	int m_sortDirection;
-
-	wxDateTime m_lastKeyPress;
-	wxString m_prefix;
 
 	CInfoText* m_pInfoText;
 	void RepositionInfoText();
