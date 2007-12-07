@@ -80,7 +80,7 @@ void wxListCtrlEx::OnSelectionChanged(wxListEvent& event)
 
 void wxListCtrlEx::ScrollTopItem(int item)
 {
-#ifndef __WXMSW__
+#ifdef __WXMSW__
 	const int current = GetTopItem();
 
 	int delta = item - current;
