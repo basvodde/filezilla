@@ -42,6 +42,23 @@ void CComparableListing::ExitComparisonMode()
 	m_pComparisonManager->ExitComparisonMode();
 }
 
+void CComparableListing::RefreshComparison()
+{
+	if (!m_pComparisonManager)
+		return;
+
+	if (!IsComparing())
+		return;
+
+	if (!CanStartComparison(0) || !GetOther() || !GetOther()->CanStartComparison(0))
+	{
+		ExitComparisonMode();
+		return;
+	}
+
+	m_pComparisonManager->CompareListings();
+}
+
 bool CComparisonManager::CompareListings()
 {
 	if (!m_pLeft || !m_pRight)

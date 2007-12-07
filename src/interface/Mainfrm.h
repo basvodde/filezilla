@@ -19,6 +19,7 @@ class CUpdateWizard;
 class CSiteManagerItemData;
 class CQueue;
 class CViewHeader;
+class CComparisonManager;
 
 class CMainFrame : public wxFrame
 {
@@ -88,6 +89,7 @@ protected:
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	CUpdateWizard* m_pUpdateWizard;
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
+	CComparisonManager* m_pComparisonManager;
 
 	void ShowLocalTree();
 	void ShowRemoteTree();
@@ -139,6 +141,7 @@ protected:
 	void OnToolbarComparison(wxCommandEvent& event);
 #ifdef __WXMSW__
 	void OnSizePost(wxCommandEvent& event);
+	void OnUpdateToolbarComparison(wxUpdateUIEvent& event);
 
 	bool m_pendingPostSizing;
 #endif

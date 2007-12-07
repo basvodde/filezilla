@@ -1103,6 +1103,10 @@ void CRemoteListView::OnColumnClicked(wxListEvent &event)
 
 	if (IsComparing())
 	{
+#ifdef __WXMSW__
+		ReleaseCapture();
+		Refresh();
+#endif
 		CConditionalDialog dlg(this, CConditionalDialog::compare_changesorting, CConditionalDialog::yesno);
 		dlg.SetTitle(_("Directory comparison"));
 		dlg.AddText(_("Sort order cannot be changed if comparing directories."));

@@ -25,6 +25,7 @@ public:
 	virtual void ScrollTopItem(int item) = 0;
 	virtual void OnExitComparisonMode() = 0;
 	
+	void RefreshComparison();
 	void ExitComparisonMode();
 
 	bool IsComparing() const;

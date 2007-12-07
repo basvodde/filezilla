@@ -108,6 +108,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_MOVE(CMainFrame::OnMoveEvent)
 	EVT_ACTIVATE(CMainFrame::OnActivate)
 	EVT_TOOL(XRCID("ID_TOOLBAR_COMPARISON"), CMainFrame::OnToolbarComparison)
+	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_COMPARISON"), OnUpdateToolbarComparison)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
@@ -343,6 +344,8 @@ CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition,
 	AddPendingEvent(evt);
 
 	CEditHandler::Create()->SetQueue(m_pQueueView);
+
+	m_pComparisonManager = 0;
 }
 
 CMainFrame::~CMainFrame()
@@ -352,6 +355,7 @@ CMainFrame::~CMainFrame()
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	delete m_pUpdateWizard;
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
+	delete m_pComparisonManager;
 
 	CEditHandler* pEditHandler = CEditHandler::Get();
 	if (pEditHandler)
@@ -1965,8 +1969,11 @@ void CMainFrame::OnActivate(wxActivateEvent& event)
 
 void CMainFrame::OnToolbarComparison(wxCommandEvent& event)
 {
-	if (!m_pState)
+	if (m_pComparisonManager && m_pComparisonManager->IsComparing())
+	{
+		m_pComparisonManager->ExitComparisonMode();
 		return;
+	}
 
 	if (!COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT))
 	{
@@ -1989,6 +1996,13 @@ void CMainFrame::OnToolbarComparison(wxCommandEvent& event)
 		m_pRemoteSplitter->SetSashPosition(pos);
 	}
 
-	CComparisonManager* pComparisonManager = new CComparisonManager(m_pLocalListView, m_pRemoteListView);
-	pComparisonManager->CompareListings();
+	if (!m_pComparisonManager)
+		m_pComparisonManager = new CComparisonManager(m_pLocalListView, m_pRemoteListView);
+
+	m_pComparisonManager->CompareListings();
+}
+
+void CMainFrame::OnUpdateToolbarComparison(wxUpdateUIEvent& event)
+{
+	event.Check(m_pComparisonManager && m_pComparisonManager->IsComparing());
 }

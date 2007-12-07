@@ -314,6 +314,9 @@ bool CLocalListView::DisplayDir(wxString dirname)
 	std::list<wxString> selectedNames;
 	if (m_dir != dirname)
 	{
+		if (IsComparing())
+			ExitComparisonMode();
+
 		// Clear selection
 		int item = -1;
 		while (true)
@@ -442,6 +445,9 @@ regular_dir:
 		SetItemCount(count);
 
 	SortList();
+
+	if (IsComparing())
+		RefreshComparison();
 
 	ReselectItems(selectedNames, focused);
 
@@ -1288,6 +1294,10 @@ void CLocalListView::OnColumnClicked(wxListEvent &event)
 
 	if (IsComparing())
 	{
+#ifdef __WXMSW__
+		ReleaseCapture();
+		Refresh();
+#endif
 		CConditionalDialog dlg(this, CConditionalDialog::compare_changesorting, CConditionalDialog::yesno);
 		dlg.SetTitle(_("Directory comparison"));
 		dlg.AddText(_("Sort order cannot be changed if comparing directories."));
@@ -1765,6 +1775,9 @@ void CLocalListView::ApplyCurrentFilter()
 
 	SortList();
 
+	if (IsComparing())
+		RefreshComparison();
+
 	ReselectItems(selectedNames, focused);
 }
 
@@ -1779,10 +1792,13 @@ std::list<wxString> CLocalListView::RememberSelectedItems(wxString& focused)
 		if (item == -1)
 			break;
 		const t_fileData &data = m_fileData[m_indexMapping[item]];
-		if (data.dir)
-			selectedNames.push_back(_T("d") + data.name);
-		else
-			selectedNames.push_back(_T("-") + data.name);
+		if (data.flags != fill)
+		{
+			if (data.dir)
+				selectedNames.push_back(_T("d") + data.name);
+			else
+				selectedNames.push_back(_T("-") + data.name);
+		}
 		SetItemState(item, 0, wxLIST_STATE_SELECTED);
 	}
 
@@ -1790,7 +1806,8 @@ std::list<wxString> CLocalListView::RememberSelectedItems(wxString& focused)
 	if (item != -1)
 	{
 		const t_fileData &data = m_fileData[m_indexMapping[item]];
-		focused = data.name;
+		if (data.flags != fill)
+			focused = data.name;
 
 		SetItemState(item, 0, wxLIST_STATE_FOCUSED);
 	}
