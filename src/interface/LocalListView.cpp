@@ -447,7 +447,10 @@ regular_dir:
 	SortList();
 
 	if (IsComparing())
+	{
+		m_originalIndexMapping.clear();
 		RefreshComparison();
+	}
 
 	ReselectItems(selectedNames, focused);
 
@@ -605,6 +608,12 @@ void CLocalListView::OnItemActivated(wxListEvent &event)
 			else
 				wxBell();
 		}
+		return;
+	}
+
+	if (data->flags == fill)
+	{
+		wxBell();
 		return;
 	}
 
@@ -1264,7 +1273,7 @@ void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 
 void CLocalListView::SortList_UpdateSelections(bool* selections, int focus)
 {
-	for (int i = m_hasParent ? 1 : 0; i < GetItemCount(); i++)
+	for (int i = m_hasParent ? 1 : 0; i < m_indexMapping.size(); i++)
 	{
 		const int state = GetItemState(i, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
 		const bool selected = (state & wxLIST_STATE_SELECTED) != 0;
@@ -1325,19 +1334,23 @@ void CLocalListView::OnContextMenu(wxContextMenuEvent& event)
 
 	int index = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	int count = 0;
+	int fillCount = 0;
 	while (index != -1)
 	{
 		count++;
-		if (!index && m_hasParent)
+		const t_fileData* const data = GetData(index);
+		if (!data || (!index && m_hasParent))
 		{
 			pMenu->Enable(XRCID("ID_UPLOAD"), false);
 			pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
 			pMenu->Enable(XRCID("ID_DELETE"), false);
 			pMenu->Enable(XRCID("ID_RENAME"), false);
 		}
+		if (data->flags == fill)
+			fillCount++;
 		index = GetNextItem(index, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	}
-	if (!count)
+	if (!count || fillCount == count)
 	{
 		pMenu->Enable(XRCID("ID_UPLOAD"), false);
 		pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
@@ -1374,6 +1387,9 @@ void CLocalListView::OnMenuUpload(wxCommandEvent& event)
 		t_fileData *data = GetData(item);
 		if (!data)
 			return;
+
+		if (data->flags == fill)
+			continue;
 
 		if (!item && m_hasParent)
 			m_pState->SetLocalDir(data->name);
@@ -1473,6 +1489,9 @@ void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 		if (!data)
 			continue;
 
+		if (data->flags == fill)
+			continue;
+
 		len += dirLen + data->name.Length() + 1;
 	}
 
@@ -1493,6 +1512,9 @@ void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 
 		t_fileData *data = GetData(item);
 		if (!data)
+			continue;
+
+		if (data->flags == fill)
 			continue;
 
 		_tcscpy(p, dir);
@@ -1539,6 +1561,9 @@ void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 
 		t_fileData *data = GetData(item);
 		if (!data)
+			continue;
+
+		if (data->flags == fil)
 			continue;
 
 		if (data->dir)
@@ -1602,6 +1627,13 @@ void CLocalListView::OnMenuRename(wxCommandEvent& event)
 		return;
 	}
 
+	t_fileData *data = GetData(item);
+	if (!data || data->flags == fill)
+	{
+		wxBell();
+		return;
+	}
+
 	EditLabel(item);
 }
 
@@ -1649,9 +1681,13 @@ void CLocalListView::OnKeyDown(wxKeyEvent& event)
 	const int code = event.GetKeyCode();
 	if (code == 'A' && event.GetModifiers() == wxMOD_CMD)
 	{
-		for (int i = m_hasParent ? 1 : 0; i < GetItemCount(); i++)
+		for (int i = m_hasParent ? 1 : 0; i < m_indexMapping.size(); i++)
 		{
-			SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+			t_fileData *data = GetData(i);
+			if (data && data->flags != fill)
+				SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+			else
+				SetItemState(i, 0, wxLIST_STATE_SELECTED);
 		}
 	}
 	else
@@ -1664,6 +1700,13 @@ void CLocalListView::OnBeginLabelEdit(wxListEvent& event)
 		return;
 
 	if (event.GetIndex() == 0)
+	{
+		event.Veto();
+		return;
+	}
+
+	const t_fileData * const data = GetData(event.GetIndex());
+	if (!data || data->flags == fill)
 	{
 		event.Veto();
 		return;
@@ -1688,7 +1731,18 @@ void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 		return;
 	}
 
+	t_fileData *const data = GetData(event.GetIndex());
+	if (!data || data->flags == fill)
+	{
+		event.Veto();
+		return;
+	}	
+
 	wxString newname = event.GetLabel();
+
+	if (newname == data->name)
+		return;
+
 #ifdef __WXMSW__
 	newname = newname.Left(255);
 
@@ -1713,7 +1767,7 @@ void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 	wxString dir = m_dir;
 	if (dir.Right(1) != _T("\\") && dir.Right(1) != _T("/"))
 		dir += _T("\\");
-	wxString from = dir + m_fileData[m_indexMapping[index]].name + _T(" ");
+	wxString from = dir + data->name + _T(" ");
 	from.SetChar(from.Length() - 1, '\0');
 	op.pFrom = from;
 	wxString to = dir + newname + _T(" ");
@@ -1725,10 +1779,7 @@ void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 	if (SHFileOperation(&op))
 		event.Veto();
 	else
-	{
-		m_fileData[m_indexMapping[index]].name = newname;
-		return;
-	}
+		data->name = newname;
 #else
 	if ((newname.Find('/') != -1) ||
 		(newname.Find('*') != -1) ||
@@ -1745,8 +1796,8 @@ void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 	wxString dir = m_dir;
 	if (dir.Right(1) != _T("\\") && dir.Right(1) != _T("/"))
 		dir += _T("\\");
-	if (wxRename(dir + m_fileData[m_indexMapping[index]].name, dir + newname))
-		m_fileData[m_indexMapping[index]].name = newname;
+	if (wxRename(dir + data->name, dir + newname))
+		data->name = newname;
 	else
 		event.Veto();
 #endif
@@ -1776,7 +1827,10 @@ void CLocalListView::ApplyCurrentFilter()
 	SortList();
 
 	if (IsComparing())
+	{
+		m_originalIndexMapping.clear();
 		RefreshComparison();
+	}
 
 	ReselectItems(selectedNames, focused);
 }
@@ -1916,8 +1970,14 @@ void CLocalListView::OnBeginDrag(wxListEvent& event)
 		if (!data)
 			return;
 
+		if (data->flags == fill)
+			continue;
+
 		obj.AddFile(m_dir + data->name);
 	}
+
+	if (obj.GetFilenames().IsEmpty())
+		return;
 
 	wxDropSource source(this);
 	source.SetData(obj);
@@ -1966,10 +2026,25 @@ void CLocalListView::RefreshFile(const wxString& file)
 		data.fileType = oldData.fileType;
 
 		*iter = data;
-		if (m_sortColumn)
-			SortList();
-		Refresh(false);
+		if (IsComparing())
+			RefreshComparison();
+		else
+		{
+			if (m_sortColumn)
+				SortList();
+			Refresh(false);
+		}
 		return;
+	}
+
+	wxString focused;
+	std::list<wxString> selectedNames;
+	if (IsComparing())
+	{
+		wxASSERT(!m_originalIndexMapping.empty());
+		selectedNames = RememberSelectedItems(focused);
+		m_indexMapping.clear();
+		m_originalIndexMapping.swap(m_indexMapping);
 	}
 
 	// Insert new entry
@@ -1986,21 +2061,29 @@ void CLocalListView::RefreshFile(const wxString& file)
 
 	const int item = insertPos - m_indexMapping.begin();
 	m_indexMapping.insert(insertPos, index);
-	SetItemCount(m_indexMapping.size());
 
-	// Move selections
-	int prevState = 0;
-	for (unsigned int i = item; i < m_indexMapping.size(); i++)
+	if (!IsComparing())
 	{
-		int state = GetItemState(i, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
-		if (state != prevState)
-		{
-			SetItemState(i, prevState, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
-			prevState = state;
-		}
-	}
+		SetItemCount(m_indexMapping.size());
 
-	Refresh(false);
+		// Move selections
+		int prevState = 0;
+		for (unsigned int i = item; i < m_indexMapping.size(); i++)
+		{
+			int state = GetItemState(i, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+			if (state != prevState)
+			{
+				SetItemState(i, prevState, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+				prevState = state;
+			}
+		}
+		Refresh();
+	}
+	else
+	{
+		RefreshComparison();
+		ReselectItems(selectedNames, focused);
+	}
 }
 
 void CLocalListView::InitDateFormat()
