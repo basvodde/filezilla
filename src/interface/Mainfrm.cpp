@@ -108,7 +108,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_MOVE(CMainFrame::OnMoveEvent)
 	EVT_ACTIVATE(CMainFrame::OnActivate)
 	EVT_TOOL(XRCID("ID_TOOLBAR_COMPARISON"), CMainFrame::OnToolbarComparison)
-	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_COMPARISON"), OnUpdateToolbarComparison)
+	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_COMPARISON"), CMainFrame::OnUpdateToolbarComparison)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
