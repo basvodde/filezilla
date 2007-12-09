@@ -1261,7 +1261,9 @@ public:
 
 	virtual bool AddSite(const wxString& name, CSiteManagerItemData* data)
 	{
-		wxMenuItem* pItem = m_pMenu->Append(wxID_ANY, name);
+		wxString newName = name;
+		newName.Replace(_T("&"), _T("&&"));
+		wxMenuItem* pItem = m_pMenu->Append(wxID_ANY, newName);
 		(*m_idMap)[pItem->GetId()] = data;
 
 		return true;
@@ -1276,7 +1278,11 @@ public:
 		wxMenu* pChild = m_pMenu;
 		m_pMenu = m_parents.back();
 		if (pChild->GetMenuItemCount())
-			m_pMenu->AppendSubMenu(pChild, m_childNames.back());
+		{
+			wxString name = m_childNames.back();
+			name.Replace(_T("&"), _T("&&"));
+			m_pMenu->AppendSubMenu(pChild, name);
+		}
 		else
 			delete pChild;
 		m_childNames.pop_back();
