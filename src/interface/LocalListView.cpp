@@ -444,7 +444,7 @@ regular_dir:
 	if (oldItemCount != count)
 		SetItemCount(count);
 
-	SortList();
+	SortList(-1, -1, false);
 
 	if (IsComparing())
 	{
@@ -1171,7 +1171,7 @@ CLocalListViewSortObject CLocalListView::GetComparisonObject()
 	}
 }
 
-void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/)
+void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/, bool updateSelections /*=true*/)
 {
 	if (column != -1)
 	{
@@ -1221,15 +1221,20 @@ void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 #endif
 
 	// Remember which files are selected
-	bool *selected = new bool[m_fileData.size()];
-	memset(selected, 0, sizeof(bool) * m_fileData.size());
+	bool *selected = 0;
+	int focused = -1;
+	if (updateSelections)
+	{
+		selected = new bool[m_fileData.size()];
+		memset(selected, 0, sizeof(bool) * m_fileData.size());
 
-	int item = -1;
-	while ((item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
-		selected[m_indexMapping[item]] = 1;
-	int focused = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
-	if (focused != -1)
-		focused = m_indexMapping[focused];
+		int item = -1;
+		while ((item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
+			selected[m_indexMapping[item]] = 1;
+		focused = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
+		if (focused != -1)
+			focused = m_indexMapping[focused];
+	}
 
 	const int dirSortOption = COptions::Get()->GetOptionVal(OPTION_FILELIST_DIRSORT);
 
@@ -1244,8 +1249,11 @@ void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 			start++;
 		std::reverse(start, m_indexMapping.end());
 
-		SortList_UpdateSelections(selected, focused);
-		delete [] selected;
+		if (updateSelections)
+		{
+			SortList_UpdateSelections(selected, focused);
+			delete [] selected;
+		}
 
 		return;
 	}
@@ -1256,7 +1264,8 @@ void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 	const unsigned int minsize = m_hasParent ? 3 : 2;
 	if (m_indexMapping.size() < minsize)
 	{
-		delete [] selected;
+		if (updateSelections)
+			delete [] selected;
 		return;
 	}
 
@@ -1267,13 +1276,16 @@ void CLocalListView::SortList(int column /*=-1*/, int direction /*=-1*/)
 	std::sort(start, m_indexMapping.end(), object);
 	object.Destroy();
 
-	SortList_UpdateSelections(selected, focused);
-	delete [] selected;
+	if (updateSelections)
+	{
+		SortList_UpdateSelections(selected, focused);
+		delete [] selected;
+	}
 }
 
 void CLocalListView::SortList_UpdateSelections(bool* selections, int focus)
 {
-	for (int i = m_hasParent ? 1 : 0; i < m_indexMapping.size(); i++)
+	for (unsigned int i = m_hasParent ? 1 : 0; i < m_indexMapping.size(); i++)
 	{
 		const int state = GetItemState(i, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
 		const bool selected = (state & wxLIST_STATE_SELECTED) != 0;
@@ -1563,7 +1575,7 @@ void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 		if (!data)
 			continue;
 
-		if (data->flags == fil)
+		if (data->flags == fill)
 			continue;
 
 		if (data->dir)
@@ -1681,7 +1693,7 @@ void CLocalListView::OnKeyDown(wxKeyEvent& event)
 	const int code = event.GetKeyCode();
 	if (code == 'A' && event.GetModifiers() == wxMOD_CMD)
 	{
-		for (int i = m_hasParent ? 1 : 0; i < m_indexMapping.size(); i++)
+		for (unsigned int i = m_hasParent ? 1 : 0; i < m_indexMapping.size(); i++)
 		{
 			t_fileData *data = GetData(i);
 			if (data && data->flags != fill)
@@ -1824,7 +1836,7 @@ void CLocalListView::ApplyCurrentFilter()
 	}
 	SetItemCount(m_indexMapping.size());
 
-	SortList();
+	SortList(-1, -1, false);
 
 	if (IsComparing())
 	{
@@ -1892,10 +1904,10 @@ void CLocalListView::ReselectItems(const std::list<wxString>& selectedNames, wxS
 
 	int firstSelected = -1;
 
-	unsigned i = 0;
+	unsigned i = -1;
 	for (std::list<wxString>::const_iterator iter = selectedNames.begin(); iter != selectedNames.end(); iter++)
 	{
-		while (i < m_indexMapping.size())
+		while (++i < m_indexMapping.size())
 		{
 			const t_fileData &data = m_fileData[m_indexMapping[i]];
 			if (data.name == focused)
@@ -1908,7 +1920,6 @@ void CLocalListView::ReselectItems(const std::list<wxString>& selectedNames, wxS
 				if (firstSelected == -1)
 					firstSelected = i;
 				SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-				i++;
 				break;
 			}
 			else if (*iter == (_T("-") + data.name))
@@ -1916,11 +1927,8 @@ void CLocalListView::ReselectItems(const std::list<wxString>& selectedNames, wxS
 				if (firstSelected == -1)
 					firstSelected = i;
 				SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-				i++;
 				break;
 			}
-			else
-				i++;
 		}
 		if (i == m_indexMapping.size())
 			break;
@@ -2027,7 +2035,10 @@ void CLocalListView::RefreshFile(const wxString& file)
 
 		*iter = data;
 		if (IsComparing())
+		{
+			// Sort order doesn't change
 			RefreshComparison();
+		}
 		else
 		{
 			if (m_sortColumn)

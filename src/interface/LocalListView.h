@@ -77,7 +77,7 @@ protected:
 	bool IsItemValid(unsigned int item) const;
 	t_fileData *GetData(unsigned int item);
 
-	void SortList(int column = -1, int direction = -1);
+	void SortList(int column = -1, int direction = -1, bool updateSelections = true);
 	void SortList_UpdateSelections(bool* selections, int focus);
 	CLocalListViewSortObject GetComparisonObject();
 

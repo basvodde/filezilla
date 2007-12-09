@@ -65,7 +65,7 @@ protected:
 	bool IsItemValid(unsigned int item) const;
 	int GetItemIndex(unsigned int item) const;
 
-	void SortList(int column = -1, int direction = -1);
+	void SortList(int column = -1, int direction = -1, const bool updateSelections = true);
 	void SortList_UpdateSelections(bool* selections, int focus);
 
 	virtual void OnStateChange(unsigned int event, const wxString& data);
