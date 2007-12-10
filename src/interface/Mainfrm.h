@@ -139,9 +139,9 @@ protected:
 	void OnMoveEvent(wxMoveEvent& event);
 	void OnActivate(wxActivateEvent& event);
 	void OnToolbarComparison(wxCommandEvent& event);
+	void OnUpdateToolbarComparison(wxUpdateUIEvent& event);
 #ifdef __WXMSW__
 	void OnSizePost(wxCommandEvent& event);
-	void OnUpdateToolbarComparison(wxUpdateUIEvent& event);
 
 	bool m_pendingPostSizing;
 #endif
