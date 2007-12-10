@@ -1276,7 +1276,7 @@ bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry, bo
 		if (token[pos] == '.')
 		{
 			// Maybe dd.mm.yyyy
-			if (value < 1900 || value > 3000)
+			if (value < 1 || value > 31)
 				return false;
 			day = value.GetLo();
 			gotDay = true;

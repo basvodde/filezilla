@@ -1060,6 +1060,25 @@ void CDirectoryListingParserTest::InitEntries()
 			}
 		});
 
+	/* IBM AS/400 style listing with localized date*/
+	m_entries.push_back((t_entry){
+			"QPGMR           36864 18.09.06 14:21:26 *FILE      55-AS400.FILE",
+			{
+				_T("55-AS400.FILE"),
+				36864,
+				_T(""),
+				_T("QPGMR"),
+				false,
+				false,
+				_T(""),
+				true,
+				true,
+				wxDateTime(18, wxDateTime::Sep, 2006, 14, 21, 26),
+				false
+			}
+		});
+
+
 /*
 	wxString name;
 	wxLongLong size;
