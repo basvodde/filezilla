@@ -159,7 +159,10 @@ void CAsyncRequestQueue::ProcessNextRequest()
 							if (pNotification->GetRequestID() != reqId_fileexists)
 								continue;
 
-							reinterpret_cast<CFileExistsNotification *>(entry.pNotification)->overwriteAction = CFileExistsNotification::OverwriteAction(action - 1);
+							CFileExistsNotification* p = reinterpret_cast<CFileExistsNotification *>(entry.pNotification);
+
+							if (!directionOnly || pNotification->download == p->download)
+								p->overwriteAction = CFileExistsNotification::OverwriteAction(action - 1);
 						}
 
 						enum TransferDirection direction;
