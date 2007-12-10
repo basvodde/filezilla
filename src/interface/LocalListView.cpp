@@ -1904,10 +1904,10 @@ void CLocalListView::ReselectItems(const std::list<wxString>& selectedNames, wxS
 
 	int firstSelected = -1;
 
-	unsigned i = -1;
+	int i = -1;
 	for (std::list<wxString>::const_iterator iter = selectedNames.begin(); iter != selectedNames.end(); iter++)
 	{
-		while (++i < m_indexMapping.size())
+		while (++i < (int)m_indexMapping.size())
 		{
 			const t_fileData &data = m_fileData[m_indexMapping[i]];
 			if (data.name == focused)

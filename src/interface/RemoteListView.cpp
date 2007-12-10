@@ -2028,7 +2028,7 @@ void CRemoteListView::ReselectItems(std::list<wxString>& selectedNames, wxString
 
 	// Reselect previous items if neccessary.
 	// Sorting direction did not change. We just have to scan through items once
-	unsigned i = 0;
+	unsigned int i = 0;
 	for (std::list<wxString>::const_iterator iter = selectedNames.begin(); iter != selectedNames.end(); iter++)
 	{
 		while (++i < m_indexMapping.size())
