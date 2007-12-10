@@ -1061,7 +1061,7 @@ void CRemoteTreeView::OnMenuDelete(wxCommandEvent& event)
 	const wxTreeItemId selected = GetSelection();
 	if (selected)
 		currentPath = GetPathFromItem(selected);
-	if (!currentPath.IsEmpty() && path.IsParentOf(currentPath, false))
+	if (!currentPath.IsEmpty() && (path == currentPath || path.IsParentOf(currentPath, false)))
 		currentPath = startDir;
 
 	pRecursiveOperation->StartRecursiveOperation(CRecursiveOperation::recursive_delete, startDir, !hasParent, currentPath);
