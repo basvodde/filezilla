@@ -87,6 +87,8 @@ bool CTlsSocket::Init()
 		Uninit();
 		return false;
 	}
+
+	gnutls_dh_set_prime_bits(m_session, 512);
 	
 	// Set which type of certificates we accept
 	const int cert_type_priority[] = { GNUTLS_CRT_X509, 0 };
