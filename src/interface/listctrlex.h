@@ -23,10 +23,10 @@ protected:
 	virtual void OnPreEmitPostScrollEvent();
 	void EmitPostScrollEvent();
 
-
 	virtual wxString GetItemText(int item, unsigned int column) { return _T(""); }
 
 	virtual wxString OnGetItemText(long item, long column) const;
+
 private:
 	// Keyboard prefix search
 	void HandlePrefixSearch(wxChar character);

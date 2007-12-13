@@ -1,21 +1,21 @@
 #ifndef __REMOTELISTVIEW_H__
 #define __REMOTELISTVIEW_H__
 
-#include "systemimagelist.h"
 #include "state.h"
 #include "listingcomparison.h"
 #include "listctrlex.h"
+#include "filelistctrl.h"
 
 class CQueueView;
 class CChmodDialog;
 class CInfoText;
 class CRemoteListViewDropTarget;
 
-class CRemoteListView : public wxListCtrlEx, CSystemImageList, CStateEventHandler, public CComparableListing
+class CRemoteListView : public CFileListCtrl<CGenericFileData>, CSystemImageList, CStateEventHandler, public CComparableListing
 {
 	friend class CRemoteListViewDropTarget;
 public:
-	CRemoteListView(wxWindow* parent, wxWindowID id, CState* pState, CQueueView* pQueue);
+	CRemoteListView(wxWindow* pParent, CState* pState, CQueueView* pQueue);
 	virtual ~CRemoteListView();
 
 	void ListingFailed();
@@ -52,12 +52,6 @@ protected:
 	virtual int OnGetItemImage(long item) const;
 
 public:
-	struct t_fileData
-	{
-		int icon;
-		wxString fileType;
-		t_fileEntryFlags flags;
-	};
 
 	wxString GetType(wxString name, bool dir);
 
@@ -65,8 +59,7 @@ protected:
 	bool IsItemValid(unsigned int item) const;
 	int GetItemIndex(unsigned int item) const;
 
-	void SortList(int column = -1, int direction = -1, const bool updateSelections = true);
-	void SortList_UpdateSelections(bool* selections, int focus);
+	virtual CSortComparisonObject GetSortComparisonObject();
 
 	virtual void OnStateChange(unsigned int event, const wxString& data);
 	void ApplyCurrentFilter();
@@ -79,9 +72,6 @@ protected:
 #endif
 
 	const CDirectoryListing *m_pDirectoryListing;
-	std::vector<t_fileData> m_fileData;
-
-	std::vector<unsigned int> m_indexMapping;
 	std::vector<unsigned int> m_originalIndexMapping; // m_originalIndexMapping will only be set on comparisons
 	std::map<wxString, wxString> m_fileTypeMap;
 
@@ -93,14 +83,7 @@ protected:
 	// Cache icon for directories, no need to calculate it multiple times
 	int m_dirIcon;
 
-#ifdef __WXMSW__
-	wxImageListEx* m_pHeaderImageList;
-#endif
-
 	CQueueView* m_pQueue;
-
-	int m_sortColumn;
-	int m_sortDirection;
 
 	CInfoText* m_pInfoText;
 	void RepositionInfoText();

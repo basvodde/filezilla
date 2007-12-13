@@ -21,6 +21,7 @@ filezilla_SOURCES = aboutdialog.cpp asyncrequestqueue.cpp \
 		edithandler.cpp \
 		export.cpp \
 		fileexistsdlg.cpp \
+		filelistctrl.cpp \
 		FileZilla.cpp filter.cpp filteredit.cpp \
 		import.cpp \
 		inputdialog.cpp \
@@ -76,6 +77,7 @@ noinst_HEADERS = aboutdialog.h asyncrequestqueue.h \
 		 edithandler.h \
 		 export.h \
 		 fileexistsdlg.h \
+		 filelistctrl.h \
 		 filezillaapp.h filter.h filteredit.h \
 		 import.h \
 		 inputdialog.h ipcmutex.h led.h \
