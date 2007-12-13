@@ -28,10 +28,7 @@ public:
 	virtual bool CanStartComparison(wxString* pError);
 	virtual void StartComparison();
 	virtual bool GetNextFile(wxString& name, bool &dir, wxLongLong &size);
-	virtual void CompareAddFile(t_fileEntryFlags flags);
 	virtual void FinishComparison();
-	virtual void ScrollTopItem(int item);
-	virtual void OnExitComparisonMode();
 
 protected:
 	virtual wxString GetItemText(int item, unsigned int column);
@@ -69,9 +66,6 @@ protected:
 #endif
 
 	const CDirectoryListing *m_pDirectoryListing;
-	std::vector<unsigned int> m_originalIndexMapping; // m_originalIndexMapping will only be set on comparisons
-
-	int m_comparisonIndex;
 
 	// Caller is responsible to check selection is valid!
 	void TransferSelectedFiles(const wxString& localDir, bool queueOnly);
@@ -90,8 +84,6 @@ protected:
 
 	wxString m_dateFormat;
 	wxString m_timeFormat;
-
-	virtual void OnPostScroll();
 
 	DECLARE_EVENT_TABLE()
 	void OnItemActivated(wxListEvent &event);

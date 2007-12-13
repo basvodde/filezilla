@@ -251,8 +251,6 @@ CLocalListView::CLocalListView(wxWindow* pParent, CState *pState, CQueueView *pQ
 
 	InitDateFormat();
 
-	m_comparisonIndex = -1;
-
 	EnablePrefixSearch(true);
 }
 
@@ -1826,20 +1824,6 @@ bool CLocalListView::GetNextFile(wxString& name, bool& dir, wxLongLong& size)
 	return true;
 }
 
-void CLocalListView::CompareAddFile(t_fileEntryFlags flags)
-{
-	if (flags == fill)
-	{
-		m_indexMapping.push_back(m_fileData.size() - 1);
-		return;
-	}
-
-	int index = m_originalIndexMapping[m_comparisonIndex];
-	m_fileData[index].flags = flags;
-
-	m_indexMapping.push_back(index);
-}
-
 void CLocalListView::FinishComparison()
 {
 	SetItemCount(m_indexMapping.size());
@@ -1855,37 +1839,6 @@ void CLocalListView::FinishComparison()
 bool CLocalListView::CanStartComparison(wxString* pError)
 {
 	return true;
-}
-
-void CLocalListView::OnPostScroll()
-{
-	if (!IsComparing())
-		return;
-
-	CComparableListing* pOther = GetOther();
-	if (!pOther)
-		return;
-
-	pOther->ScrollTopItem(GetTopItem());
-}
-
-void CLocalListView::ScrollTopItem(int item)
-{
-	wxListCtrlEx::ScrollTopItem(item);
-}
-
-void CLocalListView::OnExitComparisonMode()
-{
-	wxASSERT(!m_originalIndexMapping.empty());
-	m_indexMapping.clear();
-	m_indexMapping.swap(m_originalIndexMapping);
-
-	for (unsigned int i = 0; i < m_fileData.size() - 1; i++)
-		m_fileData[i].flags = normal;
-
-	SetItemCount(m_indexMapping.size());
-
-	Refresh();
 }
 
 wxString CLocalListView::GetItemText(int item, unsigned int column)

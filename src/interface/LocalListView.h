@@ -57,10 +57,7 @@ public:
 	virtual bool CanStartComparison(wxString* pError);
 	virtual void StartComparison();
 	virtual bool GetNextFile(wxString& name, bool &dir, wxLongLong &size);
-	virtual void CompareAddFile(t_fileEntryFlags flags);
 	virtual void FinishComparison();
-	virtual void ScrollTopItem(int item);
-	virtual void OnExitComparisonMode();
 
 protected:
 	virtual wxString GetItemText(int item, unsigned int column);
@@ -74,16 +71,10 @@ protected:
 
 	wxString m_dir;
 
-	std::vector<unsigned int> m_originalIndexMapping;
-
-	int m_comparisonIndex;
-
 	wxDropTarget* m_pDropTarget;
 	int m_dropTarget;
 
 	wxString m_dateFormat;
-
-	virtual void OnPostScroll();
 
 	// Event handlers
 	DECLARE_EVENT_TABLE();

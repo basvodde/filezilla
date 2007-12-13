@@ -19,6 +19,8 @@ template<class CFileData> CFileListCtrl<CFileData>::CFileListCtrl(wxWindow* pPar
 	m_sortDirection = 0;
 
 	m_hasParent = true;
+
+	m_comparisonIndex = -1;
 }
 
 template<class CFileData> CFileListCtrl<CFileData>::~CFileListCtrl()
@@ -353,4 +355,49 @@ template<class CFileData> wxString CFileListCtrl<CFileData>::GetType(wxString na
 	m_fileTypeMap[ext.MakeLower()] = desc;
 	return desc;
 #endif
+}
+
+template<class CFileData> void CFileListCtrl<CFileData>::ScrollTopItem(int item)
+{
+	wxListCtrlEx::ScrollTopItem(item);
+}
+
+template<class CFileData> void CFileListCtrl<CFileData>::OnPostScroll()
+{
+	if (!IsComparing())
+		return;
+
+	CComparableListing* pOther = GetOther();
+	if (!pOther)
+		return;
+
+	pOther->ScrollTopItem(GetTopItem());
+}
+
+template<class CFileData> void CFileListCtrl<CFileData>::OnExitComparisonMode()
+{
+	wxASSERT(!m_originalIndexMapping.empty());
+	m_indexMapping.clear();
+	m_indexMapping.swap(m_originalIndexMapping);
+
+	for (unsigned int i = 0; i < m_fileData.size() - 1; i++)
+		m_fileData[i].flags = normal;
+
+	SetItemCount(m_indexMapping.size());
+
+	Refresh();
+}
+
+template<class CFileData> void CFileListCtrl<CFileData>::CompareAddFile(t_fileEntryFlags flags)
+{
+	if (flags == fill)
+	{
+		m_indexMapping.push_back(m_fileData.size() - 1);
+		return;
+	}
+
+	int index = m_originalIndexMapping[m_comparisonIndex];
+	m_fileData[index].flags = flags;
+
+	m_indexMapping.push_back(index);
 }

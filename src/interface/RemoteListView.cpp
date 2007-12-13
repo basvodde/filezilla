@@ -293,7 +293,6 @@ CRemoteListView::CRemoteListView(wxWindow* pParent, CState *pState, CQueueView* 
 	CSystemImageList(16),
 	CStateEventHandler(pState, STATECHANGE_REMOTE_DIR | STATECHANGE_REMOTE_DIR_MODIFIED | STATECHANGE_APPLYFILTER)
 {
-	m_comparisonIndex = -1;
 	m_dropTarget = -1;
 
 	m_pInfoText = 0;
@@ -2235,20 +2234,6 @@ bool CRemoteListView::GetNextFile(wxString& name, bool& dir, wxLongLong& size)
 	return true;
 }
 
-void CRemoteListView::CompareAddFile(t_fileEntryFlags flags)
-{
-	if (flags == fill)
-	{
-		m_indexMapping.push_back(m_fileData.size() - 1);
-		return;
-	}
-
-	int index = m_originalIndexMapping[m_comparisonIndex];
-	m_fileData[index].flags = flags;
-
-	m_indexMapping.push_back(index);
-}
-
 void CRemoteListView::FinishComparison()
 {
 	SetItemCount(m_indexMapping.size());
@@ -2270,37 +2255,6 @@ wxListItemAttr* CRemoteListView::OnGetItemAttr(long item) const
 	
 	const int i = (data.flags == different) ? 0 : 1;
 	return &pThis->m_comparisonBackgrounds[i];
-}
-
-void CRemoteListView::ScrollTopItem(int item)
-{
-	wxListCtrlEx::ScrollTopItem(item);
-}
-
-void CRemoteListView::OnPostScroll()
-{
-	if (!IsComparing())
-		return;
-
-	CComparableListing* pOther = GetOther();
-	if (!pOther)
-		return;
-
-	pOther->ScrollTopItem(GetTopItem());
-}
-
-void CRemoteListView::OnExitComparisonMode()
-{
-	wxASSERT(!m_originalIndexMapping.empty());
-	m_indexMapping.clear();
-	m_indexMapping.swap(m_originalIndexMapping);
-
-	for (unsigned int i = 0; i < m_fileData.size() - 1; i++)
-		m_fileData[i].flags = normal;
-
-	SetItemCount(m_indexMapping.size());
-
-	Refresh();
 }
 
 // Defined in LocalListView.cpp

@@ -65,6 +65,7 @@ protected:
 
 	std::vector<CFileData> m_fileData;
 	std::vector<unsigned int> m_indexMapping;
+	std::vector<unsigned int> m_originalIndexMapping; // m_originalIndexMapping will only be set on comparisons
 
 	std::map<wxString, wxString> m_fileTypeMap;
 
@@ -86,6 +87,14 @@ protected:
 
 	// An empty path denotes a virtual file
 	wxString GetType(wxString name, bool dir, const wxString& path = _T(""));
+
+	// Comparison related
+	virtual void ScrollTopItem(int item);
+	virtual void OnPostScroll();
+	virtual void OnExitComparisonMode();
+	virtual void CompareAddFile(t_fileEntryFlags flags);
+
+	int m_comparisonIndex;
 
 private:
 	void SortList_UpdateSelections(bool* selections, int focus);
