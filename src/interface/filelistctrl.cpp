@@ -2,9 +2,15 @@
 #include "filelistctrl.h"
 #include "filezillaapp.h"
 #include "Options.h"
+#include "conditionaldialog.h"
+
+BEGIN_EVENT_TABLE_TEMPLATE1(CFileListCtrl, wxListCtrlEx, CFileData)
+EVT_LIST_COL_CLICK(wxID_ANY, CFileListCtrl<CFileData>::OnColumnClicked)
+END_EVENT_TABLE()
 
 template<class CFileData> CFileListCtrl<CFileData>::CFileListCtrl(wxWindow* pParent, CState* pState, CQueueView* pQueue)
-	: wxListCtrlEx(pParent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER | wxLC_EDIT_LABELS)
+	: wxListCtrlEx(pParent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER | wxLC_EDIT_LABELS),
+	CComparableListing(this)
 {
 	m_pHeaderImageList = 0;
 	m_pQueue = pQueue;
@@ -200,11 +206,11 @@ template<class CFileData> void CFileListCtrl<CFileData>::SortList_UpdateSelectio
 	}
 }
 
-template<class CFileData> CFileListCtrl<CFileData>::CListViewSort::DirSortMode CFileListCtrl<CFileData>::GetDirSortMode()
+template<class CFileData> CListViewSort::DirSortMode CFileListCtrl<CFileData>::GetDirSortMode()
 {
 	const int dirSortOption = COptions::Get()->GetOptionVal(OPTION_FILELIST_DIRSORT);
 
-	CListViewSort::DirSortMode dirSortMode;
+	enum CListViewSort::DirSortMode dirSortMode;
 	switch (dirSortOption)
 	{
 	case 0:
@@ -223,4 +229,128 @@ template<class CFileData> CFileListCtrl<CFileData>::CListViewSort::DirSortMode C
 	}
 
 	return dirSortMode;
+}
+
+template<class CFileData> void CFileListCtrl<CFileData>::OnColumnClicked(wxListEvent &event)
+{
+	int col = event.GetColumn();
+	if (col == -1)
+		return;
+
+	if (IsComparing())
+	{
+#ifdef __WXMSW__
+		ReleaseCapture();
+		Refresh();
+#endif
+		CConditionalDialog dlg(this, CConditionalDialog::compare_changesorting, CConditionalDialog::yesno);
+		dlg.SetTitle(_("Directory comparison"));
+		dlg.AddText(_("Sort order cannot be changed if comparing directories."));
+		dlg.AddText(_("End comparison and change sorting order?"));
+		if (!dlg.Run())
+			return;
+		ExitComparisonMode();
+	}
+
+	int dir;
+	if (col == m_sortColumn)
+		dir = m_sortDirection ? 0 : 1;
+	else
+		dir = m_sortDirection;
+
+	SortList(col, dir);
+	Refresh(false);
+}
+
+template<class CFileData> wxString CFileListCtrl<CFileData>::GetType(wxString name, bool dir, const wxString& path /*=_T("")*/)
+{
+#ifdef __WXMSW__
+	wxString ext = wxFileName(name).GetExt();
+	ext.MakeLower();
+	std::map<wxString, wxString>::iterator typeIter = m_fileTypeMap.find(ext);
+	if (typeIter != m_fileTypeMap.end())
+		return typeIter->second;
+
+	wxString type;
+	int flags = SHGFI_TYPENAME;
+	if (path == _T(""))
+		flags |= SHGFI_USEFILEATTRIBUTES;
+	else if (path == _T("\\"))
+		name += _T("\\");
+	else
+		name = path + name;
+
+	SHFILEINFO shFinfo;
+	memset(&shFinfo, 0, sizeof(SHFILEINFO));
+	if (SHGetFileInfo(name,
+		dir ? FILE_ATTRIBUTE_DIRECTORY : FILE_ATTRIBUTE_NORMAL,
+		&shFinfo,
+		sizeof(shFinfo),
+		flags))
+	{
+		type = shFinfo.szTypeName;
+		if (type == _T(""))
+		{
+			type = ext;
+			type.MakeUpper();
+			if (!type.IsEmpty())
+			{
+				type += _T("-");
+				type += _("file");
+			}
+			else
+				type = _("File");
+		}
+		else
+		{
+			if (!dir && ext != _T(""))
+				m_fileTypeMap[ext.MakeLower()] = type;
+		}
+	}
+	else
+	{
+		type = ext;
+		type.MakeUpper();
+		if (!type.IsEmpty())
+		{
+			type += _T("-");
+			type += _("file");
+		}
+		else
+			type = _("File");
+	}
+	return type;
+#else
+	if (dir)
+		return _("Folder");
+
+	wxFileName fn(name);
+	wxString ext = fn.GetExt();
+	if (ext == _T(""))
+		return _("File");
+
+	std::map<wxString, wxString>::iterator typeIter = m_fileTypeMap.find(ext);
+	if (typeIter != m_fileTypeMap.end())
+		return typeIter->second;
+
+	wxString desc;
+	wxFileType *pType = wxTheMimeTypesManager->GetFileTypeFromExtension(ext);
+	if (!pType)
+	{
+		m_fileTypeMap[ext] = desc;
+		return desc;
+	}
+
+	if (pType->GetDescription(&desc) && desc != _T(""))
+	{
+		delete pType;
+		m_fileTypeMap[ext] = desc;
+		return desc;
+	}
+	delete pType;
+
+	desc = _("File");
+	m_fileTypeMap[ext.MakeLower()] = desc;
+	return desc;
+#endif
 }

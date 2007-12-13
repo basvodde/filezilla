@@ -1,7 +1,6 @@
 #ifndef __LOCALLISTVIEW_H__
 #define __LOCALLISTVIEW_H__
 
-#include "listingcomparison.h"
 #include "filelistctrl.h"
 #include "state.h"
 
@@ -18,9 +17,10 @@ public:
 	wxDateTime lastModified;
 };
 
-class CLocalListView : public CFileListCtrl<CLocalFileData>, CSystemImageList, CStateEventHandler, public CComparableListing
+class CLocalListView : public CFileListCtrl<CLocalFileData>, CSystemImageList, CStateEventHandler
 {
 	friend class CLocalListViewDropTarget;
+	friend class CLocalListViewSortType;
 
 public:
 	CLocalListView(wxWindow* parent, CState *pState, CQueueView *pQueue);
@@ -52,8 +52,6 @@ protected:
 #endif
 
 public:
-	wxString GetType(wxString name, bool dir);
-
 	void InitDateFormat();
 
 	virtual bool CanStartComparison(wxString* pError);
@@ -77,7 +75,6 @@ protected:
 	wxString m_dir;
 
 	std::vector<unsigned int> m_originalIndexMapping;
-	std::map<wxString, wxString> m_fileTypeMap;
 
 	int m_comparisonIndex;
 
@@ -91,7 +88,6 @@ protected:
 	// Event handlers
 	DECLARE_EVENT_TABLE();
 	void OnItemActivated(wxListEvent& event);
-	void OnColumnClicked(wxListEvent& event);
 	void OnContextMenu(wxContextMenuEvent& event);
 	void OnMenuUpload(wxCommandEvent& event);
 	void OnMenuMkdir(wxCommandEvent& event);

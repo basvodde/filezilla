@@ -16,7 +16,6 @@
 #else
 #include <langinfo.h>
 #endif
-#include "conditionaldialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -202,7 +201,6 @@ protected:
 
 BEGIN_EVENT_TABLE(CLocalListView, CFileListCtrl<CLocalFileData>)
 	EVT_LIST_ITEM_ACTIVATED(wxID_ANY, CLocalListView::OnItemActivated)
-	EVT_LIST_COL_CLICK(wxID_ANY, CLocalListView::OnColumnClicked)
 	EVT_CONTEXT_MENU(CLocalListView::OnContextMenu)
 	// Map both ID_UPLOAD and ID_ADDTOQUEUE to OnMenuUpload, code is identical
 	EVT_MENU(XRCID("ID_UPLOAD"), CLocalListView::OnMenuUpload)
@@ -218,8 +216,7 @@ END_EVENT_TABLE()
 
 CLocalListView::CLocalListView(wxWindow* pParent, CState *pState, CQueueView *pQueue)
 	: CFileListCtrl<CLocalFileData>(pParent, pState, pQueue),
-	CSystemImageList(16), CStateEventHandler(pState, STATECHANGE_LOCAL_DIR | STATECHANGE_APPLYFILTER | STATECHANGE_LOCAL_REFRESH_FILE),
-	CComparableListing(this)
+	CSystemImageList(16), CStateEventHandler(pState, STATECHANGE_LOCAL_DIR | STATECHANGE_APPLYFILTER | STATECHANGE_LOCAL_REFRESH_FILE)
 {
 	m_dropTarget = -1;
 
@@ -705,98 +702,6 @@ void CLocalListView::DisplayShares(wxString computer)
 
 #endif
 
-wxString CLocalListView::GetType(wxString name, bool dir)
-{
-#ifdef __WXMSW__
-	wxString ext = wxFileName(name).GetExt();
-	ext.MakeLower();
-	std::map<wxString, wxString>::iterator typeIter = m_fileTypeMap.find(ext);
-	if (typeIter != m_fileTypeMap.end())
-		return typeIter->second;
-
-	wxString type;
-
-	wxString path;
-	if (m_dir == _T("\\"))
-		path = name + _T("\\");
-	else
-		path = m_dir + name;
-
-	SHFILEINFO shFinfo;
-	memset(&shFinfo, 0, sizeof(SHFILEINFO));
-	if (SHGetFileInfo(path,
-		dir ? FILE_ATTRIBUTE_DIRECTORY : FILE_ATTRIBUTE_NORMAL,
-		&shFinfo,
-		sizeof(shFinfo),
-		SHGFI_TYPENAME))
-	{
-		type = shFinfo.szTypeName;
-		if (type == _T(""))
-		{
-			type = ext;
-			type.MakeUpper();
-			if (!type.IsEmpty())
-			{
-				type += _T("-");
-				type += _("file");
-			}
-			else
-				type = _("File");
-		}
-		else
-		{
-			if (!dir && ext != _T(""))
-				m_fileTypeMap[ext.MakeLower()] = type;
-		}
-	}
-	else
-	{
-		type = ext;
-		type.MakeUpper();
-		if (!type.IsEmpty())
-		{
-			type += _T("-");
-			type += _("file");
-		}
-		else
-			type = _("File");
-	}
-	return type;
-#else
-	if (dir)
-		return _("Folder");
-
-	wxFileName fn(name);
-	wxString ext = fn.GetExt();
-	if (ext == _T(""))
-		return _("File");
-
-	std::map<wxString, wxString>::iterator typeIter = m_fileTypeMap.find(ext);
-	if (typeIter != m_fileTypeMap.end())
-		return typeIter->second;
-
-	wxString desc;
-	wxFileType *pType = wxTheMimeTypesManager->GetFileTypeFromExtension(ext);
-	if (!pType)
-	{
-		m_fileTypeMap[ext] = desc;
-		return desc;
-	}
-
-	if (pType->GetDescription(&desc) && desc != _T(""))
-	{
-		delete pType;
-		m_fileTypeMap[ext] = desc;
-		return desc;
-	}
-	delete pType;
-
-	desc = _("File");
-	m_fileTypeMap[ext.MakeLower()] = desc;
-	return desc;
-#endif
-}
-
 CLocalFileData* CLocalListView::GetData(unsigned int item)
 {
 	if (!IsItemValid(item))
@@ -820,7 +725,7 @@ bool CLocalListView::IsItemValid(unsigned int item) const
 // Helper classes for fast sorting using std::sort
 // -----------------------------------------------
 
-class CLocalListViewSort : public CFileListCtrl<CLocalFileData>::CListViewSort
+class CLocalListViewSort : public CListViewSort
 {
 public:
 	CLocalListViewSort(std::vector<CLocalFileData>& fileData, enum DirSortMode dirSortMode)
@@ -1016,9 +921,9 @@ public:
 		CLocalFileData &data2 = m_fileData[b];
 
 		if (data1.fileType == _T(""))
-			data1.fileType = m_pListView->GetType(data1.name, data1.dir);
+			data1.fileType = m_pListView->GetType(data1.name, data1.dir, m_pListView->m_dir);
 		if (data2.fileType == _T(""))
-			data2.fileType = m_pListView->GetType(data2.name, data2.dir);
+			data2.fileType = m_pListView->GetType(data2.name, data2.dir, m_pListView->m_dir);
 
 		CMP(CmpDir, data1, data2);
 
@@ -1080,37 +985,6 @@ CFileListCtrl<CLocalFileData>::CSortComparisonObject CLocalListView::GetSortComp
 		else
 			return CFileListCtrl<CLocalFileData>::CSortComparisonObject(new CLocalListViewSortName_Reverse(m_fileData, dirSortMode, this));
 	}
-}
-
-void CLocalListView::OnColumnClicked(wxListEvent &event)
-{
-	int col = event.GetColumn();
-	if (col == -1)
-		return;
-
-	if (IsComparing())
-	{
-#ifdef __WXMSW__
-		ReleaseCapture();
-		Refresh();
-#endif
-		CConditionalDialog dlg(this, CConditionalDialog::compare_changesorting, CConditionalDialog::yesno);
-		dlg.SetTitle(_("Directory comparison"));
-		dlg.AddText(_("Sort order cannot be changed if comparing directories."));
-		dlg.AddText(_("End comparison and change sorting order?"));
-		if (!dlg.Run())
-			return;
-		ExitComparisonMode();
-	}
-
-	int dir;
-	if (col == m_sortColumn)
-		dir = m_sortDirection ? 0 : 1;
-	else
-		dir = m_sortDirection;
-
-	SortList(col, dir);
-	Refresh(false);
 }
 
 void CLocalListView::OnContextMenu(wxContextMenuEvent& event)
@@ -2038,7 +1912,7 @@ wxString CLocalListView::GetItemText(int item, unsigned int column)
 			return _T("");
 
 		if (data->fileType == _T(""))
-			data->fileType = GetType(data->name, data->dir);
+			data->fileType = GetType(data->name, data->dir, m_dir);
 
 		return data->fileType;
 	}

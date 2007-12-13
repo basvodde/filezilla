@@ -14,7 +14,6 @@
 #include "Options.h"
 #include "recursive_operation.h"
 #include "edithandler.h"
-#include "conditionaldialog.h"
 
 #ifdef __WXMSW__
 #include "shellapi.h"
@@ -272,7 +271,6 @@ END_EVENT_TABLE()
 
 BEGIN_EVENT_TABLE(CRemoteListView, CFileListCtrl<CGenericFileData>)
 	EVT_LIST_ITEM_ACTIVATED(wxID_ANY, CRemoteListView::OnItemActivated)
-	EVT_LIST_COL_CLICK(wxID_ANY, CRemoteListView::OnColumnClicked)
 	EVT_CONTEXT_MENU(CRemoteListView::OnContextMenu)
 	// Map both ID_DOWNLOAD and ID_ADDTOQUEUE to OnMenuDownload, code is identical
 	EVT_MENU(XRCID("ID_DOWNLOAD"), CRemoteListView::OnMenuDownload)
@@ -293,8 +291,7 @@ END_EVENT_TABLE()
 CRemoteListView::CRemoteListView(wxWindow* pParent, CState *pState, CQueueView* pQueue)
 	: CFileListCtrl<CGenericFileData>(pParent, pState, pQueue),
 	CSystemImageList(16),
-	CStateEventHandler(pState, STATECHANGE_REMOTE_DIR | STATECHANGE_REMOTE_DIR_MODIFIED | STATECHANGE_APPLYFILTER),
-	CComparableListing(this)
+	CStateEventHandler(pState, STATECHANGE_REMOTE_DIR | STATECHANGE_REMOTE_DIR_MODIFIED | STATECHANGE_APPLYFILTER)
 {
 	m_comparisonIndex = -1;
 	m_dropTarget = -1;
@@ -670,7 +667,7 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 // Helper classes for fast sorting using std::sort
 // -----------------------------------------------
 
-class CRemoteListViewSort : public CFileListCtrl<CGenericFileData>::CListViewSort
+class CRemoteListViewSort : public CListViewSort
 {
 public:
 	CRemoteListViewSort(const CDirectoryListing* const pDirectoryListing, enum DirSortMode dirSortMode)
@@ -922,124 +919,6 @@ public:
 	}
 };
 typedef CReverseSort<CRemoteListViewSortPermissions> CRemoteListViewSortPermissions_Reverse;
-
-void CRemoteListView::OnColumnClicked(wxListEvent &event)
-{
-	int col = event.GetColumn();
-	if (col == -1)
-		return;
-
-	if (IsComparing())
-	{
-#ifdef __WXMSW__
-		ReleaseCapture();
-		Refresh();
-#endif
-		CConditionalDialog dlg(this, CConditionalDialog::compare_changesorting, CConditionalDialog::yesno);
-		dlg.SetTitle(_("Directory comparison"));
-		dlg.AddText(_("Sort order cannot be changed if comparing directories."));
-		dlg.AddText(_("End comparison and change sorting order?"));
-		if (!dlg.Run())
-			return;
-		ExitComparisonMode();
-	}
-
-	int dir;
-	if (col == m_sortColumn)
-		dir = m_sortDirection ? 0 : 1;
-	else
-		dir = m_sortDirection;
-
-	SortList(col, dir);
-	Refresh(false);
-}
-
-wxString CRemoteListView::GetType(wxString name, bool dir)
-{
-#ifdef __WXMSW__
-	wxString type;
-	wxString ext = wxFileName(name).GetExt();
-	ext.MakeLower();
-	std::map<wxString, wxString>::iterator typeIter = m_fileTypeMap.find(ext);
-	if (typeIter != m_fileTypeMap.end())
-		type = typeIter->second;
-	else
-	{
-		SHFILEINFO shFinfo;
-		memset(&shFinfo,0,sizeof(SHFILEINFO));
-		if (SHGetFileInfo(name,
-			dir ? FILE_ATTRIBUTE_DIRECTORY : FILE_ATTRIBUTE_NORMAL,
-			&shFinfo,
-			sizeof(shFinfo),
-			SHGFI_TYPENAME | SHGFI_USEFILEATTRIBUTES))
-		{
-			type = shFinfo.szTypeName;
-			if (type == _T(""))
-			{
-				type = ext;
-				type.MakeUpper();
-				if (!type.IsEmpty())
-				{
-					type += _T("-");
-					type += _("file");
-				}
-				else
-					type = _("File");
-			}
-			else
-			{
-				if (!dir && ext != _T(""))
-					m_fileTypeMap[ext] = type;
-			}
-		}
-		else
-		{
-			type = ext;
-			type.MakeUpper();
-			if (!type.IsEmpty())
-			{
-				type += _T("-");
-				type += _("file");
-			}
-			else
-				type = _("File");
-		}
-	}
-	return type;
-#else
-	if (dir)
-		return _("Folder");
-
-	wxFileName fn(name);
-	wxString ext = fn.GetExt();
-	if (ext == _T(""))
-		return _("File");
-
-	std::map<wxString, wxString>::iterator typeIter = m_fileTypeMap.find(ext);
-	if (typeIter != m_fileTypeMap.end())
-		return typeIter->second;
-
-	wxString desc;
-	wxFileType *pType = wxTheMimeTypesManager->GetFileTypeFromExtension(ext);
-	if (!pType)
-	{
-		m_fileTypeMap[ext] = desc;
-		return desc;
-	}
-
-	if (pType->GetDescription(&desc) && desc != _T(""))
-	{
-		delete pType;
-		m_fileTypeMap[ext] = desc;
-		return desc;
-	}
-	delete pType;
-
-	desc = _("File");
-	m_fileTypeMap[ext.MakeLower()] = desc;
-	return desc;
-#endif
-}
 
 void CRemoteListView::OnItemActivated(wxListEvent &event)
 {

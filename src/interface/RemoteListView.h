@@ -2,7 +2,6 @@
 #define __REMOTELISTVIEW_H__
 
 #include "state.h"
-#include "listingcomparison.h"
 #include "listctrlex.h"
 #include "filelistctrl.h"
 
@@ -11,9 +10,11 @@ class CChmodDialog;
 class CInfoText;
 class CRemoteListViewDropTarget;
 
-class CRemoteListView : public CFileListCtrl<CGenericFileData>, CSystemImageList, CStateEventHandler, public CComparableListing
+class CRemoteListView : public CFileListCtrl<CGenericFileData>, CSystemImageList, CStateEventHandler
 {
 	friend class CRemoteListViewDropTarget;
+	friend class CRemoteListViewSortType;
+
 public:
 	CRemoteListView(wxWindow* pParent, CState* pState, CQueueView* pQueue);
 	virtual ~CRemoteListView();
@@ -51,10 +52,6 @@ protected:
 	virtual wxListItemAttr* OnGetItemAttr(long item) const;
 	virtual int OnGetItemImage(long item) const;
 
-public:
-
-	wxString GetType(wxString name, bool dir);
-
 protected:
 	bool IsItemValid(unsigned int item) const;
 	int GetItemIndex(unsigned int item) const;
@@ -73,7 +70,6 @@ protected:
 
 	const CDirectoryListing *m_pDirectoryListing;
 	std::vector<unsigned int> m_originalIndexMapping; // m_originalIndexMapping will only be set on comparisons
-	std::map<wxString, wxString> m_fileTypeMap;
 
 	int m_comparisonIndex;
 
@@ -99,7 +95,6 @@ protected:
 
 	DECLARE_EVENT_TABLE()
 	void OnItemActivated(wxListEvent &event);
-	void OnColumnClicked(wxListEvent &event);
 	void OnContextMenu(wxContextMenuEvent& event);
 	void OnMenuDownload(wxCommandEvent& event);
 	void OnMenuMkdir(wxCommandEvent& event);

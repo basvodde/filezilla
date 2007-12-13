@@ -20,24 +20,24 @@ public:
 	CComparableListing::t_fileEntryFlags flags;
 };
 
-template<class CFileData> class CFileListCtrl : public wxListCtrlEx
+class CListViewSort
+{
+public:
+	enum DirSortMode
+	{
+		dirsort_ontop,
+		dirsort_onbottom,
+		dirsort_inline
+	};
+
+	virtual bool operator()(int a, int b) const = 0;
+};
+
+template<class CFileData> class CFileListCtrl : public wxListCtrlEx, public CComparableListing
 {
 public:
 	CFileListCtrl(wxWindow* pParent, CState *pState, CQueueView *pQueue);
 	virtual ~CFileListCtrl();
-
-	class CListViewSort
-	{
-	public:
-		enum DirSortMode
-		{
-			dirsort_ontop,
-			dirsort_onbottom,
-			dirsort_inline
-		};
-
-		virtual bool operator()(int a, int b) const = 0;
-	};
 
 	class CSortComparisonObject : public std::binary_function<int,int,bool>
 	{
@@ -66,6 +66,8 @@ protected:
 	std::vector<CFileData> m_fileData;
 	std::vector<unsigned int> m_indexMapping;
 
+	std::map<wxString, wxString> m_fileTypeMap;
+
 #ifdef __WXMSW__
 	// Has to be set after settings the image list for the items
 	void InitHeaderImageList();
@@ -79,11 +81,17 @@ protected:
 	int m_sortDirection;
 
 	void SortList(int column = -1, int direction = -1, bool updateSelections = true);
-	CListViewSort::DirSortMode GetDirSortMode();
+	enum CListViewSort::DirSortMode GetDirSortMode();
 	virtual CSortComparisonObject GetSortComparisonObject() = 0;
+
+	// An empty path denotes a virtual file
+	wxString GetType(wxString name, bool dir, const wxString& path = _T(""));
 
 private:
 	void SortList_UpdateSelections(bool* selections, int focus);
+
+	DECLARE_EVENT_TABLE()
+	void OnColumnClicked(wxListEvent &event);
 };
 
 #ifdef FILELISTCTRL_INCLUDE_TEMPLATE_DEFINITION
