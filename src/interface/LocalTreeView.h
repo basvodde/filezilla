@@ -40,7 +40,7 @@ protected:
 
 	wxTreeItemId GetNearestParent(wxString& localDir);
 	wxTreeItemId GetSubdir(wxTreeItemId parent, const wxString& subDir);
-	void DisplayDir(wxTreeItemId parent, const wxString& dirname, const wxString& filterException = _T(""));
+	void DisplayDir(wxTreeItemId parent, const wxString& dirname, const wxString& knownSubdir = _T(""));
 	bool HasSubdir(const wxString& dirname);
 	wxTreeItemId MakeSubdirs(wxTreeItemId parent, wxString dirname, wxString subDir);
 	wxString m_currentDir;
@@ -73,7 +73,7 @@ DECLARE_EVENT_TYPE(fzEVT_VOLUMESENUMERATED, -1)
 // volumes), even if the drive isn't mounted (in the sense of no media
 // inserted).
 // This can result in a long seek time if trying to enumerate the volume
-// labels, especially with legacy floppy drives (why are people still using 
+// labels, especially with legacy floppy drives (why are people still using
 // them?)
 // Since the local directory including the drives is populated at startup,
 // use a background thread to obtain the labels.

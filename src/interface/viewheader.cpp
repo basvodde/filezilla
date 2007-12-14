@@ -283,7 +283,7 @@ void CViewHeader::AddRecentDirectory(const wxString &directory)
 			m_recentDirectories.push_back(directory);
 			return;
 		}
-		
+
 		int item = m_pComboBox->FindString(dirToRemove, true);
 		if (item != wxNOT_FOUND)
 			m_pComboBox->Delete(item);
@@ -381,10 +381,19 @@ void CLocalViewHeader::OnTextChanged(wxCommandEvent& event)
 	const wxString path = fn.GetPath();
 
 	wxDir dir;
-	if (name == _T("") || path == _T("") || !dir.Open(path) || !dir.IsOpened())
+	if (name == _T("") || path == _T(""))
 	{
 		m_oldValue = str;
 		return;
+	}
+	else
+	{
+		wxLogNull log;
+		if (!dir.Open(path) || !dir.IsOpened())
+		{
+			m_oldValue = str;
+			return;
+		}
 	}
 	wxString found;
 

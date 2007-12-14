@@ -428,16 +428,45 @@ bool CLocalTreeView::DisplayDrives(wxTreeItemId parent)
 
 #endif
 
-void CLocalTreeView::DisplayDir(wxTreeItemId parent, const wxString& dirname, const wxString& filterException /*=_T("")*/)
+void CLocalTreeView::DisplayDir(wxTreeItemId parent, const wxString& dirname, const wxString& knownSubdir /*=_T("")*/)
 {
+	wxDir dir;
+
+	{
+		wxLogNull log;
+		if (!dir.Open(dirname))
+		{
+			if (knownSubdir != _T(""))
+			{
+				wxTreeItemId item = GetSubdir(parent, knownSubdir);
+				if (item != wxTreeItemId())
+					return;
+
+				const wxString fullName = dirname + knownSubdir;
+				item = AppendItem(parent, knownSubdir, GetIconIndex(::dir, fullName), GetIconIndex(opened_dir, fullName));
+				if (HasSubdir(fullName))
+					AppendItem(item, _T(""));
+			}
+			else
+			{
+				m_setSelection = true;
+				DeleteChildren(parent);
+				m_setSelection = false;
+			}
+			return;
+		}
+	}
+
 	wxASSERT(parent);
 	m_setSelection = true;
 	DeleteChildren(parent);
 	m_setSelection = false;
-	wxDir dir(dirname);
+
 	wxString file;
 
 	CFilterDialog filter;
+
+	bool matchedKnown = false;
 
 	for (bool found = dir.GetFirst(&file, _T(""), wxDIR_DIRS | wxDIR_HIDDEN); found; found = dir.GetNext(&file))
 	{
@@ -449,9 +478,9 @@ void CLocalTreeView::DisplayDir(wxTreeItemId parent, const wxString& dirname, co
 
 		wxString fullName = dirname + file;
 #ifdef __WXMSW__
-		if (file.CmpNoCase(filterException))
+		if (file.CmpNoCase(knownSubdir))
 #else
-		if (file != filterException)
+		if (file != knownSubdir)
 #endif
 		{
 			wxFileName fn(fullName);
@@ -468,11 +497,22 @@ void CLocalTreeView::DisplayDir(wxTreeItemId parent, const wxString& dirname, co
 			if (filter.FilenameFiltered(file, isDir, size, true))
 				continue;
 		}
+		else
+			matchedKnown = true;
 
 		wxTreeItemId item = AppendItem(parent, file, GetIconIndex(::dir, fullName), GetIconIndex(opened_dir, fullName));
 		if (HasSubdir(fullName))
 			AppendItem(item, _T(""));
 	}
+
+	if (!matchedKnown && knownSubdir != _T(""))
+	{
+		const wxString fullName = dirname + knownSubdir;
+		wxTreeItemId item = AppendItem(parent, knownSubdir, GetIconIndex(::dir, fullName), GetIconIndex(opened_dir, fullName));
+		if (HasSubdir(fullName))
+			AppendItem(item, _T(""));
+	}
+
 	SortChildren(parent);
 }
 
@@ -657,6 +697,24 @@ void CLocalTreeView::Refresh()
 		dirsToCheck.pop_front();
 
 		wxDir find(dir.dir);
+		if (!find.IsOpened())
+		{
+			// Dir does exist (listed in parent) but may not be accessible.
+			// Recurse into children anyhow, they might be accessible again.
+			wxTreeItemIdValue value;
+			wxTreeItemId child = GetFirstChild(dir.item, value);
+			while (child)
+			{
+				t_dir subdir;
+				subdir.dir = dir.dir + GetItemText(child) + separator;
+				subdir.item = child;
+				dirsToCheck.push_back(subdir);
+
+				child = GetNextSibling(child);
+			}
+			continue;
+		}
+
 		wxString file;
 		bool found = find.GetFirst(&file, _T(""), wxDIR_DIRS | wxDIR_HIDDEN);
 		std::list<wxString> dirs;
@@ -913,7 +971,7 @@ bool CLocalTreeView::CreateRoot()
 		name = _("Desktop");
 		iconIndex = openIconIndex = -1;
 	}
-	
+
 	m_desktop = AddRoot(name, iconIndex, openIconIndex);
 
 	name = GetSpecialFolder(CSIDL_PERSONAL, iconIndex, openIconIndex);
@@ -922,7 +980,7 @@ bool CLocalTreeView::CreateRoot()
 		name = _("My Documents");
 		iconIndex = openIconIndex = -1;
 	}
-	
+
 	m_documents = AppendItem(m_desktop, name, iconIndex, openIconIndex);
 
 
@@ -932,7 +990,7 @@ bool CLocalTreeView::CreateRoot()
 		name = _("My Computer");
 		iconIndex = openIconIndex = -1;
 	}
-	
+
 	m_drives = AppendItem(m_desktop, name, iconIndex, openIconIndex);
 
 	DisplayDrives(m_drives);
