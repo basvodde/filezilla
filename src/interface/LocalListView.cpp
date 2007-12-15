@@ -1784,7 +1784,12 @@ wxListItemAttr* CLocalListView::OnGetItemAttr(long item) const
 void CLocalListView::StartComparison()
 {
 	if (m_sortDirection || m_sortColumn)
+	{
+		wxASSERT(m_originalIndexMapping.empty());
 		SortList(0, 0);
+	}
+
+	ComparisonRememberSelections();
 
 	if (m_originalIndexMapping.empty())
 		m_originalIndexMapping.swap(m_indexMapping);
@@ -1827,6 +1832,9 @@ bool CLocalListView::GetNextFile(wxString& name, bool& dir, wxLongLong& size)
 void CLocalListView::FinishComparison()
 {
 	SetItemCount(m_indexMapping.size());
+
+	ComparisonRestoreSelections();
+
 	Refresh();
 
 	CComparableListing* pOther = GetOther();

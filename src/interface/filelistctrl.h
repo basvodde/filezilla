@@ -97,6 +97,12 @@ protected:
 
 	int m_comparisonIndex;
 
+	// Remembers which non-fill items are selected if enabling/disabling comparison.
+	// Exploit fact that sort order doesn't change -> O(n)
+	void ComparisonRememberSelections();
+	void ComparisonRestoreSelections();
+	std::list<int> m_comparisonSelections;
+
 private:
 	void SortList_UpdateSelections(bool* selections, int focus);
 

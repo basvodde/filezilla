@@ -2189,7 +2189,12 @@ bool CRemoteListView::CanStartComparison(wxString* pError)
 void CRemoteListView::StartComparison()
 {
 	if (m_sortDirection || m_sortColumn)
+	{
+		wxASSERT(m_originalIndexMapping.empty());
 		SortList(0, 0);
+	}
+
+	ComparisonRememberSelections();
 
 	if (m_originalIndexMapping.empty())
 		m_originalIndexMapping.swap(m_indexMapping);
@@ -2237,6 +2242,9 @@ bool CRemoteListView::GetNextFile(wxString& name, bool& dir, wxLongLong& size)
 void CRemoteListView::FinishComparison()
 {
 	SetItemCount(m_indexMapping.size());
+
+	ComparisonRestoreSelections();
+
 	Refresh();
 }
 

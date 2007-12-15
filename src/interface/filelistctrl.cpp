@@ -381,6 +381,8 @@ template<class CFileData> void CFileListCtrl<CFileData>::OnPostScroll()
 
 template<class CFileData> void CFileListCtrl<CFileData>::OnExitComparisonMode()
 {
+	ComparisonRememberSelections();
+
 	wxASSERT(!m_originalIndexMapping.empty());
 	m_indexMapping.clear();
 	m_indexMapping.swap(m_originalIndexMapping);
@@ -389,6 +391,8 @@ template<class CFileData> void CFileListCtrl<CFileData>::OnExitComparisonMode()
 		m_fileData[i].flags = normal;
 
 	SetItemCount(m_indexMapping.size());
+
+	ComparisonRestoreSelections();
 
 	Refresh();
 }
@@ -405,4 +409,77 @@ template<class CFileData> void CFileListCtrl<CFileData>::CompareAddFile(t_fileEn
 	m_fileData[index].flags = flags;
 
 	m_indexMapping.push_back(index);
+}
+
+template<class CFileData> void CFileListCtrl<CFileData>::ComparisonRememberSelections()
+{
+	wxASSERT(GetItemCount() == m_indexMapping.size());
+
+	m_comparisonSelections.clear();
+
+	int focus = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
+	if (focus != -1)
+	{
+		SetItemState(focus, 0, wxLIST_STATE_FOCUSED);
+		int index = m_indexMapping[focus];
+		if (m_fileData[index].flags == fill)
+			focus = -1;
+		else
+			focus = index;
+	}
+	m_comparisonSelections.push_back(focus);
+
+	int item = -1;
+	while ((item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
+	{
+		int index = m_indexMapping[item];
+		if (m_fileData[index].flags == fill)
+			continue;
+		m_comparisonSelections.push_back(index);
+	}
+}
+
+template<class CFileData> void CFileListCtrl<CFileData>::ComparisonRestoreSelections()
+{
+	if (m_comparisonSelections.empty())
+		return;
+
+	int focus = m_comparisonSelections.front();
+	m_comparisonSelections.pop_front();
+
+	int item = -1;
+	if (!m_comparisonSelections.empty())
+	{
+		item = m_comparisonSelections.front();
+		m_comparisonSelections.pop_front();
+	}
+	if (focus == -1)
+		focus = item;
+
+	for (unsigned int i = 0; i < m_indexMapping.size(); i++)
+	{
+		int index = m_indexMapping[i];
+		if (focus == index)
+		{
+			SetItemState(i, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
+			focus = -1;
+		}
+
+		bool isSelected = GetItemState(i, wxLIST_STATE_SELECTED) == wxLIST_STATE_SELECTED;
+		bool shouldSelected = item == index;
+		if (isSelected != shouldSelected)
+		{
+			SetItemState(i, shouldSelected ? wxLIST_STATE_SELECTED : 0, wxLIST_STATE_SELECTED);
+			if (shouldSelected)
+			{
+				if (m_comparisonSelections.empty())
+					item = -1;
+				else
+				{
+					item = m_comparisonSelections.front();
+					m_comparisonSelections.pop_front();
+				}
+			}
+		}
+	}
 }
