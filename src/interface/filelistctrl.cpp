@@ -1,4 +1,7 @@
+#ifndef FILELISTCTRL_INCLUDE_TEMPLATE_DEFINITION
+// This works around a bug in GCC, appears to be [Bug pch/12707]
 #include "FileZilla.h"
+#endif
 #include "filelistctrl.h"
 #include "filezillaapp.h"
 #include "Options.h"
@@ -12,7 +15,9 @@ template<class CFileData> CFileListCtrl<CFileData>::CFileListCtrl(wxWindow* pPar
 	: wxListCtrlEx(pParent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER | wxLC_EDIT_LABELS),
 	CComparableListing(this)
 {
+#ifdef __WXMSW__
 	m_pHeaderImageList = 0;
+#endif
 	m_pQueue = pQueue;
 
 	m_sortColumn = 0;
