@@ -39,6 +39,23 @@ bool CAboutDialog::Create(wxWindow* parent)
 	else
 		pHost->SetLabel(host);
 
+	wxStaticText* pBuild = XRCCTRL(*this, "ID_BUILD", wxStaticText);
+	if (!pBuild)
+		return false;
+
+	wxStaticText* pBuildDesc = XRCCTRL(*this, "ID_BUILD_DESC", wxStaticText);
+	if (!pBuildDesc)
+		return false;
+
+	wxString build = CBuildInfo::GetBuildSystem();
+	if (build == _T(""))
+	{
+		pBuild->Hide();
+		pBuildDesc->Hide();
+	}
+	else
+		pBuild->SetLabel(build);
+
 	if (!SetLabel(XRCID("ID_BUILDDATE"), CBuildInfo::GetBuildDateString()))
 		return false;
 

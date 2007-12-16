@@ -17,6 +17,7 @@ public:
 	static wxString GetCompiler();
 	static wxString GetCompilerFlags();
 	static wxString GetHostname();
+	static wxString GetBuildSystem();
 };
 
 #endif //__BUILDINFO_H__

@@ -161,3 +161,13 @@ wxString CBuildInfo::GetHostname()
 	return flags;
 #endif
 }
+
+wxString CBuildInfo::GetBuildSystem()
+{
+#ifndef USED_BUILD
+	return _T("");
+#else
+	wxString flags(USED_BUILD, wxConvLocal);
+	return flags;
+#endif
+}
