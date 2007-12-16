@@ -465,6 +465,8 @@ void CFtpControlSocket::ParseResponse()
 
 		if (!m_pCurOpData)
 			StartKeepaliveTimer();
+		else if (!m_pendingReplies)
+			SendNextCommand();
 
 		return;
 	}
@@ -838,7 +840,7 @@ int CFtpControlSocket::LogonParseResponse()
 						DoClose(error);
 						return FZ_REPLY_ERROR;
 					}
-					return LogonSend();
+					return SendNextCommand();
 				}
 			}
 
@@ -868,7 +870,7 @@ int CFtpControlSocket::LogonParseResponse()
 		{
 			pData->waitChallenge = false;
 		
-			return LogonSend();
+			return SendNextCommand();
 		}
 	}
 	else if (pData->opState == LOGON_SYST)
@@ -937,7 +939,7 @@ int CFtpControlSocket::LogonParseResponse()
 	{
 		pData->customCommandIndex++;
 		if (pData->customCommandIndex < m_pCurrentServer->GetPostLoginCommands().size())
-			return LogonSend();
+			return SendNextCommand();
 	}
 
 	while (true)
@@ -1002,7 +1004,7 @@ int CFtpControlSocket::LogonParseResponse()
 			break;
 	}
 
-	return LogonSend();
+	return SendNextCommand();
 }
 
 int CFtpControlSocket::LogonSend()
@@ -1420,7 +1422,7 @@ int CFtpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 			if (res != FZ_REPLY_OK)
 				return res;
 
-            CDirectoryCache cache;
+			CDirectoryCache cache;
 			cache.Store(listing, *m_pCurrentServer, pData->path, pData->subDir);
 			
 			m_pEngine->SendDirectoryListingNotification(m_CurrentPath, !pData->pNextOpData, true, false);
@@ -1623,7 +1625,7 @@ int CFtpControlSocket::ListCheckTimezoneDetection(CDirectoryListing& listing)
 					pData->opState = list_mdtm;
 					pData->directoryListing = listing;
 					pData->mdtm_index = i;
-					return ListSend(FZ_REPLY_OK);
+					return SendNextCommand();
 				}
 			}
 		}
@@ -1713,7 +1715,13 @@ int CFtpControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
 
 	if (m_pCurOpData->waitForAsyncRequest)
 	{
-		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Waiting for async request, ignoring SendNextCommand"));
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Waiting for async request, ignoring SendNextCommand..."));
+		return FZ_REPLY_WOULDBLOCK;
+	}
+
+	if (m_repliesToSkip)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Status, _T("Waiting for replies to skip before sending next command..."));
 		return FZ_REPLY_WOULDBLOCK;
 	}
 
@@ -2008,7 +2016,7 @@ int CFtpControlSocket::ChangeDirParseResponse()
 		return FZ_REPLY_ERROR;
 	}
 
-	return ChangeDirSend();
+	return SendNextCommand();
 }
 
 int CFtpControlSocket::ChangeDirSend()
@@ -2255,7 +2263,7 @@ int CFtpControlSocket::FileTransferParseResponse()
 		return FZ_REPLY_ERROR;
 	}
 
-	return FileTransferSend();
+	return SendNextCommand();
 }
 
 int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
@@ -2340,7 +2348,7 @@ int CFtpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 			if (!found)
 			{
 				if (!dirDidExist)
-                    pData->opState = filetransfer_size;
+					pData->opState = filetransfer_size;
 				else
 				{
 					pData->opState = filetransfer_resumetest;
@@ -2900,7 +2908,7 @@ int CFtpControlSocket::RawCommandParseResponse()
 	}
 	else
 	{
-        ResetOperation(FZ_REPLY_ERROR);
+		ResetOperation(FZ_REPLY_ERROR);
 		return FZ_REPLY_ERROR;
 	}
 }
@@ -3272,7 +3280,7 @@ int CFtpControlSocket::MkdirParseResponse()
 		return FZ_REPLY_ERROR;
 	}
 
-	return MkdirSend();
+	return SendNextCommand();
 }
 
 int CFtpControlSocket::MkdirSend()
@@ -3394,7 +3402,7 @@ int CFtpControlSocket::RenameParseResponse()
 		return FZ_REPLY_OK;
 	}
 
-	return RenameSend();
+	return SendNextCommand();
 }
 
 int CFtpControlSocket::RenameSend(int prevResult /*=FZ_REPLY_OK*/)
@@ -3891,7 +3899,7 @@ int CFtpControlSocket::TransferParseResponse()
 		return FZ_REPLY_ERROR;
 	}
 
-	return TransferSend();
+	return SendNextCommand();
 }
 
 int CFtpControlSocket::TransferSend(int prevResult /*=FZ_REPLY_OK*/)
@@ -3940,7 +3948,7 @@ int CFtpControlSocket::TransferSend(int prevResult /*=FZ_REPLY_OK*/)
 			else if (res == FZ_REPLY_OK)
 			{
 				wxString portArgument = m_pTransferSocket->SetupActiveTransfer(address);
-                if (portArgument != _T(""))
+				if (portArgument != _T(""))
 				{
 					pData->bTriedActive = true;
 					cmd = _T("PORT " + portArgument);
