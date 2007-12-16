@@ -41,8 +41,9 @@ static int compare_timers(void *av, void *bv)
      * Failing that, compare on the other two fields, just so that
      * we don't get unwanted equality.
      */
-#ifdef __LCC__
-    /* lcc won't let us compare function pointers. Legal, but annoying. */
+#ifndef __GNUC__
+    /* FZ change */
+    /* Non-gcc compilers won't let us compare function pointers. Legal, but annoying. */
     {
 	int c = memcmp(&a->fn, &b->fn, sizeof(a->fn));
 	if (c < 0)
