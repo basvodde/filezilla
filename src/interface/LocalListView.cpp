@@ -245,7 +245,10 @@ CLocalListView::CLocalListView(wxWindow* pParent, CState *pState, CQueueView *pQ
 		m_sortColumn = 0;
 
 	SetImageList(GetSystemImageList(), wxIMAGE_LIST_SMALL);
+
+#ifdef __WXMSW__
 	InitHeaderImageList();
+#endif
 
 	SetDropTarget(new CLocalListViewDropTarget(this));
 

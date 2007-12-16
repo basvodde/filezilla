@@ -326,7 +326,10 @@ CRemoteListView::CRemoteListView(wxWindow* pParent, CState *pState, CQueueView* 
 
 	m_dirIcon = GetIconIndex(dir);
 	SetImageList(GetSystemImageList(), wxIMAGE_LIST_SMALL);
+
+#ifdef __WXMSW__
 	InitHeaderImageList();
+#endif
 
 	SetDirectoryListing(0);
 
