@@ -172,9 +172,11 @@ protected:
 
 	virtual int ResetOperation(int nErrorCode);
 
-	// Called by ResetOperation if there's a queued operation
-	virtual int SendNextCommand(int prevResult = FZ_REPLY_OK);
+	virtual int SendNextCommand();
 
+	// Called by ResetOperation if there's a queued operation
+	virtual int ParseSubcommandResult(int prevResult);
+	
 	wxString ConvertDomainName(wxString domain);
 
 	int CheckOverwriteFile();

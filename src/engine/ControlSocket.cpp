@@ -102,7 +102,7 @@ int CControlSocket::ResetOperation(int nErrorCode)
 			nErrorCode == FZ_REPLY_ERROR ||
 			nErrorCode == FZ_REPLY_CRITICALERROR)
 		{
-			return SendNextCommand(nErrorCode);
+			return ParseSubcommandResult(nErrorCode);
 		}
 		else
 			return ResetOperation(nErrorCode);
@@ -620,9 +620,15 @@ void CControlSocket::SetWait(bool wait)
 		m_timer.Stop();
 }
 
-int CControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
+int CControlSocket::SendNextCommand()
 {
-	ResetOperation(prevResult);
+	ResetOperation(FZ_REPLY_INTERNALERROR);
+	return FZ_REPLY_ERROR;
+}
+
+int CControlSocket::ParseSubcommandResult(int prevResult)
+{
+	ResetOperation(FZ_REPLY_INTERNALERROR);
 	return FZ_REPLY_ERROR;
 }
 

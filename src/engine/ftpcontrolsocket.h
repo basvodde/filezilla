@@ -29,18 +29,21 @@ protected:
 	virtual int Connect(const CServer &server);
 	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T(""), bool refresh = false);
 	int ListParseResponse();
-	int ListSend(int prevResult = FZ_REPLY_OK);
+	int ListSubcommandResult(int prevResult);
+	int ListSend();
 	int ListCheckTimezoneDetection(CDirectoryListing& listing);
 
 	int ChangeDir(CServerPath path = CServerPath(), wxString subDir = _T(""));
 	int ChangeDirParseResponse();
+	int ChangeDirSubcommandResult(int prevResult);
 	int ChangeDirSend();
 
 	virtual int FileTransfer(const wxString localFile, const CServerPath &remotePath,
 							 const wxString &remoteFile, bool download,
 							 const CFileTransferCommand::t_transferSettings& transferSettings);
 	int FileTransferParseResponse();
-	int FileTransferSend(int prevResult = FZ_REPLY_OK);
+	int FileTransferSubcommandResult(int prevResult);
+	int FileTransferSend();
 	int FileTransferTestResumeCapability();
 
 	virtual int RawCommand(const wxString& command);
@@ -48,11 +51,13 @@ protected:
 	int RawCommandParseResponse();
 
 	virtual int Delete(const CServerPath& path, const std::list<wxString>& files);
-	int DeleteSend(int prevResult = FZ_REPLY_OK);
+	int DeleteSubcommandResult(int prevResult);
+	int DeleteSend();
 	int DeleteParseResponse();
 	
 	virtual int RemoveDir(const CServerPath& path, const wxString& subDir);
-	int RemoveDirSend(int prevResult = FZ_REPLY_OK);
+	int RemoveDirSubcommandResult(int prevResult);
+	int RemoveDirSend();
 	int RemoveDirParseResponse();
 
 	virtual int Mkdir(const CServerPath& path);
@@ -61,15 +66,17 @@ protected:
 
 	virtual int Rename(const CRenameCommand& command);
 	virtual int RenameParseResponse();
-	virtual int RenameSend(int prevResult = FZ_REPLY_OK);
+	virtual int RenameSubcommandResult(int prevResult);
+	virtual int RenameSend();
 
 	virtual int Chmod(const CChmodCommand& command);
 	virtual int ChmodParseResponse();
-	virtual int ChmodSend(int prevResult = FZ_REPLY_OK);
+	virtual int ChmodSubcommandResult(int prevResult);
+	virtual int ChmodSend();
 
 	virtual int Transfer(const wxString& cmd, CFtpTransferOpData* oldData);
 	virtual int TransferParseResponse();
-	virtual int TransferSend(int prevResult = FZ_REPLY_OK);
+	virtual int TransferSend();
 	
 	virtual void OnConnect();
 	virtual void OnReceive();
@@ -83,7 +90,8 @@ protected:
 	// It's the last line in a multi-line response.
 	void ParseResponse();
 
-	virtual int SendNextCommand(int prevResult = FZ_REPLY_OK);
+	virtual int SendNextCommand();
+	virtual int ParseSubcommandResult(int prevResult);
 
 	int GetReplyCode() const;
 
