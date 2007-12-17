@@ -6,6 +6,7 @@
 #include "filezillaapp.h"
 #include "Options.h"
 #include "conditionaldialog.h"
+#include <algorithm>
 
 BEGIN_EVENT_TABLE_TEMPLATE1(CFileListCtrl, wxListCtrlEx, CFileData)
 EVT_LIST_COL_CLICK(wxID_ANY, CFileListCtrl<CFileData>::OnColumnClicked)
