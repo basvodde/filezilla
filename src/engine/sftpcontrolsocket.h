@@ -43,9 +43,6 @@ public:
 	virtual int Connect(const CServer &server);
 
 	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T(""), bool refresh = false);
-	virtual int FileTransfer(const wxString localFile, const CServerPath &remotePath,
-							 const wxString &remoteFile, bool download,
-							 const CFileTransferCommand::t_transferSettings& transferSettings);
 	virtual int Delete(const CServerPath& path, const std::list<wxString>& files);
 	virtual int RemoveDir(const CServerPath& path = CServerPath(), const wxString& subDir = _T(""));
 	virtual int Mkdir(const CServerPath& path);
@@ -69,21 +66,28 @@ protected:
 	virtual int DoClose(int nErrorCode = FZ_REPLY_DISCONNECTED);
 
 	virtual int ResetOperation(int nErrorCode);
-	virtual int SendNextCommand(int prevResult = FZ_REPLY_OK);
+	virtual int SendNextCommand();
+	virtual int ParseSubcommandResult(int prevResult);
 
 	int ProcessReply(bool successful, const wxString& reply = _T(""));
 
 	int ConnectParseResponse(bool successful, const wxString& reply);
 
-	int FileTransferSend(int prevResult = FZ_REPLY_OK);
+	virtual int FileTransfer(const wxString localFile, const CServerPath &remotePath,
+							 const wxString &remoteFile, bool download,
+							 const CFileTransferCommand::t_transferSettings& transferSettings);
+	int FileTransferSubcommandResult(int prevResult);
+	int FileTransferSend();
 	int FileTransferParseResponse(bool successful, const wxString& reply);
 
-	int ListSend(int prevResult = FZ_REPLY_OK);
+	int ListSubcommandResult(int prevResult);
+	int ListSend();
 	int ListParseResponse(bool successful, const wxString& reply);
 	int ListParseEntry(const wxString& entry);
 
 	int ChangeDir(CServerPath path = CServerPath(), wxString subDir = _T(""));
 	int ChangeDirParseResponse(bool successful, const wxString& reply);
+	int ChangeDirSubcommandResult(int prevResult);
 	int ChangeDirSend();
 
 	int MkdirParseResponse(bool successful, const wxString& reply);
@@ -95,10 +99,12 @@ protected:
 	int RemoveDirParseResponse(bool successful, const wxString& reply);
 
 	int ChmodParseResponse(bool successful, const wxString& reply);
-	int ChmodSend(int prevResult = FZ_REPLY_OK);
+	int ChmodSubcommandResult(int prevResult);
+	int ChmodSend();
 
 	int RenameParseResponse(bool successful, const wxString& reply);
-	int RenameSend(int prevResult = FZ_REPLY_OK);
+	int RenameSubcommandResult(int prevResult);
+	int RenameSend();
 
 	bool Send(wxString cmd, const wxString& show = _T(""));
 	bool AddToStream(const wxString& cmd, bool force_utf8 = false);

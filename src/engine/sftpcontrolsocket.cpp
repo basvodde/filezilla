@@ -904,7 +904,7 @@ int CSftpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDi
 
 	pData->opState = list_list;
 
-	return ListSend();
+	return SendNextCommand();
 }
 
 int CSftpControlSocket::ListParseResponse(bool successful, const wxString& reply)
@@ -1014,9 +1014,9 @@ int CSftpControlSocket::ListParseEntry(const wxString& entry)
 	return FZ_REPLY_WOULDBLOCK;
 }
 
-int CSftpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
+int CSftpControlSocket::ListSubcommandResult(int prevResult)
 {
-	LogMessage(Debug_Verbose, _T("CSftpControlSocket::ListSend(%d)"), prevResult);
+	LogMessage(Debug_Verbose, _T("CSftpControlSocket::ListSubcommandResult()"));
 
 	if (!m_pCurOpData)
 	{
@@ -1028,47 +1028,67 @@ int CSftpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 	CSftpListOpData *pData = static_cast<CSftpListOpData *>(m_pCurOpData);
 	LogMessage(Debug_Debug, _T("  state = %d"), pData->opState);
 
-	if (pData->opState == list_waitcwd)
+	if (pData->opState != list_waitcwd)
 	{
-		if (prevResult != FZ_REPLY_OK)
-		{
-			ResetOperation(prevResult);
-			return FZ_REPLY_ERROR;
-		}
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
 
-		if (!pData->refresh)
-		{
-			wxASSERT(!pData->pNextOpData);
+	if (prevResult != FZ_REPLY_OK)
+	{
+		ResetOperation(prevResult);
+		return FZ_REPLY_ERROR;
+	}
 
-			// Do a cache lookup now that we know the correct directory
-			CDirectoryCache cache;
-			int hasUnsureEntries;
-			bool found = cache.DoesExist(*m_pCurrentServer, m_CurrentPath, _T(""), hasUnsureEntries);
-			if (found)
+	if (!pData->refresh)
+	{
+		wxASSERT(!pData->pNextOpData);
+
+		// Do a cache lookup now that we know the correct directory
+		CDirectoryCache cache;
+		int hasUnsureEntries;
+		bool found = cache.DoesExist(*m_pCurrentServer, m_CurrentPath, _T(""), hasUnsureEntries);
+		if (found)
+		{
+			if (!pData->path.IsEmpty() && pData->subDir != _T(""))
+				cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
+
+			// Continue with refresh if listing has unsure entries
+			if (!hasUnsureEntries)
 			{
-				if (!pData->path.IsEmpty() && pData->subDir != _T(""))
-					cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
+				m_pEngine->SendDirectoryListingNotification(m_CurrentPath, true, false, false);
 
-				// Continue with refresh if listing has unsure entries
-				if (!hasUnsureEntries)
-				{
-					m_pEngine->SendDirectoryListingNotification(m_CurrentPath, true, false, false);
+				ResetOperation(FZ_REPLY_OK);
 
-					ResetOperation(FZ_REPLY_OK);
-
-					return FZ_REPLY_OK;
-				}
+				return FZ_REPLY_OK;
 			}
 		}
-
-		if (!HasLock())
-		{
-			if (!TryLockCache(m_CurrentPath))
-				return FZ_REPLY_WOULDBLOCK;
-		}
-
-		pData->opState = list_list;
 	}
+
+	if (!HasLock())
+	{
+		if (!TryLockCache(m_CurrentPath))
+			return FZ_REPLY_WOULDBLOCK;
+	}
+
+	pData->opState = list_list;
+
+	return SendNextCommand();
+}
+
+int CSftpControlSocket::ListSend()
+{
+	LogMessage(Debug_Verbose, _T("CSftpControlSocket::ListSend()"));
+
+	if (!m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	CSftpListOpData *pData = static_cast<CSftpListOpData *>(m_pCurOpData);
+	LogMessage(Debug_Debug, _T("  state = %d"), pData->opState);
 
 	if (pData->opState == list_list)
 	{
@@ -1076,6 +1096,9 @@ int CSftpControlSocket::ListSend(int prevResult /*=FZ_REPLY_OK*/)
 		Send(_T("ls"));
 		return FZ_REPLY_WOULDBLOCK;
 	}
+
+	LogMessage(Debug_Warning, _T("Unknown opStatein CSftpControlSocket::ListSend"));
+	ResetOperation(FZ_REPLY_INTERNALERROR);
 	return FZ_REPLY_ERROR;
 }
 
@@ -1154,7 +1177,7 @@ int CSftpControlSocket::ChangeDir(CServerPath path /*=CServerPath()*/, wxString 
 
 	m_pCurOpData = pData;
 
-	return ChangeDirSend();
+	return SendNextCommand();
 }
 
 int CSftpControlSocket::ChangeDirParseResponse(bool successful, const wxString& reply)
@@ -1239,11 +1262,20 @@ int CSftpControlSocket::ChangeDirParseResponse(bool successful, const wxString& 
 		return FZ_REPLY_ERROR;
 	}
 
-	return ChangeDirSend();
+	return SendNextCommand();
+}
+
+int CSftpControlSocket::ChangeDirSubcommandResult(int WXUNUSED(prevResult))
+{
+	LogMessage(Debug_Verbose, _("CSftpControlSocket::ChangeDirSubcommandResult()"));
+
+	return SendNextCommand();
 }
 
 int CSftpControlSocket::ChangeDirSend()
 {
+	LogMessage(Debug_Verbose, _("CSftpControlSocket::ChangeDirSend()"));
+
 	if (!m_pCurOpData)
 	{
 		ResetOperation(FZ_REPLY_ERROR);
@@ -1331,9 +1363,9 @@ int CSftpControlSocket::ResetOperation(int nErrorCode)
 	return CControlSocket::ResetOperation(nErrorCode);
 }
 
-int CSftpControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
+int CSftpControlSocket::SendNextCommand()
 {
-	LogMessage(Debug_Verbose, _T("CSftpControlSocket::SendNextCommand(%d)"), prevResult);
+	LogMessage(Debug_Verbose, _T("CSftpControlSocket::SendNextCommand()"));
 	if (!m_pCurOpData)
 	{
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("SendNextCommand called without active operation"));
@@ -1350,13 +1382,19 @@ int CSftpControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
 	switch (m_pCurOpData->opId)
 	{
 	case cmd_list:
-		return ListSend(prevResult);
+		return ListSend();
 	case cmd_transfer:
-		return FileTransferSend(prevResult);
+		return FileTransferSend();
 	case cmd_cwd:
 		return ChangeDirSend();
 	case cmd_mkdir:
 		return MkdirSend();
+	case cmd_rename:
+		return RenameSend();
+	case cmd_chmod:
+		return ChmodSend();
+	case cmd_delete:
+		return DeleteSend();
 	default:
 		LogMessage(::Debug_Warning, __TFILE__, __LINE__, _T("Unknown opID (%d) in SendNextCommand"), m_pCurOpData->opId);
 		ResetOperation(FZ_REPLY_INTERNALERROR);
@@ -1456,12 +1494,12 @@ int CSftpControlSocket::FileTransfer(const wxString localFile, const CServerPath
 	if (res != FZ_REPLY_OK)
 		return res;
 
-	return FileTransferSend();
+	return SendNextCommand();
 }
 
-int CSftpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
+int CSftpControlSocket::FileTransferSubcommandResult(int prevResult)
 {
-	LogMessage(Debug_Verbose, _T("FileTransferSend()"));
+	LogMessage(Debug_Verbose, _T("CSftpControlSocket::FileTransferSubcommandResult()"));
 
 	if (!m_pCurOpData)
 	{
@@ -1549,6 +1587,28 @@ int CSftpControlSocket::FileTransferSend(int prevResult /*=FZ_REPLY_OK*/)
 		if (res != FZ_REPLY_OK)
 			return res;
 	}
+	else
+	{
+		LogMessage(Debug_Warning, _T("  Unknown opState (%d)"), pData->opState);
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	return SendNextCommand();
+}
+
+int CSftpControlSocket::FileTransferSend()
+{
+	LogMessage(Debug_Verbose, _T("FileTransferSend()"));
+
+	if (!m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	CSftpFileTransferOpData *pData = static_cast<CSftpFileTransferOpData *>(m_pCurOpData);
 
 	wxString cmd;
 	if (pData->resume)
@@ -1870,7 +1930,7 @@ int CSftpControlSocket::Delete(const CServerPath& path, const std::list<wxString
 	// CFileZillaEnginePrivate should have checked this already
 	wxASSERT(!files.empty());
 
-	return DeleteSend();
+	return SendNextCommand();
 }
 
 int CSftpControlSocket::DeleteParseResponse(bool successful, const wxString& reply)
@@ -1909,7 +1969,7 @@ int CSftpControlSocket::DeleteParseResponse(bool successful, const wxString& rep
 	pData->files.pop_front();
 	
 	if (!pData->files.empty())
-		return DeleteSend();
+		return SendNextCommand();
 
 	return ResetOperation(pData->m_deleteFailed ? FZ_REPLY_ERROR : FZ_REPLY_OK);
 }
@@ -2068,7 +2128,7 @@ int CSftpControlSocket::Chmod(const CChmodCommand& command)
 	if (res != FZ_REPLY_OK)
 		return res;
 	
-	return ChmodSend();
+	return SendNextCommand();
 }
 
 int CSftpControlSocket::ChmodParseResponse(bool successful, const wxString& reply)
@@ -2091,8 +2151,10 @@ int CSftpControlSocket::ChmodParseResponse(bool successful, const wxString& repl
 	return FZ_REPLY_OK;
 }
 
-int CSftpControlSocket::ChmodSend(int prevResult /*=FZ_REPLY_OK*/)
+int CSftpControlSocket::ChmodSubcommandResult(int prevResult)
 {
+	LogMessage(Debug_Verbose, _T("CSftpControlSocket::ChmodSend()"));
+
 	CSftpChmodOpData *pData = static_cast<CSftpChmodOpData*>(m_pCurOpData);
 	if (!pData)
 	{
@@ -2103,6 +2165,21 @@ int CSftpControlSocket::ChmodSend(int prevResult /*=FZ_REPLY_OK*/)
 
 	if (prevResult != FZ_REPLY_OK)
 		pData->m_useAbsolute = true;
+
+	return SendNextCommand();
+}
+
+int CSftpControlSocket::ChmodSend()
+{
+	LogMessage(Debug_Verbose, _T("CSftpControlSocket::ChmodSend()"));
+
+	CSftpChmodOpData *pData = static_cast<CSftpChmodOpData*>(m_pCurOpData);
+	if (!pData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("m_pCurOpData empty"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
 
 	bool res;
 	switch (pData->opState)
@@ -2173,7 +2250,7 @@ int CSftpControlSocket::Rename(const CRenameCommand& command)
 	if (res != FZ_REPLY_OK)
 		return res;
 	
-	return RenameSend();
+	return SendNextCommand();
 }
 
 int CSftpControlSocket::RenameParseResponse(bool successful, const wxString& reply)
@@ -2206,8 +2283,10 @@ int CSftpControlSocket::RenameParseResponse(bool successful, const wxString& rep
 	return FZ_REPLY_OK;
 }
 
-int CSftpControlSocket::RenameSend(int prevResult /*=FZ_REPLY_OK*/)
+int CSftpControlSocket::RenameSubcommandResult(int prevResult)
 {
+	LogMessage(Debug_Verbose, _T("CSftpControlSocket::RenameSubcommandResult()"));
+
 	CSftpRenameOpData *pData = static_cast<CSftpRenameOpData*>(m_pCurOpData);
 	if (!pData)
 	{
@@ -2218,6 +2297,21 @@ int CSftpControlSocket::RenameSend(int prevResult /*=FZ_REPLY_OK*/)
 
 	if (prevResult != FZ_REPLY_OK)
 		pData->m_useAbsolute = true;
+
+	return SendNextCommand();
+}
+
+int CSftpControlSocket::RenameSend()
+{
+	LogMessage(Debug_Verbose, _T("CSftpControlSocket::RenameSend()"));
+
+	CSftpRenameOpData *pData = static_cast<CSftpRenameOpData*>(m_pCurOpData);
+	if (!pData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("m_pCurOpData empty"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
 
 	bool res;
 	switch (pData->opState)
@@ -2297,4 +2391,36 @@ void CSftpControlSocket::OnQuotaRequest(enum CRateLimiter::rate_direction direct
 		AddToStream(wxString::Format(_T("-%d-\n"), (int)direction, bytes));
 	else
 		Wait(direction);
+}
+
+
+int CSftpControlSocket::ParseSubcommandResult(int prevResult)
+{
+	LogMessage(Debug_Verbose, _T("CSftpControlSocket::ParseSubcommandResult(%d)"), prevResult);
+	if (!m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("ParseSubcommandResult called without active operation"));
+		ResetOperation(FZ_REPLY_ERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	switch (m_pCurOpData->opId)
+	{
+	case cmd_cwd:
+		return ChangeDirSubcommandResult(prevResult);
+	case cmd_list:
+		return ListSubcommandResult(prevResult);
+	case cmd_transfer:
+		return FileTransferSubcommandResult(prevResult);
+	case cmd_rename:
+		return RenameSubcommandResult(prevResult);
+	case cmd_chmod:
+		return ChmodSubcommandResult(prevResult);
+	default:
+		LogMessage(__TFILE__, __LINE__, this, ::Debug_Warning, _T("Unknown opID (%d) in ParseSubcommandResult"), m_pCurOpData->opId);
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		break;
+	}
+
+	return FZ_REPLY_ERROR;
 }

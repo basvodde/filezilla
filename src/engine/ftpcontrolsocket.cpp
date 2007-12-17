@@ -1513,6 +1513,11 @@ int CFtpControlSocket::ListSubcommandResult(int prevResult)
 			return FZ_REPLY_ERROR;
 		}
 	}
+	else
+	{
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
 
 	return SendNextCommand();
 }
