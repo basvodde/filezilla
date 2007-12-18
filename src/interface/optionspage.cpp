@@ -12,6 +12,14 @@ bool COptionsPage::CreatePage(COptions* pOptions, CSettingsDialog* pOwner, wxWin
 		return false;
 
 	wxSize size = GetSize();
+
+#ifdef __WXGTK__
+	// wxStaticBox draws its own border coords -1.
+	// Adjust this window so that the left border is fully visible.
+	Move(1, 0);
+	size.x += 1;
+#endif
+
 	if (size.GetWidth() > maxSize.GetWidth())
 		maxSize.SetWidth(size.GetWidth());
 	if (size.GetHeight() > maxSize.GetHeight())
@@ -162,7 +170,7 @@ int COptionsPage::GetChoice(int id)
 	wxASSERT(pChoice);
 	if (!pChoice)
 		return 0;
-	
+
 	return pChoice->GetSelection();
 }
 

@@ -91,7 +91,7 @@ bool CSettingsDialog::Create(CMainFrame* pMainFrame)
 bool CSettingsDialog::LoadPages()
 {
 	// Get the tree control.
-	
+
 	wxTreeCtrl* treeCtrl = XRCCTRL(*this, "ID_TREE", wxTreeCtrl);
 	wxASSERT(treeCtrl);
 	if (!treeCtrl)
@@ -130,7 +130,7 @@ bool CSettingsDialog::LoadPages()
 	wxASSERT(parentPanel);
 	if (!parentPanel)
 		return false;
-	
+
 	// Keep track of maximum page size
 	wxSize size;
 
@@ -163,6 +163,9 @@ bool CSettingsDialog::LoadPages()
 	for (std::vector<t_page>::iterator iter = m_pages.begin(); iter != m_pages.end(); iter++)
 		size.IncTo(iter->page->GetSizer()->GetMinSize());
 
+#ifdef __WXGTK__
+	size.x += 1;
+#endif
 	parentPanel->SetInitialSize(size);
 
 	// Adjust pages sizes according to maximum size
