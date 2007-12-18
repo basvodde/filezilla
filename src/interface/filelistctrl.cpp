@@ -414,9 +414,10 @@ template<class CFileData> void CFileListCtrl<CFileData>::CompareAddFile(t_fileEn
 
 template<class CFileData> void CFileListCtrl<CFileData>::ComparisonRememberSelections()
 {
-	wxASSERT(GetItemCount() == m_indexMapping.size());
-
 	m_comparisonSelections.clear();
+
+	if (GetItemCount() != m_indexMapping.size())
+		return;
 
 	int focus = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
 	if (focus != -1)
@@ -469,17 +470,16 @@ template<class CFileData> void CFileListCtrl<CFileData>::ComparisonRestoreSelect
 		bool isSelected = GetItemState(i, wxLIST_STATE_SELECTED) == wxLIST_STATE_SELECTED;
 		bool shouldSelected = item == index;
 		if (isSelected != shouldSelected)
-		{
 			SetItemState(i, shouldSelected ? wxLIST_STATE_SELECTED : 0, wxLIST_STATE_SELECTED);
-			if (shouldSelected)
+		
+		if (shouldSelected)
+		{
+			if (m_comparisonSelections.empty())
+				item = -1;
+			else
 			{
-				if (m_comparisonSelections.empty())
-					item = -1;
-				else
-				{
-					item = m_comparisonSelections.front();
-					m_comparisonSelections.pop_front();
-				}
+				item = m_comparisonSelections.front();
+				m_comparisonSelections.pop_front();
 			}
 		}
 	}

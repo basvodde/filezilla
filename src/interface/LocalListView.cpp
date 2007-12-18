@@ -555,6 +555,9 @@ void CLocalListView::OnItemActivated(wxListEvent &event)
 
 	if (data->dir)
 	{
+		if (IsComparing())
+			ExitComparisonMode();
+
 		wxString error;
 		if (!m_pState->SetLocalDir(data->name, &error))
 		{
@@ -1053,38 +1056,33 @@ void CLocalListView::OnMenuUpload(wxCommandEvent& event)
 		if (data->flags == fill)
 			continue;
 
-		if (!item && m_hasParent)
-			m_pState->SetLocalDir(data->name);
+		const CServer* pServer = m_pState->GetServer();
+		if (!pServer)
+		{
+			wxBell();
+			return;
+		}
+
+		CServerPath path = m_pState->GetRemotePath();
+		if (path.IsEmpty())
+		{
+			wxBell();
+			return;
+		}
+
+		if (data->dir)
+		{
+			path.ChangePath(data->name);
+
+			wxFileName fn(m_dir, _T(""));
+			fn.AppendDir(data->name);
+			m_pQueue->QueueFolder(event.GetId() == XRCID("ID_ADDTOQUEUE"), false, fn.GetPath(), path, *pServer);
+		}
 		else
 		{
-			const CServer* pServer = m_pState->GetServer();
-			if (!pServer)
-			{
-				wxBell();
-				return;
-			}
+			wxFileName fn(m_dir, data->name);
 
-			CServerPath path = m_pState->GetRemotePath();
-			if (path.IsEmpty())
-			{
-				wxBell();
-				return;
-			}
-
-			if (data->dir)
-			{
-				path.ChangePath(data->name);
-
-				wxFileName fn(m_dir, _T(""));
-				fn.AppendDir(data->name);
-				m_pQueue->QueueFolder(event.GetId() == XRCID("ID_ADDTOQUEUE"), false, fn.GetPath(), path, *pServer);
-			}
-			else
-			{
-				wxFileName fn(m_dir, data->name);
-
-				m_pQueue->QueueFile(event.GetId() == XRCID("ID_ADDTOQUEUE"), false, fn.GetFullPath(), data->name, path, *pServer, data->size);
-			}
+			m_pQueue->QueueFile(event.GetId() == XRCID("ID_ADDTOQUEUE"), false, fn.GetFullPath(), data->name, path, *pServer, data->size);
 		}
 	}
 }
@@ -1325,6 +1323,10 @@ void CLocalListView::OnChar(wxKeyEvent& event)
 			wxBell();
 			return;
 		}
+
+		if (IsComparing())
+			ExitComparisonMode();
+
 		wxString error;
 		if (!m_pState->SetLocalDir(_T(".."), &error))
 		{

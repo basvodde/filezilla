@@ -981,7 +981,11 @@ void CRemoteListView::OnItemActivated(wxListEvent &event)
 		const wxString& name = entry.name;
 
 		if (entry.dir)
+		{
+			if (IsComparing())
+				ExitComparisonMode();
 			m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path, name));
+		}
 		else
 		{
 			const CServer* pServer = m_pState->GetServer();
@@ -996,7 +1000,12 @@ void CRemoteListView::OnItemActivated(wxListEvent &event)
 		}
 	}
 	else
+	{
+		if (IsComparing())
+			ExitComparisonMode();
+
 		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path, _T("..")));
+	}
 }
 
 void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
@@ -1149,6 +1158,9 @@ void CRemoteListView::TransferSelectedFiles(const wxString& localDir, bool queue
 			m_pQueue->QueueFile(queueOnly, true, fn.GetFullPath(), name, m_pDirectoryListing->path, *pServer, entry.size);
 		}
 	}
+
+	if (IsComparing())
+		ExitComparisonMode();
 	pRecursiveOperation->StartRecursiveOperation(queueOnly ? CRecursiveOperation::recursive_addtoqueue : CRecursiveOperation::recursive_download, m_pDirectoryListing->path);
 }
 
@@ -1253,6 +1265,8 @@ void CRemoteListView::OnMenuDelete(wxCommandEvent& event)
 	if (!filesToDelete.empty())
 		m_pState->m_pCommandQueue->ProcessCommand(new CDeleteCommand(m_pDirectoryListing->path, filesToDelete));
 
+	if (IsComparing())
+		ExitComparisonMode();
 	pRecursiveOperation->StartRecursiveOperation(CRecursiveOperation::recursive_delete, m_pDirectoryListing->path);
 }
 
@@ -1320,6 +1334,9 @@ void CRemoteListView::OnChar(wxKeyEvent& event)
 			wxBell();
 			return;
 		}
+
+		if (IsComparing())
+			ExitComparisonMode();
 
 		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path, _T("..")));
 	}
@@ -1582,6 +1599,9 @@ void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 
 	if (pChmodDlg->Recursive())
 	{
+		if (IsComparing())
+			ExitComparisonMode();
+
 		pRecursiveOperation->SetChmodDialog(pChmodDlg);
 		pRecursiveOperation->StartRecursiveOperation(CRecursiveOperation::recursive_chmod, m_pDirectoryListing->path);
 
@@ -1634,26 +1654,33 @@ void CRemoteListView::ApplyCurrentFilter()
 
 std::list<wxString> CRemoteListView::RememberSelectedItems(wxString& focused)
 {
+	wxASSERT(GetItemCount() == m_indexMapping.size());
 	std::list<wxString> selectedNames;
 	// Remember which items were selected
-	int item = -1;
-	while ((item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
+	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	while (item != -1)
 	{
 		SetItemState(item, 0, wxLIST_STATE_SELECTED);
 		if (!item)
 		{
 			selectedNames.push_back(_T(".."));
+			item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 			continue;
 		}
 		int index = GetItemIndex(item);
 		if (index == -1 || m_fileData[index].flags == fill)
+		{
+			item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 			continue;
+		}
 		const CDirentry& entry = (*m_pDirectoryListing)[index];
 
 		if (entry.dir)
 			selectedNames.push_back(_T("d") + entry.name);
 		else
 			selectedNames.push_back(_T("-") + entry.name);
+
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	}
 
 	item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
@@ -2002,6 +2029,9 @@ bool CRemoteListView::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataO
 
 		pRecursiveOperation->AddDirectoryToVisit(pRemoteDataObject->GetServerPath(), iter->name, path + iter->name);
 	}
+
+	if (IsComparing())
+		ExitComparisonMode();
 
 	pRecursiveOperation->StartRecursiveOperation(queueOnly ? CRecursiveOperation::recursive_addtoqueue : CRecursiveOperation::recursive_download, pRemoteDataObject->GetServerPath());
 
