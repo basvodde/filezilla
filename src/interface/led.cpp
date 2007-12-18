@@ -54,7 +54,9 @@ void CLed::OnPaint(wxPaintEvent& event)
 	if (!m_dc)
 		return;
 
-	dc.Blit(0, 0, 11, 11, m_dc, m_ledState * 11, 11 * m_index, wxCOPY, true);
+	wxSize size = dc.GetSize();
+	dc.Clear();
+	dc.Blit(0, (size.GetHeight() - 11) / 2, 11, 11, m_dc, m_ledState * 11, 11 * m_index, wxCOPY, true);
 }
 
 void CLed::Set()
