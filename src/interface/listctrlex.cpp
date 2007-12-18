@@ -167,7 +167,7 @@ void wxListCtrlEx::OnKeyDown(wxKeyEvent& event)
 
 #if defined(__WXMSW__) && wxUSE_UNICODE
 	wxChar key = MapVirtualKey(event.GetUnicodeKey(), 2);
-	if (!key)
+	if (key < 32)
 	{
 		event.Skip();
 		return;
