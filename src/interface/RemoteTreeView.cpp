@@ -320,9 +320,14 @@ wxTreeItemId CRemoteTreeView::MakeParent(CServerPath path, bool select)
 	wxASSERT(path.GetPath() != _T(""));
 	pieces.push_front(path.GetPath());
 
-	wxTreeItemId parent = GetRootItem();
+	const wxTreeItemId root = GetRootItem();
+	wxTreeItemId parent = root;
+
 	for (std::list<wxString>::const_iterator iter = pieces.begin(); iter != pieces.end(); iter++)
 	{
+		if (parent != root)
+			ListExpand(parent);
+
 		if (iter != pieces.begin())
 			path.AddSegment(*iter);
 
@@ -658,30 +663,12 @@ void CRemoteTreeView::OnItemExpanding(wxTreeEvent& event)
 	if (!item)
 		return;
 
-	const CItemData* data = (CItemData*)GetItemData(item);
-	wxASSERT(data);
-	if (!data)
-		return;
-
-	CDirectoryListing listing;
-	if (m_pState->m_pEngine->CacheLookup(data->m_path, listing) == FZ_REPLY_OK)
-		RefreshItem(item, listing);
-	else
+	if (!ListExpand(item))
 	{
-		SetItemImages(item, true);
-
-		wxTreeItemId child = GetLastChild(item);
-		if (!child)
-		{
-			event.Veto();
-			return;
-		}
-		if (GetItemText(child) == _T(""))
-		{
-			DeleteChildren(item);
-			event.Veto();
-		}
+		event.Veto();
+		return;
 	}
+
 	Refresh(false);
 }
 
@@ -1236,4 +1223,26 @@ void CRemoteTreeView::OnMkdir(wxCommandEvent& event)
 		currentPath = GetPathFromItem(selected);
 	if (!currentPath.IsEmpty() && currentPath != listed)
 		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(currentPath));
+}
+
+bool CRemoteTreeView::ListExpand(wxTreeItemId item)
+{
+	const CItemData* data = (CItemData*)GetItemData(item);
+	wxASSERT(data);
+	if (!data)
+		return false;
+
+	CDirectoryListing listing;
+	if (m_pState->m_pEngine->CacheLookup(data->m_path, listing) == FZ_REPLY_OK)
+		RefreshItem(item, listing);
+	else
+	{
+		SetItemImages(item, true);
+
+		wxTreeItemId child = GetLastChild(item);
+		if (!child || GetItemText(child) == _T(""))
+			return false;
+	}
+
+	return true;
 }

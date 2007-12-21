@@ -32,6 +32,8 @@ protected:
 
 	CServerPath GetPathFromItem(const wxTreeItemId& item) const;
 
+	bool ListExpand(wxTreeItemId item);
+
 	CQueueView* m_pQueue;
 	const CDirectoryListing* m_pDirectoryListing;
 
