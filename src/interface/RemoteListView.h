@@ -73,8 +73,6 @@ protected:
 	// Cache icon for directories, no need to calculate it multiple times
 	int m_dirIcon;
 
-	CQueueView* m_pQueue;
-
 	CInfoText* m_pInfoText;
 	void RepositionInfoText();
 	void SetInfoText(const wxString& text);
