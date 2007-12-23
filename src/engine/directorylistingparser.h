@@ -81,7 +81,7 @@ protected:
 	bool ParseTime(CToken &token, CDirentry &entry);
 
 	// Parse file sizes given like this: 123.4M
-	bool ParseComplexFileSize(CToken& token, wxLongLong& size);
+	bool ParseComplexFileSize(CToken& token, wxLongLong& size, int blocksize = -1);
 
 	CControlSocket* m_pControlSocket;
 

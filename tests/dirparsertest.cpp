@@ -724,7 +724,7 @@ void CDirectoryListingParserTest::InitEntries()
 			"36-vms-dir.DIR;1  1 19-NOV-2001 21:41 [root,root] (RWE,RWE,RE,RE)",
 			{
 				_T("36-vms-dir"),
-				1,
+				512,
 				_T("RWE,RWE,RE,RE"),
 				_T("root,root"),
 				true,
@@ -742,7 +742,7 @@ void CDirectoryListingParserTest::InitEntries()
 			"37-vms-file;1       155   2-JUL-2003 10:30:13.64",
 			{
 				_T("37-vms-file;1"),
-				155,
+				79360,
 				_T(""),
 				_T(""),
 				false,
@@ -760,7 +760,7 @@ void CDirectoryListingParserTest::InitEntries()
 			"38-vms-notime-file;1    2/8    7-JAN-2000    [IV2_XXX]   (RWED,RWED,RE,)",
 			{
 				_T("38-vms-notime-file;1"),
-				2,
+				1024,
 				_T("RWED,RWED,RE,"),
 				_T("IV2_XXX"),
 				false,
@@ -778,7 +778,7 @@ void CDirectoryListingParserTest::InitEntries()
 			"39-vms-notime-file;1    6/8    15-JUI-2002    PRONAS   (RWED,RWED,RE,)",
 			{
 				_T("39-vms-notime-file;1"),
-				6,
+				3072,
 				_T("RWED,RWED,RE,"),
 				_T("PRONAS"),
 				false,
@@ -795,7 +795,7 @@ void CDirectoryListingParserTest::InitEntries()
 			"40-vms-multiline-file;1\r\n170774/170775     24-APR-2003 08:16:15  [FTP_CLIENT,SCOT]      (RWED,RWED,RE,)",
 			{
 				_T("40-vms-multiline-file;1"),
-				170774,
+				87436288,
 				_T("RWED,RWED,RE,"),
 				_T("FTP_CLIENT,SCOT"),
 				false,
@@ -812,7 +812,7 @@ void CDirectoryListingParserTest::InitEntries()
 			"41-vms-multiline-file;1\r\n10     2-JUL-2003 10:30:08.59  [FTP_CLIENT,SCOT]      (RWED,RWED,RE,)",
 			{
 				_T("41-vms-multiline-file;1"),
-				10,
+				5120,
 				_T("RWED,RWED,RE,"),
 				_T("FTP_CLIENT,SCOT"),
 				false,
@@ -830,7 +830,7 @@ void CDirectoryListingParserTest::InitEntries()
 			"42-vms-alternate-field-order-file;1   [SUMMARY]    1/3     2-AUG-2006 13:05  (RWE,RWE,RE,)",
 			{
 				_T("42-vms-alternate-field-order-file;1"),
-				1,
+				512,
 				_T("RWE,RWE,RE,"),
 				_T("SUMMARY"),
 				false,
@@ -847,7 +847,7 @@ void CDirectoryListingParserTest::InitEntries()
 			"43-vms-alternate-field-order-file;1       17-JUN-1994 17:25:37     6308/13     (RWED,RWED,R,)",
 			{
 				_T("43-vms-alternate-field-order-file;1"),
-				6308,
+				3229696,
 				_T("RWED,RWED,R,"),
 				_T(""),
 				false,
@@ -1078,6 +1078,23 @@ void CDirectoryListingParserTest::InitEntries()
 			}
 		});
 
+	/* VMS style listing with complex size */
+	m_entries.push_back((t_entry){
+			"56-VMS-complex-size;1 2KB 23-SEP-2005 14:57:07.27",
+			{
+				_T("56-VMS-complex-size;1"),
+				2048,
+				_T(""),
+				_T(""),
+				false,
+				false,
+				_T(""),
+				true,
+				true,
+				wxDateTime(23, wxDateTime::Sep, 2005, 14, 57, 07),
+				false
+			}
+		});
 
 /*
 	wxString name;

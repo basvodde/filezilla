@@ -12,7 +12,6 @@ std::map<wxString, int> CDirectoryListingParser::m_MonthNamesMap;
 //#define LISTDEBUG
 #ifdef LISTDEBUG
 static char data[][110]={
-
 	/* IBM MVS listings */
 	// Volume Unit    Referred Ext Used Recfm Lrecl BlkSz Dsorg Dsname
 	"  WYOSPT 3420   2003/05/21  1  200  FB      80  8053  PS  48-MVS.FILE",
@@ -1638,7 +1637,6 @@ bool CDirectoryListingParser::ParseAsVms(CLine *pLine, CDirentry &entry)
 
 	entry.ownerGroup = _T("");
 
-	bool gotSize = false;
 	// This field can either be the filesize, a username (at least that's what I think) enclosed in [] or a date.
 	if (!token.IsNumeric() && !token.IsLeftNumeric())
 	{
@@ -1656,15 +1654,43 @@ bool CDirectoryListingParser::ParseAsVms(CLine *pLine, CDirentry &entry)
 	}
 
 	// Current token is either size or date
+	bool gotSize = false;
 	pos = token.Find('/');
+	
+	if (!pos)
+		return false;
+
 	if (token.IsNumeric() || (pos != -1 && token.Find('/', pos + 1) == -1))
 	{
 		// Definitely size
+
+		CToken sizeToken;
+		if (pos == -1)
+			sizeToken = token;
+		else
+			sizeToken = CToken(token.GetToken(), pos);
+		if (!ParseComplexFileSize(sizeToken, entry.size, 512))
+			return false;
 		gotSize = true;
-		entry.size = token.GetNumber();
 
 		if (!pLine->GetToken(++index, token))
 			return false;
+	}
+	else if (pos == -1 && token.IsLeftNumeric())
+	{
+		// Perhaps size
+		CToken sizeToken;
+		if (pos == -1)
+			sizeToken = token;
+		else
+			sizeToken = CToken(token.GetToken(), pos);
+		if (ParseComplexFileSize(sizeToken, entry.size, 512))
+		{
+			gotSize = true;
+
+			if (!pLine->GetToken(++index, token))
+				return false;
+		}
 	}
 
 	// Get date
@@ -1699,7 +1725,17 @@ bool CDirectoryListingParser::ParseAsVms(CLine *pLine, CDirentry &entry)
 		if (!token.IsNumeric() && !token.IsLeftNumeric())
 			return false;
 
-		entry.size = token.GetNumber();
+		int pos = token.Find('/');
+		if (!pos)
+			return false;
+
+		CToken sizeToken;
+		if (pos == -1)
+			sizeToken = token;
+		else
+			sizeToken = CToken(token.GetToken(), pos);
+		if (!ParseComplexFileSize(sizeToken, entry.size, 512))
+			return false;
 	}
 
 	// Owner / group and permissions
@@ -2466,25 +2502,40 @@ bool CDirectoryListingParser::ParseAsIBM_MVS_PDS2(CLine *pLine, CDirentry &entry
 	return true;
 }
 
-bool CDirectoryListingParser::ParseComplexFileSize(CToken& token, wxLongLong& size)
+bool CDirectoryListingParser::ParseComplexFileSize(CToken& token, wxLongLong& size, int blocksize /*=-1*/)
 {
 	if (token.IsNumeric())
 	{
 		size = token.GetNumber();
+		if (blocksize != -1)
+			size *= blocksize;
+
 		return true;
 	}
 
-	int len = token.GetLength() - 1;
+	int len = token.GetLength();
 
-	char last = token[len];
+	char last = token[len - 1];
 	if (last == 'B' || last == 'b')
 	{
-		char c = token[len];
+		if (len == 1)
+			return false;
+
+		char c = token[--len - 1];
 		if (c < '0' || c > '9')
 		{
-			last = token[len];
 			len--;
+			last = c;
 		}
+		else
+			last = 0;
+	}
+	else if (last >= '0' && last <= '9')
+		last = 0;
+	else
+	{
+		if (--len == 0)
+			return false;
 	}
 
 	size = 0;
@@ -2528,6 +2579,10 @@ bool CDirectoryListingParser::ParseComplexFileSize(CToken& token, wxLongLong& si
 		break;
 	case 'b':
 	case 'B':
+		break;
+	case 0:
+		if (blocksize != -1)
+			size *= blocksize;
 		break;
 	default:
 		return false;
