@@ -19,8 +19,8 @@ protected:
 
 	CState* m_pState;
 
-	wxBitmap m_bitmap;
-	wxMemoryDC *m_dc;
+	wxBitmap m_leds[2];
+	bool m_loaded;
 
 	wxTimer m_timer;
 

@@ -29,34 +29,36 @@ CLed::CLed(wxWindow *parent, unsigned int index, CState* pState)
 
 	m_ledState = LED_OFF;
 
-	wxLogNull *tmp = new wxLogNull;
-	m_bitmap.LoadFile(wxGetApp().GetResourceDir() + _T("leds.png"), wxBITMAP_TYPE_PNG);
-	delete tmp;
-	if (m_bitmap.Ok())
-	{
-		m_dc = new wxMemoryDC;
-		m_dc->SelectObject(m_bitmap);
-	}
-
 	m_timer.SetOwner(this, TIMER_ID);
+
+	m_loaded = false;
+
+	wxImage image;
+	if (!image.LoadFile(wxGetApp().GetResourceDir() + _T("leds.png"), wxBITMAP_TYPE_PNG))
+		return;
+
+	m_leds[0] = image.GetSubImage(wxRect(0, index * 11, 11, 11));
+	m_leds[1] = image.GetSubImage(wxRect(11, index * 11, 11, 11));
+
+	m_loaded = true;
 }
 
 CLed::~CLed()
 {
 	m_timer.Stop();
-	delete m_dc;
 }
 
 void CLed::OnPaint(wxPaintEvent& event)
 {
 	wxPaintDC dc(this);
 
-	if (!m_dc)
+	if (!m_loaded)
 		return;
 
-	wxSize size = dc.GetSize();
+#ifdef __WXMSW__
 	dc.Clear();
-	dc.Blit(0, (size.GetHeight() - 11) / 2, 11, 11, m_dc, m_ledState * 11, 11 * m_index, wxCOPY, true);
+#endif
+	dc.DrawBitmap(m_leds[m_ledState], 0, 0, true);
 }
 
 void CLed::Set()
