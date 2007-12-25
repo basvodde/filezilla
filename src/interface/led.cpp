@@ -37,8 +37,8 @@ CLed::CLed(wxWindow *parent, unsigned int index, CState* pState)
 	if (!image.LoadFile(wxGetApp().GetResourceDir() + _T("leds.png"), wxBITMAP_TYPE_PNG))
 		return;
 
-	m_leds[0] = image.GetSubImage(wxRect(0, index * 11, 11, 11));
-	m_leds[1] = image.GetSubImage(wxRect(11, index * 11, 11, 11));
+	m_leds[0] = wxBitmap(image.GetSubImage(wxRect(0, index * 11, 11, 11)));
+	m_leds[1] = wxBitmap(image.GetSubImage(wxRect(11, index * 11, 11, 11)));
 
 	m_loaded = true;
 }
