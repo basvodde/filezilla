@@ -567,17 +567,12 @@ bool CTransferSocket::CheckGetNextWriteBuffer()
 			return false;
 		else if (res == IO_Error)
 		{
-			wxLongLong free;
-			if (wxGetDiskSpace(pData->localFile, 0, &free))
-			{
-				if (free == 0)
-					m_pControlSocket->LogMessage(::Error, _("Can't write data to file, disk is full."));
-				else
-					m_pControlSocket->LogMessage(::Error, _("Can't write data to file."));
-			}
+			wxString error = pData->pIOThread->GetError();
+			if (error != _T(""))
+				m_pControlSocket->LogMessage(::Error, _("Can't write data to file: %s"), error);
 			else
 				m_pControlSocket->LogMessage(::Error, _("Can't write data to file."));
-			TransferEnd(transfer_failure);
+			TransferEnd(transfer_failure_critical);
 			return false;
 		}
 
@@ -637,12 +632,20 @@ void CTransferSocket::OnIOThreadEvent(CIOThreadEvent& event)
 void CTransferSocket::FinalizeWrite()
 {
 	CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(static_cast<CRawTransferOpData *>(m_pControlSocket->m_pCurOpData)->pOldData);
-	if (pData->pIOThread->Finalize(BUFFERSIZE - m_transferBufferLen))
+	bool res = pData->pIOThread->Finalize(BUFFERSIZE - m_transferBufferLen);
+	if (m_transferEndReason != none)
+		return;
+
+	if (res)
 		TransferEnd(successful);
 	else
 	{
-		m_pControlSocket->LogMessage(::Error, _("Can't write data to file."));
-		TransferEnd(transfer_failure);
+		wxString error = pData->pIOThread->GetError();
+		if (error != _T(""))
+			m_pControlSocket->LogMessage(::Error, _("Can't write data to file: %s"), error);
+		else
+			m_pControlSocket->LogMessage(::Error, _("Can't write data to file."));
+		TransferEnd(transfer_failure_critical);
 	}
 }
 

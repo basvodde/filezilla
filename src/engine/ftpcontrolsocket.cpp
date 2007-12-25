@@ -1674,6 +1674,8 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 		CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(m_pCurOpData);
 		if (pData->tranferCommandSent)
 		{
+			if (pData->transferEndReason == transfer_failure_critical)
+				nErrorCode |= FZ_REPLY_CRITICALERROR;
 			if (pData->transferEndReason != transfer_command_failure_immediate || GetReplyCode() != 5)
 				pData->transferInitiated = true;
 			else
@@ -2693,7 +2695,8 @@ void CFtpControlSocket::TransferEnd()
 		SetAlive();
 
 	CRawTransferOpData *pData = static_cast<CRawTransferOpData *>(m_pCurOpData);
-	pData->pOldData->transferEndReason = reason;
+	if (pData->pOldData->transferEndReason == successful)
+		pData->pOldData->transferEndReason = reason;
 
 	switch (m_pCurOpData->opState)
 	{
@@ -3957,7 +3960,8 @@ int CFtpControlSocket::TransferParseResponse()
 	case rawtransfer_transfer:
 		if (code != 1)
 		{
-			pData->pOldData->transferEndReason = transfer_command_failure_immediate;
+			if (pData->pOldData->transferEndReason == successful)
+				pData->pOldData->transferEndReason = transfer_command_failure_immediate;
 			error = true;
 		}
 		else
@@ -3966,7 +3970,8 @@ int CFtpControlSocket::TransferParseResponse()
 	case rawtransfer_waittransferpre:
 		if (code != 1)
 		{
-			pData->pOldData->transferEndReason = transfer_command_failure_immediate;
+			if (pData->pOldData->transferEndReason == successful)
+				pData->pOldData->transferEndReason = transfer_command_failure_immediate;
 			error = true;
 		}
 		else
@@ -3975,7 +3980,8 @@ int CFtpControlSocket::TransferParseResponse()
 	case rawtransfer_waitfinish:
 		if (code != 2 && code != 3)
 		{
-			pData->pOldData->transferEndReason = transfer_command_failure;
+			if (pData->pOldData->transferEndReason == successful)
+				pData->pOldData->transferEndReason = transfer_command_failure;
 			error = true;
 		}
 		else
@@ -3984,7 +3990,8 @@ int CFtpControlSocket::TransferParseResponse()
 	case rawtransfer_waittransfer:
 		if (code != 2 && code != 3)
 		{
-			pData->pOldData->transferEndReason = transfer_command_failure;
+			if (pData->pOldData->transferEndReason == successful)
+				pData->pOldData->transferEndReason = transfer_command_failure;
 			error = true;
 		}
 		else

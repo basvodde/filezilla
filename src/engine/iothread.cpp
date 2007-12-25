@@ -28,6 +28,7 @@ CIOThread::CIOThread()
 	m_threadWaiting = false;
 	m_destroyed = false;
 	m_wasCarriageReturn = false;
+	m_error_description = 0;
 }
 
 CIOThread::~CIOThread()
@@ -37,6 +38,8 @@ CIOThread::~CIOThread()
 
 	for (unsigned int i = 0; i < BUFFERCOUNT; i++)
 		delete [] m_buffers[i];
+
+	delete [] m_error_description;
 }
 
 bool CIOThread::Create(wxFile* pFile, bool read, bool binary)
@@ -360,8 +363,7 @@ bool CIOThread::WriteToFile(char* pBuffer, int len)
 	if (m_binary)
 	{
 #endif
-		int written = m_pFile->Write(pBuffer, len);
-		return written == len;
+		return DoWrite(pBuffer, len);
 #ifndef __WXMSW__
 	}
 	else
@@ -379,7 +381,7 @@ bool CIOThread::WriteToFile(char* pBuffer, int len)
 			else if (c == '\n')
 			{
 				m_wasCarriageReturn = false;
-				if (m_pFile->Write(&c, 1) != 1)
+				if (!DoWrite(&c, 1))
 					return false;
 			}
 			else
@@ -387,15 +389,42 @@ bool CIOThread::WriteToFile(char* pBuffer, int len)
 				if (m_wasCarriageReturn)
 				{
 					m_wasCarriageReturn = false;
-					if (m_pFile->Write(&CR, 1) != 1)
+					if (!DoWrite(&CR, 1))
 						return false;
 				}
-				
-				if (m_pFile->Write(&c, 1) != 1)
+
+				if (!DoWrite(&c, 1))
 					return false;
 			}
 		}
 		return true;
 	}
 #endif
+}
+
+bool CIOThread::DoWrite(char* pBuffer, int len)
+{
+	int fd = m_pFile->fd();
+	if (wxWrite(fd, pBuffer, len) == len)
+		return true;
+
+	int code = wxSysErrorCode();
+
+	const wxString error = wxSysErrorMsg(code);
+
+	wxMutexLocker locker(m_mutex);
+	delete [] m_error_description;
+	m_error_description = new wxChar[error.Len() + 1];
+	wxStrcpy(m_error_description, error);
+
+	return false;
+}
+
+wxString CIOThread::GetError()
+{
+	wxMutexLocker locker(m_mutex);
+	if (!m_error_description)
+		return _T("");
+
+	return wxString(m_error_description);
 }

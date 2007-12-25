@@ -60,11 +60,14 @@ public:
 	
 	bool Finalize(int len);
 
+	wxString GetError();
+
 protected:
 	virtual ExitCode Entry();
 
 	int ReadFromFile(char* pBuffer, int maxLen);
 	bool WriteToFile(char* pBuffer, int len);
+	bool DoWrite(char* pBuffer, int len);
 
 	wxEvtHandler* m_evtHandler;
 
@@ -89,6 +92,8 @@ protected:
 	bool m_destroyed;
 
 	bool m_wasCarriageReturn;
+
+	wxChar* m_error_description;
 };
 
 #endif //__IOTHREAD_H__
