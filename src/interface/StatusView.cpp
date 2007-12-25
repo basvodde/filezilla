@@ -107,7 +107,8 @@ void CStatusView::OnSize(wxSizeEvent &event)
 {
 	if (m_pTextCtrl)
 	{
-		m_pTextCtrl->SetSize(GetClientSize());
+		wxSize s = GetClientSize();
+		m_pTextCtrl->SetSize(0, 0, s.GetWidth(), s.GetHeight());
 	}
 }
 
