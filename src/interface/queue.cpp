@@ -64,7 +64,7 @@ CQueueItem* CQueueItem::GetChild(unsigned int item, bool recursive /*=true*/)
 		else
 			return (*iter)->GetChild(item - 1);
 	}
-	
+
 	int index;
 	int child;
 	iter = m_children.begin();
@@ -1245,13 +1245,13 @@ bool CQueueViewBase::RemoveItem(CQueueItem* pItem, bool destroy, bool updateItem
 		wxASSERT(m_folderScanCount > 0);
 		m_folderScanCount--;
 		m_folderScanCountChanged = true;
-		
+
 	}
 
 	int index = 0;
 	if (updateSelections)
 		index = GetItemIndex(pItem);
-	
+
 	CQueueItem* topLevelItem = pItem->GetTopLevelItem();
 
 	int count = topLevelItem->GetChildrenCount(true);
@@ -1334,10 +1334,16 @@ void CQueueViewBase::OnChar(wxKeyEvent& event)
 		return;
 	}
 
+	bool forward;
+	if (GetLayoutDirection() != wxLayout_RightToLeft)
+		forward = code == WXK_RIGHT;
+	else
+		forward = code == WXK_LEFT;
+
 	int selection = m_pQueue->GetSelection();
-	if (selection > 0 && code == WXK_LEFT)
+	if (selection > 0 && !forward)
 		selection--;
-	else if (selection < (int)m_pQueue->GetPageCount() - 1 && code == WXK_RIGHT)
+	else if (selection < (int)m_pQueue->GetPageCount() - 1 && forward)
 		selection++;
 	else
 		return;
