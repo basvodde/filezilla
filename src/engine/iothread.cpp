@@ -78,7 +78,7 @@ wxThreadEx::ExitCode CIOThread::Entry()
 			int len = ReadFromFile(m_buffers[m_curThreadBuf], BUFFERSIZE);
 
 			wxMutexLocker locker(m_mutex);
-			
+
 			if (m_appWaiting)
 			{
 				if (!m_evtHandler)
@@ -97,7 +97,7 @@ wxThreadEx::ExitCode CIOThread::Entry()
 				m_running = false;
 				break;
 			}
-			
+
 			m_bufferLens[m_curThreadBuf] = len;
 
 			if (!len)
@@ -163,7 +163,7 @@ wxThreadEx::ExitCode CIOThread::Entry()
 				m_error = true;
 				m_running = false;
 			}
-			
+
 			if (m_appWaiting)
 			{
 				if (!m_evtHandler)
@@ -178,9 +178,9 @@ wxThreadEx::ExitCode CIOThread::Entry()
 
 			if (m_error)
 				break;
-			
+
 			++m_curThreadBuf %= BUFFERCOUNT;
-		}		
+		}
 	}
 
 	return 0;
@@ -229,7 +229,7 @@ bool CIOThread::Finalize(int len)
 
 	if (m_destroyed)
 		return true;
-	
+
 	Destroy();
 
 	if (m_curAppBuf == -1)
@@ -263,7 +263,7 @@ int CIOThread::GetNextReadBuffer(char** pBuffer)
 	int newBuf = (m_curAppBuf + 1) % BUFFERCOUNT;
 
 	wxMutexLocker locker(m_mutex);
-	
+
 	if (newBuf == m_curThreadBuf)
 	{
 		if (m_error)
@@ -276,7 +276,7 @@ int CIOThread::GetNextReadBuffer(char** pBuffer)
 			return IO_Again;
 		}
 	}
-	
+
 	if (m_threadWaiting)
 	{
 		m_condition.Signal();
@@ -369,7 +369,7 @@ bool CIOThread::WriteToFile(char* pBuffer, int len)
 	else
 	{
 		// On all CRLF pairs, omit the CR. Don't harm stand-alone CRs
-		// I assume disk access is buffered, otherwise the 1 byte writes are 
+		// I assume disk access is buffered, otherwise the 1 byte writes are
 		// going to hurt performance.
 		const char CR = '\r';
 		const char* const end = pBuffer + len;
@@ -402,7 +402,7 @@ bool CIOThread::WriteToFile(char* pBuffer, int len)
 #endif
 }
 
-bool CIOThread::DoWrite(char* pBuffer, int len)
+bool CIOThread::DoWrite(const char* pBuffer, int len)
 {
 	int fd = m_pFile->fd();
 	if (wxWrite(fd, pBuffer, len) == len)

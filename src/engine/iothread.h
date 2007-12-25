@@ -38,7 +38,7 @@ public:
 
 	bool Create(wxFile* pFile, bool read, bool binary);
 	virtual void Destroy(); // Only call that might be blocking
-	
+
 	// Call before first call to one of the GetNext*Buffer functions
 	// This handler will receive the CIOThreadEvent events. The events
 	// get triggerd iff a buffer is available after a call to the
@@ -57,7 +57,7 @@ public:
 	//               IO_Error on error
 	//               IO_Success else
 	int GetNextWriteBuffer(char** pBuffer, int len = BUFFERSIZE);
-	
+
 	bool Finalize(int len);
 
 	wxString GetError();
@@ -67,7 +67,7 @@ protected:
 
 	int ReadFromFile(char* pBuffer, int maxLen);
 	bool WriteToFile(char* pBuffer, int len);
-	bool DoWrite(char* pBuffer, int len);
+	bool DoWrite(const char* pBuffer, int len);
 
 	wxEvtHandler* m_evtHandler;
 
