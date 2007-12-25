@@ -182,7 +182,7 @@ public:
 	int neededCommands[LOGON_DONE];
 
 	std::list<t_loginCommand> loginSequence;
-	
+
 	bool usingProxy;
 };
 
@@ -228,6 +228,7 @@ CFtpControlSocket::CFtpControlSocket(CFileZillaEnginePrivate *pEngine) : CRealCo
 
 CFtpControlSocket::~CFtpControlSocket()
 {
+	m_idleTimer.Stop();
 }
 
 void CFtpControlSocket::OnReceive()
@@ -235,7 +236,7 @@ void CFtpControlSocket::OnReceive()
 	LogMessage(Debug_Verbose, _T("CFtpControlSocket::OnReceive()"));
 
 	m_pBackend->Read(m_receiveBuffer + m_bufferLen, RECVBUFFERSIZE - m_bufferLen);
-	
+
 	if (m_pBackend->Error())
 	{
 		if (m_pBackend->LastError() != wxSOCKET_WOULDBLOCK)
@@ -312,7 +313,7 @@ void CFtpControlSocket::ParseLine(wxString line)
 			wxString up = line.Upper();
 			if (up == _T(" UTF8"))
 				CServerCapabilities::SetCapability(*m_pCurrentServer, utf8_command, yes);
-			else if (up == _T(" CLNT") || up.Left(6) == _T(" CLNT ")) 
+			else if (up == _T(" CLNT") || up.Left(6) == _T(" CLNT "))
 				CServerCapabilities::SetCapability(*m_pCurrentServer, clnt_command, yes);
 			else if (up == _T(" MLSD") || up.Left(6) == _T(" MLSD "))
 				CServerCapabilities::SetCapability(*m_pCurrentServer, mlsd_command, yes);
@@ -778,7 +779,7 @@ int CFtpControlSocket::LogonParseResponse()
 
 			wxASSERT(!m_pTlsSocket);
 			delete m_pBackend;
-			
+
 			m_pTlsSocket = new CTlsSocket(this, this, this);
 			m_pBackend = m_pTlsSocket;
 
@@ -865,11 +866,11 @@ int CFtpControlSocket::LogonParseResponse()
 			DoClose(FZ_REPLY_CRITICALERROR);
 			return FZ_REPLY_ERROR;
 		}
-		
+
 		if (!pData->loginSequence.empty())
 		{
 			pData->waitChallenge = false;
-		
+
 			return SendNextCommand();
 		}
 	}
@@ -1187,7 +1188,7 @@ public:
 	wxString subDir;
 
 	CDirectoryListingParser* m_pDirectoryListingParser;
-	
+
 	CDirectoryListing directoryListing;
 
 	// Set to true to get a directory listing even if a cache
@@ -1415,7 +1416,7 @@ int CFtpControlSocket::ListSubcommandResult(int prevResult)
 					}
 				}
 			}
-			
+
 			SetAlive();
 
 			int res = ListCheckTimezoneDetection(listing);
@@ -1424,7 +1425,7 @@ int CFtpControlSocket::ListSubcommandResult(int prevResult)
 
 			CDirectoryCache cache;
 			cache.Store(listing, *m_pCurrentServer, pData->path, pData->subDir);
-			
+
 			m_pEngine->SendDirectoryListingNotification(m_CurrentPath, !pData->pNextOpData, true, false);
 
 			ResetOperation(FZ_REPLY_OK);
@@ -1470,7 +1471,7 @@ int CFtpControlSocket::ListSubcommandResult(int prevResult)
 				int res = ListCheckTimezoneDetection(pData->directoryListing);
 				if (res != FZ_REPLY_OK)
 					return res;
-				
+
 				CDirectoryCache cache;
 				cache.Store(pData->directoryListing, *m_pCurrentServer, pData->path, pData->subDir);
 
@@ -1574,7 +1575,7 @@ int CFtpControlSocket::ListParseResponse()
 
 
 	// First condition prevents problems with concurrent MDTM
-	if (CServerCapabilities::GetCapability(*m_pCurrentServer, timezone_offset) == unknown && 
+	if (CServerCapabilities::GetCapability(*m_pCurrentServer, timezone_offset) == unknown &&
 		m_Response.Left(4) == _T("213 ") && m_Response.Length() > 16)
 	{
 		wxDateTime date;
@@ -1607,7 +1608,7 @@ int CFtpControlSocket::ListParseResponse()
 			}
 
 			// TODO: Correct cached listings
-			
+
 			CServerCapabilities::SetCapability(*m_pCurrentServer, timezone_offset, yes, offset);
 		}
 		else
@@ -1706,7 +1707,7 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 			m_pEngine->SendDirectoryListingNotification(pData->path, false, true, false);
 	}
 
-	if (m_pCurOpData && m_pCurOpData->opId == cmd_rawtransfer && 
+	if (m_pCurOpData && m_pCurOpData->opId == cmd_rawtransfer &&
 		nErrorCode != FZ_REPLY_OK)
 	{
 		CRawTransferOpData *pData = static_cast<CRawTransferOpData *>(m_pCurOpData);
@@ -1724,6 +1725,8 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 	m_lastCommandCompletionTime = wxDateTime::Now();
 	if (m_pCurOpData && !(nErrorCode & FZ_REPLY_DISCONNECTED))
 		StartKeepaliveTimer();
+	else
+		m_idleTimer.Stop();
 
 	return CControlSocket::ResetOperation(nErrorCode);
 }
@@ -2017,7 +2020,7 @@ int CFtpControlSocket::ChangeDirParseResponse()
 					LogMessage(Debug_Warning, _T("PWD failed, unable to guess current path."));
 					error = true;
 				}
-			}		
+			}
 			else if (ParsePwdReply(m_Response, false, assumedPath))
 			{
 				if (pData->target.IsEmpty())
@@ -2100,7 +2103,7 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 									const CFileTransferCommand::t_transferSettings& transferSettings)
 {
 	LogMessage(Debug_Verbose, _T("CFtpControlSocket::FileTransfer()"));
-	
+
 	if (localFile == _T(""))
 	{
 		if (!download)
@@ -2415,7 +2418,7 @@ int CFtpControlSocket::FileTransferSubcommandResult(int prevResult)
 	{
 		if (prevResult == FZ_REPLY_OK && m_pEngine->GetOptions()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS))
 		{
-			if (!pData->download && 
+			if (!pData->download &&
 				CServerCapabilities::GetCapability(*m_pCurrentServer, mfmt_command) == yes)
 			{
 				wxFileName fn(pData->localFile);
@@ -2887,7 +2890,7 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 			if (!m_pTlsSocket || m_pTlsSocket->GetState() != CTlsSocket::verifycert)
 			{
 				LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("No or invalid operation in progress, ignoring request reply %d"), pNotification->GetRequestID());
-				return false;				
+				return false;
 			}
 
 			CCertificateNotification* pCertificateNotification = reinterpret_cast<CCertificateNotification *>(pNotification);
@@ -3044,7 +3047,7 @@ int CFtpControlSocket::DeleteSend()
 }
 
 int CFtpControlSocket::DeleteParseResponse()
-{	
+{
 	LogMessage(Debug_Verbose, _T("CFtpControlSocket::DeleteParseResponse()"));
 
 	if (!m_pCurOpData)
@@ -3078,7 +3081,7 @@ int CFtpControlSocket::DeleteParseResponse()
 	}
 
 	pData->files.pop_front();
-	
+
 	if (!pData->files.empty())
 		return SendNextCommand();
 
@@ -3298,7 +3301,7 @@ int CFtpControlSocket::MkdirParseResponse()
 			// Don't fall back to using the full path if the error message
 			// is "already exists".
 			// Case 1: Full response a known "already exists" message.
-			// Case 2: Substrng of response contains "already exists". pData->path may not 
+			// Case 2: Substrng of response contains "already exists". pData->path may not
 			//         contain this substring as the path might be returned in the reply.
 			if (m_Response.Mid(4).CmpNoCase(_T("directory already exists")) &&
 				(pData->path.GetPath().Lower().Find(_T("already exists")) != -1 ||
@@ -3309,7 +3312,7 @@ int CFtpControlSocket::MkdirParseResponse()
 				break;
 			}
 		}
-		
+
 		{
 			if (pData->segments.empty())
 			{
@@ -4201,7 +4204,7 @@ int CFtpControlSocket::Connect(const CServer &server)
 		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("deleting nonzero pData"));
 		delete m_pCurOpData;
 	}
-		
+
 	CFtpLogonOpData* pData = new CFtpLogonOpData;
 	m_pCurOpData = pData;
 
@@ -4300,7 +4303,7 @@ void CFtpControlSocket::OnIdleTimer(wxTimerEvent& event)
 		return;
 
 	LogMessage(Status, _("Sending keep-alive command"));
-	
+
 	wxString cmd;
 	int i = rand() * 3 / (RAND_MAX + 1);
 	if (!i)
@@ -4314,7 +4317,7 @@ void CFtpControlSocket::OnIdleTimer(wxTimerEvent& event)
 	}
 	else
 		cmd = _T("PWD");
-	
+
 	if (!Send(cmd))
 		return;
 	m_repliesToSkip++;
@@ -4330,7 +4333,7 @@ void CFtpControlSocket::StartKeepaliveTimer()
 
 	if (!m_lastCommandCompletionTime.IsValid())
 		return;
-	
+
 	wxTimeSpan span = wxDateTime::Now() - m_lastCommandCompletionTime;
 	if (span.GetSeconds() >= (60 * 30))
 		return;
