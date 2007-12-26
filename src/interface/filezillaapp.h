@@ -13,7 +13,7 @@ public:
 	virtual ~CFileZillaApp();
 
 	virtual bool OnInit();
-	
+
 	wxString GetResourceDir() const { return m_resourceDir; }
 	wxString GetSettingsDir() const { return m_settingsDir; }
 	wxString GetDefaultsDir() const { return m_defaultsDir; }

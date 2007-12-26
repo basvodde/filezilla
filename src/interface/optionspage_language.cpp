@@ -14,14 +14,17 @@ bool COptionsPageLanguage::LoadPage()
 	if (!pListBox)
 		return false;
 
-	int language = wxGetApp().GetCurrentLanguage();
+	wxString currentLanguage = m_pOptions->GetOption(OPTION_LANGUAGE);
 
 	pListBox->Clear();
 
-	int n = pListBox->Append(_T("English"));
+	const wxString defaultName = _("Default system language");
+	int n = pListBox->Append(defaultName);
+	if (currentLanguage == _T(""))
+		pListBox->SetSelection(n);
 
-	const wxLanguageInfo* pInfo = wxLocale::FindLanguageInfo(_T("en"));
-	if (pInfo && pInfo->Language == language)
+	n = pListBox->Append(_T("English"));
+	if (currentLanguage == _T("English"))
 		pListBox->SetSelection(n);
 
 	wxString localesDir = wxGetApp().GetLocalesDir();
@@ -29,7 +32,6 @@ bool COptionsPageLanguage::LoadPage()
 		return true;
 
 	wxDir dir(localesDir);
-
 	wxString locale;
 	for (bool found = dir.GetFirst(&locale); found; found = dir.GetNext(&locale))
 	{
@@ -45,8 +47,10 @@ bool COptionsPageLanguage::LoadPage()
 		else
 			name = locale;
 
+		m_localeMap[locale] = name;
+
 		int n = pListBox->Append(name);
-		if (pInfo->Language == language)
+		if (locale == currentLanguage)
 			pListBox->SetSelection(n);
 	}
 
@@ -60,11 +64,27 @@ bool COptionsPageLanguage::SavePage()
 	if (pListBox->GetSelection() == wxNOT_FOUND)
 		return true;
 
+	const wxString& selection = pListBox->GetStringSelection();
+	wxString code;
+	std::map<wxString, wxString>::const_iterator iter;
+	for (iter = m_localeMap.begin(); iter != m_localeMap.end(); iter++)
+	{
+		if (iter->second == selection)
+			break;
+	}
+	if (iter != m_localeMap.end())
+		code = iter->first;
+
+#ifdef __WXGTK__
+	m_pOptions->SetOption(OPTION_LANGUAGE, code);
+	wxMessageBox(_("FileZilla needs to be restarted for the language change to take effect."), _("Language changed"), wxICON_INFORMATION, this);
+#else
 	const wxLanguageInfo* pInfo = wxLocale::FindLanguageInfo(pListBox->GetStringSelection());
 	if (!pInfo || !wxGetApp().SetLocale(pInfo->Language))
 		wxMessageBox(wxString::Format(_("Failed to set language to %s, using default system language"), pListBox->GetStringSelection().c_str()), _("Failed to change language"), wxICON_EXCLAMATION, this);
 	else
 		m_pOptions->SetOption(OPTION_LANGUAGE, pListBox->GetStringSelection());
+#endif
 	return true;
 }
 

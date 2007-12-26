@@ -50,7 +50,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Speedlimit burst tolerance", number, _T("0") },
 	{ "View hidden files", number, _T("0") },
 	{ "Preserve timestamps", number, _T("0") },
-	{ "Socket recv buffer size", number, _T("131072") }, // Make it large enough by default 
+	{ "Socket recv buffer size", number, _T("131072") }, // Make it large enough by default
 														 // to enable a large TCP window scale
 	{ "Socket send buffer size", number, _T("131072") },
 	{ "FTP Keep-alive commands", number, _T("0") },
@@ -67,7 +67,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Auto Ascii no extension", number, _T("1") },
 	{ "Auto Ascii dotfiles", number, _T("1") },
 	{ "Theme", string, _T("") },
-	{ "Language", string, _T("") },
+	{ "Language Code", string, _T("") },
 	{ "Last Server Path", string, _T("") },
 	{ "Max Concurrent Uploads", number, _T("0") },
 	{ "Max Concurrent Downloads", number, _T("0") },
@@ -222,7 +222,7 @@ bool COptions::SetOption(unsigned int nID, wxString value)
 {
 	if (!SetOptionNoSave(nID, value))
 		return false;
-	
+
 	if (m_pXmlFile)
 	{
 		CInterProcessMutex mutex(MUTEX_OPTIONS);
@@ -454,7 +454,7 @@ void COptions::SetServer(wxString path, const CServer& server)
 		return;
 
 	TiXmlElement *element = m_pXmlFile->GetElement();
-	
+
 	while (path != _T(""))
 	{
 		wxString sub;

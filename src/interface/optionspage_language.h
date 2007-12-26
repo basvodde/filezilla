@@ -11,6 +11,8 @@ public:
 
 protected:
 	DECLARE_EVENT_TABLE();
+
+	std::map<wxString, wxString> m_localeMap; // Maps language codes to language names
 };
 
 #endif //__OPTIONSPAGE_LANGUAGE_H__

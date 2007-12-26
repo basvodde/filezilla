@@ -28,6 +28,7 @@ filezilla_SOURCES = aboutdialog.cpp asyncrequestqueue.cpp \
 		ipcmutex.cpp led.cpp \
 		listctrlex.cpp \
 		listingcomparison.cpp \
+		locale_initializer.cpp \
 		LocalListView.cpp LocalTreeView.cpp \
 		loginmanager.cpp \
 		Mainfrm.cpp netconfwizard.cpp \
@@ -83,6 +84,7 @@ noinst_HEADERS = aboutdialog.h asyncrequestqueue.h \
 		 inputdialog.h ipcmutex.h led.h \
 		 listctrlex.h \
 		 listingcomparison.h \
+		 locale_initializer.h \
 		 LocalListView.h LocalTreeView.h \
 		 loginmanager.h \
 		 Mainfrm.h \
