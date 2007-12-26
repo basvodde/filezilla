@@ -82,7 +82,7 @@ bool CComparisonManager::CompareListings()
 		wxMessageBox(error, _("Directory comparison failed"), wxICON_EXCLAMATION);
 		return false;
 	}
-	
+
 	m_pLeft->m_pComparisonManager = this;
 	m_pRight->m_pComparisonManager = this;
 
@@ -158,7 +158,7 @@ int CComparisonManager::CompareFiles(const int dirSortMode, const wxString& loca
 		else if (remoteDir)
 			return 1;
 		break;
-	case 1:
+	case 2:
 		// Inline
 		break;
 	}
