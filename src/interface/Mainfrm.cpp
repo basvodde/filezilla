@@ -1225,7 +1225,7 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 	COptions* pOptions = COptions::Get();
 
 	wxString oldTheme = pOptions->GetOption(OPTION_THEME);
-	int oldLang = wxGetApp().GetCurrentLanguage();
+	wxString oldLang = pOptions->GetOption(OPTION_LANGUAGE);
 
 	int oldShowDebugMenu = pOptions->GetOptionVal(OPTION_DEBUG_MENU) != 0;
 
@@ -1237,7 +1237,7 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 	}
 
 	wxString newTheme = pOptions->GetOption(OPTION_THEME);
-	int newLang = wxGetApp().GetCurrentLanguage();
+	wxString newLang = pOptions->GetOption(OPTION_LANGUAGE);
 
 	if (oldTheme != newTheme)
 	{

@@ -7,7 +7,7 @@
 class CInitializer
 {
 public:
-	static bool SetLocale(const char* arg);
+	static bool SetLocale(const std::string& arg);
 
 	static std::string GetLocaleOption();
 
@@ -18,6 +18,10 @@ protected:
 	static std::string ReadSettingsFromDefaults(std::string file);
 	static std::string GetSettingFromFile(std::string file, const std::string& name);
 	static std::string GetDefaultsXmlFile();
+	static std::string CheckPathForDefaults(std::string path, int strip, std::string suffix);
+
+	static bool SetLocaleReal(const std::string& locale);
+	static std::string LocaleAddEncoding(const std::string& locale, const std::string& encoding);
 };
 
 #endif //__WXGTK__

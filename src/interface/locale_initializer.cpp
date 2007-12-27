@@ -18,17 +18,18 @@ struct t_fallbacks
 };
 
 struct t_fallbacks fallbacks[] = {
-	"ar", "ar_EG",
+	{ "ar", "ar_EG" },
 
 	// The following entries are needed due to missing language codes wxWidgets
-	"ka", "ka_GE",
-	"ku", "ku_TR",
-	"ne", "ne_NP",
+	{ "ka", "ka_GE" },
+	{ "ku", "ku_TR" },
+	{ "ne", "ne_NP" },
 
 	// Fallback chain for English
-	"en", "en_US",
-	"en_US", "C",
-	0, 0
+	{ "en", "en_US" },
+	{ "en_US", "en_GB" },
+	{ "en_GB", "C" },
+	{ 0, 0 }
 };
 
 bool CInitializer::error = false;
@@ -46,7 +47,7 @@ int main(int argc, char** argv)
 	std::string locale = CInitializer::GetLocaleOption();
 	if (locale != "")
 	{
-		if (!CInitializer::SetLocale(locale.c_str()))
+		if (!CInitializer::SetLocale(locale))
 		{
 #ifdef __WXDEBUG__
 			printf("failed to set locale\n");
@@ -64,47 +65,42 @@ int main(int argc, char** argv)
 	return wxEntry(argc, argv);
 }
 
-bool CInitializer::SetLocale(const char* arg)
+bool CInitializer::SetLocaleReal(const std::string& locale)
 {
-	char locale[50];
-
-	if (strlen(arg) > 40)
+	if (!setlocale(LC_ALL, locale.c_str()))
 		return false;
 
-	strcpy(locale, arg);
-
-	// First try with utf8 locale
-	// Take special care of modifiers
-	const char* p = strchr(arg, '@');
-	if (p)
-	{
-		locale[p - arg] = 0;
-		strcat(locale, ".utf8");
-		strcat(locale, p);
-	}
-	else
-		strcat(locale, ".utf8");
-
-	if (setlocale(LC_ALL, locale))
-	{
 #ifdef __WXDEBUG__
-		printf("setlocale %s successful\n", locale);
+	printf("setlocale %s successful\n", locale.c_str());
 #endif
-		setenv("LC_ALL", locale, 1);
-		return true;
+	setenv("LC_ALL", locale.c_str(), 1);
+	return true;
+}
+
+bool CInitializer::SetLocale(const std::string& arg)
+{
+	const char *encodings[] = {
+		"UTF-8",
+		"UTF8",
+		"utf-8",
+		"utf8",
+		0
+	};
+
+	for (int i = 0; encodings[i]; i++)
+	{
+		std::string locale = CInitializer::LocaleAddEncoding(arg, encodings[i]);
+		if (SetLocaleReal(locale))
+			return true;
 	}
 
-	strcpy(locale, arg);
-	if (setlocale(LC_ALL, locale))
-	{
-		setenv("LC_ALL", locale, 1);
+	if (CInitializer::SetLocaleReal(arg))
 		return true;
-	}
 
 	int i = 0;
 	while (fallbacks[i].locale)
 	{
-		if (!strcmp(fallbacks[i].locale, arg))
+		if (fallbacks[i].locale == arg)
 			return SetLocale(fallbacks[i].fallback);
 		i++;
 	}
@@ -112,8 +108,39 @@ bool CInitializer::SetLocale(const char* arg)
 	return false;
 }
 
+std::string CInitializer::CheckPathForDefaults(std::string path, int strip, std::string suffix)
+{
+	if (path.empty())
+		return "";
+
+	if (path[path.size() - 1] == '/')
+		path = path.substr(0, path.size() - 1);
+	while (strip--)
+	{
+		int p = path.rfind('/');
+		if (p == -1)
+			return "";
+		path = path.substr(0, p);
+	}
+
+	path += '/' + suffix;
+	struct stat buf;
+	if (!stat(path.c_str(), &buf))
+		return path;
+
+	return "";
+}
+
 std::string CInitializer::GetDefaultsXmlFile()
 {
+	std::string fzdatadir = mkstr(getenv("FZ_DATADIR"));
+	std::string file = CheckPathForDefaults(fzdatadir, 0, "fzdefaults.xml");
+	if (!file.empty())
+		return file;
+	file = CheckPathForDefaults(fzdatadir, 1, "fzdefaults.xml");
+	if (!file.empty())
+		return file;
+
 	std::string home = mkstr(getenv("HOME"));
 	if (!home.empty())
 	{
@@ -126,30 +153,37 @@ std::string CInitializer::GetDefaultsXmlFile()
 			return home;
 	}
 
-	std::string file("/etc/filezilla/fzdefaults.xml");
+	file = "/etc/filezilla/fzdefaults.xml";
 
 	struct stat buf;
 	if (!stat(file.c_str(), &buf))
 		return file;
 
 
-	file = mkstr(SELFPATH);
-	if (file.empty())
-		return "";
-
-	int p = file.rfind('/');
-	if (p == -1)
-		return "";
-	file = file.substr(0, p);
-
-	p = file.rfind('/');
-	if (p == -1)
-		return "";
-	file = file.substr(0, p);
-
-	file += "/share/filezilla/fzdefaults.xml";
-	if (!stat(file.c_str(), &buf))
+	file = CheckPathForDefaults(mkstr(SELFPATH), 2, "share/filezilla/fzdefaults.xml");
+	if (!file.empty())
 		return file;
+	file = CheckPathForDefaults(mkstr(DATADIR), 0, "filezilla/fzdefaults.xml");
+	if (!file.empty())
+		return file;
+
+	std::string path = mkstr(getenv("PATH"));
+	while (!path.empty())
+	{
+		std::string segment;
+		int pos = path.find(':');
+		if (pos == -1)
+			segment.swap(path);
+		else
+		{
+			segment = path.substr(0, pos);
+			path = path.substr(pos + 1);
+		}
+
+		file = CheckPathForDefaults(segment, 1, "share/filezilla/fzdefaults.xml");
+		if (!file.empty())
+			return file;
+	}
 
 	return "";
 }
@@ -261,6 +295,15 @@ std::string CInitializer::GetLocaleOption()
 	std::string locale = GetSettingFromFile(dir + "filezilla.xml", "Language Code");
 
 	return locale;
+}
+
+std::string CInitializer::LocaleAddEncoding(const std::string& locale, const std::string& encoding)
+{
+	int pos = locale.find('@');
+	if (pos == -1)
+		return locale + '.' + encoding;
+
+	return locale.substr(0, pos) + '.' + encoding + locale.substr(pos);
 }
 
 #endif //__WXGTK__
