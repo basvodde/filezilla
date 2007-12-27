@@ -8,9 +8,28 @@
 	#include "prefix.h"
 #endif
 
-
 // Custom main method to initialize proper locale
 #ifdef __WXGTK__
+
+struct t_fallbacks
+{
+	const char* locale;
+	const char* fallback;
+};
+
+struct t_fallbacks fallbacks[] = {
+	"ar", "ar_EG",
+
+	// The following entries are needed due to missing language codes wxWidgets
+	"ka", "ka_GE",
+	"ku", "ku_TR",
+	"ne", "ne_NP",
+
+	// Fallback chain for English
+	"en", "en_US",
+	"en_US", "C",
+	0, 0
+};
 
 bool CInitializer::error = false;
 
@@ -80,6 +99,14 @@ bool CInitializer::SetLocale(const char* arg)
 	{
 		setenv("LC_ALL", locale, 1);
 		return true;
+	}
+
+	int i = 0;
+	while (fallbacks[i].locale)
+	{
+		if (!strcmp(fallbacks[i].locale, arg))
+			return SetLocale(fallbacks[i].fallback);
+		i++;
 	}
 
 	return false;
@@ -184,7 +211,7 @@ std::string CInitializer::GetSettingFromFile(std::string file, const std::string
 		return "";
 
 	TiXmlElement* settings = main->FirstChildElement("Settings");
-	if (!main)
+	if (!settings)
 		return "";
 
 	for (TiXmlElement* setting = settings->FirstChildElement("Setting"); setting; setting = settings->NextSiblingElement("Setting"))

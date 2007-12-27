@@ -26,6 +26,7 @@ bool COptionsPageLanguage::LoadPage()
 	n = pListBox->Append(_T("English"));
 	if (currentLanguage == _T("English"))
 		pListBox->SetSelection(n);
+	m_localeMap[_T("en")] = _T("English");
 
 	wxString localesDir = wxGetApp().GetLocalesDir();
 	if (localesDir == _T("") || !wxDir::Exists(localesDir))
