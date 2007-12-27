@@ -1254,8 +1254,12 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 	}
 	if (oldLang != newLang)
 	{
+#ifdef __WXGTK__
+		wxMessageBox(_("FileZilla needs to be restarted for the language change to take effect."), _("Language changed"), wxICON_INFORMATION, this);
+#else
 		CreateQuickconnectBar();
 		wxGetApp().GetWrapEngine()->CheckLanguage();
+#endif
 	}
 
 	CheckChangedSettings();

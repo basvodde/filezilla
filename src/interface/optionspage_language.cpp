@@ -78,7 +78,6 @@ bool COptionsPageLanguage::SavePage()
 
 #ifdef __WXGTK__
 	m_pOptions->SetOption(OPTION_LANGUAGE, code);
-	wxMessageBox(_("FileZilla needs to be restarted for the language change to take effect."), _("Language changed"), wxICON_INFORMATION, this);
 #else
 	const wxLanguageInfo* pInfo = wxLocale::FindLanguageInfo(pListBox->GetStringSelection());
 	if (!pInfo || !wxGetApp().SetLocale(pInfo->Language))

@@ -214,7 +214,7 @@ std::string CInitializer::GetSettingFromFile(std::string file, const std::string
 	if (!settings)
 		return "";
 
-	for (TiXmlElement* setting = settings->FirstChildElement("Setting"); setting; setting = settings->NextSiblingElement("Setting"))
+	for (TiXmlElement* setting = settings->FirstChildElement("Setting"); setting; setting = setting->NextSiblingElement("Setting"))
 	{
 		const char* nodeVal = setting->Attribute("name");
 		if (!nodeVal || strcmp(nodeVal, name.c_str()))
@@ -257,6 +257,7 @@ std::string CInitializer::GetLocaleOption()
 	if (dir.empty())
 		return "";
 
+	printf("Reading locale option from %sfilezilla.xml\n", dir.c_str());
 	std::string locale = GetSettingFromFile(dir + "filezilla.xml", "Language Code");
 
 	return locale;
