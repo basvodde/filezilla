@@ -1838,7 +1838,7 @@ void CQueueView::SettingsChanged()
 	ext.Replace(_T("\\\\"), _T("\\"));
 	m_asciiFiles.push_back(ext);
 
-	TryStartNextTransfer();
+	AdvanceQueue();
 }
 
 bool CQueueView::ShouldUseBinaryMode(wxString filename)
@@ -2415,6 +2415,8 @@ void CQueueView::AdvanceQueue()
 			m_engineData[i]->m_idleDisconnectTimer->Start(30000, true);
 		}
 	}
+
+	Refresh(false);
 
 	insideAdvanceQueue = false;
 
