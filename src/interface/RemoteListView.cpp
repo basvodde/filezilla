@@ -2246,7 +2246,7 @@ void CRemoteListView::StartComparison()
 	}
 }
 
-bool CRemoteListView::GetNextFile(wxString& name, bool& dir, wxLongLong& size)
+bool CRemoteListView::GetNextFile(wxString& name, bool& dir, wxLongLong& size, wxDateTime& date, bool &hasTime)
 {
 	if (++m_comparisonIndex >= (int)m_originalIndexMapping.size())
 		return false;
@@ -2268,6 +2268,16 @@ bool CRemoteListView::GetNextFile(wxString& name, bool& dir, wxLongLong& size)
 	name = entry.name;
 	dir = entry.dir;
 	size = entry.size;
+	if (entry.hasDate)
+	{
+		date = entry.time;
+		hasTime = entry.hasTime;
+	}
+	else
+	{
+		date = wxDateTime();
+		hasTime = false;
+	}
 
 	return true;
 }
@@ -2291,11 +2301,19 @@ wxListItemAttr* CRemoteListView::OnGetItemAttr(long item) const
 
 	const CGenericFileData& data = m_fileData[index];
 
-	if (data.flags == normal || data.flags == fill)
+	switch (data.flags)
+	{
+	case different:
+		return &pThis->m_comparisonBackgrounds[0];
+	case fill:
+		return &pThis->m_comparisonBackgrounds[1];
+	case newer:
+		return &pThis->m_comparisonBackgrounds[2];
+	default:
 		return 0;
-	
-	const int i = (data.flags == different) ? 0 : 1;
-	return &pThis->m_comparisonBackgrounds[i];
+	}
+
+	return 0;
 }
 
 // Defined in LocalListView.cpp

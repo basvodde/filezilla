@@ -94,6 +94,11 @@ protected:
 	void ShowLocalTree();
 	void ShowRemoteTree();
 
+#if defined(EVT_TOOL_DROPDOWN) && defined(__WXMSW__)
+	void MakeDropdownTool(wxToolBar* pToolBar, int id);
+#endif
+	void ShowDropdownMenu(wxMenu* pMenu, wxToolBar* pToolBar, wxCommandEvent& event);
+
 	// Event handlers
 	DECLARE_EVENT_TABLE()
 	void OnSize(wxSizeEvent& event);
@@ -140,9 +145,13 @@ protected:
 	void OnActivate(wxActivateEvent& event);
 	void OnToolbarComparison(wxCommandEvent& event);
 	void OnUpdateToolbarComparison(wxUpdateUIEvent& event);
+	void OnToolbarComparisonDropdown(wxCommandEvent& event);
 #ifdef __WXMSW__
 	void OnSizePost(wxCommandEvent& event);
+#endif
+	void OnDropdownComparisonMode(wxCommandEvent& event);
 
+#ifdef __WXMSW__
 	bool m_pendingPostSizing;
 #endif
 

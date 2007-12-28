@@ -14,12 +14,13 @@ public:
 		normal,
 		fill,
 		different,
+		newer,
 		lonely
 	};
 
 	virtual bool CanStartComparison(wxString* pError) = 0;
 	virtual void StartComparison() = 0;
-	virtual bool GetNextFile(wxString& name, bool &dir, wxLongLong &size) = 0;
+	virtual bool GetNextFile(wxString& name, bool &dir, wxLongLong &size, wxDateTime& date, bool &hasTime) = 0;
 	virtual void CompareAddFile(t_fileEntryFlags flags) = 0;
 	virtual void FinishComparison() = 0;
 	virtual void ScrollTopItem(int item) = 0;
@@ -35,7 +36,7 @@ public:
 
 protected:
 
-	wxListItemAttr m_comparisonBackgrounds[2];
+	wxListItemAttr m_comparisonBackgrounds[3];
 
 private:
 	wxWindow* m_pParent;

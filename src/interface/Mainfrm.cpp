@@ -109,6 +109,12 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_ACTIVATE(CMainFrame::OnActivate)
 	EVT_TOOL(XRCID("ID_TOOLBAR_COMPARISON"), CMainFrame::OnToolbarComparison)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_COMPARISON"), CMainFrame::OnUpdateToolbarComparison)
+	EVT_TOOL_RCLICKED(XRCID("ID_TOOLBAR_COMPARISON"), CMainFrame::OnToolbarComparisonDropdown)
+#ifdef EVT_TOOL_DROPDOWN
+	EVT_TOOL_DROPDOWN(XRCID("ID_TOOLBAR_COMPARISON"), CMainFrame::OnToolbarComparisonDropdown)
+#endif
+	EVT_MENU(XRCID("ID_COMPARE_SIZE"), CMainFrame::OnDropdownComparisonMode)
+	EVT_MENU(XRCID("ID_COMPARE_DATE"), CMainFrame::OnDropdownComparisonMode)
 END_EVENT_TABLE()
 
 CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
@@ -815,6 +821,26 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 	}
 }
 
+#if defined(EVT_TOOL_DROPDOWN) && defined(__WXMSW__)
+void CMainFrame::MakeDropdownTool(wxToolBar* pToolBar, int id)
+{
+	wxToolBarToolBase* pOldTool = pToolBar->FindById(id);
+	if (!pOldTool)
+		return;
+
+	wxToolBarToolBase* pTool = new wxToolBarToolBase(0, id,
+		pOldTool->GetLabel(), pOldTool->GetNormalBitmap(), pOldTool->GetDisabledBitmap(),
+		wxITEM_DROPDOWN, NULL, pOldTool->GetShortHelp(), pOldTool->GetLongHelp());
+
+	int pos = pToolBar->GetToolPos(id);
+	wxASSERT(pos != wxNOT_FOUND);
+
+	pToolBar->DeleteToolByPos(pos);
+	pToolBar->InsertTool(pos, pTool);
+	pToolBar->Realize();
+}
+#endif
+
 bool CMainFrame::CreateToolBar()
 {
 	if (m_pToolBar)
@@ -831,20 +857,8 @@ bool CMainFrame::CreateToolBar()
 	m_pToolBar->SetExtraStyle(wxWS_EX_PROCESS_UI_UPDATES);
 
 #if defined(EVT_TOOL_DROPDOWN) && defined(__WXMSW__)
-	wxToolBarToolBase* pOldTool = m_pToolBar->FindById(XRCID("ID_TOOLBAR_SITEMANAGER"));
-	if (pOldTool)
-	{
-		wxToolBarToolBase* pTool = new wxToolBarToolBase(0, XRCID("ID_TOOLBAR_SITEMANAGER"),
-			pOldTool->GetLabel(), pOldTool->GetNormalBitmap(), pOldTool->GetDisabledBitmap(),
-			wxITEM_DROPDOWN, NULL, pOldTool->GetShortHelp(), pOldTool->GetLongHelp());
-
-		int pos = m_pToolBar->GetToolPos(XRCID("ID_TOOLBAR_SITEMANAGER"));
-		wxASSERT(pos != wxNOT_FOUND);
-
-		m_pToolBar->DeleteToolByPos(pos);
-		m_pToolBar->InsertTool(pos, pTool);
-		m_pToolBar->Realize();
-	}
+	MakeDropdownTool(m_pToolBar, XRCID("ID_TOOLBAR_SITEMANAGER"));
+	MakeDropdownTool(m_pToolBar, XRCID("ID_TOOLBAR_COMPARISON"));
 #endif
 
 #ifdef __WXMSW__
@@ -1556,27 +1570,10 @@ void CMainFrame::UpdateLayout(int layout /*=-1*/, int swap /*=-1*/)
 void CMainFrame::OnSitemanagerDropdown(wxCommandEvent& event)
 {
 	wxMenu *pMenu = CSiteManager::GetSitesMenu();
-#ifdef EVT_TOOL_DROPDOWN
-	if (event.GetEventType() == wxEVT_COMMAND_TOOL_DROPDOWN_CLICKED)
-	{
-		m_pToolBar->SetDropdownMenu(XRCID("ID_TOOLBAR_SITEMANAGER"), pMenu);
-		event.Skip();
-	}
-	else
-#endif
-	{
-		if (!pMenu)
-			return;
-#ifdef __WXMSW__
-		RECT r;
-        if (::SendMessage((HWND)m_pToolBar->GetHandle(), TB_GETITEMRECT, m_pToolBar->GetToolPos(event.GetId()), (LPARAM)&r))
-			m_pToolBar->PopupMenu(pMenu, r.left, r.bottom);
-		else
-#endif
-		m_pToolBar->PopupMenu(pMenu);
+	if (!pMenu)
+		return;
 
-		delete pMenu;
-	}
+	ShowDropdownMenu(pMenu, m_pToolBar, event);
 }
 
 void CMainFrame::ConnectToSite(CSiteManagerItemData* const pData)
@@ -2008,5 +2005,63 @@ void CMainFrame::OnToolbarComparison(wxCommandEvent& event)
 
 void CMainFrame::OnUpdateToolbarComparison(wxUpdateUIEvent& event)
 {
+	bool enable;
+	if (!m_pState->m_pEngine || !m_pState->m_pEngine->IsConnected())
+		enable = false;
+	else
+		enable = true;
+
+	event.Enable(enable);
+
 	event.Check(m_pComparisonManager && m_pComparisonManager->IsComparing());
+}
+
+void CMainFrame::OnToolbarComparisonDropdown(wxCommandEvent& event)
+{
+	wxMenu* pMenu = wxXmlResource::Get()->LoadMenu(_T("ID_MENU_TOOLBAR_COMPARISON_DROPDOWN"));
+	if (!pMenu)
+		return;
+
+	pMenu->FindItem(XRCID("ID_TOOLBAR_COMPARISON"))->Check(m_pComparisonManager && m_pComparisonManager->IsComparing());
+
+	const int mode = COptions::Get()->GetOptionVal(OPTION_COMPARISONMODE);
+	if (mode == 0)
+		pMenu->FindItem(XRCID("ID_COMPARE_SIZE"))->Check();
+	else
+		pMenu->FindItem(XRCID("ID_COMPARE_DATE"))->Check();
+
+	ShowDropdownMenu(pMenu, m_pToolBar, event);
+}
+
+void CMainFrame::ShowDropdownMenu(wxMenu* pMenu, wxToolBar* pToolBar, wxCommandEvent& event)
+{
+	#ifdef EVT_TOOL_DROPDOWN
+	if (event.GetEventType() == wxEVT_COMMAND_TOOL_DROPDOWN_CLICKED)
+	{
+		pToolBar->SetDropdownMenu(event.GetId(), pMenu);
+		event.Skip();
+	}
+	else
+#endif
+	{
+#ifdef __WXMSW__
+		RECT r;
+        if (::SendMessage((HWND)pToolBar->GetHandle(), TB_GETITEMRECT, pToolBar->GetToolPos(event.GetId()), (LPARAM)&r))
+			pToolBar->PopupMenu(pMenu, r.left, r.bottom);
+		else
+#endif
+			pToolBar->PopupMenu(pMenu);
+
+		delete pMenu;
+	}
+}
+
+void CMainFrame::OnDropdownComparisonMode(wxCommandEvent& event)
+{
+	int old_mode = COptions::Get()->GetOptionVal(OPTION_COMPARISONMODE);
+	int new_mode = event.GetId() == XRCID("ID_COMPARE_SIZE") ? 0 : 1;
+	COptions::Get()->SetOption(OPTION_COMPARISONMODE, new_mode);
+
+	if (old_mode != new_mode && m_pComparisonManager && m_pComparisonManager->IsComparing())
+		m_pComparisonManager->CompareListings();
 }

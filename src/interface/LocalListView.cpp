@@ -1774,7 +1774,7 @@ void CLocalListView::InitDateFormat()
 wxListItemAttr* CLocalListView::OnGetItemAttr(long item) const
 {
 	CLocalListView *pThis = const_cast<CLocalListView *>(this);
-	CLocalFileData* data = pThis->GetData((unsigned int)item);
+	const CLocalFileData* const data = pThis->GetData((unsigned int)item);
 
 	if (!data)
 		return 0;
@@ -1782,8 +1782,19 @@ wxListItemAttr* CLocalListView::OnGetItemAttr(long item) const
 	if (data->flags == normal || data->flags == fill)
 		return 0;
 	
-	const int i = (data->flags == different) ? 0 : 1;
-	return &pThis->m_comparisonBackgrounds[i];
+	switch (data->flags)
+	{
+	case different:
+		return &pThis->m_comparisonBackgrounds[0];
+	case fill:
+		return &pThis->m_comparisonBackgrounds[1];
+	case newer:
+		return &pThis->m_comparisonBackgrounds[2];
+	default:
+		return 0;
+	}
+
+	return 0;
 }
 
 void CLocalListView::StartComparison()
@@ -1816,7 +1827,7 @@ void CLocalListView::StartComparison()
 	}
 }
 
-bool CLocalListView::GetNextFile(wxString& name, bool& dir, wxLongLong& size)
+bool CLocalListView::GetNextFile(wxString& name, bool& dir, wxLongLong& size, wxDateTime& date, bool &hasTime)
 {
 	if (++m_comparisonIndex >= (int)m_originalIndexMapping.size())
 		return false;
@@ -1830,6 +1841,8 @@ bool CLocalListView::GetNextFile(wxString& name, bool& dir, wxLongLong& size)
 	name = data.name;
 	dir = data.dir;
 	size = data.size;
+	date = data.lastModified;
+	hasTime = true;
 
 	return true;
 }

@@ -105,6 +105,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Always use default editor", number, _T("0") },
 	{ "Inherit system associations", number, _T("1") },
 	{ "Custom file associations", string, _T("") },
+	{ "Comparison mode", number, _T("1") }
 };
 
 COptions::COptions()
