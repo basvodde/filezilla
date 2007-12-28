@@ -24,7 +24,7 @@ bool COptionsPageLanguage::LoadPage()
 		pListBox->SetSelection(n);
 
 	n = pListBox->Append(_T("English"));
-	if (currentLanguage == _T("English"))
+	if (currentLanguage == _T("en"))
 		pListBox->SetSelection(n);
 	m_localeMap[_T("en")] = _T("English");
 
@@ -79,11 +79,20 @@ bool COptionsPageLanguage::SavePage()
 #ifdef __WXGTK__
 	m_pOptions->SetOption(OPTION_LANGUAGE, code);
 #else
-	const wxLanguageInfo* pInfo = wxLocale::FindLanguageInfo(pListBox->GetStringSelection());
-	if (!pInfo || !wxGetApp().SetLocale(pInfo->Language))
-		wxMessageBox(wxString::Format(_("Failed to set language to %s, using default system language"), pListBox->GetStringSelection().c_str()), _("Failed to change language"), wxICON_EXCLAMATION, this);
+	bool successful = false;
+	if (code == _T(""))
+		successful = wxGetApp().SetLocale(wxLANGUAGE_DEFAULT);
 	else
-		m_pOptions->SetOption(OPTION_LANGUAGE, pListBox->GetStringSelection());
+	{
+		const wxLanguageInfo* pInfo = wxLocale::FindLanguageInfo(code);
+		if (pInfo)
+			successful = wxGetApp().SetLocale(pInfo->Language);
+	}
+
+	if (successful)
+		m_pOptions->SetOption(OPTION_LANGUAGE, code);
+	else
+		wxMessageBox(wxString::Format(_("Failed to set language to %s, using default system language"), pListBox->GetStringSelection().c_str()), _("Failed to change language"), wxICON_EXCLAMATION, this);		
 #endif
 	return true;
 }

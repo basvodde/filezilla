@@ -196,15 +196,20 @@ bool CFileZillaApp::OnInit()
 						currentName.c_str());
 			}
 
-			wxMessageBox(error, _("Failed to change language"), wxICON_EXCLAMATION);
 			error += _T("\n");
 			error += _("Please make sure the requested locale is installed on your system.");
+			wxMessageBox(error, _("Failed to change language"), wxICON_EXCLAMATION);
 
 			COptions::Get()->SetOption(OPTION_LANGUAGE, _T(""));
 		}
 #else
 		if (!pInfo || !SetLocale(pInfo->Language))
-			wxMessageBox(wxString::Format(_("Failed to set language to %s, using default system language"), language.c_str()), _("Failed to change language"), wxICON_EXCLAMATION);
+		{
+			if (pInfo && pInfo->Description)
+				wxMessageBox(wxString::Format(_("Failed to set language to %s (%s), using default system language"), pInfo->Description.c_str(), language.c_str()), _("Failed to change language"), wxICON_EXCLAMATION);
+			else
+				wxMessageBox(wxString::Format(_("Failed to set language to %s, using default system language"), language.c_str()), _("Failed to change language"), wxICON_EXCLAMATION);
+		}
 #endif
 	}
 
