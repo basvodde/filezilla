@@ -1026,7 +1026,7 @@ void CQueueViewBase::UpdateSelections_ItemRangeAdded(int added, int count)
 
 	while (item != -1)
 	{
-		// Select new items preceeding to current one
+		// Select new items preceding to current one
 		while (!itemsToSelect.empty() && itemsToSelect.front() < item)
 		{
 			SetItemState(itemsToSelect.front(), wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
@@ -1094,7 +1094,7 @@ void CQueueViewBase::UpdateSelections_ItemRangeRemoved(int removed, int count)
 
 	while (item != -1)
 	{
-		// Unselect new items preceeding to current one
+		// Unselect new items preceding to current one
 		while (!itemsToUnselect.empty() && itemsToUnselect.front() < item - count)
 		{
 			SetItemState(itemsToUnselect.front(), 0, wxLIST_STATE_SELECTED);
