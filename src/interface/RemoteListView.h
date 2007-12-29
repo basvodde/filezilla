@@ -29,6 +29,7 @@ public:
 	virtual void StartComparison();
 	virtual bool GetNextFile(wxString& name, bool &dir, wxLongLong &size, wxDateTime& date, bool& hasTime);
 	virtual void FinishComparison();
+	virtual void OnExitComparisonMode();
 
 protected:
 	virtual wxString GetItemText(int item, unsigned int column);
@@ -75,7 +76,7 @@ protected:
 
 	CInfoText* m_pInfoText;
 	void RepositionInfoText();
-	void SetInfoText(const wxString& text);
+	void SetInfoText();
 
 	wxDropTarget* m_pDropTarget;
 	int m_dropTarget;

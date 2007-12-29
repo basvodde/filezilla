@@ -131,7 +131,7 @@ bool CComparisonManager::CompareListings()
 					CComparableListing::t_fileEntryFlags localFlag, remoteFlag;
 					
 					wxDateTime localDateOnly = localDate.GetDateOnly();
-					wxDateTime remoteDateOnly = localDate.GetDateOnly();
+					wxDateTime remoteDateOnly = remoteDate.GetDateOnly();
 					if (localDateOnly > remoteDateOnly)
 					{
 						localFlag = CComparableListing::newer;
@@ -245,9 +245,9 @@ void CComparisonManager::ExitComparisonMode()
 	if (!IsComparing())
 		return;
 
+	m_isComparing = false;
 	if (m_pLeft)
 		m_pLeft->OnExitComparisonMode();
 	if (m_pRight)
 		m_pRight->OnExitComparisonMode();
-	m_isComparing = false;
 }

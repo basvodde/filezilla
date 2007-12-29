@@ -247,9 +247,19 @@ public:
 		SetBackgroundColour(parent->GetBackgroundColour());
 	}
 
-	wxString m_text;
+	void SetText(wxString text)
+	{
+		text = _T("<") + text + _T(">");
+		if (text == m_text)
+			return;
+
+		m_text = text;
+		Refresh();
+	}
 
 protected:
+	wxString m_text;
+
 	void OnPaint(wxPaintEvent& event)
 	{
 		wxPaintDC paintDc(this);
@@ -587,12 +597,7 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 	bool eraseBackground = false;
 	if (m_pDirectoryListing)
 	{
-		if (m_pDirectoryListing->m_failed)
-			SetInfoText(_("Directory listing failed"));
-		else if (!m_pDirectoryListing->GetCount())
-			SetInfoText(_("Empty directory listing"));
-		else
-			SetInfoText(_T(""));
+		SetInfoText();
 
 		m_indexMapping.push_back(m_pDirectoryListing->GetCount());
 
@@ -617,7 +622,7 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 	else
 	{
 		eraseBackground = true;
-		SetInfoText(_("Not connected to any server"));
+		SetInfoText();
 	}
 
 	if (m_dropTarget != -1)
@@ -1814,8 +1819,19 @@ void CRemoteListView::OnStateChange(unsigned int event, const wxString& data)
 		ApplyCurrentFilter();
 }
 
-void CRemoteListView::SetInfoText(const wxString& text)
+void CRemoteListView::SetInfoText()
 {
+	wxString text;
+	if (!IsComparing())
+	{
+		if (!m_pDirectoryListing)
+			text = _("Not connected to any server");
+		else if (m_pDirectoryListing->m_failed)
+			text = _("Directory listing failed");
+		else if (!m_pDirectoryListing->GetCount())
+			text = _("Empty directory listing");
+	}
+	
 	if (text == _T(""))
 	{
 		delete m_pInfoText;
@@ -1830,11 +1846,7 @@ void CRemoteListView::SetInfoText(const wxString& text)
 		return;
 	}
 
-	if (m_pInfoText->m_text == _T("<") + text + _T(">"))
-		return;
-
-	m_pInfoText->m_text = text;
-	m_pInfoText->Refresh();
+	m_pInfoText->SetText(text);
 }
 
 void CRemoteListView::OnBeginDrag(wxListEvent& event)
@@ -2284,6 +2296,8 @@ bool CRemoteListView::GetNextFile(wxString& name, bool& dir, wxLongLong& size, w
 
 void CRemoteListView::FinishComparison()
 {
+	SetInfoText();
+
 	SetItemCount(m_indexMapping.size());
 
 	ComparisonRestoreSelections();
@@ -2407,4 +2421,10 @@ CFileListCtrl<CGenericFileData>::CSortComparisonObject CRemoteListView::GetSortC
 		else
 			return CFileListCtrl<CGenericFileData>::CSortComparisonObject(new CRemoteListViewSortName_Reverse(m_pDirectoryListing, m_fileData, dirSortMode, this));
 	}
+}
+
+void CRemoteListView::OnExitComparisonMode()
+{
+	CFileListCtrl<CGenericFileData>::OnExitComparisonMode();
+	SetInfoText();
 }

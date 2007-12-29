@@ -1778,9 +1778,6 @@ wxListItemAttr* CLocalListView::OnGetItemAttr(long item) const
 
 	if (!data)
 		return 0;
-
-	if (data->flags == normal || data->flags == fill)
-		return 0;
 	
 	switch (data->flags)
 	{
