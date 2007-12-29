@@ -1121,6 +1121,7 @@ void CRemoteListView::TransferSelectedFiles(const wxString& localDir, bool queue
 	CRecursiveOperation* pRecursiveOperation = m_pState->GetRecursiveOperationHandler();
 	wxASSERT(pRecursiveOperation);
 
+	bool startRecursive = false;
 	long item = -1;
 	while (true)
 	{
@@ -1155,6 +1156,7 @@ void CRemoteListView::TransferSelectedFiles(const wxString& localDir, bool queue
 			{
 				//m_pQueue->QueueFolder(event.GetId() == XRCID("ID_ADDTOQUEUE"), true, fn.GetFullPath(), remotePath, *pServer);
 				pRecursiveOperation->AddDirectoryToVisit(m_pDirectoryListing->path, name, fn.GetFullPath());
+				startRecursive = true;
 			}
 		}
 		else
@@ -1164,9 +1166,12 @@ void CRemoteListView::TransferSelectedFiles(const wxString& localDir, bool queue
 		}
 	}
 
-	if (IsComparing())
-		ExitComparisonMode();
-	pRecursiveOperation->StartRecursiveOperation(queueOnly ? CRecursiveOperation::recursive_addtoqueue : CRecursiveOperation::recursive_download, m_pDirectoryListing->path);
+	if (startRecursive)
+	{
+		if (IsComparing())
+			ExitComparisonMode();
+		pRecursiveOperation->StartRecursiveOperation(queueOnly ? CRecursiveOperation::recursive_addtoqueue : CRecursiveOperation::recursive_download, m_pDirectoryListing->path);
+	}
 }
 
 void CRemoteListView::OnMenuMkdir(wxCommandEvent& event)
@@ -1241,6 +1246,7 @@ void CRemoteListView::OnMenuDelete(wxCommandEvent& event)
 
 	std::list<wxString> filesToDelete;
 
+	bool startRecursive = false;
 	item = -1;
 	while (true)
 	{
@@ -1261,7 +1267,10 @@ void CRemoteListView::OnMenuDelete(wxCommandEvent& event)
 		{
 			CServerPath remotePath = m_pDirectoryListing->path;
 			if (remotePath.AddSegment(name))
+			{
 				pRecursiveOperation->AddDirectoryToVisit(m_pDirectoryListing->path, name);
+				startRecursive = true;
+			}
 		}
 		else
 			filesToDelete.push_back(name);
@@ -1270,9 +1279,12 @@ void CRemoteListView::OnMenuDelete(wxCommandEvent& event)
 	if (!filesToDelete.empty())
 		m_pState->m_pCommandQueue->ProcessCommand(new CDeleteCommand(m_pDirectoryListing->path, filesToDelete));
 
-	if (IsComparing())
-		ExitComparisonMode();
-	pRecursiveOperation->StartRecursiveOperation(CRecursiveOperation::recursive_delete, m_pDirectoryListing->path);
+	if (startRecursive)
+	{
+		if (IsComparing())
+			ExitComparisonMode();
+		pRecursiveOperation->StartRecursiveOperation(CRecursiveOperation::recursive_delete, m_pDirectoryListing->path);
+	}
 }
 
 void CRemoteListView::OnMenuRename(wxCommandEvent& event)
