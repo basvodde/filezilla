@@ -569,7 +569,7 @@ bool CTransferSocket::CheckGetNextWriteBuffer()
 		{
 			wxString error = pData->pIOThread->GetError();
 			if (error != _T(""))
-				m_pControlSocket->LogMessage(::Error, _("Can't write data to file: %s"), error);
+				m_pControlSocket->LogMessage(::Error, _("Can't write data to file: %s"), error.c_str());
 			else
 				m_pControlSocket->LogMessage(::Error, _("Can't write data to file."));
 			TransferEnd(transfer_failure_critical);
@@ -642,7 +642,7 @@ void CTransferSocket::FinalizeWrite()
 	{
 		wxString error = pData->pIOThread->GetError();
 		if (error != _T(""))
-			m_pControlSocket->LogMessage(::Error, _("Can't write data to file: %s"), error);
+			m_pControlSocket->LogMessage(::Error, _("Can't write data to file: %s"), error.c_str());
 		else
 			m_pControlSocket->LogMessage(::Error, _("Can't write data to file."));
 		TransferEnd(transfer_failure_critical);
