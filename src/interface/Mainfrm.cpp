@@ -858,7 +858,7 @@ bool CMainFrame::CreateToolBar()
 
 #if defined(EVT_TOOL_DROPDOWN) && defined(__WXMSW__)
 	MakeDropdownTool(m_pToolBar, XRCID("ID_TOOLBAR_SITEMANAGER"));
-	MakeDropdownTool(m_pToolBar, XRCID("ID_TOOLBAR_COMPARISON"));
+	//MakeDropdownTool(m_pToolBar, XRCID("ID_TOOLBAR_COMPARISON"));
 #endif
 
 #ifdef __WXMSW__
@@ -2014,6 +2014,15 @@ void CMainFrame::OnUpdateToolbarComparison(wxUpdateUIEvent& event)
 	event.Enable(enable);
 
 	event.Check(m_pComparisonManager && m_pComparisonManager->IsComparing());
+	if (m_pMenuBar)
+	{
+		m_pMenuBar->Enable(XRCID("ID_TOOLBAR_COMPARISON"), enable);
+		m_pMenuBar->Check(XRCID("ID_TOOLBAR_COMPARISON"), m_pComparisonManager && m_pComparisonManager->IsComparing());
+
+		int mode = COptions::Get()->GetOptionVal(OPTION_COMPARISONMODE);
+		m_pMenuBar->Check(XRCID("ID_COMPARE_SIZE"), mode != 1);
+		m_pMenuBar->Check(XRCID("ID_TOOLBAR_COMPARISON"), mode == 1);
+	}
 }
 
 void CMainFrame::OnToolbarComparisonDropdown(wxCommandEvent& event)

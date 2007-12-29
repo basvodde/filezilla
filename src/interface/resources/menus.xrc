@@ -27,10 +27,6 @@
         <label>&amp;Network configuration wizard...</label>
       </object>
       <object class="separator"/>
-      <object class="wxMenuItem" name="ID_MENU_EDIT_FILTERS">
-        <label>Filename &amp;filters...</label>
-      </object>
-      <object class="separator"/>
       <object class="wxMenuItem" name="ID_EXPORT">
         <label>&amp;Export...</label>
       </object>
@@ -40,6 +36,29 @@
       <object class="separator"/>
       <object class="wxMenuItem" name="ID_MENU_EDIT_CLEARPRIVATEDATA">
         <label>&amp;Clear private data...</label>
+      </object>
+    </object>
+    <object class="wxMenu">
+      <label>&amp;View</label>
+      <object class="wxMenuItem" name="ID_MENU_EDIT_FILTERS">
+        <label>Filename &amp;filters...</label>
+      </object>
+      <object class="separator"/>
+      <object class="wxMenu" name="">
+        <label>&amp;Directory comparison</label>
+        <object class="wxMenuItem" name="ID_TOOLBAR_COMPARISON">
+          <label>&amp;Enable</label>
+          <checkable>1</checkable>
+        </object>
+        <object class="separator"/>
+        <object class="wxMenuItem" name="ID_COMPARE_SIZE">
+          <label>Compare file&amp;size</label>
+          <radio>1</radio>
+        </object>
+        <object class="wxMenuItem" name="ID_COMPARE_DATE">
+          <label>Compare &amp;modification time</label>
+          <radio>1</radio>
+        </object>
       </object>
     </object>
     <object class="wxMenu" name="ID_MENU_TRANSFER">
