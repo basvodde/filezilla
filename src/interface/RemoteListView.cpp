@@ -2120,7 +2120,7 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 	}
 
 	bool dangerous = false;
-	if (!pEditHandler->CanOpen(entry.name, dangerous))
+	if (!pEditHandler->CanOpen(CEditHandler::remote, entry.name, dangerous))
 	{
 		wxMessageBox(_("Selected file cannot be opened.\nNo default editor has been set or filetype association is missing or incorrect."), _("Cannot edit file"), wxICON_STOP);
 		return;
@@ -2135,7 +2135,7 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 		}
 	}
 
-	CEditHandler::fileState state = pEditHandler->GetFileState(entry.name);
+	CEditHandler::fileState state = pEditHandler->GetFileState(CEditHandler::remote, entry.name);
 	switch (state)
 	{
 	case CEditHandler::download:
@@ -2158,7 +2158,7 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 				wxBell();
 				return;
 			}
-			if (!pEditHandler->Remove(entry.name))
+			if (!pEditHandler->Remove(CEditHandler::remote, entry.name))
 			{
 				wxMessageBox(_("The selected file is still opened in some other program, please close it."), _("Selected file still being edited"), wxICON_EXCLAMATION);
 				return;
@@ -2169,7 +2169,7 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 		break;
 	}
 
-	if (!pEditHandler->AddFile(entry.name, m_pDirectoryListing->path, *m_pState->GetServer()))
+	if (!pEditHandler->AddFile(CEditHandler::remote, entry.name, m_pDirectoryListing->path, *m_pState->GetServer()))
 	{
 		wxFAIL;
 		wxBell();

@@ -138,7 +138,7 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 				pFileItem->m_errorCount = 0;
 				pFileItem->m_statusMessage.Clear();
 
-				if (pFileItem->m_edit)
+				if (pFileItem->m_edit == CEditHandler::remote)
 				{
 					CEditHandler* pEditHandler = CEditHandler::Get();
 					if (!pEditHandler)
@@ -148,8 +148,8 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 						continue;
 					}
 					wxFileName fn(pFileItem->GetLocalFile());
-					if (pEditHandler->GetFileState(fn.GetFullName()) != CEditHandler::unknown ||
-						!pEditHandler->AddFile(fn.GetFullName(), pFileItem->GetRemotePath(), pServerItem->GetServer()))
+					if (pEditHandler->GetFileState(CEditHandler::remote, fn.GetFullName()) != CEditHandler::unknown ||
+						!pEditHandler->AddFile(CEditHandler::remote, fn.GetFullName(), pFileItem->GetRemotePath(), pServerItem->GetServer()))
 					{
 						failedToRequeueAll = true;
 						delete pFileItem;
@@ -191,7 +191,7 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 			CServerItem* pServerItem = pQueueView->CreateServerItem(pOldServerItem->GetServer());
 			RemoveItem(pItem, false, false, false);
 
-			if (pFileItem->m_edit)
+			if (pFileItem->m_edit == CEditHandler::remote)
 			{
 				CEditHandler* pEditHandler = CEditHandler::Get();
 				if (!pEditHandler)
@@ -207,8 +207,8 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 					continue;
 				}
 				wxFileName fn(pFileItem->GetLocalFile());
-				if (pEditHandler->GetFileState(fn.GetFullName()) != CEditHandler::unknown ||
-					!pEditHandler->AddFile(fn.GetFullName(), pFileItem->GetRemotePath(), pServerItem->GetServer()))
+				if (pEditHandler->GetFileState(CEditHandler::remote, fn.GetFullName()) != CEditHandler::unknown ||
+					!pEditHandler->AddFile(CEditHandler::remote, fn.GetFullName(), pFileItem->GetRemotePath(), pServerItem->GetServer()))
 				{
 					if (!pServerItem->GetChildrenCount(false))
 					{

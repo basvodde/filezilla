@@ -22,7 +22,6 @@
 #include <wx/utils.h>
 #include <wx/progdlg.h>
 #include <wx/sound.h>
-#include "edithandler.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -471,7 +470,8 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 	{
 		fileItem = new CFileItem(pServerItem, queueOnly, download, localFile, remoteFile, remotePath, size);
 		fileItem->m_transferSettings.binary = ShouldUseBinaryMode(download ? remoteFile : wxFileName(localFile).GetFullName());
-		fileItem->m_edit = edit;
+		if (edit)
+			fileItem->m_edit = CEditHandler::remote;
 	}
 
 	InsertItem(pServerItem, fileItem);
@@ -1021,12 +1021,12 @@ void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
 			if (pFileItem->Download())
 				m_pMainFrame->GetState()->RefreshLocalFile(pFileItem->GetLocalFile());
 
-			if (pFileItem->m_edit && reason != retry && reason != reset)
+			if (pFileItem->m_edit == CEditHandler::remote && reason != retry && reason != reset)
 			{
 				CEditHandler* pEditHandler = CEditHandler::Get();
 				wxASSERT(pEditHandler);
 				wxFileName fn(pFileItem->GetLocalFile());
-				pEditHandler->FinishTransfer(reason == success, fn.GetFullName());
+				pEditHandler->FinishTransfer(reason == success, pFileItem->m_edit, fn.GetFullName());
 			}
 		}
 

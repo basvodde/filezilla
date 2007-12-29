@@ -968,8 +968,8 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 		CEditHandler* pEditHandler = CEditHandler::Get();
 		if (pEditHandler)
 		{
-			if (pEditHandler->GetFileCount(CEditHandler::edit) || pEditHandler->GetFileCount(CEditHandler::upload) ||
-				pEditHandler->GetFileCount(CEditHandler::upload_and_remove))
+			if (pEditHandler->GetFileCount(CEditHandler::none, CEditHandler::edit) || pEditHandler->GetFileCount(CEditHandler::none, CEditHandler::upload) ||
+				pEditHandler->GetFileCount(CEditHandler::none, CEditHandler::upload_and_remove))
 			{
 				CConditionalDialog dlg(this, CConditionalDialog::confirmexit_edit, CConditionalDialog::yesno);
 				dlg.SetTitle(_("Close FileZilla"));

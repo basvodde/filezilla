@@ -266,7 +266,7 @@ CFileItem::CFileItem(CServerItem* parent, bool queued, bool download, const wxSt
 	m_remove = false;
 	m_pEngineData = 0;
 	m_defaultFileExistsAction = -1;
-	m_edit = false;
+	m_edit = CEditHandler::none;
 }
 
 CFileItem::~CFileItem()
@@ -309,7 +309,7 @@ void CFileItem::SetActive(const bool active)
 
 void CFileItem::SaveItem(TiXmlElement* pElement) const
 {
-	if (m_edit)
+	if (m_edit != CEditHandler::none)
 		return;
 
 	TiXmlElement file("File");

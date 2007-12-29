@@ -19,6 +19,13 @@ public:
 		removing
 	};
 
+	enum fileType
+	{
+		none = -1,
+		local,
+		remote
+	};
+
 	static CEditHandler* Create();
 	static CEditHandler* Get();
 
@@ -28,20 +35,20 @@ public:
 	// If files are locked, they won't be removed though
 	void Release();
 
-	enum fileState GetFileState(const wxString& fileName) const;
+	enum fileState GetFileState(enum fileType type, const wxString& fileName) const;
 
 	// Returns the number of files in given state
-	int GetFileCount(enum fileState state) const;
+	int GetFileCount(enum fileType type, enum fileState state) const;
 
 	// Adds the file that doesn't exist yet. (Has to be in unknown state)
 	// The initial state will be download
-	bool AddFile(const wxString& fileName, const CServerPath& remotePath, const CServer& server);
+	bool AddFile(enum fileType type, const wxString& fileName, const CServerPath& remotePath, const CServer& server);
 
 	// Tries to unedit and remove file
-	bool Remove(const wxString& fileName);
+	bool Remove(enum fileType type, const wxString& fileName);
 	bool RemoveAll(bool force);
 
-	void FinishTransfer(bool successful, const wxString& fileName);
+	void FinishTransfer(bool successful, enum fileType type, const wxString& fileName);
 
 	void CheckForModifications();
 
@@ -55,8 +62,8 @@ public:
 	 * The dangerous argument will be set to true on some filetypes,
 	 * e.g. executables.
 	 */
-	bool CanOpen(const wxString& fileName, bool &dangerous);
-	bool StartEditing(const wxString& file);
+	bool CanOpen(enum fileType type, const wxString& fileName, bool &dangerous);
+	bool StartEditing(enum fileType type, const wxString& file);
 
 	struct t_fileData
 	{
@@ -67,9 +74,9 @@ public:
 		CServer server;
 	};
 
-	const std::list<t_fileData>& GetFiles() const { return m_fileDataList; }
+	const std::list<t_fileData>& GetFiles(enum fileType type) const { wxASSERT(type != none); return m_fileDataList[type]; }
 
-	bool UploadFile(const wxString& fileName, bool unedit);
+	bool UploadFile(enum fileType type, const wxString& fileName, bool unedit);
 
 protected:
 	CEditHandler();
@@ -79,7 +86,7 @@ protected:
 
 	wxString m_localDir;
 
-	bool StartEditing(t_fileData &data);
+	bool StartEditing(enum fileType type, t_fileData &data);
 
 	wxString GetOpenCommand(const wxString& file);
 	wxString GetSystemOpenCommand(const wxString& file);
@@ -87,10 +94,10 @@ protected:
 
 	void SetTimerState();
 
-	std::list<t_fileData> m_fileDataList;
+	std::list<t_fileData> m_fileDataList[2];
 
-	std::list<t_fileData>::iterator GetFile(const wxString& fileName);
-	std::list<t_fileData>::const_iterator GetFile(const wxString& fileName) const;
+	std::list<t_fileData>::iterator GetFile(enum fileType type, const wxString& fileName);
+	std::list<t_fileData>::const_iterator GetFile(enum fileType type, const wxString& fileName) const;
 
 	CQueueView* m_pQueue;
 

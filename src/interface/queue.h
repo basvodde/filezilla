@@ -3,6 +3,7 @@
 
 #include "aui_notebook_ex.h"
 #include "listctrlex.h"
+#include "edithandler.h"
 
 #define PRIORITY_COUNT 5
 enum QueuePriority
@@ -158,7 +159,7 @@ public:
 	bool m_queued;
 	int m_errorCount;
 	bool m_remove;
-	bool m_edit;
+	CEditHandler::fileType m_edit;
 
 	wxString m_statusMessage;
 
