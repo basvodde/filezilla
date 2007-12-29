@@ -1783,7 +1783,7 @@ wxListItemAttr* CLocalListView::OnGetItemAttr(long item) const
 	{
 	case different:
 		return &pThis->m_comparisonBackgrounds[0];
-	case fill:
+	case lonely:
 		return &pThis->m_comparisonBackgrounds[1];
 	case newer:
 		return &pThis->m_comparisonBackgrounds[2];
