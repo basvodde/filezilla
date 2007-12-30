@@ -2021,7 +2021,7 @@ void CMainFrame::OnUpdateToolbarComparison(wxUpdateUIEvent& event)
 
 		int mode = COptions::Get()->GetOptionVal(OPTION_COMPARISONMODE);
 		m_pMenuBar->Check(XRCID("ID_COMPARE_SIZE"), mode != 1);
-		m_pMenuBar->Check(XRCID("ID_TOOLBAR_COMPARISON"), mode == 1);
+		m_pMenuBar->Check(XRCID("ID_COMPARE_DATE"), mode == 1);
 	}
 }
 
