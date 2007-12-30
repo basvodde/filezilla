@@ -1727,7 +1727,6 @@ void CRemoteListView::ReselectItems(std::list<wxString>& selectedNames, wxString
 	{
 		focused = _T("");
 		SetItemState(0, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
-		return;
 	}
 
 	if (selectedNames.empty())
@@ -1736,11 +1735,17 @@ void CRemoteListView::ReselectItems(std::list<wxString>& selectedNames, wxString
 			return;
 
 		for (unsigned int i = 1; i < m_indexMapping.size(); i++)
-			if ((*m_pDirectoryListing)[m_indexMapping[i]].name == focused)
+		{
+			const int index = m_indexMapping[i];
+			if (m_fileData[index].flags == fill)
+				continue;
+
+			if ((*m_pDirectoryListing)[index].name == focused)
 			{
 				SetItemState(i, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
 				return;
 			}
+		}
 		return;
 	}
 
