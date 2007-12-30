@@ -86,6 +86,7 @@ bool CComparisonManager::CompareListings()
 	}
 
 	const int mode = COptions::Get()->GetOptionVal(OPTION_COMPARISONMODE);
+	const int threshold = COptions::Get()->GetOptionVal(OPTION_COMPARISON_THRESHOLD);
 
 	m_pLeft->m_pComparisonManager = this;
 	m_pRight->m_pComparisonManager = this;
@@ -129,40 +130,33 @@ bool CComparisonManager::CompareListings()
 				else
 				{
 					CComparableListing::t_fileEntryFlags localFlag, remoteFlag;
-					
-					wxDateTime localDateOnly = localDate.GetDateOnly();
-					wxDateTime remoteDateOnly = remoteDate.GetDateOnly();
-					if (localDateOnly > remoteDateOnly)
+
+					localDate.SetSecond(0);
+					localDate.SetMillisecond(0);
+					remoteDate.SetSecond(0);
+					remoteDate.SetMillisecond(0);
+					if (!localHasTime || !remoteHasTime)
 					{
-						localFlag = CComparableListing::newer;
-						remoteFlag = CComparableListing::normal;
+						localDate.ResetTime();
+						remoteDate.ResetTime();
 					}
-					else if (localDateOnly < remoteDateOnly)
+
+					wxTimeSpan span = remoteDate - localDate;
+					int minutes = span.GetMinutes();
+					if ((minutes >= 0 && minutes <= threshold) ||
+						(minutes < 0 && threshold + minutes >= 0))
+					{
+						localFlag = remoteFlag = CComparableListing::normal;
+					}
+					else if (minutes > 0)
 					{
 						localFlag = CComparableListing::normal;
 						remoteFlag = CComparableListing::newer;
 					}
-					else
+					else 
 					{
-						if (!localHasTime || !remoteHasTime)
-							localFlag = remoteFlag = CComparableListing::normal;
-						else
-						{
-							int localTime = localDate.GetHour() * 60 + localDate.GetMinute();
-							int remoteTime = remoteDate.GetHour() * 60 + remoteDate.GetMinute();
-							if (localTime > remoteTime)
-							{
-								localFlag = CComparableListing::newer;
-								remoteFlag = CComparableListing::normal;
-							}
-							else if (localTime < remoteTime)
-							{
-								localFlag = CComparableListing::normal;
-								remoteFlag = CComparableListing::newer;
-							}
-							else
-								localFlag = remoteFlag = CComparableListing::normal;
-						}
+						localFlag = CComparableListing::newer;
+						remoteFlag = CComparableListing::normal;
 					}
 					m_pLeft->CompareAddFile(localFlag);
 					m_pRight->CompareAddFile(remoteFlag);

@@ -105,7 +105,8 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Always use default editor", number, _T("0") },
 	{ "Inherit system associations", number, _T("1") },
 	{ "Custom file associations", string, _T("") },
-	{ "Comparison mode", number, _T("1") }
+	{ "Comparison mode", number, _T("1") },
+	{ "Comparison threshold", number, _T("1") }
 };
 
 COptions::COptions()
@@ -436,6 +437,14 @@ int COptions::Validate(unsigned int nID, int value)
 	case OPTION_SOCKET_BUFFERSIZE_SEND:
 		if (value != -1 && (value < 4096 || value > 4096 * 1024))
 			value = 131072;
+		break;
+	case OPTION_COMPARISONMODE:
+		if (value < 0 || value > 0)
+			value = 1;
+		break;
+	case OPTION_COMPARISON_THRESHOLD:
+		if (value < 0 || value > 1440)
+			value = 1;
 		break;
 	}
 	return value;
