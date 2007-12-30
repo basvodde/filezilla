@@ -2020,8 +2020,10 @@ void CMainFrame::OnUpdateToolbarComparison(wxUpdateUIEvent& event)
 		m_pMenuBar->Check(XRCID("ID_TOOLBAR_COMPARISON"), m_pComparisonManager && m_pComparisonManager->IsComparing());
 
 		int mode = COptions::Get()->GetOptionVal(OPTION_COMPARISONMODE);
-		m_pMenuBar->Check(XRCID("ID_COMPARE_SIZE"), mode != 1);
-		m_pMenuBar->Check(XRCID("ID_COMPARE_DATE"), mode == 1);
+		if (mode != 1)
+			m_pMenuBar->Check(XRCID("ID_COMPARE_SIZE"), true);
+		else
+			m_pMenuBar->Check(XRCID("ID_COMPARE_DATE"), true);
 	}
 }
 
@@ -2068,7 +2070,7 @@ void CMainFrame::ShowDropdownMenu(wxMenu* pMenu, wxToolBar* pToolBar, wxCommandE
 void CMainFrame::OnDropdownComparisonMode(wxCommandEvent& event)
 {
 	int old_mode = COptions::Get()->GetOptionVal(OPTION_COMPARISONMODE);
-	int new_mode = event.GetId() == XRCID("ID_COMPARE_SIZE") ? 0 : 1;
+	int new_mode = (event.GetId() == XRCID("ID_COMPARE_SIZE")) ? 0 : 1;
 	COptions::Get()->SetOption(OPTION_COMPARISONMODE, new_mode);
 
 	if (old_mode != new_mode && m_pComparisonManager && m_pComparisonManager->IsComparing())
