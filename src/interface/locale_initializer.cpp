@@ -291,7 +291,9 @@ std::string CInitializer::GetLocaleOption()
 	if (dir.empty())
 		return "";
 
+#ifdef __WXDEBUG__
 	printf("Reading locale option from %sfilezilla.xml\n", dir.c_str());
+#endif
 	std::string locale = GetSettingFromFile(dir + "filezilla.xml", "Language Code");
 
 	return locale;
