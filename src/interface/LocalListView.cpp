@@ -16,6 +16,7 @@
 #else
 #include <langinfo.h>
 #endif
+#include "edithandler.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -212,6 +213,8 @@ BEGIN_EVENT_TABLE(CLocalListView, CFileListCtrl<CLocalFileData>)
 	EVT_LIST_BEGIN_LABEL_EDIT(wxID_ANY, CLocalListView::OnBeginLabelEdit)
 	EVT_LIST_END_LABEL_EDIT(wxID_ANY, CLocalListView::OnEndLabelEdit)
 	EVT_LIST_BEGIN_DRAG(wxID_ANY, CLocalListView::OnBeginDrag)
+	EVT_MENU(XRCID("ID_OPEN"), CLocalListView::OnMenuOpen)
+	EVT_MENU(XRCID("ID_EDIT"), CLocalListView::OnMenuEdit)
 END_EVENT_TABLE()
 
 CLocalListView::CLocalListView(wxWindow* pParent, CState *pState, CQueueView *pQueue)
@@ -1000,6 +1003,7 @@ void CLocalListView::OnContextMenu(wxContextMenuEvent& event)
 	int index = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	int count = 0;
 	int fillCount = 0;
+	bool selectedDir = false;
 	while (index != -1)
 	{
 		count++;
@@ -1010,9 +1014,13 @@ void CLocalListView::OnContextMenu(wxContextMenuEvent& event)
 			pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
 			pMenu->Enable(XRCID("ID_DELETE"), false);
 			pMenu->Enable(XRCID("ID_RENAME"), false);
+			pMenu->Enable(XRCID("ID_OPEN"), false);
+			pMenu->Enable(XRCID("ID_EDIT"), false);
 		}
 		if (data->flags == fill)
 			fillCount++;
+		if (data->dir)
+			selectedDir = true;
 		index = GetNextItem(index, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	}
 	if (!count || fillCount == count)
@@ -1021,9 +1029,20 @@ void CLocalListView::OnContextMenu(wxContextMenuEvent& event)
 		pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
 		pMenu->Enable(XRCID("ID_DELETE"), false);
 		pMenu->Enable(XRCID("ID_RENAME"), false);
+		pMenu->Enable(XRCID("ID_OPEN"), false);
+		pMenu->Enable(XRCID("ID_EDIT"), false);
 	}
 	else if (count > 1)
+	{
 		pMenu->Enable(XRCID("ID_RENAME"), false);
+		pMenu->Enable(XRCID("ID_OPEN"), false);
+		pMenu->Enable(XRCID("ID_EDIT"), false);
+	}
+	else if (selectedDir)
+	{
+		pMenu->Enable(XRCID("ID_OPEN"), false);
+		pMenu->Enable(XRCID("ID_EDIT"), false);
+	}
 
 	PopupMenu(pMenu);
 	delete pMenu;
@@ -1177,24 +1196,31 @@ void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 		if (data->flags == fill)
 			continue;
 
+		const wxString name = dir + data->name;
+		if (!wxFileName::FileExists(name) && !wxFileName::DirExists(name))
+			continue;
+
 		_tcscpy(p, dir);
 		p += dirLen;
 		_tcscpy(p, data->name);
 		p += data->name.Length() + 1;
 	}
-	*p = 0;
+	if (p != pBuffer)
+	{
+		*p = 0;
 
-	// Now we can delete the files in the buffer
-	SHFILEOPSTRUCT op;
-	memset(&op, 0, sizeof(op));
-	op.hwnd = (HWND)GetHandle();
-	op.wFunc = FO_DELETE;
-	op.pFrom = pBuffer;
+		// Now we can delete the files in the buffer
+		SHFILEOPSTRUCT op;
+		memset(&op, 0, sizeof(op));
+		op.hwnd = (HWND)GetHandle();
+		op.wFunc = FO_DELETE;
+		op.pFrom = pBuffer;
 
-	// Move to trash if shift is not pressed, else delete
-	op.fFlags = wxGetKeyState(WXK_SHIFT) ? 0 : FOF_ALLOWUNDO;
+		// Move to trash if shift is not pressed, else delete
+		op.fFlags = wxGetKeyState(WXK_SHIFT) ? 0 : FOF_ALLOWUNDO;
 
-	SHFileOperation(&op);
+		SHFileOperation(&op);
+	}
 	delete [] pBuffer;
 #else
 	if (wxMessageBox(_("Really delete all selected files and/or directories?"), _("Confirmation needed"), wxICON_QUESTION | wxYES_NO, this) != wxYES)
@@ -1900,4 +1926,147 @@ wxString CLocalListView::GetItemText(int item, unsigned int column)
 		return data->lastModified.Format(m_dateFormat);
 	}
 	return _T("");
+}
+
+void CLocalListView::OnMenuEdit(wxCommandEvent& event)
+{
+	const CServer* const pServer = m_pState->GetServer();
+	if (!pServer)
+	{
+		wxBell();
+		return;
+	}
+
+	const CServerPath& path = m_pState->GetRemotePath();
+	if (path.IsEmpty())
+	{
+		wxBell();
+		return;
+	}
+
+	long item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	if (item < 1)
+	{
+		wxBell();
+		return;
+	}
+
+	if (GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1)
+	{
+		wxBell();
+		return;
+	}
+
+	if (!item && m_hasParent)
+	{
+		wxBell();
+		return;
+	}
+
+	CEditHandler* pEditHandler = CEditHandler::Get();
+
+	int unknown = 0;
+	int failed = 0;
+	wxString name;
+
+	CLocalFileData *data = GetData(item);
+	if (!data)
+	{
+		wxBell();
+		return;
+	}
+
+	if (data->dir || data->flags == fill)
+	{
+		wxBell();
+		return;
+	}
+
+	wxFileName fn(m_dir, data->name);
+
+	bool dangerous = false;
+	if (!pEditHandler->CanOpen(CEditHandler::local, fn.GetFullPath(), dangerous) || dangerous)
+	{
+		wxMessageBox(wxString::Format(_("The file '%s' could not be opened:\nNo program has been associated on your system with this file."), fn.GetFullPath().c_str()), _("Opening failed"), wxICON_EXCLAMATION);
+		return;
+	}
+
+	CEditHandler::fileState state = pEditHandler->GetFileState(CEditHandler::local, fn.GetFullPath());
+	switch (state)
+	{
+	case CEditHandler::upload:
+	case CEditHandler::upload_and_remove:
+		wxMessageBox(_("A file with that name is already being transferred."), _("Cannot view / edit selected file"), wxICON_EXCLAMATION);
+		return;
+	case CEditHandler::edit:
+		{
+			int res = wxMessageBox(_("A file with that name is already being edited. Discard old file and download the new file?"), _("Selected file already being edited"), wxICON_QUESTION | wxYES_NO);
+			if (res != wxYES)
+			{
+				wxBell();
+				return;
+			}
+			pEditHandler->StartEditing(CEditHandler::local, fn.GetFullPath());
+			return;
+		}
+	default:
+		break;
+	}
+
+	if (!pEditHandler->AddFile(CEditHandler::local, fn.GetFullPath(), path, *pServer))
+	{
+		wxMessageBox(wxString::Format(_("The file '%s' could not be opened:\nThe associated command failed"), fn.GetFullPath().c_str()), _("Opening failed"), wxICON_EXCLAMATION);
+		return;
+	}
+}
+
+void CLocalListView::OnMenuOpen(wxCommandEvent& event)
+{
+	long item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	if (item < 1)
+	{
+		wxBell();
+		return;
+	}
+
+	if (GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1)
+	{
+		wxBell();
+		return;
+	}
+
+	if (!item && m_hasParent)
+	{
+		wxBell();
+		return;
+	}
+
+	CEditHandler* pEditHandler = CEditHandler::Get();
+
+	CLocalFileData *data = GetData(item);
+	if (!data)
+	{
+		wxBell();
+		return;
+	}
+
+	if (data->dir || data->flags == fill)
+	{
+		wxBell();
+		return;
+	}
+
+	wxFileName fn(m_dir, data->name);
+
+	wxString cmd = pEditHandler->GetSystemOpenCommand(fn.GetFullPath());
+	if (cmd == _T(""))
+	{
+		wxMessageBox(wxString::Format(_("The file '%s' could not be opened:\nNo program has been associated on your system with this file."), fn.GetFullPath().c_str()), _("Opening failed"), wxICON_EXCLAMATION);
+		return;
+	}
+
+	if (wxExecute(cmd))
+		return;
+
+	wxMessageBox(wxString::Format(_("The file '%s' could not be opened:\nThe associated command failed"), fn.GetFullPath().c_str()), _("Opening failed"), wxICON_EXCLAMATION);
 }

@@ -453,7 +453,7 @@ CQueueView::~CQueueView()
 
 bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxString& localFile,
 						   const wxString& remoteFile, const CServerPath& remotePath,
-						   const CServer& server, const wxLongLong size, bool edit /*=false*/)
+						   const CServer& server, const wxLongLong size, enum CEditHandler::fileType edit /*=CEditHandler::none*/)
 {
 	CServerItem* pServerItem = CreateServerItem(server);
 
@@ -464,14 +464,13 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 			fileItem = new CFolderItem(pServerItem, queueOnly, localFile);
 		else
 			fileItem = new CFolderItem(pServerItem, queueOnly, remotePath, remoteFile);
-		wxASSERT(!edit);
+		wxASSERT(edit == CEditHandler::none);
 	}
 	else
 	{
 		fileItem = new CFileItem(pServerItem, queueOnly, download, localFile, remoteFile, remotePath, size);
 		fileItem->m_transferSettings.binary = ShouldUseBinaryMode(download ? remoteFile : wxFileName(localFile).GetFullName());
-		if (edit)
-			fileItem->m_edit = CEditHandler::remote;
+		fileItem->m_edit = edit;
 	}
 
 	InsertItem(pServerItem, fileItem);
@@ -1021,12 +1020,15 @@ void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
 			if (pFileItem->Download())
 				m_pMainFrame->GetState()->RefreshLocalFile(pFileItem->GetLocalFile());
 
-			if (pFileItem->m_edit == CEditHandler::remote && reason != retry && reason != reset)
+			if (pFileItem->m_edit != CEditHandler::none && reason != retry && reason != reset)
 			{
 				CEditHandler* pEditHandler = CEditHandler::Get();
 				wxASSERT(pEditHandler);
 				wxFileName fn(pFileItem->GetLocalFile());
-				pEditHandler->FinishTransfer(reason == success, pFileItem->m_edit, fn.GetFullName());
+				if (pFileItem->m_edit == CEditHandler::remote)
+					pEditHandler->FinishTransfer(reason == success, pFileItem->m_edit, fn.GetFullName());
+				else
+					pEditHandler->FinishTransfer(reason == success, pFileItem->m_edit, fn.GetFullPath());
 			}
 		}
 

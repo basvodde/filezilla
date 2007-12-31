@@ -2194,7 +2194,7 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 	}
 
 	wxFileName fn = wxFileName(localDir, entry.name);
-	m_pQueue->QueueFile(false, true, fn.GetFullPath(), entry.name, m_pDirectoryListing->path, *m_pState->GetServer(), entry.size, true);
+	m_pQueue->QueueFile(false, true, fn.GetFullPath(), entry.name, m_pDirectoryListing->path, *m_pState->GetServer(), entry.size, CEditHandler::remote);
 }
 
 #ifdef __WXDEBUG__

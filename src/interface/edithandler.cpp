@@ -245,17 +245,22 @@ int CEditHandler::GetFileCount(enum CEditHandler::fileType type, enum CEditHandl
 
 bool CEditHandler::AddFile(enum CEditHandler::fileType type, const wxString& fileName, const CServerPath& remotePath, const CServer& server)
 {
-	wxASSERT(type == remote);
+	wxASSERT(type != none);
 	wxASSERT(GetFileState(type, fileName) == unknown);
 	if (GetFileState(type, fileName) != unknown)
 		return false;
 
 	t_fileData data;
 	data.name = fileName;
-	data.state = download;
+	if (type == remote)
+		data.state = download;
+	else
+		data.state = edit;
 	data.remotePath = remotePath;
 	data.server = server;
-	m_fileDataList[type].push_back(data);
+
+	if (type == remote || StartEditing(type, data))
+		m_fileDataList[type].push_back(data);
 
 	return true;
 }
@@ -603,8 +608,8 @@ bool CEditHandler::UploadFile(enum CEditHandler::fileType type, const wxString& 
 
 	wxASSERT(m_pQueue);
 	wxULongLong size = fn.GetSize();
-	//TODO: local
-	m_pQueue->QueueFile(false, false, fn.GetFullPath(), fn.GetFullName(), iter->remotePath, iter->server, wxLongLong(size.GetHi(), size.GetLo()), true);
+	
+	m_pQueue->QueueFile(false, false, fn.GetFullPath(), fn.GetFullName(), iter->remotePath, iter->server, wxLongLong(size.GetHi(), size.GetLo()), type);
 
 	return true;
 }

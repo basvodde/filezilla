@@ -968,13 +968,13 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 		CEditHandler* pEditHandler = CEditHandler::Get();
 		if (pEditHandler)
 		{
-			if (pEditHandler->GetFileCount(CEditHandler::none, CEditHandler::edit) || pEditHandler->GetFileCount(CEditHandler::none, CEditHandler::upload) ||
+			if (pEditHandler->GetFileCount(CEditHandler::remote, CEditHandler::edit) || pEditHandler->GetFileCount(CEditHandler::none, CEditHandler::upload) ||
 				pEditHandler->GetFileCount(CEditHandler::none, CEditHandler::upload_and_remove))
 			{
 				CConditionalDialog dlg(this, CConditionalDialog::confirmexit_edit, CConditionalDialog::yesno);
 				dlg.SetTitle(_("Close FileZilla"));
 
-				dlg.AddText(_("Some remote files are still being edited or need to be uploaded."));
+				dlg.AddText(_("Some files are still being edited or need to be uploaded."));
 				dlg.AddText(_("If you close FileZilla, your changes will be lost."));
 				dlg.AddText(_("Do you really want to close FileZilla?"));
 

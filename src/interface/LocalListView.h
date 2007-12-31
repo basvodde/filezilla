@@ -89,6 +89,8 @@ protected:
 	void OnBeginLabelEdit(wxListEvent& event);
 	void OnEndLabelEdit(wxListEvent& event);
 	void OnBeginDrag(wxListEvent& event);
+	void OnMenuOpen(wxCommandEvent& event);
+	void OnMenuEdit(wxCommandEvent& event);
 };
 
 #endif

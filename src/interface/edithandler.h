@@ -78,6 +78,8 @@ public:
 
 	bool UploadFile(enum fileType type, const wxString& fileName, bool unedit);
 
+	wxString GetSystemOpenCommand(const wxString& file);
+
 protected:
 	CEditHandler();
 	virtual ~CEditHandler() { }
@@ -89,7 +91,6 @@ protected:
 	bool StartEditing(enum fileType type, t_fileData &data);
 
 	wxString GetOpenCommand(const wxString& file);
-	wxString GetSystemOpenCommand(const wxString& file);
 	wxString GetCustomOpenCommand(const wxString& file);
 
 	void SetTimerState();
