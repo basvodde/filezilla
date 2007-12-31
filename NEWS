@@ -5,13 +5,25 @@ Legend:
   + New feature or important bugfix
   - Bugfixes
 
-3.0.5-rc1 (2007-12-??)
+3.0.5-rc1 (2007-12-31)
 
 + Directory listing comparison
++ Ability to open and edit local files
++ Add option to use default system language. Note: Language selection will be reset to default if updating to this version.
++ New artwork for send and recv indicators
+- Fix crash with keepalive timer
+- nix: Use proper locale initialization, happened too late in FZ's startup sequence in previous versions.
 - Fix issue with proxies in combination with nonstandard ports
 - Fix timezone offset detection if user has specified a custom offset
 - MSW: Cancel remote renaming of files if listing changes
 - Fix prefix search in file listings not working with all keys
+- Internal engine state could get confused on failed transfers
+- Fix visual refresh problem in queue
+- Fix several glitches with right-to-left languages
+- Write errors during downloads are now critical, as they usually require user interaction (e.g. disk full)
+- Calculate proper filesize on VMS servers
+- Remote directory tree did not display all known directories
+- Don't display error messages if some local directories are not accessible during auto-completion in local view header or if if they are parent of an accessible directory in the local tree view.
 
 3.0.4 (2007-11-26)
 
