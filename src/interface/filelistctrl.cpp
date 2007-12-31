@@ -416,7 +416,7 @@ template<class CFileData> void CFileListCtrl<CFileData>::ComparisonRememberSelec
 {
 	m_comparisonSelections.clear();
 
-	if (GetItemCount() != m_indexMapping.size())
+	if (GetItemCount() != (int)m_indexMapping.size())
 		return;
 
 	int focus = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);

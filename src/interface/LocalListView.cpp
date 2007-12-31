@@ -1965,10 +1965,6 @@ void CLocalListView::OnMenuEdit(wxCommandEvent& event)
 
 	CEditHandler* pEditHandler = CEditHandler::Get();
 
-	int unknown = 0;
-	int failed = 0;
-	wxString name;
-
 	CLocalFileData *data = GetData(item);
 	if (!data)
 	{
