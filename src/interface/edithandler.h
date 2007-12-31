@@ -132,7 +132,6 @@ protected:
 	void OnSelectionChanged(wxListEvent& event);
 	void OnUnedit(wxCommandEvent& event);
 	void OnUpload(wxCommandEvent& event);
-	void OnUploadAndUnedit(wxCommandEvent& event);
 	void OnEdit(wxCommandEvent& event);
 };
 

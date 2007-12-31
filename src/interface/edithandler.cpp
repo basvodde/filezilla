@@ -505,6 +505,7 @@ checkmodifications_remote:
 		CChangedFileDialog dlg;
 		if (!dlg.Load(wxTheApp->GetTopWindow(), _T("ID_CHANGEDFILE")))
 			continue;
+		XRCCTRL(dlg, "ID_DESC_UPLOAD_LOCAL", wxStaticText)->Hide();
 
 		dlg.SetLabel(XRCID("ID_FILENAME"), iter->name);
 
@@ -555,6 +556,8 @@ checkmodifications_local:
 		CChangedFileDialog dlg;
 		if (!dlg.Load(wxTheApp->GetTopWindow(), _T("ID_CHANGEDFILE")))
 			continue;
+		XRCCTRL(dlg, "ID_DESC_UPLOAD_REMOTE", wxStaticText)->Hide();
+		XRCCTRL(dlg, "ID_DELETE", wxCheckBox)->SetLabel(_("&Finish editing"));
 
 		dlg.SetLabel(XRCID("ID_FILENAME"), iter->name);
 
@@ -757,7 +760,7 @@ BEGIN_EVENT_TABLE(CEditHandlerStatusDialog, wxDialogEx)
 EVT_LIST_ITEM_SELECTED(wxID_ANY, CEditHandlerStatusDialog::OnSelectionChanged)
 EVT_BUTTON(XRCID("ID_UNEDIT"), CEditHandlerStatusDialog::OnUnedit)
 EVT_BUTTON(XRCID("ID_UPLOAD"), CEditHandlerStatusDialog::OnUpload)
-EVT_BUTTON(XRCID("ID_UPLOADANDUNEDIT"), CEditHandlerStatusDialog::OnUploadAndUnedit)
+EVT_BUTTON(XRCID("ID_UPLOADANDUNEDIT"), CEditHandlerStatusDialog::OnUpload)
 EVT_BUTTON(XRCID("ID_EDIT"), CEditHandlerStatusDialog::OnEdit)
 END_EVENT_TABLE()
 
@@ -772,9 +775,9 @@ int CEditHandlerStatusDialog::ShowModal()
 	if (!pEditHandler)
 		return wxID_CANCEL;
 
-	if (!pEditHandler->GetFileCount(CEditHandler::remote, CEditHandler::unknown))
+	if (!pEditHandler->GetFileCount(CEditHandler::none, CEditHandler::unknown))
 	{
-		wxMessageBox(_("No remote files are currently being edited"), _("Cannot show dialog"), wxICON_INFORMATION, m_pParent);
+		wxMessageBox(_("No files are currently being edited"), _("Cannot show dialog"), wxICON_INFORMATION, m_pParent);
 		return wxID_CANCEL;
 	}
 
@@ -786,39 +789,71 @@ int CEditHandlerStatusDialog::ShowModal()
 		return wxID_CANCEL;
 
 	pListCtrl->InsertColumn(0, _("Filename"));
-	pListCtrl->InsertColumn(1, _("Status"));
+	pListCtrl->InsertColumn(1, _("Type"));
+	pListCtrl->InsertColumn(2, _("Status"));
 
-	const std::list<CEditHandler::t_fileData>& files = pEditHandler->GetFiles(CEditHandler::remote);
-	unsigned int i = 0;
-	for (std::list<CEditHandler::t_fileData>::const_iterator iter = files.begin(); iter != files.end(); iter++, i++)
 	{
-		pListCtrl->InsertItem(i, iter->name);
-		switch (iter->state)
+		const std::list<CEditHandler::t_fileData>& files = pEditHandler->GetFiles(CEditHandler::remote);
+		unsigned int i = 0;
+		for (std::list<CEditHandler::t_fileData>::const_iterator iter = files.begin(); iter != files.end(); iter++, i++)
 		{
-		case CEditHandler::download:
-			pListCtrl->SetItem(i, 1, _("Downloading"));
-			break;
-		case CEditHandler::upload:
-			pListCtrl->SetItem(i, 1, _("Uploading"));
-			break;
-		case CEditHandler::upload_and_remove:
-			pListCtrl->SetItem(i, 1, _("Uploading and pending removal"));
-			break;
-		case CEditHandler::removing:
-			pListCtrl->SetItem(i, 1, _("Pending removal"));
-			break;
-		case CEditHandler::edit:
-			pListCtrl->SetItem(i, 1, _("Being edited"));
-			break;
-		case CEditHandler::unknown:
-			pListCtrl->SetItem(i, 1, _("Unknown"));
-			break;
+			pListCtrl->InsertItem(i, iter->name);
+			pListCtrl->SetItem(i, 1, _("Remote"));
+			switch (iter->state)
+			{
+			case CEditHandler::download:
+				pListCtrl->SetItem(i, 2, _("Downloading"));
+				break;
+			case CEditHandler::upload:
+				pListCtrl->SetItem(i, 2, _("Uploading"));
+				break;
+			case CEditHandler::upload_and_remove:
+				pListCtrl->SetItem(i, 2, _("Uploading and pending removal"));
+				break;
+			case CEditHandler::removing:
+				pListCtrl->SetItem(i, 2, _("Pending removal"));
+				break;
+			case CEditHandler::edit:
+				pListCtrl->SetItem(i, 2, _("Being edited"));
+				break;
+			default:
+				pListCtrl->SetItem(i, 2, _("Unknown"));
+				break;
+			}
+			pListCtrl->SetItemData(i, CEditHandler::remote);
+		}
+	}
+
+	{
+		const std::list<CEditHandler::t_fileData>& files = pEditHandler->GetFiles(CEditHandler::local);
+		unsigned int i = 0;
+		for (std::list<CEditHandler::t_fileData>::const_iterator iter = files.begin(); iter != files.end(); iter++, i++)
+		{
+			pListCtrl->InsertItem(i, iter->name);
+			pListCtrl->SetItem(i, 1, _("Local"));
+			switch (iter->state)
+			{
+			case CEditHandler::upload:
+				pListCtrl->SetItem(i, 2, _("Uploading"));
+				break;
+			case CEditHandler::upload_and_remove:
+				pListCtrl->SetItem(i, 2, _("Uploading and unediting"));
+				break;
+			case CEditHandler::edit:
+				pListCtrl->SetItem(i, 2, _("Being edited"));
+				break;
+			default:
+				pListCtrl->SetItem(i, 2, _("Unknown"));
+				break;
+			}
+			pListCtrl->SetItemData(i, CEditHandler::local);
 		}
 	}
 
 	pListCtrl->SetColumnWidth(0, wxLIST_AUTOSIZE);
 	pListCtrl->SetColumnWidth(1, wxLIST_AUTOSIZE);
-	pListCtrl->SetMinSize(wxSize(pListCtrl->GetColumnWidth(0) + pListCtrl->GetColumnWidth(1) + 5, pListCtrl->GetMinSize().GetHeight()));
+	pListCtrl->SetColumnWidth(2, wxLIST_AUTOSIZE);
+	pListCtrl->SetMinSize(wxSize(pListCtrl->GetColumnWidth(0) + pListCtrl->GetColumnWidth(1) + pListCtrl->GetColumnWidth(2) + 10, pListCtrl->GetMinSize().GetHeight()));
 	GetSizer()->Fit(this);
 
 	SetCtrlState();
@@ -841,7 +876,8 @@ void CEditHandlerStatusDialog::SetCtrlState()
 	while ((item = pListCtrl->GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
 	{
 		const wxString name = pListCtrl->GetItemText(item);
-		if (pEditHandler->GetFileState(CEditHandler::remote, name) == CEditHandler::edit)
+		enum CEditHandler::fileType type = (enum CEditHandler::fileType)pListCtrl->GetItemData(item);
+		if (pEditHandler->GetFileState(type, name) == CEditHandler::edit)
 			selectedEdited = true;
 		else
 			selectedOther = true;
@@ -867,29 +903,33 @@ void CEditHandlerStatusDialog::OnUnedit(wxCommandEvent& event)
 
 	wxListCtrl* pListCtrl = XRCCTRL(*this, "ID_FILES", wxListCtrl);
 
-	std::list<wxString> names;
+	std::list<int> files;
 	int item = -1;
 	while ((item = pListCtrl->GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
 	{
 		pListCtrl->SetItemState(item, 0, wxLIST_STATE_SELECTED);
 		const wxString name = pListCtrl->GetItemText(item);
-		if (pEditHandler->GetFileState(CEditHandler::remote, name) != CEditHandler::edit)
+		enum CEditHandler::fileType type = (enum CEditHandler::fileType)pListCtrl->GetItemData(item);
+		if (pEditHandler->GetFileState(type, name) != CEditHandler::edit)
 		{
 			wxBell();
 			return;
 		}
-		names.push_back(name);
+
+		files.push_front(item);
 	}
 
-	for (std::list<wxString>::const_iterator iter = names.begin(); iter != names.end(); iter++)
+	for (std::list<int>::const_iterator iter = files.begin(); iter != files.end(); iter++)
 	{
-		int i = pListCtrl->FindItem(-1, *iter);
-		wxCHECK_RET(i != -1, _("item not found"));
+		const int i = *iter;
 
-		if (pEditHandler->Remove(CEditHandler::remote, *iter))
+		const wxString name = pListCtrl->GetItemText(i);
+		enum CEditHandler::fileType type = (enum CEditHandler::fileType)pListCtrl->GetItemData(i);
+		
+		if (pEditHandler->Remove(type, name) || type == CEditHandler::local)
 			pListCtrl->DeleteItem(i);
 		else
-			pListCtrl->SetItem(i, 1, _("Pending removal"));
+			pListCtrl->SetItem(i, 2, _("Pending removal"));
 	}
 
 	SetCtrlState();
@@ -903,61 +943,38 @@ void CEditHandlerStatusDialog::OnUpload(wxCommandEvent& event)
 
 	wxListCtrl* pListCtrl = XRCCTRL(*this, "ID_FILES", wxListCtrl);
 
-	std::list<wxString> names;
+	std::list<int> files;
 	int item = -1;
 	while ((item = pListCtrl->GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
 	{
 		pListCtrl->SetItemState(item, 0, wxLIST_STATE_SELECTED);
 		const wxString name = pListCtrl->GetItemText(item);
-		if (pEditHandler->GetFileState(CEditHandler::remote, name) != CEditHandler::edit)
+		enum CEditHandler::fileType type = (enum CEditHandler::fileType)pListCtrl->GetItemData(item);
+
+		if (pEditHandler->GetFileState(type, name) != CEditHandler::edit)
 		{
 			wxBell();
 			return;
 		}
-		names.push_back(name);
+		files.push_front(item);
 	}
 
-	for (std::list<wxString>::const_iterator iter = names.begin(); iter != names.end(); iter++)
+	for (std::list<int>::const_iterator iter = files.begin(); iter != files.end(); iter++)
 	{
-		int i = pListCtrl->FindItem(-1, *iter);
-		wxCHECK_RET(i != -1, _("item not found"));
+		const int i = *iter;
 
-		pEditHandler->UploadFile(CEditHandler::remote, *iter, false);
-		pListCtrl->SetItem(i, 1, _("Uploading"));
-	}
+		const wxString name = pListCtrl->GetItemText(i);
+		enum CEditHandler::fileType type = (enum CEditHandler::fileType)pListCtrl->GetItemData(i);
 
-	SetCtrlState();
-}
-
-void CEditHandlerStatusDialog::OnUploadAndUnedit(wxCommandEvent& event)
-{
-	CEditHandler* const pEditHandler = CEditHandler::Get();
-	if (!pEditHandler)
-		return;
-
-	wxListCtrl* pListCtrl = XRCCTRL(*this, "ID_FILES", wxListCtrl);
-
-	std::list<wxString> names;
-	int item = -1;
-	while ((item = pListCtrl->GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
-	{
-		pListCtrl->SetItemState(item, 0, wxLIST_STATE_SELECTED);
-		const wxString name = pListCtrl->GetItemText(item);
-		if (pEditHandler->GetFileState(CEditHandler::remote, name) != CEditHandler::edit)
-		{
-			wxBell();
-			return;
-		}
-		names.push_back(name);
-	}
-
-	for (std::list<wxString>::const_iterator iter = names.begin(); iter != names.end(); iter++)
-	{
-		int i = pListCtrl->FindItem(-1, *iter);
-		wxCHECK_RET(i != -1, _("item not found"));
-
-		pEditHandler->UploadFile(CEditHandler::remote, *iter, true);
-		pListCtrl->SetItem(i, 1, _("Uploading and pending removal"));
+		bool unedit = event.GetId() == XRCID("ID_UPLOADANDUNEDIT");
+		pEditHandler->UploadFile(type, name, unedit);
+		
+		if (!unedit)
+			pListCtrl->SetItem(i, 2, _("Uploading"));
+		else if (type == CEditHandler::remote)
+			pListCtrl->SetItem(i, 2, _("Uploading and pending removal"));
+		else
+			pListCtrl->SetItem(i, 2, _("Uploading and unediting"));
 	}
 
 	SetCtrlState();
@@ -971,31 +988,35 @@ void CEditHandlerStatusDialog::OnEdit(wxCommandEvent& event)
 
 	wxListCtrl* pListCtrl = XRCCTRL(*this, "ID_FILES", wxListCtrl);
 
-	std::list<wxString> names;
+	std::list<int> files;
 	int item = -1;
 	while ((item = pListCtrl->GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
 	{
 		pListCtrl->SetItemState(item, 0, wxLIST_STATE_SELECTED);
 		const wxString name = pListCtrl->GetItemText(item);
-		if (pEditHandler->GetFileState(CEditHandler::remote, name) != CEditHandler::edit)
+		enum CEditHandler::fileType type = (enum CEditHandler::fileType)pListCtrl->GetItemData(item);
+
+		if (pEditHandler->GetFileState(type, name) != CEditHandler::edit)
 		{
 			wxBell();
 			return;
 		}
-		names.push_back(name);
+		files.push_front(item);
 	}
 
-	for (std::list<wxString>::const_iterator iter = names.begin(); iter != names.end(); iter++)
+	for (std::list<int>::const_iterator iter = files.begin(); iter != files.end(); iter++)
 	{
-		int i = pListCtrl->FindItem(-1, *iter);
-		wxCHECK_RET(i != -1, _("item not found"));
+		const int i = *iter;
 
-		if (!pEditHandler->StartEditing(CEditHandler::remote, *iter))
+		const wxString name = pListCtrl->GetItemText(i);
+		enum CEditHandler::fileType type = (enum CEditHandler::fileType)pListCtrl->GetItemData(i);
+
+		if (!pEditHandler->StartEditing(type, name))
 		{
-			if (pEditHandler->Remove(CEditHandler::remote, *iter))
+			if (pEditHandler->Remove(type, name))
 				pListCtrl->DeleteItem(i);
 			else
-				pListCtrl->SetItem(i, 1, _("Pending removal"));
+				pListCtrl->SetItem(i, 2, _("Pending removal"));
 		}
 	}
 
