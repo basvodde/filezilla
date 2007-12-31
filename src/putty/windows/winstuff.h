@@ -121,13 +121,6 @@ GLOBAL HWND logbox;
 GLOBAL HINSTANCE hinst;
 
 /*
- * Details of the help file.
- */
-GLOBAL char *help_path;
-GLOBAL int help_has_contents;
-GLOBAL int requested_help;
-
-/*
  * Help file stuff in winhelp.c.
  */
 void init_help(void);
