@@ -166,7 +166,7 @@ void COptionsPageEdit::OnBrowseEditor(wxCommandEvent& event)
 #elif __WXMAC__
 		_T("Applications (*.app)|*.app"),
 #else
-		_T("*.*"),
+		wxFileSelectorDefaultWildcardStr,
 #endif
 		wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 
