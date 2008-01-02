@@ -554,25 +554,18 @@ void CRemoteTreeView::RefreshItem(wxTreeItemId parent, const CDirectoryListing& 
 		}
 		else if (cmp > 0)
 		{
+			// Child no longer exists
 			wxTreeItemId sel = GetSelection();
-			if (sel)
-			{
-				do
-				{
-					sel = GetItemParent(sel);
-					if (sel == parent)
-						break;
-				} while (sel);
-			}
+			while (sel && sel != child)
+				sel = GetItemParent(sel);
+			wxTreeItemId prev = GetPrevSibling(child);
 			if (!sel)
-			{
-				wxTreeItemId prev = GetPrevSibling(child);
 				Delete(child);
-				child = prev;
-			}
+			child = prev;
 		}
 		else if (cmp < 0)
 		{
+			// New directory
 			CServerPath path = listing.path;
 			path.AddSegment(*iter);
 
@@ -598,22 +591,14 @@ void CRemoteTreeView::RefreshItem(wxTreeItemId parent, const CDirectoryListing& 
 	}
 	while (child)
 	{
+		// Child no longer exists
 		wxTreeItemId sel = GetSelection();
-		if (sel)
-		{
-			do
-			{
-				sel = GetItemParent(sel);
-				if (sel == parent)
-					break;
-			} while (sel);
-		}
-		if (!sel)
-		{
-			wxTreeItemId prev = GetPrevSibling(child);
+		while (sel && sel != child)
+			sel = GetItemParent(sel);
+		wxTreeItemId prev = GetPrevSibling(child);
+		if (!sel)			
 			Delete(child);
-			child = prev;
-		}
+		child = prev;
 	}
 	while (iter != dirs.rend())
 	{
