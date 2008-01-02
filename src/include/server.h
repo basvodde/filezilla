@@ -19,7 +19,8 @@ enum ServerType
 	DOS,
 	MVS,
 	VXWORKS,
-	ZVM
+	ZVM,
+	HPNONSTOP
 };
 
 enum LogonType

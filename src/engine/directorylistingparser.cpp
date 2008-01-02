@@ -752,6 +752,12 @@ bool CDirectoryListingParser::ParseLine(CLine *pLine, const enum ServerType serv
 		if (res)
 			goto done;
 	}
+	else if (serverType == HPNONSTOP)
+	{
+		res = ParseAsHPNonstop(pLine, entry);
+		if (res)
+			goto done;
+	}
 
 	res = ParseAsUnix(pLine, entry);
 	if (res)
@@ -2845,5 +2851,67 @@ bool CDirectoryListingParser::ParseAsZVM(CLine* pLine, CDirentry &entry)
 	if (entry.hasTime)
 		entry.time.Add(m_timezoneOffset);
 
+	return true;
+}
+
+bool CDirectoryListingParser::ParseAsHPNonstop(CLine *pLine, CDirentry &entry)
+{
+	int index = 0;
+	CToken token;
+
+	// Get name
+	if (!pLine->GetToken(index, token))
+		return false;
+
+	entry.name = token.GetString();
+
+	// File code, numeric, unsuded
+	if (!pLine->GetToken(++index, token))
+		return false;
+	if (!token.IsNumeric())
+		return false;
+
+	// Size
+	if (!pLine->GetToken(++index, token))
+		return false;
+	if (!token.IsNumeric())
+		return false;
+
+	entry.size = token.GetNumber();
+
+	// Date
+	if (!pLine->GetToken(++index, token))
+		return false;
+	if (!ParseShortDate(token, entry, false))
+		return false;
+
+	// Time
+	if (!pLine->GetToken(++index, token))
+		return false;
+	if (!ParseTime(token, entry))
+		return false;
+
+	// Owner
+	if (!pLine->GetToken(++index, token))
+		return false;
+	entry.ownerGroup = token.GetString();
+
+	// Owner, part 2
+	if (!pLine->GetToken(++index, token))
+		return false;
+	entry.ownerGroup += _T(" ") + token.GetString();
+
+	// Permissions
+	if (!pLine->GetToken(++index, token))
+		return false;
+	entry.permissions = token.GetString();
+
+	// Nothing
+	if (pLine->GetToken(++index, token))
+		return false;
+
+	entry.dir = false;
+	entry.link = false;
+		
 	return true;
 }

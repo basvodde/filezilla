@@ -885,6 +885,8 @@ int CFtpControlSocket::LogonParseResponse()
 		{
 			if (m_Response.Length() > 7 && m_Response.Mid(3, 4) == _T(" MVS"))
 				m_pCurrentServer->SetType(MVS);
+			else if (m_Response.Len() > 12 && m_Response.Mid(3, 9).Upper() == _T(" NONSTOP "))
+				m_pCurrentServer->SetType(HPNONSTOP);
 
 			if (!m_MultilineResponseLines.empty() && m_MultilineResponseLines.front().Mid(4, 4).Upper() == _T("Z/VM"))
 			{

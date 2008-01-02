@@ -2,6 +2,7 @@
 #include "serverpath.h"
 
 #define FTP_MVS_DOUBLE_QUOTE (wxChar)0xDC
+
 CServerPath::CServerPath()
 {
 	m_type = DEFAULT;
@@ -233,6 +234,42 @@ bool CServerPath::SetPath(wxString &newPath, bool isFile)
 			goto set_path_default;
 		}
 		break;
+	case HPNONSTOP:
+		// Paths of the form \mysys.$myvol.mysubvol
+		// Files of the form \mysys.$myvol.mysubvol.file
+		if (path[0] != '\\')
+		{
+			m_bEmpty = true;
+			return false;
+		}
+		while (true)
+		{
+			int pos = path.Find('.');
+			if (!pos || pos == path.Len() - 1)
+			{
+				m_bEmpty = true;
+				return false;
+			}
+			if (pos == -1)
+			{
+				if (isFile)
+				{
+					if (m_Segments.empty())
+					{
+						m_bEmpty = true;
+						return false;
+					}
+					newPath = path;
+					return true;
+				}
+				m_Segments.push_back(path);
+				return true;				
+			}
+	
+			m_Segments.push_back(path.Left(pos));
+			path = path.Mid(pos + 1);
+		}
+		break;
 	case DOS:
 		// Check for starting drive letter
 		path.Replace(_T("\\"), _T("/"));
@@ -345,6 +382,14 @@ wxString CServerPath::GetPath() const
 			path += *iter;
 		}
 		break;
+	case HPNONSTOP:
+		for (tConstSegmentIter iter = m_Segments.begin(); iter != m_Segments.end(); iter++)
+		{
+			if (iter != m_Segments.begin())
+				path += _T(".");
+			path += *iter;
+		}
+		break;
 	default:
 		path = _T("/");
 		for (tConstSegmentIter iter = m_Segments.begin(); iter != m_Segments.end(); iter++)
@@ -361,7 +406,7 @@ bool CServerPath::HasParent() const
 	if (m_bEmpty)
 		return false;
 
-	if (m_type == DOS || m_type == VMS || m_type == MVS)
+	if (m_type == DOS || m_type == VMS || m_type == MVS || m_type == HPNONSTOP)
 		return m_Segments.size() > 1;
 
 	return !m_Segments.empty();
@@ -789,6 +834,37 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 		else
 			return false;
 		break;
+	case HPNONSTOP:
+		if (dir[0] == '\\')
+			m_Segments.clear();
+		while (true)
+		{
+			int pos = dir.Find('.');
+			if (!pos || pos == dir.Len() - 1)
+			{
+				m_bEmpty = true;
+				return false;
+			}
+			if (pos == -1)
+			{
+				if (isFile)
+				{
+					if (m_Segments.empty())
+					{
+						m_bEmpty = true;
+						return false;
+					}
+					subdir = dir;
+					return true;
+				}
+				m_Segments.push_back(dir);
+				return true;				
+			}
+	
+			m_Segments.push_back(dir.Left(pos));
+			dir = dir.Mid(pos + 1);
+		}
+		break;
 	case VXWORKS:
 		{
 			if (dir[0] != ':')
@@ -948,7 +1024,6 @@ wxString CServerPath::FormatFilename(const wxString &filename, bool omitPath /*=
 	if (filename == _T(""))
 		return _T("");
 
-	wxString fullpath;
 	tConstSegmentIter iter;
 	switch (m_type)
 	{
@@ -956,32 +1031,38 @@ wxString CServerPath::FormatFilename(const wxString &filename, bool omitPath /*=
 		if (m_prefix == _T(".") && omitPath)
 			return filename;
 
-		fullpath = _T("'");
-		for (iter = m_Segments.begin(); iter != m_Segments.end(); iter++)
-			fullpath += *iter + _T(".");
-		if (m_prefix != _T("."))
 		{
-			if (fullpath.Last() == '.')
-				fullpath.RemoveLast();
-			fullpath += _T("(") + filename + _T(")");
+			wxString fullpath = _T("'");
+			for (iter = m_Segments.begin(); iter != m_Segments.end(); iter++)
+				fullpath += *iter + _T(".");
+			if (m_prefix != _T("."))
+			{
+				if (fullpath.Last() == '.')
+					fullpath.RemoveLast();
+				fullpath += _T("(") + filename + _T(")");
+			}
+			else
+				fullpath += filename;
+			return fullpath + _T("'");
 		}
-		else
-			fullpath += filename;
-		fullpath += _T("'");
 		break;
 	case VXWORKS:
 		if (omitPath)
-			fullpath = filename;
+			return filename;
 		else
-			fullpath = GetPath() + _T("/") + filename;
-		break;
+			return GetPath() + _T("/") + filename;
+	case HPNONSTOP:
+		if (omitPath)
+			return filename;
+		else
+			return GetPath() + _T(".") + filename;
 	default:
 		if (omitPath)
-			fullpath = filename;
+			return filename;
 		else
-			fullpath = GetPath() + filename;
+			return GetPath() + filename;
 	}
-	return fullpath;
+	return _T("");
 }
 
 int CServerPath::CmpNoCase(const CServerPath &op) const

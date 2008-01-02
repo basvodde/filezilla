@@ -14,6 +14,7 @@ typedef struct
 {
 	std::string data;
 	CDirentry reference;
+	enum ServerType serverType;
 } t_entry;
 
 class CDirectoryListingParserTest : public CppUnit::TestFixture
@@ -31,6 +32,7 @@ public:
 
 	void testIndividual();
 	void testAll();
+	void testSpecial();
 
 	static std::vector<t_entry> m_entries;
 
@@ -82,7 +84,8 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				wxDateTime(8, wxDateTime::Apr, 1994),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	// This one is a recent file with a time instead of the year.
@@ -100,7 +103,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(29, wxDateTime::Mar, calcYear(3, 29), 3, 26),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	// Group omitted
@@ -118,7 +122,8 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				wxDateTime(8, wxDateTime::Apr, 1994),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	// Symbolic link
@@ -136,7 +141,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(25, wxDateTime::Jan, calcYear(1, 25), 0, 17),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	// Some listings with uncommon date/time format
@@ -156,7 +162,8 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				wxDateTime(26, wxDateTime::Sep, 2000),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	m_entries.push_back((t_entry){
@@ -173,7 +180,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(26, wxDateTime::Sep, calcYear(9, 26), 13, 45),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	m_entries.push_back((t_entry){
@@ -190,7 +198,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(7, wxDateTime::Jun, 2005, 21, 22),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 
@@ -209,7 +218,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(5, wxDateTime::Oct, calcYear(10, 5), 21, 22),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	// NetWare style listings
@@ -229,7 +239,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(16, wxDateTime::Jan, calcYear(1, 16), 18, 53),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	m_entries.push_back((t_entry){
@@ -246,7 +257,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(20, wxDateTime::Oct, calcYear(10, 20), 15, 27),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	// NetPresenz for the Mac
@@ -270,7 +282,8 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				wxDateTime(22, wxDateTime::Nov, 1995),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	m_entries.push_back((t_entry){
@@ -287,7 +300,8 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				wxDateTime(10, wxDateTime::May, 1996),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	// A format with domain field some windows servers send
@@ -305,7 +319,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(29, wxDateTime::Jan, calcYear(1, 29), 3, 26),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	// EPLF directory listings
@@ -329,7 +344,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				utc,
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	utc = wxDateTime(13, wxDateTime::Feb, 1996, 23, 58, 27);
@@ -348,7 +364,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				utc,
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	// MSDOS type listing used by old IIS
@@ -368,7 +385,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(27, wxDateTime::Apr, 2000, 12, 9),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	// Ambiguous date and AM/PM crap. Some evil manager must have forced the poor devs to implement this
@@ -386,7 +404,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(6, wxDateTime::Apr, 2000, 15, 47),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	m_entries.push_back((t_entry){
@@ -403,7 +422,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(2, wxDateTime::Sep, 2002, 18, 48),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	m_entries.push_back((t_entry){
@@ -420,7 +440,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(2, wxDateTime::Sep, 2002, 19, 6),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	// Numerical unix style listing
@@ -440,7 +461,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				utc,
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	// VShell servers
@@ -460,7 +482,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(4, wxDateTime::Apr, 2000, 21, 6),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	m_entries.push_back((t_entry){
@@ -477,7 +500,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(12, wxDateTime::Dec, 2002, 2, 13),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	/* This type of directory listings is sent by some newer versions of VShell
@@ -496,7 +520,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(8, wxDateTime::Oct, 2002, 9, 47),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	// OS/2 server format
@@ -517,7 +542,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(23, wxDateTime::Apr, 2003, 10, 57),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	m_entries.push_back((t_entry){
@@ -534,7 +560,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(14, wxDateTime::Jul, 1999, 12, 37),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	// Another server not aware of Y2K
@@ -552,7 +579,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(11, wxDateTime::Feb, 2003, 16, 15),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	// Again Y2K
@@ -570,7 +598,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(5, wxDateTime::Oct, 2000, 23, 38),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	// Localized date formats
@@ -590,7 +619,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(26, wxDateTime::Jul, calcYear(7, 26), 20, 10),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	m_entries.push_back((t_entry){
@@ -607,7 +637,8 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				wxDateTime(2, wxDateTime::Oct, 2003),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	m_entries.push_back((t_entry){
@@ -624,7 +655,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(12, wxDateTime::Oct, 1999, 17, 12),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	m_entries.push_back((t_entry){
@@ -641,7 +673,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(24, wxDateTime::Apr, 2003, 17, 12),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	// Japanese listing
@@ -661,7 +694,8 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				wxDateTime(18, wxDateTime::Apr, 2003),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	// Some other asian listing format. Those >127 chars are just examples
@@ -680,7 +714,8 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				wxDateTime(20, wxDateTime::Mar, 2003),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	m_entries.push_back((t_entry){
@@ -697,7 +732,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(17, wxDateTime::Aug, calcYear(8, 17), 8, 52),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	m_entries.push_back((t_entry){
@@ -714,7 +750,8 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				wxDateTime(15, wxDateTime::Jul, 2004),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	// VMS listings
@@ -734,7 +771,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(19, wxDateTime::Nov, 2001, 21, 41),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 
@@ -752,7 +790,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(2, wxDateTime::Jul, 2003, 10, 30, 13),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	/* VMS style listing without time */
@@ -770,7 +809,8 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				wxDateTime(7, wxDateTime::Jan, 2000),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	/* Localized month */
@@ -788,7 +828,8 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				wxDateTime(15, wxDateTime::Jul, 2002),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	m_entries.push_back((t_entry){
@@ -805,7 +846,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(24, wxDateTime::Apr, 2003, 8, 16, 15),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	m_entries.push_back((t_entry){
@@ -822,7 +864,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(2, wxDateTime::Jul, 2003, 10, 30, 8),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	// VMS style listings with a different field order
@@ -840,7 +883,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(2, wxDateTime::Aug, 2006, 13, 5),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	m_entries.push_back((t_entry){
@@ -857,7 +901,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(17, wxDateTime::Jun, 1994, 17, 25, 37),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	// Miscellaneous listings
@@ -878,7 +923,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(23, wxDateTime::Feb, 2000, 15, 9, 55),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	m_entries.push_back((t_entry){
@@ -895,7 +941,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(23, wxDateTime::Feb, 2000, 15, 9, 55),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	/* aligned directory listing with too long size */
@@ -913,7 +960,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(12, wxDateTime::Feb, calcYear(2, 12), 17, 20),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	/* short directory listing with month name */
@@ -931,7 +979,8 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				wxDateTime(1, wxDateTime::Jun, 1999),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	/* Nortel wfFtp router */
@@ -949,7 +998,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(3, wxDateTime::Jun, 2004, 10, 20, 3),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	/* VxWorks based server used in Nortel routers */
@@ -967,7 +1017,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(28, wxDateTime::Feb, 1998, 5, 23, 30),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	/* the following format is sent by the Connect:Enterprise server by Sterling Commerce */
@@ -985,7 +1036,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(13, wxDateTime::Jan, calcYear(1, 13), 7, 42),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	/* Microware OS-9
@@ -1004,7 +1056,8 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				wxDateTime(29, wxDateTime::Mar, 2007),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	/* Localised Unix style listing. Month and day fields are swapped */
@@ -1022,7 +1075,8 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				wxDateTime(1, wxDateTime::Oct, 2004),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	m_entries.push_back((t_entry){
@@ -1039,7 +1093,8 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				wxDateTime(11, wxDateTime::Nov, 2005),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	m_entries.push_back((t_entry){
@@ -1057,7 +1112,8 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				wxDateTime(6, wxDateTime::Jan, 2005),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	/* IBM AS/400 style listing with localized date*/
@@ -1075,7 +1131,8 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(18, wxDateTime::Sep, 2006, 14, 21, 26),
 				false
-			}
+			},
+			DEFAULT
 		});
 
 	/* VMS style listing with complex size */
@@ -1093,7 +1150,27 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(23, wxDateTime::Sep, 2005, 14, 57, 07),
 				false
-			}
+			},
+			DEFAULT
+		});
+
+	/* HP NonStop */
+	m_entries.push_back((t_entry){
+			"57-HP_NonStop 101 528 6-Apr-07 14:21:18 255, 0 \"oooo\"",
+			{
+				_T("57-HP_NonStop"),
+				528,
+				_T("\"oooo\""),
+				_T("255, 0"),
+				false,
+				false,
+				_T(""),
+				true,
+				true,
+				wxDateTime(6, wxDateTime::Apr, 2007, 14, 21, 18),
+				false
+			},
+			HPNONSTOP
 		});
 
 /*
@@ -1126,7 +1203,8 @@ void CDirectoryListingParserTest::testIndividual()
 
 	m_sync.Leave();
 
-	const CServer server;
+	CServer server;
+	server.SetType(entry.serverType);
 
 	CDirectoryListingParser parser(0, server);
 
@@ -1151,10 +1229,12 @@ void CDirectoryListingParserTest::testIndividual()
 
 void CDirectoryListingParserTest::testAll()
 {
-	const CServer server;
+	CServer server;
 	CDirectoryListingParser parser(0, server);
 	for (std::vector<t_entry>::const_iterator iter = m_entries.begin(); iter != m_entries.end(); iter++)
 	{
+		server.SetType(iter->serverType);
+		parser.SetServer(server);
 		const char* str = iter->data.c_str();
 		const int len = strlen(str);
 		char* data = new char[len];

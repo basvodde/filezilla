@@ -50,6 +50,8 @@ public:
 
 	void SetTimezoneOffset(const wxTimeSpan& span) { m_timezoneOffset = span; }
 
+	void SetServer(const CServer& server) { m_server = server; };
+
 protected:
 	CLine *GetLine(bool breakAtEnd = false);
 
@@ -75,6 +77,10 @@ protected:
 	// with other formats.
 	bool ParseAsZVM(CLine *pLine, CDirentry &entry);
 
+	// Only call this if servertype set to HPNONSTOP since it conflicts
+	// with other formats.
+	bool ParseAsHPNonstop(CLine *pLine, CDirentry &entry);
+
 	// Date / time parsers
 	bool ParseUnixDateTime(CLine *pLine, int &index, CDirentry &entry);
 	bool ParseShortDate(CToken &token, CDirentry &entry, bool saneFieldOrder = false);
@@ -99,7 +105,7 @@ protected:
 
 	CLine *m_prevLine;
 
-	const CServer& m_server;
+	CServer m_server;
 
 	bool m_fileListOnly;
 	std::list<wxString> m_fileList;
