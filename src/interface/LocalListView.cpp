@@ -17,6 +17,7 @@
 #include <langinfo.h>
 #endif
 #include "edithandler.h"
+#include "dragdropmanager.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -132,7 +133,18 @@ public:
 			if (!data || !data->dir)
 				hit = -1;
 			else
-				subDir = data->name;
+			{
+				const CDragDropManager* pDragDropManager = CDragDropManager::Get();
+				if (pDragDropManager && pDragDropManager->pDragSource == m_pLocalListView)
+				{
+					if (m_pLocalListView->GetItemState(hit, wxLIST_STATE_SELECTED))
+						hit = -1;
+					else
+						subDir = data->name;
+				}
+				else
+					subDir = data->name;
+			}
 		}
 		if (hit != m_pLocalListView->m_dropTarget)
 		{
@@ -167,6 +179,10 @@ public:
 
 		if (subdir == _T(""))
 		{
+			const CDragDropManager* pDragDropManager = CDragDropManager::Get();
+			if (pDragDropManager && pDragDropManager->localParent == m_pLocalListView->m_dir)
+				return wxDragNone;
+
 			if (!CState::LocalDirIsWriteable(m_pLocalListView->m_dir))
 				return wxDragNone;
 		}
@@ -1645,6 +1661,10 @@ void CLocalListView::OnBeginDrag(wxListEvent& event)
 
 	wxFileDataObject obj;
 
+	CDragDropManager* pDragDropManager = CDragDropManager::Init();
+	pDragDropManager->pDragSource = this;
+	pDragDropManager->localParent = m_dir;
+
 	item = -1;
 	while (true)
 	{
@@ -1654,20 +1674,28 @@ void CLocalListView::OnBeginDrag(wxListEvent& event)
 
 		CLocalFileData *data = GetData(item);
 		if (!data)
-			return;
+			continue;
 
 		if (data->flags == fill)
 			continue;
 
-		obj.AddFile(m_dir + data->name);
+		const wxString name = m_dir + data->name;
+		pDragDropManager->m_localFiles.push_back(name);
+		obj.AddFile(name);
 	}
 
 	if (obj.GetFilenames().IsEmpty())
+	{
+		pDragDropManager->Release();
 		return;
+	}
 
 	wxDropSource source(this);
 	source.SetData(obj);
 	int res = source.DoDragDrop(wxDrag_AllowMove);
+
+	pDragDropManager->Release();
+
 	if (res == wxDragCopy || res == wxDragMove)
 		m_pState->RefreshLocal();
 }

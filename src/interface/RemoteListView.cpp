@@ -14,6 +14,7 @@
 #include "Options.h"
 #include "recursive_operation.h"
 #include "edithandler.h"
+#include "dragdropmanager.h"
 
 #ifdef __WXMSW__
 #include "shellapi.h"
@@ -169,7 +170,7 @@ public:
 		return true;
 	}
 
-	void DisplayDropHighlight(wxPoint point)
+	int DisplayDropHighlight(wxPoint point)
 	{
 		int flags;
 		int hit = m_pRemoteListView->HitTest(point, flags, 0);
@@ -185,6 +186,15 @@ public:
 			{
 				if (!(*m_pRemoteListView->m_pDirectoryListing)[index].dir)
 					hit = -1;
+				else
+				{
+					const CDragDropManager* pDragDropManager = CDragDropManager::Get();
+					if (pDragDropManager && pDragDropManager->pDragSource == m_pRemoteListView)
+					{
+						if (m_pRemoteListView->GetItemState(hit, wxLIST_STATE_SELECTED))
+							hit = -1;
+					}
+				}
 			}
 		}
 		if (hit != m_pRemoteListView->m_dropTarget)
@@ -196,6 +206,7 @@ public:
 				m_pRemoteListView->m_dropTarget = hit;
 			}
 		}
+		return hit;
 	}
 
 	virtual wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult def)
@@ -214,7 +225,16 @@ public:
 			return wxDragNone;
 		}
 
-		DisplayDropHighlight(wxPoint(x, y));
+		const CServer* const pServer = m_pRemoteListView->m_pState->GetServer();
+		wxASSERT(pServer);
+
+		int hit = DisplayDropHighlight(wxPoint(x, y));
+		const CDragDropManager* pDragDropManager = CDragDropManager::Get();
+		
+		if (hit == -1 && pDragDropManager &&
+			pDragDropManager->remoteParent == m_pRemoteListView->m_pDirectoryListing->path &&
+			*pServer == pDragDropManager->server)
+			return wxDragNone;
 
 		return wxDragCopy;
 	}
@@ -1924,6 +1944,11 @@ void CRemoteListView::OnBeginDrag(wxListEvent& event)
 
 	CRemoteDataObject *pRemoteDataObject = new CRemoteDataObject(*pServer, m_pDirectoryListing->path);
 
+	CDragDropManager* pDragDropManager = CDragDropManager::Init();
+	pDragDropManager->pDragSource = this;
+	pDragDropManager->server = server;
+	pDragDropManager->remoteParent = m_pDirectoryListing->path;
+
 	// Add files to remote data object
 	item = -1;
 	while (true)
@@ -1961,7 +1986,12 @@ void CRemoteListView::OnBeginDrag(wxListEvent& event)
 
 	wxDropSource source(this);
 	source.SetData(object);
-	if (source.DoDragDrop() != wxDragCopy)
+
+	int res = source.DoDragDrop();
+
+	pDragDropManager->Release();
+
+	if (res != wxDragCopy)
 	{
 #if FZ3_USESHELLEXT
 		delete ext;
