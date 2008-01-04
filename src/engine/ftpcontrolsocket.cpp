@@ -972,6 +972,8 @@ int CFtpControlSocket::LogonParseResponse()
 						m_pCurrentServer->SetType(MVS);
 					else if (system.Left(4).Upper() == _T("Z/VM"))
 						m_pCurrentServer->SetType(ZVM);
+					else if (system.Left(8).Upper() == _T("NONSTOP "))
+						m_pCurrentServer->SetType(HPNONSTOP);
 				}
 
 				if (system.Find(_T("FileZilla")) != -1)
