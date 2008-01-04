@@ -2366,7 +2366,7 @@ void CQueueView::UpdateItemSize(CFileItem* pItem, wxLongLong size)
 	}
 	else
 	{
-		wxASSERT(m_totalQueueSize > oldSize);
+		wxASSERT(m_totalQueueSize >= oldSize);
 		if (m_totalQueueSize > oldSize)
 			m_totalQueueSize -= oldSize;
 		else
