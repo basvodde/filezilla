@@ -1249,6 +1249,21 @@ public:
 	{
 	}
 
+	unsigned int GetInsertIndex(wxMenu* pMenu, const wxString& name)
+	{
+		unsigned int i;
+		for (i = 0; i < pMenu->GetMenuItemCount(); i++)
+		{
+			const wxMenuItem* const pItem = pMenu->FindItemByPosition(i);
+			if (!pItem)
+				continue;
+			if (pItem->GetLabel() > name)
+				break;
+		}
+
+		return i;
+	}
+
 	virtual bool AddFolder(const wxString& name)
 	{
 		m_parents.push_back(m_pMenu);
@@ -1262,8 +1277,9 @@ public:
 	virtual bool AddSite(const wxString& name, CSiteManagerItemData* data)
 	{
 		wxString newName = name;
+		int i = GetInsertIndex(m_pMenu, newName);
 		newName.Replace(_T("&"), _T("&&"));
-		wxMenuItem* pItem = m_pMenu->Append(wxID_ANY, newName);
+		wxMenuItem* pItem = m_pMenu->Insert(i, wxID_ANY, newName);
 		(*m_idMap)[pItem->GetId()] = data;
 
 		return true;
@@ -1280,8 +1296,11 @@ public:
 		if (pChild->GetMenuItemCount())
 		{
 			wxString name = m_childNames.back();
+			int i = GetInsertIndex(m_pMenu, name);
 			name.Replace(_T("&"), _T("&&"));
-			m_pMenu->AppendSubMenu(pChild, name);
+
+			wxMenuItem* pItem = new wxMenuItem(m_pMenu, wxID_ANY, name, _T(""), wxITEM_NORMAL, pChild);
+			m_pMenu->Insert(i, pItem);
 		}
 		else
 			delete pChild;
