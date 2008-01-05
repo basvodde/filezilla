@@ -51,7 +51,6 @@ protected:
 		CCacheEntry(const CCacheEntry &entry);
 		~CCacheEntry() { };
 		CDirectoryListing listing;
-		CServer server;
 		wxDateTime createTime;
 		CTimeEx modificationTime;
 		typedef struct
@@ -64,12 +63,23 @@ protected:
 		CCacheEntry& operator=(const CCacheEntry &a);
 	};
 
+	class CServerEntry
+	{
+	public:
+		CServer server;
+		std::list<CCacheEntry> cacheList;
+	};
+
+	CServerEntry* CreateServerEntry(const CServer& server);
+	CServerEntry* GetServerEntry(const CServer& server);
+	const CServerEntry* GetServerEntry(const CServer& server) const;
+
 	typedef std::list<CCacheEntry::t_parent>::iterator tParentsIter;
 	typedef std::list<CCacheEntry::t_parent>::const_iterator tParentsConstIter;
 	typedef std::list<CCacheEntry>::iterator tCacheIter;
 	typedef std::list<CCacheEntry>::const_iterator tCacheConstIter;
 
-	static std::list<CCacheEntry> m_CacheList;
+	static std::list<CServerEntry *> m_ServerList;
 	
 	static int m_nRefCount;
 };
