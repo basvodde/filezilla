@@ -509,6 +509,7 @@ checkmodifications_remote:
 
 		dlg.SetLabel(XRCID("ID_FILENAME"), iter->name);
 
+		dlg.GetSizer()->Fit(&dlg);
 		int res = dlg.ShowModal();
 
 		const bool remove = XRCCTRL(dlg, "ID_DELETE", wxCheckBox)->IsChecked();
@@ -561,6 +562,7 @@ checkmodifications_local:
 
 		dlg.SetLabel(XRCID("ID_FILENAME"), iter->name);
 
+		dlg.GetSizer()->Fit(&dlg);
 		int res = dlg.ShowModal();
 
 		const bool remove = XRCCTRL(dlg, "ID_DELETE", wxCheckBox)->IsChecked();
