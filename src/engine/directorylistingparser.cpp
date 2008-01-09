@@ -2896,10 +2896,13 @@ bool CDirectoryListingParser::ParseAsHPNonstop(CLine *pLine, CDirentry &entry)
 		return false;
 	entry.ownerGroup = token.GetString();
 
-	// Owner, part 2
-	if (!pLine->GetToken(++index, token))
-		return false;
-	entry.ownerGroup += _T(" ") + token.GetString();
+	if (token[token.GetLength() - 1] == ',')
+	{
+		// Owner, part 2
+		if (!pLine->GetToken(++index, token))
+			return false;
+		entry.ownerGroup += _T(" ") + token.GetString();
+	}
 
 	// Permissions
 	if (!pLine->GetToken(++index, token))

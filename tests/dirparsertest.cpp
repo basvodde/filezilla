@@ -1173,6 +1173,25 @@ void CDirectoryListingParserTest::InitEntries()
 			HPNONSTOP
 		});
 
+	// Only difference is in the owner/group field, no delimiting space.
+	m_entries.push_back((t_entry){
+			"58-HP_NonStop 101 528 6-Apr-07 14:21:18 255,255 \"oooo\"",
+			{
+				_T("58-HP_NonStop"),
+				528,
+				_T("\"oooo\""),
+				_T("255,255"),
+				false,
+				false,
+				_T(""),
+				true,
+				true,
+				wxDateTime(6, wxDateTime::Apr, 2007, 14, 21, 18),
+				false
+			},
+			HPNONSTOP
+		});
+
 /*
 	wxString name;
 	wxLongLong size;
