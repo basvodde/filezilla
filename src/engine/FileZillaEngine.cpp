@@ -213,7 +213,8 @@ int CFileZillaEngine::CacheLookup(const CServerPath& path, CDirectoryListing& li
 	wxASSERT(m_pControlSocket->GetCurrentServer());
 
 	CDirectoryCache cache;
-	if (!cache.Lookup(listing, *m_pControlSocket->GetCurrentServer(), path, true))
+	bool is_outdated = false;
+	if (!cache.Lookup(listing, *m_pControlSocket->GetCurrentServer(), path, true, is_outdated))
 		return FZ_REPLY_ERROR;
 
 	return FZ_REPLY_OK;

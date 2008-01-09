@@ -380,7 +380,12 @@ int CControlSocket::CheckOverwriteFile()
 	bool dirDidExist;
 	bool matchedCase;
 	CDirectoryCache cache;
-	bool found = cache.LookupFile(entry, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath, pData->remoteFile, dirDidExist, matchedCase);
+	CServerPath remotePath;
+	if (pData->tryAbsolutePath || m_CurrentPath.IsEmpty())
+		remotePath = pData->remotePath;
+	else
+		remotePath = m_CurrentPath;
+	bool found = cache.LookupFile(entry, *m_pCurrentServer, remotePath, pData->remoteFile, dirDidExist, matchedCase);
 
 	// Ignore entries with wrong case
 	if (found && !matchedCase)

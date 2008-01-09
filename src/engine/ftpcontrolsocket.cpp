@@ -1246,16 +1246,20 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 		CDirectoryCache cache;
 
 		int hasUnsureEntries;
-		bool found = cache.DoesExist(*m_pCurrentServer, m_CurrentPath, _T(""), hasUnsureEntries);
+		bool is_outdated = false;
+		bool found = cache.DoesExist(*m_pCurrentServer, m_CurrentPath, _T(""), hasUnsureEntries, is_outdated);
 		if (found)
 		{
 			if (!pData->path.IsEmpty() && pData->subDir != _T(""))
 				cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
 
-			m_pEngine->SendDirectoryListingNotification(m_CurrentPath, true, false, false);
-			ResetOperation(FZ_REPLY_OK);
+			if (!is_outdated)
+			{
+				m_pEngine->SendDirectoryListingNotification(m_CurrentPath, true, false, false);
+				ResetOperation(FZ_REPLY_OK);
 
-			return FZ_REPLY_OK;
+				return FZ_REPLY_OK;
+			}
 		}
 	}
 
@@ -1325,20 +1329,24 @@ int CFtpControlSocket::ListSubcommandResult(int prevResult)
 			// Do a cache lookup now that we know the correct directory
 			CDirectoryCache cache;
 			int hasUnsureEntries;
-			bool found = cache.DoesExist(*m_pCurrentServer, m_CurrentPath, _T(""), hasUnsureEntries);
+			bool is_outdated = false;
+			bool found = cache.DoesExist(*m_pCurrentServer, m_CurrentPath, _T(""), hasUnsureEntries, is_outdated);
 			if (found)
 			{
 				if (!pData->path.IsEmpty() && pData->subDir != _T(""))
 					cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
 
-				// Continue with refresh if listing has unsure entries
-				if (!hasUnsureEntries)
+				if (!is_outdated)
 				{
-					m_pEngine->SendDirectoryListingNotification(m_CurrentPath, true, false, false);
+					// Continue with refresh if listing has unsure entries
+					if (!hasUnsureEntries)
+					{
+						m_pEngine->SendDirectoryListingNotification(m_CurrentPath, true, false, false);
 
-					ResetOperation(FZ_REPLY_OK);
+						ResetOperation(FZ_REPLY_OK);
 
-					return FZ_REPLY_OK;
+						return FZ_REPLY_OK;
+					}
 				}
 			}
 		}
@@ -2801,7 +2809,8 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 
 					CDirectoryListing listing;
 					CDirectoryCache cache;
-					bool found = cache.Lookup(listing, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath, true);
+					bool is_outdated = false;
+					bool found = cache.Lookup(listing, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath, true, is_outdated);
 					if (!found)
 					{
 						pData->opState = filetransfer_size;

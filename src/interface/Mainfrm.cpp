@@ -769,6 +769,8 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 					if (pListingNotification->Failed() ||
 						m_pState->m_pEngine->CacheLookup(pListingNotification->GetPath(), *pListing) != FZ_REPLY_OK)
 					{
+						delete pListing;
+						pListing = new CDirectoryListing;
 						pListing->path = pListingNotification->GetPath();
 						pListing->m_failed = true;
 					}

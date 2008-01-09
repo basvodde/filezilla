@@ -388,10 +388,10 @@ int CFileZillaEnginePrivate::List(const CListCommand &command)
 		{
 			CDirectoryListing *pListing = new CDirectoryListing;
 			CDirectoryCache cache;
-			bool found = cache.Lookup(*pListing, *pServer, command.GetPath(), command.GetSubDir(), true);
-			if (found)
+			bool is_outdated = false;
+			bool found = cache.Lookup(*pListing, *pServer, command.GetPath(), command.GetSubDir(), true, is_outdated);
+			if (found && !is_outdated)
 			{
-				
 				if (pListing->m_hasUnsureEntries)
 					refresh = true;
 				else
@@ -404,6 +404,8 @@ int CFileZillaEnginePrivate::List(const CListCommand &command)
 					return FZ_REPLY_OK;
 				}
 			}
+			if (is_outdated)
+				refresh = true;
 			delete pListing;
 		}
 	}

@@ -14,6 +14,8 @@ but for some operations the engine/interface prefers to retrieve a clean
 version.
 */
 
+const int CACHE_TIMEOUT = 1800; // In seconds
+
 class CDirectoryCache
 {
 public:
@@ -28,11 +30,10 @@ public:
 	~CDirectoryCache();
 
 	void Store(const CDirectoryListing &listing, const CServer &server, CServerPath parentPath = CServerPath(), wxString subDir = _T(""));
-	bool HasChanged(CTimeEx since, const CServer &server, const CServerPath &path) const;
 	bool GetChangeTime(CTimeEx& time, const CServer &server, const CServerPath &path) const;
-	bool Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, bool allowUnsureEntries);
-	bool Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, wxString subDir, bool allowUnsureEntries);
-	bool DoesExist(const CServer &server, const CServerPath &path, wxString subDir, int &hasUnsureEntries);
+	bool Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, bool allowUnsureEntries, bool& is_outdated);
+	bool Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, wxString subDir, bool allowUnsureEntries, bool& is_outdated);
+	bool DoesExist(const CServer &server, const CServerPath &path, wxString subDir, int &hasUnsureEntries, bool &is_outdated);
 	bool LookupFile(CDirentry &entry, const CServer &server, const CServerPath &path, const wxString& file, bool &dirDidExist, bool &matchedCase);
 	bool InvalidateFile(const CServer &server, const CServerPath &path, const wxString& filename, bool *wasDir = 0);
 	bool UpdateFile(const CServer &server, const CServerPath &path, const wxString& filename, bool mayCreate, enum Filetype type = file, int size = -1);

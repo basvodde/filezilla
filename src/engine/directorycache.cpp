@@ -76,12 +76,12 @@ void CDirectoryCache::Store(const CDirectoryListing &listing, const CServer &ser
 	pServerEntry->cacheList.push_front(entry);
 }
 
-bool CDirectoryCache::Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, bool allowUnsureEntries)
+bool CDirectoryCache::Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, bool allowUnsureEntries, bool& is_outdated)
 {
-	return Lookup(listing, server, path, _T(""), allowUnsureEntries);
+	return Lookup(listing, server, path, _T(""), allowUnsureEntries, is_outdated);
 }
 
-bool CDirectoryCache::Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, wxString subDir, bool allowUnsureEntries)
+bool CDirectoryCache::Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, wxString subDir, bool allowUnsureEntries, bool& is_outdated)
 {
 	const CServerEntry* const pServerEntry = GetServerEntry(server);
 	if (!pServerEntry)
@@ -101,6 +101,7 @@ bool CDirectoryCache::Lookup(CDirectoryListing &listing, const CServer &server, 
 						return false;
 
 					listing = entry.listing;
+					is_outdated = (wxDateTime::Now() - entry.createTime).GetSeconds() > CACHE_TIMEOUT;
 					return true;
 				}
 			}
@@ -116,6 +117,7 @@ bool CDirectoryCache::Lookup(CDirectoryListing &listing, const CServer &server, 
 						return false;
 
 					listing = entry.listing;
+					is_outdated = (wxDateTime::Now() - entry.createTime).GetSeconds() > CACHE_TIMEOUT;
 					return true;
 				}
 			}
@@ -141,13 +143,15 @@ bool CDirectoryCache::Lookup(CDirectoryListing &listing, const CServer &server, 
 		if (iter == pServerEntry->cacheList.end())
 			return false;
 
-		bool res = Lookup(listing, server, iter->listing.path, _T(""), allowUnsureEntries);
+		bool res = Lookup(listing, server, iter->listing.path, _T(""), allowUnsureEntries, is_outdated);
+		if (res)
+			is_outdated = (wxDateTime::Now() - iter->createTime).GetSeconds() > CACHE_TIMEOUT;
 		return res;
 	}
 	return false;
 }
 
-bool CDirectoryCache::DoesExist(const CServer &server, const CServerPath &path, wxString subDir, int &hasUnsureEntries)
+bool CDirectoryCache::DoesExist(const CServer &server, const CServerPath &path, wxString subDir, int &hasUnsureEntries, bool &is_outdated)
 {
 	const CServerEntry* const pServerEntry = GetServerEntry(server);
 	if (!pServerEntry)
@@ -164,6 +168,7 @@ bool CDirectoryCache::DoesExist(const CServer &server, const CServerPath &path, 
 				if (entry.listing.path == path)
 				{
 					hasUnsureEntries = entry.listing.m_hasUnsureEntries;
+					is_outdated = (wxDateTime::Now() - entry.createTime).GetSeconds() > CACHE_TIMEOUT;
 					return true;
 				}
 			}
@@ -176,6 +181,7 @@ bool CDirectoryCache::DoesExist(const CServer &server, const CServerPath &path, 
 						continue;
 
 					hasUnsureEntries = entry.listing.m_hasUnsureEntries;
+					is_outdated = (wxDateTime::Now() - entry.createTime).GetSeconds() > CACHE_TIMEOUT;
 					return true;
 				}
 			}
@@ -201,7 +207,7 @@ bool CDirectoryCache::DoesExist(const CServer &server, const CServerPath &path, 
 		if (iter == pServerEntry->cacheList.end())
 			return false;
 
-		bool res = DoesExist(server, iter->listing.path, _T(""), hasUnsureEntries);
+		bool res = DoesExist(server, iter->listing.path, _T(""), hasUnsureEntries, is_outdated);
 		return res;
 	}
 	return false;
@@ -412,28 +418,6 @@ void CDirectoryCache::InvalidateServer(const CServer& server)
 	}
 }
 
-bool CDirectoryCache::HasChanged(CTimeEx since, const CServer &server, const CServerPath &path) const
-{
-	const CServerEntry* const pServerEntry = GetServerEntry(server);
-	if (!pServerEntry)
-		return false;
-
-	for (tCacheConstIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); iter++)
-	{
-		const CCacheEntry &entry = *iter;
-				
-		if (entry.listing.path != path)
-			continue;
-
-		if (entry.modificationTime > since)
-			return true;
-		else
-			return false;
-	}
-
-	return false;
-}
-
 bool CDirectoryCache::GetChangeTime(CTimeEx& time, const CServer &server, const CServerPath &path) const
 {
 	const CServerEntry* const pServerEntry = GetServerEntry(server);
@@ -496,7 +480,8 @@ void CDirectoryCache::RemoveDir(const CServer& server, const CServerPath& path, 
 void CDirectoryCache::Rename(const CServer& server, const CServerPath& pathFrom, const wxString& fileFrom, const CServerPath& pathTo, const wxString& fileTo)
 {
 	CDirectoryListing listing;
-	bool found = Lookup(listing, server, pathFrom, true);
+	bool is_outdated = false;
+	bool found = Lookup(listing, server, pathFrom, true, is_outdated);
 	if (found)
 	{
 		unsigned int i;
