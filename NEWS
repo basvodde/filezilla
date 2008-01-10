@@ -5,6 +5,17 @@ Legend:
   + New feature or important bugfix
   - Bugfixes
 
+3.0.5 (2008-01-10)
+
+- Fix freeze if deleting remote directories
+- Compatibility with HP NonStop servers
+- MSW: Uninstaller did not remove defaultfilters.xml
+- Improve visual feedback for some drag&drop operations
+- Fix sort order in sitemanager dropdown menu
+- Fix size of file changed dialog
+- "Apply to current queue only" in file exists dialog did not work properly
+- Cached directory listings expire after 30 minutes
+
 3.0.5-rc1 (2007-12-31)
 
 + Directory listing comparison
@@ -12,7 +23,7 @@ Legend:
 + Add option to use default system language. Note: Language selection will be reset to default if updating to this version.
 + New artwork for send and recv indicators
 - Fix crash with keepalive timer
-- nix: Use proper locale initialization, happened too late in FZ's startup sequence in previous versions.
+- *nix: Use proper locale initialization, happened too late in FZ's startup sequence in previous versions.
 - Fix issue with proxies in combination with nonstandard ports
 - Fix timezone offset detection if user has specified a custom offset
 - MSW: Cancel remote renaming of files if listing changes
