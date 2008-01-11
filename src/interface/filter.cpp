@@ -83,7 +83,7 @@ CFilterDialog::CFilterDialog()
 	m_currentFilterSet = 0;
 	m_pMainFrame = 0;
 	m_shiftClick = false;
-	
+
 	LoadFilters();
 	CompileRegexes();
 
@@ -145,7 +145,7 @@ void CFilterDialog::OnEdit(wxCommandEvent& event)
 	CFilterEditDialog dlg;
 	if (!dlg.Create(this, m_filters, m_filterSets))
 		return;
-	
+
 	if (dlg.ShowModal() != wxID_OK)
 		return;
 
@@ -303,7 +303,7 @@ void CFilterDialog::LoadFilters()
 			pFilter = pFilter->NextSiblingElement("Filter");
 			continue;
 		}
-		
+
 		TiXmlElement *pCondition = pConditions->FirstChildElement("Condition");
 		while (pCondition)
 		{
@@ -479,7 +479,7 @@ bool CFilterDialog::FilenameFilteredByFilter(const wxString& name, bool dir, wxL
 		return false;
 	else if (!dir && !filter.filterFiles)
 		return false;
-    
+
 	for (std::vector<CFilterCondition>::const_iterator iter = filter.filters.begin(); iter != filter.filters.end(); iter++)
 	{
 		bool match = false;
@@ -586,7 +586,7 @@ bool CFilterDialog::FilenameFilteredByFilter(const wxString& name, bool dir, wxL
 
 	if (filter.matchType != CFilter::any)
 		return true;
-	
+
 	return false;
 }
 
@@ -715,10 +715,10 @@ void CFilterDialog::OnApply(wxCommandEvent& event)
 
 bool CFilterDialog::HasActiveFilters() const
 {
-	wxASSERT(m_currentFilterSet < m_filterSets.size());
+	wxASSERT(m_globalCurrentFilterSet < m_globalFilterSets.size());
 
-	const CFilterSet& set = m_filterSets[m_currentFilterSet];
-	for (unsigned int i = 0; i < m_filters.size(); i++)
+	const CFilterSet& set = m_globalFilterSets[m_globalCurrentFilterSet];
+	for (unsigned int i = 0; i < m_globalFilters.size(); i++)
 	{
 		if (set.local[i])
 			return true;
