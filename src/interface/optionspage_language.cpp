@@ -81,7 +81,12 @@ bool COptionsPageLanguage::SavePage()
 #else
 	bool successful = false;
 	if (code == _T(""))
-		successful = wxGetApp().SetLocale(wxLANGUAGE_DEFAULT);
+	{
+		wxGetApp().SetLocale(wxLANGUAGE_DEFAULT);
+
+		// Default language cannot fail, has to silently fall back to English
+		successful = true;
+	}
 	else
 	{
 		const wxLanguageInfo* pInfo = wxLocale::FindLanguageInfo(code);
