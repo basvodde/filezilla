@@ -1001,9 +1001,9 @@ bool CServerPath::operator<(const CServerPath &op) const
 		return true;
 
 	std::list<wxString>::const_iterator iter1, iter2;
-	for (iter1 = m_Segments.begin(), iter2 = op.m_Segments.begin(); iter1 != op.m_Segments.end(); iter1++, iter2++)
+	for (iter1 = m_Segments.begin(), iter2 = op.m_Segments.begin(); iter1 != m_Segments.end(); iter1++, iter2++)
 	{
-		if (iter2 == m_Segments.end())
+		if (iter2 == op.m_Segments.end())
 			return false;
 
 		const int cmp = iter1->Cmp(*iter2);
