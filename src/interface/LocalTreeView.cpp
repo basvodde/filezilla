@@ -789,8 +789,12 @@ void CLocalTreeView::Refresh()
 			}
 			else if (cmp > 0)
 			{
+				wxTreeItemId sel = GetSelection();
+				while (sel && sel != child)
+					sel = GetItemParent(sel);
 				wxTreeItemId prev = GetPrevSibling(child);
-				Delete(child);
+				if (!sel)
+					Delete(child);
 				child = prev;
 			}
 			else if (cmp < 0)
@@ -805,8 +809,12 @@ void CLocalTreeView::Refresh()
 		}
 		while (child)
 		{
+			wxTreeItemId sel = GetSelection();
+			while (sel && sel != child)
+				sel = GetItemParent(sel);
 			wxTreeItemId prev = GetPrevSibling(child);
-			Delete(child);
+			if (!sel)
+				Delete(child);
 			child = prev;
 		}
 		while (iter != dirs.rend())
