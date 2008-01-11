@@ -415,6 +415,7 @@ void CDirectoryCache::InvalidateServer(const CServer& server)
 
 		delete *iter;
 		m_ServerList.erase(iter);
+		break;
 	}
 }
 
