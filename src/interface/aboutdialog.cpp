@@ -14,7 +14,7 @@ bool CAboutDialog::Create(wxWindow* parent)
 
 	XRCCTRL(*this, "ID_URL", wxHyperlinkCtrl)->SetLabel(_T("http://filezilla-project.org"));
 
-	XRCCTRL(*this, "ID_COPYRIGHT", wxStaticText)->SetLabel(_T("Copyright (C) 2004-2007  Tim Kosse"));
+	XRCCTRL(*this, "ID_COPYRIGHT", wxStaticText)->SetLabel(_T("Copyright (C) 2004-2008  Tim Kosse"));
 
 	wxString version = CBuildInfo::GetVersion();
 	if (CBuildInfo::GetBuildType() == _T("nightly"))
