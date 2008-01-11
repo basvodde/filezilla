@@ -13,13 +13,15 @@ protected:
 	virtual bool Connected() const { return m_pCurrentServer != 0; }
 
 	virtual bool SetAsyncRequestReply(CAsyncRequestNotification *pNotification);
-	virtual int SendNextCommand(int prevResult = FZ_REPLY_OK);
+	virtual int SendNextCommand();
+	virtual int ParseSubcommandResult(int prevResult);
 
 	virtual int FileTransfer(const wxString localFile, const CServerPath &remotePath,
 							 const wxString &remoteFile, bool download,
 							 const CFileTransferCommand::t_transferSettings& transferSettings);
-	virtual int FileTransferSend(int prevResult = FZ_REPLY_OK);
+	virtual int FileTransferSend();
 	virtual int FileTransferParseResponse(char* p, unsigned int len);
+	virtual int FileTransferSubcommandResult(int prevResult);
 
 	int InternalConnect(const wxString& host, unsigned short port);
 	int DoInternalConnect();

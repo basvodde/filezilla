@@ -97,9 +97,9 @@ CHttpControlSocket::~CHttpControlSocket()
 	delete m_pAddress;
 }
 
-int CHttpControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
+int CHttpControlSocket::SendNextCommand()
 {
-	LogMessage(Debug_Verbose, _T("CHttpControlSocket::SendNextCommand(%d)"), prevResult);
+	LogMessage(Debug_Verbose, _T("CHttpControlSocket::SendNextCommand()"));
 	if (!m_pCurOpData)
 	{
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("SendNextCommand called without active operation"));
@@ -116,7 +116,7 @@ int CHttpControlSocket::SendNextCommand(int prevResult /*=FZ_REPLY_OK*/)
 	switch (m_pCurOpData->opId)
 	{
 	case cmd_transfer:
-		return FileTransferSend(prevResult);
+		return FileTransferSend();
 	default:
 		LogMessage(__TFILE__, __LINE__, this, ::Debug_Warning, _T("Unknown opID (%d) in SendNextCommand"), m_pCurOpData->opId);
 		ResetOperation(FZ_REPLY_INTERNALERROR);
@@ -388,9 +388,9 @@ int CHttpControlSocket::FileTransfer(const wxString localFile, const CServerPath
 	return FileTransferSend();
 }
 
-int CHttpControlSocket::FileTransferSend(int prevResult /*=FZ_RESULT_OK*/)
+int CHttpControlSocket::FileTransferSubcommandResult(int prevResult)
 {
-	LogMessage(Debug_Verbose, _T("CHttpControlSocket::FileTransferSend(%d)"), prevResult);
+	LogMessage(Debug_Verbose, _T("CHttpControlSocket::FileTransferSubcommandResult(%d)"), prevResult);
 
 	if (!m_pCurOpData)
 	{
@@ -406,6 +406,22 @@ int CHttpControlSocket::FileTransferSend(int prevResult /*=FZ_RESULT_OK*/)
 		ResetOperation(prevResult);
 		return FZ_REPLY_ERROR;
 	}
+
+	return FileTransferSend();
+}
+
+int CHttpControlSocket::FileTransferSend()
+{
+	LogMessage(Debug_Verbose, _T("CHttpControlSocket::FileTransferSend()"));
+
+	if (!m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	CHttpFileTransferOpData *pData = static_cast<CHttpFileTransferOpData *>(m_pCurOpData);
 
 	if (pData->opState == filetransfer_waitfileexists)
 	{
@@ -981,4 +997,27 @@ int CHttpControlSocket::ProcessData(char* p, int len)
 	wxASSERT(p || !m_pCurOpData);
 
 	return res;
+}
+
+int CHttpControlSocket::ParseSubcommandResult(int prevResult)
+{
+	LogMessage(Debug_Verbose, _T("CHttpControlSocket::SendNextCommand(%d)"), prevResult);
+	if (!m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("SendNextCommand called without active operation"));
+		ResetOperation(FZ_REPLY_ERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	switch (m_pCurOpData->opId)
+	{
+	case cmd_transfer:
+		return FileTransferSubcommandResult(prevResult);
+	default:
+		LogMessage(__TFILE__, __LINE__, this, ::Debug_Warning, _T("Unknown opID (%d) in SendNextCommand"), m_pCurOpData->opId);
+		ResetOperation(FZ_REPLY_INTERNALERROR);
+		break;
+	}
+
+	return FZ_REPLY_ERROR;
 }
