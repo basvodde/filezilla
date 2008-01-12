@@ -779,7 +779,7 @@ int CEditHandlerStatusDialog::ShowModal()
 
 	if (!pEditHandler->GetFileCount(CEditHandler::none, CEditHandler::unknown))
 	{
-		wxMessageBox(_("No files are currently being edited"), _("Cannot show dialog"), wxICON_INFORMATION, m_pParent);
+		wxMessageBox(_("No files are currently being edited."), _("Cannot show dialog"), wxICON_INFORMATION, m_pParent);
 		return wxID_CANCEL;
 	}
 
