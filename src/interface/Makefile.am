@@ -9,32 +9,40 @@ INCLUDES = -I$(srcdir)/../include
 bin_PROGRAMS = filezilla
 
 # the application source, library search path, and link libraries
-filezilla_SOURCES = aboutdialog.cpp asyncrequestqueue.cpp \
+filezilla_SOURCES = aboutdialog.cpp \
+		asyncrequestqueue.cpp \
 		aui_notebook_ex.cpp \
-		buildinfo.cpp chmoddialog.cpp \
+		buildinfo.cpp \
+		chmoddialog.cpp \
 		clearprivatedata.cpp \
 		commandqueue.cpp \
 		conditionaldialog.cpp \
 		customheightlistctrl.cpp \
-		defaultfileexistsdlg.cpp dialogex.cpp \
+		defaultfileexistsdlg.cpp \
+		dialogex.cpp \
 		dndobjects.cpp \
 		dragdropmanager.cpp \
 		edithandler.cpp \
 		export.cpp \
 		fileexistsdlg.cpp \
 		filelistctrl.cpp \
-		FileZilla.cpp filter.cpp filteredit.cpp \
+		FileZilla.cpp filter.cpp \
+		filteredit.cpp \
 		import.cpp \
 		inputdialog.cpp \
-		ipcmutex.cpp led.cpp \
+		ipcmutex.cpp \
+		led.cpp \
 		listctrlex.cpp \
 		listingcomparison.cpp \
 		locale_initializer.cpp \
-		LocalListView.cpp LocalTreeView.cpp \
+		LocalListView.cpp \
+		LocalTreeView.cpp \
 		loginmanager.cpp \
-		Mainfrm.cpp netconfwizard.cpp \
+		Mainfrm.cpp \
+		netconfwizard.cpp \
 		Options.cpp \
-		optionspage.cpp	optionspage_connection.cpp \
+		optionspage.cpp \
+		optionspage_connection.cpp \
 		optionspage_connection_active.cpp \
 		optionspage_connection_passive.cpp \
 		optionspage_dateformatting.cpp \
@@ -46,29 +54,42 @@ filezilla_SOURCES = aboutdialog.cpp asyncrequestqueue.cpp \
 		optionspage_interface.cpp \
 		optionspage_language.cpp \
 		optionspage_sizeformatting.cpp \
-		optionspage_themes.cpp optionspage_transfer.cpp \
+		optionspage_themes.cpp \
+		optionspage_transfer.cpp \
 		optionspage_updatecheck.cpp \
 		queue.cpp \
 		QueueView.cpp \
 		queueview_failed.cpp \
 		queueview_successful.cpp \
-		quickconnectbar.cpp recentserverlist.cpp \
+		quickconnectbar.cpp \
+		recentserverlist.cpp \
 		recursive_operation.cpp \
-		RemoteListView.cpp RemoteTreeView.cpp settingsdialog.cpp \
-		sitemanager.cpp state.cpp statuslinectrl.cpp StatusView.cpp \
+		RemoteListView.cpp \
+		RemoteTreeView.cpp \
+		settingsdialog.cpp \
+		sitemanager.cpp \
+		state.cpp \
+		statuslinectrl.cpp \
+		StatusView.cpp \
 		systemimagelist.cpp \
-		themeprovider.cpp updatewizard.cpp \
+		themeprovider.cpp \
+		updatewizard.cpp \
 		verifycertdialog.cpp \
-		view.cpp viewheader.cpp wrapengine.cpp \
+		view.cpp \
+		viewheader.cpp \
+		window_state_manager.cpp \
+		wrapengine.cpp \
 		xmlfunctions.cpp
  
 if USE_BINRELOC
 filezilla_SOURCES += prefix.cpp
 endif
 
-noinst_HEADERS = aboutdialog.h asyncrequestqueue.h \
+noinst_HEADERS = aboutdialog.h \
+		 asyncrequestqueue.h \
 		 aui_notebook_ex.h \
-		 buildinfo.h chmoddialog.h \
+		 buildinfo.h \
+		 chmoddialog.h \
 		 clearprivatedata.h \
 		 commandqueue.h \
 		 conditionaldialog.h \
@@ -81,16 +102,22 @@ noinst_HEADERS = aboutdialog.h asyncrequestqueue.h \
 		 export.h \
 		 fileexistsdlg.h \
 		 filelistctrl.h \
-		 filezillaapp.h filter.h filteredit.h \
+		 filezillaapp.h \
+		 filter.h \
+		 filteredit.h \
 		 import.h \
-		 inputdialog.h ipcmutex.h led.h \
+		 inputdialog.h \
+		 ipcmutex.h \
+		 led.h \
 		 listctrlex.h \
 		 listingcomparison.h \
 		 locale_initializer.h \
-		 LocalListView.h LocalTreeView.h \
+		 LocalListView.h \
+		 LocalTreeView.h \
 		 loginmanager.h \
 		 Mainfrm.h \
-		 netconfwizard.h Options.h \
+		 netconfwizard.h \
+		 Options.h \
 		 optionspage.h \
 		 optionspage_connection.h \
 		 optionspage_connection_active.h \
@@ -104,20 +131,33 @@ noinst_HEADERS = aboutdialog.h asyncrequestqueue.h \
 		 optionspage_interface.h \
 		 optionspage_language.h \
 		 optionspage_sizeformatting.h \
-		 optionspage_themes.h optionspage_transfer.h \
-		 optionspage_updatecheck.h prefix.h \
+		 optionspage_themes.h \
+		 optionspage_transfer.h \
+		 optionspage_updatecheck.h \
+		 prefix.h \
 		 queue.h \
 		 QueueView.h \
 		 queueview_failed.h \
 		 queueview_successful.h \
-		 quickconnectbar.h recentserverlist.h \
+		 quickconnectbar.h \
+		 recentserverlist.h \
 		 recursive_operation.h \
-		 RemoteListView.h RemoteTreeView.h \
-		 settingsdialog.h sitemanager.h state.h \
-		 statuslinectrl.h StatusView.h systemimagelist.h \
-		 themeprovider.h updatewizard.h \
+		 RemoteListView.h \
+		 RemoteTreeView.h \
+		 settingsdialog.h \
+		 sitemanager.h \
+		 state.h \
+		 statuslinectrl.h \
+		 StatusView.h \
+		 systemimagelist.h \
+		 themeprovider.h \
+		 updatewizard.h \
 		 verifycertdialog.h \
-		 view.h viewheader.h wrapengine.h xmlfunctions.h
+		 view.h \
+		 viewheader.h \
+		 window_state_manager.h \
+		 wrapengine.h \
+		 xmlfunctions.h
 
 if USE_RESOURCEFILE
 RESOURCEFILE = resources/filezilla.o

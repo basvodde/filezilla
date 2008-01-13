@@ -5,7 +5,6 @@
 #include "filezillaapp.h"
 #include <wx/tokenzr.h>
 #include "ipcmutex.h"
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -93,6 +92,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Local filelist colwidths", string, _T("") },
 	{ "Remote filelist colwidths", string, _T("") },
 	{ "Window position and size", string, _T("") },
+	{ "Splitter positions", string, _T("") },
 	{ "Local filelist sortorder", string, _T("") },
 	{ "Remote filelist sortorder", string, _T("") },
 	{ "Time Format", string, _T("") },
@@ -644,3 +644,4 @@ bool COptions::ReadColumnWidths(unsigned int optionId, unsigned int count, unsig
 	delete [] newWidths;
 	return true;
 }
+

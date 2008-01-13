@@ -34,7 +34,8 @@ enum interfaceOptions
 	OPTION_QUEUE_COLUMN_WIDTHS,
 	OPTION_LOCALFILELIST_COLUMN_WIDTHS,
 	OPTION_REMOTEFILELIST_COLUMN_WIDTHS,
-	OPTION_WINDOW_POSITION,
+	OPTION_MAINWINDOW_POSITION,
+	OPTION_MAINWINDOW_SPLITTER_POSITION,
 	OPTION_LOCALFILELIST_SORTORDER,
 	OPTION_REMOTEFILELIST_SORTORDER,
 	OPTION_TIME_FORMAT,
@@ -84,6 +85,7 @@ public:
 
 	void Import(TiXmlElement* pElement);
 
+	// Columns in wxListCtrl
 	void SaveColumnWidths(const wxListCtrl* const pListCtrl, unsigned int optionId);
 	bool ReadColumnWidths(unsigned int optionId, unsigned int count, unsigned long* widths);
 	

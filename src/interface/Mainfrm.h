@@ -20,6 +20,7 @@ class CSiteManagerItemData;
 class CQueue;
 class CViewHeader;
 class CComparisonManager;
+class CWindowStateManager;
 
 class CMainFrame : public wxFrame
 {
@@ -41,8 +42,8 @@ public:
 	void UpdateLayout(int layout = -1, int swap = -1);
 
 	// Window size and position as well as pane sizes
-	void RememberSizes();
-	void RestoreSizes();
+	void RememberSplitterPositions();
+	void RestoreSplitterPositions();
 
 	void CheckChangedSettings();
 
@@ -141,7 +142,6 @@ protected:
 	void OnNavigationKeyEvent(wxNavigationKeyEvent& event);
 	void OnGetFocus(wxFocusEvent& event);
 	void OnChar(wxKeyEvent& event);
-	void OnMoveEvent(wxMoveEvent& event);
 	void OnActivate(wxActivateEvent& event);
 	void OnToolbarComparison(wxCommandEvent& event);
 	void OnUpdateToolbarComparison(wxUpdateUIEvent& event);
@@ -168,15 +168,13 @@ protected:
 	int m_lastRemoteTreeSplitterPos;
 	int m_lastQueueSplitterPos;
 
+	CWindowStateManager* m_pWindowStateManager;
+
 #ifdef __WXMSW__
 	bool m_windowIsMaximized;
 #endif
 
 	CQueue* m_pQueuePane;
-
-	bool m_lastMaximized;
-	wxPoint m_lastWindowPosition;
-	wxSize m_lastWindowSize;
 };
 
 #endif
