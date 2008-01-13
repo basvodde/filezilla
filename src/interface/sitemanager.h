@@ -25,6 +25,7 @@ public:
 class TiXmlElement;
 class CInterProcessMutex;
 class CSiteManagerXmlHandler;
+class CWindowStateManager;
 class CSiteManager: public wxDialogEx
 {
 	DECLARE_EVENT_TABLE();
@@ -90,6 +91,8 @@ protected:
 
 	// Initialized by GetSitesMenu
 	static std::map<int, CSiteManagerItemData*> m_idMap;
+
+	CWindowStateManager* m_pWindowStateManager;
 };
 
 #endif //__SITEMANAGER_H__

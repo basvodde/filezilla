@@ -7,6 +7,7 @@
 #include "ipcmutex.h"
 #include "wrapengine.h"
 #include "conditionaldialog.h"
+#include "window_state_manager.h"
 
 std::map<int, CSiteManagerItemData*> CSiteManager::m_idMap;
 
@@ -36,11 +37,18 @@ END_EVENT_TABLE()
 CSiteManager::CSiteManager()
 {
 	m_pSiteManagerMutex = 0;
+	m_pWindowStateManager = 0;
 }
 
 CSiteManager::~CSiteManager()
 {
 	delete m_pSiteManagerMutex;
+
+	if (m_pWindowStateManager)
+	{
+		m_pWindowStateManager->Remember(OPTION_SITEMANAGER_POSITION);
+		delete m_pWindowStateManager;
+	}
 }
 
 bool CSiteManager::Create(wxWindow* parent)
@@ -89,6 +97,9 @@ bool CSiteManager::Create(wxWindow* parent)
 	XRCCTRL(*this, "ID_TRANSFERMODE_PASSIVE", wxRadioButton)->Update();
 
 	SetCtrlState();
+
+	m_pWindowStateManager = new CWindowStateManager(this);
+	m_pWindowStateManager->Restore(OPTION_SITEMANAGER_POSITION);
 
 	return true;
 }

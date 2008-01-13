@@ -106,7 +106,8 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Inherit system associations", number, _T("1") },
 	{ "Custom file associations", string, _T("") },
 	{ "Comparison mode", number, _T("1") },
-	{ "Comparison threshold", number, _T("1") }
+	{ "Comparison threshold", number, _T("1") },
+	{ "Site Manager position", string, _T("") }
 };
 
 COptions::COptions()
