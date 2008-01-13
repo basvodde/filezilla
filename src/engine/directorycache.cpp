@@ -217,7 +217,10 @@ bool CDirectoryCache::LookupFile(CDirentry &entry, const CServer &server, const 
 {
 	const CServerEntry* const pServerEntry = GetServerEntry(server);
 	if (!pServerEntry)
+	{
+		dirDidExist = false;
 		return false;
+	}
 
 	for (tCacheConstIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); iter++)
 	{
