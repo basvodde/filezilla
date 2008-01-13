@@ -474,7 +474,10 @@ void CSiteManager::OnNewFolder(wxCommandEvent&event)
 		return;
 
 	if (pTree->GetItemData(item))
-		return;
+	{
+		item = pTree->GetItemParent(item);
+		wxASSERT(!pTree->GetItemData(item));
+	}
 
 	if (!Verify())
 		return;
@@ -738,7 +741,10 @@ void CSiteManager::OnNewSite(wxCommandEvent& event)
 		return;
 
 	if (pTree->GetItemData(item))
-		return;
+	{
+		item = pTree->GetItemParent(item);
+		wxASSERT(!pTree->GetItemData(item));
+	}
 
 	if (!Verify())
 		return;
@@ -1012,8 +1018,8 @@ void CSiteManager::SetCtrlState()
 		XRCCTRL(*this, "ID_DELETE", wxWindow)->Enable(!predefined);
 		XRCCTRL(*this, "ID_COPY", wxWindow)->Enable(true);
 		XRCCTRL(*this, "ID_NOTEBOOK", wxWindow)->Enable(true);
-		XRCCTRL(*this, "ID_NEWFOLDER", wxWindow)->Enable(false);
-		XRCCTRL(*this, "ID_NEWSITE", wxWindow)->Enable(false);
+		XRCCTRL(*this, "ID_NEWFOLDER", wxWindow)->Enable(!predefined);
+		XRCCTRL(*this, "ID_NEWSITE", wxWindow)->Enable(!predefined);
 		XRCCTRL(*this, "ID_CONNECT", wxWindow)->Enable(true);
 
 		XRCCTRL(*this, "ID_HOST", wxWindow)->Enable(!predefined);
