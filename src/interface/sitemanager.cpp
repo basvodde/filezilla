@@ -176,7 +176,7 @@ public:
 	virtual ~CSiteManagerXmlHandler() {};
 
 	// Adds a folder and descents
-	virtual bool AddFolder(const wxString& name) = 0;
+	virtual bool AddFolder(const wxString& name, bool expanded) = 0;
 	virtual bool AddSite(const wxString& name, CSiteManagerItemData* data) = 0;
 
 	// Go up a level
@@ -197,13 +197,14 @@ public:
 		m_pTree->Expand(m_item);
 	}
 
-	virtual bool AddFolder(const wxString& name)
+	virtual bool AddFolder(const wxString& name, bool expanded)
 	{
 		wxTreeItemId newItem = m_pTree->AppendItem(m_item, name, 0, 0);
 		m_pTree->SetItemImage(newItem, 1, wxTreeItemIcon_Expanded);
 		m_pTree->SetItemImage(newItem, 1, wxTreeItemIcon_SelectedExpanded);
 
 		m_item = newItem;
+		m_expand.push_back(expanded);
 
 		return true;
 	}
@@ -217,8 +218,14 @@ public:
 
 	virtual bool LevelUp()
 	{
+		if (!m_expand.empty())
+		{
+			const bool expand = m_expand.back();
+			m_expand.pop_back();
+			if (expand)
+				m_pTree->Expand(m_item);
+		}
 		m_pTree->SortChildren(m_item);
-		m_pTree->Expand(m_item);
 
 		wxTreeItemId parent = m_pTree->GetItemParent(m_item);
 		if (!parent)
@@ -231,6 +238,8 @@ public:
 protected:
 	wxTreeCtrl* m_pTree;
 	wxTreeItemId m_item;
+
+	std::list<bool> m_expand;
 };
 
 bool CSiteManager::Load()
@@ -302,7 +311,8 @@ bool CSiteManager::Load(TiXmlElement *pElement, CSiteManagerXmlHandler* pHandler
 
 		if (!strcmp(pChild->Value(), "Folder"))
 		{
-			if (!pHandler->AddFolder(name))
+			const bool expand = GetTextAttribute(pChild, "expanded") != _T("0");
+			if (!pHandler->AddFolder(name, expand))
 				return false;
 			Load(pChild, pHandler);
 			if (!pHandler->LevelUp())
@@ -410,6 +420,9 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 		if (!data)
 		{
 			TiXmlNode* pNode = pElement->InsertEndChild(TiXmlElement("Folder"));
+			const bool expanded = pTree->IsExpanded(child);
+			SetTextAttribute(pNode->ToElement(), "expanded", expanded ? _T("1") : _T("0"));
+
 			pNode->InsertEndChild(TiXmlText(utf8));
 			delete [] utf8;
 
@@ -1275,7 +1288,7 @@ public:
 		return i;
 	}
 
-	virtual bool AddFolder(const wxString& name)
+	virtual bool AddFolder(const wxString& name, bool)
 	{
 		m_parents.push_back(m_pMenu);
 		m_childNames.push_back(name);
