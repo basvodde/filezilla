@@ -26,8 +26,11 @@ class TiXmlElement;
 class CInterProcessMutex;
 class CSiteManagerXmlHandler;
 class CWindowStateManager;
+class CSiteManagerDropTarget;
 class CSiteManager: public wxDialogEx
 {
+	friend class CSiteManagerDropTarget;
+
 	DECLARE_EVENT_TABLE();
 
 public:
@@ -82,12 +85,17 @@ protected:
 	virtual void OnLimitMultipleConnectionsChanged(wxCommandEvent& event);
 	virtual void OnCharsetChange(wxCommandEvent& event);
 	virtual void OnProtocolSelChanged(wxCommandEvent& event);
+	virtual void OnBeginDrag(wxTreeEvent& event);
 	void OnCopySite(wxCommandEvent& event);
 
 	CInterProcessMutex* m_pSiteManagerMutex;
 
 	wxTreeItemId m_predefinedSites;
 	wxTreeItemId m_ownSites;
+
+	wxTreeItemId m_dropSource;
+
+	bool MoveItems(wxTreeItemId source, wxTreeItemId target, bool copy);
 
 	// Initialized by GetSitesMenu
 	static std::map<int, CSiteManagerItemData*> m_idMap;

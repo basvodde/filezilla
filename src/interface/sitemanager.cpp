@@ -8,6 +8,7 @@
 #include "wrapengine.h"
 #include "conditionaldialog.h"
 #include "window_state_manager.h"
+#include <wx/dnd.h>
 
 std::map<int, CSiteManagerItemData*> CSiteManager::m_idMap;
 
@@ -32,7 +33,214 @@ EVT_RADIOBUTTON(XRCID("ID_CHARSET_UTF8"), CSiteManager::OnCharsetChange)
 EVT_RADIOBUTTON(XRCID("ID_CHARSET_CUSTOM"), CSiteManager::OnCharsetChange)
 EVT_CHOICE(XRCID("ID_PROTOCOL"), CSiteManager::OnProtocolSelChanged)
 EVT_BUTTON(XRCID("ID_COPY"), CSiteManager::OnCopySite)
+EVT_TREE_BEGIN_DRAG(XRCID("ID_SITETREE"), CSiteManager::OnBeginDrag)
 END_EVENT_TABLE()
+
+class CSiteManagerDataObject : public wxDataObjectSimple
+{
+public:
+	CSiteManagerDataObject()
+		: wxDataObjectSimple(wxDataFormat(_T("FileZilla3SiteManagerObject")))
+	{
+	}
+
+	virtual size_t GetDataSize() const { return 0; }
+
+	virtual bool GetDataHere(void *buf) const { return true; }
+
+	virtual bool SetData(size_t len, const void *buf) { return true; }
+};
+
+class CSiteManagerDropTarget : public wxDropTarget
+{
+public:
+	CSiteManagerDropTarget(CSiteManager* pSiteManager)
+		: wxDropTarget(new CSiteManagerDataObject())
+	{
+		m_pSiteManager = pSiteManager;
+	}
+
+	virtual wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def)
+	{
+		ClearDropHighlight();
+		if (def == wxDragError ||
+			def == wxDragNone ||
+			def == wxDragCancel)
+		{
+			return def;
+		}
+
+		wxTreeItemId hit = GetHit(wxPoint(x, y));
+		if (!hit)
+			return wxDragNone;
+	
+		const bool predefined = m_pSiteManager->IsPredefinedItem(hit);
+		if (predefined)
+			return wxDragNone;
+	
+		wxTreeCtrl *pTree = XRCCTRL(*m_pSiteManager, "ID_SITETREE", wxTreeCtrl);
+		if (pTree->GetItemData(hit))
+			return wxDragNone;
+	
+		wxTreeItemId item = hit;
+		while (item != pTree->GetRootItem())
+		{
+			if (item == m_pSiteManager->m_dropSource)
+			{
+				ClearDropHighlight();
+				return wxDragNone;
+			}
+			item = pTree->GetItemParent(item);
+		}
+
+		if (def == wxDragMove && pTree->GetItemParent(m_pSiteManager->m_dropSource) == hit)
+			return wxDragNone;
+
+		if (!m_pSiteManager->MoveItems(m_pSiteManager->m_dropSource, hit, def == wxDragCopy))
+			return wxDragNone;
+	
+		return def;
+	}
+
+	virtual wxDragResult OnDrop(wxCoord x, wxCoord y, wxDragResult def)
+	{
+		ClearDropHighlight();
+		if (def == wxDragError ||
+			def == wxDragNone ||
+			def == wxDragCancel)
+		{
+			return def;
+		}
+
+		wxTreeItemId hit = GetHit(wxPoint(x, y));
+		if (!hit)
+			return wxDragNone;
+	
+		const bool predefined = m_pSiteManager->IsPredefinedItem(hit);
+		if (predefined)
+			return wxDragNone;
+	
+		wxTreeCtrl *pTree = XRCCTRL(*m_pSiteManager, "ID_SITETREE", wxTreeCtrl);
+		if (pTree->GetItemData(hit))
+			return wxDragNone;
+	
+		wxTreeItemId item = hit;
+		while (item != pTree->GetRootItem())
+		{
+			if (item == m_pSiteManager->m_dropSource)
+			{
+				ClearDropHighlight();
+				return wxDragNone;
+			}
+			item = pTree->GetItemParent(item);
+		}
+
+		if (def == wxDragMove && pTree->GetItemParent(m_pSiteManager->m_dropSource) == hit)
+			return wxDragNone;
+	
+		return def;
+	}
+
+	virtual void OnLeave()
+	{
+		ClearDropHighlight();
+	}
+
+	virtual wxDragResult OnEnter(wxCoord x, wxCoord y, wxDragResult def)
+	{
+		return OnDragOver(x, y, def);
+	}
+
+	wxTreeItemId GetHit(const wxPoint& point)
+	{
+		int flags = 0;
+
+		wxTreeCtrl *pTree = XRCCTRL(*m_pSiteManager, "ID_SITETREE", wxTreeCtrl);
+		wxTreeItemId hit = pTree->HitTest(point, flags);
+
+		if (flags & (wxTREE_HITTEST_ABOVE | wxTREE_HITTEST_BELOW | wxTREE_HITTEST_NOWHERE | wxTREE_HITTEST_TOLEFT | wxTREE_HITTEST_TORIGHT))
+			return wxTreeItemId();
+
+		return hit;
+	}
+
+	virtual wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult def)
+	{
+		if (def == wxDragError ||
+			def == wxDragNone ||
+			def == wxDragCancel)
+		{
+			ClearDropHighlight();
+			return def;
+		}
+
+		wxTreeItemId hit = GetHit(wxPoint(x, y));
+		if (!hit)
+		{
+			ClearDropHighlight();
+			return wxDragNone;
+		}
+
+		const bool predefined = m_pSiteManager->IsPredefinedItem(hit);
+		if (predefined)
+		{
+			ClearDropHighlight();
+			return wxDragNone;
+		}
+
+		wxTreeCtrl *pTree = XRCCTRL(*m_pSiteManager, "ID_SITETREE", wxTreeCtrl);
+		CSiteManagerItemData* data = reinterpret_cast<CSiteManagerItemData* >(pTree->GetItemData(hit));
+		if (data)
+		{
+			ClearDropHighlight();
+			return wxDragNone;
+		}
+
+		wxTreeItemId item = hit;
+		while (item != pTree->GetRootItem())
+		{
+			if (item == m_pSiteManager->m_dropSource)
+			{
+				ClearDropHighlight();
+				return wxDragNone;
+			}
+			item = pTree->GetItemParent(item);
+		}
+
+		if (def == wxDragMove && pTree->GetItemParent(m_pSiteManager->m_dropSource) == hit)
+		{
+			ClearDropHighlight();
+			return wxDragNone;
+		}
+
+		DisplayDropHighlight(hit);
+
+		return def;
+	}
+
+	void ClearDropHighlight()
+	{
+		if (m_dropHighlight == wxTreeItemId())
+			return;
+
+		wxTreeCtrl *pTree = XRCCTRL(*m_pSiteManager, "ID_SITETREE", wxTreeCtrl);
+		pTree->SetItemDropHighlight(m_dropHighlight, false);
+		m_dropHighlight = wxTreeItemId();
+	}
+
+	void DisplayDropHighlight(wxTreeItemId item)
+	{
+		ClearDropHighlight();
+
+		wxTreeCtrl *pTree = XRCCTRL(*m_pSiteManager, "ID_SITETREE", wxTreeCtrl);
+		pTree->SetItemDropHighlight(item, true);
+		m_dropHighlight = item;
+	}
+
+protected:
+	CSiteManager* m_pSiteManager;
+	wxTreeItemId m_dropHighlight;
+};
 
 CSiteManager::CSiteManager()
 {
@@ -100,6 +308,8 @@ bool CSiteManager::Create(wxWindow* parent)
 
 	m_pWindowStateManager = new CWindowStateManager(this);
 	m_pWindowStateManager->Restore(OPTION_SITEMANAGER_POSITION);
+
+	pTree->SetDropTarget(new CSiteManagerDropTarget(this));
 
 	return true;
 }
@@ -1477,4 +1687,149 @@ CSiteManagerItemData* CSiteManager::GetSiteById(int id)
 	ClearIdMap();
 
 	return pData;
+}
+
+void CSiteManager::OnBeginDrag(wxTreeEvent& event)
+{
+	if (!Verify())
+	{
+		event.Veto();
+		return;
+	}
+
+	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
+	if (!pTree)
+	{
+		event.Veto();
+		return;
+	}
+	
+	wxTreeItemId item = event.GetItem();
+	if (!item.IsOk())
+	{
+		event.Veto();
+		return;
+	}
+
+	const bool predefined = IsPredefinedItem(item);
+	const bool root_or_predefined = (item == pTree->GetRootItem() || item == m_ownSites || predefined);
+
+	CSiteManagerDataObject obj;
+
+	wxDropSource source(this);
+	source.SetData(obj);
+
+	m_dropSource = item;
+	
+	source.DoDragDrop(root_or_predefined ? wxDrag_CopyOnly : wxDrag_DefaultMove);
+
+	m_dropSource = wxTreeItemId();
+}
+
+struct itempair
+{
+	wxTreeItemId source;
+	wxTreeItemId target;
+};
+
+bool CSiteManager::MoveItems(wxTreeItemId source, wxTreeItemId target, bool copy)
+{
+	if (IsPredefinedItem(target))
+		return false;
+
+	if (IsPredefinedItem(source) && !copy)
+		return false;
+
+    wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
+	if (pTree->GetItemData(target))
+		return false;
+
+	wxTreeItemId item = target;
+	while (item != pTree->GetRootItem())
+	{
+		if (item == source)
+			return false;
+		item = pTree->GetItemParent(item);
+	}
+
+	if (!copy && pTree->GetItemParent(source) == target)
+		return false;
+
+	wxString sourceName = pTree->GetItemText(source);
+
+	wxTreeItemId child;
+	wxTreeItemIdValue cookie;
+	child = pTree->GetFirstChild(target, cookie);
+
+	while (child.IsOk())
+	{
+		wxString childName = pTree->GetItemText(child);
+
+		if (!sourceName.CmpNoCase(childName))
+		{
+			wxMessageBox(_("An item with the same name as the dragged item already exists at the target location."), _("Failed to copy or move sites"), wxICON_INFORMATION);
+			return false;
+		}
+
+		child = pTree->GetNextChild(target, cookie);
+	}
+
+	std::list<itempair> work;
+	itempair pair;
+	pair.source = source;
+	pair.target = target;
+	work.push_back(pair);
+
+	std::list<wxTreeItemId> expand;
+	
+	while (!work.empty())
+	{
+		itempair pair = work.front();
+		work.pop_front();
+
+		wxString name = pTree->GetItemText(pair.source);
+
+		CSiteManagerItemData* data = reinterpret_cast<CSiteManagerItemData* >(pTree->GetItemData(pair.source));
+
+		wxTreeItemId newItem = pTree->AppendItem(pair.target, name, data ? 2 : 0);
+		if (!data)
+		{
+			pTree->SetItemImage(newItem, 1, wxTreeItemIcon_Expanded);
+			pTree->SetItemImage(newItem, 1, wxTreeItemIcon_SelectedExpanded);
+
+			if (pTree->IsExpanded(pair.source))
+				expand.push_back(newItem);
+		}
+		else
+		{
+			CSiteManagerItemData* newData = new CSiteManagerItemData;
+			*newData = *data;
+			pTree->SetItemData(newItem, newData);
+		}
+
+		wxTreeItemId child;
+		wxTreeItemIdValue cookie;
+		child = pTree->GetFirstChild(pair.source, cookie);
+		while (child.IsOk())
+		{
+			itempair newPair;
+			newPair.source = child;
+			newPair.target = newItem;
+			work.push_back(newPair);
+
+			child = pTree->GetNextChild(pair.source, cookie);
+		}
+
+		pTree->SortChildren(pair.target);
+	}
+
+	if (!copy)
+		pTree->Delete(source);
+
+	for (std::list<wxTreeItemId>::iterator iter = expand.begin(); iter != expand.end(); iter++)
+		pTree->Expand(*iter);
+
+	pTree->Expand(target);
+	
+	return true;
 }
