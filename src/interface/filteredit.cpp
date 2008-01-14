@@ -329,6 +329,12 @@ void CFilterEditDialog::OnNew(wxCommandEvent& event)
 		return;
 	newName = dlg.GetValue();
 
+	if (newName == _T(""))
+	{
+		wxMessageBox(_("No filter name given"), _("Cannot create new filter"), wxICON_INFORMATION);
+		return;
+	}
+
 	if (m_pFilterListCtrl->FindString(newName) != wxNOT_FOUND)
 	{
 		wxMessageBox(_("The entered filter name already exists."), _("Duplicate filter name"), wxICON_ERROR, this);

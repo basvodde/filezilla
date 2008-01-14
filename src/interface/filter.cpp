@@ -616,6 +616,11 @@ void CFilterDialog::OnSaveAs(wxCommandEvent& event)
 		return;
 
 	wxString name = dlg.GetValue();
+	if (name == _T(""))
+	{
+		wxMessageBox(_("No name for the filterset given."), _("Cannot save filterset"), wxICON_INFORMATION);
+		return;
+	}
 	wxChoice* pChoice = XRCCTRL(*this, "ID_SETS", wxChoice);
 	int pos = pChoice->FindString(name);
 	if (pos != wxNOT_FOUND)
