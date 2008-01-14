@@ -113,7 +113,7 @@ bool CSettingsDialog::LoadPages()
 	ADD_PAGE(_("Date/time format"), COptionsPageDateFormatting, page_interface);
 	ADD_PAGE(_("Filesize format"), COptionsPageSizeFormatting, page_interface);
 	ADD_PAGE(_("Language"), COptionsPageLanguage, page_none);
-	ADD_PAGE(_("Remote file editing"), COptionsPageEdit, page_none);
+	ADD_PAGE(_("File editing"), COptionsPageEdit, page_none);
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	ADD_PAGE(_("Update Check"), COptionsPageUpdateCheck, page_none);
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
