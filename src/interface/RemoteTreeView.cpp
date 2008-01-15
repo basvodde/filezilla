@@ -221,6 +221,7 @@ EVT_MENU(XRCID("ID_RENAME"), CRemoteTreeView::OnMenuRename)
 EVT_TREE_BEGIN_LABEL_EDIT(wxID_ANY, CRemoteTreeView::OnBeginLabelEdit)
 EVT_TREE_END_LABEL_EDIT(wxID_ANY, CRemoteTreeView::OnEndLabelEdit)
 EVT_MENU(XRCID("ID_MKDIR"), CRemoteTreeView::OnMkdir)
+EVT_CHAR(CRemoteTreeView::OnChar)
 END_EVENT_TABLE()
 
 CRemoteTreeView::CRemoteTreeView(wxWindow* parent, wxWindowID id, CState* pState, CQueueView* pQueue)
@@ -1242,4 +1243,17 @@ bool CRemoteTreeView::ListExpand(wxTreeItemId item)
 	}
 
 	return true;
+}
+
+void CRemoteTreeView::OnChar(wxKeyEvent& event)
+{
+	m_contextMenuItem = GetSelection();
+
+	wxCommandEvent cmdEvt;
+	if (event.GetKeyCode() == WXK_F2)
+		OnMenuRename(cmdEvt);
+	else if (event.GetKeyCode() == WXK_DELETE)
+		OnMenuDelete(cmdEvt);
+	else
+		event.Skip();
 }
