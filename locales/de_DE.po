@@ -349,7 +349,7 @@ msgstr "&Höchster verfügbarer Port:"
 
 #: resources.h:72 resources.h:607
 msgid "&Host:"
-msgstr "&Server:"
+msgstr "Se&rver:"
 
 #: resources.h:201
 msgid "&IEC binary prefixes (e.g. 1 KiB = 1024 bytes)"
@@ -636,6 +636,7 @@ msgstr "'%s' konnte nicht gefunden werden oder es war kein Zugriff möglich."
 msgid "'Account' logontype not supported by selected protocol"
 msgstr "Anmeldung via 'Konto' wird vom gewählten Protokoll nicht unterstützt."
 
+# TODO
 #: ../../locales/../src/interface/Mainfrm.cpp:571
 msgid ""
 "'quote' is usually a local command used by commandline clients to send the "
@@ -644,7 +645,7 @@ msgid ""
 msgstr ""
 "'quote' ist normalerweise ein lokales Kommando, das Befehlszeilen-Clients "
 "verwenden, um den Inhalt welcher dem 'quote' folgt an den Server zu senden. "
-"Sie könnten ebenso das Raw-Kommando ohne 'quote' senden."
+"Wollen Sie nicht vielmehr den Befehl ohne 'quote' senden?"
 
 #: resources.h:28 resources.h:30
 msgid "(0 for no limit)"
@@ -1279,7 +1280,7 @@ msgstr "Ko&mmentare:"
 #: resources.h:218
 msgid "Command and its arguments should be properly quoted."
 msgstr ""
-"Das Kommando und seine Argumente sollten korrekt mit Anführungszeichen versehen sein."
+"Der Befehl und seine Argumente sollten korrekt mit Anführungszeichen versehen sein."
 
 #: ../../locales/../src/engine/engineprivate.cpp:217
 msgid "Command not supported by this protocol"
@@ -1795,7 +1796,7 @@ msgstr "Verzeichnisauflistung fehlgeschlagen"
 
 #: resources.h:304
 msgid "Directory listing filters"
-msgstr "Filter für Ordnerinhalte"
+msgstr "Datei-/Verzeichnisfilter"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:133
 msgid "Directory listing successful"
@@ -1898,12 +1899,11 @@ msgstr "Ausgewählte Dateien und Verzeichnisse herunterladen"
 msgid "Downloading"
 msgstr "Wird heruntergeladen"
 
-# TODO //stopped here...
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:336
 #: ../../locales/../src/interface/updatewizard.cpp:224
 #, c-format
 msgid "Downloading %s"
-msgstr "Herunterladen von %s"
+msgstr "Lade %s herunter"
 
 #: resources.h:371 resources.h:391
 msgid "Downloads"
@@ -1918,7 +1918,7 @@ msgid ""
 "Drag&drop between different instances of FileZilla has not been implemented "
 "yet."
 msgstr ""
-"Drag&Drop zwischen verschiedenen Instanzen von Filezilla ist derzeit nicht "
+"Drag&Drop zwischen verschiedenen Instanzen von FileZilla ist derzeit noch nicht "
 "möglich."
 
 #: ../../locales/../src/interface/LocalListView.cpp:100
@@ -1927,7 +1927,7 @@ msgstr ""
 #: ../../locales/../src/interface/RemoteListView.cpp:96
 #: ../../locales/../src/interface/RemoteTreeView.cpp:85
 msgid "Drag&drop between different servers has not been implemented yet."
-msgstr "Drag&Drop zwischen verschiedenen Servern ist derzeit nicht möglich"
+msgstr "Drag&Drop zwischen verschiedenen Servern ist derzeit noch nicht möglich."
 
 #: ../../locales/../src/interface/filteredit.cpp:334
 #: ../../locales/../src/interface/filteredit.cpp:397
@@ -1953,7 +1953,7 @@ msgstr "E-Mail:"
 
 #: ../../locales/../src/interface/filteredit.cpp:536
 msgid "Each filter needs at least one condition."
-msgstr "Jeder Filter muss wenigstens eine Bedingung enthalten"
+msgstr "Jeder Filter muss wenigstens eine Bedingung enthalten."
 
 #: resources.h:319
 msgid "Edit filters"
@@ -1963,28 +1963,31 @@ msgstr "Filter bearbeiten"
 msgid ""
 "Edit the file with the configured editor and upload changes to the server."
 msgstr ""
-"Bearbeiten der Datei mit dem eingestellten Editor und Hochladen zum Server."
+"Datei mit dem eingestellten Editor bearbeiten und auf den Server hochladen."
 
 #: resources.h:173
 msgid "Email:"
 msgstr "E-Mail:"
 
+# TODO:? Leerer Befehl
 #: ../../locales/../src/interface/QueueView.cpp:1971
 msgid "Empty command"
 msgstr "Leeres Kommando"
 
+# TODO:? Leerer Befehl.
 #: ../../locales/../src/interface/optionspage_edit.cpp:147
 msgid "Empty command."
 msgstr "Leeres Kommando."
 
 #: ../../locales/../src/interface/RemoteListView.cpp:1869
 msgid "Empty directory listing"
-msgstr "Verzeichnis leer"
+msgstr "Leeres Verzeichnis"
 
 #: ../../locales/../src/interface/optionspage_edit.cpp:140
 msgid "Empty file extension."
 msgstr "Leere Dateierweiterung."
 
+# TODO
 #: ../../locales/../src/interface/filteredit.cpp:388
 #: ../../locales/../src/interface/filteredit.cpp:431
 msgid "Empty filter names are not allowed."
@@ -1995,9 +1998,10 @@ msgstr "Geben Sie einen nicht leeren Filter an."
 msgid "Empty name"
 msgstr "Leerer Name"
 
+# TODO
 #: ../../locales/../src/interface/optionspage_edit.cpp:115
 msgid "Empty quoted string."
-msgstr "Leerer String."
+msgstr "Leere Zeichenkette."
 
 #: resources.h:313
 msgid "En&able all"
@@ -2023,11 +2027,11 @@ msgstr "Benutzerdefinierten Befehl eingeben"
 #: ../../locales/../src/interface/filteredit.cpp:380
 #: ../../locales/../src/interface/filteredit.cpp:424
 msgid "Enter filter name"
-msgstr "Bitte einen Filtername angegeben"
+msgstr "Bitte einen Filternamen angegeben"
 
 #: ../../locales/../src/interface/filter.cpp:614
 msgid "Enter name for filterset"
-msgstr "Namen für Filtersatz eingeben"
+msgstr "Bitte einen Namen für den Filtersatz eingeben"
 
 #: resources.h:112
 msgid "Enter password"
@@ -2045,7 +2049,7 @@ msgstr ""
 "Geben Sie die Adresse des Servers ein.\n"
 "Um das Server-Protokoll festzulegen, können Sie einen Protokollnamen vor dem "
 "Servernamen einfügen. Wenn kein Protokoll angegeben wird, wird das "
-"Standardprotokoll ftp:// verwendet.\n"
+"Standardprotokoll (ftp://) verwendet.\n"
 "Sie können auch eine komplette URL in der Form protokoll://benutzer:"
 "passwort@server:port angeben. Die Werte in den anderen Feldern werden dann "
 "überschrieben."
@@ -2065,13 +2069,13 @@ msgstr "Fehler %d beim Schreiben auf Socket"
 
 #: ../../locales/../src/interface/export.cpp:26
 msgid "Error exporting settings"
-msgstr "Fehler bei Exportieren der Einstellungen"
+msgstr "Fehler beim Exportieren der Einstellungen"
 
 #: ../../locales/../src/interface/import.cpp:28
 #: ../../locales/../src/interface/import.cpp:36
 #: ../../locales/../src/interface/import.cpp:99
 msgid "Error importing"
-msgstr "Importfehler"
+msgstr "Fehler beim Importieren"
 
 #: ../../locales/../src/interface/filter.cpp:168
 #: ../../locales/../src/interface/filter.cpp:264
@@ -2114,13 +2118,14 @@ msgstr "Ausführbare Datei"
 #: ../../locales/../src/interface/Mainfrm.cpp:1457
 msgid "Executable contains no version info, cannot check for updates."
 msgstr ""
-"Programm enthält keine Versionsinformationen, Updateüberprüfung nicht "
+"Programm enthält keine Versionsinformationen, Überprüfung auf Updates nicht "
 "möglich."
 
 #: resources.h:140
 msgid "Explorer"
 msgstr "Explorer"
 
+# TODO //stopped here...
 #: resources.h:421
 msgid "Export &Queue"
 msgstr "&Warteschlange"
@@ -2436,7 +2441,7 @@ msgstr "Dateiname"
 
 #: resources.h:462
 msgid "Filename &filters..."
-msgstr "Datei&filter..."
+msgstr "Datei-/Verzeichnis&filter..."
 
 #: ../../locales/../src/interface/RemoteListView.cpp:1477
 msgid "Filename invalid"
@@ -4408,7 +4413,7 @@ msgid ""
 "Continue with the import?"
 msgstr ""
 "Die gewählte Datei beinhaltet Servermanagerdaten einer älteren Version von "
-"Filezilla.\n"
+"FileZilla.\n"
 "Aufgrund von Unterschieden im Speicherformat kann nur Server, Port, "
 "Benutzername und Passwort importiert werden.\n"
 "Mit dem Import fortsetzen?"
