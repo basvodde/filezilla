@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ID-01\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-13 12:07+0100\n"
-"PO-Revision-Date: 2008-01-12 13:30+0700\n"
+"POT-Creation-Date: 2008-01-15 15:03+0100\n"
+"PO-Revision-Date: 2008-01-14 22:24+0700\n"
 "Last-Translator: Willy Sudiarto Raharjo <willysr@gmail.com>\n"
 "Language-Team: Indonesia <willysr@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -170,9 +170,8 @@ msgid "&Binary"
 msgstr "&Biner"
 
 #: resources.h:202
-#, fuzzy
 msgid "&Binary prefixes using SI symbols. (e.g. 1 KB = 1024 bytes)"
-msgstr "&Awalan biner menggunakan simbol SI. (cth. 1 KB = 1024 byte.)"
+msgstr "&Awalan biner menggunakan simbol SI. (cth. 1 KB = 1024 byte)"
 
 #: resources.h:89 resources.h:217
 msgid "&Browse..."
@@ -627,7 +626,7 @@ msgstr "&Ya"
 msgid "'%s' does not exist or cannot be accessed."
 msgstr "'%s' tidak ada atau tidak bisa diakses."
 
-#: ../../locales/../src/interface/sitemanager.cpp:522
+#: ../../locales/../src/interface/sitemanager.cpp:760
 msgid "'Account' logontype not supported by selected protocol"
 msgstr "Jenis login 'Akun' tidak didukung oleh protokol yang dipilih"
 
@@ -825,12 +824,12 @@ msgstr "&Tanya aksi"
 msgid "About FileZilla"
 msgstr "Tentang FileZilla"
 
-#: resources.h:80 ../../locales/../src/interface/sitemanager.cpp:519
-#: ../../locales/../src/interface/sitemanager.cpp:569
-#: ../../locales/../src/interface/sitemanager.cpp:770
-#: ../../locales/../src/interface/sitemanager.cpp:771
-#: ../../locales/../src/interface/sitemanager.cpp:809
-#: ../../locales/../src/interface/sitemanager.cpp:1028
+#: resources.h:80 ../../locales/../src/interface/sitemanager.cpp:757
+#: ../../locales/../src/interface/sitemanager.cpp:807
+#: ../../locales/../src/interface/sitemanager.cpp:1011
+#: ../../locales/../src/interface/sitemanager.cpp:1012
+#: ../../locales/../src/interface/sitemanager.cpp:1050
+#: ../../locales/../src/interface/sitemanager.cpp:1269
 msgid "Account"
 msgstr "Akun"
 
@@ -931,10 +930,18 @@ msgstr ""
 "Alternatif lain, kunjungi http://filezilla-project.org  untuk mendownload "
 "versi terbaru. "
 
-#: resources.h:76 ../../locales/../src/interface/sitemanager.cpp:560
-#: ../../locales/../src/interface/sitemanager.cpp:769
-#: ../../locales/../src/interface/sitemanager.cpp:965
-#: ../../locales/../src/interface/sitemanager.cpp:1031
+#: ../../locales/../src/interface/sitemanager.cpp:1771
+#, fuzzy
+msgid ""
+"An item with the same name as the dragged item already exists at the target "
+"location."
+msgstr ""
+"Berkas dengan nama tersebut masih diedit. Harap ditutup dan coba kembali."
+
+#: resources.h:76 ../../locales/../src/interface/sitemanager.cpp:798
+#: ../../locales/../src/interface/sitemanager.cpp:1010
+#: ../../locales/../src/interface/sitemanager.cpp:1206
+#: ../../locales/../src/interface/sitemanager.cpp:1272
 msgid "Anonymous"
 msgstr "Anonim"
 
@@ -962,8 +969,8 @@ msgstr "Terapkan pada &berkas saja"
 msgid "Archive"
 msgstr "Arsip"
 
-#: resources.h:78 ../../locales/../src/interface/sitemanager.cpp:805
-#: ../../locales/../src/interface/sitemanager.cpp:1022
+#: resources.h:78 ../../locales/../src/interface/sitemanager.cpp:1046
+#: ../../locales/../src/interface/sitemanager.cpp:1263
 msgid "Ask for password"
 msgstr "Tanya Kata kunci"
 
@@ -979,7 +986,7 @@ msgstr "Tanya sistem operasi Anda untuk alamat IP eksternal"
 msgid "Associated program not found:"
 msgstr "Program yang sesuai tidak ditemukan:"
 
-#: ../../locales/../src/interface/filteredit.cpp:547
+#: ../../locales/../src/interface/filteredit.cpp:553
 msgid "At least one filter condition is incomplete"
 msgstr "Paling tidak satu kondisi filter tidak lengkap"
 
@@ -1106,6 +1113,11 @@ msgstr ""
 msgid "Cannot compare directories, not connected to a server."
 msgstr "Tidak dapat membandingkan direktori, tidak terhubung ke server."
 
+#: ../../locales/../src/interface/filteredit.cpp:334
+#, fuzzy
+msgid "Cannot create new filter"
+msgstr "Tidak dapat mengganti nama berkas"
+
 #: ../../locales/../src/interface/RemoteListView.cpp:2165
 #: ../../locales/../src/interface/RemoteListView.cpp:2172
 msgid "Cannot edit file"
@@ -1135,12 +1147,17 @@ msgstr "Tidak dapat membuka menu utama dari berkas sumber"
 msgid "Cannot load toolbar from resource file"
 msgstr "Tidak dapat membuka toolbar dari berkas sumber"
 
-#: ../../locales/../src/interface/sitemanager.cpp:646
+#: ../../locales/../src/interface/sitemanager.cpp:884
 msgid "Cannot rename entry"
 msgstr "Tidak dapat mengganti nama daftar"
 
 #: ../../locales/../src/interface/RemoteListView.cpp:1477
 msgid "Cannot rename file"
+msgstr "Tidak dapat mengganti nama berkas"
+
+#: ../../locales/../src/interface/filter.cpp:621
+#, fuzzy
+msgid "Cannot save filterset"
 msgstr "Tidak dapat mengganti nama berkas"
 
 #: ../../locales/../src/interface/edithandler.cpp:782
@@ -1200,7 +1217,7 @@ msgstr "Memeriksa alamat IP eksternal yang benar"
 msgid "Checking for updates"
 msgstr "Memeriksa update"
 
-#: ../../locales/../src/interface/sitemanager.cpp:905
+#: ../../locales/../src/interface/sitemanager.cpp:1146
 msgid "Choose the default local directory"
 msgstr "Pilih direktori lokal default"
 
@@ -1428,12 +1445,12 @@ msgstr "Koneksi dengan server pengujian gagal"
 msgid "Cop&y"
 msgstr "Sal&in"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1179
+#: ../../locales/../src/interface/sitemanager.cpp:1420
 #, c-format
 msgid "Copy (%d) of %s"
 msgstr "Salin (%d) dari %s"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1156
+#: ../../locales/../src/interface/sitemanager.cpp:1397
 #, c-format
 msgid "Copy of %s"
 msgstr "Salinan dari %s"
@@ -1481,7 +1498,7 @@ msgstr "Tidak dapat menghasilkan urutan login."
 msgid "Could not get temporary directory to download file into."
 msgstr "Tidak bisa mendapatkan direktori sementara untuk mendownload berkas"
 
-#: ../../locales/../src/interface/Options.cpp:125
+#: ../../locales/../src/interface/Options.cpp:126
 #, c-format
 msgid ""
 "Could not load \"%s\", make sure the file is valid.\n"
@@ -1501,7 +1518,7 @@ msgstr "Tidak dapat membuka \"%s\", pastikan berkas valid dan dapat diakses."
 
 #: ../../locales/../src/interface/filter.cpp:167
 #: ../../locales/../src/interface/filter.cpp:263
-#: ../../locales/../src/interface/sitemanager.cpp:356
+#: ../../locales/../src/interface/sitemanager.cpp:588
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1513,8 +1530,8 @@ msgstr ""
 
 #: ../../locales/../src/interface/import.cpp:110
 #: ../../locales/../src/interface/import.cpp:293
-#: ../../locales/../src/interface/sitemanager.cpp:253
-#: ../../locales/../src/interface/sitemanager.cpp:1336
+#: ../../locales/../src/interface/sitemanager.cpp:484
+#: ../../locales/../src/interface/sitemanager.cpp:1577
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1557,7 +1574,7 @@ msgstr "Tidak dapat mengulang thread IO"
 msgid "Could not start transfer"
 msgstr "Tidak dapat memulai transfer"
 
-#: ../../locales/../src/interface/sitemanager.cpp:382
+#: ../../locales/../src/interface/sitemanager.cpp:614
 #, c-format
 msgid ""
 "Could not write \"%s\", any changes to the Site Manager could not be saved: %"
@@ -1665,8 +1682,8 @@ msgstr "Debug"
 msgid "Debugging settings"
 msgstr "Pengaturan debug"
 
-#: resources.h:87 ../../locales/../src/interface/sitemanager.cpp:971
-#: ../../locales/../src/interface/sitemanager.cpp:1060
+#: resources.h:87 ../../locales/../src/interface/sitemanager.cpp:1212
+#: ../../locales/../src/interface/sitemanager.cpp:1301
 msgid "Default"
 msgstr "Default"
 
@@ -1717,7 +1734,7 @@ msgstr "Keterlambatan diantara percobaan login yang gagal:"
 msgid "Delaying connection due to previously failed connection attempt..."
 msgstr "Menunda koneksi karena percobaan koneksi yang gagal sebelumnya..."
 
-#: ../../locales/../src/interface/sitemanager.cpp:679
+#: ../../locales/../src/interface/sitemanager.cpp:917
 msgid "Delete Site Manager entry"
 msgstr "Hapus daftar Manajemen Situs"
 
@@ -1840,7 +1857,7 @@ msgstr ""
 msgid "Do you really want to delete all Site Manager entries?"
 msgstr "Apakah Anda hendak menghapus semua daftar Manajemen Situs?"
 
-#: ../../locales/../src/interface/sitemanager.cpp:681
+#: ../../locales/../src/interface/sitemanager.cpp:919
 msgid "Do you really want to delete selected entry?"
 msgstr "Apakah Anda hendak menghapus daftar yang terpilih?"
 
@@ -1901,9 +1918,9 @@ msgstr "Drag&drop antar FileZilla yang berbeda belum diimplementasikan."
 msgid "Drag&drop between different servers has not been implemented yet."
 msgstr "Drag&drop antara server yang berbeda belum diimplementasikan."
 
-#: ../../locales/../src/interface/filteredit.cpp:334
-#: ../../locales/../src/interface/filteredit.cpp:397
-#: ../../locales/../src/interface/filteredit.cpp:437
+#: ../../locales/../src/interface/filteredit.cpp:340
+#: ../../locales/../src/interface/filteredit.cpp:403
+#: ../../locales/../src/interface/filteredit.cpp:443
 msgid "Duplicate filter name"
 msgstr "Nama filter duplikat"
 
@@ -1923,7 +1940,7 @@ msgstr "Ke&luar"
 msgid "E-Mail:"
 msgstr "E-Mail:"
 
-#: ../../locales/../src/interface/filteredit.cpp:536
+#: ../../locales/../src/interface/filteredit.cpp:542
 msgid "Each filter needs at least one condition."
 msgstr "Setiap filter perlu paling tidak satu kondisi."
 
@@ -1958,13 +1975,13 @@ msgstr "Daftar direktori kosong"
 msgid "Empty file extension."
 msgstr "Ekstensi berkas kosong"
 
-#: ../../locales/../src/interface/filteredit.cpp:388
-#: ../../locales/../src/interface/filteredit.cpp:431
+#: ../../locales/../src/interface/filteredit.cpp:394
+#: ../../locales/../src/interface/filteredit.cpp:437
 msgid "Empty filter names are not allowed."
 msgstr "Nama filter kosong tidak diijinkan."
 
-#: ../../locales/../src/interface/filteredit.cpp:388
-#: ../../locales/../src/interface/filteredit.cpp:431
+#: ../../locales/../src/interface/filteredit.cpp:394
+#: ../../locales/../src/interface/filteredit.cpp:437
 msgid "Empty name"
 msgstr "Nama kosong"
 
@@ -1993,8 +2010,8 @@ msgid "Enter custom command"
 msgstr "Masukkan perintah sendiri"
 
 #: ../../locales/../src/interface/filteredit.cpp:327
-#: ../../locales/../src/interface/filteredit.cpp:380
-#: ../../locales/../src/interface/filteredit.cpp:424
+#: ../../locales/../src/interface/filteredit.cpp:386
+#: ../../locales/../src/interface/filteredit.cpp:430
 msgid "Enter filter name"
 msgstr "Masukkan nama filter"
 
@@ -2048,19 +2065,19 @@ msgstr "Kesalahan dalam mengimpor"
 #: ../../locales/../src/interface/filter.cpp:264
 #: ../../locales/../src/interface/import.cpp:111
 #: ../../locales/../src/interface/import.cpp:294
-#: ../../locales/../src/interface/Options.cpp:126
+#: ../../locales/../src/interface/Options.cpp:127
 #: ../../locales/../src/interface/QueueView.cpp:1642
 #: ../../locales/../src/interface/QueueView.cpp:1669
-#: ../../locales/../src/interface/sitemanager.cpp:254
-#: ../../locales/../src/interface/sitemanager.cpp:357
-#: ../../locales/../src/interface/sitemanager.cpp:1337
+#: ../../locales/../src/interface/sitemanager.cpp:485
+#: ../../locales/../src/interface/sitemanager.cpp:589
+#: ../../locales/../src/interface/sitemanager.cpp:1578
 #: ../../locales/../src/interface/wrapengine.cpp:821
 msgid "Error loading xml file"
 msgstr "Kesalahan membuka berkas xml"
 
 #: ../../locales/../src/interface/QueueView.cpp:1652
 #: ../../locales/../src/interface/QueueView.cpp:1688
-#: ../../locales/../src/interface/sitemanager.cpp:383
+#: ../../locales/../src/interface/sitemanager.cpp:615
 #: ../../locales/../src/interface/wrapengine.cpp:989
 msgid "Error writing xml file"
 msgstr "Kesalahan menulis berkas xml"
@@ -2106,7 +2123,7 @@ msgstr "Pengaturan ekspor"
 msgid "F&ilter name:"
 msgstr "Nama F&ilter"
 
-#: ../../locales/../src/interface/sitemanager.cpp:964
+#: ../../locales/../src/interface/sitemanager.cpp:1205
 msgid "FTP"
 msgstr "FTP"
 
@@ -2155,6 +2172,11 @@ msgstr "Gagal mengganti bahasa"
 #: ../../locales/../src/interface/updatewizard.cpp:262
 msgid "Failed to check for newer version of FileZilla."
 msgstr "Gagal memeriksa versi baru dari FileZilla."
+
+#: ../../locales/../src/interface/sitemanager.cpp:1771
+#, fuzzy
+msgid "Failed to copy or move sites"
+msgstr "Gagal menulis ke berkas %s"
 
 #: ../../locales/../src/interface/xmlfunctions.cpp:377
 msgid "Failed to create backup copy of xml file"
@@ -2325,6 +2347,11 @@ msgstr "Jenis Berkas"
 msgid "File does not contain any importable data."
 msgstr "Berkas tidak mengandung data yang dapat diimpor."
 
+#: ../../locales/../src/interface/settingsdialog.cpp:116
+#, fuzzy
+msgid "File editing"
+msgstr "&Selesaikan pengeditan"
+
 #: ../../locales/../src/interface/RemoteListView.cpp:1492
 msgid "File exists"
 msgstr "Berkas ada"
@@ -2436,11 +2463,11 @@ msgstr "Filter &out semua berkas yang:"
 msgid "Filter applies to:"
 msgstr "Filter diterapkan pada:"
 
-#: ../../locales/../src/interface/filteredit.cpp:578
+#: ../../locales/../src/interface/filteredit.cpp:584
 msgid "Filter name already exists"
 msgstr "Nama filter sudah ada"
 
-#: ../../locales/../src/interface/filter.cpp:623
+#: ../../locales/../src/interface/filter.cpp:628
 msgid "Filter set already exists"
 msgstr "Kumpulan filter sudah ada"
 
@@ -2448,11 +2475,11 @@ msgstr "Kumpulan filter sudah ada"
 msgid "Filter the directory listings"
 msgstr "Filter daftar direktori"
 
-#: ../../locales/../src/interface/filteredit.cpp:536
-#: ../../locales/../src/interface/filteredit.cpp:547
-#: ../../locales/../src/interface/filteredit.cpp:558
-#: ../../locales/../src/interface/filteredit.cpp:569
-#: ../../locales/../src/interface/filteredit.cpp:578
+#: ../../locales/../src/interface/filteredit.cpp:542
+#: ../../locales/../src/interface/filteredit.cpp:553
+#: ../../locales/../src/interface/filteredit.cpp:564
+#: ../../locales/../src/interface/filteredit.cpp:575
+#: ../../locales/../src/interface/filteredit.cpp:584
 msgid "Filter validation failed"
 msgstr "Validasi filter gagal"
 
@@ -2510,7 +2537,7 @@ msgstr "Umum"
 msgid "Get external IP address from the following URL:"
 msgstr "Dapatkan alamat IP eksternal dari URL berikut:"
 
-#: ../../locales/../src/interface/filter.cpp:623
+#: ../../locales/../src/interface/filter.cpp:628
 msgid "Given filterset name already exists, overwrite filter set?"
 msgstr "Karena nama filter sudah ada, timpa kumpulan filter yang ada?"
 
@@ -2775,8 +2802,8 @@ msgstr "Kata kunci salah"
 msgid "Initializing TLS..."
 msgstr "Menginisialisasi TLS..."
 
-#: resources.h:79 ../../locales/../src/interface/sitemanager.cpp:807
-#: ../../locales/../src/interface/sitemanager.cpp:1025
+#: resources.h:79 ../../locales/../src/interface/sitemanager.cpp:1048
+#: ../../locales/../src/interface/sitemanager.cpp:1266
 msgid "Interactive"
 msgstr "Interaktif"
 
@@ -2855,7 +2882,7 @@ msgstr ""
 msgid "Invalid response code"
 msgstr "Kode respon tidak valid"
 
-#: ../../locales/../src/interface/filteredit.cpp:558
+#: ../../locales/../src/interface/filteredit.cpp:564
 msgid "Invalid size in condition"
 msgstr "Ukuran tidak valid"
 
@@ -3020,9 +3047,9 @@ msgstr "Komputerku"
 msgid "My Documents"
 msgstr "Dokumenku"
 
-#: ../../locales/../src/interface/sitemanager.cpp:240
-#: ../../locales/../src/interface/sitemanager.cpp:242
-#: ../../locales/../src/interface/sitemanager.cpp:1377
+#: ../../locales/../src/interface/sitemanager.cpp:471
+#: ../../locales/../src/interface/sitemanager.cpp:473
+#: ../../locales/../src/interface/sitemanager.cpp:1618
 msgid "My Sites"
 msgstr "Situsku"
 
@@ -3033,7 +3060,7 @@ msgstr "Situsku"
 msgid "N/a"
 msgstr "N/a"
 
-#: ../../locales/../src/interface/sitemanager.cpp:646
+#: ../../locales/../src/interface/sitemanager.cpp:884
 msgid "Name already exists"
 msgstr "Nama sudah ada"
 
@@ -3041,11 +3068,11 @@ msgstr "Nama sudah ada"
 msgid "Name:"
 msgstr "Nama:"
 
-#: ../../locales/../src/interface/filteredit.cpp:569
+#: ../../locales/../src/interface/filteredit.cpp:575
 msgid "Need to enter filter name"
 msgstr "Harus memasukkan nama filter"
 
-#: ../../locales/../src/interface/sitemanager.cpp:554
+#: ../../locales/../src/interface/sitemanager.cpp:792
 msgid "Need to specify a character encoding"
 msgstr "Harus menentukan enkoding karakter"
 
@@ -3059,13 +3086,13 @@ msgstr "Filter baru"
 
 #: ../../locales/../src/interface/RemoteListView.cpp:1220
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1181
-#: ../../locales/../src/interface/sitemanager.cpp:458
-#: ../../locales/../src/interface/sitemanager.cpp:481
+#: ../../locales/../src/interface/sitemanager.cpp:696
+#: ../../locales/../src/interface/sitemanager.cpp:719
 msgid "New folder"
 msgstr "Direktori baru"
 
-#: ../../locales/../src/interface/sitemanager.cpp:722
-#: ../../locales/../src/interface/sitemanager.cpp:745
+#: ../../locales/../src/interface/sitemanager.cpp:963
+#: ../../locales/../src/interface/sitemanager.cpp:986
 msgid "New site"
 msgstr "Situs baru"
 
@@ -3087,9 +3114,13 @@ msgstr ""
 "Tidak ada alamat IP eksternal yang ditentukan, mencoba menggunakan default."
 
 #: ../../locales/../src/interface/edithandler.cpp:782
-#, fuzzy
 msgid "No files are currently being edited."
-msgstr "Tidak ada berkas yang sedang diedit"
+msgstr "Tidak ada berkas yang sedang diedit."
+
+#: ../../locales/../src/interface/filteredit.cpp:334
+#, fuzzy
+msgid "No filter name given"
+msgstr "Masukkan nama filter"
 
 #: ../../locales/../src/engine/server.cpp:32
 #: ../../locales/../src/engine/server.cpp:121
@@ -3101,9 +3132,14 @@ msgstr "Tidak ada mesin yang diberikan, harap masukkan sebuah mesin."
 msgid "No images available"
 msgstr "Tidak ada gambar yang tersedia"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1343
-#: ../../locales/../src/interface/sitemanager.cpp:1355
-#: ../../locales/../src/interface/sitemanager.cpp:1386
+#: ../../locales/../src/interface/filter.cpp:621
+#, fuzzy
+msgid "No name for the filterset given."
+msgstr "Masukkan nama untuk kelompok filter"
+
+#: ../../locales/../src/interface/sitemanager.cpp:1584
+#: ../../locales/../src/interface/sitemanager.cpp:1596
+#: ../../locales/../src/interface/sitemanager.cpp:1627
 msgid "No sites available"
 msgstr "Tidak ada situs yang tersedia"
 
@@ -3121,9 +3157,9 @@ msgstr "Tidak ada pada berikut ini"
 
 #: resources.h:41 resources.h:77 ../../locales/../src/interface/queue.cpp:849
 #: ../../locales/../src/interface/queue.cpp:930
-#: ../../locales/../src/interface/sitemanager.cpp:770
-#: ../../locales/../src/interface/sitemanager.cpp:803
-#: ../../locales/../src/interface/sitemanager.cpp:1019
+#: ../../locales/../src/interface/sitemanager.cpp:1011
+#: ../../locales/../src/interface/sitemanager.cpp:1044
+#: ../../locales/../src/interface/sitemanager.cpp:1260
 msgid "Normal"
 msgstr "Normal"
 
@@ -3352,11 +3388,11 @@ msgstr ""
 msgid "Please enter a name for the new filter."
 msgstr "Harap masukkan nama untuk filter baru."
 
-#: ../../locales/../src/interface/filteredit.cpp:424
+#: ../../locales/../src/interface/filteredit.cpp:430
 msgid "Please enter a new name for the copied filter."
 msgstr "Harap masukkan nama baru untuk filter yang disalin."
 
-#: ../../locales/../src/interface/filteredit.cpp:380
+#: ../../locales/../src/interface/filteredit.cpp:386
 msgid "Please enter a new name for the filter."
 msgstr "Harap masukkan nama baru untuk filter."
 
@@ -3591,8 +3627,8 @@ msgid ""
 msgstr ""
 "Harap kunjungi http://filezilla-project.org untuk mendownload versi terbaru."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1216
-#: ../../locales/../src/interface/sitemanager.cpp:1376
+#: ../../locales/../src/interface/sitemanager.cpp:1457
+#: ../../locales/../src/interface/sitemanager.cpp:1617
 msgid "Predefined Sites"
 msgstr "Situs Terdefinisi"
 
@@ -3738,10 +3774,6 @@ msgstr "Sertifikat remote tidak dipercaya."
 #: ../../locales/../src/interface/queue.cpp:1134
 msgid "Remote file"
 msgstr "Berkas remote"
-
-#: ../../locales/../src/interface/settingsdialog.cpp:116
-msgid "Remote file editing"
-msgstr "Pengeditan berkas secara remote"
 
 #: resources.h:312
 msgid "Remote filters:"
@@ -4064,7 +4096,7 @@ msgstr "Daftar &Manajemen Situs"
 msgid "Site Manager"
 msgstr "Manajemen Situs"
 
-#: ../../locales/../src/interface/sitemanager.cpp:52
+#: ../../locales/../src/interface/sitemanager.cpp:269
 msgid "Site Manager already open"
 msgstr "Manajemen Situs telah dibuka"
 
@@ -4230,7 +4262,7 @@ msgstr "Hasil pengujian"
 msgid "Testing resume capabilities of server"
 msgstr "Menguji kemampuan melanjutkan dari server"
 
-#: ../../locales/../src/interface/sitemanager.cpp:51
+#: ../../locales/../src/interface/sitemanager.cpp:268
 msgid ""
 "The Site Manager is opened in another instance of FileZilla 3.\n"
 "Do you want to continue? Any changes made in the Site Manager won't be saved "
@@ -4257,9 +4289,9 @@ msgstr "Alamat yang Anda masukkan adalah: %s"
 msgid "The custom login sequence cannot be empty."
 msgstr "Urutan login kustom tidak boleh kosong."
 
-#: ../../locales/../src/interface/filteredit.cpp:334
-#: ../../locales/../src/interface/filteredit.cpp:397
-#: ../../locales/../src/interface/filteredit.cpp:437
+#: ../../locales/../src/interface/filteredit.cpp:340
+#: ../../locales/../src/interface/filteredit.cpp:403
+#: ../../locales/../src/interface/filteredit.cpp:443
 msgid "The entered filter name already exists."
 msgstr "Nama filter yang dimasukkan sudah ada."
 
@@ -4440,7 +4472,7 @@ msgstr "Kesalahan tema"
 msgid "Themes"
 msgstr "Tema"
 
-#: ../../locales/../src/interface/filter.cpp:651
+#: ../../locales/../src/interface/filter.cpp:656
 msgid "This filter set cannot be removed"
 msgstr "Filter ini tidak bisa dihapus"
 
@@ -4930,7 +4962,7 @@ msgstr ""
 msgid "You did not enter a new name for the file. Overwrite the file instead?"
 msgstr "Anda tidak memasukkan nama baru untuk berkas ini. Timpa berkas ini?"
 
-#: ../../locales/../src/interface/sitemanager.cpp:512
+#: ../../locales/../src/interface/sitemanager.cpp:750
 msgid "You have to enter a hostname."
 msgstr "Anda harus memasukkan nama mesin"
 
@@ -4939,11 +4971,11 @@ msgstr "Anda harus memasukkan nama mesin"
 msgid "You have to enter a valid IP address."
 msgstr "Anda harus memasukkan alamat IP valid."
 
-#: ../../locales/../src/interface/sitemanager.cpp:573
+#: ../../locales/../src/interface/sitemanager.cpp:811
 msgid "You have to enter an account name"
 msgstr "Anda harus memasukkan nama akun"
 
-#: ../../locales/../src/interface/sitemanager.cpp:564
+#: ../../locales/../src/interface/sitemanager.cpp:802
 msgid "You have to specify a user name"
 msgstr "Anda harus memasukkan nama pengguna"
 
@@ -5030,3 +5062,6 @@ msgstr "themes.xml hilang, tidak dapat mengambil data tema"
 #: resources.h:49
 msgid "with the following file?"
 msgstr "dengan berkas berikut?"
+
+#~ msgid "Remote file editing"
+#~ msgstr "Pengeditan berkas secara remote"
