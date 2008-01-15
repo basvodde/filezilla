@@ -1093,7 +1093,14 @@ void CRemoteTreeView::OnEndLabelEdit(wxTreeEvent& event)
 		return;
 	}
 
-	const CServerPath& path = GetPathFromItem(event.GetItem());
+	CItemData* const pData = (CItemData*)GetItemData(event.GetItem());
+	if (!pData)
+	{
+		event.Veto();
+		return;
+	}
+
+	const CServerPath path = pData->m_path;
 	if (path.IsEmpty())
 	{
 		event.Veto();
@@ -1115,6 +1122,11 @@ void CRemoteTreeView::OnEndLabelEdit(wxTreeEvent& event)
 		event.Veto();
 		return;
 	}
+
+	// Update the item data
+	wxASSERT(path.GetLastSegment() == oldName);
+	pData->m_path = parent;
+	pData->m_path.AddSegment(newName);
 
 	m_pState->m_pCommandQueue->ProcessCommand(new CRenameCommand(parent, oldName, parent, newName));
 	m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(parent));
