@@ -86,6 +86,7 @@ protected:
 	virtual void OnCharsetChange(wxCommandEvent& event);
 	virtual void OnProtocolSelChanged(wxCommandEvent& event);
 	virtual void OnBeginDrag(wxTreeEvent& event);
+	virtual void OnChar(wxKeyEvent& event);
 	void OnCopySite(wxCommandEvent& event);
 
 	CInterProcessMutex* m_pSiteManagerMutex;

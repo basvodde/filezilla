@@ -34,6 +34,7 @@ EVT_RADIOBUTTON(XRCID("ID_CHARSET_CUSTOM"), CSiteManager::OnCharsetChange)
 EVT_CHOICE(XRCID("ID_PROTOCOL"), CSiteManager::OnProtocolSelChanged)
 EVT_BUTTON(XRCID("ID_COPY"), CSiteManager::OnCopySite)
 EVT_TREE_BEGIN_DRAG(XRCID("ID_SITETREE"), CSiteManager::OnBeginDrag)
+EVT_CHAR(CSiteManager::OnChar)
 END_EVENT_TABLE()
 
 class CSiteManagerDataObject : public wxDataObjectSimple
@@ -1832,4 +1833,16 @@ bool CSiteManager::MoveItems(wxTreeItemId source, wxTreeItemId target, bool copy
 	pTree->Expand(target);
 	
 	return true;
+}
+
+void CSiteManager::OnChar(wxKeyEvent& event)
+{
+	if (event.GetKeyCode() != WXK_F2)
+	{
+		event.Skip();
+		return;
+	}
+
+	wxCommandEvent cmdEvent;
+	OnRename(cmdEvent);
 }
