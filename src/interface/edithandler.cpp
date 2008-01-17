@@ -666,16 +666,16 @@ wxString CEditHandler::GetOpenCommand(const wxString& file)
 {
 	if (!COptions::Get()->GetOptionVal(OPTION_EDIT_ALWAYSDEFAULT))
 	{
+		const wxString command = GetCustomOpenCommand(file);
+		if (command != _T(""))
+			return command;
+
 		if (COptions::Get()->GetOptionVal(OPTION_EDIT_INHERITASSOCIATIONS))
 		{
 			const wxString command = GetSystemOpenCommand(file);
 			if (command != _T(""))
 				return command;
 		}
-
-		const wxString command = GetCustomOpenCommand(file);
-		if (command != _T(""))
-			return command;
 	}
 
 	wxString command = COptions::Get()->GetOption(OPTION_EDIT_DEFAULTEDITOR);
