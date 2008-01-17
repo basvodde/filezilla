@@ -939,7 +939,7 @@ void CNetConfWizard::OnAccept()
 	{
 		delete m_pDataSocket;
 		m_pDataSocket = 0;
-		PrintMessage(_("Failed to get peer address on control connection, connection closed."), 1);
+		PrintMessage(_("Failed to get peer address of control connection, connection closed."), 1);
 		CloseSocket();
 		return;
 	}
@@ -947,7 +947,7 @@ void CNetConfWizard::OnAccept()
 	{
 		delete m_pDataSocket;
 		m_pDataSocket = 0;
-		PrintMessage(_("Failed to get peer address on data connection, connection closed."), 1);
+		PrintMessage(_("Failed to get peer address of data connection, connection closed."), 1);
 		CloseSocket();
 		return;
 	}
