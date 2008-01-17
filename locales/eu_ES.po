@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Filezilla 3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-10-23 14:40+0200\n"
+"POT-Creation-Date: 2008-01-17 14:07+0100\n"
 "PO-Revision-Date: 2005-10-18 09:10+0200\n"
 "Last-Translator: xOneca <xoneca+fz@gmail.com>\n"
 "Language-Team: \n"
@@ -27,10 +27,26 @@ msgstr "%H:%M:%S igarotakoa"
 msgid "%H:%M:%S left"
 msgstr "%H:%M:%S falta"
 
-#: ../../locales/../src/interface/QueueView.cpp:2206
+#: resources.h:237
+#, c-format
+msgid ""
+"%a - Account (Lines containing this will be omitted if not using Account "
+"logontype)"
+msgstr ""
+
+#: ../../locales/../src/interface/QueueView.cpp:2181
 #, c-format
 msgid "%d files added to queue"
 msgstr "%d fitxategi ilarara gehituak"
+
+#: resources.h:234
+msgid "%h - Host"
+msgstr ""
+
+#: resources.h:236
+#, fuzzy, c-format
+msgid "%p - Password"
+msgstr "Pasa&hitza"
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:47
 #, c-format
@@ -41,6 +57,11 @@ msgstr ""
 #, c-format
 msgid "%s - Not yet valid!"
 msgstr "Ez da egokia: %s"
+
+#: resources.h:238
+#, c-format
+msgid "%s - Proxy user"
+msgstr ""
 
 #: ../../locales/../src/interface/updatewizard.cpp:667
 #, c-format
@@ -70,7 +91,7 @@ msgstr "%s byte (%d.%d MB/s)"
 msgid "%s bytes (? B/s)"
 msgstr "%s byte (? B/s)"
 
-#: ../../locales/../src/interface/FileZilla.cpp:731
+#: ../../locales/../src/interface/FileZilla.cpp:795
 #, c-format
 msgid ""
 "%s could not be found. Without this component of FileZilla, SFTP will not "
@@ -93,7 +114,17 @@ msgstr ""
 msgid "%s with %d bits"
 msgstr "%s $d bit-ekin"
 
-#: resources.h:452
+#: resources.h:235
+#, fuzzy, c-format
+msgid "%u - Username"
+msgstr "&Erabiltzaile-izena:"
+
+#: resources.h:239
+#, fuzzy
+msgid "%w - Proxy password"
+msgstr "Eskatu pasahitza"
+
+#: resources.h:483
 msgid "&About..."
 msgstr "&FileZillari buruz..."
 
@@ -101,23 +132,28 @@ msgstr "&FileZillari buruz..."
 msgid "&Account:"
 msgstr "&Kontua:"
 
-#: resources.h:97 resources.h:154 resources.h:530
+#: resources.h:97 resources.h:157 resources.h:579
 msgid "&Active"
 msgstr "&Aktiboa"
 
-#: resources.h:456 resources.h:466 resources.h:511
+#: resources.h:487 resources.h:501
 msgid "&Add files to queue"
+msgstr "&Fitxategiak ilarara sartu"
+
+#: resources.h:546 resources.h:562
+#, fuzzy
+msgid "&Add to queue"
 msgstr "&Fitxategiak ilarara sartu"
 
 #: resources.h:21
 msgid "&Always trust certificate in future sessions."
 msgstr "Fidatu ziurtagiriaz &betirako."
 
-#: resources.h:265
+#: resources.h:289
 msgid "&Always trust this host, add this key to the cache"
 msgstr "&Fidatu beti gune honetaz, gehitu gako hau erregistrora"
 
-#: resources.h:214
+#: resources.h:220
 msgid "&Always use default editor"
 msgstr "&Beti editore aurreaukeratua erabili"
 
@@ -125,11 +161,11 @@ msgstr "&Beti editore aurreaukeratua erabili"
 msgid "&Always use this action"
 msgstr "&Beti ekintza hau erabili"
 
-#: resources.h:349 resources.h:368
+#: resources.h:373 resources.h:392
 msgid "&Ask for action"
 msgstr "Galdetu zer egin"
 
-#: resources.h:127 resources.h:440
+#: resources.h:127 resources.h:470
 msgid "&Auto"
 msgstr "&Automatikoa"
 
@@ -137,19 +173,20 @@ msgstr "&Automatikoa"
 msgid "&Autodetect"
 msgstr "&Autodetektatu"
 
-#: resources.h:508
+#: resources.h:543
 msgid "&Automatically remove successful transfers"
 msgstr "Automatikoki ongi ateratako transferentziak kendu"
 
-#: resources.h:129 resources.h:442
+#: resources.h:129 resources.h:472
 msgid "&Binary"
 msgstr "&Bitarra"
 
-#: resources.h:196
-msgid "&Binary prefixes using SI symbols. (e.g. 1 KB = 1024 bytes.)"
+#: resources.h:202
+#, fuzzy
+msgid "&Binary prefixes using SI symbols. (e.g. 1 KB = 1024 bytes)"
 msgstr "Bitar aurrizkiak SI sinboloak erabiliz (adibidez, 1KB = 1024 byte)."
 
-#: resources.h:89 resources.h:211
+#: resources.h:89 resources.h:217
 msgid "&Browse..."
 msgstr "&Bilatu..."
 
@@ -157,20 +194,20 @@ msgstr "&Bilatu..."
 msgid "&Burst tolerance:"
 msgstr "&Burrunba tolerantzia:"
 
-#: resources.h:63 resources.h:121 resources.h:125 resources.h:223
-#: resources.h:267 resources.h:279
+#: resources.h:63 resources.h:121 resources.h:125 resources.h:246
+#: resources.h:291 resources.h:303
 msgid "&Cancel"
 msgstr "&Utzi"
 
-#: resources.h:331
+#: resources.h:355
 msgid "&Check for beta versions of FileZilla"
 msgstr "&Bilatu FileZilla beta bertsio berriak"
 
-#: resources.h:436
+#: resources.h:460
 msgid "&Clear private data..."
 msgstr "Datu pribatuak garbitu..."
 
-#: resources.h:488
+#: resources.h:523
 msgid "&Close FileZilla"
 msgstr "FileZilla &Itxi"
 
@@ -178,19 +215,19 @@ msgstr "FileZilla &Itxi"
 msgid "&Connect"
 msgstr "&Konektatu"
 
-#: resources.h:300
+#: resources.h:324
 msgid "&Copy"
 msgstr "&Kopiatu"
 
-#: resources.h:497
+#: resources.h:532
 msgid "&Copy to clipboard"
 msgstr "&Kopiatu arbelean"
 
-#: resources.h:500
+#: resources.h:535
 msgid "&Crash"
 msgstr "&Arazketa-kraskadura"
 
-#: resources.h:458 resources.h:469 resources.h:513
+#: resources.h:493 resources.h:504 resources.h:548 resources.h:564
 msgid "&Create directory"
 msgstr "&Sortu direktorioa"
 
@@ -198,35 +235,41 @@ msgstr "&Sortu direktorioa"
 msgid "&Debug"
 msgstr "&Depuratu"
 
-#: resources.h:201
+#: resources.h:207
 msgid "&Debug information in message log:"
 msgstr "Erregistroan dagoen &Depurazio informazioa:"
 
-#: resources.h:197
+#: resources.h:203
 msgid "&Decimal prefixes using SI symbols (e.g. 1 KB = 1000 bytes)"
 msgstr "Dezimal atzizkiak SI sinboloak erabiliz (adibidez, 1KB = 1000 byte)."
 
-#: resources.h:210
+#: resources.h:216
 msgid "&Default editor:"
 msgstr "Editore aurre-aukeratua:"
 
-#: resources.h:438 resources.h:480
+#: resources.h:468 resources.h:515
 msgid "&Default file exists action..."
 msgstr "Fitxeroa existitzen deneko ekintza..."
 
-#: resources.h:69 resources.h:282 resources.h:298
+#: resources.h:69 resources.h:306 resources.h:322 resources.h:495
+#: resources.h:566
 msgid "&Delete"
 msgstr "&Ezabatu"
 
-#: resources.h:445
+#: resources.h:463
+#, fuzzy
+msgid "&Directory comparison"
+msgstr "Dire&ktorioak"
+
+#: resources.h:476
 msgid "&Disconnect"
 msgstr "&Deskonektatu"
 
-#: resources.h:489
+#: resources.h:524
 msgid "&Disconnect from server"
 msgstr "Zerbitzariatik &deskonektatu"
 
-#: resources.h:194
+#: resources.h:200
 msgid "&Display size in bytes"
 msgstr "Tamainia byte-etan erakutsi"
 
@@ -234,19 +277,24 @@ msgstr "Tamainia byte-etan erakutsi"
 msgid "&Don't show this dialog again."
 msgstr "&Ez erakutsi leiho hau berriz."
 
-#: resources.h:464 resources.h:509
+#: resources.h:499 resources.h:544
 msgid "&Download"
 msgstr "&Jeitsi"
 
-#: resources.h:429
+#: resources.h:454 resources.h:491
 msgid "&Edit"
 msgstr "&Editatu"
 
-#: resources.h:284
+#: resources.h:308
 msgid "&Edit filters..."
 msgstr "Iragazkiak editatu..."
 
-#: resources.h:177
+#: resources.h:464 resources.h:557
+#, fuzzy
+msgid "&Enable"
+msgstr "Gaitu dena"
+
+#: resources.h:183
 msgid "&Enable automatic update check"
 msgstr "&Egunerapenak automatikoki bilatu"
 
@@ -254,19 +302,19 @@ msgstr "&Egunerapenak automatikoki bilatu"
 msgid "&Encoding:"
 msgstr "&Kodeketa:"
 
-#: resources.h:496
+#: resources.h:531
 msgid "&Enter custom command..."
 msgstr "&Sartu komando pertsonalizatua..."
 
-#: resources.h:229
+#: resources.h:252
 msgid "&Execute"
 msgstr "&Exekutatu"
 
-#: resources.h:395
+#: resources.h:419
 msgid "&Export Site Manager entries"
 msgstr "&Esportatu Gune-kudeatzaileko zerrenda"
 
-#: resources.h:434
+#: resources.h:458
 msgid "&Export..."
 msgstr "&Esportatu..."
 
@@ -274,59 +322,63 @@ msgstr "&Esportatu..."
 msgid "&Fall back to active mode"
 msgstr "&Bueltatu aktibatu modura"
 
-#: resources.h:423
+#: resources.h:448
 msgid "&File"
 msgstr "&Fitxategia"
 
-#: resources.h:475 resources.h:519
+#: resources.h:510 resources.h:554
 msgid "&File Attributes..."
 msgstr "&Fitxategi-atributuak..."
 
-#: resources.h:281
+#: resources.h:305
 msgid "&Filter sets:"
 msgstr "Iragazki-multzoak:"
 
-#: resources.h:296
+#: resources.h:320
 msgid "&Filters:"
 msgstr "&Iragazkiak:"
 
-#: resources.h:412
+#: ../../locales/../src/interface/edithandler.cpp:561
+msgid "&Finish editing"
+msgstr ""
+
+#: resources.h:437
 msgid "&Finish editing and delete local file"
 msgstr "Bukatu editatzen eta kendu bertako artxibo"
 
-#: resources.h:449
+#: resources.h:480
 msgid "&Help"
 msgstr "&Laguntza"
 
-#: resources.h:482
+#: resources.h:517
 msgid "&Highest"
 msgstr "&Handiena"
 
-#: resources.h:318
+#: resources.h:342
 msgid "&Highest available port:"
 msgstr "&Ataka erabilgarri handiena:"
 
-#: resources.h:72 resources.h:568
+#: resources.h:72 resources.h:617
 msgid "&Host:"
 msgstr "&Gunea:"
 
-#: resources.h:195
+#: resources.h:201
 msgid "&IEC binary prefixes (e.g. 1 KiB = 1024 bytes)"
 msgstr "&IEC Aurrizki bitarrak (adibidez, 1KiB = 1024 byte)."
 
-#: resources.h:183
+#: resources.h:189
 msgid "&ISO 8601 (example: 2007-09-15)"
 msgstr "&ISO 8601 (adibidez: 2007-09-15)"
 
-#: resources.h:435
+#: resources.h:459
 msgid "&Import..."
 msgstr "&Inportatu..."
 
-#: resources.h:216
+#: resources.h:222
 msgid "&Inherit system's filetype associations"
 msgstr "&Sistemako fitxategi-mota elkartasunak erabili"
 
-#: resources.h:315
+#: resources.h:339
 msgid "&Limit local ports used by FileZilla"
 msgstr "&Mugatu FileZillak erabilitako bertako atakak"
 
@@ -338,7 +390,7 @@ msgstr "&Mugatu aldibereko konexio kopurua"
 msgid "&Logontype:"
 msgstr "&Saio-hasiera mota:"
 
-#: resources.h:485
+#: resources.h:520
 msgid "&Low"
 msgstr "&Txikia"
 
@@ -346,11 +398,11 @@ msgstr "&Txikia"
 msgid "&Maximum number of connections:"
 msgstr "&Gehienezko konexkio kopurua:"
 
-#: resources.h:432
+#: resources.h:457
 msgid "&Network configuration wizard..."
 msgstr "&Sareko konfiguraziorako laguntzailea..."
 
-#: resources.h:297
+#: resources.h:321
 msgid "&New"
 msgstr "&Berria"
 
@@ -362,15 +414,20 @@ msgstr "&Gune berria"
 msgid "&New version available!"
 msgstr "&Badago Bertsio berri bat!"
 
-#: resources.h:414
+#: resources.h:439
 msgid "&No"
 msgstr "&Ez"
 
-#: resources.h:484
+#: resources.h:228
+#, fuzzy
+msgid "&None"
+msgstr "&Ez"
+
+#: resources.h:519
 msgid "&Normal"
 msgstr "&Normala"
 
-#: resources.h:238
+#: resources.h:261
 msgid "&Numeric value:"
 msgstr "&Zenbakizko balioa:"
 
@@ -378,7 +435,15 @@ msgstr "&Zenbakizko balioa:"
 msgid "&OK"
 msgstr "&Ados"
 
-#: resources.h:54 resources.h:350 resources.h:369
+#: resources.h:231
+msgid "&OPEN"
+msgstr ""
+
+#: resources.h:489
+msgid "&Open"
+msgstr ""
+
+#: resources.h:54 resources.h:374 resources.h:393
 msgid "&Overwrite"
 msgstr "&Gainean idatzi"
 
@@ -390,27 +455,36 @@ msgstr "&Pasiboa"
 msgid "&Password:"
 msgstr "&Pasahitza:"
 
-#: resources.h:492
+#: resources.h:527
 msgid "&Play sound"
 msgstr "&Soinua entzun"
 
-#: resources.h:73 resources.h:572
+#: resources.h:73 resources.h:621
 msgid "&Port:"
 msgstr "&Ataka:"
 
-#: resources.h:404
+#: resources.h:473
+msgid "&Preserve timestamps of transferred files"
+msgstr ""
+
+#: resources.h:242
+#, fuzzy
+msgid "&Proxy password:"
+msgstr "&Pasahitza:"
+
+#: resources.h:428
 msgid "&Queue"
 msgstr "&Ilara"
 
-#: resources.h:574
+#: resources.h:623
 msgid "&Quickconnect"
 msgstr "&Konexio bizkorra"
 
-#: resources.h:227
+#: resources.h:250
 msgid "&Read"
 msgstr "&Irakurri"
 
-#: resources.h:444
+#: resources.h:475
 msgid "&Reconnect"
 msgstr "&Birkonektatu"
 
@@ -422,64 +496,68 @@ msgstr "&Gogoratu pasahitza saio honetarako"
 msgid "&Remove"
 msgstr "&Kendu"
 
-#: resources.h:479
+#: resources.h:514
 msgid "&Remove selected"
 msgstr "Kendu hautatutakoa"
 
-#: resources.h:68 resources.h:299 resources.h:462 resources.h:473
-#: resources.h:517
+#: resources.h:68 resources.h:323 resources.h:497 resources.h:508
+#: resources.h:552 resources.h:568
 msgid "&Rename"
 msgstr "&Izena aldatu"
 
-#: resources.h:567
+#: resources.h:616
 msgid "&Restart Wizard"
 msgstr "&Hasi berriro laguntzailea"
 
-#: resources.h:56 resources.h:352 resources.h:371
+#: resources.h:56 resources.h:376 resources.h:395
 msgid "&Resume"
 msgstr "&Jarraitu"
 
-#: resources.h:490
+#: resources.h:525
 msgid "&Run command..."
 msgstr "&Exekutatu komandoa..."
 
-#: resources.h:151
+#: resources.h:154
 msgid "&Run configuration wizard now..."
 msgstr "&Ireki konfiguraziorako laguntzailea orain..."
 
-#: resources.h:180
+#: resources.h:186
 msgid "&Run update check now..."
 msgstr "&Bilatu bertsio berria orain..."
 
-#: resources.h:283
+#: resources.h:230
+msgid "&SITE"
+msgstr ""
+
+#: resources.h:307
 msgid "&Save as..."
 msgstr "Gorde honela..."
 
-#: resources.h:174
+#: resources.h:180
 msgid "&Select language:"
 msgstr "&Hautatu hizkuntza:"
 
-#: resources.h:443
+#: resources.h:474
 msgid "&Server"
 msgstr "&Zerbitzaria"
 
-#: resources.h:403
+#: resources.h:427
 msgid "&Settings"
 msgstr "&Konfigurazioa"
 
-#: resources.h:430
+#: resources.h:455
 msgid "&Settings..."
 msgstr "&Konfigurazioa"
 
-#: resources.h:200
+#: resources.h:206
 msgid "&Show debug menu"
 msgstr "&Debug-menua erakutsi"
 
-#: resources.h:491
+#: resources.h:526
 msgid "&Show message"
 msgstr "&Mezua erakutsi"
 
-#: resources.h:424
+#: resources.h:449
 msgid "&Site Manager..."
 msgstr "Gune-kudeatzailea..."
 
@@ -491,15 +569,15 @@ msgstr "&Saltatu"
 msgid "&Swap local and remote panes"
 msgstr "&Trukatu bertako eta urrutiko panelak"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:223
+#: ../../locales/../src/interface/netconfwizard.cpp:226
 msgid "&Test"
 msgstr "&Probatu"
 
-#: resources.h:164
+#: resources.h:170
 msgid "&Theme:"
 msgstr "&Diseinua:"
 
-#: resources.h:437
+#: resources.h:467
 msgid "&Transfer"
 msgstr "&Transferitu"
 
@@ -511,15 +589,15 @@ msgstr "&Transferentzia-modua:"
 msgid "&Treat dotfiles (filenames starting with a dot) as Ascii files"
 msgstr "Erabili puntu batekin hasten diren fitxategiak ASCII eran"
 
-#: resources.h:418
+#: resources.h:443
 msgid "&Unedit"
 msgstr "&Des-editatu"
 
-#: resources.h:277
+#: resources.h:301
 msgid "&Update cached key for this host"
 msgstr "&Eguneratu erregistratutako gakoa gune honetarako"
 
-#: resources.h:454
+#: resources.h:485 resources.h:560
 msgid "&Upload"
 msgstr "&Igo"
 
@@ -527,7 +605,7 @@ msgstr "&Igo"
 msgid "&Use the server's external IP address instead"
 msgstr "&Ordez, Zerbitzariaren kanpoko IP helbidea erabili"
 
-#: resources.h:198
+#: resources.h:204
 msgid "&Use thousands separator"
 msgstr "&Milako bereizlea erabili"
 
@@ -535,7 +613,7 @@ msgstr "&Milako bereizlea erabili"
 msgid "&User:"
 msgstr "&Erabiltzailea:"
 
-#: resources.h:570
+#: resources.h:619
 msgid "&Username:"
 msgstr "&Erabiltzaile-izena:"
 
@@ -544,15 +622,20 @@ msgstr "&Erabiltzaile-izena:"
 msgid "&Version %s"
 msgstr "%s &bertsioa"
 
-#: resources.h:468
+#: resources.h:461
+#, fuzzy
+msgid "&View"
+msgstr "&Berria"
+
+#: resources.h:503
 msgid "&View / Edit"
 msgstr "&Ikusi / Editatu"
 
-#: resources.h:228
+#: resources.h:251
 msgid "&Write"
 msgstr "&Idatzi"
 
-#: resources.h:413
+#: resources.h:438
 msgid "&Yes"
 msgstr "&Bai"
 
@@ -561,11 +644,11 @@ msgstr "&Bai"
 msgid "'%s' does not exist or cannot be accessed."
 msgstr "'%s' ez da existitzen edo ezin da hara iritsi."
 
-#: ../../locales/../src/interface/sitemanager.cpp:530
+#: ../../locales/../src/interface/sitemanager.cpp:760
 msgid "'Account' logontype not supported by selected protocol"
 msgstr "Aukeratutako protokoloak ez du 'Kontua' sesio-hasiera modua jasaten"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:570
+#: ../../locales/../src/interface/Mainfrm.cpp:571
 msgid ""
 "'quote' is usually a local command used by commandline clients to send the "
 "arguments following 'quote' to the server. You might want to enter the raw "
@@ -579,11 +662,11 @@ msgstr ""
 msgid "(0 for no limit)"
 msgstr "(0 ez mugatzeko)"
 
-#: resources.h:159
+#: resources.h:162
 msgid "(0-99)"
 msgstr "(0-99)"
 
-#: resources.h:161
+#: resources.h:164
 msgid "(0-999 seconds)"
 msgstr "(0-999 segundu)"
 
@@ -595,15 +678,15 @@ msgstr "(1-10)"
 msgid "(5-9999, 0 to disable)"
 msgstr "(5-9999, 0 ez erabiltzeko)"
 
-#: resources.h:179
+#: resources.h:185
 msgid "(At least 7 days)"
 msgstr "(Gutxienez 7 egun)"
 
-#: resources.h:191
+#: resources.h:197
 msgid "(example: %H:%M)"
 msgstr "(adibidez: %H:%M)"
 
-#: resources.h:185
+#: resources.h:191
 msgid "(example: %Y-%m-%d)"
 msgstr "(adibidez: %Y-%m-%d)"
 
@@ -619,7 +702,7 @@ msgstr "%H:%M:%S faltan"
 msgid ", --:--:-- left"
 msgstr "--:--:-- faltan"
 
-#: resources.h:555
+#: resources.h:604
 msgid "-"
 msgstr "-"
 
@@ -628,36 +711,40 @@ msgstr "-"
 msgid "--:--:-- left"
 msgstr "--:--:-- faltan"
 
-#: resources.h:202
+#: resources.h:208
 msgid "0 - None"
 msgstr "0 - Ezer ez"
 
-#: resources.h:203
+#: resources.h:209
 msgid "1 - Warning"
 msgstr "1 - Adi!"
 
-#: resources.h:204
+#: resources.h:210
 msgid "2 - Info"
 msgstr "2 - Informazioa"
 
-#: resources.h:205
+#: resources.h:211
 msgid "3 - Verbose"
 msgstr "3 - Informazio asko"
 
-#: resources.h:206
+#: resources.h:212
 msgid "4 - Debug"
 msgstr "4 - Debug"
 
-#: ../../locales/../src/interface/optionspage_edit.cpp:109
+#: ../../locales/../src/engine/directorylistingparser.cpp:1627
+msgid ";1"
+msgstr ""
+
+#: ../../locales/../src/interface/optionspage_edit.cpp:122
 msgid "A default editor needs to be set."
 msgstr "Nahiagoko editorea ezarri behar da."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:140
+#: ../../locales/../src/interface/RemoteListView.cpp:143
 #: ../../locales/../src/interface/RemoteTreeView.cpp:106
 msgid "A directory cannot be dragged into one if its subdirectories."
 msgstr "Direktorio bat ezin da bere subdirektorio betean sartu."
 
-#: resources.h:527
+#: resources.h:576
 msgid ""
 "A few servers don't allow passive mode or are misconfigured. In such cases "
 "you would have to use active mode. In active mode, FileZilla opens a port "
@@ -668,11 +755,12 @@ msgstr ""
 "FileZillak ataba bat irekitzen du eta zerbitzariari hara konektatzea "
 "eskatzen dio."
 
-#: resources.h:409
+#: resources.h:433
 msgid "A file previously opened has been changed:"
 msgstr "Aurretik irekita zegoen fitxategi bat aldatu da:"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2434
+#: ../../locales/../src/interface/LocalListView.cpp:2039
+#: ../../locales/../src/interface/RemoteListView.cpp:2202
 msgid ""
 "A file with that name is already being edited. Discard old file and download "
 "the new file?"
@@ -680,18 +768,19 @@ msgstr ""
 "Izen bera duen beste fitxategi bat editatzen ari da. Baztertu zaharra eta "
 "jaitsi berria?"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2423
+#: ../../locales/../src/interface/LocalListView.cpp:2035
+#: ../../locales/../src/interface/RemoteListView.cpp:2191
 msgid "A file with that name is already being transferred."
 msgstr "Izen bera duen beste fitxategi bat transferitzen ari da."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2428
+#: ../../locales/../src/interface/RemoteListView.cpp:2196
 msgid ""
 "A file with that name is still being edited. Please close it and try again."
 msgstr ""
 "Izen hori duen beste fitxategi bat oraindik editatzen ari da. Mesedez, itxi "
 "eta ahalegindu berriro."
 
-#: ../../locales/../src/interface/FileZilla.cpp:623
+#: ../../locales/../src/interface/FileZilla.cpp:687
 msgid ""
 "A local filename could not be decoded.\n"
 "Please make sure the LC_CTYPE (or LC_ALL) environment variable is set "
@@ -705,11 +794,17 @@ msgstr ""
 "zerrendetan.\n"
 "Ez da abisu gehiagorik izango saio honetan."
 
-#: resources.h:333
+#: resources.h:357
 msgid "A newer version of FileZilla is available:"
 msgstr "FileZilla bertsio berri bat eskura dago:"
 
-#: resources.h:441
+#: resources.h:168
+msgid ""
+"A proper server does not require this. Contact the server administrator if "
+"you need this."
+msgstr ""
+
+#: resources.h:471
 msgid "A&SCII"
 msgstr ""
 
@@ -717,19 +812,19 @@ msgstr ""
 msgid "A&dd"
 msgstr "G&ehitu"
 
-#: resources.h:382
+#: resources.h:406
 msgid "A&llow resume of ascii files"
 msgstr "ASCII fitxategiak jarraitu daitezke"
 
-#: ../../locales/../src/interface/fileexistsdlg.cpp:99
+#: ../../locales/../src/interface/fileexistsdlg.cpp:106
 msgid "A&pply only to downloads"
 msgstr "A&plikatu jaisteko soilik"
 
-#: ../../locales/../src/interface/fileexistsdlg.cpp:155
+#: ../../locales/../src/interface/fileexistsdlg.cpp:162
 msgid "A&pply only to uploads"
 msgstr "A&plikatu igotzeko soilik"
 
-#: resources.h:241
+#: resources.h:264
 msgid "A&pply to all files and directories"
 msgstr "Direktorio eta fitxategi guztiei ezarri"
 
@@ -737,36 +832,36 @@ msgstr "Direktorio eta fitxategi guztiei ezarri"
 msgid "A&scii"
 msgstr "A&SCII"
 
-#: resources.h:357 resources.h:375
+#: resources.h:381 resources.h:399
 msgid "A&sk for action"
 msgstr "Eskatu ekintza"
 
-#: resources.h:246
+#: resources.h:269
 msgid "About FileZilla"
 msgstr "FileZillari buruz"
 
-#: resources.h:80 ../../locales/../src/interface/sitemanager.cpp:527
-#: ../../locales/../src/interface/sitemanager.cpp:577
-#: ../../locales/../src/interface/sitemanager.cpp:778
-#: ../../locales/../src/interface/sitemanager.cpp:779
-#: ../../locales/../src/interface/sitemanager.cpp:817
-#: ../../locales/../src/interface/sitemanager.cpp:1049
+#: resources.h:80 ../../locales/../src/interface/sitemanager.cpp:757
+#: ../../locales/../src/interface/sitemanager.cpp:807
+#: ../../locales/../src/interface/sitemanager.cpp:1011
+#: ../../locales/../src/interface/sitemanager.cpp:1012
+#: ../../locales/../src/interface/sitemanager.cpp:1050
+#: ../../locales/../src/interface/sitemanager.cpp:1269
 msgid "Account"
 msgstr "Kontua"
 
-#: resources.h:487
+#: resources.h:522
 msgid "Action after queue &completion"
 msgstr "Ilara bukatzerako ekintza"
 
-#: resources.h:417
+#: resources.h:442
 msgid "Action on selected file:"
 msgstr "Ekintza hautatutako fitxategian"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:103
+#: ../../locales/../src/interface/settingsdialog.cpp:105
 msgid "Active mode"
 msgstr "Modu aktiboa"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:593
+#: ../../locales/../src/interface/netconfwizard.cpp:599
 msgid ""
 "Active mode FTP test failed. FileZilla does not know the correct external IP "
 "address."
@@ -774,7 +869,7 @@ msgstr ""
 "FTP testa modu aktiboan huts egin du. FileZillak ez du ezagutzen kanpoko IP "
 "helbidea."
 
-#: ../../locales/../src/interface/netconfwizard.cpp:580
+#: ../../locales/../src/interface/netconfwizard.cpp:586
 msgid ""
 "Active mode FTP test failed. FileZilla does not know the correct external IP "
 "address. In addition to that, your router has modified the sent address."
@@ -782,28 +877,30 @@ msgstr ""
 "FTP testa modu aktiboan huts egin du. FileZillak ez du ezagutzen kanpoko IP "
 "helbidea. Gainera, zure router-ak igorle-helbidea aldatu egin du."
 
-#: ../../locales/../src/interface/netconfwizard.cpp:568
+#: ../../locales/../src/interface/netconfwizard.cpp:574
+#, fuzzy
 msgid ""
 "Active mode FTP test failed. FileZilla knows the correct external IP "
-"address, but your router has misleadingly modified the sent address."
+"address, but your router or firewall has misleadingly modified the sent "
+"address."
 msgstr ""
 "FTP testa modu aktiboan huts egin du. FileZillak ez du ezagutzen kanpoko IP "
 "helbidea, baina zure routerak engainatuta igorle-helbidea aldatu egin du."
 
-#: resources.h:326
+#: resources.h:350
 #, fuzzy
 msgid "Active mode IP"
 msgstr "Aktibatu IP modua"
 
-#: resources.h:306
+#: resources.h:330
 msgid "Add &more"
 msgstr "Gehitu &gehiago"
 
-#: resources.h:512
+#: resources.h:547 resources.h:563
 msgid "Add selected directory to the transfer queue"
 msgstr "Gehitu hautatutako fitxategiak eta karpetak transferentzia-ilarara"
 
-#: resources.h:457 resources.h:467
+#: resources.h:488 resources.h:502
 msgid "Add selected files and folders to the transfer queue"
 msgstr "Gehitu hautatutako fitxategiak eta karpetak transferentzia-ilarara"
 
@@ -815,25 +912,25 @@ msgstr "Doitu zerbitzariaren ordu-zonaren konpentsazioa:"
 msgid "Advanced"
 msgstr "Aurreratua"
 
-#: resources.h:330
+#: resources.h:354
 msgid "Advanced options:"
 msgstr "Aukera aurreratuak:"
 
-#: resources.h:556
+#: resources.h:605
 msgid "All ports in the given range have to be between 1024 and 65535."
 msgstr ""
 "Ataka erabilgarri txikienak 1024 eta 65535 bitarteko zenbaki bat izan behar "
 "du."
 
-#: resources.h:155
+#: resources.h:158
 msgid "Allow fall back to other transfer mode on failure"
 msgstr "Beste transferentzia modu batean jarri huts egitean"
 
-#: resources.h:531
+#: resources.h:580
 msgid "Allow fallback to other transfer mode on failure"
 msgstr "Beste transferentzia modu batean jarri huts egitean"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:626
+#: ../../locales/../src/interface/Mainfrm.cpp:627
 msgid ""
 "Also, not all servers support this feature and may return incorrect listings "
 "if 'View hidden files' is enabled. Although FileZilla performs some tests to "
@@ -843,7 +940,7 @@ msgstr ""
 "desegokia bueltatu dezakete 'Ikusi fitxategi ezkutuak' aktibatuta badago. "
 "FileZilla test batzuk egiten dituen arren, testa huts egin dezake."
 
-#: ../../locales/../src/interface/updatewizard.cpp:836
+#: ../../locales/../src/interface/updatewizard.cpp:837
 msgid ""
 "Alternatively, visit http://filezilla-project.org to download the most "
 "recent version."
@@ -851,22 +948,31 @@ msgstr ""
 "Hautabide gisa, http://filezilla-project.org/ helbidean sartu zaitezke "
 "eguneratuen bertsioa jaisteko."
 
-#: resources.h:76 ../../locales/../src/interface/sitemanager.cpp:568
-#: ../../locales/../src/interface/sitemanager.cpp:777
-#: ../../locales/../src/interface/sitemanager.cpp:986
-#: ../../locales/../src/interface/sitemanager.cpp:1052
+#: ../../locales/../src/interface/sitemanager.cpp:1771
+#, fuzzy
+msgid ""
+"An item with the same name as the dragged item already exists at the target "
+"location."
+msgstr ""
+"Izen hori duen beste fitxategi bat oraindik editatzen ari da. Mesedez, itxi "
+"eta ahalegindu berriro."
+
+#: resources.h:76 ../../locales/../src/interface/sitemanager.cpp:798
+#: ../../locales/../src/interface/sitemanager.cpp:1010
+#: ../../locales/../src/interface/sitemanager.cpp:1206
+#: ../../locales/../src/interface/sitemanager.cpp:1272
 msgid "Anonymous"
 msgstr "Anonimoa"
 
-#: resources.h:304
+#: resources.h:328
 msgid "Any of the following"
 msgstr "Honako edozein"
 
-#: resources.h:243
+#: resources.h:266
 msgid "App&ly to directories only"
 msgstr "Ap&likatu direktorioei soilik"
 
-#: resources.h:294
+#: resources.h:318
 msgid "Apply"
 msgstr "Aplikatu"
 
@@ -874,7 +980,7 @@ msgstr "Aplikatu"
 msgid "Apply to &current queue only"
 msgstr "Aplikatu &uneko ilarari soilik"
 
-#: resources.h:242
+#: resources.h:265
 msgid "Apply to &files only"
 msgstr "Aplikatu &fitxategiei soilik"
 
@@ -882,32 +988,32 @@ msgstr "Aplikatu &fitxategiei soilik"
 msgid "Archive"
 msgstr "Fitxategia"
 
-#: resources.h:78 ../../locales/../src/interface/sitemanager.cpp:813
-#: ../../locales/../src/interface/sitemanager.cpp:1043
+#: resources.h:78 ../../locales/../src/interface/sitemanager.cpp:1046
+#: ../../locales/../src/interface/sitemanager.cpp:1263
 msgid "Ask for password"
 msgstr "Eskatu pasahitza"
 
-#: resources.h:552
+#: resources.h:601
 msgid "Ask operating system for a port."
 msgstr "Eskatu sistema eraginkorrari ataka bat."
 
-#: resources.h:320 resources.h:542
+#: resources.h:344 resources.h:591
 msgid "Ask your operating system for the external IP address"
 msgstr "Eskatu sistema eraginkorrari kanpoko IP helbidea"
 
-#: ../../locales/../src/interface/optionspage_edit.cpp:138
+#: ../../locales/../src/interface/optionspage_edit.cpp:151
 msgid "Associated program not found:"
 msgstr "Ez da aurkitu loturiko programa:"
 
-#: ../../locales/../src/interface/filteredit.cpp:547
+#: ../../locales/../src/interface/filteredit.cpp:553
 msgid "At least one filter condition is incomplete"
 msgstr "Gutxienez iragazki-baldintza bat ez da osatu"
 
-#: resources.h:561
+#: resources.h:610
 msgid "At this point, all required information has been gathered."
 msgstr "Puntu honetan, behar den informazio guztia eskuratu da."
 
-#: resources.h:165
+#: resources.h:171
 msgid "Author:"
 msgstr "Egilea:"
 
@@ -915,11 +1021,12 @@ msgstr "Egilea:"
 msgid "Automatic file type classification"
 msgstr "Fitxategi-moten sailkapen automatikoa"
 
-#: resources.h:176
+#: resources.h:182
 msgid "Automatic update check"
 msgstr "Bilatu bertsio berria automatikoki"
 
-#: ../../locales/../src/interface/edithandler.cpp:672
+#: ../../locales/../src/interface/edithandler.cpp:819
+#: ../../locales/../src/interface/edithandler.cpp:845
 msgid "Being edited"
 msgstr "Editatzen dago"
 
@@ -931,15 +1038,15 @@ msgstr "Arbela"
 msgid "Break current connection?"
 msgstr "Uneko konexioa eten?"
 
-#: resources.h:253
+#: resources.h:277
 msgid "Build date:"
 msgstr "Eraikitze-data:"
 
-#: resources.h:251
+#: resources.h:274
 msgid "Build information"
 msgstr "Eraikitze-informazioa"
 
-#: resources.h:316
+#: resources.h:340
 #, fuzzy
 msgid ""
 "By default uses any available local port to establish transfers in active "
@@ -951,52 +1058,61 @@ msgstr ""
 "modu aktiboan ezartzeko. Ataka barrutia mugatu nahi baduzu,\n"
 "hautatu bitartea honen azpian."
 
-#: resources.h:332
+#: resources.h:356
 msgid "C&heck for nightly builds of FileZilla"
 msgstr ""
 
-#: resources.h:498
+#: resources.h:533
 msgid "C&lear all"
 msgstr "G&arbitu dena"
 
-#: resources.h:184
+#: resources.h:190
 #, fuzzy
 msgid "C&ustom"
 msgstr "&Automatikoa"
 
-#: resources.h:217
+#: resources.h:223
 #, fuzzy
 msgid "C&ustom filetype associations:"
 msgstr "Fitxategi-moten sailkapen automatikoa"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1265
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1286
+msgid "CSftpControlSocket::ChangeDirSend()"
+msgstr ""
+
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1279
+msgid "CSftpControlSocket::ChangeDirSubcommandResult()"
+msgstr ""
+
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1554
 msgid "Calculating timezone offset of server..."
 msgstr ""
 
-#: ../../locales/../src/engine/transfersocket.cpp:603
+#: ../../locales/../src/engine/transfersocket.cpp:595
 msgid "Can't read from file"
 msgstr "Ezin fitxategitik irakurri"
 
-#: ../../locales/../src/engine/transfersocket.cpp:577
-msgid "Can't write data to file, disk is full."
-msgstr "Ezin fitxategian idatzi, diskoa beteta dago."
-
-#: ../../locales/../src/engine/transfersocket.cpp:579
-#: ../../locales/../src/engine/transfersocket.cpp:582
+#: ../../locales/../src/engine/transfersocket.cpp:574
 #: ../../locales/../src/engine/transfersocket.cpp:647
 msgid "Can't write data to file."
 msgstr "Ezin fitxategian idatzi."
 
-#: resources.h:23 resources.h:245 resources.h:293 resources.h:313
-#: resources.h:365 resources.h:392 resources.h:399 resources.h:407
+#: ../../locales/../src/engine/transfersocket.cpp:572
+#: ../../locales/../src/engine/transfersocket.cpp:645
+#, fuzzy, c-format
+msgid "Can't write data to file: %s"
+msgstr "Ezin fitxategian idatzi."
+
+#: resources.h:23 resources.h:268 resources.h:317 resources.h:337
+#: resources.h:389 resources.h:416 resources.h:423 resources.h:431
 msgid "Cancel"
 msgstr "Utzi"
 
-#: resources.h:589
+#: resources.h:638
 msgid "Cancel current operation"
 msgstr "Utzi uneko eragiketa"
 
-#: resources.h:590
+#: resources.h:639
 msgid "Cancels the current operation"
 msgstr "Bertan behera uzten du uneko eragiketa"
 
@@ -1005,13 +1121,29 @@ msgstr "Bertan behera uzten du uneko eragiketa"
 msgid "Cannot access '%s', no media inserted or drive not ready."
 msgstr ""
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2397
-#: ../../locales/../src/interface/RemoteListView.cpp:2404
+#: ../../locales/../src/interface/listingcomparison.cpp:72
+msgid ""
+"Cannot compare directories, different filters for local and remote "
+"directories are enabled"
+msgstr ""
+
+#: ../../locales/../src/interface/RemoteListView.cpp:2274
+#, fuzzy
+msgid "Cannot compare directories, not connected to a server."
+msgstr "Ezin da zerbitzariarekin konektatu"
+
+#: ../../locales/../src/interface/filteredit.cpp:334
+#, fuzzy
+msgid "Cannot create new filter"
+msgstr "Ezin da fitxategiaren izena aldatu"
+
+#: ../../locales/../src/interface/RemoteListView.cpp:2165
+#: ../../locales/../src/interface/RemoteListView.cpp:2172
 #, fuzzy
 msgid "Cannot edit file"
 msgstr "Ezin da fitxategiaren izena aldatu"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:321
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:339
 msgid ""
 "Cannot establish FTP connection to an SFTP server. Please select proper "
 "protocol."
@@ -1021,7 +1153,7 @@ msgstr ""
 msgid "Cannot load Quickconnect bar from resource file"
 msgstr "Ezin da konexio bizkorraren barra baliabide-fitxategitik kargatu"
 
-#: ../../locales/../src/interface/import.cpp:26
+#: ../../locales/../src/interface/import.cpp:36
 msgid "Cannot load file, not a valid XML file."
 msgstr ""
 
@@ -1029,28 +1161,34 @@ msgstr ""
 msgid "Cannot load main menu from resource file"
 msgstr "Ezin da menu nagusia baliabide-fitxategitik kargatu"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:808
+#: ../../locales/../src/interface/Mainfrm.cpp:844
 msgid "Cannot load toolbar from resource file"
 msgstr "Ezin da tresna-barra baliabide-fitxategitik kargatu"
 
-#: ../../locales/../src/interface/sitemanager.cpp:654
+#: ../../locales/../src/interface/sitemanager.cpp:884
 #, fuzzy
 msgid "Cannot rename entry"
 msgstr "Ezin da fitxategiaren izena aldatu"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1775
+#: ../../locales/../src/interface/RemoteListView.cpp:1477
 msgid "Cannot rename file"
 msgstr "Ezin da fitxategiaren izena aldatu"
 
-#: ../../locales/../src/interface/edithandler.cpp:638
+#: ../../locales/../src/interface/filter.cpp:621
+#, fuzzy
+msgid "Cannot save filterset"
+msgstr "Ezin da fitxategiaren izena aldatu"
+
+#: ../../locales/../src/interface/edithandler.cpp:782
 msgid "Cannot show dialog"
 msgstr ""
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2423
+#: ../../locales/../src/interface/LocalListView.cpp:2035
+#: ../../locales/../src/interface/RemoteListView.cpp:2191
 msgid "Cannot view / edit selected file"
 msgstr ""
 
-#: resources.h:386
+#: resources.h:410
 msgid "Categories"
 msgstr ""
 
@@ -1062,15 +1200,15 @@ msgstr ""
 msgid "Challenge:"
 msgstr "Lehia:"
 
-#: resources.h:224
+#: resources.h:247
 msgid "Change file attributes"
 msgstr "Aldatu fitxategi-atributuak"
 
-#: resources.h:476 resources.h:520
+#: resources.h:511 resources.h:555
 msgid "Change the file permissions."
 msgstr "Aldatu fitxategi-baimenak"
 
-#: ../../locales/../src/interface/FileZilla.cpp:623
+#: ../../locales/../src/interface/FileZilla.cpp:687
 msgid "Character encoding issue"
 msgstr "Karaktere-kodeketa gaia"
 
@@ -1078,11 +1216,11 @@ msgstr "Karaktere-kodeketa gaia"
 msgid "Charset"
 msgstr "Karaktere-multzoa"
 
-#: resources.h:450
+#: resources.h:481
 msgid "Check for &updates..."
 msgstr ""
 
-#: resources.h:451
+#: resources.h:482
 msgid "Check for newer versions of FileZilla"
 msgstr ""
 
@@ -1090,19 +1228,19 @@ msgstr ""
 msgid "Check for updates"
 msgstr ""
 
-#: ../../locales/../src/interface/netconfwizard.cpp:748
+#: ../../locales/../src/interface/netconfwizard.cpp:759
 msgid "Checking for correct external IP address"
 msgstr ""
 
-#: resources.h:328
+#: resources.h:352
 msgid "Checking for updates"
 msgstr ""
 
-#: ../../locales/../src/interface/sitemanager.cpp:926
+#: ../../locales/../src/interface/sitemanager.cpp:1146
 msgid "Choose the default local directory"
 msgstr "Aukeratu direktorio lokal lehenetsia"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:814
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:830
 msgid "Chunk data improperly terminated"
 msgstr ""
 
@@ -1110,25 +1248,25 @@ msgstr ""
 msgid "Classic"
 msgstr ""
 
-#: resources.h:389
+#: resources.h:413
 #, fuzzy
 msgid "Clear &Site Manager entries"
 msgstr "Gune-kudeatzailea"
 
-#: resources.h:499
+#: resources.h:534
 msgid "Clear &layout cache"
 msgstr ""
 
-#: resources.h:387
+#: resources.h:411
 #, fuzzy
 msgid "Clear &quickconnect history"
 msgstr "&Konexio bizkorra"
 
-#: resources.h:388
+#: resources.h:412
 msgid "Clear &reconnect information"
 msgstr ""
 
-#: resources.h:390
+#: resources.h:414
 #, fuzzy
 msgid "Clear &transfer queue"
 msgstr "Fitxategi-trasnferentzia arrakastatsua"
@@ -1138,7 +1276,7 @@ msgstr "Fitxategi-trasnferentzia arrakastatsua"
 msgid "Clear history"
 msgstr "Sortu direktorioa"
 
-#: resources.h:384 ../../locales/../src/interface/clearprivatedata.cpp:34
+#: resources.h:408 ../../locales/../src/interface/clearprivatedata.cpp:34
 #: ../../locales/../src/interface/clearprivatedata.cpp:40
 #: ../../locales/../src/interface/clearprivatedata.cpp:46
 #: ../../locales/../src/interface/clearprivatedata.cpp:68
@@ -1151,16 +1289,16 @@ msgstr ""
 msgid "Clear quickconnect bar"
 msgstr "&Konexio bizkorra"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:560
+#: ../../locales/../src/interface/netconfwizard.cpp:566
 msgid "Click on Finish to save your configuration."
 msgstr ""
 
-#: ../../locales/../src/interface/updatewizard.cpp:835
+#: ../../locales/../src/interface/updatewizard.cpp:836
 msgid "Click on next to download the new version."
 msgstr ""
 
-#: resources.h:428 ../../locales/../src/interface/Mainfrm.cpp:922
-#: ../../locales/../src/interface/Mainfrm.cpp:941
+#: resources.h:453 ../../locales/../src/interface/Mainfrm.cpp:946
+#: ../../locales/../src/interface/Mainfrm.cpp:965
 msgid "Close FileZilla"
 msgstr "Itxi FileZilla"
 
@@ -1168,7 +1306,7 @@ msgstr "Itxi FileZilla"
 msgid "Co&mments:"
 msgstr "Oha&rrak:"
 
-#: resources.h:212
+#: resources.h:218
 msgid "Command and its arguments should be properly quoted."
 msgstr ""
 
@@ -1176,8 +1314,8 @@ msgstr ""
 msgid "Command not supported by this protocol"
 msgstr ""
 
-#: ../../locales/../src/interface/StatusView.cpp:198
-#: ../../locales/../src/interface/StatusView.cpp:233
+#: ../../locales/../src/interface/StatusView.cpp:199
+#: ../../locales/../src/interface/StatusView.cpp:234
 msgid "Command:"
 msgstr "Komandoa:"
 
@@ -1186,17 +1324,43 @@ msgstr "Komandoa:"
 msgid "Common name:"
 msgstr "Komandoa:"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:418
-#: ../../locales/../src/interface/netconfwizard.cpp:433
+#: ../../locales/../src/interface/netconfwizard.cpp:424
+#: ../../locales/../src/interface/netconfwizard.cpp:439
 #, fuzzy
-msgid "Communication tainted by router"
+msgid "Communication tainted by router or firewall"
 msgstr "Konexio-saioa eten du erabiltzaileak"
 
-#: resources.h:254
+#: resources.h:466 resources.h:559
+msgid "Compare &modification time"
+msgstr ""
+
+#: resources.h:465 resources.h:558
+msgid "Compare file&size"
+msgstr ""
+
+#: resources.h:151
+msgid "Comparison threshold (in minutes):"
+msgstr ""
+
+#: ../../locales/../src/interface/optionspage_interface.cpp:42
+msgid "Comparison threshold needs to be between 0 and 1440 minutes."
+msgstr ""
+
+#: resources.h:275
+#, fuzzy
+msgid "Compiled for:"
+msgstr "Konpiladorea:"
+
+#: resources.h:276
+#, fuzzy
+msgid "Compiled on:"
+msgstr "Konpiladorea:"
+
+#: resources.h:278
 msgid "Compiled with:"
 msgstr "Konpiladorea:"
 
-#: resources.h:255
+#: resources.h:279
 msgid "Compiler flags:"
 msgstr "Konpiladorearen banderak:"
 
@@ -1204,51 +1368,52 @@ msgstr "Konpiladorearen banderak:"
 msgid "Concurrent transfers"
 msgstr ""
 
-#: resources.h:308
+#: resources.h:332
 msgid "Conditions are c&ase sensitive"
 msgstr "Maiuskula/minuskula bereiztu"
 
-#: resources.h:560
+#: resources.h:609
 #, fuzzy
 msgid "Configuration test"
 msgstr "Berrespena behar du"
 
-#: resources.h:534
+#: resources.h:583
 #, fuzzy
 msgid "Configure passive mode"
 msgstr "&Erabili modu pasiboa"
 
-#: resources.h:550
+#: resources.h:599
 msgid "Configure port range"
 msgstr ""
 
-#: ../../locales/../src/interface/LocalListView.cpp:1533
-#: ../../locales/../src/interface/RemoteListView.cpp:1490
-#: ../../locales/../src/interface/RemoteTreeView.cpp:1040
+#: ../../locales/../src/interface/LocalListView.cpp:1242
+#: ../../locales/../src/interface/LocalTreeView.cpp:1389
+#: ../../locales/../src/interface/RemoteListView.cpp:1261
+#: ../../locales/../src/interface/RemoteTreeView.cpp:1013
 msgid "Confirmation needed"
 msgstr "Berrespena behar du"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:556
+#: ../../locales/../src/interface/netconfwizard.cpp:562
 msgid "Congratulations, your configuration seems to be working."
 msgstr ""
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:711
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:954
 msgid "Connected"
 msgstr "Konektatua"
 
-#: ../../locales/../src/interface/QueueView.cpp:1235
+#: ../../locales/../src/interface/QueueView.cpp:1201
 msgid "Connecting"
 msgstr "Konektatzen"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:202
+#: ../../locales/../src/interface/netconfwizard.cpp:205
 #: ../../locales/../src/interface/statuslinectrl.cpp:195
 #, c-format
 msgid "Connecting to %s"
 msgstr "%s(e)ra konektatzen"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:977
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:492
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:344
+#: ../../locales/../src/engine/ControlSocket.cpp:1000
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:508
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:323
 #, c-format
 msgid "Connecting to %s:%d..."
 msgstr "%s(e)ra konektatzen:%d..."
@@ -1259,27 +1424,27 @@ msgstr "%s(e)ra konektatzen:%d..."
 msgid "Connecting to server"
 msgstr "%s(e)ra konektatzen"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:102
+#: ../../locales/../src/interface/settingsdialog.cpp:104
 #, fuzzy
 msgid "Connection"
 msgstr "Konektatzen"
 
-#: ../../locales/../src/interface/QueueView.cpp:929
+#: ../../locales/../src/interface/QueueView.cpp:892
 #, fuzzy
 msgid "Connection attempt failed"
 msgstr "Konexio-saioa eten du erabiltzaileak"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:123
-#: ../../locales/../src/engine/engineprivate.cpp:363
+#: ../../locales/../src/engine/engineprivate.cpp:364
 msgid "Connection attempt interrupted by user"
 msgstr "Konexio-saioa eten du erabiltzaileak"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:535
+#: ../../locales/../src/interface/netconfwizard.cpp:541
 #, fuzzy
 msgid "Connection closed"
 msgstr "%s(e)ra konektatzen"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:395
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:413
 #, fuzzy
 msgid "Connection established, initializing TLS..."
 msgstr "Konexioa ezarri da, ongietorri-mezuaren zain..."
@@ -1289,25 +1454,30 @@ msgstr "Konexioa ezarri da, ongietorri-mezuaren zain..."
 msgid "Connection established, sending HTTP request"
 msgstr "Konexioa ezarri da, ongietorri-mezuaren zain..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:424
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:442
 msgid "Connection established, waiting for welcome message..."
 msgstr "Konexioa ezarri da, ongietorri-mezuaren zain..."
 
-#: ../../locales/../src/interface/netconfwizard.cpp:333
+#: ../../locales/../src/interface/netconfwizard.cpp:336
 #, fuzzy
 msgid "Connection lost"
 msgstr "%s(e)ra konektatzen"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:598
+#: ../../locales/../src/engine/ControlSocket.cpp:603
 #, fuzzy
 msgid "Connection timed out"
 msgstr "%s(e)ra konektatzen"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:552
+#: ../../locales/../src/interface/netconfwizard.cpp:1062
+#, fuzzy
+msgid "Connection timed out."
+msgstr "%s(e)ra konektatzen"
+
+#: ../../locales/../src/interface/netconfwizard.cpp:558
 msgid "Connection with server got closed prematurely."
 msgstr ""
 
-#: ../../locales/../src/interface/netconfwizard.cpp:544
+#: ../../locales/../src/interface/netconfwizard.cpp:550
 #, fuzzy
 msgid "Connection with the test server failed."
 msgstr "Erabilitako azken zerbitzarira birkonektatzen du"
@@ -1316,12 +1486,12 @@ msgstr "Erabilitako azken zerbitzarira birkonektatzen du"
 msgid "Cop&y"
 msgstr "Kop&iatu"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1205
+#: ../../locales/../src/interface/sitemanager.cpp:1420
 #, c-format
 msgid "Copy (%d) of %s"
 msgstr ""
 
-#: ../../locales/../src/interface/sitemanager.cpp:1182
+#: ../../locales/../src/interface/sitemanager.cpp:1397
 #, c-format
 msgid "Copy of %s"
 msgstr ""
@@ -1330,19 +1500,24 @@ msgstr ""
 msgid "Could not connect to server"
 msgstr "Ezin da zerbitzariarekin konektatu"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2294
-#: ../../locales/../src/interface/RemoteTreeView.cpp:829
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:610
+#, fuzzy
+msgid "Could not convert command to server encoding"
+msgstr "Ezin da zerbitzariarekin konektatu"
+
+#: ../../locales/../src/interface/RemoteListView.cpp:2059
+#: ../../locales/../src/interface/RemoteTreeView.cpp:802
 msgid ""
 "Could not determine the target of the Drag&Drop operation.\n"
 "Either the shell extension is not installed properly or you didn't drop the "
 "files into an Explorer window."
 msgstr ""
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3670
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4121
 msgid "Could not establish connection to server"
 msgstr "Ezin da zerbitzariarekin konexioa ezarri"
 
-#: ../../locales/../src/interface/FileZilla.cpp:358
+#: ../../locales/../src/interface/FileZilla.cpp:413
 msgid ""
 "Could not find the resource files for FileZilla, closing FileZilla.\n"
 "You can set the data directory of FileZilla using the '--datadir "
@@ -1353,11 +1528,15 @@ msgstr ""
 "FileZillaren datu-direktorioa ezarri dezakezu '--datadir <custompath>' "
 "komando-lerro aukera baliatuz edo FZ_DATADIR ingurune-aldagaia ezarriz."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2397
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:719
+msgid "Could not generate custom login sequence."
+msgstr ""
+
+#: ../../locales/../src/interface/RemoteListView.cpp:2165
 msgid "Could not get temporary directory to download file into."
 msgstr ""
 
-#: ../../locales/../src/interface/Options.cpp:113
+#: ../../locales/../src/interface/Options.cpp:126
 #, c-format
 msgid ""
 "Could not load \"%s\", make sure the file is valid.\n"
@@ -1379,8 +1558,8 @@ msgstr ""
 "Ilara ez da gordeko."
 
 #: ../../locales/../src/interface/filter.cpp:167
-#: ../../locales/../src/interface/filter.cpp:252
-#: ../../locales/../src/interface/sitemanager.cpp:364
+#: ../../locales/../src/interface/filter.cpp:263
+#: ../../locales/../src/interface/sitemanager.cpp:588
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1391,10 +1570,10 @@ msgstr ""
 "ziurtatu.\n"
 "Gune-kudeatzailean egindako aldaketak ez dira gordeko."
 
-#: ../../locales/../src/interface/import.cpp:100
-#: ../../locales/../src/interface/import.cpp:283
-#: ../../locales/../src/interface/sitemanager.cpp:261
-#: ../../locales/../src/interface/sitemanager.cpp:1337
+#: ../../locales/../src/interface/import.cpp:110
+#: ../../locales/../src/interface/import.cpp:293
+#: ../../locales/../src/interface/sitemanager.cpp:484
+#: ../../locales/../src/interface/sitemanager.cpp:1577
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1405,8 +1584,8 @@ msgstr ""
 "ziurtatu.\n"
 "Gune-kudeatzailean egindako aldaketak ez dira gordeko."
 
-#: ../../locales/../src/interface/QueueView.cpp:1675
-#: ../../locales/../src/interface/QueueView.cpp:1702
+#: ../../locales/../src/interface/QueueView.cpp:1641
+#: ../../locales/../src/interface/QueueView.cpp:1668
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1421,28 +1600,28 @@ msgstr ""
 msgid "Could not parse server address:"
 msgstr "Ezin da zerbitzariaren helbidea lortu:"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2262
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2628
 #, c-format
 msgid "Could not seek to offset %s within file"
 msgstr "Ezin da fitxategiaren %s posizioan kokatu"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2193
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2559
 #, fuzzy
 msgid "Could not seek to the end of the file"
 msgstr "Ezin da fitxategiaren amaieran kokatu"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2282
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2648
 #, fuzzy
 msgid "Could not spawn IO thread"
 msgstr "Ezin da zerbitzariaren helbidea lortu:"
 
-#: ../../locales/../src/interface/QueueView.cpp:955
-#: ../../locales/../src/interface/QueueView.cpp:960
+#: ../../locales/../src/interface/QueueView.cpp:918
+#: ../../locales/../src/interface/QueueView.cpp:923
 #, fuzzy
 msgid "Could not start transfer"
 msgstr "Ezin da zerbitzariarekin konektatu"
 
-#: ../../locales/../src/interface/sitemanager.cpp:390
+#: ../../locales/../src/interface/sitemanager.cpp:614
 #, c-format
 msgid ""
 "Could not write \"%s\", any changes to the Site Manager could not be saved: %"
@@ -1451,8 +1630,8 @@ msgstr ""
 "Ezin da \"%s\" idatzi, Gune-kudeatzailean egindako aldaketak ezin dira "
 "gorde: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1685
-#: ../../locales/../src/interface/QueueView.cpp:1721
+#: ../../locales/../src/interface/QueueView.cpp:1651
+#: ../../locales/../src/interface/QueueView.cpp:1687
 #, c-format
 msgid "Could not write \"%s\", the queue could not be saved."
 msgstr "Ezin da \"%s\" idatzi, ilara ezin da gorde"
@@ -1466,27 +1645,28 @@ msgstr ""
 msgid "Country:"
 msgstr ""
 
-#: resources.h:501
+#: resources.h:536
 msgid "Crashes FileZilla instantly. Only used to debug the exception handler"
 msgstr "Berehala gelditzen du FileZilla. Arazteko erabiltzen da soilik "
 
-#: resources.h:459 resources.h:470 resources.h:514
+#: resources.h:494 resources.h:505 resources.h:549 resources.h:565
 msgid "Create a new subdirectory in the current directory"
 msgstr "Sortu azpidirektorio berri bat uneko direktorioan"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1432
-#: ../../locales/../src/interface/RemoteListView.cpp:1435
-#: ../../locales/../src/interface/RemoteTreeView.cpp:1195
+#: ../../locales/../src/interface/LocalListView.cpp:1128
+#: ../../locales/../src/interface/LocalTreeView.cpp:1281
+#: ../../locales/../src/interface/RemoteListView.cpp:1206
+#: ../../locales/../src/interface/RemoteTreeView.cpp:1180
 msgid "Create directory"
 msgstr "Sortu direktorioa"
 
-#: ../../locales/../src/interface/QueueView.cpp:1308
+#: ../../locales/../src/interface/QueueView.cpp:1274
 #, fuzzy
 msgid "Creating directory"
 msgstr "Sortu direktorioa"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2838
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1672
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3246
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1762
 #, c-format
 msgid "Creating directory '%s'..."
 msgstr "'%s' direktorioa sortzen..."
@@ -1495,7 +1675,7 @@ msgstr "'%s' direktorioa sortzen..."
 msgid "Critical error"
 msgstr "Errore kritikoa"
 
-#: resources.h:190
+#: resources.h:196 resources.h:232
 msgid "Cus&tom"
 msgstr ""
 
@@ -1508,11 +1688,11 @@ msgstr "Iragazkiak editatu"
 msgid "D&efault"
 msgstr "L&ehenetsia"
 
-#: resources.h:460 resources.h:471 resources.h:515
+#: resources.h:506 resources.h:550
 msgid "D&elete"
 msgstr "E&zabatu"
 
-#: resources.h:287
+#: resources.h:311
 #, fuzzy
 msgid "D&isable all"
 msgstr "Desgaitu dena"
@@ -1521,41 +1701,41 @@ msgstr "Desgaitu dena"
 msgid "D&iscard"
 msgstr "U&tzi"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2409
+#: ../../locales/../src/interface/RemoteListView.cpp:2177
 msgid "Dangerous filetype"
 msgstr ""
 
-#: ../../locales/../src/interface/netconfwizard.cpp:963
-#: ../../locales/../src/interface/netconfwizard.cpp:1029
+#: ../../locales/../src/interface/netconfwizard.cpp:977
+#: ../../locales/../src/interface/netconfwizard.cpp:1043
 msgid "Data socket closed too early."
 msgstr ""
 
-#: resources.h:181
+#: resources.h:187
 msgid "Date formatting"
 msgstr ""
 
-#: ../../locales/../src/interface/settingsdialog.cpp:110
+#: ../../locales/../src/interface/settingsdialog.cpp:113
 #, fuzzy
 msgid "Date/time format"
 msgstr "Data/ordu ezezaguna"
 
-#: ../../locales/../src/interface/fileexistsdlg.cpp:68
-#: ../../locales/../src/interface/fileexistsdlg.cpp:92
-#: ../../locales/../src/interface/fileexistsdlg.cpp:124
-#: ../../locales/../src/interface/fileexistsdlg.cpp:148
+#: ../../locales/../src/interface/fileexistsdlg.cpp:75
+#: ../../locales/../src/interface/fileexistsdlg.cpp:99
+#: ../../locales/../src/interface/fileexistsdlg.cpp:131
+#: ../../locales/../src/interface/fileexistsdlg.cpp:155
 msgid "Date/time unknown"
 msgstr "Data/ordu ezezaguna"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:117
+#: ../../locales/../src/interface/settingsdialog.cpp:120
 msgid "Debug"
 msgstr ""
 
-#: resources.h:199
+#: resources.h:205
 msgid "Debugging settings"
 msgstr ""
 
-#: resources.h:87 ../../locales/../src/interface/sitemanager.cpp:992
-#: ../../locales/../src/interface/sitemanager.cpp:1081
+#: resources.h:87 ../../locales/../src/interface/sitemanager.cpp:1212
+#: ../../locales/../src/interface/sitemanager.cpp:1301
 msgid "Default"
 msgstr "Lehenetsia"
 
@@ -1563,11 +1743,11 @@ msgstr "Lehenetsia"
 msgid "Default &local directory:"
 msgstr "Direktorio &lokal lehenetsia"
 
-#: ../../locales/../src/interface/optionspage_edit.cpp:99
+#: ../../locales/../src/interface/optionspage_edit.cpp:112
 msgid "Default editor not properly quoted."
 msgstr ""
 
-#: resources.h:345
+#: resources.h:369
 msgid "Default file exists action"
 msgstr ""
 
@@ -1575,7 +1755,12 @@ msgstr ""
 msgid "Default r&emote directory:"
 msgstr "Urrun&eko direktorio lehenetsia"
 
-#: resources.h:528
+#: ../../locales/../src/interface/optionspage_language.cpp:21
+#, fuzzy
+msgid "Default system language"
+msgstr "&Hautatu hizkuntza:"
+
+#: resources.h:577
 #, fuzzy
 msgid "Default transfer mode:"
 msgstr "Transferentzia-mota lehenetsia:"
@@ -1584,50 +1769,51 @@ msgstr "Transferentzia-mota lehenetsia:"
 msgid "Default transfer type:"
 msgstr "Transferentzia-mota lehenetsia:"
 
-#: resources.h:324 resources.h:547
+#: resources.h:348 resources.h:596
 msgid "Default: http://ip.filezilla-project.org/ip.php"
 msgstr ""
 
-#: ../../locales/../src/interface/optionspage_connection.cpp:49
+#: ../../locales/../src/interface/optionspage_connection.cpp:53
 msgid ""
 "Delay between failed connection attempts has to be between 1 and 999 seconds."
 msgstr ""
 
-#: resources.h:160
+#: resources.h:163
 msgid "Delay between failed login attempts:"
 msgstr ""
 
-#: ../../locales/../src/engine/engineprivate.cpp:657
+#: ../../locales/../src/engine/engineprivate.cpp:660
 msgid "Delaying connection due to previously failed connection attempt..."
 msgstr ""
 
-#: ../../locales/../src/interface/sitemanager.cpp:687
+#: ../../locales/../src/interface/sitemanager.cpp:917
 #, fuzzy
 msgid "Delete Site Manager entry"
 msgstr "Gune-kudeatzailea ireki"
 
-#: resources.h:516
+#: resources.h:551 resources.h:567
 #, fuzzy
 msgid "Delete selected directory"
 msgstr "Urrun&eko direktorio lehenetsia"
 
-#: resources.h:461 resources.h:472
-msgid "Delete selected files and folders"
+#: resources.h:496 resources.h:507
+#, fuzzy
+msgid "Delete selected files and directories"
 msgstr "Ezabatu hautatutako fitxategiak eta karpetak"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:913
+#: ../../locales/../src/interface/LocalTreeView.cpp:988
 msgid "Desktop"
 msgstr ""
 
-#: resources.h:7 resources.h:259
+#: resources.h:7 resources.h:283
 msgid "Details"
 msgstr "Xehetasunak"
 
-#: resources.h:271
+#: resources.h:295
 msgid "Details for new key:"
 msgstr "Gako berriaren xehetasunak:"
 
-#: resources.h:311
+#: resources.h:335
 msgid "Dire&ctories"
 msgstr "Dire&ktorioak"
 
@@ -1635,16 +1821,30 @@ msgstr "Dire&ktorioak"
 msgid "Direction"
 msgstr "Norabidea"
 
+#: resources.h:149 resources.h:556 resources.h:646 resources.h:647
+#: ../../locales/../src/interface/filelistctrl.cpp:255
+#: ../../locales/../src/interface/Mainfrm.cpp:1893
+#, fuzzy
+msgid "Directory comparison"
+msgstr "Dire&ktorioak"
+
+#: ../../locales/../src/interface/listingcomparison.cpp:72
+#: ../../locales/../src/interface/listingcomparison.cpp:79
+#: ../../locales/../src/interface/listingcomparison.cpp:84
+#, fuzzy
+msgid "Directory comparison failed"
+msgstr "Direktorioa bistaratzeko iragazkiak"
+
 #: ../../locales/../src/engine/ControlSocket.cpp:129
 msgid "Directory listing aborted by user"
 msgstr "Direktorioaren zerrendatzea eten du erabiltzaileak"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:670
+#: ../../locales/../src/interface/RemoteListView.cpp:1867
 #, fuzzy
 msgid "Directory listing failed"
 msgstr "Direktorioa bistaratzeko iragazkiak"
 
-#: resources.h:280
+#: resources.h:304
 msgid "Directory listing filters"
 msgstr "Direktorioa bistaratzeko iragazkiak"
 
@@ -1652,43 +1852,43 @@ msgstr "Direktorioa bistaratzeko iragazkiak"
 msgid "Directory listing successful"
 msgstr "Direktorioa ongi bistaratu da"
 
-#: resources.h:290
+#: resources.h:314
 #, fuzzy
 msgid "Disa&ble all"
 msgstr "Desgaitu dena"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:627
+#: ../../locales/../src/interface/Mainfrm.cpp:628
 msgid "Disable this option if you cannot see your files anymore."
 msgstr ""
 
-#: resources.h:591
+#: resources.h:640
 msgid "Disconnect from server"
 msgstr "Deskonektatu zerbitzaritik"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:67
-#: ../../locales/../src/engine/ControlSocket.cpp:925
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:226
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:894
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:896
-#: ../../locales/../src/interface/QueueView.cpp:927
-#: ../../locales/../src/interface/QueueView.cpp:952
+#: ../../locales/../src/engine/ControlSocket.cpp:936
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:244
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:910
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:912
+#: ../../locales/../src/interface/QueueView.cpp:890
+#: ../../locales/../src/interface/QueueView.cpp:915
 msgid "Disconnected from server"
 msgstr "Deskonektatua zerbitzaritik"
 
-#: ../../locales/../src/interface/QueueView.cpp:1210
+#: ../../locales/../src/interface/QueueView.cpp:1176
 #: ../../locales/../src/interface/statuslinectrl.cpp:189
 msgid "Disconnecting from previous server"
 msgstr "Deskonektatzen aurreko zerbitzaritik"
 
-#: resources.h:592
+#: resources.h:641
 msgid "Disconnects from the currently visible server"
 msgstr "Ikusten den uneko zerbitzaritik deskonektatzen du"
 
-#: resources.h:453
+#: resources.h:484
 msgid "Display about dialog"
 msgstr "Bistaratu FileZillari buruzko pantaila"
 
-#: resources.h:495
+#: resources.h:530
 msgid "Do &nothing"
 msgstr ""
 
@@ -1698,8 +1898,8 @@ msgid ""
 "Unless you want to test new features, keep using stable versions."
 msgstr ""
 
-#: ../../locales/../src/interface/Mainfrm.cpp:925
-#: ../../locales/../src/interface/Mainfrm.cpp:945
+#: ../../locales/../src/interface/Mainfrm.cpp:949
+#: ../../locales/../src/interface/Mainfrm.cpp:969
 msgid "Do you really want to close FileZilla?"
 msgstr ""
 
@@ -1712,7 +1912,7 @@ msgstr ""
 msgid "Do you really want to delete all Site Manager entries?"
 msgstr ""
 
-#: ../../locales/../src/interface/sitemanager.cpp:689
+#: ../../locales/../src/interface/sitemanager.cpp:919
 msgid "Do you really want to delete selected entry?"
 msgstr ""
 
@@ -1721,12 +1921,12 @@ msgstr ""
 msgid "Do you really want to delete the transfer queue?"
 msgstr "Gehitu hautatutako fitxategiak eta karpetak transferentzia-ilarara"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:571
+#: ../../locales/../src/interface/Mainfrm.cpp:572
 #, c-format
 msgid "Do you really want to send '%s' to the server?"
 msgstr ""
 
-#: resources.h:325 resources.h:549
+#: resources.h:349 resources.h:598
 msgid "Don't use external IP address on &local connections."
 msgstr ""
 
@@ -1735,16 +1935,17 @@ msgstr ""
 msgid "Download &limit:"
 msgstr "&Behera kargatu"
 
-#: resources.h:510
+#: resources.h:545
 #, fuzzy
 msgid "Download selected directory"
 msgstr "Behera kargatu hautatutako fitxategiak eta karpetak"
 
-#: resources.h:465
-msgid "Download selected files and folders"
+#: resources.h:500
+#, fuzzy
+msgid "Download selected files and directories"
 msgstr "Behera kargatu hautatutako fitxategiak eta karpetak"
 
-#: ../../locales/../src/interface/edithandler.cpp:660
+#: ../../locales/../src/interface/edithandler.cpp:807
 #, fuzzy
 msgid "Downloading"
 msgstr "&Behera kargatu"
@@ -1755,46 +1956,46 @@ msgstr "&Behera kargatu"
 msgid "Downloading %s"
 msgstr "&Behera kargatu"
 
-#: resources.h:347 resources.h:367
+#: resources.h:371 resources.h:391
 #, fuzzy
 msgid "Downloads"
 msgstr "&Behera kargatu"
 
-#: ../../locales/../src/interface/LocalListView.cpp:90
-#: ../../locales/../src/interface/LocalTreeView.cpp:88
-#: ../../locales/../src/interface/QueueView.cpp:71
-#: ../../locales/../src/interface/RemoteListView.cpp:87
+#: ../../locales/../src/interface/LocalListView.cpp:94
+#: ../../locales/../src/interface/LocalTreeView.cpp:89
+#: ../../locales/../src/interface/QueueView.cpp:70
+#: ../../locales/../src/interface/RemoteListView.cpp:90
 #: ../../locales/../src/interface/RemoteTreeView.cpp:79
 msgid ""
 "Drag&drop between different instances of FileZilla has not been implemented "
 "yet."
 msgstr ""
 
-#: ../../locales/../src/interface/LocalListView.cpp:96
-#: ../../locales/../src/interface/LocalTreeView.cpp:94
-#: ../../locales/../src/interface/QueueView.cpp:82
-#: ../../locales/../src/interface/RemoteListView.cpp:93
+#: ../../locales/../src/interface/LocalListView.cpp:100
+#: ../../locales/../src/interface/LocalTreeView.cpp:95
+#: ../../locales/../src/interface/QueueView.cpp:81
+#: ../../locales/../src/interface/RemoteListView.cpp:96
 #: ../../locales/../src/interface/RemoteTreeView.cpp:85
 msgid "Drag&drop between different servers has not been implemented yet."
 msgstr ""
 
-#: ../../locales/../src/interface/filteredit.cpp:334
-#: ../../locales/../src/interface/filteredit.cpp:397
-#: ../../locales/../src/interface/filteredit.cpp:437
+#: ../../locales/../src/interface/filteredit.cpp:340
+#: ../../locales/../src/interface/filteredit.cpp:403
+#: ../../locales/../src/interface/filteredit.cpp:443
 #, fuzzy
 msgid "Duplicate filter name"
 msgstr "Iragazkiaren izena sartu behar da"
 
-#: resources.h:286
+#: resources.h:310
 #, fuzzy
 msgid "E&nable all"
 msgstr "Gaitu dena"
 
-#: resources.h:233
+#: resources.h:256
 msgid "E&xecute"
 msgstr "E&xekutatu"
 
-#: resources.h:427
+#: resources.h:452
 msgid "E&xit"
 msgstr "I&rten"
 
@@ -1803,77 +2004,86 @@ msgstr "I&rten"
 msgid "E-Mail:"
 msgstr "Posta elektronikoa:"
 
-#: ../../locales/../src/interface/filteredit.cpp:536
+#: ../../locales/../src/interface/filteredit.cpp:542
 #, fuzzy
 msgid "Each filter needs at least one condition."
 msgstr "Iragazki bakoitzak baldintza bat behar du gutxienez"
 
-#: resources.h:295
+#: resources.h:319
 msgid "Edit filters"
 msgstr "Iragazkiak editatu"
 
-#: resources.h:167
+#: resources.h:492
+msgid ""
+"Edit the file with the configured editor and upload changes to the server."
+msgstr ""
+
+#: resources.h:173
 msgid "Email:"
 msgstr "Posta elektronikoa:"
 
-#: ../../locales/../src/interface/QueueView.cpp:1996
+#: ../../locales/../src/interface/QueueView.cpp:1971
 #, fuzzy
 msgid "Empty command"
 msgstr "Sartu komando pertsonalizatua"
 
-#: ../../locales/../src/interface/optionspage_edit.cpp:134
+#: ../../locales/../src/interface/optionspage_edit.cpp:147
 msgid "Empty command."
 msgstr ""
 
-#: ../../locales/../src/interface/RemoteListView.cpp:672
+#: ../../locales/../src/interface/RemoteListView.cpp:1869
 #, fuzzy
 msgid "Empty directory listing"
 msgstr "Iragazi direktorioen zerrendatzeak"
 
-#: ../../locales/../src/interface/optionspage_edit.cpp:127
+#: ../../locales/../src/interface/optionspage_edit.cpp:140
 msgid "Empty file extension."
 msgstr ""
 
-#: ../../locales/../src/interface/filteredit.cpp:388
-#: ../../locales/../src/interface/filteredit.cpp:431
+#: ../../locales/../src/interface/filteredit.cpp:394
+#: ../../locales/../src/interface/filteredit.cpp:437
 msgid "Empty filter names are not allowed."
 msgstr ""
 
-#: ../../locales/../src/interface/filteredit.cpp:388
-#: ../../locales/../src/interface/filteredit.cpp:431
+#: ../../locales/../src/interface/filteredit.cpp:394
+#: ../../locales/../src/interface/filteredit.cpp:437
 msgid "Empty name"
 msgstr ""
 
-#: ../../locales/../src/interface/optionspage_edit.cpp:102
+#: ../../locales/../src/interface/optionspage_edit.cpp:115
 msgid "Empty quoted string."
 msgstr ""
 
-#: resources.h:289
+#: resources.h:313
 #, fuzzy
 msgid "En&able all"
 msgstr "Gaitu dena"
 
-#: resources.h:446
+#: ../../locales/../src/interface/filelistctrl.cpp:257
+msgid "End comparison and change sorting order?"
+msgstr ""
+
+#: resources.h:477
 msgid "Enter &custom command..."
 msgstr "Sartu &komando pertsonalizatua..."
 
-#: ../../locales/../src/interface/QueueView.cpp:1985
+#: ../../locales/../src/interface/QueueView.cpp:1960
 #, fuzzy
 msgid "Enter command"
 msgstr "Sartu komando pertsonalizatua"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:559
+#: ../../locales/../src/interface/Mainfrm.cpp:560
 msgid "Enter custom command"
 msgstr "Sartu komando pertsonalizatua"
 
 #: ../../locales/../src/interface/filteredit.cpp:327
-#: ../../locales/../src/interface/filteredit.cpp:380
-#: ../../locales/../src/interface/filteredit.cpp:424
+#: ../../locales/../src/interface/filteredit.cpp:386
+#: ../../locales/../src/interface/filteredit.cpp:430
 #, fuzzy
 msgid "Enter filter name"
 msgstr "Iragazkiaren izena sartu behar da"
 
-#: ../../locales/../src/interface/filter.cpp:601
+#: ../../locales/../src/interface/filter.cpp:614
 msgid "Enter name for filterset"
 msgstr ""
 
@@ -1881,7 +2091,7 @@ msgstr ""
 msgid "Enter password"
 msgstr "Sartu pasahitza"
 
-#: resources.h:569
+#: resources.h:618
 msgid ""
 "Enter the address of the server.\n"
 "To specify the server protocol, prepend the host with the protocol "
@@ -1897,7 +2107,7 @@ msgstr ""
 "URL helbide osoa ere sartu dezakezu,  protocol://user:pass@host:port eran, "
 "beste eremuen balioak ordezkatuz."
 
-#: resources.h:573
+#: resources.h:622
 msgid ""
 "Enter the port on which the server listens.\n"
 "The default for FTP is 21, the default for SFTP is 22."
@@ -1915,43 +2125,44 @@ msgstr "%d errorea socketa idaztean"
 msgid "Error exporting settings"
 msgstr "%d errorea socketa idaztean"
 
-#: ../../locales/../src/interface/import.cpp:26
-#: ../../locales/../src/interface/import.cpp:89
+#: ../../locales/../src/interface/import.cpp:28
+#: ../../locales/../src/interface/import.cpp:36
+#: ../../locales/../src/interface/import.cpp:99
 msgid "Error importing"
 msgstr ""
 
 #: ../../locales/../src/interface/filter.cpp:168
-#: ../../locales/../src/interface/filter.cpp:253
-#: ../../locales/../src/interface/import.cpp:101
-#: ../../locales/../src/interface/import.cpp:284
-#: ../../locales/../src/interface/Options.cpp:114
-#: ../../locales/../src/interface/QueueView.cpp:1676
-#: ../../locales/../src/interface/QueueView.cpp:1703
-#: ../../locales/../src/interface/sitemanager.cpp:262
-#: ../../locales/../src/interface/sitemanager.cpp:365
-#: ../../locales/../src/interface/sitemanager.cpp:1338
+#: ../../locales/../src/interface/filter.cpp:264
+#: ../../locales/../src/interface/import.cpp:111
+#: ../../locales/../src/interface/import.cpp:294
+#: ../../locales/../src/interface/Options.cpp:127
+#: ../../locales/../src/interface/QueueView.cpp:1642
+#: ../../locales/../src/interface/QueueView.cpp:1669
+#: ../../locales/../src/interface/sitemanager.cpp:485
+#: ../../locales/../src/interface/sitemanager.cpp:589
+#: ../../locales/../src/interface/sitemanager.cpp:1578
 #: ../../locales/../src/interface/wrapengine.cpp:821
 msgid "Error loading xml file"
 msgstr "Errorea xml fitxategia kargatzean"
 
-#: ../../locales/../src/interface/QueueView.cpp:1686
-#: ../../locales/../src/interface/QueueView.cpp:1722
-#: ../../locales/../src/interface/sitemanager.cpp:391
+#: ../../locales/../src/interface/QueueView.cpp:1652
+#: ../../locales/../src/interface/QueueView.cpp:1688
+#: ../../locales/../src/interface/sitemanager.cpp:615
 #: ../../locales/../src/interface/wrapengine.cpp:989
 msgid "Error writing xml file"
 msgstr "Errorea xml fitxategia idaztean"
 
-#: ../../locales/../src/interface/StatusView.cpp:196
-#: ../../locales/../src/interface/StatusView.cpp:229
+#: ../../locales/../src/interface/StatusView.cpp:197
+#: ../../locales/../src/interface/StatusView.cpp:230
 msgid "Error:"
 msgstr "Errorea:"
 
-#: resources.h:219
+#: resources.h:225
 #, fuzzy
 msgid "Example:"
 msgstr "Izena:"
 
-#: resources.h:237
+#: resources.h:260
 msgid "Exe&cute"
 msgstr "Exe&kutatu"
 
@@ -1960,7 +2171,7 @@ msgstr "Exe&kutatu"
 msgid "Executable"
 msgstr "&Exekutatu"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1409
+#: ../../locales/../src/interface/Mainfrm.cpp:1457
 msgid "Executable contains no version info, cannot check for updates."
 msgstr ""
 
@@ -1968,25 +2179,25 @@ msgstr ""
 msgid "Explorer"
 msgstr ""
 
-#: resources.h:397
+#: resources.h:421
 msgid "Export &Queue"
 msgstr ""
 
-#: resources.h:396
+#: resources.h:420
 #, fuzzy
 msgid "Export &Settings"
 msgstr "&Ezarpenak"
 
-#: resources.h:393
+#: resources.h:417
 #, fuzzy
 msgid "Export settings"
 msgstr "Transferentzia-ezarpenak"
 
-#: resources.h:301
+#: resources.h:325
 msgid "F&ilter name:"
 msgstr "I&ragazki izena:"
 
-#: ../../locales/../src/interface/sitemanager.cpp:985
+#: ../../locales/../src/interface/sitemanager.cpp:1205
 msgid "FTP"
 msgstr "FTP"
 
@@ -1994,7 +2205,15 @@ msgstr "FTP"
 msgid "FTP Engine not initialized, can't connect"
 msgstr ""
 
-#: resources.h:525
+#: resources.h:166
+msgid "FTP Keep-alive"
+msgstr ""
+
+#: ../../locales/../src/interface/settingsdialog.cpp:107
+msgid "FTP Proxy"
+msgstr ""
+
+#: resources.h:574
 msgid ""
 "FTP uses secondary connections for data transfers. These additional "
 "connections can be established in two ways."
@@ -2008,16 +2227,18 @@ msgstr ""
 msgid "FTPS - FTP over implicit TLS/SSL"
 msgstr ""
 
-#: ../../locales/../src/interface/LocalListView.cpp:636
-#: ../../locales/../src/interface/LocalListView.cpp:1653
-#: ../../locales/../src/interface/LocalTreeView.cpp:790
-#: ../../locales/../src/interface/viewheader.cpp:484
+#: ../../locales/../src/interface/LocalListView.cpp:584
+#: ../../locales/../src/interface/LocalListView.cpp:1376
+#: ../../locales/../src/interface/LocalTreeView.cpp:865
+#: ../../locales/../src/interface/viewheader.cpp:493
 #, fuzzy
 msgid "Failed to change directory"
 msgstr "Ezin da hizkuntza aldatu"
 
-#: ../../locales/../src/interface/FileZilla.cpp:158
-#: ../../locales/../src/interface/optionspage_language.cpp:65
+#: ../../locales/../src/interface/FileZilla.cpp:201
+#: ../../locales/../src/interface/FileZilla.cpp:209
+#: ../../locales/../src/interface/FileZilla.cpp:211
+#: ../../locales/../src/interface/optionspage_language.cpp:100
 msgid "Failed to change language"
 msgstr "Ezin da hizkuntza aldatu"
 
@@ -2025,17 +2246,22 @@ msgstr "Ezin da hizkuntza aldatu"
 msgid "Failed to check for newer version of FileZilla."
 msgstr ""
 
+#: ../../locales/../src/interface/sitemanager.cpp:1771
+#, fuzzy
+msgid "Failed to copy or move sites"
+msgstr "Ezin da xml fitxategia idatzi"
+
 #: ../../locales/../src/interface/xmlfunctions.cpp:377
 msgid "Failed to create backup copy of xml file"
 msgstr "Ezin da xml fitxategiaren segurtasun-kopia sortu"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:774
+#: ../../locales/../src/interface/netconfwizard.cpp:785
 #, fuzzy
 msgid "Failed to create listen socket, aborting"
 msgstr "Ezin dira ezarpenak balidatu"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3649
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3653
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4100
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4104
 #, fuzzy
 msgid "Failed to create listening socket for active mode transfer"
 msgstr ""
@@ -2045,57 +2271,57 @@ msgstr ""
 msgid "Failed to download the latest version of FileZilla."
 msgstr ""
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:568
+#: ../../locales/../src/interface/LocalTreeView.cpp:617
 msgid "Failed to get 'My Documents' path"
 msgstr ""
 
-#: ../../locales/../src/interface/netconfwizard.cpp:936
-msgid "Failed to get data peer address, connection closed."
-msgstr ""
-
-#: ../../locales/../src/interface/LocalTreeView.cpp:554
+#: ../../locales/../src/interface/LocalTreeView.cpp:603
 #, fuzzy
 msgid "Failed to get desktop path"
 msgstr "Ezin da direktorioaren zerrendatzea berreskuratu"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:928
-msgid "Failed to get peer address, connection closed."
+#: ../../locales/../src/interface/netconfwizard.cpp:942
+msgid "Failed to get peer address of control connection, connection closed."
 msgstr ""
 
-#: ../../locales/../src/interface/Mainfrm.cpp:188
+#: ../../locales/../src/interface/netconfwizard.cpp:950
+msgid "Failed to get peer address of data connection, connection closed."
+msgstr ""
+
+#: ../../locales/../src/interface/Mainfrm.cpp:193
 #, fuzzy
 msgid "Failed to initialize FTP engine"
 msgstr "Ezin dira ezarpenak balidatu"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:404
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:571
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:422
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:788
 #, fuzzy
 msgid "Failed to initialize TLS."
 msgstr "Ezin da xml fitxategia idatzi"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:142
+#: ../../locales/../src/interface/settingsdialog.cpp:145
 #, fuzzy
 msgid "Failed to load panels, invalid resource files?"
 msgstr "Ezin da menu nagusia baliabide-fitxategitik kargatu"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2182
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2548
 #, c-format
 msgid "Failed to open \"%s\" for appending / writing"
 msgstr "Ezin da \"%s\" ireki eransteko / idazteko"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2246
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2612
 #, c-format
 msgid "Failed to open \"%s\" for reading"
 msgstr "Ezin da \"%s\" ireki irakurtzeko"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2225
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2591
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:376
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:421
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:437
 #, c-format
 msgid "Failed to open \"%s\" for writing"
 msgstr "Ezin da \"%s\" ireki idazteko"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:992
+#: ../../locales/../src/interface/netconfwizard.cpp:1006
 #, fuzzy
 msgid "Failed to receive data"
 msgstr "Ezin da hizkuntza aldatu"
@@ -2104,46 +2330,77 @@ msgstr "Ezin da hizkuntza aldatu"
 msgid "Failed to retrieve directory listing"
 msgstr "Ezin da direktorioaren zerrendatzea berreskuratu"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:702
+#: ../../locales/../src/interface/netconfwizard.cpp:713
 #, fuzzy
 msgid "Failed to retrieve external ip address, aborting"
 msgstr "Ezin da direktorioaren zerrendatzea berreskuratu"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3376
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3823
 msgid "Failed to retrieve external ip address, using local address"
 msgstr ""
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3397
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3844
 #, fuzzy
 msgid "Failed to retrieve local ip address."
 msgstr "Ezin da direktorioaren zerrendatzea berreskuratu"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:671
+#: ../../locales/../src/interface/netconfwizard.cpp:682
 #, fuzzy
 msgid "Failed to retrieve local ip address. Aborting"
 msgstr "Ezin da direktorioaren zerrendatzea berreskuratu"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:604
+#: ../../locales/../src/interface/netconfwizard.cpp:610
 #, fuzzy
 msgid "Failed to retrieve the external IP address."
 msgstr "Ezin da direktorioaren zerrendatzea berreskuratu"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:302
+#: ../../locales/../src/interface/netconfwizard.cpp:305
 msgid "Failed to send command."
 msgstr ""
 
-#: ../../locales/../src/interface/FileZilla.cpp:158
-#: ../../locales/../src/interface/optionspage_language.cpp:65
+#: ../../locales/../src/interface/FileZilla.cpp:209
+#, fuzzy, c-format
+msgid "Failed to set language to %s (%s), using default system language"
+msgstr ""
+"Ezin da %s hizkuntza ezarri, sistemaren hizkuntza lehenetsia erabiliko da"
+
+#: ../../locales/../src/interface/FileZilla.cpp:194
+#, fuzzy, c-format
+msgid ""
+"Failed to set language to %s (%s), using default system language (%s, %s)."
+msgstr ""
+"Ezin da %s hizkuntza ezarri, sistemaren hizkuntza lehenetsia erabiliko da"
+
+#: ../../locales/../src/interface/FileZilla.cpp:178
+#, fuzzy, c-format
+msgid "Failed to set language to %s (%s), using default system language."
+msgstr ""
+"Ezin da %s hizkuntza ezarri, sistemaren hizkuntza lehenetsia erabiliko da"
+
+#: ../../locales/../src/interface/FileZilla.cpp:211
+#: ../../locales/../src/interface/optionspage_language.cpp:100
 #, c-format
 msgid "Failed to set language to %s, using default system language"
 msgstr ""
 "Ezin da %s hizkuntza ezarri, sistemaren hizkuntza lehenetsia erabiliko da"
 
-#: ../../locales/../src/interface/optionspage.cpp:185
+#: ../../locales/../src/interface/FileZilla.cpp:190
+#, fuzzy, c-format
+msgid "Failed to set language to %s, using default system language (%s, %s)."
+msgstr ""
+"Ezin da %s hizkuntza ezarri, sistemaren hizkuntza lehenetsia erabiliko da"
+
+#: ../../locales/../src/interface/FileZilla.cpp:175
+#, fuzzy, c-format
+msgid "Failed to set language to %s, using default system language."
+msgstr ""
+"Ezin da %s hizkuntza ezarri, sistemaren hizkuntza lehenetsia erabiliko da"
+
+#: ../../locales/../src/interface/optionspage.cpp:193
 msgid "Failed to validate settings"
 msgstr "Ezin dira ezarpenak balidatu"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:549
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:565
 #, fuzzy, c-format
 msgid "Failed to write to file %s"
 msgstr "Ezin da xml fitxategia idatzi"
@@ -2157,49 +2414,50 @@ msgstr "Ezin da xml fitxategia idatzi"
 msgid "Failed transfers"
 msgstr "Fitxategi-trasnferentzia arrakastatsua"
 
-#: resources.h:540
+#: resources.h:589
 msgid "Fall back to active mode"
 msgstr ""
 
-#: resources.h:310
+#: resources.h:334
 msgid "Fil&es"
 msgstr "Fit&xategiak"
 
-#: ../../locales/../src/interface/LocalListView.cpp:808
-#: ../../locales/../src/interface/LocalListView.cpp:826
-#: ../../locales/../src/interface/LocalListView.cpp:836
-#: ../../locales/../src/interface/LocalListView.cpp:858
-#: ../../locales/../src/interface/RemoteListView.cpp:1178
-#: ../../locales/../src/interface/RemoteListView.cpp:1196
-#: ../../locales/../src/interface/RemoteListView.cpp:1207
-#: ../../locales/../src/interface/RemoteListView.cpp:1229
+#: ../../locales/../src/interface/filelistctrl.cpp:310
+#: ../../locales/../src/interface/filelistctrl.cpp:328
+#: ../../locales/../src/interface/filelistctrl.cpp:338
+#: ../../locales/../src/interface/filelistctrl.cpp:360
 msgid "File"
 msgstr "Fitxategia"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:106
+#: ../../locales/../src/interface/settingsdialog.cpp:109
 msgid "File Types"
 msgstr "Fitxategi-motak"
 
-#: ../../locales/../src/interface/import.cpp:89
+#: ../../locales/../src/interface/import.cpp:99
 msgid "File does not contain any importable data."
 msgstr ""
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1790
+#: ../../locales/../src/interface/settingsdialog.cpp:116
+#, fuzzy
+msgid "File editing"
+msgstr "Urruneko fitxategia"
+
+#: ../../locales/../src/interface/RemoteListView.cpp:1492
 msgid "File exists"
 msgstr "Fitxategia badago"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:107
+#: ../../locales/../src/interface/settingsdialog.cpp:110
 #, fuzzy
 msgid "File exists action"
 msgstr "Fitxategia badago"
 
-#: resources.h:408
+#: resources.h:432
 #, fuzzy
 msgid "File has changed"
 msgstr "Fitxategi-izena ez da aldatu"
 
-#: ../../locales/../src/interface/FileZilla.cpp:732
-#: ../../locales/../src/interface/optionspage_edit.cpp:168
+#: ../../locales/../src/interface/FileZilla.cpp:796
+#: ../../locales/../src/interface/optionspage_edit.cpp:183
 msgid "File not found"
 msgstr ""
 
@@ -2207,17 +2465,17 @@ msgstr ""
 msgid "File transfer successful"
 msgstr "Fitxategi-trasnferentzia arrakastatsua"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:924
+#: ../../locales/../src/interface/Mainfrm.cpp:948
 #, fuzzy
 msgid "File transfers still in progress."
 msgstr "Fitxategi-trasnferentzia arrakastatsua"
 
-#: ../../locales/../src/interface/FileZilla.cpp:359
+#: ../../locales/../src/interface/FileZilla.cpp:414
 #: ../../locales/../src/interface/quickconnectbar.cpp:50
 msgid "FileZilla Error"
 msgstr "FileZilla Errorea"
 
-#: resources.h:562
+#: resources.h:611
 msgid ""
 "FileZilla can now test your configuration to ensure everything is configured "
 "properly."
@@ -2227,92 +2485,97 @@ msgstr ""
 msgid "FileZilla does not support the HTTP protocol"
 msgstr ""
 
+#: ../../locales/../src/interface/Mainfrm.cpp:1268
+msgid "FileZilla needs to be restarted for the language change to take effect."
+msgstr ""
+
 #: resources.h:144
 #, fuzzy
 msgid "Filelists"
 msgstr "Fitxategia badago"
 
-#: ../../locales/../src/interface/edithandler.cpp:649
+#: ../../locales/../src/interface/edithandler.cpp:793
 #: ../../locales/../src/interface/filteredit.cpp:52
-#: ../../locales/../src/interface/LocalListView.cpp:231
-#: ../../locales/../src/interface/RemoteListView.cpp:307
+#: ../../locales/../src/interface/LocalListView.cpp:247
+#: ../../locales/../src/interface/RemoteListView.cpp:336
 msgid "Filename"
 msgstr "Izena"
 
-#: resources.h:433
+#: resources.h:462
 #, fuzzy
 msgid "Filename &filters..."
 msgstr "Iragazkiak editatu..."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1775
+#: ../../locales/../src/interface/RemoteListView.cpp:1477
 msgid "Filename invalid"
 msgstr "Fitxategi-izen baliogabea"
 
-#: ../../locales/../src/interface/asyncrequestqueue.cpp:226
+#: ../../locales/../src/interface/asyncrequestqueue.cpp:229
 msgid "Filename unchanged"
 msgstr "Fitxategi-izena ez da aldatu"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1837
+#: ../../locales/../src/interface/LocalListView.cpp:1468
 msgid "Filenames may not contain any of the following characters: / * ? < > |"
 msgstr "Fitxategi-izenak ez ditu honako karaktereak onartzen: / * ? < > |"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1802
+#: ../../locales/../src/interface/LocalListView.cpp:1443
 msgid ""
 "Filenames may not contain any of the following characters: / \\ : * ? \" < > "
 "|"
 msgstr ""
 "Fitxategi-izenak ez ditu honako karaktereak onartzen: / \\ : * ? \" < > |"
 
-#: resources.h:415
+#: resources.h:440
 msgid "Files currently being edited"
 msgstr ""
 
 #: ../../locales/../src/interface/filteredit.cpp:53
-#: ../../locales/../src/interface/LocalListView.cpp:232
-#: ../../locales/../src/interface/RemoteListView.cpp:308
+#: ../../locales/../src/interface/LocalListView.cpp:248
+#: ../../locales/../src/interface/RemoteListView.cpp:337
 msgid "Filesize"
 msgstr "Tamaina"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:111
+#: ../../locales/../src/interface/settingsdialog.cpp:114
 #, fuzzy
 msgid "Filesize format"
 msgstr "Tamaina"
 
-#: ../../locales/../src/interface/LocalListView.cpp:233
-#: ../../locales/../src/interface/RemoteListView.cpp:309
+#: ../../locales/../src/interface/LocalListView.cpp:249
+#: ../../locales/../src/interface/RemoteListView.cpp:338
 msgid "Filetype"
 msgstr "Mota"
 
-#: resources.h:215
-msgid "Filetype asociations"
-msgstr ""
+#: resources.h:221
+#, fuzzy
+msgid "Filetype associations"
+msgstr "Fitxategi-moten sailkapen automatikoa"
 
-#: resources.h:302
+#: resources.h:326
 msgid "Filter &out all files that:"
 msgstr "Iragazi honako fitxategiak:"
 
-#: resources.h:309
+#: resources.h:333
 msgid "Filter applies to:"
 msgstr "Iragazkia hauei aplikatua:"
 
-#: ../../locales/../src/interface/filteredit.cpp:578
+#: ../../locales/../src/interface/filteredit.cpp:584
 msgid "Filter name already exists"
 msgstr "Iragazki-izena lehendik badago"
 
-#: ../../locales/../src/interface/filter.cpp:610
+#: ../../locales/../src/interface/filter.cpp:628
 #, fuzzy
 msgid "Filter set already exists"
 msgstr "Iragazki-izena lehendik badago"
 
-#: resources.h:595 resources.h:596
+#: resources.h:644 resources.h:645
 msgid "Filter the directory listings"
 msgstr "Iragazi direktorioen zerrendatzeak"
 
-#: ../../locales/../src/interface/filteredit.cpp:536
-#: ../../locales/../src/interface/filteredit.cpp:547
-#: ../../locales/../src/interface/filteredit.cpp:558
-#: ../../locales/../src/interface/filteredit.cpp:569
-#: ../../locales/../src/interface/filteredit.cpp:578
+#: ../../locales/../src/interface/filteredit.cpp:542
+#: ../../locales/../src/interface/filteredit.cpp:553
+#: ../../locales/../src/interface/filteredit.cpp:564
+#: ../../locales/../src/interface/filteredit.cpp:575
+#: ../../locales/../src/interface/filteredit.cpp:584
 msgid "Filter validation failed"
 msgstr ""
 
@@ -2326,26 +2589,25 @@ msgstr "Hatz-marka"
 msgid "Fingerprint (SHA-1):"
 msgstr "Hatz-marka"
 
-#: resources.h:262 resources.h:274
+#: resources.h:286 resources.h:298
 msgid "Fingerprint:"
 msgstr "Hatz-marka"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:39
+#: ../../locales/../src/interface/netconfwizard.cpp:42
 msgid "Firewall and router configuration wizard"
 msgstr ""
 
-#: ../../locales/../src/interface/LocalListView.cpp:831
-#: ../../locales/../src/interface/RemoteListView.cpp:1202
+#: ../../locales/../src/interface/filelistctrl.cpp:333
 msgid "Folder"
 msgstr "Karpeta"
 
-#: resources.h:150
+#: resources.h:153
 msgid ""
 "For more detailed information about what these options do, please run the "
 "network configuration wizard."
 msgstr ""
 
-#: resources.h:557
+#: resources.h:606
 msgid "For reliability you should specify a range of at least 10 ports."
 msgstr ""
 
@@ -2353,7 +2615,12 @@ msgstr ""
 msgid "Force &UTF-8"
 msgstr "&UTF-8 behartu"
 
-#: resources.h:218
+#: resources.h:233
+#, fuzzy
+msgid "Format specifications:"
+msgstr "Fitxategi-moten sailkapen automatikoa"
+
+#: resources.h:224
 msgid "Format: Extension followed by properly quoted command and arguments."
 msgstr ""
 
@@ -2361,20 +2628,20 @@ msgstr ""
 msgid "General"
 msgstr "Orokorra"
 
-#: resources.h:323 resources.h:546
+#: resources.h:347 resources.h:595
 msgid "Get external IP address from the following URL:"
 msgstr ""
 
-#: ../../locales/../src/interface/filter.cpp:610
+#: ../../locales/../src/interface/filter.cpp:628
 #, fuzzy
 msgid "Given filterset name already exists, overwrite filter set?"
 msgstr "Helburuko fitxategi-izena lehendik badago, jarraitu?"
 
-#: resources.h:230
+#: resources.h:253
 msgid "Group permissions"
 msgstr "Talde-baimenak"
 
-#: resources.h:483
+#: resources.h:518
 msgid "H&igh"
 msgstr "H&andia"
 
@@ -2394,23 +2661,22 @@ msgid "Highest available port has to be a number between 1024 and 65535."
 msgstr ""
 "Ataka erabilgarri altuenak 1 eta 65535 bitarteko zenbaki bat izan behar du."
 
-#: resources.h:291
+#: resources.h:315
 msgid ""
 "Hold the shift key to toggle the filter state on both sides simultanously."
 msgstr ""
 "Sakatu maiuskula tekla iragazkiaren egoera bi guneetan aldi berean "
 "aktibatzeko/desaktibatzeko."
 
-#: resources.h:249
+#: resources.h:272
 msgid "Homepage:"
 msgstr "Orri nagusia"
 
-#: resources.h:268
+#: resources.h:292
 msgid "Host key mismatch"
 msgstr "Gunearen gakoa ez dator bat"
 
-#: resources.h:8 resources.h:115 resources.h:252 resources.h:260
-#: resources.h:272
+#: resources.h:8 resources.h:115 resources.h:284 resources.h:296
 msgid "Host:"
 msgstr "Gunea:"
 
@@ -2418,7 +2684,7 @@ msgstr "Gunea:"
 msgid "Hours,"
 msgstr "Ordu,"
 
-#: resources.h:189
+#: resources.h:195
 msgid "I&SO 8601 (example: 15:47)"
 msgstr ""
 
@@ -2428,11 +2694,11 @@ msgid ""
 "closed and FileZilla will try to reconnect."
 msgstr ""
 
-#: resources.h:208
+#: resources.h:214
 msgid "If reporting bugs, please provide logs with \"Verbose\" logging level."
 msgstr ""
 
-#: resources.h:537
+#: resources.h:586
 msgid ""
 "If the automatic test at the end of this wizard succeeds, but you cannot "
 "transfer files to a particular server, the server might be misconfigured and "
@@ -2440,40 +2706,46 @@ msgid ""
 "basis in the Site Manager."
 msgstr ""
 
-#: resources.h:532
+#: resources.h:581
 msgid ""
 "If the fallback option is enabled, you will be able to connect to "
 "misconfigured servers which reject the selected transfer mode."
 msgstr ""
 
-#: ../../locales/../src/interface/netconfwizard.cpp:612
+#: ../../locales/../src/interface/netconfwizard.cpp:618
 msgid ""
 "If this problem persists, please contact your router or firewall "
 "manufacturer for a solution."
 msgstr ""
 
-#: ../../locales/../src/interface/netconfwizard.cpp:570
+#: ../../locales/../src/interface/netconfwizard.cpp:576
 msgid "If this problem stays, please contact your router manufacturer."
 msgstr ""
 
-#: resources.h:363 resources.h:381
+#: resources.h:387 resources.h:405
 msgid ""
 "If using 'overwrite if newer', your system time has to be synchronized with "
 "the server. If the time differs (e.g. different timezone), specify a "
 "timezone offset in the site manager."
 msgstr ""
 
-#: resources.h:175
+#: resources.h:150
+msgid ""
+"If using timestamp based comparison, consider two files equal if their "
+"timestamp differerence does not exceed this threshold."
+msgstr ""
+
+#: resources.h:181
 msgid "If you change the language, you should restart FileZilla."
 msgstr "Hizkuntza aldatzen baduzu, FileZilla berrabiarazi."
 
-#: resources.h:563
+#: resources.h:612
 msgid ""
 "If you click on test, FileZilla will connect to probe.filezilla-project.org "
 "and will perform some simple tests."
 msgstr ""
 
-#: ../../locales/../src/interface/Mainfrm.cpp:944
+#: ../../locales/../src/interface/Mainfrm.cpp:968
 msgid "If you close FileZilla, your changes will be lost."
 msgstr ""
 
@@ -2487,11 +2759,11 @@ msgstr ""
 "fitxategiak hondaturik agertu daitezke\n"
 "transferitu eta gero."
 
-#: resources.h:564
+#: resources.h:613
 msgid "If you get any errors, your configuration is not correct."
 msgstr ""
 
-#: resources.h:156
+#: resources.h:159
 #, fuzzy
 msgid ""
 "If you have problems to retrieve directory listings or to transfer files, "
@@ -2501,136 +2773,136 @@ msgstr ""
 "arazoak badituzu,\n"
 "saiatu modu pasiboaren ezarpena aktibatzen/desaktibatzen."
 
-#: ../../locales/../src/interface/netconfwizard.cpp:558
+#: ../../locales/../src/interface/netconfwizard.cpp:564
 msgid ""
 "If you keep having problems with a specific server, the server itself or a "
-"remote router might be misconfigured. In this case try to toggle passive "
-"mode and contact the server administrator for help."
+"remote router or firewall might be misconfigured. In this case try to toggle "
+"passive mode and contact the server administrator for help."
 msgstr ""
 
-#: resources.h:523
+#: resources.h:572
 msgid ""
 "If you sucessfully complete the wizard and the final test succeeds, any "
 "firewalls and routers you have should be configured properly."
 msgstr ""
 
-#: resources.h:559
+#: resources.h:608
 msgid ""
 "If you use a firewall, make sure FileZilla is allowed to accept connection "
 "on all given ports."
 msgstr ""
 
-#: resources.h:558
+#: resources.h:607
 msgid ""
 "If you use a router, make sure all these ports are forwarded to the machine "
 "you're running FileZilla on."
 msgstr ""
 
-#: ../../locales/../src/interface/netconfwizard.cpp:583
+#: ../../locales/../src/interface/netconfwizard.cpp:589
 msgid ""
 "If your router keeps changing the IP address, please contact your router "
 "manufacturer."
 msgstr ""
 
-#: ../../locales/../src/interface/import.cpp:80
+#: ../../locales/../src/interface/import.cpp:90
 msgid "Import data from older version"
 msgstr ""
 
-#: resources.h:400
+#: resources.h:424
 #, fuzzy
 msgid "Import settings"
 msgstr "Transferentzia-ezarpenak"
 
-#: ../../locales/../src/interface/import.cpp:66
-#: ../../locales/../src/interface/import.cpp:69
+#: ../../locales/../src/interface/import.cpp:76
+#: ../../locales/../src/interface/import.cpp:79
 #, fuzzy
 msgid "Import successful"
 msgstr "Direktorioa ongi bistaratu da"
 
-#: ../../locales/../src/interface/optionspage_edit.cpp:124
-#: ../../locales/../src/interface/optionspage_edit.cpp:131
+#: ../../locales/../src/interface/optionspage_edit.cpp:137
+#: ../../locales/../src/interface/optionspage_edit.cpp:144
 msgid "Improperly quoted association."
 msgstr ""
 
-#: resources.h:551
+#: resources.h:600
 msgid ""
 "In active mode, FileZilla has to listen on a port for data transfers. You "
 "have to specify which ports FileZilla will use."
 msgstr ""
 
-#: resources.h:553
+#: resources.h:602
 msgid ""
 "In case you have a router, you will have to forward all available ports, as "
 "FileZilla has no influence on the ports your system chooses."
 msgstr ""
 
-#: resources.h:344
+#: resources.h:368
 msgid ""
 "In case you prefer automatic updates, you can enable automatic update checks "
 "in the settings dialog."
 msgstr ""
 
-#: resources.h:319 resources.h:541
+#: resources.h:343 resources.h:590
 msgid ""
 "In order to use active mode, FileZilla needs to know your external IP "
 "address."
 msgstr ""
 
-#: resources.h:526
+#: resources.h:575
 msgid ""
 "In passive mode, which is recommended for most users, FileZilla asks the "
 "server for a port and connects to the given port. Not much configuration has "
 "to be done for this."
 msgstr ""
 
-#: ../../locales/../src/interface/QueueView.cpp:923
+#: ../../locales/../src/interface/QueueView.cpp:886
 #, fuzzy
 msgid "Incorrect password"
 msgstr "Sartu pasahitza"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:561
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:778
 msgid "Initializing TLS..."
 msgstr ""
 
-#: resources.h:79 ../../locales/../src/interface/sitemanager.cpp:815
-#: ../../locales/../src/interface/sitemanager.cpp:1046
+#: resources.h:79 ../../locales/../src/interface/sitemanager.cpp:1048
+#: ../../locales/../src/interface/sitemanager.cpp:1266
 msgid "Interactive"
 msgstr "Elkarreragilea"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:108
+#: ../../locales/../src/interface/settingsdialog.cpp:111
 #, fuzzy
 msgid "Interface"
 msgstr "Elkarreragilea"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:159
-#: ../../locales/../src/interface/QueueView.cpp:888
-#: ../../locales/../src/interface/QueueView.cpp:1363
+#: ../../locales/../src/interface/QueueView.cpp:851
+#: ../../locales/../src/interface/QueueView.cpp:1329
 msgid "Interrupted by user"
 msgstr "Erabiltzaileak eten du"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:732
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:748
 msgid "Invalid Content-Length"
 msgstr ""
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:606
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:622
 msgid "Invalid HTTP Response"
 msgstr ""
 
-#: ../../locales/../src/engine/ControlSocket.cpp:464
-#: ../../locales/../src/engine/ControlSocket.cpp:524
+#: ../../locales/../src/engine/ControlSocket.cpp:469
+#: ../../locales/../src/engine/ControlSocket.cpp:529
 msgid ""
 "Invalid character sequence received, disabling UTF-8. Select UTF-8 option in "
 "site manager to force UTF-8."
 msgstr ""
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:856
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:872
 #, fuzzy
 msgid "Invalid chunk size"
 msgstr "Baliogabeko erabiltzaile-izena."
 
-#: ../../locales/../src/interface/netconfwizard.cpp:348
-#: ../../locales/../src/interface/netconfwizard.cpp:358
-#: ../../locales/../src/interface/netconfwizard.cpp:367
+#: ../../locales/../src/interface/netconfwizard.cpp:351
+#: ../../locales/../src/interface/netconfwizard.cpp:361
+#: ../../locales/../src/interface/netconfwizard.cpp:370
 msgid "Invalid data received"
 msgstr ""
 
@@ -2640,12 +2912,12 @@ msgstr ""
 msgid "Invalid date"
 msgstr "Baliogabeko Fitxategi-izena"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1802
-#: ../../locales/../src/interface/LocalListView.cpp:1837
+#: ../../locales/../src/interface/LocalListView.cpp:1443
+#: ../../locales/../src/interface/LocalListView.cpp:1468
 msgid "Invalid filename"
 msgstr "Baliogabeko Fitxategi-izena"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:972
+#: ../../locales/../src/engine/ControlSocket.cpp:989
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:147
 msgid "Invalid hostname or host not found"
 msgstr "Baliogabeko ostalari-izena edo gunea ez da aurkitu"
@@ -2665,12 +2937,12 @@ msgid ""
 "ftpes:// for FTP over SSL (explicit)."
 msgstr ""
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:616
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:632
 #, fuzzy
 msgid "Invalid response code"
 msgstr "Baliogabeko tamaina baldintzan"
 
-#: ../../locales/../src/interface/filteredit.cpp:558
+#: ../../locales/../src/interface/filteredit.cpp:564
 msgid "Invalid size in condition"
 msgstr "Baliogabeko tamaina baldintzan"
 
@@ -2682,24 +2954,29 @@ msgstr "Baliogabeko erabiltzaile-izena."
 msgid "Keep directories on top"
 msgstr ""
 
-#: resources.h:486
+#: resources.h:521
 msgid "L&owest"
 msgstr "T&xikiena"
 
-#: resources.h:317
+#: resources.h:341
 msgid "L&owest available port:"
 msgstr "Ataka erabilgarri t&xikiena:"
 
-#: resources.h:173 ../../locales/../src/interface/settingsdialog.cpp:112
+#: resources.h:179 ../../locales/../src/interface/settingsdialog.cpp:115
 msgid "Language"
 msgstr "Hizkuntza"
 
-#: resources.h:172
+#: ../../locales/../src/interface/Mainfrm.cpp:1268
+#, fuzzy
+msgid "Language changed"
+msgstr "Hizkuntza"
+
+#: resources.h:178
 msgid "Large icons"
 msgstr "Ikono handiak"
 
-#: ../../locales/../src/interface/LocalListView.cpp:234
-#: ../../locales/../src/interface/RemoteListView.cpp:310
+#: ../../locales/../src/interface/LocalListView.cpp:250
+#: ../../locales/../src/interface/RemoteListView.cpp:339
 msgid "Last modified"
 msgstr "Azken aldaketa"
 
@@ -2719,24 +2996,29 @@ msgstr ""
 msgid "Limit for concurrent &uploads:"
 msgstr ""
 
-#: resources.h:314
+#: resources.h:338
 msgid "Limit local ports"
 msgstr "Mugatu ataka lokalak"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:799
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:815
 msgid "Line length exceeded"
 msgstr ""
 
-#: ../../locales/../src/interface/netconfwizard.cpp:262
+#: ../../locales/../src/interface/netconfwizard.cpp:265
 msgid "Listen socket closed"
 msgstr ""
 
-#: ../../locales/../src/interface/StatusView.cpp:207
-#: ../../locales/../src/interface/StatusView.cpp:248
+#: ../../locales/../src/interface/StatusView.cpp:208
+#: ../../locales/../src/interface/StatusView.cpp:249
 msgid "Listing:"
 msgstr "Zerrendatua:"
 
-#: resources.h:285
+#: ../../locales/../src/interface/edithandler.cpp:835
+#, fuzzy
+msgid "Local"
+msgstr "Gune lokala:"
+
+#: resources.h:309
 msgid "Local filters:"
 msgstr "Iragazki lokalak:"
 
@@ -2749,10 +3031,20 @@ msgstr "Gune lokala:"
 msgid "Locality:"
 msgstr "Gune lokala:"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:606
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:827
+msgid ""
+"Login data contains non-ascii characters and server might not be UTF-8 "
+"aware. Cannot fall back to local charset since using proxy."
+msgstr ""
+
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:834
 msgid ""
 "Login data contains non-ascii characters and server might not be UTF-8 "
 "aware. Trying local charset."
+msgstr ""
+
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:863
+msgid "Login sequence fully executed yet not logged in. Aborting."
 msgstr ""
 
 #: ../../locales/../src/interface/queue.cpp:846
@@ -2771,28 +3063,28 @@ msgid "Lowest available port has to be a number between 1024 and 65535."
 msgstr ""
 "Ataka erabilgarri txikienak 1 eta 65535 bitarteko zenbaki bat izan behar du."
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:787
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:799
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:814
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:856
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:803
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:815
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:830
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:872
 #, c-format
 msgid "Malformed chunk data: %s"
 msgstr ""
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:732
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:748
 #, c-format
 msgid "Malformed header: %s"
 msgstr ""
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:576
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:592
 msgid "Malformed reply, server not sending proper lineendings"
 msgstr ""
 
-#: resources.h:303
+#: resources.h:327
 msgid "Match all of the following"
 msgstr "Honakoa bete"
 
-#: resources.h:158
+#: resources.h:161
 #, fuzzy
 msgid "Maximum number of retries:"
 msgstr "&Gehienezko konexkio kopurua:"
@@ -2801,7 +3093,7 @@ msgstr "&Gehienezko konexkio kopurua:"
 msgid "Maximum simultaneous &transfers:"
 msgstr ""
 
-#: resources.h:171
+#: resources.h:177
 msgid "Medium icons"
 msgstr "Ikono ertainak"
 
@@ -2809,17 +3101,17 @@ msgstr "Ikono ertainak"
 msgid "Minutes"
 msgstr "Minutu"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:932
+#: ../../locales/../src/interface/LocalTreeView.cpp:1007
 msgid "My Computer"
 msgstr ""
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:922
+#: ../../locales/../src/interface/LocalTreeView.cpp:997
 msgid "My Documents"
 msgstr ""
 
-#: ../../locales/../src/interface/sitemanager.cpp:248
-#: ../../locales/../src/interface/sitemanager.cpp:250
-#: ../../locales/../src/interface/sitemanager.cpp:1378
+#: ../../locales/../src/interface/sitemanager.cpp:471
+#: ../../locales/../src/interface/sitemanager.cpp:473
+#: ../../locales/../src/interface/sitemanager.cpp:1618
 msgid "My Sites"
 msgstr "Nire Guneak"
 
@@ -2830,7 +3122,7 @@ msgstr "Nire Guneak"
 msgid "N/a"
 msgstr "N/a"
 
-#: ../../locales/../src/interface/sitemanager.cpp:654
+#: ../../locales/../src/interface/sitemanager.cpp:884
 #, fuzzy
 msgid "Name already exists"
 msgstr "Iragazki-izena lehendik badago"
@@ -2839,11 +3131,11 @@ msgstr "Iragazki-izena lehendik badago"
 msgid "Name:"
 msgstr "Izena:"
 
-#: ../../locales/../src/interface/filteredit.cpp:569
+#: ../../locales/../src/interface/filteredit.cpp:575
 msgid "Need to enter filter name"
 msgstr "Iragazkiaren izena sartu behar da"
 
-#: ../../locales/../src/interface/sitemanager.cpp:562
+#: ../../locales/../src/interface/sitemanager.cpp:792
 msgid "Need to specify a character encoding"
 msgstr "Karaktere-kodeketa bat zehaztu behar da"
 
@@ -2851,23 +3143,28 @@ msgstr "Karaktere-kodeketa bat zehaztu behar da"
 msgid "New &Folder"
 msgstr "&Karpeta berria"
 
+#: ../../locales/../src/interface/LocalTreeView.cpp:1284
+#: ../../locales/../src/interface/RemoteTreeView.cpp:1194
+#, fuzzy
+msgid "New directory"
+msgstr "Sortu direktorioa"
+
 #: ../../locales/../src/interface/filteredit.cpp:322
 msgid "New filter"
 msgstr "Iragazki berria"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1449
-#: ../../locales/../src/interface/RemoteTreeView.cpp:1209
-#: ../../locales/../src/interface/sitemanager.cpp:466
-#: ../../locales/../src/interface/sitemanager.cpp:489
+#: ../../locales/../src/interface/RemoteListView.cpp:1220
+#: ../../locales/../src/interface/sitemanager.cpp:696
+#: ../../locales/../src/interface/sitemanager.cpp:719
 msgid "New folder"
 msgstr "Karpeta berria"
 
-#: ../../locales/../src/interface/sitemanager.cpp:730
-#: ../../locales/../src/interface/sitemanager.cpp:753
+#: ../../locales/../src/interface/sitemanager.cpp:963
+#: ../../locales/../src/interface/sitemanager.cpp:986
 msgid "New site"
 msgstr "Gune berria"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:776
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:780
 msgid "No"
 msgstr ""
 
@@ -2875,13 +3172,23 @@ msgstr ""
 msgid "No category to export selected"
 msgstr ""
 
-#: ../../locales/../src/interface/QueueView.cpp:1996
+#: ../../locales/../src/interface/QueueView.cpp:1971
 msgid "No command given, aborting."
 msgstr ""
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3343
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3790
 msgid "No external IP address set, trying default."
 msgstr ""
+
+#: ../../locales/../src/interface/edithandler.cpp:782
+#, fuzzy
+msgid "No files are currently being edited."
+msgstr "Honako fitxategi-motak Ascii fitxategien eran erabili:"
+
+#: ../../locales/../src/interface/filteredit.cpp:334
+#, fuzzy
+msgid "No filter name given"
+msgstr "Iragazkiaren izena sartu behar da"
 
 #: ../../locales/../src/engine/server.cpp:32
 #: ../../locales/../src/engine/server.cpp:121
@@ -2893,13 +3200,13 @@ msgstr "Ostalaria edo gunea sartu mesedez."
 msgid "No images available"
 msgstr "Irudirik ez"
 
-#: ../../locales/../src/interface/edithandler.cpp:638
-msgid "No remote files are currently being edited"
+#: ../../locales/../src/interface/filter.cpp:621
+msgid "No name for the filterset given."
 msgstr ""
 
-#: ../../locales/../src/interface/sitemanager.cpp:1344
-#: ../../locales/../src/interface/sitemanager.cpp:1356
-#: ../../locales/../src/interface/sitemanager.cpp:1387
+#: ../../locales/../src/interface/sitemanager.cpp:1584
+#: ../../locales/../src/interface/sitemanager.cpp:1596
+#: ../../locales/../src/interface/sitemanager.cpp:1627
 #, fuzzy
 msgid "No sites available"
 msgstr "Irudirik ez"
@@ -2912,16 +3219,16 @@ msgstr "Diseinurik ez themes.xml fitxategian"
 msgid "None"
 msgstr ""
 
-#: resources.h:305
+#: resources.h:329
 #, fuzzy
 msgid "None of the following"
 msgstr "Honako bat"
 
 #: resources.h:41 resources.h:77 ../../locales/../src/interface/queue.cpp:849
 #: ../../locales/../src/interface/queue.cpp:930
-#: ../../locales/../src/interface/sitemanager.cpp:778
-#: ../../locales/../src/interface/sitemanager.cpp:811
-#: ../../locales/../src/interface/sitemanager.cpp:1040
+#: ../../locales/../src/interface/sitemanager.cpp:1011
+#: ../../locales/../src/interface/sitemanager.cpp:1044
+#: ../../locales/../src/interface/sitemanager.cpp:1260
 msgid "Normal"
 msgstr "Normala"
 
@@ -2929,68 +3236,81 @@ msgstr "Normala"
 msgid "Not all items could be requeued for viewing / editing."
 msgstr ""
 
-#: ../../locales/../src/interface/RemoteListView.cpp:697
+#: ../../locales/../src/interface/RemoteListView.cpp:1865
 #, fuzzy
 msgid "Not connected to any server"
 msgstr "Ezin da zerbitzariarekin konektatu"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:625
+#: ../../locales/../src/interface/Mainfrm.cpp:626
 msgid "Note that this feature is only supported using the FTP protocol."
 msgstr ""
 
-#: resources.h:178
+#: resources.h:243
+msgid "Note: This only works with plain, unencrypted FTP connections."
+msgstr ""
+
+#: resources.h:184
 msgid "Number of days between update checks:"
 msgstr ""
 
-#: ../../locales/../src/interface/optionspage_connection.cpp:43
+#: ../../locales/../src/interface/optionspage_connection.cpp:47
 msgid "Number of retries has to be between 0 and 99."
 msgstr ""
 
-#: resources.h:421
+#: resources.h:446
 #, fuzzy
 msgid "O&pen file"
 msgstr "Aldatu fitxategi honen izena"
 
-#: resources.h:358 resources.h:376
+#: resources.h:382 resources.h:400
 #, fuzzy
 msgid "O&verwrite"
 msgstr "&Gainean idatzi"
 
-#: resources.h:22 resources.h:62 resources.h:222 resources.h:244
-#: resources.h:256 resources.h:266 resources.h:278 resources.h:292
-#: resources.h:312 resources.h:391 resources.h:398 resources.h:406
-#: resources.h:422
+#: resources.h:22 resources.h:62 resources.h:245 resources.h:267
+#: resources.h:280 resources.h:290 resources.h:302 resources.h:316
+#: resources.h:336 resources.h:388 resources.h:415 resources.h:422
+#: resources.h:430 resources.h:447
 msgid "OK"
 msgstr "Ados"
 
-#: resources.h:364
-msgid "Ok"
-msgstr ""
-
-#: resources.h:533
+#: resources.h:582
 msgid ""
 "On the following pages, the selected transfer mode will be configured, as "
 "well as the fallback mode if enabled."
 msgstr ""
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:786
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:790
 #, fuzzy
 msgid "Once"
 msgstr "Utzi"
 
-#: resources.h:575 resources.h:576
+#: resources.h:624 resources.h:625
 msgid "Open the Site Manager"
 msgstr "Gune-kudeatzailea ireki"
 
-#: resources.h:431
+#: resources.h:490
+#, fuzzy
+msgid "Open the file."
+msgstr "Aldatu fitxategi honen izena"
+
+#: resources.h:456
 msgid "Open the settings dialog of FileZilla"
 msgstr "FileZillaren ezarpenak ireki"
 
-#: resources.h:425
+#: ../../locales/../src/interface/LocalListView.cpp:2026
+#: ../../locales/../src/interface/LocalListView.cpp:2054
+#: ../../locales/../src/interface/LocalListView.cpp:2100
+#: ../../locales/../src/interface/LocalListView.cpp:2107
+#, fuzzy
+msgid "Opening failed"
+msgstr "Aldatu fitxategi honen izena"
+
+#: resources.h:450
 msgid "Opens the Site Manager"
 msgstr "Gune-kudeatzailea irekitzen du"
 
-#: ../../locales/../src/interface/FileZilla.cpp:206
+#: ../../locales/../src/interface/FileZilla.cpp:261
 msgid "Operating system problem detected"
 msgstr ""
 
@@ -3003,17 +3323,17 @@ msgstr ""
 msgid "Other:"
 msgstr "Egilea:"
 
-#: resources.h:351 resources.h:370
+#: resources.h:375 resources.h:394
 #, fuzzy
 msgid "Ov&erwrite if newer"
 msgstr "Gainean idatzi &berriagoa bada"
 
-#: resources.h:359 resources.h:377
+#: resources.h:383 resources.h:401
 #, fuzzy
 msgid "Over&write if newer"
 msgstr "Gainean idatzi &berriagoa bada"
 
-#: resources.h:149
+#: resources.h:152
 #, fuzzy
 msgid "Overview"
 msgstr "&Gainean idatzi"
@@ -3022,19 +3342,24 @@ msgstr "&Gainean idatzi"
 msgid "Overwrite &if newer"
 msgstr "Gainean idatzi &berriagoa bada"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:312
+#: ../../locales/../src/interface/RemoteListView.cpp:341
 msgid "Owner / Group"
 msgstr "Jabea / Taldea"
 
-#: resources.h:226
+#: resources.h:249
 msgid "Owner permissions"
 msgstr "Jabearen baimenak"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:452
-msgid "PORT command tainted by router."
+#: resources.h:240
+msgid "P&roxy host:"
 msgstr ""
 
-#: resources.h:153
+#: ../../locales/../src/interface/netconfwizard.cpp:486
+#, fuzzy
+msgid "PORT command tainted by router or firewall."
+msgstr "Konexio-saioa eten du erabiltzaileak"
+
+#: resources.h:156
 #, fuzzy
 msgid "Pa&ssive (recommended)"
 msgstr "Modu pasiboa"
@@ -3043,49 +3368,49 @@ msgstr "Modu pasiboa"
 msgid "Package"
 msgstr ""
 
-#: resources.h:82 resources.h:571
+#: resources.h:82 resources.h:620
 msgid "Pass&word:"
 msgstr "Pasa&hitza"
 
-#: resources.h:529
+#: resources.h:578
 #, fuzzy
 msgid "Passive (recommended)"
 msgstr "Modu pasiboa"
 
-#: resources.h:1 ../../locales/../src/interface/settingsdialog.cpp:104
+#: resources.h:1 ../../locales/../src/interface/settingsdialog.cpp:106
 #, fuzzy
 msgid "Passive mode"
 msgstr "Modu pasiboa"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:576
-#: ../../locales/../src/interface/netconfwizard.cpp:589
-#: ../../locales/../src/interface/netconfwizard.cpp:600
+#: ../../locales/../src/interface/netconfwizard.cpp:582
+#: ../../locales/../src/interface/netconfwizard.cpp:595
+#: ../../locales/../src/interface/netconfwizard.cpp:606
 msgid "Passive mode has been set as default transfer mode."
 msgstr ""
 
-#: ../../locales/../src/interface/edithandler.cpp:669
-#: ../../locales/../src/interface/edithandler.cpp:753
-#: ../../locales/../src/interface/edithandler.cpp:859
+#: ../../locales/../src/interface/edithandler.cpp:816
+#: ../../locales/../src/interface/edithandler.cpp:934
+#: ../../locales/../src/interface/edithandler.cpp:1021
 msgid "Pending removal"
 msgstr ""
 
-#: ../../locales/../src/interface/RemoteListView.cpp:311
+#: ../../locales/../src/interface/RemoteListView.cpp:340
 msgid "Permissions"
 msgstr "Baimenak"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:605
+#: ../../locales/../src/interface/netconfwizard.cpp:611
 msgid ""
 "Pleae make sure FileZilla is allowed to establish outgoing connections and "
 "make sure you typed the address of the address resolver correctly."
 msgstr ""
 
-#: resources.h:341
+#: resources.h:365
 msgid ""
 "Please check http://filezilla-project.org for the most recent version of "
 "FileZilla."
 msgstr ""
 
-#: ../../locales/../src/interface/netconfwizard.cpp:545
+#: ../../locales/../src/interface/netconfwizard.cpp:551
 msgid ""
 "Please check on http://filezilla-project.org/probe.php that the server is "
 "running and carefully check your settings again."
@@ -3097,17 +3422,17 @@ msgid ""
 "visit http://filezilla-project.org to download the source code of FileZilla."
 msgstr ""
 
-#: resources.h:535
+#: resources.h:584
 msgid ""
 "Please configure any firewalls and routers so that FileZilla can establish "
 "outgoing connection to arbitrary ports."
 msgstr ""
 
-#: ../../locales/../src/interface/netconfwizard.cpp:611
+#: ../../locales/../src/interface/netconfwizard.cpp:617
 msgid "Please disable settings like 'DMZ mode' or 'Game mode' on your router."
 msgstr ""
 
-#: ../../locales/../src/interface/netconfwizard.cpp:553
+#: ../../locales/../src/interface/netconfwizard.cpp:559
 msgid ""
 "Please ensure you have a stable internet connection and check on http://"
 "filezilla-project.org/probe.php that the server is running."
@@ -3131,12 +3456,12 @@ msgstr ""
 msgid "Please enter a name for the new filter."
 msgstr "Sartu pasahitz bat zerbitzari honetarako:"
 
-#: ../../locales/../src/interface/filteredit.cpp:424
+#: ../../locales/../src/interface/filteredit.cpp:430
 #, fuzzy
 msgid "Please enter a new name for the copied filter."
 msgstr "Hautatu hautatutako fitxategien atributu berriak."
 
-#: ../../locales/../src/interface/filteredit.cpp:380
+#: ../../locales/../src/interface/filteredit.cpp:386
 #, fuzzy
 msgid "Please enter a new name for the filter."
 msgstr "Hautatu \"%s\" fitxategiaren atributu berriak."
@@ -3162,7 +3487,7 @@ msgstr ""
 msgid "Please enter a password for this server:"
 msgstr "Sartu pasahitz bat zerbitzari honetarako:"
 
-#: ../../locales/../src/interface/QueueView.cpp:1985
+#: ../../locales/../src/interface/QueueView.cpp:1960
 msgid ""
 "Please enter a path and executable to run.\n"
 "E.g. c:\\somePath\\file.exe under MS Windows or /somePath/file under Unix.\n"
@@ -3174,17 +3499,17 @@ msgid ""
 "Please enter a timeout between 5 and 9999 seconds or 0 to disable timeouts."
 msgstr ""
 
-#: ../../locales/../src/interface/filter.cpp:601
+#: ../../locales/../src/interface/filter.cpp:614
 #, fuzzy
 msgid "Please enter a unique name for this filter set"
 msgstr "Sartu pasahitz bat zerbitzari honetarako:"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:177
+#: ../../locales/../src/interface/netconfwizard.cpp:180
 #, fuzzy
 msgid "Please enter a valid portrange."
 msgstr "Sartu pasahitz bat zerbitzari honetarako:"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:156
+#: ../../locales/../src/interface/netconfwizard.cpp:159
 msgid "Please enter an URL where to get your external address from"
 msgstr ""
 
@@ -3196,7 +3521,7 @@ msgstr ""
 msgid "Please enter an upload speedlimit greater or equal to 0 KB/s."
 msgstr ""
 
-#: ../../locales/../src/interface/Mainfrm.cpp:559
+#: ../../locales/../src/interface/Mainfrm.cpp:560
 msgid ""
 "Please enter raw FTP command.\n"
 "Using raw ftp commands will clear the directory cache."
@@ -3204,38 +3529,43 @@ msgstr ""
 "FTP komandoa sartu.\n"
 "FTP komandoak erabiltzerakoan direktorioaren cachea garbituko da."
 
-#: ../../locales/../src/interface/LocalListView.cpp:1432
-#: ../../locales/../src/interface/RemoteListView.cpp:1435
-#: ../../locales/../src/interface/RemoteTreeView.cpp:1195
+#: ../../locales/../src/interface/LocalListView.cpp:1128
+#: ../../locales/../src/interface/LocalTreeView.cpp:1281
+#: ../../locales/../src/interface/RemoteListView.cpp:1206
+#: ../../locales/../src/interface/RemoteTreeView.cpp:1180
 msgid "Please enter the name of the directory which should be created:"
 msgstr "Sartu sortuko den direktorioaren izena"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:137
+#: ../../locales/../src/interface/netconfwizard.cpp:140
 #, fuzzy
 msgid "Please enter your external IP address"
 msgstr "&Kanpoko IP helbidea:"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:581
-#: ../../locales/../src/interface/netconfwizard.cpp:594
+#: ../../locales/../src/interface/netconfwizard.cpp:587
+#: ../../locales/../src/interface/netconfwizard.cpp:600
 msgid ""
 "Please enter your external IP address on the active mode page of this "
 "wizard. In case you have a dynamic address or don't know your external "
 "address, use the external resolver option."
 msgstr ""
 
-#: resources.h:522
+#: resources.h:571
 msgid ""
 "Please follow the instructions carefully, as wrong configuration will "
 "prevent successful FTP connections."
 msgstr ""
 
-#: ../../locales/../src/interface/netconfwizard.cpp:564
+#: ../../locales/../src/interface/FileZilla.cpp:200
+msgid "Please make sure the requested locale is installed on your system."
+msgstr ""
+
+#: ../../locales/../src/interface/netconfwizard.cpp:570
 msgid ""
 "Please make sure you are running the latest version of FileZilla. Visit "
 "http://filezilla-project.org for details."
 msgstr ""
 
-#: ../../locales/../src/interface/netconfwizard.cpp:582
+#: ../../locales/../src/interface/netconfwizard.cpp:588
 msgid ""
 "Please make sure your router is using the latest available firmware. "
 "Furthermore, your router has to be configured properly. You will have to "
@@ -3243,15 +3573,7 @@ msgid ""
 "'game mode'."
 msgstr ""
 
-#: ../../locales/../src/interface/netconfwizard.cpp:569
-msgid ""
-"Please make sure your router is using the latest available firmware. "
-"Furthermore, your router has to be configured properly. You will have to use "
-"manual port forwarding. Don't run your router in the so called 'DMZ mode' or "
-"'game mode'."
-msgstr ""
-
-#: resources.h:536
+#: resources.h:585
 msgid ""
 "Please note that FileZilla has no influence on the port the server chooses. "
 "So the server might choose a port which your firewall thinks is only used by "
@@ -3259,19 +3581,25 @@ msgid ""
 "discard."
 msgstr ""
 
-#: resources.h:162
+#: ../../locales/../src/interface/Mainfrm.cpp:670
+msgid ""
+"Please note that preserving timestamps on uploads only works on FTP, FTPS "
+"and FTPES servers (but not SFTP) supporting the MFMT command."
+msgstr ""
+
+#: resources.h:165
 msgid ""
 "Please note that some servers might ban you if you try to reconnect too "
 "often or in too short intervals."
 msgstr ""
 
-#: resources.h:186 resources.h:192
+#: resources.h:192 resources.h:198
 msgid ""
-"Please read http://filezilla-project.org/wiki/index.php/"
-"Date_and_Time_formatting for details"
+"Please read http://wiki.filezilla-project.org/Date_and_Time_formatting for "
+"details"
 msgstr ""
 
-#: ../../locales/../src/interface/netconfwizard.cpp:559
+#: ../../locales/../src/interface/netconfwizard.cpp:565
 msgid ""
 "Please run this wizard again should you change your network environment or "
 "in case you suddenly encounter problems with servers that did work "
@@ -3282,12 +3610,12 @@ msgstr ""
 msgid "Please select an action:"
 msgstr "Ekintza bat hautatu:"
 
-#: resources.h:405
+#: resources.h:429
 #, fuzzy
 msgid "Please select the categories you would like to import."
 msgstr "Hautatu hautatutako direktorioen atributu berriak."
 
-#: resources.h:524
+#: resources.h:573
 #, fuzzy
 msgid "Please select the default transfer mode you would like to use."
 msgstr "Hautatu \"%s\" direktorioaren atributu berriak."
@@ -3315,29 +3643,42 @@ msgstr "Hautatu hautatutako fitxategi eta direktorioen atributu berriak."
 msgid "Please select the new attributes for the selected files."
 msgstr "Hautatu hautatutako fitxategien atributu berriak."
 
-#: resources.h:343
+#: ../../locales/../src/interface/netconfwizard.cpp:575
+msgid ""
+"Please update your firewall and make sure your router is using the latest "
+"available firmware. Furthermore, your router has to be configured properly. "
+"You will have to use manual port forwarding. Don't run your router in the so "
+"called 'DMZ mode' or 'game mode'. Things like protocol inspection or "
+"protocol specific 'fixups' have to be disabled"
+msgstr ""
+
+#: resources.h:367
 msgid ""
 "Please visit http://filezilla-project.org for more information about "
 "FileZilla."
 msgstr ""
 
 #: ../../locales/../src/interface/updatewizard.cpp:817
-#: ../../locales/../src/interface/updatewizard.cpp:829
+#: ../../locales/../src/interface/updatewizard.cpp:830
 msgid ""
 "Please visit http://filezilla-project.org to download the most recent "
 "version."
 msgstr ""
 
-#: ../../locales/../src/interface/sitemanager.cpp:1242
-#: ../../locales/../src/interface/sitemanager.cpp:1377
+#: ../../locales/../src/interface/sitemanager.cpp:1457
+#: ../../locales/../src/interface/sitemanager.cpp:1617
 msgid "Predefined Sites"
 msgstr ""
 
-#: resources.h:169
+#: ../../locales/../src/interface/Mainfrm.cpp:669
+msgid "Preserving file timestamps"
+msgstr ""
+
+#: resources.h:175
 msgid "Preview"
 msgstr "Aurrebista"
 
-#: ../../locales/../src/engine/tlssocket.cpp:792
+#: ../../locales/../src/engine/tlssocket.cpp:794
 msgid "Primary connection and data connection certificates don't match."
 msgstr ""
 
@@ -3349,70 +3690,79 @@ msgstr ""
 msgid "Priority"
 msgstr "Lehentasuna"
 
-#: resources.h:477
+#: resources.h:512
 msgid "Process &Queue"
 msgstr "Prozesatu &Ilara"
+
+#: resources.h:241
+msgid "Proxy &user:"
+msgstr ""
+
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4243
+msgid "Proxy set but proxy host or port invalid"
+msgstr ""
 
 #: resources.h:13
 msgid "Public key algorithm:"
 msgstr ""
 
-#: resources.h:234
+#: resources.h:257
 msgid "Public permissions"
 msgstr "Baimen publikoak"
 
-#: ../../locales/../src/interface/QueueView.cpp:1544
+#: ../../locales/../src/interface/QueueView.cpp:1510
 #, c-format
 msgid "Queue: %s%d KB"
 msgstr "Ilara: %s%d KB"
 
-#: ../../locales/../src/interface/QueueView.cpp:1539
+#: ../../locales/../src/interface/QueueView.cpp:1505
 #, c-format
 msgid "Queue: %s%d MB"
 msgstr "Ilara: %s%d MB"
 
-#: ../../locales/../src/interface/QueueView.cpp:1547
+#: ../../locales/../src/interface/QueueView.cpp:1513
 #, c-format
 msgid "Queue: %s%d bytes"
 msgstr "Ilara: %s%d bytes"
 
-#: ../../locales/../src/interface/QueueView.cpp:1535
+#: ../../locales/../src/interface/QueueView.cpp:1501
 msgid "Queue: empty"
 msgstr "Ilara: hutsik"
 
-#: ../../locales/../src/interface/QueueView.cpp:408
+#: ../../locales/../src/interface/QueueView.cpp:399
 #, fuzzy
 msgid "Queued files"
 msgstr "Ilara: %s%d bytes"
 
-#: resources.h:493
+#: resources.h:528
 #, fuzzy
 msgid "R&eboot system"
 msgstr "Urruneko gunea:"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:568
+#: ../../locales/../src/interface/Mainfrm.cpp:569
 msgid "Raw FTP command"
 msgstr ""
 
-#: resources.h:231
+#: resources.h:254
 msgid "Re&ad"
 msgstr "Ir&akurri"
 
-#: resources.h:57 resources.h:353 resources.h:372
+#: resources.h:57 resources.h:377 resources.h:396
 msgid "Re&name"
 msgstr "Ize&na aldatu"
 
-#: resources.h:235
+#: resources.h:258
 msgid "Rea&d"
 msgstr "Ira&kurri"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:870
+#: ../../locales/../src/interface/Mainfrm.cpp:894
 msgid "Really cancel current operation?"
 msgstr "Benetan bertan behera utzi uneko eragiketa?"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1533
-#: ../../locales/../src/interface/RemoteListView.cpp:1490
-#: ../../locales/../src/interface/RemoteTreeView.cpp:1040
+#: ../../locales/../src/interface/LocalListView.cpp:1242
+#: ../../locales/../src/interface/LocalTreeView.cpp:1389
+#: ../../locales/../src/interface/RemoteListView.cpp:1261
+#: ../../locales/../src/interface/RemoteTreeView.cpp:1013
 msgid "Really delete all selected files and/or directories?"
 msgstr "Benetan hautatutako fitxategiak eta/edo direktorioak ezabatu?"
 
@@ -3421,13 +3771,13 @@ msgstr "Benetan hautatutako fitxategiak eta/edo direktorioak ezabatu?"
 msgid "Reason"
 msgstr "Erantzuna:"
 
-#: resources.h:240
+#: resources.h:263
 msgid "Rec&urse into subdirectories"
 msgstr "Azpidirektorioetan eragiten du"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:976
-#: ../../locales/../src/interface/netconfwizard.cpp:985
-#: ../../locales/../src/interface/netconfwizard.cpp:1009
+#: ../../locales/../src/interface/netconfwizard.cpp:990
+#: ../../locales/../src/interface/netconfwizard.cpp:999
+#: ../../locales/../src/interface/netconfwizard.cpp:1023
 msgid "Received data tainted"
 msgstr ""
 
@@ -3437,23 +3787,28 @@ msgid ""
 "If you continue, your connection will be disconnected."
 msgstr ""
 
-#: resources.h:157
+#: resources.h:160
 msgid "Reconnection settings"
 msgstr ""
 
-#: resources.h:593 resources.h:594
+#: resources.h:642 resources.h:643
 msgid "Reconnects to the last used server"
 msgstr "Erabilitako azken zerbitzarira birkonektatzen du"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:681
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:697
 msgid "Redirection to invalid address"
 msgstr ""
 
-#: resources.h:585 resources.h:586
+#: resources.h:634 resources.h:635
 msgid "Refresh the file and folder lists"
 msgstr "Freskatu fitxategi eta karpeten zerrendak"
 
-#: ../../locales/../src/engine/tlssocket.cpp:744
+#: ../../locales/../src/interface/edithandler.cpp:803
+#, fuzzy
+msgid "Remote"
+msgstr "&Kendu"
+
+#: ../../locales/../src/engine/tlssocket.cpp:746
 msgid "Remote certificate not trusted."
 msgstr ""
 
@@ -3461,63 +3816,59 @@ msgstr ""
 msgid "Remote file"
 msgstr "Urruneko fitxategia"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:113
-#, fuzzy
-msgid "Remote file editing"
-msgstr "Urruneko fitxategia"
-
-#: resources.h:288
+#: resources.h:312
 msgid "Remote filters:"
 msgstr "Urruneko iragazkiak:"
 
-#: ../../locales/../src/interface/viewheader.cpp:512
+#: ../../locales/../src/interface/viewheader.cpp:521
 msgid "Remote site:"
 msgstr "Urruneko gunea:"
 
-#: resources.h:502 resources.h:505
+#: resources.h:537 resources.h:540
 #, fuzzy
 msgid "Remove &all"
 msgstr "&Kendu"
 
-#: resources.h:307 resources.h:503 resources.h:506
+#: resources.h:331 resources.h:538 resources.h:541
 msgid "Remove &selected"
 msgstr "Kendu hautatutakoa"
 
-#: resources.h:361 resources.h:379
+#: resources.h:385 resources.h:403
 #, fuzzy
 msgid "Rena&me"
 msgstr "&Izena aldatu"
 
-#: ../../locales/../src/interface/asyncrequestqueue.cpp:214
+#: ../../locales/../src/interface/asyncrequestqueue.cpp:217
 msgid "Rename file"
 msgstr "Aldatu fitxategi honen izena"
 
-#: resources.h:518
+#: resources.h:553 resources.h:569
 #, fuzzy
 msgid "Rename selected directory"
 msgstr "Aldatu hautatutako fitxategi eta karpeten izenak"
 
-#: resources.h:463 resources.h:474
-msgid "Rename selected files and folders"
+#: resources.h:498 resources.h:509
+#, fuzzy
+msgid "Rename selected files and directories"
 msgstr "Aldatu hautatutako fitxategi eta karpeten izenak"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3048
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2145
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3456
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2252
 #, c-format
 msgid "Renaming '%s' to '%s'"
 msgstr "'%s' izena '%s' izenagatik aldatu"
 
-#: resources.h:360 resources.h:378
+#: resources.h:384 resources.h:402
 #, fuzzy
 msgid "Res&ume"
 msgstr "&Berrekin"
 
-#: resources.h:504 resources.h:507
+#: resources.h:539 resources.h:542
 msgid "Reset and requeue selected files"
 msgstr ""
 
-#: ../../locales/../src/engine/ControlSocket.cpp:943
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:467
+#: ../../locales/../src/engine/ControlSocket.cpp:960
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:483
 #, c-format
 msgid "Resolving IP-Address for %s"
 msgstr ""
@@ -3526,52 +3877,52 @@ msgstr ""
 msgid "Resolving hostname"
 msgstr ""
 
-#: ../../locales/../src/interface/netconfwizard.cpp:387
-#: ../../locales/../src/interface/StatusView.cpp:201
-#: ../../locales/../src/interface/StatusView.cpp:237
+#: ../../locales/../src/interface/netconfwizard.cpp:393
+#: ../../locales/../src/interface/StatusView.cpp:202
+#: ../../locales/../src/interface/StatusView.cpp:238
 msgid "Response:"
 msgstr "Erantzuna:"
 
-#: resources.h:383
+#: resources.h:407
 msgid ""
 "Resuming ascii files can cause problems if server uses a different line "
 "ending format than the client."
 msgstr ""
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:961
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:847
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1219
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:851
 msgid "Retrieving directory listing..."
 msgstr "Direktorioaren zerrendatzea berreskuratzen..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3361
-#: ../../locales/../src/interface/netconfwizard.cpp:690
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3808
+#: ../../locales/../src/interface/netconfwizard.cpp:701
 #, fuzzy, c-format
 msgid "Retrieving external IP address from %s"
 msgstr "&Kanpoko IP helbidea:"
 
-#: resources.h:426
+#: resources.h:451
 msgid "S&how files currently being edited..."
 msgstr ""
 
-#: resources.h:494
+#: resources.h:529
 msgid "S&hutdown system"
 msgstr ""
 
-#: resources.h:354 resources.h:373
+#: resources.h:378 resources.h:397
 #, fuzzy
 msgid "S&kip"
 msgstr "&Saltatu"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:826
+#: ../../locales/../src/interface/netconfwizard.cpp:840
 #, fuzzy
 msgid "Save settings?"
 msgstr "Ezarpenak"
 
-#: ../../locales/../src/interface/QueueView.cpp:1599
+#: ../../locales/../src/interface/QueueView.cpp:1565
 msgid "Scanning for files to add to queue"
 msgstr "Fitxategiak arakatzen ilarara gehitzeko"
 
-#: ../../locales/../src/interface/QueueView.cpp:1601
+#: ../../locales/../src/interface/QueueView.cpp:1567
 msgid "Scanning for files to upload"
 msgstr "Fitxategiak arakatzen gora kargatzeko"
 
@@ -3583,16 +3934,16 @@ msgstr "Hautatu &orria:"
 msgid "Select Entry:"
 msgstr "Hautatu Sarrera:"
 
-#: resources.h:163
+#: resources.h:169
 msgid "Select Theme"
 msgstr "Hautatu Diseinua"
 
-#: resources.h:366
+#: resources.h:390
 msgid ""
 "Select default action to perform if target file of a transfer already exists."
 msgstr ""
 
-#: ../../locales/../src/interface/optionspage_edit.cpp:150
+#: ../../locales/../src/interface/optionspage_edit.cpp:163
 msgid "Select default editor"
 msgstr ""
 
@@ -3616,54 +3967,63 @@ msgstr ""
 msgid "Select file for exported settings"
 msgstr ""
 
-#: ../../locales/../src/interface/import.cpp:15
+#: ../../locales/../src/interface/import.cpp:16
 msgid "Select file to import settings from"
 msgstr ""
 
-#: resources.h:394
+#: resources.h:418
 msgid "Select the categories to export:"
 msgstr ""
 
-#: resources.h:385
+#: resources.h:409
 msgid "Select the private data you would like to delete."
 msgstr ""
 
-#: ../../locales/../src/interface/optionspage_edit.cpp:168
+#: ../../locales/../src/interface/optionspage_edit.cpp:183
 msgid "Selected editor does not exist"
 msgstr ""
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2434
+#: ../../locales/../src/interface/LocalListView.cpp:2039
+#: ../../locales/../src/interface/RemoteListView.cpp:2202
 #, fuzzy
 msgid "Selected file already being edited"
 msgstr "Helburuko fitxategia lehendik badago"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2428
+#: ../../locales/../src/interface/RemoteListView.cpp:2196
 #, fuzzy
 msgid "Selected file already still opened."
 msgstr "Gune-kudeatzailea lehendik irekia"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2404
+#: ../../locales/../src/interface/RemoteListView.cpp:2172
 msgid ""
 "Selected file cannot be opened.\n"
 "No default editor has been set or filetype association is missing or "
 "incorrect."
 msgstr ""
 
-#: ../../locales/../src/interface/optionspage_edit.cpp:105
+#: ../../locales/../src/interface/optionspage_edit.cpp:118
 msgid "Selected file does not exist."
 msgstr ""
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2442
+#: ../../locales/../src/interface/RemoteListView.cpp:2210
 msgid "Selected file still being edited"
 msgstr ""
 
-#: ../../locales/../src/engine/engineprivate.cpp:324
+#: ../../locales/../src/engine/engineprivate.cpp:325
 msgid "Selected port usually in use by a different protocol."
 msgstr ""
 
-#: resources.h:447
+#: resources.h:167
+msgid "Send FTP Keep-alive commands"
+msgstr ""
+
+#: resources.h:478
 msgid "Send custom command to the server otherwise not available"
 msgstr "Komando pertsonalizatuak zerbitzarira bidali"
+
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4320
+msgid "Sending keep-alive command"
+msgstr ""
 
 #: resources.h:12
 msgid "Serial number:"
@@ -3673,51 +4033,56 @@ msgstr ""
 msgid "Server / Local file"
 msgstr "Zerbitzaria / Fitxategi lokala"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3728
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4179
 #, c-format
 msgid "Server does not support resume of files > %d GB."
 msgstr ""
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3724
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4175
 #, c-format
 msgid ""
 "Server does not support resume of files > %d GB. End transfer since "
 "filesizes match."
 msgstr ""
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2127
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2477
 msgid "Server does not support resume of files > 2GB."
 msgstr ""
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2122
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2472
 msgid "Server does not support resume of files > 4GB."
 msgstr ""
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3739
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4190
 #, c-format
 msgid ""
 "Server may not support resume of files > %d GB. End transfer since filesizes "
 "match."
 msgstr ""
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:823
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:865
 msgid ""
-"Server requires an account. Please specify an account using the Site Manager"
+"Server might require an account. Try specifying an account using the Site "
+"Manager"
 msgstr ""
 
-#: ../../locales/../src/interface/netconfwizard.cpp:395
-#: ../../locales/../src/interface/netconfwizard.cpp:402
-#: ../../locales/../src/interface/netconfwizard.cpp:441
-#: ../../locales/../src/interface/netconfwizard.cpp:460
-#: ../../locales/../src/interface/netconfwizard.cpp:467
-#: ../../locales/../src/interface/netconfwizard.cpp:479
-#: ../../locales/../src/interface/netconfwizard.cpp:493
-#: ../../locales/../src/interface/netconfwizard.cpp:502
-#: ../../locales/../src/interface/netconfwizard.cpp:513
+#: ../../locales/../src/interface/netconfwizard.cpp:401
+#: ../../locales/../src/interface/netconfwizard.cpp:408
+#: ../../locales/../src/interface/netconfwizard.cpp:447
+#: ../../locales/../src/interface/netconfwizard.cpp:456
+#: ../../locales/../src/interface/netconfwizard.cpp:468
+#: ../../locales/../src/interface/netconfwizard.cpp:492
+#: ../../locales/../src/interface/netconfwizard.cpp:499
+#: ../../locales/../src/interface/netconfwizard.cpp:508
+#: ../../locales/../src/interface/netconfwizard.cpp:519
 msgid "Server sent invalid reply."
 msgstr ""
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3312
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3760
+msgid "Server sent passive reply with unroutable address. Passive mode failed."
+msgstr ""
+
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3754
 msgid ""
 "Server sent passive reply with unroutable address. Using server address "
 "instead."
@@ -3727,26 +4092,34 @@ msgstr ""
 msgid "Server&type:"
 msgstr "Zerbitzari-&mota"
 
-#: resources.h:481
+#: resources.h:516
 msgid "Set &Priority"
 msgstr "Ezarri &Lehentasuna"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3189
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2040
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3614
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2130
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
 msgstr "Ezarri '%s'-(r)en baimenak '%s'-(r)i"
+
+#: ../../locales/../src/engine/transfersocket.cpp:711
+msgid "SetSocketBufferSize called without socket"
+msgstr ""
 
 #: resources.h:122
 msgid "Settings"
 msgstr "Ezarpenak"
 
-#: resources.h:209
+#: resources.h:215
 #, fuzzy
 msgid "Show &raw directory listing"
 msgstr "Iragazi direktorioen zerrendatzeak"
 
-#: resources.h:402
+#: ../../locales/../src/interface/Mainfrm.cpp:1896
+msgid "Show both directory trees and continue comparing?"
+msgstr ""
+
+#: resources.h:426
 #, fuzzy
 msgid "Site &Manager entries"
 msgstr "Gune-kudeatzailea"
@@ -3755,7 +4128,7 @@ msgstr "Gune-kudeatzailea"
 msgid "Site Manager"
 msgstr "Gune-kudeatzailea"
 
-#: ../../locales/../src/interface/sitemanager.cpp:60
+#: ../../locales/../src/interface/sitemanager.cpp:269
 msgid "Site Manager already open"
 msgstr "Gune-kudeatzailea lehendik irekia"
 
@@ -3763,60 +4136,65 @@ msgstr "Gune-kudeatzailea lehendik irekia"
 msgid "Size"
 msgstr "Tamaina"
 
-#: resources.h:193
+#: resources.h:199
 #, fuzzy
 msgid "Size formatting"
 msgstr "Eraikitze-informazioa"
 
-#: ../../locales/../src/interface/fileexistsdlg.cpp:59
-#: ../../locales/../src/interface/fileexistsdlg.cpp:83
-#: ../../locales/../src/interface/fileexistsdlg.cpp:115
-#: ../../locales/../src/interface/fileexistsdlg.cpp:139
+#: ../../locales/../src/interface/fileexistsdlg.cpp:66
+#: ../../locales/../src/interface/fileexistsdlg.cpp:90
+#: ../../locales/../src/interface/fileexistsdlg.cpp:122
+#: ../../locales/../src/interface/fileexistsdlg.cpp:146
 msgid "Size unknown"
 msgstr "Tamaina ezezaguna"
 
-#: resources.h:362 resources.h:380
+#: resources.h:386 resources.h:404
 #, fuzzy
 msgid "Sk&ip"
 msgstr "&Saltatu"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2397
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2482
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2772
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2858
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:206
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:246
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:670
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:743
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:673
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:747
 #, c-format
 msgid "Skipping download of %s"
 msgstr "%s behera kargatzea saltatzen"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2401
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2486
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2776
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2862
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:210
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:250
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:674
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:747
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:677
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:751
 #, c-format
 msgid "Skipping upload of %s"
 msgstr "%s gora kargatzea saltatzen"
 
-#: resources.h:170
+#: resources.h:176
 msgid "Small icons"
 msgstr "Ikono txikiak"
 
-#: resources.h:2 resources.h:538
+#: ../../locales/../src/interface/Mainfrm.cpp:967
+msgid "Some files are still being edited or need to be uploaded."
+msgstr ""
+
+#: resources.h:2 resources.h:587
 msgid ""
 "Some misconfigured remote servers which are behind a router, may reply with "
 "their local ip address."
 msgstr ""
 
-#: ../../locales/../src/interface/Mainfrm.cpp:943
-msgid "Some remote files are still being edited or need to be uploaded."
-msgstr ""
-
 #: resources.h:148
 msgid "Sort directories inline"
 msgstr ""
+
+#: ../../locales/../src/interface/filelistctrl.cpp:256
+#, fuzzy
+msgid "Sort order cannot be changed if comparing directories."
+msgstr "Direktorio bat ezin da bere subdirektorio betean sartu."
 
 #: resources.h:145
 msgid "Sorting mode:"
@@ -3826,7 +4204,7 @@ msgstr ""
 msgid "Source and path of the drop operation are identical"
 msgstr ""
 
-#: ../../locales/../src/interface/RemoteListView.cpp:126
+#: ../../locales/../src/interface/RemoteListView.cpp:129
 msgid "Source and target of the drop operation are identical"
 msgstr ""
 
@@ -3834,14 +4212,14 @@ msgstr ""
 msgid "Speed limits"
 msgstr ""
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1819
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1384
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2131
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1434
 #, c-format
 msgid "Starting download of %s"
 msgstr "%s behera kargatzen hasten"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1823
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1388
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2135
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1438
 #, c-format
 msgid "Starting upload of %s"
 msgstr "%s gora kargatzen hasten"
@@ -3851,17 +4229,17 @@ msgstr "%s gora kargatzen hasten"
 msgid "State:"
 msgstr "Egoera:"
 
-#: ../../locales/../src/interface/edithandler.cpp:650
-#: ../../locales/../src/interface/QueueView.cpp:434
+#: ../../locales/../src/interface/edithandler.cpp:795
+#: ../../locales/../src/interface/QueueView.cpp:425
 msgid "Status"
 msgstr "Egoera"
 
-#: ../../locales/../src/interface/StatusView.cpp:210
-#: ../../locales/../src/interface/StatusView.cpp:252
+#: ../../locales/../src/interface/StatusView.cpp:211
+#: ../../locales/../src/interface/StatusView.cpp:253
 msgid "Status:"
 msgstr "Egoera:"
 
-#: resources.h:478
+#: resources.h:513
 msgid "Stop and remove &all"
 msgstr ""
 
@@ -3873,7 +4251,7 @@ msgstr ""
 msgid "Subject of certificate"
 msgstr ""
 
-#: ../../locales/../src/interface/netconfwizard.cpp:565
+#: ../../locales/../src/interface/netconfwizard.cpp:571
 msgid ""
 "Submit a bug report if this problem persists even with the latest version of "
 "FileZilla."
@@ -3884,7 +4262,7 @@ msgstr ""
 msgid "Successful transfers"
 msgstr "Transferentzia-mota lehenetsia:"
 
-#: resources.h:566
+#: resources.h:615
 msgid "Summary of test results:"
 msgstr ""
 
@@ -3894,12 +4272,12 @@ msgstr ""
 msgid "Syntax error"
 msgstr "Errore kritikoa"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:416
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:434
 #, fuzzy
 msgid "TLS/SSL connection established, waiting for welcome message..."
 msgstr "Konexioa ezarri da, ongietorri-mezuaren zain..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:420
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:438
 msgid "TLS/SSL connection established."
 msgstr ""
 
@@ -3907,19 +4285,19 @@ msgstr ""
 msgid "Target file already exists"
 msgstr "Helburuko fitxategia lehendik badago"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1790
+#: ../../locales/../src/interface/RemoteListView.cpp:1492
 msgid "Target filename already exists, really continue?"
 msgstr "Helburuko fitxategi-izena lehendik badago, jarraitu?"
 
-#: resources.h:565
+#: resources.h:614
 msgid "Test results"
 msgstr ""
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3745
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4196
 msgid "Testing resume capabilities of server"
 msgstr ""
 
-#: ../../locales/../src/interface/sitemanager.cpp:59
+#: ../../locales/../src/interface/sitemanager.cpp:268
 msgid ""
 "The Site Manager is opened in another instance of FileZilla 3.\n"
 "Do you want to continue? Any changes made in the Site Manager won't be saved "
@@ -3937,14 +4315,18 @@ msgstr ""
 "Gune-kudeatzailea lehendik dago irekita.\n"
 "Jarraitu nahi duzu? Egindako aldaketak ez dira gordeko."
 
-#: ../../locales/../src/interface/netconfwizard.cpp:606
+#: ../../locales/../src/interface/netconfwizard.cpp:612
 #, c-format
 msgid "The address you entered was: %s"
 msgstr ""
 
-#: ../../locales/../src/interface/filteredit.cpp:334
-#: ../../locales/../src/interface/filteredit.cpp:397
-#: ../../locales/../src/interface/filteredit.cpp:437
+#: ../../locales/../src/interface/optionspage_ftpproxy.cpp:89
+msgid "The custom login sequence cannot be empty."
+msgstr ""
+
+#: ../../locales/../src/interface/filteredit.cpp:340
+#: ../../locales/../src/interface/filteredit.cpp:403
+#: ../../locales/../src/interface/filteredit.cpp:443
 #, fuzzy
 msgid "The entered filter name already exists."
 msgstr "Iragazki-izena lehendik badago"
@@ -3954,8 +4336,8 @@ msgstr "Iragazki-izena lehendik badago"
 msgid "The extension '%s' does already exist in the list"
 msgstr "'%s' luzapena lehendik dago zerrendan"
 
-#: ../../locales/../src/interface/asyncrequestqueue.cpp:204
-#: ../../locales/../src/interface/asyncrequestqueue.cpp:211
+#: ../../locales/../src/interface/asyncrequestqueue.cpp:207
+#: ../../locales/../src/interface/asyncrequestqueue.cpp:214
 #, c-format
 msgid ""
 "The file %s already exists.\n"
@@ -3964,7 +4346,23 @@ msgstr ""
 "%s fitxategia lehendik dago.\n"
 "Sartu izen berri bat:"
 
-#: ../../locales/../src/interface/import.cpp:79
+#: ../../locales/../src/interface/LocalListView.cpp:2026
+#: ../../locales/../src/interface/LocalListView.cpp:2100
+#, c-format
+msgid ""
+"The file '%s' could not be opened:\n"
+"No program has been associated on your system with this file."
+msgstr ""
+
+#: ../../locales/../src/interface/LocalListView.cpp:2054
+#: ../../locales/../src/interface/LocalListView.cpp:2107
+#, c-format
+msgid ""
+"The file '%s' could not be opened:\n"
+"The associated command failed"
+msgstr ""
+
+#: ../../locales/../src/interface/import.cpp:89
 msgid ""
 "The file you have selected contains site manager data from a previous "
 "version of FileZilla.\n"
@@ -3973,12 +4371,12 @@ msgid ""
 "Continue with the import?"
 msgstr ""
 
-#: resources.h:416
+#: resources.h:441
 #, fuzzy
 msgid "The following files are currently being edited:"
 msgstr "Honako fitxategi-motak Ascii fitxategien eran erabili:"
 
-#: resources.h:207
+#: resources.h:213
 msgid ""
 "The higher the debug level, the more information will be displayed in the "
 "message log. Displaying debug information has a negative impact on "
@@ -4003,28 +4401,28 @@ msgid ""
 "install this version."
 msgstr ""
 
-#: ../../locales/../src/interface/import.cpp:69
+#: ../../locales/../src/interface/import.cpp:79
 msgid "The selected categories have been imported."
 msgstr ""
 
-#: resources.h:401
+#: resources.h:425
 msgid ""
 "The selected file contains importable data for the following categories:"
 msgstr ""
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2442
+#: ../../locales/../src/interface/RemoteListView.cpp:2210
 msgid ""
 "The selected file is still opened in some other program, please close it."
 msgstr ""
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2409
+#: ../../locales/../src/interface/RemoteListView.cpp:2177
 msgid ""
 "The selected file would be executed directly.\n"
 "This can be dangerous and damage your system.\n"
 "Do you really want to continue?"
 msgstr ""
 
-#: ../../locales/../src/interface/netconfwizard.cpp:563
+#: ../../locales/../src/interface/netconfwizard.cpp:569
 msgid "The server sent an unrecognized reply."
 msgstr ""
 
@@ -4041,7 +4439,7 @@ msgid ""
 "certificate to make sure the server can be trusted."
 msgstr ""
 
-#: resources.h:270
+#: resources.h:294
 msgid ""
 "The server's host key does not match the key that has been cached. This "
 "means that either the administrator has changed the host key, or you are "
@@ -4054,7 +4452,7 @@ msgstr ""
 "Ez badu gakoa onartzen, zerbitzariaren administratzailearekin harremanetan "
 "jarri zaitez."
 
-#: resources.h:258
+#: resources.h:282
 msgid ""
 "The server's host key is not cached in the registry. You have no guarantee "
 "that the server is the computer you think it is."
@@ -4062,7 +4460,7 @@ msgstr ""
 "Zerbitzariaren gakoa ez dago erregistraturik. Zerbitzari hau zuk uste duzuna "
 "denik ezin bermatu."
 
-#: ../../locales/../src/interface/import.cpp:66
+#: ../../locales/../src/interface/import.cpp:76
 msgid ""
 "The settings have been imported. You have to restart FileZilla for all "
 "settings to have effect."
@@ -4076,7 +4474,7 @@ msgstr ""
 "Helburu-fitxategia lehendik badago.\n"
 "Ordezkatu nahi duzu"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:826
+#: ../../locales/../src/interface/netconfwizard.cpp:840
 msgid "The test did not succeed. Do you really want to save the settings?"
 msgstr ""
 
@@ -4085,27 +4483,27 @@ msgstr ""
 msgid "Theme error"
 msgstr "Diseinu-errorea"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:109
+#: ../../locales/../src/interface/settingsdialog.cpp:112
 msgid "Themes"
 msgstr "Diseinua"
 
-#: ../../locales/../src/interface/filter.cpp:638
+#: ../../locales/../src/interface/filter.cpp:656
 msgid "This filter set cannot be removed"
 msgstr ""
 
-#: resources.h:543
+#: resources.h:592
 msgid ""
 "This only works if you are not behind a router, else your system would just "
 "return your internal address."
 msgstr ""
 
-#: resources.h:521
+#: resources.h:570
 msgid ""
 "This wizard will help you to properly configure any routers and firewalls "
 "you have and tests your configuration."
 msgstr ""
 
-#: resources.h:187
+#: resources.h:193
 #, fuzzy
 msgid "Time formatting"
 msgstr "Eraikitze-informazioa"
@@ -4114,13 +4512,13 @@ msgstr "Eraikitze-informazioa"
 msgid "Time&out in seconds:"
 msgstr ""
 
-#: resources.h:31 ../../locales/../src/interface/QueueView.cpp:925
-#: ../../locales/../src/interface/QueueView.cpp:950
+#: resources.h:31 ../../locales/../src/interface/QueueView.cpp:888
+#: ../../locales/../src/interface/QueueView.cpp:913
 #, fuzzy
 msgid "Timeout"
 msgstr "Ordua"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1320
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1609
 #, c-format
 msgid ""
 "Timezone offsets: Server: %d seconds. Local: %d seconds. Difference: %d "
@@ -4132,45 +4530,53 @@ msgstr ""
 msgid "Title:"
 msgstr "Fitxategia"
 
-#: resources.h:587 resources.h:588
+#: ../../locales/../src/interface/Mainfrm.cpp:1894
+msgid "To compare directories, both file lists have to be aligned."
+msgstr ""
+
+#: ../../locales/../src/interface/Mainfrm.cpp:1895
+msgid "To do this, the directory trees need to be both shown or both hidden."
+msgstr ""
+
+#: resources.h:636 resources.h:637
 msgid "Toggles processing of the transfer queue"
 msgstr "Transferentzia-ilararen prozesaketa aktibatu/desaktibatu"
 
-#: resources.h:579 resources.h:580
+#: resources.h:628 resources.h:629
 msgid "Toggles the display of the local directory tree"
 msgstr "Direktorio-zuhaitz lokalaren bistaratzea aktibatu/desaktibatu"
 
-#: resources.h:577 resources.h:578
+#: resources.h:626 resources.h:627
 msgid "Toggles the display of the message log"
 msgstr "Mezu-logaren bistaratzea aktibatu/desaktibatu"
 
-#: resources.h:581 resources.h:582
+#: resources.h:630 resources.h:631
 msgid "Toggles the display of the remote directory tree"
 msgstr "Urruneko direktorio-zuhaitzaren bistaratzea aktibatu/desaktibatu"
 
-#: resources.h:583 resources.h:584
+#: resources.h:632 resources.h:633
 msgid "Toggles the display of the transfer queue"
 msgstr "Transferentzia-ilararen bistaratzea aktibatu/desaktibatu"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:588
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:604
 msgid "Too long header line"
 msgstr ""
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:649
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:665
 msgid "Too many redirects"
 msgstr ""
 
-#: ../../locales/../src/interface/StatusView.cpp:204
-#: ../../locales/../src/interface/StatusView.cpp:244
+#: ../../locales/../src/interface/StatusView.cpp:205
+#: ../../locales/../src/interface/StatusView.cpp:245
 msgid "Trace:"
 msgstr "Aztarna:"
 
-#: resources.h:439
+#: resources.h:469
 #, fuzzy
 msgid "Transfer &type"
 msgstr "Transferentzia-modua"
 
-#: resources.h:152
+#: resources.h:155
 msgid "Transfer Mode"
 msgstr "Transferentzia-modua"
 
@@ -4183,16 +4589,16 @@ msgstr "Erabiltzaileak eten du"
 msgid "Transfer settings"
 msgstr "Transferentzia-ezarpenak"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:609
+#: ../../locales/../src/interface/netconfwizard.cpp:615
 msgid "Transferred data got tainted."
 msgstr ""
 
-#: ../../locales/../src/interface/QueueView.cpp:1272
+#: ../../locales/../src/interface/QueueView.cpp:1238
 #: ../../locales/../src/interface/statuslinectrl.cpp:198
 msgid "Transferring"
 msgstr "Transferitzen"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:105
+#: ../../locales/../src/interface/settingsdialog.cpp:108
 #, fuzzy
 msgid "Transfers"
 msgstr "Transferitzen"
@@ -4205,15 +4611,15 @@ msgstr "Erabili luzapenik &gabeko fitxategiak Ascii fitxategien eran"
 msgid "Treat the &following filetypes as Ascii files:"
 msgstr "Honako fitxategi-motak Ascii fitxategien eran erabili:"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:773
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:777
 msgid "Trust changed Hostkey: "
 msgstr ""
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:771
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:775
 msgid "Trust new Hostkey: "
 msgstr ""
 
-#: resources.h:276
+#: resources.h:300
 msgid "Trust the new key and carry on connecting?"
 msgstr "Gako berriari fidagarritasuna eman eta konexioarekin jarraitu?"
 
@@ -4223,12 +4629,20 @@ msgid "Trust this certificate and carry on connecting"
 msgstr ""
 "Ostalari edo gune honi fidagarritasuna eman eta konexioarekin jarraitu?"
 
-#: resources.h:264
+#: resources.h:288
 msgid "Trust this host and carry on connecting?"
 msgstr ""
 "Ostalari edo gune honi fidagarritasuna eman eta konexioarekin jarraitu?"
 
-#: resources.h:419
+#: ../../locales/../src/interface/edithandler.cpp:794
+msgid "Type"
+msgstr ""
+
+#: resources.h:227
+msgid "Type of FTP Proxy:"
+msgstr ""
+
+#: resources.h:444
 #, fuzzy
 msgid "U&pload"
 msgstr "&Gora kargatu"
@@ -4237,12 +4651,16 @@ msgstr "&Gora kargatu"
 msgid "U&pload limit:"
 msgstr ""
 
-#: resources.h:213
+#: resources.h:219
 msgid "U&se filetype associations if available"
 msgstr ""
 
-#: resources.h:188
+#: resources.h:194
 msgid "U&se system defaults"
+msgstr ""
+
+#: resources.h:229
+msgid "USER@&HOST"
 msgstr ""
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:122
@@ -4250,41 +4668,46 @@ msgstr ""
 msgid "Unit:"
 msgstr "Unix"
 
-#: ../../locales/../src/interface/edithandler.cpp:675
+#: ../../locales/../src/interface/edithandler.cpp:822
+#: ../../locales/../src/interface/edithandler.cpp:848
 #, fuzzy
 msgid "Unknown"
 msgstr "Tamaina ezezaguna"
+
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:725
+msgid "Unknown FTP proxy type, cannot generate login sequence."
+msgstr ""
 
 #: resources.h:5
 msgid "Unknown certificate"
 msgstr ""
 
-#: resources.h:257
+#: resources.h:281
 msgid "Unknown host key"
 msgstr "Ostalari edo gunearen gako ezezaguna"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:584
-#: ../../locales/../src/interface/netconfwizard.cpp:595
+#: ../../locales/../src/interface/netconfwizard.cpp:590
+#: ../../locales/../src/interface/netconfwizard.cpp:601
 msgid ""
 "Unless these problems get fixed, active mode FTP will not work and passive "
 "mode has to be used."
 msgstr ""
 
-#: ../../locales/../src/interface/netconfwizard.cpp:571
+#: ../../locales/../src/interface/netconfwizard.cpp:577
 msgid ""
 "Unless this problem gets fixed, active mode FTP will not work and passive "
 "mode has to be used."
 msgstr ""
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:633
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:649
 msgid "Unsuppored redirect"
 msgstr ""
 
-#: resources.h:420
+#: resources.h:445
 msgid "Up&load and unedit"
 msgstr ""
 
-#: ../../locales/../src/interface/settingsdialog.cpp:115
+#: ../../locales/../src/interface/settingsdialog.cpp:118
 msgid "Update Check"
 msgstr ""
 
@@ -4293,30 +4716,46 @@ msgstr ""
 msgid "Update wizard"
 msgstr ""
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1409
+#: ../../locales/../src/interface/Mainfrm.cpp:1457
 msgid "Updatecheck failed"
 msgstr ""
 
-#: resources.h:455
-msgid "Upload selected files and folders"
+#: resources.h:561
+#, fuzzy
+msgid "Upload selected directory"
+msgstr "Behera kargatu hautatutako fitxategiak eta karpetak"
+
+#: resources.h:486
+#, fuzzy
+msgid "Upload selected files and directories"
 msgstr "Gora kargatu hautatutako fitxategi eta karpetak"
 
-#: resources.h:411
+#: resources.h:436
 msgid "Upload this file back to the server?"
 msgstr ""
 
-#: ../../locales/../src/interface/edithandler.cpp:663
-#: ../../locales/../src/interface/edithandler.cpp:787
+#: resources.h:435
+msgid "Upload this file to the server?"
+msgstr ""
+
+#: ../../locales/../src/interface/edithandler.cpp:810
+#: ../../locales/../src/interface/edithandler.cpp:839
+#: ../../locales/../src/interface/edithandler.cpp:975
 #, fuzzy
 msgid "Uploading"
 msgstr "&Gora kargatu"
 
-#: ../../locales/../src/interface/edithandler.cpp:666
-#: ../../locales/../src/interface/edithandler.cpp:821
+#: ../../locales/../src/interface/edithandler.cpp:813
+#: ../../locales/../src/interface/edithandler.cpp:977
 msgid "Uploading and pending removal"
 msgstr ""
 
-#: resources.h:355 resources.h:374
+#: ../../locales/../src/interface/edithandler.cpp:842
+#: ../../locales/../src/interface/edithandler.cpp:979
+msgid "Uploading and unediting"
+msgstr ""
+
+#: resources.h:379 resources.h:398
 #, fuzzy
 msgid "Uploads"
 msgstr "&Gora kargatu"
@@ -4325,40 +4764,40 @@ msgstr "&Gora kargatu"
 msgid "Use &custom charset"
 msgstr "Erabili karaktere-multzo &pertsonalizatua"
 
-#: resources.h:348
+#: resources.h:372
 #, fuzzy
 msgid "Use &default"
 msgstr "L&ehenetsia"
 
-#: resources.h:356
+#: resources.h:380
 #, fuzzy
 msgid "Use d&efault"
 msgstr "L&ehenetsia"
 
-#: resources.h:182
+#: resources.h:188
 msgid "Use system &defaults"
 msgstr ""
 
-#: resources.h:321 resources.h:544
+#: resources.h:345 resources.h:593
 #, fuzzy
 msgid "Use the following IP address:"
 msgstr "honako fitxategiarekin?"
 
-#: resources.h:554
+#: resources.h:603
 #, fuzzy
 msgid "Use the following port range:"
 msgstr "honako fitxategiarekin?"
 
-#: resources.h:539
+#: resources.h:588
 msgid "Use the server's external IP address instead"
 msgstr ""
 
-#: resources.h:322 resources.h:545
+#: resources.h:346 resources.h:594
 msgid ""
 "Use this if you're behind a router and have a static external IP address."
 msgstr ""
 
-#: resources.h:548
+#: resources.h:597
 msgid ""
 "Use this option if you have a dynamic IP address. FileZilla will contact the "
 "above server once each session as soon as you use active mode for the first "
@@ -4376,6 +4815,11 @@ msgstr ""
 "UTF-8 erabiltzen du zerbitzariak onartzen badu,\n"
 "karaktere-multzo lokala bestela."
 
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4248
+#, c-format
+msgid "Using proxy %s"
+msgstr ""
+
 #: resources.h:108
 #, fuzzy
 msgid ""
@@ -4384,7 +4828,7 @@ msgstr ""
 "Karaktere-multzo okerra erabiliz gero fitxategi-izenak\n"
 "ez dira ongi bistaratuko."
 
-#: resources.h:327
+#: resources.h:351
 msgid "Using this wizard you can check for available updates to FileZilla."
 msgstr ""
 
@@ -4396,7 +4840,7 @@ msgstr ""
 msgid "Valid to:"
 msgstr ""
 
-#: ../../locales/../src/engine/tlssocket.cpp:922
+#: ../../locales/../src/engine/tlssocket.cpp:924
 msgid "Verifying certificate..."
 msgstr ""
 
@@ -4404,32 +4848,32 @@ msgstr ""
 msgid "Very high"
 msgstr ""
 
-#: resources.h:448
+#: resources.h:479
 msgid "View &hidden files"
 msgstr ""
 
-#: ../../locales/../src/interface/Mainfrm.cpp:623
+#: ../../locales/../src/interface/Mainfrm.cpp:624
 msgid "View hidden files"
 msgstr ""
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1031
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1117
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1293
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1383
 msgid "View hidden option set, but unsupported by server"
 msgstr ""
 
-#: resources.h:232
+#: resources.h:255
 msgid "W&rite"
 msgstr "I&datzi"
 
-#: ../../locales/../src/interface/QueueView.cpp:1558
+#: ../../locales/../src/interface/QueueView.cpp:1524
 msgid "Waiting"
 msgstr "Itxaroten"
 
-#: ../../locales/../src/interface/QueueView.cpp:1201
+#: ../../locales/../src/interface/QueueView.cpp:1167
 msgid "Waiting for browsing connection"
 msgstr ""
 
-#: ../../locales/../src/interface/QueueView.cpp:1222
+#: ../../locales/../src/interface/QueueView.cpp:1188
 #, fuzzy
 msgid "Waiting for password"
 msgstr "Eskatu pasahitza"
@@ -4443,7 +4887,7 @@ msgstr "Transferentzia bertan behera uzteko zain"
 msgid "Waiting to retry..."
 msgstr "'%s' direktorioa sortzen..."
 
-#: ../../locales/../src/interface/FileZilla.cpp:197
+#: ../../locales/../src/interface/FileZilla.cpp:252
 msgid ""
 "Warning!\n"
 "\n"
@@ -4460,7 +4904,7 @@ msgid ""
 "FileZilla will timeout on big transfers."
 msgstr ""
 
-#: ../../locales/../src/interface/netconfwizard.cpp:944
+#: ../../locales/../src/interface/netconfwizard.cpp:958
 msgid "Warning, ignoring data connection from wrong IP."
 msgstr ""
 
@@ -4473,7 +4917,7 @@ msgid ""
 "Do you really want to check for nightly builds?"
 msgstr ""
 
-#: resources.h:269
+#: resources.h:293
 msgid "Warning: Potential security breach!"
 msgstr "Abisua: Segurtasun-arazo posiblea!"
 
@@ -4481,31 +4925,31 @@ msgstr "Abisua: Segurtasun-arazo posiblea!"
 msgid "Widescreen"
 msgstr ""
 
-#: resources.h:236
+#: resources.h:259
 msgid "Wr&ite"
 msgstr "Id&atzi"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:425
-#: ../../locales/../src/interface/netconfwizard.cpp:432
+#: ../../locales/../src/interface/netconfwizard.cpp:431
+#: ../../locales/../src/interface/netconfwizard.cpp:438
 #, fuzzy
 msgid "Wrong external IP address"
 msgstr "&Kanpoko IP helbidea:"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:787
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:803
 msgid "Wrong lineendings"
 msgstr ""
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:784
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:788
 msgid "Yes"
 msgstr ""
 
-#: resources.h:342
+#: resources.h:366
 msgid ""
 "You are already using the most recent version of FileZilla. Please check "
 "again in future."
 msgstr ""
 
-#: resources.h:239
+#: resources.h:262
 msgid ""
 "You can use an x at any position to keep the permission the original files "
 "have."
@@ -4513,36 +4957,45 @@ msgstr ""
 "Jatorrizko fitxategien baimenak ezartzeko x hizkia erabili, nahi duzun "
 "posizioan kokatuz."
 
-#: ../../locales/../src/interface/asyncrequestqueue.cpp:226
+#: ../../locales/../src/interface/import.cpp:28
+msgid "You cannot import settings from FileZilla's own settings directory."
+msgstr ""
+
+#: ../../locales/../src/interface/asyncrequestqueue.cpp:229
 msgid "You did not enter a new name for the file. Overwrite the file instead?"
 msgstr ""
 "Ez duzu fitxategiarentzat izen berririk sartu. Fitxategia gainean idatzi?"
 
-#: ../../locales/../src/interface/sitemanager.cpp:520
+#: ../../locales/../src/interface/sitemanager.cpp:750
 #, fuzzy
 msgid "You have to enter a hostname."
 msgstr "Ostalaria edo gunea sartu mesedez."
 
-#: ../../locales/../src/interface/netconfwizard.cpp:144
+#: ../../locales/../src/interface/netconfwizard.cpp:147
 #: ../../locales/../src/interface/optionspage_connection_active.cpp:90
 msgid "You have to enter a valid IP address."
 msgstr ""
 
-#: ../../locales/../src/interface/sitemanager.cpp:581
+#: ../../locales/../src/interface/sitemanager.cpp:811
 msgid "You have to enter an account name"
 msgstr ""
 
-#: ../../locales/../src/interface/sitemanager.cpp:572
+#: ../../locales/../src/interface/sitemanager.cpp:802
 msgid "You have to specify a user name"
 msgstr ""
 
-#: ../../locales/../src/interface/netconfwizard.cpp:610
+#: ../../locales/../src/interface/netconfwizard.cpp:616
 msgid ""
 "You likely have a router or firewall which errorneously modified the "
 "transferred data."
 msgstr ""
 
-#: ../../locales/../src/interface/netconfwizard.cpp:557
+#: ../../locales/../src/interface/optionspage_ftpproxy.cpp:82
+#, fuzzy
+msgid "You need to enter a proxy host."
+msgstr "Ostalaria edo gunea sartu mesedez."
+
+#: ../../locales/../src/interface/netconfwizard.cpp:563
 msgid ""
 "You should have no problems connecting to other servers, file transfers "
 "should work properly."
@@ -4552,10 +5005,10 @@ msgstr ""
 msgid "begins with"
 msgstr ""
 
-#: ../../locales/../src/interface/fileexistsdlg.cpp:57
-#: ../../locales/../src/interface/fileexistsdlg.cpp:81
-#: ../../locales/../src/interface/fileexistsdlg.cpp:113
-#: ../../locales/../src/interface/fileexistsdlg.cpp:137
+#: ../../locales/../src/interface/fileexistsdlg.cpp:64
+#: ../../locales/../src/interface/fileexistsdlg.cpp:88
+#: ../../locales/../src/interface/fileexistsdlg.cpp:120
+#: ../../locales/../src/interface/fileexistsdlg.cpp:144
 msgid "bytes"
 msgstr "byte"
 
@@ -4572,18 +5025,16 @@ msgstr "Konpiladorea:"
 msgid "equals"
 msgstr "da"
 
-#: ../../locales/../src/interface/LocalListView.cpp:805
-#: ../../locales/../src/interface/LocalListView.cpp:823
-#: ../../locales/../src/interface/RemoteListView.cpp:1175
-#: ../../locales/../src/interface/RemoteListView.cpp:1193
+#: ../../locales/../src/interface/filelistctrl.cpp:307
+#: ../../locales/../src/interface/filelistctrl.cpp:325
 msgid "file"
 msgstr "fitxategia"
 
-#: ../../locales/../src/interface/edithandler.cpp:80
+#: ../../locales/../src/interface/edithandler.cpp:81
 msgid "fz3temp-lockfile"
 msgstr ""
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1317
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1361
 msgid "fzsftp could not be started"
 msgstr "Ezin da fzsftp prozesua abiarazi"
 
@@ -4595,13 +5046,6 @@ msgstr "handiago"
 msgid "is equal to"
 msgstr "berdin"
 
-#: ../../locales/../src/interface/edithandler.cpp:748
-#: ../../locales/../src/interface/edithandler.cpp:784
-#: ../../locales/../src/interface/edithandler.cpp:818
-#: ../../locales/../src/interface/edithandler.cpp:852
-msgid "item not found"
-msgstr ""
-
 #: ../../locales/../src/interface/filteredit.cpp:63
 msgid "less than"
 msgstr "txikiago"
@@ -4610,7 +5054,7 @@ msgstr "txikiago"
 msgid "matches regex"
 msgstr "adierazpen erregularrarekin bat dator"
 
-#: resources.h:220
+#: resources.h:226
 msgid "png \"c:\\program files\\viewer\\viewer.exe\" -open"
 msgstr ""
 
@@ -4621,6 +5065,9 @@ msgstr "themes.xml fitxategia falta da, ezin da gaiaren datua lortu"
 #: resources.h:49
 msgid "with the following file?"
 msgstr "honako fitxategiarekin?"
+
+#~ msgid "Can't write data to file, disk is full."
+#~ msgstr "Ezin fitxategian idatzi, diskoa beteta dago."
 
 #~ msgid "Could not establish passive connection to server"
 #~ msgstr "Ezin da zerbitzariarekin konexio pasiboa ezarri"
