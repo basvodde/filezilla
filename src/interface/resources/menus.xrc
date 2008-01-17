@@ -123,7 +123,7 @@
     <object class="wxMenuItem" name="ID_UPLOAD">
       <label>&amp;Upload</label>
       <bitmap stock_id="ART_UPLOAD"></bitmap>
-      <help>Upload selected files and folders</help>
+      <help>Upload selected files and directories</help>
     </object>
     <object class="wxMenuItem" name="ID_ADDTOQUEUE">
       <label>&amp;Add files to queue</label>
@@ -147,18 +147,18 @@
     <object class="separator"/>
     <object class="wxMenuItem" name="ID_DELETE">
       <label>&amp;Delete</label>
-      <help>Delete selected files and folders</help>
+      <help>Delete selected files and directories</help>
     </object>
     <object class="wxMenuItem" name="ID_RENAME">
       <label>&amp;Rename</label>
-      <help>Rename selected files and folders</help>
+      <help>Rename selected files and directories</help>
     </object>
   </object>
   <object class="wxMenu" name="ID_MENU_REMOTEFILELIST">
     <object class="wxMenuItem" name="ID_DOWNLOAD">
       <label>&amp;Download</label>
       <bitmap stock_id="ART_DOWNLOAD"></bitmap>
-      <help>Download selected files and folders</help>
+      <help>Download selected files and directories</help>
     </object>
     <object class="wxMenuItem" name="ID_ADDTOQUEUE">
       <label>&amp;Add files to queue</label>
@@ -176,11 +176,11 @@
     <object class="separator"/>
     <object class="wxMenuItem" name="ID_DELETE">
       <label>D&amp;elete</label>
-      <help>Delete selected files and folders</help>
+      <help>Delete selected files and directories</help>
     </object>
     <object class="wxMenuItem" name="ID_RENAME">
       <label>&amp;Rename</label>
-      <help>Rename selected files and folders</help>
+      <help>Rename selected files and directories</help>
     </object>
     <object class="wxMenuItem" name="ID_CHMOD">
       <label>&amp;File Attributes...</label>
@@ -320,7 +320,7 @@
       <help>Download selected directory</help>
     </object>
     <object class="wxMenuItem" name="ID_ADDTOQUEUE">
-      <label>&amp;Add files to queue</label>
+      <label>&amp;Add to queue</label>
       <bitmap stock_id="ART_DOWNLOADADD"></bitmap>
       <help>Add selected directory to the transfer queue</help>
     </object>
@@ -357,6 +357,32 @@
     <object class="wxMenuItem" name="ID_COMPARE_DATE">
       <label>Compare &amp;modification time</label>
       <radio>1</radio>
+    </object>
+  </object>
+  <object class="wxMenu" name="ID_MENU_LOCALTREE">
+    <object class="wxMenuItem" name="ID_UPLOAD">
+      <label>&amp;Upload</label>
+      <bitmap stock_id="ART_UPLOAD"></bitmap>
+      <help>Upload selected directory</help>
+    </object>
+    <object class="wxMenuItem" name="ID_ADDTOQUEUE">
+      <label>&amp;Add to queue</label>
+      <bitmap stock_id="ART_UPLOADADD"></bitmap>
+      <help>Add selected directory to the transfer queue</help>
+    </object>
+    <object class="separator"/>
+    <object class="wxMenuItem" name="ID_MKDIR">
+      <label>&amp;Create directory</label>
+      <help>Create a new subdirectory in the current directory</help>
+    </object>
+    <object class="separator"/>
+    <object class="wxMenuItem" name="ID_DELETE">
+      <label>&amp;Delete</label>
+      <help>Delete selected directory</help>
+    </object>
+    <object class="wxMenuItem" name="ID_RENAME">
+      <label>&amp;Rename</label>
+      <help>Rename selected directory</help>
     </object>
   </object>
 </resource>

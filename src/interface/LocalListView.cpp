@@ -1402,10 +1402,13 @@ void CLocalListView::OnKeyDown(wxKeyEvent& event)
 
 void CLocalListView::OnBeginLabelEdit(wxListEvent& event)
 {
-	if (!m_hasParent)
+	if (!m_pState->LocalDirIsWriteable(m_dir))
+	{
+		event.Veto();
 		return;
+	}
 
-	if (event.GetIndex() == 0)
+	if (event.GetIndex() == 0 && m_hasParent)
 	{
 		event.Veto();
 		return;
@@ -1419,12 +1422,63 @@ void CLocalListView::OnBeginLabelEdit(wxListEvent& event)
 	}
 }
 
+bool Rename(wxWindow* parent, wxString dir, wxString from, wxString to)
+{
+	if (dir.Right(1) != _T("\\") && dir.Right(1) != _T("/"))
+		dir += wxFileName::GetPathSeparator();
+
+#ifdef __WXMSW__
+	to = to.Left(255);
+
+	if ((to.Find('/') != -1) ||
+		(to.Find('\\') != -1) ||
+		(to.Find(':') != -1) ||
+		(to.Find('*') != -1) ||
+		(to.Find('?') != -1) ||
+		(to.Find('"') != -1) ||
+		(to.Find('<') != -1) ||
+		(to.Find('>') != -1) ||
+		(to.Find('|') != -1))
+	{
+		wxMessageBox(_("Filenames may not contain any of the following characters: / \\ : * ? \" < > |"), _("Invalid filename"), wxICON_EXCLAMATION);
+		return false;
+	}
+
+	SHFILEOPSTRUCT op;
+	memset(&op, 0, sizeof(op));
+
+	from = dir + from + _T(" ");
+	from.SetChar(from.Length() - 1, '\0');
+	op.pFrom = from;
+	to = dir + to + _T(" ");
+	to.SetChar(to.Length()-1, '\0');
+	op.pTo = to;
+	op.hwnd = (HWND)parent->GetHandle();
+	op.wFunc = FO_RENAME;
+	op.fFlags = FOF_ALLOWUNDO;
+	return SHFileOperation(&op) == 0;
+#else
+	if ((to.Find('/') != -1) ||
+		(to.Find('*') != -1) ||
+		(to.Find('?') != -1) ||
+		(to.Find('<') != -1) ||
+		(to.Find('>') != -1) ||
+		(to.Find('|') != -1))
+	{
+		wxMessageBox(_("Filenames may not contain any of the following characters: / * ? < > |"), _("Invalid filename"), wxICON_EXCLAMATION);
+		return false;
+	}
+
+	return wxRename(dir + from, dir + to);
+#endif
+}
+
 void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 {
 	if (event.IsEditCancelled())
 		return;
 
-	int index = event.GetIndex();
+	const int index = event.GetIndex();
 	if (!index && m_hasParent)
 	{
 		event.Veto();
@@ -1432,6 +1486,12 @@ void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 	}
 
 	if (event.GetLabel() == _T(""))
+	{
+		event.Veto();
+		return;
+	}
+
+	if (!m_pState->LocalDirIsWriteable(m_dir))
 	{
 		event.Veto();
 		return;
@@ -1445,68 +1505,20 @@ void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 	}	
 
 	wxString newname = event.GetLabel();
+#ifdef __WXMSW__
+	newname = newname.Left(255);
+#endif
 
 	if (newname == data->name)
 		return;
 
-#ifdef __WXMSW__
-	newname = newname.Left(255);
-
-	if ((newname.Find('/') != -1) ||
-		(newname.Find('\\') != -1) ||
-		(newname.Find(':') != -1) ||
-		(newname.Find('*') != -1) ||
-		(newname.Find('?') != -1) ||
-		(newname.Find('"') != -1) ||
-		(newname.Find('<') != -1) ||
-		(newname.Find('>') != -1) ||
-		(newname.Find('|') != -1))
-	{
-		wxMessageBox(_("Filenames may not contain any of the following characters: / \\ : * ? \" < > |"), _("Invalid filename"), wxICON_EXCLAMATION);
-		event.Veto();
-		return;
-	}
-
-	SHFILEOPSTRUCT op;
-	memset(&op, 0, sizeof(op));
-
-	wxString dir = m_dir;
-	if (dir.Right(1) != _T("\\") && dir.Right(1) != _T("/"))
-		dir += _T("\\");
-	wxString from = dir + data->name + _T(" ");
-	from.SetChar(from.Length() - 1, '\0');
-	op.pFrom = from;
-	wxString to = dir + newname + _T(" ");
-	to.SetChar(to.Length()-1, '\0');
-	op.pTo = to;
-	op.hwnd = (HWND)GetHandle();
-	op.wFunc = FO_RENAME;
-	op.fFlags = FOF_ALLOWUNDO;
-	if (SHFileOperation(&op))
+	if (!Rename(this, m_dir, data->name, newname))
 		event.Veto();
 	else
-		data->name = newname;
-#else
-	if ((newname.Find('/') != -1) ||
-		(newname.Find('*') != -1) ||
-		(newname.Find('?') != -1) ||
-		(newname.Find('<') != -1) ||
-		(newname.Find('>') != -1) ||
-		(newname.Find('|') != -1))
 	{
-		wxMessageBox(_("Filenames may not contain any of the following characters: / * ? < > |"), _("Invalid filename"), wxICON_EXCLAMATION);
-		event.Veto();
-		return;
-	}
-
-	wxString dir = m_dir;
-	if (dir.Right(1) != _T("\\") && dir.Right(1) != _T("/"))
-		dir += _T("\\");
-	if (wxRename(dir + data->name, dir + newname))
 		data->name = newname;
-	else
-		event.Veto();
-#endif
+		m_pState->RefreshLocal();
+	}
 }
 
 void CLocalListView::ApplyCurrentFilter()

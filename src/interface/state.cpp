@@ -595,7 +595,7 @@ bool CState::LocalDirHasParent(const wxString& dir)
 		if (pos == -1 || pos + 3 == (int)dir.Len())
 			return false;
 	}
-	if (dir == _T("\\"))
+	if (dir == _T("\\") || dir == _T("//"))
 		return false;
 #endif
 
@@ -608,7 +608,7 @@ bool CState::LocalDirHasParent(const wxString& dir)
 bool CState::LocalDirIsWriteable(const wxString& dir)
 {
 #ifdef __WXMSW__
-	if (dir == _T("\\"))
+	if (dir == _T("\\") || dir == _T("//"))
 		return false;
 
 	if (dir.Left(2) == _T("\\\\"))

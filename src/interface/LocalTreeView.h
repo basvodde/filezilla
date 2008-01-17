@@ -55,13 +55,21 @@ protected:
 	void OnVolumesEnumerated(wxCommandEvent& event);
 	CVolumeDescriptionEnumeratorThread* m_pVolumeEnumeratorThread;
 #endif
-
+	void OnContextMenu(wxTreeEvent& event);
+	void OnMenuUpload(wxCommandEvent& event);
+	void OnMenuMkdir(wxCommandEvent& event);
+	void OnMenuRename(wxCommandEvent& event);
+	void OnMenuDelete(wxCommandEvent& event);
+	void OnBeginLabelEdit(wxTreeEvent& event);
+	void OnEndLabelEdit(wxTreeEvent& event);
+	
 	wxString GetDirFromItem(wxTreeItemId item);
 
 	CQueueView* m_pQueueView;
 
 	bool m_setSelection;
 
+	wxTreeItemId m_contextMenuItem;
 	wxTreeItemId m_dropHighlight;
 };
 

@@ -5,6 +5,7 @@
 #include "filter.h"
 #include <wx/dnd.h>
 #include "dndobjects.h"
+#include "inputdialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -193,6 +194,14 @@ EVT_KEY_DOWN(CLocalTreeView::OnKeyDown)
 #else
 EVT_COMMAND(-1, fzEVT_VOLUMESENUMERATED, CLocalTreeView::OnVolumesEnumerated)
 #endif //__WXMSW__
+EVT_TREE_ITEM_MENU(wxID_ANY, CLocalTreeView::OnContextMenu)
+EVT_MENU(XRCID("ID_UPLOAD"), CLocalTreeView::OnMenuUpload)
+EVT_MENU(XRCID("ID_ADDTOQUEUE"), CLocalTreeView::OnMenuUpload)
+EVT_MENU(XRCID("ID_DELETE"), CLocalTreeView::OnMenuDelete)
+EVT_MENU(XRCID("ID_RENAME"), CLocalTreeView::OnMenuRename)
+EVT_MENU(XRCID("ID_MKDIR"), CLocalTreeView::OnMenuMkdir)
+EVT_TREE_BEGIN_LABEL_EDIT(wxID_ANY, CLocalTreeView::OnBeginLabelEdit)
+EVT_TREE_END_LABEL_EDIT(wxID_ANY, CLocalTreeView::OnEndLabelEdit)
 END_EVENT_TABLE()
 
 CLocalTreeView::CLocalTreeView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView *pQueueView)
@@ -1191,3 +1200,384 @@ std::list<CVolumeDescriptionEnumeratorThread::t_VolumeInfo> CVolumeDescriptionEn
 }
 
 #endif
+
+void CLocalTreeView::OnContextMenu(wxTreeEvent& event)
+{
+	m_contextMenuItem = event.GetItem();
+	if (!m_contextMenuItem.IsOk())
+		return;
+
+	wxMenu* pMenu = wxXmlResource::Get()->LoadMenu(_T("ID_MENU_LOCALTREE"));
+	if (!pMenu)
+		return;
+
+	const wxString& path = GetDirFromItem(m_contextMenuItem);
+
+	bool hasParent = m_pState->LocalDirHasParent(path);
+	const bool writeable = m_pState->LocalDirIsWriteable(path);
+#ifdef __WXMSW__
+	if (path.Len() == 3 && path.Mid(1) == _T(":\\"))
+		hasParent = false;
+#endif
+	const bool remoteConnected = m_pState->IsRemoteConnected() && !m_pState->GetRemotePath().IsEmpty();
+
+	pMenu->Enable(XRCID("ID_UPLOAD"), hasParent && remoteConnected);
+	pMenu->Enable(XRCID("ID_ADDTOQUEUE"), hasParent && remoteConnected);
+	pMenu->Enable(XRCID("ID_MKDIR"), writeable);
+	pMenu->Enable(XRCID("ID_DELETE"), writeable && hasParent);
+	pMenu->Enable(XRCID("ID_RENAME"), writeable && hasParent);
+
+	PopupMenu(pMenu);
+	delete pMenu;
+}
+
+void CLocalTreeView::OnMenuUpload(wxCommandEvent& event)
+{
+	if (!m_contextMenuItem.IsOk())
+		return;
+
+	wxString path = GetDirFromItem(m_contextMenuItem);
+
+	if (!m_pState->LocalDirHasParent(path))
+		return;
+	
+#ifdef __WXMSW__
+	if (path.Len() == 3 && path.Mid(1) == _T(":\\"))
+		return;
+#endif
+	
+	if (!m_pState->IsRemoteConnected())
+		return;
+
+	const CServer server = *m_pState->GetServer();
+	CServerPath remotePath = m_pState->GetRemotePath();
+	if (remotePath.IsEmpty())
+		return;
+
+	if (!remotePath.ChangePath(GetItemText(m_contextMenuItem)))
+		return;
+
+	if (path.Last() == wxFileName::GetPathSeparator())
+		path.RemoveLast();
+	m_pQueueView->QueueFolder(event.GetId() == XRCID("ID_ADDTOQUEUE"), false, path, remotePath, server);
+}
+
+void CLocalTreeView::OnMenuMkdir(wxCommandEvent& event)
+{
+	if (!m_contextMenuItem.IsOk())
+		return;
+
+	wxString path = GetDirFromItem(m_contextMenuItem);
+	if (path.Last() != wxFileName::GetPathSeparator())
+		path += wxFileName::GetPathSeparator();
+
+	if (!m_pState->LocalDirIsWriteable(path))
+	{
+		wxBell();
+		return;
+	}
+
+	CInputDialog dlg;
+	if (!dlg.Create(this, _("Create directory"), _("Please enter the name of the directory which should be created:")))
+		return;
+
+	wxString newName = _("New directory");
+	dlg.SetValue(path + newName);
+	dlg.SelectText(path.Len(), path.Len() + newName.Len());
+
+	if (dlg.ShowModal() != wxID_OK)
+		return;
+
+	wxFileName fn(dlg.GetValue(), _T(""));
+	if (!fn.Normalize(wxPATH_NORM_ALL, path))
+	{
+		wxBell();
+		return;
+	}
+
+	bool res;
+	{
+		wxLogNull log;
+		res = fn.Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
+	}
+
+	if (!res)
+		wxBell();
+
+	Refresh();
+	m_pState->RefreshLocal();
+}
+
+void CLocalTreeView::OnMenuRename(wxCommandEvent& event)
+{
+	if (!m_contextMenuItem.IsOk())
+		return;
+	
+#ifdef __WXMSW__
+	if (m_contextMenuItem == m_desktop || m_contextMenuItem == m_documents)
+	{
+		wxBell();
+		return;
+	}
+#endif
+
+	wxString path = GetDirFromItem(m_contextMenuItem);
+
+#ifdef __WXMSW__
+	if (path.Len() == 3 && path.Mid(1) == _T(":\\"))
+	{
+		wxBell();
+		return;
+	}
+#endif
+	if (!m_pState->LocalDirHasParent(path) || !m_pState->LocalDirIsWriteable(path))
+	{
+		wxBell();
+		return;
+	}
+
+	EditLabel(m_contextMenuItem);
+}
+
+void CLocalTreeView::OnMenuDelete(wxCommandEvent& event)
+{
+	if (!m_contextMenuItem.IsOk())
+		return;
+
+	wxString path = GetDirFromItem(m_contextMenuItem);
+
+	if (!m_pState->LocalDirHasParent(path) || !m_pState->LocalDirIsWriteable(path))
+		return;
+	
+#ifdef __WXMSW__
+	if (path.Len() == 3 && path.Mid(1) == _T(":\\"))
+		return;
+#endif
+
+	// Under Windows use SHFileOperation to delete files and directories.
+	// Under other systems, we have to recurse into subdirectories manually
+	// to delete all contents.
+
+#ifdef __WXMSW__
+	// SHFileOperation accepts a list of null-terminated strings. Go through all
+	// items to get the required buffer length
+
+	if (path.Last() == wxFileName::GetPathSeparator())
+		path.RemoveLast();
+
+	int len = path.Len() + 2;
+
+	// Allocate memory
+	wxChar* pBuffer = new wxChar[len];
+	_tcscpy(pBuffer, path);
+	pBuffer[len - 1] = 0;
+
+	// Now we can delete the files in the buffer
+	SHFILEOPSTRUCT op;
+	memset(&op, 0, sizeof(op));
+	op.hwnd = (HWND)GetHandle();
+	op.wFunc = FO_DELETE;
+	op.pFrom = pBuffer;
+
+	// Move to trash if shift is not pressed, else delete
+	op.fFlags = wxGetKeyState(WXK_SHIFT) ? 0 : FOF_ALLOWUNDO;
+
+	SHFileOperation(&op);
+	
+	delete [] pBuffer;
+#else
+	if (wxMessageBox(_("Really delete all selected files and/or directories?"), _("Confirmation needed"), wxICON_QUESTION | wxYES_NO, this) != wxYES)
+		return;
+
+	// Remember the directories to delete and the directories to visit
+	std::list<wxString> dirsToDelete;
+	std::list<wxString> dirsToVisit;
+
+	if (path.Last() != wxFileName::GetPathSeparator())
+		path += wxFileName::GetPathSeparator();
+
+	dirsToVisit.push_back(path);
+	dirsToDelete.push_front(path);
+
+	// Process any subdirs which still have to be visited
+	while (!dirsToVisit.empty())
+	{
+		wxString filename = dirsToVisit.front();
+		dirsToVisit.pop_front();
+		wxDir dir;
+		if (!dir.Open(filename))
+			continue;
+
+		wxString file;
+		for (bool found = dir.GetFirst(&file); found; found = dir.GetNext(&file))
+		{
+			if (file == _T(""))
+			{
+				wxGetApp().DisplayEncodingWarning();
+				continue;
+			}
+			if (wxFileName::DirExists(filename + file))
+			{
+				wxString subDir = filename + file + wxFileName::GetPathSeparator();
+				dirsToVisit.push_back(subDir);
+				dirsToDelete.push_front(subDir);
+			}
+			else
+				wxRemoveFile(filename + file);
+		}
+	}
+
+	// Delete the now empty directories
+	for (std::list<wxString>::const_iterator iter = dirsToDelete.begin(); iter != dirsToDelete.end(); iter++)
+		wxRmdir(*iter);
+
+#endif
+
+	wxTreeItemId item = GetSelection();
+	while (item && item != m_contextMenuItem)
+		item = GetItemParent(item);
+
+	if (!item)
+	{
+		if (GetItemParent(m_contextMenuItem) == GetSelection())
+			m_pState->RefreshLocal();
+		else
+			Refresh();
+		return;
+	}
+
+	if (path.Last() == wxFileName::GetPathSeparator())
+		path.RemoveLast();
+	int pos = path.Find(wxFileName::GetPathSeparator(), true);
+	if (pos < 1)
+		path = _T("/");
+	else
+		path = path.Left(pos);
+
+	m_pState->SetLocalDir(path);
+	Refresh();
+}
+
+void CLocalTreeView::OnBeginLabelEdit(wxTreeEvent& event)
+{
+	wxTreeItemId item = event.GetItem();
+
+#ifdef __WXMSW__
+	if (item == m_desktop || item == m_documents)
+	{
+		wxBell();
+		event.Veto();
+		return;
+	}
+#endif
+
+	wxString path = GetDirFromItem(item);
+
+#ifdef __WXMSW__
+	if (path.Len() == 3 && path.Mid(1) == _T(":\\"))
+	{
+		wxBell();
+		event.Veto();
+		return;
+	}
+#endif
+	if (!m_pState->LocalDirHasParent(path) || !m_pState->LocalDirIsWriteable(path))
+	{
+		wxBell();
+		event.Veto();
+		return;
+	}
+}
+
+// Defined in LocalListView.cpp
+extern bool Rename(wxWindow* pWnd, wxString dir, wxString from, wxString to);
+
+void CLocalTreeView::OnEndLabelEdit(wxTreeEvent& event)
+{
+	if (event.IsEditCancelled())
+	{
+		event.Veto();
+		return;
+	}
+
+	wxTreeItemId item = event.GetItem();
+
+#ifdef __WXMSW__
+	if (item == m_desktop || item == m_documents)
+	{
+		wxBell();
+		event.Veto();
+		return;
+	}
+#endif
+
+	wxString path = GetDirFromItem(item);
+
+#ifdef __WXMSW__
+	if (path.Len() == 3 && path.Mid(1) == _T(":\\"))
+	{
+		wxBell();
+		event.Veto();
+		return;
+	}
+#endif
+	if (!m_pState->LocalDirHasParent(path) || !m_pState->LocalDirIsWriteable(path))
+	{
+		wxBell();
+		event.Veto();
+		return;
+	}
+
+	if (path.Last() == wxFileName::GetPathSeparator())
+		path.RemoveLast();
+
+	int pos = path.Find(wxFileName::GetPathSeparator(), true);
+	wxASSERT(pos != -1);
+    
+	wxString parent = path.Left(pos + 1);
+
+	const wxString& oldName = GetItemText(item);
+	const wxString& newName = event.GetLabel();
+
+	wxASSERT(parent + oldName == path);
+
+	if (oldName == newName)
+		return;
+
+	if (!Rename(this, parent, oldName, newName))
+	{
+		event.Veto();
+		return;
+	}
+
+	wxTreeItemId currentSel = GetSelection();
+	if (currentSel == wxTreeItemId())
+	{
+		Refresh();
+		return;
+	}
+
+	if (item == currentSel)
+	{
+		m_pState->SetLocalDir(parent + newName);
+		return;
+	}
+
+	wxString sub;
+
+	wxTreeItemId tmp = currentSel;
+	while (tmp != GetRootItem() && tmp != item)
+	{
+		sub = wxFileName::GetPathSeparator() + GetItemText(tmp) + sub;
+		tmp = GetItemParent(tmp);
+	}
+	
+	if (tmp == GetRootItem())
+	{
+		// Rename unrelated to current selection
+		return;
+	}
+
+	// Current selection below renamed item
+	m_pState->SetLocalDir(parent + newName + sub);
+}

@@ -1191,7 +1191,7 @@ void CRemoteTreeView::OnMkdir(wxCommandEvent& event)
 		wxString pathName = newPath.GetPath();
 		int pos = pathName.Find(tmpName);
 		wxASSERT(pos != -1);
-		wxString newName = _("New folder");
+		wxString newName = _("New directory");
 		pathName.Replace(tmpName, newName);
 		dlg.SetValue(pathName);
 		dlg.SelectText(pos, pos + newName.Length());
