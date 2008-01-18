@@ -2624,9 +2624,9 @@ void CQueueView::ActionAfter(bool warned /*=false*/)
 		}
 		case ActionAfterState_ShowMessage:
 		{
-			wxMessageDialog* dialog = new wxMessageDialog(m_pMainFrame, _T("No more files in the queue!"), _T("Queue completion"), wxOK | wxICON_INFORMATION);
-			dialog->ShowModal();
+			wxMessageDialog* dialog = new wxMessageDialog(m_pMainFrame, _("No more files in the queue!"), _T("Queue completion"), wxOK | wxICON_INFORMATION);
 			m_pMainFrame->RequestUserAttention(wxUSER_ATTENTION_ERROR);
+			dialog->ShowModal();
 			break;
 		}
 		case ActionAfterState_PlaySound:
@@ -2639,7 +2639,10 @@ void CQueueView::ActionAfter(bool warned /*=false*/)
 		case ActionAfterState_Reboot:
 		{
 			if (!warned)
-				ActionAfterWarnUser(_T("The system will soon reboot unless you press cancel."));
+			{
+				ActionAfterWarnUser(false);
+				return;
+			}
 			else
 				wxShutdown(wxSHUTDOWN_REBOOT);
 			break;
@@ -2648,7 +2651,10 @@ void CQueueView::ActionAfter(bool warned /*=false*/)
 		case ActionAfterState_Shutdown:
 		{
 			if (!warned)
-				ActionAfterWarnUser(_T("The system will soon shutdown unless you press cancel."));
+			{
+				ActionAfterWarnUser(true);
+				return;
+			}
 			else
 				wxShutdown(wxSHUTDOWN_POWEROFF);
 			break;
@@ -2662,14 +2668,32 @@ void CQueueView::ActionAfter(bool warned /*=false*/)
 }
 
 #ifdef __WXMSW__
-void CQueueView::ActionAfterWarnUser(wxString message)
+void CQueueView::ActionAfterWarnUser(bool shutdown)
 {
 	if (m_actionAfterWarnDialog != NULL)
 		return;
 
-	m_actionAfterWarnDialog = new wxProgressDialog(_T("Queue completion dialog"), message, 150, m_pMainFrame, wxPD_CAN_ABORT | wxPD_AUTO_HIDE | wxPD_CAN_SKIP | wxPD_APP_MODAL);
+	wxString message;
+	if (shutdown)
+		message = _("The system will soon shutdown unless you press cancel.");
+	else
+		message = _("The system will soon reboot unless you press cancel.");;
+
+	m_actionAfterWarnDialog = new wxProgressDialog(_("Queue has been fulled processed"), message, 150, m_pMainFrame, wxPD_CAN_ABORT | wxPD_AUTO_HIDE | wxPD_CAN_SKIP | wxPD_APP_MODAL);
 	wxSize dialogSize = m_actionAfterWarnDialog->GetSize();
-	m_actionAfterWarnDialog->SetSize(dialogSize.GetWidth() / 2, dialogSize.GetHeight());
+
+	// Magic id from wxWidgets' src/generic/propdlgg.cpp
+	wxWindow* pSkip = m_actionAfterWarnDialog->FindWindow(32000);
+	if (pSkip)
+	{
+		if (!shutdown)
+			pSkip->SetLabel(_("Reboot now"));
+		else
+			pSkip->SetLabel(_("Shutdown now"));
+	}
+
+	CWrapEngine engine;
+	engine.WrapRecursive(m_actionAfterWarnDialog, 2);
 	m_actionAfterWarnDialog->CentreOnParent();
 	m_actionAfterWarnDialog->SetFocus();
 	m_pMainFrame->RequestUserAttention(wxUSER_ATTENTION_ERROR);

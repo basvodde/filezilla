@@ -148,7 +148,7 @@ protected:
 	bool IsActionAfter(enum ActionAfterState);
 	void ActionAfter(bool warned = false);
 #ifdef __WXMSW__
-	void ActionAfterWarnUser(wxString message);
+	void ActionAfterWarnUser(bool shutdown);
 #endif
 
 	void ProcessNotification(t_EngineData* pEngineData, CNotification* pNotification);
