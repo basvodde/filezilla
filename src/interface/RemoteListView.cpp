@@ -1843,6 +1843,7 @@ void CRemoteListView::RepositionInfoText()
 	}
 
 	m_pInfoText->SetSize(rect);
+	m_pInfoText->Refresh(false);
 }
 
 void CRemoteListView::OnStateChange(unsigned int event, const wxString& data)
