@@ -636,7 +636,6 @@ msgstr "'%s' konnte nicht gefunden werden oder es war kein Zugriff möglich."
 msgid "'Account' logontype not supported by selected protocol"
 msgstr "Anmeldung via 'Konto' wird vom gewählten Protokoll nicht unterstützt."
 
-# TODO
 #: ../../locales/../src/interface/Mainfrm.cpp:571
 msgid ""
 "'quote' is usually a local command used by commandline clients to send the "
@@ -644,7 +643,7 @@ msgid ""
 "command without the leading 'quote'."
 msgstr ""
 "'quote' ist normalerweise ein lokales Kommando, das Befehlszeilen-Clients "
-"verwenden, um den Inhalt welcher dem 'quote' folgt an den Server zu senden. "
+"verwenden, um die Argumente die auf 'quote' folgen unverarbeitet an den Server zu senden. "
 "Wollen Sie nicht vielmehr den Befehl ohne 'quote' senden?"
 
 #: resources.h:28 resources.h:30
@@ -1170,7 +1169,6 @@ msgstr "Kategorien"
 msgid "Certificate issuer"
 msgstr "Herausgeber des Zertifikats"
 
-# TODO: Better word?
 #: resources.h:117
 msgid "Challenge:"
 msgstr "Aufforderung:"
@@ -1203,10 +1201,9 @@ msgstr "Nach neueren FileZilla-Versionen suchen"
 msgid "Check for updates"
 msgstr "Nach Updates suchen"
 
-# TODO: ? Externe IP-Adresse auf Korrektheit überprüfen
 #: ../../locales/../src/interface/netconfwizard.cpp:759
 msgid "Checking for correct external IP address"
-msgstr "Suche nach korrekter externer IP-Adresse"
+msgstr "Überprüfe Korrektheit der externen IP-Adresse"
 
 #: resources.h:352
 msgid "Checking for updates"
@@ -1725,15 +1722,13 @@ msgstr "Standard-Transfertyp:"
 msgid "Default: http://ip.filezilla-project.org/ip.php"
 msgstr "Standard: http://ip.filezilla-project.org/ip.php"
 
-# TODO
 #: ../../locales/../src/interface/optionspage_connection.cpp:53
 msgid ""
 "Delay between failed connection attempts has to be between 1 and 999 seconds."
 msgstr ""
-"Die Verzögerung zwischen fehlerhaften Verbindungsversuchen muss zwischen 1 "
+"Die Verzögerung nach fehlerhaften Verbindungsversuchen muss zwischen 1 "
 "und 999 Sekunden liegen."
 
-# TODO
 #: resources.h:163
 msgid "Delay between failed login attempts:"
 msgstr "Verzögerung zwischen ungültigen Login-Versuchen:"
@@ -1969,15 +1964,13 @@ msgstr ""
 msgid "Email:"
 msgstr "E-Mail:"
 
-# TODO:? Leerer Befehl
 #: ../../locales/../src/interface/QueueView.cpp:1971
 msgid "Empty command"
-msgstr "Leeres Kommando"
+msgstr "Leerer Befehl"
 
-# TODO:? Leerer Befehl.
 #: ../../locales/../src/interface/optionspage_edit.cpp:147
 msgid "Empty command."
-msgstr "Leeres Kommando."
+msgstr "Leerer Befehl."
 
 #: ../../locales/../src/interface/RemoteListView.cpp:1869
 msgid "Empty directory listing"
@@ -1987,21 +1980,19 @@ msgstr "Leeres Verzeichnis"
 msgid "Empty file extension."
 msgstr "Leere Dateierweiterung."
 
-# TODO
 #: ../../locales/../src/interface/filteredit.cpp:388
 #: ../../locales/../src/interface/filteredit.cpp:431
 msgid "Empty filter names are not allowed."
-msgstr "Geben Sie einen nicht leeren Filter an."
+msgstr "Geben Sie einen nicht-leeren Namen für den Filter an."
 
 #: ../../locales/../src/interface/filteredit.cpp:388
 #: ../../locales/../src/interface/filteredit.cpp:431
 msgid "Empty name"
 msgstr "Leerer Name"
 
-# TODO
 #: ../../locales/../src/interface/optionspage_edit.cpp:115
 msgid "Empty quoted string."
-msgstr "Leere Zeichenkette."
+msgstr "Leere Zeichenkette innerhalb der Anführungszeichen."
 
 #: resources.h:313
 msgid "En&able all"
@@ -2165,15 +2156,13 @@ msgstr ""
 "Das FTP-Protokoll verwended sekundäre Verbindungen für den Datentransfer. "
 "Diese zusätzlichen Verbindungen können auf zwei Arten aufgebaut werden."
 
-# TODO:? über
 #: ../../locales/../src/engine/server.cpp:17
 msgid "FTPES - FTP over explicit TLS/SSL"
-msgstr "FTPES - FTP durch explizites TLS/SSL"
+msgstr "FTPES - FTP über explizites TLS/SSL"
 
-# TODO:? über
 #: ../../locales/../src/engine/server.cpp:16
 msgid "FTPS - FTP over implicit TLS/SSL"
-msgstr "FTPS - FTP durch implizites TLS/SSL"
+msgstr "FTPS - FTP über implizites TLS/SSL"
 
 #: ../../locales/../src/interface/LocalListView.cpp:584
 #: ../../locales/../src/interface/LocalListView.cpp:1376
@@ -2462,10 +2451,9 @@ msgid ""
 msgstr ""
 "Dateinamen dürfen keines der folgenden Zeichen enthalten: / \\ : * ? \" < > |"
 
-# TODO //stopped here
 #: resources.h:440
 msgid "Files currently being edited"
-msgstr "Dateien wurden bereits bearbeitet"
+msgstr "Zur Bearbeitung geöffnete Dateien"
 
 #: ../../locales/../src/interface/filteredit.cpp:53
 #: ../../locales/../src/interface/LocalListView.cpp:248
@@ -2512,7 +2500,7 @@ msgstr "Ordnerinhalte filtern"
 #: ../../locales/../src/interface/filteredit.cpp:569
 #: ../../locales/../src/interface/filteredit.cpp:578
 msgid "Filter validation failed"
-msgstr "Filter-Verifizierung fehlgeschlagen"
+msgstr "Filter-Gültigkeitsprüfung fehlgeschlagen"
 
 #: resources.h:14
 msgid "Fingerprint (MD5):"
@@ -2532,7 +2520,7 @@ msgstr "Assistent zur Firewall- und Routerkonfiguration"
 
 #: ../../locales/../src/interface/filelistctrl.cpp:333
 msgid "Folder"
-msgstr "Ordner"
+msgstr "Verzeichnis"
 
 #: resources.h:153
 msgid ""
@@ -2545,8 +2533,8 @@ msgstr ""
 #: resources.h:596
 msgid "For reliability you should specify a range of at least 10 ports."
 msgstr ""
-"Für Zuverlässigkeit sollten Sie einen Bereich von mindestens 10 Ports "
-"angeben."
+"Um eine zuverlässige Verbindung bzw. Datenübertragung zu garantieren "
+"sollten Sie einen Bereich von mindestens 10 Ports angeben."
 
 #: resources.h:105
 msgid "Force &UTF-8"
@@ -2559,7 +2547,7 @@ msgstr "Formatspezifikationen:"
 #: resources.h:224
 msgid "Format: Extension followed by properly quoted command and arguments."
 msgstr ""
-"Format: Erweiterung gefolgt von korrektem Kommando und Argumenten in "
+"Format: Erweiterung gefolgt von korrektem Befehl und Argumenten in "
 "Anführungszeichen."
 
 #: resources.h:71
@@ -2573,7 +2561,7 @@ msgstr "Externe IP-Adresse von folgender URL beziehen:"
 #: ../../locales/../src/interface/filter.cpp:623
 msgid "Given filterset name already exists, overwrite filter set?"
 msgstr ""
-"Der Name für den Filtersatz existiert bereits, Filtersatz überschreiben?"
+"Ein Filtersatz mit diesem Namen existiert bereits, Filtersatz überschreiben?"
 
 #: resources.h:253
 msgid "Group permissions"
@@ -2595,7 +2583,7 @@ msgstr "Höchste"
 
 #: ../../locales/../src/interface/optionspage_connection_active.cpp:74
 msgid "Highest available port has to be a number between 1024 and 65535."
-msgstr "Der größte verfügbare Port muss eine Zahl zwischen 1024 un 65535 sein."
+msgstr "Der größte verfügbare Port muss eine Zahl zwischen 1024 und 65535 sein."
 
 #: resources.h:315
 msgid ""
@@ -2610,7 +2598,7 @@ msgstr "Homepage:"
 
 #: resources.h:292
 msgid "Host key mismatch"
-msgstr "Server-Schlüssel stimmt nicht überein"
+msgstr "Server-Schlüssel stimmen nicht überein"
 
 #: resources.h:8 resources.h:115 resources.h:284 resources.h:296
 msgid "Host:"
@@ -2647,7 +2635,7 @@ msgid ""
 msgstr ""
 "Sofern der automatische Test am Ende des Assistenten erfolgreich ist, aber "
 "Sie keine Dateien zu einem bestimmten Server übertragen können, ist der "
-"Server eventuell falsch konfiguriert, und Sie sollten den aktiven Modus "
+"Server eventuell falsch konfiguriert und Sie sollten den aktiven Modus "
 "ausprobieren. Sie können den Transfermodus für jeden Server individuell im "
 "Servermanager auswählen."
 
@@ -2656,7 +2644,7 @@ msgid ""
 "If the fallback option is enabled, you will be able to connect to "
 "misconfigured servers which reject the selected transfer mode."
 msgstr ""
-"Wenn Sie ein zurückgreifen auf einen anderen Transfermodus erlauben, können "
+"Wenn Sie das Zurückgreifen auf einen anderen Transfermodus erlauben, können "
 "Sie auch auf falsch konfigurierte Server zugreifen, die den ausgewählten "
 "Modus ablehnen."
 
@@ -2666,13 +2654,13 @@ msgid ""
 "manufacturer for a solution."
 msgstr ""
 "Wenn das Problem weiterhin besteht, wenden Sie sich bitte an den Hersteller "
-"Ihres Routers oder Firewall um eine Lösung zu erfragen."
+"Ihres Routers oder Ihrer Firewall um eine Lösung zu erfragen."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:576
 msgid "If this problem stays, please contact your router manufacturer."
 msgstr ""
-"Wenn das Problem weiterhin besteht, wenden Sie sich bitte an Ihren "
-"Routerhersteller."
+"Wenn das Problem weiterhin besteht, wenden Sie sich bitte an den Hersteller Ihres "
+"Routers."
 
 #: resources.h:387 resources.h:405
 msgid ""
@@ -2690,9 +2678,9 @@ msgid ""
 "If using timestamp based comparison, consider two files equal if their "
 "timestamp differerence does not exceed this threshold."
 msgstr ""
-"Falls ein zeitstempelbasierter Vergleich genutzt wird, beachten Sie, dass "
-"zwei Dateien als gleich angesehen werden, falls ihre Zeitstempeldifferenz "
-"den eingestellten Schwellwert nicht überschreitet."
+"Falls ein Verzeichnisvergleich anhand des Änderungzeitpunkts durchgeführt wird, "
+"werden zwei Dateien als gleich angesehen falls ihre Änderungszeitpunkte nicht weiter "
+"als der eingestellten Schwellwert auseinander liegen."
 
 #: resources.h:181
 msgid "If you change the language, you should restart FileZilla."
@@ -2703,13 +2691,14 @@ msgid ""
 "If you click on test, FileZilla will connect to probe.filezilla-project.org "
 "and will perform some simple tests."
 msgstr ""
-"Wenn Sie auf \"Test\" klicken, wird sich FileZilla zu probe.filezilla-"
+"Wenn Sie auf \"Test\" klicken, wird sich FileZilla mit probe.filezilla-"
 "project.org verbinden und einige einfache Tests ausführen."
 
 #: ../../locales/../src/interface/Mainfrm.cpp:968
 msgid "If you close FileZilla, your changes will be lost."
 msgstr "Wenn Sie FileZilla schließen, werden Ihre Änderungen verloren gehen."
 
+# TODO //stopped here...
 #: resources.h:134
 msgid ""
 "If you enter the wrong filetypes, those files may get corrupted when "
