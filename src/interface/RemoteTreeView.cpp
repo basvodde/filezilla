@@ -960,7 +960,15 @@ void CRemoteTreeView::OnMenuChmod(wxCommandEvent& event)
 		pRecursiveOperation->StartRecursiveOperation(CRecursiveOperation::recursive_chmod, hasParent ? path.GetParent() : path, !cached, currentPath);
 	}
 	else
+	{
 		pChmodDlg->Destroy();
+		const wxTreeItemId selected = GetSelection();
+		if (selected)
+		{
+			CServerPath currentPath = GetPathFromItem(selected);
+			m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(currentPath));
+		}
+	}
 }
 
 void CRemoteTreeView::OnMenuDownload(wxCommandEvent& event)
