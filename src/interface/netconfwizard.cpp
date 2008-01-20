@@ -585,7 +585,7 @@ void CNetConfWizard::CloseSocket()
 		case mismatchandtainted:
 			text[0] = _("Active mode FTP test failed. FileZilla does not know the correct external IP address. In addition to that, your router has modified the sent address.");
 			text[1] = _("Please enter your external IP address on the active mode page of this wizard. In case you have a dynamic address or don't know your external address, use the external resolver option.");
-			text[2] = _("Please make sure your router is using the latest available firmware. Furthermore, your router has to be configured properly. You will have to manual port forwarding. Don't run your router in the so called 'DMZ mode' or 'game mode'.");
+			text[2] = _("Please make sure your router is using the latest available firmware. Furthermore, your router has to be configured properly. You will have to use manual port forwarding. Don't run your router in the so called 'DMZ mode' or 'game mode'.");
 			text[3] = _("If your router keeps changing the IP address, please contact your router manufacturer.");
 			text[4] = _("Unless these problems get fixed, active mode FTP will not work and passive mode has to be used.");
 			if (XRCCTRL(*this, "ID_ACTIVE", wxRadioButton)->GetValue())
