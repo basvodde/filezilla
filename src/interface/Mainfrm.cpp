@@ -523,6 +523,8 @@ bool CMainFrame::CreateMenus()
 		m_pUpdateWizard->DisplayUpdateAvailability(false, true);
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 
+	m_pMenuBar->FindItem(XRCID("ID_MENU_SERVER_VIEWHIDDEN"), 0)->Check(COptions::Get()->GetOptionVal(OPTION_VIEW_HIDDEN_FILES) ? true : false);
+
 	return true;
 }
 
@@ -620,16 +622,20 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		bool showHidden = COptions::Get()->GetOptionVal(OPTION_VIEW_HIDDEN_FILES) ? 0 : 1;
 		if (showHidden)
 		{
-			CConditionalDialog dlg(this, CConditionalDialog::viewhidden, CConditionalDialog::ok, true);
-			dlg.SetTitle(_("View hidden files"));
+			CConditionalDialog dlg(this, CConditionalDialog::viewhidden, CConditionalDialog::ok, false);
+			dlg.SetTitle(_("Force showing hidden files"));
 
 			dlg.AddText(_("Note that this feature is only supported using the FTP protocol."));
-			dlg.AddText(_("Also, not all servers support this feature and may return incorrect listings if 'View hidden files' is enabled. Although FileZilla performs some tests to see if the server supports this feature, the test may fail."));
-			dlg.AddText(_("Disable this option if you cannot see your files anymore."));
+			dlg.AddText(_("A proper server always shows all files, but some broken servers hide files from the user. Use this option to force the server to show all files."));
+			dlg.AddText(_("Keep in mind that not all servers support this feature and may return incorrect listings if this option is enabled. Although FileZilla performs some tests to check if the server supports this feature, the test may fail."));
+			dlg.AddText(_("Disable this option again if you will not be able to see the correct directory contents anymore."));
 			dlg.Run();
 		}
 
 		COptions::Get()->SetOption(OPTION_VIEW_HIDDEN_FILES, showHidden ? 1 : 0);
+		CServerPath path = m_pState->GetRemotePath();
+		if (!path.IsEmpty() && m_pState->m_pCommandQueue)
+			m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(path, _T(""), true));
 	}
 	else if (event.GetId() == XRCID("ID_EXPORT"))
 	{

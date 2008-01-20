@@ -19,8 +19,8 @@ CConditionalDialog::CConditionalDialog(wxWindow* parent, enum DialogType type, e
 	pMainSizer->AddSpacer(5);
 	wxSizer* pSizer = new wxBoxSizer(wxVERTICAL);
 	pMainSizer->Add(pSizer, 0, wxALL, 5);
-	m_pTextSizer = new wxFlexGridSizer(1, 5, 5);
-	pSizer->Add(m_pTextSizer);
+	m_pTextSizer = new wxFlexGridSizer(1, 5, 6);
+	pSizer->Add(m_pTextSizer, 0, wxTOP, 5);
 	
 	wxCheckBox *pCheckBox = new wxCheckBox(this, wxID_HIGHEST + 1, _("&Don't show this dialog again."));
 	pCheckBox->SetValue(checked);
