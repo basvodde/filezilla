@@ -2480,6 +2480,7 @@ void CQueueView::DeleteEngines()
 	for (unsigned int engineIndex = 1; engineIndex < m_engineData.size(); engineIndex++)
 	{
 		t_EngineData* const data = m_engineData[engineIndex];
+		wxASSERT(!data->active);
 		delete data->pEngine;
 		data->pEngine = 0;
 		delete data->m_idleDisconnectTimer;

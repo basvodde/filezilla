@@ -224,6 +224,13 @@ void CStatusLineCtrl::OnTimer(wxTimerEvent& event)
 {
 	bool changed;
 	CTransferStatus status;
+
+	if (!m_pEngineData || !m_pEngineData->pEngine)
+	{
+		m_transferStatusTimer.Stop();
+		return;
+	}
+
 	if (!m_pEngineData->pEngine->GetTransferStatus(status, changed))
 		SetTransferStatus(0);
 	else if (changed)
@@ -312,4 +319,17 @@ wxLongLong CStatusLineCtrl::GetSpeed() const
 		return (m_pStatus->currentOffset - m_pStatus->startOffset) / elapsedSeconds;
 	else
 		return -1;
+}
+
+bool CStatusLineCtrl::Show(bool show /*=true*/)
+{
+	if (show)
+	{
+		if (!m_transferStatusTimer.IsRunning())
+			m_transferStatusTimer.Start(100);
+	}
+	else
+		m_transferStatusTimer.Stop();
+
+	return wxWindow::Show(show);
 }
