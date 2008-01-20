@@ -18,6 +18,8 @@ public:
 	// Returns true if some progress has been made since transfer started
 	bool MadeProgress() const { return m_madeProgress; }
 
+	virtual bool Show(bool show = true);
+
 protected:
 	void DrawRightAlignedText(wxDC& dc, wxString text, int x, int y);
 	void DrawProgressBar(wxDC& dc, int x, int y, int height);
