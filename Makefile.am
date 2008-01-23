@@ -25,6 +25,9 @@ docsdir = $(pkgdatadir)/docs
 
 dist_docs_DATA = docs/fzdefaults.xml.example
 
+dist_man1_MANS = docs/filezilla.man docs/fzsftp.man
+dist_man5_MANS = docs/fzdefaults.xml.man
+
 if !LOCALES_ONLY
 if MACAPPBUNDLE
 clean-local:
