@@ -2194,7 +2194,7 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 	case CEditHandler::removing:
 		if (!pEditHandler)
 		{
-			wxMessageBox(_("A file with that name is still being edited. Please close it and try again."), _("Selected file already still opened."), wxICON_EXCLAMATION);
+			wxMessageBox(_("A file with that name is still being edited. Please close it and try again."), _("Selected file already opened."), wxICON_EXCLAMATION);
 			return;
 		}
 		break;
