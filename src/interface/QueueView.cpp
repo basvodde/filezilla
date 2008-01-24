@@ -2676,11 +2676,11 @@ void CQueueView::ActionAfterWarnUser(bool shutdown)
 
 	wxString message;
 	if (shutdown)
-		message = _("The system will soon shutdown unless you press cancel.");
+		message = _("The system will soon shutdown unless you click cancel.");
 	else
-		message = _("The system will soon reboot unless you press cancel.");;
+		message = _("The system will soon reboot unless you click cancel.");
 
-	m_actionAfterWarnDialog = new wxProgressDialog(_("Queue has been fulled processed"), message, 150, m_pMainFrame, wxPD_CAN_ABORT | wxPD_AUTO_HIDE | wxPD_CAN_SKIP | wxPD_APP_MODAL);
+	m_actionAfterWarnDialog = new wxProgressDialog(_("Queue has been fully processed"), message, 150, m_pMainFrame, wxPD_CAN_ABORT | wxPD_AUTO_HIDE | wxPD_CAN_SKIP | wxPD_APP_MODAL);
 	wxSize dialogSize = m_actionAfterWarnDialog->GetSize();
 
 	// Magic id from wxWidgets' src/generic/propdlgg.cpp
