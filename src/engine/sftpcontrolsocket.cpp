@@ -2059,6 +2059,7 @@ int CSftpControlSocket::RemoveDir(const CServerPath& path /*=CServerPath()*/, co
 	CPathCache pathCache;
 	pathCache.InvalidatePath(*m_pCurrentServer, pData->path, pData->subDir);
 
+	m_pEngine->InvalidateCurrentWorkingDirs(fullPath);
 	if (!Send(_T("rmdir ") + WildcardEscape(QuoteFilename(fullPath.GetPath())),
 			  _T("rmdir ") + QuoteFilename(fullPath.GetPath())))
 		return FZ_REPLY_ERROR;
@@ -2329,7 +2330,8 @@ int CSftpControlSocket::RenameSend()
 	case rename_rename:
 		{
 			CDirectoryCache cache;
-			cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile());
+			bool wasDir = false;
+			cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile(), &wasDir);
 			cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetToPath(), pData->m_cmd.GetToFile());
 
 			wxString fromQuoted = QuoteFilename(pData->m_cmd.GetFromPath().FormatFilename(pData->m_cmd.GetFromFile(), !pData->m_useAbsolute));
@@ -2338,6 +2340,18 @@ int CSftpControlSocket::RenameSend()
 			CPathCache pathCache;
 			pathCache.InvalidatePath(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile());
 			pathCache.InvalidatePath(*m_pCurrentServer, pData->m_cmd.GetToPath(), pData->m_cmd.GetToFile());
+
+			if (wasDir)
+			{
+				// Need to invalidate current working directories
+				CServerPath path = pathCache.Lookup(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile());
+				if (path.IsEmpty())
+				{
+					path = pData->m_cmd.GetFromPath();
+					path.AddSegment(pData->m_cmd.GetFromFile());
+				}
+				m_pEngine->InvalidateCurrentWorkingDirs(path);
+			}
 
 			res = Send(_T("mv ") + WildcardEscape(fromQuoted) + _T(" ") + toQuoted,
 					   _T("mv ") + fromQuoted + _T(" ") + toQuoted);
