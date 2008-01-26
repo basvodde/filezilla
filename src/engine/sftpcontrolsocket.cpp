@@ -1866,6 +1866,7 @@ int CSftpControlSocket::MkdirParseResponse(bool successful, const wxString& repl
 			ResetOperation(FZ_REPLY_OK);
 			return FZ_REPLY_OK;
 		}
+		break;
 	default:
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("unknown op state: %d"), pData->opState);
 		ResetOperation(FZ_REPLY_INTERNALERROR);
