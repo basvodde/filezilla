@@ -608,7 +608,7 @@ void CNetConfWizard::CloseSocket()
 			break;
 		case externalfailed:
 			text[0] = _("Failed to retrieve the external IP address.");
-			text[1] = _("Pleae make sure FileZilla is allowed to establish outgoing connections and make sure you typed the address of the address resolver correctly.");
+			text[1] = _("Please make sure FileZilla is allowed to establish outgoing connections and make sure you typed the address of the address resolver correctly.");
 			text[2] = wxString::Format(_("The address you entered was: %s"), XRCCTRL(*this, "ID_ACTIVERESOLVER", wxTextCtrl)->GetValue().c_str());
 			break;
 		case datatainted:

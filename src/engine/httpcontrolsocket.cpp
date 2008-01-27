@@ -646,7 +646,7 @@ int CHttpControlSocket::ParseHeader(CHttpOpData* pData)
 			if (pData->m_responseCode == 305)
 			{
 				// Unsupported redirect
-				LogMessage(::Error, _("Unsuppored redirect"));
+				LogMessage(::Error, _("Unsupported redirect"));
 				ResetOperation(FZ_REPLY_ERROR);
 				return FZ_REPLY_ERROR;
 			}

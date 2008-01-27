@@ -653,7 +653,7 @@ void CFilterDialog::OnDeleteSet(wxCommandEvent& event)
 
 	if (!pos)
 	{
-		wxMessageBox(_("This filter set cannot be removed"));
+		wxMessageBox(_("This filter set cannot be removed."));
 		return;
 	}
 

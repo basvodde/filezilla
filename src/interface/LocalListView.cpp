@@ -2023,7 +2023,7 @@ void CLocalListView::OnMenuEdit(wxCommandEvent& event)
 	bool dangerous = false;
 	if (!pEditHandler->CanOpen(CEditHandler::local, fn.GetFullPath(), dangerous) || dangerous)
 	{
-		wxMessageBox(wxString::Format(_("The file '%s' could not be opened:\nNo program has been associated on your system with this file."), fn.GetFullPath().c_str()), _("Opening failed"), wxICON_EXCLAMATION);
+		wxMessageBox(wxString::Format(_("The file '%s' could not be opened:\nNo program has been associated on your system with this file type."), fn.GetFullPath().c_str()), _("Opening failed"), wxICON_EXCLAMATION);
 		return;
 	}
 
@@ -2097,7 +2097,7 @@ void CLocalListView::OnMenuOpen(wxCommandEvent& event)
 	wxString cmd = pEditHandler->GetSystemOpenCommand(fn.GetFullPath());
 	if (cmd == _T(""))
 	{
-		wxMessageBox(wxString::Format(_("The file '%s' could not be opened:\nNo program has been associated on your system with this file."), fn.GetFullPath().c_str()), _("Opening failed"), wxICON_EXCLAMATION);
+		wxMessageBox(wxString::Format(_("The file '%s' could not be opened:\nNo program has been associated on your system with this file type."), fn.GetFullPath().c_str()), _("Opening failed"), wxICON_EXCLAMATION);
 		return;
 	}
 
