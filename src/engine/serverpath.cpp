@@ -245,7 +245,7 @@ bool CServerPath::SetPath(wxString &newPath, bool isFile)
 		while (true)
 		{
 			int pos = path.Find('.');
-			if (!pos || pos == path.Len() - 1)
+			if (!pos || pos == (int)path.Len() - 1)
 			{
 				m_bEmpty = true;
 				return false;
@@ -840,7 +840,7 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 		while (true)
 		{
 			int pos = dir.Find('.');
-			if (!pos || pos == dir.Len() - 1)
+			if (!pos || pos == (int)dir.Len() - 1)
 			{
 				m_bEmpty = true;
 				return false;
