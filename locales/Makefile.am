@@ -36,7 +36,7 @@ uninstall-local:
 # ----------------------------------------------------------------------------
 
 # the programs we use (TODO: use configure to detect them)
-MSGFMT=@msgfmt@ --verbose
+MSGFMT=@msgfmt@ -c --verbose
 MSGMERGE=@msgmerge@
 XGETTEXT=@xgettext@
 
@@ -66,10 +66,14 @@ XGETTEXT_ARGS=-C -k_ -kwxGetTranslation -kwxTRANSLATE -kwxPLURAL:1,2 -s -j
 resources.h: $(srcdir)/../src/interface/resources/*.xrc
 	@if [ -f $@~ ]; then rm $@~; fi
 
-	@WXRC@ -g -e $(srcdir)/../src/interface/resources/*.xrc > $@~ || exit 1
+	@WXRC@ -g -e $(srcdir)/../src/interface/resources/*.xrc > "$@~" || exit 1
 
 # strip strings not marked for translation (enclosed in <>)
-	cat $@~ | sed "s/_(\"<.*>\")\;//" > $@  || exit 1
+	cat $@~ | sed "s/_(\"<.*>\")\;//" > $@~~ || exit 1
+	@mv $@~~ $@~
+
+# In resource files we have no format specifiers
+	cat $@~ | sed -e '/%/ s/$$/ \/\/xgettext:no-c-format/' > $@ || exit 1
 
 	@if [ -f $@~ ]; then rm $@~; fi
 
