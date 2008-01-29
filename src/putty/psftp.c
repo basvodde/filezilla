@@ -1188,9 +1188,10 @@ int sftp_general_get(struct sftp_command *cmd, int restart, int multiple)
     }
 
     i = 1;
+    /* FZ unused
     while (i < cmd->nwords && cmd->words[i][0] == '-') {
 	if (!strcmp(cmd->words[i], "--")) {
-	    /* finish processing options */
+	    /* finish processing options *//* FZ unused
 	    i++;
 	    break;
 	} else if (!strcmp(cmd->words[i], "-r")) {
@@ -1201,6 +1202,7 @@ int sftp_general_get(struct sftp_command *cmd, int restart, int multiple)
 	}
 	i++;
     }
+    */
 
     if (i >= cmd->nwords) {
 	fzprintf(sftpError, "%s: expects a filename", cmd->words[0]);
