@@ -69,11 +69,13 @@ public:
 };
 
 DECLARE_COMMAND(CConnectCommand, cmd_connect)
-	CConnectCommand(const CServer &server);
+	CConnectCommand(const CServer &server, bool retry_conncting = true);
 
 	const CServer GetServer() const;
+	bool RetryConnecting() const { return m_retry_connecting; }
 protected:
 	CServer m_Server;
+	bool m_retry_connecting;
 };
 
 DECLARE_COMMAND(CDisconnectCommand, cmd_disconnect)

@@ -10,6 +10,8 @@ public:
 
 	const CFileItem* const GetItem() const { return m_pEngineData->pItem; }
 
+	void SetEngineData(const t_EngineData* const pEngineData);
+
 	void SetTransferStatus(const CTransferStatus* pStatus);
 	wxLongLong GetLastOffset() const { return m_pStatus ? m_pStatus->currentOffset : m_lastOffset; }
 	wxLongLong GetTotalSize() const { return m_pStatus ? m_pStatus->totalSize : -1; }
@@ -25,7 +27,7 @@ protected:
 	void DrawProgressBar(wxDC& dc, int x, int y, int height);
 
 	CQueueView* m_pParent;
-	const t_EngineData* const m_pEngineData;
+	const t_EngineData* m_pEngineData;
 	CTransferStatus* m_pStatus;
 
 	wxString m_statusText;

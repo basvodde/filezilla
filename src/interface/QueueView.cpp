@@ -575,7 +575,7 @@ void CQueueView::ProcessNotification(t_EngineData* pEngineData, CNotification* p
 		delete pNotification;
 		break;
 	case nId_operation:
-		ProcessReply(*pEngineData, reinterpret_cast<COperationNotification*>(pNotification));
+		ProcessReply(pEngineData, reinterpret_cast<COperationNotification*>(pNotification));
 		delete pNotification;
 		break;
 	case nId_asyncrequest:
@@ -825,7 +825,7 @@ bool CQueueView::TryStartNextTransfer()
 	return true;
 }
 
-void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* pNotification)
+void CQueueView::ProcessReply(t_EngineData* pEngineData, COperationNotification* pNotification)
 {
 	if (pNotification->nReplyCode & FZ_REPLY_DISCONNECTED &&
 		pNotification->commandId == cmd_none)
@@ -836,7 +836,7 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 	wxASSERT(pNotification->commandId != cmd_none);
 
 	// Cancel pending requests
-	m_pAsyncRequestQueue->ClearPending(engineData.pEngine);
+	m_pAsyncRequestQueue->ClearPending(pEngineData->pEngine);
 
 	// Process reply from the engine
 	int replyCode = pNotification->nReplyCode;
@@ -844,147 +844,154 @@ void CQueueView::ProcessReply(t_EngineData& engineData, COperationNotification* 
 	if ((replyCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)
 	{
 		enum ResetReason reason;
-		if (engineData.pItem && engineData.pItem->m_remove)
+		if (pEngineData->pItem && pEngineData->pItem->m_remove)
 			reason = remove;
 		else
 			reason = reset;
-		engineData.pItem->m_statusMessage = _("Interrupted by user");
-		ResetEngine(engineData, reason);
+		pEngineData->pItem->m_statusMessage = _("Interrupted by user");
+		ResetEngine(*pEngineData, reason);
 		return;
 	}
 
 	// Cycle through queue states
-	switch (engineData.state)
+	switch (pEngineData->state)
 	{
 	case t_EngineData::disconnect:
-		if (engineData.active)
+		if (pEngineData->active)
 		{
-			engineData.state = t_EngineData::connect;
-			engineData.pStatusLineCtrl->SetTransferStatus(0);
+			pEngineData->state = t_EngineData::connect;
+			pEngineData->pStatusLineCtrl->SetTransferStatus(0);
 		}
 		else
-			engineData.state = t_EngineData::none;
+			pEngineData->state = t_EngineData::none;
 		break;
 	case t_EngineData::connect:
 		if (replyCode == FZ_REPLY_OK)
 		{
-			if (engineData.pItem->GetType() == QueueItemType_File)
-				engineData.state = t_EngineData::transfer;
+			if (pEngineData->pItem->GetType() == QueueItemType_File)
+				pEngineData->state = t_EngineData::transfer;
 			else
-				engineData.state = t_EngineData::mkdir;
-			if (engineData.active && engineData.pStatusLineCtrl)
-				engineData.pStatusLineCtrl->SetTransferStatus(0);
+				pEngineData->state = t_EngineData::mkdir;
+			if (pEngineData->active && pEngineData->pStatusLineCtrl)
+				pEngineData->pStatusLineCtrl->SetTransferStatus(0);
 		}
 		else
 		{
 			if (replyCode & FZ_REPLY_PASSWORDFAILED)
-				CLoginManager::Get().CachedPasswordFailed(engineData.lastServer);
+				CLoginManager::Get().CachedPasswordFailed(pEngineData->lastServer);
 
 			if ((replyCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)
-				engineData.pItem->m_statusMessage = _T("");
+				pEngineData->pItem->m_statusMessage = _T("");
 			else if (replyCode & FZ_REPLY_PASSWORDFAILED)
-				engineData.pItem->m_statusMessage = _("Incorrect password");
+				pEngineData->pItem->m_statusMessage = _("Incorrect password");
 			else if ((replyCode & FZ_REPLY_TIMEOUT) == FZ_REPLY_TIMEOUT)
-				engineData.pItem->m_statusMessage = _("Timeout");
+				pEngineData->pItem->m_statusMessage = _("Timeout");
 			else if (replyCode & FZ_REPLY_DISCONNECTED)
-				engineData.pItem->m_statusMessage = _("Disconnected from server");
+				pEngineData->pItem->m_statusMessage = _("Disconnected from server");
 			else
-				engineData.pItem->m_statusMessage = _("Connection attempt failed");
+				pEngineData->pItem->m_statusMessage = _("Connection attempt failed");
 
-			if (!IncreaseErrorCount(engineData))
+			if (!IncreaseErrorCount(*pEngineData))
 				return;
+
+			if (pEngineData != m_engineData[0])
+				SwitchEngine(&pEngineData);
 		}
 		break;
 	case t_EngineData::transfer:
 		if (replyCode == FZ_REPLY_OK)
 		{
-			ResetEngine(engineData, success);
+			ResetEngine(*pEngineData, success);
 			return;
 		}
 		// Increase error count only if item didn't make any progress. This keeps
 		// user interaction at a minimum if connection is unstable.
 
 		// FIXME: Disabled since detection isn't reliable (yet)
-		//else if (!engineData.pStatusLineCtrl || !engineData.pStatusLineCtrl->MadeProgress())
+		//else if (!pEngineData->pStatusLineCtrl || !pEngineData->pStatusLineCtrl->MadeProgress())
 		{
 			if ((replyCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)
-				engineData.pItem->m_statusMessage = _T("");
+				pEngineData->pItem->m_statusMessage = _T("");
 			else if ((replyCode & FZ_REPLY_TIMEOUT) == FZ_REPLY_TIMEOUT)
-				engineData.pItem->m_statusMessage = _("Timeout");
+				pEngineData->pItem->m_statusMessage = _("Timeout");
 			else if (replyCode & FZ_REPLY_DISCONNECTED)
-				engineData.pItem->m_statusMessage = _("Disconnected from server");
+				pEngineData->pItem->m_statusMessage = _("Disconnected from server");
 			else if ((replyCode & FZ_REPLY_CRITICALERROR) == FZ_REPLY_CRITICALERROR)
 			{
-				engineData.pItem->m_statusMessage = _("Could not start transfer");
-				ResetEngine(engineData, failure);
+				pEngineData->pItem->m_statusMessage = _("Could not start transfer");
+				ResetEngine(*pEngineData, failure);
 				return;
 			}
 			else
-				engineData.pItem->m_statusMessage = _("Could not start transfer");
-			if (!IncreaseErrorCount(engineData))
+				pEngineData->pItem->m_statusMessage = _("Could not start transfer");
+			if (!IncreaseErrorCount(*pEngineData))
 				return;
 
-			if (replyCode & FZ_REPLY_DISCONNECTED && &engineData == m_engineData[0])
+			if (replyCode & FZ_REPLY_DISCONNECTED && pEngineData == m_engineData[0])
 			{
-				ResetEngine(engineData, retry);
+				ResetEngine(*pEngineData, retry);
 				return;
 			}
 		}
 		if (replyCode & FZ_REPLY_DISCONNECTED)
-			engineData.state = t_EngineData::connect;
+		{
+			if (!SwitchEngine(&pEngineData))
+				pEngineData->state = t_EngineData::connect;
+		}
 		break;
 	case t_EngineData::mkdir:
 		if (replyCode == FZ_REPLY_OK)
 		{
-			ResetEngine(engineData, success);
+			ResetEngine(*pEngineData, success);
 			return;
 		}
 		if (replyCode & FZ_REPLY_DISCONNECTED)
 		{
-			if (!IncreaseErrorCount(engineData))
+			if (!IncreaseErrorCount(*pEngineData))
 				return;
 
-			if (&engineData == m_engineData[0])
+			if (pEngineData == m_engineData[0])
 			{
-				ResetEngine(engineData, retry);
+				ResetEngine(*pEngineData, retry);
 				return;
 			}
 
-			engineData.state = t_EngineData::connect;
+			if (!SwitchEngine(&pEngineData))
+				pEngineData->state = t_EngineData::connect;
 		}
 		else
 		{
 			// Cannot retry
-			ResetEngine(engineData, failure);
+			ResetEngine(*pEngineData, failure);
 			return;
 		}
 
 		break;
 	case t_EngineData::list:
-		ResetEngine(engineData, remove);
+		ResetEngine(*pEngineData, remove);
 		return;
 	default:
 		return;
 	}
 
-	if (engineData.state == t_EngineData::connect && engineData.lastServer.GetLogonType() == ASK)
+	if (pEngineData->state == t_EngineData::connect && pEngineData->lastServer.GetLogonType() == ASK)
 	{
-		if (!CLoginManager::Get().GetPassword(engineData.lastServer, true))
-			engineData.state = t_EngineData::askpassword;
+		if (!CLoginManager::Get().GetPassword(pEngineData->lastServer, true))
+			pEngineData->state = t_EngineData::askpassword;
 	}
 
 	if (!m_activeMode)
 	{
 		enum ResetReason reason;
-		if (engineData.pItem && engineData.pItem->m_remove)
+		if (pEngineData->pItem && pEngineData->pItem->m_remove)
 			reason = remove;
 		else
 			reason = reset;
-		ResetEngine(engineData, reason);
+		ResetEngine(*pEngineData, reason);
 		return;
 	}
 
-	SendNextCommand(engineData);
+	SendNextCommand(*pEngineData);
 }
 
 void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
@@ -1201,7 +1208,7 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 			engineData.pItem->m_statusMessage = _("Connecting");
 			RefreshItem(engineData.pItem);
 
-			int res = engineData.pEngine->Command(CConnectCommand(engineData.lastServer));
+			int res = engineData.pEngine->Command(CConnectCommand(engineData.lastServer, false));
 
 			wxASSERT((res & FZ_REPLY_BUSY) != FZ_REPLY_BUSY);
 			if (res == FZ_REPLY_WOULDBLOCK)
@@ -2743,3 +2750,61 @@ void CQueueView::OnActionAfterTimerTick()
 	}
 }
 #endif //__WXMSW__
+
+bool CQueueView::SwitchEngine(t_EngineData** ppEngineData)
+{
+	if (m_engineData.size() < 2)
+		return false;
+
+	t_EngineData* pEngineData = *ppEngineData;
+
+	for (std::vector<t_EngineData*>::iterator iter = ++m_engineData.begin(); iter != m_engineData.end(); iter++)
+	{
+		t_EngineData* pNewEngineData = *iter;
+		if (pNewEngineData == pEngineData)
+			continue;
+
+		if (pNewEngineData->active)
+			continue;
+
+		if (pNewEngineData->lastServer != pEngineData->lastServer)
+			continue;
+
+		if (!pNewEngineData->pEngine->IsConnected())
+			continue;
+
+		wxASSERT(!pNewEngineData->pItem);
+		pNewEngineData->pItem = pEngineData->pItem;
+		pNewEngineData->pItem->m_pEngineData = pNewEngineData;
+		pEngineData->pItem = 0;
+
+		pNewEngineData->active = true;
+		pEngineData->active = false;
+
+		delete pNewEngineData->m_idleDisconnectTimer;
+		pNewEngineData->m_idleDisconnectTimer = 0;
+
+		CStatusLineCtrl* pOldStatusLineCtrl = pNewEngineData->pStatusLineCtrl;
+		pNewEngineData->pStatusLineCtrl = pEngineData->pStatusLineCtrl;
+		pNewEngineData->pStatusLineCtrl->SetEngineData(pNewEngineData);
+		if (pOldStatusLineCtrl)
+		{
+			pEngineData->pStatusLineCtrl = pOldStatusLineCtrl;
+			pEngineData->pStatusLineCtrl->SetEngineData(pEngineData);
+		}
+
+		if (pNewEngineData->pItem->GetType() == QueueItemType_File)
+			pNewEngineData->state = t_EngineData::transfer;
+		else
+			pNewEngineData->state = t_EngineData::mkdir;
+		if (pNewEngineData->pStatusLineCtrl)
+			pNewEngineData->pStatusLineCtrl->SetTransferStatus(0);
+
+		pEngineData->state = t_EngineData::none;
+
+		*ppEngineData = pNewEngineData;
+		return true;
+	}
+
+	return false;
+}

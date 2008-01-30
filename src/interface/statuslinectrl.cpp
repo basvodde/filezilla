@@ -333,3 +333,9 @@ bool CStatusLineCtrl::Show(bool show /*=true*/)
 
 	return wxWindow::Show(show);
 }
+
+void CStatusLineCtrl::SetEngineData(const t_EngineData* const pEngineData)
+{
+	wxASSERT(pEngineData);
+	m_pEngineData = pEngineData;
+}

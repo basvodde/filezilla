@@ -228,12 +228,16 @@ int CFileZillaEnginePrivate::ResetOperation(int nErrorCode)
 				const CConnectCommand *pConnectCommand = (CConnectCommand *)m_pCurrentCommand;
 
 				RegisterFailedLoginAttempt(pConnectCommand->GetServer());
-				unsigned int delay = GetRemainingReconnectDelay(pConnectCommand->GetServer());
-				if (!delay)
-					delay = 1;
-				m_pLogging->LogMessage(Status, _("Waiting to retry..."));
-				m_retryTimer.Start(delay, true);
-				return FZ_REPLY_WOULDBLOCK;
+
+				if (pConnectCommand->RetryConnecting())
+				{
+					unsigned int delay = GetRemainingReconnectDelay(pConnectCommand->GetServer());
+					if (!delay)
+						delay = 1;
+					m_pLogging->LogMessage(Status, _("Waiting to retry..."));
+					m_retryTimer.Start(delay, true);
+					return FZ_REPLY_WOULDBLOCK;
+				}
 			}
 		}
 
@@ -636,7 +640,7 @@ void CFileZillaEnginePrivate::OnTimer(wxTimerEvent& event)
 	}
 	wxASSERT(!IsConnected());
 
-#ifdef __WXDEBUG__
+#if 0//__WXDEBUG__
 	const CConnectCommand *pConnectCommand = (CConnectCommand *)m_pCurrentCommand;
 	wxASSERT(!GetRemainingReconnectDelay(pConnectCommand->GetServer()));
 #endif

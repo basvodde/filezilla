@@ -113,7 +113,7 @@ protected:
 	bool ProcessFolderItems(int type = -1);
 	void ProcessUploadFolderItems();
 
-	void ProcessReply(t_EngineData& engineData, COperationNotification* pNotification);
+	void ProcessReply(t_EngineData* pEngineData, COperationNotification* pNotification);
 	void SendNextCommand(t_EngineData& engineData);
 
 	enum ResetReason
@@ -152,6 +152,11 @@ protected:
 #endif
 
 	void ProcessNotification(t_EngineData* pEngineData, CNotification* pNotification);
+
+	// Called from Process Reply.
+	// After a disconnect, check if there's another idle engine that
+	// is already connected.
+	bool SwitchEngine(t_EngineData** ppEngineData);
 
 	t_EngineData* GetIdleEngine(const CServer* pServer = 0);
 
