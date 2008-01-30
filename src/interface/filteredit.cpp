@@ -281,6 +281,8 @@ void CFilterEditDialog::SaveFilter(CFilter& filter)
 
 	filter.matchCase = XRCCTRL(*this, "ID_CASE", wxCheckBox)->GetValue();
 
+	wxASSERT(m_filterControls.size() == m_currentFilter.filters.size());
+
 	filter.filters.clear();
 	for (unsigned int i = 0; i < m_currentFilter.filters.size(); i++)
 	{
@@ -311,13 +313,24 @@ void CFilterEditDialog::SaveFilter(CFilter& filter)
 	filter.name = XRCCTRL(*this, "ID_NAME", wxTextCtrl)->GetValue();
 	if (oldName != filter.name)
 	{
-		m_pFilterListCtrl->Delete(m_currentSelection);
-		m_pFilterListCtrl->Insert(filter.name, m_currentSelection);
+		int oldSelection = m_currentSelection;
+		m_pFilterListCtrl->Delete(oldSelection);
+		m_pFilterListCtrl->Insert(filter.name, oldSelection);
+		m_pFilterListCtrl->Select(oldSelection);
+		wxCommandEvent evt;
+		OnFilterSelect(evt);
 	}
 }
 
 void CFilterEditDialog::OnNew(wxCommandEvent& event)
 {
+	if (m_currentSelection != -1)
+	{
+		if (!Validate())
+			return;
+		SaveFilter(m_filters[m_currentSelection]);
+	}
+
 	int index = 1;
 	wxString name = _("New filter");
 	wxString newName = name;
@@ -413,13 +426,14 @@ void CFilterEditDialog::OnRename(wxCommandEvent& event)
 
 void CFilterEditDialog::OnCopy(wxCommandEvent& event)
 {
-	CFilter filter;
-	if (m_currentSelection != -1)
-	{
-		if (!Validate())
-			return;
-		SaveFilter(filter);
-	}
+	if (m_currentSelection == -1)
+		return;
+
+	if (!Validate())
+		return;
+	SaveFilter(m_filters[m_currentSelection]);
+
+	CFilter filter = m_filters[m_currentSelection];
 
 	int index = 1;
 	const wxString& name = m_currentFilter.name;
@@ -466,6 +480,7 @@ void CFilterEditDialog::OnFilterSelect(wxCommandEvent& event)
 	int item = m_pFilterListCtrl->GetSelection();
 	if (item == -1)
 	{
+		m_currentSelection = -1;
 		SetCtrlState(false);
 		return;
 	}
@@ -542,6 +557,9 @@ bool CFilterEditDialog::Validate()
 		wxMessageBox(_("Each filter needs at least one condition."), _("Filter validation failed"), wxICON_ERROR, this);
 		return false;
 	}
+
+	wxASSERT(m_filterControls.size() == m_currentFilter.filters.size());
+
 	for (unsigned int i = 0; i < size; i++)
 	{
 		const CFilterControls& controls = m_filterControls[i];
