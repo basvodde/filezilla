@@ -158,6 +158,8 @@ protected:
 	// is already connected.
 	bool SwitchEngine(t_EngineData** ppEngineData);
 
+	bool IsOtherEngineConnected(t_EngineData* pEngineData);
+
 	t_EngineData* GetIdleEngine(const CServer* pServer = 0);
 
 	std::vector<t_EngineData*> m_engineData;

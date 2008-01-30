@@ -891,8 +891,12 @@ void CQueueView::ProcessReply(t_EngineData* pEngineData, COperationNotification*
 			else
 				pEngineData->pItem->m_statusMessage = _("Connection attempt failed");
 
-			if (!IncreaseErrorCount(*pEngineData))
-				return;
+			if (replyCode != (FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED) ||
+				!IsOtherEngineConnected(pEngineData))
+			{
+				if (!IncreaseErrorCount(*pEngineData))
+					return;
+			}
 
 			if (pEngineData != m_engineData[0])
 				SwitchEngine(&pEngineData);
@@ -2804,6 +2808,28 @@ bool CQueueView::SwitchEngine(t_EngineData** ppEngineData)
 
 		*ppEngineData = pNewEngineData;
 		return true;
+	}
+
+	return false;
+}
+
+bool CQueueView::IsOtherEngineConnected(t_EngineData* pEngineData)
+{
+	for (std::vector<t_EngineData*>::iterator iter = m_engineData.begin(); iter != m_engineData.end(); iter++)
+	{
+		t_EngineData* current = *iter;
+
+		if (current == pEngineData)
+			continue;
+
+		if (!current->pEngine)
+			continue;
+
+		if (current->lastServer != pEngineData->lastServer)
+			continue;
+
+		if (current->pEngine->IsConnected())
+			return true;
 	}
 
 	return false;
