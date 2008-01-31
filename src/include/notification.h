@@ -278,7 +278,7 @@ public:
 	const wxString& GetHost() const { return m_host; }
 	unsigned int GetPort() const { return m_port; }
 
-	const unsigned char* const GetRawData(unsigned int& len) const { len = m_len; return m_rawData; }
+	const unsigned char* GetRawData(unsigned int& len) const { len = m_len; return m_rawData; }
 	wxDateTime GetActivationTime() const { return m_activationTime; }
 	wxDateTime GetExpirationTime() const { return m_expirationTime; }
 

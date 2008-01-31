@@ -537,7 +537,7 @@ wxSocketServer* CTransferSocket::CreateSocketServer()
 	if (start < low || start > high)
 	{
 		srand( (unsigned)time( NULL ) );
-		start = rand() * (high - low) / (RAND_MAX + 1) + low;
+		start = rand() * (high - low) / (RAND_MAX < INT_MAX ? RAND_MAX + 1 : RAND_MAX) + low;
 	}
 
 	wxSocketServer* pServer = 0;

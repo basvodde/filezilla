@@ -8,7 +8,7 @@ public:
 	CStatusLineCtrl(CQueueView* pParent, const t_EngineData* const pEngineData, const wxRect& initialPosition);
 	~CStatusLineCtrl();
 
-	const CFileItem* const GetItem() const { return m_pEngineData->pItem; }
+	const CFileItem* GetItem() const { return m_pEngineData->pItem; }
 
 	void SetEngineData(const t_EngineData* const pEngineData);
 

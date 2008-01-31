@@ -878,7 +878,7 @@ int CNetConfWizard::CreateListenSocket()
 		XRCCTRL(*this, "ID_ACTIVE_PORTMIN", wxTextCtrl)->GetValue().ToLong(&low);
 		XRCCTRL(*this, "ID_ACTIVE_PORTMAX", wxTextCtrl)->GetValue().ToLong(&high);
 		
-		int mid = (rand() * (high - low)) / (RAND_MAX + 1) + low;
+		int mid = (rand() * (high - low)) / (RAND_MAX < INT_MAX ? RAND_MAX + 1 : RAND_MAX) + low;
 		for (int port = mid; port <= high; port++)
 			if (CreateListenSocket(port))
 				return port;
