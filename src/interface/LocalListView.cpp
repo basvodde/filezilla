@@ -1385,7 +1385,8 @@ void CLocalListView::OnChar(wxKeyEvent& event)
 void CLocalListView::OnKeyDown(wxKeyEvent& event)
 {
 	const int code = event.GetKeyCode();
-	if (code == 'A' && event.GetModifiers() == wxMOD_CMD)
+	const int mods = event.GetModifiers();
+	if (code == 'A' && (mods == wxMOD_CMD || mods == (wxMOD_CONTROL | wxMOD_META)))
 	{
 		for (unsigned int i = m_hasParent ? 1 : 0; i < m_indexMapping.size(); i++)
 		{
