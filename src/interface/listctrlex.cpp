@@ -172,6 +172,11 @@ void wxListCtrlEx::OnKeyDown(wxKeyEvent& event)
 		event.Skip();
 		return;
 	}
+	else if (key == 32 && event.HasModifiers())
+	{
+		event.Skip();
+		return;
+	}
 	HandlePrefixSearch(key);
 	return;
 #else
