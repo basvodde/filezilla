@@ -1192,6 +1192,25 @@ void CDirectoryListingParserTest::InitEntries()
 			HPNONSTOP
 		});
 
+
+	m_entries.push_back((t_entry){
+			"drwxr-xr-x 6 user sys 1024 30. Jan., 12:40 59-localized-date-dir",
+			{
+				_T("59-localized-date-dir"),
+				1024,
+				_T("drwxr-xr-x"),
+				_T("user sys"),
+				true,
+				false,
+				_T(""),
+				true,
+				true,
+				wxDateTime(30, wxDateTime::Jan, calcYear(1, 30), 12, 40),
+				false
+			},
+			DEFAULT
+		});
+
 /*
 	wxString name;
 	wxLongLong size;

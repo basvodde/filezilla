@@ -1121,7 +1121,7 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 			strMonth = strMonth.Left(i + 1);
 		}
 		// Check month name
-		if (strMonth.Right(1) == _T(",") || strMonth.Right(1) == _T("."))
+		while (strMonth.Right(1) == _T(",") || strMonth.Right(1) == _T("."))
 			strMonth.RemoveLast();
 		strMonth.MakeLower();
 		std::map<wxString, int>::iterator iter = m_MonthNamesMap.find(strMonth);
