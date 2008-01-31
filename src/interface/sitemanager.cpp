@@ -74,6 +74,8 @@ public:
 		wxTreeItemId hit = GetHit(wxPoint(x, y));
 		if (!hit)
 			return wxDragNone;
+		if (hit == m_pSiteManager->m_dropSource)
+			return wxDragNone;
 	
 		const bool predefined = m_pSiteManager->IsPredefinedItem(hit);
 		if (predefined)
@@ -115,6 +117,8 @@ public:
 
 		wxTreeItemId hit = GetHit(wxPoint(x, y));
 		if (!hit)
+			return wxDragNone;
+		if (hit == m_pSiteManager->m_dropSource)
 			return wxDragNone;
 	
 		const bool predefined = m_pSiteManager->IsPredefinedItem(hit);
@@ -177,6 +181,11 @@ public:
 
 		wxTreeItemId hit = GetHit(wxPoint(x, y));
 		if (!hit)
+		{
+			ClearDropHighlight();
+			return wxDragNone;
+		}
+		if (hit == m_pSiteManager->m_dropSource)
 		{
 			ClearDropHighlight();
 			return wxDragNone;
@@ -1735,6 +1744,9 @@ struct itempair
 
 bool CSiteManager::MoveItems(wxTreeItemId source, wxTreeItemId target, bool copy)
 {
+	if (source == target)
+		return false;
+
 	if (IsPredefinedItem(target))
 		return false;
 
