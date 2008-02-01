@@ -18,7 +18,6 @@ struct t_fallbacks
 };
 
 struct t_fallbacks fallbacks[] = {
-	{ "ar", "ar_EG" },
 
 	// The following entries are needed due to missing language codes wxWidgets
 	{ "ka", "ka_GE" },
@@ -29,6 +28,20 @@ struct t_fallbacks fallbacks[] = {
 	{ "en", "en_US" },
 	{ "en_US", "en_GB" },
 	{ "en_GB", "C" },
+	
+	// Base names
+	{ "ar", "ar_EG" },
+	{ "ca", "ca_ES" },
+	{ "de", "de_DE" },
+	{ "el", "el_GR" },
+	{ "es", "es_ES" },
+	{ "fr", "fr_FR" },
+	{ "it", "it_IT" },
+	{ "nl", "nl_NL" },
+	{ "ru", "ru_RU" },
+	{ "sv", "sv_SE" },
+	{ "tr", "tr_TR" },
+
 	{ 0, 0 }
 };
 
