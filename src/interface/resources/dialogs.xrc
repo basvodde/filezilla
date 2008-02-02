@@ -433,77 +433,28 @@
     <object class="wxBoxSizer">
       <orient>wxVERTICAL</orient>
       <object class="sizeritem">
-        <border>0</border>
         <object class="wxBoxSizer">
           <orient>wxHORIZONTAL</orient>
           <object class="sizeritem">
-            <border>0</border>
-            <object class="wxBoxSizer">
-              <orient>wxVERTICAL</orient>
+            <flag>wxALL</flag>
+            <border>5</border>
+            <object class="wxFlexGridSizer">
               <object class="sizeritem">
-                <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP</flag>
-                <border>5</border>
-                <object class="wxStaticText" name="wxID_STATIC">
-                  <label>The target file already exists.\nWould you like to replace the file</label>
+                <object class="wxStaticText" name="">
+                  <label>The target file already exists.\nPlease chose an action.</label>
                 </object>
               </object>
               <object class="sizeritem">
-                <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP</flag>
-                <border>5</border>
-                <object class="wxStaticText" name="ID_FILE1_NAME">
-                  <label>&lt;file&gt;</label>
+                <object class="wxStaticText" name="">
+                  <label>Source file:</label>
                 </object>
               </object>
               <object class="sizeritem">
-                <border>0</border>
-                <object class="wxBoxSizer">
-                  <orient>wxHORIZONTAL</orient>
-                  <object class="sizeritem">
-                    <flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-                    <border>10</border>
-                    <object class="wxStaticBitmap" name="ID_FILE1_ICON">
-                      <bitmap>32x32/file.png</bitmap>
-                    </object>
-                  </object>
-                  <object class="sizeritem">
-                    <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-                    <border>5</border>
-                    <object class="wxBoxSizer">
-                      <orient>wxVERTICAL</orient>
-                      <object class="sizeritem">
-                        <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxBOTTOM</flag>
-                        <border>5</border>
-                        <object class="wxStaticText" name="ID_FILE1_SIZE">
-                          <label>&lt;size&gt;</label>
-                        </object>
-                      </object>
-                      <object class="sizeritem">
-                        <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxBOTTOM</flag>
-                        <border>5</border>
-                        <object class="wxStaticText" name="ID_FILE1_TIME">
-                          <label>&lt;date/time&gt;</label>
-                        </object>
-                      </object>
-                    </object>
-                  </object>
-                </object>
-              </object>
-              <object class="sizeritem">
-                <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP</flag>
-                <border>5</border>
-                <object class="wxStaticText" name="wxID_STATIC">
-                  <label>with the following file?</label>
-                </object>
-              </object>
-              <object class="sizeritem">
-                <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP</flag>
-                <border>5</border>
                 <object class="wxStaticText" name="ID_FILE2_NAME">
                   <label>&lt;file&gt;</label>
                 </object>
               </object>
               <object class="sizeritem">
-                <border>0</border>
                 <object class="wxBoxSizer">
                   <orient>wxHORIZONTAL</orient>
                   <object class="sizeritem">
@@ -514,19 +465,19 @@
                     </object>
                   </object>
                   <object class="sizeritem">
-                    <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                    <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxALIGN_CENTRE_VERTICAL</flag>
                     <border>5</border>
                     <object class="wxBoxSizer">
                       <orient>wxVERTICAL</orient>
                       <object class="sizeritem">
-                        <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxBOTTOM</flag>
+                        <flag>wxLEFT|wxRIGHT|wxBOTTOM</flag>
                         <border>5</border>
                         <object class="wxStaticText" name="ID_FILE2_SIZE">
                           <label>&lt;size&gt;</label>
                         </object>
                       </object>
                       <object class="sizeritem">
-                        <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxBOTTOM</flag>
+                        <flag>wxLEFT|wxRIGHT|wxBOTTOM</flag>
                         <border>5</border>
                         <object class="wxStaticText" name="ID_FILE2_TIME">
                           <label>&lt;date/time&gt;</label>
@@ -536,6 +487,51 @@
                   </object>
                 </object>
               </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Target file:</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="ID_FILE1_NAME">
+                  <label>&lt;file&gt;</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxBoxSizer">
+                  <orient>wxHORIZONTAL</orient>
+                  <object class="sizeritem">
+                    <flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+                    <border>10</border>
+                    <object class="wxStaticBitmap" name="ID_FILE1_ICON">
+                      <bitmap>32x32/file.png</bitmap>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                    <border>5</border>
+                    <object class="wxBoxSizer">
+                      <orient>wxVERTICAL</orient>
+                      <object class="sizeritem">
+                        <flag>wxLEFT|wxRIGHT|wxBOTTOM</flag>
+                        <border>5</border>
+                        <object class="wxStaticText" name="ID_FILE1_SIZE">
+                          <label>&lt;size&gt;</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <flag>wxLEFT|wxRIGHT|wxBOTTOM</flag>
+                        <border>5</border>
+                        <object class="wxStaticText" name="ID_FILE1_TIME">
+                          <label>&lt;date/time&gt;</label>
+                        </object>
+                      </object>
+                    </object>
+                  </object>
+                </object>
+              </object>
+              <cols>1</cols>
+              <vgap>5</vgap>
             </object>
           </object>
           <object class="spacer">
@@ -544,18 +540,18 @@
             <size>3,4</size>
           </object>
           <object class="sizeritem">
-            <flag>wxALIGN_TOP|wxALL</flag>
+            <flag>wxALL|wxALIGN_TOP</flag>
             <border>5</border>
             <object class="wxBoxSizer">
               <orient>wxVERTICAL</orient>
               <object class="sizeritem">
-                <flag>wxALIGN_LEFT|wxALL</flag>
+                <flag>wxTOP|wxBOTTOM|wxLEFT|wxGROW</flag>
                 <border>5</border>
                 <object class="wxStaticBoxSizer">
                   <orient>wxVERTICAL</orient>
-                  <label>Please select an action:</label>
+                  <label>Action:</label>
                   <object class="sizeritem">
-                    <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP</flag>
+                    <flag>wxLEFT|wxRIGHT|wxTOP</flag>
                     <border>5</border>
                     <object class="wxRadioButton" name="ID_ACTION1">
                       <label>&amp;Overwrite</label>
@@ -563,15 +559,15 @@
                     </object>
                   </object>
                   <object class="sizeritem">
-                    <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP</flag>
+                    <flag>wxLEFT|wxRIGHT|wxTOP</flag>
                     <border>5</border>
                     <object class="wxRadioButton" name="ID_ACTION2">
-                      <label>Overwrite &amp;if newer</label>
+                      <label>Overwrite &amp;if source newer</label>
                       <value>0</value>
                     </object>
                   </object>
                   <object class="sizeritem">
-                    <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP</flag>
+                    <flag>wxLEFT|wxRIGHT|wxTOP</flag>
                     <border>5</border>
                     <object class="wxRadioButton" name="ID_ACTION3">
                       <label>&amp;Resume</label>
@@ -579,7 +575,7 @@
                     </object>
                   </object>
                   <object class="sizeritem">
-                    <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP</flag>
+                    <flag>wxLEFT|wxRIGHT|wxTOP</flag>
                     <border>5</border>
                     <object class="wxRadioButton" name="ID_ACTION4">
                       <label>Re&amp;name</label>
@@ -587,7 +583,7 @@
                     </object>
                   </object>
                   <object class="sizeritem">
-                    <flag>wxALIGN_LEFT|wxALL</flag>
+                    <flag>wxALL</flag>
                     <border>5</border>
                     <object class="wxRadioButton" name="ID_ACTION5">
                       <label>&amp;Skip</label>
@@ -597,7 +593,7 @@
                 </object>
               </object>
               <object class="sizeritem">
-                <flag>wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP</flag>
+                <flag>wxTOP|wxLEFT</flag>
                 <border>5</border>
                 <object class="wxCheckBox" name="ID_ALWAYS">
                   <label>&amp;Always use this action</label>
@@ -605,7 +601,7 @@
                 </object>
               </object>
               <object class="sizeritem">
-                <flag>wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT</flag>
+                <flag>wxLEFT|wxALIGN_CENTRE_HORIZONTAL</flag>
                 <border>5</border>
                 <object class="wxBoxSizer">
                   <orient>wxHORIZONTAL</orient>
@@ -620,7 +616,7 @@
                     <object class="wxBoxSizer">
                       <orient>wxVERTICAL</orient>
                       <object class="sizeritem">
-                        <flag>wxALIGN_LEFT|wxRIGHT|wxTOP</flag>
+                        <flag>wxRIGHT|wxTOP</flag>
                         <border>5</border>
                         <object class="wxCheckBox" name="ID_QUEUEONLY">
                           <label>Apply to &amp;current queue only</label>
@@ -628,7 +624,7 @@
                         </object>
                       </object>
                       <object class="sizeritem">
-                        <flag>wxALIGN_LEFT|wxRIGHT|wxTOP|wxBOTTOM</flag>
+                        <flag>wxRIGHT|wxTOP|wxBOTTOM</flag>
                         <border>5</border>
                         <object class="wxCheckBox" name="ID_UPDOWNONLY">
                           <label>&lt;updownonly&gt;</label>
@@ -644,7 +640,7 @@
         </object>
       </object>
       <object class="sizeritem">
-        <flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
+        <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxALIGN_CENTRE_HORIZONTAL</flag>
         <border>5</border>
         <object class="wxBoxSizer">
           <orient>wxHORIZONTAL</orient>
