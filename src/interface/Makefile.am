@@ -79,6 +79,7 @@ filezilla_SOURCES = aboutdialog.cpp \
 		viewheader.cpp \
 		window_state_manager.cpp \
 		wrapengine.cpp \
+		xh_toolb_ex.cpp \
 		xmlfunctions.cpp
  
 if USE_BINRELOC
@@ -157,6 +158,7 @@ noinst_HEADERS = aboutdialog.h \
 		 viewheader.h \
 		 window_state_manager.h \
 		 wrapengine.h \
+		 xh_toolb_ex.h \
 		 xmlfunctions.h
 
 if USE_RESOURCEFILE

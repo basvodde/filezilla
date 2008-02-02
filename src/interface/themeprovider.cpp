@@ -7,6 +7,8 @@
 CThemeProvider::CThemeProvider()
 {
 	wxArtProvider::Push(this);
+
+	m_themePath = GetThemePath(COptions::Get()->GetOption(OPTION_THEME));
 }
 
 wxBitmap CThemeProvider::CreateBitmap(const wxArtID& id, const wxArtClient& client, const wxSize& size)
@@ -14,35 +16,40 @@ wxBitmap CThemeProvider::CreateBitmap(const wxArtID& id, const wxArtClient& clie
 	if (id.Left(4) != _T("ART_"))
 		return wxNullBitmap;
 
-	wxString path = GetThemePath(COptions::Get()->GetOption(OPTION_THEME));
+	wxString resourceDir = wxGetApp().GetResourceDir();
 
-	wxString strSize;
+	std::list<wxString> dirs;
+	wxString strSize = wxString::Format(_T("%dx%d/"), size.GetWidth(), size.GetHeight());
+	if (wxDir::Exists(m_themePath + strSize))
+		dirs.push_back(m_themePath + strSize);
+	if (wxDir::Exists(resourceDir + strSize))
+		dirs.push_back(resourceDir + strSize);
+
 	if (size.GetWidth() >= 40)
-		strSize = _T("48x48/");
-	else if (size.GetWidth() >= 24)
-		strSize = _T("32x32/");
-	else
-		strSize = _T("16x16/");
+	{
+		dirs.push_back(m_themePath + _T("48x48/"));
+		dirs.push_back(resourceDir + _T("48x48/"));
+	}
+	if (size.GetWidth() >= 24)
+	{
+		dirs.push_back(m_themePath + _T("32x32/"));
+		dirs.push_back(resourceDir + _T("32x32/"));
+	}
+	dirs.push_back(m_themePath + _T("16x16/"));
+	dirs.push_back(resourceDir + _T("16x16/"));
 
 	wxString name = id.Mid(4);
 	name.MakeLower();
 
 	wxLogNull logNull;
 
-	wxString fileName;
-
-	// First try provided theme
-	fileName = path + strSize + name + _T(".png");
-	wxBitmap bmp(fileName, wxBITMAP_TYPE_PNG);
-	if (bmp.Ok())
+	for (std::list<wxString>::const_iterator iter = dirs.begin(); iter != dirs.end(); iter++)
+	{
+		wxString fileName = *iter + name + _T(".png");
+		wxBitmap bmp(fileName, wxBITMAP_TYPE_PNG);
+		if (bmp.Ok())
 		return bmp;
-
-	// Try classic theme
-	wxString resourceDir = wxGetApp().GetResourceDir();
-	fileName = resourceDir + strSize + name + _T(".png");
-	bmp = wxBitmap(fileName, wxBITMAP_TYPE_PNG);
-	if (bmp.Ok())
-		return bmp;
+	}
 
 	return wxNullBitmap;
 }
@@ -87,13 +94,16 @@ std::list<wxBitmap*> CThemeProvider::GetAllImages(const wxString& theme, wxSize&
 
 	wxLogNull log;
 
-	wxString strSize;
-	if (size.GetWidth() >= 40)
-		path += _T("48x48/");
-	else if (size.GetWidth() >= 24)
-		path += _T("32x32/");
-	else
-		path += _T("16x16/");
+	wxString strSize = wxString::Format(_T("%dx%d/"), size.GetWidth(), size.GetHeight());
+	if (!wxDir::Exists(strSize))
+	{
+		if (size.GetWidth() >= 40)
+			path += _T("48x48/");
+		else if (size.GetWidth() >= 24)
+			path += _T("32x32/");
+		else
+			path += _T("16x16/");
+	}
 
 	std::list<wxBitmap*> bitmaps;
 
@@ -188,6 +198,54 @@ bool CThemeProvider::GetThemeData(const wxString& theme, wxString& author, wxStr
 	delete pDocument->GetDocument();
 
 	return false;
+}
+
+static std::list<wxString> GetThemeSizes(const wxString& theme)
+{
+	std::list<wxString> sizes;
+
+	wxFileName fn(wxGetApp().GetResourceDir(), _T("themes.xml"));
+	TiXmlElement* pDocument = GetXmlFile(fn.GetFullPath());
+	if (!pDocument)
+		return sizes;
+
+	TiXmlElement* pThemes = pDocument->FirstChildElement("Themes");
+	TiXmlElement* pTheme = 0;
+	if (pThemes)
+	{
+		TiXmlElement* pTheme = pThemes->FirstChildElement("Theme");
+		while (pTheme)
+		{
+			wxString name = GetTextElement(pTheme, "Name");
+			if (name != theme)
+			{
+				pTheme = pTheme->NextSiblingElement("Theme");
+				continue;
+			}
+
+			break;
+		}
+	}
+
+	if (pTheme)
+	{
+		for (TiXmlElement* pSize = pTheme->FirstChildElement("size"); pSize; pSize = pTheme->NextSiblingElement("size"))
+		{
+			const char* txt = pSize->GetText();
+			if (!txt)
+				continue;
+
+			wxString size = ConvLocal(txt);
+			if (size == _T(""))
+				continue;
+
+			sizes.push_back(size);
+		}
+	}
+
+	delete pDocument->GetDocument();
+
+	return sizes;
 }
 
 wxIconBundle CThemeProvider::GetIconBundle(const wxArtID& id, const wxArtClient& client /*=wxART_OTHER*/)
