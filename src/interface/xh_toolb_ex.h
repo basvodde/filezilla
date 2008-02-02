@@ -7,7 +7,7 @@
 
 class wxToolBar;
 
-class WXDLLIMPEXP_XRC wxToolBarXmlHandlerEx : public wxXmlResourceHandler
+class wxToolBarXmlHandlerEx : public wxXmlResourceHandler
 {
 public:
     wxToolBarXmlHandlerEx();

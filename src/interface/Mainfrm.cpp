@@ -33,6 +33,7 @@
 #include "edithandler.h"
 #include "inputdialog.h"
 #include "window_state_manager.h"
+#include "xh_toolb_ex.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -844,6 +845,22 @@ bool CMainFrame::CreateToolBar()
 		SetToolBar(0);
 		delete m_pToolBar;
 	}
+
+	COptions::Get()->SetOption(OPTION_THEME_ICONSIZE, _T("48x48"));
+	{
+		wxString str = COptions::Get()->GetOption(OPTION_THEME_ICONSIZE);
+		int pos = str.Find('x');
+		if (pos > 0 && pos < str.Len() - 1)
+		{
+			long width = 0;
+			long height = 0;
+			if (str.Left(pos).ToLong(&width) &&
+				str.Mid(pos + 1).ToLong(&height) &&
+				width > 0 && height > 0)
+				wxToolBarXmlHandlerEx::SetIconSize(wxSize(width, height));
+		}
+	}
+
 	m_pToolBar = wxXmlResource::Get()->LoadToolBar(this, _T("ID_TOOLBAR"));
 	if (!m_pToolBar)
 	{
