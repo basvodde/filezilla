@@ -88,7 +88,7 @@ std::list<wxString> CThemeProvider::GetThemes()
 	return themes;
 }
 
-std::list<wxBitmap*> CThemeProvider::GetAllImages(const wxString& theme, wxSize& size)
+std::list<wxBitmap*> CThemeProvider::GetAllImages(const wxString& theme, const wxSize& size)
 {
 	wxString path = GetThemePath(theme);
 
@@ -200,7 +200,7 @@ bool CThemeProvider::GetThemeData(const wxString& theme, wxString& author, wxStr
 	return false;
 }
 
-static std::list<wxString> GetThemeSizes(const wxString& theme)
+std::list<wxString> CThemeProvider::GetThemeSizes(const wxString& theme)
 {
 	std::list<wxString> sizes;
 
@@ -213,7 +213,7 @@ static std::list<wxString> GetThemeSizes(const wxString& theme)
 	TiXmlElement* pTheme = 0;
 	if (pThemes)
 	{
-		TiXmlElement* pTheme = pThemes->FirstChildElement("Theme");
+		pTheme = pThemes->FirstChildElement("Theme");
 		while (pTheme)
 		{
 			wxString name = GetTextElement(pTheme, "Name");
@@ -229,7 +229,7 @@ static std::list<wxString> GetThemeSizes(const wxString& theme)
 
 	if (pTheme)
 	{
-		for (TiXmlElement* pSize = pTheme->FirstChildElement("size"); pSize; pSize = pTheme->NextSiblingElement("size"))
+		for (TiXmlElement* pSize = pTheme->FirstChildElement("size"); pSize; pSize = pSize->NextSiblingElement("size"))
 		{
 			const char* txt = pSize->GetText();
 			if (!txt)
@@ -278,4 +278,53 @@ wxIconBundle CThemeProvider::GetIconBundle(const wxArtID& id, const wxArtClient&
 	}
 
 	return iconBundle;
+}
+
+bool CThemeProvider::ThemeHasSize(const wxString& theme, const wxString& size)
+{
+	wxFileName fn(wxGetApp().GetResourceDir(), _T("themes.xml"));
+	TiXmlElement* pDocument = GetXmlFile(fn.GetFullPath());
+	if (!pDocument)
+		return false;
+
+	TiXmlElement* pThemes = pDocument->FirstChildElement("Themes");
+	TiXmlElement* pTheme = 0;
+	if (pThemes)
+	{
+		pTheme = pThemes->FirstChildElement("Theme");
+		while (pTheme)
+		{
+			wxString name = GetTextElement(pTheme, "Name");
+			if (name != theme)
+			{
+				pTheme = pTheme->NextSiblingElement("Theme");
+				continue;
+			}
+
+			break;
+		}
+	}
+
+	if (!pTheme)
+	{
+		delete pDocument->GetDocument();
+		return false;
+	}
+
+	for (TiXmlElement* pSize = pTheme->FirstChildElement("size"); pSize; pSize = pSize->NextSiblingElement("size"))
+	{
+		const char* txt = pSize->GetText();
+		if (!txt)
+			continue;
+
+		if (size == ConvLocal(txt))
+		{
+			delete pDocument->GetDocument();
+			return true;
+		}
+	}
+
+	delete pDocument->GetDocument();
+
+	return false;
 }

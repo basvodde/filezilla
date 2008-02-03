@@ -846,19 +846,22 @@ bool CMainFrame::CreateToolBar()
 		delete m_pToolBar;
 	}
 
-	COptions::Get()->SetOption(OPTION_THEME_ICONSIZE, _T("48x48"));
 	{
+		wxSize iconSize(16, 16);
 		wxString str = COptions::Get()->GetOption(OPTION_THEME_ICONSIZE);
 		int pos = str.Find('x');
-		if (pos > 0 && pos < str.Len() - 1)
+		if (CThemeProvider::ThemeHasSize(COptions::Get()->GetOption(OPTION_THEME), str) && pos > 0 && pos < str.Len() - 1)
 		{
+			
 			long width = 0;
 			long height = 0;
 			if (str.Left(pos).ToLong(&width) &&
 				str.Mid(pos + 1).ToLong(&height) &&
 				width > 0 && height > 0)
-				wxToolBarXmlHandlerEx::SetIconSize(wxSize(width, height));
+				iconSize = wxSize(width, height);
 		}
+
+		wxToolBarXmlHandlerEx::SetIconSize(iconSize);
 	}
 
 	m_pToolBar = wxXmlResource::Get()->LoadToolBar(this, _T("ID_TOOLBAR"));
@@ -884,6 +887,9 @@ bool CMainFrame::CreateToolBar()
 	CFilterDialog dlg;
 	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), dlg.HasActiveFilters());
 	SetToolBar(m_pToolBar);
+
+	if (m_pQuickconnectBar)
+		m_pQuickconnectBar->Refresh();
 
 	return true;
 }
@@ -1258,6 +1264,7 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 	COptions* pOptions = COptions::Get();
 
 	wxString oldTheme = pOptions->GetOption(OPTION_THEME);
+	wxString oldThemeSize = pOptions->GetOption(OPTION_THEME_ICONSIZE);
 	wxString oldLang = pOptions->GetOption(OPTION_LANGUAGE);
 
 	int oldShowDebugMenu = pOptions->GetOptionVal(OPTION_DEBUG_MENU) != 0;
@@ -1270,6 +1277,7 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 	}
 
 	wxString newTheme = pOptions->GetOption(OPTION_THEME);
+	wxString newThemeSize = pOptions->GetOption(OPTION_THEME_ICONSIZE);
 	wxString newLang = pOptions->GetOption(OPTION_LANGUAGE);
 
 	if (oldTheme != newTheme)
@@ -1277,7 +1285,9 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 		wxArtProvider::Delete(m_pThemeProvider);
 		m_pThemeProvider = new CThemeProvider();
 	}
-	if (oldTheme != newTheme || oldLang != newLang)
+	if (oldTheme != newTheme ||
+		oldThemeSize != newThemeSize ||
+		oldLang != newLang)
 		CreateToolBar();
 	if (oldLang != newLang ||
 		oldShowDebugMenu != pOptions->GetOptionVal(OPTION_DEBUG_MENU))

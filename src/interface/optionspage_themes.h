@@ -11,15 +11,10 @@ public:
 	virtual bool Validate();
 
 protected:
-
-	void GetPreview();
-
-	bool m_previewInitialized;
-	std::list<wxBitmap*> m_preview[3];
+	bool DisplayTheme(const wxString& theme);
 
 	DECLARE_EVENT_TABLE();
 	void OnThemeChange(wxCommandEvent& event);
-	void OnPanelPaint(wxPaintEvent& event);
 };
 
 #endif //__OPTIONSPAGE_THEMES_H__

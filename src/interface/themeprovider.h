@@ -8,10 +8,11 @@ public:
 	virtual ~CThemeProvider() { }
 
 	static std::list<wxString> GetThemes();
-	static std::list<wxBitmap*> GetAllImages(const wxString& theme, wxSize& size);
+	static std::list<wxBitmap*> GetAllImages(const wxString& theme, const wxSize& size);
 	static bool GetThemeData(const wxString& theme, wxString& author, wxString& email);
 	static std::list<wxString> GetThemeSizes(const wxString& theme);
 	static wxIconBundle GetIconBundle(const wxArtID& id, const wxArtClient& client = wxART_OTHER);
+	static bool ThemeHasSize(const wxString& theme, const wxString& size);
 
 protected:
 	static wxString GetThemePath(const wxString& theme);
