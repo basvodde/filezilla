@@ -1877,6 +1877,11 @@ void CMainFrame::RestoreSplitterPositions()
 	m_lastLogViewSplitterPos = aPosValues[0];
 	m_pTopSplitter->SetSashPosition(m_lastLogViewSplitterPos);
 
+#ifdef __WXMSW__
+	if (IsMaximized())
+		Show();
+#endif
+
 	int x, y;
 	m_pBottomSplitter->GetClientSize(&x, &y);
 	y -= aPosValues[1];
