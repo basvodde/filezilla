@@ -742,14 +742,16 @@ wxString CEditHandler::GetCustomOpenCommand(const wxString& file)
 		if (assoc != ext)
 			continue;
 
+		wxString prog = command;
+
 		wxString args;
-		if (!UnquoteCommand(command, args))
+		if (!UnquoteCommand(prog, args))
 			return _T("");
 
-		if (command == _T(""))
+		if (prog == _T(""))
 			return _T("");
 
-		if (!ProgramExists(command))
+		if (!ProgramExists(prog))
 			return _T("");
 
 		return command + _T(" \"") + fn.GetFullPath() + _T("\"");
