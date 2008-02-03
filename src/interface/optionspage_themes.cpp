@@ -43,7 +43,7 @@ public:
 		m_sizeInitialized = true;
 
 		wxSize size = GetClientSize();
-		
+
 		if (!m_icons.empty())
 		{
 			int icons_per_line = wxMax(1, (size.GetWidth() - BORDER) / (m_iconSize.GetWidth() + BORDER));
@@ -61,7 +61,7 @@ public:
 
 				wxSize size2 = GetClientSize();
 				size.SetWidth(size2.GetWidth());
-			
+
 				icons_per_line = wxMax(1, (size.GetWidth() - BORDER) / (m_iconSize.GetWidth() + BORDER));
 				lines = (m_icons.size() - 1) / icons_per_line + 1;
 				vheight = lines * (m_iconSize.GetHeight() + BORDER) + BORDER;
@@ -86,7 +86,7 @@ protected:
 	virtual void OnPaint(wxPaintEvent& event)
 	{
 		CalcSize();
-		
+
 		wxPaintDC dc(this);
 		PrepareDC(dc);
 
@@ -170,7 +170,7 @@ bool COptionsPageThemes::LoadPage()
 bool COptionsPageThemes::SavePage()
 {
 	wxChoice* pTheme = XRCCTRL(*this, "ID_THEME", wxChoice);
-	
+
 	m_pOptions->SetOption(OPTION_THEME, pTheme->GetString(pTheme->GetSelection()));
 
 	wxNotebook *pPreview = XRCCTRL(*this, "ID_PREVIEW", wxNotebook);
@@ -221,16 +221,19 @@ bool COptionsPageThemes::DisplayTheme(const wxString& theme)
 		{
 			continue;
 		}
-		
+
 		wxSize iconSize(width, height);
 
 		wxPanel* pPanel = new wxPanel();
+#ifdef __WXMSW__
+		// Drawing glitch on MSW
 		pPanel->Hide();
+#endif
 		pPanel->Create(pPreview);
 		wxSizer* pSizer = new wxBoxSizer(wxVERTICAL);
 		pPanel->SetSizer(pSizer);
 		pSizer->Add(new wxStaticText(pPanel, wxID_ANY, _("Preview:")), 0, wxLEFT|wxRIGHT|wxTOP, 5);
-		
+
 		CIconPreview *pIconPreview = new CIconPreview(pPanel);
 		pIconPreview->LoadIcons(theme, iconSize);
 
