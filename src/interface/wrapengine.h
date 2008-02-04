@@ -40,6 +40,8 @@ protected:
 	bool CanWrapBefore(const wxChar& c);
 	bool m_wrapOnEveryChar;
 	const wxChar* m_noWrapChars;
+
+	wxFont m_font;
 };
 
 #endif //__WRAPENGINE_H__
