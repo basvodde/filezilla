@@ -73,7 +73,7 @@ bool CWrapEngine::WrapTextChinese(wxWindow* parent, wxString &text, unsigned lon
 			if (iter == m_charWidths.end())
 			{
 				// Get width of all individual characters, record width of the current line
-				parent->GetTextExtent(*p, &width, &height);
+				parent->GetTextExtent(*p, &width, &height, 0, 0, &m_font);
 				if ((unsigned int)width > maxLength)
 					return false;
 				m_charWidths[*p] = width;
@@ -163,7 +163,7 @@ bool CWrapEngine::WrapTextChinese(wxWindow* parent, wxString &text, unsigned lon
 			piece = temp.Left(pos);
 			temp = temp.Mid(pos + 1);
 		}
-		parent->GetTextExtent(piece, &width, &height);
+		parent->GetTextExtent(piece, &width, &height, 0, 0, &m_font);
 		wxASSERT(width <= (int)maxLength);
 	}
 #endif
@@ -195,6 +195,9 @@ bool CWrapEngine::WrapText(wxWindow* parent, wxString& text, unsigned long maxLe
 	For this kind of languages, a different wrapping algorithm is used.
     */
 
+	if (!m_font.IsOk())
+		m_font = parent->GetFont();
+
 	if (m_wrapOnEveryChar)
 	{
 #ifdef __WXDEBUG__
@@ -213,7 +216,7 @@ bool CWrapEngine::WrapText(wxWindow* parent, wxString& text, unsigned long maxLe
 	int width = 0, height = 0;
 
 	int spaceWidth = 0;
-	parent->GetTextExtent(_T(" "), &spaceWidth, &height);
+	parent->GetTextExtent(_T(" "), &spaceWidth, &height, 0, 0, &m_font);
 
 	int strLen = text.Length();
 	int wrapAfter = -1;
@@ -234,7 +237,7 @@ bool CWrapEngine::WrapText(wxWindow* parent, wxString& text, unsigned long maxLe
 			segment = text.Mid(wrapAfter + 1, i - wrapAfter - 1);
 
 		segment = wxStripMenuCodes(segment);
-		parent->GetTextExtent(segment, &width, &height);
+		parent->GetTextExtent(segment, &width, &height, 0, 0, &m_font);
 
 		if ((unsigned int)width > maxLength)
 		{
@@ -253,7 +256,7 @@ bool CWrapEngine::WrapText(wxWindow* parent, wxString& text, unsigned long maxLe
 					{
 						wxString left = segment.Left(j + 1);
 						int lwidth;
-						parent->GetTextExtent(left, &lwidth, &height);
+						parent->GetTextExtent(left, &lwidth, &height, 0, 0, &m_font);
 						if ((unsigned)lwidth <= maxLength)
 						{
 							if (lineLength && lineLength + spaceWidth + lwidth > maxLength)
@@ -295,7 +298,7 @@ bool CWrapEngine::WrapText(wxWindow* parent, wxString& text, unsigned long maxLe
 				wrappedText += segment.Left(best + 1);
 				segment = segment.Mid(best + 1);
 
-				parent->GetTextExtent(wrappedText, &width, &height);
+				parent->GetTextExtent(wrappedText, &width, &height, 0, 0, &m_font);
 				parent->GetTextExtent(segment, &width, &height);
 				if ((unsigned)width <= maxLength)
 				{
