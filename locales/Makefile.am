@@ -54,8 +54,8 @@ XGETTEXT_ARGS=-C -k_ -kwxGetTranslation -kwxTRANSLATE -kwxPLURAL:1,2 -s -j
 	if [ ! -f $@ ]; then \
 	  exit 1; \
 	fi
-	$(MSGMERGE) -U $@ filezilla.pot  || exit 1
-	@if [ -f $@~ ]; then rm $@~; fi
+	$(MSGMERGE) $@ filezilla.pot -o $@~ || exit 1
+	@mv $@~ $@
 
 # touch file so that timestamp is newer than that of filezilla.pot
 	@touch $@;
