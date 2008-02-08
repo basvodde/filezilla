@@ -64,6 +64,8 @@ bool CConditionalDialog::Run()
 	Fit();
 	wxGetApp().GetWrapEngine()->WrapRecursive(this, 3);
 
+	CenterOnParent();
+
 	int id = ShowModal();
 
 	if (wxDynamicCast(FindWindow(wxID_HIGHEST + 1), wxCheckBox)->GetValue())
