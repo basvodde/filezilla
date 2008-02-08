@@ -489,12 +489,14 @@ void CEditHandler::CheckForModifications(
 	if (insideCheckForModifications)
 		return;
 
+#ifdef __WXMAC__
 	if (emitEvent)
 	{
 		wxCommandEvent evt(fzEDIT_CHANGEDFILE);
 		AddPendingEvent(evt);
 		return;
 	}
+#endif
 
 	insideCheckForModifications = true;
 
@@ -779,10 +781,12 @@ wxString CEditHandler::GetCustomOpenCommand(const wxString& file)
 	return _T("");
 }
 
+#ifdef __WXMAC__
 void CEditHandler::OnChangedFileEvent(wxCommandEvent& event)
 {
 	CheckForModifications();
 }
+#endif
 
 BEGIN_EVENT_TABLE(CEditHandlerStatusDialog, wxDialogEx)
 EVT_LIST_ITEM_SELECTED(wxID_ANY, CEditHandlerStatusDialog::OnSelectionChanged)
