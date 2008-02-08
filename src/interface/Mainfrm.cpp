@@ -1839,7 +1839,7 @@ void CMainFrame::RememberSplitterPositions()
 	if (m_pBottomSplitter->IsSplit())
 		y -= m_pBottomSplitter->GetSashPosition();
 	else
-		y -= m_lastQueueSplitterPos;
+		y = m_lastQueueSplitterPos;
 	posString += wxString::Format(_T("%d "), y);
 
 	// view_pos
@@ -1893,14 +1893,19 @@ void CMainFrame::RestoreSplitterPositions()
 		Show();
 #endif
 
+	m_lastQueueSplitterPos = aPosValues[1];
+
 	int x, y;
 	m_pBottomSplitter->GetClientSize(&x, &y);
-	y -= aPosValues[1];
-	if (y < 100)
-		y = 100;
-	m_lastQueueSplitterPos = y;
 
-	m_pBottomSplitter->SetSashPosition(m_lastQueueSplitterPos);
+	if (m_lastQueueSplitterPos > y - 100)
+		m_lastQueueSplitterPos = y - 100;
+	else if (m_lastQueueSplitterPos < 50)
+		m_lastQueueSplitterPos = 100;
+
+	y -= m_lastQueueSplitterPos;
+
+	m_pBottomSplitter->SetSashPosition(y);
 
 	m_ViewSplitterSashPos = (float)aPosValues[2] / aPosValues[3];
 	m_pViewSplitter->SetSashPosition(aPosValues[2]);
