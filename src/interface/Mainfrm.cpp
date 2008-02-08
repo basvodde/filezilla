@@ -969,6 +969,14 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 {
 	if (!m_bQuit)
 	{
+		static bool quit_confirmation_displayed = false;
+		if (quit_confirmation_displayed)
+		{
+			event.Veto();
+			return;
+		}
+		quit_confirmation_displayed = true;
+
 		if (m_pQueueView && m_pQueueView->IsActive())
 		{
 			CConditionalDialog dlg(this, CConditionalDialog::confirmexit, CConditionalDialog::yesno);
@@ -980,6 +988,7 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 			if (!dlg.Run())
 			{
 				event.Veto();
+				quit_confirmation_displayed = false;
 				return;
 			}
 		}
@@ -1000,10 +1009,12 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 				if (!dlg.Run())
 				{
 					event.Veto();
+					quit_confirmation_displayed = false;
 					return;
 				}
 			}
 		}
+		quit_confirmation_displayed = false;
 
 		if (m_pWindowStateManager)
 		{
