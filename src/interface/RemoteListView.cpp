@@ -1094,6 +1094,13 @@ void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
 				pMenu->Enable(XRCID("ID_EDIT"), false);
 			if (count > 1)
 				pMenu->Enable(XRCID("ID_RENAME"), false);
+
+			const wxString& localDir = m_pState->GetLocalDir();
+			if (!m_pState->LocalDirIsWriteable(localDir))
+			{
+				pMenu->Enable(XRCID("ID_DOWNLOAD"), false);
+				pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
+			}
 		}
 	}
 
@@ -1105,6 +1112,13 @@ void CRemoteListView::OnMenuDownload(wxCommandEvent& event)
 {
 	// Make sure selection is valid
 	bool idle = m_pState->IsRemoteIdle();
+
+	const wxString& localDir = m_pState->GetLocalDir();
+	if (!m_pState->LocalDirIsWriteable(localDir))
+	{
+		wxBell();
+		return;
+	}
 
 	long item = -1;
 	while (true)
@@ -1131,7 +1145,7 @@ void CRemoteListView::OnMenuDownload(wxCommandEvent& event)
 		}
 	}
 
-	TransferSelectedFiles(m_pState->GetLocalDir(), event.GetId() == XRCID("ID_ADDTOQUEUE"));
+	TransferSelectedFiles(localDir, event.GetId() == XRCID("ID_ADDTOQUEUE"));
 }
 
 void CRemoteListView::TransferSelectedFiles(const wxString& localDir, bool queueOnly)
@@ -1140,6 +1154,8 @@ void CRemoteListView::TransferSelectedFiles(const wxString& localDir, bool queue
 
 	CRecursiveOperation* pRecursiveOperation = m_pState->GetRecursiveOperationHandler();
 	wxASSERT(pRecursiveOperation);
+
+	wxASSERT(m_pState->LocalDirIsWriteable(localDir));
 
 	bool startRecursive = false;
 	long item = -1;

@@ -852,8 +852,13 @@ void CRemoteTreeView::OnContextMenu(wxTreeEvent& event)
 		pMenu->Enable(XRCID("ID_RENAME"), false);
 	}
 	else if (!path.HasParent())
-	{
 		pMenu->Enable(XRCID("ID_RENAME"), false);
+
+	const wxString& localDir = m_pState->GetLocalDir();
+	if (!m_pState->LocalDirIsWriteable(localDir))
+	{
+		pMenu->Enable(XRCID("ID_DOWNLOAD"), false);
+		pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
 	}
 
 	PopupMenu(pMenu);
@@ -973,6 +978,13 @@ void CRemoteTreeView::OnMenuChmod(wxCommandEvent& event)
 
 void CRemoteTreeView::OnMenuDownload(wxCommandEvent& event)
 {
+	const wxString& localDir = m_pState->GetLocalDir();
+	if (!m_pState->LocalDirIsWriteable(localDir))
+	{
+		wxBell();
+		return;
+	}
+
 	if (!m_pState->IsRemoteIdle())
 		return;
 
@@ -984,8 +996,6 @@ void CRemoteTreeView::OnMenuDownload(wxCommandEvent& event)
 		return;
 
 	const bool hasParent = path.HasParent();
-
-	const wxString localDir = m_pState->GetLocalDir();
 
 	const wxString& name = GetItemText(m_contextMenuItem);
 
