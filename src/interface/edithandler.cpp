@@ -33,8 +33,16 @@ void CChangedFileDialog::OnNo(wxCommandEvent& event)
 
 //-------------
 
+#ifdef __WXMAC__
+DECLARE_EVENT_TYPE(fzEDIT_CHANGEDFILE, -1)
+DEFINE_EVENT_TYPE(fzEDIT_CHANGEDFILE)
+#endif
+
 BEGIN_EVENT_TABLE(CEditHandler, wxEvtHandler)
 EVT_TIMER(wxID_ANY, CEditHandler::OnTimerEvent)
+#ifdef __WXMAC__
+EVT_COMMAND(wxID_ANY, fzEDIT_CHANGEDFILE, CEditHandler::OnChangedFileEvent)
+#endif
 END_EVENT_TABLE()
 
 CEditHandler* CEditHandler::m_pEditHandler = 0;
@@ -471,11 +479,22 @@ bool CEditHandler::StartEditing(enum CEditHandler::fileType type, t_fileData& da
 	return true;
 }
 
-void CEditHandler::CheckForModifications()
+void CEditHandler::CheckForModifications(
+#ifdef __WXMAC__
+		bool emitEvent /*=false*/
+#endif
+	)
 {
 	static bool insideCheckForModifications = false;
 	if (insideCheckForModifications)
 		return;
+
+	if (emitEvent)
+	{
+		wxCommandEvent evt(fzEDIT_CHANGEDFILE);
+		AddPendingEvent(evt);
+		return;
+	}
 
 	insideCheckForModifications = true;
 
@@ -758,6 +777,11 @@ wxString CEditHandler::GetCustomOpenCommand(const wxString& file)
 	}
 
 	return _T("");
+}
+
+void CEditHandler::OnChangedFileEvent(wxCommandEvent& event)
+{
+	CheckForModifications();
 }
 
 BEGIN_EVENT_TABLE(CEditHandlerStatusDialog, wxDialogEx)

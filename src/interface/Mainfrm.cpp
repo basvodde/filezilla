@@ -1922,7 +1922,11 @@ void CMainFrame::OnActivate(wxActivateEvent& event)
 
 	CEditHandler* pEditHandler = CEditHandler::Get();
 	if (pEditHandler)
-		pEditHandler->CheckForModifications();
+		pEditHandler->CheckForModifications(
+#ifdef __WXMAC__
+				true
+#endif
+			);
 }
 
 void CMainFrame::OnToolbarComparison(wxCommandEvent& event)

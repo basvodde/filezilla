@@ -50,7 +50,11 @@ public:
 
 	void FinishTransfer(bool successful, enum fileType type, const wxString& fileName);
 
-	void CheckForModifications();
+	void CheckForModifications(
+#ifdef __WXMAC__
+			bool emitEvent = false
+#endif
+		);
 
 	void SetQueue(CQueueView* pQueue) { m_pQueue = pQueue; }
 
@@ -114,6 +118,9 @@ protected:
 
 	DECLARE_EVENT_TABLE()
 	void OnTimerEvent(wxTimerEvent& event);
+#ifdef __WXMAC__
+	void OnChangedFileEvent(wxCommandEvent& event);
+#endif
 };
 
 class CEditHandlerStatusDialog : protected wxDialogEx
