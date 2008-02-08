@@ -503,8 +503,18 @@ void CDirectoryCache::Rename(const CServer& server, const CServerPath& pathFrom,
 			}
 			else
 			{
-				RemoveFile(server, pathFrom, fileFrom);
-				UpdateFile(server, pathTo, fileTo, true, file);
+				if (pathFrom == pathTo)
+				{
+					RemoveFile(server, pathFrom, fileTo);
+					listing[i].name = fileTo;
+					listing[i].unsure = true;
+					listing.m_hasUnsureEntries |= UNSURE_CHANGE;
+				}
+				else
+				{
+					RemoveFile(server, pathFrom, fileFrom);
+					UpdateFile(server, pathTo, fileTo, true, file);
+				}
 			}
 		}
 		else
