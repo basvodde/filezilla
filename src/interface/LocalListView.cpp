@@ -395,8 +395,21 @@ regular_dir:
 			else
 				data.size = result ? -1 : buf.st_size;
 
+#ifdef __WXMSW__
+			DWORD tmp = GetFileAttributes(dirname + file);
+			if (tmp == INVALID_FILE_ATTRIBUTES)
+				data.attributes = 0;
+			else
+				data.attributes = tmp;
+#else
+			if (!result)
+				data.attributes = buf.st_mode & 0x777;
+			else
+				data.attributes = -1;
+#endif //__WXMSW__
+
 			m_fileData.push_back(data);
-			if (!filter.FilenameFiltered(data.name, data.dir, data.size, true))
+			if (!filter.FilenameFiltered(data.name, data.dir, data.size, true, data.attributes))
 				m_indexMapping.push_back(num);
 			num++;
 
@@ -1538,7 +1551,7 @@ void CLocalListView::ApplyCurrentFilter()
 	for (unsigned int i = min; i < m_fileData.size(); i++)
 	{
 		const CLocalFileData& data = m_fileData[i];
-		if (!filter.FilenameFiltered(data.name, data.dir, data.size, true))
+		if (!filter.FilenameFiltered(data.name, data.dir, data.size, true, data.attributes))
 			m_indexMapping.push_back(i);
 	}
 	SetItemCount(m_indexMapping.size());
@@ -1552,6 +1565,9 @@ void CLocalListView::ApplyCurrentFilter()
 	}
 
 	ReselectItems(selectedNames, focused);
+
+	if (!IsComparing())
+		Refresh();
 }
 
 std::list<wxString> CLocalListView::RememberSelectedItems(wxString& focused)

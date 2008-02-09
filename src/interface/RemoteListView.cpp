@@ -630,7 +630,7 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 			data.icon = entry.dir ? m_dirIcon : -2;
 			m_fileData.push_back(data);
 
-			if (!filter.FilenameFiltered(entry.name, entry.dir, entry.size, false))
+			if (!filter.FilenameFiltered(entry.name, entry.dir, entry.size, false, 0))
 				m_indexMapping.push_back(i);
 		}
 
@@ -1687,7 +1687,7 @@ void CRemoteListView::ApplyCurrentFilter()
 	for (unsigned int i = 0; i < count; i++)
 	{
 		const CDirentry& entry = (*m_pDirectoryListing)[i];
-		if (!filter.FilenameFiltered(entry.name, entry.dir, entry.size, false))
+		if (!filter.FilenameFiltered(entry.name, entry.dir, entry.size, false, 0))
 			m_indexMapping.push_back(i);
 	}
 

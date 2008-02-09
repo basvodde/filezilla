@@ -317,17 +317,32 @@ protected:
 
 				if (wxDir::Exists(fullName))
 				{
-#ifdef S_ISLNK
+					int attributes;
+#ifdef __WXMSW__
+					DWORD tmp = GetFileAttributes(fullName);
+					if (tmp == INVALID_FILE_ATTRIBUTES)
+						attributes = 0;
+					else
+						attributes = tmp;
+#else
 					wxStructStat buf;
 					const int result = wxLstat(fullName, &buf);
-					if (!result && S_ISLNK(buf.st_mode))
+					if (!result)
 					{
-						found = pDir->GetNext(&file);
-						continue;
+#ifdef S_ISLNK
+						if (S_ISLNK(buf.st_mode))
+						{
+							found = pDir->GetNext(&file);
+							continue;
+						}
+#endif //S_ISLNK
+						attributes = buf.st_mode & 0x777;
 					}
-#endif
+					else
+						attributes = -1;
+#endif //__WXMSWMM
 
-					if (!m_filters.FilenameFiltered(file, true, -1, true))
+					if (!m_filters.FilenameFiltered(file, true, -1, true, attributes))
 					{
 						CFolderScanItem::t_dirPair pair;
 						pair.localPath = fullName;
@@ -342,7 +357,21 @@ protected:
 					int result;
 					result = wxStat(fullName, &buf);
 
-					if (!m_filters.FilenameFiltered(file, false, result ? -1 : buf.st_size, true))
+					int attributes;
+#ifdef __WXMSW__
+					DWORD tmp = GetFileAttributes(fullName);
+					if (tmp == INVALID_FILE_ATTRIBUTES)
+						attributes = 0;
+					else
+						attributes = tmp;
+#else
+					if (!result)
+						attributes = buf.st_mode & 0x777;
+					else
+						attributes = -1;
+#endif //__WXMSW__
+
+					if (!m_filters.FilenameFiltered(file, false, result ? -1 : buf.st_size, true, attributes))
 					{
 						t_newEntry entry;
 						entry.localFile = fullName.c_str();

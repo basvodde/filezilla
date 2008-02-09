@@ -497,13 +497,29 @@ void CLocalTreeView::DisplayDir(wxTreeItemId parent, const wxString& dirname, co
 
 			wxLongLong size;
 
+			const wxString& fullName = fn.GetFullPath();
 			wxStructStat buf;
-			if (!isDir && !wxStat(fn.GetFullPath(), &buf))
+			int result = result = wxStat(fullName, &buf);
+			if (!isDir && !result)
 				size = buf.st_size;
 			else
 				size = -1;
 
-			if (filter.FilenameFiltered(file, isDir, size, true))
+			int attributes;
+#ifdef __WXMSW__
+			DWORD tmp = GetFileAttributes(fullName);
+			if (tmp == INVALID_FILE_ATTRIBUTES)
+				attributes = 0;
+			else
+				attributes = tmp;
+#else
+			if (!result)
+				attributes = buf.st_mode & 0x777;
+			else
+				attributes = -1;
+#endif //__WXMSW__
+
+			if (filter.FilenameFiltered(file, isDir, size, true, attributes))
 				continue;
 		}
 		else
@@ -536,7 +552,22 @@ bool CLocalTreeView::HasSubdir(const wxString& dirname)
 	wxString file;
 	for (bool found = dir.GetFirst(&file, _T(""), wxDIR_DIRS | wxDIR_HIDDEN); found; found = dir.GetNext(&file))
 	{
-		if (!filter.FilenameFiltered(file, true, -1, true))
+		int attributes;
+#ifdef __WXMSW__
+		DWORD tmp = GetFileAttributes(dirname + wxFileName::GetPathSeparator() + file);
+		if (tmp == INVALID_FILE_ATTRIBUTES)
+			attributes = 0;
+		else
+			attributes = tmp;
+#else
+		wxStructStat buf;
+		const int result = wxLstat(dirname + file, &buf);
+		if (!result)
+			attributes = buf.st_mode & 0x777;
+		else
+			attributes = -1;
+#endif //__WXMSWMM
+		if (!filter.FilenameFiltered(file, true, -1, true, attributes))
 			return true;
 	}
 
@@ -741,12 +772,27 @@ void CLocalTreeView::Refresh()
 			wxLongLong size;
 
 			wxStructStat buf;
-			if (!isDir && !wxStat(fn.GetFullPath(), &buf))
+			int result = wxStat(fn.GetFullPath(), &buf);
+			if (!isDir && !result)
 				size = buf.st_size;
 			else
 				size = -1;
 
-			if (!filter.FilenameFiltered(file, isDir, size , true))
+			int attributes;
+#ifdef __WXMSW__
+			DWORD tmp = GetFileAttributes(fn.GetFullPath());
+			if (tmp == INVALID_FILE_ATTRIBUTES)
+				attributes = 0;
+			else
+				attributes = tmp;
+#else
+			if (!result)
+				attributes = buf.st_mode & 0x777;
+			else
+				attributes = -1;
+#endif //__WXMSW__
+
+			if (!filter.FilenameFiltered(file, isDir, size , true, attributes))
 				dirs.push_back(file);
 			found = find.GetNext(&file);
 		}

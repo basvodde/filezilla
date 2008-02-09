@@ -444,7 +444,7 @@ bool CRemoteTreeView::HasSubdirs(const CDirectoryListing& listing, const CFilter
 		if (!listing[i].dir)
 			continue;
 
-		if (filter.FilenameFiltered(listing[i].name, true, -1, false))
+		if (filter.FilenameFiltered(listing[i].name, true, -1, false, 0))
 			continue;
 
 		return true;
@@ -463,7 +463,7 @@ void CRemoteTreeView::DisplayItem(wxTreeItemId parent, const CDirectoryListing& 
 		if (!listing[i].dir)
 			continue;
 
-		if (filter.FilenameFiltered(listing[i].name, true, -1, false))
+		if (filter.FilenameFiltered(listing[i].name, true, -1, false, 0))
 			continue;
 
 		const wxString& name = listing[i].name;
@@ -520,7 +520,7 @@ void CRemoteTreeView::RefreshItem(wxTreeItemId parent, const CDirectoryListing& 
 		if (!listing[i].dir)
 			continue;
 
-		if (!filter.FilenameFiltered(listing[i].name, true, -1, false))
+		if (!filter.FilenameFiltered(listing[i].name, true, -1, false, 0))
 			dirs.push_back(listing[i].name);
 	}
 

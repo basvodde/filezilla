@@ -33,7 +33,7 @@ END_EVENT_TABLE();
 
 CFilterCondition::CFilterCondition()
 {
-	type = 0;
+	type = name;
 	condition = 0;
 	pRegEx = 0;
 	matchCase = true;
@@ -76,6 +76,17 @@ CFilter::CFilter()
 #else
 	matchCase = true;
 #endif
+}
+
+bool CFilter::HasConditionOfType(enum t_filterType type) const
+{
+	for (std::vector<CFilterCondition>::const_iterator iter = filters.begin(); iter != filters.end(); iter++)
+	{
+		if (iter->type == type)
+			return true;
+	}
+
+	return false;
 }
 
 CFilterDialog::CFilterDialog()
@@ -308,7 +319,10 @@ void CFilterDialog::LoadFilters()
 		while (pCondition)
 		{
 			CFilterCondition condition;
-			condition.type = GetTextElementInt(pCondition, "Type", 0);
+			int type = GetTextElementInt(pCondition, "Type", 0);
+			if (type < 0 || type >= filterType_size)
+				continue;
+			condition.type = (enum t_filterType)type;
 			condition.condition = GetTextElementInt(pCondition, "Condition", 0);
 			condition.strValue = GetTextElement(pCondition, "Value");
 			condition.matchCase = filter.matchCase;
@@ -319,11 +333,18 @@ void CFilterDialog::LoadFilters()
 			}
 
 			// TODO: 64bit filesize
-			if (condition.type == 1)
+			if (condition.type == size)
 			{
 				unsigned long tmp;
 				condition.strValue.ToULong(&tmp);
 				condition.value = tmp;
+			}
+			else if (condition.type == attributes || condition.type == permissions)
+			{
+				if (condition.strValue == _T("0"))
+					condition.value = 0;
+				else
+					condition.value = 1;
 			}
 
 			filter.filters.push_back(condition);
@@ -395,11 +416,14 @@ void CFilterDialog::DisplayFilters()
 	for (unsigned int i = 0; i < m_filters.size(); i++)
 	{
 		const CFilter& filter = m_filters[i];
+
+		const bool localOnly = filter.HasConditionOfType(attributes) || filter.HasConditionOfType(permissions);
+
 		pLocalFilters->Append(filter.name);
 		pRemoteFilters->Append(filter.name);
 
 		pLocalFilters->Check(i, m_filterSets[m_currentFilterSet].local[i]);
-		pRemoteFilters->Check(i, m_filterSets[m_currentFilterSet].remote[i]);
+		pRemoteFilters->Check(i, localOnly ? false : m_filterSets[m_currentFilterSet].remote[i]);
 	}
 }
 
@@ -422,10 +446,23 @@ void CFilterDialog::OnFilterSelect(wxCommandEvent& event)
 
 	int item = event.GetSelection();
 
+	const CFilter& filter = m_filters[item];
+	const bool localOnly = filter.HasConditionOfType(attributes) || filter.HasConditionOfType(permissions);
+	if (localOnly && event.GetEventObject() != pLocal)
+	{
+		pRemote->Check(item, false);
+		wxMessageBox(_("Selected filter only works for local files."), _("Cannot select filter"), wxICON_INFORMATION);
+		return;
+	}
+
+
 	if (m_shiftClick)
 	{
 		if (event.GetEventObject() == pLocal)
-			pRemote->Check(item, pLocal->IsChecked(event.GetSelection()));
+		{
+			if (!localOnly)
+				pRemote->Check(item, pLocal->IsChecked(event.GetSelection()));
+		}
 		else
 			pLocal->Check(item, pRemote->IsChecked(event.GetSelection()));
 	}
@@ -444,7 +481,7 @@ void CFilterDialog::OnFilterSelect(wxCommandEvent& event)
 	m_filterSets[0].remote[item] = remoteChecked;
 }
 
-bool CFilterDialog::FilenameFiltered(const wxString& name, bool dir, wxLongLong size, bool local) const
+bool CFilterDialog::FilenameFiltered(const wxString& name, bool dir, wxLongLong size, bool local, int attributes) const
 {
 	wxASSERT(m_currentFilterSet < m_filterSets.size());
 
@@ -456,13 +493,13 @@ bool CFilterDialog::FilenameFiltered(const wxString& name, bool dir, wxLongLong 
 		if (local)
 		{
 			if (set.local[i])
-				if (FilenameFilteredByFilter(name, dir, size, i))
+				if (FilenameFilteredByFilter(name, dir, size, i, attributes))
 					return true;
 		}
 		else
 		{
 			if (set.remote[i])
-				if (FilenameFilteredByFilter(name, dir, size, i))
+				if (FilenameFilteredByFilter(name, dir, size, i, attributes))
 					return true;
 		}
 	}
@@ -470,7 +507,7 @@ bool CFilterDialog::FilenameFiltered(const wxString& name, bool dir, wxLongLong 
 	return false;
 }
 
-bool CFilterDialog::FilenameFilteredByFilter(const wxString& name, bool dir, wxLongLong size, unsigned int filterIndex) const
+bool CFilterDialog::FilenameFilteredByFilter(const wxString& name, bool dir, wxLongLong size, unsigned int filterIndex, int attributes) const
 {
 	wxRegEx regex;
 	const CFilter& filter = m_filters[filterIndex];
@@ -487,7 +524,7 @@ bool CFilterDialog::FilenameFilteredByFilter(const wxString& name, bool dir, wxL
 
 		switch (condition.type)
 		{
-		case 0:
+		case (enum t_filterType)::name:
 			switch (condition.condition)
 			{
 			case 0:
@@ -550,7 +587,7 @@ bool CFilterDialog::FilenameFilteredByFilter(const wxString& name, bool dir, wxL
 					match = true;
 			}
 			break;
-		case 1:
+		case (enum t_filterType)::size:
 			if (size == -1)
 				continue;
 			switch (condition.condition)
@@ -568,6 +605,89 @@ bool CFilterDialog::FilenameFilteredByFilter(const wxString& name, bool dir, wxL
 					match = true;
 				break;
 			}
+			break;
+		case (enum t_filterType)::attributes:
+#ifndef __WXMSW__
+			continue;
+#else
+			if (!attributes)
+				continue;
+
+			{
+				int flag = 0;
+				switch (condition.condition)
+				{
+				case 0:
+					flag = FILE_ATTRIBUTE_ARCHIVE;
+					break;
+				case 1:
+					flag = FILE_ATTRIBUTE_COMPRESSED;
+					break;
+				case 2:
+					flag = FILE_ATTRIBUTE_ENCRYPTED;
+					break;
+				case 3:
+					flag = FILE_ATTRIBUTE_HIDDEN;
+					break;
+				case 4:
+					flag = FILE_ATTRIBUTE_READONLY;
+					break;
+				case 5:
+					flag = FILE_ATTRIBUTE_SYSTEM;
+					break;
+				}
+
+				int set = (flag & attributes) ? 1 : 0;
+				if (set == condition.value)
+					match = true;
+			}
+#endif //__WXMSW__
+			break;
+		case permissions:
+#ifdef __WXMSW__
+			continue;
+#else
+			if (attributes == -1)
+				continue;
+
+			{
+				int flag = 0;
+				switch (condition.condition)
+				{
+				case 0:
+					flag = S_IRUSR;
+					break;
+				case 1:
+					flag = S_IWUSR;
+					break;
+				case 2:
+					flag = S_IXUSR;
+					break;
+				case 3:
+					flag = S_IRGRP;
+					break;
+				case 4:
+					flag = S_IWGRP;
+					break;
+				case 5:
+					flag = S_IXGRP;
+					break;
+				case 6:
+					flag = S_IROTH;
+					break;
+				case 7:
+					flag = S_IWOTH;
+					break;
+				case 8:
+					flag = S_IXOTH;
+					break;
+				}
+
+				int set = (flag & attributes) ? 1 : 0;
+				if (set == condition.value)
+					match = true;
+			}
+#endif //__WXMSW__
 			break;
 		}
 		if (match)
@@ -679,17 +799,20 @@ void CFilterDialog::OnChangeAll(wxCommandEvent& event)
 	if (event.GetId() == XRCID("ID_LOCAL_DISABLEALL") || event.GetId() == XRCID("ID_REMOTE_DISABLEALL"))
 		check = false;
 
+	bool local;
 	std::vector<bool>* pValues;
 	wxCheckListBox* pListBox;
 	if (event.GetId() == XRCID("ID_LOCAL_ENABLEALL") || event.GetId() == XRCID("ID_LOCAL_DISABLEALL"))
 	{
 		pListBox = XRCCTRL(*this, "ID_LOCALFILTERS", wxCheckListBox);
 		pValues = &m_filterSets[0].local;
+		local = true;
 	}
 	else
 	{
 		pListBox = XRCCTRL(*this, "ID_REMOTEFILTERS", wxCheckListBox);
 		pValues = &m_filterSets[0].remote;
+		local = false;
 	}
 
 	if (m_currentFilterSet)
@@ -702,8 +825,16 @@ void CFilterDialog::OnChangeAll(wxCommandEvent& event)
 
 	for (size_t i = 0; i < pListBox->GetCount(); i++)
 	{
-		pListBox->Check(i, check);
-		(*pValues)[i] = check;
+		if (!local && (m_filters[i].HasConditionOfType(attributes) || m_filters[i].HasConditionOfType(permissions)))
+		{
+			pListBox->Check(i, false);
+			(*pValues)[i] = false;
+		}
+		else
+		{
+			pListBox->Check(i, check);
+			(*pValues)[i] = check;
+		}
 	}
 }
 

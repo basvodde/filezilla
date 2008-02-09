@@ -8,10 +8,13 @@ class CFilterControls
 {
 public:
 	CFilterControls();
+	
+	void Reset();
 
 	wxChoice* pType;
 	wxChoice* pCondition;
 	wxTextCtrl* pValue;
+	wxChoice* pSet;
 };
 
 class wxCustomHeightListCtrl;
@@ -44,13 +47,20 @@ protected:
 		
 	void ShowFilter(const CFilter& filter);
 	void SaveFilter(CFilter& filter);
-	void MakeControls(const CFilterCondition& condition);
+	void MakeControls(const CFilterCondition& condition, unsigned int i = -1);
 	void DestroyControls();
 	void UpdateCount();
 
 	void CalcMinListWidth();
 
 	void SetCtrlState(bool enabled);
+
+	enum t_filterType GetTypeFromTypeSelection(int selection);
+#ifndef __WXMSW__
+	bool m_hasAttributes;
+#else
+	bool m_hasPermissions;
+#endif
 
 	wxCustomHeightListCtrl* m_pListCtrl;
 	int m_choiceBoxHeight;

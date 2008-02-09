@@ -15,6 +15,7 @@ public:
 	wxLongLong size;
 	bool hasTime;
 	wxDateTime lastModified;
+	int attributes;
 };
 
 class CLocalListView : public CFileListCtrl<CLocalFileData>, CSystemImageList, CStateEventHandler

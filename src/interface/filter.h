@@ -4,6 +4,16 @@
 #include "dialogex.h"
 #include <wx/regex.h>
 
+enum t_filterType
+{
+	name,
+	size,
+	attributes,
+	permissions,
+
+	filterType_size
+};
+
 class CFilterCondition
 {
 public:
@@ -11,7 +21,7 @@ public:
 	CFilterCondition(const CFilterCondition& cond);
 
 	virtual ~CFilterCondition();
-	int type;
+	enum t_filterType type;
 	int condition;
 	wxString strValue;
 	wxLongLong value;
@@ -41,6 +51,8 @@ public:
 	bool matchCase;
 
 	std::vector<CFilterCondition> filters;
+
+	bool HasConditionOfType(enum t_filterType type) const;
 };
 
 class CFilterSet
@@ -60,7 +72,8 @@ public:
 
 	bool Create(CMainFrame* parent);
 
-	bool FilenameFiltered(const wxString& name, bool dir, wxLongLong size, bool local) const;
+	// Note: Under non-windows, attributes are permissions
+	bool FilenameFiltered(const wxString& name, bool dir, wxLongLong size, bool local, int attributes) const;
 	bool HasActiveFilters() const;
 
 	bool HasSameLocalAndRemoteFilters() const;
@@ -68,7 +81,7 @@ public:
 protected:
 
 	bool CompileRegexes();
-	bool FilenameFilteredByFilter(const wxString& name, bool dir, wxLongLong size, unsigned int filterIndex) const;
+	bool FilenameFilteredByFilter(const wxString& name, bool dir, wxLongLong size, unsigned int filterIndex, int attributes) const;
 
 	void SaveFilters();
 	void LoadFilters();

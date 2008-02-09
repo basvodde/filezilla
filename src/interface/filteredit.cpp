@@ -5,12 +5,29 @@
 static wxArrayString filterTypes;
 static wxArrayString stringConditionTypes;
 static wxArrayString sizeConditionTypes;
+static wxArrayString attributeConditionTypes;
+static wxArrayString permissionConditionTypes;
+static wxArrayString attributeSetTypes;
 
 CFilterControls::CFilterControls()
 {
 	pType = 0;
 	pCondition = 0;
 	pValue = 0;
+	pSet = 0;
+}
+
+void CFilterControls::Reset()
+{
+	delete pType;
+	delete pCondition;
+	delete pValue;
+	delete pSet;
+
+	pType = 0;
+	pCondition = 0;
+	pValue = 0;
+	pSet = 0;
 }
 
 BEGIN_EVENT_TABLE(CFilterEditDialog, wxDialogEx)
@@ -47,10 +64,65 @@ void CFilterEditDialog::OnCancel(wxCommandEvent& event)
 
 bool CFilterEditDialog::Create(wxWindow* parent, const std::vector<CFilter>& filters, const std::vector<CFilterSet>& filterSets)
 {
+#ifndef __WXMSW__
+	bool m_hasAttributes = false;
+	for (std::vector<CFilter>::const_iterator iter = filters.begin(); iter != filters.end(); iter++)
+	{
+		const CFilter& filter = *iter;
+		if (!filter.HasConditionOfType(attributes))
+			continue;
+
+		m_hasAttributes = true;
+		break;
+	}
+#else
+	bool m_hasPermissions = true;
+	for (std::vector<CFilter>::const_iterator iter = filters.begin(); iter != filters.end(); iter++)
+	{
+		const CFilter& filter = *iter;
+		if (!filter.HasConditionOfType(permissions))
+			continue;
+
+		m_hasPermissions = true;
+		break;
+	}
+#endif
+
 	if (filterTypes.IsEmpty())
 	{
 		filterTypes.Add(_("Filename"));
 		filterTypes.Add(_("Filesize"));
+#ifndef __WXMSW__
+		if (m_hasAttributes)
+#endif
+		{
+			filterTypes.Add(_("Attribute"));
+			attributeConditionTypes.Add(_("Archive"));
+			attributeConditionTypes.Add(_("Compressed"));
+			attributeConditionTypes.Add(_("Encrypted"));
+			attributeConditionTypes.Add(_("Hidden"));
+			attributeConditionTypes.Add(_("Read-only"));
+			attributeConditionTypes.Add(_("System"));
+		}
+
+#ifdef __WXMSW__
+		if (m_hasPermissions)
+#endif
+		{
+			filterTypes.Add(_("Permission"));
+			permissionConditionTypes.Add(_("owner readable"));
+			permissionConditionTypes.Add(_("owner writeable"));
+			permissionConditionTypes.Add(_("owner executable"));
+			permissionConditionTypes.Add(_("group readable"));
+			permissionConditionTypes.Add(_("group writeable"));
+			permissionConditionTypes.Add(_("group executable"));
+			permissionConditionTypes.Add(_("world readable"));
+			permissionConditionTypes.Add(_("world writeable"));
+			permissionConditionTypes.Add(_("world executable"));
+		}
+
+		attributeSetTypes.Add(_("is set"));
+		attributeSetTypes.Add(_("is unset"));
 
 		stringConditionTypes.Add(_("contains"));
 		stringConditionTypes.Add(_("is equal to"));
@@ -131,17 +203,24 @@ void CFilterEditDialog::OnRemove(wxCommandEvent& event)
 			pos.y -= deleted * (m_choiceBoxHeight + 6);
 			controls.pCondition->SetPosition(pos);
 
-			pos = controls.pValue->GetPosition();
-			pos.y -= deleted * (m_choiceBoxHeight + 6);
-			controls.pValue->SetPosition(pos);
+			if (controls.pValue)
+			{
+				pos = controls.pValue->GetPosition();
+				pos.y -= deleted * (m_choiceBoxHeight + 6);
+				controls.pValue->SetPosition(pos);
+			}
+			if (controls.pSet)
+			{
+				pos = controls.pSet->GetPosition();
+				pos.y -= deleted * (m_choiceBoxHeight + 6);
+				controls.pSet->SetPosition(pos);
+			}
 
 			controls.pType->SetId(i - deleted);
 		}
 		else
 		{
-			delete controls.pType;
-			delete controls.pCondition;
-			delete controls.pValue;
+			controls.Reset();
 			deleted++;
 		}
 	}
@@ -185,41 +264,35 @@ void CFilterEditDialog::OnFilterTypeChange(wxCommandEvent& event)
 
 	CFilterCondition& filter = m_currentFilter.filters[item];
 
-	int type = event.GetSelection();
+	t_filterType type = GetTypeFromTypeSelection(event.GetSelection());
 	if (type == filter.type)
 		return;
-
-	CFilterControls& controls = m_filterControls[item];
-	controls.pCondition->Clear();
-	if (type == 1)
-	{
-		controls.pCondition->Append(sizeConditionTypes);
-		controls.pCondition->Select(1);
-	}
-	else
-	{
-		controls.pCondition->Append(stringConditionTypes);
-		controls.pCondition->Select(0);
-	}
-
-	controls.pValue->SetValue(_T(""));
-
 	filter.type = type;
+
+	MakeControls(filter, item);
 }
 
-void CFilterEditDialog::MakeControls(const CFilterCondition& condition)
+void CFilterEditDialog::MakeControls(const CFilterCondition& condition, unsigned int i /*=-1*/)
 {
 	wxRect size = m_pListCtrl->GetClientSize();
 
+	if (i == -1)
+	{
+		i = m_filterControls.size();
+		CFilterControls controls;
+		m_filterControls.push_back(controls);
+	}
+	CFilterControls& controls = m_filterControls[i];
+	controls.Reset();
+
 	// Get correct coordinates
-	int posy = m_filterControls.size() * (m_choiceBoxHeight + 6) + 3;
+	int posy = i * (m_choiceBoxHeight + 6) + 3;
 	int posx = 0, x, y;
 	m_pListCtrl->CalcScrolledPosition(posx, posy, &x, &y);
 	posy = y;
 
-	CFilterControls controls;
 	controls.pType = new wxChoice();
-	controls.pType->Create(m_pListCtrl, m_filterControls.size(), wxPoint(10, posy), wxDefaultSize, filterTypes);
+	controls.pType->Create(m_pListCtrl, i, wxPoint(10, posy), wxDefaultSize, filterTypes);
 	controls.pType->Select(condition.type);
 	wxRect typeRect = controls.pType->GetSize();
 
@@ -231,19 +304,37 @@ void CFilterEditDialog::MakeControls(const CFilterCondition& condition)
 	}
 
 	controls.pCondition = new wxChoice();
-	if (condition.type != 1)
+	switch (condition.type)
+	{
+	case name:
 		controls.pCondition->Create(m_pListCtrl, wxID_ANY, wxPoint(20 + typeRect.GetWidth(), posy), wxDefaultSize, stringConditionTypes);
-	else
+		break;
+	case (enum t_filterType)::size:
 		controls.pCondition->Create(m_pListCtrl, wxID_ANY, wxPoint(20 + typeRect.GetWidth(), posy), wxDefaultSize, sizeConditionTypes);
+		break;
+	case attributes:
+		controls.pCondition->Create(m_pListCtrl, wxID_ANY, wxPoint(20 + typeRect.GetWidth(), posy), wxDefaultSize, attributeConditionTypes);
+		break;
+	case permissions:
+		controls.pCondition->Create(m_pListCtrl, wxID_ANY, wxPoint(20 + typeRect.GetWidth(), posy), wxDefaultSize, permissionConditionTypes);
+		break;
+	}
 	controls.pCondition->Select(condition.condition);
 	wxRect conditionsRect = controls.pCondition->GetSize();
 
-	int textWidth = 30 + typeRect.GetWidth() + conditionsRect.GetWidth();
-	controls.pValue = new wxTextCtrl();
-	controls.pValue->Create(m_pListCtrl, wxID_ANY, _T(""), wxPoint(textWidth, posy), wxSize(size.GetWidth() - textWidth - 10, -1));
-	controls.pValue->SetValue(condition.strValue);
-
-	m_filterControls.push_back(controls);
+	posx = 30 + typeRect.GetWidth() + conditionsRect.GetWidth();
+	if (condition.type == name || condition.type == (enum t_filterType)::size)
+	{		
+		controls.pValue = new wxTextCtrl();
+		controls.pValue->Create(m_pListCtrl, wxID_ANY, _T(""), wxPoint(posx, posy), wxSize(size.GetWidth() - posx - 10, -1));
+		controls.pValue->SetValue(condition.strValue);
+	}
+	else
+	{
+		controls.pSet = new wxChoice();
+		controls.pSet->Create(m_pListCtrl, wxID_ANY, wxPoint(posx, posy), wxSize(size.GetWidth() - posx - 10, -1), attributeSetTypes);
+		controls.pSet->Select(condition.strValue != _T("0") ? 0 : 1);
+	}
 }
 
 void CFilterEditDialog::UpdateCount()
@@ -289,16 +380,35 @@ void CFilterEditDialog::SaveFilter(CFilter& filter)
 		const CFilterControls& controls = m_filterControls[i];
 		CFilterCondition condition = m_currentFilter.filters[i];
 
-		condition.type = controls.pType->GetSelection();
+		condition.type = GetTypeFromTypeSelection(controls.pType->GetSelection());
 		condition.condition = controls.pCondition->GetSelection();
-		condition.strValue = controls.pValue->GetValue();
 
-		// TODO: 64bit filesize
-		if (condition.type == 1)
+		switch (condition.type)
 		{
-			unsigned long tmp;
-			condition.strValue.ToULong(&tmp);
-			condition.value = tmp;
+		case name:
+			condition.strValue = controls.pValue->GetValue();
+			break;
+		case size:
+			{
+				condition.strValue = controls.pValue->GetValue();
+				unsigned long tmp;
+				condition.strValue.ToULong(&tmp);
+				condition.value = tmp;
+			}
+			break;
+		case attributes:
+		case permissions:
+			if (controls.pSet->GetSelection())
+			{
+				condition.strValue = _T("0");
+				condition.value = 0;
+			}
+			else
+			{
+				condition.strValue = _T("1");
+				condition.value = 1;
+			}
+			break;
 		}
 
 		condition.matchCase = filter.matchCase;
@@ -528,9 +638,7 @@ void CFilterEditDialog::DestroyControls()
 	for (unsigned int i = 0; i < m_filterControls.size(); i++)
 	{
 		CFilterControls& controls = m_filterControls[i];
-		delete controls.pType;
-		delete controls.pCondition;
-		delete controls.pValue;
+		controls.Reset();
 	}
 	m_filterControls.clear();
 }
@@ -563,7 +671,8 @@ bool CFilterEditDialog::Validate()
 	for (unsigned int i = 0; i < size; i++)
 	{
 		const CFilterControls& controls = m_filterControls[i];
-		if (controls.pValue->GetValue() == _T(""))
+		enum t_filterType type = GetTypeFromTypeSelection(controls.pType->GetSelection());
+		if (type == name && controls.pValue->GetValue() == _T(""))
 		{
 			m_pFilterListCtrl->SetSelection(m_currentSelection);
 			m_pListCtrl->SelectLine(i);
@@ -571,7 +680,7 @@ bool CFilterEditDialog::Validate()
 			wxMessageBox(_("At least one filter condition is incomplete"), _("Filter validation failed"), wxICON_ERROR, this);
 			return false;
 		}
-		if (controls.pType->GetSelection() == 1)
+		else if (type == size)
 		{
 			long number;
 			if (!controls.pValue->GetValue().ToLong(&number) || number < 0)
@@ -627,4 +736,16 @@ void CFilterEditDialog::CalcMinListWidth()
 	m_pListCtrl->SetMinSize(minSize);
 	Layout();
 	Fit();
+}
+
+t_filterType CFilterEditDialog::GetTypeFromTypeSelection(int selection)
+{
+#ifdef __WXMSW__
+	if (!m_hasPermissions && selection >= permissions)
+		selection++;
+#else
+	if (!m_hasAttributes && selection >= attributes)
+		selection++;
+#endif
+	return (enum t_filterType)selection;
 }
