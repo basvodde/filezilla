@@ -53,6 +53,14 @@ void CFilterEditDialog::OnOK(wxCommandEvent& event)
 		wxASSERT((unsigned int)m_currentSelection < m_filters.size());
 		SaveFilter(m_filters[m_currentSelection]);
 	}
+	for (unsigned int i = 0; i < m_filters.size(); i++)
+	{
+		if (!m_filters[i].HasConditionOfType(permissions) && !m_filters[i].HasConditionOfType(permissions))
+			continue;
+
+		for (unsigned int j = 0; j < m_filterSets.size(); j++)
+			m_filterSets[j].remote[i] = false;
+	}
 
 	EndModal(wxID_OK);
 }
