@@ -850,7 +850,7 @@ bool CMainFrame::CreateToolBar()
 		wxSize iconSize(16, 16);
 		wxString str = COptions::Get()->GetOption(OPTION_THEME_ICONSIZE);
 		int pos = str.Find('x');
-		if (CThemeProvider::ThemeHasSize(COptions::Get()->GetOption(OPTION_THEME), str) && pos > 0 && pos < str.Len() - 1)
+		if (CThemeProvider::ThemeHasSize(COptions::Get()->GetOption(OPTION_THEME), str) && pos > 0 && pos < (int)str.Len() - 1)
 		{
 			
 			long width = 0;
@@ -1280,12 +1280,16 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 
 	int oldShowDebugMenu = pOptions->GetOptionVal(OPTION_DEBUG_MENU) != 0;
 
+	bool oldTimestamps = pOptions->GetOptionVal(OPTION_MESSAGELOG_TIMESTAMP) != 0;
+
 	int res = dlg.ShowModal();
 	if (res != wxID_OK)
 	{
 		UpdateLayout();
 		return;
 	}
+
+	bool newTimestamps = pOptions->GetOptionVal(OPTION_MESSAGELOG_TIMESTAMP) != 0;
 
 	wxString newTheme = pOptions->GetOption(OPTION_THEME);
 	wxString newThemeSize = pOptions->GetOption(OPTION_THEME_ICONSIZE);
@@ -1300,10 +1304,16 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 		oldThemeSize != newThemeSize ||
 		oldLang != newLang)
 		CreateToolBar();
+
+	if (oldLang != newLang ||
+		oldTimestamps != newTimestamps)
+	{
+		m_pStatusView->InitDefAttr();
+	}
+
 	if (oldLang != newLang ||
 		oldShowDebugMenu != pOptions->GetOptionVal(OPTION_DEBUG_MENU))
 	{
-		m_pStatusView->InitDefAttr();
 		CreateMenus();
 	}
 	if (oldLang != newLang)

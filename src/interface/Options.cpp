@@ -108,7 +108,8 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Comparison mode", number, _T("1") },
 	{ "Comparison threshold", number, _T("1") },
 	{ "Site Manager position", string, _T("") },
-	{ "Theme icon size", string, _T("") }
+	{ "Theme icon size", string, _T("") },
+	{ "Timestamp in message log", number, _T("0") }
 };
 
 COptions::COptions()

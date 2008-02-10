@@ -1,6 +1,7 @@
 #include "FileZilla.h"
 #include "StatusView.h"
 #include <wx/wupdlock.h>
+#include "Options.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -114,16 +115,17 @@ void CStatusView::OnSize(wxSizeEvent &event)
 
 void CStatusView::AddToLog(CLogmsgNotification *pNotification)
 {
-	AddToLog(pNotification->msgType, pNotification->msg);
+	AddToLog(pNotification->msgType, pNotification->msg, wxDateTime::Now());
 }
 
-void CStatusView::AddToLog(enum MessageType messagetype, wxString message)
+void CStatusView::AddToLog(enum MessageType messagetype, const wxString& message, const wxDateTime& time)
 {
 	if (!m_shown)
 	{
 		struct t_line line;
 		line.messagetype = messagetype;
 		line.message = message;
+		line.time = time;
 
 		m_hiddenLines.push_back(line);
 		if (m_hiddenLines.size() > MAX_LINECOUNT)
@@ -131,13 +133,26 @@ void CStatusView::AddToLog(enum MessageType messagetype, wxString message)
 		return;
 	}
 
+	const int messageLength = message.Length();
+
 #ifndef __WXGTK__
 	wxWindowUpdateLocker *pLock = 0;
 #endif //__WXGTK__
 	wxString prefix;
+	prefix.Alloc(25 + messageLength);
 
 	if (m_nLineCount)
 		prefix = _T("\n");
+
+	if (m_showTimestamps)
+	{
+		if (time != m_lastTime)
+		{
+			m_lastTime = time;
+			m_lastTimeString = time.Format(_T("%H:%M:%S\t"));
+		}
+		prefix += m_lastTimeString;
+	}
 
 	if (m_nLineCount == MAX_LINECOUNT)
 	{
@@ -154,7 +169,7 @@ void CStatusView::AddToLog(enum MessageType messagetype, wxString message)
 
 	prefix += m_attributeCache[messagetype].prefix;
 
-	int lineLength = m_attributeCache[messagetype].len + message.Length();
+	int lineLength = m_attributeCache[messagetype].len + messageLength;
 
 	if (m_rtl)
 	{
@@ -179,7 +194,8 @@ void CStatusView::AddToLog(enum MessageType messagetype, wxString message)
 
 	m_lineLengths.push_back(lineLength);
 
-	m_pTextCtrl->AppendText(prefix + message);
+	prefix += message;
+	m_pTextCtrl->AppendText(prefix);
 
 #ifndef __WXGTK__
 	delete pLock;
@@ -188,8 +204,21 @@ void CStatusView::AddToLog(enum MessageType messagetype, wxString message)
 
 void CStatusView::InitDefAttr()
 {
+	m_showTimestamps = COptions::Get()->GetOptionVal(OPTION_MESSAGELOG_TIMESTAMP) != 0;
+	m_lastTime = wxDateTime::Now();
+	m_lastTimeString = m_lastTime.Format(_T("%H:%M:%S\t"));
+
 	// Measure withs of all types
 	wxClientDC dc(this);
+
+	int timestampWidth = 0;
+	if (m_showTimestamps)
+	{
+		wxCoord width = 0;
+		wxCoord height = 0;
+		dc.GetTextExtent(_T("88:88:88"), &width, &height);
+		timestampWidth = width;
+	}
 
 	int maxWidth = 0;
 	wxCoord width = 0;
@@ -215,7 +244,14 @@ void CStatusView::InitDefAttr()
 	dc.SetMapMode(wxMM_LOMETRIC);
 
 	maxWidth = dc.DeviceToLogicalX(maxWidth) + 20;
+	if (timestampWidth != 0)
+	{
+		timestampWidth = dc.DeviceToLogicalX(timestampWidth) + 20;
+		maxWidth += timestampWidth;
+	}
 	wxArrayInt array;
+	if (timestampWidth != 0)
+		array.Add(timestampWidth);
 	array.Add(maxWidth);
 	wxTextAttr defAttr;
 	defAttr.SetTabs(array);
@@ -319,7 +355,7 @@ bool CStatusView::Show(bool show /*=true*/)
 
 		for (std::list<t_line>::const_iterator iter = m_hiddenLines.begin(); iter != m_hiddenLines.end(); iter++)
 		{
-			AddToLog(iter->messagetype, iter->message);
+			AddToLog(iter->messagetype, iter->message, iter->time);
 		}
 		m_hiddenLines.clear();
 	}

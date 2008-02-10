@@ -53,6 +53,7 @@ filezilla_SOURCES = aboutdialog.cpp \
 		optionspage_ftpproxy.cpp \
 		optionspage_interface.cpp \
 		optionspage_language.cpp \
+		optionspage_logging.cpp \
 		optionspage_sizeformatting.cpp \
 		optionspage_themes.cpp \
 		optionspage_transfer.cpp \
@@ -131,6 +132,7 @@ noinst_HEADERS = aboutdialog.h \
 		 optionspage_ftpproxy.h \
 		 optionspage_interface.h \
 		 optionspage_language.h \
+		 optionspage_logging.h \
 		 optionspage_sizeformatting.h \
 		 optionspage_themes.h \
 		 optionspage_transfer.h \

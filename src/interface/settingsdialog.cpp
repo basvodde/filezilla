@@ -11,6 +11,7 @@
 #include "optionspage_language.h"
 #include "optionspage_transfer.h"
 #include "optionspage_updatecheck.h"
+#include "optionspage_logging.h"
 #include "optionspage_debug.h"
 #include "optionspage_interface.h"
 #include "optionspage_dateformatting.h"
@@ -39,6 +40,7 @@ enum pagenames
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	page_updatecheck,
 #endif
+	page_logging,
 	page_debug
 };
 
@@ -117,6 +119,7 @@ bool CSettingsDialog::LoadPages()
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	ADD_PAGE(_("Update Check"), COptionsPageUpdateCheck, page_none);
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
+	ADD_PAGE(_("Logging"), COptionsPageLogging, page_none);
 	ADD_PAGE(_("Debug"), COptionsPageDebug, page_none);
 
 	treeCtrl->SetQuickBestSize(false);

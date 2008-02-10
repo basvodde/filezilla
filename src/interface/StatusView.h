@@ -9,7 +9,7 @@ public:
 	virtual ~CStatusView();
 
 	void AddToLog(CLogmsgNotification *pNotification);
-	void AddToLog(enum MessageType messagetype, wxString message);
+	void AddToLog(enum MessageType messagetype, const wxString& message, const wxDateTime& time);
 
 	void InitDefAttr();
 
@@ -49,8 +49,13 @@ protected:
 	{
 		MessageType messagetype;
 		wxString message;
+		wxDateTime time;
 	};
 	std::list<t_line> m_hiddenLines;
+
+	bool m_showTimestamps;
+	wxDateTime m_lastTime;
+	wxString m_lastTimeString;
 };
 
 #endif
