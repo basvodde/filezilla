@@ -172,7 +172,7 @@ void wxListCtrlEx::OnKeyDown(wxKeyEvent& event)
 		event.Skip();
 		return;
 	}
-	else if (key == 32 && event.HasModifiers())
+	else if (key == 32 || event.HasModifiers())
 	{
 		event.Skip();
 		return;
