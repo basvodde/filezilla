@@ -5,6 +5,24 @@ Legend:
   + New feature or important bugfix
   - Bugfixes
 
+3.0.7-rc1 (2008-02-10)
+
++ Ability to select different toolbar icon sizes if theme supports it
++ Local listings can be filtered by file attributes (Windows) or permissions (other)
++ Option to enable timestamps in message log
+- Transfer queue pane did not remember its size correctly
+- Fix infinite loop if dragging root node in Site Manager
+- *nix: Fix segault if copying directory listing filters
+- Keyboard navigation in file lists fixed
+  - MSW: Ctrl + Space not working
+  - *nix: Ctrl + A not selecting all files
+- OS X: File changed notification can no longer get stuck behind main window
+- Disable download in remote context menu if local directory is not writable
+- Prevent opening multiple confirmation dialogs if closing FileZilla
+- Speed up loading time of the more complex dialogs
+- Fix cache problem if renaming files
+- If preserving file timestamps, use MDTM command if downloading files where the directory listing does not have enough precision
+
 3.0.6 (2008-01-30)
 
 - If deleting or renaming a directory in SFTP, invalidate current working directories
@@ -111,7 +129,7 @@ Legend:
 - Fix performance problem if FileZilla gets started with message log hidden
 - Work around possible race conditions in SFTP input thread leading to crashes
 - MSW: Fix issue with installer where reboot after uninstalling previous version disrupted installation. Fix will only work if uninstalling 3.0.2 or greater.
-- OSX: Use new icon
+- OS X: Use new icon
 
 3.0.2-rc1 (2007-10-10)
 
