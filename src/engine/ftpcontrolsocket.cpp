@@ -2150,11 +2150,6 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 	pData->transferSettings = transferSettings;
 	pData->binary = transferSettings.binary;
 
-	pData->opState = filetransfer_waitcwd;
-
-	if (pData->remotePath.GetType() == DEFAULT)
-		pData->remotePath.SetType(m_pCurrentServer->GetType());
-
 	wxStructStat buf;
 	int result;
 	result = wxStat(pData->localFile, &buf);
@@ -2163,58 +2158,15 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 		pData->localFileSize = buf.st_size;
 	}
 
+	pData->opState = filetransfer_waitcwd;
+
+	if (pData->remotePath.GetType() == DEFAULT)
+		pData->remotePath.SetType(m_pCurrentServer->GetType());
+
 	int res = ChangeDir(pData->remotePath);
 	if (res != FZ_REPLY_OK)
 		return res;
-
-	pData->opState = filetransfer_waitlist;
-
-	CDirentry entry;
-	bool dirDidExist;
-	bool matchedCase;
-	CDirectoryCache cache;
-	bool found = cache.LookupFile(entry, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath, pData->remoteFile, dirDidExist, matchedCase);
-	bool shouldList = false;
-	if (!found)
-	{
-		if (!dirDidExist)
-			shouldList = true;
-	}
-	else
-	{
-		if (entry.unsure)
-			shouldList = true;
-		else
-		{
-			if (matchedCase)
-			{
-				pData->remoteFileSize = entry.size.GetLo() + ((wxFileOffset)entry.size.GetHi() << 32);
-				if (entry.hasDate)
-					pData->fileTime = entry.time;
-
-				pData->opState = filetransfer_resumetest;
-				res = CheckOverwriteFile();
-				if (res != FZ_REPLY_OK)
-					return res;
-			}
-			else
-				pData->opState = filetransfer_size;
-		}
-	}
-	if (shouldList)
-	{
-		res = List(CServerPath(), _T(""), true);
-		if (res != FZ_REPLY_OK)
-			return res;
-	}
-
-	pData->opState = filetransfer_resumetest;
-
-	res = CheckOverwriteFile();
-	if (res != FZ_REPLY_OK)
-		return res;
-
-	return SendNextCommand();
+	return ParseSubcommandResult(FZ_REPLY_OK);
 }
 
 int CFtpControlSocket::FileTransferParseResponse()
@@ -2287,7 +2239,10 @@ int CFtpControlSocket::FileTransferParseResponse()
 			wxDateTime date;
 			const wxChar *res = date.ParseFormat(m_Response.Mid(4), _T("%Y%m%d%H%M"));
 			if (res && date.IsValid())
-				pData->fileTime = date;
+			{
+				pData->fileTime = date.FromTimezone(wxDateTime::GMT0);
+				pData->fileTime += wxTimeSpan(0, m_pCurrentServer->GetTimezoneOffset(), 0);
+			}
 		}
 
 		{
@@ -2332,23 +2287,28 @@ int CFtpControlSocket::FileTransferSubcommandResult(int prevResult)
 	{
 		if (prevResult == FZ_REPLY_OK)
 		{
-			pData->opState = filetransfer_waitlist;
-
 			CDirentry entry;
 			bool dirDidExist;
 			bool matchedCase;
 			CDirectoryCache cache;
 			bool found = cache.LookupFile(entry, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath, pData->remoteFile, dirDidExist, matchedCase);
-			bool shouldList = false;
 			if (!found)
 			{
 				if (!dirDidExist)
-					shouldList = true;
+					pData->opState = filetransfer_waitlist;
+				else if (pData->download &&
+					m_pEngine->GetOptions()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS) &&
+					CServerCapabilities::GetCapability(*m_pCurrentServer, mdtm_command) == yes)
+				{
+					pData->opState = filetransfer_mdtm;
+				}
+				else
+					pData->opState = filetransfer_resumetest;
 			}
 			else
 			{
 				if (entry.unsure)
-					shouldList = true;
+					pData->opState = filetransfer_waitlist;
 				else
 				{
 					if (matchedCase)
@@ -2357,27 +2317,34 @@ int CFtpControlSocket::FileTransferSubcommandResult(int prevResult)
 						if (entry.hasDate)
 							pData->fileTime = entry.time;
 
-						pData->opState = filetransfer_resumetest;
-						int res = CheckOverwriteFile();
-						if (res != FZ_REPLY_OK)
-							return res;
+						if (pData->download &&
+							(!entry.hasDate || !entry.hasTime) && 
+							m_pEngine->GetOptions()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS) &&
+							CServerCapabilities::GetCapability(*m_pCurrentServer, mdtm_command) == yes)
+						{
+							pData->opState = filetransfer_mdtm;
+						}
+						else
+							pData->opState = filetransfer_resumetest;
 					}
 					else
 						pData->opState = filetransfer_size;
 				}
 			}
-			if (shouldList)
+			if (pData->opState == filetransfer_waitlist)
 			{
 				int res = List(CServerPath(), _T(""), true);
 				if (res != FZ_REPLY_OK)
 					return res;
+				ResetOperation(FZ_REPLY_INTERNALERROR);
+				return FZ_REPLY_ERROR;
 			}
-
-			pData->opState = filetransfer_resumetest;
-
-			int res = CheckOverwriteFile();
-			if (res != FZ_REPLY_OK)
-				return res;
+			else if (pData->opState == filetransfer_resumetest)
+			{
+				int res = CheckOverwriteFile();
+				if (res != FZ_REPLY_OK)
+					return res;
+			}
 		}
 		else
 		{
@@ -2398,13 +2365,14 @@ int CFtpControlSocket::FileTransferSubcommandResult(int prevResult)
 			{
 				if (!dirDidExist)
 					pData->opState = filetransfer_size;
-				else
+				else if (pData->download &&
+					m_pEngine->GetOptions()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS) &&
+					CServerCapabilities::GetCapability(*m_pCurrentServer, mdtm_command) == yes)
 				{
-					pData->opState = filetransfer_resumetest;
-					int res = CheckOverwriteFile();
-					if (res != FZ_REPLY_OK)
-						return res;
+					pData->opState = filetransfer_mdtm;
 				}
+				else
+					pData->opState = filetransfer_resumetest;
 			}
 			else
 			{
@@ -2414,13 +2382,24 @@ int CFtpControlSocket::FileTransferSubcommandResult(int prevResult)
 					if (entry.hasDate)
 						pData->fileTime = entry.time;
 
-					pData->opState = filetransfer_resumetest;
-					int res = CheckOverwriteFile();
-					if (res != FZ_REPLY_OK)
-						return res;
+					if (pData->download &&
+						(!entry.hasDate || !entry.hasTime) && 
+						m_pEngine->GetOptions()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS) &&
+						CServerCapabilities::GetCapability(*m_pCurrentServer, mdtm_command) == yes)
+					{
+						pData->opState = filetransfer_mdtm;
+					}
+					else
+						pData->opState = filetransfer_resumetest;
 				}
 				else
 					pData->opState = filetransfer_size;
+			}
+			if (pData->opState == filetransfer_resumetest)
+			{
+				int res = CheckOverwriteFile();
+				if (res != FZ_REPLY_OK)
+					return res;
 			}
 		}
 		else
