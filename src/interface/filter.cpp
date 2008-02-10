@@ -321,7 +321,10 @@ void CFilterDialog::LoadFilters()
 			CFilterCondition condition;
 			int type = GetTextElementInt(pCondition, "Type", 0);
 			if (type < 0 || type >= filterType_size)
+			{
+				pCondition = pCondition->NextSiblingElement("Condition");
 				continue;
+			}
 			condition.type = (enum t_filterType)type;
 			condition.condition = GetTextElementInt(pCondition, "Condition", 0);
 			condition.strValue = GetTextElement(pCondition, "Value");
