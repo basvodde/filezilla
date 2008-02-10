@@ -76,7 +76,7 @@ bool CFilterEditDialog::Create(wxWindow* parent, const std::vector<CFilter>& fil
 		break;
 	}
 #else
-	bool m_hasPermissions = true;
+	bool m_hasPermissions = false;
 	for (std::vector<CFilter>::const_iterator iter = filters.begin(); iter != filters.end(); iter++)
 	{
 		const CFilter& filter = *iter;
