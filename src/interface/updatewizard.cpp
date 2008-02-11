@@ -56,7 +56,7 @@ CUpdateWizard::~CUpdateWizard()
 
 bool CUpdateWizard::Load()
 {
-	if (!Create(m_parent, wxID_ANY, _("Check for updates")))
+	if (!Create(m_parent, wxID_ANY, _("Check for updates"), wxNullBitmap, wxPoint(0, 0)))
 		return false;
 
 	wxSize minPageSize = GetPageAreaSizer()->GetMinSize();
@@ -102,6 +102,8 @@ bool CUpdateWizard::Load()
 	}
 
 	m_loaded = true;
+
+	CenterOnParent();
 
 	return true;
 }

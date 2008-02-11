@@ -16,6 +16,7 @@ void CImportDialog::Show()
 	wxFileDialog dlg(m_parent, _("Select file to import settings from"), _T(""), 
 					_T("FileZilla.xml"), _T("XML files (*.xml)|*.xml"), 
 					wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+	dlg.CenterOnParent();
 
 	if (dlg.ShowModal() != wxID_OK)
 		return;

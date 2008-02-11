@@ -39,7 +39,7 @@ CNetConfWizard::~CNetConfWizard()
 
 bool CNetConfWizard::Load()
 {
-	if (!Create(m_parent, wxID_ANY, _("Firewall and router configuration wizard")))
+	if (!Create(m_parent, wxID_ANY, _("Firewall and router configuration wizard"), wxNullBitmap, wxPoint(0, 0)))
 		return false;
 
 	wxSize minPageSize = GetPageAreaSizer()->GetMinSize();
@@ -63,6 +63,8 @@ bool CNetConfWizard::Load()
 	for (unsigned int i = 0; i < m_pages.size(); i++)
 		windows.push_back(m_pages[i]);
 	wxGetApp().GetWrapEngine()->WrapRecursive(windows, 1.7, "Netconf", wxSize(), minPageSize);
+
+	CenterOnParent();
 
 	// Load values
 
