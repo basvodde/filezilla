@@ -155,7 +155,7 @@ bool CFileZillaApp::OnInit()
 
 	LoadLocales();
 	InitDefaultsDir();
-    InitSettingsDir();
+	InitSettingsDir();
 
 	COptions::Init();
 
@@ -315,7 +315,17 @@ wxString CFileZillaApp::GetDataDir(wxString fileToFind) const
 	 * Basically we just check a couple of paths for presence of the resources,
 	 * and hope we find them. If not, the user can still specify on the cmdline
 	 * and using environment variables where the resources are.
+	 *
+	 * At least on OS X it's simple: All inside application bundle.
 	 */
+
+#ifdef __WXMAC__
+	wxString path = wxStandardPaths::Get().GetDataDir();
+	if (FileExists(path + fileToFind))
+		return path;
+
+	return _T("");
+#else
 
 	wxPathList pathList;
 	// FIXME: --datadir cmdline
@@ -325,7 +335,6 @@ wxString CFileZillaApp::GetDataDir(wxString fileToFind) const
 
 	// Next try the current path and the current executable path.
 	// Without this, running development versions would be difficult.
-
 	pathList.Add(wxGetCwd());
 
 #ifdef ENABLE_BINRELOC
@@ -354,13 +363,12 @@ wxString CFileZillaApp::GetDataDir(wxString fileToFind) const
 		wxFileName fn(path);
 		pathList.Add(fn.GetPath());
 	}
-#endif
+#endif //ENABLE_BINRELOC and __WXMSW__ blocks
 
 	// Now scan through the path
 	pathList.AddEnvList(_T("PATH"));
 
-#ifdef __WXMSW__
-#else
+#ifndef __WXMSW__
 	// Try some common paths
 	pathList.Add(_T("/usr/share/filezilla"));
 	pathList.Add(_T("/usr/local/share/filezilla"));
@@ -377,10 +385,6 @@ wxString CFileZillaApp::GetDataDir(wxString fileToFind) const
 			return cur + _T("/share/filezilla");
 		if (FileExists(cur + _T("/filezilla") + fileToFind))
 			return cur + _T("/filezilla");
-#if defined(__WXMAC__) || defined(__WXCOCOA__)
-		if (FileExists(cur + _T("/FileZilla.app/Contents/SharedSupport") + fileToFind))
-			return cur + _T("/FileZilla.app/Contents/SharedSupport");
-#endif
 	}
 
 	for (node = pathList.begin(); node != pathList.end(); node++)
@@ -400,6 +404,7 @@ wxString CFileZillaApp::GetDataDir(wxString fileToFind) const
 	}
 
 	return _T("");
+#endif //__WXMAC__
 }
 
 bool CFileZillaApp::LoadResourceFiles()
@@ -426,31 +431,31 @@ bool CFileZillaApp::LoadResourceFiles()
 	pResource->SetFlags(pResource->GetFlags() | wxXRC_NO_RELOADING);
 #endif
 
-    pResource->AddHandler(new wxMenuXmlHandler);
-    pResource->AddHandler(new wxMenuBarXmlHandler);
+	pResource->AddHandler(new wxMenuXmlHandler);
+	pResource->AddHandler(new wxMenuBarXmlHandler);
 	pResource->AddHandler(new wxDialogXmlHandler);
 	pResource->AddHandler(new wxPanelXmlHandler);
 	pResource->AddHandler(new wxSizerXmlHandler);
 	pResource->AddHandler(new wxButtonXmlHandler);
 	pResource->AddHandler(new wxBitmapButtonXmlHandler);
-    pResource->AddHandler(new wxStaticTextXmlHandler);
-    pResource->AddHandler(new wxStaticBoxXmlHandler);
-    pResource->AddHandler(new wxStaticBitmapXmlHandler);
-    pResource->AddHandler(new wxTreeCtrlXmlHandler);
-    pResource->AddHandler(new wxListCtrlXmlHandler);
-    pResource->AddHandler(new wxCheckListBoxXmlHandler);
-    pResource->AddHandler(new wxChoiceXmlHandler);
-    pResource->AddHandler(new wxGaugeXmlHandler);
-    pResource->AddHandler(new wxCheckBoxXmlHandler);
-    pResource->AddHandler(new wxSpinCtrlXmlHandler);
-    pResource->AddHandler(new wxRadioButtonXmlHandler);
-    pResource->AddHandler(new wxNotebookXmlHandler);
-    pResource->AddHandler(new wxTextCtrlXmlHandler);
-    pResource->AddHandler(new wxListBoxXmlHandler);
-    pResource->AddHandler(new wxToolBarXmlHandlerEx);
+	pResource->AddHandler(new wxStaticTextXmlHandler);
+	pResource->AddHandler(new wxStaticBoxXmlHandler);
+	pResource->AddHandler(new wxStaticBitmapXmlHandler);
+	pResource->AddHandler(new wxTreeCtrlXmlHandler);
+	pResource->AddHandler(new wxListCtrlXmlHandler);
+	pResource->AddHandler(new wxCheckListBoxXmlHandler);
+	pResource->AddHandler(new wxChoiceXmlHandler);
+	pResource->AddHandler(new wxGaugeXmlHandler);
+	pResource->AddHandler(new wxCheckBoxXmlHandler);
+	pResource->AddHandler(new wxSpinCtrlXmlHandler);
+	pResource->AddHandler(new wxRadioButtonXmlHandler);
+	pResource->AddHandler(new wxNotebookXmlHandler);
+	pResource->AddHandler(new wxTextCtrlXmlHandler);
+	pResource->AddHandler(new wxListBoxXmlHandler);
+	pResource->AddHandler(new wxToolBarXmlHandlerEx);
 	pResource->AddHandler(new wxStaticLineXmlHandler);
-    pResource->AddHandler(new wxScrolledWindowXmlHandler);
-    pResource->AddHandler(new wxHyperlinkCtrlXmlHandler);
+	pResource->AddHandler(new wxScrolledWindowXmlHandler);
+	pResource->AddHandler(new wxHyperlinkCtrlXmlHandler);
 
 	wxString resourceDir = m_resourceDir;
 #if wxUSE_FILESYSTEM
@@ -573,6 +578,7 @@ bool CFileZillaApp::InitSettingsDir()
 
 bool CFileZillaApp::LoadLocales()
 {
+#ifndef __WXMAC__
 	m_localesDir = GetDataDir(_T("/../locale/*/filezilla.mo"));
 	if (m_localesDir != _T(""))
 	{
@@ -592,6 +598,9 @@ bool CFileZillaApp::LoadLocales()
 			m_localesDir += _T("locales");
 		}
 	}
+#else
+	m_localesDir = wxStandardPaths::Get().GetDataDir() + _T("/locales");
+#endif
 
 	if (m_localesDir != _T(""))
 	{
@@ -696,6 +705,20 @@ void CFileZillaApp::CheckExistsFzsftp()
 {
 	// Get the correct path to the fzsftp executable
 
+#ifdef __WXMAC__
+	wxString executable = wxStandardPaths::Get().GetExecutablePath();
+	int pos = executable.Find('/', true);
+	if (pos != -1)
+		executable = executable.Left(pos);
+	executable += _T("/fzsftp");
+	if (!wxFileName::FileExists(executable))
+	{
+		wxMessageBox(wxString::Format(_("%s could not be found. Without this component of FileZilla, SFTP will not work.\n\nPlease download FileZilla again. If this problem persists, please submit a bug report."), executable.c_str()),
+			_("File not found"), wxICON_ERROR);
+	}
+#else
+
+
 	wxString program = _T("fzsftp");
 #ifdef __WXMSW__
 	program += _T(".exe");
@@ -748,16 +771,7 @@ void CFileZillaApp::CheckExistsFzsftp()
 
 	if (!found)
 	{
-#ifdef __WXMAC__
-		// Get application path within the bundle
-		wxFileName fn(wxStandardPaths::Get().GetDataDir() + _T("/../MacOS/"), program);
-		fn.Normalize();
-		if (fn.FileExists())
-		{
-			executable = fn.GetFullPath();
-			found = true;
-		}
-#elif defined(__UNIX__)
+#ifdef __UNIX__
 		const wxString prefix = ((const wxStandardPaths&)wxStandardPaths::Get()).GetInstallPrefix();
 		if (prefix != _T("/usr/local"))
 		{
@@ -796,5 +810,6 @@ void CFileZillaApp::CheckExistsFzsftp()
 			_("File not found"), wxICON_ERROR);
 	}
 	else
+#endif
 		COptions::Get()->SetOption(OPTION_FZSFTP_EXECUTABLE, executable);
 }
