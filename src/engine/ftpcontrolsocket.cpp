@@ -1238,66 +1238,7 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 	if (res != FZ_REPLY_OK)
 		return res;
 
-	if (!pData->refresh)
-	{
-		wxASSERT(!pData->pNextOpData);
-
-		// Do a cache lookup now that we know the correct directory
-		CDirectoryCache cache;
-
-		int hasUnsureEntries;
-		bool is_outdated = false;
-		bool found = cache.DoesExist(*m_pCurrentServer, m_CurrentPath, _T(""), hasUnsureEntries, is_outdated);
-		if (found)
-		{
-			if (!pData->path.IsEmpty() && pData->subDir != _T(""))
-				cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
-
-			if (!is_outdated)
-			{
-				m_pEngine->SendDirectoryListingNotification(m_CurrentPath, true, false, false);
-				ResetOperation(FZ_REPLY_OK);
-
-				return FZ_REPLY_OK;
-			}
-		}
-	}
-
-	// Try to lock cache
-	if (!TryLockCache(m_CurrentPath))
-		return FZ_REPLY_WOULDBLOCK;
-
-	delete m_pTransferSocket;
-	m_pTransferSocket = new CTransferSocket(m_pEngine, this, ::list);
-	pData->m_pDirectoryListingParser = new CDirectoryListingParser(this, *m_pCurrentServer);
-	pData->m_pDirectoryListingParser->SetTimezoneOffset(GetTimezoneOffset());
-	m_pTransferSocket->m_pDirectoryListingParser = pData->m_pDirectoryListingParser;
-
-	InitTransferStatus(-1, 0, true);
-
-	pData->opState = list_waittransfer;
-#if 0 // Disabled for now
-	if (CServerCapabilities::GetCapability(*m_pCurrentServer, mlsd_command) == yes)
-		return Transfer(_T("MLSD"), pData);
-	else
-#endif
-	{
-		if (m_pEngine->GetOptions()->GetOptionVal(OPTION_VIEW_HIDDEN_FILES))
-		{
-			enum capabilities cap = CServerCapabilities::GetCapability(*m_pCurrentServer, list_hidden_support);
-			if (cap == unknown)
-				pData->viewHiddenCheck = true;
-			else if (cap == yes)
-				pData->viewHidden = true;
-			else
-				LogMessage(Debug_Info, _("View hidden option set, but unsupported by server"));
-		}
-
-		if (pData->viewHidden)
-			return Transfer(_T("LIST -a"), pData);
-		else
-			return Transfer(_T("LIST"), pData);
-	}
+	return ParseSubcommandResult(FZ_REPLY_OK);
 }
 
 int CFtpControlSocket::ListSubcommandResult(int prevResult)
@@ -1328,6 +1269,7 @@ int CFtpControlSocket::ListSubcommandResult(int prevResult)
 
 			// Do a cache lookup now that we know the correct directory
 			CDirectoryCache cache;
+
 			int hasUnsureEntries;
 			bool is_outdated = false;
 			bool found = cache.DoesExist(*m_pCurrentServer, m_CurrentPath, _T(""), hasUnsureEntries, is_outdated);
@@ -1336,17 +1278,14 @@ int CFtpControlSocket::ListSubcommandResult(int prevResult)
 				if (!pData->path.IsEmpty() && pData->subDir != _T(""))
 					cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
 
-				if (!is_outdated)
+				// We're done if listins is recent and has no outdated entries
+				if (!is_outdated && !hasUnsureEntries)
 				{
-					// Continue with refresh if listing has unsure entries
-					if (!hasUnsureEntries)
-					{
-						m_pEngine->SendDirectoryListingNotification(m_CurrentPath, true, false, false);
+					m_pEngine->SendDirectoryListingNotification(m_CurrentPath, true, false, false);
 
-						ResetOperation(FZ_REPLY_OK);
+					ResetOperation(FZ_REPLY_OK);
 
-						return FZ_REPLY_OK;
-					}
+					return FZ_REPLY_OK;
 				}
 			}
 		}
@@ -2318,7 +2257,7 @@ int CFtpControlSocket::FileTransferSubcommandResult(int prevResult)
 							pData->fileTime = entry.time;
 
 						if (pData->download &&
-							(!entry.hasDate || !entry.hasTime) && 
+							(!entry.hasDate || !entry.hasTime) &&
 							m_pEngine->GetOptions()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS) &&
 							CServerCapabilities::GetCapability(*m_pCurrentServer, mdtm_command) == yes)
 						{
@@ -2383,7 +2322,7 @@ int CFtpControlSocket::FileTransferSubcommandResult(int prevResult)
 						pData->fileTime = entry.time;
 
 					if (pData->download &&
-						(!entry.hasDate || !entry.hasTime) && 
+						(!entry.hasDate || !entry.hasTime) &&
 						m_pEngine->GetOptions()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS) &&
 						CServerCapabilities::GetCapability(*m_pCurrentServer, mdtm_command) == yes)
 					{

@@ -70,13 +70,13 @@ public:
 		messages.swap(m_sftpMessages);
 		m_criticalSection.Leave();
 	}
-	
+
 protected:
 
 	void SendMessage(sftp_message* message)
 	{
 		bool sendEvent;
-		
+
 		m_criticalSection.Enter();
 		sendEvent = m_sftpMessages.empty();
 		m_sftpMessages.push_back(message);
@@ -115,7 +115,7 @@ protected:
 				// Cap string length
 				continue;
 			}
-			
+
 			buffer[read++] = c;
 		}
 		if (pInputStream->Eof())
@@ -153,7 +153,7 @@ protected:
 				break;
 
 			eventType -= '0';
-			
+
 			switch(eventType)
 			{
 			case sftpReply:
@@ -360,7 +360,7 @@ int CSftpControlSocket::Connect(const CServer &server)
 		DoClose();
 		return FZ_REPLY_ERROR;
 	}
-	
+
 	m_pInputThread = new CSftpInputThread(this, m_pProcess);
 	if (!m_pInputThread->Init())
 	{
@@ -407,7 +407,7 @@ int CSftpControlSocket::ConnectParseResponse(bool successful, const wxString& re
 	}
 
 	pData->gotInitialReply = true;
-	
+
 	bool res = Send(wxString::Format(_T("open \"%s@%s\" %d"), m_pCurrentServer->GetUser().c_str(), m_pCurrentServer->GetHost().c_str(), m_pCurrentServer->GetPort()));
 
 	if (res)
@@ -601,7 +601,7 @@ bool CSftpControlSocket::Send(wxString cmd, const wxString& show /*=_T("")*/)
 bool CSftpControlSocket::AddToStream(const wxString& cmd, bool force_utf8 /*=false*/)
 {
 	const wxCharBuffer str = ConvToServer(cmd, force_utf8);
-	
+
 	if (!m_pProcess)
 		return false;
 
@@ -724,7 +724,7 @@ bool CSftpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotifi
 									differentCase = true;
 								else
 								{
-									wxLongLong size = listing[i].size;	
+									wxLongLong size = listing[i].size;
 									pData->remoteFileSize = size.GetLo() + ((wxFileOffset)size.GetHi() << 32);
 									found = true;
 									break;
@@ -793,7 +793,7 @@ bool CSftpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotifi
 	case reqId_interactiveLogin:
 		{
 			CInteractiveLoginNotification *pInteractiveLoginNotification = reinterpret_cast<CInteractiveLoginNotification *>(pNotification);
-		
+
 			if (!pInteractiveLoginNotification->passwordSet)
 			{
 				DoClose(FZ_REPLY_CANCELED);
@@ -878,38 +878,7 @@ int CSftpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDi
 	if (res != FZ_REPLY_OK)
 		return res;
 
-	if (!pData->refresh)
-	{
-		wxASSERT(!pData->pNextOpData);
-
-		// Do a cache lookup now that we know the correct directory
-		CDirectoryCache cache;
-
-		int hasUnsureEntries;
-		bool is_outdated = false;
-		bool found = cache.DoesExist(*m_pCurrentServer, m_CurrentPath, _T(""), hasUnsureEntries, is_outdated);
-		if (found)
-		{
-			if (!pData->path.IsEmpty() && pData->subDir != _T(""))
-				cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
-
-			if (!is_outdated)
-			{
-				m_pEngine->SendDirectoryListingNotification(m_CurrentPath, true, false, false);
-				ResetOperation(FZ_REPLY_OK);
-
-				return FZ_REPLY_OK;
-			}
-		}
-	}
-
-	// Try to lock cache
-	if (!TryLockCache(m_CurrentPath))
-		return FZ_REPLY_WOULDBLOCK;
-
-	pData->opState = list_list;
-
-	return SendNextCommand();
+	return ParseSubcommandResult(FZ_REPLY_OK);
 }
 
 int CSftpControlSocket::ListParseResponse(bool successful, const wxString& reply)
@@ -1051,6 +1020,7 @@ int CSftpControlSocket::ListSubcommandResult(int prevResult)
 
 		// Do a cache lookup now that we know the correct directory
 		CDirectoryCache cache;
+
 		int hasUnsureEntries;
 		bool is_outdated = false;
 		bool found = cache.DoesExist(*m_pCurrentServer, m_CurrentPath, _T(""), hasUnsureEntries, is_outdated);
@@ -1059,17 +1029,14 @@ int CSftpControlSocket::ListSubcommandResult(int prevResult)
 			if (!pData->path.IsEmpty() && pData->subDir != _T(""))
 				cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
 
-			if (!is_outdated)
+			// We're done if listins is recent and has no outdated entries
+			if (!is_outdated && !hasUnsureEntries)
 			{
-				// Continue with refresh if listing has unsure entries
-				if (!hasUnsureEntries)
-				{
-					m_pEngine->SendDirectoryListingNotification(m_CurrentPath, true, false, false);
+				m_pEngine->SendDirectoryListingNotification(m_CurrentPath, true, false, false);
 
-					ResetOperation(FZ_REPLY_OK);
+				ResetOperation(FZ_REPLY_OK);
 
-					return FZ_REPLY_OK;
-				}
+				return FZ_REPLY_OK;
 			}
 		}
 	}
@@ -1216,7 +1183,7 @@ int CSftpControlSocket::ChangeDirParseResponse(bool successful, const wxString& 
 		if (!successful)
 		{
 			// Create remote directory if part of a file upload
-			if (pData->pNextOpData && pData->pNextOpData->opId == cmd_transfer && 
+			if (pData->pNextOpData && pData->pNextOpData->opId == cmd_transfer &&
 				!static_cast<CSftpFileTransferOpData *>(pData->pNextOpData)->download && !pData->triedMkd)
 			{
 				pData->triedMkd = true;
@@ -1467,43 +1434,7 @@ int CSftpControlSocket::FileTransfer(const wxString localFile, const CServerPath
 	if (res != FZ_REPLY_OK)
 		return res;
 
-	pData->opState = filetransfer_waitlist;
-
-	CDirentry entry;
-	bool dirDidExist;
-	bool matchedCase;
-	CDirectoryCache cache;
-	bool found = cache.LookupFile(entry, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath, pData->remoteFile, dirDidExist, matchedCase);
-	bool shouldList = false;
-	if (!found)
-	{
-		if (!dirDidExist)
-			shouldList = true;
-	}
-	else
-	{
-		if (entry.unsure)
-			shouldList = true;
-		else
-		{
-			if (matchedCase)
-				pData->remoteFileSize = entry.size.GetLo() + ((wxFileOffset)entry.size.GetHi() << 32);
-		}
-	}
-	if (shouldList)
-	{
-		res = List(pData->remotePath, _T(""), true);
-		if (res != FZ_REPLY_OK)
-			return res;
-	}
-
-	pData->opState = filetransfer_transfer;
-
-	res = CheckOverwriteFile();
-	if (res != FZ_REPLY_OK)
-		return res;
-
-	return SendNextCommand();
+	return ParseSubcommandResult(FZ_REPLY_OK);
 }
 
 int CSftpControlSocket::FileTransferSubcommandResult(int prevResult)
@@ -1589,7 +1520,7 @@ int CSftpControlSocket::FileTransferSubcommandResult(int prevResult)
 					return res;
 			}
 		}
-		
+
 		pData->opState = filetransfer_transfer;
 
 		int res = CheckOverwriteFile();
@@ -1654,7 +1585,7 @@ int CSftpControlSocket::FileTransferSend()
 		wxString logstr = cmd;
 		wxString localFile = QuoteFilename(pData->localFile) + _T(" ");
 		wxString remoteFile = QuoteFilename(pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath));
-		
+
 		logstr += localFile;
 		logstr += remoteFile;
 		LogMessageRaw(Command, logstr);
@@ -1669,7 +1600,7 @@ int CSftpControlSocket::FileTransferSend()
 	SetTransferStatusStartTime();
 
 	pData->transferInitiated = true;
-	
+
 	return FZ_REPLY_WOULDBLOCK;
 }
 
@@ -1754,7 +1685,7 @@ enum mkdStates
 int CSftpControlSocket::Mkdir(const CServerPath& path)
 {
 	/* Directory creation works like this: First find a parent directory into
-	 * which we can CWD, then create the subdirs one by one. If either part 
+	 * which we can CWD, then create the subdirs one by one. If either part
 	 * fails, try MKD with the full path directly.
 	 */
 
@@ -1918,7 +1849,7 @@ int CSftpControlSocket::MkdirSend()
 
 	if (!res)
 		return FZ_REPLY_ERROR;
-	
+
 	return FZ_REPLY_WOULDBLOCK;
 }
 
@@ -1964,7 +1895,7 @@ int CSftpControlSocket::DeleteParseResponse(bool successful, const wxString& rep
 
 		CDirectoryCache cache;
 		cache.RemoveFile(*m_pCurrentServer, pData->path, file);
-		
+
 		wxDateTime now = wxDateTime::UNow();
 		if (now.IsValid() && pData->m_time.IsValid() && (now - pData->m_time).GetSeconds() >= 1)
 		{
@@ -1977,7 +1908,7 @@ int CSftpControlSocket::DeleteParseResponse(bool successful, const wxString& rep
 	}
 
 	pData->files.pop_front();
-	
+
 	if (!pData->files.empty())
 		return SendNextCommand();
 
@@ -2046,7 +1977,7 @@ int CSftpControlSocket::RemoveDir(const CServerPath& path /*=CServerPath()*/, co
 	pData->subDir = subDir;
 
 	CServerPath fullPath = pData->path;
-		
+
 	if (!fullPath.AddSegment(subDir))
 	{
 		LogMessage(::Error, _T("Path cannot be constructed for folder %s and subdir %s"), path.GetPath().c_str(), subDir.c_str());
@@ -2138,7 +2069,7 @@ int CSftpControlSocket::Chmod(const CChmodCommand& command)
 	int res = ChangeDir(command.GetPath());
 	if (res != FZ_REPLY_OK)
 		return res;
-	
+
 	return SendNextCommand();
 }
 
@@ -2199,7 +2130,7 @@ int CSftpControlSocket::ChmodSend()
 		{
 			CDirectoryCache cache;
 			cache.UpdateFile(*m_pCurrentServer, pData->m_cmd.GetPath(), pData->m_cmd.GetFile(), false, CDirectoryCache::unknown);
-		
+
 			wxString quotedFilename = QuoteFilename(pData->m_cmd.GetPath().FormatFilename(pData->m_cmd.GetFile(), !pData->m_useAbsolute));
 
 			res = Send(_T("chmod ") + pData->m_cmd.GetPermission() + _T(" ") + WildcardEscape(quotedFilename),
@@ -2260,7 +2191,7 @@ int CSftpControlSocket::Rename(const CRenameCommand& command)
 	int res = ChangeDir(command.GetFromPath());
 	if (res != FZ_REPLY_OK)
 		return res;
-	
+
 	return SendNextCommand();
 }
 
