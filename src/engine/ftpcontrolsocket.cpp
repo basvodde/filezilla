@@ -1701,6 +1701,7 @@ int CFtpControlSocket::SendNextCommand()
 	if (m_repliesToSkip)
 	{
 		LogMessage(__TFILE__, __LINE__, this, Status, _T("Waiting for replies to skip before sending next command..."));
+		SetWait(true);
 		return FZ_REPLY_WOULDBLOCK;
 	}
 
@@ -4227,7 +4228,10 @@ bool CFtpControlSocket::CheckInclusion(const CDirectoryListing& listing1, const 
 void CFtpControlSocket::OnIdleTimer(wxTimerEvent& event)
 {
 	if (event.GetId() != m_idleTimer.GetId())
+	{
+		event.Skip();
 		return;
+	}
 
 	if (m_pCurOpData)
 		return;
