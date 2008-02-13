@@ -679,6 +679,11 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		}
 		COptions::Get()->SetOption(OPTION_PRESERVE_TIMESTAMPS, event.IsChecked() ? 1 : 0);
 	}
+	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_PROCESSQUEUE"))
+	{
+		if (m_pQueueView)
+			m_pQueueView->SetActive(event.IsChecked());
+	}
 	else
 	{
 		CSiteManagerItemData* pData = CSiteManager::GetSiteById(event.GetId());
@@ -1263,7 +1268,11 @@ void CMainFrame::OnProcessQueue(wxCommandEvent& event)
 
 void CMainFrame::OnUpdateToolbarProcessQueue(wxUpdateUIEvent& event)
 {
-	event.Check(m_pQueueView->IsActive() != 0);
+	const bool check = m_pQueueView->IsActive() != 0;
+
+	event.Check(check);
+
+	m_pMenuBar->FindItem(XRCID("ID_MENU_TRANSFER_PROCESSQUEUE"), 0)->Check(check);
 }
 
 void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
