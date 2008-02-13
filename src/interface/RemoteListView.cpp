@@ -288,7 +288,7 @@ protected:
 	{
 		wxPaintDC paintDc(this);
 
-		//paintDc.SetFont(GetFont());
+		paintDc.SetFont(GetFont());
 
 		paintDc.DrawText(m_text, 0, 0);
 	};
