@@ -265,6 +265,7 @@ public:
 		m_text(_T("<") + text + _T(">"))
 	{
 		SetBackgroundColour(parent->GetBackgroundColour());
+		GetTextExtent(m_text, &m_textSize.x, &m_textSize.y);
 	}
 
 	void SetText(wxString text)
@@ -274,8 +275,11 @@ public:
 			return;
 
 		m_text = text;
-		Refresh();
+
+		GetTextExtent(m_text, &m_textSize.x, &m_textSize.y);
 	}
+
+	wxSize GetTextSize() const { return m_textSize; }
 
 protected:
 	wxString m_text;
@@ -284,13 +288,12 @@ protected:
 	{
 		wxPaintDC paintDc(this);
 
-		wxRect rect = GetClientRect();
-		paintDc.SetFont(GetFont());
+		//paintDc.SetFont(GetFont());
 
-		int width, height;
-		paintDc.GetTextExtent(m_text, &width, &height);
-		paintDc.DrawText(m_text, rect.x + rect.GetWidth() / 2 - width / 2, rect.GetTop());
+		paintDc.DrawText(m_text, 0, 0);
 	};
+
+	wxSize m_textSize;
 
 	DECLARE_EVENT_TABLE();
 };
@@ -1850,6 +1853,8 @@ void CRemoteListView::RepositionInfoText()
 
 	wxRect rect = GetClientRect();
 
+	wxSize size = m_pInfoText->GetTextSize();
+
 	if (!m_indexMapping.size())
 		rect.y = 60;
 	else
@@ -1858,6 +1863,9 @@ void CRemoteListView::RepositionInfoText()
 		GetItemRect(0, itemRect);
 		rect.y = wxMax(60, itemRect.GetBottom() + 1);
 	}
+	rect.x = rect.x + (rect.width - size.x) / 2;
+	rect.width = size.x;
+	rect.height = size.y;
 
 	m_pInfoText->SetSize(rect);
 	m_pInfoText->Refresh(false);
@@ -1902,6 +1910,7 @@ void CRemoteListView::SetInfoText()
 	}
 
 	m_pInfoText->SetText(text);
+	RepositionInfoText();
 }
 
 void CRemoteListView::OnBeginDrag(wxListEvent& event)
