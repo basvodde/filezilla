@@ -71,6 +71,7 @@ public:
 	int GetTimezoneOffset() const;
 	enum PasvMode GetPasvMode() const;
 	int MaximumMultipleConnections() const;
+	bool GetBypassProxy() const;
 	
 	// Return true if URL could be parsed correctly, false otherwise.
 	// If parsing fails, pError is filled with the reason and the CServer instance may be left an undefined state.
@@ -112,6 +113,7 @@ public:
 	// These commands will be executed after a successful login.
 	const std::vector<wxString>& GetPostLoginCommands() const { return m_postLoginCommands; }
 	bool SetPostLoginCommands(const std::vector<wxString>& postLoginCommands);
+	void SetBypassProxy(bool val);
 
 protected:
 	void Initialize();
@@ -131,6 +133,7 @@ protected:
 	wxString m_customEncoding;
 
 	std::vector<wxString> m_postLoginCommands;
+	bool m_bypassProxy;
 };
 
 #endif

@@ -228,6 +228,7 @@ CServer& CServer::operator=(const CServer &op)
 	m_encodingType = op.m_encodingType;
 	m_customEncoding = op.m_customEncoding;
 	m_postLoginCommands = op.m_postLoginCommands;
+	m_bypassProxy = op.m_bypassProxy;
 
 	return *this;
 }
@@ -274,6 +275,8 @@ bool CServer::operator==(const CServer &op) const
 			return false;
 	}
 	if (m_postLoginCommands != op.m_postLoginCommands)
+		return false;
+	if (m_bypassProxy != op.m_bypassProxy)
 		return false;
 
 	// Do not compare number of allowed multiple connections
@@ -362,6 +365,10 @@ bool CServer::operator<(const CServer &op) const
 		else if (m_customEncoding > op.m_customEncoding)
 			return false;
 	}
+	if (m_bypassProxy < op.m_bypassProxy)
+		return true;
+	else if (m_bypassProxy > op.m_bypassProxy)
+		return false;
 
 	// Do not compare number of allowed multiple connections
 
@@ -546,6 +553,7 @@ void CServer::Initialize()
 	m_maximumMultipleConnections = 0;
 	m_encodingType = ENCODING_AUTO;
 	m_customEncoding = _T("");
+	m_bypassProxy = false;
 }
 
 bool CServer::SetEncodingType(enum CharsetEncoding type, const wxString& encoding /*=_T("")*/)
@@ -680,4 +688,14 @@ wxString CServer::GetPrefixFromProtocol(const enum ServerProtocol protocol)
 	}
 
 	return _T("");
+}
+
+void CServer::SetBypassProxy(bool val)
+{
+  m_bypassProxy = val;
+}
+
+bool CServer::GetBypassProxy() const
+{
+  return m_bypassProxy;
 }

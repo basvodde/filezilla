@@ -524,7 +524,7 @@ bool CFtpControlSocket::GetLoginSequence(const CServer& server)
 	pData->loginSequence.clear();
 
 	int proxyType = m_pEngine->GetOptions()->GetOptionVal(OPTION_FTP_PROXY_TYPE);
-	if (!proxyType)
+	if (!proxyType || server.GetBypassProxy())
 	{
 		// User
 		t_loginCommand cmd = {false, false, user, _T("")};
@@ -4142,7 +4142,7 @@ int CFtpControlSocket::Connect(const CServer &server)
 	CFtpLogonOpData* pData = new CFtpLogonOpData;
 	m_pCurOpData = pData;
 
-	if (m_pEngine->GetOptions()->GetOptionVal(OPTION_FTP_PROXY_TYPE))
+	if (m_pEngine->GetOptions()->GetOptionVal(OPTION_FTP_PROXY_TYPE) && !server.GetBypassProxy())
 	{
 		pData->host = m_pEngine->GetOptions()->GetOption(OPTION_FTP_PROXY_HOST);
 		int pos = pData->host.Find(':');
