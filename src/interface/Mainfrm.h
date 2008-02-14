@@ -133,12 +133,10 @@ protected:
 	void OnUpdateToggleQueueView(wxUpdateUIEvent& event);
 	void OnMenuHelpAbout(wxCommandEvent& event);
 	void OnFilter(wxCommandEvent& event);
-	void OnUpdateMenuCustomcommand(wxUpdateUIEvent& event);
 #if FZ_MANUALUPDATECHECK
 	void OnCheckForUpdates(wxCommandEvent& event);
 #endif //FZ_MANUALUPDATECHECK
 	void OnSitemanagerDropdown(wxCommandEvent& event);
-	void OnUpdateMenuShowHidden(wxUpdateUIEvent& event);
 	void OnNavigationKeyEvent(wxNavigationKeyEvent& event);
 	void OnGetFocus(wxFocusEvent& event);
 	void OnChar(wxKeyEvent& event);
