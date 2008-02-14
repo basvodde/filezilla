@@ -108,6 +108,9 @@ void CQuickconnectBar::OnQuickconnect(wxCommandEvent& event)
 		return;
 	}
 
+	if (event.GetId() == 1)
+		server.SetBypassProxy(true);
+
 	if (!m_pState->Connect(server, true))
 		return;
 
@@ -119,8 +122,10 @@ void CQuickconnectBar::OnQuickconnectDropdown(wxCommandEvent& event)
 	wxMenu* pMenu = new wxMenu;
 
 	// We have to start with id 1 since menu items with id 0 don't work under OS X
-	pMenu->Append(1, _("Clear quickconnect bar"));
-	pMenu->Append(2, _("Clear history"));
+	if (COptions::Get()->GetOptionVal(OPTION_FTP_PROXY_TYPE))
+		pMenu->Append(1, _("Connect bypassing proxy settings"));
+	pMenu->Append(2, _("Clear quickconnect bar"));
+	pMenu->Append(3, _("Clear history"));
 	pMenu->AppendSeparator();
 
 	m_recentServers = CRecentServerList::GetMostRecentServers();
@@ -141,8 +146,10 @@ void CQuickconnectBar::OnMenu(wxCommandEvent& event)
 {
 	const int id = event.GetId();
 	if (id == 1)
-		ClearFields();
+		OnQuickconnect(event);
 	else if (id == 2)
+		ClearFields();
+	else if (id == 3)
 		CRecentServerList::Clear();
 
 	if (id < 10)

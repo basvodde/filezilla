@@ -512,7 +512,9 @@ bool GetServer(TiXmlElement *node, CServer& server)
 		if (!server.SetPostLoginCommands(postLoginCommands))
 			return false;
 	}
-	
+
+	server.SetBypassProxy(GetTextElementInt(node, "BypassProxy", false) == 1);
+
 	return true;
 }
 
@@ -520,22 +522,22 @@ void SetServer(TiXmlElement *node, const CServer& server)
 {
 	if (!node)
 		return;
-	
+
 	node->Clear();
-	
+
 	AddTextElement(node, "Host", server.GetHost());
 	AddTextElement(node, "Port", server.GetPort());
 	AddTextElement(node, "Protocol", server.GetProtocol());
 	AddTextElement(node, "Type", server.GetType());
 	AddTextElement(node, "Logontype", server.GetLogonType());
-	
+
 	if (server.GetLogonType() != ANONYMOUS)
 	{
 		AddTextElement(node, "User", server.GetUser());
 
 		if (server.GetLogonType() == NORMAL || server.GetLogonType() == ACCOUNT)
 			AddTextElement(node, "Pass", server.GetPass());
-		
+
 		if (server.GetLogonType() == ACCOUNT)
 			AddTextElement(node, "Account", server.GetAccount());
 	}
@@ -580,6 +582,8 @@ void SetServer(TiXmlElement *node, const CServer& server)
 				AddTextElement(pElement, "Command", *iter);
 		}
 	}
+
+	AddTextElement(node, "BypassProxy", server.GetBypassProxy() ? 1 : 0);
 }
 
 void SetTextAttribute(TiXmlElement* node, const char* name, const wxString& value)
