@@ -1115,6 +1115,10 @@ bool CSiteManager::UpdateServer()
 	else
 		data->m_server.SetEncodingType(ENCODING_AUTO);
 
+	if (XRCCTRL(*this, "ID_BYPASSPROXY", wxCheckBox)->GetValue())
+		data->m_server.SetBypassProxy(true);
+	else
+		data->m_server.SetBypassProxy(false);
 	return true;
 }
 
@@ -1212,6 +1216,7 @@ void CSiteManager::SetCtrlState()
 		XRCCTRL(*this, "ID_HOST", wxTextCtrl)->SetValue(_T(""));
 		XRCCTRL(*this, "ID_PORT", wxTextCtrl)->SetValue(_T(""));
 		XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(_("FTP"));
+		XRCCTRL(*this, "ID_BYPASSPROXY", wxCheckBox)->SetValue(false);
 		XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetStringSelection(_("Anonymous"));
 		XRCCTRL(*this, "ID_USER", wxTextCtrl)->SetValue(_T(""));
 		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->SetValue(_T(""));
@@ -1258,6 +1263,7 @@ void CSiteManager::SetCtrlState()
 		else
 			XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(CServer::GetProtocolName(FTP));
 		XRCCTRL(*this, "ID_PROTOCOL", wxWindow)->Enable(!predefined);
+		XRCCTRL(*this, "ID_BYPASSPROXY", wxCheckBox)->SetValue(data->m_server.GetBypassProxy());
 
 		XRCCTRL(*this, "ID_USER", wxTextCtrl)->Enable(!predefined && data->m_server.GetLogonType() != ANONYMOUS);
 		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->Enable(!predefined && data->m_server.GetLogonType() == NORMAL || data->m_server.GetLogonType() == ACCOUNT);
