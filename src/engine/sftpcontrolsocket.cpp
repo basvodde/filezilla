@@ -484,6 +484,7 @@ void CSftpControlSocket::OnSftpEvent(wxCommandEvent& event)
 					CInteractiveLoginNotification *pNotification = new CInteractiveLoginNotification(challenge);
 					pNotification->server = *m_pCurrentServer;
 					pNotification->requestNumber = m_pEngine->GetNextAsyncRequestNumber();
+					m_pCurOpData->waitForAsyncRequest = true;
 					m_pEngine->AddNotification(pNotification);
 				}
 				else
