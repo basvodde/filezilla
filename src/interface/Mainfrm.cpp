@@ -672,7 +672,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		{
 			CConditionalDialog dlg(this, CConditionalDialog::confirm_preserve_timestamps, CConditionalDialog::ok, true);
 			dlg.SetTitle(_("Preserving file timestamps"));
-			dlg.AddText(_("Please note that preserving timestamps on uploads only works on FTP, FTPS and FTPES servers (but not SFTP) supporting the MFMT command."));
+			dlg.AddText(_("Please note that preserving timestamps on uploads on FTP, FTPS and FTPES servers only works if they support the MFMT command."));
 			dlg.Run();
 		}
 		COptions::Get()->SetOption(OPTION_PRESERVE_TIMESTAMPS, event.IsChecked() ? 1 : 0);
