@@ -47,7 +47,7 @@ protected:
 		
 	void ShowFilter(const CFilter& filter);
 	void SaveFilter(CFilter& filter);
-	void MakeControls(const CFilterCondition& condition, unsigned int i = -1);
+	void MakeControls(const CFilterCondition& condition, int i = -1);
 	void DestroyControls();
 	void UpdateCount();
 
