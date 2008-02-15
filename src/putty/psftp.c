@@ -1876,7 +1876,7 @@ static int sftp_action_chmtime(void *vmtime, char *fname)
     return 1;
 }
 
-int sftp_cmd_chmtime(struct sftp_command *cmd)
+static int sftp_cmd_chmtime(struct sftp_command *cmd)
 {
     char *p;
     int i, ret;
@@ -1888,7 +1888,7 @@ int sftp_cmd_chmtime(struct sftp_command *cmd)
     }
 
     if (cmd->nwords < 3) {
-	fzprintf(sftpError, "chmod: expects a mode specifier and a filename");
+	fzprintf(sftpError, "chmtime: expects a the time and a filename");
 	return 0;
     }
 
@@ -1911,6 +1911,76 @@ int sftp_cmd_chmtime(struct sftp_command *cmd)
 	fznotify1(sftpDone, 1);
 
     return ret;
+}
+
+static int sftp_cmd_mtime(struct sftp_command *cmd)
+{
+    char* unwcfname, *filename, *cname, *output;
+    int result, is_wc;
+    uint64 mtime;
+    struct fxp_attrs attrs = {0};
+    struct sftp_packet *pktin;
+    struct sftp_request *req, *rreq;
+    
+    if (back == NULL) {
+	not_connected();
+	return 0;
+    }
+
+    if (cmd->nwords != 2) {
+	fzprintf(sftpError, "mtime: expects exactly one filename as argument");
+	return 0;
+    }
+
+    filename = cmd->words[1];
+    unwcfname = snewn(strlen(filename) + 1, char);
+    is_wc = !wc_unescape(unwcfname, filename);
+    if (is_wc) {
+	fzprintf(sftpError, "mtime does not support wildcards");
+	sfree(unwcfname);
+	return 0;
+    }
+
+    cname = canonify(unwcfname);
+    sfree(unwcfname);
+    if (!cname) {
+	fzprintf(sftpError, "%s: canonify: %s", filename, fxp_error());
+	return 0;
+    }
+    attrs.flags = SSH_FILEXFER_ATTR_ACCESSTIME | SSH_FILEXFER_ATTR_CREATETIME | SSH_FILEXFER_ATTR_MODIFICATIONTIME;
+    sftp_register(req = fxp_stat_send(cname));
+    rreq = sftp_find_request(pktin = sftp_recv());
+    assert(rreq == req);
+    result = fxp_stat_recv(pktin, rreq, &attrs);
+
+    if (!result) {
+	fzprintf(sftpError, "get attrs for %s: %s", cname,
+	       fxp_error());
+
+	sfree(cname);
+	return 0;
+    }
+
+    attrs.flags &= SSH_FILEXFER_ATTR_ACCESSTIME | SSH_FILEXFER_ATTR_CREATETIME | SSH_FILEXFER_ATTR_MODIFICATIONTIME;
+
+    if (attrs.flags == SSH_FILEXFER_ATTR_ACMODTIME)
+	mtime = attrs.mtime;
+    else if (attrs.flags & SSH_FILEXFER_ATTR_MODIFICATIONTIME)
+	mtime = attrs.mtime;
+    else {
+	fzprintf(sftpError, "get attrs for %s: %s", cname,
+	       "mtime not provided");
+	sfree(cname);
+	return 0;
+    }
+    
+    sfree(cname);
+
+    output = snewn(25, char);
+    uint64_decimal(mtime, output);
+    fzprintf(sftpReply, output);
+    sfree(output);
+    return 1;
 }
 
 static int sftp_cmd_open(struct sftp_command *cmd)
@@ -2162,6 +2232,12 @@ static struct sftp_cmd_lookup {
 	    "  such as \"*.c\" to specify lots of files at once.\n"
 	    "  If -r specified, recursively store files and directories.\n",
 	    sftp_cmd_mput
+    },
+    {
+	"mtime", TRUE, "get file modification time",
+	    " <filename>\n"
+	    "  Returns time in seconds since Jan 1st, 1970 in UTC\n",
+	    sftp_cmd_mtime
     },
     {
 	"mv", TRUE, "move or rename file(s) on the remote server",

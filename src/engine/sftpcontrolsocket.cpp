@@ -1721,6 +1721,28 @@ int CSftpControlSocket::FileTransferParseResponse(bool successful, const wxStrin
 	}
 	else if (pData->opState == filetransfer_mtime)
 	{
+		if (successful && reply != _T(""))
+		{
+			time_t seconds = 0;
+			bool parsed = true;
+			for (unsigned int i = 0; i < reply.Len(); i++)
+			{
+				wxChar c = reply[i];
+				if (c < '0' || c > '9')
+				{
+					parsed = false;
+					break;
+				}
+				seconds *= 10;
+				seconds += c - '0';
+			}
+			if (parsed)
+			{
+				wxDateTime fileTime = wxDateTime(seconds);
+				if (fileTime.IsValid())
+					pData->fileTime = fileTime;
+			}
+		}
 		pData->opState = filetransfer_transfer;
 		int res = CheckOverwriteFile();
 		if (res != FZ_REPLY_OK)
