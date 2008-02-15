@@ -113,9 +113,26 @@ static void sftp_pkt_addattrs(struct sftp_packet *pkt, struct fxp_attrs attrs)
     if (attrs.flags & SSH_FILEXFER_ATTR_PERMISSIONS) {
 	sftp_pkt_adduint32(pkt, attrs.permissions);
     }
-    if (attrs.flags & SSH_FILEXFER_ATTR_ACMODTIME) {
-	sftp_pkt_adduint32(pkt, attrs.atime);
-	sftp_pkt_adduint32(pkt, attrs.mtime);
+    if (attrs.flags & (SSH_FILEXFER_ATTR_CREATETIME | SSH_FILEXFER_ATTR_MODIFICATIONTIME)) {
+	if (attrs.flags & SSH_FILEXFER_ATTR_ACCESSTIME) {
+	    sftp_pkt_adduint32(pkt, attrs.atime.hi);
+	    sftp_pkt_adduint32(pkt, attrs.atime.lo);
+	}
+	if (attrs.flags & SSH_FILEXFER_ATTR_CREATETIME) {
+	    sftp_pkt_adduint32(pkt, attrs.ctime.hi);
+	    sftp_pkt_adduint32(pkt, attrs.ctime.lo);
+	}
+	if (attrs.flags & SSH_FILEXFER_ATTR_MODIFICATIONTIME) {
+	    sftp_pkt_adduint32(pkt, attrs.mtime.hi);
+	    sftp_pkt_adduint32(pkt, attrs.mtime.lo);
+	}
+    }
+    else
+    {
+	if (attrs.flags & SSH_FILEXFER_ATTR_ACMODTIME) {
+	    sftp_pkt_adduint32(pkt, attrs.atime.lo);
+	    sftp_pkt_adduint32(pkt, attrs.mtime.lo);
+	}
     }
     if (attrs.flags & SSH_FILEXFER_ATTR_EXTENDED) {
 	/*
@@ -181,10 +198,34 @@ static int sftp_pkt_getattrs(struct sftp_packet *pkt, struct fxp_attrs *ret)
 	if (!sftp_pkt_getuint32(pkt, &ret->permissions))
 	    return 0;
     }
-    if (ret->flags & SSH_FILEXFER_ATTR_ACMODTIME) {
-	if (!sftp_pkt_getuint32(pkt, &ret->atime) ||
-	    !sftp_pkt_getuint32(pkt, &ret->mtime))
-	    return 0;
+    if (ret->flags & (SSH_FILEXFER_ATTR_CREATETIME | SSH_FILEXFER_ATTR_MODIFICATIONTIME)) {
+	unsigned long hi, lo;
+	if (ret->flags & SSH_FILEXFER_ATTR_ACCESSTIME) {
+    	    if (!sftp_pkt_getuint32(pkt, &hi) ||
+		!sftp_pkt_getuint32(pkt, &lo))
+		return 0;
+	    ret->atime = uint64_make(hi, lo);
+	}
+	if (ret->flags & SSH_FILEXFER_ATTR_CREATETIME) {
+    	    if (!sftp_pkt_getuint32(pkt, &hi) ||
+		!sftp_pkt_getuint32(pkt, &lo))
+		return 0;
+	    ret->ctime = uint64_make(hi, lo);
+	}
+	if (ret->flags & SSH_FILEXFER_ATTR_MODIFICATIONTIME) {
+    	    if (!sftp_pkt_getuint32(pkt, &hi) ||
+		!sftp_pkt_getuint32(pkt, &lo))
+		return 0;
+	    ret->mtime = uint64_make(hi, lo);
+	}
+    }
+    else {
+	if (ret->flags & SSH_FILEXFER_ATTR_ACMODTIME) {
+    	    if (!sftp_pkt_getuint32(pkt, &ret->atime.lo) ||
+		!sftp_pkt_getuint32(pkt, &ret->mtime.lo))
+		return 0;
+	}
+	ret->atime.hi = ret->ctime.hi = 0;
     }
     if (ret->flags & SSH_FILEXFER_ATTR_EXTENDED) {
 	unsigned long count;

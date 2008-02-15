@@ -19,7 +19,9 @@ enum filetransferStates
 	filetransfer_init = 0,
 	filetransfer_waitcwd,
 	filetransfer_waitlist,
-	filetransfer_transfer
+	filetransfer_mtime,
+	filetransfer_transfer,
+	filetransfer_chmtime
 };
 
 struct sftp_message
@@ -1455,78 +1457,119 @@ int CSftpControlSocket::FileTransferSubcommandResult(int prevResult)
 	{
 		if (prevResult == FZ_REPLY_OK)
 		{
-			pData->opState = filetransfer_waitlist;
-
 			CDirentry entry;
 			bool dirDidExist;
 			bool matchedCase;
 			CDirectoryCache cache;
 			bool found = cache.LookupFile(entry, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath, pData->remoteFile, dirDidExist, matchedCase);
-			bool shouldList = false;
 			if (!found)
 			{
 				if (!dirDidExist)
-					shouldList = true;
+					pData->opState = filetransfer_waitlist;
+				else if (pData->download &&
+					m_pEngine->GetOptions()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS))
+				{
+					pData->opState = filetransfer_mtime;
+				}
+				else
+					pData->opState = filetransfer_transfer;
 			}
 			else
 			{
 				if (entry.unsure)
-					shouldList = true;
+					pData->opState = filetransfer_waitlist;
 				else
 				{
 					if (matchedCase)
+					{
 						pData->remoteFileSize = entry.size.GetLo() + ((wxFileOffset)entry.size.GetHi() << 32);
+						if (entry.hasDate)
+							pData->fileTime = entry.time;
+
+						if (pData->download &&
+							(!entry.hasDate || !entry.hasTime) &&
+							m_pEngine->GetOptions()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS))
+						{
+							pData->opState = filetransfer_mtime;
+						}
+						else
+							pData->opState = filetransfer_transfer;
+					}
+					else
+						pData->opState = filetransfer_mtime;
 				}
 			}
-			if (shouldList)
+			if (pData->opState == filetransfer_waitlist)
 			{
 				int res = List(CServerPath(), _T(""), true);
 				if (res != FZ_REPLY_OK)
 					return res;
+				ResetOperation(FZ_REPLY_INTERNALERROR);
+				return FZ_REPLY_ERROR;
 			}
-
-			pData->opState = filetransfer_transfer;
-
-			int res = CheckOverwriteFile();
-			if (res != FZ_REPLY_OK)
-				return res;
+			else if (pData->opState == filetransfer_transfer)
+			{
+				int res = CheckOverwriteFile();
+				if (res != FZ_REPLY_OK)
+					return res;
+			}
 		}
 		else
 		{
 			pData->tryAbsolutePath = true;
-			pData->opState = filetransfer_transfer;
-
-			int res = CheckOverwriteFile();
-			if (res != FZ_REPLY_OK)
-				return res;
+			pData->opState = filetransfer_mtime;
 		}
 	}
 	else if (pData->opState == filetransfer_waitlist)
 	{
 		if (prevResult == FZ_REPLY_OK)
 		{
-			pData->opState = filetransfer_transfer;
-
 			CDirentry entry;
 			bool dirDidExist;
 			bool matchedCase;
 			CDirectoryCache cache;
 			bool found = cache.LookupFile(entry, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath, pData->remoteFile, dirDidExist, matchedCase);
-			if (found && matchedCase)
+			if (!found)
 			{
-				pData->remoteFileSize = entry.size.GetLo() + ((wxFileOffset)entry.size.GetHi() << 32);
+				if (!dirDidExist)
+					pData->opState = filetransfer_mtime;
+				else if (pData->download &&
+					m_pEngine->GetOptions()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS))
+				{
+					pData->opState = filetransfer_mtime;
+				}
+				else
+					pData->opState = filetransfer_transfer;
+			}
+			else
+			{
+				if (matchedCase && !entry.unsure)
+				{
+					pData->remoteFileSize = entry.size.GetLo() + ((wxFileOffset)entry.size.GetHi() << 32);
+					if (entry.hasDate)
+						pData->fileTime = entry.time;
 
+					if (pData->download &&
+						(!entry.hasDate || !entry.hasTime) &&
+						m_pEngine->GetOptions()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS))
+					{
+						pData->opState = filetransfer_mtime;
+					}
+					else
+						pData->opState = filetransfer_transfer;
+				}
+				else
+					pData->opState = filetransfer_mtime;
+			}
+			if (pData->opState == filetransfer_transfer)
+			{
 				int res = CheckOverwriteFile();
 				if (res != FZ_REPLY_OK)
 					return res;
 			}
 		}
-
-		pData->opState = filetransfer_transfer;
-
-		int res = CheckOverwriteFile();
-		if (res != FZ_REPLY_OK)
-			return res;
+		else
+			pData->opState = filetransfer_mtime;
 	}
 	else
 	{
@@ -1551,56 +1594,84 @@ int CSftpControlSocket::FileTransferSend()
 
 	CSftpFileTransferOpData *pData = static_cast<CSftpFileTransferOpData *>(m_pCurOpData);
 
-	wxString cmd;
-	if (pData->resume)
-		cmd = _T("re");
-	if (pData->download)
+	if (pData->opState == filetransfer_transfer)
 	{
-		// Create local directory
-		if (!pData->resume)
+		wxString cmd;
+		if (pData->resume)
+			cmd = _T("re");
+		if (pData->download)
 		{
-			wxFileName fn(pData->localFile);
-			wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
+			// Create local directory
+			if (!pData->resume)
+			{
+				wxFileName fn(pData->localFile);
+				wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
+			}
+
+			InitTransferStatus(pData->remoteFileSize, pData->resume ? pData->localFileSize : 0, false);
+			cmd += _T("get ");
+			cmd += QuoteFilename(pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath)) + _T(" ");
+
+			wxString localFile = QuoteFilename(pData->localFile);
+			wxString logstr = cmd;
+			logstr += localFile;
+			LogMessageRaw(Command, logstr);
+
+			if (!AddToStream(cmd) || !AddToStream(localFile + _T("\n"), true))
+			{
+				ResetOperation(FZ_REPLY_ERROR);
+				return FZ_REPLY_ERROR;
+			}
 		}
-
-		InitTransferStatus(pData->remoteFileSize, pData->resume ? pData->localFileSize : 0, false);
-		cmd += _T("get ");
-		cmd += QuoteFilename(pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath)) + _T(" ");
-
-		wxString localFile = QuoteFilename(pData->localFile);
-		wxString logstr = cmd;
-		logstr += localFile;
-		LogMessageRaw(Command, logstr);
-
-		if (!AddToStream(cmd) || !AddToStream(localFile + _T("\n"), true))
+		else
 		{
-			ResetOperation(FZ_REPLY_ERROR);
+			InitTransferStatus(pData->localFileSize, pData->resume ? pData->remoteFileSize : 0, false);
+			cmd += _T("put ");
+
+			wxString logstr = cmd;
+			wxString localFile = QuoteFilename(pData->localFile) + _T(" ");
+			wxString remoteFile = QuoteFilename(pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath));
+
+			logstr += localFile;
+			logstr += remoteFile;
+			LogMessageRaw(Command, logstr);
+
+			if (!AddToStream(cmd) || !AddToStream(localFile, true) ||
+				!AddToStream(remoteFile + _T("\n")))
+			{
+				ResetOperation(FZ_REPLY_ERROR);
+				return FZ_REPLY_ERROR;
+			}
+		}
+		SetTransferStatusStartTime();
+
+		pData->transferInitiated = true;
+	}
+	else if (pData->opState == filetransfer_mtime)
+	{
+		wxString quotedFilename = QuoteFilename(pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath));
+		if (!Send(_T("mtime ") + WildcardEscape(quotedFilename),
+			_T("mtime ") + quotedFilename))
+			return FZ_REPLY_ERROR;
+	}
+	else if (pData->opState == filetransfer_chmtime)
+	{
+		wxASSERT(pData->fileTime.IsValid());
+		if (pData->download)
+		{
+			LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("  filetransfer_chmtime during download"));
+			ResetOperation(FZ_REPLY_INTERNALERROR);
 			return FZ_REPLY_ERROR;
 		}
-	}
-	else
-	{
-		InitTransferStatus(pData->localFileSize, pData->resume ? pData->remoteFileSize : 0, false);
-		cmd += _T("put ");
 
-		wxString logstr = cmd;
-		wxString localFile = QuoteFilename(pData->localFile) + _T(" ");
-		wxString remoteFile = QuoteFilename(pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath));
-
-		logstr += localFile;
-		logstr += remoteFile;
-		LogMessageRaw(Command, logstr);
-
-		if (!AddToStream(cmd) || !AddToStream(localFile, true) ||
-			!AddToStream(remoteFile + _T("\n")))
-		{
-			ResetOperation(FZ_REPLY_ERROR);
+		wxString quotedFilename = QuoteFilename(pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath));
+		// Y2K38		
+		time_t ticks = pData->fileTime.GetTicks(); // Already in UTC
+		wxString seconds = wxString::Format(_T("%d"), (int)ticks);
+		if (!Send(_T("chmtime ") + seconds + _T(" ") + WildcardEscape(quotedFilename),
+			_T("chmtime ") + seconds + _T(" ") + quotedFilename))
 			return FZ_REPLY_ERROR;
-		}
 	}
-	SetTransferStatusStartTime();
-
-	pData->transferInitiated = true;
 
 	return FZ_REPLY_WOULDBLOCK;
 }
@@ -1608,12 +1679,6 @@ int CSftpControlSocket::FileTransferSend()
 int CSftpControlSocket::FileTransferParseResponse(bool successful, const wxString& reply)
 {
 	LogMessage(Debug_Verbose, _T("FileTransferParseResponse()"));
-
-	if (!successful)
-	{
-		ResetOperation(FZ_REPLY_ERROR);
-		return FZ_REPLY_ERROR;
-	}
 
 	if (!m_pCurOpData)
 	{
@@ -1624,7 +1689,55 @@ int CSftpControlSocket::FileTransferParseResponse(bool successful, const wxStrin
 
 	CSftpFileTransferOpData *pData = static_cast<CSftpFileTransferOpData *>(m_pCurOpData);
 
-	if (pData->opState != filetransfer_transfer)
+	if (pData->opState == filetransfer_transfer)
+	{
+		if (!successful)
+		{
+			ResetOperation(FZ_REPLY_ERROR);
+			return FZ_REPLY_ERROR;
+		}
+
+		if (m_pEngine->GetOptions()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS))
+		{
+			wxFileName fn(pData->localFile);
+			if (fn.FileExists())
+			{
+				if (pData->download)
+				{
+					if (pData->fileTime.IsValid())
+						fn.SetTimes(&pData->fileTime, &pData->fileTime, 0);
+				}
+				else
+				{
+					pData->fileTime = fn.GetModificationTime();
+					if (pData->fileTime.IsValid())
+					{
+						pData->opState = filetransfer_chmtime;
+						return SendNextCommand();
+					}
+				}
+			}
+		}
+	}
+	else if (pData->opState == filetransfer_mtime)
+	{
+		pData->opState = filetransfer_transfer;
+		int res = CheckOverwriteFile();
+		if (res != FZ_REPLY_OK)
+			return res;
+
+		return SendNextCommand();
+	}
+	else if (pData->opState == filetransfer_chmtime)
+	{
+		if (pData->download)
+		{
+			LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("  filetransfer_chmtime during download"));
+			ResetOperation(FZ_REPLY_INTERNALERROR);
+			return FZ_REPLY_ERROR;
+		}
+	}
+	else
 	{
 		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("  Called at improper time: opState == %d"), pData->opState);
 		ResetOperation(FZ_REPLY_INTERNALERROR);

@@ -44,6 +44,9 @@
 #define SSH_FILEXFER_ATTR_UIDGID                  0x00000002
 #define SSH_FILEXFER_ATTR_PERMISSIONS             0x00000004
 #define SSH_FILEXFER_ATTR_ACMODTIME               0x00000008
+#define SSH_FILEXFER_ATTR_ACCESSTIME              0x00000008
+#define SSH_FILEXFER_ATTR_CREATETIME              0x00000010
+#define SSH_FILEXFER_ATTR_MODIFICATIONTIME        0x00000020
 #define SSH_FILEXFER_ATTR_EXTENDED                0x80000000
 
 #define SSH_FXF_READ                              0x00000001
@@ -78,8 +81,9 @@ struct fxp_attrs {
     unsigned long uid;
     unsigned long gid;
     unsigned long permissions;
-    unsigned long atime;
-    unsigned long mtime;
+    uint64 atime;
+    uint64 mtime;
+    uint64 ctime;
 };
 
 struct fxp_handle {
