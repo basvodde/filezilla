@@ -1144,6 +1144,7 @@ int CSftpControlSocket::ListSend()
 	if (pData->opState == list_list)
 	{
 		pData->pParser = new CDirectoryListingParser(this, *m_pCurrentServer);
+		pData->pParser->SetTimezoneOffset(GetTimezoneOffset());
 		if (!Send(_T("ls")))
 			return FZ_REPLY_ERROR;
 		return FZ_REPLY_WOULDBLOCK;
