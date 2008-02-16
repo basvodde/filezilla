@@ -1181,6 +1181,7 @@ public:
 		viewHiddenCheck = false;
 		viewHidden = false;
 		m_pDirectoryListingParser = 0;
+		mdtm_index = 0;
 	}
 
 	virtual ~CFtpListOpData()

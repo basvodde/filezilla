@@ -5,6 +5,7 @@
 #include "directorycache.h"
 #include "directorylistingparser.h"
 #include "pathcache.h"
+#include "servercapabilities.h"
 
 class CSftpFileTransferOpData : public CFileTransferOpData
 {
@@ -824,6 +825,7 @@ public:
 		: COpData(cmd_list)
 	{
 		pParser = 0;
+		mtime_index = 0;
 	}
 
 	virtual ~CSftpListOpData()
@@ -839,13 +841,17 @@ public:
 	// Set to true to get a directory listing even if a cache
 	// lookup can be made after finding out true remote directory
 	bool refresh;
+
+	CDirectoryListing directoryListing;
+	int mtime_index;
 };
 
 enum listStates
 {
 	list_init = 0,
 	list_waitcwd,
-	list_list
+	list_list,
+	list_mtime
 };
 
 
@@ -888,12 +894,6 @@ int CSftpControlSocket::ListParseResponse(bool successful, const wxString& reply
 {
 	LogMessage(Debug_Verbose, _T("CSftpControlSocket::ListParseResponse(%s)"), reply.c_str());
 
-	if (!successful)
-	{
-		ResetOperation(FZ_REPLY_ERROR);
-		return FZ_REPLY_ERROR;
-	}
-
 	if (!m_pCurOpData)
 	{
 		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
@@ -909,28 +909,101 @@ int CSftpControlSocket::ListParseResponse(bool successful, const wxString& reply
 		return FZ_REPLY_ERROR;
 	}
 
-	if (pData->opState != list_list)
+	if (pData->opState == list_list)
 	{
-		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("ListParseResponse called at inproper time: %s"), pData->opState);
-		ResetOperation(FZ_REPLY_INTERNALERROR);
-		return FZ_REPLY_ERROR;
+		if (!successful)
+		{
+			ResetOperation(FZ_REPLY_ERROR);
+			return FZ_REPLY_ERROR;
+		}
+
+		if (!pData->pParser)
+		{
+			LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("pData->pParser is 0"));
+			ResetOperation(FZ_REPLY_INTERNALERROR);
+			return FZ_REPLY_ERROR;
+		}
+
+		pData->directoryListing = pData->pParser->Parse(m_CurrentPath);
+
+		int res = ListCheckTimezoneDetection();
+		if (res != FZ_REPLY_OK)
+			return res;
+
+		CDirectoryCache cache;
+		cache.Store(pData->directoryListing, *m_pCurrentServer, pData->path, pData->subDir);
+
+		m_pEngine->SendDirectoryListingNotification(m_CurrentPath, !pData->pNextOpData, true, false);
+
+		ResetOperation(FZ_REPLY_OK);
+		return FZ_REPLY_OK;
+	}
+	else if (pData->opState == list_mtime)
+	{
+		if (successful && reply != _T(""))
+		{
+			time_t seconds = 0;
+			bool parsed = true;
+			for (unsigned int i = 0; i < reply.Len(); i++)
+			{
+				wxChar c = reply[i];
+				if (c < '0' || c > '9')
+				{
+					parsed = false;
+					break;
+				}
+				seconds *= 10;
+				seconds += c - '0';
+			}
+			if (parsed)
+			{
+				wxDateTime date = wxDateTime(seconds);
+				if (date.IsValid())
+				{
+					date.MakeTimezone(wxDateTime::GMT0);
+					wxASSERT(pData->directoryListing[pData->mtime_index].hasTime);
+					wxDateTime listTime = pData->directoryListing[pData->mtime_index].time;
+					listTime -= wxTimeSpan(0, m_pCurrentServer->GetTimezoneOffset(), 0);
+
+					int serveroffset = (date - listTime).GetSeconds().GetLo();
+
+					wxDateTime now = wxDateTime::Now();
+					wxDateTime now_utc = now.ToTimezone(wxDateTime::GMT0);
+
+					int localoffset = (now - now_utc).GetSeconds().GetLo();
+					int offset = serveroffset + localoffset;
+
+					LogMessage(Status, _("Timezone offsets: Server: %d seconds. Local: %d seconds. Difference: %d seconds."), -serveroffset, localoffset, offset);
+
+					wxTimeSpan span(0, 0, offset);
+					const int count = pData->directoryListing.GetCount();
+					for (int i = 0; i < count; i++)
+					{
+						CDirentry& entry = pData->directoryListing[i];
+						if (!entry.hasTime)
+							continue;
+
+						entry.time += span;
+					}
+
+					// TODO: Correct cached listings
+
+					CServerCapabilities::SetCapability(*m_pCurrentServer, timezone_offset, yes, offset);
+				}
+			}
+		}
+
+		CDirectoryCache cache;
+		cache.Store(pData->directoryListing, *m_pCurrentServer, pData->path, pData->subDir);
+
+		m_pEngine->SendDirectoryListingNotification(m_CurrentPath, !pData->pNextOpData, true, false);
+
+		ResetOperation(FZ_REPLY_OK);
+		return FZ_REPLY_OK;
 	}
 
-	if (!pData->pParser)
-	{
-		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("pData->pParser is 0"));
-		return FZ_REPLY_INTERNALERROR;
-	}
-
-	CDirectoryListing listing = pData->pParser->Parse(m_CurrentPath);
-
-	CDirectoryCache cache;
-	cache.Store(listing, *m_pCurrentServer, pData->path, pData->subDir);
-
-	m_pEngine->SendDirectoryListingNotification(m_CurrentPath, !pData->pNextOpData, true, false);
-
-	ResetOperation(FZ_REPLY_OK);
-
+	LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("ListParseResponse called at inproper time: %d"), pData->opState);
+	ResetOperation(FZ_REPLY_INTERNALERROR);
 	return FZ_REPLY_ERROR;
 }
 
@@ -964,11 +1037,10 @@ int CSftpControlSocket::ListParseEntry(const wxString& entry)
 	if (pData->opState != list_list)
 	{
 		LogMessageRaw(RawList, entry);
-		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("ListParseResponse called at inproper time: %s"), pData->opState);
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("ListParseResponse called at inproper time: %d"), pData->opState);
 		ResetOperation(FZ_REPLY_INTERNALERROR);
 		return FZ_REPLY_ERROR;
 	}
-
 
 	if (!pData->pParser)
 	{
@@ -1072,7 +1144,18 @@ int CSftpControlSocket::ListSend()
 	if (pData->opState == list_list)
 	{
 		pData->pParser = new CDirectoryListingParser(this, *m_pCurrentServer);
-		Send(_T("ls"));
+		if (!Send(_T("ls")))
+			return FZ_REPLY_ERROR;
+		return FZ_REPLY_WOULDBLOCK;
+	}
+	else if (pData->opState == list_mtime)
+	{
+		LogMessage(Status, _("Calculating timezone offset of server..."));
+		const wxString& name = pData->directoryListing[pData->mtime_index].name;
+		wxString quotedFilename = QuoteFilename(pData->directoryListing.path.FormatFilename(name, true));
+		if (!Send(_T("mtime ") + WildcardEscape(quotedFilename),
+			_T("mtime ") + quotedFilename))
+			return FZ_REPLY_ERROR;
 		return FZ_REPLY_WOULDBLOCK;
 	}
 
@@ -2514,4 +2597,27 @@ int CSftpControlSocket::ParseSubcommandResult(int prevResult)
 	}
 
 	return FZ_REPLY_ERROR;
+}
+
+int CSftpControlSocket::ListCheckTimezoneDetection()
+{
+	wxASSERT(m_pCurOpData);
+
+	CSftpListOpData *pData = static_cast<CSftpListOpData *>(m_pCurOpData);
+
+	if (CServerCapabilities::GetCapability(*m_pCurrentServer, timezone_offset) == unknown)
+	{
+		const int count = pData->directoryListing.GetCount();
+		for (int i = 0; i < count; i++)
+		{
+			if (!pData->directoryListing[i].hasTime)
+				continue;
+
+			pData->opState = list_mtime;
+			pData->mtime_index = i;
+			return SendNextCommand();
+		}
+	}
+
+	return FZ_REPLY_OK;
 }

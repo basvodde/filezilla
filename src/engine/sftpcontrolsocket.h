@@ -84,6 +84,7 @@ protected:
 	int ListSend();
 	int ListParseResponse(bool successful, const wxString& reply);
 	int ListParseEntry(const wxString& entry);
+	int ListCheckTimezoneDetection();
 
 	int ChangeDir(CServerPath path = CServerPath(), wxString subDir = _T(""));
 	int ChangeDirParseResponse(bool successful, const wxString& reply);
