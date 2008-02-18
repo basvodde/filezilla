@@ -80,6 +80,8 @@ protected:
 	typedef std::list<CCacheEntry>::iterator tCacheIter;
 	typedef std::list<CCacheEntry>::const_iterator tCacheConstIter;
 
+	bool Lookup(tCacheIter &cacheIter, const CServer &server, const CServerPath &path, wxString subDir, bool allowUnsureEntries, bool& is_outdated);
+
 	static std::list<CServerEntry *> m_ServerList;
 	
 	static int m_nRefCount;
