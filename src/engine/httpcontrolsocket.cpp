@@ -48,7 +48,7 @@ public:
 
 	wxLongLong m_totalSize;
 	wxLongLong m_receivedData;
-	
+
 	COpData* m_pOpData;
 
 	enum transferEncodings
@@ -135,7 +135,7 @@ int CHttpControlSocket::ContinueConnect(const wxIPV4address *address)
 		LogMessage(Debug_Warning, _T("Invalid context for call to ContinueConnect(), cmd=%d, m_pCurrentServer=%p"), GetCurrentCommandId(), m_pCurrentServer);
 		return DoClose(FZ_REPLY_INTERNALERROR);
 	}
-	
+
 	if (!address)
 	{
 		if (m_pCurrentServer)
@@ -283,7 +283,7 @@ void CHttpControlSocket::OnReceive()
 			ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED);
 		return;
 	}
-		
+
 	int read;
 	if (!(read = LastCount()))
 	{
@@ -332,7 +332,7 @@ int CHttpControlSocket::FileTransfer(const wxString localFile, const CServerPath
 							  const CFileTransferCommand::t_transferSettings& transferSettings)
 {
 	LogMessage(Debug_Verbose, _T("CHttpControlSocket::FileTransfer()"));
-	
+
 	LogMessage(Status, _("Downloading %s"), remotePath.FormatFilename(remoteFile).c_str());
 
 	if (!download)
@@ -399,7 +399,7 @@ int CHttpControlSocket::FileTransferSubcommandResult(int prevResult)
 		return FZ_REPLY_ERROR;
 	}
 
-	CHttpFileTransferOpData *pData = static_cast<CHttpFileTransferOpData *>(m_pCurOpData);
+	//CHttpFileTransferOpData *pData = static_cast<CHttpFileTransferOpData *>(m_pCurOpData);
 
 	if (prevResult != FZ_REPLY_OK)
 	{
@@ -488,7 +488,7 @@ int CHttpControlSocket::InternalConnect(const wxString& host, unsigned short por
 		resolver->Run();
 		return FZ_REPLY_WOULDBLOCK;
 	}
-	
+
 	pData->host = host;
 	return DoInternalConnect();
 }
@@ -721,7 +721,7 @@ int CHttpControlSocket::ParseHeader(CHttpOpData* pData)
 					}
 					return res;
 				}
-				
+
 				return FZ_REPLY_WOULDBLOCK;
 			}
 			if (m_recvBufferPos > 12 && !memcmp(m_pRecvBuffer, "Location: ", 10))
@@ -840,7 +840,7 @@ int CHttpControlSocket::OnChunkedData(CHttpOpData* pData)
 				// We're done
 				return ProcessData(0, 0);
 			}
-			
+
 			// Ignore the trailer
 		}
 		else

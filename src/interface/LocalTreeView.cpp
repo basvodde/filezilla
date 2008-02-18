@@ -499,7 +499,7 @@ void CLocalTreeView::DisplayDir(wxTreeItemId parent, const wxString& dirname, co
 
 			const wxString& fullName = fn.GetFullPath();
 			wxStructStat buf;
-			int result = result = wxStat(fullName, &buf);
+			int result = wxStat(fullName, &buf);
 			if (!isDir && !result)
 				size = buf.st_size;
 			else
@@ -1286,12 +1286,12 @@ void CLocalTreeView::OnMenuUpload(wxCommandEvent& event)
 
 	if (!m_pState->LocalDirHasParent(path))
 		return;
-	
+
 #ifdef __WXMSW__
 	if (path.Len() == 3 && path.Mid(1) == _T(":\\"))
 		return;
 #endif
-	
+
 	if (!m_pState->IsRemoteConnected())
 		return;
 
@@ -1358,7 +1358,7 @@ void CLocalTreeView::OnMenuRename(wxCommandEvent& event)
 {
 	if (!m_contextMenuItem.IsOk())
 		return;
-	
+
 #ifdef __WXMSW__
 	if (m_contextMenuItem == m_desktop || m_contextMenuItem == m_documents)
 	{
@@ -1394,7 +1394,7 @@ void CLocalTreeView::OnMenuDelete(wxCommandEvent& event)
 
 	if (!m_pState->LocalDirHasParent(path) || !m_pState->LocalDirIsWriteable(path))
 		return;
-	
+
 #ifdef __WXMSW__
 	if (path.Len() == 3 && path.Mid(1) == _T(":\\"))
 		return;
@@ -1429,7 +1429,7 @@ void CLocalTreeView::OnMenuDelete(wxCommandEvent& event)
 	op.fFlags = wxGetKeyState(WXK_SHIFT) ? 0 : FOF_ALLOWUNDO;
 
 	SHFileOperation(&op);
-	
+
 	delete [] pBuffer;
 #else
 	if (wxMessageBox(_("Really delete all selected files and/or directories?"), _("Confirmation needed"), wxICON_QUESTION | wxYES_NO, this) != wxYES)
@@ -1579,7 +1579,7 @@ void CLocalTreeView::OnEndLabelEdit(wxTreeEvent& event)
 
 	int pos = path.Find(wxFileName::GetPathSeparator(), true);
 	wxASSERT(pos != -1);
-    
+
 	wxString parent = path.Left(pos + 1);
 
 	const wxString& oldName = GetItemText(item);
@@ -1617,7 +1617,7 @@ void CLocalTreeView::OnEndLabelEdit(wxTreeEvent& event)
 		sub = wxFileName::GetPathSeparator() + GetItemText(tmp) + sub;
 		tmp = GetItemParent(tmp);
 	}
-	
+
 	if (tmp == GetRootItem())
 	{
 		// Rename unrelated to current selection

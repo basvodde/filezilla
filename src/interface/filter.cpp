@@ -692,6 +692,9 @@ bool CFilterDialog::FilenameFilteredByFilter(const wxString& name, bool dir, wxL
 			}
 #endif //__WXMSW__
 			break;
+		default:
+			wxFAIL_MSG(_T("Unhandled filter type"));
+			break;
 		}
 		if (match)
 		{

@@ -230,7 +230,7 @@ public:
 
 		int hit = DisplayDropHighlight(wxPoint(x, y));
 		const CDragDropManager* pDragDropManager = CDragDropManager::Get();
-		
+
 		if (hit == -1 && pDragDropManager &&
 			pDragDropManager->remoteParent == m_pRemoteListView->m_pDirectoryListing->path &&
 			*pServer == pDragDropManager->server)
@@ -558,7 +558,7 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 #ifdef __WXMSW__
 	EndEditLabel(true);
 #endif
-	
+
 	bool reset = false;
 	if (!pDirectoryListing || !m_pDirectoryListing)
 		reset = true;
@@ -1711,7 +1711,7 @@ void CRemoteListView::ApplyCurrentFilter()
 
 std::list<wxString> CRemoteListView::RememberSelectedItems(wxString& focused)
 {
-	wxASSERT(GetItemCount() == m_indexMapping.size());
+	wxASSERT(GetItemCount() == (int)m_indexMapping.size());
 	std::list<wxString> selectedNames;
 	// Remember which items were selected
 	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
@@ -1894,7 +1894,7 @@ void CRemoteListView::SetInfoText()
 		else if (!m_pDirectoryListing->GetCount())
 			text = _("Empty directory listing");
 	}
-	
+
 	if (text == _T(""))
 	{
 		delete m_pInfoText;
@@ -2128,7 +2128,7 @@ void CRemoteListView::InitDateFormat()
 {
 	const wxString& dateFormat = COptions::Get()->GetOption(OPTION_DATE_FORMAT);
 	const wxString& timeFormat = COptions::Get()->GetOption(OPTION_TIME_FORMAT);
-	
+
 	if (dateFormat == _T("1"))
 		m_dateFormat = _T("%Y-%m-%d");
 	else if (dateFormat[0] == '2')
