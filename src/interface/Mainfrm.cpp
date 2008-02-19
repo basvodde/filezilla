@@ -503,13 +503,16 @@ bool CMainFrame::CreateMenus()
 	}
 
 #if !FZ_MANUALUPDATECHECK
-	wxMenu *helpMenu;
-	wxMenuItem* pUpdateItem = m_pMenuBar->FindItem(XRCID("ID_CHECKFORUPDATES"), &helpMenu);
-	if (pUpdateItem)
-		helpMenu->Delete(pUpdateItem);
+	if (m_pMenuBar)
+	{
+		wxMenu *helpMenu;
+		wxMenuItem* pUpdateItem = m_pMenuBar->FindItem(XRCID("ID_CHECKFORUPDATES"), &helpMenu);
+		if (pUpdateItem)
+			helpMenu->Delete(pUpdateItem);
+	}
 #endif //!FZ_MANUALUPDATECHECK
 
-	if (COptions::Get()->GetOptionVal(OPTION_DEBUG_MENU))
+	if (COptions::Get()->GetOptionVal(OPTION_DEBUG_MENU) && m_pMenuBar)
 	{
 		wxMenu* pMenu = wxXmlResource::Get()->LoadMenu(_T("ID_MENU_DEBUG"));
 		if (pMenu)
@@ -522,7 +525,8 @@ bool CMainFrame::CreateMenus()
 		m_pUpdateWizard->DisplayUpdateAvailability(false, true);
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 
-	m_pMenuBar->FindItem(XRCID("ID_MENU_SERVER_VIEWHIDDEN"), 0)->Check(COptions::Get()->GetOptionVal(OPTION_VIEW_HIDDEN_FILES) ? true : false);
+	if (m_pMenuBar)
+		m_pMenuBar->FindItem(XRCID("ID_MENU_SERVER_VIEWHIDDEN"), 0)->Check(COptions::Get()->GetOptionVal(OPTION_VIEW_HIDDEN_FILES) ? true : false);
 
 	return true;
 }

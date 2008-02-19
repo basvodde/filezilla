@@ -799,7 +799,9 @@ void CUpdateWizard::DisplayUpdateAvailability(bool showDialog, bool forceMenu /*
 	wxMenu* pMenu = new wxMenu();
 	const wxString& name = wxString::Format(_("&Version %s"), pOptions->GetOption(OPTION_UPDATECHECK_NEWVERSION).c_str());
 	pMenu->Append(XRCID("ID_CHECKFORUPDATES"), name);
-	pFrame->GetMenuBar()->Append(pMenu, _("&New version available!"));
+	wxMenuBar* pMenuBar = pFrame->GetMenuBar();
+	if (pMenuBar)
+		pMenuBar->Append(pMenu, _("&New version available!"));
 
 	if (showDialog)
 	{
