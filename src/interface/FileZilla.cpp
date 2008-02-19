@@ -655,6 +655,13 @@ int CFileZillaApp::GetCurrentLanguage() const
 	return m_pLocale->GetLanguage();
 }
 
+wxString CFileZillaApp::GetCurrentLanguageCode() const
+{
+	if (!m_pLocale)
+		return _T("");
+
+	return m_pLocale->GetCanonicalName();
+}
 
 #if wxUSE_DEBUGREPORT && wxUSE_ON_FATAL_EXCEPTION
 
