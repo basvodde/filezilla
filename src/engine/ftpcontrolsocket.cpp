@@ -464,10 +464,14 @@ void CFtpControlSocket::ParseResponse()
 		if (m_Response[0] != '1')
 			m_repliesToSkip--;
 
-		if (!m_pCurOpData)
-			StartKeepaliveTimer();
-		else if (!m_pendingReplies)
-			SendNextCommand();
+		if (!m_repliesToSkip)
+		{
+			SetWait(false);
+			if (!m_pCurOpData)
+				StartKeepaliveTimer();
+			else if (!m_pendingReplies)
+				SendNextCommand();
+		}
 
 		return;
 	}
