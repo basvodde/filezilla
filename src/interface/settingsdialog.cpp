@@ -3,6 +3,7 @@
 #include "Options.h"
 #include "optionspage.h"
 #include "optionspage_connection.h"
+#include "optionspage_connection_ftp.h"
 #include "optionspage_connection_active.h"
 #include "optionspage_connection_passive.h"
 #include "optionspage_filetype.h"
@@ -25,6 +26,7 @@ enum pagenames
 {
 	page_none = -1,
 	page_connection = 0,
+	page_connection_ftp,
 	page_connection_active,
 	page_connection_passive,
 	page_connection_ftp_proxy,
@@ -104,9 +106,10 @@ bool CSettingsDialog::LoadPages()
 	// Create the instances of the page classes and fill the tree.
 	t_page page;
 	ADD_PAGE(_("Connection"), COptionsPageConnection, page_none);
-	ADD_PAGE(_("Active mode"), COptionsPageConnectionActive, page_connection);
-	ADD_PAGE(_("Passive mode"), COptionsPageConnectionPassive, page_connection);
-	ADD_PAGE(_("FTP Proxy"), COptionsPageFtpProxy, page_connection);
+	ADD_PAGE(_("FTP"), COptionsPageConnectionFTP, page_connection);
+	ADD_PAGE(_("Active mode"), COptionsPageConnectionActive, page_connection_ftp);
+	ADD_PAGE(_("Passive mode"), COptionsPageConnectionPassive, page_connection_ftp);
+	ADD_PAGE(_("FTP Proxy"), COptionsPageFtpProxy, page_connection_ftp);
 	ADD_PAGE(_("Transfers"), COptionsPageTransfer, page_none);
 	ADD_PAGE(_("File Types"), COptionsPageFiletype, page_transfer);
 	ADD_PAGE(_("File exists action"), COptionsPageFileExists, page_transfer);

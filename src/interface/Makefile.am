@@ -44,6 +44,7 @@ filezilla_SOURCES = aboutdialog.cpp \
 		optionspage.cpp \
 		optionspage_connection.cpp \
 		optionspage_connection_active.cpp \
+		optionspage_connection_ftp.cpp \
 		optionspage_connection_passive.cpp \
 		optionspage_dateformatting.cpp \
 		optionspage_debug.cpp \
@@ -123,6 +124,7 @@ noinst_HEADERS = aboutdialog.h \
 		 optionspage.h \
 		 optionspage_connection.h \
 		 optionspage_connection_active.h \
+		 optionspage_connection_ftp.h \
 		 optionspage_connection_passive.h \
 		 optionspage_dateformatting.h \
 		 optionspage_debug.h \

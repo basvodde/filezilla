@@ -12,29 +12,16 @@ END_EVENT_TABLE()
 bool COptionsPageConnection::LoadPage()
 {
 	bool failure = false;
-	SetRCheck(XRCID("ID_PASSIVE"), m_pOptions->GetOptionVal(OPTION_USEPASV) != 0, failure);
-	SetRCheck(XRCID("ID_ACTIVE"), m_pOptions->GetOptionVal(OPTION_USEPASV) == 0, failure);
-	SetCheck(XRCID("ID_FALLBACK"), m_pOptions->GetOptionVal(OPTION_ALLOW_TRANSFERMODEFALLBACK) != 0, failure);
-
 	SetTextFromOption(XRCID("ID_RETRIES"), OPTION_RECONNECTCOUNT, failure);
 	SetTextFromOption(XRCID("ID_RETRYDELAY"), OPTION_RECONNECTDELAY, failure);
-
-	SetCheck(XRCID("ID_USEKEEPALIVE"), m_pOptions->GetOptionVal(OPTION_FTP_SENDKEEPALIVE) != 0, failure);
-
 	return !failure;
 }
 
 bool COptionsPageConnection::SavePage()
 {
-	m_pOptions->SetOption(OPTION_USEPASV, GetRCheck(XRCID("ID_PASSIVE")) ? 1 : 0);
-	m_pOptions->SetOption(OPTION_ALLOW_TRANSFERMODEFALLBACK, GetCheck(XRCID("ID_FALLBACK")) ? 1 : 0);
-
 	long tmp;
 	GetText(XRCID("ID_RETRIES")).ToLong(&tmp); m_pOptions->SetOption(OPTION_RECONNECTCOUNT, tmp);
 	GetText(XRCID("ID_RETRYDELAY")).ToLong(&tmp); m_pOptions->SetOption(OPTION_RECONNECTDELAY, tmp);
-
-	m_pOptions->SetOption(OPTION_FTP_SENDKEEPALIVE, GetCheck(XRCID("ID_USEKEEPALIVE")) ? 1 : 0);
-
 	return true;
 }
 
