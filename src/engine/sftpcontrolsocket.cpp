@@ -494,18 +494,17 @@ void CSftpControlSocket::OnSftpEvent(wxCommandEvent& event)
 				{
 					CSftpConnectOpData *pData = reinterpret_cast<CSftpConnectOpData*>(m_pCurOpData);
 
-					const wxString newChallenge = m_requestPreamble + _T("\n") + m_requestInstruction;
+					const wxString newChallenge = m_requestPreamble + _T("\n") + m_requestInstruction + message->text;
 
 					if (pData->pLastChallenge)
 					{
 						// Check for same challenge. Will most likely fail as well, so abort early.
 						if (*pData->pLastChallenge == newChallenge)
-						{
-							LogMessage(::Error, _T("Authentication failed."));
-							DoClose(FZ_REPLY_CRITICALERROR | FZ_REPLY_PASSWORDFAILED);
-							return;
-						}
-						delete pData->pLastChallenge;
+							LogMessage(::Error, _("Authentication failed."));
+						else
+							LogMessage(::Error, _("Server sent an additional login prompt. You need to use the interactive login type."));
+						DoClose(FZ_REPLY_CRITICALERROR | FZ_REPLY_PASSWORDFAILED);
+						return;
 					}
 
 					pData->pLastChallenge = new wxString(newChallenge);
