@@ -13,6 +13,7 @@
 #include "tree234.h"
 #include "sftp.h"
 
+#include "fzprintf.h"
 #include "fzsftp.h"
 
 struct sftp_packet {
