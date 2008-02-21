@@ -59,6 +59,7 @@ if SFTP_UNIX
   fzsftp_LDADD += unix/libfzsftp_ux.a unix/libfzputtycommon_ux.a
   fzsftp_CPPFLAGS = $(AM_CPPFLAGS) -D_FILE_OFFSET_BITS=64
 
+  fzputtygen_SOURCES += tree234.c
   fzputtygen_CPPFLAGS = $(AM_CPPFLAGS)
   fzputtygen_LDADD = unix/libfzputtycommon_ux.a libfzputtycommon.a
 endif
