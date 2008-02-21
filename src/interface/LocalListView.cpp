@@ -282,6 +282,22 @@ CLocalListView::~CLocalListView()
 	COptions::Get()->SetOption(OPTION_LOCALFILELIST_SORTORDER, str);
 }
 
+#ifdef __WXMSW__
+static bool ConvertFileTimeToWxDateTime(wxDateTime& time, const FILETIME &ft)
+{
+	FILETIME ftLocal;
+	if (!::FileTimeToLocalFileTime(&ft, &ftLocal))
+		return false;
+
+	SYSTEMTIME st;
+	if (!::FileTimeToSystemTime(&ftLocal, &st))
+		return false;
+
+	return time.Set(st.wDay, wxDateTime::Month(st.wMonth - 1), st.wYear,
+					st.wHour, st.wMinute, st.wSecond, st.wMilliseconds).IsValid();
+}
+#endif
+
 bool CLocalListView::DisplayDir(wxString dirname)
 {
 	wxString focused;
@@ -371,42 +387,68 @@ regular_dir:
 				found = dir.GetNext(&file);
 				continue;
 			}
+			const wxString fullName = dirname + file;
 			CLocalFileData data;
 
 			data.flags = normal;
-			data.dir = wxFileName::DirExists(dirname + file);
 			data.icon = -2;
 			data.name = file;
 
+#ifndef __WXMSW__
 			wxStructStat buf;
-			int result;
-			result = wxStat(dirname + file, &buf);
+			int result = wxStat(fullName, &buf);
 
 			if (!result)
 			{
 				data.hasTime = true;
 				data.lastModified = wxDateTime(buf.st_mtime);
+				if (buf.st_mode & S_IFDIR)
+				{
+					data.dir = true;
+					data.size = buf.st_size;
+				}
+				else
+				{
+					data.dir = false;
+					data.size = -1;
+				}
+				data.attributes = buf.st_mode & 0x777;
 			}
 			else
+			{
+				data.dir = false;
 				data.hasTime = false;
-
-			if (data.dir)
 				data.size = -1;
-			else
-				data.size = result ? -1 : buf.st_size;
-
-#ifdef __WXMSW__
-			DWORD tmp = GetFileAttributes(dirname + file);
-			if (tmp == INVALID_FILE_ATTRIBUTES)
-				data.attributes = 0;
-			else
-				data.attributes = tmp;
-#else
-			if (!result)
-				data.attributes = buf.st_mode & 0x777;
-			else
 				data.attributes = -1;
-#endif //__WXMSW__
+			}
+#else
+			WIN32_FILE_ATTRIBUTE_DATA attributes;
+			if (GetFileAttributesEx(fullName, GetFileExInfoStandard, &attributes))
+			{
+				data.attributes = attributes.dwFileAttributes;
+				if (attributes.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+				{
+					data.dir = true;
+					data.size = -1;
+				}
+				else
+				{
+					data.dir = false;
+					data.size = wxLongLong(attributes.nFileSizeHigh, attributes.nFileSizeLow);
+				}
+				if (attributes.ftLastWriteTime.dwHighDateTime != 0 && attributes.ftLastWriteTime.dwLowDateTime != 0)
+					data.hasTime = ConvertFileTimeToWxDateTime(data.lastModified, attributes.ftLastWriteTime);
+				else
+					data.hasTime = false;
+			}
+			else
+			{
+				data.size = -1;
+				data.dir = false;
+				data.hasTime = false;
+				data.attributes = 0;
+			}
+#endif
 
 			m_fileData.push_back(data);
 			if (!filter.FilenameFiltered(data.name, data.dir, data.size, true, data.attributes))
