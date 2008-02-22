@@ -2630,7 +2630,7 @@ void fatalbox(char *fmt, ...)
     va_start(ap, fmt);
     str = dupvprintf(fmt, ap);
     va_end(ap);
-    fzprintf(sftpError, str);
+    fzprintf(sftpError, "%s", str);
     sfree(str);
 
     cleanup_exit(1);
@@ -2643,7 +2643,7 @@ void modalfatalbox(char *fmt, ...)
     va_start(ap, fmt);
     str = dupvprintf(fmt, ap);
     va_end(ap);
-    fzprintf(sftpError, str);
+    fzprintf(sftpError, "%s", str);
     sfree(str);
 
     cleanup_exit(1);
