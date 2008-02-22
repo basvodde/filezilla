@@ -1,7 +1,7 @@
 ;FileZilla 3 installation script
 ;Written by Tim Kosse <mailto:tim.kosse@filezilla-project.org>
 ;
-;Requires NSIS >= 2.29
+;Requires NSIS >= 2.35
 
 ;--------------------------------
 ; Build environment
@@ -30,11 +30,10 @@
 ;--------------------------------
 ;Include Modern UI and functions
 
-  !include "MUI.nsh"
+  !include "MUI2.nsh"
   !include "WordFunc.nsh"
   !include Library.nsh
   !include "WinVer.nsh"
-  !include "nsDialogs.nsh"
   !include "FileFunc.nsh"
 
 ;--------------------------------
@@ -523,6 +522,7 @@ Section "FileZilla Client" SecMain
   
   File "..\src\interface\FileZilla.exe"
   File "..\src\putty\fzsftp.exe"
+  File "..\src\putty\fzputtygen.exe"
   File "${srcdir}\mingwm10.dll"
   File "${top_srcdir}\GPL.html"
   File "${top_srcdir}\NEWS"
@@ -631,13 +631,14 @@ SectionEnd
 
 Function PostInstPage
 
-    FindWindow $MUI_TEMP1 "#32770" "" $HWNDPARENT
-    GetDlgItem $MUI_TEMP1 $MUI_TEMP1 1016
-    System::Call user32::IsWindowVisible(i$MUI_TEMP1)i.s
-    Pop $MUI_TEMP1
+  ; Don't advance automatically if details expanded
+  FindWindow $R0 "#32770" "" $HWNDPARENT
+  GetDlgItem $R0 $R0 1016
+  System::Call user32::IsWindowVisible(i$R0)i.s
+  Pop $R0
 
-    StrCmp $MUI_TEMP1 0 +2
-    SetAutoClose false
+  StrCmp $R0 0 +2
+  SetAutoClose false
 
 FunctionEnd
 
@@ -813,6 +814,7 @@ Section "Uninstall"
 
   Delete "$INSTDIR\filezilla.exe"
   Delete "$INSTDIR\fzsftp.exe"
+  Delete "$INSTDIR\fzputtygen.exe"
   Delete "$INSTDIR\mingwm10.dll"
   Delete "mingwm10.dll"
   Delete "$INSTDIR\GPL.html"

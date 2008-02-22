@@ -82,3 +82,4 @@ endif
 $(top_builddir)/FileZilla.app/Contents/MacOS/fzsftp$(EXEEXT): fzsftp
 	mkdir -p $(top_builddir)/FileZilla.app/Contents/MacOS
 	cp -f fzsftp $(top_builddir)/FileZilla.app/Contents/MacOS/fzsftp
+	cp -f fzputtygen $(top_builddir)/FileZilla.app/Contents/MacOS/fzputtygen
