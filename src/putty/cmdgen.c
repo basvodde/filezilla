@@ -34,6 +34,10 @@ void modalfatalbox(char *fmt, ...)
 void log_eventlog(void *handle, const char *event)
 {
 }
+char *x_get_default(const char *key)
+{
+    return NULL;
+}
 void sk_cleanup(void)
 {
 }
