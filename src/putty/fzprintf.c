@@ -14,6 +14,16 @@ int fzprintf(sftpEventTypes type, const char* fmt, ...)
     char* str, *p, *s;
     va_start(ap, fmt);
     str = dupvprintf(fmt, ap);
+    if (!*str)
+    {
+	sfree(str);
+	va_end(ap);
+
+	fprintf(stdout, "%c\n", (int)type + '0');
+	fflush(stdout);
+
+	return 0;
+    }
     p = str;
     s = str;
     while (1)

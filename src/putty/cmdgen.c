@@ -176,7 +176,7 @@ int main(int argc, char **argv)
 	    if (passphrase)
 		sfree(passphrase);
 	    passphrase = strdup(args);
-	    fznotify(sftpDone);
+	    fzprintf(sftpReply, "");
 	}
 	else if (!strcmp(cmd, "load"))
 	{
@@ -249,7 +249,7 @@ int main(int argc, char **argv)
 	    if (error)
 		fzprintf(sftpError, "Error loading file: %s", error);
 	    else
-		fznotify(sftpDone);
+		fzprintf(sftpReply, "");
 	}
 	else if (!strcmp(cmd, "data"))
 	{
@@ -314,7 +314,7 @@ int main(int argc, char **argv)
 		}
 	    }
 
-	    fznotify(sftpDone);
+	    fzprintf(sftpReply, "");
 	}
 	else
     	    fzprintf(sftpError, "Unknown command");

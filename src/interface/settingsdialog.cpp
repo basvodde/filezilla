@@ -6,6 +6,8 @@
 #include "optionspage_connection_ftp.h"
 #include "optionspage_connection_active.h"
 #include "optionspage_connection_passive.h"
+#include "optionspage_ftpproxy.h"
+#include "optionspage_connection_sftp.h"
 #include "optionspage_filetype.h"
 #include "optionspage_fileexists.h"
 #include "optionspage_themes.h"
@@ -18,7 +20,6 @@
 #include "optionspage_dateformatting.h"
 #include "optionspage_sizeformatting.h"
 #include "optionspage_edit.h"
-#include "optionspage_ftpproxy.h"
 #include "filezillaapp.h"
 #include "Mainfrm.h"
 
@@ -30,6 +31,7 @@ enum pagenames
 	page_connection_active,
 	page_connection_passive,
 	page_connection_ftp_proxy,
+	page_connection_sftp,
 	page_transfer,
 	page_filetype,
 	page_fileexists,
@@ -110,6 +112,7 @@ bool CSettingsDialog::LoadPages()
 	ADD_PAGE(_("Active mode"), COptionsPageConnectionActive, page_connection_ftp);
 	ADD_PAGE(_("Passive mode"), COptionsPageConnectionPassive, page_connection_ftp);
 	ADD_PAGE(_("FTP Proxy"), COptionsPageFtpProxy, page_connection_ftp);
+	ADD_PAGE(_("SFTP"), COptionsPageConnectionSFTP, page_connection);
 	ADD_PAGE(_("Transfers"), COptionsPageTransfer, page_none);
 	ADD_PAGE(_("File Types"), COptionsPageFiletype, page_transfer);
 	ADD_PAGE(_("File exists action"), COptionsPageFileExists, page_transfer);
@@ -128,6 +131,12 @@ bool CSettingsDialog::LoadPages()
 	treeCtrl->SetQuickBestSize(false);
 	treeCtrl->InvalidateBestSize();
 	treeCtrl->SetInitialSize();
+	
+	// Compensate for scrollbar
+	wxSize size = treeCtrl->GetBestSize();
+	int scrollWidth = wxSystemSettings::GetMetric(wxSYS_VSCROLL_X, treeCtrl);
+	size.x += scrollWidth;
+	treeCtrl->SetInitialSize(size);
 	Layout();
 
 	// Before we can initialize the pages, get the target panel in the settings
@@ -138,7 +147,7 @@ bool CSettingsDialog::LoadPages()
 		return false;
 
 	// Keep track of maximum page size
-	wxSize size;
+	size = wxSize();
 
 	for (std::vector<t_page>::iterator iter = m_pages.begin(); iter != m_pages.end(); iter++)
 	{

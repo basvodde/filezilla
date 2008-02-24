@@ -9,7 +9,7 @@
           <orient>wxHORIZONTAL</orient>
           <object class="sizeritem">
             <object class="wxStaticBitmap" name="ID_IMAGE">
-              <bitmap stock_id="wxART_INFORMATION"/>
+              <bitmap stock_id="wxART_INFORMATION"></bitmap>
             </object>
             <flag>wxALL</flag>
             <border>7</border>
@@ -45,6 +45,7 @@
                       </object>
                       <object class="sizeritem">
                         <object class="wxStaticText" name="ID_ACTIVATION_TIME">
+                          <label></label>
                         </object>
                       </object>
                       <object class="sizeritem">
@@ -54,6 +55,7 @@
                       </object>
                       <object class="sizeritem">
                         <object class="wxStaticText" name="ID_EXPIRATION_TIME">
+                          <label></label>
                         </object>
                       </object>
                       <object class="sizeritem">
@@ -63,6 +65,7 @@
                       </object>
                       <object class="sizeritem">
                         <object class="wxStaticText" name="ID_SERIAL">
+                          <label></label>
                         </object>
                       </object>
                       <object class="sizeritem">
@@ -72,6 +75,7 @@
                       </object>
                       <object class="sizeritem">
                         <object class="wxStaticText" name="ID_PKALGO">
+                          <label></label>
                         </object>
                       </object>
                       <object class="sizeritem">
@@ -81,6 +85,7 @@
                       </object>
                       <object class="sizeritem">
                         <object class="wxStaticText" name="ID_FINGERPRINT_MD5">
+                          <label></label>
                         </object>
                       </object>
                       <object class="sizeritem">
@@ -90,6 +95,7 @@
                       </object>
                       <object class="sizeritem">
                         <object class="wxStaticText" name="ID_FINGERPRINT_SHA1">
+                          <label></label>
                         </object>
                       </object>
                       <vgap>3</vgap>
@@ -406,6 +412,7 @@
               </object>
               <object class="sizeritem">
                 <object class="wxStaticText">
+                  <label></label>
                 </object>
               </object>
               <cols>3</cols>
@@ -778,6 +785,7 @@
                             </object>
                             <object class="sizeritem">
                               <object class="wxChoice" name="ID_PROTOCOL">
+                                <content/>
                                 <selection>0</selection>
                               </object>
                               <flag>wxGROW</flag>
@@ -1215,6 +1223,7 @@
           </object>
           <object class="sizeritem">
             <object class="wxStaticText" name="ID_NAME">
+              <label></label>
             </object>
           </object>
           <object class="sizeritem">
@@ -1224,6 +1233,7 @@
           </object>
           <object class="sizeritem">
             <object class="wxStaticText" name="ID_HOST">
+              <label></label>
             </object>
           </object>
           <object class="sizeritem">
@@ -1233,6 +1243,7 @@
           </object>
           <object class="sizeritem">
             <object class="wxStaticText" name="ID_USER">
+              <label></label>
             </object>
           </object>
           <vgap>5</vgap>
@@ -1702,6 +1713,7 @@
               </object>
               <object class="sizeritem">
                 <object class="wxChoice" name="ID_THEME">
+                  <content/>
                 </object>
               </object>
               <object class="sizeritem">
@@ -1769,6 +1781,7 @@
           </object>
           <object class="sizeritem">
             <object class="wxListBox" name="ID_LANGUAGES">
+              <content/>
               <style>wxLB_SINGLE|wxLB_NEEDED_SB|wxLB_SORT</style>
             </object>
             <option>1</option>
@@ -2395,6 +2408,15 @@
         <border>5</border>
       </object>
       <object class="sizeritem">
+        <object class="wxTextCtrl" name="ID_STRING_PW">
+          <style>wxTE_PASSWORD</style>
+          <hidden>1</hidden>
+        </object>
+        <option>1</option>
+        <flag>wxLEFT|wxRIGHT|wxGROW</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
         <object class="wxStaticLine"/>
         <flag>wxALL|wxGROW</flag>
         <border>5</border>
@@ -2421,6 +2443,7 @@
         <border>5</border>
       </object>
     </object>
+    <title></title>
   </object>
   <object class="wxDialog" name="ID_CHMODDIALOG">
     <title>Change file attributes</title>
@@ -2631,7 +2654,7 @@
               <orient>wxVERTICAL</orient>
               <object class="sizeritem">
                 <object class="wxStaticBitmap">
-                  <bitmap stock_id="ART_FILEZILLA"/>
+                  <bitmap stock_id="ART_FILEZILLA"></bitmap>
                   <size>48,48</size>
                 </object>
                 <flag>wxALL</flag>
@@ -2694,6 +2717,7 @@
               </object>
               <object class="sizeritem">
                 <object class="wxStaticText" name="ID_HOST">
+                  <label></label>
                 </object>
               </object>
               <object class="sizeritem">
@@ -2703,6 +2727,7 @@
               </object>
               <object class="sizeritem">
                 <object class="wxStaticText" name="ID_BUILD">
+                  <label></label>
                 </object>
               </object>
               <object class="sizeritem">
@@ -2712,6 +2737,7 @@
               </object>
               <object class="sizeritem">
                 <object class="wxStaticText" name="ID_BUILDDATE">
+                  <label></label>
                 </object>
               </object>
               <object class="sizeritem">
@@ -2721,6 +2747,7 @@
               </object>
               <object class="sizeritem">
                 <object class="wxStaticText" name="ID_COMPILEDWITH">
+                  <label></label>
                 </object>
               </object>
               <object class="sizeritem">
@@ -2730,6 +2757,7 @@
               </object>
               <object class="sizeritem">
                 <object class="wxStaticText" name="ID_CFLAGS">
+                  <label></label>
                 </object>
               </object>
               <vgap>3</vgap>
@@ -2761,7 +2789,7 @@
           <orient>wxHORIZONTAL</orient>
           <object class="sizeritem">
             <object class="wxStaticBitmap">
-              <bitmap stock_id="wxART_INFORMATION"/>
+              <bitmap stock_id="wxART_INFORMATION"></bitmap>
             </object>
             <flag>wxALL</flag>
             <border>7</border>
@@ -2863,7 +2891,7 @@
           <orient>wxHORIZONTAL</orient>
           <object class="sizeritem">
             <object class="wxStaticBitmap">
-              <bitmap stock_id="wxART_WARNING"/>
+              <bitmap stock_id="wxART_WARNING"></bitmap>
             </object>
             <flag>wxALL</flag>
             <border>7</border>
@@ -2982,6 +3010,7 @@
               <cols>4</cols>
               <object class="sizeritem">
                 <object class="wxChoice" name="ID_SETS">
+                  <content/>
                 </object>
                 <flag>wxALIGN_CENTRE_VERTICAL</flag>
               </object>
@@ -3012,6 +3041,7 @@
                   <orient>wxVERTICAL</orient>
                   <object class="sizeritem">
                     <object class="wxCheckListBox" name="ID_LOCALFILTERS">
+                      <content/>
                       <size>-1,200</size>
                     </object>
                     <flag>wxALL|wxGROW</flag>
@@ -3047,6 +3077,7 @@
                   <orient>wxVERTICAL</orient>
                   <object class="sizeritem">
                     <object class="wxCheckListBox" name="ID_REMOTEFILTERS">
+                      <content/>
                       <size>-1, 200</size>
                     </object>
                     <flag>wxALL|wxGROW</flag>
@@ -3139,6 +3170,7 @@
               </object>
               <object class="sizeritem">
                 <object class="wxListBox" name="ID_FILTERS">
+                  <content/>
                 </object>
                 <option>1</option>
                 <flag>wxTOP|wxBOTTOM|wxGROW</flag>
@@ -3923,12 +3955,12 @@
           </object>
           <object class="sizeritem">
             <object class="wxCheckBox" name="ID_ASCIIRESUME">
-              <label>A&amp;llow resume of ascii files</label>
+              <label>A&amp;llow resume of ASCII files</label>
             </object>
           </object>
           <object class="sizeritem">
             <object class="wxStaticText" name="ID_ASCIIRESUME_TEXT">
-              <label>Resuming ascii files can cause problems if server uses a different line ending format than the client.</label>
+              <label>Resuming ASCIIi files can cause problems if server uses a different line ending format than the client.</label>
             </object>
             <flag>wxLEFT</flag>
             <border>18</border>
@@ -4337,6 +4369,78 @@
         <option>1</option>
         <flag>wxGROW</flag>
       </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_CONNECTION_SFTP">
+    <object class="wxFlexGridSizer">
+      <cols>2</cols>
+      <vgap></vgap>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Public Key Authentication</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>1</cols>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="">
+                  <label>To support public key authentication, FileZilla needs to know the private keys to use.</label>
+                </object>
+              </object>
+              <object class="spacer"/>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="">
+                  <label>Private keys:</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxListCtrl" name="ID_KEYS">
+                  <style>wxLC_REPORT</style>
+                </object>
+                <option>1</option>
+                <flag>wxGROW</flag>
+              </object>
+              <vgap>5</vgap>
+              <growablecols>0</growablecols>
+              <object class="sizeritem">
+                <object class="wxGridSizer">
+                  <object class="sizeritem">
+                    <object class="wxButton" name="ID_ADDKEY">
+                      <label>&amp;Add keyfile...</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxButton" name="ID_REMOVEKEY">
+                      <label>&amp;Remove key</label>
+                    </object>
+                  </object>
+                  <cols>2</cols>
+                  <hgap>5</hgap>
+                </object>
+                <flag>wxALIGN_CENTRE_HORIZONTAL</flag>
+              </object>
+              <object class="sizeritem" platform="win">
+                <object class="wxStaticText">
+                  <label>Alternatively you can use the Pageant tool from PuTTY to manage your keys, FileZilla does recognize Pageant.</label>
+                </object>
+              </object>
+              <object class="sizeritem" platform="mac|unix">
+                <object class="wxStaticText">
+                  <label>Alternatively you can use your system's SSH agent. To do so, make sure the SSH_AUTH_SOCK environment variable is set.</label>
+                </object>
+              </object>
+              <growablerows>3</growablerows>
+            </object>
+            <option>1</option>
+            <flag>wxALL|wxGROW</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <option>1</option>
+        <flag>wxGROW</flag>
+      </object>
+      <growablecols>0</growablecols>
+      <growablerows>0</growablerows>
     </object>
   </object>
 </resource>

@@ -12,7 +12,7 @@ public:
 	bool Create(wxWindow* parent, const wxString& title, wxString text);
 
 	bool SetPasswordMode(bool password);
-	void AllowEmpty(bool allowEmpty) { m_allowEmpty = allowEmpty; }
+	void AllowEmpty(bool allowEmpty);
 
 	void SetValue(const wxString& value);
 	wxString GetValue() const;
@@ -26,6 +26,8 @@ protected:
 	void OnValueChanged(wxCommandEvent& event);
 	void OnOK(wxCommandEvent& event);
 	void OnCancel(wxCommandEvent& event);
+
+	wxTextCtrl* m_pTextCtrl;
 };
 
 #endif //__INPUTDIALOG_H__
