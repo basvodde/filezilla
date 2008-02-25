@@ -7,7 +7,7 @@ class COptionsPageConnectionSFTP : public COptionsPage
 {
 public:
 	COptionsPageConnectionSFTP();
-	virtual ~COptionsPageConnectionSFTP() {}
+	virtual ~COptionsPageConnectionSFTP();
 	virtual wxString GetResourceName() { return _T("ID_SETTINGS_CONNECTION_SFTP"); }
 	virtual bool LoadPage();
 	virtual bool SavePage();
@@ -25,6 +25,9 @@ protected:
 	bool LoadProcess();
 	bool Send(const wxString& cmd);
 	enum ReplyCode GetReply(wxString& reply);
+	bool KeyFileExists(const wxString& keyFile);
+
+	void SetCtrlState();
 
 	wxProcess* m_pProcess;
 	bool m_initialized;
@@ -33,6 +36,7 @@ protected:
 	void OnEndProcess(wxProcessEvent& event);
 	void OnAdd(wxCommandEvent& event);
 	void OnRemove(wxCommandEvent& event);
+	void OnSelChanged(wxListEvent& event);
 };
 
 #endif //__OPTIONSPAGE_CONNECTION_SFTP_H__

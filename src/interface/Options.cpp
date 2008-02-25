@@ -58,6 +58,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "FTP Proxy user", string, _T("") },
 	{ "FTP Proxy password", string, _T("") },
 	{ "FTP Proxy login sequence", string, _T("") },
+	{ "SFTP keyfiles", string, _T("") },
 
 	// Interface settings
 	{ "Number of Transfers", number, _T("2") },
