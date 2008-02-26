@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla3 pol lang\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-24 23:34+0100\n"
-"PO-Revision-Date: 2008-02-22 10:23+0100\n"
+"POT-Creation-Date: 2008-02-27 00:50+0100\n"
+"PO-Revision-Date: 2008-02-25 16:26+0100\n"
 "Last-Translator: Waldek <s2k2@tlen.pl>\n"
 "Language-Team: .angelo <angelo.cpp@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -159,9 +159,8 @@ msgid "&Add files to queue"
 msgstr "&Dodaj pliki do kolejki"
 
 #: resources.h:453
-#, fuzzy
 msgid "&Add keyfile..."
-msgstr "&Edytuj filtry..."
+msgstr "&Dodaj plik klucza..."
 
 #: resources.h:556 resources.h:572
 msgid "&Add to queue"
@@ -514,9 +513,8 @@ msgid "&Remove"
 msgstr "&Usuń"
 
 #: resources.h:454
-#, fuzzy
 msgid "&Remove key"
-msgstr "&Usuń"
+msgstr "&Usuń klucz"
 
 #: resources.h:524
 msgid "&Remove selected"
@@ -851,9 +849,8 @@ msgid "A&dd"
 msgstr "D&odaj"
 
 #: resources.h:400
-#, fuzzy
 msgid "A&llow resume of ASCII files"
-msgstr "Pozwól na wznawianie plików ASCII"
+msgstr "&Pozwól na wznawianie plików ASCII"
 
 #: ../../locales/../src/interface/fileexistsdlg.cpp:106
 msgid "A&pply only to downloads"
@@ -970,12 +967,16 @@ msgid ""
 "Alternatively you can use the Pageant tool from PuTTY to manage your keys, "
 "FileZilla does recognize Pageant."
 msgstr ""
+"Ewentualnie możesz użyć narzędzia Pageant z PuTTY do zarządzania twoimi "
+"kluczami, FileZilla radzi sobie z rozpoznawaniem Pageant."
 
 #: resources.h:456
 msgid ""
 "Alternatively you can use your system's SSH agent. To do so, make sure the "
 "SSH&AUTH&SOCK environment variable is set."
 msgstr ""
+"Ewentualnie możesz użyć systemowego agenta SSH. Robiąc tak, upewnij się, że "
+"zmienna środowiska SSH & AUTH & SKARPETY jest ustawiona."
 
 #: ../../locales/../src/interface/updatewizard.cpp:841
 msgid ""
@@ -1052,7 +1053,7 @@ msgstr "Na tę chwilę, wszystkie wymagane informacje zostały zebrane."
 msgid "Attribute"
 msgstr "Atrybut"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:503
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:570
 msgid "Authentication failed."
 msgstr "Identyfikacja nie powiodła się."
 
@@ -1123,16 +1124,16 @@ msgstr "&Własny"
 msgid "C&ustom filetype associations:"
 msgstr "&Własne skojarzenia plików:"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1339
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1405
 msgid "CSftpControlSocket::ChangeDirSend()"
 msgstr "CSftpControlSocket::ChangeDirSend()"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1332
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1398
 msgid "CSftpControlSocket::ChangeDirSubcommandResult()"
 msgstr "CSftpControlSocket::ChangeDirSubcommandResult()"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1498
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1153
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1219
 msgid "Calculating timezone offset of server..."
 msgstr "Obliczanie przesunięcia dla strefy czasu serwera..."
 
@@ -1207,6 +1208,11 @@ msgstr "Nie można załadować paska szybkiego łączenia z pliku źródłowego"
 #: ../../locales/../src/interface/import.cpp:37
 msgid "Cannot load file, not a valid XML file."
 msgstr "Nie można załadować pliku, niepoprawny plik XML."
+
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:367
+#, fuzzy
+msgid "Cannot load keyfile"
+msgstr "Nie można załadować pliku klucza"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:502
 msgid "Cannot load main menu from resource file"
@@ -1358,12 +1364,11 @@ msgstr "K&omentarze:"
 msgid "Command and its arguments should be properly quoted."
 msgstr "Polecenie i jego argumenty powinny być poprawnie użyte."
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:81
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:95
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:112
-#, fuzzy
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:117
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:131
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:148
 msgid "Command failed"
-msgstr "Polecenie:"
+msgstr "Nieudane polecenie"
 
 #: ../../locales/../src/engine/engineprivate.cpp:217
 msgid "Command not supported by this protocol"
@@ -1373,6 +1378,11 @@ msgstr "Polecenie nie obsługiwane przez ten protokół"
 #: ../../locales/../src/interface/StatusView.cpp:270
 msgid "Command:"
 msgstr "Polecenie:"
+
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:40
+#, fuzzy
+msgid "Comment"
+msgstr "K&omentarze:"
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:120
 msgid "Common name:"
@@ -1470,7 +1480,7 @@ msgstr "Łączenie do %s"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:1000
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:508
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:326
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:336
 #, c-format
 msgid "Connecting to %s:%d..."
 msgstr "Łączenie do %s:%d..."
@@ -1529,9 +1539,9 @@ msgstr "Połączenie z serwerem zostało nieoczekiwanie zakończone."
 msgid "Connection with the test server failed."
 msgstr "Połączenie z serwerem testowym nie powiodło się."
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:215
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:251
 msgid "Convert keyfile"
-msgstr ""
+msgstr "Przekształcenie pliku klucza"
 
 #: resources.h:71
 msgid "Cop&y"
@@ -1551,15 +1561,14 @@ msgstr "Kopiowanie z %s"
 msgid "Could not connect to server"
 msgstr "Nie można połączyć się z serwerem"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:613
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:680
 msgid "Could not convert command to server encoding"
 msgstr "Nie można przetworzyć polecenia do systemu kodowania serwera"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:257
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:267
-#, fuzzy
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:293
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:303
 msgid "Could not convert private key"
-msgstr "Nie można połączyć się z serwerem"
+msgstr "Nie można przekształcić prywatnego klucza"
 
 #: ../../locales/../src/interface/RemoteListView.cpp:2086
 #: ../../locales/../src/interface/RemoteTreeView.cpp:802
@@ -1591,8 +1600,12 @@ msgstr ""
 msgid "Could not generate custom login sequence."
 msgstr "Nie można wygenerować sekwencji logowania."
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:95
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:112
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:131
+#, fuzzy
+msgid "Could not get reply from fzputtygen."
+msgstr "Nie można wysłać polecenia do fzputtygen."
+
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:148
 msgid "Could not get replyfrom fzputtygen."
 msgstr ""
 
@@ -1600,7 +1613,7 @@ msgstr ""
 msgid "Could not get temporary directory to download file into."
 msgstr "Nie można znaleźć katalogu tymczasowego do zapisania w nim pliku."
 
-#: ../../locales/../src/interface/Options.cpp:128
+#: ../../locales/../src/interface/Options.cpp:129
 #, c-format
 msgid ""
 "Could not load \"%s\", make sure the file is valid.\n"
@@ -1659,15 +1672,13 @@ msgstr ""
 "dostępny.\n"
 "Kolejka nie zostanie zapisana."
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:165
-#, fuzzy
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:201
 msgid "Could not load keyfile"
-msgstr "Nie można przewinąć do końca pliku"
+msgstr "Nie można załadować pliku klucza"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:242
-#, fuzzy
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:278
 msgid "Could not load private key"
-msgstr "Nie można zapisać \"%s\": %s"
+msgstr "Nie można załadować prywatnego klucza"
 
 #: ../../locales/../src/interface/quickconnectbar.cpp:70
 msgid "Could not parse server address:"
@@ -1682,10 +1693,9 @@ msgstr "Nie można wyszukać offsetu %s w pliku"
 msgid "Could not seek to the end of the file"
 msgstr "Nie można przewinąć do końca pliku"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:81
-#, fuzzy
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:117
 msgid "Could not send command to fzputtygen."
-msgstr "Nie można przetworzyć polecenia do systemu kodowania serwera"
+msgstr "Nie można wysłać polecenia do fzputtygen."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2572
 msgid "Could not spawn IO thread"
@@ -1716,10 +1726,10 @@ msgstr "Nie można zapisać \"%s\", kolejka może nie zostać zapisana."
 msgid "Could not write \"%s\": %s"
 msgstr "Nie można zapisać \"%s\": %s"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:267
-#, fuzzy, c-format
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:303
+#, c-format
 msgid "Could not write keyfile: %s"
-msgstr "Nie można zapisać \"%s\": %s"
+msgstr "Nie można zapisać pliku klucza: %s"
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:124
 msgid "Country:"
@@ -1745,7 +1755,7 @@ msgid "Creating directory"
 msgstr "Tworzenie katalogu"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3170
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1912
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1980
 #, c-format
 msgid "Creating directory '%s'..."
 msgstr "Tworzenie katalogu '%s'..."
@@ -1781,6 +1791,10 @@ msgstr "&Anuluj"
 #: ../../locales/../src/interface/RemoteListView.cpp:2204
 msgid "Dangerous filetype"
 msgstr "Niebezpieczny typ pliku"
+
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:41
+msgid "Data"
+msgstr ""
 
 #: ../../locales/../src/interface/netconfwizard.cpp:979
 #: ../../locales/../src/interface/netconfwizard.cpp:1045
@@ -2177,12 +2191,14 @@ msgstr ""
 "Możesz także wprowadzać całe adresy w formie protokół://użytkownik:"
 "hasło@host:port, wartości innych pół zostaną zamienione."
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:221
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:257
 #, c-format
 msgid ""
 "Enter the password for the file '%s'.\n"
 "Please note that the converted file will not be password protected."
 msgstr ""
+"Wprowadź hasło do pliku '%s'.\n"
+"Przekształcony plik nie będzie chroniony hasłem."
 
 #: resources.h:632
 msgid ""
@@ -2211,7 +2227,7 @@ msgstr "Błąd importowania"
 #: ../../locales/../src/interface/filter.cpp:275
 #: ../../locales/../src/interface/import.cpp:112
 #: ../../locales/../src/interface/import.cpp:295
-#: ../../locales/../src/interface/Options.cpp:129
+#: ../../locales/../src/interface/Options.cpp:130
 #: ../../locales/../src/interface/QueueView.cpp:1682
 #: ../../locales/../src/interface/QueueView.cpp:1709
 #: ../../locales/../src/interface/sitemanager.cpp:501
@@ -2221,9 +2237,9 @@ msgstr "Błąd importowania"
 msgid "Error loading xml file"
 msgstr "Błąd ładowania pliku XML"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:59
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:95
 msgid "Error starting program"
-msgstr ""
+msgstr "Błąd podczas uruchomienia programu"
 
 #: ../../locales/../src/interface/QueueView.cpp:1692
 #: ../../locales/../src/interface/QueueView.cpp:1728
@@ -2377,10 +2393,10 @@ msgstr "Nieudana inicjacja TLS."
 msgid "Failed to load panels, invalid resource files?"
 msgstr "Nie można załadować paneli, nieprawidłowy plik źródłowy?"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:241
-#, fuzzy, c-format
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:277
+#, c-format
 msgid "Failed to load private key: %s"
-msgstr "Nie można zapisać do pliku %s"
+msgstr "Nie powidło sie załadowanie prywatnego klucza: %s"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2472
 #, c-format
@@ -2570,6 +2586,7 @@ msgstr "Listy plików"
 #: ../../locales/../src/interface/edithandler.cpp:823
 #: ../../locales/../src/interface/filteredit.cpp:101
 #: ../../locales/../src/interface/LocalListView.cpp:247
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:39
 #: ../../locales/../src/interface/RemoteListView.cpp:339
 msgid "Filename"
 msgstr "Nazwa pliku"
@@ -3282,7 +3299,7 @@ msgstr "Nowy katalog"
 msgid "New site"
 msgstr "Nowy adres"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:783
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:850
 msgid "No"
 msgstr "Nie"
 
@@ -3397,7 +3414,7 @@ msgstr ""
 "Na następujących stronach zostanie skonfigurowany wybrany tryb transferu "
 "oraz opcja powrotu, jeśli została wybrana."
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:793
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:860
 msgid "Once"
 msgstr "Raz"
 
@@ -3495,9 +3512,9 @@ msgstr "Tryb pasywny "
 msgid "Passive mode has been set as default transfer mode."
 msgstr "Tryb pasywny został ustawiony jako domyślny tryb transferu."
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:223
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:259
 msgid "Password required"
-msgstr ""
+msgstr "Wymagane jest hasło"
 
 #: ../../locales/../src/interface/edithandler.cpp:846
 #: ../../locales/../src/interface/edithandler.cpp:964
@@ -3838,7 +3855,7 @@ msgstr "Priorytet"
 
 #: resources.h:452
 msgid "Private keys:"
-msgstr ""
+msgstr "Prywatny klucz:"
 
 #: resources.h:477 resources.h:522
 msgid "Process &Queue"
@@ -3854,7 +3871,7 @@ msgstr "Proxy ustawione, jednak host lub port jest nieprawidłowy"
 
 #: resources.h:450
 msgid "Public Key Authentication"
-msgstr ""
+msgstr "Uwierzytelnianie klucza publicznego"
 
 #: resources.h:9
 msgid "Public key algorithm:"
@@ -4014,7 +4031,7 @@ msgid "Rename selected files and directories"
 msgstr "Zmień nazwy zaznaczonych plików i katalogów"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3380
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2404
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2472
 #, c-format
 msgid "Renaming '%s' to '%s'"
 msgstr "Zmiana nazwy z  '%s' na '%s'"
@@ -4046,14 +4063,14 @@ msgstr "Odpowiedź"
 #: resources.h:401
 #, fuzzy
 msgid ""
-"Resuming ASCIIi files can cause problems if server uses a different line "
+"Resuming ASCII files can cause problems if server uses a different line "
 "ending format than the client."
 msgstr ""
-"Wznawianie plików ASCII może powodować problemy, jeśli serwer używa innych "
+"Wznawianie plików ASCIIi może powodować problemy, jeśli serwer używa innych "
 "zakończeń linii niż klient."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1224
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:859
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:925
 msgid "Retrieving directory listing..."
 msgstr "Otrzymywanie listy katalogów..."
 
@@ -4076,9 +4093,8 @@ msgid "S&kip"
 msgstr "&Pomiń"
 
 #: ../../locales/../src/interface/settingsdialog.cpp:115
-#, fuzzy
 msgid "SFTP"
-msgstr "FTP"
+msgstr "SFTP"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:842
 msgid "Save settings?"
@@ -4133,10 +4149,9 @@ msgstr ""
 msgid "Select download location for package"
 msgstr "Wybierz miejsce pobrania dla paczki"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:302
-#, fuzzy
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:338
 msgid "Select file containing private key"
-msgstr "Zaznaczony plik wciąż jest edytowany"
+msgstr "Wybierz plik zawierający prywatny klucz"
 
 #: ../../locales/../src/interface/export.cpp:30
 msgid "Select file for exported settings"
@@ -4146,10 +4161,9 @@ msgstr "Wybierz plik dla ustawień eksportowania"
 msgid "Select file to import settings from"
 msgstr "Wybierz plik, z którego importować ustawienia"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:246
-#, fuzzy
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:282
 msgid "Select filename for converted keyfile"
-msgstr "Wybierz plik dla ustawień eksportowania"
+msgstr "Wybierz nazwę pliku do przekształcenia pliku klucza"
 
 #: resources.h:412
 msgid "Select the categories to export:"
@@ -4185,6 +4199,11 @@ msgstr ""
 #: ../../locales/../src/interface/optionspage_edit.cpp:118
 msgid "Selected file does not exist."
 msgstr "Zaznaczony plik nie istnieje."
+
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:367
+#, fuzzy
+msgid "Selected file is already loaded"
+msgstr "Zaznaczony plik jest już otwarty."
 
 #: ../../locales/../src/interface/RemoteListView.cpp:2237
 msgid "Selected file still being edited"
@@ -4257,7 +4276,7 @@ msgstr ""
 "Serwer może wymagać posiadania konta. Wprowadź konto, używając Menadżera "
 "stron"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:505
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:572
 msgid ""
 "Server sent an additional login prompt. You need to use the interactive "
 "login type."
@@ -4300,7 +4319,7 @@ msgid "Set &Priority"
 msgstr "U&staw priorytet"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3538
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2282
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2350
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
 msgstr "Ustaw prawa dostępu '%s' do '%s'"
@@ -4360,8 +4379,8 @@ msgstr "Pomiń"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2782
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:206
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:246
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:676
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:750
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:743
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:817
 #, c-format
 msgid "Skipping download of %s"
 msgstr "Pomijanie pobierania %s"
@@ -4370,8 +4389,8 @@ msgstr "Pomijanie pobierania %s"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2786
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:210
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:250
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:680
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:754
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:747
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:821
 #, c-format
 msgid "Skipping upload of %s"
 msgstr "Pomijanie wysyłanie %s"
@@ -4405,10 +4424,9 @@ msgstr "Tryb sortowania:"
 msgid "Source and path of the drop operation are identical"
 msgstr "Źródło i cel operacji upuszczania są identyczne"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:257
-#, fuzzy
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:293
 msgid "Source and target file may not be the same"
-msgstr "Źródło i lokalizacja docelowa operacji upuszczania są identyczne"
+msgstr "Źródło i docelowy plik nie są takie same"
 
 #: ../../locales/../src/interface/RemoteListView.cpp:129
 msgid "Source and target of the drop operation are identical"
@@ -4423,13 +4441,13 @@ msgid "Speed limits"
 msgstr "Limity transferu"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2076
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1487
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1555
 #, c-format
 msgid "Starting download of %s"
 msgstr "Rozpoczynanie pobierania %s"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2080
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1491
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1559
 #, c-format
 msgid "Starting upload of %s"
 msgstr "Rozpoczynanie wysyłania %s"
@@ -4561,12 +4579,10 @@ msgstr ""
 "Plik %s już istnieje.\n"
 "Wprowadź nową nazwę:"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:164
-#, fuzzy, c-format
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:200
+#, c-format
 msgid "The file '%s' could not be loaded or does not contain a private key."
-msgstr ""
-"Plik '%s' nie mógł być otworzony:\n"
-"Wykonane polecenie nie powiodło się"
+msgstr "Plik '%s' nie mógł być załadowany lub nie zawierał prywatnego klucza."
 
 #: ../../locales/../src/interface/LocalListView.cpp:2085
 #: ../../locales/../src/interface/LocalListView.cpp:2159
@@ -4588,7 +4604,7 @@ msgstr ""
 "Plik '%s' nie mógł być otworzony:\n"
 "Wykonane polecenie nie powiodło się"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:210
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:246
 #, c-format
 msgid ""
 "The file '%s' is not in a format supported by FileZilla.\n"
@@ -4596,21 +4612,31 @@ msgid ""
 "supported by FileZilla yet.\n"
 "Would you like to convert it into a supported, unprotected format?"
 msgstr ""
+"Plik '%s' nie jest w formacie obsługiwanym przez FileZilla.\n"
+"Plik jest dodatkowo zabezpieczony hasłem. Pliki zabezpieczone hasłem nie są "
+"jeszcze obsługiwane przez FileZilla.\n"
+"Czy chciałbyś przekształcić plik do obsługiwanego i niezabezpieczonego "
+"formatu?"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:208
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:244
 #, c-format
 msgid ""
 "The file '%s' is not in a format supported by FileZilla.\n"
 "Would you like to convert it into a supported format?"
 msgstr ""
+"Plik '%s' nie jest w formacie obsługiwanym przez FileZilla.\n"
+"Czy chciałbyś przekształcić plik do obsługiwanego formatu?"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:213
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:249
 #, c-format
 msgid ""
 "The file '%s' is password protected. Password protected keyfiles are not "
 "supported by FileZilla yet.\n"
 "Would you like to convert it into an unprotected file?"
 msgstr ""
+"Plik '%s' jest zabezpieczony hasłem. Pliki kluczy zabezpieczone hasłem nie "
+"są jeszcze obsługiwane przez FileZilla.\n"
+"Czy chciałbyś przekształcić plik do niezabezpieczonego hasłem?"
 
 #: ../../locales/../src/interface/import.cpp:90
 msgid ""
@@ -4797,7 +4823,7 @@ msgid "Timeout"
 msgstr "Limit oczekiwania"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1553
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:975
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1041
 #, c-format
 msgid ""
 "Timezone offsets: Server: %d seconds. Local: %d seconds. Difference: %d "
@@ -4824,6 +4850,8 @@ msgid ""
 "To support public key authentication, FileZilla needs to know the private "
 "keys to use."
 msgstr ""
+"FileZilla musi znać prywatny klucz, aby obsłużyć uwierzytelnianie klucza "
+"publicznego."
 
 #: resources.h:646 resources.h:647
 msgid "Toggles processing of the transfer queue"
@@ -4895,11 +4923,11 @@ msgstr "&Traktuj pliki bez rozszerzenia jako pliki ASCII"
 msgid "Treat the &following filetypes as Ascii files:"
 msgstr "Traktuj następujące typy plików jako pliki ASCII:"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:780
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:847
 msgid "Trust changed Hostkey: "
 msgstr "Ufaj zmienionemu kluczowi hosta: "
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:778
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:845
 msgid "Trust new Hostkey: "
 msgstr "Ufaj nowemu kluczowi hosta: "
 
@@ -5224,7 +5252,7 @@ msgstr "Nieprawidłowy zewnętrzny adres IP"
 msgid "Wrong lineendings"
 msgstr "Nieprawidłowe zakończenia linii"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:791
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:858
 msgid "Yes"
 msgstr "Tak"
 
@@ -5319,14 +5347,17 @@ msgstr "plik"
 msgid "fz3temp-lockfile"
 msgstr "fz3temp-lockfile"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:59
+#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:95
 msgid ""
 "fzputtygen could not be started.\n"
 "Please make sure this executable exists in the same directory as the main "
 "FileZilla executable."
 msgstr ""
+"fzputtygen nie mógł wystartować.\n"
+"Proszę upewnić się, że plik wykonawczy istnieje w tym samym katalogu, co "
+"plik wykonawczy FileZilla."
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1414
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1480
 msgid "fzsftp could not be started"
 msgstr "fzsftp nie może wystartować"
 
