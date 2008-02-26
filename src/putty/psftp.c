@@ -959,6 +959,22 @@ int sftp_cmd_quit(struct sftp_command *cmd)
     return -1;
 }
 
+int sftp_cmd_keyfile(struct sftp_command *cmd)
+{
+    if (cmd->nwords != 2) {
+	fzprintf(sftpError, "No keyfile given");
+	return 0;
+    }
+
+    Keyfile_list *list = snew(Keyfile_list);
+    list->file = filename_from_str(cmd->words[1]);
+    list->next = cfg.keyfile_list;
+    cfg.keyfile_list = list;
+
+    fznotify1(sftpDone, 1);
+    return 1;
+}
+
 int sftp_cmd_close(struct sftp_command *cmd)
 {
     if (back == NULL) {
@@ -2181,6 +2197,14 @@ static struct sftp_cmd_lookup {
 	    "  If -r specified, recursively fetch a directory.\n",
 	    sftp_cmd_get
     },
+    {
+	"keyfile", TRUE, "add a keyfile to use",
+	    " <filename>\n"
+	    "  One of the keyfiles used during authentication.\n"
+	    "  Has to be in PuTTY's .ppk format.\n",
+	    sftp_cmd_keyfile
+    },
+
 /* BEGIN FZ UNUSED
     {
 	"help", TRUE, "give help",
@@ -3147,6 +3171,7 @@ int psftp_main(int argc, char *argv[])
     userhost = user = NULL;
 
     /* Load Default Settings before doing anything else. */
+    cfg.keyfile_list = 0;
     do_defaults(NULL, &cfg);
     loaded_session = FALSE;
 
@@ -3238,6 +3263,16 @@ int psftp_main(int argc, char *argv[])
     cmdline_cleanup();
     console_provide_logctx(NULL);
     sk_cleanup();
+
+    {
+	Keyfile_list *list = cfg.keyfile_list;
+	while (list)
+	{
+	    Keyfile_list *next = list->next;
+	    sfree(list);
+	    list = next;
+	}
+    }
 
     return 0;
 }

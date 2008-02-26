@@ -408,6 +408,13 @@ extern const int be_default_protocol;
  */
 extern const char *const appname;
 
+struct Keyfile_list {
+    Filename file;
+    struct Keyfile_list* next;
+};
+
+typedef struct Keyfile_list Keyfile_list;
+
 /*
  * IMPORTANT POLICY POINT: everything in this structure which wants
  * to be treated like an integer must be an actual, honest-to-
@@ -604,6 +611,8 @@ struct config_tag {
     FontSpec wideboldfont;
     int shadowboldoffset;
     int crhaslf;
+
+    Keyfile_list* keyfile_list;
 };
 
 /*

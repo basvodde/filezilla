@@ -36,9 +36,9 @@ bool COptionsPageConnectionSFTP::LoadPage()
 	wxListCtrl* pKeys = XRCCTRL(*this, "ID_KEYS", wxListCtrl);
 	if (!pKeys)
 		return false;
-	pKeys->InsertColumn(0, _T("Filename"), wxLIST_FORMAT_LEFT, 150);
-	pKeys->InsertColumn(1, _T("Comment"), wxLIST_FORMAT_LEFT, 100);
-	pKeys->InsertColumn(2, _T("Data"), wxLIST_FORMAT_LEFT, 350);
+	pKeys->InsertColumn(0, _("Filename"), wxLIST_FORMAT_LEFT, 150);
+	pKeys->InsertColumn(1, _("Comment"), wxLIST_FORMAT_LEFT, 100);
+	pKeys->InsertColumn(2, _("Data"), wxLIST_FORMAT_LEFT, 350);
 
 	wxString keyFiles = m_pOptions->GetOption(OPTION_SFTP_KEYFILES);
 	wxStringTokenizer tokens(keyFiles, _T("\n"), wxTOKEN_DEFAULT);
@@ -128,7 +128,7 @@ enum COptionsPageConnectionSFTP::ReplyCode COptionsPageConnectionSFTP::GetReply(
 	wxInputStream *pStream = m_pProcess->GetInputStream();
 	if (!pStream)
 	{
-		wxMessageBox(_("Could not get replyfrom fzputtygen."), _("Command failed"), wxICON_EXCLAMATION);
+		wxMessageBox(_("Could not get reply from fzputtygen."), _("Command failed"), wxICON_EXCLAMATION);
 		return failure;
 	}
 

@@ -6,6 +6,7 @@
 #include "directorylistingparser.h"
 #include "pathcache.h"
 #include "servercapabilities.h"
+#include <wx/tokenzr.h>
 
 class CSftpFileTransferOpData : public CFileTransferOpData
 {
@@ -300,25 +301,34 @@ CSftpControlSocket::~CSftpControlSocket()
 	DoClose();
 }
 
+enum connectStates
+{
+	connect_init,
+	connect_keys,
+	connect_open
+};
+
 class CSftpConnectOpData : public COpData
 {
 public:
 	CSftpConnectOpData()
 		: COpData(cmd_connect)
 	{
-		gotInitialReply = false;
 		pLastChallenge = 0;
 		criticalFailure = false;
+		pKeyFiles = 0;
 	}
 
 	virtual ~CSftpConnectOpData()
 	{
+		delete pKeyFiles;
 		delete pLastChallenge;
 	}
 
 	wxString *pLastChallenge;
-	bool gotInitialReply;
 	bool criticalFailure;
+
+	wxStringTokenizer* pKeyFiles;
 };
 
 int CSftpControlSocket::Connect(const CServer &server)
@@ -343,7 +353,16 @@ int CSftpControlSocket::Connect(const CServer &server)
 		delete m_pCurrentServer;
 	m_pCurrentServer = new CServer(server);
 
-	m_pCurOpData = new CSftpConnectOpData;
+	CSftpConnectOpData* pData = new CSftpConnectOpData;
+	m_pCurOpData = pData;
+
+	pData->opState = connect_init;
+
+	wxStringTokenizer* pTokenizer = new wxStringTokenizer(m_pEngine->GetOptions()->GetOption(OPTION_SFTP_KEYFILES), _T("\n"), wxTOKEN_DEFAULT);
+	if (!pTokenizer->HasMoreTokens())
+		delete pTokenizer;
+	else
+		pData->pKeyFiles = pTokenizer;
 
 	m_pProcess = new wxProcess(this);
 	m_pProcess->Redirect();
@@ -384,14 +403,14 @@ int CSftpControlSocket::ConnectParseResponse(bool successful, const wxString& re
 
 	if (!successful)
 	{
-		ResetOperation(FZ_REPLY_ERROR);
+		DoClose(FZ_REPLY_ERROR);
 		return FZ_REPLY_ERROR;
 	}
 
 	if (!m_pCurOpData)
 	{
 		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
-		ResetOperation(FZ_REPLY_INTERNALERROR);
+		DoClose(FZ_REPLY_INTERNALERROR);
 		return FZ_REPLY_ERROR;
 	}
 
@@ -399,19 +418,67 @@ int CSftpControlSocket::ConnectParseResponse(bool successful, const wxString& re
 	if (!pData)
 	{
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("m_pCurOpData of wrong type"));
-		ResetOperation(FZ_REPLY_INTERNALERROR);
+		DoClose(FZ_REPLY_INTERNALERROR);
 		return FZ_REPLY_ERROR;
 	}
 
-	if (pData->gotInitialReply)
+	switch (pData->opState)
 	{
+	case connect_init:
+		if (pData->pKeyFiles)
+			pData->opState = connect_keys;
+		else
+			pData->opState = connect_open;
+		break;
+	case connect_keys:
+		wxASSERT(pData->pKeyFiles);
+		if (!pData->pKeyFiles->HasMoreTokens())
+			pData->opState = connect_open;
+		break;
+	case connect_open:
 		ResetOperation(FZ_REPLY_OK);
 		return FZ_REPLY_OK;
+	default:
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Unknown op state: %d"), pData->opState);
+        DoClose(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
 	}
 
-	pData->gotInitialReply = true;
+	return SendNextCommand();
+}
 
-	bool res = Send(wxString::Format(_T("open \"%s@%s\" %d"), m_pCurrentServer->GetUser().c_str(), m_pCurrentServer->GetHost().c_str(), m_pCurrentServer->GetPort()));
+int CSftpControlSocket::ConnectSend()
+{
+	LogMessage(Debug_Verbose, _T("CSftpControlSocket::ConnectSend()"));
+	if (!m_pCurOpData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Empty m_pCurOpData"));
+		DoClose(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	CSftpConnectOpData *pData = static_cast<CSftpConnectOpData *>(m_pCurOpData);
+	if (!pData)
+	{
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("m_pCurOpData of wrong type"));
+		DoClose(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
+
+	bool res;
+	switch (pData->opState)
+	{
+	case connect_keys:
+		res = Send(_T("keyfile \"") + pData->pKeyFiles->GetNextToken() + _T("\""));
+		break;
+	case connect_open:
+		res = Send(wxString::Format(_T("open \"%s@%s\" %d"), m_pCurrentServer->GetUser().c_str(), m_pCurrentServer->GetHost().c_str(), m_pCurrentServer->GetPort()));
+		break;
+	default:
+		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Unknown op state: %d"), pData->opState);
+        DoClose(FZ_REPLY_INTERNALERROR);
+		return FZ_REPLY_ERROR;
+	}
 
 	if (res)
 		return FZ_REPLY_WOULDBLOCK;
@@ -852,7 +919,6 @@ enum listStates
 	list_list,
 	list_mtime
 };
-
 
 int CSftpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/, bool refresh /*=false*/)
 {
@@ -1410,7 +1476,7 @@ int CSftpControlSocket::ResetOperation(int nErrorCode)
 	if (m_pCurOpData && m_pCurOpData->opId == cmd_connect)
 	{
 		CSftpConnectOpData *pData = static_cast<CSftpConnectOpData *>(m_pCurOpData);
-		if (!pData->gotInitialReply)
+		if (pData->opState == connect_init && (nErrorCode & FZ_REPLY_CANCELED) != FZ_REPLY_CANCELED)
 			LogMessage(::Error, _("fzsftp could not be started"));
 		if (pData->criticalFailure)
 			nErrorCode |= FZ_REPLY_CRITICALERROR;
@@ -1443,6 +1509,8 @@ int CSftpControlSocket::SendNextCommand()
 
 	switch (m_pCurOpData->opId)
 	{
+	case cmd_connect:
+		return ConnectSend();
 	case cmd_list:
 		return ListSend();
 	case cmd_transfer:

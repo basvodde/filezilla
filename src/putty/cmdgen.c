@@ -221,14 +221,15 @@ int main(int argc, char **argv)
 
 	    case SSH_KEYTYPE_SSH2:
 		ssh2key = ssh2_load_userkey(&infilename, passphrase, &error);
-		if ((ssh2key && ssh2key != SSH2_WRONG_PASSPHRASE))
-		    error = NULL;
-		else if (!error) {
-		    if (ssh2key == SSH2_WRONG_PASSPHRASE)
-			error = "wrong passphrase";
-		    else
-			error = "unknown error";
+		if (ssh2key == SSH2_WRONG_PASSPHRASE)
+		{
+		    error = "wrong passphrase";
+		    ssh2key = 0;
 		}
+		else if (ssh2key)
+		    error = NULL;
+		else if (!error)
+		    error = "unknown error";
 		break;
 
 	    case SSH_KEYTYPE_OPENSSH:

@@ -72,6 +72,7 @@ protected:
 	int ProcessReply(bool successful, const wxString& reply = _T(""));
 
 	int ConnectParseResponse(bool successful, const wxString& reply);
+	int ConnectSend();
 
 	virtual int FileTransfer(const wxString localFile, const CServerPath &remotePath,
 							 const wxString &remoteFile, bool download,
