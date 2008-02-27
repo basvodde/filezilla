@@ -27,6 +27,7 @@ mkdir -p "$targetdir" || exit 1
 echo Copying executables
 cp "$top_builddir/src/interface/filezilla.exe" "$targetdir/filezilla.exe" || exit 1
 cp "$top_builddir/src/putty/fzsftp.exe" "$targetdir/fzsftp.exe" || exit 1
+cp "$top_builddir/src/putty/fzputtygen.exe" "$targetdir/fzputtygen.exe" || exit 1
 cp "$top_builddir/src/fzshellext/.libs/libfzshellext-0.dll" "$targetdir/fzshellext.dll" || exit 1
 cp "$top_srcdir/src/fzshellext/fzshellext_64.dll" "$targetdir/fzshellext_64.dll" || exit 1
 cp "$top_srcdir/data/mingwm10.dll" "$targetdir" || exit 1
