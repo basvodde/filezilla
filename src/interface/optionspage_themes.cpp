@@ -150,16 +150,22 @@ bool COptionsPageThemes::LoadPage()
 		return false;
 
 	wxString theme = m_pOptions->GetOption(OPTION_THEME);
+	wxString firstName;
 	for (std::list<wxString>::const_iterator iter = themes.begin(); iter != themes.end(); iter++)
 	{
-		int n = pTheme->Append(*iter);
+		wxString name, author, mail;
+		if (!CThemeProvider::GetThemeData(*iter, name, author, mail))
+			continue;
+		if (firstName == _T(""))
+			firstName = name;
+		int n = pTheme->Append(name, new wxStringClientData(*iter));
 		if (*iter == theme)
 			pTheme->SetSelection(n);
 	}
 	if (pTheme->GetSelection() == wxNOT_FOUND)
-		pTheme->SetSelection(pTheme->FindString(themes.front()));
+		pTheme->SetSelection(pTheme->FindString(firstName));
 
-	theme = pTheme->GetString(pTheme->GetSelection());
+	theme = ((wxStringClientData*)pTheme->GetClientObject(pTheme->GetSelection()))->GetData();
 
 	if (!DisplayTheme(theme))
 		failure = true;
@@ -171,10 +177,14 @@ bool COptionsPageThemes::SavePage()
 {
 	wxChoice* pTheme = XRCCTRL(*this, "ID_THEME", wxChoice);
 
-	m_pOptions->SetOption(OPTION_THEME, pTheme->GetString(pTheme->GetSelection()));
+	const int sel = pTheme->GetSelection();
+	const wxString theme = ((wxStringClientData*)pTheme->GetClientObject(sel))->GetData();
+
+	m_pOptions->SetOption(OPTION_THEME, theme);
 
 	wxNotebook *pPreview = XRCCTRL(*this, "ID_PREVIEW", wxNotebook);
-	m_pOptions->SetOption(OPTION_THEME_ICONSIZE, pPreview->GetPageText(pPreview->GetSelection()));
+	wxString size = pPreview->GetPageText(pPreview->GetSelection());
+	m_pOptions->SetOption(OPTION_THEME_ICONSIZE, size);
 
 	return true;
 }
@@ -186,8 +196,10 @@ bool COptionsPageThemes::Validate()
 
 bool COptionsPageThemes::DisplayTheme(const wxString& theme)
 {
-	wxString author, mail;
-	if (!CThemeProvider::GetThemeData(theme, author, mail))
+	wxString name, author, mail;
+	if (!CThemeProvider::GetThemeData(theme, name, author, mail))
+		return false;
+	if (name == _T(""))
 		return false;
 
 	if (author == _T(""))
@@ -250,7 +262,8 @@ void COptionsPageThemes::OnThemeChange(wxCommandEvent& event)
 {
 	wxChoice* pTheme = XRCCTRL(*this, "ID_THEME", wxChoice);
 
-	wxString theme = pTheme->GetString(pTheme->GetSelection());
+	const int sel = pTheme->GetSelection();
+	const wxString theme = ((wxStringClientData*)pTheme->GetClientObject(sel))->GetData();
 
 	DisplayTheme(theme);
 }

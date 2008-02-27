@@ -9,7 +9,7 @@ dist_resources_DATA = defaultfilters.xml \
 		finished.wav \
 		leds.png menus.xrc netconfwizard.xrc \
 		quickconnectbar.xrc \
-		themes.xml toolbar.xrc up.png
+		theme.xml toolbar.xrc up.png
 
 resources48dir = $(pkgdatadir)/resources/48x48
 dist_resources48_DATA = 48x48/filezilla.png

@@ -9,13 +9,13 @@ public:
 
 	static std::list<wxString> GetThemes();
 	static std::list<wxBitmap*> GetAllImages(const wxString& theme, const wxSize& size);
-	static bool GetThemeData(const wxString& theme, wxString& author, wxString& email);
-	static std::list<wxString> GetThemeSizes(const wxString& theme);
+	static bool GetThemeData(const wxString& themePath, wxString& name, wxString& author, wxString& email);
+	static std::list<wxString> GetThemeSizes(const wxString& themePath);
 	static wxIconBundle GetIconBundle(const wxArtID& id, const wxArtClient& client = wxART_OTHER);
-	static bool ThemeHasSize(const wxString& theme, const wxString& size);
+	static bool ThemeHasSize(const wxString& themePath, const wxString& size);
 
 protected:
-	static wxString GetThemePath(const wxString& theme);
+	static wxString GetThemePath();
 
 	wxBitmap CreateBitmap(const wxArtID& id, const wxArtClient& client, const wxSize& size);
 

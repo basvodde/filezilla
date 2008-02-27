@@ -533,7 +533,7 @@ Section "FileZilla Client" SecMain
   File "${top_srcdir}/src\interface\resources\*.png"
   File "${top_srcdir}/src\interface\resources\defaultfilters.xml"
   File "${top_srcdir}/src\interface\resources\finished.wav"
-  File "${top_srcdir}/src\interface\resources\themes.xml"
+  File "${top_srcdir}/src\interface\resources\theme.xml"
 
   SetOutPath "$INSTDIR\resources\16x16"
   File "${top_srcdir}/src\interface\resources\16x16\*.png"
@@ -543,10 +543,16 @@ Section "FileZilla Client" SecMain
   
   SetOutPath "$INSTDIR\resources\48x48"
   File "${top_srcdir}/src\interface\resources\48x48\*.png"
+
+  SetOutPath "$INSTDIR\resources\cyril"
+  File "${top_srcdir}/src\interface\resources\cyril\theme.xml"
   
   SetOutPath "$INSTDIR\resources\cyril\16x16"
   File "${top_srcdir}/src\interface\resources\cyril\16x16\*.png"
 
+  SetOutPath "$INSTDIR\resources\blukis"
+  File "${top_srcdir}/src\interface\resources\blukis\theme.xml"
+  
   SetOutPath "$INSTDIR\resources\blukis\16x16"
   File "${top_srcdir}/src\interface\resources\blukis\16x16\*.png"
 
@@ -824,12 +830,14 @@ Section "Uninstall"
   Delete "$INSTDIR\resources\*.png"
   Delete "$INSTDIR\resources\defaultfilters.xml"
   Delete "$INSTDIR\resources\finished.wav"
-  Delete "$INSTDIR\resources\themes.xml"
+  Delete "$INSTDIR\resources\theme.xml"
   Delete "$INSTDIR\resources\16x16\*.png"
   Delete "$INSTDIR\resources\32x32\*.png"
   Delete "$INSTDIR\resources\48x48\*.png"
+  Delete "$INSTDIR\resources\cyril\theme.xml"
   Delete "$INSTDIR\resources\cyril\16x16\*.png"
   Delete "$INSTDIR\resources\cyril\32x32\*.png"
+  Delete "$INSTDIR\resources\blukis\theme.xml"
   Delete "$INSTDIR\resources\blukis\16x16\*.png"
   Delete "$INSTDIR\resources\blukis\32x32\*.png"
   Delete "$INSTDIR\resources\blukis\48x48\*.png"

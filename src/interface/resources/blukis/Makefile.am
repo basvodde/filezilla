@@ -1,6 +1,9 @@
+resourcesdir = $(pkgdatadir)/resources/blukis
 resources16dir = $(pkgdatadir)/resources/blukis/16x16
 resources32dir = $(pkgdatadir)/resources/blukis/32x32
 resources48dir = $(pkgdatadir)/resources/blukis/48x48
+
+dist_resources_DATA = theme.xml
 
 dist_resources16_DATA = 16x16/ascii.png \
 		16x16/auto.png \
@@ -106,6 +109,9 @@ mac-copy-resources: $(dist_resources_DATA)
 	mkdir -p "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/blukis/48x48";
 	for i in $(dist_resources48_DATA); \
 		do cp -f "$(srcdir)/$$i" "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/blukis/48x48"; \
+	done
+	for i in $(dist_resources_DATA); \
+		do cp -f $(srcdir)/$$i $(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/blukis; \
 	done
 endif
 
