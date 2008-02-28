@@ -828,14 +828,14 @@ int CFtpControlSocket::LogonParseResponse()
 				{
 					if (pData->usingProxy)
 					{
-						LogMessage(Status, _("Login data contains non-ascii characters and server might not be UTF-8 aware. Cannot fall back to local charset since using proxy."), 0);
+						LogMessage(Status, _("Login data contains non-ASCII characters and server might not be UTF-8 aware. Cannot fall back to local charset since using proxy."), 0);
 						int error = FZ_REPLY_DISCONNECTED;
 						if (cmd.type == pass && code == 5)
 							error |= FZ_REPLY_PASSWORDFAILED;
 						DoClose(error);
 						return FZ_REPLY_ERROR;
 					}
-					LogMessage(Status, _("Login data contains non-ascii characters and server might not be UTF-8 aware. Trying local charset."), 0);
+					LogMessage(Status, _("Login data contains non-ASCII characters and server might not be UTF-8 aware. Trying local charset."), 0);
 					m_useUTF8 = false;
 					if (!GetLoginSequence(*m_pCurrentServer))
 					{
