@@ -2,6 +2,7 @@
 #include "locale_initializer.h"
 #include "../tinyxml/tinyxml.h"
 #include <string>
+#include <locale.h>
 
 #ifdef ENABLE_BINRELOC
 	#define BR_PTHREADS 0
