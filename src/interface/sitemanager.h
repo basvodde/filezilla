@@ -17,7 +17,6 @@ public:
 	wxString m_comments;
 	wxString m_localDir;
 	CServerPath m_remoteDir;
-	wxString m_name; // Only filled by CSiteManager::GetServer
 };
 
 #include "dialogex.h"

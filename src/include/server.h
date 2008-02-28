@@ -115,6 +115,11 @@ public:
 	bool SetPostLoginCommands(const std::vector<wxString>& postLoginCommands);
 	void SetBypassProxy(bool val);
 
+	// Abstract server name.
+	// Not compared in ==, < and related operators
+	void SetName(const wxString& name) { m_name = name; }
+	wxString GetName() const { return m_name; }
+
 protected:
 	void Initialize();
 
@@ -131,6 +136,7 @@ protected:
 	int m_maximumMultipleConnections;
 	enum CharsetEncoding m_encodingType;
 	wxString m_customEncoding;
+	wxString m_name;
 
 	std::vector<wxString> m_postLoginCommands;
 	bool m_bypassProxy;

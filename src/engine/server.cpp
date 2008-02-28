@@ -229,6 +229,7 @@ CServer& CServer::operator=(const CServer &op)
 	m_customEncoding = op.m_customEncoding;
 	m_postLoginCommands = op.m_postLoginCommands;
 	m_bypassProxy = op.m_bypassProxy;
+	m_name = op.m_name;
 
 	return *this;
 }

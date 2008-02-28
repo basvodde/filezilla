@@ -1650,7 +1650,7 @@ void CMainFrame::ConnectToSite(CSiteManagerItemData* const pData)
 
 	if (pData->m_server.GetLogonType() == ASK)
 	{
-		if (!CLoginManager::Get().GetPassword(pData->m_server, false, pData->m_name))
+		if (!CLoginManager::Get().GetPassword(pData->m_server, false, pData->m_server.GetName()))
 			return;
 	}
 

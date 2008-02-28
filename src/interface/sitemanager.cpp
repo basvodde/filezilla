@@ -1126,6 +1126,9 @@ bool CSiteManager::UpdateServer()
 		data->m_server.SetBypassProxy(true);
 	else
 		data->m_server.SetBypassProxy(false);
+
+	data->m_server.SetName(pTree->GetItemText(item));
+
 	return true;
 }
 
@@ -1144,7 +1147,6 @@ bool CSiteManager::GetServer(CSiteManagerItemData& data)
 		return false;
 
 	data = *pData;
-	data.m_name = pTree->GetItemText(item);
 
 	return true;
 }

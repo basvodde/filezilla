@@ -514,6 +514,7 @@ bool GetServer(TiXmlElement *node, CServer& server)
 	}
 
 	server.SetBypassProxy(GetTextElementInt(node, "BypassProxy", false) == 1);
+	server.SetName(GetTextElement(node, "Name"));
 
 	return true;
 }
@@ -584,6 +585,9 @@ void SetServer(TiXmlElement *node, const CServer& server)
 	}
 
 	AddTextElement(node, "BypassProxy", server.GetBypassProxy() ? 1 : 0);
+	const wxString& name = server.GetName();
+	if (name != _T(""))
+		AddTextElement(node, "Name", name);
 }
 
 void SetTextAttribute(TiXmlElement* node, const char* name, const wxString& value)

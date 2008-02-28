@@ -281,7 +281,11 @@ bool CState::Connect(const CServer& server, bool askBreak, const CServerPath& pa
 	COptions::Get()->SetLastServer(server);
 	COptions::Get()->SetOption(OPTION_LASTSERVERPATH, path.GetSafePath());
 
-	m_pMainFrame->SetTitle(server.FormatServer() + _T(" - FileZilla"));
+	const wxString& name = server.GetName();
+	if (!name.IsEmpty())
+		m_pMainFrame->SetTitle(name + _T(" - ") + server.FormatServer() + _T(" - FileZilla"));
+	else
+		m_pMainFrame->SetTitle(server.FormatServer() + _T(" - FileZilla"));
 
 	return true;
 }
