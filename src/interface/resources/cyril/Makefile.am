@@ -8,8 +8,9 @@ dist_noinst_DATA =
 
 if MACAPPBUNDLE
 mac-copy-resources: $(dist_resources_DATA)
+	mkdir -p "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/cyril"
 	for i in $(dist_resources_DATA); do \
-	  cp -f $(srcdir)/$$i $(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/cyril; \
+	  cp -f "$(srcdir)/$$i" "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/cyril"; \
 	done
 	
 	$(MAKE) -C 16x16 mac-copy-resources

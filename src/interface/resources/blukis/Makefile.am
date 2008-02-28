@@ -99,19 +99,19 @@ dist_resources48_DATA = 48x48/ascii.png \
 if MACAPPBUNDLE
 mac-copy-resources: $(dist_resources_DATA)
 	mkdir -p "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/blukis/16x16";
-	for i in $(dist_resources16_DATA); \
-		do cp -f "$(srcdir)/$$i" "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/blukis/16x16"; \
+	for i in $(dist_resources16_DATA); do \
+	  cp -f "$(srcdir)/$$i" "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/blukis/16x16"; \
 	done
 	mkdir -p "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/blukis/32x32";
-	for i in $(dist_resources32_DATA); \
-		do cp -f "$(srcdir)/$$i" "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/blukis/32x32"; \
+	for i in $(dist_resources32_DATA); do \
+	  cp -f "$(srcdir)/$$i" "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/blukis/32x32"; \
 	done
 	mkdir -p "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/blukis/48x48";
-	for i in $(dist_resources48_DATA); \
-		do cp -f "$(srcdir)/$$i" "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/blukis/48x48"; \
+	for i in $(dist_resources48_DATA); do \
+	  cp -f "$(srcdir)/$$i" "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/blukis/48x48"; \
 	done
-	for i in $(dist_resources_DATA); \
-		do cp -f $(srcdir)/$$i $(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/blukis; \
+	for i in $(dist_resources_DATA); do \
+	  cp -f "$(srcdir)/$$i" "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/blukis"; \
 	done
 endif
 
