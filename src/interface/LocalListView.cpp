@@ -405,12 +405,12 @@ regular_dir:
 				if (buf.st_mode & S_IFDIR)
 				{
 					data.dir = true;
-					data.size = buf.st_size;
+					data.size = -1;
 				}
 				else
 				{
 					data.dir = false;
-					data.size = -1;
+					data.size = buf.st_size;
 				}
 				data.attributes = buf.st_mode & 0x777;
 			}
