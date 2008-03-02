@@ -737,7 +737,12 @@ void CLocalListView::DisplayDrives()
 
 void CLocalListView::DisplayShares(wxString computer)
 {
-	SHARE_INFO_1* pShareInfo = 0;
+	// Cast through a union to avoid warning about breaking strict aliasing rule
+	union
+	{
+		SHARE_INFO_1* pShareInfo;
+		LPBYTE pShareInfoBlob;
+	} si;
 
 	DWORD read, total;
 	DWORD resume_handle = 0;
@@ -750,12 +755,12 @@ void CLocalListView::DisplayShares(wxString computer)
 	do
 	{
 		const wxWX2WCbuf buf = computer.wc_str(wxConvLocal);
-		res = NetShareEnum((wchar_t*)(const wchar_t*)buf, 1, (LPBYTE*)&pShareInfo, MAX_PREFERRED_LENGTH, &read, &total, &resume_handle);
+		res = NetShareEnum((wchar_t*)(const wchar_t*)buf, 1, &si.pShareInfoBlob, MAX_PREFERRED_LENGTH, &read, &total, &resume_handle);
 
 		if (res != ERROR_SUCCESS && res != ERROR_MORE_DATA)
 			break;
 
-		SHARE_INFO_1* p = pShareInfo;
+		SHARE_INFO_1* p = si.pShareInfo;
 		for (unsigned int i = 0; i < read; i++, p++)
 		{
 			if (p->shi1_type != STYPE_DISKTREE)
@@ -773,12 +778,12 @@ void CLocalListView::DisplayShares(wxString computer)
 			m_indexMapping.push_back(j++);
 		}
 
-		NetApiBufferFree(pShareInfo);
+		NetApiBufferFree(si.pShareInfo);
 	}
 	while (res == ERROR_MORE_DATA);
 }
 
-#endif
+#endif //__WXMSW__
 
 CLocalFileData* CLocalListView::GetData(unsigned int item)
 {

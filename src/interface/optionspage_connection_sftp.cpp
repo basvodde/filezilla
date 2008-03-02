@@ -107,7 +107,7 @@ bool COptionsPageConnectionSFTP::Send(const wxString& cmd)
 		return false;
 
 	wxWX2MBbuf buf = (cmd + _T("\n")).mb_str();
-	const int len = strlen(buf);
+	const size_t len = strlen(buf);
 
 	wxOutputStream* stream = m_pProcess->GetOutputStream();
 	stream->Write((const char*)buf, len);
@@ -138,7 +138,7 @@ enum COptionsPageConnectionSFTP::ReplyCode COptionsPageConnectionSFTP::GetReply(
 
 	while (true)
 	{
-		size_t pos = input.Find('\n');
+		int pos = input.Find('\n');
 		if (pos == wxNOT_FOUND)
 		{
 			pStream->Read(buffer, 99);
@@ -274,7 +274,7 @@ bool COptionsPageConnectionSFTP::LoadKeyFile(wxString& keyFile, bool silent, wxS
 			return false;
 		if (code != success)
 		{
-			wxString msg = wxString::Format(_("Failed to load private key: %s"), reply);
+			wxString msg = wxString::Format(_("Failed to load private key: %s"), reply.c_str());
 			wxMessageBox(msg, _("Could not load private key"), wxICON_EXCLAMATION);
 			return false;
 		}
@@ -300,7 +300,7 @@ bool COptionsPageConnectionSFTP::LoadKeyFile(wxString& keyFile, bool silent, wxS
 			return false;
 		if (code != success)
 		{
-			wxMessageBox(wxString::Format(_("Could not write keyfile: %s"), reply), _("Could not convert private key"), wxICON_EXCLAMATION);
+			wxMessageBox(wxString::Format(_("Could not write keyfile: %s"), reply.c_str()), _("Could not convert private key"), wxICON_EXCLAMATION);
 			return false;
 		}
 		keyFile = newName;
