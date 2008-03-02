@@ -89,14 +89,17 @@ bool COptionsPageConnectionSFTP::LoadProcess()
 	//FIXME TODO BROKEN
 	executable.Replace(_T("fzsftp"), _T("fzputtygen"));
 
-	m_pProcess = wxProcess::Open(executable);
-	if (!m_pProcess)
+	m_pProcess = new wxProcess(this);
+	m_pProcess->Redirect();
+
+	if (!wxExecute(executable, wxEXEC_ASYNC, m_pProcess))
 	{
+		delete m_pProcess;
+		m_pProcess = 0;
+
 		wxMessageBox(_("fzputtygen could not be started.\nPlease make sure this executable exists in the same directory as the main FileZilla executable."), _("Error starting program"), wxICON_EXCLAMATION);
 		return false;
 	}
-
-	m_pProcess->Redirect();
 
 	return true;
 }
