@@ -238,8 +238,10 @@ int main(int argc, char **argv)
 		if (ssh2key) {
 		    if (ssh2key != SSH2_WRONG_PASSPHRASE)
 			error = NULL;
-		    else
+		    else {
+			ssh2key = NULL;
 			error = "wrong passphrase";
+		    }
 		} else if (!error)
 		    error = "unknown error";
 		break;
