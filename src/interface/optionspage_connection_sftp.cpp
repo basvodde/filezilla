@@ -82,12 +82,23 @@ bool COptionsPageConnectionSFTP::LoadProcess()
 {
 	if (m_initialized)
 		return m_pProcess != 0;
-	
+
 	m_initialized = true;
 
 	wxString executable = m_pOptions->GetOption(OPTION_FZSFTP_EXECUTABLE);
-	//FIXME TODO BROKEN
-	executable.Replace(_T("fzsftp"), _T("fzputtygen"));
+	int pos = executable.Find(wxFileName::GetPathSeparator(), true);
+	if (pos == -1)
+	{
+		wxMessageBox(_("fzputtygen could not be started.\nPlease make sure this executable exists in the same directory as the main FileZilla executable."), _("Error starting program"), wxICON_EXCLAMATION);
+		return false;
+	}
+	else
+	{
+		executable = executable.Left(pos + 1) + _T("fzputtygen");
+#ifdef __WXMSW__
+		executable += _T(".exe");
+#endif
+	}
 
 	m_pProcess = new wxProcess(this);
 	m_pProcess->Redirect();
@@ -172,7 +183,7 @@ enum COptionsPageConnectionSFTP::ReplyCode COptionsPageConnectionSFTP::GetReply(
 			continue;
 		}
 		wxChar c = input[0];
-		
+
 		reply = input.Mid(1, pos2 - 1);
 		input = input.Mid(pos + 1);
 
@@ -254,7 +265,7 @@ bool COptionsPageConnectionSFTP::LoadKeyFile(wxString& keyFile, bool silent, wxS
 		int res = wxMessageBox(msg, _("Convert keyfile"), wxICON_QUESTION | wxYES_NO);
 		if (res != wxYES)
 			return false;
-		
+
 		if (encrypted)
 		{
 			wxString msg = wxString::Format(_("Enter the password for the file '%s'.\nPlease note that the converted file will not be password protected."), keyFile.c_str());
@@ -338,7 +349,7 @@ void COptionsPageConnectionSFTP::OnEndProcess(wxProcessEvent& event)
 
 void COptionsPageConnectionSFTP::OnAdd(wxCommandEvent& event)
 {
-	wxFileDialog dlg(this, _("Select file containing private key"), _T(""), _T(""), _T("*.*"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+	wxFileDialog dlg(this, _("Select file containing private key"), _T(""), _T(""), wxFileSelectorDefaultWildcardStr, wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 	if (dlg.ShowModal() != wxID_OK)
 		return;
 
@@ -350,7 +361,7 @@ void COptionsPageConnectionSFTP::OnAdd(wxCommandEvent& event)
 void COptionsPageConnectionSFTP::OnRemove(wxCommandEvent& event)
 {
 	wxListCtrl* pKeys = XRCCTRL(*this, "ID_KEYS", wxListCtrl);
-	
+
 	int index = pKeys->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	if (index == -1)
 		return;
@@ -393,7 +404,7 @@ bool COptionsPageConnectionSFTP::KeyFileExists(const wxString& keyFile)
 void COptionsPageConnectionSFTP::SetCtrlState()
 {
 	wxListCtrl* pKeys = XRCCTRL(*this, "ID_KEYS", wxListCtrl);
-	
+
 	int index = pKeys->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	XRCCTRL(*this, "ID_REMOVEKEY", wxButton)->Enable(index != -1);
 	return;
