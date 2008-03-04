@@ -13,6 +13,8 @@ public:
 	bool Restore(unsigned int optionId);
 	void Remember(unsigned int optionId);
 
+	static wxRect GetScreenDimensions();
+
 protected:
 	wxTopLevelWindow* m_pWindow;
 

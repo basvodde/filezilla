@@ -49,28 +49,7 @@ bool CWindowStateManager::Restore(unsigned int optionId)
 		return false;
 	}
 
-#if wxUSE_DISPLAY
-	int min_x = 1000000000;
-	int min_y = 1000000000;
-	int max_x = 0;
-	int max_y = 0;
-
-	// Get bounding rectangle of virtual screen
-	for (unsigned int i = 0; i < wxDisplay::GetCount(); i++)
-	{
-		wxDisplay display(i);
-		wxRect rect = display.GetGeometry();
-		min_x = wxMin(min_x, rect.GetLeft());
-		min_y = wxMin(min_y, rect.GetTop());
-		max_x = wxMax(max_x, rect.GetRight());
-		max_y = wxMax(max_y, rect.GetBottom());
-	}
-#else
-	int min_x = 0;
-	int min_y = 0;
-	int max_x = 1000000000;
-	int max_y = 1000000000;
-#endif
+	wxRect screen_size = GetScreenDimensions();
 
 	// Fields:
 	// - maximized (1 or 0)
@@ -99,15 +78,15 @@ bool CWindowStateManager::Restore(unsigned int optionId)
 	}
 
 	// Make sure position is (somewhat) sane
-	int pos_x = wxMin(max_x - 30, values[1]);
-	int pos_y = wxMin(max_y - 30, values[2]);
+	int pos_x = wxMin(screen_size.GetRight() - 30, values[1]);
+	int pos_y = wxMin(screen_size.GetBottom() - 30, values[2]);
 	int client_width = values[3];
 	int client_height = values[4];
 
-	if (pos_x + client_width - 30 < min_x)
-		pos_x = min_x;
-	if (pos_y + client_height - 30 < min_y)
-		pos_y = min_y;
+	if (pos_x + client_width - 30 < screen_size.GetLeft())
+		pos_x = screen_size.GetLeft();
+	if (pos_y + client_height - 30 < screen_size.GetTop())
+		pos_y = screen_size.GetTop();
 
 	if (values[0])
 	{
@@ -165,4 +144,25 @@ void CWindowStateManager::OnMove(wxMoveEvent& event)
 		m_lastWindowSize = m_pWindow->GetClientSize();
 	}
 	event.Skip();
+}
+
+wxRect CWindowStateManager::GetScreenDimensions()
+{
+#if wxUSE_DISPLAY
+	wxRect screen_size(0, 0, 0, 0);
+
+	// Get bounding rectangle of virtual screen
+	for (unsigned int i = 0; i < wxDisplay::GetCount(); i++)
+	{
+		wxDisplay display(i);
+		wxRect rect = display.GetGeometry();
+		screen_size.Union(rect);
+	}
+	if (screen_size.GetWidth() <= 0 || screen_size.GetHeight() <= 0)
+		screen_size = wxRect(0, 0, 1000000000, 1000000000);
+#else
+	wxRect screen_size(0, 0, 1000000000, 1000000000);
+#endif
+
+	return screen_size;
 }

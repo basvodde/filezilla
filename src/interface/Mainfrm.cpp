@@ -113,8 +113,15 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_MENU(XRCID("ID_COMPARE_DATE"), CMainFrame::OnDropdownComparisonMode)
 END_EVENT_TABLE()
 
-CMainFrame::CMainFrame() : wxFrame(NULL, -1, _T("FileZilla"), wxDefaultPosition, wxSize(900, 750))
+CMainFrame::CMainFrame()
 {
+	wxRect screen_size = CWindowStateManager::GetScreenDimensions();
+
+	wxSize initial_size;
+	initial_size.x = wxMin(900, screen_size.GetWidth() - 10);
+	initial_size.y = wxMin(750, screen_size.GetHeight() - 50);
+
+	Create(NULL, -1, _T("FileZilla"), wxDefaultPosition, initial_size);
 	SetSizeHints(250, 250);
 
 #ifdef __WXMSW__
