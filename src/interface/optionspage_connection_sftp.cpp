@@ -159,7 +159,7 @@ enum COptionsPageConnectionSFTP::ReplyCode COptionsPageConnectionSFTP::GetReply(
 			int read;
 			if (pStream->Eof() || !(read = pStream->LastRead()))
 			{
-				wxMessageBox(_("Could not get replyfrom fzputtygen."), _("Command failed"), wxICON_EXCLAMATION);
+				wxMessageBox(_("Could not get reply from fzputtygen."), _("Command failed"), wxICON_EXCLAMATION);
 				return failure;
 			}
 			buffer[read] = 0;
