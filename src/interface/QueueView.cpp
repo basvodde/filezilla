@@ -2791,7 +2791,9 @@ bool CQueueView::SwitchEngine(t_EngineData** ppEngineData)
 
 	t_EngineData* pEngineData = *ppEngineData;
 
-	for (std::vector<t_EngineData*>::iterator iter = ++m_engineData.begin(); iter != m_engineData.end(); iter++)
+	std::vector<t_EngineData*>::iterator iter = m_engineData.begin();
+	iter++;
+	for (; iter != m_engineData.end(); iter++)
 	{
 		t_EngineData* pNewEngineData = *iter;
 		if (pNewEngineData == pEngineData)
