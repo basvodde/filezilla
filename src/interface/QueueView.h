@@ -75,7 +75,7 @@ public:
 
 	bool IsEmpty() const;
 	int IsActive() const { return m_activeMode; }
-	bool SetActive(const bool active = true);
+	bool SetActive(bool active = true);
 	bool Quit();
 
 	// If the settings are changed, this function will recalculate some
