@@ -70,7 +70,7 @@ public:
 			if (hit != -1 && (flags & wxLIST_HITTEST_ONITEM))
 			{
 				int index = m_pRemoteListView->GetItemIndex(hit);
-				if (index != -1)
+				if (index != -1 && m_pRemoteListView->m_fileData[index].flags != CComparableListing::fill)
 				{
 					if (index == (int)m_pRemoteListView->m_pDirectoryListing->GetCount())
 						subdir = _T("..");
@@ -104,7 +104,7 @@ public:
 		if (hit != -1 && (flags & wxLIST_HITTEST_ONITEM))
 		{
 			int index = m_pRemoteListView->GetItemIndex(hit);
-			if (index != -1)
+			if (index != -1 && m_pRemoteListView->m_fileData[index].flags != CComparableListing::fill)
 			{
 				if (index == (int)m_pRemoteListView->m_pDirectoryListing->GetCount())
 					subdir = _T("..");
@@ -180,7 +180,7 @@ public:
 		if (hit != -1)
 		{
 			int index = m_pRemoteListView->GetItemIndex(hit);
-			if (index == -1)
+			if (index == -1 || m_pRemoteListView->m_fileData[index].flags == CComparableListing::fill)
 				hit = -1;
 			else if (index != (int)m_pRemoteListView->m_pDirectoryListing->GetCount())
 			{
