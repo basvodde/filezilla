@@ -477,6 +477,8 @@ void CLocalTreeView::DisplayDir(wxTreeItemId parent, const wxString& dirname, co
 
 	bool matchedKnown = false;
 
+	const wxLongLong size = -1;
+
 	for (bool found = dir.GetFirst(&file, _T(""), wxDIR_DIRS | wxDIR_HIDDEN); found; found = dir.GetNext(&file))
 	{
 		if (file == _T(""))
@@ -492,34 +494,8 @@ void CLocalTreeView::DisplayDir(wxTreeItemId parent, const wxString& dirname, co
 		if (file != knownSubdir)
 #endif
 		{
-			wxFileName fn(fullName);
-			const bool isDir = fn.DirExists();
-
-			wxLongLong size;
-
-			const wxString& fullName = fn.GetFullPath();
-			wxStructStat buf;
-			int result = wxStat(fullName, &buf);
-			if (!isDir && !result)
-				size = buf.st_size;
-			else
-				size = -1;
-
-			int attributes;
-#ifdef __WXMSW__
-			DWORD tmp = GetFileAttributes(fullName);
-			if (tmp == INVALID_FILE_ATTRIBUTES)
-				attributes = 0;
-			else
-				attributes = tmp;
-#else
-			if (!result)
-				attributes = buf.st_mode & 0x777;
-			else
-				attributes = -1;
-#endif //__WXMSW__
-
-			if (filter.FilenameFiltered(file, isDir, size, true, attributes))
+			const int attributes = GetDirAttributes(fullName);
+			if (filter.FilenameFiltered(file, true, size, true, attributes))
 				continue;
 		}
 		else
@@ -550,24 +526,11 @@ bool CLocalTreeView::HasSubdir(const wxString& dirname)
 
 	CFilterDialog filter;
 	wxString file;
+	const wxLongLong size = -1;
 	for (bool found = dir.GetFirst(&file, _T(""), wxDIR_DIRS | wxDIR_HIDDEN); found; found = dir.GetNext(&file))
 	{
-		int attributes;
-#ifdef __WXMSW__
-		DWORD tmp = GetFileAttributes(dirname + wxFileName::GetPathSeparator() + file);
-		if (tmp == INVALID_FILE_ATTRIBUTES)
-			attributes = 0;
-		else
-			attributes = tmp;
-#else
-		wxStructStat buf;
-		const int result = wxLstat(dirname + file, &buf);
-		if (!result)
-			attributes = buf.st_mode & 0x777;
-		else
-			attributes = -1;
-#endif //__WXMSWMM
-		if (!filter.FilenameFiltered(file, true, -1, true, attributes))
+		int attributes = GetDirAttributes(dirname + wxFileName::GetPathSeparator() + file);
+		if (!filter.FilenameFiltered(file, true, size, true, attributes))
 			return true;
 	}
 
@@ -755,6 +718,7 @@ void CLocalTreeView::Refresh()
 			continue;
 		}
 
+		const wxLongLong size = -1;
 		wxString file;
 		bool found = find.GetFirst(&file, _T(""), wxDIR_DIRS | wxDIR_HIDDEN);
 		std::list<wxString> dirs;
@@ -766,33 +730,10 @@ void CLocalTreeView::Refresh()
 				found = find.GetNext(&file);
 				continue;
 			}
-			wxFileName fn(dir.dir + file);
-			const bool isDir = fn.DirExists();
 
-			wxLongLong size;
+			const int attributes = GetDirAttributes(dir.dir + file);
 
-			wxStructStat buf;
-			int result = wxStat(fn.GetFullPath(), &buf);
-			if (!isDir && !result)
-				size = buf.st_size;
-			else
-				size = -1;
-
-			int attributes;
-#ifdef __WXMSW__
-			DWORD tmp = GetFileAttributes(fn.GetFullPath());
-			if (tmp == INVALID_FILE_ATTRIBUTES)
-				attributes = 0;
-			else
-				attributes = tmp;
-#else
-			if (!result)
-				attributes = buf.st_mode & 0x777;
-			else
-				attributes = -1;
-#endif //__WXMSW__
-
-			if (!filter.FilenameFiltered(file, isDir, size , true, attributes))
+			if (!filter.FilenameFiltered(file, true, size , true, attributes))
 				dirs.push_back(file);
 			found = find.GetNext(&file);
 		}
@@ -1626,4 +1567,23 @@ void CLocalTreeView::OnEndLabelEdit(wxTreeEvent& event)
 
 	// Current selection below renamed item
 	m_pState->SetLocalDir(parent + newName + sub);
+}
+
+int CLocalTreeView::GetDirAttributes(const wxString& fileName)
+{
+#ifndef __WXMSW__
+	wxStructStat buf;
+	int result = wxStat(fileName, &buf);
+
+	if (result)
+		return -1;
+
+	return buf.st_mode & 0x777;
+#else
+	DWORD tmp = GetFileAttributes(fileName);
+	if (tmp == INVALID_FILE_ATTRIBUTES)
+		return 0;
+	
+	return (int)tmp;
+#endif
 }

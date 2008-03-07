@@ -45,6 +45,8 @@ protected:
 	wxTreeItemId MakeSubdirs(wxTreeItemId parent, wxString dirname, wxString subDir);
 	wxString m_currentDir;
 
+	int GetDirAttributes(const wxString& fileName);
+
 	DECLARE_EVENT_TABLE()
 	void OnItemExpanding(wxTreeEvent& event);
 	void OnSelectionChanged(wxTreeEvent& event);
