@@ -1540,6 +1540,12 @@ void CLocalTreeView::OnEndLabelEdit(wxTreeEvent& event)
 
 	const wxString& oldName = GetItemText(item);
 	const wxString& newName = event.GetLabel();
+	if (newName == _T(""))
+	{
+		wxBell();
+		event.Veto();
+		return;
+	}
 
 	wxASSERT(parent + oldName == path);
 
