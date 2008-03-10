@@ -6,6 +6,7 @@ noinst_HEADERS = asynchostresolver.h compatibility.h \
 		 commands.h directorylisting.h \
 		 engineprivate.h externalipresolver.h FileZilla.h \
 		 FileZillaEngine.h \
+		 local_filesys.h \
 		 logging.h misc.h notification.h optionsbase.h server.h \
 		 serverpath.h setup.h threadex.h timeex.h
 

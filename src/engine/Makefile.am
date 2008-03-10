@@ -16,7 +16,9 @@ libengine_a_SOURCES = asynchostresolver.cpp \
 		engineprivate.cpp externalipresolver.cpp \
 		FileZillaEngine.cpp ftpcontrolsocket.cpp \
 		httpcontrolsocket.cpp \
-		iothread.cpp logging.cpp \
+		iothread.cpp \
+		local_filesys.cpp \
+		logging.cpp \
 		misc.cpp notification.cpp \
 		pathcache.cpp \
 		ratelimiter.cpp \

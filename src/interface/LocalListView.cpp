@@ -18,6 +18,7 @@
 #endif
 #include "edithandler.h"
 #include "dragdropmanager.h"
+#include "local_filesys.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -1213,54 +1214,16 @@ void CLocalListView::OnMenuMkdir(wxCommandEvent& event)
 	DisplayDir(m_dir);
 }
 
-#ifndef __WXMSW__
-// Returns true only on actual directories, not on symlinks
-bool IsDirNotSymlink(const wxString& file)
-{
-	if (file.Last() == wxFileName::GetPathSeparator() && file != wxFileName::GetPathSeparator())
-	{
-		wxString tmp = file;
-		tmp.RemoveLast();
-		return IsDirNotSymlink(tmp);
-	}
-	wxStructStat buf;
-	int result = wxLstat(file, &buf);
-	if (result)
-		return false;
-
-#ifdef S_ISLNK
-	if (S_ISLNK(buf.st_mode))
-		return false;
-#endif
-
-	return S_ISDIR(buf.st_mode);
-}
-#endif
-
 void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 {
-	// Under Windows use SHFileOperation to delete files and directories.
-	// Under other systems, we have to recurse into subdirectories manually
-	// to delete all contents.
-
-#ifdef __WXMSW__
-	// SHFileOperation accepts a list of null-terminated strings. Go through all
-	// items to get the required buffer length
-
 	wxString dir = m_dir;
 	if (dir.Right(1) != _T("\\") && dir.Right(1) != _T("/"))
 		dir += _T("\\");
-	int dirLen = dir.Length();
 
-	int len = 1; // String list terminated by empty string
-
+	std::list<wxString> pathsToDelete;
 	long item = -1;
-	while (true)
+	while ((item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
 	{
-		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-		if (item == -1)
-			break;
-
 		if (!item && m_hasParent)
 			continue;
 
@@ -1271,135 +1234,11 @@ void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 		if (data->flags == fill)
 			continue;
 
-		len += dirLen + data->name.Length() + 1;
+		pathsToDelete.push_back(dir + data->name);
 	}
+	if (!CLocalFileSystem::RecursiveDelete(pathsToDelete, this))
+		wxGetApp().DisplayEncodingWarning();
 
-	// Allocate memory
-	wxChar* pBuffer = new wxChar[len];
-	wxChar* p = pBuffer;
-
-	// Loop through all selected items again and fill buffer
-	item = -1;
-	while (true)
-	{
-		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-		if (item == -1)
-			break;
-
-		if (!item && m_hasParent)
-			continue;
-
-		CLocalFileData *data = GetData(item);
-		if (!data)
-			continue;
-
-		if (data->flags == fill)
-			continue;
-
-		const wxString name = dir + data->name;
-		if (!wxFileName::FileExists(name) && !wxFileName::DirExists(name))
-			continue;
-
-		_tcscpy(p, dir);
-		p += dirLen;
-		_tcscpy(p, data->name);
-		p += data->name.Length() + 1;
-	}
-	if (p != pBuffer)
-	{
-		*p = 0;
-
-		// Now we can delete the files in the buffer
-		SHFILEOPSTRUCT op;
-		memset(&op, 0, sizeof(op));
-		op.hwnd = (HWND)GetHandle();
-		op.wFunc = FO_DELETE;
-		op.pFrom = pBuffer;
-
-		// Move to trash if shift is not pressed, else delete
-		op.fFlags = wxGetKeyState(WXK_SHIFT) ? 0 : FOF_ALLOWUNDO;
-
-		SHFileOperation(&op);
-	}
-	delete [] pBuffer;
-#else
-	if (wxMessageBox(_("Really delete all selected files and/or directories?"), _("Confirmation needed"), wxICON_QUESTION | wxYES_NO, this) != wxYES)
-		return;
-
-	// Remember the directories to delete and the directories to visit
-	std::list<wxString> dirsToDelete;
-	std::list<wxString> dirsToVisit;
-
-	wxString dir = m_dir;
-	if (dir.Right(1) != _T("\\") && dir.Right(1) != _T("/"))
-		dir += _T("/");
-
-	// First process selected items
-	long item = -1;
-	while (true)
-	{
-		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-		if (item == -1)
-			break;
-
-		if (!item && m_hasParent)
-			continue;
-
-		CLocalFileData *data = GetData(item);
-		if (!data)
-			continue;
-
-		if (data->flags == fill)
-			continue;
-
-		const wxString& fullName = dir + data->name;
-
-		if (IsDirNotSymlink(fullName))
-		{
-			const wxString& subDir = fullName + _T("/");
-			dirsToVisit.push_back(subDir);
-			dirsToDelete.push_front(subDir);
-		}
-		else
-			wxRemoveFile(fullName);
-	}
-
-	// Process any subdirs which still have to be visited
-	while (!dirsToVisit.empty())
-	{
-		wxString filename = dirsToVisit.front();
-		dirsToVisit.pop_front();
-		wxDir dir;
-		if (!dir.Open(filename))
-			continue;
-
-		wxString file;
-		for (bool found = dir.GetFirst(&file); found; found = dir.GetNext(&file))
-		{
-			if (file == _T(""))
-			{
-				wxGetApp().DisplayEncodingWarning();
-				continue;
-			}
-
-			const wxString& fullName = filename + file;
-
-			if (IsDirNotSymlink(fullName))
-			{
-				const wxString& subDir = fullName + _T("/");
-				dirsToVisit.push_back(subDir);
-				dirsToDelete.push_front(subDir);
-			}
-			else
-				wxRemoveFile(fullName);
-		}
-	}
-
-	// Delete the now empty directories
-	for (std::list<wxString>::const_iterator iter = dirsToDelete.begin(); iter != dirsToDelete.end(); iter++)
-		wxRmdir(*iter);
-
-#endif
 	m_pState->SetLocalDir(m_dir);
 }
 

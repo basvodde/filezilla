@@ -6,6 +6,7 @@
 #include <wx/dnd.h>
 #include "dndobjects.h"
 #include "inputdialog.h"
+#include "local_filesys.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -1327,10 +1328,6 @@ void CLocalTreeView::OnMenuRename(wxCommandEvent& event)
 	EditLabel(m_contextMenuItem);
 }
 
-#ifndef __WXMSW__
-extern bool IsDirNotSymlink(const wxString& file);
-#endif
-
 void CLocalTreeView::OnMenuDelete(wxCommandEvent& event)
 {
 	if (!m_contextMenuItem.IsOk())
@@ -1346,95 +1343,8 @@ void CLocalTreeView::OnMenuDelete(wxCommandEvent& event)
 		return;
 #endif
 
-	// Under Windows use SHFileOperation to delete files and directories.
-	// Under other systems, we have to recurse into subdirectories manually
-	// to delete all contents.
-
-#ifdef __WXMSW__
-	// SHFileOperation accepts a list of null-terminated strings. Go through all
-	// items to get the required buffer length
-
-	if (path.Last() == wxFileName::GetPathSeparator())
-		path.RemoveLast();
-
-	int len = path.Len() + 2;
-
-	// Allocate memory
-	wxChar* pBuffer = new wxChar[len];
-	_tcscpy(pBuffer, path);
-	pBuffer[len - 1] = 0;
-
-	// Now we can delete the files in the buffer
-	SHFILEOPSTRUCT op;
-	memset(&op, 0, sizeof(op));
-	op.hwnd = (HWND)GetHandle();
-	op.wFunc = FO_DELETE;
-	op.pFrom = pBuffer;
-
-	// Move to trash if shift is not pressed, else delete
-	op.fFlags = wxGetKeyState(WXK_SHIFT) ? 0 : FOF_ALLOWUNDO;
-
-	SHFileOperation(&op);
-
-	delete [] pBuffer;
-#else
-	if (wxMessageBox(_("Really delete all selected files and/or directories?"), _("Confirmation needed"), wxICON_QUESTION | wxYES_NO, this) != wxYES)
-		return;
-
-	if (!IsDirNotSymlink(path))
-	{
-		if (path.Last() == wxFileName::GetPathSeparator())
-			path.RemoveLast();
-		wxRemoveFile(path);
-	}
-	else
-	{
-		// Remember the directories to delete and the directories to visit
-		std::list<wxString> dirsToDelete;
-		std::list<wxString> dirsToVisit;
-
-		if (path.Last() != wxFileName::GetPathSeparator())
-			path += wxFileName::GetPathSeparator();
-
-		dirsToVisit.push_back(path);
-		dirsToDelete.push_front(path);
-
-		// Process any subdirs which still have to be visited
-		while (!dirsToVisit.empty())
-		{
-			wxString filename = dirsToVisit.front();
-			dirsToVisit.pop_front();
-			wxDir dir;
-			if (!dir.Open(filename))
-				continue;
-
-			wxString file;
-			for (bool found = dir.GetFirst(&file); found; found = dir.GetNext(&file))
-			{
-				if (file == _T(""))
-				{
-					wxGetApp().DisplayEncodingWarning();
-					continue;
-				}
-
-				const wxString& fullName = filename + file;
-
-				if (IsDirNotSymlink(fullName))
-				{
-					const wxString& subDir = fullName + wxFileName::GetPathSeparator();
-					dirsToVisit.push_back(subDir);
-					dirsToDelete.push_front(subDir);
-				}
-				else
-					wxRemoveFile(fullName);
-			}
-		}
-
-		// Delete the now empty directories
-		for (std::list<wxString>::const_iterator iter = dirsToDelete.begin(); iter != dirsToDelete.end(); iter++)
-			wxRmdir(*iter);
-	}
-#endif
+	if (!CLocalFileSystem::RecursiveDelete(path, this))
+		wxGetApp().DisplayEncodingWarning();
 
 	wxTreeItemId item = GetSelection();
 	while (item && item != m_contextMenuItem)
