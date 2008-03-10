@@ -64,7 +64,8 @@ protected:
 	void OnMenuDelete(wxCommandEvent& event);
 	void OnBeginLabelEdit(wxTreeEvent& event);
 	void OnEndLabelEdit(wxTreeEvent& event);
-	
+	void OnChar(wxKeyEvent& event);
+
 	wxString GetDirFromItem(wxTreeItemId item);
 
 	CQueueView* m_pQueueView;

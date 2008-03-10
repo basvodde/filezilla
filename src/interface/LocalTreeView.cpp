@@ -202,6 +202,7 @@ EVT_MENU(XRCID("ID_RENAME"), CLocalTreeView::OnMenuRename)
 EVT_MENU(XRCID("ID_MKDIR"), CLocalTreeView::OnMenuMkdir)
 EVT_TREE_BEGIN_LABEL_EDIT(wxID_ANY, CLocalTreeView::OnBeginLabelEdit)
 EVT_TREE_END_LABEL_EDIT(wxID_ANY, CLocalTreeView::OnEndLabelEdit)
+EVT_CHAR(CLocalTreeView::OnChar)
 END_EVENT_TABLE()
 
 CLocalTreeView::CLocalTreeView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView *pQueueView)
@@ -1607,4 +1608,17 @@ int CLocalTreeView::GetDirAttributes(const wxString& fileName)
 
 	return (int)tmp;
 #endif
+}
+
+void CLocalTreeView::OnChar(wxKeyEvent& event)
+{
+	m_contextMenuItem = GetSelection();
+
+	wxCommandEvent cmdEvt;
+	if (event.GetKeyCode() == WXK_F2)
+		OnMenuRename(cmdEvt);
+	else if (event.GetKeyCode() == WXK_DELETE)
+		OnMenuDelete(cmdEvt);
+	else
+		event.Skip();
 }
