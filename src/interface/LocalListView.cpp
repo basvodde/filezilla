@@ -552,7 +552,7 @@ wxString FormatSize(const wxLongLong& size)
 	if (!p)
 		return result + _T("B");
 
-	// We stop at Exa. If someone has files bigger than that, he can afford to 
+	// We stop at Exa. If someone has files bigger than that, he can afford to
 	// make a donation to have this changed ;)
 	wxChar prefix[] = { ' ', 'K', 'M', 'G', 'T', 'P', 'E' };
 
@@ -1213,6 +1213,30 @@ void CLocalListView::OnMenuMkdir(wxCommandEvent& event)
 	DisplayDir(m_dir);
 }
 
+#ifndef __WXMSW__
+// Returns true only on actual directories, not on symlinks
+bool IsDirNotSymlink(const wxString& file)
+{
+	if (file.Last() == wxFileName::GetPathSeparator() && file != wxFileName::GetPathSeparator())
+	{
+		wxString tmp = file;
+		tmp.RemoveLast();
+		return IsDirNotSymlink(tmp);
+	}
+	wxStructStat buf;
+	int result = wxLstat(file, &buf);
+	if (result)
+		return false;
+
+#ifdef S_ISLNK
+	if (S_ISLNK(buf.st_mode))
+		return false;
+#endif
+
+	return S_ISDIR(buf.st_mode);
+}
+#endif
+
 void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 {
 	// Under Windows use SHFileOperation to delete files and directories.
@@ -1328,14 +1352,16 @@ void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 		if (data->flags == fill)
 			continue;
 
-		if (data->dir)
+		const wxString& fullName = dir + data->name;
+
+		if (IsDirNotSymlink(fullName))
 		{
-			wxString subDir = dir + data->name + _T("/");
+			const wxString& subDir = fullName + _T("/");
 			dirsToVisit.push_back(subDir);
 			dirsToDelete.push_front(subDir);
 		}
 		else
-			wxRemoveFile(dir + data->name);
+			wxRemoveFile(fullName);
 	}
 
 	// Process any subdirs which still have to be visited
@@ -1355,14 +1381,17 @@ void CLocalListView::OnMenuDelete(wxCommandEvent& event)
 				wxGetApp().DisplayEncodingWarning();
 				continue;
 			}
-			if (wxFileName::DirExists(filename + file))
+
+			const wxString& fullName = filename + file;
+
+			if (IsDirNotSymlink(fullName))
 			{
-				wxString subDir = filename + file + _T("/");
+				const wxString& subDir = fullName + _T("/");
 				dirsToVisit.push_back(subDir);
 				dirsToDelete.push_front(subDir);
 			}
 			else
-				wxRemoveFile(filename + file);
+				wxRemoveFile(fullName);
 		}
 	}
 
@@ -1563,7 +1592,7 @@ void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 	{
 		event.Veto();
 		return;
-	}	
+	}
 
 	wxString newname = event.GetLabel();
 #ifdef __WXMSW__
@@ -1883,7 +1912,7 @@ void CLocalListView::InitDateFormat()
 {
 	const wxString& dateFormat = COptions::Get()->GetOption(OPTION_DATE_FORMAT);
 	const wxString& timeFormat = COptions::Get()->GetOption(OPTION_TIME_FORMAT);
-	
+
 	if (dateFormat == _T("1"))
 		m_dateFormat = _T("%Y-%m-%d");
 	else if (dateFormat[0] == '2')
@@ -1908,7 +1937,7 @@ wxListItemAttr* CLocalListView::OnGetItemAttr(long item) const
 
 	if (!data)
 		return 0;
-	
+
 	switch (data->flags)
 	{
 	case different:

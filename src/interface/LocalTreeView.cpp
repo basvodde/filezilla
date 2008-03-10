@@ -1326,6 +1326,10 @@ void CLocalTreeView::OnMenuRename(wxCommandEvent& event)
 	EditLabel(m_contextMenuItem);
 }
 
+#ifndef __WXMSW__
+extern bool IsDirNotSymlink(const wxString& file);
+#endif
+
 void CLocalTreeView::OnMenuDelete(wxCommandEvent& event)
 {
 	if (!m_contextMenuItem.IsOk())
@@ -1376,48 +1380,59 @@ void CLocalTreeView::OnMenuDelete(wxCommandEvent& event)
 	if (wxMessageBox(_("Really delete all selected files and/or directories?"), _("Confirmation needed"), wxICON_QUESTION | wxYES_NO, this) != wxYES)
 		return;
 
-	// Remember the directories to delete and the directories to visit
-	std::list<wxString> dirsToDelete;
-	std::list<wxString> dirsToVisit;
-
-	if (path.Last() != wxFileName::GetPathSeparator())
-		path += wxFileName::GetPathSeparator();
-
-	dirsToVisit.push_back(path);
-	dirsToDelete.push_front(path);
-
-	// Process any subdirs which still have to be visited
-	while (!dirsToVisit.empty())
+	if (!IsDirNotSymlink(path))
 	{
-		wxString filename = dirsToVisit.front();
-		dirsToVisit.pop_front();
-		wxDir dir;
-		if (!dir.Open(filename))
-			continue;
-
-		wxString file;
-		for (bool found = dir.GetFirst(&file); found; found = dir.GetNext(&file))
-		{
-			if (file == _T(""))
-			{
-				wxGetApp().DisplayEncodingWarning();
-				continue;
-			}
-			if (wxFileName::DirExists(filename + file))
-			{
-				wxString subDir = filename + file + wxFileName::GetPathSeparator();
-				dirsToVisit.push_back(subDir);
-				dirsToDelete.push_front(subDir);
-			}
-			else
-				wxRemoveFile(filename + file);
-		}
+		if (path.Last() == wxFileName::GetPathSeparator())
+			path.RemoveLast();
+		wxRemoveFile(path);
 	}
+	else
+	{
+		// Remember the directories to delete and the directories to visit
+		std::list<wxString> dirsToDelete;
+		std::list<wxString> dirsToVisit;
 
-	// Delete the now empty directories
-	for (std::list<wxString>::const_iterator iter = dirsToDelete.begin(); iter != dirsToDelete.end(); iter++)
-		wxRmdir(*iter);
+		if (path.Last() != wxFileName::GetPathSeparator())
+			path += wxFileName::GetPathSeparator();
 
+		dirsToVisit.push_back(path);
+		dirsToDelete.push_front(path);
+
+		// Process any subdirs which still have to be visited
+		while (!dirsToVisit.empty())
+		{
+			wxString filename = dirsToVisit.front();
+			dirsToVisit.pop_front();
+			wxDir dir;
+			if (!dir.Open(filename))
+				continue;
+
+			wxString file;
+			for (bool found = dir.GetFirst(&file); found; found = dir.GetNext(&file))
+			{
+				if (file == _T(""))
+				{
+					wxGetApp().DisplayEncodingWarning();
+					continue;
+				}
+
+				const wxString& fullName = filename + file;
+
+				if (IsDirNotSymlink(fullName))
+				{
+					const wxString& subDir = fullName + wxFileName::GetPathSeparator();
+					dirsToVisit.push_back(subDir);
+					dirsToDelete.push_front(subDir);
+				}
+				else
+					wxRemoveFile(fullName);
+			}
+		}
+
+		// Delete the now empty directories
+		for (std::list<wxString>::const_iterator iter = dirsToDelete.begin(); iter != dirsToDelete.end(); iter++)
+			wxRmdir(*iter);
+	}
 #endif
 
 	wxTreeItemId item = GetSelection();
@@ -1583,7 +1598,7 @@ int CLocalTreeView::GetDirAttributes(const wxString& fileName)
 	DWORD tmp = GetFileAttributes(fileName);
 	if (tmp == INVALID_FILE_ATTRIBUTES)
 		return 0;
-	
+
 	return (int)tmp;
 #endif
 }
