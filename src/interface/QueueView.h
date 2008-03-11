@@ -124,7 +124,7 @@ protected:
 		retry,
 		remove
 	};
-	
+
 	enum ActionAfterState GetActionAfterState() const;
 
 	void ResetEngine(t_EngineData& data, const enum ResetReason reason);
@@ -144,7 +144,7 @@ protected:
 	void DisplayQueueSize();
 	void SaveQueue();
 	bool ShouldUseBinaryMode(wxString filename);
-	
+
 	bool IsActionAfter(enum ActionAfterState);
 	void ActionAfter(bool warned = false);
 #ifdef __WXMSW__
@@ -215,6 +215,7 @@ protected:
 	void OnEngineEvent(wxEvent &event);
 	void OnFolderThreadComplete(wxCommandEvent& event);
 	void OnFolderThreadFiles(wxCommandEvent& event);
+	void OnChar(wxKeyEvent& event);
 
 	// Context menu handlers
 	void OnContextMenu(wxContextMenuEvent& event);

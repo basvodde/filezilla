@@ -8,6 +8,7 @@ EVT_CONTEXT_MENU(CQueueViewFailed::OnContextMenu)
 EVT_MENU(XRCID("ID_REMOVEALL"), CQueueViewFailed::OnRemoveAll)
 EVT_MENU(XRCID("ID_REMOVE"), CQueueViewFailed::OnRemoveSelected)
 EVT_MENU(XRCID("ID_REQUEUE"), CQueueViewFailed::OnRequeueSelected)
+EVT_CHAR(CQueueViewFailed::OnChar)
 END_EVENT_TABLE()
 
 CQueueViewFailed::CQueueViewFailed(CQueue* parent, int index)
@@ -46,10 +47,10 @@ void CQueueViewFailed::OnRemoveAll(wxCommandEvent& event)
 	m_serverList.clear();
 
 	m_itemCount = 0;
-	SetItemCount(0);
+	SaveSetItemCount(0);
 	m_fileCount = 0;
 	m_folderScanCount = 0;
-	
+
 	DisplayNumberQueuedFiles();
 
 	Refresh();
@@ -88,7 +89,7 @@ void CQueueViewFailed::OnRemoveSelected(wxCommandEvent& event)
 		RemoveItem(pItem, true, false, false);
 	}
 	DisplayNumberQueuedFiles();
-	SetItemCount(m_itemCount);
+	SaveSetItemCount(m_itemCount);
 	Refresh();
 
 	if (!m_itemCount && m_pQueue->GetQueueView()->GetItemCount())
@@ -129,7 +130,7 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 		if (pItem->GetType() == QueueItemType_Server)
 		{
 			CServerItem* pOldServerItem = (CServerItem*)pItem;
-			CServerItem* pServerItem = pQueueView->CreateServerItem(pOldServerItem->GetServer());			
+			CServerItem* pServerItem = pQueueView->CreateServerItem(pOldServerItem->GetServer());
 
 			unsigned int childrenCount = pOldServerItem->GetChildrenCount(false);
 			for (unsigned int i = 0; i < childrenCount; i++)
@@ -160,7 +161,7 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 				pFileItem->SetParent(pServerItem);
 				pQueueView->InsertItem(pServerItem, pFileItem);
 			}
-			
+
 			m_fileCount -= childrenCount;
 			m_itemCount -= childrenCount + 1;
 			pOldServerItem->DetachChildren();
@@ -201,7 +202,7 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 						pQueueView->CommitChanges();
 						pQueueView->RemoveItem(pServerItem, true, true, true);
 					}
-					
+
 					failedToRequeueAll = true;
 					delete pItem;
 					continue;
@@ -224,14 +225,14 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 
 			pItem->SetParent(pServerItem);
 			pQueueView->InsertItem(pServerItem, pItem);
-		}		
+		}
 	}
 	m_fileCountChanged = true;
 
 	pQueueView->CommitChanges();
 
 	DisplayNumberQueuedFiles();
-	SetItemCount(m_itemCount);
+	SaveSetItemCount(m_itemCount);
 	Refresh();
 
 	if (!m_itemCount && m_pQueue->GetQueueView()->GetItemCount())
@@ -239,4 +240,15 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 
 	if (failedToRequeueAll)
 		wxMessageBox(_("Not all items could be requeued for viewing / editing."));
+}
+
+void CQueueViewFailed::OnChar(wxKeyEvent& event)
+{
+	if (event.GetKeyCode() == WXK_DELETE)
+	{
+		wxCommandEvent cmdEvt;
+		OnRemoveSelected(cmdEvt);
+	}
+	else
+		event.Skip();
 }

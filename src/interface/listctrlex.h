@@ -18,6 +18,8 @@ public:
 
 	void EnablePrefixSearch(bool enable) { m_prefixSearch_enabled = enable; }
 
+	void SaveSetItemCount(long count);
+
 protected:
 	virtual void OnPostScroll();
 	virtual void OnPreEmitPostScrollEvent();
@@ -26,6 +28,10 @@ protected:
 	virtual wxString GetItemText(int item, unsigned int column) { return _T(""); }
 
 	virtual wxString OnGetItemText(long item, long column) const;
+
+#ifdef __WXGTK__
+	wxBitmap GetSortArrow(bool sortDown);
+#endif
 
 private:
 	// Keyboard prefix search

@@ -164,6 +164,7 @@ EVT_MENU(XRCID("ID_ACTIONAFTER_SHUTDOWN"), CQueueView::OnActionAfter)
 EVT_COMMAND(wxID_ANY, fzEVT_ASKFORPASSWORD, CQueueView::OnAskPassword)
 
 EVT_TIMER(wxID_ANY, CQueueView::OnTimer)
+EVT_CHAR(CQueueView::OnChar)
 
 EVT_MENU(XRCID("ID_PRIORITY_HIGHEST"), CQueueView::OnSetPriority)
 EVT_MENU(XRCID("ID_PRIORITY_HIGH"), CQueueView::OnSetPriority)
@@ -1054,7 +1055,7 @@ void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
 			UpdateSelections_ItemRemoved(GetItemIndex(data.pItem) + 1);
 
 			m_itemCount--;
-			SetItemCount(m_itemCount);
+			SaveSetItemCount(m_itemCount);
 
 			const CFileItem* const pFileItem = (CFileItem*)data.pItem;
 			if (pFileItem->Download())
@@ -2049,7 +2050,7 @@ void CQueueView::RemoveAll()
 			m_itemCount += 1 + (*iter)->GetChildrenCount(true);
 		}
 	}
-	SetItemCount(m_itemCount);
+	SaveSetItemCount(m_itemCount);
 	m_actionAfterState = ActionAfterState_Disabled;
 
 	m_serverList = newServerList;
@@ -2125,7 +2126,7 @@ void CQueueView::OnRemoveSelected(wxCommandEvent& event)
 	}
 	DisplayNumberQueuedFiles();
 	DisplayQueueSize();
-	SetItemCount(m_itemCount);
+	SaveSetItemCount(m_itemCount);
 
 	m_waitStatusLineUpdate = false;
 	UpdateStatusLinePositions();
@@ -2195,12 +2196,12 @@ bool CQueueView::StopItem(CServerItem* pServerItem)
 		if (RemoveItem(pItem, true, false))
 		{
 			DisplayNumberQueuedFiles();
-			SetItemCount(m_itemCount);
+			SaveSetItemCount(m_itemCount);
 			return true;
 		}
 	}
 	DisplayNumberQueuedFiles();
-	SetItemCount(m_itemCount);
+	SaveSetItemCount(m_itemCount);
 
 	return false;
 }
@@ -2864,4 +2865,15 @@ bool CQueueView::IsOtherEngineConnected(t_EngineData* pEngineData)
 	}
 
 	return false;
+}
+
+void CQueueView::OnChar(wxKeyEvent& event)
+{
+	if (event.GetKeyCode() == WXK_DELETE)
+	{
+		wxCommandEvent cmdEvt;
+		OnRemoveSelected(cmdEvt);
+	}
+	else
+		event.Skip();
 }

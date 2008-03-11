@@ -14,6 +14,7 @@ protected:
 	void OnRemoveAll(wxCommandEvent& event);
 	void OnRemoveSelected(wxCommandEvent& event);
 	void OnRequeueSelected(wxCommandEvent& event);
+	void OnChar(wxKeyEvent& event);
 };
 
 #endif //__QUEUEVIEW_FAILED_H__

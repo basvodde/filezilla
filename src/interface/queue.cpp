@@ -1170,7 +1170,7 @@ CServerItem* CQueueViewBase::CreateServerItem(const CServer& server)
 
 void CQueueViewBase::CommitChanges()
 {
-	SetItemCount(m_itemCount);
+	SaveSetItemCount(m_itemCount);
 
 	if (m_insertionStart != -1)
 	{
@@ -1277,7 +1277,7 @@ bool CQueueViewBase::RemoveItem(CQueueItem* pItem, bool destroy, bool updateItem
 
 		m_itemCount -= count + 1;
 		if (updateItemCount)
-			SetItemCount(m_itemCount);
+			SaveSetItemCount(m_itemCount);
 
 		didRemoveParent = true;
 	}
@@ -1290,7 +1290,7 @@ bool CQueueViewBase::RemoveItem(CQueueItem* pItem, bool destroy, bool updateItem
 
 		m_itemCount -= count;
 		if (updateItemCount)
-			SetItemCount(m_itemCount);
+			SaveSetItemCount(m_itemCount);
 
 		didRemoveParent = false;
 	}
