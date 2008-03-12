@@ -496,7 +496,10 @@ void CLocalTreeView::DisplayDir(wxTreeItemId parent, const wxString& dirname, co
 		if (file != knownSubdir)
 #endif
 		{
-			const int attributes = GetDirAttributes(fullName);
+			int attributes;
+			bool isLink;
+			if (CLocalFileSystem::GetFileInfo(fullName, isLink, 0, 0, &attributes) != CLocalFileSystem::dir)
+				continue;
 			if (filter.FilenameFiltered(file, true, size, true, attributes))
 				continue;
 		}
@@ -531,9 +534,13 @@ bool CLocalTreeView::HasSubdir(const wxString& dirname)
 	const wxLongLong size = -1;
 	for (bool found = dir.GetFirst(&file, _T(""), wxDIR_DIRS | wxDIR_HIDDEN); found; found = dir.GetNext(&file))
 	{
-		int attributes = GetDirAttributes(dirname + wxFileName::GetPathSeparator() + file);
-		if (!filter.FilenameFiltered(file, true, size, true, attributes))
-			return true;
+		int attributes;
+		bool isLink;
+		if (CLocalFileSystem::GetFileInfo(dirname + wxFileName::GetPathSeparator() + file, isLink, 0, 0, &attributes) != CLocalFileSystem::dir)
+			continue;
+		if (filter.FilenameFiltered(file, true, size, true, attributes))
+			continue;
+		return true;
 	}
 
 	return false;
@@ -733,9 +740,14 @@ void CLocalTreeView::Refresh()
 				continue;
 			}
 
-			const int attributes = GetDirAttributes(dir.dir + file);
+			int attributes;
+			bool isLink;
+			if (CLocalFileSystem::GetFileInfo(dir.dir + file, isLink, 0, 0, &attributes) != CLocalFileSystem::dir)
+				continue;
+			if (filter.FilenameFiltered(file, true, size, true, attributes))
+				continue;
 
-			if (!filter.FilenameFiltered(file, true, size , true, attributes))
+			if (!filter.FilenameFiltered(file, true, size, true, attributes))
 				dirs.push_back(file);
 			found = find.GetNext(&file);
 		}
@@ -1499,25 +1511,6 @@ void CLocalTreeView::OnEndLabelEdit(wxTreeEvent& event)
 
 	// Current selection below renamed item
 	m_pState->SetLocalDir(parent + newName + sub);
-}
-
-int CLocalTreeView::GetDirAttributes(const wxString& fileName)
-{
-#ifndef __WXMSW__
-	wxStructStat buf;
-	int result = wxStat(fileName, &buf);
-
-	if (result)
-		return -1;
-
-	return buf.st_mode & 0x777;
-#else
-	DWORD tmp = GetFileAttributes(fileName);
-	if (tmp == INVALID_FILE_ATTRIBUTES)
-		return 0;
-
-	return (int)tmp;
-#endif
 }
 
 void CLocalTreeView::OnChar(wxKeyEvent& event)

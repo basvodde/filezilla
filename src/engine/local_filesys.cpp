@@ -160,3 +160,118 @@ bool CLocalFileSystem::RecursiveDelete(std::list<wxString> dirsToVisit, wxWindow
 	return !encodingError;
 #endif
 }
+
+enum CLocalFileSystem::local_fileType CLocalFileSystem::GetFileInfo(const wxString& path, bool &isLink, wxLongLong* size, wxDateTime* modificationTime, int *mode)
+{
+	if (path.Last() == wxFileName::GetPathSeparator() && path != wxFileName::GetPathSeparator())
+	{
+		wxString tmp = path;
+		tmp.RemoveLast();
+		return GetFileInfo(tmp, isLink, size, modificationTime, mode);
+	}
+
+#ifdef __WXMSW__
+	isLink = false;
+
+	WIN32_FILE_ATTRIBUTE_DATA attributes;
+	BOOL result = GetFileAttributesEx(path, GetFileExInfoStandard, &attributes);
+	if (!result)
+	{
+		if (size)
+			*size = -1;
+		if (mode)
+			*mode = 0;
+		return unknown;
+	}
+
+	if (modificationTime)
+		ConvertFileTimeToWxDateTime(*modificationTime, attributes.ftLastWriteTime);
+
+	if (mode)
+		*mode = (int)attributes.dwFileAttributes;
+
+	if (attributes.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+	{
+		if (size)
+			*size = -1;
+		return dir;
+	}
+
+	if (size)
+		*size = wxLongLong(attributes.nFileSizeHigh, attributes.nFileSizeLow);
+
+	return file;
+#else
+	wxStructStat buf;
+	int result = wxLstat(file, &buf);
+	if (result)
+	{
+		isLink = false;
+		if (size)
+			*size = -1;
+		if (mode)
+			*mode = -1;
+		return unknown;
+	}
+
+#ifdef S_ISLNK
+	if (S_ISLNK(buf.st_mode))
+	{
+		isLink = true;
+		int result = wxStat(file, &buf);
+		if (result)
+		{
+			if (size)
+				*size = -1;
+			if (mode)
+				*mode = -1;
+			return unknown;
+		}
+	}
+	else
+#endif
+		isLink = false;
+
+	if (modificationTime)
+		modificationTime->Set(buf.st_mtime);
+
+	if (mode)
+		*mode = buf.st_mode & 0x777;
+
+	if (S_ISDIR(buf.st_mode))
+	{
+		if (size)
+			*size = -1;
+		return dir;
+	}
+
+	if (size)
+		*size = buf.st_size;
+
+	return file;
+#endif
+}
+
+#ifdef __WXMSW__
+bool CLocalFileSystem::ConvertFileTimeToWxDateTime(wxDateTime& time, const FILETIME &ft)
+{
+	if (!ft.dwHighDateTime && !ft.dwLowDateTime)
+		return false;
+
+	FILETIME ftLocal;
+	if (!::FileTimeToLocalFileTime(&ft, &ftLocal))
+		return false;
+
+	SYSTEMTIME st;
+	if (!::FileTimeToSystemTime(&ftLocal, &st))
+		return false;
+
+	wxDateTime tmp;
+	if (!tmp.Set(st.wDay, wxDateTime::Month(st.wMonth - 1), st.wYear,
+		st.wHour, st.wMinute, st.wSecond, st.wMilliseconds).IsValid())
+		return false;
+	time = tmp;
+
+	return true;
+}
+#endif

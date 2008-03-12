@@ -22,6 +22,7 @@
 #include <wx/utils.h>
 #include <wx/progdlg.h>
 #include <wx/sound.h>
+#include "local_filesys.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -316,32 +317,18 @@ protected:
 			{
 				const wxString& fullName = currentLocalPath + wxFileName::GetPathSeparator() + file;
 
-				if (wxDir::Exists(fullName))
+				bool isLink;
+				wxLongLong size;
+				int attributes;
+				CLocalFileSystem::local_fileType type = CLocalFileSystem::GetFileInfo(fullName, isLink, &size, 0, &attributes);
+
+				if (type == CLocalFileSystem::dir)
 				{
-					int attributes;
-#ifdef __WXMSW__
-					DWORD tmp = GetFileAttributes(fullName);
-					if (tmp == INVALID_FILE_ATTRIBUTES)
-						attributes = 0;
-					else
-						attributes = tmp;
-#else
-					wxStructStat buf;
-					const int result = wxLstat(fullName, &buf);
-					if (!result)
+					if (isLink)
 					{
-#ifdef S_ISLNK
-						if (S_ISLNK(buf.st_mode))
-						{
-							found = pDir->GetNext(&file);
-							continue;
-						}
-#endif //S_ISLNK
-						attributes = buf.st_mode & 0x777;
+						found = pDir->GetNext(&file);
+						continue;
 					}
-					else
-						attributes = -1;
-#endif //__WXMSWMM
 
 					if (!m_filters.FilenameFiltered(file, true, -1, true, attributes))
 					{
@@ -352,33 +339,15 @@ protected:
 						m_pFolderItem->m_dirsToCheck.push_back(pair);
 					}
 				}
-				else
+				else if (type == CLocalFileSystem::file)
 				{
-					wxStructStat buf;
-					int result;
-					result = wxStat(fullName, &buf);
-
-					int attributes;
-#ifdef __WXMSW__
-					DWORD tmp = GetFileAttributes(fullName);
-					if (tmp == INVALID_FILE_ATTRIBUTES)
-						attributes = 0;
-					else
-						attributes = tmp;
-#else
-					if (!result)
-						attributes = buf.st_mode & 0x777;
-					else
-						attributes = -1;
-#endif //__WXMSW__
-
-					if (!m_filters.FilenameFiltered(file, false, result ? -1 : buf.st_size, true, attributes))
+					if (!m_filters.FilenameFiltered(file, false, size, true, attributes))
 					{
 						t_newEntry entry;
 						entry.localFile = fullName.c_str();
 						entry.remoteFile = file.c_str();
 						entry.remotePath.SetSafePath(currentRemotePath.GetSafePath().c_str());
-						entry.size = result ? -1 : buf.st_size;
+						entry.size = size;
 
 						AddEntry(entry);
 					}
