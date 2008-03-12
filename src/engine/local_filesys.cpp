@@ -15,13 +15,13 @@ enum CLocalFileSystem::local_fileType CLocalFileSystem::GetFileType(const wxStri
 #else
 	if (path.Last() == wxFileName::GetPathSeparator() && path != wxFileName::GetPathSeparator())
 	{
-		wxString tmp = file;
+		wxString tmp = path;
 		tmp.RemoveLast();
 		return GetFileType(tmp);
 	}
 
 	wxStructStat buf;
-	int result = wxLstat(file, &buf);
+	int result = wxLstat(path, &buf);
 	if (result)
 		return unknown;
 
@@ -203,7 +203,7 @@ enum CLocalFileSystem::local_fileType CLocalFileSystem::GetFileInfo(const wxStri
 	return file;
 #else
 	wxStructStat buf;
-	int result = wxLstat(file, &buf);
+	int result = wxLstat(path, &buf);
 	if (result)
 	{
 		isLink = false;
@@ -218,7 +218,7 @@ enum CLocalFileSystem::local_fileType CLocalFileSystem::GetFileInfo(const wxStri
 	if (S_ISLNK(buf.st_mode))
 	{
 		isLink = true;
-		int result = wxStat(file, &buf);
+		int result = wxStat(path, &buf);
 		if (result)
 		{
 			if (size)
