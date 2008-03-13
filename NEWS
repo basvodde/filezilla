@@ -5,6 +5,18 @@ Legend:
   + New feature or important bugfix
   - Bugfixes
 
+  Platform prefixes:
+    MSW: Microsoft Windows
+    *nix: Unix (e.g BSD) and Unix-like systems (e.g. Linux)
+    OS X: Apple Mac OS X
+
+3.0.8 (2008-03-13)
+
+- *nix: No longer follows symbolic links if deleting local directories
+- Fix crash if dropping a file on a fill item in directory comparison mode
+- Handle DEL key in queue and local directory tree
+- Handle F2 key in local directory tree
+
 3.0.8-rc1 (2008-03-07)
 
 + Add interface for SFTP public key authentication
@@ -220,9 +232,9 @@ Legend:
 3.0.0-rc1 (2007-08-11)
 
 ! Fix remotely triggered memory corruption if connection gets terminated during TLS handshake.
-+ Windows: Add choice between "All Users" and "Current User" to installer
-+ Windows: Add Desktop and My Documents links to directory tree
-+ Windows: Ability to list shares on Network computers
++ MSW: Add choice between "All Users" and "Current User" to installer
++ MSW: Add Desktop and My Documents links to directory tree
++ MSW: Ability to list shares on Network computers
 + Column withs in all list views will be saved
 + Refresh local file list after a successful file transfer
 + Add context menu to remote directory tree
@@ -259,7 +271,7 @@ Beta 9 (2007-06-01):
 + Performance improvements of message log
 + Avoid sending unnecessary TYPE commands
 - Updated TinyXML component, fixes problems with filenames containing ampersands or other special XML entities.
-- Fix deadlock in sftp component under Windows
+- MSW: Fix deadlock in sftp component
 - Don't retry connecting if user cancels new/changed hostkey notification
 
 Beta 8 (2007-05-09):
@@ -268,12 +280,12 @@ Beta 8 (2007-05-09):
 + Implement speed limits
 + Last used local directory will be remembered
 + New option for the sorting of the filelists. Directories can be kept on top or sorted inline.
-+ Display warning if detecting a Windows system with a networking bug confirmed by Microsoft
++ MSW: Display warning if detecting a system with a networking bug confirmed by Microsoft
 + Right-clicking the Sitemanager button in the toolbar displays a popup menu with the sites for quick access. On Windows, a dropdown arrow got added.
 - Directorylisting-parser fixes, including support for Microware OS-9
-- Small SFTP transfer speed improvement under Windows
-- Autocompletion did not work properly on GTK based systems
-- Uninstalling FileZilla on Windows should no longer leave registry keys behind 
+- MSW: Small SFTP transfer speed improvement
+- *nix: Autocompletion did not work properly on GTK based systems
+- MSW: Uninstalling FileZilla should no longer leave registry keys behind 
 - lots of small bugfixes
 
 Beta 7 (2007-03-27):
@@ -288,7 +300,7 @@ Beta 7 (2007-03-27):
 Beta 6 (2007-02-19):
 
 + Vastly improved drag and drop support, including
-+ Shell extension under Windows to allow dragging of files from FileZilla into Explorer
++ MSW: Shell extension to allow dragging of files from FileZilla into Explorer
 + CTRL+A will select all files in currently focused file list
 + Display warning if trying to connect to SFTP server using FTP protocol
 - Fix timing issue in socket event handling, fixes transfers not starting on some systems
