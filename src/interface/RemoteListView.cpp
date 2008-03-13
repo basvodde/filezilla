@@ -1572,6 +1572,11 @@ void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 				else
 					permissions[i] = -1;
 			}
+			if (entry.permissions[6] == 's')
+				permissions[5] = 2;
+			if (entry.permissions[9] == 't')
+				permissions[8] = 2;
+
 		}
 	}
 	if (!dirCount && !fileCount)
