@@ -1010,6 +1010,14 @@ void CLocalListView::OnContextMenu(wxContextMenuEvent& event)
 	if (!pMenu)
 		return;
 
+	const bool connected = m_pState->IsRemoteConnected();
+	if (!connected)
+	{
+		pMenu->Enable(XRCID("ID_EDIT"), false);
+		pMenu->Enable(XRCID("ID_UPLOAD"), false);
+		pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
+	}
+
 	int index = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	int count = 0;
 	int fillCount = 0;
