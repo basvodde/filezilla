@@ -1956,6 +1956,12 @@ void CLocalListView::OnMenuOpen(wxCommandEvent& event)
 	wxString cmd = pEditHandler->GetSystemOpenCommand(fn.GetFullPath());
 	if (cmd == _T(""))
 	{
+		int pos = data->name.Find('.') == -1;
+		if (pos == -1 || (pos == 0 && data->name.Mid(1).Find('.') == -1))
+			cmd = pEditHandler->GetOpenCommand(fn.GetFullPath());
+	}
+	if (cmd == _T(""))
+	{
 		wxMessageBox(wxString::Format(_("The file '%s' could not be opened:\nNo program has been associated on your system with this file type."), fn.GetFullPath().c_str()), _("Opening failed"), wxICON_EXCLAMATION);
 		return;
 	}
