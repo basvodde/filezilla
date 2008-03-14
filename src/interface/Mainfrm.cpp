@@ -896,8 +896,11 @@ void CMainFrame::OnUpdateToolbarDisconnect(wxUpdateUIEvent& event)
 	bool enable = m_pState->IsRemoteConnected() && m_pState->IsRemoteIdle();
 	event.Enable(enable);
 
-	m_pMenuBar->FindItem(XRCID("ID_MENU_SERVER_DISCONNECT"), 0)->Enable(enable);
-    m_pMenuBar->FindItem(XRCID("ID_MENU_SERVER_CMD"), 0)->Enable(m_pState->m_pEngine && m_pState->m_pEngine->IsConnected() && m_pState->m_pCommandQueue->Idle());
+	if (m_pMenuBar)
+	{
+		m_pMenuBar->FindItem(XRCID("ID_MENU_SERVER_DISCONNECT"), 0)->Enable(enable);
+		m_pMenuBar->FindItem(XRCID("ID_MENU_SERVER_CMD"), 0)->Enable(m_pState->m_pEngine && m_pState->m_pEngine->IsConnected() && m_pState->m_pCommandQueue->Idle());
+	}
 }
 
 void CMainFrame::OnDisconnect(wxCommandEvent& event)
@@ -1081,7 +1084,9 @@ void CMainFrame::OnUpdateToolbarReconnect(wxUpdateUIEvent &event)
 	}
 	
 	event.Enable(enable);
-	m_pMenuBar->FindItem(XRCID("ID_MENU_SERVER_RECONNECT"), 0)->Enable(enable);
+
+	if (m_pMenuBar)
+		m_pMenuBar->FindItem(XRCID("ID_MENU_SERVER_RECONNECT"), 0)->Enable(enable);
 }
 
 void CMainFrame::OnReconnect(wxCommandEvent &event)
@@ -1232,7 +1237,12 @@ void CMainFrame::OnUpdateToolbarProcessQueue(wxUpdateUIEvent& event)
 
 	event.Check(check);
 
-	m_pMenuBar->FindItem(XRCID("ID_MENU_TRANSFER_PROCESSQUEUE"), 0)->Check(check);
+	if (m_pMenuBar)
+	{
+		wxMenuItem* pItem = m_pMenuBar->FindItem(XRCID("ID_MENU_TRANSFER_PROCESSQUEUE"), 0);
+		if (pItem)
+			pItem->Check(check);
+	}
 }
 
 void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
