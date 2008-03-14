@@ -21,6 +21,7 @@ class CQueue;
 class CViewHeader;
 class CComparisonManager;
 class CWindowStateManager;
+class CStatusBar;
 
 class CMainFrame : public wxFrame
 {
@@ -61,7 +62,7 @@ protected:
 
 	void FocusNextEnabled(std::list<wxWindow*>& windowOrder, std::list<wxWindow*>::iterator iter, bool skipFirst, bool forward);
 
-	wxStatusBar* m_pStatusBar;
+	CStatusBar* m_pStatusBar;
 	wxMenuBar* m_pMenuBar;
 	wxToolBar* m_pToolBar;
 	CQuickconnectBar* m_pQuickconnectBar;
@@ -117,7 +118,6 @@ protected:
 	void OnUpdateToolbarReconnect(wxUpdateUIEvent& event);
 	void OnReconnect(wxCommandEvent& event);
 	void OnRefresh(wxCommandEvent& event);
-	void OnStatusbarSize(wxSizeEvent& event);
 	void OnTimer(wxTimerEvent& event);
 	void OnSiteManager(wxCommandEvent& event);
 	void OnProcessQueue(wxCommandEvent& event);
@@ -167,10 +167,6 @@ protected:
 	int m_lastQueueSplitterPos;
 
 	CWindowStateManager* m_pWindowStateManager;
-
-#ifdef __WXMSW__
-	bool m_windowIsMaximized;
-#endif
 
 	CQueue* m_pQueuePane;
 };

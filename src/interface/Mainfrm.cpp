@@ -34,20 +34,13 @@
 #include "inputdialog.h"
 #include "window_state_manager.h"
 #include "xh_toolb_ex.h"
+#include "statusbar.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
 #define TRANSFERSTATUS_TIMER_ID wxID_HIGHEST + 3
-
-static const int statbarWidths[6] = {
-#ifdef __WXMSW__
-	-2, 90, -1, 150, -1, 41
-#else
-	-2, 90, -1, 150, -1, 50
-#endif
-};
 
 #ifdef __WXMSW__
 DECLARE_EVENT_TYPE(fzEVT_ONSIZE_POST, -1)
@@ -151,30 +144,20 @@ CMainFrame::CMainFrame()
 	m_lastQueueSplitterPos = 0;
 
 #ifdef __WXMSW__
-	m_windowIsMaximized = false;
 	m_pendingPostSizing = false;
 #endif
 
 	m_pThemeProvider = new CThemeProvider();
 	m_pState = new CState(this);
 
-	m_pStatusBar = new wxStatusBar(this, wxID_ANY, wxST_SIZEGRIP);
+	m_pStatusBar = new CStatusBar(this);
 	if (m_pStatusBar)
 	{
-		m_pStatusBar->SetFieldsCount(6);
-
-		m_pStatusBar->Connect(wxID_ANY, wxEVT_SIZE, (wxObjectEventFunction)(wxEventFunction)(wxSizeEventFunction)&CMainFrame::OnStatusbarSize, 0, this);
-		int array[6];
-		for (int i = 1; i < 5; i++)
-			array[i] = wxSB_NORMAL;
-		array[0] = wxSB_FLAT;
-		array[5] = wxSB_FLAT;
-		m_pStatusBar->SetStatusStyles(6, array);
-
-		m_pStatusBar->SetStatusWidths(6, statbarWidths);
-
 		m_pRecvLed = new CLed(m_pStatusBar, 1, m_pState);
 		m_pSendLed = new CLed(m_pStatusBar, 0, m_pState);
+
+		m_pStatusBar->AddChild(-1, m_pRecvLed, 2);
+		m_pStatusBar->AddChild(-1, m_pSendLed, 16);
 
 		SetStatusBar(m_pStatusBar);
 	}
@@ -1128,45 +1111,6 @@ void CMainFrame::OnRefresh(wxCommandEvent &event)
 
 	if (m_pState)
 		m_pState->RefreshLocal();
-}
-
-void CMainFrame::OnStatusbarSize(wxSizeEvent& event)
-{
-	if (!m_pStatusBar)
-		return;
-
-#ifdef __WXMSW__
-	if (IsMaximized() && !m_windowIsMaximized)
-	{
-		m_windowIsMaximized = true;
-		int widths[6];
-		memcpy(widths, statbarWidths, 6 * sizeof(int));
-		widths[5] = 35;
-		m_pStatusBar->SetStatusWidths(6, widths);
-		m_pStatusBar->Refresh();
-	}
-	else if (!IsMaximized() && m_windowIsMaximized)
-	{
-		m_windowIsMaximized = false;
-
-		m_pStatusBar->SetStatusWidths(6, statbarWidths);
-		m_pStatusBar->Refresh();
-	}
-#endif
-
-	if (m_pSendLed)
-	{
-		wxRect rect;
-		m_pStatusBar->GetFieldRect(5, rect);
-		m_pSendLed->SetSize(rect.GetLeft() + 16, rect.GetTop() + (rect.GetHeight() - 11) / 2, -1, -1);
-	}
-
-	if (m_pRecvLed)
-	{
-		wxRect rect;
-		m_pStatusBar->GetFieldRect(5, rect);
-		m_pRecvLed->SetSize(rect.GetLeft() + 2, rect.GetTop() + (rect.GetHeight() - 11) / 2, -1, -1);
-	}
 }
 
 void CMainFrame::OnTimer(wxTimerEvent& event)

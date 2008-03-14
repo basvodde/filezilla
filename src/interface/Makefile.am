@@ -72,6 +72,7 @@ filezilla_SOURCES = aboutdialog.cpp \
 		settingsdialog.cpp \
 		sitemanager.cpp \
 		state.cpp \
+		statusbar.cpp \
 		statuslinectrl.cpp \
 		StatusView.cpp \
 		systemimagelist.cpp \
@@ -155,6 +156,7 @@ noinst_HEADERS = aboutdialog.h \
 		 sitemanager.h \
 		 state.h \
 		 statuslinectrl.h \
+		 statusbar.h \
 		 StatusView.h \
 		 systemimagelist.h \
 		 themeprovider.h \
