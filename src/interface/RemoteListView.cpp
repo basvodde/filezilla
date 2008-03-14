@@ -1038,6 +1038,12 @@ void CRemoteListView::OnItemActivated(wxListEvent &event)
 
 void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
 {
+	if (GetEditControl())
+	{
+		event.Skip();
+		return;
+	}
+
 	wxMenu* pMenu = wxXmlResource::Get()->LoadMenu(_T("ID_MENU_REMOTEFILELIST"));
 	if (!pMenu)
 		return;
