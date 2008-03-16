@@ -707,7 +707,7 @@ void CMainFrame::OnMenuOpenHandler(wxMenuEvent& event)
 	if (m_pState)
 		pServer = m_pState->GetServer();
 
-	if (!pServer || pServer->GetProtocol() == FTP || pServer->GetProtocol() == FTPS || pServer->GetProtocol() == FTPES)
+	if (!pServer || CServer::ProtocolHasDataTypeConcept(pServer->GetProtocol()))
 	{
 		pItem->Enable(true);
 		int mode = COptions::Get()->GetOptionVal(OPTION_ASCIIBINARY);

@@ -110,6 +110,10 @@ public:
 	static enum ServerProtocol GetProtocolFromPrefix(const wxString& prefix);
 	static wxString GetPrefixFromProtocol(const enum ServerProtocol protocol);
 
+	// Some protocol distinguish between ASCII and binary files for line-ending
+	// conversion.
+	static bool ProtocolHasDataTypeConcept(const enum ServerProtocol protocol);
+
 	// These commands will be executed after a successful login.
 	const std::vector<wxString>& GetPostLoginCommands() const { return m_postLoginCommands; }
 	bool SetPostLoginCommands(const std::vector<wxString>& postLoginCommands);

@@ -221,7 +221,7 @@ void CStatusBar::DisplayQueueSize(wxLongLong totalSize, bool hasUnknown)
 
 void CStatusBar::DisplayDataType(const CServer* const pServer)
 {
-	if (!pServer || (pServer->GetProtocol() != FTP && pServer->GetProtocol() != FTPS && pServer->GetProtocol() != FTPES))
+	if (!pServer || !CServer::ProtocolHasDataTypeConcept(pServer->GetProtocol()))
 	{
 		if (m_pDataTypeIndicator)
 		{

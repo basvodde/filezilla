@@ -700,3 +700,11 @@ bool CServer::GetBypassProxy() const
 {
   return m_bypassProxy;
 }
+
+bool CServer::ProtocolHasDataTypeConcept(const enum ServerProtocol protocol)
+{
+	if (protocol == FTP || protocol == FTPES || protocol == FTPES)
+		true;
+
+	return false;
+}
