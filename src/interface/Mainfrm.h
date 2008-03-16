@@ -50,6 +50,8 @@ public:
 
 	void ConnectNavigationHandler(wxEvtHandler* handler);
 
+	CStatusBar* GetStatusBar() { return m_pStatusBar; }
+
 protected:
 	bool CreateMenus();
 	bool CreateQuickconnectBar();

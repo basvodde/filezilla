@@ -649,16 +649,19 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	{
 		COptions::Get()->SetOption(OPTION_ASCIIBINARY, 0);
 		m_pMenuBar->FindItem(XRCID("ID_MENU_TRANSFER_TYPE_AUTO"))->Check();
+		m_pStatusBar->DisplayDataType(m_pState->GetServer());
 	}
 	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_TYPE_ASCII"))
 	{
 		COptions::Get()->SetOption(OPTION_ASCIIBINARY, 1);
 		m_pMenuBar->FindItem(XRCID("ID_MENU_TRANSFER_TYPE_ASCII"))->Check();
+		m_pStatusBar->DisplayDataType(m_pState->GetServer());
 	}
 	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_TYPE_BINARY"))
 	{
 		COptions::Get()->SetOption(OPTION_ASCIIBINARY, 2);
 		m_pMenuBar->FindItem(XRCID("ID_MENU_TRANSFER_TYPE_BINARY"))->Check();
+		m_pStatusBar->DisplayDataType(m_pState->GetServer());
 	}
 	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_PRESERVETIMES"))
 	{
@@ -1306,6 +1309,8 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 	}
 
 	CheckChangedSettings();
+
+	m_pStatusBar->DisplayDataType(m_pState->GetServer());
 }
 
 void CMainFrame::OnToggleLogView(wxCommandEvent& event)

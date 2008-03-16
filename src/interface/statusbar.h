@@ -14,6 +14,8 @@ public:
 	// cx is the horizontal offset inside the field.
 	// Children are always centered vertically.
 	void AddChild(int field, wxWindow* pChild, int cx);
+	
+	void RemoveChild(int field, wxWindow* pChild);
 
 	// We override these for two reasons:
 	// - wxWidgets does not provide a function to get the field widths back
@@ -23,7 +25,11 @@ public:
 	virtual void SetFieldsCount(int number = 1, const int* widths = NULL);
 	virtual void SetStatusWidths(int n, const int *widths);
 
+	void SetFieldWidth(int field, int width);
+
 protected:
+	int GetFieldIndex(int field);
+
 	struct t_statbar_child
 	{
 		int field;
@@ -38,7 +44,11 @@ protected:
 	bool m_parentWasMaximized;
 #endif
 
+	void FixupFieldWidth(int field);
+
 	int* m_columnWidths;
+
+	void PositionChild(const struct t_statbar_child& data);
 
 	DECLARE_EVENT_TABLE();
 	void OnSize(wxSizeEvent& event);
@@ -48,6 +58,14 @@ class CStatusBar : public wxStatusBarEx
 {
 public:
 	CStatusBar(wxTopLevelWindow* parent);
+	virtual ~CStatusBar() {}
+
+	void DisplayQueueSize(wxLongLong totalSize, bool hasUnknown);
+
+	void DisplayDataType(const CServer* const pServer);
+
+protected:
+	wxStaticBitmap* m_pDataTypeIndicator;
 };
 
 #endif //__STATUSBAR_H__

@@ -23,6 +23,7 @@
 #include <wx/progdlg.h>
 #include <wx/sound.h>
 #include "local_filesys.h"
+#include "statusbar.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -1501,27 +1502,10 @@ void CQueueView::CalculateQueueSize()
 
 void CQueueView::DisplayQueueSize()
 {
-	wxStatusBar *pStatusBar = m_pMainFrame->GetStatusBar();
+	CStatusBar* pStatusBar = m_pMainFrame->GetStatusBar();
 	if (!pStatusBar)
 		return;
-
-	wxString queueSize;
-	wxLongLong totalSize = m_totalQueueSize;
-	if (totalSize == 0 && m_filesWithUnknownSize == 0)
-		queueSize = _("Queue: empty");
-	if (totalSize > (1000 * 1000))
-	{
-		totalSize /= 1000 * 1000;
-		queueSize.Printf(_("Queue: %s%d MB"), (m_filesWithUnknownSize > 0) ? _T(">") : _T(""), totalSize.GetLo());
-	}
-	else if (totalSize > 1000)
-	{
-		totalSize /= 1000;
-		queueSize.Printf(_("Queue: %s%d KB"), (m_filesWithUnknownSize > 0) ? _T(">") : _T(""), totalSize.GetLo());
-	}
-	else
-		queueSize.Printf(_("Queue: %s%d bytes"), (m_filesWithUnknownSize > 0) ? _T(">") : _T(""), totalSize.GetLo());
-	pStatusBar->SetStatusText(queueSize, 4);
+	pStatusBar->DisplayQueueSize(m_totalQueueSize, m_filesWithUnknownSize != 0);
 }
 
 bool CQueueView::QueueFolder(bool queueOnly, bool download, const wxString& localPath, const CServerPath& remotePath, const CServer& server)
