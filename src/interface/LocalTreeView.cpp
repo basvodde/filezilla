@@ -729,14 +729,12 @@ void CLocalTreeView::Refresh()
 
 		const wxLongLong size = -1;
 		wxString file;
-		bool found = find.GetFirst(&file, _T(""), wxDIR_DIRS | wxDIR_HIDDEN);
 		std::list<wxString> dirs;
-		while (found)
+		for (bool found = find.GetFirst(&file, _T(""), wxDIR_DIRS | wxDIR_HIDDEN); found; found = find.GetNext(&file))
 		{
 			if (file == _T(""))
 			{
 				wxGetApp().DisplayEncodingWarning();
-				found = find.GetNext(&file);
 				continue;
 			}
 
