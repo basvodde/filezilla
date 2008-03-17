@@ -1,25 +1,34 @@
 <html>
+<head>
+<style type="text/css">
+h2, h3 { text-decoration: underline; }
+</style>
+</head>
 <body>
 
 <p align="center"><font size="5"><b>FileZilla 3 Icon set specification</b></font></p>
 
-<p><b><u>Introduction:</u></b></p>
+<h2>Introduction</h2>
 
 <p>This document describes the requirements for icon sets in FileZilla 3.</p>
 
 <p>
   Please remember that if you want to create an icon set for FileZilla,
-  that you should be available to update the icon set in the feature when it's
-  required. Else it could happen that the icon set will be removed.
+  that you should be available to update the icon set in the future when
+  additional icon are added to the requirements. Otherwise the default icons
+  will be used for the missing icons and eventually your theme willbe removed
+  once it becomes too outdated.
 </p>
 
-<p><b><u>Requirements:</u></b></p>
+<h2>Requirements</h2>
 <p>
   Since FileZilla is Free Software, the same has to apply to all artwork used 
   in FileZilla. This means that all artwork has to be published under the GPL
   or a GPL compatible license.
-  Note that Creative Commons is <a href="http://www.gnu.org/licenses/license-list.html">not compatible</a> with the GPL.
+  Note that the Creative Commons Attribution license is <a href="http://www.gnu.org/licenses/license-list.html">not compatible</a> with the GPL.
 </p>
+
+<h3>Icon sizes</h3>
 
 <p>
   To improve accessibility of the software, the icons should be available in
@@ -38,11 +47,15 @@
   The following icons <b>have</b> to be available in 16x16 (see further below what the icons should mean):
 </p>
 <ul>
+  <li>ascii.png</li>
+  <li>auto.png</li>
+  <li>binary.png</li>
   <li>file.png</li>
   <li>folder.png</li>
   <li>folderclosed.png</li>
   <li>download.png</li>
   <li>downloadadd.png</li>
+  <li>lock.png</li>
   <li>upload.png</li>
   <li>uploadadd.png</li>
   <li>server.png</li>
@@ -55,22 +68,26 @@
   <li>file.png</li>
 </ul>
 
+<p>It is important, that the icons are good-looking in all those sizes. Especialy the smallest icon size should not look blurred</p>
+
+<h3>Color depth</h3>
 
 <p>
-  It is important, that the icons are good-looking in all those sizes.<br>
+  Regarding the used color-depth there is no limitation.
+</p>
+
+<h3>File format</h3>
+
+<p>
   As fileformat for the icons, the png format has to be used. For each 
   provided size there has to be a subdirectory with the size as name 
   ("16x16" for example) containing all icons in the corresponding size.
 </p>
 
 <p>
-  If possible, despite the files for the different sizes, each icon should be
-  available in a vector based format (e.g. SVG), so that differently sized icons can 
-  quickly be generated.
-</p>
-
-<p>
-  Regarding the used color-depth there is no limitation.
+  In addition to the files for the different sizes, each icon should be
+  available in a vector based format (e.g. SVG) as well, so that differently sized icons can 
+  be generated quickly.
 </p>
 
 <p>
@@ -78,7 +95,7 @@
   the function of the icon has to be easily recognizeable.
 </p>
 
-<p><b><u>Required icons:</u></b></p>
+<h2>Required icons</h2>
 
 <p>
   The following icons together with the required file name are required in all
@@ -119,10 +136,6 @@
 
 <p><b>Transfer settings toolbar:</b></p>
 <ul>
-  <li>
-    ascii.png, binary.png, auto.png - Transfermode buttons for Ascii, binary
-    and Auto mode.
-  </li>
   <li>speedlimits.png - Button to enable speed limits</li>
 </ul>
 
@@ -136,12 +149,17 @@
 
 <p><b>Other generic icons:</b></p>
 <ul>
+  <li>
+    ascii.png, auto.png, binary.png - Transfermode icons for Ascii, binary
+    and Auto mode.
+  </li>
   <li>bookmars.png - Bookmarks/Favourites</li>
   <li>folderup.png - "Go up one folder"</li>
   <li>folderback.png - "Go back to previous folder"</li>
   <li>file.png - icon for generic files</li>
   <li>folder.png - icon for open folder/directory</li>
   <li>folderclosed.png - icon for a closed folder/directory</li>
+  <li>lock.png - used in status bar to indicate encrypted connections</li>
   <li>server.png - server icon for the site entries in the Site Manager, can be 16x16 only</li>
 </ul>
 
