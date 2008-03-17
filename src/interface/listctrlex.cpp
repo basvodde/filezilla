@@ -240,6 +240,6 @@ void wxListCtrlEx::SaveSetItemCount(long count)
 	int focused = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
 	if (focused >= count)
 		SetItemState(focused, 0, wxLIST_STATE_FOCUSED);
-#endif __WXMSW__
+#endif //__WXMSW__
 	SetItemCount(count);
 }
