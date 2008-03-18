@@ -1257,7 +1257,7 @@ void CDirectoryListingParserTest::testIndividual()
 	wxString msg = wxString::Format(_T("Data: %s, count: %d"), wxString(entry.data.c_str(), wxConvUTF8).c_str(), listing.GetCount());
 	msg.Replace(_T("\r"), _T(""));
 	msg.Replace(_T("\n"), _T(""));
-	const wxWX2MBbuf mb_buf = msg.mb_str(wxConvUTF8);
+	wxWX2MBbuf mb_buf = msg.mb_str(wxConvUTF8);
 	CPPUNIT_ASSERT_MESSAGE((const char*)mb_buf, listing.GetCount() == 1);
 
 	msg = wxString::Format(_T("Data: %s  Expected:\n%s\n  Got:\n%s"), wxString(entry.data.c_str(), wxConvUTF8).c_str(), entry.reference.dump().c_str(), listing[0].dump().c_str());
