@@ -1311,6 +1311,7 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 	CheckChangedSettings();
 
 	m_pStatusBar->DisplayDataType(m_pState->GetServer());
+	m_pStatusBar->UpdateSizeFormat();
 }
 
 void CMainFrame::OnToggleLogView(wxCommandEvent& event)

@@ -244,7 +244,10 @@ void CState::SetServer(const CServer* server)
 		delete m_pServer;
 	}
 
-	m_pMainFrame->GetStatusBar()->DisplayDataType(server);
+	CStatusBar* const pStatusBar = m_pMainFrame->GetStatusBar();
+	pStatusBar->DisplayDataType(server);
+	pStatusBar->DisplayEncrypted(server);
+
 	if (server)
 		m_pServer = new CServer(*server);
 	else

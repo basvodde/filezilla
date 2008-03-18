@@ -3,7 +3,7 @@
 #include "Options.h"
 
 static const int statbarWidths[6] = {
-	-3, 0, 0, 30, -1, 35
+	-3, 0, 0, 20, 0, 35
 };
 #define FIELD_QUEUESIZE 4
 
@@ -186,6 +186,7 @@ CStatusBar::CStatusBar(wxTopLevelWindow* pParent)
 	: wxStatusBarEx(pParent)
 {
 	m_pDataTypeIndicator = 0;
+	m_pEncryptionIndicator = 0;
 
 	const int count = 6;
 	SetFieldsCount(count);
@@ -197,25 +198,57 @@ CStatusBar::CStatusBar(wxTopLevelWindow* pParent)
 	SetStatusStyles(count, array);
 
 	SetStatusWidths(count, statbarWidths);
+
+	MeasureQueueSizeWidth();
+
+	UpdateSizeFormat();
 }
 
 void CStatusBar::DisplayQueueSize(wxLongLong totalSize, bool hasUnknown)
 {
-	wxString queueSize;
 	if (totalSize == 0 && !hasUnknown)
-		queueSize = _("Queue: empty");
-	if (totalSize > (1000 * 1000))
 	{
-		totalSize /= 1000 * 1000;
-		queueSize.Printf(_("Queue: %s%d MB"), hasUnknown ? _T(">") : _T(""), totalSize.GetLo());
+		SetStatusText(_("Queue: empty"), FIELD_QUEUESIZE);
+		return;
 	}
-	else if (totalSize > 1000)
-	{
-		totalSize /= 1000;
-		queueSize.Printf(_("Queue: %s%d KB"), hasUnknown ? _T(">") : _T(""), totalSize.GetLo());
-	}
+
+	int divider;
+	if (m_sizeFormat == 3)
+		divider = 1000;
 	else
+		divider = 1024;
+
+	// We always round up. Set to true if there's a reminder
+	bool r2 = false;
+
+	int p = 0; // Exponent (2^(10p) or 10^(3p) depending on option
+	while (totalSize > divider && p < 6)
+	{
+		const wxLongLong rr = totalSize / divider;
+		if (rr * divider != totalSize)
+			r2 = true;
+		totalSize = rr;
+		p++;
+	}
+	if (r2)
+		totalSize++;
+
+	wxString queueSize;
+	if (!p)
 		queueSize.Printf(_("Queue: %s%d bytes"), hasUnknown ? _T(">") : _T(""), totalSize.GetLo());
+	else
+	{
+		// We stop at Exa. If someone has files bigger than that, he can afford to
+		// make a donation to have this changed ;)
+		const wxChar prefix[] = { ' ', 'K', 'M', 'G', 'T', 'P', 'E' };
+
+		queueSize.Printf(_("Queue: %s%d %c"), hasUnknown ? _T(">") : _T(""), totalSize.GetLo(), prefix[p]);
+
+		if (m_sizeFormat == 1)
+			queueSize += _T("iB");
+		else
+			queueSize += _T("B");
+	}
 	SetStatusText(queueSize, FIELD_QUEUESIZE);
 }
 
@@ -258,8 +291,8 @@ void CStatusBar::DisplayDataType(const CServer* const pServer)
 		if (!m_pDataTypeIndicator)
 		{
 			m_pDataTypeIndicator = new wxStaticBitmap(this, wxID_ANY, bmp);
-			AddChild(-4, m_pDataTypeIndicator, 2);
 			SetFieldWidth(-4, 20);
+			AddChild(-4, m_pDataTypeIndicator, 2);
 		}
 		else
 			m_pDataTypeIndicator->SetBitmap(bmp);
@@ -267,4 +300,53 @@ void CStatusBar::DisplayDataType(const CServer* const pServer)
 
 		Refresh();
 	}
+}
+
+void CStatusBar::MeasureQueueSizeWidth()
+{
+	wxClientDC dc(this);
+	dc.SetFont(GetFont());
+
+	wxSize s = dc.GetTextExtent(_("Queue: empty"));
+	s.IncTo(dc.GetTextExtent(wxString::Format(_("Queue: %s%d MiB"), ">", 8888)));
+	s.IncTo(dc.GetTextExtent(wxString::Format(_("Queue: %s%d bytes"), ">", 8888)));
+
+	SetFieldWidth(-2, s.x + 10);
+}
+
+void CStatusBar::DisplayEncrypted(const CServer* const pServer)
+{
+	if (!pServer || (pServer->GetProtocol() != FTPS && pServer->GetProtocol() != FTPES && pServer->GetProtocol() != SFTP))
+	{
+		if (m_pEncryptionIndicator)
+		{
+			RemoveChild(-5, m_pEncryptionIndicator);
+			SetFieldWidth(-5, 0);
+			m_pEncryptionIndicator->Destroy();
+			m_pEncryptionIndicator = 0;
+			Refresh();
+		}
+	}
+	else
+	{
+		if (m_pEncryptionIndicator)
+			return;
+		wxBitmap bmp = wxArtProvider::GetBitmap(_T("ART_LOCK"), wxART_OTHER, wxSize(16, 16));
+		m_pEncryptionIndicator = new wxStaticBitmap(this, wxID_ANY, bmp);
+		SetFieldWidth(-5, 20);
+		AddChild(-5, m_pEncryptionIndicator, 2);
+
+		m_pEncryptionIndicator->SetToolTip(_T("The connection is encrypted. Click icon for details."));
+
+		Refresh();
+	}
+}
+
+void CStatusBar::UpdateSizeFormat()
+{
+	// 0 equals bytes, however just use IEC binary prefixes instead, 
+	// exact byte counts for queue make no sense.
+	m_sizeFormat = COptions::Get()->GetOptionVal(OPTION_SIZE_FORMAT);
+	if (!m_sizeFormat)
+		m_sizeFormat = 1;
 }

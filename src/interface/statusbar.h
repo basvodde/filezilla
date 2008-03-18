@@ -61,11 +61,18 @@ public:
 	virtual ~CStatusBar() {}
 
 	void DisplayQueueSize(wxLongLong totalSize, bool hasUnknown);
+	void UpdateSizeFormat();
 
 	void DisplayDataType(const CServer* const pServer);
+	void DisplayEncrypted(const CServer* const pServer);
 
 protected:
+	void MeasureQueueSizeWidth();
+
+	int m_sizeFormat;
+
 	wxStaticBitmap* m_pDataTypeIndicator;
+	wxStaticBitmap* m_pEncryptionIndicator;
 };
 
 #endif //__STATUSBAR_H__
