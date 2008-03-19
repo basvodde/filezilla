@@ -32,7 +32,10 @@ void CCommandQueue::ProcessCommand(CCommand *pCommand)
 {
 	m_CommandList.push_back(pCommand);
 	if (m_CommandList.size() == 1)
+	{
+		m_pMainFrame->GetState()->NotifyRemoteIdleChange();
 		ProcessNextCommand();
+	}
 }
 
 void CCommandQueue::ProcessNextCommand()
@@ -105,9 +108,12 @@ void CCommandQueue::ProcessNextCommand()
 		}
 	}
 
-	if (m_CommandList.empty() && m_exclusiveEngineRequest)
+	if (m_CommandList.empty())
 	{
-		GrantExclusiveEngineRequest();
+		if (m_exclusiveEngineRequest)
+			GrantExclusiveEngineRequest();
+		else
+			m_pMainFrame->GetState()->NotifyRemoteIdleChange();
 	}
 }
 
@@ -132,6 +138,7 @@ bool CCommandQueue::Cancel()
 	{
 		delete pCommand;
 		m_CommandList.clear();
+		m_pMainFrame->GetState()->NotifyRemoteIdleChange();
 		return true;
 	}
 
@@ -139,7 +146,12 @@ bool CCommandQueue::Cancel()
 	if (res == FZ_REPLY_WOULDBLOCK)
 		return false;
 	else
+	{
+		delete pCommand;
+		m_CommandList.clear();
+		m_pMainFrame->GetState()->NotifyRemoteIdleChange();
 		return true;
+	}
 }
 
 void CCommandQueue::Finish(COperationNotification *pNotification)
@@ -195,6 +207,7 @@ void CCommandQueue::RequestExclusiveEngine(bool requestExclusive)
 			m_requestId = 0;
 		if (m_CommandList.empty())
 		{
+			m_pMainFrame->GetState()->NotifyRemoteIdleChange();
 			GrantExclusiveEngineRequest();
 			return;
 		}
@@ -202,6 +215,7 @@ void CCommandQueue::RequestExclusiveEngine(bool requestExclusive)
 	if (!requestExclusive)
 		m_exclusiveEngineLock = false;
 	m_exclusiveEngineRequest = requestExclusive;
+	m_pMainFrame->GetState()->NotifyRemoteIdleChange();
 }
 
 void CCommandQueue::GrantExclusiveEngineRequest()

@@ -56,17 +56,12 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_MENU(wxID_ANY, CMainFrame::OnMenuHandler)
 	EVT_MENU_OPEN(CMainFrame::OnMenuOpenHandler)
 	EVT_FZ_NOTIFICATION(wxID_ANY, CMainFrame::OnEngineEvent)
-	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_DISCONNECT"), CMainFrame::OnUpdateToolbarDisconnect)
 	EVT_TOOL(XRCID("ID_TOOLBAR_DISCONNECT"), CMainFrame::OnDisconnect)
-	EVT_UPDATE_UI(XRCID("ID_MENU_SERVER_DISCONNECT"), CMainFrame::OnUpdateToolbarDisconnect)
 	EVT_MENU(XRCID("ID_MENU_SERVER_DISCONNECT"), CMainFrame::OnDisconnect)
-	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_CANCEL"), CMainFrame::OnUpdateToolbarCancel)
 	EVT_TOOL(XRCID("ID_TOOLBAR_CANCEL"), CMainFrame::OnCancel)
 	EVT_SPLITTER_SASH_POS_CHANGING(wxID_ANY, CMainFrame::OnSplitterSashPosChanging)
 	EVT_SPLITTER_SASH_POS_CHANGED(wxID_ANY, CMainFrame::OnSplitterSashPosChanged)
-	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_RECONNECT"), CMainFrame::OnUpdateToolbarReconnect)
 	EVT_TOOL(XRCID("ID_TOOLBAR_RECONNECT"), CMainFrame::OnReconnect)
-	EVT_UPDATE_UI(XRCID("ID_MENU_SERVER_RECONNECT"), CMainFrame::OnUpdateToolbarReconnect)
 	EVT_TOOL(XRCID("ID_MENU_SERVER_RECONNECT"), CMainFrame::OnReconnect)
 	EVT_TOOL(XRCID("ID_TOOLBAR_REFRESH"), CMainFrame::OnRefresh)
 	EVT_TOOL(XRCID("ID_TOOLBAR_SITEMANAGER"), CMainFrame::OnSiteManager)
@@ -75,13 +70,9 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_TOOL(XRCID("ID_TOOLBAR_PROCESSQUEUE"), CMainFrame::OnProcessQueue)
 	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_PROCESSQUEUE"), CMainFrame::OnUpdateToolbarProcessQueue)
 	EVT_TOOL(XRCID("ID_TOOLBAR_LOGVIEW"), CMainFrame::OnToggleLogView)
-	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_LOGVIEW"), CMainFrame::OnUpdateToggleLogView)
 	EVT_TOOL(XRCID("ID_TOOLBAR_LOCALTREEVIEW"), CMainFrame::OnToggleLocalTreeView)
-	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_LOCALTREEVIEW"), CMainFrame::OnUpdateToggleLocalTreeView)
 	EVT_TOOL(XRCID("ID_TOOLBAR_REMOTETREEVIEW"), CMainFrame::OnToggleRemoteTreeView)
-	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_REMOTETREEVIEW"), CMainFrame::OnUpdateToggleRemoteTreeView)
 	EVT_TOOL(XRCID("ID_TOOLBAR_QUEUEVIEW"), CMainFrame::OnToggleQueueView)
-	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_QUEUEVIEW"), CMainFrame::OnUpdateToggleQueueView)
 	EVT_MENU(wxID_ABOUT, CMainFrame::OnMenuHelpAbout)
 	EVT_TOOL(XRCID("ID_TOOLBAR_FILTER"), CMainFrame::OnFilter)
 #if FZ_MANUALUPDATECHECK
@@ -91,7 +82,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 #ifdef EVT_TOOL_DROPDOWN
 	EVT_TOOL_DROPDOWN(XRCID("ID_TOOLBAR_SITEMANAGER"), CMainFrame::OnSitemanagerDropdown)
 #endif
-		EVT_NAVIGATION_KEY(CMainFrame::OnNavigationKeyEvent)
+	EVT_NAVIGATION_KEY(CMainFrame::OnNavigationKeyEvent)
 	EVT_SET_FOCUS(CMainFrame::OnGetFocus)
 	EVT_CHAR_HOOK(CMainFrame::OnChar)
 	EVT_MENU(XRCID("ID_MENU_EDIT_FILTERS"), CMainFrame::OnFilter)
@@ -105,6 +96,28 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_MENU(XRCID("ID_COMPARE_SIZE"), CMainFrame::OnDropdownComparisonMode)
 	EVT_MENU(XRCID("ID_COMPARE_DATE"), CMainFrame::OnDropdownComparisonMode)
 END_EVENT_TABLE()
+
+class CMainFrameStateEventHandler : public CStateEventHandler
+{
+public:
+	CMainFrameStateEventHandler(CState* pState, CMainFrame* pMainFrame)
+		: CStateEventHandler(pState)
+	{
+		m_pMainFrame = pMainFrame;
+
+		pState->RegisterHandler(this, STATECHANGE_REMOTE_IDLE);
+		pState->RegisterHandler(this, STATECHANGE_SERVER);
+	}
+
+protected:
+	virtual void OnStateChange(enum t_statechange_notifications notification, const wxString& data)
+	{
+		m_pMainFrame->UpdateMenubarState();
+		m_pMainFrame->UpdateToolbarState();
+	}
+
+	CMainFrame* m_pMainFrame;
+};
 
 CMainFrame::CMainFrame()
 {
@@ -149,6 +162,7 @@ CMainFrame::CMainFrame()
 
 	m_pThemeProvider = new CThemeProvider();
 	m_pState = new CState(this);
+	m_pStateEventHandler = new CMainFrameStateEventHandler(m_pState, this);
 
 	m_pStatusBar = new CStatusBar(this);
 	if (m_pStatusBar)
@@ -339,10 +353,13 @@ CMainFrame::CMainFrame()
 	CEditHandler::Create()->SetQueue(m_pQueueView);
 
 	m_pComparisonManager = 0;
+
+	InitToolbarState();
 }
 
 CMainFrame::~CMainFrame()
 {
+	delete m_pStateEventHandler;
 	delete m_pState;
 	delete m_pAsyncRequestQueue;
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
@@ -517,6 +534,8 @@ bool CMainFrame::CreateMenus()
 
 	if (m_pMenuBar)
 		m_pMenuBar->FindItem(XRCID("ID_MENU_SERVER_VIEWHIDDEN"), 0)->Check(COptions::Get()->GetOptionVal(OPTION_VIEW_HIDDEN_FILES) ? true : false);
+
+	UpdateMenubarState();
 
 	return true;
 }
@@ -862,7 +881,6 @@ bool CMainFrame::CreateToolBar()
 		int pos = str.Find('x');
 		if (CThemeProvider::ThemeHasSize(COptions::Get()->GetOption(OPTION_THEME), str) && pos > 0 && pos < (int)str.Len() - 1)
 		{
-			
 			long width = 0;
 			long height = 0;
 			if (str.Left(pos).ToLong(&width) &&
@@ -901,19 +919,10 @@ bool CMainFrame::CreateToolBar()
 	if (m_pQuickconnectBar)
 		m_pQuickconnectBar->Refresh();
 
+	InitToolbarState();
+	UpdateToolbarState();
+
 	return true;
-}
-
-void CMainFrame::OnUpdateToolbarDisconnect(wxUpdateUIEvent& event)
-{
-	bool enable = m_pState->IsRemoteConnected() && m_pState->IsRemoteIdle();
-	event.Enable(enable);
-
-	if (m_pMenuBar)
-	{
-		m_pMenuBar->FindItem(XRCID("ID_MENU_SERVER_DISCONNECT"), 0)->Enable(enable);
-		m_pMenuBar->FindItem(XRCID("ID_MENU_SERVER_CMD"), 0)->Enable(m_pState->m_pEngine && m_pState->m_pEngine->IsConnected() && m_pState->m_pCommandQueue->Idle());
-	}
 }
 
 void CMainFrame::OnDisconnect(wxCommandEvent& event)
@@ -925,11 +934,6 @@ void CMainFrame::OnDisconnect(wxCommandEvent& event)
 		return;
 
 	m_pState->m_pCommandQueue->ProcessCommand(new CDisconnectCommand());
-}
-
-void CMainFrame::OnUpdateToolbarCancel(wxUpdateUIEvent& event)
-{
-	event.Enable(m_pState && m_pState->m_pCommandQueue && !m_pState->m_pCommandQueue->Idle());
 }
 
 void CMainFrame::OnCancel(wxCommandEvent& event)
@@ -1083,26 +1087,6 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 	COptions::Get()->SaveColumnWidths(m_pRemoteListView, OPTION_REMOTEFILELIST_COLUMN_WIDTHS);
 
 	Destroy();
-}
-
-void CMainFrame::OnUpdateToolbarReconnect(wxUpdateUIEvent &event)
-{
-	bool enable;
-	if (!m_pState->m_pEngine || m_pState->m_pEngine->IsConnected() || !m_pState->m_pCommandQueue->Idle())
-		enable = false;
-	else
-	{
-		CServer server;
-		enable = COptions::Get()->GetLastServer(server);
-	}
-	
-	event.Enable(enable);
-
-	if (m_pMenuBar)
-	{
-		m_pMenuBar->FindItem(XRCID("ID_MENU_SERVER_RECONNECT"), 0)->Enable(enable);
-		m_pMenuBar->FindItem(XRCID("ID_MENU_FILE_COPYSITEMANAGER"), 0)->Enable(m_pState->GetServer() != 0);
-	}
 }
 
 void CMainFrame::OnReconnect(wxCommandEvent &event)
@@ -1359,11 +1343,6 @@ void CMainFrame::OnToggleLogView(wxCommandEvent& event)
 	COptions::Get()->SetOption(OPTION_SHOW_MESSAGELOG, m_pTopSplitter->IsSplit());
 }
 
-void CMainFrame::OnUpdateToggleLogView(wxUpdateUIEvent& event)
-{
-	event.Check(m_pTopSplitter && m_pTopSplitter->IsSplit());
-}
-
 void CMainFrame::ApplySplitterConstraints()
 {
 	if (m_pTopSplitter->IsSplit())
@@ -1417,11 +1396,6 @@ void CMainFrame::ShowLocalTree()
 		m_pLocalSplitter->SplitHorizontally(m_pLocalTreeViewPanel, m_pLocalListViewPanel, m_lastLocalTreeSplitterPos);
 }
 
-void CMainFrame::OnUpdateToggleLocalTreeView(wxUpdateUIEvent& event)
-{
-	event.Check(m_pLocalSplitter && m_pLocalSplitter->IsSplit());
-}
-
 void CMainFrame::OnToggleRemoteTreeView(wxCommandEvent& event)
 {
 	if (!m_pTopSplitter)
@@ -1456,11 +1430,6 @@ void CMainFrame::ShowRemoteTree()
 		m_pRemoteSplitter->SplitHorizontally(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel, m_lastRemoteTreeSplitterPos);
 }
 
-void CMainFrame::OnUpdateToggleRemoteTreeView(wxUpdateUIEvent& event)
-{
-	event.Check(m_pRemoteSplitter && m_pRemoteSplitter->IsSplit());
-}
-
 void CMainFrame::OnToggleQueueView(wxCommandEvent& event)
 {
 	if (!m_pBottomSplitter)
@@ -1479,11 +1448,6 @@ void CMainFrame::OnToggleQueueView(wxCommandEvent& event)
 		ApplySplitterConstraints();
 	}
 	COptions::Get()->SetOption(OPTION_SHOW_QUEUE, m_pBottomSplitter->IsSplit());
-}
-
-void CMainFrame::OnUpdateToggleQueueView(wxUpdateUIEvent& event)
-{
-	event.Check(m_pBottomSplitter && m_pBottomSplitter->IsSplit());
 }
 
 void CMainFrame::OnMenuHelpAbout(wxCommandEvent& event)
@@ -2024,4 +1988,61 @@ void CMainFrame::OnDropdownComparisonMode(wxCommandEvent& event)
 
 	if (old_mode != new_mode && m_pComparisonManager && m_pComparisonManager->IsComparing())
 		m_pComparisonManager->CompareListings();
+}
+
+void CMainFrame::InitToolbarState()
+{
+	if (!m_pToolBar)
+		return;
+	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_LOGVIEW"), m_pTopSplitter && m_pTopSplitter->IsSplit());
+	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_LOCALTREEVIEW"), m_pLocalSplitter && m_pLocalSplitter->IsSplit());
+	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_REMOTETREEVIEW"), m_pRemoteSplitter && m_pRemoteSplitter->IsSplit());
+	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_QUEUEVIEW"), m_pBottomSplitter && m_pBottomSplitter->IsSplit());
+}
+
+void CMainFrame::UpdateToolbarState()
+{
+	if (!m_pToolBar)
+		return;
+	wxASSERT(m_pState);
+
+	const CServer* pServer = m_pState->GetServer();
+	const bool idle = m_pState->IsRemoteIdle();
+
+	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_DISCONNECT"), pServer && idle);
+	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_CANCEL"), pServer && !idle);
+
+	bool canReconnect;
+	if (pServer || !idle)
+		canReconnect = false;
+	else
+	{
+		CServer tmp;
+		canReconnect = COptions::Get()->GetLastServer(tmp);
+	}
+	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_RECONNECT"), canReconnect);
+}
+
+void CMainFrame::UpdateMenubarState()
+{
+	if (!m_pMenuBar)
+		return;
+	wxASSERT(m_pState);
+
+	const CServer* const pServer = m_pState->GetServer();
+	const bool idle = m_pState->IsRemoteIdle();
+
+	m_pMenuBar->Enable(XRCID("ID_MENU_SERVER_DISCONNECT"), pServer && idle);
+	m_pMenuBar->Enable(XRCID("ID_MENU_SERVER_CMD"), pServer && idle);
+	m_pMenuBar->Enable(XRCID("ID_MENU_FILE_COPYSITEMANAGER"), pServer != 0);
+
+	bool canReconnect;
+	if (pServer || !idle)
+		canReconnect = false;
+	else
+	{
+		CServer tmp;
+		canReconnect = COptions::Get()->GetLastServer(tmp);
+	}
+	m_pMenuBar->Enable(XRCID("ID_MENU_SERVER_RECONNECT"), canReconnect);
 }

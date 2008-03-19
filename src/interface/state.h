@@ -16,6 +16,9 @@ enum t_statechange_notifications
 
 	STATECHANGE_APPLYFILTER,
 
+	STATECHANGE_REMOTE_IDLE,
+	STATECHANGE_SERVER,
+
 	STATECHANGE_MAX
 };
 
@@ -63,8 +66,6 @@ public:
 	void RegisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification);
 	void UnregisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification);
 
-	static CState* GetState();
-
 	CFileZillaEngine* m_pEngine;
 	CCommandQueue* m_pCommandQueue;
 
@@ -77,6 +78,8 @@ public:
 
 	bool IsRemoteConnected() const;
 	bool IsRemoteIdle() const;
+
+	void NotifyRemoteIdleChange();
 
 	CRecursiveOperation* GetRecursiveOperationHandler() { return m_pRecursiveOperation; }
 

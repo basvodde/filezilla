@@ -22,6 +22,7 @@ class CViewHeader;
 class CComparisonManager;
 class CWindowStateManager;
 class CStatusBar;
+class CMainFrameStateEventHandler;
 
 class CMainFrame : public wxFrame
 {
@@ -52,6 +53,9 @@ public:
 
 	CStatusBar* GetStatusBar() { return m_pStatusBar; }
 
+	void UpdateToolbarState();
+	void UpdateMenubarState();
+
 protected:
 	bool CreateMenus();
 	bool CreateQuickconnectBar();
@@ -59,6 +63,7 @@ protected:
 	void SetProgress(const CTransferStatus* pStatus);
 	void ConnectToSite(CSiteManagerItemData* const pData);
 	void OpenSiteManager(const CServer* pServer = 0);
+	void InitToolbarState();
 
 	// If resizing the window, make sure the individual splitter windows don't get too small
 	void ApplySplitterConstraints();
@@ -111,14 +116,11 @@ protected:
 	void OnMenuHandler(wxCommandEvent& event);
 	void OnMenuOpenHandler(wxMenuEvent& event);
 	void OnEngineEvent(wxEvent& event);
-	void OnUpdateToolbarDisconnect(wxUpdateUIEvent& event);
 	void OnDisconnect(wxCommandEvent& event);
-	void OnUpdateToolbarCancel(wxUpdateUIEvent& event);
 	void OnCancel(wxCommandEvent& event);
 	void OnSplitterSashPosChanging(wxSplitterEvent& event);
 	void OnSplitterSashPosChanged(wxSplitterEvent& event);
 	void OnClose(wxCloseEvent& event);
-	void OnUpdateToolbarReconnect(wxUpdateUIEvent& event);
 	void OnReconnect(wxCommandEvent& event);
 	void OnRefresh(wxCommandEvent& event);
 	void OnTimer(wxTimerEvent& event);
@@ -127,13 +129,9 @@ protected:
 	void OnUpdateToolbarProcessQueue(wxUpdateUIEvent& event);
 	void OnMenuEditSettings(wxCommandEvent& event);
 	void OnToggleLogView(wxCommandEvent& event);
-	void OnUpdateToggleLogView(wxUpdateUIEvent& event);
 	void OnToggleLocalTreeView(wxCommandEvent& event);
-	void OnUpdateToggleLocalTreeView(wxUpdateUIEvent& event);
 	void OnToggleRemoteTreeView(wxCommandEvent& event);
-	void OnUpdateToggleRemoteTreeView(wxUpdateUIEvent& event);
 	void OnToggleQueueView(wxCommandEvent& event);
-	void OnUpdateToggleQueueView(wxUpdateUIEvent& event);
 	void OnMenuHelpAbout(wxCommandEvent& event);
 	void OnFilter(wxCommandEvent& event);
 #if FZ_MANUALUPDATECHECK
@@ -162,6 +160,7 @@ protected:
 
 	CAsyncRequestQueue* m_pAsyncRequestQueue;
 	CState* m_pState;
+	CMainFrameStateEventHandler* m_pStateEventHandler;
 
 	// Variables to remember the splitter position on unsplit
 	int m_lastLogViewSplitterPos;

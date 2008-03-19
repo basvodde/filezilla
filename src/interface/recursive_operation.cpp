@@ -55,6 +55,7 @@ void CRecursiveOperation::StartRecursiveOperation(enum OperationMode mode, const
 	}
 
 	m_operationMode = mode;
+	m_pState->NotifyRemoteIdleChange();
 
 	m_startDir = startDir;
 
@@ -266,6 +267,7 @@ void CRecursiveOperation::SetChmodDialog(CChmodDialog* pChmodDialog)
 void CRecursiveOperation::StopRecursiveOperation()
 {
 	m_operationMode = recursive_none;
+	m_pState->NotifyRemoteIdleChange();
 	m_dirsToVisit.clear();
 	m_visitedDirs.clear();
 

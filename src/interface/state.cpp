@@ -260,6 +260,8 @@ void CState::SetServer(const CServer* server)
 			m_pMainFrame->SetTitle(_T("FileZilla"));
 		m_pServer = 0;
 	}
+
+	NotifyHandlers(STATECHANGE_SERVER);
 }
 
 const CServer* CState::GetServer() const
@@ -654,4 +656,9 @@ bool CState::LocalDirIsWriteable(const wxString& dir)
 #endif
 
 	return true;
+}
+
+void CState::NotifyRemoteIdleChange()
+{
+	NotifyHandlers(STATECHANGE_REMOTE_IDLE);
 }
