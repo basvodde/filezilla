@@ -269,11 +269,6 @@ const CServer* CState::GetServer() const
 	return m_pServer;
 }
 
-void CState::ApplyCurrentFilter()
-{
-	NotifyHandlers(STATECHANGE_APPLYFILTER);
-}
-
 bool CState::Connect(const CServer& server, bool askBreak, const CServerPath& path /*=CServerPath()*/)
 {
 	if (!m_pEngine)
@@ -656,9 +651,4 @@ bool CState::LocalDirIsWriteable(const wxString& dir)
 #endif
 
 	return true;
-}
-
-void CState::NotifyRemoteIdleChange()
-{
-	NotifyHandlers(STATECHANGE_REMOTE_IDLE);
 }

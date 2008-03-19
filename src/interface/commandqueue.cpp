@@ -33,7 +33,7 @@ void CCommandQueue::ProcessCommand(CCommand *pCommand)
 	m_CommandList.push_back(pCommand);
 	if (m_CommandList.size() == 1)
 	{
-		m_pMainFrame->GetState()->NotifyRemoteIdleChange();
+		m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_REMOTE_IDLE);
 		ProcessNextCommand();
 	}
 }
@@ -113,7 +113,7 @@ void CCommandQueue::ProcessNextCommand()
 		if (m_exclusiveEngineRequest)
 			GrantExclusiveEngineRequest();
 		else
-			m_pMainFrame->GetState()->NotifyRemoteIdleChange();
+			m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_REMOTE_IDLE);
 	}
 }
 
@@ -138,7 +138,7 @@ bool CCommandQueue::Cancel()
 	{
 		delete pCommand;
 		m_CommandList.clear();
-		m_pMainFrame->GetState()->NotifyRemoteIdleChange();
+		m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_REMOTE_IDLE);
 		return true;
 	}
 
@@ -149,7 +149,7 @@ bool CCommandQueue::Cancel()
 	{
 		delete pCommand;
 		m_CommandList.clear();
-		m_pMainFrame->GetState()->NotifyRemoteIdleChange();
+		m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_REMOTE_IDLE);
 		return true;
 	}
 }
@@ -207,7 +207,7 @@ void CCommandQueue::RequestExclusiveEngine(bool requestExclusive)
 			m_requestId = 0;
 		if (m_CommandList.empty())
 		{
-			m_pMainFrame->GetState()->NotifyRemoteIdleChange();
+			m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_REMOTE_IDLE);
 			GrantExclusiveEngineRequest();
 			return;
 		}
@@ -215,7 +215,7 @@ void CCommandQueue::RequestExclusiveEngine(bool requestExclusive)
 	if (!requestExclusive)
 		m_exclusiveEngineLock = false;
 	m_exclusiveEngineRequest = requestExclusive;
-	m_pMainFrame->GetState()->NotifyRemoteIdleChange();
+	m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_REMOTE_IDLE);
 }
 
 void CCommandQueue::GrantExclusiveEngineRequest()

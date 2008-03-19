@@ -126,7 +126,6 @@ protected:
 	void OnTimer(wxTimerEvent& event);
 	void OnSiteManager(wxCommandEvent& event);
 	void OnProcessQueue(wxCommandEvent& event);
-	void OnUpdateToolbarProcessQueue(wxUpdateUIEvent& event);
 	void OnMenuEditSettings(wxCommandEvent& event);
 	void OnToggleLogView(wxCommandEvent& event);
 	void OnToggleLocalTreeView(wxCommandEvent& event);
@@ -143,7 +142,6 @@ protected:
 	void OnChar(wxKeyEvent& event);
 	void OnActivate(wxActivateEvent& event);
 	void OnToolbarComparison(wxCommandEvent& event);
-	void OnUpdateToolbarComparison(wxUpdateUIEvent& event);
 	void OnToolbarComparisonDropdown(wxCommandEvent& event);
 #ifdef __WXMSW__
 	void OnSizePost(wxCommandEvent& event);

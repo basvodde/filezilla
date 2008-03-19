@@ -19,6 +19,8 @@ enum t_statechange_notifications
 	STATECHANGE_REMOTE_IDLE,
 	STATECHANGE_SERVER,
 
+	STATECHANGE_QUEUEPROCESSING,
+
 	STATECHANGE_MAX
 };
 
@@ -61,8 +63,6 @@ public:
 	void RefreshLocal();
 	void RefreshLocalFile(wxString file);
 
-	void ApplyCurrentFilter();
-
 	void RegisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification);
 	void UnregisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification);
 
@@ -79,13 +79,12 @@ public:
 	bool IsRemoteConnected() const;
 	bool IsRemoteIdle() const;
 
-	void NotifyRemoteIdleChange();
-
 	CRecursiveOperation* GetRecursiveOperationHandler() { return m_pRecursiveOperation; }
+
+	void NotifyHandlers(enum t_statechange_notifications notification, const wxString& data = _T(""));
 
 protected:
 	void SetServer(const CServer* server);
-	void NotifyHandlers(enum t_statechange_notifications notification, const wxString& data = _T(""));
 
 	wxString m_localDir;
 	const CDirectoryListing *m_pDirectoryListing;

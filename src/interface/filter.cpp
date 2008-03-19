@@ -852,7 +852,7 @@ void CFilterDialog::OnApply(wxCommandEvent& event)
 
 	SaveFilters();
 
-	m_pMainFrame->GetState()->ApplyCurrentFilter();
+	m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_APPLYFILTER);
 }
 
 bool CFilterDialog::HasActiveFilters() const

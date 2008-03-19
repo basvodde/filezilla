@@ -262,7 +262,6 @@ void CStatusBar::DisplayDataType(const CServer* const pServer)
 			SetFieldWidth(-4, 0);
 			m_pDataTypeIndicator->Destroy();
 			m_pDataTypeIndicator = 0;
-			Refresh();
 		}
 	}
 	else
@@ -284,7 +283,7 @@ void CStatusBar::DisplayDataType(const CServer* const pServer)
 		else
 		{
 			name = _T("ART_AUTO");
-			desc = _("Current transfer type is to automatic detection.");
+			desc = _("Current transfer type is set to automatic detection.");
 		}
 
 		wxBitmap bmp = wxArtProvider::GetBitmap(name, wxART_OTHER, wxSize(16, 16));
@@ -297,8 +296,6 @@ void CStatusBar::DisplayDataType(const CServer* const pServer)
 		else
 			m_pDataTypeIndicator->SetBitmap(bmp);
 		m_pDataTypeIndicator->SetToolTip(desc);
-
-		Refresh();
 	}
 }
 
@@ -324,7 +321,6 @@ void CStatusBar::DisplayEncrypted(const CServer* const pServer)
 			SetFieldWidth(-5, 0);
 			m_pEncryptionIndicator->Destroy();
 			m_pEncryptionIndicator = 0;
-			Refresh();
 		}
 	}
 	else
@@ -337,8 +333,6 @@ void CStatusBar::DisplayEncrypted(const CServer* const pServer)
 		AddChild(-5, m_pEncryptionIndicator, 2);
 
 		m_pEncryptionIndicator->SetToolTip(_T("The connection is encrypted. Click icon for details."));
-
-		Refresh();
 	}
 }
 

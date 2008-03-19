@@ -2,6 +2,7 @@
 #include "listingcomparison.h"
 #include "filter.h"
 #include "Options.h"
+#include "Mainfrm.h"
 
 CComparableListing::CComparableListing(wxWindow* pParent)
 {
@@ -92,6 +93,14 @@ bool CComparisonManager::CompareListings()
 	m_pRight->m_pComparisonManager = this;
 
 	m_isComparing = true;
+
+	wxToolBar* pToolBar = m_pMainFrame->GetToolBar();
+	if (pToolBar)
+		pToolBar->ToggleTool(XRCID("ID_TOOLBAR_COMPARISON"), false);	
+
+	wxMenuBar* pMenuBar = m_pMainFrame->GetMenuBar();
+	if (pMenuBar)
+		pMenuBar->Check(XRCID("ID_TOOLBAR_COMPARISON"), true);
 
 	m_pLeft->StartComparison();
 	m_pRight->StartComparison();
@@ -226,8 +235,8 @@ int CComparisonManager::CompareFiles(const int dirSortMode, const wxString& loca
 	return 0;
 }
 
-CComparisonManager::CComparisonManager(CComparableListing* pLeft, CComparableListing* pRight)
-	: m_pLeft(pLeft), m_pRight(pRight)
+CComparisonManager::CComparisonManager(CMainFrame* pMainFrame, CComparableListing* pLeft, CComparableListing* pRight)
+	: m_pMainFrame(pMainFrame), m_pLeft(pLeft), m_pRight(pRight)
 {
 	m_isComparing = false;
 	m_pLeft->SetOther(m_pRight);
@@ -244,4 +253,12 @@ void CComparisonManager::ExitComparisonMode()
 		m_pLeft->OnExitComparisonMode();
 	if (m_pRight)
 		m_pRight->OnExitComparisonMode();
+
+	wxToolBar* pToolBar = m_pMainFrame->GetToolBar();
+	if (pToolBar)
+		pToolBar->ToggleTool(XRCID("ID_TOOLBAR_COMPARISON"), false);	
+
+	wxMenuBar* pMenuBar = m_pMainFrame->GetMenuBar();
+	if (pMenuBar)
+		pMenuBar->Check(XRCID("ID_TOOLBAR_COMPARISON"), false);
 }

@@ -68,7 +68,6 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_CLOSE(CMainFrame::OnClose)
 	EVT_TIMER(wxID_ANY, CMainFrame::OnTimer)
 	EVT_TOOL(XRCID("ID_TOOLBAR_PROCESSQUEUE"), CMainFrame::OnProcessQueue)
-	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_PROCESSQUEUE"), CMainFrame::OnUpdateToolbarProcessQueue)
 	EVT_TOOL(XRCID("ID_TOOLBAR_LOGVIEW"), CMainFrame::OnToggleLogView)
 	EVT_TOOL(XRCID("ID_TOOLBAR_LOCALTREEVIEW"), CMainFrame::OnToggleLocalTreeView)
 	EVT_TOOL(XRCID("ID_TOOLBAR_REMOTETREEVIEW"), CMainFrame::OnToggleRemoteTreeView)
@@ -88,7 +87,6 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_MENU(XRCID("ID_MENU_EDIT_FILTERS"), CMainFrame::OnFilter)
 	EVT_ACTIVATE(CMainFrame::OnActivate)
 	EVT_TOOL(XRCID("ID_TOOLBAR_COMPARISON"), CMainFrame::OnToolbarComparison)
-	EVT_UPDATE_UI(XRCID("ID_TOOLBAR_COMPARISON"), CMainFrame::OnUpdateToolbarComparison)
 	EVT_TOOL_RCLICKED(XRCID("ID_TOOLBAR_COMPARISON"), CMainFrame::OnToolbarComparisonDropdown)
 #ifdef EVT_TOOL_DROPDOWN
 	EVT_TOOL_DROPDOWN(XRCID("ID_TOOLBAR_COMPARISON"), CMainFrame::OnToolbarComparisonDropdown)
@@ -107,11 +105,26 @@ public:
 
 		pState->RegisterHandler(this, STATECHANGE_REMOTE_IDLE);
 		pState->RegisterHandler(this, STATECHANGE_SERVER);
+		pState->RegisterHandler(this, STATECHANGE_QUEUEPROCESSING);
 	}
 
 protected:
 	virtual void OnStateChange(enum t_statechange_notifications notification, const wxString& data)
 	{
+		if (notification == STATECHANGE_QUEUEPROCESSING)
+		{
+			const bool check = m_pMainFrame->GetQueue() && m_pMainFrame->GetQueue()->IsActive() != 0;
+
+			wxToolBar* pToolBar = m_pMainFrame->GetToolBar();
+			if (pToolBar)
+				pToolBar->ToggleTool(XRCID("ID_TOOLBAR_PROCESSQUEUE"), check);
+
+			wxMenuBar* pMenuBar = m_pMainFrame->GetMenuBar();
+			if (pMenuBar)
+				pMenuBar->Check(XRCID("ID_MENU_TRANSFER_PROCESSQUEUE"), check);
+			return;
+		}
+
 		m_pMainFrame->UpdateMenubarState();
 		m_pMainFrame->UpdateToolbarState();
 	}
@@ -533,7 +546,15 @@ bool CMainFrame::CreateMenus()
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 
 	if (m_pMenuBar)
+	{
 		m_pMenuBar->FindItem(XRCID("ID_MENU_SERVER_VIEWHIDDEN"), 0)->Check(COptions::Get()->GetOptionVal(OPTION_VIEW_HIDDEN_FILES) ? true : false);
+
+		int mode = COptions::Get()->GetOptionVal(OPTION_COMPARISONMODE);
+		if (mode != 1)
+			m_pMenuBar->Check(XRCID("ID_COMPARE_SIZE"), true);
+		else
+			m_pMenuBar->Check(XRCID("ID_COMPARE_DATE"), true);
+	}
 
 	UpdateMenubarState();
 
@@ -898,7 +919,6 @@ bool CMainFrame::CreateToolBar()
 		wxLogError(_("Cannot load toolbar from resource file"));
 		return false;
 	}
-	m_pToolBar->SetExtraStyle(wxWS_EX_PROCESS_UI_UPDATES);
 
 #if defined(EVT_TOOL_DROPDOWN) && defined(__WXMSW__)
 	MakeDropdownTool(m_pToolBar, XRCID("ID_TOOLBAR_SITEMANAGER"));
@@ -1236,20 +1256,6 @@ void CMainFrame::OnProcessQueue(wxCommandEvent& event)
 		m_pQueueView->SetActive(event.IsChecked());
 }
 
-void CMainFrame::OnUpdateToolbarProcessQueue(wxUpdateUIEvent& event)
-{
-	const bool check = m_pQueueView->IsActive() != 0;
-
-	event.Check(check);
-
-	if (m_pMenuBar)
-	{
-		wxMenuItem* pItem = m_pMenuBar->FindItem(XRCID("ID_MENU_TRANSFER_PROCESSQUEUE"), 0);
-		if (pItem)
-			pItem->Check(check);
-	}
-}
-
 void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 {
 	CSettingsDialog dlg;
@@ -1466,7 +1472,7 @@ void CMainFrame::OnFilter(wxCommandEvent& event)
 	dlg.Create(this);
 	dlg.ShowModal();
 	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), dlg.HasActiveFilters());
-	m_pState->ApplyCurrentFilter();
+	m_pState->NotifyHandlers(STATECHANGE_APPLYFILTER);
 }
 
 #if FZ_MANUALUPDATECHECK
@@ -1911,33 +1917,9 @@ void CMainFrame::OnToolbarComparison(wxCommandEvent& event)
 	}
 
 	if (!m_pComparisonManager)
-		m_pComparisonManager = new CComparisonManager(m_pLocalListView, m_pRemoteListView);
+		m_pComparisonManager = new CComparisonManager(this, m_pLocalListView, m_pRemoteListView);
 
 	m_pComparisonManager->CompareListings();
-}
-
-void CMainFrame::OnUpdateToolbarComparison(wxUpdateUIEvent& event)
-{
-	bool enable;
-	if (!m_pState->m_pEngine || !m_pState->m_pEngine->IsConnected())
-		enable = false;
-	else
-		enable = true;
-
-	event.Enable(enable);
-
-	event.Check(m_pComparisonManager && m_pComparisonManager->IsComparing());
-	if (m_pMenuBar)
-	{
-		m_pMenuBar->Enable(XRCID("ID_TOOLBAR_COMPARISON"), enable);
-		m_pMenuBar->Check(XRCID("ID_TOOLBAR_COMPARISON"), m_pComparisonManager && m_pComparisonManager->IsComparing());
-
-		int mode = COptions::Get()->GetOptionVal(OPTION_COMPARISONMODE);
-		if (mode != 1)
-			m_pMenuBar->Check(XRCID("ID_COMPARE_SIZE"), true);
-		else
-			m_pMenuBar->Check(XRCID("ID_COMPARE_DATE"), true);
-	}
 }
 
 void CMainFrame::OnToolbarComparisonDropdown(wxCommandEvent& event)
@@ -1986,6 +1968,14 @@ void CMainFrame::OnDropdownComparisonMode(wxCommandEvent& event)
 	int new_mode = (event.GetId() == XRCID("ID_COMPARE_SIZE")) ? 0 : 1;
 	COptions::Get()->SetOption(OPTION_COMPARISONMODE, new_mode);
 
+	if (m_pMenuBar)
+	{
+		if (new_mode != 1)
+			m_pMenuBar->Check(XRCID("ID_COMPARE_SIZE"), true);
+		else
+			m_pMenuBar->Check(XRCID("ID_COMPARE_DATE"), true);
+	}
+
 	if (old_mode != new_mode && m_pComparisonManager && m_pComparisonManager->IsComparing())
 		m_pComparisonManager->CompareListings();
 }
@@ -2011,6 +2001,7 @@ void CMainFrame::UpdateToolbarState()
 
 	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_DISCONNECT"), pServer && idle);
 	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_CANCEL"), pServer && !idle);
+	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_COMPARISON"), pServer && m_pState->IsRemoteConnected());
 
 	bool canReconnect;
 	if (pServer || !idle)
@@ -2035,6 +2026,7 @@ void CMainFrame::UpdateMenubarState()
 	m_pMenuBar->Enable(XRCID("ID_MENU_SERVER_DISCONNECT"), pServer && idle);
 	m_pMenuBar->Enable(XRCID("ID_MENU_SERVER_CMD"), pServer && idle);
 	m_pMenuBar->Enable(XRCID("ID_MENU_FILE_COPYSITEMANAGER"), pServer != 0);
+	m_pMenuBar->Enable(XRCID("ID_TOOLBAR_COMPARISON"), pServer && m_pState->IsRemoteConnected());
 
 	bool canReconnect;
 	if (pServer || !idle)

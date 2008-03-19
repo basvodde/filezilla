@@ -478,7 +478,10 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 	CommitChanges();
 
 	if (!m_activeMode && !queueOnly)
+	{
 		m_activeMode = 1;
+		m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_QUEUEPROCESSING);
+	}
 
 	m_waitStatusLineUpdate = true;
 	AdvanceQueue();
@@ -511,7 +514,10 @@ bool CQueueView::QueueFiles(const bool queueOnly, const wxString& localPath, con
 	CommitChanges();
 
 	if (!m_activeMode && !queueOnly)
+	{
 		m_activeMode = 1;
+		m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_QUEUEPROCESSING);
+	}
 
 	m_waitStatusLineUpdate = true;
 	AdvanceQueue();
@@ -1361,6 +1367,8 @@ bool CQueueView::SetActive(bool active /*=true*/)
 		UpdateStatusLinePositions();
 	}
 
+	m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_QUEUEPROCESSING);
+
 	return true;
 }
 
@@ -1434,6 +1442,9 @@ void CQueueView::CheckQueueState()
 				m_pQueue->SetSelection(2);
 		}
 		*/
+
+		m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_QUEUEPROCESSING);
+
 		if (!m_quit)
 			ActionAfter();
 	}
@@ -1610,7 +1621,10 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOn
 	CommitChanges();
 
 	if (!m_activeMode && !queueOnly)
+	{
 		m_activeMode = 1;
+		m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_QUEUEPROCESSING);
+	}
 
 	m_waitStatusLineUpdate = true;
 	AdvanceQueue();
