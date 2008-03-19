@@ -209,9 +209,12 @@ END_EVENT_TABLE()
 CLocalTreeView::CLocalTreeView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView *pQueueView)
 	: wxTreeCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxTR_EDIT_LABELS | wxTR_LINES_AT_ROOT | wxTR_HAS_BUTTONS | wxNO_BORDER),
 	CSystemImageList(16),
-	CStateEventHandler(pState, STATECHANGE_LOCAL_DIR | STATECHANGE_APPLYFILTER),
+	CStateEventHandler(pState),
 	m_pQueueView(pQueueView)
 {
+	pState->RegisterHandler(this, STATECHANGE_LOCAL_DIR);
+	pState->RegisterHandler(this, STATECHANGE_APPLYFILTER);
+
 	m_setSelection = false;
 
 	SetImageList(GetSystemImageList());
@@ -880,12 +883,15 @@ int CLocalTreeView::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId
 #endif
 }
 
-void CLocalTreeView::OnStateChange(unsigned int event, const wxString& data)
+void CLocalTreeView::OnStateChange(enum t_statechange_notifications notification, const wxString& data)
 {
-	if (event == STATECHANGE_LOCAL_DIR)
+	if (notification == STATECHANGE_LOCAL_DIR)
 		SetDir(m_pState->GetLocalDir());
-	else if (event == STATECHANGE_APPLYFILTER)
+	else
+	{
+		wxASSERT(notification == STATECHANGE_APPLYFILTER);
 		Refresh();
+	}
 }
 
 void CLocalTreeView::OnBeginDrag(wxTreeEvent& event)

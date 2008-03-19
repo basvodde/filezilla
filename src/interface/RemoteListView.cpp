@@ -324,8 +324,12 @@ END_EVENT_TABLE()
 CRemoteListView::CRemoteListView(wxWindow* pParent, CState *pState, CQueueView* pQueue)
 	: CFileListCtrl<CGenericFileData>(pParent, pState, pQueue),
 	CSystemImageList(16),
-	CStateEventHandler(pState, STATECHANGE_REMOTE_DIR | STATECHANGE_REMOTE_DIR_MODIFIED | STATECHANGE_APPLYFILTER)
+	CStateEventHandler(pState)
 {
+	pState->RegisterHandler(this, STATECHANGE_REMOTE_DIR);
+	pState->RegisterHandler(this, STATECHANGE_REMOTE_DIR_MODIFIED);
+	pState->RegisterHandler(this, STATECHANGE_APPLYFILTER);
+
 	m_dropTarget = -1;
 
 	m_pInfoText = 0;
@@ -1882,15 +1886,18 @@ void CRemoteListView::RepositionInfoText()
 	m_pInfoText->Refresh(false);
 }
 
-void CRemoteListView::OnStateChange(unsigned int event, const wxString& data)
+void CRemoteListView::OnStateChange(enum t_statechange_notifications notification, const wxString& data)
 {
 	wxASSERT(m_pState);
-	if (event == STATECHANGE_REMOTE_DIR)
+	if (notification == STATECHANGE_REMOTE_DIR)
 		SetDirectoryListing(m_pState->GetRemoteDir(), false);
-	else if (event == STATECHANGE_REMOTE_DIR_MODIFIED)
+	else if (notification == STATECHANGE_REMOTE_DIR_MODIFIED)
 		SetDirectoryListing(m_pState->GetRemoteDir(), true);
-	else if (event == STATECHANGE_APPLYFILTER)
+	else
+	{
+		wxASSERT(notification == STATECHANGE_APPLYFILTER);
 		ApplyCurrentFilter();
+	}
 }
 
 void CRemoteListView::SetInfoText()

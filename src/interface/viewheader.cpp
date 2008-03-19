@@ -318,8 +318,9 @@ EVT_COMMAND(wxID_ANY, fzEVT_LOCALVIEWHEADERSETTEXTSEL, CLocalViewHeader::OnSelec
 END_EVENT_TABLE()
 
 CLocalViewHeader::CLocalViewHeader(wxWindow* pParent, CState* pState)
-	: CViewHeader(pParent, _("Local site:")), CStateEventHandler(pState, STATECHANGE_LOCAL_DIR)
+	: CViewHeader(pParent, _("Local site:")), CStateEventHandler(pState)
 {
+	pState->RegisterHandler(this, STATECHANGE_LOCAL_DIR);
 }
 
 void CLocalViewHeader::OnTextChanged(wxCommandEvent& event)
@@ -497,10 +498,9 @@ void CLocalViewHeader::OnTextEnter(wxCommandEvent& event)
 	}
 }
 
-void CLocalViewHeader::OnStateChange(unsigned int event, const wxString& data)
+void CLocalViewHeader::OnStateChange(enum t_statechange_notifications notification, const wxString& data)
 {
-	if (event != STATECHANGE_LOCAL_DIR)
-		return;
+	wxASSERT(notification == STATECHANGE_LOCAL_DIR);
 
 #ifdef __WXGTK__
 	m_autoCompletionText = _T("");
@@ -518,15 +518,15 @@ EVT_COMBOBOX(wxID_ANY, CRemoteViewHeader::OnSelectionChanged)
 END_EVENT_TABLE()
 
 CRemoteViewHeader::CRemoteViewHeader(wxWindow* pParent, CState* pState)
-	: CViewHeader(pParent, _("Remote site:")), CStateEventHandler(pState, STATECHANGE_REMOTE_DIR)
+	: CViewHeader(pParent, _("Remote site:")), CStateEventHandler(pState)
 {
+	pState->RegisterHandler(this, STATECHANGE_LOCAL_DIR);
 	m_pComboBox->Disable();
 }
 
-void CRemoteViewHeader::OnStateChange(unsigned int event, const wxString& data)
+void CRemoteViewHeader::OnStateChange(enum t_statechange_notifications notification, const wxString& data)
 {
-	if (event != STATECHANGE_REMOTE_DIR)
-		return;
+	wxASSERT(notification == STATECHANGE_LOCAL_DIR);
 
 	m_path = m_pState->GetRemotePath();
 	if (m_path.IsEmpty())

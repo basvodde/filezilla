@@ -227,8 +227,12 @@ END_EVENT_TABLE()
 CRemoteTreeView::CRemoteTreeView(wxWindow* parent, wxWindowID id, CState* pState, CQueueView* pQueue)
 	: wxTreeCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxTR_EDIT_LABELS | wxTR_LINES_AT_ROOT | wxTR_HAS_BUTTONS | wxNO_BORDER | wxTR_HIDE_ROOT),
 	CSystemImageList(16),
-	CStateEventHandler(pState, STATECHANGE_REMOTE_DIR | STATECHANGE_REMOTE_DIR_MODIFIED | STATECHANGE_APPLYFILTER)
+	CStateEventHandler(pState)
 {
+	pState->RegisterHandler(this, STATECHANGE_REMOTE_DIR);
+	pState->RegisterHandler(this, STATECHANGE_REMOTE_DIR_MODIFIED);
+	pState->RegisterHandler(this, STATECHANGE_APPLYFILTER);
+
 	m_busy = false;
 	m_pQueue = pQueue;
 	AddRoot(_T(""));
@@ -246,11 +250,11 @@ CRemoteTreeView::~CRemoteTreeView()
 	delete m_pImageList;
 }
 
-void CRemoteTreeView::OnStateChange(unsigned int event, const wxString& data)
+void CRemoteTreeView::OnStateChange(enum t_statechange_notifications notification, const wxString& data)
 {
-	if (event == STATECHANGE_REMOTE_DIR)
+	if (notification == STATECHANGE_REMOTE_DIR)
 		SetDirectoryListing(m_pState->GetRemoteDir(), false);
-	else if (event == STATECHANGE_REMOTE_DIR_MODIFIED)
+	else if (notification == STATECHANGE_REMOTE_DIR_MODIFIED)
 		SetDirectoryListing(m_pState->GetRemoteDir(), true);
 }
 

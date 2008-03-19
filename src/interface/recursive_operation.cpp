@@ -11,9 +11,11 @@ CRecursiveOperation::CNewDir::CNewDir()
 }
 
 CRecursiveOperation::CRecursiveOperation(CState* pState)
-	: CStateEventHandler(pState, STATECHANGE_REMOTE_DIR),
+	: CStateEventHandler(pState),
 	  m_operationMode(recursive_none), m_pState(pState)
 {
+	pState->RegisterHandler(this, STATECHANGE_REMOTE_DIR);
+
 	m_pChmodDlg = 0;
 	m_pQueue = 0;
 }
@@ -27,11 +29,11 @@ CRecursiveOperation::~CRecursiveOperation()
 	}
 }
 
-void CRecursiveOperation::OnStateChange(unsigned int event, const wxString& data)
+void CRecursiveOperation::OnStateChange(enum t_statechange_notifications notification, const wxString& data)
 {
 	wxASSERT(m_pState);
-	if (event == STATECHANGE_REMOTE_DIR)
-		ProcessDirectoryListing(m_pState->GetRemoteDir());
+	wxASSERT(notification == STATECHANGE_REMOTE_DIR);
+	ProcessDirectoryListing(m_pState->GetRemoteDir());
 }
 
 void CRecursiveOperation::StartRecursiveOperation(enum OperationMode mode, const CServerPath& startDir, bool allowParent /*=false*/, const CServerPath& finalDir /*=CServerPath()*/)

@@ -28,7 +28,7 @@ public:
 	virtual ~CLocalListView();
 
 protected:
-	void OnStateChange(unsigned int event, const wxString& data);
+	void OnStateChange(enum t_statechange_notifications notification, const wxString& data);
 	bool DisplayDir(wxString dirname);
 	void ApplyCurrentFilter();
 

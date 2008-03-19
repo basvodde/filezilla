@@ -32,8 +32,11 @@ CState::~CState()
 	delete m_pEngine;
 
 	// Unregister all handlers
-	for (std::list<CStateEventHandler*>::iterator iter = m_handlers.begin(); iter != m_handlers.end(); iter++)
-		(*iter)->m_pState = 0;
+	for (int i = 0; i < STATECHANGE_MAX; i++)
+	{
+		for (std::list<CStateEventHandler*>::iterator iter = m_handlers[i].begin(); iter != m_handlers[i].end(); iter++)
+			(*iter)->m_pState = 0;
+	}
 
 	delete m_pRecursiveOperation;
 }
@@ -318,61 +321,82 @@ void CState::DestroyEngine()
 	m_pEngine = 0;
 }
 
-void CState::RegisterHandler(CStateEventHandler* pHandler)
+void CState::RegisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification)
 {
 	wxASSERT(pHandler);
+	wxASSERT(notification != STATECHANGE_MAX && notification != STATECHANGE_NONE);
 
+	std::list<CStateEventHandler*> &handlers = m_handlers[notification];
 	std::list<CStateEventHandler*>::const_iterator iter;
-	for (iter = m_handlers.begin(); iter != m_handlers.end(); iter++)
-		if (*iter == pHandler)
-			break;
-
-	if (iter != m_handlers.end())
-		return;
-
-	m_handlers.push_back(pHandler);
-}
-
-void CState::UnregisterHandler(CStateEventHandler* pHandler)
-{
-	for (std::list<CStateEventHandler*>::iterator iter = m_handlers.begin(); iter != m_handlers.end(); iter++)
+	for (iter = handlers.begin(); iter != handlers.end(); iter++)
 	{
 		if (*iter == pHandler)
-		{
-			m_handlers.erase(iter);
 			return;
+	}
+
+	handlers.push_back(pHandler);
+}
+
+void CState::UnregisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification)
+{
+	wxASSERT(pHandler);
+	wxASSERT(notification != STATECHANGE_MAX);
+
+	if (notification == STATECHANGE_NONE)
+	{
+		for (int i = 0; i < STATECHANGE_MAX; i++)
+		{
+			std::list<CStateEventHandler*> &handlers = m_handlers[notification];
+			for (std::list<CStateEventHandler*>::iterator iter = handlers.begin(); iter != handlers.end(); iter++)
+			{
+				if (*iter == pHandler)
+				{
+					handlers.erase(iter);
+					break;
+				}
+			}
+		}
+	}
+	else
+	{
+		std::list<CStateEventHandler*> &handlers = m_handlers[notification];
+		for (std::list<CStateEventHandler*>::iterator iter = handlers.begin(); iter != handlers.end(); iter++)
+		{
+			if (*iter == pHandler)
+			{
+				handlers.erase(iter);
+				return;
+			}
 		}
 	}
 }
 
-void CState::NotifyHandlers(unsigned int event, const wxString& data /*=_T("")*/)
+void CState::NotifyHandlers(enum t_statechange_notifications notification, const wxString& data /*=_T("")*/)
 {
-	for (std::list<CStateEventHandler*>::iterator iter = m_handlers.begin(); iter != m_handlers.end(); iter++)
+	wxASSERT(notification != STATECHANGE_NONE && notification != STATECHANGE_MAX);
+
+	const std::list<CStateEventHandler*> &handlers = m_handlers[notification];
+	for (std::list<CStateEventHandler*>::const_iterator iter = handlers.begin(); iter != handlers.end(); iter++)
 	{
-		if ((*iter)->m_eventMask & event)
-			(*iter)->OnStateChange(event, data);
+		(*iter)->OnStateChange(notification, data);
 	}
 }
 
-CStateEventHandler::CStateEventHandler(CState* pState, unsigned int eventMask)
+CStateEventHandler::CStateEventHandler(CState* pState)
 {
 	wxASSERT(pState);
-	wxASSERT(eventMask);
 
 	if (!pState)
 		return;
 
 	m_pState = pState;
-	m_eventMask = eventMask;
-
-	m_pState->RegisterHandler(this);
 }
 
 CStateEventHandler::~CStateEventHandler()
 {
 	if (!m_pState)
 		return;
-	m_pState->UnregisterHandler(this);
+	m_pState->UnregisterHandler(this, STATECHANGE_NONE);
 }
 
 void CState::UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const wxString& subdir, bool queueOnly)

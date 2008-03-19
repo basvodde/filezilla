@@ -1,16 +1,23 @@
 #ifndef __STATE_H__
 #define __STATE_H__
 
-#define STATECHANGE_REMOTE_DIR			0x0001
-#define STATECHANGE_REMOTE_DIR_MODIFIED	0x0002
-#define STATECHANGE_REMOTE_RECV			0x0010
-#define STATECHANGE_REMOTE_SEND			0x0020
-#define STATECHANGE_LOCAL_DIR			0x0100
+enum t_statechange_notifications
+{
+	STATECHANGE_NONE, // Used to unregister all notifications
 
-// data contains name (excluding path) of file to refresh
-#define STATECHANGE_LOCAL_REFRESH_FILE	0x0200
+	STATECHANGE_REMOTE_DIR,
+	STATECHANGE_REMOTE_DIR_MODIFIED,
+	STATECHANGE_REMOTE_RECV,
+	STATECHANGE_REMOTE_SEND,
+	STATECHANGE_LOCAL_DIR,
 
-#define STATECHANGE_APPLYFILTER			0x1000
+	// data contains name (excluding path) of file to refresh
+	STATECHANGE_LOCAL_REFRESH_FILE,
+
+	STATECHANGE_APPLYFILTER,
+
+	STATECHANGE_MAX
+};
 
 class CDirectoryListing;
 class CFileZillaEngine;
@@ -53,8 +60,8 @@ public:
 
 	void ApplyCurrentFilter();
 
-	void RegisterHandler(CStateEventHandler* pHandler);
-	void UnregisterHandler(CStateEventHandler* pHandler);
+	void RegisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification);
+	void UnregisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification);
 
 	static CState* GetState();
 
@@ -75,7 +82,7 @@ public:
 
 protected:
 	void SetServer(const CServer* server);
-	void NotifyHandlers(unsigned int event, const wxString& data = _T(""));
+	void NotifyHandlers(enum t_statechange_notifications notification, const wxString& data = _T(""));
 
 	wxString m_localDir;
 	const CDirectoryListing *m_pDirectoryListing;
@@ -86,20 +93,18 @@ protected:
 
 	CRecursiveOperation* m_pRecursiveOperation;
 
-	std::list<CStateEventHandler*> m_handlers;
+	std::list<CStateEventHandler*> m_handlers[STATECHANGE_MAX];
 };
 
 class CStateEventHandler
 {
 public:
-	CStateEventHandler(CState* pState, unsigned int eventMask);
+	CStateEventHandler(CState* pState);
 	virtual ~CStateEventHandler();
 
 	CState* m_pState;
 
-	int m_eventMask;
-	
-	virtual void OnStateChange(unsigned int event, const wxString& data) = 0;
+	virtual void OnStateChange(enum t_statechange_notifications notification, const wxString& data) = 0;
 };
 
 #endif

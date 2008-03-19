@@ -236,8 +236,12 @@ END_EVENT_TABLE()
 
 CLocalListView::CLocalListView(wxWindow* pParent, CState *pState, CQueueView *pQueue)
 	: CFileListCtrl<CLocalFileData>(pParent, pState, pQueue),
-	CSystemImageList(16), CStateEventHandler(pState, STATECHANGE_LOCAL_DIR | STATECHANGE_APPLYFILTER | STATECHANGE_LOCAL_REFRESH_FILE)
+	CSystemImageList(16), CStateEventHandler(pState)
 {
+	m_pState->RegisterHandler(this, STATECHANGE_LOCAL_DIR);
+	m_pState->RegisterHandler(this, STATECHANGE_APPLYFILTER);
+	m_pState->RegisterHandler(this, STATECHANGE_LOCAL_REFRESH_FILE);
+
 	m_dropTarget = -1;
 
 	unsigned long widths[4] = { 120, 80, 100, 120 };
@@ -1531,14 +1535,17 @@ void CLocalListView::ReselectItems(const std::list<wxString>& selectedNames, wxS
 	}
 }
 
-void CLocalListView::OnStateChange(unsigned int event, const wxString& data)
+void CLocalListView::OnStateChange(enum t_statechange_notifications notification, const wxString& data)
 {
-	if (event == STATECHANGE_LOCAL_DIR)
+	if (notification == STATECHANGE_LOCAL_DIR)
 		DisplayDir(m_pState->GetLocalDir());
-	else if (event == STATECHANGE_APPLYFILTER)
+	else if (notification == STATECHANGE_APPLYFILTER)
 		ApplyCurrentFilter();
-	else if (event == STATECHANGE_LOCAL_REFRESH_FILE)
+	else
+	{
+		wxASSERT(notification == STATECHANGE_LOCAL_REFRESH_FILE);
 		RefreshFile(data);
+	}
 }
 
 void CLocalListView::OnBeginDrag(wxListEvent& event)
