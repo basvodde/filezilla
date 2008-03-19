@@ -269,7 +269,7 @@ CSiteManager::~CSiteManager()
 	}
 }
 
-bool CSiteManager::Create(wxWindow* parent)
+bool CSiteManager::Create(wxWindow* parent, const CServer* pServer /*=0*/)
 {
 	m_pSiteManagerMutex = new CInterProcessMutex(MUTEX_SITEMANAGERGLOBAL, false);
 	if (!m_pSiteManagerMutex->TryLock())
@@ -327,6 +327,9 @@ bool CSiteManager::Create(wxWindow* parent)
 	if (!data)
 		XRCCTRL(*this, "wxID_OK", wxButton)->SetFocus();
 #endif
+
+	if (pServer)
+		CopyAddServer(*pServer);
 
 	return true;
 }
@@ -976,37 +979,8 @@ void CSiteManager::OnNewSite(wxCommandEvent& event)
 	if (!Verify())
 		return;
 
-	wxString newName = _("New site");
-	int index = 2;
-	while (true)
-	{
-		wxTreeItemId child;
-		wxTreeItemIdValue cookie;
-		child = pTree->GetFirstChild(item, cookie);
-		bool found = false;
-		while (child.IsOk())
-		{
-			wxString name = pTree->GetItemText(child);
-			int cmp = name.CmpNoCase(newName);
-			if (!cmp)
-			{
-				found = true;
-				break;
-			}
-
-			child = pTree->GetNextChild(item, cookie);
-		}
-		if (!found)
-			break;
-
-		newName = _("New site") + wxString::Format(_T(" %d"), index++);
-	}
-
-	wxTreeItemId newItem = pTree->AppendItem(item, newName, 2, 2, new CSiteManagerItemData());
-	pTree->SortChildren(item);
-	pTree->SelectItem(newItem);
-	pTree->Expand(item);
-	pTree->EditLabel(newItem);
+	CServer server;
+	AddNewSite(item, server);
 }
 
 void CSiteManager::OnLogontypeSelChanged(wxCommandEvent& event)
@@ -1895,4 +1869,51 @@ void CSiteManager::OnChar(wxKeyEvent& event)
 
 	wxCommandEvent cmdEvent;
 	OnRename(cmdEvent);
+}
+
+void CSiteManager::CopyAddServer(const CServer& server)
+{
+	if (!Verify())
+		return;
+
+	AddNewSite(m_ownSites, server);
+}
+
+void CSiteManager::AddNewSite(wxTreeItemId parent, const CServer& server)
+{
+	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
+	if (!pTree)
+		return;
+
+	wxString newName = _("New site");
+	int index = 2;
+	while (true)
+	{
+		wxTreeItemId child;
+		wxTreeItemIdValue cookie;
+		child = pTree->GetFirstChild(parent, cookie);
+		bool found = false;
+		while (child.IsOk())
+		{
+			wxString name = pTree->GetItemText(child);
+			int cmp = name.CmpNoCase(newName);
+			if (!cmp)
+			{
+				found = true;
+				break;
+			}
+
+			child = pTree->GetNextChild(parent, cookie);
+		}
+		if (!found)
+			break;
+
+		newName = _("New site") + wxString::Format(_T(" %d"), index++);
+	}
+
+	wxTreeItemId newItem = pTree->AppendItem(parent, newName, 2, 2, new CSiteManagerItemData(server));
+	pTree->SortChildren(m_ownSites);
+	pTree->SelectItem(newItem);
+	pTree->Expand(m_ownSites);
+	pTree->EditLabel(newItem);
 }

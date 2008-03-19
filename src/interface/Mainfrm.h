@@ -58,6 +58,7 @@ protected:
 	bool CreateToolBar();
 	void SetProgress(const CTransferStatus* pStatus);
 	void ConnectToSite(CSiteManagerItemData* const pData);
+	void OpenSiteManager(const CServer* pServer = 0);
 
 	// If resizing the window, make sure the individual splitter windows don't get too small
 	void ApplySplitterConstraints();
@@ -174,4 +175,3 @@ protected:
 };
 
 #endif
-

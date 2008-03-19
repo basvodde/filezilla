@@ -37,11 +37,8 @@ public:
 	CSiteManager();
 	virtual ~CSiteManager();
 
-	/// Creation
-	bool Create(wxWindow* parent);
-
-	/// Creates the controls and sizers
-	void CreateControls(wxWindow* parent);
+	// Creation. If pServer is set, it will cause a new item to be created.
+	bool Create(wxWindow* parent, const CServer* pServer = 0);
 
 	bool GetServer(CSiteManagerItemData& data);
 
@@ -52,6 +49,9 @@ public:
 	static CSiteManagerItemData* GetSiteById(int id);
 
 protected:
+	// Creates the controls and sizers
+	void CreateControls(wxWindow* parent);
+
 	bool Verify();
 	bool UpdateServer();
 	bool Load();
@@ -66,6 +66,9 @@ protected:
 	bool IsPredefinedItem(wxTreeItemId item);
 
 	static CSiteManagerItemData* ReadServerElement(TiXmlElement *pElement);
+
+	void AddNewSite(wxTreeItemId parent, const CServer& server);
+	void CopyAddServer(const CServer& server);
 
 	virtual void OnOK(wxCommandEvent& event);
 	virtual void OnCancel(wxCommandEvent& event);

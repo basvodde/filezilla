@@ -544,7 +544,17 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	}
 	else if (event.GetId() == XRCID("ID_MENU_FILE_SITEMANAGER"))
 	{
-		OnSiteManager(event);
+		OpenSiteManager();
+	}
+	else if (event.GetId() == XRCID("ID_MENU_FILE_COPYSITEMANAGER"))
+	{
+		const CServer* pServer = m_pState->GetServer();
+		if (!pServer)
+		{
+			wxMessageBox(_("Not connected to any server."), _("Cannot add server to Site Manager"), wxICON_EXCLAMATION);
+			return;
+		}
+		OpenSiteManager(pServer);
 	}
 	else if (event.GetId() == XRCID("ID_MENU_SERVER_CMD"))
 	{
@@ -1089,7 +1099,10 @@ void CMainFrame::OnUpdateToolbarReconnect(wxUpdateUIEvent &event)
 	event.Enable(enable);
 
 	if (m_pMenuBar)
+	{
 		m_pMenuBar->FindItem(XRCID("ID_MENU_SERVER_RECONNECT"), 0)->Enable(enable);
+		m_pMenuBar->FindItem(XRCID("ID_MENU_FILE_COPYSITEMANAGER"), 0)->Enable(m_pState->GetServer() != 0);
+	}
 }
 
 void CMainFrame::OnReconnect(wxCommandEvent &event)
@@ -1194,10 +1207,10 @@ void CMainFrame::SetProgress(const CTransferStatus *pStatus)
 	*/
 }
 
-void CMainFrame::OnSiteManager(wxCommandEvent& event)
+void CMainFrame::OpenSiteManager(const CServer* pServer /*=0*/)
 {
 	CSiteManager dlg;
-	if (!dlg.Create(this))
+	if (!dlg.Create(this, pServer))
 		return;
 
 	int res = dlg.ShowModal();
@@ -1209,6 +1222,11 @@ void CMainFrame::OnSiteManager(wxCommandEvent& event)
 
 		ConnectToSite(&data);
 	}
+}
+
+void CMainFrame::OnSiteManager(wxCommandEvent& event)
+{
+	OpenSiteManager();
 }
 
 void CMainFrame::UpdateSendLed()
