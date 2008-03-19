@@ -747,7 +747,6 @@ void CLocalTreeView::Refresh()
 
 			if (!filter.FilenameFiltered(file, true, size, true, attributes))
 				dirs.push_back(file);
-			found = find.GetNext(&file);
 		}
 		dirs.sort(sortfunc);
 
