@@ -64,6 +64,7 @@ protected:
 	void ConnectToSite(CSiteManagerItemData* const pData);
 	void OpenSiteManager(const CServer* pServer = 0);
 	void InitToolbarState();
+	void InitMenubarState();
 
 	// If resizing the window, make sure the individual splitter windows don't get too small
 	void ApplySplitterConstraints();

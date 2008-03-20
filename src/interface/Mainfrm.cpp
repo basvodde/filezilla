@@ -59,11 +59,13 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_TOOL(XRCID("ID_TOOLBAR_DISCONNECT"), CMainFrame::OnDisconnect)
 	EVT_MENU(XRCID("ID_MENU_SERVER_DISCONNECT"), CMainFrame::OnDisconnect)
 	EVT_TOOL(XRCID("ID_TOOLBAR_CANCEL"), CMainFrame::OnCancel)
+	EVT_MENU(XRCID("ID_CANCEL"), CMainFrame::OnCancel)
 	EVT_SPLITTER_SASH_POS_CHANGING(wxID_ANY, CMainFrame::OnSplitterSashPosChanging)
 	EVT_SPLITTER_SASH_POS_CHANGED(wxID_ANY, CMainFrame::OnSplitterSashPosChanged)
 	EVT_TOOL(XRCID("ID_TOOLBAR_RECONNECT"), CMainFrame::OnReconnect)
 	EVT_TOOL(XRCID("ID_MENU_SERVER_RECONNECT"), CMainFrame::OnReconnect)
 	EVT_TOOL(XRCID("ID_TOOLBAR_REFRESH"), CMainFrame::OnRefresh)
+	EVT_MENU(XRCID("ID_REFRESH"), CMainFrame::OnRefresh)
 	EVT_TOOL(XRCID("ID_TOOLBAR_SITEMANAGER"), CMainFrame::OnSiteManager)
 	EVT_CLOSE(CMainFrame::OnClose)
 	EVT_TIMER(wxID_ANY, CMainFrame::OnTimer)
@@ -72,6 +74,10 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_TOOL(XRCID("ID_TOOLBAR_LOCALTREEVIEW"), CMainFrame::OnToggleLocalTreeView)
 	EVT_TOOL(XRCID("ID_TOOLBAR_REMOTETREEVIEW"), CMainFrame::OnToggleRemoteTreeView)
 	EVT_TOOL(XRCID("ID_TOOLBAR_QUEUEVIEW"), CMainFrame::OnToggleQueueView)
+	EVT_MENU(XRCID("ID_VIEW_MESSAGELOG"), CMainFrame::OnToggleLogView)
+	EVT_MENU(XRCID("ID_VIEW_LOCALTREE"), CMainFrame::OnToggleLocalTreeView)
+	EVT_MENU(XRCID("ID_VIEW_REMOTETREE"), CMainFrame::OnToggleRemoteTreeView)
+	EVT_MENU(XRCID("ID_VIEW_QUEUE"), CMainFrame::OnToggleQueueView)
 	EVT_MENU(wxID_ABOUT, CMainFrame::OnMenuHelpAbout)
 	EVT_TOOL(XRCID("ID_TOOLBAR_FILTER"), CMainFrame::OnFilter)
 #if FZ_MANUALUPDATECHECK
@@ -84,7 +90,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_NAVIGATION_KEY(CMainFrame::OnNavigationKeyEvent)
 	EVT_SET_FOCUS(CMainFrame::OnGetFocus)
 	EVT_CHAR_HOOK(CMainFrame::OnChar)
-	EVT_MENU(XRCID("ID_MENU_EDIT_FILTERS"), CMainFrame::OnFilter)
+	EVT_MENU(XRCID("ID_MENU_VIEW_FILTERS"), CMainFrame::OnFilter)
 	EVT_ACTIVATE(CMainFrame::OnActivate)
 	EVT_TOOL(XRCID("ID_TOOLBAR_COMPARISON"), CMainFrame::OnToolbarComparison)
 	EVT_TOOL_RCLICKED(XRCID("ID_TOOLBAR_COMPARISON"), CMainFrame::OnToolbarComparisonDropdown)
@@ -367,6 +373,7 @@ CMainFrame::CMainFrame()
 
 	m_pComparisonManager = 0;
 
+	InitMenubarState();
 	InitToolbarState();
 }
 
@@ -556,6 +563,7 @@ bool CMainFrame::CreateMenus()
 			m_pMenuBar->Check(XRCID("ID_COMPARE_DATE"), true);
 	}
 
+	InitMenubarState();
 	UpdateMenubarState();
 
 	return true;
@@ -1347,6 +1355,11 @@ void CMainFrame::OnToggleLogView(wxCommandEvent& event)
 		ApplySplitterConstraints();
 	}
 	COptions::Get()->SetOption(OPTION_SHOW_MESSAGELOG, m_pTopSplitter->IsSplit());
+
+	if (m_pMenuBar)
+		m_pMenuBar->Check(XRCID("ID_VIEW_MESSAGELOG"), m_pTopSplitter->IsSplit());
+	if (m_pToolBar)
+		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_LOGVIEW"), m_pTopSplitter->IsSplit());
 }
 
 void CMainFrame::ApplySplitterConstraints()
@@ -1383,6 +1396,11 @@ void CMainFrame::OnToggleLocalTreeView(wxCommandEvent& event)
 		ShowLocalTree();
 
 	COptions::Get()->SetOption(OPTION_SHOW_TREE_LOCAL, m_pLocalSplitter->IsSplit());
+
+	if (m_pMenuBar)
+		m_pMenuBar->Check(XRCID("ID_VIEW_LOCALTREE"), m_pLocalSplitter->IsSplit());
+	if (m_pToolBar)
+		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_LOCALTREEVIEW"), m_pLocalSplitter->IsSplit());
 }
 
 void CMainFrame::ShowLocalTree()
@@ -1417,6 +1435,11 @@ void CMainFrame::OnToggleRemoteTreeView(wxCommandEvent& event)
 		ShowRemoteTree();
 
 	COptions::Get()->SetOption(OPTION_SHOW_TREE_REMOTE, m_pRemoteSplitter->IsSplit());
+
+	if (m_pMenuBar)
+		m_pMenuBar->Check(XRCID("ID_VIEW_REMOTETREE"), m_pRemoteSplitter->IsSplit());
+	if (m_pToolBar)
+		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_REMOTETREEVIEW"), m_pRemoteSplitter->IsSplit());
 }
 
 void CMainFrame::ShowRemoteTree()
@@ -1454,6 +1477,11 @@ void CMainFrame::OnToggleQueueView(wxCommandEvent& event)
 		ApplySplitterConstraints();
 	}
 	COptions::Get()->SetOption(OPTION_SHOW_QUEUE, m_pBottomSplitter->IsSplit());
+
+	if (m_pMenuBar)
+		m_pMenuBar->Check(XRCID("ID_VIEW_QUEUE"), m_pBottomSplitter->IsSplit());
+	if (m_pToolBar)
+		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_QUEUEVIEW"), m_pBottomSplitter->IsSplit());
 }
 
 void CMainFrame::OnMenuHelpAbout(wxCommandEvent& event)
@@ -2014,6 +2042,16 @@ void CMainFrame::UpdateToolbarState()
 	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_RECONNECT"), canReconnect);
 }
 
+void CMainFrame::InitMenubarState()
+{
+	if (!m_pMenuBar)
+		return;
+	m_pMenuBar->Check(XRCID("ID_VIEW_MESSAGELOG"), m_pTopSplitter && m_pTopSplitter->IsSplit());
+	m_pMenuBar->Check(XRCID("ID_VIEW_LOCALTREE"), m_pLocalSplitter && m_pLocalSplitter->IsSplit());
+	m_pMenuBar->Check(XRCID("ID_VIEW_REMOTETREE"), m_pRemoteSplitter && m_pRemoteSplitter->IsSplit());
+	m_pMenuBar->Check(XRCID("ID_VIEW_QUEUE"), m_pBottomSplitter && m_pBottomSplitter->IsSplit());
+}
+
 void CMainFrame::UpdateMenubarState()
 {
 	if (!m_pMenuBar)
@@ -2024,6 +2062,7 @@ void CMainFrame::UpdateMenubarState()
 	const bool idle = m_pState->IsRemoteIdle();
 
 	m_pMenuBar->Enable(XRCID("ID_MENU_SERVER_DISCONNECT"), pServer && idle);
+	m_pMenuBar->Enable(XRCID("ID_CANCEL"), pServer && !idle);
 	m_pMenuBar->Enable(XRCID("ID_MENU_SERVER_CMD"), pServer && idle);
 	m_pMenuBar->Enable(XRCID("ID_MENU_FILE_COPYSITEMANAGER"), pServer != 0);
 	m_pMenuBar->Enable(XRCID("ID_TOOLBAR_COMPARISON"), pServer && m_pState->IsRemoteConnected());
