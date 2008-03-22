@@ -287,7 +287,7 @@ void CStatusView::InitDefAttr()
 			break;
 		default:
 			m_attributeCache[i].prefix = _("Status:");
-			m_attributeCache[i].attr.SetTextColour(wxColour(0, 0, 0));
+			m_attributeCache[i].attr.SetTextColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 			break;
 		}
 		m_attributeCache[i].prefix += _T("\t");

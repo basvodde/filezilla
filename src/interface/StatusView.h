@@ -40,7 +40,7 @@ protected:
 	} m_attributeCache[MessageTypeCount];
 
 	bool m_rtl;
-	
+
 	bool m_shown;
 
 	// Don't update actual log window if not shown,

@@ -289,6 +289,7 @@ protected:
 		wxPaintDC paintDc(this);
 
 		paintDc.SetFont(GetFont());
+		paintDc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 
 		paintDc.DrawText(m_text, 0, 0);
 	};

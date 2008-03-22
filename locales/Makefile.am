@@ -7,8 +7,8 @@ install-data-local: install-filezilla-catalogs
 
 install-filezilla-catalogs: allmo
 	for i in @FILEZILLA_LINGUAS@ ; do \
-	  $(mkinstalldirs) $(DESTDIR)$(localedir)/$$i ; \
-	  $(INSTALL_DATA) $$i.mo $(DESTDIR)$(localedir)/$$i/filezilla.mo ; \
+	  $(mkinstalldirs) $(DESTDIR)$(localedir)/$$i/LC_MESSAGES ; \
+	  $(INSTALL_DATA) $$i.mo $(DESTDIR)$(localedir)/$$i/LC_MESSAGES/filezilla.mo ; \
 	done
 
 uninstall-local:

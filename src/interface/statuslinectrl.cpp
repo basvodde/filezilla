@@ -30,7 +30,7 @@ CStatusLineCtrl::CStatusLineCtrl(CQueueView* pParent, const t_EngineData* const 
 	SetOwnFont(pParent->GetFont());
 	SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 	SetBackgroundColour(pParent->GetBackgroundColour());
-	
+
 	m_transferStatusTimer.SetOwner(this, TRANSFERSTATUS_TIMER_ID);
 
 	m_madeProgress = false;
@@ -115,6 +115,7 @@ void CStatusLineCtrl::OnPaint(wxPaintEvent& event)
 	dc.SetFont(GetFont());
 	dc.SetPen(GetBackgroundColour());
 	dc.SetBrush(GetBackgroundColour());
+	dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 
 	// Get character height so that we can center the text vertically.
 	wxCoord h = (rect.GetHeight() - m_textHeight) / 2;
@@ -270,7 +271,7 @@ void CStatusLineCtrl::DrawProgressBar(wxDC& dc, int x, int y, int height)
 	dc.DrawRectangle(x + 1 + barSplit, y + 1, PROGRESSBAR_WIDTH - barSplit - 1, height - 2);
 
 	if (barSplit && height > 2)
-	{	
+	{
 		// Draw pretty gradient
 
 		int greenmin = 128;
