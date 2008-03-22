@@ -192,7 +192,7 @@ wxString CServer::GetUser() const
 {
 	if (m_logonType == ANONYMOUS)
 		return _T("anonymous");
-	
+
 	return m_user;
 }
 
@@ -200,7 +200,7 @@ wxString CServer::GetPass() const
 {
 	if (m_logonType == ANONYMOUS)
 		return _T("anon@localhost");
-	
+
 	return m_pass;
 }
 
@@ -348,7 +348,7 @@ bool CServer::operator<(const CServer &op) const
 		return true;
 	else if (m_timezoneOffset > op.m_timezoneOffset)
 		return false;
-	
+
 	if (m_pasvMode < op.m_pasvMode)
 		return true;
 	else if (m_pasvMode > op.m_pasvMode)
@@ -441,7 +441,7 @@ bool CServer::SetHost(wxString host, unsigned int port)
 
 	if (m_protocol == UNKNOWN)
 		m_protocol = GetProtocolFromPort(m_port);
-	
+
 	return true;
 }
 
@@ -455,7 +455,7 @@ bool CServer::SetUser(const wxString& user, const wxString& pass /*=_T("")*/)
 
 	m_user = user;
 	m_pass = pass;
-	
+
 	return true;
 }
 
@@ -575,7 +575,7 @@ bool CServer::SetCustomEncoding(const wxString& encoding)
 
 	m_encodingType = ENCODING_CUSTOM;
 	m_customEncoding = encoding;
-	
+
 	return true;
 }
 
@@ -608,7 +608,7 @@ enum ServerProtocol CServer::GetProtocolFromPort(unsigned int port, bool default
 		if (protocolInfos[i].defaultPort == port)
 			return protocolInfos[i].protocol;
 	}
-	
+
 	if (defaultOnly)
 		return UNKNOWN;
 
