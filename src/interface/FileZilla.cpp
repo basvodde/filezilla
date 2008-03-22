@@ -580,6 +580,8 @@ bool CFileZillaApp::LoadLocales()
 {
 #ifndef __WXMAC__
 	m_localesDir = GetDataDir(_T("/../locale/*/filezilla.mo"));
+	if (m_localesDir == _T(""))
+		m_localesDir = GetDataDir(_T("/../locale/*/LC_MESSAGES/filezilla.mo"));
 	if (m_localesDir != _T(""))
 	{
 		if (m_localesDir[m_localesDir.Length() - 1] != wxFileName::GetPathSeparator())

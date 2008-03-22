@@ -37,7 +37,10 @@ bool COptionsPageLanguage::LoadPage()
 	for (bool found = dir.GetFirst(&locale); found; found = dir.GetNext(&locale))
 	{
 		if (!wxFileName::FileExists(localesDir + locale + _T("/filezilla.mo")))
-			continue;
+		{
+			if (!wxFileName::FileExists(localesDir + locale + _T("/LC_MESSAGES/filezilla.mo")))
+				continue;
+		}
 
 		wxString name;
 		const wxLanguageInfo* pInfo = wxLocale::FindLanguageInfo(locale);
@@ -97,7 +100,7 @@ bool COptionsPageLanguage::SavePage()
 	if (successful)
 		m_pOptions->SetOption(OPTION_LANGUAGE, code);
 	else
-		wxMessageBox(wxString::Format(_("Failed to set language to %s, using default system language"), pListBox->GetStringSelection().c_str()), _("Failed to change language"), wxICON_EXCLAMATION, this);		
+		wxMessageBox(wxString::Format(_("Failed to set language to %s, using default system language"), pListBox->GetStringSelection().c_str()), _("Failed to change language"), wxICON_EXCLAMATION, this);
 #endif
 	return true;
 }

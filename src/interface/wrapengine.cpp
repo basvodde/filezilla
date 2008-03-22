@@ -813,6 +813,8 @@ static wxString GetLocaleFile(const wxString& localesDir, wxString name)
 {
 	if (wxFileName::FileExists(localesDir + name + _T("/filezilla.mo")))
 		return name;
+	if (wxFileName::FileExists(localesDir + name + _T("/LC_MESSAGES/filezilla.mo")))
+		return name + _T("/LC_MESSAGES");
 
 	size_t pos = name.Find('@');
 	if (pos > 0)
@@ -820,6 +822,8 @@ static wxString GetLocaleFile(const wxString& localesDir, wxString name)
 		name = name.Left(pos);
 		if (wxFileName::FileExists(localesDir + name + _T("/filezilla.mo")))
 			return name;
+		if (wxFileName::FileExists(localesDir + name + _T("/LC_MESSAGES/filezilla.mo")))
+			return name + _T("/LC_MESSAGES");
 	}
 
 	pos = name.Find('_');
@@ -828,6 +832,8 @@ static wxString GetLocaleFile(const wxString& localesDir, wxString name)
 		name = name.Left(pos);
 		if (wxFileName::FileExists(localesDir + name + _T("/filezilla.mo")))
 			return name;
+		if (wxFileName::FileExists(localesDir + name + _T("/LC_MESSAGES/filezilla.mo")))
+			return name + _T("/LC_MESSAGES");
 	}
 
 	return _T("");
