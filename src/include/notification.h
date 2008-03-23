@@ -143,6 +143,8 @@ public:
 
 	bool ascii;
 
+	bool canResume;
+
 	// overwriteAction will be set by the request handler
 	enum OverwriteAction
 	{
@@ -150,9 +152,11 @@ public:
 		ask,
 		overwrite,
 		overwriteNewer,	// Overwrite if source file is newer than target file
-		resume,
+		resume, // Overwrites if cannot be resumed
 		rename,
-		skip
+		skip,
+
+		ACTION_COUNT
 	};
 
 	// Set overwriteAction to the desired action
@@ -202,6 +206,13 @@ public:
 	wxFileOffset totalSize;		// Total size of the file to transfer, -1 if unknown
 	wxFileOffset startOffset;
 	wxFileOffset currentOffset;
+
+	// True on download notifications iff currentOffset != startOffset.
+	// True on FTP upload notifications iff currentOffset != startOffset
+	// AND after the first accepted data after the first wxSOCKET_WOULDBLOCK.
+	// SFTP uploads: Set to true if currentOffset >= startOffset + 65536.
+	bool madeProgress;
+
 	bool list;
 };
 

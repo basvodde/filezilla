@@ -90,6 +90,11 @@ protected:
 
 	CTlsSocket* m_pTlsSocket;
 	bool m_shutdown;
+
+	// Needed for the madeProgress field in CTransferStatus
+	// Initially 0, 2 if made progress
+	// On uploads, 1 after first WSAE_WOULDBLOCK
+	int m_madeProgress;
 };
 
 #endif

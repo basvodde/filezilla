@@ -141,6 +141,7 @@ public:
 	void UpdateTransferStatus(wxFileOffset transferredBytes);
 	void ResetTransferStatus();
 	bool GetTransferStatus(CTransferStatus &status, bool &changed);
+	void SetTransferStatusMadeProgress();
 
 	const CServer* GetCurrentServer() const;
 

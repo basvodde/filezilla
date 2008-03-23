@@ -17,9 +17,6 @@ public:
 	wxLongLong GetTotalSize() const { return m_pStatus ? m_pStatus->totalSize : -1; }
 	wxLongLong GetSpeed() const;
 
-	// Returns true if some progress has been made since transfer started
-	bool MadeProgress() const { return m_madeProgress; }
-
 	virtual bool Show(bool show = true);
 
 protected:

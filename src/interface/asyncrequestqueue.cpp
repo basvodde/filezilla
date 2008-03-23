@@ -185,10 +185,10 @@ void CAsyncRequestQueue::ProcessNextRequest()
 				action = 5;
 		}
 
-		if (action < 1 || action > 5)
-			action = 5;
+		if (action < 1 || action >= CFileExistsNotification::ACTION_COUNT)
+			action = CFileExistsNotification::skip;
 
-		if (action == 3 && pNotification->ascii)
+		if (action == CFileExistsNotification::resume && pNotification->ascii)
 		{
 			// Check if resuming ascii files is allowed
 			if (!COptions::Get()->GetOptionVal(OPTION_ASCIIRESUME))
@@ -198,7 +198,7 @@ void CAsyncRequestQueue::ProcessNextRequest()
 
 		switch (action)
 		{
-		case 4:
+		case CFileExistsNotification::rename:
 			{
 				wxString msg;
 				wxString defaultName;

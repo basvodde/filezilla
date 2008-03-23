@@ -169,6 +169,9 @@ public:
 
 	int m_defaultFileExistsAction;
 
+	bool m_madeProgress;
+	bool m_autoResume;
+
 protected:
 	enum QueuePriority m_priority;
 

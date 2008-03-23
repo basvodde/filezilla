@@ -594,9 +594,19 @@ void CQueueView::ProcessNotification(t_EngineData* pEngineData, CNotification* p
 		{
 		case reqId_fileexists:
 			{
-				// Set default file exists action
 				CFileExistsNotification *pFileExistsNotification = reinterpret_cast<CFileExistsNotification *>(pNotification);
-				pFileExistsNotification->overwriteAction = (enum CFileExistsNotification::OverwriteAction)pEngineData->pItem->m_defaultFileExistsAction;
+				if (pFileExistsNotification->canResume &&
+					pEngineData->pItem->GetType() == QueueItemType_File &&
+					((CFileItem*)pEngineData->pItem)->m_autoResume &&
+					((CFileItem*)pEngineData->pItem)->m_transferSettings.binary)
+				{
+					pFileExistsNotification->overwriteAction = CFileExistsNotification::resume;
+				}
+				else
+				{
+					// Set default file exists action
+					pFileExistsNotification->overwriteAction = (enum CFileExistsNotification::OverwriteAction)pEngineData->pItem->m_defaultFileExistsAction;
+				}
 			}
 			break;
 		default:
@@ -622,7 +632,15 @@ void CQueueView::ProcessNotification(t_EngineData* pEngineData, CNotification* p
 			const CTransferStatus *pStatus = pTransferStatusNotification->GetStatus();
 
 			if (pEngineData->active)
+			{
+				if (pStatus && pStatus->madeProgress && !pStatus->list && 
+					pEngineData->pItem->GetType() == QueueItemType_File)
+				{
+					CFileItem* pItem = (CFileItem*)pEngineData->pItem;
+					pItem->m_madeProgress = true;
+				}
 				pEngineData->pStatusLineCtrl->SetTransferStatus(pStatus);
+			}
 		}
 		delete pNotification;
 		break;
@@ -853,7 +871,15 @@ void CQueueView::ProcessReply(t_EngineData* pEngineData, COperationNotification*
 		if (pEngineData->pItem && pEngineData->pItem->m_remove)
 			reason = remove;
 		else
+		{
+			if (pEngineData->pItem->GetType() == QueueItemType_File && ((CFileItem*)pEngineData->pItem)->m_madeProgress)
+			{
+				CFileItem* pItem = (CFileItem*)pEngineData->pItem;
+				pItem->m_madeProgress = false;
+				pItem->m_autoResume = true;
+			}
 			reason = reset;
+		}
 		pEngineData->pItem->m_statusMessage = _("Interrupted by user");
 		ResetEngine(*pEngineData, reason);
 		return;
@@ -917,8 +943,14 @@ void CQueueView::ProcessReply(t_EngineData* pEngineData, COperationNotification*
 		// Increase error count only if item didn't make any progress. This keeps
 		// user interaction at a minimum if connection is unstable.
 
-		// FIXME: Disabled since detection isn't reliable (yet)
-		//else if (!pEngineData->pStatusLineCtrl || !pEngineData->pStatusLineCtrl->MadeProgress())
+		if (pEngineData->pItem->GetType() == QueueItemType_File && ((CFileItem*)pEngineData->pItem)->m_madeProgress)
+		{
+			// Don't increase error count if there has been progress
+			CFileItem* pItem = (CFileItem*)pEngineData->pItem;
+			pItem->m_madeProgress = false;
+			pItem->m_autoResume = true;
+		}
+		else
 		{
 			if ((replyCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)
 				pEngineData->pItem->m_statusMessage = _T("");
@@ -1033,7 +1065,7 @@ void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
 			m_itemCount--;
 			SaveSetItemCount(m_itemCount);
 
-			const CFileItem* const pFileItem = (CFileItem*)data.pItem;
+			CFileItem* const pFileItem = (CFileItem*)data.pItem;
 			if (pFileItem->Download())
 				m_pMainFrame->GetState()->RefreshLocalFile(pFileItem->GetLocalFile());
 
@@ -1046,6 +1078,12 @@ void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
 					pEditHandler->FinishTransfer(reason == success, pFileItem->m_edit, fn.GetFullName());
 				else
 					pEditHandler->FinishTransfer(reason == success, pFileItem->m_edit, fn.GetFullPath());
+			}
+
+			if (reason == failure)
+			{
+				pFileItem->m_autoResume = false;
+				pFileItem->m_madeProgress = false;
 			}
 		}
 

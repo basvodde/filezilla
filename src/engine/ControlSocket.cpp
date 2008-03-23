@@ -255,6 +255,7 @@ void CControlSocket::InitTransferStatus(wxFileOffset totalSize, wxFileOffset sta
 	m_pTransferStatus->totalSize = totalSize;
 	m_pTransferStatus->startOffset = startOffset;
 	m_pTransferStatus->currentOffset = startOffset;
+	m_pTransferStatus->madeProgress = false;
 }
 
 void CControlSocket::SetTransferStatusStartTime()
@@ -263,6 +264,14 @@ void CControlSocket::SetTransferStatusStartTime()
 		return;
 
 	m_pTransferStatus->started = wxDateTime::Now();
+}
+
+void CControlSocket::SetTransferStatusMadeProgress()
+{
+	if (!m_pTransferStatus)
+		return;
+
+	m_pTransferStatus->madeProgress = true;
 }
 
 void CControlSocket::UpdateTransferStatus(wxFileOffset transferredBytes)
@@ -406,6 +415,13 @@ int CControlSocket::CheckOverwriteFile()
 	pNotification->localSize = pData->localFileSize;
 	pNotification->remoteSize = pData->remoteFileSize;
 	pNotification->ascii = !pData->transferSettings.binary;
+
+	if (pData->download && pNotification->localSize != -1)
+		pNotification->canResume = true;
+	else if (!pData->download && pNotification->remoteSize != -1)
+		pNotification->canResume = true;
+	else
+		pNotification->canResume = false;
 
 	wxStructStat buf;
 	int result;

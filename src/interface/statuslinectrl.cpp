@@ -33,7 +33,6 @@ CStatusLineCtrl::CStatusLineCtrl(CQueueView* pParent, const t_EngineData* const 
 
 	m_transferStatusTimer.SetOwner(this, TRANSFERSTATUS_TIMER_ID);
 
-	m_madeProgress = false;
 	m_pParent = pParent;
 	m_pStatus = 0;
 	m_lastOffset = -1;
@@ -212,9 +211,6 @@ void CStatusLineCtrl::SetTransferStatus(const CTransferStatus* pStatus)
 
 		m_lastOffset = pStatus->currentOffset;
 
-		if (!m_madeProgress && !pStatus->list && pStatus->currentOffset - pStatus->startOffset > 16384)
-			m_madeProgress = true;
-
 		if (!m_transferStatusTimer.IsRunning())
 			m_transferStatusTimer.Start(100);
 	}
@@ -235,7 +231,15 @@ void CStatusLineCtrl::OnTimer(wxTimerEvent& event)
 	if (!m_pEngineData->pEngine->GetTransferStatus(status, changed))
 		SetTransferStatus(0);
 	else if (changed)
+	{
+		if (status.madeProgress && !status.list &&
+			m_pEngineData->pItem->GetType() == QueueItemType_File)
+		{
+			CFileItem* pItem = (CFileItem*)m_pEngineData->pItem;
+			pItem->m_madeProgress = true;
+		}
 		SetTransferStatus(&status);
+	}
 	else
 		m_transferStatusTimer.Stop();
 }

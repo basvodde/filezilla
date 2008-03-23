@@ -41,6 +41,8 @@ CTransferSocket::CTransferSocket(CFileZillaEnginePrivate *pEngine, CFtpControlSo
 	m_postponedSend = false;
 
 	m_shutdown = false;
+
+	m_madeProgress = 0;
 }
 
 CTransferSocket::~CTransferSocket()
@@ -206,6 +208,11 @@ void CTransferSocket::OnReceive()
 		{
 			m_pDirectoryListingParser->AddData(pBuffer, numread);
 			m_pEngine->SetActive(true);
+			if (!m_madeProgress)
+			{
+				m_madeProgress = 2;
+				m_pControlSocket->SetTransferStatusMadeProgress();
+			}
 			m_pControlSocket->UpdateTransferStatus(numread);
 			if (m_onCloseCalled)
 			{
@@ -252,6 +259,11 @@ void CTransferSocket::OnReceive()
 		if (numread > 0)
 		{
 			m_pEngine->SetActive(true);
+			if (!m_madeProgress)
+			{
+				m_madeProgress = 2;
+				m_pControlSocket->SetTransferStatusMadeProgress();
+			}
 			m_pControlSocket->UpdateTransferStatus(numread);
 
 			m_pTransferBuffer += numread;
@@ -333,6 +345,12 @@ void CTransferSocket::OnSend()
 		if (numsent > 0)
 		{
 			m_pEngine->SetActive(false);
+			if (m_madeProgress == 1)
+			{
+				m_pControlSocket->LogMessage(::Debug_Debug, _T("Made progress in CTransferSocket::OnSend()"));
+				m_madeProgress = 2;
+				m_pControlSocket->SetTransferStatusMadeProgress();
+			}
 			m_pControlSocket->UpdateTransferStatus(numsent);
 		}
 
@@ -344,7 +362,16 @@ void CTransferSocket::OnSend()
 	if (m_pBackend->Error())
 	{
 		int error = m_pBackend->LastError();
-		if (error != wxSOCKET_NOERROR && error != wxSOCKET_WOULDBLOCK)
+		if (error == wxSOCKET_WOULDBLOCK)
+		{
+			if (!m_madeProgress)
+			{
+				m_pControlSocket->LogMessage(::Debug_Debug, _T("First wxSOCKET_WOULDBLOCK in CTransferSocket::OnSend()"));
+				m_madeProgress = 1;
+				m_pControlSocket->SetTransferStatusMadeProgress();
+			}
+		}
+		else if (error != wxSOCKET_NOERROR)
 		{
 			m_pControlSocket->LogMessage(::Error, _("Error %d writing to socket"), error);
 			TransferEnd(transfer_failure);

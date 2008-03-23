@@ -595,6 +595,25 @@ void CSftpControlSocket::OnSftpEvent(wxCommandEvent& event)
 			{
 				long number = 0;
 				message->text.ToLong(&number);
+				
+				if (m_pTransferStatus && !m_pTransferStatus->madeProgress)
+				{
+					if (m_pCurOpData && m_pCurOpData->opId == cmd_transfer)
+					{
+						CSftpFileTransferOpData *pData = static_cast<CSftpFileTransferOpData *>(m_pCurOpData);
+						if (pData->download)
+						{
+							if (number > 0)
+								SetTransferStatusMadeProgress();
+						}
+						else
+						{
+							if (m_pTransferStatus->currentOffset > m_pTransferStatus->startOffset + 65565)
+								SetTransferStatusMadeProgress();
+						}
+					}
+				}
+
 				UpdateTransferStatus(number);
 			}
 			break;
