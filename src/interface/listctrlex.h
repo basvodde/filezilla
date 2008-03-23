@@ -29,10 +29,6 @@ protected:
 
 	virtual wxString OnGetItemText(long item, long column) const;
 
-#ifdef __WXGTK__
-	wxBitmap GetSortArrow(bool sortDown);
-#endif
-
 private:
 	// Keyboard prefix search
 	void HandlePrefixSearch(wxChar character);

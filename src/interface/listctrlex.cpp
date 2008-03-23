@@ -219,21 +219,6 @@ int wxListCtrlEx::FindItemWithPrefix(const wxString& searchPrefix, int start)
 	return -1;
 }
 
-#ifdef __WXGTK__
-wxBitmap wxListCtrlEx::GetSortArrow(bool sortDown)
-{
-	wxBitmap bmp(16, 16);
-	wxMemoryDC dc(bmp);
-
-	dc.Clear();
-
-	wxRendererNative& renderer = wxRendererNative::Get();
-	renderer.DrawDropArrow(this, dc, wxRect(0, 0, 20, 20), 0);
-
-	return bmp;
-}
-#endif //__WXGTK__
-
 void wxListCtrlEx::SaveSetItemCount(long count)
 {
 #ifndef __WXMSW__
