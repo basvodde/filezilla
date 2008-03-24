@@ -362,6 +362,8 @@ void CSiteManager::OnOK(wxCommandEvent& event)
 
 	Save();
 
+	RememberLastSelected();
+
 	EndModal(wxID_OK);
 }
 
@@ -397,6 +399,8 @@ void CSiteManager::OnConnect(wxCommandEvent& event)
 
 	Save();
 
+	RememberLastSelected();
+
 	EndModal(wxID_YES);
 }
 
@@ -416,9 +420,46 @@ public:
 class CSiteManagerXmlHandler_Tree : public CSiteManagerXmlHandler
 {
 public:
-	CSiteManagerXmlHandler_Tree(wxTreeCtrl* pTree, wxTreeItemId root)
+	CSiteManagerXmlHandler_Tree(wxTreeCtrl* pTree, wxTreeItemId root, const wxString& lastSelection)
 		: m_pTree(pTree), m_item(root)
 	{
+		wxString name;
+		const wxChar *p = lastSelection;
+
+		// Undo escapement
+		bool lastBackslash = false;
+		while (*p)
+		{
+			const wxChar& c = *p;
+			if (c == '\\')
+			{
+				if (lastBackslash)
+				{
+					name += _T("\\");
+					lastBackslash = false;
+				}
+				else
+					lastBackslash = true;
+			}
+			else if (c == '/')
+			{
+				if (lastBackslash)
+				{
+					name += _T("/");
+					lastBackslash = 0;
+				}
+				else
+				{
+					if (!name.IsEmpty())
+						m_lastSelection.push_back(name);
+					name.clear();
+				}
+			}
+			else
+				name += *p;
+			p++;
+		}
+		m_wrong_sel_depth = 0;
 	}
 
 	virtual ~CSiteManagerXmlHandler_Tree()
@@ -436,18 +477,46 @@ public:
 		m_item = newItem;
 		m_expand.push_back(expanded);
 
+		if (!m_wrong_sel_depth && !m_lastSelection.empty())
+		{
+			const wxString& first = m_lastSelection.front();
+			if (first == name)
+			{
+				m_lastSelection.pop_front();
+				if (m_lastSelection.empty())
+					m_pTree->SelectItem(newItem);
+			}
+			else
+				m_wrong_sel_depth++;
+		}
+		else
+			m_wrong_sel_depth++;
+
 		return true;
 	}
 
 	virtual bool AddSite(const wxString& name, CSiteManagerItemData* data)
 	{
-		m_pTree->AppendItem(m_item, name, 2, 2, data);
+		wxTreeItemId newItem = m_pTree->AppendItem(m_item, name, 2, 2, data);
+
+		if (!m_wrong_sel_depth && !m_lastSelection.empty())
+		{
+			const wxString& first = m_lastSelection.front();
+			if (first == name)
+			{
+				m_lastSelection.clear();
+				m_pTree->SelectItem(newItem);
+			}
+		}
 
 		return true;
 	}
 
 	virtual bool LevelUp()
 	{
+		if (m_wrong_sel_depth)
+			m_wrong_sel_depth--;
+
 		if (!m_expand.empty())
 		{
 			const bool expand = m_expand.back();
@@ -468,6 +537,9 @@ public:
 protected:
 	wxTreeCtrl* m_pTree;
 	wxTreeItemId m_item;
+
+	std::list<wxString> m_lastSelection;
+	int m_wrong_sel_depth;
 
 	std::list<bool> m_expand;
 };
@@ -492,7 +564,6 @@ bool CSiteManager::Load()
 		m_ownSites = pTree->AddRoot(_("My Sites"), 0, 0);
 
 	wxTreeItemId treeId = m_ownSites;
-	pTree->SelectItem(treeId);
 	pTree->SetItemImage(treeId, 1, wxTreeItemIcon_Expanded);
 	pTree->SetItemImage(treeId, 1, wxTreeItemIcon_SelectedExpanded);
 
@@ -510,13 +581,26 @@ bool CSiteManager::Load()
 	if (!pElement)
 		return true;
 
-	CSiteManagerXmlHandler_Tree handler(pTree, treeId);
+	wxString lastSelection = COptions::Get()->GetOption(OPTION_SITEMANAGER_LASTSELECTED);
+	if (lastSelection[0] == '0')
+	{
+		if (lastSelection == _T("0"))
+			pTree->SelectItem(treeId);
+		else
+			lastSelection = lastSelection.Mid(1);
+	}
+	else
+		lastSelection = _T("");
+	CSiteManagerXmlHandler_Tree handler(pTree, treeId, lastSelection);
 
 	bool res = Load(pElement, &handler);
 
 	pTree->SortChildren(treeId);
 	pTree->Expand(treeId);
-	pTree->SelectItem(treeId);
+	if (!pTree->GetSelection())
+		pTree->SelectItem(treeId);
+
+	pTree->EnsureVisible(pTree->GetSelection());
 
 	return res;
 }
@@ -1479,7 +1563,17 @@ bool CSiteManager::LoadDefaultSites()
 	pTree->SetItemImage(m_predefinedSites, 1, wxTreeItemIcon_Expanded);
 	pTree->SetItemImage(m_predefinedSites, 1, wxTreeItemIcon_SelectedExpanded);
 
-	CSiteManagerXmlHandler_Tree handler(pTree, m_predefinedSites);
+	wxString lastSelection = COptions::Get()->GetOption(OPTION_SITEMANAGER_LASTSELECTED);
+	if (lastSelection[0] == '1')
+	{
+		if (lastSelection == _T("1"))
+			pTree->SelectItem(m_predefinedSites);
+		else
+			lastSelection = lastSelection.Mid(1);
+	}
+	else
+		lastSelection = _T("");
+	CSiteManagerXmlHandler_Tree handler(pTree, m_predefinedSites, lastSelection);
 
 	Load(pElement, &handler);
 
@@ -1916,4 +2010,34 @@ void CSiteManager::AddNewSite(wxTreeItemId parent, const CServer& server)
 	pTree->SelectItem(newItem);
 	pTree->Expand(m_ownSites);
 	pTree->EditLabel(newItem);
+}
+
+void CSiteManager::RememberLastSelected()
+{
+	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
+	if (!pTree)
+		return;
+
+	wxTreeItemId item = pTree->GetSelection();
+	if (!item.IsOk())
+		return;
+
+	wxString path;
+	while (item != pTree->GetRootItem() && item != m_ownSites && item != m_predefinedSites)
+	{
+		wxString name = pTree->GetItemText(item);
+		name.Replace(_T("\\"), _T("\\\\"));
+		name.Replace(_T("/"), _T("\\/"));
+
+		path = name + _T("/") + path;
+
+		item = pTree->GetItemParent(item);
+	}
+
+	if (item == m_predefinedSites)
+		path = _T("1") + path;
+	else
+		path = _T("0") + path;
+
+	COptions::Get()->SetOption(OPTION_SITEMANAGER_LASTSELECTED, path);
 }

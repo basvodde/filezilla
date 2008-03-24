@@ -70,6 +70,8 @@ protected:
 	void AddNewSite(wxTreeItemId parent, const CServer& server);
 	void CopyAddServer(const CServer& server);
 
+	void RememberLastSelected();
+
 	virtual void OnOK(wxCommandEvent& event);
 	virtual void OnCancel(wxCommandEvent& event);
 	virtual void OnConnect(wxCommandEvent& event);
