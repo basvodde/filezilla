@@ -39,6 +39,11 @@ CUpdateWizard::CUpdateWizard(wxWindow* pParent)
 	version.Replace(_T(" "), _T("%20"));
 	m_urlServer = _T("update.filezilla-project.org");
 	m_urlFile = wxString::Format(_T("/updatecheck.php?platform=%s&version=%s"), host.c_str(), version.c_str());
+#if defined(__WXMSW__) || defined(__WXMAC__)
+	// Makes not much sense to submit OS version on Linux, *BSD and the likes, too many flavours.
+	wxString osVersion = wxString::Format(_T("&osversion=%d.%d"), wxPlatformInfo::Get().GetOSMajorVersion(), wxPlatformInfo::Get().GetOSMinorVersion());
+	m_urlFile += osVersion;
+#endif
 
 	m_statusTimer.SetOwner(this, 0);
 	m_autoCheckTimer.SetOwner(this, 1);

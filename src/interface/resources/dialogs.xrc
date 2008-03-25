@@ -1814,8 +1814,7 @@
           <label>Automatic update check</label>
           <orient>wxVERTICAL</orient>
           <object class="sizeritem">
-            <object class="wxBoxSizer">
-              <orient>wxVERTICAL</orient>
+            <object class="wxFlexGridSizer">
               <object class="sizeritem">
                 <object class="wxCheckBox" name="ID_UPDATECHECK">
                   <label>&amp;Enable automatic update check</label>
@@ -1844,8 +1843,6 @@
                     <flag>wxALIGN_CENTRE_VERTICAL</flag>
                   </object>
                 </object>
-                <flag>wxTOP|wxBOTTOM</flag>
-                <border>3</border>
               </object>
               <object class="spacer">
                 <size>0,10</size>
@@ -1853,6 +1850,21 @@
               <object class="sizeritem">
                 <object class="wxButton" name="ID_RUNUPDATECHECK">
                   <label>&amp;Run update check now...</label>
+                </object>
+              </object>
+              <cols>1</cols>
+              <vgap>3</vgap>
+              <object class="spacer">
+                <size>0,10</size>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Privacy policy:</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Only the versions of FileZilla and the operating system you are using will be submitted to the server.</label>
                 </object>
               </object>
             </object>
