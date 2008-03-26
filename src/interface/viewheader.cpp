@@ -521,13 +521,13 @@ END_EVENT_TABLE()
 CRemoteViewHeader::CRemoteViewHeader(wxWindow* pParent, CState* pState)
 	: CViewHeader(pParent, _("Remote site:")), CStateEventHandler(pState)
 {
-	pState->RegisterHandler(this, STATECHANGE_LOCAL_DIR);
+	pState->RegisterHandler(this, STATECHANGE_REMOTE_DIR);
 	m_pComboBox->Disable();
 }
 
 void CRemoteViewHeader::OnStateChange(enum t_statechange_notifications notification, const wxString& data)
 {
-	wxASSERT(notification == STATECHANGE_LOCAL_DIR);
+	wxASSERT(notification == STATECHANGE_REMOTE_DIR);
 
 	m_path = m_pState->GetRemotePath();
 	if (m_path.IsEmpty())
