@@ -2,10 +2,10 @@
 #include "statusbar.h"
 #include "Options.h"
 
-static const int statbarWidths[6] = {
-	-3, 0, 0, 20, 0, 35
+static const int statbarWidths[5] = {
+	-3, 40, 20, 0, 35
 };
-#define FIELD_QUEUESIZE 4
+#define FIELD_QUEUESIZE 3
 
 BEGIN_EVENT_TABLE(wxStatusBarEx, wxStatusBar)
 EVT_SIZE(wxStatusBarEx::OnSize)
@@ -188,7 +188,7 @@ CStatusBar::CStatusBar(wxTopLevelWindow* pParent)
 	m_pDataTypeIndicator = 0;
 	m_pEncryptionIndicator = 0;
 
-	const int count = 6;
+	const int count = 5;
 	SetFieldsCount(count);
 	int array[count];
 	for (int i = 0; i < count - 2; i++)
@@ -259,9 +259,14 @@ void CStatusBar::DisplayDataType(const CServer* const pServer)
 		if (m_pDataTypeIndicator)
 		{
 			RemoveChild(-4, m_pDataTypeIndicator);
-			SetFieldWidth(-4, 0);
 			m_pDataTypeIndicator->Destroy();
 			m_pDataTypeIndicator = 0;
+
+			if (m_pEncryptionIndicator)
+			{
+				RemoveChild(-4, m_pEncryptionIndicator);
+				AddChild(-4, m_pEncryptionIndicator, 22);
+			}
 		}
 	}
 	else
@@ -290,8 +295,13 @@ void CStatusBar::DisplayDataType(const CServer* const pServer)
 		if (!m_pDataTypeIndicator)
 		{
 			m_pDataTypeIndicator = new wxStaticBitmap(this, wxID_ANY, bmp);
-			SetFieldWidth(-4, 20);
-			AddChild(-4, m_pDataTypeIndicator, 2);
+			AddChild(-4, m_pDataTypeIndicator, 22);
+
+			if (m_pEncryptionIndicator)
+			{
+				RemoveChild(-4, m_pEncryptionIndicator);
+				AddChild(-4, m_pEncryptionIndicator, 2);
+			}
 		}
 		else
 			m_pDataTypeIndicator->SetBitmap(bmp);
@@ -317,8 +327,7 @@ void CStatusBar::DisplayEncrypted(const CServer* const pServer)
 	{
 		if (m_pEncryptionIndicator)
 		{
-			RemoveChild(-5, m_pEncryptionIndicator);
-			SetFieldWidth(-5, 0);
+			RemoveChild(-4, m_pEncryptionIndicator);
 			m_pEncryptionIndicator->Destroy();
 			m_pEncryptionIndicator = 0;
 		}
@@ -329,8 +338,7 @@ void CStatusBar::DisplayEncrypted(const CServer* const pServer)
 			return;
 		wxBitmap bmp = wxArtProvider::GetBitmap(_T("ART_LOCK"), wxART_OTHER, wxSize(16, 16));
 		m_pEncryptionIndicator = new wxStaticBitmap(this, wxID_ANY, bmp);
-		SetFieldWidth(-5, 20);
-		AddChild(-5, m_pEncryptionIndicator, 2);
+		AddChild(-4, m_pEncryptionIndicator, m_pDataTypeIndicator ? 2 : 22);
 
 		m_pEncryptionIndicator->SetToolTip(_T("The connection is encrypted. Click icon for details."));
 	}
