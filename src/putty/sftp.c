@@ -114,6 +114,7 @@ static void sftp_pkt_addattrs(struct sftp_packet *pkt, struct fxp_attrs attrs)
     if (attrs.flags & SSH_FILEXFER_ATTR_PERMISSIONS) {
 	sftp_pkt_adduint32(pkt, attrs.permissions);
     }
+/*FZ: Does not work
     if (attrs.flags & (SSH_FILEXFER_ATTR_CREATETIME | SSH_FILEXFER_ATTR_MODIFICATIONTIME)) {
 	if (attrs.flags & SSH_FILEXFER_ATTR_ACCESSTIME) {
 	    sftp_pkt_adduint32(pkt, attrs.atime.hi);
@@ -129,6 +130,7 @@ static void sftp_pkt_addattrs(struct sftp_packet *pkt, struct fxp_attrs attrs)
 	}
     }
     else
+*/
     {
 	if (attrs.flags & SSH_FILEXFER_ATTR_ACMODTIME) {
 	    sftp_pkt_adduint32(pkt, attrs.atime.lo);
@@ -199,6 +201,7 @@ static int sftp_pkt_getattrs(struct sftp_packet *pkt, struct fxp_attrs *ret)
 	if (!sftp_pkt_getuint32(pkt, &ret->permissions))
 	    return 0;
     }
+/*FZ: Does not work
     if (ret->flags & (SSH_FILEXFER_ATTR_CREATETIME | SSH_FILEXFER_ATTR_MODIFICATIONTIME)) {
 	unsigned long hi, lo;
 	if (ret->flags & SSH_FILEXFER_ATTR_ACCESSTIME) {
@@ -220,7 +223,9 @@ static int sftp_pkt_getattrs(struct sftp_packet *pkt, struct fxp_attrs *ret)
 	    ret->mtime = uint64_make(hi, lo);
 	}
     }
-    else {
+    else 
+*/
+    {
 	if (ret->flags & SSH_FILEXFER_ATTR_ACMODTIME) {
     	    if (!sftp_pkt_getuint32(pkt, &ret->atime.lo) ||
 		!sftp_pkt_getuint32(pkt, &ret->mtime.lo))

@@ -1868,9 +1868,11 @@ static int sftp_action_chmtime(void *vmtime, char *fname)
 	return 0;
     }
 
+/*FZ: Does not work
     if (attrs.flags & SSH_FILEXFER_ATTR_MODIFICATIONTIME)
 	attrs.flags = SSH_FILEXFER_ATTR_MODIFICATIONTIME;
     else
+*/
 	attrs.flags = SSH_FILEXFER_ATTR_ACMODTIME;
     
     if (!uint64_compare(attrs.mtime, *mtime)) {
@@ -1981,8 +1983,9 @@ static int sftp_cmd_mtime(struct sftp_command *cmd)
 
     if (attrs.flags == SSH_FILEXFER_ATTR_ACMODTIME)
 	mtime = attrs.mtime;
-    else if (attrs.flags & SSH_FILEXFER_ATTR_MODIFICATIONTIME)
+/*FZ: Does not work    else if (attrs.flags & SSH_FILEXFER_ATTR_MODIFICATIONTIME)
 	mtime = attrs.mtime;
+*/
     else {
 	fzprintf(sftpError, "get attrs for %s: %s", cname,
 	       "mtime not provided");
