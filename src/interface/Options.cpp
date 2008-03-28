@@ -69,8 +69,8 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Theme", string, _T("") },
 	{ "Language Code", string, _T("") },
 	{ "Last Server Path", string, _T("") },
-	{ "Max Concurrent Uploads", number, _T("0") },
-	{ "Max Concurrent Downloads", number, _T("0") },
+	{ "Concurrent download limit", number, _T("0") },
+	{ "Concurrent upload limit", number, _T("0") },
 	{ "Update Check", number, _T("1") },
 	{ "Update Check Interval", number, _T("7") },
 	{ "Last automatic update check", string, _T("") },
@@ -345,6 +345,7 @@ void COptions::SetXmlValue(unsigned int nID, wxString value)
 			return;
 		}
 	}
+	wxASSERT(options[nID].name[0]);
 	TiXmlElement setting("Setting");
 	setting.SetAttribute("name", options[nID].name);
 	setting.SetAttribute("type", (options[nID].type == string) ? "string" : "number");
