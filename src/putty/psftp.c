@@ -1981,7 +1981,7 @@ static int sftp_cmd_mtime(struct sftp_command *cmd)
 
     attrs.flags &= SSH_FILEXFER_ATTR_ACCESSTIME | SSH_FILEXFER_ATTR_CREATETIME | SSH_FILEXFER_ATTR_MODIFICATIONTIME;
 
-    if (attrs.flags == SSH_FILEXFER_ATTR_ACMODTIME)
+    if (attrs.flags & SSH_FILEXFER_ATTR_ACMODTIME)
 	mtime = attrs.mtime;
 /*FZ: Does not work    else if (attrs.flags & SSH_FILEXFER_ATTR_MODIFICATIONTIME)
 	mtime = attrs.mtime;

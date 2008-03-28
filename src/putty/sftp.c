@@ -231,7 +231,8 @@ static int sftp_pkt_getattrs(struct sftp_packet *pkt, struct fxp_attrs *ret)
 		!sftp_pkt_getuint32(pkt, &ret->mtime.lo))
 		return 0;
 	}
-	ret->atime.hi = ret->ctime.hi = 0;
+	ret->atime.hi = ret->mtime.hi = 0;
+	ret->ctime.lo = ret.ctime.hi = 0;
     }
     if (ret->flags & SSH_FILEXFER_ATTR_EXTENDED) {
 	unsigned long count;
