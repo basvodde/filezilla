@@ -45,9 +45,10 @@ public:
 	{
 	}
 
-	virtual size_t GetDataSize() const { return 0; }
+	// GTK doesn't like data size of 0
+	virtual size_t GetDataSize() const { return 1; }
 
-	virtual bool GetDataHere(void *buf) const { return true; }
+	virtual bool GetDataHere(void *buf) const { memset(buf, 0, 1); return true; }
 
 	virtual bool SetData(size_t len, const void *buf) { return true; }
 };
@@ -105,29 +106,23 @@ public:
 		return def;
 	}
 
-	virtual wxDragResult OnDrop(wxCoord x, wxCoord y, wxDragResult def)
+	virtual bool OnDrop(wxCoord x, wxCoord y)
 	{
 		ClearDropHighlight();
-		if (def == wxDragError ||
-			def == wxDragNone ||
-			def == wxDragCancel)
-		{
-			return def;
-		}
 
 		wxTreeItemId hit = GetHit(wxPoint(x, y));
 		if (!hit)
-			return wxDragNone;
+			return false;
 		if (hit == m_pSiteManager->m_dropSource)
-			return wxDragNone;
+			return false;
 
 		const bool predefined = m_pSiteManager->IsPredefinedItem(hit);
 		if (predefined)
-			return wxDragNone;
+			return false;
 
 		wxTreeCtrl *pTree = XRCCTRL(*m_pSiteManager, "ID_SITETREE", wxTreeCtrl);
 		if (pTree->GetItemData(hit))
-			return wxDragNone;
+			return false;
 
 		wxTreeItemId item = hit;
 		while (item != pTree->GetRootItem())
@@ -135,15 +130,12 @@ public:
 			if (item == m_pSiteManager->m_dropSource)
 			{
 				ClearDropHighlight();
-				return wxDragNone;
+				return false;
 			}
 			item = pTree->GetItemParent(item);
 		}
 
-		if (def == wxDragMove && pTree->GetItemParent(m_pSiteManager->m_dropSource) == hit)
-			return wxDragNone;
-
-		return def;
+		return true;
 	}
 
 	virtual void OnLeave()
