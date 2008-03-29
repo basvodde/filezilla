@@ -235,6 +235,213 @@
       </object>
     </object>
   </object>
+  <object class="wxDialog" name="ID_DISPLAYCERT">
+    <title>Certificate details</title>
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <object class="wxStaticBitmap" name="ID_IMAGE">
+              <bitmap stock_id="wxART_INFORMATION"></bitmap>
+            </object>
+            <flag>wxALL</flag>
+            <border>7</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <object class="sizeritem">
+                <object class="wxStaticBoxSizer">
+                  <label>Details</label>
+                  <orient>wxVERTICAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxFlexGridSizer">
+                      <cols>2</cols>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>Host:</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText" name="ID_HOST">
+                          <label>&lt;Host:port&gt;</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>Valid from:</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText" name="ID_ACTIVATION_TIME">
+                          <label></label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>Valid to:</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText" name="ID_EXPIRATION_TIME">
+                          <label></label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>Serial number:</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText" name="ID_SERIAL">
+                          <label></label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>Public key algorithm:</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText" name="ID_PKALGO">
+                          <label></label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>Fingerprint (MD5):</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText" name="ID_FINGERPRINT_MD5">
+                          <label></label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>Fingerprint (SHA-1):</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText" name="ID_FINGERPRINT_SHA1">
+                          <label></label>
+                        </object>
+                      </object>
+                      <vgap>3</vgap>
+                      <hgap>3</hgap>
+                    </object>
+                    <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxGROW</flag>
+                    <border>4</border>
+                  </object>
+                </object>
+                <flag>wxEXPAND</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxBoxSizer">
+                  <object class="sizeritem">
+                    <object class="wxStaticBoxSizer">
+                      <label>Subject of certificate</label>
+                      <orient>wxVERTICAL</orient>
+                      <object class="sizeritem">
+                        <object class="wxFlexGridSizer">
+                          <cols>2</cols>
+                          <object class="sizeritem">
+                            <object class="wxStaticText" name="ID_SUBJECT_DUMMY">
+                              <label>&lt;Dummy&gt;</label>
+                            </object>
+                          </object>
+                          <vgap>2</vgap>
+                          <hgap>2</hgap>
+                        </object>
+                        <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxGROW</flag>
+                        <border>4</border>
+                      </object>
+                    </object>
+                    <option>1</option>
+                    <flag>wxGROW|wxRIGHT</flag>
+                    <border>5</border>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticBoxSizer">
+                      <label>Certificate issuer</label>
+                      <orient>wxVERTICAL</orient>
+                      <object class="sizeritem">
+                        <object class="wxFlexGridSizer">
+                          <cols>2</cols>
+                          <object class="sizeritem">
+                            <object class="wxStaticText" name="ID_ISSUER_DUMMY">
+                              <label>&lt;Dummy&gt;</label>
+                            </object>
+                          </object>
+                          <vgap>2</vgap>
+                          <hgap>2</hgap>
+                        </object>
+                        <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxGROW</flag>
+                        <border>4</border>
+                      </object>
+                    </object>
+                    <option>1</option>
+                    <flag>wxGROW</flag>
+                  </object>
+                  <orient>wxHORIZONTAL</orient>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticBoxSizer">
+                  <label>Session details</label>
+                  <orient>wxVERTICAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxFlexGridSizer">
+                      <cols>2</cols>
+                      <vgap>3</vgap>
+                      <hgap>3</hgap>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>Cipher:</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText" name="ID_CIPHER">
+                          <label>&lt;cipher&gt;</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>MAC:</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText" name="ID_MAC">
+                          <label>&lt;mac&gt;</label>
+                        </object>
+                      </object>
+                    </object>
+                    <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxGROW</flag>
+                    <border>4</border>
+                  </object>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <cols>1</cols>
+              <vgap>5</vgap>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+        </object>
+      </object>
+      <object class="sizeritem">
+        <flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
+        <border>5</border>
+        <object class="wxButton" name="wxID_OK">
+          <label>OK</label>
+          <default>1</default>
+        </object>
+      </object>
+    </object>
+  </object>
   <object class="wxPanel" name="ID_SETTINGS_CONNECTION_PASSIVE">
     <object class="wxBoxSizer">
       <orient>wxVERTICAL</orient>

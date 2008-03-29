@@ -12,14 +12,19 @@ CVerifyCertDialog::~CVerifyCertDialog()
 		delete [] iter->data;
 }
 
-void CVerifyCertDialog::ShowVerificationDialog(CCertificateNotification* pNotification)
+void CVerifyCertDialog::ShowVerificationDialog(CCertificateNotification* pNotification, bool displayOnly /*=false*/)
 {
 	LoadTrustedCerts();
 
 	wxDialogEx* pDlg = new wxDialogEx;
-	pDlg->Load(0, _T("ID_VERIFYCERT"));
+	if (displayOnly)
+		pDlg->Load(0, _T("ID_DISPLAYCERT"));
+	else
+	{
+		pDlg->Load(0, _T("ID_VERIFYCERT"));
 
-	pDlg->WrapText(pDlg, XRCID("ID_DESC"), 400);
+		pDlg->WrapText(pDlg, XRCID("ID_DESC"), 400);
+	}
 
 	pDlg->SetLabel(XRCID("ID_HOST"), wxString::Format(_T("%s:%d"), pNotification->GetHost().c_str(), pNotification->GetPort()));
 
@@ -80,7 +85,8 @@ void CVerifyCertDialog::ShowVerificationDialog(CCertificateNotification* pNotifi
 	if (warning)
 	{
 		XRCCTRL(*pDlg, "ID_IMAGE", wxStaticBitmap)->SetBitmap(wxArtProvider::GetBitmap(wxART_WARNING));
-		XRCCTRL(*pDlg, "ID_ALWAYS", wxCheckBox)->Enable(false);
+		if (!displayOnly)
+			XRCCTRL(*pDlg, "ID_ALWAYS", wxCheckBox)->Enable(false);
 	}
 
 	pDlg->GetSizer()->Fit(pDlg);
@@ -88,25 +94,28 @@ void CVerifyCertDialog::ShowVerificationDialog(CCertificateNotification* pNotifi
 
 	int res = pDlg->ShowModal();
 
-	if (res == wxID_OK)
+	if (!displayOnly)
 	{
-		wxASSERT(!IsTrusted(pNotification));
-
-		pNotification->m_trusted = true;
-
-		if (!warning && XRCCTRL(*pDlg, "ID_ALWAYS", wxCheckBox)->GetValue())
-			SetPermanentlyTrusted(pNotification);
-		else
+		if (res == wxID_OK)
 		{
-			t_certData cert;
-			const unsigned char* data = pNotification->GetRawData(cert.len);
-			cert.data = new unsigned char[cert.len];
-			memcpy(cert.data, data, cert.len);
-			m_sessionTrustedCerts.push_back(cert);
+			wxASSERT(!IsTrusted(pNotification));
+
+			pNotification->m_trusted = true;
+
+			if (!warning && XRCCTRL(*pDlg, "ID_ALWAYS", wxCheckBox)->GetValue())
+				SetPermanentlyTrusted(pNotification);
+			else
+			{
+				t_certData cert;
+				const unsigned char* data = pNotification->GetRawData(cert.len);
+				cert.data = new unsigned char[cert.len];
+				memcpy(cert.data, data, cert.len);
+				m_sessionTrustedCerts.push_back(cert);
+			}
 		}
+		else
+			pNotification->m_trusted = false;
 	}
-	else
-		pNotification->m_trusted = false;
 
 	delete pDlg;
 }

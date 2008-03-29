@@ -9,7 +9,7 @@ public:
 	virtual ~CVerifyCertDialog();
 
 	bool IsTrusted(CCertificateNotification* pNotification);
-	void ShowVerificationDialog(CCertificateNotification* pNotification);
+	void ShowVerificationDialog(CCertificateNotification* pNotification, bool displayOnly = false);
 
 protected:
 	bool IsTrusted(const unsigned char* data, unsigned int len, bool permanentOnly);

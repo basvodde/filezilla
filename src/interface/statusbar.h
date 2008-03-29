@@ -58,13 +58,16 @@ class CStatusBar : public wxStatusBarEx
 {
 public:
 	CStatusBar(wxTopLevelWindow* parent);
-	virtual ~CStatusBar() {}
+	virtual ~CStatusBar();
 
 	void DisplayQueueSize(wxLongLong totalSize, bool hasUnknown);
 	void UpdateSizeFormat();
 
 	void DisplayDataType(const CServer* const pServer);
 	void DisplayEncrypted(const CServer* const pServer);
+	void SetCertificate(CCertificateNotification* pCertificate);
+
+	void OnHandleClick(wxWindow* wnd);
 
 protected:
 	void MeasureQueueSizeWidth();
@@ -73,6 +76,8 @@ protected:
 
 	wxStaticBitmap* m_pDataTypeIndicator;
 	wxStaticBitmap* m_pEncryptionIndicator;
+
+	CCertificateNotification* m_pCertificate;
 };
 
 #endif //__STATUSBAR_H__

@@ -1,6 +1,7 @@
 #include "FileZilla.h"
 #include "statusbar.h"
 #include "Options.h"
+#include "verifycertdialog.h"
 
 static const int statbarWidths[5] = {
 	-3, 40, 20, 0, 35
@@ -182,11 +183,35 @@ void wxStatusBarEx::OnSize(wxSizeEvent& event)
 		PositionChild(*iter);
 }
 
+class CEncryptionIndicator : public wxStaticBitmap
+{
+public:
+	CEncryptionIndicator(CStatusBar* pStatusBar, const wxBitmap& bmp)
+		: wxStaticBitmap(pStatusBar, wxID_ANY, bmp)
+	{
+		m_pStatusBar = pStatusBar;
+	}
+
+protected:
+	CStatusBar* m_pStatusBar;
+
+	DECLARE_EVENT_TABLE()
+	void OnMouseUp(wxMouseEvent& event)
+	{
+		m_pStatusBar->OnHandleClick(this);
+	}
+};
+
+BEGIN_EVENT_TABLE(CEncryptionIndicator, wxStaticBitmap)
+EVT_LEFT_UP(CEncryptionIndicator::OnMouseUp)
+END_EVENT_TABLE()
+
 CStatusBar::CStatusBar(wxTopLevelWindow* pParent)
 	: wxStatusBarEx(pParent)
 {
 	m_pDataTypeIndicator = 0;
 	m_pEncryptionIndicator = 0;
+	m_pCertificate = 0;
 
 	const int count = 5;
 	SetFieldsCount(count);
@@ -202,6 +227,11 @@ CStatusBar::CStatusBar(wxTopLevelWindow* pParent)
 	MeasureQueueSizeWidth();
 
 	UpdateSizeFormat();
+}
+
+CStatusBar::~CStatusBar()
+{
+	delete m_pCertificate;
 }
 
 void CStatusBar::DisplayQueueSize(wxLongLong totalSize, bool hasUnknown)
@@ -323,6 +353,8 @@ void CStatusBar::MeasureQueueSizeWidth()
 
 void CStatusBar::DisplayEncrypted(const CServer* const pServer)
 {
+	delete m_pCertificate;
+	m_pCertificate = 0;
 	if (!pServer || (pServer->GetProtocol() != FTPS && pServer->GetProtocol() != FTPES && pServer->GetProtocol() != SFTP))
 	{
 		if (m_pEncryptionIndicator)
@@ -337,7 +369,7 @@ void CStatusBar::DisplayEncrypted(const CServer* const pServer)
 		if (m_pEncryptionIndicator)
 			return;
 		wxBitmap bmp = wxArtProvider::GetBitmap(_T("ART_LOCK"), wxART_OTHER, wxSize(16, 16));
-		m_pEncryptionIndicator = new wxStaticBitmap(this, wxID_ANY, bmp);
+		m_pEncryptionIndicator = new CEncryptionIndicator(this, bmp);
 		AddChild(-4, m_pEncryptionIndicator, m_pDataTypeIndicator ? 2 : 22);
 
 		m_pEncryptionIndicator->SetToolTip(_T("The connection is encrypted. Click icon for details."));
@@ -351,4 +383,27 @@ void CStatusBar::UpdateSizeFormat()
 	m_sizeFormat = COptions::Get()->GetOptionVal(OPTION_SIZE_FORMAT);
 	if (!m_sizeFormat)
 		m_sizeFormat = 1;
+}
+
+void CStatusBar::OnHandleClick(wxWindow* pWnd)
+{
+	if (pWnd != m_pEncryptionIndicator)
+		return;
+
+	if (m_pCertificate)
+	{
+		CVerifyCertDialog dlg;
+		dlg.ShowVerificationDialog(m_pCertificate, true);
+	}
+	else
+		wxMessageBox(_("Certificate and session data are not available yet."), _("Security information"));
+}
+
+void CStatusBar::SetCertificate(CCertificateNotification* pCertificate)
+{
+	delete m_pCertificate;
+	if (pCertificate)
+		m_pCertificate = new CCertificateNotification(*pCertificate);
+	else
+		m_pCertificate = 0;
 }

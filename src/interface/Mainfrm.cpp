@@ -839,7 +839,11 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 				if (pAsyncRequest->GetRequestID() == reqId_fileexists)
 					m_pQueueView->ProcessNotification(pNotification);
 				else
+				{
+					if (pAsyncRequest->GetRequestID() == reqId_certificate && m_pStatusBar)
+						m_pStatusBar->SetCertificate((CCertificateNotification*)pNotification);
 					m_pAsyncRequestQueue->AddRequest(m_pState->m_pEngine, pAsyncRequest);
+				}
 			}
 			break;
 		case nId_active:
