@@ -823,6 +823,21 @@ void CSiteManager::OnNewFolder(wxCommandEvent&event)
 	pTree->EditLabel(newItem);
 }
 
+static enum ServerType GetTypeFromName(const wxString& name)
+{
+	if (name == _T("Unix"))
+		return UNIX;
+	else if (name == _T("Dos"))
+		return DOS;
+	else if (name == _T("VMS"))
+		return VMS;
+	else if (name == _T("MVS"))
+		return MVS;
+	else if (name == _T("VxWorks"))
+		return VXWORKS;
+	else
+		return DEFAULT;
+}
 
 bool CSiteManager::Verify()
 {
@@ -906,6 +921,21 @@ bool CSiteManager::Verify()
 		wxMessageBox(_("You have to enter an account name"));
 		return false;
 	}
+
+	const wxString remotePathRaw = XRCCTRL(*this, "ID_REMOTEDIR", wxTextCtrl)->GetValue();
+	if (remotePathRaw != _T(""))
+	{
+		CServerPath remotePath;
+		const wxString serverType = XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->GetStringSelection();
+		remotePath.SetType(GetTypeFromName(serverType));
+		if (!remotePath.SetPath(remotePathRaw))
+		{
+			XRCCTRL(*this, "ID_REMOTEDIR", wxTextCtrl)->SetFocus();
+			wxMessageBox(_("Default remote path cannot be parsed. Make sure it is valid and is supported by the selected servertype."));
+			return false;
+		}
+	}
+
 
 	return true;
 }
@@ -1106,7 +1136,7 @@ bool CSiteManager::UpdateServer()
 	else
 		data->m_server.SetProtocol(FTP);
 
-	wxString logonType = XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->GetStringSelection();
+	const wxString logonType = XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->GetStringSelection();
 	if (logonType == _("Normal"))
 		data->m_server.SetLogonType(NORMAL);
 	else if (logonType == _("Ask for password"))
@@ -1124,19 +1154,8 @@ bool CSiteManager::UpdateServer()
 
 	data->m_comments = XRCCTRL(*this, "ID_COMMENTS", wxTextCtrl)->GetValue();
 
-	wxString serverType = XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->GetStringSelection();
-	if (serverType == _T("Unix"))
-		data->m_server.SetType(UNIX);
-	else if (serverType == _T("Dos"))
-		data->m_server.SetType(DOS);
-	else if (serverType == _T("VMS"))
-		data->m_server.SetType(VMS);
-	else if (serverType == _T("MVS"))
-		data->m_server.SetType(MVS);
-	else if (serverType == _T("VxWorks"))
-		data->m_server.SetType(VXWORKS);
-	else
-		data->m_server.SetType(DEFAULT);
+	const wxString serverType = XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->GetStringSelection();
+	data->m_server.SetType(GetTypeFromName(serverType));
 
 	data->m_localDir = XRCCTRL(*this, "ID_LOCALDIR", wxTextCtrl)->GetValue();
 	data->m_remoteDir = CServerPath();
