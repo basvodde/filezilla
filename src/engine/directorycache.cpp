@@ -32,7 +32,7 @@ void CDirectoryCache::Store(const CDirectoryListing &listing, const CServer &ser
 		CCacheEntry &entry = *iter;
 		if (entry.listing.path != listing.path)
 			continue;
-		
+
 		entry.modificationTime = CTimeEx::Now();
 		entry.createTime = entry.modificationTime.GetTime();
 
@@ -47,7 +47,7 @@ void CDirectoryCache::Store(const CDirectoryListing &listing, const CServer &ser
 				if (parent.path == parentPath && parent.subDir == subDir)
 					return;
 			}
-	
+
 			// Store parent
 			CCacheEntry::t_parent parent;
 			parent.path = parentPath;
@@ -316,7 +316,7 @@ bool CDirectoryCache::InvalidateFile(const CServer &server, const CServerPath &p
 				entry.listing[i].unsure = true;
 				//if (entry.listing[i].name == filename)
 					//matchCase = true;
-			}				
+			}
 		}
 		entry.listing.m_hasUnsureEntries |= UNSURE_UNSURE;
 		entry.modificationTime = CTimeEx::Now();
@@ -325,7 +325,7 @@ bool CDirectoryCache::InvalidateFile(const CServer &server, const CServerPath &p
 	return true;
 }
 
-bool CDirectoryCache::UpdateFile(const CServer &server, const CServerPath &path, const wxString& filename, bool mayCreate, enum Filetype type /*=file*/, int size /*=-1*/)
+bool CDirectoryCache::UpdateFile(const CServer &server, const CServerPath &path, const wxString& filename, bool mayCreate, enum Filetype type /*=file*/, wxLongLong size /*=-1*/)
 {
 	CServerEntry* pServerEntry = GetServerEntry(server);
 	if (!pServerEntry)
@@ -348,7 +348,7 @@ bool CDirectoryCache::UpdateFile(const CServer &server, const CServerPath &path,
 				if (cEntry.listing[i].name == filename)
 					matchCase = true;
 				entry.listing[i].unsure = true;
-			}				
+			}
 		}
 		if (!matchCase && type != unknown && mayCreate)
 		{
@@ -392,7 +392,7 @@ bool CDirectoryCache::RemoveFile(const CServer &server, const CServerPath &path,
 			if (entry.listing[i].name == filename)
 				matchCase = true;
 		}
-		
+
 		if (matchCase)
 		{
 			unsigned int i;
@@ -411,7 +411,7 @@ bool CDirectoryCache::RemoveFile(const CServer &server, const CServerPath &path,
 				if (!filename.CmpNoCase(entry.listing[i].name))
 				{
 					iter->listing[i].unsure = true;
-				}				
+				}
 			}
 			iter->listing.m_hasUnsureEntries |= UNSURE_CONFUSED;
 		}
@@ -443,7 +443,7 @@ bool CDirectoryCache::GetChangeTime(CTimeEx& time, const CServer &server, const 
 	for (tCacheConstIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); iter++)
 	{
 		const CCacheEntry &entry = *iter;
-		
+
 		if (entry.listing.path != path)
 			continue;
 
@@ -487,7 +487,7 @@ void CDirectoryCache::RemoveDir(const CServer& server, const CServerPath& path, 
 
 		newList.push_back(*iter);
 	}
-	
+
 	pServerEntry->cacheList = newList;
 
 	RemoveFile(server, path, filename);

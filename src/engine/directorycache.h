@@ -2,15 +2,15 @@
 #define __DIRECTORYCACHE_H__
 
 /*
-This class is the directory cache used to store retrieved directory listings 
+This class is the directory cache used to store retrieved directory listings
 for further use.
 Directory get either purged from the cache if the maximum cache time exceeds,
 or on possible data inconsistencies.
-For example since some servers are case sensitive and others aren't, a 
+For example since some servers are case sensitive and others aren't, a
 directory is removed from cache once an operation effects a file wich matches
 multiple entries in a cache directory using a case insensitive search
 On other operations, the directory ist markes as unsure. It may still be valid,
-but for some operations the engine/interface prefers to retrieve a clean 
+but for some operations the engine/interface prefers to retrieve a clean
 version.
 */
 
@@ -36,7 +36,7 @@ public:
 	bool DoesExist(const CServer &server, const CServerPath &path, wxString subDir, int &hasUnsureEntries, bool &is_outdated);
 	bool LookupFile(CDirentry &entry, const CServer &server, const CServerPath &path, const wxString& file, bool &dirDidExist, bool &matchedCase);
 	bool InvalidateFile(const CServer &server, const CServerPath &path, const wxString& filename, bool *wasDir = 0);
-	bool UpdateFile(const CServer &server, const CServerPath &path, const wxString& filename, bool mayCreate, enum Filetype type = file, int size = -1);
+	bool UpdateFile(const CServer &server, const CServerPath &path, const wxString& filename, bool mayCreate, enum Filetype type = file, wxLongLong size = -1);
 	bool RemoveFile(const CServer &server, const CServerPath &path, const wxString& filename);
 	void InvalidateServer(const CServer& server);
 	void RemoveDir(const CServer& server, const CServerPath& path, const wxString& filename);
@@ -83,7 +83,7 @@ protected:
 	bool Lookup(tCacheIter &cacheIter, const CServer &server, const CServerPath &path, wxString subDir, bool allowUnsureEntries, bool& is_outdated);
 
 	static std::list<CServerEntry *> m_ServerList;
-	
+
 	static int m_nRefCount;
 };
 
