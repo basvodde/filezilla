@@ -2655,6 +2655,16 @@ void CFtpControlSocket::TransferEnd()
 
 bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotification)
 {
+	if (m_pCurOpData)
+	{
+		if (!m_pCurOpData->waitForAsyncRequest)
+		{
+			LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Not waiting for request reply, ignoring request reply %d"), pNotification->GetRequestID());
+			return false;
+		}
+		m_pCurOpData->waitForAsyncRequest = false;
+	}
+
 	switch (pNotification->GetRequestID())
 	{
 	case reqId_fileexists:
@@ -2666,13 +2676,6 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 			}
 
 			CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(m_pCurOpData);
-
-			if (!pData->waitForAsyncRequest)
-			{
-				LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Not waiting for request reply, ignoring request reply %d"), pNotification->GetRequestID());
-				return false;
-			}
-			pData->waitForAsyncRequest = false;
 
 			CFileExistsNotification *pFileExistsNotification = reinterpret_cast<CFileExistsNotification *>(pNotification);
 			switch (pFileExistsNotification->overwriteAction)
@@ -2802,13 +2805,6 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 			}
 
 			CFtpLogonOpData* pData = static_cast<CFtpLogonOpData*>(m_pCurOpData);
-
-			if (!pData->waitForAsyncRequest)
-			{
-				LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Not waiting for request reply, ignoring request reply %d"), pNotification->GetRequestID());
-				return false;
-			}
-			pData->waitForAsyncRequest = false;
 
 			CInteractiveLoginNotification *pInteractiveLoginNotification = reinterpret_cast<CInteractiveLoginNotification *>(pNotification);
 			if (!pInteractiveLoginNotification->passwordSet)

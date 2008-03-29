@@ -166,6 +166,16 @@ int CHttpControlSocket::ContinueConnect(const wxIPV4address *address)
 
 bool CHttpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotification)
 {
+	if (m_pCurOpData)
+	{
+		if (!m_pCurOpData->waitForAsyncRequest)
+		{
+			LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Not waiting for request reply, ignoring request reply %d"), pNotification->GetRequestID());
+			return false;
+		}
+		m_pCurOpData->waitForAsyncRequest = false;
+	}
+
 	switch (pNotification->GetRequestID())
 	{
 	case reqId_fileexists:
@@ -177,13 +187,6 @@ bool CHttpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotifi
 			}
 
 			CHttpFileTransferOpData *pData = static_cast<CHttpFileTransferOpData *>(m_pCurOpData);
-
-			if (!pData->waitForAsyncRequest)
-			{
-				LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Not waiting for request reply, ignoring request reply %d"), pNotification->GetRequestID());
-				return false;
-			}
-			pData->waitForAsyncRequest = false;
 
 			CFileExistsNotification *pFileExistsNotification = reinterpret_cast<CFileExistsNotification *>(pNotification);
 			switch (pFileExistsNotification->overwriteAction)
