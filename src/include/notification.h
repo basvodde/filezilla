@@ -274,6 +274,7 @@ protected:
 class CCertificateNotification : public CAsyncRequestNotification
 {
 public:
+	CCertificateNotification(const CCertificateNotification& ref);
 	CCertificateNotification(const wxString& host, unsigned int port,
 		const unsigned char* rawData, unsigned int len,
 		wxDateTime activationTime, wxDateTime expirationTime,
@@ -309,6 +310,8 @@ public:
 	const wxString& GetSessionMac() const { return m_sessionMac; }
 
 	bool m_trusted;
+
+	CCertificateNotification& operator=(const CCertificateNotification &op);
 
 protected:
 	wxString m_host;
