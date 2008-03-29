@@ -1061,10 +1061,9 @@ int CFtpControlSocket::LogonSend()
 				{
 					CInteractiveLoginNotification *pNotification = new CInteractiveLoginNotification(pData->challenge);
 					pNotification->server = *m_pCurrentServer;
-					pNotification->requestNumber = m_pEngine->GetNextAsyncRequestNumber();
-					pData->waitForAsyncRequest = true;
 					pData->challenge = _T("");
-					m_pEngine->AddNotification(pNotification);
+
+					SendAsyncRequest(pNotification);
 
 					return FZ_REPLY_WOULDBLOCK;
 				}

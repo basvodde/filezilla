@@ -448,10 +448,7 @@ int CControlSocket::CheckOverwriteFile()
 		}
 	}
 
-	pNotification->requestNumber = m_pEngine->GetNextAsyncRequestNumber();
-	pData->waitForAsyncRequest = true;
-
-	m_pEngine->AddNotification(pNotification);
+	SendAsyncRequest(pNotification);
 
 	return FZ_REPLY_WOULDBLOCK;
 }
@@ -794,6 +791,17 @@ wxTimeSpan CControlSocket::GetTimezoneOffset()
 		return wxTimeSpan();
 
 	return wxTimeSpan(0, 0, seconds);
+}
+
+void CControlSocket::SendAsyncRequest(CAsyncRequestNotification* pNotification)
+{
+	wxASSERT(pNotification);
+
+	pNotification->requestNumber = m_pEngine->GetNextAsyncRequestNumber();
+
+	if (m_pCurOpData)
+		m_pCurOpData->waitForAsyncRequest = true;
+	m_pEngine->AddNotification(pNotification);
 }
 
 // ------------------

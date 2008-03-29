@@ -54,8 +54,6 @@ public:
 
 	virtual bool SetAsyncRequestReply(CAsyncRequestNotification *pNotification);
 
-	bool SendRequest(CAsyncRequestNotification *pNotification);
-
 	void SetActive(bool recv);
 
 protected:

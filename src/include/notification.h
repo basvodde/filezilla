@@ -282,7 +282,9 @@ public:
 		const wxString& fingerprint_md5,
 		const wxString& fingerprint_sha1,
 		const wxString& subject,
-		const wxString& issuer);
+		const wxString& issuer,
+		const wxString& sessionCipher,
+		const wxString& sessionMac);
 	virtual ~CCertificateNotification();
 	virtual enum RequestId GetRequestID() const { return reqId_certificate; }
 
@@ -302,6 +304,9 @@ public:
 
 	const wxString& GetSubject() const { return m_subject; }
 	const wxString& GetIssuer() const { return m_issuer; }
+
+	const wxString& GetSessionCipher() const { return m_sessionCipher; }
+	const wxString& GetSessionMac() const { return m_sessionMac; }
 
 	bool m_trusted;
 
@@ -324,6 +329,9 @@ protected:
 
 	wxString m_subject;
 	wxString m_issuer;
+
+	wxString m_sessionCipher;
+	wxString m_sessionMac;
 };
 
 #endif

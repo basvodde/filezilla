@@ -159,6 +159,42 @@
                 <flag>wxGROW</flag>
               </object>
               <object class="sizeritem">
+                <object class="wxStaticBoxSizer">
+                  <label>Session details</label>
+                  <orient>wxVERTICAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxFlexGridSizer">
+                      <cols>2</cols>
+                      <vgap>3</vgap>
+                      <hgap>3</hgap>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>Cipher:</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText" name="ID_CIPHER">
+                          <label>&lt;cipher&gt;</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>MAC:</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText" name="ID_MAC">
+                          <label>&lt;mac&gt;</label>
+                        </object>
+                      </object>
+                    </object>
+                    <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxGROW</flag>
+                    <border>4</border>
+                  </object>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <object class="sizeritem">
                 <object class="wxStaticText">
                   <label>Trust this certificate and carry on connecting?</label>
                 </object>

@@ -74,12 +74,14 @@ void CVerifyCertDialog::ShowVerificationDialog(CCertificateNotification* pNotifi
 	ParseDN(pDlg, pNotification->GetIssuer(), pSizer);
 	XRCCTRL(*pDlg, "ID_ISSUER_DUMMY", wxStaticText)->Destroy();
 
+	pDlg->SetLabel(XRCID("ID_CIPHER"), pNotification->GetSessionCipher());
+	pDlg->SetLabel(XRCID("ID_MAC"), pNotification->GetSessionMac());
+
 	if (warning)
 	{
 		XRCCTRL(*pDlg, "ID_IMAGE", wxStaticBitmap)->SetBitmap(wxArtProvider::GetBitmap(wxART_WARNING));
 		XRCCTRL(*pDlg, "ID_ALWAYS", wxCheckBox)->Enable(false);
 	}
-
 
 	pDlg->GetSizer()->Fit(pDlg);
 	pDlg->GetSizer()->SetSizeHints(pDlg);

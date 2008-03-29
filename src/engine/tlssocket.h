@@ -39,6 +39,9 @@ public:
 	void TrustCurrentCert(bool trusted);
 
 	enum TlsState GetState() const { return m_tlsState; }
+
+	wxString GetCipherName();
+	wxString GetMacName();
 	
 protected:
 

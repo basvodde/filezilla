@@ -197,7 +197,9 @@ CCertificateNotification::CCertificateNotification(const wxString& host, unsigne
 		const wxString& fingerprint_md5,
 		const wxString& fingerprint_sha1,
 		const wxString& subject,
-		const wxString& issuer)
+		const wxString& issuer,
+		const wxString& sessionCipher,
+		const wxString& sessionMac)
 {
 	m_host = host;
 	m_port = port;
@@ -224,6 +226,9 @@ CCertificateNotification::CCertificateNotification(const wxString& host, unsigne
 
 	m_subject = subject;
 	m_issuer = issuer;
+
+	m_sessionCipher = sessionCipher;
+	m_sessionMac = sessionMac;
 
 	m_trusted = false;
 }

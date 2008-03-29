@@ -198,7 +198,7 @@ protected:
 						if (error)
 							goto loopexit;
 
-						m_pOwner->SendRequest(new CHostKeyNotification(line.Mid(1), port, fingerprint, requestType == sftpReqHostkeyChanged));
+						m_pOwner->SendAsyncRequest(new CHostKeyNotification(line.Mid(1), port, fingerprint, requestType == sftpReqHostkeyChanged));
 					}
 					else if (requestType == sftpReqPassword)
 					{
@@ -553,9 +553,8 @@ void CSftpControlSocket::OnSftpEvent(wxCommandEvent& event)
 						challenge += message->text;
 					CInteractiveLoginNotification *pNotification = new CInteractiveLoginNotification(challenge);
 					pNotification->server = *m_pCurrentServer;
-					pNotification->requestNumber = m_pEngine->GetNextAsyncRequestNumber();
-					m_pCurOpData->waitForAsyncRequest = true;
-					m_pEngine->AddNotification(pNotification);
+
+					SendAsyncRequest(pNotification);
 				}
 				else
 				{
@@ -707,14 +706,6 @@ bool CSftpControlSocket::AddToStream(const wxString& cmd, bool force_utf8 /*=fal
 	unsigned int len = strlen(str);
 	if (pStream->Write(str, len).LastWrite() != len)
 		return false;
-
-	return true;
-}
-
-bool CSftpControlSocket::SendRequest(CAsyncRequestNotification *pNotification)
-{
-	pNotification->requestNumber = m_pEngine->GetNextAsyncRequestNumber();
-	m_pEngine->AddNotification(pNotification);
 
 	return true;
 }

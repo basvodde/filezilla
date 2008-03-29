@@ -134,6 +134,7 @@ public:
 
 	virtual void TransferEnd() { }
 
+	void SendAsyncRequest(CAsyncRequestNotification* pNotification);
 	virtual bool SetAsyncRequestReply(CAsyncRequestNotification *pNotification) = 0;
 
 	void InitTransferStatus(wxFileOffset totalSize, wxFileOffset startOffset, bool list);

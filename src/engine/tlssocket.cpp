@@ -394,19 +394,8 @@ int CTlsSocket::Handshake(const CTlsSocket* pPrimarySocket /*=0*/)
 	{
 		m_pOwner->LogMessage(Debug_Info, _T("Handshake successful"));
 
-		wxString cipherName;
-		const char* cipher = gnutls_cipher_get_name(gnutls_cipher_get(m_session));
-		if (cipher)
-			cipherName = wxString(cipher, wxConvUTF8);
-		else
-			cipherName = _T("unknown");
-
-		wxString macName;
-		const char* mac = gnutls_mac_get_name(gnutls_mac_get(m_session));
-		if (mac)
-			macName = wxString(mac, wxConvUTF8);
-		else
-			macName = _T("unknown");
+		const wxString& cipherName = GetCipherName();
+		const wxString& macName = GetMacName();
 
 		m_pOwner->LogMessage(Debug_Info, _T("Cipher: %s, MAC: %s"), cipherName.c_str(), macName.c_str());
 
@@ -915,11 +904,11 @@ int CTlsSocket::VerifyCertificate()
 		fingerprint_md5,
 		fingerprint_sha1,
 		subject,
-		issuer);
+		issuer,
+		GetCipherName(),
+		GetMacName());
 
-	pNotification->requestNumber = m_pOwner->GetEngine()->GetNextAsyncRequestNumber();
-	
-	m_pOwner->GetEngine()->AddNotification(pNotification);
+	m_pOwner->SendAsyncRequest(pNotification);
 
 	m_pOwner->LogMessage(Status, _("Verifying certificate..."));
 
@@ -928,4 +917,22 @@ int CTlsSocket::VerifyCertificate()
 
 void CTlsSocket::OnRateAvailable(enum CRateLimiter::rate_direction direction)
 {
+}
+
+wxString CTlsSocket::GetCipherName()
+{
+	const char* cipher = gnutls_cipher_get_name(gnutls_cipher_get(m_session));
+	if (cipher && *cipher)
+		return wxString(cipher, wxConvUTF8);
+	else
+		return _T("unknown");
+}
+
+wxString CTlsSocket::GetMacName()
+{
+	const char* mac = gnutls_mac_get_name(gnutls_mac_get(m_session));
+	if (mac && *mac)
+		return wxString(mac, wxConvUTF8);
+	else
+		return _T("unknown");
 }
