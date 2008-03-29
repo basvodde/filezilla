@@ -48,7 +48,7 @@ CControlSocket::CControlSocket(CFileZillaEnginePrivate *pEngine)
 	m_useUTF8 = false;
 
 	m_timer.SetOwner(this);
-	
+
 	m_closed = false;
 
 	m_invalidateCurrentPath = false;
@@ -184,11 +184,11 @@ int CControlSocket::DoClose(int nErrorCode /*=FZ_REPLY_DISCONNECTED*/)
 		wxASSERT(!m_pCurOpData);
 		return nErrorCode;
 	}
-	
+
 	m_closed = true;
 
 	nErrorCode = ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED | nErrorCode);
-	
+
 	delete m_pCurrentServer;
 	m_pCurrentServer = 0;
 
@@ -332,14 +332,14 @@ bool CControlSocket::ParsePwdReply(wxString reply, bool unquoted /*=false*/, con
 		}
 		if (pos1 == -1 || pos1 >= pos2)
 		{
-			LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("No quoted path found in pwd reply, trying first token as path"));
+			LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Broken server, no quoted path found in pwd reply, trying first token as path"));
 			pos1 = reply.Find(' ');
 			if (pos1 != -1)
 			{
-				pos2 = reply.Mid(pos1 + 1).Find(' ');
-				if (pos2 == -1)
-					pos2 = (int)reply.Length();
-				reply = reply.Mid(pos1 + 1, pos2 - pos1 - 1);
+				reply = reply.Mid(pos1 + 1);
+				pos2 = reply.Find(' ');
+				if (pos2 != -1)
+					reply = reply.Left(pos2);
 			}
 			else
 				reply = _T("");
@@ -486,7 +486,7 @@ wxString CControlSocket::ConvToLocal(const char* buffer)
 			m_useUTF8 = false;
 		}
 	}
-	
+
 	if (m_pCSConv)
 	{
 		wxChar* out = ConvToLocalBuffer(buffer, *m_pCSConv);
@@ -792,7 +792,7 @@ wxTimeSpan CControlSocket::GetTimezoneOffset()
 	int seconds = 0;
 	if (CServerCapabilities::GetCapability(*m_pCurrentServer, timezone_offset, &seconds) != yes)
 		return wxTimeSpan();
-	
+
 	return wxTimeSpan(0, 0, seconds);
 }
 
@@ -969,7 +969,7 @@ int CRealControlSocket::Connect(const CServer &server)
 		pData = 0;
 	else
 		pData = static_cast<CConnectOpData *>(m_pCurOpData);
-	
+
 	const wxString& host = pData ? pData->host : server.GetHost();
 	if (!IsIpAddress(host))
 	{
@@ -999,7 +999,7 @@ int CRealControlSocket::ContinueConnect(const wxIPV4address *address)
 		LogMessage(Debug_Warning, _T("Invalid context for call to ContinueConnect(), cmd=%d, m_pCurrentServer=%p"), GetCurrentCommandId(), m_pCurrentServer);
 		return DoClose(FZ_REPLY_INTERNALERROR);
 	}
-	
+
 	if (!address)
 	{
 		LogMessage(::Error, _("Invalid hostname or host not found"));
@@ -1029,7 +1029,7 @@ int CRealControlSocket::ContinueConnect(const wxIPV4address *address)
 int CRealControlSocket::DoClose(int nErrorCode /*=FZ_REPLY_DISCONNECTED*/)
 {
 	ResetSocket();
-	
+
 	return CControlSocket::DoClose(nErrorCode);
 }
 
