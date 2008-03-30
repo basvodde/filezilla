@@ -23,6 +23,7 @@
 #include "pathcache.h"
 #include <algorithm>
 #include <wx/tokenzr.h>
+#include "local_filesys.h"
 
 #define LOGON_WELCOME	0
 #define LOGON_AUTH_TLS	1
@@ -1642,15 +1643,16 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 		}
 		if (nErrorCode != FZ_REPLY_OK && pData->download && !pData->fileDidExist)
 		{
-			wxStructStat stats;
-			if (!wxStat(pData->localFile, &stats) && !stats.st_size)
+			delete pData->pIOThread;
+			pData->pIOThread = 0;
+			wxLongLong size;
+			bool isLink;
+			if (CLocalFileSystem::GetFileInfo(pData->localFile, isLink, &size, 0, 0) == CLocalFileSystem::file && size == 0)
 			{
 				// Download failed and a new local file was created before, but
 				// nothing has been written to it. Remove it again, so we don't
 				// leave a bunch of empty files all over the place.
 				LogMessage(Debug_Verbose, _T("Deleting empty file"));
-				delete pData->pIOThread;
-				pData->pIOThread = 0;
 				wxRemoveFile(pData->localFile);
 			}
 		}
@@ -2094,13 +2096,10 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 	pData->transferSettings = transferSettings;
 	pData->binary = transferSettings.binary;
 
-	wxStructStat buf;
-	int result;
-	result = wxStat(pData->localFile, &buf);
-	if (!result)
-	{
-		pData->localFileSize = buf.st_size;
-	}
+	wxLongLong size;
+	bool isLink;
+	if (CLocalFileSystem::GetFileInfo(pData->localFile, isLink, &size, 0, 0) == CLocalFileSystem::file)
+		pData->localFileSize = size.GetValue();
 
 	pData->opState = filetransfer_waitcwd;
 
@@ -2718,11 +2717,10 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 					fn.SetFullName(pFileExistsNotification->newName);
 					pData->localFile = fn.GetFullPath();
 
-					wxStructStat buf;
-					int result;
-					result = wxStat(pData->localFile, &buf);
-					if (!result)
-						pData->localFileSize = buf.st_size;
+					wxLongLong size;
+					bool isLink;
+					if (CLocalFileSystem::GetFileInfo(pData->localFile, isLink, &size, 0, 0) == CLocalFileSystem::file)
+						pData->localFileSize = size.GetValue();
 					else
 						pData->localFileSize = -1;
 
