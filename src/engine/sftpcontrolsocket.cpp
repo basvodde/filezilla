@@ -168,6 +168,13 @@ protected:
 			case sftpError:
 			case sftpVerbose:
 			case sftpStatus:
+			case sftpKexAlgorithm:
+			case sftpKexHash:
+			case sftpCipherClientToServer:
+			case sftpCipherServerToClient:
+			case sftpMacClientToServer:
+			case sftpMacServerToClient:
+			case sftpHostkey:
 				{
 					sftp_message* message = new sftp_message;
 					message->type = (sftpEventTypes)eventType;
@@ -336,6 +343,8 @@ int CSftpControlSocket::Connect(const CServer &server)
 	LogMessage(Status, _("Connecting to %s:%d..."), server.GetHost().c_str(), server.GetPort());
 	SetWait(true);
 
+	m_sftpEncryptionDetails = CSftpEncryptionNotification();
+
 	delete m_pCSConv;
 	if (server.GetEncodingType() == ENCODING_CUSTOM)
 	{
@@ -436,6 +445,7 @@ int CSftpControlSocket::ConnectParseResponse(bool successful, const wxString& re
 			pData->opState = connect_open;
 		break;
 	case connect_open:
+		m_pEngine->AddNotification(new CSftpEncryptionNotification(m_sftpEncryptionDetails));
 		ResetOperation(FZ_REPLY_OK);
 		return FZ_REPLY_OK;
 	default:
@@ -627,6 +637,27 @@ void CSftpControlSocket::OnSftpEvent(wxCommandEvent& event)
 			break;
 		case sftpUsedQuotaSend:
 			OnQuotaRequest(CRateLimiter::outbound);
+			break;
+		case sftpKexAlgorithm:
+			m_sftpEncryptionDetails.kexAlgorithm = message->text;
+			break;
+		case sftpKexHash:
+			m_sftpEncryptionDetails.kexHash = message->text;
+			break;
+		case sftpCipherClientToServer:
+			m_sftpEncryptionDetails.cipherClientToServer = message->text;
+			break;
+		case sftpCipherServerToClient:
+			m_sftpEncryptionDetails.cipherServerToClient = message->text;
+			break;
+		case sftpMacClientToServer:
+			m_sftpEncryptionDetails.macClientToServer = message->text;
+			break;
+		case sftpMacServerToClient:
+			m_sftpEncryptionDetails.macServerToClient = message->text;
+			break;
+		case sftpHostkey:
+			m_sftpEncryptionDetails.hostKey = message->text;
 			break;
 		default:
 			wxFAIL_MSG(_T("given notification codes not handled"));

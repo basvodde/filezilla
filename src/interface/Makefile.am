@@ -70,6 +70,7 @@ filezilla_SOURCES = aboutdialog.cpp \
 		RemoteListView.cpp \
 		RemoteTreeView.cpp \
 		settingsdialog.cpp \
+		sftp_crypt_info_dlg.cpp \
 		sitemanager.cpp \
 		state.cpp \
 		statusbar.cpp \
@@ -153,6 +154,7 @@ noinst_HEADERS = aboutdialog.h \
 		 RemoteListView.h \
 		 RemoteTreeView.h \
 		 settingsdialog.h \
+		 sftp_crypt_info_dlg.h \
 		 sitemanager.h \
 		 state.h \
 		 statuslinectrl.h \

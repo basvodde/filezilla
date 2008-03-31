@@ -5930,6 +5930,8 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
                       ssh->kex->groupname);
         }
 
+	fzprintf(sftpKexAlgorithm, "Diffie-Hellman");
+	fzprintf(sftpKexHash, ssh->kex->hash->text_name);
         logeventf(ssh, "Doing Diffie-Hellman key exchange with hash %s",
                   ssh->kex->hash->text_name);
         /*
@@ -5979,6 +5981,8 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
             freebn(s->p);
         }
     } else {
+	fzprintf(sftpKexAlgorithm, "RSA");
+	fzprintf(sftpKexHash, ssh->kex->hash->text_name);
 	logeventf(ssh, "Doing RSA key exchange with hash %s",
 		  ssh->kex->hash->text_name);
 	ssh->pkt_kctx = SSH2_PKTCTX_RSAKEX;
@@ -6106,6 +6110,7 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
     s->keystr = ssh->hostkey->fmtkey(s->hkey);
     s->fingerprint = ssh->hostkey->fingerprint(s->hkey);
     ssh_set_frozen(ssh, 1);
+    fzprintf(sftpHostkey, s->fingerprint);
     s->dlgret = verify_ssh_host_key(ssh->frontend,
                                     ssh->savedhost, ssh->savedport,
                                     ssh->hostkey->keytype, s->keystr,
@@ -6198,6 +6203,8 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
 	memset(keyspace, 0, sizeof(keyspace));
     }
 
+    fzprintf(sftpCipherClientToServer, ssh->cscipher->text_name);
+    fzprintf(sftpMacClientToServer, ssh->csmac->text_name);
     logeventf(ssh, "Initialised %.200s client->server encryption",
 	      ssh->cscipher->text_name);
     logeventf(ssh, "Initialised %.200s client->server MAC algorithm",
@@ -6263,6 +6270,8 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
 	ssh->scmac->setkey(ssh->sc_mac_ctx, keyspace);
 	memset(keyspace, 0, sizeof(keyspace));
     }
+    fzprintf(sftpCipherServerToClient, ssh->sccipher->text_name);
+    fzprintf(sftpMacServerToClient, ssh->scmac->text_name);
     logeventf(ssh, "Initialised %.200s server->client encryption",
 	      ssh->sccipher->text_name);
     logeventf(ssh, "Initialised %.200s server->client MAC algorithm",

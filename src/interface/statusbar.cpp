@@ -2,6 +2,7 @@
 #include "statusbar.h"
 #include "Options.h"
 #include "verifycertdialog.h"
+#include "sftp_crypt_info_dlg.h"
 
 static const int statbarWidths[5] = {
 	-3, 40, 20, 0, 35
@@ -212,6 +213,7 @@ CStatusBar::CStatusBar(wxTopLevelWindow* pParent)
 	m_pDataTypeIndicator = 0;
 	m_pEncryptionIndicator = 0;
 	m_pCertificate = 0;
+	m_pSftpEncryptionInfo = 0;
 
 	const int count = 5;
 	SetFieldsCount(count);
@@ -355,6 +357,8 @@ void CStatusBar::DisplayEncrypted(const CServer* const pServer)
 {
 	delete m_pCertificate;
 	m_pCertificate = 0;
+	delete m_pSftpEncryptionInfo;
+	m_pSftpEncryptionInfo = 0;
 	if (!pServer || (pServer->GetProtocol() != FTPS && pServer->GetProtocol() != FTPES && pServer->GetProtocol() != SFTP))
 	{
 		if (m_pEncryptionIndicator)
@@ -395,15 +399,35 @@ void CStatusBar::OnHandleClick(wxWindow* pWnd)
 		CVerifyCertDialog dlg;
 		dlg.ShowVerificationDialog(m_pCertificate, true);
 	}
+	else if (m_pSftpEncryptionInfo)
+	{
+		CSftpEncryptioInfoDialog dlg;
+		dlg.ShowDialog(m_pSftpEncryptionInfo);
+	}
 	else
 		wxMessageBox(_("Certificate and session data are not available yet."), _("Security information"));
 }
 
 void CStatusBar::SetCertificate(CCertificateNotification* pCertificate)
 {
+	delete m_pSftpEncryptionInfo;
+	m_pSftpEncryptionInfo = 0;
+
 	delete m_pCertificate;
 	if (pCertificate)
 		m_pCertificate = new CCertificateNotification(*pCertificate);
 	else
 		m_pCertificate = 0;
+}
+
+void CStatusBar::SetSftpEncryptionInfo(const CSftpEncryptionNotification* pEncryptionInfo)
+{
+	delete m_pCertificate;
+	m_pCertificate = 0;
+
+	delete m_pSftpEncryptionInfo;
+	if (pEncryptionInfo)
+		m_pSftpEncryptionInfo = new CSftpEncryptionNotification(*pEncryptionInfo);
+	else
+		m_pSftpEncryptionInfo = 0;
 }

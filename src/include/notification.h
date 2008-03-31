@@ -45,7 +45,8 @@ enum NotificationId
 	nId_listing,		// directory listings
 	nId_asyncrequest,	// asynchronous request
 	nId_active,			// sent if data gets either received or sent
-	nId_data			// for memory downloads, indicates that new data is available.
+	nId_data,			// for memory downloads, indicates that new data is available.
+	nId_sftp_encryption	// information about key exchange, encryption algorithms and so on for SFTP
 };
 
 // Async request IDs
@@ -335,6 +336,20 @@ protected:
 
 	wxString m_sessionCipher;
 	wxString m_sessionMac;
+};
+
+class CSftpEncryptionNotification : public CNotification
+{
+public:
+	virtual enum NotificationId GetID() const { return nId_sftp_encryption; }
+
+	wxString hostKey;
+	wxString kexAlgorithm;
+	wxString kexHash;
+	wxString cipherClientToServer;
+	wxString cipherServerToClient;
+	wxString macClientToServer;
+	wxString macServerToClient;
 };
 
 #endif

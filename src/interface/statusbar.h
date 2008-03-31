@@ -66,6 +66,7 @@ public:
 	void DisplayDataType(const CServer* const pServer);
 	void DisplayEncrypted(const CServer* const pServer);
 	void SetCertificate(CCertificateNotification* pCertificate);
+	void SetSftpEncryptionInfo(const CSftpEncryptionNotification* pEncryptionInfo);
 
 	void OnHandleClick(wxWindow* wnd);
 
@@ -78,6 +79,7 @@ protected:
 	wxStaticBitmap* m_pEncryptionIndicator;
 
 	CCertificateNotification* m_pCertificate;
+	CSftpEncryptionNotification* m_pSftpEncryptionInfo;
 };
 
 #endif //__STATUSBAR_H__

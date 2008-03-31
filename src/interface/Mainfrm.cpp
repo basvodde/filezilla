@@ -871,6 +871,13 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 				delete pNotification;*/
 			}
 			break;
+		case nId_sftp_encryption:
+			{
+				if (m_pStatusBar)
+					m_pStatusBar->SetSftpEncryptionInfo(reinterpret_cast<CSftpEncryptionNotification*>(pNotification));
+				delete pNotification;
+			}
+			break;
 		default:
 			delete pNotification;
 			break;

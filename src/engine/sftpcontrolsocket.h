@@ -22,7 +22,14 @@ typedef enum
 	sftpRequestPreamble,
 	sftpRequestInstruction,
 	sftpUsedQuotaRecv,
-	sftpUsedQuotaSend
+	sftpUsedQuotaSend,
+	sftpKexAlgorithm,
+	sftpKexHash,
+	sftpCipherClientToServer,
+	sftpCipherServerToClient,
+	sftpMacClientToServer,
+	sftpMacServerToClient,
+	sftpHostkey
 } sftpEventTypes;
 
 enum sftpRequestTypes
@@ -131,6 +138,8 @@ protected:
 
 	wxString m_requestPreamble;
 	wxString m_requestInstruction;
+
+	CSftpEncryptionNotification m_sftpEncryptionDetails;
 };
 
 #endif //__SFTPCONTROLSOCKET_H__
