@@ -13,7 +13,7 @@ install-filezilla-catalogs: allmo
 
 uninstall-local:
 	for i in @FILEZILLA_LINGUAS@ ; do \
-	  rm $(DESTDIR)$(localedir)/$$i/filezilla.mo ; \
+	  rm $(DESTDIR)$(localedir)/$$i/LC_MESSAGES/filezilla.mo ; \
 	done
 
 
