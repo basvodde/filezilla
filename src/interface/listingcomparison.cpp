@@ -96,7 +96,7 @@ bool CComparisonManager::CompareListings()
 
 	wxToolBar* pToolBar = m_pMainFrame->GetToolBar();
 	if (pToolBar)
-		pToolBar->ToggleTool(XRCID("ID_TOOLBAR_COMPARISON"), false);	
+		pToolBar->ToggleTool(XRCID("ID_TOOLBAR_COMPARISON"), true);	
 
 	wxMenuBar* pMenuBar = m_pMainFrame->GetMenuBar();
 	if (pMenuBar)
