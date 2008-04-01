@@ -22,6 +22,7 @@ dist_resources16_DATA = 16x16/ascii.png \
 		16x16/folderup.png \
 		16x16/help.png \
 		16x16/localtreeview.png \
+		16x16/lock.png \
 		16x16/logview.png \
 		16x16/processqueue.png \
 		16x16/queueview.png \
@@ -53,6 +54,7 @@ dist_resources32_DATA = 32x32/ascii.png \
 		32x32/folderup.png \
 		32x32/help.png \
 		32x32/localtreeview.png \
+		32x32/lock.png \
 		32x32/logview.png \
 		32x32/processqueue.png \
 		32x32/queueview.png \
@@ -83,6 +85,7 @@ dist_resources48_DATA = 48x48/ascii.png \
 		48x48/folderup.png \
 		48x48/help.png \
 		48x48/localtreeview.png \
+		48x48/lock.png \
 		48x48/logview.png \
 		48x48/processqueue.png \
 		48x48/queueview.png \
