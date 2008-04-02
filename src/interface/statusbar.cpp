@@ -376,7 +376,7 @@ void CStatusBar::DisplayEncrypted(const CServer* const pServer)
 		m_pEncryptionIndicator = new CEncryptionIndicator(this, bmp);
 		AddChild(-4, m_pEncryptionIndicator, m_pDataTypeIndicator ? 2 : 22);
 
-		m_pEncryptionIndicator->SetToolTip(_T("The connection is encrypted. Click icon for details."));
+		m_pEncryptionIndicator->SetToolTip(_("The connection is encrypted. Click icon for details."));
 	}
 }
 
