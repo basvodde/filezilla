@@ -166,6 +166,17 @@ void wxListCtrlEx::OnKeyDown(wxKeyEvent& event)
 		return;
 	}
 
+	int code = event.GetKeyCode();
+	if (code == WXK_LEFT ||
+		code == WXK_RIGHT ||
+		code == WXK_UP ||
+		code == WXK_DOWN ||
+		code == WXK_HOME ||
+		code == WXK_END)
+	{
+		ResetSearchPrefix();
+	}
+
 #if defined(__WXMSW__) && wxUSE_UNICODE
 	wxChar key = MapVirtualKey(event.GetUnicodeKey(), 2);
 	if (key < 32)
@@ -181,7 +192,6 @@ void wxListCtrlEx::OnKeyDown(wxKeyEvent& event)
 	HandlePrefixSearch(key);
 	return;
 #else
-	int code = event.GetKeyCode();
 	if (code > 32 && code < 300 && !event.HasModifiers())
 	{
 #if wxUSE_UNICODE
@@ -227,4 +237,9 @@ void wxListCtrlEx::SaveSetItemCount(long count)
 		SetItemState(focused, 0, wxLIST_STATE_FOCUSED);
 #endif //__WXMSW__
 	SetItemCount(count);
+}
+
+void wxListCtrlEx::ResetSearchPrefix()
+{
+	m_prefixSearch_prefix = _T("");
 }
