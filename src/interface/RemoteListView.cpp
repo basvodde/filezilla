@@ -1695,13 +1695,17 @@ void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 
 void CRemoteListView::ApplyCurrentFilter()
 {
+	CFilterDialog filter;
+
+	if (!filter.HasSameLocalAndRemoteFilters() && IsComparing())
+		ExitComparisonMode();
+
 	if (m_fileData.size() <= 1)
 		return;
 
 	wxString focused;
 	std::list<wxString> selectedNames = RememberSelectedItems(focused);
 
-	CFilterDialog filter;
 	m_indexMapping.clear();
 	const unsigned int count = m_pDirectoryListing->GetCount();
 	m_indexMapping.push_back(count);

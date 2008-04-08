@@ -56,6 +56,8 @@ public:
 
 	void ExitComparisonMode();
 
+	void UpdateToolState();
+
 protected:
 	int CompareFiles(const int dirSortMode, const wxString& local, const wxString& remote, bool localDir, bool remoteDir);
 

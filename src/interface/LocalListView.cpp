@@ -1409,6 +1409,11 @@ void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 
 void CLocalListView::ApplyCurrentFilter()
 {
+	CFilterDialog filter;
+
+	if (!filter.HasSameLocalAndRemoteFilters() && IsComparing())
+		ExitComparisonMode();
+
 	unsigned int min = m_hasParent ? 1 : 0;
 	if (m_fileData.size() <= min)
 		return;
@@ -1416,7 +1421,6 @@ void CLocalListView::ApplyCurrentFilter()
 	wxString focused;
 	const std::list<wxString>& selectedNames = RememberSelectedItems(focused);
 
-	CFilterDialog filter;
 	m_indexMapping.clear();
 	if (m_hasParent)
 		m_indexMapping.push_back(0);

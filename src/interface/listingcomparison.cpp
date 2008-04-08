@@ -70,6 +70,7 @@ bool CComparisonManager::CompareListings()
 	CFilterDialog filters;
 	if (!filters.HasSameLocalAndRemoteFilters())
 	{
+		UpdateToolState();
 		wxMessageBox(_("Cannot compare directories, different filters for local and remote directories are enabled"), _("Directory comparison failed"), wxICON_EXCLAMATION);
 		return false;
 	}
@@ -77,11 +78,13 @@ bool CComparisonManager::CompareListings()
 	wxString error;
 	if (!m_pLeft->CanStartComparison(&error))
 	{
+		UpdateToolState();
 		wxMessageBox(error, _("Directory comparison failed"), wxICON_EXCLAMATION);
 		return false;
 	}
 	if (!m_pRight->CanStartComparison(&error))
 	{
+		UpdateToolState();
 		wxMessageBox(error, _("Directory comparison failed"), wxICON_EXCLAMATION);
 		return false;
 	}
@@ -94,13 +97,7 @@ bool CComparisonManager::CompareListings()
 
 	m_isComparing = true;
 
-	wxToolBar* pToolBar = m_pMainFrame->GetToolBar();
-	if (pToolBar)
-		pToolBar->ToggleTool(XRCID("ID_TOOLBAR_COMPARISON"), true);	
-
-	wxMenuBar* pMenuBar = m_pMainFrame->GetMenuBar();
-	if (pMenuBar)
-		pMenuBar->Check(XRCID("ID_TOOLBAR_COMPARISON"), true);
+	UpdateToolState();
 
 	m_pLeft->StartComparison();
 	m_pRight->StartComparison();
@@ -254,11 +251,16 @@ void CComparisonManager::ExitComparisonMode()
 	if (m_pRight)
 		m_pRight->OnExitComparisonMode();
 
+	UpdateToolState();
+}
+
+void CComparisonManager::UpdateToolState()
+{
 	wxToolBar* pToolBar = m_pMainFrame->GetToolBar();
 	if (pToolBar)
-		pToolBar->ToggleTool(XRCID("ID_TOOLBAR_COMPARISON"), false);	
+		pToolBar->ToggleTool(XRCID("ID_TOOLBAR_COMPARISON"), m_isComparing);	
 
 	wxMenuBar* pMenuBar = m_pMainFrame->GetMenuBar();
 	if (pMenuBar)
-		pMenuBar->Check(XRCID("ID_TOOLBAR_COMPARISON"), false);
+		pMenuBar->Check(XRCID("ID_TOOLBAR_COMPARISON"), m_isComparing);
 }

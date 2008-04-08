@@ -1934,6 +1934,9 @@ void CMainFrame::OnToolbarComparison(wxCommandEvent& event)
 		return;
 	}
 
+	if (!m_pComparisonManager)
+		m_pComparisonManager = new CComparisonManager(this, m_pLocalListView, m_pRemoteListView);
+
 	if (!COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT))
 	{
 		if ((m_pLocalSplitter->IsSplit() && !m_pRemoteSplitter->IsSplit()) ||
@@ -1945,7 +1948,10 @@ void CMainFrame::OnToolbarComparison(wxCommandEvent& event)
 			dlg.AddText(_("To do this, the directory trees need to be both shown or both hidden."));
 			dlg.AddText(_("Show both directory trees and continue comparing?"));
 			if (!dlg.Run())
+			{
+				m_pComparisonManager->UpdateToolState();
 				return;
+			}
 
 			ShowLocalTree();
 			ShowRemoteTree();
@@ -1954,9 +1960,6 @@ void CMainFrame::OnToolbarComparison(wxCommandEvent& event)
 		m_pLocalSplitter->SetSashPosition(pos);
 		m_pRemoteSplitter->SetSashPosition(pos);
 	}
-
-	if (!m_pComparisonManager)
-		m_pComparisonManager = new CComparisonManager(this, m_pLocalListView, m_pRemoteListView);
 
 	m_pComparisonManager->CompareListings();
 }
