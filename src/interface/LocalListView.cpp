@@ -1423,6 +1423,8 @@ void CLocalListView::ApplyCurrentFilter()
 	for (unsigned int i = min; i < m_fileData.size(); i++)
 	{
 		const CLocalFileData& data = m_fileData[i];
+		if (data.flags == fill)
+			continue;
 		if (!filter.FilenameFiltered(data.name, data.dir, data.size, true, data.attributes))
 			m_indexMapping.push_back(i);
 	}
