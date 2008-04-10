@@ -429,14 +429,16 @@ void CState::UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const C
 		}
 		else if (wxDir::Exists(files[i]))
 		{
-			wxString name = files[i];
-			int pos = name.Find(wxFileName::GetPathSeparator(), true);
-			if (pos != -1)
+			wxString dir = files[i];
+			if (dir.Last() == wxFileName::GetPathSeparator() && dir.Len() > 1)
+				dir.RemoveLast();
+			int pos = dir.Find(wxFileName::GetPathSeparator(), true);
+			if (pos != -1 && pos != (int)dir.Len() - 1)
 			{
-				name = name.Mid(pos + 1);
+				wxString lastSegment = dir.Mid(pos + 1);
 				CServerPath target = path;
-				target.AddSegment(name);
-				m_pMainFrame->GetQueue()->QueueFolder(queueOnly, false, files[i], target, *m_pServer);
+				target.AddSegment(lastSegment);
+				m_pMainFrame->GetQueue()->QueueFolder(queueOnly, false, dir, target, *m_pServer);
 			}
 		}
 	}

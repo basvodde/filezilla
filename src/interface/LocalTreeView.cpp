@@ -909,7 +909,11 @@ void CLocalTreeView::OnBeginDrag(wxTreeEvent& event)
 	if (dir == _T("/"))
 		return;
 
+#ifdef __WXMSW__
 	if (dir.Last() == '\\')
+		dir.RemoveLast();
+#endif
+	if (dir.Last() == '/')
 		dir.RemoveLast();
 
 #ifdef __WXMSW__
