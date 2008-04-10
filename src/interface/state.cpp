@@ -248,14 +248,16 @@ void CState::SetServer(const CServer* server)
 	}
 
 	CStatusBar* const pStatusBar = m_pMainFrame->GetStatusBar();
-	pStatusBar->DisplayDataType(server);
-	pStatusBar->DisplayEncrypted(server);
+	if (pStatusBar)
+	{
+		pStatusBar->DisplayDataType(server);
+		pStatusBar->DisplayEncrypted(server);
+	}
 
 	if (server)
 		m_pServer = new CServer(*server);
 	else
 	{
-		m_pMainFrame->GetStatusBar()->DisplayDataType(false);
 		if (m_pServer)
 			m_pMainFrame->SetTitle(_T("FileZilla"));
 		m_pServer = 0;

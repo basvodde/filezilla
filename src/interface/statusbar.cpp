@@ -56,6 +56,7 @@ void wxStatusBarEx::SetFieldsCount(int number /*=1*/, const int* widths /*=NULL*
 	}
 	else
 	{
+		delete [] oldWidths;
 		for (int i = 0; i < number; i++)
 			m_columnWidths[i] = widths[i];
 
@@ -234,6 +235,7 @@ CStatusBar::CStatusBar(wxTopLevelWindow* pParent)
 CStatusBar::~CStatusBar()
 {
 	delete m_pCertificate;
+	delete m_pSftpEncryptionInfo;
 }
 
 void CStatusBar::DisplayQueueSize(wxLongLong totalSize, bool hasUnknown)
