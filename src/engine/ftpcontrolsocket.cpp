@@ -330,6 +330,8 @@ void CFtpControlSocket::ParseLine(wxString line)
 				CServerCapabilities::SetCapability(*m_pCurrentServer, mdtm_command, yes);
 			else if (up == _T(" SIZE") || up.Left(6) == _T(" SIZE "))
 				CServerCapabilities::SetCapability(*m_pCurrentServer, size_command, yes);
+			else if (up == _T(" TVFS"))
+				CServerCapabilities::SetCapability(*m_pCurrentServer, tvfs_support, yes);
 		}
 		else if (pData->opState == LOGON_WELCOME)
 		{
@@ -918,6 +920,9 @@ int CFtpControlSocket::LogonParseResponse()
 		}
 		else
 			CServerCapabilities::SetCapability(*GetCurrentServer(), feat_command, no);
+
+		if (CServerCapabilities::GetCapability(*m_pCurrentServer, tvfs_support) != yes)
+			CServerCapabilities::SetCapability(*m_pCurrentServer, tvfs_support, no);
 
 		const enum CharsetEncoding encoding = m_pCurrentServer->GetEncodingType();
 		if (encoding == ENCODING_AUTO && CServerCapabilities::GetCapability(*m_pCurrentServer, utf8_command) != yes)
