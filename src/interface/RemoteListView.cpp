@@ -2432,6 +2432,31 @@ wxListItemAttr* CRemoteListView::OnGetItemAttr(long item) const
 // Defined in LocalListView.cpp
 extern wxString FormatSize(const wxLongLong& size);
 
+// Filenames on VMS systems have a revision suffix, e.g.
+// foo.bar;1
+// foo.bar;2
+// foo.bar;3
+wxString StripVMSRevision(const wxString& name)
+{
+	int pos = name.Find(';', true);
+	if (pos < 0)
+		return name;
+
+	const int len = name.Len();
+	if (pos == len - 1)
+		return name;
+
+	int p = pos;
+	while (++pos < len)
+	{
+		const wxChar& c = name[pos];
+		if (c < '0' || c > '9')
+			return name;
+	}
+
+	return name.Left(pos);
+}
+
 wxString CRemoteListView::GetItemText(int item, unsigned int column)
 {
 	int index = GetItemIndex(item);
@@ -2467,7 +2492,10 @@ wxString CRemoteListView::GetItemText(int item, unsigned int column)
 		if (data.fileType == _T(""))
 		{
 			const CDirentry& entry = (*m_pDirectoryListing)[index];
-			data.fileType = GetType(entry.name, entry.dir);
+			if (m_pDirectoryListing->path.GetType() == VMS)
+				GetType(StripVMSRevision(entry.name), entry.dir);
+			else
+				data.fileType = GetType(entry.name, entry.dir);
 		}
 
 		return data.fileType;
