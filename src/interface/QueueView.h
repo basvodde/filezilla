@@ -143,7 +143,7 @@ protected:
 	void CalculateQueueSize();
 	void DisplayQueueSize();
 	void SaveQueue();
-	bool ShouldUseBinaryMode(wxString filename);
+	bool ShouldUseBinaryMode(wxString filename, enum ServerType type);
 
 	bool IsActionAfter(enum ActionAfterState);
 	void ActionAfter(bool warned = false);

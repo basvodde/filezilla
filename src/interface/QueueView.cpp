@@ -469,7 +469,7 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 	else
 	{
 		fileItem = new CFileItem(pServerItem, queueOnly, download, localFile, remoteFile, remotePath, size);
-		fileItem->m_transferSettings.binary = ShouldUseBinaryMode(download ? remoteFile : wxFileName(localFile).GetFullName());
+		fileItem->m_transferSettings.binary = ShouldUseBinaryMode(download ? remoteFile : wxFileName(localFile).GetFullName(), remotePath.GetType());
 		fileItem->m_edit = edit;
 	}
 
@@ -506,7 +506,7 @@ bool CQueueView::QueueFiles(const bool queueOnly, const wxString& localPath, con
 
 		CFileItem* fileItem;
 		fileItem = new CFileItem(pServerItem, queueOnly, true, localPath + iter->name, iter->name, dataObject.GetServerPath(), iter->size);
-		fileItem->m_transferSettings.binary = ShouldUseBinaryMode(iter->name);
+		fileItem->m_transferSettings.binary = ShouldUseBinaryMode(iter->name, dataObject.GetServerPath().GetType());
 
 		InsertItem(pServerItem, fileItem);
 	}
@@ -1647,7 +1647,7 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOn
 		if (entry.localFile != _T(""))
 		{
 			fileItem = new CFileItem(pServerItem, queueOnly, download, entry.localFile, entry.remoteFile, entry.remotePath, entry.size);
-			fileItem->m_transferSettings.binary = ShouldUseBinaryMode(download ? entry.remoteFile : wxFileName(entry.localFile).GetFullName());
+			fileItem->m_transferSettings.binary = ShouldUseBinaryMode(download ? entry.remoteFile : wxFileName(entry.localFile).GetFullName(), entry.remotePath.GetType());
 			fileItem->m_defaultFileExistsAction = defaultFileExistsAction;
 		}
 		else
@@ -1889,7 +1889,10 @@ void CQueueView::SettingsChanged()
 	AdvanceQueue();
 }
 
-bool CQueueView::ShouldUseBinaryMode(wxString filename)
+// Defined in RemoteListView.cpp
+wxString StripVMSRevision(const wxString& name);
+
+bool CQueueView::ShouldUseBinaryMode(wxString filename, enum ServerType type)
 {
 	int mode = COptions::Get()->GetOptionVal(OPTION_ASCIIBINARY);
 	if (mode == 1)
@@ -1897,24 +1900,22 @@ bool CQueueView::ShouldUseBinaryMode(wxString filename)
 	else if (mode == 2)
 		return true;
 
-	int pos = filename.Find('.');
-	if (pos == -1)
-		return COptions::Get()->GetOptionVal(OPTION_ASCIINOEXT) == 0;
-	else if (!pos)
+	if (type == VMS)
+		filename = StripVMSRevision(filename);
+
+	if (filename[0] == '.')
 		return COptions::Get()->GetOptionVal(OPTION_ASCIIDOTFILE) == 0;
 
-	wxString ext = filename;
-	do
-	{
-		ext = ext.Mid(pos + 1);
-	}
-	while ((pos = ext.Find('.')) != -1);
+	int pos = filename.Find('.', true);
+	if (pos == -1)
+		return COptions::Get()->GetOptionVal(OPTION_ASCIINOEXT) == 0;
+	filename = filename.Mid(pos + 1);
 
-	if (ext == _T(""))
+	if (filename == _T(""))
 		return true;
 
 	for (std::list<wxString>::const_iterator iter = m_asciiFiles.begin(); iter != m_asciiFiles.end(); iter++)
-		if (!ext.CmpNoCase(*iter))
+		if (!filename.CmpNoCase(*iter))
 			return false;
 
 	return true;
