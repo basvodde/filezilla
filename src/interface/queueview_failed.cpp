@@ -188,6 +188,13 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 			pFileItem->m_errorCount = 0;
 			pFileItem->m_statusMessage.Clear();
 
+			if (!pFileItem->Download() && !wxFileName::FileExists(pFileItem->GetLocalFile()))
+			{
+				failedToRequeueAll = true;
+				RemoveItem(pItem, true, false, false);
+				continue;
+			}
+
 			CServerItem* pOldServerItem = (CServerItem*)pItem->GetTopLevelItem();
 			CServerItem* pServerItem = pQueueView->CreateServerItem(pOldServerItem->GetServer());
 			RemoveItem(pItem, false, false, false);

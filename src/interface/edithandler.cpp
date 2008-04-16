@@ -540,7 +540,7 @@ checkmodifications_remote:
 			UploadFile(remote, iter->name, remove);
 			goto checkmodifications_remote;
 		}
-		else
+		else if (remove)
 		{
 			if (!fn.FileExists() || wxRemoveFile(fn.GetFullPath()))
 			{
@@ -549,6 +549,11 @@ checkmodifications_remote:
 			}
 
 			iter->state = removing;
+		}
+		else if (!fn.FileExists())
+		{
+			m_fileDataList[remote].erase(iter);
+			goto checkmodifications_remote;
 		}
 	}
 
