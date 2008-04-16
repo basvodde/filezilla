@@ -2439,7 +2439,7 @@ extern wxString FormatSize(const wxLongLong& size);
 wxString StripVMSRevision(const wxString& name)
 {
 	int pos = name.Find(';', true);
-	if (pos < 0)
+	if (pos < 1)
 		return name;
 
 	const int len = name.Len();
@@ -2447,9 +2447,9 @@ wxString StripVMSRevision(const wxString& name)
 		return name;
 
 	int p = pos;
-	while (++pos < len)
+	while (++p < len)
 	{
-		const wxChar& c = name[pos];
+		const wxChar& c = name[p];
 		if (c < '0' || c > '9')
 			return name;
 	}
@@ -2493,7 +2493,7 @@ wxString CRemoteListView::GetItemText(int item, unsigned int column)
 		{
 			const CDirentry& entry = (*m_pDirectoryListing)[index];
 			if (m_pDirectoryListing->path.GetType() == VMS)
-				GetType(StripVMSRevision(entry.name), entry.dir);
+				data.fileType = GetType(StripVMSRevision(entry.name), entry.dir);
 			else
 				data.fileType = GetType(entry.name, entry.dir);
 		}
