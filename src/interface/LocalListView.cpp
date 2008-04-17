@@ -42,8 +42,12 @@ public:
 		const int dropTarget = m_pLocalListView->m_dropTarget;
 		if (dropTarget != -1)
 		{
-			m_pLocalListView->SetItemState(dropTarget, 0, wxLIST_STATE_DROPHILITED);
 			m_pLocalListView->m_dropTarget = -1;
+#ifdef __WXMSW__
+			m_pLocalListView->SetItemState(dropTarget, 0, wxLIST_STATE_DROPHILITED);
+#else
+			m_pLocalListView->RefreshItem(dropTarget);
+#endif
 		}
 	}
 
@@ -152,8 +156,12 @@ public:
 			ClearDropHighlight();
 			if (hit != -1)
 			{
-				m_pLocalListView->SetItemState(hit, wxLIST_STATE_DROPHILITED, wxLIST_STATE_DROPHILITED);
 				m_pLocalListView->m_dropTarget = hit;
+#ifdef __WXMSW__
+				m_pLocalListView->SetItemState(hit, wxLIST_STATE_DROPHILITED, wxLIST_STATE_DROPHILITED);
+#else
+				m_pLocalListView->RefreshItem(hit);
+#endif
 			}
 		}
 
@@ -1728,6 +1736,11 @@ wxListItemAttr* CLocalListView::OnGetItemAttr(long item) const
 
 	if (!data)
 		return 0;
+
+#ifndef __WXMSW__
+	if (item == m_dropTarget)
+		return &pThis->m_dropHighlightAttribute;
+#endif
 
 	switch (data->flags)
 	{

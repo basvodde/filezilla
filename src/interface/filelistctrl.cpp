@@ -27,6 +27,10 @@ template<class CFileData> CFileListCtrl<CFileData>::CFileListCtrl(wxWindow* pPar
 	m_hasParent = true;
 
 	m_comparisonIndex = -1;
+
+#ifndef __WXMSW__
+	m_dropHighlightAttribute.SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNSHADOW));
+#endif
 }
 
 template<class CFileData> CFileListCtrl<CFileData>::~CFileListCtrl()
@@ -471,7 +475,7 @@ template<class CFileData> void CFileListCtrl<CFileData>::ComparisonRestoreSelect
 		bool shouldSelected = item == index;
 		if (isSelected != shouldSelected)
 			SetItemState(i, shouldSelected ? wxLIST_STATE_SELECTED : 0, wxLIST_STATE_SELECTED);
-		
+
 		if (shouldSelected)
 		{
 			if (m_comparisonSelections.empty())

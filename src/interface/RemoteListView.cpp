@@ -44,8 +44,12 @@ public:
 		const int dropTarget = m_pRemoteListView->m_dropTarget;
 		if (dropTarget != -1)
 		{
-			m_pRemoteListView->SetItemState(dropTarget, 0, wxLIST_STATE_DROPHILITED);
 			m_pRemoteListView->m_dropTarget = -1;
+#ifdef __WXMSW__
+			m_pRemoteListView->SetItemState(dropTarget, 0, wxLIST_STATE_DROPHILITED);
+#else
+			m_pRemoteListView->RefreshItem(dropTarget);
+#endif
 		}
 	}
 
@@ -202,8 +206,12 @@ public:
 			ClearDropHighlight();
 			if (hit != -1)
 			{
-				m_pRemoteListView->SetItemState(hit, wxLIST_STATE_DROPHILITED, wxLIST_STATE_DROPHILITED);
 				m_pRemoteListView->m_dropTarget = hit;
+#ifdef __WXMSW__
+				m_pRemoteListView->SetItemState(hit, wxLIST_STATE_DROPHILITED, wxLIST_STATE_DROPHILITED);
+#else
+				m_pRemoteListView->RefreshItem(hit);
+#endif
 			}
 		}
 		return hit;
@@ -2412,6 +2420,11 @@ wxListItemAttr* CRemoteListView::OnGetItemAttr(long item) const
 
 	if (index == -1)
 		return 0;
+
+#ifndef __WXMSW__
+	if (item == m_dropTarget)
+		return &pThis->m_dropHighlightAttribute;
+#endif
 
 	const CGenericFileData& data = m_fileData[index];
 

@@ -103,6 +103,11 @@ protected:
 	void ComparisonRestoreSelections();
 	std::list<int> m_comparisonSelections;
 
+#ifndef __WXMSW__
+	// Generic wxListCtrl does not support wxLIST_STATE_DROPHILITED, emulate it
+	wxListItemAttr m_dropHighlightAttribute;
+#endif
+
 private:
 	void SortList_UpdateSelections(bool* selections, int focus);
 
