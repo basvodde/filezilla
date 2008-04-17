@@ -2240,6 +2240,7 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 	case CEditHandler::download:
 	case CEditHandler::upload:
 	case CEditHandler::upload_and_remove:
+	case CEditHandler::upload_and_remove_failed:
 		wxMessageBox(_("A file with that name is already being transferred."), _("Cannot view / edit selected file"), wxICON_EXCLAMATION);
 		return;
 	case CEditHandler::removing:

@@ -16,6 +16,7 @@ public:
 		download,
 		upload,
 		upload_and_remove,
+		upload_and_remove_failed,
 		removing
 	};
 
@@ -38,7 +39,8 @@ public:
 	enum fileState GetFileState(enum fileType type, const wxString& fileName) const;
 
 	// Returns the number of files in given state
-	int GetFileCount(enum fileType type, enum fileState state) const;
+	// pServer may be set only if state isn't unknown
+	int GetFileCount(enum fileType type, enum fileState state, const CServer* pServer = 0) const;
 
 	// Adds the file that doesn't exist yet. (Has to be in unknown state)
 	// The initial state will be download
@@ -47,6 +49,7 @@ public:
 	// Tries to unedit and remove file
 	bool Remove(enum fileType type, const wxString& fileName);
 	bool RemoveAll(bool force);
+	bool RemoveAll(enum fileState state, const CServer* pServer = 0);
 
 	void FinishTransfer(bool successful, enum fileType type, const wxString& fileName);
 

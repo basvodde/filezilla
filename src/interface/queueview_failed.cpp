@@ -42,6 +42,10 @@ void CQueueViewFailed::OnRemoveAll(wxCommandEvent& event)
 	while ((item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
 		SetItemState(item, 0, wxLIST_STATE_SELECTED);
 
+	CEditHandler* pEditHandler = CEditHandler::Get();
+	if (pEditHandler)
+		pEditHandler->RemoveAll(CEditHandler::upload_and_remove_failed);
+
 	for (std::vector<CServerItem*>::iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
 		delete *iter;
 	m_serverList.clear();
@@ -73,12 +77,33 @@ void CQueueViewFailed::OnRemoveSelected(wxCommandEvent& event)
 		SetItemState(item, 0, wxLIST_STATE_SELECTED);
 	}
 
+	CEditHandler* pEditHandler = CEditHandler::Get();
+
 	while (!selectedItems.empty())
 	{
 		CQueueItem* pItem = selectedItems.front();
 		selectedItems.pop_front();
 
 		CQueueItem* pTopLevelItem = pItem->GetTopLevelItem();
+
+		if (pItem->GetType() == QueueItemType_Server)
+		{
+			CServerItem* pServerItem = (CServerItem*)pItem;
+			if (pEditHandler && pEditHandler->GetFileCount(CEditHandler::remote, CEditHandler::upload_and_remove_failed, &pServerItem->GetServer()))
+				pEditHandler->RemoveAll(CEditHandler::upload_and_remove_failed, &pServerItem->GetServer());
+		}
+		else if (pItem->GetType() == QueueItemType_File)
+		{
+			CFileItem* pFileItem = (CFileItem*)pItem;
+			if (pFileItem->m_edit == CEditHandler::remote && pEditHandler)
+			{
+				wxFileName fn(pFileItem->GetLocalFile());
+				enum CEditHandler::fileState state = pEditHandler->GetFileState(CEditHandler::remote, fn.GetFullName());
+				if (state == CEditHandler::upload_and_remove_failed)
+					pEditHandler->Remove(pFileItem->m_edit, fn.GetFullName());
+			}
+		}
+
 		if (!pTopLevelItem->GetChild(1))
 		{
 			// Parent will get deleted
@@ -139,6 +164,13 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 				pFileItem->m_errorCount = 0;
 				pFileItem->m_statusMessage.Clear();
 
+				if (!pFileItem->Download() && !wxFileName::FileExists(pFileItem->GetLocalFile()))
+				{
+					failedToRequeueAll = true;
+					RemoveItem(pItem, true, false, false);
+					continue;
+				}
+
 				if (pFileItem->m_edit == CEditHandler::remote)
 				{
 					CEditHandler* pEditHandler = CEditHandler::Get();
@@ -149,8 +181,26 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 						continue;
 					}
 					wxFileName fn(pFileItem->GetLocalFile());
-					if (pEditHandler->GetFileState(CEditHandler::remote, fn.GetFullName()) != CEditHandler::unknown ||
-						!pEditHandler->AddFile(CEditHandler::remote, fn.GetFullName(), pFileItem->GetRemotePath(), pServerItem->GetServer()))
+					enum CEditHandler::fileState state = pEditHandler->GetFileState(CEditHandler::remote, fn.GetFullName());
+					if (state == CEditHandler::unknown)
+					{
+						wxASSERT(pFileItem->Download());
+						if (!pEditHandler->AddFile(CEditHandler::remote, fn.GetFullName(), pFileItem->GetRemotePath(), pServerItem->GetServer()))
+						{
+							failedToRequeueAll = true;
+							delete pFileItem;
+							continue;
+						}
+					}
+					else if (state == CEditHandler::upload_and_remove_failed)
+					{
+						wxASSERT(!pFileItem->Download());
+						if (!pEditHandler->UploadFile(pFileItem->m_edit, fn.GetFullName(), true))
+							failedToRequeueAll = true;
+						delete pFileItem;
+						continue;
+					}
+					else
 					{
 						failedToRequeueAll = true;
 						delete pFileItem;
@@ -215,8 +265,39 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 					continue;
 				}
 				wxFileName fn(pFileItem->GetLocalFile());
-				if (pEditHandler->GetFileState(CEditHandler::remote, fn.GetFullName()) != CEditHandler::unknown ||
-					!pEditHandler->AddFile(CEditHandler::remote, fn.GetFullName(), pFileItem->GetRemotePath(), pServerItem->GetServer()))
+				enum CEditHandler::fileState state = pEditHandler->GetFileState(CEditHandler::remote, fn.GetFullName());
+				if (state == CEditHandler::unknown)
+				{
+					wxASSERT(pFileItem->Download());
+					if (!pEditHandler->AddFile(CEditHandler::remote, fn.GetFullName(), pFileItem->GetRemotePath(), pServerItem->GetServer()))
+					{
+						if (!pServerItem->GetChildrenCount(false))
+						{
+							pQueueView->CommitChanges();
+							pQueueView->RemoveItem(pServerItem, true, true, true);
+						}
+
+						failedToRequeueAll = true;
+						delete pItem;
+						continue;
+					}
+				}
+				else if (state == CEditHandler::upload_and_remove_failed)
+				{
+					wxASSERT(!pFileItem->Download());
+					if (!pEditHandler->UploadFile(pFileItem->m_edit, fn.GetFullName(), true))
+						failedToRequeueAll = true;
+
+					if (!pServerItem->GetChildrenCount(false))
+					{
+						pQueueView->CommitChanges();
+						pQueueView->RemoveItem(pServerItem, true, true, true);
+					}
+
+					delete pItem;
+					continue;
+				}
+				else
 				{
 					if (!pServerItem->GetChildrenCount(false))
 					{

@@ -1078,6 +1078,8 @@ void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
 					pEditHandler->FinishTransfer(reason == success, pFileItem->m_edit, fn.GetFullName());
 				else
 					pEditHandler->FinishTransfer(reason == success, pFileItem->m_edit, fn.GetFullPath());
+				if (reason == success)
+					pFileItem->m_edit = CEditHandler::none;
 			}
 
 			if (reason == failure)
