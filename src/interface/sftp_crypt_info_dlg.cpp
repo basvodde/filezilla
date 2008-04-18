@@ -18,7 +18,7 @@ void CSftpEncryptioInfoDialog::ShowDialog(CSftpEncryptionNotification* pNotifica
 	pDlg->GetSizer()->Fit(pDlg);
 	pDlg->GetSizer()->SetSizeHints(pDlg);
 
-	int res = pDlg->ShowModal();
+	pDlg->ShowModal();
 
 	delete pDlg;
 }
