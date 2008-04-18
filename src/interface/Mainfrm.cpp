@@ -1099,6 +1099,10 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 	m_pMenuBar = 0;
 	m_pToolBar = 0;
 
+	// We're no longer interested in these events
+	delete m_pStateEventHandler;
+	m_pStateEventHandler = 0;
+
 	m_transferStatusTimer.Stop();
 
 	if (!m_pQueueView->Quit())

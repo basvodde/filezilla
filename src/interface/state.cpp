@@ -345,7 +345,7 @@ void CState::UnregisterHandler(CStateEventHandler* pHandler, enum t_statechange_
 	{
 		for (int i = 0; i < STATECHANGE_MAX; i++)
 		{
-			std::list<CStateEventHandler*> &handlers = m_handlers[notification];
+			std::list<CStateEventHandler*> &handlers = m_handlers[i];
 			for (std::list<CStateEventHandler*>::iterator iter = handlers.begin(); iter != handlers.end(); iter++)
 			{
 				if (*iter == pHandler)
