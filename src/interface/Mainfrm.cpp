@@ -1092,10 +1092,12 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 
 	Show(false);
 
-	delete m_pSendLed;
-	delete m_pRecvLed;
+	// Getting deleted by wxWidgets
 	m_pSendLed = 0;
 	m_pRecvLed = 0;
+	m_pStatusBar = 0;
+	m_pMenuBar = 0;
+	m_pToolBar = 0;
 
 	m_transferStatusTimer.Stop();
 
@@ -1514,10 +1516,12 @@ void CMainFrame::OnMenuHelpAbout(wxCommandEvent& event)
 void CMainFrame::OnFilter(wxCommandEvent& event)
 {
 	CFilterDialog dlg;
-	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), dlg.HasActiveFilters());
+	if (m_pToolBar)
+		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), dlg.HasActiveFilters());
 	dlg.Create(this);
 	dlg.ShowModal();
-	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), dlg.HasActiveFilters());
+	if (m_pToolBar)
+		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), dlg.HasActiveFilters());
 	m_pState->NotifyHandlers(STATECHANGE_APPLYFILTER);
 }
 
