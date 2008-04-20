@@ -2,9 +2,25 @@
 .SH NAME
 FileZilla \- FTP client
 .SH SYNOPSIS
-.B filezilla
+.B filezilla [-s] [-c <site>] [<FTP URL>]
 .SH DESCRIPTION
 FileZilla is a powerful client for plain FTP, FTP over SSL/TLS (FTPS) and the SSH File Transfer Protocol (SFTP).
+.SH OPTIONS
+.IP "-s, --sitemanager"
+Start with Site Manager opened.
+.IP
+May not be used together with
+.B -c
+nor with URL parameter.
+.IP "-c, --site"
+Connect to the given site from the Site Manager.
+Site has to be given as complete path, with a slashes as separation character. Any slash or backslash that is part of a segment has to be escaped with a backslash. Path has to be prefixed with 0 for user defined entries or 1 for default entries. Site path may not contain double quotation marks.
+.IP
+Example: 0/foo/bar/sl\\/ash connects to the user site sl/ash in the site directory foo/bar
+.IP
+May not be used together with
+.B -s
+nor with URL parameter.
 .SH ENVIRONMENT
 The
 .B FZ_DATADIR
