@@ -2127,7 +2127,10 @@ void CMainFrame::ProcessCommandLine()
 		CSiteManagerItemData* pData = CSiteManager::GetSiteByPath(site);
 
 		if (pData)
+		{
 			ConnectToSite(pData);
+			delete pData;
+		}
 	}
 
 	wxString param = pCommandLine->GetParameter();
