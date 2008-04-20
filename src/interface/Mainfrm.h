@@ -65,6 +65,7 @@ protected:
 	void OpenSiteManager(const CServer* pServer = 0);
 	void InitToolbarState();
 	void InitMenubarState();
+	void ProcessCommandLine();
 
 	// If resizing the window, make sure the individual splitter windows don't get too small
 	void ApplySplitterConstraints();

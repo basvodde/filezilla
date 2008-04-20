@@ -9,6 +9,7 @@
 #endif
 #include "xmlfunctions.h"
 #include <wx/tokenzr.h>
+#include "cmdline.h"
 
 #include <wx/xrc/xh_bmpbt.h>
 #include <wx/xrc/xh_bttn.h>
@@ -71,12 +72,14 @@ CFileZillaApp::CFileZillaApp()
 {
 	m_pWrapEngine = 0;
 	m_pLocale = 0;
+	m_pCommandLine = 0;
 }
 
 CFileZillaApp::~CFileZillaApp()
 {
 	delete m_pLocale;
 	delete m_pWrapEngine;
+	delete m_pCommandLine;
 	COptions::Destroy();
 }
 
@@ -148,12 +151,21 @@ bool CFileZillaApp::OnInit()
 #if wxUSE_DEBUGREPORT && wxUSE_ON_FATAL_EXCEPTION
 	//wxHandleFatalExceptions();
 #endif
-	wxApp::OnInit();
 
 	wxSystemOptions::SetOption(_T("msw.remap"), 0);
 	wxSystemOptions::SetOption(_T("mac.listctrl.always_use_generic"), 1);
 
+	m_pCommandLine = new CCommandLine(argc, argv);
+	bool cmdline_ok = m_pCommandLine->Parse();
+
 	LoadLocales();
+
+	if (!cmdline_ok)
+	{
+		m_pCommandLine->DisplayUsage();
+		return false;
+	}
+
 	InitDefaultsDir();
 	InitSettingsDir();
 

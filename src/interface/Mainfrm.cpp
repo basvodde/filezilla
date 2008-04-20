@@ -35,6 +35,7 @@
 #include "window_state_manager.h"
 #include "xh_toolb_ex.h"
 #include "statusbar.h"
+#include "cmdline.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -375,6 +376,8 @@ CMainFrame::CMainFrame()
 
 	InitMenubarState();
 	InitToolbarState();
+
+	ProcessCommandLine();
 }
 
 CMainFrame::~CMainFrame()
@@ -2105,4 +2108,42 @@ void CMainFrame::UpdateMenubarState()
 		canReconnect = COptions::Get()->GetLastServer(tmp);
 	}
 	m_pMenuBar->Enable(XRCID("ID_MENU_SERVER_RECONNECT"), canReconnect);
+}
+
+void CMainFrame::ProcessCommandLine()
+{
+	const CCommandLine* pCommandLine = wxGetApp().GetCommandLine();
+	if (!pCommandLine)
+		return;
+
+	wxString site;
+	if (pCommandLine->HasSwitch(CCommandLine::sitemanager))
+	{
+		Show();
+		OpenSiteManager();
+	}
+	else if ((site = pCommandLine->GetOption(CCommandLine::site)) != _T(""))
+	{
+		CSiteManagerItemData* pData = CSiteManager::GetSiteByPath(site);
+
+		if (pData)
+			ConnectToSite(pData);
+	}
+
+	wxString param = pCommandLine->GetParameter();
+	if (param != _T(""))
+	{
+		wxString error;
+
+		CServer server;
+		CServerPath path;
+		if (!server.ParseUrl(param, 0, _T(""), _T(""), error, path))
+		{
+			wxString str = _("Parameter not a valid URL");
+			str += _T("\n") + error;
+			wxMessageBox(error, _("Syntax error in command line"));
+		}
+
+		m_pState->Connect(server, true, path);
+	}
 }

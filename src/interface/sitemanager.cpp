@@ -415,42 +415,8 @@ public:
 	CSiteManagerXmlHandler_Tree(wxTreeCtrl* pTree, wxTreeItemId root, const wxString& lastSelection)
 		: m_pTree(pTree), m_item(root)
 	{
-		wxString name;
-		const wxChar *p = lastSelection;
-
-		// Undo escapement
-		bool lastBackslash = false;
-		while (*p)
-		{
-			const wxChar& c = *p;
-			if (c == '\\')
-			{
-				if (lastBackslash)
-				{
-					name += _T("\\");
-					lastBackslash = false;
-				}
-				else
-					lastBackslash = true;
-			}
-			else if (c == '/')
-			{
-				if (lastBackslash)
-				{
-					name += _T("/");
-					lastBackslash = 0;
-				}
-				else
-				{
-					if (!name.IsEmpty())
-						m_lastSelection.push_back(name);
-					name.clear();
-				}
-			}
-			else
-				name += *p;
-			p++;
-		}
+		if (!CSiteManager::UnescapeSitePath(lastSelection, m_lastSelection))
+			m_lastSelection.clear();
 		m_wrong_sel_depth = 0;
 	}
 
@@ -2051,4 +2017,64 @@ void CSiteManager::RememberLastSelected()
 		path = _T("0") + path;
 
 	COptions::Get()->SetOption(OPTION_SITEMANAGER_LASTSELECTED, path);
+}
+
+bool CSiteManager::UnescapeSitePath(wxString path, std::list<wxString>& result)
+{
+	result.clear();
+
+	wxString name;
+	const wxChar *p = path;
+
+	// Undo escapement
+	bool lastBackslash = false;
+	while (*p)
+	{
+		const wxChar& c = *p;
+		if (c == '\\')
+		{
+			if (lastBackslash)
+			{
+				name += _T("\\");
+				lastBackslash = false;
+			}
+			else
+				lastBackslash = true;
+		}
+		else if (c == '/')
+		{
+			if (lastBackslash)
+			{
+				name += _T("/");
+				lastBackslash = 0;
+			}
+			else
+			{
+				if (!name.IsEmpty())
+					result.push_back(name);
+				name.clear();
+			}
+		}
+		else
+			name += *p;
+		p++;
+	}
+	if (lastBackslash)
+		return false;
+	if (name != _T(""))
+		result.push_back(name);
+
+	return !result.empty();
+}
+
+CSiteManagerItemData* CSiteManager::GetSiteByPath(wxString sitePath)
+{
+	wxChar c = sitePath[0];
+	if (c != '0' && c != '1')
+	{
+		wxMessageBox(_("Site path has to begin with 0 or 1."), _("Invalid site path"));
+		return 0;
+	}
+
+	return 0;
 }
