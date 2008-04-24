@@ -155,12 +155,13 @@ bool CFileZillaApp::OnInit()
 	wxSystemOptions::SetOption(_T("msw.remap"), 0);
 	wxSystemOptions::SetOption(_T("mac.listctrl.always_use_generic"), 1);
 
-	m_pCommandLine = new CCommandLine(argc, argv);
-	bool cmdline_ok = m_pCommandLine->Parse();
+	int cmdline_result = ProcessCommandLine();
+	if (!cmdline_result)
+		return false;
 
 	LoadLocales();
 
-	if (!cmdline_ok)
+	if (cmdline_result < 0)
 	{
 		m_pCommandLine->DisplayUsage();
 		return false;
@@ -833,4 +834,36 @@ void CFileZillaApp::CheckExistsFzsftp()
 	else
 #endif
 		COptions::Get()->SetOption(OPTION_FZSFTP_EXECUTABLE, executable);
+}
+
+#ifdef __WXMSW__
+extern "C" BOOL CALLBACK EnumWindowCallback(HWND hwnd, LPARAM lParam)
+{
+	HWND child = FindWindowEx(hwnd, 0, 0, _T("FileZilla process identificator 3919DB0A-082D-4560-8E2F-381A35969FB4"));
+	if (child)
+	{
+		::PostMessage(hwnd, WM_ENDSESSION, (WPARAM)TRUE, (LPARAM)ENDSESSION_LOGOFF);
+	}
+
+	return TRUE;
+}
+#endif
+
+int CFileZillaApp::ProcessCommandLine()
+{
+	m_pCommandLine = new CCommandLine(argc, argv);
+	int res = m_pCommandLine->Parse() ? 1 : -1;
+
+	if (res > 0)
+	{
+		if (m_pCommandLine->HasSwitch(CCommandLine::close))
+		{
+#ifdef __WXMSW__
+			EnumWindows((WNDENUMPROC)EnumWindowCallback, 0);
+#endif
+			return 0;
+		}
+	}
+
+	return res;
 }

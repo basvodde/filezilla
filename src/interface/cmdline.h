@@ -8,7 +8,8 @@ class CCommandLine
 public:
 	enum t_switches
 	{
-		sitemanager
+		sitemanager,
+		close
 	};
 
 	enum t_option

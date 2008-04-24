@@ -38,6 +38,7 @@ protected:
 	wxString GetSettingsDirFromDefaults();
 	bool LoadResourceFiles();
 	bool LoadLocales();
+	int ProcessCommandLine();
 
 	wxLocale* m_pLocale;
 

@@ -6,6 +6,9 @@ CCommandLine::CCommandLine(int argc, wxChar** argv)
 	m_parser.AddSwitch(_T("h"), _T("help"), _("Shows this help dialog"), wxCMD_LINE_OPTION_HELP);
 	m_parser.AddSwitch(_T("s"), _T("site-manager"), _("Start with opened Site Manager"));
 	m_parser.AddOption(_T("c"), _T("site"), _("Connect to specified Site Manager site"));
+#ifdef __WXMSW__
+	m_parser.AddSwitch(_T(""), _T("close"), _("Close all running instances of FileZilla"));
+#endif
 	m_parser.AddSwitch(_T(""), _T("verbose"), _("Verbose log messages from wxWidgets"));
 	wxString str = _T("<");
 	str += _("FTP URL");
@@ -21,6 +24,10 @@ bool CCommandLine::HasSwitch(enum CCommandLine::t_switches s) const
 {
 	if (s == sitemanager)
 		return m_parser.Found(_T("s"));
+#ifdef __WXMSW__
+	else if (s == close)
+		return m_parser.Found(_T("close"));
+#endif
 
 	return false;
 }
