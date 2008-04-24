@@ -797,6 +797,11 @@ void CUpdateWizard::DisplayUpdateAvailability(bool showDialog, bool forceMenu /*
 		return;
 	}
 
+#ifdef __WXMSW__
+	// All open menus need to be closed or app will become unresponsive.
+	::EndMenu();
+#endif
+
 	m_updateShown = true;
 
 	CMainFrame* pFrame = (CMainFrame*)m_parent;
