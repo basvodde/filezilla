@@ -64,7 +64,7 @@ void COptionsPage::SetTextFromOption(int ctrlId, int optionId, bool& failure)
 	}
 
 	const wxString& text = m_pOptions->GetOption(optionId);
-	pTextCtrl->SetValue(text);
+	pTextCtrl->ChangeValue(text);
 }
 
 wxString COptionsPage::GetText(int id)
@@ -84,7 +84,7 @@ bool COptionsPage::SetText(int id, const wxString& text, bool& failure)
 		return false;
 	}
 
-	pTextCtrl->SetValue(text);
+	pTextCtrl->ChangeValue(text);
 
 	return true;
 }
