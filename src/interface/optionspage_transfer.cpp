@@ -7,12 +7,23 @@
 bool COptionsPageTransfer::LoadPage()
 {
 	bool failure = false;
+
+	wxTextCtrl* pTextCtrl = XRCCTRL(*this, "ID_DOWNLOADLIMIT", wxTextCtrl);
+	if (!pTextCtrl)
+		return false;
+	pTextCtrl->SetMaxLength(9);
+	pTextCtrl->ChangeValue(m_pOptions->GetOption(OPTION_SPEEDLIMIT_INBOUND));
+
+	pTextCtrl = XRCCTRL(*this, "ID_UPLOADLIMIT", wxTextCtrl);
+	if (!pTextCtrl)
+		return false;
+	pTextCtrl->SetMaxLength(9);
+	pTextCtrl->ChangeValue(m_pOptions->GetOption(OPTION_SPEEDLIMIT_OUTBOUND));
+
 	SetTextFromOption(XRCID("ID_NUMTRANSFERS"), OPTION_NUMTRANSFERS, failure);
 	SetTextFromOption(XRCID("ID_NUMDOWNLOADS"), OPTION_CONCURRENTDOWNLOADLIMIT, failure);
 	SetTextFromOption(XRCID("ID_NUMUPLOADS"), OPTION_CONCURRENTUPLOADLIMIT, failure);
 	SetTextFromOption(XRCID("ID_TIMEOUT"), OPTION_TIMEOUT, failure);
-	SetTextFromOption(XRCID("ID_DOWNLOADLIMIT"), OPTION_SPEEDLIMIT_INBOUND, failure);
-	SetTextFromOption(XRCID("ID_UPLOADLIMIT"), OPTION_SPEEDLIMIT_OUTBOUND, failure);
 	SetChoice(XRCID("ID_BURSTTOLERANCE"), m_pOptions->GetOptionVal(OPTION_SPEEDLIMIT_BURSTTOLERANCE), failure);
 
 	return !failure;
