@@ -59,10 +59,10 @@ void CRateLimiter::AddObject(CRateLimiterObject* pObject)
 
 	for (int i = 0; i < 2; i++)
 	{
-		int limit = m_pOptions->GetOptionVal(OPTION_SPEEDLIMIT_INBOUND + i) * 1024;
+		wxLongLong limit = m_pOptions->GetOptionVal(OPTION_SPEEDLIMIT_INBOUND + i) * 1024;
 		if (limit > 0)
 		{
-			int tokens = limit * tickDelay / 1000;
+			wxLongLong tokens = limit / (1000 / tickDelay);
 
 			tokens /= m_objectList.size();
 			if (m_tokenDebt[i] > 0)
@@ -102,7 +102,7 @@ void CRateLimiter::RemoveObject(CRateLimiterObject* pObject)
 				// so that newly created objects get less initial tokens.
 				// That ensures that rapidly adding and removing objects does not exceed the rate
 				int limit = m_pOptions->GetOptionVal(OPTION_SPEEDLIMIT_INBOUND + i) * 1024;
-				int tokens = limit * tickDelay / 1000;
+				int tokens = limit / (1000 / tickDelay);
 				tokens /= m_objectList.size();
 				if ((*iter)->m_bytesAvailable[i] < tokens)
 					m_tokenDebt[i] += tokens - (*iter)->m_bytesAvailable[i];
@@ -136,8 +136,8 @@ void CRateLimiter::OnTimer(wxTimerEvent& event)
 		if (!m_objectList.size())
 			continue;
 
-		int limit = m_pOptions->GetOptionVal(OPTION_SPEEDLIMIT_INBOUND + i) * 1024;
-		if (!limit)
+		wxLongLong limit = m_pOptions->GetOptionVal(OPTION_SPEEDLIMIT_INBOUND + i);
+		if (limit == 0)
 		{
 			for (std::list<CRateLimiterObject*>::iterator iter = m_objectList.begin(); iter != m_objectList.end(); iter++)
 			{
@@ -148,15 +148,13 @@ void CRateLimiter::OnTimer(wxTimerEvent& event)
 			continue;
 		}
 
-		int tokens = limit * tickDelay / 1000;
-		if (!tokens)
-			tokens = 1;
-		int maxTokens = tokens * GetBucketSize();
+		wxLongLong tokens = limit * (tickDelay * 1024 / 1000);
+		wxLongLong maxTokens = tokens * GetBucketSize();
 
 		// Get amount of tokens for each object
-		int tokensPerObject = tokens / m_objectList.size();
+		wxLongLong tokensPerObject = tokens / m_objectList.size();
 		
-		if (!tokensPerObject)
+		if (tokensPerObject == 0)
 			tokensPerObject = 1;
 		tokens = 0;
 
@@ -189,10 +187,10 @@ void CRateLimiter::OnTimer(wxTimerEvent& event)
 
 		// If there are any left-over tokens (in case of objects with a rate below the limit)
 		// assign to the unsaturated sources
-		while (tokens && !unsaturatedObjects.empty())
+		while (tokens != 0 && !unsaturatedObjects.empty())
 		{
 			tokensPerObject = tokens / unsaturatedObjects.size();
-			if (!tokensPerObject)
+			if (tokensPerObject == 0)
 				break;
 			tokens = 0;
 

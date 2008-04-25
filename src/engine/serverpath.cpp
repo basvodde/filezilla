@@ -178,6 +178,7 @@ bool CServerPath::SetPath(wxString &newPath, bool isFile)
 			int pos = path.Find(_T("."));
 			while (pos != -1)
 			{
+				// What happens if pos is 0?
 				m_Segments.push_back(path.Left(pos));
 				path = path.Mid(pos + 1);
 				pos = path.Find( _T(".") );

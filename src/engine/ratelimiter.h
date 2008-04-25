@@ -36,7 +36,7 @@ protected:
 	static CRateLimiter *m_pTheRateLimiter;
 	unsigned int m_usageCount;
 
-	int m_tokenDebt[2];
+	wxLongLong m_tokenDebt[2];
 
 	COptionsBase* m_pOptions;
 
@@ -53,7 +53,7 @@ class CRateLimiterObject
 public:
 	CRateLimiterObject();
 	virtual ~CRateLimiterObject() { }
-	int GetAvailableBytes(enum CRateLimiter::rate_direction direction) const { return m_bytesAvailable[direction]; }
+	wxLongLong GetAvailableBytes(enum CRateLimiter::rate_direction direction) const { return m_bytesAvailable[direction]; }
 
 	bool IsWaiting(enum CRateLimiter::rate_direction direction) const;
 
@@ -65,7 +65,7 @@ protected:
 
 private:
 	bool m_waiting[2];
-	int m_bytesAvailable[2];
+	wxLongLong m_bytesAvailable[2];
 };
 
 #endif //__RATELIMITER_H__
