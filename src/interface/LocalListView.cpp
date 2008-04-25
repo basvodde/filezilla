@@ -1363,7 +1363,7 @@ bool Rename(wxWindow* parent, wxString dir, wxString from, wxString to)
 		return false;
 	}
 
-	return wxRename(dir + from, dir + to);
+	return wxRename(dir + from, dir + to) == 0;
 #endif
 }
 
