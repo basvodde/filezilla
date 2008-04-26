@@ -135,6 +135,12 @@ bool CLocalFileSystem::RecursiveDelete(std::list<wxString> dirsToVisit, wxWindow
 		if (!dir.Open(path))
 			continue;
 
+		// Depending on underlying platform, wxDir does not handle
+		// changes to the directory contents very well.
+		// See bug [ 1946574 ]
+		// To work around this, delete files after enumerating everything in current directory
+		std::list<wxString> filesToDelete;
+
 		wxString file;
 		for (bool found = dir.GetFirst(&file); found; found = dir.GetNext(&file))
 		{
@@ -149,8 +155,12 @@ bool CLocalFileSystem::RecursiveDelete(std::list<wxString> dirsToVisit, wxWindow
 			if (CLocalFileSystem::GetFileType(fullName) == CLocalFileSystem::dir)
 				dirsToVisit.push_back(fullName);
 			else
-				wxRemoveFile(fullName);
+				filesToDelete.push_back(fullName);
 		}
+
+		// Delete all files and links in current directory enumerated before
+		for (std::list<wxString>::const_iterator iter = filesToDelete.begin(); iter != filesToDelete.end(); iter++)
+			wxRemoveFile(*iter);
 	}
 
 	// Delete the now empty directories
