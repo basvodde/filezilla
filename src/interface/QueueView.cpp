@@ -407,7 +407,7 @@ CQueueView::CQueueView(CQueue* parent, int index, CMainFrame* pMainFrame, CAsync
 	m_activeCountDown = 0;
 	m_activeCountUp = 0;
 	m_activeMode = 0;
-	m_quit = false;
+	m_quit = 0;
 	m_waitStatusLineUpdate = false;
 	m_lastTopItem = -1;
 	m_pFolderProcessingThread = 0;
@@ -1414,7 +1414,8 @@ bool CQueueView::SetActive(bool active /*=true*/)
 
 bool CQueueView::Quit()
 {
-	m_quit = true;
+	if (!m_quit)
+		m_quit = 1;
 
 #ifdef __WXMSW__
 	if (m_actionAfterWarnDialog)
@@ -1447,7 +1448,11 @@ bool CQueueView::Quit()
 
 	DeleteEngines();
 
-	SaveQueue();
+	if (m_quit == 1)
+	{
+		SaveQueue();
+		m_quit = 2;
+	}
 
 	COptions::Get()->SaveColumnWidths(this, OPTION_QUEUE_COLUMN_WIDTHS);
 

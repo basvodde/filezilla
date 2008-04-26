@@ -188,7 +188,7 @@ protected:
 	int m_activeCountDown;
 	int m_activeCountUp;
 	int m_activeMode; // 0 inactive, 1 only immediate transfers, 2 all
-	bool m_quit;
+	int m_quit;
 
 	enum ActionAfterState m_actionAfterState;
 	wxString m_actionAfterRunCommand;
