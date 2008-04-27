@@ -8,6 +8,9 @@
 #include "buildinfo.h"
 #include <wx/stdpaths.h>
 #include "Mainfrm.h"
+#ifdef __WXMSW__
+#include <wx/dynlib.h> // Used by GetDownloadDir
+#endif __WXMSW__
 
 #define MAXCHECKPROGRESS 9 // Maximum value of progress bar
 
@@ -157,6 +160,37 @@ void CUpdateWizard::OnCheck(wxCommandEvent& event)
 	}
 }
 
+#ifdef __WXMSW__
+// See comment a few lines below
+GUID VISTASHIT_FOLDERID_Downloads = { 0x374de290, 0x123f, 0x4565, 0x91, 0x64, 0x39, 0xc4, 0x92, 0x5e, 0x46, 0x7b };
+extern "C" typedef HRESULT (WINAPI *tSHGetKnownFolderPath)(const GUID& rfid, DWORD dwFlags, HANDLE hToken, PWSTR *ppszPath);
+#endif
+
+wxString CUpdateWizard::GetDownloadDir()
+{
+#ifdef __WXMSW__
+	// Old Vista has a profile directory for downloaded files,
+	// need to get it using SHGetKnownFolderPath which we need to
+	// load dynamically to preserve forward compatibility with the 
+	// upgrade to Windows XP.
+	wxDynamicLibrary lib(_T("shell32.dll"));
+	if (lib.IsLoaded() && lib.HasSymbol(_T("SHGetKnownFolderPath")))
+	{
+		tSHGetKnownFolderPath pSHGetKnownFolderPath = (tSHGetKnownFolderPath)lib.GetSymbol(_T("SHGetKnownFolderPath"));
+
+		PWSTR path;
+		HRESULT result = pSHGetKnownFolderPath(VISTASHIT_FOLDERID_Downloads, 0, 0, &path);
+		if (result == S_OK)
+		{
+			wxString dir = path;
+			CoTaskMemFree(path);
+			return dir;
+		}
+	}
+#endif
+	return wxStandardPaths::Get().GetDocumentsDir();
+}
+
 void CUpdateWizard::OnPageChanging(wxWizardEvent& event)
 {
 	if (m_skipPageChanging)
@@ -190,7 +224,7 @@ void CUpdateWizard::OnPageChanging(wxWizardEvent& event)
 		if (pos != -1)
 			filename = filename.Mid(pos + 1);
 
-		const wxString defaultDir = wxStandardPaths::Get().GetDocumentsDir();
+		const wxString defaultDir = GetDownloadDir();
 
 		const int flags = wxFD_SAVE | wxFD_OVERWRITE_PROMPT;
 
