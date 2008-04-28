@@ -151,6 +151,16 @@ CMainFrame::CMainFrame()
 	SetSizeHints(250, 250);
 
 #ifdef __WXMSW__
+	// In order for the --close commandline argument to work,
+	// there has to be a way to find other instances.
+	// Create a hidden window with a title no other program uses
+	wxWindow* pChild = new wxWindow();
+	pChild->Hide();
+	pChild->Create(this, wxID_ANY);
+	::SetWindowText((HWND)pChild->GetHandle(), _T("FileZilla process identificator 3919DB0A-082D-4560-8E2F-381A35969FB4"));
+#endif
+
+#ifdef __WXMSW__
 	SetIcon(wxICON(appicon));
 #else
 	SetIcons(CThemeProvider::GetIconBundle(_T("ART_FILEZILLA")));
@@ -167,6 +177,7 @@ CMainFrame::CMainFrame()
 	m_pRemoteSplitter = NULL;
 	m_bInitDone = false;
 	m_bQuit = false;
+	m_closeEvent = 0;
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	m_pUpdateWizard = 0;
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
@@ -202,6 +213,7 @@ CMainFrame::CMainFrame()
 	}
 
 	m_transferStatusTimer.SetOwner(this, TRANSFERSTATUS_TIMER_ID);
+	m_closeEventTimer.SetOwner(this);
 
 	CreateMenus();
 	CreateToolBar();
@@ -1031,46 +1043,45 @@ void CMainFrame::OnSplitterSashPosChanged(wxSplitterEvent& event)
 	}
 }
 
+#ifdef __WXMSW__
+
+BOOL CALLBACK FzEnumThreadWndProc(HWND hwnd, LPARAM lParam)
+{
+	// This function enumerates all dialogs and calls EndDialog for them
+	TCHAR buffer[10];
+	int c = GetClassName(hwnd, buffer, 9);
+	// #32770 is the dialog window class.
+	if (c && !_tcscmp(buffer, _T("#32770")))
+	{
+		*((bool*)lParam) = true;
+		EndDialog(hwnd, IDCANCEL);
+		return FALSE;
+	}
+
+	return TRUE;
+}
+#endif //__WXMSW__
+
 void CMainFrame::OnClose(wxCloseEvent &event)
 {
 	if (!m_bQuit)
 	{
 		static bool quit_confirmation_displayed = false;
-		if (quit_confirmation_displayed)
+		if (quit_confirmation_displayed && event.CanVeto())
 		{
 			event.Veto();
 			return;
 		}
-		quit_confirmation_displayed = true;
-
-		if (m_pQueueView && m_pQueueView->IsActive())
+		if (event.CanVeto())
 		{
-			CConditionalDialog dlg(this, CConditionalDialog::confirmexit, CConditionalDialog::yesno);
-			dlg.SetTitle(_("Close FileZilla"));
+			quit_confirmation_displayed = true;
 
-			dlg.AddText(_("File transfers still in progress."));
-			dlg.AddText(_("Do you really want to close FileZilla?"));
-
-			if (!dlg.Run())
+			if (m_pQueueView && m_pQueueView->IsActive())
 			{
-				event.Veto();
-				quit_confirmation_displayed = false;
-				return;
-			}
-		}
-
-		CEditHandler* pEditHandler = CEditHandler::Get();
-		if (pEditHandler)
-		{
-			if (pEditHandler->GetFileCount(CEditHandler::remote, CEditHandler::edit) || pEditHandler->GetFileCount(CEditHandler::none, CEditHandler::upload) ||
-				pEditHandler->GetFileCount(CEditHandler::none, CEditHandler::upload_and_remove) ||
-				pEditHandler->GetFileCount(CEditHandler::none, CEditHandler::upload_and_remove_failed))
-			{
-				CConditionalDialog dlg(this, CConditionalDialog::confirmexit_edit, CConditionalDialog::yesno);
+				CConditionalDialog dlg(this, CConditionalDialog::confirmexit, CConditionalDialog::yesno);
 				dlg.SetTitle(_("Close FileZilla"));
 
-				dlg.AddText(_("Some files are still being edited or need to be uploaded."));
-				dlg.AddText(_("If you close FileZilla, your changes will be lost."));
+				dlg.AddText(_("File transfers still in progress."));
 				dlg.AddText(_("Do you really want to close FileZilla?"));
 
 				if (!dlg.Run())
@@ -1079,9 +1090,91 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 					quit_confirmation_displayed = false;
 					return;
 				}
+				if (m_bQuit)
+					return;
 			}
+
+			CEditHandler* pEditHandler = CEditHandler::Get();
+			if (pEditHandler)
+			{
+				if (pEditHandler->GetFileCount(CEditHandler::remote, CEditHandler::edit) || pEditHandler->GetFileCount(CEditHandler::none, CEditHandler::upload) ||
+					pEditHandler->GetFileCount(CEditHandler::none, CEditHandler::upload_and_remove) ||
+					pEditHandler->GetFileCount(CEditHandler::none, CEditHandler::upload_and_remove_failed))
+				{
+					CConditionalDialog dlg(this, CConditionalDialog::confirmexit_edit, CConditionalDialog::yesno);
+					dlg.SetTitle(_("Close FileZilla"));
+
+					dlg.AddText(_("Some files are still being edited or need to be uploaded."));
+					dlg.AddText(_("If you close FileZilla, your changes will be lost."));
+					dlg.AddText(_("Do you really want to close FileZilla?"));
+
+					if (!dlg.Run())
+					{
+						event.Veto();
+						quit_confirmation_displayed = false;
+						return;
+					}
+					if (m_bQuit)
+						return;
+				}
+			}
+			quit_confirmation_displayed = false;
 		}
-		quit_confirmation_displayed = false;
+
+		if (!event.CanVeto())
+		{
+
+			// We need to close all other top level windows on the stack before closing the main frame.
+			// In other words, all open dialogs need to be closed.
+			static int prev_size = 0;
+
+			int size = wxTopLevelWindows.size();
+			static wxTopLevelWindow* pLast = 0;
+			wxWindowList::reverse_iterator iter = wxTopLevelWindows.rbegin();
+			wxTopLevelWindow* pTop = (wxTopLevelWindow*)(*iter);
+			while (pTop != this && (size != prev_size || pLast != pTop))
+			{
+				wxDialog* pDialog = wxDynamicCast(pTop, wxDialog);
+				if (pDialog)
+					pDialog->EndModal(wxID_CANCEL);
+				else
+				{
+					wxWindow* pParent = pTop->GetParent();
+					if (m_pQueuePane && pParent == m_pQueuePane)
+					{
+						// It's the AUI frame manager hint window. Ignore it
+						iter++;
+						pTop = (wxTopLevelWindow*)(*iter);
+						continue;
+					}
+					wxString title = pTop->GetTitle();
+					pTop->Destroy();
+				}
+
+				prev_size = size;
+				pLast = pTop;
+
+				m_closeEvent = event.GetEventType();
+				m_closeEventTimer.Start(1, true);
+
+				return;
+			}
+
+#ifdef __WXMSW__
+			// wxMessageBox does not use wxTopLevelWindow, close it too
+			bool dialog = false;
+			EnumThreadWindows(GetCurrentThreadId(), FzEnumThreadWndProc, (LPARAM)&dialog);
+			if (dialog)
+			{
+				m_closeEvent = event.GetEventType();
+				m_closeEventTimer.Start(1, true);
+
+				return;
+			}
+#endif //__WXMSW__
+
+			// At this point all other top level windows should be closed.
+		}
 
 		if (m_pWindowStateManager)
 		{
@@ -1089,6 +1182,7 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 			delete m_pWindowStateManager;
 			m_pWindowStateManager = 0;
 		}
+
 		RememberSplitterPositions();
 		m_bQuit = true;
 	}
@@ -1191,6 +1285,17 @@ void CMainFrame::OnTimer(wxTimerEvent& event)
 			SetProgress(&status);
 		else
 			m_transferStatusTimer.Stop();
+	}
+	else if (event.GetId() == m_closeEventTimer.GetId())
+	{
+		if (m_closeEvent == 0)
+			return;
+
+		// When we get idle event, a dialog's event loop has been left.
+		// Now we can close the top level window on the stack.
+		wxCloseEvent evt(m_closeEvent);
+		evt.SetCanVeto(false);
+		AddPendingEvent(evt);
 	}
 }
 

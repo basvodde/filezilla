@@ -157,6 +157,8 @@ protected:
 	float m_ViewSplitterSashPos;
 	bool m_bInitDone;
 	bool m_bQuit;
+	wxEventType m_closeEvent;
+	wxTimer m_closeEventTimer;
 
 	CAsyncRequestQueue* m_pAsyncRequestQueue;
 	CState* m_pState;
