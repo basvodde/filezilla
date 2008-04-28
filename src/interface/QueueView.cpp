@@ -387,7 +387,7 @@ protected:
 	CQueueView* m_pOwner;
 	CFolderScanItem* m_pFolderItem;
 
-	CFilterDialog m_filters;
+	CFilterManager m_filters;
 
 	wxMutex m_sync;
 	wxCondition m_condition;

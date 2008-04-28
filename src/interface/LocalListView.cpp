@@ -367,7 +367,7 @@ bool CLocalListView::DisplayDir(wxString dirname)
 #ifdef __WXMSW__
 regular_dir:
 #endif
-		CFilterDialog filter;
+		CFilterManager filter;
 
 		wxDir dir(dirname);
 		if (!dir.IsOpened())
@@ -1417,7 +1417,7 @@ void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 
 void CLocalListView::ApplyCurrentFilter()
 {
-	CFilterDialog filter;
+	CFilterManager filter;
 
 	if (!filter.HasSameLocalAndRemoteFilters() && IsComparing())
 		ExitComparisonMode();

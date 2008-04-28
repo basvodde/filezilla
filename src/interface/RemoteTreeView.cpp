@@ -294,7 +294,7 @@ void CRemoteTreeView::SetDirectoryListing(const CDirectoryListing* pListing, boo
 	if (!IsExpanded(parent) && parent != m_ExpandAfterList)
 	{
 		DeleteChildren(parent);
-		CFilterDialog filter;
+		CFilterManager filter;
 		if (HasSubdirs(*pListing, filter))
 			AppendItem(parent, _T(""), -1, -1);
 	}
@@ -438,7 +438,7 @@ void CRemoteTreeView::CreateImageList()
 	SetImageList(m_pImageList);
 }
 
-bool CRemoteTreeView::HasSubdirs(const CDirectoryListing& listing, const CFilterDialog& filter)
+bool CRemoteTreeView::HasSubdirs(const CDirectoryListing& listing, const CFilterManager& filter)
 {
 	if (!listing.m_hasDirs)
 		return false;
@@ -516,7 +516,7 @@ void CRemoteTreeView::RefreshItem(wxTreeItemId parent, const CDirectoryListing& 
 		return;
 	}
 
-	CFilterDialog filter;
+	CFilterManager filter;
 
 	std::list<wxString> dirs;
 	for (unsigned int i = 0; i < listing.GetCount(); i++)

@@ -639,7 +639,7 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 
 		m_indexMapping.push_back(m_pDirectoryListing->GetCount());
 
-		CFilterDialog filter;
+		CFilterManager filter;
 		for (unsigned int i = 0; i < m_pDirectoryListing->GetCount(); i++)
 		{
 			const CDirentry& entry = (*m_pDirectoryListing)[i];
@@ -1703,7 +1703,7 @@ void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 
 void CRemoteListView::ApplyCurrentFilter()
 {
-	CFilterDialog filter;
+	CFilterManager filter;
 
 	if (!filter.HasSameLocalAndRemoteFilters() && IsComparing())
 		ExitComparisonMode();

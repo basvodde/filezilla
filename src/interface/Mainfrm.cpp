@@ -969,8 +969,8 @@ bool CMainFrame::CreateToolBar()
 		m_pToolBar->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 #endif
 
-	CFilterDialog dlg;
-	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), dlg.HasActiveFilters());
+	CFilterManager filters;
+	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), filters.HasActiveFilters());
 	SetToolBar(m_pToolBar);
 
 	if (m_pQuickconnectBar)

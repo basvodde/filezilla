@@ -26,7 +26,7 @@ protected:
 
 	void SetItemImages(wxTreeItemId item, bool unknown);
 
-	bool HasSubdirs(const CDirectoryListing& listing, const CFilterDialog& filter);
+	bool HasSubdirs(const CDirectoryListing& listing, const CFilterManager& filter);
 
 	virtual int OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2);
 

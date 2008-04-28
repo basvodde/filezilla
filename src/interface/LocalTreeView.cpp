@@ -478,7 +478,7 @@ void CLocalTreeView::DisplayDir(wxTreeItemId parent, const wxString& dirname, co
 
 	wxString file;
 
-	CFilterDialog filter;
+	CFilterManager filter;
 
 	bool matchedKnown = false;
 
@@ -532,7 +532,7 @@ bool CLocalTreeView::HasSubdir(const wxString& dirname)
 	if (!dir.IsOpened())
 		return false;
 
-	CFilterDialog filter;
+	CFilterManager filter;
 	wxString file;
 	const wxLongLong size = -1;
 	for (bool found = dir.GetFirst(&file, _T(""), wxDIR_DIRS | wxDIR_HIDDEN); found; found = dir.GetNext(&file))
@@ -704,7 +704,7 @@ void CLocalTreeView::Refresh()
 	dirsToCheck.push_back(dir);
 #endif
 
-	CFilterDialog filter;
+	CFilterManager filter;
 
 	while (!dirsToCheck.empty())
 	{

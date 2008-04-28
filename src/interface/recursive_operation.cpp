@@ -181,7 +181,7 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 			m_pQueue->QueueFile(true, true, fn.GetFullPath(), _T(""), CServerPath(), *pServer, -1);
 	}
 
-	CFilterDialog filter;
+	CFilterManager filter;
 
 	// Is operation restricted to a single child?
 	bool restrict = !dir.restrict.IsEmpty();

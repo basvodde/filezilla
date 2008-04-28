@@ -63,14 +63,10 @@ public:
 	std::vector<bool> remote;
 };
 
-class CMainFrame;
-class CFilterDialog : public wxDialogEx
+class CFilterManager
 {
 public:
-	CFilterDialog();
-	virtual ~CFilterDialog() { }
-
-	bool Create(CMainFrame* parent);
+	CFilterManager();
 
 	// Note: Under non-windows, attributes are permissions
 	bool FilenameFiltered(const wxString& name, bool dir, wxLongLong size, bool local, int attributes) const;
@@ -79,15 +75,10 @@ public:
 	bool HasSameLocalAndRemoteFilters() const;
 
 protected:
-
 	bool CompileRegexes();
 	bool FilenameFilteredByFilter(const wxString& name, bool dir, wxLongLong size, unsigned int filterIndex, int attributes) const;
 
-	void SaveFilters();
 	void LoadFilters();
-
-	void DisplayFilters();
-
 	static bool m_loaded;
 
 	static std::vector<CFilter> m_globalFilters;
@@ -97,6 +88,22 @@ protected:
 	std::vector<CFilterSet> m_filterSets;
 	unsigned int m_currentFilterSet;
 	static unsigned int m_globalCurrentFilterSet;
+};
+
+class CMainFrame;
+class CFilterDialog : public wxDialogEx, public CFilterManager
+{
+public:
+	CFilterDialog();
+	virtual ~CFilterDialog() { }
+
+	bool Create(CMainFrame* parent);
+
+protected:
+
+	void SaveFilters();
+
+	void DisplayFilters();
 
 	DECLARE_EVENT_TABLE();
 	void OnOK(wxCommandEvent& event);

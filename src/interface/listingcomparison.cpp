@@ -67,7 +67,7 @@ bool CComparisonManager::CompareListings()
 	if (!m_pLeft || !m_pRight)
 		return false;
 
-	CFilterDialog filters;
+	CFilterManager filters;
 	if (!filters.HasSameLocalAndRemoteFilters())
 	{
 		UpdateToolState();

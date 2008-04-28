@@ -520,11 +520,15 @@ void CFilterEditDialog::OnDelete(wxCommandEvent& event)
 void CFilterEditDialog::OnRename(wxCommandEvent& event)
 {
 	const wxString& oldName = XRCCTRL(*this, "ID_NAME", wxTextCtrl)->GetValue();
-	wxTextEntryDialog dlg(this, _("Please enter a new name for the filter."), _("Enter filter name"), oldName);
-	if (dlg.ShowModal() != wxID_OK)
+	wxTextEntryDialog *pDlg = new wxTextEntryDialog(this, _("Please enter a new name for the filter."), _("Enter filter name"), oldName);
+	if (pDlg->ShowModal() != wxID_OK)
+	{
+		delete pDlg;
 		return;
+	}
 
-	const wxString& newName = dlg.GetValue();
+	const wxString& newName = pDlg->GetValue();
+	delete pDlg;
 
 	if (newName == _T(""))
 	{
