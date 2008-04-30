@@ -252,29 +252,13 @@ CLocalListView::CLocalListView(wxWindow* pParent, CState *pState, CQueueView *pQ
 
 	m_dropTarget = -1;
 
-	unsigned long widths[4] = { 120, 80, 100, 120 };
+	const unsigned long widths[4] = { 120, 80, 100, 120 };
 
-	if (!wxGetKeyState(WXK_SHIFT) || !wxGetKeyState(WXK_ALT) || !wxGetKeyState(WXK_CONTROL))
-		COptions::Get()->ReadColumnWidths(OPTION_LOCALFILELIST_COLUMN_WIDTHS, 4, widths);
-
-	InsertColumn(0, _("Filename"), wxLIST_FORMAT_LEFT, widths[0]);
-	InsertColumn(1, _("Filesize"), wxLIST_FORMAT_RIGHT, widths[1]);
-	InsertColumn(2, _("Filetype"), wxLIST_FORMAT_LEFT, widths[2]);
-	InsertColumn(3, _("Last modified"), wxLIST_FORMAT_LEFT, widths[3]);
-
-	wxString sortInfo = COptions::Get()->GetOption(OPTION_LOCALFILELIST_SORTORDER);
-	m_sortDirection = sortInfo[0] - '0';
-	if (m_sortDirection < 0 || m_sortDirection > 1)
-		m_sortDirection = 0;
-
-	if (sortInfo.Len() == 3)
-	{
-		m_sortColumn = sortInfo[2] - '0';
-		if (m_sortColumn < 0 || m_sortColumn > 3)
-			m_sortColumn = 0;
-	}
-	else
-		m_sortColumn = 0;
+	AddColumn(_("Filename"), wxLIST_FORMAT_LEFT, widths[0]);
+	AddColumn(_("Filesize"), wxLIST_FORMAT_RIGHT, widths[1]);
+	AddColumn(_("Filetype"), wxLIST_FORMAT_LEFT, widths[2]);
+	AddColumn(_("Last modified"), wxLIST_FORMAT_LEFT, widths[3]);
+	LoadColumnSettings(OPTION_LOCALFILELIST_COLUMN_WIDTHS, OPTION_LOCALFILELIST_COLUMN_SHOWN);
 
 	SetImageList(GetSystemImageList(), wxIMAGE_LIST_SMALL);
 

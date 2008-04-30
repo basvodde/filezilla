@@ -10,6 +10,7 @@
 
 BEGIN_EVENT_TABLE_TEMPLATE1(CFileListCtrl, wxListCtrlEx, CFileData)
 EVT_LIST_COL_CLICK(wxID_ANY, CFileListCtrl<CFileData>::OnColumnClicked)
+EVT_LIST_COL_RIGHT_CLICK(wxID_ANY, CFileListCtrl<CFileData>::OnColumnRightClicked)
 END_EVENT_TABLE()
 
 template<class CFileData> CFileListCtrl<CFileData>::CFileListCtrl(wxWindow* pParent, CState* pState, CQueueView* pQueue)
@@ -487,4 +488,54 @@ template<class CFileData> void CFileListCtrl<CFileData>::ComparisonRestoreSelect
 			}
 		}
 	}
+}
+
+template<class CFileData> void CFileListCtrl<CFileData>::OnColumnRightClicked(wxListEvent& event)
+{
+	wxDialogEx dlg;
+
+	dlg.Load(this, _T("ID_COLUMN_SETUP"));
+
+	wxCheckListBox* pListBox = XRCCTRL(dlg, "ID_ACTIVE", wxCheckListBox);
+
+	for (unsigned int i = 0; i < m_columnInfo.size(); i++)
+	{
+		pListBox->Append(m_columnInfo[i].name);
+		if (m_columnInfo[i].shown)
+			pListBox->Check(i);
+	}
+
+	dlg.GetSizer()->Fit(&dlg);
+
+	if (dlg.ShowModal() != wxID_OK)
+		return;
+
+	for (unsigned int i = 0; i < m_columnInfo.size(); i++)
+	{
+		bool isChecked = pListBox->IsChecked(i);
+		if (!isChecked && !i)
+		{
+			isChecked = true;
+			wxMessageBox(_("The filename column cannot be hidden."));
+		}
+		if (m_columnInfo[i].shown != isChecked)
+			ShowColumn(i, isChecked);
+	}
+}
+
+template<class CFileData> void CFileListCtrl<CFileData>::InitSort(int optionID)
+{
+	wxString sortInfo = COptions::Get()->GetOption(optionID);
+	m_sortDirection = sortInfo[0] - '0';
+	if (m_sortDirection < 0 || m_sortDirection > 1)
+		m_sortDirection = 0;
+
+	if (sortInfo.Len() == 3)
+	{
+		m_sortColumn = sortInfo[2] - '0';
+		if (m_sortColumn < 0 || m_sortColumn > GetColumnCount())
+			m_sortColumn = 0;
+	}
+	else
+		m_sortColumn = 0;
 }

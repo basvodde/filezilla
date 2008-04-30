@@ -82,6 +82,7 @@ protected:
 	int m_sortColumn;
 	int m_sortDirection;
 
+	void InitSort(int optionID); // Has to be called after initializing columns
 	void SortList(int column = -1, int direction = -1, bool updateSelections = true);
 	enum CListViewSort::DirSortMode GetDirSortMode();
 	virtual CSortComparisonObject GetSortComparisonObject() = 0;
@@ -113,6 +114,7 @@ private:
 
 	DECLARE_EVENT_TABLE()
 	void OnColumnClicked(wxListEvent &event);
+	void OnColumnRightClicked(wxListEvent& event);
 };
 
 #ifdef FILELISTCTRL_INCLUDE_TEMPLATE_DEFINITION

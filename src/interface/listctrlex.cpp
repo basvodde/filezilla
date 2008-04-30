@@ -1,6 +1,8 @@
 #include "FileZilla.h"
 #include "listctrlex.h"
 #include <wx/renderer.h>
+#include <wx/tokenzr.h>
+#include "Options.h"
 
 DECLARE_EVENT_TYPE(fzEVT_POSTSCROLL, -1)
 DEFINE_EVENT_TYPE(fzEVT_POSTSCROLL)
@@ -23,11 +25,13 @@ wxListCtrlEx::wxListCtrlEx(wxWindow *parent,
 						   const wxString& name)
 						   : wxListCtrl(parent, id, pos, size, style, validator, name)
 {
+	m_pVisibleColumnMapping = 0;
 	m_prefixSearch_enabled = false;
 }
 
 wxListCtrlEx::~wxListCtrlEx()
 {
+	delete [] m_pVisibleColumnMapping;
 }
 
 #ifndef __WXMSW__
@@ -213,7 +217,7 @@ void wxListCtrlEx::OnKeyDown(wxKeyEvent& event)
 wxString wxListCtrlEx::OnGetItemText(long item, long column) const
 {
 	wxListCtrlEx *pThis = const_cast<wxListCtrlEx *>(this);
-	return pThis->GetItemText(item, (unsigned int)column);
+	return pThis->GetItemText(item, (unsigned int)m_pVisibleColumnMapping[column]);
 }
 
 int wxListCtrlEx::FindItemWithPrefix(const wxString& searchPrefix, int start)
@@ -242,4 +246,177 @@ void wxListCtrlEx::SaveSetItemCount(long count)
 void wxListCtrlEx::ResetSearchPrefix()
 {
 	m_prefixSearch_prefix = _T("");
+}
+
+void wxListCtrlEx::ShowColumn(unsigned int col, bool show)
+{
+	if (col >= m_columnInfo.size())
+		return;
+
+	if (m_columnInfo[col].shown == show)
+		return;
+
+	m_columnInfo[col].shown = show;
+
+	if (show)
+	{
+		int i;
+		for (i = 0; i < GetColumnCount(); i++)
+		{
+			if (m_pVisibleColumnMapping[i] >= col)
+				break;
+		}
+
+		for (int j = i; j < GetColumnCount(); j++)
+			m_pVisibleColumnMapping[j + 1] = m_pVisibleColumnMapping[j];
+		m_pVisibleColumnMapping[i] = col;
+
+		InsertColumn(i, m_columnInfo[col].name, m_columnInfo[col].align, m_columnInfo[col].width);
+	}
+	else
+	{
+		int i;
+		for (i = 0; i < GetColumnCount(); i++)
+		{
+			if (m_pVisibleColumnMapping[i] == col)
+				break;
+		}
+		for (int j = i + 1; j < GetColumnCount(); j++)
+			m_pVisibleColumnMapping[j - 1] = m_pVisibleColumnMapping[j];
+
+		wxASSERT(i < GetColumnCount());
+
+		m_columnInfo[col].width = GetColumnWidth(i);
+		DeleteColumn(i);
+	}
+}
+
+void wxListCtrlEx::LoadColumnSettings(int widthsOptionId, int visibilityOptionId)
+{
+	wxASSERT(!GetColumnCount());
+
+	if (widthsOptionId != -1)
+		ReadColumnWidths(widthsOptionId);
+
+	delete [] m_pVisibleColumnMapping;
+	m_pVisibleColumnMapping = new int[m_columnInfo.size()];
+
+	if (visibilityOptionId != -1)
+	{
+		wxString visibleColumns = COptions::Get()->GetOption(visibilityOptionId);
+		if (visibleColumns.Len() >= m_columnInfo.size())
+		{
+			for (unsigned int i = 0; i < m_columnInfo.size(); i++)
+				m_columnInfo[i].shown = visibleColumns[i] == '1';
+		}
+	}
+
+	int j = 0;
+	for (unsigned int i = 0; i < m_columnInfo.size(); i++)
+	{
+		const t_columnInfo &column = m_columnInfo[i];
+
+		if (!column.shown)
+			continue;
+
+		m_pVisibleColumnMapping[j++] = i;
+		InsertColumn(j, column.name, column.align, column.width);
+	}
+}
+
+void wxListCtrlEx::SaveColumnSettings(int widthsOptionId, int visibilityOptionId)
+{
+	if (widthsOptionId != -1)
+		SaveColumnWidths(widthsOptionId);
+
+	if (visibilityOptionId != -1)
+	{
+		wxString visibleColumns;
+		for (unsigned int i = 0; i < m_columnInfo.size(); i++)
+		{
+			if (m_columnInfo[i].shown)
+				visibleColumns += _T("1");
+			else
+				visibleColumns += _T("0");
+		}
+		COptions::Get()->SetOption(visibilityOptionId, visibleColumns);
+	}
+}
+
+bool wxListCtrlEx::ReadColumnWidths(unsigned int optionId)
+{
+	wxASSERT(!GetColumnCount());
+
+	if (wxGetKeyState(WXK_SHIFT) &&
+		wxGetKeyState(WXK_ALT) &&
+		wxGetKeyState(WXK_CONTROL))
+	{
+		return true;
+	}
+
+	const unsigned int count = m_columnInfo.size();
+
+	wxString savedWidths = COptions::Get()->GetOption(optionId);
+	wxStringTokenizer tokens(savedWidths, _T(" "));
+	if (tokens.CountTokens() < count)
+		return false;
+
+	unsigned long* newWidths = new unsigned long[count];
+	for (unsigned int i = 0; i < count; i++)
+	{
+		wxString token = tokens.GetNextToken();
+		if (!token.ToULong(newWidths + i) || newWidths[i] > 5000)
+		{
+			delete [] newWidths;
+			return false;
+		}
+	}
+
+	for (unsigned int i = 0; i < count; i++)
+		m_columnInfo[i].width = newWidths[i];
+
+	delete [] newWidths;
+	return true;
+}
+
+void wxListCtrlEx::SaveColumnWidths(unsigned int optionId)
+{
+	const unsigned int count = m_columnInfo.size();
+
+	wxString widths;
+	for (unsigned int i = 0; i < count; i++)
+	{
+		int width;
+
+		bool found = false;
+		for (int j = 0; j < GetColumnCount(); j++)
+		{
+			if (m_pVisibleColumnMapping[j] != i)
+				continue;
+
+			found = true;
+			width = GetColumnWidth(j);
+		}
+		if (!found)
+			width = m_columnInfo[i].width;
+		widths += wxString::Format(_T("%d "), width);
+	}
+	widths.RemoveLast();
+
+	COptions::Get()->SetOption(optionId, widths);
+}
+
+
+void wxListCtrlEx::AddColumn(const wxString& name, int align, int initialWidth)
+{
+	wxASSERT(!GetColumnCount());
+
+	t_columnInfo info;
+	info.name = name;
+	info.align = align;
+	info.width = initialWidth;
+	info.shown = true;
+	info.order = m_columnInfo.size();
+
+	m_columnInfo.push_back(info);
 }

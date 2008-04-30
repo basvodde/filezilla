@@ -111,7 +111,9 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Site Manager position", string, _T("") },
 	{ "Theme icon size", string, _T("") },
 	{ "Timestamp in message log", number, _T("0") },
-	{ "Sitemanager last selected", string, _T("") }
+	{ "Sitemanager last selected", string, _T("") },
+	{ "Local filelist shown columns", string, _T("") },
+	{ "Remote filelist shown columns", string, _T("") }
 };
 
 COptions::COptions()
@@ -612,42 +614,5 @@ void COptions::Import(TiXmlElement* pElement)
 		CInterProcessMutex mutex(MUTEX_OPTIONS);
 		m_pXmlFile->Save();
 	}
-}
-
-void COptions::SaveColumnWidths(const wxListCtrl* const pListCtrl, unsigned int optionId)
-{
-	wxCHECK_RET(pListCtrl, _T("SaveColumnWidths called with !pListCtrl"));
-
-	wxString widths;
-	for (int i = 0; i < pListCtrl->GetColumnCount(); i++)
-		widths += wxString::Format(_T("%d "), pListCtrl->GetColumnWidth(i));
-	widths.RemoveLast();
-
-	SetOption(optionId, widths);
-}
-
-bool COptions::ReadColumnWidths(unsigned int optionId, unsigned int count, unsigned long* widths)
-{
-	wxString savedWidths = GetOption(optionId);
-	wxStringTokenizer tokens(savedWidths, _T(" "));
-	if (tokens.CountTokens() != count)
-		return false;
-
-	unsigned long* newWidths = new unsigned long[count];
-	for (unsigned int i = 0; i < count; i++)
-	{
-		wxString token = tokens.GetNextToken();
-		if (!token.ToULong(newWidths + i) || newWidths[i] > 5000)
-		{
-			delete [] newWidths;
-			return false;
-		}
-	}
-
-	for (unsigned int i = 0; i < count; i++)
-		widths[i] = newWidths[i];
-
-	delete [] newWidths;
-	return true;
 }
 

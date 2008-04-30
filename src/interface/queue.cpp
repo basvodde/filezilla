@@ -1120,24 +1120,17 @@ void CQueueViewBase::UpdateSelections_ItemRangeRemoved(int removed, int count)
 
 void CQueueViewBase::CreateColumns(const wxString& lastColumnName)
 {
-	static unsigned long widths[6] = { 180, 60, 180, 80, 60, 150 };
-	static bool widths_loaded = false;
+	const unsigned long widths[6] = { 180, 60, 180, 80, 60, 150 };
 
-	if (!widths_loaded)
-	{
-		widths_loaded = true;
-
-		if (!wxGetKeyState(WXK_SHIFT) || !wxGetKeyState(WXK_ALT) || !wxGetKeyState(WXK_CONTROL))
-			COptions::Get()->ReadColumnWidths(OPTION_QUEUE_COLUMN_WIDTHS, 6, widths);
-	}
-
-	InsertColumn(0, _("Server / Local file"), wxLIST_FORMAT_LEFT, widths[0]);
-	InsertColumn(1, _("Direction"), wxLIST_FORMAT_CENTER, widths[1]);
-	InsertColumn(2, _("Remote file"), wxLIST_FORMAT_LEFT, widths[2]);
-	InsertColumn(3, _("Size"), wxLIST_FORMAT_RIGHT, widths[3]);
-	InsertColumn(4, _("Priority"), wxLIST_FORMAT_LEFT, widths[4]);
+	AddColumn(_("Server / Local file"), wxLIST_FORMAT_LEFT, widths[0]);
+	AddColumn(_("Direction"), wxLIST_FORMAT_CENTER, widths[1]);
+	AddColumn(_("Remote file"), wxLIST_FORMAT_LEFT, widths[2]);
+	AddColumn(_("Size"), wxLIST_FORMAT_RIGHT, widths[3]);
+	AddColumn(_("Priority"), wxLIST_FORMAT_LEFT, widths[4]);
 	if (lastColumnName != _T(""))
-		InsertColumn(5, lastColumnName, wxLIST_FORMAT_LEFT, widths[5]);
+		AddColumn(lastColumnName, wxLIST_FORMAT_LEFT, widths[5]);
+
+	LoadColumnSettings(OPTION_QUEUE_COLUMN_WIDTHS, -1);
 }
 
 CServerItem* CQueueViewBase::GetServerItem(const CServer& server)

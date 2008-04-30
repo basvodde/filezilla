@@ -20,6 +20,16 @@ public:
 
 	void SaveSetItemCount(long count);
 
+	void ShowColumn(unsigned int col, bool show);
+	
+	// Do not call after calling LoadColumnSettings
+	void AddColumn(const wxString& name, int align, int initialWidth);
+	
+	// LoadColumnSettings needs to be called exactly once after adding
+	// all columns
+	void LoadColumnSettings(int widthsOptionId, int visibilityOptionId);
+	void SaveColumnSettings(int widthsOptionId, int visibilityOptionId);
+
 protected:
 	virtual void OnPostScroll();
 	virtual void OnPreEmitPostScrollEvent();
@@ -49,6 +59,20 @@ private:
 	bool m_prefixSearch_enabled;
 	wxDateTime m_prefixSearch_lastKeyPress;
 	wxString m_prefixSearch_prefix;
+
+	bool ReadColumnWidths(unsigned int optionId);
+	void SaveColumnWidths(unsigned int optionId);
+
+	struct t_columnInfo
+	{
+		wxString name;
+		int align;
+		int width;
+		bool shown;
+		int order;
+	};
+	std::vector<t_columnInfo> m_columnInfo;
+	int *m_pVisibleColumnMapping;
 };
 
 #endif //__LISTCTRLEX_H__

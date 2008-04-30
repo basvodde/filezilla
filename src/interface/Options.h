@@ -54,6 +54,8 @@ enum interfaceOptions
 	OPTION_THEME_ICONSIZE,
 	OPTION_MESSAGELOG_TIMESTAMP,
 	OPTION_SITEMANAGER_LASTSELECTED,
+	OPTION_LOCALFILELIST_COLUMN_SHOWN,
+	OPTION_REMOTEFILELIST_COLUMN_SHOWN,
 
 	// Has to be last element
 	OPTIONS_NUM
@@ -88,10 +90,6 @@ public:
 	static void Destroy();
 
 	void Import(TiXmlElement* pElement);
-
-	// Columns in wxListCtrl
-	void SaveColumnWidths(const wxListCtrl* const pListCtrl, unsigned int optionId);
-	bool ReadColumnWidths(unsigned int optionId, unsigned int count, unsigned long* widths);
 	
 protected:
 	COptions();
