@@ -1263,8 +1263,17 @@ void CRemoteListView::OnMenuMkdir(wxCommandEvent& event)
 		dlg.SelectText(pos, pos + newName.Length());
 	}
 
+	const CServerPath oldPath = m_pDirectoryListing->path;
+
 	if (dlg.ShowModal() != wxID_OK)
 		return;
+
+	if (!m_pDirectoryListing || oldPath != m_pDirectoryListing->path ||
+		!m_pState->IsRemoteIdle())
+	{
+		wxBell();
+		return;
+	}
 
 	path = m_pDirectoryListing->path;
 	if (!path.ChangePath(dlg.GetValue()))
