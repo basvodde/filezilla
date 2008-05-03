@@ -682,6 +682,9 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 
 		pDlg->Show();
 		pDlg->Delete();
+
+		UpdateMenubarState();
+		UpdateToolbarState();
 	}
 	else if (event.GetId() == XRCID("ID_MENU_SERVER_VIEWHIDDEN"))
 	{
