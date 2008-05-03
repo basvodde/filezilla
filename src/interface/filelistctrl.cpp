@@ -492,35 +492,7 @@ template<class CFileData> void CFileListCtrl<CFileData>::ComparisonRestoreSelect
 
 template<class CFileData> void CFileListCtrl<CFileData>::OnColumnRightClicked(wxListEvent& event)
 {
-	wxDialogEx dlg;
-
-	dlg.Load(this, _T("ID_COLUMN_SETUP"));
-
-	wxCheckListBox* pListBox = XRCCTRL(dlg, "ID_ACTIVE", wxCheckListBox);
-
-	for (unsigned int i = 0; i < m_columnInfo.size(); i++)
-	{
-		pListBox->Append(m_columnInfo[i].name);
-		if (m_columnInfo[i].shown)
-			pListBox->Check(i);
-	}
-
-	dlg.GetSizer()->Fit(&dlg);
-
-	if (dlg.ShowModal() != wxID_OK)
-		return;
-
-	for (unsigned int i = 0; i < m_columnInfo.size(); i++)
-	{
-		bool isChecked = pListBox->IsChecked(i);
-		if (!isChecked && !i)
-		{
-			isChecked = true;
-			wxMessageBox(_("The filename column cannot be hidden."));
-		}
-		if (m_columnInfo[i].shown != isChecked)
-			ShowColumn(i, isChecked);
-	}
+	ShowColumnEditor();
 }
 
 template<class CFileData> void CFileListCtrl<CFileData>::InitSort(int optionID)

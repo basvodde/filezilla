@@ -4848,13 +4848,39 @@
                       <label>&amp;Select the columns that should be displayed:</label>
                     </object>
                   </object>
-                  <vgap>5</vgap>
                   <object class="sizeritem">
-                    <object class="wxCheckListBox" name="ID_ACTIVE">
-                      <content/>
+                    <object class="wxFlexGridSizer">
+                      <object class="sizeritem">
+                        <object class="wxCheckListBox" name="ID_ACTIVE">
+                          <content/>
+                        </object>
+                        <flag>wxGROW</flag>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxFlexGridSizer">
+                          <object class="sizeritem">
+                            <object class="wxButton" name="ID_UP">
+                              <label>Move &amp;up</label>
+                              <enabled>0</enabled>
+                            </object>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxButton" name="ID_DOWN">
+                              <label>Move &amp;down</label>
+                              <enabled>0</enabled>
+                            </object>
+                          </object>
+                          <cols>1</cols>
+                          <vgap>5</vgap>
+                        </object>
+                      </object>
+                      <cols>2</cols>
+                      <hgap>5</hgap>
+                      <growablecols>0</growablecols>
                     </object>
                     <flag>wxGROW</flag>
                   </object>
+                  <vgap>5</vgap>
                 </object>
                 <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
                 <border>4</border>

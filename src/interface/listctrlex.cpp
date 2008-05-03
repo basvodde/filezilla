@@ -3,6 +3,7 @@
 #include <wx/renderer.h>
 #include <wx/tokenzr.h>
 #include "Options.h"
+#include "dialogex.h"
 
 DECLARE_EVENT_TYPE(fzEVT_POSTSCROLL, -1)
 DEFINE_EVENT_TYPE(fzEVT_POSTSCROLL)
@@ -260,18 +261,22 @@ void wxListCtrlEx::ShowColumn(unsigned int col, bool show)
 
 	if (show)
 	{
-		int i;
-		for (i = 0; i < GetColumnCount(); i++)
+		// Insert new column
+		int pos = 0;
+		for (unsigned int i = 0; i < m_columnInfo.size(); i++)
 		{
-			if (m_pVisibleColumnMapping[i] >= col)
-				break;
+			if (i == col)
+				continue;
+			t_columnInfo& info = m_columnInfo[i];
+			if (info.shown && info.order < m_columnInfo[col].order)
+				pos++;
 		}
+		for (int i = GetColumnCount() - 1; i >= pos; i--)
+			m_pVisibleColumnMapping[i + 1] = m_pVisibleColumnMapping[i];
+		m_pVisibleColumnMapping[pos] = col;
 
-		for (int j = i; j < GetColumnCount(); j++)
-			m_pVisibleColumnMapping[j + 1] = m_pVisibleColumnMapping[j];
-		m_pVisibleColumnMapping[i] = col;
-
-		InsertColumn(i, m_columnInfo[col].name, m_columnInfo[col].align, m_columnInfo[col].width);
+		t_columnInfo& info = m_columnInfo[col];
+		InsertColumn(pos, info.name, info.align, info.width);
 	}
 	else
 	{
@@ -281,6 +286,7 @@ void wxListCtrlEx::ShowColumn(unsigned int col, bool show)
 			if (m_pVisibleColumnMapping[i] == col)
 				break;
 		}
+		wxASSERT(m_columnInfo[col].order >= (unsigned int)i);
 		for (int j = i + 1; j < GetColumnCount(); j++)
 			m_pVisibleColumnMapping[j - 1] = m_pVisibleColumnMapping[j];
 
@@ -299,7 +305,7 @@ void wxListCtrlEx::LoadColumnSettings(int widthsOptionId, int visibilityOptionId
 		ReadColumnWidths(widthsOptionId);
 
 	delete [] m_pVisibleColumnMapping;
-	m_pVisibleColumnMapping = new int[m_columnInfo.size()];
+	m_pVisibleColumnMapping = new unsigned int[m_columnInfo.size()];
 
 	if (visibilityOptionId != -1)
 	{
@@ -311,17 +317,7 @@ void wxListCtrlEx::LoadColumnSettings(int widthsOptionId, int visibilityOptionId
 		}
 	}
 
-	int j = 0;
-	for (unsigned int i = 0; i < m_columnInfo.size(); i++)
-	{
-		const t_columnInfo &column = m_columnInfo[i];
-
-		if (!column.shown)
-			continue;
-
-		m_pVisibleColumnMapping[j++] = i;
-		InsertColumn(j, column.name, column.align, column.width);
-	}
+	CreateVisibleColumnMapping();
 }
 
 void wxListCtrlEx::SaveColumnSettings(int widthsOptionId, int visibilityOptionId)
@@ -419,4 +415,196 @@ void wxListCtrlEx::AddColumn(const wxString& name, int align, int initialWidth)
 	info.order = m_columnInfo.size();
 
 	m_columnInfo.push_back(info);
+}
+
+// Moves column. Target position includes both hidden
+// as well as shown columns
+void wxListCtrlEx::MoveColumn(unsigned int col, unsigned int before)
+{
+	if (m_columnInfo[col].order == before)
+		return;
+
+	for (unsigned int i = 0; i < m_columnInfo.size(); i++)
+	{
+		if (i == col)
+			continue;
+
+		t_columnInfo& info = m_columnInfo[i];
+		if (info.order > col)
+			info.order--;
+		if (info.order >= before)
+			info.order++;
+	}
+
+	t_columnInfo& info = m_columnInfo[col];
+	if (info.shown)
+	{
+		// Remove old column
+		for (unsigned int i = 0; i < (unsigned int)GetColumnCount(); i++)
+		{
+			if (m_pVisibleColumnMapping[i] != col)
+				continue;
+
+			for (unsigned int j = i + 1; j < (unsigned int)GetColumnCount(); j++)
+				m_pVisibleColumnMapping[j - 1] = m_pVisibleColumnMapping[j];
+			info.width = GetColumnWidth(i);
+			DeleteColumn(i);
+
+			break;
+		}
+
+		// Insert new column
+		unsigned int pos = 0;
+		for (unsigned int i = 0; i < m_columnInfo.size(); i++)
+		{
+			if (i == col)
+				continue;
+			t_columnInfo& info = m_columnInfo[i];
+			if (info.shown && info.order < before)
+				pos++;
+		}
+		for (unsigned int i = (int)GetColumnCount(); i > pos; i--)
+			m_pVisibleColumnMapping[i] = m_pVisibleColumnMapping[i - 1];
+		m_pVisibleColumnMapping[pos] = col;
+
+		InsertColumn(pos, info.name, info.align, info.width);
+	}
+	m_columnInfo[col].order = before;
+}
+
+void wxListCtrlEx::CreateVisibleColumnMapping()
+{
+	int pos = 0;
+	for (unsigned int j = 0; j < m_columnInfo.size(); j++)
+	{
+		for (unsigned int i = 0; i < m_columnInfo.size(); i++)
+		{
+			const t_columnInfo &column = m_columnInfo[i];
+
+			if (!column.shown)
+				continue;
+
+			if (column.order != j)
+				continue;
+
+			m_pVisibleColumnMapping[pos] = i;
+			InsertColumn(pos++, column.name, column.align, column.width);
+		}
+	}
+}
+
+class CColumnEditDialog : public wxDialogEx
+{
+public:
+	int *m_order;
+	DECLARE_EVENT_TABLE()
+
+protected:
+	void OnUp(wxCommandEvent& event)
+	{
+		wxCheckListBox* pListBox = XRCCTRL(*this, "ID_ACTIVE", wxCheckListBox);
+		int sel = pListBox->GetSelection();
+		if (sel < 1)
+			return;
+
+		int tmp;
+		tmp = m_order[sel - 1];
+		m_order[sel - 1] = m_order[sel];
+		m_order[sel] = tmp;
+
+		wxString name = pListBox->GetString(sel);
+		bool checked = pListBox->IsChecked(sel);
+		pListBox->Delete(sel);
+		pListBox->Insert(name, sel - 1);
+		pListBox->Check(sel - 1, checked);
+		pListBox->SetSelection(sel - 1);
+
+		wxCommandEvent evt;
+		OnSelChanged(evt);
+	}
+
+	void OnDown(wxCommandEvent& event)
+	{
+		wxCheckListBox* pListBox = XRCCTRL(*this, "ID_ACTIVE", wxCheckListBox);
+		int sel = pListBox->GetSelection();
+		if (sel >= (int)pListBox->GetCount() - 1)
+			return;
+
+		int tmp;
+		tmp = m_order[sel + 1];
+		m_order[sel + 1] = m_order[sel];
+		m_order[sel] = tmp;
+
+		wxString name = pListBox->GetString(sel);
+		bool checked = pListBox->IsChecked(sel);
+		pListBox->Delete(sel);
+		pListBox->Insert(name, sel + 1);
+		pListBox->Check(sel + 1, checked);
+		pListBox->SetSelection(sel + 1);
+
+		wxCommandEvent evt;
+		OnSelChanged(evt);
+	}
+
+	void OnSelChanged(wxCommandEvent& event)
+	{
+		wxCheckListBox* pListBox = XRCCTRL(*this, "ID_ACTIVE", wxCheckListBox);
+		int sel = pListBox->GetSelection();
+		XRCCTRL(*this, "ID_UP", wxButton)->Enable(sel > 0);
+		XRCCTRL(*this, "ID_DOWN", wxButton)->Enable(sel != wxNOT_FOUND && sel < (int)pListBox->GetCount() - 1);
+	}
+};
+
+BEGIN_EVENT_TABLE(CColumnEditDialog, wxDialogEx)
+EVT_BUTTON(XRCID("ID_UP"), CColumnEditDialog::OnUp)
+EVT_BUTTON(XRCID("ID_DOWN"), CColumnEditDialog::OnDown)
+EVT_LISTBOX(wxID_ANY, CColumnEditDialog::OnSelChanged)
+END_EVENT_TABLE()
+
+void wxListCtrlEx::ShowColumnEditor()
+{
+	CColumnEditDialog dlg;
+
+	dlg.Load(this, _T("ID_COLUMN_SETUP"));
+
+	wxCheckListBox* pListBox = XRCCTRL(dlg, "ID_ACTIVE", wxCheckListBox);
+
+	dlg.m_order = new int[m_columnInfo.size()];
+	for (unsigned int j = 0; j < m_columnInfo.size(); j++)
+	{
+		for (unsigned int i = 0; i < m_columnInfo.size(); i++)
+		{
+			if (m_columnInfo[i].order != j)
+				continue;
+			dlg.m_order[j] = i;
+			pListBox->Append(m_columnInfo[i].name);
+			if (m_columnInfo[i].shown)
+				pListBox->Check(j);
+		}
+	}
+	wxASSERT(pListBox->GetCount() == m_columnInfo.size());
+
+	dlg.GetSizer()->Fit(&dlg);
+
+	if (dlg.ShowModal() != wxID_OK)
+	{
+		delete [] dlg.m_order;
+		return;
+	}
+
+	for (unsigned int i = 0; i < m_columnInfo.size(); i++)
+	{
+		int col = dlg.m_order[i];
+		bool isChecked = pListBox->IsChecked(i);
+		if (!isChecked && !col)
+		{
+			isChecked = true;
+			wxMessageBox(_("The filename column cannot be hidden."));
+		}
+		MoveColumn(col, i);
+		if (m_columnInfo[col].shown != isChecked)
+			ShowColumn(col, isChecked);
+	}
+
+	delete [] dlg.m_order;
 }

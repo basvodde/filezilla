@@ -20,7 +20,13 @@ public:
 
 	void SaveSetItemCount(long count);
 
+	void ShowColumnEditor();
+
 	void ShowColumn(unsigned int col, bool show);
+
+	// Moves column. Target position includes both hidden
+	// as well as shown columns
+	void MoveColumn(unsigned int col, unsigned int before);
 	
 	// Do not call after calling LoadColumnSettings
 	void AddColumn(const wxString& name, int align, int initialWidth);
@@ -63,16 +69,18 @@ private:
 	bool ReadColumnWidths(unsigned int optionId);
 	void SaveColumnWidths(unsigned int optionId);
 
+	void CreateVisibleColumnMapping();
+
 	struct t_columnInfo
 	{
 		wxString name;
 		int align;
 		int width;
 		bool shown;
-		int order;
+		unsigned int order;
 	};
 	std::vector<t_columnInfo> m_columnInfo;
-	int *m_pVisibleColumnMapping;
+	unsigned int *m_pVisibleColumnMapping;
 };
 
 #endif //__LISTCTRLEX_H__
