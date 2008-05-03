@@ -111,7 +111,7 @@ void CQuickconnectBar::OnQuickconnect(wxCommandEvent& event)
 	if (event.GetId() == 1)
 		server.SetBypassProxy(true);
 
-	if (!m_pState->Connect(server, true))
+	if (!m_pState->Connect(server, true, path))
 		return;
 
 	CRecentServerList::SetMostRecentServer(server);
