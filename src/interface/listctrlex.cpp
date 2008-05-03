@@ -607,4 +607,7 @@ void wxListCtrlEx::ShowColumnEditor()
 	}
 
 	delete [] dlg.m_order;
+
+	// Generic wxListCtrl needs manual refresh
+	Refresh();
 }
