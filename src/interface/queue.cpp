@@ -1130,7 +1130,7 @@ void CQueueViewBase::CreateColumns(const wxString& lastColumnName)
 	if (lastColumnName != _T(""))
 		AddColumn(lastColumnName, wxLIST_FORMAT_LEFT, widths[5]);
 
-	LoadColumnSettings(OPTION_QUEUE_COLUMN_WIDTHS, -1);
+	LoadColumnSettings(OPTION_QUEUE_COLUMN_WIDTHS, -1, -1);
 }
 
 CServerItem* CQueueViewBase::GetServerItem(const CServer& server)

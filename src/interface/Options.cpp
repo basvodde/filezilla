@@ -113,7 +113,9 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Timestamp in message log", number, _T("0") },
 	{ "Sitemanager last selected", string, _T("") },
 	{ "Local filelist shown columns", string, _T("") },
-	{ "Remote filelist shown columns", string, _T("") }
+	{ "Remote filelist shown columns", string, _T("") },
+	{ "Local filelist column order", string, _T("") },
+	{ "Remote filelist column order", string, _T("") }
 };
 
 COptions::COptions()
@@ -615,4 +617,3 @@ void COptions::Import(TiXmlElement* pElement)
 		m_pXmlFile->Save();
 	}
 }
-

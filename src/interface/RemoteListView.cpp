@@ -352,7 +352,7 @@ CRemoteListView::CRemoteListView(wxWindow* pParent, CState *pState, CQueueView* 
 	AddColumn(_("Last modified"), wxLIST_FORMAT_LEFT, widths[3]);
 	AddColumn(_("Permissions"), wxLIST_FORMAT_LEFT, widths[4]);
 	AddColumn(_("Owner / Group"), wxLIST_FORMAT_LEFT, widths[5]);
-	LoadColumnSettings(OPTION_REMOTEFILELIST_COLUMN_WIDTHS, OPTION_REMOTEFILELIST_COLUMN_SHOWN);
+	LoadColumnSettings(OPTION_REMOTEFILELIST_COLUMN_WIDTHS, OPTION_REMOTEFILELIST_COLUMN_SHOWN, OPTION_REMOTEFILELIST_COLUMN_ORDER);
 
 	InitSort(OPTION_REMOTEFILELIST_SORTORDER);
 

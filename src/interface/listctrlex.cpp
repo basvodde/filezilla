@@ -297,7 +297,7 @@ void wxListCtrlEx::ShowColumn(unsigned int col, bool show)
 	}
 }
 
-void wxListCtrlEx::LoadColumnSettings(int widthsOptionId, int visibilityOptionId)
+void wxListCtrlEx::LoadColumnSettings(int widthsOptionId, int visibilityOptionId, int sortOptionId)
 {
 	wxASSERT(!GetColumnCount());
 
@@ -317,10 +317,43 @@ void wxListCtrlEx::LoadColumnSettings(int widthsOptionId, int visibilityOptionId
 		}
 	}
 
+	if (sortOptionId != -1)
+	{
+		wxString strorder = COptions::Get()->GetOption(sortOptionId);
+		wxStringTokenizer tokens(strorder, _T(","));
+
+		unsigned int count = tokens.CountTokens();
+		if (count == m_columnInfo.size())
+		{
+			unsigned long *order = new unsigned long[count];
+			bool *order_set = new bool[count];
+			memset(order_set, 0, sizeof(bool) * count);
+
+			int i = 0;
+			while (tokens.HasMoreTokens())
+			{
+				if (!tokens.GetNextToken().ToULong(&order[i]))
+					break;
+				if (order[i] >= count || order_set[order[i]])
+					break;
+				order_set[order[i]] = true;
+				i++;
+			}
+			if (i == count)
+			{
+				for (unsigned int i = 0; i < m_columnInfo.size(); i++)
+					m_columnInfo[i].order = order[i];
+			}
+
+			delete [] order;
+			delete [] order_set;
+		}
+	}
+
 	CreateVisibleColumnMapping();
 }
 
-void wxListCtrlEx::SaveColumnSettings(int widthsOptionId, int visibilityOptionId)
+void wxListCtrlEx::SaveColumnSettings(int widthsOptionId, int visibilityOptionId, int sortOptionId)
 {
 	if (widthsOptionId != -1)
 		SaveColumnWidths(widthsOptionId);
@@ -336,6 +369,18 @@ void wxListCtrlEx::SaveColumnSettings(int widthsOptionId, int visibilityOptionId
 				visibleColumns += _T("0");
 		}
 		COptions::Get()->SetOption(visibilityOptionId, visibleColumns);
+	}
+
+	if (sortOptionId != -1)
+	{
+		wxString order;
+		for (unsigned int i = 0; i < m_columnInfo.size(); i++)
+		{
+			if (i)
+				order += _T(",");
+			order += wxString::Format(_T("%d"), m_columnInfo[i].order);
+		}
+		COptions::Get()->SetOption(sortOptionId, order);
 	}
 }
 
@@ -504,7 +549,7 @@ protected:
 	{
 		wxCheckListBox* pListBox = XRCCTRL(*this, "ID_ACTIVE", wxCheckListBox);
 		int sel = pListBox->GetSelection();
-		if (sel < 1)
+		if (sel < 2)
 			return;
 
 		int tmp;
@@ -527,6 +572,8 @@ protected:
 	{
 		wxCheckListBox* pListBox = XRCCTRL(*this, "ID_ACTIVE", wxCheckListBox);
 		int sel = pListBox->GetSelection();
+		if (sel < 1)
+			return;
 		if (sel >= (int)pListBox->GetCount() - 1)
 			return;
 
@@ -550,8 +597,18 @@ protected:
 	{
 		wxCheckListBox* pListBox = XRCCTRL(*this, "ID_ACTIVE", wxCheckListBox);
 		int sel = pListBox->GetSelection();
-		XRCCTRL(*this, "ID_UP", wxButton)->Enable(sel > 0);
-		XRCCTRL(*this, "ID_DOWN", wxButton)->Enable(sel != wxNOT_FOUND && sel < (int)pListBox->GetCount() - 1);
+		XRCCTRL(*this, "ID_UP", wxButton)->Enable(sel > 1);
+		XRCCTRL(*this, "ID_DOWN", wxButton)->Enable(sel > 0 && sel < (int)pListBox->GetCount() - 1);
+	}
+
+	void OnCheck(wxCommandEvent& event)
+	{
+		if (!event.GetSelection() && !event.IsChecked())
+		{
+			wxCheckListBox* pListBox = XRCCTRL(*this, "ID_ACTIVE", wxCheckListBox);
+			pListBox->Check(0);
+			wxMessageBox(_("The filename column cannot be hidden or moved"));
+		}
 	}
 };
 
@@ -559,6 +616,7 @@ BEGIN_EVENT_TABLE(CColumnEditDialog, wxDialogEx)
 EVT_BUTTON(XRCID("ID_UP"), CColumnEditDialog::OnUp)
 EVT_BUTTON(XRCID("ID_DOWN"), CColumnEditDialog::OnDown)
 EVT_LISTBOX(wxID_ANY, CColumnEditDialog::OnSelChanged)
+EVT_CHECKLISTBOX(wxID_ANY, CColumnEditDialog::OnCheck)
 END_EVENT_TABLE()
 
 void wxListCtrlEx::ShowColumnEditor()

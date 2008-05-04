@@ -33,8 +33,8 @@ public:
 	
 	// LoadColumnSettings needs to be called exactly once after adding
 	// all columns
-	void LoadColumnSettings(int widthsOptionId, int visibilityOptionId);
-	void SaveColumnSettings(int widthsOptionId, int visibilityOptionId);
+	void LoadColumnSettings(int widthsOptionId, int visibilityOptionId, int sortOptionId);
+	void SaveColumnSettings(int widthsOptionId, int visibilityOptionId, int sortOptionId);
 
 protected:
 	virtual void OnPostScroll();
