@@ -607,7 +607,7 @@ protected:
 		{
 			wxCheckListBox* pListBox = XRCCTRL(*this, "ID_ACTIVE", wxCheckListBox);
 			pListBox->Check(0);
-			wxMessageBox(_("The filename column cannot be hidden or moved"));
+			wxMessageBox(_("The filename column cannot be hidden nor moved."));
 		}
 	}
 };
