@@ -121,21 +121,18 @@ wxThreadEx::ExitCode CIOThread::Entry()
 	else
 	{
 		m_mutex.Lock();
-		if (!m_running)
-		{
-			m_mutex.Unlock();
-			return 0;
-		}
 		if (m_curAppBuf == -1)
 		{
-			m_threadWaiting = true;
-			m_condition.Wait();
-		}
-
-		if (!m_running)
-		{
-			m_mutex.Unlock();
-			return 0;
+			if (!m_running)
+			{
+				m_mutex.Unlock();
+				return 0;
+			}
+			else
+			{
+				m_threadWaiting = true;
+				m_condition.Wait();
+			}
 		}
 		m_mutex.Unlock();
 
