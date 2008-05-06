@@ -10,6 +10,20 @@ Legend:
     *nix: Unix (e.g BSD) and Unix-like systems (e.g. Linux)
     OS X: Apple Mac OS X
 
+3.0.9.3 (2008-05-06)
+
++ Fix rare race condition in IO thread leading to data loss. Was possible to lose up to 3*65536 bytes at the beginning of a download.
+- *NIX: Renaming local files did not change local filelist
+- OS X: Deleting non-empty local directories did not work in all cases
+- MSW: Program could become unresponsive if update available dialog appears while a menu was opened
+- MSW: Update wizard should use correct download location on Vista to save installation files
+- Fix possible duplication of queue items on shutdown
+- Cap input length of speedlimit edit controls
+- Fix crash if getting disconnected while remote directory creating dialog was open
+- Quickconnect bar did not handle URLs with trailing paths
+- Update menu and toolbar state after clearing private data
+- NIX: Filetype column was empty on some filetypes
+
 3.0.9.2 (2008-04-18)
 
 - Fix rare crash if closing FileZilla
