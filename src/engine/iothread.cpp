@@ -121,7 +121,7 @@ wxThreadEx::ExitCode CIOThread::Entry()
 	else
 	{
 		m_mutex.Lock();
-		if (m_curAppBuf == -1)
+		while (m_curAppBuf == -1)
 		{
 			if (!m_running)
 			{
