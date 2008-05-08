@@ -36,6 +36,7 @@
 #include "xh_toolb_ex.h"
 #include "statusbar.h"
 #include "cmdline.h"
+#include "buildinfo.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -768,6 +769,38 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	{
 		if (m_pQueueView)
 			m_pQueueView->SetActive(event.IsChecked());
+	}
+	else if (event.GetId() == XRCID("ID_MENU_HELP_GETTINGHELP") ||
+			 event.GetId() == XRCID("ID_MENU_HELP_BUGREPORT"))
+	{
+		wxString url(_T("http://filezilla-project.org/support.php?type=client&mode="));
+		if (event.GetId() == XRCID("ID_MENU_HELP_GETTINGHELP"))
+			url += _T("help");
+		else
+			url += _T("bugreport");
+		wxString version = CBuildInfo::GetVersion();
+		if (version != _T("custom build"))
+		{
+			url += _T("&version=");
+			// We need to urlencode version number
+
+			// Unbelievable, but wxWidgets does not have any method
+			// to urlencode strings.
+			// Do a crude approach: Drop everything unexpected...
+			for (unsigned int i = 0; i < version.Len(); i++)
+			{
+				wxChar& c = version[i];
+				if ((version[i] >= '0' && version[i] <= '9') ||
+					(version[i] >= 'a' && version[i] <= 'z') ||
+					(version[i] >= 'A' && version[i] <= 'Z') ||
+					version[i] == '-' || version[i] == '.' ||
+					version[i] == '_')
+				{
+					url += c;
+				}
+			}
+		}
+		wxLaunchDefaultBrowser(url);
 	}
 	else
 	{
