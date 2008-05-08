@@ -72,6 +72,8 @@ protected:
 
 	void FocusNextEnabled(std::list<wxWindow*>& windowOrder, std::list<wxWindow*>::iterator iter, bool skipFirst, bool forward);
 
+	void LayoutSplittersOnSize();
+
 	CStatusBar* m_pStatusBar;
 	wxMenuBar* m_pMenuBar;
 	wxToolBar* m_pToolBar;

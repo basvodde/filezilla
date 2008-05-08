@@ -339,6 +339,14 @@ CMainFrame::CMainFrame()
 		m_pRemoteSplitter->Initialize(m_pRemoteListViewPanel);
 	}
 
+	if (layout == 3)
+	{
+		if (!swap)
+			m_pRemoteSplitter->SetSashGravity(1.0);
+		else
+			m_pLocalSplitter->SetSashGravity(1.0);
+	}
+
 	wxSize size = m_pBottomSplitter->GetClientSize();
 	m_pBottomSplitter->SetSashPosition(size.GetHeight() - 170);
 
@@ -443,12 +451,19 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 		AddPendingEvent(evt);
 	}
 #else
+	LayoutSplittersOnSize();
+#endif
+}
+
+void CMainFrame::LayoutSplittersOnSize()
+{
+	const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
+	const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
+
+	Layout();
 	if (m_pViewSplitter)
 	{
-		Layout();
 		wxSize size = m_pViewSplitter->GetClientSize();
-
-		const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
 
 		int pos;
 		if (layout == 1)
@@ -469,43 +484,39 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 		}
 		m_pViewSplitter->SetSashPosition(pos);
 	}
+	if (m_pRemoteSplitter && (layout == 2 || layout == 3) && m_pRemoteSplitter->IsSplit())
+	{
+		int pos;
+		if (layout == 3 && !swap)
+		{
+			wxSize size = m_pRemoteSplitter->GetClientSize();
+			pos = size.GetWidth() - m_lastRemoteTreeSplitterPos;
+		}
+		else
+			pos = m_lastRemoteTreeSplitterPos;
+		m_pRemoteSplitter->SetSashPosition(pos);
+	}
+	if (m_pLocalSplitter && (layout == 2 || layout == 3) && m_pLocalSplitter->IsSplit())
+	{
+		int pos;
+		if (layout == 3 && swap)
+		{
+			wxSize size = m_pLocalSplitter->GetClientSize();
+			pos = size.GetWidth() - m_lastLocalTreeSplitterPos;
+		}
+		else
+			pos = m_lastLocalTreeSplitterPos;
+		m_pLocalSplitter->SetSashPosition(pos);
+	}
 
 	ApplySplitterConstraints();
-#endif
 }
 
 #ifdef __WXMSW__
 void CMainFrame::OnSizePost(wxCommandEvent& event)
 {
 	m_pendingPostSizing = false;
-	if (m_pViewSplitter)
-	{
-		Layout();
-		wxSize size = m_pViewSplitter->GetClientSize();
-
-		const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
-
-		int pos;
-		if (layout == 1)
-		{
-			pos = static_cast<int>(size.GetHeight() * m_ViewSplitterSashPos);
-			if (pos < 20)
-				pos = 20;
-			else if (pos > size.GetHeight() - 20)
-				pos = size.GetHeight() - 20;
-		}
-		else
-		{
-			pos = static_cast<int>(size.GetWidth() * m_ViewSplitterSashPos);
-			if (pos < 20)
-				pos = 20;
-			else if (pos > size.GetWidth() - 20)
-				pos = size.GetWidth() - 20;
-		}
-		m_pViewSplitter->SetSashPosition(pos);
-	}
-
-	ApplySplitterConstraints();
+	LayoutSplittersOnSize();
 }
 #endif
 
@@ -1018,6 +1029,38 @@ void CMainFrame::OnSplitterSashPosChanging(wxSplitterEvent& event)
 		if (event.GetSashPosition() < 43)
 			event.SetSashPosition(43);
 	}
+	else if (event.GetEventObject() == m_pRemoteSplitter)
+	{
+#ifdef __WXMSW__
+		if (m_pendingPostSizing)
+			return;
+#endif
+
+		const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
+		const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
+
+		wxSize size = m_pRemoteSplitter->GetClientSize();
+		if (layout != 3 || swap)
+			m_lastRemoteTreeSplitterPos = m_pRemoteSplitter->GetSashPosition();
+		else
+			m_lastRemoteTreeSplitterPos = size.GetWidth() - m_pRemoteSplitter->GetSashPosition();
+	}
+	else if (event.GetEventObject() == m_pLocalSplitter)
+	{
+#ifdef __WXMSW__
+		if (m_pendingPostSizing)
+			return;
+#endif
+
+		const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
+		const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
+
+		wxSize size = m_pLocalSplitter->GetClientSize();
+		if (layout != 3 || swap)
+			m_lastLocalTreeSplitterPos = m_pLocalSplitter->GetSashPosition();
+		else
+			m_lastLocalTreeSplitterPos = size.GetWidth() - m_pLocalSplitter->GetSashPosition();
+	}
 }
 
 void CMainFrame::OnSplitterSashPosChanged(wxSplitterEvent& event)
@@ -1523,8 +1566,17 @@ void CMainFrame::OnToggleLocalTreeView(wxCommandEvent& event)
 
 	if (m_pLocalSplitter->IsSplit())
 	{
+		const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
+		const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
+
+		if (layout != 3 || !swap)
+			m_lastLocalTreeSplitterPos = m_pLocalSplitter->GetSashPosition();
+		else
+		{
+			wxSize size = m_pLocalSplitter->GetClientSize();
+			m_lastLocalTreeSplitterPos = m_pLocalSplitter->GetSashPosition();
+		}
 		m_pLocalListViewPanel->SetHeader(m_pLocalTreeViewPanel->DetachHeader());
-		m_lastLocalTreeSplitterPos = m_pLocalSplitter->GetSashPosition();
 		m_pLocalSplitter->Unsplit(m_pLocalTreeViewPanel);
 	}
 	else
@@ -1548,7 +1600,7 @@ void CMainFrame::ShowLocalTree()
 	const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
 	const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
 	if (layout == 3 && swap)
-		m_pLocalSplitter->SplitVertically(m_pLocalListViewPanel, m_pLocalTreeViewPanel, m_lastLocalTreeSplitterPos);
+		m_pLocalSplitter->SplitVertically(m_pLocalListViewPanel, m_pLocalTreeViewPanel, size.GetWidth() - m_lastLocalTreeSplitterPos);
 	else if (layout)
 		m_pLocalSplitter->SplitVertically(m_pLocalTreeViewPanel, m_pLocalListViewPanel, m_lastLocalTreeSplitterPos);
 	else
@@ -1562,8 +1614,17 @@ void CMainFrame::OnToggleRemoteTreeView(wxCommandEvent& event)
 
 	if (m_pRemoteSplitter->IsSplit())
 	{
+		const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
+		const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
+
+		if (layout != 3 || swap)
+			m_lastRemoteTreeSplitterPos = m_pRemoteSplitter->GetSashPosition();
+		else
+		{
+			wxSize size = m_pRemoteSplitter->GetClientSize();
+			m_lastRemoteTreeSplitterPos = size.GetWidth() - m_pRemoteSplitter->GetSashPosition();
+		}
 		m_pRemoteListViewPanel->SetHeader(m_pRemoteTreeViewPanel->DetachHeader());
-		m_lastRemoteTreeSplitterPos = m_pRemoteSplitter->GetSashPosition();
 		m_pRemoteSplitter->Unsplit(m_pRemoteTreeViewPanel);
 	}
 	else
@@ -1587,7 +1648,7 @@ void CMainFrame::ShowRemoteTree()
 	const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
 	const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
 	if (layout == 3 && !swap)
-		m_pRemoteSplitter->SplitVertically(m_pRemoteListViewPanel, m_pRemoteTreeViewPanel, m_lastRemoteTreeSplitterPos);
+		m_pRemoteSplitter->SplitVertically(m_pRemoteListViewPanel, m_pRemoteTreeViewPanel, size.GetWidth() - m_lastRemoteTreeSplitterPos);
 	else if (layout)
 		m_pRemoteSplitter->SplitVertically(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel, m_lastRemoteTreeSplitterPos);
 	else
@@ -1751,6 +1812,20 @@ void CMainFrame::UpdateLayout(int layout /*=-1*/, int swap /*=-1*/)
 				m_pRemoteSplitter->SplitVertically(pFirst, pSecond, m_lastRemoteTreeSplitterPos);
 			else
 				m_pRemoteSplitter->SplitHorizontally(pFirst, pSecond, m_lastRemoteTreeSplitterPos);
+		}
+	}
+
+	if (layout == 3)
+	{
+		if (!swap)
+		{
+			m_pRemoteSplitter->SetSashGravity(1.0);
+			m_pLocalSplitter->SetSashGravity(0.0);
+		}
+		else
+		{
+			m_pLocalSplitter->SetSashGravity(1.0);
+			m_pRemoteSplitter->SetSashGravity(0.0);
 		}
 	}
 }
@@ -1971,10 +2046,10 @@ void CMainFrame::RememberSplitterPositions()
 		posString += wxString::Format(_T("%d "), y);
 
 	// local_pos
-	posString += wxString::Format(_T("%d "), m_pLocalSplitter->IsSplit() ? m_pLocalSplitter->GetSashPosition() : m_lastLocalTreeSplitterPos);
+	posString += wxString::Format(_T("%d "), m_lastLocalTreeSplitterPos);//m_pLocalSplitter->IsSplit() ? m_pLocalSplitter->GetSashPosition() : m_lastLocalTreeSplitterPos);
 
 	// remote_pos
-	posString += wxString::Format(_T("%d"), m_pRemoteSplitter->IsSplit() ? m_pRemoteSplitter->GetSashPosition() : m_lastRemoteTreeSplitterPos);
+	posString += wxString::Format(_T("%d"), m_lastRemoteTreeSplitterPos);//m_pRemoteSplitter->IsSplit() ? m_pRemoteSplitter->GetSashPosition() : m_lastRemoteTreeSplitterPos);
 
 	COptions::Get()->SetOption(OPTION_MAINWINDOW_SPLITTER_POSITION, posString);
 }
@@ -2030,8 +2105,24 @@ void CMainFrame::RestoreSplitterPositions()
 
 	m_lastLocalTreeSplitterPos = aPosValues[4];
 	m_lastRemoteTreeSplitterPos = aPosValues[5];
-	m_pLocalSplitter->SetSashPosition(m_lastLocalTreeSplitterPos);
-	m_pRemoteSplitter->SetSashPosition(m_lastRemoteTreeSplitterPos);
+
+	const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
+	const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
+
+	if (layout != 3 || !swap)
+		m_pLocalSplitter->SetSashPosition(m_lastLocalTreeSplitterPos);
+	else
+	{
+		wxSize size = m_pLocalSplitter->GetClientSize();
+		m_pLocalSplitter->SetSashPosition(size.GetWidth() - m_lastLocalTreeSplitterPos);
+	}
+	if (layout != 3 || swap)
+		m_pRemoteSplitter->SetSashPosition(m_lastRemoteTreeSplitterPos);
+	else
+	{
+		wxSize size = m_pRemoteSplitter->GetClientSize();
+		m_pRemoteSplitter->SetSashPosition(size.GetWidth() - m_lastRemoteTreeSplitterPos);
+	}
 	delete [] aPosValues;
 }
 
