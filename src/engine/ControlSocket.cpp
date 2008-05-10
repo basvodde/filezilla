@@ -28,6 +28,8 @@ COpData::COpData(enum Command op_Id)
 	pNextOpData = 0;
 
 	waitForAsyncRequest = false;
+
+	holdsLock = false;
 }
 
 COpData::~COpData()
@@ -87,10 +89,8 @@ int CControlSocket::ResetOperation(int nErrorCode)
 		LogMessage(::Debug_Warning, _T("ResetOperation with FZ_REPLY_WOULDBLOCK in nErrorCode (%d)"), nErrorCode);
 	}
 
-	if (m_pCurOpData && m_pCurOpData->opId != cmd_rawtransfer)
-	{
+	if (m_pCurOpData && m_pCurOpData->holdsLock)
 		UnlockCache();
-	}
 
 	if (m_pCurOpData && m_pCurOpData->pNextOpData)
 	{
@@ -660,9 +660,10 @@ const std::list<CControlSocket::t_lockInfo>::iterator CControlSocket::GetLockSta
 	return iter;
 }
 
-bool CControlSocket::TryLockCache(const CServerPath& directory)
+bool CControlSocket::TryLockCache(enum locking_reason reason, const CServerPath& directory)
 {
 	wxASSERT(m_pCurrentServer);
+	wxASSERT(m_pCurOpData);
 
 	std::list<t_lockInfo>::iterator own = GetLockStatus();
 	if (own == m_lockInfoList.end())
@@ -671,38 +672,91 @@ bool CControlSocket::TryLockCache(const CServerPath& directory)
 		info.directory = directory;
 		info.pControlSocket = this;
 		info.waiting = true;
+		info.reason = reason;
+		info.lockcount = 0;
 		m_lockInfoList.push_back(info);
 		own = --m_lockInfoList.end();
 	}
 	else
 	{
+		if (own->lockcount)
+		{
+			if (!m_pCurOpData->holdsLock)
+			{
+				m_pCurOpData->holdsLock = true;
+				own->lockcount++;
+			}
+			return true;
+		}
 		wxASSERT(own->waiting);
+		wxASSERT(own->reason == reason);
 	}
+
+	// Needs to be set in any case so that ResetOperation 
+	// unlocks or cancels the lock wait
+	m_pCurOpData->holdsLock = true;
 
 	// Try to find other instance holding the lock
 	for (std::list<t_lockInfo>::const_iterator iter = m_lockInfoList.begin(); iter != own; iter++)
 	{
 		if (*m_pCurrentServer != *iter->pControlSocket->m_pCurrentServer)
 			continue;
+		if (directory != iter->directory)
+			continue;
+		if (reason != iter->reason)
+			continue;
 
-		if (directory == iter->directory)
-		{
-			// Some other instance is holding the lock
-			return false;
-		}
+		// Some other instance is holding the lock
+		return false;
 	}
 
+	own->lockcount++;
 	own->waiting = false;
 	return true;
 }
 
+bool CControlSocket::IsLocked(enum locking_reason reason, const CServerPath& directory)
+{
+	wxASSERT(m_pCurrentServer);
+
+	std::list<t_lockInfo>::iterator own = GetLockStatus();
+	if (own != m_lockInfoList.end())
+		return true;
+
+	// Try to find other instance holding the lock
+	for (std::list<t_lockInfo>::const_iterator iter = m_lockInfoList.begin(); iter != own; iter++)
+	{
+		if (*m_pCurrentServer != *iter->pControlSocket->m_pCurrentServer)
+			continue;
+		if (directory != iter->directory)
+			continue;
+		if (reason != iter->reason)
+			continue;
+
+		// Some instance is holding the lock
+		return true;
+	}
+
+	return false;
+}
+
 void CControlSocket::UnlockCache()
 {
+	if (!m_pCurOpData || !m_pCurOpData->holdsLock)
+		return;
+	m_pCurOpData->holdsLock = false;
+
 	std::list<t_lockInfo>::iterator iter = GetLockStatus();
 	if (iter == m_lockInfoList.end())
 		return;
 
+	iter->lockcount--;
+	if (iter->lockcount)
+		return;
+
 	CServerPath directory = iter->directory;
+	enum locking_reason reason = iter->reason;
+
 	m_lockInfoList.erase(iter);
 
 	// Find other instance waiting for the lock
@@ -714,6 +768,9 @@ void CControlSocket::UnlockCache()
 		if (iter->directory != directory)
 			continue;
 
+		if (iter->reason != reason)
+			continue;
+
 		// Send notification
 		wxCommandEvent evt(fzOBTAINLOCK);
 		iter->pControlSocket->AddPendingEvent(evt);
@@ -721,44 +778,41 @@ void CControlSocket::UnlockCache()
 	}
 }
 
-bool CControlSocket::ObtainLockFromEvent()
+enum CControlSocket::locking_reason CControlSocket::ObtainLockFromEvent()
 {
+	wxASSERT(m_pCurOpData);
+
 	std::list<t_lockInfo>::iterator own = GetLockStatus();
 	if (own == m_lockInfoList.end())
-		return false;
+		return lock_unknown;
 
 	if (!own->waiting)
-		return false;
+		return lock_unknown;
 
 	for (std::list<t_lockInfo>::const_iterator iter = m_lockInfoList.begin(); iter != own; iter++)
 	{
 		if (*m_pCurrentServer != *iter->pControlSocket->m_pCurrentServer)
 			continue;
 
-		if (iter->directory == own->directory)
-			return false;
+		if (iter->directory != own->directory)
+			continue;
+
+		if (iter->reason != own->reason)
+			continue;
+
+		// Another instance comes before us
+		return lock_unknown;
 	}
 
 	own->waiting = false;
+	own->lockcount++;
 
-	return true;
-}
-
-bool CControlSocket::HasLock()
-{
-	std::list<t_lockInfo>::iterator own = GetLockStatus();
-	if (own == m_lockInfoList.end())
-		return false;
-
-	if (own->waiting)
-		return false;
-
-	return true;
+	return own->reason;
 }
 
 void CControlSocket::OnObtainLock(wxCommandEvent& event)
 {
-	if (!ObtainLockFromEvent())
+	if (ObtainLockFromEvent() == lock_unknown)
 		return;
 
 	SendNextCommand();

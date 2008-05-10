@@ -11,6 +11,7 @@ public:
 	const enum Command opId;
 
 	bool waitForAsyncRequest;
+	bool holdsLock;
 
 	COpData *pNextOpData;
 };
@@ -75,7 +76,7 @@ public:
 	CChangeDirOpData()
 		: COpData(cmd_cwd)
 	{
-		triedMkd = false;
+		tryMkdOnFail = false;
 	}
 
 	virtual ~CChangeDirOpData()
@@ -84,7 +85,7 @@ public:
 
 	CServerPath path;
 	wxString subDir;
-	bool triedMkd;
+	bool tryMkdOnFail;
 	CServerPath target;
 };
 
@@ -207,22 +208,30 @@ protected:
 	// Begin cache locking stuff
 	// -------------------------
 
+	enum locking_reason
+	{
+		lock_unknown = -1,
+		lock_list,
+		lock_mkdir
+	};
+
 	// Tries to obtain lock. Returns true on success.
 	// On failure, caller has to pass control.
 	// SendNextCommand will be called once the lock gets available
 	// and engine could obtain it.
-	bool TryLockCache(const CServerPath& directory);
+	// Lock is recursive. Lock counter increases on suboperations.
+	bool TryLockCache(enum locking_reason reason, const CServerPath& directory);
+	bool IsLocked(enum locking_reason reason, const CServerPath& directory);
 
 	// Unlocks the cache. Can be called if not holding the lock
+	// Doesn't need reason as one engine can at most hold one lock
 	void UnlockCache();
 
 	// Called from the fzOBTAINLOCK event.
-	// Returns true iff engine is the first waiting engine
+	// Returns reason != unknown iff engine is the first waiting engine
 	// and obtains the lock.
 	// On failure, the engine was not waiting for a lock.
-	bool ObtainLockFromEvent();
-
-	bool HasLock();
+	enum locking_reason ObtainLockFromEvent();
 
 #ifdef __VISUALC__
 	// Retarded compiler does not like my code
@@ -232,7 +241,9 @@ protected:
 	{
 		CControlSocket* pControlSocket;
 		CServerPath directory;
+		enum locking_reason reason;
 		bool waiting;
+		int lockcount;
 	};
 	static std::list<t_lockInfo> m_lockInfoList;
 #ifdef __VISUALC__

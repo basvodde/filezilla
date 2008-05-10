@@ -1300,9 +1300,9 @@ int CFtpControlSocket::ListSubcommandResult(int prevResult)
 			}
 		}
 
-		if (!HasLock())
+		if (!pData->holdsLock)
 		{
-			if (!TryLockCache(m_CurrentPath))
+			if (!TryLockCache(lock_list, m_CurrentPath))
 				return FZ_REPLY_WOULDBLOCK;
 		}
 
@@ -1835,6 +1835,14 @@ int CFtpControlSocket::ChangeDir(CServerPath path /*=CServerPath()*/, wxString s
 	pData->subDir = subDir;
 	pData->target = target;
 
+	if (pData->pNextOpData && pData->pNextOpData->opId == cmd_transfer &&
+		!static_cast<CFtpFileTransferOpData *>(pData->pNextOpData)->download)
+	{
+		pData->tryMkdOnFail = true;
+		wxASSERT(subDir == _T(""));
+	}
+
+
 	m_pCurOpData = pData;
 
 	return SendNextCommand();
@@ -1868,10 +1876,9 @@ int CFtpControlSocket::ChangeDirParseResponse()
 		if (code != 2 && code != 3)
 		{
 			// Create remote directory if part of a file upload
-			if (pData->pNextOpData && pData->pNextOpData->opId == cmd_transfer &&
-				!static_cast<CFtpFileTransferOpData *>(pData->pNextOpData)->download && !pData->triedMkd)
+			if (pData->tryMkdOnFail)
 			{
-				pData->triedMkd = true;
+				pData->tryMkdOnFail = false;
 				int res = Mkdir(pData->path);
 				if (res != FZ_REPLY_OK)
 					return res;
@@ -2037,6 +2044,17 @@ int CFtpControlSocket::ChangeDirSend()
 		cmd = _T("PWD");
 		break;
 	case cwd_cwd:
+		if (pData->tryMkdOnFail && !pData->holdsLock)
+		{
+			if (IsLocked(lock_mkdir, pData->path))
+			{
+				// Some other engine is already creating this directory or
+				// performing an action that will lead to its creation
+				pData->tryMkdOnFail = false;
+			}
+			if (!TryLockCache(lock_mkdir, pData->path))
+				return FZ_REPLY_WOULDBLOCK;
+		}
 		cmd = _T("CWD ") + pData->path.GetPath();
 		m_CurrentPath.Clear();
 		break;
@@ -3317,6 +3335,12 @@ int CFtpControlSocket::MkdirSend()
 
 	CMkdirOpData *pData = static_cast<CMkdirOpData *>(m_pCurOpData);
 	LogMessage(Debug_Debug, _T("  state = %d"), pData->opState);
+
+	if (!pData->holdsLock)
+	{
+		if (!TryLockCache(lock_mkdir, pData->path))
+			return FZ_REPLY_WOULDBLOCK;
+	}
 
 	bool res;
 	switch (pData->opState)
