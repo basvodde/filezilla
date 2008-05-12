@@ -1012,6 +1012,10 @@ void CSiteManager::OnDelete(wxCommandEvent& event)
 	if (!dlg.Run())
 		return;
 
+	wxTreeItemId parent = pTree->GetItemParent(item);
+	if (pTree->GetChildrenCount(parent) == 1)
+		pTree->Collapse(parent);
+
 	pTree->Delete(item);
 }
 
@@ -1920,7 +1924,13 @@ bool CSiteManager::MoveItems(wxTreeItemId source, wxTreeItemId target, bool copy
 	}
 
 	if (!copy)
+	{
+		wxTreeItemId parent = pTree->GetItemParent(source);
+		if (pTree->GetChildrenCount(parent) == 1)
+			pTree->Collapse(parent);
+
 		pTree->Delete(source);
+	}
 
 	for (std::list<wxTreeItemId>::iterator iter = expand.begin(); iter != expand.end(); iter++)
 		pTree->Expand(*iter);
