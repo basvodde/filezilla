@@ -411,7 +411,7 @@ bool CLocalFileSystem::GetNextFile(wxString& name)
 #endif
 }
 
-bool CLocalFileSystem::GetNextFile(wxString& name, bool &isLink, bool &dir, wxLongLong* size, wxDateTime* modificationTime, int* mode)
+bool CLocalFileSystem::GetNextFile(wxString& name, bool &isLink, bool &is_dir, wxLongLong* size, wxDateTime* modificationTime, int* mode)
 {
 #ifdef __WXMSW__
 	if (!m_found)
@@ -440,13 +440,13 @@ bool CLocalFileSystem::GetNextFile(wxString& name, bool &isLink, bool &dir, wxLo
 
 		if (m_find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 		{
-			dir = true;
+			is_dir = true;
 			if (size)
 				*size = -1;
 		}
 		else
 		{
-			dir = false;
+			is_dir = false;
 			*size = wxLongLong(m_find_data.nFileSizeHigh, m_find_data.nFileSizeLow);
 		}
 
@@ -468,9 +468,9 @@ bool CLocalFileSystem::GetNextFile(wxString& name, bool &isLink, bool &dir, wxLo
 			return true;
 
 		enum local_fileType type = GetFileInfo(m_path + name, isLink, size, modificationTime, mode);
-		if (m_dirs_only && type != local_fileType::dir)
+		if (m_dirs_only && type != dir)
 			continue;
-		dir = type == local_fileType::dir;
+		is_dir = type == dir;
 		
 		return true;
 	}
