@@ -1,6 +1,23 @@
 #include "FileZilla.h"
 #include "local_filesys.h"
 
+CLocalFileSystem::CLocalFileSystem()
+{
+	m_dirs_only = false;
+	m_found = false;
+#ifdef __WXMSW__
+	m_hFind = INVALID_HANDLE_VALUE;
+#endif
+}
+
+CLocalFileSystem::~CLocalFileSystem()
+{
+#ifdef __WXMSW__
+	if (m_hFind != INVALID_HANDLE_VALUE)
+		FindClose(m_hFind);
+#endif
+}
+
 enum CLocalFileSystem::local_fileType CLocalFileSystem::GetFileType(const wxString& path)
 {
 #ifdef __WXMSW__
@@ -191,6 +208,8 @@ enum CLocalFileSystem::local_fileType CLocalFileSystem::GetFileInfo(const wxStri
 			*size = -1;
 		if (mode)
 			*mode = 0;
+		if (modificationTime)
+			*modificationTime = wxDateTime();
 		return unknown;
 	}
 
@@ -221,6 +240,8 @@ enum CLocalFileSystem::local_fileType CLocalFileSystem::GetFileInfo(const wxStri
 			*size = -1;
 		if (mode)
 			*mode = -1;
+		if (modificationTime)
+			*modificationTime = wxDateTime();
 		return unknown;
 	}
 
@@ -235,6 +256,8 @@ enum CLocalFileSystem::local_fileType CLocalFileSystem::GetFileInfo(const wxStri
 				*size = -1;
 			if (mode)
 				*mode = -1;
+			if (modificationTime)
+				*modificationTime = wxDateTime();
 			return unknown;
 		}
 	}
@@ -285,3 +308,174 @@ bool CLocalFileSystem::ConvertFileTimeToWxDateTime(wxDateTime& time, const FILET
 	return true;
 }
 #endif
+
+bool CLocalFileSystem::BeginFindFiles(wxString path, bool dirs_only)
+{
+	m_dirs_only = dirs_only;
+#ifdef __WXMSW__
+	if (m_hFind != INVALID_HANDLE_VALUE)
+		FindClose(m_hFind);
+
+	if (path.Last() != '/' && path.Last() != '\\')
+		path += _T("\\*");
+	else
+		path += '*';
+
+	m_hFind = FindFirstFileEx(path, FindExInfoStandard, &m_find_data, dirs_only ? FindExSearchLimitToDirectories : FindExSearchNameMatch, 0, 0);
+	if (m_hFind == INVALID_HANDLE_VALUE)
+	{
+		m_found = false;
+		return false;
+	}
+	
+	m_found = true;	
+	return true;
+#else
+	m_path = path;
+	if (m_path.Last() != '/')
+		m_path += '/';
+
+	if (!m_find.Open(path) || !m_find.IsOpened())
+	{
+		m_found = false;
+		return false;
+	}
+
+	int flags = wxDIR_DIRS | wxDIR_HIDDEN;
+	if (!m_dirs_only)
+		flags |= wxDIR_FILES;
+	m_found = m_find.GetFirst(&m_file, wxEmptyString, flags);
+	return m_found;
+#endif
+}
+
+void CLocalFileSystem::EndFindFiles()
+{
+	m_found = false;
+#ifdef __WXMSW__
+	if (m_hFind != INVALID_HANDLE_VALUE)
+	{
+		FindClose(m_hFind);
+		m_hFind = INVALID_HANDLE_VALUE;
+	}
+#endif
+}
+
+bool CLocalFileSystem::GetNextFile(wxString& name)
+{
+#ifdef __WXMSW__
+	if (!m_found)
+		return false;
+	do
+	{
+		name = m_find_data.cFileName;
+		if (name == _T(""))
+		{
+			m_found = FindNextFile(m_hFind, &m_find_data) != 0;
+			return true;
+		}
+		if (name == _T(".") || name == _T(".."))
+			continue;
+
+		if (m_dirs_only && !(m_find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+			continue;
+
+		m_found = FindNextFile(m_hFind, &m_find_data) != 0;
+		return true;
+	} while ((m_found = FindNextFile(m_hFind, &m_find_data) != 0));
+	
+	return false;
+#else
+	if (!m_found)
+		return false;
+
+	while (m_found)
+	{
+		name = m_file;
+		m_found = m_find.GetNext(&m_file);
+
+		if (name == _T(""))
+			return true;
+
+		if (m_dirs_only)
+		{
+			bool wasLink;
+			if (GetFileInfo(m_path + name, wasLink, 0, 0, 0) != dir)
+				continue;
+		}
+
+		return true;
+	}
+
+	return false;
+#endif
+}
+
+bool CLocalFileSystem::GetNextFile(wxString& name, bool &isLink, bool &dir, wxLongLong* size, wxDateTime* modificationTime, int* mode)
+{
+#ifdef __WXMSW__
+	if (!m_found)
+		return false;
+	do
+	{
+		name = m_find_data.cFileName;
+		if (name == _T(""))
+		{
+			m_found = FindNextFile(m_hFind, &m_find_data) != 0;
+			return true;
+		}
+		if (name == _T(".") || name == _T(".."))
+			continue;
+
+		if (m_dirs_only && !(m_find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+			continue;
+
+		isLink = false;
+
+		if (modificationTime)
+			ConvertFileTimeToWxDateTime(*modificationTime, m_find_data.ftLastWriteTime);
+
+		if (mode)
+			*mode = (int)m_find_data.dwFileAttributes;
+
+		if (m_find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+		{
+			dir = true;
+			if (size)
+				*size = -1;
+		}
+		else
+		{
+			dir = false;
+			*size = wxLongLong(m_find_data.nFileSizeHigh, m_find_data.nFileSizeLow);
+		}
+
+		m_found = FindNextFile(m_hFind, &m_find_data) != 0;
+		return true;
+	} while ((m_found = FindNextFile(m_hFind, &m_find_data) != 0));
+	
+	return false;
+#else
+	if (!m_found)
+		return false;
+
+	while (m_found)
+	{
+		name = m_file;
+		m_found = m_find.GetNext(&m_file);
+
+		if (name == _T(""))
+			return true;
+
+		enum local_fileType type = GetFileInfo(m_path + name, isLink, size, modificationTime, mode);
+		if (m_dirs_only && type != local_fileType::dir)
+			continue;
+		dir = type == local_fileType::dir;
+		
+		return true;
+	}
+
+	return false;
+#endif
+}
+
