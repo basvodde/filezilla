@@ -9,48 +9,12 @@
 std::map<wxString, int> CDirectoryListingParser::m_MonthNamesMap;
 
 //#define LISTDEBUG_MVS
-//#define LISTDEBUG
+#define LISTDEBUG
 #ifdef LISTDEBUG
 static char data[][110]={
-	/* IBM MVS listings */
-	// Volume Unit    Referred Ext Used Recfm Lrecl BlkSz Dsorg Dsname
-	"  WYOSPT 3420   2003/05/21  1  200  FB      80  8053  PS  48-MVS.FILE",
-	"  WPTA01 3290   2004/03/04  1    3  FB      80  3125  PO  49-MVS.DATASET",
-	"  TSO004 3390   VSAM 50-mvs-file",
-	"  TSO005 3390   2005/06/06 213000 U 0 27998 PO 51-mvs-dir",
-	"  NRP004 3390   **NONE**    1   15  NONE     0     0  PO  52-MVS-NONEDATE.DATASET",
-
-	/* Dataset members */
-	// Name         VV.MM   Created      Changed       Size  Init  Mod Id
-	// ADATAB /* filenames without data, only check for those on MVS servers */
-	"  53-MVSPDSMEMBER 01.01 2004/06/22 2004/06/22 16:32   128   128    0 BOBY12",
-
-	"54-MVSPDSMEMBER2 00B308 000411  00 FO                31    ANY",
-	"55-MVSPDSMEMBER3 00B308 000411  00 FO        RU      ANY    24",
-
-	// Migrated MVS file
-	"Migrated				SOME.FILE",
-
-	// z/VM, another IBM abomination. Description by Alexandre Charbey
-	// 
-	// ACTAPI
-	//   is a filename
-	// TRACE
-	//   is a filetype (extension, like exe or com or jpg...)
-	// V
-	//   is the file format. Designates how records are arranged in a file. F=Fixed and V=Variable. I don't think you care
-	// 65
-	//   is the logical record length.
-	// 107
-	//   is Number of records in a file.
-	// 2
-	//   (seems wrong) is the block size ( iirc 1 is 127, 2 is 381, 3 is 1028 and 4 is 4072 - not sure - the numbers are not the usual binary numbers)
-	// there is the date/time
-	// 060191
-	//   I think it is some internal stuff saying who the file belongs to.  191 is the "handle" of the user's disk. I don't know what 060 is. This 060191 is what FZ shows in its file list.
-	"ACTAPI  TRACE   V        65      107        2 2005-10-04 15:28:42 060191",
-
-	""};
+	
+	"" // Has to be terminated with empty string
+};
 
 #endif
 
@@ -379,12 +343,12 @@ public:
 			int start = m_parsePos;
 			while (m_parsePos < m_len)
 			{
-				if (m_pLine[m_parsePos] == ' ')
+				if (m_pLine[m_parsePos] == ' ' || m_pLine[m_parsePos] == '\t')
 				{
 					CToken *pToken = new CToken(m_pLine + start, m_parsePos - start);
 					m_Tokens.push_back(pToken);
 
-					while (m_pLine[m_parsePos] == ' ' && m_parsePos < m_len)
+					while ((m_pLine[m_parsePos] == ' ' || m_pLine[m_parsePos] == '\t') && m_parsePos < m_len)
 						m_parsePos++;
 
 					if (m_Tokens.size() > n)
@@ -796,10 +760,10 @@ bool CDirectoryListingParser::ParseLine(CLine *pLine, const enum ServerType serv
 	if (serverType == MVS)
 #endif //LISTDEBUG_MVS
 	{
-		res = ParseAsIBM_MVS_PDS2(pLine, entry);
+		res = ParseAsIBM_MVS_Migrated(pLine, entry);
 		if (res)
 			goto done;
-		res = ParseAsIBM_MVS_Migrated(pLine, entry);
+		res = ParseAsIBM_MVS_PDS2(pLine, entry);
 		if (res)
 			goto done;
 	}

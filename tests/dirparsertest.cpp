@@ -1211,6 +1211,241 @@ void CDirectoryListingParserTest::InitEntries()
 			DEFAULT
 		});
 
+	// MVS variants
+	//
+	// Note: I am not quite sure of these get parsed correctly, but so far
+	//       nobody did complain. Formats added here with what I think
+	//       is at least somewhat correct, so that there won't be any
+	//       regressions at least.
+
+	// The following 5 are loosely based on this format:
+	// Volume Unit    Referred Ext Used Recfm Lrecl BlkSz Dsorg Dsname
+	m_entries.push_back((t_entry){
+			"WYOSPT 3420   2003/05/21  1  200  FB      80  8053  PS  60-MVS.FILE",
+			{
+				_T("60-MVS.FILE"),
+				100,
+				_T(""),
+				_T(""),
+				false,
+				false,
+				_T(""),
+				true,
+				false,
+				wxDateTime(21, wxDateTime::May, 2003),
+				false
+		},
+		DEFAULT
+	});
+
+	m_entries.push_back((t_entry){
+			"WPTA01 3290   2004/03/04  1    3  FB      80  3125  PO  61-MVS.DATASET",
+			{
+				_T("61-MVS.DATASET"),
+				-1,
+				_T(""),
+				_T(""),
+				true,
+				false,
+				_T(""),
+				true,
+				false,
+				wxDateTime(04, wxDateTime::Mar, 2004),
+				false
+		},
+		DEFAULT
+	});
+
+	m_entries.push_back((t_entry){
+			"NRP004 3390   **NONE**    1   15  NONE     0     0  PO  62-MVS-NONEDATE.DATASET",
+			{
+				_T("62-MVS-NONEDATE.DATASET"),
+				-1,
+				_T(""),
+				_T(""),
+				true,
+				false,
+				_T(""),
+				false,
+				false,
+				wxDateTime(),
+				false
+		},
+		DEFAULT
+	});
+
+	m_entries.push_back((t_entry){
+			"TSO005 3390   2005/06/06 213000 U 0 27998 PO 63-MVS.DATASET",
+			{
+				_T("63-MVS.DATASET"),
+				-1,
+				_T(""),
+				_T(""),
+				true,
+				false,
+				_T(""),
+				true,
+				false,
+				wxDateTime(6, wxDateTime::Jun, 2005),
+				false
+		},
+		DEFAULT
+	});
+
+	m_entries.push_back((t_entry){
+			"TSO004 3390   VSAM 64-mvs-file",
+			{
+				_T("64-mvs-file"),
+				-1,
+				_T(""),
+				_T(""),
+				false,
+				false,
+				_T(""),
+				false,
+				false,
+				wxDateTime(),
+				false
+		},
+		DEFAULT
+	});
+
+	// MVS Dataset members
+	// 
+	// As common with IBM misdesign, multiple styles exist.
+	
+	// Speciality: Some members have no attributes at all.
+	// Requires servertype to be MVS or it won't be parsed, as 
+	// it would conflict with lots of other servers.
+	m_entries.push_back((t_entry){
+			"65-MVS-PDS-MEMBER",
+			{
+				_T("65-MVS-PDS-MEMBER"),
+				-1,
+				_T(""),
+				_T(""),
+				false,
+				false,
+				_T(""),
+				false,
+				false,
+				wxDateTime(),
+				false
+		},
+		MVS
+	});
+
+	// Name         VV.MM   Created      Changed       Size  Init  Mod Id
+	m_entries.push_back((t_entry){
+			"66-MVSPDSMEMBER 01.01 2004/06/22 2004/06/22 16:32   128   128    0 BOBY12",
+			{
+				_T("66-MVSPDSMEMBER"),
+				128,
+				_T(""),
+				_T(""),
+				false,
+				false,
+				_T(""),
+				true,
+				true,
+				wxDateTime(22, wxDateTime::Jun, 2004, 16, 32),
+				false
+		},
+		MVS
+	});
+
+	// Hexadecimal size
+	m_entries.push_back((t_entry){
+			"67-MVSPDSMEMBER2 00B308 000411  00 FO                31    ANY",
+			{
+				_T("67-MVSPDSMEMBER2"),
+				45832,
+				_T(""),
+				_T(""),
+				false,
+				false,
+				_T(""),
+				false,
+				false,
+				wxDateTime(),
+				false
+		},
+		MVS
+	});
+
+	m_entries.push_back((t_entry){
+			"68-MVSPDSMEMBER3 00B308 000411  00 FO        RU      ANY    24",
+			{
+				_T("68-MVSPDSMEMBER3"),
+				45832,
+				_T(""),
+				_T(""),
+				false,
+				false,
+				_T(""),
+				false,
+				false,
+				wxDateTime(),
+				false
+		},
+		MVS
+	});
+
+	// Migrated MVS file
+	m_entries.push_back((t_entry){
+			"Migrated				69-SOME.FILE",
+			{
+				_T("69-SOME.FILE"),
+				-1,
+				_T(""),
+				_T(""),
+				false,
+				false,
+				_T(""),
+				false,
+				false,
+				wxDateTime(),
+				false
+		},
+		MVS
+	});
+
+	// z/VM, another IBM abomination. Description by Alexandre Charbey
+	// Requires type set to ZVM or it cannot be parsed.
+	// 
+	// 70-ZVMFILE
+	//   is a filename
+	// TRACE
+	//   is a filetype (extension, like exe or com or jpg...)
+	// V
+	//   is the file format. Designates how records are arranged in a file. F=Fixed and V=Variable. I don't think you care
+	// 65
+	//   is the logical record length.
+	// 107
+	//   is Number of records in a file.
+	// 2
+	//   (seems wrong) is the block size ( iirc 1 is 127, 2 is 381, 3 is 1028 and 4 is 4072 - not sure - the numbers are not the usual binary numbers)
+	// there is the date/time
+	// 060191
+	//   I think it is some internal stuff saying who the file belongs to.  191 is the "handle" of the user's disk. I don't know what 060 is. This 060191 is what FZ shows in its file list.
+	m_entries.push_back((t_entry){
+			"70-ZVMFILE  TRACE   V        65      107        2 2005-10-04 15:28:42 060191",
+			{
+				_T("70-ZVMFILE.TRACE"),
+				6955,
+				_T(""),
+				_T("060191"),
+				false,
+				false,
+				_T(""),
+				true,
+				true,
+				wxDateTime(4, wxDateTime::Oct, 2005, 15, 28, 42),
+				false
+		},
+		ZVM
+	});
+
 /*
 	wxString name;
 	wxLongLong size;
