@@ -109,8 +109,11 @@ bool CDirentry::operator==(const CDirentry &op) const
 	if (hasTime != op.hasTime)
 		return false;
 
-	if (time != op.time)
-		return false;
+	if (hasDate)
+	{
+		if (time != op.time)
+			return false;
+	}
 	
 	if (unsure != op.unsure)
 		return false;
