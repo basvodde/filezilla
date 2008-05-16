@@ -37,7 +37,7 @@ public:
 
 	bool BeginFindFiles(wxString path, bool dirs_only);
 	bool GetNextFile(wxString& name);
-	bool GetNextFile(wxString& name, bool &isLink, bool &dir, wxLongLong* size, wxDateTime* modificationTime, int* mode);
+	bool GetNextFile(wxString& name, bool &isLink, bool &is_dir, wxLongLong* size, wxDateTime* modificationTime, int* mode);
 	void EndFindFiles();
 	
 protected:
