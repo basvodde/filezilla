@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-12 12:38+0200\n"
-"PO-Revision-Date: 2008-05-04 16:29+0800\n"
+"POT-Creation-Date: 2008-05-20 10:49+0200\n"
+"PO-Revision-Date: 2008-05-16 04:07+0800\n"
 "Last-Translator: Kene Lin <kenelin@gmail.com>\n"
 "Language-Team: milo <milo.tw@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -97,7 +97,7 @@ msgid ""
 msgstr ""
 "無法找到 %s. 沒有這個 FileZilla 的元件, SFTP 就不會運作.\n"
 "\n"
-"請再次下載 FileZilla. 如果這個問題依舊持續, 請回報此臭蟲."
+"請再次下載 FileZilla. 如果這個問題依舊持續, 請回報此錯誤."
 
 #: ../../locales/../src/interface/FileZilla.cpp:831
 #, c-format
@@ -206,8 +206,7 @@ msgstr "瀏覽(&B)..."
 msgid "&Burst tolerance:"
 msgstr "暴衝容忍度(&B):"
 
-#: resources.h:89 resources.h:148 resources.h:152 resources.h:268
-#: resources.h:325
+#: resources.h:148 resources.h:152 resources.h:268 resources.h:325
 msgid "&Cancel"
 msgstr "取消(&C)"
 
@@ -369,9 +368,8 @@ msgid "&Get external IP address from the following URL:"
 msgstr "從下列網址取得外部 IP Address (&G):"
 
 #: resources.h:553
-#, fuzzy
 msgid "&Getting help..."
-msgstr "設定(&S)..."
+msgstr "取得協助(&G)..."
 
 #: resources.h:550
 msgid "&Help"
@@ -551,9 +549,8 @@ msgid "&Rename"
 msgstr "更名(&R)"
 
 #: resources.h:554
-#, fuzzy
 msgid "&Report a bug..."
-msgstr "匯出(&E)..."
+msgstr "回報錯誤(&R)..."
 
 #: resources.h:688
 msgid "&Restart Wizard"
@@ -807,7 +804,7 @@ msgstr "3 - 詳述"
 msgid "4 - Debug"
 msgstr "4 - 偵錯"
 
-#: ../../locales/../src/engine/directorylistingparser.cpp:1627
+#: ../../locales/../src/engine/directorylistingparser.cpp:1591
 msgid ";1"
 msgstr ";1"
 
@@ -833,14 +830,14 @@ msgstr ""
 msgid "A file previously opened has been changed:"
 msgstr "先前開啟的檔案已被更動:"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1920
+#: ../../locales/../src/interface/LocalListView.cpp:1910
 #: ../../locales/../src/interface/RemoteListView.cpp:2258
 msgid ""
 "A file with that name is already being edited. Discard old file and download "
 "the new file?"
 msgstr "該名稱之檔案已被編輯. 要忽略舊版並且下載新版檔案嗎?"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1916
+#: ../../locales/../src/interface/LocalListView.cpp:1906
 #: ../../locales/../src/interface/RemoteListView.cpp:2247
 msgid "A file with that name is already being transferred."
 msgstr "該名稱之檔案已傳送."
@@ -915,10 +912,10 @@ msgstr "關於 FileZilla"
 
 #: resources.h:106 ../../locales/../src/interface/sitemanager.cpp:833
 #: ../../locales/../src/interface/sitemanager.cpp:883
-#: ../../locales/../src/interface/sitemanager.cpp:1073
-#: ../../locales/../src/interface/sitemanager.cpp:1074
-#: ../../locales/../src/interface/sitemanager.cpp:1112
-#: ../../locales/../src/interface/sitemanager.cpp:1335
+#: ../../locales/../src/interface/sitemanager.cpp:1077
+#: ../../locales/../src/interface/sitemanager.cpp:1078
+#: ../../locales/../src/interface/sitemanager.cpp:1116
+#: ../../locales/../src/interface/sitemanager.cpp:1339
 msgid "Account"
 msgstr "帳號"
 
@@ -1027,16 +1024,16 @@ msgid ""
 "recent version."
 msgstr "也可以拜訪 http://filezilla-project.org 下載最近的版本."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1866
+#: ../../locales/../src/interface/sitemanager.cpp:1870
 msgid ""
 "An item with the same name as the dragged item already exists at the target "
 "location."
 msgstr "目標位置已存在與拖曳來源相同名稱的檔案."
 
 #: resources.h:102 ../../locales/../src/interface/sitemanager.cpp:874
-#: ../../locales/../src/interface/sitemanager.cpp:1072
-#: ../../locales/../src/interface/sitemanager.cpp:1268
-#: ../../locales/../src/interface/sitemanager.cpp:1338
+#: ../../locales/../src/interface/sitemanager.cpp:1076
+#: ../../locales/../src/interface/sitemanager.cpp:1272
+#: ../../locales/../src/interface/sitemanager.cpp:1342
 msgid "Anonymous"
 msgstr "匿名"
 
@@ -1065,8 +1062,8 @@ msgstr "只套用到檔案(&F)"
 msgid "Archive"
 msgstr "封存"
 
-#: resources.h:104 ../../locales/../src/interface/sitemanager.cpp:1108
-#: ../../locales/../src/interface/sitemanager.cpp:1329
+#: resources.h:104 ../../locales/../src/interface/sitemanager.cpp:1112
+#: ../../locales/../src/interface/sitemanager.cpp:1333
 msgid "Ask for password"
 msgstr "詢問密碼"
 
@@ -1196,9 +1193,9 @@ msgstr "無法寫入檔案."
 msgid "Can't write data to file: %s"
 msgstr "無法寫入檔案: %s"
 
-#: resources.h:24 resources.h:290 resources.h:313 resources.h:339
-#: resources.h:359 resources.h:411 resources.h:438 resources.h:445
-#: resources.h:453 resources.h:509
+#: resources.h:24 resources.h:89 resources.h:290 resources.h:313
+#: resources.h:339 resources.h:359 resources.h:411 resources.h:438
+#: resources.h:445 resources.h:453 resources.h:509
 msgid "Cancel"
 msgstr "取消"
 
@@ -1284,7 +1281,7 @@ msgstr "無法選取篩選器"
 msgid "Cannot show dialog"
 msgstr "無法顯示對話框"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1916
+#: ../../locales/../src/interface/LocalListView.cpp:1906
 #: ../../locales/../src/interface/RemoteListView.cpp:2247
 msgid "Cannot view / edit selected file"
 msgstr "無法檢視/編輯所選的檔案"
@@ -1345,7 +1342,7 @@ msgstr "正在檢查正確的外部 IP Address"
 msgid "Checking for updates"
 msgstr "正在檢查更新"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1203
+#: ../../locales/../src/interface/sitemanager.cpp:1207
 msgid "Choose the default local directory"
 msgstr "選擇預設的本地目錄"
 
@@ -1518,7 +1515,7 @@ msgstr "配置被動模式"
 msgid "Configure port range"
 msgstr "配置連接埠範圍"
 
-#: ../../locales/../src/engine/local_filesys.cpp:105
+#: ../../locales/../src/engine/local_filesys.cpp:122
 #: ../../locales/../src/interface/RemoteListView.cpp:1296
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1035
 msgid "Confirmation needed"
@@ -1619,12 +1616,12 @@ msgstr "轉換金鑰檔案"
 msgid "Cop&y"
 msgstr "複製(&Y)"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1502
+#: ../../locales/../src/interface/sitemanager.cpp:1506
 #, c-format
 msgid "Copy (%d) of %s"
 msgstr "複製 (%d) - %s"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1479
+#: ../../locales/../src/interface/sitemanager.cpp:1483
 #, c-format
 msgid "Copy of %s"
 msgstr "複製 - %s"
@@ -1712,8 +1709,8 @@ msgstr ""
 #: ../../locales/../src/interface/import.cpp:111
 #: ../../locales/../src/interface/import.cpp:294
 #: ../../locales/../src/interface/sitemanager.cpp:532
-#: ../../locales/../src/interface/sitemanager.cpp:1669
-#: ../../locales/../src/interface/sitemanager.cpp:2182
+#: ../../locales/../src/interface/sitemanager.cpp:1673
+#: ../../locales/../src/interface/sitemanager.cpp:2192
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1803,8 +1800,8 @@ msgstr "立即弄當 FileZilla. 只用於檢測例外處理機制"
 msgid "Create a new subdirectory in the current directory"
 msgstr "在現行目錄下建立子新的目錄"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1138
-#: ../../locales/../src/interface/LocalTreeView.cpp:1289
+#: ../../locales/../src/interface/LocalListView.cpp:1128
+#: ../../locales/../src/interface/LocalTreeView.cpp:1297
 #: ../../locales/../src/interface/RemoteListView.cpp:1232
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1202
 msgid "Create directory"
@@ -1900,8 +1897,8 @@ msgstr "偵錯"
 msgid "Debugging settings"
 msgstr "偵錯設定"
 
-#: resources.h:113 ../../locales/../src/interface/sitemanager.cpp:1274
-#: ../../locales/../src/interface/sitemanager.cpp:1367
+#: resources.h:113 ../../locales/../src/interface/sitemanager.cpp:1278
+#: ../../locales/../src/interface/sitemanager.cpp:1371
 msgid "Default"
 msgstr "預設"
 
@@ -1964,7 +1961,7 @@ msgstr "刪除所選的目錄"
 msgid "Delete selected files and directories"
 msgstr "刪除所選的檔案與目錄"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:996
+#: ../../locales/../src/interface/LocalTreeView.cpp:1004
 msgid "Desktop"
 msgstr "桌面"
 
@@ -2311,8 +2308,8 @@ msgstr "匯入錯誤"
 #: ../../locales/../src/interface/QueueView.cpp:1722
 #: ../../locales/../src/interface/sitemanager.cpp:533
 #: ../../locales/../src/interface/sitemanager.cpp:650
-#: ../../locales/../src/interface/sitemanager.cpp:1670
-#: ../../locales/../src/interface/sitemanager.cpp:2183
+#: ../../locales/../src/interface/sitemanager.cpp:1674
+#: ../../locales/../src/interface/sitemanager.cpp:2193
 #: ../../locales/../src/interface/wrapengine.cpp:854
 msgid "Error loading xml file"
 msgstr "載入 XML 檔案錯誤"
@@ -2371,7 +2368,7 @@ msgid "F&ilter name:"
 msgstr "篩選器名稱(&I):"
 
 #: ../../locales/../src/interface/settingsdialog.cpp:111
-#: ../../locales/../src/interface/sitemanager.cpp:1266
+#: ../../locales/../src/interface/sitemanager.cpp:1270
 msgid "FTP"
 msgstr "FTP"
 
@@ -2405,9 +2402,9 @@ msgstr "FTPES - 透過外顯式 TLS/SSL 的 FTP"
 msgid "FTPS - FTP over implicit TLS/SSL"
 msgstr "FTPS - 透過隱含式 TLS/SSL 的 FTP"
 
-#: ../../locales/../src/interface/LocalListView.cpp:575
-#: ../../locales/../src/interface/LocalListView.cpp:1253
-#: ../../locales/../src/interface/LocalTreeView.cpp:866
+#: ../../locales/../src/interface/LocalListView.cpp:565
+#: ../../locales/../src/interface/LocalListView.cpp:1243
+#: ../../locales/../src/interface/LocalTreeView.cpp:874
 #: ../../locales/../src/interface/viewheader.cpp:495
 msgid "Failed to change directory"
 msgstr "無法變更目錄"
@@ -2423,7 +2420,7 @@ msgstr "無法變更語系"
 msgid "Failed to check for newer version of FileZilla."
 msgstr "無法檢查新版的 FileZilla."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1866
+#: ../../locales/../src/interface/sitemanager.cpp:1870
 msgid "Failed to copy or move sites"
 msgstr "無法複製或移動站台"
 
@@ -2444,11 +2441,11 @@ msgstr "無法以主動傳輸模式建立 socket"
 msgid "Failed to download the latest version of FileZilla."
 msgstr "無法下載最新版的 FileZilla."
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:623
+#: ../../locales/../src/interface/LocalTreeView.cpp:631
 msgid "Failed to get 'My Documents' path"
 msgstr "無法取得 '我的文件' 路徑"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:609
+#: ../../locales/../src/interface/LocalTreeView.cpp:617
 msgid "Failed to get desktop path"
 msgstr "無法取得桌面路徑"
 
@@ -2671,11 +2668,11 @@ msgstr "檔名無效"
 msgid "Filename unchanged"
 msgstr "檔名未改變"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1346
+#: ../../locales/../src/interface/LocalListView.cpp:1336
 msgid "Filenames may not contain any of the following characters: / * ? < > |"
 msgstr "檔名不能包含以下任何字元: / * ? < > |"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1321
+#: ../../locales/../src/interface/LocalListView.cpp:1311
 msgid ""
 "Filenames may not contain any of the following characters: / \\ : * ? \" < > "
 "|"
@@ -3036,8 +3033,8 @@ msgstr "密碼不正確"
 msgid "Initializing TLS..."
 msgstr "初始 TLS 加密中..."
 
-#: resources.h:105 ../../locales/../src/interface/sitemanager.cpp:1110
-#: ../../locales/../src/interface/sitemanager.cpp:1332
+#: resources.h:105 ../../locales/../src/interface/sitemanager.cpp:1114
+#: ../../locales/../src/interface/sitemanager.cpp:1336
 msgid "Interactive"
 msgstr "交談式"
 
@@ -3083,8 +3080,8 @@ msgstr "收到無效的資料"
 msgid "Invalid date"
 msgstr "無效的日期"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1321
-#: ../../locales/../src/interface/LocalListView.cpp:1346
+#: ../../locales/../src/interface/LocalListView.cpp:1311
+#: ../../locales/../src/interface/LocalListView.cpp:1336
 msgid "Invalid filename"
 msgstr "無效的檔名"
 
@@ -3116,10 +3113,10 @@ msgstr ""
 msgid "Invalid response code"
 msgstr "無效的回應碼"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2153
-#: ../../locales/../src/interface/sitemanager.cpp:2173
-#: ../../locales/../src/interface/sitemanager.cpp:2191
-#: ../../locales/../src/interface/sitemanager.cpp:2202
+#: ../../locales/../src/interface/sitemanager.cpp:2163
+#: ../../locales/../src/interface/sitemanager.cpp:2183
+#: ../../locales/../src/interface/sitemanager.cpp:2201
+#: ../../locales/../src/interface/sitemanager.cpp:2212
 msgid "Invalid site path"
 msgstr "無效的站台路徑"
 
@@ -3292,17 +3289,17 @@ msgstr "下移(&D)"
 msgid "Move &up"
 msgstr "上移(&U)"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1015
+#: ../../locales/../src/interface/LocalTreeView.cpp:1023
 msgid "My Computer"
 msgstr "我的電腦"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1005
+#: ../../locales/../src/interface/LocalTreeView.cpp:1013
 msgid "My Documents"
 msgstr "我的文件"
 
 #: ../../locales/../src/interface/sitemanager.cpp:520
 #: ../../locales/../src/interface/sitemanager.cpp:522
-#: ../../locales/../src/interface/sitemanager.cpp:1710
+#: ../../locales/../src/interface/sitemanager.cpp:1714
 msgid "My Sites"
 msgstr "我的站台"
 
@@ -3331,7 +3328,7 @@ msgstr "需要指定字元編碼"
 msgid "New &Folder"
 msgstr "新增資料夾(&F)"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1292
+#: ../../locales/../src/interface/LocalTreeView.cpp:1300
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1216
 msgid "New directory"
 msgstr "新目錄"
@@ -3346,8 +3343,8 @@ msgstr "新篩選器"
 msgid "New folder"
 msgstr "新資料夾"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1959
-#: ../../locales/../src/interface/sitemanager.cpp:1982
+#: ../../locales/../src/interface/sitemanager.cpp:1969
+#: ../../locales/../src/interface/sitemanager.cpp:1992
 msgid "New site"
 msgstr "新站台"
 
@@ -3393,9 +3390,9 @@ msgstr "佇列裡不再有檔案!"
 msgid "No name for the filterset given."
 msgstr "沒有給定篩選集的名稱."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1676
-#: ../../locales/../src/interface/sitemanager.cpp:1688
-#: ../../locales/../src/interface/sitemanager.cpp:1719
+#: ../../locales/../src/interface/sitemanager.cpp:1680
+#: ../../locales/../src/interface/sitemanager.cpp:1692
+#: ../../locales/../src/interface/sitemanager.cpp:1723
 msgid "No sites available"
 msgstr "沒有可用的站台"
 
@@ -3409,9 +3406,9 @@ msgstr "以下皆否"
 
 #: resources.h:66 resources.h:103 ../../locales/../src/interface/queue.cpp:851
 #: ../../locales/../src/interface/queue.cpp:932
-#: ../../locales/../src/interface/sitemanager.cpp:1073
-#: ../../locales/../src/interface/sitemanager.cpp:1106
-#: ../../locales/../src/interface/sitemanager.cpp:1326
+#: ../../locales/../src/interface/sitemanager.cpp:1077
+#: ../../locales/../src/interface/sitemanager.cpp:1110
+#: ../../locales/../src/interface/sitemanager.cpp:1330
 msgid "Normal"
 msgstr "一般"
 
@@ -3487,10 +3484,10 @@ msgstr "開啟檔案."
 msgid "Open the settings dialog of FileZilla"
 msgstr "開啟 FileZilla 設定對話框"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1907
-#: ../../locales/../src/interface/LocalListView.cpp:1935
-#: ../../locales/../src/interface/LocalListView.cpp:1987
-#: ../../locales/../src/interface/LocalListView.cpp:1994
+#: ../../locales/../src/interface/LocalListView.cpp:1897
+#: ../../locales/../src/interface/LocalListView.cpp:1925
+#: ../../locales/../src/interface/LocalListView.cpp:1977
+#: ../../locales/../src/interface/LocalListView.cpp:1984
 msgid "Opening failed"
 msgstr "開啟失敗"
 
@@ -3719,8 +3716,8 @@ msgstr ""
 "請直接輸入 FTP 指令.\n"
 "使用直接的 FTP 指令會清除目錄快取."
 
-#: ../../locales/../src/interface/LocalListView.cpp:1138
-#: ../../locales/../src/interface/LocalTreeView.cpp:1289
+#: ../../locales/../src/interface/LocalListView.cpp:1128
+#: ../../locales/../src/interface/LocalTreeView.cpp:1297
 #: ../../locales/../src/interface/RemoteListView.cpp:1232
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1202
 msgid "Please enter the name of the directory which should be created:"
@@ -3877,8 +3874,8 @@ msgid ""
 "version."
 msgstr "請到 http://filezilla-project.org 下載最近的版本."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1539
-#: ../../locales/../src/interface/sitemanager.cpp:1709
+#: ../../locales/../src/interface/sitemanager.cpp:1543
+#: ../../locales/../src/interface/sitemanager.cpp:1713
 msgid "Predefined Sites"
 msgstr "預先定義的站台"
 
@@ -3999,7 +3996,7 @@ msgstr "唯讀"
 msgid "Really cancel current operation?"
 msgstr "真的要取消當前的操作?"
 
-#: ../../locales/../src/engine/local_filesys.cpp:105
+#: ../../locales/../src/engine/local_filesys.cpp:122
 #: ../../locales/../src/interface/RemoteListView.cpp:1296
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1035
 msgid "Really delete all selected files and/or directories?"
@@ -4235,7 +4232,7 @@ msgstr "請選擇您要刪除的私人資料."
 msgid "Selected editor does not exist"
 msgstr "所選的編輯器不存在"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1920
+#: ../../locales/../src/interface/LocalListView.cpp:1910
 #: ../../locales/../src/interface/RemoteListView.cpp:2258
 msgid "Selected file already being edited"
 msgstr "已在編輯所選的檔案."
@@ -4417,13 +4414,13 @@ msgstr "站台管理員"
 msgid "Site Manager already open"
 msgstr "已開啟站台管理員"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2173
-#: ../../locales/../src/interface/sitemanager.cpp:2191
-#: ../../locales/../src/interface/sitemanager.cpp:2202
+#: ../../locales/../src/interface/sitemanager.cpp:2183
+#: ../../locales/../src/interface/sitemanager.cpp:2201
+#: ../../locales/../src/interface/sitemanager.cpp:2212
 msgid "Site does not exist."
 msgstr "站台不存在."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2153
+#: ../../locales/../src/interface/sitemanager.cpp:2163
 msgid "Site path has to begin with 0 or 1."
 msgstr "站台路徑必須以 0 或 1 開始."
 
@@ -4665,8 +4662,8 @@ msgstr ""
 msgid "The file '%s' could not be loaded or does not contain a private key."
 msgstr "檔案 '%s' 無法載入或是不包含私鑰."
 
-#: ../../locales/../src/interface/LocalListView.cpp:1907
-#: ../../locales/../src/interface/LocalListView.cpp:1987
+#: ../../locales/../src/interface/LocalListView.cpp:1897
+#: ../../locales/../src/interface/LocalListView.cpp:1977
 #, c-format
 msgid ""
 "The file '%s' could not be opened:\n"
@@ -4675,8 +4672,8 @@ msgstr ""
 "無法開啟檔案 '%s':\n"
 "您的系統裡沒有程式關聯到這個檔案型態."
 
-#: ../../locales/../src/interface/LocalListView.cpp:1935
-#: ../../locales/../src/interface/LocalListView.cpp:1994
+#: ../../locales/../src/interface/LocalListView.cpp:1925
+#: ../../locales/../src/interface/LocalListView.cpp:1984
 #, c-format
 msgid ""
 "The file '%s' could not be opened:\n"
@@ -4729,9 +4726,8 @@ msgstr ""
 "要繼續匯入嗎?"
 
 #: ../../locales/../src/interface/listctrlex.cpp:610
-#, fuzzy
-msgid "The filename column cannot be hidden nor moved."
-msgstr "不能隱藏檔名欄位."
+msgid "The filename column can neither be hidden nor moved."
+msgstr "不能隱藏或移動檔名欄位."
 
 #: ../../locales/../src/interface/listctrlex.cpp:660
 msgid "The filename column cannot be hidden."
