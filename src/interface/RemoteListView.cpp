@@ -525,7 +525,16 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 bool CRemoteListView::UpdateDirectoryListing(const CDirectoryListing *pDirectoryListing)
 {
 	wxASSERT(!IsComparing());
-	if ((pDirectoryListing->m_hasUnsureEntries & UNSURE_CHANGE) == UNSURE_CHANGE)
+
+	const int unsure = pDirectoryListing->m_hasUnsureEntries & ~(CDirectoryListing::unsure_unknown);
+
+	if (!unsure)
+		return false;
+
+	if (unsure & CDirectoryListing::unsure_invalid)
+		return false;
+
+	if (!(unsure & ~(CDirectoryListing::unsure_dir_changed | CDirectoryListing::unsure_file_changed)))
 	{
 		if (m_sortColumn && m_sortColumn != 2)
 		{
@@ -533,23 +542,25 @@ bool CRemoteListView::UpdateDirectoryListing(const CDirectoryListing *pDirectory
 			// sort order.
 			return false;
 		}
-	}
+		wxASSERT(pDirectoryListing->GetCount() == m_pDirectoryListing->GetCount());
+		if (pDirectoryListing->GetCount() != m_pDirectoryListing->GetCount())
+			return false;
+		
+		m_pDirectoryListing = pDirectoryListing;
 
-	if ((pDirectoryListing->m_hasUnsureEntries & UNSURE_CONFUSED) == UNSURE_CONFUSED)
-		return false;
-
-	int addremove = UNSURE_ADD | UNSURE_REMOVE;
-	if ((pDirectoryListing->m_hasUnsureEntries & addremove) == addremove)
-		return false;
-
-	if ((pDirectoryListing->m_hasUnsureEntries & UNSURE_REMOVE) == UNSURE_REMOVE)
-	{
-		wxASSERT(pDirectoryListing->GetCount() < m_pDirectoryListing->GetCount());
-		UpdateDirectoryListing_Removed(pDirectoryListing);
+		// We don't have to do anything
 		return true;
 	}
 
-	return false;
+	if (unsure & (CDirectoryListing::unsure_dir_added | CDirectoryListing::unsure_file_added))
+	{
+		// Todo: Would be nice to handle this too
+		return false;
+	}
+
+	wxASSERT(pDirectoryListing->GetCount() < m_pDirectoryListing->GetCount());
+	UpdateDirectoryListing_Removed(pDirectoryListing);
+	return true;
 }
 
 void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryListing, bool modified /*=false*/)

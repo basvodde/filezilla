@@ -22,12 +22,6 @@ public:
 	bool operator==(const CDirentry &op) const;
 };
 
-#define UNSURE_UNSURE	0x01
-#define UNSURE_ADD		(0x02|UNSURE_UNSURE)
-#define UNSURE_REMOVE	(0x04|UNSURE_UNSURE)
-#define UNSURE_CHANGE	(0x08|UNSURE_UNSURE)
-#define UNSURE_CONFUSED	(0x10|UNSURE_UNSURE)
-
 class CDirentryObject
 {
 public:
@@ -65,6 +59,19 @@ public:
 	void SetCount(unsigned int count);
 	unsigned int GetCount() const { return m_entryCount; }
 
+	enum
+	{
+		unsure_file_added = 0x01,
+		unsure_file_removed = 0x02,
+		unsure_file_changed = 0x04,
+		unsure_file_mask = 0x07,
+		unsure_dir_added = 0x08,
+		unsure_dir_removed = 0x10,
+		unsure_dir_changed = 0x20,
+		unsure_dir_mask = 0x38,
+		unsure_unknown = 0x40,
+		unsure_invalid = 0x80 // Recommended action: Do a full refresh
+	};
 	// Lowest bit indicates a file got added
 	// Next bit indicates a file got removed
 	// 3rd bit indicates a file got changed.

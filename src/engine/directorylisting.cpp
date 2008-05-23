@@ -4,7 +4,7 @@ CDirectoryListing::CDirectoryListing()
 {
 	m_pEntries = 0;
 	m_entryCount = 0;
-	m_hasUnsureEntries = false;
+	m_hasUnsureEntries = 0;
 	m_failed = false;
 	m_referenceCount = 0;
 	m_hasDirs = false;
@@ -239,11 +239,14 @@ bool CDirectoryListing::RemoveEntry(unsigned int index)
 
 	Copy();
 
-	m_pEntries->erase(m_pEntries->begin() + index);
+	std::vector<CDirentryObject>::iterator iter = m_pEntries->begin() + index;
+	if (iter->GetEntry().dir)
+		m_hasUnsureEntries |= CDirectoryListing::unsure_dir_removed;
+	else
+		m_hasUnsureEntries |= CDirectoryListing::unsure_file_removed;
+	m_pEntries->erase(iter);
 
 	m_entryCount--;
-
-	m_hasUnsureEntries |= UNSURE_REMOVE;
 
 	return true;
 }

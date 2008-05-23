@@ -284,6 +284,13 @@ void CRemoteTreeView::SetDirectoryListing(const CDirectoryListing* pListing, boo
 	}
 	Enable(true);
 
+	if (pListing->m_hasUnsureEntries && !(pListing->m_hasUnsureEntries & ~(CDirectoryListing::unsure_unknown | CDirectoryListing::unsure_file_mask)))
+	{
+		// Just files changed, does not affect directory tree
+		m_busy = false;
+		return;
+	}
+
 	wxTreeItemId parent = MakeParent(pListing->path, !modified);
 	if (!parent)
 	{
