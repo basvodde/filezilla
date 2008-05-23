@@ -36,6 +36,8 @@ public:
 	void LoadColumnSettings(int widthsOptionId, int visibilityOptionId, int sortOptionId);
 	void SaveColumnSettings(int widthsOptionId, int visibilityOptionId, int sortOptionId);
 
+	int GetColumnVisibleIndex(int col);
+
 protected:
 	virtual void OnPostScroll();
 	virtual void OnPreEmitPostScrollEvent();
@@ -45,6 +47,12 @@ protected:
 
 	virtual wxString OnGetItemText(long item, long column) const;
 	void ResetSearchPrefix();
+
+#ifdef __WXMSW__
+	// Argument is visible column index
+	int GetHeaderIconIndex(int col);
+	void SetHeaderIconIndex(int col, int icon);
+#endif //__WXMSW__
 
 private:
 	// Keyboard prefix search

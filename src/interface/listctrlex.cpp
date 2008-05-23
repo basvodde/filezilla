@@ -4,6 +4,9 @@
 #include <wx/tokenzr.h>
 #include "Options.h"
 #include "dialogex.h"
+#ifdef __WXMSW__
+#include "commctrl.h"
+#endif
 
 DECLARE_EVENT_TYPE(fzEVT_POSTSCROLL, -1)
 DEFINE_EVENT_TYPE(fzEVT_POSTSCROLL)
@@ -481,6 +484,10 @@ void wxListCtrlEx::MoveColumn(unsigned int col, unsigned int before)
 			info.order++;
 	}
 
+#ifdef __WXMSW__
+	int icon = -1;
+#endif
+
 	t_columnInfo& info = m_columnInfo[col];
 	if (info.shown)
 	{
@@ -493,6 +500,10 @@ void wxListCtrlEx::MoveColumn(unsigned int col, unsigned int before)
 			for (unsigned int j = i + 1; j < (unsigned int)GetColumnCount(); j++)
 				m_pVisibleColumnMapping[j - 1] = m_pVisibleColumnMapping[j];
 			info.width = GetColumnWidth(i);
+
+#ifdef __WXMSW__
+			icon = GetHeaderIconIndex(i);
+#endif
 			DeleteColumn(i);
 
 			break;
@@ -513,6 +524,10 @@ void wxListCtrlEx::MoveColumn(unsigned int col, unsigned int before)
 		m_pVisibleColumnMapping[pos] = col;
 
 		InsertColumn(pos, info.name, info.align, info.width);
+
+#ifdef __WXMSW__
+		SetHeaderIconIndex(pos, icon);
+#endif
 	}
 	m_columnInfo[col].order = before;
 }
@@ -669,3 +684,62 @@ void wxListCtrlEx::ShowColumnEditor()
 	// Generic wxListCtrl needs manual refresh
 	Refresh();
 }
+
+int wxListCtrlEx::GetColumnVisibleIndex(int col)
+{
+	if (!m_pVisibleColumnMapping)
+		return -1;
+
+	for (int i = 0; i < GetColumnCount(); i++)
+	{
+		if (m_pVisibleColumnMapping[i] == col)
+			return i;
+	}
+
+	return -1;
+}
+
+#ifdef __WXMSW__
+int wxListCtrlEx::GetHeaderIconIndex(int col)
+{
+	if (col < 0 || col >= GetColumnCount())
+		return -1;
+
+	HWND hWnd = (HWND)GetHandle();
+	HWND header = (HWND)SendMessage(hWnd, LVM_GETHEADER, 0, 0);
+
+	HDITEM item;
+	item.mask = HDI_IMAGE | HDI_FORMAT;
+	SendMessage(header, HDM_GETITEM, col, (LPARAM)&item);
+
+	if (!(item.fmt & HDF_IMAGE))
+		return -1;
+
+	return item.iImage;
+}
+
+void wxListCtrlEx::SetHeaderIconIndex(int col, int icon)
+{
+	if (col < 0 || col >= GetColumnCount())
+		return;
+
+	HWND hWnd = (HWND)GetHandle();
+	HWND header = (HWND)SendMessage(hWnd, LVM_GETHEADER, 0, 0);
+
+	wxChar buffer[100];
+	HDITEM item;
+	item.mask = HDI_TEXT | HDI_FORMAT;
+	item.pszText = buffer;
+	item.cchTextMax = 99;
+	SendMessage(header, HDM_GETITEM, col, (LPARAM)&item);
+	item.mask |= HDI_IMAGE;
+	if (icon != -1)
+	{
+		item.fmt |= HDF_IMAGE | HDF_BITMAP_ON_RIGHT;
+		item.iImage = icon;
+	}
+	else
+		item.fmt &= ~(HDF_IMAGE | HDF_BITMAP_ON_RIGHT);
+	SendMessage(header, HDM_SETITEM, col, (LPARAM)&item);
+}
+#endif __WXMSW__

@@ -49,8 +49,6 @@ template<class CFileData> void CFileListCtrl<CFileData>::InitHeaderImageList()
 
 	wxBitmap bmp;
 
-	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("empty.png"), wxBITMAP_TYPE_PNG);
-	m_pHeaderImageList->Add(bmp);
 	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("up.png"), wxBITMAP_TYPE_PNG);
 	m_pHeaderImageList->Add(bmp);
 	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("down.png"), wxBITMAP_TYPE_PNG);
@@ -90,22 +88,11 @@ template<class CFileData> void CFileListCtrl<CFileData>::SortList(int column /*=
 #ifdef __WXMSW__
 		if (column != m_sortColumn && m_pHeaderImageList)
 		{
-			HWND hWnd = (HWND)GetHandle();
-			HWND header = (HWND)SendMessage(hWnd, LVM_GETHEADER, 0, 0);
-
-			wxChar buffer[100];
-			HDITEM item;
-			item.mask = HDI_TEXT | HDI_FORMAT;
-			item.pszText = buffer;
-			item.cchTextMax = 99;
-			SendMessage(header, HDM_GETITEM, m_sortColumn, (LPARAM)&item);
-			item.mask |= HDI_IMAGE;
-			item.fmt |= HDF_IMAGE | HDF_BITMAP_ON_RIGHT;
-			item.iImage = 0;
-			SendMessage(header, HDM_SETITEM, m_sortColumn, (LPARAM)&item);
+			const int oldVisibleColumn = GetColumnVisibleIndex(m_sortColumn);
+			if (oldVisibleColumn != -1)
+				SetHeaderIconIndex(oldVisibleColumn, -1);
 		}
 #endif
-		m_sortColumn = column;
 	}
 	else
 		column = m_sortColumn;
@@ -113,23 +100,16 @@ template<class CFileData> void CFileListCtrl<CFileData>::SortList(int column /*=
 	if (direction == -1)
 		direction = m_sortDirection;
 
+	int newVisibleColumn = GetColumnVisibleIndex(column);
+	if (newVisibleColumn == -1)
+	{
+		newVisibleColumn = 0;
+		column = 0;
+	}
+
 #ifdef __WXMSW__
 	if (m_pHeaderImageList)
-	{
-		HWND hWnd = (HWND)GetHandle();
-		HWND header = (HWND)SendMessage(hWnd, LVM_GETHEADER, 0, 0);
-
-		wxChar buffer[100];
-		HDITEM item;
-		item.mask = HDI_TEXT | HDI_FORMAT;
-		item.pszText = buffer;
-		item.cchTextMax = 99;
-		SendMessage(header, HDM_GETITEM, column, (LPARAM)&item);
-		item.mask |= HDI_IMAGE;
-		item.fmt |= HDF_IMAGE | HDF_BITMAP_ON_RIGHT;
-		item.iImage = direction ? 2 : 1;
-		SendMessage(header, HDM_SETITEM, column, (LPARAM)&item);
-	}
+		SetHeaderIconIndex(newVisibleColumn, direction ? 1 : 0);
 #endif
 
 	// Remember which files are selected
@@ -246,7 +226,7 @@ template<class CFileData> CListViewSort::DirSortMode CFileListCtrl<CFileData>::G
 
 template<class CFileData> void CFileListCtrl<CFileData>::OnColumnClicked(wxListEvent &event)
 {
-	int col = event.GetColumn();
+	int col = m_pVisibleColumnMapping[event.GetColumn()];
 	if (col == -1)
 		return;
 
@@ -510,7 +490,7 @@ template<class CFileData> void CFileListCtrl<CFileData>::InitSort(int optionID)
 	if (sortInfo.Len() == 3)
 	{
 		m_sortColumn = sortInfo[2] - '0';
-		if (m_sortColumn < 0 || m_sortColumn > GetColumnCount())
+		if (GetColumnVisibleIndex(m_sortColumn) == -1)
 			m_sortColumn = 0;
 	}
 	else

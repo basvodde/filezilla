@@ -260,6 +260,8 @@ CLocalListView::CLocalListView(wxWindow* pParent, CState *pState, CQueueView *pQ
 	AddColumn(_("Last modified"), wxLIST_FORMAT_LEFT, widths[3]);
 	LoadColumnSettings(OPTION_LOCALFILELIST_COLUMN_WIDTHS, OPTION_LOCALFILELIST_COLUMN_SHOWN, OPTION_LOCALFILELIST_COLUMN_ORDER);
 
+	InitSort(OPTION_LOCALFILELIST_SORTORDER);
+
 	SetImageList(GetSystemImageList(), wxIMAGE_LIST_SMALL);
 
 #ifdef __WXMSW__
@@ -1208,7 +1210,7 @@ void CLocalListView::OnMenuRename(wxCommandEvent& event)
 
 void CLocalListView::OnChar(wxKeyEvent& event)
 {
-	int code = event.GetKeyCode();
+	const int code = event.GetKeyCode();
 	if (code == WXK_DELETE)
 	{
 		if (GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) == -1)
