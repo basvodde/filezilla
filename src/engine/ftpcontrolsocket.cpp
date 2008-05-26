@@ -3256,9 +3256,15 @@ int CFtpControlSocket::MkdirParseResponse()
 			// Case 1: Full response a known "already exists" message.
 			// Case 2: Substrng of response contains "already exists". pData->path may not
 			//         contain this substring as the path might be returned in the reply.
-			if (m_Response.Mid(4).CmpNoCase(_T("directory already exists")) &&
-				(pData->path.GetPath().Lower().Find(_T("already exists")) != -1 ||
-				 m_Response.Lower().Find(_T("already exists")) == -1)
+			// Case 3: Substrng of response contains "file exists". pData->path may not
+			//         contain this substring as the path might be returned in the reply.
+			const wxString response = m_Response.Mid(4).Lower();
+			const wxString path = pData->path.GetPath().Lower();
+			if (response != _T("directory already exists") &&
+				(path.Find(_T("already exists")) != -1 ||
+				 response.Find(_T("already exists")) == -1) &&
+				(path.Find(_T("file exists")) != -1 ||
+				 response.Find(_T("file exists")) == -1)
 				)
 			{
 				pData->opState = mkd_tryfull;
