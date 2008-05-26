@@ -10,6 +10,7 @@ public:
 	void TriggerUpdateText();
 	void UpdateText();
 
+	void SelectAll();
 	void UnselectAll();
 	void SelectFile(const wxLongLong &size);
 	void UnselectFile(const wxLongLong &size);

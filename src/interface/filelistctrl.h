@@ -117,8 +117,13 @@ protected:
 	wxListItemAttr m_dropHighlightAttribute;
 #endif
 
+	void SetSelection(int item, bool select);
+
 private:
 	void SortList_UpdateSelections(bool* selections, int focus);
+
+	// If this is set to true, don't process selection changed events
+	bool m_insideSetSelection; 
 
 #ifdef __WXMSW__
 	static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

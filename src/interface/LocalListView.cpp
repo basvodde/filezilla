@@ -300,7 +300,8 @@ bool CLocalListView::DisplayDir(wxString dirname)
 			item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
 			if (item == -1)
 				break;
-			SetItemState(item, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+			SetSelection(item, false);
+			SetItemState(item, 0, wxLIST_STATE_FOCUSED);
 		}
 		focused = _T("..");
 
@@ -313,6 +314,9 @@ bool CLocalListView::DisplayDir(wxString dirname)
 		// Remember which items were selected
 		selectedNames = RememberSelectedItems(focused);
 	}
+
+	if (m_pFilelistStatusBar)
+		m_pFilelistStatusBar->UnselectAll();
 
 	const int oldItemCount = m_indexMapping.size();
 
@@ -401,10 +405,7 @@ regular_dir:
 		}
 
 		if (m_pFilelistStatusBar)
-		{
 			m_pFilelistStatusBar->SetDirectoryContents(totalFileCount, totalDirCount, totalSize, has_unknown_sizes);
-			m_pFilelistStatusBar->UpdateText();
-		}
 	}
 
 	if (m_dropTarget != -1)
@@ -1290,10 +1291,12 @@ void CLocalListView::OnKeyDown(wxKeyEvent& event)
 		{
 			CLocalFileData *data = GetData(i);
 			if (data && data->flags != fill)
-				SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+				SetSelection(i, true);
 			else
-				SetItemState(i, 0, wxLIST_STATE_SELECTED);
+				SetSelection(i, false);
 		}
+		if (m_pFilelistStatusBar)
+			m_pFilelistStatusBar->SelectAll();
 	}
 	else
 		OnChar(event);
@@ -1479,7 +1482,7 @@ std::list<wxString> CLocalListView::RememberSelectedItems(wxString& focused)
 			else
 				selectedNames.push_back(_T("-") + data.name);
 		}
-		SetItemState(item, 0, wxLIST_STATE_SELECTED);
+		SetSelection(item, false);
 	}
 
 	item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
@@ -1639,13 +1642,38 @@ void CLocalListView::RefreshFile(const wxString& file)
 	data.hasTime = data.lastModified.IsValid();
 
 	// Look if file data already exists
-	for (std::vector<CLocalFileData>::iterator iter = m_fileData.begin(); iter != m_fileData.end(); iter++)
+	int i = 0;
+	for (std::vector<CLocalFileData>::iterator iter = m_fileData.begin(); iter != m_fileData.end(); iter++, i++)
 	{
 		const CLocalFileData& oldData = *iter;
 		if (oldData.name != file)
 			continue;
 
-		// It exists, update entry
+		// Update file list status bar
+		if (m_pFilelistStatusBar)
+		{
+			int item = -1;
+			while (true)
+			{
+				item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+				if (item == -1)
+					break;
+				if (m_indexMapping[item] != i)
+					continue;
+
+				if (oldData.dir)
+					m_pFilelistStatusBar->UnselectDirectory();
+				else
+					m_pFilelistStatusBar->UnselectFile(oldData.size);
+				if (data.dir)
+					m_pFilelistStatusBar->SelectDirectory();
+				else
+					m_pFilelistStatusBar->SelectFile(data.size);
+				break;
+			}
+		}
+
+		// Update the data
 		data.fileType = oldData.fileType;
 
 		*iter = data;
@@ -1699,7 +1727,8 @@ void CLocalListView::RefreshFile(const wxString& file)
 			int state = GetItemState(i, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
 			if (state != prevState)
 			{
-				SetItemState(i, prevState, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+				SetItemState(i, prevState, wxLIST_STATE_FOCUSED);
+				SetSelection(i, (prevState & wxLIST_STATE_SELECTED) != 0);
 				prevState = state;
 			}
 		}
@@ -1708,6 +1737,8 @@ void CLocalListView::RefreshFile(const wxString& file)
 	else
 	{
 		RefreshComparison();
+		if (m_pFilelistStatusBar)
+			m_pFilelistStatusBar->UnselectAll();
 		ReselectItems(selectedNames, focused);
 	}
 }

@@ -87,6 +87,16 @@ void CFilelistStatusBar::SetDirectoryContents(int count_files, int count_dirs, c
 	m_count_dirs = count_dirs;
 	m_total_size = total_size;
 	m_unknown_size = unknown_size;
+	TriggerUpdateText();
+}
+
+void CFilelistStatusBar::SelectAll()
+{
+	m_count_selected_files = m_count_files;
+	m_count_selected_dirs = m_count_dirs;
+	m_total_selected_size = m_total_size;
+	m_unknown_selected_size = m_unknown_size;
+	TriggerUpdateText();
 }
 
 void CFilelistStatusBar::UnselectAll()

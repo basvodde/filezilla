@@ -40,6 +40,9 @@ template<class CFileData> LRESULT CALLBACK CFileListCtrl<CFileData>::WindowProc(
 	NMHDR* pNmhdr = (NMHDR*)lParam;
 	if (pNmhdr->code == LVN_ODSTATECHANGED)
 	{
+		if (pFileListCtrl->m_insideSetSelection)
+			return 0;
+
 		// A range of items go (de)selected
 		NMLVODSTATECHANGE* pNmOdStateChange = (NMLVODSTATECHANGE*)lParam;
 
@@ -51,7 +54,7 @@ template<class CFileData> LRESULT CALLBACK CFileListCtrl<CFileData>::WindowProc(
 		{
 			const int index = pFileListCtrl->m_indexMapping[i];
 			const CFileData& data = pFileListCtrl->m_fileData[index];
-			if (data.flags != normal)
+			if (data.flags == fill)
 				continue;
 
 			if (pFileListCtrl->m_hasParent && !i)
@@ -66,6 +69,9 @@ template<class CFileData> LRESULT CALLBACK CFileListCtrl<CFileData>::WindowProc(
 	}
 	else if (pNmhdr->code == LVN_ITEMCHANGED)
 	{
+		if (pFileListCtrl->m_insideSetSelection)
+			return 0;
+
 		NMLISTVIEW* pNmListView = (NMLISTVIEW*)lParam;
 
 		// Item of -1 means change applied to all items
@@ -101,6 +107,7 @@ template<class CFileData> CFileListCtrl<CFileData>::CFileListCtrl(wxWindow* pPar
 
 	m_pFilelistStatusBar = 0;
 
+	m_insideSetSelection = false;
 #ifdef __WXMSW__
 	// Subclass window
 	m_hwnd_map[(HWND)pParent->GetHandle()] = this;
@@ -263,7 +270,7 @@ template<class CFileData> void CFileListCtrl<CFileData>::SortList_UpdateSelectio
 
 		int item = m_indexMapping[i];
 		if (selections[item] != selected)
-			SetItemState(i, selections[item] ? wxLIST_STATE_SELECTED : 0, wxLIST_STATE_SELECTED);
+			SetSelection(i, selections[item]);
 		if (focused)
 		{
 			if (item != focus)
@@ -538,7 +545,7 @@ template<class CFileData> void CFileListCtrl<CFileData>::ComparisonRestoreSelect
 		bool isSelected = GetItemState(i, wxLIST_STATE_SELECTED) == wxLIST_STATE_SELECTED;
 		bool shouldSelected = item == index;
 		if (isSelected != shouldSelected)
-			SetItemState(i, shouldSelected ? wxLIST_STATE_SELECTED : 0, wxLIST_STATE_SELECTED);
+			SetSelection(i, shouldSelected);
 
 		if (shouldSelected)
 		{
@@ -577,6 +584,12 @@ template<class CFileData> void CFileListCtrl<CFileData>::InitSort(int optionID)
 
 template<class CFileData> void CFileListCtrl<CFileData>::OnItemSelected(wxListEvent& event)
 {
+#ifndef __WXMSW__
+	// On MSW this is done in the subclassed window proc
+	if (m_insideSetSelection)
+		return;
+#endif
+
 	if (!m_pFilelistStatusBar)
 		return;
 
@@ -589,7 +602,7 @@ template<class CFileData> void CFileListCtrl<CFileData>::OnItemSelected(wxListEv
 
 	const int index = m_indexMapping[item];
 	const CFileData& data = m_fileData[index];
-	if (data.flags != normal)
+	if (data.flags == fill)
 		return;
 
 	if (ItemIsDir(index))
@@ -600,6 +613,12 @@ template<class CFileData> void CFileListCtrl<CFileData>::OnItemSelected(wxListEv
 
 template<class CFileData> void CFileListCtrl<CFileData>::OnItemDeselected(wxListEvent& event)
 {
+#ifndef __WXMSW__
+	// On MSW this is done in the subclassed window proc
+	if (m_insideSetSelection)
+		return;
+#endif
+
 	if (!m_pFilelistStatusBar)
 		return;
 
@@ -612,11 +631,18 @@ template<class CFileData> void CFileListCtrl<CFileData>::OnItemDeselected(wxList
 
 	const int index = m_indexMapping[item];
 	const CFileData& data = m_fileData[index];
-	if (data.flags != normal)
+	if (data.flags == fill)
 		return;
 
 	if (ItemIsDir(index))
 		m_pFilelistStatusBar->UnselectDirectory();
 	else
 		m_pFilelistStatusBar->UnselectFile(ItemGetSize(index));
+}
+
+template<class CFileData> void CFileListCtrl<CFileData>::SetSelection(int item, bool select)
+{
+	m_insideSetSelection = true;
+	SetItemState(item, select ? wxLIST_STATE_SELECTED : 0, wxLIST_STATE_SELECTED);
+	m_insideSetSelection = false;
 }
