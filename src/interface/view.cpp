@@ -11,6 +11,13 @@ CView::CView(wxWindow* pParent)
 {
 	m_pWnd = 0;
 	m_pHeader = 0;
+
+	m_pStatusBar = 0;
+}
+
+void CView::SetStatusBar(wxStatusBar* pStatusBar)
+{
+	m_pStatusBar = pStatusBar;
 }
 
 void CView::OnSize(wxSizeEvent& event)
@@ -24,6 +31,16 @@ void CView::OnSize(wxSizeEvent& event)
 		m_pHeader->SetSize(headerRect);
 		rect.SetHeight(rect.GetHeight() - headerRect.GetHeight());
 		rect.SetY(headerRect.GetHeight());
+	}
+	if (m_pStatusBar)
+	{
+		const int status_height = m_pStatusBar->GetSize().GetHeight();
+		rect.height -= status_height;
+
+		wxRect status_rect = rect;
+		status_rect.y += rect.height;
+		status_rect.height = status_height;
+		m_pStatusBar->SetSize(status_rect);
 	}
 	if (!m_pWnd)
 		return;

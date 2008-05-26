@@ -37,6 +37,7 @@
 #include "statusbar.h"
 #include "cmdline.h"
 #include "buildinfo.h"
+#include "filelist_statusbar.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -264,12 +265,19 @@ CMainFrame::CMainFrame()
 	m_pLocalTreeViewPanel->SetWindow(m_pLocalTreeView);
 	m_pLocalListViewPanel->SetWindow(m_pLocalListView);
 
+	CFilelistStatusBar* pLocalFilelistStatusBar = new CFilelistStatusBar(m_pLocalListViewPanel);
+	m_pLocalListViewPanel->SetStatusBar(pLocalFilelistStatusBar);
+	m_pLocalListView->SetFilelistStatusBar(pLocalFilelistStatusBar);
 	m_pRemoteTreeViewPanel = new CView(m_pRemoteSplitter);
 	m_pRemoteListViewPanel = new CView(m_pRemoteSplitter);
 	m_pRemoteTreeView = new CRemoteTreeView(m_pRemoteTreeViewPanel, -1, m_pState, m_pQueueView);
 	m_pRemoteListView = new CRemoteListView(m_pRemoteListViewPanel, m_pState, m_pQueueView);
 	m_pRemoteTreeViewPanel->SetWindow(m_pRemoteTreeView);
 	m_pRemoteListViewPanel->SetWindow(m_pRemoteListView);
+
+	CFilelistStatusBar* pRemoteFilelistStatusBar = new CFilelistStatusBar(m_pRemoteListViewPanel);
+	m_pRemoteListViewPanel->SetStatusBar(pRemoteFilelistStatusBar);
+	m_pRemoteListView->SetFilelistStatusBar(pRemoteFilelistStatusBar);
 
 	if (COptions::Get()->GetOptionVal(OPTION_SHOW_MESSAGELOG))
 		m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter, 100);

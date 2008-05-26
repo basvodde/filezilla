@@ -2450,7 +2450,7 @@ wxListItemAttr* CRemoteListView::OnGetItemAttr(long item) const
 }
 
 // Defined in LocalListView.cpp
-extern wxString FormatSize(const wxLongLong& size);
+extern wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix = false);
 
 // Filenames on VMS systems have a revision suffix, e.g.
 // foo.bar;1
@@ -2574,4 +2574,14 @@ void CRemoteListView::OnExitComparisonMode()
 {
 	CFileListCtrl<CGenericFileData>::OnExitComparisonMode();
 	SetInfoText();
+}
+
+bool CRemoteListView::ItemIsDir(int index) const
+{
+	return (*m_pDirectoryListing)[index].dir;
+}
+
+wxLongLong CRemoteListView::ItemGetSize(int index) const
+{
+	return (*m_pDirectoryListing)[index].size;
 }

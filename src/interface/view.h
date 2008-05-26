@@ -11,10 +11,12 @@ public:
 	void SetHeader(CViewHeader* pWnd);
 	CViewHeader* GetHeader() { return m_pHeader; }
 	CViewHeader* DetachHeader();
+	void SetStatusBar(wxStatusBar* pStatusBar);
 
 protected:
 	wxWindow* m_pWnd;
 	CViewHeader* m_pHeader;
+	wxStatusBar* m_pStatusBar;
 
 	DECLARE_EVENT_TABLE();
 	void OnSize(wxSizeEvent& event);

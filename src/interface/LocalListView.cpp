@@ -19,6 +19,7 @@
 #include "edithandler.h"
 #include "dragdropmanager.h"
 #include "local_filesys.h"
+#include "filelist_statusbar.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -362,6 +363,11 @@ regular_dir:
 			return false;
 		}
 
+		wxLongLong totalSize;
+		bool has_unknown_sizes = false;
+		int totalFileCount = 0;
+		int totalDirCount = 0;
+
 		int num = m_fileData.size();
 		CLocalFileData data;
 		data.flags = normal;
@@ -378,8 +384,26 @@ regular_dir:
 
 			m_fileData.push_back(data);
 			if (!filter.FilenameFiltered(data.name, data.dir, data.size, true, data.attributes))
+			{
+				if (data.dir)
+					totalDirCount++;
+				else
+				{
+					if (data.size != -1)
+						totalSize += data.size;
+					else
+						has_unknown_sizes = true;
+					totalFileCount++;
+				}
 				m_indexMapping.push_back(num);
+			}
 			num++;
+		}
+
+		if (m_pFilelistStatusBar)
+		{
+			m_pFilelistStatusBar->SetDirectoryContents(totalFileCount, totalDirCount, totalSize, has_unknown_sizes);
+			m_pFilelistStatusBar->UpdateText();
 		}
 	}
 
@@ -412,7 +436,7 @@ regular_dir:
 	return true;
 }
 
-wxString FormatSize(const wxLongLong& size)
+wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix = false)
 {
 	COptions* const pOptions = COptions::Get();
 	const int format = pOptions->GetOptionVal(OPTION_SIZE_FORMAT);
@@ -447,8 +471,13 @@ wxString FormatSize(const wxLongLong& size)
 			result += sep + tmp.Mid(i, 3);
 			i += 3;
 		}
-
-		return result;
+		if (!add_bytes_suffix)
+			return result;
+		else
+		{
+			int last = (size % 1000000).GetLo();
+			return wxString::Format(wxPLURAL("%s byte", "%s bytes", last), result);
+		}
 	}
 
 	int divider;
@@ -1984,4 +2013,14 @@ void CLocalListView::OnMenuOpen(wxCommandEvent& event)
 		return;
 
 	wxMessageBox(wxString::Format(_("The file '%s' could not be opened:\nThe associated command failed"), fn.GetFullPath().c_str()), _("Opening failed"), wxICON_EXCLAMATION);
+}
+
+bool CLocalListView::ItemIsDir(int index) const
+{
+	return m_fileData[index].dir;
+}
+
+wxLongLong CLocalListView::ItemGetSize(int index) const
+{
+	return m_fileData[index].size;
 }

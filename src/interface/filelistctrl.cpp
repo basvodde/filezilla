@@ -7,11 +7,77 @@
 #include "Options.h"
 #include "conditionaldialog.h"
 #include <algorithm>
+#include "filelist_statusbar.h"
 
 BEGIN_EVENT_TABLE_TEMPLATE1(CFileListCtrl, wxListCtrlEx, CFileData)
 EVT_LIST_COL_CLICK(wxID_ANY, CFileListCtrl<CFileData>::OnColumnClicked)
 EVT_LIST_COL_RIGHT_CLICK(wxID_ANY, CFileListCtrl<CFileData>::OnColumnRightClicked)
+EVT_LIST_ITEM_SELECTED(wxID_ANY, CFileListCtrl<CFileData>::OnItemSelected)
+EVT_LIST_ITEM_DESELECTED(wxID_ANY, CFileListCtrl<CFileData>::OnItemDeselected)
 END_EVENT_TABLE()
+
+#ifdef __WXMSW__
+// wxWidgets does not hnadle LVN_ODSTATECHANGED, work around it
+
+template<class CFileData> std::map<HWND, CFileListCtrl<CFileData>*> CFileListCtrl<CFileData>::m_hwnd_map;
+
+template<class CFileData> LRESULT CALLBACK CFileListCtrl<CFileData>::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	std::map<HWND, CFileListCtrl<CFileData>*>::iterator iter = m_hwnd_map.find(hWnd);
+	if (iter == m_hwnd_map.end())
+	{
+		// This shouldn't happen
+        return 0;
+	}
+	CFileListCtrl<CFileData>* pFileListCtrl = iter->second;
+
+	if (uMsg != WM_NOTIFY)
+        return CallWindowProc(pFileListCtrl->m_prevWndproc, hWnd, uMsg, wParam, lParam);
+
+	if (!pFileListCtrl->m_pFilelistStatusBar)
+		return CallWindowProc(pFileListCtrl->m_prevWndproc, hWnd, uMsg, wParam, lParam);
+
+	NMHDR* pNmhdr = (NMHDR*)lParam;
+	if (pNmhdr->code == LVN_ODSTATECHANGED)
+	{
+		// A range of items go (de)selected
+		NMLVODSTATECHANGE* pNmOdStateChange = (NMLVODSTATECHANGE*)lParam;
+
+		if (!pFileListCtrl->m_pFilelistStatusBar)
+			return 0;
+
+		wxASSERT(pNmOdStateChange->iFrom <= pNmOdStateChange->iTo);
+		for (int i = pNmOdStateChange->iFrom; i <= pNmOdStateChange->iTo; i++)
+		{
+			const int index = pFileListCtrl->m_indexMapping[i];
+			const CFileData& data = pFileListCtrl->m_fileData[index];
+			if (data.flags != normal)
+				continue;
+
+			if (pFileListCtrl->m_hasParent && !i)
+				continue;
+
+			if (pFileListCtrl->ItemIsDir(index))
+				pFileListCtrl->m_pFilelistStatusBar->SelectDirectory();
+			else
+				pFileListCtrl->m_pFilelistStatusBar->SelectFile(pFileListCtrl->ItemGetSize(index));
+		}
+		return 0;
+	}
+	else if (pNmhdr->code == LVN_ITEMCHANGED)
+	{
+		NMLISTVIEW* pNmListView = (NMLISTVIEW*)lParam;
+
+		// Item of -1 means change applied to all items
+		if (pNmListView->iItem == -1 && !(pNmListView->uNewState & LVIS_SELECTED))
+		{
+			pFileListCtrl->m_pFilelistStatusBar->UnselectAll();
+		}
+	}
+
+	return CallWindowProc(pFileListCtrl->m_prevWndproc, hWnd, uMsg, wParam, lParam);
+}
+#endif
 
 template<class CFileData> CFileListCtrl<CFileData>::CFileListCtrl(wxWindow* pParent, CState* pState, CQueueView* pQueue)
 	: wxListCtrlEx(pParent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxLC_VIRTUAL | wxLC_REPORT | wxNO_BORDER | wxLC_EDIT_LABELS),
@@ -32,12 +98,24 @@ template<class CFileData> CFileListCtrl<CFileData>::CFileListCtrl(wxWindow* pPar
 #ifndef __WXMSW__
 	m_dropHighlightAttribute.SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNSHADOW));
 #endif
+
+	m_pFilelistStatusBar = 0;
+
+#ifdef __WXMSW__
+	// Subclass window
+	m_hwnd_map[(HWND)pParent->GetHandle()] = this;
+	m_prevWndproc = (WNDPROC)SetWindowLongPtr((HWND)pParent->GetHandle(), GWLP_WNDPROC, (LONG_PTR)WindowProc);
+#endif
 }
 
 template<class CFileData> CFileListCtrl<CFileData>::~CFileListCtrl()
 {
 #ifdef __WXMSW__
 	delete m_pHeaderImageList;
+
+	// Remove subclass
+	if (m_prevWndproc != 0)
+		SetWindowLongPtr((HWND)GetParent()->GetHandle(), GWLP_WNDPROC, (LONG_PTR)m_prevWndproc);
 #endif
 }
 
@@ -495,4 +573,50 @@ template<class CFileData> void CFileListCtrl<CFileData>::InitSort(int optionID)
 	}
 	else
 		m_sortColumn = 0;
+}
+
+template<class CFileData> void CFileListCtrl<CFileData>::OnItemSelected(wxListEvent& event)
+{
+	if (!m_pFilelistStatusBar)
+		return;
+
+	const int item = event.GetIndex();
+	if (item < 0 || item >= (int)m_indexMapping.size())
+		return;
+
+	if (m_hasParent && !item)
+		return;
+
+	const int index = m_indexMapping[item];
+	const CFileData& data = m_fileData[index];
+	if (data.flags != normal)
+		return;
+
+	if (ItemIsDir(index))
+		m_pFilelistStatusBar->SelectDirectory();
+	else
+		m_pFilelistStatusBar->SelectFile(ItemGetSize(index));
+}
+
+template<class CFileData> void CFileListCtrl<CFileData>::OnItemDeselected(wxListEvent& event)
+{
+	if (!m_pFilelistStatusBar)
+		return;
+
+	const int item = event.GetIndex();
+	if (item < 0 || item >= (int)m_indexMapping.size())
+		return;
+
+	if (m_hasParent && !item)
+		return;
+
+	const int index = m_indexMapping[item];
+	const CFileData& data = m_fileData[index];
+	if (data.flags != normal)
+		return;
+
+	if (ItemIsDir(index))
+		m_pFilelistStatusBar->UnselectDirectory();
+	else
+		m_pFilelistStatusBar->UnselectFile(ItemGetSize(index));
 }

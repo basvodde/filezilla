@@ -791,7 +791,7 @@ void CQueueViewBase::OnEraseBackground(wxEraseEvent& event)
 }
 
 // Defined in LocalListView.cpp
-extern wxString FormatSize(const wxLongLong& size);
+extern wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix = false);
 
 wxString CQueueViewBase::OnGetItemText(long item, long column) const
 {
