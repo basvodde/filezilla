@@ -432,7 +432,8 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 	unsigned int i = 0;
 	while (i < pDirectoryListing->GetCount() && j < m_pDirectoryListing->GetCount())
 	{
-		const wxString& oldName = (*m_pDirectoryListing)[j].name;
+		const CDirentry& oldEntry = (*m_pDirectoryListing)[j];
+		const wxString& oldName = oldEntry.name;
 		const wxString& newName = (*pDirectoryListing)[i].name;
 		if (oldName == newName)
 		{
@@ -441,18 +442,20 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 			continue;
 		}
 
+		if (m_pFilelistStatusBar)
+		{
+			if (oldEntry.dir)
+				m_pFilelistStatusBar->RemoveDirectory();
+			else
+				m_pFilelistStatusBar->RemoveFile(oldEntry.size);
+		}
+
 		removedItems.push_back(j++);
 	}
 	for (; j < m_pDirectoryListing->GetCount(); j++)
 		removedItems.push_back(j);
 
 	wxASSERT(removedItems.size() == removed);
-
-	// Remove corresponding file data
-	for (std::list<unsigned int>::reverse_iterator iter = removedItems.rbegin(); iter != removedItems.rend(); iter++)
-	{
-		m_fileData.erase(m_fileData.begin() + *iter);
-	}
 
 	std::list<int> selectedItems;
 
@@ -466,14 +469,16 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 	{
 		bool removed = false;
 
+		unsigned int& index = m_indexMapping[i];
+
 		// j is the offset the index has to be adjusted
 		int j = 0;
 		for (std::list<unsigned int>::const_iterator iter = removedItems.begin(); iter != removedItems.end(); iter++, j++)
 		{
-			if (*iter > m_indexMapping[i])
+			if (*iter > index)
 				break;
 
-			if (*iter == m_indexMapping[i])
+			if (*iter == index)
 			{
 				removedIndexes.push_back(i);
 				removed = true;
@@ -481,10 +486,23 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 				break;
 			}
 		}
-		m_indexMapping[i] -= j;
 
-		// Update selection
+		// Get old selection
 		bool isSelected = GetItemState(i, wxLIST_STATE_SELECTED) != 0;
+		
+		// Update statusbar info
+		if (isSelected && removed && m_pFilelistStatusBar)
+		{
+			if ((*m_pDirectoryListing)[index].dir)
+				m_pFilelistStatusBar->UnselectDirectory();
+			else
+				m_pFilelistStatusBar->UnselectFile((*m_pDirectoryListing)[index].size);
+		}
+
+		// Update index
+		index -= j;
+
+		// Update selections
 		bool needSelection;
 		if (selectedItems.empty())
 			needSelection = false;
@@ -498,16 +516,23 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 
 		if (isSelected)
 		{
-			if (!needSelection && toRemove)
-				SetItemState(i, 0, wxLIST_STATE_SELECTED);
+			if (!needSelection && (toRemove || removed))
+				SetSelection(i, false);
 
 			if (!removed)
 				selectedItems.push_back(i - toRemove);
 		}
 		else if (needSelection)
-			SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+			SetSelection(i, true);
 	}
 
+	// Erase file data
+	for (std::list<unsigned int>::reverse_iterator iter = removedItems.rbegin(); iter != removedItems.rend(); iter++)
+	{
+		m_fileData.erase(m_fileData.begin() + *iter);
+	}
+
+	// Erase indexes
 	wxASSERT(!toRemove);
 	wxASSERT(removedIndexes.size() == removed);
 	for (std::list<int>::iterator iter = removedIndexes.begin(); iter != removedIndexes.end(); iter++)
@@ -574,8 +599,11 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 		reset = true;
 	else if (m_pDirectoryListing->path != pDirectoryListing->path)
 		reset = true;
-	else if (m_pDirectoryListing->GetCount() > 200 && m_pDirectoryListing->m_firstListTime == pDirectoryListing->m_firstListTime &&
-		!IsComparing())
+	else if (m_pDirectoryListing->m_firstListTime == pDirectoryListing->m_firstListTime && !IsComparing()
+#ifndef __WXDEBUG__
+		&& m_pDirectoryListing->GetCount() > 200
+#endif
+		)
 	{
 		// Updated directory listing. Check if we can use process it in a different,
 		// more efficient way.
@@ -609,7 +637,7 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 			item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 			if (item == -1)
 				break;
-			SetItemState(item, 0, wxLIST_STATE_SELECTED);
+			SetSelection(item, false);
 		}
 		item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
 		if (item != -1)
@@ -624,10 +652,18 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 		selectedNames = RememberSelectedItems(prevFocused);
 	}
 
+	if (m_pFilelistStatusBar)
+		m_pFilelistStatusBar->UnselectAll();
+
 	m_pDirectoryListing = pDirectoryListing;
 
 	m_fileData.clear();
 	m_indexMapping.clear();
+
+	wxLongLong totalSize;
+	int unknown_sizes = 0;
+	int totalFileCount = 0;
+	int totalDirCount = 0;
 
 	bool eraseBackground = false;
 	if (m_pDirectoryListing)
@@ -645,6 +681,17 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 			data.icon = entry.dir ? m_dirIcon : -2;
 			m_fileData.push_back(data);
 
+			if (entry.dir)
+				totalDirCount++;
+			else
+			{
+				if (entry.size == -1)
+					unknown_sizes++;
+				else
+					totalSize += entry.size;
+				totalFileCount++;
+			}
+
 			if (!filter.FilenameFiltered(entry.name, entry.dir, entry.size, false, 0))
 				m_indexMapping.push_back(i);
 		}
@@ -659,6 +706,9 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 		eraseBackground = true;
 		SetInfoText();
 	}
+
+	if (m_pFilelistStatusBar)
+		m_pFilelistStatusBar->SetDirectoryContents(totalFileCount, totalDirCount, totalSize, unknown_sizes);
 
 	if (m_dropTarget != -1)
 	{
@@ -1437,10 +1487,12 @@ void CRemoteListView::OnKeyDown(wxKeyEvent& event)
 		{
 			int index = GetItemIndex(i);
 			if (index != -1 && m_fileData[index].flags != fill)
-				SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+				SetSelection(i, true);
 			else
-				SetItemState(i, 0, wxLIST_STATE_SELECTED);
+				SetSelection(i, false);
 		}
+		if (m_pFilelistStatusBar)
+			m_pFilelistStatusBar->SelectAll();
 	}
 	else
 		OnChar(event);
@@ -1720,6 +1772,9 @@ void CRemoteListView::ApplyCurrentFilter()
 	wxString focused;
 	std::list<wxString> selectedNames = RememberSelectedItems(focused);
 
+	if (m_pFilelistStatusBar)
+		m_pFilelistStatusBar->UnselectAll();
+
 	m_indexMapping.clear();
 	const unsigned int count = m_pDirectoryListing->GetCount();
 	m_indexMapping.push_back(count);
@@ -1753,7 +1808,7 @@ std::list<wxString> CRemoteListView::RememberSelectedItems(wxString& focused)
 	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	while (item != -1)
 	{
-		SetItemState(item, 0, wxLIST_STATE_SELECTED);
+		SetSelection(item, false);
 		if (!item)
 		{
 			selectedNames.push_back(_T(".."));
@@ -1853,14 +1908,18 @@ void CRemoteListView::ReselectItems(std::list<wxString>& selectedNames, wxString
 			{
 				if (firstSelected == -1)
 					firstSelected = i;
-				SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+				if (m_pFilelistStatusBar)
+					m_pFilelistStatusBar->SelectDirectory();
+                SetSelection(i, true);
 				break;
 			}
 			else if (*iter == (_T("-") + entry.name))
 			{
 				if (firstSelected == -1)
 					firstSelected = i;
-				SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+				if (m_pFilelistStatusBar)
+					m_pFilelistStatusBar->SelectFile(entry.size);
+				SetSelection(i, true);
 				break;
 			}
 		}
