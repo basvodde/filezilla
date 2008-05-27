@@ -81,12 +81,18 @@ void CFilelistStatusBar::UpdateText()
 	SetStatusText(text);
 }
 
-void CFilelistStatusBar::SetDirectoryContents(int count_files, int count_dirs, const wxLongLong &total_size, bool unknown_size)
+void CFilelistStatusBar::SetDirectoryContents(int count_files, int count_dirs, const wxLongLong &total_size, int unknown_size)
 {
 	m_count_files = count_files;
 	m_count_dirs = count_dirs;
 	m_total_size = total_size;
 	m_unknown_size = unknown_size;
+
+	m_count_selected_files = 0;
+	m_count_selected_dirs = 0;
+	m_total_selected_size = 0;
+	m_unknown_selected_size = 0;
+
 	TriggerUpdateText();
 }
 
@@ -151,4 +157,36 @@ void CFilelistStatusBar::TriggerUpdateText()
 		return;
 
 	m_updateTimer.Start(1, true);
+}
+
+void CFilelistStatusBar::AddFile(const wxLongLong& size)
+{
+	m_count_files++;
+	if (size != -1)
+		m_total_size += size;
+	else
+		m_unknown_size++;
+	TriggerUpdateText();
+}
+
+void CFilelistStatusBar::RemoveFile(const wxLongLong& size)
+{
+	m_count_files++;
+	if (size != -1)
+		m_total_size -= size;
+	else
+		m_unknown_size--;
+	TriggerUpdateText();
+}
+
+void CFilelistStatusBar::AddDirectory()
+{
+	m_count_dirs++;
+	TriggerUpdateText();
+}
+
+void CFilelistStatusBar::RemoveDirectory()
+{
+	m_count_dirs--;
+	TriggerUpdateText();
 }

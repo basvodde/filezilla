@@ -6,9 +6,14 @@ class CFilelistStatusBar : public wxStatusBar
 public:
 	CFilelistStatusBar(wxWindow* pParent);
 
-	void SetDirectoryContents(int count_files, int count_dirs, const wxLongLong &total_size, bool unknown_size);
+	void SetDirectoryContents(int count_files, int count_dirs, const wxLongLong &total_size, int unknown_size);
 	void TriggerUpdateText();
 	void UpdateText();
+
+	void AddFile(const wxLongLong& size);
+	void RemoveFile(const wxLongLong& size);
+	void AddDirectory();
+	void RemoveDirectory();
 
 	void SelectAll();
 	void UnselectAll();
@@ -22,7 +27,7 @@ protected:
 	int m_count_files;
 	int m_count_dirs;
 	wxLongLong m_total_size;
-	bool m_unknown_size; // Set to true if there are files with unknown size
+	int m_unknown_size; // Set to true if there are files with unknown size
 
 	int m_count_selected_files;
 	int m_count_selected_dirs;

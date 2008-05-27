@@ -297,12 +297,15 @@ bool CLocalListView::DisplayDir(wxString dirname)
 		int item = -1;
 		while (true)
 		{
-			item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+			item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 			if (item == -1)
 				break;
 			SetSelection(item, false);
-			SetItemState(item, 0, wxLIST_STATE_FOCUSED);
+			
 		}
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
+		if (item != -1)
+			SetItemState(item, 0, wxLIST_STATE_FOCUSED);
 		focused = _T("..");
 
 		if (GetItemCount())
@@ -368,7 +371,7 @@ regular_dir:
 		}
 
 		wxLongLong totalSize;
-		bool has_unknown_sizes = false;
+		int unknown_sizes = 0;
 		int totalFileCount = 0;
 		int totalDirCount = 0;
 
@@ -396,7 +399,7 @@ regular_dir:
 					if (data.size != -1)
 						totalSize += data.size;
 					else
-						has_unknown_sizes = true;
+						unknown_sizes++;
 					totalFileCount++;
 				}
 				m_indexMapping.push_back(num);
@@ -405,7 +408,7 @@ regular_dir:
 		}
 
 		if (m_pFilelistStatusBar)
-			m_pFilelistStatusBar->SetDirectoryContents(totalFileCount, totalDirCount, totalSize, has_unknown_sizes);
+			m_pFilelistStatusBar->SetDirectoryContents(totalFileCount, totalDirCount, totalSize, unknown_sizes);
 	}
 
 	if (m_dropTarget != -1)
@@ -653,6 +656,7 @@ void CLocalListView::DisplayDrives()
 	const wxChar* pDrive = drives;
 
 	int count = m_fileData.size();
+	int drive_count = 0;
 	while(*pDrive)
 	{
 		// Check if drive should be hidden by default
@@ -671,6 +675,8 @@ void CLocalListView::DisplayDrives()
 				continue;
 			}
 		}
+
+		drive_count++;
 
 		wxString path = pDrive;
 		if (path.Right(1) == _T("\\"))
@@ -691,6 +697,9 @@ void CLocalListView::DisplayDrives()
 	}
 
 	delete [] drives;
+
+	if (m_pFilelistStatusBar)
+		m_pFilelistStatusBar->SetDirectoryContents(0, drive_count, 0, false);
 }
 
 void CLocalListView::DisplayShares(wxString computer)
@@ -709,6 +718,7 @@ void CLocalListView::DisplayShares(wxString computer)
 		computer.RemoveLast();
 
 	int j = m_fileData.size();
+	int share_count = 0;
 	int res = 0;
 	do
 	{
@@ -734,11 +744,16 @@ void CLocalListView::DisplayShares(wxString computer)
 
 			m_fileData.push_back(data);
 			m_indexMapping.push_back(j++);
+
+			share_count++;
 		}
 
 		NetApiBufferFree(si.pShareInfo);
 	}
 	while (res == ERROR_MORE_DATA);
+
+	if (m_pFilelistStatusBar)
+		m_pFilelistStatusBar->SetDirectoryContents(0, share_count, 0, false);
 }
 
 #endif //__WXMSW__
@@ -1437,6 +1452,9 @@ void CLocalListView::ApplyCurrentFilter()
 	wxString focused;
 	const std::list<wxString>& selectedNames = RememberSelectedItems(focused);
 
+	if (m_pFilelistStatusBar)
+		m_pFilelistStatusBar->UnselectAll();
+
 	m_indexMapping.clear();
 	if (m_hasParent)
 		m_indexMapping.push_back(0);
@@ -1536,14 +1554,18 @@ void CLocalListView::ReselectItems(const std::list<wxString>& selectedNames, wxS
 			{
 				if (firstSelected == -1)
 					firstSelected = i;
-				SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+				if (m_pFilelistStatusBar)
+					m_pFilelistStatusBar->SelectDirectory();
+				SetSelection(i, true);
 				break;
 			}
 			else if (*iter == (_T("-") + data.name))
 			{
 				if (firstSelected == -1)
 					firstSelected = i;
-				SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+				if (m_pFilelistStatusBar)
+					m_pFilelistStatusBar->SelectFile(data.size);
+				SetSelection(i, true);
 				break;
 			}
 		}
@@ -1671,6 +1693,15 @@ void CLocalListView::RefreshFile(const wxString& file)
 					m_pFilelistStatusBar->SelectFile(data.size);
 				break;
 			}
+
+			if (oldData.dir)
+				m_pFilelistStatusBar->RemoveDirectory();
+			else
+				m_pFilelistStatusBar->RemoveFile(oldData.size);
+			if (data.dir)
+				m_pFilelistStatusBar->AddDirectory();
+			else
+				m_pFilelistStatusBar->AddFile(data.size);
 		}
 
 		// Update the data
