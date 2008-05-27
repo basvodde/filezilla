@@ -186,13 +186,31 @@ void wxListCtrlEx::OnKeyDown(wxKeyEvent& event)
 	}
 
 #if defined(__WXMSW__) && wxUSE_UNICODE
-	wxChar key = MapVirtualKey(event.GetUnicodeKey(), 2);
+	if (code >= 300)
+	{
+		event.Skip();
+		return;
+	}
+
+	// Get the actual key
+	BYTE state[256];
+	GetKeyboardState(state);
+	wxChar buffer[1];
+	int res = ToUnicode(event.GetRawKeyCode(), 0, state, buffer, 1, 0);
+	if (res != 1)
+	{
+		event.Skip();
+		return;
+	}
+	
+	wxChar key = buffer[0];
+
 	if (key < 32)
 	{
 		event.Skip();
 		return;
 	}
-	else if (key == 32 || event.HasModifiers())
+	if (key == 32 && event.HasModifiers())
 	{
 		event.Skip();
 		return;
