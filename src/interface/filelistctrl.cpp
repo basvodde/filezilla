@@ -9,11 +9,26 @@
 #include <algorithm>
 #include "filelist_statusbar.h"
 
+#ifndef __WXMSW__
+DECLARE_EVENT_TYPE(fz_EVT_FILELIST_FOCUSCHANGE, -1)
+DECLARE_EVENT_TYPE(fz_EVT_DEFERRED_MOUSEEVENT, -1)
+#ifndef FILELISTCTRL_INCLUDE_TEMPLATE_DEFINITION
+DEFINE_EVENT_TYPE(fz_EVT_FILELIST_FOCUSCHANGE)
+DEFINE_EVENT_TYPE(fz_EVT_DEFERRED_MOUSEEVENT)
+#endif
+#endif
+
 BEGIN_EVENT_TABLE_TEMPLATE1(CFileListCtrl, wxListCtrlEx, CFileData)
 EVT_LIST_COL_CLICK(wxID_ANY, CFileListCtrl<CFileData>::OnColumnClicked)
 EVT_LIST_COL_RIGHT_CLICK(wxID_ANY, CFileListCtrl<CFileData>::OnColumnRightClicked)
 EVT_LIST_ITEM_SELECTED(wxID_ANY, CFileListCtrl<CFileData>::OnItemSelected)
 EVT_LIST_ITEM_DESELECTED(wxID_ANY, CFileListCtrl<CFileData>::OnItemDeselected)
+#ifndef __WXMSW__
+EVT_LIST_ITEM_FOCUSED(wxID_ANY, CFileListCtrl<CFileData>::OnFocusChanged)
+EVT_COMMAND(wxID_ANY, fz_EVT_FILELIST_FOCUSCHANGE, CFileListCtrl<CFileData>::OnProcessFocusChange)
+EVT_LEFT_DOWN(CFileListCtrl<CFileData>::OnLeftDown)
+EVT_COMMAND(wxID_ANY, fz_EVT_DEFERRED_MOUSEEVENT, CFileListCtrl<CFileData>::OnProcessMouseEvent)
+#endif
 END_EVENT_TABLE()
 
 #ifdef __WXMSW__
@@ -112,6 +127,9 @@ template<class CFileData> CFileListCtrl<CFileData>::CFileListCtrl(wxWindow* pPar
 	// Subclass window
 	m_hwnd_map[(HWND)pParent->GetHandle()] = this;
 	m_prevWndproc = (WNDPROC)SetWindowLongPtr((HWND)pParent->GetHandle(), GWLP_WNDPROC, (LONG_PTR)WindowProc);
+#else
+	m_pending_focus_processing = 0;
+	m_focusItem = -1;
 #endif
 }
 
@@ -588,12 +606,21 @@ template<class CFileData> void CFileListCtrl<CFileData>::OnItemSelected(wxListEv
 	// On MSW this is done in the subclassed window proc
 	if (m_insideSetSelection)
 		return;
+	if (m_pending_focus_processing)
+		return;
+#endif
+
+	const int item = event.GetIndex();
+
+#ifndef __WXMSW__
+	if (m_selections[item])
+		return;
+	m_selections[item] = true;
 #endif
 
 	if (!m_pFilelistStatusBar)
 		return;
 
-	const int item = event.GetIndex();
 	if (item < 0 || item >= (int)m_indexMapping.size())
 		return;
 
@@ -619,10 +646,17 @@ template<class CFileData> void CFileListCtrl<CFileData>::OnItemDeselected(wxList
 		return;
 #endif
 
+	const int item = event.GetIndex();
+
+#ifndef __WXMSW__
+	if (!m_selections[item])
+		return;
+	m_selections[item] = false;
+#endif
+
 	if (!m_pFilelistStatusBar)
 		return;
 
-	const int item = event.GetIndex();
 	if (item < 0 || item >= (int)m_indexMapping.size())
 		return;
 
@@ -645,4 +679,141 @@ template<class CFileData> void CFileListCtrl<CFileData>::SetSelection(int item, 
 	m_insideSetSelection = true;
 	SetItemState(item, select ? wxLIST_STATE_SELECTED : 0, wxLIST_STATE_SELECTED);
 	m_insideSetSelection = false;
+#ifndef __WXMSW__
+	m_selections[item] = select;
+#endif
 }
+
+#ifndef __WXMSW__
+template<class CFileData> void CFileListCtrl<CFileData>::OnFocusChanged(wxListEvent& event)
+{
+	const int focusItem = event.GetIndex();
+
+	// Need to defer processing, as focus it set before selection by wxWidgets internally
+	wxCommandEvent evt;
+	evt.SetEventType(fz_EVT_FILELIST_FOCUSCHANGE);
+	evt.SetInt(m_focusItem);
+	evt.SetExtraLong((long)focusItem);
+	m_pending_focus_processing++;
+	AddPendingEvent(evt);
+
+	m_focusItem = focusItem;
+}
+
+template<class CFileData> void CFileListCtrl<CFileData>::SetItemCount(int count)
+{
+	m_selections.resize(count, false);
+	if (m_focusItem >= count)
+		m_focusItem = -1;
+	wxListCtrlEx::SetItemCount(count);
+}
+
+template<class CFileData> void CFileListCtrl<CFileData>::OnProcessFocusChange(wxCommandEvent& event)
+{
+	m_pending_focus_processing--;
+	int old_focus = event.GetInt();
+	int new_focus = (int)event.GetExtraLong();
+
+	if (old_focus >= GetItemCount())
+		return;
+
+	if (old_focus != -1)
+	{
+		bool selected = GetItemState(old_focus, wxLIST_STATE_SELECTED) == wxLIST_STATE_SELECTED;
+		if (!selected && m_selections[old_focus])
+		{
+			// Need to deselect all
+			if (m_pFilelistStatusBar)
+				m_pFilelistStatusBar->UnselectAll();
+			for (unsigned int i = 0; i < m_selections.size(); i++)
+				m_selections[i] = 0;
+		}
+	}
+
+	int min;
+	int max;
+	if (new_focus > old_focus)
+	{
+		min = old_focus;
+		max = new_focus;
+	}
+	else
+	{
+		min = new_focus;
+		max = old_focus;
+	}
+	if (min == -1)
+		min++;
+	if (max == -1)
+		return;
+
+	if (max >= GetItemCount())
+		return;
+
+	for (int i = min; i <= max; i++)
+	{
+		bool selected = GetItemState(i, wxLIST_STATE_SELECTED) == wxLIST_STATE_SELECTED;
+		if (selected == m_selections[i])
+			continue;
+
+		m_selections[i] = selected;
+
+		if (!m_pFilelistStatusBar)
+			continue;
+
+		if (m_hasParent && !i)
+			continue;
+
+		const int index = m_indexMapping[i];
+		const CFileData& data = m_fileData[index];
+		if (data.flags == fill)
+			continue;
+
+		if (selected)
+		{
+			if (ItemIsDir(index))
+				m_pFilelistStatusBar->SelectDirectory();
+			else
+				m_pFilelistStatusBar->SelectFile(ItemGetSize(index));
+		}
+		else
+		{
+			if (ItemIsDir(index))
+				m_pFilelistStatusBar->UnselectDirectory();
+			else
+				m_pFilelistStatusBar->UnselectFile(ItemGetSize(index));
+		}
+	}
+}
+
+template<class CFileData> void CFileListCtrl<CFileData>::OnLeftDown(wxMouseEvent& event)
+{
+	// Left clicks in the whitespace around the items deselect everything
+	// but does not change focus. Defer event.
+	event.Skip();
+	wxCommandEvent evt;
+	evt.SetEventType(fz_EVT_DEFERRED_MOUSEEVENT);
+	AddPendingEvent(evt);
+}
+
+template<class CFileData> void CFileListCtrl<CFileData>::OnProcessMouseEvent(wxCommandEvent& event)
+{
+	if (m_pending_focus_processing)
+		return;
+
+	if (m_focusItem >= GetItemCount())
+		return;
+	if (m_focusItem == -1)
+		return;
+
+	bool selected = GetItemState(m_focusItem, wxLIST_STATE_SELECTED) == wxLIST_STATE_SELECTED;
+	if (!selected && m_selections[m_focusItem])
+	{
+		// Need to deselect all
+		if (m_pFilelistStatusBar)
+			m_pFilelistStatusBar->UnselectAll();
+		for (unsigned int i = 0; i < m_selections.size(); i++)
+			m_selections[i] = 0;
+	}
+}
+#endif

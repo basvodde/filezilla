@@ -118,17 +118,25 @@ protected:
 #endif
 
 	void SetSelection(int item, bool select);
+#ifndef __WXMSW__
+	// Used by selection tracking
+	void SetItemCount(int count);
+#endif
 
 private:
 	void SortList_UpdateSelections(bool* selections, int focus);
 
 	// If this is set to true, don't process selection changed events
-	bool m_insideSetSelection; 
+	bool m_insideSetSelection;
 
 #ifdef __WXMSW__
 	static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	WNDPROC m_prevWndproc;
 	static std::map<HWND, CFileListCtrl<CFileData>*> m_hwnd_map;
+#else
+	int m_focusItem;
+	std::vector<bool> m_selections;
+	int m_pending_focus_processing;
 #endif
 
 	DECLARE_EVENT_TABLE()
@@ -136,6 +144,12 @@ private:
 	void OnColumnRightClicked(wxListEvent& event);
 	void OnItemSelected(wxListEvent& event);
 	void OnItemDeselected(wxListEvent& event);
+#ifndef __WXMSW__
+	void OnFocusChanged(wxListEvent& event);
+	void OnProcessFocusChange(wxCommandEvent& event);
+	void OnLeftDown(wxMouseEvent& event);
+	void OnProcessMouseEvent(wxCommandEvent& event);
+#endif
 };
 
 #ifdef FILELISTCTRL_INCLUDE_TEMPLATE_DEFINITION

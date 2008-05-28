@@ -301,7 +301,7 @@ bool CLocalListView::DisplayDir(wxString dirname)
 			if (item == -1)
 				break;
 			SetSelection(item, false);
-			
+
 		}
 		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
 		if (item != -1)
@@ -480,7 +480,7 @@ wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix = false)
 		else
 		{
 			int last = (size % 1000000).GetLo();
-			return wxString::Format(wxPLURAL("%s byte", "%s bytes", last), result);
+			return wxString::Format(wxPLURAL("%s byte", "%s bytes", last), result.c_str());
 		}
 	}
 
@@ -1664,7 +1664,7 @@ void CLocalListView::RefreshFile(const wxString& file)
 	data.hasTime = data.lastModified.IsValid();
 
 	// Look if file data already exists
-	int i = 0;
+	unsigned int i = 0;
 	for (std::vector<CLocalFileData>::iterator iter = m_fileData.begin(); iter != m_fileData.end(); iter++, i++)
 	{
 		const CLocalFileData& oldData = *iter;
