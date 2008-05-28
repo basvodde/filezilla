@@ -465,7 +465,15 @@ wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix = false)
 		wxString tmp = size.ToString();
 		const int len = tmp.Len();
 		if (len <= 3)
-			return tmp;
+		{
+			if (!add_bytes_suffix)
+				return tmp;
+			else
+			{
+				const int last = (size % 1000000).GetLo();
+				return wxString::Format(wxPLURAL("%s byte", "%s bytes", last), tmp.c_str());
+			}
+		}
 
 		wxString result;
 		int i = (len - 1) % 3 + 1;
@@ -479,7 +487,7 @@ wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix = false)
 			return result;
 		else
 		{
-			int last = (size % 1000000).GetLo();
+			const int last = (size % 1000000).GetLo();
 			return wxString::Format(wxPLURAL("%s byte", "%s bytes", last), result.c_str());
 		}
 	}
