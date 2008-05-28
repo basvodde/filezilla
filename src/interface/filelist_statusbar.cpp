@@ -32,7 +32,7 @@ void CFilelistStatusBar::UpdateText()
 	if (m_count_selected_files || m_count_selected_dirs)
 	{
 		if (!m_count_selected_files)
-			text = wxString::Format(wxPLURAL("Selected %d directory", "Selected %d directories", m_count_selected_dirs), m_count_selected_dirs);
+			text = wxString::Format(wxPLURAL("Selected %d directory.", "Selected %d directories.", m_count_selected_dirs), m_count_selected_dirs);
 		else if (!m_count_selected_dirs)
 		{
 			const wxString size = FormatSize(m_total_selected_size, true);
