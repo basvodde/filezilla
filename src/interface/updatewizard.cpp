@@ -10,7 +10,7 @@
 #include "Mainfrm.h"
 #ifdef __WXMSW__
 #include <wx/dynlib.h> // Used by GetDownloadDir
-#endif __WXMSW__
+#endif //__WXMSW__
 
 #define MAXCHECKPROGRESS 9 // Maximum value of progress bar
 
