@@ -202,7 +202,7 @@ void wxListCtrlEx::OnKeyDown(wxKeyEvent& event)
 		event.Skip();
 		return;
 	}
-	
+
 	wxChar key = buffer[0];
 
 	if (key < 32)
@@ -350,7 +350,7 @@ void wxListCtrlEx::LoadColumnSettings(int widthsOptionId, int visibilityOptionId
 			bool *order_set = new bool[count];
 			memset(order_set, 0, sizeof(bool) * count);
 
-			int i = 0;
+			unsigned int i = 0;
 			while (tokens.HasMoreTokens())
 			{
 				if (!tokens.GetNextToken().ToULong(&order[i]))
@@ -448,7 +448,7 @@ void wxListCtrlEx::SaveColumnWidths(unsigned int optionId)
 	wxString widths;
 	for (unsigned int i = 0; i < count; i++)
 	{
-		int width;
+		int width = 0;
 
 		bool found = false;
 		for (int j = 0; j < GetColumnCount(); j++)
@@ -710,7 +710,7 @@ int wxListCtrlEx::GetColumnVisibleIndex(int col)
 
 	for (int i = 0; i < GetColumnCount(); i++)
 	{
-		if (m_pVisibleColumnMapping[i] == col)
+		if (m_pVisibleColumnMapping[i] == (unsigned int)col)
 			return i;
 	}
 
@@ -760,4 +760,4 @@ void wxListCtrlEx::SetHeaderIconIndex(int col, int icon)
 		item.fmt &= ~(HDF_IMAGE | HDF_BITMAP_ON_RIGHT);
 	SendMessage(header, HDM_SETITEM, col, (LPARAM)&item);
 }
-#endif __WXMSW__
+#endif //__WXMSW__
