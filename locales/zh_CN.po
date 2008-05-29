@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla 3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-28 20:00+0200\n"
-"PO-Revision-Date: 2008-05-14 21:10+0800\n"
-"Last-Translator: Sun Junwen <sunjw8888@gmail.com>\n"
+"POT-Creation-Date: 2008-05-29 09:30+0200\n"
+"PO-Revision-Date: 2008-05-29 09:29+0100\n"
+"Last-Translator: Tim Kosse <tim.kosse@filezilla-project.org>\n"
 "Language-Team: Evan <evan@freemagi.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -38,7 +38,6 @@ msgstr "%a - 帐号 (如果不是使用帐号登录的方式，该行就会被�
 msgid "%d directory"
 msgid_plural "%d directories"
 msgstr[0] "%d 个目录"
-msgstr[1] "%d 个目录"
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:46
 #: ../../locales/../src/interface/filelist_statusbar.cpp:69
@@ -46,21 +45,18 @@ msgstr[1] "%d 个目录"
 msgid "%d file"
 msgid_plural "%d files"
 msgstr[0] "%d 个文件"
-msgstr[1] "%d 个文件"
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:65
 #, c-format
 msgid "%d file. Total size: %s"
 msgid_plural "%d files. Total size: %s"
 msgstr[0] "%d 个文件。大小总共: %s"
-msgstr[1] "%d 个文件。大小总共: %s"
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:63
 #, c-format
 msgid "%d file. Total size: At least %s"
 msgid_plural "%d files. Total size: At least %s"
 msgstr[0] "%d 个文件。大小总共: 至少 %s"
-msgstr[1] "%d 个文件。大小总共: 至少 %s"
 
 #: ../../locales/../src/interface/QueueView.cpp:2235
 #, c-format
@@ -101,12 +97,12 @@ msgstr "%s 和 %s。大小总共: %s"
 msgid "%s and %s. Total size: At least %s"
 msgstr "%s 和 %s。大小总共: 至少 %s"
 
-#: ../../locales/../src/interface/LocalListView.cpp:483
+#: ../../locales/../src/interface/LocalListView.cpp:474
+#: ../../locales/../src/interface/LocalListView.cpp:491
 #, c-format
 msgid "%s byte"
 msgid_plural "%s bytes"
 msgstr[0] "%s 字节"
-msgstr[1] "%s 字节"
 
 #: ../../locales/../src/interface/updatewizard.cpp:708
 #, c-format
@@ -880,14 +876,14 @@ msgstr ""
 msgid "A file previously opened has been changed:"
 msgstr "之前打开的文件已被改动:"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2003
+#: ../../locales/../src/interface/LocalListView.cpp:2011
 #: ../../locales/../src/interface/RemoteListView.cpp:2328
 msgid ""
 "A file with that name is already being edited. Discard old file and download "
 "the new file?"
 msgstr "该名称的文件已被编辑，要忽略旧版文件并下载新版文件吗？"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1999
+#: ../../locales/../src/interface/LocalListView.cpp:2007
 #: ../../locales/../src/interface/RemoteListView.cpp:2317
 msgid "A file with that name is already being transferred."
 msgstr "该名称的文件已经传输。"
@@ -1330,7 +1326,7 @@ msgstr "无法选择过滤器"
 msgid "Cannot show dialog"
 msgstr "无法显示对话框"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1999
+#: ../../locales/../src/interface/LocalListView.cpp:2007
 #: ../../locales/../src/interface/RemoteListView.cpp:2317
 msgid "Cannot view / edit selected file"
 msgstr "无法查看/编辑所选的文件"
@@ -1853,7 +1849,7 @@ msgstr "使 Filezilla 立即崩溃。只用作特殊调试"
 msgid "Create a new subdirectory in the current directory"
 msgstr "在当前目录创建一个新的子目录"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1175
+#: ../../locales/../src/interface/LocalListView.cpp:1183
 #: ../../locales/../src/interface/LocalTreeView.cpp:1297
 #: ../../locales/../src/interface/RemoteListView.cpp:1293
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1209
@@ -2035,7 +2031,7 @@ msgid "Direction"
 msgstr "方向"
 
 #: resources.h:177 resources.h:628 resources.h:718 resources.h:719
-#: ../../locales/../src/interface/filelistctrl.cpp:343
+#: ../../locales/../src/interface/filelistctrl.cpp:359
 #: ../../locales/../src/interface/Mainfrm.cpp:2204
 msgid "Directory comparison"
 msgstr "比较目录"
@@ -2279,7 +2275,7 @@ msgstr "加密"
 msgid "Encryption details"
 msgstr "加密细节"
 
-#: ../../locales/../src/interface/filelistctrl.cpp:345
+#: ../../locales/../src/interface/filelistctrl.cpp:361
 msgid "End comparison and change sorting order?"
 msgstr "结束对比并改变排序?"
 
@@ -2459,8 +2455,8 @@ msgstr "FTPES - 通过显式 TLS/SSL 的 FTP"
 msgid "FTPS - FTP over implicit TLS/SSL"
 msgstr "FTPS - 通过隐式 TLS/SSL 的 FTP"
 
-#: ../../locales/../src/interface/LocalListView.cpp:600
-#: ../../locales/../src/interface/LocalListView.cpp:1290
+#: ../../locales/../src/interface/LocalListView.cpp:608
+#: ../../locales/../src/interface/LocalListView.cpp:1298
 #: ../../locales/../src/interface/LocalTreeView.cpp:874
 #: ../../locales/../src/interface/viewheader.cpp:495
 msgid "Failed to change directory"
@@ -2638,9 +2634,9 @@ msgstr "回到主动模式"
 msgid "Fil&es"
 msgstr "文件(&E)"
 
-#: ../../locales/../src/interface/filelistctrl.cpp:398
-#: ../../locales/../src/interface/filelistctrl.cpp:416
-#: ../../locales/../src/interface/filelistctrl.cpp:426
+#: ../../locales/../src/interface/filelistctrl.cpp:414
+#: ../../locales/../src/interface/filelistctrl.cpp:432
+#: ../../locales/../src/interface/filelistctrl.cpp:442
 msgid "File"
 msgstr "文件"
 
@@ -2725,11 +2721,11 @@ msgstr "文件名非法"
 msgid "Filename unchanged"
 msgstr "文件名没有改变"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1385
+#: ../../locales/../src/interface/LocalListView.cpp:1393
 msgid "Filenames may not contain any of the following characters: / * ? < > |"
 msgstr "文件名不能包含以下任何字符: / * ? < > |"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1360
+#: ../../locales/../src/interface/LocalListView.cpp:1368
 msgid ""
 "Filenames may not contain any of the following characters: / \\ : * ? \" < > "
 "|"
@@ -2802,7 +2798,7 @@ msgstr "指纹:"
 msgid "Firewall and router configuration wizard"
 msgstr "防火墙和路由器配置向导"
 
-#: ../../locales/../src/interface/filelistctrl.cpp:421
+#: ../../locales/../src/interface/filelistctrl.cpp:437
 msgid "Folder"
 msgstr "文件夹"
 
@@ -3136,8 +3132,8 @@ msgstr "收到非法数据"
 msgid "Invalid date"
 msgstr "非法数据"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1360
-#: ../../locales/../src/interface/LocalListView.cpp:1385
+#: ../../locales/../src/interface/LocalListView.cpp:1368
+#: ../../locales/../src/interface/LocalListView.cpp:1393
 msgid "Invalid filename"
 msgstr "非法文件名"
 
@@ -3541,10 +3537,10 @@ msgstr "打开文件。"
 msgid "Open the settings dialog of FileZilla"
 msgstr "打开 FileZilla 的设置对话框"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1990
-#: ../../locales/../src/interface/LocalListView.cpp:2018
-#: ../../locales/../src/interface/LocalListView.cpp:2070
-#: ../../locales/../src/interface/LocalListView.cpp:2077
+#: ../../locales/../src/interface/LocalListView.cpp:1998
+#: ../../locales/../src/interface/LocalListView.cpp:2026
+#: ../../locales/../src/interface/LocalListView.cpp:2078
+#: ../../locales/../src/interface/LocalListView.cpp:2085
 msgid "Opening failed"
 msgstr "打开失败"
 
@@ -3776,7 +3772,7 @@ msgstr ""
 "请输入原始FTP命令。\n"
 "使用原始的ftp命令将会清空目录缓存。"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1175
+#: ../../locales/../src/interface/LocalListView.cpp:1183
 #: ../../locales/../src/interface/LocalTreeView.cpp:1297
 #: ../../locales/../src/interface/RemoteListView.cpp:1293
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1209
@@ -4286,25 +4282,22 @@ msgid "Select the private data you would like to delete."
 msgstr "请选择您要删除的个人信息。"
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:35
-#, c-format
-msgid "Selected %d directory"
-msgid_plural "Selected %d directories"
+#, fuzzy, c-format
+msgid "Selected %d directory."
+msgid_plural "Selected %d directories."
 msgstr[0] "选中 %d 个文件夹"
-msgstr[1] "选中 %d 个文件夹"
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:42
 #, c-format
 msgid "Selected %d file. Total size: %s"
 msgid_plural "Selected %d files. Total size: %s"
 msgstr[0] "选中 %d 个文件。大小总共: %s"
-msgstr[1] "选中 %d 个文件。大小总共: %s"
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:40
 #, c-format
 msgid "Selected %d file. Total size: At least %s"
 msgid_plural "Selected %d files. Total size: At least %s"
 msgstr[0] "选中 %d 个文件。大小总共: 至少 %s"
-msgstr[1] "选中 %d 个文件。大小总共: 至少 %s"
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:52
 #, c-format
@@ -4320,7 +4313,7 @@ msgstr "选中 %s 和 %s。大小总共: 至少 %s"
 msgid "Selected editor does not exist"
 msgstr "所选的编辑器不存在"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2003
+#: ../../locales/../src/interface/LocalListView.cpp:2011
 #: ../../locales/../src/interface/RemoteListView.cpp:2328
 msgid "Selected file already being edited"
 msgstr "已在编辑所选的文件。"
@@ -4565,7 +4558,7 @@ msgstr "一些配置错误的远程服务器放在了路由器后面，可能会
 msgid "Sort directories inline"
 msgstr "排序目录列表"
 
-#: ../../locales/../src/interface/filelistctrl.cpp:344
+#: ../../locales/../src/interface/filelistctrl.cpp:360
 msgid "Sort order cannot be changed if comparing directories."
 msgstr "对比目录时不能改变目录排序。"
 
@@ -4749,8 +4742,8 @@ msgstr ""
 msgid "The file '%s' could not be loaded or does not contain a private key."
 msgstr "文件‘%s’不能被加载或者不含私钥。"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1990
-#: ../../locales/../src/interface/LocalListView.cpp:2070
+#: ../../locales/../src/interface/LocalListView.cpp:1998
+#: ../../locales/../src/interface/LocalListView.cpp:2078
 #, c-format
 msgid ""
 "The file '%s' could not be opened:\n"
@@ -4759,8 +4752,8 @@ msgstr ""
 "无法打开文件 '%s':\n"
 "系统中没有设置此类型文件关联的程序。"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2018
-#: ../../locales/../src/interface/LocalListView.cpp:2077
+#: ../../locales/../src/interface/LocalListView.cpp:2026
+#: ../../locales/../src/interface/LocalListView.cpp:2085
 #, c-format
 msgid ""
 "The file '%s' could not be opened:\n"
@@ -5470,10 +5463,10 @@ msgstr "作结尾"
 msgid "equals"
 msgstr "相等"
 
-#: ../../locales/../src/interface/filelistctrl.cpp:395
-#: ../../locales/../src/interface/filelistctrl.cpp:413
-#: ../../locales/../src/interface/filelistctrl.cpp:437
+#: ../../locales/../src/interface/filelistctrl.cpp:411
+#: ../../locales/../src/interface/filelistctrl.cpp:429
 #: ../../locales/../src/interface/filelistctrl.cpp:453
+#: ../../locales/../src/interface/filelistctrl.cpp:469
 msgid "file"
 msgstr "文件"
 
