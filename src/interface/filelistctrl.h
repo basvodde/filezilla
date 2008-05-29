@@ -132,7 +132,8 @@ private:
 #ifdef __WXMSW__
 	static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	WNDPROC m_prevWndproc;
-	static std::map<HWND, CFileListCtrl<CFileData>*> m_hwnd_map;
+	// char* instead of CFileListCtrl<CFileData> due to bug in mingw compiler
+	static std::map<HWND, char*> m_hwnd_map;
 #else
 	int m_focusItem;
 	std::vector<bool> m_selections;

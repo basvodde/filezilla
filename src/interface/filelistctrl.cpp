@@ -34,17 +34,28 @@ END_EVENT_TABLE()
 #ifdef __WXMSW__
 // wxWidgets does not hnadle LVN_ODSTATECHANGED, work around it
 
-template<class CFileData> std::map<HWND, CFileListCtrl<CFileData>*> CFileListCtrl<CFileData>::m_hwnd_map;
+template<class CFileData> std::map<HWND, char*> CFileListCtrl<CFileData>::m_hwnd_map;
+
+#pragma pack(push, 1)
+typedef struct fz_tagNMLVODSTATECHANGE
+{
+    NMHDR hdr;
+    int iFrom;
+    int iTo;
+    UINT uNewState;
+    UINT uOldState;
+} fzNMLVODSTATECHANGE;
+#pragma pack(pop)
 
 template<class CFileData> LRESULT CALLBACK CFileListCtrl<CFileData>::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	std::map<HWND, CFileListCtrl<CFileData>*>::iterator iter = m_hwnd_map.find(hWnd);
+	std::map<HWND, char*>::iterator iter = m_hwnd_map.find(hWnd);
 	if (iter == m_hwnd_map.end())
 	{
 		// This shouldn't happen
         return 0;
 	}
-	CFileListCtrl<CFileData>* pFileListCtrl = iter->second;
+	CFileListCtrl<CFileData>* pFileListCtrl = (CFileListCtrl<CFileData>*)iter->second;
 
 	if (uMsg != WM_NOTIFY)
         return CallWindowProc(pFileListCtrl->m_prevWndproc, hWnd, uMsg, wParam, lParam);
@@ -59,7 +70,7 @@ template<class CFileData> LRESULT CALLBACK CFileListCtrl<CFileData>::WindowProc(
 			return 0;
 
 		// A range of items go (de)selected
-		NMLVODSTATECHANGE* pNmOdStateChange = (NMLVODSTATECHANGE*)lParam;
+		fzNMLVODSTATECHANGE* pNmOdStateChange = (fzNMLVODSTATECHANGE*)lParam;
 
 		if (!pFileListCtrl->m_pFilelistStatusBar)
 			return 0;
@@ -125,7 +136,7 @@ template<class CFileData> CFileListCtrl<CFileData>::CFileListCtrl(wxWindow* pPar
 	m_insideSetSelection = false;
 #ifdef __WXMSW__
 	// Subclass window
-	m_hwnd_map[(HWND)pParent->GetHandle()] = this;
+	m_hwnd_map[(HWND)pParent->GetHandle()] = (char*)this;
 	m_prevWndproc = (WNDPROC)SetWindowLongPtr((HWND)pParent->GetHandle(), GWLP_WNDPROC, (LONG_PTR)WindowProc);
 #else
 	m_pending_focus_processing = 0;
@@ -140,7 +151,12 @@ template<class CFileData> CFileListCtrl<CFileData>::~CFileListCtrl()
 
 	// Remove subclass
 	if (m_prevWndproc != 0)
+	{
 		SetWindowLongPtr((HWND)GetParent()->GetHandle(), GWLP_WNDPROC, (LONG_PTR)m_prevWndproc);
+		std::map<HWND, char*>::iterator iter = m_hwnd_map.find((HWND)GetParent()->GetHandle());
+		if (iter != m_hwnd_map.end())
+			m_hwnd_map.erase(iter);
+	}
 #endif
 }
 
