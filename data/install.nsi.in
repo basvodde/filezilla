@@ -75,6 +75,8 @@
   Page custom PageReinstall PageLeaveReinstall
   Page custom PageAllUsers PageLeaveAllUsers
   !insertmacro MUI_PAGE_COMPONENTS
+
+  !define MUI_PAGE_CUSTOMFUNCTION_PRE PageDirectoryPre
   !insertmacro MUI_PAGE_DIRECTORY
 
   ;Start Menu Folder Page Configuration
@@ -83,6 +85,7 @@
   !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Startmenu"
   !define MUI_STARTMENUPAGE_DEFAULTFOLDER "FileZilla FTP Client"
   
+  !define MUI_PAGE_CUSTOMFUNCTION_PRE PageStartmenuPre
   !insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
 
   !define MUI_PAGE_CUSTOMFUNCTION_SHOW PageInstfilesShow
@@ -153,9 +156,35 @@ Function ReadAllUsersCommandline
   ${EndUnless}
 FunctionEnd
 
+Function CheckPrevInstallDirExists
+
+  ${If} $PREVIOUS_INSTALLDIR != ""
+
+    ; Make sure directory is valid
+    Push $R0
+    Push $R1
+    StrCpy $R0 "$PREVIOUS_INSTALLDIR" "" -1
+    ${If} $R0 == '\'
+    ${OrIf} $R0 == '/'
+      StrCpy $R0 $PREVIOUS_INSTALLDIR*.*
+    ${Else}
+      StrCpy $R0 $PREVIOUS_INSTALLDIR\*.*
+    ${EndIf}
+    ${IfNot} ${FileExists} $R0
+      StrCpy $PREVIOUS_INSTALLDIR ""
+    ${EndIf}
+    Pop $R1
+    Pop $R0
+
+  ${EndIf}
+
+FunctionEnd
+
 Function ReadPreviousVersion
 
   ReadRegStr $PREVIOUS_INSTALLDIR HKLM "Software\FileZilla Client" ""
+
+  Call CheckPrevInstallDirExists
 
   ${If} $PREVIOUS_INSTALLDIR != ""
     ;Detect version
@@ -169,6 +198,8 @@ Function ReadPreviousVersion
   ${EndIf}
   
   ReadRegStr $PREVIOUS_INSTALLDIR HKCU "Software\FileZilla Client" ""
+
+  Call CheckPrevInstallDirExists
 
   ${If} $PREVIOUS_INSTALLDIR != ""
     ;Detect version
@@ -324,47 +355,41 @@ Function PageReinstall
   ${If} $PREVIOUS_VERSION_STATE == "newer"
 
     !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose how you want to install FileZilla."
-    nsDialogs::CreateItem /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 0 0 100% 40 "An older version of FileZilla is installed on your system. It's recommended that you uninstall the current version before installing. Select the operation you want to perform and click Next to continue."
+    nsDialogs::CreateItem /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 0 0 100% 40 "An older version of FileZilla is installed on your system. Select the operation you want to perform and click Next to continue."
     Pop $R0
-    nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_VCENTER}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}|${WS_GROUP}|${WS_TABSTOP} 0 10 55 100% 30 "Uninstall before installing"
+    nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_VCENTER}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}|${WS_GROUP}|${WS_TABSTOP} 0 10 55 100% 30 "Upgrade FileZilla using previous settings (recommended)"
     Pop $REINSTALL_UNINSTALLBUTTON
-    nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_TOP}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 10 85 100% 50 "Do not uninstall"
+    nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_TOP}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 10 85 100% 50 "Change settings (advanced)"
     Pop $R0
-    ${If} $REINSTALL_UNINSTALL == ""
-      StrCpy $REINSTALL_UNINSTALL 1
-    ${EndIf}
 
   ${ElseIf} $PREVIOUS_VERSION_STATE == "older"
 
     !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose how you want to install FileZilla."
-    nsDialogs::CreateItem /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 0 0 100% 40 "A newer version of FileZilla is already installed! It is not recommended that you install an older version. If you really want to install this older version, it's better to uninstall the current version first. Select the operation you want to perform and click Next to continue."
+    nsDialogs::CreateItem /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 0 0 100% 40 "A newer version of FileZilla is already installed! It is not recommended that you downgrade to an older version. Select the operation you want to perform and click Next to continue."
     Pop $R0
-    nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_VCENTER}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}|${WS_GROUP}|${WS_TABSTOP} 0 10 55 100% 30 "Uninstall before installing"
+    nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_VCENTER}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}|${WS_GROUP}|${WS_TABSTOP} 0 10 55 100% 30 "Downgrade FileZilla using previous settings (recommended)"
     Pop $REINSTALL_UNINSTALLBUTTON
-    nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_TOP}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 10 85 100% 50 "Do not uninstall"
+    nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_TOP}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 10 85 100% 50 "Change settings (advanced)"
     Pop $R0
-    ${If} $REINSTALL_UNINSTALL == ""
-      StrCpy $REINSTALL_UNINSTALL 1
-    ${EndIf}
-  
+
   ${ElseIf} $PREVIOUS_VERSION_STATE == "same"
 
     !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose the maintenance option to perform."
     nsDialogs::CreateItem /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 0 0 100% 40 "FileZilla ${VERSION} is already installed. Select the operation you want to perform and click Next to continue."
     Pop $R0
-    nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_VCENTER}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}|${WS_GROUP}|${WS_TABSTOP} 0 10 55 100% 30 "Add/Reinstall components"
+    nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_VCENTER}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}|${WS_GROUP}|${WS_TABSTOP} 0 10 55 100% 30 "Add/Remove/Reinstall components"
     Pop $R0
     nsDialogs::CreateItem /NOUNLOAD BUTTON ${BS_AUTORADIOBUTTON}|${BS_TOP}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 10 85 100% 50 "Uninstall FileZilla"
     Pop $REINSTALL_UNINSTALLBUTTON
-    ${If} $REINSTALL_UNINSTALL == ""
-      StrCpy $REINSTALL_UNINSTALL 1
-    ${EndIf}
-
   ${Else}
 
     MessageBox MB_ICONSTOP "Unknown value of PREVIOUS_VERSION_STATE, aborting"
     Abort
 
+  ${EndIf}
+
+  ${If} $REINSTALL_UNINSTALL == ""
+    StrCpy $REINSTALL_UNINSTALL 1
   ${EndIf}
 
   ${If} $REINSTALL_UNINSTALL == "1"
@@ -391,6 +416,7 @@ Function RunUninstaller
   ClearErrors
 
   ${If} $PREVIOUS_VERSION_STATE == "same"
+  ${AndIf} $REINSTALL_UNINSTALL == "2"
     ExecWait '$R1 _?=$INSTDIR'
   ${Else}
     ExecWait '$R1 /frominstall _?=$INSTDIR'
@@ -411,22 +437,27 @@ Function PageLeaveReinstall
 
   SendMessage $REINSTALL_UNINSTALLBUTTON ${BM_GETCHECK} 0 0 $R0
   ${If} $R0 == 1
+    ; Option to uninstall old version selected
     StrCpy $REINSTALL_UNINSTALL 1
   ${Else}
+    ; Custom up/downgrade or add/remove/reinstall
     StrCpy $REINSTALL_UNINSTALL 2
   ${EndIf}
 
   ${If} $REINSTALL_UNINSTALL == 1
   ${AndIf} $PREVIOUS_VERSION_STATE == "same"
-
-    Call RunUninstaller
-    Quit
-
+      Call RunUninstaller
+      Quit
   ${EndIf}
 
 FunctionEnd
 
 Function PageAllUsers
+
+  ${If} $REINSTALL_UNINSTALL == 1
+    ; Keep same settings
+    Abort
+  ${EndIf}
 
   !insertmacro MUI_HEADER_TEXT "Choose Installation Options" "Who should this application be installed for?"
 
@@ -497,9 +528,45 @@ Function PageLeaveAllUsers
 
 FunctionEnd
 
+Function PageDirectoryPre
+
+  ${If} $REINSTALL_UNINSTALL == "1"
+
+    Abort
+
+  ${EndIf}
+
+FunctionEnd
+
+Function PageStartmenuPre
+
+  ${If} $REINSTALL_UNINSTALL == "1"
+
+    !define ID "Application"
+
+    !ifdef MUI_STARTMENUPAGE_${ID}_REGISTRY_ROOT & MUI_STARTMENUPAGE_${ID}_REGISTRY_KEY & MUI_STARTMENUPAGE_${ID}_REGISTRY_VALUENAME
+
+      ReadRegStr $mui.StartMenuPage.RegistryLocation "${MUI_STARTMENUPAGE_${ID}_REGISTRY_ROOT}" "${MUI_STARTMENUPAGE_${ID}_REGISTRY_KEY}" "${MUI_STARTMENUPAGE_${ID}_REGISTRY_VALUENAME}"
+    
+      ${if} $mui.StartMenuPage.RegistryLocation != ""
+        StrCpy "$STARTMENU_FOLDER" $mui.StartMenuPage.RegistryLocation
+      ${else}
+        StrCpy "$STARTMENU_FOLDER" ">"
+      ${endif}
+
+      !undef ID
+
+    !endif
+
+    Abort
+
+  ${EndIf}
+
+FunctionEnd
+
 Function PageInstfilesShow
 
-  ${If} $REINSTALL_UNINSTALL == 1
+  ${If} $REINSTALL_UNINSTALL != ""
 
     Call RunUninstaller
     BringToFront
@@ -590,6 +657,14 @@ Section "FileZilla Client" SecMain
   CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\FileZilla.lnk" "$INSTDIR\filezilla.exe"
   
   !insertmacro MUI_STARTMENU_WRITE_END
+
+  Push $R0
+  StrCpy $R0 "$STARTMENU_FOLDER" 1
+  ${if} $R0 == ">"
+    ;Write folder to registry
+    WriteRegStr "${MUI_STARTMENUPAGE_Application_REGISTRY_ROOT}" "${MUI_STARTMENUPAGE_Application_REGISTRY_KEY}" "${MUI_STARTMENUPAGE_Application_REGISTRY_VALUENAME}" ">"
+  ${endif}
+  Pop $R0
 
 SectionEnd
 
