@@ -55,8 +55,8 @@
   Var PREVIOUS_VERSION_STATE
   Var REINSTALL_UNINSTALL
   Var REINSTALL_UNINSTALLBUTTON
+  Var ALL_USERS_DEFAULT
   Var ALL_USERS
-  Var ALL_USERS_FIXED
   Var ALL_USERS_BUTTON
   Var IS_ADMIN
   Var USERNAME
@@ -131,6 +131,16 @@ Function GetUserInfo
 
 FunctionEnd
 
+Function UpdateShellVarContext
+
+  ${If} $ALL_USERS == 1
+    SetShellVarContext all
+  ${Else}
+    SetShellVarContext current
+  ${EndIf}
+
+FunctionEnd
+
 Function ReadAllUsersCommandline
 
   ${GetParameters} $R0
@@ -140,29 +150,17 @@ Function ReadAllUsersCommandline
   ${Unless} ${Errors}
     ${If} $R1 == "current"
     ${OrIf} $R1 == "=current"
-      ${If} $ALL_USERS_FIXED == 1
-      ${AndIf} $ALL_USERS == 1
-        MessageBox MB_ICONSTOP "Cannot install for current user only. FileZilla has been previously installed for all users.$\nPlease install this version for all users or uninstall previous version first."
-        Abort
-      ${EndIf}
-      SetShellVarContext current
       StrCpy $ALL_USERS 0
-      StrCpy $ALL_USERS_FIXED 1
     ${ElseIf} $R1 == "all"
     ${OrIf} $R1 == "=all"
-      ${If} $ALL_USERS_FIXED == 1
-      ${AndIf} $ALL_USERS == 0
-        MessageBox MB_ICONSTOP "Cannot install for all users. FileZilla has been previously installed for the current user only.$\nPlease install this version for the current user only or uninstall previous version first."
-        Abort
-      ${EndIf}
       StrCpy $ALL_USERS 1
-      StrCpy $ALL_USERS_FIXED 1
-      SetShellVarContext all
     ${Else}
       MessageBox MB_ICONSTOP "Invalid option for /user. Has to be either /user=all or /user=current"
       Abort
     ${EndIf}
   ${EndUnless}
+  Call UpdateShellVarContext
+
 FunctionEnd
 
 Function CheckPrevInstallDirExists
@@ -200,7 +198,6 @@ Function ReadPreviousVersion
     ReadRegStr $PREVIOUS_VERSION HKLM "Software\FileZilla Client" "Version"
     ${If} $PREVIOUS_VERSION != ""
       StrCpy $ALL_USERS 1
-      StrCpy $ALL_USERS_FIXED 1
       SetShellVarContext all
       return
     ${EndIf}
@@ -215,14 +212,38 @@ Function ReadPreviousVersion
     ReadRegStr $PREVIOUS_VERSION HKCU "Software\FileZilla Client" "Version"
     ${If} $PREVIOUS_VERSION != ""
       StrCpy $ALL_USERS 0
-      StrCpy $ALL_USERS_FIXED 1
       SetShellVarContext current
       return
     ${EndIf}
   ${EndIf}
  
-  SetShellVarContext all
-  StrCpy $ALL_USERS 1
+FunctionEnd
+
+Function LoadPreviousSettings
+
+  ; Component selection
+  ${MementoSectionRestore}
+
+  ; Startmenu
+  !define ID "Application"
+
+  !ifdef MUI_STARTMENUPAGE_${ID}_REGISTRY_ROOT & MUI_STARTMENUPAGE_${ID}_REGISTRY_KEY & MUI_STARTMENUPAGE_${ID}_REGISTRY_VALUENAME
+
+    ReadRegStr $mui.StartMenuPage.RegistryLocation "${MUI_STARTMENUPAGE_${ID}_REGISTRY_ROOT}" "${MUI_STARTMENUPAGE_${ID}_REGISTRY_KEY}" "${MUI_STARTMENUPAGE_${ID}_REGISTRY_VALUENAME}"
+
+    ${if} $mui.StartMenuPage.RegistryLocation != ""
+      StrCpy "$STARTMENU_FOLDER" $mui.StartMenuPage.RegistryLocation
+    ${else}
+      StrCpy "$STARTMENU_FOLDER" ""
+    ${endif}
+
+    !undef ID
+
+  !endif
+
+  ${If} $PREVIOUS_INSTALLDIR != ""
+    StrCpy $INSTDIR $PREVIOUS_INSTALLDIR
+  ${EndIf}
 
 FunctionEnd
 
@@ -235,25 +256,40 @@ installonoldwindows:
   ${EndUnless}
   
   Call GetUserInfo
+
+  ; Initialize $ALL_USERS with default value
+  ${If} $IS_ADMIN == 1
+    StrCpy $ALL_USERS 1
+  ${Else}
+    StrCpy $ALL_USERS 0
+  ${EndIf}
+  Call UpdateShellVarContext
+
+  ; See if previous version exists
+  ; This can change ALL_USERS
   Call ReadPreviousVersion
+
+  ; Load _all_ previous settings.
+  ; Need to do it now as up to now, $ALL_USERS was possibly reflecting a
+  ; previous installation. After this call, $ALL_USERS reflects the requested
+  ; installation mode for this installation.
+  Call LoadPreviousSettings
+
   Call ReadAllUsersCommandline
 
   ${If} $ALL_USERS == 1
     ${If} $IS_ADMIN == 0
 
-      ${If} $ALL_USERS_FIXED == 1
+      ${If} $PREVIOUS_VERSION != ""
         MessageBox MB_ICONSTOP "FileZilla has been previously installed for all users.$\nPlease restart the installer with Administrator privileges."
         Abort
       ${Else}
-        StrCpy $All_USERS 0
+        MessageBox MB_ICONSTOP "Cannot install for all users.$\nPlease restart the installer with Administrator privileges."
+        Abort
       ${EndIf}
     ${EndIf}
   ${EndIf}
         
-  ${If} $PREVIOUS_INSTALLDIR != ""
-    StrCpy $INSTDIR $PREVIOUS_INSTALLDIR
-  ${EndIf}
-
   ${Unless} $PREVIOUS_VERSION == ""
 
     Push "${VERSION}"
@@ -261,6 +297,8 @@ installonoldwindows:
     Call FZVersionCompare
 
   ${EndUnless}
+
+  StrCpy $ALL_USERS_DEFAULT $ALL_USERS
 
 FunctionEnd
 
@@ -422,7 +460,11 @@ FunctionEnd
 
 Function RunUninstaller
 
-  ReadRegStr $R1 SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "UninstallString"
+  ${If} $ALL_USERS_DEFAULT == 1
+    ReadRegStr $R1 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "UninstallString"
+  ${Else}
+    ReadRegStr $R1 HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "UninstallString"
+  ${EndIf}
 
   ${If} $R1 == ""
     Return
@@ -463,9 +505,23 @@ Function PageLeaveReinstall
   ${EndIf}
 
   ${If} $REINSTALL_UNINSTALL == 1
-  ${AndIf} $PREVIOUS_VERSION_STATE == "same"
+
+    ${If} $PREVIOUS_VERSION_STATE == "same"
+
       Call RunUninstaller
       Quit
+
+    ${Else}
+
+      ; Need to reload defaults. User could have
+      ; chosen custom, change something, went back and selected
+      ; the express option.
+      StrCpy $ALL_USERS $ALL_USERS_DEFAULT
+      Call UpdateShellVarContext
+      Call LoadPreviousSettings
+
+    ${EndIf}
+
   ${EndIf}
 
 FunctionEnd
@@ -486,24 +542,14 @@ Function PageAllUsers
   Pop $R0
   
   ${If} $IS_ADMIN == 1
-    ${If} $ALL_USERS_FIXED == 1
-    ${AndIf} $ALL_USERS == 0
-      StrCpy $R2 ${BS_AUTORADIOBUTTON}|${BS_VCENTER}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}|${WS_GROUP}|${WS_TABSTOP}|${WS_DISABLED}
-    ${Else}
-      StrCpy $R2 ${BS_AUTORADIOBUTTON}|${BS_VCENTER}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}|${WS_GROUP}|${WS_TABSTOP}
-    ${EndIf}
+    StrCpy $R2 ${BS_AUTORADIOBUTTON}|${BS_VCENTER}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}|${WS_GROUP}|${WS_TABSTOP}
   ${Else}
     StrCpy $R2 ${BS_AUTORADIOBUTTON}|${BS_VCENTER}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}|${WS_GROUP}|${WS_TABSTOP}|${WS_DISABLED}
   ${EndIf}
   nsDialogs::CreateItem /NOUNLOAD BUTTON $R2 0 10 55 100% 30 "&Anyone who uses this computer (all users)"
   Pop $ALL_USERS_BUTTON
   
-  ${If} $ALL_USERS_FIXED == 1
-  ${AndIf} $ALL_USERS == 1
-    StrCpy $R2 ${BS_AUTORADIOBUTTON}|${BS_TOP}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}|${WS_DISABLED}
-  ${Else}
-    StrCpy $R2 ${BS_AUTORADIOBUTTON}|${BS_TOP}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}
-  ${EndIf}
+  StrCpy $R2 ${BS_AUTORADIOBUTTON}|${BS_TOP}|${BS_MULTILINE}|${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS}
   
   ${If} $USERNAME != ""
     nsDialogs::CreateItem /NOUNLOAD BUTTON $R2 0 10 85 100% 50 "&Only for me ($USERNAME)"
@@ -512,11 +558,11 @@ Function PageAllUsers
   ${EndIf}
   Pop $R0
   
-  ${If} $ALL_USERS_FIXED == 1
-    ${If} $ALL_USERS == 1
-      nsDialogs::CreateItem /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 0 -30 100% 30 "FileZilla has been previously installed for all users. Please uninstall first before changing setup type."
+  ${If} $PREVIOUS_VERSION != ""
+    ${If} $ALL_USERS_DEFAULT == 1
+      nsDialogs::CreateItem /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 0 -30 100% 30 "FileZilla has been previously installed for all users."
     ${Else}
-      nsDialogs::CreateItem /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 0 -30 100% 30 "FileZilla has been previously installed for this user only. Please uninstall first before changing setup type."
+      nsDialogs::CreateItem /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 0 -30 100% 30 "FileZilla has been previously installed for this user only."
     ${EndIf}
   ${Else}
     nsDialogs::CreateItem /NOUNLOAD STATIC ${WS_VISIBLE}|${WS_CHILD}|${WS_CLIPSIBLINGS} 0 0 -30 100% 30 "Installation for all users requires Administrator privileges."
@@ -538,17 +584,14 @@ Function PageLeaveAllUsers
   SendMessage $ALL_USERS_BUTTON ${BM_GETCHECK} 0 0 $R0
   ${If} $R0 == 0
     StrCpy $ALL_USERS "0"
-    SetShellVarContext current
   ${Else}
     StrCpy $ALL_USERS "1"
-    SetShellVarContext all
   ${EndIf}
+  Call UpdateShellVarContext
 
 FunctionEnd
 
 Function PageComponentsPre
-
-  ${MementoSectionRestore}
 
   ${If} $REINSTALL_UNINSTALL == 1
 
@@ -572,21 +615,11 @@ Function PageStartmenuPre
 
   ${If} $REINSTALL_UNINSTALL == "1"
 
-    !define ID "Application"
+    ${If} "$STARTMENU_FOLDER" == ""
 
-    !ifdef MUI_STARTMENUPAGE_${ID}_REGISTRY_ROOT & MUI_STARTMENUPAGE_${ID}_REGISTRY_KEY & MUI_STARTMENUPAGE_${ID}_REGISTRY_VALUENAME
+      StrCpy "$STARTMENU_FOLDER" ">"
 
-      ReadRegStr $mui.StartMenuPage.RegistryLocation "${MUI_STARTMENUPAGE_${ID}_REGISTRY_ROOT}" "${MUI_STARTMENUPAGE_${ID}_REGISTRY_KEY}" "${MUI_STARTMENUPAGE_${ID}_REGISTRY_VALUENAME}"
-    
-      ${if} $mui.StartMenuPage.RegistryLocation != ""
-        StrCpy "$STARTMENU_FOLDER" $mui.StartMenuPage.RegistryLocation
-      ${else}
-        StrCpy "$STARTMENU_FOLDER" ">"
-      ${endif}
-
-      !undef ID
-
-    !endif
+    ${EndIf}
 
     Abort
 
