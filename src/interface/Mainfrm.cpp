@@ -258,6 +258,8 @@ CMainFrame::CMainFrame()
 	m_pQueuePane = new CQueue(m_pBottomSplitter, this, m_pAsyncRequestQueue);
 	m_pQueueView = m_pQueuePane->GetQueueView();
 
+	bool show_filelist_statusbars = COptions::Get()->GetOptionVal(OPTION_FILELIST_STATUSBAR) != 0;
+
 	m_pLocalTreeViewPanel = new CView(m_pLocalSplitter);
 	m_pLocalListViewPanel = new CView(m_pLocalSplitter);
 	m_pLocalTreeView = new CLocalTreeView(m_pLocalTreeViewPanel, -1, m_pState, m_pQueueView);
@@ -266,8 +268,11 @@ CMainFrame::CMainFrame()
 	m_pLocalListViewPanel->SetWindow(m_pLocalListView);
 
 	CFilelistStatusBar* pLocalFilelistStatusBar = new CFilelistStatusBar(m_pLocalListViewPanel);
+	if (!show_filelist_statusbars)
+		pLocalFilelistStatusBar->Hide();
 	m_pLocalListViewPanel->SetStatusBar(pLocalFilelistStatusBar);
 	m_pLocalListView->SetFilelistStatusBar(pLocalFilelistStatusBar);
+
 	m_pRemoteTreeViewPanel = new CView(m_pRemoteSplitter);
 	m_pRemoteListViewPanel = new CView(m_pRemoteSplitter);
 	m_pRemoteTreeView = new CRemoteTreeView(m_pRemoteTreeViewPanel, -1, m_pState, m_pQueueView);
@@ -276,6 +281,8 @@ CMainFrame::CMainFrame()
 	m_pRemoteListViewPanel->SetWindow(m_pRemoteListView);
 
 	CFilelistStatusBar* pRemoteFilelistStatusBar = new CFilelistStatusBar(m_pRemoteListViewPanel);
+	if (!show_filelist_statusbars)
+		pRemoteFilelistStatusBar->Hide();
 	m_pRemoteListViewPanel->SetStatusBar(pRemoteFilelistStatusBar);
 	m_pRemoteListView->SetFilelistStatusBar(pRemoteFilelistStatusBar);
 
@@ -809,6 +816,31 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 			}
 		}
 		wxLaunchDefaultBrowser(url);
+	}
+	else if (event.GetId() == XRCID("ID_MENU_VIEW_FILELISTSTATUSBAR"))
+	{
+		bool show = COptions::Get()->GetOptionVal(OPTION_FILELIST_STATUSBAR) == 0;
+		COptions::Get()->SetOption(OPTION_FILELIST_STATUSBAR, show ? 1 : 0);
+		if (m_pLocalListViewPanel)
+		{
+			wxStatusBar* pStatusBar = m_pLocalListViewPanel->GetStatusBar();
+			if (pStatusBar)
+			{
+				pStatusBar->Show(show);
+				wxSizeEvent evt;
+				m_pLocalListViewPanel->ProcessEvent(evt);
+			}
+		}
+		if (m_pRemoteListViewPanel)
+		{
+			wxStatusBar* pStatusBar = m_pRemoteListViewPanel->GetStatusBar();
+			if (pStatusBar)
+			{
+				pStatusBar->Show(show);
+				wxSizeEvent evt;
+				m_pRemoteListViewPanel->ProcessEvent(evt);
+			}
+		}
 	}
 	else
 	{
@@ -2322,6 +2354,7 @@ void CMainFrame::InitMenubarState()
 	m_pMenuBar->Check(XRCID("ID_VIEW_LOCALTREE"), m_pLocalSplitter && m_pLocalSplitter->IsSplit());
 	m_pMenuBar->Check(XRCID("ID_VIEW_REMOTETREE"), m_pRemoteSplitter && m_pRemoteSplitter->IsSplit());
 	m_pMenuBar->Check(XRCID("ID_VIEW_QUEUE"), m_pBottomSplitter && m_pBottomSplitter->IsSplit());
+	m_pMenuBar->Check(XRCID("ID_MENU_VIEW_FILELISTSTATUSBAR"), COptions::Get()->GetOptionVal(OPTION_FILELIST_STATUSBAR) != 0);
 }
 
 void CMainFrame::UpdateMenubarState()

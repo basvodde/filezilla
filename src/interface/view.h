@@ -12,6 +12,7 @@ public:
 	CViewHeader* GetHeader() { return m_pHeader; }
 	CViewHeader* DetachHeader();
 	void SetStatusBar(wxStatusBar* pStatusBar);
+	wxStatusBar* GetStatusBar() { return m_pStatusBar; }
 
 protected:
 	wxWindow* m_pWnd;

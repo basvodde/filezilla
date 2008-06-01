@@ -115,7 +115,8 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Local filelist shown columns", string, _T("") },
 	{ "Remote filelist shown columns", string, _T("") },
 	{ "Local filelist column order", string, _T("") },
-	{ "Remote filelist column order", string, _T("") }
+	{ "Remote filelist column order", string, _T("") },
+	{ "Filelist status bar", number, _T("1") }
 };
 
 COptions::COptions()

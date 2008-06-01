@@ -32,7 +32,7 @@ void CView::OnSize(wxSizeEvent& event)
 		rect.SetHeight(rect.GetHeight() - headerRect.GetHeight());
 		rect.SetY(headerRect.GetHeight());
 	}
-	if (m_pStatusBar)
+	if (m_pStatusBar && m_pStatusBar->IsShown())
 	{
 		const int status_height = m_pStatusBar->GetSize().GetHeight();
 		rect.height -= status_height;
