@@ -392,10 +392,13 @@ wxString CServerPath::GetPath() const
 		}
 		break;
 	default:
-		path = _T("/");
-		for (tConstSegmentIter iter = m_Segments.begin(); iter != m_Segments.end(); iter++)
-			path += *iter + _T("/");
-
+		if (m_Segments.empty())
+			path = _T("/");
+		else
+		{
+			for (tConstSegmentIter iter = m_Segments.begin(); iter != m_Segments.end(); iter++)
+				path += _T("/") + *iter;
+		}
 		break;
 	}
 
@@ -1061,7 +1064,7 @@ wxString CServerPath::FormatFilename(const wxString &filename, bool omitPath /*=
 		if (omitPath)
 			return filename;
 		else
-			return GetPath() + filename;
+			return GetPath() + _T("/") + filename;
 	}
 	return _T("");
 }
