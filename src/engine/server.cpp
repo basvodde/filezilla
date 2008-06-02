@@ -18,6 +18,18 @@ static const t_protocolInfo protocolInfos[] = {
 	{ UNKNOWN, _T(""),      21,  false, _T("") }
 };
 
+static const wxString typeNames[SERVERTYPE_MAX] = {
+	wxTRANSLATE("Default (Autodetect)"),
+	_T("Unix"),
+	_T("VMS"),
+	_T("DOS"),
+	_T("MVS, OS/390, z/OS"),
+	_T("VxWorks"),
+	_T("z/VM"),
+	_T("HP NonStop"),
+	wxTRANSLATE("DOS-like with virtual paths")
+};
+
 CServer::CServer()
 {
 	Initialize();
@@ -707,4 +719,10 @@ bool CServer::ProtocolHasDataTypeConcept(const enum ServerProtocol protocol)
 		return true;
 
 	return false;
+}
+
+wxString CServer::GetNameFromServerType(enum ServerType type)
+{
+	wxASSERT(type != SERVERTYPE_MAX);
+	return wxGetTranslation(typeNames[type]);
 }

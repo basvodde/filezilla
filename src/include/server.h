@@ -20,7 +20,10 @@ enum ServerType
 	MVS,
 	VXWORKS,
 	ZVM,
-	HPNONSTOP
+	HPNONSTOP,
+	DOS_VIRTUAL,
+
+	SERVERTYPE_MAX
 };
 
 enum LogonType
@@ -123,6 +126,8 @@ public:
 	// Not compared in ==, < and related operators
 	void SetName(const wxString& name) { m_name = name; }
 	wxString GetName() const { return m_name; }
+
+	static wxString GetNameFromServerType(enum ServerType type);
 
 protected:
 	void Initialize();

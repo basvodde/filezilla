@@ -169,7 +169,7 @@ void AddTextElement(TiXmlElement* node, const char* name, const wxString& value)
 	char* utf8 = ConvUTF8(value);
 	if (!utf8)
 		return;
-	
+
     element.InsertEndChild(TiXmlText(utf8));
 	delete [] utf8;
 
@@ -197,7 +197,7 @@ void AddTextElement(TiXmlElement* node, const wxString& value)
 		node->RemoveChild(pChild);
 		break;
 	}
-	
+
     node->InsertEndChild(TiXmlText(utf8));
 	delete [] utf8;
 }
@@ -346,7 +346,7 @@ TiXmlElement* GetXmlFile(wxFileName file)
 		TiXmlDocument* pXmlDocument = new TiXmlDocument();
 		pXmlDocument->SetCondenseWhiteSpace(false);
 		pXmlDocument->InsertEndChild(TiXmlDeclaration("1.0", "UTF-8", "yes"));
-	
+
 		pXmlDocument->InsertEndChild(TiXmlElement("FileZilla3"));
 
 		if (!pXmlDocument->SaveFile(file.GetFullPath().mb_str()))
@@ -354,7 +354,7 @@ TiXmlElement* GetXmlFile(wxFileName file)
 			delete pXmlDocument;
 			return 0;
 		}
-		
+
 		return pXmlDocument->FirstChildElement("FileZilla3");
 	}
 }
@@ -405,7 +405,7 @@ bool SaveXmlFile(const wxFileName& file, TiXmlNode* node, wxString* error /*=0*/
 bool GetServer(TiXmlElement *node, CServer& server)
 {
 	wxASSERT(node);
-	
+
 	wxString host = GetTextElement(node, "Host");
 	if (host == _T(""))
 		return false;
@@ -416,15 +416,15 @@ bool GetServer(TiXmlElement *node, CServer& server)
 
 	if (!server.SetHost(host, port))
 		return false;
-	
+
 	int protocol = GetTextElementInt(node, "Protocol");
 	if (protocol < 0)
 		return false;
 
 	server.SetProtocol((enum ServerProtocol)protocol);
-	
+
 	int type = GetTextElementInt(node, "Type");
-	if (type < 0)
+	if (type < 0 || type >= SERVERTYPE_MAX)
 		return false;
 
 	server.SetType((enum ServerType)type);
@@ -434,20 +434,20 @@ bool GetServer(TiXmlElement *node, CServer& server)
 		return false;
 
 	server.SetLogonType((enum LogonType)logonType);
-	
+
 	if (server.GetLogonType() != ANONYMOUS)
 	{
 		wxString user = GetTextElement(node, "User");
 		if (user == _T(""))
 			return false;
-	
+
 		wxString pass;
 		if ((long)NORMAL == logonType || (long)ACCOUNT == logonType)
 			pass = GetTextElement(node, "Pass");
 
 		if (!server.SetUser(user, pass))
 			return false;
-		
+
 		if ((long)ACCOUNT == logonType)
 		{
 			wxString account = GetTextElement(node, "Account");
@@ -461,7 +461,7 @@ bool GetServer(TiXmlElement *node, CServer& server)
 	int timezoneOffset = GetTextElementInt(node, "TimezoneOffset");
 	if (!server.SetTimezoneOffset(timezoneOffset))
 		return false;
-	
+
 	wxString pasvMode = GetTextElement(node, "PasvMode");
 	if (pasvMode == _T("MODE_PASSIVE"))
 		server.SetPasvMode(MODE_PASSIVE);
@@ -469,7 +469,7 @@ bool GetServer(TiXmlElement *node, CServer& server)
 		server.SetPasvMode(MODE_ACTIVE);
 	else
 		server.SetPasvMode(MODE_DEFAULT);
-	
+
 	int maximumMultipleConnections = GetTextElementInt(node, "MaximumMultipleConnections");
 	server.MaximumMultipleConnections(maximumMultipleConnections);
 
@@ -597,7 +597,7 @@ void SetTextAttribute(TiXmlElement* node, const char* name, const wxString& valu
 	char* utf8 = ConvUTF8(value);
 	if (!utf8)
 		return;
-	
+
     node->SetAttribute(name, utf8);
 	delete [] utf8;
 }
@@ -609,7 +609,7 @@ wxString GetTextAttribute(TiXmlElement* node, const char* name)
 	const char* value = node->Attribute(name);
 	if (!value)
 		return _T("");
-	
+
 	return ConvLocal(value);
 }
 
@@ -625,7 +625,7 @@ TiXmlElement* FindElementWithAttribute(TiXmlElement* node, const char* element, 
 	{
 		const char* nodeVal = child->Attribute(attribute);
 		if (nodeVal && !strcmp(value, nodeVal))
-			return child;			
+			return child;
 
 		if (element)
 			child = child->NextSiblingElement(element);
@@ -649,7 +649,7 @@ TiXmlElement* FindElementWithAttribute(TiXmlElement* node, const char* element, 
 		int nodeValue;
 		const char* nodeVal = child->Attribute(attribute, &nodeValue);
 		if (nodeVal && nodeValue == value)
-			return child;			
+			return child;
 
 		if (element)
 			child = child->NextSiblingElement(element);
@@ -704,13 +704,13 @@ bool CXmlFile::ParseData(char* data)
 	m_pDocument = new TiXmlDocument;
 	m_pDocument->SetCondenseWhiteSpace(false);
 	m_pDocument->Parse(data);
-	
+
 	if (!m_pDocument->FirstChildElement("FileZilla3"))
 	{
 		delete m_pDocument;
 		m_pDocument = 0;
 		return false;
 	}
-	
+
 	return true;
 }
