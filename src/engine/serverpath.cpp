@@ -3,6 +3,29 @@
 
 #define FTP_MVS_DOUBLE_QUOTE (wxChar)0xDC
 
+struct CServerTypeTraits
+{
+	wxChar separator;
+	bool has_root; // Root = simply separator nothing else
+	wxChar left_enclosure; // Example: VMS paths: [FOO.BAR]
+	wxChar right_enclosure;
+	bool filename_inside_enclosure; // MVS
+	int prefixmode; //0 = normal prefix, 1 = suffix
+	wxChar separatorEscape;
+};
+
+static const CServerTypeTraits traits[SERVERTYPE_MAX] = {
+	{ '/',  true,  0,    0,    false, 0, 0   }, // Failsafe
+	{ '/',  true,  0,    0,    false, 0, 0   },
+	{ '.',  false, '[',  ']',  false, 0, '^' },
+	{ '\\', false, 0,    0,    false, 0, 0   },
+	{ '.',  false, '\'', '\'', true,  1, 0   },
+	{ '/',  true,  0,    0,    false, 0, 0   },
+	{ '/',  true,  0,    0,    false, 0, 0   }, // Same as Unix
+	{ '.',  false, 0,    0,    false, 0, 0   },
+	{ '\\', true,  0,    0,    false, 0, 0   }
+};
+
 CServerPath::CServerPath()
 {
 	m_type = DEFAULT;
@@ -18,7 +41,7 @@ CServerPath::CServerPath(const CServerPath &path, wxString subdir /*=_T("")*/)
 
 	subdir.Trim(true);
 	subdir.Trim(false);
-	
+
 	if (subdir == _T(""))
 		return;
 
@@ -92,7 +115,9 @@ bool CServerPath::SetPath(wxString &newPath, bool isFile)
 			if (slash == -1 || slash > pos1)
 				m_type = VXWORKS;
 		}
-		
+		else if (path[0] == '\\')
+			m_type = DOS_VIRTUAL;
+
 		if (m_type == DEFAULT)
 			m_type = UNIX;
 	}
@@ -142,7 +167,7 @@ bool CServerPath::SetPath(wxString &newPath, bool isFile)
 				if (wasAppend)
 					m_Segments.back() += segment;
 				else
-					m_Segments.push_back(segment);					
+					m_Segments.push_back(segment);
 
 				path = path.Mid(pos + 1);
 				pos = path.Find(_T("."));
@@ -163,7 +188,7 @@ bool CServerPath::SetPath(wxString &newPath, bool isFile)
 			while (c == FTP_MVS_DOUBLE_QUOTE || c == '\'' || c == '.')
 				c = path.c_str()[++i];
 			path.Remove(0, i);
-			
+
 			while (path != _T(""))
 			{
 				c = path.Last();
@@ -229,9 +254,9 @@ bool CServerPath::SetPath(wxString &newPath, bool isFile)
 				m_bEmpty = true;
 				return false;
 			}
-			
+
 			m_prefix = path.Left(colon2 + 2);
-			path = path.Mid(colon2 + 1);
+			path = path.Mid(colon2 + 2);
 			goto set_path_default;
 		}
 		break;
@@ -264,12 +289,16 @@ bool CServerPath::SetPath(wxString &newPath, bool isFile)
 					return true;
 				}
 				m_Segments.push_back(path);
-				return true;				
+				return true;
 			}
-	
+
 			m_Segments.push_back(path.Left(pos));
 			path = path.Mid(pos + 1);
 		}
+		break;
+	case DOS_VIRTUAL:
+		path.Replace(_T("\\"), _T("/"));
+		goto set_path_default;
 		break;
 	case DOS:
 		// Check for starting drive letter
@@ -343,64 +372,40 @@ wxString CServerPath::GetPath() const
 
 	wxString path;
 
-	switch (m_type)
-	{
-	case VMS:
-		{
-			path = m_prefix + _T("[");
-			for (tConstSegmentIter iter = m_Segments.begin(); iter != m_Segments.end(); iter++)
-			{
-				wxString segment = *iter;
-				segment.Replace(_T("."), _T("^."));
-				path += segment + _T(".");
-			}
-			path.RemoveLast();
-			path += _T("]");
-		}
-		break;
-	case DOS:
-		{
-			for (tConstSegmentIter iter = m_Segments.begin(); iter != m_Segments.end(); iter++)
-				path += *iter + _T("\\");
-		}
-		break;
-	case MVS:
-		path = _T("'");
-		for (tConstSegmentIter iter = m_Segments.begin(); iter != m_Segments.end(); iter++)
-		{
-			if (iter != m_Segments.begin())
-				path += _T(".");
-			path += *iter;
-		}
-		path += m_prefix + _T("'");
-		break;
-	case VXWORKS:
+	if (!traits[m_type].prefixmode)
 		path = m_prefix;
-		for (tConstSegmentIter iter = m_Segments.begin(); iter != m_Segments.end(); iter++)
+
+	if (traits[m_type].left_enclosure != 0)
+		path += traits[m_type].left_enclosure;
+	if (m_Segments.empty() && (!traits[m_type].has_root || m_prefix.empty()))
+		path += traits[m_type].separator;
+
+	for (tConstSegmentIter iter = m_Segments.begin(); iter != m_Segments.end(); iter++)
+	{
+		const wxString& segment = *iter;
+		if ((traits[m_type].has_root && m_prefix.empty()) || iter != m_Segments.begin())
+			path += traits[m_type].separator;
+
+		if (traits[m_type].separatorEscape)
 		{
-			if (iter != m_Segments.begin())
-				path += _T("/");
-			path += *iter;
+			wxString tmp = segment;
+			tmp.Replace((wxString)traits[m_type].separator, (wxString)traits[m_type].separatorEscape + traits[m_type].separator);
+			path += tmp;
 		}
-		break;
-	case HPNONSTOP:
-		for (tConstSegmentIter iter = m_Segments.begin(); iter != m_Segments.end(); iter++)
-		{
-			if (iter != m_Segments.begin())
-				path += _T(".");
-			path += *iter;
-		}
-		break;
-	default:
-		if (m_Segments.empty())
-			path = _T("/");
 		else
-		{
-			for (tConstSegmentIter iter = m_Segments.begin(); iter != m_Segments.end(); iter++)
-				path += _T("/") + *iter;
-		}
-		break;
+			path += segment;
 	}
+
+	if (traits[m_type].prefixmode)
+		path += m_prefix;
+
+	if (traits[m_type].right_enclosure != 0)
+		path += traits[m_type].right_enclosure;
+
+	// DOS is strange.
+	// C: is current working dir on drive C, C:\ the drive root.
+	if (m_type == DOS && m_Segments.size() == 1)
+		path += traits[m_type].separator;
 
 	return path;
 }
@@ -410,7 +415,7 @@ bool CServerPath::HasParent() const
 	if (m_bEmpty)
 		return false;
 
-	if (m_type == DOS || m_type == VMS || m_type == MVS || m_type == HPNONSTOP)
+	if (!traits[m_type].has_root)
 		return m_Segments.size() > 1;
 
 	return !m_Segments.empty();
@@ -497,7 +502,7 @@ bool CServerPath::SetSafePath(wxString path)
 	path = path.Mid(pos + 1);
 	if (path.Length() < len)
 		return false;
-	
+
 	if (len)
 	{
 		m_prefix = path.Left(len);
@@ -514,7 +519,7 @@ bool CServerPath::SetSafePath(wxString path)
 			path = path.Mid(1);
 			continue;
 		}
-		
+
 		if (!path.Left(pos).ToULong(&len) || !len)
 			return false;
 		path = path.Mid(pos + 1);
@@ -524,7 +529,7 @@ bool CServerPath::SetSafePath(wxString path)
 		m_Segments.push_back(path.Left(len));
 		path = path.Mid(len + 1);
 	}
-	
+
 	m_bEmpty = false;
 
 	return true;
@@ -550,15 +555,23 @@ bool CServerPath::IsSubdirOf(const CServerPath &path, bool cmpNoCase) const
 	if (m_bEmpty || path.m_bEmpty)
 		return false;
 
-	if (cmpNoCase && m_prefix.CmpNoCase(path.m_prefix))
-		return false;
-	if (!cmpNoCase && m_prefix != path.m_prefix)
-		return false;
-
 	if (m_type != path.m_type)
 		return false;
 
 	if (!HasParent())
+		return false;
+
+	if (traits[m_type].prefixmode != 1)
+	{
+		if (cmpNoCase && m_prefix.CmpNoCase(path.m_prefix))
+			return false;
+		if (!cmpNoCase && m_prefix != path.m_prefix)
+			return false;
+	}
+
+	// On MVS, dirs like 'FOO.BAR' without trailing dot cannot have
+	// subdirectories
+	if (traits[m_type].prefixmode == 1 && path.m_prefix == _T(""))
 		return false;
 
 	tConstSegmentIter iter1 = m_Segments.begin();
@@ -603,7 +616,7 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 
 	dir.Trim(true);
 	dir.Trim(false);
-	
+
 	if (dir == _T(""))
 	{
 		if (IsEmpty() || isFile)
@@ -650,7 +663,7 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 				if (isFile)
 					file = dir.Mid(pos2 + 1);
 				dir = dir.Left(pos2);
-				
+
 				if (pos1)
 					m_prefix = dir.Left(pos1);
 				else
@@ -677,7 +690,7 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 				if (wasAppend)
 					m_Segments.back() += segment;
 				else
-					m_Segments.push_back(segment);					
+					m_Segments.push_back(segment);
 
 				dir = dir.Mid(pos + 1);
 				pos = dir.Find(_T("."));
@@ -709,7 +722,7 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 				m_Segments.push_back(first);
 				dir = dir.Mid(1);
 			}
-			
+
 			if (isFile)
 			{
 				int pos = dir.Find('/', true);
@@ -759,7 +772,7 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 			while (c == FTP_MVS_DOUBLE_QUOTE)
 				c = subdir.c_str()[++i];
 			subdir.Remove(0, i);
-			
+
 			while (subdir != _T(""))
 			{
 				c = subdir.Last();
@@ -773,7 +786,7 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 			return false;
 
 		while (subdir.Replace(_T(".."), _T(".")));
-		
+
 		if (subdir.c_str()[0] == '\'')
 		{
 			if (subdir.Last() != '\'')
@@ -793,7 +806,7 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 
 			if (subdir.c_str()[0] == '.')
 				subdir.Remove(0, 1);
-			
+
 			int pos = subdir.Find('.');
 			while (pos != -1)
 			{
@@ -862,9 +875,9 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 					return true;
 				}
 				m_Segments.push_back(dir);
-				return true;				
+				return true;
 			}
-	
+
 			m_Segments.push_back(dir.Left(pos));
 			dir = dir.Mid(pos + 1);
 		}
@@ -908,7 +921,7 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 				m_Segments.clear();
 				dir = dir.Mid(1);
 			}
-			
+
 			if (isFile)
 			{
 				int pos = dir.Find('/', true);
@@ -930,7 +943,7 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 			}
 			else if (dir != _T("") && dir.Right(1) != _T("/"))
 				dir += _T("/");
-			
+
 			int pos = dir.Find(_T("/"));
 			while (pos != -1)
 			{
@@ -998,7 +1011,7 @@ bool CServerPath::operator<(const CServerPath &op) const
 		return true;
 	if (cmp > 0)
 		return false;
-	
+
 	if (m_type > op.m_type)
 		return false;
 	else if (m_type < op.m_type)
@@ -1028,45 +1041,40 @@ wxString CServerPath::FormatFilename(const wxString &filename, bool omitPath /*=
 	if (filename == _T(""))
 		return _T("");
 
-	tConstSegmentIter iter;
+	if (m_bEmpty)
+		return _T("");
+
+	if (omitPath && (!traits[m_type].prefixmode || m_prefix == _T(".")))
+		return filename;
+
+	wxString result = GetPath();
+	if (traits[m_type].left_enclosure && traits[m_type].filename_inside_enclosure)
+		result.RemoveLast();
+
 	switch (m_type)
 	{
-	case MVS:
-		if (m_prefix == _T(".") && omitPath)
-			return filename;
-
-		{
-			wxString fullpath = _T("'");
-			for (iter = m_Segments.begin(); iter != m_Segments.end(); iter++)
-				fullpath += *iter + _T(".");
-			if (m_prefix != _T("."))
-			{
-				if (fullpath.Last() == '.')
-					fullpath.RemoveLast();
-				fullpath += _T("(") + filename + _T(")");
-			}
-			else
-				fullpath += filename;
-			return fullpath + _T("'");
-		}
-		break;
-	case VXWORKS:
-		if (omitPath)
-			return filename;
-		else
-			return GetPath() + _T("/") + filename;
-	case HPNONSTOP:
-		if (omitPath)
-			return filename;
-		else
-			return GetPath() + _T(".") + filename;
-	default:
-		if (omitPath)
-			return filename;
-		else
-			return GetPath() + _T("/") + filename;
+		case VXWORKS:
+			if (result.Last() != traits[m_type].separator && !m_Segments.empty())
+				result += traits[m_type].separator;
+			break;
+		case VMS:
+		case MVS:
+			break;
+		default:
+			if (result.Last() != traits[m_type].separator)
+				result += traits[m_type].separator;
+			break;
 	}
-	return _T("");
+
+	if (traits[m_type].prefixmode == 1 && m_prefix.empty())
+		result += _T("(") + filename + _T(")");
+	else
+		result += filename;
+
+	if (traits[m_type].left_enclosure && traits[m_type].filename_inside_enclosure)
+		result += traits[m_type].right_enclosure;
+
+	return result;
 }
 
 int CServerPath::CmpNoCase(const CServerPath &op) const
@@ -1091,7 +1099,7 @@ int CServerPath::CmpNoCase(const CServerPath &op) const
 		if (res)
 			return res;
 	}
-	
+
 	return 0;
 }
 
@@ -1108,27 +1116,60 @@ bool CServerPath::AddSegment(const wxString& segment)
 
 CServerPath CServerPath::GetCommonParent(const CServerPath& path) const
 {
+	if (*this == path)
+		return *this;
+
 	if (m_bEmpty || path.m_bEmpty)
 		return CServerPath();
 
 	if (m_type != path.m_type ||
-		m_prefix != path.m_prefix)
+		(!traits[m_type].prefixmode && m_prefix != path.m_prefix))
+	{
 		return CServerPath();
+	}
 
-	if (!HasParent() || !path.HasParent())
-		return CServerPath();
+	if (!HasParent())
+	{
+		if (path.IsSubdirOf(*this, false))
+			return *this;
+		else
+			return CServerPath();
+	}
+	else if (!path.HasParent())
+	{
+		if (IsSubdirOf(path, false))
+			return path;
+		else
+			return CServerPath();
+	}
 
 	CServerPath parent;
 	parent.m_bEmpty = false;
 	parent.m_type = m_type;
 	parent.m_prefix = m_prefix;
 
+	std::list<wxString>::const_iterator last = m_Segments.end();
+	std::list<wxString>::const_iterator last2 = path.m_Segments.end();
+	if (traits[m_type].prefixmode == 1)
+	{
+		if (m_prefix.empty())
+			last--;
+		if (path.m_prefix.empty())
+			last2--;
+		parent.m_prefix = GetParent().m_prefix;
+	}
+
 	std::list<wxString>::const_iterator iter = m_Segments.begin();
 	std::list<wxString>::const_iterator iter2 = path.m_Segments.begin();
-	while (iter != m_Segments.end() && iter2 != path.m_Segments.end())
+	while (iter != last && iter2 != last2)
 	{
 		if (*iter != *iter2)
-			return parent;
+		{
+			if (!traits[m_type].has_root && parent.m_Segments.empty())
+				return CServerPath();
+			else
+				return parent;
+		}
 
 		parent.m_Segments.push_back(*iter);
 
@@ -1141,11 +1182,11 @@ CServerPath CServerPath::GetCommonParent(const CServerPath& path) const
 
 wxString CServerPath::FormatSubdir(const wxString &subdir) const
 {
-	if (m_type != VMS)
+	if (!traits[m_type].separatorEscape)
 		return subdir;
 
 	wxString res = subdir;
-	res.Replace(_T("."), _T("^."));
+	res.Replace((wxString)traits[m_type].separator, (wxString)traits[m_type].separatorEscape + traits[m_type].separator);
 
 	return res;
 }
