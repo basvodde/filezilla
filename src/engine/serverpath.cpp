@@ -12,18 +12,19 @@ struct CServerTypeTraits
 	bool filename_inside_enclosure; // MVS
 	int prefixmode; //0 = normal prefix, 1 = suffix
 	wxChar separatorEscape;
+	bool has_dots; // Special meaning for .. (parent) and . (self)
 };
 
 static const CServerTypeTraits traits[SERVERTYPE_MAX] = {
-	{ '/',  true,  0,    0,    false, 0, 0   }, // Failsafe
-	{ '/',  true,  0,    0,    false, 0, 0   },
-	{ '.',  false, '[',  ']',  false, 0, '^' },
-	{ '\\', false, 0,    0,    false, 0, 0   },
-	{ '.',  false, '\'', '\'', true,  1, 0   },
-	{ '/',  true,  0,    0,    false, 0, 0   },
-	{ '/',  true,  0,    0,    false, 0, 0   }, // Same as Unix
-	{ '.',  false, 0,    0,    false, 0, 0   },
-	{ '\\', true,  0,    0,    false, 0, 0   }
+	{ '/',  true,  0,    0,    false, 0, 0,   true  }, // Failsafe
+	{ '/',  true,  0,    0,    false, 0, 0,   true  },
+	{ '.',  false, '[',  ']',  false, 0, '^', false },
+	{ '\\', false, 0,    0,    false, 0, 0,   true  },
+	{ '.',  false, '\'', '\'', true,  1, 0,   false },
+	{ '/',  true,  0,    0,    false, 0, 0,   true  },
+	{ '/',  true,  0,    0,    false, 0, 0,   true  }, // Same as Unix
+	{ '.',  false, 0,    0,    false, 0, 0,   false },
+	{ '\\', true,  0,    0,    false, 0, 0,   true  }
 };
 
 CServerPath::CServerPath()
@@ -75,9 +76,6 @@ bool CServerPath::SetPath(wxString newPath)
 
 bool CServerPath::SetPath(wxString &newPath, bool isFile)
 {
-	m_Segments.clear();
-	m_prefix = _T("");
-
 	wxString path = newPath;
 	wxString file;
 
@@ -85,12 +83,7 @@ bool CServerPath::SetPath(wxString &newPath, bool isFile)
 	path.Trim(false);
 
 	if (path == _T(""))
-	{
-		m_bEmpty = true;
 		return false;
-	}
-	else
-		m_bEmpty = false;
 
 	if (m_type == DEFAULT)
 	{
@@ -122,243 +115,12 @@ bool CServerPath::SetPath(wxString &newPath, bool isFile)
 			m_type = UNIX;
 	}
 
-	int pos;
-	switch (m_type)
-	{
-	case VMS:
-		if (isFile)
-		{
-			pos = path.Find(']', true);
-			if (pos == -1)
-			{
-				m_bEmpty = true;
-				return false;
-			}
-			file = path.Mid(pos + 1);
-			path = path.Left(pos + 1);
-		}
-		pos = path.Find(_T("["));
-		if (pos == -1 || path.Right(1) != _T("]"))
-		{
-			m_bEmpty = true;
-			return false;
-		}
-		else
-		{
-			path.RemoveLast();
-			if (pos)
-				m_prefix = path.Left(pos);
-			path = path.Mid(pos + 1);
-			pos = path.Find(_T("."));
-			bool append = false;
-			while (pos != -1)
-			{
-				bool wasAppend = append;
-				wxString segment = path.Left(pos);
-				if (segment.Last() == '^')
-				{
-					append = true;
-					segment.RemoveLast();
-					segment += _T(".");
-				}
-				else
-					append = false;
+	m_Segments.clear();
+	m_bEmpty = true;
+	m_prefix = _T("");
 
-				if (wasAppend)
-					m_Segments.back() += segment;
-				else
-					m_Segments.push_back(segment);
-
-				path = path.Mid(pos + 1);
-				pos = path.Find(_T("."));
-			}
-			if (path != _T(""))
-			{
-				if (append)
-					m_Segments.back() += path;
-				else
-					m_Segments.push_back(path);
-			}
-		}
-		break;
-	case MVS:
-		{
-			int i = 0;
-			wxChar c = path.c_str()[i];
-			while (c == FTP_MVS_DOUBLE_QUOTE || c == '\'' || c == '.')
-				c = path.c_str()[++i];
-			path.Remove(0, i);
-
-			while (path != _T(""))
-			{
-				c = path.Last();
-				if (c != FTP_MVS_DOUBLE_QUOTE && c != '\'')
-					break;
-				else
-					path.RemoveLast();
-			}
-
-			while (path.Replace(_T(".."), _T(".")));
-
-			int pos = path.Find(_T("."));
-			while (pos != -1)
-			{
-				// What happens if pos is 0?
-				m_Segments.push_back(path.Left(pos));
-				path = path.Mid(pos + 1);
-				pos = path.Find( _T(".") );
-			}
-			if (path != _T(""))
-				m_Segments.push_back(path);
-			else
-				m_prefix = _T(".");
-
-			if (isFile)
-			{
-				if (m_prefix == _T("."))
-					return false;
-
-				if (m_Segments.empty())
-					return false;
-				file = m_Segments.back();
-				m_Segments.pop_back();
-
-				int pos = file.Find('(');
-				int pos2 = file.Find(')');
-				if (pos != -1)
-				{
-					if (!pos || pos2 <= pos || pos2 != (int)file.Length() - 2)
-						return false;
-					m_Segments.push_back(file.Left(pos));
-					file = file.Mid(pos + 1, pos2 - pos - 1);
-					m_prefix = _T("");
-				}
-				else if (pos2 != -1)
-					return false;
-				else
-					m_prefix = _T(".");
-			}
-		}
-		break;
-	case VXWORKS:
-		{
-			int colon2;
-			if (path[0] != ':' || (colon2 = path.Mid(1).Find(':')) < 1)
-			{
-				m_bEmpty = true;
-				return false;
-			}
-			int slash = path.Find('/');
-			if (slash != -1 && slash <= colon2)
-			{
-				m_bEmpty = true;
-				return false;
-			}
-
-			m_prefix = path.Left(colon2 + 2);
-			path = path.Mid(colon2 + 2);
-			goto set_path_default;
-		}
-		break;
-	case HPNONSTOP:
-		// Paths of the form \mysys.$myvol.mysubvol
-		// Files of the form \mysys.$myvol.mysubvol.file
-		if (path[0] != '\\')
-		{
-			m_bEmpty = true;
-			return false;
-		}
-		while (true)
-		{
-			int pos = path.Find('.');
-			if (!pos || pos == (int)path.Len() - 1)
-			{
-				m_bEmpty = true;
-				return false;
-			}
-			if (pos == -1)
-			{
-				if (isFile)
-				{
-					if (m_Segments.empty())
-					{
-						m_bEmpty = true;
-						return false;
-					}
-					newPath = path;
-					return true;
-				}
-				m_Segments.push_back(path);
-				return true;
-			}
-
-			m_Segments.push_back(path.Left(pos));
-			path = path.Mid(pos + 1);
-		}
-		break;
-	case DOS_VIRTUAL:
-		path.Replace(_T("\\"), _T("/"));
-		goto set_path_default;
-		break;
-	case DOS:
-		// Check for starting drive letter
-		path.Replace(_T("\\"), _T("/"));
-		pos = path.Find('/');
-		if (pos != 2 || path.c_str()[1] != ':' ||
-			!((path.c_str()[0] >= 'A' && path.c_str()[0] <= 'Z') || (path.c_str()[0] >= 'a' && path.c_str()[0] <= 'z')))
-		{
-			m_bEmpty = true;
-			return false;
-		}
-		// No break on purpose!
-	default:
-set_path_default:
-		while (path.Replace(_T("//"), _T("/")));
-
-		if (path.c_str()[0] == '/')
-			path.Remove(0, 1);
-
-		if (isFile)
-		{
-			pos = path.Find('/', true);
-			if (pos == -1 || static_cast<size_t>(pos) == (path.Length() - 1))
-			{
-				m_bEmpty = true;
-				return false;
-			}
-			file = path.Mid(pos + 1);
-			path = path.Left(pos + 1);
-
-			if (file == _T(".") || file == _T(".."))
-			{
-				m_bEmpty = true;
-				return false;
-			}
-		}
-		else if (path != _T("") && path.Right(1) != _T("/"))
-			path = path + _T("/");
-
-		pos = path.Find(_T("/"));
-		while (pos != -1)
-		{
-			wxString segment = path.Left(pos);
-			if (segment == _T(".."))
-			{
-				if (m_Segments.empty())
-				{
-					m_bEmpty = true;
-					return false;
-				}
-				m_Segments.pop_back();
-			}
-			else if (segment != _T("."))
-				m_Segments.push_back(segment);
-			path = path.Mid(pos + 1);
-			pos = path.Find(_T("/"));
-		}
-
-		break;
-	}
+	if (!ChangePath(path, isFile))
+		return false;
 
 	if (isFile)
 		newPath = file;
@@ -629,10 +391,10 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 	{
 	case VMS:
 		{
-			int pos1 = subdir.Find(_T("["));
+			int pos1 = dir.Find(traits[m_type].left_enclosure);
 			if (pos1 == -1)
 			{
-				int pos2 = dir.Find(']', true);
+				int pos2 = dir.Find(traits[m_type].right_enclosure, true);
 				if (pos2 != -1)
 					return false;
 
@@ -641,23 +403,18 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 					if (IsEmpty())
 						return false;
 
-					subdir = dir;
-					return true;
+					file = dir;
+					break;
 				}
-
-				while (dir.Replace(_T(".."), _T(".")));
 			}
 			else
 			{
-				int pos2 = dir.Find(']', true);
-				if (pos2 == -1)
+				int pos2 = dir.Find(traits[m_type].right_enclosure, true);
+				if (pos2 == -1 || pos2 <= pos1 + 1)
 					return false;
 
-				if (isFile && static_cast<size_t>(pos2) == (dir.Length() - 1))
-					return false;
-				if (isFile && static_cast<size_t>(pos2) != (dir.Length() - 1))
-					return false;
-				if (pos2 <= pos1)
+				bool enclosure_is_last = static_cast<size_t>(pos2) == (dir.Length() - 1);
+				if (isFile == enclosure_is_last)
 					return false;
 
 				if (isFile)
@@ -666,221 +423,129 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 
 				if (pos1)
 					m_prefix = dir.Left(pos1);
-				else
-					m_prefix = _T("");
 				dir = dir.Mid(pos1 + 1);
 
 				m_Segments.clear();
 			}
-			int pos = dir.Find(_T("."));
-			bool append = false;
-			while (pos != -1)
-			{
-				bool wasAppend = append;
-				wxString segment = dir.Left(pos);
-				if (segment.Last() == '^')
-				{
-					append = true;
-					segment.RemoveLast();
-					segment += _T(".");
-				}
-				else
-					append = false;
 
-				if (wasAppend)
-					m_Segments.back() += segment;
-				else
-					m_Segments.push_back(segment);
-
-				dir = dir.Mid(pos + 1);
-				pos = dir.Find(_T("."));
-			}
-			if (dir != _T(""))
-			{
-				if (append)
-					m_Segments.back() += dir;
-				else
-					m_Segments.push_back(dir);
-			}
+			if (!Segmentize(dir, m_Segments))
+				return false;
+			if (m_Segments.empty() && m_bEmpty)
+				return false;
 		}
 		break;
 	case DOS:
 		{
-			dir.Replace(_T("\\"), _T("/"));
-			while (dir.Replace(_T("//"), _T("/")));
 			if (dir.Length() >= 2 && dir.c_str()[1] == ':')
 				m_Segments.clear();
-			else if (dir.Left(1) == _T("/"))
+			else if (dir[0] == traits[m_type].separator)
 			{
 				if (m_Segments.empty())
-				{
-					Clear();
 					return false;
-				}
 				wxString first = m_Segments.front();
 				m_Segments.clear();
 				m_Segments.push_back(first);
 				dir = dir.Mid(1);
 			}
 
-			if (isFile)
-			{
-				int pos = dir.Find('/', true);
-				if (pos == (int)dir.Length() - 1)
-				{
-					Clear();
-					return false;
-				}
-				if (pos == -1)
-				{
-					subdir = dir;
-					return true;
-				}
-				else
-				{
-					file = dir.Mid(pos + 1);
-					dir = dir.Left(pos + 1);
-				}
-			}
-			else if (dir != _T("") && dir.Right(1) != _T("/"))
-				dir += _T("/");
+			if (isFile && !ExtractFile(dir, file))
+				return false;
 
-			int pos = dir.Find(_T("/"));
-			while (pos != -1)
-			{
-				wxString segment = dir.Left(pos);
-				if (segment == _T(".."))
-				{
-					if (m_Segments.size() <= 1)
-					{
-						Clear();
-						return false;
-					}
-					m_Segments.pop_back();
-				}
-				else if (segment != _T("."))
-					m_Segments.push_back(segment);
-				dir = dir.Mid(pos + 1);
-				pos = dir.Find(_T("/"));
-			}
+			if (!Segmentize(dir, m_Segments))
+				return false;
+			if (m_Segments.empty() && m_bEmpty)
+				return false;
 		}
 		break;
 	case MVS:
 		{
+			// Remove the double quoation some servers send in PWD reply
 			int i = 0;
-			wxChar c = subdir.c_str()[i];
+			wxChar c = dir.c_str()[i];
 			while (c == FTP_MVS_DOUBLE_QUOTE)
-				c = subdir.c_str()[++i];
-			subdir.Remove(0, i);
+				c = dir.c_str()[++i];
+			dir.Remove(0, i);
 
-			while (subdir != _T(""))
+			while (dir != _T(""))
 			{
-				c = subdir.Last();
+				c = dir.Last();
 				if (c != FTP_MVS_DOUBLE_QUOTE)
 					break;
 				else
-					subdir.RemoveLast();
+					dir.RemoveLast();
 			}
 		}
-		if (subdir == _T(""))
+		if (dir == _T(""))
 			return false;
 
-		while (subdir.Replace(_T(".."), _T(".")));
-
-		if (subdir.c_str()[0] == '\'')
+		if (dir.c_str()[0] == traits[m_type].left_enclosure)
 		{
-			if (subdir.Last() != '\'')
+			if (dir.Last() != traits[m_type].right_enclosure)
 				return false;
 
-			if (SetPath(subdir, isFile))
-				file = subdir;
-			else
-				return false;
+			dir.RemoveLast();
+			dir = dir.Mid(1);
+
+			m_Segments.clear();
 		}
-		else if (subdir.Last() == '\'')
+		else if (dir.Last() == traits[m_type].right_enclosure)
 			return false;
-		else if (!IsEmpty())
+		else if (m_bEmpty)
+			return false;
+
+		if (dir.Last() == ')')
 		{
-			if (m_prefix != _T("."))
+			// Partitioned dataset member
+			if (!isFile)
 				return false;
 
-			if (subdir.c_str()[0] == '.')
-				subdir.Remove(0, 1);
+			int pos = dir.Find('(');
+			if (pos == -1)
+				return false;
+			dir.RemoveLast();
+			file = dir.Mid(pos + 1);
+			dir = dir.Left(pos);
 
-			int pos = subdir.Find('.');
-			while (pos != -1)
+			if (!m_bEmpty && m_prefix == _T("") && !dir.empty())
+				return false;
+
+			m_prefix.clear();
+		}
+		else
+		{
+			if (!m_bEmpty && m_prefix == _T(""))
 			{
-				m_Segments.push_back(subdir.Left(pos));
-				subdir = subdir.Mid(pos + 1);
+				if (dir.Find('.') != -1 || !isFile)
+					return false;
 			}
-			if (subdir != _T(""))
-			{
-				m_Segments.push_back(subdir);
-				m_prefix = _T("");
-			}
-			else
-				m_prefix = _T(".");
 
 			if (isFile)
 			{
-				if (m_prefix == _T("."))
+				if (!ExtractFile(dir, file))
 					return false;
-
-				if (m_Segments.empty())
-					return false;
-				file = m_Segments.back();
-				m_Segments.pop_back();
-
-				int pos = file.Find('(');
-				int pos2 = file.Find(')');
-				if (pos != -1)
-				{
-					if (!pos || pos2 <= pos || pos2 != (int)file.Length() - 2)
-						return false;
-					m_Segments.push_back(file.Left(pos));
-					file = file.Mid(pos + 1, pos2 - pos - 1);
-				}
-				else if (pos2 != -1)
-					return false;
-				else
-					m_prefix = _T(".");
+				m_prefix = _T(".");
 			}
+			else if (dir.Last() == '.')
+				m_prefix = _T(".");
+			else
+				m_prefix.clear();
 		}
-		else if (SetPath(subdir, isFile))
-			file = subdir;
-		else
+
+		if (!Segmentize(dir, m_Segments))
 			return false;
 		break;
 	case HPNONSTOP:
 		if (dir[0] == '\\')
 			m_Segments.clear();
-		while (true)
-		{
-			int pos = dir.Find('.');
-			if (!pos || pos == (int)dir.Len() - 1)
-			{
-				m_bEmpty = true;
-				return false;
-			}
-			if (pos == -1)
-			{
-				if (isFile)
-				{
-					if (m_Segments.empty())
-					{
-						m_bEmpty = true;
-						return false;
-					}
-					subdir = dir;
-					return true;
-				}
-				m_Segments.push_back(dir);
-				return true;
-			}
 
-			m_Segments.push_back(dir.Left(pos));
-			dir = dir.Mid(pos + 1);
-		}
+		if (isFile && !ExtractFile(dir, file))
+			return false;
+
+		if (!Segmentize(dir, m_Segments))
+			return false;
+		if (m_Segments.empty() && m_bEmpty)
+			return false;
+
 		break;
 	case VXWORKS:
 		{
@@ -894,80 +559,47 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 				int colon2;
 				if ((colon2 = dir.Mid(1).Find(':')) < 1)
 					return false;
-
-				int slash = dir.Find('/');
-				if (slash != -1 && slash <= colon2)
-					return false;
-
 				m_prefix = dir.Left(colon2 + 2);
-				dir = dir.Mid(colon2 + 1);
-
-				if (dir[0] == '/')
-					return false;
+				dir = dir.Mid(colon2 + 2);
 
 				m_Segments.clear();
-
 			}
-			if (isFile && dir.Find('/') == -1)
+
+			if (isFile && !ExtractFile(dir, file))
+				return false;
+
+			if (!Segmentize(dir, m_Segments))
 				return false;
 		}
-		// No break on purpose
+		break;
 	default:
 		{
-			while (dir.Replace(_T("//"), _T("/")));
-			if (dir.c_str()[0] == '/')
-			{
-				m_prefix = _T("");
+			if (dir[0] == traits[m_type].separator)
 				m_Segments.clear();
-				dir = dir.Mid(1);
-			}
+			else if (m_bEmpty)
+				return false;
 
-			if (isFile)
-			{
-				int pos = dir.Find('/', true);
-				if (pos == (int)dir.Length() - 1)
-				{
-					Clear();
-					return false;
-				}
-				if (pos == -1)
-				{
-					subdir = dir;
-					return true;
-				}
-				else
-				{
-					file = dir.Mid(pos + 1);
-					dir = dir.Left(pos + 1);
-				}
-			}
-			else if (dir != _T("") && dir.Right(1) != _T("/"))
-				dir += _T("/");
+			if (isFile && !ExtractFile(dir, file))
+				return false;
 
-			int pos = dir.Find(_T("/"));
-			while (pos != -1)
-			{
-				wxString segment = dir.Left(pos);
-				if (segment == _T(".."))
-				{
-					if (m_Segments.empty())
-					{
-						Clear();
-						return false;
-					}
-					m_Segments.pop_back();
-				}
-				else if (segment != _T("."))
-					m_Segments.push_back(segment);
-				dir = dir.Mid(pos + 1);
-				pos = dir.Find(_T("/"));
-			}
+			if (!Segmentize(dir, m_Segments))
+				return false;
 		}
 		break;
 	}
 
+	if (!traits[m_type].has_root && m_Segments.empty())
+		return false;
+
 	if (isFile)
+	{
+		if (traits[m_type].has_dots)
+		{
+			if (file == _T("..") || file == _T("."))
+				return false;
+		}
 		subdir = file;
+	}
 
 	m_bEmpty = false;
 	return true;
@@ -1189,4 +821,83 @@ wxString CServerPath::FormatSubdir(const wxString &subdir) const
 	res.Replace((wxString)traits[m_type].separator, (wxString)traits[m_type].separatorEscape + traits[m_type].separator);
 
 	return res;
+}
+
+bool CServerPath::Segmentize(wxString str, tSegmentList& segments)
+{
+	bool append = false;
+	while (!str.empty())
+	{
+		wxString segment;
+		int pos = str.Find(traits[m_type].separator);
+		if (pos == -1)
+		{
+			segment = str,
+			str.clear();
+		}
+		else if (!pos)
+		{
+			str = str.Mid(1);
+			continue;
+		}
+		else
+		{
+			segment = str.Left(pos);
+			str = str.Mid(pos + 1);
+		}
+
+		if (traits[m_type].has_dots)
+		{
+			if (segment == _T("."))
+				continue;
+			else if (segment == _T(".."))
+			{
+				if (segments.empty())
+					return false;
+				else
+				{
+					segments.pop_back();
+					continue;
+				}
+			}
+		}
+
+		bool append_next = false;
+		if (traits[m_type].separatorEscape && segment.Last() == traits[m_type].separatorEscape)
+		{
+			append_next = true;
+			segment.RemoveLast();
+			segment += traits[m_type].separator;
+		}
+
+		if (append)
+			segments.back() += segment;
+		else
+			segments.push_back(segment);
+
+		append = append_next;
+	}
+	if (append)
+		return false;
+
+	return true;
+}
+
+bool CServerPath::ExtractFile(wxString& dir, wxString& file)
+{
+	int pos = dir.Find(traits[m_type].separator, true);
+	if (pos == (int)dir.Length() - 1)
+		return false;
+
+	if (pos == -1)
+	{
+		file = dir;
+		dir.clear();
+		return true;
+	}
+
+	file = dir.Mid(pos + 1);
+	dir = dir.Left(pos + 1);
+
+	return true;
 }
