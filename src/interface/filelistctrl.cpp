@@ -32,7 +32,7 @@ EVT_COMMAND(wxID_ANY, fz_EVT_DEFERRED_MOUSEEVENT, CFileListCtrl<CFileData>::OnPr
 END_EVENT_TABLE()
 
 #ifdef __WXMSW__
-// wxWidgets does not hnadle LVN_ODSTATECHANGED, work around it
+// wxWidgets does not handle LVN_ODSTATECHANGED, work around it
 
 template<class CFileData> std::map<HWND, char*> CFileListCtrl<CFileData>::m_hwnd_map;
 
