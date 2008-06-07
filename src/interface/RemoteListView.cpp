@@ -681,6 +681,9 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 			data.icon = entry.dir ? m_dirIcon : -2;
 			m_fileData.push_back(data);
 
+			if (filter.FilenameFiltered(entry.name, entry.dir, entry.size, false, 0))
+				continue;
+
 			if (entry.dir)
 				totalDirCount++;
 			else
@@ -692,8 +695,7 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 				totalFileCount++;
 			}
 
-			if (!filter.FilenameFiltered(entry.name, entry.dir, entry.size, false, 0))
-				m_indexMapping.push_back(i);
+			m_indexMapping.push_back(i);
 		}
 
 		CGenericFileData data;
