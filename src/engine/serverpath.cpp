@@ -123,7 +123,7 @@ bool CServerPath::SetPath(wxString &newPath, bool isFile)
 		return false;
 
 	if (isFile)
-		newPath = file;
+		newPath = path;
 	return true;
 }
 
@@ -603,7 +603,6 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 
 	m_bEmpty = false;
 	return true;
-
 }
 
 bool CServerPath::operator==(const CServerPath &op) const
