@@ -1777,15 +1777,36 @@ void CRemoteListView::ApplyCurrentFilter()
 	if (m_pFilelistStatusBar)
 		m_pFilelistStatusBar->UnselectAll();
 
+	wxLongLong totalSize;
+	int unknown_sizes = 0;
+	int totalFileCount = 0;
+	int totalDirCount = 0;
+
 	m_indexMapping.clear();
 	const unsigned int count = m_pDirectoryListing->GetCount();
 	m_indexMapping.push_back(count);
 	for (unsigned int i = 0; i < count; i++)
 	{
 		const CDirentry& entry = (*m_pDirectoryListing)[i];
-		if (!filter.FilenameFiltered(entry.name, entry.dir, entry.size, false, 0))
-			m_indexMapping.push_back(i);
+		if (filter.FilenameFiltered(entry.name, entry.dir, entry.size, false, 0))
+			continue;
+
+		if (entry.dir)
+			totalDirCount++;
+		else
+		{
+			if (entry.size == -1)
+				unknown_sizes++;
+			else
+				totalSize += entry.size;
+			totalFileCount++;
+		}
+
+		m_indexMapping.push_back(i);
 	}
+
+	if (m_pFilelistStatusBar)
+		m_pFilelistStatusBar->SetDirectoryContents(totalFileCount, totalDirCount, totalSize, unknown_sizes);
 
 	SetItemCount(m_indexMapping.size());
 

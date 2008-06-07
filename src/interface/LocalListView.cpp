@@ -1463,6 +1463,11 @@ void CLocalListView::ApplyCurrentFilter()
 	if (m_pFilelistStatusBar)
 		m_pFilelistStatusBar->UnselectAll();
 
+	wxLongLong totalSize;
+	int unknown_sizes = 0;
+	int totalFileCount = 0;
+	int totalDirCount = 0;
+
 	m_indexMapping.clear();
 	if (m_hasParent)
 		m_indexMapping.push_back(0);
@@ -1471,10 +1476,26 @@ void CLocalListView::ApplyCurrentFilter()
 		const CLocalFileData& data = m_fileData[i];
 		if (data.flags == fill)
 			continue;
-		if (!filter.FilenameFiltered(data.name, data.dir, data.size, true, data.attributes))
-			m_indexMapping.push_back(i);
+		if (filter.FilenameFiltered(data.name, data.dir, data.size, true, data.attributes))
+			continue;
+
+		if (data.dir)
+			totalDirCount++;
+		else
+		{
+			if (data.size != -1)
+				totalSize += data.size;
+			else
+				unknown_sizes++;
+			totalFileCount++;
+		}
+
+		m_indexMapping.push_back(i);
 	}
 	SetItemCount(m_indexMapping.size());
+
+	if (m_pFilelistStatusBar)
+		m_pFilelistStatusBar->SetDirectoryContents(totalFileCount, totalDirCount, totalSize, unknown_sizes);
 
 	SortList(-1, -1, false);
 
