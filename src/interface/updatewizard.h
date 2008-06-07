@@ -38,6 +38,8 @@ protected:
 
 	void StartUpdateCheck();
 
+	int SendTransferCommand();
+
 	wxString GetDownloadDir();
 
 	DECLARE_EVENT_TABLE()
@@ -60,6 +62,9 @@ protected:
 	wxTimer m_statusTimer;
 
 	bool m_loaded;
+
+	// Hold changelog of what's new
+	wxString m_news;
 
 	// Auto check related functions and variables
 	// ------------------------------------------

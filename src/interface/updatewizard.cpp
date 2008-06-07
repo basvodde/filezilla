@@ -212,6 +212,8 @@ void CUpdateWizard::OnPageChanging(wxWizardEvent& event)
 		pText->Show();
 		pText->SetLabel(_("Resolving hostname"));
 
+		if (XRCCTRL(*this, "ID_CHECKBETA", wxCheckBox)->IsChecked())
+			m_urlFile += _T("&beta=1");
 
 		event.Veto();
 
@@ -269,16 +271,8 @@ void CUpdateWizard::OnPageChanged(wxWizardEvent& event)
 	int res = m_pEngine->Command(CConnectCommand(CServer(HTTP, DEFAULT, m_urlServer, 80)));
 	if (res == FZ_REPLY_OK)
 	{
-		m_inTransfer = true;
 		XRCCTRL(*this, "ID_DOWNLOADPROGRESSTEXT", wxStaticText)->SetLabel(_("Connecting to server"));
-		CFileTransferCommand::t_transferSettings transferSettings;
-
-		CServerPath path;
-		wxString file = m_urlFile;
-		path.SetPath(file, true);
-
-		CFileTransferCommand cmd(m_localFile, path, file, true, transferSettings);
-		res = m_pEngine->Command(cmd);
+		res = SendTransferCommand();
 
 		XRCCTRL(*this, "ID_DOWNLOADPROGRESS", wxGauge)->SetRange(100);
 	}
@@ -383,22 +377,13 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 				}
 				if (!m_inTransfer)
 				{
-					m_inTransfer = true;
-
 					if (m_loaded && !m_currentPage)
 					{
 						wxGauge* pProgress = XRCCTRL(*this, "ID_CHECKINGPROGRESS", wxGauge);
 						pProgress->SetValue(pProgress->GetValue() + 1);
 					}
 
-					CFileTransferCommand::t_transferSettings transferSettings;
-
-					CServerPath path;
-					wxString file = m_urlFile;
-					path.SetPath(file, true);
-
-					CFileTransferCommand cmd(m_localFile, path, file, true, transferSettings);
-					int res = m_pEngine->Command(cmd);
+					int res = SendTransferCommand();
 					if (res == FZ_REPLY_WOULDBLOCK)
 						break;
 					else if (res != FZ_REPLY_OK)
@@ -516,6 +501,15 @@ void CUpdateWizard::ParseData()
 
 		line.Trim(true);
 		line.Trim(false);
+
+		if (line == _T(""))
+		{
+			// After empty line, changelog follows
+			m_news = m_data;
+			m_news.Trim(true);
+			m_news.Trim(false);
+			break;
+		}
 		
 		// Extract type of update
 		pos = line.Find(' ');
@@ -568,30 +562,6 @@ void CUpdateWizard::ParseData()
 		{
 			if (CBuildInfo::ConvertToVersionNumber(versionOrDate) <= ownVersionNumber)
 				continue;
-		}
-		if (type == _T("beta"))
-		{
-			// Update beta only if at least one of these conditions is true:
-			// - Beta box is checked
-			// - Current version is a beta and no newer stable version exists
-
-			const bool checkBeta = m_loaded ? XRCCTRL(*this, "ID_CHECKBETA", wxCheckBox)->GetValue() : false;
-
-			if (!checkBeta &&
-				((ownVersionNumber & 0x07FFFF) == 0 || newVersionNumber != 0))
-				continue;
-
-			if (newVersionNumber >= CBuildInfo::ConvertToVersionNumber(versionOrDate))
-				continue;
-		}
-		else
-		{
-			// Final releases
-			if (m_loaded)
-			{
-				if (CBuildInfo::ConvertToVersionNumber(versionOrDate) < newVersionNumber && XRCCTRL(*this, "ID_CHECKBETA", wxCheckBox)->GetValue())
-					continue;
-			}
 		}
 
 		newVersion = versionOrDate;
@@ -789,21 +759,13 @@ void CUpdateWizard::StartUpdateCheck()
 	int res = m_pEngine->Command(CConnectCommand(CServer(HTTP, DEFAULT, m_urlServer, 80)));
 	if (res == FZ_REPLY_OK)
 	{
-		m_inTransfer = true;
 		if (m_loaded)
 		{
 			XRCCTRL(*this, "ID_CHECKINGTEXTPROGRESS", wxStaticText)->SetLabel(_("Connecting to server"));
 			wxGauge* pProgress = XRCCTRL(*this, "ID_CHECKINGPROGRESS", wxGauge);
 			pProgress->SetValue(pProgress->GetValue() + 1);
 		}
-		CFileTransferCommand::t_transferSettings transferSettings;
-
-		CServerPath path;
-		wxString file = m_urlFile;
-		path.SetPath(file, true);
-
-		CFileTransferCommand cmd(_T(""), path, file, true, transferSettings);
-		res = m_pEngine->Command(cmd);
+		res = SendTransferCommand();
 	}
 	wxASSERT(res != FZ_REPLY_OK);
 	if (res != FZ_REPLY_WOULDBLOCK)
@@ -866,6 +828,9 @@ void CUpdateWizard::PrepareUpdateAvailablePage(const wxString &newVersion, wxStr
 		else
 			XRCCTRL(*this, "ID_UPDATEDESC", wxStaticText)->SetLabel(_("Please check the package manager of your system for an updated package or visit http://filezilla-project.org to download the source code of FileZilla."));
 		XRCCTRL(*this, "ID_UPDATEDESC2", wxStaticText)->SetLabel(_T(""));
+
+		XRCCTRL(*this, "ID_NEWS_DESC", wxStaticText)->Hide();
+		XRCCTRL(*this, "ID_NEWS", wxTextCtrl)->Hide();
 		m_pages[1]->SetNext(0);
 	}
 	else
@@ -888,6 +853,13 @@ void CUpdateWizard::PrepareUpdateAvailablePage(const wxString &newVersion, wxStr
 			m_urlServer = newUrl.Left(pos);
 			m_urlFile = newUrl.Mid(pos);
 		}
+		if (m_news == _T(""))
+		{
+			XRCCTRL(*this, "ID_NEWS_DESC", wxStaticText)->Hide();
+			XRCCTRL(*this, "ID_NEWS", wxTextCtrl)->Hide();
+		}
+		else
+			XRCCTRL(*this, "ID_NEWS", wxTextCtrl)->ChangeValue(m_news);
 	}
 	RewrapPage(1);
 }
@@ -906,6 +878,20 @@ void CUpdateWizard::RewrapPage(int page)
 	m_pages[page]->GetSizer()->SetMinSize(newSize);
 	m_pages[page]->GetSizer()->Layout();
 	m_pages[page]->GetSizer()->Fit(m_pages[page]);
+}
+
+int CUpdateWizard::SendTransferCommand()
+{
+	m_inTransfer = true;
+
+	CFileTransferCommand::t_transferSettings transferSettings;
+
+	CServerPath path;
+	wxString file = m_urlFile;
+	path.SetPath(file, true);
+
+	CFileTransferCommand cmd(m_localFile, path, file, true, transferSettings);
+	return m_pEngine->Command(cmd);
 }
 
 #endif //FZ_MANUALUPDATECHECK

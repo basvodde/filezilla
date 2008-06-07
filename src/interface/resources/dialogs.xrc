@@ -1138,6 +1138,7 @@
                             </object>
                             <object class="sizeritem">
                               <object class="wxChoice" name="ID_SERVERTYPE">
+                                <content/>
                                 <selection>0</selection>
                               </object>
                               <flag>wxALL</flag>
@@ -3832,6 +3833,22 @@
           <label>&lt;write here what to do next&gt;</label>
         </object>
         <flag>wxTOP</flag>
+        <border>5</border>
+      </object>
+      <object class="spacer">
+        <size>0,20</size>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticText" name="ID_NEWS_DESC">
+          <label>What's new:</label>
+        </object>
+      </object>
+      <object class="sizeritem">
+        <object class="wxTextCtrl" name="ID_NEWS">
+          <style>wxTE_MULTILINE|wxTE_READONLY</style>
+        </object>
+        <option>1</option>
+        <flag>wxGROW|wxTOP</flag>
         <border>5</border>
       </object>
     </object>
