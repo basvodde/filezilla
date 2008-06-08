@@ -39,6 +39,11 @@ bool COptionsPageConnectionSFTP::LoadPage()
 	pKeys->InsertColumn(0, _("Filename"), wxLIST_FORMAT_LEFT, 150);
 	pKeys->InsertColumn(1, _("Comment"), wxLIST_FORMAT_LEFT, 100);
 	pKeys->InsertColumn(2, _("Data"), wxLIST_FORMAT_LEFT, 350);
+	
+	// Generic wxListCtrl has gross minsize
+	wxSize size = pKeys->GetMinSize();
+	size.x = 1;
+	pKeys->SetMinSize(size);
 
 	wxString keyFiles = m_pOptions->GetOption(OPTION_SFTP_KEYFILES);
 	wxStringTokenizer tokens(keyFiles, _T("\n"), wxTOKEN_DEFAULT);
