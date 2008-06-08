@@ -55,6 +55,7 @@ CUpdateWizard::CUpdateWizard(wxWindow* pParent)
 
 	m_loaded = false;
 	m_updateShown = false;
+	m_start_check = false;
 }
 
 CUpdateWizard::~CUpdateWizard()
@@ -109,6 +110,11 @@ bool CUpdateWizard::Load()
 		GetPageAreaSizer()->Add(m_pages[i]);
 	}
 
+	if (COptions::Get()->GetOptionVal(OPTION_UPDATECHECK_CHECKBETA) != 0)
+		XRCCTRL(*this, "ID_CHECKBETA", wxCheckBox)->SetValue(1);
+	else
+		XRCCTRL(*this, "ID_CHECKBETA", wxCheckBox)->SetValue(0);
+
 	m_loaded = true;
 
 	CenterOnParent();
@@ -130,25 +136,33 @@ bool CUpdateWizard::Run()
 	if (CBuildInfo::ConvertToVersionNumber(newVersion) <= CBuildInfo::ConvertToVersionNumber(CBuildInfo::GetVersion()))
 	{
 		pOptions->SetOption(OPTION_UPDATECHECK_NEWVERSION, _T(""));
-		pOptions->SetOption(OPTION_UPDATECHECK_URL, _T(""));
 		return RunWizard(m_pages.front());
 	}
 
-	PrepareUpdateAvailablePage(newVersion, pOptions->GetOption(OPTION_UPDATECHECK_URL));
+	// Force another check
+	PrepareUpdateCheckPage();
+	m_start_check = true;
+	m_currentPage = 0;
 
-	m_currentPage = 1;
-	return RunWizard(m_pages[1]);
+	return RunWizard(m_pages[0]);
 }
 
 void CUpdateWizard::OnCheck(wxCommandEvent& event)
 {
-	if (event.GetId() == XRCID("ID_CHECKBETA") && event.IsChecked())
+	if (event.GetId() == XRCID("ID_CHECKBETA"))
 	{
-		if (wxMessageBox(_("Do you really want to check for beta versions?\nUnless you want to test new features, keep using stable versions."), _("Update wizard"), wxICON_QUESTION | wxYES_NO, this) != wxYES)
+		if (event.IsChecked())
 		{
-			XRCCTRL(*this, "ID_CHECKBETA", wxCheckBox)->SetValue(0);
-			return;
+			if (wxMessageBox(_("Do you really want to check for beta versions?\nUnless you want to test new features, keep using stable versions."), _("Update wizard"), wxICON_QUESTION | wxYES_NO, this) != wxYES)
+			{
+				XRCCTRL(*this, "ID_CHECKBETA", wxCheckBox)->SetValue(0);
+				return;
+			}
+			COptions::Get()->SetOption(OPTION_UPDATECHECK_CHECKBETA, 1);
 		}
+		else
+			COptions::Get()->SetOption(OPTION_UPDATECHECK_CHECKBETA, 0);
+
 	}
 	else if (event.GetId() == XRCID("ID_CHECKNIGHTLY") && event.IsChecked())
 	{
@@ -199,24 +213,9 @@ void CUpdateWizard::OnPageChanging(wxWizardEvent& event)
 
 	if (event.GetPage() == m_pages[0])
 	{
-		XRCCTRL(*this, "ID_CHECKBETA", wxCheckBox)->Disable();
-		XRCCTRL(*this, "ID_CHECKNIGHTLY", wxCheckBox)->Disable();
-		wxButton* pNext = wxDynamicCast(FindWindow(wxID_FORWARD), wxButton);
-		pNext->Disable();
-
-		XRCCTRL(*this, "ID_CHECKINGTEXT", wxStaticText)->Show();
-		wxGauge* pProgress = XRCCTRL(*this, "ID_CHECKINGPROGRESS", wxGauge);
-		pProgress->Show();
-
-		wxStaticText *pText = XRCCTRL(*this, "ID_CHECKINGTEXTPROGRESS", wxStaticText);
-		pText->Show();
-		pText->SetLabel(_("Resolving hostname"));
-
-		if (XRCCTRL(*this, "ID_CHECKBETA", wxCheckBox)->IsChecked())
-			m_urlFile += _T("&beta=1");
-
 		event.Veto();
 
+		PrepareUpdateCheckPage();
 		StartUpdateCheck();
 	}
 	if (event.GetPage() == m_pages[1] && m_pages[1]->GetNext())
@@ -256,6 +255,16 @@ void CUpdateWizard::OnPageChanging(wxWizardEvent& event)
 
 void CUpdateWizard::OnPageChanged(wxWizardEvent& event)
 {
+	if (event.GetPage() == m_pages[0])
+	{
+		if (m_start_check)
+		{
+			m_start_check = false;
+			StartUpdateCheck();
+		}
+		return;
+	}
+
 	if (event.GetPage() != m_pages[2])
 		return;
 
@@ -576,11 +585,17 @@ void CUpdateWizard::ParseData()
 
 		COptions* pOptions = COptions::Get();
 		pOptions->SetOption(OPTION_UPDATECHECK_NEWVERSION, newVersion);
-		pOptions->SetOption(OPTION_UPDATECHECK_URL, newUrl);
 
 		DisplayUpdateAvailability(true);
 
 		return;
+	}
+	else
+	{
+		// Since the auto check and the manual check, a newer version might have been published
+		COptions* pOptions = COptions::Get();
+		if (!pOptions->GetOption(OPTION_UPDATECHECK_NEWVERSION).empty())
+			pOptions->SetOption(OPTION_UPDATECHECK_NEWVERSION, newVersion);
 	}
 
 	if (newVersion == _T(""))
@@ -756,6 +771,10 @@ bool CUpdateWizard::CanAutoCheckForUpdateNow()
 void CUpdateWizard::StartUpdateCheck()
 {
 	m_inTransfer = false;
+
+	if (COptions::Get()->GetOptionVal(OPTION_UPDATECHECK_CHECKBETA) != 0)
+		m_urlFile += _T("&beta=1");
+
 	int res = m_pEngine->Command(CConnectCommand(CServer(HTTP, DEFAULT, m_urlServer, 80)));
 	if (res == FZ_REPLY_OK)
 	{
@@ -789,7 +808,6 @@ void CUpdateWizard::DisplayUpdateAvailability(bool showDialog, bool forceMenu /*
 	if (CBuildInfo::ConvertToVersionNumber(newVersion) <= CBuildInfo::ConvertToVersionNumber(CBuildInfo::GetVersion()))
 	{
 		pOptions->SetOption(OPTION_UPDATECHECK_NEWVERSION, _T(""));
-		pOptions->SetOption(OPTION_UPDATECHECK_URL, _T(""));
 		return;
 	}
 
@@ -892,6 +910,22 @@ int CUpdateWizard::SendTransferCommand()
 
 	CFileTransferCommand cmd(m_localFile, path, file, true, transferSettings);
 	return m_pEngine->Command(cmd);
+}
+
+void CUpdateWizard::PrepareUpdateCheckPage()
+{
+	XRCCTRL(*this, "ID_CHECKBETA", wxCheckBox)->Disable();
+	XRCCTRL(*this, "ID_CHECKNIGHTLY", wxCheckBox)->Disable();
+	wxButton* pNext = wxDynamicCast(FindWindow(wxID_FORWARD), wxButton);
+	pNext->Disable();
+
+	XRCCTRL(*this, "ID_CHECKINGTEXT", wxStaticText)->Show();
+	wxGauge* pProgress = XRCCTRL(*this, "ID_CHECKINGPROGRESS", wxGauge);
+	pProgress->Show();
+
+	wxStaticText *pText = XRCCTRL(*this, "ID_CHECKINGTEXTPROGRESS", wxStaticText);
+	pText->Show();
+	pText->SetLabel(_("Resolving hostname"));
 }
 
 #endif //FZ_MANUALUPDATECHECK

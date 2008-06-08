@@ -75,7 +75,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Update Check Interval", number, _T("7") },
 	{ "Last automatic update check", string, _T("") },
 	{ "Update Check New Version", string, _T("") },
-	{ "Update Check Package URL", string, _T("") },
+	{ "Update Check Check Beta", number, _T("0") },
 	{ "Show debug menu", number, _T("0") },
 	{ "File exists action download", number, _T("0") },
 	{ "File exists action upload", number, _T("0") },

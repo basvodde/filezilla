@@ -10,12 +10,14 @@
 
 BEGIN_EVENT_TABLE(COptionsPageUpdateCheck, COptionsPage)
 EVT_BUTTON(XRCID("ID_RUNUPDATECHECK"), COptionsPageUpdateCheck::OnRunUpdateCheck)
+EVT_CHECKBOX(XRCID("ID_CHECKBETA"), COptionsPageUpdateCheck::OnCheckBeta)
 END_EVENT_TABLE()
 
 bool COptionsPageUpdateCheck::LoadPage()
 {
 	bool failure = false;
 	SetCheck(XRCID("ID_UPDATECHECK"), m_pOptions->GetOptionVal(OPTION_UPDATECHECK) != 0, failure);
+	SetCheck(XRCID("ID_CHECKBETA"), m_pOptions->GetOptionVal(OPTION_UPDATECHECK_CHECKBETA) != 0, failure);
 	SetTextFromOption(XRCID("ID_DAYS"), OPTION_UPDATECHECK_INTERVAL, failure);
 
 	return !failure;
@@ -49,6 +51,21 @@ void COptionsPageUpdateCheck::OnRunUpdateCheck(wxCommandEvent &event)
 		return;
 
 	dlg.Run();
+}
+
+void COptionsPageUpdateCheck::OnCheckBeta(wxCommandEvent& event)
+{
+	if (event.IsChecked())
+	{
+		if (wxMessageBox(_("Do you really want to check for beta versions?\nUnless you want to test new features, keep using stable versions."), _("Update wizard"), wxICON_QUESTION | wxYES_NO, this) != wxYES)
+		{
+			XRCCTRL(*this, "ID_CHECKBETA", wxCheckBox)->SetValue(0);
+			return;
+		}
+		COptions::Get()->SetOption(OPTION_UPDATECHECK_CHECKBETA, 1);
+	}
+	else
+		COptions::Get()->SetOption(OPTION_UPDATECHECK_CHECKBETA, 0);
 }
 
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK

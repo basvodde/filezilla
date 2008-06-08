@@ -36,6 +36,7 @@ protected:
 
 	void SetTransferStatus(const CTransferStatus* pStatus);
 
+	void PrepareUpdateCheckPage();
 	void StartUpdateCheck();
 
 	int SendTransferCommand();
@@ -75,6 +76,7 @@ protected:
 
 	bool m_autoUpdateCheckRunning;
 	bool m_updateShown;
+	bool m_start_check;
 };
 
 #endif //FZ_MANUALUPDATECHECK
