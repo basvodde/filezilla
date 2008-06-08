@@ -737,9 +737,10 @@ void CFileZillaApp::CheckExistsFzsftp()
 	{
 		wxMessageBox(wxString::Format(_("%s could not be found. Without this component of FileZilla, SFTP will not work.\n\nPlease download FileZilla again. If this problem persists, please submit a bug report."), executable.c_str()),
 			_("File not found"), wxICON_ERROR);
+		executable.clear();
 	}
-#else
 
+#else
 
 	wxString program = _T("fzsftp");
 #ifdef __WXMSW__
@@ -830,10 +831,15 @@ void CFileZillaApp::CheckExistsFzsftp()
 	{
 		wxMessageBox(wxString::Format(_("%s could not be found. Without this component of FileZilla, SFTP will not work.\n\nPossible solutions:\n- Make sure %s is in a directory listed in your PATH environment variable.\n- Set the full path to %s in the FZ_FZSFTP environment variable."), program.c_str(), program.c_str(), program.c_str()),
 			_("File not found"), wxICON_ERROR);
+		executable.clear();
 	}
-	else
 #endif
-		COptions::Get()->SetOption(OPTION_FZSFTP_EXECUTABLE, executable);
+
+	// Quote path if it contains spaces
+	if (executable.Find(_T(" ")) != -1 && executable[0] != '"' && executable[0] != '\'')
+		executable = _T("\"") + executable + _T("\"");
+
+	COptions::Get()->SetOption(OPTION_FZSFTP_EXECUTABLE, executable);
 }
 
 #ifdef __WXMSW__
