@@ -12,6 +12,7 @@ CFilelistStatusBar::CFilelistStatusBar(wxWindow* pParent)
 	m_count_dirs = 0;
 	m_total_size = 0;
 	m_unknown_size = false;
+	m_hidden = false;
 
 	m_count_selected_files = 0;
 	m_count_selected_dirs = 0;
@@ -74,6 +75,11 @@ void CFilelistStatusBar::UpdateText()
 			else
 				text = wxString::Format(_("%s and %s. Total size: %s"), files.c_str(), dirs.c_str(), size.c_str());
 		}
+		if (m_hidden)
+		{
+			text += ' ';
+			text += wxString::Format(wxPLURAL("(%d object filtered)", "(%d objects filtered)", m_hidden), m_hidden);
+		}
 	}
 	else
 		text = _("Empty directory.");
@@ -81,12 +87,13 @@ void CFilelistStatusBar::UpdateText()
 	SetStatusText(text);
 }
 
-void CFilelistStatusBar::SetDirectoryContents(int count_files, int count_dirs, const wxLongLong &total_size, int unknown_size)
+void CFilelistStatusBar::SetDirectoryContents(int count_files, int count_dirs, const wxLongLong &total_size, int unknown_size, int hidden)
 {
 	m_count_files = count_files;
 	m_count_dirs = count_dirs;
 	m_total_size = total_size;
 	m_unknown_size = unknown_size;
+	m_hidden = hidden;
 
 	m_count_selected_files = 0;
 	m_count_selected_dirs = 0;
@@ -188,5 +195,11 @@ void CFilelistStatusBar::AddDirectory()
 void CFilelistStatusBar::RemoveDirectory()
 {
 	m_count_dirs--;
+	TriggerUpdateText();
+}
+
+void CFilelistStatusBar::SetHidden(int hidden)
+{
+	m_hidden = hidden;
 	TriggerUpdateText();
 }

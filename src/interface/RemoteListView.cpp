@@ -544,6 +544,9 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 
 	m_pDirectoryListing = pDirectoryListing;
 
+	if (m_pFilelistStatusBar)
+		m_pFilelistStatusBar->SetHidden(m_pDirectoryListing->GetCount() + 1 - m_indexMapping.size());
+
 	SetItemCount(m_indexMapping.size());
 }
 
@@ -664,6 +667,7 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 	int unknown_sizes = 0;
 	int totalFileCount = 0;
 	int totalDirCount = 0;
+	int hidden = 0;
 
 	bool eraseBackground = false;
 	if (m_pDirectoryListing)
@@ -682,7 +686,10 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 			m_fileData.push_back(data);
 
 			if (filter.FilenameFiltered(entry.name, entry.dir, entry.size, false, 0))
+			{
+				hidden++;
 				continue;
+			}
 
 			if (entry.dir)
 				totalDirCount++;
@@ -710,7 +717,7 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 	}
 
 	if (m_pFilelistStatusBar)
-		m_pFilelistStatusBar->SetDirectoryContents(totalFileCount, totalDirCount, totalSize, unknown_sizes);
+		m_pFilelistStatusBar->SetDirectoryContents(totalFileCount, totalDirCount, totalSize, unknown_sizes, hidden);
 
 	if (m_dropTarget != -1)
 	{
@@ -1781,6 +1788,7 @@ void CRemoteListView::ApplyCurrentFilter()
 	int unknown_sizes = 0;
 	int totalFileCount = 0;
 	int totalDirCount = 0;
+	int hidden = 0;
 
 	m_indexMapping.clear();
 	const unsigned int count = m_pDirectoryListing->GetCount();
@@ -1789,7 +1797,10 @@ void CRemoteListView::ApplyCurrentFilter()
 	{
 		const CDirentry& entry = (*m_pDirectoryListing)[i];
 		if (filter.FilenameFiltered(entry.name, entry.dir, entry.size, false, 0))
+		{
+			hidden++;
 			continue;
+		}
 
 		if (entry.dir)
 			totalDirCount++;
@@ -1806,7 +1817,7 @@ void CRemoteListView::ApplyCurrentFilter()
 	}
 
 	if (m_pFilelistStatusBar)
-		m_pFilelistStatusBar->SetDirectoryContents(totalFileCount, totalDirCount, totalSize, unknown_sizes);
+		m_pFilelistStatusBar->SetDirectoryContents(totalFileCount, totalDirCount, totalSize, unknown_sizes, hidden);
 
 	SetItemCount(m_indexMapping.size());
 

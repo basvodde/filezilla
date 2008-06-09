@@ -374,6 +374,7 @@ regular_dir:
 		int unknown_sizes = 0;
 		int totalFileCount = 0;
 		int totalDirCount = 0;
+		int hidden = 0;
 
 		int num = m_fileData.size();
 		CLocalFileData data;
@@ -404,11 +405,13 @@ regular_dir:
 				}
 				m_indexMapping.push_back(num);
 			}
+			else
+				hidden++;
 			num++;
 		}
 
 		if (m_pFilelistStatusBar)
-			m_pFilelistStatusBar->SetDirectoryContents(totalFileCount, totalDirCount, totalSize, unknown_sizes);
+			m_pFilelistStatusBar->SetDirectoryContents(totalFileCount, totalDirCount, totalSize, unknown_sizes, hidden);
 	}
 
 	if (m_dropTarget != -1)
@@ -707,7 +710,7 @@ void CLocalListView::DisplayDrives()
 	delete [] drives;
 
 	if (m_pFilelistStatusBar)
-		m_pFilelistStatusBar->SetDirectoryContents(0, drive_count, 0, false);
+		m_pFilelistStatusBar->SetDirectoryContents(0, drive_count, 0, false, 0);
 }
 
 void CLocalListView::DisplayShares(wxString computer)
@@ -761,7 +764,7 @@ void CLocalListView::DisplayShares(wxString computer)
 	while (res == ERROR_MORE_DATA);
 
 	if (m_pFilelistStatusBar)
-		m_pFilelistStatusBar->SetDirectoryContents(0, share_count, 0, false);
+		m_pFilelistStatusBar->SetDirectoryContents(0, share_count, 0, false, 0);
 }
 
 #endif //__WXMSW__
@@ -1467,6 +1470,7 @@ void CLocalListView::ApplyCurrentFilter()
 	int unknown_sizes = 0;
 	int totalFileCount = 0;
 	int totalDirCount = 0;
+	int hidden = 0;
 
 	m_indexMapping.clear();
 	if (m_hasParent)
@@ -1477,7 +1481,10 @@ void CLocalListView::ApplyCurrentFilter()
 		if (data.flags == fill)
 			continue;
 		if (filter.FilenameFiltered(data.name, data.dir, data.size, true, data.attributes))
+		{
+			hidden++;
 			continue;
+		}
 
 		if (data.dir)
 			totalDirCount++;
@@ -1495,7 +1502,7 @@ void CLocalListView::ApplyCurrentFilter()
 	SetItemCount(m_indexMapping.size());
 
 	if (m_pFilelistStatusBar)
-		m_pFilelistStatusBar->SetDirectoryContents(totalFileCount, totalDirCount, totalSize, unknown_sizes);
+		m_pFilelistStatusBar->SetDirectoryContents(totalFileCount, totalDirCount, totalSize, unknown_sizes, hidden);
 
 	SortList(-1, -1, false);
 
@@ -1691,6 +1698,10 @@ void CLocalListView::RefreshFile(const wxString& file)
 	data.name = file;
 	data.dir = type == CLocalFileSystem::dir;
 	data.hasTime = data.lastModified.IsValid();
+
+	CFilterManager filter;
+	if (filter.FilenameFiltered(data.name, data.dir, data.size, true, data.attributes))
+		return;
 
 	// Look if file data already exists
 	unsigned int i = 0;
