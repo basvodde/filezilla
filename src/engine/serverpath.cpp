@@ -13,18 +13,20 @@ struct CServerTypeTraits
 	int prefixmode; //0 = normal prefix, 1 = suffix
 	wxChar separatorEscape;
 	bool has_dots; // Special meaning for .. (parent) and . (self)
+	bool separator_after_prefix;
 };
 
 static const CServerTypeTraits traits[SERVERTYPE_MAX] = {
-	{ '/',  true,  0,    0,    false, 0, 0,   true  }, // Failsafe
-	{ '/',  true,  0,    0,    false, 0, 0,   true  },
-	{ '.',  false, '[',  ']',  false, 0, '^', false },
-	{ '\\', false, 0,    0,    false, 0, 0,   true  },
-	{ '.',  false, '\'', '\'', true,  1, 0,   false },
-	{ '/',  true,  0,    0,    false, 0, 0,   true  },
-	{ '/',  true,  0,    0,    false, 0, 0,   true  }, // Same as Unix
-	{ '.',  false, 0,    0,    false, 0, 0,   false },
-	{ '\\', true,  0,    0,    false, 0, 0,   true  }
+	{ '/',  true,  0,    0,    false, 0, 0,   true,  false }, // Failsafe
+	{ '/',  true,  0,    0,    false, 0, 0,   true,  false },
+	{ '.',  false, '[',  ']',  false, 0, '^', false, false },
+	{ '\\', false, 0,    0,    false, 0, 0,   true,  false },
+	{ '.',  false, '\'', '\'', true,  1, 0,   false, false },
+	{ '/',  true,  0,    0,    false, 0, 0,   true,  false },
+	{ '/',  true,  0,    0,    false, 0, 0,   true,  false }, // Same as Unix
+	{ '.',  false, 0,    0,    false, 0, 0,   false, false },
+	{ '\\', true,  0,    0,    false, 0, 0,   true,  false },
+	{ '/',  true,  0,    0,    false, 0, 0,   true,  true  } // Cygwin is like Unix but has optional prefix of form "//server"
 };
 
 CServerPath::CServerPath()
@@ -139,14 +141,19 @@ wxString CServerPath::GetPath() const
 
 	if (traits[m_type].left_enclosure != 0)
 		path += traits[m_type].left_enclosure;
-	if (m_Segments.empty() && (!traits[m_type].has_root || m_prefix.empty()))
+	if (m_Segments.empty() && (!traits[m_type].has_root || m_prefix.empty() || traits[m_type].separator_after_prefix))
 		path += traits[m_type].separator;
 
 	for (tConstSegmentIter iter = m_Segments.begin(); iter != m_Segments.end(); iter++)
 	{
 		const wxString& segment = *iter;
-		if ((traits[m_type].has_root && m_prefix.empty()) || iter != m_Segments.begin())
+		if (iter != m_Segments.begin())
 			path += traits[m_type].separator;
+		else if (traits[m_type].has_root)
+		{
+			if (m_prefix.empty() || traits[m_type].separator_after_prefix)
+				path += traits[m_type].separator;
+		}
 
 		if (traits[m_type].separatorEscape)
 		{
@@ -563,6 +570,28 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 				dir = dir.Mid(colon2 + 2);
 
 				m_Segments.clear();
+			}
+
+			if (isFile && !ExtractFile(dir, file))
+				return false;
+
+			if (!Segmentize(dir, m_Segments))
+				return false;
+		}
+		break;
+	case CYGWIN:
+		{
+			if (dir[0] == traits[m_type].separator)
+			{
+				m_Segments.clear();
+				m_prefix.clear();
+			}
+			else if (m_bEmpty)
+				return false;
+			if (dir.Left(2) == _T("//"))
+			{
+				m_prefix = traits[m_type].separator;
+				dir = dir.Mid(1);
 			}
 
 			if (isFile && !ExtractFile(dir, file))

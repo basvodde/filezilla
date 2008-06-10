@@ -114,6 +114,18 @@ void CServerPathTest::testGetPath()
 
 	const CServerPath dos_virtual3(_T("\\foo\\bar"));
 	CPPUNIT_ASSERT(dos_virtual3.GetPath() == _T("\\foo\\bar"));
+
+	const CServerPath cygwin1(_T("/"), CYGWIN);
+	CPPUNIT_ASSERT(cygwin1.GetPath() == _T("/"));
+
+	const CServerPath cygwin2(_T("/foo"), CYGWIN);
+	CPPUNIT_ASSERT(cygwin2.GetPath() == _T("/foo"));
+
+	const CServerPath cygwin3(_T("//"), CYGWIN);
+	CPPUNIT_ASSERT(cygwin3.GetPath() == _T("//"));
+
+	const CServerPath cygwin4(_T("//foo"), CYGWIN);
+	CPPUNIT_ASSERT(cygwin4.GetPath() == _T("//foo"));
 }
 
 void CServerPathTest::testHasParent()
@@ -194,6 +206,24 @@ void CServerPathTest::testHasParent()
 
 	const CServerPath dos_virtual3(_T("\\foo\\bar"));
 	CPPUNIT_ASSERT(dos_virtual3.HasParent());
+
+	const CServerPath cygwin1(_T("/"), CYGWIN);
+	CPPUNIT_ASSERT(!cygwin1.HasParent());
+
+	const CServerPath cygwin2(_T("/foo"), CYGWIN);
+	CPPUNIT_ASSERT(cygwin2.HasParent());
+
+	const CServerPath cygwin3(_T("/foo/bar"), CYGWIN);
+	CPPUNIT_ASSERT(cygwin3.HasParent());
+
+	const CServerPath cygwin4(_T("//"), CYGWIN);
+	CPPUNIT_ASSERT(!cygwin4.HasParent());
+
+	const CServerPath cygwin5(_T("//foo"), CYGWIN);
+	CPPUNIT_ASSERT(cygwin5.HasParent());
+
+	const CServerPath cygwin6(_T("//foo/bar"), CYGWIN);
+	CPPUNIT_ASSERT(cygwin6.HasParent());
 }
 
 void CServerPathTest::testGetParent()
@@ -247,6 +277,17 @@ void CServerPathTest::testGetParent()
 	const CServerPath dos_virtual3(_T("\\foo\\bar"));
 	CPPUNIT_ASSERT(dos_virtual2.GetParent() == dos_virtual1);
 	CPPUNIT_ASSERT(dos_virtual3.GetParent() == dos_virtual2);
+
+	const CServerPath cygwin1(_T("/"), CYGWIN);
+	const CServerPath cygwin2(_T("/foo"), CYGWIN);
+	const CServerPath cygwin3(_T("/foo/bar"), CYGWIN);
+	const CServerPath cygwin4(_T("//"), CYGWIN);
+	const CServerPath cygwin5(_T("//foo"), CYGWIN);
+	const CServerPath cygwin6(_T("//foo/bar"), CYGWIN);
+	CPPUNIT_ASSERT(cygwin2.GetParent() == cygwin1);
+	CPPUNIT_ASSERT(cygwin3.GetParent() == cygwin2);
+	CPPUNIT_ASSERT(cygwin5.GetParent() == cygwin4);
+	CPPUNIT_ASSERT(cygwin6.GetParent() == cygwin5);
 }
 
 void CServerPathTest::testFormatSubdir()
@@ -257,7 +298,6 @@ void CServerPathTest::testFormatSubdir()
 	CPPUNIT_ASSERT(path.FormatSubdir(_T("FOO.BAR")) == _T("FOO^.BAR"));
 }
 
-
 void CServerPathTest::testGetCommonParent()
 {
 	const CServerPath unix1(_T("/foo"));
@@ -265,6 +305,7 @@ void CServerPathTest::testGetCommonParent()
 	const CServerPath unix3(_T("/foo/bar"));
 	CPPUNIT_ASSERT(unix2.GetCommonParent(unix3) == unix1);
 	CPPUNIT_ASSERT(unix1.GetCommonParent(unix1) == unix1);
+	CPPUNIT_ASSERT(unix1.GetCommonParent(unix3) == unix1);
 
 	const CServerPath vms1(_T("FOO:[BAR]"));
 	const CServerPath vms2(_T("FOO:[BAR.TEST]"));
@@ -324,6 +365,20 @@ void CServerPathTest::testGetCommonParent()
 	const CServerPath dos_virtual3(_T("\\foo\\bar"));
 	CPPUNIT_ASSERT(dos_virtual2.GetCommonParent(dos_virtual3) == dos_virtual1);
 	CPPUNIT_ASSERT(dos_virtual1.GetCommonParent(dos_virtual1) == dos_virtual1);
+
+	const CServerPath cygwin1(_T("/foo"), CYGWIN);
+	const CServerPath cygwin2(_T("/foo/baz"), CYGWIN);
+	const CServerPath cygwin3(_T("/foo/bar"), CYGWIN);
+	const CServerPath cygwin4(_T("//foo"), CYGWIN);
+	const CServerPath cygwin5(_T("//foo/baz"), CYGWIN);
+	const CServerPath cygwin6(_T("//foo/bar"), CYGWIN);
+	CPPUNIT_ASSERT(cygwin2.GetCommonParent(cygwin3) == cygwin1);
+	CPPUNIT_ASSERT(cygwin1.GetCommonParent(cygwin1) == cygwin1);
+	CPPUNIT_ASSERT(cygwin1.GetCommonParent(cygwin3) == cygwin1);
+	CPPUNIT_ASSERT(cygwin5.GetCommonParent(cygwin6) == cygwin4);
+	CPPUNIT_ASSERT(cygwin4.GetCommonParent(cygwin4) == cygwin4);
+	CPPUNIT_ASSERT(cygwin4.GetCommonParent(cygwin6) == cygwin4);
+	CPPUNIT_ASSERT(cygwin4.GetCommonParent(cygwin1) == CServerPath());
 }
 
 void CServerPathTest::testFormatFilename()
@@ -371,6 +426,15 @@ void CServerPathTest::testFormatFilename()
 	const CServerPath dos_virtual2(_T("/foo"));
 	CPPUNIT_ASSERT(dos_virtual1.FormatFilename(_T("bar"), false) == _T("/bar"));
 	CPPUNIT_ASSERT(dos_virtual2.FormatFilename(_T("bar"), false) == _T("/foo/bar"));
+
+	const CServerPath cygwin1(_T("/"), CYGWIN);
+	const CServerPath cygwin2(_T("/foo"), CYGWIN);
+	const CServerPath cygwin3(_T("//"), CYGWIN);
+	const CServerPath cygwin4(_T("//foo"), CYGWIN);
+	CPPUNIT_ASSERT(cygwin1.FormatFilename(_T("bar"), false) == _T("/bar"));
+	CPPUNIT_ASSERT(cygwin2.FormatFilename(_T("bar"), false) == _T("/foo/bar"));
+	CPPUNIT_ASSERT(cygwin3.FormatFilename(_T("bar"), false) == _T("//bar"));
+	CPPUNIT_ASSERT(cygwin4.FormatFilename(_T("bar"), false) == _T("//foo/bar"));
 }
 
 void CServerPathTest::testChangePath()
@@ -513,4 +577,23 @@ void CServerPathTest::testChangePath()
 	CPPUNIT_ASSERT(dos_virtual4.ChangePath(sub, true) && dos_virtual4 == dos_virtual5 && sub == _T("bar"));
 	sub = _T("bar\\");
 	CPPUNIT_ASSERT(!dos_virtual4.ChangePath(sub, true));
+
+	CServerPath cygwin1(_T("/foo/bar"), CYGWIN);
+	CServerPath cygwin2(_T("/foo/bar/baz"), CYGWIN);
+	CServerPath cygwin3(_T("/foo/baz"), CYGWIN);
+	CServerPath cygwin4(_T("/foo/bar/baz"), CYGWIN);
+	CServerPath cygwin5(_T("/foo"), CYGWIN);
+	CServerPath cygwin6(_T("//foo"), CYGWIN);
+	CServerPath cygwin7(_T("//"), CYGWIN);
+	CPPUNIT_ASSERT(cygwin1.ChangePath(_T("baz")) && cygwin1 == cygwin2);
+	CPPUNIT_ASSERT(cygwin2.ChangePath(_T("../../baz")) && cygwin2 == cygwin3);
+	CPPUNIT_ASSERT(cygwin3.ChangePath(_T("/foo/bar/baz")) && cygwin3 == cygwin4);
+	CPPUNIT_ASSERT(cygwin3.ChangePath(_T(".")) && cygwin3 == cygwin4);
+	sub = _T("../../bar");
+	CPPUNIT_ASSERT(cygwin4.ChangePath(sub, true) && cygwin4 == cygwin5 && sub == _T("bar"));
+	sub = _T("bar/");
+	CPPUNIT_ASSERT(!cygwin4.ChangePath(sub, true));
+	CPPUNIT_ASSERT(cygwin5.ChangePath(_T("//foo")) && cygwin5 == cygwin6);
+	sub = _T("//foo");
+	CPPUNIT_ASSERT(cygwin1.ChangePath(sub, true) && cygwin1 == cygwin7 && sub == _T("foo"));
 }

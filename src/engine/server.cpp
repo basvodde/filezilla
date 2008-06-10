@@ -27,7 +27,8 @@ static const wxString typeNames[SERVERTYPE_MAX] = {
 	_T("VxWorks"),
 	_T("z/VM"),
 	_T("HP NonStop"),
-	wxTRANSLATE("DOS-like with virtual paths")
+	wxTRANSLATE("DOS-like with virtual paths"),
+	_T("Cygwin")
 };
 
 CServer::CServer()
