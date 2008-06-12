@@ -25,7 +25,7 @@ libtoolexecutablesubdir.nsh: Makefile
 	touch test_libtool_exedir.c
 	$(CC) -c -o test_libtool_exedir.o test_libtool_exedir.c
 	exedir=`$(LIBTOOL) -n --mode=link $(CC) -o test_libtool_exedir$(EXEEXT) test_libtool_exedir.o`; \
-	if echo "$$exedir" | grep '.libs' > /dev/null; then \
+	if echo "$$exedir" | grep -- '-o \.libs' > /dev/null; then \
 	  echo "!define LT_EXEDIR \".libs\\\"" > libtoolexecutablesubdir.nsh; \
 	else \
 	  touch libtoolexecutablesubdir.nsh; \
