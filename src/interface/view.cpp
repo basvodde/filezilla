@@ -41,6 +41,9 @@ void CView::OnSize(wxSizeEvent& event)
 		status_rect.y += rect.height;
 		status_rect.height = status_height;
 		m_pStatusBar->SetSize(status_rect);
+#ifdef __WXMSW__
+		m_pStatusBar->Update();
+#endif
 	}
 	if (!m_pWnd)
 		return;

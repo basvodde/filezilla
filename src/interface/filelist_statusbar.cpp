@@ -22,6 +22,10 @@ CFilelistStatusBar::CFilelistStatusBar(wxWindow* pParent)
 	m_updateTimer.SetOwner(this);
 
 	UpdateText();
+
+#ifdef __WXMSW__
+	SetDoubleBuffered(true);
+#endif
 }
 
 // Defined in LocalListView.cpp

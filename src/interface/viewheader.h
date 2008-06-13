@@ -25,6 +25,7 @@ public:
 
 protected:
 	CComboBoxEx* m_pComboBox;
+	wxStaticText* m_pLabel;
 	bool m_alreadyInPaint;
 
 	DECLARE_EVENT_TABLE();
@@ -40,7 +41,6 @@ protected:
 	void AddRecentDirectory(const wxString &directory);
 	std::list<wxString> m_recentDirectories;
 
-	wxString m_label;
 	int m_cbOffset;
 	int m_labelHeight;
 };

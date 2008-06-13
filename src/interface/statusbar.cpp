@@ -21,6 +21,8 @@ wxStatusBarEx::wxStatusBarEx(wxTopLevelWindow* pParent)
 
 #ifdef __WXMSW__
 	m_parentWasMaximized = false;
+
+	SetDoubleBuffered(true);
 #endif
 }
 
@@ -183,6 +185,10 @@ void wxStatusBarEx::OnSize(wxSizeEvent& event)
 
 	for (std::list<struct t_statbar_child>::iterator iter = m_children.begin(); iter != m_children.end(); iter++)
 		PositionChild(*iter);
+
+#ifdef __WXMSW__
+	Update();
+#endif
 }
 
 class CEncryptionIndicator : public wxStaticBitmap
