@@ -355,8 +355,8 @@ void CStatusBar::MeasureQueueSizeWidth()
 	dc.SetFont(GetFont());
 
 	wxSize s = dc.GetTextExtent(_("Queue: empty"));
-	s.IncTo(dc.GetTextExtent(wxString::Format(_("Queue: %s%d MiB"), ">", 8888)));
-	s.IncTo(dc.GetTextExtent(wxString::Format(_("Queue: %s%d bytes"), ">", 8888)));
+	s.IncTo(dc.GetTextExtent(wxString::Format(_("Queue: %s%d MiB"), _T(">"), 8888)));
+	s.IncTo(dc.GetTextExtent(wxString::Format(_("Queue: %s%d bytes"), _T(">"), 8888)));
 
 	SetFieldWidth(-2, s.x + 10);
 }
