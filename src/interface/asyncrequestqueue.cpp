@@ -37,25 +37,31 @@ bool CAsyncRequestQueue::ProcessDefaults(CFileZillaEngine *pEngine, CAsyncReques
 			CFileExistsNotification *pFileExistsNotification = reinterpret_cast<CFileExistsNotification *>(pNotification);
 
 			// Get the action, go up the hierarchy till one is found
-			int action = pFileExistsNotification->overwriteAction;
-			if (action == -1)
+			enum CFileExistsNotification::OverwriteAction action = pFileExistsNotification->overwriteAction;
+			if (action == CFileExistsNotification::unknown)
 				action = CDefaultFileExistsDlg::GetDefault(pFileExistsNotification->download);
-			if (action == -1)
-				action = COptions::Get()->GetOptionVal(pFileExistsNotification->download ? OPTION_FILEEXISTS_DOWNLOAD : OPTION_FILEEXISTS_UPLOAD);
+			if (action ==CFileExistsNotification::unknown)
+			{
+				int option = COptions::Get()->GetOptionVal(pFileExistsNotification->download ? OPTION_FILEEXISTS_DOWNLOAD : OPTION_FILEEXISTS_UPLOAD);
+				if (option < CFileExistsNotification::unknown || option >= CFileExistsNotification::ACTION_COUNT)
+					action = CFileExistsNotification::unknown;
+				else
+					action = (enum CFileExistsNotification::OverwriteAction)option;
+			}
 
 			// Ask and rename options require user interaction
-			if (!action || action == 4)
+			if (action == CFileExistsNotification::unknown || action == CFileExistsNotification::ask || action == CFileExistsNotification::rename)
 				break;
 
-			if (action == 3 && pFileExistsNotification->ascii)
+			if (action == CFileExistsNotification::resume && pFileExistsNotification->ascii)
 			{
 				// Check if resuming ascii files is allowed
 				if (!COptions::Get()->GetOptionVal(OPTION_ASCIIRESUME))
 					// Overwrite instead
-					action = 1;
+					action = CFileExistsNotification::overwrite;
 			}
 
-			pFileExistsNotification->overwriteAction = (enum CFileExistsNotification::OverwriteAction)action;
+			pFileExistsNotification->overwriteAction = action;
 			
 			pEngine->SetAsyncRequestReply(pNotification);
 			delete pNotification;
@@ -124,11 +130,17 @@ void CAsyncRequestQueue::ProcessNextRequest()
 		CFileExistsNotification *pNotification = reinterpret_cast<CFileExistsNotification *>(entry.pNotification);
 
 		// Get the action, go up the hierarchy till one is found
-		int action = pNotification->overwriteAction;
-		if (action == -1)
+		enum CFileExistsNotification::OverwriteAction action = pNotification->overwriteAction;
+		if (action == CFileExistsNotification::unknown)
 			action = CDefaultFileExistsDlg::GetDefault(pNotification->download);
-		if (action == -1)
-			action = COptions::Get()->GetOptionVal(pNotification->download ? OPTION_FILEEXISTS_DOWNLOAD : OPTION_FILEEXISTS_UPLOAD);
+		if (action == CFileExistsNotification::unknown)
+		{
+			int option = COptions::Get()->GetOptionVal(pNotification->download ? OPTION_FILEEXISTS_DOWNLOAD : OPTION_FILEEXISTS_UPLOAD);
+			if (option < CFileExistsNotification::unknown || option >= CFileExistsNotification::ACTION_COUNT)
+				action = CFileExistsNotification::unknown;
+			else
+				action = (enum CFileExistsNotification::OverwriteAction)option;
+		}
 
 		if (!action)
 		{
@@ -138,7 +150,7 @@ void CAsyncRequestQueue::ProcessNextRequest()
 
 			if (res == wxID_OK)
 			{
-				action = dlg.GetAction() + 1;
+				action = dlg.GetAction();
 
 				bool directionOnly, queueOnly;
 				if (dlg.Always(directionOnly, queueOnly))
@@ -182,10 +194,10 @@ void CAsyncRequestQueue::ProcessNextRequest()
 				}
 			}
 			else
-				action = 5;
+				action = CFileExistsNotification::skip;
 		}
 
-		if (action < 1 || action >= CFileExistsNotification::ACTION_COUNT)
+		if (action == CFileExistsNotification::unknown || action == CFileExistsNotification::ask)
 			action = CFileExistsNotification::skip;
 
 		if (action == CFileExistsNotification::resume && pNotification->ascii)
@@ -193,7 +205,7 @@ void CAsyncRequestQueue::ProcessNextRequest()
 			// Check if resuming ascii files is allowed
 			if (!COptions::Get()->GetOptionVal(OPTION_ASCIIRESUME))
 				// Overwrite instead
-				action = 1;
+				action = CFileExistsNotification::overwrite;
 		}
 
 		switch (action)
@@ -250,7 +262,7 @@ void CAsyncRequestQueue::ProcessNextRequest()
 			}
 			break;
 		default:
-			pNotification->overwriteAction = (enum CFileExistsNotification::OverwriteAction)action;
+			pNotification->overwriteAction = action;
 			break;
 		}
 

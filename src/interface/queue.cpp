@@ -265,7 +265,7 @@ CFileItem::CFileItem(CServerItem* parent, bool queued, bool download, const wxSt
 	m_errorCount = 0;
 	m_remove = false;
 	m_pEngineData = 0;
-	m_defaultFileExistsAction = -1;
+	m_defaultFileExistsAction = CFileExistsNotification::unknown;
 	m_edit = CEditHandler::none;
 	m_madeProgress = false;
 	m_autoResume = false;
@@ -420,7 +420,7 @@ void CServerItem::RemoveFileItemFromList(CFileItem* pItem)
 	wxFAIL_MSG(_T("File item not deleted from m_fileList"));
 }
 
-void CServerItem::SetDefaultFileExistsAction(int action, const enum TransferDirection direction)
+void CServerItem::SetDefaultFileExistsAction(enum CFileExistsNotification::OverwriteAction action, const enum TransferDirection direction)
 {
 	for (std::vector<CQueueItem*>::iterator iter = m_children.begin(); iter != m_children.end(); iter++)
 	{
@@ -693,7 +693,7 @@ CFolderScanItem::CFolderScanItem(CServerItem* parent, bool queued, bool download
 	pair.remotePath.SetSafePath(remotePath.GetSafePath().c_str());
 	m_dirsToCheck.push_back(pair);
 
-	m_defaultFileExistsAction = -1;
+	m_defaultFileExistsAction = CFileExistsNotification::unknown;
 }
 
 bool CFolderScanItem::TryRemoveAll()

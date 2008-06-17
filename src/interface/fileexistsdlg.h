@@ -17,7 +17,7 @@ public:
 	/// Creates the controls and sizers
 	void CreateControls();
 	
-	int GetAction() const;
+	enum CFileExistsNotification::OverwriteAction GetAction() const;
 	bool Always(bool &directionOnly, bool &queueOnly) const;
 
 protected:
@@ -30,7 +30,7 @@ protected:
 
 	CFileExistsNotification *m_pNotification;
 	wxRadioButton *m_pAction1, *m_pAction2, *m_pAction3, *m_pAction4, *m_pAction5;
-	int m_action;
+	enum CFileExistsNotification::OverwriteAction m_action;
 	bool m_always;
 	bool m_directionOnly;
 	bool m_queueOnly;

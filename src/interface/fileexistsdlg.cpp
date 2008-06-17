@@ -14,7 +14,7 @@ CFileExistsDlg::CFileExistsDlg(CFileExistsNotification *pNotification)
 {
 	m_pNotification = pNotification;
 	m_pAction1 = m_pAction2 = m_pAction3 = m_pAction4 = m_pAction5 = 0;
-	m_action = 0;
+	m_action = CFileExistsNotification::overwrite;
 	m_always = false;
 	m_queueOnly = false;
 	m_directionOnly = false;
@@ -255,17 +255,17 @@ void CFileExistsDlg::LoadIcon(int id, const wxString &file)
 void CFileExistsDlg::OnOK(wxCommandEvent& event)
 {
 	if (m_pAction1 && m_pAction1->GetValue())
-		m_action = 0;
+		m_action = CFileExistsNotification::overwrite;
 	else if (m_pAction2 && m_pAction2->GetValue())
-		m_action = 1;
+		m_action = CFileExistsNotification::overwriteNewer;
 	else if (m_pAction3 && m_pAction3->GetValue())
-		m_action = 2;
+		m_action = CFileExistsNotification::resume;
 	else if (m_pAction4 && m_pAction4->GetValue())
-		m_action = 3;
+		m_action = CFileExistsNotification::rename;
 	else if (m_pAction5 && m_pAction5->GetValue())
-		m_action = 4;
+		m_action = CFileExistsNotification::skip;
 	else
-		m_action = 0;
+		m_action = CFileExistsNotification::overwrite;
 
 	m_always = XRCCTRL(*this, "ID_ALWAYS", wxCheckBox)->GetValue();
 	m_directionOnly = XRCCTRL(*this, "ID_UPDOWNONLY", wxCheckBox)->GetValue();
@@ -273,14 +273,14 @@ void CFileExistsDlg::OnOK(wxCommandEvent& event)
 	EndModal(wxID_OK);
 }
 
-int CFileExistsDlg::GetAction() const
+enum CFileExistsNotification::OverwriteAction CFileExistsDlg::GetAction() const
 {
 	return m_action;
 }
 
 void CFileExistsDlg::OnCancel(wxCommandEvent& event)
 {
-	m_action = 4;
+	m_action = CFileExistsNotification::skip;
 	EndModal(wxID_CANCEL);
 }
 

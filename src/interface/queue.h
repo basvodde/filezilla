@@ -99,7 +99,7 @@ public:
 
 	virtual void SaveItem(TiXmlElement* pElement) const;
 
-	void SetDefaultFileExistsAction(int action, const enum TransferDirection direction);
+	void SetDefaultFileExistsAction(enum CFileExistsNotification::OverwriteAction action, const enum TransferDirection direction);
 
 	int m_activeCount;
 
@@ -167,7 +167,7 @@ public:
 
 	t_EngineData* m_pEngineData;
 
-	int m_defaultFileExistsAction;
+	enum CFileExistsNotification::OverwriteAction m_defaultFileExistsAction;
 
 	bool m_madeProgress;
 	bool m_autoResume;
@@ -225,7 +225,7 @@ public:
 	};
 	std::list<t_dirPair> m_dirsToCheck;
 
-	int m_defaultFileExistsAction;
+	enum CFileExistsNotification::OverwriteAction m_defaultFileExistsAction;
 
 protected:
 	wxString m_localPath;

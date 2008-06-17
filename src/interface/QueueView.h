@@ -70,7 +70,7 @@ public:
 	bool QueueFile(const bool queueOnly, const bool download, const wxString& localFile, const wxString& remoteFile,
 		const CServerPath& remotePath, const CServer& server, const wxLongLong size, enum CEditHandler::fileType edit = CEditHandler::none);
 	bool QueueFiles(const bool queueOnly, const wxString& localPath, const CRemoteDataObject& dataObject);
-	bool QueueFiles(const std::list<t_newEntry> &entryList, bool queueOnly, bool download, CServerItem* pServerItem, const int defaultFileExistsAction);
+	bool QueueFiles(const std::list<t_newEntry> &entryList, bool queueOnly, bool download, CServerItem* pServerItem, const enum CFileExistsNotification::OverwriteAction defaultFileExistsAction);
 	bool QueueFolder(bool queueOnly, bool download, const wxString& localPath, const CServerPath& remotePath, const CServer& server);
 
 	bool IsEmpty() const;
@@ -84,7 +84,7 @@ public:
 
 	// This sets the default file exists action for all files currently in queue.
 	// This includes queued folders which are yet to be processed
-	void SetDefaultFileExistsAction(int action, const enum TransferDirection direction);
+	void SetDefaultFileExistsAction(enum CFileExistsNotification::OverwriteAction action, const enum TransferDirection direction);
 
 	// Tries to refresh the current remote directory listing
 	// if there's an idle engine connected to the current server of
