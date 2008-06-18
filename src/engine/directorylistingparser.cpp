@@ -9,7 +9,7 @@
 std::map<wxString, int> CDirectoryListingParser::m_MonthNamesMap;
 
 //#define LISTDEBUG_MVS
-#define LISTDEBUG
+//#define LISTDEBUG
 #ifdef LISTDEBUG
 static char data[][110]={
 	
