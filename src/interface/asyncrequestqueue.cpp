@@ -136,13 +136,13 @@ void CAsyncRequestQueue::ProcessNextRequest()
 		if (action == CFileExistsNotification::unknown)
 		{
 			int option = COptions::Get()->GetOptionVal(pNotification->download ? OPTION_FILEEXISTS_DOWNLOAD : OPTION_FILEEXISTS_UPLOAD);
-			if (option < CFileExistsNotification::unknown || option >= CFileExistsNotification::ACTION_COUNT)
-				action = CFileExistsNotification::unknown;
+			if (option <= CFileExistsNotification::unknown || option >= CFileExistsNotification::ACTION_COUNT)
+				action = CFileExistsNotification::ask;
 			else
 				action = (enum CFileExistsNotification::OverwriteAction)option;
 		}
 
-		if (!action)
+		if (action == CFileExistsNotification::ask)
 		{
 			CFileExistsDlg dlg(pNotification);
 			dlg.Create(m_pMainFrame);
