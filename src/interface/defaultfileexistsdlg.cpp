@@ -33,6 +33,12 @@ bool CDefaultFileExistsDlg::Load(wxWindow *parent, bool fromQueue)
 	case CFileExistsNotification::overwriteNewer:
 		XRCCTRL(*this, "ID_DL_OVERWRITEIFNEWER", wxRadioButton)->SetValue(true);
 		break;
+	case CFileExistsNotification::overwriteSize:
+		XRCCTRL(*this, "ID_DL_OVERWRITESIZE", wxRadioButton)->SetValue(true);
+		break;
+	case CFileExistsNotification::overwriteSizeOrNewer:
+		XRCCTRL(*this, "ID_DL_OVERWRITESIZEORNEWER", wxRadioButton)->SetValue(true);
+		break;
 	case CFileExistsNotification::resume:
 		XRCCTRL(*this, "ID_DL_RESUME", wxRadioButton)->SetValue(true);
 		break;
@@ -57,6 +63,12 @@ bool CDefaultFileExistsDlg::Load(wxWindow *parent, bool fromQueue)
 		break;
 	case CFileExistsNotification::overwriteNewer:
 		XRCCTRL(*this, "ID_UL_OVERWRITEIFNEWER", wxRadioButton)->SetValue(true);
+		break;
+	case CFileExistsNotification::overwriteSize:
+		XRCCTRL(*this, "ID_UL_OVERWRITESIZE", wxRadioButton)->SetValue(true);
+		break;
+	case CFileExistsNotification::overwriteSizeOrNewer:
+		XRCCTRL(*this, "ID_UL_OVERWRITESIZEORNEWER", wxRadioButton)->SetValue(true);
 		break;
 	case CFileExistsNotification::resume:
 		XRCCTRL(*this, "ID_UL_RESUME", wxRadioButton)->SetValue(true);
@@ -95,6 +107,10 @@ bool CDefaultFileExistsDlg::Run(enum CFileExistsNotification::OverwriteAction *d
 		action = CFileExistsNotification::overwrite;
 	else if (XRCCTRL(*this, "ID_DL_OVERWRITEIFNEWER", wxRadioButton)->GetValue())
 		action = CFileExistsNotification::overwriteNewer;
+	else if (XRCCTRL(*this, "ID_DL_OVERWRITESIZE", wxRadioButton)->GetValue())
+		action = CFileExistsNotification::overwriteSize;
+	else if (XRCCTRL(*this, "ID_DL_OVERWRITESIZEORNEWER", wxRadioButton)->GetValue())
+		action = CFileExistsNotification::overwriteSizeOrNewer;
 	else if (XRCCTRL(*this, "ID_DL_RESUME", wxRadioButton)->GetValue())
 		action = CFileExistsNotification::resume;
 	else if (XRCCTRL(*this, "ID_DL_RENAME", wxRadioButton)->GetValue())
@@ -115,6 +131,10 @@ bool CDefaultFileExistsDlg::Run(enum CFileExistsNotification::OverwriteAction *d
 		action = CFileExistsNotification::overwrite;
 	else if (XRCCTRL(*this, "ID_UL_OVERWRITEIFNEWER", wxRadioButton)->GetValue())
 		action = CFileExistsNotification::overwriteNewer;
+	else if (XRCCTRL(*this, "ID_UL_OVERWRITESIZE", wxRadioButton)->GetValue())
+		action = CFileExistsNotification::overwriteSize;
+	else if (XRCCTRL(*this, "ID_UL_OVERWRITESIZEORNEWER", wxRadioButton)->GetValue())
+		action = CFileExistsNotification::overwriteSizeOrNewer;
 	else if (XRCCTRL(*this, "ID_UL_RESUME", wxRadioButton)->GetValue())
 		action = CFileExistsNotification::resume;
 	else if (XRCCTRL(*this, "ID_UL_RENAME", wxRadioButton)->GetValue())

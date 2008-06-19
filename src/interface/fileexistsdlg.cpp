@@ -13,7 +13,7 @@ END_EVENT_TABLE()
 CFileExistsDlg::CFileExistsDlg(CFileExistsNotification *pNotification)
 {
 	m_pNotification = pNotification;
-	m_pAction1 = m_pAction2 = m_pAction3 = m_pAction4 = m_pAction5 = 0;
+	m_pAction1 = m_pAction2 = m_pAction3 = m_pAction4 = m_pAction5 = m_pAction6 = m_pAction7 = 0;
 	m_action = CFileExistsNotification::overwrite;
 	m_always = false;
 	m_queueOnly = false;
@@ -39,6 +39,8 @@ void CFileExistsDlg::CreateControls()
 	m_pAction3 = wxDynamicCast(FindWindow(XRCID("ID_ACTION3")), wxRadioButton);
 	m_pAction4 = wxDynamicCast(FindWindow(XRCID("ID_ACTION4")), wxRadioButton);
 	m_pAction5 = wxDynamicCast(FindWindow(XRCID("ID_ACTION5")), wxRadioButton);
+	m_pAction6 = wxDynamicCast(FindWindow(XRCID("ID_ACTION6")), wxRadioButton);
+	m_pAction7 = wxDynamicCast(FindWindow(XRCID("ID_ACTION7")), wxRadioButton);
 
 	wxString localFile = m_pNotification->localFile;
 
@@ -264,6 +266,10 @@ void CFileExistsDlg::OnOK(wxCommandEvent& event)
 		m_action = CFileExistsNotification::rename;
 	else if (m_pAction5 && m_pAction5->GetValue())
 		m_action = CFileExistsNotification::skip;
+	else if (m_pAction6 && m_pAction6->GetValue())
+		m_action = CFileExistsNotification::overwriteSizeOrNewer;
+	else if (m_pAction7 && m_pAction7->GetValue())
+		m_action = CFileExistsNotification::overwriteSize;
 	else
 		m_action = CFileExistsNotification::overwrite;
 

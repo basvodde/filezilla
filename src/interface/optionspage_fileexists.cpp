@@ -17,6 +17,12 @@ bool COptionsPageFileExists::LoadPage()
 	case CFileExistsNotification::overwriteNewer:
 		SetRCheck(XRCID("ID_DL_OVERWRITEIFNEWER"), true, failure);
 		break;
+	case CFileExistsNotification::overwriteSize:
+		SetRCheck(XRCID("ID_DL_OVERWRITESIZE"), true, failure);
+		break;
+	case CFileExistsNotification::overwriteSizeOrNewer:
+		SetRCheck(XRCID("ID_DL_OVERWRITESIZEORNEWER"), true, failure);
+		break;
 	case CFileExistsNotification::resume:
 		SetRCheck(XRCID("ID_DL_RESUME"), true, failure);
 		break;
@@ -39,6 +45,12 @@ bool COptionsPageFileExists::LoadPage()
 		break;
 	case CFileExistsNotification::overwriteNewer:
 		SetRCheck(XRCID("ID_UL_OVERWRITEIFNEWER"), true, failure);
+		break;
+	case CFileExistsNotification::overwriteSize:
+		SetRCheck(XRCID("ID_UL_OVERWRITESIZE"), true, failure);
+		break;
+	case CFileExistsNotification::overwriteSizeOrNewer:
+		SetRCheck(XRCID("ID_UL_OVERWRITESIZEORNEWER"), true, failure);
 		break;
 	case CFileExistsNotification::resume:
 		SetRCheck(XRCID("ID_UL_RESUME"), true, failure);
@@ -66,6 +78,10 @@ bool COptionsPageFileExists::SavePage()
 		value = CFileExistsNotification::overwrite;
 	else if (GetRCheck(XRCID("ID_DL_OVERWRITEIFNEWER")))
 		value = CFileExistsNotification::overwriteNewer;
+	else if (GetRCheck(XRCID("ID_DL_OVERWRITESIZE")))
+		value = CFileExistsNotification::overwriteSize;
+	else if (GetRCheck(XRCID("ID_DL_OVERWRITESIZEORNEWER")))
+		value = CFileExistsNotification::overwriteSizeOrNewer;
 	else if (GetRCheck(XRCID("ID_DL_RESUME")))
 		value = CFileExistsNotification::resume;
 	else if (GetRCheck(XRCID("ID_DL_RENAME")))
@@ -80,6 +96,10 @@ bool COptionsPageFileExists::SavePage()
 		value = CFileExistsNotification::overwrite;
 	else if (GetRCheck(XRCID("ID_UL_OVERWRITEIFNEWER")))
 		value = CFileExistsNotification::overwriteNewer;
+	else if (GetRCheck(XRCID("ID_UL_OVERWRITESIZE")))
+		value = CFileExistsNotification::overwriteSize;
+	else if (GetRCheck(XRCID("ID_UL_OVERWRITESIZEORNEWER")))
+		value = CFileExistsNotification::overwriteSizeOrNewer;
 	else if (GetRCheck(XRCID("ID_UL_RESUME")))
 		value = CFileExistsNotification::resume;
 	else if (GetRCheck(XRCID("ID_UL_RENAME")))

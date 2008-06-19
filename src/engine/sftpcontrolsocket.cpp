@@ -793,6 +793,50 @@ bool CSftpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotifi
 					ResetOperation(FZ_REPLY_OK);
 				}
 				break;
+			case CFileExistsNotification::overwriteSize:
+				/* First compare flags both size known but different, one size known and the other not (obviously they are different).
+				   Second compare flags the remaining case in which we need to send command : both size unknown */
+				if ((pFileExistsNotification->localSize != pFileExistsNotification->remoteSize) || (pFileExistsNotification->localSize == -1))
+					SendNextCommand();
+				else
+				{
+					if (pData->download)
+					{
+						wxString filename = pData->remotePath.FormatFilename(pData->remoteFile);
+						LogMessage(Status, _("Skipping download of %s"), filename.c_str());
+					}
+					else
+					{
+						LogMessage(Status, _("Skipping upload of %s"), pData->localFile.c_str());
+					}
+					ResetOperation(FZ_REPLY_OK);
+				}
+				break;
+			case CFileExistsNotification::overwriteSizeOrNewer:
+				if (!pFileExistsNotification->localTime.IsValid() || !pFileExistsNotification->remoteTime.IsValid())
+					SendNextCommand();
+				/* First compare flags both size known but different, one size known and the other not (obviously they are different).
+				   Second compare flags the remaining case in which we need to send command : both size unknown */
+				else if ((pFileExistsNotification->localSize != pFileExistsNotification->remoteSize) || (pFileExistsNotification->localSize == -1))
+					SendNextCommand();
+				else if (pFileExistsNotification->download && pFileExistsNotification->localTime.IsEarlierThan(pFileExistsNotification->remoteTime))
+					SendNextCommand();
+				else if (!pFileExistsNotification->download && pFileExistsNotification->localTime.IsLaterThan(pFileExistsNotification->remoteTime))
+					SendNextCommand();
+				else
+				{
+					if (pData->download)
+					{
+						wxString filename = pData->remotePath.FormatFilename(pData->remoteFile);
+						LogMessage(Status, _("Skipping download of %s"), filename.c_str());
+					}
+					else
+					{
+						LogMessage(Status, _("Skipping upload of %s"), pData->localFile.c_str());
+					}
+					ResetOperation(FZ_REPLY_OK);
+				}
+				break;
 			case CFileExistsNotification::resume:
 				if (pData->download && pFileExistsNotification->localSize != -1)
 					pData->resume = true;

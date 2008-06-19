@@ -29,7 +29,7 @@ protected:
 	wxString GetPathEllipsis(wxString path, wxWindow *window);
 
 	CFileExistsNotification *m_pNotification;
-	wxRadioButton *m_pAction1, *m_pAction2, *m_pAction3, *m_pAction4, *m_pAction5;
+	wxRadioButton *m_pAction1, *m_pAction2, *m_pAction3, *m_pAction4, *m_pAction5, *m_pAction6, *m_pAction7;
 	enum CFileExistsNotification::OverwriteAction m_action;
 	bool m_always;
 	bool m_directionOnly;
