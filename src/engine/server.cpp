@@ -126,7 +126,29 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 		host = host.Left(pos);
 	}
 
-	pos = host.Find(':');
+	if (host[0] == '[')
+	{
+		// Probably IPv6 address
+		pos = host.Find(']');
+		if (pos == -1)
+		{
+			error = _("Host starts with '[' but no closing bracket found.");
+			return false;
+		}
+		if (host[pos + 1])
+		{
+			if (host[pos + 1] != ':')
+			{
+				error = _("Invalid host, after closing bracket only colon and port may follow.");
+				return false;
+			}
+			pos++;
+		}
+		else
+			pos = -1;
+	}
+	else
+		pos = host.Find(':');
 	if (pos != -1)
 	{
 		if (!pos)
