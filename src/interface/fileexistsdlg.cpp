@@ -42,7 +42,7 @@ void CFileExistsDlg::CreateControls()
 
 	wxString localFile = m_pNotification->localFile;
 
-	wxString remoteFile = m_pNotification->remotePath.GetPath() + m_pNotification->remoteFile;
+	wxString remoteFile = m_pNotification->remotePath.FormatFilename(m_pNotification->remoteFile);
     localFile = GetPathEllipsis(localFile, FindWindow(XRCID("ID_FILE1_NAME")));
     remoteFile = GetPathEllipsis(remoteFile, FindWindow(XRCID("ID_FILE2_NAME")));
 
