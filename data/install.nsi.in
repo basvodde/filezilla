@@ -660,7 +660,9 @@ FunctionEnd
 ;--------------------------------
 ;Installer Sections
 
-${MementoSection} "FileZilla Client" SecMain
+Section "FileZilla Client" SecMain
+
+  SectionIn 1 RO
 
   SetOutPath "$INSTDIR"
   
@@ -743,7 +745,7 @@ ${MementoSection} "FileZilla Client" SecMain
   ${endif}
   Pop $R0
 
-${MementoSectionEnd}
+SectionEnd
 
 !macro INSTALLLANGFILE LANG
 
