@@ -2132,6 +2132,7 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 	int res = ChangeDir(pData->remotePath);
 	if (res != FZ_REPLY_OK)
 		return res;
+
 	return ParseSubcommandResult(FZ_REPLY_OK);
 }
 
@@ -2687,7 +2688,8 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 		m_pCurOpData->waitForAsyncRequest = false;
 	}
 
-	switch (pNotification->GetRequestID())
+	const enum RequestId requestId = pNotification->GetRequestID();
+	switch (requestId)
 	{
 	case reqId_fileexists:
 		{
@@ -2702,81 +2704,6 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 			CFileExistsNotification *pFileExistsNotification = reinterpret_cast<CFileExistsNotification *>(pNotification);
 			switch (pFileExistsNotification->overwriteAction)
 			{
-			case CFileExistsNotification::overwrite:
-				SendNextCommand();
-				break;
-			case CFileExistsNotification::overwriteNewer:
-				if (!pFileExistsNotification->localTime.IsValid() || !pFileExistsNotification->remoteTime.IsValid())
-					SendNextCommand();
-				else if (pFileExistsNotification->download && pFileExistsNotification->localTime.IsEarlierThan(pFileExistsNotification->remoteTime))
-					SendNextCommand();
-				else if (!pFileExistsNotification->download && pFileExistsNotification->localTime.IsLaterThan(pFileExistsNotification->remoteTime))
-					SendNextCommand();
-				else
-				{
-					if (pData->download)
-					{
-						wxString filename = pData->remotePath.FormatFilename(pData->remoteFile);
-						LogMessage(Status, _("Skipping download of %s"), filename.c_str());
-					}
-					else
-					{
-						LogMessage(Status, _("Skipping upload of %s"), pData->localFile.c_str());
-					}
-					ResetOperation(FZ_REPLY_OK);
-				}
-				break;
-			case CFileExistsNotification::overwriteSize:
-				/* First compare flags both size known but different, one size known and the other not (obviously they are different).
-				   Second compare flags the remaining case in which we need to send command : both size unknown */
-				if ((pFileExistsNotification->localSize != pFileExistsNotification->remoteSize) || (pFileExistsNotification->localSize == -1))
-					SendNextCommand();
-				else
-				{
-					if (pData->download)
-					{
-						wxString filename = pData->remotePath.FormatFilename(pData->remoteFile);
-						LogMessage(Status, _("Skipping download of %s"), filename.c_str());
-					}
-					else
-					{
-						LogMessage(Status, _("Skipping upload of %s"), pData->localFile.c_str());
-					}
-					ResetOperation(FZ_REPLY_OK);
-				}
-				break;
-			case CFileExistsNotification::overwriteSizeOrNewer:
-				if (!pFileExistsNotification->localTime.IsValid() || !pFileExistsNotification->remoteTime.IsValid())
-					SendNextCommand();
-				/* First compare flags both size known but different, one size known and the other not (obviously they are different).
-				   Second compare flags the remaining case in which we need to send command : both size unknown */
-				else if ((pFileExistsNotification->localSize != pFileExistsNotification->remoteSize) || (pFileExistsNotification->localSize == -1))
-					SendNextCommand();
-				else if (pFileExistsNotification->download && pFileExistsNotification->localTime.IsEarlierThan(pFileExistsNotification->remoteTime))
-					SendNextCommand();
-				else if (!pFileExistsNotification->download && pFileExistsNotification->localTime.IsLaterThan(pFileExistsNotification->remoteTime))
-					SendNextCommand();
-				else
-				{
-					if (pData->download)
-					{
-						wxString filename = pData->remotePath.FormatFilename(pData->remoteFile);
-						LogMessage(Status, _("Skipping download of %s"), filename.c_str());
-					}
-					else
-					{
-						LogMessage(Status, _("Skipping upload of %s"), pData->localFile.c_str());
-					}
-					ResetOperation(FZ_REPLY_OK);
-				}
-				break;
-			case CFileExistsNotification::resume:
-				if (pData->download && pData->localFileSize != -1)
-					pData->resume = true;
-				else if (!pData->download && pData->remoteFileSize != -1)
-					pData->resume = true;
-				SendNextCommand();
-				break;
 			case CFileExistsNotification::rename:
 				if (pData->download)
 				{
@@ -2842,22 +2769,8 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 
 				}
 				break;
-			case CFileExistsNotification::skip:
-				if (pData->download)
-				{
-					wxString filename = pData->remotePath.FormatFilename(pData->remoteFile);
-					LogMessage(Status, _("Skipping download of %s"), filename.c_str());
-				}
-				else
-				{
-					LogMessage(Status, _("Skipping upload of %s"), pData->localFile.c_str());
-				}
-				ResetOperation(FZ_REPLY_OK);
-				break;
 			default:
-				LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Unknown file exists action: %d"), pFileExistsNotification->overwriteAction);
-				ResetOperation(FZ_REPLY_INTERNALERROR);
-				return false;
+				return SetFileExistsAction(pFileExistsNotification);
 			}
 		}
 		break;

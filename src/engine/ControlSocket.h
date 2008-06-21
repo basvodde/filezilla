@@ -137,6 +137,7 @@ public:
 
 	void SendAsyncRequest(CAsyncRequestNotification* pNotification);
 	virtual bool SetAsyncRequestReply(CAsyncRequestNotification *pNotification) = 0;
+	bool SetFileExistsAction(CFileExistsNotification *pFileExistsNotification);
 
 	void InitTransferStatus(wxFileOffset totalSize, wxFileOffset startOffset, bool list);
 	void SetTransferStatusStartTime();
