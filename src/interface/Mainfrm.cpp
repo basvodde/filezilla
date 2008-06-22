@@ -242,7 +242,7 @@ CMainFrame::CMainFrame()
 	m_pTopSplitter->SetMinimumPaneSize(50);
 
 	m_pBottomSplitter = new wxSplitterWindow(m_pTopSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
-	m_pBottomSplitter->SetMinimumPaneSize(50);
+	m_pBottomSplitter->SetMinimumPaneSize(55);
 	m_pBottomSplitter->SetSashGravity(1.0);
 
 	m_pViewSplitter = new wxSplitterWindow(m_pBottomSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
@@ -1148,17 +1148,22 @@ void CMainFrame::OnSplitterSashPosChanged(wxSplitterEvent& event)
 
 		int delta = event.GetSashPosition() - m_pBottomSplitter->GetSashPosition();
 
-		int newSize = m_pRemoteSplitter->GetClientSize().GetHeight() - m_pRemoteSplitter->GetSashPosition() + delta;
-		if (newSize < 0)
-			event.Veto();
-		else if (newSize < 20)
-			m_pRemoteSplitter->SetSashPosition(m_pRemoteSplitter->GetSashPosition() - 20 + newSize);
+		const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
 
-		newSize = m_pLocalSplitter->GetClientSize().GetHeight() - m_pLocalSplitter->GetSashPosition() + delta;
-		if (newSize < 0)
-			event.Veto();
-		else if (newSize < 20)
-			m_pLocalSplitter->SetSashPosition(m_pLocalSplitter->GetSashPosition() - 20 + newSize);
+		if (!layout)
+		{
+			int newSize = m_pRemoteSplitter->GetClientSize().GetHeight() - m_pRemoteSplitter->GetSashPosition() + delta;
+			if (newSize < 0)
+				event.Veto();
+			else if (newSize < 20)
+				m_pRemoteSplitter->SetSashPosition(m_pRemoteSplitter->GetSashPosition() - 20 + newSize);
+
+			newSize = m_pLocalSplitter->GetClientSize().GetHeight() - m_pLocalSplitter->GetSashPosition() + delta;
+			if (newSize < 0)
+				event.Veto();
+			else if (newSize < 20)
+				m_pLocalSplitter->SetSashPosition(m_pLocalSplitter->GetSashPosition() - 20 + newSize);
+		}
 	}
 }
 
