@@ -22,7 +22,8 @@ wxStatusBarEx::wxStatusBarEx(wxTopLevelWindow* pParent)
 #ifdef __WXMSW__
 	m_parentWasMaximized = false;
 
-	SetDoubleBuffered(true);
+	if (GetLayoutDirection() != wxLayout_RightToLeft)
+		SetDoubleBuffered(true);
 #endif
 }
 
@@ -187,7 +188,8 @@ void wxStatusBarEx::OnSize(wxSizeEvent& event)
 		PositionChild(*iter);
 
 #ifdef __WXMSW__
-	Update();
+	if (GetLayoutDirection() != wxLayout_RightToLeft)
+		Update();
 #endif
 }
 

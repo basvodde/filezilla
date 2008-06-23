@@ -24,7 +24,8 @@ CFilelistStatusBar::CFilelistStatusBar(wxWindow* pParent)
 	UpdateText();
 
 #ifdef __WXMSW__
-	SetDoubleBuffered(true);
+	if (GetLayoutDirection() != wxLayout_RightToLeft)
+		SetDoubleBuffered(true);
 #endif
 }
 
