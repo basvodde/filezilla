@@ -87,7 +87,14 @@ void CFilelistStatusBar::UpdateText()
 		}
 	}
 	else
+	{
 		text = _("Empty directory.");
+		if (m_hidden)
+		{
+			text += ' ';
+			text += wxString::Format(wxPLURAL("(%d object filtered)", "(%d objects filtered)", m_hidden), m_hidden);
+		}
+	}
 
 	SetStatusText(text);
 }
