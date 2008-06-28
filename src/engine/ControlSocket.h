@@ -1,6 +1,11 @@
 #ifndef __CONTROLSOCKET_H__
 #define __CONTROLSOCKET_H__
 
+#include "socket.h"
+#include "logging_private.h"
+#include "backend.h"
+#include "socket.h"
+
 class COpData
 {
 public:
@@ -103,9 +108,6 @@ enum TransferEndReason
 	failed_resumetest
 };
 
-#include "logging_private.h"
-#include "backend.h"
-
 class CTransferStatus;
 class CControlSocket: public wxEvtHandler, public CLogging
 {
@@ -127,7 +129,7 @@ public:
 	virtual int Mkdir(const CServerPath& path) { return FZ_REPLY_NOTSUPPORTED; }
 	virtual int Rename(const CRenameCommand& command) { return FZ_REPLY_NOTSUPPORTED; }
 	virtual int Chmod(const CChmodCommand& command) { return FZ_REPLY_NOTSUPPORTED; }
-	virtual bool Connected() const = 0;
+	virtual bool Connected() = 0;
 
 	// If m_pCurrentOpData is zero, this function returns the current command
 	// from the engine.
@@ -264,16 +266,15 @@ protected:
 	void OnObtainLock(wxCommandEvent& event);
 };
 
-class CRealControlSocket : public CControlSocket, public wxSocketClient
+class CRealControlSocket : public CControlSocket, public CSocket
 {
 public:
 	CRealControlSocket(CFileZillaEnginePrivate *pEngine);
 	virtual ~CRealControlSocket();
 
 	virtual int Connect(const CServer &server);
-	virtual int ContinueConnect(const wxIPV4address *address);
 
-	virtual bool Connected() const { return IsConnected(); }
+	virtual bool Connected() { return GetState() == CSocket::connected; }
 
 protected:
 	virtual int DoClose(int nErrorCode = FZ_REPLY_DISCONNECTED);
@@ -284,7 +285,7 @@ protected:
 	virtual wxString GetPeerIP() const;
 
 	DECLARE_EVENT_TABLE();
-	virtual void OnSocketEvent(wxSocketEvent &event);
+	virtual void OnSocketEvent(CSocketEvent &event);
 	virtual void OnConnect();
 	virtual void OnReceive();
 	virtual void OnSend();
@@ -296,8 +297,6 @@ protected:
 
 	char *m_pSendBuffer;
 	int m_nSendBufferLen;
-
-	bool m_onConnectCalled;
 };
 
 #endif

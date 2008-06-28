@@ -216,6 +216,7 @@ void CHttpControlSocket::OnReceive()
 		m_recvBufferPos = 0;
 	}
 
+	/*XXX
 	unsigned int len = m_recvBufferLen - m_recvBufferPos;
 	Read(m_pRecvBuffer + m_recvBufferPos, len);
 	if (Error())
@@ -252,7 +253,7 @@ void CHttpControlSocket::OnReceive()
 		m_pHttpOpData->m_receivedData += m_recvBufferPos;
 		ProcessData(m_pRecvBuffer, m_recvBufferPos);
 		m_recvBufferPos = 0;
-	}
+	}*/
 }
 
 void CHttpControlSocket::OnConnect()
@@ -450,19 +451,19 @@ int CHttpControlSocket::DoInternalConnect()
 
 	if (m_pBackend)
 		delete m_pBackend;
-	m_pBackend = new CSocketBackend(this, this);
+	m_pBackend = new CSocketBackend2(this, this);
 
 	wxIPV4address addr;
 	addr.Hostname(pData->host);
 	addr.Service(pData->port);
 
-	bool res = wxSocketClient::Connect(addr, false);
+/*XXX	bool res = wxSocketClient::Connect(addr, false);
 
 	if (res)
 		return FZ_REPLY_OK;
 	else if (LastError() != wxSOCKET_WOULDBLOCK)
 		return ResetOperation(FZ_REPLY_ERROR);
-
+*/
 	return FZ_REPLY_WOULDBLOCK;
 }
 
@@ -861,7 +862,7 @@ int CHttpControlSocket::ResetOperation(int nErrorCode)
 void CHttpControlSocket::OnClose()
 {
 	char tmp[1];
-	for (Peek(tmp, 1); !Error() && LastCount(); Peek(tmp, 1))
+/*xxx	for (Peek(tmp, 1); !Error() && LastCount(); Peek(tmp, 1))
 		OnReceive();
 
 	// HTTP socket isn't connected outside operations
@@ -897,7 +898,7 @@ void CHttpControlSocket::OnClose()
 		}
 	}
 
-	ProcessData(0, 0);
+	ProcessData(0, 0);*/
 }
 
 void CHttpControlSocket::ResetHttpData(CHttpOpData* pData)

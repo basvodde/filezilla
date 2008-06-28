@@ -197,8 +197,7 @@ int CControlSocket::DoClose(int nErrorCode /*=FZ_REPLY_DISCONNECTED*/)
 }
 
 wxString CControlSocket::ConvertDomainName(wxString domain)
-{return domain;
-/*
+{
 	const wxWCharBuffer buffer = wxConvCurrent->cWX2WC(domain);
 
 	int len = 0;
@@ -220,7 +219,7 @@ wxString CControlSocket::ConvertDomainName(wxString domain)
 
 	wxString result = wxConvCurrent->cMB2WX(output);
 	free(output);
-	return result;*/
+	return result;
 }
 
 void CControlSocket::Cancel()
@@ -864,17 +863,16 @@ void CControlSocket::SendAsyncRequest(CAsyncRequestNotification* pNotification)
 // ------------------
 
 BEGIN_EVENT_TABLE(CRealControlSocket, CControlSocket)
-	EVT_SOCKET(wxID_ANY, CRealControlSocket::OnSocketEvent)
+	EVT_FZ_SOCKET(wxID_ANY, CRealControlSocket::OnSocketEvent)
 END_EVENT_TABLE()
 
 CRealControlSocket::CRealControlSocket(CFileZillaEnginePrivate *pEngine)
-	: CControlSocket(pEngine), wxSocketClient(wxSOCKET_NOWAIT)
+	: CControlSocket(pEngine), CSocket(this, 0)
 {
-	m_pBackend = new CSocketBackend(this, this);
+	m_pBackend = new CSocketBackend2(this, this);
 
 	m_pSendBuffer = 0;
 	m_nSendBufferLen = 0;
-	m_onConnectCalled = false;
 }
 
 CRealControlSocket::~CRealControlSocket()
@@ -927,7 +925,7 @@ bool CRealControlSocket::Send(const char *buffer, int len)
 	return true;
 }
 
-void CRealControlSocket::OnSocketEvent(wxSocketEvent &event)
+void CRealControlSocket::OnSocketEvent(CSocketEvent &event)
 {
 	if (!m_pBackend)
 		return;
@@ -935,18 +933,42 @@ void CRealControlSocket::OnSocketEvent(wxSocketEvent &event)
 	if (event.GetId() != m_pBackend->GetId())
 		return;
 
-	switch (event.GetSocketEvent())
+	switch (event.GetType())
 	{
+	case CSocketEvent::hostaddress:
+		{
+			const wxString& address = event.GetData();
+			LogMessage(Status, _("Connecting to %s..."), address.c_str()); 
+		}
+		break;
+	case CSocketEvent::connection_next:
+		if (event.GetError())
+			LogMessage(Status, _("Connection attempt failed with \"%s\", trying next address."), CSocket::GetErrorDescription(event.GetError()).c_str()); 
+		break;
+	case CSocketEvent::connection:
+		if (event.GetError())
+		{
+			LogMessage(Status, _("Connection attempt failed with \"%s\"."), CSocket::GetErrorDescription(event.GetError()).c_str()); 
+			OnClose();
+		}
+		else
+			OnConnect();
+		break;
+	case CSocketEvent::read:
+		OnReceive();
+		break;
+	case CSocketEvent::write:
+		OnSend();
+		break;
+	default:
+		LogMessage(Debug_Warning, _T("Unhandled socket event %d"), event.GetType());
+		break;
+		/*
 	case wxSOCKET_CONNECTION:
 		m_onConnectCalled = true;
 		OnConnect();
 		break;
 	case wxSOCKET_INPUT:
-		if (!m_onConnectCalled)
-		{
-			m_onConnectCalled = true;
-			OnConnect();
-		}
 		OnReceive();
 		break;
 	case wxSOCKET_OUTPUT:
@@ -954,7 +976,7 @@ void CRealControlSocket::OnSocketEvent(wxSocketEvent &event)
 		break;
 	case wxSOCKET_LOST:
 		OnClose();
-		break;
+		break;*/
 	}
 }
 
@@ -1033,58 +1055,23 @@ int CRealControlSocket::Connect(const CServer &server)
 	else
 		pData = static_cast<CConnectOpData *>(m_pCurOpData);
 
-	const wxString& host = pData ? pData->host : server.GetHost();
-	if (!IsIpAddress(host))
-	{
-		LogMessage(Status, _("Resolving IP-Address for %s"), host.c_str());
-		CAsyncHostResolver *resolver = new CAsyncHostResolver(m_pEngine, ConvertDomainName(host));
-		m_pEngine->AddNewAsyncHostResolver(resolver);
-
-		resolver->Create();
-		resolver->Run();
-	}
-	else
-	{
-		wxIPV4address addr;
-		addr.Hostname(host);
-		return ContinueConnect(&addr);
-	}
-
-	return FZ_REPLY_WOULDBLOCK;
-}
-
-int CRealControlSocket::ContinueConnect(const wxIPV4address *address)
-{
-	LogMessage(__TFILE__, __LINE__, this, Debug_Verbose, _T("CRealControlSocket::ContinueConnect(%p) m_pEngine=%p"), address, m_pEngine);
-	if (GetCurrentCommandId() != cmd_connect ||
-		!m_pCurrentServer)
-	{
-		LogMessage(Debug_Warning, _T("Invalid context for call to ContinueConnect(), cmd=%d, m_pCurrentServer=%p"), GetCurrentCommandId(), m_pCurrentServer);
-		return DoClose(FZ_REPLY_INTERNALERROR);
-	}
-
-	if (!address)
-	{
-		LogMessage(::Error, _("Invalid hostname or host not found"));
-		return DoClose(FZ_REPLY_ERROR | FZ_REPLY_CRITICALERROR);
-	}
-
-	CConnectOpData* pData;
-	if (!m_pCurOpData || m_pCurOpData->opId != cmd_connect)
-		pData = 0;
-	else
-		pData = static_cast<CConnectOpData *>(m_pCurOpData);
-
+	wxString host = pData ? pData->host : server.GetHost();
 	const unsigned int port = pData ? pData->port : m_pCurrentServer->GetPort();
-	LogMessage(Status, _("Connecting to %s:%d..."), address->IPAddress().c_str(), port);
 
-	wxIPV4address addr = *address;
-	addr.Service(port);
+	// International domain names
+	host = ConvertDomainName(host);
 
-	bool res = wxSocketClient::Connect(addr, false);
+	LogMessage(Status, _("Resolving address of %s"), host.c_str());
+	
+	int res = CSocket::Connect(host, port);
 
-	if (!res && LastError() != wxSOCKET_WOULDBLOCK)
-		return DoClose();
+	// Treat success same as EINPROGRESS, we wait for connect notification in any case
+	if (res && res != EINPROGRESS)
+	{
+		LogMessage(::Error, _("Could not connect to server: %s"), CSocket::GetErrorDescription(res).c_str());
+		DoClose();
+		return FZ_REPLY_ERROR;
+	}
 
 	return FZ_REPLY_WOULDBLOCK;
 }
@@ -1107,28 +1094,28 @@ void CRealControlSocket::ResetSocket()
 		m_nSendBufferLen = 0;
 	}
 
-	m_onConnectCalled = false;
-
 	delete m_pBackend;
 	m_pBackend = 0;
 }
 
 wxString CRealControlSocket::GetLocalIP() const
 {
+	return _T("");/*xxx
 	wxIPV4address addr;
 	if (!GetLocal(addr))
 		return _T("");
 
-	return addr.IPAddress();
+	return addr.IPAddress();*/
 }
 
 wxString CRealControlSocket::GetPeerIP() const
 {
+	return _T("");/*xxx
 	wxIPV4address addr;
 	if (!GetPeer(addr))
 		return _T("");
 
-	return addr.IPAddress();
+	return addr.IPAddress();*/
 }
 
 bool CControlSocket::SetFileExistsAction(CFileExistsNotification *pFileExistsNotification)

@@ -388,6 +388,7 @@ void CFtpControlSocket::OnConnect()
 
 	// Enable SO_KEEPALIVE, lots of clueless users have broken routers and
 	// firewalls which terminate the control connection on long transfers.
+	/*XXX
 	int enabled = 1;
 	SetOption(SOL_SOCKET, SO_KEEPALIVE, &enabled, sizeof(enabled));
 
@@ -408,7 +409,7 @@ void CFtpControlSocket::OnConnect()
 	if (res)
 		LogMessage(::Debug_Info, _T("WSAIoctl with SIO_KEEPALIVE_VALS failed with %d"), (int)WSAGetLastError());
 #endif //__WXMSW__
-
+*/
 	if (m_pCurrentServer->GetProtocol() == FTPS)
 	{
 		if (!m_pTlsSocket)
@@ -417,7 +418,7 @@ void CFtpControlSocket::OnConnect()
 
 			wxASSERT(!m_pTlsSocket);
 			delete m_pBackend;
-			m_pTlsSocket = new CTlsSocket(this, this, this);
+			m_pTlsSocket = 0;//new CTlsSocket(this, this, this);
 			m_pBackend = m_pTlsSocket;
 
 			if (!m_pTlsSocket->Init())
@@ -787,7 +788,7 @@ int CFtpControlSocket::LogonParseResponse()
 			wxASSERT(!m_pTlsSocket);
 			delete m_pBackend;
 
-			m_pTlsSocket = new CTlsSocket(this, this, this);
+			m_pTlsSocket = 0;//XXXnew CTlsSocket(this, this, this);
 			m_pBackend = m_pTlsSocket;
 
 			if (!m_pTlsSocket->Init())

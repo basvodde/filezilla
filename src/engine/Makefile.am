@@ -25,6 +25,7 @@ libengine_a_SOURCES = asynchostresolver.cpp \
 		server.cpp serverpath.cpp\
 		servercapabilities.cpp \
 		sftpcontrolsocket.cpp \
+		socket.cpp \
 		tlssocket.cpp \
 		threadex.cpp timeex.cpp transfersocket.cpp
 
@@ -37,6 +38,7 @@ noinst_HEADERS = backend.h \
 		ratelimiter.h \
 		servercapabilities.h \
 		sftpcontrolsocket.h \
+		socket.h \
 		tlssocket.h \
 		transfersocket.h
 

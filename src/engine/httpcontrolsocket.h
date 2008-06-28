@@ -10,7 +10,7 @@ public:
 
 protected:
 	virtual int ContinueConnect(const wxIPV4address *address);
-	virtual bool Connected() const { return m_pCurrentServer != 0; }
+	virtual bool Connected() { return m_pCurrentServer != 0; }
 
 	virtual bool SetAsyncRequestReply(CAsyncRequestNotification *pNotification);
 	virtual int SendNextCommand();

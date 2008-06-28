@@ -1,5 +1,6 @@
 #include "FileZilla.h"
 #include "backend.h"
+#include "socket.h"
 
 int CBackend::m_nextId = 0;
 
@@ -23,6 +24,28 @@ CSocketBackend::CSocketBackend(wxEvtHandler* pEvtHandler, wxSocketBase* pSocket)
 	CRateLimiter* pRateLimiter = CRateLimiter::Get();
 	if (pRateLimiter)
 		pRateLimiter->AddObject(this);
+}
+
+CSocketBackend2::CSocketBackend2(wxEvtHandler* pEvtHandler, CSocket* pSocket) : CBackend(pEvtHandler), m_pSocket(pSocket)
+{
+	m_error = false;
+	m_lastCount = 0;
+	m_lastError = 0;
+
+	m_pSocket->SetEventHandler(pEvtHandler, GetId());
+
+	CRateLimiter* pRateLimiter = CRateLimiter::Get();
+	if (pRateLimiter)
+		pRateLimiter->AddObject(this);
+}
+
+CSocketBackend2::~CSocketBackend2()
+{
+	m_pSocket->SetEventHandler(0, -1);
+
+	CRateLimiter* pRateLimiter = CRateLimiter::Get();
+	if (pRateLimiter)
+		pRateLimiter->RemoveObject(this);	
 }
 
 CSocketBackend::~CSocketBackend()
