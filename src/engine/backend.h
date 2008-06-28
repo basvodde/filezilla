@@ -64,8 +64,8 @@ public:
 	CSocketBackend2(wxEvtHandler* pEvtHandler, CSocket* pSocket);
 	virtual ~CSocketBackend2();
 	// Backend definitions
-	virtual void Read(void *buffer, unsigned int len) {};
-	virtual void Write(const void *buffer, unsigned int len) {};
+	virtual void Read(void *buffer, unsigned int len);
+	virtual void Write(const void *buffer, unsigned int len);
 	virtual bool Error() const { return m_error; }
 	virtual unsigned int LastCount() const { return m_lastCount; }
 	virtual int LastError() const { return m_lastError; }
@@ -74,7 +74,6 @@ public:
 protected:
 	virtual void OnRateAvailable(enum CRateLimiter::rate_direction direction) {};
 
-	void UpdateResults();
 	CSocket* m_pSocket;
 
 	bool m_error;

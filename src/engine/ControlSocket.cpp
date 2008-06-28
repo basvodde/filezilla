@@ -963,20 +963,6 @@ void CRealControlSocket::OnSocketEvent(CSocketEvent &event)
 	default:
 		LogMessage(Debug_Warning, _T("Unhandled socket event %d"), event.GetType());
 		break;
-		/*
-	case wxSOCKET_CONNECTION:
-		m_onConnectCalled = true;
-		OnConnect();
-		break;
-	case wxSOCKET_INPUT:
-		OnReceive();
-		break;
-	case wxSOCKET_OUTPUT:
-		OnSend();
-		break;
-	case wxSOCKET_LOST:
-		OnClose();
-		break;*/
 	}
 }
 

@@ -105,6 +105,54 @@ void CSocketBackend::Read(void *buffer, unsigned int len)
 		UpdateUsage(CRateLimiter::inbound, m_lastCount);
 }
 
+void CSocketBackend2::Write(const void *buffer, unsigned int len)
+{
+	wxLongLong max = GetAvailableBytes(CRateLimiter::outbound);
+	if (max == 0)
+	{
+		Wait(CRateLimiter::outbound);
+		m_error = true;
+		m_lastError = wxSOCKET_WOULDBLOCK;
+		return;
+	}
+	else if (max > 0 && max < len)
+		len = max.GetLo();
+
+	m_lastCount = m_pSocket->Write(buffer, len, m_lastError);
+	m_error = m_lastCount == -1;
+
+	// XXX
+	if (m_lastError == EGAIN)
+		m_lastError = wxSOCKET_WOULDBLOCK;
+
+	if (!m_error && max != -1)
+		UpdateUsage(CRateLimiter::outbound, m_lastCount);
+}
+
+void CSocketBackend2::Read(void *buffer, unsigned int len)
+{
+	wxLongLong max = GetAvailableBytes(CRateLimiter::inbound);
+	if (max == 0)
+	{
+		Wait(CRateLimiter::inbound);
+		m_error = true;
+		m_lastError = wxSOCKET_WOULDBLOCK;
+		return;
+	}
+	else if (max > 0 && max < len)
+		len = max.GetLo();
+
+	m_lastCount = m_pSocket->Read(buffer, len, m_lastError);
+	m_error = m_lastCount == -1;
+
+	// XXX
+	if (m_lastError == EGAIN)
+		m_lastError = wxSOCKET_WOULDBLOCK;
+
+	if (!m_error && max != -1)
+		UpdateUsage(CRateLimiter::inbound, m_lastCount);
+}
+
 void CSocketBackend::Peek(void *buffer, unsigned int len)
 {
 	m_pSocket->Peek(buffer, len);

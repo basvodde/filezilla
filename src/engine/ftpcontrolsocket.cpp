@@ -236,58 +236,61 @@ void CFtpControlSocket::OnReceive()
 {
 	LogMessage(Debug_Verbose, _T("CFtpControlSocket::OnReceive()"));
 
-	m_pBackend->Read(m_receiveBuffer + m_bufferLen, RECVBUFFERSIZE - m_bufferLen);
-
-	if (m_pBackend->Error())
+	while (true)
 	{
-		if (m_pBackend->LastError() != wxSOCKET_WOULDBLOCK)
+		m_pBackend->Read(m_receiveBuffer + m_bufferLen, RECVBUFFERSIZE - m_bufferLen);
+
+		if (m_pBackend->Error())
 		{
-			LogMessage(::Error, _("Disconnected from server"));
-			DoClose();
-		}
-		return;
-	}
-
-	int numread = m_pBackend->LastCount();
-	if (!numread)
-		return;
-
-	m_pEngine->SetActive(true);
-
-	char* start = m_receiveBuffer;
-	m_bufferLen += numread;
-
-	for (int i = start - m_receiveBuffer; i < m_bufferLen; i++)
-	{
-		char& p = m_receiveBuffer[i];
-		if (p == '\r' ||
-			p == '\n' ||
-			p == 0)
-		{
-			int len = i - (start - m_receiveBuffer);
-			if (!len)
+			if (m_pBackend->LastError() != wxSOCKET_WOULDBLOCK)
 			{
-				start++;
-				continue;
+				LogMessage(::Error, _("Disconnected from server"));
+				DoClose();
 			}
-
-			if (len > MAXLINELEN)
-				len = MAXLINELEN;
-			p = 0;
-			wxString line = ConvToLocal(start);
-			start = m_receiveBuffer + i + 1;
-
-			ParseLine(line);
-
-			// Abort if connection got closed
-			if (!m_pCurrentServer)
-				return;
+			return;
 		}
+
+		int numread = m_pBackend->LastCount();
+		if (!numread)
+			return;
+
+		m_pEngine->SetActive(true);
+
+		char* start = m_receiveBuffer;
+		m_bufferLen += numread;
+
+		for (int i = start - m_receiveBuffer; i < m_bufferLen; i++)
+		{
+			char& p = m_receiveBuffer[i];
+			if (p == '\r' ||
+				p == '\n' ||
+				p == 0)
+			{
+				int len = i - (start - m_receiveBuffer);
+				if (!len)
+				{
+					start++;
+					continue;
+				}
+
+				if (len > MAXLINELEN)
+					len = MAXLINELEN;
+				p = 0;
+				wxString line = ConvToLocal(start);
+				start = m_receiveBuffer + i + 1;
+
+				ParseLine(line);
+
+				// Abort if connection got closed
+				if (!m_pCurrentServer)
+					return;
+			}
+		}
+		memmove(m_receiveBuffer, start, m_bufferLen - (start - m_receiveBuffer));
+		m_bufferLen -= (start -m_receiveBuffer);
+		if (m_bufferLen > MAXLINELEN)
+			m_bufferLen = MAXLINELEN;
 	}
-	memmove(m_receiveBuffer, start, m_bufferLen - (start - m_receiveBuffer));
-	m_bufferLen -= (start -m_receiveBuffer);
-	if (m_bufferLen > MAXLINELEN)
-		m_bufferLen = MAXLINELEN;
 }
 
 void CFtpControlSocket::ParseLine(wxString line)

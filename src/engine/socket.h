@@ -85,8 +85,8 @@ public:
 
 	// After receiving a send or receive event, you can call these functions
 	// as long as their return value is positive.
-	int Read(void *buffer, int size);
-	int Write(void *buffer, int size);
+	int Read(void *buffer, unsigned int size, int& error);
+	int Write(const void *buffer, unsigned int size, int& error);
 	int	GetError();
 
 	int Close();

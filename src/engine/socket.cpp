@@ -699,3 +699,65 @@ enum CSocket::SocketState CSocket::GetState()
 CSocket::Cleanup(bool force)
 {
 }
+
+int CSocket::Read(void* buffer, unsigned int size, int& error)
+{
+	int res = recv(m_fd, (char*)buffer, size, 0);
+
+	if (res == -1)
+	{
+#ifdef __WXMSW__
+		error = ConvertMSWErrorCode(WSAGetLastError());
+#else
+		error = errno;
+#endif
+		if (error == EGAIN)
+		{
+			if (m_pSocketThread)
+			{
+				m_pSocketThread->m_sync.Lock();
+				if (!(m_pSocketThread->m_waiting & WAIT_READ))
+				{
+					m_pSocketThread->m_waiting |= WAIT_READ;
+					m_pSocketThread->WakeupThread(true);
+				}
+				m_pSocketThread->m_sync.Unlock();
+			}
+		}
+	}
+	else
+		error = 0;
+
+	return res;
+}
+
+int CSocket::Write(const void* buffer, unsigned int size, int& error)
+{
+	int res = send(m_fd, (const char*)buffer, size, 0);
+
+	if (res == -1)
+	{
+#ifdef __WXMSW__
+		error = ConvertMSWErrorCode(WSAGetLastError());
+#else
+		error = errno;
+#endif
+		if (error == EGAIN)
+		{
+			if (m_pSocketThread)
+			{
+				m_pSocketThread->m_sync.Lock();
+				if (!(m_pSocketThread->m_waiting & WAIT_WRITE))
+				{
+					m_pSocketThread->m_waiting |= WAIT_WRITE;
+					m_pSocketThread->WakeupThread(true);
+				}
+				m_pSocketThread->m_sync.Unlock();
+			}
+		}
+	}
+	else
+		error = 0;
+
+	return res;
+}
