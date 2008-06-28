@@ -204,27 +204,6 @@ protected:
 		return true;
 	}
 
-	wxString AddressToString(const struct sockaddr* addr, socklen_t addr_len, bool with_port = true)
-	{
-		int bufflen = NI_MAXHOST;
-		char hostbuf[NI_MAXHOST];
-		char portbuf[NI_MAXSERV];
-
-		int res = getnameinfo(addr, addr_len, hostbuf, NI_MAXHOST, portbuf, NI_MAXSERV, NI_NUMERICHOST | NI_NUMERICSERV);
-		if (res) // Should never fail
-			return _T("");
-
-		wxString host = wxString(hostbuf, wxConvLibc);
-		wxString port = wxString(portbuf, wxConvLibc);
-
-		// IPv6 uses colons as separator, need to enclose address
-		// to avoid ambiguity if also showing port
-		if (with_port && addr->sa_family == AF_INET6)
-			host = _T("[") + host + _T("]");
-
-		return host + _T(":") + port;
-	}
-
 	// Only call while locked
 	bool DoConnect()
 	{
@@ -271,7 +250,7 @@ protected:
 		for (struct addrinfo *addr = addressList; addr; addr = addr->ai_next)
 		{
 
-			CSocketEvent evt(m_pSocket->m_id, CSocketEvent::hostaddress, AddressToString(addr->ai_addr, addr->ai_addrlen));
+			CSocketEvent evt(m_pSocket->m_id, CSocketEvent::hostaddress, CSocket::AddressToString(addr->ai_addr, addr->ai_addrlen));
 			SendEvent(evt);
 
 			int fd = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
@@ -760,4 +739,58 @@ int CSocket::Write(const void* buffer, unsigned int size, int& error)
 		error = 0;
 
 	return res;
+}
+
+wxString CSocket::AddressToString(const struct sockaddr* addr, int addr_len, bool with_port /*=true*/)
+{
+	int bufflen = NI_MAXHOST;
+	char hostbuf[NI_MAXHOST];
+	char portbuf[NI_MAXSERV];
+
+	int res = getnameinfo(addr, addr_len, hostbuf, NI_MAXHOST, portbuf, NI_MAXSERV, NI_NUMERICHOST | NI_NUMERICSERV);
+	if (res) // Should never fail
+		return _T("");
+
+	wxString host = wxString(hostbuf, wxConvLibc);
+	wxString port = wxString(portbuf, wxConvLibc);
+
+	// IPv6 uses colons as separator, need to enclose address
+	// to avoid ambiguity if also showing port
+	if (with_port && addr->sa_family == AF_INET6)
+		host = _T("[") + host + _T("]");
+
+	return host + _T(":") + port;
+}
+
+wxString CSocket::GetLocalIP() const
+{
+	struct sockaddr addr;
+	socklen_t addr_len = sizeof(addr);
+	int res = getsockname(m_fd, &addr, &addr_len);
+	if (res)
+		return _T("");
+
+	return AddressToString(&addr, addr_len, false);
+}
+
+wxString CSocket::GetPeerIP() const
+{
+	struct sockaddr addr;
+	socklen_t addr_len = sizeof(addr);
+	int res = getpeername(m_fd, &addr, &addr_len);
+	if (res)
+		return _T("");
+
+	return AddressToString(&addr, addr_len, false);
+}
+
+int CSocket::GetAddressFamily() const
+{
+	struct sockaddr addr;
+	socklen_t addr_len = sizeof(addr);
+	int res = getsockname(m_fd, &addr, &addr_len);
+	if (res)
+		return AF_UNSPEC;
+
+	return addr.sa_family;
 }

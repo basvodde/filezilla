@@ -1084,26 +1084,6 @@ void CRealControlSocket::ResetSocket()
 	m_pBackend = 0;
 }
 
-wxString CRealControlSocket::GetLocalIP() const
-{
-	return _T("");/*xxx
-	wxIPV4address addr;
-	if (!GetLocal(addr))
-		return _T("");
-
-	return addr.IPAddress();*/
-}
-
-wxString CRealControlSocket::GetPeerIP() const
-{
-	return _T("");/*xxx
-	wxIPV4address addr;
-	if (!GetPeer(addr))
-		return _T("");
-
-	return addr.IPAddress();*/
-}
-
 bool CControlSocket::SetFileExistsAction(CFileExistsNotification *pFileExistsNotification)
 {
 	wxASSERT(pFileExistsNotification);

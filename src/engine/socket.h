@@ -95,6 +95,10 @@ public:
 	wxString GetLocalIP() const;
 	wxString GetPeerIP() const;
 
+	// If connected, either AF_INET or AF_INET6
+	// AF_UNSPEC otherwise
+	int GetAddressFamily() const;
+
 	// Returns either AF_INET or AF_INET6 on success, AF_UNSPEC on error
 	int GetConnectionType() const;
 	
@@ -105,6 +109,8 @@ public:
 	void SetEventHandler(wxEvtHandler* pEvtHandler, int id);
 
 	static Cleanup(bool force);
+
+	static wxString AddressToString(const struct sockaddr* addr, int addr_len, bool with_port = true);
 
 protected:
 	wxEvtHandler* m_pEvtHandler;

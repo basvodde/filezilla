@@ -280,10 +280,6 @@ protected:
 	virtual int DoClose(int nErrorCode = FZ_REPLY_DISCONNECTED);
 	void ResetSocket();
 
-	// Easier functions to get the IP addresses
-	virtual wxString GetLocalIP() const;
-	virtual wxString GetPeerIP() const;
-
 	DECLARE_EVENT_TABLE();
 	virtual void OnSocketEvent(CSocketEvent &event);
 	virtual void OnConnect();
