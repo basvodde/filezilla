@@ -309,6 +309,7 @@ protected:
 					freeaddrinfo(addressList);
 					return false;
 				}
+				m_triggered &= ~WAIT_CONNECT;
 
 				res = m_triggered_errors[0];
 			}
@@ -395,7 +396,6 @@ protected:
 					m_triggered |= WAIT_CONNECT;
 					m_triggered_errors[0] = ConvertMSWErrorCode(events.iErrorCode[FD_CONNECT_BIT]);
 					m_waiting &= ~WAIT_CONNECT;
-					matched = true;
 				}
 			}
 			if (m_waiting & WAIT_READ)
@@ -405,7 +405,6 @@ protected:
 					m_triggered |= WAIT_READ;
 					m_triggered_errors[1] = ConvertMSWErrorCode(events.iErrorCode[FD_READ_BIT]);
 					m_waiting &= ~WAIT_READ;
-					matched = true;
 				}
 			}
 			if (m_waiting & WAIT_WRITE)
@@ -415,11 +414,10 @@ protected:
 					m_triggered |= WAIT_WRITE;
 					m_triggered_errors[2] = ConvertMSWErrorCode(events.iErrorCode[FD_WRITE_BIT]);
 					m_waiting &= ~WAIT_WRITE;
-					matched = true;
 				}
 			}
 
-			if (matched || !m_waiting)
+			if (m_triggered || !m_waiting)
 			{
 				return true;
 			}
@@ -430,6 +428,8 @@ protected:
 
 	void SendEvents()
 	{
+		if (!m_pSocket->m_pEvtHandler)
+			return;
 		if (m_triggered & WAIT_READ)
 		{
 			CSocketEvent evt(m_pSocket->m_id, CSocketEvent::read, m_triggered_errors[1]);
@@ -554,9 +554,14 @@ int CSocket::Connect(wxString host, unsigned int port)
 
 void CSocket::SetEventHandler(wxEvtHandler* pEvtHandler, int id)
 {
-	wxASSERT(m_state == none);
+	if (m_pSocketThread)
+		m_pSocketThread->m_sync.Lock();
+    
 	m_pEvtHandler = pEvtHandler;
 	m_id = id;
+
+	if (m_pSocketThread)
+		m_pSocketThread->m_sync.Unlock();
 }
 
 #define ERRORDECL(c, desc) { c, _T(#c), wxTRANSLATE(desc) },
@@ -675,8 +680,9 @@ enum CSocket::SocketState CSocket::GetState()
 	return state;
 }
 
-CSocket::Cleanup(bool force)
+bool CSocket::Cleanup(bool force)
 {
+	return false;
 }
 
 int CSocket::Read(void* buffer, unsigned int size, int& error)

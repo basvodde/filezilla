@@ -4,7 +4,9 @@
 #define ssize_t long
 #include <gnutls/gnutls.h>
 #include "backend.h"
+#include "socket.h"
 
+class CSocket;
 class CControlSocket;
 class CTlsSocket : protected wxEvtHandler, public CBackend
 {
@@ -19,7 +21,7 @@ public:
 		closed
 	};
 
-	CTlsSocket(wxEvtHandler* pEvtHandler, wxSocketBase* pSocket, CControlSocket* pOwner);
+	CTlsSocket(wxEvtHandler* pEvtHandler, CSocket* pSocket, CControlSocket* pOwner);
 	~CTlsSocket();
 
 	bool Init();
@@ -74,7 +76,7 @@ protected:
 	void TriggerEvents();
 
 	DECLARE_EVENT_TABLE();
-	void OnSocketEvent(wxSocketEvent& event);
+	void OnSocketEvent(CSocketEvent& event);
 	void OnRead();
 	void OnSend();
 
@@ -87,8 +89,8 @@ protected:
 
 	bool m_socketClosed;
 
-	CSocketBackend* m_pSocketBackend;
-	wxSocketBase* m_pSocket;
+	CSocketBackend2* m_pSocketBackend;
+	CSocket* m_pSocket;
 
 	// Used by LastError() and LastCount()
 	int m_lastError;
@@ -102,7 +104,8 @@ protected:
 	// application.
 	// This avoids the rule to call it again with the -same- data after
 	// GNUTLS_E_AGAIN.
-	void CheckResumeFailedWrite();
+	void CheckResumeFailedReadWrite();
+	bool m_lastReadFailed;
 	bool m_lastWriteFailed;
 	unsigned int m_writeSkip;
 

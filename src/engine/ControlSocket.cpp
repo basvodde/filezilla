@@ -877,6 +877,7 @@ CRealControlSocket::CRealControlSocket(CFileZillaEnginePrivate *pEngine)
 
 CRealControlSocket::~CRealControlSocket()
 {
+	Close();
 	delete m_pBackend;
 	m_pBackend = 0;
 }

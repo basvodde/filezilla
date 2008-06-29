@@ -679,7 +679,7 @@ void CTransferSocket::FinalizeWrite()
 bool CTransferSocket::InitTls(const CTlsSocket* pPrimaryTlsSocket)
 {
 	wxASSERT(!m_pBackend);
-	m_pTlsSocket = new CTlsSocket(this, m_pSocket, m_pControlSocket);
+	m_pTlsSocket = 0;//XXXnew CTlsSocket(this, m_pSocket, m_pControlSocket);
 
 	if (!m_pTlsSocket->Init())
 	{
