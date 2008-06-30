@@ -122,7 +122,7 @@ void CSocketBackend2::Write(const void *buffer, unsigned int len)
 	m_error = m_lastCount == -1;
 
 	// XXX
-	if (m_lastError == EGAIN)
+	if (m_lastError == EAGAIN)
 		m_lastError = wxSOCKET_WOULDBLOCK;
 
 	if (!m_error && max != -1)
@@ -146,7 +146,7 @@ void CSocketBackend2::Read(void *buffer, unsigned int len)
 	m_error = m_lastCount == -1;
 
 	// XXX
-	if (m_lastError == EGAIN)
+	if (m_lastError == EAGAIN)
 		m_lastError = wxSOCKET_WOULDBLOCK;
 
 	if (!m_error && max != -1)

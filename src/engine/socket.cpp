@@ -10,7 +10,8 @@
 #define WAIT_CONNECT 0x01
 #define WAIT_READ	 0x02
 #define WAIT_WRITE	 0x04
-#define WAIT_EVENTCOUNT 3
+#define WAIT_ACCEPT  0x08
+#define WAIT_EVENTCOUNT 4
 
 const wxEventType fzEVT_SOCKET = wxNewEventType();
 
@@ -36,7 +37,7 @@ static int ConvertMSWErrorCode(int error)
 	case WSAESOCKTNOSUPPORT:
 		return EAI_SOCKTYPE;
 	case WSAEWOULDBLOCK:
-		return EGAIN;
+		return EAGAIN;
 	case WSAEMFILE:
 		return EMFILE;
 	case WSAEINTR:
@@ -370,6 +371,8 @@ protected:
 				wait_events |= FD_READ;
 			if (m_waiting & WAIT_WRITE)
 				wait_events |= FD_WRITE;
+			if (m_waiting & WAIT_ACCEPT)
+				wait_events |= FD_ACCEPT;
 			WSAEventSelect(m_pSocket->m_fd, m_sync_event, wait_events);
 			m_sync.Unlock();
 			WSAWaitForMultipleEvents(1, &m_sync_event, false, WSA_INFINITE, false);
@@ -416,6 +419,15 @@ protected:
 					m_waiting &= ~WAIT_WRITE;
 				}
 			}
+			if (m_waiting & WAIT_ACCEPT)
+			{
+				if (events.lNetworkEvents & FD_ACCEPT)
+				{
+					m_triggered |= WAIT_ACCEPT;
+					m_triggered_errors[3] = ConvertMSWErrorCode(events.iErrorCode[FD_ACCEPT_BIT]);
+					m_waiting &= ~WAIT_ACCEPT;
+				}
+			}
 
 			if (m_triggered || !m_waiting)
 			{
@@ -441,6 +453,12 @@ protected:
 			CSocketEvent evt(m_pSocket->m_id, CSocketEvent::write, m_triggered_errors[2]);
 			m_pSocket->m_pEvtHandler->AddPendingEvent(evt);
 			m_triggered &= ~WAIT_WRITE;
+		}
+		if (m_triggered & WAIT_ACCEPT)
+		{
+			CSocketEvent evt(m_pSocket->m_id, CSocketEvent::connection, m_triggered_errors[3]);
+			m_pSocket->m_pEvtHandler->AddPendingEvent(evt);
+			m_triggered &= ~WAIT_ACCEPT;
 		}
 	}
 
@@ -472,14 +490,27 @@ protected:
 				return 0;
 			}
 
-			if (!DoConnect())
-				continue;
-
-			while (IdleLoop())
+			if (m_pSocket->m_state == CSocket::listening)
 			{
-				if (!DoWait(0))
-					break;
-				SendEvents();
+				while (DoWait(WAIT_ACCEPT))
+				{
+					SendEvents();
+				}
+			}
+			else
+			{
+				if (m_pSocket->m_state == CSocket::connecting)
+				{
+					if (!DoConnect())
+						continue;
+				}
+
+				while (IdleLoop())
+				{
+					if (!DoWait(0))
+						break;
+					SendEvents();
+				}
 			}
 		}
 
@@ -561,7 +592,14 @@ void CSocket::SetEventHandler(wxEvtHandler* pEvtHandler, int id)
 	m_id = id;
 
 	if (m_pSocketThread)
+	{
+		if (pEvtHandler && m_state == connected)
+		{
+			m_pSocketThread->m_waiting |= WAIT_READ | WAIT_WRITE;
+			m_pSocketThread->WakeupThread(true);
+		}
 		m_pSocketThread->m_sync.Unlock();
+	}
 }
 
 #define ERRORDECL(c, desc) { c, _T(#c), wxTRANSLATE(desc) },
@@ -696,7 +734,7 @@ int CSocket::Read(void* buffer, unsigned int size, int& error)
 #else
 		error = errno;
 #endif
-		if (error == EGAIN)
+		if (error == EAGAIN)
 		{
 			if (m_pSocketThread)
 			{
@@ -727,7 +765,7 @@ int CSocket::Write(const void* buffer, unsigned int size, int& error)
 #else
 		error = errno;
 #endif
-		if (error == EGAIN)
+		if (error == EAGAIN)
 		{
 			if (m_pSocketThread)
 			{
@@ -799,4 +837,161 @@ int CSocket::GetAddressFamily() const
 		return AF_UNSPEC;
 
 	return addr.sa_family;
+}
+
+int CSocket::Listen(int family, int port /*=0*/)
+{
+	if (m_state != none)
+		return EALREADY;
+
+	if (port < 0 || port > 65535)
+		return EINVAL;
+
+	struct addrinfo hints = {0};
+	hints.ai_family = family;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_flags = AI_PASSIVE | NI_NUMERICSERV;
+
+	char portstring[6];
+	sprintf(portstring, "%d", port);
+
+	struct addrinfo* addressList = 0;
+	int res = getaddrinfo(0, portstring, &hints, &addressList);
+	if (res)
+	{
+#ifdef __WXMSW__
+		return ConvertMSWErrorCode(res);
+#else
+		return res;
+#endif
+	}
+
+	for (struct addrinfo* addr = addressList; addr; addr = addr->ai_next)
+	{
+		m_fd = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
+#ifdef __WXMSW__
+		res = ConvertMSWErrorCode(WSAGetLastError());
+#else
+		res = errno;
+#endif
+		if (m_fd == -1)
+			continue;
+
+		unsigned long nonblock = 1;
+		ioctlsocket(m_fd, FIONBIO, &nonblock);
+
+		res = bind(m_fd, addr->ai_addr, addr->ai_addrlen);
+		if (!res)
+			break;
+#ifdef __WXMSW__
+		res = ConvertMSWErrorCode(res);
+#endif
+
+		close(m_fd);
+		m_fd = -1;
+	}
+	if (m_fd == -1)
+		return res;
+
+	res = listen(m_fd, 1);
+	if (res)
+	{
+#ifdef __WXMSW__
+		res = ConvertMSWErrorCode(res);
+#endif
+		close(m_fd);
+		m_fd = -1;
+		return res;
+	}
+
+	m_state = listening;
+
+	m_pSocketThread = new CSocketThread();
+	m_pSocketThread->SetSocket(this);
+
+	m_pSocketThread->m_waiting = WAIT_ACCEPT;
+
+	m_pSocketThread->Start();
+
+	return 0;
+}
+
+unsigned int CSocket::GetLocalPort(int& error)
+{
+	struct sockaddr addr;
+	socklen_t addr_len = sizeof(addr);
+	error = getsockname(m_fd, &addr, &addr_len);
+	if (error)
+	{
+#ifdef __WXMSW__
+		error = ConvertMSWErrorCode(error);
+#endif
+		return -1;
+	}
+
+	if (addr.sa_family == AF_INET)
+	{
+		struct sockaddr_in* addr_v4 = (sockaddr_in*)&addr;
+		return ntohs(addr_v4->sin_port);
+	}
+	else if (addr.sa_family == AF_INET6)
+	{
+		struct sockaddr_in6* addr_v6 = (sockaddr_in6*)&addr;
+		return ntohs(addr_v6->sin6_port);
+	}
+	
+	error = EINVAL;
+	return -1;
+}
+
+unsigned int CSocket::GetRemotePort(int& error)
+{
+	struct sockaddr addr;
+	socklen_t addr_len = sizeof(addr);
+	error = getpeername(m_fd, &addr, &addr_len);
+	if (error)
+	{
+#ifdef __WXMSW__
+		error = ConvertMSWErrorCode(error);
+#endif
+		return -1;
+	}
+
+	if (addr.sa_family == AF_INET)
+	{
+		struct sockaddr_in* addr_v4 = (sockaddr_in*)&addr;
+		return ntohs(addr_v4->sin_port);
+	}
+	else if (addr.sa_family == AF_INET6)
+	{
+		struct sockaddr_in6* addr_v6 = (sockaddr_in6*)&addr;
+		return ntohs(addr_v6->sin6_port);
+	}
+	
+	error = EINVAL;
+	return -1;
+}
+
+CSocket* CSocket::Accept(int &error)
+{
+	SOCKET fd = accept(m_fd, 0, 0);
+	if (fd == -1)
+	{
+#ifdef __WXMSW__
+		error = ConvertMSWErrorCode(WSAGetLastError());
+#else
+		error = errno;
+#endif
+		return 0;
+	}
+
+	CSocket* pSocket = new CSocket(0, -1);
+	pSocket->m_state = connected;
+	pSocket->m_fd = fd;
+	pSocket->m_pSocketThread = new CSocketThread();
+	pSocket->m_pSocketThread->SetSocket(pSocket);
+	pSocket->m_pSocketThread->m_waiting = WAIT_READ | WAIT_WRITE;
+	pSocket->m_pSocketThread->Start();
+
+	return pSocket;
 }

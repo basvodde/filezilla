@@ -46,25 +46,25 @@ protected:
 	bool InitBackend();
 	bool InitTls(const CTlsSocket* pPrimaryTlsSocket);
 
-	virtual void OnSocketEvent(wxSocketEvent &event);
-	virtual void OnConnect(wxSocketEvent &event);
+	virtual void OnSocketEvent(CSocketEvent &event);
+	virtual void OnConnect();
 	virtual void OnReceive();
 	virtual void OnSend();
-	virtual void OnClose(wxSocketEvent &event);
+	virtual void OnClose();
 	virtual void OnIOThreadEvent(CIOThreadEvent& event);
 
 	// Create a socket server
-	wxSocketServer* CreateSocketServer();
-	wxSocketServer* CreateSocketServer(const wxIPV4address& addr);
+	CSocket* CreateSocketServer();
+	CSocket* CreateSocketServer(int port);
 
-	void SetSocketBufferSizes(wxSocketBase* pSocket);
+	void SetSocketBufferSizes(CSocket* pSocket);
 
 	DECLARE_EVENT_TABLE();
 
-	wxSocketBase *m_pSocket; // Will point to either client or server socket
+	CSocket *m_pSocket;
 
 	// Will be set only while creating active mode connections
-	wxSocketServer *m_pSocketServer;
+	CSocket* m_pSocketServer;
 
 	CFileZillaEnginePrivate *m_pEngine;
 	CFtpControlSocket *m_pControlSocket;

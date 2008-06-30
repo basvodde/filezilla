@@ -87,13 +87,16 @@ public:
 	// as long as their return value is positive.
 	int Read(void *buffer, unsigned int size, int& error);
 	int Write(const void *buffer, unsigned int size, int& error);
-	int	GetError();
 
 	int Close();
 
 	// Returns empty string on error
 	wxString GetLocalIP() const;
 	wxString GetPeerIP() const;
+
+	// -1 on error
+	unsigned int GetLocalPort(int& error);
+	unsigned int GetRemotePort(int& error);
 
 	// If connected, either AF_INET or AF_INET6
 	// AF_UNSPEC otherwise
@@ -108,9 +111,12 @@ public:
 	// Can only be called if the state is none
 	void SetEventHandler(wxEvtHandler* pEvtHandler, int id);
 
-	static Cleanup(bool force);
+	static bool Cleanup(bool force);
 
 	static wxString AddressToString(const struct sockaddr* addr, int addr_len, bool with_port = true);
+
+	int Listen(int family, int port = 0);
+	CSocket* Accept(int& error);
 
 protected:
 	wxEvtHandler* m_pEvtHandler;
@@ -133,9 +139,6 @@ protected:
 #endif
 #ifndef EINPROGRESS
 #define EINPROGRESS WSAEINPROGRESS
-#endif
-#ifndef EGAIN
-#define EGAIN WSATRY_AGAIN
 #endif
 #ifndef EAFNOSUPPORT
 #define EAFNOSUPPORT WSAEAFNOSUPPORT
