@@ -1,7 +1,16 @@
 #include <wx/defs.h>
 #ifdef __WXMSW__
-#include <winsock2.h>
-#include <ws2tcpip.h>
+  // MinGW needs this for getaddrinfo
+  #if defined(_WIN32_WINNT)
+    #if _WIN32_WINNT < 0x0501
+      #undef _WIN32_WINNT
+      #define _WIN32_WINNT 0x0501
+    #endif
+  #else
+    #define _WIN32_WINNT 0x0501
+  #endif
+  #include <winsock2.h>
+  #include <ws2tcpip.h>
 #endif
 #include "FileZilla.h"
 #include "socket.h"

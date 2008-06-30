@@ -6,6 +6,7 @@
 #include "directorycache.h"
 #include "servercapabilities.h"
 #include "local_filesys.h"
+#include <errno.h>
 
 DECLARE_EVENT_TYPE(fzOBTAINLOCK, -1)
 DEFINE_EVENT_TYPE(fzOBTAINLOCK)
