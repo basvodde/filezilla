@@ -116,6 +116,21 @@ wxString CTransferSocket::SetupActiveTransfer(const wxString& ip)
 
 void CTransferSocket::OnSocketEvent(CSocketEvent &event)
 {
+	if (m_pSocketServer && event.GetId() == m_pSocketServer->GetId())
+	{
+		if (event.GetType() == CSocketEvent::connection)
+			OnAccept(event.GetError());
+		else
+			m_pControlSocket->LogMessage(::Debug_Info, _T("Unhandled socket event %d from listening socket"), event.GetType());
+		return;
+	}
+
+	if (!m_pBackend || event.GetId() != m_pBackend->GetId())
+	{
+		m_pControlSocket->LogMessage(::Debug_Info, _T("Skipping socket event %d. No backend or id mismatch."), event.GetType());
+		return;
+	}
+
 	switch (event.GetType())
 	{
 	case CSocketEvent::connection:
@@ -133,22 +148,39 @@ void CTransferSocket::OnSocketEvent(CSocketEvent &event)
 	}
 }
 
+void CTransferSocket::OnAccept(int error)
+{
+	m_pControlSocket->SetAlive();
+	m_pControlSocket->LogMessage(::Debug_Verbose, _T("CTransferSocket::OnAccept(%d)"), error);
+
+	if (!m_pSocketServer)
+	{
+		m_pControlSocket->LogMessage(::Debug_Warning, _T("No socket server in OnAccept"), error);
+		return;
+	}
+	
+	m_pSocket = m_pSocketServer->Accept(error);
+	if (!m_pSocket)
+	{
+		if (error == EAGAIN)
+			m_pControlSocket->LogMessage(::Debug_Verbose, _("No pending connection"));
+		else
+		{
+			m_pControlSocket->LogMessage(::Status, _("Could not accept connection: %s"), CSocket::GetErrorDescription(error).c_str());
+			TransferEnd(transfer_failure);
+		}
+		return;
+	}
+	delete m_pSocketServer;
+	m_pSocketServer = 0;
+
+	OnConnect();
+}
+
 void CTransferSocket::OnConnect()
 {
 	m_pControlSocket->SetAlive();
 	m_pControlSocket->LogMessage(::Debug_Verbose, _T("CTransferSocket::OnConnect"));
-	if (m_pSocketServer)
-	{
-		int error;
-		m_pSocket = m_pSocketServer->Accept(error);
-		if (!m_pSocket)
-		{
-			TransferEnd(transfer_failure);
-			return;
-		}
-		delete m_pSocketServer;
-		m_pSocketServer = 0;
-	}
 
 	if (!m_pSocket)
 	{
@@ -522,7 +554,7 @@ void CTransferSocket::TransferEnd(enum TransferEndReason reason)
 
 CSocket* CTransferSocket::CreateSocketServer(int port)
 {
-	CSocket* pServer = new CSocket(this, 1);
+	CSocket* pServer = new CSocket(this, CBackend::GetNextId());
 	int res = pServer->Listen(m_pControlSocket->GetAddressFamily(), port);
 	if (res)
 	{
@@ -681,7 +713,7 @@ void CTransferSocket::FinalizeWrite()
 bool CTransferSocket::InitTls(const CTlsSocket* pPrimaryTlsSocket)
 {
 	wxASSERT(!m_pBackend);
-	m_pTlsSocket = 0;//XXXnew CTlsSocket(this, m_pSocket, m_pControlSocket);
+	m_pTlsSocket = new CTlsSocket(this, m_pSocket, m_pControlSocket);
 
 	if (!m_pTlsSocket->Init())
 	{
@@ -730,7 +762,7 @@ bool CTransferSocket::InitBackend()
 			return false;
 	}
 	else
-		m_pBackend = new CSocketBackend2(this, m_pSocket);
+		m_pBackend = new CSocketBackend(this, m_pSocket);
 
 	return true;
 }

@@ -89,7 +89,7 @@ protected:
 
 	bool m_socketClosed;
 
-	CSocketBackend2* m_pSocketBackend;
+	CSocketBackend* m_pSocketBackend;
 	CSocket* m_pSocket;
 
 	// Used by LastError() and LastCount()

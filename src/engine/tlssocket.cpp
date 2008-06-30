@@ -14,7 +14,7 @@ CTlsSocket::CTlsSocket(wxEvtHandler* pEvtHandler, CSocket* pSocket, CControlSock
 	: CBackend(pEvtHandler), m_pOwner(pOwner)
 {
 	m_pSocket = pSocket;
-	m_pSocketBackend = new CSocketBackend2(this, m_pSocket);
+	m_pSocketBackend = new CSocketBackend(this, m_pSocket);
 
 	m_session = 0;
 	m_initialized = false;

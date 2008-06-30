@@ -110,6 +110,7 @@ public:
 
 	// Can only be called if the state is none
 	void SetEventHandler(wxEvtHandler* pEvtHandler, int id);
+	int GetId() const { return m_id; }
 
 	static bool Cleanup(bool force);
 

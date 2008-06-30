@@ -1,7 +1,7 @@
 #include <wx/defs.h>
 #ifdef __WXMSW__
 #include <winsock2.h>
-#include <Ws2tcpip.h>
+#include <ws2tcpip.h>
 #endif
 #include "FileZilla.h"
 #include "socket.h"
@@ -492,8 +492,10 @@ protected:
 
 			if (m_pSocket->m_state == CSocket::listening)
 			{
-				while (DoWait(WAIT_ACCEPT))
+				while (IdleLoop())
 				{
+					if (!DoWait(0))
+						break;
 					SendEvents();
 				}
 			}
@@ -974,6 +976,13 @@ unsigned int CSocket::GetRemotePort(int& error)
 
 CSocket* CSocket::Accept(int &error)
 {
+	if (m_pSocketThread)
+	{
+		m_pSocketThread->m_sync.Lock();
+		m_pSocketThread->m_waiting |= WAIT_ACCEPT;
+		m_pSocketThread->WakeupThread(true);
+		m_pSocketThread->m_sync.Unlock();
+	}
 	SOCKET fd = accept(m_fd, 0, 0);
 	if (fd == -1)
 	{

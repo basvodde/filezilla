@@ -869,7 +869,7 @@ END_EVENT_TABLE()
 CRealControlSocket::CRealControlSocket(CFileZillaEnginePrivate *pEngine)
 	: CControlSocket(pEngine), CSocket(this, 0)
 {
-	m_pBackend = new CSocketBackend2(this, this);
+	m_pBackend = new CSocketBackend(this, this);
 
 	m_pSendBuffer = 0;
 	m_nSendBufferLen = 0;

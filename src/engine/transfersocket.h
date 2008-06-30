@@ -48,6 +48,7 @@ protected:
 
 	virtual void OnSocketEvent(CSocketEvent &event);
 	virtual void OnConnect();
+	virtual void OnAccept(int error);
 	virtual void OnReceive();
 	virtual void OnSend();
 	virtual void OnClose();

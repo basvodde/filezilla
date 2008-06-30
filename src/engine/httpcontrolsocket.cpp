@@ -451,7 +451,7 @@ int CHttpControlSocket::DoInternalConnect()
 
 	if (m_pBackend)
 		delete m_pBackend;
-	m_pBackend = new CSocketBackend2(this, this);
+	m_pBackend = new CSocketBackend(this, this);
 
 	wxIPV4address addr;
 	addr.Hostname(pData->host);
