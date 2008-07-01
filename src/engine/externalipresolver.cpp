@@ -2,6 +2,9 @@
 #include "externalipresolver.h"
 #include "asynchostresolver.h"
 #include "wx/regex.h"
+#include "socket.h"
+#include "backend.h"
+#include <errno.h>
 
 const wxEventType fzEVT_EXTERNALIPRESOLVE = wxNewEventType();
 
@@ -19,12 +22,11 @@ wxString CExternalIPResolver::m_ip;
 bool CExternalIPResolver::m_checked = false;
 
 BEGIN_EVENT_TABLE(CExternalIPResolver, wxEvtHandler)
-	EVT_FZ_ASYNCHOSTRESOLVE(wxID_ANY, CExternalIPResolver::OnAsyncHostResolver)
-	EVT_SOCKET(0, CExternalIPResolver::OnSocketEvent)
+	EVT_FZ_SOCKET(wxID_ANY, CExternalIPResolver::OnSocketEvent)
 END_EVENT_TABLE();
 
 CExternalIPResolver::CExternalIPResolver(wxEvtHandler* handler, int id /*=wxID_ANY*/)
-	: m_handler(handler), m_id(id), m_pHostResolver(0)
+	: m_handler(handler), m_id(id)
 {
 	m_pSocket = 0;
 	m_done = false;
@@ -45,12 +47,6 @@ CExternalIPResolver::~CExternalIPResolver()
 
 	delete m_pSocket;
 	m_pSocket = 0;
-	if (m_pHostResolver)
-	{
-		m_pHostResolver->SetObsolete();
-		m_pHostResolver->Wait();
-		delete m_pHostResolver;
-	}
 }
 
 void CExternalIPResolver::GetExternalIP(const wxString& address /*=_T("")*/, bool force /*=false*/)
@@ -96,75 +92,49 @@ void CExternalIPResolver::GetExternalIP(const wxString& address /*=_T("")*/, boo
 		return;
 	}
 
-	m_pHostResolver = new CAsyncHostResolver(this, host);
-	m_pHostResolver->Create();
-	m_pHostResolver->Run();
+	m_pSocket = new CSocket(this, CBackend::GetNextId());
+
+	int res = m_pSocket->Connect(host, m_port);
+	if (res && res != EINPROGRESS)
+	{
+		Close(false);
+		return;
+	}
 
 	wxString buffer = wxString::Format(_T("GET %s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s\r\nConnection: close\r\n\r\n"), address.c_str(), hostWithPort.c_str(), wxString(PACKAGE_STRING, wxConvLocal).c_str());
 	m_pSendBuffer = new char[strlen(buffer.mb_str()) + 1];
 	strcpy(m_pSendBuffer, buffer.mb_str());
 }
 
-void CExternalIPResolver::OnAsyncHostResolver(fzAsyncHostResolveEvent& event)
-{
-	if (!m_pHostResolver)
-		return;
-
-	if (!m_pHostResolver->Done())
-		return;
-
-	if (!m_pHostResolver->Successful())
-	{
-		Close(false);
-		return;
-	}
-
-	m_pHostResolver->Wait();
-
-	if (m_pSocket)
-	{
-		delete m_pHostResolver;
-		m_pHostResolver = 0;
-		return;
-	}
-
-	m_pSocket = new wxSocketClient(wxSOCKET_NOWAIT);
-	m_pSocket->SetEventHandler(*this, 0);
-	m_pSocket->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_OUTPUT_FLAG | wxSOCKET_CONNECTION_FLAG | wxSOCKET_LOST_FLAG);
-	m_pSocket->Notify(true);
-
-	m_pHostResolver->m_Address.Service(m_port);
-	m_pSocket->Connect(m_pHostResolver->m_Address, false);
-
-	delete m_pHostResolver;
-	m_pHostResolver = 0;
-}
-
-void CExternalIPResolver::OnSocketEvent(wxSocketEvent& event)
+void CExternalIPResolver::OnSocketEvent(CSocketEvent& event)
 {
 	if (!m_pSocket)
 		return;
 
-	switch (event.GetSocketEvent())
+	switch (event.GetType())
 	{
-	case wxSOCKET_INPUT:
+	case CSocketEvent::read:
 		OnReceive();
 		break;
-	case wxSOCKET_CONNECTION:
-		OnConnect();
+	case CSocketEvent::connection:
+		OnConnect(event.GetError());
 		break;
-	case wxSOCKET_LOST:
+	case CSocketEvent::close:
 		OnClose();
 		break;
-	case wxSOCKET_OUTPUT:
+	case CSocketEvent::write:
 		OnSend();
+		break;
+	default:
 		break;
 	}
 
 }
 
-void CExternalIPResolver::OnConnect()
+void CExternalIPResolver::OnConnect(int error)
 {
+	if (error)
+		Close(false);
 }
 
 void CExternalIPResolver::OnClose()
@@ -186,76 +156,75 @@ void CExternalIPResolver::OnReceive()
 	if (m_pSendBuffer)
 		return;
 
-	unsigned int len = m_recvBufferLen - m_recvBufferPos;
-	m_pSocket->Read(m_pRecvBuffer + m_recvBufferPos, len);
-	if (m_pSocket->Error())
+	while (m_pSocket)
 	{
-		if (m_pSocket->LastError() != wxSOCKET_WOULDBLOCK)
+		unsigned int len = m_recvBufferLen - m_recvBufferPos;
+		int error;
+		int read = m_pSocket->Read(m_pRecvBuffer + m_recvBufferPos, len, error);
+		if (read == -1)
+		{
+			if (error != EAGAIN)
+				Close(false);
+			return;
+		}
+
+		if (!read)
 		{
 			Close(false);
+			return;
 		}
-		return;
-	}
 
-	int read;
-	if (!(read = m_pSocket->LastCount()))
-	{
-		Close(false);
-		return;
-	}
+		if (m_finished)
+		{
+			// Just ignore all further data
+			m_recvBufferPos = 0;
+			return;
+		}
 
-	if (m_finished)
-	{
-		// Just ignore all further data
-		m_recvBufferPos = 0;
-		return;
-	}
+		m_recvBufferPos += read;
 
-	m_recvBufferPos += read;
-
-	if (!m_gotHeader)
-		OnHeader();
-	else
-	{
-		if (m_transferEncoding == chunked)
-			OnChunkedData();
+		if (!m_gotHeader)
+			OnHeader();
 		else
-			OnData(m_pRecvBuffer, m_recvBufferPos);
+		{
+			if (m_transferEncoding == chunked)
+				OnChunkedData();
+			else
+				OnData(m_pRecvBuffer, m_recvBufferPos);
+		}
 	}
 }
 
 void CExternalIPResolver::OnSend()
 {
-	if (!m_pSendBuffer)
-		return;
-
-	unsigned int len = strlen(m_pSendBuffer + m_sendBufferPos);
-	m_pSocket->Write(m_pSendBuffer + m_sendBufferPos, len);
-	if (m_pSocket->Error())
+	while (m_pSendBuffer)
 	{
-		if (m_pSocket->LastError() != wxSOCKET_WOULDBLOCK)
+		unsigned int len = strlen(m_pSendBuffer + m_sendBufferPos);
+		int error;
+		int written = m_pSocket->Write(m_pSendBuffer + m_sendBufferPos, len, error);
+		if (written == -1)
+		{
+			if (error != EAGAIN)
+				Close(false);
+			return;
+		}
+
+		if (!written)
 		{
 			Close(false);
+			return;
 		}
-		return;
-	}
 
-	unsigned int written;
-	if (!(written = m_pSocket->LastCount()))
-	{
-		Close(false);
-		return;
-	}
+		if (written == (int)len)
+		{
+			delete [] m_pSendBuffer;
+			m_pSendBuffer = 0;
 
-	if (written == len)
-	{
-		delete [] m_pSendBuffer;
-		m_pSendBuffer = 0;
-
-		OnReceive();
+			OnReceive();
+		}
+		else
+			m_sendBufferPos += written;
 	}
-	else
-		m_sendBufferPos += written;
 }
 
 void CExternalIPResolver::Close(bool successful)

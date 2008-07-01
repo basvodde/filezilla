@@ -20,6 +20,8 @@ extern const wxEventType fzEVT_EXTERNALIPRESOLVE;
         (wxObject *) NULL \
     ),
 
+class CSocket;
+class CSocketEvent;
 class CExternalIPResolver : public wxEvtHandler
 {
 public:
@@ -43,20 +45,18 @@ protected:
 
 	bool m_done;
 
-	CAsyncHostResolver* m_pHostResolver;
-
 	static wxString m_ip;
 	static bool m_checked;
 
 	wxString m_data;
 
-	wxSocketClient *m_pSocket;
+	CSocket *m_pSocket;
 
 	DECLARE_EVENT_TABLE();
 	void OnAsyncHostResolver(fzAsyncHostResolveEvent& event);
-	void OnSocketEvent(wxSocketEvent& event);
+	void OnSocketEvent(CSocketEvent& event);
 
-	void OnConnect();
+	void OnConnect(int error);
 	void OnClose();
 	void OnReceive();
 	void OnHeader();

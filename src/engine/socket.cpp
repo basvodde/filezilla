@@ -764,7 +764,7 @@ enum CSocket::SocketState CSocket::GetState()
 {
 	enum SocketState state;
 	if (m_pSocketThread)
-		m_pSocketThread->m_sync.Unlock();
+		m_pSocketThread->m_sync.Lock();
 	state = m_state;
 	if (m_pSocketThread)
 		m_pSocketThread->m_sync.Unlock();
