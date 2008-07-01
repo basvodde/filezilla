@@ -2,7 +2,7 @@
 
 CLEANFILES = FileZilla.h.gch
 
-noinst_HEADERS = asynchostresolver.h compatibility.h \
+noinst_HEADERS = compatibility.h \
 		 commands.h directorylisting.h \
 		 engineprivate.h externalipresolver.h FileZilla.h \
 		 FileZillaEngine.h \

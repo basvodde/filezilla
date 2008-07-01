@@ -9,7 +9,7 @@ libengine_a_CXXFLAGS = $(WX_CXXFLAGS_ONLY)
 libengine_a_CFLAGS = $(WX_CFLAGS_ONLY)
 
 
-libengine_a_SOURCES = asynchostresolver.cpp \
+libengine_a_SOURCES = \
 		backend.cpp \
 		commands.cpp ControlSocket.cpp \
 		directorycache.cpp directorylisting.cpp directorylistingparser.cpp \

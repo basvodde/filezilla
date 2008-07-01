@@ -411,7 +411,7 @@ int CHttpControlSocket::FileTransferSend()
 	return FZ_REPLY_WOULDBLOCK;
 }
 
-int CHttpControlSocket::InternalConnect(const wxString& host, unsigned short port)
+int CHttpControlSocket::InternalConnect(wxString host, unsigned short port)
 {
 	LogMessage(Debug_Verbose, _T("CHttpControlSocket::InternalConnect()"));
 
@@ -420,16 +420,11 @@ int CHttpControlSocket::InternalConnect(const wxString& host, unsigned short por
 	m_pCurOpData = pData;
 	pData->port = port;
 
-	if (!IsIpAddress(host))
-	{
-		LogMessage(Status, _("Resolving IP-Address for %s"), host.c_str());
-		CAsyncHostResolver *resolver = new CAsyncHostResolver(m_pEngine, ConvertDomainName(host));
-		m_pEngine->AddNewAsyncHostResolver(resolver);
+	// International domain names
+	host = ConvertDomainName(host);
 
-		resolver->Create();
-		resolver->Run();
-		return FZ_REPLY_WOULDBLOCK;
-	}
+	if (!IsIpAddress(host))
+		LogMessage(Status, _("Resolving address of %s"), host.c_str());
 
 	pData->host = host;
 	return DoInternalConnect();

@@ -1,5 +1,4 @@
 #include "FileZilla.h"
-#include "asynchostresolver.h"
 #include "ControlSocket.h"
 #include "ftpcontrolsocket.h"
 #include "sftpcontrolsocket.h"
@@ -49,7 +48,6 @@ wxEvent *wxFzEngineEvent::Clone() const
 
 BEGIN_EVENT_TABLE(CFileZillaEnginePrivate, wxEvtHandler)
 	EVT_FZ_ENGINE_NOTIFICATION(wxID_ANY, CFileZillaEnginePrivate::OnEngineEvent)
-	EVT_FZ_ASYNCHOSTRESOLVE(wxID_ANY, CFileZillaEnginePrivate::OnAsyncHostResolver)
 	EVT_TIMER(wxID_ANY, CFileZillaEnginePrivate::OnTimer)
 END_EVENT_TABLE();
 
@@ -78,14 +76,6 @@ CFileZillaEnginePrivate::~CFileZillaEnginePrivate()
 	// Delete notification list
 	for (std::list<CNotification *>::iterator iter = m_NotificationList.begin(); iter != m_NotificationList.end(); iter++)
 		delete *iter;
-
-	for (std::list<CAsyncHostResolver *>::iterator iter = m_HostResolverThreads.begin(); iter != m_HostResolverThreads.end(); iter++)
-	{
-		CAsyncHostResolver* pResolver = *iter;
-		pResolver->SetObsolete();
-		pResolver->Wait();
-		delete pResolver;					
-	}
 
 	// Remove ourself from the engine list
 	for (std::list<CFileZillaEnginePrivate*>::iterator iter = m_engineList.begin(); iter != m_engineList.end(); iter++)
@@ -123,40 +113,6 @@ void CFileZillaEnginePrivate::OnEngineEvent(wxFzEngineEvent &event)
 			m_pControlSocket->TransferEnd();
 	default:
 		break;
-	}
-}
-
-void CFileZillaEnginePrivate::OnAsyncHostResolver(fzAsyncHostResolveEvent& event)
-{
-	if (m_HostResolverThreads.empty())
-		return;
-	CAsyncHostResolver *pResolver = m_HostResolverThreads.front();
-	m_HostResolverThreads.pop_front();
-
-	std::list<CAsyncHostResolver *> remaining;
-	for (std::list<CAsyncHostResolver *>::iterator iter = m_HostResolverThreads.begin(); iter != m_HostResolverThreads.end(); iter++)
-	{
-		CAsyncHostResolver* pResolver = *iter;
-		pResolver->SetObsolete();
-		if (!pResolver->Done())
-			remaining.push_back(pResolver);
-		else
-		{
-			pResolver->Wait();
-			delete pResolver;					
-		}
-	}
-	m_HostResolverThreads.clear();
-	m_HostResolverThreads = remaining;
-
-	if (!pResolver->Done())
-		m_HostResolverThreads.push_front(pResolver);
-	else
-	{
-		if (!pResolver->Obsolete())
-			m_pControlSocket->ContinueConnect(pResolver->Successful() ? &pResolver->m_Address : 0);
-		pResolver->Wait();
-		delete pResolver;
 	}
 }
 
@@ -265,9 +221,6 @@ int CFileZillaEnginePrivate::ResetOperation(int nErrorCode)
 		}
 	}
 
-	if (!m_HostResolverThreads.empty())
-		m_HostResolverThreads.front()->SetObsolete();
-
 	return nErrorCode;
 }
 
@@ -298,16 +251,6 @@ unsigned int CFileZillaEnginePrivate::GetNextAsyncRequestNumber()
 {
 	wxCriticalSectionLocker lock(m_lock);
 	return ++m_asyncRequestCounter;
-}
-
-void CFileZillaEnginePrivate::AddNewAsyncHostResolver(CAsyncHostResolver* pResolver)
-{
-	wxASSERT(pResolver);
-
-	if (!m_HostResolverThreads.empty())
-		m_HostResolverThreads.front()->SetObsolete();
-	
-	m_HostResolverThreads.push_front(pResolver);
 }
 
 // Command handlers

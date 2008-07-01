@@ -1,8 +1,6 @@
 #ifndef __EXTERNALIPRESOLVER_H__
 #define __EXTERNALIPRESOLVER_H__
 
-#include "asynchostresolver.h"
-
 class fzExternalIPResolveEvent : public wxEvent
 {
 public:
@@ -53,7 +51,6 @@ protected:
 	CSocket *m_pSocket;
 
 	DECLARE_EVENT_TABLE();
-	void OnAsyncHostResolver(fzAsyncHostResolveEvent& event);
 	void OnSocketEvent(CSocketEvent& event);
 
 	void OnConnect(int error);

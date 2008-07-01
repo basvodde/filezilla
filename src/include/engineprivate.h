@@ -7,11 +7,8 @@ enum EngineNotificationType
 	engineTransferEnd
 };
 
-#include "asynchostresolver.h"
-
 class wxFzEngineEvent;
 class CControlSocket;
-class CAsyncHostResolver;
 class CLogging;
 class CRateLimiter;
 class CFileZillaEnginePrivate : public wxEvtHandler
@@ -35,12 +32,6 @@ public:
 	enum Command GetCurrentCommandId() const;
 
 	COptionsBase *GetOptions() { return m_pOptions; }
-
-	// Since host resolving may block, we create a thread in which
-	// hosts are resolved. We have to store the resolvers in the engine object,
-	// instead of the socket object, else it won't be possible to quickly abort
-	// connection attempts, as removing the thread may take some time.
-	void AddNewAsyncHostResolver(CAsyncHostResolver* pThread);
 
 	void SendDirectoryListingNotification(const CServerPath& path, bool onList, bool modified, bool failed);
 
@@ -74,7 +65,6 @@ protected:
 
 	DECLARE_EVENT_TABLE();
 	void OnEngineEvent(wxFzEngineEvent &event);
-	void OnAsyncHostResolver(fzAsyncHostResolveEvent& event);
 	void OnTimer(wxTimerEvent& event);
 
 	wxEvtHandler *m_pEventHandler;
@@ -95,8 +85,6 @@ protected:
 
 	std::list<CNotification*> m_NotificationList;
 	bool m_maySendNotificationEvent;
-
-	std::list<CAsyncHostResolver*> m_HostResolverThreads;
 
 	bool m_bIsInCommand; //true if Command is on the callstack
 	int m_nControlSocketError;

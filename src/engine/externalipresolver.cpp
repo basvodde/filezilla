@@ -1,6 +1,5 @@
 #include "FileZilla.h"
 #include "externalipresolver.h"
-#include "asynchostresolver.h"
 #include "wx/regex.h"
 #include "socket.h"
 #include "backend.h"

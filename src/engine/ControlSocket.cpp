@@ -2,7 +2,6 @@
 #include "logging_private.h"
 #include "ControlSocket.h"
 #include <idna.h>
-#include "asynchostresolver.h"
 #include "directorycache.h"
 #include "servercapabilities.h"
 #include "local_filesys.h"

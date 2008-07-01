@@ -16,6 +16,11 @@
 #include "socket.h"
 #include "threadex.h"
 #include <errno.h>
+#ifndef __WXMSW__
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#endif
 
 #define WAIT_CONNECT 0x01
 #define WAIT_READ	 0x02
