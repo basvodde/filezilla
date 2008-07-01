@@ -951,7 +951,7 @@ void CRealControlSocket::OnSocketEvent(CSocketEvent &event)
 		if (event.GetError())
 		{
 			LogMessage(Status, _("Connection attempt failed with \"%s\"."), CSocket::GetErrorDescription(event.GetError()).c_str()); 
-			OnClose();
+			OnClose(event.GetError());
 		}
 		else
 			OnConnect();
@@ -961,6 +961,9 @@ void CRealControlSocket::OnSocketEvent(CSocketEvent &event)
 		break;
 	case CSocketEvent::write:
 		OnSend();
+		break;
+	case CSocketEvent::close:
+		OnClose(event.GetError());
 		break;
 	default:
 		LogMessage(Debug_Warning, _T("Unhandled socket event %d"), event.GetType());
@@ -1017,12 +1020,17 @@ void CRealControlSocket::OnSend()
 	}
 }
 
-void CRealControlSocket::OnClose()
+void CRealControlSocket::OnClose(int error)
 {
-	LogMessage(Debug_Verbose, _T("CRealControlSocket::OnClose()"));
+	LogMessage(Debug_Verbose, _T("CRealControlSocket::OnClose(%d)"), error);
 
 	if (GetCurrentCommandId() != cmd_connect)
-		LogMessage(::Error, _("Disconnected from server"));
+	{
+		if (!error)
+			LogMessage(::Error, _("Connection closed by server"));
+		else
+			LogMessage(::Error, _("Disconnected from server: %s"), CSocket::GetErrorDescription(error).c_str());
+	}
 	DoClose();
 }
 

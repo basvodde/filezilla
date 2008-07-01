@@ -90,8 +90,12 @@ void CSocketBackend::Read(void *buffer, unsigned int len)
 
 void CSocketBackend::Peek(void *buffer, unsigned int len)
 {
-	/*XXXm_pSocket->Peek(buffer, len);
-	UpdateResults();*/
+	m_lastCount = m_pSocket->Peek(buffer, len, m_lastError);
+	m_error = m_lastCount == -1;
+
+	// XXX
+	if (m_lastError == EAGAIN)
+		m_lastError = wxSOCKET_WOULDBLOCK;
 }
 
 void CSocketBackend::OnRateAvailable(enum CRateLimiter::rate_direction direction)

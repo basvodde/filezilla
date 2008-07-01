@@ -15,12 +15,14 @@
 #include "FileZilla.h"
 #include "socket.h"
 #include "threadex.h"
+#include <errno.h>
 
 #define WAIT_CONNECT 0x01
 #define WAIT_READ	 0x02
 #define WAIT_WRITE	 0x04
 #define WAIT_ACCEPT  0x08
-#define WAIT_EVENTCOUNT 4
+#define WAIT_CLOSE	 0x10
+#define WAIT_EVENTCOUNT 5
 
 const wxEventType fzEVT_SOCKET = wxNewEventType();
 
@@ -74,7 +76,7 @@ public:
 #ifdef __WXMSW__
 			int code = ConvertMSWErrorCode(errors[i]);
 #else
-			code = errors[i];
+			int code = errors[i];
 #endif
 			if (CSocket::GetErrorDescription(code).Len() < 15)
 				wxMessageBox(CSocket::GetErrorDescription(code));
@@ -386,6 +388,8 @@ protected:
 				wait_events |= FD_WRITE;
 			if (m_waiting & WAIT_ACCEPT)
 				wait_events |= FD_ACCEPT;
+			if (m_waiting & WAIT_CLOSE)
+				wait_events |= FD_CLOSE;
 			WSAEventSelect(m_pSocket->m_fd, m_sync_event, wait_events);
 			m_sync.Unlock();
 			WSAWaitForMultipleEvents(1, &m_sync_event, false, WSA_INFINITE, false);
@@ -440,6 +444,15 @@ protected:
 					m_waiting &= ~WAIT_ACCEPT;
 				}
 			}
+			if (m_waiting & WAIT_CLOSE)
+			{
+				if (events.lNetworkEvents & FD_CLOSE)
+				{
+					m_triggered |= WAIT_CLOSE;
+					m_triggered_errors[4] = ConvertMSWErrorCode(events.iErrorCode[FD_CLOSE_BIT]);
+					m_waiting &= ~WAIT_CLOSE;
+				}
+			}
 
 			if (m_triggered || !m_waiting)
 				return true;
@@ -468,6 +481,12 @@ protected:
 			CSocketEvent evt(m_pSocket->m_id, CSocketEvent::connection, m_triggered_errors[3]);
 			m_pSocket->m_pEvtHandler->AddPendingEvent(evt);
 			m_triggered &= ~WAIT_ACCEPT;
+		}
+		if (m_triggered & WAIT_CLOSE)
+		{
+			CSocketEvent evt(m_pSocket->m_id, CSocketEvent::close, m_triggered_errors[4]);
+			m_pSocket->m_pEvtHandler->AddPendingEvent(evt);
+			m_triggered &= ~WAIT_CLOSE;
 		}
 	}
 
@@ -516,11 +535,23 @@ protected:
 						continue;
 				}
 
+				m_waiting |= WAIT_CLOSE;
+				int wait_close = WAIT_CLOSE;
 				while (IdleLoop())
 				{
-					if (!DoWait(0))
+					bool res = DoWait(0);
+
+					if (m_triggered & WAIT_CLOSE && m_pSocket)
+					{
+						m_pSocket->m_state = CSocket::closing;
+						wait_close = 0;
+					}
+
+					if (!res)
 						break;
+
 					SendEvents();
+					m_waiting |= wait_close;
 				}
 			}
 		}
@@ -598,6 +629,18 @@ void CSocket::SetEventHandler(wxEvtHandler* pEvtHandler, int id)
 {
 	if (m_pSocketThread)
 		m_pSocketThread->m_sync.Lock();
+
+#ifdef __WXMSW__
+	if (pEvtHandler && m_state == closing && m_pSocketThread)
+	{
+		// After getting FD_CLOSE, no further events are recorded, so send
+		// it out to new handler manually
+		CSocketEvent evt(id, CSocketEvent::close, m_pSocketThread->m_triggered_errors[4]);
+		pEvtHandler->AddPendingEvent(evt);
+	}
+#else
+	wxASSERT(!pEvtHandler || m_state != closing);
+#endif
     
 	m_pEvtHandler = pEvtHandler;
 	m_id = id;
@@ -758,6 +801,24 @@ int CSocket::Read(void* buffer, unsigned int size, int& error)
 				m_pSocketThread->m_sync.Unlock();
 			}
 		}
+	}
+	else
+		error = 0;
+
+	return res;
+}
+
+int CSocket::Peek(void* buffer, unsigned int size, int& error)
+{
+	int res = recv(m_fd, (char*)buffer, size, MSG_PEEK);
+
+	if (res == -1)
+	{
+#ifdef __WXMSW__
+		error = ConvertMSWErrorCode(WSAGetLastError());
+#else
+		error = errno;
+#endif
 	}
 	else
 		error = 0;

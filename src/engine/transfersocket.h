@@ -51,7 +51,7 @@ protected:
 	virtual void OnAccept(int error);
 	virtual void OnReceive();
 	virtual void OnSend();
-	virtual void OnClose();
+	virtual void OnClose(int error);
 	virtual void OnIOThreadEvent(CIOThreadEvent& event);
 
 	// Create a socket server

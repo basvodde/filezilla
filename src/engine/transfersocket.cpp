@@ -144,7 +144,10 @@ void CTransferSocket::OnSocketEvent(CSocketEvent &event)
 		OnSend();
 		break;
 	case CSocketEvent::close:
-		OnClose();
+		OnClose(event.GetError());
+		break;
+	default:
+		m_pControlSocket->LogMessage(::Debug_Info, _T("Unhandled socket event %d"), event.GetType());
 		break;
 	}
 }
@@ -430,9 +433,9 @@ void CTransferSocket::OnSend()
 	}
 }
 
-void CTransferSocket::OnClose()
+void CTransferSocket::OnClose(int error)
 {
-	m_pControlSocket->LogMessage(::Debug_Verbose, _T("CTransferSocket::OnClose"));
+	m_pControlSocket->LogMessage(::Debug_Verbose, _T("CTransferSocket::OnClose(%d)"), error);
 	m_onCloseCalled = true;
 
 	if (m_transferEndReason != none)
@@ -466,6 +469,15 @@ void CTransferSocket::OnClose()
 	m_pBackend->Peek(&buffer, 100);
 	if (!m_pBackend->Error() && m_pBackend->LastCount())
 	{
+#ifndef __WXMSW__
+		wxFAIL_MSG(_T("Peek isn't supposed to return data after close notification"));
+#endif
+
+		// MSDN says this:
+		//   FD_CLOSE being posted after all data is read from a socket.
+		//   An application should check for remaining data upon receipt
+		//   of FD_CLOSE to avoid any possibility of losing data.
+		// First half is actually plain wrong.
 		OnReceive();
 
 		return;
