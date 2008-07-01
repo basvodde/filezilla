@@ -71,7 +71,11 @@ public:
 		};
 		for (int i = 0; errors[i]; i++)
 		{
+#ifdef __WXMSW__
 			int code = ConvertMSWErrorCode(errors[i]);
+#else
+			code = errors[i];
+#endif
 			if (CSocket::GetErrorDescription(code).Len() < 15)
 				wxMessageBox(CSocket::GetErrorDescription(code));
 		}
@@ -400,7 +404,6 @@ protected:
 				return false;
 			}
 
-			bool matched = false;
 			if (m_waiting & WAIT_CONNECT)
 			{
 				if (events.lNetworkEvents & FD_CONNECT)
@@ -439,12 +442,9 @@ protected:
 			}
 
 			if (m_triggered || !m_waiting)
-			{
 				return true;
-			}
-		}
-		
 #endif
+		}
 	}
 
 	void SendEvents()
@@ -798,7 +798,6 @@ int CSocket::Write(const void* buffer, unsigned int size, int& error)
 
 wxString CSocket::AddressToString(const struct sockaddr* addr, int addr_len, bool with_port /*=true*/)
 {
-	int bufflen = NI_MAXHOST;
 	char hostbuf[NI_MAXHOST];
 	char portbuf[NI_MAXSERV];
 
@@ -927,7 +926,7 @@ int CSocket::Listen(int family, int port /*=0*/)
 	return 0;
 }
 
-unsigned int CSocket::GetLocalPort(int& error)
+int CSocket::GetLocalPort(int& error)
 {
 	struct sockaddr addr;
 	socklen_t addr_len = sizeof(addr);
@@ -955,7 +954,7 @@ unsigned int CSocket::GetLocalPort(int& error)
 	return -1;
 }
 
-unsigned int CSocket::GetRemotePort(int& error)
+int CSocket::GetRemotePort(int& error)
 {
 	struct sockaddr addr;
 	socklen_t addr_len = sizeof(addr);
@@ -992,7 +991,7 @@ CSocket* CSocket::Accept(int &error)
 		m_pSocketThread->WakeupThread(true);
 		m_pSocketThread->m_sync.Unlock();
 	}
-	SOCKET fd = accept(m_fd, 0, 0);
+	int fd = accept(m_fd, 0, 0);
 	if (fd == -1)
 	{
 #ifdef __WXMSW__

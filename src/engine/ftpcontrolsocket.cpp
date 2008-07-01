@@ -2650,7 +2650,7 @@ void CFtpControlSocket::TransferEnd()
 	}
 
 	enum TransferEndReason reason = m_pTransferSocket->GetTransferEndreason();
-	if (reason == none)
+	if (reason == ::none)
 	{
 		LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("Call to TransferEnd at unusual time"));
 		return;

@@ -1,7 +1,8 @@
 #include <wx/defs.h>
 #ifdef __WXMSW__
+// For AF_INET6
 #include <winsock2.h>
-#include <Ws2tcpip.h>
+#include <ws2tcpip.h>
 #endif
 #include "FileZilla.h"
 #include "transfersocket.h"

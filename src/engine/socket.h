@@ -95,8 +95,8 @@ public:
 	wxString GetPeerIP() const;
 
 	// -1 on error
-	unsigned int GetLocalPort(int& error);
-	unsigned int GetRemotePort(int& error);
+	int GetLocalPort(int& error);
+	int GetRemotePort(int& error);
 
 	// If connected, either AF_INET or AF_INET6
 	// AF_UNSPEC otherwise
