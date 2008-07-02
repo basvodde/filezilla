@@ -89,6 +89,9 @@ CFileZillaEnginePrivate::~CFileZillaEnginePrivate()
 
 	if (m_pRateLimiter)
 		m_pRateLimiter->Free();
+
+	if (m_engineList.empty())
+		CSocket::Cleanup(true);
 }
 
 bool CFileZillaEnginePrivate::SendEvent(enum EngineNotificationType eventType, int data /*=0*/)

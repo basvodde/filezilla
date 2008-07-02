@@ -31,6 +31,9 @@
 
 const wxEventType fzEVT_SOCKET = wxNewEventType();
 
+class CSocketThread;
+static std::list<CSocketThread*> waiting_socket_threads;
+
 #ifdef __WXMSW__
 static int ConvertMSWErrorCode(int error)
 {
@@ -112,7 +115,7 @@ class CSocketThread : protected wxThreadEx
 	friend class CSocket;
 public:
 	CSocketThread()
-		: m_condition(m_sync)
+		: wxThreadEx(wxTHREAD_JOINABLE), m_condition(m_sync)
 	{
 		m_pSocket = 0;
 		m_pHost = 0;
@@ -121,6 +124,7 @@ public:
 		m_sync_event = WSA_INVALID_EVENT;
 #endif
 		m_quit = false;
+		m_finished = false;
 
 		m_waiting = 0;
 		m_triggered = 0;
@@ -132,9 +136,10 @@ public:
 		}
 	}
 
-	void SetSocket(CSocket* pSocket)
+	void SetSocket(CSocket* pSocket, bool already_locked = false)
 	{
-		m_sync.Lock();
+		if (!already_locked)
+			m_sync.Lock();
 		m_pSocket = pSocket;
 		if (m_pHost)
 		{
@@ -147,7 +152,8 @@ public:
 			m_pPort = 0;
 		}
 		m_waiting = 0;
-		m_sync.Unlock();
+		if (!already_locked)
+			m_sync.Unlock();
 	}
 
 	int Connect()
@@ -293,8 +299,13 @@ protected:
 			}
 
 			// Set socket to non-blocking.
+#ifdef __WXMSW__
 			unsigned long nonblock = 1;
 			ioctlsocket(fd, FIONBIO, &nonblock);
+#else
+			int flags = fnctl(fd, F_GETFL);
+			fnctl(fd, F_SETFL, flags | O_NONBLOCK);
+#endif
 
 			int res = connect(fd, addr->ai_addr, addr->ai_addrlen);
 			if (res == -1)
@@ -578,6 +589,7 @@ protected:
 	wxCondition m_condition;
 
 	bool m_quit;
+	bool m_finished;
 
 	// The socket events we are waiting for
 	int m_waiting;
@@ -607,7 +619,25 @@ CSocket::~CSocket()
 		Close();
 
 	if (m_pSocketThread)
-		m_pSocketThread->SetSocket(0);
+	{
+		m_pSocketThread->m_sync.Lock();
+		m_pSocketThread->SetSocket(0, true);
+		if (m_pSocketThread->m_finished)
+		{
+			m_pSocketThread->WakeupThread(true);
+			m_pSocketThread->m_sync.Unlock();
+			m_pSocketThread->Wait();
+			delete m_pSocketThread;
+		}
+		else
+		{
+			m_pSocketThread->m_quit = true;
+			m_pSocketThread->WakeupThread(true);
+			m_pSocketThread->m_sync.Unlock();
+			waiting_socket_threads.push_back(m_pSocketThread);
+		}		
+	}
+	Cleanup(false);
 }
 
 int CSocket::Connect(wxString host, unsigned int port)
@@ -752,9 +782,6 @@ wxString CSocket::GetErrorDescription(int error)
 
 int CSocket::Close()
 {
-	if (m_pSocketThread)
-		m_pSocketThread->SetSocket(0);
-
 	if (m_fd != -1)
 	{
 		close(m_fd);
@@ -779,6 +806,24 @@ enum CSocket::SocketState CSocket::GetState()
 
 bool CSocket::Cleanup(bool force)
 {
+	std::list<CSocketThread*>::iterator iter = waiting_socket_threads.begin();
+	while (iter != waiting_socket_threads.end())
+	{
+		std::list<CSocketThread*>::iterator current = iter++;
+		CSocketThread* pThread = *current;
+		pThread->m_sync.Lock();
+		if (!force && !pThread->m_finished)
+		{
+			pThread->m_sync.Unlock();
+			continue;
+		}
+		pThread->m_sync.Unlock();
+
+		pThread->Wait();
+		delete pThread;
+		waiting_socket_threads.erase(current);
+	}
+
 	return false;
 }
 

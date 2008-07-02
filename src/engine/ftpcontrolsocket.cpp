@@ -28,16 +28,16 @@
 #define LOGON_WELCOME	0
 #define LOGON_AUTH_TLS	1
 #define LOGON_AUTH_SSL	2
-#define LOGON_LOGON		3
-#define LOGON_SYST		4
-#define LOGON_FEAT		5
-#define LOGON_CLNT		6
-#define LOGON_OPTSUTF8	7
-#define LOGON_PBSZ		8
-#define LOGON_PROT		9
-#define LOGON_CUSTOMCOMMANDS 10
-#define LOGON_DONE		11
-
+#define LOGON_AUTH_WAIT	3
+#define LOGON_LOGON		4
+#define LOGON_SYST		5
+#define LOGON_FEAT		6
+#define LOGON_CLNT		7
+#define LOGON_OPTSUTF8	8
+#define LOGON_PBSZ		9
+#define LOGON_PROT		10
+#define LOGON_CUSTOMCOMMANDS 11
+#define LOGON_DONE		12
 
 #ifdef __WXMSW__
 
@@ -809,6 +809,10 @@ int CFtpControlSocket::LogonParseResponse()
 			}
 
 			pData->neededCommands[LOGON_AUTH_SSL] = 0;
+			pData->opState = LOGON_AUTH_WAIT;
+
+			if (res == FZ_REPLY_WOULDBLOCK)
+				return FZ_REPLY_WOULDBLOCK;
 		}
 	}
 	else if (pData->opState == LOGON_LOGON)
@@ -932,21 +936,6 @@ int CFtpControlSocket::LogonParseResponse()
 		if (encoding == ENCODING_AUTO && CServerCapabilities::GetCapability(*m_pCurrentServer, utf8_command) != yes)
 			m_useUTF8 = false;
 	}
-	/*
-	else if (pData->opState == LOGON_CLNT)
-	{
-		// Don't check return code, it has no meaning for us
-	}
-	else if (pData->opState == LOGON_OPTSUTF8)
-	{
-		// If server obeys RFC 2640 this command had no effect, return code
-		// is irrelevant
-	}
-	else if (pData->opState == LOGON_PBSZ)
-	{
-		// Nothing to do
-	}
-	*/
 	else if (pData->opState == LOGON_PROT)
 	{
 		if (code == 2 || code == 3)
@@ -1040,6 +1029,9 @@ int CFtpControlSocket::LogonSend()
 	bool res;
 	switch (pData->opState)
 	{
+	case LOGON_AUTH_WAIT:
+		LogMessage(Debug_Info, _T("LogonSend() called during LOGON_AUTH_WAIT, ignoring"));
+		break;
 	case LOGON_AUTH_TLS:
 		res = Send(_T("AUTH TLS"));
 		break;
@@ -2809,6 +2801,13 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 
 			CCertificateNotification* pCertificateNotification = reinterpret_cast<CCertificateNotification *>(pNotification);
 			m_pTlsSocket->TrustCurrentCert(pCertificateNotification->m_trusted);
+
+			if (m_pCurOpData && m_pCurOpData->opId == cmd_connect &&
+				m_pCurOpData->opState == LOGON_AUTH_WAIT)
+			{
+				m_pCurOpData->opState = LOGON_LOGON;
+			}
+			SendNextCommand();
 		}
 		break;
 	default:
