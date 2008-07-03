@@ -108,7 +108,7 @@ wxString CTransferSocket::SetupActiveTransfer(const wxString& ip)
 	else
 	{
 		portArguments = ip;
-		portArguments += wxString::Format(_T(",%d,%d"),port / 256, port % 256);
+		portArguments += wxString::Format(_T(",%d,%d"), port / 256, port % 256);
 		portArguments.Replace(_T("."), _T(","));
 	}
 
@@ -126,10 +126,21 @@ void CTransferSocket::OnSocketEvent(CSocketEvent &event)
 		return;
 	}
 
-	if (!m_pBackend || event.GetId() != m_pBackend->GetId())
+	if (m_pBackend)
 	{
-		m_pControlSocket->LogMessage(::Debug_Info, _T("Skipping socket event %d. No backend or id mismatch."), event.GetType());
-		return;
+		if (event.GetId() != m_pBackend->GetId())
+		{
+			m_pControlSocket->LogMessage(::Debug_Info, _T("Skipping socket event %d, id mismatch."), event.GetType());
+			return;
+		}
+	}
+	else
+	{
+		if (!m_pSocket || m_pSocket->GetId() != event.GetId())
+		{
+			m_pControlSocket->LogMessage(::Debug_Info, _T("Skipping socket event %d, no socket or id mismatch."), event.GetType());
+			return;
+		}
 	}
 
 	switch (event.GetType())
@@ -735,10 +746,12 @@ bool CTransferSocket::InitTls(const CTlsSocket* pPrimaryTlsSocket)
 		return false;
 	}
 
-	if (!m_pTlsSocket->Handshake(pPrimaryTlsSocket))
+	int res = m_pTlsSocket->Handshake(pPrimaryTlsSocket);
+	if (res && res != FZ_REPLY_WOULDBLOCK)
 	{
 		delete m_pTlsSocket;
 		m_pTlsSocket = 0;
+		return false;
 	}
 
 	m_pBackend = m_pTlsSocket;

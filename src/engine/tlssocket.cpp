@@ -24,7 +24,7 @@ CTlsSocket::CTlsSocket(wxEvtHandler* pEvtHandler, CSocket* pSocket, CControlSock
 	m_canWriteToSocket = true;
 	m_canCheckCloseSocket = false;
 
-	m_canTriggerRead = true;
+	m_canTriggerRead = false;
 	m_canTriggerWrite = true;
 
 	m_tlsState = noconn;
@@ -33,6 +33,7 @@ CTlsSocket::CTlsSocket(wxEvtHandler* pEvtHandler, CSocket* pSocket, CControlSock
 	m_lastCount = 0;
 	m_lastSuccessful = false;
 
+	m_lastWriteFailed = true;
 	m_lastWriteFailed = false;
 	m_writeSkip = 0;
 
@@ -250,8 +251,7 @@ ssize_t CTlsSocket::PullFunction(void* data, size_t len)
 			m_canReadFromSocket = false;
 			if (m_canCheckCloseSocket && !m_pSocketBackend->IsWaiting(CRateLimiter::inbound))
 			{
-				wxSocketEvent evt(m_pSocketBackend->GetId());
-				evt.m_event = wxSOCKET_LOST;
+				CSocketEvent evt(m_pSocketBackend->GetId(), CSocketEvent::close);
 				wxPostEvent(this, evt);
 			}
 
@@ -265,8 +265,7 @@ ssize_t CTlsSocket::PullFunction(void* data, size_t len)
 
 	if (m_canCheckCloseSocket)
 	{
-		wxSocketEvent evt(m_pSocketBackend->GetId());
-		evt.m_event = wxSOCKET_LOST;
+		CSocketEvent evt(m_pSocketBackend->GetId(), CSocketEvent::close);
 		wxPostEvent(this, evt);
 	}
 
@@ -290,7 +289,7 @@ void CTlsSocket::OnSocketEvent(CSocketEvent& event)
 	case CSocketEvent::write:
 		OnSend();
 		break;
-/*XXX	case wxSOCKET_LOST:
+	case CSocketEvent::close:
 		{
 			m_canCheckCloseSocket = true;
 			char tmp[100];
@@ -300,7 +299,7 @@ void CTlsSocket::OnSocketEvent(CSocketEvent& event)
 				int lastCount = m_pSocketBackend->LastCount();
 
 				if (lastCount)
-					m_pOwner->LogMessage(Debug_Verbose, _T("CTlsSocket::OnSocketEvent(): pending data, postponing wxSOCKET_LOST"));
+					m_pOwner->LogMessage(Debug_Verbose, _T("CTlsSocket::OnSocketEvent(): pending data, postponing close event"));
 				else
 					m_socketClosed = true;
 				OnRead();
@@ -309,14 +308,13 @@ void CTlsSocket::OnSocketEvent(CSocketEvent& event)
 					return;
 			}
 
-			m_pOwner->LogMessage(Debug_Info, _T("CTlsSocket::OnSocketEvent(): wxSOCKET_LOST received"));
+			m_pOwner->LogMessage(Debug_Info, _T("CTlsSocket::OnSocketEvent(): close event received"));
 
 			//Uninit();
-			wxSocketEvent evt(GetId());
-			evt.m_event = wxSOCKET_LOST;
+			CSocketEvent evt(GetId(), CSocketEvent::close);
 			wxPostEvent(m_pEvtHandler, evt);
 		}
-		break;*/
+		break;
 	default:
 		break;
 	}
@@ -416,8 +414,7 @@ int CTlsSocket::Handshake(const CTlsSocket* pPrimarySocket /*=0*/)
 			Shutdown();
 			if (!Error() || LastError() != wxSOCKET_WOULDBLOCK)
 			{
-				wxSocketEvent evt(GetId());
-				evt.m_event = wxSOCKET_LOST;
+				CSocketEvent evt(GetId(), CSocketEvent::close);
 				wxPostEvent(m_pEvtHandler, evt);
 			}
 		}
@@ -434,7 +431,8 @@ int CTlsSocket::Handshake(const CTlsSocket* pPrimarySocket /*=0*/)
 
 void CTlsSocket::Read(void *buffer, unsigned int len)
 {
-	if (m_tlsState == handshake)
+	m_pOwner->LogMessage(Debug_Verbose, _T("Read"));
+	if (m_tlsState == handshake || m_tlsState == verifycert)
 	{
 		m_lastError = wxSOCKET_WOULDBLOCK;
 		m_lastSuccessful = false;
@@ -507,7 +505,7 @@ void CTlsSocket::Read(void *buffer, unsigned int len)
 
 void CTlsSocket::Write(const void *buffer, unsigned int len)
 {
-	if (m_tlsState == handshake)
+	if (m_tlsState == handshake || m_tlsState == verifycert)
 	{
 		m_lastError = wxSOCKET_WOULDBLOCK;
 		m_lastSuccessful = false;
@@ -650,8 +648,7 @@ void CTlsSocket::Failure(int code)
 		LogError(code);
 	Uninit();
 
-	wxSocketEvent evt(GetId());
-	evt.m_event = wxSOCKET_LOST;
+	CSocketEvent evt(GetId(), CSocketEvent::close);
 	wxPostEvent(m_pEvtHandler, evt);
 }
 
@@ -739,8 +736,7 @@ void CTlsSocket::ContinueShutdown()
 	{
 		m_tlsState = closed;
 
-		wxSocketEvent evt(GetId());
-		evt.m_event = wxSOCKET_LOST;
+		CSocketEvent evt(GetId(), CSocketEvent::close);
 		wxPostEvent(m_pEvtHandler, evt);
 
 		return;
@@ -764,6 +760,8 @@ void CTlsSocket::TrustCurrentCert(bool trusted)
 
 		CSocketEvent evt(GetId(), CSocketEvent::connection);
 		wxPostEvent(m_pEvtHandler, evt);
+		if (m_lastWriteFailed)
+			m_lastWriteFailed = false;
 		CheckResumeFailedReadWrite();
 		TriggerEvents();
 		return;
