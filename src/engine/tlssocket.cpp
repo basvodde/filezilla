@@ -431,7 +431,6 @@ int CTlsSocket::Handshake(const CTlsSocket* pPrimarySocket /*=0*/)
 
 void CTlsSocket::Read(void *buffer, unsigned int len)
 {
-	m_pOwner->LogMessage(Debug_Verbose, _T("Read"));
 	if (m_tlsState == handshake || m_tlsState == verifycert)
 	{
 		m_lastError = wxSOCKET_WOULDBLOCK;
