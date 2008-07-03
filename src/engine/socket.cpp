@@ -918,7 +918,10 @@ wxString CSocket::AddressToString(const struct sockaddr* addr, int addr_len, boo
 	if (with_port && addr->sa_family == AF_INET6)
 		host = _T("[") + host + _T("]");
 
-	return host + _T(":") + port;
+	if (with_port)
+		return host + _T(":") + port;
+	else
+		return host;
 }
 
 wxString CSocket::GetLocalIP() const
