@@ -11,6 +11,7 @@
 #include "optionsbase.h"
 #include "iothread.h"
 #include "tlssocket.h"
+#include <errno.h>
 
 BEGIN_EVENT_TABLE(CTransferSocket, wxEvtHandler)
 	EVT_FZ_SOCKET(wxID_ANY, CTransferSocket::OnSocketEvent)
@@ -173,7 +174,7 @@ void CTransferSocket::OnAccept(int error)
 		m_pControlSocket->LogMessage(::Debug_Warning, _T("No socket server in OnAccept"), error);
 		return;
 	}
-	
+
 	m_pSocket = m_pSocketServer->Accept(error);
 	if (!m_pSocket)
 	{

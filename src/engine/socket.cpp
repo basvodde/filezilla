@@ -186,6 +186,9 @@ public:
 			m_sync_event = WSACreateEvent();
 		if (m_sync_event == WSA_INVALID_EVENT)
 			return 1;
+#else
+		if (pipe(m_pipe))
+			return errno;
 #endif
 
 		int res = Create();
@@ -211,10 +214,12 @@ public:
 				m_sync.Unlock();
 			return;
 		}
-		
+
 #ifdef __WXMSW__
 		WSASetEvent(m_sync_event);
 #else
+		char tmp = 0;
+		write(m_pipe[1], &tmp, 1);
 #endif
 		if (!already_locked)
 			m_sync.Unlock();
@@ -274,7 +279,7 @@ protected:
 			SendEvent(evt);
 			m_pSocket->m_state = CSocket::closed;
 		}
-		
+
 		for (struct addrinfo *addr = addressList; addr; addr = addr->ai_next)
 		{
 
@@ -318,7 +323,7 @@ protected:
 
 			if (res == EINPROGRESS)
 			{
-				
+
 				m_pSocket->m_fd = fd;
 
 				bool wait_successful;
@@ -406,7 +411,7 @@ protected:
 
 			m_sync.Lock();
 			if (m_quit || !m_pSocket)
-			{
+			{WAIT_CONNECT
 				return false;
 			}
 
@@ -466,6 +471,85 @@ protected:
 
 			if (m_triggered || !m_waiting)
 				return true;
+#else
+			fd_set readfds;
+			fd_set writefds;
+			FD_ZERO(&readfds);
+			FD_ZERO(&writefds);
+
+			FD_SET(m_pipe[0], &readfds);
+			if (!(m_waiting & WAIT_CONNECT))
+				FD_SET(m_pSocket->m_fd, &readfds);
+
+			if (m_waiting & (WAIT_WRITE | WAIT_CONNECT))
+				FD_SET(m_pSocket->m_fd, &writefds);
+
+			int max = wxMax(m_pipe[0], m_pSocket->m_fd) + 1;
+
+			m_sync.Unlock();
+
+			int res = select(max, &readfds, &writefds, 0, 0);
+
+			m_sync.Lock();
+
+			if (res > 0 && FD_ISSET(m_pipe[0], &readfds))
+			{
+				char buffer[100];
+				read(m_pipe[0], buffer, 100);
+			}
+
+			if (m_quit || !m_pSocket)
+			{
+				return false;
+			}
+
+			if (!res)
+				continue;
+			if (res == -1)
+			{
+				res = errno;
+				if (res == EINTR)
+					continue;
+
+				printf("FOO\n");
+				fflush(stdout);
+
+				return false;
+			}
+
+			if (m_waiting & WAIT_CONNECT)
+			{
+				if (FD_ISSET(m_pSocket->m_fd, &writefds))
+				{
+					int error;
+					size_t len = sizeof(error);
+					int res = getsockopt(m_pSocket->m_fd, SOL_SOCKET, SO_ERROR, &error, &len);
+					if (res)
+						error = errno;
+					m_triggered |= WAIT_CONNECT;
+					m_triggered_errors[0] = error;
+					m_waiting &= ~WAIT_CONNECT;
+				}
+			}
+			else if (m_waiting & WAIT_READ)
+			{
+				if (FD_ISSET(m_pSocket->m_fd, &readfds))
+				{
+					m_triggered |= WAIT_READ;
+					m_waiting &= ~WAIT_READ;
+				}
+			}
+			if (m_waiting & WAIT_WRITE)
+			{
+				if (FD_ISSET(m_pSocket->m_fd, &writefds))
+				{
+					m_triggered |= WAIT_WRITE;
+					m_waiting &= ~WAIT_WRITE;
+				}
+			}
+
+			if (m_triggered || !m_waiting)
+				return true;
 #endif
 		}
 	}
@@ -513,7 +597,7 @@ protected:
 			if (m_quit)
 				return false;
 		}
-		
+
 		return true;
 	}
 
@@ -545,8 +629,10 @@ protected:
 						continue;
 				}
 
+#ifdef __WXMSW__
 				m_waiting |= WAIT_CLOSE;
 				int wait_close = WAIT_CLOSE;
+#endif
 				while (IdleLoop())
 				{
 					bool res = DoWait(0);
@@ -554,14 +640,18 @@ protected:
 					if (m_triggered & WAIT_CLOSE && m_pSocket)
 					{
 						m_pSocket->m_state = CSocket::closing;
+#ifdef __WXMSW__
 						wait_close = 0;
+#endif
 					}
 
 					if (!res)
 						break;
 
 					SendEvents();
+#ifdef __WXMSW__
 					m_waiting |= wait_close;
+#endif
 				}
 			}
 		}
@@ -577,6 +667,9 @@ protected:
 #ifdef __WXMSW__
 	// We wait on this using WSAWaitForMultipleEvents
 	WSAEVENT m_sync_event;
+#else
+	// A pipe is used to unblock select
+	int m_pipe[2];
 #endif
 
 	wxMutex m_sync;
@@ -629,7 +722,7 @@ CSocket::~CSocket()
 			m_pSocketThread->WakeupThread(true);
 			m_pSocketThread->m_sync.Unlock();
 			waiting_socket_threads.push_back(m_pSocketThread);
-		}		
+		}
 	}
 	Cleanup(false);
 }
@@ -670,7 +763,7 @@ void CSocket::SetEventHandler(wxEvtHandler* pEvtHandler, int id)
 #else
 	wxASSERT(!pEvtHandler || m_state != closing);
 #endif
-    
+
 	m_pEvtHandler = pEvtHandler;
 	m_id = id;
 
@@ -736,7 +829,7 @@ static struct Error_table error_table[] =
 #ifndef __WXMSW__
 	ERRORDECL(EAI_SYSTEM, "Other system error")
 #endif
-	
+
 	// Codes that have no POSIX equivalence
 #ifdef __WXMSW__
 	ERRORDECL(WSANOTINITIALISED, "Not initialized, need to call WSAStartup")
@@ -1056,7 +1149,7 @@ int CSocket::GetLocalPort(int& error)
 		struct sockaddr_in6* addr_v6 = (sockaddr_in6*)&addr;
 		return ntohs(addr_v6->sin6_port);
 	}
-	
+
 	error = EINVAL;
 	return -1;
 }
@@ -1084,7 +1177,7 @@ int CSocket::GetRemotePort(int& error)
 		struct sockaddr_in6* addr_v6 = (sockaddr_in6*)&addr;
 		return ntohs(addr_v6->sin6_port);
 	}
-	
+
 	error = EINVAL;
 	return -1;
 }
@@ -1133,7 +1226,7 @@ int CSocket::SetNonblocking(int fd)
 	else
 		return ConvertMSWErrorCode(WSAGetLastError());
 #else
-	int flags = fnctl(fd, F_GETFL);
+	int flags = fcntl(fd, F_GETFL);
 	if (flags == -1)
 		return errno;
 	int res = fcntl(fd, F_SETFL, flags | O_NONBLOCK);
