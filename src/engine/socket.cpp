@@ -20,6 +20,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <fcntl.h>
 #endif
 
 #define WAIT_CONNECT 0x01
@@ -298,14 +299,7 @@ protected:
 				continue;
 			}
 
-			// Set socket to non-blocking.
-#ifdef __WXMSW__
-			unsigned long nonblock = 1;
-			ioctlsocket(fd, FIONBIO, &nonblock);
-#else
-			int flags = fnctl(fd, F_GETFL);
-			fnctl(fd, F_SETFL, flags | O_NONBLOCK);
-#endif
+			CSocket::SetNonblocking(fd);
 
 			int res = connect(fd, addr->ai_addr, addr->ai_addrlen);
 			if (res == -1)
@@ -998,8 +992,7 @@ int CSocket::Listen(int family, int port /*=0*/)
 		if (m_fd == -1)
 			continue;
 
-		unsigned long nonblock = 1;
-		ioctlsocket(m_fd, FIONBIO, &nonblock);
+		SetNonblocking(m_fd);
 
 		res = bind(m_fd, addr->ai_addr, addr->ai_addrlen);
 		if (!res)
@@ -1113,6 +1106,8 @@ CSocket* CSocket::Accept(int &error)
 		return 0;
 	}
 
+	SetNonblocking(fd);
+
 	CSocket* pSocket = new CSocket(0, -1);
 	pSocket->m_state = connected;
 	pSocket->m_fd = fd;
@@ -1122,4 +1117,25 @@ CSocket* CSocket::Accept(int &error)
 	pSocket->m_pSocketThread->Start();
 
 	return pSocket;
+}
+
+int CSocket::SetNonblocking(int fd)
+{
+	// Set socket to non-blocking.
+#ifdef __WXMSW__
+	unsigned long nonblock = 1;
+	int res = ioctlsocket(fd, FIONBIO, &nonblock);
+	if (!res)
+		return 0;
+	else
+		return ConvertMSWErrorCode(WSAGetLastError());
+#else
+	int flags = fnctl(fd, F_GETFL);
+	if (flags == -1)
+		return errno;
+	int res = fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+	if (res == -1)
+		return errno;
+	return 0;
+#endif
 }

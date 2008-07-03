@@ -121,6 +121,8 @@ public:
 	CSocket* Accept(int& error);
 
 protected:
+	static int SetNonblocking(int fd);
+
 	wxEvtHandler* m_pEvtHandler;
 	int m_id;
 
