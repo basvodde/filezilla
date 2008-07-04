@@ -1,10 +1,9 @@
-#include <wx/wx.h>
-
+#include <wx/defs.h>
 #ifdef __WXMSW__
-// wxWidgets offers us no way to get the socket handle.
-#define WriteMsg UsefulDefineHackToGetFd(int* fd) { *fd = m_socket->m_fd; return *this; } wxSocketBase& WriteMsg
+// For AF_INET6
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #endif
-
 #include "FileZilla.h"
 
 #ifdef __WXMSW__
@@ -61,11 +60,6 @@ struct tcp_keepalive
 	u_long  keepaliveinterval;
 };
 
-#endif
-
-#ifdef _MSC_VER
-// Only needed on MSVC, MinGW already brings this along
-extern "C" int WINAPI WSAIoctl(SOCKET, DWORD, LPVOID, DWORD, LPVOID, DWORD, LPDWORD, void*, void*);
 #endif
 
 #endif //__WXMSW__
@@ -3992,7 +3986,10 @@ int CFtpControlSocket::TransferSend()
 		if (pData->bPasv)
 		{
 			pData->bTriedPasv = true;
-			cmd = _T("PASV");
+			if (GetAddressFamily() == AF_INET6)
+				cmd = _T("EPSV");
+			else
+				cmd = _T("PASV");
 		}
 		else
 		{
@@ -4006,7 +4003,10 @@ int CFtpControlSocket::TransferSend()
 				if (portArgument != _T(""))
 				{
 					pData->bTriedActive = true;
-					cmd = _T("PORT " + portArgument);
+					if (GetAddressFamily() == AF_INET6)
+						cmd = _T("EPRT " + portArgument);
+					else
+						cmd = _T("PORT " + portArgument);
 					break;
 				}
 			}
@@ -4021,7 +4021,10 @@ int CFtpControlSocket::TransferSend()
 			pData->bTriedActive = true;
 			pData->bTriedPasv = true;
 			pData->bPasv = true;
-			cmd = _T("PASV");
+			if (GetAddressFamily() == AF_INET6)
+				cmd = _T("EPSV");
+			else
+				cmd = _T("PASV");
 		}
 		break;
 	case rawtransfer_rest:

@@ -411,7 +411,7 @@ protected:
 
 			m_sync.Lock();
 			if (m_quit || !m_pSocket)
-			{WAIT_CONNECT
+			{
 				return false;
 			}
 
