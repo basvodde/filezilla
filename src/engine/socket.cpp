@@ -522,7 +522,7 @@ protected:
 				if (FD_ISSET(m_pSocket->m_fd, &writefds))
 				{
 					int error;
-					size_t len = sizeof(error);
+					socklen_t len = sizeof(error);
 					int res = getsockopt(m_pSocket->m_fd, SOL_SOCKET, SO_ERROR, &error, &len);
 					if (res)
 						error = errno;
