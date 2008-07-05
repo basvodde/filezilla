@@ -3657,7 +3657,7 @@ bool CFtpControlSocket::ParsePasvResponse(CRawTransferOpData* pData)
 	pData->host.Replace(_T(","), _T("."));
 
 	const wxString peerIP = GetPeerIP();
-	if (!IsRoutableAddress(pData->host) && IsRoutableAddress(peerIP))
+	if (!IsRoutableAddress(pData->host, GetAddressFamily()) && IsRoutableAddress(peerIP, GetAddressFamily()))
 	{
 		if (!m_pEngine->GetOptions()->GetOptionVal(OPTION_PASVREPLYFALLBACKMODE) || pData->bTriedActive)
 		{
@@ -3683,7 +3683,7 @@ int CFtpControlSocket::GetExternalIPAddress(wxString& address)
 	if (mode)
 	{
 		if (m_pEngine->GetOptions()->GetOptionVal(OPTION_NOEXTERNALONLOCAL) &&
-			!IsRoutableAddress(GetPeerIP()))
+			!IsRoutableAddress(GetPeerIP(), GetAddressFamily()))
 			// Skip next block, use local address
 			goto getLocalIP;
 	}

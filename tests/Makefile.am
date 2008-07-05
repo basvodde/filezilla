@@ -6,7 +6,10 @@ INCLUDES += -I$(top_srcdir)/src/engine
 TESTS = test
 check_PROGRAMS = $(TESTS)
 
-test_SOURCES = test.cpp dirparsertest.cpp serverpathtest.cpp
+test_SOURCES =  test.cpp \
+		ipaddress.cpp \
+		dirparsertest.cpp \
+		serverpathtest.cpp
 
 test_CPPFLAGS = $(WX_CPPFLAGS)
 test_CXXFLAGS = $(WX_CXXFLAGS_ONLY) $(CPPUNIT_CFLAGS)
