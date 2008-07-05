@@ -3627,6 +3627,29 @@ bool CFtpControlSocket::IsMisleadingListResponse() const
 	return false;
 }
 
+bool CFtpControlSocket::ParseEpsvResponse(CRawTransferOpData* pData)
+{
+	int pos = m_Response.Find(_T("(|||"));
+	if (pos == -1)
+		return false;
+
+	int pos2 = m_Response.Mid(pos + 4).Find(_T("|)"));
+	if (pos2 <= 0)
+		return false;
+
+	wxString number = m_Response.Mid(pos + 4, pos2);
+	unsigned long port;
+	if (!number.ToULong(&port))
+		 return false;
+
+	if (port <= 0 || port > 65535)
+	   return false;
+
+	pData->port = port;
+	pData->host = GetPeerIP();
+	return true;
+}
+
 bool CFtpControlSocket::ParsePasvResponse(CRawTransferOpData* pData)
 {
 	// Validate ip address
@@ -3857,7 +3880,12 @@ int CFtpControlSocket::TransferParseResponse()
 		}
 		if (pData->bPasv)
 		{
-			if (!ParsePasvResponse(pData))
+			bool parsed;
+			if (GetAddressFamily() == AF_INET6)
+				parsed = ParseEpsvResponse(pData);
+			else
+				parsed = ParsePasvResponse(pData);
+			if (!parsed)
 			{
 				if (!m_pEngine->GetOptions()->GetOptionVal(OPTION_ALLOW_TRANSFERMODEFALLBACK))
 				{

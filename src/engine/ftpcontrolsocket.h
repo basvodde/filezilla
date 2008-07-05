@@ -23,7 +23,7 @@ public:
 	virtual bool SetAsyncRequestReply(CAsyncRequestNotification *pNotification);
 
 protected:
-	
+
 	virtual int ResetOperation(int nErrorCode);
 
 	virtual int Connect(const CServer &server);
@@ -54,7 +54,7 @@ protected:
 	int DeleteSubcommandResult(int prevResult);
 	int DeleteSend();
 	int DeleteParseResponse();
-	
+
 	virtual int RemoveDir(const CServerPath& path, const wxString& subDir);
 	int RemoveDirSubcommandResult(int prevResult);
 	int RemoveDirSend();
@@ -77,7 +77,7 @@ protected:
 	virtual int Transfer(const wxString& cmd, CFtpTransferOpData* oldData);
 	virtual int TransferParseResponse();
 	virtual int TransferSend();
-	
+
 	virtual void OnConnect();
 	virtual void OnReceive();
 
@@ -98,8 +98,9 @@ protected:
 	int Logon();
 	int LogonParseResponse();
 	int LogonSend();
-	
+
 	bool ParsePasvResponse(CRawTransferOpData* pData);
+	bool ParseEpsvResponse(CRawTransferOpData* pData);
 
 	// Some servers are broken. Instead of an empty listing, some MVS servers
 	// for example they return "550 no members found"
