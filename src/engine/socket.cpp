@@ -531,6 +531,14 @@ protected:
 					m_waiting &= ~WAIT_CONNECT;
 				}
 			}
+			else if (m_waiting & WAIT_ACCEPT)
+			{
+				if (FD_ISSET(m_pSocket->m_fd, &readfds))
+				{
+					m_triggered |= WAIT_ACCEPT;
+					m_waiting &= ~WAIT_ACCEPT;
+				}
+			}
 			else if (m_waiting & WAIT_READ)
 			{
 				if (FD_ISSET(m_pSocket->m_fd, &readfds))
@@ -1061,13 +1069,14 @@ int CSocket::Listen(int family, int port /*=0*/)
 	struct addrinfo hints = {0};
 	hints.ai_family = family;
 	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = AI_PASSIVE | NI_NUMERICSERV;
+	hints.ai_flags = AI_PASSIVE | AI_NUMERICSERV;
 
 	char portstring[6];
 	sprintf(portstring, "%d", port);
 
 	struct addrinfo* addressList = 0;
 	int res = getaddrinfo(0, portstring, &hints, &addressList);
+
 	if (res)
 	{
 #ifdef __WXMSW__
