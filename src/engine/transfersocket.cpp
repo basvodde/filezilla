@@ -335,9 +335,8 @@ void CTransferSocket::OnReceive()
 
 				if (m_onCloseCalled && m_transferEndReason == none)
 				{
-					wxSocketEvent evt(m_pBackend->GetId());
-					evt.m_event = wxSOCKET_LOST;
-					wxPostEvent(this, evt);
+					CSocketEvent evt(m_pBackend->GetId(), CSocketEvent::close);
+					AddPendingEvent(evt);
 				}
 			}
 			else //!numread
@@ -357,9 +356,8 @@ void CTransferSocket::OnReceive()
 				TransferEnd(transfer_failure);
 			else if (m_onCloseCalled && !m_pBackend->IsWaiting(CRateLimiter::inbound))
 			{
-				wxSocketEvent evt(m_pBackend->GetId());
-				evt.m_event = wxSOCKET_LOST;
-				wxPostEvent(this, evt);
+				CSocketEvent evt(m_pBackend->GetId(), CSocketEvent::close);
+				AddPendingEvent(evt);
 			}
 			return;
 		}
@@ -375,9 +373,8 @@ void CTransferSocket::OnReceive()
 			TransferEnd(failed_resumetest);
 		else if (m_onCloseCalled)
 		{
-			wxSocketEvent evt(m_pBackend->GetId());
-			evt.m_event = wxSOCKET_LOST;
-			wxPostEvent(this, evt);
+			CSocketEvent evt(m_pBackend->GetId(), CSocketEvent::close);
+			AddPendingEvent(evt);
 		}
 	}
 }
