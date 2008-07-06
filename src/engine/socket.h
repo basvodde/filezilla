@@ -120,7 +120,16 @@ public:
 	int Listen(int family, int port = 0);
 	CSocket* Accept(int& error);
 
+	enum Flags
+	{
+		flag_nodelay = 0x01,
+		flag_keepalive = 0x02
+	};
+
+	void SetFlags(int flags);
+
 protected:
+	static int DoSetFlags(int fd, int flags, int flags_mask);
 	static int SetNonblocking(int fd);
 
 	wxEvtHandler* m_pEvtHandler;
@@ -134,6 +143,8 @@ protected:
 
 	wxString m_host;
 	unsigned int m_port;
+
+	int m_flags;
 };
 
 #ifdef __WXMSW__

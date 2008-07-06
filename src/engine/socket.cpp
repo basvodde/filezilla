@@ -287,6 +287,7 @@ protected:
 			SendEvent(evt);
 
 			int fd = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
+			CSocket::DoSetFlags(fd, m_pSocket->m_flags, m_pSocket->m_flags);
 
 			if (fd == -1)
 			{
@@ -704,6 +705,7 @@ CSocket::CSocket(wxEvtHandler* pEvtHandler, int id)
 	m_fd = -1;
 	m_state = none;
 	m_pSocketThread = 0;
+	m_flags = 0;
 
 	m_port = 0;
 }
@@ -1027,35 +1029,35 @@ wxString CSocket::AddressToString(const struct sockaddr* addr, int addr_len, boo
 
 wxString CSocket::GetLocalIP() const
 {
-	struct sockaddr addr;
+	struct sockaddr_storage addr;
 	socklen_t addr_len = sizeof(addr);
-	int res = getsockname(m_fd, &addr, &addr_len);
+	int res = getsockname(m_fd, (sockaddr*)&addr, &addr_len);
 	if (res)
 		return _T("");
 
-	return AddressToString(&addr, addr_len, false);
+	return AddressToString((sockaddr *)&addr, addr_len, false);
 }
 
 wxString CSocket::GetPeerIP() const
 {
-	struct sockaddr addr;
+	struct sockaddr_storage addr;
 	socklen_t addr_len = sizeof(addr);
-	int res = getpeername(m_fd, &addr, &addr_len);
+	int res = getpeername(m_fd, (sockaddr*)&addr, &addr_len);
 	if (res)
 		return _T("");
 
-	return AddressToString(&addr, addr_len, false);
+	return AddressToString((sockaddr *)&addr, addr_len, false);
 }
 
 int CSocket::GetAddressFamily() const
 {
-	struct sockaddr addr;
+	struct sockaddr_storage addr;
 	socklen_t addr_len = sizeof(addr);
-	int res = getsockname(m_fd, &addr, &addr_len);
+	int res = getsockname(m_fd, (sockaddr*)&addr, &addr_len);
 	if (res)
 		return AF_UNSPEC;
 
-	return addr.sa_family;
+	return ((sockaddr*)&addr)->sa_family;
 }
 
 int CSocket::Listen(int family, int port /*=0*/)
@@ -1069,7 +1071,11 @@ int CSocket::Listen(int family, int port /*=0*/)
 	struct addrinfo hints = {0};
 	hints.ai_family = family;
 	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = AI_PASSIVE | AI_NUMERICSERV;
+	hints.ai_flags = AI_PASSIVE;
+#ifndef __WXMSW__
+	// Windows doesn't know AI_NUMERICSERV.
+	hints.ai_flags |= AI_NUMERICSERV;
+#endif
 
 	char portstring[6];
 	sprintf(portstring, "%d", port);
@@ -1243,4 +1249,45 @@ int CSocket::SetNonblocking(int fd)
 		return errno;
 	return 0;
 #endif
+}
+
+void CSocket::SetFlags(int flags)
+{
+	if (m_pSocketThread)
+		m_pSocketThread->m_sync.Lock();
+
+	if (m_fd != -1)
+		DoSetFlags(m_fd, flags, flags ^ m_flags);
+	m_flags = flags;
+
+	if (m_pSocketThread)
+		m_pSocketThread->m_sync.Unlock();
+}
+
+int CSocket::DoSetFlags(int fd, int flags, int flags_mask)
+{
+	if (flags_mask & flag_nodelay)
+	{
+		const BOOL value = (flags & flag_nodelay) ? TRUE : FALSE;
+		int res = setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (const char*)&value, sizeof(value));
+		if (res != 0)
+#ifdef __WXMSW__
+			return ConvertMSWErrorCode(WSAGetLastError());
+#else
+			return errno;
+#endif
+	}
+	if (flags_mask & flag_keepalive)
+	{
+		const BOOL value = (flags & flag_keepalive) ? TRUE : FALSE;
+		int res = setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, (const char*)&value, sizeof(value));
+		if (res != 0)
+#ifdef __WXMSW__
+			return ConvertMSWErrorCode(WSAGetLastError());
+#else
+			return errno;
+#endif
+	}
+
+	return 0;
 }

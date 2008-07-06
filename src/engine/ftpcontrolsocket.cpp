@@ -219,6 +219,11 @@ CFtpControlSocket::CFtpControlSocket(CFileZillaEnginePrivate *pEngine) : CRealCo
 	m_protectDataChannel = false;
 	m_lastTypeBinary = -1;
 	m_idleTimer.SetOwner(this);
+
+	// Enable TCP_NODELAY, speeds things up a bit.
+	// Enable SO_KEEPALIVE, lots of clueless users have broken routers and
+	// firewalls which terminate the control connection on long transfers.
+	CSocket::SetFlags(flag_nodelay | flag_keepalive);
 }
 
 CFtpControlSocket::~CFtpControlSocket()
@@ -387,30 +392,6 @@ void CFtpControlSocket::OnConnect()
 
 	SetAlive();
 
-	// Enable SO_KEEPALIVE, lots of clueless users have broken routers and
-	// firewalls which terminate the control connection on long transfers.
-	/*XXX
-	int enabled = 1;
-	SetOption(SOL_SOCKET, SO_KEEPALIVE, &enabled, sizeof(enabled));
-
-#ifdef __WXMSW__
-	// Also set the keepalive timeout to 10 minutes since lots of broken
-	// routers and firewalls kill the connection after 15 minutes
-	int fd = 0;
-	UsefulDefineHackToGetFd(&fd);
-
-	struct tcp_keepalive data = {0};
-	data.onoff = 1;
-	data.keepalivetime = 60 * 10 * 1000; // 10 minutes
-	data.keepaliveinterval = 1000;
-
-	int len = sizeof(tcp_keepalive);
-	DWORD out = 0;
-	int res = WSAIoctl(fd, SIO_KEEPALIVE_VALS, &data, len, 0, 0, &out, 0, 0);
-	if (res)
-		LogMessage(::Debug_Info, _T("WSAIoctl with SIO_KEEPALIVE_VALS failed with %d"), (int)WSAGetLastError());
-#endif //__WXMSW__
-*/
 	if (m_pCurrentServer->GetProtocol() == FTPS)
 	{
 		if (!m_pTlsSocket)
