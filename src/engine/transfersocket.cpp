@@ -513,6 +513,8 @@ bool CTransferSocket::SetupPassiveTransfer(wxString host, int port)
 
 	m_pSocket = new CSocket(this, 0);
 
+	SetSocketBufferSizes(m_pSocket);
+
 	int res = m_pSocket->Connect(host, port);
 	if (res && res != EINPROGRESS)
 	{
@@ -520,8 +522,6 @@ bool CTransferSocket::SetupPassiveTransfer(wxString host, int port)
 		m_pSocket = 0;
 		return false;
 	}
-
-	SetSocketBufferSizes(m_pSocket);
 
 	if (!res)
 	{
@@ -795,10 +795,7 @@ void CTransferSocket::SetSocketBufferSizes(CSocket* pSocket)
 {
 	wxCHECK_RET(pSocket, _("SetSocketBufferSize called without socket"));
 
-	/*XXX
-	int value = m_pEngine->GetOptions()->GetOptionVal(OPTION_SOCKET_BUFFERSIZE_SEND);
-	pSocket->SetOption(SOL_SOCKET, SO_SNDBUF, &value, sizeof(value));
-
-	value = m_pEngine->GetOptions()->GetOptionVal(OPTION_SOCKET_BUFFERSIZE_RECV);
-	pSocket->SetOption(SOL_SOCKET, SO_RCVBUF, &value, sizeof(value));*/
+	const int size_read = m_pEngine->GetOptions()->GetOptionVal(OPTION_SOCKET_BUFFERSIZE_RECV);
+	const int size_write = m_pEngine->GetOptions()->GetOptionVal(OPTION_SOCKET_BUFFERSIZE_SEND);
+	pSocket->SetBufferSizes(size_read, size_write);
 }

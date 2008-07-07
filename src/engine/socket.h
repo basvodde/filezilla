@@ -128,8 +128,13 @@ public:
 
 	void SetFlags(int flags);
 
+	// If called on listen socket, sizes will be inherited by
+	// accepted sockets
+	void SetBufferSizes(int size_read, int size_write);
+
 protected:
 	static int DoSetFlags(int fd, int flags, int flags_mask);
+	static int DoSetBufferSizes(int fd, int size_read, int size_write);
 	static int SetNonblocking(int fd);
 
 	wxEvtHandler* m_pEvtHandler;
@@ -145,6 +150,8 @@ protected:
 	unsigned int m_port;
 
 	int m_flags;
+
+	int m_buffer_sizes[2];
 };
 
 #ifdef __WXMSW__

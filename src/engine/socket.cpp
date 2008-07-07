@@ -292,6 +292,8 @@ protected:
 			int fd = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
 			CSocket::DoSetFlags(fd, m_pSocket->m_flags, m_pSocket->m_flags);
 
+			CSocket::DoSetBufferSizes(fd, m_pSocket->m_buffer_sizes[0], m_pSocket->m_buffer_sizes[1]);
+
 			if (fd == -1)
 			{
 #ifdef __WXMSW__
@@ -713,6 +715,9 @@ CSocket::CSocket(wxEvtHandler* pEvtHandler, int id)
 	m_flags = 0;
 
 	m_port = 0;
+
+	m_buffer_sizes[0] = -1;
+	m_buffer_sizes[1] = -1;
 }
 
 CSocket::~CSocket()
@@ -1231,6 +1236,8 @@ CSocket* CSocket::Accept(int &error)
 
 	SetNonblocking(fd);
 
+	DoSetBufferSizes(fd, m_buffer_sizes[0], m_buffer_sizes[1]);
+
 	CSocket* pSocket = new CSocket(0, -1);
 	pSocket->m_state = connected;
 	pSocket->m_fd = fd;
@@ -1293,6 +1300,48 @@ int CSocket::DoSetFlags(int fd, int flags, int flags_mask)
 	{
 		const int value = (flags & flag_keepalive) ? 1 : 0;
 		int res = setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, (const char*)&value, sizeof(value));
+		if (res != 0)
+#ifdef __WXMSW__
+			return ConvertMSWErrorCode(WSAGetLastError());
+#else
+			return errno;
+#endif
+	}
+
+	return 0;
+}
+
+void CSocket::SetBufferSizes(int size_read, int size_write)
+{
+	if (m_pSocketThread)
+		m_pSocketThread->m_sync.Lock();
+
+	m_buffer_sizes[0] = size_read;
+	m_buffer_sizes[1] = size_write;
+
+	if (m_fd != -1)
+		DoSetBufferSizes(m_fd, size_read, size_write);
+
+	if (m_pSocketThread)
+		m_pSocketThread->m_sync.Unlock();
+}
+
+int CSocket::DoSetBufferSizes(int fd, int size_read, int size_write)
+{
+	if (size_read != -1)
+	{
+		int res = setsockopt(fd, SOL_SOCKET, SO_RCVBUF, (const char*)&size_read, sizeof(size_read));
+		if (res != 0)
+#ifdef __WXMSW__
+			return ConvertMSWErrorCode(WSAGetLastError());
+#else
+			return errno;
+#endif
+	}
+
+	if (size_write != -1)
+	{
+		int res = setsockopt(fd, SOL_SOCKET, SO_SNDBUF, (const char*)&size_write, sizeof(size_write));
 		if (res != 0)
 #ifdef __WXMSW__
 			return ConvertMSWErrorCode(WSAGetLastError());
