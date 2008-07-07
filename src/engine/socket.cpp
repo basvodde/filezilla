@@ -72,10 +72,11 @@ static int ConvertMSWErrorCode(int error)
 }
 #endif
 
-class X
+#ifdef ERRORCODETEST
+class CErrorCodeTest
 {
 public:
-	X()
+	CErrorCodeTest()
 	{
 		int errors[] = {
 			0
@@ -93,6 +94,7 @@ public:
 
 	}
 };
+#endif
 
 CSocketEvent::CSocketEvent(int id, enum EventType type, wxString data)
 	: wxEvent(id, fzEVT_SOCKET), m_type(type), m_data(data), m_error(0)
@@ -701,7 +703,9 @@ protected:
 CSocket::CSocket(wxEvtHandler* pEvtHandler, int id)
 	: m_pEvtHandler(pEvtHandler), m_id(id)
 {
-	X x;
+#ifdef ERRORCODETEST
+	CErrorCodeTest test;
+#endif
 	m_fd = -1;
 	m_state = none;
 	m_pSocketThread = 0;
@@ -821,7 +825,14 @@ static struct Error_table error_table[] =
 	ERRORDECL(ENOTSOCK, "File descriptior not a socket")
 	ERRORDECL(ETIMEDOUT, "Connection attempt timed out")
 	ERRORDECL(EHOSTUNREACH, "No route to host")
-
+	ERRORDECL(ENOTCONN, "Socket not connected")
+	ERRORDECL(ENETRESET, "Connection reset by network")
+	ERRORDECL(EOPNOTSUPP, "Operation not supported")
+	ERRORDECL(ESHUTDOWN, "Socket has been shut down")
+	ERRORDECL(EMSGSIZE, "Message too large")
+	ERRORDECL(ECONNABORTED, "Connection aborted")
+	ERRORDECL(ECONNRESET, "Connection reset by peer")
+	ERRORDECL(EPIPE, "Local endpoint has been closed")
 
 	// Getaddrinfo related
 #ifndef __WXMSW__
@@ -1072,8 +1083,8 @@ int CSocket::Listen(int family, int port /*=0*/)
 	hints.ai_family = family;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
-#ifndef __WXMSW__
-	// Windows doesn't know AI_NUMERICSERV.
+#ifdef AI_NUMERICSERV
+	// Some systems like Windows or OS X don't know AI_NUMERICSERV.
 	hints.ai_flags |= AI_NUMERICSERV;
 #endif
 

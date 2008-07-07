@@ -185,6 +185,27 @@ protected:
 #ifndef EHOSTUNREACH
 #define EHOSTUNREACH WSAEHOSTUNREACH
 #endif
+#ifndef ENOTCONN
+#define ENOTCONN WSAENOTCONN
+#endif
+#ifndef ENETRESET
+#define ENETRESET WSAENETRESET
+#endif
+#ifndef EOPNOTSUPP
+#define EOPNOTSUPP WSAEOPNOTSUPP
+#endif
+#ifndef ESHUTDOWN
+#define ESHUTDOWN WSAESHUTDOWN
+#endif
+#ifndef EMSGSIZE
+#define EMSGSIZE WSAEMSGSIZE
+#endif
+#ifndef ECONNABORTED
+#define ECONNABORTED WSAECONNABORTED
+#endif
+#ifndef ECONNRESET
+#define ECONNRESET WSAECONNRESET
+#endif
 #endif //__WXMSW__
 
 #endif //__SOCKET_H__
