@@ -21,6 +21,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <fcntl.h>
+#include <netinet/tcp.h>
 #endif
 
 #define WAIT_CONNECT 0x01
@@ -1279,7 +1280,7 @@ int CSocket::DoSetFlags(int fd, int flags, int flags_mask)
 {
 	if (flags_mask & flag_nodelay)
 	{
-		const BOOL value = (flags & flag_nodelay) ? TRUE : FALSE;
+		const int value = (flags & flag_nodelay) ? 1 : 0;
 		int res = setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (const char*)&value, sizeof(value));
 		if (res != 0)
 #ifdef __WXMSW__
@@ -1290,7 +1291,7 @@ int CSocket::DoSetFlags(int fd, int flags, int flags_mask)
 	}
 	if (flags_mask & flag_keepalive)
 	{
-		const BOOL value = (flags & flag_keepalive) ? TRUE : FALSE;
+		const int value = (flags & flag_keepalive) ? 1 : 0;
 		int res = setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, (const char*)&value, sizeof(value));
 		if (res != 0)
 #ifdef __WXMSW__
