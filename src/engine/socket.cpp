@@ -17,11 +17,17 @@
 #include "threadex.h"
 #include <errno.h>
 #ifndef __WXMSW__
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <fcntl.h>
-#include <netinet/tcp.h>
+  #include <sys/types.h>
+  #include <sys/socket.h>
+  #include <netdb.h>
+  #include <fcntl.h>
+  #include <netinet/in.h>
+  #include <netinet/tcp.h>
+#endif
+
+// Fixups needed on FreeBSD
+#if !defined(EAI_ADDRESSFAMILY) && defined(EAI_FAMILY)
+  #define EAI_ADDRESSFAMILY EAI_FAMILY
 #endif
 
 #define WAIT_CONNECT 0x01
@@ -846,11 +852,22 @@ static struct Error_table error_table[] =
 #endif
 	ERRORDECL(EAI_AGAIN, "Temporary failure in name resolution")
 	ERRORDECL(EAI_BADFLAGS, "Invalid value for ai_flags")
+#ifdef EAI_BADHINTS
+	ERRORDECL(EAI_BADHINTS, "Invalid value for hints")
+#endif
 	ERRORDECL(EAI_FAIL, "Nonrecoverable failure in name resolution")
 	ERRORDECL(EAI_FAMILY, "The ai_family member is not supported")
 	ERRORDECL(EAI_MEMORY, "Memory allocation failure")
+#ifdef EAI_NODATA
 	ERRORDECL(EAI_NODATA, "No address associated with nodename")
+#endif
 	ERRORDECL(EAI_NONAME, "Neither nodename nor servname provided, or not known")
+#ifdef EAI_OVERFLOW
+	ERRORDECL(EAI_OVERFLOW, "Argument buffer overflow")
+#endif
+#ifdef EAI_PROTOCOL
+	ERRORDECL(EAI_PROTOCOL, "Resolved protocol is unknown")
+#endif
 	ERRORDECL(EAI_SERVICE, "The servname parameter is not supported for ai_socktype")
 	ERRORDECL(EAI_SOCKTYPE, "The ai_socktype member is not supported")
 #ifndef __WXMSW__
