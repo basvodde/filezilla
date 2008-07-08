@@ -4566,6 +4566,70 @@
       </object>
     </object>
   </object>
+  <object class="wxDialog" name="ID_EDITEXISTING">
+    <title>Selected file already being edited</title>
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxFlexGridSizer">
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>The selected file is already being edited:</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText" name="ID_FILENAME">
+              <label>&lt;filename&gt;</label>
+            </object>
+          </object>
+          <cols>1</cols>
+          <vgap>5</vgap>
+          <object class="spacer">
+            <size>0,5</size>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>Action to perform:</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxRadioButton" name="ID_REOPEN">
+              <label>&amp;Reopen local file</label>
+              <value>1</value>
+              <style>wxRB_GROUP</style>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxRadioButton" name="ID_RETRANSFER">
+              <label>&amp;Discard local file then download and edit file anew</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxHORIZONTAL</orient>
+              <object class="sizeritem">
+                <object class="wxButton" name="wxID_OK">
+                  <label>OK</label>
+                  <default>1</default>
+                </object>
+                <flag>wxRIGHT|wxGROW</flag>
+                <border>5</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxButton" name="wxID_CANCEL">
+                  <label>Cancel</label>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+            </object>
+            <flag>wxALIGN_CENTRE_HORIZONTAL</flag>
+          </object>
+        </object>
+        <flag>wxALL</flag>
+        <border>5</border>
+      </object>
+    </object>
+  </object>
   <object class="wxDialog" name="ID_EDITING">
     <title>Files currently being edited</title>
     <object class="wxBoxSizer">
