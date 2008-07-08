@@ -158,6 +158,9 @@ void CTransferSocket::OnSocketEvent(CSocketEvent &event)
 	case CSocketEvent::close:
 		OnClose(event.GetError());
 		break;
+	case CSocketEvent::hostaddress:
+		// Booooring. No seriously, we connect by IP already, nothing to resolve
+		break;
 	default:
 		m_pControlSocket->LogMessage(::Debug_Info, _T("Unhandled socket event %d"), event.GetType());
 		break;
