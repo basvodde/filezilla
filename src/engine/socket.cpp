@@ -26,8 +26,8 @@
 #endif
 
 // Fixups needed on FreeBSD
-#if !defined(EAI_ADDRESSFAMILY) && defined(EAI_FAMILY)
-  #define EAI_ADDRESSFAMILY EAI_FAMILY
+#if !defined(EAI_ADDRFAMILY) && defined(EAI_FAMILY)
+  #define EAI_ADDRFAMILY EAI_FAMILY
 #endif
 
 #define WAIT_CONNECT 0x01
