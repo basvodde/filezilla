@@ -3681,6 +3681,13 @@ bool CFtpControlSocket::ParsePasvResponse(CRawTransferOpData* pData)
 
 int CFtpControlSocket::GetExternalIPAddress(wxString& address)
 {
+	if (GetAddressFamily() == AF_INET6)
+	{
+		// Local IP should work. Only a complete moron would use IPv6
+		// and NAT at the same time.
+		goto getLocalIP;
+	}
+
 	int mode = m_pEngine->GetOptions()->GetOptionVal(OPTION_EXTERNALIPMODE);
 
 	if (mode)
