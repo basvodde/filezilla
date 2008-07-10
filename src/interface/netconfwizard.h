@@ -4,6 +4,7 @@
 #include <wx/wizard.h>
 #include "wrapengine.h"
 #include "externalipresolver.h"
+#include <wx/socket.h>
 
 #define NETCONFBUFFERSIZE 100
 

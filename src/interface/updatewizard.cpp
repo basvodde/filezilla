@@ -12,7 +12,7 @@
 #include <wx/dynlib.h> // Used by GetDownloadDir
 #endif //__WXMSW__
 
-#define MAXCHECKPROGRESS 9 // Maximum value of progress bar
+#define MAXCHECKPROGRESS 10 // Maximum value of progress bar
 
 BEGIN_EVENT_TABLE(CUpdateWizard, wxWizard)
 EVT_CHECKBOX(wxID_ANY, CUpdateWizard::OnCheck)

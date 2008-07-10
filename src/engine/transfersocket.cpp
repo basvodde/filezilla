@@ -248,18 +248,15 @@ void CTransferSocket::OnReceive()
 			{
 				delete [] pBuffer;
 				int error = m_pBackend->LastError();
-				if (error == wxSOCKET_NOERROR)
-					TransferEnd(successful);
-				else if (error != wxSOCKET_WOULDBLOCK)
+				if (error != EAGAIN)
 				{
-					m_pControlSocket->LogMessage(Debug_Warning, _T("Read failed with error %d"), error);
+					m_pControlSocket->LogMessage(::Error, _T("Could not read from transfer socket: %s"), CSocket::GetErrorDescription(error).c_str());
 					TransferEnd(transfer_failure);
 				}
 				else if (m_onCloseCalled && !m_pBackend->IsWaiting(CRateLimiter::inbound))
 				{
-					wxSocketEvent evt(m_pBackend->GetId());
-					evt.m_event = wxSOCKET_LOST;
-					wxPostEvent(this, evt);
+					CSocketEvent evt(m_pBackend->GetId(), CSocketEvent::close);
+					AddPendingEvent(evt);
 				}
 				return;
 			}
@@ -277,9 +274,8 @@ void CTransferSocket::OnReceive()
 				m_pControlSocket->UpdateTransferStatus(numread);
 				if (m_onCloseCalled)
 				{
-					wxSocketEvent evt(m_pBackend->GetId());
-					evt.m_event = wxSOCKET_LOST;
-					wxPostEvent(this, evt);
+					CSocketEvent evt(m_pBackend->GetId(), CSocketEvent::close);
+					AddPendingEvent(evt);
 				}
 			}
 			else
@@ -307,15 +303,15 @@ void CTransferSocket::OnReceive()
 			if (m_pBackend->Error())
 			{
 				int error = m_pBackend->LastError();
-				if (error == wxSOCKET_NOERROR)
-					FinalizeWrite();
-				else if (error != wxSOCKET_WOULDBLOCK)
+				if (error != EAGAIN)
+				{
+					m_pControlSocket->LogMessage(::Error, _T("Could not read from transfer socket: %s"), CSocket::GetErrorDescription(error).c_str());
 					TransferEnd(transfer_failure);
+				}
 				else if (m_onCloseCalled && !m_pBackend->IsWaiting(CRateLimiter::inbound))
 				{
-					wxSocketEvent evt(m_pBackend->GetId());
-					evt.m_event = wxSOCKET_LOST;
-					wxPostEvent(this, evt);
+					CSocketEvent evt(m_pBackend->GetId(), CSocketEvent::close);
+					AddPendingEvent(evt);
 				}
 				return;
 			}
@@ -351,33 +347,40 @@ void CTransferSocket::OnReceive()
 	}
 	else if (m_transferMode == resumetest)
 	{
-		char buffer[2];
-		m_pBackend->Read(buffer, 2);
-		if (m_pBackend->Error())
+		while (true)
 		{
-			if (m_pBackend->LastError() != wxSOCKET_WOULDBLOCK)
-				TransferEnd(transfer_failure);
-			else if (m_onCloseCalled && !m_pBackend->IsWaiting(CRateLimiter::inbound))
+			char buffer[2];
+			m_pBackend->Read(buffer, 2);
+			if (m_pBackend->Error())
+			{
+				const int error = m_pBackend->LastError();
+				if (error != EAGAIN)
+				{
+					m_pControlSocket->LogMessage(::Error, _T("Could not read from transfer socket: %s"), CSocket::GetErrorDescription(error).c_str());
+					TransferEnd(transfer_failure);
+				}
+				else if (m_onCloseCalled && !m_pBackend->IsWaiting(CRateLimiter::inbound))
+				{
+					CSocketEvent evt(m_pBackend->GetId(), CSocketEvent::close);
+					AddPendingEvent(evt);
+				}
+				return;
+			}
+			int numread = m_pBackend->LastCount();
+			if (!numread)
+			{
+				TransferEnd(successful);
+				return;
+			}
+			m_transferBufferLen += numread;
+
+			if (m_transferBufferLen > 1)
+				TransferEnd(failed_resumetest);
+			else if (m_onCloseCalled)
 			{
 				CSocketEvent evt(m_pBackend->GetId(), CSocketEvent::close);
 				AddPendingEvent(evt);
 			}
-			return;
-		}
-		int numread = m_pBackend->LastCount();
-		if (!numread)
-		{
-			TransferEnd(successful);
-			return;
-		}
-		m_transferBufferLen += numread;
-
-		if (m_transferBufferLen > 1)
-			TransferEnd(failed_resumetest);
-		else if (m_onCloseCalled)
-		{
-			CSocketEvent evt(m_pBackend->GetId(), CSocketEvent::close);
-			AddPendingEvent(evt);
 		}
 	}
 }
@@ -428,18 +431,18 @@ void CTransferSocket::OnSend()
 	if (m_pBackend->Error())
 	{
 		int error = m_pBackend->LastError();
-		if (error == wxSOCKET_WOULDBLOCK)
+		if (error == EAGAIN)
 		{
 			if (!m_madeProgress)
 			{
-				m_pControlSocket->LogMessage(::Debug_Debug, _T("First wxSOCKET_WOULDBLOCK in CTransferSocket::OnSend()"));
+				m_pControlSocket->LogMessage(::Debug_Debug, _T("First EAGAIN in CTransferSocket::OnSend()"));
 				m_madeProgress = 1;
 				m_pControlSocket->SetTransferStatusMadeProgress();
 			}
 		}
-		else if (error != wxSOCKET_NOERROR)
+		else
 		{
-			m_pControlSocket->LogMessage(::Error, _("Error %d writing to socket"), error);
+			m_pControlSocket->LogMessage(Error, _T("Could not write to transfer socket: %s"), CSocket::GetErrorDescription(error).c_str());
 			TransferEnd(transfer_failure);
 		}
 	}
@@ -594,9 +597,6 @@ CSocket* CTransferSocket::CreateSocketServer(int port)
 
 CSocket* CTransferSocket::CreateSocketServer()
 {
-	wxIPV4address addr, controladdr;
-	addr.AnyAddress();
-
 	if (!m_pEngine->GetOptions()->GetOptionVal(OPTION_LIMITPORTS))
 	{
 		// Ask the systen for a port
@@ -609,7 +609,7 @@ CSocket* CTransferSocket::CreateSocketServer()
 	// increase the port step by step
 
 	// Windows only: I think there's a bug in the socket implementation of
-	// Windows: Even if using wxSOCKET_REUSEADDR, using the same local address
+	// Windows: Even if using SO_REUSEADDR, using the same local address
 	// twice will fail unless there are a couple of minutes between the
 	// connection attempts. This may cause problems if transferring lots of
 	// files with a narrow port range.
@@ -690,7 +690,7 @@ bool CTransferSocket::CheckGetNextReadBuffer()
 				m_pTlsSocket->Shutdown();
 				if (m_pTlsSocket->Error())
 				{
-					if (m_pTlsSocket->LastError() != wxSOCKET_WOULDBLOCK)
+					if (m_pTlsSocket->LastError() != EAGAIN)
 						TransferEnd(transfer_failure);
 					return false;
 				}

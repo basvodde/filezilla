@@ -212,7 +212,7 @@ ssize_t CTlsSocket::PushFunction(const void* data, size_t len)
 	if (m_pSocketBackend->Error())
 	{
 		const int error = m_pSocketBackend->LastError();
-		if (error == wxSOCKET_WOULDBLOCK)
+		if (error == EAGAIN)
 		{
 			m_canWriteToSocket = false;
 			gnutls_transport_set_errno(m_session, EAGAIN);
@@ -246,7 +246,7 @@ ssize_t CTlsSocket::PullFunction(void* data, size_t len)
 	m_pSocketBackend->Read(data, len);
 	if (m_pSocketBackend->Error())
 	{
-		if (m_pSocketBackend->LastError() == wxSOCKET_WOULDBLOCK)
+		if (m_pSocketBackend->LastError() == EAGAIN)
 		{
 			m_canReadFromSocket = false;
 			if (m_canCheckCloseSocket && !m_pSocketBackend->IsWaiting(CRateLimiter::inbound))
@@ -412,7 +412,7 @@ int CTlsSocket::Handshake(const CTlsSocket* pPrimarySocket /*=0*/)
 		if (m_shutdown_requested)
 		{
 			Shutdown();
-			if (!Error() || LastError() != wxSOCKET_WOULDBLOCK)
+			if (!Error() || LastError() != EAGAIN)
 			{
 				CSocketEvent evt(GetId(), CSocketEvent::close);
 				wxPostEvent(m_pEvtHandler, evt);
@@ -433,20 +433,20 @@ void CTlsSocket::Read(void *buffer, unsigned int len)
 {
 	if (m_tlsState == handshake || m_tlsState == verifycert)
 	{
-		m_lastError = wxSOCKET_WOULDBLOCK;
+		m_lastError = EAGAIN;
 		m_lastSuccessful = false;
 		m_lastReadFailed = true;
 		return;
 	}
 	else if (m_tlsState != conn)
 	{
-		m_lastError = wxSOCKET_IOERR;
+		m_lastError = ENOTCONN;
 		m_lastSuccessful = false;
 		return;
 	}
 	else if (m_lastReadFailed)
 	{
-		m_lastError = wxSOCKET_WOULDBLOCK;
+		m_lastError = EAGAIN;
 		m_lastSuccessful = false;
 		return;
 	}
@@ -489,13 +489,13 @@ void CTlsSocket::Read(void *buffer, unsigned int len)
 
 	if (res == GNUTLS_E_INTERRUPTED || res == GNUTLS_E_AGAIN)
 	{
-		m_lastError = wxSOCKET_WOULDBLOCK;
+		m_lastError = EAGAIN;
 		m_lastReadFailed = true;
 	}
 	else
 	{
 		Failure(res);
-		m_lastError = wxSOCKET_IOERR;
+		m_lastError = ECONNABORTED;
 	}
 
 	m_lastSuccessful = false;
@@ -506,20 +506,20 @@ void CTlsSocket::Write(const void *buffer, unsigned int len)
 {
 	if (m_tlsState == handshake || m_tlsState == verifycert)
 	{
-		m_lastError = wxSOCKET_WOULDBLOCK;
+		m_lastError = EAGAIN;
 		m_lastSuccessful = false;
 		return;
 	}
 	else if (m_tlsState != conn)
 	{
-		m_lastError = wxSOCKET_IOERR;
+		m_lastError = ENOTCONN;
 		m_lastSuccessful = false;
 		return;
 	}
 
 	if (m_lastWriteFailed)
 	{
-		m_lastError = wxSOCKET_WOULDBLOCK;
+		m_lastError = EAGAIN;
 		m_lastSuccessful = false;
 		return;
 	}
@@ -557,7 +557,7 @@ void CTlsSocket::Write(const void *buffer, unsigned int len)
 		else
 		{
 			m_lastSuccessful = false;
-			m_lastError = wxSOCKET_WOULDBLOCK;
+			m_lastError = EAGAIN;
 			m_lastWriteFailed = true;
 		}
 	}
@@ -565,7 +565,7 @@ void CTlsSocket::Write(const void *buffer, unsigned int len)
 	{
 		m_lastSuccessful = false;
 		Failure(res);
-		m_lastError = wxSOCKET_IOERR;
+		m_lastError = ECONNABORTED;
 	}
 }
 
@@ -685,7 +685,7 @@ void CTlsSocket::Shutdown()
 	if (m_tlsState == closing)
 	{
 		m_lastSuccessful = false;
-		m_lastError = wxSOCKET_WOULDBLOCK;
+		m_lastError = EAGAIN;
 		return;
 	}
 
@@ -695,14 +695,14 @@ void CTlsSocket::Shutdown()
 		m_pOwner->LogMessage(Debug_Verbose, _T("Shutdown during handshake, postponing"));
 		m_shutdown_requested = true;
 		m_lastSuccessful = false;
-		m_lastError = wxSOCKET_WOULDBLOCK;
+		m_lastError = EAGAIN;
 		return;
 	}
 
 	if (m_tlsState != conn)
 	{
 		m_lastSuccessful = false;
-		m_lastError = wxSOCKET_IOERR;
+		m_lastError = ECONNABORTED;
 		return;
 	}
 
@@ -718,11 +718,11 @@ void CTlsSocket::Shutdown()
 
 	m_lastSuccessful = false;
 	if (res == GNUTLS_E_INTERRUPTED || res == GNUTLS_E_AGAIN)
-		m_lastError = wxSOCKET_WOULDBLOCK;
+		m_lastError = EAGAIN;
 	else
 	{
 		Failure(res);
-		m_lastError = wxSOCKET_IOERR;
+		m_lastError = ECONNABORTED;
 	}
 }
 

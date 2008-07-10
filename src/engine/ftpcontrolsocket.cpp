@@ -6,10 +6,6 @@
 #endif
 #include "FileZilla.h"
 
-#ifdef __WXMSW__
-#undef WriteMsg
-#endif //__WXMSW__
-
 #include "ftpcontrolsocket.h"
 #include "transfersocket.h"
 #include "directorylistingparser.h"
@@ -23,6 +19,7 @@
 #include <algorithm>
 #include <wx/tokenzr.h>
 #include "local_filesys.h"
+#include <errno.h>
 
 #define LOGON_WELCOME	0
 #define LOGON_AUTH_TLS	1
@@ -241,9 +238,11 @@ void CFtpControlSocket::OnReceive()
 
 		if (m_pBackend->Error())
 		{
-			if (m_pBackend->LastError() != wxSOCKET_WOULDBLOCK)
+			if (m_pBackend->LastError() != EAGAIN)
 			{
-				LogMessage(::Error, _("Disconnected from server"));
+				LogMessage(::Error, _("Could not read from socket: %s"), CSocket::GetErrorDescription(m_pBackend->LastError()).c_str());
+				if (GetCurrentCommandId() != cmd_connect)
+					LogMessage(::Error, _("Disconnected from server"));
 				DoClose();
 			}
 			return;

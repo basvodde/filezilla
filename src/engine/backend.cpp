@@ -47,7 +47,7 @@ void CSocketBackend::Write(const void *buffer, unsigned int len)
 	{
 		Wait(CRateLimiter::outbound);
 		m_error = true;
-		m_lastError = wxSOCKET_WOULDBLOCK;
+		m_lastError = EAGAIN;
 		return;
 	}
 	else if (max > 0 && max < len)
@@ -55,10 +55,6 @@ void CSocketBackend::Write(const void *buffer, unsigned int len)
 
 	m_lastCount = m_pSocket->Write(buffer, len, m_lastError);
 	m_error = m_lastCount == -1;
-
-	// XXX
-	if (m_lastError == EAGAIN)
-		m_lastError = wxSOCKET_WOULDBLOCK;
 
 	if (!m_error && max != -1)
 		UpdateUsage(CRateLimiter::outbound, m_lastCount);
@@ -71,7 +67,7 @@ void CSocketBackend::Read(void *buffer, unsigned int len)
 	{
 		Wait(CRateLimiter::inbound);
 		m_error = true;
-		m_lastError = wxSOCKET_WOULDBLOCK;
+		m_lastError = EAGAIN;
 		return;
 	}
 	else if (max > 0 && max < len)
@@ -79,10 +75,6 @@ void CSocketBackend::Read(void *buffer, unsigned int len)
 
 	m_lastCount = m_pSocket->Read(buffer, len, m_lastError);
 	m_error = m_lastCount == -1;
-
-	// XXX
-	if (m_lastError == EAGAIN)
-		m_lastError = wxSOCKET_WOULDBLOCK;
 
 	if (!m_error && max != -1)
 		UpdateUsage(CRateLimiter::inbound, m_lastCount);
@@ -92,10 +84,6 @@ void CSocketBackend::Peek(void *buffer, unsigned int len)
 {
 	m_lastCount = m_pSocket->Peek(buffer, len, m_lastError);
 	m_error = m_lastCount == -1;
-
-	// XXX
-	if (m_lastError == EAGAIN)
-		m_lastError = wxSOCKET_WOULDBLOCK;
 }
 
 void CSocketBackend::OnRateAvailable(enum CRateLimiter::rate_direction direction)

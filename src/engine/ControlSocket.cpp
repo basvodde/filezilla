@@ -900,8 +900,11 @@ bool CRealControlSocket::Send(const char *buffer, int len)
 		int numsent = 0;
 		if (m_pBackend->Error())
 		{
-			if (m_pBackend->LastError() != wxSOCKET_WOULDBLOCK)
+			const int error = m_pBackend->LastError();
+			if (error != EAGAIN)
 			{
+				LogMessage(::Error, _("Could not write to socket: %s"), CSocket::GetErrorDescription(error).c_str());
+				LogMessage(::Error, _("Disconnected from server"));
 				DoClose();
 				return false;
 			}
@@ -992,8 +995,14 @@ void CRealControlSocket::OnSend()
 		m_pBackend->Write(m_pSendBuffer, m_nSendBufferLen);
 		if (m_pBackend->Error())
 		{
-			if (m_pBackend->LastError() != wxSOCKET_WOULDBLOCK)
+			const int error = m_pBackend->LastError();
+			if (error != EAGAIN)
+			{
+				LogMessage(::Error, _("Could not write to socket: %s"), CSocket::GetErrorDescription(error).c_str());
+				if (GetCurrentCommandId() != cmd_connect)
+					LogMessage(::Error, _("Disconnected from server"));
 				DoClose();
+			}
 			return;
 		}
 
