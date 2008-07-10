@@ -2292,7 +2292,7 @@ void CRemoteListView::InitDateFormat()
 
 void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 {
-	if (!m_pState->IsRemoteConnected())
+	if (!m_pState->IsRemoteConnected() || !m_pDirectoryListing)
 	{
 		wxBell();
 		return;
@@ -2353,6 +2353,12 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 			wxBell();
 			return;
 		}
+
+		if (!m_pState->IsRemoteConnected() || !m_pDirectoryListing)
+		{
+			wxBell();
+			return;
+		}
 	}
 
 	CEditHandler::fileState state = pEditHandler->GetFileState(CEditHandler::remote, entry.name);
@@ -2398,6 +2404,12 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 					wxMessageBox(_("The selected file is still opened in some other program, please close it."), _("Selected file still being edited"), wxICON_EXCLAMATION);
 					return;
 				}
+			}
+
+			if (!m_pState->IsRemoteConnected() || !m_pDirectoryListing)
+			{
+				wxBell();
+				return;
 			}
 		}
 		break;
