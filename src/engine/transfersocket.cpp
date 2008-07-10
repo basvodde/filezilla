@@ -12,6 +12,9 @@
 #include "iothread.h"
 #include "tlssocket.h"
 #include <errno.h>
+#ifndef __WXMSW__
+#include <sys/socket.h>
+#endif
 
 BEGIN_EVENT_TABLE(CTransferSocket, wxEvtHandler)
 	EVT_FZ_SOCKET(wxID_ANY, CTransferSocket::OnSocketEvent)
