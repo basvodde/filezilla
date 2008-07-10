@@ -82,7 +82,7 @@ public:
 	bool ParseUrl(wxString host, unsigned int, wxString user, wxString pass, wxString &error, CServerPath &path);
 	
 	void SetProtocol(enum ServerProtocol serverProtocol);
-	bool SetHost(wxString Host, unsigned int);
+	bool SetHost(wxString Host, unsigned int port);
 
 	void SetLogonType(enum LogonType logonType);
 	bool SetUser(const wxString& user, const wxString& pass = _T(""));
