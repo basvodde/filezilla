@@ -795,7 +795,7 @@ int CSocket::Connect(wxString host, unsigned int port)
 			m_pSocketThread->WakeupThread(true);
 			m_pSocketThread->m_sync.Unlock();
 			// Wait a small amount of time
-			Sleep(100);
+			wxMilliSleep(100);
 
 			m_pSocketThread->m_sync.Lock();
 			if (!m_pSocketThread->m_threadwait)
