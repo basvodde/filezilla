@@ -5,7 +5,6 @@
 #include <ws2tcpip.h>
 #endif
 #include "FileZilla.h"
-
 #include "ftpcontrolsocket.h"
 #include "transfersocket.h"
 #include "directorylistingparser.h"
@@ -20,6 +19,9 @@
 #include <wx/tokenzr.h>
 #include "local_filesys.h"
 #include <errno.h>
+#ifndef __WXMSW__
+#include <sys/socket.h>
+#endif
 
 #define LOGON_WELCOME	0
 #define LOGON_AUTH_TLS	1
@@ -3681,78 +3683,76 @@ bool CFtpControlSocket::ParsePasvResponse(CRawTransferOpData* pData)
 
 int CFtpControlSocket::GetExternalIPAddress(wxString& address)
 {
-	if (GetAddressFamily() == AF_INET6)
+	// Local IP should work. Only a complete moron would use IPv6
+	// and NAT at the same time.
+	if (GetAddressFamily() != AF_INET6)
 	{
-		// Local IP should work. Only a complete moron would use IPv6
-		// and NAT at the same time.
-		goto getLocalIP;
-	}
+		int mode = m_pEngine->GetOptions()->GetOptionVal(OPTION_EXTERNALIPMODE);
 
-	int mode = m_pEngine->GetOptions()->GetOptionVal(OPTION_EXTERNALIPMODE);
-
-	if (mode)
-	{
-		if (m_pEngine->GetOptions()->GetOptionVal(OPTION_NOEXTERNALONLOCAL) &&
-			!IsRoutableAddress(GetPeerIP(), GetAddressFamily()))
-			// Skip next block, use local address
-			goto getLocalIP;
-	}
-
-	if (mode == 1)
-	{
-		wxString ip = m_pEngine->GetOptions()->GetOption(OPTION_EXTERNALIP);
-		if (ip != _T(""))
+		if (mode)
 		{
-			address = ip;
-			return FZ_REPLY_OK;
+			if (m_pEngine->GetOptions()->GetOptionVal(OPTION_NOEXTERNALONLOCAL) &&
+				!IsRoutableAddress(GetPeerIP(), GetAddressFamily()))
+				// Skip next block, use local address
+				goto getLocalIP;
 		}
 
-		LogMessage(::Debug_Warning, _("No external IP address set, trying default."));
-	}
-	else if (mode == 2)
-	{
-		if (!m_pIPResolver)
+		if (mode == 1)
 		{
-			const wxString& localAddress = GetLocalIP();
-
-			if (localAddress != _T("") && localAddress == m_pEngine->GetOptions()->GetOption(OPTION_LASTRESOLVEDIP))
+			wxString ip = m_pEngine->GetOptions()->GetOption(OPTION_EXTERNALIP);
+			if (ip != _T(""))
 			{
-				LogMessage(::Debug_Verbose, _T("Using cached external IP address"));
-
-				address = localAddress;
+				address = ip;
 				return FZ_REPLY_OK;
 			}
 
-			wxString resolverAddress = m_pEngine->GetOptions()->GetOption(OPTION_EXTERNALIPRESOLVER);
-
-			LogMessage(::Debug_Info, _("Retrieving external IP address from %s"), resolverAddress.c_str());
-
-			m_pIPResolver = new CExternalIPResolver(this);
-			m_pIPResolver->GetExternalIP(resolverAddress);
-			if (!m_pIPResolver->Done())
+			LogMessage(::Debug_Warning, _("No external IP address set, trying default."));
+		}
+		else if (mode == 2)
+		{
+			if (!m_pIPResolver)
 			{
-				LogMessage(::Debug_Verbose, _T("Waiting for resolver thread"));
-				return FZ_REPLY_WOULDBLOCK;
+				const wxString& localAddress = GetLocalIP();
+
+				if (localAddress != _T("") && localAddress == m_pEngine->GetOptions()->GetOption(OPTION_LASTRESOLVEDIP))
+				{
+					LogMessage(::Debug_Verbose, _T("Using cached external IP address"));
+
+					address = localAddress;
+					return FZ_REPLY_OK;
+				}
+
+				wxString resolverAddress = m_pEngine->GetOptions()->GetOption(OPTION_EXTERNALIPRESOLVER);
+
+				LogMessage(::Debug_Info, _("Retrieving external IP address from %s"), resolverAddress.c_str());
+
+				m_pIPResolver = new CExternalIPResolver(this);
+				m_pIPResolver->GetExternalIP(resolverAddress);
+				if (!m_pIPResolver->Done())
+				{
+					LogMessage(::Debug_Verbose, _T("Waiting for resolver thread"));
+					return FZ_REPLY_WOULDBLOCK;
+				}
 			}
-		}
-		if (!m_pIPResolver->Successful())
-		{
-			delete m_pIPResolver;
-			m_pIPResolver = 0;
+			if (!m_pIPResolver->Successful())
+			{
+				delete m_pIPResolver;
+				m_pIPResolver = 0;
 
-			LogMessage(::Debug_Warning, _("Failed to retrieve external ip address, using local address"));
-		}
-		else
-		{
-			LogMessage(::Debug_Info, _T("Got external IP address"));
-			address = m_pIPResolver->GetIP();
+				LogMessage(::Debug_Warning, _("Failed to retrieve external ip address, using local address"));
+			}
+			else
+			{
+				LogMessage(::Debug_Info, _T("Got external IP address"));
+				address = m_pIPResolver->GetIP();
 
-			m_pEngine->GetOptions()->SetOption(OPTION_LASTRESOLVEDIP, address);
+				m_pEngine->GetOptions()->SetOption(OPTION_LASTRESOLVEDIP, address);
 
-			delete m_pIPResolver;
-			m_pIPResolver = 0;
+				delete m_pIPResolver;
+				m_pIPResolver = 0;
 
-			return FZ_REPLY_OK;
+				return FZ_REPLY_OK;
+			}
 		}
 	}
 
