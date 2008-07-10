@@ -116,7 +116,6 @@ public:
 	virtual ~CControlSocket();
 
 	virtual int Connect(const CServer &server) = 0;
-	virtual int ContinueConnect(const wxIPV4address *address) { return FZ_REPLY_ERROR; }
 	virtual int Disconnect();
 	virtual void Cancel();
 	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T(""), bool refresh = false) { return FZ_REPLY_NOTSUPPORTED; }
@@ -273,6 +272,7 @@ public:
 	virtual ~CRealControlSocket();
 
 	virtual int Connect(const CServer &server);
+	virtual int ContinueConnect();
 
 	virtual bool Connected() { return GetState() == CSocket::connected; }
 

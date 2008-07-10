@@ -9,7 +9,7 @@ public:
 	virtual ~CHttpControlSocket();
 
 protected:
-	virtual int ContinueConnect(const wxIPV4address *address);
+	virtual int ContinueConnect();
 	virtual bool Connected() { return m_pCurrentServer != 0; }
 
 	virtual bool SetAsyncRequestReply(CAsyncRequestNotification *pNotification);
@@ -38,9 +38,6 @@ protected:
 	int OnChunkedData(CHttpOpData* pData);
 
 	int ProcessData(char* p, int len);
-
-	// IP address of server
-	wxIPV4address* m_pAddress;
 
 	char* m_pRecvBuffer;
 	unsigned int m_recvBufferPos;

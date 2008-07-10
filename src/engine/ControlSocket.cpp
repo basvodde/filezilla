@@ -1044,21 +1044,18 @@ int CRealControlSocket::Connect(const CServer &server)
 		delete m_pCurrentServer;
 	m_pCurrentServer = new CServer(server);
 
-	CConnectOpData* pData;
-	if (!m_pCurOpData || m_pCurOpData->opId != cmd_connect)
-		pData = 0;
-	else
-		pData = static_cast<CConnectOpData *>(m_pCurOpData);
-
-	wxString host = pData ? pData->host : server.GetHost();
-	const unsigned int port = pData ? pData->port : m_pCurrentServer->GetPort();
-
 	// International domain names
-	host = ConvertDomainName(host);
+	m_pCurrentServer->SetHost(ConvertDomainName(server.GetHost()), server.GetPort());
 
-	LogMessage(Status, _("Resolving address of %s"), host.c_str());
+	return ContinueConnect();
+}
+
+int CRealControlSocket::ContinueConnect()
+{
+	if (!IsIpAddress(m_pCurrentServer->GetHost()))
+		LogMessage(Status, _("Resolving address of %s"), m_pCurrentServer->GetHost().c_str());
 	
-	int res = CSocket::Connect(host, port);
+	int res = CSocket::Connect(m_pCurrentServer->GetHost(), m_pCurrentServer->GetPort());
 
 	// Treat success same as EINPROGRESS, we wait for connect notification in any case
 	if (res && res != EINPROGRESS)

@@ -137,6 +137,8 @@ protected:
 	static int DoSetBufferSizes(int fd, int size_read, int size_write);
 	static int SetNonblocking(int fd);
 
+	void DetachThread();
+
 	wxEvtHandler* m_pEvtHandler;
 	int m_id;
 

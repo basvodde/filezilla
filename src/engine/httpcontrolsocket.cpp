@@ -1,6 +1,7 @@
 #include "FileZilla.h"
 #include "ControlSocket.h"
 #include "httpcontrolsocket.h"
+#include <errno.h>
 
 // Connect is special for HTTP: It is done on a per-command basis, so we need
 // to establish a connection before each command.
@@ -88,13 +89,11 @@ CHttpControlSocket::CHttpControlSocket(CFileZillaEnginePrivate *pEngine)
 	: CRealControlSocket(pEngine)
 {
 	m_pRecvBuffer = 0;
-	m_pAddress = 0;
 }
 
 CHttpControlSocket::~CHttpControlSocket()
 {
 	delete [] m_pRecvBuffer;
-	delete m_pAddress;
 }
 
 int CHttpControlSocket::SendNextCommand()
@@ -126,9 +125,10 @@ int CHttpControlSocket::SendNextCommand()
 	return FZ_REPLY_ERROR;
 }
 
-int CHttpControlSocket::ContinueConnect(const wxIPV4address *address)
+
+int CHttpControlSocket::ContinueConnect()
 {
-	LogMessage(__TFILE__, __LINE__, this, Debug_Verbose, _T("CHttpControlSocket::ContinueConnect(%p) m_pEngine=%p"), address, m_pEngine);
+	LogMessage(__TFILE__, __LINE__, this, Debug_Verbose, _T("CHttpControlSocket::ContinueConnect() m_pEngine=%p"), m_pEngine);
 	if (GetCurrentCommandId() != cmd_connect ||
 		!m_pCurrentServer)
 	{
@@ -136,30 +136,6 @@ int CHttpControlSocket::ContinueConnect(const wxIPV4address *address)
 		return DoClose(FZ_REPLY_INTERNALERROR);
 	}
 
-	if (!address)
-	{
-		if (m_pCurrentServer)
-		{
-			delete m_pCurrentServer;
-			m_pCurrentServer = 0;
-		}
-
-		LogMessage(::Error, _("Invalid hostname or host not found"));
-		return ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_CRITICALERROR);
-	}
-
-	if (m_pCurOpData && m_pCurOpData->opId == cmd_connect)
-	{
-		CHttpConnectOpData *pData = static_cast<CHttpConnectOpData *>(m_pCurOpData);
-		pData->host = address->IPAddress();
-		return DoInternalConnect();
-	}
-
-	if (m_pAddress)
-		delete m_pAddress;
-	m_pAddress = new wxIPV4address(*address);
-
-	// Now we got the server's IP address for later use, e.g. transfer commands
 	ResetOperation(FZ_REPLY_OK);
 	return FZ_REPLY_OK;
 }
@@ -216,44 +192,72 @@ void CHttpControlSocket::OnReceive()
 		m_recvBufferPos = 0;
 	}
 
-	/*XXX
-	unsigned int len = m_recvBufferLen - m_recvBufferPos;
-	Read(m_pRecvBuffer + m_recvBufferPos, len);
-	if (Error())
+	int id = GetId();
+
+	do
 	{
-		if (LastError() != wxSOCKET_WOULDBLOCK)
-			ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED);
-		return;
+		if (GetState() != connected && GetState() != closing)
+			return;
+
+		unsigned int len = m_recvBufferLen - m_recvBufferPos;
+		int error;
+		int read = Read(m_pRecvBuffer + m_recvBufferPos, len, error);
+		if (read == -1)
+		{
+			if (error != EAGAIN)
+			{
+				ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED);
+			}
+			return;
+		}
+
+		m_pEngine->SetActive(true);
+
+		if (!m_pCurOpData || m_pCurOpData->opId == cmd_connect)
+		{
+			// Just ignore all further data
+			m_recvBufferPos = 0;
+			return;
+		}
+
+		m_recvBufferPos += read;
+
+		if (!m_pHttpOpData->m_gotHeader)
+		{
+			if (!read)
+			{
+				ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED);
+				return;
+			}
+
+			ParseHeader(m_pHttpOpData);
+		}
+		else if (m_pHttpOpData->m_transferEncoding == CHttpOpData::chunked)
+		{
+			if (!read)
+			{
+				ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED);
+				return;
+			}
+			OnChunkedData(m_pHttpOpData);
+		}
+		else
+		{
+			if (!read)
+			{
+				wxASSERT(!m_recvBufferPos);
+				ProcessData(0, 0);
+				return;
+			}
+			else
+			{
+				m_pHttpOpData->m_receivedData += m_recvBufferPos;
+				ProcessData(m_pRecvBuffer, m_recvBufferPos);
+				m_recvBufferPos = 0;
+			}
+		}
 	}
-
-	int read;
-	if (!(read = LastCount()))
-	{
-		ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED);
-		return;
-	}
-
-	m_pEngine->SetActive(true);
-
-	if (!m_pCurOpData || m_pCurOpData->opId == cmd_connect)
-	{
-		// Just ignore all further data
-		m_recvBufferPos = 0;
-		return;
-	}
-
-	m_recvBufferPos += read;
-
-	if (!m_pHttpOpData->m_gotHeader)
-		ParseHeader(m_pHttpOpData);
-	else if (m_pHttpOpData->m_transferEncoding == CHttpOpData::chunked)
-		OnChunkedData(m_pHttpOpData);
-	else
-	{
-		m_pHttpOpData->m_receivedData += m_recvBufferPos;
-		ProcessData(m_pRecvBuffer, m_recvBufferPos);
-		m_recvBufferPos = 0;
-	}*/
+	while (GetId() == id);
 }
 
 void CHttpControlSocket::OnConnect()
@@ -323,7 +327,7 @@ int CHttpControlSocket::FileTransfer(const wxString localFile, const CServerPath
 	else
 		pData->opState = filetransfer_transfer;
 
-	int res = InternalConnect(m_pAddress->IPAddress(), m_pCurrentServer->GetPort());
+	int res = InternalConnect(m_pCurrentServer->GetHost(), m_pCurrentServer->GetPort());
 	if (res != FZ_REPLY_OK)
 		return res;
 
@@ -340,8 +344,6 @@ int CHttpControlSocket::FileTransferSubcommandResult(int prevResult)
 		ResetOperation(FZ_REPLY_INTERNALERROR);
 		return FZ_REPLY_ERROR;
 	}
-
-	//CHttpFileTransferOpData *pData = static_cast<CHttpFileTransferOpData *>(m_pCurOpData);
 
 	if (prevResult != FZ_REPLY_OK)
 	{
@@ -381,7 +383,7 @@ int CHttpControlSocket::FileTransferSend()
 			return FZ_REPLY_ERROR;
 		}
 
-		int res = InternalConnect(m_pAddress->IPAddress(), m_pCurrentServer->GetPort());
+		int res = InternalConnect(m_pCurrentServer->GetHost(), m_pCurrentServer->GetPort());
 		if (res != FZ_REPLY_OK)
 			return res;
 	}
@@ -420,9 +422,6 @@ int CHttpControlSocket::InternalConnect(wxString host, unsigned short port)
 	m_pCurOpData = pData;
 	pData->port = port;
 
-	// International domain names
-	host = ConvertDomainName(host);
-
 	if (!IsIpAddress(host))
 		LogMessage(Status, _("Resolving address of %s"), host.c_str());
 
@@ -442,23 +441,19 @@ int CHttpControlSocket::DoInternalConnect()
 	}
 
 	CHttpConnectOpData *pData = static_cast<CHttpConnectOpData *>(m_pCurOpData);
-	LogMessage(Status, _("Connecting to %s:%d..."), m_pAddress->IPAddress().c_str(), pData->port);
+	LogMessage(Status, _("Connecting to %s:%d..."), pData->host.c_str(), pData->port);
 
 	if (m_pBackend)
 		delete m_pBackend;
 	m_pBackend = new CSocketBackend(this, this);
 
-	wxIPV4address addr;
-	addr.Hostname(pData->host);
-	addr.Service(pData->port);
-
-/*XXX	bool res = wxSocketClient::Connect(addr, false);
-
-	if (res)
+	int res = CSocket::Connect(pData->host, pData->port);
+	if (!res)
 		return FZ_REPLY_OK;
-	else if (LastError() != wxSOCKET_WOULDBLOCK)
+
+	if (res && res != EINPROGRESS)
 		return ResetOperation(FZ_REPLY_ERROR);
-*/
+	
 	return FZ_REPLY_WOULDBLOCK;
 }
 
@@ -636,6 +631,9 @@ int CHttpControlSocket::ParseHeader(CHttpOpData* pData)
 						return FZ_REPLY_ERROR;
 					}
 					pData->m_newHostWithPort = wxString::Format(_T("%s:%d"), host.c_str(), port);
+
+					// International domain names
+					host = ConvertDomainName(host);
 
 					return InternalConnect(host, port);
 				}
@@ -856,9 +854,7 @@ int CHttpControlSocket::ResetOperation(int nErrorCode)
 
 void CHttpControlSocket::OnClose()
 {
-	char tmp[1];
-/*xxx	for (Peek(tmp, 1); !Error() && LastCount(); Peek(tmp, 1))
-		OnReceive();
+	OnReceive();
 
 	// HTTP socket isn't connected outside operations
 	if (!m_pCurOpData)
@@ -893,7 +889,7 @@ void CHttpControlSocket::OnClose()
 		}
 	}
 
-	ProcessData(0, 0);*/
+	ProcessData(0, 0);
 }
 
 void CHttpControlSocket::ResetHttpData(CHttpOpData* pData)

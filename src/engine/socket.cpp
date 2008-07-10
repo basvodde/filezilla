@@ -133,6 +133,7 @@ public:
 #ifdef __WXMSW__
 		m_sync_event = WSA_INVALID_EVENT;
 #endif
+		m_started = false;
 		m_quit = false;
 		m_finished = false;
 
@@ -190,6 +191,16 @@ public:
 
 	int Start()
 	{
+		if (m_started)
+		{
+			m_sync.Lock();
+			wxASSERT(m_threadwait);
+			m_waiting = 0;
+			WakeupThread(true);
+			m_sync.Unlock();
+			return 0;
+		}
+		m_started = true;
 #ifdef __WXMSW__
 		if (m_sync_event == WSA_INVALID_EVENT)
 			m_sync_event = WSACreateEvent();
@@ -655,6 +666,11 @@ protected:
 #endif
 				while (IdleLoop())
 				{
+					if (m_pSocket->m_fd == -1)
+					{
+						m_waiting = 0;
+						break;
+					}
 					bool res = DoWait(0);
 
 					if (m_triggered & WAIT_CLOSE && m_pSocket)
@@ -695,6 +711,7 @@ protected:
 	wxMutex m_sync;
 	wxCondition m_condition;
 
+	bool m_started;
 	bool m_quit;
 	bool m_finished;
 
@@ -731,25 +748,32 @@ CSocket::~CSocket()
 	if (m_state != none)
 		Close();
 
-	if (m_pSocketThread)
+	DetachThread();
+}
+
+void CSocket::DetachThread()
+{
+	if (!m_pSocketThread)
+		return;
+
+	m_pSocketThread->m_sync.Lock();
+	m_pSocketThread->SetSocket(0, true);
+	if (m_pSocketThread->m_finished)
 	{
-		m_pSocketThread->m_sync.Lock();
-		m_pSocketThread->SetSocket(0, true);
-		if (m_pSocketThread->m_finished)
-		{
-			m_pSocketThread->WakeupThread(true);
-			m_pSocketThread->m_sync.Unlock();
-			m_pSocketThread->Wait();
-			delete m_pSocketThread;
-		}
-		else
-		{
-			m_pSocketThread->m_quit = true;
-			m_pSocketThread->WakeupThread(true);
-			m_pSocketThread->m_sync.Unlock();
-			waiting_socket_threads.push_back(m_pSocketThread);
-		}
+		m_pSocketThread->WakeupThread(true);
+		m_pSocketThread->m_sync.Unlock();
+		m_pSocketThread->Wait();
+		delete m_pSocketThread;
 	}
+	else
+	{
+		m_pSocketThread->m_quit = true;
+		m_pSocketThread->WakeupThread(true);
+		m_pSocketThread->m_sync.Unlock();
+		waiting_socket_threads.push_back(m_pSocketThread);
+	}
+	m_pSocketThread = 0;
+
 	Cleanup(false);
 }
 
@@ -763,8 +787,34 @@ int CSocket::Connect(wxString host, unsigned int port)
 
 	m_state = connecting;
 
-	m_pSocketThread = new CSocketThread();
-	m_pSocketThread->SetSocket(this);
+	if (m_pSocketThread)
+	{
+		m_pSocketThread->m_sync.Lock();
+		if (!m_pSocketThread->m_threadwait)
+		{
+			m_pSocketThread->WakeupThread(true);
+			m_pSocketThread->m_sync.Unlock();
+			// Wait a small amount of time
+			Sleep(100);
+
+			m_pSocketThread->m_sync.Lock();
+			if (!m_pSocketThread->m_threadwait)
+			{
+				// Inside a blocking call, e.g. getaddrinfo
+				m_pSocketThread->m_sync.Unlock();
+				DetachThread();
+			}
+			else
+				m_pSocketThread->m_sync.Unlock();
+		}
+		else
+			m_pSocketThread->m_sync.Unlock();
+	}
+	if (!m_pSocketThread)
+	{
+		m_pSocketThread = new CSocketThread();
+		m_pSocketThread->SetSocket(this);
+	}
 
 	m_host = host;
 	m_port = port;
