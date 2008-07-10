@@ -5,6 +5,9 @@
 #include <ws2tcpip.h>
 #endif
 #include "FileZilla.h"
+#ifndef __WXMSW__
+#include <sys/socket.h>
+#endif
 
 bool VerifySetDate(wxDateTime& date, int year, wxDateTime::Month month, int day, int hour /*=0*/, int minute /*=0*/, int second /*=0*/)
 {
