@@ -14,6 +14,9 @@ public:
 	virtual ~CFileZillaApp();
 
 	virtual bool OnInit();
+#ifdef __WXMSW__
+	virtual int OnExit();
+#endif
 
 	wxString GetResourceDir() const { return m_resourceDir; }
 	wxString GetSettingsDir() const { return m_settingsDir; }

@@ -35,6 +35,9 @@
 #include <wx/xrc/xh_tree.h>
 #include <wx/xrc/xh_hyperlink.h>
 #include "xh_toolb_ex.h"
+#ifdef __WXMSW__
+#include <wx/socket.h>
+#endif
 
 #if defined(__WXMAC__) || defined(__UNIX__)
 #include <wx/stdpaths.h>
@@ -150,6 +153,11 @@ bool CFileZillaApp::OnInit()
 {
 #if wxUSE_DEBUGREPORT && wxUSE_ON_FATAL_EXCEPTION
 	//wxHandleFatalExceptions();
+#endif
+
+#ifdef __WXMSW__
+	// Need to call WSAStartup. Let wx do that for us
+	wxSocketBase::Initialize();
 #endif
 
 	wxSystemOptions::SetOption(_T("msw.remap"), 0);
@@ -290,6 +298,14 @@ FileZilla will timeout on big transfers.\
 
 	return true;
 }
+
+#ifdef __WXMSW__
+int CFileZillaApp::OnExit()
+{
+	wxSocketBase::Shutdown();
+	return wxApp::OnExit();
+}
+#endif
 
 bool CFileZillaApp::FileExists(const wxString& file) const
 {
