@@ -142,7 +142,7 @@ void CTransferSocket::OnSocketEvent(CSocketEvent &event)
 	{
 		if (!m_pSocket || m_pSocket->GetId() != event.GetId())
 		{
-			m_pControlSocket->LogMessage(::Debug_Info, _T("Skipping socket event %d, no socket or id mismatch."), event.GetType());
+			m_pControlSocket->LogMessage(m_pSocket ? ::Debug_Debug : ::Debug_Info, _T("Skipping socket event %d, no socket or id mismatch."), event.GetType());
 			return;
 		}
 	}
