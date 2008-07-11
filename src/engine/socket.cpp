@@ -847,8 +847,24 @@ void CSocket::SetEventHandler(wxEvtHandler* pEvtHandler, int id)
 	{
 		if (pEvtHandler && m_state == connected)
 		{
+#ifdef __WXMSW__
+			// If a graceful shutdown is going on in background already,
+			// no further events are recorded. Send out events we're not
+			// waiting for (i.e. they got triggered already) manually.
+			if (!(m_pSocketThread->m_waiting & WAIT_READ))
+			{
+				CSocketEvent evt(id, CSocketEvent::read, 0);
+				pEvtHandler->AddPendingEvent(evt);
+			}
+			if (!(m_pSocketThread->m_waiting & WAIT_WRITE))
+			{
+				CSocketEvent evt(id, CSocketEvent::write, 0);
+				pEvtHandler->AddPendingEvent(evt);
+			}
+#else
 			m_pSocketThread->m_waiting |= WAIT_READ | WAIT_WRITE;
 			m_pSocketThread->WakeupThread(true);
+#endif
 		}
 		m_pSocketThread->m_sync.Unlock();
 	}
