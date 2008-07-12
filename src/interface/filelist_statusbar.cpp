@@ -190,7 +190,7 @@ void CFilelistStatusBar::AddFile(const wxLongLong& size)
 
 void CFilelistStatusBar::RemoveFile(const wxLongLong& size)
 {
-	m_count_files++;
+	m_count_files--;
 	if (size != -1)
 		m_total_size -= size;
 	else
