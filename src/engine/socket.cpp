@@ -359,7 +359,11 @@ protected:
 
 				if (!wait_successful)
 				{
+#ifdef __WXMSW__
+					closesocket(fd);
+#else
 					close(fd);
+#endif
 					freeaddrinfo(addressList);
 					return false;
 				}
@@ -374,8 +378,11 @@ protected:
 				SendEvent(evt);
 
 				m_pSocket->m_fd = -1;
+#ifdef __WXMSW__
+				closesocket(fd);
+#else
 				close(fd);
-
+#endif
 				if (!addr->ai_next)
 					m_pSocket->m_state = CSocket::closed;
 			}
@@ -981,7 +988,11 @@ int CSocket::Close()
 {
 	if (m_fd != -1)
 	{
+#ifdef __WXMSW__
+		closesocket(m_fd);
+#else
 		close(m_fd);
+#endif
 		m_fd = -1;
 	}
 	m_state = none;
@@ -1210,9 +1221,10 @@ int CSocket::Listen(int family, int port /*=0*/)
 			break;
 #ifdef __WXMSW__
 		res = ConvertMSWErrorCode(res);
-#endif
-
+		closesocket(m_fd);
+#else
 		close(m_fd);
+#endif
 		m_fd = -1;
 	}
 	if (m_fd == -1)
@@ -1223,8 +1235,10 @@ int CSocket::Listen(int family, int port /*=0*/)
 	{
 #ifdef __WXMSW__
 		res = ConvertMSWErrorCode(res);
-#endif
+		closesocket(m_fd);
+#else
 		close(m_fd);
+#endif
 		m_fd = -1;
 		return res;
 	}
