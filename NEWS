@@ -10,6 +10,13 @@ Legend:
     *nix: Unix (e.g BSD) and Unix-like systems (e.g. Linux)
     OS X: Apple Mac OS X
 
+3.1.0-beta2 (2008-07-12)
+
+- Filecount in statusbar no longer count upwards if deleting files
+- MSW: Call WSAStartup, fixes WSANOTINITIALISED problem
+- MSW: Use closesocket(fd) instead of close(fd), the latter caused uploads to hang at the end
+- MSW: Fix socket hang after changing event handler. Use a better way to resend events
+
 3.1.0-beta1 (2008-07-10)
 
 + IPv6 support
