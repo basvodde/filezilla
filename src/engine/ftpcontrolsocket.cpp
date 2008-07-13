@@ -2922,7 +2922,7 @@ int CFtpControlSocket::DeleteSend()
 	wxString filename = pData->path.FormatFilename(file, pData->omitPath);
 	if (filename == _T(""))
 	{
-		LogMessage(::Error, _T("Filename cannot be constructed for folder %s and filename %s"), pData->path.GetPath().c_str(), file.c_str());
+		LogMessage(::Error, _("Filename cannot be constructed for directory %s and filename %s"), pData->path.GetPath().c_str(), file.c_str());
 		ResetOperation(FZ_REPLY_ERROR);
 		return FZ_REPLY_ERROR;
 	}
@@ -3009,7 +3009,7 @@ int CFtpControlSocket::RemoveDir(const CServerPath& path, const wxString& subDir
 
 	if (!pData->fullPath.AddSegment(subDir))
 	{
-		LogMessage(::Error, _T("Path cannot be constructed for folder %s and subdir %s"), path.GetPath().c_str(), subDir.c_str());
+		LogMessage(::Error, _("Path cannot be constructed for directory %s and subdir %s"), path.GetPath().c_str(), subDir.c_str());
 		ResetOperation(FZ_REPLY_ERROR);
 		return FZ_REPLY_ERROR;
 	}

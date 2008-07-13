@@ -257,7 +257,7 @@ bool CServerPath::SetSafePath(wxString path)
 			return false;
 		else
 		{
-			// Is root folder, like / on unix like systems.
+			// Is root directory, like / on unix like systems.
 			m_bEmpty = false;
 			return true;
 		}
