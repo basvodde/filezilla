@@ -2,6 +2,9 @@
 #include "directorylistingparser.h"
 #include <cppunit/extensions/HelperMacros.h>
 #include <list>
+#ifndef __WXMSW__
+#include <sys/socket.h>
+#endif
 
 /*
  * This testsuite asserts the correctness of the
