@@ -46,6 +46,9 @@ public:
 	static wxString Canonicalize(wxString oldDir, wxString newDir, wxString *error = 0);
 	bool SetLocalDir(wxString dir, wxString *error = 0);
 
+	// Returns a file:// URL
+	static wxString GetAsURL(const wxString& dir);
+
 	// These functions only operate on the path syntax, they don't
 	// check the actual filesystem properties.
 	// Passed directory should be in canonical form.
@@ -57,7 +60,7 @@ public:
 	bool SetRemoteDir(const CDirectoryListing *m_pDirectoryListing, bool modified = false);
 	const CDirectoryListing *GetRemoteDir() const;
 	const CServerPath GetRemotePath() const;
-	
+
 	const CServer* GetServer() const;
 
 	void RefreshLocal();

@@ -1103,7 +1103,6 @@ void CLocalListView::OnContextMenu(wxContextMenuEvent& event)
 		pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
 		pMenu->Enable(XRCID("ID_DELETE"), false);
 		pMenu->Enable(XRCID("ID_RENAME"), false);
-		pMenu->Enable(XRCID("ID_OPEN"), false);
 		pMenu->Enable(XRCID("ID_EDIT"), false);
 	}
 	else if (count > 1)
@@ -1113,10 +1112,9 @@ void CLocalListView::OnContextMenu(wxContextMenuEvent& event)
 		pMenu->Enable(XRCID("ID_EDIT"), false);
 	}
 	else if (selectedDir)
-	{
-		pMenu->Enable(XRCID("ID_OPEN"), false);
 		pMenu->Enable(XRCID("ID_EDIT"), false);
-	}
+	if (fillCount)
+		pMenu->Enable(XRCID("ID_OPEN"), false);
 
 	PopupMenu(pMenu);
 	delete pMenu;
@@ -2063,7 +2061,12 @@ void CLocalListView::OnMenuEdit(wxCommandEvent& event)
 void CLocalListView::OnMenuOpen(wxCommandEvent& event)
 {
 	long item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-	if (item < 1)
+	if (item == -1)
+	{
+		wxLaunchDefaultBrowser(CState::GetAsURL(m_dir));
+		return;
+	}
+	else if (item < 1)
 	{
 		wxBell();
 		return;
@@ -2090,9 +2093,16 @@ void CLocalListView::OnMenuOpen(wxCommandEvent& event)
 		return;
 	}
 
-	if (data->dir || data->flags == fill)
+	if (data->flags == fill)
 	{
 		wxBell();
+		return;
+	}
+
+	if (data->dir)
+	{
+		wxString dir = CState::Canonicalize(m_dir, data->name);
+		wxLaunchDefaultBrowser(CState::GetAsURL(dir));
 		return;
 	}
 

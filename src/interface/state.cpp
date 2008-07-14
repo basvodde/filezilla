@@ -52,7 +52,7 @@ wxString CState::Canonicalize(wxString oldDir, wxString newDir, wxString *error 
 	if (newDir == _T("\\") || newDir == _T("/") || newDir == _T(""))
 		return _T("\\");
 
-	// "Go up one level" is a little bit difficult under Windows due to 
+	// "Go up one level" is a little bit difficult under Windows due to
 	// things like "My Computer" and "Desktop"
 	if (newDir == _T(".."))
 	{
@@ -118,7 +118,7 @@ wxString CState::Canonicalize(wxString oldDir, wxString newDir, wxString *error 
 
 			*error = wxString::Format(_("Cannot access '%s', no media inserted or drive not ready."), newDir.c_str());
 #endif
-			
+
 		return _T("");
 	}
 
@@ -168,7 +168,7 @@ bool CState::SetRemoteDir(const CDirectoryListing *pDirectoryListing, bool modif
 	}
 	else
 		COptions::Get()->SetOption(OPTION_LASTSERVERPATH, pDirectoryListing->path.GetSafePath());
-	
+
 	if (m_pDirectoryListing && m_pDirectoryListing->path == pDirectoryListing->path &&
         pDirectoryListing->m_failed)
 	{
@@ -179,7 +179,7 @@ bool CState::SetRemoteDir(const CDirectoryListing *pDirectoryListing, bool modif
 
 	const CDirectoryListing *pOldListing = m_pDirectoryListing;
 	m_pDirectoryListing = pDirectoryListing;
-	
+
 	if (!modified)
 		NotifyHandlers(STATECHANGE_REMOTE_DIR);
 	else
@@ -199,7 +199,7 @@ const CServerPath CState::GetRemotePath() const
 {
 	if (!m_pDirectoryListing)
 		return CServerPath();
-	
+
 	return m_pDirectoryListing->path;
 }
 
@@ -285,7 +285,7 @@ bool CState::Connect(const CServer& server, bool askBreak, const CServerPath& pa
 
 	m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
 	m_pCommandQueue->ProcessCommand(new CListCommand(path));
-	
+
 	COptions::Get()->SetLastServer(server);
 	COptions::Get()->SetOption(OPTION_LASTSERVERPATH, path.GetSafePath());
 
@@ -308,7 +308,7 @@ bool CState::CreateEngine()
 	m_pEngine->Init(m_pMainFrame, COptions::Get());
 
 	m_pCommandQueue = new CCommandQueue(m_pEngine, m_pMainFrame);
-	
+
 	return true;
 }
 
@@ -418,7 +418,7 @@ void CState::UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const C
 		return;
 
 	const wxArrayString& files = pFileDataObject->GetFilenames();
-	
+
 	for (unsigned int i = 0; i < files.Count(); i++)
 	{
 		if (wxFile::Exists(files[i]))
@@ -534,7 +534,7 @@ bool CState::RecursiveCopy(wxString source, wxString target)
 
 	if (target.Len() > source.Len() && source == target.Left(source.Len()) && target[source.Len()] == wxFileName::GetPathSeparator())
 		return false;
-	
+
 	int pos = source.Find(wxFileName::GetPathSeparator(), true);
 	if (pos == -1 || pos == (int)source.Len() - 1)
 		return false;
@@ -655,4 +655,62 @@ bool CState::LocalDirIsWriteable(const wxString& dir)
 #endif
 
 	return true;
+}
+
+wxString CState::GetAsURL(const wxString& dir)
+{
+	// Cheap URL encode
+	wxString encoded;
+	wxWX2MBbuf utf8 = dir.mb_str();
+
+	const char* p = utf8;
+	while (*p)
+	{
+		// List of characters that don't need to be escaped taken
+		// from the BNF grammar in RFC 1738
+		// Again attention seeking Windows wants special treatment...
+		const unsigned char c = (unsigned char)*p++;
+		if ((c >= 'a' && c <= 'z') ||
+			(c >= 'A' && c <= 'Z') ||
+			(c >= '0' && c <= '9') ||
+			c == '$' ||
+			c == '_' ||
+			c == '-' ||
+			c == '.' ||
+			c == '+' ||
+			c == '!' ||
+			c == '*' ||
+#ifndef __WXMSW__
+			c == '\'' ||
+#endif
+			c == '(' ||
+			c == ')' ||
+			c == ',' ||
+			c == '?' ||
+			c == ':' ||
+			c == '@' ||
+			c == '&' ||
+			c == '=' ||
+			c == '/')
+		{
+			encoded += (wxChar)c;
+		}
+#ifdef __WXMSW__
+		else if (c == '\\')
+			encoded += '/';
+#endif
+		else
+			encoded += wxString::Format(_T("%%%x"), (unsigned int)c);
+	}
+#ifdef __WXMSW__
+	if (encoded.Left(2) == _T("//"))
+	{
+		// UNC path
+		encoded = encoded.Mid(2);
+	}
+	else
+		encoded = _T("/") + encoded;
+#endif
+
+	return _T("file://") + encoded;
 }
