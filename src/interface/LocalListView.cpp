@@ -2066,7 +2066,7 @@ void CLocalListView::OnMenuOpen(wxCommandEvent& event)
 		wxLaunchDefaultBrowser(CState::GetAsURL(m_dir));
 		return;
 	}
-	else if (item < 1)
+	else if (item < (m_hasParent ? 1 : 0))
 	{
 		wxBell();
 		return;
