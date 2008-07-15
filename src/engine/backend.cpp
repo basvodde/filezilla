@@ -37,7 +37,7 @@ CSocketBackend::~CSocketBackend()
 
 	CRateLimiter* pRateLimiter = CRateLimiter::Get();
 	if (pRateLimiter)
-		pRateLimiter->RemoveObject(this);	
+		pRateLimiter->RemoveObject(this);
 }
 
 void CSocketBackend::Write(const void *buffer, unsigned int len)

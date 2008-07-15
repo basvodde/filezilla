@@ -265,6 +265,7 @@ protected:
 	void OnObtainLock(wxCommandEvent& event);
 };
 
+class CProxySocket;
 class CRealControlSocket : public CControlSocket, public CSocket
 {
 public:
@@ -290,6 +291,7 @@ protected:
 	virtual bool Send(const char *buffer, int len);
 
 	CBackend* m_pBackend;
+	CProxySocket* m_pProxyBackend;
 
 	char *m_pSendBuffer;
 	int m_nSendBufferLen;

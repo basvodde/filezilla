@@ -22,7 +22,7 @@ public:
 	};
 
 	CTlsSocket(wxEvtHandler* pEvtHandler, CSocket* pSocket, CControlSocket* pOwner);
-	~CTlsSocket();
+	virtual ~CTlsSocket();
 
 	bool Init();
 	void Uninit();

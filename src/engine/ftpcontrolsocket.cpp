@@ -3661,6 +3661,12 @@ bool CFtpControlSocket::ParsePasvResponse(CRawTransferOpData* pData)
 	pData->host = pData-> host.Left(i);
 	pData->host.Replace(_T(","), _T("."));
 
+	if (m_pProxyBackend)
+	{
+		// We do not have any information about the proxy's inner workings
+		return true;
+	}
+
 	const wxString peerIP = GetPeerIP();
 	if (!IsRoutableAddress(pData->host, GetAddressFamily()) && IsRoutableAddress(peerIP, GetAddressFamily()))
 	{
@@ -3793,17 +3799,30 @@ int CFtpControlSocket::Transfer(const wxString& cmd, CFtpTransferOpData* oldData
 	pData->pOldData = oldData;
 	pData->pOldData->transferEndReason = successful;
 
-	switch (m_pCurrentServer->GetPasvMode())
+	if (m_pProxyBackend)
 	{
-	case MODE_PASSIVE:
+		// Only passive suported
+		// Theoretically could use reverse proxy ability in SOCKS5, but
+		// it is too fragile to set up with all those broken routers and
+		// firewalls sabotaging connections. Regular active mode is hard
+		// enough already
 		pData->bPasv = true;
-		break;
-	case MODE_ACTIVE:
-		pData->bPasv = false;
-		break;
-	default:
-		pData->bPasv = m_pEngine->GetOptions()->GetOptionVal(OPTION_USEPASV) != 0;
-		break;
+		pData->bTriedActive = true;
+	}
+	else
+	{
+		switch (m_pCurrentServer->GetPasvMode())
+		{
+		case MODE_PASSIVE:
+			pData->bPasv = true;
+			break;
+		case MODE_ACTIVE:
+			pData->bPasv = false;
+			break;
+		default:
+			pData->bPasv = m_pEngine->GetOptions()->GetOptionVal(OPTION_USEPASV) != 0;
+			break;
+		}
 	}
 
 	if ((pData->pOldData->binary && m_lastTypeBinary == 1) ||

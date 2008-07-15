@@ -21,6 +21,7 @@ libengine_a_SOURCES = \
 		logging.cpp \
 		misc.cpp notification.cpp \
 		pathcache.cpp \
+		proxy.cpp \
 		ratelimiter.cpp \
 		server.cpp serverpath.cpp\
 		servercapabilities.cpp \
@@ -35,6 +36,7 @@ noinst_HEADERS = backend.h \
 		httpcontrolsocket.h iothread.h \
 		logging_private.h \
 		pathcache.h \
+		proxy.h \
 		ratelimiter.h \
 		servercapabilities.h \
 		sftpcontrolsocket.h \

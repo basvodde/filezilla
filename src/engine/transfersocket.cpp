@@ -15,6 +15,7 @@
 #ifndef __WXMSW__
 #include <sys/socket.h>
 #endif
+#include "proxy.h"
 
 BEGIN_EVENT_TABLE(CTransferSocket, wxEvtHandler)
 	EVT_FZ_SOCKET(wxID_ANY, CTransferSocket::OnSocketEvent)
@@ -29,6 +30,7 @@ CTransferSocket::CTransferSocket(CFileZillaEnginePrivate *pEngine, CFtpControlSo
 	m_pSocketServer = 0;
 	m_pSocket = 0;
 	m_pBackend = 0;
+	m_pProxyBackend = 0;
 	m_pTlsSocket = 0;
 
 	m_pDirectoryListingParser = 0;
@@ -59,6 +61,7 @@ CTransferSocket::~CTransferSocket()
 {
 	if (m_transferEndReason == none)
 		m_transferEndReason = successful;
+	delete m_pProxyBackend;
 	if (m_pTlsSocket)
 		delete m_pTlsSocket;
 	else if (m_pBackend)
@@ -121,6 +124,40 @@ wxString CTransferSocket::SetupActiveTransfer(const wxString& ip)
 
 void CTransferSocket::OnSocketEvent(CSocketEvent &event)
 {
+	if (m_pProxyBackend && event.GetId() == m_pProxyBackend->GetId())
+	{
+		switch (event.GetType())
+		{
+		case CSocketEvent::connection:
+			{
+				const int error = event.GetError();
+				if (error)
+				{
+					m_pControlSocket->LogMessage(::Error, _("Proxy handshake failed: %s"), CSocket::GetErrorDescription(error).c_str());
+					TransferEnd(failure);
+				}
+				else
+				{
+					delete m_pProxyBackend;
+					m_pProxyBackend = 0;
+					OnConnect();
+				}
+			}
+			return;
+		case CSocketEvent::close:
+			{
+				const int error = event.GetError();
+				m_pControlSocket->LogMessage(::Error, _("Proxy handshake failed: %s"), CSocket::GetErrorDescription(error).c_str());
+				TransferEnd(failure);
+			}
+			return;
+		default:
+			// Uninteresting
+			return;
+		}
+		return;
+	}
+
 	if (m_pSocketServer && event.GetId() == m_pSocketServer->GetId())
 	{
 		if (event.GetType() == CSocketEvent::connection)
@@ -522,20 +559,36 @@ bool CTransferSocket::SetupPassiveTransfer(wxString host, int port)
 
 	m_pSocket = new CSocket(this, 0);
 
+	if (m_pControlSocket->m_pProxyBackend)
+	{
+		m_pProxyBackend = new CProxySocket(this, m_pSocket, m_pControlSocket);
+		int res = m_pProxyBackend->Handshake(m_pControlSocket->m_pProxyBackend->GetProxyType(),
+											 host, port,
+											 m_pControlSocket->m_pProxyBackend->GetUser(), m_pControlSocket->m_pProxyBackend->GetPass());
+
+		if (res != EINPROGRESS)
+		{
+			delete m_pProxyBackend;
+			m_pProxyBackend = 0;
+			delete m_pSocket;
+			m_pSocket = 0;
+			return false;
+		}
+		int error;
+		host = m_pControlSocket->GetPeerIP();
+		port = m_pControlSocket->GetRemotePort(error);
+	}
+
 	SetSocketBufferSizes(m_pSocket);
 
 	int res = m_pSocket->Connect(host, port);
 	if (res && res != EINPROGRESS)
 	{
+		delete m_pProxyBackend;
+		m_pProxyBackend = 0;
 		delete m_pSocket;
 		m_pSocket = 0;
 		return false;
-	}
-
-	if (!res)
-	{
-		if (!InitBackend())
-			return false;
 	}
 
 	return true;
@@ -565,6 +618,12 @@ void CTransferSocket::TransferEnd(enum TransferEndReason reason)
 
 	delete m_pSocketServer;
 	m_pSocketServer = 0;
+
+	if (m_pProxyBackend)
+	{
+		delete m_pProxyBackend;
+		m_pProxyBackend = 0;
+	}
 	if (m_pTlsSocket)
 	{
 		if (m_pBackend == m_pTlsSocket)

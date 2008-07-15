@@ -89,6 +89,8 @@ protected:
 
 	CBackend* m_pBackend;
 
+	CProxySocket* m_pProxyBackend;
+
 	CTlsSocket* m_pTlsSocket;
 	bool m_shutdown;
 

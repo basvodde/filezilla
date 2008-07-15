@@ -6,6 +6,7 @@
 #include "servercapabilities.h"
 #include "local_filesys.h"
 #include <errno.h>
+#include "proxy.h"
 
 DECLARE_EVENT_TYPE(fzOBTAINLOCK, -1)
 DEFINE_EVENT_TYPE(fzOBTAINLOCK)
@@ -870,6 +871,7 @@ CRealControlSocket::CRealControlSocket(CFileZillaEnginePrivate *pEngine)
 	: CControlSocket(pEngine), CSocket(this, 0)
 {
 	m_pBackend = new CSocketBackend(this, this);
+	m_pProxyBackend = 0;
 
 	m_pSendBuffer = 0;
 	m_nSendBufferLen = 0;
@@ -878,6 +880,8 @@ CRealControlSocket::CRealControlSocket(CFileZillaEnginePrivate *pEngine)
 CRealControlSocket::~CRealControlSocket()
 {
 	Close();
+	if (m_pProxyBackend && m_pProxyBackend != m_pBackend)
+		delete m_pProxyBackend;
 	delete m_pBackend;
 	m_pBackend = 0;
 }
@@ -956,7 +960,14 @@ void CRealControlSocket::OnSocketEvent(CSocketEvent &event)
 			OnClose(event.GetError());
 		}
 		else
+		{
+			if (m_pProxyBackend && !m_pProxyBackend->Detached())
+			{
+				m_pProxyBackend->Detach();
+				m_pBackend = new CSocketBackend(this, this);
+			}
 			OnConnect();
+		}
 		break;
 	case CSocketEvent::read:
 		OnReceive();
@@ -1061,10 +1072,41 @@ int CRealControlSocket::Connect(const CServer &server)
 
 int CRealControlSocket::ContinueConnect()
 {
+	wxString host;
+	unsigned int port;
+
+	int proxy_type = m_pEngine->GetOptions()->GetOptionVal(OPTION_PROXY_TYPE);
+	if (proxy_type > CProxySocket::unknown && proxy_type < CProxySocket::proxytype_count)
+	{
+		LogMessage(::Status, _("Connecting to %s through proxy"), m_pCurrentServer->FormatHost().c_str());
+
+		host = m_pEngine->GetOptions()->GetOption(OPTION_PROXY_HOST);
+		port = m_pEngine->GetOptions()->GetOptionVal(OPTION_PROXY_PORT);
+
+		delete m_pBackend;
+		m_pProxyBackend = new CProxySocket(this, this, this);
+		m_pBackend = m_pProxyBackend;
+		int res = m_pProxyBackend->Handshake(CProxySocket::HTTP,
+											 m_pCurrentServer->GetHost(), m_pCurrentServer->GetPort(),
+											  m_pEngine->GetOptions()->GetOption(OPTION_PROXY_USER),
+											  m_pEngine->GetOptions()->GetOption(OPTION_PROXY_PASS));
+
+		if (res != EINPROGRESS)
+		{
+			LogMessage(::Error, _("Could not start proxy handshake: %s"), CSocket::GetErrorDescription(res).c_str());
+			DoClose();
+			return FZ_REPLY_ERROR;
+		}
+	}
+	else
+	{
+		host = m_pCurrentServer->GetHost();
+		port = m_pCurrentServer->GetPort();
+	}
 	if (!IsIpAddress(m_pCurrentServer->GetHost()))
-		LogMessage(Status, _("Resolving address of %s"), m_pCurrentServer->GetHost().c_str());
-	
-	int res = CSocket::Connect(m_pCurrentServer->GetHost(), m_pCurrentServer->GetPort());
+		LogMessage(Status, _("Resolving address of %s"), host.c_str());
+
+	int res = CSocket::Connect(host, port);
 
 	// Treat success same as EINPROGRESS, we wait for connect notification in any case
 	if (res && res != EINPROGRESS)
@@ -1095,6 +1137,12 @@ void CRealControlSocket::ResetSocket()
 		m_nSendBufferLen = 0;
 	}
 
+	if (m_pProxyBackend)
+	{
+		if (m_pProxyBackend != m_pBackend)
+			delete m_pProxyBackend;
+		m_pProxyBackend = 0;
+	}
 	delete m_pBackend;
 	m_pBackend = 0;
 }
