@@ -52,6 +52,8 @@ protected:
 	CControlSocket* m_pOwner;
 
 	enum ProxyType m_proxyType;
+	wxString m_host;
+	int m_port;
 	wxString m_user;
 	wxString m_pass;
 
@@ -70,6 +72,9 @@ protected:
 	void OnSocketEvent(CSocketEvent& event);
 	void OnReceive();
 	void OnSend();
+
+	bool m_can_write;
+	bool m_can_read;
 };
 
 #endif //__PROXY_H__

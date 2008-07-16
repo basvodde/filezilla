@@ -1086,7 +1086,7 @@ int CRealControlSocket::ContinueConnect()
 		delete m_pBackend;
 		m_pProxyBackend = new CProxySocket(this, this, this);
 		m_pBackend = m_pProxyBackend;
-		int res = m_pProxyBackend->Handshake(CProxySocket::HTTP,
+		int res = m_pProxyBackend->Handshake((enum CProxySocket::ProxyType)proxy_type,
 											 m_pCurrentServer->GetHost(), m_pCurrentServer->GetPort(),
 											  m_pEngine->GetOptions()->GetOption(OPTION_PROXY_USER),
 											  m_pEngine->GetOptions()->GetOption(OPTION_PROXY_PASS));

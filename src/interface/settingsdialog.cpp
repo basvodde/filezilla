@@ -20,6 +20,7 @@
 #include "optionspage_dateformatting.h"
 #include "optionspage_sizeformatting.h"
 #include "optionspage_edit.h"
+#include "optionspage_proxy.h"
 #include "filezillaapp.h"
 #include "Mainfrm.h"
 
@@ -32,6 +33,7 @@ enum pagenames
 	page_connection_passive,
 	page_connection_ftp_proxy,
 	page_connection_sftp,
+	page_connection_proxy,
 	page_transfer,
 	page_filetype,
 	page_fileexists,
@@ -113,6 +115,7 @@ bool CSettingsDialog::LoadPages()
 	ADD_PAGE(_("Passive mode"), COptionsPageConnectionPassive, page_connection_ftp);
 	ADD_PAGE(_("FTP Proxy"), COptionsPageFtpProxy, page_connection_ftp);
 	ADD_PAGE(_("SFTP"), COptionsPageConnectionSFTP, page_connection);
+	ADD_PAGE(_("Generic proxy"), COptionsPageProxy, page_connection);
 	ADD_PAGE(_("Transfers"), COptionsPageTransfer, page_none);
 	ADD_PAGE(_("File Types"), COptionsPageFiletype, page_transfer);
 	ADD_PAGE(_("File exists action"), COptionsPageFileExists, page_transfer);

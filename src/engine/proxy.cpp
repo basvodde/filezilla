@@ -5,7 +5,13 @@
 
 enum handshake_state
 {
-	http_wait
+	http_wait,
+
+	socks5_method,
+	socks5_auth,
+	socks5_request,
+	socks5_request_addrtype,
+	socks5_request_address,
 };
 
 BEGIN_EVENT_TABLE(CProxySocket, wxEvtHandler)
@@ -24,6 +30,9 @@ CProxySocket::CProxySocket(wxEvtHandler* pEvtHandler, CSocket* pSocket, CControl
 	m_pRecvBuffer = 0;
 
 	m_proxyType = unknown;
+
+	m_can_write = false;
+	m_can_read = false;
 }
 
 CProxySocket::~CProxySocket()
@@ -76,49 +85,79 @@ int CProxySocket::Handshake(enum CProxySocket::ProxyType type, const wxString& h
 
 	wxWX2MBbuf host_raw = host.mb_str(wxConvUTF8);
 
-	if (type != HTTP)
+	if (type != HTTP && type != SOCKS5)
 		return EPROTONOSUPPORT;
 
 	m_user = user;
 	m_pass = pass;
+	m_host = host;
+	m_port = port;
 	m_proxyType = type;
 
 	m_proxyState = handshake;
-	m_handshakeState = http_wait;
 
-	wxWX2MBbuf challenge;
-	int challenge_len;
-	if (user != _T(""))
+	if (type == HTTP)
 	{
-		challenge = base64encode(user + _T(":") + pass).mb_str(wxConvUTF8);
-		challenge_len = strlen(challenge);
+		m_handshakeState = http_wait;
+
+		wxWX2MBbuf challenge;
+		int challenge_len;
+		if (user != _T(""))
+		{
+			challenge = base64encode(user + _T(":") + pass).mb_str(wxConvUTF8);
+			challenge_len = strlen(challenge);
+		}
+		else
+		{
+			challenge = 0;
+			challenge_len = 0;
+		}
+
+		// Bit oversized, but be on the safe side
+		m_pSendBuffer = new char[70 + strlen(host_raw) * 2 + 2*5 + challenge_len];
+
+		if (challenge)
+		{
+			m_sendBufferLen = sprintf(m_pSendBuffer, "CONNECT %s:%d HTTP/1.1\r\nHost: %s:%d\r\n\r\n",
+				(const char*)host_raw, port,
+				(const char*)host_raw, port);
+		}
+		else
+		{
+			m_sendBufferLen = sprintf(m_pSendBuffer, "CONNECT %s:%d HTTP/1.1\r\nHost: %s:%d\r\nProxy-Authorization: Basic %s\r\n\r\n",
+				(const char*)host_raw, port,
+				(const char*)host_raw, port,
+				(const char*)challenge);
+		}
+
+		m_pRecvBuffer = new char[4096];
+		m_recvBufferLen = 4096;
+		m_recvBufferPos = 0;
 	}
 	else
 	{
-		challenge = 0;
-		challenge_len = 0;
-	}
+		m_pSendBuffer = new char[4];
+		m_pSendBuffer[0] = 5; // Protocol version
+		if (user != _T(""))
+		{
+			m_pSendBuffer[1] = 2; // # auth methods supported
+			m_pSendBuffer[2] = 0; // Method: No auth
+			m_pSendBuffer[3] = 2; // Method: Username and password
+			m_sendBufferLen = 4;
+		}
+		else
+		{
+			m_pSendBuffer[1] = 1; // # auth methods supported
+			m_pSendBuffer[2] = 0; // Method: No auth
+			m_sendBufferLen = 3;
+		}
 
-	// Bit oversized, but be on the safe side
-	m_pSendBuffer = new char[70 + strlen(host_raw) * 2 + 2*5 + challenge_len];
+		m_pRecvBuffer = new char[1024];
+		m_recvBufferLen = 2;
+		m_recvBufferPos = 0;
 
-	if (challenge)
-	{
-		m_sendBufferLen = sprintf(m_pSendBuffer, "CONNECT %s:%d HTTP/1.1\r\nHost: %s:%d\r\n\r\n",
-								(const char*)host_raw, port,
-								(const char*)host_raw, port);
+		m_handshakeState = socks5_method;
 	}
-	else
-	{
-		m_sendBufferLen = sprintf(m_pSendBuffer, "CONNECT %s:%d HTTP/1.1\r\nHost: %s:%d\r\nProxy-Authorization: Basic %s\r\n\r\n",
-								(const char*)host_raw, port,
-								(const char*)host_raw, port,
-								(const char*)challenge);
-	}
-
-	m_pRecvBuffer = new char[4096];
-	m_recvBufferLen = 4096;
-	m_recvBufferPos = 0;
 
 	return EINPROGRESS;
 }
@@ -158,9 +197,10 @@ void CProxySocket::OnSocketEvent(CSocketEvent& event)
 		OnSend();
 		break;
 	case CSocketEvent::close:
-		if (m_proxyState == handshake)
+		OnReceive();
+		/*if (m_proxyState == handshake)
 			m_proxyState = noconn;
-		m_pEvtHandler->AddPendingEvent(event);
+		m_pEvtHandler->AddPendingEvent(event);*/
 		break;
 	default:
 		m_pOwner->LogMessage(Debug_Warning, _T("Unhandled socket event %d"), event.GetType());
@@ -179,6 +219,8 @@ void CProxySocket::Detach()
 
 void CProxySocket::OnReceive()
 {
+	m_can_read = true;
+
 	if (m_proxyState != handshake)
 		return;
 
@@ -205,6 +247,8 @@ void CProxySocket::OnReceive()
 						CSocketEvent evt(GetId(), CSocketEvent::close, error);
 						m_pEvtHandler->AddPendingEvent(evt);
 					}
+					else
+						m_can_read = false;
 					return;
 				}
 				if (!read)
@@ -279,6 +323,213 @@ void CProxySocket::OnReceive()
 			m_pEvtHandler->AddPendingEvent(evt);
 			return;
 		}
+	case socks5_method:
+	case socks5_auth:
+	case socks5_request:
+	case socks5_request_addrtype:
+	case socks5_request_address:
+		if (m_pSendBuffer)
+			return;
+		while (true)
+		{
+			int error;
+			int read = m_pSocket->Read(m_pRecvBuffer + m_recvBufferPos, m_recvBufferLen, error);
+			if (read == -1)
+			{
+				if (error != EAGAIN)
+				{
+					m_proxyState = noconn;
+					CSocketEvent evt(GetId(), CSocketEvent::close, error);
+					m_pEvtHandler->AddPendingEvent(evt);
+				}
+				else
+					m_can_read = false;
+				return;
+			}
+			if (!read)
+			{
+				m_proxyState = noconn;
+				CSocketEvent evt(GetId(), CSocketEvent::close, ECONNABORTED);
+				m_pEvtHandler->AddPendingEvent(evt);
+				return;
+			}
+			m_recvBufferPos += read;
+			m_recvBufferLen -= read;
+
+			if (m_recvBufferLen)
+				continue;
+
+			m_recvBufferPos = 0;
+			
+			// All data got read, parse it
+			if (m_handshakeState != socks5_request_address && m_handshakeState != socks5_request_addrtype && m_pRecvBuffer[0] != 5)
+			{
+				m_pOwner->LogMessage(Debug_Warning, _("Unknown SOCKS protocol version: %d"), (int)m_pRecvBuffer[0]);
+				m_proxyState = noconn;
+				CSocketEvent evt(GetId(), CSocketEvent::close, ECONNABORTED);
+				m_pEvtHandler->AddPendingEvent(evt);
+				return;
+			}
+			switch (m_handshakeState)
+			{
+			case socks5_method:
+				{
+					const char method = m_pRecvBuffer[1];
+					switch (method)
+					{
+					case 0:
+						m_handshakeState = socks5_request;
+						break;
+					case 2:
+						m_handshakeState = socks5_auth;
+						break;
+					default:
+						m_pOwner->LogMessage(Debug_Warning, _("No supported SOCKS5 auth method"));
+						m_proxyState = noconn;
+						CSocketEvent evt(GetId(), CSocketEvent::close, ECONNABORTED);
+						m_pEvtHandler->AddPendingEvent(evt);
+						return;
+					}
+				}
+				break;
+			case socks5_auth:
+				if (m_pRecvBuffer[1] != 0)
+				{
+					m_pOwner->LogMessage(Debug_Warning, _("Proxy authentication failed"));
+					m_proxyState = noconn;
+					CSocketEvent evt(GetId(), CSocketEvent::close, ECONNABORTED);
+					m_pEvtHandler->AddPendingEvent(evt);
+					return;
+				}
+				m_handshakeState = socks5_request;
+
+			case socks5_request:
+				if (m_pRecvBuffer[1])
+				{
+					wxString error;
+					switch (m_pRecvBuffer[1])
+					{
+					case 1:
+						error = _("General SOCKS server failure");
+						break;
+					case 2:
+						error = _("Connection not allowed by ruleset");
+						break;
+					case 3:
+						error = _("Network unreachable");
+						break;
+					case 4:
+						error = _("Host unreachable");
+						break;
+					case 5:
+						error = _("Connection refused");
+						break;
+					case 6:
+						error = _("TTL expired");
+						break;
+					case 7:
+						error = _("Command not supported");
+						break;
+					case 8:
+						error = _("Addrss type not supported");
+						break;
+					default:
+						error.Printf(_("Unassigned error code %d"), (int)(unsigned char)m_pRecvBuffer[1]);
+						break;
+					}
+
+					m_pOwner->LogMessage(Debug_Warning, _("Proxy request failed: %s"), error);
+					m_proxyState = noconn;
+					CSocketEvent evt(GetId(), CSocketEvent::close, ECONNABORTED);
+					m_pEvtHandler->AddPendingEvent(evt);
+					return;
+				}
+				m_handshakeState = socks5_request_addrtype;
+				m_recvBufferLen = 3;
+				break;
+			case socks5_request_addrtype:
+				switch (m_pRecvBuffer[1])
+				{
+				case 1:
+					m_recvBufferLen = 5;
+					break;
+				case 3:
+					m_recvBufferLen = m_pRecvBuffer[2] + 2;
+					break;
+				case 4:
+					m_recvBufferLen = 17;
+					break;
+				default:
+					m_pOwner->LogMessage(Debug_Warning, _("Proxy request failed: Unknown address type in CONNECT reply"));
+					m_proxyState = noconn;
+					CSocketEvent evt(GetId(), CSocketEvent::close, ECONNABORTED);
+					m_pEvtHandler->AddPendingEvent(evt);
+					return;
+				}
+				m_handshakeState = socks5_request_address;
+				break;
+			case socks5_request_address:
+				{
+					// We're done
+					m_proxyState = conn;
+					CSocketEvent evt(GetId(), CSocketEvent::connection, 0);
+					m_pEvtHandler->AddPendingEvent(evt);
+					return;
+				}
+			default:
+				wxFAIL;
+				break;
+			}
+
+			switch (m_handshakeState)
+			{
+			case socks5_auth:
+				{
+					wxWX2MBbuf user = m_user.mb_str(wxConvUTF8);
+					wxWX2MBbuf pass = m_pass.mb_str(wxConvUTF8);
+
+					const int userlen = strlen(user);
+					const int passlen = strlen(pass);
+					m_sendBufferLen = userlen + passlen + 3;
+					m_pSendBuffer = new char[m_sendBufferLen];
+					m_pSendBuffer[0] = 5;
+					m_pSendBuffer[1] = userlen;
+					memcpy(m_pSendBuffer + 2, (const char*)user, userlen);
+					m_pSendBuffer[userlen + 2] = passlen;
+					memcpy(m_pSendBuffer + userlen + 3, (const char*)pass, passlen);
+					m_recvBufferLen = 2;
+				}
+				break;
+			case socks5_request:
+				{
+					wxWX2MBbuf host = m_host.mb_str(wxConvUTF8);
+					const int hostlen = strlen(host);
+					m_sendBufferLen = 7 + hostlen;
+
+					m_pSendBuffer = new char[m_sendBufferLen];
+					m_pSendBuffer[0] = 5;
+					m_pSendBuffer[1] = 1; // CONNECT
+					m_pSendBuffer[2] = 0; // Reserved
+					m_pSendBuffer[3] = 3; // Domain name
+					m_pSendBuffer[4] = hostlen;
+					memcpy(m_pSendBuffer + 5, (const char*)host, hostlen);
+					m_pSendBuffer[hostlen + 5] = (m_port >> 8) & 0xFF; // Port in network order
+					m_pSendBuffer[hostlen + 6] = m_port & 0xFF;
+					m_recvBufferLen = 2;
+				}
+				break;
+			case socks5_request_addrtype:
+			case socks5_request_address:
+				// Nothing to send, we simply need to wait for more data
+				break;
+			default:
+				wxFAIL;
+				break;
+			}
+			if (m_pSendBuffer && m_can_write)
+				OnSend();
+		}
+		break;
 	default:
 		m_proxyState = noconn;
 		m_pOwner->LogMessage(Debug_Warning, _T("Unhandled handshake state %d"), m_handshakeState);
@@ -290,6 +541,7 @@ void CProxySocket::OnReceive()
 
 void CProxySocket::OnSend()
 {
+	m_can_write = true;
 	if (m_proxyState != handshake || !m_pSendBuffer)
 		return;
 
@@ -305,6 +557,8 @@ void CProxySocket::OnSend()
 				CSocketEvent evt(GetId(), CSocketEvent::close, error);
 				m_pEvtHandler->AddPendingEvent(evt);
 			}
+			else
+				m_can_write = false;
 
 			return;
 		}
@@ -313,6 +567,9 @@ void CProxySocket::OnSend()
 		{
 			delete [] m_pSendBuffer;
 			m_pSendBuffer = 0;
+
+			if (m_can_read)
+				OnReceive();
 			return;
 		}
 		memmove(m_pSendBuffer, m_pSendBuffer + written, m_sendBufferLen - written);

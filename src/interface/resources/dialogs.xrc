@@ -5056,4 +5056,105 @@
       </object>
     </object>
   </object>
+  <object class="wxPanel" name="ID_SETTINGS_CONNECTION_PROXY">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Generic Proxy</label>
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>1</cols>
+              <vgap>5</vgap>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Type of generic proxy:</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_PROXYTYPE_NONE">
+                  <label>&amp;None</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_PROXYTYPE_HTTP">
+                  <label>&amp;HTTP/1.1 using CONNECT method</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_PROXYTYPE_SOCKS5">
+                  <label>&amp;SOCKS 5</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <cols>2</cols>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>P&amp;roxy host:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_PROXY_HOST"/>
+                    <flag>wxALIGN_CENTRE_VERTICAL|wxGROW</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Proxy &amp;port:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_PROXY_PORT">
+                      <size>50,-1</size>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Proxy &amp;user:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_PROXY_USER"/>
+                    <flag>wxALIGN_CENTRE_VERTICAL|wxGROW</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Pro&amp;xy password:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_PROXY_PASS">
+                      <style>wxTE_PASSWORD</style>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL|wxGROW</flag>
+                  </object>
+                  <vgap>5</vgap>
+                  <hgap>5</hgap>
+                  <growablecols>1</growablecols>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <growablecols>0</growablecols>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Note: Using a generic proxy forces passive mode on FTP connections.</label>
+                </object>
+              </object>
+            </object>
+            <option>1</option>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxGROW</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <option>1</option>
+        <flag>wxGROW</flag>
+      </object>
+    </object>
+  </object>
 </resource>
