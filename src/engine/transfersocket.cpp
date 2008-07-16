@@ -409,7 +409,10 @@ void CTransferSocket::OnReceive()
 			int numread = m_pBackend->LastCount();
 			if (!numread)
 			{
-				TransferEnd(successful);
+				if (m_transferBufferLen == 1)
+					TransferEnd(successful);
+				else
+					TransferEnd(failed_resumetest);
 				return;
 			}
 			m_transferBufferLen += numread;
