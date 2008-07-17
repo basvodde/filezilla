@@ -50,6 +50,11 @@ mac-copy-resources: $(dist_resources_DATA)
 endif
 
 pixmapsdir = $(datadir)/pixmaps
-
 pixmaps_DATA = 48x48/filezilla.png
 
+hicolorapps16dir = $(datadir)/icons/hicolor/16x16/apps
+hicolorapps16_DATA = 16x16/filezilla.png
+hicolorapps32dir = $(datadir)/icons/hicolor/32x32/apps
+hicolorapps32_DATA = 32x32/filezilla.png
+hicolorapps48dir = $(datadir)/icons/hicolor/48x48/apps
+hicolorapps48_DATA = 48x48/filezilla.png
