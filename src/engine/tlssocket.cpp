@@ -254,12 +254,9 @@ ssize_t CTlsSocket::PullFunction(void* data, size_t len)
 				CSocketEvent evt(m_pSocketBackend->GetId(), CSocketEvent::close);
 				wxPostEvent(this, evt);
 			}
-
-			gnutls_transport_set_errno(m_session, EAGAIN);
-			return -1;
 		}
 
-		gnutls_transport_set_errno(m_session, 0);
+		gnutls_transport_set_errno(m_session, m_pSocketBackend->LastError());
 		return -1;
 	}
 
@@ -401,13 +398,6 @@ int CTlsSocket::Handshake(const CTlsSocket* pPrimarySocket /*=0*/)
 		res = VerifyCertificate();
 		if (res != FZ_REPLY_OK)
 			return res;
-
-		m_tlsState = conn;
-
-		CSocketEvent evt(GetId(), CSocketEvent::connection);
-		wxPostEvent(m_pEvtHandler, evt);
-		CheckResumeFailedReadWrite();
-		TriggerEvents();
 
 		if (m_shutdown_requested)
 		{
