@@ -3,7 +3,6 @@
 #include "filteredit.h"
 #include "ipcmutex.h"
 #include "filezillaapp.h"
-#include "../tinyxml/tinyxml.h"
 #include "xmlfunctions.h"
 #include <wx/regex.h>
 #include "Mainfrm.h"

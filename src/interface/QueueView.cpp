@@ -4,7 +4,6 @@
 #include "Options.h"
 #include "StatusView.h"
 #include "statuslinectrl.h"
-#include "../tinyxml/tinyxml.h"
 #include "xmlfunctions.h"
 #include "filezillaapp.h"
 #include "ipcmutex.h"

@@ -1,6 +1,10 @@
 #include "FileZilla.h"
 #include "locale_initializer.h"
+#ifdef HAVE_LIBTINYXML
+#include <tinyxml.h>
+#else
 #include "../tinyxml/tinyxml.h"
+#endif
 #include <string>
 #include <locale.h>
 

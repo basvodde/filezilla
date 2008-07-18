@@ -186,7 +186,7 @@ filezilla_CXXFLAGS = $(WX_CXXFLAGS_ONLY)
 filezilla_CFLAGS = $(WX_CFLAGS_ONLY)
 
 filezilla_LDFLAGS = ../engine/libengine.a
-filezilla_LDFLAGS += ../tinyxml/libtinyxml.a
+filezilla_LDFLAGS += $(TINYXML_LIBS)
 filezilla_LDFLAGS += $(LIBGNUTLS_LIBS)
 filezilla_LDFLAGS += $(WX_LIBS)
 filezilla_LDFLAGS += $(RESOURCEFILE)
@@ -196,8 +196,12 @@ if MINGW
 filezilla_LDFLAGS += -lole32 -luuid -lnetapi32
 endif
 
-filezilla_DEPENDENCIES = ../engine/libengine.a \
-			../tinyxml/libtinyxml.a
+filezilla_DEPENDENCIES = ../engine/libengine.a
+
+if HAVE_LIBTINYXML
+else
+filezilla_DEPENDENCIES += $(TINYXML_LIBS)
+endif
 
 dist_noinst_DATA = interface.vcproj
 

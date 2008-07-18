@@ -1,6 +1,5 @@
 #include "FileZilla.h"
 #include "Options.h"
-#include "../tinyxml/tinyxml.h"
 #include "xmlfunctions.h"
 #include "filezillaapp.h"
 #include <wx/tokenzr.h>

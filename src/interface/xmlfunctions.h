@@ -6,7 +6,11 @@
 #ifndef __XMLFUNCTIONS_H__
 #define __XMLFUNCTIONS_H__
 
+#ifdef HAVE_LIBTINYXML
+#include <tinyxml.h>
+#else
 #include "../tinyxml/tinyxml.h"
+#endif
 
 class CXmlFile
 {

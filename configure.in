@@ -347,6 +347,46 @@ AH_BOTTOM([
   AC_SUBST(LIBGNUTLS_LIBS)
   AC_SUBST(LIBGNUTLS_CFLAGS)
 
+  # TinyXML
+  # ------
+
+  AC_ARG_WITH(tinyxml, AC_HELP_STRING([--with-tinyxml=type], [Selects which version of tinyxml to use. Type has to be either system or builtin]),
+    [
+      if test "x$with_tinyxml" != "xbuiltin"; then
+        if test "x$with_tinyxml" != "xsystem"; then
+          AC_MSG_ERROR([--with-tinyxml has to be set to either builtin or system])
+        fi
+      fi
+    ],
+    [
+      with_tinyxml=auto
+    ])
+
+  if test "x$with_tinyxml" != "xbuiltin"; then
+    AC_HAVE_LIBRARY(tinyxml,
+      [
+         with_tinyxml=system
+      ],
+      [
+        if test "x$with_tinyxml" = "xsystem"; then
+          AC_MSG_ERROR([tinyxml sytem library not found but requested])
+        else
+          with_tinyxml=builtin
+        fi
+      ])
+  fi
+
+  if test "x$with_tinyxml" = "xsystem"; then
+    AC_MSG_NOTICE([Using system tinyxml])
+    AC_DEFINE(HAVE_LIBTINYXML, 1, [Define to 1 if your system has the `tinyxml' library (-ltinyxml).])
+    TINYXML_LIBS="-ltinyxml"
+  else
+    AC_MSG_NOTICE([Using builtin tinyxml])
+    TINYXML_LIBS="../tinyxml/libtinyxml.a"
+  fi
+
+  AC_SUBST(TINYXML_LIBS)
+
 fi
 
 # Everything translation related
@@ -431,6 +471,7 @@ AM_CONDITIONAL(MAKENSISSCRIPT, [test "$makensisscript" = "yes"])
 AM_CONDITIONAL(USE_BINRELOC, test "$use_binreloc" = "yes")
 AM_CONDITIONAL(ENABLE_PRECOMP, test "x$use_precomp" = "xyes")
 AM_CONDITIONAL(HAS_CPPUNIT, [test "$has_cppunit" = "yes"])
+AM_CONDITIONAL(HAVE_LIBTINYXML, [test x$have_tinyxml = xtrue])
 
 AC_CONFIG_FILES(Makefile src/Makefile src/engine/Makefile src/tinyxml/Makefile
 src/interface/Makefile src/interface/resources/Makefile src/include/Makefile
