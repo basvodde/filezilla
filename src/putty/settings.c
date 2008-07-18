@@ -551,6 +551,7 @@ void load_open_settings(void *sesskey, Config *cfg)
 	 sizeof(cfg->proxy_exclude_list));
     gppi(sesskey, "ProxyDNS", 1, &i); cfg->proxy_dns = (i+1)%3;
     gppi(sesskey, "ProxyLocalhost", 0, &cfg->even_proxy_localhost);
+    /* FZ unused
     gppi(sesskey, "ProxyMethod", -1, &cfg->proxy_type);
     if (cfg->proxy_type == -1) {
         int i;
@@ -580,6 +581,7 @@ void load_open_settings(void *sesskey, Config *cfg)
 	 sizeof(cfg->proxy_password));
     gpps(sesskey, "ProxyTelnetCommand", "connect %host %port\\n",
 	 cfg->proxy_telnet_command, sizeof(cfg->proxy_telnet_command));
+    */
     gppmap(sesskey, "Environment", "", cfg->environmt, lenof(cfg->environmt));
     gpps(sesskey, "UserName", "", cfg->username, sizeof(cfg->username));
     gpps(sesskey, "LocalUserName", "", cfg->localusername,

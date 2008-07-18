@@ -979,6 +979,77 @@ int sftp_cmd_keyfile(struct sftp_command *cmd)
     return 1;
 }
 
+int sftp_cmd_proxy(struct sftp_command *cmd)
+{
+    int proxy_type;
+    int portnumber;
+
+    if (cmd->nwords < 2) {
+	fzprintf(sftpError, "Not enough arguments to proxy command");
+	return 0;
+    }
+
+    if (!strcmp(cmd->words[1], "0")) {
+	cfg.proxy_type = PROXY_NONE;
+        fznotify1(sftpDone, 1);
+	return 1;
+    }
+    if (!strcmp(cmd->words[1], "1")) {
+	proxy_type = PROXY_HTTP;
+    }
+    else if (!strcmp(cmd->words[1], "2")) {
+	proxy_type = PROXY_SOCKS5;
+    }
+    else {
+	fzprintf(sftpError, "Unknown proxy type");
+	return 0;
+    }
+
+    if (cmd->nwords < 4) {
+	fzprintf(sftpError, "Not enough arguments to proxy command");
+	return 0;
+    }
+
+    portnumber = atoi(cmd->words[3]);
+    if (portnumber < 0 || portnumber > 65535) {
+	fzprintf(sftpError, "Invalid port");
+	return 0;
+    }
+
+    if (strlen(cmd->words[2]) >= sizeof(cfg.proxy_host)) {
+	fzprintf(sftpError,  "Host too long");
+	return 0;
+    }
+    if (cmd->nwords > 4 && strlen(cmd->words[4]) >= sizeof(cfg.proxy_username)) {
+	fzprintf(sftpError,  "User too long");
+	return 0;
+    }
+    if (cmd->nwords > 5 && strlen(cmd->words[5]) >= sizeof(cfg.proxy_password)) {
+	fzprintf(sftpError,  "Password too long");
+	return 0;
+    }
+
+    if (cmd->nwords > 5) {
+	strcpy(cfg.proxy_username, cmd->words[4]);
+	strcpy(cfg.proxy_password, cmd->words[5]);
+    }
+    else if (cmd->nwords > 4) {
+	strcpy(cfg.proxy_username, cmd->words[4]);
+	cfg.proxy_password[0] = 0;
+    }
+    else {
+	cfg.proxy_username[0] = 0;
+	cfg.proxy_password[0] = 0;
+    }
+
+    cfg.proxy_type = proxy_type;
+    strcpy(cfg.proxy_host, cmd->words[2]);
+    cfg.proxy_port = portnumber;
+
+    fznotify1(sftpDone, 1);
+    return 1;
+}
+
 int sftp_cmd_close(struct sftp_command *cmd)
 {
     if (back == NULL) {
@@ -2290,6 +2361,12 @@ static struct sftp_cmd_lookup {
 	    sftp_cmd_open
     },
     {
+	"proxy", TRUE, "set a proxy",
+	    " <type> <host> [ <port> <user> ] <pass>\n"
+	    "  Type is 0 for no proxy, 1 for HTTP/1.1 and 2 for SOCKS5\n",
+	    sftp_cmd_proxy
+    },
+    {
 	"put", TRUE, "upload a file from your local machine to the server",
 	    " [ -r ] [ -- ] <filename> [ <remote-filename> ]\n"
 	    "  Uploads a file to the server and stores it there under\n"
@@ -3152,6 +3229,9 @@ int psftp_init_utf8_locale()
  */
 int psftp_main(int argc, char *argv[])
 {
+    // FZ: Set proxy to none
+    cfg.proxy_type = PROXY_NONE;
+
     int i;
     int portnumber = 0;
     char *userhost, *user;

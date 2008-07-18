@@ -8,6 +8,7 @@
 #include "servercapabilities.h"
 #include <wx/tokenzr.h>
 #include "local_filesys.h"
+#include "proxy.h"
 
 class CSftpFileTransferOpData : public CFileTransferOpData
 {
@@ -312,6 +313,7 @@ CSftpControlSocket::~CSftpControlSocket()
 enum connectStates
 {
 	connect_init,
+	connect_proxy,
 	connect_keys,
 	connect_open
 };
@@ -435,6 +437,14 @@ int CSftpControlSocket::ConnectParseResponse(bool successful, const wxString& re
 	switch (pData->opState)
 	{
 	case connect_init:
+		if (m_pEngine->GetOptions()->GetOptionVal(OPTION_PROXY_TYPE))
+			pData->opState = connect_proxy;
+		else if (pData->pKeyFiles)
+			pData->opState = connect_keys;
+		else
+			pData->opState = connect_open;
+		break;
+	case connect_proxy:
 		if (pData->pKeyFiles)
 			pData->opState = connect_keys;
 		else
@@ -479,6 +489,35 @@ int CSftpControlSocket::ConnectSend()
 	bool res;
 	switch (pData->opState)
 	{
+	case connect_proxy:
+		{
+			int type;
+			switch (m_pEngine->GetOptions()->GetOptionVal(OPTION_PROXY_TYPE))
+			{
+			case CProxySocket::HTTP:
+				type = 1;
+				break;
+			case CProxySocket::SOCKS5:
+				type = 2;
+				break;
+			default:
+				LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Unsupported proxy type"));
+				DoClose(FZ_REPLY_INTERNALERROR);
+				return FZ_REPLY_ERROR;
+			}
+
+			wxString cmd = wxString::Format(_T("proxy %d \"%s\" %d"), type,
+											m_pEngine->GetOptions()->GetOption(OPTION_PROXY_HOST),
+											m_pEngine->GetOptions()->GetOptionVal(OPTION_PROXY_PORT));
+			wxString user = m_pEngine->GetOptions()->GetOption(OPTION_PROXY_USER);
+			if (user != _T(""))
+				cmd += _T(" \"") + user + _T("\"");
+			wxString pass = m_pEngine->GetOptions()->GetOption(OPTION_PROXY_PASS);
+			if (pass != _T(""))
+				cmd += _T(" \"") + pass + _T("\"");
+			res = Send(cmd);
+		}
+		break;
 	case connect_keys:
 		res = Send(_T("keyfile \"") + pData->pKeyFiles->GetNextToken() + _T("\""));
 		break;
