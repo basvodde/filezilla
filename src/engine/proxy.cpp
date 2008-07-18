@@ -431,7 +431,7 @@ void CProxySocket::OnReceive()
 						error = _("Command not supported");
 						break;
 					case 8:
-						error = _("Addrss type not supported");
+						error = _("Address type not supported");
 						break;
 					default:
 						error.Printf(_("Unassigned error code %d"), (int)(unsigned char)m_pRecvBuffer[1]);
