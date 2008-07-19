@@ -151,6 +151,8 @@ bool CheckForWin2003FirewallBug()
 
 bool CFileZillaApp::OnInit()
 {
+	srand( (unsigned)time( NULL ) );
+
 #if wxUSE_DEBUGREPORT && wxUSE_ON_FATAL_EXCEPTION
 	//wxHandleFatalExceptions();
 #endif

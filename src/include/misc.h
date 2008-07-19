@@ -8,4 +8,6 @@ bool IsRoutableAddress(const wxString& address, int family);
 
 bool IsIpAddress(const wxString& address);
 
+int GetRandomNumber(int low, int high);
+
 #endif //__MISC_H__

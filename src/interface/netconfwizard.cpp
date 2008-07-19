@@ -880,14 +880,8 @@ int CNetConfWizard::CreateListenSocket()
 		XRCCTRL(*this, "ID_ACTIVE_PORTMIN", wxTextCtrl)->GetValue().ToLong(&low);
 		XRCCTRL(*this, "ID_ACTIVE_PORTMAX", wxTextCtrl)->GetValue().ToLong(&high);
 		
-		// Be fair and avoid integer overflow
-		srand( (unsigned)time( NULL ) );
-		const int max = ((RAND_MAX  / (high - low + 1)) - 1) * (high - low + 1);
-		int r;
-		do {
-			r = rand();
-		} while (r >= max);
-		int mid = (r % (high - low + 1)) + low;
+		int mid = GetRandomNumber(low, high);
+		wxASSERT(mid >= low && mid <= high);
 
 		for (int port = mid; port <= high; port++)
 			if (CreateListenSocket(port))

@@ -688,14 +688,8 @@ CSocket* CTransferSocket::CreateSocketServer()
 
 	if (start < low || start > high)
 	{
-		// Be fair and avoid integer overflow
-		srand( (unsigned)time( NULL ) );
-		const int max = ((RAND_MAX  / (high - low + 1)) - 1) * (high - low + 1);
-		int r;
-		do {
-			r = rand();
-		} while (r >= max);
-		start = (r % (high - low + 1)) + low;
+		start = GetRandomNumber(low, high);
+		wxASSERT(start >= low && start <= high);
 	}
 
 	CSocket* pServer = 0;

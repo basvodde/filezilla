@@ -4278,7 +4278,7 @@ void CFtpControlSocket::OnIdleTimer(wxTimerEvent& event)
 	LogMessage(Status, _("Sending keep-alive command"));
 
 	wxString cmd;
-	int i = rand() % 3; // Fair enough
+	int i = GetRandomNumber(0, 2);
 	if (!i)
 		cmd = _T("NOOP");
 	else if (i == 1)

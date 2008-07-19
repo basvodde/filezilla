@@ -284,3 +284,81 @@ bool IsIpAddress(const wxString& address)
 
 	return true;
 }
+
+// RAND_MAX is different depending on platform.
+// For example on MSW, it is just 0x7fff, not even enough to cover
+// a full range of tcp ports.
+// On Linux it is identical to INT_MAX.
+//
+// The following code can generate random numbers using rand() for any
+// RAND_MAX.
+int GetRandomNumber(int low, int high)
+{
+	wxASSERT(low <= high);
+	if (low == high)
+		return low;
+
+	const int range = high - low;
+	if (RAND_MAX < range)
+	{
+		// Calculate number of random bits rand() returns
+		int r = RAND_MAX;
+		unsigned int random_bits = 0;
+		bool zero = false;
+		while (r)
+		{
+			if (!r & 1)
+				zero = true;
+			r >>= 1;
+			random_bits++;
+		}
+		if (zero)
+			random_bits--;
+
+		// Calculate number of bits in the range
+		unsigned int maxshift = 0;
+		r = range;
+		while (r)
+		{
+			r >>= 1;
+			maxshift++;
+		}
+
+		unsigned int s = 0;
+		do
+		{
+			unsigned int shift_remaining = maxshift;
+			while (shift_remaining)
+			{
+				int m;
+				if (shift_remaining >= random_bits)
+				{
+					m = (1 << random_bits) - 1;
+					s <<= random_bits;
+					s += (unsigned int)GetRandomNumber(0, m);
+					shift_remaining -= random_bits;
+				}
+				else
+				{
+					m = (1 << shift_remaining) - 1;
+					s <<= shift_remaining;
+					s += (unsigned int)GetRandomNumber(0, m);
+					shift_remaining = 0;
+				}
+			}
+		} while (s > (unsigned int)range);
+
+		return s;
+	}
+	else if (range == RAND_MAX)
+		return low + rand();
+	else
+	{
+		const unsigned int max = ((((unsigned int)RAND_MAX) + 1) / (range + 1)) * (range + 1);
+		unsigned int r;
+		do {
+			r = (unsigned int)rand();
+		} while (r >= max);
+		return (int)((r % (range + 1)) + low);
+	}
+}
