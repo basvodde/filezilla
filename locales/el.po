@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla 3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-17 16:13+0200\n"
-"PO-Revision-Date: 2008-07-15 06:02+0200\n"
+"POT-Creation-Date: 2008-07-19 17:53+0200\n"
+"PO-Revision-Date: 2008-07-19 15:37+0200\n"
 "Last-Translator: Stamatis H. Stamatellos <ydatografida@gmail.com>\n"
 "Language-Team: Stamatis H. Stamatellos <ydatografida@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -35,6 +35,8 @@ msgid ""
 "%a - Account (Lines containing this will be omitted if not using Account "
 "logontype)"
 msgstr ""
+"%a - Λογαριασμός (οι γραμμές που περιέχονται σ' αυτόν θα παραλειφθούν εάν "
+"δεν  χρησιμοποιούνται ως Τύπος Εισόδου στον Λογαριασμό)"
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:53
 #: ../../locales/../src/interface/filelist_statusbar.cpp:64
@@ -67,7 +69,7 @@ msgid_plural "%d files. Total size: At least %s"
 msgstr[0] "%d αρχείο. Συνολικό μέγεθος: Τουλάχιστον %s"
 msgstr[1] "%d αρχεία. Συνολικό μέγεθος: Τουλάχιστον %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:2235
+#: ../../locales/../src/interface/QueueView.cpp:2234
 #, c-format
 msgid "%d files added to queue"
 msgstr "%d αρχεία προστέθηκαν στην σειρά αναμονής"
@@ -142,7 +144,7 @@ msgstr "%s bytes (%d.%d MB/s)"
 msgid "%s bytes (? B/s)"
 msgstr "%s bytes (? B/s)"
 
-#: ../../locales/../src/interface/FileZilla.cpp:754
+#: ../../locales/../src/interface/FileZilla.cpp:753
 #, c-format
 msgid ""
 "%s could not be found. Without this component of FileZilla, SFTP will not "
@@ -151,8 +153,13 @@ msgid ""
 "Please download FileZilla again. If this problem persists, please submit a "
 "bug report."
 msgstr ""
+"%s δεν βρέθηκε. Χωρίς αυτό το συστατικό του FileZilla, το SFTP δεν θα "
+"λειτουργήσει.\n"
+"\n"
+"Παρακαλώ, μεταφορτώστε ξανά το FileZilla. Εάν το πρόβλημα παραμένει να "
+"αποστείλετε Αναφορά σφάλματος."
 
-#: ../../locales/../src/interface/FileZilla.cpp:848
+#: ../../locales/../src/interface/FileZilla.cpp:847
 #, c-format
 msgid ""
 "%s could not be found. Without this component of FileZilla, SFTP will not "
@@ -167,7 +174,7 @@ msgstr ""
 "\n"
 "Πιθανές λύσεις:\n"
 "- Σιγουρευτείτε ότι το %s είναι φάκελος που υπάρχει στην μεταβλητή PATH.\n"
-"- Ορίστε το πλήρες μονοπάτι για το %s στην μεταβλητή FZ_FZSFTP."
+"- Ορίστε την πλήρη διαδρομή για το %s στην μεταβλητή FZ_FZSFTP."
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:69
 #, c-format
@@ -235,7 +242,7 @@ msgstr "&Ερώτηση στο λειτουργικό σας σύστημα γι
 
 #: resources.h:155 resources.h:569
 msgid "&Auto"
-msgstr "&Αυτόματο"
+msgstr "&Αυτόματος"
 
 #: resources.h:131
 msgid "&Autodetect"
@@ -247,7 +254,7 @@ msgstr "&Αυτόματα αφαίρεσε τις επιτυχημένες με�
 
 #: resources.h:157 resources.h:571
 msgid "&Binary"
-msgstr "&Δυαδικό"
+msgstr "&Δυαδικός"
 
 #: resources.h:223
 msgid "&Binary prefixes using SI symbols. (e.g. 1 KB = 1024 bytes)"
@@ -333,6 +340,8 @@ msgstr "&Σύγκριση φακέλων"
 #: resources.h:478
 msgid "&Discard local file then download and edit file anew"
 msgstr ""
+"&Απόρριψη τοπικού αρχείου κατόπιν της εκ νέου μεταφόρτωσης και επεξεργασίας "
+"του."
 
 #: resources.h:576
 msgid "&Disconnect"
@@ -408,7 +417,7 @@ msgstr "&Ιδιότητες Αρχείου..."
 
 #: resources.h:329
 msgid "&Filter sets:"
-msgstr "&Σετ φίλτρων:"
+msgstr "&Oρίσματα φίλτρων:"
 
 #: resources.h:344
 msgid "&Filters:"
@@ -416,7 +425,7 @@ msgstr "&Φίλτρα:"
 
 #: ../../locales/../src/interface/edithandler.cpp:651
 msgid "&Finish editing"
-msgstr "&Ολοκλήρωση Επεξεργασίας"
+msgstr "&Ολοκλήρωση επεξεργασίας"
 
 #: resources.h:470
 msgid "&Finish editing and delete local file"
@@ -432,7 +441,7 @@ msgstr "&Λήψη βοήθειας..."
 
 #: resources.h:532
 msgid "&HTTP/1.1 using CONNECT method"
-msgstr ""
+msgstr "&HTTP/1.1 μέθοδος σύνδεσης"
 
 #: resources.h:580
 msgid "&Help"
@@ -649,7 +658,7 @@ msgstr "&ΤΟΠΟΘΕΣΙΑ"
 
 #: resources.h:533
 msgid "&SOCKS 5"
-msgstr ""
+msgstr "&SOCKS 5"
 
 #: resources.h:331
 msgid "&Save as..."
@@ -661,7 +670,7 @@ msgstr "&Επιλογή γλώσσας:"
 
 #: resources.h:524
 msgid "&Select the columns that should be displayed:"
-msgstr ""
+msgstr "&Επιλέξτε τις στήλες που θα εμφανίζονται:"
 
 #: resources.h:573
 msgid "&Server"
@@ -781,7 +790,7 @@ msgstr "&Ναι"
 msgid "'%s' does not exist or cannot be accessed."
 msgstr "'%s' δεν υπάρχει ή δεν είναι προσβάσιμο."
 
-#: ../../locales/../src/interface/sitemanager.cpp:829
+#: ../../locales/../src/interface/sitemanager.cpp:828
 msgid "'Account' logontype not supported by selected protocol"
 msgstr ""
 "Ο τύπος σύνδεσης 'Λογαριασμός' δεν υποστηρίζεται από το επιλεγμένο πρωτόκολλο"
@@ -794,15 +803,15 @@ msgid ""
 msgstr ""
 "Το 'quote' είναι συνήθως μία τοπική εντολή που χρησιμοποιούν οι χρήστες για "
 "να στείλουν τις παρακάτω παραμέτρους 'quote' στον εξυπηρετητή. Μπορεί να "
-"θέλετε να εισάγετε μία raw εντολή χωρίς τα 'quote'."
+"θέλετε να εισάγετε μία ακατέργαστη εντολή χωρίς τα 'quote'."
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:86
 #: ../../locales/../src/interface/filelist_statusbar.cpp:95
 #, c-format
 msgid "(%d object filtered)"
 msgid_plural "(%d objects filtered)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "(%d αντικείμενο που φιλτραρίστηκε)"
+msgstr[1] "(%d αντικείμενα που φιλτραρίστηκαν)"
 
 #: resources.h:53 resources.h:55
 msgid "(0 for no limit)"
@@ -859,23 +868,23 @@ msgstr "--:--:-- απομένουν"
 
 #: ../../locales/../src/interface/cmdline.cpp:69
 msgid "-c cannot be used together with an FTP URL."
-msgstr ""
+msgstr "-c δεν μπορεί να χρησιμοποιηθεί συγχρόνως με μία διεύθυνση FTP."
 
 #: ../../locales/../src/interface/cmdline.cpp:57
 msgid "-s and -c cannot be present at the same time."
-msgstr ""
+msgstr "-s και -c δεν μπορούν να είναι παρών συγχρόνως."
 
 #: ../../locales/../src/interface/cmdline.cpp:63
 msgid "-s cannot be used together with an FTP URL."
-msgstr ""
+msgstr "-s δεν μπορεί να χρησιμοποιηθεί συγχρόνως με μία διεύθυνση FTP."
 
 #: resources.h:231
 msgid "0 - None"
-msgstr "0 - Κανένα"
+msgstr "0 - Καμία"
 
 #: resources.h:232
 msgid "1 - Warning"
-msgstr "1 - Προειδοποίηση"
+msgstr "1 - Προειδοποιήσεις"
 
 #: resources.h:233
 msgid "2 - Info"
@@ -883,11 +892,11 @@ msgstr "2 - Πληροφορίες"
 
 #: resources.h:234
 msgid "3 - Verbose"
-msgstr "3 - Αναλυτικά"
+msgstr "3 - Αναλυτικές"
 
 #: resources.h:235
 msgid "4 - Debug"
-msgstr "4 - Αποσφαλμάτωση"
+msgstr "4 - Αποσφαλματώσεις"
 
 #: ../../locales/../src/engine/directorylistingparser.cpp:1591
 msgid ";1"
@@ -895,7 +904,7 @@ msgstr ";1"
 
 #: ../../locales/../src/interface/optionspage_edit.cpp:122
 msgid "A default editor needs to be set."
-msgstr "Ένας προκαθοριμένος επεξεργαστής πρέπει να οριστεί."
+msgstr "Πρέπει να οριστεί ένας προκαθοριμένος επεξεργαστής."
 
 #: ../../locales/../src/interface/RemoteListView.cpp:147
 #: ../../locales/../src/interface/RemoteTreeView.cpp:106
@@ -926,18 +935,18 @@ msgstr ""
 "κατέβασμα του νέου αρχείου;"
 
 #: ../../locales/../src/interface/LocalListView.cpp:2037
-#: ../../locales/../src/interface/RemoteListView.cpp:2371
+#: ../../locales/../src/interface/RemoteListView.cpp:2393
 msgid "A file with that name is already being transferred."
 msgstr "Ένα αρχείο με αυτό το όνομα έχει ήδη μεταφερθεί."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2376
+#: ../../locales/../src/interface/RemoteListView.cpp:2398
 msgid ""
 "A file with that name is still being edited. Please close it and try again."
 msgstr ""
 "Ένα αρχείο με αυτό το όνομα ακόμα επεξεργάζεται. Παρακαλούμε κλείστε το και "
 "προσπαθήστε ξανά."
 
-#: ../../locales/../src/interface/FileZilla.cpp:734
+#: ../../locales/../src/interface/FileZilla.cpp:733
 msgid ""
 "A local filename could not be decoded.\n"
 "Please make sure the LC_CTYPE (or LC_ALL) environment variable is set "
@@ -960,12 +969,18 @@ msgid ""
 "A proper server always shows all files, but some broken servers hide files "
 "from the user. Use this option to force the server to show all files."
 msgstr ""
+"Ένας κανονικός σε λειτουργία εξυπηρετητής εμφανίζει πάντα όλα τα αρχεία, "
+"αλλά μερικοί αποκομμένοι εξυπηρετητές αποκρύπτουν αρχεία από το χρήστη. "
+"Χρησιμοποιήστε αυτή την επιλογή για να εξαναγκαστεί ο εξυπηρετητής να "
+"εμφανίσει όλα τα αρχεία."
 
 #: resources.h:496
 msgid ""
 "A proper server does not require this. Contact the server administrator if "
 "you need this."
 msgstr ""
+"Δεν απαιτείτε από έναν εξυπηρετητή σε κανονική λειτουργία. Επικοινωνήστε με "
+"τον διαχειριστή του εξυπηρετητή."
 
 #: resources.h:156 resources.h:570
 msgid "A&SCII"
@@ -999,12 +1014,12 @@ msgstr "Ε&ρώτηση για ενέργεια"
 msgid "About FileZilla"
 msgstr "Περί FileZilla"
 
-#: resources.h:108 ../../locales/../src/interface/sitemanager.cpp:826
-#: ../../locales/../src/interface/sitemanager.cpp:876
+#: resources.h:108 ../../locales/../src/interface/sitemanager.cpp:825
+#: ../../locales/../src/interface/sitemanager.cpp:875
+#: ../../locales/../src/interface/sitemanager.cpp:1069
 #: ../../locales/../src/interface/sitemanager.cpp:1070
-#: ../../locales/../src/interface/sitemanager.cpp:1071
-#: ../../locales/../src/interface/sitemanager.cpp:1109
-#: ../../locales/../src/interface/sitemanager.cpp:1332
+#: ../../locales/../src/interface/sitemanager.cpp:1108
+#: ../../locales/../src/interface/sitemanager.cpp:1331
 msgid "Account"
 msgstr "Λογαριασμός"
 
@@ -1073,8 +1088,8 @@ msgstr ""
 "Προσθήκη των επιλεγμένων αρχείων και φακέλων στην σειρά αναμονής για μεταφορά"
 
 #: ../../locales/../src/engine/proxy.cpp:434
-msgid "Addrss type not supported"
-msgstr ""
+msgid "Address type not supported"
+msgstr "Μη υποστηριζόμενος τύπος διεύθυνσης"
 
 #: resources.h:119
 msgid "Adjust server timezone offset:"
@@ -1109,12 +1124,17 @@ msgid ""
 "Alternatively you can use the Pageant tool from PuTTY to manage your keys, "
 "FileZilla does recognize Pageant."
 msgstr ""
+"Εναλλακτικά μπορείτε να χρησιμοποιήσετε το εργαλείο Pageant από PuTTY για να "
+"διαχειριστείτε τα κλειδιά σας, το FileZilla αναγνωρίζει το Pageant."
 
 #: resources.h:503
 msgid ""
 "Alternatively you can use your system's SSH agent. To do so, make sure the "
 "SSH&AUTH&SOCK environment variable is set."
 msgstr ""
+"Εναλλακτικά μπορείτε να χρησιμοποιήσετε το αναγνωριστικό του συστήματος σας "
+"SSH. Επιβεβαιώστε ότι οι μεταβλητές περιβάλλοντος SSH&AUTH&SOCK έχουν "
+"οριστεί."
 
 #: ../../locales/../src/interface/updatewizard.cpp:868
 msgid ""
@@ -1124,16 +1144,16 @@ msgstr ""
 "Εναλλακτικά, επισκευθείτε το http://filezilla-project.org για να κατεβάσετε "
 "την πιο πρόσφατη έκδοση."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1843
+#: ../../locales/../src/interface/sitemanager.cpp:1842
 msgid ""
 "An item with the same name as the dragged item already exists at the target "
 "location."
 msgstr "Ένα αντικείμενο με το ίδιο όνομα υπάρχει ήδη στη τοποθεσία προορισμού."
 
-#: resources.h:104 ../../locales/../src/interface/sitemanager.cpp:867
-#: ../../locales/../src/interface/sitemanager.cpp:1069
-#: ../../locales/../src/interface/sitemanager.cpp:1265
-#: ../../locales/../src/interface/sitemanager.cpp:1335
+#: resources.h:104 ../../locales/../src/interface/sitemanager.cpp:866
+#: ../../locales/../src/interface/sitemanager.cpp:1068
+#: ../../locales/../src/interface/sitemanager.cpp:1264
+#: ../../locales/../src/interface/sitemanager.cpp:1334
 msgid "Anonymous"
 msgstr "Anonymous"
 
@@ -1162,8 +1182,8 @@ msgstr "Εφαρμογή στα &αρχεία μόνο"
 msgid "Archive"
 msgstr "Αρχείο"
 
-#: resources.h:106 ../../locales/../src/interface/sitemanager.cpp:1105
-#: ../../locales/../src/interface/sitemanager.cpp:1326
+#: resources.h:106 ../../locales/../src/interface/sitemanager.cpp:1104
+#: ../../locales/../src/interface/sitemanager.cpp:1325
 msgid "Ask for password"
 msgstr "Αίτηση για κωδικό"
 
@@ -1191,7 +1211,7 @@ msgstr "Σε αυτό το σημείο, όλες οι απαραίτητες π
 msgid "Attribute"
 msgstr "Ιδιότητα"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:580
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:619
 msgid "Authentication failed."
 msgstr "Αποτυχία πιστοποίησης."
 
@@ -1213,7 +1233,7 @@ msgstr "Διαθέσιμα μεγέθη"
 
 #: resources.h:115
 msgid "B&ypass proxy"
-msgstr ""
+msgstr "&Πέρασμα διαμεσολαβητή"
 
 #: ../../locales/../src/interface/edithandler.cpp:928
 #: ../../locales/../src/interface/edithandler.cpp:954
@@ -1267,18 +1287,18 @@ msgstr "Π&ροσαρμογή"
 msgid "C&ustom filetype associations:"
 msgstr "Π&ροσαρμοσμένες σχέσεις τύπων αρχείων:"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1344
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1383
 msgid "CSftpControlSocket::ChangeDirSend()"
-msgstr ""
+msgstr "CSftpControlSocket::ChangeDirSend()"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1337
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1376
 msgid "CSftpControlSocket::ChangeDirSubcommandResult()"
-msgstr ""
+msgstr "CSftpControlSocket::ChangeDirSubcommandResult()"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1479
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1152
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1480
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1191
 msgid "Calculating timezone offset of server..."
-msgstr ""
+msgstr "Υπολογισμός απόκλισης χρονικής ζώνης από τον εξυπηρετητή..."
 
 #: ../../locales/../src/engine/transfersocket.cpp:746
 msgid "Can't read from file"
@@ -1317,15 +1337,17 @@ msgstr ""
 
 #: ../../locales/../src/interface/Mainfrm.cpp:644
 msgid "Cannot add server to Site Manager"
-msgstr "Αδυναμία προσθήκης στον εξυπηρετητή του Διαχειριστής Τοποθεσιών"
+msgstr "Αδυναμία προσθήκης του εξυπηρετητή στον Διαχειριστής Τοποθεσιών"
 
 #: ../../locales/../src/interface/listingcomparison.cpp:74
 msgid ""
 "Cannot compare directories, different filters for local and remote "
 "directories are enabled"
 msgstr ""
+"Αδυναμία σύγκρισης φακέλω, λόγω ενεργοποίησης διαφορετικών φίλτρων στους "
+"τοπικούς και στους απομακρυσμένους φακέλους."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2475
+#: ../../locales/../src/interface/RemoteListView.cpp:2497
 msgid "Cannot compare directories, not connected to a server."
 msgstr ""
 "Αδύνατη η σύγκριση των φακέλων,  δεν υπάρχει σύνδεση με τον εξυπηρετητή."
@@ -1334,8 +1356,8 @@ msgstr ""
 msgid "Cannot create new filter"
 msgstr "Αδυναμία δημιουργίας νέου φίλτρου"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2338
-#: ../../locales/../src/interface/RemoteListView.cpp:2345
+#: ../../locales/../src/interface/RemoteListView.cpp:2360
+#: ../../locales/../src/interface/RemoteListView.cpp:2367
 msgid "Cannot edit file"
 msgstr "Αδύνατη η επεξεργασία του αρχείου"
 
@@ -1368,19 +1390,19 @@ msgstr "Δεν μπορεί να φορτωθεί το κυρίως μενού �
 msgid "Cannot load toolbar from resource file"
 msgstr "Δεν μπορεί να φορτωθεί η γραμμή εργαλείων από το αρχείο resource"
 
-#: ../../locales/../src/interface/sitemanager.cpp:968
+#: ../../locales/../src/interface/sitemanager.cpp:967
 msgid "Cannot rename entry"
 msgstr "Δεν μπορεί να μετονομαστεί η είσοδος"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1585
+#: ../../locales/../src/interface/RemoteListView.cpp:1607
 msgid "Cannot rename file"
 msgstr "Το αρχείο δεν μπορεί να μετονομαστεί"
 
-#: ../../locales/../src/interface/filter.cpp:318
+#: ../../locales/../src/interface/filter.cpp:317
 msgid "Cannot save filterset"
 msgstr "Αδυναμία αποθήκευσης των ορισμάτων φίλτρου"
 
-#: ../../locales/../src/interface/filter.cpp:278
+#: ../../locales/../src/interface/filter.cpp:277
 msgid "Cannot select filter"
 msgstr "Αδυναμία επιλογής φίλτρου"
 
@@ -1389,7 +1411,7 @@ msgid "Cannot show dialog"
 msgstr "Ο διάλογος δεν μπορεί να εμφανιστεί"
 
 #: ../../locales/../src/interface/LocalListView.cpp:2037
-#: ../../locales/../src/interface/RemoteListView.cpp:2371
+#: ../../locales/../src/interface/RemoteListView.cpp:2393
 msgid "Cannot view / edit selected file"
 msgstr "Το επιλεγμένο αρχείο δεν μπορεί να εμφανιστεί / επεξεργαστεί"
 
@@ -1421,13 +1443,13 @@ msgstr "Αλλαγή ιδιοτήτων αρχείου"
 msgid "Change the file permissions."
 msgstr "Αλλαγή δικαιωμάτων αρχείου"
 
-#: ../../locales/../src/interface/FileZilla.cpp:734
+#: ../../locales/../src/interface/FileZilla.cpp:733
 msgid "Character encoding issue"
 msgstr "Θέμα κωδικοποίησης χαρακτήρων"
 
 #: resources.h:129
 msgid "Charset"
-msgstr "Σετ χαρακτήρων"
+msgstr "Κωδικοποίηση χαρακτήρων"
 
 #: resources.h:205
 msgid "Check for &beta versions and release candidates"
@@ -1453,11 +1475,11 @@ msgstr "Έλεγχος για σωστή εξωτερική IP διεύθυνσ�
 msgid "Checking for updates"
 msgstr "Έλεγχος αναβαθμίσεων"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1200
+#: ../../locales/../src/interface/sitemanager.cpp:1199
 msgid "Choose the default local directory"
 msgstr "Επιλέξτε τον προκαθορισμένο τοπικό φάκελο"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:765
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:763
 msgid "Chunk data improperly terminated"
 msgstr "Ακατάλληλος τερματισμός τμήματος δεδομένων "
 
@@ -1515,11 +1537,11 @@ msgstr "Κάνε κλικ στο συνέχεια για να κατεβάσετ
 
 #: resources.h:515
 msgid "Client to server MAC:"
-msgstr "Φυσική Διεύθυνση (MAC) Πελάτη στον εξυπηρετητή:"
+msgstr "Πελάτης πρός Φυσική Διεύθυνση (MAC) εξυπηρετητή:"
 
 #: resources.h:513
 msgid "Client to server cipher:"
-msgstr "Αποτύπωμα πελάτη προς εξυπηρετητή:"
+msgstr "Πελάτης προς αποτύπωμα εξυπηρετητή:"
 
 #: resources.h:547 ../../locales/../src/interface/Mainfrm.cpp:1206
 #: ../../locales/../src/interface/Mainfrm.cpp:1229
@@ -1528,7 +1550,7 @@ msgstr "Κλείσιμο του FileZilla"
 
 #: ../../locales/../src/interface/cmdline.cpp:10
 msgid "Close all running instances of FileZilla"
-msgstr ""
+msgstr "Κλείσιμο όλων των ενεργών διεργασιών του FileZilla"
 
 #: resources.h:112
 msgid "Co&mments:"
@@ -1554,9 +1576,8 @@ msgid "Command failed"
 msgstr "Η Εντολή απέτυχε"
 
 #: ../../locales/../src/engine/proxy.cpp:431
-#, fuzzy
 msgid "Command not supported"
-msgstr "Η εντολή δεν υποστηρίζεται από αυτό το πρωτόκολλο"
+msgstr "Η εντολή δεν υποστηρίζεται"
 
 #: ../../locales/../src/engine/engineprivate.cpp:176
 msgid "Command not supported by this protocol"
@@ -1592,7 +1613,7 @@ msgstr "Σύγκριση &μεγέθους αρχείου"
 
 #: resources.h:180
 msgid "Comparison &threshold (in minutes):"
-msgstr ""
+msgstr "Κατώτατο όριο σύγκρισης (σε λεπτά):"
 
 #: ../../locales/../src/interface/optionspage_interface.cpp:42
 msgid "Comparison threshold needs to be between 0 and 1440 minutes."
@@ -1639,7 +1660,7 @@ msgid "Configure port range"
 msgstr "Ρύθμιση εύρους θυρών"
 
 #: ../../locales/../src/engine/local_filesys.cpp:122
-#: ../../locales/../src/interface/RemoteListView.cpp:1366
+#: ../../locales/../src/interface/RemoteListView.cpp:1388
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1042
 msgid "Confirmation needed"
 msgstr "Χρειάζεται επιβεβαίωση"
@@ -1654,13 +1675,13 @@ msgstr "Η σύνδεση προσπέρασε τις ρυθμίσεις του 
 
 #: ../../locales/../src/interface/cmdline.cpp:8
 msgid "Connect to specified Site Manager site"
-msgstr ""
+msgstr "Σύνδεση σε καθορισμένη τοποθεσία Διαχειριστή Δικτυακού τόπου"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:937
 msgid "Connected"
 msgstr "Συνδεδεμένος"
 
-#: ../../locales/../src/interface/QueueView.cpp:1258
+#: ../../locales/../src/interface/QueueView.cpp:1257
 msgid "Connecting"
 msgstr "Σύνδεση"
 
@@ -1671,9 +1692,9 @@ msgid "Connecting to %s"
 msgstr "Σύνδεση στο %s"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:1081
-#, fuzzy, c-format
+#, c-format
 msgid "Connecting to %s through proxy"
-msgstr "Σύνδεση στο %s"
+msgstr "Σύνδεση στο %s διαμέσου διαμεσολαβητή"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:949
 #: ../../locales/../src/engine/proxy.cpp:175
@@ -1681,8 +1702,8 @@ msgstr "Σύνδεση στο %s"
 msgid "Connecting to %s..."
 msgstr "Σύνδεση στο %s..."
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:444
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:344
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:442
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:346
 #, c-format
 msgid "Connecting to %s:%d..."
 msgstr "Σύνδεση στο %s:%d..."
@@ -1696,7 +1717,7 @@ msgstr "Σύνδεση στον εξυπηρετητή"
 msgid "Connection"
 msgstr "Σύνδεση"
 
-#: ../../locales/../src/interface/QueueView.cpp:924
+#: ../../locales/../src/interface/QueueView.cpp:923
 msgid "Connection attempt failed"
 msgstr "Προσπάθεια σύνδεσης απέτυχε"
 
@@ -1730,7 +1751,7 @@ msgstr "Σύνδεση τερματίστηκε από τον εξυπηρετη
 msgid "Connection established, initializing TLS..."
 msgstr "Σύνδεση εδραιώθηκε, αρχικοποίηση του TLS..."
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:265
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:263
 msgid "Connection established, sending HTTP request"
 msgstr "Σύνδεση εδραιώθηκε, αποστολή HTTP αιτήματος"
 
@@ -1743,27 +1764,24 @@ msgid "Connection lost"
 msgstr "Σύνδεση χάθηκε"
 
 #: ../../locales/../src/engine/proxy.cpp:416
-#, fuzzy
 msgid "Connection not allowed by ruleset"
-msgstr "Σύνδεση τερματίστηκε από τον εξυπηρετητή"
+msgstr "Μη επιτρεπτή σύνδεση σύμφωνα με τα καθορισμένα ορίσματα"
 
 #: ../../locales/../src/engine/proxy.cpp:425
-#, fuzzy
 msgid "Connection refused"
-msgstr "Σύνδεση τερματίστηκε"
+msgstr "Η σύνδεση απορρίφθηκε"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:617
 msgid "Connection timed out"
 msgstr "Η σύνδεση διακόπηκε"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:1064
+#: ../../locales/../src/interface/netconfwizard.cpp:1066
 msgid "Connection timed out."
 msgstr "Τέλος χρονικού ορίου σύνδεσης."
 
 #: ../../locales/../src/engine/proxy.cpp:190
-#, fuzzy
 msgid "Connection with proxy established, performing handshake..."
-msgstr "Σύνδεση εδραιώθηκε, αναμονή για μήνυμα υποδοχής..."
+msgstr "Η σύνδεση με τον διαμεσολαβητή εδραιώθηκε, αναμονή για χειραψία..."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:560
 msgid "Connection with server got closed prematurely."
@@ -1781,12 +1799,12 @@ msgstr "Μετατροπή του αρχείου-κλειδιού"
 msgid "Cop&y"
 msgstr "Αντ&ιγραφή"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1479
+#: ../../locales/../src/interface/sitemanager.cpp:1478
 #, c-format
 msgid "Copy (%d) of %s"
 msgstr "Αντιγραφή (%d) από %s"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1456
+#: ../../locales/../src/interface/sitemanager.cpp:1455
 #, c-format
 msgid "Copy of %s"
 msgstr "Αντιγραφή του %s"
@@ -1805,7 +1823,7 @@ msgstr "Αδύνατη η σύνδεση στον εξυπηρετητή"
 msgid "Could not connect to server: %s"
 msgstr "Αδύνατη η σύνδεση στον εξυπηρετητή: %s"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:730
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:769
 msgid "Could not convert command to server encoding"
 msgstr "Αδυναμία μετατροπής εντολής στην κωδικοποίηση του εξυπηρετητή"
 
@@ -1814,7 +1832,7 @@ msgstr "Αδυναμία μετατροπής εντολής στην κωδικ
 msgid "Could not convert private key"
 msgstr "Αδυναμία μετατροπής ιδιωτικού κλειδιού"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2232
+#: ../../locales/../src/interface/RemoteListView.cpp:2254
 #: ../../locales/../src/interface/RemoteTreeView.cpp:813
 msgid ""
 "Could not determine the target of the Drag&Drop operation.\n"
@@ -1825,11 +1843,11 @@ msgstr ""
 "Είτε η επέκταση του φλοιού δεν έχει εγκατασταθεί κατάλληλα ή δεν βάλατε τα "
 "αρχεία σε ένα παράθυρο Εξερευνητή."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4074
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4075
 msgid "Could not establish connection to server"
 msgstr "Αδύνατη η εδραίωση σύνδεσης με τον εξυπηρετητή"
 
-#: ../../locales/../src/interface/FileZilla.cpp:447
+#: ../../locales/../src/interface/FileZilla.cpp:446
 msgid ""
 "Could not find the resource files for FileZilla, closing FileZilla.\n"
 "You can set the data directory of FileZilla using the '--datadir "
@@ -1843,18 +1861,18 @@ msgstr ""
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:710
 msgid "Could not generate custom login sequence."
-msgstr ""
+msgstr "Αδυναμία δημιουργίας προσαρμοσμένης ακολουθίας εισόδου."
 
 #: ../../locales/../src/interface/optionspage_connection_sftp.cpp:150
 #: ../../locales/../src/interface/optionspage_connection_sftp.cpp:167
 msgid "Could not get reply from fzputtygen."
-msgstr ""
+msgstr "Αδυναμία λήψης του κατάλληλου τύπου από το fzputtygen."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2338
+#: ../../locales/../src/interface/RemoteListView.cpp:2360
 msgid "Could not get temporary directory to download file into."
 msgstr "Δεν βρέθηκε προσωρινός φάκελος για να αποθηκευτεί εκεί το αρχείο."
 
-#: ../../locales/../src/interface/Options.cpp:140
+#: ../../locales/../src/interface/Options.cpp:139
 #, c-format
 msgid ""
 "Could not load \"%s\", make sure the file is valid.\n"
@@ -1874,9 +1892,9 @@ msgstr ""
 "Αδύνατο να φορτωθεί το \"%s\", παρακαλούμε ελέγξτε την εγκυρότητα και το "
 "κατα πόσο είναι προσβάσιμο."
 
-#: ../../locales/../src/interface/filter.cpp:164
-#: ../../locales/../src/interface/filter.cpp:758
-#: ../../locales/../src/interface/sitemanager.cpp:646
+#: ../../locales/../src/interface/filter.cpp:163
+#: ../../locales/../src/interface/filter.cpp:757
+#: ../../locales/../src/interface/sitemanager.cpp:645
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1890,9 +1908,9 @@ msgstr ""
 
 #: ../../locales/../src/interface/import.cpp:111
 #: ../../locales/../src/interface/import.cpp:294
-#: ../../locales/../src/interface/sitemanager.cpp:529
-#: ../../locales/../src/interface/sitemanager.cpp:1646
-#: ../../locales/../src/interface/sitemanager.cpp:2165
+#: ../../locales/../src/interface/sitemanager.cpp:528
+#: ../../locales/../src/interface/sitemanager.cpp:1645
+#: ../../locales/../src/interface/sitemanager.cpp:2164
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1903,8 +1921,8 @@ msgstr ""
 "και προσβάσιμο.\n"
 "Οποιεσδήποτε αλλαγές στον Διαχειριστή Τοποθεσιών δεν θα αποθηκευτούν."
 
-#: ../../locales/../src/interface/QueueView.cpp:1694
-#: ../../locales/../src/interface/QueueView.cpp:1721
+#: ../../locales/../src/interface/QueueView.cpp:1693
+#: ../../locales/../src/interface/QueueView.cpp:1720
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1932,12 +1950,12 @@ msgstr "Αδύνατη η ανάλυση της διεύθυνσης του εξ
 msgid "Could not read from socket: %s"
 msgstr "Αδυναμία ανάγνωσης από την υποδοχή: %s"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2550
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2551
 #, c-format
 msgid "Could not seek to offset %s within file"
 msgstr "Αδύνατη η μεταφορά στην σχετική διεύθυνση %s μέσα στο αρχείο"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2481
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2482
 msgid "Could not seek to the end of the file"
 msgstr "Αδύνατη η μεταφορά στο τέλος του αρχείου"
 
@@ -1945,21 +1963,21 @@ msgstr "Αδύνατη η μεταφορά στο τέλος του αρχείο
 msgid "Could not send command to fzputtygen."
 msgstr "Αδυναμία αποστολής εντολής στο fzputtygen."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2570
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2571
 msgid "Could not spawn IO thread"
 msgstr "Αδύνατη η δημιουργία ΙΟ thread"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:1096
-#, fuzzy, c-format
+#, c-format
 msgid "Could not start proxy handshake: %s"
-msgstr "Αδύνατη η εκκίνηση της μεταφοράς"
+msgstr "Αδύνατη η εκκίνηση χειραψίας με τον διαμεσολαβητή:  %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:963
-#: ../../locales/../src/interface/QueueView.cpp:968
+#: ../../locales/../src/interface/QueueView.cpp:962
+#: ../../locales/../src/interface/QueueView.cpp:967
 msgid "Could not start transfer"
 msgstr "Αδύνατη η εκκίνηση της μεταφοράς"
 
-#: ../../locales/../src/interface/sitemanager.cpp:672
+#: ../../locales/../src/interface/sitemanager.cpp:671
 #, c-format
 msgid ""
 "Could not write \"%s\", any changes to the Site Manager could not be saved: %"
@@ -1968,8 +1986,8 @@ msgstr ""
 "Αδύνατη η εγγραφή στο \"%s\", οποιεσδήποτε αλλαγές στον Διαχειριστή "
 "Τοποθεσιών δεν μπορούν να αποθηκευτούν: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1704
-#: ../../locales/../src/interface/QueueView.cpp:1740
+#: ../../locales/../src/interface/QueueView.cpp:1703
+#: ../../locales/../src/interface/QueueView.cpp:1739
 #, c-format
 msgid "Could not write \"%s\", the queue could not be saved."
 msgstr ""
@@ -2007,17 +2025,17 @@ msgstr "Δημιουργία υποφακέλου στον τρέχον φάκε
 
 #: ../../locales/../src/interface/LocalListView.cpp:1184
 #: ../../locales/../src/interface/LocalTreeView.cpp:1297
-#: ../../locales/../src/interface/RemoteListView.cpp:1302
+#: ../../locales/../src/interface/RemoteListView.cpp:1324
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1209
 msgid "Create directory"
 msgstr "Δημιουργία φακέλου"
 
-#: ../../locales/../src/interface/QueueView.cpp:1331
+#: ../../locales/../src/interface/QueueView.cpp:1330
 msgid "Creating directory"
 msgstr "Δημιουργία φακέλου"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3126
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1929
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3127
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1968
 #, c-format
 msgid "Creating directory '%s'..."
 msgstr "Δημιουργία φακέλου '%s'..."
@@ -2028,23 +2046,23 @@ msgstr "Επικίνδυνο σφάλμα"
 
 #: ../../locales/../src/interface/statusbar.cpp:323
 msgid "Current transfer type is set to ASCII."
-msgstr ""
+msgstr "Ο τρέχον τύπος μεταφοράς έχει ορισθεί ως ASCII."
 
 #: ../../locales/../src/interface/statusbar.cpp:333
 msgid "Current transfer type is set to automatic detection."
-msgstr ""
+msgstr "Ο τρέχον τύπος μεταφοράς έχει ορισθεί ως αυτόματη ανίχνευση."
 
 #: ../../locales/../src/interface/statusbar.cpp:328
 msgid "Current transfer type is set to binary."
-msgstr ""
+msgstr "Ο τρέχον τύπος μεταφοράς έχει ορισθεί ως δυαδικός."
 
 #: resources.h:217 resources.h:256
 msgid "Cus&tom"
 msgstr "Προσ&αρμογή"
 
-#: ../../locales/../src/interface/filter.cpp:113
+#: ../../locales/../src/interface/filter.cpp:112
 msgid "Custom filter set"
-msgstr "Προσαρμοσμένο σετ φίλτρων"
+msgstr "Προσαρμοσμένα ορίσματα φίλτρων"
 
 #: resources.h:224
 msgid "D&ecimal prefixes using SI symbols (e.g. 1 KB = 1000 bytes)"
@@ -2069,9 +2087,9 @@ msgstr "Α&πόρριψη"
 
 #: ../../locales/../src/engine/server.cpp:30
 msgid "DOS-like with virtual paths"
-msgstr ""
+msgstr "Σαν DOS με εικονικές διαδρομές"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2350
+#: ../../locales/../src/interface/RemoteListView.cpp:2372
 msgid "Dangerous filetype"
 msgstr "Επικίνδυνος τύπος αρχείου"
 
@@ -2079,8 +2097,8 @@ msgstr "Επικίνδυνος τύπος αρχείου"
 msgid "Data"
 msgstr "Δεδομένα"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:979
-#: ../../locales/../src/interface/netconfwizard.cpp:1045
+#: ../../locales/../src/interface/netconfwizard.cpp:981
+#: ../../locales/../src/interface/netconfwizard.cpp:1047
 msgid "Data socket closed too early."
 msgstr "Το socket δεδομένων έκλεισε πολύ σύντομα."
 
@@ -2127,11 +2145,14 @@ msgstr "Προεπιλογή ενέργειας υπάρχοντος αρχεί�
 msgid "Default r&emote directory:"
 msgstr "Προκαθορισμένος α&πομακρυσμένος φάκελος:"
 
-#: ../../locales/../src/interface/sitemanager.cpp:893
+#: ../../locales/../src/interface/sitemanager.cpp:892
 msgid ""
 "Default remote path cannot be parsed. Make sure it is valid and is supported "
 "by the selected servertype."
 msgstr ""
+"Αδυναμία προσπέλασης της προκαθορισμένης απομακρυσμένης διαδρομής. "
+"Βεβαιωθείτε ότι είναι έγκυρη καθώς επίσης και ότι ο επιλεγμένος τύπος "
+"εξυπηρετητή την υποστηρίζει."
 
 #: ../../locales/../src/interface/optionspage_language.cpp:21
 msgid "Default system language"
@@ -2160,7 +2181,7 @@ msgstr ""
 msgid "Delaying connection due to previously failed connection attempt..."
 msgstr "Καθύστερηση σύνδεσης λόγω της προηγούμενης αποτυχημένης προσπάθειας..."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1001
+#: ../../locales/../src/interface/sitemanager.cpp:1000
 msgid "Delete Site Manager entry"
 msgstr "Διαγραφή εγγραφής Διαχειριστή Τοποθεσιών"
 
@@ -2208,7 +2229,7 @@ msgstr "Η σύγκριση φακέλων απέτυχε"
 msgid "Directory listing aborted by user"
 msgstr "Λίστα φακέλου ακυρώθηκε από τον χρήστη"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2034
+#: ../../locales/../src/interface/RemoteListView.cpp:2056
 msgid "Directory listing failed"
 msgstr "Λίστα φακέλου απέτυχε"
 
@@ -2240,10 +2261,10 @@ msgstr "Αποσύνδεση από τον εξυπηρετητή"
 #: ../../locales/../src/engine/ControlSocket.cpp:911
 #: ../../locales/../src/engine/ControlSocket.cpp:1014
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:247
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:843
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:845
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:847
-#: ../../locales/../src/interface/QueueView.cpp:922
-#: ../../locales/../src/interface/QueueView.cpp:960
+#: ../../locales/../src/interface/QueueView.cpp:921
+#: ../../locales/../src/interface/QueueView.cpp:959
 msgid "Disconnected from server"
 msgstr "Αποσύνδεση από τον εξυπηρετητή"
 
@@ -2252,7 +2273,7 @@ msgstr "Αποσύνδεση από τον εξυπηρετητή"
 msgid "Disconnected from server: %s"
 msgstr "Αποσύνδεση από τον εξυπηρετητή: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1233
+#: ../../locales/../src/interface/QueueView.cpp:1232
 #: ../../locales/../src/interface/statuslinectrl.cpp:189
 msgid "Disconnecting from previous server"
 msgstr "Αποσύνδεση από τον προηγούμενο εξυπηρετητή"
@@ -2295,7 +2316,7 @@ msgstr ""
 msgid "Do you really want to delete all Site Manager entries?"
 msgstr "Θέλετε να διαγράψετε όλες τις εγγραφές του Διαχειριστή Τοποθεσιών"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1003
+#: ../../locales/../src/interface/sitemanager.cpp:1002
 msgid "Do you really want to delete selected entry?"
 msgstr "Θέλετε πραγματικά να διαγαψετε την επιλεγμένη εγγραφή;"
 
@@ -2332,7 +2353,7 @@ msgstr "Μεταφόρτωση των επιλεγμένων αρχείων κα
 msgid "Downloading"
 msgstr "Κατεβαίνει"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:282
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:280
 #: ../../locales/../src/interface/updatewizard.cpp:276
 #, c-format
 msgid "Downloading %s"
@@ -2344,7 +2365,7 @@ msgstr "Ληφθέντα"
 
 #: ../../locales/../src/interface/LocalListView.cpp:100
 #: ../../locales/../src/interface/LocalTreeView.cpp:90
-#: ../../locales/../src/interface/QueueView.cpp:72
+#: ../../locales/../src/interface/QueueView.cpp:71
 #: ../../locales/../src/interface/RemoteListView.cpp:94
 #: ../../locales/../src/interface/RemoteTreeView.cpp:79
 msgid ""
@@ -2356,13 +2377,13 @@ msgstr ""
 
 #: ../../locales/../src/interface/LocalListView.cpp:106
 #: ../../locales/../src/interface/LocalTreeView.cpp:96
-#: ../../locales/../src/interface/QueueView.cpp:83
+#: ../../locales/../src/interface/QueueView.cpp:82
 #: ../../locales/../src/interface/RemoteListView.cpp:100
 #: ../../locales/../src/interface/RemoteTreeView.cpp:85
 msgid "Drag&drop between different servers has not been implemented yet."
 msgstr ""
-"Το drag & drop ανάμεσα σε διαφορετικούς εξυπηρετητές δεν έχει υλοποιηθεί "
-"ακόμα."
+"Το σύρσιμο & ελευθέρωση ανάμεσα σε διαφορετικούς εξυπηρετητές δεν έχει "
+"υλοποιηθεί ακόμα."
 
 #: ../../locales/../src/interface/filteredit.cpp:477
 #: ../../locales/../src/interface/filteredit.cpp:544
@@ -2398,12 +2419,14 @@ msgstr "Επεξεργασία φίλτρων"
 msgid ""
 "Edit the file with the configured editor and upload changes to the server."
 msgstr ""
+"Τροποποιήστε το αρχείο με έναν Επεξεργαστή και στείλτε τις αλλαγές στον "
+"εξυπηρετητή."
 
 #: resources.h:194
 msgid "Email:"
 msgstr "Email:"
 
-#: ../../locales/../src/interface/QueueView.cpp:2025
+#: ../../locales/../src/interface/QueueView.cpp:2024
 msgid "Empty command"
 msgstr "Κενή εντολή"
 
@@ -2411,7 +2434,7 @@ msgstr "Κενή εντολή"
 msgid "Empty command."
 msgstr "Κενή εντολή."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2036
+#: ../../locales/../src/interface/RemoteListView.cpp:2058
 msgid "Empty directory listing"
 msgstr "Άδειασμα λίστας φακέλου"
 
@@ -2435,7 +2458,7 @@ msgstr "Κενό όνομα"
 
 #: ../../locales/../src/interface/optionspage_edit.cpp:115
 msgid "Empty quoted string."
-msgstr "Άδειασμα συμβολοσειράς σε εισαγωγικά."
+msgstr "Κενή αλφαριθμητική σε παράθεση."
 
 #: resources.h:337
 msgid "En&able all"
@@ -2455,13 +2478,13 @@ msgstr "Λεπτομέρειες κρυπτογράφησης"
 
 #: ../../locales/../src/interface/filelistctrl.cpp:361
 msgid "End comparison and change sorting order?"
-msgstr ""
+msgstr "Να ολοκληρωθεί σύγκριση και η αλλαγή των ορισμάτων ταξινόμησης;"
 
 #: resources.h:577
 msgid "Enter &custom command..."
 msgstr "Εισαγωγή &προσαρμοσμένης εντολής..."
 
-#: ../../locales/../src/interface/QueueView.cpp:2014
+#: ../../locales/../src/interface/QueueView.cpp:2013
 msgid "Enter command"
 msgstr "Εισαγωγή εντολής"
 
@@ -2475,9 +2498,9 @@ msgstr "Εισαγωγή προσαρμοσμένης εντολής"
 msgid "Enter filter name"
 msgstr "Εισαγωγή ονόματος φίλτρου"
 
-#: ../../locales/../src/interface/filter.cpp:311
+#: ../../locales/../src/interface/filter.cpp:310
 msgid "Enter name for filterset"
-msgstr "Εισαγωγή ονόματος για το σετ φίλτρων"
+msgstr "Εισαγωγή ονόματος για τα ορίσματα φίλτρων"
 
 #: resources.h:140
 msgid "Enter password"
@@ -2505,6 +2528,9 @@ msgid ""
 "Enter the password for the file '%s'.\n"
 "Please note that the converted file will not be password protected."
 msgstr ""
+"Εισάγετε τον κωδικό προστασίας για το αρχείο '%s'.\n"
+"Να λάβετε υπόψιν σας ότι, ίσως το αρχείο να μην είναι προστατευμένο με "
+"κωδικό."
 
 #: resources.h:724
 msgid ""
@@ -2524,17 +2550,17 @@ msgstr "Σφάλμα κατά την εξαγωγή ρυθμίσεων"
 msgid "Error importing"
 msgstr "Σφάλμα εισαγωγής"
 
-#: ../../locales/../src/interface/filter.cpp:165
-#: ../../locales/../src/interface/filter.cpp:759
+#: ../../locales/../src/interface/filter.cpp:164
+#: ../../locales/../src/interface/filter.cpp:758
 #: ../../locales/../src/interface/import.cpp:112
 #: ../../locales/../src/interface/import.cpp:295
-#: ../../locales/../src/interface/Options.cpp:141
-#: ../../locales/../src/interface/QueueView.cpp:1695
-#: ../../locales/../src/interface/QueueView.cpp:1722
-#: ../../locales/../src/interface/sitemanager.cpp:530
-#: ../../locales/../src/interface/sitemanager.cpp:647
-#: ../../locales/../src/interface/sitemanager.cpp:1647
-#: ../../locales/../src/interface/sitemanager.cpp:2166
+#: ../../locales/../src/interface/Options.cpp:140
+#: ../../locales/../src/interface/QueueView.cpp:1694
+#: ../../locales/../src/interface/QueueView.cpp:1721
+#: ../../locales/../src/interface/sitemanager.cpp:529
+#: ../../locales/../src/interface/sitemanager.cpp:646
+#: ../../locales/../src/interface/sitemanager.cpp:1646
+#: ../../locales/../src/interface/sitemanager.cpp:2165
 #: ../../locales/../src/interface/wrapengine.cpp:925
 msgid "Error loading xml file"
 msgstr "Σφάλμα φόρτωσης xml αρχείου"
@@ -2544,9 +2570,9 @@ msgstr "Σφάλμα φόρτωσης xml αρχείου"
 msgid "Error starting program"
 msgstr "Σφάλμα κατά την εκκίνηση του προγράμματος"
 
-#: ../../locales/../src/interface/QueueView.cpp:1705
-#: ../../locales/../src/interface/QueueView.cpp:1741
-#: ../../locales/../src/interface/sitemanager.cpp:673
+#: ../../locales/../src/interface/QueueView.cpp:1704
+#: ../../locales/../src/interface/QueueView.cpp:1740
+#: ../../locales/../src/interface/sitemanager.cpp:672
 #: ../../locales/../src/interface/wrapengine.cpp:1076
 msgid "Error writing xml file"
 msgstr "Σφάλμα εγγραφής xml αρχείου"
@@ -2595,7 +2621,7 @@ msgid "F&ilter name:"
 msgstr "Όνομα φ&ίλτρου:"
 
 #: ../../locales/../src/interface/settingsdialog.cpp:113
-#: ../../locales/../src/interface/sitemanager.cpp:1263
+#: ../../locales/../src/interface/sitemanager.cpp:1262
 msgid "FTP"
 msgstr "FTP"
 
@@ -2605,7 +2631,7 @@ msgstr "Η μηχανή FTP δεν έχει αρχικοποιηθεί, αδύν
 
 #: resources.h:494
 msgid "FTP Keep-alive"
-msgstr ""
+msgstr "Διατήρηση-Ενεργό FTP"
 
 #: resources.h:250 ../../locales/../src/interface/settingsdialog.cpp:116
 msgid "FTP Proxy"
@@ -2638,9 +2664,9 @@ msgstr "FTPS - FTP over implicit TLS/SSL"
 msgid "Failed to change directory"
 msgstr "Αποτυχία στην αλλαγή φακέλου"
 
-#: ../../locales/../src/interface/FileZilla.cpp:222
-#: ../../locales/../src/interface/FileZilla.cpp:230
-#: ../../locales/../src/interface/FileZilla.cpp:232
+#: ../../locales/../src/interface/FileZilla.cpp:221
+#: ../../locales/../src/interface/FileZilla.cpp:229
+#: ../../locales/../src/interface/FileZilla.cpp:231
 #: ../../locales/../src/interface/optionspage_language.cpp:103
 msgid "Failed to change language"
 msgstr "Αποτυχία στην αλλαγή γλώσσας"
@@ -2649,7 +2675,7 @@ msgstr "Αποτυχία στην αλλαγή γλώσσας"
 msgid "Failed to check for newer version of FileZilla."
 msgstr "Αποτυχία ελέγχου νέας έκδοσης του FileZilla."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1843
+#: ../../locales/../src/interface/sitemanager.cpp:1842
 msgid "Failed to copy or move sites"
 msgstr "Αποτυχία αντιγραφής ή  μετακίνησης τοποθεσιών"
 
@@ -2661,8 +2687,8 @@ msgstr "Αποτυχία στην δημιουργία αντιγράφου ασ
 msgid "Failed to create listen socket, aborting"
 msgstr "Αποτυχία δημιουργίας listen socket, ακύρωση"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4050
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4054
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4051
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4055
 msgid "Failed to create listening socket for active mode transfer"
 msgstr "Αποτυχία δημιουργίας listen socket για μεταφορά σε ενεργή κατάσταση "
 
@@ -2672,17 +2698,17 @@ msgstr "Αποτυχία κατεβάσματος της νεώτερης έκδ
 
 #: ../../locales/../src/interface/LocalTreeView.cpp:631
 msgid "Failed to get 'My Documents' path"
-msgstr "Αποτυχία πρόσβασης στο μονοπάτι 'Τα Εγγραφά Μου'"
+msgstr "Αποτυχία πρόσβασης στην διαδρομή 'Τα Εγγραφά Μου'"
 
 #: ../../locales/../src/interface/LocalTreeView.cpp:617
 msgid "Failed to get desktop path"
-msgstr "Αποτυχία πρόσβασης στο μονοπάτι της επιφάνειας εργασίας"
+msgstr "Αποτυχία πρόσβασης στην διαδρομή της επιφάνειας εργασίας"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:944
+#: ../../locales/../src/interface/netconfwizard.cpp:946
 msgid "Failed to get peer address of control connection, connection closed."
 msgstr "Αποτυχία λήψης ομότιμης διεύθυνσης, η σύνδεση έκλεισε."
 
-#: ../../locales/../src/interface/netconfwizard.cpp:952
+#: ../../locales/../src/interface/netconfwizard.cpp:954
 msgid "Failed to get peer address of data connection, connection closed."
 msgstr ""
 "Αποτυχία λήψης ομότιμης διεύθυνσης από τα δεδομένα σύνδεσης, η σύνδεση "
@@ -2706,24 +2732,24 @@ msgstr "Αδυναμία φόρτωσης πινάκων οργάνων, λάθ�
 msgid "Failed to load private key: %s"
 msgstr "Αποτυχία φόρτωσης του ιδιωτικού κλειδιού: %s"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2470
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2471
 #, c-format
 msgid "Failed to open \"%s\" for appending / writing"
 msgstr "Αποτυχία ανοίγματος του \"%s\" για πρόσθεση / γράψιμο"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2534
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2535
 #, c-format
 msgid "Failed to open \"%s\" for reading"
 msgstr "Αποτυχία ανοίγματος του \"%s\" για ανάγνωση"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2513
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:322
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:381
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2514
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:320
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:379
 #, c-format
 msgid "Failed to open \"%s\" for writing"
 msgstr "Αποτυχία ανοίγματος του \"%s\" για εγγραφή"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:1008
+#: ../../locales/../src/interface/netconfwizard.cpp:1010
 msgid "Failed to receive data"
 msgstr "Αποτυχία λήψης δεδομένων"
 
@@ -2735,11 +2761,11 @@ msgstr "Άνοιγμα φακέλου απέτυχε"
 msgid "Failed to retrieve external ip address, aborting"
 msgstr "Αποτυχία ανάκτησης εξωτερικής IP διεύθυνσης, ακύρωση"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3748
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3749
 msgid "Failed to retrieve external ip address, using local address"
 msgstr "Αποτυχία ανάκτησης εξωτερικής IP διεύθυνσης, χρήση τοπικής διεύθυνσης"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3770
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3771
 msgid "Failed to retrieve local ip address."
 msgstr "Αποτυχία ανάκτησης τοπικής IP διεύθυνσης."
 
@@ -2755,14 +2781,14 @@ msgstr "Αποτυχία ανάκτησης εξωτερικής IP διεύθυ
 msgid "Failed to send command."
 msgstr "Αποτυχία αποστολής εντολής."
 
-#: ../../locales/../src/interface/FileZilla.cpp:230
+#: ../../locales/../src/interface/FileZilla.cpp:229
 #, c-format
 msgid "Failed to set language to %s (%s), using default system language"
 msgstr ""
 "Αποτυχία ορισμού γλώσσας σε %s (%s), χρήση της προκαθορισμένης γλώσσας από "
 "το σύστημα "
 
-#: ../../locales/../src/interface/FileZilla.cpp:215
+#: ../../locales/../src/interface/FileZilla.cpp:214
 #, c-format
 msgid ""
 "Failed to set language to %s (%s), using default system language (%s, %s)."
@@ -2770,14 +2796,14 @@ msgstr ""
 "Αποτυχία ορισμού γλώσσας σε %s (%s), χρήση της προκαθορισμένης γλώσσας από "
 "το σύστημα (%s, %s)."
 
-#: ../../locales/../src/interface/FileZilla.cpp:199
+#: ../../locales/../src/interface/FileZilla.cpp:202
 #, c-format
 msgid "Failed to set language to %s (%s), using default system language."
 msgstr ""
 "Αποτυχία ορισμού γλώσσας σε  %s (%s), χρήση προκαθορισμένης γλώσσας από το "
 "σύστημα."
 
-#: ../../locales/../src/interface/FileZilla.cpp:232
+#: ../../locales/../src/interface/FileZilla.cpp:231
 #: ../../locales/../src/interface/optionspage_language.cpp:103
 #, c-format
 msgid "Failed to set language to %s, using default system language"
@@ -2785,14 +2811,14 @@ msgstr ""
 "Αποτυχία ορισμού γλώσσας σε %s, χρήση της προκαθορισμένης από το σύστημα "
 "γλώσσας"
 
-#: ../../locales/../src/interface/FileZilla.cpp:211
+#: ../../locales/../src/interface/FileZilla.cpp:210
 #, c-format
 msgid "Failed to set language to %s, using default system language (%s, %s)."
 msgstr ""
 "Αποτυχία ορισμού γλώσσας σε %s, χρήση της προκαθορισμένης γλώσσας από το "
 "σύστημα (%s, %s)."
 
-#: ../../locales/../src/interface/FileZilla.cpp:196
+#: ../../locales/../src/interface/FileZilla.cpp:199
 #, c-format
 msgid "Failed to set language to %s, using default system language."
 msgstr ""
@@ -2803,7 +2829,7 @@ msgstr ""
 msgid "Failed to validate settings"
 msgstr "Αποτυχία πιστοποίησης ρυθμίσεων"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:497
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:495
 #, c-format
 msgid "Failed to write to file %s"
 msgstr "Αποτυχία εγγραφής στο αρχείο %s"
@@ -2842,7 +2868,7 @@ msgstr "Το αρχείο δεν περιέχει δεδομένα για εισ
 msgid "File editing"
 msgstr "Επεξεργασία αρχείου"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1600
+#: ../../locales/../src/interface/RemoteListView.cpp:1622
 msgid "File exists"
 msgstr "Το αρχείο υπάρχει"
 
@@ -2854,8 +2880,8 @@ msgstr "Ενέργεια για υπάρχον αρχείο"
 msgid "File has changed"
 msgstr "Το αρχείο άλλαξε"
 
-#: ../../locales/../src/interface/FileZilla.cpp:755
-#: ../../locales/../src/interface/FileZilla.cpp:849
+#: ../../locales/../src/interface/FileZilla.cpp:754
+#: ../../locales/../src/interface/FileZilla.cpp:848
 #: ../../locales/../src/interface/optionspage_edit.cpp:183
 msgid "File not found"
 msgstr "Το αρχείο δεν βρέθηκε"
@@ -2868,7 +2894,7 @@ msgstr "Επιτυχής μεταφορά αρχείου"
 msgid "File transfers still in progress."
 msgstr "Μεταφορά αρχείων σε πρόοδο."
 
-#: ../../locales/../src/interface/FileZilla.cpp:448
+#: ../../locales/../src/interface/FileZilla.cpp:447
 #: ../../locales/../src/interface/quickconnectbar.cpp:50
 msgid "FileZilla Error"
 msgstr "Σφάλμα FileZilla"
@@ -2910,13 +2936,14 @@ msgstr "Όνομα Αρχείου"
 msgid "Filename &filters..."
 msgstr "Όνομα Αρχείου &φίλτρα..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2925
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2183
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2926
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2222
 #, c-format
 msgid "Filename cannot be constructed for directory %s and filename %s"
 msgstr ""
+"Δεν μπορεί να κατασκευαστεί όνομα αρχείου για τον φάκελο %s  και το αρχείο %s"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1585
+#: ../../locales/../src/interface/RemoteListView.cpp:1607
 msgid "Filename invalid"
 msgstr "Λανθασμένο όνομα αρχείου"
 
@@ -2973,13 +3000,13 @@ msgstr "Εφαρμογή φίλτρου σε:"
 msgid "Filter name already exists"
 msgstr "Το όνομα φίλτρου υπάρχει ήδη"
 
-#: ../../locales/../src/interface/filter.cpp:325
+#: ../../locales/../src/interface/filter.cpp:324
 msgid "Filter set already exists"
-msgstr "Το σετ φίλτρων υπάρχει ήδη"
+msgstr "Τα ορίσματα φίλτρων υπάρχουν ήδη"
 
 #: resources.h:746 resources.h:747
 msgid "Filter the directory listings"
-msgstr "Φιλτράρισε τις λίστες φακέλων"
+msgstr "Φιλτράρισμα λιστών φακέλων"
 
 #: ../../locales/../src/interface/filteredit.cpp:683
 #: ../../locales/../src/interface/filteredit.cpp:698
@@ -3049,23 +3076,23 @@ msgstr "Γενικά"
 
 #: ../../locales/../src/engine/proxy.cpp:413
 msgid "General SOCKS server failure"
-msgstr ""
+msgstr "Γενική αποτυχία εξυπηρετητή SOCKS "
 
 #: resources.h:529
 msgid "Generic Proxy"
-msgstr ""
+msgstr "Γενικός Διαμεσολαβητής"
 
 #: ../../locales/../src/interface/settingsdialog.cpp:118
 msgid "Generic proxy"
-msgstr ""
+msgstr "Γενικός Διαμεσολαβητής"
 
 #: resources.h:697
 msgid "Get external IP address from the following URL:"
 msgstr "Πάρε την εξωτερική IP διεύθυνση από το παρακάτω URL:"
 
-#: ../../locales/../src/interface/filter.cpp:325
+#: ../../locales/../src/interface/filter.cpp:324
 msgid "Given filterset name already exists, overwrite filter set?"
-msgstr "Το όνομα του σετ φίλτρων υπάρχει ήδη, αντικατάσταση του σετ φίλτρων;"
+msgstr "Το όνομα των ορισμάτων φίλτρου υπάρχει ήδη, να αντικατασταθεί;"
 
 #: resources.h:277
 msgid "Group permissions"
@@ -3118,12 +3145,11 @@ msgstr "Το κλειδί του κόμβου δεν ταιριάζει"
 
 #: ../../locales/../src/engine/server.cpp:135
 msgid "Host starts with '[' but no closing bracket found."
-msgstr ""
+msgstr "Ο κόμβος ξεκινάει με '[' αλλά η αγκύλη κλεισίματος δε βρέθηκε."
 
 #: ../../locales/../src/engine/proxy.cpp:422
-#, fuzzy
 msgid "Host unreachable"
-msgstr "δημόσια ανάγνωση"
+msgstr "Μη προσπελάσιμος κόμβος"
 
 #: resources.h:4 resources.h:27 resources.h:143 resources.h:308
 #: resources.h:320
@@ -3203,6 +3229,9 @@ msgid ""
 "If using timestamp based comparison, consider two files equal if their "
 "timestamp differerence does not exceed this threshold."
 msgstr ""
+"Για να θεωρηθούν δύο αρχεία όμοια κατά την σύγκριση τους, με την μέθοδο της "
+"χρονικής σφραγίδας, θα πρέπει η διαφορά της χρονικής σφραγίδας να μην "
+"υπερβαίνει το κατώτατο όριο που έχει οριστεί."
 
 #: resources.h:199
 msgid "If you change the language, you should restart FileZilla."
@@ -3345,7 +3374,7 @@ msgstr ""
 "χρήστες, το FileZilla ζητά από τον εξυπηρετητή μία θύρα και συνδέεται σε "
 "αυτή. Δεν χρειάζονται ιδιαίτερες ρυθμίσεις γι' αυτό."
 
-#: ../../locales/../src/interface/QueueView.cpp:918
+#: ../../locales/../src/interface/QueueView.cpp:917
 msgid "Incorrect password"
 msgstr "Λάθος κωδικός"
 
@@ -3353,8 +3382,8 @@ msgstr "Λάθος κωδικός"
 msgid "Initializing TLS..."
 msgstr "Αρχικοποίηση TLS..."
 
-#: resources.h:107 ../../locales/../src/interface/sitemanager.cpp:1107
-#: ../../locales/../src/interface/sitemanager.cpp:1329
+#: resources.h:107 ../../locales/../src/interface/sitemanager.cpp:1106
+#: ../../locales/../src/interface/sitemanager.cpp:1328
 msgid "Interactive"
 msgstr "Διαδραστικό"
 
@@ -3363,16 +3392,16 @@ msgid "Interface"
 msgstr "Διεπαφή"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:161
-#: ../../locales/../src/interface/QueueView.cpp:883
-#: ../../locales/../src/interface/QueueView.cpp:1386
+#: ../../locales/../src/interface/QueueView.cpp:882
+#: ../../locales/../src/interface/QueueView.cpp:1385
 msgid "Interrupted by user"
 msgstr "Διακόπηκε από τον χρήστη"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:683
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:681
 msgid "Invalid Content-Length"
 msgstr "Λάθος Content-Length"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:554
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:552
 msgid "Invalid HTTP Response"
 msgstr "Λανθασμένη HTTP Απάντηση"
 
@@ -3385,7 +3414,7 @@ msgstr ""
 "Ελήφθη λάθος ακολουθία χαρακτήρων, απενεργοποίηση του UTF-8. Επιλέξτε την "
 "επιλογή UTF-8 στον Διαχειριστή Τοποθεσιών για να χρησιμοποιήσετε UTF-8."
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:807
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:805
 msgid "Invalid chunk size"
 msgstr "Λάθος μέγεθος τμήματος"
 
@@ -3408,6 +3437,8 @@ msgstr "Λάθος όνομα αρχείου"
 #: ../../locales/../src/engine/server.cpp:142
 msgid "Invalid host, after closing bracket only colon and port may follow."
 msgstr ""
+"Μη έγκυρος κόμβος. Μετά τον εγκιβωτισμό (κλείνει η αγκύλη) πρέπει να "
+"ακολουθεί η άνω κάτω τελεία και η θύρα.  "
 
 #: ../../locales/../src/engine/server.cpp:163
 #: ../../locales/../src/engine/server.cpp:176
@@ -3429,14 +3460,14 @@ msgstr ""
 "ftps:// για FTP over SSL (αυτονόητο) και\n"
 "ftpes:// για FTP over SSL (ρητό)."
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:564
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:562
 msgid "Invalid response code"
 msgstr "Λάθος κωδικός απάντησης"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2136
-#: ../../locales/../src/interface/sitemanager.cpp:2156
-#: ../../locales/../src/interface/sitemanager.cpp:2174
-#: ../../locales/../src/interface/sitemanager.cpp:2185
+#: ../../locales/../src/interface/sitemanager.cpp:2135
+#: ../../locales/../src/interface/sitemanager.cpp:2155
+#: ../../locales/../src/interface/sitemanager.cpp:2173
+#: ../../locales/../src/interface/sitemanager.cpp:2184
 msgid "Invalid site path"
 msgstr "Μη έγκυρη διαδρομή"
 
@@ -3501,7 +3532,7 @@ msgstr "Όριο ταυτόχρονων &αποστολών:"
 msgid "Limit local ports"
 msgstr "Όριο τοπικών θυρών"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:750
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:748
 msgid "Line length exceeded"
 msgstr "Το μήκος γραμμής ξεπεράστηκε"
 
@@ -3536,7 +3567,7 @@ msgstr "Τοποθεσία:"
 
 #: resources.h:226 ../../locales/../src/interface/settingsdialog.cpp:131
 msgid "Logging"
-msgstr "Γίνεται σύνδεση"
+msgstr "Καταγραφή"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:822
 msgid ""
@@ -3558,6 +3589,8 @@ msgstr ""
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:858
 msgid "Login sequence fully executed yet not logged in. Aborting."
 msgstr ""
+"Η ακολουθία σύνδεσης που εκτελείται δεν διεκπεραιώθηκε ακόμα, δε συνδέθηκε. "
+"Απόρριψη."
 
 #: ../../locales/../src/interface/queue.cpp:848
 #: ../../locales/../src/interface/queue.cpp:929
@@ -3579,20 +3612,20 @@ msgstr ""
 msgid "MAC:"
 msgstr "Φυσική διεύθυνση (MAC):"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:738
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:750
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:765
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:807
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:736
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:748
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:763
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:805
 #, c-format
 msgid "Malformed chunk data: %s"
 msgstr "Κατεστραμένο τμήμα δεδομένων: %s"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:683
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:681
 #, c-format
 msgid "Malformed header: %s"
 msgstr "Κατεστραμένη κεφαλίδα: %s"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:524
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:522
 msgid "Malformed reply, server not sending proper lineendings"
 msgstr ""
 "Κατεστραμένη απάντηση, ο εξυπηρετητής δεν στέλνει κατάλληλους τερματισμούς "
@@ -3626,9 +3659,9 @@ msgstr "Ο Υπολογιστής Μου"
 msgid "My Documents"
 msgstr "Τα Εγγραφά Μου"
 
-#: ../../locales/../src/interface/sitemanager.cpp:517
-#: ../../locales/../src/interface/sitemanager.cpp:519
-#: ../../locales/../src/interface/sitemanager.cpp:1687
+#: ../../locales/../src/interface/sitemanager.cpp:516
+#: ../../locales/../src/interface/sitemanager.cpp:518
+#: ../../locales/../src/interface/sitemanager.cpp:1686
 msgid "My Sites"
 msgstr "Οι Τοποθεσίες μου"
 
@@ -3637,7 +3670,7 @@ msgstr "Οι Τοποθεσίες μου"
 msgid "N/a"
 msgstr "N/a"
 
-#: ../../locales/../src/interface/sitemanager.cpp:968
+#: ../../locales/../src/interface/sitemanager.cpp:967
 msgid "Name already exists"
 msgstr "To όνομα ήδη υπάρχει"
 
@@ -3649,14 +3682,13 @@ msgstr "Όνομα:"
 msgid "Need to enter filter name"
 msgstr "Πρέπει να εισάγετε όνομα φίλτρου"
 
-#: ../../locales/../src/interface/sitemanager.cpp:861
+#: ../../locales/../src/interface/sitemanager.cpp:860
 msgid "Need to specify a character encoding"
 msgstr "Πρέπει να ορίσετε μία κωδικοποίηση χαρακτήρων"
 
 #: ../../locales/../src/engine/proxy.cpp:419
-#, fuzzy
 msgid "Network unreachable"
-msgstr "δημόσια ανάγνωση"
+msgstr "Μη προσπελάσιμο δίκτυο"
 
 #: resources.h:95
 msgid "New &Folder"
@@ -3671,18 +3703,18 @@ msgstr "Νέος φάκελος"
 msgid "New filter"
 msgstr "Νέο Φίλτρο"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1316
-#: ../../locales/../src/interface/sitemanager.cpp:754
-#: ../../locales/../src/interface/sitemanager.cpp:777
+#: ../../locales/../src/interface/RemoteListView.cpp:1338
+#: ../../locales/../src/interface/sitemanager.cpp:753
+#: ../../locales/../src/interface/sitemanager.cpp:776
 msgid "New folder"
 msgstr "Νέος Φάκελος"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1942
-#: ../../locales/../src/interface/sitemanager.cpp:1965
+#: ../../locales/../src/interface/sitemanager.cpp:1941
+#: ../../locales/../src/interface/sitemanager.cpp:1964
 msgid "New site"
 msgstr "Νέα Τοποθεσία"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:783
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:822
 msgid "No"
 msgstr "Όχι"
 
@@ -3690,11 +3722,11 @@ msgstr "Όχι"
 msgid "No category to export selected"
 msgstr "Δεν έχει επιλεχθεί καμία κατηγορία για εξαγωγή"
 
-#: ../../locales/../src/interface/QueueView.cpp:2025
+#: ../../locales/../src/interface/QueueView.cpp:2024
 msgid "No command given, aborting."
 msgstr "Δεν δώθηκε καμία εντολή, ακύρωση."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3715
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3716
 msgid "No external IP address set, trying default."
 msgstr ""
 "Καμία εξωτερική IP διεύθυνση δεν έχει οριστεί, δοκιμή της προκαθορισμένης."
@@ -3717,11 +3749,11 @@ msgstr "Δεν δώθηκε κόμβος, παρακαλούμε εισάγετ�
 msgid "No images available"
 msgstr "Καμία διαθέσιμη εικόνα"
 
-#: ../../locales/../src/interface/QueueView.cpp:2682
+#: ../../locales/../src/interface/QueueView.cpp:2681
 msgid "No more files in the queue!"
 msgstr "Δεν υπάρχουν άλλα αρχεία στη σειρά αναμονής!"
 
-#: ../../locales/../src/interface/filter.cpp:318
+#: ../../locales/../src/interface/filter.cpp:317
 msgid "No name for the filterset given."
 msgstr "Δεν δόθηκε όνομα για τα ορίσματα φίλτρου."
 
@@ -3729,15 +3761,15 @@ msgstr "Δεν δόθηκε όνομα για τα ορίσματα φίλτρο
 msgid "No pending connection"
 msgstr "Καμία σύνδεση σε εκκρεμότητα"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1653
-#: ../../locales/../src/interface/sitemanager.cpp:1665
-#: ../../locales/../src/interface/sitemanager.cpp:1696
+#: ../../locales/../src/interface/sitemanager.cpp:1652
+#: ../../locales/../src/interface/sitemanager.cpp:1664
+#: ../../locales/../src/interface/sitemanager.cpp:1695
 msgid "No sites available"
 msgstr "Καμία διαθέσιμη τοποθεσία"
 
 #: ../../locales/../src/engine/proxy.cpp:387
 msgid "No supported SOCKS5 auth method"
-msgstr ""
+msgstr "Μη υποστηριζόμενη μέθοδος έγκρισης SOCKS5 "
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:67
 msgid "None"
@@ -3749,9 +3781,9 @@ msgstr "Κανένα από τα παρακάτω"
 
 #: resources.h:66 resources.h:105 ../../locales/../src/interface/queue.cpp:851
 #: ../../locales/../src/interface/queue.cpp:932
-#: ../../locales/../src/interface/sitemanager.cpp:1070
-#: ../../locales/../src/interface/sitemanager.cpp:1103
-#: ../../locales/../src/interface/sitemanager.cpp:1323
+#: ../../locales/../src/interface/sitemanager.cpp:1069
+#: ../../locales/../src/interface/sitemanager.cpp:1102
+#: ../../locales/../src/interface/sitemanager.cpp:1322
 msgid "Normal"
 msgstr "Κανονικό"
 
@@ -3761,9 +3793,9 @@ msgstr ""
 "Δεν μπορούν όλα τα στοιχεία να ξαναμπούν σε σειρά αναμονής για εμφάνιση / "
 "επεξεργασία."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2032
+#: ../../locales/../src/interface/RemoteListView.cpp:2054
 msgid "Not connected to any server"
-msgstr "Καμία σύνδεση σε κανέναν εξυπηρετητή"
+msgstr "Δε συνδέθηκε με κανέναν εξυπηρετητή"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:644
 msgid "Not connected to any server."
@@ -3772,15 +3804,17 @@ msgstr "Δε συνδέθηκε με κανέναν εξυπηρετητή."
 #: ../../locales/../src/interface/Mainfrm.cpp:724
 msgid "Note that this feature is only supported using the FTP protocol."
 msgstr ""
-"Σημείωση ότι αυτό το χαρακτηριστικό υποστηρίζεται μόνο στο FTP πρωτόκολλο."
+"Σημείωση: Αυτό το χαρακτηριστικό υποστηρίζεται μόνο στο FTP πρωτόκολλο."
 
 #: resources.h:267
 msgid "Note: This only works with plain, unencrypted FTP connections."
-msgstr ""
+msgstr "Σημείωση: Λειτουργεί μόνο με απλές, μη κρυπτογραφημένες συνδέσεις."
 
 #: resources.h:538
 msgid "Note: Using a generic proxy forces passive mode on FTP connections."
 msgstr ""
+"Σημείωση: Με την χρήση ενός γενικού διαμεσολαβητή στις συνδέσεις FTP, αυτές "
+"αναγκάζονται να λειτουργούν σε παθητική κατάσταση."
 
 #: ../../locales/../src/interface/optionspage_connection.cpp:34
 msgid "Number of retries has to be between 0 and 99."
@@ -3810,7 +3844,7 @@ msgstr ""
 "Στις επόμενες σελίδες, θα ρυθμιστεί η κατάσταση μεταφοράς, καθώς και η "
 "κατάσταση επιστροφής αν είναι ενεργοποιημένη."
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:793
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:832
 msgid "Once"
 msgstr "Μία"
 
@@ -3819,6 +3853,8 @@ msgid ""
 "Only the versions of FileZilla and the operating system you are using will "
 "be submitted to the server."
 msgstr ""
+"Μόνο η εκδοσή του FileZilla και του λειτουργικού συστήματος που "
+"χρησιμοποιείτε θα υποβληθούν στον  εξυπηρετητή."
 
 #: resources.h:726 resources.h:727
 msgid "Open the Site Manager"
@@ -3843,7 +3879,7 @@ msgstr "Αποτυχία ανοίγματος"
 msgid "Opens the Site Manager"
 msgstr "Ανοίγει ο Διαχειριστής Τοποθεσιών"
 
-#: ../../locales/../src/interface/FileZilla.cpp:282
+#: ../../locales/../src/interface/FileZilla.cpp:281
 msgid "Operating system problem detected"
 msgstr "Εντοπίστηκε πρόβλημα λειτουργικού συστήματος"
 
@@ -3910,7 +3946,7 @@ msgstr "Πακέτο"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:2423
 msgid "Parameter not a valid URL"
-msgstr ""
+msgstr "Η παράμετρος δεν είναι έγκυρη URL"
 
 #: resources.h:110 resources.h:722
 msgid "Pass&word:"
@@ -3934,11 +3970,11 @@ msgstr "Η παθητική κατάσταση επιλέχθηκε ως προ�
 msgid "Password required"
 msgstr "Απαιτείται κωδικός πρόσβασης"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3012
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2225
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3013
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2264
 #, c-format
 msgid "Path cannot be constructed for directory %s and subdir %s"
-msgstr ""
+msgstr "Αδυναμία δημιουργίας διαδρομής για τον φάκελο %s και τον υποφάκελο %s"
 
 #: ../../locales/../src/interface/edithandler.cpp:925
 #: ../../locales/../src/interface/edithandler.cpp:1048
@@ -3984,8 +4020,9 @@ msgid ""
 "Please configure any firewalls and routers so that FileZilla can establish "
 "outgoing connection to arbitrary ports."
 msgstr ""
-"Παρακαλώ, ρυθμίστε ότι firewalls ή δρομολογητές έτσι ώστε το FileZilla να "
-"μπορεί να εδραιώσει εξωτερικές συνδέσεις σε αυθαίρετες θύρες."
+"Παρακαλώ, ρυθμίστε τα τοίχη προστασίας (firewalls) ή τους δρομολογητές "
+"(routers) έτσι ώστε το FileZilla να μπορεί να εδραιώσει εξωτερικές συνδέσεις "
+"σε αυθαίρετες θύρες."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:619
 msgid "Please disable settings like 'DMZ mode' or 'Game mode' on your router."
@@ -3998,8 +4035,9 @@ msgid ""
 "Please ensure you have a stable internet connection and check on http://"
 "filezilla-project.org/probe.php that the server is running."
 msgstr ""
-"Παρακαλώ, ελέγξτε ότι έχετε σταθερή σύνδεση στο διαδύκτιο και ελέγξτε στο "
-"http://filezilla-project.org/probe.php αν ο εξυπηρετητής λειτουργεί."
+"Παρακαλώ, ελέγξτε ότι έχετε σταθερή σύνδεση στο διαδύκτιο και ελέγξτε στην "
+"διεύθυνση \"http://filezilla-project.org/probe.php\" ότι ο εξυπηρετητής "
+"λειτουργεί."
 
 #: ../../locales/../src/interface/optionspage_dateformatting.cpp:70
 msgid "Please enter a custom date format."
@@ -4054,15 +4092,15 @@ msgstr ""
 msgid "Please enter a password for this server:"
 msgstr "Παρακαλώ, εισάγετε τον κωδικό γι' αυτόν τον εξυπηρετητή:"
 
-#: ../../locales/../src/interface/QueueView.cpp:2014
+#: ../../locales/../src/interface/QueueView.cpp:2013
 msgid ""
 "Please enter a path and executable to run.\n"
 "E.g. c:\\somePath\\file.exe under MS Windows or /somePath/file under Unix.\n"
 "You can also optionally specify program arguments."
 msgstr ""
-"Παρακαλώ, εισάγετε το μονοπάτι και το εκτελέσιμο προς εκτέλεση.\n"
+"Παρακαλώ, εισάγετε την διαδρομή και το προς εκτέλεση αρχείο.\n"
 "π.χ. c:\\somePath\\file.exe σε MS Windows ή /somePath/file σε Unix.\n"
-"Μπορείτε επίσης προαιρετικά να ορίσετε παραμέτρους του προγράμματος."
+"Μπορείτε επίσης, προαιρετικά να ορίσετε τις παραμέτρους του προγράμματος."
 
 #: ../../locales/../src/interface/optionspage_transfer.cpp:64
 msgid ""
@@ -4071,9 +4109,9 @@ msgstr ""
 "Παρακαλώ, εισάγετε ένα χρόνο διακοπής ανάμεσα σε 5 και 9999 δευτερόλεπτα ή 0 "
 "για να απενεργοποιήσετε τις διακοπές."
 
-#: ../../locales/../src/interface/filter.cpp:311
+#: ../../locales/../src/interface/filter.cpp:310
 msgid "Please enter a unique name for this filter set"
-msgstr "Παρακαλώ, εισάγετε ένα μοναδικό όνομα για αυτό το σετ φίλτρων"
+msgstr "Παρακαλώ, εισάγετε ένα μοναδικό όνομα για αυτό το όρισμα φίλτρων"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:182
 msgid "Please enter a valid portrange."
@@ -4101,12 +4139,12 @@ msgid ""
 "Please enter raw FTP command.\n"
 "Using raw ftp commands will clear the directory cache."
 msgstr ""
-"Παρακαλώ, εισάγετε μία raw εντολή FTP.\n"
-"Η χρήση raw ftp εντολών θα καθαρίσει την προσωρινή μνήμη φακέλων."
+"Παρακαλώ, εισάγετε μία ακατέργαστη εντολή FTP.\n"
+"Η χρήση ακατέργαστων εντολών ftp θα καθαρίσουν την προσωρινή μνήμη φακέλων."
 
 #: ../../locales/../src/interface/LocalListView.cpp:1184
 #: ../../locales/../src/interface/LocalTreeView.cpp:1297
-#: ../../locales/../src/interface/RemoteListView.cpp:1302
+#: ../../locales/../src/interface/RemoteListView.cpp:1324
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1209
 msgid "Please enter the name of the directory which should be created:"
 msgstr "Παρακαλώ, εισάγετε το όνομα του φακέλου που πρέπει να δημιουργηθεί:"
@@ -4143,9 +4181,11 @@ msgstr ""
 "και ελέγξτε αν έχετε πληκτρολογήσει σωστά την διεύθυνση του αναλυτή "
 "διευθύνσεων."
 
-#: ../../locales/../src/interface/FileZilla.cpp:221
+#: ../../locales/../src/interface/FileZilla.cpp:220
 msgid "Please make sure the requested locale is installed on your system."
 msgstr ""
+"Σιγουρευτείτε ότι η αιτούμενη τοπική προσαρμογή θα εγκατασταθεί στο σύστημα "
+"σας."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:572
 msgid ""
@@ -4153,7 +4193,7 @@ msgid ""
 "http://filezilla-project.org for details."
 msgstr ""
 "Παρακαλώ, ελέγξτε ότι τρέχετε την τελευταία έκδοση του FileZilla. "
-"Επισκευθείτε το http://filezilla-project.org για πληροφορίες"
+"Επισκευθείτε την διεύθυνση \"http://filezilla-project.org\" για πληροφορίες"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:590
 msgid ""
@@ -4162,10 +4202,10 @@ msgid ""
 "manual port forwarding. Don't run your router in the so called 'DMZ mode' or "
 "'game mode'."
 msgstr ""
-"Παρακαλώ, ελέγξτε ότι ο δρομολογητής σας χρησιμοποιεί το νεώτερο firmware. "
-"Επιπρόσθετα, ο δρομολογητής σας πρέπει να είναι σωστά ρυθμισμένος. Θα πρέπει "
-"να χρησιμοποιήσετε χειροκίνητη προώθηση θυρών. Μην λειτουργήσετε τον "
-"δρομολογητή σας σε καταστάσεις 'DMZ' ή 'game mode'"
+"Παρακαλώ, ελέγξτε ότι ο δρομολογητής (router) σας  χρησιμοποιεί το νεώτερο "
+"λογισμικό (firmware). Επιπρόσθετα, ο δρομολογητής σας πρέπει να είναι σωστά "
+"ρυθμισμένος. Θα πρέπει να χρησιμοποιήσετε χειροκίνητη προώθηση θυρών. Ο "
+"δρομολογητή δεν πρέπει να λειτουργεί σε καταστάσεις 'DMZ' ή 'game mode'."
 
 #: resources.h:687
 msgid ""
@@ -4174,25 +4214,29 @@ msgid ""
 "trojans or other malware. This might raise a false alarm you can safely "
 "discard."
 msgstr ""
-"Παρακαλώ, να σημειώσετε ότι το FileZilla δεν επηρεάζει την θύρα που επιλέγει "
-"ο εξυπηρετητής. Έτσι ο εξυπηρετητής μπορεί να επιλέξει μια θύρα που το "
-"firewall σας πιστεύει ότι χρησιμοποιείτε από κάποιο trojan ή άλλο κακόβουλο "
-"πρόγραμμα. Αυτό μπορεί να προκαλέσει λάθος συναγερμό που πρέπει να αγνοήσετε."
+"Παρακαλώ, να λάβετε υπόψιν σας ότι το FileZilla δεν επηρεάζει την θύρα που "
+"επιλέγει ο εξυπηρετητής. Έτσι ο εξυπηρετητής μπορεί να επιλέξει μια θύρα που "
+"το τοίχος προστασίας (firewall) πιστεύει ότι χρησιμοποιείτε από κάποιο "
+"trojan ή άλλο κακόβουλο πρόγραμμα. Αυτό μπορεί να προκαλέσει λάθος συναγερμό "
+"που πρέπει να αγνοήσετε."
 
 #: ../../locales/../src/interface/Mainfrm.cpp:778
 msgid ""
 "Please note that preserving timestamps on uploads on FTP, FTPS and FTPES "
 "servers only works if they support the MFMT command."
 msgstr ""
+"Σημείωση: Η διατήρηση των χρονικών σφραγίδων κατά τις αποστολές στους "
+"εξυπηρετητές FTP, FTPS και FTPES λειτουργεί μόνο εάν αυτοί υποστηρίζουν την "
+"εντολή MFMT."
 
 #: resources.h:189
 msgid ""
 "Please note that some servers might ban you if you try to reconnect too "
 "often or in too short intervals."
 msgstr ""
-"Παρακαλώ, σημειώστε ότι μερικοί εξυπηρετητές μπορεί να σας απαγορέψουν την "
-"πρόσβαση αν προσπαθείτε να επανασυνδεθείτε σε πολύ ανά πολύ μικρά χρονικά "
-"διαστήματα."
+"Παρακαλώ, να λάβετε υπόψιν σας ότι μερικοί εξυπηρετητές μπορεί να σας "
+"απαγορέψουν την πρόσβαση, αν προσπαθείτε να επανασυνδεθείτε σε τακτά και "
+"πολύ μικρά χρονικά διαστήματα."
 
 #: resources.h:213 resources.h:219
 #, no-c-format
@@ -4209,8 +4253,8 @@ msgid ""
 "in case you suddenly encounter problems with servers that did work "
 "previously."
 msgstr ""
-"Παρακαλώ, τρέξτε αυτό τον οδηγό ξανά αν αλλάξατε το δίκτυο σας ή σε "
-"περίπτωση που ξαφνικά υπάτχουν προβλήματα σε εξυπηρετητές που λειτουργούσαν "
+"Παρακαλώ, τρέξτε αυτό τον οδηγό ξανά, αν αλλάξατε το δίκτυο σας ή στη "
+"περίπτωση που ξαφνικά υπάρχουν προβλήματα με εξυπηρετητές που λειτουργούσαν "
 "παλαιότερα."
 
 #: resources.h:462
@@ -4255,8 +4299,8 @@ msgid ""
 msgstr ""
 "Παρακαλώ, ελέγξτε ότι ο δρομολογητής (router) σας χρησιμοποιεί το νεώτερο "
 "Λογισμικό (firmware). Επιπρόσθετα, ο δρομολογητής σας πρέπει να είναι σωστά "
-"ρυθμισμένος. Θα πρέπει να χρησιμοποιήσετε χειροκίνητη προώθηση θυρών. Μην "
-"λειτουργήσετε τον δρομολογητή σας σε καταστάσεις 'DMZ' ή 'game mode'"
+"ρυθμισμένος. Θα πρέπει να χρησιμοποιήσετε χειροκίνητη προώθηση θυρών. Ο "
+"δρομολογητή δεν πρέπει να λειτουργεί σε καταστάσεις 'DMZ' ή 'game mode'."
 
 #: resources.h:392
 msgid ""
@@ -4275,8 +4319,8 @@ msgstr ""
 "Παρακαλώ, επισκευθείτε το http://filezilla-project.org για να κατεβάσετε την "
 "πιο πρόσφατη έκδοση."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1516
-#: ../../locales/../src/interface/sitemanager.cpp:1686
+#: ../../locales/../src/interface/sitemanager.cpp:1515
+#: ../../locales/../src/interface/sitemanager.cpp:1685
 msgid "Predefined Sites"
 msgstr "Προκαθορισμένες Τοποθεσίες"
 
@@ -4288,7 +4332,7 @@ msgstr "Διατήρηση των χρονικών σφραγίδων στα α�
 msgid "Preview:"
 msgstr "Προεπισκόπηση:"
 
-#: ../../locales/../src/engine/tlssocket.cpp:817
+#: ../../locales/../src/engine/tlssocket.cpp:807
 msgid "Primary connection and data connection certificates don't match."
 msgstr ""
 "Η κύρια σύνδεση και τα πιστοποιητικά σύνδεσης δεδομένων δεν ταιριάζουν."
@@ -4318,40 +4362,40 @@ msgid "Process &Queue"
 msgstr "Επεξεργασία &Σειράς Αναμονής"
 
 #: resources.h:535
-#, fuzzy
 msgid "Proxy &port:"
-msgstr "Κόμβος διαμεσολαβητή:"
+msgstr "&Θύρα διαμεσολαβητή:"
 
 #: resources.h:265 resources.h:536
 msgid "Proxy &user:"
 msgstr "&Χρήστης διαμεσολαβητής:"
 
 #: ../../locales/../src/engine/proxy.cpp:398
-#, fuzzy
 msgid "Proxy authentication failed"
-msgstr "Αποτυχία πιστοποίησης."
+msgstr "Αποτυχία πιστοποίησης διαμεσολαβητή"
 
 #: ../../locales/../src/engine/transfersocket.cpp:136
 #: ../../locales/../src/engine/transfersocket.cpp:150
 #, c-format
 msgid "Proxy handshake failed: %s"
-msgstr ""
+msgstr "Απέτυχε η χειραψία με τον διαμεσολαβητή: %s"
 
 #: ../../locales/../src/engine/proxy.cpp:311
 #, c-format
 msgid "Proxy reply: %s"
-msgstr ""
+msgstr "Απάντηση διαμεσολαβητή: %s"
 
 #: ../../locales/../src/engine/proxy.cpp:441
 #, c-format
 msgid "Proxy request failed: %s"
-msgstr ""
+msgstr "Απέτυχε το αίτημα του διαμεσολαβητή: %s"
 
 #: ../../locales/../src/engine/proxy.cpp:463
 msgid "Proxy request failed: Unknown address type in CONNECT reply"
 msgstr ""
+"Το αίτημα του διαμεσολαβητή  απορρίφθηκε: Άγνωστος τύπος διεύθυνσης ως "
+"απάντηση κατά την σύνδεση  "
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4196
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4197
 msgid "Proxy set but proxy host or port invalid"
 msgstr "Μη έγκυρη θύρα διαμεσολαβητή"
 
@@ -4367,7 +4411,7 @@ msgstr "Αλγόριθμος δημοσίου κλειδιού:"
 msgid "Public permissions"
 msgstr "Δημόσια δικαιώματα"
 
-#: ../../locales/../src/interface/QueueView.cpp:2737
+#: ../../locales/../src/interface/QueueView.cpp:2736
 msgid "Queue has been fully processed"
 msgstr "Η σειρά αναμονής έχει υποβληθεί σε πλήρης επεξεργασία"
 
@@ -4392,7 +4436,7 @@ msgstr "Σειρά Αναμονής: %s%d bytes"
 msgid "Queue: empty"
 msgstr "Σειρά Αναμονής: κενή"
 
-#: ../../locales/../src/interface/QueueView.cpp:399
+#: ../../locales/../src/interface/QueueView.cpp:398
 msgid "Queued files"
 msgstr "Αρχεία σε σειρά αναμονής"
 
@@ -4406,7 +4450,7 @@ msgstr "&Δομή Απομακρυσμένου φακέλου"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:664
 msgid "Raw FTP command"
-msgstr "FTP εντολή"
+msgstr "Aκατέργαστη εντολή FTP "
 
 #: resources.h:278
 msgid "Re&ad"
@@ -4429,7 +4473,7 @@ msgid "Really cancel current operation?"
 msgstr "Ακύρωση τρέχουσας λειτουργίας;"
 
 #: ../../locales/../src/engine/local_filesys.cpp:122
-#: ../../locales/../src/interface/RemoteListView.cpp:1366
+#: ../../locales/../src/interface/RemoteListView.cpp:1388
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1042
 msgid "Really delete all selected files and/or directories?"
 msgstr "Διαγραφή όλων το επιλεγμένων αρχείων και/ή φακέλων;"
@@ -4438,7 +4482,7 @@ msgstr "Διαγραφή όλων το επιλεγμένων αρχείων κ�
 msgid "Reason"
 msgstr "Αιτία"
 
-#: ../../locales/../src/interface/QueueView.cpp:2745
+#: ../../locales/../src/interface/QueueView.cpp:2744
 msgid "Reboot now"
 msgstr "Επανεκκίνηση τώρα"
 
@@ -4446,9 +4490,9 @@ msgstr "Επανεκκίνηση τώρα"
 msgid "Rec&urse into subdirectories"
 msgstr "Επα&ναληπτικά στους υποφακέλους"
 
-#: ../../locales/../src/interface/netconfwizard.cpp:992
-#: ../../locales/../src/interface/netconfwizard.cpp:1001
-#: ../../locales/../src/interface/netconfwizard.cpp:1025
+#: ../../locales/../src/interface/netconfwizard.cpp:994
+#: ../../locales/../src/interface/netconfwizard.cpp:1003
+#: ../../locales/../src/interface/netconfwizard.cpp:1027
 msgid "Received data tainted"
 msgstr "Μολυσμένα ληφθέντα δεδομένα"
 
@@ -4469,7 +4513,7 @@ msgstr "Ρυθμίσεις επανασύνδεσης"
 msgid "Reconnects to the last used server"
 msgstr "Επανασύνδεση στον εξυπηρετητή που χρησιμοποιήθηκε την τελευταία φορά"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:629
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:627
 msgid "Redirection to invalid address"
 msgstr "Αναδρομολόγηση σε λάθος διεύθυνση"
 
@@ -4481,7 +4525,7 @@ msgstr "Ανανέωση των λιστών αρχείων και φακέλω�
 msgid "Remote"
 msgstr "Αφαίρεση"
 
-#: ../../locales/../src/engine/tlssocket.cpp:769
+#: ../../locales/../src/engine/tlssocket.cpp:759
 msgid "Remote certificate not trusted."
 msgstr "Απομακρυσμένο πιστοποιητικό μη εμπιστεύσιμο."
 
@@ -4521,8 +4565,8 @@ msgstr "Μετονομασία επιλεγμένου φακέλου"
 msgid "Rename selected files and directories"
 msgstr "Μετονομασία επιλεγμένων αρχείων και φακέλων"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3348
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2427
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3349
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2466
 #, c-format
 msgid "Renaming '%s' to '%s'"
 msgstr "Μετονομασία του '%s' σε '%s'"
@@ -4536,7 +4580,7 @@ msgid "Reset and requeue selected files"
 msgstr "Επανεκκίνησε και ξαναβάλε σε σειρά αναμονής τα επιλεγμένα αρχεία."
 
 #: ../../locales/../src/engine/ControlSocket.cpp:1107
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:426
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:424
 #, c-format
 msgid "Resolving address of %s"
 msgstr "Ανάλυση διεύθυνσης για %s"
@@ -4560,12 +4604,12 @@ msgstr ""
 "εξυπηρετητής χρησιμοποιεί διαφορετική μορφή τερματισμού γραμμής από τον "
 "πελάτη."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1205
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:858
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1206
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:897
 msgid "Retrieving directory listing..."
 msgstr "Ανάκτηση λίστας φακέλου..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3733
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3734
 #: ../../locales/../src/interface/netconfwizard.cpp:703
 #, c-format
 msgid "Retrieving external IP address from %s"
@@ -4591,11 +4635,11 @@ msgstr "SFTP"
 msgid "Save settings?"
 msgstr "Αποθήκευση ρυθμίσεων;"
 
-#: ../../locales/../src/interface/QueueView.cpp:1615
+#: ../../locales/../src/interface/QueueView.cpp:1614
 msgid "Scanning for files to add to queue"
 msgstr "Ανίχνευση αρχείων για πρόσθεση στην ουρά αναμονής"
 
-#: ../../locales/../src/interface/QueueView.cpp:1617
+#: ../../locales/../src/interface/QueueView.cpp:1616
 msgid "Scanning for files to upload"
 msgstr "Ανίχνευση αρχείων προς αποστολή"
 
@@ -4709,19 +4753,19 @@ msgstr "Ο επιλεγμένος επεξεργαστής δεν υπάρχει
 msgid "Selected file already being edited"
 msgstr "Το επιλεγμένο αρχείο ήδη επεξεργάζεται"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2376
+#: ../../locales/../src/interface/RemoteListView.cpp:2398
 msgid "Selected file already opened."
 msgstr "Το επιλεγμένο αρχείο είναι ήδη ανοιχτό."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2345
+#: ../../locales/../src/interface/RemoteListView.cpp:2367
 msgid ""
 "Selected file cannot be opened.\n"
 "No default editor has been set or filetype association is missing or "
 "incorrect."
 msgstr ""
 "Το επιλεγμένο αρχείο δεν μπορεί να ανοιχτεί.\n"
-"Δεν έχει οριστεί προκαθορισμένος επεξεργαστής ή λείπει η σχέση τύπου αρχείου "
-"ή είναι λάθος."
+"Δεν έχει οριστεί προκαθορισμένος επεξεργαστής ή λείπει η συσχέτιση με τον "
+"τύπο του αρχείου ή είναι λάθος."
 
 #: ../../locales/../src/interface/optionspage_edit.cpp:118
 msgid "Selected file does not exist."
@@ -4731,11 +4775,11 @@ msgstr "Το επιλεγμένο αρχείο δεν υπάρχει."
 msgid "Selected file is already loaded"
 msgstr "Το επιλεγμένο αρχείο έχει ήδη φορτωθεί"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2404
+#: ../../locales/../src/interface/RemoteListView.cpp:2426
 msgid "Selected file still being edited"
 msgstr "Το επιλεγμένο αρχείο ακόμα επεξεργάζεται"
 
-#: ../../locales/../src/interface/filter.cpp:278
+#: ../../locales/../src/interface/filter.cpp:277
 msgid "Selected filter only works for local files."
 msgstr "Το επιλεγμένο φίλτρο λειτουργεί μόνο για τα τοπικά αρχεία."
 
@@ -4745,15 +4789,17 @@ msgstr "Η επιλεγμένη θύρα συνήθως χρησιμοποιεί
 
 #: resources.h:495
 msgid "Send FTP &keep-alive commands"
-msgstr ""
+msgstr "Αποστολή εντολών Διατήρηση-Ενεργό FTP"
 
 #: resources.h:578
 msgid "Send custom command to the server otherwise not available"
-msgstr "Στείλε προσαρμοσμένη εντολή στον εξυπηρετητή αλλιώς μη διαθέσιμο"
-
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4277
-msgid "Sending keep-alive command"
 msgstr ""
+"Αποστολή προσαρμοσμένης εντολής στον εξυπηρετητή, σε διαφορετική περίπτωση "
+"δεν είναι διαθέσιμος"
+
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4278
+msgid "Sending keep-alive command"
+msgstr "Αποστολή εντολής Διατήρηση-Ενεργό "
 
 #: resources.h:8 resources.h:31
 msgid "Serial number:"
@@ -4763,12 +4809,12 @@ msgstr "Σειριακός Αριθμός:"
 msgid "Server / Local file"
 msgstr "Εξυπηρετητής / Τοπικό αρχείο"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4132
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4133
 #, c-format
 msgid "Server does not support resume of files > %d GB."
 msgstr "Ο εξυπηρετητής δεν υποστηρίζει την επαναφορά αρχείων > %d GB."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4128
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4129
 #, c-format
 msgid ""
 "Server does not support resume of files > %d GB. End transfer since "
@@ -4777,15 +4823,15 @@ msgstr ""
 "Ο εξυπηρετητής δεν υποστηρίζει την επαναφορά αρχείων > %d GB. Τερματισμός "
 "μεταφοράς εφόσον το μέγεθος ταιριάζει."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2399
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2400
 msgid "Server does not support resume of files > 2GB."
 msgstr "Ο εξυπηρετητής δεν υποστηρίζει την επαναφορά αρχείων > 2GB."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2394
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2395
 msgid "Server does not support resume of files > 4GB."
 msgstr "Ο εξυπηρετητής δεν υποστηρίζει την επαναφορά αρχείων > 4GB."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4143
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4144
 #, c-format
 msgid ""
 "Server may not support resume of files > %d GB. End transfer since filesizes "
@@ -4802,11 +4848,13 @@ msgstr ""
 "Ο εξυπηρετητής απαιτεί έναν λογαριασμό. Ορίστε έναν λογαριασμό "
 "χρησιμοποιώντας τον Διαχειριστή Τοποθεσιών"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:582
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:621
 msgid ""
 "Server sent an additional login prompt. You need to use the interactive "
 "login type."
 msgstr ""
+"Ο εξυπηρετητής  υπαγορεύει τη σύνδεση. Πρέπει να χρησιμοποιήσετε το "
+"διαλογικό τύπο σύνδεσης."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:403
 #: ../../locales/../src/interface/netconfwizard.cpp:410
@@ -4820,13 +4868,13 @@ msgstr ""
 msgid "Server sent invalid reply."
 msgstr "Ο εξυπηρετητής έστειλε λάθος απάντηση."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3681
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3682
 msgid "Server sent passive reply with unroutable address. Passive mode failed."
 msgstr ""
 "Ο εξυπηρετητής απέστειλε παθητική απάντηση σε μη-δρομολογήσιμη διεύθυνση. "
 "Απέτυχε η παθητική μέθοδος λειτουργίας."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3675
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3676
 msgid ""
 "Server sent passive reply with unroutable address. Using server address "
 "instead."
@@ -4836,11 +4884,11 @@ msgstr ""
 
 #: resources.h:519
 msgid "Server to client MAC:"
-msgstr "Φυσική διεύθυνση (MAC) εξυπηρετητή στο πελάτη:"
+msgstr "Εξυπηρετητής προς Φυσική διεύθυνση (MAC) πελάτη:"
 
 #: resources.h:517
 msgid "Server to client cipher:"
-msgstr "Αποτύπωμα εξυπηρετητή προς πελάτη:"
+msgstr "Εξυπηρετητής προς αποτύπωμα πελάτη:"
 
 #: resources.h:102 resources.h:114
 msgid "Server&type:"
@@ -4854,15 +4902,15 @@ msgstr "Λεπτομέρειες συνεδρίας"
 msgid "Set &Priority"
 msgstr "Ορισμός &Προτεραιότητας"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3506
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2305
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3507
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2344
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
 msgstr "Ορισμός δικαιωμάτων του '%s' στο '%s'"
 
 #: ../../locales/../src/engine/transfersocket.cpp:864
 msgid "SetSocketBufferSize called without socket"
-msgstr ""
+msgstr "SetSocketBufferSize κλήθηκε χωρίς όνομα υποδοχής"
 
 #: resources.h:150
 msgid "Settings"
@@ -4870,7 +4918,7 @@ msgstr "Ρυθμίσεις"
 
 #: resources.h:238
 msgid "Show &raw directory listing"
-msgstr "Εμφάνιση &raw λίστας φακέλου"
+msgstr "Εμφάνιση &ακατέργαστης λίστας φακέλου"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:2244
 msgid "Show both directory trees and continue comparing?"
@@ -4881,7 +4929,7 @@ msgstr ""
 msgid "Shows this help dialog"
 msgstr "Εμφάνιση διαλόγου βοήθειας"
 
-#: ../../locales/../src/interface/QueueView.cpp:2747
+#: ../../locales/../src/interface/QueueView.cpp:2746
 msgid "Shutdown now"
 msgstr "Τερματισμός συστήματος"
 
@@ -4893,17 +4941,17 @@ msgstr "Εγγραφές &Διαχειριστή Τοποθεσιών"
 msgid "Site Manager"
 msgstr "Διαχειριστής Τοποθεσιών"
 
-#: ../../locales/../src/interface/sitemanager.cpp:270
+#: ../../locales/../src/interface/sitemanager.cpp:269
 msgid "Site Manager already open"
 msgstr "Ο Διαχειριστής Τοποθεσιών είναι ήδη ανοικτός"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2156
-#: ../../locales/../src/interface/sitemanager.cpp:2174
-#: ../../locales/../src/interface/sitemanager.cpp:2185
+#: ../../locales/../src/interface/sitemanager.cpp:2155
+#: ../../locales/../src/interface/sitemanager.cpp:2173
+#: ../../locales/../src/interface/sitemanager.cpp:2184
 msgid "Site does not exist."
 msgstr "Η επιλεγμένη τοποθεσία δεν υπάρχει."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2136
+#: ../../locales/../src/interface/sitemanager.cpp:2135
 msgid "Site path has to begin with 0 or 1."
 msgstr "Η διαδρομή τοποθεσίας πρέπει να αρχίζει με 0 ή 1."
 
@@ -4970,7 +5018,8 @@ msgstr "&Κατάσταση ταξινόμησης:"
 
 #: ../../locales/../src/interface/RemoteTreeView.cpp:92
 msgid "Source and path of the drop operation are identical"
-msgstr "Ο προορισμός και το μονοπάτι της λειτουργίας καταστροφής είναι όμοιοι"
+msgstr ""
+"Η προέλευση και η διαδρομή της ενέργειας Σύρσιμο & Ελευθέρωση είναι ταυτόσημη"
 
 #: ../../locales/../src/interface/optionspage_connection_sftp.cpp:312
 msgid "Source and target file may not be the same"
@@ -4992,14 +5041,14 @@ msgstr "Όρια ταχυτήτων"
 msgid "Start with opened Site Manager"
 msgstr "Εκκίνηση με άνοιγμα του Διαχειριστή Τοποθεσιών"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2076
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1505
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2077
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1544
 #, c-format
 msgid "Starting download of %s"
 msgstr "Εκκίνηση λήψης του %s"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2080
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1509
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2081
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1548
 #, c-format
 msgid "Starting upload of %s"
 msgstr "Εκκίνηση αποστολής του %s"
@@ -5009,7 +5058,7 @@ msgid "State:"
 msgstr "Κατάσταση:"
 
 #: ../../locales/../src/interface/edithandler.cpp:901
-#: ../../locales/../src/interface/QueueView.cpp:425
+#: ../../locales/../src/interface/QueueView.cpp:424
 msgid "Status"
 msgstr "Κατάσταση"
 
@@ -5072,7 +5121,7 @@ msgstr "Σύνδεση TLS/SSL εδραιώθηκε."
 
 #: ../../locales/../src/engine/proxy.cpp:428
 msgid "TTL expired"
-msgstr ""
+msgstr "Έληξε TTL"
 
 #: resources.h:69
 msgid "Target file already exists"
@@ -5082,7 +5131,7 @@ msgstr "Το αρχείο υπάρχει ήδη"
 msgid "Target file:"
 msgstr "Απομακρυσμένο αρχείο:"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1600
+#: ../../locales/../src/interface/RemoteListView.cpp:1622
 msgid "Target filename already exists, really continue?"
 msgstr "Το όνομα του αρχείου υπάρχει ήδη, θέλετε να συνεχίσετε;"
 
@@ -5090,11 +5139,11 @@ msgstr "Το όνομα του αρχείου υπάρχει ήδη, θέλετ�
 msgid "Test results"
 msgstr "Αποτελέσματα δοκιμής"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4149
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4150
 msgid "Testing resume capabilities of server"
 msgstr "Δοκιμή δυνατότητας επαναφοράς του εξυπηρετητή"
 
-#: ../../locales/../src/interface/sitemanager.cpp:269
+#: ../../locales/../src/interface/sitemanager.cpp:268
 msgid ""
 "The Site Manager is opened in another instance of FileZilla 3.\n"
 "Do you want to continue? Any changes made in the Site Manager won't be saved "
@@ -5123,7 +5172,7 @@ msgstr "Η σύνδεση με κρυπτογράφηση. Κάντε κλικ �
 
 #: ../../locales/../src/interface/optionspage_ftpproxy.cpp:89
 msgid "The custom login sequence cannot be empty."
-msgstr ""
+msgstr "Η Προσαρμοσμένη ακολουθία σύνδεσης δεν πρέπει να είναι κενή."
 
 #: ../../locales/../src/interface/filteredit.cpp:477
 #: ../../locales/../src/interface/filteredit.cpp:544
@@ -5158,7 +5207,7 @@ msgid ""
 "The file '%s' could not be opened:\n"
 "No program has been associated on your system with this file type."
 msgstr ""
-"Το αρχείο '%s'  δεν μπορεί ναανοιχθεί::\n"
+" Το αρχείο '%s'  δεν μπορεί ναανοιχθεί:\n"
 "Κανένα πρόγραμμα δεν έχει συσχετιστεί με αυτόν τον τύπο αρχείου."
 
 #: ../../locales/../src/interface/LocalListView.cpp:2056
@@ -5168,7 +5217,7 @@ msgid ""
 "The file '%s' could not be opened:\n"
 "The associated command failed"
 msgstr ""
-"Το αρχείο '%s'  δεν μπορεί ναανοιχθεί::\n"
+"Το αρχείο '%s'  δεν μπορεί ναανοιχθεί:\n"
 "Απέτυχε η εντολή συσχέτισης"
 
 #: ../../locales/../src/interface/optionspage_connection_sftp.cpp:265
@@ -5191,6 +5240,8 @@ msgid ""
 "The file '%s' is not in a format supported by FileZilla.\n"
 "Would you like to convert it into a supported format?"
 msgstr ""
+"Το FileZilla δεν υποστηρίζει την  διαμόρφωση του αρχείου '%s' .\n"
+"Να τροποποιηθεί σε  μία υποστηριζόμενη από την εφαρμογή διαμόρφωση;"
 
 #: ../../locales/../src/interface/optionspage_connection_sftp.cpp:268
 #, c-format
@@ -5278,14 +5329,14 @@ msgstr ""
 msgid "The selected file is already being edited:"
 msgstr "Το επιλεγμένο αρχείο ήδη επεξεργάζεται:"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2404
+#: ../../locales/../src/interface/RemoteListView.cpp:2426
 msgid ""
 "The selected file is still opened in some other program, please close it."
 msgstr ""
 "Το επιλεγμένο αρχείο είναι ήδη ανοιγμένο σε κάποιο άλλο πρόγραμμα, "
 "παρακαλούμε κλείστε το."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2350
+#: ../../locales/../src/interface/RemoteListView.cpp:2372
 msgid ""
 "The selected file would be executed directly.\n"
 "This can be dangerous and damage your system.\n"
@@ -5302,8 +5353,8 @@ msgstr "Ο εξυπηρετητής απέστειλε μία μη-κατηγο�
 #: resources.h:130
 msgid "The server uses following charset encoding for filenames:"
 msgstr ""
-"Ο εξυπηρετητής χρησιμοποιεί το ακόλουθο σετ χαρακτήρων για τα ονόματα "
-"αρχείων:"
+"Ο εξυπηρετητής χρησιμοποιεί την ακόλουθη κωδικοποίηση χαρακτήρων για τα "
+"ονόματα αρχείων:"
 
 #: resources.h:2
 msgid ""
@@ -5321,20 +5372,21 @@ msgid ""
 "If the host key change was not expected, please contact the server "
 "administrator."
 msgstr ""
-"Το κλειδί κόμβου του εξυπηρετητή δεν ταιριάζει με το κλειδί που "
-"αποθηκεύτηκε. Αυτό σημαίνει ότι είτε ο διαχειριστής άλλαξε το κλειδί κόμβου, "
-"ή προσπαθείτε να συνδεθείτε σε έναν άλλον υπολογιστή προσποιούμενοι τον "
+"Το κλειδί Κόμβου του εξυπηρετητή δεν ταιριάζει με το κλειδί που "
+"αποθηκεύτηκε. Αυτό σημαίνει ότι είτε ο διαχειριστής άλλαξε το κλειδί, ή "
+"προσπαθείτε να συνδεθείτε σε έναν άλλον υπολογιστή, προσποιούμενοι τον "
 "εξυπηρετητή.\n"
 "Αν η αλλαγή του κλειδιού δεν ήταν αναμενόμενη, παρακαλούμε επικοινωνήστε με "
-"τον διαχειριστή συστήματος."
+"τον διαχειριστή του συστήματος."
 
 #: resources.h:306
 msgid ""
 "The server's host key is not cached in the registry. You have no guarantee "
 "that the server is the computer you think it is."
 msgstr ""
-"Το κλειδί κόμβου του εξυπηρετητή αποθηκεύτηκε στην registry. Δεν υπάρχει "
-"εγγύηση ότι ο εξυπηρετητής είναι ο υπολογιστής που πιστέυετε ότι είναι."
+"Το κλειδί κόμβου του εξυπηρετητή αποθηκεύτηκε στο μητρώο (registry). Δεν "
+"υπάρχει εγγύηση ότι ο εξυπηρετητής είναι ο υπολογιστής που πιστέυετε ότι "
+"είναι."
 
 #: ../../locales/../src/interface/import.cpp:77
 msgid ""
@@ -5344,11 +5396,11 @@ msgstr ""
 "Οι ρυθμίσεις έχουν εισαχθεί. Επανεκκινήστε το FileZilla για να εκτελεστούν "
 "οι ρυθμίσεις."
 
-#: ../../locales/../src/interface/QueueView.cpp:2735
+#: ../../locales/../src/interface/QueueView.cpp:2734
 msgid "The system will soon reboot unless you click cancel."
 msgstr "Το σύστημα θα επανεκκίνηθεί, εκτός αν ακυρώσετε την ενέργεια αυτή."
 
-#: ../../locales/../src/interface/QueueView.cpp:2733
+#: ../../locales/../src/interface/QueueView.cpp:2732
 msgid "The system will soon shutdown unless you click cancel."
 msgstr ""
 "Το σύστημα θα τερματίσει την λειτουργία του, εκτός αν ακυρώσετε την ενέργεια "
@@ -5371,7 +5423,7 @@ msgstr ""
 msgid "Themes"
 msgstr "Θέματα"
 
-#: ../../locales/../src/interface/filter.cpp:353
+#: ../../locales/../src/interface/filter.cpp:352
 msgid "This filter set cannot be removed."
 msgstr "Τα ορίσματα των φίλτρων δεν μπορούν να απομακρυνθούν."
 
@@ -5399,18 +5451,20 @@ msgstr "Μορφοποίηση ώρας"
 msgid "Time&out in seconds:"
 msgstr "Διακ&οπή σε δευτερόλεπτα:"
 
-#: resources.h:56 ../../locales/../src/interface/QueueView.cpp:920
-#: ../../locales/../src/interface/QueueView.cpp:958
+#: resources.h:56 ../../locales/../src/interface/QueueView.cpp:919
+#: ../../locales/../src/interface/QueueView.cpp:957
 msgid "Timeout"
 msgstr "Διακοπή"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1534
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:974
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1535
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1013
 #, c-format
 msgid ""
 "Timezone offsets: Server: %d seconds. Local: %d seconds. Difference: %d "
 "seconds."
 msgstr ""
+"Απόκλιση χρονικής ζώνης: Εξυπηρετητής: %d δευτερόλεπτα. Τοπική: %d "
+"δευτερόλεπτα. Διαφορά: %d δευτερόλεπτα. "
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:134
 msgid "Title:"
@@ -5433,40 +5487,35 @@ msgid ""
 "To support public key authentication, FileZilla needs to know the private "
 "keys to use."
 msgstr ""
+"Για να υποστηρίξει το FileZilla την πιστοποίηση του δημόσιου κλειδιού, "
+"πρέπει να γνωρίζει το ιδιωτικό κλειδί του χρήστη."
 
 #: resources.h:738 resources.h:739
 msgid "Toggles processing of the transfer queue"
-msgstr ""
-"Πραγματοποιεί εναλλαγές σχετικές με την επεξεργασία της σειράς αναμονής "
-"μεταφορών"
+msgstr "Εναλλαγές σχετικές με την επεξεργασία της σειράς αναμονής μεταφορών"
 
 #: resources.h:730 resources.h:731
 msgid "Toggles the display of the local directory tree"
-msgstr ""
-"Πραγματοποιεί εναλλαγές σχετικές με την εμφάνιση της δομής των τοπικών "
-"φακέλων"
+msgstr "Εναλλαγές σχετικές με την εμφάνιση της δομής των τοπικών φακέλων"
 
 #: resources.h:728 resources.h:729
 msgid "Toggles the display of the message log"
-msgstr "Πραγματοποιεί εναλλαγές σχετικές με την εμφάνιση του Αρχείο συμβάντων"
+msgstr "Εναλλαγές σχετικές με την εμφάνιση του Αρχείο συμβάντων"
 
 #: resources.h:732 resources.h:733
 msgid "Toggles the display of the remote directory tree"
 msgstr ""
-"Πραγματοποιεί εναλλαγές σχετικές με την εμφάνιση της δομής των "
-"απομακρυσμένων φακέλων"
+"Εναλλαγές σχετικές με την εμφάνιση της δομής των απομακρυσμένων φακέλων"
 
 #: resources.h:734 resources.h:735
 msgid "Toggles the display of the transfer queue"
-msgstr ""
-"Πραγματοποιεί εναλλαγές σχετικές με την εμφάνιση της σειράς αναμονής "
-"μεταφορών"
+msgstr "Εναλλαγές σχετικές με την εμφάνιση της σειράς αναμονής μεταφορών"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:536
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:534
 msgid "Too long header line"
 msgstr "Πολύ μεγάλη γραμμή κεφαλίδας"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:597
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:595
 msgid "Too many redirects"
 msgstr "Πάρα πολλές αναδρομολογήσεις"
 
@@ -5495,7 +5544,7 @@ msgstr "Ρυθμίσεις μεταφοράς"
 msgid "Transferred data got tainted."
 msgstr "Τα δεδομένα που μεταφέρθηκαν μολύνθηκαν."
 
-#: ../../locales/../src/interface/QueueView.cpp:1295
+#: ../../locales/../src/interface/QueueView.cpp:1294
 #: ../../locales/../src/interface/statuslinectrl.cpp:198
 msgid "Transferring"
 msgstr "Μεταφορά"
@@ -5512,11 +5561,11 @@ msgstr "Χειρισμός των αρχείων &χωρίς επέκταση ω
 msgid "Treat the &following filetypes as ASCII files:"
 msgstr "Χειρισμός των &παρακάτω τύπων αρχείων ως ASCII αρχεία:"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:780
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:819
 msgid "Trust changed Hostkey: "
 msgstr "Εμπιστεύσου το αλλαγμένο ΚλειδίΚόμβου:"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:778
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:817
 msgid "Trust new Hostkey: "
 msgstr "Εμπιστεύσου το νέο ΚλειδίΚόμβου:"
 
@@ -5541,9 +5590,8 @@ msgid "Type of FTP Proxy:"
 msgstr "Τύπος του FTP διαμεσολαβητή:"
 
 #: resources.h:530
-#, fuzzy
 msgid "Type of generic proxy:"
-msgstr "Τύπος του FTP διαμεσολαβητή:"
+msgstr "Τύπος του γενικού διαμεσολαβητή:"
 
 #: resources.h:485
 msgid "U&pload"
@@ -5563,12 +5611,12 @@ msgstr "Χ&ρήση προκαθορισμένων από το σύστημα"
 
 #: resources.h:253
 msgid "USER@&HOST"
-msgstr ""
+msgstr "ΧΡΗΣΤΗΣ@&ΚΟΜΒΟΣ"
 
 #: ../../locales/../src/engine/proxy.cpp:437
 #, c-format
 msgid "Unassigned error code %d"
-msgstr ""
+msgstr "Απροσδιόριστος ο κωδικός σφάλματος %d"
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:133
 msgid "Unit:"
@@ -5587,7 +5635,7 @@ msgstr ""
 #: ../../locales/../src/engine/proxy.cpp:367
 #, c-format
 msgid "Unknown SOCKS protocol version: %d"
-msgstr ""
+msgstr "Άγνωστη έκδοση SOCKS πρωτοκόλλου: %d"
 
 #: resources.h:1
 msgid "Unknown certificate"
@@ -5614,7 +5662,7 @@ msgstr ""
 "Εκτός κι αν φτιαχτεί αυτό το πρόβλημα, η ενεργή κατάσταση του FTP δεν μπορεί "
 "να χρησιμοποιηθεί και θα χρησιμοποιηθεί η παθητική."
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:581
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:579
 msgid "Unsupported redirect"
 msgstr "Μη υποστηριζόμενη αναδρομολογήση"
 
@@ -5678,7 +5726,7 @@ msgstr "Απεσταλμένα"
 
 #: resources.h:134
 msgid "Use &custom charset"
-msgstr "Χρήση &προσαρμοσμένου σετ χαρακτήρων"
+msgstr "Χρήση &προσαρμοσμένης κωδικοποίησης χαρακτήρων"
 
 #: resources.h:397
 msgid "Use &default"
@@ -5729,10 +5777,10 @@ msgstr "Χρήστης:"
 #: resources.h:132
 msgid "Uses UTF-8 if the server supports it, else use local charset."
 msgstr ""
-"Χρήση UTF-8 αν το υποστηρίζει ο εξυπηρετητής, αλλιώς χρήση τοπικού σετ "
-"χαρακτήρων."
+"Κάντε χρήση της κωδικοποίησης χαρακτήρων UTF-8, αν την υποστηρίζει ο "
+"εξυπηρετητής, αλλιώς κάντε χρήση της τοπικής κωδικοποίησης χαρακτήρων."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4201
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4202
 #, c-format
 msgid "Using proxy %s"
 msgstr "Χρήση του διαμεσολαβητή %s"
@@ -5741,8 +5789,8 @@ msgstr "Χρήση του διαμεσολαβητή %s"
 msgid ""
 "Using the wrong charset can result in filenames not displaying properly."
 msgstr ""
-"Η χρήση λανθασμένου σετ χαρακτήρων μπορεί να επιφέρει κακή εμφάνιση των "
-"ονομάτων των αρχείων."
+"Η χρήση λανθασμένης κωδικοποίησης χαρακτήρων μπορεί να επιφέρει κακή "
+"εμφάνιση των ονομάτων των αρχείων."
 
 #: resources.h:375
 msgid "Using this wizard you can check for available updates to FileZilla."
@@ -5761,8 +5809,10 @@ msgstr "Έγκυρο σε:"
 #: ../../locales/../src/interface/cmdline.cpp:12
 msgid "Verbose log messages from wxWidgets"
 msgstr ""
+"Περιφραστικά μηνύματα καταγραφής από τα wxWidgets (γραφικά συστατικά μορφής "
+"wx)"
 
-#: ../../locales/../src/engine/tlssocket.cpp:947
+#: ../../locales/../src/engine/tlssocket.cpp:937
 msgid "Verifying certificate..."
 msgstr "Επικύρωση πιστοποιητικού..."
 
@@ -5770,7 +5820,7 @@ msgstr "Επικύρωση πιστοποιητικού..."
 msgid "Very high"
 msgstr "Πολύ υψηλό"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1308
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1309
 msgid "View hidden option set, but unsupported by server"
 msgstr ""
 "Εμφάνιση κρυφών ενεργοποιήθηκε, αλλά δεν υποστηρίζεται από τον εξυπηρετητή"
@@ -5783,15 +5833,15 @@ msgstr "Ορατές στήλες"
 msgid "W&rite"
 msgstr "Ε&γγραφή"
 
-#: ../../locales/../src/interface/QueueView.cpp:1574
+#: ../../locales/../src/interface/QueueView.cpp:1573
 msgid "Waiting"
 msgstr "Αναμονή"
 
-#: ../../locales/../src/interface/QueueView.cpp:1224
+#: ../../locales/../src/interface/QueueView.cpp:1223
 msgid "Waiting for browsing connection"
 msgstr "Αναμονή για σύνδεση αναζήτησης"
 
-#: ../../locales/../src/interface/QueueView.cpp:1245
+#: ../../locales/../src/interface/QueueView.cpp:1244
 msgid "Waiting for password"
 msgstr "Αναμονή για κωδικό"
 
@@ -5803,7 +5853,7 @@ msgstr "Αναμονή για ακύρωση της μεταφοράς"
 msgid "Waiting to retry..."
 msgstr "Αναμονή για νέα προσπάθεια..."
 
-#: ../../locales/../src/interface/FileZilla.cpp:273
+#: ../../locales/../src/interface/FileZilla.cpp:272
 msgid ""
 "Warning!\n"
 "\n"
@@ -5831,7 +5881,7 @@ msgstr ""
 "kb/931130.\n"
 "Το FileZilla θα τερματίζει σε μεγάλες μεταφορές."
 
-#: ../../locales/../src/interface/netconfwizard.cpp:960
+#: ../../locales/../src/interface/netconfwizard.cpp:962
 msgid "Warning, ignoring data connection from wrong IP."
 msgstr "Προσοχή, αδιαφορία σύνδεσης δεδομένων από λάθος IP."
 
@@ -5856,7 +5906,7 @@ msgstr "Προσοχή: Πιθανή παραβίαση ασφαλείας:"
 
 #: resources.h:385
 msgid "What's new:"
-msgstr ""
+msgstr "Ενημερώσεις:"
 
 #: resources.h:170
 msgid "Widescreen"
@@ -5871,11 +5921,11 @@ msgstr "Εγ&γραφή"
 msgid "Wrong external IP address"
 msgstr "Λάθος εξωτερική IP διεύθυνση"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:738
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:736
 msgid "Wrong lineendings"
 msgstr "Λάθος τερματισμοί γραμμών"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:791
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:830
 msgid "Yes"
 msgstr "Ναι"
 
@@ -5897,13 +5947,13 @@ msgstr ""
 
 #: ../../locales/../src/interface/import.cpp:29
 msgid "You cannot import settings from FileZilla's own settings directory."
-msgstr ""
+msgstr "Αδυναμία εισαγωγής ρυθμίσεων από το FileZilla στον φάκελο Ρυθμίσεις."
 
 #: ../../locales/../src/interface/asyncrequestqueue.cpp:241
 msgid "You did not enter a new name for the file. Overwrite the file instead?"
 msgstr "Δεν δώσατε νέο όνομα στο αρχείο. Αντικατάσταση του αρχείου;"
 
-#: ../../locales/../src/interface/sitemanager.cpp:819
+#: ../../locales/../src/interface/sitemanager.cpp:818
 msgid "You have to enter a hostname."
 msgstr "Πρέπει να εισάγετε ένα όνομα κόμβου."
 
@@ -5912,11 +5962,11 @@ msgstr "Πρέπει να εισάγετε ένα όνομα κόμβου."
 msgid "You have to enter a valid IP address."
 msgstr "Πρέπει να εισάγετε μία έγκυση IP διεύθυνση."
 
-#: ../../locales/../src/interface/sitemanager.cpp:880
+#: ../../locales/../src/interface/sitemanager.cpp:879
 msgid "You have to enter an account name"
 msgstr "Πρέπει να εισάγετε ένα όνομα λογαριασμού"
 
-#: ../../locales/../src/interface/sitemanager.cpp:871
+#: ../../locales/../src/interface/sitemanager.cpp:870
 msgid "You have to specify a user name"
 msgstr "Πρέπει να ορίσετε ένα όνομα χρήστη"
 
@@ -5934,9 +5984,8 @@ msgid "You need to enter a proxy host."
 msgstr "Πρέπει να εισάγετε έναν κόμβο διαμεσολαβητή."
 
 #: ../../locales/../src/interface/optionspage_proxy.cpp:75
-#, fuzzy
 msgid "You need to enter a proxy port in the range from 1 to 65535"
-msgstr "Πρέπει να εισάγετε έναν κόμβο διαμεσολαβητή."
+msgstr "Απαιτείται η εισαγωγή θήρας διαμεσολαβητή, με εύρος από 1 έως 65535"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:565
 msgid ""
@@ -5987,8 +6036,11 @@ msgid ""
 "Please make sure this executable exists in the same directory as the main "
 "FileZilla executable."
 msgstr ""
+"Αδυναμία εκκίνησης του fzputtygen.\n"
+"Σιγουρευτείτε ότι το εκτελέσιμο αρχείο συνυπάρχει στον ίδιο φάκελο με το "
+"κύριο εκτελέσιμο αρχείο του FileZilla."
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1430
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1469
 msgid "fzsftp could not be started"
 msgstr "Το fzsftp δεν μπόρεσε να εκκινήσει"
 
