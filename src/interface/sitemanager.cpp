@@ -1313,7 +1313,7 @@ void CSiteManager::SetCtrlState()
 		XRCCTRL(*this, "ID_BYPASSPROXY", wxCheckBox)->SetValue(data->m_server.GetBypassProxy());
 
 		XRCCTRL(*this, "ID_USER", wxTextCtrl)->Enable(!predefined && data->m_server.GetLogonType() != ANONYMOUS);
-		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->Enable(!predefined && data->m_server.GetLogonType() == NORMAL || data->m_server.GetLogonType() == ACCOUNT);
+		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->Enable(!predefined && (data->m_server.GetLogonType() == NORMAL || data->m_server.GetLogonType() == ACCOUNT));
 		XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->Enable(!predefined && data->m_server.GetLogonType() == ACCOUNT);
 
 		switch (data->m_server.GetLogonType())

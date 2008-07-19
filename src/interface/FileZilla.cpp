@@ -190,7 +190,8 @@ bool CFileZillaApp::OnInit()
 			wxString error;
 
 			wxLocale *loc = wxGetLocale();
-			if (!loc)
+			const wxLanguageInfo* currentInfo = loc ? loc->GetLanguageInfo(loc->GetLanguage()) : 0;
+			if (!loc || !currentInfo)
 			{
 				if (!pInfo)
 					error.Printf(_("Failed to set language to %s, using default system language."),
@@ -201,12 +202,8 @@ bool CFileZillaApp::OnInit()
 			}
 			else
 			{
-				const wxLanguageInfo* currentInfo = loc->GetLanguageInfo(loc->GetLanguage());
-				wxString currentName;
-				if (currentInfo)
-					currentName = currentInfo->CanonicalName;
+				wxString currentName = currentInfo->CanonicalName;
 
-				if (currentInfo)
 				if (!pInfo)
 					error.Printf(_("Failed to set language to %s, using default system language (%s, %s)."),
 						language.c_str(), loc->GetLocale(),
