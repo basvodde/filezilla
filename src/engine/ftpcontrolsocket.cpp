@@ -1010,6 +1010,7 @@ int CFtpControlSocket::LogonSend()
 	switch (pData->opState)
 	{
 	case LOGON_AUTH_WAIT:
+		res = FZ_REPLY_WOULDBLOCK;
 		LogMessage(Debug_Info, _T("LogonSend() called during LOGON_AUTH_WAIT, ignoring"));
 		break;
 	case LOGON_AUTH_TLS:

@@ -507,7 +507,7 @@ int CSftpControlSocket::ConnectSend()
 			}
 
 			wxString cmd = wxString::Format(_T("proxy %d \"%s\" %d"), type,
-											m_pEngine->GetOptions()->GetOption(OPTION_PROXY_HOST),
+											m_pEngine->GetOptions()->GetOption(OPTION_PROXY_HOST).c_str(),
 											m_pEngine->GetOptions()->GetOptionVal(OPTION_PROXY_PORT));
 			wxString user = m_pEngine->GetOptions()->GetOption(OPTION_PROXY_USER);
 			if (user != _T(""))

@@ -162,8 +162,6 @@ bool CHttpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotifi
 				return false;
 			}
 
-			CHttpFileTransferOpData *pData = static_cast<CHttpFileTransferOpData *>(m_pCurOpData);
-
 			CFileExistsNotification *pFileExistsNotification = reinterpret_cast<CFileExistsNotification *>(pNotification);
 			switch (pFileExistsNotification->overwriteAction)
 			{

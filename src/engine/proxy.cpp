@@ -77,7 +77,7 @@ static wxString base64encode(const wxString& str)
 
 int CProxySocket::Handshake(enum CProxySocket::ProxyType type, const wxString& host, unsigned int port, const wxString& user, const wxString& pass)
 {
-	if (type == UNKNOWN || host == _T("") || port < 1 || port > 65535)
+	if (type == CProxySocket::unknown || host == _T("") || port < 1 || port > 65535)
 		return EINVAL;
 
 	if (m_proxyState != noconn)
@@ -438,7 +438,7 @@ void CProxySocket::OnReceive()
 						break;
 					}
 
-					m_pOwner->LogMessage(Debug_Warning, _("Proxy request failed: %s"), error);
+					m_pOwner->LogMessage(Debug_Warning, _("Proxy request failed: %s"), error.c_str());
 					m_proxyState = noconn;
 					CSocketEvent evt(GetId(), CSocketEvent::close, ECONNABORTED);
 					m_pEvtHandler->AddPendingEvent(evt);
