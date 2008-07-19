@@ -850,8 +850,17 @@ int CHttpControlSocket::ResetOperation(int nErrorCode)
 	return CControlSocket::ResetOperation(nErrorCode);
 }
 
-void CHttpControlSocket::OnClose()
+void CHttpControlSocket::OnClose(int error)
 {
+	LogMessage(Debug_Verbose, _T("CRealControlSocket::OnClose(%d)"), error);
+
+	if (error)
+	{
+		LogMessage(::Error, _("Disconnected from server: %s"), CSocket::GetErrorDescription(error).c_str());
+		ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED);
+		return;
+	}
+	
 	OnReceive();
 
 	// HTTP socket isn't connected outside operations

@@ -27,7 +27,7 @@ protected:
 	int DoInternalConnect();
 
 	virtual void OnConnect();
-	virtual void OnClose();
+	virtual void OnClose(int error);
 	virtual void OnReceive();
 
 	virtual int ResetOperation(int nErrorCode);
