@@ -1075,8 +1075,8 @@ int CRealControlSocket::ContinueConnect()
 	wxString host;
 	unsigned int port;
 
-	int proxy_type = m_pEngine->GetOptions()->GetOptionVal(OPTION_PROXY_TYPE);
-	if (proxy_type > CProxySocket::unknown && proxy_type < CProxySocket::proxytype_count)
+	const int proxy_type = m_pEngine->GetOptions()->GetOptionVal(OPTION_PROXY_TYPE);
+	if (proxy_type > CProxySocket::unknown && proxy_type < CProxySocket::proxytype_count && !m_pCurrentServer->GetBypassProxy())
 	{
 		LogMessage(::Status, _("Connecting to %s through proxy"), m_pCurrentServer->FormatHost().c_str());
 
@@ -1100,10 +1100,19 @@ int CRealControlSocket::ContinueConnect()
 	}
 	else
 	{
-		host = m_pCurrentServer->GetHost();
-		port = m_pCurrentServer->GetPort();
+		if (m_pCurOpData && m_pCurOpData->opId == cmd_connect)
+		{
+			CConnectOpData* pData = (CConnectOpData*)m_pCurOpData;
+			host = pData->host;
+			port = pData->port;
+		}
+		if (host == _T(""))
+		{
+			host = m_pCurrentServer->GetHost();
+			port = m_pCurrentServer->GetPort();
+		}
 	}
-	if (!IsIpAddress(m_pCurrentServer->GetHost()))
+	if (!IsIpAddress(host))
 		LogMessage(Status, _("Resolving address of %s"), host.c_str());
 
 	int res = CSocket::Connect(host, port);

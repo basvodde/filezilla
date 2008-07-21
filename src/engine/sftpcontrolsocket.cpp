@@ -437,7 +437,7 @@ int CSftpControlSocket::ConnectParseResponse(bool successful, const wxString& re
 	switch (pData->opState)
 	{
 	case connect_init:
-		if (m_pEngine->GetOptions()->GetOptionVal(OPTION_PROXY_TYPE))
+		if (m_pEngine->GetOptions()->GetOptionVal(OPTION_PROXY_TYPE) && !m_pCurrentServer->GetBypassProxy())
 			pData->opState = connect_proxy;
 		else if (pData->pKeyFiles)
 			pData->opState = connect_keys;

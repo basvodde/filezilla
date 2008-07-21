@@ -22,6 +22,7 @@
 #ifndef __WXMSW__
 #include <sys/socket.h>
 #endif
+#include "proxy.h"
 
 #define LOGON_WELCOME	0
 #define LOGON_AUTH_TLS	1
@@ -153,7 +154,7 @@ public:
 		gotPassword = false;
 		waitForAsyncRequest = false;
 		gotFirstWelcomeLine = false;
-		usingProxy = false;
+		ftp_proxy_type = 0;
 
 		customCommandIndex = 0;
 
@@ -177,7 +178,7 @@ public:
 
 	std::list<t_loginCommand> loginSequence;
 
-	bool usingProxy;
+	int ftp_proxy_type;
 };
 
 class CFtpDeleteOpData : public COpData
@@ -514,8 +515,7 @@ bool CFtpControlSocket::GetLoginSequence(const CServer& server)
 	CFtpLogonOpData *pData = reinterpret_cast<CFtpLogonOpData *>(m_pCurOpData);
 	pData->loginSequence.clear();
 
-	int proxyType = m_pEngine->GetOptions()->GetOptionVal(OPTION_FTP_PROXY_TYPE);
-	if (!proxyType || server.GetBypassProxy())
+	if (!pData->ftp_proxy_type)
 	{
 		// User
 		t_loginCommand cmd = {false, false, user, _T("")};
@@ -535,7 +535,7 @@ bool CFtpControlSocket::GetLoginSequence(const CServer& server)
 			pData->loginSequence.push_back(cmd);
 		}
 	}
-	else if (proxyType == 1)
+	else if (pData->ftp_proxy_type == 1)
 	{
 		const wxString& proxyUser = m_pEngine->GetOptions()->GetOption(OPTION_FTP_PROXY_USER);
 		if (proxyUser != _T(""))
@@ -567,7 +567,7 @@ bool CFtpControlSocket::GetLoginSequence(const CServer& server)
 			pData->loginSequence.push_back(cmd);
 		}
 	}
-	else if (proxyType == 2 || proxyType == 3)
+	else if (pData->ftp_proxy_type == 2 || pData->ftp_proxy_type == 3)
 	{
 		const wxString& proxyUser = m_pEngine->GetOptions()->GetOption(OPTION_FTP_PROXY_USER);
 		if (proxyUser != _T(""))
@@ -583,7 +583,7 @@ bool CFtpControlSocket::GetLoginSequence(const CServer& server)
 
 		// Site or Open
 		t_loginCommand cmd = {false, false, user, _T("")};
-		if (proxyType == 2)
+		if (pData->ftp_proxy_type == 2)
 			cmd.command = _T("SITE ") + server.FormatHost();
 		else
 			cmd.command = _T("OPEN ") + server.FormatHost();
@@ -608,7 +608,7 @@ bool CFtpControlSocket::GetLoginSequence(const CServer& server)
 			pData->loginSequence.push_back(cmd);
 		}
 	}
-	else if (proxyType == 4)
+	else if (pData->ftp_proxy_type == 4)
 	{
 		wxString proxyUser = m_pEngine->GetOptions()->GetOption(OPTION_FTP_PROXY_USER);
 		wxString proxyPass = m_pEngine->GetOptions()->GetOption(OPTION_FTP_PROXY_PASS);
@@ -817,7 +817,7 @@ int CFtpControlSocket::LogonParseResponse()
 						asciiOnly = false;
 				if (!asciiOnly)
 				{
-					if (pData->usingProxy)
+					if (pData->ftp_proxy_type)
 					{
 						LogMessage(Status, _("Login data contains non-ASCII characters and server might not be UTF-8 aware. Cannot fall back to local charset since using proxy."), 0);
 						int error = FZ_REPLY_DISCONNECTED;
@@ -4177,7 +4177,10 @@ int CFtpControlSocket::Connect(const CServer &server)
 	CFtpLogonOpData* pData = new CFtpLogonOpData;
 	m_pCurOpData = pData;
 
-	if (m_pEngine->GetOptions()->GetOptionVal(OPTION_FTP_PROXY_TYPE) && !server.GetBypassProxy())
+	// Do not use FTP proxy if generic proxy is set
+	int generic_proxy_type = m_pEngine->GetOptions()->GetOptionVal(OPTION_PROXY_TYPE);
+	if ((generic_proxy_type <= CProxySocket::unknown || generic_proxy_type >= CProxySocket::proxytype_count) &&
+		(pData->ftp_proxy_type = m_pEngine->GetOptions()->GetOptionVal(OPTION_FTP_PROXY_TYPE)) && !server.GetBypassProxy())
 	{
 		pData->host = m_pEngine->GetOptions()->GetOption(OPTION_FTP_PROXY_HOST);
 		int pos = pData->host.Find(':');
@@ -4203,6 +4206,7 @@ int CFtpControlSocket::Connect(const CServer &server)
 	}
 	else
 	{
+		pData->ftp_proxy_type = 0;
 		pData->host = server.GetHost();
 		pData->port = server.GetPort();
 	}
