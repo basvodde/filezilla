@@ -3029,7 +3029,9 @@ static int psftp_connect(char *userhost, char *user, int portnumber)
     /*
      * Trim a colon suffix off the hostname if it's there.
      */
+    /* FZ: Doing so ruins ability to connect to IPv6 addresses
     cfg.host[strcspn(cfg.host, ":")] = '\0';
+    */
 
     /*
      * Remove any remaining whitespace from the hostname.
