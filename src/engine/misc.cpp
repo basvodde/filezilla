@@ -253,6 +253,9 @@ bool IsRoutableAddress(const wxString& address, int family)
 
 bool IsIpAddress(const wxString& address)
 {
+	if (GetIPV6LongForm(address) != _T(""))
+		return true;
+
 	int segment = 0;
 	int dotcount = 0;
 	for (size_t i = 0; i < address.Len(); i++)
