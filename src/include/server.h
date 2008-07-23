@@ -97,7 +97,7 @@ public:
 	void SetPasvMode(enum PasvMode pasvMode);
 	void MaximumMultipleConnections(int maximum);
 
-	wxString FormatHost() const;
+	wxString FormatHost(bool always_omit_port = false) const;
 	wxString FormatServer() const;
 
 	bool SetEncodingType(enum CharsetEncoding type, const wxString& encoding = _T(""));

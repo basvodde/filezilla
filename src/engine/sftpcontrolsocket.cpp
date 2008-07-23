@@ -343,7 +343,7 @@ public:
 
 int CSftpControlSocket::Connect(const CServer &server)
 {
-	LogMessage(Status, _("Connecting to %s:%d..."), server.GetHost().c_str(), server.GetPort());
+	LogMessage(Status, _("Connecting to %s..."), server.FormatHost().c_str());
 	SetWait(true);
 
 	m_sftpEncryptionDetails = CSftpEncryptionNotification();

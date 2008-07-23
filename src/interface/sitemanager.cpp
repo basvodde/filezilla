@@ -844,7 +844,7 @@ bool CSiteManager::Verify()
 		return false;
 	}
 
-	XRCCTRL(*this, "ID_HOST", wxTextCtrl)->SetValue(server.GetHost());
+	XRCCTRL(*this, "ID_HOST", wxTextCtrl)->SetValue(server.FormatHost(true));
 	XRCCTRL(*this, "ID_PORT", wxTextCtrl)->SetValue(wxString::Format(_T("%d"), server.GetPort()));
 
 	protocolName = CServer::GetProtocolName(server.GetProtocol());
@@ -1295,7 +1295,7 @@ void CSiteManager::SetCtrlState()
 		XRCCTRL(*this, "ID_CONNECT", wxWindow)->Enable(true);
 
 		XRCCTRL(*this, "ID_HOST", wxWindow)->Enable(!predefined);
-		XRCCTRL(*this, "ID_HOST", wxTextCtrl)->SetValue(data->m_server.GetHost());
+		XRCCTRL(*this, "ID_HOST", wxTextCtrl)->SetValue(data->m_server.FormatHost(true));
 		unsigned int port = data->m_server.GetPort();
 
 		if (port != CServer::GetDefaultPort(data->m_server.GetProtocol()))

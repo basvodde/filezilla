@@ -390,8 +390,8 @@ int CHttpControlSocket::FileTransferSend()
 	wxString hostWithPort;
 	if (pData->m_newLocation == _T(""))
 	{
-		location = _T("http://") + m_pCurrentServer->GetHost() + pData->remotePath.FormatFilename(pData->remoteFile).c_str();
-		hostWithPort = wxString::Format(_T("%s:%d"), m_pCurrentServer->GetHost().c_str(), m_pCurrentServer->GetPort());
+		location = _T("http://") + m_pCurrentServer->FormatHost() + pData->remotePath.FormatFilename(pData->remoteFile).c_str();
+		hostWithPort = wxString::Format(_T("%s:%d"), m_pCurrentServer->FormatHost(true).c_str(), m_pCurrentServer->GetPort());
 	}
 	else
 	{

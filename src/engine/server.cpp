@@ -164,11 +164,6 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 			return false;
 		}
 		port = tmp;
-
-		if (host[0] == '[')
-			host = host.Mid(1, pos - 2);
-		else
-			host = host.Left(pos);
 	}
 	else
 	{
@@ -178,11 +173,6 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 		{
 			error = _("Invalid port given. The port has to be a value from 1 to 65535.");
 			return false;
-		}
-		if (host[0] == '[')
-		{
-			host.RemoveLast();
-			host = host.Mid(1);
 		}
 	}
 
@@ -196,6 +186,13 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 	}
 
 	m_host = host;
+
+	if (m_host[0] == '[')
+	{
+		m_host.RemoveLast();
+		m_host = m_host.Mid(1);
+	}
+
 	m_port = port;
 	m_user = user;
 	m_pass = pass;
@@ -547,12 +544,18 @@ int CServer::MaximumMultipleConnections() const
 	return m_maximumMultipleConnections;
 }
 
-wxString CServer::FormatHost() const
+wxString CServer::FormatHost(bool always_omit_port /*=false*/) const
 {
 	wxString host = m_host;
 
-	if (m_port != GetDefaultPort(m_protocol))
-		host += wxString::Format(_T(":%d"), m_port);
+	if (host.Find(':') != -1)
+		host = _T("[") + host + _T("]");
+
+	if (!always_omit_port)
+	{
+		if (m_port != GetDefaultPort(m_protocol))
+			host += wxString::Format(_T(":%d"), m_port);
+	}
 
 	return host;
 }
