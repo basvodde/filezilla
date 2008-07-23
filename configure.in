@@ -111,29 +111,6 @@ if ! test "$localesonly" = "yes"; then
   AC_CHECK_FUNCS([gettimeofday ftime])
   AC_CHECK_FUNCS([in6addr_loopback in6addr_any])
 
-AH_BOTTOM([
-/* Convert autoconf definitions to ones that PuTTY wants. */
-
-#ifndef HAVE_GETADDRINFO
-# define NO_IPV6
-#endif
-#ifndef HAVE_SETRESUID
-# define HAVE_NO_SETRESUID
-#endif
-#ifndef HAVE_STRSIGNAL
-# define HAVE_NO_STRSIGNAL
-#endif
-#if !defined(HAVE_UTMPX_H) || !defined(HAVE_UPDWTMPX)
-# define OMIT_UTMP
-#endif
-#ifndef HAVE_PTSNAME
-# define BSD_PTYS
-#endif
-#ifndef HAVE_SYS_SELECT_H
-# define HAVE_NO_SYS_SELECT_H
-#endif
-])
-
   # Check for windres on MinGW builds
   # ---------------------------------
 

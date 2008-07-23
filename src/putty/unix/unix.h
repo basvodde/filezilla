@@ -20,6 +20,9 @@
 #ifndef HAVE_PTSNAME
 # define BSD_PTYS
 #endif
+#ifndef HAVE_SYS_SELECT_H
+# define HAVE_NO_SYS_SELECT_H
+#endif
 
 #include <stdio.h>		       /* for FILENAME_MAX */
 //#include "charset.h"

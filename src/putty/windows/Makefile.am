@@ -3,8 +3,7 @@ noinst_LIBRARIES = libfzsftp_win.a libfzputtycommon_win.a
 INCLUDES = -I$(srcdir)/..
 
 libfzputtycommon_win_a_CFLAGS = $(AM_CFLAGS) \
-				-D_WINDOWS -D_WIN32_IE=0x0500 -DWINVER=0x0500 -D_WIN32_WINDOWS=0x0410 -D_WIN32_WINNT=0x0500 \
-				-DNO_IPV6
+				-D_WINDOWS -D_WIN32_IE=0x0500 -DWINVER=0x0500 -D_WIN32_WINDOWS=0x0410 -D_WIN32_WINNT=0x0500
 
 libfzputtycommon_win_a_SOURCES = wincons.c \
 				 winmisc.c \
@@ -12,8 +11,7 @@ libfzputtycommon_win_a_SOURCES = wincons.c \
 				 winstore.c
 
 libfzsftp_win_a_CFLAGS = $(AM_CFLAGS) \
-			-D_WINDOWS -D_WIN32_IE=0x0500 -DWINVER=0x0500 -D_WIN32_WINDOWS=0x0410 -D_WIN32_WINNT=0x0500 \
-			-DNO_IPV6
+			-D_WINDOWS -D_WIN32_IE=0x0500 -DWINVER=0x0500 -D_WIN32_WINDOWS=0x0410 -D_WIN32_WINNT=0x0500
 
 libfzsftp_win_a_SOURCES = winpgntc.c \
 		       winnet.c \
