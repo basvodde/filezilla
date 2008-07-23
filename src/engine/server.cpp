@@ -165,7 +165,10 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 		}
 		port = tmp;
 
-		host = host.Left(pos);
+		if (host[0] == '[')
+			host = host.Mid(1, pos - 2);
+		else
+			host = host.Left(pos);
 	}
 	else
 	{
@@ -175,6 +178,11 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 		{
 			error = _("Invalid port given. The port has to be a value from 1 to 65535.");
 			return false;
+		}
+		if (host[0] == '[')
+		{
+			host.RemoveLast();
+			host = host.Mid(1);
 		}
 	}
 
