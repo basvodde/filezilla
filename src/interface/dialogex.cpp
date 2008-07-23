@@ -62,6 +62,10 @@ int wxDialogEx::ShowModal()
 #ifdef __WXMSW__
 	// All open menus need to be closed or app will become unresponsive.
 	::EndMenu();
+
+	// For same reason release mouse capture.
+	// Could happen during drag&drop with notification dialogs.
+	::ReleaseCapture();
 #endif
 	return wxDialog::ShowModal();
 }

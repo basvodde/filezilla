@@ -586,13 +586,6 @@ checkmodifications_remote:
 
 		dlg.GetSizer()->Fit(&dlg);
 
-#ifdef __WXMSW__
-		// If mouse is captured, program
-		// could become unresponsive if showing
-		// dialog. Could happen during drag&drop.
-		ReleaseCapture();
-#endif
-
 		int res = dlg.ShowModal();
 
 		const bool remove = XRCCTRL(dlg, "ID_DELETE", wxCheckBox)->IsChecked();
