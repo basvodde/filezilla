@@ -13,6 +13,7 @@ bool CFilterManager::m_loaded = false;
 std::vector<CFilter> CFilterManager::m_globalFilters;
 std::vector<CFilterSet> CFilterManager::m_globalFilterSets;
 unsigned int CFilterManager::m_globalCurrentFilterSet = 0;
+bool CFilterManager::m_filters_disabled = false;
 
 BEGIN_EVENT_TABLE(CFilterDialog, wxDialogEx)
 EVT_BUTTON(XRCID("wxID_OK"), CFilterDialog::OnOK)
@@ -226,6 +227,8 @@ void CFilterDialog::SaveFilters()
 
 	SaveXmlFile(file, pDocument);
 	delete pDocument->GetDocument();
+
+	m_filters_disabled = false;
 }
 
 void CFilterDialog::DisplayFilters()
@@ -442,9 +445,12 @@ CFilterManager::CFilterManager()
 	}
 }
 
-bool CFilterManager::HasActiveFilters() const
+bool CFilterManager::HasActiveFilters(bool ignore_disabled /*=false*/) const
 {
 	wxASSERT(m_globalCurrentFilterSet < m_globalFilterSets.size());
+
+	if (m_filters_disabled)
+		return false;
 
 	const CFilterSet& set = m_globalFilterSets[m_globalCurrentFilterSet];
 	for (unsigned int i = 0; i < m_globalFilters.size(); i++)
@@ -478,6 +484,9 @@ bool CFilterManager::HasSameLocalAndRemoteFilters() const
 
 bool CFilterManager::FilenameFiltered(const wxString& name, bool dir, wxLongLong size, bool local, int attributes) const
 {
+	if (m_filters_disabled)
+		return false;
+
 	wxASSERT(m_currentFilterSet < m_filterSets.size());
 
 	const CFilterSet& set = m_filterSets[m_currentFilterSet];
@@ -889,4 +898,16 @@ void CFilterManager::LoadFilters()
 	m_currentFilterSet = m_globalCurrentFilterSet;
 
 	delete pDocument->GetDocument();
+}
+
+void CFilterManager::ToggleFilters()
+{
+	if (m_filters_disabled)
+	{
+		m_filters_disabled = false;
+		return;
+	}
+
+	if (HasActiveFilters(true))
+		m_filters_disabled = true;
 }

@@ -83,6 +83,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_MENU(XRCID("ID_VIEW_QUEUE"), CMainFrame::OnToggleQueueView)
 	EVT_MENU(wxID_ABOUT, CMainFrame::OnMenuHelpAbout)
 	EVT_TOOL(XRCID("ID_TOOLBAR_FILTER"), CMainFrame::OnFilter)
+	EVT_TOOL_RCLICKED(XRCID("ID_TOOLBAR_FILTER"), CMainFrame::OnFilterRightclicked)
 #if FZ_MANUALUPDATECHECK
 	EVT_MENU(XRCID("ID_CHECKFORUPDATES"), CMainFrame::OnCheckForUpdates)
 #endif //FZ_MANUALUPDATECHECK
@@ -2427,4 +2428,21 @@ void CMainFrame::ProcessCommandLine()
 
 		m_pState->Connect(server, true, path);
 	}
+}
+
+void CMainFrame::OnFilterRightclicked(wxCommandEvent& event)
+{
+	CFilterManager filters;
+
+	const bool active = filters.HasActiveFilters();
+
+	filters.ToggleFilters();
+
+	if (active == filters.HasActiveFilters())
+		return;
+
+	if (m_pState)
+		m_pState->NotifyHandlers(STATECHANGE_APPLYFILTER);
+	if (m_pToolBar)
+		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), filters.HasActiveFilters());
 }

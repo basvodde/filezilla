@@ -70,9 +70,11 @@ public:
 
 	// Note: Under non-windows, attributes are permissions
 	bool FilenameFiltered(const wxString& name, bool dir, wxLongLong size, bool local, int attributes) const;
-	bool HasActiveFilters() const;
+	bool HasActiveFilters(bool ignore_disabled = false) const;
 
 	bool HasSameLocalAndRemoteFilters() const;
+
+	void ToggleFilters();
 
 protected:
 	bool CompileRegexes();
@@ -88,6 +90,8 @@ protected:
 	std::vector<CFilterSet> m_filterSets;
 	unsigned int m_currentFilterSet;
 	static unsigned int m_globalCurrentFilterSet;
+
+	static bool m_filters_disabled;
 };
 
 class CMainFrame;

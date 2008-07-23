@@ -137,6 +137,7 @@ protected:
 	void OnToggleQueueView(wxCommandEvent& event);
 	void OnMenuHelpAbout(wxCommandEvent& event);
 	void OnFilter(wxCommandEvent& event);
+	void OnFilterRightclicked(wxCommandEvent& event);
 #if FZ_MANUALUPDATECHECK
 	void OnCheckForUpdates(wxCommandEvent& event);
 #endif //FZ_MANUALUPDATECHECK
