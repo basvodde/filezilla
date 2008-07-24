@@ -132,6 +132,9 @@ public:
 		m_pPort = 0;
 #ifdef __WXMSW__
 		m_sync_event = WSA_INVALID_EVENT;
+#else
+		m_pipe[0] = -1;
+		m_pipe[1] = -1;
 #endif
 		m_started = false;
 		m_quit = false;
@@ -145,6 +148,19 @@ public:
 		{
 			m_triggered_errors[i] = 0;
 		}
+	}
+
+	virtual ~CSocketThread()
+	{
+#ifdef __WXMSW__
+		if (m_sync_event != WSA_INVALID_EVENT)
+			WSACloseEvent(m_sync_event);
+#else
+		if (m_pipe[0] != -1)
+			close(m_pipe[0]);
+		if (m_pipe[1] != -1)
+			close(m_pipe[1]);
+#endif
 	}
 
 	void SetSocket(CSocket* pSocket, bool already_locked = false)
@@ -207,8 +223,11 @@ public:
 		if (m_sync_event == WSA_INVALID_EVENT)
 			return 1;
 #else
-		if (pipe(m_pipe))
-			return errno;
+		if (m_pipe[0] == -1)
+		{
+			if (pipe(m_pipe))
+				return errno;
+		}
 #endif
 
 		int res = Create();
@@ -365,6 +384,7 @@ protected:
 #else
 					close(fd);
 #endif
+					m_pSocket->m_fd = -1;
 					freeaddrinfo(addressList);
 					return false;
 				}
