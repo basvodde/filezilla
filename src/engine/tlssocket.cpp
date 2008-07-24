@@ -46,6 +46,8 @@ CTlsSocket::CTlsSocket(wxEvtHandler* pEvtHandler, CSocket* pSocket, CControlSock
 	m_implicitTrustedCert.size = 0;
 
 	m_shutdown_requested = false;
+
+	m_socket_eof = false;
 }
 
 CTlsSocket::~CTlsSocket()
@@ -266,7 +268,11 @@ ssize_t CTlsSocket::PullFunction(void* data, size_t len)
 		wxPostEvent(this, evt);
 	}
 
-	return m_pSocketBackend->LastCount();
+	unsigned int read = m_pSocketBackend->LastCount();
+	if (!read)
+		m_socket_eof = true;
+
+	return read;
 }
 
 void CTlsSocket::OnSocketEvent(CSocketEvent& event)
@@ -298,7 +304,10 @@ void CTlsSocket::OnSocketEvent(CSocketEvent& event)
 				if (lastCount)
 					m_pOwner->LogMessage(Debug_Verbose, _T("CTlsSocket::OnSocketEvent(): pending data, postponing close event"));
 				else
+				{
+					m_socket_eof = true;
 					m_socketClosed = true;
+				}
 				OnRead();
 
 				if (lastCount)
@@ -414,7 +423,7 @@ int CTlsSocket::Handshake(const CTlsSocket* pPrimarySocket /*=0*/)
 	else if (res == GNUTLS_E_AGAIN || res == GNUTLS_E_INTERRUPTED)
 		return FZ_REPLY_WOULDBLOCK;
 
-	Failure(res);
+	Failure(res, 0);
 
 	return FZ_REPLY_ERROR;
 }
@@ -484,7 +493,7 @@ void CTlsSocket::Read(void *buffer, unsigned int len)
 	}
 	else
 	{
-		Failure(res);
+		Failure(res, 0);
 		m_lastError = ECONNABORTED;
 	}
 
@@ -554,7 +563,7 @@ void CTlsSocket::Write(const void *buffer, unsigned int len)
 	else
 	{
 		m_lastSuccessful = false;
-		Failure(res);
+		Failure(res, 0);
 		m_lastError = ECONNABORTED;
 	}
 }
@@ -589,7 +598,7 @@ void CTlsSocket::CheckResumeFailedReadWrite()
 		
 		if (res < 0)
 		{
-			Failure(res);
+			Failure(res, ECONNABORTED);
 			return;
 		}
 
@@ -613,7 +622,7 @@ void CTlsSocket::CheckResumeFailedReadWrite()
 			delete [] m_peekData;
 			m_peekData = 0;
 			if (res != GNUTLS_E_INTERRUPTED && res != GNUTLS_E_AGAIN)
-				Failure(res);
+				Failure(res, ECONNABORTED);
 			return;
 		}
 
@@ -631,14 +640,21 @@ void CTlsSocket::CheckResumeFailedReadWrite()
 	}
 }
 
-void CTlsSocket::Failure(int code)
+void CTlsSocket::Failure(int code, int socket_error)
 {
 	if (code)
+	{
 		LogError(code);
+		if (code == GNUTLS_E_UNEXPECTED_PACKET_LENGTH && m_socket_eof)
+			m_pOwner->LogMessage(Status, _("Server did not properly shut down TLS connection"));
+	}
 	Uninit();
 
-	CSocketEvent evt(GetId(), CSocketEvent::close);
-	wxPostEvent(m_pEvtHandler, evt);
+	if (socket_error)
+	{
+		CSocketEvent evt(GetId(), CSocketEvent::close, socket_error);
+		wxPostEvent(m_pEvtHandler, evt);
+	}
 }
 
 void CTlsSocket::Peek(void *buffer, unsigned int len)
@@ -711,7 +727,7 @@ void CTlsSocket::Shutdown()
 		m_lastError = EAGAIN;
 	else
 	{
-		Failure(res);
+		Failure(res, 0);
 		m_lastError = ECONNABORTED;
 	}
 }
@@ -732,7 +748,7 @@ void CTlsSocket::ContinueShutdown()
 	}
 
 	if (res != GNUTLS_E_INTERRUPTED && res != GNUTLS_E_AGAIN)
-		Failure(res);
+		Failure(res, ECONNABORTED);
 }
 
 void CTlsSocket::TrustCurrentCert(bool trusted)
@@ -747,17 +763,22 @@ void CTlsSocket::TrustCurrentCert(bool trusted)
 	{
 		m_tlsState = conn;
 
-		CSocketEvent evt(GetId(), CSocketEvent::connection);
-		wxPostEvent(m_pEvtHandler, evt);
 		if (m_lastWriteFailed)
 			m_lastWriteFailed = false;
 		CheckResumeFailedReadWrite();
 		TriggerEvents();
+
+		if (m_tlsState == conn)
+		{
+			CSocketEvent evt(GetId(), CSocketEvent::connection);
+			wxPostEvent(m_pEvtHandler, evt);
+		}
+
 		return;
 	}
 
 	m_pOwner->LogMessage(::Error, _("Remote certificate not trusted."));
-	Failure(0);
+	Failure(0, ECONNABORTED);
 }
 
 static wxString bin2hex(const unsigned char* in, size_t size)
@@ -786,7 +807,7 @@ int CTlsSocket::VerifyCertificate()
 	if (gnutls_certificate_type_get(m_session) != GNUTLS_CRT_X509)
 	{
 		m_pOwner->LogMessage(::Debug_Warning, _T("Unsupported certificate type"));
-		Failure(0);
+		Failure(0, ECONNABORTED);
 		return FZ_REPLY_ERROR;
 	}
 
@@ -795,7 +816,7 @@ int CTlsSocket::VerifyCertificate()
 	if (!cert_list || !cert_list_size)
 	{
 		m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_certificate_get_peers returned no certificates"));
-		Failure(0);
+		Failure(0, ECONNABORTED);
 		return FZ_REPLY_ERROR;
 	}
 
@@ -805,11 +826,14 @@ int CTlsSocket::VerifyCertificate()
 			memcmp(m_implicitTrustedCert.data, cert_list[0].data, cert_list[0].size))
 		{
 			m_pOwner->LogMessage(::Error, _("Primary connection and data connection certificates don't match."));
-			Failure(0);
+			Failure(0, ECONNABORTED);
 			return FZ_REPLY_ERROR;
 		}
 		
 		TrustCurrentCert(true);
+
+		if (m_tlsState != conn)
+			return FZ_REPLY_ERROR;
 		return FZ_REPLY_OK;
 	}
 
@@ -817,14 +841,14 @@ int CTlsSocket::VerifyCertificate()
 	if (gnutls_x509_crt_init(&cert))
 	{
 		m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_x509_crt_init failed"));
-		Failure(0);
+		Failure(0, ECONNABORTED);
 		return FZ_REPLY_ERROR;
 	}
 
 	if (gnutls_x509_crt_import(cert, cert_list, GNUTLS_X509_FMT_DER))
 	{
 		m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_x509_crt_import failed"));
-		Failure(0);
+		Failure(0, ECONNABORTED);
 		gnutls_x509_crt_deinit(cert);
 		return FZ_REPLY_ERROR;
 	}
@@ -871,7 +895,7 @@ int CTlsSocket::VerifyCertificate()
 	if (subject == _T(""))
 	{
 		m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_x509_get_dn failed"));
-		Failure(0);
+		Failure(0, ECONNABORTED);
 		gnutls_x509_crt_deinit(cert);
 		return FZ_REPLY_ERROR;
 	}
@@ -896,7 +920,7 @@ int CTlsSocket::VerifyCertificate()
 	if (issuer == _T(""))
 	{
 		m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_x509_get_issuer_dn failed"));
-		Failure(0);
+		Failure(0, ECONNABORTED);
 		gnutls_x509_crt_deinit(cert);
 		return FZ_REPLY_ERROR;
 	}

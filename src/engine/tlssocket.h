@@ -66,7 +66,7 @@ protected:
 	void PrintAlert();
 	
 	// Failure logs the error, uninits the session and sends a close event
-	void Failure(int code);
+	void Failure(int code, int socket_error);
 
 	static ssize_t PushFunction(gnutls_transport_ptr_t ptr, const void* data, size_t len);
 	static ssize_t PullFunction(gnutls_transport_ptr_t ptr, void* data, size_t len);
@@ -114,6 +114,8 @@ protected:
 	unsigned int m_peekDataLen;
 
 	gnutls_datum_t m_implicitTrustedCert;
+
+	bool m_socket_eof;
 };
 
 #endif //__TLSSOCKET_H__
