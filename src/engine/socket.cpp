@@ -264,7 +264,10 @@ protected:
 		char* pPort;
 
 		if (!m_pHost || !m_pPort)
+		{
+			m_pSocket->m_state = CSocket::closed;
 			return false;
+		}
 
 		pHost = m_pHost;
 		m_pHost = 0;
@@ -286,6 +289,7 @@ protected:
 		{
 			if (!res && addressList)
 				freeaddrinfo(addressList);
+			m_pSocket->m_state = CSocket::closed;
 			return false;
 		}
 
@@ -320,9 +324,6 @@ protected:
 #endif
 				CSocketEvent evt(m_pSocket->m_id, addr->ai_next ? CSocketEvent::connection_next : CSocketEvent::connection, res);
 				SendEvent(evt);
-
-				if (!addr->ai_next)
-					m_pSocket->m_state = CSocket::closed;
 
 				continue;
 			}
@@ -383,8 +384,6 @@ protected:
 #else
 				close(fd);
 #endif
-				if (!addr->ai_next)
-					m_pSocket->m_state = CSocket::closed;
 			}
 			else
 			{
@@ -401,6 +400,7 @@ protected:
 			}
 		}
 		freeaddrinfo(addressList);
+		m_pSocket->m_state = CSocket::closed;
 
 		return false;
 	}
