@@ -523,6 +523,13 @@ void CTransferSocket::OnClose(int error)
 		return;
 	}
 
+	if (error)
+	{
+		m_pControlSocket->LogMessage(::Error, _("Transfer connection interrupted: %s"), CSocket::GetErrorDescription(error).c_str());
+		TransferEnd(transfer_failure);
+		return;
+	}
+
 	char buffer[100];
 	m_pBackend->Peek(&buffer, 100);
 	if (!m_pBackend->Error() && m_pBackend->LastCount())
@@ -538,6 +545,12 @@ void CTransferSocket::OnClose(int error)
 		// First half is actually plain wrong.
 		OnReceive();
 
+		return;
+	}
+	else if (m_pBackend->Error() && m_pBackend->LastError() != EAGAIN)
+	{
+		m_pControlSocket->LogMessage(::Error, _("Transfer connection interrupted: %s"), CSocket::GetErrorDescription(error).c_str());
+		TransferEnd(transfer_failure);
 		return;
 	}
 
