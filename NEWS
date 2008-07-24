@@ -10,6 +10,15 @@ Legend:
     *nix: Unix (e.g BSD) and Unix-like systems (e.g. Linux)
     OS X: Apple Mac OS X
 
+3.1.0.1 (2008-07-24)
+
+! Do not report success on SSL/TLS transfers if server did not perform orderly SSL/TLS shutdown. Previously, an attacker could cause truncated files with FileZilla thinking the transfer was successful. All versions prior to this were affected
+- Fix infinite loop in new socket class
+- Fix file descriptor/handle leak in new socket class
+- Fix locking error if cancelling an operation waiting for a lock held by a different engine
+- MSW: In rare cases, initial read event was not triggered on transfer sockets
+- Add missing icon in LonE theme
+
 3.1.0 (2008-07-23)
 
 + Right-clicking filter button in toolbar toggles filters
@@ -21,7 +30,7 @@ Legend:
 3.1.0-rc2 (2008-07-19)
 
 + Enable SOCKS5 and HTTP/1.1 proxy support for SFTP connections
-- For sorting remote file list by owner/group
+- Fix sorting remote file list by owner/group
 - *nix: Install FileZilla application icons according to the freedesktop.org Icon Theme Specification
 - *nix: Use the system's tinyxml library if available
 
