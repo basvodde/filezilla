@@ -751,9 +751,14 @@ void CControlSocket::UnlockCache()
 	if (iter == m_lockInfoList.end())
 		return;
 
-	iter->lockcount--;
-	if (iter->lockcount)
-		return;
+	wxASSERT(!iter->waiting || iter->lockcount == 0);
+	if (!iter->waiting)
+	{
+		iter->lockcount--;
+		wxASSERT(iter->lockcount >= 0);
+		if (iter->lockcount)
+			return;
+	}
 
 	CServerPath directory = iter->directory;
 	enum locking_reason reason = iter->reason;
@@ -781,7 +786,8 @@ void CControlSocket::UnlockCache()
 
 enum CControlSocket::locking_reason CControlSocket::ObtainLockFromEvent()
 {
-	wxASSERT(m_pCurOpData);
+	if (!m_pCurOpData)
+		return lock_unknown;
 
 	std::list<t_lockInfo>::iterator own = GetLockStatus();
 	if (own == m_lockInfoList.end())
