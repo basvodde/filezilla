@@ -573,7 +573,7 @@ checkmodifications_remote:
 		if (!mtime.IsValid())
 			continue;
 
-		if (iter->modificationTime.IsValid() && iter->modificationTime != mtime)
+		if (iter->modificationTime.IsValid() && iter->modificationTime == mtime)
 			continue;
 
 		// File has changed, ask user what to do
@@ -633,7 +633,7 @@ checkmodifications_local:
 		if (!mtime.IsValid())
 			continue;
 
-		if (iter->modificationTime.IsValid() && iter->modificationTime != mtime)
+		if (iter->modificationTime.IsValid() && iter->modificationTime == mtime)
 			continue;
 
 		// File has changed, ask user what to do
