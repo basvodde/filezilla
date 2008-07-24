@@ -19,7 +19,7 @@ CTlsSocket::CTlsSocket(wxEvtHandler* pEvtHandler, CSocket* pSocket, CControlSock
 	m_session = 0;
 	m_initialized = false;
 	m_certCredentials = 0;
-	
+
 	m_canReadFromSocket = true;
 	m_canWriteToSocket = true;
 	m_canCheckCloseSocket = false;
@@ -33,7 +33,7 @@ CTlsSocket::CTlsSocket(wxEvtHandler* pEvtHandler, CSocket* pSocket, CControlSock
 	m_lastCount = 0;
 	m_lastSuccessful = false;
 
-	m_lastWriteFailed = true;
+	m_lastReadFailed = true;
 	m_lastWriteFailed = false;
 	m_writeSkip = 0;
 
@@ -92,7 +92,7 @@ bool CTlsSocket::Init()
 	}
 
 	gnutls_dh_set_prime_bits(m_session, 512);
-	
+
 	// Set which type of certificates we accept
 	const int cert_type_priority[] = { GNUTLS_CRT_X509, 0 };
 	gnutls_certificate_type_set_priority(m_session, cert_type_priority);
@@ -338,7 +338,7 @@ void CTlsSocket::OnRead()
 	const int direction = gnutls_record_get_direction(m_session);
 	if (direction && !m_lastReadFailed)
 		return;
-		
+
 	if (m_tlsState == handshake)
 		Handshake();
 	if (m_tlsState == closing)
@@ -454,7 +454,7 @@ void CTlsSocket::Read(void *buffer, unsigned int len)
 	{
 		unsigned int min = wxMin(len, m_peekDataLen);
 		memcpy(buffer, m_peekData, min);
-		
+
 		if (min == m_peekDataLen)
 		{
 			m_peekDataLen = 0;
@@ -473,7 +473,7 @@ void CTlsSocket::Read(void *buffer, unsigned int len)
 		m_lastCount = min;
 		return;
 	}
-	
+
 	int res = gnutls_record_recv(m_session, buffer, len);
 	if (res >= 0)
 	{
@@ -595,7 +595,7 @@ void CTlsSocket::CheckResumeFailedReadWrite()
 		int res = gnutls_record_send(m_session, 0, 0);
 		if (res == GNUTLS_E_INTERRUPTED || res == GNUTLS_E_AGAIN)
 			return;
-		
+
 		if (res < 0)
 		{
 			Failure(res, ECONNABORTED);
@@ -614,7 +614,7 @@ void CTlsSocket::CheckResumeFailedReadWrite()
 
 		m_peekDataLen = 65536;
 		m_peekData = new char[m_peekDataLen];
-		
+
 		int res = gnutls_record_recv(m_session, m_peekData, m_peekDataLen);
 		if (res < 0)
 		{
@@ -663,7 +663,7 @@ void CTlsSocket::Peek(void *buffer, unsigned int len)
 	{
 		int min = wxMin(len, m_peekDataLen);
 		memcpy(buffer, m_peekData, min);
-		
+
 		m_lastCount = min;
 		m_lastSuccessful = true;
 		return;
@@ -829,7 +829,7 @@ int CTlsSocket::VerifyCertificate()
 			Failure(0, ECONNABORTED);
 			return FZ_REPLY_ERROR;
 		}
-		
+
 		TrustCurrentCert(true);
 
 		if (m_tlsState != conn)
@@ -872,7 +872,7 @@ int CTlsSocket::VerifyCertificate()
 		algoName = wxString(pAlgo, wxConvUTF8);
 
 	//int version = gnutls_x509_crt_get_version(cert);
-	
+
 	wxString subject, issuer;
 
 	size = 0;
