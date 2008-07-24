@@ -384,7 +384,8 @@ protected:
 #else
 					close(fd);
 #endif
-					m_pSocket->m_fd = -1;
+					if (m_pSocket)
+						m_pSocket->m_fd = -1;
 					freeaddrinfo(addressList);
 					return false;
 				}
@@ -878,15 +879,19 @@ void CSocket::SetEventHandler(wxEvtHandler* pEvtHandler, int id)
 			// If a graceful shutdown is going on in background already,
 			// no further events are recorded. Send out events we're not
 			// waiting for (i.e. they got triggered already) manually.
-			if (!(m_pSocketThread->m_waiting & WAIT_READ))
-			{
-				CSocketEvent evt(id, CSocketEvent::read, 0);
-				pEvtHandler->AddPendingEvent(evt);
-			}
+
 			if (!(m_pSocketThread->m_waiting & WAIT_WRITE))
 			{
 				CSocketEvent evt(id, CSocketEvent::write, 0);
 				pEvtHandler->AddPendingEvent(evt);
+			}
+
+			CSocketEvent evt(id, CSocketEvent::read, 0);
+			pEvtHandler->AddPendingEvent(evt);
+			if (m_pSocketThread->m_waiting & WAIT_WRITE)
+			{
+				m_pSocketThread->m_waiting &= ~WAIT_READ;
+				m_pSocketThread->WakeupThread(true);
 			}
 #else
 			m_pSocketThread->m_waiting |= WAIT_READ | WAIT_WRITE;
