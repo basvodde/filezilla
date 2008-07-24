@@ -29,6 +29,7 @@ dist_resources16_DATA = 16x16/ascii.png \
 		16x16/reconnect.png \
 		16x16/refresh.png \
 		16x16/remotetreeview.png \
+		16x16/server.png \
 		16x16/showhidden.png \
 		16x16/sitemanager.png \
 		16x16/speedlimits.png \
