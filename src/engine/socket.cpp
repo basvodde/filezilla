@@ -667,6 +667,7 @@ protected:
 		{
 			if (!IdleLoop())
 			{
+				m_finished = true;
 				m_sync.Unlock();
 				return 0;
 			}
@@ -720,6 +721,7 @@ protected:
 			}
 		}
 
+		m_finished = true;
 		return 0;
 	}
 
