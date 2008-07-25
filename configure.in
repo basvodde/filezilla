@@ -448,7 +448,7 @@ AM_CONDITIONAL(MAKENSISSCRIPT, [test "$makensisscript" = "yes"])
 AM_CONDITIONAL(USE_BINRELOC, test "$use_binreloc" = "yes")
 AM_CONDITIONAL(ENABLE_PRECOMP, test "x$use_precomp" = "xyes")
 AM_CONDITIONAL(HAS_CPPUNIT, [test "$has_cppunit" = "yes"])
-AM_CONDITIONAL(HAVE_LIBTINYXML, [test x$have_tinyxml = xtrue])
+AM_CONDITIONAL(HAVE_LIBTINYXML, [test "x$with_tinyxml" = "xsystem"])
 
 AC_CONFIG_FILES(Makefile src/Makefile src/engine/Makefile src/tinyxml/Makefile
 src/interface/Makefile src/interface/resources/Makefile src/include/Makefile
