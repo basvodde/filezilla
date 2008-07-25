@@ -942,7 +942,8 @@ void CQueueView::ProcessReply(t_EngineData* pEngineData, COperationNotification*
 		// Increase error count only if item didn't make any progress. This keeps
 		// user interaction at a minimum if connection is unstable.
 
-		if (pEngineData->pItem->GetType() == QueueItemType_File && ((CFileItem*)pEngineData->pItem)->m_madeProgress)
+		if (pEngineData->pItem->GetType() == QueueItemType_File && ((CFileItem*)pEngineData->pItem)->m_madeProgress &&
+			(replyCode & FZ_REPLY_WRITEFAILED) != FZ_REPLY_WRITEFAILED)
 		{
 			// Don't increase error count if there has been progress
 			CFileItem* pItem = (CFileItem*)pEngineData->pItem;
@@ -957,6 +958,12 @@ void CQueueView::ProcessReply(t_EngineData* pEngineData, COperationNotification*
 				pEngineData->pItem->m_statusMessage = _("Timeout");
 			else if (replyCode & FZ_REPLY_DISCONNECTED)
 				pEngineData->pItem->m_statusMessage = _("Disconnected from server");
+			else if ((replyCode & FZ_REPLY_WRITEFAILED) == FZ_REPLY_WRITEFAILED)
+			{
+				pEngineData->pItem->m_statusMessage = _("Could not write to local file");
+				ResetEngine(*pEngineData, failure);
+				return;
+			}
 			else if ((replyCode & FZ_REPLY_CRITICALERROR) == FZ_REPLY_CRITICALERROR)
 			{
 				pEngineData->pItem->m_statusMessage = _("Could not start transfer");

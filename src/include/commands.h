@@ -44,6 +44,7 @@ enum Command
 #define FZ_REPLY_PASSWORDFAILED	0x0400 // Will be returned if PASS fails with 5yz reply code.
 #define FZ_REPLY_TIMEOUT		(0x0800 | FZ_REPLY_ERROR)
 #define FZ_REPLY_NOTSUPPORTED	(0x1000 | FZ_REPLY_ERROR) // Will be returned if command not supported by that protocol
+#define FZ_REPLY_WRITEFAILED	(0x2000 | FZ_REPLY_ERROR) // Happens if local file could not be written during transfer
 
 // Small macro to simplify command class declaration
 // Basically all this macro does, is to declare the class and add the required

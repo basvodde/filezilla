@@ -370,7 +370,8 @@ void CTransferSocket::OnReceive()
 				m_pTransferBuffer += numread;
 				m_transferBufferLen -= numread;
 
-				CheckGetNextWriteBuffer();
+				if (!CheckGetNextWriteBuffer())
+					return;
 
 				if (m_onCloseCalled && m_transferEndReason == none)
 				{

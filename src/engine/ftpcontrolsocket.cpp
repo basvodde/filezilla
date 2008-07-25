@@ -1614,7 +1614,7 @@ int CFtpControlSocket::ResetOperation(int nErrorCode)
 		if (pData->tranferCommandSent)
 		{
 			if (pData->transferEndReason == transfer_failure_critical)
-				nErrorCode |= FZ_REPLY_CRITICALERROR;
+				nErrorCode |= FZ_REPLY_CRITICALERROR | FZ_REPLY_WRITEFAILED;
 			if (pData->transferEndReason != transfer_command_failure_immediate || GetReplyCode() != 5)
 				pData->transferInitiated = true;
 			else
