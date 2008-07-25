@@ -164,6 +164,7 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 			return false;
 		}
 		port = tmp;
+		host = host.Left(pos);
 	}
 	else
 	{
