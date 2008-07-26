@@ -797,10 +797,18 @@ void CSocket::DetachThread()
 	}
 	else
 	{
-		m_pSocketThread->m_quit = true;
-		m_pSocketThread->WakeupThread(true);
-		m_pSocketThread->m_sync.Unlock();
-		waiting_socket_threads.push_back(m_pSocketThread);
+		if (!m_pSocketThread->m_started)
+		{
+			m_pSocketThread->m_sync.Unlock();
+			delete m_pSocketThread;
+		}
+		else
+		{
+			m_pSocketThread->m_quit = true;
+			m_pSocketThread->WakeupThread(true);
+			m_pSocketThread->m_sync.Unlock();
+			waiting_socket_threads.push_back(m_pSocketThread);
+		}
 	}
 	m_pSocketThread = 0;
 
@@ -817,7 +825,7 @@ int CSocket::Connect(wxString host, unsigned int port)
 
 	m_state = connecting;
 
-	if (m_pSocketThread)
+	if (m_pSocketThread && m_pSocketThread->m_started)
 	{
 		m_pSocketThread->m_sync.Lock();
 		if (!m_pSocketThread->m_threadwait)
