@@ -785,7 +785,7 @@ void CSiteManager::OnNewFolder(wxCommandEvent&event)
 	pTree->EditLabel(newItem);
 }
 
-static enum ServerType GetTypeFromName(const wxString& name)
+static enum ServerType GetServerTypeFromName(const wxString& name)
 {
 	for (int i = 0; i < SERVERTYPE_MAX; i++)
 	{
@@ -795,6 +795,20 @@ static enum ServerType GetTypeFromName(const wxString& name)
 	}
 
 	return DEFAULT;
+}
+
+static enum LogonType GetLogonTypeFromName(const wxString& name)
+{
+	if (name == _("Normal"))
+		return NORMAL;
+	else if (name == _("Ask for password"))
+		return ASK;
+	else if (name == _("Interactive"))
+		return INTERACTIVE;
+	else if (name == _("Account"))
+		return ACCOUNT;
+	else
+		return ANONYMOUS;
 }
 
 bool CSiteManager::Verify()
@@ -819,10 +833,12 @@ bool CSiteManager::Verify()
 		return false;
 	}
 
+	enum LogonType logon_type = GetLogonTypeFromName(XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->GetStringSelection());
+
 	wxString protocolName = XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->GetStringSelection();
 	enum ServerProtocol protocol = CServer::GetProtocolFromName(protocolName);
 	if (protocol == SFTP &&
-		XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->GetStringSelection() == _("Account"))
+		logon_type == ACCOUNT)
 	{
 		XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetFocus();
 		wxMessageBox(_("'Account' logontype not supported by selected protocol"));
@@ -830,6 +846,10 @@ bool CSiteManager::Verify()
 	}
 
 	CServer server;
+
+	// Set selected type
+	server.SetLogonType(logon_type);
+
 	if (protocol != UNKNOWN)
 		server.SetProtocol(protocol);
 
@@ -862,17 +882,41 @@ bool CSiteManager::Verify()
 		}
 	}
 
-	// Require username for non-anonymous logon type
-	if (XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->GetStringSelection() != _("Anonymous") &&
-		XRCCTRL(*this, "ID_USER", wxTextCtrl)->GetValue() == _T(""))
+	// Require username for non-anonymous, non-ask logon type
+	const wxString user = XRCCTRL(*this, "ID_USER", wxTextCtrl)->GetValue();
+	if (logon_type != ANONYMOUS &&
+		logon_type != ASK &&
+		logon_type != INTERACTIVE &&
+		user == _T(""))
 	{
 		XRCCTRL(*this, "ID_USER", wxTextCtrl)->SetFocus();
 		wxMessageBox(_("You have to specify a user name"));
 		return false;
 	}
 
+	// The way TinyXML handles blanks, we can't use username of only spaces
+	if (user != _T(""))
+	{
+		bool space_only = true;
+		for (unsigned int i = 0; i < user.Len(); i++)
+		{
+			if (user[i] != ' ')
+			{
+				space_only = false;
+				break;
+			}
+		}
+		if (space_only)
+		{
+			XRCCTRL(*this, "ID_USER", wxTextCtrl)->SetFocus();
+			wxMessageBox(_("Username cannot be a series of spaces"));
+			return false;
+		}
+
+	}
+
 	// Require account for account logon type
-	if (XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->GetStringSelection() == _("Account") &&
+	if (logon_type == ACCOUNT &&
 		XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->GetValue() == _T(""))
 	{
 		XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->SetFocus();
@@ -885,7 +929,7 @@ bool CSiteManager::Verify()
 	{
 		CServerPath remotePath;
 		const wxString serverType = XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->GetStringSelection();
-		remotePath.SetType(GetTypeFromName(serverType));
+		remotePath.SetType(GetServerTypeFromName(serverType));
 		if (!remotePath.SetPath(remotePathRaw))
 		{
 			XRCCTRL(*this, "ID_REMOTEDIR", wxTextCtrl)->SetFocus();
@@ -1098,17 +1142,8 @@ bool CSiteManager::UpdateServer()
 	else
 		data->m_server.SetProtocol(FTP);
 
-	const wxString logonType = XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->GetStringSelection();
-	if (logonType == _("Normal"))
-		data->m_server.SetLogonType(NORMAL);
-	else if (logonType == _("Ask for password"))
-		data->m_server.SetLogonType(ASK);
-	else if (logonType == _("Interactive"))
-		data->m_server.SetLogonType(INTERACTIVE);
-	else if (logonType == _("Account"))
-		data->m_server.SetLogonType(ACCOUNT);
-	else
-		data->m_server.SetLogonType(ANONYMOUS);
+	enum LogonType logon_type = GetLogonTypeFromName(XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->GetStringSelection());
+	data->m_server.SetLogonType(logon_type);
 
 	data->m_server.SetUser(XRCCTRL(*this, "ID_USER", wxTextCtrl)->GetValue(),
 						   XRCCTRL(*this, "ID_PASS", wxTextCtrl)->GetValue());
@@ -1117,7 +1152,7 @@ bool CSiteManager::UpdateServer()
 	data->m_comments = XRCCTRL(*this, "ID_COMMENTS", wxTextCtrl)->GetValue();
 
 	const wxString serverType = XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->GetStringSelection();
-	data->m_server.SetType(GetTypeFromName(serverType));
+	data->m_server.SetType(GetServerTypeFromName(serverType));
 
 	data->m_localDir = XRCCTRL(*this, "ID_LOCALDIR", wxTextCtrl)->GetValue();
 	data->m_remoteDir = CServerPath();

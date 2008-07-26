@@ -1922,7 +1922,8 @@ void CMainFrame::ConnectToSite(CSiteManagerItemData* const pData)
 {
 	wxASSERT(pData);
 
-	if (pData->m_server.GetLogonType() == ASK)
+	if (pData->m_server.GetLogonType() == ASK ||
+		(pData->m_server.GetLogonType() == INTERACTIVE && pData->m_server.GetUser() == _T("")))
 	{
 		if (!CLoginManager::Get().GetPassword(pData->m_server, false, pData->m_server.GetName()))
 			return;

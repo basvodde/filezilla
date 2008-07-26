@@ -112,7 +112,7 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 		user.Trim(true);
 		user.Trim(false);
 
-		if (user == _T(""))
+		if (user == _T("") && m_logonType != ASK && m_logonType != INTERACTIVE)
 		{
 			user = _T("anonymous");
 			pass = _T("anonymous@example.com");
@@ -198,10 +198,13 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 	m_user = user;
 	m_pass = pass;
 	m_account = _T("");
-	if (m_user == _T("") || m_user == _T("anonymous"))
-		m_logonType = ANONYMOUS;
-	else
-		m_logonType = NORMAL;
+	if (m_logonType != ASK && m_logonType != INTERACTIVE)
+	{
+		if (m_user == _T("") || m_user == _T("anonymous"))
+			m_logonType = ANONYMOUS;
+		else
+			m_logonType = NORMAL;
+	}
 
 	if (m_protocol == UNKNOWN)
 		m_protocol = GetProtocolFromPort(port);
@@ -492,11 +495,16 @@ bool CServer::SetUser(const wxString& user, const wxString& pass /*=_T("")*/)
 		return true;
 
 	if (user == _T(""))
-		return false;
-
+	{
+		if (m_logonType != ASK && m_logonType != INTERACTIVE)
+			return false;
+		m_pass = _T("");
+	}
+	else
+		m_pass = pass;
+	
 	m_user = user;
-	m_pass = pass;
-
+	
 	return true;
 }
 

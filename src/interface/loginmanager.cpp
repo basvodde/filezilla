@@ -57,15 +57,51 @@ bool CLoginManager::DisplayDialog(CServer &server, wxString name, wxString chall
 		XRCCTRL(pwdDlg, "ID_CHALLENGE", wxTextCtrl)->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 	}
 	XRCCTRL(pwdDlg, "ID_HOST", wxStaticText)->SetLabel(server.FormatHost());
-	XRCCTRL(pwdDlg, "ID_USER", wxStaticText)->SetLabel(server.GetUser());
+
+	if (server.GetUser() == _T(""))
+	{
+		pwdDlg.SetTitle(_("Enter username and password"));
+		XRCCTRL(pwdDlg, "ID_OLD_USER_LABEL", wxStaticText)->Hide();
+		XRCCTRL(pwdDlg, "ID_OLD_USER", wxStaticText)->Hide();
+
+		if (server.GetLogonType() == INTERACTIVE)
+		{
+			XRCCTRL(pwdDlg, "ID_PASSWORD_LABEL", wxStaticText)->Hide();
+			XRCCTRL(pwdDlg, "ID_PASSWORD", wxTextCtrl)->Hide();
+			XRCCTRL(pwdDlg, "ID_REMEMBER", wxCheckBox)->Hide();
+		}
+	}
+	else
+	{
+		XRCCTRL(pwdDlg, "ID_OLD_USER", wxStaticText)->SetLabel(server.GetUser());
+		XRCCTRL(pwdDlg, "ID_NEW_USER_LABEL", wxStaticText)->Hide();
+		XRCCTRL(pwdDlg, "ID_NEW_USER", wxTextCtrl)->Hide();
+	}
 	XRCCTRL(pwdDlg, "wxID_OK", wxButton)->SetId(wxID_OK);
 	XRCCTRL(pwdDlg, "wxID_CANCEL", wxButton)->SetId(wxID_CANCEL);
 	pwdDlg.GetSizer()->Fit(&pwdDlg);
 	pwdDlg.GetSizer()->SetSizeHints(&pwdDlg);
-	if (pwdDlg.ShowModal() != wxID_OK)
-		return false;
 
-	server.SetUser(server.GetUser(), XRCCTRL(pwdDlg, "ID_PASSWORD", wxTextCtrl)->GetValue());
+	wxString user;
+	while (user == _T(""))
+	{
+		if (pwdDlg.ShowModal() != wxID_OK)
+			return false;
+
+		if (server.GetUser() == _T(""))
+		{
+			user = XRCCTRL(pwdDlg, "ID_NEW_USER", wxTextCtrl)->GetValue();
+			if (user == _T(""))
+			{
+				wxMessageBox(_("No username given."), _("Invalid input"), wxICON_EXCLAMATION);
+				continue;
+			}
+		}
+		else
+			user = server.GetUser();
+	}
+
+	server.SetUser(user, XRCCTRL(pwdDlg, "ID_PASSWORD", wxTextCtrl)->GetValue());
 
 	if (server.GetLogonType() == ASK && XRCCTRL(pwdDlg, "ID_REMEMBER", wxCheckBox)->GetValue())
 	{

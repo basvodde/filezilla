@@ -438,8 +438,6 @@ bool GetServer(TiXmlElement *node, CServer& server)
 	if (server.GetLogonType() != ANONYMOUS)
 	{
 		wxString user = GetTextElement(node, "User");
-		if (user == _T(""))
-			return false;
 
 		wxString pass;
 		if ((long)NORMAL == logonType || (long)ACCOUNT == logonType)
