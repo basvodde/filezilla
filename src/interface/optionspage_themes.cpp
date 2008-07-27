@@ -212,9 +212,15 @@ bool COptionsPageThemes::DisplayTheme(const wxString& theme)
 	SetStaticText(XRCID("ID_EMAIL"), mail, failure);
 
 	wxNotebook *pPreview = XRCCTRL(*this, "ID_PREVIEW", wxNotebook);
-	pPreview->DeleteAllPages();
 
-	wxString selected = COptions::Get()->GetOption(OPTION_THEME_ICONSIZE);
+	wxString selected_size;
+	int selected_page = pPreview->GetSelection();
+	if (selected_page != -1)
+		selected_size = pPreview->GetPageText(selected_page);
+	else
+		selected_size = COptions::Get()->GetOption(OPTION_THEME_ICONSIZE);
+
+	pPreview->DeleteAllPages();
 
 	std::list<wxString> sizes = CThemeProvider::GetThemeSizes(theme);
 	for (std::list<wxString>::const_iterator iter = sizes.begin(); iter != sizes.end(); iter++)
@@ -251,9 +257,8 @@ bool COptionsPageThemes::DisplayTheme(const wxString& theme)
 
 		pSizer->Add(pIconPreview, 1, wxGROW | wxALL, 5);
 
-		pPreview->AddPage(pPanel, size, selected == size);
+		pPreview->AddPage(pPanel, size, selected_size == size);
 	}
-
 
 	return !failure;
 }
