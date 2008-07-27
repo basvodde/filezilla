@@ -41,9 +41,15 @@ public:
 	bool DisplayError(const wxString& controlToFocus, const wxString& error);
 	bool DisplayError(wxWindow* pWnd, const wxString& error);
 
+	bool Display();
+
+	virtual bool OnDisplayedFirstTime();
+
 protected:
 	COptions* m_pOptions;
 	CSettingsDialog* m_pOwner;
+
+	bool m_was_selected;
 };
 
 #endif //__OPTIONSPAGE_H__

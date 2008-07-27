@@ -25,6 +25,8 @@ bool COptionsPage::CreatePage(COptions* pOptions, CSettingsDialog* pOwner, wxWin
 	if (size.GetHeight() > maxSize.GetHeight())
 		maxSize.SetHeight(size.GetHeight());
 
+	m_was_selected = false;
+
 	return true;
 }
 
@@ -193,4 +195,22 @@ bool COptionsPage::DisplayError(wxWindow* pWnd, const wxString& error)
 	wxMessageBox(error, _("Failed to validate settings"), wxICON_EXCLAMATION, this);
 
 	return false;
+}
+
+bool COptionsPage::Display()
+{
+	if (!m_was_selected)
+	{
+		if (!OnDisplayedFirstTime())
+			return false;
+		m_was_selected = true;
+	}
+	Show();
+
+	return true;
+}
+
+bool COptionsPage::OnDisplayedFirstTime()
+{
+	return true;
 }

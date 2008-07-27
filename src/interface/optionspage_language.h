@@ -9,6 +9,8 @@ public:
 	virtual bool SavePage();
 	virtual bool Validate();
 
+	virtual bool OnDisplayedFirstTime();
+
 protected:
 	DECLARE_EVENT_TABLE();
 

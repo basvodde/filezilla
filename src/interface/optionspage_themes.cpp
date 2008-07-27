@@ -134,43 +134,7 @@ COptionsPageThemes::~COptionsPageThemes()
 
 bool COptionsPageThemes::LoadPage()
 {
-	bool failure = false;
-
-	wxChoice* pTheme = XRCCTRL(*this, "ID_THEME", wxChoice);
-	if (!pTheme)
-		return false;
-
-	if (!pTheme || !XRCCTRL(*this, "ID_PREVIEW", wxNotebook) ||
-		!XRCCTRL(*this, "ID_AUTHOR", wxStaticText) ||
-		!XRCCTRL(*this, "ID_EMAIL", wxStaticText))
-		return false;
-
-	std::list<wxString> themes = CThemeProvider::GetThemes();
-	if (themes.empty())
-		return false;
-
-	wxString theme = m_pOptions->GetOption(OPTION_THEME);
-	wxString firstName;
-	for (std::list<wxString>::const_iterator iter = themes.begin(); iter != themes.end(); iter++)
-	{
-		wxString name, author, mail;
-		if (!CThemeProvider::GetThemeData(*iter, name, author, mail))
-			continue;
-		if (firstName == _T(""))
-			firstName = name;
-		int n = pTheme->Append(name, new wxStringClientData(*iter));
-		if (*iter == theme)
-			pTheme->SetSelection(n);
-	}
-	if (pTheme->GetSelection() == wxNOT_FOUND)
-		pTheme->SetSelection(pTheme->FindString(firstName));
-
-	theme = ((wxStringClientData*)pTheme->GetClientObject(pTheme->GetSelection()))->GetData();
-
-	if (!DisplayTheme(theme))
-		failure = true;
-
-	return !failure;
+	return true;
 }
 
 bool COptionsPageThemes::SavePage()
@@ -271,4 +235,45 @@ void COptionsPageThemes::OnThemeChange(wxCommandEvent& event)
 	const wxString theme = ((wxStringClientData*)pTheme->GetClientObject(sel))->GetData();
 
 	DisplayTheme(theme);
+}
+
+bool COptionsPageThemes::OnDisplayedFirstTime()
+{
+	bool failure = false;
+
+	wxChoice* pTheme = XRCCTRL(*this, "ID_THEME", wxChoice);
+	if (!pTheme)
+		return false;
+
+	if (!pTheme || !XRCCTRL(*this, "ID_PREVIEW", wxNotebook) ||
+		!XRCCTRL(*this, "ID_AUTHOR", wxStaticText) ||
+		!XRCCTRL(*this, "ID_EMAIL", wxStaticText))
+		return false;
+
+	std::list<wxString> themes = CThemeProvider::GetThemes();
+	if (themes.empty())
+		return false;
+
+	wxString theme = m_pOptions->GetOption(OPTION_THEME);
+	wxString firstName;
+	for (std::list<wxString>::const_iterator iter = themes.begin(); iter != themes.end(); iter++)
+	{
+		wxString name, author, mail;
+		if (!CThemeProvider::GetThemeData(*iter, name, author, mail))
+			continue;
+		if (firstName == _T(""))
+			firstName = name;
+		int n = pTheme->Append(name, new wxStringClientData(*iter));
+		if (*iter == theme)
+			pTheme->SetSelection(n);
+	}
+	if (pTheme->GetSelection() == wxNOT_FOUND)
+		pTheme->SetSelection(pTheme->FindString(firstName));
+
+	theme = ((wxStringClientData*)pTheme->GetClientObject(pTheme->GetSelection()))->GetData();
+
+	if (!DisplayTheme(theme))
+		failure = true;
+
+	return !failure;
 }

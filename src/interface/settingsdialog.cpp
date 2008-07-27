@@ -210,7 +210,7 @@ bool CSettingsDialog::LoadPages()
 	if (!m_activePanel)
 	{
 		m_activePanel = m_pages[0].page;
-		m_activePanel->Show();
+		m_activePanel->Display();
 	}
 
 	return true;
@@ -240,7 +240,7 @@ void CSettingsDialog::OnPageChanged(wxTreeEvent& event)
 		if (m_pages[i].id == item)
 		{
 			m_activePanel = m_pages[i].page;
-			m_activePanel->Show();
+			m_activePanel->Display();
 			break;
 		}
 	}

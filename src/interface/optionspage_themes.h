@@ -13,6 +13,8 @@ public:
 protected:
 	bool DisplayTheme(const wxString& theme);
 
+	virtual bool OnDisplayedFirstTime();
+
 	DECLARE_EVENT_TABLE();
 	void OnThemeChange(wxCommandEvent& event);
 };
