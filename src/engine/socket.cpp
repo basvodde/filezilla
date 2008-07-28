@@ -321,6 +321,8 @@ protected:
 			CSocketEvent evt(m_pSocket->m_id, CSocketEvent::connection, res);
 			SendEvent(evt);
 			m_pSocket->m_state = CSocket::closed;
+
+			return false;
 		}
 
 		for (struct addrinfo *addr = addressList; addr; addr = addr->ai_next)
