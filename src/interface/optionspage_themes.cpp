@@ -139,6 +139,9 @@ bool COptionsPageThemes::LoadPage()
 
 bool COptionsPageThemes::SavePage()
 {
+	if (!m_was_selected)
+		return true;
+
 	wxChoice* pTheme = XRCCTRL(*this, "ID_THEME", wxChoice);
 
 	const int sel = pTheme->GetSelection();

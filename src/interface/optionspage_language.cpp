@@ -15,6 +15,9 @@ bool COptionsPageLanguage::LoadPage()
 
 bool COptionsPageLanguage::SavePage()
 {
+	if (!m_was_selected)
+		return true;
+
 	wxListBox* pListBox = XRCCTRL(*this, "ID_LANGUAGES", wxListBox);
 
 	if (pListBox->GetSelection() == wxNOT_FOUND)
