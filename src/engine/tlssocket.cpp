@@ -488,7 +488,8 @@ void CTlsSocket::Read(void *buffer, unsigned int len)
 			gnutls_bye(m_session, GNUTLS_SHUT_WR);
 			// Note: Theoretically this could return a write error.
 			// But we ignore it, since it is perfectly valid for peer
-			// to connection after sending its shutdown notification.
+			// to close the connection after sending its shutdown
+			// notification.
 		}
 
 		return;
