@@ -482,6 +482,14 @@ void CTlsSocket::Read(void *buffer, unsigned int len)
 
 		if (res > 0)
 			TriggerEvents();
+		else
+		{
+			// Peer did already initiate a shutdown, reply to it
+			gnutls_bye(m_session, GNUTLS_SHUT_WR);
+			// Note: Theoretically this could return a write error.
+			// But we ignore it, since it is perfectly valid for peer
+			// to connection after sending its shutdown notification.
+		}
 
 		return;
 	}
