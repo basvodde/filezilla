@@ -116,7 +116,7 @@ int CProxySocket::Handshake(enum CProxySocket::ProxyType type, const wxString& h
 		// Bit oversized, but be on the safe side
 		m_pSendBuffer = new char[70 + strlen(host_raw) * 2 + 2*5 + challenge_len];
 
-		if (challenge)
+		if (!challenge)
 		{
 			m_sendBufferLen = sprintf(m_pSendBuffer, "CONNECT %s:%d HTTP/1.1\r\nHost: %s:%d\r\n\r\n",
 				(const char*)host_raw, port,
