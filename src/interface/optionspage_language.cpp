@@ -114,6 +114,7 @@ bool COptionsPageLanguage::OnDisplayedFirstTime()
 		if (locale == currentLanguage)
 			pListBox->SetSelection(n);
 	}
+	pListBox->GetContainingSizer()->Layout();
 
 	return true;
 }
