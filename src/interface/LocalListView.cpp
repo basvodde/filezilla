@@ -1760,6 +1760,11 @@ void CLocalListView::RefreshFile(const wxString& file)
 		return;
 	}
 
+	if (data.dir)
+		m_pFilelistStatusBar->AddDirectory();
+	else
+		m_pFilelistStatusBar->AddFile(data.size);
+
 	wxString focused;
 	std::list<wxString> selectedNames;
 	if (IsComparing())
