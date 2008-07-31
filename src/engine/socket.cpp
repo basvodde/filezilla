@@ -244,6 +244,13 @@ public:
 	{
 		if (!already_locked)
 			m_sync.Lock();
+			
+		if (!m_started || m_finished)
+		{
+			if (!already_locked)
+				m_sync.Unlock();
+			return;
+		}
 
 		if (m_threadwait)
 		{
@@ -544,14 +551,14 @@ protected:
 			int res = select(max, &readfds, &writefds, 0, 0);
 
 			m_sync.Lock();
-
+			
 			if (res > 0 && FD_ISSET(m_pipe[0], &readfds))
 			{
 				char buffer[100];
 				read(m_pipe[0], buffer, 100);
 			}
 
-			if (m_quit || !m_pSocket)
+			if (m_quit || !m_pSocket || m_pSocket->m_fd == -1)
 			{
 				return false;
 			}
@@ -561,11 +568,11 @@ protected:
 			if (res == -1)
 			{
 				res = errno;
+				//printf("select failed: %s\n", (const char *)CSocket::GetErrorDescription(res).mb_str());
+				//fflush(stdout);
+
 				if (res == EINTR)
 					continue;
-
-				printf("FOO\n");
-				fflush(stdout);
 
 				return false;
 			}
@@ -1025,12 +1032,24 @@ int CSocket::Close()
 {
 	if (m_fd != -1)
 	{
+		int fd = m_fd;
+		if (m_pSocketThread)
+		{
+			m_pSocketThread->m_sync.Lock();
+			m_fd = -1;
+			if (!m_pSocketThread->m_threadwait)
+				m_pSocketThread->WakeupThread(true);
+		}
+		else
+			m_fd = -1;
+			
 #ifdef __WXMSW__
-		closesocket(m_fd);
+		closesocket(fd);
 #else
-		close(m_fd);
+		close(fd);
 #endif
-		m_fd = -1;
+		if (m_pSocketThread)
+			m_pSocketThread->m_sync.Unlock();
 	}
 	m_state = none;
 
