@@ -1816,7 +1816,12 @@ void CSiteManager::OnBeginDrag(wxTreeEvent& event)
 	}
 
 	const bool predefined = IsPredefinedItem(item);
-	const bool root_or_predefined = (item == pTree->GetRootItem() || item == m_ownSites || predefined);
+	const bool root = item == pTree->GetRootItem() || item == m_ownSites;
+	if (root)
+	{
+		event.Veto();
+		return;
+	}
 
 	CSiteManagerDataObject obj;
 
@@ -1825,7 +1830,7 @@ void CSiteManager::OnBeginDrag(wxTreeEvent& event)
 
 	m_dropSource = item;
 
-	source.DoDragDrop(root_or_predefined ? wxDrag_CopyOnly : wxDrag_DefaultMove);
+	source.DoDragDrop(predefined ? wxDrag_CopyOnly : wxDrag_DefaultMove);
 
 	m_dropSource = wxTreeItemId();
 }
