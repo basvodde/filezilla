@@ -8,6 +8,8 @@ int CPathCache::m_misses = 0;
 
 int CPathCache::m_instance_count = 0;
 
+static CPathCache cache;
+
 CPathCache::CPathCache()
 {
 	m_instance_count++;

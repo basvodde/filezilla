@@ -538,9 +538,18 @@ void CDirectoryCache::Rename(const CServer& server, const CServerPath& pathFrom,
 			}
 			if (i != listing.GetCount())
 			{
-				listing[i].name = fileTo;
-				listing[i].unsure = true;
-				listing.m_hasUnsureEntries |= CDirectoryListing::unsure_unknown;
+				if (listing[i].dir)
+				{
+					RemoveDir(server, pathFrom, fileFrom);
+					RemoveDir(server, pathFrom, fileTo);
+					UpdateFile(server, pathFrom, fileTo, true, dir);
+				}
+				else
+				{
+					listing[i].name = fileTo;
+					listing[i].unsure = true;
+					listing.m_hasUnsureEntries |= CDirectoryListing::unsure_unknown;
+				}
 			}
 			return;
 		}
