@@ -1313,9 +1313,9 @@ int CSocket::Listen(int family, int port /*=0*/)
 
 int CSocket::GetLocalPort(int& error)
 {
-	struct sockaddr addr;
+	struct sockaddr_storage addr;
 	socklen_t addr_len = sizeof(addr);
-	error = getsockname(m_fd, &addr, &addr_len);
+	error = getsockname(m_fd, (sockaddr*)&addr, &addr_len);
 	if (error)
 	{
 #ifdef __WXMSW__
@@ -1324,12 +1324,12 @@ int CSocket::GetLocalPort(int& error)
 		return -1;
 	}
 
-	if (addr.sa_family == AF_INET)
+	if (addr.ss_family == AF_INET)
 	{
 		struct sockaddr_in* addr_v4 = (sockaddr_in*)&addr;
 		return ntohs(addr_v4->sin_port);
 	}
-	else if (addr.sa_family == AF_INET6)
+	else if (addr.ss_family == AF_INET6)
 	{
 		struct sockaddr_in6* addr_v6 = (sockaddr_in6*)&addr;
 		return ntohs(addr_v6->sin6_port);
@@ -1341,9 +1341,9 @@ int CSocket::GetLocalPort(int& error)
 
 int CSocket::GetRemotePort(int& error)
 {
-	struct sockaddr addr;
+	struct sockaddr_storage addr;
 	socklen_t addr_len = sizeof(addr);
-	error = getpeername(m_fd, &addr, &addr_len);
+	error = getpeername(m_fd, (sockaddr*)&addr, &addr_len);
 	if (error)
 	{
 #ifdef __WXMSW__
@@ -1352,12 +1352,12 @@ int CSocket::GetRemotePort(int& error)
 		return -1;
 	}
 
-	if (addr.sa_family == AF_INET)
+	if (addr.ss_family == AF_INET)
 	{
 		struct sockaddr_in* addr_v4 = (sockaddr_in*)&addr;
 		return ntohs(addr_v4->sin_port);
 	}
-	else if (addr.sa_family == AF_INET6)
+	else if (addr.ss_family == AF_INET6)
 	{
 		struct sockaddr_in6* addr_v6 = (sockaddr_in6*)&addr;
 		return ntohs(addr_v6->sin6_port);
