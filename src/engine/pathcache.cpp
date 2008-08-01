@@ -6,9 +6,18 @@ CPathCache::tCache CPathCache::m_cache;
 int CPathCache::m_hits = 0;
 int CPathCache::m_misses = 0;
 
+int CPathCache::m_instance_count = 0;
+
+CPathCache::CPathCache()
+{
+	m_instance_count++;
+}
+
 CPathCache::~CPathCache()
 {
-	Clear();
+	m_instance_count--;
+	if (!m_instance_count)
+		Clear();
 }
 
 void CPathCache::Store(const CServer& server, const CServerPath& target, const CServerPath& source, const wxString subdir/*=_T("")*/)

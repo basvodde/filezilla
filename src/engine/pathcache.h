@@ -4,6 +4,7 @@
 class CPathCache
 {
 public:
+	CPathCache();
 	virtual ~CPathCache();
 
 	void Store(const CServer& server, const CServerPath& target, const CServerPath& source, const wxString subdir = _T(""));
@@ -15,7 +16,7 @@ public:
 	// Invalidate path
 	void InvalidatePath(const CServer& server, const CServerPath& path, const wxString& subdir = _T(""));
 
-	void Clear();
+	static void Clear();
 
 protected:
 	class CSourcePath
@@ -48,6 +49,8 @@ protected:
 
 	static int m_hits;
 	static int m_misses;
+
+	static int m_instance_count;
 };
 
 #endif //__PATHCACHE_H__
