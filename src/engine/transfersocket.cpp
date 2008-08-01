@@ -96,7 +96,10 @@ wxString CTransferSocket::SetupActiveTransfer(const wxString& ip)
 
 	m_pSocketServer = CreateSocketServer();
 	if (!m_pSocketServer)
+	{
+		m_pControlSocket->LogMessage(::Debug_Warning, _T("CreateSocketServer failed"));
 		return _T("");
+	}
 
 	int error;
 	int port = m_pSocketServer->GetLocalPort(error);
@@ -104,6 +107,8 @@ wxString CTransferSocket::SetupActiveTransfer(const wxString& ip)
 	{
 		delete m_pSocketServer;
 		m_pSocketServer = 0;
+
+		m_pControlSocket->LogMessage(::Debug_Warning, _T("GetLocalPort failed: %s"), CSocket::GetErrorDescription(error).c_str());
 		return _T("");
 	}
 
@@ -222,7 +227,7 @@ void CTransferSocket::OnAccept(int error)
 	if (!m_pSocket)
 	{
 		if (error == EAGAIN)
-			m_pControlSocket->LogMessage(::Debug_Verbose, _("No pending connection"));
+			m_pControlSocket->LogMessage(::Debug_Verbose, _T("No pending connection"));
 		else
 		{
 			m_pControlSocket->LogMessage(::Status, _("Could not accept connection: %s"), CSocket::GetErrorDescription(error).c_str());
@@ -665,6 +670,7 @@ CSocket* CTransferSocket::CreateSocketServer(int port)
 	int res = pServer->Listen(m_pControlSocket->GetAddressFamily(), port);
 	if (res)
 	{
+		m_pControlSocket->LogMessage(::Debug_Verbose, _T("Could not listen on port %d: %s"), port, CSocket::GetErrorDescription(res).c_str());
 		delete pServer;
 		return 0;
 	}
@@ -714,9 +720,9 @@ CSocket* CTransferSocket::CreateSocketServer()
 		pServer = CreateSocketServer(start++);
 		if (pServer)
 			break;
+		if (start > high)
+			start = low;
 	}
-	if (start > high)
-		start = low;
 
 	return pServer;
 }
