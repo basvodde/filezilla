@@ -1133,7 +1133,14 @@ bool CSiteManager::UpdateServer()
 
 	unsigned long port;
 	XRCCTRL(*this, "ID_PORT", wxTextCtrl)->GetValue().ToULong(&port);
-	data->m_server.SetHost(XRCCTRL(*this, "ID_HOST", wxTextCtrl)->GetValue(), port);
+	wxString host = XRCCTRL(*this, "ID_HOST", wxTextCtrl)->GetValue();
+	// SetHost does not accept URL syntax
+	if (host[0] == '[')
+	{
+		host.RemoveLast();
+		host = host.Mid(1);
+	}
+	data->m_server.SetHost(host, port);
 
 	const wxString& protocolName = XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->GetStringSelection();
 	const enum ServerProtocol protocol = CServer::GetProtocolFromName(protocolName);
