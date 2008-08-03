@@ -64,18 +64,24 @@ bool CLoginManager::DisplayDialog(CServer &server, wxString name, wxString chall
 		XRCCTRL(pwdDlg, "ID_OLD_USER_LABEL", wxStaticText)->Hide();
 		XRCCTRL(pwdDlg, "ID_OLD_USER", wxStaticText)->Hide();
 
+		XRCCTRL(pwdDlg, "ID_HEADER_PASS", wxStaticText)->Hide();
 		if (server.GetLogonType() == INTERACTIVE)
 		{
 			XRCCTRL(pwdDlg, "ID_PASSWORD_LABEL", wxStaticText)->Hide();
 			XRCCTRL(pwdDlg, "ID_PASSWORD", wxTextCtrl)->Hide();
 			XRCCTRL(pwdDlg, "ID_REMEMBER", wxCheckBox)->Hide();
+			XRCCTRL(pwdDlg, "ID_HEADER_BOTH", wxStaticText)->Hide();
 		}
+		else
+			XRCCTRL(pwdDlg, "ID_HEADER_USER", wxStaticText)->Hide();
 	}
 	else
 	{
 		XRCCTRL(pwdDlg, "ID_OLD_USER", wxStaticText)->SetLabel(server.GetUser());
 		XRCCTRL(pwdDlg, "ID_NEW_USER_LABEL", wxStaticText)->Hide();
 		XRCCTRL(pwdDlg, "ID_NEW_USER", wxTextCtrl)->Hide();
+		XRCCTRL(pwdDlg, "ID_HEADER_USER", wxStaticText)->Hide();
+		XRCCTRL(pwdDlg, "ID_HEADER_BOTH", wxStaticText)->Hide();
 	}
 	XRCCTRL(pwdDlg, "wxID_OK", wxButton)->SetId(wxID_OK);
 	XRCCTRL(pwdDlg, "wxID_CANCEL", wxButton)->SetId(wxID_CANCEL);
