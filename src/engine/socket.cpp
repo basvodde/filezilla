@@ -36,7 +36,7 @@
 #ifdef __WXMSW__
 
 // Stupid Win2K has no getaddrinfo
-// Appareantly it is too hard for the richest company in the
+// Apparently it is too hard for the richest company in the
 // world to add this simple function with a service pack...
 
 extern "C" 
