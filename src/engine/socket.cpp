@@ -30,6 +30,62 @@
   #define EAI_ADDRFAMILY EAI_FAMILY
 #endif
 
+// --------------------------
+// Windows 2000 compatibility
+// --------------------------
+#ifdef __WXMSW__
+
+// Stupid Win2K has no getaddrinfo
+// Appareantly it is too hard for the richest company in the
+// world to add this simple function with a service pack...
+
+extern "C" 
+{
+	typedef int (WINAPI *t_getaddrinfo)(const char *nodename, const char *servname,
+						const struct addrinfo *hints, struct addrinfo **res);
+	typedef void (WINAPI *t_freeaddrinfo)(struct addrinfo* ai);
+	typedef int (WINAPI *t_getnameinfo)(const struct sockaddr* sa, socklen_t salen,
+						char* host, DWORD hostlen, char* serv, DWORD servlen, int flags);
+}
+
+static t_getaddrinfo p_getaddrinfo = 0;
+static t_freeaddrinfo p_freeaddrinfo = 0;
+static t_getnameinfo p_getnameinfo = 0;
+
+class CGetAddrinfoLoader
+{
+public:
+	CGetAddrinfoLoader()
+	{
+		HMODULE m_hDll = LoadLibrary(_T("ws2_32.dll"));
+		if (m_hDll)
+		{
+			p_getaddrinfo = (t_getaddrinfo)GetProcAddress(m_hDll, "getaddrinfo");
+			if (p_getaddrinfo)
+				p_freeaddrinfo = (t_freeaddrinfo)GetProcAddress(m_hDll, "freeaddrinfo");
+			p_getnameinfo = (t_getnameinfo)GetProcAddress(m_hDll, "getnameinfo");
+		}
+	}
+
+	~CGetAddrinfoLoader()
+	{
+		if (m_hDll)
+			FreeLibrary(m_hDll);
+	}
+protected:
+	HMODULE m_hDll;
+};
+static CGetAddrinfoLoader addrinfo_loader;
+
+#define getaddrinfo p_getaddrinfo
+#define freeaddrinfo p_freeaddrinfo
+#define getnameinfo p_getnameinfo
+
+#endif //__WXMSW__
+// ------------------------------
+// End Windows 2000 compatibility
+// ------------------------------
+
 #define WAIT_CONNECT 0x01
 #define WAIT_READ	 0x02
 #define WAIT_WRITE	 0x04
@@ -283,6 +339,104 @@ protected:
 		return true;
 	}
 
+	int TryConnectHost(struct addrinfo *addr)
+	{
+		CSocketEvent evt(m_pSocket->m_id, CSocketEvent::hostaddress, CSocket::AddressToString(addr->ai_addr, addr->ai_addrlen));
+		SendEvent(evt);
+
+		int fd = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
+		CSocket::DoSetFlags(fd, m_pSocket->m_flags, m_pSocket->m_flags);
+
+		CSocket::DoSetBufferSizes(fd, m_pSocket->m_buffer_sizes[0], m_pSocket->m_buffer_sizes[1]);
+
+		if (fd == -1)
+		{
+#ifdef __WXMSW__
+			int res = ConvertMSWErrorCode(WSAGetLastError());
+#else
+			int res = errno;
+#endif
+			CSocketEvent evt(m_pSocket->m_id, addr->ai_next ? CSocketEvent::connection_next : CSocketEvent::connection, res);
+			SendEvent(evt);
+
+			return 0;
+		}
+
+		CSocket::SetNonblocking(fd);
+
+		int res = connect(fd, addr->ai_addr, addr->ai_addrlen);
+		if (res == -1)
+		{
+#ifdef __WXMSW__
+			// Map to POSIX error codes
+			int error = WSAGetLastError();
+			if (error == WSAEWOULDBLOCK)
+				res = EINPROGRESS;
+			else
+				res = ConvertMSWErrorCode(WSAGetLastError());
+#else
+			res = errno;
+#endif
+		}
+
+		if (res == EINPROGRESS)
+		{
+
+			m_pSocket->m_fd = fd;
+
+			bool wait_successful;
+			do
+			{
+				wait_successful = DoWait(WAIT_CONNECT);
+				if ((m_triggered & WAIT_CONNECT))
+					break;
+			} while (wait_successful);
+
+			if (!wait_successful)
+			{
+#ifdef __WXMSW__
+				closesocket(fd);
+#else
+				close(fd);
+#endif
+				if (m_pSocket)
+					m_pSocket->m_fd = -1;
+				return -1;
+			}
+			m_triggered &= ~WAIT_CONNECT;
+
+			res = m_triggered_errors[0];
+		}
+
+		if (res)
+		{
+			CSocketEvent evt(m_pSocket->m_id, addr->ai_next ? CSocketEvent::connection_next : CSocketEvent::connection, res);
+			SendEvent(evt);
+
+			m_pSocket->m_fd = -1;
+#ifdef __WXMSW__
+			closesocket(fd);
+#else
+			close(fd);
+#endif
+		}
+		else
+		{
+			m_pSocket->m_fd = fd;
+			m_pSocket->m_state = CSocket::connected;
+
+			CSocketEvent evt(m_pSocket->m_id, CSocketEvent::connection, 0);
+			SendEvent(evt);
+
+			// We're now interested in all the other nice events
+			m_waiting |= WAIT_READ | WAIT_WRITE;
+
+			return 1;
+		}
+
+		return 0;
+	}
+
 	// Only call while locked
 	bool DoConnect()
 	{
@@ -306,6 +460,52 @@ protected:
 		struct addrinfo hints = {0};
 		hints.ai_family = AF_UNSPEC;
 		hints.ai_socktype = SOCK_STREAM;
+
+#ifdef __WXMSW__
+		if (!getaddrinfo)
+		{
+			// Win2K fallback
+			int port = atoi(pPort);
+
+			struct hostent* h = gethostbyname(pHost);
+
+			delete [] pHost;
+			delete [] pPort;
+
+			if (!Lock())
+			{
+				m_pSocket->m_state = CSocket::closed;
+				return false;
+			}
+
+			if (!h)
+			{
+				int res = ConvertMSWErrorCode(WSAGetLastError());
+				CSocketEvent evt(m_pSocket->m_id, CSocketEvent::connection, res);
+				SendEvent(evt);
+				m_pSocket->m_state = CSocket::closed;
+				return false;
+			}
+
+			struct sockaddr_in addr_in = {0};
+			addr_in.sin_family = AF_INET;
+			addr_in.sin_addr = *((struct in_addr*)h->h_addr_list[0]);
+			addr_in.sin_port = htons(port);
+
+			struct addrinfo addr = {0};
+			addr.ai_family = AF_INET;
+			addr.ai_socktype = SOCK_STREAM;
+			addr.ai_addr = (struct sockaddr*)&addr_in;
+			addr.ai_addrlen = sizeof(struct sockaddr_in);
+
+			int res = TryConnectHost(&addr);
+			if (res == 1)
+				return true;
+
+			m_pSocket->m_state = CSocket::closed;
+			return false;
+		}
+#endif
 		int res = getaddrinfo(pHost, pPort, &hints, &addressList);
 
 		delete [] pHost;
@@ -334,98 +534,16 @@ protected:
 
 		for (struct addrinfo *addr = addressList; addr; addr = addr->ai_next)
 		{
-
-			CSocketEvent evt(m_pSocket->m_id, CSocketEvent::hostaddress, CSocket::AddressToString(addr->ai_addr, addr->ai_addrlen));
-			SendEvent(evt);
-
-			int fd = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
-			CSocket::DoSetFlags(fd, m_pSocket->m_flags, m_pSocket->m_flags);
-
-			CSocket::DoSetBufferSizes(fd, m_pSocket->m_buffer_sizes[0], m_pSocket->m_buffer_sizes[1]);
-
-			if (fd == -1)
-			{
-#ifdef __WXMSW__
-				int res = ConvertMSWErrorCode(WSAGetLastError());
-#else
-				int res = errno;
-#endif
-				CSocketEvent evt(m_pSocket->m_id, addr->ai_next ? CSocketEvent::connection_next : CSocketEvent::connection, res);
-				SendEvent(evt);
-
-				continue;
-			}
-
-			CSocket::SetNonblocking(fd);
-
-			int res = connect(fd, addr->ai_addr, addr->ai_addrlen);
+			res = TryConnectHost(addr);
 			if (res == -1)
 			{
-#ifdef __WXMSW__
-				// Map to POSIX error codes
-				int error = WSAGetLastError();
-				if (error == WSAEWOULDBLOCK)
-					res = EINPROGRESS;
-				else
-					res = ConvertMSWErrorCode(WSAGetLastError());
-#else
-				res = errno;
-#endif
+				freeaddrinfo(addressList);
+				m_pSocket->m_state = CSocket::closed;
+				return false;
 			}
-
-			if (res == EINPROGRESS)
+			else if (res)
 			{
-
-				m_pSocket->m_fd = fd;
-
-				bool wait_successful;
-				do
-				{
-					wait_successful = DoWait(WAIT_CONNECT);
-					if ((m_triggered & WAIT_CONNECT))
-						break;
-				} while (wait_successful);
-
-				if (!wait_successful)
-				{
-#ifdef __WXMSW__
-					closesocket(fd);
-#else
-					close(fd);
-#endif
-					if (m_pSocket)
-						m_pSocket->m_fd = -1;
-					freeaddrinfo(addressList);
-					return false;
-				}
-				m_triggered &= ~WAIT_CONNECT;
-
-				res = m_triggered_errors[0];
-			}
-
-			if (res)
-			{
-				CSocketEvent evt(m_pSocket->m_id, addr->ai_next ? CSocketEvent::connection_next : CSocketEvent::connection, res);
-				SendEvent(evt);
-
-				m_pSocket->m_fd = -1;
-#ifdef __WXMSW__
-				closesocket(fd);
-#else
-				close(fd);
-#endif
-			}
-			else
-			{
-				m_pSocket->m_fd = fd;
-				m_pSocket->m_state = CSocket::connected;
-
-				CSocketEvent evt(m_pSocket->m_id, CSocketEvent::connection, 0);
-				SendEvent(evt);
-
-				// We're now interested in all the other nice events
-				m_waiting |= WAIT_READ | WAIT_WRITE;
-
+				freeaddrinfo(addressList);
 				return true;
 			}
 		}
@@ -1176,6 +1294,24 @@ wxString CSocket::AddressToString(const struct sockaddr* addr, int addr_len, boo
 	char hostbuf[NI_MAXHOST];
 	char portbuf[NI_MAXSERV];
 
+#ifdef __WXMSW__
+	if (!getnameinfo)
+	{
+		// Win2K fallback
+		if (addr->sa_family != AF_INET)
+			return _T("");
+		char* s = inet_ntoa(((struct sockaddr_in*)addr)->sin_addr);
+		if (!s)
+			return _T("");
+
+		wxString host = wxString(s, wxConvLibc);
+		if (!with_port)
+			return host;
+
+		return host + wxString::Format(_T(":%d"), (int)ntohs(((struct sockaddr_in*)addr)->sin_port));
+	}
+#endif
+
 	int res = getnameinfo(addr, addr_len, hostbuf, NI_MAXHOST, portbuf, NI_MAXSERV, NI_NUMERICHOST | NI_NUMERICSERV);
 	if (res) // Should never fail
 		return _T("");
@@ -1235,58 +1371,86 @@ int CSocket::Listen(int family, int port /*=0*/)
 	if (port < 0 || port > 65535)
 		return EINVAL;
 
-	struct addrinfo hints = {0};
-	hints.ai_family = family;
-	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = AI_PASSIVE;
-#ifdef AI_NUMERICSERV
-	// Some systems like Windows or OS X don't know AI_NUMERICSERV.
-	hints.ai_flags |= AI_NUMERICSERV;
-#endif
-
-	char portstring[6];
-	sprintf(portstring, "%d", port);
-
-	struct addrinfo* addressList = 0;
-	int res = getaddrinfo(0, portstring, &hints, &addressList);
-
-	if (res)
-	{
 #ifdef __WXMSW__
-		return ConvertMSWErrorCode(res);
-#else
-		return res;
-#endif
-	}
-
-	for (struct addrinfo* addr = addressList; addr; addr = addr->ai_next)
+	if (!getaddrinfo)
 	{
-		m_fd = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
-#ifdef __WXMSW__
-		res = ConvertMSWErrorCode(WSAGetLastError());
-#else
-		res = errno;
-#endif
+		m_fd = socket(AF_INET, SOCK_STREAM, 0);
 		if (m_fd == -1)
-			continue;
+			return ConvertMSWErrorCode(WSAGetLastError());
 
 		SetNonblocking(m_fd);
 
-		res = bind(m_fd, addr->ai_addr, addr->ai_addrlen);
-		if (!res)
-			break;
-#ifdef __WXMSW__
-		res = ConvertMSWErrorCode(res);
-		closesocket(m_fd);
-#else
-		close(m_fd);
-#endif
-		m_fd = -1;
-	}
-	if (m_fd == -1)
-		return res;
+		struct sockaddr_in addr = {0};
+		addr.sin_family = AF_INET;
+		addr.sin_port = htons(port);
 
-	res = listen(m_fd, 1);
+		int res = bind(m_fd, (sockaddr *)&addr, sizeof(addr));
+		if (res)
+		{
+			res = WSAGetLastError();
+			closesocket(m_fd);
+			m_fd = -1;
+
+			return ConvertMSWErrorCode(res);
+		}
+	}
+	else
+#endif
+	{
+		struct addrinfo hints = {0};
+		hints.ai_family = family;
+		hints.ai_socktype = SOCK_STREAM;
+		hints.ai_flags = AI_PASSIVE;
+#ifdef AI_NUMERICSERV
+		// Some systems like Windows or OS X don't know AI_NUMERICSERV.
+		hints.ai_flags |= AI_NUMERICSERV;
+#endif
+
+		char portstring[6];
+		sprintf(portstring, "%d", port);
+
+		struct addrinfo* addressList = 0;
+		int res = getaddrinfo(0, portstring, &hints, &addressList);
+
+		if (res)
+		{
+#ifdef __WXMSW__
+			return ConvertMSWErrorCode(res);
+#else
+			return res;
+#endif
+		}
+
+		for (struct addrinfo* addr = addressList; addr; addr = addr->ai_next)
+		{
+			m_fd = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
+#ifdef __WXMSW__
+			res = ConvertMSWErrorCode(WSAGetLastError());
+#else
+			res = errno;
+#endif
+			if (m_fd == -1)
+				continue;
+
+			SetNonblocking(m_fd);
+
+			res = bind(m_fd, addr->ai_addr, addr->ai_addrlen);
+			if (!res)
+				break;
+#ifdef __WXMSW__
+			res = ConvertMSWErrorCode(WSAGetLastError());
+			closesocket(m_fd);
+#else
+			res = errno;
+			close(m_fd);
+#endif
+			m_fd = -1;
+		}
+		if (m_fd == -1)
+			return res;
+	}
+
+	int res = listen(m_fd, 1);
 	if (res)
 	{
 #ifdef __WXMSW__
