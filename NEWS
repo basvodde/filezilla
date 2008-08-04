@@ -10,6 +10,23 @@ Legend:
     *nix: Unix (e.g BSD) and Unix-like systems (e.g. Linux)
     OS X: Apple Mac OS X
 
+3.1.1-rc1 (2008-08-04)
+
++ If using "Ask for password" and "Interactive" logon types, a username is now optional in the Site Manager
++ New iconset: OpenCrystal
++ MSW: Whether icon sets should be installed or not can be seleted in the installer
+- Fix parsing of URLs containing port number in quickconnect bar
+- Fix handling of local write errors if downloading files
+- If closing FileZilla, the queue is now properly saved using a backup copy to prevent corruption of queue file
+- Slight performance improvement if opening settings dialog, language and theme pages are now populated on demand
+- Reply to server's shutdown notification on SSL/TLS secured downloads if connection still open
+- After downloading files, local file count did not update
+- "My Sites" in Site Manager should not be dragable
+- Fix entering IPv6 addresses in Site Manager
+- Directory cache was incoherent after renaming a directory
+- Several fixes to new socket class
+- MSW: Starting a bounding box selection (Windows calls it marquee selection) did not set focus to the file lists
+
 3.1.0.1 (2008-07-24)
 
 ! Do not report success on SSL/TLS transfers if server did not perform orderly SSL/TLS shutdown. Previously, an attacker could cause truncated files with FileZilla thinking the transfer was successful. All versions prior to this were affected
