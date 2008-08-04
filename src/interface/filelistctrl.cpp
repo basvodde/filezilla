@@ -47,6 +47,11 @@ typedef struct fz_tagNMLVODSTATECHANGE
 } fzNMLVODSTATECHANGE;
 #pragma pack(pop)
 
+#ifndef LVN_MARQUEEBEGIN
+// MinGW lacks this constant
+#define LVN_MARQUEEBEGIN        (LVN_FIRST-56)
+#endif
+
 template<class CFileData> LRESULT CALLBACK CFileListCtrl<CFileData>::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	std::map<HWND, char*>::iterator iter = m_hwnd_map.find(hWnd);
