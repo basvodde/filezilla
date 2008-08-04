@@ -106,6 +106,10 @@ template<class CFileData> LRESULT CALLBACK CFileListCtrl<CFileData>::WindowProc(
 			pFileListCtrl->m_pFilelistStatusBar->UnselectAll();
 		}
 	}
+	else if (pNmhdr->code == LVN_MARQUEEBEGIN)
+	{
+		pFileListCtrl->SetFocus();
+	}
 
 	return CallWindowProc(pFileListCtrl->m_prevWndproc, hWnd, uMsg, wParam, lParam);
 }
