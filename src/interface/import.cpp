@@ -247,12 +247,16 @@ bool CImportDialog::HasEntryWithName(TiXmlElement* pElement, const wxString& nam
 	for (pChild = pElement->FirstChildElement("Server"); pChild; pChild = pChild->NextSiblingElement("Server"))
 	{
 		wxString childName = GetTextElement(pChild);
+		childName.Trim(true);
+		childName.Trim(false);
 		if (!name.CmpNoCase(childName))
 			return true;
 	}
 	for (pChild = pElement->FirstChildElement("Folder"); pChild; pChild = pChild->NextSiblingElement("Folder"))
 	{
 		wxString childName = GetTextElement(pChild);
+		childName.Trim(true);
+		childName.Trim(false);
 		if (!name.CmpNoCase(childName))
 			return true;
 	}
@@ -266,6 +270,8 @@ TiXmlElement* CImportDialog::GetFolderWithName(TiXmlElement* pElement, const wxS
 	for (pChild = pElement->FirstChildElement("Server"); pChild; pChild = pChild->NextSiblingElement("Server"))
 	{
 		wxString childName = GetTextElement(pChild);
+		childName.Trim(true);
+		childName.Trim(false);
 		if (!name.CmpNoCase(childName))
 			return 0;
 	}
@@ -273,6 +279,8 @@ TiXmlElement* CImportDialog::GetFolderWithName(TiXmlElement* pElement, const wxS
 	for (pChild = pElement->FirstChildElement("Folder"); pChild; pChild = pChild->NextSiblingElement("Folder"))
 	{
 		wxString childName = GetTextElement(pChild);
+		childName.Trim(true);
+		childName.Trim(false);
 		if (!name.CmpNoCase(childName))
 			return pChild;
 	}
@@ -312,6 +320,8 @@ bool CImportDialog::ImportSites(TiXmlElement* pSitesToImport, TiXmlElement* pExi
 	for (TiXmlElement* pImportFolder = pSitesToImport->FirstChildElement("Folder"); pImportFolder; pImportFolder = pImportFolder->NextSiblingElement("Folder"))
 	{
 		wxString name = GetTextElement(pImportFolder);
+		name.Trim(true);
+		name.Trim(false);
 		if (name == _T(""))
 			continue;
 
@@ -329,6 +339,8 @@ bool CImportDialog::ImportSites(TiXmlElement* pSitesToImport, TiXmlElement* pExi
 	for (TiXmlElement* pImportSite = pSitesToImport->FirstChildElement("Server"); pImportSite; pImportSite = pImportSite->NextSiblingElement("Server"))
 	{
 		wxString name = GetTextElement(pImportSite);
+		name.Trim(true);
+		name.Trim(false);
 		if (name == _T(""))
 			continue;
 
