@@ -1608,8 +1608,15 @@ public:
 			const wxMenuItem* const pItem = pMenu->FindItemByPosition(i);
 			if (!pItem)
 				continue;
+
+			// Use same sorting as site tree in site manager
+#ifdef __WXMSW__
+			if (pItem->GetLabel().CmpNoCase(name) > 0)
+				break;
+#else
 			if (pItem->GetLabel() > name)
 				break;
+#endif
 		}
 
 		return i;
