@@ -2043,7 +2043,7 @@ void CLocalListView::OnMenuEdit(wxCommandEvent& event)
 		return;
 	case CEditHandler::edit:
 		{
-			int res = wxMessageBox(_("A file with that name is already being edited. Discard old file and download the new file?"), _("Selected file already being edited"), wxICON_QUESTION | wxYES_NO);
+			int res = wxMessageBox(wxString::Format(_("A file with that name is already being edited. Do you want to reopen '%s'?"), fn.GetFullPath().c_str()), _("Selected file already being edited"), wxICON_QUESTION | wxYES_NO);
 			if (res != wxYES)
 			{
 				wxBell();
