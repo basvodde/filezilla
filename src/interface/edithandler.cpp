@@ -577,6 +577,15 @@ checkmodifications_remote:
 			continue;
 
 		// File has changed, ask user what to do
+
+        wxTopLevelWindow* pTopWindow = (wxTopLevelWindow*)wxTheApp->GetTopWindow();
+		if (pTopWindow && pTopWindow->IsIconized())
+		{
+			pTopWindow->RequestUserAttention(wxUSER_ATTENTION_INFO);
+			insideCheckForModifications = false;
+			return;
+		}
+
 		CChangedFileDialog dlg;
 		if (!dlg.Load(wxTheApp->GetTopWindow(), _T("ID_CHANGEDFILE")))
 			continue;
@@ -637,8 +646,17 @@ checkmodifications_local:
 			continue;
 
 		// File has changed, ask user what to do
+
+		wxTopLevelWindow* pTopWindow = (wxTopLevelWindow*)wxTheApp->GetTopWindow();
+		if (pTopWindow && pTopWindow->IsIconized())
+		{
+			pTopWindow->RequestUserAttention(wxUSER_ATTENTION_INFO);
+			insideCheckForModifications = false;
+			return;
+		}
+
 		CChangedFileDialog dlg;
-		if (!dlg.Load(wxTheApp->GetTopWindow(), _T("ID_CHANGEDFILE")))
+		if (!dlg.Load(pTopWindow, _T("ID_CHANGEDFILE")))
 			continue;
 		XRCCTRL(dlg, "ID_DESC_UPLOAD_REMOTE", wxStaticText)->Hide();
 		XRCCTRL(dlg, "ID_DELETE", wxCheckBox)->SetLabel(_("&Finish editing"));
@@ -652,8 +670,15 @@ checkmodifications_local:
 
 		if (res == wxID_YES)
 			UploadFile(local, iter->name, remove);
-		else
+		else if (remove)
 			m_fileDataList[local].erase(iter);
+		else if (!fn.FileExists())
+		{
+			m_fileDataList[remote].erase(iter);
+			goto checkmodifications_remote;
+		}
+		else
+			iter->modificationTime = mtime;
 		goto checkmodifications_local;
 	}
 
