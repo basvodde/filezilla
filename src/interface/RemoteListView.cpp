@@ -571,8 +571,7 @@ bool CRemoteListView::UpdateDirectoryListing(const CDirectoryListing *pDirectory
 			return false;
 		}
 
-		CFilterManager filter;
-		if (filter.HasActiveFilters())
+		if (CFilterManager::HasActiveFilters())
 			return false;
 
 		wxASSERT(pDirectoryListing->GetCount() == m_pDirectoryListing->GetCount());

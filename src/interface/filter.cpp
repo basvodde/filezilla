@@ -432,6 +432,10 @@ CFilterManager::CFilterManager()
 {
 	m_currentFilterSet = 0;
 	LoadFilters();
+	m_filters = m_globalFilters;
+	m_filterSets = m_globalFilterSets;
+	m_currentFilterSet = m_globalCurrentFilterSet;
+
 	CompileRegexes();
 
 	if (m_globalFilterSets.empty())
@@ -445,11 +449,14 @@ CFilterManager::CFilterManager()
 	}
 }
 
-bool CFilterManager::HasActiveFilters(bool ignore_disabled /*=false*/) const
+bool CFilterManager::HasActiveFilters(bool ignore_disabled /*=false*/)
 {
+	if (!m_loaded)
+		LoadFilters();
+
 	wxASSERT(m_globalCurrentFilterSet < m_globalFilterSets.size());
 
-	if (m_filters_disabled)
+	if (m_filters_disabled && !ignore_disabled)
 		return false;
 
 	const CFilterSet& set = m_globalFilterSets[m_globalCurrentFilterSet];
@@ -738,12 +745,8 @@ bool CFilterManager::CompileRegexes()
 void CFilterManager::LoadFilters()
 {
 	if (m_loaded)
-	{
-		m_filters = m_globalFilters;
-		m_filterSets = m_globalFilterSets;
-		m_currentFilterSet = m_globalCurrentFilterSet;
 		return;
-	}
+
 	m_loaded = true;
 
 	CInterProcessMutex mutex(MUTEX_FILTERS);
@@ -852,7 +855,6 @@ void CFilterManager::LoadFilters()
 
 		pFilter = pFilter->NextSiblingElement("Filter");
 	}
-	m_filters = m_globalFilters;
 
 	TiXmlElement* pSets = pDocument->FirstChildElement("Sets");
 	if (!pSets)
@@ -882,10 +884,9 @@ void CFilterManager::LoadFilters()
 				continue;
 		}
 
-		if (set.local.size() == m_filters.size())
+		if (set.local.size() == m_globalFilters.size())
 			m_globalFilterSets.push_back(set);
 	}
-	m_filterSets = m_globalFilterSets;
 
 	wxString attribute = GetTextAttribute(pSets, "Current");
 	unsigned long value;
@@ -894,8 +895,6 @@ void CFilterManager::LoadFilters()
 		if (value < m_globalFilterSets.size())
 			m_globalCurrentFilterSet = value;
 	}
-
-	m_currentFilterSet = m_globalCurrentFilterSet;
 
 	delete pDocument->GetDocument();
 }

@@ -218,6 +218,12 @@ CMainFrame::CMainFrame()
 	m_transferStatusTimer.SetOwner(this, TRANSFERSTATUS_TIMER_ID);
 	m_closeEventTimer.SetOwner(this);
 
+	if (CFilterManager::HasActiveFilters(true))
+	{
+		if (COptions::Get()->GetOptionVal(OPTION_FILTERTOGGLESTATE))
+			CFilterManager::ToggleFilters();
+	}
+
 	CreateMenus();
 	CreateToolBar();
 	CreateQuickconnectBar();
@@ -1057,8 +1063,7 @@ bool CMainFrame::CreateToolBar()
 		m_pToolBar->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 #endif
 
-	CFilterManager filters;
-	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), filters.HasActiveFilters());
+	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), CFilterManager::HasActiveFilters());
 	SetToolBar(m_pToolBar);
 
 	if (m_pQuickconnectBar)
@@ -1356,6 +1361,9 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 
 	m_pLocalListView->SaveColumnSettings(OPTION_LOCALFILELIST_COLUMN_WIDTHS, OPTION_LOCALFILELIST_COLUMN_SHOWN, OPTION_LOCALFILELIST_COLUMN_ORDER);
 	m_pRemoteListView->SaveColumnSettings(OPTION_REMOTEFILELIST_COLUMN_WIDTHS, OPTION_REMOTEFILELIST_COLUMN_SHOWN, OPTION_REMOTEFILELIST_COLUMN_ORDER);
+
+	bool filters_toggled = CFilterManager::HasActiveFilters(true) && !CFilterManager::HasActiveFilters(false);
+	COptions::Get()->SetOption(OPTION_FILTERTOGGLESTATE, filters_toggled ? 1 : 0);
 
 	Destroy();
 }
@@ -2433,17 +2441,15 @@ void CMainFrame::ProcessCommandLine()
 
 void CMainFrame::OnFilterRightclicked(wxCommandEvent& event)
 {
-	CFilterManager filters;
+	const bool active = CFilterManager::HasActiveFilters();
 
-	const bool active = filters.HasActiveFilters();
+	CFilterManager::ToggleFilters();
 
-	filters.ToggleFilters();
-
-	if (active == filters.HasActiveFilters())
+	if (active == CFilterManager::HasActiveFilters())
 		return;
 
 	if (m_pState)
 		m_pState->NotifyHandlers(STATECHANGE_APPLYFILTER);
 	if (m_pToolBar)
-		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), filters.HasActiveFilters());
+		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), !active);
 }
