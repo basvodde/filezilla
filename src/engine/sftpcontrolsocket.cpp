@@ -2680,6 +2680,9 @@ int CSftpControlSocket::ListCheckTimezoneDetection()
 			if (!pData->directoryListing[i].hasTime)
 				continue;
 
+			if (pData->directoryListing[i].link)
+				continue;
+
 			pData->opState = list_mtime;
 			pData->mtime_index = i;
 			return SendNextCommand();
