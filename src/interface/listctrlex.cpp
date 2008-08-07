@@ -185,6 +185,12 @@ void wxListCtrlEx::OnKeyDown(wxKeyEvent& event)
 		ResetSearchPrefix();
 	}
 
+	if (event.AltDown() && !event.ControlDown()) // Alt but not AltGr
+	{
+		event.Skip();
+		return;
+	}
+
 #if defined(__WXMSW__) && wxUSE_UNICODE
 	if (code >= 300)
 	{
