@@ -1079,7 +1079,7 @@ int CRealControlSocket::Connect(const CServer &server)
 int CRealControlSocket::ContinueConnect()
 {
 	wxString host;
-	unsigned int port;
+	unsigned int port = 0;
 
 	const int proxy_type = m_pEngine->GetOptions()->GetOptionVal(OPTION_PROXY_TYPE);
 	if (proxy_type > CProxySocket::unknown && proxy_type < CProxySocket::proxytype_count && !m_pCurrentServer->GetBypassProxy())
