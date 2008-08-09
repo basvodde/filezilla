@@ -803,6 +803,11 @@ protected:
 			{
 				while (IdleLoop())
 				{
+					if (m_pSocket->m_fd == -1)
+					{
+						m_waiting = 0;
+						break;
+					}
 					if (!DoWait(0))
 						break;
 					SendEvents();
