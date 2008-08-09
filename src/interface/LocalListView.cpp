@@ -335,6 +335,9 @@ bool CLocalListView::DisplayDir(wxString dirname)
 		data.dir = true;
 		data.icon = -2;
 		data.name = _T("..");
+#ifdef __WXMSW__
+		data.label = _T("..");
+#endif
 		data.size = -1;
 		data.hasTime = 0;
 		m_fileData.push_back(data);
@@ -388,6 +391,9 @@ regular_dir:
 				wxGetApp().DisplayEncodingWarning();
 				continue;
 			}
+#ifdef __WXMSW__
+			data.label = data.name;
+#endif
 			data.hasTime = data.lastModified.IsValid();
 
 			m_fileData.push_back(data);
@@ -696,6 +702,18 @@ void CLocalListView::DisplayDrives()
 		CLocalFileData data;
 		data.flags = normal;
 		data.name = path;
+
+		// Get the label of the drive
+		wxChar* pVolumeName = new wxChar[501];
+		int oldErrorMode = SetErrorMode(SEM_FAILCRITICALERRORS);
+		BOOL res = GetVolumeInformation(pDrive, pVolumeName, 500, 0, 0, 0, 0, 0);
+		SetErrorMode(oldErrorMode);
+		if (res && pVolumeName[0])
+			data.label = data.name + _T(" (") + pVolumeName + _T(")");
+		else
+			data.label = data.name;
+		delete [] pVolumeName;
+
 		data.dir = true;
 		data.icon = -2;
 		data.size = -1;
@@ -748,6 +766,9 @@ void CLocalListView::DisplayShares(wxString computer)
 			CLocalFileData data;
 			data.flags = normal;
 			data.name = p->shi1_netname;
+#ifdef __WXMSW__
+			data.label = data.name;
+#endif
 			data.dir = true;
 			data.icon = -2;
 			data.size = -1;
@@ -1140,7 +1161,7 @@ void CLocalListView::OnMenuUpload(wxCommandEvent& event)
 		if (item == -1)
 			break;
 
-		CLocalFileData *data = GetData(item);
+		const CLocalFileData *data = GetData(item);
 		if (!data)
 			return;
 
@@ -1313,7 +1334,7 @@ void CLocalListView::OnKeyDown(wxKeyEvent& event)
 	{
 		for (unsigned int i = m_hasParent ? 1 : 0; i < m_indexMapping.size(); i++)
 		{
-			CLocalFileData *data = GetData(i);
+			const CLocalFileData *data = GetData(i);
 			if (data && data->flags != fill)
 				SetSelection(i, true);
 			else
@@ -1443,6 +1464,9 @@ void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 	else
 	{
 		data->name = newname;
+#ifdef __WXMSW__
+		data->label = data->name;
+#endif
 		m_pState->RefreshLocal();
 	}
 }
@@ -1694,6 +1718,9 @@ void CLocalListView::RefreshFile(const wxString& file)
 	data.flags = normal;
 	data.icon = -2;
 	data.name = file;
+#ifdef __WXMSW__
+	data.label = file;
+#endif
 	data.dir = type == CLocalFileSystem::dir;
 	data.hasTime = data.lastModified.IsValid();
 
@@ -1944,7 +1971,13 @@ wxString CLocalListView::GetItemText(int item, unsigned int column)
 		return _T("");
 
 	if (!column)
+	{
+#ifdef __WXMSW__
+		return data->label;
+#else
 		return data->name;
+#endif
+	}
 	else if (column == 1)
 	{
 		if (data->size < 0)

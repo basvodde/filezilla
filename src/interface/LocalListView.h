@@ -11,6 +11,9 @@ class CLocalFileData : public CGenericFileData
 {
 public:
 	wxString name;
+#ifdef __WXMSW__
+	wxString label;
+#endif
 	bool dir;
 	wxLongLong size;
 	bool hasTime;
