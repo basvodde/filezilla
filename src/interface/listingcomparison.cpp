@@ -68,7 +68,7 @@ bool CComparisonManager::CompareListings()
 		return false;
 
 	CFilterManager filters;
-	if (!filters.HasSameLocalAndRemoteFilters())
+	if (filters.HasActiveFilters() && !filters.HasSameLocalAndRemoteFilters())
 	{
 		UpdateToolState();
 		wxMessageBox(_("Cannot compare directories, different filters for local and remote directories are enabled"), _("Directory comparison failed"), wxICON_EXCLAMATION);
