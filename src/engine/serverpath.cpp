@@ -221,12 +221,12 @@ wxString CServerPath::GetSafePath() const
 		return _T("");
 
 	wxString safepath;
-	safepath.Printf(_T("%d %d "), m_type, m_prefix.Length());
+	safepath.Printf(_T("%d %d "), m_type, (int)m_prefix.Length());
 	if (m_prefix != _T(""))
 		safepath += m_prefix + _T(" ");
 
 	for (tConstSegmentIter iter = m_Segments.begin(); iter != m_Segments.end(); iter++)
-		safepath += wxString::Format(_T("%d %s "), iter->Length(), iter->c_str());
+		safepath += wxString::Format(_T("%d %s "), (int)iter->Length(), iter->c_str());
 
 	if (!m_Segments.empty())
 		safepath.RemoveLast();

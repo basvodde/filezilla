@@ -628,7 +628,7 @@ int CHttpControlSocket::ParseHeader(CHttpOpData* pData)
 						ResetOperation(FZ_REPLY_ERROR);
 						return FZ_REPLY_ERROR;
 					}
-					pData->m_newHostWithPort = wxString::Format(_T("%s:%d"), host.c_str(), port);
+					pData->m_newHostWithPort = wxString::Format(_T("%s:%d"), host.c_str(), (int)port);
 
 					// International domain names
 					host = ConvertDomainName(host);

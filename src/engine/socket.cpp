@@ -247,7 +247,7 @@ public:
 		if (m_pPort)
 			delete [] m_pPort;
 
-		wxWX2MBbuf buf = m_pSocket->m_host.mb_str();
+		const wxWX2MBbuf buf = m_pSocket->m_host.mb_str();
 		m_pHost = new char[strlen(buf) + 1];
 		strcpy(m_pHost, buf);
 

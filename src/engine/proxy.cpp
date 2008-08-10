@@ -52,7 +52,7 @@ static wxString base64encode(const wxString& str)
 
 	wxString buf;
 	
-	wxWX2MBbuf utf8 = str.mb_str(wxConvUTF8);
+	const wxWX2MBbuf utf8 = str.mb_str(wxConvUTF8);
 	const char* from = utf8;
 
 	size_t len = strlen(from);
@@ -83,7 +83,7 @@ int CProxySocket::Handshake(enum CProxySocket::ProxyType type, const wxString& h
 	if (m_proxyState != noconn)
 		return EALREADY;
 
-	wxWX2MBbuf host_raw = host.mb_str(wxConvUTF8);
+	const wxWX2MBbuf host_raw = host.mb_str(wxConvUTF8);
 
 	if (type != HTTP && type != SOCKS5)
 		return EPROTONOSUPPORT;
@@ -100,7 +100,11 @@ int CProxySocket::Handshake(enum CProxySocket::ProxyType type, const wxString& h
 	{
 		m_handshakeState = http_wait;
 
+#if wxUSE_UNICODE
 		wxWX2MBbuf challenge;
+#else
+		const wxWX2MBbuf challenge;
+#endif
 		int challenge_len;
 		if (user != _T(""))
 		{
@@ -485,8 +489,8 @@ void CProxySocket::OnReceive()
 			{
 			case socks5_auth:
 				{
-					wxWX2MBbuf user = m_user.mb_str(wxConvUTF8);
-					wxWX2MBbuf pass = m_pass.mb_str(wxConvUTF8);
+					const wxWX2MBbuf user = m_user.mb_str(wxConvUTF8);
+					const wxWX2MBbuf pass = m_pass.mb_str(wxConvUTF8);
 
 					const int userlen = strlen(user);
 					const int passlen = strlen(pass);
@@ -502,7 +506,7 @@ void CProxySocket::OnReceive()
 				break;
 			case socks5_request:
 				{
-					wxWX2MBbuf host = m_host.mb_str(wxConvUTF8);
+					const wxWX2MBbuf host = m_host.mb_str(wxConvUTF8);
 					const int hostlen = strlen(host);
 					m_sendBufferLen = 7 + hostlen;
 

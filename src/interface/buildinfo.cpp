@@ -45,7 +45,7 @@ wxString CBuildInfo::GetBuildDateString()
 	if (!tmp.Mid(pos + 1).ToLong(&year))
 		return date;
 
-	return wxString::Format(_T("%04d-%02d-%02d"), year, i + 1, day);
+	return wxString::Format(_T("%04d-%02d-%02d"), (int)year, i + 1, (int)day);
 }
 
 wxString CBuildInfo::GetBuildTimeString()

@@ -661,7 +661,7 @@ wxString CState::GetAsURL(const wxString& dir)
 {
 	// Cheap URL encode
 	wxString encoded;
-	wxWX2MBbuf utf8 = dir.mb_str();
+	const wxWX2MBbuf utf8 = dir.mb_str();
 
 	const char* p = utf8;
 	while (*p)
