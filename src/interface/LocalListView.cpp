@@ -1422,6 +1422,20 @@ bool Rename(wxWindow* parent, wxString dir, wxString from, wxString to)
 
 void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 {
+#ifdef __WXMAC__
+	int item = event.GetIndex();
+	if (item != -1)
+	{
+		int from = item;
+		int to = item;
+		if (from)
+			from--;
+		if (to < GetItemCount() - 1)
+			to++;
+		RefreshItems(from, to);
+	}
+#endif
+
 	if (event.IsEditCancelled())
 		return;
 

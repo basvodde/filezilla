@@ -1566,6 +1566,20 @@ void CRemoteListView::OnBeginLabelEdit(wxListEvent& event)
 
 void CRemoteListView::OnEndLabelEdit(wxListEvent& event)
 {
+	int item = event.GetIndex();
+#ifdef __WXMAC__
+	if (item != -1)
+	{
+		int from = item;
+		int to = item;
+		if (from)
+			from--;
+		if (to < GetItemCount() - 1)
+			to++;
+		RefreshItems(from, to);
+	}
+#endif
+
 	if (event.IsEditCancelled() || event.GetLabel() == _T(""))
 	{
 		event.Veto();
@@ -1586,7 +1600,6 @@ void CRemoteListView::OnEndLabelEdit(wxListEvent& event)
 		return;
 	}
 
-	int item = event.GetIndex();
 	if (!item)
 	{
 		event.Veto();
