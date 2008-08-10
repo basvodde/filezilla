@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla 3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-04 15:04+0200\n"
-"PO-Revision-Date: 2008-07-27 13:56+0100\n"
+"POT-Creation-Date: 2008-08-10 16:14+0200\n"
+"PO-Revision-Date: 2008-08-05 11:23+0100\n"
 "Last-Translator: Ivan Masár <helix84@centrum.sk>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
 "MIME-Version: 1.0\n"
@@ -33,7 +33,7 @@ msgid ""
 "%a - Account (Lines containing this will be omitted if not using Account "
 "logontype)"
 msgstr ""
-"%a - Účet (Riadky, ktoré toto obsahujú, sa vynechajú ak nepouživajú typ "
+"%a - Účet (Riadky, ktoré toto obsahujú, sa vynechajú ak nepoužívajú typ "
 "prihlasovania Účet)"
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:53
@@ -110,8 +110,8 @@ msgstr "%s a %s. Veľkosť celkom: %s"
 msgid "%s and %s. Total size: At least %s"
 msgstr "%s a %s. Veľkosť celkom: najmenej %s"
 
-#: ../../locales/../src/interface/LocalListView.cpp:477
-#: ../../locales/../src/interface/LocalListView.cpp:494
+#: ../../locales/../src/interface/LocalListView.cpp:483
+#: ../../locales/../src/interface/LocalListView.cpp:500
 #, c-format
 msgid "%s byte"
 msgid_plural "%s bytes"
@@ -312,7 +312,7 @@ msgstr "&Spadnúť"
 msgid "&Create directory"
 msgstr "&Vytvoriť adresár"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:589
+#: ../../locales/../src/interface/Mainfrm.cpp:595
 msgid "&Debug"
 msgstr "&Ladenie"
 
@@ -425,7 +425,7 @@ msgstr "&Sady filtrov:"
 msgid "&Filters:"
 msgstr "&Filtre:"
 
-#: ../../locales/../src/interface/edithandler.cpp:644
+#: ../../locales/../src/interface/edithandler.cpp:662
 msgid "&Finish editing"
 msgstr "&Ukončiť úpravy"
 
@@ -796,7 +796,7 @@ msgstr "„%s“ neexistuje alebo je neprístupný."
 msgid "'Account' logontype not supported by selected protocol"
 msgstr "Vybraný protokol nepodporuje spôsob prihlasovania „Konto“"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:667
+#: ../../locales/../src/interface/Mainfrm.cpp:673
 msgid ""
 "'quote' is usually a local command used by commandline clients to send the "
 "arguments following 'quote' to the server. You might want to enter the raw "
@@ -928,20 +928,20 @@ msgstr ""
 msgid "A file previously opened has been changed:"
 msgstr "Predtým otvorený súbor bol zmenený:"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2046
+#: ../../locales/../src/interface/LocalListView.cpp:2079
+#, fuzzy, c-format
 msgid ""
-"A file with that name is already being edited. Discard old file and download "
-"the new file?"
+"A file with that name is already being edited. Do you want to reopen '%s'?"
 msgstr ""
 "Na súbore s takým názvom už prebiehajú úpravy. Má sa zahodiť starý súbor a "
 "stiahnuť nový?"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2042
-#: ../../locales/../src/interface/RemoteListView.cpp:2398
+#: ../../locales/../src/interface/LocalListView.cpp:2075
+#: ../../locales/../src/interface/RemoteListView.cpp:2397
 msgid "A file with that name is already being transferred."
 msgstr "Súbor s takým názvom sa už prenáša."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2403
+#: ../../locales/../src/interface/RemoteListView.cpp:2402
 msgid ""
 "A file with that name is still being edited. Please close it and try again."
 msgstr ""
@@ -966,7 +966,7 @@ msgstr ""
 msgid "A newer version of FileZilla is available:"
 msgstr "Je dostupná novšia verzia aplikácie FileZilla:"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:726
+#: ../../locales/../src/interface/Mainfrm.cpp:732
 msgid ""
 "A proper server always shows all files, but some broken servers hide files "
 "from the user. Use this option to force the server to show all files."
@@ -1082,7 +1082,7 @@ msgstr "Pridať vybraný adresár do frontu prenosov"
 msgid "Add selected files and folders to the transfer queue"
 msgstr "Pridať vybrané súbory a adresáre do frontu prenosov"
 
-#: ../../locales/../src/engine/proxy.cpp:434
+#: ../../locales/../src/engine/proxy.cpp:438
 msgid "Address type not supported"
 msgstr "Nepodporovaný typ adresy"
 
@@ -1138,7 +1138,7 @@ msgstr ""
 "Namiesto toho navštívte http://filezilla-project.org a stiahnite si "
 "najnovšiu verziu."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1889
+#: ../../locales/../src/interface/sitemanager.cpp:1896
 msgid ""
 "An item with the same name as the dragged item already exists at the target "
 "location."
@@ -1230,8 +1230,8 @@ msgstr "Dostupné veľkosti"
 msgid "B&ypass proxy"
 msgstr "Obchádzanie prox&y"
 
-#: ../../locales/../src/interface/edithandler.cpp:921
-#: ../../locales/../src/interface/edithandler.cpp:947
+#: ../../locales/../src/interface/edithandler.cpp:946
+#: ../../locales/../src/interface/edithandler.cpp:972
 msgid "Being edited"
 msgstr "Upravuje sa"
 
@@ -1331,7 +1331,7 @@ msgstr ""
 "Nedá sa pristupovať k „%s“, nosič nie je vložený alebo jednotka nie je "
 "pripravená."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:645
+#: ../../locales/../src/interface/Mainfrm.cpp:651
 msgid "Cannot add server to Site Manager"
 msgstr "Nie je možné pridať server do Správcu lokalít"
 
@@ -1343,7 +1343,7 @@ msgstr ""
 "Nie je možné porovnať adresáre, sú zapnuté odlišné filtre pre miestne a "
 "vzdialené adresáre"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2502
+#: ../../locales/../src/interface/RemoteListView.cpp:2501
 msgid "Cannot compare directories, not connected to a server."
 msgstr "Nie je možné porovnať adresáre, neexistuje pripojenie k serveru."
 
@@ -1351,8 +1351,8 @@ msgstr "Nie je možné porovnať adresáre, neexistuje pripojenie k serveru."
 msgid "Cannot create new filter"
 msgstr "Nie je možné vytvoriť nový filter"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2365
-#: ../../locales/../src/interface/RemoteListView.cpp:2372
+#: ../../locales/../src/interface/RemoteListView.cpp:2364
+#: ../../locales/../src/interface/RemoteListView.cpp:2371
 msgid "Cannot edit file"
 msgstr "Súbor nie je možné upravovať"
 
@@ -1376,11 +1376,11 @@ msgstr "Nebolo možné načítať súbor, nie je to platný XML súbor."
 msgid "Cannot load keyfile"
 msgstr "Nie je možné načítať súbor kľúča"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:572
+#: ../../locales/../src/interface/Mainfrm.cpp:578
 msgid "Cannot load main menu from resource file"
 msgstr "Nedá sa načítať hlavné menu zo súboru prostriedkov"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1044
+#: ../../locales/../src/interface/Mainfrm.cpp:1050
 msgid "Cannot load toolbar from resource file"
 msgstr "Nedá sa načítať nástrojová lišta zo súboru prostriedkov"
 
@@ -1388,7 +1388,7 @@ msgstr "Nedá sa načítať nástrojová lišta zo súboru prostriedkov"
 msgid "Cannot rename entry"
 msgstr "Záznam nie je možné premenovať "
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1612
+#: ../../locales/../src/interface/RemoteListView.cpp:1611
 msgid "Cannot rename file"
 msgstr "Súbor nie je možné premenovať"
 
@@ -1400,12 +1400,12 @@ msgstr "Nie je možné uložiť sadu filtrov"
 msgid "Cannot select filter"
 msgstr "Nie je možné vybrať filter"
 
-#: ../../locales/../src/interface/edithandler.cpp:881
+#: ../../locales/../src/interface/edithandler.cpp:906
 msgid "Cannot show dialog"
 msgstr "Nie je možné zobraziť dialóg"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2042
-#: ../../locales/../src/interface/RemoteListView.cpp:2398
+#: ../../locales/../src/interface/LocalListView.cpp:2075
+#: ../../locales/../src/interface/RemoteListView.cpp:2397
 msgid "Cannot view / edit selected file"
 msgstr "Nie je možné zobraziť/upraviť vybraný súbor"
 
@@ -1537,8 +1537,8 @@ msgstr "MAC klient - server:"
 msgid "Client to server cipher:"
 msgstr "Šifra klient - server:"
 
-#: resources.h:550 ../../locales/../src/interface/Mainfrm.cpp:1207
-#: ../../locales/../src/interface/Mainfrm.cpp:1230
+#: resources.h:550 ../../locales/../src/interface/Mainfrm.cpp:1212
+#: ../../locales/../src/interface/Mainfrm.cpp:1235
 msgid "Close FileZilla"
 msgstr "Ukončí aplikáciu FileZilla"
 
@@ -1550,7 +1550,7 @@ msgstr "Zatvoriť všetky bežice inštancie aplikácie FileZilla."
 msgid "Co&mments:"
 msgstr "Po&známky:"
 
-#: ../../locales/../src/interface/listctrlex.cpp:643
+#: ../../locales/../src/interface/listctrlex.cpp:649
 msgid "Column properties"
 msgstr "Nastavenie stĺpcov"
 
@@ -1568,7 +1568,7 @@ msgstr "Príkaz a jeho argumenty by mali mať vhodné úvodzovky."
 msgid "Command failed"
 msgstr "Príkaz zlyhal"
 
-#: ../../locales/../src/engine/proxy.cpp:431
+#: ../../locales/../src/engine/proxy.cpp:435
 msgid "Command not supported"
 msgstr "Príkaz nie je podporovaný"
 
@@ -1651,7 +1651,7 @@ msgid "Configure port range"
 msgstr "Nastavenie rozsahu portov"
 
 #: ../../locales/../src/engine/local_filesys.cpp:122
-#: ../../locales/../src/interface/RemoteListView.cpp:1393
+#: ../../locales/../src/interface/RemoteListView.cpp:1392
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1042
 msgid "Confirmation needed"
 msgstr "Vyžadované potvrdenie"
@@ -1688,7 +1688,7 @@ msgid "Connecting to %s through proxy"
 msgstr "Prebieha pripájanie k %s pomocou proxy"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:955
-#: ../../locales/../src/engine/proxy.cpp:175
+#: ../../locales/../src/engine/proxy.cpp:179
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:346
 #, c-format
 msgid "Connecting to %s..."
@@ -1713,7 +1713,7 @@ msgid "Connection attempt failed"
 msgstr "Pokus o pripojenie zlyhal"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:960
-#: ../../locales/../src/engine/proxy.cpp:179
+#: ../../locales/../src/engine/proxy.cpp:183
 #, c-format
 msgid "Connection attempt failed with \"%s\", trying next address."
 msgstr "Pokus o pripojenie zlyhal - „%s“. Skúša sa ďalšia adresa."
@@ -1753,11 +1753,11 @@ msgstr "Spojenie nadviazané, čaká sa na uvítaciu správu..."
 msgid "Connection lost"
 msgstr "Spojenie prerušené"
 
-#: ../../locales/../src/engine/proxy.cpp:416
+#: ../../locales/../src/engine/proxy.cpp:420
 msgid "Connection not allowed by ruleset"
 msgstr "Zoznam pravidiel neumožnil spojenie"
 
-#: ../../locales/../src/engine/proxy.cpp:425
+#: ../../locales/../src/engine/proxy.cpp:429
 msgid "Connection refused"
 msgstr "Spojenie odmietnuté"
 
@@ -1769,7 +1769,7 @@ msgstr "Spojenie prerušené (čas vypršal)"
 msgid "Connection timed out."
 msgstr "Spojenie prerušené (čas vypršal)."
 
-#: ../../locales/../src/engine/proxy.cpp:190
+#: ../../locales/../src/engine/proxy.cpp:194
 msgid "Connection with proxy established, performing handshake..."
 msgstr "Spojenie s proxy nadviazané, vykonáva sa handshake..."
 
@@ -1822,7 +1822,7 @@ msgstr "Nebolo možné konvertovať príkaz do kódovania, ktoré používa serv
 msgid "Could not convert private key"
 msgstr "Nebolo možné konvertovať privátny kľúč"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2259
+#: ../../locales/../src/interface/RemoteListView.cpp:2258
 #: ../../locales/../src/interface/RemoteTreeView.cpp:813
 msgid ""
 "Could not determine the target of the Drag&Drop operation.\n"
@@ -1859,13 +1859,13 @@ msgstr "Nebolo možné vytvoriť vlastnú prihlasovaciu sekvenciu."
 msgid "Could not get reply from fzputtygen."
 msgstr "Nebolo možné získať odpoveď od fzputtygen."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2365
+#: ../../locales/../src/interface/RemoteListView.cpp:2364
 msgid "Could not get temporary directory to download file into."
 msgstr ""
 "Nepodarilo sa zistiť dočasný adresár, do ktorého by bolo možné stiahnuť "
 "súbor."
 
-#: ../../locales/../src/interface/Options.cpp:139
+#: ../../locales/../src/interface/Options.cpp:140
 #, c-format
 msgid ""
 "Could not load \"%s\", make sure the file is valid.\n"
@@ -1886,7 +1886,7 @@ msgstr ""
 "prístup."
 
 #: ../../locales/../src/interface/filter.cpp:164
-#: ../../locales/../src/interface/filter.cpp:766
+#: ../../locales/../src/interface/filter.cpp:769
 #: ../../locales/../src/interface/sitemanager.cpp:645
 #, c-format
 msgid ""
@@ -1899,10 +1899,10 @@ msgstr ""
 "Zmeny urobené v Správcovi lokalít nebolo možné uložiť."
 
 #: ../../locales/../src/interface/import.cpp:111
-#: ../../locales/../src/interface/import.cpp:294
+#: ../../locales/../src/interface/import.cpp:302
 #: ../../locales/../src/interface/sitemanager.cpp:528
-#: ../../locales/../src/interface/sitemanager.cpp:1687
-#: ../../locales/../src/interface/sitemanager.cpp:2211
+#: ../../locales/../src/interface/sitemanager.cpp:1694
+#: ../../locales/../src/interface/sitemanager.cpp:2218
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -1982,11 +1982,13 @@ msgid "Could not write \"%s\", the queue could not be saved."
 msgstr "Nedá sa zapísať „%s“, front nie je možné uložiť."
 
 #: ../../locales/../src/interface/QueueView.cpp:1711
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Could not write \"%s\", the queue could not be saved.\n"
 "%s"
-msgstr "Nedá sa zapísať „%s“, front nie je možné uložiť."
+msgstr ""
+"Nedá sa zapísať „%s“, front nie je možné uložiť.\n"
+"%s"
 
 #: ../../locales/../src/interface/wrapengine.cpp:1075
 #, c-format
@@ -2022,9 +2024,9 @@ msgstr ""
 msgid "Create a new subdirectory in the current directory"
 msgstr "Vytvoriť podadresár v aktuálnom adresáry"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1184
+#: ../../locales/../src/interface/LocalListView.cpp:1205
 #: ../../locales/../src/interface/LocalTreeView.cpp:1297
-#: ../../locales/../src/interface/RemoteListView.cpp:1329
+#: ../../locales/../src/interface/RemoteListView.cpp:1328
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1209
 msgid "Create directory"
 msgstr "Vytvoriť adresár"
@@ -2087,7 +2089,7 @@ msgstr "Stor&no"
 msgid "DOS-like with virtual paths"
 msgstr "Ako DOS s virtuálnymi cestami"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2377
+#: ../../locales/../src/interface/RemoteListView.cpp:2376
 msgid "Dangerous filetype"
 msgstr "Nebezpečný typ súboru"
 
@@ -2212,8 +2214,8 @@ msgid "Direction"
 msgstr "Smer"
 
 #: resources.h:181 resources.h:661 resources.h:751 resources.h:752
-#: ../../locales/../src/interface/filelistctrl.cpp:363
-#: ../../locales/../src/interface/Mainfrm.cpp:2243
+#: ../../locales/../src/interface/filelistctrl.cpp:368
+#: ../../locales/../src/interface/Mainfrm.cpp:2251
 msgid "Directory comparison"
 msgstr "Porovnanie adresárov"
 
@@ -2227,7 +2229,7 @@ msgstr "Porovnanie adresárov zlyhalo"
 msgid "Directory listing aborted by user"
 msgstr "Výpis adresára bol prerušený používateľom"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2061
+#: ../../locales/../src/interface/RemoteListView.cpp:2060
 msgid "Directory listing failed"
 msgstr "Výpis adresára zlyhal"
 
@@ -2243,7 +2245,7 @@ msgstr "Výpis adresára prebehol úspešne"
 msgid "Disa&ble all"
 msgstr "Z&akázať všetky"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:728
+#: ../../locales/../src/interface/Mainfrm.cpp:734
 msgid ""
 "Disable this option again if you will not be able to see the correct "
 "directory contents anymore."
@@ -2297,8 +2299,8 @@ msgstr ""
 "Ak sa nechcete zúčastniť testovania nových vlastností, používajte naďalej "
 "stabilné verzie."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1210
-#: ../../locales/../src/interface/Mainfrm.cpp:1234
+#: ../../locales/../src/interface/Mainfrm.cpp:1215
+#: ../../locales/../src/interface/Mainfrm.cpp:1239
 msgid "Do you really want to close FileZilla?"
 msgstr "Naozaj chcete zatvoriť aplikáciu FileZilla?"
 
@@ -2319,7 +2321,7 @@ msgstr "Naozaj chcete vymazať druhú položku?"
 msgid "Do you really want to delete the transfer queue?"
 msgstr "Naozaj chcete vymazať prenosový front?"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:668
+#: ../../locales/../src/interface/Mainfrm.cpp:674
 #, c-format
 msgid "Do you really want to send '%s' to the server?"
 msgstr "Naozaj chcete serveru poslať „%s“?"
@@ -2344,7 +2346,7 @@ msgstr "Stiahnuť vybraný adresár"
 msgid "Download selected files and directories"
 msgstr "Stiahnuť vybrané súbory a adresáre"
 
-#: ../../locales/../src/interface/edithandler.cpp:906
+#: ../../locales/../src/interface/edithandler.cpp:931
 msgid "Downloading"
 msgstr "Sťahuje sa"
 
@@ -2425,7 +2427,7 @@ msgstr "Prázdny príkaz"
 msgid "Empty command."
 msgstr "Prázdny príkaz."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2063
+#: ../../locales/../src/interface/RemoteListView.cpp:2062
 msgid "Empty directory listing"
 msgstr "Prázdny výpis adresára"
 
@@ -2467,7 +2469,7 @@ msgstr "Šifrovanie"
 msgid "Encryption details"
 msgstr "Podrobnosti šifrovania"
 
-#: ../../locales/../src/interface/filelistctrl.cpp:365
+#: ../../locales/../src/interface/filelistctrl.cpp:370
 msgid "End comparison and change sorting order?"
 msgstr "Ukončiť porovnávanie a zmeniť poradie triedenia?"
 
@@ -2479,7 +2481,7 @@ msgstr "&Zadať vlastný príkaz..."
 msgid "Enter command"
 msgstr "Zadať príkaz"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:656
+#: ../../locales/../src/interface/Mainfrm.cpp:662
 msgid "Enter custom command"
 msgstr "Zadať vlastný príkaz"
 
@@ -2544,16 +2546,16 @@ msgid "Error importing"
 msgstr "Chyba pri importe"
 
 #: ../../locales/../src/interface/filter.cpp:165
-#: ../../locales/../src/interface/filter.cpp:767
+#: ../../locales/../src/interface/filter.cpp:770
 #: ../../locales/../src/interface/import.cpp:112
-#: ../../locales/../src/interface/import.cpp:295
-#: ../../locales/../src/interface/Options.cpp:140
+#: ../../locales/../src/interface/import.cpp:303
+#: ../../locales/../src/interface/Options.cpp:141
 #: ../../locales/../src/interface/QueueView.cpp:1701
 #: ../../locales/../src/interface/QueueView.cpp:1729
 #: ../../locales/../src/interface/sitemanager.cpp:529
 #: ../../locales/../src/interface/sitemanager.cpp:646
-#: ../../locales/../src/interface/sitemanager.cpp:1688
-#: ../../locales/../src/interface/sitemanager.cpp:2212
+#: ../../locales/../src/interface/sitemanager.cpp:1695
+#: ../../locales/../src/interface/sitemanager.cpp:2219
 #: ../../locales/../src/interface/wrapengine.cpp:925
 msgid "Error loading xml file"
 msgstr "Chyba pri načítaní XML súboru"
@@ -2587,7 +2589,7 @@ msgstr "&Spustiť"
 msgid "Executable"
 msgstr "Spustiteľný súbor"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1789
+#: ../../locales/../src/interface/Mainfrm.cpp:1797
 msgid "Executable contains no version info, cannot check for updates."
 msgstr ""
 "Spustiteľný súbor neobsahuje informácie o verzii, nie je možné skontrolovať "
@@ -2650,8 +2652,8 @@ msgstr "FTPES - FTP cez explicitné TLS/SSL"
 msgid "FTPS - FTP over implicit TLS/SSL"
 msgstr "FTPS - FTP cez implicitné TLS/SSL"
 
-#: ../../locales/../src/interface/LocalListView.cpp:611
-#: ../../locales/../src/interface/LocalListView.cpp:1299
+#: ../../locales/../src/interface/LocalListView.cpp:617
+#: ../../locales/../src/interface/LocalListView.cpp:1320
 #: ../../locales/../src/interface/LocalTreeView.cpp:874
 #: ../../locales/../src/interface/viewheader.cpp:501
 msgid "Failed to change directory"
@@ -2668,7 +2670,7 @@ msgstr "Nepodarilo sa zmeniť jazyk"
 msgid "Failed to check for newer version of FileZilla."
 msgstr "Nepodarilo sa skontrolovať aktualizácie aplikácie FileZilla."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1889
+#: ../../locales/../src/interface/sitemanager.cpp:1896
 msgid "Failed to copy or move sites"
 msgstr "Nepodarilo sa skopírovať alebo presunúť lokality"
 
@@ -2706,7 +2708,7 @@ msgstr ""
 msgid "Failed to get peer address of data connection, connection closed."
 msgstr "Nedá sa získať adresa rovesníka dátového spojenia, spojenie zatvorené."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:231
+#: ../../locales/../src/interface/Mainfrm.cpp:237
 msgid "Failed to initialize FTP engine"
 msgstr "Chyba pri inicializácii FTP jadra"
 
@@ -2838,9 +2840,9 @@ msgstr "Použiť aktívny režim pri chybe (fallback)"
 msgid "Fil&es"
 msgstr "Sú&bory"
 
-#: ../../locales/../src/interface/filelistctrl.cpp:418
-#: ../../locales/../src/interface/filelistctrl.cpp:436
-#: ../../locales/../src/interface/filelistctrl.cpp:446
+#: ../../locales/../src/interface/filelistctrl.cpp:423
+#: ../../locales/../src/interface/filelistctrl.cpp:441
+#: ../../locales/../src/interface/filelistctrl.cpp:451
 msgid "File"
 msgstr "Súbor"
 
@@ -2856,7 +2858,7 @@ msgstr "Súbory neobsahujú údaje, ktoré by bolo možné importovať"
 msgid "File editing"
 msgstr "Úprava súboru"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1627
+#: ../../locales/../src/interface/RemoteListView.cpp:1626
 msgid "File exists"
 msgstr "Súbor existuje"
 
@@ -2878,7 +2880,7 @@ msgstr "Súbor nenájdený"
 msgid "File transfer successful"
 msgstr "Prenos súboru úspešný"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1209
+#: ../../locales/../src/interface/Mainfrm.cpp:1214
 msgid "File transfers still in progress."
 msgstr "Prenosy súborov ešte stále prebiehajú."
 
@@ -2899,7 +2901,7 @@ msgstr ""
 msgid "FileZilla does not support the HTTP protocol"
 msgstr "FileZilla nepodporuje protokol HTTP"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1574
+#: ../../locales/../src/interface/Mainfrm.cpp:1582
 msgid "FileZilla needs to be restarted for the language change to take effect."
 msgstr "Aplikáciu FileZilla je potrebné reštartovať, aby sa zmeny prejavili."
 
@@ -2911,7 +2913,7 @@ msgstr "&Stavový panel zoznamu súborov"
 msgid "Filelists"
 msgstr "Zoznamy súborov"
 
-#: ../../locales/../src/interface/edithandler.cpp:892
+#: ../../locales/../src/interface/edithandler.cpp:917
 #: ../../locales/../src/interface/filteredit.cpp:101
 #: ../../locales/../src/interface/LocalListView.cpp:258
 #: ../../locales/../src/interface/optionspage_connection_sftp.cpp:39
@@ -2929,7 +2931,7 @@ msgstr "&Filtre názvu súboru..."
 msgid "Filename cannot be constructed for directory %s and filename %s"
 msgstr "Nie je možné zostaviť názov súboru adresára %s a súboru %s"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1612
+#: ../../locales/../src/interface/RemoteListView.cpp:1611
 msgid "Filename invalid"
 msgstr "Neplatný názov súboru"
 
@@ -2937,11 +2939,11 @@ msgstr "Neplatný názov súboru"
 msgid "Filename unchanged"
 msgstr "Názov súboru nezmenený"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1394
+#: ../../locales/../src/interface/LocalListView.cpp:1415
 msgid "Filenames may not contain any of the following characters: / * ? < > |"
 msgstr "Názvy súborov nesmú obsahovať žiadny z týchto znakov: / * ? < > |"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1369
+#: ../../locales/../src/interface/LocalListView.cpp:1390
 msgid ""
 "Filenames may not contain any of the following characters: / \\ : * ? \" < > "
 "|"
@@ -3015,7 +3017,7 @@ msgstr "Odtlačok prsta:"
 msgid "Firewall and router configuration wizard"
 msgstr "Sprievodca nastavením firewallu a smerovača"
 
-#: ../../locales/../src/interface/filelistctrl.cpp:441
+#: ../../locales/../src/interface/filelistctrl.cpp:446
 msgid "Folder"
 msgstr "Adresár"
 
@@ -3039,7 +3041,7 @@ msgstr "Vynútiť &UTF-8"
 msgid "Force showing &hidden files"
 msgstr "Vynútiť zobrazovanie &skrytých súborov"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:723
+#: ../../locales/../src/interface/Mainfrm.cpp:729
 msgid "Force showing hidden files"
 msgstr "Vynútiť zobrazovanie skrytých súborov"
 
@@ -3057,7 +3059,7 @@ msgstr ""
 msgid "General"
 msgstr "Základné"
 
-#: ../../locales/../src/engine/proxy.cpp:413
+#: ../../locales/../src/engine/proxy.cpp:417
 msgid "General SOCKS server failure"
 msgstr "Všeobecné zlyhanie servera SOCKS"
 
@@ -3130,7 +3132,7 @@ msgstr "Nesúhlasí hostiteľský kľúč"
 msgid "Host starts with '[' but no closing bracket found."
 msgstr "Hostiteľ začína znakom „[“, no zatvárajúca zátvorka nebola nájdená."
 
-#: ../../locales/../src/engine/proxy.cpp:422
+#: ../../locales/../src/engine/proxy.cpp:426
 msgid "Host unreachable"
 msgstr "Hostiteľ nedostupný"
 
@@ -3222,7 +3224,7 @@ msgstr ""
 "Ak kliknete na test, FileZilla sa spojí s probe.filezilla-project.org a "
 "vykoná niekoľko jednoduchých testov."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1233
+#: ../../locales/../src/interface/Mainfrm.cpp:1238
 msgid "If you close FileZilla, your changes will be lost."
 msgstr ""
 "Ak zatvoríte aplikáciu FileZilla, zmeny, ktoré ste vykonali, sa stratia."
@@ -3403,8 +3405,8 @@ msgstr "Prijaté nekorektné dáta"
 msgid "Invalid date"
 msgstr "Neplatný dátum"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1369
-#: ../../locales/../src/interface/LocalListView.cpp:1394
+#: ../../locales/../src/interface/LocalListView.cpp:1390
+#: ../../locales/../src/interface/LocalListView.cpp:1415
 msgid "Invalid filename"
 msgstr "Neplatný názov súboru"
 
@@ -3441,10 +3443,10 @@ msgstr ""
 msgid "Invalid response code"
 msgstr "Neplatný kód odpovede"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2182
-#: ../../locales/../src/interface/sitemanager.cpp:2202
-#: ../../locales/../src/interface/sitemanager.cpp:2220
-#: ../../locales/../src/interface/sitemanager.cpp:2231
+#: ../../locales/../src/interface/sitemanager.cpp:2189
+#: ../../locales/../src/interface/sitemanager.cpp:2209
+#: ../../locales/../src/interface/sitemanager.cpp:2227
+#: ../../locales/../src/interface/sitemanager.cpp:2238
 msgid "Invalid site path"
 msgstr "Neplatná cesta k lokalite"
 
@@ -3460,7 +3462,7 @@ msgstr "Neplatné používateľské meno."
 msgid "Keep directories on top"
 msgstr "Adresáre nechávať na vrchu"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:727
+#: ../../locales/../src/interface/Mainfrm.cpp:733
 msgid ""
 "Keep in mind that not all servers support this feature and may return "
 "incorrect listings if this option is enabled. Although FileZilla performs "
@@ -3483,7 +3485,7 @@ msgstr "Na&jnižšia"
 msgid "Language"
 msgstr "Jazyk"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1574
+#: ../../locales/../src/interface/Mainfrm.cpp:1582
 msgid "Language changed"
 msgstr "Jazyk sa zmenil"
 
@@ -3525,7 +3527,7 @@ msgstr "Výpis:"
 msgid "Lo&west available port:"
 msgstr "&Najnižší dostupný port:"
 
-#: ../../locales/../src/interface/edithandler.cpp:937
+#: ../../locales/../src/interface/edithandler.cpp:962
 msgid "Local"
 msgstr "Lokálny"
 
@@ -3633,7 +3635,7 @@ msgstr "Moje dokumenty"
 
 #: ../../locales/../src/interface/sitemanager.cpp:516
 #: ../../locales/../src/interface/sitemanager.cpp:518
-#: ../../locales/../src/interface/sitemanager.cpp:1728
+#: ../../locales/../src/interface/sitemanager.cpp:1735
 msgid "My Sites"
 msgstr "Moje lokality"
 
@@ -3658,7 +3660,7 @@ msgstr "Musíte zadať názov filtra"
 msgid "Need to specify a character encoding"
 msgstr "Musíte uviesť znakovú sadu"
 
-#: ../../locales/../src/engine/proxy.cpp:419
+#: ../../locales/../src/engine/proxy.cpp:423
 msgid "Network unreachable"
 msgstr "Sieť nedostupná"
 
@@ -3675,14 +3677,14 @@ msgstr "Nový adresár"
 msgid "New filter"
 msgstr "Nový filter"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1343
+#: ../../locales/../src/interface/RemoteListView.cpp:1342
 #: ../../locales/../src/interface/sitemanager.cpp:753
 #: ../../locales/../src/interface/sitemanager.cpp:776
 msgid "New folder"
 msgstr "Nový adresár"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1988
-#: ../../locales/../src/interface/sitemanager.cpp:2011
+#: ../../locales/../src/interface/sitemanager.cpp:1995
+#: ../../locales/../src/interface/sitemanager.cpp:2018
 msgid "New site"
 msgstr "Nová lokalita"
 
@@ -3702,7 +3704,7 @@ msgstr "Nebol zadaný príkaz, ruší sa."
 msgid "No external IP address set, trying default."
 msgstr "Nenastavená žiadna externá IP adresa, skúša sa štandardná."
 
-#: ../../locales/../src/interface/edithandler.cpp:881
+#: ../../locales/../src/interface/edithandler.cpp:906
 msgid "No files are currently being edited."
 msgstr "Žiadne súbory sa momentálne neupravujú."
 
@@ -3728,13 +3730,13 @@ msgstr "Vo fronte už nie sú ďalšie súbory!"
 msgid "No name for the filterset given."
 msgstr "Nebol zadaný názov sady filtrov."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1694
-#: ../../locales/../src/interface/sitemanager.cpp:1706
-#: ../../locales/../src/interface/sitemanager.cpp:1737
+#: ../../locales/../src/interface/sitemanager.cpp:1701
+#: ../../locales/../src/interface/sitemanager.cpp:1713
+#: ../../locales/../src/interface/sitemanager.cpp:1744
 msgid "No sites available"
 msgstr "Nie je dostupná žiadna lokalita"
 
-#: ../../locales/../src/engine/proxy.cpp:387
+#: ../../locales/../src/engine/proxy.cpp:391
 msgid "No supported SOCKS5 auth method"
 msgstr "Žiadna podporovaná metóda overovania SOCKS5"
 
@@ -3762,15 +3764,15 @@ msgstr "Normálny"
 msgid "Not all items could be requeued for viewing / editing."
 msgstr "Nie všetky položky bolo možné znovu zaradiť na zobrazenie/úpravy."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2059
+#: ../../locales/../src/interface/RemoteListView.cpp:2058
 msgid "Not connected to any server"
 msgstr "Nepripojený k žiadnemu serveru"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:645
+#: ../../locales/../src/interface/Mainfrm.cpp:651
 msgid "Not connected to any server."
 msgstr "Nepripojený k žiadnemu serveru."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:725
+#: ../../locales/../src/interface/Mainfrm.cpp:731
 msgid "Note that this feature is only supported using the FTP protocol."
 msgstr ""
 "Majte na pamäti, že táto vlastnosť je podporovaná iba pri použití protokolu "
@@ -3837,10 +3839,10 @@ msgstr "Otvoriť súbor."
 msgid "Open the settings dialog of FileZilla"
 msgstr "Otvorí dialóg s nastavením aplikácie FileZilla"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2033
-#: ../../locales/../src/interface/LocalListView.cpp:2061
-#: ../../locales/../src/interface/LocalListView.cpp:2125
-#: ../../locales/../src/interface/LocalListView.cpp:2132
+#: ../../locales/../src/interface/LocalListView.cpp:2066
+#: ../../locales/../src/interface/LocalListView.cpp:2094
+#: ../../locales/../src/interface/LocalListView.cpp:2158
+#: ../../locales/../src/interface/LocalListView.cpp:2165
 msgid "Opening failed"
 msgstr "Otvorenie sa nepodarilo"
 
@@ -3911,7 +3913,7 @@ msgstr "Pa&sívny (odporúča sa)"
 msgid "Package"
 msgstr "Balík"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2425
+#: ../../locales/../src/interface/Mainfrm.cpp:2433
 msgid "Parameter not a valid URL"
 msgstr "Parameter nie je platný URL"
 
@@ -3943,9 +3945,9 @@ msgstr "Vyžaduje sa heslo"
 msgid "Path cannot be constructed for directory %s and subdir %s"
 msgstr "Nie je možné zostaviť cestu adresára %s a podadresára %s"
 
-#: ../../locales/../src/interface/edithandler.cpp:918
-#: ../../locales/../src/interface/edithandler.cpp:1041
-#: ../../locales/../src/interface/edithandler.cpp:1129
+#: ../../locales/../src/interface/edithandler.cpp:943
+#: ../../locales/../src/interface/edithandler.cpp:1066
+#: ../../locales/../src/interface/edithandler.cpp:1154
 msgid "Pending removal"
 msgstr "Nedokončené odstránenie"
 
@@ -4072,9 +4074,8 @@ msgid "Please enter a unique name for this filter set"
 msgstr "Prosím, zadajte jedinečný názov pre túto sadu filtrov"
 
 #: resources.h:142
-#, fuzzy
 msgid "Please enter a username for this server:"
-msgstr "Prosím, zadajte heslo pre tento server:"
+msgstr "Prosím, zadajte používateľské meno pre tento server:"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:182
 msgid "Please enter a valid portrange."
@@ -4092,7 +4093,7 @@ msgstr "Prosím, zadajte interval aktualizácie najmenej 7 dní"
 msgid "Please enter an upload speedlimit greater or equal to 0 KB/s."
 msgstr "Prosím, zadajte limit rýchlosti nahrávania väčší alebo rovný 0 KB/s."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:656
+#: ../../locales/../src/interface/Mainfrm.cpp:662
 msgid ""
 "Please enter raw FTP command.\n"
 "Using raw ftp commands will clear the directory cache."
@@ -4100,17 +4101,16 @@ msgstr ""
 "Prosím zadajte priamy FTP príkaz.\n"
 "Použitie priameho FTP príkazu vymaže cache adresárov."
 
-#: ../../locales/../src/interface/LocalListView.cpp:1184
+#: ../../locales/../src/interface/LocalListView.cpp:1205
 #: ../../locales/../src/interface/LocalTreeView.cpp:1297
-#: ../../locales/../src/interface/RemoteListView.cpp:1329
+#: ../../locales/../src/interface/RemoteListView.cpp:1328
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1209
 msgid "Please enter the name of the directory which should be created:"
 msgstr "Zadajte prosím názov adresára, ktorý sa má vytvoriť:"
 
 #: resources.h:143
-#, fuzzy
 msgid "Please enter username and password for this server:"
-msgstr "Prosím, zadajte heslo pre tento server:"
+msgstr "Prosím, zadajte používateľské meno a heslo pre tento server:"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:142
 msgid "Please enter your external IP address"
@@ -4179,7 +4179,7 @@ msgstr ""
 "blokuje, pretože ho používajú iba trójske kone alebo iný nebezpečný "
 "software. To môže vyvolať falošný poplach, ktorý môžete bezpečne ignorovať."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:779
+#: ../../locales/../src/interface/Mainfrm.cpp:785
 msgid ""
 "Please note that preserving timestamps on uploads on FTP, FTPS and FTPES "
 "servers only works if they support the MFMT command."
@@ -4276,11 +4276,11 @@ msgstr ""
 "verziu."
 
 #: ../../locales/../src/interface/sitemanager.cpp:1557
-#: ../../locales/../src/interface/sitemanager.cpp:1727
+#: ../../locales/../src/interface/sitemanager.cpp:1734
 msgid "Predefined Sites"
 msgstr "Preddefinované lokality"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:778
+#: ../../locales/../src/interface/Mainfrm.cpp:784
 msgid "Preserving file timestamps"
 msgstr "Zachovávajú sa časové známky súborov"
 
@@ -4324,7 +4324,7 @@ msgstr "&Port proxy:"
 msgid "Proxy &user:"
 msgstr "&Používateľ proxy:"
 
-#: ../../locales/../src/engine/proxy.cpp:398
+#: ../../locales/../src/engine/proxy.cpp:402
 msgid "Proxy authentication failed"
 msgstr "Overenie u proxy zlyhalo."
 
@@ -4334,17 +4334,17 @@ msgstr "Overenie u proxy zlyhalo."
 msgid "Proxy handshake failed: %s"
 msgstr "Zlyhal handshake s proxy serverom: %s"
 
-#: ../../locales/../src/engine/proxy.cpp:311
+#: ../../locales/../src/engine/proxy.cpp:315
 #, c-format
 msgid "Proxy reply: %s"
 msgstr "Odpoveď proxy: %s"
 
-#: ../../locales/../src/engine/proxy.cpp:441
+#: ../../locales/../src/engine/proxy.cpp:445
 #, c-format
 msgid "Proxy request failed: %s"
 msgstr "Zlyhala požiadavka pre proxy: %s"
 
-#: ../../locales/../src/engine/proxy.cpp:463
+#: ../../locales/../src/engine/proxy.cpp:467
 msgid "Proxy request failed: Unknown address type in CONNECT reply"
 msgstr "Zlyhala požiadavka pre proxy: Neznámy typ adresy v odpovedi na CONNECT"
 
@@ -4401,7 +4401,7 @@ msgstr "&Reštartovať systém"
 msgid "R&emote directory tree"
 msgstr "Vzdial&ený strom adresárov"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:665
+#: ../../locales/../src/interface/Mainfrm.cpp:671
 msgid "Raw FTP command"
 msgstr "Priamy FTP príkaz"
 
@@ -4421,12 +4421,12 @@ msgstr "Číta&nie"
 msgid "Read-only"
 msgstr "Len na čítanie"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1089
+#: ../../locales/../src/interface/Mainfrm.cpp:1094
 msgid "Really cancel current operation?"
 msgstr "Skutočne si želáte prerušiť aktuálnu operáciu?"
 
 #: ../../locales/../src/engine/local_filesys.cpp:122
-#: ../../locales/../src/interface/RemoteListView.cpp:1393
+#: ../../locales/../src/interface/RemoteListView.cpp:1392
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1042
 msgid "Really delete all selected files and/or directories?"
 msgstr "Chcete skutočne odstrániť všetky zvolené súbory a/alebo adresáre?"
@@ -4474,7 +4474,7 @@ msgstr "Presmerovanie na neplatnú adresu"
 msgid "Refresh the file and folder lists"
 msgstr "Aktualizuje zoznam súborov a adresárov"
 
-#: ../../locales/../src/interface/edithandler.cpp:902
+#: ../../locales/../src/interface/edithandler.cpp:927
 msgid "Remote"
 msgstr "Vzdialený"
 
@@ -4704,15 +4704,15 @@ msgstr "Vybrané %s a %s. Veľkosť celkom: najmenej %s"
 msgid "Selected editor does not exist"
 msgstr "Vybraný editor neexistuje"
 
-#: resources.h:476 ../../locales/../src/interface/LocalListView.cpp:2046
+#: resources.h:476 ../../locales/../src/interface/LocalListView.cpp:2079
 msgid "Selected file already being edited"
 msgstr "Vybraný súbor sa už upravuje"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2403
+#: ../../locales/../src/interface/RemoteListView.cpp:2402
 msgid "Selected file already opened."
 msgstr "Vybraný súbor je už otvorený."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2372
+#: ../../locales/../src/interface/RemoteListView.cpp:2371
 msgid ""
 "Selected file cannot be opened.\n"
 "No default editor has been set or filetype association is missing or "
@@ -4730,7 +4730,7 @@ msgstr "Vybraný súbor neexistuje."
 msgid "Selected file is already loaded"
 msgstr "Vybraný súbor je už načítaný"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2431
+#: ../../locales/../src/interface/RemoteListView.cpp:2430
 msgid "Selected file still being edited"
 msgstr "Vybraný súbor sa ešte stále upravuje"
 
@@ -4880,7 +4880,7 @@ msgstr "Nastavenia"
 msgid "Show &raw directory listing"
 msgstr "Zobraziť &neformátované výpisy adresárov"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2246
+#: ../../locales/../src/interface/Mainfrm.cpp:2254
 msgid "Show both directory trees and continue comparing?"
 msgstr "Zobraziť oba stromy adresárov a pokračovať v porovanávaní?"
 
@@ -4904,13 +4904,13 @@ msgstr "Správca lokalít"
 msgid "Site Manager already open"
 msgstr "Správca lokalít je už otvorený"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2202
-#: ../../locales/../src/interface/sitemanager.cpp:2220
-#: ../../locales/../src/interface/sitemanager.cpp:2231
+#: ../../locales/../src/interface/sitemanager.cpp:2209
+#: ../../locales/../src/interface/sitemanager.cpp:2227
+#: ../../locales/../src/interface/sitemanager.cpp:2238
 msgid "Site does not exist."
 msgstr "Lokalita neexistuje."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2182
+#: ../../locales/../src/interface/sitemanager.cpp:2189
 msgid "Site path has to begin with 0 or 1."
 msgstr "Cesta k lokalite musí začínač 0 alebo 1."
 
@@ -4949,7 +4949,7 @@ msgstr "Vynecháva sa sťahovanie %s"
 msgid "Skipping upload of %s"
 msgstr "Vynecháva sa nahrávanie %s na server"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1232
+#: ../../locales/../src/interface/Mainfrm.cpp:1237
 msgid "Some files are still being edited or need to be uploaded."
 msgstr "Niektoré súbory sa ešte stále upravujú alebo čakajú na nahranie."
 
@@ -4965,7 +4965,7 @@ msgstr ""
 msgid "Sort directories inline"
 msgstr "Adresáre medzi ostatné súbory"
 
-#: ../../locales/../src/interface/filelistctrl.cpp:364
+#: ../../locales/../src/interface/filelistctrl.cpp:369
 msgid "Sort order cannot be changed if comparing directories."
 msgstr "Nie je možné zmeniť poradie triedenia pri porovnávaní adresárov."
 
@@ -5013,7 +5013,7 @@ msgstr "Začína sa nahrávať %s na server"
 msgid "State:"
 msgstr "Stav:"
 
-#: ../../locales/../src/interface/edithandler.cpp:894
+#: ../../locales/../src/interface/edithandler.cpp:919
 #: ../../locales/../src/interface/QueueView.cpp:424
 msgid "Status"
 msgstr "Stav"
@@ -5059,7 +5059,7 @@ msgstr "Syntaktická chyba"
 #: ../../locales/../src/interface/cmdline.cpp:57
 #: ../../locales/../src/interface/cmdline.cpp:63
 #: ../../locales/../src/interface/cmdline.cpp:69
-#: ../../locales/../src/interface/Mainfrm.cpp:2427
+#: ../../locales/../src/interface/Mainfrm.cpp:2435
 msgid "Syntax error in command line"
 msgstr "Syntaktická chyba na príkazovom riadku"
 
@@ -5075,7 +5075,7 @@ msgstr "TLS/SSL spojenie nadviazané, čakám na uvítaciu správu..."
 msgid "TLS/SSL connection established."
 msgstr "Nadviazané TLS/SSL spojenie."
 
-#: ../../locales/../src/engine/proxy.cpp:428
+#: ../../locales/../src/engine/proxy.cpp:432
 msgid "TTL expired"
 msgstr "Vypršal TTL"
 
@@ -5087,7 +5087,7 @@ msgstr "Cieľový súbor už existuje"
 msgid "Target file:"
 msgstr "Cieľový súbor:"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1627
+#: ../../locales/../src/interface/RemoteListView.cpp:1626
 msgid "Target filename already exists, really continue?"
 msgstr "Cieľový názov súboru už existuje, chcete skutočne pokračovať?"
 
@@ -5155,8 +5155,8 @@ msgstr ""
 msgid "The file '%s' could not be loaded or does not contain a private key."
 msgstr "Súbor „%s“ nebolo možné načítať alebo neobsahuje privátny kľúč."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2033
-#: ../../locales/../src/interface/LocalListView.cpp:2125
+#: ../../locales/../src/interface/LocalListView.cpp:2066
+#: ../../locales/../src/interface/LocalListView.cpp:2158
 #, c-format
 msgid ""
 "The file '%s' could not be opened:\n"
@@ -5165,8 +5165,8 @@ msgstr ""
 "Súbor „%s“ nebolo možné otvoriť:\n"
 "Žiadny príkaz na vašom systéme nebol priradený k tomuto typu súboru."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2061
-#: ../../locales/../src/interface/LocalListView.cpp:2132
+#: ../../locales/../src/interface/LocalListView.cpp:2094
+#: ../../locales/../src/interface/LocalListView.cpp:2165
 #, c-format
 msgid ""
 "The file '%s' could not be opened:\n"
@@ -5222,11 +5222,11 @@ msgstr ""
 "port, používateľské meno a heslo.\n"
 "Pokračovať v importovaní?"
 
-#: ../../locales/../src/interface/listctrlex.cpp:643
+#: ../../locales/../src/interface/listctrlex.cpp:649
 msgid "The filename column can neither be hidden nor moved."
 msgstr "Stĺpec názov súboru nemožno skryť ani presunúť."
 
-#: ../../locales/../src/interface/listctrlex.cpp:693
+#: ../../locales/../src/interface/listctrlex.cpp:699
 msgid "The filename column cannot be hidden."
 msgstr "Stĺpec názov súboru nemožno skryť."
 
@@ -5281,13 +5281,13 @@ msgstr "Zvolený súbor obsahuje importovateľné údaje pre nasledujúce kateg�
 msgid "The selected file is already being edited:"
 msgstr "Vybraný súbor sa už upravuje:"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2431
+#: ../../locales/../src/interface/RemoteListView.cpp:2430
 msgid ""
 "The selected file is still opened in some other program, please close it."
 msgstr ""
 "Vybraný súbor je ešte stále otvorený v inom programe. Prosím, zatvorte ho."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2377
+#: ../../locales/../src/interface/RemoteListView.cpp:2376
 msgid ""
 "The selected file would be executed directly.\n"
 "This can be dangerous and damage your system.\n"
@@ -5414,12 +5414,12 @@ msgstr ""
 msgid "Title:"
 msgstr "Názov:"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2244
+#: ../../locales/../src/interface/Mainfrm.cpp:2252
 msgid "To compare directories, both file lists have to be aligned."
 msgstr ""
 "Aby ste mohli porovnať adresáre, oba zoznamy súborov musia byť zarovanané."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2245
+#: ../../locales/../src/interface/Mainfrm.cpp:2253
 msgid "To do this, the directory trees need to be both shown or both hidden."
 msgstr ""
 "Aby ste to mohli urobiť, oba stromy adresárov musia byť buď zobrazené alebo "
@@ -5529,7 +5529,7 @@ msgstr "Dôverovať tomuto certifikátu a pokračovať v nadväzovaní spojenia?
 msgid "Trust this host and carry on connecting?"
 msgstr "Dôverovať tomuto hostiteľovi a pokračovať v nadväzovaní spojenia?"
 
-#: ../../locales/../src/interface/edithandler.cpp:893
+#: ../../locales/../src/interface/edithandler.cpp:918
 msgid "Type"
 msgstr "Typ"
 
@@ -5561,7 +5561,7 @@ msgstr "&Použiť štandardné hodnoty"
 msgid "USER@&HOST"
 msgstr "POUŽÍVATEĽ@&STROJ"
 
-#: ../../locales/../src/engine/proxy.cpp:437
+#: ../../locales/../src/engine/proxy.cpp:441
 #, c-format
 msgid "Unassigned error code %d"
 msgstr "Nepriradený chybový kód %d"
@@ -5570,8 +5570,8 @@ msgstr "Nepriradený chybový kód %d"
 msgid "Unit:"
 msgstr "Jednotka:"
 
-#: ../../locales/../src/interface/edithandler.cpp:924
-#: ../../locales/../src/interface/edithandler.cpp:950
+#: ../../locales/../src/interface/edithandler.cpp:949
+#: ../../locales/../src/interface/edithandler.cpp:975
 msgid "Unknown"
 msgstr "Neznáma"
 
@@ -5579,7 +5579,7 @@ msgstr "Neznáma"
 msgid "Unknown FTP proxy type, cannot generate login sequence."
 msgstr "Neznámy typ FTP proxy, nie je možné vytvoriť prihlasovaciu sekvenciu."
 
-#: ../../locales/../src/engine/proxy.cpp:367
+#: ../../locales/../src/engine/proxy.cpp:371
 #, c-format
 msgid "Unknown SOCKS protocol version: %d"
 msgstr "Neznáma verzia protokolu SOCKS: %d"
@@ -5627,11 +5627,11 @@ msgstr "Kontrola aktualizácie"
 msgid "Update wizard"
 msgstr "Sprievodca aktualizáciou"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1789
+#: ../../locales/../src/interface/Mainfrm.cpp:1797
 msgid "Updatecheck failed"
 msgstr "Kontrola aktualizácie zlyhala."
 
-#: ../../locales/../src/interface/edithandler.cpp:915
+#: ../../locales/../src/interface/edithandler.cpp:940
 msgid "Upload failed"
 msgstr "Nahrávanie zlyhalo"
 
@@ -5651,19 +5651,19 @@ msgstr "Nahrať tento súbor späť na server?"
 msgid "Upload this file to the server?"
 msgstr "Nahrať tento súbor na server?"
 
-#: ../../locales/../src/interface/edithandler.cpp:909
-#: ../../locales/../src/interface/edithandler.cpp:941
-#: ../../locales/../src/interface/edithandler.cpp:1083
+#: ../../locales/../src/interface/edithandler.cpp:934
+#: ../../locales/../src/interface/edithandler.cpp:966
+#: ../../locales/../src/interface/edithandler.cpp:1108
 msgid "Uploading"
 msgstr "Nahráva sa"
 
-#: ../../locales/../src/interface/edithandler.cpp:912
-#: ../../locales/../src/interface/edithandler.cpp:1085
+#: ../../locales/../src/interface/edithandler.cpp:937
+#: ../../locales/../src/interface/edithandler.cpp:1110
 msgid "Uploading and pending removal"
 msgstr "Nahráva sa a dokončuje sa odstránenie"
 
-#: ../../locales/../src/interface/edithandler.cpp:944
-#: ../../locales/../src/interface/edithandler.cpp:1087
+#: ../../locales/../src/interface/edithandler.cpp:969
+#: ../../locales/../src/interface/edithandler.cpp:1112
 msgid "Uploading and unediting"
 msgstr "Nahráva sa a rušia sa úpravy"
 
@@ -5967,10 +5967,10 @@ msgstr "končí na"
 msgid "equals"
 msgstr "je"
 
-#: ../../locales/../src/interface/filelistctrl.cpp:415
-#: ../../locales/../src/interface/filelistctrl.cpp:433
-#: ../../locales/../src/interface/filelistctrl.cpp:457
-#: ../../locales/../src/interface/filelistctrl.cpp:473
+#: ../../locales/../src/interface/filelistctrl.cpp:420
+#: ../../locales/../src/interface/filelistctrl.cpp:438
+#: ../../locales/../src/interface/filelistctrl.cpp:462
+#: ../../locales/../src/interface/filelistctrl.cpp:478
 msgid "file"
 msgstr "súbor"
 
