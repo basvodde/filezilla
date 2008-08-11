@@ -10,6 +10,7 @@ enum t_filterType
 	size,
 	attributes,
 	permissions,
+	path,
 
 	filterType_size
 };
@@ -69,7 +70,7 @@ public:
 	CFilterManager();
 
 	// Note: Under non-windows, attributes are permissions
-	bool FilenameFiltered(const wxString& name, bool dir, wxLongLong size, bool local, int attributes) const;
+	bool FilenameFiltered(const wxString& name, const wxString& path, bool dir, wxLongLong size, bool local, int attributes) const;
 	static bool HasActiveFilters(bool ignore_disabled = false);
 
 	bool HasSameLocalAndRemoteFilters() const;
@@ -78,7 +79,7 @@ public:
 
 protected:
 	bool CompileRegexes();
-	bool FilenameFilteredByFilter(const wxString& name, bool dir, wxLongLong size, unsigned int filterIndex, int attributes) const;
+	bool FilenameFilteredByFilter(const wxString& name, const wxString& path, bool dir, wxLongLong size, unsigned int filterIndex, int attributes) const;
 
 	static void LoadFilters();
 	static bool m_loaded;

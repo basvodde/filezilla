@@ -489,7 +489,7 @@ bool CFilterManager::HasSameLocalAndRemoteFilters() const
 	return true;
 }
 
-bool CFilterManager::FilenameFiltered(const wxString& name, bool dir, wxLongLong size, bool local, int attributes) const
+bool CFilterManager::FilenameFiltered(const wxString& name, const wxString& path, bool dir, wxLongLong size, bool local, int attributes) const
 {
 	if (m_filters_disabled)
 		return false;
@@ -504,13 +504,13 @@ bool CFilterManager::FilenameFiltered(const wxString& name, bool dir, wxLongLong
 		if (local)
 		{
 			if (set.local[i])
-				if (FilenameFilteredByFilter(name, dir, size, i, attributes))
+				if (FilenameFilteredByFilter(name, path, dir, size, i, attributes))
 					return true;
 		}
 		else
 		{
 			if (set.remote[i])
-				if (FilenameFilteredByFilter(name, dir, size, i, attributes))
+				if (FilenameFilteredByFilter(name, path, dir, size, i, attributes))
 					return true;
 		}
 	}
@@ -518,7 +518,7 @@ bool CFilterManager::FilenameFiltered(const wxString& name, bool dir, wxLongLong
 	return false;
 }
 
-bool CFilterManager::FilenameFilteredByFilter(const wxString& name, bool dir, wxLongLong size, unsigned int filterIndex, int attributes) const
+bool CFilterManager::FilenameFilteredByFilter(const wxString& name, const wxString& path, bool dir, wxLongLong size, unsigned int filterIndex, int attributes) const
 {
 	wxRegEx regex;
 	const CFilter& filter = m_filters[filterIndex];
@@ -595,6 +595,69 @@ bool CFilterManager::FilenameFilteredByFilter(const wxString& name, bool dir, wx
 			case 4:
 				wxASSERT(condition.pRegEx);
 				if (condition.pRegEx && condition.pRegEx->Matches(name))
+					match = true;
+			}
+			break;
+		case (enum t_filterType)::path:
+			switch (condition.condition)
+			{
+			case 0:
+				if (filter.matchCase)
+				{
+					if (path.Contains(condition.strValue))
+						match = true;
+				}
+				else
+				{
+					if (path.Lower().Contains(condition.strValue.Lower()))
+						match = true;
+				}
+				break;
+			case 1:
+				if (filter.matchCase)
+				{
+					if (path == condition.strValue)
+						match = true;
+				}
+				else
+				{
+					if (!path.CmpNoCase(condition.strValue))
+						match = true;
+				}
+				break;
+			case 2:
+				{
+					const wxString& left = path.Left(condition.strValue.Len());
+					if (filter.matchCase)
+					{
+						if (left == condition.strValue)
+							match = true;
+					}
+					else
+					{
+						if (!left.CmpNoCase(condition.strValue))
+							match = true;
+					}
+				}
+				break;
+			case 3:
+				{
+					const wxString& right = path.Right(condition.strValue.Len());
+					if (filter.matchCase)
+					{
+						if (right == condition.strValue)
+							match = true;
+					}
+					else
+					{
+						if (!right.CmpNoCase(condition.strValue))
+							match = true;
+					}
+				}
+				break;
+			case 4:
+				wxASSERT(condition.pRegEx);
+				if (condition.pRegEx && condition.pRegEx->Matches(path))
 					match = true;
 			}
 			break;
@@ -733,7 +796,7 @@ bool CFilterManager::CompileRegexes()
 		{
 			CFilterCondition& condition = *iter;
 			delete condition.pRegEx;
-			if (!condition.type && condition.condition == 4)
+			if ((condition.type == name || condition.type == path) && condition.condition == 4)
 				condition.pRegEx = new wxRegEx(condition.strValue);
 			else
 				condition.pRegEx = 0;

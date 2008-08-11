@@ -55,7 +55,7 @@ void CFilterEditDialog::OnOK(wxCommandEvent& event)
 	}
 	for (unsigned int i = 0; i < m_filters.size(); i++)
 	{
-		if (!m_filters[i].HasConditionOfType(permissions) && !m_filters[i].HasConditionOfType(permissions))
+		if (!m_filters[i].HasConditionOfType(permissions) && !m_filters[i].HasConditionOfType(attributes))
 			continue;
 
 		for (unsigned int j = 0; j < m_filterSets.size(); j++)
@@ -128,6 +128,7 @@ bool CFilterEditDialog::Create(wxWindow* parent, const std::vector<CFilter>& fil
 			permissionConditionTypes.Add(_("world writeable"));
 			permissionConditionTypes.Add(_("world executable"));
 		}
+		filterTypes.Add(_("Path"));
 
 		attributeSetTypes.Add(_("is set"));
 		attributeSetTypes.Add(_("is unset"));
@@ -315,6 +316,7 @@ void CFilterEditDialog::MakeControls(const CFilterCondition& condition, int i /*
 	switch (condition.type)
 	{
 	case name:
+	case path:
 		controls.pCondition->Create(m_pListCtrl, wxID_ANY, wxPoint(20 + typeRect.GetWidth(), posy), wxDefaultSize, stringConditionTypes);
 		break;
 	case (enum t_filterType)::size:
@@ -334,7 +336,7 @@ void CFilterEditDialog::MakeControls(const CFilterCondition& condition, int i /*
 	wxRect conditionsRect = controls.pCondition->GetSize();
 
 	posx = 30 + typeRect.GetWidth() + conditionsRect.GetWidth();
-	if (condition.type == name || condition.type == (enum t_filterType)::size)
+	if (condition.type == name || condition.type == (enum t_filterType)::size || condition.type == path)
 	{		
 		controls.pValue = new wxTextCtrl();
 		controls.pValue->Create(m_pListCtrl, wxID_ANY, _T(""), wxPoint(posx, posy), wxSize(size.GetWidth() - posx - 10, -1));
@@ -397,6 +399,7 @@ void CFilterEditDialog::SaveFilter(CFilter& filter)
 		switch (condition.type)
 		{
 		case name:
+		case path:
 			condition.strValue = controls.pValue->GetValue();
 			break;
 		case size:
@@ -690,7 +693,7 @@ bool CFilterEditDialog::Validate()
 	{
 		const CFilterControls& controls = m_filterControls[i];
 		enum t_filterType type = GetTypeFromTypeSelection(controls.pType->GetSelection());
-		if (type == name && controls.pValue->GetValue() == _T(""))
+		if ((type == name || type == path) && controls.pValue->GetValue() == _T(""))
 		{
 			m_pFilterListCtrl->SetSelection(m_currentSelection);
 			m_pListCtrl->SelectLine(i);

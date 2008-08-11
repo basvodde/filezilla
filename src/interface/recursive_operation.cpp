@@ -187,6 +187,8 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 	bool restrict = !dir.restrict.IsEmpty();
 
 	std::list<wxString> filesToDelete;
+
+	const wxString path = pDirectoryListing->path.GetPath();
 	
 	for (int i = pDirectoryListing->GetCount() - 1; i >= 0; i--)
 	{
@@ -197,7 +199,7 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 			if (entry.name != dir.restrict)
 				continue;
 		}
-		else if (filter.FilenameFiltered(entry.name, entry.dir, entry.size, false, 0))
+		else if (filter.FilenameFiltered(entry.name, path, entry.dir, entry.size, false, 0))
 			continue;
 
 		if (entry.dir && !entry.link)

@@ -501,7 +501,7 @@ void CLocalTreeView::DisplayDir(wxTreeItemId parent, const wxString& dirname, co
 		if (file != knownSubdir)
 #endif
 		{
-			if (filter.FilenameFiltered(file, true, size, true, attributes))
+			if (filter.FilenameFiltered(file, dirname, true, size, true, attributes))
 				continue;
 		}
 		else
@@ -548,7 +548,7 @@ bool CLocalTreeView::HasSubdir(const wxString& dirname)
 		}
 
 		wxString fullName = dirname + file;
-		if (filter.FilenameFiltered(file, true, size, true, attributes))
+		if (filter.FilenameFiltered(file, dirname, true, size, true, attributes))
 			continue;
 
 		return true;
@@ -754,7 +754,7 @@ void CLocalTreeView::Refresh()
 				continue;
 			}
 
-			if (filter.FilenameFiltered(file, true, size, true, attributes))
+			if (filter.FilenameFiltered(file, dir.dir, true, size, true, attributes))
 				continue;
 
 			dirs.push_back(file);

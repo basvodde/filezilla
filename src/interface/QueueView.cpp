@@ -330,7 +330,7 @@ protected:
 						continue;
 					}
 
-					if (!m_filters.FilenameFiltered(file, true, -1, true, attributes))
+					if (!m_filters.FilenameFiltered(file, currentLocalPath, true, -1, true, attributes))
 					{
 						CFolderScanItem::t_dirPair pair;
 						pair.localPath = fullName;
@@ -341,7 +341,7 @@ protected:
 				}
 				else if (type == CLocalFileSystem::file)
 				{
-					if (!m_filters.FilenameFiltered(file, false, size, true, attributes))
+					if (!m_filters.FilenameFiltered(file, currentLocalPath, false, size, true, attributes))
 					{
 						t_newEntry entry;
 						entry.localFile = fullName.c_str();

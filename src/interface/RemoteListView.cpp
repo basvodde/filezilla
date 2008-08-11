@@ -680,6 +680,8 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 
 		m_indexMapping.push_back(m_pDirectoryListing->GetCount());
 
+		const wxString path = m_pDirectoryListing->path.GetPath();
+
 		CFilterManager filter;
 		for (unsigned int i = 0; i < m_pDirectoryListing->GetCount(); i++)
 		{
@@ -689,7 +691,7 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 			data.icon = entry.dir ? m_dirIcon : -2;
 			m_fileData.push_back(data);
 
-			if (filter.FilenameFiltered(entry.name, entry.dir, entry.size, false, 0))
+			if (filter.FilenameFiltered(entry.name, path, entry.dir, entry.size, false, 0))
 			{
 				hidden++;
 				continue;
@@ -1829,13 +1831,15 @@ void CRemoteListView::ApplyCurrentFilter()
 	int totalDirCount = 0;
 	int hidden = 0;
 
+	const wxString path = m_pDirectoryListing->path.GetPath();
+
 	m_indexMapping.clear();
 	const unsigned int count = m_pDirectoryListing->GetCount();
 	m_indexMapping.push_back(count);
 	for (unsigned int i = 0; i < count; i++)
 	{
 		const CDirentry& entry = (*m_pDirectoryListing)[i];
-		if (filter.FilenameFiltered(entry.name, entry.dir, entry.size, false, 0))
+		if (filter.FilenameFiltered(entry.name, path, entry.dir, entry.size, false, 0))
 		{
 			hidden++;
 			continue;
