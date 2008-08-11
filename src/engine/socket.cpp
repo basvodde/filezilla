@@ -502,7 +502,8 @@ protected:
 			if (res == 1)
 				return true;
 
-			m_pSocket->m_state = CSocket::closed;
+			if (m_pSocket)
+				m_pSocket->m_state = CSocket::closed;
 			return false;
 		}
 #endif
@@ -538,7 +539,8 @@ protected:
 			if (res == -1)
 			{
 				freeaddrinfo(addressList);
-				m_pSocket->m_state = CSocket::closed;
+				if (m_pSocket)
+					m_pSocket->m_state = CSocket::closed;
 				return false;
 			}
 			else if (res)
