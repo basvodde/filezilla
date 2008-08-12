@@ -454,6 +454,9 @@ bool CFilterManager::HasActiveFilters(bool ignore_disabled /*=false*/)
 	if (!m_loaded)
 		LoadFilters();
 
+	if (m_globalFilterSets.empty())
+		return false;
+
 	wxASSERT(m_globalCurrentFilterSet < m_globalFilterSets.size());
 
 	if (m_filters_disabled && !ignore_disabled)
