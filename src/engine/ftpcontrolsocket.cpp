@@ -1475,6 +1475,17 @@ int CFtpControlSocket::ListSend()
 	CFtpListOpData *pData = static_cast<CFtpListOpData *>(m_pCurOpData);
 	LogMessage(Debug_Debug, _T("  state = %d"), pData->opState);
 
+	if (pData->opState == list_waitcwd)
+	{
+		// Can only happen if we got the lock
+		if (!pData->holdsLock)
+		{
+			LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Not holding the lock as expected"));
+			ResetOperation(FZ_REPLY_INTERNALERROR);
+			return FZ_REPLY_ERROR;
+		}
+		return ListSubcommandResult(FZ_REPLY_OK);
+	}
 	if (pData->opState == list_mdtm)
 	{
 		LogMessage(Status, _("Calculating timezone offset of server..."));
