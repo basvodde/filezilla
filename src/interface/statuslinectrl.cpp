@@ -189,7 +189,7 @@ void CStatusLineCtrl::SetTransferStatus(const CTransferStatus* pStatus)
 			m_statusText = _("Disconnecting from previous server");
 			break;
 		case t_EngineData::cancel:
-			m_statusText = _("Waiting for transfer to be canceled");
+			m_statusText = _("Waiting for transfer to be cancelled");
 			break;
 		case t_EngineData::connect:
 			m_statusText = wxString::Format(_("Connecting to %s"), m_pEngineData->lastServer.FormatServer().c_str());

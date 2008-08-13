@@ -1792,7 +1792,7 @@ void CMainFrame::OnCheckForUpdates(wxCommandEvent& event)
 	wxString version(PACKAGE_VERSION, wxConvLocal);
 	if (version[0] < '0' || version[0] > '9')
 	{
-		wxMessageBox(_("Executable contains no version info, cannot check for updates."), _("Updatecheck failed"), wxICON_ERROR, this);
+		wxMessageBox(_("Executable contains no version info, cannot check for updates."), _("Check for updates failed"), wxICON_ERROR, this);
 		return;
 	}
 

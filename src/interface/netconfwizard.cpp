@@ -615,7 +615,7 @@ void CNetConfWizard::CloseSocket()
 			break;
 		case datatainted:
 			text[0] = _("Transferred data got tainted.");
-			text[1] = _("You likely have a router or firewall which errorneously modified the transferred data.");
+			text[1] = _("You likely have a router or firewall which erroneously modified the transferred data.");
 			text[2] = _("Please disable settings like 'DMZ mode' or 'Game mode' on your router.");
 			text[3] = _("If this problem persists, please contact your router or firewall manufacturer for a solution.");
 			break;

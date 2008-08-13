@@ -4159,7 +4159,7 @@ int CFtpControlSocket::FileTransferTestResumeCapability()
 			case yes:
 				if (pData->remoteFileSize == pData->localFileSize)
 				{
-					LogMessage(::Debug_Info, _("Server does not support resume of files > %d GB. End transfer since filesizes match."), i ? 2 : 4);
+					LogMessage(::Debug_Info, _("Server does not support resume of files > %d GB. End transfer since file sizes match."), i ? 2 : 4);
 					ResetOperation(FZ_REPLY_OK);
 					return FZ_REPLY_CANCELED;
 				}
@@ -4174,7 +4174,7 @@ int CFtpControlSocket::FileTransferTestResumeCapability()
 				}
 				if (pData->remoteFileSize == pData->localFileSize)
 				{
-					LogMessage(::Debug_Info, _("Server may not support resume of files > %d GB. End transfer since filesizes match."), i ? 2 : 4);
+					LogMessage(::Debug_Info, _("Server may not support resume of files > %d GB. End transfer since file sizes match."), i ? 2 : 4);
 					ResetOperation(FZ_REPLY_OK);
 					return FZ_REPLY_CANCELED;
 				}

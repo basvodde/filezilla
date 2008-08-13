@@ -519,7 +519,7 @@ int CHttpControlSocket::ParseHeader(CHttpOpData* pData)
 			{
 				if (m_pRecvBuffer[i + 1] != '\n')
 				{
-					LogMessage(::Error, _("Malformed reply, server not sending proper lineendings"));
+					LogMessage(::Error, _("Malformed reply, server not sending proper line endings"));
 					ResetOperation(FZ_REPLY_ERROR);
 					return FZ_REPLY_ERROR;
 				}
@@ -733,7 +733,7 @@ int CHttpControlSocket::OnChunkedData(CHttpOpData* pData)
 			{
 				if (p[i + 1] != '\n')
 				{
-					LogMessage(::Error, _("Malformed chunk data: %s"), _("Wrong lineendings"));
+					LogMessage(::Error, _("Malformed chunk data: %s"), _("Wrong line endings"));
 					ResetOperation(FZ_REPLY_ERROR);
 					return FZ_REPLY_ERROR;
 				}
