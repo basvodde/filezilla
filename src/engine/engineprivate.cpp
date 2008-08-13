@@ -330,6 +330,9 @@ int CFileZillaEnginePrivate::List(const CListCommand &command)
 	if (!IsConnected())
 		return FZ_REPLY_NOTCONNECTED;
 
+	if (command.GetPath().IsEmpty() && command.GetSubDir() != _T(""))
+		return FZ_REPLY_SYNTAXERROR;
+
 	bool refresh = command.Refresh();
 	if (!command.Refresh() && !command.GetPath().IsEmpty())
 	{
