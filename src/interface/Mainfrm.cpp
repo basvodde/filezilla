@@ -419,8 +419,6 @@ CMainFrame::CMainFrame()
 
 	InitMenubarState();
 	InitToolbarState();
-
-	ProcessCommandLine();
 }
 
 CMainFrame::~CMainFrame()

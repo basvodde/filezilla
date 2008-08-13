@@ -291,9 +291,11 @@ FileZilla will timeout on big transfers.\
 	m_pWrapEngine = new CWrapEngine();
 	m_pWrapEngine->LoadCache();
 
-	wxFrame *frame = new CMainFrame();
+	CMainFrame *frame = new CMainFrame();
 	frame->Show(true);
 	SetTopWindow(frame);
+
+	frame->ProcessCommandLine();
 
 	return true;
 }
