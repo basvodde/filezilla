@@ -1191,12 +1191,15 @@ public:
 
 	// Listing index for list_mdtm
 	int mdtm_index;
+
+	CTimeEx m_time_before_locking;
 };
 
 enum listStates
 {
 	list_init = 0,
 	list_waitcwd,
+	list_waitlock,
 	list_waittransfer,
 	list_mdtm
 };
@@ -1249,6 +1252,8 @@ int CFtpControlSocket::ListSubcommandResult(int prevResult)
 			ResetOperation(prevResult);
 			return FZ_REPLY_ERROR;
 		}
+		if (pData->path.IsEmpty())
+			pData->path = m_CurrentPath;
 
 		if (!pData->refresh)
 		{
@@ -1280,7 +1285,11 @@ int CFtpControlSocket::ListSubcommandResult(int prevResult)
 		if (!pData->holdsLock)
 		{
 			if (!TryLockCache(lock_list, m_CurrentPath))
+			{
+				pData->opState = list_waitlock;
+				pData->m_time_before_locking = CTimeEx::Now();
 				return FZ_REPLY_WOULDBLOCK;
+			}
 		}
 
 		delete m_pTransferSocket;
@@ -1475,15 +1484,29 @@ int CFtpControlSocket::ListSend()
 	CFtpListOpData *pData = static_cast<CFtpListOpData *>(m_pCurOpData);
 	LogMessage(Debug_Debug, _T("  state = %d"), pData->opState);
 
-	if (pData->opState == list_waitcwd)
+	if (pData->opState == list_waitlock)
 	{
-		// Can only happen if we got the lock
 		if (!pData->holdsLock)
 		{
 			LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Not holding the lock as expected"));
 			ResetOperation(FZ_REPLY_INTERNALERROR);
 			return FZ_REPLY_ERROR;
 		}
+
+		// Check if we can use already existing listing
+		CDirectoryListing listing;
+		CDirectoryCache cache;
+		bool is_outdated = false;
+		bool found = cache.Lookup(listing, *m_pCurrentServer, pData->path, pData->subDir, true, is_outdated);
+		if (found && !is_outdated && !listing.m_hasUnsureEntries &&
+			listing.m_firstListTime > pData->m_time_before_locking)
+		{
+			m_pEngine->SendDirectoryListingNotification(listing.path, !pData->pNextOpData, true, false);
+
+			ResetOperation(FZ_REPLY_OK);
+			return FZ_REPLY_OK;
+		}
+
 		return ListSubcommandResult(FZ_REPLY_OK);
 	}
 	if (pData->opState == list_mdtm)
@@ -1494,7 +1517,6 @@ int CFtpControlSocket::ListSend()
 			return FZ_REPLY_ERROR;
 		else
 			return FZ_REPLY_WOULDBLOCK;
-
 	}
 
 	LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("invalid opstate"));

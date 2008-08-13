@@ -25,6 +25,7 @@ void CDirectoryCache::Store(const CDirectoryListing &listing, const CServer &ser
 {
 	CServerEntry* pServerEntry = CreateServerEntry(server);
 	wxASSERT(pServerEntry);
+	wxASSERT(!parentPath.IsEmpty());
 
 	// First check for existing entry in cache and update if it neccessary
 	for (tCacheIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); iter++)
