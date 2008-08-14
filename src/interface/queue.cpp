@@ -1208,11 +1208,13 @@ void CQueueViewBase::DisplayNumberQueuedFiles()
 
 void CQueueViewBase::InsertItem(CServerItem* pServerItem, CQueueItem* pItem)
 {
+	const int newIndex = GetItemIndex(pServerItem) + pServerItem->GetChildrenCount(true) + 1;
+
 	pServerItem->AddChild(pItem);
 	m_itemCount++;
 
 	if (m_insertionStart == -1)
-		m_insertionStart = GetItemIndex(pItem);
+		m_insertionStart = newIndex;
 	m_insertionCount++;
 
 	if (pItem->GetType() == QueueItemType_File || pItem->GetType() == QueueItemType_Folder)
