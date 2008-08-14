@@ -8,6 +8,9 @@
 #include "conditionaldialog.h"
 #include "window_state_manager.h"
 #include <wx/dnd.h>
+#ifdef __WXMSW__
+#include "commctrl.h"
+#endif
 
 std::map<int, CSiteManagerItemData*> CSiteManager::m_idMap;
 
@@ -286,6 +289,23 @@ bool CSiteManager::Create(wxWindow* parent, const CServer* pServer /*=0*/)
 	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_SERVER"),  wxART_OTHER, wxSize(16, 16)));
 
 	pTree->AssignImageList(pImageList);
+
+#ifdef __WXMSW__
+	// Make pages at least wide enough to fit all tabs
+	wxNotebook *pBook = XRCCTRL(*this, "ID_NOTEBOOK", wxNotebook);
+	
+	HWND hWnd = (HWND)pBook->GetHandle();
+
+	int width = 4;
+	for (unsigned int i = 0; i < pBook->GetPageCount(); i++)
+	{
+		RECT tab_rect;
+		TabCtrl_GetItemRect(hWnd, i, &tab_rect);
+		width += tab_rect.right - tab_rect.left;
+	}
+	int margin = pBook->GetSize().x - pBook->GetPage(0)->GetSize().x;
+	pBook->GetPage(0)->GetSizer()->SetMinSize(wxSize(width - margin, 0));
+#endif
 
 	Layout();
 	wxGetApp().GetWrapEngine()->WrapRecursive(this, 1.33, "Site Manager");
