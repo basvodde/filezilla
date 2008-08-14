@@ -474,9 +474,14 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 
 	InsertItem(pServerItem, fileItem);
 
+	return true;
+}
+
+void CQueueView::QueueFile_Finish(const bool start)
+{
 	CommitChanges();
 
-	if (!m_activeMode && !queueOnly)
+	if (!m_activeMode && start)
 	{
 		m_activeMode = 1;
 		m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_QUEUEPROCESSING);
@@ -488,8 +493,6 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 	UpdateStatusLinePositions();
 
 	Refresh(false);
-
-	return true;
 }
 
 bool CQueueView::QueueFiles(const bool queueOnly, const wxString& localPath, const CRemoteDataObject& dataObject)

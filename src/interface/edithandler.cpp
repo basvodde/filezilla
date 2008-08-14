@@ -723,6 +723,7 @@ bool CEditHandler::UploadFile(enum CEditHandler::fileType type, const wxString& 
 	wxULongLong size = fn.GetSize();
 	
 	m_pQueue->QueueFile(false, false, fn.GetFullPath(), fn.GetFullName(), iter->remotePath, iter->server, wxLongLong(size.GetHi(), size.GetLo()), type);
+	m_pQueue->QueueFile_Finish(true);
 
 	return true;
 }

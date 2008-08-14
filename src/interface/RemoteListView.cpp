@@ -1124,6 +1124,7 @@ void CRemoteListView::OnItemActivated(wxListEvent &event)
 
 			wxFileName fn = wxFileName(m_pState->GetLocalDir(), name);
 			m_pQueue->QueueFile(false, true, fn.GetFullPath(), name, m_pDirectoryListing->path, *pServer, entry.size);
+			m_pQueue->QueueFile_Finish(true);
 		}
 	}
 	else
@@ -1265,6 +1266,14 @@ void CRemoteListView::TransferSelectedFiles(const wxString& localDir, bool queue
 
 	wxASSERT(m_pState->LocalDirIsWriteable(localDir));
 
+	const CServer* pServer = m_pState->GetServer();
+	if (!pServer)
+	{
+		wxBell();
+		return;
+	}
+
+	bool added = false;
 	bool startRecursive = false;
 	long item = -1;
 	while (true)
@@ -1281,13 +1290,6 @@ void CRemoteListView::TransferSelectedFiles(const wxString& localDir, bool queue
 
 		const CDirentry& entry = (*m_pDirectoryListing)[index];
 		const wxString& name = entry.name;
-
-		const CServer* pServer = m_pState->GetServer();
-		if (!pServer)
-		{
-			wxBell();
-			return;
-		}
 
 		if (entry.dir)
 		{
@@ -1307,8 +1309,11 @@ void CRemoteListView::TransferSelectedFiles(const wxString& localDir, bool queue
 		{
 			wxFileName fn = wxFileName(localDir, name);
 			m_pQueue->QueueFile(queueOnly, true, fn.GetFullPath(), name, m_pDirectoryListing->path, *pServer, entry.size);
+			added = true;
 		}
 	}
+	if (added)
+		m_pQueue->QueueFile_Finish(!queueOnly);
 
 	if (startRecursive)
 	{
@@ -2469,6 +2474,7 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 
 	wxFileName fn = wxFileName(localDir, entry.name);
 	m_pQueue->QueueFile(false, true, fn.GetFullPath(), entry.name, m_pDirectoryListing->path, *m_pState->GetServer(), entry.size, CEditHandler::remote);
+	m_pQueue->QueueFile_Finish(true);
 }
 
 #ifdef __WXDEBUG__

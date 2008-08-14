@@ -426,6 +426,7 @@ void CState::UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const C
 			const wxFileName name(files[i]);
 			const wxLongLong size = name.GetSize().GetValue();
 			m_pMainFrame->GetQueue()->QueueFile(queueOnly, false, files[i], name.GetFullName(), path, *m_pServer, size);
+			m_pMainFrame->GetQueue()->QueueFile_Finish(!queueOnly);
 		}
 		else if (wxDir::Exists(files[i]))
 		{

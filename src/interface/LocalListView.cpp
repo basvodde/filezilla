@@ -644,6 +644,7 @@ void CLocalListView::OnItemActivated(wxListEvent &event)
 	wxFileName fn(m_dir, data->name);
 
 	m_pQueue->QueueFile(false, false, fn.GetFullPath(), data->name, path, *pServer, data->size);
+	m_pQueue->QueueFile_Finish(true);
 }
 
 #ifdef __WXMSW__
@@ -1154,6 +1155,17 @@ void CLocalListView::OnMenuUpload(wxCommandEvent& event)
 			return;
 	}
 
+	const CServer* pServer = m_pState->GetServer();
+	if (!pServer)
+	{
+		wxBell();
+		return;
+	}
+
+	bool added = false;
+
+	bool queue_only = event.GetId() == XRCID("ID_ADDTOQUEUE");
+
 	item = -1;
 	while (true)
 	{
@@ -1163,23 +1175,16 @@ void CLocalListView::OnMenuUpload(wxCommandEvent& event)
 
 		const CLocalFileData *data = GetData(item);
 		if (!data)
-			return;
+			break;
 
 		if (data->flags == fill)
 			continue;
-
-		const CServer* pServer = m_pState->GetServer();
-		if (!pServer)
-		{
-			wxBell();
-			return;
-		}
 
 		CServerPath path = m_pState->GetRemotePath();
 		if (path.IsEmpty())
 		{
 			wxBell();
-			return;
+			break;
 		}
 
 		if (data->dir)
@@ -1194,9 +1199,12 @@ void CLocalListView::OnMenuUpload(wxCommandEvent& event)
 		{
 			wxFileName fn(m_dir, data->name);
 
-			m_pQueue->QueueFile(event.GetId() == XRCID("ID_ADDTOQUEUE"), false, fn.GetFullPath(), data->name, path, *pServer, data->size);
+			m_pQueue->QueueFile(queue_only, false, fn.GetFullPath(), data->name, path, *pServer, data->size);
+			added = true;
 		}
 	}
+	if (added)
+		m_pQueue->QueueFile_Finish(!queue_only);
 }
 
 void CLocalListView::OnMenuMkdir(wxCommandEvent& event)

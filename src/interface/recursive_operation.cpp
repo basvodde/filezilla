@@ -178,7 +178,10 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 			m_pState->RefreshLocalFile(fn.GetFullPath());
 		}
 		else if (m_operationMode == recursive_addtoqueue)
+		{
 			m_pQueue->QueueFile(true, true, fn.GetFullPath(), _T(""), CServerPath(), *pServer, -1);
+			m_pQueue->QueueFile_Finish(false);
+		}
 	}
 
 	CFilterManager filter;
@@ -190,6 +193,8 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 
 	const wxString path = pDirectoryListing->path.GetPath();
 	
+	bool added = false;
+
 	for (int i = pDirectoryListing->GetCount() - 1; i >= 0; i--)
 	{
 		const CDirentry& entry = (*pDirectoryListing)[i];
@@ -225,6 +230,7 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 				{
 					wxFileName fn(dir.localDir, entry.name);
 					m_pQueue->QueueFile(m_operationMode == recursive_addtoqueue, true, fn.GetFullPath(), entry.name, pDirectoryListing->path, *pServer, entry.size);
+					added = true;
 				}
 				break;
 			case recursive_delete:
@@ -249,6 +255,8 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 			}
 		}
 	}
+	if (added)
+		m_pQueue->QueueFile_Finish(m_operationMode != recursive_addtoqueue);
 
 	if (m_operationMode == recursive_delete && !filesToDelete.empty())
 		m_pState->m_pCommandQueue->ProcessCommand(new CDeleteCommand(pDirectoryListing->path, filesToDelete));
