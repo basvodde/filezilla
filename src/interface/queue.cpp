@@ -980,10 +980,15 @@ void CQueueViewBase::UpdateSelections_ItemAdded(int added)
 	// selections. Though worst case is still O(n), as with every algorithm to
 	// move selections.
 
+#ifndef __WXMSW__
+	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
+	const int selection_count = GetSelectedItemCount();
+	if (!selection_count)
+		return;
+#endif
+
 	// Go through all items, keep record of the previous selected item
-	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-	while (item != -1 && item < added)
-		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	int item = GetNextItem(added - 1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 
 	int prevItem = -1;
 	while (item != -1)
@@ -1019,12 +1024,17 @@ void CQueueViewBase::UpdateSelections_ItemAdded(int added)
 
 void CQueueViewBase::UpdateSelections_ItemRangeAdded(int added, int count)
 {
+#ifndef __WXMSW__
+	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
+	const int selection_count = GetSelectedItemCount();
+	if (!selection_count)
+		return;
+#endif
+
 	std::list<int> itemsToSelect;
 
 	// Go through all selected items
-	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-	while (item != -1 && item < added)
-		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	int item = GetNextItem(added - 1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 
 	while (item != -1)
 	{
@@ -1049,13 +1059,18 @@ void CQueueViewBase::UpdateSelections_ItemRangeAdded(int added, int count)
 
 void CQueueViewBase::UpdateSelections_ItemRemoved(int removed)
 {
+#ifndef __WXMSW__
+	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
+	const int selection_count = GetSelectedItemCount();
+	if (!selection_count)
+		return;
+#endif
+
 	SetItemState(removed, 0, wxLIST_STATE_SELECTED);
 
-	int prevItem = -1;
-	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-	while (item != -1 && item < removed)
-		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	int item = GetNextItem(removed - 1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 
+	int prevItem = -1;
 	while (item != -1)
 	{
 		if (prevItem != -1)
@@ -1086,13 +1101,18 @@ void CQueueViewBase::UpdateSelections_ItemRemoved(int removed)
 
 void CQueueViewBase::UpdateSelections_ItemRangeRemoved(int removed, int count)
 {
+#ifndef __WXMSW__
+	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
+	const int selection_count = GetSelectedItemCount();
+	if (!selection_count)
+		return;
+#endif
+
 	SetItemState(removed, 0, wxLIST_STATE_SELECTED);
 
 	std::list<int> itemsToUnselect;
 
-	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-	while (item != -1 && item < removed)
-		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	int item = GetNextItem(removed - 1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 
 	while (item != -1)
 	{
