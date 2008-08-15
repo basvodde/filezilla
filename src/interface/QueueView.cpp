@@ -2537,6 +2537,8 @@ void CQueueView::OnTimer(wxTimerEvent& event)
 				pData->pEngine->Command(CDisconnectCommand());
 		}
 	}
+
+	event.Skip();
 }
 
 void CQueueView::DeleteEngines()

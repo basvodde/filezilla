@@ -714,6 +714,7 @@ EVT_ERASE_BACKGROUND(CQueueViewBase::OnEraseBackground)
 EVT_NAVIGATION_KEY(CQueueViewBase::OnNavigationKey)
 EVT_CHAR(CQueueViewBase::OnChar)
 EVT_LIST_COL_END_DRAG(wxID_ANY, CQueueViewBase::OnEndColumnDrag)
+EVT_TIMER(wxID_ANY, CQueueViewBase::OnTimer)
 END_EVENT_TABLE()
 
 CQueueViewBase::CQueueViewBase(CQueue* parent, int index, const wxString& title)
@@ -740,6 +741,8 @@ CQueueViewBase::CQueueViewBase(CQueue* parent, int index, const wxString& title)
 	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDER"),  wxART_OTHER, wxSize(16, 16)));
 
 	AssignImageList(pImageList, wxIMAGE_LIST_SMALL);
+
+	m_filecount_delay_timer.SetOwner(this);
 }
 
 CQueueViewBase::~CQueueViewBase()
@@ -1205,6 +1208,12 @@ void CQueueViewBase::CommitChanges()
 
 void CQueueViewBase::DisplayNumberQueuedFiles()
 {
+	if (m_filecount_delay_timer.IsRunning())
+	{
+		m_fileCountChanged = true;
+		return;
+	}
+
 	wxString str;
 	if (m_fileCount > 0)
 	{
@@ -1224,6 +1233,8 @@ void CQueueViewBase::DisplayNumberQueuedFiles()
 
 	m_fileCountChanged = false;
 	m_folderScanCountChanged = false;
+
+	m_filecount_delay_timer.Start(200, true);
 }
 
 void CQueueViewBase::InsertItem(CServerItem* pServerItem, CQueueItem* pItem)
@@ -1379,6 +1390,18 @@ void CQueueViewBase::OnEndColumnDrag(wxListEvent& event)
 		for (int col = 0; col < wxMin(GetColumnCount(), page->GetColumnCount()); col++)
 			page->SetColumnWidth(col, GetColumnWidth(col));
 	}
+}
+
+void CQueueViewBase::OnTimer(wxTimerEvent& event)
+{
+	if (event.GetId() != m_filecount_delay_timer.GetId())
+	{
+		event.Skip();
+		return;
+	}
+
+	if (m_fileCountChanged || m_folderScanCountChanged)
+		DisplayNumberQueuedFiles();
 }
 
 // ------
