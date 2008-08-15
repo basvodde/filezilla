@@ -195,9 +195,15 @@ void CStatusView::AddToLog(enum MessageType messagetype, const wxString& message
 	m_lineLengths.push_back(lineLength);
 
 	prefix += message;
+#ifdef __WXGTK__
+	// AppendText always calls SetInsertionPointEnd, which is very expensive.
+	// This check however is negligible.
+	if (m_pTextCtrl->GetInsertionPoint() != m_pTextCtrl->GetLastPosition())
+		m_pTextCtrl->AppendText(prefix);
+	else
+		m_pTextCtrl->WriteText(prefix);
+#else
 	m_pTextCtrl->AppendText(prefix);
-
-#ifndef __WXGTK__
 	delete pLock;
 #endif //__WXGTK__
 }
