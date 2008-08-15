@@ -1,6 +1,8 @@
 #ifndef __DIRECTORYLISTING_H__
 #define __DIRECTORYLISTING_H__
 
+#include <map>
+
 class CDirentry
 {
 public:
@@ -54,10 +56,18 @@ public:
 	CDirectoryListing& operator=(const CDirectoryListing &a);
 
 	const CDirentry& operator[](unsigned int index) const;
+
+	// Word of caution: You MUST NOT change the name of the returned
+	// entry if you do not call ClearFindMap afterwards
 	CDirentry& operator[](unsigned int index);
 
 	void SetCount(unsigned int count);
 	unsigned int GetCount() const { return m_entryCount; }
+
+	int FindFile_CmpCase(const wxString& name) const;
+	int FindFile_CmpNoCase(wxString name) const;
+
+	void ClearFindMap();
 
 	enum
 	{
@@ -99,6 +109,9 @@ protected:
 	void Copy();
 
 	std::vector<CDirentryObject> *m_pEntries;
+
+	mutable std::multimap<wxString, unsigned int> m_searchmap_case;
+	mutable std::multimap<wxString, unsigned int> m_searchmap_nocase;
 
 	unsigned int m_entryCount;
 

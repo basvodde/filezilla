@@ -245,30 +245,21 @@ bool CDirectoryCache::LookupFile(CDirentry &entry, const CServer &server, const 
 
 			const CDirectoryListing &listing = cacheEntry.listing;
 
-			bool found = false;
-			for (unsigned int i = 0; i < listing.GetCount(); i++)
+			int i = listing.FindFile_CmpCase(file);
+			if (i != -1)
 			{
-				if (!listing[i].name.CmpNoCase(file))
-				{
-					if (listing[i].name == file)
-					{
-						entry = listing[i];
-						matchedCase = true;
-						return true;
-					}
-					if (!found)
-					{
-						found = true;
-						entry = listing[i];
-					}
-				}
+				entry = listing[i];
+				matchedCase = true;
+				return true;
 			}
-			if (found)
+			listing.FindFile_CmpNoCase(file);
+			if (i != -1)
 			{
+				entry = listing[i];
 				matchedCase = false;
 				return true;
 			}
-
+			
 			return false;
 		}
 	}
@@ -550,6 +541,7 @@ void CDirectoryCache::Rename(const CServer& server, const CServerPath& pathFrom,
 					listing[i].name = fileTo;
 					listing[i].unsure = true;
 					listing.m_hasUnsureEntries |= CDirectoryListing::unsure_unknown;
+					listing.ClearFindMap();
 				}
 			}
 			return;

@@ -63,6 +63,9 @@ CDirectoryListing& CDirectoryListing::operator=(const CDirectoryListing &a)
 
 	m_hasDirs = a.m_hasDirs;
 
+	m_searchmap_case = a.m_searchmap_case;
+	m_searchmap_nocase = a.m_searchmap_nocase;
+
 	return *this;
 }
 
@@ -125,6 +128,12 @@ void CDirectoryListing::SetCount(unsigned int count)
 {
 	if (count == m_entryCount)
 		return;
+
+	if (count < m_entryCount)
+	{
+		m_searchmap_case.clear();
+		m_searchmap_nocase.clear();
+	}
 
 	if (!count)
 	{
@@ -248,6 +257,8 @@ bool CDirectoryListing::RemoveEntry(unsigned int index)
 
 	m_entryCount--;
 
+	ClearFindMap();
+
 	return true;
 }
 
@@ -346,4 +357,67 @@ void CDirectoryListing::GetFilenames(std::vector<wxString> &names) const
 	names.reserve(GetCount());
 	for (unsigned int i = 0; i < GetCount(); i++)
 		names.push_back((*this)[i].name);
+}
+
+int CDirectoryListing::FindFile_CmpCase(const wxString& name) const
+{
+	if (!m_pEntries)
+		return -1;
+
+	// Search map
+	std::multimap<wxString, unsigned int>::const_iterator iter = m_searchmap_case.find(name);
+	if (iter != m_searchmap_case.end())
+		return iter->second;
+
+	unsigned int i = m_searchmap_case.size();
+
+	// Build map if not yet complete
+	std::vector<CDirentryObject>::const_iterator entry_iter = m_pEntries->begin() + i;
+	for (; entry_iter != m_pEntries->end(); entry_iter++, i++)
+	{
+		const wxString& entry_name = entry_iter->GetEntry().name;
+		m_searchmap_case.insert(std::pair<wxString, unsigned int>(entry_name, i));
+
+		if (entry_name == name)
+			return i;
+	}
+
+	// Map is complete, item not in it
+	return -1;
+}
+
+int CDirectoryListing::FindFile_CmpNoCase(wxString name) const
+{
+	name.MakeLower();
+
+	if (!m_pEntries)
+		return -1;
+
+	// Search map
+	std::multimap<wxString, unsigned int>::const_iterator iter = m_searchmap_nocase.find(name);
+	if (iter != m_searchmap_nocase.end())
+		return iter->second;
+
+	unsigned int i = m_searchmap_nocase.size();
+
+	// Build map if not yet complete
+	std::vector<CDirentryObject>::const_iterator entry_iter = m_pEntries->begin() + i;
+	for (; entry_iter != m_pEntries->end(); entry_iter++, i++)
+	{
+		wxString entry_name = entry_iter->GetEntry().name;
+		entry_name.MakeLower();
+		m_searchmap_nocase.insert(std::pair<wxString, unsigned int>(entry_name, i));
+
+		if (entry_name == name)
+			return i;
+	}
+
+	// Map is complete, item not in it
+	return -1;
+}
+
+void CDirectoryListing::ClearFindMap()
+{
+	m_searchmap_case.clear();
+	m_searchmap_nocase.clear();
 }
