@@ -28,8 +28,15 @@ void CQueueViewFailed::OnContextMenu(wxContextMenuEvent& event)
 	if (!pMenu)
 		return;
 
-	pMenu->Enable(XRCID("ID_REMOVE"), GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1);
-	pMenu->Enable(XRCID("ID_REQUEUE"), GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1);
+#ifndef __WXMSW__
+	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
+	const bool has_selection = GetSelectedItemCount() != 0;
+#else
+	const bool has_selection = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1;
+#endif
+
+	pMenu->Enable(XRCID("ID_REMOVE"), has_selection);
+	pMenu->Enable(XRCID("ID_REQUEUE"), has_selection);
 
 	PopupMenu(pMenu);
 	delete pMenu;
@@ -37,6 +44,12 @@ void CQueueViewFailed::OnContextMenu(wxContextMenuEvent& event)
 
 void CQueueViewFailed::OnRemoveAll(wxCommandEvent& event)
 {
+#ifndef __WXMSW__
+	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
+	if (!GetSelectedItemCount())
+		return;
+#endif
+
 	// First, clear all selections
 	int item;
 	while ((item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
@@ -65,6 +78,12 @@ void CQueueViewFailed::OnRemoveAll(wxCommandEvent& event)
 
 void CQueueViewFailed::OnRemoveSelected(wxCommandEvent& event)
 {
+#ifndef __WXMSW__
+	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
+	if (!GetSelectedItemCount())
+		return;
+#endif
+
 	std::list<CQueueItem*> selectedItems;
 	long item = -1;
 	while (true)
@@ -123,6 +142,12 @@ void CQueueViewFailed::OnRemoveSelected(wxCommandEvent& event)
 
 void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 {
+#ifndef __WXMSW__
+	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
+	if (!GetSelectedItemCount())
+		return;
+#endif
+
 	bool failedToRequeueAll = false;
 	std::list<CQueueItem*> selectedItems;
 	long item = -1;

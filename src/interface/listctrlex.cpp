@@ -124,8 +124,18 @@ void wxListCtrlEx::HandlePrefixSearch(wxChar character)
 
 	wxString newPrefix = m_prefixSearch_prefix + character;
 
+	int item;
+#ifndef __WXMSW__
+	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
+	if (!GetSelectedItemCount())
+		item = -1;
+	else
+#endif
+	{
+		item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	}
+
 	bool beep = false;
-	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	if (item != -1)
 	{
 		wxString text = GetItemText(item, 0);
@@ -156,7 +166,6 @@ void wxListCtrlEx::HandlePrefixSearch(wxChar character)
 		return;
 	}
 
-	item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	while (item != -1)
 	{
 		SetItemState(item, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
@@ -767,3 +776,4 @@ void wxListCtrlEx::SetHeaderIconIndex(int col, int icon)
 	SendMessage(header, HDM_SETITEM, col, (LPARAM)&item);
 }
 #endif //__WXMSW__
+

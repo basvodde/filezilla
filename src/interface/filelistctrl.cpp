@@ -248,9 +248,15 @@ template<class CFileData> void CFileListCtrl<CFileData>::SortList(int column /*=
 		selected = new bool[m_fileData.size()];
 		memset(selected, 0, sizeof(bool) * m_fileData.size());
 
-		int item = -1;
-		while ((item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
-			selected[m_indexMapping[item]] = 1;
+#ifndef __WXMSW__
+	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
+		if (GetSelectedItemCount())		
+#endif
+		{
+			int item = -1;
+			while ((item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
+				selected[m_indexMapping[item]] = 1;
+		}
 		focused = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
 		if (focused != -1)
 			focused = m_indexMapping[focused];
@@ -549,13 +555,19 @@ template<class CFileData> void CFileListCtrl<CFileData>::ComparisonRememberSelec
 	}
 	m_comparisonSelections.push_back(focus);
 
-	int item = -1;
-	while ((item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
+#ifndef __WXMSW__
+	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
+	if (GetSelectedItemCount())
+#endif
 	{
-		int index = m_indexMapping[item];
-		if (m_fileData[index].flags == fill)
-			continue;
-		m_comparisonSelections.push_back(index);
+		int item = -1;
+		while ((item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
+		{
+			int index = m_indexMapping[item];
+			if (m_fileData[index].flags == fill)
+				continue;
+			m_comparisonSelections.push_back(index);
+		}
 	}
 }
 
@@ -842,3 +854,23 @@ template<class CFileData> void CFileListCtrl<CFileData>::OnProcessMouseEvent(wxC
 	}
 }
 #endif
+
+template<class CFileData> void CFileListCtrl<CFileData>::ClearSelection()
+{
+	// Clear selection
+#ifndef __WXMSW__
+	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
+	if (GetSelectedItemCount())
+#endif
+	{
+		int item = -1;
+		while ((item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
+		{
+			SetSelection(item, false);
+		}
+	}
+
+	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
+	if (item != -1)
+		SetItemState(item, 0, wxLIST_STATE_FOCUSED);
+}

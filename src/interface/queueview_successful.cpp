@@ -21,8 +21,15 @@ void CQueueViewSuccessful::OnContextMenu(wxContextMenuEvent& event)
 	if (!pMenu)
 		return;
 
-	pMenu->Enable(XRCID("ID_REMOVE"), GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1);
-	pMenu->Enable(XRCID("ID_REQUEUE"), GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1);
+#ifndef __WXMSW__
+	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
+	const bool has_selection = GetSelectedItemCount() != 0;
+#else
+	const bool has_selection = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1;
+#endif
+
+	pMenu->Enable(XRCID("ID_REMOVE"), has_selection);
+	pMenu->Enable(XRCID("ID_REQUEUE"), has_selection);
 	pMenu->Check(XRCID("ID_AUTOCLEAR"), m_autoClear);
 
 	PopupMenu(pMenu);

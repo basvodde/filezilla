@@ -1950,6 +1950,13 @@ void CQueueView::OnContextMenu(wxContextMenuEvent& event)
 	if (!pMenu)
 		return;
 
+#ifndef __WXMSW__
+	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
+	const bool has_selection = GetSelectedItemCount() != 0;
+#else
+	const bool has_selection = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1;
+#endif
+
 	pMenu->Check(XRCID("ID_PROCESSQUEUE"), IsActive() ? true : false);
 	pMenu->Check(XRCID("ID_ACTIONAFTER_DISABLE"), IsActionAfter(ActionAfterState_Disabled));
 	pMenu->Check(XRCID("ID_ACTIONAFTER_CLOSE"), IsActionAfter(ActionAfterState_Close));
@@ -1961,12 +1968,10 @@ void CQueueView::OnContextMenu(wxContextMenuEvent& event)
 	pMenu->Check(XRCID("ID_ACTIONAFTER_REBOOT"), IsActionAfter(ActionAfterState_Reboot));
 	pMenu->Check(XRCID("ID_ACTIONAFTER_SHUTDOWN"), IsActionAfter(ActionAfterState_Shutdown));
 #endif
-	pMenu->Enable(XRCID("ID_REMOVE"), GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1);
+	pMenu->Enable(XRCID("ID_REMOVE"), has_selection);
 
-	const bool hasSelection = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1;
-
-	pMenu->Enable(XRCID("ID_PRIORITY"), hasSelection);
-	pMenu->Enable(XRCID("ID_DEFAULT_FILEEXISTSACTION"), hasSelection);
+	pMenu->Enable(XRCID("ID_PRIORITY"), has_selection);
+	pMenu->Enable(XRCID("ID_DEFAULT_FILEEXISTSACTION"), has_selection);
 #ifdef __WXMSW__
 	pMenu->Enable(XRCID("ID_ACTIONAFTER"), m_actionAfterWarnDialog == NULL);
 #endif
@@ -2057,9 +2062,15 @@ void CQueueView::RemoveAll()
 	// for removal
 
 	// First, clear all selections
-	int item;
-	while ((item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
-		SetItemState(item, 0, wxLIST_STATE_SELECTED);
+#ifndef __WXMSW__
+	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
+	if (GetSelectedItemCount())
+#endif
+	{
+		int item;
+		while ((item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
+			SetItemState(item, 0, wxLIST_STATE_SELECTED);
+	}
 
 	std::vector<CServerItem*> newServerList;
 	m_itemCount = 0;
@@ -2087,6 +2098,12 @@ void CQueueView::RemoveAll()
 
 void CQueueView::OnRemoveSelected(wxCommandEvent& event)
 {
+#ifndef __WXMSW__
+	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
+	if (!GetSelectedItemCount())
+		return;
+#endif
+
 	std::list<CQueueItem*> selectedItems;
 	long item = -1;
 	while (true)
@@ -2254,7 +2271,13 @@ void CQueueView::SetDefaultFileExistsAction(enum CFileExistsNotification::Overwr
 
 void CQueueView::OnSetDefaultFileExistsAction(wxCommandEvent &event)
 {
-	if (GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) == -1)
+#ifndef __WXMSW__
+	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
+	const bool has_selection = GetSelectedItemCount() != 0;
+#else
+	const bool has_selection = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1;
+#endif
+	if (!has_selection)
 		return;
 
 	CDefaultFileExistsDlg dlg;
@@ -2573,6 +2596,12 @@ void CQueueView::WriteToFile(TiXmlElement* pElement) const
 
 void CQueueView::OnSetPriority(wxCommandEvent& event)
 {
+#ifndef __WXMSW__
+	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
+	if (!GetSelectedItemCount())
+		return;
+#endif
+
 	enum QueuePriority priority;
 
 	const int id = event.GetId();

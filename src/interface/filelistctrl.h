@@ -64,6 +64,8 @@ public:
 
 	void SetFilelistStatusBar(CFilelistStatusBar* pFilelistStatusBar) { m_pFilelistStatusBar = pFilelistStatusBar; }
 
+	void ClearSelection();
+
 protected:
 	CQueueView *m_pQueue;
 

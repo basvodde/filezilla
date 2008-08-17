@@ -293,19 +293,7 @@ bool CLocalListView::DisplayDir(wxString dirname)
 		if (IsComparing())
 			ExitComparisonMode();
 
-		// Clear selection
-		int item = -1;
-		while (true)
-		{
-			item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-			if (item == -1)
-				break;
-			SetSelection(item, false);
-
-		}
-		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
-		if (item != -1)
-			SetItemState(item, 0, wxLIST_STATE_FOCUSED);
+		ClearSelection();
 		focused = _T("..");
 
 		if (GetItemCount())
@@ -1566,24 +1554,30 @@ std::list<wxString> CLocalListView::RememberSelectedItems(wxString& focused)
 {
 	std::list<wxString> selectedNames;
 	// Remember which items were selected
-	int item = -1;
-	while (true)
+#ifndef __WXMSW__
+	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
+	if (GetSelectedItemCount())
+#endif
 	{
-		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-		if (item == -1)
-			break;
-		const CLocalFileData &data = m_fileData[m_indexMapping[item]];
-		if (data.flags != fill)
+		int item = -1;
+		while (true)
 		{
-			if (data.dir)
-				selectedNames.push_back(_T("d") + data.name);
-			else
-				selectedNames.push_back(_T("-") + data.name);
+			item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+			if (item == -1)
+				break;
+			const CLocalFileData &data = m_fileData[m_indexMapping[item]];
+			if (data.flags != fill)
+			{
+				if (data.dir)
+					selectedNames.push_back(_T("d") + data.name);
+				else
+					selectedNames.push_back(_T("-") + data.name);
+			}
+			SetSelection(item, false);
 		}
-		SetSelection(item, false);
 	}
 
-	item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
+	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
 	if (item != -1)
 	{
 		const CLocalFileData &data = m_fileData[m_indexMapping[item]];
@@ -1761,24 +1755,30 @@ void CLocalListView::RefreshFile(const wxString& file)
 		// Update file list status bar
 		if (m_pFilelistStatusBar)
 		{
-			int item = -1;
-			while (true)
+#ifndef __WXMSW__
+			// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
+			if (GetSelectedItemCount())
+#endif
 			{
-				item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-				if (item == -1)
-					break;
-				if (m_indexMapping[item] != i)
-					continue;
+				int item = -1;
+				while (true)
+				{
+					item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+					if (item == -1)
+						break;
+					if (m_indexMapping[item] != i)
+						continue;
 
-				if (oldData.dir)
-					m_pFilelistStatusBar->UnselectDirectory();
-				else
-					m_pFilelistStatusBar->UnselectFile(oldData.size);
-				if (data.dir)
-					m_pFilelistStatusBar->SelectDirectory();
-				else
-					m_pFilelistStatusBar->SelectFile(data.size);
-				break;
+					if (oldData.dir)
+						m_pFilelistStatusBar->UnselectDirectory();
+					else
+						m_pFilelistStatusBar->UnselectFile(oldData.size);
+					if (data.dir)
+						m_pFilelistStatusBar->SelectDirectory();
+					else
+						m_pFilelistStatusBar->SelectFile(data.size);
+					break;
+				}
 			}
 
 			if (oldData.dir)

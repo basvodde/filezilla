@@ -637,21 +637,7 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 		if (IsComparing())
 			ExitComparisonMode();
 
-		// Clear selection
-		int item = -1;
-		while (true)
-		{
-			item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-			if (item == -1)
-				break;
-			SetSelection(item, false);
-		}
-		item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
-		if (item != -1)
-		{
-			SetItemState(item, 0, wxLIST_STATE_FOCUSED);
-			wxASSERT(GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED) == -1);
-		}
+		ClearSelection();
 	}
 	else
 	{
@@ -1887,33 +1873,39 @@ std::list<wxString> CRemoteListView::RememberSelectedItems(wxString& focused)
 	wxASSERT(GetItemCount() == (int)m_indexMapping.size());
 	std::list<wxString> selectedNames;
 	// Remember which items were selected
-	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-	while (item != -1)
+#ifndef __WXMSW__
+	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
+	if (GetSelectedItemCount())
+#endif
 	{
-		SetSelection(item, false);
-		if (!item)
+		int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		while (item != -1)
 		{
-			selectedNames.push_back(_T(".."));
-			item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-			continue;
-		}
-		int index = GetItemIndex(item);
-		if (index == -1 || m_fileData[index].flags == fill)
-		{
-			item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-			continue;
-		}
-		const CDirentry& entry = (*m_pDirectoryListing)[index];
+			SetSelection(item, false);
+			if (!item)
+			{
+				selectedNames.push_back(_T(".."));
+				item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+				continue;
+			}
+			int index = GetItemIndex(item);
+			if (index == -1 || m_fileData[index].flags == fill)
+			{
+				item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+				continue;
+			}
+			const CDirentry& entry = (*m_pDirectoryListing)[index];
 
-		if (entry.dir)
-			selectedNames.push_back(_T("d") + entry.name);
-		else
-			selectedNames.push_back(_T("-") + entry.name);
+			if (entry.dir)
+				selectedNames.push_back(_T("d") + entry.name);
+			else
+				selectedNames.push_back(_T("-") + entry.name);
 
-		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+			item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		}
 	}
 
-	item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
+	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
 	if (item != -1)
 	{
 		int index = GetItemIndex(item);
