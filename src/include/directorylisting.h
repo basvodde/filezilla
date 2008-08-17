@@ -106,12 +106,12 @@ protected:
 
 	void AddRef();
 	void Unref();
-	void Copy();
+	void Copy(bool copy_cache);
 
 	std::vector<CDirentryObject> *m_pEntries;
 
-	mutable std::multimap<wxString, unsigned int> m_searchmap_case;
-	mutable std::multimap<wxString, unsigned int> m_searchmap_nocase;
+	mutable std::multimap<wxString, unsigned int>* m_searchmap_case;
+	mutable std::multimap<wxString, unsigned int>* m_searchmap_nocase;
 
 	unsigned int m_entryCount;
 
