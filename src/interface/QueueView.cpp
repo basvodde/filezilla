@@ -188,9 +188,14 @@ public:
 		m_didSendEvent = false;
 		m_threadWaiting = false;
 	}
-	~CFolderProcessingThread() { }
 
-	void GetFiles(std::list<t_newEntry> &entryList)
+	virtual ~CFolderProcessingThread()
+	{
+		for (std::list<t_newEntry*>::iterator iter = m_entryList.begin(); iter != m_entryList.end(); iter++)
+			delete *iter;
+	}
+
+	void GetFiles(std::list<t_newEntry*> &entryList)
 	{
 		wxASSERT(entryList.empty());
 		wxMutexLocker locker(m_sync);
@@ -207,7 +212,7 @@ public:
 
 protected:
 
-	void AddEntry(const t_newEntry& entry)
+	void AddEntry(t_newEntry* entry)
 	{
 		m_sync.Lock();
 		m_entryList.push_back(entry);
@@ -290,8 +295,8 @@ protected:
 						{
 							// Empty directory
 
-							t_newEntry entry;
-							entry.remotePath.SetSafePath(pair.remotePath.GetSafePath().c_str());
+							t_newEntry *entry = new t_newEntry;
+							entry->remotePath.SetSafePath(pair.remotePath.GetSafePath().c_str());
 
 							AddEntry(entry);
 						}
@@ -343,11 +348,14 @@ protected:
 				{
 					if (!m_filters.FilenameFiltered(file, currentLocalPath, false, size, true, attributes))
 					{
-						t_newEntry entry;
-						entry.localFile = fullName.c_str();
-						entry.remoteFile = file.c_str();
-						entry.remotePath.SetSafePath(currentRemotePath.GetSafePath().c_str());
-						entry.size = size;
+						t_newEntry* entry = new t_newEntry;
+
+						{
+							entry->localFile = fullName.c_str();
+							entry->remoteFile = file.c_str();
+							entry->remotePath.SetSafePath(currentRemotePath.GetSafePath().c_str());
+							entry->size = size;
+						}
 
 						AddEntry(entry);
 					}
@@ -381,7 +389,7 @@ protected:
 	}
 
 	// Access has to be guarded by m_sync
-	std::list<t_newEntry> m_entryList;
+	std::list<t_newEntry*> m_entryList;
 
 	CQueueView* m_pOwner;
 	CFolderScanItem* m_pFolderItem;
@@ -1651,23 +1659,25 @@ void CQueueView::OnFolderThreadComplete(wxCommandEvent& event)
 	ProcessUploadFolderItems();
 }
 
-bool CQueueView::QueueFiles(const std::list<t_newEntry> &entryList, bool queueOnly, bool download, CServerItem* pServerItem, const enum CFileExistsNotification::OverwriteAction defaultFileExistsAction)
+bool CQueueView::QueueFiles(const std::list<t_newEntry*> &entryList, bool queueOnly, bool download, CServerItem* pServerItem, const enum CFileExistsNotification::OverwriteAction defaultFileExistsAction)
 {
 	wxASSERT(pServerItem);
 
-	for (std::list<t_newEntry>::const_iterator iter = entryList.begin(); iter != entryList.end(); iter++)
+	for (std::list<t_newEntry*>::const_iterator iter = entryList.begin(); iter != entryList.end(); iter++)
 	{
-		const t_newEntry& entry = *iter;
+		const t_newEntry* entry = *iter;
 
 		CFileItem* fileItem;
-		if (entry.localFile != _T(""))
+		if (entry->localFile != _T(""))
 		{
-			fileItem = new CFileItem(pServerItem, queueOnly, download, entry.localFile, entry.remoteFile, entry.remotePath, entry.size);
-			fileItem->m_transferSettings.binary = ShouldUseBinaryMode(download ? entry.remoteFile : wxFileName(entry.localFile).GetFullName(), entry.remotePath.GetType());
+			fileItem = new CFileItem(pServerItem, queueOnly, download, entry->localFile, entry->remoteFile, entry->remotePath, entry->size);
+			fileItem->m_transferSettings.binary = ShouldUseBinaryMode(download ? entry->remoteFile : wxFileName(entry->localFile).GetFullName(), entry->remotePath.GetType());
 			fileItem->m_defaultFileExistsAction = defaultFileExistsAction;
 		}
 		else
-			fileItem = new CFolderItem(pServerItem, queueOnly, entry.remotePath, _T(""));
+			fileItem = new CFolderItem(pServerItem, queueOnly, entry->remotePath, _T(""));
+
+		delete entry;
 
 		InsertItem(pServerItem, fileItem);
 	}
@@ -2254,7 +2264,7 @@ void CQueueView::OnFolderThreadFiles(wxCommandEvent& event)
 	wxASSERT(!m_queuedFolders[1].empty());
 	CFolderScanItem* pItem = m_queuedFolders[1].front();
 
-	std::list<t_newEntry> entryList;
+	std::list<t_newEntry*> entryList;
 	m_pFolderProcessingThread->GetFiles(entryList);
 	QueueFiles(entryList, pItem->Queued(), false, (CServerItem*)pItem->GetTopLevelItem(), pItem->m_defaultFileExistsAction);
 
