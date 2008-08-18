@@ -2,7 +2,11 @@ dist_noinst_DATA = install.nsi.in makezip.sh.in mingwm10.dll uninstall.ico
 
 if MAKENSISSCRIPT
 
-noinst_DATA = installlangfiles.nsh uninstalllangfiles.nsh libtoolexecutablesubdir.nsh
+if LOCALES
+  MAYBE_LANGFILES = installlangfiles.nsh uninstalllangfiles.nsh
+endif
+
+noinst_DATA = $(MAYBE_LANGFILES) libtoolexecutablesubdir.nsh
 
 installlangfiles.nsh: Makefile
 	rm -f $@
