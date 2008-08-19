@@ -366,13 +366,32 @@ void CProxySocket::OnReceive()
 			m_recvBufferPos = 0;
 			
 			// All data got read, parse it
-			if (m_handshakeState != socks5_request_address && m_handshakeState != socks5_request_addrtype && m_pRecvBuffer[0] != 5)
+			switch (m_handshakeState)
 			{
-				m_pOwner->LogMessage(Debug_Warning, _("Unknown SOCKS protocol version: %d"), (int)m_pRecvBuffer[0]);
-				m_proxyState = noconn;
-				CSocketEvent evt(GetId(), CSocketEvent::close, ECONNABORTED);
-				m_pEvtHandler->AddPendingEvent(evt);
-				return;
+			default:
+				if (m_pRecvBuffer[0] != 5)
+				{
+					m_pOwner->LogMessage(Debug_Warning, _("Unknown SOCKS protocol version: %d"), (int)m_pRecvBuffer[0]);
+					m_proxyState = noconn;
+					CSocketEvent evt(GetId(), CSocketEvent::close, ECONNABORTED);
+					m_pEvtHandler->AddPendingEvent(evt);
+					return;
+				}
+				break;
+			case socks5_auth:
+				if (m_pRecvBuffer[0] != 1)
+				{
+					m_pOwner->LogMessage(Debug_Warning, _("Unknown protocol version of SOCKS Username/Password Authentication subnegotiation: %d"), (int)m_pRecvBuffer[0]);
+					m_proxyState = noconn;
+					CSocketEvent evt(GetId(), CSocketEvent::close, ECONNABORTED);
+					m_pEvtHandler->AddPendingEvent(evt);
+					return;
+				}
+				break;
+			case socks5_request_address:
+			case socks5_request_addrtype:
+				// Nothing to do
+				break;
 			}
 			switch (m_handshakeState)
 			{
@@ -496,7 +515,7 @@ void CProxySocket::OnReceive()
 					const int passlen = strlen(pass);
 					m_sendBufferLen = userlen + passlen + 3;
 					m_pSendBuffer = new char[m_sendBufferLen];
-					m_pSendBuffer[0] = 5;
+					m_pSendBuffer[0] = 1;
 					m_pSendBuffer[1] = userlen;
 					memcpy(m_pSendBuffer + 2, (const char*)user, userlen);
 					m_pSendBuffer[userlen + 2] = passlen;
