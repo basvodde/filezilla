@@ -775,13 +775,14 @@ void CTlsSocket::TrustCurrentCert(bool trusted)
 		if (m_lastWriteFailed)
 			m_lastWriteFailed = false;
 		CheckResumeFailedReadWrite();
-		TriggerEvents();
 
 		if (m_tlsState == conn)
 		{
 			CSocketEvent evt(GetId(), CSocketEvent::connection);
 			wxPostEvent(m_pEvtHandler, evt);
 		}
+
+		TriggerEvents();
 
 		return;
 	}
