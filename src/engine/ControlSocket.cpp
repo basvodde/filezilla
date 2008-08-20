@@ -1109,7 +1109,7 @@ int CRealControlSocket::ContinueConnect()
 		if (m_pCurOpData && m_pCurOpData->opId == cmd_connect)
 		{
 			CConnectOpData* pData = (CConnectOpData*)m_pCurOpData;
-			host = pData->host;
+			host = ConvertDomainName(pData->host);
 			port = pData->port;
 		}
 		if (host == _T(""))
