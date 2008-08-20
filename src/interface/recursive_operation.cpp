@@ -306,3 +306,13 @@ void CRecursiveOperation::SetQueue(CQueueView* pQueue)
 {
 	m_pQueue = pQueue;
 }
+
+bool CRecursiveOperation::ChangeOperationMode(enum OperationMode mode)
+{
+	if (mode != recursive_addtoqueue && m_operationMode != recursive_download)
+		return false;
+
+	m_operationMode = mode;
+
+	return true;
+}

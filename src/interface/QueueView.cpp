@@ -23,6 +23,7 @@
 #include <wx/sound.h>
 #include "local_filesys.h"
 #include "statusbar.h"
+#include "recursive_operation.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -1386,6 +1387,14 @@ bool CQueueView::SetActive(bool active /*=true*/)
 		m_activeMode = 0;
 		for (std::vector<CServerItem*>::iterator iter = m_serverList.begin(); iter != m_serverList.end(); iter++)
 			(*iter)->QueueImmediateFiles();
+
+		CState* const pState = m_pMainFrame->GetState();
+		if (pState)
+		{
+			CRecursiveOperation* pRecursiveOperation = pState->GetRecursiveOperationHandler();
+			if (pRecursiveOperation && pRecursiveOperation->GetOperationMode() == CRecursiveOperation::recursive_download)
+				pRecursiveOperation->ChangeOperationMode(CRecursiveOperation::recursive_addtoqueue);
+		}
 
 		UpdateStatusLinePositions();
 
