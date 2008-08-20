@@ -424,11 +424,15 @@ void CTransferSocket::OnReceive()
 			m_transferBufferLen += numread;
 
 			if (m_transferBufferLen > 1)
+			{
 				TransferEnd(failed_resumetest);
+				return;
+			}
 			else if (m_onCloseCalled)
 			{
 				CSocketEvent evt(m_pBackend->GetId(), CSocketEvent::close);
 				AddPendingEvent(evt);
+				return;
 			}
 		}
 	}
