@@ -1412,6 +1412,8 @@ bool CQueueView::SetActive(bool active /*=true*/)
 			}
 		}
 
+		m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_QUEUEPROCESSING);
+
 		return m_activeCount == 0;
 	}
 	else
