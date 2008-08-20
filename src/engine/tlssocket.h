@@ -27,7 +27,7 @@ public:
 	bool Init();
 	void Uninit();
 
-	int Handshake(const CTlsSocket* pPrimarySocket = 0);
+	int Handshake(const CTlsSocket* pPrimarySocket = 0, bool try_resume = false);
 
 	virtual void Read(void *buffer, unsigned int len);
 	virtual void Write(const void *buffer, unsigned int len);
@@ -44,8 +44,12 @@ public:
 
 	wxString GetCipherName();
 	wxString GetMacName();
+
+	bool ResumedSession() const;
 	
 protected:
+
+	bool CopySessionData(const CTlsSocket* pPrimarySocket);
 
 	virtual void OnRateAvailable(enum CRateLimiter::rate_direction direction);
 

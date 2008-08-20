@@ -27,6 +27,9 @@ enum capabilityNames
 	tvfs_support, // Trivial virtual file store (RFC 3659)
 	list_hidden_support, // LIST -a command
 
+	// FTPS and HTTPS
+	tls_resume, // Does the server resuming of TLS sessions?
+
 	// Server timezone offset. If using FTP, LIST details are unspecified and
 	// can return different times than the UTC based times using the MLST or
 	// MDTM commands.

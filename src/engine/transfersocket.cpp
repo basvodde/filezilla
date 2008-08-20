@@ -16,6 +16,7 @@
 #include <sys/socket.h>
 #endif
 #include "proxy.h"
+#include "servercapabilities.h"
 
 BEGIN_EVENT_TABLE(CTransferSocket, wxEvtHandler)
 	EVT_FZ_SOCKET(wxID_ANY, CTransferSocket::OnSocketEvent)
@@ -258,6 +259,13 @@ void CTransferSocket::OnConnect()
 		{
 			TransferEnd(transfer_failure);
 			return;
+		}
+	}
+	else if (m_pTlsSocket)
+	{
+		if (CServerCapabilities::GetCapability(*m_pControlSocket->m_pCurrentServer, tls_resume) == unknown)
+		{
+			CServerCapabilities::SetCapability(*m_pControlSocket->m_pCurrentServer, tls_resume, m_pTlsSocket->ResumedSession() ? yes : no);
 		}
 	}
 
@@ -588,6 +596,7 @@ bool CTransferSocket::SetupPassiveTransfer(wxString host, int port)
 	if (m_pControlSocket->m_pProxyBackend)
 	{
 		m_pProxyBackend = new CProxySocket(this, m_pSocket, m_pControlSocket);
+
 		int res = m_pProxyBackend->Handshake(m_pControlSocket->m_pProxyBackend->GetProxyType(),
 											 host, port,
 											 m_pControlSocket->m_pProxyBackend->GetUser(), m_pControlSocket->m_pProxyBackend->GetPass());
@@ -836,7 +845,9 @@ bool CTransferSocket::InitTls(const CTlsSocket* pPrimaryTlsSocket)
 		return false;
 	}
 
-	int res = m_pTlsSocket->Handshake(pPrimaryTlsSocket);
+	bool try_resume = CServerCapabilities::GetCapability(*m_pControlSocket->m_pCurrentServer, tls_resume) != no;
+
+	int res = m_pTlsSocket->Handshake(pPrimaryTlsSocket, try_resume);
 	if (res && res != FZ_REPLY_WOULDBLOCK)
 	{
 		delete m_pTlsSocket;

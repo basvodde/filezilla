@@ -374,7 +374,46 @@ void CTlsSocket::OnSend()
 	}
 }
 
-int CTlsSocket::Handshake(const CTlsSocket* pPrimarySocket /*=0*/)
+bool CTlsSocket::CopySessionData(const CTlsSocket* pPrimarySocket)
+{
+	size_t session_data_size = 0;
+
+	// Get buffer size
+	int res = gnutls_session_get_data(pPrimarySocket->m_session, 0, &session_data_size);
+	if (res)
+	{
+		m_pOwner->LogMessage(Debug_Info, _T("gnutls_session_get_data on primary socket failed: %d"), res);
+		return false;
+	}
+
+	// Get session data
+	void *session_data = new char[session_data_size];
+	res = gnutls_session_get_data(pPrimarySocket->m_session, session_data, &session_data_size);
+	if (res)
+	{
+		delete [] session_data;
+		m_pOwner->LogMessage(Debug_Info, _T("gnutls_session_get_data on primary socket failed: %d"), res);
+		return false;
+	}
+
+	// Set session data
+	res = gnutls_session_set_data(m_session, session_data, session_data_size);
+	delete [] session_data;
+	if (res)
+	{
+		m_pOwner->LogMessage(Debug_Info, _T("gnutls_session_set_data failed: %d"), res);
+		return false;
+	}
+
+	return true;
+}
+
+bool CTlsSocket::ResumedSession() const
+{
+	return gnutls_session_is_resumed(m_session) != 0;
+}
+
+int CTlsSocket::Handshake(const CTlsSocket* pPrimarySocket /*=0*/, bool try_resume /*=false*/)
 {
 	m_pOwner->LogMessage(Debug_Verbose, _T("CTlsSocket::Handshake()"));
 	wxASSERT(m_session);
@@ -392,12 +431,18 @@ int CTlsSocket::Handshake(const CTlsSocket* pPrimarySocket /*=0*/)
 			memcpy(m_implicitTrustedCert.data, cert_list[0].data, cert_list[0].size);
 			m_implicitTrustedCert.size = cert_list[0].size;
 		}
+
+		if (try_resume)
+			CopySessionData(pPrimarySocket);
 	}
 
 	int res = gnutls_handshake(m_session);
 	if (!res)
 	{
 		m_pOwner->LogMessage(Debug_Info, _T("Handshake successful"));
+
+		if (ResumedSession())
+			m_pOwner->LogMessage(Debug_Info, _T("Session resumed"));
 
 		const wxString& cipherName = GetCipherName();
 		const wxString& macName = GetMacName();
