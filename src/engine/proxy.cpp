@@ -425,7 +425,7 @@ void CProxySocket::OnReceive()
 					return;
 				}
 				m_handshakeState = socks5_request;
-
+				break;
 			case socks5_request:
 				if (m_pRecvBuffer[1])
 				{
