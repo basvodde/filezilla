@@ -19,8 +19,6 @@ public:
 	CRemoteListView(wxWindow* pParent, CState* pState, CQueueView* pQueue);
 	virtual ~CRemoteListView();
 
-	void ListingFailed();
-
 	bool DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, wxString path, bool queueOnly);
 
 	void InitDateFormat();
