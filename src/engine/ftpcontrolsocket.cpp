@@ -1270,7 +1270,7 @@ int CFtpControlSocket::ListSubcommandResult(int prevResult)
 				if (!pData->path.IsEmpty() && pData->subDir != _T(""))
 					cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
 
-				// We're done if listins is recent and has no outdated entries
+				// We're done if listing is recent and has no outdated entries
 				if (!is_outdated && !hasUnsureEntries)
 				{
 					m_pEngine->SendDirectoryListingNotification(m_CurrentPath, true, false, false);
@@ -1501,7 +1501,7 @@ int CFtpControlSocket::ListSend()
 		if (found && !is_outdated && !listing.m_hasUnsureEntries &&
 			listing.m_firstListTime > pData->m_time_before_locking)
 		{
-			m_pEngine->SendDirectoryListingNotification(listing.path, !pData->pNextOpData, true, false);
+			m_pEngine->SendDirectoryListingNotification(listing.path, !pData->pNextOpData, false, false);
 
 			ResetOperation(FZ_REPLY_OK);
 			return FZ_REPLY_OK;
