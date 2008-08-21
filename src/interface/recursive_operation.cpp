@@ -124,6 +124,13 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 	if (m_operationMode == recursive_none)
 		return;
 
+	if (pDirectoryListing->m_failed)
+	{
+		// Ignore this.
+		// It will get handled by the failed command in ListingFailed
+		return;
+	}
+
 	wxASSERT(!m_dirsToVisit.empty());
 
 	if (!m_pState->IsRemoteConnected() || m_dirsToVisit.empty())
