@@ -865,6 +865,14 @@ bool CSiteManager::Verify()
 		return false;
 	}
 
+	if (COptions::Get()->GetDefaultVal(DEFAULT_KIOSKMODE) != 0 &&
+		(logon_type == ACCOUNT || logon_type == NORMAL))
+	{
+		XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetFocus();
+		wxMessageBox(_("FileZilla is running in kiosk mode.\n'Normal' and 'Account' logontypes are not available in this mode."));
+		return false;
+	}
+
 	CServer server;
 
 	// Set selected type

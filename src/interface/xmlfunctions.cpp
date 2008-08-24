@@ -1,6 +1,7 @@
 #include "FileZilla.h"
 #include "xmlfunctions.h"
 #include "filezillaapp.h"
+#include "Options.h"
 
 CXmlFile::CXmlFile(const wxString& fileName)
 {
@@ -522,24 +523,46 @@ void SetServer(TiXmlElement *node, const CServer& server)
 	if (!node)
 		return;
 
+	static bool initialized = false;
+	static bool kiosk_mode = false;
+	if (!initialized)
+	{
+		COptions* pOptions = COptions::Get();
+		if (pOptions)
+		{
+			initialized = true;
+			if (pOptions->GetDefaultVal(DEFAULT_KIOSKMODE) != 0)
+				kiosk_mode = true;
+		}
+	}
+
 	node->Clear();
 
 	AddTextElement(node, "Host", server.GetHost());
 	AddTextElement(node, "Port", server.GetPort());
 	AddTextElement(node, "Protocol", server.GetProtocol());
 	AddTextElement(node, "Type", server.GetType());
-	AddTextElement(node, "Logontype", server.GetLogonType());
+
+	enum LogonType logonType = server.GetLogonType();
 
 	if (server.GetLogonType() != ANONYMOUS)
 	{
 		AddTextElement(node, "User", server.GetUser());
 
 		if (server.GetLogonType() == NORMAL || server.GetLogonType() == ACCOUNT)
-			AddTextElement(node, "Pass", server.GetPass());
+		{
+			if (kiosk_mode)
+				logonType = ASK;
+			else
+			{
+				AddTextElement(node, "Pass", server.GetPass());
 
-		if (server.GetLogonType() == ACCOUNT)
-			AddTextElement(node, "Account", server.GetAccount());
+				if (server.GetLogonType() == ACCOUNT)
+					AddTextElement(node, "Account", server.GetAccount());
+			}
+		}
 	}
+	AddTextElement(node, "Logontype", logonType);
 
 	AddTextElement(node, "TimezoneOffset", server.GetTimezoneOffset());
 	switch (server.GetPasvMode())
