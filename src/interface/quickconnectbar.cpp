@@ -4,6 +4,7 @@
 #include "commandqueue.h"
 #include "state.h"
 #include "Options.h"
+#include "loginmanager.h"
 
 BEGIN_EVENT_TABLE(CQuickconnectBar, wxPanel)
 EVT_BUTTON(XRCID("ID_QUICKCONNECT_OK"), CQuickconnectBar::OnQuickconnect)
@@ -162,7 +163,14 @@ void CQuickconnectBar::OnMenu(wxCommandEvent& event)
 	std::list<CServer>::const_iterator iter;
 	for (iter = m_recentServers.begin(); index; index--, iter++);
 
-	m_pState->Connect(*iter, true);
+	CServer server = *iter;
+	if (server.GetLogonType() == ASK)
+	{
+		if (!CLoginManager::Get().GetPassword(server, false))
+			return;
+	}
+
+	m_pState->Connect(server, true);
 }
 
 void CQuickconnectBar::ClearFields()
