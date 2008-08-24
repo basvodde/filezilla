@@ -712,7 +712,7 @@ int sftp_put_file(char *fname, char *outfname, int recurse, int restart)
 	if (!xfer_done(xfer)) {
 	    pktin = sftp_recv();
 	    ret = xfer_upload_gotpkt(xfer, pktin);
-	    if (!ret) {
+	    if (ret <= 0 && !err) {
 		fzprintf(sftpError, "error while writing: %s\n", fxp_error());
 		err = 1;
 	    }
