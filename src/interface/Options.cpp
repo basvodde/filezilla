@@ -124,6 +124,21 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Filter toggle state", number, _T("0") }
 };
 
+struct t_default_option
+{
+	const wxChar name[30];
+	enum Type type;
+	wxString value_str;
+	int value_number;
+};
+
+static t_default_option default_options[DEFAULTS_NUM] =
+{
+	{ _T("Config Location"), string, _T(""), 0 },
+	{ _T("Kiosk mode"), number, _T(""), 0 },
+	{ _T("Disable update check"), number, _T(""), 0 }
+};
+
 COptions::COptions()
 {
 	m_pLastServer = 0;
@@ -144,6 +159,8 @@ COptions::COptions()
 	}
 	else
 		CreateSettingsXmlElement();
+
+	LoadGlobalDefaultOptions();
 }
 
 COptions::~COptions()
@@ -622,4 +639,62 @@ void COptions::Import(TiXmlElement* pElement)
 		CInterProcessMutex mutex(MUTEX_OPTIONS);
 		m_pXmlFile->Save();
 	}
+}
+
+void COptions::LoadGlobalDefaultOptions()
+{
+	const wxString& defaultsDir = wxGetApp().GetDefaultsDir();
+	if (defaultsDir == _T(""))
+		return;
+	
+	wxFileName name(defaultsDir, _T("fzdefaults.xml"));
+	CXmlFile file(name);
+	if (!file.Load())
+		return;
+
+	TiXmlElement* pElement = file.GetElement();
+	if (!pElement)
+		return;
+
+	pElement = pElement->FirstChildElement("Settings");
+	if (!pElement)
+		return;
+
+	for (TiXmlElement* pSetting = pElement->FirstChildElement("Setting"); pSetting; pSetting = pSetting->NextSiblingElement("Setting"))
+	{
+		wxString name = GetTextAttribute(pSetting, "name");
+		for (int i = 0; i < DEFAULTS_NUM; i++)
+		{
+			if (name != default_options[i].name)
+				continue;
+
+			wxString value = GetTextElement(pSetting);
+			if (default_options[i].type == string)
+				default_options[i].value_str = value;
+			else
+			{
+				long v = 0;
+				if (!value.ToLong(&v))
+					v = 0;
+				default_options[i].value_number = v;
+			}
+
+		}
+	}
+}
+
+int COptions::GetDefaultVal(unsigned int nID) const
+{
+	if (nID >= DEFAULTS_NUM)
+		return 0;
+
+	return default_options[nID].value_number;
+}
+
+wxString COptions::GetDefault(unsigned int nID) const
+{
+	if (nID >= DEFAULTS_NUM)
+		return _T("");
+
+	return default_options[nID].value_str;
 }

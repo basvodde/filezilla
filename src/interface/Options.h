@@ -65,6 +65,16 @@ enum interfaceOptions
 	OPTIONS_NUM
 };
 
+enum defaultOptions
+{
+	DEFAULT_SETTINGSDIR,
+	DEFAULT_KIOSKMODE,
+	DEFAULT_DISABLEUPDATECHECK,
+
+	// Has to be last element
+	DEFAULTS_NUM
+};
+
 struct t_OptionsCache
 {
 	bool cached;
@@ -79,6 +89,9 @@ class COptions : public COptionsBase
 public:
 	virtual int GetOptionVal(unsigned int nID);
 	virtual wxString GetOption(unsigned int nID);
+
+	int GetDefaultVal(unsigned int nID) const;
+	wxString GetDefault(unsigned int nID) const;
 
 	virtual bool SetOption(unsigned int nID, int value);
 	virtual bool SetOption(unsigned int nID, wxString value);
@@ -110,6 +123,8 @@ protected:
 	bool GetServer(wxString path, CServer& server);
 
 	void CreateSettingsXmlElement();
+
+	void LoadGlobalDefaultOptions();
 
 	CXmlFile* m_pXmlFile;
 

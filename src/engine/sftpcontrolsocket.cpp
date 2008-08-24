@@ -1126,6 +1126,9 @@ int CSftpControlSocket::ListSubcommandResult(int prevResult)
 		return FZ_REPLY_ERROR;
 	}
 
+	if (pData->path.IsEmpty())
+		pData->path = m_CurrentPath;
+
 	if (!pData->refresh)
 	{
 		wxASSERT(!pData->pNextOpData);

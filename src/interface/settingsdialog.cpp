@@ -126,7 +126,10 @@ bool CSettingsDialog::LoadPages()
 	ADD_PAGE(_("Language"), COptionsPageLanguage, page_none);
 	ADD_PAGE(_("File editing"), COptionsPageEdit, page_none);
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
-	ADD_PAGE(_("Update Check"), COptionsPageUpdateCheck, page_none);
+	if (!COptions::Get()->GetDefaultVal(DEFAULT_DISABLEUPDATECHECK))
+	{
+		ADD_PAGE(_("Update Check"), COptionsPageUpdateCheck, page_none);
+	}
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	ADD_PAGE(_("Logging"), COptionsPageLogging, page_none);
 	ADD_PAGE(_("Debug"), COptionsPageDebug, page_none);

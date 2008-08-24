@@ -389,7 +389,7 @@ CMainFrame::CMainFrame()
 	SetAcceleratorTable(accel);
 
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
-	if (COptions::Get()->GetOptionVal(OPTION_UPDATECHECK))
+	if (!COptions::Get()->GetDefaultVal(DEFAULT_DISABLEUPDATECHECK) && COptions::Get()->GetOptionVal(OPTION_UPDATECHECK))
 	{
 		m_pUpdateWizard = new CUpdateWizard(this);
 		m_pUpdateWizard->InitAutoUpdateCheck();
@@ -576,15 +576,32 @@ bool CMainFrame::CreateMenus()
 		wxLogError(_("Cannot load main menu from resource file"));
 	}
 
-#if !FZ_MANUALUPDATECHECK
-	if (m_pMenuBar)
+#if FZ_MANUALUPDATECHECK
+	if (COptions::Get()->GetDefaultVal(DEFAULT_DISABLEUPDATECHECK))
+#endif
 	{
-		wxMenu *helpMenu;
-		wxMenuItem* pUpdateItem = m_pMenuBar->FindItem(XRCID("ID_CHECKFORUPDATES"), &helpMenu);
-		if (pUpdateItem)
-			helpMenu->Delete(pUpdateItem);
+		if (m_pMenuBar)
+		{
+			wxMenu *helpMenu;
+
+			wxMenuItem* pUpdateItem = m_pMenuBar->FindItem(XRCID("ID_CHECKFORUPDATES"), &helpMenu);
+			if (pUpdateItem)
+			{
+				// Get rid of separator
+				unsigned int count = helpMenu->GetMenuItemCount();
+				for (unsigned int i = 0; i < count - 1; i++)
+				{
+					if (helpMenu->FindItemByPosition(i) == pUpdateItem)
+					{
+						helpMenu->Delete(helpMenu->FindItemByPosition(i + 1));
+						break;
+					}
+				}
+
+				helpMenu->Delete(pUpdateItem);
+			}
+		}
 	}
-#endif //!FZ_MANUALUPDATECHECK
 
 	if (COptions::Get()->GetOptionVal(OPTION_DEBUG_MENU) && m_pMenuBar)
 	{
@@ -1944,7 +1961,7 @@ void CMainFrame::ConnectToSite(CSiteManagerItemData* const pData)
 void CMainFrame::CheckChangedSettings()
 {
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
-	if (COptions::Get()->GetOptionVal(OPTION_UPDATECHECK))
+	if (!COptions::Get()->GetDefaultVal(DEFAULT_DISABLEUPDATECHECK) && COptions::Get()->GetOptionVal(OPTION_UPDATECHECK))
 	{
 		if (!m_pUpdateWizard)
 		{

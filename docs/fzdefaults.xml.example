@@ -30,25 +30,39 @@
     the resulting XML file to fzdefaults.xml or copy the <Servers> block in it
     to fzdefaults.xml. See example below.
 
-  Location of settings directory:
+  Global configuration settings
 
-    By default, FileZilla stores its settings in the user's home directory. If
-    you want to change this location, modify the "Config Location" setting (see
-    below).
+    Location of settings directory:
 
-    "Config Location" either accepts absolute paths or paths relative to the
-    location of fzdefaults.xml
-    You can also use environment variables by preceding them with the dollar
-    sign, e.g. "$HOME/foo".
-    Use $$ to denote a path containing dollar signs, e.g. "c:\$$foobar\" if
-    settings should be located in "c:\$foobar".
-    A single dot denotes the directory containing fzdefaults.xml
+      By default, FileZilla stores its settings in the user's home directory. If
+      you want to change this location, modify the "Config Location" setting (see
+      below).
+
+      "Config Location" either accepts absolute paths or paths relative to the
+      location of fzdefaults.xml
+      You can also use environment variables by preceding them with the dollar
+      sign, e.g. "$HOME/foo".
+      Use $$ to denote a path containing dollar signs, e.g. "c:\$$foobar\" if
+      settings should be located in "c:\$foobar".
+      A single dot denotes the directory containing fzdefaults.xml
+
+    Kiosk mode
+
+      If the "Kiosk mode" setting is set to 1, FileZilla will not write any 
+      passwords to disk.
+
+    Disable update check
+
+      If the "Disable update check" setting is set to 1, the capability to
+      check for new FileZilla versions will be completely disabled.
 
 -->   
 
 <FileZilla3>
     <Settings>
       <Setting name="Config Location">$SOMEDIR/filezilla/</Setting>
+      <Setting name="Kiosk mode">0</Setting>
+      <Setting name="Disable update check">0</Setting>
     </Settings>
     <Servers>
         <Server>
