@@ -148,7 +148,7 @@ RFile *open_existing_file(char *name, uint64 *size,
 
 	if (size)
 	    *size = uint64_make((statbuf.st_size >> 16) >> 16,
-				statbuf.st_size);
+				statbuf.st_size & 0xffffffffu);
 
 	if (mtime)
 	    *mtime = statbuf.st_mtime;
@@ -213,7 +213,7 @@ WFile *open_existing_wfile(char *name, uint64 *size)
 	}
 
 	*size = uint64_make((statbuf.st_size >> 16) >> 16,
-			    statbuf.st_size);
+			    statbuf.st_size & 0xffffffffu);
     }
 
     return ret;
@@ -293,7 +293,7 @@ uint64 get_file_posn(WFile *f)
 
     fileofft = lseek(f->fd, (off_t) 0, SEEK_CUR);
 
-    ret = uint64_make((fileofft >> 16) >> 16, fileofft);
+    ret = uint64_make((fileofft >> 16) >> 16, fileofft & 0xffffffffu);
 
     return ret;
 }

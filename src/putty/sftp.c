@@ -1181,7 +1181,7 @@ static struct fxp_xfer *xfer_init(struct fxp_handle *fh, uint64 offset)
     xfer->req_totalsize = 0;
     xfer->req_maxsize = 1048576;
     xfer->err = 0;
-    xfer->filesize = uint64_make(ULONG_MAX, ULONG_MAX);
+    xfer->filesize = uint64_make(0xffffffffU, 0xffffffffU);
     xfer->furthestdata = uint64_make(0, 0);
 
     return xfer;
