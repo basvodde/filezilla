@@ -10,6 +10,24 @@ Legend:
     *nix: Unix (e.g BSD) and Unix-like systems (e.g. Linux)
     OS X: Apple Mac OS X
 
+3.1.2-rc1 (2008-08-24)
+
++ Add directory listing filter condition to match on containing path name
++ Implement kiosk mode in which FileZilla will not write any passwords to disk. Can be enabled through fzdefaults.xml
++ Add option to disable update checks to fzdefaults.xml
++ Vast performance improvements if handling queues and directories with thousands of files
++ Faster TLS/SSL handshake on data connections
+- Queue should no longer get mixed up if LIST command fails during recursive downloads
+- Fix crash if using -s commandline argument
+- Fix spurious transfer failures if multiple engines try to list the same directory
+- Loading invalid filters could crash FileZilla
+- User/pass authentication for SOCKS5 proxy support was not working properly
+- If stopping queue processing while recursively downloading directories, files added by the recursive operation will no longer reenable queue processing
+- MSW: Keep site manager wide enough so that all notebook tabs fit
+- Fix crash if server does not support resuming of large files
+- SFTP uploads did not fail if server ran out of diskspace
+- If compiled for some 64bit systems, SFTP resumes of files larger than 2^32 did not work properly
+
 3.1.1.1 (2008-08-11)
 
 - Fix crash if a connection attempt gets aborted
