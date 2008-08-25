@@ -443,7 +443,15 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 		break;
 	case DOS:
 		{
-			if (dir.Length() >= 2 && dir.c_str()[1] == ':')
+			bool is_relative = false;
+			int sep = dir.Find(traits[m_type].separator);
+			if (sep == -1)
+				sep = dir.Len();
+			int colon = dir.Find(':');
+			if (colon > 0 && colon == sep - 1)
+				is_relative = true;
+
+			if (is_relative)
 				m_Segments.clear();
 			else if (dir[0] == traits[m_type].separator)
 			{

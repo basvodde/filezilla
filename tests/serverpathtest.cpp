@@ -65,6 +65,9 @@ void CServerPathTest::testGetPath()
 	const CServerPath dos2(_T("C:\\FOO"));
 	CPPUNIT_ASSERT(dos2.GetPath() == _T("C:\\FOO"));
 
+	const CServerPath dos3(_T("md:\\"), DOS);
+	CPPUNIT_ASSERT(dos3.GetPath() == _T("md:\\"));
+
 	const CServerPath mvs1(_T("'FOO'"), MVS);
 	CPPUNIT_ASSERT(mvs1.GetPath() == _T("'FOO'"));
 
@@ -481,6 +484,7 @@ void CServerPathTest::testChangePath()
 	CServerPath dos7(_T("d:\\bar"));
 	CServerPath dos8(_T("c:\\bar\\baz"));
 	CServerPath dos9(_T("c:\\bar\\"));
+	CServerPath dos10(_T("md:\\bar\\"), DOS);
 	CPPUNIT_ASSERT(dos2.ChangePath(_T("baz")) && dos2 == dos3);
 	CPPUNIT_ASSERT(dos4.ChangePath(_T("baz\\bar")) && dos4 == dos5);
 	CPPUNIT_ASSERT(dos5.ChangePath(_T("\\bar\\")) && dos5 == dos1);
@@ -490,6 +494,7 @@ void CServerPathTest::testChangePath()
 	CPPUNIT_ASSERT(dos8.ChangePath(sub, true) && dos8 == dos1 && sub == _T("foo"));
 	sub = _T("baz\\foo");
 	CPPUNIT_ASSERT(dos9.ChangePath(sub, true) && dos9 == dos3 && sub == _T("foo"));
+	CPPUNIT_ASSERT(dos9.ChangePath(_T("md:\\bar\\")) && dos9 == dos10);
 
 	const CServerPath mvs1(_T("'BAR.'"), MVS);
 	CServerPath mvs2(_T("'BAR.'"), MVS);
