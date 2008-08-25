@@ -195,7 +195,6 @@ bool IsRoutableAddress(const wxString& address, int family)
 						DigitHexToDecNum(long_address[32]) * 16 + DigitHexToDecNum(long_address[33]),
 						DigitHexToDecNum(long_address[35]) * 16 + DigitHexToDecNum(long_address[36]),
 						DigitHexToDecNum(long_address[37]) * 16 + DigitHexToDecNum(long_address[38]));
-				printf("\n--- %s ---\n", (const char*)ipv4.mb_str());
 				return IsRoutableAddress(ipv4, AF_INET);
 			}
 
