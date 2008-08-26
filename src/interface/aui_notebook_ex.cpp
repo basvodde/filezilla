@@ -64,3 +64,26 @@ void wxAuiNotebookEx::SetExArtProvider()
 {
 	SetArtProvider(new wxAuiTabArtEx);
 }
+
+bool wxAuiNotebookEx::SetPageText(size_t page_idx, const wxString& text)
+{
+	// Basically identical to the AUI one, but not calling Update
+	if (page_idx >= m_tabs.GetPageCount())
+		return false;
+
+	// update our own tab catalog
+	wxAuiNotebookPage& page_info = m_tabs.GetPage(page_idx);
+	page_info.caption = text;
+
+	// update what's on screen
+	wxAuiTabCtrl* ctrl;
+	int ctrl_idx;
+	if (FindTab(page_info.window, &ctrl, &ctrl_idx))
+	{
+		wxAuiNotebookPage& info = ctrl->GetPage(ctrl_idx);
+		info.caption = text;
+		ctrl->Refresh();
+	}
+
+	return true;
+}

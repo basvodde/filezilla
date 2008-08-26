@@ -27,6 +27,11 @@ public:
 
 	void SetFieldWidth(int field, int width);
 
+#ifdef __WXGTK__
+	// Basically identical to the wx one, but not calling Update
+	virtual void SetStatusText(const wxString& text, int number = 0);
+#endif
+
 protected:
 	int GetFieldIndex(int field);
 

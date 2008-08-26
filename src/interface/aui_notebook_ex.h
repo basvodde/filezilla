@@ -13,6 +13,9 @@ public:
 	void RemoveExtraBorders();
 
 	void SetExArtProvider();
+
+	// Basically identical to the AUI one, but not calling Update
+	bool SetPageText(size_t page_idx, const wxString& text);
 };
 
 #endif //__AUI_NOTEBOOK_EX_H__

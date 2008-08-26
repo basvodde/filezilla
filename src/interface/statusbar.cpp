@@ -193,6 +193,23 @@ void wxStatusBarEx::OnSize(wxSizeEvent& event)
 #endif
 }
 
+#ifdef __WXGTK__
+void wxStatusBarEx::SetStatusText(const wxString& text, int number /*=0*/)
+{
+	// Basically identical to the wx one, but not calling Update
+	wxString oldText = m_statusStrings[number];
+	if (oldText != text)
+	{
+		m_statusStrings[number] = text;
+
+		wxRect rect;
+		GetFieldRect(number, rect);
+
+		Refresh(true, &rect);
+	}
+}
+#endif
+
 class CEncryptionIndicator : public wxStaticBitmap
 {
 public:
