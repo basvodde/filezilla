@@ -478,7 +478,6 @@ int CFileZillaEnginePrivate::Chmod(const CChmodCommand& command)
 void CFileZillaEnginePrivate::SendDirectoryListingNotification(const CServerPath& path, bool onList, bool modified, bool failed)
 {
 	wxASSERT(m_pControlSocket);
-	wxASSERT(onList || modified);
 	
 	const CServer* const pOwnServer = m_pControlSocket->GetCurrentServer();
 	wxASSERT(pOwnServer);
