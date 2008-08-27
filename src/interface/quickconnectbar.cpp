@@ -16,6 +16,10 @@ END_EVENT_TABLE();
 
 CQuickconnectBar::CQuickconnectBar()
 {
+	m_pHost = 0;
+	m_pUser = 0;
+	m_pPass = 0;
+	m_pPort = 0;
 }
 
 CQuickconnectBar::~CQuickconnectBar()
@@ -39,7 +43,18 @@ bool CQuickconnectBar::Create(wxWindow* pParent, CState* pState)
 		tlw->SetDefaultItem(0);
 #endif
 
-	XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetMaxLength(5);
+	m_pHost = XRCCTRL(*this, "ID_QUICKCONNECT_HOST", wxTextCtrl);
+	m_pUser = XRCCTRL(*this, "ID_QUICKCONNECT_USER", wxTextCtrl);
+	m_pPass = XRCCTRL(*this, "ID_QUICKCONNECT_PASS", wxTextCtrl);
+	m_pPort = XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl);
+
+	if (!m_pHost || !m_pUser || !m_pPass || !m_pPort)
+	{
+		wxLogError(_("Cannot load Quickconnect bar from resource file"));
+		return false;
+	}
+
+	m_pPort->SetMaxLength(5);
 
 	return true;
 }
@@ -52,10 +67,10 @@ void CQuickconnectBar::OnQuickconnect(wxCommandEvent& event)
 		return;
 	}
 
-	wxString host = XRCCTRL(*this, "ID_QUICKCONNECT_HOST", wxTextCtrl)->GetValue();
-	wxString user = XRCCTRL(*this, "ID_QUICKCONNECT_USER", wxTextCtrl)->GetValue();
-	wxString pass = XRCCTRL(*this, "ID_QUICKCONNECT_PASS", wxTextCtrl)->GetValue();
-	wxString port = XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl)->GetValue();
+	wxString host = m_pHost->GetValue();
+	wxString user = m_pUser->GetValue();
+	wxString pass = m_pPass->GetValue();
+	wxString port = m_pPort->GetValue();
 	
 	long numericPort = 0;
 	if (port != _T(""))
@@ -94,14 +109,14 @@ void CQuickconnectBar::OnQuickconnect(wxCommandEvent& event)
 		break;
 	}
 	
-	XRCCTRL(*this, "ID_QUICKCONNECT_HOST", wxTextCtrl)->SetValue(host);
+	m_pHost->SetValue(host);
 	if (server.GetPort() != server.GetDefaultPort(server.GetProtocol()))
-		XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetValue(wxString::Format(_T("%d"), server.GetPort()));
+		m_pPort->SetValue(wxString::Format(_T("%d"), server.GetPort()));
 	else
-		XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetValue(_T(""));
+		m_pPort->SetValue(_T(""));
 
-	XRCCTRL(*this, "ID_QUICKCONNECT_USER", wxTextCtrl)->SetValue(server.GetUser());
-	XRCCTRL(*this, "ID_QUICKCONNECT_PASS", wxTextCtrl)->SetValue(server.GetPass());
+	m_pUser->SetValue(server.GetUser());
+	m_pPass->SetValue(server.GetPass());
 
 	if (protocol == HTTP)
 	{
@@ -175,10 +190,10 @@ void CQuickconnectBar::OnMenu(wxCommandEvent& event)
 
 void CQuickconnectBar::ClearFields()
 {
-	XRCCTRL(*this, "ID_QUICKCONNECT_HOST", wxTextCtrl)->SetValue(_T(""));
-	XRCCTRL(*this, "ID_QUICKCONNECT_PORT", wxTextCtrl)->SetValue(_T(""));
-	XRCCTRL(*this, "ID_QUICKCONNECT_USER", wxTextCtrl)->SetValue(_T(""));
-	XRCCTRL(*this, "ID_QUICKCONNECT_PASS", wxTextCtrl)->SetValue(_T(""));
+	m_pHost->SetValue(_T(""));
+	m_pPort->SetValue(_T(""));
+	m_pUser->SetValue(_T(""));
+	m_pPass->SetValue(_T(""));
 }
 
 void CQuickconnectBar::OnKeyboardNavigation(wxNavigationKeyEvent& event)
@@ -188,7 +203,7 @@ void CQuickconnectBar::OnKeyboardNavigation(wxNavigationKeyEvent& event)
 		event.SetEventObject(this);
 		GetParent()->ProcessEvent(event);
 	}
-	else if (!event.GetDirection() && event.GetEventObject() == XRCCTRL(*this, "ID_QUICKCONNECT_HOST", wxTextCtrl))
+	else if (!event.GetDirection() && event.GetEventObject() == m_pHost)
 	{
 		event.SetEventObject(this);
 		GetParent()->ProcessEvent(event);

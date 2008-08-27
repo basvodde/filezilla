@@ -23,6 +23,11 @@ protected:
 	void OnQuickconnectDropdown(wxCommandEvent& event);
 	void OnMenu(wxCommandEvent& event);
 	void OnKeyboardNavigation(wxNavigationKeyEvent& event);
+
+	wxTextCtrl* m_pHost;
+	wxTextCtrl* m_pUser;
+	wxTextCtrl* m_pPass;
+	wxTextCtrl* m_pPort;
 };
 
 
