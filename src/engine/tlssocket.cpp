@@ -387,7 +387,7 @@ bool CTlsSocket::CopySessionData(const CTlsSocket* pPrimarySocket)
 	}
 
 	// Get session data
-	void *session_data = new char[session_data_size];
+	char *session_data = new char[session_data_size];
 	res = gnutls_session_get_data(pPrimarySocket->m_session, session_data, &session_data_size);
 	if (res)
 	{
