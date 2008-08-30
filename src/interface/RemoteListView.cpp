@@ -1324,15 +1324,15 @@ void CRemoteListView::OnMenuMkdir(wxCommandEvent& event)
 	CServerPath path = m_pDirectoryListing->path;
 
 	// Append a long segment which does (most likely) not exist in the path and
-	// replace it with "New folder" later. This way we get the exact position of
-	// "New folder" and can preselect it in the dialog.
+	// replace it with "New directory" later. This way we get the exact position of
+	// "New directory" and can preselect it in the dialog.
 	wxString tmpName = _T("25CF809E56B343b5A12D1F0466E3B37A49A9087FDCF8412AA9AF8D1E849D01CF");
 	if (path.AddSegment(tmpName))
 	{
 		wxString pathName = path.GetPath();
 		int pos = pathName.Find(tmpName);
 		wxASSERT(pos != -1);
-		wxString newName = _("New folder");
+		wxString newName = _("New directory");
 		pathName.Replace(tmpName, newName);
 		dlg.SetValue(pathName);
 		dlg.SelectText(pos, pos + newName.Length());

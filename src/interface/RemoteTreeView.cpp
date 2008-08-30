@@ -1217,8 +1217,8 @@ void CRemoteTreeView::OnMkdir(wxCommandEvent& event)
 	CServerPath newPath = path;
 
 	// Append a long segment which does (most likely) not exist in the path and
-	// replace it with "New folder" later. This way we get the exact position of
-	// "New folder" and can preselect it in the dialog.
+	// replace it with "New directory" later. This way we get the exact position of
+	// "New directory" and can preselect it in the dialog.
 	wxString tmpName = _T("25CF809E56B343b5A12D1F0466E3B37A49A9087FDCF8412AA9AF8D1E849D01CF");
 	if (newPath.AddSegment(tmpName))
 	{

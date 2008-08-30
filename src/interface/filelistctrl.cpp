@@ -449,7 +449,7 @@ template<class CFileData> wxString CFileListCtrl<CFileData>::GetType(wxString na
 	return type;
 #else
 	if (dir)
-		return _("Folder");
+		return _("Directory");
 
 	wxFileName fn(name);
 	wxString ext = fn.GetExt();
