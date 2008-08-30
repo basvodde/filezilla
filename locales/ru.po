@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-24 15:32+0200\n"
-"PO-Revision-Date: 2008-08-12 11:55+0200\n"
+"POT-Creation-Date: 2008-08-30 15:51+0200\n"
+"PO-Revision-Date: 2008-08-26 10:47+0200\n"
 "Last-Translator: Sergey <sergey.lyalyuk@gmail.com>\n"
 "Language-Team:  <ru@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -244,7 +244,7 @@ msgstr "Получить сведения о внешнем IP в настрой
 
 #: resources.h:158 resources.h:572
 msgid "&Auto"
-msgstr "&Автоматически"
+msgstr "&Авто"
 
 #: resources.h:131
 msgid "&Autodetect"
@@ -1354,7 +1354,8 @@ msgstr ""
 "Невозможно установить FTP соединение на SFTP сервер. Пожалуйста выберите "
 "правильный протокол."
 
-#: ../../locales/../src/interface/quickconnectbar.cpp:30
+#: ../../locales/../src/interface/quickconnectbar.cpp:35
+#: ../../locales/../src/interface/quickconnectbar.cpp:53
 msgid "Cannot load Quickconnect bar from resource file"
 msgstr "Невозможно загрузить панель быстрого соединения из файла ресурсов"
 
@@ -1452,9 +1453,8 @@ msgid "Check for updates"
 msgstr "Проверить обновления"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:1812
-#, fuzzy
 msgid "Check for updates failed"
-msgstr "Проверить обновления"
+msgstr "Не удалось проверить обновления"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:761
 msgid "Checking for correct external IP address"
@@ -1500,7 +1500,7 @@ msgstr "Очистить &информацию о подключениях"
 msgid "Clear &transfer queue"
 msgstr "Очистить &задание"
 
-#: ../../locales/../src/interface/quickconnectbar.cpp:128
+#: ../../locales/../src/interface/quickconnectbar.cpp:144
 msgid "Clear history"
 msgstr "Очистить историю"
 
@@ -1512,7 +1512,7 @@ msgstr "Очистить историю"
 msgid "Clear private data"
 msgstr "Стереть личные данные"
 
-#: ../../locales/../src/interface/quickconnectbar.cpp:127
+#: ../../locales/../src/interface/quickconnectbar.cpp:143
 msgid "Clear quickconnect bar"
 msgstr "Очистить строку соединения"
 
@@ -1655,7 +1655,7 @@ msgstr "Необходимо подтверждение"
 msgid "Congratulations, your configuration seems to be working."
 msgstr "Поздравляем, ваша конфигурация работает."
 
-#: ../../locales/../src/interface/quickconnectbar.cpp:126
+#: ../../locales/../src/interface/quickconnectbar.cpp:142
 msgid "Connect bypassing proxy settings"
 msgstr "Подключиться в обход настроек прокси"
 
@@ -1924,7 +1924,7 @@ msgstr "Невозможно загрузить файл с ключем"
 msgid "Could not load private key"
 msgstr "Невозможно загрузить секретный ключ"
 
-#: ../../locales/../src/interface/quickconnectbar.cpp:70
+#: ../../locales/../src/interface/quickconnectbar.cpp:86
 msgid "Could not parse server address:"
 msgstr "Невозможно разобрать адрес сервера:"
 
@@ -2609,7 +2609,7 @@ msgstr "И&мя фильтра:"
 msgid "FTP"
 msgstr "FTP"
 
-#: ../../locales/../src/interface/quickconnectbar.cpp:50
+#: ../../locales/../src/interface/quickconnectbar.cpp:66
 msgid "FTP Engine not initialized, can't connect"
 msgstr "Движок FTP не инициализирован, не могу соединиться!"
 
@@ -2871,7 +2871,7 @@ msgid "File transfers still in progress."
 msgstr "Идет передача файлов."
 
 #: ../../locales/../src/interface/FileZilla.cpp:449
-#: ../../locales/../src/interface/quickconnectbar.cpp:50
+#: ../../locales/../src/interface/quickconnectbar.cpp:66
 msgid "FileZilla Error"
 msgstr "Ошибка FileZilla"
 
@@ -2883,7 +2883,7 @@ msgstr ""
 "FileZilla может протестировать конфигурацию, чтобы убедиться, что все "
 "настроено правильно."
 
-#: ../../locales/../src/interface/quickconnectbar.cpp:107
+#: ../../locales/../src/interface/quickconnectbar.cpp:123
 msgid "FileZilla does not support the HTTP protocol"
 msgstr "FileZilla не поддерживает HTTP протокол"
 
@@ -2892,6 +2892,8 @@ msgid ""
 "FileZilla is running in kiosk mode.\n"
 "'Normal' and 'Account' logontypes are not available in this mode."
 msgstr ""
+"FileZilla работает в режиме 'киоск'.\n"
+"В этом режиме типы входов 'Нормальный' и 'Аккаунт' не доступны."
 
 #: ../../locales/../src/interface/Mainfrm.cpp:1597
 msgid "FileZilla needs to be restarted for the language change to take effect."
@@ -3094,10 +3096,9 @@ msgid "Highest available port has to be a number between 1024 and 65535."
 msgstr "Наивысший номер порта должен быть между 1024 и 65535"
 
 #: resources.h:342
-#, fuzzy
 msgid ""
 "Hold the shift key to toggle the filter state on both sides simultaneously."
-msgstr "Удерживайте SHIFT, чтобы включть фильтр одновременно на обе стороны."
+msgstr "Удерживайте SHIFT, чтобы включить фильтр одновременно на обе стороны."
 
 #: resources.h:299
 msgid "Homepage:"
@@ -3186,7 +3187,6 @@ msgstr ""
 "поясах, то сделайте поправку в Менеджере хостов"
 
 #: resources.h:182
-#, fuzzy
 msgid ""
 "If using timestamp based comparison, consider two files equal if their "
 "timestamp difference does not exceed this threshold."
@@ -3241,7 +3241,6 @@ msgstr ""
 "этом случае используйте пассивный режим и обратитесь к админу."
 
 #: resources.h:677
-#, fuzzy
 msgid ""
 "If you successfully complete the wizard and the final test succeeds, any "
 "firewalls and routers you have should be configured properly."
@@ -3580,7 +3579,6 @@ msgid "Malformed header: %s"
 msgstr "Поврежден заголовок: %s"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:522
-#, fuzzy
 msgid "Malformed reply, server not sending proper line endings"
 msgstr "Поврежден ответ, сервер не посылает надлежащие окончания строк"
 
@@ -4758,7 +4756,7 @@ msgid "Server does not support resume of files > %d GB."
 msgstr "Сервер не поддерживает докачку файлов более %d ГБ."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:4141
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Server does not support resume of files > %d GB. End transfer since file "
 "sizes match."
@@ -4775,7 +4773,7 @@ msgid "Server does not support resume of files > 4GB."
 msgstr "Сервер не поддерживает докачку файлов более 4 ГБ."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:4156
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Server may not support resume of files > %d GB. End transfer since file "
 "sizes match."
@@ -5034,8 +5032,8 @@ msgstr "Успешные передачи"
 msgid "Summary of test results:"
 msgstr "Результаты теста:"
 
-#: ../../locales/../src/interface/quickconnectbar.cpp:73
-#: ../../locales/../src/interface/quickconnectbar.cpp:107
+#: ../../locales/../src/interface/quickconnectbar.cpp:89
+#: ../../locales/../src/interface/quickconnectbar.cpp:123
 msgid "Syntax error"
 msgstr "Ошибка синтаксиса"
 
@@ -5582,6 +5580,8 @@ msgid ""
 "Unknown protocol version of SOCKS Username/Password Authentication "
 "subnegotiation: %d"
 msgstr ""
+"Неизвестная версия протокола доп. согласования аутентификации имени "
+"пользователя/пароля SOCKS: %d"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:592
 #: ../../locales/../src/interface/netconfwizard.cpp:603
@@ -5779,7 +5779,6 @@ msgid "Waiting for password"
 msgstr "Ожидание пароля"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:192
-#, fuzzy
 msgid "Waiting for transfer to be cancelled"
 msgstr "Ожидание отмены передачи"
 
@@ -5858,7 +5857,6 @@ msgid "Wrong external IP address"
 msgstr "Неправильный внешний IP-адрес"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:736
-#, fuzzy
 msgid "Wrong line endings"
 msgstr "Неправильные концы строк"
 
@@ -5906,12 +5904,11 @@ msgid "You have to specify a user name"
 msgstr "Укажите имя пользователя"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:618
-#, fuzzy
 msgid ""
 "You likely have a router or firewall which erroneously modified the "
 "transferred data."
 msgstr ""
-"Похоже, что ваш роутер или брандмауэр вносит ошибки в передаваемые данные."
+"Похоже, что ваш роутер или брандмауэр внес ошибки в передаваемые данные."
 
 #: ../../locales/../src/interface/optionspage_ftpproxy.cpp:82
 #: ../../locales/../src/interface/optionspage_proxy.cpp:70
