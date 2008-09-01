@@ -184,16 +184,16 @@ bool CHttpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotifi
 
 void CHttpControlSocket::OnReceive()
 {
-	if (!m_pRecvBuffer)
-	{
-		m_pRecvBuffer = new char[m_recvBufferLen];
-		m_recvBufferPos = 0;
-	}
-
 	int id = GetId();
 
 	do
 	{
+		if (!m_pRecvBuffer)
+		{
+			m_pRecvBuffer = new char[m_recvBufferLen];
+			m_recvBufferPos = 0;
+		}
+
 		if (GetState() != connected && GetState() != closing)
 			return;
 

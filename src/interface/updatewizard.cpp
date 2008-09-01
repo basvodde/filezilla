@@ -429,12 +429,15 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 			break;
 		case nId_data:
 			{
+				if (!m_inTransfer)
+					break;
+
 				wxASSERT(!m_currentPage);
 				CDataNotification* pOpMsg = reinterpret_cast<CDataNotification*>(pNotification);
 				int len;
 				char* data = pOpMsg->Detach(len);
 
-				if (m_data.Len() + len > 4096)
+				if (m_data.Len() + len > 131072)
 				{
 					delete [] data;
 					m_pEngine->Command(CCancelCommand());
