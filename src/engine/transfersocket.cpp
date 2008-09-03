@@ -426,13 +426,17 @@ void CTransferSocket::OnReceive()
 				if (m_transferBufferLen == 1)
 					TransferEnd(successful);
 				else
+				{
+					m_pControlSocket->LogMessage(::Debug_Warning, _T("Server incorrectly sent %d bytes"), m_transferBufferLen);
 					TransferEnd(failed_resumetest);
+				}
 				return;
 			}
 			m_transferBufferLen += numread;
 
 			if (m_transferBufferLen > 1)
 			{
+				m_pControlSocket->LogMessage(::Debug_Warning, _T("Server incorrectly sent %d bytes"), m_transferBufferLen);
 				TransferEnd(failed_resumetest);
 				return;
 			}
