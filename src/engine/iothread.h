@@ -75,8 +75,8 @@ protected:
 	bool m_binary;
 	wxFile* m_pFile;
 
-	char* m_buffers[3];
-	unsigned int m_bufferLens[3];
+	char* m_buffers[BUFFERCOUNT];
+	unsigned int m_bufferLens[BUFFERCOUNT];
 
 	wxMutex m_mutex;
 	wxCondition m_condition;
