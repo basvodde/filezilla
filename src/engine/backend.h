@@ -9,12 +9,10 @@ class CBackend : public CRateLimiterObject
 public:
 	CBackend(CSocketEventHandler* pEvtHandler);
 	virtual ~CBackend() {}
-	virtual void Read(void *data, unsigned int len) = 0;
-	virtual void Write(const void *data, unsigned int len) = 0;
-	virtual bool Error() const = 0;
-	virtual int LastError() const = 0;
-	virtual unsigned int LastCount() const = 0;
-	virtual void Peek(void *buffer, unsigned int len) = 0;
+
+	virtual int Read(void *buffer, unsigned int size, int& error) = 0;
+	virtual int Peek(void *buffer, unsigned int size, int& error) = 0;
+	virtual int Write(const void *buffer, unsigned int size, int& error) = 0;
 
 	virtual void OnRateAvailable(enum CRateLimiter::rate_direction direction) = 0;
 
@@ -43,21 +41,14 @@ public:
 	CSocketBackend(CSocketEventHandler* pEvtHandler, CSocket* pSocket);
 	virtual ~CSocketBackend();
 	// Backend definitions
-	virtual void Read(void *buffer, unsigned int len);
-	virtual void Write(const void *buffer, unsigned int len);
-	virtual bool Error() const { return m_error; }
-	virtual unsigned int LastCount() const { return m_lastCount; }
-	virtual int LastError() const { return m_lastError; }
-	virtual void Peek(void *buffer, unsigned int len);
+	virtual int Read(void *buffer, unsigned int size, int& error);
+	virtual int Peek(void *buffer, unsigned int size, int& error);
+	virtual int Write(const void *buffer, unsigned int size, int& error);
 
 protected:
 	virtual void OnRateAvailable(enum CRateLimiter::rate_direction direction);
 
 	CSocket* m_pSocket;
-
-	bool m_error;
-	int m_lastCount;
-	int m_lastError;
 };
 
 #endif //__BACKEND_H__

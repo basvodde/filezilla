@@ -28,14 +28,11 @@ public:
 
 	int Handshake(const CTlsSocket* pPrimarySocket = 0, bool try_resume = false);
 
-	virtual void Read(void *buffer, unsigned int len);
-	virtual void Write(const void *buffer, unsigned int len);
-	virtual bool Error() const { return !m_lastSuccessful; }
-	virtual unsigned int LastCount() const { return m_lastCount; }
-	virtual int LastError() const { return m_lastError; }
-	virtual void Peek(void *buffer, unsigned int len);
+	virtual int Read(void *buffer, unsigned int size, int& error);
+	virtual int Peek(void *buffer, unsigned int size, int& error);
+	virtual int Write(const void *buffer, unsigned int size, int& error);
 
-	void Shutdown();
+	int Shutdown();
 
 	void TrustCurrentCert(bool trusted);
 
@@ -94,10 +91,6 @@ protected:
 	CSocketBackend* m_pSocketBackend;
 	CSocket* m_pSocket;
 
-	// Used by LastError() and LastCount()
-	int m_lastError;
-	unsigned int m_lastCount;
-	bool m_lastSuccessful;
 	bool m_shutdown_requested;
 
 	// Due to the strange gnutls_record_send semantics, call it again

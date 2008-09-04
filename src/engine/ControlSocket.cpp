@@ -906,11 +906,10 @@ bool CRealControlSocket::Send(const char *buffer, int len)
 	}
 	else
 	{
-		m_pBackend->Write(buffer, len);
-		int numsent = 0;
-		if (m_pBackend->Error())
+		int error;
+		int written = m_pBackend->Write(buffer, len, error);
+		if (written < 0)
 		{
-			const int error = m_pBackend->LastError();
 			if (error != EAGAIN)
 			{
 				LogMessage(::Error, _("Could not write to socket: %s"), CSocket::GetErrorDescription(error).c_str());
@@ -919,19 +918,17 @@ bool CRealControlSocket::Send(const char *buffer, int len)
 				return false;
 			}
 		}
-		else
-			numsent = m_pBackend->LastCount();
 
-		if (numsent)
+		if (written)
 			m_pEngine->SetActive(false);
 
-		if (numsent < len)
+		if (written < len)
 		{
 			char *tmp = m_pSendBuffer;
-			m_pSendBuffer = new char[m_nSendBufferLen + len - numsent];
+			m_pSendBuffer = new char[m_nSendBufferLen + len - written];
 			memcpy(m_pSendBuffer, tmp, m_nSendBufferLen);
-			memcpy(m_pSendBuffer + m_nSendBufferLen, buffer, len - numsent);
-			m_nSendBufferLen += len - numsent;
+			memcpy(m_pSendBuffer + m_nSendBufferLen, buffer, len - written);
+			m_nSendBufferLen += len - written;
 			delete [] tmp;
 		}
 	}
@@ -1009,10 +1006,10 @@ void CRealControlSocket::OnSend()
 			return;
 		}
 
-		m_pBackend->Write(m_pSendBuffer, m_nSendBufferLen);
-		if (m_pBackend->Error())
+		int error;
+		int written = m_pBackend->Write(m_pSendBuffer, m_nSendBufferLen, error);
+		if (written < 0)
 		{
-			const int error = m_pBackend->LastError();
 			if (error != EAGAIN)
 			{
 				LogMessage(::Error, _("Could not write to socket: %s"), CSocket::GetErrorDescription(error).c_str());
@@ -1023,15 +1020,13 @@ void CRealControlSocket::OnSend()
 			return;
 		}
 
-		int numsent = m_pBackend->LastCount();
-
-		if (numsent)
+		if (written)
 		{
 			SetAlive();
 			m_pEngine->SetActive(false);
 		}
 
-		if (numsent == m_nSendBufferLen)
+		if (written == m_nSendBufferLen)
 		{
 			m_nSendBufferLen = 0;
 			delete [] m_pSendBuffer;
@@ -1039,8 +1034,8 @@ void CRealControlSocket::OnSend()
 		}
 		else
 		{
-			memmove(m_pSendBuffer, m_pSendBuffer + numsent, m_nSendBufferLen - numsent);
-			m_nSendBufferLen -= numsent;
+			memmove(m_pSendBuffer, m_pSendBuffer + written, m_nSendBufferLen - written);
+			m_nSendBufferLen -= written;
 		}
 	}
 }

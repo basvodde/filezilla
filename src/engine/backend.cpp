@@ -20,10 +20,6 @@ int CBackend::GetNextId()
 
 CSocketBackend::CSocketBackend(CSocketEventHandler* pEvtHandler, CSocket* pSocket) : CBackend(pEvtHandler), m_pSocket(pSocket)
 {
-	m_error = false;
-	m_lastCount = 0;
-	m_lastError = 0;
-
 	m_pSocket->SetEventHandler(pEvtHandler, GetId());
 
 	CRateLimiter* pRateLimiter = CRateLimiter::Get();
@@ -40,50 +36,49 @@ CSocketBackend::~CSocketBackend()
 		pRateLimiter->RemoveObject(this);
 }
 
-void CSocketBackend::Write(const void *buffer, unsigned int len)
+int CSocketBackend::Write(const void *buffer, unsigned int len, int& error)
 {
 	wxLongLong max = GetAvailableBytes(CRateLimiter::outbound);
 	if (max == 0)
 	{
 		Wait(CRateLimiter::outbound);
-		m_error = true;
-		m_lastError = EAGAIN;
-		return;
+		error = EAGAIN;
+		return -1;
 	}
 	else if (max > 0 && max < len)
 		len = max.GetLo();
 
-	m_lastCount = m_pSocket->Write(buffer, len, m_lastError);
-	m_error = m_lastCount == -1;
+	int written = m_pSocket->Write(buffer, len, error);
+	
+	if (written > 0 && max != -1)
+		UpdateUsage(CRateLimiter::outbound, written);
 
-	if (!m_error && max != -1)
-		UpdateUsage(CRateLimiter::outbound, m_lastCount);
+	return written;
 }
 
-void CSocketBackend::Read(void *buffer, unsigned int len)
+int CSocketBackend::Read(void *buffer, unsigned int len, int& error)
 {
 	wxLongLong max = GetAvailableBytes(CRateLimiter::inbound);
 	if (max == 0)
 	{
 		Wait(CRateLimiter::inbound);
-		m_error = true;
-		m_lastError = EAGAIN;
-		return;
+		error = EAGAIN;
+		return -1;
 	}
 	else if (max > 0 && max < len)
 		len = max.GetLo();
 
-	m_lastCount = m_pSocket->Read(buffer, len, m_lastError);
-	m_error = m_lastCount == -1;
+	int read = m_pSocket->Read(buffer, len, error);
 
-	if (!m_error && max != -1)
-		UpdateUsage(CRateLimiter::inbound, m_lastCount);
+	if (read > 0 && max != -1)
+		UpdateUsage(CRateLimiter::inbound, read);
+
+	return read;
 }
 
-void CSocketBackend::Peek(void *buffer, unsigned int len)
+int CSocketBackend::Peek(void *buffer, unsigned int len, int& error)
 {
-	m_lastCount = m_pSocket->Peek(buffer, len, m_lastError);
-	m_error = m_lastCount == -1;
+	return m_pSocket->Peek(buffer, len, error);
 }
 
 void CSocketBackend::OnRateAvailable(enum CRateLimiter::rate_direction direction)

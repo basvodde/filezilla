@@ -295,11 +295,11 @@ void CTransferSocket::OnReceive()
 		while (true)
 		{
 			char *pBuffer = new char[4096];
-			m_pBackend->Read(pBuffer, 4096);
-			if (m_pBackend->Error())
+			int error;
+			int numread = m_pBackend->Read(pBuffer, 4096, error);
+			if (numread < 0)
 			{
 				delete [] pBuffer;
-				int error = m_pBackend->LastError();
 				if (error != EAGAIN)
 				{
 					m_pControlSocket->LogMessage(::Error, _T("Could not read from transfer socket: %s"), CSocket::GetErrorDescription(error).c_str());
@@ -312,7 +312,6 @@ void CTransferSocket::OnReceive()
 				}
 				return;
 			}
-			int numread = m_pBackend->LastCount();
 
 			if (numread > 0)
 			{
@@ -333,13 +332,7 @@ void CTransferSocket::OnReceive()
 			else
 			{
 				delete [] pBuffer;
-				if (!numread)
-					TransferEnd(successful);
-				else if (numread < 0)
-				{
-					m_pControlSocket->LogMessage(Debug_Warning, _T("  numread < 0"));
-					TransferEnd(transfer_failure);
-				}
+				TransferEnd(successful);
 				return;
 			}
 		}
@@ -351,10 +344,10 @@ void CTransferSocket::OnReceive()
 			if (!CheckGetNextWriteBuffer())
 				return;
 
-			m_pBackend->Read(m_pTransferBuffer, m_transferBufferLen);
-			if (m_pBackend->Error())
+			int error;
+			int numread = m_pBackend->Read(m_pTransferBuffer, m_transferBufferLen, error);
+			if (numread < 0)
 			{
-				int error = m_pBackend->LastError();
 				if (error != EAGAIN)
 				{
 					m_pControlSocket->LogMessage(::Error, _T("Could not read from transfer socket: %s"), CSocket::GetErrorDescription(error).c_str());
@@ -367,7 +360,6 @@ void CTransferSocket::OnReceive()
 				}
 				return;
 			}
-			int numread = m_pBackend->LastCount();
 
 			if (numread > 0)
 			{
@@ -403,10 +395,10 @@ void CTransferSocket::OnReceive()
 		while (true)
 		{
 			char buffer[2];
-			m_pBackend->Read(buffer, 2);
-			if (m_pBackend->Error())
+			int error;
+			int numread = m_pBackend->Read(buffer, 2, error);
+			if (numread < 0)
 			{
-				const int error = m_pBackend->LastError();
 				if (error != EAGAIN)
 				{
 					m_pControlSocket->LogMessage(::Error, _T("Could not read from transfer socket: %s"), CSocket::GetErrorDescription(error).c_str());
@@ -419,7 +411,7 @@ void CTransferSocket::OnReceive()
 				}
 				return;
 			}
-			int numread = m_pBackend->LastCount();
+
 			if (!numread)
 			{
 				if (m_transferBufferLen == 1)
@@ -464,37 +456,33 @@ void CTransferSocket::OnSend()
 	if (m_transferMode != upload)
 		return;
 
-	int numsent = 0;
+	int error;
+	int written;
 	do
 	{
 		if (!CheckGetNextReadBuffer())
 			return;
 
-		m_pBackend->Write(m_pTransferBuffer, m_transferBufferLen);
-		if (m_pBackend->Error())
+		written = m_pBackend->Write(m_pTransferBuffer, m_transferBufferLen, error);
+		if (written <= 0)
 			break;
 
-		numsent = m_pBackend->LastCount();
-		if (numsent > 0)
+		m_pEngine->SetActive(false);
+		if (m_madeProgress == 1)
 		{
-			m_pEngine->SetActive(false);
-			if (m_madeProgress == 1)
-			{
-				m_pControlSocket->LogMessage(::Debug_Debug, _T("Made progress in CTransferSocket::OnSend()"));
-				m_madeProgress = 2;
-				m_pControlSocket->SetTransferStatusMadeProgress();
-			}
-			m_pControlSocket->UpdateTransferStatus(numsent);
+			m_pControlSocket->LogMessage(::Debug_Debug, _T("Made progress in CTransferSocket::OnSend()"));
+			m_madeProgress = 2;
+			m_pControlSocket->SetTransferStatusMadeProgress();
 		}
+		m_pControlSocket->UpdateTransferStatus(written);
 
-		m_pTransferBuffer += numsent;
-		m_transferBufferLen -= numsent;
+		m_pTransferBuffer += written;
+		m_transferBufferLen -= written;
 	}
-	while (!m_pBackend->Error() && numsent > 0);
+	while (true);
 
-	if (m_pBackend->Error())
+	if (written < 0)
 	{
-		int error = m_pBackend->LastError();
 		if (error == EAGAIN)
 		{
 			if (!m_madeProgress)
@@ -533,8 +521,7 @@ void CTransferSocket::OnClose(int error)
 	{
 		if (m_shutdown && m_pTlsSocket)
 		{
-			m_pTlsSocket->Shutdown();
-			if (m_pTlsSocket->Error())
+			if (m_pTlsSocket->Shutdown() != 0)
 				TransferEnd(transfer_failure);
 			else
 				TransferEnd(successful);
@@ -552,8 +539,8 @@ void CTransferSocket::OnClose(int error)
 	}
 
 	char buffer[100];
-	m_pBackend->Peek(&buffer, 100);
-	if (!m_pBackend->Error() && m_pBackend->LastCount())
+	int numread = m_pBackend->Peek(&buffer, 100, error);
+	if (numread > 0)
 	{
 #ifndef __WXMSW__
 		wxFAIL_MSG(_T("Peek isn't supposed to return data after close notification"));
@@ -568,7 +555,7 @@ void CTransferSocket::OnClose(int error)
 
 		return;
 	}
-	else if (m_pBackend->Error() && m_pBackend->LastError() != EAGAIN)
+	else if (numread < 0 && error != EAGAIN)
 	{
 		m_pControlSocket->LogMessage(::Error, _("Transfer connection interrupted: %s"), CSocket::GetErrorDescription(error).c_str());
 		TransferEnd(transfer_failure);
@@ -788,10 +775,11 @@ bool CTransferSocket::CheckGetNextReadBuffer()
 			if (m_pTlsSocket)
 			{
 				m_shutdown = true;
-				m_pTlsSocket->Shutdown();
-				if (m_pTlsSocket->Error())
+				
+				int error = m_pTlsSocket->Shutdown();
+				if (error != 0)
 				{
-					if (m_pTlsSocket->LastError() != EAGAIN)
+					if (error != EAGAIN)
 						TransferEnd(transfer_failure);
 					return false;
 				}

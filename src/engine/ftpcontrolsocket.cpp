@@ -237,13 +237,14 @@ void CFtpControlSocket::OnReceive()
 
 	while (true)
 	{
-		m_pBackend->Read(m_receiveBuffer + m_bufferLen, RECVBUFFERSIZE - m_bufferLen);
+		int error;
+		int read = m_pBackend->Read(m_receiveBuffer + m_bufferLen, RECVBUFFERSIZE - m_bufferLen, error);
 
-		if (m_pBackend->Error())
+		if (read < 0)
 		{
-			if (m_pBackend->LastError() != EAGAIN)
+			if (error != EAGAIN)
 			{
-				LogMessage(::Error, _("Could not read from socket: %s"), CSocket::GetErrorDescription(m_pBackend->LastError()).c_str());
+				LogMessage(::Error, _("Could not read from socket: %s"), CSocket::GetErrorDescription(error).c_str());
 				if (GetCurrentCommandId() != cmd_connect)
 					LogMessage(::Error, _("Disconnected from server"));
 				DoClose();
@@ -251,8 +252,7 @@ void CFtpControlSocket::OnReceive()
 			return;
 		}
 
-		int numread = m_pBackend->LastCount();
-		if (!numread)
+		if (!read)
 		{
 			LogMessage(::Error, _("Connection closed by server"));
 			DoClose();
@@ -262,7 +262,7 @@ void CFtpControlSocket::OnReceive()
 		m_pEngine->SetActive(true);
 
 		char* start = m_receiveBuffer;
-		m_bufferLen += numread;
+		m_bufferLen += read;
 
 		for (int i = start - m_receiveBuffer; i < m_bufferLen; i++)
 		{
