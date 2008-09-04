@@ -75,16 +75,6 @@ public:
 	virtual void OnSocketEvent(CSocketEvent& event) = 0;
 };
 
-typedef void (wxEvtHandler::*fzSocketEventFunction)(CSocketEvent&);
-
-extern const wxEventType fzEVT_SOCKET;
-#define EVT_FZ_SOCKET(id, fn) \
-    DECLARE_EVENT_TABLE_ENTRY( \
-        fzEVT_SOCKET, id, -1, \
-        (wxObjectEventFunction)(wxEventFunction) wxStaticCastEvent( fzSocketEventFunction, &fn ), \
-        (wxObject *) NULL \
-    ),
-
 class CSocketThread;
 class CSocket
 {
