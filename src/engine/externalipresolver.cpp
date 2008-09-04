@@ -20,10 +20,6 @@ wxEvent* fzExternalIPResolveEvent::Clone() const
 wxString CExternalIPResolver::m_ip;
 bool CExternalIPResolver::m_checked = false;
 
-BEGIN_EVENT_TABLE(CExternalIPResolver, wxEvtHandler)
-	EVT_FZ_SOCKET(wxID_ANY, CExternalIPResolver::OnSocketEvent)
-END_EVENT_TABLE();
-
 CExternalIPResolver::CExternalIPResolver(wxEvtHandler* handler, int id /*=wxID_ANY*/)
 	: m_handler(handler), m_id(id)
 {

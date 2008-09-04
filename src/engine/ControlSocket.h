@@ -4,7 +4,6 @@
 #include "socket.h"
 #include "logging_private.h"
 #include "backend.h"
-#include "socket.h"
 
 class COpData
 {
@@ -266,7 +265,7 @@ protected:
 };
 
 class CProxySocket;
-class CRealControlSocket : public CControlSocket, public CSocket
+class CRealControlSocket : public CControlSocket, public CSocketEventHandler
 {
 public:
 	CRealControlSocket(CFileZillaEnginePrivate *pEngine);
@@ -275,13 +274,12 @@ public:
 	virtual int Connect(const CServer &server);
 	virtual int ContinueConnect();
 
-	virtual bool Connected() { return GetState() == CSocket::connected; }
+	virtual bool Connected() { return m_pSocket->GetState() == CSocket::connected; }
 
 protected:
 	virtual int DoClose(int nErrorCode = FZ_REPLY_DISCONNECTED);
 	void ResetSocket();
 
-	DECLARE_EVENT_TABLE();
 	virtual void OnSocketEvent(CSocketEvent &event);
 	virtual void OnConnect();
 	virtual void OnReceive();
@@ -289,6 +287,8 @@ protected:
 	virtual void OnClose(int error);
 	
 	virtual bool Send(const char *buffer, int len);
+
+	CSocket* m_pSocket;
 
 	CBackend* m_pBackend;
 	CProxySocket* m_pProxyBackend;

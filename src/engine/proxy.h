@@ -4,10 +4,10 @@
 #include "backend.h"
 #include "socket.h"
 
-class CProxySocket : protected wxEvtHandler, public CBackend
+class CProxySocket : protected CSocketEventHandler, public CBackend
 {
 public:
-	CProxySocket(wxEvtHandler* pEvtHandler, CSocket* pSocket, CControlSocket* pOwner);
+	CProxySocket(CSocketEventHandler* pEvtHandler, CSocket* pSocket, CControlSocket* pOwner);
 	virtual ~CProxySocket();
 
 	enum ProxyState
@@ -68,7 +68,6 @@ protected:
 	int m_recvBufferPos;
 	int m_recvBufferLen;
 
-	DECLARE_EVENT_TABLE();
 	void OnSocketEvent(CSocketEvent& event);
 	void OnReceive();
 	void OnSend();

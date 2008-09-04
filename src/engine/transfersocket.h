@@ -19,7 +19,7 @@ enum TransferMode
 
 class CIOThread;
 class CTlsSocket;
-class CTransferSocket : public wxEvtHandler
+class CTransferSocket : public wxEvtHandler, public CSocketEventHandler
 {
 public:
 	CTransferSocket(CFileZillaEnginePrivate *pEngine, CFtpControlSocket *pControlSocket, enum TransferMode transferMode);

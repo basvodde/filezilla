@@ -223,7 +223,7 @@ CFtpControlSocket::CFtpControlSocket(CFileZillaEnginePrivate *pEngine) : CRealCo
 	// Enable TCP_NODELAY, speeds things up a bit.
 	// Enable SO_KEEPALIVE, lots of clueless users have broken routers and
 	// firewalls which terminate the control connection on long transfers.
-	CSocket::SetFlags(flag_nodelay | flag_keepalive);
+	m_pSocket->SetFlags(CSocket::flag_nodelay | CSocket::flag_keepalive);
 }
 
 CFtpControlSocket::~CFtpControlSocket()
@@ -402,7 +402,7 @@ void CFtpControlSocket::OnConnect()
 
 			wxASSERT(!m_pTlsSocket);
 			delete m_pBackend;
-			m_pTlsSocket = new CTlsSocket(this, this, this);
+			m_pTlsSocket = new CTlsSocket(this, m_pSocket, this);
 			m_pBackend = m_pTlsSocket;
 
 			if (!m_pTlsSocket->Init())
@@ -771,7 +771,7 @@ int CFtpControlSocket::LogonParseResponse()
 			wxASSERT(!m_pTlsSocket);
 			delete m_pBackend;
 
-			m_pTlsSocket = new CTlsSocket(this, this, this);
+			m_pTlsSocket = new CTlsSocket(this, m_pSocket, this);
 			m_pBackend = m_pTlsSocket;
 
 			if (!m_pTlsSocket->Init())
@@ -3641,7 +3641,7 @@ bool CFtpControlSocket::ParseEpsvResponse(CRawTransferOpData* pData)
 	   return false;
 
 	pData->port = port;
-	pData->host = GetPeerIP();
+	pData->host = m_pSocket->GetPeerIP();
 	return true;
 }
 
@@ -3680,8 +3680,8 @@ bool CFtpControlSocket::ParsePasvResponse(CRawTransferOpData* pData)
 		return true;
 	}
 
-	const wxString peerIP = GetPeerIP();
-	if (!IsRoutableAddress(pData->host, GetAddressFamily()) && IsRoutableAddress(peerIP, GetAddressFamily()))
+	const wxString peerIP = m_pSocket->GetPeerIP();
+	if (!IsRoutableAddress(pData->host, m_pSocket->GetAddressFamily()) && IsRoutableAddress(peerIP, m_pSocket->GetAddressFamily()))
 	{
 		if (!m_pEngine->GetOptions()->GetOptionVal(OPTION_PASVREPLYFALLBACKMODE) || pData->bTriedActive)
 		{
@@ -3704,14 +3704,14 @@ int CFtpControlSocket::GetExternalIPAddress(wxString& address)
 {
 	// Local IP should work. Only a complete moron would use IPv6
 	// and NAT at the same time.
-	if (GetAddressFamily() != AF_INET6)
+	if (m_pSocket->GetAddressFamily() != AF_INET6)
 	{
 		int mode = m_pEngine->GetOptions()->GetOptionVal(OPTION_EXTERNALIPMODE);
 
 		if (mode)
 		{
 			if (m_pEngine->GetOptions()->GetOptionVal(OPTION_NOEXTERNALONLOCAL) &&
-				!IsRoutableAddress(GetPeerIP(), GetAddressFamily()))
+				!IsRoutableAddress(m_pSocket->GetPeerIP(), m_pSocket->GetAddressFamily()))
 				// Skip next block, use local address
 				goto getLocalIP;
 		}
@@ -3731,7 +3731,7 @@ int CFtpControlSocket::GetExternalIPAddress(wxString& address)
 		{
 			if (!m_pIPResolver)
 			{
-				const wxString& localAddress = GetLocalIP();
+				const wxString& localAddress = m_pSocket->GetLocalIP();
 
 				if (localAddress != _T("") && localAddress == m_pEngine->GetOptions()->GetOption(OPTION_LASTRESOLVEDIP))
 				{
@@ -3777,7 +3777,7 @@ int CFtpControlSocket::GetExternalIPAddress(wxString& address)
 
 getLocalIP:
 
-	address = GetLocalIP();
+	address = m_pSocket->GetLocalIP();
 	if (address == _T(""))
 	{
 		LogMessage(::Error, _("Failed to retrieve local ip address."), 1);
@@ -3900,7 +3900,7 @@ int CFtpControlSocket::TransferParseResponse()
 		if (pData->bPasv)
 		{
 			bool parsed;
-			if (GetAddressFamily() == AF_INET6)
+			if (m_pSocket->GetAddressFamily() == AF_INET6)
 				parsed = ParseEpsvResponse(pData);
 			else
 				parsed = ParsePasvResponse(pData);
@@ -4033,7 +4033,7 @@ int CFtpControlSocket::TransferSend()
 		if (pData->bPasv)
 		{
 			pData->bTriedPasv = true;
-			if (GetAddressFamily() == AF_INET6)
+			if (m_pSocket->GetAddressFamily() == AF_INET6)
 				cmd = _T("EPSV");
 			else
 				cmd = _T("PASV");
@@ -4050,7 +4050,7 @@ int CFtpControlSocket::TransferSend()
 				if (portArgument != _T(""))
 				{
 					pData->bTriedActive = true;
-					if (GetAddressFamily() == AF_INET6)
+					if (m_pSocket->GetAddressFamily() == AF_INET6)
 						cmd = _T("EPRT " + portArgument);
 					else
 						cmd = _T("PORT " + portArgument);
@@ -4068,7 +4068,7 @@ int CFtpControlSocket::TransferSend()
 			pData->bTriedActive = true;
 			pData->bTriedPasv = true;
 			pData->bPasv = true;
-			if (GetAddressFamily() == AF_INET6)
+			if (m_pSocket->GetAddressFamily() == AF_INET6)
 				cmd = _T("EPSV");
 			else
 				cmd = _T("PASV");

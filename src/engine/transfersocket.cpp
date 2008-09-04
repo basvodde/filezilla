@@ -19,7 +19,6 @@
 #include "servercapabilities.h"
 
 BEGIN_EVENT_TABLE(CTransferSocket, wxEvtHandler)
-	EVT_FZ_SOCKET(wxID_ANY, CTransferSocket::OnSocketEvent)
 	EVT_IOTHREAD(wxID_ANY, CTransferSocket::OnIOThreadEvent)
 END_EVENT_TABLE();
 
@@ -308,8 +307,8 @@ void CTransferSocket::OnReceive()
 				}
 				else if (m_onCloseCalled && !m_pBackend->IsWaiting(CRateLimiter::inbound))
 				{
-					CSocketEvent evt(m_pBackend->GetId(), CSocketEvent::close);
-					AddPendingEvent(evt);
+					CSocketEvent *evt = new CSocketEvent(this, m_pBackend->GetId(), CSocketEvent::close);
+					CSocketEventDispatcher::Get().SendEvent(evt);
 				}
 				return;
 			}
@@ -327,8 +326,8 @@ void CTransferSocket::OnReceive()
 				m_pControlSocket->UpdateTransferStatus(numread);
 				if (m_onCloseCalled)
 				{
-					CSocketEvent evt(m_pBackend->GetId(), CSocketEvent::close);
-					AddPendingEvent(evt);
+					CSocketEvent *evt = new CSocketEvent(this, m_pBackend->GetId(), CSocketEvent::close);
+					CSocketEventDispatcher::Get().SendEvent(evt);
 				}
 			}
 			else
@@ -363,8 +362,8 @@ void CTransferSocket::OnReceive()
 				}
 				else if (m_onCloseCalled && !m_pBackend->IsWaiting(CRateLimiter::inbound))
 				{
-					CSocketEvent evt(m_pBackend->GetId(), CSocketEvent::close);
-					AddPendingEvent(evt);
+					CSocketEvent *evt = new CSocketEvent(this, m_pBackend->GetId(), CSocketEvent::close);
+					CSocketEventDispatcher::Get().SendEvent(evt);
 				}
 				return;
 			}
@@ -388,8 +387,8 @@ void CTransferSocket::OnReceive()
 
 				if (m_onCloseCalled && m_transferEndReason == none)
 				{
-					CSocketEvent evt(m_pBackend->GetId(), CSocketEvent::close);
-					AddPendingEvent(evt);
+					CSocketEvent *evt = new CSocketEvent(this, m_pBackend->GetId(), CSocketEvent::close);
+					CSocketEventDispatcher::Get().SendEvent(evt);
 				}
 			}
 			else //!numread
@@ -415,8 +414,8 @@ void CTransferSocket::OnReceive()
 				}
 				else if (m_onCloseCalled && !m_pBackend->IsWaiting(CRateLimiter::inbound))
 				{
-					CSocketEvent evt(m_pBackend->GetId(), CSocketEvent::close);
-					AddPendingEvent(evt);
+					CSocketEvent *evt = new CSocketEvent(this, m_pBackend->GetId(), CSocketEvent::close);
+					CSocketEventDispatcher::Get().SendEvent(evt);
 				}
 				return;
 			}
@@ -442,8 +441,8 @@ void CTransferSocket::OnReceive()
 			}
 			else if (m_onCloseCalled)
 			{
-				CSocketEvent evt(m_pBackend->GetId(), CSocketEvent::close);
-				AddPendingEvent(evt);
+				CSocketEvent *evt = new CSocketEvent(this, m_pBackend->GetId(), CSocketEvent::close);
+				CSocketEventDispatcher::Get().SendEvent(evt);
 				return;
 			}
 		}
@@ -614,8 +613,8 @@ bool CTransferSocket::SetupPassiveTransfer(wxString host, int port)
 			return false;
 		}
 		int error;
-		host = m_pControlSocket->GetPeerIP();
-		port = m_pControlSocket->GetRemotePort(error);
+		host = m_pControlSocket->m_pSocket->GetPeerIP();
+		port = m_pControlSocket->m_pSocket->GetRemotePort(error);
 	}
 
 	SetSocketBufferSizes(m_pSocket);
@@ -684,7 +683,7 @@ void CTransferSocket::TransferEnd(enum TransferEndReason reason)
 CSocket* CTransferSocket::CreateSocketServer(int port)
 {
 	CSocket* pServer = new CSocket(this, CBackend::GetNextId());
-	int res = pServer->Listen(m_pControlSocket->GetAddressFamily(), port);
+	int res = pServer->Listen(m_pControlSocket->m_pSocket->GetAddressFamily(), port);
 	if (res)
 	{
 		m_pControlSocket->LogMessage(::Debug_Verbose, _T("Could not listen on port %d: %s"), port, CSocket::GetErrorDescription(res).c_str());

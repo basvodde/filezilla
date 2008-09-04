@@ -869,14 +869,12 @@ void CControlSocket::SendAsyncRequest(CAsyncRequestNotification* pNotification)
 // CRealControlSocket
 // ------------------
 
-BEGIN_EVENT_TABLE(CRealControlSocket, CControlSocket)
-	EVT_FZ_SOCKET(wxID_ANY, CRealControlSocket::OnSocketEvent)
-END_EVENT_TABLE()
-
 CRealControlSocket::CRealControlSocket(CFileZillaEnginePrivate *pEngine)
-	: CControlSocket(pEngine), CSocket(this, 0)
+	: CControlSocket(pEngine)
 {
-	m_pBackend = new CSocketBackend(this, this);
+	m_pSocket = new CSocket(this, 0);
+
+	m_pBackend = new CSocketBackend(this, m_pSocket);
 	m_pProxyBackend = 0;
 
 	m_pSendBuffer = 0;
@@ -885,11 +883,13 @@ CRealControlSocket::CRealControlSocket(CFileZillaEnginePrivate *pEngine)
 
 CRealControlSocket::~CRealControlSocket()
 {
-	Close();
+	m_pSocket->Close();
 	if (m_pProxyBackend && m_pProxyBackend != m_pBackend)
 		delete m_pProxyBackend;
 	delete m_pBackend;
 	m_pBackend = 0;
+
+	delete m_pSocket;
 }
 
 bool CRealControlSocket::Send(const char *buffer, int len)
@@ -970,7 +970,7 @@ void CRealControlSocket::OnSocketEvent(CSocketEvent &event)
 			if (m_pProxyBackend && !m_pProxyBackend->Detached())
 			{
 				m_pProxyBackend->Detach();
-				m_pBackend = new CSocketBackend(this, this);
+				m_pBackend = new CSocketBackend(this, m_pSocket);
 			}
 			OnConnect();
 		}
@@ -1090,7 +1090,7 @@ int CRealControlSocket::ContinueConnect()
 		port = m_pEngine->GetOptions()->GetOptionVal(OPTION_PROXY_PORT);
 
 		delete m_pBackend;
-		m_pProxyBackend = new CProxySocket(this, this, this);
+		m_pProxyBackend = new CProxySocket(this, m_pSocket, this);
 		m_pBackend = m_pProxyBackend;
 		int res = m_pProxyBackend->Handshake((enum CProxySocket::ProxyType)proxy_type,
 											 m_pCurrentServer->GetHost(), m_pCurrentServer->GetPort(),
@@ -1121,7 +1121,7 @@ int CRealControlSocket::ContinueConnect()
 	if (!IsIpAddress(host))
 		LogMessage(Status, _("Resolving address of %s"), host.c_str());
 
-	int res = CSocket::Connect(host, port);
+	int res = m_pSocket->Connect(host, port);
 
 	// Treat success same as EINPROGRESS, we wait for connect notification in any case
 	if (res && res != EINPROGRESS)
@@ -1143,7 +1143,7 @@ int CRealControlSocket::DoClose(int nErrorCode /*=FZ_REPLY_DISCONNECTED*/)
 
 void CRealControlSocket::ResetSocket()
 {
-	Close();
+	m_pSocket->Close();
 
 	if (m_pSendBuffer)
 	{

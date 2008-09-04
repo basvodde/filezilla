@@ -8,7 +8,9 @@ noinst_HEADERS = compatibility.h \
 		 FileZillaEngine.h \
 		 local_filesys.h \
 		 logging.h misc.h notification.h optionsbase.h server.h \
-		 serverpath.h setup.h threadex.h timeex.h
+		 serverpath.h setup.h \
+		 socket.h \
+		 threadex.h timeex.h
 
 if ENABLE_PRECOMP
 

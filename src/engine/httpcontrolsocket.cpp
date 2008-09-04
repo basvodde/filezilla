@@ -184,7 +184,7 @@ bool CHttpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotifi
 
 void CHttpControlSocket::OnReceive()
 {
-	int id = GetId();
+	int id = m_pSocket->GetId();
 
 	do
 	{
@@ -194,12 +194,13 @@ void CHttpControlSocket::OnReceive()
 			m_recvBufferPos = 0;
 		}
 
-		if (GetState() != connected && GetState() != closing)
+		const enum CSocket::SocketState state = m_pSocket->GetState();
+		if (state != CSocket::connected && state != CSocket::closing)
 			return;
 
 		unsigned int len = m_recvBufferLen - m_recvBufferPos;
 		int error;
-		int read = Read(m_pRecvBuffer + m_recvBufferPos, len, error);
+		int read = m_pSocket->Read(m_pRecvBuffer + m_recvBufferPos, len, error);
 		if (read == -1)
 		{
 			if (error != EAGAIN)
@@ -255,7 +256,7 @@ void CHttpControlSocket::OnReceive()
 			}
 		}
 	}
-	while (GetId() == id);
+	while (m_pSocket->GetId() == id);
 }
 
 void CHttpControlSocket::OnConnect()
@@ -443,9 +444,9 @@ int CHttpControlSocket::DoInternalConnect()
 
 	if (m_pBackend)
 		delete m_pBackend;
-	m_pBackend = new CSocketBackend(this, this);
+	m_pBackend = new CSocketBackend(this, m_pSocket);
 
-	int res = CSocket::Connect(pData->host, pData->port);
+	int res = m_pSocket->Connect(pData->host, pData->port);
 	if (!res)
 		return FZ_REPLY_OK;
 

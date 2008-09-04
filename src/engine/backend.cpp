@@ -5,7 +5,7 @@
 
 int CBackend::m_nextId = 0;
 
-CBackend::CBackend(wxEvtHandler* pEvtHandler) : m_pEvtHandler(pEvtHandler)
+CBackend::CBackend(CSocketEventHandler* pEvtHandler) : m_pEvtHandler(pEvtHandler)
 {
 	m_Id = GetNextId();
 }
@@ -18,7 +18,7 @@ int CBackend::GetNextId()
 	return id;
 }
 
-CSocketBackend::CSocketBackend(wxEvtHandler* pEvtHandler, CSocket* pSocket) : CBackend(pEvtHandler), m_pSocket(pSocket)
+CSocketBackend::CSocketBackend(CSocketEventHandler* pEvtHandler, CSocket* pSocket) : CBackend(pEvtHandler), m_pSocket(pSocket)
 {
 	m_error = false;
 	m_lastCount = 0;
@@ -88,14 +88,11 @@ void CSocketBackend::Peek(void *buffer, unsigned int len)
 
 void CSocketBackend::OnRateAvailable(enum CRateLimiter::rate_direction direction)
 {
+	CSocketEvent *evt;
 	if (direction == CRateLimiter::outbound)
-	{
-		CSocketEvent evt(GetId(), CSocketEvent::write);
-		m_pEvtHandler->AddPendingEvent(evt);
-	}
+		evt = new CSocketEvent(m_pEvtHandler, GetId(), CSocketEvent::write);
 	else
-	{
-		CSocketEvent evt(GetId(), CSocketEvent::read);
-		m_pEvtHandler->AddPendingEvent(evt);
-	}
+		evt = new CSocketEvent(m_pEvtHandler, GetId(), CSocketEvent::read);
+	
+	CSocketEventDispatcher::Get().SendEvent(evt);
 }

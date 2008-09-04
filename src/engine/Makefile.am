@@ -40,7 +40,6 @@ noinst_HEADERS = backend.h \
 		ratelimiter.h \
 		servercapabilities.h \
 		sftpcontrolsocket.h \
-		socket.h \
 		tlssocket.h \
 		transfersocket.h
 

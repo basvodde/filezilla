@@ -1,6 +1,8 @@
 #ifndef __EXTERNALIPRESOLVER_H__
 #define __EXTERNALIPRESOLVER_H__
 
+#include "socket.h"
+
 class fzExternalIPResolveEvent : public wxEvent
 {
 public:
@@ -18,9 +20,7 @@ extern const wxEventType fzEVT_EXTERNALIPRESOLVE;
         (wxObject *) NULL \
     ),
 
-class CSocket;
-class CSocketEvent;
-class CExternalIPResolver : public wxEvtHandler
+class CExternalIPResolver : public CSocketEventHandler
 {
 public:
 	CExternalIPResolver(wxEvtHandler* handler, int id = wxID_ANY);
@@ -50,7 +50,6 @@ protected:
 
 	CSocket *m_pSocket;
 
-	DECLARE_EVENT_TABLE();
 	void OnSocketEvent(CSocketEvent& event);
 
 	void OnConnect(int error);

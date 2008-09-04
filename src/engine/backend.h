@@ -3,10 +3,11 @@
 
 #include "ratelimiter.h"
 
+class CSocketEventHandler;
 class CBackend : public CRateLimiterObject
 {
 public:
-	CBackend(wxEvtHandler* pEvtHandler);
+	CBackend(CSocketEventHandler* pEvtHandler);
 	virtual ~CBackend() {}
 	virtual void Read(void *data, unsigned int len) = 0;
 	virtual void Write(const void *data, unsigned int len) = 0;
@@ -22,7 +23,7 @@ public:
 	static int GetNextId();
 
 protected:
-	wxEvtHandler* const m_pEvtHandler;
+	CSocketEventHandler* const m_pEvtHandler;
 
 private:
 	int m_Id;
@@ -39,7 +40,7 @@ class CSocket;
 class CSocketBackend : public CBackend
 {
 public:
-	CSocketBackend(wxEvtHandler* pEvtHandler, CSocket* pSocket);
+	CSocketBackend(CSocketEventHandler* pEvtHandler, CSocket* pSocket);
 	virtual ~CSocketBackend();
 	// Backend definitions
 	virtual void Read(void *buffer, unsigned int len);

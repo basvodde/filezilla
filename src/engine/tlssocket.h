@@ -6,9 +6,8 @@
 #include "backend.h"
 #include "socket.h"
 
-class CSocket;
 class CControlSocket;
-class CTlsSocket : protected wxEvtHandler, public CBackend
+class CTlsSocket : protected CSocketEventHandler, public CBackend
 {
 public:
 	enum TlsState
@@ -21,7 +20,7 @@ public:
 		closed
 	};
 
-	CTlsSocket(wxEvtHandler* pEvtHandler, CSocket* pSocket, CControlSocket* pOwner);
+	CTlsSocket(CSocketEventHandler* pEvtHandler, CSocket* pSocket, CControlSocket* pOwner);
 	virtual ~CTlsSocket();
 
 	bool Init();
@@ -79,7 +78,6 @@ protected:
 
 	void TriggerEvents();
 
-	DECLARE_EVENT_TABLE();
 	void OnSocketEvent(CSocketEvent& event);
 	void OnRead();
 	void OnSend();
