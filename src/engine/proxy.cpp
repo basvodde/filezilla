@@ -596,3 +596,21 @@ void CProxySocket::OnSend()
 		m_sendBufferLen -= written;
 	}
 }
+
+int CProxySocket::Read(void *buffer, unsigned int size, int& error)
+{
+	error = EAGAIN;
+	return -1;
+}
+
+int CProxySocket::Peek(void *buffer, unsigned int size, int& error)
+{
+	error = EAGAIN;
+	return -1;
+}
+
+int CProxySocket::Write(const void *buffer, unsigned int size, int& error)
+{
+	error = EAGAIN;
+	return -1;
+}

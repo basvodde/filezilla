@@ -33,9 +33,9 @@ public:
 	// Past the initial handshake, proxies are transparent.
 	// Class users should detach socket and use a normal socket backend instead.
 	virtual void OnRateAvailable(enum CRateLimiter::rate_direction direction) {};
-	virtual int Read(void *buffer, unsigned int size, int& error) { error = EAGAIN; return -1; }
-	virtual int Peek(void *buffer, unsigned int size, int& error) { error = EAGAIN; return -1; }
-	virtual int Write(const void *buffer, unsigned int size, int& error) { error = EAGAIN; return -1; }
+	virtual int Read(void *buffer, unsigned int size, int& error);
+	virtual int Peek(void *buffer, unsigned int size, int& error);
+	virtual int Write(const void *buffer, unsigned int size, int& error);
 
 	void Detach();
 	bool Detached() const { return m_pSocket == 0; }
