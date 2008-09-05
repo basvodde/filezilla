@@ -941,8 +941,7 @@ void CRealControlSocket::OnSocketEvent(CSocketEvent &event)
 	if (!m_pBackend)
 		return;
 
-	if (event.GetId() != m_pBackend->GetId())
-		return;
+	wxASSERT(event.GetId() == m_pBackend->GetId());
 
 	switch (event.GetType())
 	{

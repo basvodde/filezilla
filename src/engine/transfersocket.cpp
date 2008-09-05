@@ -129,8 +129,10 @@ wxString CTransferSocket::SetupActiveTransfer(const wxString& ip)
 
 void CTransferSocket::OnSocketEvent(CSocketEvent &event)
 {
-	if (m_pProxyBackend && event.GetId() == m_pProxyBackend->GetId())
+	if (m_pProxyBackend)
 	{
+		wxASSERT(event.GetId() == m_pProxyBackend->GetId());
+
 		switch (event.GetType())
 		{
 		case CSocketEvent::connection:
@@ -163,8 +165,10 @@ void CTransferSocket::OnSocketEvent(CSocketEvent &event)
 		return;
 	}
 
-	if (m_pSocketServer && event.GetId() == m_pSocketServer->GetId())
+	if (m_pSocketServer)
 	{
+		wxASSERT(event.GetId() == m_pSocketServer->GetId());
+
 		if (event.GetType() == CSocketEvent::connection)
 			OnAccept(event.GetError());
 		else
@@ -174,19 +178,11 @@ void CTransferSocket::OnSocketEvent(CSocketEvent &event)
 
 	if (m_pBackend)
 	{
-		if (event.GetId() != m_pBackend->GetId())
-		{
-			m_pControlSocket->LogMessage(::Debug_Info, _T("Skipping socket event %d, id mismatch."), event.GetType());
-			return;
-		}
+		wxASSERT(event.GetId() == m_pBackend->GetId());
 	}
 	else
 	{
-		if (!m_pSocket || m_pSocket->GetId() != event.GetId())
-		{
-			m_pControlSocket->LogMessage(m_pSocket ? ::Debug_Debug : ::Debug_Info, _T("Skipping socket event %d, no socket or id mismatch."), event.GetType());
-			return;
-		}
+		wxASSERT(m_pSocket && m_pSocket->GetId() == event.GetId());
 	}
 
 	switch (event.GetType())

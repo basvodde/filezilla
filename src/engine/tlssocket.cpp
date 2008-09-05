@@ -273,8 +273,7 @@ void CTlsSocket::OnSocketEvent(CSocketEvent& event)
 	if (!m_session)
 		return;
 
-	if (event.GetId() != m_pSocketBackend->GetId())
-		return;
+	wxASSERT(event.GetId() == m_pSocketBackend->GetId());
 
 	switch (event.GetType())
 	{

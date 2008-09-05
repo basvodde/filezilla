@@ -164,8 +164,7 @@ int CProxySocket::Handshake(enum CProxySocket::ProxyType type, const wxString& h
 
 void CProxySocket::OnSocketEvent(CSocketEvent& event)
 {
-	if (event.GetId() != GetId())
-		return;
+	wxASSERT(event.GetId() == GetId());
 
 	switch (event.GetType())
 	{
