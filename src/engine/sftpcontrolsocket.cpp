@@ -1971,14 +1971,16 @@ int CSftpControlSocket::Mkdir(const CServerPath& path)
 		LogMessage(Status, _("Creating directory '%s'..."), path.GetPath().c_str());
 
 	CMkdirOpData *pData = new CMkdirOpData;
-	pData->opState = mkd_findparent;
 	pData->path = path;
 
 	if (!m_CurrentPath.IsEmpty())
 	{
 		// Unless the server is broken, a directory already exists if current directory is a subdir of it.
 		if (m_CurrentPath == path || m_CurrentPath.IsSubdirOf(path, false))
+		{
+			delete pData;
 			return FZ_REPLY_OK;
+		}
 
 		if (m_CurrentPath.IsParentOf(path, false))
 			pData->commonParent = m_CurrentPath;
@@ -1986,11 +1988,18 @@ int CSftpControlSocket::Mkdir(const CServerPath& path)
 			pData->commonParent = path.GetCommonParent(m_CurrentPath);
 	}
 
-	pData->currentPath = path.GetParent();
-	pData->segments.push_back(path.GetLastSegment());
+	if (!path.HasParent())
+		pData->opState = mkd_tryfull;
+	else
+	{
+		pData->currentPath = path.GetParent();
+		pData->segments.push_back(path.GetLastSegment());
 
-	if (pData->currentPath == m_CurrentPath)
-		pData->opState = mkd_mkdsub;
+		if (pData->currentPath == m_CurrentPath)
+			pData->opState = mkd_mkdsub;
+		else
+			pData->opState = mkd_findparent;
+	}
 
 	pData->pNextOpData = m_pCurOpData;
 	m_pCurOpData = pData;
