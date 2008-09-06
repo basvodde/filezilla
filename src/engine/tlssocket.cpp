@@ -246,7 +246,7 @@ ssize_t CTlsSocket::PullFunction(void* data, size_t len)
 			m_canReadFromSocket = false;
 			if (m_canCheckCloseSocket && !m_pSocketBackend->IsWaiting(CRateLimiter::inbound))
 			{
-				CSocketEvent *evt = new CSocketEvent(this, m_pSocketBackend->GetId(), CSocketEvent::close);
+				CSocketEvent *evt = new CSocketEvent(this, m_pSocketBackend, CSocketEvent::close);
 				CSocketEventDispatcher::Get().SendEvent(evt);
 			}
 		}
@@ -257,7 +257,7 @@ ssize_t CTlsSocket::PullFunction(void* data, size_t len)
 
 	if (m_canCheckCloseSocket)
 	{
-		CSocketEvent *evt = new CSocketEvent(this, m_pSocketBackend->GetId(), CSocketEvent::close);
+		CSocketEvent *evt = new CSocketEvent(this, m_pSocketBackend, CSocketEvent::close);
 		CSocketEventDispatcher::Get().SendEvent(evt);
 	}
 
@@ -272,8 +272,6 @@ void CTlsSocket::OnSocketEvent(CSocketEvent& event)
 	wxASSERT(m_pSocket);
 	if (!m_session)
 		return;
-
-	wxASSERT(event.GetId() == m_pSocketBackend->GetId());
 
 	switch (event.GetType())
 	{
@@ -307,7 +305,7 @@ void CTlsSocket::OnSocketEvent(CSocketEvent& event)
 			m_pOwner->LogMessage(Debug_Info, _T("CTlsSocket::OnSocketEvent(): close event received"));
 
 			//Uninit();
-			CSocketEvent *evt = new CSocketEvent(m_pEvtHandler, GetId(), CSocketEvent::close);
+			CSocketEvent *evt = new CSocketEvent(m_pEvtHandler, this, CSocketEvent::close);
 			CSocketEventDispatcher::Get().SendEvent(evt);
 		}
 		break;
@@ -448,7 +446,7 @@ int CTlsSocket::Handshake(const CTlsSocket* pPrimarySocket /*=0*/, bool try_resu
 			int error = Shutdown();
 			if (!error || error != EAGAIN)
 			{
-				CSocketEvent *evt = new CSocketEvent(m_pEvtHandler, GetId(), CSocketEvent::close);
+				CSocketEvent *evt = new CSocketEvent(m_pEvtHandler, this, CSocketEvent::close);
 				CSocketEventDispatcher::Get().SendEvent(evt);
 			}
 		}
@@ -607,14 +605,14 @@ void CTlsSocket::TriggerEvents()
 
 	if (m_canTriggerRead)
 	{
-		CSocketEvent *evt = new CSocketEvent(m_pEvtHandler, GetId(), CSocketEvent::read);
+		CSocketEvent *evt = new CSocketEvent(m_pEvtHandler, this, CSocketEvent::read);
 		CSocketEventDispatcher::Get().SendEvent(evt);
 		m_canTriggerRead = false;
 	}
 
 	if (m_canTriggerWrite)
 	{
-		CSocketEvent *evt = new CSocketEvent(m_pEvtHandler, GetId(), CSocketEvent::write);
+		CSocketEvent *evt = new CSocketEvent(m_pEvtHandler, this, CSocketEvent::write);
 		CSocketEventDispatcher::Get().SendEvent(evt);
 		m_canTriggerWrite = false;
 	}
@@ -684,7 +682,7 @@ void CTlsSocket::Failure(int code, int socket_error)
 
 	if (socket_error)
 	{
-		CSocketEvent *evt = new CSocketEvent(m_pEvtHandler, GetId(), CSocketEvent::close, socket_error);
+		CSocketEvent *evt = new CSocketEvent(m_pEvtHandler, this, CSocketEvent::close, socket_error);
 		CSocketEventDispatcher::Get().SendEvent(evt);
 	}
 }
@@ -757,7 +755,7 @@ void CTlsSocket::ContinueShutdown()
 	{
 		m_tlsState = closed;
 
-		CSocketEvent *evt = new CSocketEvent(m_pEvtHandler, GetId(), CSocketEvent::close);
+		CSocketEvent *evt = new CSocketEvent(m_pEvtHandler, this, CSocketEvent::close);
 		CSocketEventDispatcher::Get().SendEvent(evt);
 
 		return;
@@ -785,7 +783,7 @@ void CTlsSocket::TrustCurrentCert(bool trusted)
 
 		if (m_tlsState == conn)
 		{
-			CSocketEvent *evt = new CSocketEvent(m_pEvtHandler, GetId(), CSocketEvent::connection);
+			CSocketEvent *evt = new CSocketEvent(m_pEvtHandler, this, CSocketEvent::connection);
 			CSocketEventDispatcher::Get().SendEvent(evt);
 		}
 

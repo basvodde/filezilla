@@ -191,6 +191,8 @@ void CSocketEventDispatcher::SendEvent(CSocketEvent* evt)
 
 void CSocketEventDispatcher::RemovePending(const CSocketEventHandler* pHandler)
 {
+	wxCriticalSectionLocker lock(m_sync);
+
 	std::list<CSocketEvent*> keep;
 	for (std::list<CSocketEvent*>::iterator iter = m_pending_events.begin(); iter != m_pending_events.end(); iter++)
 	{
@@ -205,15 +207,36 @@ void CSocketEventDispatcher::RemovePending(const CSocketEventHandler* pHandler)
 	m_pending_events.swap(keep);
 }
 
-void CSocketEventDispatcher::UpdatePending(const CSocketEventHandler* pOldHandler, int oldId, CSocketEventHandler* pNewHandler, int newId)
+void CSocketEventDispatcher::RemovePending(const CSocketEventSource* pSource)
 {
+	return;
+	wxCriticalSectionLocker lock(m_sync);
+
+	std::list<CSocketEvent*> keep;
+	for (std::list<CSocketEvent*>::iterator iter = m_pending_events.begin(); iter != m_pending_events.end(); iter++)
+	{
+		if ((*iter)->GetSocketEventSource() != pSource)
+		{
+			keep.push_back(*iter);
+			continue;
+		}
+
+		delete *iter;
+	}
+	m_pending_events.swap(keep);
+}
+
+void CSocketEventDispatcher::UpdatePending(const CSocketEventHandler* pOldHandler, const CSocketEventSource* pOldSource, CSocketEventHandler* pNewHandler, CSocketEventSource* pNewSource)
+{
+	wxCriticalSectionLocker lock(m_sync);
+
 	for (std::list<CSocketEvent*>::iterator iter = m_pending_events.begin(); iter != m_pending_events.end(); iter++)
 	{
 		CSocketEvent* evt = *iter;
-		if (evt->GetId() != oldId || evt->GetSocketEventHandler() != pOldHandler)
+		if (evt->GetSocketEventSource() != pOldSource || evt->GetSocketEventHandler() != pOldHandler)
 			continue;
 
-		evt->m_id = newId;
+		evt->m_pSource = pNewSource;
 		evt->m_pSocketEventHandler = pNewHandler;
 	}
 }
@@ -243,18 +266,22 @@ bool CSocketEventDispatcher::ProcessEvent(wxEvent& event)
 	return true;
 }
 
-CSocketEvent::CSocketEvent(CSocketEventHandler* pSocketEventHandler, int id, enum EventType type, wxString data)
-	: m_id(id), m_type(type), m_data(data), m_error(0), m_pSocketEventHandler(pSocketEventHandler)
+CSocketEvent::CSocketEvent(CSocketEventHandler* pSocketEventHandler, CSocketEventSource* pSource, enum EventType type, wxString data)
+	: m_pSource(pSource), m_type(type), m_data(data), m_error(0), m_pSocketEventHandler(pSocketEventHandler)
 {
 }
 
-CSocketEvent::CSocketEvent(CSocketEventHandler* pSocketEventHandler, int id, enum EventType type, int error /*=0*/)
-	: m_id(id), m_type(type), m_error(error), m_pSocketEventHandler(pSocketEventHandler)
+CSocketEvent::CSocketEvent(CSocketEventHandler* pSocketEventHandler, CSocketEventSource* pSource, enum EventType type, int error /*=0*/)
+	: m_pSource(pSource), m_type(type), m_error(error), m_pSocketEventHandler(pSocketEventHandler)
 {
 }
-
 
 CSocketEventHandler::~CSocketEventHandler()
+{
+	CSocketEventDispatcher::Get().RemovePending(this);
+}
+
+CSocketEventSource::~CSocketEventSource()
 {
 	CSocketEventDispatcher::Get().RemovePending(this);
 }
@@ -414,7 +441,7 @@ protected:
 
 	int TryConnectHost(struct addrinfo *addr)
 	{
-		CSocketEvent *evt = new CSocketEvent(m_pSocket->GetEventHandler(), m_pSocket->m_id, CSocketEvent::hostaddress, CSocket::AddressToString(addr->ai_addr, addr->ai_addrlen));
+		CSocketEvent *evt = new CSocketEvent(m_pSocket->GetEventHandler(), m_pSocket, CSocketEvent::hostaddress, CSocket::AddressToString(addr->ai_addr, addr->ai_addrlen));
 		CSocketEventDispatcher::Get().SendEvent(evt);
 
 		int fd = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
@@ -429,7 +456,7 @@ protected:
 #else
 			int res = errno;
 #endif
-			CSocketEvent *evt = new CSocketEvent(m_pSocket->GetEventHandler(), m_pSocket->m_id, addr->ai_next ? CSocketEvent::connection_next : CSocketEvent::connection, res);
+			CSocketEvent *evt = new CSocketEvent(m_pSocket->GetEventHandler(), m_pSocket, addr->ai_next ? CSocketEvent::connection_next : CSocketEvent::connection, res);
 			CSocketEventDispatcher::Get().SendEvent(evt);
 
 			return 0;
@@ -483,7 +510,7 @@ protected:
 
 		if (res)
 		{
-			CSocketEvent *evt = new CSocketEvent(m_pSocket->GetEventHandler(), m_pSocket->m_id, addr->ai_next ? CSocketEvent::connection_next : CSocketEvent::connection, res);
+			CSocketEvent *evt = new CSocketEvent(m_pSocket->GetEventHandler(), m_pSocket, addr->ai_next ? CSocketEvent::connection_next : CSocketEvent::connection, res);
 			CSocketEventDispatcher::Get().SendEvent(evt);
 
 			m_pSocket->m_fd = -1;
@@ -498,7 +525,7 @@ protected:
 			m_pSocket->m_fd = fd;
 			m_pSocket->m_state = CSocket::connected;
 
-			CSocketEvent *evt = new CSocketEvent(m_pSocket->GetEventHandler(), m_pSocket->m_id, CSocketEvent::connection, 0);
+			CSocketEvent *evt = new CSocketEvent(m_pSocket->GetEventHandler(), m_pSocket, CSocketEvent::connection, 0);
 			CSocketEventDispatcher::Get().SendEvent(evt);
 
 			// We're now interested in all the other nice events
@@ -555,7 +582,7 @@ protected:
 			if (!h)
 			{
 				int res = ConvertMSWErrorCode(WSAGetLastError());
-				CSocketEvent *evt = new CSocketEvent(m_pSocket->GetEventHandler(), m_pSocket->m_id, CSocketEvent::connection, res);
+				CSocketEvent *evt = new CSocketEvent(m_pSocket->GetEventHandler(), m_pSocket, CSocketEvent::connection, res);
 				CSocketEventDispatcher::Get().SendEvent(evt);
 				m_pSocket->m_state = CSocket::closed;
 				return false;
@@ -601,7 +628,7 @@ protected:
 			res = ConvertMSWErrorCode(res);
 #endif
 
-			CSocketEvent *evt = new CSocketEvent(m_pSocket->GetEventHandler(), m_pSocket->m_id, CSocketEvent::connection, res);
+			CSocketEvent *evt = new CSocketEvent(m_pSocket->GetEventHandler(), m_pSocket, CSocketEvent::connection, res);
 			CSocketEventDispatcher::Get().SendEvent(evt);
 			m_pSocket->m_state = CSocket::closed;
 
@@ -823,25 +850,25 @@ protected:
 			return;
 		if (m_triggered & WAIT_READ)
 		{
-			CSocketEvent *evt = new CSocketEvent(m_pSocket->m_pEvtHandler, m_pSocket->m_id, CSocketEvent::read, m_triggered_errors[1]);
+			CSocketEvent *evt = new CSocketEvent(m_pSocket->m_pEvtHandler, m_pSocket, CSocketEvent::read, m_triggered_errors[1]);
 			CSocketEventDispatcher::Get().SendEvent(evt);
 			m_triggered &= ~WAIT_READ;
 		}
 		if (m_triggered & WAIT_WRITE)
 		{
-			CSocketEvent *evt = new CSocketEvent(m_pSocket->m_pEvtHandler, m_pSocket->m_id, CSocketEvent::write, m_triggered_errors[2]);
+			CSocketEvent *evt = new CSocketEvent(m_pSocket->m_pEvtHandler, m_pSocket, CSocketEvent::write, m_triggered_errors[2]);
 			CSocketEventDispatcher::Get().SendEvent(evt);
 			m_triggered &= ~WAIT_WRITE;
 		}
 		if (m_triggered & WAIT_ACCEPT)
 		{
-			CSocketEvent *evt = new CSocketEvent(m_pSocket->m_pEvtHandler, m_pSocket->m_id, CSocketEvent::connection, m_triggered_errors[3]);
+			CSocketEvent *evt = new CSocketEvent(m_pSocket->m_pEvtHandler, m_pSocket, CSocketEvent::connection, m_triggered_errors[3]);
 			CSocketEventDispatcher::Get().SendEvent(evt);
 			m_triggered &= ~WAIT_ACCEPT;
 		}
 		if (m_triggered & WAIT_CLOSE)
 		{
-			CSocketEvent *evt = new CSocketEvent(m_pSocket->m_pEvtHandler, m_pSocket->m_id, CSocketEvent::close, m_triggered_errors[4]);
+			CSocketEvent *evt = new CSocketEvent(m_pSocket->m_pEvtHandler, m_pSocket, CSocketEvent::close, m_triggered_errors[4]);
 			CSocketEventDispatcher::Get().SendEvent(evt);
 			m_triggered &= ~WAIT_CLOSE;
 		}
@@ -965,8 +992,8 @@ protected:
 	bool m_threadwait;
 };
 
-CSocket::CSocket(CSocketEventHandler* pEvtHandler, int id)
-	: m_pEvtHandler(pEvtHandler), m_id(id)
+CSocket::CSocket(CSocketEventHandler* pEvtHandler)
+	: m_pEvtHandler(pEvtHandler)
 {
 #ifdef ERRORCODETEST
 	CErrorCodeTest test;
@@ -1070,7 +1097,7 @@ int CSocket::Connect(wxString host, unsigned int port)
 	return EINPROGRESS;
 }
 
-void CSocket::SetEventHandler(CSocketEventHandler* pEvtHandler, int id)
+void CSocket::SetEventHandler(CSocketEventHandler* pEvtHandler)
 {
 	if (m_pSocketThread)
 		m_pSocketThread->m_sync.Lock();
@@ -1082,14 +1109,14 @@ void CSocket::SetEventHandler(CSocketEventHandler* pEvtHandler, int id)
 	else
 	{
 		if (m_pEvtHandler)
-			CSocketEventDispatcher::Get().UpdatePending(m_pEvtHandler, m_id, pEvtHandler, id);
+			CSocketEventDispatcher::Get().UpdatePending(m_pEvtHandler, this, pEvtHandler, this);
 	}
 #ifdef __WXMSW__
 	if (pEvtHandler && !m_pEvtHandler && m_state == closing && m_pSocketThread)
 	{
 		// After getting FD_CLOSE, no further events are recorded, so send
 		// it out to new handler manually
-		CSocketEvent *evt = new CSocketEvent(pEvtHandler, id, CSocketEvent::close, m_pSocketThread->m_triggered_errors[4]);
+		CSocketEvent *evt = new CSocketEvent(pEvtHandler, this, CSocketEvent::close, m_pSocketThread->m_triggered_errors[4]);
 		CSocketEventDispatcher::Get().SendEvent(evt);
 	}
 #else
@@ -1097,7 +1124,6 @@ void CSocket::SetEventHandler(CSocketEventHandler* pEvtHandler, int id)
 #endif
 
 	m_pEvtHandler = pEvtHandler;
-	m_id = id;
 
 	if (m_pSocketThread)
 	{
@@ -1110,11 +1136,11 @@ void CSocket::SetEventHandler(CSocketEventHandler* pEvtHandler, int id)
 
 			if (!(m_pSocketThread->m_waiting & WAIT_WRITE))
 			{
-				CSocketEvent *evt = new CSocketEvent(pEvtHandler, id, CSocketEvent::write, 0);
+				CSocketEvent *evt = new CSocketEvent(pEvtHandler, this, CSocketEvent::write, 0);
 				CSocketEventDispatcher::Get().SendEvent(evt);
 			}
 
-			CSocketEvent *evt = new CSocketEvent(pEvtHandler, id, CSocketEvent::read, 0);
+			CSocketEvent *evt = new CSocketEvent(pEvtHandler, this, CSocketEvent::read, 0);
 			CSocketEventDispatcher::Get().SendEvent(evt);
 			if (m_pSocketThread->m_waiting & WAIT_WRITE)
 			{
@@ -1259,6 +1285,9 @@ int CSocket::Close()
 #endif
 		if (m_pSocketThread)
 			m_pSocketThread->m_sync.Unlock();
+
+		if (m_pEvtHandler)
+			CSocketEventDispatcher::Get().RemovePending(m_pEvtHandler);
 	}
 	m_state = none;
 
@@ -1646,7 +1675,7 @@ CSocket* CSocket::Accept(int &error)
 
 	DoSetBufferSizes(fd, m_buffer_sizes[0], m_buffer_sizes[1]);
 
-	CSocket* pSocket = new CSocket(0, -1);
+	CSocket* pSocket = new CSocket(0);
 	pSocket->m_state = connected;
 	pSocket->m_fd = fd;
 	pSocket->m_pSocketThread = new CSocketThread();

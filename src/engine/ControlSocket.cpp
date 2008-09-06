@@ -872,7 +872,7 @@ void CControlSocket::SendAsyncRequest(CAsyncRequestNotification* pNotification)
 CRealControlSocket::CRealControlSocket(CFileZillaEnginePrivate *pEngine)
 	: CControlSocket(pEngine)
 {
-	m_pSocket = new CSocket(this, 0);
+	m_pSocket = new CSocket(this);
 
 	m_pBackend = new CSocketBackend(this, m_pSocket);
 	m_pProxyBackend = 0;
@@ -940,8 +940,6 @@ void CRealControlSocket::OnSocketEvent(CSocketEvent &event)
 {
 	if (!m_pBackend)
 		return;
-
-	wxASSERT(event.GetId() == m_pBackend->GetId());
 
 	switch (event.GetType())
 	{

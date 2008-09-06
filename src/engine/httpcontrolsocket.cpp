@@ -3,6 +3,8 @@
 #include "httpcontrolsocket.h"
 #include <errno.h>
 
+#define FZ_REPLY_REDIRECTED FZ_REPLY_ALREADYCONNECTED
+
 // Connect is special for HTTP: It is done on a per-command basis, so we need
 // to establish a connection before each command.
 class CHttpConnectOpData : public COpData
@@ -184,19 +186,17 @@ bool CHttpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotifi
 
 void CHttpControlSocket::OnReceive()
 {
-	int id = m_pSocket->GetId();
-
 	do
 	{
+		const enum CSocket::SocketState state = m_pSocket->GetState();
+		if (state != CSocket::connected && state != CSocket::closing)
+			return;
+
 		if (!m_pRecvBuffer)
 		{
 			m_pRecvBuffer = new char[m_recvBufferLen];
 			m_recvBufferPos = 0;
 		}
-
-		const enum CSocket::SocketState state = m_pSocket->GetState();
-		if (state != CSocket::connected && state != CSocket::closing)
-			return;
 
 		unsigned int len = m_recvBufferLen - m_recvBufferPos;
 		int error;
@@ -229,7 +229,11 @@ void CHttpControlSocket::OnReceive()
 				return;
 			}
 
-			ParseHeader(m_pHttpOpData);
+			int res = ParseHeader(m_pHttpOpData);
+			if ((res & FZ_REPLY_REDIRECTED) == FZ_REPLY_REDIRECTED)
+				return;
+			if (res != FZ_REPLY_WOULDBLOCK)
+				return;
 		}
 		else if (m_pHttpOpData->m_transferEncoding == CHttpOpData::chunked)
 		{
@@ -256,7 +260,7 @@ void CHttpControlSocket::OnReceive()
 			}
 		}
 	}
-	while (m_pSocket->GetId() == id);
+	while (m_pSocket);
 }
 
 void CHttpControlSocket::OnConnect()
@@ -634,7 +638,10 @@ int CHttpControlSocket::ParseHeader(CHttpOpData* pData)
 					// International domain names
 					host = ConvertDomainName(host);
 
-					return InternalConnect(host, port);
+					int res = InternalConnect(host, port);
+					if (res == FZ_REPLY_WOULDBLOCK)
+						res |= FZ_REPLY_REDIRECTED;
+					return res;
 				}
 
 				pData->m_gotHeader = true;

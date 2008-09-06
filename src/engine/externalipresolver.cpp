@@ -2,7 +2,6 @@
 #include "externalipresolver.h"
 #include "wx/regex.h"
 #include "socket.h"
-#include "backend.h"
 #include <errno.h>
 
 const wxEventType fzEVT_EXTERNALIPRESOLVE = wxNewEventType();
@@ -87,7 +86,7 @@ void CExternalIPResolver::GetExternalIP(const wxString& address /*=_T("")*/, boo
 		return;
 	}
 
-	m_pSocket = new CSocket(this, CBackend::GetNextId());
+	m_pSocket = new CSocket(this);
 
 	int res = m_pSocket->Connect(host, m_port);
 	if (res && res != EINPROGRESS)

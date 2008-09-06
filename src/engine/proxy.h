@@ -4,7 +4,7 @@
 #include "backend.h"
 #include "socket.h"
 
-class CProxySocket : protected CSocketEventHandler, public CBackend
+class CProxySocket : protected CSocketEventHandler, public CBackend, public CSocketEventSource
 {
 public:
 	CProxySocket(CSocketEventHandler* pEvtHandler, CSocket* pSocket, CControlSocket* pOwner);

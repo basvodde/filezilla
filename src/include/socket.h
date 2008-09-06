@@ -6,6 +6,7 @@
 // see 'man 2 socket', 'man 2 connect', ...
 
 class CSocketEventHandler;
+class CSocketEventSource;
 class CSocketEvent
 {
 public:
@@ -22,10 +23,10 @@ public:
 		close
 	};
 
-	CSocketEvent(CSocketEventHandler* pSocketEventHandler, int id, enum EventType type, wxString data);
-	CSocketEvent(CSocketEventHandler* pSocketEventHandler, int id, enum EventType type, int error = 0);
+	CSocketEvent(CSocketEventHandler* pSocketEventHandler, CSocketEventSource* pSource, enum EventType type, wxString data);
+	CSocketEvent(CSocketEventHandler* pSocketEventHandler, CSocketEventSource* pSource, enum EventType type, int error = 0);
 
-	int GetId() const { return m_id; }
+	CSocketEventSource* GetSocketEventSource() const { return m_pSource; }
 	enum EventType GetType() const { return m_type; }
 	CSocketEventHandler* GetSocketEventHandler() const { return m_pSocketEventHandler; }
 
@@ -33,7 +34,7 @@ public:
 	int GetError() const { return m_error; }
 
 protected:
-	int m_id;
+	CSocketEventSource* m_pSource;
 	const enum EventType m_type;
 	wxString m_data;
 	int m_error;
@@ -47,7 +48,8 @@ class CSocketEventDispatcher : protected wxEvtHandler
 public:
 	void SendEvent(CSocketEvent* evt);
 	void RemovePending(const CSocketEventHandler* pHandler);
-	void UpdatePending(const CSocketEventHandler* pOldHandler, int oldId, CSocketEventHandler* pNewHandler, int newId);
+	void RemovePending(const CSocketEventSource* pSource);
+	void UpdatePending(const CSocketEventHandler* pOldHandler, const CSocketEventSource* pOldSource, CSocketEventHandler* pNewHandler, CSocketEventSource* pNewSource);
 
 	static CSocketEventDispatcher& Get();
 
@@ -75,12 +77,18 @@ public:
 	virtual void OnSocketEvent(CSocketEvent& event) = 0;
 };
 
+class CSocketEventSource
+{
+public:
+	virtual ~CSocketEventSource();
+};
+
 class CSocketThread;
-class CSocket
+class CSocket : public CSocketEventSource
 {
 	friend class CSocketThread;
 public:
-	CSocket(CSocketEventHandler* pEvtHandler, int id);
+	CSocket(CSocketEventHandler* pEvtHandler);
 	virtual ~CSocket();
 
 	enum SocketState
@@ -138,9 +146,8 @@ public:
 	static wxString GetErrorDescription(int error);
 
 	// Can only be called if the state is none
-	void SetEventHandler(CSocketEventHandler* pEvtHandler, int id);
+	void SetEventHandler(CSocketEventHandler* pEvtHandler);
 	CSocketEventHandler* GetEventHandler() { return m_pEvtHandler; }
-	int GetId() const { return m_id; }
 
 	static bool Cleanup(bool force);
 
@@ -169,7 +176,6 @@ protected:
 	void DetachThread();
 
 	CSocketEventHandler* m_pEvtHandler;
-	int m_id;
 
 	int m_fd;
 

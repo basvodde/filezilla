@@ -131,8 +131,6 @@ void CTransferSocket::OnSocketEvent(CSocketEvent &event)
 {
 	if (m_pProxyBackend)
 	{
-		wxASSERT(event.GetId() == m_pProxyBackend->GetId());
-
 		switch (event.GetType())
 		{
 		case CSocketEvent::connection:
@@ -167,22 +165,11 @@ void CTransferSocket::OnSocketEvent(CSocketEvent &event)
 
 	if (m_pSocketServer)
 	{
-		wxASSERT(event.GetId() == m_pSocketServer->GetId());
-
 		if (event.GetType() == CSocketEvent::connection)
 			OnAccept(event.GetError());
 		else
 			m_pControlSocket->LogMessage(::Debug_Info, _T("Unhandled socket event %d from listening socket"), event.GetType());
 		return;
-	}
-
-	if (m_pBackend)
-	{
-		wxASSERT(event.GetId() == m_pBackend->GetId());
-	}
-	else
-	{
-		wxASSERT(m_pSocket && m_pSocket->GetId() == event.GetId());
 	}
 
 	switch (event.GetType())
@@ -560,7 +547,7 @@ bool CTransferSocket::SetupPassiveTransfer(wxString host, int port)
 	delete m_pSocketServer;
 	m_pSocketServer = 0;
 
-	m_pSocket = new CSocket(this, 0);
+	m_pSocket = new CSocket(this);
 
 	if (m_pControlSocket->m_pProxyBackend)
 	{
@@ -648,7 +635,7 @@ void CTransferSocket::TransferEnd(enum TransferEndReason reason)
 
 CSocket* CTransferSocket::CreateSocketServer(int port)
 {
-	CSocket* pServer = new CSocket(this, CBackend::GetNextId());
+	CSocket* pServer = new CSocket(this);
 	int res = pServer->Listen(m_pControlSocket->m_pSocket->GetAddressFamily(), port);
 	if (res)
 	{

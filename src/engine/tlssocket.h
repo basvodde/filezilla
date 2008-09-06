@@ -7,7 +7,7 @@
 #include "socket.h"
 
 class CControlSocket;
-class CTlsSocket : protected CSocketEventHandler, public CBackend
+class CTlsSocket : protected CSocketEventHandler, public CBackend, public CSocketEventSource
 {
 public:
 	enum TlsState

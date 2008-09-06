@@ -3,24 +3,13 @@
 #include "socket.h"
 #include <errno.h>
 
-int CBackend::m_nextId = 0;
-
 CBackend::CBackend(CSocketEventHandler* pEvtHandler) : m_pEvtHandler(pEvtHandler)
 {
-	m_Id = GetNextId();
-}
-
-int CBackend::GetNextId()
-{
-	const int id = m_nextId++;
-	if (m_nextId < 0)
-		m_nextId = 0;
-	return id;
 }
 
 CSocketBackend::CSocketBackend(CSocketEventHandler* pEvtHandler, CSocket* pSocket) : CBackend(pEvtHandler), m_pSocket(pSocket)
 {
-	m_pSocket->SetEventHandler(pEvtHandler, GetId());
+	m_pSocket->SetEventHandler(pEvtHandler);
 
 	CRateLimiter* pRateLimiter = CRateLimiter::Get();
 	if (pRateLimiter)
@@ -29,7 +18,7 @@ CSocketBackend::CSocketBackend(CSocketEventHandler* pEvtHandler, CSocket* pSocke
 
 CSocketBackend::~CSocketBackend()
 {
-	m_pSocket->SetEventHandler(0, -1);
+	m_pSocket->SetEventHandler(0);
 
 	CRateLimiter* pRateLimiter = CRateLimiter::Get();
 	if (pRateLimiter)
@@ -61,7 +50,6 @@ int CSocketBackend::Read(void *buffer, unsigned int len, int& error)
 	wxLongLong max = GetAvailableBytes(CRateLimiter::inbound);
 	if (max == 0)
 	{
-		Wait(CRateLimiter::inbound);
 		error = EAGAIN;
 		return -1;
 	}
@@ -85,9 +73,9 @@ void CSocketBackend::OnRateAvailable(enum CRateLimiter::rate_direction direction
 {
 	CSocketEvent *evt;
 	if (direction == CRateLimiter::outbound)
-		evt = new CSocketEvent(m_pEvtHandler, GetId(), CSocketEvent::write);
+		evt = new CSocketEvent(m_pEvtHandler, this, CSocketEvent::write);
 	else
-		evt = new CSocketEvent(m_pEvtHandler, GetId(), CSocketEvent::read);
+		evt = new CSocketEvent(m_pEvtHandler, this, CSocketEvent::read);
 	
 	CSocketEventDispatcher::Get().SendEvent(evt);
 }

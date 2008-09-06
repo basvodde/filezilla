@@ -2642,8 +2642,6 @@ void CSftpControlSocket::OnQuotaRequest(enum CRateLimiter::rate_direction direct
 	}
 	else if (bytes < 0)
 		AddToStream(wxString::Format(_T("-%d-\n"), (int)direction));
-	else
-		Wait(direction);
 }
 
 
