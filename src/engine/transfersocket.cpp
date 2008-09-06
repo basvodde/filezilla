@@ -302,10 +302,8 @@ void CTransferSocket::OnReceive()
 					TransferEnd(transfer_failure);
 				}
 				else if (m_onCloseCalled && !m_pBackend->IsWaiting(CRateLimiter::inbound))
-				{
-					CSocketEvent *evt = new CSocketEvent(this, m_pBackend->GetId(), CSocketEvent::close);
-					CSocketEventDispatcher::Get().SendEvent(evt);
-				}
+					TransferEnd(successful);
+
 				return;
 			}
 
@@ -319,11 +317,6 @@ void CTransferSocket::OnReceive()
 					m_pControlSocket->SetTransferStatusMadeProgress();
 				}
 				m_pControlSocket->UpdateTransferStatus(numread);
-				if (m_onCloseCalled)
-				{
-					CSocketEvent *evt = new CSocketEvent(this, m_pBackend->GetId(), CSocketEvent::close);
-					CSocketEventDispatcher::Get().SendEvent(evt);
-				}
 			}
 			else
 			{
@@ -350,10 +343,7 @@ void CTransferSocket::OnReceive()
 					TransferEnd(transfer_failure);
 				}
 				else if (m_onCloseCalled && !m_pBackend->IsWaiting(CRateLimiter::inbound))
-				{
-					CSocketEvent *evt = new CSocketEvent(this, m_pBackend->GetId(), CSocketEvent::close);
-					CSocketEventDispatcher::Get().SendEvent(evt);
-				}
+					TransferEnd(successful);
 				return;
 			}
 
@@ -372,12 +362,6 @@ void CTransferSocket::OnReceive()
 
 				if (!CheckGetNextWriteBuffer())
 					return;
-
-				if (m_onCloseCalled && m_transferEndReason == none)
-				{
-					CSocketEvent *evt = new CSocketEvent(this, m_pBackend->GetId(), CSocketEvent::close);
-					CSocketEventDispatcher::Get().SendEvent(evt);
-				}
 			}
 			else //!numread
 			{
@@ -402,8 +386,13 @@ void CTransferSocket::OnReceive()
 				}
 				else if (m_onCloseCalled && !m_pBackend->IsWaiting(CRateLimiter::inbound))
 				{
-					CSocketEvent *evt = new CSocketEvent(this, m_pBackend->GetId(), CSocketEvent::close);
-					CSocketEventDispatcher::Get().SendEvent(evt);
+					if (m_transferBufferLen == 1)
+						TransferEnd(successful);
+					else
+					{
+						m_pControlSocket->LogMessage(::Debug_Warning, _T("Server incorrectly sent %d bytes"), m_transferBufferLen);
+						TransferEnd(failed_resumetest);
+					}
 				}
 				return;
 			}
@@ -425,12 +414,6 @@ void CTransferSocket::OnReceive()
 			{
 				m_pControlSocket->LogMessage(::Debug_Warning, _T("Server incorrectly sent %d bytes"), m_transferBufferLen);
 				TransferEnd(failed_resumetest);
-				return;
-			}
-			else if (m_onCloseCalled)
-			{
-				CSocketEvent *evt = new CSocketEvent(this, m_pBackend->GetId(), CSocketEvent::close);
-				CSocketEventDispatcher::Get().SendEvent(evt);
 				return;
 			}
 		}
