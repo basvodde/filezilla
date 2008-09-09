@@ -78,18 +78,15 @@ public:
 	static void ToggleFilters();
 
 protected:
-	bool CompileRegexes();
+	static bool CompileRegexes();
 	bool FilenameFilteredByFilter(const wxString& name, const wxString& path, bool dir, wxLongLong size, unsigned int filterIndex, int attributes) const;
 
 	static void LoadFilters();
 	static bool m_loaded;
 
 	static std::vector<CFilter> m_globalFilters;
-	std::vector<CFilter> m_filters;
 
 	static std::vector<CFilterSet> m_globalFilterSets;
-	std::vector<CFilterSet> m_filterSets;
-	unsigned int m_currentFilterSet;
 	static unsigned int m_globalCurrentFilterSet;
 
 	static bool m_filters_disabled;
@@ -127,6 +124,10 @@ protected:
 	bool m_shiftClick;
 
 	CMainFrame* m_pMainFrame;
+
+	std::vector<CFilter> m_filters;
+	std::vector<CFilterSet> m_filterSets;
+	unsigned int m_currentFilterSet;
 };
 
 #endif //__FILTER_H__

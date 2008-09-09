@@ -93,6 +93,10 @@ CFilterDialog::CFilterDialog()
 {
 	m_pMainFrame = 0;
 	m_shiftClick = false;
+
+	m_filters = m_globalFilters;
+	m_filterSets = m_globalFilterSets;
+	m_currentFilterSet = m_globalCurrentFilterSet;
 }
 
 bool CFilterDialog::Create(CMainFrame* parent)
@@ -430,22 +434,15 @@ void CFilterDialog::OnApply(wxCommandEvent& event)
 
 CFilterManager::CFilterManager()
 {
-	m_currentFilterSet = 0;
 	LoadFilters();
-	m_filters = m_globalFilters;
-	m_filterSets = m_globalFilterSets;
-	m_currentFilterSet = m_globalCurrentFilterSet;
-
-	CompileRegexes();
 
 	if (m_globalFilterSets.empty())
 	{
 		CFilterSet set;
-		set.local.resize(m_filters.size(), false);
-		set.remote.resize(m_filters.size(), false);
+		set.local.resize(m_globalFilters.size(), false);
+		set.remote.resize(m_globalFilters.size(), false);
 
 		m_globalFilterSets.push_back(set);
-		m_filterSets.push_back(set);
 	}
 }
 
@@ -477,8 +474,8 @@ bool CFilterManager::HasActiveFilters(bool ignore_disabled /*=false*/)
 
 bool CFilterManager::HasSameLocalAndRemoteFilters() const
 {
-	const CFilterSet& set = m_filterSets[m_currentFilterSet];
-	for (unsigned int i = 0; i < m_filters.size(); i++)
+	const CFilterSet& set = m_globalFilterSets[m_globalCurrentFilterSet];
+	for (unsigned int i = 0; i < m_globalFilters.size(); i++)
 	{
 		if (set.local[i])
 		{
@@ -497,12 +494,12 @@ bool CFilterManager::FilenameFiltered(const wxString& name, const wxString& path
 	if (m_filters_disabled)
 		return false;
 
-	wxASSERT(m_currentFilterSet < m_filterSets.size());
+	wxASSERT(m_globalCurrentFilterSet < m_globalFilterSets.size());
 
-	const CFilterSet& set = m_filterSets[m_currentFilterSet];
+	const CFilterSet& set = m_globalFilterSets[m_globalCurrentFilterSet];
 
 	// Check active filters
-	for (unsigned int i = 0; i < m_filters.size(); i++)
+	for (unsigned int i = 0; i < m_globalFilters.size(); i++)
 	{
 		if (local)
 		{
@@ -524,7 +521,7 @@ bool CFilterManager::FilenameFiltered(const wxString& name, const wxString& path
 bool CFilterManager::FilenameFilteredByFilter(const wxString& name, const wxString& path, bool dir, wxLongLong size, unsigned int filterIndex, int attributes) const
 {
 	wxRegEx regex;
-	const CFilter& filter = m_filters[filterIndex];
+	const CFilter& filter = m_globalFilters[filterIndex];
 
 	if (dir && !filter.filterDirs)
 		return false;
@@ -792,9 +789,9 @@ bool CFilterManager::FilenameFilteredByFilter(const wxString& name, const wxStri
 
 bool CFilterManager::CompileRegexes()
 {
-	for (unsigned int i = 0; i < m_filters.size(); i++)
+	for (unsigned int i = 0; i < m_globalFilters.size(); i++)
 	{
-		CFilter& filter = m_filters[i];
+		CFilter& filter = m_globalFilters[i];
 		for (std::vector<CFilterCondition>::iterator iter = filter.filters.begin(); iter != filter.filters.end(); iter++)
 		{
 			CFilterCondition& condition = *iter;
@@ -921,6 +918,8 @@ void CFilterManager::LoadFilters()
 
 		pFilter = pFilter->NextSiblingElement("Filter");
 	}
+
+	CompileRegexes();
 
 	TiXmlElement* pSets = pDocument->FirstChildElement("Sets");
 	if (!pSets)
