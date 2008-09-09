@@ -17,6 +17,13 @@
 #include <shlobj.h>
 #endif
 
+class CTreeItemData : public wxTreeItemData
+{
+public:
+	CTreeItemData(const wxString& known_subdir) : m_known_subdir(known_subdir) {}
+	wxString m_known_subdir;
+};
+
 class CLocalTreeViewDropTarget : public wxDropTarget
 {
 public:
@@ -458,8 +465,7 @@ void CLocalTreeView::DisplayDir(wxTreeItemId parent, const wxString& dirname, co
 
 				const wxString fullName = dirname + knownSubdir;
 				item = AppendItem(parent, knownSubdir, GetIconIndex(::dir, fullName), GetIconIndex(opened_dir, fullName));
-				if (HasSubdir(fullName))
-					AppendItem(item, _T(""));
+				CheckSubdirStatus(item, fullName);
 			}
 			else
 			{
@@ -508,22 +514,20 @@ void CLocalTreeView::DisplayDir(wxTreeItemId parent, const wxString& dirname, co
 			matchedKnown = true;
 
 		wxTreeItemId item = AppendItem(parent, file, GetIconIndex(::dir, fullName), GetIconIndex(opened_dir, fullName));
-		if (HasSubdir(fullName))
-			AppendItem(item, _T(""));
+		CheckSubdirStatus(item, fullName);
 	}
 
 	if (!matchedKnown && knownSubdir != _T(""))
 	{
 		const wxString fullName = dirname + knownSubdir;
 		wxTreeItemId item = AppendItem(parent, knownSubdir, GetIconIndex(::dir, fullName), GetIconIndex(opened_dir, fullName));
-		if (HasSubdir(fullName))
-			AppendItem(item, _T(""));
+		CheckSubdirStatus(item, fullName);
 	}
 
 	SortChildren(parent);
 }
 
-bool CLocalTreeView::HasSubdir(const wxString& dirname)
+wxString CLocalTreeView::HasSubdir(const wxString& dirname)
 {
 	wxLogNull nullLog;
 
@@ -531,7 +535,7 @@ bool CLocalTreeView::HasSubdir(const wxString& dirname)
 	
 	CLocalFileSystem local_filesystem;
 	if (!local_filesystem.BeginFindFiles(dirname, true))
-		return false;
+		return _T("");
 
 	wxString file;
 	bool wasLink;
@@ -547,14 +551,13 @@ bool CLocalTreeView::HasSubdir(const wxString& dirname)
 			continue;
 		}
 
-		wxString fullName = dirname + file;
 		if (filter.FilenameFiltered(file, dirname, true, size, true, attributes))
 			continue;
 
-		return true;
+		return file;
 	}
 
-	return false;
+	return _T("");
 }
 
 wxTreeItemId CLocalTreeView::MakeSubdirs(wxTreeItemId parent, wxString dirname, wxString subDir)
@@ -776,21 +779,11 @@ void CLocalTreeView::Refresh()
 			{
 				if (!IsExpanded(child))
 				{
-					wxTreeItemId subchild = GetLastChild(child);
-					if (subchild && GetItemText(subchild) == _T(""))
-					{
-						if (!HasSubdir(dir.dir + *iter + separator))
-							Delete(subchild);
-					}
-					else if (!subchild)
-					{
-						if (HasSubdir(dir.dir + *iter + separator))
-							AppendItem(child, _T(""));
-					}
-					else
+					wxString path = dir.dir + *iter + separator;
+					if (!CheckSubdirStatus(child, path))
 					{
 						t_dir subdir;
-						subdir.dir = dir.dir + *iter + separator;
+						subdir.dir = path;
 						subdir.item = child;
 						dirsToCheck.push_front(subdir);
 					}
@@ -819,8 +812,7 @@ void CLocalTreeView::Refresh()
 			{
 				wxString fullname = dir.dir + *iter + separator;
 				wxTreeItemId newItem = AppendItem(dir.item, *iter, GetIconIndex(::dir, fullname), GetIconIndex(opened_dir, fullname));
-				if (HasSubdir(fullname))
-					AppendItem(newItem, _T(""));
+				CheckSubdirStatus(newItem, fullname);
 				iter++;
 				inserted = true;
 			}
@@ -839,8 +831,7 @@ void CLocalTreeView::Refresh()
 		{
 			wxString fullname = dir.dir + *iter + separator;
 			wxTreeItemId newItem = AppendItem(dir.item, *iter, GetIconIndex(::dir, fullname), GetIconIndex(opened_dir, fullname));
-			if (HasSubdir(fullname))
-				AppendItem(newItem, _T(""));
+			CheckSubdirStatus(newItem, fullname);
 			iter++;
 			inserted = true;
 		}
@@ -1539,4 +1530,41 @@ void CLocalTreeView::OnChar(wxKeyEvent& event)
 		OnMenuDelete(cmdEvt);
 	else
 		event.Skip();
+}
+
+bool CLocalTreeView::CheckSubdirStatus(wxTreeItemId& item, const wxString& path)
+{
+	wxTreeItemIdValue value;
+	wxTreeItemId child = GetFirstChild(item, value);
+
+	if (child)
+	{
+		if (GetItemText(child) != _T(""))
+			return false;
+
+		CTreeItemData* pData = (CTreeItemData*)GetItemData(child);
+		if (pData)
+		{
+			bool wasLink;
+			int attributes;
+			static const wxLongLong size(-1);
+			if (CLocalFileSystem::GetFileInfo(path + pData->m_known_subdir, wasLink, 0, 0, &attributes) == CLocalFileSystem::dir)
+			{
+				CFilterManager filter;
+				if (!filter.FilenameFiltered(pData->m_known_subdir, path, true, size, true, attributes))
+					return true;
+			}
+		}
+	}
+
+	wxString sub = HasSubdir(path);
+	if (sub != _T(""))
+	{
+		wxTreeItemId subItem = AppendItem(item, _T(""));
+		SetItemData(subItem, new CTreeItemData(sub));
+	}
+	else if (child)
+		Delete(child);
+
+	return true;
 }

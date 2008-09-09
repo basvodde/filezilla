@@ -274,11 +274,17 @@ wxString CViewHeader::GetLabel() const
 
 void CViewHeader::AddRecentDirectory(const wxString &directory)
 {
+	const int len = directory.Len();
+
 	// Check if directory is already in the list
 	for (std::list<wxString>::const_iterator iter = m_recentDirectories.begin(); iter != m_recentDirectories.end(); iter++)
 	{
 		if (*iter == directory)
+		{
+			m_pComboBox->SetStringSelection(directory);
+			m_pComboBox->SetSelection(len, len);
 			return;
+		}
 	}
 
 	if (m_recentDirectories.size() == 20)
@@ -288,6 +294,8 @@ void CViewHeader::AddRecentDirectory(const wxString &directory)
 		if (dirToRemove == directory)
 		{
 			m_recentDirectories.push_back(directory);
+			m_pComboBox->SetStringSelection(directory);
+			m_pComboBox->SetSelection(len, len);
 			return;
 		}
 
@@ -297,7 +305,10 @@ void CViewHeader::AddRecentDirectory(const wxString &directory)
 	}
 
 	m_recentDirectories.push_back(directory);
-	m_pComboBox->Append(directory);
+	int item = m_pComboBox->Append(directory);
+	m_pComboBox->SetSelection(item);
+	m_pComboBox->SetSelection(len, len);
+	return;
 }
 
 void CViewHeader::SetFocus()
@@ -515,8 +526,6 @@ void CLocalViewHeader::OnStateChange(enum t_statechange_notifications notificati
 
 	wxString dir = m_pState->GetLocalDir();
 	AddRecentDirectory(dir);
-	m_pComboBox->SetStringSelection(dir);
-	m_pComboBox->SetSelection(m_pComboBox->GetValue().Length(), m_pComboBox->GetValue().Length());
 }
 
 BEGIN_EVENT_TABLE(CRemoteViewHeader, CViewHeader)
@@ -552,9 +561,6 @@ void CRemoteViewHeader::OnStateChange(enum t_statechange_notifications notificat
 		}
 		m_pComboBox->Enable();
 		AddRecentDirectory(m_path.GetPath());
-		m_pComboBox->SetStringSelection(m_path.GetPath());
-		wxString path = m_path.GetPath();
-		m_pComboBox->SetSelection(m_pComboBox->GetValue().Length(), m_pComboBox->GetValue().Length());
 	}
 }
 
