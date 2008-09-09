@@ -45,16 +45,20 @@ protected:
 	static bool ConvertFileTimeToWxDateTime(wxDateTime& time, const FILETIME &ft);
 #endif
 
+#ifndef __WXMSW__
+	static enum local_fileType GetFileInfo(const char* path, bool &isLink, wxLongLong* size, wxDateTime* modificationTime, int* mode);
+#endif
+
 	// State for directory enumeration
 	bool m_dirs_only;
-	bool m_found;
 #ifdef __WXMSW__
 	WIN32_FIND_DATA m_find_data;
 	HANDLE m_hFind;
+	bool m_found;
 #else
-	wxString m_path;
-	wxDir m_find;
-	wxString m_file;
+	char* m_raw_path;
+	char* m_file_part; // Points into m_raw_path past the trailing slash of the path part
+	DIR* m_dir;
 #endif
 };
 

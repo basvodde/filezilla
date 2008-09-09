@@ -4,18 +4,19 @@
 CLocalFileSystem::CLocalFileSystem()
 {
 	m_dirs_only = false;
-	m_found = false;
 #ifdef __WXMSW__
+	m_found = false;
 	m_hFind = INVALID_HANDLE_VALUE;
+#else
+	m_raw_path = 0;
+	m_file_part = 0;
+	m_dir = 0;
 #endif
 }
 
 CLocalFileSystem::~CLocalFileSystem()
 {
-#ifdef __WXMSW__
-	if (m_hFind != INVALID_HANDLE_VALUE)
-		FindClose(m_hFind);
-#endif
+	EndFindFiles();
 }
 
 enum CLocalFileSystem::local_fileType CLocalFileSystem::GetFileType(const wxString& path)
@@ -30,7 +31,7 @@ enum CLocalFileSystem::local_fileType CLocalFileSystem::GetFileType(const wxStri
 
 	return file;
 #else
-	if (path.Last() == wxFileName::GetPathSeparator() && path != wxFileName::GetPathSeparator())
+	if (path.Last() == '/' && path != _T("/"))
 	{
 		wxString tmp = path;
 		tmp.RemoveLast();
@@ -126,7 +127,7 @@ bool CLocalFileSystem::RecursiveDelete(std::list<wxString> dirsToVisit, wxWindow
 	for (std::list<wxString>::iterator iter = dirsToVisit.begin(); iter != dirsToVisit.end(); iter++)
 	{
 		wxString& path = *iter;
-		if (path.Last() == wxFileName::GetPathSeparator() && path != wxFileName::GetPathSeparator())
+		if (path.Last() == '/' && path != _T("/"))
 			path.RemoveLast();
 	}
 
@@ -167,7 +168,7 @@ bool CLocalFileSystem::RecursiveDelete(std::list<wxString> dirsToVisit, wxWindow
 				continue;
 			}
 
-			const wxString& fullName = path + wxFileName::GetPathSeparator() + file;
+			const wxString& fullName = path + '/' + file;
 
 			if (CLocalFileSystem::GetFileType(fullName) == CLocalFileSystem::dir)
 				dirsToVisit.push_back(fullName);
@@ -190,6 +191,7 @@ bool CLocalFileSystem::RecursiveDelete(std::list<wxString> dirsToVisit, wxWindow
 
 enum CLocalFileSystem::local_fileType CLocalFileSystem::GetFileInfo(const wxString& path, bool &isLink, wxLongLong* size, wxDateTime* modificationTime, int *mode)
 {
+#ifdef __WXMSW__
 	if (path.Last() == wxFileName::GetPathSeparator() && path != wxFileName::GetPathSeparator())
 	{
 		wxString tmp = path;
@@ -197,7 +199,6 @@ enum CLocalFileSystem::local_fileType CLocalFileSystem::GetFileInfo(const wxStri
 		return GetFileInfo(tmp, isLink, size, modificationTime, mode);
 	}
 
-#ifdef __WXMSW__
 	isLink = false;
 
 	WIN32_FILE_ATTRIBUTE_DATA attributes;
@@ -231,8 +232,23 @@ enum CLocalFileSystem::local_fileType CLocalFileSystem::GetFileInfo(const wxStri
 
 	return file;
 #else
-	wxStructStat buf;
-	int result = wxLstat(path, &buf);
+	if (path.Last() == '/' && path != _T("/"))
+	{
+		wxString tmp = path;
+		tmp.RemoveLast();
+		return GetFileInfo(tmp, isLink, size, modificationTime, mode);
+	}
+
+	const wxCharBuffer p = path.fn_str();
+	return GetFileInfo(p, isLink, size, modificationTime, mode);
+#endif
+}
+
+#ifndef __WXMSW__
+enum CLocalFileSystem::local_fileType CLocalFileSystem::GetFileInfo(const char* path, bool &isLink, wxLongLong* size, wxDateTime* modificationTime, int *mode)
+{
+	struct stat buf;
+	int result = lstat(path, &buf);
 	if (result)
 	{
 		isLink = false;
@@ -249,7 +265,7 @@ enum CLocalFileSystem::local_fileType CLocalFileSystem::GetFileInfo(const wxStri
 	if (S_ISLNK(buf.st_mode))
 	{
 		isLink = true;
-		int result = wxStat(path, &buf);
+		int result = stat(path, &buf);
 		if (result)
 		{
 			if (size)
@@ -282,8 +298,8 @@ enum CLocalFileSystem::local_fileType CLocalFileSystem::GetFileInfo(const wxStri
 		*size = buf.st_size;
 
 	return file;
-#endif
 }
+#endif
 
 #ifdef __WXMSW__
 bool CLocalFileSystem::ConvertFileTimeToWxDateTime(wxDateTime& time, const FILETIME &ft)
@@ -311,11 +327,10 @@ bool CLocalFileSystem::ConvertFileTimeToWxDateTime(wxDateTime& time, const FILET
 
 bool CLocalFileSystem::BeginFindFiles(wxString path, bool dirs_only)
 {
+	EndFindFiles();
+
 	m_dirs_only = dirs_only;
 #ifdef __WXMSW__
-	if (m_hFind != INVALID_HANDLE_VALUE)
-		FindClose(m_hFind);
-
 	if (path.Last() != '/' && path.Last() != '\\')
 		path += _T("\\*");
 	else
@@ -331,33 +346,49 @@ bool CLocalFileSystem::BeginFindFiles(wxString path, bool dirs_only)
 	m_found = true;	
 	return true;
 #else
-	m_path = path;
-	if (m_path.Last() != '/')
-		m_path += '/';
+	if (path != _T("/") && path.Last() == '/')
+		path.RemoveLast();
 
-	if (!m_find.Open(path) || !m_find.IsOpened())
-	{
-		m_found = false;
+	const wxCharBuffer s = path.fn_str();
+
+	m_dir = opendir(s);
+	if (!m_dir)
 		return false;
-	}
 
-	int flags = wxDIR_DIRS | wxDIR_HIDDEN;
-	if (!m_dirs_only)
-		flags |= wxDIR_FILES;
-	m_found = m_find.GetFirst(&m_file, wxEmptyString, flags);
-	return m_found;
+	const wxCharBuffer p = path.fn_str();
+	const int len = strlen(p);
+	m_raw_path = new char[len + NAME_MAX + 2];
+	strcpy(m_raw_path, p);
+	if (len > 1)
+	{
+		m_raw_path[len] = '/';
+		m_file_part = m_raw_path + len + 1;
+	}
+	else
+		m_file_part = m_raw_path + len;
+
+	return true;
 #endif
 }
 
 void CLocalFileSystem::EndFindFiles()
 {
-	m_found = false;
 #ifdef __WXMSW__
+	m_found = false;
 	if (m_hFind != INVALID_HANDLE_VALUE)
 	{
 		FindClose(m_hFind);
 		m_hFind = INVALID_HANDLE_VALUE;
 	}
+#else
+	if (m_dir)
+	{
+		closedir(m_dir);
+		m_dir = 0;
+	}
+	delete [] m_raw_path;
+	m_raw_path = 0;
+	m_file_part = 0;
 #endif
 }
 
@@ -386,23 +417,31 @@ bool CLocalFileSystem::GetNextFile(wxString& name)
 	
 	return false;
 #else
-	if (!m_found)
+	if (!m_dir)
 		return false;
 
-	while (m_found)
+	struct dirent* entry;
+	while ((entry = readdir(m_dir)))
 	{
-		name = m_file;
-		m_found = m_find.GetNext(&m_file);
-
-		if (name == _T(""))
-			return true;
+		if (!entry->d_name[0] ||
+			!strcmp(entry->d_name, ".") ||
+			!strcmp(entry->d_name, ".."))
+			continue;
 
 		if (m_dirs_only)
 		{
-			bool wasLink;
-			if (GetFileInfo(m_path + name, wasLink, 0, 0, 0) != dir)
+			if (entry->d_type == DT_LNK)
+			{
+				bool wasLink;
+				strcpy(m_file_part, entry->d_name);
+				if (GetFileInfo(m_raw_path, wasLink, 0, 0, 0) != dir)
+					continue;
+			}
+			else if (entry->d_type != DT_DIR)
 				continue;
 		}
+
+		name = wxString(entry->d_name, *wxConvFileName);
 
 		return true;
 	}
@@ -456,20 +495,38 @@ bool CLocalFileSystem::GetNextFile(wxString& name, bool &isLink, bool &is_dir, w
 	
 	return false;
 #else
-	if (!m_found)
+	if (!m_dir)
 		return false;
 
-	while (m_found)
+	struct dirent* entry;
+	while ((entry = readdir(m_dir)))
 	{
-		name = m_file;
-		m_found = m_find.GetNext(&m_file);
-
-		if (name == _T(""))
-			return true;
-
-		enum local_fileType type = GetFileInfo(m_path + name, isLink, size, modificationTime, mode);
-		if (m_dirs_only && type != dir)
+		if (!entry->d_name[0] ||
+			!strcmp(entry->d_name, ".") ||
+			!strcmp(entry->d_name, ".."))
 			continue;
+
+		if (m_dirs_only)
+		{
+			if (entry->d_type == DT_LNK)
+			{
+				strcpy(m_file_part, entry->d_name);
+				enum local_fileType type = GetFileInfo(m_raw_path, isLink, size, modificationTime, mode);
+				if (type != dir)
+					continue;
+
+				name = wxString(entry->d_name, *wxConvFileName);
+				is_dir = type == dir;
+				return true;
+			}
+			else if (entry->d_type != DT_DIR)
+				continue;
+		}
+
+		name = wxString(entry->d_name, *wxConvFileName);
+
+		strcpy(m_file_part, entry->d_name);
+		enum local_fileType type = GetFileInfo(m_raw_path, isLink, size, modificationTime, mode);
 		is_dir = type == dir;
 		
 		return true;
