@@ -172,6 +172,14 @@ void wxListCtrlEx::HandlePrefixSearch(wxChar character)
 		item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	}
 	SetItemState(newPos, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+
+#ifdef __WXMSW__
+	// SetItemState does not move the selection mark, that is the item from
+	// which a multiple selection starts (e.g. shift+up/down)
+	HWND hWnd = (HWND)GetHandle();
+	::SendMessage(hWnd, LVM_SETSELECTIONMARK, 0, newPos);
+#endif
+
 	EnsureVisible(newPos);
 }
 
@@ -192,6 +200,8 @@ void wxListCtrlEx::OnKeyDown(wxKeyEvent& event)
 		code == WXK_END)
 	{
 		ResetSearchPrefix();
+		event.Skip();
+		return;
 	}
 
 	if (event.AltDown() && !event.ControlDown()) // Alt but not AltGr
