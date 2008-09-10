@@ -168,7 +168,7 @@ bool CLocalFileSystem::RecursiveDelete(std::list<wxString> dirsToVisit, wxWindow
 				continue;
 			}
 
-			const wxString& fullName = path + '/' + file;
+			const wxString& fullName = path + _T("/") + file;
 
 			if (CLocalFileSystem::GetFileType(fullName) == CLocalFileSystem::dir)
 				dirsToVisit.push_back(fullName);
