@@ -266,7 +266,7 @@ void CRemoteTreeView::SetDirectoryListing(const CDirectoryListing* pListing, boo
 
 	if (!pListing)
 	{
-        m_ExpandAfterList = wxTreeItemId();
+		m_ExpandAfterList = wxTreeItemId();
 		DeleteAllItems();
 		AddRoot(_T(""));
 		m_busy = false;
@@ -291,10 +291,16 @@ void CRemoteTreeView::SetDirectoryListing(const CDirectoryListing* pListing, boo
 		return;
 	}
 
+#ifndef __WXMSW__
+	Freeze();
+#endif
 	wxTreeItemId parent = MakeParent(pListing->path, !modified);
 	if (!parent)
 	{
 		m_busy = false;
+#ifndef __WXMSW__
+		Thaw();
+#endif
 		return;
 	}
 
@@ -310,13 +316,31 @@ void CRemoteTreeView::SetDirectoryListing(const CDirectoryListing* pListing, boo
 		RefreshItem(parent, *pListing);
 
 		if (m_ExpandAfterList == parent)
+		{
+#ifndef __WXMSW__
+			// Prevent CalculatePositions from being called
+			wxGenericTreeItem *anchor = m_anchor;
+			m_anchor = 0;
+#endif
 			Expand(parent);
+#ifndef __WXMSW__
+			m_anchor = anchor;
+#endif
+		}
 	}
 	m_ExpandAfterList = wxTreeItemId();
 
 	SetItemImages(parent, false);
 
-	Refresh(false);
+#ifndef __WXMSW__
+	m_freezeCount--;
+#endif
+	if (!modified)
+		SelectItem(parent);
+#ifndef __WXMSW__
+	else
+		Refresh();
+#endif
 
 	m_busy = false;
 }
@@ -337,25 +361,23 @@ wxTreeItemId CRemoteTreeView::MakeParent(CServerPath path, bool select)
 
 	for (std::list<wxString>::const_iterator iter = pieces.begin(); iter != pieces.end(); iter++)
 	{
-		if (parent != root)
-			ListExpand(parent);
-
 		if (iter != pieces.begin())
 			path.AddSegment(*iter);
 
 		wxTreeItemIdValue cookie;
-		wxTreeItemId child;
+		wxTreeItemId child = GetFirstChild(parent, cookie);
+		if (child && GetItemText(child) == _T(""))
+		{
+			Delete(child);
+			child = wxTreeItemId();
+			if (parent != root)
+				ListExpand(parent);
+		}
 		for (child = GetFirstChild(parent, cookie); child; child = GetNextSibling(child))
 		{
 			const wxString& text = GetItemText(child);
 			if (text == *iter)
 				break;
-			if (text == _T(""))
-			{
-				Delete(child);
-				child = wxTreeItemId();
-				break;
-			}
 		}
 		if (!child)
 		{
@@ -379,12 +401,20 @@ wxTreeItemId CRemoteTreeView::MakeParent(CServerPath path, bool select)
 				DisplayItem(child, listing);
 		}
 		if (select && iter != pieces.begin())
+		{
+#ifndef __WXMSW__
+			// Prevent CalculatePositions from being called
+			wxGenericTreeItem *anchor = m_anchor;
+			m_anchor = 0;
+#endif
 			Expand(parent);
+#ifndef __WXMSW__
+			m_anchor = anchor;
+#endif
+		}
 
 		parent = child;
 	}
-	if (select)
-		SelectItem(parent);
 
 	return parent;
 }
@@ -598,8 +628,8 @@ void CRemoteTreeView::RefreshItem(wxTreeItemId parent, const CDirectoryListing& 
 			else
 			{
 				wxTreeItemId child = AppendItem(parent, *iter, 1, 3, new CItemData(path));
-                if (child)
-				    SetItemImages(child, true);
+				if (child)
+					SetItemImages(child, true);
 			}
 
 			iter++;
@@ -676,8 +706,11 @@ void CRemoteTreeView::OnItemExpanding(wxTreeEvent& event)
 
 void CRemoteTreeView::SetItemImages(wxTreeItemId item, bool unknown)
 {
+	const int old_image = GetItemImage(item, wxTreeItemIcon_Normal);
 	if (!unknown)
 	{
+		if (old_image == 0)
+			return;
 		SetItemImage(item, 0, wxTreeItemIcon_Normal);
 		SetItemImage(item, 2, wxTreeItemIcon_Selected);
 		SetItemImage(item, 0, wxTreeItemIcon_Expanded);
@@ -685,6 +718,8 @@ void CRemoteTreeView::SetItemImages(wxTreeItemId item, bool unknown)
 	}
 	else
 	{
+		if (old_image == 1)
+			return;
 		SetItemImage(item, 1, wxTreeItemIcon_Normal);
 		SetItemImage(item, 3, wxTreeItemIcon_Selected);
 		SetItemImage(item, 1, wxTreeItemIcon_Expanded);
