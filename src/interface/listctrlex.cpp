@@ -787,3 +787,12 @@ void wxListCtrlEx::SetHeaderIconIndex(int col, int icon)
 }
 #endif //__WXMSW__
 
+void wxListCtrlEx::RefreshListOnly(bool eraseBackground /*=true*/)
+{
+	// See comment in wxGenericListCtrl::Refresh
+#ifdef __WXMSW__
+	Refresh(eraseBackground);
+#else
+	GetMainWindow()->Refresh(eraseBackground);
+#endif
+}

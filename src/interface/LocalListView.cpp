@@ -432,7 +432,7 @@ regular_dir:
 
 	ReselectItems(selectedNames, focused);
 
-	Refresh();
+	RefreshListOnly();
 
 	return true;
 }
@@ -1547,7 +1547,7 @@ void CLocalListView::ApplyCurrentFilter()
 	ReselectItems(selectedNames, focused);
 
 	if (!IsComparing())
-		Refresh();
+		RefreshListOnly();
 }
 
 std::list<wxString> CLocalListView::RememberSelectedItems(wxString& focused)
@@ -1804,7 +1804,7 @@ void CLocalListView::RefreshFile(const wxString& file)
 		{
 			if (m_sortColumn)
 				SortList();
-			Refresh(false);
+			RefreshListOnly(false);
 		}
 		return;
 	}
@@ -1855,7 +1855,7 @@ void CLocalListView::RefreshFile(const wxString& file)
 				prevState = state;
 			}
 		}
-		Refresh();
+		RefreshListOnly();
 	}
 	else
 	{
@@ -1972,7 +1972,7 @@ void CLocalListView::FinishComparison()
 
 	ComparisonRestoreSelections();
 
-	Refresh();
+	RefreshListOnly();
 
 	CComparableListing* pOther = GetOther();
 	if (!pOther)

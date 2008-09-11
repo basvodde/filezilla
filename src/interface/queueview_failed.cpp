@@ -70,7 +70,7 @@ void CQueueViewFailed::OnRemoveAll(wxCommandEvent& event)
 
 	DisplayNumberQueuedFiles();
 
-	Refresh();
+	RefreshListOnly();
 
 	if (!m_itemCount && m_pQueue->GetQueueView()->GetItemCount())
 		m_pQueue->SetSelection(0);
@@ -134,7 +134,7 @@ void CQueueViewFailed::OnRemoveSelected(wxCommandEvent& event)
 	}
 	DisplayNumberQueuedFiles();
 	SaveSetItemCount(m_itemCount);
-	Refresh();
+	RefreshListOnly();
 
 	if (!m_itemCount && m_pQueue->GetQueueView()->GetItemCount())
 		m_pQueue->SetSelection(0);
@@ -346,7 +346,7 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 
 	DisplayNumberQueuedFiles();
 	SaveSetItemCount(m_itemCount);
-	Refresh();
+	RefreshListOnly();
 
 	if (!m_itemCount && m_pQueue->GetQueueView()->GetItemCount())
 		m_pQueue->SetSelection(0);

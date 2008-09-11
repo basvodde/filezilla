@@ -622,7 +622,7 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 			wxASSERT(m_pDirectoryListing->GetCount() + 1 >= (unsigned int)GetItemCount());
 			wxASSERT(m_indexMapping[0] == m_pDirectoryListing->GetCount());
 
-			Refresh();
+			RefreshListOnly();
 
 			return;
 		}
@@ -753,7 +753,7 @@ void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryLis
 	else
 	{
 		ReselectItems(selectedNames, prevFocused);
-		Refresh(eraseBackground);
+		RefreshListOnly(eraseBackground);
 	}
 }
 
@@ -1865,7 +1865,7 @@ void CRemoteListView::ApplyCurrentFilter()
 
 	ReselectItems(selectedNames, focused);
 	if (!IsComparing())
-		Refresh();
+		RefreshListOnly();
 }
 
 std::list<wxString> CRemoteListView::RememberSelectedItems(wxString& focused)
@@ -2591,7 +2591,7 @@ void CRemoteListView::FinishComparison()
 
 	ComparisonRestoreSelections();
 
-	Refresh();
+	RefreshListOnly();
 }
 
 wxListItemAttr* CRemoteListView::OnGetItemAttr(long item) const

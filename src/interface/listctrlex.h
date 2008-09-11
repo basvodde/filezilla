@@ -38,6 +38,9 @@ public:
 
 	int GetColumnVisibleIndex(int col);
 
+	// Refresh list but not header
+	void RefreshListOnly(bool eraseBackground = true);
+
 protected:
 	virtual void OnPostScroll();
 	virtual void OnPreEmitPostScrollEvent();
@@ -54,14 +57,14 @@ protected:
 	void SetHeaderIconIndex(int col, int icon);
 #endif //__WXMSW__
 
+#ifndef __WXMSW__
+	wxScrolledWindow* GetMainWindow();
+#endif
+
 private:
 	// Keyboard prefix search
 	void HandlePrefixSearch(wxChar character);
 	int FindItemWithPrefix(const wxString& searchPrefix, int start);
-
-#ifndef __WXMSW__
-	wxScrolledWindow* GetMainWindow();
-#endif
 
 	DECLARE_EVENT_TABLE();
 	void OnPostScrollEvent(wxCommandEvent& event);

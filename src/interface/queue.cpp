@@ -1330,7 +1330,7 @@ bool CQueueViewBase::RemoveItem(CQueueItem* pItem, bool destroy, bool updateItem
 		if (oldCount > m_itemCount)
 		{
 			bool eraseBackground = GetTopItem() + GetCountPerPage() + 1 >= m_itemCount;
-			Refresh(eraseBackground);
+			RefreshListOnly(eraseBackground);
 			if (eraseBackground)
 				Update();
 		}

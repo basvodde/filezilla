@@ -501,7 +501,7 @@ void CQueueView::QueueFile_Finish(const bool start)
 	m_waitStatusLineUpdate = false;
 	UpdateStatusLinePositions();
 
-	Refresh(false);
+	RefreshListOnly(false);
 }
 
 bool CQueueView::QueueFiles(const bool queueOnly, const wxString& localPath, const CRemoteDataObject& dataObject)
@@ -535,7 +535,7 @@ bool CQueueView::QueueFiles(const bool queueOnly, const wxString& localPath, con
 	m_waitStatusLineUpdate = false;
 	UpdateStatusLinePositions();
 
-	Refresh(false);
+	RefreshListOnly(false);
 
 	return true;
 }
@@ -1606,7 +1606,7 @@ bool CQueueView::QueueFolder(bool queueOnly, bool download, const wxString& loca
 	m_queuedFolders[download ? 0 : 1].push_back(folderItem);
 	ProcessFolderItems();
 
-	Refresh(false);
+	RefreshListOnly(false);
 
 	return true;
 }
@@ -1649,7 +1649,7 @@ void CQueueView::ProcessUploadFolderItems()
 	m_pFolderProcessingThread->Create();
 	m_pFolderProcessingThread->Run();
 
-	Refresh(false);
+	RefreshListOnly(false);
 }
 
 void CQueueView::OnFolderThreadComplete(wxCommandEvent& event)
@@ -1706,7 +1706,7 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry*> &entryList, bool queueO
 	m_waitStatusLineUpdate = false;
 	UpdateStatusLinePositions();
 
-	Refresh(false);
+	RefreshListOnly(false);
 
 	return true;
 }
@@ -1865,7 +1865,7 @@ void CQueueView::ImportQueue(TiXmlElement* pElement, bool updateSelections)
 		CommitChanges();
 	}
 	else
-		Refresh();
+		RefreshListOnly();
 }
 
 void CQueueView::SettingsChanged()
@@ -2114,7 +2114,7 @@ void CQueueView::RemoveAll()
 	CalculateQueueSize();
 
 	CheckQueueState();
-	Refresh();
+	RefreshListOnly();
 }
 
 void CQueueView::OnRemoveSelected(wxCommandEvent& event)
@@ -2192,7 +2192,7 @@ void CQueueView::OnRemoveSelected(wxCommandEvent& event)
 	m_waitStatusLineUpdate = false;
 	UpdateStatusLinePositions();
 
-	Refresh();
+	RefreshListOnly();
 }
 
 bool CQueueView::StopItem(CFileItem* item)
@@ -2526,7 +2526,7 @@ void CQueueView::AdvanceQueue()
 		}
 	}
 
-	Refresh(false);
+	RefreshListOnly(false);
 
 	insideAdvanceQueue = false;
 
@@ -2656,7 +2656,7 @@ void CQueueView::OnSetPriority(wxCommandEvent& event)
 		pItem->SetPriority(priority);
 	}
 
-	Refresh();
+	RefreshListOnly();
 }
 
 void CQueueView::OnExclusiveEngineRequestGranted(wxCommandEvent& event)
