@@ -386,7 +386,7 @@ template<class CFileData> void CFileListCtrl<CFileData>::OnColumnClicked(wxListE
 		dir = m_sortDirection;
 
 	SortList(col, dir);
-	Refresh(false);
+	RefreshListOnly(false);
 }
 
 template<class CFileData> wxString CFileListCtrl<CFileData>::GetType(wxString name, bool dir, const wxString& path /*=_T("")*/)
@@ -519,7 +519,7 @@ template<class CFileData> void CFileListCtrl<CFileData>::OnExitComparisonMode()
 
 	ComparisonRestoreSelections();
 
-	Refresh();
+	RefreshListOnly();
 }
 
 template<class CFileData> void CFileListCtrl<CFileData>::CompareAddFile(t_fileEntryFlags flags)
