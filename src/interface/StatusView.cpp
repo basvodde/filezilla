@@ -98,6 +98,10 @@ CStatusView::CStatusView(wxWindow* parent, wxWindowID id)
 	InitDefAttr();
 
 	m_shown = IsShown();
+	
+#ifdef __WXMAC__
+	m_insertionPoint = 0;
+#endif
 }
 
 CStatusView::~CStatusView()
@@ -135,41 +139,66 @@ void CStatusView::AddToLog(enum MessageType messagetype, const wxString& message
 
 	const int messageLength = message.Length();
 
-#ifndef __WXGTK__
-	wxWindowUpdateLocker *pLock = 0;
-#endif //__WXGTK__
 	wxString prefix;
 	prefix.Alloc(25 + messageLength);
 
 	if (m_nLineCount)
 		prefix = _T("\n");
 
-	if (m_showTimestamps)
-	{
-		if (time != m_lastTime)
-		{
-			m_lastTime = time;
-			m_lastTimeString = time.Format(_T("%H:%M:%S\t"));
-		}
-		prefix += m_lastTimeString;
-	}
+#ifndef __WXGTK__
+	wxWindowUpdateLocker *pLock = 0;
+#endif //__WXGTK__
 
 	if (m_nLineCount == MAX_LINECOUNT)
 	{
 #ifndef __WXGTK__
 		pLock = new wxWindowUpdateLocker(m_pTextCtrl);
 #endif //__WXGTK__
-		m_pTextCtrl->Remove(0, m_lineLengths.front() + 1);
+		int oldLength = m_lineLengths.front();
+#ifdef __WXMAC__
+		m_insertionPoint -= oldLength + 1;
+#endif
+		m_pTextCtrl->Remove(0, oldLength + 1);
 		m_lineLengths.pop_front();
+		
+#ifdef __WXMAC__
+		m_pTextCtrl->SetInsertionPoint(m_insertionPoint);
+#endif
 	}
 	else
 		m_nLineCount++;
 
+	int lineLength = m_attributeCache[messagetype].len + messageLength;
+
+	if (m_showTimestamps)
+	{
+		if (time != m_lastTime)
+		{
+			m_lastTime = time;
+#ifndef __WXMAC__
+			m_lastTimeString = time.Format(_T("%H:%M:%S\t"));
+#else
+			// Tabs on OS X cannot be freely positioned
+			m_lastTimeString = time.Format(_T("%H:%M:%S "));
+#endif
+		}
+		prefix += m_lastTimeString;
+		lineLength += m_lastTimeString.Len();
+	}
+
+#ifdef __WXMAC__
+	int current = m_pTextCtrl->GetInsertionPoint();
+	if (current != m_insertionPoint)
+	{
+		m_pTextCtrl->SetInsertionPointEnd();
+		m_insertionPoint = m_pTextCtrl->GetInsertionPoint();
+	}
+	m_pTextCtrl->SetStyle(m_insertionPoint, m_insertionPoint, m_attributeCache[messagetype].attr);
+#else
 	m_pTextCtrl->SetDefaultStyle(m_attributeCache[messagetype].attr);
+#endif
 
 	prefix += m_attributeCache[messagetype].prefix;
-
-	int lineLength = m_attributeCache[messagetype].len + messageLength;
 
 	if (m_rtl)
 	{
@@ -195,14 +224,20 @@ void CStatusView::AddToLog(enum MessageType messagetype, const wxString& message
 	m_lineLengths.push_back(lineLength);
 
 	prefix += message;
-#ifdef __WXGTK__
+#if defined(__WXGTK__)
 	// AppendText always calls SetInsertionPointEnd, which is very expensive.
 	// This check however is negligible.
 	if (m_pTextCtrl->GetInsertionPoint() != m_pTextCtrl->GetLastPosition())
 		m_pTextCtrl->AppendText(prefix);
 	else
 		m_pTextCtrl->WriteText(prefix);
-#else
+#elif defined(__WXMAC__)
+	m_pTextCtrl->WriteText(prefix);
+	m_insertionPoint += lineLength;
+	if (m_nLineCount > 1)
+		m_insertionPoint += 1;
+	delete pLock;
+#elif !defined(__WXMAC__)
 	m_pTextCtrl->AppendText(prefix);
 	delete pLock;
 #endif //__WXGTK__
@@ -222,7 +257,11 @@ void CStatusView::InitDefAttr()
 	{
 		wxCoord width = 0;
 		wxCoord height = 0;
+#ifndef __WXMAC__
 		dc.GetTextExtent(_T("88:88:88"), &width, &height);
+#else
+		dc.GetTextExtent(_T("88:88:88 "), &width, &height);
+#endif
 		timestampWidth = width;
 	}
 
@@ -256,16 +295,23 @@ void CStatusView::InitDefAttr()
 		maxWidth += timestampWidth;
 	}
 	wxArrayInt array;
+#ifndef __WXMAC__
 	if (timestampWidth != 0)
 		array.Add(timestampWidth);
+#endif
 	array.Add(maxWidth);
 	wxTextAttr defAttr;
 	defAttr.SetTabs(array);
 	defAttr.SetLeftIndent(0, maxWidth);
+#ifdef __WXMAC__
+	m_pTextCtrl->SetDefaultStyle(defAttr);
+#endif
 
 	for (int i = 0; i < MessageTypeCount; i++)
 	{
+#ifndef __WXMAC__
 		m_attributeCache[i].attr = defAttr;
+#endif
 		switch (i)
 		{
 		case Error:
@@ -319,6 +365,10 @@ void CStatusView::OnClear(wxCommandEvent& event)
 		m_pTextCtrl->Clear();
 	m_nLineCount = 0;
 	m_lineLengths.clear();
+	
+#ifdef __WXMAC__
+	m_insertionPoint = 0;
+#endif
 }
 
 void CStatusView::OnCopy(wxCommandEvent& event)

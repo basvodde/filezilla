@@ -56,6 +56,10 @@ protected:
 	bool m_showTimestamps;
 	wxDateTime m_lastTime;
 	wxString m_lastTimeString;
+
+#ifdef __WXMAC__
+	int m_insertionPoint;
+#endif
 };
 
 #endif
