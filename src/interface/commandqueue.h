@@ -34,6 +34,9 @@ protected:
 	bool m_exclusiveEngineLock;
 	int m_requestId;
 
+	// Used to make this class reentrance-safe
+	bool m_inside_commandqueue;
+
 	std::list<CCommand *> m_CommandList;
 };
 

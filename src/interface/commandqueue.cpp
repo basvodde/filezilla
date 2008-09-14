@@ -15,6 +15,7 @@ CCommandQueue::CCommandQueue(CFileZillaEngine *pEngine, CMainFrame* pMainFrame)
 	m_exclusiveEngineRequest = false;
 	m_exclusiveEngineLock = false;
 	m_requestId = 0;
+	m_inside_commandqueue = false;
 }
 
 CCommandQueue::~CCommandQueue()
@@ -40,11 +41,16 @@ void CCommandQueue::ProcessCommand(CCommand *pCommand)
 
 void CCommandQueue::ProcessNextCommand()
 {
+	if (m_inside_commandqueue)
+		return;
+
 	if (m_exclusiveEngineLock)
 		return;
 
 	if (m_pEngine->IsBusy())
 		return;
+
+	m_inside_commandqueue = true;
 
 	while (!m_CommandList.empty())
 	{
@@ -64,6 +70,20 @@ void CCommandQueue::ProcessNextCommand()
 		else if (pCommand->GetId() == cmd_disconnect)
 		{
 			m_pMainFrame->GetState()->SetServer(0);
+		}
+		else
+		{
+			if (res == FZ_REPLY_NOTCONNECTED)
+			{
+				// Try automatic reconnect
+				const CServer* pServer = m_pMainFrame->GetState()->GetServer();
+				if (pServer)
+				{
+					CCommand *pCommand = new CConnectCommand(*pServer);
+					m_CommandList.push_front(pCommand);
+					continue;
+				}
+			}
 		}
 
 		if (res == FZ_REPLY_WOULDBLOCK)
@@ -93,20 +113,19 @@ void CCommandQueue::ProcessNextCommand()
 		}
 		else
 		{
-			if ((res & FZ_REPLY_NOTCONNECTED) == FZ_REPLY_NOTCONNECTED)
-					m_pMainFrame->GetState()->SetServer(0);
-
 			wxBell();
 			
 			// Let the remote list view know if a LIST command failed,
 			// so that it may issue the next command in recursive operations.
 			if (pCommand->GetId() == cmd_list)
-				m_pMainFrame->GetState()->GetRecursiveOperationHandler()->ListingFailed();
+				m_pMainFrame->GetState()->GetRecursiveOperationHandler()->ListingFailed(res);
 
 			m_CommandList.pop_front();
 			delete pCommand;
 		}
 	}
+
+	m_inside_commandqueue = false;
 
 	if (m_CommandList.empty())
 	{
@@ -166,7 +185,6 @@ void CCommandQueue::Finish(COperationNotification *pNotification)
 		}
 		if (pNotification->nReplyCode & FZ_REPLY_PASSWORDFAILED)
 			CLoginManager::Get().CachedPasswordFailed(*m_pMainFrame->GetState()->GetServer());
-		m_pMainFrame->GetState()->SetServer(0);
 	}
 
 	if (m_exclusiveEngineLock)
@@ -181,17 +199,43 @@ void CCommandQueue::Finish(COperationNotification *pNotification)
 		return;
 	}
 
+	wxASSERT(!m_inside_commandqueue);
+	m_inside_commandqueue = true;
+
 	CCommand* pCommand = m_CommandList.front();
 
 	// Let the remote list view know if a LIST command failed,
 	// so that it may issue the next command in recursive operations.
 	if (pCommand->GetId() == cmd_list && pNotification->nReplyCode != FZ_REPLY_OK)
-		m_pMainFrame->GetState()->GetRecursiveOperationHandler()->ListingFailed();
+	{
+		m_pMainFrame->GetState()->GetRecursiveOperationHandler()->ListingFailed(pNotification->nReplyCode);
+		m_CommandList.pop_front();
+	}
+	else if (pCommand->GetId() == cmd_connect && pNotification->nReplyCode != FZ_REPLY_OK)
+	{
+		// Remove pending events
+		m_CommandList.pop_front();
+		while (!m_CommandList.empty())
+		{
+			CCommand* pPendingCommand = m_CommandList.front();
+			if (pPendingCommand->GetId() == cmd_connect)
+				break;
+			m_CommandList.pop_front();
+			delete pPendingCommand;
+		}
+
+		// If this was an automatic reconnect during a recursive
+		// operation, stop the recursive operation
+		m_pMainFrame->GetState()->GetRecursiveOperationHandler()->StopRecursiveOperation();
+	}
+	else
+		m_CommandList.pop_front();
 	
-	delete m_CommandList.front();
-	m_CommandList.pop_front();
+	delete pCommand;
 	
 	delete pNotification;
+
+	m_inside_commandqueue = false;
 
 	ProcessNextCommand();
 }

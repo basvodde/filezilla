@@ -157,6 +157,8 @@ bool CState::SetRemoteDir(const CDirectoryListing *pDirectoryListing, bool modif
 		return true;
 	}
 
+	wxASSERT(pDirectoryListing->m_firstListTime.IsValid());
+
 	if (modified)
 	{
 		if (!m_pDirectoryListing || m_pDirectoryListing->path != pDirectoryListing->path)
@@ -243,6 +245,12 @@ void CState::SetServer(const CServer* server)
 {
 	if (m_pServer)
 	{
+		if (server &&  *server == *m_pServer)
+		{
+			// Nothing changes
+			return;
+		}
+
 		SetRemoteDir(0);
 		delete m_pServer;
 	}
@@ -608,7 +616,7 @@ bool CState::IsRemoteConnected() const
 	if (!m_pEngine)
 		return false;
 
-	return m_pEngine->IsConnected();
+	return m_pServer != 0;
 }
 
 bool CState::IsRemoteIdle() const

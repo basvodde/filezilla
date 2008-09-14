@@ -670,13 +670,19 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	}
 	else if (event.GetId() == XRCID("ID_MENU_SERVER_CMD"))
 	{
-		if (!m_pState->m_pEngine || !m_pState->m_pEngine->IsConnected() || !m_pState->m_pCommandQueue->Idle())
+		if (!m_pState || !m_pState->m_pCommandQueue || !m_pState->IsRemoteConnected() || !m_pState->IsRemoteIdle())
 			return;
 
 		CInputDialog dlg;
 		dlg.Create(this, _("Enter custom command"), _("Please enter raw FTP command.\nUsing raw ftp commands will clear the directory cache."));
 		if (dlg.ShowModal() != wxID_OK)
 			return;
+
+		if (!m_pState || !m_pState->m_pCommandQueue || !m_pState->IsRemoteConnected() || !m_pState->IsRemoteIdle())
+		{
+			wxBell();
+			return;
+		}
 
 		const wxString &command = dlg.GetValue();
 
@@ -953,6 +959,7 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 						pListing = new CDirectoryListing;
 						pListing->path = pListingNotification->GetPath();
 						pListing->m_failed = true;
+						pListing->m_firstListTime = CTimeEx::Now();
 					}
 
 					m_pState->SetRemoteDir(pListing, pListingNotification->Modified());
@@ -1385,7 +1392,10 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 
 void CMainFrame::OnReconnect(wxCommandEvent &event)
 {
-	if (!m_pState->m_pEngine || m_pState->m_pEngine->IsConnected() || !m_pState->m_pCommandQueue->Idle())
+	if (!m_pState)
+		return;
+
+	if (m_pState->IsRemoteConnected() || !m_pState->IsRemoteIdle())
 		return;
 
 	CServer server;
@@ -1405,11 +1415,13 @@ void CMainFrame::OnReconnect(wxCommandEvent &event)
 
 void CMainFrame::OnRefresh(wxCommandEvent &event)
 {
-	if (m_pState->m_pEngine && m_pState->m_pEngine->IsConnected() && m_pState->m_pCommandQueue->Idle())
+	if (!m_pState)
+		return;
+
+	if (m_pState->m_pCommandQueue && m_pState->IsRemoteConnected() && m_pState->IsRemoteIdle())
 		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_pState->GetRemotePath(), _T(""), true));
 
-	if (m_pState)
-		m_pState->RefreshLocal();
+	m_pState->RefreshLocal();
 }
 
 void CMainFrame::OnTimer(wxTimerEvent& event)

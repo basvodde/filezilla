@@ -8,6 +8,7 @@
 CRecursiveOperation::CNewDir::CNewDir()
 {
 	recurse = true;
+	second_try = false;
 }
 
 CRecursiveOperation::CRecursiveOperation(CState* pState)
@@ -295,7 +296,7 @@ void CRecursiveOperation::StopRecursiveOperation()
 	}
 }
 
-void CRecursiveOperation::ListingFailed()
+void CRecursiveOperation::ListingFailed(int error)
 {
 	if (m_operationMode == recursive_none)
 		return;
@@ -304,7 +305,15 @@ void CRecursiveOperation::ListingFailed()
 	if (m_dirsToVisit.empty())
 		return;
 
+	CNewDir dir = m_dirsToVisit.front();
 	m_dirsToVisit.pop_front();
+	if ((error & FZ_REPLY_CRITICALERROR) != FZ_REPLY_CRITICALERROR && !dir.second_try)
+	{
+		// Retry, could have been a temporary socket creating failure
+		// (e.g. hitting a blocked port) or a disconnect (e.g. no-filetransfer-timeout)
+		dir.second_try = true;
+		m_dirsToVisit.push_front(dir);
+	}
 
 	NextOperation();
 }

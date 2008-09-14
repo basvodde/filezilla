@@ -32,7 +32,7 @@ public:
 	// Needed for recursive_chmod
 	void SetChmodDialog(CChmodDialog* pChmodDialog);
 
-	void ListingFailed();
+	void ListingFailed(int error);
 
 	void SetQueue(CQueueView* pQueue);
 
@@ -60,6 +60,8 @@ protected:
 
 		bool recurse;
 		wxString restrict;
+
+		bool second_try;
 	};
 
 	CServerPath m_startDir;
