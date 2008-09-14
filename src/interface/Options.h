@@ -84,7 +84,7 @@ struct t_OptionsCache
 
 class CXmlFile;
 class TiXmlElement;
-class COptions : public COptionsBase
+class COptions : public wxEvtHandler, public COptionsBase
 {
 public:
 	virtual int GetOptionVal(unsigned int nID);
@@ -96,9 +96,6 @@ public:
 	virtual bool SetOption(unsigned int nID, int value);
 	virtual bool SetOption(unsigned int nID, wxString value);
 	
-	bool SetOptionNoSave(unsigned int nID, int value);
-	bool SetOptionNoSave(unsigned int nID, wxString value);
-
 	void SetLastServer(const CServer& server);
 	bool GetLastServer(CServer& server);
 
@@ -126,6 +123,8 @@ protected:
 
 	void LoadGlobalDefaultOptions();
 
+	void Save();
+
 	CXmlFile* m_pXmlFile;
 
 	t_OptionsCache m_optionsCache[OPTIONS_NUM];
@@ -134,6 +133,11 @@ protected:
 	CServer* m_pLastServer;
 
 	static COptions* m_theOptions;
+
+	wxTimer m_save_timer;
+
+	DECLARE_EVENT_TABLE();
+	void OnTimer(wxTimerEvent& event);
 };
 
 #endif //__OPTIONS_H__

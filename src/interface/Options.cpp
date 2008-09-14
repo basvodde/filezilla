@@ -139,6 +139,10 @@ static t_default_option default_options[DEFAULTS_NUM] =
 	{ _T("Disable update check"), number, _T(""), 0 }
 };
 
+BEGIN_EVENT_TABLE(COptions, wxEvtHandler)
+EVT_TIMER(wxID_ANY, COptions::OnTimer)
+END_EVENT_TABLE()
+
 COptions::COptions()
 {
 	m_pLastServer = 0;
@@ -147,6 +151,8 @@ COptions::COptions()
 
 	for (unsigned int i = 0; i < OPTIONS_NUM; i++)
 		m_optionsCache[i].cached = false;
+
+	m_save_timer.SetOwner(this);
 
 	CInterProcessMutex mutex(MUTEX_OPTIONS);
 	m_pXmlFile = new CXmlFile(_T("filezilla"));
@@ -165,6 +171,12 @@ COptions::COptions()
 
 COptions::~COptions()
 {
+	if (m_save_timer.IsRunning())
+	{
+		m_save_timer.Stop();
+		Save();
+	}
+
 	delete m_pLastServer;
 	delete m_pXmlFile;
 }
@@ -221,20 +233,6 @@ wxString COptions::GetOption(unsigned int nID)
 
 bool COptions::SetOption(unsigned int nID, int value)
 {
-	if (!SetOptionNoSave(nID, value))
-		return false;
-
-	if (m_pXmlFile)
-	{
-		CInterProcessMutex mutex(MUTEX_OPTIONS);
-		m_pXmlFile->Save();
-	}
-
-	return true;
-}
-
-bool COptions::SetOptionNoSave(unsigned int nID, int value)
-{
 	if (nID >= OPTIONS_NUM)
 		return false;
 
@@ -247,26 +245,17 @@ bool COptions::SetOptionNoSave(unsigned int nID, int value)
 	m_optionsCache[nID].numValue = value;
 
 	if (m_pXmlFile)
+	{
 		SetXmlValue(nID, wxString::Format(_T("%d"), value));
 
-	return true;
-}
-
-bool COptions::SetOption(unsigned int nID, wxString value)
-{
-	if (!SetOptionNoSave(nID, value))
-		return false;
-
-	if (m_pXmlFile)
-	{
-		CInterProcessMutex mutex(MUTEX_OPTIONS);
-		m_pXmlFile->Save();
+		if (!m_save_timer.IsRunning())
+			m_save_timer.Start(15000, true);
 	}
 
 	return true;
 }
 
-bool COptions::SetOptionNoSave(unsigned int nID, wxString value)
+bool COptions::SetOption(unsigned int nID, wxString value)
 {
 	if (nID >= OPTIONS_NUM)
 		return false;
@@ -286,7 +275,12 @@ bool COptions::SetOptionNoSave(unsigned int nID, wxString value)
 	m_optionsCache[nID].strValue = value;
 
 	if (m_pXmlFile)
+	{
 		SetXmlValue(nID, value);
+
+		if (!m_save_timer.IsRunning())
+			m_save_timer.Start(15000, true);
+	}
 
 
 	return true;
@@ -631,13 +625,7 @@ void COptions::Import(TiXmlElement* pElement)
 		if (!GetXmlValue(i, value, pElement))
 			continue;
 
-		SetOptionNoSave(i, value);
-	}
-
-	if (m_pXmlFile)
-	{
-		CInterProcessMutex mutex(MUTEX_OPTIONS);
-		m_pXmlFile->Save();
+		SetOption(i, value);
 	}
 }
 
@@ -697,4 +685,18 @@ wxString COptions::GetDefault(unsigned int nID) const
 		return _T("");
 
 	return default_options[nID].value_str;
+}
+
+void COptions::OnTimer(wxTimerEvent& event)
+{
+	Save();
+}
+
+void COptions::Save()
+{
+	if (!m_pXmlFile)
+		return;
+
+	CInterProcessMutex mutex(MUTEX_OPTIONS);
+	m_pXmlFile->Save();
 }
