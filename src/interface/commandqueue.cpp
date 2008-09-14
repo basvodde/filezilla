@@ -71,7 +71,7 @@ void CCommandQueue::ProcessNextCommand()
 		{
 			m_pMainFrame->GetState()->SetServer(0);
 		}
-		else
+		else if (pCommand->GetId() != cmd_cancel)
 		{
 			if (res == FZ_REPLY_NOTCONNECTED)
 			{
