@@ -1408,12 +1408,8 @@ void CMainFrame::OnRefresh(wxCommandEvent &event)
 	if (m_pState->m_pEngine && m_pState->m_pEngine->IsConnected() && m_pState->m_pCommandQueue->Idle())
 		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_pState->GetRemotePath(), _T(""), true));
 
-	for (int i = 0; i < 100; i++)
-	{
-	fprintf(stderr, "%d\n", i);
 	if (m_pState)
 		m_pState->RefreshLocal();
-}
 }
 
 void CMainFrame::OnTimer(wxTimerEvent& event)
