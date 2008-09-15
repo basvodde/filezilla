@@ -171,12 +171,6 @@ COptions::COptions()
 
 COptions::~COptions()
 {
-	if (m_save_timer.IsRunning())
-	{
-		m_save_timer.Stop();
-		Save();
-	}
-
 	delete m_pLastServer;
 	delete m_pXmlFile;
 }
@@ -699,4 +693,13 @@ void COptions::Save()
 
 	CInterProcessMutex mutex(MUTEX_OPTIONS);
 	m_pXmlFile->Save();
+}
+
+void COptions::SaveIfNeeded()
+{
+	if (!m_save_timer.IsRunning())
+		return;
+
+	m_save_timer.Stop();
+	Save();
 }

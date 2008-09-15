@@ -104,7 +104,9 @@ public:
 	static void Destroy();
 
 	void Import(TiXmlElement* pElement);
-	
+
+	void SaveIfNeeded();
+
 protected:
 	COptions();
 	virtual ~COptions();

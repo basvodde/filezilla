@@ -300,13 +300,14 @@ FileZilla will timeout on big transfers.\
 	return true;
 }
 
-#ifdef __WXMSW__
 int CFileZillaApp::OnExit()
 {
+	COptions::Get()->SaveIfNeeded();
+#ifdef __WXMSW__
 	wxSocketBase::Shutdown();
+#endif
 	return wxApp::OnExit();
 }
-#endif
 
 bool CFileZillaApp::FileExists(const wxString& file) const
 {
