@@ -189,7 +189,7 @@ wxIconBundle CThemeProvider::GetIconBundle(const wxArtID& id, const wxArtClient&
 		if (!wxFileName::FileExists(file))
 			continue;
 
-		iconBundle.AddIcon(wxIcon(file));
+		iconBundle.AddIcon(wxIcon(file, wxBITMAP_TYPE_PNG));
 	}
 
 	return iconBundle;
