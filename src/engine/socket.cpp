@@ -358,6 +358,12 @@ public:
 			delete [] m_pPort;
 
 		const wxWX2MBbuf buf = m_pSocket->m_host.mb_str();
+		if (!buf)
+		{
+			m_pHost = 0;
+			m_pPort = 0;
+			return EINVAL;
+		}
 		m_pHost = new char[strlen(buf) + 1];
 		strcpy(m_pHost, buf);
 
@@ -1110,7 +1116,14 @@ int CSocket::Connect(wxString host, unsigned int port)
 
 	m_host = host;
 	m_port = port;
-	m_pSocketThread->Connect();
+	int res = m_pSocketThread->Connect();
+	if (res)
+	{
+		m_state = none;
+		delete m_pSocketThread;
+		m_pSocketThread = 0;
+		return res;
+	}
 
 	return EINPROGRESS;
 }
