@@ -185,6 +185,8 @@ void CCommandQueue::Finish(COperationNotification *pNotification)
 		}
 		if (pNotification->nReplyCode & FZ_REPLY_PASSWORDFAILED)
 			CLoginManager::Get().CachedPasswordFailed(*m_pMainFrame->GetState()->GetServer());
+		if (!m_pMainFrame->GetState()->SuccessfulConnect())
+			m_pMainFrame->GetState()->SetServer(0);
 	}
 
 	if (m_exclusiveEngineLock)
@@ -227,6 +229,11 @@ void CCommandQueue::Finish(COperationNotification *pNotification)
 		// If this was an automatic reconnect during a recursive
 		// operation, stop the recursive operation
 		m_pMainFrame->GetState()->GetRecursiveOperationHandler()->StopRecursiveOperation();
+	}
+	else if (pCommand->GetId() == cmd_connect && pNotification->nReplyCode == FZ_REPLY_OK)
+	{
+		m_pMainFrame->GetState()->SetSuccessfulConnect();
+		m_CommandList.pop_front();
 	}
 	else
 		m_CommandList.pop_front();

@@ -16,6 +16,7 @@ CState::CState(CMainFrame* pMainFrame)
 
 	m_pDirectoryListing = 0;
 	m_pServer = 0;
+	m_successful_connect = 0;
 
 	m_pEngine = 0;
 	m_pCommandQueue = 0;
@@ -254,6 +255,8 @@ void CState::SetServer(const CServer* server)
 		SetRemoteDir(0);
 		delete m_pServer;
 	}
+
+	m_successful_connect = false;
 
 	CStatusBar* const pStatusBar = m_pMainFrame->GetStatusBar();
 	if (pStatusBar)

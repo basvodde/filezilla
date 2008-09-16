@@ -86,6 +86,9 @@ public:
 
 	void NotifyHandlers(enum t_statechange_notifications notification, const wxString& data = _T(""));
 
+	bool SuccessfulConnect() const { return m_successful_connect; }
+	void SetSuccessfulConnect() { m_successful_connect = true; }
+
 protected:
 	void SetServer(const CServer* server);
 
@@ -93,6 +96,7 @@ protected:
 	const CDirectoryListing *m_pDirectoryListing;
 
 	CServer* m_pServer;
+	bool m_successful_connect;
 
 	CMainFrame* m_pMainFrame;
 
