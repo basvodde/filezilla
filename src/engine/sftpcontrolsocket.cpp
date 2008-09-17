@@ -620,6 +620,9 @@ void CSftpControlSocket::OnSftpEvent(wxCommandEvent& event)
 						else
 							LogMessage(::Error, _("Server sent an additional login prompt. You need to use the interactive login type."));
 						DoClose(FZ_REPLY_CRITICALERROR | FZ_REPLY_PASSWORDFAILED);
+
+						for (;iter != messages.end(); iter++)
+							delete *iter;
 						return;
 					}
 
