@@ -24,6 +24,7 @@ struct sftp_packet {
 };
 
 static const char *fxp_error_message;
+static char fxp_error_message_long[200];
 static int fxp_errtype;
 
 static void fxp_internal_error(char *msg);
@@ -277,8 +278,10 @@ struct sftp_packet *sftp_recv(void)
     char x[4];
     unsigned char uc;
 
-    if (!sftp_recvdata(x, 4))
+    if (!sftp_recvdata(x, 4)) {
+	fxp_internal_error("sftp_recvdata failed, could not reveive packet length");
 	return NULL;
+    }
 
     pkt = snew(struct sftp_packet);
     pkt->savedpos = 0;
@@ -286,11 +289,13 @@ struct sftp_packet *sftp_recv(void)
     pkt->data = snewn(pkt->length, char);
 
     if (!sftp_recvdata(pkt->data, pkt->length)) {
+	fxp_internal_error("sftp_recvdata failed, could not receive packet contents");
 	sftp_pkt_free(pkt);
 	return NULL;
     }
 
     if (!sftp_pkt_getbyte(pkt, &uc)) {
+	fxp_internal_error("sftp_pkt_getbyte failed");
 	sftp_pkt_free(pkt);
 	return NULL;
     } else {
@@ -404,18 +409,22 @@ struct sftp_request *sftp_find_request(struct sftp_packet *pktin)
     struct sftp_request *req;
 
     if (!pktin) {
-	fxp_internal_error("did not receive a valid SFTP packet\n");
+	char* tmp = dupcat("did not receive a valid SFTP packet: ", fxp_error_message, NULL);
+	strncpy(fxp_error_message_long, tmp, 200);
+	fxp_error_message_long[199] = 0;
+	sfree(tmp);
+	fxp_internal_error(fxp_error_message_long);
 	return NULL;
     }
 
     if (!sftp_pkt_getuint32(pktin, &id)) {
-	fxp_internal_error("did not receive a valid SFTP packet\n");
+	fxp_internal_error("did not receive a valid SFTP packet");
 	return NULL;
     }
     req = find234(sftp_requests, &id, sftp_reqfind);
 
     if (!req || !req->registered) {
-	fxp_internal_error("request ID mismatch\n");
+	fxp_internal_error("request ID mismatch");
         sftp_pkt_free(pktin);
 	return NULL;
     }
@@ -576,12 +585,12 @@ char *fxp_realpath_recv(struct sftp_packet *pktin, struct sftp_request *req)
 	int len;
 
 	if (!sftp_pkt_getuint32(pktin, &count) || count != 1) {
-	    fxp_internal_error("REALPATH did not return name count of 1\n");
+	    fxp_internal_error("REALPATH did not return name count of 1");
             sftp_pkt_free(pktin);
 	    return NULL;
 	}
 	if (!sftp_pkt_getstring(pktin, &path, &len)) {
-	    fxp_internal_error("REALPATH returned malformed FXP_NAME\n");
+	    fxp_internal_error("REALPATH returned malformed FXP_NAME");
             sftp_pkt_free(pktin);
 	    return NULL;
 	}
@@ -624,7 +633,7 @@ struct fxp_handle *fxp_open_recv(struct sftp_packet *pktin,
 	int len;
 
 	if (!sftp_pkt_getstring(pktin, &hstring, &len)) {
-	    fxp_internal_error("OPEN returned malformed FXP_HANDLE\n");
+	    fxp_internal_error("OPEN returned malformed FXP_HANDLE");
             sftp_pkt_free(pktin);
 	    return NULL;
 	}
@@ -666,7 +675,7 @@ struct fxp_handle *fxp_opendir_recv(struct sftp_packet *pktin,
 	int len;
 
 	if (!sftp_pkt_getstring(pktin, &hstring, &len)) {
-	    fxp_internal_error("OPENDIR returned malformed FXP_HANDLE\n");
+	    fxp_internal_error("OPENDIR returned malformed FXP_HANDLE");
             sftp_pkt_free(pktin);
 	    return NULL;
 	}
