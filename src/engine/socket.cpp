@@ -454,10 +454,6 @@ protected:
 		}
 
 		int fd = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
-		CSocket::DoSetFlags(fd, m_pSocket->m_flags, m_pSocket->m_flags);
-
-		CSocket::DoSetBufferSizes(fd, m_pSocket->m_buffer_sizes[0], m_pSocket->m_buffer_sizes[1]);
-
 		if (fd == -1)
 		{
 #ifdef __WXMSW__
@@ -474,6 +470,8 @@ protected:
 			return 0;
 		}
 
+		CSocket::DoSetFlags(fd, m_pSocket->m_flags, m_pSocket->m_flags);
+		CSocket::DoSetBufferSizes(fd, m_pSocket->m_buffer_sizes[0], m_pSocket->m_buffer_sizes[1]);
 		CSocket::SetNonblocking(fd);
 
 		int res = connect(fd, addr->ai_addr, addr->ai_addrlen);
@@ -625,7 +623,14 @@ protected:
 				return true;
 
 			if (m_pSocket)
+			{
+				if (!res && m_pSocket->m_pEvtHandler)
+				{
+					CSocketEvent *evt = new CSocketEvent(m_pSocket->GetEventHandler(), m_pSocket, CSocketEvent::connection, ECONNABORTED);
+					CSocketEventDispatcher::Get().SendEvent(evt);
+				}
 				m_pSocket->m_state = CSocket::closed;
+			}
 			return false;
 		}
 #endif
@@ -676,6 +681,12 @@ protected:
 			}
 		}
 		freeaddrinfo(addressList);
+
+		if (m_pSocket->m_pEvtHandler)
+		{
+			CSocketEvent *evt = new CSocketEvent(m_pSocket->GetEventHandler(), m_pSocket, CSocketEvent::connection, ECONNABORTED);
+			CSocketEventDispatcher::Get().SendEvent(evt);
+		}
 		m_pSocket->m_state = CSocket::closed;
 
 		return false;
