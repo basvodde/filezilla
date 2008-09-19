@@ -2522,7 +2522,7 @@ void CQueueView::AdvanceQueue()
 				continue;
 
 			m_engineData[i]->m_idleDisconnectTimer = new wxTimer(this);
-			m_engineData[i]->m_idleDisconnectTimer->Start(30000, true);
+			m_engineData[i]->m_idleDisconnectTimer->Start(60000, true);
 		}
 	}
 
