@@ -21,6 +21,8 @@ public:
 		link_dir
 	};
 
+	static const wxChar path_separator;
+
 	// If called with a symlink, GetFileType stats the link, not 
 	// the target.
 	static enum local_fileType GetFileType(const wxString& path);

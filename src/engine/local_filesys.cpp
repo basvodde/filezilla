@@ -1,6 +1,12 @@
 #include "FileZilla.h"
 #include "local_filesys.h"
 
+#ifdef __WXMSW__
+const wxChar CLocalFileSystem::path_separator = '\\';
+#else
+const wxChar CLocalFileSystem::path_separator = '/';
+#endif
+
 CLocalFileSystem::CLocalFileSystem()
 {
 	m_dirs_only = false;

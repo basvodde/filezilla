@@ -4,6 +4,7 @@
 #include "chmoddialog.h"
 #include "filter.h"
 #include "queue.h"
+#include "local_filesys.h"
 
 CRecursiveOperation::CNewDir::CNewDir()
 {
@@ -74,7 +75,10 @@ void CRecursiveOperation::AddDirectoryToVisit(const CServerPath& path, const wxS
 {
 	CNewDir dirToVisit;
 	dirToVisit.doVisit = true;
+
 	dirToVisit.localDir = localDir;
+	if (localDir != _T("") && localDir.Last() != CLocalFileSystem::path_separator)
+		dirToVisit.localDir += CLocalFileSystem::path_separator;
 	dirToVisit.parent = path;
 	dirToVisit.subdir = subdir;
 	m_dirsToVisit.push_back(dirToVisit);
@@ -164,30 +168,26 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 	}
 
 	// Check if we have already visited the directory
-	for (std::list<CServerPath>::const_iterator iter = m_visitedDirs.begin(); iter != m_visitedDirs.end(); iter++)
+	if (!m_visitedDirs.insert(pDirectoryListing->path).second)
 	{
-		if (*iter == pDirectoryListing->path)
-		{
-			NextOperation();
-			return;
-		}
+		NextOperation();
+		return;
 	}
-	m_visitedDirs.push_back(pDirectoryListing->path);
 
 	const CServer* pServer = m_pState->GetServer();
 	wxASSERT(pServer);
 
 	if (!pDirectoryListing->GetCount())
 	{
-		wxFileName fn(dir.localDir, _T(""));
 		if (m_operationMode == recursive_download)
 		{
+			wxFileName fn(dir.localDir, _T(""));
 			wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
 			m_pState->RefreshLocalFile(fn.GetFullPath());
 		}
 		else if (m_operationMode == recursive_addtoqueue)
 		{
-			m_pQueue->QueueFile(true, true, fn.GetFullPath(), _T(""), CServerPath(), *pServer, -1);
+			m_pQueue->QueueFile(true, true, dir.localDir, _T(""), CServerPath(), *pServer, -1);
 			m_pQueue->QueueFile_Finish(false);
 		}
 	}
@@ -220,11 +220,9 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 			if (dir.recurse)
 			{
 				CNewDir dirToVisit;
-				wxFileName fn(dir.localDir, _T(""));
-				fn.AppendDir(entry.name);
 				dirToVisit.parent = pDirectoryListing->path;
 				dirToVisit.subdir = entry.name;
-				dirToVisit.localDir = fn.GetFullPath();
+				dirToVisit.localDir = dir.localDir + entry.name + CLocalFileSystem::path_separator;
 				dirToVisit.doVisit = true;
 				m_dirsToVisit.push_front(dirToVisit);
 			}
@@ -236,8 +234,9 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 			case recursive_addtoqueue:
 			case recursive_download:
 				{
-					wxFileName fn(dir.localDir, entry.name);
-					m_pQueue->QueueFile(m_operationMode == recursive_addtoqueue, true, fn.GetFullPath(), entry.name, pDirectoryListing->path, *pServer, entry.size);
+					m_pQueue->QueueFile(m_operationMode == recursive_addtoqueue, true,
+						dir.localDir + entry.name,
+						entry.name, pDirectoryListing->path, *pServer, entry.size);
 					added = true;
 				}
 				break;

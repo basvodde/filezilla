@@ -2,6 +2,7 @@
 #define __RECURSIVE_OPERATION_H__
 
 #include "state.h"
+#include <set>
 
 class CChmodDialog;
 class CQueueView;
@@ -66,7 +67,7 @@ protected:
 
 	CServerPath m_startDir;
 	CServerPath m_finalDir;
-	std::list<CServerPath> m_visitedDirs;
+	std::set<CServerPath> m_visitedDirs;
 	std::list<CNewDir> m_dirsToVisit;
 
 	bool m_allowParent;
