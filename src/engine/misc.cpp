@@ -175,7 +175,6 @@ bool IsRoutableAddress(const wxString& address, int family)
 	if (family == AF_INET6)
 	{
 		wxString long_address = GetIPV6LongForm(address);
-		printf("\n--- %s ---\n", (const char*)long_address.mb_str());
 		if (long_address.empty())
 			return false;
 		if (long_address[0] == '0')
