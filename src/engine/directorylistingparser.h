@@ -59,7 +59,7 @@ protected:
 
 	bool ParseLine(CLine *pLine, const enum ServerType serverType, bool concatenated);
 
-	bool ParseAsUnix(CLine *pLine, CDirentry &entry);
+	bool ParseAsUnix(CLine *pLine, CDirentry &entry, bool expect_date);
 	bool ParseAsDos(CLine *pLine, CDirentry &entry);
 	bool ParseAsEplf(CLine *pLine, CDirentry &entry);
 	bool ParseAsVms(CLine *pLine, CDirentry &entry);

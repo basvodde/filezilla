@@ -1387,9 +1387,9 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				wxDateTime(),
 				false
-		},
-		MVS
-	});
+			},
+			MVS
+		});
 
 	// Migrated MVS file
 	m_entries.push_back((t_entry){
@@ -1406,9 +1406,9 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				wxDateTime(),
 				false
-		},
-		MVS
-	});
+			},
+			MVS
+		});
 
 	// z/VM, another IBM abomination. Description by Alexandre Charbey
 	// Requires type set to ZVM or it cannot be parsed.
@@ -1442,9 +1442,27 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				wxDateTime(4, wxDateTime::Oct, 2005, 15, 28, 42),
 				false
-		},
-		ZVM
-	});
+			},
+			ZVM
+		});
+
+	m_entries.push_back((t_entry){
+			"drwxr-xr-x 3 slopri devlab 512 71-unix-dateless",
+			{
+				_T("71-unix-dateless"),
+				512,
+				_T("drwxr-xr-x"),
+				_T("slopri devlab"),
+				true,
+				false,
+				_T(""),
+				false,
+				false,
+				wxDateTime(),
+				false
+			},
+			DEFAULT
+		});
 
 /*
 	wxString name;

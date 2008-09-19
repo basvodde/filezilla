@@ -723,7 +723,7 @@ bool CDirectoryListingParser::ParseLine(CLine *pLine, const enum ServerType serv
 			goto done;
 	}
 
-	res = ParseAsUnix(pLine, entry);
+	res = ParseAsUnix(pLine, entry, true); // Common 'ls -l'
 	if (res)
 		goto done;
 	res = ParseAsDos(pLine, entry);
@@ -767,6 +767,9 @@ bool CDirectoryListingParser::ParseLine(CLine *pLine, const enum ServerType serv
 		if (res)
 			goto done;
 	}
+	res = ParseAsUnix(pLine, entry, false); // 'ls -l' but without the date/time
+	if (res)
+		goto done;
 
 	// Some servers just send a list of filenames. If a line could not be parsed,
 	// check if it's a filename. If that's the case, store it for later, else clear
@@ -826,7 +829,7 @@ done:
 	return true;
 }
 
-bool CDirectoryListingParser::ParseAsUnix(CLine *pLine, CDirentry &entry)
+bool CDirectoryListingParser::ParseAsUnix(CLine *pLine, CDirentry &entry, bool expect_date)
 {
 	int index = 0;
 	CToken token;
@@ -912,8 +915,16 @@ bool CDirectoryListingParser::ParseAsUnix(CLine *pLine, CDirentry &entry)
 			entry.ownerGroup += token.GetString(1);
 		}
 
-		if (!ParseUnixDateTime(pLine, index, entry))
-			continue;
+		if (expect_date)
+		{
+			if (!ParseUnixDateTime(pLine, index, entry))
+				continue;
+		}
+		else
+		{
+			entry.hasDate = false;
+			entry.hasTime = false;
+		}
 
 		// Get the filename
 		if (!pLine->GetToken(++index, token, 1))
