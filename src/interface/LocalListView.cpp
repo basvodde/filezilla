@@ -489,6 +489,10 @@ wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix = false)
 		}
 	}
 
+	const int numplaces = pOptions->GetOptionVal(OPTION_SIZE_DECIMALPLACES);
+
+	wxString places;
+
 	int divider;
 	if (format == 3)
 		divider = 1000;
@@ -502,18 +506,95 @@ wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix = false)
 	int p = 0;
 
 	wxLongLong r = size;
+	int remainder = 0;
+	bool clipped = false;
 	while (r > divider && p < 6)
 	{
 		const wxLongLong rr = r / divider;
-		if (rr * divider != r)
-			r2 = true;
+		if (remainder != 0)
+			clipped = true;
+		remainder = (r - rr * divider).GetLo();
 		r = rr;
 		p++;
 	}
-	if (r2)
-		r++;
+	if (!numplaces)
+	{
+		if (remainder != 0)
+			r++;
+	}
+	else
+	{
+		if (format != 3)
+		{
+			// Binary, need to convert 1024 into range from 1-1000
+			if (clipped)
+			{
+				remainder++;
+				clipped = false;
+			}
+			remainder = ceil((double)remainder * 1000 / 1024);
+		}
+
+		int max;
+		switch (numplaces)
+		{
+		case 1:
+			max = 9;
+			divider = 100;
+			break;
+		case 2:
+			max = 99;
+			divider = 10;
+			break;
+		case 3:
+			max = 999;
+			break;
+		}
+
+		if (numplaces != 3)
+		{
+			if (remainder % divider)
+				clipped = true;
+			remainder /= divider;
+		}
+
+		if (clipped)
+			remainder++;
+		if (remainder > max)
+		{
+			r++;
+			remainder = 0;
+		}
+
+		places.Printf(_T("%d"), remainder);
+		const int len = places.Len();
+		for (int i = len; i < numplaces; i++)
+			places = _T("0") + places;
+	}
 
 	wxString result = r.ToString();
+	if (places != _T(""))
+	{
+#ifdef __WXMSW__
+		wxChar sep[5];
+		int count = ::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SDECIMAL , sep, 5);
+		if (!count)
+		{
+			sep[0] = '.';
+			sep[1] = 0;
+		}
+#else
+		wxChar sep;
+		char* chr = nl_langinfo(RADIXCHAR);
+		if (!chr || !*chr)
+			sep = 0;
+		else
+			sep = chr[0];
+#endif
+
+		result += sep;
+		result += places;
+	}
 	result += ' ';
 	if (!p)
 		return result + _T("B");
