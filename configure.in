@@ -260,6 +260,9 @@ if ! test "$localesonly" = "yes"; then
   use_precomp=""
   AC_ARG_ENABLE(precomp, AC_HELP_STRING([--enable-precomp], [Use precompiled headers]), \
                 use_precomp="$enableval")
+  if test "x$enable_dependency_tracking" = "xno"; then
+    use_precomp="no"
+  fi
   if test -z "$use_precomp"; then
     if test "X$GCC" = Xyes; then
       if gcc_version=`$CC -dumpversion` > /dev/null 2>&1; then
