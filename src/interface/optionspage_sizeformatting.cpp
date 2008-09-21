@@ -4,9 +4,6 @@
 #include "settingsdialog.h"
 #include "optionspage.h"
 #include "optionspage_sizeformatting.h"
-#ifndef __WXMSW__
-#include <langinfo.h>
-#endif
 
 BEGIN_EVENT_TABLE(COptionsPageSizeFormatting, COptionsPage)
 EVT_RADIOBUTTON(wxID_ANY, COptionsPageSizeFormatting::OnRadio)
@@ -95,163 +92,17 @@ void COptionsPageSizeFormatting::UpdateControls()
 	XRCCTRL(*this, "ID_SIZEFORMAT_DECIMALPLACES", wxSpinCtrl)->Enable(format != 0);
 }
 
+// defined in LocalListView.cpp
+// TODO: Find a better place for this
+extern wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix, int format, bool thousands_separator, int num_decimal_places);
+
 wxString COptionsPageSizeFormatting::FormatSize(const wxLongLong& size)
 {
 	const int format = GetFormat();
+	const bool thousands_separator = GetCheck(XRCID("ID_SIZEFORMAT_SEPARATE_THOUTHANDS"));
+	const int num_decimal_places = XRCCTRL(*this, "ID_SIZEFORMAT_DECIMALPLACES", wxSpinCtrl)->GetValue();
 
-	if (!format)
-	{
-		if (!GetCheck(XRCID("ID_SIZEFORMAT_SEPARATE_THOUTHANDS")))
-			return size.ToString();
-
-#ifdef __WXMSW__
-		wxChar sep[5];
-		int count = ::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_STHOUSAND, sep, 5);
-		if (!count)
-			return size.ToString();
-#else
-		char* chr = nl_langinfo(THOUSEP);
-		if (!chr || !*chr)
-			return size.ToString();
-		wxChar sep = chr[0];
-#endif
-
-		wxString tmp = size.ToString();
-		const int len = tmp.Len();
-		if (len <= 3)
-			return tmp;
-
-		wxString result;
-		int i = (len - 1) % 3 + 1;
-		result = tmp.Left(i);
-		while (i < len)
-		{
-			result += sep + tmp.Mid(i, 3);
-			i += 3;
-		}
-		return result;
-	}
-
-	const int numplaces = XRCCTRL(*this, "ID_SIZEFORMAT_DECIMALPLACES", wxSpinCtrl)->GetValue();
-
-	wxString places;
-
-	int divider;
-	if (format == 3)
-		divider = 1000;
-	else
-		divider = 1024;
-
-	// We always round up. Set to true if there's a reminder
-	bool r2 = false;
-
-	// Exponent (2^(10p) or 10^(3p) depending on option
-	int p = 0;
-
-	wxLongLong r = size;
-	int remainder = 0;
-	bool clipped = false;
-	while (r > divider && p < 6)
-	{
-		const wxLongLong rr = r / divider;
-		if (remainder != 0)
-			clipped = true;
-		remainder = (r - rr * divider).GetLo();
-		r = rr;
-		p++;
-	}
-	if (!numplaces)
-	{
-		if (remainder != 0)
-			r++;
-	}
-	else
-	{
-		if (format != 3)
-		{
-			// Binary, need to convert 1024 into range from 1-1000
-			if (clipped)
-			{
-				remainder++;
-				clipped = false;
-			}
-			remainder = ceil((double)remainder * 1000 / 1024);
-		}
-
-		int max;
-		switch (numplaces)
-		{
-		case 1:
-			max = 9;
-			divider = 100;
-			break;
-		case 2:
-			max = 99;
-			divider = 10;
-			break;
-		case 3:
-			max = 999;
-			break;
-		}
-
-		if (numplaces != 3)
-		{
-			if (remainder % divider)
-				clipped = true;
-			remainder /= divider;
-		}
-
-		if (clipped)
-			remainder++;
-		if (remainder > max)
-		{
-			r++;
-			remainder = 0;
-		}
-
-		places.Printf(_T("%d"), remainder);
-		const int len = places.Len();
-		for (int i = len; i < numplaces; i++)
-			places = _T("0") + places;
-	}
-
-	wxString result = r.ToString();
-	if (places != _T(""))
-	{
-#ifdef __WXMSW__
-		wxChar sep[5];
-		int count = ::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SDECIMAL , sep, 5);
-		if (!count)
-		{
-			sep[0] = '.';
-			sep[1] = 0;
-		}
-#else
-		wxChar sep;
-		char* chr = nl_langinfo(RADIXCHAR);
-		if (!chr || !*chr)
-			sep = 0;
-		else
-			sep = chr[0];
-#endif
-
-		result += sep;
-		result += places;
-	}
-	result += ' ';
-	if (!p)
-		return result + _T("B");
-
-	// We stop at Exa. If someone has files bigger than that, he can afford to
-	// make a donation to have this changed ;)
-	wxChar prefix[] = { ' ', 'K', 'M', 'G', 'T', 'P', 'E' };
-
-	result += prefix[p];
-	if (format == 1)
-		result += 'i';
-	result += 'B';
-
-	return result;
+	return ::FormatSize(size, false, format, thousands_separator, num_decimal_places);
 }
 
 void COptionsPageSizeFormatting::UpdateExamples()

@@ -437,14 +437,11 @@ regular_dir:
 	return true;
 }
 
-wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix = false)
+wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix, int format, bool thousands_separator, int num_decimal_places)
 {
-	COptions* const pOptions = COptions::Get();
-	const int format = pOptions->GetOptionVal(OPTION_SIZE_FORMAT);
-
 	if (!format)
 	{
-		if (!pOptions->GetOptionVal(OPTION_SIZE_USETHOUSANDSEP))
+		if (!thousands_separator)
 			return size.ToString();
 
 #ifdef __WXMSW__
@@ -489,8 +486,6 @@ wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix = false)
 		}
 	}
 
-	const int numplaces = pOptions->GetOptionVal(OPTION_SIZE_DECIMALPLACES);
-
 	wxString places;
 
 	int divider;
@@ -517,7 +512,7 @@ wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix = false)
 		r = rr;
 		p++;
 	}
-	if (!numplaces)
+	if (!num_decimal_places)
 	{
 		if (remainder != 0)
 			r++;
@@ -536,7 +531,7 @@ wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix = false)
 		}
 
 		int max;
-		switch (numplaces)
+		switch (num_decimal_places)
 		{
 		case 1:
 			max = 9;
@@ -551,7 +546,7 @@ wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix = false)
 			break;
 		}
 
-		if (numplaces != 3)
+		if (num_decimal_places != 3)
 		{
 			if (remainder % divider)
 				clipped = true;
@@ -568,7 +563,7 @@ wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix = false)
 
 		places.Printf(_T("%d"), remainder);
 		const int len = places.Len();
-		for (int i = len; i < numplaces; i++)
+		for (int i = len; i < num_decimal_places; i++)
 			places = _T("0") + places;
 	}
 
@@ -609,6 +604,16 @@ wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix = false)
 	result += 'B';
 
 	return result;
+}
+
+wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix = false)
+{
+	COptions* const pOptions = COptions::Get();
+	const int format = pOptions->GetOptionVal(OPTION_SIZE_FORMAT);
+	const bool thousands_separator = pOptions->GetOptionVal(OPTION_SIZE_USETHOUSANDSEP) != 0;
+	const int num_decimal_places = pOptions->GetOptionVal(OPTION_SIZE_DECIMALPLACES);
+
+	return FormatSize(size, add_bytes_suffix, format, thousands_separator, num_decimal_places);
 }
 
 // See comment to OnGetItemText
