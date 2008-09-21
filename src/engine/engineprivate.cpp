@@ -108,8 +108,10 @@ void CFileZillaEnginePrivate::OnEngineEvent(wxFzEngineEvent &event)
 	case engineCancel:
 		if (!IsBusy())
 			break;
-
-		m_pControlSocket->Cancel();
+		if (m_pControlSocket)
+			m_pControlSocket->Cancel();
+		else if (m_pCurrentCommand)
+			ResetOperation(FZ_REPLY_CANCELED);
 		break;
 	case engineTransferEnd:
 		if (m_pControlSocket)
