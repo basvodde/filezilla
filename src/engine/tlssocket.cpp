@@ -55,6 +55,7 @@ bool CTlsSocket::Init()
 	if (res)
 	{
 		LogError(res);
+		Uninit();
 		return false;
 	}
 	m_initialized = true;
