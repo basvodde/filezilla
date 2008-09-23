@@ -233,7 +233,7 @@ printf "4. Checking generate files... "
 if test ! -f configure || test ! -f config/ltmain.sh || test ! -f Makefile.in; then
   printf "\033[1;31mfailed\n"
   printf "\nError: Unable to generate all required files!\033[0m\n\n"
-  echo "Please make sure you have you have autoconf 2.5, automake 1.7, libtool 1.5,"
+  echo "Please make sure you have autoconf 2.5, automake 1.7, libtool 1.5,"
   echo "autoheader and aclocal installed."
   printf "If you don't have access to these tools, please get a recent source tarball from \033[1mhttp://filezilla-project.org/nightly.php\033[0m instead.\n"
   echo "script which will download the generated files, just remember to call it from"
