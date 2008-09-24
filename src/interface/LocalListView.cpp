@@ -2175,7 +2175,7 @@ void CLocalListView::OnMenuEdit(wxCommandEvent& event)
 		return;
 	}
 
-	CEditHandler::fileState state = pEditHandler->GetFileState(CEditHandler::local, fn.GetFullPath());
+	CEditHandler::fileState state = pEditHandler->GetFileState(fn.GetFullPath());
 	switch (state)
 	{
 	case CEditHandler::upload:
@@ -2190,7 +2190,7 @@ void CLocalListView::OnMenuEdit(wxCommandEvent& event)
 				wxBell();
 				return;
 			}
-			pEditHandler->StartEditing(CEditHandler::local, fn.GetFullPath());
+			pEditHandler->StartEditing(fn.GetFullPath());
 			return;
 		}
 	default:

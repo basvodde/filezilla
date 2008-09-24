@@ -208,11 +208,19 @@ void CEditHandler::Release()
 	delete this;
 }
 
-enum CEditHandler::fileState CEditHandler::GetFileState(enum CEditHandler::fileType type, const wxString& fileName) const
+enum CEditHandler::fileState CEditHandler::GetFileState(const wxString& fileName) const
 {
-	wxASSERT(type != none);
-	std::list<t_fileData>::const_iterator iter = GetFile(type, fileName);
-	if (iter == m_fileDataList[type].end())
+	std::list<t_fileData>::const_iterator iter = GetFile(fileName);
+	if (iter == m_fileDataList[local].end())
+		return unknown;
+
+	return iter->state;
+}
+
+enum CEditHandler::fileState CEditHandler::GetFileState(const wxString& fileName, const CServerPath& remotePath, const CServer& server) const
+{
+	std::list<t_fileData>::const_iterator iter = GetFile(fileName, remotePath, server);
+	if (iter == m_fileDataList[remote].end())
 		return unknown;
 
 	return iter->state;
@@ -261,16 +269,31 @@ int CEditHandler::GetFileCount(enum CEditHandler::fileType type, enum CEditHandl
 bool CEditHandler::AddFile(enum CEditHandler::fileType type, const wxString& fileName, const CServerPath& remotePath, const CServer& server)
 {
 	wxASSERT(type != none);
-	wxASSERT(GetFileState(type, fileName) == unknown);
-	if (GetFileState(type, fileName) != unknown)
+
+	enum fileState state;
+	if (type == local)
+		state = GetFileState(fileName);
+	else
+		state = GetFileState(fileName, remotePath, server);
+	if (state != unknown)
+	{
+		wxFAIL_MSG(_T("File state not unknown"));
 		return false;
+	}
 
 	t_fileData data;
-	data.name = fileName;
 	if (type == remote)
+	{
 		data.state = download;
+		data.name = fileName;
+		data.file = m_localDir + fileName;
+	}
 	else
+	{
+		data.file = fileName;
+		data.name = wxFileName(fileName).GetFullName();
 		data.state = edit;
+	}
 	data.remotePath = remotePath;
 	data.server = server;
 
@@ -280,37 +303,41 @@ bool CEditHandler::AddFile(enum CEditHandler::fileType type, const wxString& fil
 	return true;
 }
 
-bool CEditHandler::Remove(enum CEditHandler::fileType type, const wxString& fileName)
+bool CEditHandler::Remove(const wxString& fileName)
 {
-	wxASSERT(type != none);
-
-	std::list<t_fileData>::iterator iter = GetFile(type, fileName);
-	if (iter == m_fileDataList[type].end())
+	std::list<t_fileData>::iterator iter = GetFile(fileName);
+	if (iter == m_fileDataList[local].end())
 		return true;
 
-	if (type == remote)
-	{
-		wxASSERT(iter->state != download && iter->state != upload && iter->state != upload_and_remove);
-		if (iter->state == download || iter->state == upload || iter->state == upload_and_remove)
-			return false;
+	wxASSERT(iter->state != upload && iter->state != upload_and_remove);
+	if (iter->state == upload || iter->state == upload_and_remove)
+		return false;
 
-		if (wxFileName::FileExists(m_localDir + iter->name))
+	m_fileDataList[local].erase(iter);
+
+	return true;
+}
+
+bool CEditHandler::Remove(const wxString& fileName, const CServerPath& remotePath, const CServer& server)
+{
+	std::list<t_fileData>::iterator iter = GetFile(fileName, remotePath, server);
+	if (iter == m_fileDataList[remote].end())
+		return true;
+
+	wxASSERT(iter->state != download && iter->state != upload && iter->state != upload_and_remove);
+	if (iter->state == download || iter->state == upload || iter->state == upload_and_remove)
+		return false;
+
+	if (wxFileName::FileExists(iter->file))
+	{
+		if (!wxRemoveFile(iter->file))
 		{
-			if (!wxRemoveFile(m_localDir + iter->name))
-			{
-				iter->state = removing;
-				return false;
-			}
+			iter->state = removing;
+			return false;
 		}
 	}
-	else
-	{
-		wxASSERT(iter->state != upload && iter->state != upload_and_remove);
-		if (iter->state == upload || iter->state == upload_and_remove)
-			return false;
-	}
 
-	m_fileDataList[type].erase(iter);
+	m_fileDataList[remote].erase(iter);
 
 	return true;
 }
@@ -327,9 +354,9 @@ bool CEditHandler::RemoveAll(bool force)
 			continue;
 		}
 
-		if (wxFileName::FileExists(m_localDir + iter->name))
+		if (wxFileName::FileExists(iter->file))
 		{
-			if (!wxRemoveFile(m_localDir + iter->name))
+			if (!wxRemoveFile(iter->file))
 			{
 				iter->state = removing;
 				keep.push_back(*iter);
@@ -379,9 +406,9 @@ bool CEditHandler::RemoveAll(enum fileState state, const CServer* pServer /*=0*/
 			continue;
 		}
 
-		if (wxFileName::FileExists(m_localDir + iter->name))
+		if (wxFileName::FileExists(iter->file))
 		{
-			if (!wxRemoveFile(m_localDir + iter->name))
+			if (!wxRemoveFile(iter->file))
 			{
 				iter->state = removing;
 				keep.push_back(*iter);
@@ -394,118 +421,163 @@ bool CEditHandler::RemoveAll(enum fileState state, const CServer* pServer /*=0*/
 	return true;
 }
 
-std::list<CEditHandler::t_fileData>::iterator CEditHandler::GetFile(enum CEditHandler::fileType type, const wxString& fileName)
+std::list<CEditHandler::t_fileData>::iterator CEditHandler::GetFile(const wxString& fileName)
 {
-	wxASSERT(type != none);
-
 	std::list<t_fileData>::iterator iter;
-	for (iter = m_fileDataList[type].begin(); iter != m_fileDataList[type].end(); iter++)
+	for (iter = m_fileDataList[local].begin(); iter != m_fileDataList[local].end(); iter++)
 	{
-		if (iter->name == fileName)
+		if (iter->file == fileName)
 			break;
 	}
 
 	return iter;
 }
 
-std::list<CEditHandler::t_fileData>::const_iterator CEditHandler::GetFile(enum CEditHandler::fileType type, const wxString& fileName) const
+std::list<CEditHandler::t_fileData>::const_iterator CEditHandler::GetFile(const wxString& fileName) const
 {
-	wxASSERT(type != none);
-
 	std::list<t_fileData>::const_iterator iter;
-	for (iter = m_fileDataList[type].begin(); iter != m_fileDataList[type].end(); iter++)
+	for (iter = m_fileDataList[local].begin(); iter != m_fileDataList[local].end(); iter++)
 	{
-		if (iter->name == fileName)
+		if (iter->file == fileName)
 			break;
 	}
 
 	return iter;
 }
 
-void CEditHandler::FinishTransfer(bool successful, enum CEditHandler::fileType type, const wxString& fileName)
+std::list<CEditHandler::t_fileData>::iterator CEditHandler::GetFile(const wxString& fileName, const CServerPath& remotePath, const CServer& server)
 {
-	wxASSERT(type != none);
+	std::list<t_fileData>::iterator iter;
+	for (iter = m_fileDataList[remote].begin(); iter != m_fileDataList[remote].end(); iter++)
+	{
+		if (iter->name != fileName)
+			continue;
 
-	std::list<t_fileData>::iterator iter = GetFile(type, fileName);
-	if (iter == m_fileDataList[type].end())
+		if (iter->server != server)
+			continue;
+
+		if (iter->remotePath != remotePath)
+			continue;
+
+		return iter;
+	}
+
+	return iter;
+}
+
+std::list<CEditHandler::t_fileData>::const_iterator CEditHandler::GetFile(const wxString& fileName, const CServerPath& remotePath, const CServer& server) const
+{
+	std::list<t_fileData>::const_iterator iter;
+	for (iter = m_fileDataList[remote].begin(); iter != m_fileDataList[remote].end(); iter++)
+	{
+		if (iter->name != fileName)
+			continue;
+
+		if (iter->server != server)
+			continue;
+
+		if (iter->remotePath != remotePath)
+			continue;
+
+		return iter;
+	}
+
+	return iter;
+}
+
+void CEditHandler::FinishTransfer(bool successful, const wxString& fileName)
+{
+	std::list<t_fileData>::iterator iter = GetFile(fileName);
+	if (iter == m_fileDataList[local].end())
 		return;
 
-	if (type == remote)
-	{
-		wxASSERT(iter->state == download || iter->state == upload || iter->state == upload_and_remove);
+	wxASSERT(iter->state == upload || iter->state == upload_and_remove);
 
-		switch (iter->state)
-		{
-		case upload_and_remove:
-			if (successful)
-			{
-				if (wxFileName::FileExists(m_localDir + fileName) && !wxRemoveFile(m_localDir + fileName))
-					iter->state = removing;
-				else
-					m_fileDataList[type].erase(iter);
-			}
-			else
-			{
-				if (!wxFileName::FileExists(m_localDir + fileName))
-					m_fileDataList[type].erase(iter);
-				else
-					iter->state = upload_and_remove_failed;
-			}
-			break;
-		case upload:
-			if (wxFileName::FileExists(m_localDir + fileName))
-				iter->state = edit;
-			else
-				m_fileDataList[type].erase(iter);
-			break;
-		case download:
-			if (wxFileName::FileExists(m_localDir + fileName))
-			{
-				iter->state = edit;
-				if (StartEditing(remote, *iter))
-					break;
-			}
-			if (wxFileName::FileExists(m_localDir + fileName) && !wxRemoveFile(m_localDir + fileName))
-				iter->state = removing;
-			else
-				m_fileDataList[type].erase(iter);
-			break;
-		default:
-			return;
-		}
-	}
-	else
+	switch (iter->state)
 	{
-		wxASSERT(iter->state == upload || iter->state == upload_and_remove);
-
-		switch (iter->state)
-		{
-		case upload_and_remove:
-			m_fileDataList[type].erase(iter);
-			break;
-		case upload:
-			if (wxFileName::FileExists(fileName))
-				iter->state = edit;
-			else
-				m_fileDataList[type].erase(iter);
-			break;
-		default:
-			return;
-		}
+	case upload_and_remove:
+		m_fileDataList[local].erase(iter);
+		break;
+	case upload:
+		if (wxFileName::FileExists(fileName))
+			iter->state = edit;
+		else
+			m_fileDataList[local].erase(iter);
+		break;
+	default:
+		return;
 	}
 
 	SetTimerState();
 }
 
-bool CEditHandler::StartEditing(enum CEditHandler::fileType type, const wxString& file)
+void CEditHandler::FinishTransfer(bool successful, const wxString& fileName, const CServerPath& remotePath, const CServer& server)
 {
-	wxASSERT(type != none);
+	std::list<t_fileData>::iterator iter = GetFile(fileName, remotePath, server);
+	if (iter == m_fileDataList[remote].end())
+		return;
 
-	std::list<t_fileData>::iterator iter = GetFile(type, file);
-	if (iter == m_fileDataList[type].end())
+	wxASSERT(iter->state == download || iter->state == upload || iter->state == upload_and_remove);
+
+	switch (iter->state)
+	{
+	case upload_and_remove:
+		if (successful)
+		{
+			if (wxFileName::FileExists(iter->file) && !wxRemoveFile(iter->file))
+				iter->state = removing;
+			else
+				m_fileDataList[remote].erase(iter);
+		}
+		else
+		{
+			if (!wxFileName::FileExists(iter->file))
+				m_fileDataList[remote].erase(iter);
+			else
+				iter->state = upload_and_remove_failed;
+		}
+		break;
+	case upload:
+		if (wxFileName::FileExists(iter->file))
+			iter->state = edit;
+		else
+			m_fileDataList[remote].erase(iter);
+		break;
+	case download:
+		if (wxFileName::FileExists(iter->file))
+		{
+			iter->state = edit;
+			if (StartEditing(remote, *iter))
+				break;
+		}
+		if (wxFileName::FileExists(iter->file) && !wxRemoveFile(iter->file))
+			iter->state = removing;
+		else
+			m_fileDataList[remote].erase(iter);
+		break;
+	default:
+		return;
+	}
+
+	SetTimerState();
+}
+
+bool CEditHandler::StartEditing(const wxString& file)
+{
+	std::list<t_fileData>::iterator iter = GetFile(file);
+	if (iter == m_fileDataList[local].end())
 		return false;
 
-	return StartEditing(type, *iter);
+	return StartEditing(local, *iter);
+}
+
+bool CEditHandler::StartEditing(const wxString& file, const CServerPath& remotePath, const CServer& server)
+{
+	std::list<t_fileData>::iterator iter = GetFile(file, remotePath, server);
+	if (iter == m_fileDataList[remote].end())
+		return false;
+
+	return StartEditing(remote, *iter);
 }
 
 bool CEditHandler::StartEditing(enum CEditHandler::fileType type, t_fileData& data)
@@ -513,11 +585,7 @@ bool CEditHandler::StartEditing(enum CEditHandler::fileType type, t_fileData& da
 	wxASSERT(type != none);
 	wxASSERT(data.state == edit);
 
-	wxFileName fn;
-	if (type == remote)
-		fn = wxFileName(m_localDir, data.name);
-	else
-		fn = wxFileName(data.name);
+	wxFileName fn(data.file);
 
 	if (!fn.FileExists())
 		return false;
@@ -560,7 +628,7 @@ checkmodifications_remote:
 		if (iter->state != edit)
 			continue;
 
-		wxFileName fn(m_localDir, iter->name);
+		wxFileName fn(iter->file);
 		if (!fn.FileExists())
 		{
 			m_fileDataList[remote].erase(iter);
@@ -601,7 +669,7 @@ checkmodifications_remote:
 
 		if (res == wxID_YES)
 		{
-			UploadFile(remote, iter->name, remove);
+			UploadFile(remote, iter, remove);
 			goto checkmodifications_remote;
 		}
 		else if (remove)
@@ -629,7 +697,7 @@ checkmodifications_local:
 		if (iter->state != edit)
 			continue;
 
-		wxFileName fn(iter->name);
+		wxFileName fn(iter->file);
 		if (!fn.FileExists())
 		{
 			m_fileDataList[local].erase(iter);
@@ -669,7 +737,7 @@ checkmodifications_local:
 		const bool remove = XRCCTRL(dlg, "ID_DELETE", wxCheckBox)->IsChecked();
 
 		if (res == wxID_YES)
-			UploadFile(local, iter->name, remove);
+			UploadFile(local, iter, remove);
 		else if (remove)
 			m_fileDataList[local].erase(iter);
 		else if (!fn.FileExists())
@@ -687,11 +755,22 @@ checkmodifications_local:
 	insideCheckForModifications = false;
 }
 
-bool CEditHandler::UploadFile(enum CEditHandler::fileType type, const wxString& fileName, bool unedit)
+bool CEditHandler::UploadFile(const wxString& file, const CServerPath& remotePath, const CServer& server, bool unedit)
+{
+	std::list<t_fileData>::iterator iter = GetFile(file, remotePath, server);
+	return UploadFile(remote, iter, unedit);
+}
+
+bool CEditHandler::UploadFile(const wxString& file, bool unedit)
+{
+	std::list<t_fileData>::iterator iter = GetFile(file);
+	return UploadFile(local, iter, unedit);
+}
+
+bool CEditHandler::UploadFile(enum fileType type, std::list<t_fileData>::iterator iter, bool unedit)
 {
 	wxASSERT(type != none);
 
-	std::list<t_fileData>::iterator iter = GetFile(type, fileName);
 	if (iter == m_fileDataList[type].end())
 		return false;
 
@@ -701,11 +780,7 @@ bool CEditHandler::UploadFile(enum CEditHandler::fileType type, const wxString& 
 
 	iter->state = unedit ? upload_and_remove : upload;
 
-	wxFileName fn;
-	if (type == remote)
-		fn = wxFileName(m_localDir, iter->name);
-	else
-		fn = wxFileName(iter->name);
+	wxFileName fn(iter->file);
 
 	if (!fn.FileExists())
 	{
@@ -891,6 +966,11 @@ EVT_BUTTON(XRCID("ID_UPLOADANDUNEDIT"), CEditHandlerStatusDialog::OnUpload)
 EVT_BUTTON(XRCID("ID_EDIT"), CEditHandlerStatusDialog::OnEdit)
 END_EVENT_TABLE()
 
+#define COLUMN_NAME 0
+#define COLUMN_TYPE 1
+#define COLUMN_REMOTEPATH 2
+#define COLUMN_STATUS 3
+
 CEditHandlerStatusDialog::CEditHandlerStatusDialog(wxWindow* parent)
 	: m_pParent(parent)
 {
@@ -917,7 +997,8 @@ int CEditHandlerStatusDialog::ShowModal()
 
 	pListCtrl->InsertColumn(0, _("Filename"));
 	pListCtrl->InsertColumn(1, _("Type"));
-	pListCtrl->InsertColumn(2, _("Status"));
+	pListCtrl->InsertColumn(2, _("Remote path"));
+	pListCtrl->InsertColumn(3, _("Status"));
 
 	{
 		const std::list<CEditHandler::t_fileData>& files = pEditHandler->GetFiles(CEditHandler::remote);
@@ -925,32 +1006,33 @@ int CEditHandlerStatusDialog::ShowModal()
 		for (std::list<CEditHandler::t_fileData>::const_iterator iter = files.begin(); iter != files.end(); iter++, i++)
 		{
 			pListCtrl->InsertItem(i, iter->name);
-			pListCtrl->SetItem(i, 1, _("Remote"));
+			pListCtrl->SetItem(i, COLUMN_TYPE, _("Remote"));
 			switch (iter->state)
 			{
 			case CEditHandler::download:
-				pListCtrl->SetItem(i, 2, _("Downloading"));
+				pListCtrl->SetItem(i, COLUMN_STATUS, _("Downloading"));
 				break;
 			case CEditHandler::upload:
-				pListCtrl->SetItem(i, 2, _("Uploading"));
+				pListCtrl->SetItem(i, COLUMN_STATUS, _("Uploading"));
 				break;
 			case CEditHandler::upload_and_remove:
-				pListCtrl->SetItem(i, 2, _("Uploading and pending removal"));
+				pListCtrl->SetItem(i, COLUMN_STATUS, _("Uploading and pending removal"));
 				break;
 			case CEditHandler::upload_and_remove_failed:
-				pListCtrl->SetItem(i, 2, _("Upload failed"));
+				pListCtrl->SetItem(i, COLUMN_STATUS, _("Upload failed"));
 				break;
 			case CEditHandler::removing:
-				pListCtrl->SetItem(i, 2, _("Pending removal"));
+				pListCtrl->SetItem(i, COLUMN_STATUS, _("Pending removal"));
 				break;
 			case CEditHandler::edit:
-				pListCtrl->SetItem(i, 2, _("Being edited"));
+				pListCtrl->SetItem(i, COLUMN_STATUS, _("Being edited"));
 				break;
 			default:
-				pListCtrl->SetItem(i, 2, _("Unknown"));
+				pListCtrl->SetItem(i, COLUMN_STATUS, _("Unknown"));
 				break;
 			}
-			pListCtrl->SetItemData(i, CEditHandler::remote);
+			CEditHandler::t_fileData* pData = new CEditHandler::t_fileData(*iter);
+			pListCtrl->SetItemPtrData(i, (wxUIntPtr)pData);
 		}
 	}
 
@@ -959,36 +1041,41 @@ int CEditHandlerStatusDialog::ShowModal()
 		unsigned int i = 0;
 		for (std::list<CEditHandler::t_fileData>::const_iterator iter = files.begin(); iter != files.end(); iter++, i++)
 		{
-			pListCtrl->InsertItem(i, iter->name);
-			pListCtrl->SetItem(i, 1, _("Local"));
+			pListCtrl->InsertItem(i, iter->file);
+			pListCtrl->SetItem(i, COLUMN_TYPE, _("Local"));
 			switch (iter->state)
 			{
 			case CEditHandler::upload:
-				pListCtrl->SetItem(i, 2, _("Uploading"));
+				pListCtrl->SetItem(i, COLUMN_STATUS, _("Uploading"));
 				break;
 			case CEditHandler::upload_and_remove:
-				pListCtrl->SetItem(i, 2, _("Uploading and unediting"));
+				pListCtrl->SetItem(i, COLUMN_STATUS, _("Uploading and unediting"));
 				break;
 			case CEditHandler::edit:
-				pListCtrl->SetItem(i, 2, _("Being edited"));
+				pListCtrl->SetItem(i, COLUMN_STATUS, _("Being edited"));
 				break;
 			default:
-				pListCtrl->SetItem(i, 2, _("Unknown"));
+				pListCtrl->SetItem(i, COLUMN_STATUS, _("Unknown"));
 				break;
 			}
-			pListCtrl->SetItemData(i, CEditHandler::local);
+			CEditHandler::t_fileData* pData = new CEditHandler::t_fileData(*iter);
+			pListCtrl->SetItemPtrData(i, (wxUIntPtr)pData);
 		}
 	}
 
-	pListCtrl->SetColumnWidth(0, wxLIST_AUTOSIZE);
-	pListCtrl->SetColumnWidth(1, wxLIST_AUTOSIZE);
-	pListCtrl->SetColumnWidth(2, wxLIST_AUTOSIZE);
-	pListCtrl->SetMinSize(wxSize(pListCtrl->GetColumnWidth(0) + pListCtrl->GetColumnWidth(1) + pListCtrl->GetColumnWidth(2) + 10, pListCtrl->GetMinSize().GetHeight()));
+	for (int i = 0; i < 4; i++)
+		pListCtrl->SetColumnWidth(i, wxLIST_AUTOSIZE);
+	pListCtrl->SetMinSize(wxSize(pListCtrl->GetColumnWidth(0) + pListCtrl->GetColumnWidth(1) + pListCtrl->GetColumnWidth(2) + pListCtrl->GetColumnWidth(3) + 10, pListCtrl->GetMinSize().GetHeight()));
 	GetSizer()->Fit(this);
 
 	SetCtrlState();
 
-	return wxDialogEx::ShowModal();
+	int res = wxDialogEx::ShowModal();
+
+	for (int i = 0; i < pListCtrl->GetItemCount(); i++)
+		delete (CEditHandler::t_fileData*)pListCtrl->GetItemData(i);
+
+	return res;
 }
 
 void CEditHandlerStatusDialog::SetCtrlState()
@@ -1006,12 +1093,11 @@ void CEditHandlerStatusDialog::SetCtrlState()
 	int item = -1;
 	while ((item = pListCtrl->GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
 	{
-		const wxString name = pListCtrl->GetItemText(item);
-		enum CEditHandler::fileType type = (enum CEditHandler::fileType)pListCtrl->GetItemData(item);
-		enum CEditHandler::fileState state = pEditHandler->GetFileState(type, name);
-		if (state == CEditHandler::edit)
+		enum CEditHandler::fileType type;
+		CEditHandler::t_fileData* pData = GetDataFromItem(item, type);
+		if (pData->state == CEditHandler::edit)
 			selectedEdited = true;
-		else if (state == CEditHandler::upload_and_remove_failed)
+		else if (pData->state == CEditHandler::upload_and_remove_failed)
 			selectedUploadRemoveFailed = true;
 		else
 			selectedOther = true;
@@ -1042,10 +1128,9 @@ void CEditHandlerStatusDialog::OnUnedit(wxCommandEvent& event)
 	while ((item = pListCtrl->GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
 	{
 		pListCtrl->SetItemState(item, 0, wxLIST_STATE_SELECTED);
-		const wxString name = pListCtrl->GetItemText(item);
-		enum CEditHandler::fileType type = (enum CEditHandler::fileType)pListCtrl->GetItemData(item);
-		enum CEditHandler::fileState state = pEditHandler->GetFileState(type, name);
-		if (state != CEditHandler::edit && state != CEditHandler::upload_and_remove_failed)
+		enum CEditHandler::fileType type;
+		CEditHandler::t_fileData* pData = GetDataFromItem(item, type);
+		if (pData->state != CEditHandler::edit && pData->state != CEditHandler::upload_and_remove_failed)
 		{
 			wxBell();
 			return;
@@ -1058,13 +1143,25 @@ void CEditHandlerStatusDialog::OnUnedit(wxCommandEvent& event)
 	{
 		const int i = *iter;
 
-		const wxString name = pListCtrl->GetItemText(i);
-		enum CEditHandler::fileType type = (enum CEditHandler::fileType)pListCtrl->GetItemData(i);
+		enum CEditHandler::fileType type;
+		CEditHandler::t_fileData* pData = GetDataFromItem(item, type);
 		
-		if (pEditHandler->Remove(type, name) || type == CEditHandler::local)
+		if (type == CEditHandler::local)
+		{
+			delete pData;
 			pListCtrl->DeleteItem(i);
+			pEditHandler->Remove(pData->file);
+		}
 		else
-			pListCtrl->SetItem(i, 2, _("Pending removal"));
+		{
+			if (pEditHandler->Remove(pData->name, pData->remotePath, pData->server))
+			{
+				delete pData;
+				pListCtrl->DeleteItem(i);
+			}
+			else
+				pListCtrl->SetItem(i, COLUMN_STATUS, _("Pending removal"));
+		}
 	}
 
 	SetCtrlState();
@@ -1083,10 +1180,11 @@ void CEditHandlerStatusDialog::OnUpload(wxCommandEvent& event)
 	while ((item = pListCtrl->GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
 	{
 		pListCtrl->SetItemState(item, 0, wxLIST_STATE_SELECTED);
-		const wxString name = pListCtrl->GetItemText(item);
-		enum CEditHandler::fileType type = (enum CEditHandler::fileType)pListCtrl->GetItemData(item);
-		enum CEditHandler::fileState state = pEditHandler->GetFileState(type, name);
-		if (state != CEditHandler::edit && state != CEditHandler::upload_and_remove_failed)
+
+		enum CEditHandler::fileType type;
+		CEditHandler::t_fileData* pData = GetDataFromItem(item, type);
+
+		if (pData->state != CEditHandler::edit && pData->state != CEditHandler::upload_and_remove_failed)
 		{
 			wxBell();
 			return;
@@ -1098,19 +1196,22 @@ void CEditHandlerStatusDialog::OnUpload(wxCommandEvent& event)
 	{
 		const int i = *iter;
 
-		const wxString name = pListCtrl->GetItemText(i);
-		enum CEditHandler::fileType type = (enum CEditHandler::fileType)pListCtrl->GetItemData(i);
-		enum CEditHandler::fileState state = pEditHandler->GetFileState(type, name);
+		enum CEditHandler::fileType type;
+		CEditHandler::t_fileData* pData = GetDataFromItem(item, type);
 
-		bool unedit = event.GetId() == XRCID("ID_UPLOADANDUNEDIT") || state == CEditHandler::upload_and_remove_failed;
-		pEditHandler->UploadFile(type, name, unedit);
-		
-		if (!unedit)
-			pListCtrl->SetItem(i, 2, _("Uploading"));
-		else if (type == CEditHandler::remote)
-			pListCtrl->SetItem(i, 2, _("Uploading and pending removal"));
+		bool unedit = event.GetId() == XRCID("ID_UPLOADANDUNEDIT") || pData->state == CEditHandler::upload_and_remove_failed;
+
+		if (type == CEditHandler::local)
+			pEditHandler->UploadFile(pData->file, unedit);
 		else
-			pListCtrl->SetItem(i, 2, _("Uploading and unediting"));
+			pEditHandler->UploadFile(pData->name, pData->remotePath, pData->server, unedit);
+
+		if (!unedit)
+			pListCtrl->SetItem(i, COLUMN_STATUS, _("Uploading"));
+		else if (type == CEditHandler::remote)
+			pListCtrl->SetItem(i, COLUMN_STATUS, _("Uploading and pending removal"));
+		else
+			pListCtrl->SetItem(i, COLUMN_STATUS, _("Uploading and unediting"));
 	}
 
 	SetCtrlState();
@@ -1129,10 +1230,11 @@ void CEditHandlerStatusDialog::OnEdit(wxCommandEvent& event)
 	while ((item = pListCtrl->GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
 	{
 		pListCtrl->SetItemState(item, 0, wxLIST_STATE_SELECTED);
-		const wxString name = pListCtrl->GetItemText(item);
-		enum CEditHandler::fileType type = (enum CEditHandler::fileType)pListCtrl->GetItemData(item);
+		
+		enum CEditHandler::fileType type;
+		CEditHandler::t_fileData* pData = GetDataFromItem(item, type);
 
-		if (pEditHandler->GetFileState(type, name) != CEditHandler::edit)
+		if (pData->state != CEditHandler::edit)
 		{
 			wxBell();
 			return;
@@ -1144,17 +1246,51 @@ void CEditHandlerStatusDialog::OnEdit(wxCommandEvent& event)
 	{
 		const int i = *iter;
 
-		const wxString name = pListCtrl->GetItemText(i);
-		enum CEditHandler::fileType type = (enum CEditHandler::fileType)pListCtrl->GetItemData(i);
+		enum CEditHandler::fileType type;
+		CEditHandler::t_fileData* pData = GetDataFromItem(item, type);
 
-		if (!pEditHandler->StartEditing(type, name))
+		if (type == CEditHandler::local)
 		{
-			if (pEditHandler->Remove(type, name))
-				pListCtrl->DeleteItem(i);
-			else
-				pListCtrl->SetItem(i, 2, _("Pending removal"));
+			if (!pEditHandler->StartEditing(pData->file))
+			{
+				if (pEditHandler->Remove(pData->file))
+				{
+					delete pData;
+					pListCtrl->DeleteItem(i);
+				}
+				else
+					pListCtrl->SetItem(i, COLUMN_STATUS, _("Pending removal"));
+			}
+		}
+		else
+		{
+			if (!pEditHandler->StartEditing(pData->name, pData->remotePath, pData->server))
+			{
+				if (pEditHandler->Remove(pData->name, pData->remotePath, pData->server))
+				{
+					delete pData;
+					pListCtrl->DeleteItem(i);
+				}
+				else
+					pListCtrl->SetItem(i, COLUMN_STATUS, _("Pending removal"));
+			}
 		}
 	}
 
 	SetCtrlState();
+}
+
+CEditHandler::t_fileData* CEditHandlerStatusDialog::GetDataFromItem(int item, CEditHandler::fileType &type)
+{
+	wxListCtrl* pListCtrl = XRCCTRL(*this, "ID_FILES", wxListCtrl);
+
+	CEditHandler::t_fileData* pData = (CEditHandler::t_fileData*)pListCtrl->GetItemData(item);
+	wxASSERT(pData);
+
+	if (pListCtrl->GetItemText(item) == _("Local"))
+		type = CEditHandler::local;
+	else
+		type = CEditHandler::remote;
+
+	return pData;
 }

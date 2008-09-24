@@ -1091,11 +1091,13 @@ void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
 			{
 				CEditHandler* pEditHandler = CEditHandler::Get();
 				wxASSERT(pEditHandler);
-				wxFileName fn(pFileItem->GetLocalFile());
 				if (pFileItem->m_edit == CEditHandler::remote)
-					pEditHandler->FinishTransfer(reason == success, pFileItem->m_edit, fn.GetFullName());
+				{
+					const CServerItem* pServerItem = (const CServerItem*)pFileItem->GetTopLevelItem();
+					pEditHandler->FinishTransfer(reason == success, pFileItem->GetRemoteFile(), pFileItem->GetRemotePath(), pServerItem->GetServer());
+				}
 				else
-					pEditHandler->FinishTransfer(reason == success, pFileItem->m_edit, fn.GetFullPath());
+					pEditHandler->FinishTransfer(reason == success, pFileItem->GetLocalFile());
 				if (reason == success)
 					pFileItem->m_edit = CEditHandler::none;
 			}
