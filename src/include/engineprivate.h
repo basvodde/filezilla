@@ -63,7 +63,7 @@ protected:
 
 	int ContinueConnect();
 
-	DECLARE_EVENT_TABLE();
+	DECLARE_EVENT_TABLE()
 	void OnEngineEvent(wxFzEngineEvent &event);
 	void OnTimer(wxTimerEvent& event);
 
