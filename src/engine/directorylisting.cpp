@@ -409,7 +409,7 @@ int CDirectoryListing::FindFile_CmpCase(const wxString& name) const
 	for (; entry_iter != m_pEntries->end(); entry_iter++, i++)
 	{
 		const wxString& entry_name = entry_iter->GetEntry().name;
-		m_searchmap_case->insert(std::pair<wxString, unsigned int>(entry_name, i));
+		m_searchmap_case->insert(std::pair<const wxString, unsigned int>(entry_name, i));
 
 		if (entry_name == name)
 			return i;
@@ -439,7 +439,7 @@ int CDirectoryListing::FindFile_CmpNoCase(wxString name) const
 	{
 		wxString entry_name = entry_iter->GetEntry().name;
 		entry_name.MakeLower();
-		m_searchmap_nocase->insert(std::pair<wxString, unsigned int>(entry_name, i));
+		m_searchmap_nocase->insert(std::pair<const wxString, unsigned int>(entry_name, i));
 
 		if (entry_name == name)
 			return i;
