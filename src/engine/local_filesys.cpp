@@ -436,6 +436,7 @@ bool CLocalFileSystem::GetNextFile(wxString& name)
 
 		if (m_dirs_only)
 		{
+#ifdef _DIRENT_HAVE_D_TYPE
 			if (entry->d_type == DT_LNK)
 			{
 				bool wasLink;
@@ -445,6 +446,13 @@ bool CLocalFileSystem::GetNextFile(wxString& name)
 			}
 			else if (entry->d_type != DT_DIR)
 				continue;
+#else
+			// Solaris doesn't have d_type
+			bool wasLink;
+			strcpy(m_file_part, entry->d_name);
+			if (GetFileInfo(m_raw_path, wasLink, 0, 0, 0) != dir)
+				continue;
+#endif
 		}
 
 		name = wxString(entry->d_name, *wxConvFileName);
@@ -512,6 +520,7 @@ bool CLocalFileSystem::GetNextFile(wxString& name, bool &isLink, bool &is_dir, w
 			!strcmp(entry->d_name, ".."))
 			continue;
 
+#ifdef _DIRENT_HAVE_D_TYPE
 		if (m_dirs_only)
 		{
 			if (entry->d_type == DT_LNK)
@@ -522,17 +531,24 @@ bool CLocalFileSystem::GetNextFile(wxString& name, bool &isLink, bool &is_dir, w
 					continue;
 
 				name = wxString(entry->d_name, *wxConvFileName);
-				is_dir = type == dir;
+				is_dir = true;
 				return true;
 			}
 			else if (entry->d_type != DT_DIR)
 				continue;
 		}
+#endif
 
 		name = wxString(entry->d_name, *wxConvFileName);
 
 		strcpy(m_file_part, entry->d_name);
 		enum local_fileType type = GetFileInfo(m_raw_path, isLink, size, modificationTime, mode);
+
+#ifndef _DIRENT_HAVE_D_TYPE
+		// Solaris doesn't have d_type
+		if (m_dirs_only && type != dir)
+			continue;
+#endif
 		is_dir = type == dir;
 		
 		return true;
