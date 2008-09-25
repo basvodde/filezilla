@@ -156,6 +156,8 @@ public:
 	virtual bool TryRemoveAll(); // Removes a inactive childrens, queues active children for removal.
 								 // Returns true if item can be removed itself
 
+	void SetLocalFile(const wxString file);
+
 	bool m_queued;
 	int m_errorCount;
 	bool m_remove;

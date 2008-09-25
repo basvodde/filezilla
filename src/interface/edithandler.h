@@ -45,7 +45,7 @@ public:
 
 	// Adds the file that doesn't exist yet. (Has to be in unknown state)
 	// The initial state will be download
-	bool AddFile(enum fileType type, const wxString& fileName, const CServerPath& remotePath, const CServer& server);
+	bool AddFile(enum fileType type, wxString& fileName, const CServerPath& remotePath, const CServer& server);
 
 	// Tries to unedit and remove file
 	bool Remove(const wxString& fileName); // Local files
@@ -122,6 +122,9 @@ protected:
 	wxTimer m_timer;
 
 	void RemoveTemporaryFiles(const wxString& temp);
+
+	wxString GetTemporaryFile(wxString name);
+	wxString TruncateFilename(const wxString path, const wxString& name, int max);
 
 #ifdef __WXMSW__
 	HANDLE m_lockfile_handle;

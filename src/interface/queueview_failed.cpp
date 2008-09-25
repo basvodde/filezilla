@@ -219,12 +219,14 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 					if (state == CEditHandler::unknown)
 					{
 						wxASSERT(pFileItem->Download());
-						if (!pEditHandler->AddFile(CEditHandler::remote, pFileItem->GetRemoteFile(), pFileItem->GetRemotePath(), pServerItem->GetServer()))
+						wxString file = pFileItem->GetRemoteFile();
+						if (!pEditHandler->AddFile(CEditHandler::remote, file, pFileItem->GetRemotePath(), pServerItem->GetServer()))
 						{
 							failedToRequeueAll = true;
 							delete pFileItem;
 							continue;
 						}
+						pFileItem->SetLocalFile(file);
 					}
 					else if (state == CEditHandler::upload_and_remove_failed)
 					{
@@ -298,12 +300,12 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 					delete pItem;
 					continue;
 				}
-				wxFileName fn(pFileItem->GetLocalFile());
 				enum CEditHandler::fileState state = pEditHandler->GetFileState(pFileItem->GetRemoteFile(), pFileItem->GetRemotePath(), pServerItem->GetServer());
 				if (state == CEditHandler::unknown)
 				{
 					wxASSERT(pFileItem->Download());
-					if (!pEditHandler->AddFile(CEditHandler::remote, fn.GetFullName(), pFileItem->GetRemotePath(), pServerItem->GetServer()))
+					wxString file = pFileItem->GetRemoteFile();
+					if (!pEditHandler->AddFile(CEditHandler::remote, file, pFileItem->GetRemotePath(), pServerItem->GetServer()))
 					{
 						if (!pServerItem->GetChildrenCount(false))
 						{
@@ -315,6 +317,7 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 						delete pItem;
 						continue;
 					}
+					pFileItem->SetLocalFile(file);
 				}
 				else if (state == CEditHandler::upload_and_remove_failed)
 				{

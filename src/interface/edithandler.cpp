@@ -130,7 +130,11 @@ wxString CEditHandler::GetLocalDirectory()
 	if (m_localDir != _T(""))
 		return m_localDir;
 
-	wxString dir = wxFileName::GetTempDir();
+	wxFileName tmpdir(wxFileName::GetTempDir(), _T(""));
+	// Need to call GetLongPath on MSW, GetTempDir can return short path
+	// which will cause problems when calculating maximum allowed file
+	// length
+	wxString dir = tmpdir.GetLongPath();
 	if (dir == _T("") || !wxFileName::DirExists(dir))
 		return _T("");
 
@@ -266,7 +270,7 @@ int CEditHandler::GetFileCount(enum CEditHandler::fileType type, enum CEditHandl
 	return count;
 }
 
-bool CEditHandler::AddFile(enum CEditHandler::fileType type, const wxString& fileName, const CServerPath& remotePath, const CServer& server)
+bool CEditHandler::AddFile(enum CEditHandler::fileType type, wxString& fileName, const CServerPath& remotePath, const CServer& server)
 {
 	wxASSERT(type != none);
 
@@ -286,7 +290,8 @@ bool CEditHandler::AddFile(enum CEditHandler::fileType type, const wxString& fil
 	{
 		data.state = download;
 		data.name = fileName;
-		data.file = m_localDir + fileName;
+		data.file = GetTemporaryFile(fileName);
+		fileName = data.file;
 	}
 	else
 	{
@@ -797,7 +802,7 @@ bool CEditHandler::UploadFile(enum fileType type, std::list<t_fileData>::iterato
 	wxASSERT(m_pQueue);
 	wxULongLong size = fn.GetSize();
 	
-	m_pQueue->QueueFile(false, false, fn.GetFullPath(), fn.GetFullName(), iter->remotePath, iter->server, wxLongLong(size.GetHi(), size.GetLo()), type);
+	m_pQueue->QueueFile(false, false, fn.GetFullPath(), iter->name, iter->remotePath, iter->server, wxLongLong(size.GetHi(), size.GetLo()), type);
 	m_pQueue->QueueFile_Finish(true);
 
 	return true;
@@ -957,6 +962,43 @@ void CEditHandler::OnChangedFileEvent(wxCommandEvent& event)
 	CheckForModifications();
 }
 #endif
+
+wxString CEditHandler::GetTemporaryFile(wxString name)
+{
+#ifdef __WXMSW__
+	// MAX_PATH - 1 is theoretical limit, we subtract another 4 to allow
+	// editors which create temporary files
+	name = TruncateFilename(m_localDir, name, MAX_PATH - 5);
+	if (name == _T(""))
+		return _T("");
+#endif
+	wxString file = m_localDir + name;
+
+	return file;
+}
+
+wxString CEditHandler::TruncateFilename(const wxString path, const wxString& name, int max)
+{
+	const int pathlen = path.Len();
+	const int namelen = name.Len();
+	if (namelen + pathlen > max)
+	{
+		int pos = name.Find('.', true);
+		if (pos != -1)
+		{
+			int extlen = namelen - pos;
+			if (pathlen + extlen >= max)
+			{
+				// Cannot truncate extension
+				return _T("");
+			}
+
+			return name.Left(max - pathlen - extlen) + name.Mid(pos);
+		}
+	}
+	
+	return name;
+}
 
 BEGIN_EVENT_TABLE(CEditHandlerStatusDialog, wxDialogEx)
 EVT_LIST_ITEM_SELECTED(wxID_ANY, CEditHandlerStatusDialog::OnSelectionChanged)

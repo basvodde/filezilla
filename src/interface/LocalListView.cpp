@@ -514,10 +514,10 @@ wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix, int format, b
 	}
 	if (!num_decimal_places)
 	{
-		if (remainder != 0)
+		if (remainder != 0 || clipped)
 			r++;
 	}
-	else
+	else if (p) // Don't add decimal places on exact bytes
 	{
 		if (format != 3)
 		{
@@ -2197,7 +2197,8 @@ void CLocalListView::OnMenuEdit(wxCommandEvent& event)
 		break;
 	}
 
-	if (!pEditHandler->AddFile(CEditHandler::local, fn.GetFullPath(), path, *pServer))
+	wxString file = fn.GetFullPath();
+	if (!pEditHandler->AddFile(CEditHandler::local, file, path, *pServer))
 	{
 		wxMessageBox(wxString::Format(_("The file '%s' could not be opened:\nThe associated command failed"), fn.GetFullPath().c_str()), _("Opening failed"), wxICON_EXCLAMATION);
 		return;

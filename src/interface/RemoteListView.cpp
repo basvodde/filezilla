@@ -2448,15 +2448,15 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 		break;
 	}
 
-	if (!pEditHandler->AddFile(CEditHandler::remote, entry.name, path, server))
+	wxString file = entry.name;
+	if (!pEditHandler->AddFile(CEditHandler::remote, file, path, server))
 	{
 		wxFAIL;
 		wxBell();
 		return;
 	}
 
-	wxFileName fn = wxFileName(localDir, entry.name);
-	m_pQueue->QueueFile(false, true, fn.GetFullPath(), entry.name, path, server, entry.size, CEditHandler::remote);
+	m_pQueue->QueueFile(false, true, file, entry.name, path, server, entry.size, CEditHandler::remote);
 	m_pQueue->QueueFile_Finish(true);
 }
 
