@@ -49,6 +49,7 @@ protected:
 
 #ifndef __WXMSW__
 	static enum local_fileType GetFileInfo(const char* path, bool &isLink, wxLongLong* size, wxDateTime* modificationTime, int* mode);
+	void AllocPathBuffer(const char* file);  // Ensures m_raw_path is large enough to hold path and filename
 #endif
 
 	// State for directory enumeration
@@ -60,6 +61,7 @@ protected:
 #else
 	char* m_raw_path;
 	char* m_file_part; // Points into m_raw_path past the trailing slash of the path part
+	int m_buffer_length;
 	DIR* m_dir;
 #endif
 };

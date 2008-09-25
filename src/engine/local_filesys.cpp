@@ -363,7 +363,8 @@ bool CLocalFileSystem::BeginFindFiles(wxString path, bool dirs_only)
 
 	const wxCharBuffer p = path.fn_str();
 	const int len = strlen(p);
-	m_raw_path = new char[len + NAME_MAX + 2];
+	m_raw_path = new char[len + 2048 + 2];
+	m_buffer_length = len + 2048 + 2;
 	strcpy(m_raw_path, p);
 	if (len > 1)
 	{
@@ -440,6 +441,7 @@ bool CLocalFileSystem::GetNextFile(wxString& name)
 			if (entry->d_type == DT_LNK)
 			{
 				bool wasLink;
+				AllocPathBuffer(entry->d_name);
 				strcpy(m_file_part, entry->d_name);
 				if (GetFileInfo(m_raw_path, wasLink, 0, 0, 0) != dir)
 					continue;
@@ -449,6 +451,7 @@ bool CLocalFileSystem::GetNextFile(wxString& name)
 #else
 			// Solaris doesn't have d_type
 			bool wasLink;
+			AllocPathBuffer(entry->d_name);
 			strcpy(m_file_part, entry->d_name);
 			if (GetFileInfo(m_raw_path, wasLink, 0, 0, 0) != dir)
 				continue;
@@ -525,6 +528,7 @@ bool CLocalFileSystem::GetNextFile(wxString& name, bool &isLink, bool &is_dir, w
 		{
 			if (entry->d_type == DT_LNK)
 			{
+				AllocPathBuffer(entry->d_name);
 				strcpy(m_file_part, entry->d_name);
 				enum local_fileType type = GetFileInfo(m_raw_path, isLink, size, modificationTime, mode);
 				if (type != dir)
@@ -539,8 +543,7 @@ bool CLocalFileSystem::GetNextFile(wxString& name, bool &isLink, bool &is_dir, w
 		}
 #endif
 
-		name = wxString(entry->d_name, *wxConvFileName);
-
+		AllocPathBuffer(entry->d_name);
 		strcpy(m_file_part, entry->d_name);
 		enum local_fileType type = GetFileInfo(m_raw_path, isLink, size, modificationTime, mode);
 
@@ -551,6 +554,8 @@ bool CLocalFileSystem::GetNextFile(wxString& name, bool &isLink, bool &is_dir, w
 #endif
 		is_dir = type == dir;
 		
+		name = wxString(entry->d_name, *wxConvFileName);
+
 		return true;
 	}
 
@@ -558,3 +563,20 @@ bool CLocalFileSystem::GetNextFile(wxString& name, bool &isLink, bool &is_dir, w
 #endif
 }
 
+#ifndef __WXMSW__
+void CLocalFileSystem::AllocPathBuffer(const char* file)
+{
+	int len = strlen(file);
+	int pathlen = m_file_part - m_raw_path;
+
+	if (len + pathlen >= m_buffer_length)
+	{
+		m_buffer_length = (len + pathlen) * 2;
+		char* tmp = new char[m_buffer_length];
+		memcpy(tmp, m_raw_path, pathlen);
+		delete [] m_raw_path;
+		m_raw_path = tmp;
+		m_file_part = m_raw_path + pathlen;
+	}
+}
+#endif
