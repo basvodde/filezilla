@@ -1128,6 +1128,7 @@ int CEditHandlerStatusDialog::ShowModal()
 				pListCtrl->SetItem(i, COLUMN_STATUS, _("Unknown"));
 				break;
 			}
+			pListCtrl->SetItem(i, COLUMN_REMOTEPATH, iter->server.FormatServer() + iter->remotePath.GetPath());
 			CEditHandler::t_fileData* pData = new CEditHandler::t_fileData(*iter);
 			pListCtrl->SetItemPtrData(i, (wxUIntPtr)pData);
 		}
@@ -1155,6 +1156,7 @@ int CEditHandlerStatusDialog::ShowModal()
 				pListCtrl->SetItem(i, COLUMN_STATUS, _("Unknown"));
 				break;
 			}
+			pListCtrl->SetItem(i, COLUMN_REMOTEPATH, iter->server.FormatServer() + iter->remotePath.GetPath());
 			CEditHandler::t_fileData* pData = new CEditHandler::t_fileData(*iter);
 			pListCtrl->SetItemPtrData(i, (wxUIntPtr)pData);
 		}
