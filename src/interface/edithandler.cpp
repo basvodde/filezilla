@@ -968,13 +968,48 @@ wxString CEditHandler::GetTemporaryFile(wxString name)
 #ifdef __WXMSW__
 	// MAX_PATH - 1 is theoretical limit, we subtract another 4 to allow
 	// editors which create temporary files
-	name = TruncateFilename(m_localDir, name, MAX_PATH - 5);
-	if (name == _T(""))
-		return _T("");
+	int max = MAX_PATH - 5;
+#else
+	int max = -1;
 #endif
-	wxString file = m_localDir + name;
+	if (max != -1)
+	{
+		name = TruncateFilename(m_localDir, name, max);
+		if (name == _T(""))
+			return _T("");
+	}
 
-	return file;
+	wxString file = m_localDir + name;
+	if (!FilenameExists(file))
+		return file;
+
+	if (max != -1)
+		max--;
+	int cutoff = 1;
+	int n = 1;
+	while (++n < 10000) // Just to give up eventually
+	{
+		// Further reduce length if needed
+		if (max != -1 && n >= cutoff)
+		{
+			cutoff *= 10;
+			max--;
+			name = TruncateFilename(m_localDir, name, max);
+			if (name == _T(""))
+				return _T("");
+		}
+
+		int pos = name.Find('.', true);
+		if (pos < 1)
+			file = m_localDir + name + wxString::Format(_T(" %d"), n);
+		else
+			file = m_localDir + name.Left(pos) + wxString::Format(_T(" %d"), n) + name.Mid(pos);
+
+		if (!FilenameExists(file))
+			return file;
+	}
+
+	return _T("");
 }
 
 wxString CEditHandler::TruncateFilename(const wxString path, const wxString& name, int max)
@@ -998,6 +1033,26 @@ wxString CEditHandler::TruncateFilename(const wxString path, const wxString& nam
 	}
 	
 	return name;
+}
+
+bool CEditHandler::FilenameExists(const wxString& file)
+{
+	for (std::list<t_fileData>::const_iterator iter = m_fileDataList[remote].begin(); iter != m_fileDataList[remote].end(); iter++)
+	{
+		if (iter->file == file)
+			return true;
+	}
+
+	if (wxFileName::FileExists(file))
+	{
+		// Save to remove, it's not marked as edited anymore.
+		wxRemoveFile(file);
+
+		if (wxFileName::FileExists(file))
+			return true;
+	}
+
+	return false;
 }
 
 BEGIN_EVENT_TABLE(CEditHandlerStatusDialog, wxDialogEx)
@@ -1186,7 +1241,7 @@ void CEditHandlerStatusDialog::OnUnedit(wxCommandEvent& event)
 		const int i = *iter;
 
 		enum CEditHandler::fileType type;
-		CEditHandler::t_fileData* pData = GetDataFromItem(item, type);
+		CEditHandler::t_fileData* pData = GetDataFromItem(i, type);
 		
 		if (type == CEditHandler::local)
 		{
@@ -1239,7 +1294,7 @@ void CEditHandlerStatusDialog::OnUpload(wxCommandEvent& event)
 		const int i = *iter;
 
 		enum CEditHandler::fileType type;
-		CEditHandler::t_fileData* pData = GetDataFromItem(item, type);
+		CEditHandler::t_fileData* pData = GetDataFromItem(i, type);
 
 		bool unedit = event.GetId() == XRCID("ID_UPLOADANDUNEDIT") || pData->state == CEditHandler::upload_and_remove_failed;
 
@@ -1289,7 +1344,7 @@ void CEditHandlerStatusDialog::OnEdit(wxCommandEvent& event)
 		const int i = *iter;
 
 		enum CEditHandler::fileType type;
-		CEditHandler::t_fileData* pData = GetDataFromItem(item, type);
+		CEditHandler::t_fileData* pData = GetDataFromItem(i, type);
 
 		if (type == CEditHandler::local)
 		{

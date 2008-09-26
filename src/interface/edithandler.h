@@ -125,6 +125,7 @@ protected:
 
 	wxString GetTemporaryFile(wxString name);
 	wxString TruncateFilename(const wxString path, const wxString& name, int max);
+	bool FilenameExists(const wxString& file);
 
 #ifdef __WXMSW__
 	HANDLE m_lockfile_handle;
