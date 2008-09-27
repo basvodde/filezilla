@@ -115,7 +115,7 @@ bool COptionsPageEdit::Validate()
 			return DisplayError(_T("ID_EDITOR"), _("Empty quoted string."));
 
 		if (!ProgramExists(editor))
-			return DisplayError(_T("ID_EDITOR"), _("Selected file does not exist."));
+			return DisplayError(_T("ID_EDITOR"), _("The file selected as default editor does not exist."));
 	}
 
 	if (GetRCheck(XRCID("ID_USEDEFAULT")) && editor == _T(""))

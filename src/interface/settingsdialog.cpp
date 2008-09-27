@@ -255,7 +255,14 @@ void CSettingsDialog::OnOK(wxCommandEvent& event)
 	for (unsigned int i = 0; i < size; i++)
 	{
 		if (!m_pages[i].page->Validate())
+		{
+			if (m_activePanel != m_pages[i].page)
+			{
+				wxTreeCtrl* treeCtrl = XRCCTRL(*this, "ID_TREE", wxTreeCtrl);
+				treeCtrl->SelectItem(m_pages[i].id);
+			}
 			return;
+		}
 	}
 
 	for (unsigned int i = 0; i < size; i++)
