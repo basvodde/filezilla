@@ -127,6 +127,8 @@ protected:
 	wxString TruncateFilename(const wxString path, const wxString& name, int max);
 	bool FilenameExists(const wxString& file);
 
+	int DisplayChangeNotification(fileType type, std::list<t_fileData>::const_iterator iter, bool& remove);
+
 #ifdef __WXMSW__
 	HANDLE m_lockfile_handle;
 #else

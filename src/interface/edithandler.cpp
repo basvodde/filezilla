@@ -659,18 +659,10 @@ checkmodifications_remote:
 			return;
 		}
 
-		CChangedFileDialog dlg;
-		if (!dlg.Load(wxTheApp->GetTopWindow(), _T("ID_CHANGEDFILE")))
+		bool remove;
+		int res = DisplayChangeNotification(remote, iter, remove);
+		if (res == -1)
 			continue;
-		XRCCTRL(dlg, "ID_DESC_UPLOAD_LOCAL", wxStaticText)->Hide();
-
-		dlg.SetLabel(XRCID("ID_FILENAME"), iter->name);
-
-		dlg.GetSizer()->Fit(&dlg);
-
-		int res = dlg.ShowModal();
-
-		const bool remove = XRCCTRL(dlg, "ID_DELETE", wxCheckBox)->IsChecked();
 
 		if (res == wxID_YES)
 		{
@@ -728,18 +720,8 @@ checkmodifications_local:
 			return;
 		}
 
-		CChangedFileDialog dlg;
-		if (!dlg.Load(pTopWindow, _T("ID_CHANGEDFILE")))
-			continue;
-		XRCCTRL(dlg, "ID_DESC_UPLOAD_REMOTE", wxStaticText)->Hide();
-		XRCCTRL(dlg, "ID_DELETE", wxCheckBox)->SetLabel(_("&Finish editing"));
-
-		dlg.SetLabel(XRCID("ID_FILENAME"), iter->name);
-
-		dlg.GetSizer()->Fit(&dlg);
-		int res = dlg.ShowModal();
-
-		const bool remove = XRCCTRL(dlg, "ID_DELETE", wxCheckBox)->IsChecked();
+		bool remove;
+		int res = DisplayChangeNotification(local, iter, remove);
 
 		if (res == wxID_YES)
 			UploadFile(local, iter, remove);
@@ -758,6 +740,50 @@ checkmodifications_local:
 	SetTimerState();
 
 	insideCheckForModifications = false;
+}
+
+int CEditHandler::DisplayChangeNotification(CEditHandler::fileType type, std::list<CEditHandler::t_fileData>::const_iterator iter, bool& remove)
+{
+	CChangedFileDialog dlg;
+	if (!dlg.Load(wxTheApp->GetTopWindow(), _T("ID_CHANGEDFILE")))
+		return -1;
+	if (type == remote)
+		XRCCTRL(dlg, "ID_DESC_UPLOAD_LOCAL", wxStaticText)->Hide();
+	else
+		XRCCTRL(dlg, "ID_DESC_UPLOAD_REMOTE", wxStaticText)->Hide();
+
+	dlg.SetLabel(XRCID("ID_FILENAME"), iter->name);
+
+	if (type == local)
+	{
+		XRCCTRL(dlg, "ID_DESC_OPENEDAS", wxStaticText)->Hide();
+		XRCCTRL(dlg, "ID_OPENEDAS", wxStaticText)->Hide();
+	}
+	else
+	{
+		wxString file = iter->file;
+		int pos = file.Find(wxFileName::GetPathSeparator(), true);
+		wxASSERT(pos != -1);
+		file = file.Mid(pos + 1);
+	
+		if (file == iter->name)
+		{
+			XRCCTRL(dlg, "ID_DESC_OPENEDAS", wxStaticText)->Hide();
+			XRCCTRL(dlg, "ID_OPENEDAS", wxStaticText)->Hide();
+		}
+		else
+			dlg.SetLabel(XRCID("ID_OPENEDAS"), file);
+	}
+	dlg.SetLabel(XRCID("ID_SERVER"), iter->server.FormatServer());
+	dlg.SetLabel(XRCID("ID_REMOTEPATH"), iter->remotePath.GetPath());
+
+	dlg.GetSizer()->Fit(&dlg);
+
+	int res = dlg.ShowModal();
+
+	remove = XRCCTRL(dlg, "ID_DELETE", wxCheckBox)->IsChecked();
+
+	return res;
 }
 
 bool CEditHandler::UploadFile(const wxString& file, const CServerPath& remotePath, const CServer& server, bool unedit)

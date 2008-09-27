@@ -4608,16 +4608,66 @@
     <object class="wxBoxSizer">
       <orient>wxVERTICAL</orient>
       <object class="sizeritem">
+        <object class="wxStaticText">
+          <label>A file previously opened has been changed.</label>
+        </object>
+        <flag>wxALL</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
         <object class="wxFlexGridSizer">
+          <cols>2</cols>
+          <vgap>5</vgap>
+          <hgap>5</hgap>
           <object class="sizeritem">
             <object class="wxStaticText">
-              <label>A file previously opened has been changed:</label>
+              <label>Filename:</label>
             </object>
           </object>
           <object class="sizeritem">
             <object class="wxStaticText" name="ID_FILENAME">
               <label>&lt;filename&gt;</label>
             </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText" name="ID_DESC_OPENEDAS">
+              <label>Opened as:</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText" name="ID_OPENEDAS">
+              <label>&lt;openedas&gt;</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText" name="">
+              <label>Server:</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText" name="ID_SERVER">
+              <label>&lt;server&gt;</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>Remote path:</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText" name="ID_REMOTEPATH">
+              <label>&lt;remotepath&gt;</label>
+            </object>
+          </object>
+        </object>
+        <flag>wxLEFT|wxRIGHT</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxFlexGridSizer">
+          <object class="sizeritem">
+            <object class="wxStaticLine"/>
+            <flag>wxGROW</flag>
           </object>
           <object class="sizeritem">
             <object class="wxStaticText" name="ID_DESC_UPLOAD_LOCAL">
@@ -4656,8 +4706,9 @@
             </object>
             <flag>wxALIGN_CENTRE_HORIZONTAL</flag>
           </object>
+          <growablecols>0</growablecols>
         </object>
-        <flag>wxALL</flag>
+        <flag>wxALL|wxGROW</flag>
         <border>5</border>
       </object>
     </object>
