@@ -114,6 +114,10 @@ protected:
 #endif
 	void ShowDropdownMenu(wxMenu* pMenu, wxToolBar* pToolBar, wxCommandEvent& event);
 
+#ifdef __WXMSW__
+	virtual WXLRESULT MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam);
+#endif
+
 	// Event handlers
 	DECLARE_EVENT_TABLE()
 	void OnSize(wxSizeEvent& event);

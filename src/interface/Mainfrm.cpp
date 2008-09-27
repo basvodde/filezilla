@@ -2480,3 +2480,20 @@ void CMainFrame::OnFilterRightclicked(wxCommandEvent& event)
 	if (m_pToolBar)
 		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), !active);
 }
+
+#ifdef __WXMSW__
+WXLRESULT CMainFrame::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam)
+{
+	if (nMsg == WM_DEVICECHANGE)
+	{
+		// Let tree control handle device change message
+		// They get sent by Window on adding or removing drive
+		// letters
+
+		if (m_pLocalTreeView)
+			m_pLocalTreeView->OnDevicechange(wParam, lParam);
+		return 0;
+	}
+	return wxFrame::MSWWindowProc(nMsg, wParam, lParam);
+}
+#endif
