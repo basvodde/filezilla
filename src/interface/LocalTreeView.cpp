@@ -1597,7 +1597,15 @@ void CLocalTreeView::OnDevicechange(WPARAM wParam, LPARAM lParam)
 				if (wParam == DBT_DEVICEARRIVAL)
 					AddDrive(drive);
 				else
+				{
 					RemoveDrive(drive);
+
+					if (pVolume->dbcv_flags & DBTF_MEDIA)
+					{
+						// E.g. disk removed from CD-ROM drive, need to keep the drive letter
+						AddDrive(drive);
+					}
+				}
 			}
 			drive++;
 			mask <<= 1;
