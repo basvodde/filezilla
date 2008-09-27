@@ -587,6 +587,8 @@ bool CTransferSocket::SetupPassiveTransfer(wxString host, int port)
 
 void CTransferSocket::SetActive()
 {
+	if (m_transferEndReason != none)
+		return;
 	if (m_transferMode == download || m_transferMode == upload)
 	{
 		CFtpFileTransferOpData *pData = static_cast<CFtpFileTransferOpData *>(static_cast<CRawTransferOpData *>(m_pControlSocket->m_pCurOpData)->pOldData);;
@@ -595,7 +597,10 @@ void CTransferSocket::SetActive()
 	}
 
 	m_bActive = true;
-	if (m_pSocket && m_pSocket->GetState() == CSocket::connected)
+	if (!m_pSocket)
+		return;
+	
+	if (m_pSocket->GetState() == CSocket::connected || m_pSocket->GetState() == CSocket::closing)
 		TriggerPostponedEvents();
 }
 
@@ -826,13 +831,19 @@ void CTransferSocket::TriggerPostponedEvents()
 		m_pControlSocket->LogMessage(::Debug_Verbose, _T("Executing postponed receive"));
 		m_postponedReceive = false;
 		OnReceive();
+		if (m_transferEndReason != none)
+			return;
 	}
 	if (m_postponedSend)
 	{
 		m_pControlSocket->LogMessage(::Debug_Verbose, _T("Executing postponed send"));
 		m_postponedSend = false;
 		OnSend();
+		if (m_transferEndReason != none)
+			return;
 	}
+	if (m_onCloseCalled)
+		OnClose(0);
 }
 
 bool CTransferSocket::InitBackend()
