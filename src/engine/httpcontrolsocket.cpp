@@ -186,11 +186,16 @@ bool CHttpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotifi
 
 void CHttpControlSocket::OnReceive()
 {
+	DoReceive();
+}
+
+int CHttpControlSocket::DoReceive()
+{
 	do
 	{
 		const enum CSocket::SocketState state = m_pSocket->GetState();
 		if (state != CSocket::connected && state != CSocket::closing)
-			return;
+			return 0;
 
 		if (!m_pRecvBuffer)
 		{
@@ -207,7 +212,7 @@ void CHttpControlSocket::OnReceive()
 			{
 				ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED);
 			}
-			return;
+			return 0;
 		}
 
 		m_pEngine->SetActive(true);
@@ -216,7 +221,7 @@ void CHttpControlSocket::OnReceive()
 		{
 			// Just ignore all further data
 			m_recvBufferPos = 0;
-			return;
+			return 0;
 		}
 
 		m_recvBufferPos += read;
@@ -226,21 +231,21 @@ void CHttpControlSocket::OnReceive()
 			if (!read)
 			{
 				ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED);
-				return;
+				return 0;
 			}
 
 			int res = ParseHeader(m_pHttpOpData);
 			if ((res & FZ_REPLY_REDIRECTED) == FZ_REPLY_REDIRECTED)
-				return;
+				return FZ_REPLY_REDIRECTED;
 			if (res != FZ_REPLY_WOULDBLOCK)
-				return;
+				return 0;
 		}
 		else if (m_pHttpOpData->m_transferEncoding == CHttpOpData::chunked)
 		{
 			if (!read)
 			{
 				ResetOperation(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED);
-				return;
+				return 0;
 			}
 			OnChunkedData(m_pHttpOpData);
 		}
@@ -250,7 +255,7 @@ void CHttpControlSocket::OnReceive()
 			{
 				wxASSERT(!m_recvBufferPos);
 				ProcessData(0, 0);
-				return;
+				return 0;
 			}
 			else
 			{
@@ -261,6 +266,8 @@ void CHttpControlSocket::OnReceive()
 		}
 	}
 	while (m_pSocket);
+
+	return 0;
 }
 
 void CHttpControlSocket::OnConnect()
@@ -860,7 +867,7 @@ int CHttpControlSocket::ResetOperation(int nErrorCode)
 
 void CHttpControlSocket::OnClose(int error)
 {
-	LogMessage(Debug_Verbose, _T("CRealControlSocket::OnClose(%d)"), error);
+	LogMessage(Debug_Verbose, _T("CHttpControlSocket::OnClose(%d)"), error);
 
 	if (error)
 	{
@@ -869,7 +876,8 @@ void CHttpControlSocket::OnClose(int error)
 		return;
 	}
 	
-	OnReceive();
+	if (DoReceive() == FZ_REPLY_REDIRECTED)
+		return; // Socket got closed already
 
 	// HTTP socket isn't connected outside operations
 	if (!m_pCurOpData)

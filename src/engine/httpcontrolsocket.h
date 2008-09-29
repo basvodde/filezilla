@@ -29,6 +29,7 @@ protected:
 	virtual void OnConnect();
 	virtual void OnClose(int error);
 	virtual void OnReceive();
+	int DoReceive();
 
 	virtual int ResetOperation(int nErrorCode);
 	
