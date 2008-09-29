@@ -1968,7 +1968,7 @@ int CFtpControlSocket::ChangeDirParseResponse()
 		break;
 	case cwd_pwd_subdir:
 		{
-			CServerPath assumedPath = pData->path;
+			CServerPath assumedPath(pData->path);
 			if (pData->subDir == _T(".."))
 			{
 				if (!assumedPath.HasParent())
@@ -2846,7 +2846,7 @@ int CFtpControlSocket::RawCommandSend()
 
 	CDirectoryCache cache;
 	cache.InvalidateServer(*m_pCurrentServer);
-	m_CurrentPath = CServerPath();
+	m_CurrentPath.Clear();
 
 	CRawCommandOpData *pData = static_cast<CRawCommandOpData *>(m_pCurOpData);
 
@@ -3070,7 +3070,7 @@ int CFtpControlSocket::RemoveDirSend()
 	cache.InvalidateFile(*m_pCurrentServer, pData->path, pData->subDir);
 
 	CPathCache pathCache;
-	CServerPath path = pathCache.Lookup(*m_pCurrentServer, pData->path, pData->subDir);
+	CServerPath path(pathCache.Lookup(*m_pCurrentServer, pData->path, pData->subDir));
 	if (path.IsEmpty())
 	{
 		path = pData->path;
@@ -3465,7 +3465,7 @@ int CFtpControlSocket::RenameSend()
 
 			if (wasDir)
 			{
-				CServerPath path = pathCache.Lookup(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile());
+				CServerPath path(pathCache.Lookup(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile()));
 				if (path.IsEmpty())
 				{
 					path = pData->m_cmd.GetFromPath();

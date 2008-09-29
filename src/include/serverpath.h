@@ -1,12 +1,26 @@
 #ifndef __SERVERPATH_H__
 #define __SERVERPATH_H__
 
+#include "refcount.h"
+
+class CServerPathData
+{
+public:
+	CServerPathData();
+	CServerPathData(const CServerPathData& v);
+	std::list<wxString> m_segments;
+	wxString m_prefix;
+
+	bool operator==(const CServerPathData& cmp) const;
+};
+
 class CServerPath
 {
 public:
 	CServerPath();
 	CServerPath(wxString path, ServerType type = DEFAULT);
-	CServerPath(const CServerPath &path, wxString subdir = _T("")); // Ignores parent on absolute subdir
+	CServerPath(const CServerPath &path, wxString subdir); // Ignores parent on absolute subdir
+	CServerPath(const CServerPath &path);
 	virtual ~CServerPath();
 
 	bool IsEmpty() const { return m_bEmpty; };
@@ -54,15 +68,15 @@ public:
 protected:
 	bool m_bEmpty;
 	ServerType m_type;
-	wxString m_prefix;
 
 	typedef std::list<wxString> tSegmentList;
 	typedef tSegmentList::iterator tSegmentIter;
 	typedef tSegmentList::const_iterator tConstSegmentIter;
-	tSegmentList m_Segments;
 
 	bool Segmentize(wxString str, tSegmentList& segments);
 	bool ExtractFile(wxString& dir, wxString& file);
+
+	CRefcountObject<CServerPathData> m_data;
 };
 
 #endif
