@@ -10,6 +10,11 @@ Legend:
     *nix: Unix (e.g BSD) and Unix-like systems (e.g. Linux)
     OS X: Apple Mac OS X
 
+3.1.3.1 (2008-09-29)
+
+- Download speedlimits were not working since 3.1.3-beta1
+- On very fast connections, sockets could receive close event before being marked active, leading to timeouts
+
 3.1.3 (2008-09-21)
 
 - Fzsftp no longer crashes if receiving invalid data from server and instead quits gracefully
