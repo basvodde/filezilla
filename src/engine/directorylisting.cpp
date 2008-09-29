@@ -2,23 +2,15 @@
 
 CDirectoryListing::CDirectoryListing()
 {
-	m_pEntries = 0;
 	m_entryCount = 0;
 	m_hasUnsureEntries = 0;
 	m_failed = false;
-	m_referenceCount = 0;
 	m_hasDirs = false;
-	m_searchmap_case = 0;
-	m_searchmap_nocase = 0;
 }
 
 CDirectoryListing::CDirectoryListing(const CDirectoryListing& listing)
+	: m_entries(listing.m_entries), m_searchmap_case(listing.m_searchmap_case), m_searchmap_nocase(listing.m_searchmap_nocase)
 {
-	m_referenceCount = listing.m_referenceCount;
-	m_pEntries = listing.m_pEntries;
-	if (m_referenceCount)
-		(*m_referenceCount)++;
-
 	path = listing.path;
 
 	m_hasUnsureEntries = listing.m_hasUnsureEntries;
@@ -29,14 +21,6 @@ CDirectoryListing::CDirectoryListing(const CDirectoryListing& listing)
 	m_firstListTime = listing.m_firstListTime;
 
 	m_hasDirs = listing.m_hasDirs;
-
-	m_searchmap_case = listing.m_searchmap_case;
-	m_searchmap_nocase = listing.m_searchmap_nocase;
-}
-
-CDirectoryListing::~CDirectoryListing()
-{
-	Unref();
 }
 
 CDirectoryListing& CDirectoryListing::operator=(const CDirectoryListing &a)
@@ -44,18 +28,7 @@ CDirectoryListing& CDirectoryListing::operator=(const CDirectoryListing &a)
 	if (&a == this)
 		return *this;
 
-	if (m_referenceCount && m_referenceCount == a.m_referenceCount)
-	{
-		// References the same listing
-		return *this;
-	}
-
-	Unref();
-
-	m_referenceCount = a.m_referenceCount;
-	m_pEntries = a.m_pEntries;
-	if (m_referenceCount)
-		(*m_referenceCount)++;
+	m_entries = a.m_entries;
 
 	path = a.path;
 
@@ -138,22 +111,17 @@ void CDirectoryListing::SetCount(unsigned int count)
 
 	if (!count)
 	{
-		Unref();
 		m_entryCount = 0;
 		return;
 	}
 
 	if (count < old_count)
 	{
-		Copy(false);
-		m_searchmap_case->clear();
-		m_searchmap_nocase->clear();
+		m_searchmap_case.clear();
+		m_searchmap_nocase.clear();
 	}
-	else
-		Copy(true);
 
-	wxASSERT(m_pEntries);
-	m_pEntries->resize(count);
+	m_entries.Get().resize(count);
 	
 	m_entryCount = count;
 }
@@ -162,107 +130,23 @@ const CDirentry& CDirectoryListing::operator[](unsigned int index) const
 {
 	// Commented out, too heavy speed penalty
 	// wxASSERT(index < m_entryCount);
-	const CDirentryObject& entryObject = (*m_pEntries)[index];
-	return entryObject.GetEntry();
+	return *(*m_entries)[index];
 }
 
 CDirentry& CDirectoryListing::operator[](unsigned int index)
 {
 	// Commented out, too heavy speed penalty
 	// wxASSERT(index < m_entryCount);
-
-	Copy(true);
-
-	return (*m_pEntries)[index].GetEntry();
-}
-
-void CDirectoryListing::Unref()
-{
-	if (!m_referenceCount)
-		return;
-
-	wxASSERT(*m_referenceCount > 0);
-
-	if (*m_referenceCount > 1)
-	{
-		(*m_referenceCount)--;
-		return;
-	}
-
-	delete m_pEntries;
-	m_pEntries = 0;
-
-	delete m_referenceCount;
-	m_referenceCount = 0;
-
-	delete m_searchmap_case;
-	m_searchmap_case = 0;
-
-	delete m_searchmap_nocase;
-	m_searchmap_nocase = 0;
-}
-
-void CDirectoryListing::AddRef()
-{
-	if (!m_referenceCount)
-	{
-		// New object
-		m_referenceCount = new int(1);
-		m_pEntries = new std::vector<CDirentryObject>;
-
-		m_searchmap_case = new std::multimap<wxString, unsigned int>;
-		m_searchmap_nocase = new std::multimap<wxString, unsigned int>;
-
-		return;
-	}
-	(*m_referenceCount)++;
-}
-
-void CDirectoryListing::Copy(bool copy_cache)
-{
-	if (!m_referenceCount)
-	{
-		AddRef();
-		return;
-	}
-
-	if (*m_referenceCount == 1)
-	{
-		// Only instance
-		return;
-	}
-
-	(*m_referenceCount)--;
-	m_referenceCount = new int(1);
-	
-	std::vector<CDirentryObject>* pEntries = new std::vector<CDirentryObject>;
-	*pEntries = *m_pEntries;
-	m_pEntries = pEntries;
-
-	if (copy_cache)
-	{
-		std::multimap<wxString, unsigned int>* searchmap_case = new std::multimap<wxString, unsigned int>;
-		*searchmap_case = *searchmap_case;
-		m_searchmap_case = searchmap_case;
-
-		std::multimap<wxString, unsigned int>* searchmap_nocase = new std::multimap<wxString, unsigned int>;
-		*searchmap_nocase = *searchmap_nocase;
-		m_searchmap_nocase = searchmap_nocase;
-	}
-	else
-	{
-		m_searchmap_case = new std::multimap<wxString, unsigned int>;
-		m_searchmap_nocase = new std::multimap<wxString, unsigned int>;
-	}
+	return m_entries.Get()[index].Get();
 }
 
 void CDirectoryListing::Assign(const std::list<CDirentry> &entries)
 {
-	Unref();
-	AddRef();
-
 	m_entryCount = entries.size();
-	m_pEntries->reserve(m_entryCount);
+
+	std::vector<CRefcountObject<CDirentry> >& own_entries = m_entries.Get();
+	own_entries.clear();
+	own_entries.reserve(m_entryCount);
 	
 	m_hasDirs = false;
 	
@@ -270,8 +154,11 @@ void CDirectoryListing::Assign(const std::list<CDirentry> &entries)
 	{
 		if (iter->dir)
 			m_hasDirs = true;
-		m_pEntries->push_back(*iter);
+		own_entries.push_back(CRefcountObject<CDirentry>(*iter));
 	}
+
+	m_searchmap_case.clear();
+	m_searchmap_nocase.clear();
 }
 
 bool CDirectoryListing::RemoveEntry(unsigned int index)
@@ -279,123 +166,36 @@ bool CDirectoryListing::RemoveEntry(unsigned int index)
 	if (index >= GetCount())
 		return false;
 
-	Copy(false);
-	m_searchmap_case->clear();
-	m_searchmap_nocase->clear();
+	m_searchmap_case.clear();
+	m_searchmap_nocase.clear();
 
-	std::vector<CDirentryObject>::iterator iter = m_pEntries->begin() + index;
-	if (iter->GetEntry().dir)
+	std::vector<CRefcountObject<CDirentry> >& entries = m_entries.Get();
+	std::vector<CRefcountObject<CDirentry> >::iterator iter = entries.begin() + index;
+	if ((*iter)->dir)
 		m_hasUnsureEntries |= CDirectoryListing::unsure_dir_removed;
 	else
 		m_hasUnsureEntries |= CDirectoryListing::unsure_file_removed;
-	m_pEntries->erase(iter);
+	entries.erase(iter);
 
 	m_entryCount--;
 
 	return true;
 }
 
-CDirentryObject::CDirentryObject()
-{
-	m_pEntry = 0;
-	m_pReferenceCount = 0;
-}
-
-CDirentryObject::CDirentryObject(const CDirentryObject& entryObject)
-{
-	m_pEntry = entryObject.m_pEntry;
-	m_pReferenceCount = entryObject.m_pReferenceCount;
-	if (m_pReferenceCount)
-		(*m_pReferenceCount)++;
-}
-
-CDirentryObject::~CDirentryObject()
-{
-	Unref();
-}
-
-CDirentryObject& CDirentryObject::operator=(const CDirentryObject &a)
-{
-	if (&a == this)
-		return *this;
-
-	if (m_pReferenceCount && m_pReferenceCount == a.m_pReferenceCount)
-	{
-		// References the same listing
-		return *this;
-	}
-
-	Unref();
-
-	m_pEntry = a.m_pEntry;
-	m_pReferenceCount = a.m_pReferenceCount;
-	if (m_pReferenceCount)
-		(*m_pReferenceCount)++;
-
-	return *this;
-}
-
-void CDirentryObject::Unref()
-{
-	if (!m_pReferenceCount)
-		return;
-
-	if (*m_pReferenceCount > 1)
-	{
-		(*m_pReferenceCount)--;
-		return;
-	}
-
-	delete m_pReferenceCount;
-	m_pReferenceCount = 0;
-	delete m_pEntry;
-	m_pEntry = 0;
-}
-
-void CDirentryObject::Copy()
-{
-	if (!m_pReferenceCount)
-	{
-		m_pEntry = new CDirentry;
-		m_pReferenceCount = new int(1);
-		return;
-	}
-	if (*m_pReferenceCount == 1)
-		return;
-	
-	(*m_pReferenceCount)--;
-	m_pEntry = new CDirentry(*m_pEntry);
-	m_pReferenceCount = new int(1);
-}
-
-CDirentryObject::CDirentryObject(const CDirentry& entry)
-{
-	m_pEntry = new CDirentry(entry);
-	m_pReferenceCount = new int(1);
-}
-
-const CDirentry& CDirentryObject::GetEntry() const
-{
-	return *m_pEntry;
-}
-
-CDirentry& CDirentryObject::GetEntry()
-{
-	Copy();
-	return *m_pEntry;
-}
-
 void CDirectoryListing::GetFilenames(std::vector<wxString> &names) const
 {
 	names.reserve(GetCount());
 	for (unsigned int i = 0; i < GetCount(); i++)
-		names.push_back((*this)[i].name);
+		names.push_back((*m_entries)[i]->name);
 }
 
 int CDirectoryListing::FindFile_CmpCase(const wxString& name) const
 {
-	if (!m_pEntries)
+	if (!m_entryCount)
 		return -1;
+
+	if (!m_searchmap_case)
+		m_searchmap_case.Get();
 
 	// Search map
 	std::multimap<wxString, unsigned int>::const_iterator iter = m_searchmap_case->find(name);
@@ -404,12 +204,14 @@ int CDirectoryListing::FindFile_CmpCase(const wxString& name) const
 
 	unsigned int i = m_searchmap_case->size();
 
+	std::multimap<wxString, unsigned int>& searchmap_case = m_searchmap_case.Get();
+
 	// Build map if not yet complete
-	std::vector<CDirentryObject>::const_iterator entry_iter = m_pEntries->begin() + i;
-	for (; entry_iter != m_pEntries->end(); entry_iter++, i++)
+	std::vector<CRefcountObject<CDirentry> >::const_iterator entry_iter = m_entries->begin() + i;
+	for (; entry_iter != m_entries->end(); entry_iter++, i++)
 	{
-		const wxString& entry_name = entry_iter->GetEntry().name;
-		m_searchmap_case->insert(std::pair<const wxString, unsigned int>(entry_name, i));
+		const wxString& entry_name = (*entry_iter)->name;
+		searchmap_case.insert(std::pair<const wxString, unsigned int>(entry_name, i));
 
 		if (entry_name == name)
 			return i;
@@ -421,8 +223,11 @@ int CDirectoryListing::FindFile_CmpCase(const wxString& name) const
 
 int CDirectoryListing::FindFile_CmpNoCase(wxString name) const
 {
-	if (!m_pEntries)
+	if (!m_entryCount)
 		return -1;
+
+	if (!m_searchmap_nocase)
+		m_searchmap_nocase.Get();
 
 	name.MakeLower();
 
@@ -433,13 +238,15 @@ int CDirectoryListing::FindFile_CmpNoCase(wxString name) const
 
 	unsigned int i = m_searchmap_nocase->size();
 
+	std::multimap<wxString, unsigned int>& searchmap_nocase = m_searchmap_nocase.Get();
+
 	// Build map if not yet complete
-	std::vector<CDirentryObject>::const_iterator entry_iter = m_pEntries->begin() + i;
-	for (; entry_iter != m_pEntries->end(); entry_iter++, i++)
+	std::vector<CRefcountObject<CDirentry> >::const_iterator entry_iter = m_entries->begin() + i;
+	for (; entry_iter != m_entries->end(); entry_iter++, i++)
 	{
-		wxString entry_name = entry_iter->GetEntry().name;
+		wxString entry_name = (*entry_iter)->name;
 		entry_name.MakeLower();
-		m_searchmap_nocase->insert(std::pair<const wxString, unsigned int>(entry_name, i));
+		searchmap_nocase.insert(std::pair<const wxString, unsigned int>(entry_name, i));
 
 		if (entry_name == name)
 			return i;
@@ -454,6 +261,6 @@ void CDirectoryListing::ClearFindMap()
 	if (!m_searchmap_case)
 		return;
 
-	m_searchmap_case->clear();
-	m_searchmap_nocase->clear();
+	m_searchmap_case.clear();
+	m_searchmap_nocase.clear();
 }

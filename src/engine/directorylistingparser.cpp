@@ -698,7 +698,6 @@ CDirectoryListing CDirectoryListingParser::Parse(const CServerPath &path)
 	}
 	else
 	{
-		listing.SetCount(m_entryList.size());
 		listing.Assign(m_entryList);
 	}
 

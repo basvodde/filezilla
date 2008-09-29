@@ -24,33 +24,13 @@ public:
 	bool operator==(const CDirentry &op) const;
 };
 
-class CDirentryObject
-{
-public:
-	CDirentryObject(const CDirentryObject& entryObject);
-	CDirentryObject(const CDirentry& entry);
-	CDirentryObject();
-	virtual ~CDirentryObject();
-	
-	CDirentryObject& operator=(const CDirentryObject &a);
-
-	const CDirentry& GetEntry() const;
-	CDirentry& GetEntry();
-
-protected:
-	void Unref();
-	void Copy();
-
-	int *m_pReferenceCount;
-	CDirentry* m_pEntry;
-};
+#include "refcount.h"
 
 class CDirectoryListing
 {
 public:
 	CDirectoryListing();
 	CDirectoryListing(const CDirectoryListing& listing);
-	~CDirectoryListing();
 
 	CServerPath path;
 	CDirectoryListing& operator=(const CDirectoryListing &a);
@@ -104,18 +84,12 @@ public:
 
 protected:
 
-	void AddRef();
-	void Unref();
-	void Copy(bool copy_cache);
+	CRefcountObject_Uninitialized<std::vector<CRefcountObject<CDirentry> > > m_entries;
 
-	std::vector<CDirentryObject> *m_pEntries;
-
-	mutable std::multimap<wxString, unsigned int>* m_searchmap_case;
-	mutable std::multimap<wxString, unsigned int>* m_searchmap_nocase;
+	mutable CRefcountObject_Uninitialized<std::multimap<wxString, unsigned int> > m_searchmap_case;
+	mutable CRefcountObject_Uninitialized<std::multimap<wxString, unsigned int> > m_searchmap_nocase;
 
 	unsigned int m_entryCount;
-
-	int *m_referenceCount;
 };
 
 #endif
