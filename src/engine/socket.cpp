@@ -1608,6 +1608,7 @@ int CSocket::Listen(int family, int port /*=0*/)
 #endif
 			m_fd = -1;
 		}
+		freeaddrinfo(addressList);
 		if (m_fd == -1)
 			return res;
 	}
