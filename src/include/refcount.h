@@ -54,7 +54,7 @@ public:
 
 	CRefcountObject_Uninitialized<T>& operator=(const CRefcountObject_Uninitialized<T>& v);
 
-	bool operator!() const { return m_ptr != 0; }
+	bool operator!() const { return m_ptr == 0; }
 protected:
 	int* m_refcount;
 	T* m_ptr;
