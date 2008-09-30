@@ -389,6 +389,7 @@ int CSftpControlSocket::Connect(const CServer &server)
 	m_pid = wxExecute(executable + _T(" -v"), wxEXEC_ASYNC, m_pProcess);
 	if (!m_pid)
 	{
+		LogMessage(Debug_Warning, _T("wxExecute failed"));
 		delete m_pProcess;
 		m_pProcess = 0;
 		DoClose();
@@ -398,6 +399,7 @@ int CSftpControlSocket::Connect(const CServer &server)
 	m_pInputThread = new CSftpInputThread(this, m_pProcess);
 	if (!m_pInputThread->Init())
 	{
+		LogMessage(Debug_Warning, _T("Thread creation failed"));
 		delete m_pInputThread;
 		m_pInputThread = 0;
 		m_pProcess->Detach();
