@@ -494,9 +494,6 @@ wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix, int format, b
 	else
 		divider = 1024;
 
-	// We always round up. Set to true if there's a reminder
-	bool r2 = false;
-
 	// Exponent (2^(10p) or 10^(3p) depending on option
 	int p = 0;
 
