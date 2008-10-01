@@ -241,6 +241,9 @@ CStatusBar::CStatusBar(wxTopLevelWindow* pParent)
 	m_pCertificate = 0;
 	m_pSftpEncryptionInfo = 0;
 
+	m_size = 0;
+	m_hasUnknownFiles = false;
+
 	const int count = 5;
 	SetFieldsCount(count);
 	int array[count];
@@ -265,12 +268,14 @@ CStatusBar::~CStatusBar()
 
 void CStatusBar::DisplayQueueSize(wxLongLong totalSize, bool hasUnknown)
 {
+	m_size = totalSize;
+	m_hasUnknownFiles = hasUnknown;
+
 	if (totalSize == 0 && !hasUnknown)
 	{
 		SetStatusText(_("Queue: empty"), FIELD_QUEUESIZE);
 		return;
 	}
-
 	int divider;
 	if (m_sizeFormat == 3)
 		divider = 1000;
@@ -414,6 +419,8 @@ void CStatusBar::UpdateSizeFormat()
 	m_sizeFormat = COptions::Get()->GetOptionVal(OPTION_SIZE_FORMAT);
 	if (!m_sizeFormat)
 		m_sizeFormat = 1;
+
+	DisplayQueueSize(m_size, m_hasUnknownFiles);
 }
 
 void CStatusBar::OnHandleClick(wxWindow* pWnd)

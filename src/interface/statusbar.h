@@ -79,6 +79,8 @@ protected:
 	void MeasureQueueSizeWidth();
 
 	int m_sizeFormat;
+	wxLongLong m_size;
+	bool m_hasUnknownFiles;
 
 	wxStaticBitmap* m_pDataTypeIndicator;
 	wxStaticBitmap* m_pEncryptionIndicator;
