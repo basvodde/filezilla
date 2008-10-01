@@ -246,7 +246,7 @@ enum CLocalFileSystem::local_fileType CLocalFileSystem::GetFileInfo(const wxStri
 	}
 
 	const wxCharBuffer p = path.fn_str();
-	return GetFileInfo(p, isLink, size, modificationTime, mode);
+	return GetFileInfo((const char*)p, isLink, size, modificationTime, mode);
 #endif
 }
 
