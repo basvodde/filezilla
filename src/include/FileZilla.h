@@ -46,7 +46,6 @@
 #include "setup.h"
 
 #include <wx/splitter.h>
-#include <wx/wxhtml.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/image.h>
 #include <wx/sysopt.h>
