@@ -70,10 +70,12 @@ TiXmlElement* FindElementWithAttribute(TiXmlElement* node, const char* element, 
 // Add a new child element with the specified name and value to the xml document
 void AddTextElement(TiXmlElement* node, const char* name, const wxString& value);
 void AddTextElement(TiXmlElement* node, const char* name, int value);
+void AddTextElementRaw(TiXmlElement* node, const char* name, const char* value);
 
 // Set the current element's text value
 void AddTextElement(TiXmlElement* node, const wxString& value);
 void AddTextElement(TiXmlElement* node, int value);
+void AddTextElementRaw(TiXmlElement* node, const char* value);
 
 // Get string from named child element
 wxString GetTextElement(TiXmlElement* node, const char* name);
@@ -84,6 +86,8 @@ wxString GetTextElement(TiXmlElement* node);
 // Get (64-bit) integer from named element
 int GetTextElementInt(TiXmlElement* node, const char* name, int defValue = 0);
 wxLongLong GetTextElementLongLong(TiXmlElement* node, const char* name, int defValue = 0);
+
+bool GetTextElementBool(TiXmlElement* node, const char* name, bool defValue = false);
 
 // Opens the specified XML file if it exists or creates a new one otherwise.
 // Returns 0 on error.

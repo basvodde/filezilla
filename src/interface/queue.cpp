@@ -319,13 +319,14 @@ void CFileItem::SaveItem(TiXmlElement* pElement) const
 	AddTextElement(&file, "LocalFile", m_localFile);
 	AddTextElement(&file, "RemoteFile", m_remoteFile);
 	AddTextElement(&file, "RemotePath", m_remotePath.GetSafePath());
-	AddTextElement(&file, "Download", m_download ? _T("1") : _T("0"));
+	AddTextElementRaw(&file, "Download", m_download ? "1" : "0");
 	if (m_size != -1)
 		AddTextElement(&file, "Size", m_size.ToString());
 	if (m_errorCount)
 		AddTextElement(&file, "ErrorCount", m_errorCount);
-	AddTextElement(&file, "Priority", m_priority);
-	AddTextElement(&file, "TransferMode", m_transferSettings.binary ? _T("1") : _T("0"));
+	if (m_priority != priority_normal)
+		AddTextElement(&file, "Priority", m_priority);
+	AddTextElementRaw(&file, "TransferMode", m_transferSettings.binary ? "1" : "0");
 
 	pElement->InsertEndChild(file);
 }
@@ -365,7 +366,7 @@ void CFolderItem::SaveItem(TiXmlElement* pElement) const
 		AddTextElement(&file, "RemoteFile", m_remoteFile);
 		AddTextElement(&file, "RemotePath", m_remotePath.GetSafePath());
 	}
-	AddTextElement(&file, "Download", m_download ? _T("1") : _T("0"));
+	AddTextElementRaw(&file, "Download", m_download ? "1" : "0");
 
 	pElement->InsertEndChild(file);
 }

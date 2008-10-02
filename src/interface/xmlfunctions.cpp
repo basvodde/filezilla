@@ -179,7 +179,21 @@ void AddTextElement(TiXmlElement* node, const char* name, const wxString& value)
 
 void AddTextElement(TiXmlElement* node, const char* name, int value)
 {
-	AddTextElement(node, name, wxString::Format(_T("%d"), value));
+	char buffer[sizeof(int)]; // Always big enough
+	sprintf(buffer, "%d", value);
+	AddTextElementRaw(node, name, buffer);
+}
+
+void AddTextElementRaw(TiXmlElement* node, const char* name, const char* value)
+{
+	wxASSERT(node);
+	wxASSERT(value && *value);
+
+	TiXmlElement element(name);
+
+    element.InsertEndChild(TiXmlText(value));
+
+	node->InsertEndChild(element);
 }
 
 void AddTextElement(TiXmlElement* node, const wxString& value)
@@ -205,7 +219,26 @@ void AddTextElement(TiXmlElement* node, const wxString& value)
 
 void AddTextElement(TiXmlElement* node, int value)
 {
-	AddTextElement(node, wxString::Format(_T("%d"), value));
+	char buffer[sizeof(int)]; // Always big enough
+	sprintf(buffer, "%d", value);
+	AddTextElementRaw(node, buffer);
+}
+
+void AddTextElementRaw(TiXmlElement* node, const char* value)
+{
+	wxASSERT(node);
+	wxASSERT(value && *value);
+
+	for (TiXmlNode* pChild = node->FirstChild(); pChild; pChild = pChild->NextSibling())
+	{
+		if (!pChild->ToText())
+			continue;
+
+		node->RemoveChild(pChild);
+		break;
+	}
+
+    node->InsertEndChild(TiXmlText(value));
 }
 
 wxString GetTextElement(TiXmlElement* node, const char* name)
@@ -308,6 +341,33 @@ wxLongLong GetTextElementLongLong(TiXmlElement* node, const char* name, int defV
 	}
 
 	return negative ? -value : value;
+}
+
+bool GetTextElementBool(TiXmlElement* node, const char* name, bool defValue /*=false*/)
+{
+	wxASSERT(node);
+
+	TiXmlElement* element = node->FirstChildElement(name);
+	if (!element)
+		return defValue;
+
+	TiXmlNode* textNode = element->FirstChild();
+	if (!textNode || !textNode->ToText())
+		return defValue;
+
+	const char* str = textNode->Value();
+	if (!str)
+		return defValue;
+	
+	switch (str[0])
+	{
+	case '0':
+		return false;
+	case '1':
+		return true;
+	default:
+		return defValue;
+	}
 }
 
 // Opens the specified XML file if it exists or creates a new one otherwise.
@@ -568,13 +628,13 @@ void SetServer(TiXmlElement *node, const CServer& server)
 	switch (server.GetPasvMode())
 	{
 	case MODE_PASSIVE:
-		AddTextElement(node, "PasvMode", _T("MODE_PASSIVE"));
+		AddTextElementRaw(node, "PasvMode", "MODE_PASSIVE");
 		break;
 	case MODE_ACTIVE:
-		AddTextElement(node, "PasvMode", _T("MODE_ACTIVE"));
+		AddTextElementRaw(node, "PasvMode", "MODE_ACTIVE");
 		break;
 	default:
-		AddTextElement(node, "PasvMode", _T("MODE_DEFAULT"));
+		AddTextElementRaw(node, "PasvMode", "MODE_DEFAULT");
 		break;
 	}
 	AddTextElement(node, "MaximumMultipleConnections", server.MaximumMultipleConnections());
@@ -582,13 +642,13 @@ void SetServer(TiXmlElement *node, const CServer& server)
 	switch (server.GetEncodingType())
 	{
 	case ENCODING_AUTO:
-		AddTextElement(node, "EncodingType", _T("Auto"));
+		AddTextElementRaw(node, "EncodingType", "Auto");
 		break;
 	case ENCODING_UTF8:
-		AddTextElement(node, "EncodingType", _T("UTF-8"));
+		AddTextElementRaw(node, "EncodingType", "UTF-8");
 		break;
 	case ENCODING_CUSTOM:
-		AddTextElement(node, "EncodingType", _T("Custom"));
+		AddTextElementRaw(node, "EncodingType", "Custom");
 		AddTextElement(node, "CustomEncoding", server.GetCustomEncoding());
 		break;
 	}
@@ -605,7 +665,7 @@ void SetServer(TiXmlElement *node, const CServer& server)
 		}
 	}
 
-	AddTextElement(node, "BypassProxy", server.GetBypassProxy() ? 1 : 0);
+	AddTextElementRaw(node, "BypassProxy", server.GetBypassProxy() ? "1" : "0");
 	const wxString& name = server.GetName();
 	if (name != _T(""))
 		AddTextElement(node, "Name", name);
