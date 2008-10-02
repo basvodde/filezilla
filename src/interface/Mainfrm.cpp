@@ -226,7 +226,8 @@ CMainFrame::CMainFrame()
 
 	CreateMenus();
 	CreateToolBar();
-	CreateQuickconnectBar();
+	if (COptions::Get()->GetOptionVal(OPTION_SHOW_QUICKCONNECT))
+		CreateQuickconnectBar();
 
 	m_ViewSplitterSashPos = 0.5;
 
@@ -449,14 +450,11 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 
 	wxSize clientSize = GetClientSize();
 	if (m_pQuickconnectBar)
-	{
-		wxSize barSize = m_pQuickconnectBar->GetSize();
-		m_pQuickconnectBar->SetSize(0, 0, clientSize.GetWidth(), barSize.GetHeight());
-	}
+		m_pQuickconnectBar->SetSize(0, 0, clientSize.GetWidth(), -1, wxSIZE_USE_EXISTING);
 	if (m_pTopSplitter)
 	{
 		if (!m_pQuickconnectBar)
-			m_pTopSplitter->SetSize(clientSize.GetWidth(), clientSize.GetHeight());
+			m_pTopSplitter->SetSize(0, 0, clientSize.GetWidth(), clientSize.GetHeight());
 		else
 		{
 			wxSize panelSize = m_pQuickconnectBar->GetSize();
@@ -643,6 +641,16 @@ bool CMainFrame::CreateQuickconnectBar()
 	{
 		delete m_pQuickconnectBar;
 		m_pQuickconnectBar = 0;
+	}
+	else
+	{
+		wxSize clientSize = GetClientSize();
+		if (m_pTopSplitter)
+		{
+			wxSize panelSize = m_pQuickconnectBar->GetSize();
+			m_pTopSplitter->SetSize(-1, panelSize.GetHeight(), -1, clientSize.GetHeight() - panelSize.GetHeight(), wxSIZE_USE_EXISTING);
+		}
+		m_pQuickconnectBar->SetSize(0, 0, clientSize.GetWidth(), -1);
 	}
 
 	return true;
@@ -869,6 +877,20 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 				m_pRemoteListViewPanel->ProcessEvent(evt);
 			}
 		}
+	}
+	else if (event.GetId() == XRCID("ID_VIEW_QUICKCONNECT"))
+	{
+		if (!m_pQuickconnectBar)
+			CreateQuickconnectBar();
+		else
+		{
+			m_pQuickconnectBar->Destroy();
+			m_pQuickconnectBar = 0;
+			wxSize clientSize = GetClientSize();
+			m_pTopSplitter->SetSize(0, 0, clientSize.GetWidth(), clientSize.GetHeight());
+		}
+		COptions::Get()->SetOption(OPTION_SHOW_QUICKCONNECT, m_pQuickconnectBar != 0);
+		m_pMenuBar->Check(XRCID("ID_VIEW_QUICKCONNECT"), m_pQuickconnectBar != 0);
 	}
 	else
 	{
@@ -2012,8 +2034,10 @@ void CMainFrame::ConnectNavigationHandler(wxEvtHandler* handler)
 void CMainFrame::OnNavigationKeyEvent(wxNavigationKeyEvent& event)
 {
 	std::list<wxWindow*> windowOrder;
-	windowOrder.push_back(m_pQuickconnectBar);
-	windowOrder.push_back(m_pStatusView);
+	if (m_pQuickconnectBar)
+		windowOrder.push_back(m_pQuickconnectBar);
+	if (m_pStatusView)
+		windowOrder.push_back(m_pStatusView);
 	if (COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP) == 0)
 	{
 		windowOrder.push_back(m_pLocalViewHeader);
@@ -2070,7 +2094,8 @@ void CMainFrame::OnChar(wxKeyEvent& event)
 	// Jump between quickconnect bar and view headers
 
 	std::list<wxWindow*> windowOrder;
-	windowOrder.push_back(m_pQuickconnectBar);
+	if (m_pQuickconnectBar)
+		windowOrder.push_back(m_pQuickconnectBar);
 	windowOrder.push_back(m_pLocalViewHeader);
 	windowOrder.push_back(m_pRemoteViewHeader);
 
@@ -2392,6 +2417,7 @@ void CMainFrame::InitMenubarState()
 {
 	if (!m_pMenuBar)
 		return;
+	m_pMenuBar->Check(XRCID("ID_VIEW_QUICKCONNECT"), m_pQuickconnectBar != 0);
 	m_pMenuBar->Check(XRCID("ID_VIEW_MESSAGELOG"), m_pTopSplitter && m_pTopSplitter->IsSplit());
 	m_pMenuBar->Check(XRCID("ID_VIEW_LOCALTREE"), m_pLocalSplitter && m_pLocalSplitter->IsSplit());
 	m_pMenuBar->Check(XRCID("ID_VIEW_REMOTETREE"), m_pRemoteSplitter && m_pRemoteSplitter->IsSplit());
