@@ -1094,8 +1094,6 @@ int CSocket::Connect(wxString host, unsigned int port)
 	if (port < 1 || port > 65535)
 		return EINVAL;
 
-	m_state = connecting;
-
 	if (m_pSocketThread && m_pSocketThread->m_started)
 	{
 		m_pSocketThread->m_sync.Lock();
@@ -1124,6 +1122,8 @@ int CSocket::Connect(wxString host, unsigned int port)
 		m_pSocketThread = new CSocketThread();
 		m_pSocketThread->SetSocket(this);
 	}
+
+	m_state = connecting;
 
 	m_host = host;
 	m_port = port;
