@@ -39,6 +39,7 @@
 #include "buildinfo.h"
 #include "filelist_statusbar.h"
 #include "manual_transfer.h"
+#include "auto_ascii_files.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -421,6 +422,8 @@ CMainFrame::CMainFrame()
 
 	InitMenubarState();
 	InitToolbarState();
+
+	CAutoAsciiFiles::SettingsChanged();
 }
 
 CMainFrame::~CMainFrame()
@@ -895,8 +898,13 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	}
 	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_MANUAL"))
 	{
+		if (!m_pState)
+		{
+			wxBell();
+			return;
+		}
 		CManualTransfer dlg;
-		dlg.Show(this, _T(""), CServerPath(), 0);
+		dlg.Show(this, m_pState->GetLocalDir(), m_pState->GetRemotePath(), m_pState->GetServer());
 	}
 	else
 	{
@@ -2027,6 +2035,7 @@ void CMainFrame::CheckChangedSettings()
 	m_pRemoteListView->InitDateFormat();
 
 	m_pQueueView->SettingsChanged();
+	CAutoAsciiFiles::SettingsChanged();
 }
 
 void CMainFrame::ConnectNavigationHandler(wxEvtHandler* handler)

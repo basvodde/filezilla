@@ -144,7 +144,6 @@ protected:
 	void CalculateQueueSize();
 	void DisplayQueueSize();
 	void SaveQueue();
-	bool ShouldUseBinaryMode(wxString filename, enum ServerType type);
 
 	bool IsActionAfter(enum ActionAfterState);
 	void ActionAfter(bool warned = false);
@@ -205,8 +204,6 @@ protected:
 
 	CMainFrame* m_pMainFrame;
 	CAsyncRequestQueue* m_pAsyncRequestQueue;
-
-	std::list<wxString> m_asciiFiles;
 
 	std::list<CFileZillaEngine*> m_waitingForPassword;
 

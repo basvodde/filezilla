@@ -24,6 +24,7 @@
 #include "local_filesys.h"
 #include "statusbar.h"
 #include "recursive_operation.h"
+#include "auto_ascii_files.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -477,7 +478,10 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 	else
 	{
 		fileItem = new CFileItem(pServerItem, queueOnly, download, localFile, remoteFile, remotePath, size);
-		fileItem->m_transferSettings.binary = ShouldUseBinaryMode(download ? remoteFile : wxFileName(localFile).GetFullName(), remotePath.GetType());
+		if (download)
+			fileItem->m_transferSettings.binary = !CAutoAsciiFiles::TransferRemoteAsAscii(remoteFile, remotePath.GetType());
+		else
+			fileItem->m_transferSettings.binary = !CAutoAsciiFiles::TransferLocalAsAscii(localFile, remotePath.GetType());
 		fileItem->m_edit = edit;
 	}
 
@@ -517,7 +521,7 @@ bool CQueueView::QueueFiles(const bool queueOnly, const wxString& localPath, con
 
 		CFileItem* fileItem;
 		fileItem = new CFileItem(pServerItem, queueOnly, true, localPath + iter->name, iter->name, dataObject.GetServerPath(), iter->size);
-		fileItem->m_transferSettings.binary = ShouldUseBinaryMode(iter->name, dataObject.GetServerPath().GetType());
+		fileItem->m_transferSettings.binary = !CAutoAsciiFiles::TransferRemoteAsAscii(iter->name, dataObject.GetServerPath().GetType());
 
 		InsertItem(pServerItem, fileItem);
 	}
@@ -1684,7 +1688,12 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry*> &entryList, bool queueO
 		if (entry->localFile != _T(""))
 		{
 			fileItem = new CFileItem(pServerItem, queueOnly, download, entry->localFile, entry->remoteFile, entry->remotePath, entry->size);
-			fileItem->m_transferSettings.binary = ShouldUseBinaryMode(download ? entry->remoteFile : wxFileName(entry->localFile).GetFullName(), entry->remotePath.GetType());
+
+			if (download)
+				fileItem->m_transferSettings.binary = !CAutoAsciiFiles::TransferRemoteAsAscii(entry->remoteFile, entry->remotePath.GetType());
+			else
+				fileItem->m_transferSettings.binary = !CAutoAsciiFiles::TransferLocalAsAscii(entry->localFile, entry->remotePath.GetType());
+
 			fileItem->m_defaultFileExistsAction = defaultFileExistsAction;
 		}
 		else
@@ -1893,72 +1902,7 @@ void CQueueView::SettingsChanged()
 		}
 	}
 
-	m_asciiFiles.clear();
-	wxString extensions = COptions::Get()->GetOption(OPTION_ASCIIFILES);
-	wxString ext;
-	int pos = extensions.Find(_T("|"));
-	while (pos != -1)
-	{
-		if (!pos)
-		{
-			if (ext != _T(""))
-			{
-				ext.Replace(_T("\\\\"), _T("\\"));
-				m_asciiFiles.push_back(ext);
-				ext = _T("");
-			}
-		}
-		else if (extensions.c_str()[pos - 1] != '\\')
-		{
-			ext += extensions.Left(pos);
-			ext.Replace(_T("\\\\"), _T("\\"));
-			m_asciiFiles.push_back(ext);
-			ext = _T("");
-		}
-		else
-		{
-			ext += extensions.Left(pos - 1) + _T("|");
-		}
-		extensions = extensions.Mid(pos + 1);
-		pos = extensions.Find(_T("|"));
-	}
-	ext += extensions;
-	ext.Replace(_T("\\\\"), _T("\\"));
-	m_asciiFiles.push_back(ext);
-
 	AdvanceQueue();
-}
-
-// Defined in RemoteListView.cpp
-wxString StripVMSRevision(const wxString& name);
-
-bool CQueueView::ShouldUseBinaryMode(wxString filename, enum ServerType type)
-{
-	int mode = COptions::Get()->GetOptionVal(OPTION_ASCIIBINARY);
-	if (mode == 1)
-		return false;
-	else if (mode == 2)
-		return true;
-
-	if (type == VMS)
-		filename = StripVMSRevision(filename);
-
-	if (filename[0] == '.')
-		return COptions::Get()->GetOptionVal(OPTION_ASCIIDOTFILE) == 0;
-
-	int pos = filename.Find('.', true);
-	if (pos == -1)
-		return COptions::Get()->GetOptionVal(OPTION_ASCIINOEXT) == 0;
-	filename = filename.Mid(pos + 1);
-
-	if (filename == _T(""))
-		return true;
-
-	for (std::list<wxString>::const_iterator iter = m_asciiFiles.begin(); iter != m_asciiFiles.end(); iter++)
-		if (!filename.CmpNoCase(*iter))
-			return false;
-
-	return true;
 }
 
 void CQueueView::OnPostScroll()

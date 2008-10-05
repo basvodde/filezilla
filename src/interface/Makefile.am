@@ -12,6 +12,7 @@ bin_PROGRAMS = filezilla
 filezilla_SOURCES = aboutdialog.cpp \
 		asyncrequestqueue.cpp \
 		aui_notebook_ex.cpp \
+		auto_ascii_files.cpp \
 		buildinfo.cpp \
 		chmoddialog.cpp \
 		clearprivatedata.cpp \
@@ -98,6 +99,7 @@ endif
 noinst_HEADERS = aboutdialog.h \
 		 asyncrequestqueue.h \
 		 aui_notebook_ex.h \
+		 auto_ascii_files.h \
 		 buildinfo.h \
 		 chmoddialog.h \
 		 clearprivatedata.h \
