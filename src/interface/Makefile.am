@@ -41,6 +41,7 @@ filezilla_SOURCES = aboutdialog.cpp \
 		LocalTreeView.cpp \
 		loginmanager.cpp \
 		Mainfrm.cpp \
+		manual_transfer.cpp \
 		netconfwizard.cpp \
 		Options.cpp \
 		optionspage.cpp \
@@ -127,6 +128,7 @@ noinst_HEADERS = aboutdialog.h \
 		 LocalTreeView.h \
 		 loginmanager.h \
 		 Mainfrm.h \
+		 manual_transfer.h \
 		 netconfwizard.h \
 		 Options.h \
 		 optionspage.h \

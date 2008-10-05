@@ -38,6 +38,7 @@
 #include "cmdline.h"
 #include "buildinfo.h"
 #include "filelist_statusbar.h"
+#include "manual_transfer.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -891,6 +892,11 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		}
 		COptions::Get()->SetOption(OPTION_SHOW_QUICKCONNECT, m_pQuickconnectBar != 0);
 		m_pMenuBar->Check(XRCID("ID_VIEW_QUICKCONNECT"), m_pQuickconnectBar != 0);
+	}
+	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_MANUAL"))
+	{
+		CManualTransfer dlg;
+		dlg.Show(this, _T(""), CServerPath(), 0);
 	}
 	else
 	{
