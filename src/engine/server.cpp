@@ -459,6 +459,7 @@ enum LogonType CServer::GetLogonType() const
 
 void CServer::SetLogonType(enum LogonType logonType)
 {
+	wxASSERT(logonType != LOGONTYPE_MAX);
 	m_logonType = logonType;
 }
 
@@ -768,4 +769,49 @@ wxString CServer::GetNameFromServerType(enum ServerType type)
 {
 	wxASSERT(type != SERVERTYPE_MAX);
 	return wxGetTranslation(typeNames[type]);
+}
+
+enum ServerType CServer::GetServerTypeFromName(const wxString& name)
+{
+	for (int i = 0; i < SERVERTYPE_MAX; i++)
+	{
+		enum ServerType type = (enum ServerType)i;
+		if (name == CServer::GetNameFromServerType(type))
+			return type;
+	}
+
+	return DEFAULT;
+}
+
+enum LogonType CServer::GetLogonTypeFromName(const wxString& name)
+{
+	if (name == _("Normal"))
+		return NORMAL;
+	else if (name == _("Ask for password"))
+		return ASK;
+	else if (name == _("Interactive"))
+		return INTERACTIVE;
+	else if (name == _("Account"))
+		return ACCOUNT;
+	else
+		return ANONYMOUS;
+}
+
+wxString CServer::GetNameFromLogonType(enum LogonType type)
+{
+	wxASSERT(type != LOGONTYPE_MAX);
+
+	switch (type)
+	{
+	case NORMAL:
+		return _("Normal");
+	case ASK:
+		return _("Ask for password");
+	case INTERACTIVE:
+		return _("Interactive");
+	case ACCOUNT:
+		return _("Account");
+	default:
+		return _("Anonymous");
+	}
 }

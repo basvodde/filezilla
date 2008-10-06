@@ -33,7 +33,9 @@ enum LogonType
 	NORMAL,
 	ASK, // ASK should not be sent to the engine, it's intendet to be used by the interface
 	INTERACTIVE,
-	ACCOUNT
+	ACCOUNT,
+
+	LOGONTYPE_MAX
 };
 
 enum PasvMode
@@ -129,6 +131,10 @@ public:
 	wxString GetName() const { return m_name; }
 
 	static wxString GetNameFromServerType(enum ServerType type);
+	static enum ServerType GetServerTypeFromName(const wxString& name);
+
+	static wxString GetNameFromLogonType(enum LogonType type);
+	static enum LogonType GetLogonTypeFromName(const wxString& name);
 
 protected:
 	void Initialize();

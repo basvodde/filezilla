@@ -359,6 +359,11 @@ void CSiteManager::CreateControls(wxWindow* parent)
 	wxASSERT(pChoice);
 	for (int i = 0; i < SERVERTYPE_MAX; i++)
 		pChoice->Append(CServer::GetNameFromServerType((enum ServerType)i));
+
+	pChoice = XRCCTRL(*this, "ID_LOGONTYPE", wxChoice);
+	wxASSERT(pChoice);
+	for (int i = 0; i < LOGONTYPE_MAX; i++)
+		pChoice->Append(CServer::GetNameFromLogonType((enum LogonType)i));
 }
 
 void CSiteManager::OnOK(wxCommandEvent& event)
@@ -805,32 +810,6 @@ void CSiteManager::OnNewFolder(wxCommandEvent&event)
 	pTree->EditLabel(newItem);
 }
 
-static enum ServerType GetServerTypeFromName(const wxString& name)
-{
-	for (int i = 0; i < SERVERTYPE_MAX; i++)
-	{
-		enum ServerType type = (enum ServerType)i;
-		if (name == CServer::GetNameFromServerType(type))
-			return type;
-	}
-
-	return DEFAULT;
-}
-
-static enum LogonType GetLogonTypeFromName(const wxString& name)
-{
-	if (name == _("Normal"))
-		return NORMAL;
-	else if (name == _("Ask for password"))
-		return ASK;
-	else if (name == _("Interactive"))
-		return INTERACTIVE;
-	else if (name == _("Account"))
-		return ACCOUNT;
-	else
-		return ANONYMOUS;
-}
-
 bool CSiteManager::Verify()
 {
 	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
@@ -853,7 +832,7 @@ bool CSiteManager::Verify()
 		return false;
 	}
 
-	enum LogonType logon_type = GetLogonTypeFromName(XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->GetStringSelection());
+	enum LogonType logon_type = CServer::GetLogonTypeFromName(XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->GetStringSelection());
 
 	wxString protocolName = XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->GetStringSelection();
 	enum ServerProtocol protocol = CServer::GetProtocolFromName(protocolName);
@@ -957,7 +936,7 @@ bool CSiteManager::Verify()
 	{
 		CServerPath remotePath;
 		const wxString serverType = XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->GetStringSelection();
-		remotePath.SetType(GetServerTypeFromName(serverType));
+		remotePath.SetType(CServer::GetServerTypeFromName(serverType));
 		if (!remotePath.SetPath(remotePathRaw))
 		{
 			XRCCTRL(*this, "ID_REMOTEDIR", wxTextCtrl)->SetFocus();
@@ -1177,7 +1156,7 @@ bool CSiteManager::UpdateServer()
 	else
 		data->m_server.SetProtocol(FTP);
 
-	enum LogonType logon_type = GetLogonTypeFromName(XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->GetStringSelection());
+	enum LogonType logon_type = CServer::GetLogonTypeFromName(XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->GetStringSelection());
 	data->m_server.SetLogonType(logon_type);
 
 	data->m_server.SetUser(XRCCTRL(*this, "ID_USER", wxTextCtrl)->GetValue(),
@@ -1187,7 +1166,7 @@ bool CSiteManager::UpdateServer()
 	data->m_comments = XRCCTRL(*this, "ID_COMMENTS", wxTextCtrl)->GetValue();
 
 	const wxString serverType = XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->GetStringSelection();
-	data->m_server.SetType(GetServerTypeFromName(serverType));
+	data->m_server.SetType(CServer::GetServerTypeFromName(serverType));
 
 	data->m_localDir = XRCCTRL(*this, "ID_LOCALDIR", wxTextCtrl)->GetValue();
 	data->m_remoteDir = CServerPath();
@@ -1386,24 +1365,7 @@ void CSiteManager::SetCtrlState()
 		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->Enable(!predefined && (data->m_server.GetLogonType() == NORMAL || data->m_server.GetLogonType() == ACCOUNT));
 		XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->Enable(!predefined && data->m_server.GetLogonType() == ACCOUNT);
 
-		switch (data->m_server.GetLogonType())
-		{
-		case NORMAL:
-			XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetStringSelection(_("Normal"));
-			break;
-		case ASK:
-			XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetStringSelection(_("Ask for password"));
-			break;
-		case INTERACTIVE:
-			XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetStringSelection(_("Interactive"));
-			break;
-		case ACCOUNT:
-			XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetStringSelection(_("Account"));
-			break;
-		default:
-			XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetStringSelection(_("Anonymous"));
-			break;
-		}
+		XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetStringSelection(CServer::GetNameFromLogonType(data->m_server.GetLogonType()));
 		XRCCTRL(*this, "ID_LOGONTYPE", wxWindow)->Enable(!predefined);
 
 		XRCCTRL(*this, "ID_USER", wxTextCtrl)->SetValue(data->m_server.GetUser());

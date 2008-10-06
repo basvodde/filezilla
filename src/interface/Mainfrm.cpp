@@ -904,7 +904,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 			return;
 		}
 		CManualTransfer dlg;
-		dlg.Show(this, m_pState->GetLocalDir(), m_pState->GetRemotePath(), m_pState->GetServer());
+		dlg.Show(this, m_pState);
 	}
 	else
 	{
