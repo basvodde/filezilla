@@ -116,4 +116,3 @@ void COptionsPageSizeFormatting::UpdateExamples()
 
 	GetSizer()->Layout();
 }
-	
