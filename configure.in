@@ -71,7 +71,7 @@ if ! test "$localesonly" = "yes"; then
   AM_OPTIONS_WXCONFIG
 
   MIN_WX_VERSION="2.8.9"
-  AM_PATH_WXCONFIG($MIN_WX_VERSION, wxWin=1, , [adv,aui,base,core,net,xml,xrc])
+  AM_PATH_WXCONFIG($MIN_WX_VERSION, wxWin=1, , [aui,xrc,adv,core,xml,net,base])
   if test "$wxWin" != 1; then
 	AC_MSG_ERROR([
         	wxWidgets must be installed on your system
