@@ -616,7 +616,11 @@ bool CSiteManager::Load(TiXmlElement *pElement, CSiteManagerXmlHandler* pHandler
 			CSiteManagerItemData* data = ReadServerElement(pChild);
 
 			if (data)
+			{
+				if (data->m_server.GetName() == _T(""))
+					data->m_server.SetName(name);
 				pHandler->AddSite(name, data);
+			}
 		}
 	}
 
