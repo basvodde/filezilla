@@ -24,6 +24,7 @@ protected:
 	bool m_local_file_exists;
 
 	CServer *m_pServer;
+	CServer* m_pLastSite;
 
 	CState* m_pState;
 
@@ -34,6 +35,9 @@ protected:
 	void OnDirection(wxCommandEvent& event);
 	void OnServerTypeChanged(wxCommandEvent& event);
 	void OnOK(wxCommandEvent& event);
+	void OnSelectSite(wxCommandEvent& event);
+	void OnSelectedSite(wxCommandEvent& event);
+	void OnLogontypeSelChanged(wxCommandEvent& event);
 };
 
 #endif //__MANUAL_TRANSFER_H__

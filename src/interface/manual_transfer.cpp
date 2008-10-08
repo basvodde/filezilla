@@ -4,6 +4,7 @@
 #include "auto_ascii_files.h"
 #include "state.h"
 #include "Options.h"
+#include "sitemanager.h"
 
 BEGIN_EVENT_TABLE(CManualTransfer, wxDialogEx)
 EVT_TEXT(XRCID("ID_LOCALFILE"), CManualTransfer::OnLocalChanged)
@@ -15,17 +16,22 @@ EVT_RADIOBUTTON(XRCID("ID_SERVER_CURRENT"), CManualTransfer::OnServerTypeChanged
 EVT_RADIOBUTTON(XRCID("ID_SERVER_SITE"), CManualTransfer::OnServerTypeChanged)
 EVT_RADIOBUTTON(XRCID("ID_SERVER_CUSTOM"), CManualTransfer::OnServerTypeChanged)
 EVT_BUTTON(XRCID("wxID_OK"), CManualTransfer::OnOK)
+EVT_BUTTON(XRCID("ID_SERVER_SITE_SELECT"), CManualTransfer::OnSelectSite)
+EVT_MENU(wxID_ANY, CManualTransfer::OnSelectedSite)
+EVT_CHOICE(XRCID("ID_LOGONTYPE"), CManualTransfer::OnLogontypeSelChanged)
 END_EVENT_TABLE()
 
 CManualTransfer::CManualTransfer()
 {
 	m_local_file_exists = false;
 	m_pServer = 0;
+	m_pLastSite = 0;
 }
 
 CManualTransfer::~CManualTransfer()
 {
 	delete m_pServer;
+	delete m_pLastSite;
 }
 
 void CManualTransfer::Show(wxWindow* pParent, CState* pState)
@@ -56,6 +62,7 @@ void CManualTransfer::Show(wxWindow* pParent, CState* pState)
 	{
 		XRCCTRL(*this, "ID_SERVER_CUSTOM", wxRadioButton)->SetValue(true);
 		XRCCTRL(*this, "ID_SERVER_CURRENT", wxRadioButton)->Disable();
+		DisplayServer();
 	}
 
 	wxString localPath = m_pState->GetLocalDir();
@@ -67,6 +74,19 @@ void CManualTransfer::Show(wxWindow* pParent, CState* pState)
 
 	SetControlState();
 
+	switch(COptions::Get()->GetOptionVal(OPTION_ASCIIBINARY))
+	{
+	case 1:
+		XRCCTRL(*this, "ID_TYPE_ASCII", wxRadioButton)->SetValue(true);
+		break;
+	case 2:
+		XRCCTRL(*this, "ID_TYPE_BINARY", wxRadioButton)->SetValue(true);
+		break;
+	default:
+		XRCCTRL(*this, "ID_TYPE_AUTO", wxRadioButton)->SetValue(true);
+		break;
+	}
+
 	ShowModal();
 }
 
@@ -74,6 +94,8 @@ void CManualTransfer::SetControlState()
 {
 	SetServerState();
 	SetAutoAsciiState();
+
+	XRCCTRL(*this, "ID_SERVER_SITE_SELECT", wxButton)->Enable(XRCCTRL(*this, "ID_SERVER_SITE", wxRadioButton)->GetValue());
 }
 
 void CManualTransfer::SetAutoAsciiState()
@@ -126,9 +148,11 @@ void CManualTransfer::SetServerState()
 	XRCCTRL(*this, "ID_PORT", wxWindow)->Enable(server_enabled);
 	XRCCTRL(*this, "ID_PROTOCOL", wxWindow)->Enable(server_enabled);
 	XRCCTRL(*this, "ID_LOGONTYPE", wxWindow)->Enable(server_enabled);
-	XRCCTRL(*this, "ID_USER", wxWindow)->Enable(server_enabled);
-	XRCCTRL(*this, "ID_PASS", wxWindow)->Enable(server_enabled);
-	XRCCTRL(*this, "ID_ACCOUNT", wxWindow)->Enable(server_enabled);
+
+	wxString logon_type = XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->GetStringSelection();
+	XRCCTRL(*this, "ID_USER", wxTextCtrl)->Enable(server_enabled && logon_type != _("Anonymous"));
+	XRCCTRL(*this, "ID_PASS", wxTextCtrl)->Enable(server_enabled && (logon_type == _("Normal") || logon_type == _("Account")));
+	XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->Enable(server_enabled && logon_type == _("Account"));
 }
 
 void CManualTransfer::DisplayServer()
@@ -149,10 +173,6 @@ void CManualTransfer::DisplayServer()
 		else
 			XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(CServer::GetProtocolName(FTP));
 
-		XRCCTRL(*this, "ID_USER", wxTextCtrl)->Enable(m_pServer->GetLogonType() != ANONYMOUS);
-		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->Enable(m_pServer->GetLogonType() == NORMAL || m_pServer->GetLogonType() == ACCOUNT);
-		XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->Enable(m_pServer->GetLogonType() == ACCOUNT);
-
 		switch (m_pServer->GetLogonType())
 		{
 		case NORMAL:
@@ -172,9 +192,9 @@ void CManualTransfer::DisplayServer()
 			break;
 		}
 
-		XRCCTRL(*this, "ID_USER", wxTextCtrl)->SetValue(m_pServer->GetUser());
-		XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->SetValue(m_pServer->GetAccount());
-		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->SetValue(m_pServer->GetPass());
+		XRCCTRL(*this, "ID_USER", wxTextCtrl)->ChangeValue(m_pServer->GetUser());
+		XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->ChangeValue(m_pServer->GetAccount());
+		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->ChangeValue(m_pServer->GetPass());
 	}
 	else
 	{
@@ -186,9 +206,9 @@ void CManualTransfer::DisplayServer()
 		XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->Enable(false);
 		XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetStringSelection(_("Anonymous"));
 
-		XRCCTRL(*this, "ID_USER", wxTextCtrl)->SetValue(_T(""));
-		XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->SetValue(_T(""));
-		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->SetValue(_T(""));
+		XRCCTRL(*this, "ID_USER", wxTextCtrl)->ChangeValue(_T(""));
+		XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->ChangeValue(_T(""));
+		XRCCTRL(*this, "ID_PASS", wxTextCtrl)->ChangeValue(_T(""));
 	}
 }
 
@@ -258,8 +278,13 @@ void CManualTransfer::OnServerTypeChanged(wxCommandEvent& event)
 	else if (event.GetId() == XRCID("ID_SERVER_SITE"))
 	{
 		delete m_pServer;
-		m_pServer = 0;
+		if (m_pLastSite)
+			m_pServer = new CServer(*m_pLastSite);
+		else
+			m_pServer = 0;
+
 	}
+	XRCCTRL(*this, "ID_SERVER_SITE_SELECT", wxButton)->Enable(event.GetId() == XRCID("ID_SERVER_SITE"));
 	DisplayServer();
 	SetServerState();
 }
@@ -269,9 +294,54 @@ void CManualTransfer::OnOK(wxCommandEvent& event)
 	if (!UpdateServer())
 		return;
 
+	bool download = XRCCTRL(*this, "ID_DOWNLOAD", wxRadioButton)->GetValue();
+
+	bool start = XRCCTRL(*this, "ID_START", wxCheckBox)->GetValue();
+
 	if (!m_pServer)
 	{
 		wxMessageBox(_("You need to specify a server."), _("Manual transfer"), wxICON_EXCLAMATION);
+		return;
+	}
+
+	wxString local_file = XRCCTRL(*this, "ID_LOCALFILE", wxTextCtrl)->GetValue();
+	if (local_file == _T(""))
+	{
+		wxMessageBox(_("You need to specify a local file."), _("Manual transfer"), wxICON_EXCLAMATION);
+		return;
+	}
+
+	CLocalFileSystem::local_fileType type = CLocalFileSystem::GetFileType(local_file);
+	if (type == CLocalFileSystem::dir)
+	{
+		wxMessageBox(_("Local file is a directory instead of a regular file."), _("Manual transfer"), wxICON_EXCLAMATION);
+		return;
+	}
+	if (!download && type != CLocalFileSystem::file && start)
+	{
+		wxMessageBox(_("Local file does not exist."), _("Manual transfer"), wxICON_EXCLAMATION);
+		return;
+	}
+
+	wxString remote_file = XRCCTRL(*this, "ID_REMOTEFILE", wxTextCtrl)->GetValue();
+
+	if (remote_file == _T(""))
+	{
+		wxMessageBox(_("You need to specify a remote file."), _("Manual transfer"), wxICON_EXCLAMATION);
+		return;
+	}
+
+	wxString remote_path_str = XRCCTRL(*this, "ID_REMOTEPATH", wxTextCtrl)->GetValue();
+	if (remote_path_str == _T(""))
+	{
+		wxMessageBox(_("You need to specify a remote path."), _("Manual transfer"), wxICON_EXCLAMATION);
+		return;
+	}
+
+	CServerPath path(remote_path_str, m_pServer->GetType());
+	if (path.IsEmpty())
+	{
+		wxMessageBox(_("Remote path could not be parsed."), _("Manual transfer"), wxICON_EXCLAMATION);
 		return;
 	}
 
@@ -419,4 +489,40 @@ bool CManualTransfer::VerifyServer()
 	}
 
 	return true;
+}
+
+void CManualTransfer::OnSelectSite(wxCommandEvent& event)
+{
+	wxMenu *pMenu = CSiteManager::GetSitesMenu();
+	if (!pMenu)
+		return;
+
+	PopupMenu(pMenu);
+
+	delete pMenu;
+}
+
+void CManualTransfer::OnSelectedSite(wxCommandEvent& event)
+{
+	CSiteManagerItemData* pData = CSiteManager::GetSiteById(event.GetId());
+	if (!pData)
+		return;
+
+	delete m_pServer;
+	m_pServer = new CServer(pData->m_server);
+	delete m_pLastSite;
+	m_pLastSite = new CServer(pData->m_server);
+
+	XRCCTRL(*this, "ID_SERVER_SITE_SERVER", wxStaticText)->SetLabel(m_pServer->GetName());
+
+	delete pData;
+
+	DisplayServer();
+}
+
+void CManualTransfer::OnLogontypeSelChanged(wxCommandEvent& event)
+{
+	XRCCTRL(*this, "ID_USER", wxTextCtrl)->Enable(event.GetString() != _("Anonymous"));
+	XRCCTRL(*this, "ID_PASS", wxTextCtrl)->Enable(event.GetString() == _("Normal") || event.GetString() == _("Account"));
+	XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->Enable(event.GetString() == _("Account"));
 }

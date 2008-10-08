@@ -5338,37 +5338,29 @@
                   <orient>wxVERTICAL</orient>
                   <object class="sizeritem">
                     <object class="wxFlexGridSizer">
-                      <cols>1</cols>
-                      <vgap>5</vgap>
+                      <cols>3</cols>
+                      <hgap>5</hgap>
                       <object class="sizeritem">
-                        <object class="wxFlexGridSizer">
-                          <cols>3</cols>
-                          <hgap>5</hgap>
-                          <object class="sizeritem">
-                            <object class="wxStaticText" name="">
-                              <label>&amp;File:</label>
-                            </object>
-                            <flag>wxALIGN_CENTRE_VERTICAL</flag>
-                          </object>
-                          <object class="sizeritem">
-                            <object class="wxTextCtrl" name="ID_LOCALFILE">
-                              <size>200,-1</size>
-                            </object>
-                            <flag>wxGROW|wxALIGN_CENTRE_VERTICAL</flag>
-                          </object>
-                          <object class="sizeritem">
-                            <object class="wxButton" name="ID_BROWSE">
-                              <label>&amp;Browse...</label>
-                            </object>
-                            <flag>wxALIGN_CENTRE_VERTICAL</flag>
-                          </object>
-                          <growablecols>1</growablecols>
+                        <object class="wxStaticText" name="">
+                          <label>&amp;File:</label>
                         </object>
-                        <flag>wxGROW</flag>
+                        <flag>wxALIGN_CENTRE_VERTICAL</flag>
                       </object>
-                      <growablecols>0</growablecols>
+                      <object class="sizeritem">
+                        <object class="wxTextCtrl" name="ID_LOCALFILE">
+                          <size>200,-1</size>
+                        </object>
+                        <flag>wxGROW|wxALIGN_CENTRE_VERTICAL</flag>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxButton" name="ID_BROWSE">
+                          <label>&amp;Browse...</label>
+                        </object>
+                        <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                      </object>
+                      <growablecols>1</growablecols>
                     </object>
-                    <flag>wxALL|wxGROW</flag>
+                    <flag>wxGROW|wxALL</flag>
                     <border>5</border>
                   </object>
                 </object>
@@ -5381,44 +5373,36 @@
                   <orient>wxVERTICAL</orient>
                   <object class="sizeritem">
                     <object class="wxFlexGridSizer">
-                      <cols>1</cols>
+                      <cols>2</cols>
                       <vgap>5</vgap>
+                      <hgap>5</hgap>
                       <object class="sizeritem">
-                        <object class="wxFlexGridSizer">
-                          <cols>2</cols>
-                          <vgap>5</vgap>
-                          <hgap>5</hgap>
-                          <object class="sizeritem">
-                            <object class="wxStaticText">
-                              <label>&amp;Remote path:</label>
-                            </object>
-                            <flag>wxALIGN_CENTRE_VERTICAL</flag>
-                          </object>
-                          <object class="sizeritem">
-                            <object class="wxTextCtrl" name="ID_REMOTEPATH">
-                              <size>200,-1</size>
-                            </object>
-                            <flag>wxGROW|wxALIGN_CENTRE_VERTICAL</flag>
-                          </object>
-                          <object class="sizeritem">
-                            <object class="wxStaticText" name="">
-                              <label>Fil&amp;e:</label>
-                            </object>
-                            <flag>wxALIGN_CENTRE_VERTICAL</flag>
-                          </object>
-                          <object class="sizeritem">
-                            <object class="wxTextCtrl" name="ID_REMOTEFILE">
-                              <size>200,-1</size>
-                            </object>
-                            <flag>wxGROW|wxALIGN_CENTRE_VERTICAL</flag>
-                          </object>
-                          <growablecols>1</growablecols>
+                        <object class="wxStaticText">
+                          <label>&amp;Remote path:</label>
                         </object>
-                        <flag>wxGROW</flag>
+                        <flag>wxALIGN_CENTRE_VERTICAL</flag>
                       </object>
-                      <growablecols>0</growablecols>
+                      <object class="sizeritem">
+                        <object class="wxTextCtrl" name="ID_REMOTEPATH">
+                          <size>200,-1</size>
+                        </object>
+                        <flag>wxGROW|wxALIGN_CENTRE_VERTICAL</flag>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText" name="">
+                          <label>Fil&amp;e:</label>
+                        </object>
+                        <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxTextCtrl" name="ID_REMOTEFILE">
+                          <size>200,-1</size>
+                        </object>
+                        <flag>wxGROW|wxALIGN_CENTRE_VERTICAL</flag>
+                      </object>
+                      <growablecols>1</growablecols>
                     </object>
-                    <flag>wxALL|wxGROW</flag>
+                    <flag>wxGROW|wxALL</flag>
                     <border>5</border>
                   </object>
                 </object>
@@ -5465,14 +5449,14 @@
                                 <border>5</border>
                               </object>
                               <object class="sizeritem">
-                                <object class="wxStaticText">
+                                <object class="wxStaticText" name="ID_SERVER_SITE_SERVER">
                                   <label>None selected yet</label>
                                 </object>
                               </object>
                             </object>
                           </object>
                           <object class="sizeritem">
-                            <object class="wxButton">
+                            <object class="wxButton" name="ID_SERVER_SITE_SELECT">
                               <label>Sele&amp;ct server</label>
                             </object>
                             <flag>wxTOP</flag>
@@ -5654,7 +5638,7 @@
                     </object>
                   </object>
                   <object class="sizeritem">
-                    <object class="wxRadioButton" name="ID_TYPE_AUTO">
+                    <object class="wxRadioButton" name="ID_TYPE_BINARY">
                       <label>Binary</label>
                     </object>
                   </object>
