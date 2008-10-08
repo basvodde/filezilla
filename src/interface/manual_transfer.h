@@ -3,11 +3,12 @@
 
 #include "dialogex.h"
 
+class CQueueView;
 class CState;
 class CManualTransfer : public wxDialogEx
 {
 public:
-	CManualTransfer();
+	CManualTransfer(CQueueView* pQueueView);
 	virtual ~CManualTransfer();
 
 	void Show(wxWindow* pParent, CState* pState);
@@ -27,6 +28,7 @@ protected:
 	CServer* m_pLastSite;
 
 	CState* m_pState;
+	CQueueView* m_pQueueView;
 
 	DECLARE_EVENT_TABLE()
 	void OnLocalChanged(wxCommandEvent& event);

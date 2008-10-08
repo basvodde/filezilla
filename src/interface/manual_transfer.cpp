@@ -5,6 +5,8 @@
 #include "state.h"
 #include "Options.h"
 #include "sitemanager.h"
+#include "queue.h"
+#include "QueueView.h"
 
 BEGIN_EVENT_TABLE(CManualTransfer, wxDialogEx)
 EVT_TEXT(XRCID("ID_LOCALFILE"), CManualTransfer::OnLocalChanged)
@@ -21,8 +23,10 @@ EVT_MENU(wxID_ANY, CManualTransfer::OnSelectedSite)
 EVT_CHOICE(XRCID("ID_LOGONTYPE"), CManualTransfer::OnLogontypeSelChanged)
 END_EVENT_TABLE()
 
-CManualTransfer::CManualTransfer()
+CManualTransfer::CManualTransfer(CQueueView* pQueueView)
 {
+	m_pQueueView = pQueueView;
+
 	m_local_file_exists = false;
 	m_pServer = 0;
 	m_pLastSite = 0;
@@ -344,6 +348,23 @@ void CManualTransfer::OnOK(wxCommandEvent& event)
 		wxMessageBox(_("Remote path could not be parsed."), _("Manual transfer"), wxICON_EXCLAMATION);
 		return;
 	}
+
+	int old_data_type = COptions::Get()->GetOptionVal(OPTION_ASCIIBINARY);
+	
+	// Set data type for the file to add
+	if (XRCCTRL(*this, "ID_TYPE_ASCII", wxRadioButton)->GetValue())
+		COptions::Get()->SetOption(OPTION_ASCIIBINARY, 1);
+	else if (XRCCTRL(*this, "ID_TYPE_BINARY", wxRadioButton)->GetValue())
+		COptions::Get()->SetOption(OPTION_ASCIIBINARY, 2);
+	else
+		COptions::Get()->SetOption(OPTION_ASCIIBINARY, 0);
+
+	m_pQueueView->QueueFile(!start, download, local_file, remote_file, path, *m_pServer, -1);
+
+	// Restore old data type
+	COptions::Get()->SetOption(OPTION_ASCIIBINARY, old_data_type);
+
+	m_pQueueView->QueueFile_Finish(start);
 
 	EndModal(wxID_OK);
 }

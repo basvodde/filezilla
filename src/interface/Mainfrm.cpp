@@ -898,12 +898,12 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	}
 	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_MANUAL"))
 	{
-		if (!m_pState)
+		if (!m_pState || !m_pQueueView)
 		{
 			wxBell();
 			return;
 		}
-		CManualTransfer dlg;
+		CManualTransfer dlg(m_pQueueView);
 		dlg.Show(this, m_pState);
 	}
 	else

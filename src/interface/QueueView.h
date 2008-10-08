@@ -29,6 +29,7 @@ enum ActionAfterState
 };
 
 class CStatusLineCtrl;
+class CFileItem;
 struct t_EngineData
 {
 	CFileZillaEngine* pEngine;
