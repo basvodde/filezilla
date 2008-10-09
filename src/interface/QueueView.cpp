@@ -2251,11 +2251,14 @@ void CQueueView::OnSetDefaultFileExistsAction(wxCommandEvent &event)
 	if (!dlg.Load(this, true))
 		return;
 
-	enum CFileExistsNotification::OverwriteAction downloadAction, uploadAction;
-	if (!dlg.Run(&downloadAction, &uploadAction))
-		return;
+	// Get current default action for the item
+	enum CFileExistsNotification::OverwriteAction downloadAction = CFileExistsNotification::unknown;
+	enum CFileExistsNotification::OverwriteAction uploadAction = CFileExistsNotification::unknown;
+	bool has_upload = false;
+	bool has_download = false;
+	bool download_unknown = false;
+	bool upload_unknown = false;
 
-	std::list<long> selectedItems;
 	long item = -1;
 	while (true)
 	{
@@ -2270,22 +2273,95 @@ void CQueueView::OnSetDefaultFileExistsAction(wxCommandEvent &event)
 		switch (pItem->GetType())
 		{
 		case QueueItemType_FolderScan:
+			if (uploadAction == CFileExistsNotification::unknown)
+				uploadAction = ((CFolderScanItem*)pItem)->m_defaultFileExistsAction;
+			else if (((CFolderScanItem*)pItem)->m_defaultFileExistsAction != uploadAction)
+				upload_unknown = true;
+			has_upload = true;
+			break;
+		case QueueItemType_File:
+			{
+				CFileItem *pFileItem = (CFileItem*)pItem;
+				if (pFileItem->Download())
+				{
+					if (downloadAction == CFileExistsNotification::unknown)
+						downloadAction = pFileItem->m_defaultFileExistsAction;
+					else if (pFileItem->m_defaultFileExistsAction != downloadAction)
+						download_unknown = true;
+					has_download = true;
+				}
+				else
+				{
+					if (uploadAction == CFileExistsNotification::unknown)
+						uploadAction = pFileItem->m_defaultFileExistsAction;
+					else if (pFileItem->m_defaultFileExistsAction != uploadAction)
+						upload_unknown = true;
+					has_upload = true;
+				}
+			}
+			break;
+		case QueueItemType_Server:
+			{
+				download_unknown = true;
+				upload_unknown = true;
+				has_download = true;
+				has_upload = true;
+			}
+			break;
+		default:
+			break;
+		}
+	}
+	if (download_unknown)
+		downloadAction = CFileExistsNotification::unknown;
+	if (upload_unknown)
+		uploadAction = CFileExistsNotification::unknown;
+
+	if (!dlg.Run(has_download ? &downloadAction : 0, has_upload ? &uploadAction : 0))
+		return;
+
+	item = -1;
+	while (true)
+	{
+		item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+		if (item == -1)
+			break;
+
+		CQueueItem* pItem = GetQueueItem(item);
+		if (!pItem)
+			continue;
+
+		switch (pItem->GetType())
+		{
+		case QueueItemType_FolderScan:
+			if (!has_upload)
+				break;
 			((CFolderScanItem*)pItem)->m_defaultFileExistsAction = uploadAction;
 			break;
 		case QueueItemType_File:
 			{
 				CFileItem *pFileItem = (CFileItem*)pItem;
 				if (pFileItem->Download())
+				{
+					if (!has_download)
+						break;
 					pFileItem->m_defaultFileExistsAction = downloadAction;
+				}
 				else
+				{
+					if (!has_upload)
+						break;
 					pFileItem->m_defaultFileExistsAction = uploadAction;
+				}
 			}
 			break;
 		case QueueItemType_Server:
 			{
 				CServerItem *pServerItem = (CServerItem*)pItem;
-				pServerItem->SetDefaultFileExistsAction(downloadAction, download);
-				pServerItem->SetDefaultFileExistsAction(uploadAction, upload);
+				if (has_download)
+					pServerItem->SetDefaultFileExistsAction(downloadAction, download);
+				if (has_upload)
+					pServerItem->SetDefaultFileExistsAction(uploadAction, upload);
 			}
 			break;
 		default:

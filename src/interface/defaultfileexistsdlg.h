@@ -16,6 +16,8 @@ public:
 	bool Run(enum CFileExistsNotification::OverwriteAction *downloadAction = 0, enum CFileExistsNotification::OverwriteAction *uploadAction = 0);
 
 protected:
+	void SelectDefaults(enum CFileExistsNotification::OverwriteAction* downloadAction, enum CFileExistsNotification::OverwriteAction* uploadAction);
+
 	static enum CFileExistsNotification::OverwriteAction m_defaults[2];
 };
 
