@@ -108,6 +108,9 @@
   !define MUI_PAGE_CUSTOMFUNCTION_SHOW PageInstfilesShow
   !define MUI_PAGE_CUSTOMFUNCTION_LEAVE PostInstPage
   !insertmacro MUI_PAGE_INSTFILES
+
+  !define MUI_FINISHPAGE_RUN "$INSTDIR/filezilla.exe"
+  !define MUI_FINISHPAGE_RUN_TEXT "&Start FileZilla now"
   !insertmacro MUI_PAGE_FINISH
   
   !define MUI_PAGE_CUSTOMFUNCTION_PRE un.ConfirmPagePre
