@@ -469,6 +469,12 @@ protected:
 
 			return 0;
 		}
+		
+#if defined(SO_NOSIGPIPE) && !defined(MSG_NOSIGNAL)
+		// We do not want SIGPIPE if writing to socket.
+		const int value = 1;
+		setsockopt(fd, SOL_SOCKET, SO_NOSIGPIPE, &value, sizeof(int));
+#endif
 
 		CSocket::DoSetFlags(fd, m_pSocket->m_flags, m_pSocket->m_flags);
 		CSocket::DoSetBufferSizes(fd, m_pSocket->m_buffer_sizes[0], m_pSocket->m_buffer_sizes[1]);
@@ -1422,7 +1428,12 @@ int CSocket::Peek(void* buffer, unsigned int size, int& error)
 
 int CSocket::Write(const void* buffer, unsigned int size, int& error)
 {
-	int res = send(m_fd, (const char*)buffer, size, 0);
+#ifdef MSG_NOSIGNAL
+	const int flags = MSG_NOSIGNAL;
+#else
+	const int flags = 0;
+#endif
+	int res = send(m_fd, (const char*)buffer, size, flags);
 
 	if (res == -1)
 	{
@@ -1713,6 +1724,12 @@ CSocket* CSocket::Accept(int &error)
 #endif
 		return 0;
 	}
+	
+#if defined(SO_NOSIGPIPE) && !defined(MSG_NOSIGNAL)
+	// We do not want SIGPIPE if writing to socket.
+	const int value = 1;
+	setsockopt(fd, SOL_SOCKET, SO_NOSIGPIPE, &value, sizeof(int));
+#endif
 
 	SetNonblocking(fd);
 
