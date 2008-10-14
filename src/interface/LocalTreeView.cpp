@@ -1558,6 +1558,25 @@ bool CLocalTreeView::CheckSubdirStatus(wxTreeItemId& item, const wxString& path)
 	wxTreeItemIdValue value;
 	wxTreeItemId child = GetFirstChild(item, value);
 
+	static const wxLongLong size(-1);
+
+#ifdef __WXMAC__
+	// By default, OS X has a list of servers mounted into /net,
+	// listing that directory is slow.
+	if (GetItemParent(item) == GetRootItem() && (path == _T("/net") || path == _T("/net/")))
+	{
+			CFilterManager filter;
+
+			const int attributes = S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
+			if (!filter.FilenameFiltered(_T("localhost"), path, true, size, true, attributes))
+			{
+				if (!child)
+					AppendItem(item, _T(""));
+				return true;
+			}
+	}
+#endif
+
 	if (child)
 	{
 		if (GetItemText(child) != _T(""))
@@ -1568,8 +1587,12 @@ bool CLocalTreeView::CheckSubdirStatus(wxTreeItemId& item, const wxString& path)
 		{
 			bool wasLink;
 			int attributes;
-			static const wxLongLong size(-1);
-			if (CLocalFileSystem::GetFileInfo(path + pData->m_known_subdir, wasLink, 0, 0, &attributes) == CLocalFileSystem::dir)
+			enum CLocalFileSystem::local_fileType type;
+			if (path.Last() == CLocalFileSystem::path_separator)
+				type = CLocalFileSystem::GetFileInfo(path + pData->m_known_subdir, wasLink, 0, 0, &attributes);
+			else
+				type = CLocalFileSystem::GetFileInfo(path + CLocalFileSystem::path_separator + pData->m_known_subdir, wasLink, 0, 0, &attributes);
+			if (type == CLocalFileSystem::dir)
 			{
 				CFilterManager filter;
 				if (!filter.FilenameFiltered(pData->m_known_subdir, path, true, size, true, attributes))
