@@ -11,12 +11,13 @@
 class CDragDropManager
 {
 public:
-	static const CDragDropManager* Get() { return m_pDragDropManager; }
+	static CDragDropManager* Get() { return m_pDragDropManager; }
 
 	static CDragDropManager* Init();
 	void Release();
 
 	const wxWindow* pDragSource;
+	const wxWindow* pDropTarget;
 
 	wxString localParent;
 	std::list<wxString> m_localFiles;

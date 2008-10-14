@@ -25,6 +25,7 @@
 #include "statusbar.h"
 #include "recursive_operation.h"
 #include "auto_ascii_files.h"
+#include "dragdropmanager.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -52,6 +53,10 @@ public:
 
 		if (!GetData())
 			return wxDragError;
+
+		CDragDropManager* pDragDropManager = CDragDropManager::Get();
+		if (pDragDropManager)
+			pDragDropManager->pDropTarget = m_pQueueView;
 
 		if (m_pDataObject->GetReceivedFormat() == m_pFileDataObject->GetFormat())
 		{

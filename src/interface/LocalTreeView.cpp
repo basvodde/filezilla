@@ -7,6 +7,7 @@
 #include "dndobjects.h"
 #include "inputdialog.h"
 #include "local_filesys.h"
+#include "dragdropmanager.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -88,6 +89,10 @@ public:
 
 		if (!GetData())
 			return wxDragError;
+
+		CDragDropManager* pDragDropManager = CDragDropManager::Get();
+		if (pDragDropManager)
+			pDragDropManager->pDropTarget = m_pLocalTreeView;
 
 		if (m_pDataObject->GetReceivedFormat() == m_pFileDataObject->GetFormat())
 			m_pLocalTreeView->m_pState->HandleDroppedFiles(m_pFileDataObject, dir, def == wxDragCopy);
@@ -924,6 +929,9 @@ void CLocalTreeView::OnBeginDrag(wxTreeEvent& event)
 		return;
 #endif
 
+	CDragDropManager* pDragDropManager = CDragDropManager::Init();
+	pDragDropManager->pDragSource = this;
+
 	wxFileDataObject obj;
 
 	obj.AddFile(dir);
@@ -931,8 +939,17 @@ void CLocalTreeView::OnBeginDrag(wxTreeEvent& event)
 	wxDropSource source(this);
 	source.SetData(obj);
 	int res = source.DoDragDrop(wxDrag_AllowMove);
-	if (res == wxDragCopy || res == wxDragMove)
+
+	bool handled_internally = pDragDropManager->pDropTarget != 0;
+
+	pDragDropManager->Release();
+
+	if (!handled_internally && (res == wxDragCopy || res == wxDragMove))
+	{
+		// We only need to refresh local side if the operation got handled
+		// externally, the internal handlers do this for us already
 		m_pState->RefreshLocal();
+	}
 }
 
 #ifndef __WXMSW__

@@ -66,6 +66,10 @@ public:
 		if (!GetData())
 			return wxDragError;
 
+		CDragDropManager* pDragDropManager = CDragDropManager::Get();
+		if (pDragDropManager)
+			pDragDropManager->pDropTarget = m_pRemoteListView;
+
 		if (m_pDataObject->GetReceivedFormat() == m_pFileDataObject->GetFormat())
 		{
 			wxString subdir;

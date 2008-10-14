@@ -65,6 +65,10 @@ public:
 		if (def != wxDragCopy && def != wxDragMove)
 			return wxDragError;
 
+		CDragDropManager* pDragDropManager = CDragDropManager::Get();
+		if (pDragDropManager)
+			pDragDropManager->pDropTarget = m_pLocalListView;
+
 		wxString subdir;
 		int flags;
 		int hit = m_pLocalListView->HitTest(wxPoint(x, y), flags, 0);
@@ -524,12 +528,13 @@ wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix, int format, b
 				remainder++;
 				clipped = false;
 			}
-			remainder = ceil((double)remainder * 1000 / 1024);
+			remainder = (int)ceil((double)remainder * 1000 / 1024);
 		}
 
 		int max;
 		switch (num_decimal_places)
 		{
+		default:
 		case 1:
 			max = 9;
 			divider = 100;
@@ -1799,10 +1804,16 @@ void CLocalListView::OnBeginDrag(wxListEvent& event)
 	source.SetData(obj);
 	int res = source.DoDragDrop(wxDrag_AllowMove);
 
+	bool handled_internally = pDragDropManager->pDropTarget != 0;
+
 	pDragDropManager->Release();
 
-	if (res == wxDragCopy || res == wxDragMove)
+	if (!handled_internally && (res == wxDragCopy || res == wxDragMove))
+	{
+		// We only need to refresh local side if the operation got handled
+		// externally, the internal handlers do this for us already
 		m_pState->RefreshLocal();
+	}
 }
 
 void CLocalListView::RefreshFile(const wxString& file)

@@ -6,6 +6,7 @@
 #include "chmoddialog.h"
 #include "recursive_operation.h"
 #include "inputdialog.h"
+#include "dragdropmanager.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -69,6 +70,10 @@ public:
 
 		if (!GetData())
 			return wxDragError;
+
+		CDragDropManager* pDragDropManager = CDragDropManager::Get();
+		if (pDragDropManager)
+			pDragDropManager->pDropTarget = m_pRemoteTreeView;
 
 		if (m_pDataObject->GetReceivedFormat() == m_pFileDataObject->GetFormat())
 			m_pRemoteTreeView->m_pState->UploadDroppedFiles(m_pFileDataObject, path, false);
