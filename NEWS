@@ -10,6 +10,17 @@ Legend:
     *nix: Unix (e.g BSD) and Unix-like systems (e.g. Linux)
     OS X: Apple Mac OS X
 
+3.1.4 (2008-10-15)
+
+- *nix and OS X: Avoid SIGPIPE if socket gets closed during uploads
+- Fix SFTP speed limits
+- Avoid reduntant refreshes of local file lists on some drag&drop operations
+- Send user agent with requests if using HTTP proxy
+- MSW: Add checkbox to start FileZilla to finish page of intaller
+- Reselect previously set default file exists action if reopening dialog on a queue item
+- OS X: Do not check /net whether it has subdirectories, it is extremely slow
+- Upon reconnecting, fall back to list current directory if last used directory is no longer accessible
+
 3.1.4-rc1 (2008-10-08)
 
 + Configurable number of decimal places for filesize formatting
