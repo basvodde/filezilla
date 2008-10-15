@@ -12,7 +12,7 @@ const CServer CConnectCommand::GetServer() const
 }
 
 CListCommand::CListCommand(bool refresh /*=false*/)
-	: m_refresh(refresh)
+	: m_refresh(refresh), m_fallback_to_current(false)
 {
 }
 
