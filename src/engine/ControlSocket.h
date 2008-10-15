@@ -117,7 +117,7 @@ public:
 	virtual int Connect(const CServer &server) = 0;
 	virtual int Disconnect();
 	virtual void Cancel();
-	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T(""), bool refresh = false) { return FZ_REPLY_NOTSUPPORTED; }
+	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T(""), bool refresh = false, bool fallback_to_current = false) { return FZ_REPLY_NOTSUPPORTED; }
 	virtual int FileTransfer(const wxString localFile, const CServerPath &remotePath,
 							 const wxString &remoteFile, bool download,
 							 const CFileTransferCommand::t_transferSettings& transferSettings) { return FZ_REPLY_NOTSUPPORTED; }

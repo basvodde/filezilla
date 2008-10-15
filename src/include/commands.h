@@ -91,18 +91,24 @@ DECLARE_COMMAND(CListCommand, cmd_list)
     // pair of an absolute path and the very last path segments.
 	// Set refresh to true to get a directory listing even if a cache
 	// lookup can be made after finding out true remote directory.
+	//
+	// If fallback_to_current is set and CWD fails, list whatever
+	// directory we are currently in. Useful for initial reconnect to the
+	// server when we don't know if remote directory still exists
 	CListCommand(bool refresh = false);
-	CListCommand(CServerPath path, wxString subDir = _T(""), bool refresh = false);
+	CListCommand(CServerPath path, wxString subDir = _T(""), bool refresh = false, bool fallback_to_current = false);
 	
 	CServerPath GetPath() const;
 	wxString GetSubDir() const;
 
 	bool Refresh() const;
+	bool FallbackToCurrent() const { return m_fallback_to_current; }
 
 protected:
 	CServerPath m_path;
 	wxString m_subDir;
 	bool m_refresh;
+	bool m_fallback_to_current;
 };
 
 DECLARE_COMMAND(CFileTransferCommand, cmd_transfer)

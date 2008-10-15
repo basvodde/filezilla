@@ -869,6 +869,7 @@ public:
 	{
 		pParser = 0;
 		mtime_index = 0;
+		fallback_to_current = false;
 	}
 
 	virtual ~CSftpListOpData()
@@ -884,6 +885,7 @@ public:
 	// Set to true to get a directory listing even if a cache
 	// lookup can be made after finding out true remote directory
 	bool refresh;
+	bool fallback_to_current;
 
 	CDirectoryListing directoryListing;
 	int mtime_index;
@@ -897,7 +899,7 @@ enum listStates
 	list_mtime
 };
 
-int CSftpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/, bool refresh /*=false*/)
+int CSftpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/, bool refresh /*=false*/, bool fallback_to_current /*=false*/)
 {
 	LogMessage(Status, _("Retrieving directory listing..."));
 
@@ -924,6 +926,7 @@ int CSftpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDi
 	pData->path = path;
 	pData->subDir = subDir;
 	pData->refresh = refresh;
+	pData->fallback_to_current = fallback_to_current;
 
 	int res = ChangeDir(path, subDir);
 	if (res != FZ_REPLY_OK)
@@ -1127,8 +1130,21 @@ int CSftpControlSocket::ListSubcommandResult(int prevResult)
 
 	if (prevResult != FZ_REPLY_OK)
 	{
-		ResetOperation(prevResult);
-		return FZ_REPLY_ERROR;
+		if (pData->fallback_to_current)
+		{
+			// List current directory instead
+			pData->fallback_to_current = false;
+			pData->path.Clear();
+			pData->subDir = _T("");
+			int res = ChangeDir();
+			if (res != FZ_REPLY_OK)
+				return res;
+		}
+		else
+		{
+			ResetOperation(prevResult);
+			return FZ_REPLY_ERROR;
+		}
 	}
 
 	if (pData->path.IsEmpty())

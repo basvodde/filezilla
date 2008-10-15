@@ -295,7 +295,7 @@ bool CState::Connect(const CServer& server, bool askBreak, const CServerPath& pa
 	}
 
 	m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
-	m_pCommandQueue->ProcessCommand(new CListCommand(path));
+	m_pCommandQueue->ProcessCommand(new CListCommand(path, _T(""), false, true));
 
 	COptions::Get()->SetLastServer(server);
 	COptions::Get()->SetOption(OPTION_LASTSERVERPATH, path.GetSafePath());

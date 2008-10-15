@@ -1168,6 +1168,7 @@ public:
 		viewHidden = false;
 		m_pDirectoryListingParser = 0;
 		mdtm_index = 0;
+		fallback_to_current = false;
 	}
 
 	virtual ~CFtpListOpData()
@@ -1177,6 +1178,7 @@ public:
 
 	CServerPath path;
 	wxString subDir;
+	bool fallback_to_current;
 
 	CDirectoryListingParser* m_pDirectoryListingParser;
 
@@ -1204,7 +1206,7 @@ enum listStates
 	list_mdtm
 };
 
-int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/, bool refresh /*=false*/)
+int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/, bool refresh /*=false*/, bool fallback_to_current /*=false*/)
 {
 	LogMessage(Status, _("Retrieving directory listing..."));
 
@@ -1223,6 +1225,7 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 	pData->path = path;
 	pData->subDir = subDir;
 	pData->refresh = refresh;
+	pData->fallback_to_current = fallback_to_current;
 
 	int res = ChangeDir(path, subDir);
 	if (res != FZ_REPLY_OK)
@@ -1249,8 +1252,21 @@ int CFtpControlSocket::ListSubcommandResult(int prevResult)
 	{
 		if (prevResult != FZ_REPLY_OK)
 		{
-			ResetOperation(prevResult);
-			return FZ_REPLY_ERROR;
+			if (pData->fallback_to_current)
+			{
+				// List current directory instead
+				pData->fallback_to_current = false;
+				pData->path.Clear();
+				pData->subDir = _T("");
+				int res = ChangeDir();
+				if (res != FZ_REPLY_OK)
+					return res;
+			}
+			else
+			{
+				ResetOperation(prevResult);
+				return FZ_REPLY_ERROR;
+			}
 		}
 		if (pData->path.IsEmpty())
 			pData->path = m_CurrentPath;

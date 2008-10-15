@@ -16,8 +16,8 @@ CListCommand::CListCommand(bool refresh /*=false*/)
 {
 }
 
-CListCommand::CListCommand(CServerPath path, wxString subDir /*=_T("")*/, bool refresh /*=false*/)
-	: m_refresh(refresh)
+CListCommand::CListCommand(CServerPath path, wxString subDir /*=_T("")*/, bool refresh /*=false*/, bool fallback_to_current /*=false*/)
+	: m_refresh(refresh), m_fallback_to_current(fallback_to_current)
 {
 	m_path = path;
 	m_subDir = subDir;

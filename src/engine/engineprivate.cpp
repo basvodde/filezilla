@@ -368,7 +368,7 @@ int CFileZillaEnginePrivate::List(const CListCommand &command)
 		return FZ_REPLY_BUSY;
 
 	m_pCurrentCommand = command.Clone();
-	return m_pControlSocket->List(command.GetPath(), command.GetSubDir(), refresh);
+	return m_pControlSocket->List(command.GetPath(), command.GetSubDir(), refresh, command.FallbackToCurrent());
 }
 
 int CFileZillaEnginePrivate::FileTransfer(const CFileTransferCommand &command)

@@ -27,7 +27,7 @@ protected:
 	virtual int ResetOperation(int nErrorCode);
 
 	virtual int Connect(const CServer &server);
-	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T(""), bool refresh = false);
+	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T(""), bool refresh = false, bool fallback_to_current = false);
 	int ListParseResponse();
 	int ListSubcommandResult(int prevResult);
 	int ListSend();
