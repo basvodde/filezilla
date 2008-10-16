@@ -1508,6 +1508,12 @@ void CLocalTreeView::OnEndLabelEdit(wxTreeEvent& event)
 		return;
 	}
 
+	// We may call SetLocalDir, item might be deleted by it, so
+	// if we don't rename item now and veto the event, wxWidgets
+	// might access deleted item.
+	event.Veto();
+	SetItemText(item, newName);
+
 	wxTreeItemId currentSel = GetSelection();
 	if (currentSel == wxTreeItemId())
 	{
