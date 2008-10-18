@@ -6,6 +6,14 @@
 #include "wx/msw/uxtheme.h"
 #endif //__WXMSW__
 
+#ifdef __WXMSW__
+const int border_offset = 0;
+#elif defined(__WXMAC__)
+const int border_offset = 6;
+#else
+const int border_offset = 10;
+#endif
+
 // wxComboBox derived class which captures WM_CANCELMODE under Windows
 class CComboBoxEx : public wxComboBox
 {
@@ -83,11 +91,7 @@ CViewHeader::CViewHeader(wxWindow* pParent, const wxString& label)
 	m_pComboBox = new CComboBoxEx(this);
 	m_pLabel = new wxStaticText(this, wxID_ANY, label, wxDefaultPosition, wxDefaultSize);
 	wxSize size = GetSize();
-#ifdef __WXMSW__
-	size.SetHeight(m_pComboBox->GetBestSize().GetHeight());
-#else
-	size.SetHeight(m_pComboBox->GetBestSize().GetHeight() + 10);
-#endif
+	size.SetHeight(m_pComboBox->GetBestSize().GetHeight() + border_offset);
 	SetSize(size);
 
 #ifdef __WXMSW__
@@ -102,19 +106,18 @@ CViewHeader::CViewHeader(wxWindow* pParent, const wxString& label)
 
 void CViewHeader::OnSize(wxSizeEvent& event)
 {
-	wxRect rect = GetClientRect();
+	const wxRect client_rect = GetClientRect();
 
+	wxRect rect = client_rect;
 	rect.SetWidth(rect.GetWidth() - m_cbOffset + 2);
 	rect.SetX(m_cbOffset);
-#ifndef __WXMSW__
-	rect.Deflate(0, 5);
-	rect.SetWidth(rect.GetWidth() - 5);
-#endif
+	rect.Deflate(0, border_offset / 2);
+	rect.SetWidth(rect.GetWidth() - border_offset / 2);
 	m_pComboBox->SetSize(rect);
 
 	rect.SetX(5);
 	rect.SetWidth(m_cbOffset - 5);
-	rect.SetY((rect.GetHeight() - m_labelHeight) / 2 - 1);
+	rect.SetY((client_rect.GetHeight() - m_labelHeight) / 2 - 1);
 	rect.SetHeight(m_labelHeight);
 	m_pLabel->SetSize(rect);
 

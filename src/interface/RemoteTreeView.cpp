@@ -234,6 +234,10 @@ CRemoteTreeView::CRemoteTreeView(wxWindow* parent, wxWindowID id, CState* pState
 	CSystemImageList(16),
 	CStateEventHandler(pState)
 {
+#ifdef __WXMAC__
+	SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+#endif
+
 	pState->RegisterHandler(this, STATECHANGE_REMOTE_DIR);
 	pState->RegisterHandler(this, STATECHANGE_REMOTE_DIR_MODIFIED);
 	pState->RegisterHandler(this, STATECHANGE_APPLYFILTER);

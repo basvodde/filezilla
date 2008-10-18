@@ -89,7 +89,12 @@ CStatusView::CStatusView(wxWindow* parent, wxWindowID id)
 {
 	m_pTextCtrl = 0;
 	m_pTextCtrl = new CFastTextCtrl(this);
+
+#ifdef __WXMAC__
+	m_pTextCtrl->SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+#else
 	m_pTextCtrl->SetFont(GetFont());
+#endif
 
 	m_pTextCtrl->Connect(wxID_ANY, wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(CStatusView::OnContextMenu), 0, this);
 

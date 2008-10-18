@@ -225,6 +225,10 @@ CLocalTreeView::CLocalTreeView(wxWindow* parent, wxWindowID id, CState *pState, 
 	CStateEventHandler(pState),
 	m_pQueueView(pQueueView)
 {
+#ifdef __WXMAC__
+	SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+#endif
+
 	pState->RegisterHandler(this, STATECHANGE_LOCAL_DIR);
 	pState->RegisterHandler(this, STATECHANGE_APPLYFILTER);
 
