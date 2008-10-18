@@ -312,6 +312,9 @@ void CStatusView::InitDefAttr()
 	m_pTextCtrl->SetDefaultStyle(defAttr);
 #endif
 
+	const wxColour background = GetBackgroundColour();
+	const bool is_dark = background.Red() + background.Green() + background.Blue() < 384;
+
 	for (int i = 0; i < MessageTypeCount; i++)
 	{
 #ifndef __WXMAC__
@@ -325,22 +328,34 @@ void CStatusView::InitDefAttr()
 			break;
 		case Command:
 			m_attributeCache[i].prefix = _("Command:");
-			m_attributeCache[i].attr.SetTextColour(wxColour(0, 0, 128));
+			if (is_dark)
+				m_attributeCache[i].attr.SetTextColour(wxColour(128, 128, 255));
+			else
+				m_attributeCache[i].attr.SetTextColour(wxColour(0, 0, 128));
 			break;
 		case Response:
 			m_attributeCache[i].prefix = _("Response:");
-			m_attributeCache[i].attr.SetTextColour(wxColour(0, 128, 0));
+			if (is_dark)
+				m_attributeCache[i].attr.SetTextColour(wxColour(128, 255, 128));
+			else
+				m_attributeCache[i].attr.SetTextColour(wxColour(0, 128, 0));
 			break;
 		case Debug_Warning:
 		case Debug_Info:
 		case Debug_Verbose:
 		case Debug_Debug:
 			m_attributeCache[i].prefix = _("Trace:");
-			m_attributeCache[i].attr.SetTextColour(wxColour(128, 0, 128));
+			if (is_dark)
+				m_attributeCache[i].attr.SetTextColour(wxColour(255, 128, 255));
+			else
+				m_attributeCache[i].attr.SetTextColour(wxColour(128, 0, 128));
 			break;
 		case RawList:
 			m_attributeCache[i].prefix = _("Listing:");
-			m_attributeCache[i].attr.SetTextColour(wxColour(0, 128, 128));
+			if (is_dark)
+				m_attributeCache[i].attr.SetTextColour(wxColour(128, 255, 255));
+			else
+				m_attributeCache[i].attr.SetTextColour(wxColour(0, 128, 128));
 			break;
 		default:
 			m_attributeCache[i].prefix = _("Status:");
