@@ -312,7 +312,7 @@ void CStatusView::InitDefAttr()
 	m_pTextCtrl->SetDefaultStyle(defAttr);
 #endif
 
-	const wxColour background = GetBackgroundColour();
+	const wxColour background = wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX);
 	const bool is_dark = background.Red() + background.Green() + background.Blue() < 384;
 
 	for (int i = 0; i < MessageTypeCount; i++)
