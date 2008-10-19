@@ -1206,7 +1206,7 @@ enum listStates
 	list_mdtm
 };
 
-int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/, bool refresh /*=false*/, bool fallback_to_current /*=false*/)
+int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/, bool refresh /*=false*/, bool fallback_to_current /*=false*/, bool link_discovery /*=false*/)
 {
 	LogMessage(Status, _("Retrieving directory listing..."));
 
@@ -1227,7 +1227,7 @@ int CFtpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir
 	pData->refresh = refresh;
 	pData->fallback_to_current = fallback_to_current;
 
-	int res = ChangeDir(path, subDir);
+	int res = ChangeDir(path, subDir, link_discovery);
 	if (res != FZ_REPLY_OK)
 		return res;
 
@@ -1252,6 +1252,12 @@ int CFtpControlSocket::ListSubcommandResult(int prevResult)
 	{
 		if (prevResult != FZ_REPLY_OK)
 		{
+			if (prevResult & FZ_REPLY_LINKNOTDIR)
+			{
+				ResetOperation(prevResult);
+				return FZ_REPLY_ERROR;
+			}
+
 			if (pData->fallback_to_current)
 			{
 				// List current directory instead
@@ -1800,7 +1806,7 @@ enum cwdStates
 	cwd_pwd_subdir
 };
 
-int CFtpControlSocket::ChangeDir(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/)
+int CFtpControlSocket::ChangeDir(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/, bool link_discovery /*=false*/)
 {
 	enum cwdStates state = cwd_init;
 
@@ -1860,6 +1866,7 @@ int CFtpControlSocket::ChangeDir(CServerPath path /*=CServerPath()*/, wxString s
 	pData->path = path;
 	pData->subDir = subDir;
 	pData->target = target;
+	pData->link_discovery = link_discovery;
 
 	if (pData->pNextOpData && pData->pNextOpData->opId == cmd_transfer &&
 		!static_cast<CFtpFileTransferOpData *>(pData->pNextOpData)->download)
@@ -1975,6 +1982,12 @@ int CFtpControlSocket::ChangeDirParseResponse()
 			{
 				// CDUP command not implemented, try again using CWD ..
 				pData->tried_cdup = true;
+			}
+			else if (pData->link_discovery)
+			{
+				LogMessage(Debug_Info, _T("Symlink does not link to a directory, probably a file"));
+				ResetOperation(FZ_REPLY_LINKNOTDIR);
+				return FZ_REPLY_ERROR;
 			}
 			else
 				error = true;

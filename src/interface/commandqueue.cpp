@@ -5,6 +5,7 @@
 #include "recursive_operation.h"
 #include "loginmanager.h"
 #include "queue.h"
+#include "RemoteListView.h"
 
 DEFINE_EVENT_TYPE(fzEVT_GRANTEXCLUSIVEENGINEACCESS)
 
@@ -115,10 +116,12 @@ void CCommandQueue::ProcessNextCommand()
 		{
 			wxBell();
 			
-			// Let the remote list view know if a LIST command failed,
-			// so that it may issue the next command in recursive operations.
 			if (pCommand->GetId() == cmd_list)
+			{
+				// Let the recursive operation handler know if a LIST command failed,
+				// so that it may issue the next command in recursive operations.
 				m_pMainFrame->GetState()->GetRecursiveOperationHandler()->ListingFailed(res);
+			}
 
 			m_CommandList.pop_front();
 			delete pCommand;
@@ -206,11 +209,26 @@ void CCommandQueue::Finish(COperationNotification *pNotification)
 
 	CCommand* pCommand = m_CommandList.front();
 
-	// Let the remote list view know if a LIST command failed,
-	// so that it may issue the next command in recursive operations.
 	if (pCommand->GetId() == cmd_list && pNotification->nReplyCode != FZ_REPLY_OK)
 	{
-		m_pMainFrame->GetState()->GetRecursiveOperationHandler()->ListingFailed(pNotification->nReplyCode);
+		if (pNotification->nReplyCode & FZ_REPLY_LINKNOTDIR)
+		{
+			// Symbolic link does not point to a directory. Either points to file
+			// or is completely invalid
+			CListCommand* pListCommand = (CListCommand*)pCommand;
+			wxASSERT(pListCommand->IsLink());
+
+			if (m_pMainFrame->GetState()->GetRecursiveOperationHandler()->GetOperationMode() != CRecursiveOperation::recursive_none)
+				m_pMainFrame->GetState()->GetRecursiveOperationHandler()->LinkIsNotDir();
+			else
+				m_pMainFrame->GetRemoteListView()->LinkIsNotDir(pListCommand->GetPath(), pListCommand->GetSubDir());
+		}
+		else
+		{
+			// Let the recursive operation handler know if a LIST command failed,
+			// so that it may issue the next command in recursive operations.
+			m_pMainFrame->GetState()->GetRecursiveOperationHandler()->ListingFailed(pNotification->nReplyCode);
+		}
 		m_CommandList.pop_front();
 	}
 	else if (pCommand->GetId() == cmd_connect && pNotification->nReplyCode != FZ_REPLY_OK)

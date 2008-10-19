@@ -25,7 +25,7 @@ public:
 	void StartRecursiveOperation(enum OperationMode mode, const CServerPath& startDir, bool allowParent = false, const CServerPath& finalDir = CServerPath());
 	void StopRecursiveOperation();
 
-	void AddDirectoryToVisit(const CServerPath& path, const wxString& subdir, const wxString& localDir = _T(""));
+	void AddDirectoryToVisit(const CServerPath& path, const wxString& subdir, const wxString& localDir = _T(""), bool is_link = false);
 	void AddDirectoryToVisitRestricted(const CServerPath& path, const wxString& restrict, bool recurse);
 
 	enum OperationMode GetOperationMode() const { return m_operationMode; }
@@ -34,6 +34,7 @@ public:
 	void SetChmodDialog(CChmodDialog* pChmodDialog);
 
 	void ListingFailed(int error);
+	void LinkIsNotDir();
 
 	void SetQueue(CQueueView* pQueue);
 
@@ -63,6 +64,7 @@ protected:
 		wxString restrict;
 
 		bool second_try;
+		bool link;
 	};
 
 	CServerPath m_startDir;

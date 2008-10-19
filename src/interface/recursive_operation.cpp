@@ -10,6 +10,7 @@ CRecursiveOperation::CNewDir::CNewDir()
 {
 	recurse = true;
 	second_try = false;
+	link = false;
 }
 
 CRecursiveOperation::CRecursiveOperation(CState* pState)
@@ -71,7 +72,7 @@ void CRecursiveOperation::StartRecursiveOperation(enum OperationMode mode, const
 	NextOperation();
 }
 
-void CRecursiveOperation::AddDirectoryToVisit(const CServerPath& path, const wxString& subdir, const wxString& localDir /*=_T("")*/)
+void CRecursiveOperation::AddDirectoryToVisit(const CServerPath& path, const wxString& subdir, const wxString& localDir /*=_T("")*/, bool is_link /*=false*/)
 {
 	CNewDir dirToVisit;
 	dirToVisit.doVisit = true;
@@ -81,6 +82,7 @@ void CRecursiveOperation::AddDirectoryToVisit(const CServerPath& path, const wxS
 		dirToVisit.localDir += CLocalFileSystem::path_separator;
 	dirToVisit.parent = path;
 	dirToVisit.subdir = subdir;
+	dirToVisit.link = is_link;
 	m_dirsToVisit.push_back(dirToVisit);
 }
 
@@ -109,7 +111,10 @@ bool CRecursiveOperation::NextOperation()
 			continue;
 		}
 
-		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(dirToVisit.parent, dirToVisit.subdir));
+		CListCommand* cmd = new CListCommand(dirToVisit.parent, dirToVisit.subdir);
+		if (dirToVisit.link)
+			cmd->SetIsLink(true);
+		m_pState->m_pCommandQueue->ProcessCommand(cmd);
 		return true;
 	}
 
@@ -167,6 +172,12 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 		m_dirsToVisit.push_front(dir2);
 	}
 
+	if (dir.link && !dir.recurse)
+	{
+		NextOperation();
+		return;
+	}
+
 	// Check if we have already visited the directory
 	if (!m_visitedDirs.insert(pDirectoryListing->path).second)
 	{
@@ -215,7 +226,7 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 		else if (filter.FilenameFiltered(entry.name, path, entry.dir, entry.size, false, 0))
 			continue;
 
-		if (entry.dir && !entry.link)
+		if (entry.dir && (!entry.link || m_operationMode != recursive_delete))
 		{
 			if (dir.recurse)
 			{
@@ -224,6 +235,11 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 				dirToVisit.subdir = entry.name;
 				dirToVisit.localDir = dir.localDir + entry.name + CLocalFileSystem::path_separator;
 				dirToVisit.doVisit = true;
+				if (entry.link)
+				{
+					dirToVisit.link = true;
+					dirToVisit.recurse = false;
+				}
 				m_dirsToVisit.push_front(dirToVisit);
 			}
 		}
@@ -330,4 +346,32 @@ bool CRecursiveOperation::ChangeOperationMode(enum OperationMode mode)
 	m_operationMode = mode;
 
 	return true;
+}
+
+void CRecursiveOperation::LinkIsNotDir()
+{
+	if (m_operationMode == recursive_none)
+		return;
+
+	wxASSERT(!m_dirsToVisit.empty());
+	if (m_dirsToVisit.empty())
+		return;
+
+	CNewDir dir = m_dirsToVisit.front();
+	m_dirsToVisit.pop_front();
+
+	const CServer* pServer = m_pState->GetServer();
+	if (!pServer)
+	{
+		NextOperation();
+		return;
+	}
+
+	wxString local_file = dir.localDir;
+	if (local_file.Last() == CLocalFileSystem::path_separator)
+		local_file.RemoveLast();
+	m_pQueue->QueueFile(m_operationMode == recursive_addtoqueue, true, local_file, dir.subdir, dir.parent, *pServer, -1);
+	m_pQueue->QueueFile_Finish(m_operationMode != recursive_addtoqueue);
+
+	NextOperation();
 }

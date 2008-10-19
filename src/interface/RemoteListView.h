@@ -29,6 +29,8 @@ public:
 	virtual void FinishComparison();
 	virtual void OnExitComparisonMode();
 
+	void LinkIsNotDir(CServerPath& path, const wxString& link);
+
 protected:
 	virtual wxString GetItemText(int item, unsigned int column);
 
@@ -84,6 +86,17 @@ protected:
 
 	wxString m_dateFormat;
 	wxString m_timeFormat;
+
+	// Used to track state for resolving symlinks
+	// While being resolved, global state might have changed
+	// already.
+	struct t_linkResolveState
+	{
+		CServer server;
+		CServerPath remote_path;
+		wxString link;
+		wxString local_path;
+	} *m_pLinkResolveState;
 
 	DECLARE_EVENT_TABLE()
 	void OnItemActivated(wxListEvent &event);

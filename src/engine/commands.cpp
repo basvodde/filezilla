@@ -14,6 +14,7 @@ const CServer CConnectCommand::GetServer() const
 CListCommand::CListCommand(bool refresh /*=false*/)
 	: m_refresh(refresh), m_fallback_to_current(false)
 {
+	m_link = false;
 }
 
 CListCommand::CListCommand(CServerPath path, wxString subDir /*=_T("")*/, bool refresh /*=false*/, bool fallback_to_current /*=false*/)
@@ -21,6 +22,8 @@ CListCommand::CListCommand(CServerPath path, wxString subDir /*=_T("")*/, bool r
 {
 	m_path = path;
 	m_subDir = subDir;
+
+	m_link = false;
 }
 
 CServerPath CListCommand::GetPath() const

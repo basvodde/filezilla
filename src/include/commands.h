@@ -45,6 +45,7 @@ enum Command
 #define FZ_REPLY_TIMEOUT		(0x0800 | FZ_REPLY_ERROR)
 #define FZ_REPLY_NOTSUPPORTED	(0x1000 | FZ_REPLY_ERROR) // Will be returned if command not supported by that protocol
 #define FZ_REPLY_WRITEFAILED	(0x2000 | FZ_REPLY_ERROR) // Happens if local file could not be written during transfer
+#define FZ_REPLY_LINKNOTDIR		(0x4000)
 
 // Small macro to simplify command class declaration
 // Basically all this macro does, is to declare the class and add the required
@@ -104,11 +105,18 @@ DECLARE_COMMAND(CListCommand, cmd_list)
 	bool Refresh() const;
 	bool FallbackToCurrent() const { return m_fallback_to_current; }
 
+	// Used for symlink discovery. There's unfortunately no sane
+	// way to distinguish between symlinks to files and symlinks to
+	// directories.
+	void SetIsLink(bool link) { m_link = link; }
+	bool IsLink() const { return m_link; }
+
 protected:
 	CServerPath m_path;
 	wxString m_subDir;
 	bool m_refresh;
 	bool m_fallback_to_current;
+	bool m_link;
 };
 
 DECLARE_COMMAND(CFileTransferCommand, cmd_transfer)

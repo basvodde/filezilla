@@ -49,7 +49,7 @@ public:
 
 	virtual int Connect(const CServer &server);
 
-	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T(""), bool refresh = false, bool fallback_to_current = false);
+	virtual int List(CServerPath path = CServerPath(), wxString subDir = _T(""), bool refresh = false, bool fallback_to_current = false, bool link_discovery = false);
 	virtual int Delete(const CServerPath& path, const std::list<wxString>& files);
 	virtual int RemoveDir(const CServerPath& path = CServerPath(), const wxString& subDir = _T(""));
 	virtual int Mkdir(const CServerPath& path);
@@ -92,7 +92,7 @@ protected:
 	int ListParseEntry(const wxString& entry);
 	int ListCheckTimezoneDetection();
 
-	int ChangeDir(CServerPath path = CServerPath(), wxString subDir = _T(""));
+	int ChangeDir(CServerPath path = CServerPath(), wxString subDir = _T(""), bool link_discovery = false);
 	int ChangeDirParseResponse(bool successful, const wxString& reply);
 	int ChangeDirSubcommandResult(int prevResult);
 	int ChangeDirSend();

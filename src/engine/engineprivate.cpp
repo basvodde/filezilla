@@ -335,6 +335,9 @@ int CFileZillaEnginePrivate::List(const CListCommand &command)
 	if (command.GetPath().IsEmpty() && command.GetSubDir() != _T(""))
 		return FZ_REPLY_SYNTAXERROR;
 
+	if (command.IsLink() && command.GetSubDir() == _T(""))
+		return FZ_REPLY_SYNTAXERROR;
+
 	bool refresh = command.Refresh();
 	if (!command.Refresh() && !command.GetPath().IsEmpty())
 	{
@@ -368,7 +371,7 @@ int CFileZillaEnginePrivate::List(const CListCommand &command)
 		return FZ_REPLY_BUSY;
 
 	m_pCurrentCommand = command.Clone();
-	return m_pControlSocket->List(command.GetPath(), command.GetSubDir(), refresh, command.FallbackToCurrent());
+	return m_pControlSocket->List(command.GetPath(), command.GetSubDir(), refresh, command.FallbackToCurrent(), command.IsLink());
 }
 
 int CFileZillaEnginePrivate::FileTransfer(const CFileTransferCommand &command)

@@ -899,7 +899,7 @@ enum listStates
 	list_mtime
 };
 
-int CSftpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/, bool refresh /*=false*/, bool fallback_to_current /*=false*/)
+int CSftpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/, bool refresh /*=false*/, bool fallback_to_current /*=false*/, bool link_discovery /*=false*/)
 {
 	LogMessage(Status, _("Retrieving directory listing..."));
 
@@ -928,7 +928,7 @@ int CSftpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDi
 	pData->refresh = refresh;
 	pData->fallback_to_current = fallback_to_current;
 
-	int res = ChangeDir(path, subDir);
+	int res = ChangeDir(path, subDir, link_discovery);
 	if (res != FZ_REPLY_OK)
 		return res;
 
@@ -1238,7 +1238,7 @@ enum cwdStates
 	cwd_cwd_subdir
 };
 
-int CSftpControlSocket::ChangeDir(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/)
+int CSftpControlSocket::ChangeDir(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/, bool link_discovery /*=false*/)
 {
 	enum cwdStates state = cwd_init;
 
@@ -1298,6 +1298,7 @@ int CSftpControlSocket::ChangeDir(CServerPath path /*=CServerPath()*/, wxString 
 	pData->path = path;
 	pData->subDir = subDir;
 	pData->target = target;
+	pData->link_discovery = link_discovery;
 
 	if (pData->pNextOpData && pData->pNextOpData->opId == cmd_transfer &&
 		!static_cast<CSftpFileTransferOpData *>(pData->pNextOpData)->download)
@@ -1369,7 +1370,16 @@ int CSftpControlSocket::ChangeDirParseResponse(bool successful, const wxString& 
 		break;
 	case cwd_cwd_subdir:
 		if (!successful || reply == _T(""))
-			error = true;
+		{
+			if (pData->link_discovery)
+			{
+				LogMessage(Debug_Info, _T("Symlink does not link to a directory, probably a file"));
+				ResetOperation(FZ_REPLY_LINKNOTDIR);
+				return FZ_REPLY_ERROR;
+			}
+			else
+				error = true;
+		}
 		else if (ParsePwdReply(reply))
 		{
 			CPathCache cache;

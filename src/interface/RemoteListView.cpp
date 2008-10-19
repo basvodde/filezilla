@@ -374,12 +374,16 @@ CRemoteListView::CRemoteListView(wxWindow* pParent, CState *pState, CQueueView* 
 	InitDateFormat();
 
 	EnablePrefixSearch(true);
+
+	m_pLinkResolveState = 0;
 }
 
 CRemoteListView::~CRemoteListView()
 {
 	wxString str = wxString::Format(_T("%d %d"), m_sortDirection, m_sortColumn);
 	COptions::Get()->SetOption(OPTION_REMOTEFILELIST_SORTORDER, str);
+
+	delete m_pLinkResolveState;
 }
 
 // See comment to OnGetItemText
@@ -1097,21 +1101,32 @@ void CRemoteListView::OnItemActivated(wxListEvent &event)
 		const CDirentry& entry = (*m_pDirectoryListing)[index];
 		const wxString& name = entry.name;
 
+		const CServer* pServer = m_pState->GetServer();
+		if (!pServer)
+		{
+			wxBell();
+			return;
+		}
+
 		if (entry.dir)
 		{
 			if (IsComparing())
 				ExitComparisonMode();
-			m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path, name));
+			CListCommand* cmd = new CListCommand(m_pDirectoryListing->path, name);
+			if (entry.link)
+			{
+				delete m_pLinkResolveState;
+				m_pLinkResolveState = new t_linkResolveState;
+				m_pLinkResolveState->remote_path = m_pDirectoryListing->path;
+				m_pLinkResolveState->link = name;
+				m_pLinkResolveState->local_path = m_pState->GetLocalDir();
+				m_pLinkResolveState->server = *pServer;
+				cmd->SetIsLink(true);
+			}
+			m_pState->m_pCommandQueue->ProcessCommand(cmd);
 		}
 		else
 		{
-			const CServer* pServer = m_pState->GetServer();
-			if (!pServer)
-			{
-				wxBell();
-				return;
-			}
-
 			wxFileName fn = wxFileName(m_pState->GetLocalDir(), name);
 			m_pQueue->QueueFile(false, true, fn.GetFullPath(), name, m_pDirectoryListing->path, *pServer, entry.size);
 			m_pQueue->QueueFile_Finish(true);
@@ -1291,7 +1306,7 @@ void CRemoteListView::TransferSelectedFiles(const wxString& localDir, bool queue
 			if (remotePath.AddSegment(name))
 			{
 				//m_pQueue->QueueFolder(event.GetId() == XRCID("ID_ADDTOQUEUE"), true, fn.GetFullPath(), remotePath, *pServer);
-				pRecursiveOperation->AddDirectoryToVisit(m_pDirectoryListing->path, name, fn.GetFullPath());
+				pRecursiveOperation->AddDirectoryToVisit(m_pDirectoryListing->path, name, fn.GetFullPath(), entry.link);
 				startRecursive = true;
 			}
 		}
@@ -2758,4 +2773,20 @@ bool CRemoteListView::ItemIsDir(int index) const
 wxLongLong CRemoteListView::ItemGetSize(int index) const
 {
 	return (*m_pDirectoryListing)[index].size;
+}
+
+void CRemoteListView::LinkIsNotDir(CServerPath& path, const wxString& link)
+{
+	if (!m_pLinkResolveState)
+		return;
+
+	if (m_pLinkResolveState->remote_path == path && m_pLinkResolveState->link == link)
+	{
+		wxFileName fn(m_pLinkResolveState->local_path, link);
+		m_pQueue->QueueFile(false, true, fn.GetFullPath(), link, m_pLinkResolveState->remote_path, m_pLinkResolveState->server, -1);
+		m_pQueue->QueueFile_Finish(true);
+	}
+
+	delete m_pLinkResolveState;
+	m_pLinkResolveState = 0;
 }
