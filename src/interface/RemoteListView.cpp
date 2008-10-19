@@ -276,6 +276,7 @@ public:
 		: wxWindow(parent, wxID_ANY, wxPoint(0, 60), wxDefaultSize),
 		m_text(_T("<") + text + _T(">"))
 	{
+		SetForegroundColour(parent->GetForegroundColour());
 		SetBackgroundColour(parent->GetBackgroundColour());
 		GetTextExtent(m_text, &m_textSize.x, &m_textSize.y);
 	}
@@ -301,7 +302,7 @@ protected:
 		wxPaintDC paintDc(this);
 
 		paintDc.SetFont(GetFont());
-		paintDc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+		paintDc.SetTextForeground(GetForegroundColour());
 
 		paintDc.DrawText(m_text, 0, 0);
 	};
