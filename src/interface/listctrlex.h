@@ -41,6 +41,9 @@ public:
 	// Refresh list but not header
 	void RefreshListOnly(bool eraseBackground = true);
 
+#ifndef __WXMSW__
+	wxScrolledWindow* GetMainWindow();
+#endif
 protected:
 	virtual void OnPostScroll();
 	virtual void OnPreEmitPostScrollEvent();
@@ -56,10 +59,6 @@ protected:
 	int GetHeaderIconIndex(int col);
 	void SetHeaderIconIndex(int col, int icon);
 #endif //__WXMSW__
-
-#ifndef __WXMSW__
-	wxScrolledWindow* GetMainWindow();
-#endif
 
 private:
 	// Keyboard prefix search

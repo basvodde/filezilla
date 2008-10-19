@@ -851,6 +851,9 @@ bool CQueueView::TryStartNextTransfer()
 
 		wxRect rect;
 		GetItemRect(lineIndex + 1, rect);
+#ifndef __WXMSW__
+		rect.y -= GetMainWindow()->GetPosition().y;
+#endif
 		m_allowBackgroundErase = false;
 		if (!pEngineData->pStatusLineCtrl)
 			pEngineData->pStatusLineCtrl = new CStatusLineCtrl(this, pEngineData, rect);
@@ -1556,6 +1559,10 @@ void CQueueView::UpdateStatusLinePositions()
 	m_lastTopItem = GetTopItem();
 	int bottomItem = m_lastTopItem + GetCountPerPage();
 
+#ifndef __WXMSW__
+	int header_offset = GetMainWindow()->GetPosition().y;
+#endif
+
 	for (std::list<CStatusLineCtrl*>::iterator iter = m_statusLineList.begin(); iter != m_statusLineList.end(); iter++)
 	{
 		CStatusLineCtrl *pCtrl = *iter;
@@ -1572,6 +1579,9 @@ void CQueueView::UpdateStatusLinePositions()
 			pCtrl->Show(false);
 			continue;
 		}
+#ifndef __WXMSW__
+		rect.y -= header_offset;
+#endif
 		m_allowBackgroundErase = bottomItem + 1 >= m_itemCount;
 		pCtrl->SetSize(rect);
 		m_allowBackgroundErase = false;

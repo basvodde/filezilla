@@ -26,8 +26,14 @@ CStatusLineCtrl::CStatusLineCtrl(CQueueView* pParent, const t_EngineData* const 
 {
 	wxASSERT(pEngineData);
 
+#ifdef __WXMSW__
 	Create(pParent, wxID_ANY, initialPosition.GetPosition(), initialPosition.GetSize());
+#else
+	Create(pParent->GetMainWindow(), wxID_ANY, initialPosition.GetPosition(), initialPosition.GetSize());
+#endif
+
 	SetOwnFont(pParent->GetFont());
+	SetForegroundColour(pParent->GetForegroundColour());
 	SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 	SetBackgroundColour(pParent->GetBackgroundColour());
 
@@ -114,7 +120,7 @@ void CStatusLineCtrl::OnPaint(wxPaintEvent& event)
 	dc.SetFont(GetFont());
 	dc.SetPen(GetBackgroundColour());
 	dc.SetBrush(GetBackgroundColour());
-	dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+	dc.SetTextForeground(GetForegroundColour());//wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 
 	// Get character height so that we can center the text vertically.
 	wxCoord h = (rect.GetHeight() - m_textHeight) / 2;
