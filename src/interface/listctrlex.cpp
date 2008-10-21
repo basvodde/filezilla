@@ -210,8 +210,52 @@ void wxListCtrlEx::OnKeyDown(wxKeyEvent& event)
 		return;
 	}
 
+	wxChar key;
+
+	switch (code)
+	{
+	case WXK_NUMPAD0:
+	case WXK_NUMPAD1:
+	case WXK_NUMPAD2:
+	case WXK_NUMPAD3:
+	case WXK_NUMPAD4:
+	case WXK_NUMPAD5:
+	case WXK_NUMPAD6:
+	case WXK_NUMPAD7:
+	case WXK_NUMPAD8:
+	case WXK_NUMPAD9:
+		key = '0' + code - WXK_NUMPAD0;
+		break;
+	case WXK_NUMPAD_ADD:
+		key = '+';
+		break;
+	case WXK_NUMPAD_SUBTRACT:
+		key = '-';
+		break;
+	case WXK_NUMPAD_MULTIPLY:
+		key = '*';
+		break;
+	case WXK_NUMPAD_DIVIDE:
+		key = '/';
+		break;
+	default:
+		key = 0;
+		break;
+	}
+	if (key)
+	{
+		if (event.GetModifiers())
+		{
+			// Numpad keys can not have modifiers
+			event.Skip();
+		}
+		HandlePrefixSearch(key);
+		return;
+	}
+
 #if defined(__WXMSW__) && wxUSE_UNICODE
-	if (code >= 300)
+
+	if (code >= 300 && code != WXK_NUMPAD_DECIMAL)
 	{
 		event.Skip();
 		return;
@@ -227,8 +271,8 @@ void wxListCtrlEx::OnKeyDown(wxKeyEvent& event)
 		event.Skip();
 		return;
 	}
-
-	wxChar key = buffer[0];
+	
+	key = buffer[0];
 
 	if (key < 32)
 	{
