@@ -29,7 +29,7 @@ public:
 	virtual void FinishComparison();
 	virtual void OnExitComparisonMode();
 
-	void LinkIsNotDir(CServerPath& path, const wxString& link);
+	void LinkIsNotDir(const CServerPath& path, const wxString& link);
 
 protected:
 	virtual wxString GetItemText(int item, unsigned int column);

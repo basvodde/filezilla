@@ -2776,7 +2776,7 @@ wxLongLong CRemoteListView::ItemGetSize(int index) const
 	return (*m_pDirectoryListing)[index].size;
 }
 
-void CRemoteListView::LinkIsNotDir(CServerPath& path, const wxString& link)
+void CRemoteListView::LinkIsNotDir(const CServerPath& path, const wxString& link)
 {
 	if (!m_pLinkResolveState)
 		return;
