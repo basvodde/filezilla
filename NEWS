@@ -10,6 +10,17 @@ Legend:
     *nix: Unix (e.g BSD) and Unix-like systems (e.g. Linux)
     OS X: Apple Mac OS X
 
+3.1.5 (2008-10-22)
+
++ Handle symbolic links on servers. If trying to access a symbolic link, FileZilla will first try to CWD into it, and if that fails, will treat it as a file instead. During recursive operations, any directory link encountered will not be followed, but file links will be downloaded.
+- Numpad keys could not be used to search for entries in the file lists
+- OS X: Use smaller font sizes in message log and directory trees
+- Fix vertical alignment of labels next to the directory boxes above the directory trees
+- Use lighter text colors in message log if using dark background
+- *nix: Transfer status lines will no longer overlap the queue scrollbar
+- *nix: Fix font colors if using themes with dark backgrounds (e.g. DarkRoom under Ubuntu 8.10)
+- Fix XML corruption problems
+
 3.1.4.1 (2008-10-16)
 
 - *nix: Fix crash if renaming directories using the local directory tree
