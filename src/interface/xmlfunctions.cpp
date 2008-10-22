@@ -179,7 +179,7 @@ void AddTextElement(TiXmlElement* node, const char* name, const wxString& value)
 
 void AddTextElement(TiXmlElement* node, const char* name, int value)
 {
-	char buffer[sizeof(int)]; // Always big enough
+	char buffer[sizeof(int) * 8]; // Always big enough
 	sprintf(buffer, "%d", value);
 	AddTextElementRaw(node, name, buffer);
 }
