@@ -312,7 +312,7 @@ void CNetConfWizard::OnSend()
 	int written = m_socket->LastCount();
 	if (written == len)
 	{
-		delete m_pSendBuffer;
+		delete [] m_pSendBuffer;
 		m_pSendBuffer = 0;
 	}
 	else
