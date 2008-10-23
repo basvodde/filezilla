@@ -11,6 +11,7 @@ CRecursiveOperation::CNewDir::CNewDir()
 	recurse = true;
 	second_try = false;
 	link = false;
+	doVisit = true;
 }
 
 CRecursiveOperation::CRecursiveOperation(CState* pState)
@@ -75,7 +76,6 @@ void CRecursiveOperation::StartRecursiveOperation(enum OperationMode mode, const
 void CRecursiveOperation::AddDirectoryToVisit(const CServerPath& path, const wxString& subdir, const wxString& localDir /*=_T("")*/, bool is_link /*=false*/)
 {
 	CNewDir dirToVisit;
-	dirToVisit.doVisit = true;
 
 	dirToVisit.localDir = localDir;
 	if (localDir != _T("") && localDir.Last() != CLocalFileSystem::path_separator)
@@ -89,7 +89,6 @@ void CRecursiveOperation::AddDirectoryToVisit(const CServerPath& path, const wxS
 void CRecursiveOperation::AddDirectoryToVisitRestricted(const CServerPath& path, const wxString& restrict, bool recurse)
 {
 	CNewDir dirToVisit;
-	dirToVisit.doVisit = true;
 	dirToVisit.parent = path;
 	dirToVisit.recurse = recurse;
 	dirToVisit.restrict = restrict;
@@ -234,7 +233,6 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 				dirToVisit.parent = pDirectoryListing->path;
 				dirToVisit.subdir = entry.name;
 				dirToVisit.localDir = dir.localDir + entry.name + CLocalFileSystem::path_separator;
-				dirToVisit.doVisit = true;
 				if (entry.link)
 				{
 					dirToVisit.link = true;
