@@ -919,7 +919,7 @@ void CHttpControlSocket::ResetHttpData(CHttpOpData* pData)
 {
 	wxASSERT(pData);
 
-	delete m_pRecvBuffer;
+	delete [] m_pRecvBuffer;
 	m_pRecvBuffer = 0;
 
 	pData->m_gotHeader = false;
