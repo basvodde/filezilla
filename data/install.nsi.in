@@ -166,7 +166,7 @@ Function ReadAllUsersCommandline
     ${OrIf} $R1 == "=all"
       StrCpy $ALL_USERS 1
     ${Else}
-      MessageBox MB_ICONSTOP "Invalid option for /user. Has to be either /user=all or /user=current"
+      MessageBox MB_ICONSTOP "Invalid option for /user. Has to be either /user=all or /user=current" /SD IDOK
       Abort
     ${EndIf}
   ${EndUnless}
@@ -261,7 +261,7 @@ FunctionEnd
 Function .onInit
 
   ${Unless} ${AtLeastWin2000}
-    MessageBox MB_YESNO|MB_ICONSTOP "Unsupported operating system.$\nFileZilla ${VERSION} requires at least Windows XP and may not work correctly on your system.$\nDo you really want to continue with the installation?" IDYES installonoldwindows
+    MessageBox MB_YESNO|MB_ICONSTOP "Unsupported operating system.$\nFileZilla ${VERSION} requires at least Windows XP and may not work correctly on your system.$\nDo you really want to continue with the installation?" /SD IDNO IDYES installonoldwindows
     Abort
 installonoldwindows:
   ${EndUnless}
@@ -292,10 +292,10 @@ installonoldwindows:
     ${If} $IS_ADMIN == 0
 
       ${If} $PREVIOUS_VERSION != ""
-        MessageBox MB_ICONSTOP "FileZilla has been previously installed for all users.$\nPlease restart the installer with Administrator privileges."
+        MessageBox MB_ICONSTOP "FileZilla has been previously installed for all users.$\nPlease restart the installer with Administrator privileges." /SD IDOK
         Abort
       ${Else}
-        MessageBox MB_ICONSTOP "Cannot install for all users.$\nPlease restart the installer with Administrator privileges."
+        MessageBox MB_ICONSTOP "Cannot install for all users.$\nPlease restart the installer with Administrator privileges." /SD IDOK
         Abort
       ${EndIf}
     ${EndIf}
@@ -454,7 +454,7 @@ Function PageReinstall
 
   ${Else}
 
-    MessageBox MB_ICONSTOP "Unknown value of PREVIOUS_VERSION_STATE, aborting"
+    MessageBox MB_ICONSTOP "Unknown value of PREVIOUS_VERSION_STATE, aborting" /SD IDOK
     Abort
 
   ${EndIf}
@@ -912,7 +912,7 @@ Function un.onInit
 
   ${If} $un.REMOVE_ALL_USERS == 1
   ${AndIf} $IS_ADMIN == 0
-    MessageBox MB_ICONSTOP "FileZilla has been installed for all users.$\nPlease restart the uninstaller with Administrator privileges to remove it."
+    MessageBox MB_ICONSTOP "FileZilla has been installed for all users.$\nPlease restart the uninstaller with Administrator privileges to remove it." /SD IDOK
     Abort
   ${EndIf}
   
