@@ -209,7 +209,6 @@ void CSocketEventDispatcher::RemovePending(const CSocketEventHandler* pHandler)
 
 void CSocketEventDispatcher::RemovePending(const CSocketEventSource* pSource)
 {
-	return;
 	wxCriticalSectionLocker lock(m_sync);
 
 	std::list<CSocketEvent*> keep;
