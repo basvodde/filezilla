@@ -804,12 +804,12 @@ int CHttpControlSocket::OnChunkedData(CHttpOpData* pData)
 				}
 				else if (*q >= 'A' && *q <= 'F')
 				{
-					pData->m_chunkData.size *= 10;
+					pData->m_chunkData.size *= 16;
 					pData->m_chunkData.size += *q - 'A' + 10;
 				}
 				else if (*q >= 'a' && *q <= 'f')
 				{
-					pData->m_chunkData.size *= 10;
+					pData->m_chunkData.size *= 16;
 					pData->m_chunkData.size += *q - 'a' + 10;
 				}
 				else if (*q == ';' || *q == ' ')
