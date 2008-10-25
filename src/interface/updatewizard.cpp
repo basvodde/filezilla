@@ -449,14 +449,18 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 					if (!data[i] || (unsigned char)data[i] > 127)
 					{
 						delete [] data;
+						data = 0;
 						m_pEngine->Command(CCancelCommand());
 						FailedTransfer();
 						break;
 					}
 				}
 
-				m_data += wxString(data, wxConvUTF8, len);
-				delete [] data;
+				if (data)
+				{
+					m_data += wxString(data, wxConvUTF8, len);
+					delete [] data;
+				}
 				break;
 			}
 		case nId_asyncrequest:
