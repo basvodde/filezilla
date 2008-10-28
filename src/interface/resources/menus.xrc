@@ -152,7 +152,8 @@
       </object>
     </object>
     <object class="wxMenu">
-      <label>&amp;Help</label>
+      <label platform="mac">?</label>
+      <label platform="win|unix">&amp;Help</label>
       <object class="wxMenuItem" name="ID_CHECKFORUPDATES">
         <label>Check for &amp;updates...</label>
         <help>Check for newer versions of FileZilla</help>
@@ -164,7 +165,7 @@
       <object class="wxMenuItem" name="ID_MENU_HELP_BUGREPORT">
         <label>&amp;Report a bug...</label>
       </object>
-      <object class="separator"/>
+      <object platform="win|unix" class="separator"/>
       <object class="wxMenuItem" name="wxID_ABOUT">
         <label>&amp;About...</label>
         <help>Display about dialog</help>
