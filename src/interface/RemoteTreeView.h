@@ -22,7 +22,7 @@ protected:
 	virtual void OnStateChange(enum t_statechange_notifications notification, const wxString& data);
 
 	void DisplayItem(wxTreeItemId parent, const CDirectoryListing& listing);
-	void RefreshItem(wxTreeItemId parent, const CDirectoryListing& listing);
+	void RefreshItem(wxTreeItemId parent, const CDirectoryListing& listing, bool will_select_parent);
 
 	void SetItemImages(wxTreeItemId item, bool unknown);
 

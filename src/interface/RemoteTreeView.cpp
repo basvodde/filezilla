@@ -322,7 +322,7 @@ void CRemoteTreeView::SetDirectoryListing(const CDirectoryListing* pListing, boo
 	}
 	else
 	{
-		RefreshItem(parent, *pListing);
+		RefreshItem(parent, *pListing, !modified);
 
 		if (m_ExpandAfterList == parent)
 		{
@@ -553,7 +553,7 @@ static bool sortfunc(const wxString& a, const wxString& b)
 }
 
 
-void CRemoteTreeView::RefreshItem(wxTreeItemId parent, const CDirectoryListing& listing)
+void CRemoteTreeView::RefreshItem(wxTreeItemId parent, const CDirectoryListing& listing, bool will_select_parent)
 {
 	SetItemImages(parent, false);
 
@@ -652,8 +652,11 @@ void CRemoteTreeView::RefreshItem(wxTreeItemId parent, const CDirectoryListing& 
 		while (sel && sel != child)
 			sel = GetItemParent(sel);
 		wxTreeItemId prev = GetPrevSibling(child);
-		if (!sel)			
+		if (!sel || will_select_parent)
 			Delete(child);
+		else if (will_select_parent)
+		{
+		}
 		child = prev;
 	}
 	while (iter != dirs.rend())
@@ -1310,7 +1313,7 @@ bool CRemoteTreeView::ListExpand(wxTreeItemId item)
 
 	CDirectoryListing listing;
 	if (m_pState->m_pEngine->CacheLookup(data->m_path, listing) == FZ_REPLY_OK)
-		RefreshItem(item, listing);
+		RefreshItem(item, listing, false);
 	else
 	{
 		SetItemImages(item, true);
