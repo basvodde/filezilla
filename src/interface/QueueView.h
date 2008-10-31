@@ -8,9 +8,12 @@
 struct t_newEntry
 {
 	wxString localFile;
+	wxString localPath;
 	wxString remoteFile;
 	CServerPath remotePath;
 	wxLongLong size;
+	wxDateTime time;
+	int attributes;
 };
 
 enum ActionAfterState

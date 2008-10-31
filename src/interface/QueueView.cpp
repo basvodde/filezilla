@@ -194,11 +194,20 @@ public:
 
 		m_didSendEvent = false;
 		m_threadWaiting = false;
+		m_throttleWait = false;
+		m_processing_entries = false;
+
+		t_dirPair* pair = new t_dirPair;
+		pair->localPath = pFolderItem->GetLocalPath().c_str();
+		pair->remotePath.SetSafePath(pFolderItem->GetRemotePath().GetSafePath().c_str());
+		m_dirsToCheck.push_back(pair);
 	}
 
 	virtual ~CFolderProcessingThread()
 	{
 		for (std::list<t_newEntry*>::iterator iter = m_entryList.begin(); iter != m_entryList.end(); iter++)
+			delete *iter;
+		for (std::list<t_dirPair*>::iterator iter = m_dirsToCheck.begin(); iter != m_dirsToCheck.end(); iter++)
 			delete *iter;
 	}
 
@@ -209,12 +218,57 @@ public:
 		entryList.swap(m_entryList);
 
 		m_didSendEvent = false;
+		m_processing_entries = true;
+
+		if (m_throttleWait)
+		{
+			m_throttleWait = false;
+			m_condition.Signal();
+		}
+	}
+
+	void ProcessDirectory(const t_newEntry* entry)
+	{
+		wxMutexLocker locker(m_sync);
+
+		t_dirPair* pair = new t_dirPair;
+
+		{
+			pair->localPath = (entry->localPath + CLocalFileSystem::path_separator + entry->localFile).c_str();
+
+			CServerPath path = entry->remotePath;
+			path.AddSegment(entry->localFile);
+			pair->remotePath.SetSafePath(path.GetSafePath().c_str());
+		}
+
+		m_dirsToCheck.push_back(pair);
 
 		if (m_threadWaiting)
 		{
 			m_threadWaiting = false;
 			m_condition.Signal();
 		}
+	}
+
+	void CheckFinished()
+	{
+		m_sync.Lock();
+		wxASSERT(m_processing_entries);
+
+		m_processing_entries = false;
+
+		if (m_threadWaiting)
+		{
+			m_threadWaiting = false;
+			m_condition.Signal();
+		}
+
+		m_sync.Unlock();
+	}
+
+	CFolderScanItem* GetFolderScanItem()
+	{
+		return m_pFolderItem;
 	}
 
 protected:
@@ -234,7 +288,7 @@ protected:
 			send = false;
 			if (m_entryList.size() >= 100)
 			{
-				m_threadWaiting = true;
+				m_throttleWait = true;
 				m_condition.Wait();
 			}
 		}
@@ -242,6 +296,9 @@ protected:
 			send = false;
 		else
 			send = true;
+
+		if (send)
+			m_didSendEvent = true;
 
 		m_sync.Unlock();
 
@@ -257,143 +314,98 @@ protected:
 
 	ExitCode Entry()
 	{
+#ifdef __WXDEBUG__
 		wxMutexGuiEnter();
 		wxASSERT(m_pFolderItem->GetTopLevelItem() && m_pFolderItem->GetTopLevelItem()->GetType() == QueueItemType_Server);
 		wxMutexGuiLeave();
+#endif
 
 		wxASSERT(!m_pFolderItem->Download());
 
 		wxString currentLocalPath;
 		CServerPath currentRemotePath;
 
-		wxDir* pDir = 0;
+		CLocalFileSystem localFileSystem;
 
-		while (!TestDestroy())
+		while (!TestDestroy() && !m_pFolderItem->m_remove)
 		{
-			if (m_pFolderItem->m_remove)
-			{
-				wxCommandEvent evt(fzEVT_FOLDERTHREAD_COMPLETE, wxID_ANY);
-				wxPostEvent(m_pOwner, evt);
-
-				delete pDir;
-
-				return 0;
-			}
-			bool found;
-			wxString file;
-			if (!pDir)
-			{
-				if (!m_pFolderItem->m_dirsToCheck.empty())
-				{
-					const CFolderScanItem::t_dirPair& pair = m_pFolderItem->m_dirsToCheck.front();
-
-					wxLogNull nullLog;
-
-					pDir = new wxDir(pair.localPath);
-
-					if (pDir->IsOpened())
-					{
-						currentLocalPath = pair.localPath;
-						currentRemotePath = pair.remotePath;
-
-						found = pDir->GetFirst(&file);
-
-						if (!found)
-						{
-							// Empty directory
-
-							t_newEntry *entry = new t_newEntry;
-							entry->remotePath.SetSafePath(pair.remotePath.GetSafePath().c_str());
-
-							AddEntry(entry);
-						}
-					}
-					else
-						found = false;
-					m_pFolderItem->m_dirsToCheck.pop_front();
-				}
-				else
-				{
-					wxCommandEvent evt(fzEVT_FOLDERTHREAD_COMPLETE, wxID_ANY);
-					wxPostEvent(m_pOwner, evt);
-
-					if (pDir)
-						delete pDir;
-					return 0;
-				}
-			}
-			else
-				found = pDir->GetNext(&file);
-
-			while (found && !TestDestroy() && !m_pFolderItem->m_remove)
-			{
-				const wxString& fullName = currentLocalPath + wxFileName::GetPathSeparator() + file;
-
-				bool isLink;
-				wxLongLong size;
-				int attributes;
-				CLocalFileSystem::local_fileType type = CLocalFileSystem::GetFileInfo(fullName, isLink, &size, 0, &attributes);
-
-				if (type == CLocalFileSystem::dir)
-				{
-					if (isLink)
-					{
-						found = pDir->GetNext(&file);
-						continue;
-					}
-
-					if (!m_filters.FilenameFiltered(file, currentLocalPath, true, -1, true, attributes))
-					{
-						CFolderScanItem::t_dirPair pair;
-						pair.localPath = fullName;
-						pair.remotePath = currentRemotePath;
-						pair.remotePath.AddSegment(file);
-						m_pFolderItem->m_dirsToCheck.push_back(pair);
-					}
-				}
-				else if (type == CLocalFileSystem::file)
-				{
-					if (!m_filters.FilenameFiltered(file, currentLocalPath, false, size, true, attributes))
-					{
-						t_newEntry* entry = new t_newEntry;
-
-						{
-							entry->localFile = fullName.c_str();
-							entry->remoteFile = file.c_str();
-							entry->remotePath.SetSafePath(currentRemotePath.GetSafePath().c_str());
-							entry->size = size;
-						}
-
-						AddEntry(entry);
-					}
-				}
-
-				found = pDir->GetNext(&file);
-			}
-
-			bool send;
 			m_sync.Lock();
-			if (!m_didSendEvent && m_entryList.size())
-				send = true;
-			else
-				send = false;
+			if (m_dirsToCheck.empty())
+			{
+				if (!m_didSendEvent && !m_entryList.empty())
+				{
+					m_sync.Unlock();
+					wxCommandEvent evt(fzEVT_FOLDERTHREAD_FILES, wxID_ANY);
+					wxPostEvent(m_pOwner, evt);
+					continue;
+				}
+
+				if (!m_didSendEvent && !m_processing_entries)
+				{
+					m_sync.Unlock();
+					break;
+				}
+				m_threadWaiting = true;
+				m_condition.Wait();
+				if (m_dirsToCheck.empty())
+				{
+					m_sync.Unlock();
+					break;
+				}
+				m_sync.Unlock();
+				continue;
+			}
+
+			const t_dirPair *pair = m_dirsToCheck.front();
+			m_dirsToCheck.pop_front();
+
 			m_sync.Unlock();
 
-			if (send)
+			if (!localFileSystem.BeginFindFiles(pair->localPath, false))
 			{
-				// We send the notification after leaving the critical section, else we
-				// could get into a deadlock. wxWidgets event system does internal
-				// locking.
-				wxCommandEvent evt(fzEVT_FOLDERTHREAD_FILES, wxID_ANY);
-				wxPostEvent(m_pOwner, evt);
+				delete pair;
+				continue;
 			}
 
-			delete pDir;
-			pDir = 0;
+			t_newEntry* entry = new t_newEntry;
+
+			wxString name;
+			bool is_link;
+			bool is_dir;
+			while (localFileSystem.GetNextFile(name, is_link, is_dir, &entry->size, &entry->time, &entry->attributes))
+			{
+				if (is_link)
+					continue;
+				entry->localFile = name.c_str();
+				entry->localPath = pair->localPath.c_str();
+				if (!is_dir)
+					entry->remoteFile = name.c_str();
+
+				entry->remotePath.SetSafePath(pair->remotePath.GetSafePath().c_str());
+
+				AddEntry(entry);
+
+				entry = new t_newEntry;
+			}
+
+			entry->remotePath.SetSafePath(pair->remotePath.GetSafePath().c_str());
+			AddEntry(entry);
+
+			delete pair;
 		}
+
+		wxCommandEvent evt(fzEVT_FOLDERTHREAD_COMPLETE, wxID_ANY);
+		wxPostEvent(m_pOwner, evt);
 
 		return 0;
 	}
+
+	struct t_dirPair
+	{
+		wxString localPath;
+		CServerPath remotePath;
+	};
+	std::list<t_dirPair*> m_dirsToCheck;
 
 	// Access has to be guarded by m_sync
 	std::list<t_newEntry*> m_entryList;
@@ -401,12 +413,12 @@ protected:
 	CQueueView* m_pOwner;
 	CFolderScanItem* m_pFolderItem;
 
-	CFilterManager m_filters;
-
 	wxMutex m_sync;
 	wxCondition m_condition;
 	bool m_threadWaiting;
+	bool m_throttleWait;
 	bool m_didSendEvent;
+	bool m_processing_entries;
 };
 
 CQueueView::CQueueView(CQueue* parent, int index, CMainFrame* pMainFrame, CAsyncRequestQueue *pAsyncRequestQueue)
@@ -531,20 +543,7 @@ bool CQueueView::QueueFiles(const bool queueOnly, const wxString& localPath, con
 		InsertItem(pServerItem, fileItem);
 	}
 
-	CommitChanges();
-
-	if (!m_activeMode && !queueOnly)
-	{
-		m_activeMode = 1;
-		m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_QUEUEPROCESSING);
-	}
-
-	m_waitStatusLineUpdate = true;
-	AdvanceQueue();
-	m_waitStatusLineUpdate = false;
-	UpdateStatusLinePositions();
-
-	RefreshListOnly(false);
+	QueueFile_Finish(!queueOnly);
 
 	return true;
 }
@@ -1695,44 +1694,55 @@ bool CQueueView::QueueFiles(const std::list<t_newEntry*> &entryList, bool queueO
 {
 	wxASSERT(pServerItem);
 
+	CFilterManager filters;
 	for (std::list<t_newEntry*>::const_iterator iter = entryList.begin(); iter != entryList.end(); iter++)
 	{
 		const t_newEntry* entry = *iter;
 
-		CFileItem* fileItem;
-		if (entry->localFile != _T(""))
+		if (entry->localFile == _T(""))
 		{
-			fileItem = new CFileItem(pServerItem, queueOnly, download, entry->localFile, entry->remoteFile, entry->remotePath, entry->size);
+			if (m_pFolderProcessingThread->GetFolderScanItem()->m_dir_is_empty)
+			{
+				CFileItem* fileItem = new CFolderItem(pServerItem, queueOnly, entry->remotePath, _T(""));
+				InsertItem(pServerItem, fileItem);
+			}
 
-			if (download)
-				fileItem->m_transferSettings.binary = !CAutoAsciiFiles::TransferRemoteAsAscii(entry->remoteFile, entry->remotePath.GetType());
-			else
-				fileItem->m_transferSettings.binary = !CAutoAsciiFiles::TransferLocalAsAscii(entry->localFile, entry->remotePath.GetType());
+			m_pFolderProcessingThread->GetFolderScanItem()->m_dir_is_empty = true;
 
-			fileItem->m_defaultFileExistsAction = defaultFileExistsAction;
+			delete entry;
+			continue;
 		}
+
+		if (filters.FilenameFiltered(entry->localFile, entry->localPath, entry->remoteFile != _T(""), entry->size, true, entry->attributes))
+		{
+			delete entry;
+			continue;
+		}
+
+		m_pFolderProcessingThread->GetFolderScanItem()->m_dir_is_empty = false;
+
+		if (entry->remoteFile == _T(""))
+		{
+			m_pFolderProcessingThread->ProcessDirectory(entry);
+			delete entry;
+			continue;
+		}
+
+		CFileItem* fileItem = new CFileItem(pServerItem, queueOnly, download, entry->localPath + CLocalFileSystem::path_separator + entry->localFile, entry->remoteFile, entry->remotePath, entry->size);
+
+		if (download)
+			fileItem->m_transferSettings.binary = !CAutoAsciiFiles::TransferRemoteAsAscii(entry->remoteFile, entry->remotePath.GetType());
 		else
-			fileItem = new CFolderItem(pServerItem, queueOnly, entry->remotePath, _T(""));
+			fileItem->m_transferSettings.binary = !CAutoAsciiFiles::TransferLocalAsAscii(entry->localFile, entry->remotePath.GetType());
+
+		fileItem->m_defaultFileExistsAction = defaultFileExistsAction;
 
 		delete entry;
 
 		InsertItem(pServerItem, fileItem);
 	}
 
-	CommitChanges();
-
-	if (!m_activeMode && !queueOnly)
-	{
-		m_activeMode = 1;
-		m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_QUEUEPROCESSING);
-	}
-
-	m_waitStatusLineUpdate = true;
-	AdvanceQueue();
-	m_waitStatusLineUpdate = false;
-	UpdateStatusLinePositions();
-
-	RefreshListOnly(false);
+	QueueFile_Finish(!queueOnly);
 
 	return true;
 }
@@ -2239,6 +2249,7 @@ void CQueueView::OnFolderThreadFiles(wxCommandEvent& event)
 	std::list<t_newEntry*> entryList;
 	m_pFolderProcessingThread->GetFiles(entryList);
 	QueueFiles(entryList, pItem->Queued(), false, (CServerItem*)pItem->GetTopLevelItem(), pItem->m_defaultFileExistsAction);
+	m_pFolderProcessingThread->CheckFinished();
 
 	pItem->m_count += entryList.size();
 	pItem->m_statusMessage = wxString::Format(_("%d files added to queue"), pItem->GetCount());

@@ -694,10 +694,7 @@ CFolderScanItem::CFolderScanItem(CServerItem* parent, bool queued, bool download
 	m_remove = false;
 	m_active = false;
 	m_count = 0;
-	t_dirPair pair;
-	pair.localPath = localPath.c_str();
-	pair.remotePath.SetSafePath(remotePath.GetSafePath().c_str());
-	m_dirsToCheck.push_back(pair);
+	m_dir_is_empty = true;
 
 	m_defaultFileExistsAction = CFileExistsNotification::unknown;
 }
@@ -1350,7 +1347,13 @@ void CQueueViewBase::RefreshItem(const CQueueItem* pItem)
 	wxASSERT(pItem);
 	int index = GetItemIndex(pItem);
 
+#ifdef __WXMSW__
+	wxRect rect;
+	GetItemRect(index, rect);
+	RefreshRect(rect, false);
+#else
 	wxListCtrl::RefreshItem(index);
+#endif
 }
 
 void CQueueViewBase::OnNavigationKey(wxNavigationKeyEvent& event)

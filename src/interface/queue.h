@@ -220,14 +220,9 @@ public:
 
 	int m_count;
 
-	struct t_dirPair
-	{
-		wxString localPath;
-		CServerPath remotePath;
-	};
-	std::list<t_dirPair> m_dirsToCheck;
-
 	enum CFileExistsNotification::OverwriteAction m_defaultFileExistsAction;
+
+	bool m_dir_is_empty;
 
 protected:
 	wxString m_localPath;
