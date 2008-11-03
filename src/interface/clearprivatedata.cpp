@@ -55,7 +55,8 @@ void CClearPrivateDataDialog::Show()
 	if (pCheck->GetValue())
 	{
 		CRecentServerList::Clear();
-		m_pMainFrame->GetQuickconnectBar()->ClearFields();
+		if (m_pMainFrame->GetQuickconnectBar())
+			m_pMainFrame->GetQuickconnectBar()->ClearFields();
 	}
 
 	pCheck = XRCCTRL(*this, "ID_CLEARRECONNECT", wxCheckBox);
