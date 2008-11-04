@@ -23,6 +23,9 @@
   #include <fcntl.h>
   #include <netinet/in.h>
   #include <netinet/tcp.h>
+  #if !defined(MSG_NOSIGNAL) && !defined(SO_NOSIGPIPE)
+    #include <signal.h>
+  #endif
 #endif
 
 // Fixups needed on FreeBSD
@@ -1431,8 +1434,24 @@ int CSocket::Write(const void* buffer, unsigned int size, int& error)
 	const int flags = MSG_NOSIGNAL;
 #else
 	const int flags = 0;
+
+#if !defined(SO_NOSIGPIPE) && !defined(__WXMSW__)
+	// Some systems have neither. Need to block signal
+	struct sigaction old_action;
+	struct sigaction action = {0};
+	action.sa_handler = SIG_IGN;
+	int signal_set = sigaction(SIGPIPE, &action, &old_action);
 #endif
+
+#endif
+
 	int res = send(m_fd, (const char*)buffer, size, flags);
+
+#if !defined(MSG_NOSIGNAL) && !defined(SO_NOSIGPIPE) && !defined(__WXMSW__)
+	// Restore previous signal handler
+	if (!signal_set)
+		sigaction(SIGPIPE, &old_action, 0);
+#endif
 
 	if (res == -1)
 	{
