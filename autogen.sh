@@ -236,8 +236,6 @@ if test ! -f configure || test ! -f config/ltmain.sh || test ! -f Makefile.in; t
   echo "Please make sure you have autoconf 2.5, automake 1.7, libtool 1.5,"
   echo "autoheader and aclocal installed."
   printf "If you don't have access to these tools, please get a recent source tarball from \033[1mhttp://filezilla-project.org/nightly.php\033[0m instead.\n"
-  echo "script which will download the generated files, just remember to call it from"
-  echo "time to time, it will only download if some files have been changed"
 
   exit 1
 fi

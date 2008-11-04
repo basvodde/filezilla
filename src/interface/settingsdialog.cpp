@@ -63,6 +63,10 @@ enum pagenames
 	} \
 	m_pages.push_back(page);
 
+//wxXmlResource CSettingsDialog::m_settingXmlResource;
+bool CSettingsDialog::m_resources_initialized = false;
+
+
 BEGIN_EVENT_TABLE(CSettingsDialog, wxDialogEx)
 EVT_TREE_SEL_CHANGING(XRCID("ID_TREE"), CSettingsDialog::OnPageChanging)
 EVT_TREE_SEL_CHANGED(XRCID("ID_TREE"), CSettingsDialog::OnPageChanged)
@@ -87,7 +91,26 @@ bool CSettingsDialog::Create(CMainFrame* pMainFrame)
 
 	SetExtraStyle(wxWS_EX_BLOCK_EVENTS);
 	SetParent(pMainFrame);
-	if (!wxXmlResource::Get()->LoadDialog(this, GetParent(), _T("ID_SETTINGS")))
+
+/*	if (!m_resources_initialized)
+	{
+		m_resources_initialized = true;
+		wxGetApp().InitXRCHandlers(m_settingXmlResource);
+
+#ifndef __WXDEBUG__
+		m_settingXmlResource.SetFlags(m_settingXmlResource.GetFlags() | wxXRC_NO_RELOADING);
+#endif
+
+		wxString resourceDir = wxGetApp().GetResourceDir();
+#if wxUSE_FILESYSTEM
+		resourceDir.Replace(_T("%"), _T("%25"));
+		resourceDir.Replace(_T(":"), _T("%3A"));
+		resourceDir.Replace(_T("#"), _T("%23"));
+#endif
+		m_settingXmlResource.Load(resourceDir + _T("settings_dialog.xrc"));
+	}*/
+
+	if (!m_settingXmlResource.LoadDialog(this, GetParent(), _T("ID_SETTINGS")))
 		return false;
 
 	if (!LoadPages())

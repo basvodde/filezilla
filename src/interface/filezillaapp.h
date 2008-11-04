@@ -33,6 +33,8 @@ public:
 
 	const CCommandLine* GetCommandLine() const { return m_pCommandLine; }
 
+	void InitXRCHandlers(wxXmlResource& resource);
+
 protected:
 	bool InitDefaultsDir();
 	bool InitSettingsDir();

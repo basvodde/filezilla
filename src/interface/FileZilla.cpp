@@ -438,6 +438,35 @@ wxString CFileZillaApp::GetDataDir(wxString fileToFind) const
 #endif //__WXMAC__
 }
 
+void CFileZillaApp::InitXRCHandlers(wxXmlResource& resource)
+{
+	resource.AddHandler(new wxMenuXmlHandler);
+	resource.AddHandler(new wxMenuBarXmlHandler);
+	resource.AddHandler(new wxDialogXmlHandler);
+	resource.AddHandler(new wxPanelXmlHandler);
+	resource.AddHandler(new wxSizerXmlHandler);
+	resource.AddHandler(new wxButtonXmlHandler);
+	resource.AddHandler(new wxBitmapButtonXmlHandler);
+	resource.AddHandler(new wxStaticTextXmlHandler);
+	resource.AddHandler(new wxStaticBoxXmlHandler);
+	resource.AddHandler(new wxStaticBitmapXmlHandler);
+	resource.AddHandler(new wxTreeCtrlXmlHandler);
+	resource.AddHandler(new wxListCtrlXmlHandler);
+	resource.AddHandler(new wxCheckListBoxXmlHandler);
+	resource.AddHandler(new wxChoiceXmlHandler);
+	resource.AddHandler(new wxGaugeXmlHandler);
+	resource.AddHandler(new wxCheckBoxXmlHandler);
+	resource.AddHandler(new wxSpinCtrlXmlHandler);
+	resource.AddHandler(new wxRadioButtonXmlHandler);
+	resource.AddHandler(new wxNotebookXmlHandler);
+	resource.AddHandler(new wxTextCtrlXmlHandler);
+	resource.AddHandler(new wxListBoxXmlHandler);
+	resource.AddHandler(new wxToolBarXmlHandlerEx);
+	resource.AddHandler(new wxStaticLineXmlHandler);
+	resource.AddHandler(new wxScrolledWindowXmlHandler);
+	resource.AddHandler(new wxHyperlinkCtrlXmlHandler);
+}
+
 bool CFileZillaApp::LoadResourceFiles()
 {
 	m_resourceDir = GetDataDir(_T("/resources/menus.xrc"));
@@ -462,31 +491,7 @@ bool CFileZillaApp::LoadResourceFiles()
 	pResource->SetFlags(pResource->GetFlags() | wxXRC_NO_RELOADING);
 #endif
 
-	pResource->AddHandler(new wxMenuXmlHandler);
-	pResource->AddHandler(new wxMenuBarXmlHandler);
-	pResource->AddHandler(new wxDialogXmlHandler);
-	pResource->AddHandler(new wxPanelXmlHandler);
-	pResource->AddHandler(new wxSizerXmlHandler);
-	pResource->AddHandler(new wxButtonXmlHandler);
-	pResource->AddHandler(new wxBitmapButtonXmlHandler);
-	pResource->AddHandler(new wxStaticTextXmlHandler);
-	pResource->AddHandler(new wxStaticBoxXmlHandler);
-	pResource->AddHandler(new wxStaticBitmapXmlHandler);
-	pResource->AddHandler(new wxTreeCtrlXmlHandler);
-	pResource->AddHandler(new wxListCtrlXmlHandler);
-	pResource->AddHandler(new wxCheckListBoxXmlHandler);
-	pResource->AddHandler(new wxChoiceXmlHandler);
-	pResource->AddHandler(new wxGaugeXmlHandler);
-	pResource->AddHandler(new wxCheckBoxXmlHandler);
-	pResource->AddHandler(new wxSpinCtrlXmlHandler);
-	pResource->AddHandler(new wxRadioButtonXmlHandler);
-	pResource->AddHandler(new wxNotebookXmlHandler);
-	pResource->AddHandler(new wxTextCtrlXmlHandler);
-	pResource->AddHandler(new wxListBoxXmlHandler);
-	pResource->AddHandler(new wxToolBarXmlHandlerEx);
-	pResource->AddHandler(new wxStaticLineXmlHandler);
-	pResource->AddHandler(new wxScrolledWindowXmlHandler);
-	pResource->AddHandler(new wxHyperlinkCtrlXmlHandler);
+	InitXRCHandlers(*pResource);
 
 	wxString resourceDir = m_resourceDir;
 #if wxUSE_FILESYSTEM
