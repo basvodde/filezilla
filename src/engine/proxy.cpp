@@ -328,7 +328,7 @@ void CProxySocket::OnReceive()
 	case socks5_request_address:
 		if (m_pSendBuffer)
 			return;
-		while (true)
+		while (m_recvBufferLen && m_can_read && m_proxyState == handshake)
 		{
 			int error;
 			int read = m_pSocket->Read(m_pRecvBuffer + m_recvBufferPos, m_recvBufferLen, error);
