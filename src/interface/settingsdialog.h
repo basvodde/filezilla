@@ -3,8 +3,6 @@
 
 #include "dialogex.h"
 
-#define m_settingXmlResource (*wxXmlResource::Get())
-
 class COptions;
 class COptionsPage;
 class CMainFrame;
@@ -18,8 +16,6 @@ public:
 	bool LoadSettings();
 
 	CMainFrame* m_pMainFrame;
-
-//	static wxXmlResource m_settingXmlResource;
 
 protected:
 	bool LoadPages();
@@ -40,8 +36,6 @@ protected:
 	void OnPageChanged(wxTreeEvent& event);
 	void OnOK(wxCommandEvent& event);
 	void OnCancel(wxCommandEvent& event);
-
-	static bool m_resources_initialized;
 };
 
 #endif //__SETTINGSDIALOG_H__
