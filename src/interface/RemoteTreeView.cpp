@@ -615,7 +615,7 @@ void CRemoteTreeView::RefreshItem(wxTreeItemId parent, const CDirectoryListing& 
 			while (sel && sel != child)
 				sel = GetItemParent(sel);
 			wxTreeItemId prev = GetPrevSibling(child);
-			if (!sel)
+			if (!sel || will_select_parent)
 				Delete(child);
 			child = prev;
 		}
@@ -654,9 +654,6 @@ void CRemoteTreeView::RefreshItem(wxTreeItemId parent, const CDirectoryListing& 
 		wxTreeItemId prev = GetPrevSibling(child);
 		if (!sel || will_select_parent)
 			Delete(child);
-		else if (will_select_parent)
-		{
-		}
 		child = prev;
 	}
 	while (iter != dirs.rend())
