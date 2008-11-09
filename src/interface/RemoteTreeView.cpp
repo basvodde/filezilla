@@ -394,12 +394,12 @@ wxTreeItemId CRemoteTreeView::MakeParent(CServerPath path, bool select)
 
 			if (m_pState->m_pEngine->CacheLookup(path, listing) == FZ_REPLY_OK)
 			{
-				child = AppendItem(parent, *iter, 0, 2, new CItemData(path));
+				child = AppendItem(parent, *iter, 0, 2, path.HasParent() ? 0 : new CItemData(path));
 				SetItemImages(child, false);
 			}
 			else
 			{
-				child = AppendItem(parent, *iter, 1, 3, new CItemData(path));
+				child = AppendItem(parent, *iter, 1, 3, path.HasParent() ? 0 : new CItemData(path));
 				SetItemImages(child, true);
 			}
 			SortChildren(parent);
@@ -527,7 +527,7 @@ void CRemoteTreeView::DisplayItem(wxTreeItemId parent, const CDirectoryListing& 
 
 		if (m_pState->m_pEngine->CacheLookup(subdir, subListing) == FZ_REPLY_OK)
 		{
-			wxTreeItemId child = AppendItem(parent, name, 0, 2, new CItemData(subdir));
+			wxTreeItemId child = AppendItem(parent, name, 0, 2, 0);
 			SetItemImages(child, false);
 
 			if (HasSubdirs(subListing, filter))
@@ -535,7 +535,7 @@ void CRemoteTreeView::DisplayItem(wxTreeItemId parent, const CDirectoryListing& 
 		}
 		else
 		{
-			wxTreeItemId child = AppendItem(parent, name, 1, 3, new CItemData(subdir));
+			wxTreeItemId child = AppendItem(parent, name, 1, 3, 0);
 			SetItemImages(child, true);
 		}
 	}
@@ -628,7 +628,7 @@ void CRemoteTreeView::RefreshItem(wxTreeItemId parent, const CDirectoryListing& 
 			CDirectoryListing subListing;
 			if (m_pState->m_pEngine->CacheLookup(path, subListing) == FZ_REPLY_OK)
 			{
-				wxTreeItemId child = AppendItem(parent, *iter, 0, 2, new CItemData(path));
+				wxTreeItemId child = AppendItem(parent, *iter, 0, 2, 0);
 				SetItemImages(child, false);
 
 				if (HasSubdirs(subListing, filter))
@@ -636,7 +636,7 @@ void CRemoteTreeView::RefreshItem(wxTreeItemId parent, const CDirectoryListing& 
 			}
 			else
 			{
-				wxTreeItemId child = AppendItem(parent, *iter, 1, 3, new CItemData(path));
+				wxTreeItemId child = AppendItem(parent, *iter, 1, 3, 0);
 				if (child)
 					SetItemImages(child, true);
 			}
@@ -664,7 +664,7 @@ void CRemoteTreeView::RefreshItem(wxTreeItemId parent, const CDirectoryListing& 
 		CDirectoryListing subListing;
 		if (m_pState->m_pEngine->CacheLookup(path, subListing) == FZ_REPLY_OK)
 		{
-			wxTreeItemId child = AppendItem(parent, *iter, 0, 2, new CItemData(path));
+			wxTreeItemId child = AppendItem(parent, *iter, 0, 2, 0);
 			SetItemImages(child, false);
 
 			if (HasSubdirs(subListing, filter))
@@ -672,7 +672,7 @@ void CRemoteTreeView::RefreshItem(wxTreeItemId parent, const CDirectoryListing& 
 		}
 		else
 		{
-			wxTreeItemId child = AppendItem(parent, *iter, 1, 3, new CItemData(path));
+			wxTreeItemId child = AppendItem(parent, *iter, 1, 3, 0);
 			SetItemImages(child, true);
 		}
 
@@ -753,12 +753,12 @@ void CRemoteTreeView::OnSelectionChanged(wxTreeEvent& event)
 	if (!item)
 		return;
 
-	const CItemData* data = (CItemData*)GetItemData(item);
-	wxASSERT(data);
-	if (!data)
+	const CServerPath path = GetPathFromItem(item);
+	wxASSERT(!path.IsEmpty());
+	if (path.IsEmpty())
 		return;
 
-	m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(data->m_path));
+	m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(path));
 }
 
 void CRemoteTreeView::OnItemActivated(wxTreeEvent& event)
@@ -769,12 +769,28 @@ void CRemoteTreeView::OnItemActivated(wxTreeEvent& event)
 
 CServerPath CRemoteTreeView::GetPathFromItem(const wxTreeItemId& item) const
 {
-	const CItemData* const pData = (const CItemData*)GetItemData(item);
+	std::list<wxString> segments;
 
-	if (!pData)
-		return CServerPath();
+	wxTreeItemId i = item;
+	while (i != GetRootItem())
+	{
+		const CItemData* const pData = (const CItemData*)GetItemData(i);
+		if (pData)
+		{
+			CServerPath path = pData->m_path;
+			for (std::list<wxString>::const_iterator iter = segments.begin(); iter != segments.end(); iter++)
+			{
+				if (!path.AddSegment(*iter))
+					return CServerPath();
+			}
+			return path;
+		}
 
-	return pData->m_path;
+		segments.push_front(GetItemText(i));
+		i = GetItemParent(i);
+	}
+
+	return CServerPath();
 }
 
 void CRemoteTreeView::OnBeginDrag(wxTreeEvent& event)
@@ -1173,26 +1189,14 @@ void CRemoteTreeView::OnEndLabelEdit(wxTreeEvent& event)
 	}
 
 	CItemData* const pData = (CItemData*)GetItemData(event.GetItem());
-	if (!pData)
+	if (pData)
 	{
 		event.Veto();
 		return;
 	}
 
-	const CServerPath path = pData->m_path;
-	if (path.IsEmpty())
-	{
-		event.Veto();
-		return;
-	}
-
-	if (!path.HasParent())
-	{
-		event.Veto();
-		return;
-	}
-
-	CServerPath parent = path.GetParent();
+	CServerPath old_path = GetPathFromItem(event.GetItem());
+	CServerPath parent = old_path.GetParent();
 
 	const wxString& oldName = GetItemText(event.GetItem());
 	const wxString& newName = event.GetLabel();
@@ -1201,11 +1205,6 @@ void CRemoteTreeView::OnEndLabelEdit(wxTreeEvent& event)
 		event.Veto();
 		return;
 	}
-
-	// Update the item data
-	wxASSERT(path.GetLastSegment() == oldName);
-	pData->m_path = parent;
-	pData->m_path.AddSegment(newName);
 
 	m_pState->m_pCommandQueue->ProcessCommand(new CRenameCommand(parent, oldName, parent, newName));
 	m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(parent));
@@ -1217,12 +1216,12 @@ void CRemoteTreeView::OnEndLabelEdit(wxTreeEvent& event)
 	if (currentPath.IsEmpty())
 		return;
 
-	if (currentPath == path || currentPath.IsSubdirOf(path, false))
+	if (currentPath == old_path || currentPath.IsSubdirOf(old_path, false))
 	{
 		// Previously selected path was below renamed one, list the new one
 
 		std::list<wxString> subdirs;
-		while (currentPath != path)
+		while (currentPath != old_path)
 		{
 			if (!currentPath.HasParent())
 			{
@@ -1303,13 +1302,13 @@ void CRemoteTreeView::OnMkdir(wxCommandEvent& event)
 
 bool CRemoteTreeView::ListExpand(wxTreeItemId item)
 {
-	const CItemData* data = (CItemData*)GetItemData(item);
-	wxASSERT(data);
-	if (!data)
+	const CServerPath path = GetPathFromItem(item);
+	wxASSERT(!path.IsEmpty());
+	if (path.IsEmpty())
 		return false;
 
 	CDirectoryListing listing;
-	if (m_pState->m_pEngine->CacheLookup(data->m_path, listing) == FZ_REPLY_OK)
+	if (m_pState->m_pEngine->CacheLookup(path, listing) == FZ_REPLY_OK)
 		RefreshItem(item, listing, false);
 	else
 	{
