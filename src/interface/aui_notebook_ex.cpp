@@ -5,9 +5,15 @@
 class wxAuiTabArtEx : public wxAuiDefaultTabArt
 {
 public:
+	wxAuiTabArtEx(wxAuiNotebookEx* pNotebook)
+	{
+		m_pNotebook = pNotebook;
+		m_fonts_initialized = false;
+	}
+
 	virtual wxAuiTabArt* Clone()
 	{
-		return new wxAuiTabArtEx();
+		return new wxAuiTabArtEx(m_pNotebook);
 	}
 
 	virtual wxSize GetTabSize(wxDC& dc, wxWindow* wnd, const wxString& caption, const wxBitmap& bitmap, bool active, int close_button_state, int* x_extent)
@@ -35,12 +41,52 @@ public:
 		return size;
 	};
 
+
+	virtual void DrawTab(wxDC& dc,
+                         wxWindow* wnd,
+                         const wxAuiNotebookPage& pane,
+                         const wxRect& in_rect,
+                         int close_button_state,
+                         wxRect* out_tab_rect,
+                         wxRect* out_button_rect,
+                         int* x_extent)
+	{
+		if (!pane.active)
+		{
+			if (m_pNotebook->Highlighted(m_pNotebook->GetPageIndex(pane.window)))
+			{
+				if (!m_fonts_initialized)
+				{
+					m_fonts_initialized = true;
+					m_original_normal_font = m_normal_font;
+					m_highlighted_font = m_normal_font;
+					m_highlighted_font.SetWeight(wxFONTWEIGHT_BOLD);
+					m_highlighted_font.SetStyle(wxFONTSTYLE_ITALIC);
+				}
+				m_normal_font = m_highlighted_font;
+			}
+			else if (m_fonts_initialized)
+				m_normal_font = m_original_normal_font;
+		}
+
+		wxAuiDefaultTabArt::DrawTab(dc, wnd, pane, in_rect, close_button_state, out_tab_rect, out_button_rect, x_extent);
+	}
+
 protected:
+	wxAuiNotebookEx* m_pNotebook;
 
 	static std::map<wxString, int> m_maxSizes;
+
+	wxFont m_original_normal_font;
+	wxFont m_highlighted_font;
+	bool m_fonts_initialized;
 };
 
 std::map<wxString, int> wxAuiTabArtEx::m_maxSizes;
+
+BEGIN_EVENT_TABLE(wxAuiNotebookEx, wxAuiNotebook)
+EVT_AUINOTEBOOK_PAGE_CHANGED(wxID_ANY, wxAuiNotebookEx::OnPageChanged)
+END_EVENT_TABLE()
 
 wxAuiNotebookEx::wxAuiNotebookEx()
 {
@@ -62,7 +108,7 @@ void wxAuiNotebookEx::RemoveExtraBorders()
 
 void wxAuiNotebookEx::SetExArtProvider()
 {
-	SetArtProvider(new wxAuiTabArtEx);
+	SetArtProvider(new wxAuiTabArtEx(this));
 }
 
 bool wxAuiNotebookEx::SetPageText(size_t page_idx, const wxString& text)
@@ -86,4 +132,42 @@ bool wxAuiNotebookEx::SetPageText(size_t page_idx, const wxString& text)
 	}
 
 	return true;
+}
+
+void wxAuiNotebookEx::Highlight(size_t page, bool highlight /*=true*/)
+{
+	if (GetSelection() == page)
+		return;
+
+	wxASSERT(page < m_tabs.GetPageCount());
+	if (page >= m_tabs.GetPageCount())
+		return;
+
+	if (page >= m_highlighted.size())
+		m_highlighted.resize(page + 1, false);
+
+	if (highlight == m_highlighted[page])
+		return;
+
+	m_highlighted[page] = highlight;
+
+	GetActiveTabCtrl()->Refresh();
+}
+
+bool wxAuiNotebookEx::Highlighted(size_t page) const
+{
+	wxASSERT(page < m_tabs.GetPageCount());
+	if (page >= m_highlighted.size())
+		return false;
+
+	return m_highlighted[page];
+}
+
+void wxAuiNotebookEx::OnPageChanged(wxAuiNotebookEvent& event)
+{
+	size_t page = (size_t)GetSelection();
+	if (page >= m_highlighted.size())
+		return;
+	
+	m_highlighted[page] = false;
 }

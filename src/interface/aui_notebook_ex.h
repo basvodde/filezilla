@@ -16,6 +16,15 @@ public:
 
 	// Basically identical to the AUI one, but not calling Update
 	bool SetPageText(size_t page_idx, const wxString& text);
+
+	void Highlight(size_t page, bool highlight = true);
+	bool Highlighted(size_t page) const;
+
+protected:
+	std::vector<bool> m_highlighted;
+
+	DECLARE_EVENT_TABLE()
+	void OnPageChanged(wxAuiNotebookEvent& event);
 };
 
 #endif //__AUI_NOTEBOOK_EX_H__
