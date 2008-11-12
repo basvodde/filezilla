@@ -123,7 +123,8 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Filelist status bar", number, _T("1") },
 	{ "Filter toggle state", number, _T("0") },
 	{ "Size decimal places", number, _T("0") },
-	{ "Show quickconnect bar", number, _T("1") }
+	{ "Show quickconnect bar", number, _T("1") },
+	{ "Messagelog position", number, _T("0") }
 };
 
 struct t_default_option

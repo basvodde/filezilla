@@ -296,13 +296,26 @@ CMainFrame::CMainFrame()
 	m_pRemoteListViewPanel->SetStatusBar(pRemoteFilelistStatusBar);
 	m_pRemoteListView->SetFilelistStatusBar(pRemoteFilelistStatusBar);
 
-	if (COptions::Get()->GetOptionVal(OPTION_SHOW_MESSAGELOG))
-		m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter, 100);
-	else
+	switch (COptions::Get()->GetOptionVal(OPTION_MESSAGELOG_POSITION))
 	{
-		m_pStatusView->Hide();
+	case 1:
 		m_pTopSplitter->Initialize(m_pBottomSplitter);
+		break;
+	case 2:
+		m_pTopSplitter->Initialize(m_pBottomSplitter);
+		m_pQueuePane->AddPage(m_pStatusView, _("Message log"));
+		break;
+	default:
+		if (COptions::Get()->GetOptionVal(OPTION_SHOW_MESSAGELOG))
+			m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter, 100);
+		else
+		{
+			m_pStatusView->Hide();
+			m_pTopSplitter->Initialize(m_pBottomSplitter);
+		}
+		break;
 	}
+
 	if (COptions::Get()->GetOptionVal(OPTION_SHOW_QUEUE))
 		m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueuePane);
 	else
@@ -610,6 +623,14 @@ bool CMainFrame::CreateMenus()
 		wxMenu* pMenu = wxXmlResource::Get()->LoadMenu(_T("ID_MENU_DEBUG"));
 		if (pMenu)
 			m_pMenuBar->Append(pMenu, _("&Debug"));
+	}
+
+	if (COptions::Get()->GetOptionVal(OPTION_MESSAGELOG_POSITION) == 2)
+	{
+		wxMenu* pMenu;
+		wxMenuItem* pItem = m_pMenuBar->FindItem(XRCID("ID_VIEW_MESSAGELOG"), &pMenu);
+		if (pItem)
+			pMenu->Delete(pItem);
 	}
 
 	SetMenuBar(m_pMenuBar);
@@ -969,6 +990,8 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 		{
 		case nId_logmsg:
 			m_pStatusView->AddToLog(reinterpret_cast<CLogmsgNotification *>(pNotification));
+			if (COptions::Get()->GetOptionVal(OPTION_MESSAGELOG_POSITION) == 2)
+				m_pQueuePane->Highlight(3);
 			delete pNotification;
 			break;
 		case nId_operation:
@@ -1120,6 +1143,9 @@ bool CMainFrame::CreateToolBar()
 	if (majorVersion < 6)
 		m_pToolBar->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 #endif
+
+	if (COptions::Get()->GetOptionVal(OPTION_MESSAGELOG_POSITION) == 2)
+		m_pToolBar->DeleteTool(XRCID("ID_TOOLBAR_LOGVIEW"));
 
 	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), CFilterManager::HasActiveFilters());
 	SetToolBar(m_pToolBar);
@@ -1682,7 +1708,8 @@ void CMainFrame::OnToggleLogView(wxCommandEvent& event)
 
 		ApplySplitterConstraints();
 	}
-	COptions::Get()->SetOption(OPTION_SHOW_MESSAGELOG, m_pTopSplitter->IsSplit());
+	if (COptions::Get()->GetOptionVal(OPTION_MESSAGELOG_POSITION) != 2)
+		COptions::Get()->SetOption(OPTION_SHOW_MESSAGELOG, m_pTopSplitter->IsSplit());
 
 	if (m_pMenuBar)
 		m_pMenuBar->Check(XRCID("ID_VIEW_MESSAGELOG"), m_pTopSplitter->IsSplit());
@@ -2433,7 +2460,8 @@ void CMainFrame::InitMenubarState()
 	if (!m_pMenuBar)
 		return;
 	m_pMenuBar->Check(XRCID("ID_VIEW_QUICKCONNECT"), m_pQuickconnectBar != 0);
-	m_pMenuBar->Check(XRCID("ID_VIEW_MESSAGELOG"), m_pTopSplitter && m_pTopSplitter->IsSplit());
+	if (COptions::Get()->GetOptionVal(OPTION_MESSAGELOG_POSITION) != 2)
+		m_pMenuBar->Check(XRCID("ID_VIEW_MESSAGELOG"), m_pTopSplitter && m_pTopSplitter->IsSplit());
 	m_pMenuBar->Check(XRCID("ID_VIEW_LOCALTREE"), m_pLocalSplitter && m_pLocalSplitter->IsSplit());
 	m_pMenuBar->Check(XRCID("ID_VIEW_REMOTETREE"), m_pRemoteSplitter && m_pRemoteSplitter->IsSplit());
 	m_pMenuBar->Check(XRCID("ID_VIEW_QUEUE"), m_pBottomSplitter && m_pBottomSplitter->IsSplit());
