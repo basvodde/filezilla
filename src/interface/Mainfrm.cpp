@@ -2571,7 +2571,7 @@ WXLRESULT CMainFrame::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lPara
 		// to delete the factory on program shutdown.
 		//
 		// To reset the factory manually in response to WM_DISPLAYCHANGE,
-		// create another instance of the module and call it's Exit() member.
+		// create another instance of the module and call its Exit() member.
 		// After that, the next call to a wxDisplay will create a new factory and
 		// get the new display layout from Windows.
 		// 
