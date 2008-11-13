@@ -43,11 +43,12 @@ public:
 		wxString name;
 		bool dir;
 		wxLongLong size;
+		bool link;
 	};
 
 	const std::list<t_fileInfo>& GetFiles() const { return m_fileList; }
 
-	void AddFile(wxString name, bool dir, wxLongLong size);
+	void AddFile(const wxString& name, bool dir, const wxLongLong& size, bool link);
 
 protected:
 	CServer m_server;

@@ -2195,7 +2195,7 @@ void CRemoteListView::OnBeginDrag(wxListEvent& event)
 			continue;
 		const CDirentry& entry = (*m_pDirectoryListing)[index];
 
-		pRemoteDataObject->AddFile(entry.name, entry.dir, entry.size);
+		pRemoteDataObject->AddFile(entry.name, entry.dir, entry.size, entry.link);
 	}
 
 	pRemoteDataObject->Finalize();
@@ -2319,7 +2319,7 @@ bool CRemoteListView::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataO
 		if (!iter->dir)
 			continue;
 
-		pRecursiveOperation->AddDirectoryToVisit(pRemoteDataObject->GetServerPath(), iter->name, path + iter->name);
+		pRecursiveOperation->AddDirectoryToVisit(pRemoteDataObject->GetServerPath(), iter->name, path + iter->name, iter->link);
 	}
 
 	if (IsComparing())

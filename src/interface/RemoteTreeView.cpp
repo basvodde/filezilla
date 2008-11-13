@@ -822,7 +822,7 @@ void CRemoteTreeView::OnBeginDrag(wxTreeEvent& event)
 		return;
 
 	CRemoteDataObject *pRemoteDataObject = new CRemoteDataObject(*pServer, parent);
-	pRemoteDataObject->AddFile(lastSegment, true, -1);
+	pRemoteDataObject->AddFile(lastSegment, true, -1, false);
 
 	pRemoteDataObject->Finalize();
 

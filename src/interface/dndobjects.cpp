@@ -243,6 +243,7 @@ void CRemoteDataObject::Finalize()
 		AddTextElement(pFile, "Name", iter->name);
 		AddTextElement(pFile, "Dir", iter->dir ? 1 : 0);
 		AddTextElement(pFile, "Size", iter->size.ToString());
+		AddTextElement(pFile, "Link", iter->link ? 1 : 0);
 	}
 }
 
@@ -292,18 +293,21 @@ bool CRemoteDataObject::SetData(size_t len, const void* buf)
 		if (info.size <= -2)
 			return false;
 
+		info.link = GetTextElementBool(pFile, "Link", false);
+
 		m_fileList.push_back(info);
 	}
 
 	return true;
 }
 
-void CRemoteDataObject::AddFile(wxString name, bool dir, wxLongLong size)
+void CRemoteDataObject::AddFile(const wxString& name, bool dir, const wxLongLong& size, bool link)
 {
 	t_fileInfo info;
 	info.name = name;
 	info.dir = dir;
 	info.size = size;
+	info.link = link;
 
 	m_fileList.push_back(info);
 }
