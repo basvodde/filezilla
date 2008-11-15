@@ -205,13 +205,13 @@ public:
 
 	virtual ~CFolderProcessingThread()
 	{
-		for (std::list<t_newEntry*>::iterator iter = m_entryList.begin(); iter != m_entryList.end(); iter++)
+		for (std::list<CFolderProcessingEntry*>::iterator iter = m_entryList.begin(); iter != m_entryList.end(); iter++)
 			delete *iter;
 		for (std::list<t_dirPair*>::iterator iter = m_dirsToCheck.begin(); iter != m_dirsToCheck.end(); iter++)
 			delete *iter;
 	}
 
-	void GetFiles(std::list<t_newEntry*> &entryList)
+	void GetFiles(std::list<CFolderProcessingEntry*> &entryList)
 	{
 		wxASSERT(entryList.empty());
 		wxMutexLocker locker(m_sync);
@@ -227,18 +227,25 @@ public:
 		}
 	}
 
-	void ProcessDirectory(const t_newEntry* entry)
+	class t_dirPair : public CFolderProcessingEntry
+	{
+	public:
+		t_dirPair() : CFolderProcessingEntry(CFolderProcessingEntry::dir) {}
+		wxString localPath;
+		CServerPath remotePath;
+	};
+
+	void ProcessDirectory(const wxString& localPath, CServerPath remotePath, const wxString& name)
 	{
 		wxMutexLocker locker(m_sync);
 
 		t_dirPair* pair = new t_dirPair;
 
 		{
-			pair->localPath = (entry->localPath + CLocalFileSystem::path_separator + entry->localFile).c_str();
+			pair->localPath = (localPath + CLocalFileSystem::path_separator + name).c_str();
 
-			CServerPath path = entry->remotePath;
-			path.AddSegment(entry->localFile);
-			pair->remotePath.SetSafePath(path.GetSafePath().c_str());
+			remotePath.AddSegment(name);
+			pair->remotePath.SetSafePath(remotePath.GetSafePath().c_str());
 		}
 
 		m_dirsToCheck.push_back(pair);
@@ -273,7 +280,7 @@ public:
 
 protected:
 
-	void AddEntry(t_newEntry* entry)
+	void AddEntry(CFolderProcessingEntry* entry)
 	{
 		m_sync.Lock();
 		m_entryList.push_back(entry);
@@ -334,6 +341,7 @@ protected:
 			{
 				if (!m_didSendEvent && !m_entryList.empty())
 				{
+					m_didSendEvent = true;
 					m_sync.Unlock();
 					wxCommandEvent evt(fzEVT_FOLDERTHREAD_FILES, wxID_ANY);
 					wxPostEvent(m_pOwner, evt);
@@ -367,9 +375,16 @@ protected:
 				continue;
 			}
 
-			t_newEntry* entry = new t_newEntry;
+			t_dirPair* pair2 = new t_dirPair;
+	
+			{
+				pair2->localPath = pair->localPath.c_str();
+				pair2->remotePath.SetSafePath(pair->remotePath.GetSafePath().c_str());
+			}
 
-			const wxChar* safe_path = pair->remotePath.GetSafePath();
+			AddEntry(pair2);
+
+			t_newEntry* entry = new t_newEntry;
 
 			wxString name;
 			bool is_link;
@@ -378,20 +393,14 @@ protected:
 			{
 				if (is_link)
 					continue;
-				entry->localFile = name.c_str();
-				entry->localPath = pair->localPath.c_str();
-				if (!is_dir)
-					entry->remoteFile = name.c_str();
-
-				entry->remotePath.SetSafePath(safe_path);
+				entry->name = name.c_str();
+				entry->dir = is_dir;
 
 				AddEntry(entry);
 
 				entry = new t_newEntry;
 			}
-
-			entry->remotePath.SetSafePath(safe_path);
-			AddEntry(entry);
+			delete entry;
 
 			delete pair;
 		}
@@ -402,15 +411,10 @@ protected:
 		return 0;
 	}
 
-	struct t_dirPair
-	{
-		wxString localPath;
-		CServerPath remotePath;
-	};
 	std::list<t_dirPair*> m_dirsToCheck;
 
 	// Access has to be guarded by m_sync
-	std::list<t_newEntry*> m_entryList;
+	std::list<CFolderProcessingEntry*> m_entryList;
 
 	CQueueView* m_pOwner;
 	CFolderScanItem* m_pFolderItem;
@@ -519,11 +523,14 @@ void CQueueView::QueueFile_Finish(const bool start)
 		m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_QUEUEPROCESSING);
 	}
 
-	m_waitStatusLineUpdate = true;
-	AdvanceQueue();
-	m_waitStatusLineUpdate = false;
-	UpdateStatusLinePositions();
+	if (m_activeMode)
+	{
+		m_waitStatusLineUpdate = true;
+		AdvanceQueue(false);
+		m_waitStatusLineUpdate = false;
+	}
 
+	UpdateStatusLinePositions();
 	RefreshListOnly(false);
 }
 
@@ -1681,6 +1688,13 @@ void CQueueView::OnFolderThreadComplete(wxCommandEvent& event)
 
 	wxASSERT(!m_queuedFolders[1].empty());
 	CFolderScanItem* pItem = m_queuedFolders[1].front();
+	if (pItem->m_dir_is_empty)
+	{
+		CServerItem* pServerItem = (CServerItem*)pItem->GetTopLevelItem();
+		CFileItem* fileItem = new CFolderItem(pServerItem, pItem->Queued(), pItem->m_current_remote_path, _T(""));
+		InsertItem(pServerItem, fileItem);
+		QueueFile_Finish(!pItem->Queued());
+	}
 	m_queuedFolders[1].pop_front();
 
 	RemoveItem(pItem, true);
@@ -1692,56 +1706,62 @@ void CQueueView::OnFolderThreadComplete(wxCommandEvent& event)
 	ProcessUploadFolderItems();
 }
 
-bool CQueueView::QueueFiles(const std::list<t_newEntry*> &entryList, bool queueOnly, bool download, CServerItem* pServerItem, const enum CFileExistsNotification::OverwriteAction defaultFileExistsAction)
+bool CQueueView::QueueFiles(const std::list<CFolderProcessingEntry*> &entryList, bool queueOnly, bool download, CServerItem* pServerItem, const enum CFileExistsNotification::OverwriteAction defaultFileExistsAction)
 {
 	wxASSERT(pServerItem);
+	
+	CFolderScanItem* pFolderScanItem = m_pFolderProcessingThread->GetFolderScanItem();
 
 	CFilterManager filters;
-	for (std::list<t_newEntry*>::const_iterator iter = entryList.begin(); iter != entryList.end(); iter++)
+	for (std::list<CFolderProcessingEntry*>::const_iterator iter = entryList.begin(); iter != entryList.end(); iter++)
 	{
-		const t_newEntry* entry = *iter;
-
-		if (entry->localFile == _T(""))
+		const CFolderProcessingEntry* entry = *iter;
+		if (entry->m_type == CFolderProcessingEntry::dir)
 		{
 			if (m_pFolderProcessingThread->GetFolderScanItem()->m_dir_is_empty)
 			{
-				CFileItem* fileItem = new CFolderItem(pServerItem, queueOnly, entry->remotePath, _T(""));
+				CFileItem* fileItem = new CFolderItem(pServerItem, queueOnly, pFolderScanItem->m_current_remote_path, _T(""));
 				InsertItem(pServerItem, fileItem);
 			}
 
-			m_pFolderProcessingThread->GetFolderScanItem()->m_dir_is_empty = true;
-
+			const CFolderProcessingThread::t_dirPair* entry = (const CFolderProcessingThread::t_dirPair*)*iter;
+			pFolderScanItem->m_current_local_path = entry->localPath;
+			pFolderScanItem->m_current_remote_path = entry->remotePath;
+			pFolderScanItem->m_dir_is_empty = true;
 			delete entry;
-			continue;
 		}
-
-		if (filters.FilenameFiltered(entry->localFile, entry->localPath, entry->remoteFile != _T(""), entry->size, true, entry->attributes))
-		{
-			delete entry;
-			continue;
-		}
-
-		m_pFolderProcessingThread->GetFolderScanItem()->m_dir_is_empty = false;
-
-		if (entry->remoteFile == _T(""))
-		{
-			m_pFolderProcessingThread->ProcessDirectory(entry);
-			delete entry;
-			continue;
-		}
-
-		CFileItem* fileItem = new CFileItem(pServerItem, queueOnly, download, entry->localPath + CLocalFileSystem::path_separator + entry->localFile, entry->remoteFile, entry->remotePath, entry->size);
-
-		if (download)
-			fileItem->m_transferSettings.binary = !CAutoAsciiFiles::TransferRemoteAsAscii(entry->remoteFile, entry->remotePath.GetType());
 		else
-			fileItem->m_transferSettings.binary = !CAutoAsciiFiles::TransferLocalAsAscii(entry->localFile, entry->remotePath.GetType());
+		{
+			const t_newEntry* entry = (const t_newEntry*)*iter;
 
-		fileItem->m_defaultFileExistsAction = defaultFileExistsAction;
+			if (filters.FilenameFiltered(entry->name, pFolderScanItem->m_current_local_path, entry->dir, entry->size, true, entry->attributes))
+			{
+				delete entry;
+				continue;
+			}
 
-		delete entry;
+			pFolderScanItem->m_dir_is_empty = false;
 
-		InsertItem(pServerItem, fileItem);
+			if (entry->dir)
+			{
+				m_pFolderProcessingThread->ProcessDirectory(pFolderScanItem->m_current_local_path, pFolderScanItem->m_current_remote_path, entry->name);
+				delete entry;
+				continue;
+			}
+
+			CFileItem* fileItem = new CFileItem(pServerItem, queueOnly, download, pFolderScanItem->m_current_local_path + CLocalFileSystem::path_separator + entry->name, entry->name, pFolderScanItem->m_current_remote_path, entry->size);
+
+			if (download)
+				fileItem->m_transferSettings.binary = !CAutoAsciiFiles::TransferRemoteAsAscii(entry->name, pFolderScanItem->m_current_remote_path.GetType());
+			else
+				fileItem->m_transferSettings.binary = !CAutoAsciiFiles::TransferLocalAsAscii(entry->name, pFolderScanItem->m_current_remote_path.GetType());
+
+			fileItem->m_defaultFileExistsAction = defaultFileExistsAction;
+
+			delete entry;
+
+			InsertItem(pServerItem, fileItem);
+		}
 	}
 
 	QueueFile_Finish(!queueOnly);
@@ -1929,7 +1949,8 @@ void CQueueView::SettingsChanged()
 		}
 	}
 
-	AdvanceQueue();
+	if (m_activeMode)
+		AdvanceQueue();
 }
 
 void CQueueView::OnPostScroll()
@@ -2248,7 +2269,7 @@ void CQueueView::OnFolderThreadFiles(wxCommandEvent& event)
 	wxASSERT(!m_queuedFolders[1].empty());
 	CFolderScanItem* pItem = m_queuedFolders[1].front();
 
-	std::list<t_newEntry*> entryList;
+	std::list<CFolderProcessingEntry*> entryList;
 	m_pFolderProcessingThread->GetFiles(entryList);
 	QueueFiles(entryList, pItem->Queued(), false, (CServerItem*)pItem->GetTopLevelItem(), pItem->m_defaultFileExistsAction);
 	m_pFolderProcessingThread->CheckFinished();
@@ -2541,7 +2562,7 @@ void CQueueView::UpdateItemSize(CFileItem* pItem, wxLongLong size)
 	DisplayQueueSize();
 }
 
-void CQueueView::AdvanceQueue()
+void CQueueView::AdvanceQueue(bool refresh /*=true*/)
 {
 	static bool insideAdvanceQueue = false;
 	if (insideAdvanceQueue)
@@ -2576,7 +2597,8 @@ void CQueueView::AdvanceQueue()
 		}
 	}
 
-	RefreshListOnly(false);
+	if (refresh)
+		RefreshListOnly(false);
 
 	insideAdvanceQueue = false;
 

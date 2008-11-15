@@ -694,7 +694,7 @@ CFolderScanItem::CFolderScanItem(CServerItem* parent, bool queued, bool download
 	m_remove = false;
 	m_active = false;
 	m_count = 0;
-	m_dir_is_empty = true;
+	m_dir_is_empty = false;
 
 	m_defaultFileExistsAction = CFileExistsNotification::unknown;
 }

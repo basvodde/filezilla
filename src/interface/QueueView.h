@@ -5,15 +5,28 @@
 #include "dndobjects.h"
 #include <wx/progdlg.h>
 
-struct t_newEntry
+class CFolderProcessingEntry
 {
-	wxString localFile;
-	wxString localPath;
-	wxString remoteFile;
-	CServerPath remotePath;
+public:
+	enum t_type
+	{
+		dir,
+		file
+	};
+	const enum t_type m_type;
+
+	CFolderProcessingEntry(enum t_type type) : m_type(type) {}
+};
+
+class t_newEntry : public CFolderProcessingEntry
+{
+public:
+	t_newEntry() : CFolderProcessingEntry(CFolderProcessingEntry::file) {}
+	wxString name;
 	wxLongLong size;
 	wxDateTime time;
 	int attributes;
+	bool dir;
 };
 
 enum ActionAfterState
@@ -75,7 +88,7 @@ public:
 		const CServerPath& remotePath, const CServer& server, const wxLongLong size, enum CEditHandler::fileType edit = CEditHandler::none);
 	void QueueFile_Finish(const bool start); // Need to be called after QueueFile
 	bool QueueFiles(const bool queueOnly, const wxString& localPath, const CRemoteDataObject& dataObject);
-	bool QueueFiles(const std::list<t_newEntry*> &entryList, bool queueOnly, bool download, CServerItem* pServerItem, const enum CFileExistsNotification::OverwriteAction defaultFileExistsAction);
+	bool QueueFiles(const std::list<CFolderProcessingEntry*> &entryList, bool queueOnly, bool download, CServerItem* pServerItem, const enum CFileExistsNotification::OverwriteAction defaultFileExistsAction);
 	bool QueueFolder(bool queueOnly, bool download, const wxString& localPath, const CServerPath& remotePath, const CServer& server);
 
 	bool IsEmpty() const;
@@ -113,7 +126,7 @@ public:
 
 protected:
 
-	void AdvanceQueue();
+	void AdvanceQueue(bool refresh = true);
 	bool TryStartNextTransfer();
 	bool ProcessFolderItems(int type = -1);
 	void ProcessUploadFolderItems();
@@ -177,7 +190,7 @@ protected:
 	std::list<CFolderScanItem*> m_queuedFolders[2];
 
 	CFolderProcessingThread *m_pFolderProcessingThread;
-
+	
 	/*
 	 * Don't update status line positions if m_waitStatusLineUpdate is true.
 	 * This assures we are updating the status line positions only once,

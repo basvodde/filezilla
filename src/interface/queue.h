@@ -223,6 +223,8 @@ public:
 	enum CFileExistsNotification::OverwriteAction m_defaultFileExistsAction;
 
 	bool m_dir_is_empty;
+	wxString m_current_local_path;
+	CServerPath m_current_remote_path;
 
 protected:
 	wxString m_localPath;
