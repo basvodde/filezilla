@@ -1706,11 +1706,13 @@ void CQueueView::OnFolderThreadComplete(wxCommandEvent& event)
 	ProcessUploadFolderItems();
 }
 
-bool CQueueView::QueueFiles(const std::list<CFolderProcessingEntry*> &entryList, bool queueOnly, bool download, CServerItem* pServerItem, const enum CFileExistsNotification::OverwriteAction defaultFileExistsAction)
+int CQueueView::QueueFiles(const std::list<CFolderProcessingEntry*> &entryList, bool queueOnly, bool download, CServerItem* pServerItem, const enum CFileExistsNotification::OverwriteAction defaultFileExistsAction)
 {
 	wxASSERT(pServerItem);
 	
 	CFolderScanItem* pFolderScanItem = m_pFolderProcessingThread->GetFolderScanItem();
+
+	int added = 0;
 
 	CFilterManager filters;
 	for (std::list<CFolderProcessingEntry*>::const_iterator iter = entryList.begin(); iter != entryList.end(); iter++)
@@ -1722,6 +1724,7 @@ bool CQueueView::QueueFiles(const std::list<CFolderProcessingEntry*> &entryList,
 			{
 				CFileItem* fileItem = new CFolderItem(pServerItem, queueOnly, pFolderScanItem->m_current_remote_path, _T(""));
 				InsertItem(pServerItem, fileItem);
+				added++;
 			}
 
 			const CFolderProcessingThread::t_dirPair* entry = (const CFolderProcessingThread::t_dirPair*)*iter;
@@ -1761,12 +1764,14 @@ bool CQueueView::QueueFiles(const std::list<CFolderProcessingEntry*> &entryList,
 			delete entry;
 
 			InsertItem(pServerItem, fileItem);
+
+			added++;
 		}
 	}
 
 	QueueFile_Finish(!queueOnly);
 
-	return true;
+	return added;
 }
 
 void CQueueView::SaveQueue()
@@ -2271,10 +2276,10 @@ void CQueueView::OnFolderThreadFiles(wxCommandEvent& event)
 
 	std::list<CFolderProcessingEntry*> entryList;
 	m_pFolderProcessingThread->GetFiles(entryList);
-	QueueFiles(entryList, pItem->Queued(), false, (CServerItem*)pItem->GetTopLevelItem(), pItem->m_defaultFileExistsAction);
+	int added = QueueFiles(entryList, pItem->Queued(), false, (CServerItem*)pItem->GetTopLevelItem(), pItem->m_defaultFileExistsAction);
 	m_pFolderProcessingThread->CheckFinished();
 
-	pItem->m_count += entryList.size();
+	pItem->m_count += added;
 	pItem->m_statusMessage = wxString::Format(_("%d files added to queue"), pItem->GetCount());
 	RefreshItem(pItem);
 }
