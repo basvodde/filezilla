@@ -369,6 +369,8 @@ protected:
 
 			t_newEntry* entry = new t_newEntry;
 
+			const wxChar* safe_path = pair->remotePath.GetSafePath();
+
 			wxString name;
 			bool is_link;
 			bool is_dir;
@@ -381,14 +383,14 @@ protected:
 				if (!is_dir)
 					entry->remoteFile = name.c_str();
 
-				entry->remotePath.SetSafePath(pair->remotePath.GetSafePath().c_str());
+				entry->remotePath.SetSafePath(safe_path);
 
 				AddEntry(entry);
 
 				entry = new t_newEntry;
 			}
 
-			entry->remotePath.SetSafePath(pair->remotePath.GetSafePath().c_str());
+			entry->remotePath.SetSafePath(safe_path);
 			AddEntry(entry);
 
 			delete pair;
