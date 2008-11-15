@@ -10,6 +10,19 @@ Legend:
     *nix: Unix (e.g BSD) and Unix-like systems (e.g. Linux)
     OS X: Apple Mac OS X
 
+3.1.5.1 (2008-11-15)
+
+- Connection establishment through SOCKS proxies could fail in some cases
+- Clearing private data no longer crashes if quickconnect bar is hidden
+- Handle drag & drop of symlinks
+- Update remote directory tree if deleting a subdirectory
+- Fix parsing of HTTP chunk lengths for the update downloader
+- Reduce memory consumption of remote directory tree
+- Rewrite the code that added local directories to the queue. New one is faster and avoids some potentially thread-unsafe behaviour of the old code
+- OS X: Fix help menu duplication on non-English systems
+- MSW: Reset wxWidgets internal display cache if changing display resolution or layout
+- MSW: Fixes for silent intaller
+
 3.1.5 (2008-10-22)
 
 + Handle symbolic links on servers. If trying to access a symbolic link, FileZilla will first try to CWD into it, and if that fails, will treat it as a file instead. During recursive operations, any directory link encountered will not be followed, but file links will be downloaded.
