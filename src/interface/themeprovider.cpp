@@ -11,6 +11,25 @@ CThemeProvider::CThemeProvider()
 	m_themePath = GetThemePath();
 }
 
+// The ART_* IDs are always given in uppercase ASCII,
+// all filenames used by FileZilla for the resources
+// are lowercase.
+// Under some locales (e.g. Turkish), there is a different
+// relationship between the letters a-z and A-Z.
+// In Turkish for example there are different types of i 
+// (dotted and dotless), with i lowercase dotted and I
+// uppercase dotless.
+// Just transform the case manually and locale-independently
+static void MakeLowerAscii(wxString& str)
+{
+	for (size_t i = 0; i < str.Len(); i++)
+	{
+		wxChar& c = str[i];
+		if (c >= 'A' && c <= 'Z')
+			c += 32;
+	}
+}
+
 wxBitmap CThemeProvider::CreateBitmap(const wxArtID& id, const wxArtClient& client, const wxSize& size)
 {
 	if (id.Left(4) != _T("ART_"))
@@ -39,7 +58,7 @@ wxBitmap CThemeProvider::CreateBitmap(const wxArtID& id, const wxArtClient& clie
 	dirs.push_back(resourceDir + _T("16x16/"));
 
 	wxString name = id.Mid(4);
-	name.MakeLower();
+	MakeLowerAscii(name);
 
 	wxLogNull logNull;
 
@@ -48,7 +67,7 @@ wxBitmap CThemeProvider::CreateBitmap(const wxArtID& id, const wxArtClient& clie
 		wxString fileName = *iter + name + _T(".png");
 		wxBitmap bmp(fileName, wxBITMAP_TYPE_PNG);
 		if (bmp.Ok())
-		return bmp;
+			return bmp;
 	}
 
 	return wxNullBitmap;
@@ -177,7 +196,8 @@ wxIconBundle CThemeProvider::GetIconBundle(const wxArtID& id, const wxArtClient&
 	if (id.Left(4) != _T("ART_"))
 		return iconBundle;
 
-	const wxString& name = id.Mid(4).Lower();
+	wxString name = id.Mid(4);
+	MakeLowerAscii(name);
 
 	const wxChar* dirs[3] = { _T("16x16/"), _T("32x32/"), _T("48x48/") };
 
