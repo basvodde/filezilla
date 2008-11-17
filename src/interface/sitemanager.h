@@ -60,6 +60,7 @@ protected:
 	bool Load();
 	static bool Load(TiXmlElement *pElement, CSiteManagerXmlHandler* pHandler);
 	bool Save(TiXmlElement *pElement = 0, wxTreeItemId treeId = wxTreeItemId());
+	bool SaveChild(TiXmlElement *pElement, wxTreeItemId child);
 	void SetCtrlState();
 	bool LoadDefaultSites();
 
@@ -95,6 +96,8 @@ protected:
 	virtual void OnBeginDrag(wxTreeEvent& event);
 	virtual void OnChar(wxKeyEvent& event);
 	void OnCopySite(wxCommandEvent& event);
+	void OnContextMenu(wxTreeEvent& event);
+	void OnExportSelected(wxCommandEvent& event);
 
 	CInterProcessMutex* m_pSiteManagerMutex;
 
@@ -102,6 +105,8 @@ protected:
 	wxTreeItemId m_ownSites;
 
 	wxTreeItemId m_dropSource;
+
+	wxTreeItemId m_contextMenuItem;
 
 	bool MoveItems(wxTreeItemId source, wxTreeItemId target, bool copy);
 

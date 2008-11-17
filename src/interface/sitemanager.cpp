@@ -37,6 +37,8 @@ EVT_CHOICE(XRCID("ID_PROTOCOL"), CSiteManager::OnProtocolSelChanged)
 EVT_BUTTON(XRCID("ID_COPY"), CSiteManager::OnCopySite)
 EVT_TREE_BEGIN_DRAG(XRCID("ID_SITETREE"), CSiteManager::OnBeginDrag)
 EVT_CHAR(CSiteManager::OnChar)
+EVT_TREE_ITEM_MENU(XRCID("ID_SITETREE"), CSiteManager::OnContextMenu)
+EVT_MENU(XRCID("ID_EXPORT"), CSiteManager::OnExportSelected)
 END_EVENT_TABLE()
 
 class CSiteManagerDataObject : public wxDataObjectSimple
@@ -710,54 +712,65 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 	child = pTree->GetFirstChild(treeId, cookie);
 	while (child.IsOk())
 	{
-		wxString name = pTree->GetItemText(child);
-		char* utf8 = ConvUTF8(name);
-
-		CSiteManagerItemData* data = reinterpret_cast<CSiteManagerItemData* >(pTree->GetItemData(child));
-		if (!data)
-		{
-			TiXmlNode* pNode = pElement->InsertEndChild(TiXmlElement("Folder"));
-			const bool expanded = pTree->IsExpanded(child);
-			SetTextAttribute(pNode->ToElement(), "expanded", expanded ? _T("1") : _T("0"));
-
-			pNode->InsertEndChild(TiXmlText(utf8));
-			delete [] utf8;
-
-			Save(pNode->ToElement(), child);
-		}
-		else
-		{
-			TiXmlNode* pNode = pElement->InsertEndChild(TiXmlElement("Server"));
-			SetServer(pNode->ToElement(), data->m_server);
-
-			TiXmlNode* sub;
-
-			// Save comments
-			sub = pNode->InsertEndChild(TiXmlElement("Comments"));
-			char* comments = ConvUTF8(data->m_comments);
-			sub->InsertEndChild(TiXmlText(comments));
-			delete [] comments;
-
-			// Save local dir
-			sub = pNode->InsertEndChild(TiXmlElement("LocalDir"));
-			char* localDir = ConvUTF8(data->m_localDir);
-			sub->InsertEndChild(TiXmlText(localDir));
-			delete [] localDir;
-
-			// Save remote dir
-			sub = pNode->InsertEndChild(TiXmlElement("RemoteDir"));
-			char* remoteDir = ConvUTF8(data->m_remoteDir.GetSafePath());
-			sub->InsertEndChild(TiXmlText(remoteDir));
-			delete [] remoteDir;
-
-			pNode->InsertEndChild(TiXmlText(utf8));
-			delete [] utf8;
-		}
+		SaveChild(pElement, child);
 
 		child = pTree->GetNextChild(treeId, cookie);
 	}
 
 	return false;
+}
+
+bool CSiteManager::SaveChild(TiXmlElement *pElement, wxTreeItemId child)
+{
+	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
+	if (!pTree)
+		return false;
+
+	wxString name = pTree->GetItemText(child);
+	char* utf8 = ConvUTF8(name);
+
+	CSiteManagerItemData* data = reinterpret_cast<CSiteManagerItemData* >(pTree->GetItemData(child));
+	if (!data)
+	{
+		TiXmlNode* pNode = pElement->InsertEndChild(TiXmlElement("Folder"));
+		const bool expanded = pTree->IsExpanded(child);
+		SetTextAttribute(pNode->ToElement(), "expanded", expanded ? _T("1") : _T("0"));
+
+		pNode->InsertEndChild(TiXmlText(utf8));
+		delete [] utf8;
+
+		Save(pNode->ToElement(), child);
+	}
+	else
+	{
+		TiXmlNode* pNode = pElement->InsertEndChild(TiXmlElement("Server"));
+		SetServer(pNode->ToElement(), data->m_server);
+
+		TiXmlNode* sub;
+
+		// Save comments
+		sub = pNode->InsertEndChild(TiXmlElement("Comments"));
+		char* comments = ConvUTF8(data->m_comments);
+		sub->InsertEndChild(TiXmlText(comments));
+		delete [] comments;
+
+		// Save local dir
+		sub = pNode->InsertEndChild(TiXmlElement("LocalDir"));
+		char* localDir = ConvUTF8(data->m_localDir);
+		sub->InsertEndChild(TiXmlText(localDir));
+		delete [] localDir;
+
+		// Save remote dir
+		sub = pNode->InsertEndChild(TiXmlElement("RemoteDir"));
+		char* remoteDir = ConvUTF8(data->m_remoteDir.GetSafePath());
+		sub->InsertEndChild(TiXmlText(remoteDir));
+		delete [] remoteDir;
+
+		pNode->InsertEndChild(TiXmlText(utf8));
+		delete [] utf8;
+	}
+
+	return true;
 }
 
 void CSiteManager::OnNewFolder(wxCommandEvent&event)
@@ -2234,4 +2247,41 @@ CSiteManagerItemData* CSiteManager::GetSiteByPath(wxString sitePath)
 	}
 
 	return handler.m_theItemData;
+}
+
+void CSiteManager::OnContextMenu(wxTreeEvent& event)
+{
+	wxMenu* pMenu = wxXmlResource::Get()->LoadMenu(_T("ID_MENU_SITEMANAGER"));
+	if (!pMenu)
+		return;
+
+	m_contextMenuItem = event.GetItem();
+
+	PopupMenu(pMenu);
+	delete pMenu;
+}
+
+void CSiteManager::OnExportSelected(wxCommandEvent& event)
+{
+	wxFileDialog dlg(this, _("Select file for exported sites"), _T(""), 
+					_T("sites.xml"), _T("XML files (*.xml)|*.xml"), 
+					wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+
+	if (dlg.ShowModal() != wxID_OK)
+		return;
+
+	wxFileName fn(dlg.GetPath());
+	CXmlFile xml(fn);
+
+	TiXmlElement* exportRoot = xml.CreateEmpty();
+
+	TiXmlElement* pServers = exportRoot->InsertEndChild(TiXmlElement("Servers"))->ToElement();
+	bool res = SaveChild(pServers, m_contextMenuItem);
+
+	wxString error;
+	if (!xml.Save(&error))
+	{
+		wxString msg = wxString::Format(_("Could not write \"%s\", the selected sites coud not be exported: %s"), fn.GetFullPath().c_str(), error.c_str());
+		wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
+	}
 }
