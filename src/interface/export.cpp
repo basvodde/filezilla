@@ -27,7 +27,17 @@ void CExportDialog::Show()
 		return;
 	}
 
-	wxFileDialog dlg(m_parent, _("Select file for exported settings"), _T(""), 
+	wxString str;
+	if (sitemanager && !queue && !settings)
+		str = _("Select file for exported sites");
+	else if (!sitemanager && queue && !settings)
+		str = _("Select file for exported queue");
+	else if (!sitemanager && !queue && settings)
+		str = _("Select file for exported settings");
+	else
+		str = _("Select file for exported data");
+
+	wxFileDialog dlg(m_parent, str, _T(""), 
 					_T("FileZilla.xml"), _T("XML files (*.xml)|*.xml"), 
 					wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
