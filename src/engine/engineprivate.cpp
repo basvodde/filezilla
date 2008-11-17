@@ -6,6 +6,7 @@
 #include "logging_private.h"
 #include "httpcontrolsocket.h"
 #include "ratelimiter.h"
+#include "pathcache.h"
 
 class wxFzEngineEvent : public wxEvent
 {
@@ -344,27 +345,31 @@ int CFileZillaEnginePrivate::List(const CListCommand &command)
 		const CServer* pServer = m_pControlSocket->GetCurrentServer();
 		if (pServer)
 		{
-			CDirectoryListing *pListing = new CDirectoryListing;
-			CDirectoryCache cache;
-			bool is_outdated = false;
-			bool found = cache.Lookup(*pListing, *pServer, command.GetPath(), command.GetSubDir(), true, is_outdated);
-			if (found && !is_outdated)
+			CServerPath path(CPathCache::Lookup(*pServer, command.GetPath(), command.GetSubDir()));
+			if (!path.IsEmpty())
 			{
-				if (pListing->m_hasUnsureEntries)
-					refresh = true;
-				else
+				CDirectoryListing *pListing = new CDirectoryListing;
+				CDirectoryCache cache;
+				bool is_outdated = false;
+				bool found = cache.Lookup(*pListing, *pServer, path, true, is_outdated);
+				if (found && !is_outdated)
 				{
-					m_lastListDir = pListing->path;
-					m_lastListTime = wxDateTime::Now();
-					CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing->path);
-					AddNotification(pNotification);
-					delete pListing;
-					return FZ_REPLY_OK;
+					if (pListing->m_hasUnsureEntries)
+						refresh = true;
+					else
+					{
+						m_lastListDir = pListing->path;
+						m_lastListTime = wxDateTime::Now();
+						CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing->path);
+						AddNotification(pNotification);
+						delete pListing;
+						return FZ_REPLY_OK;
+					}
 				}
+				if (is_outdated)
+					refresh = true;
+				delete pListing;
 			}
-			if (is_outdated)
-				refresh = true;
-			delete pListing;
 		}
 	}
 	if (IsBusy())

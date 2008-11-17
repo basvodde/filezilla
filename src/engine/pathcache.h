@@ -7,14 +7,16 @@ public:
 	CPathCache();
 	virtual ~CPathCache();
 
-	void Store(const CServer& server, const CServerPath& target, const CServerPath& source, const wxString subdir = _T(""));
+	// The source argument should be a canonicalized path already if subdir is non-empty
+	static void Store(const CServer& server, const CServerPath& target, const CServerPath& source, const wxString subdir = _T(""));
 
-	CServerPath Lookup(const CServer& server, const CServerPath& source, const wxString subdir = _T(""));
+	// The source argument should be a canonicalized path already if subdir is non-empty happen
+	static CServerPath Lookup(const CServer& server, const CServerPath& source, const wxString subdir = _T(""));
 
-	void InvalidateServer(const CServer& server);
+	static void InvalidateServer(const CServer& server);
 
 	// Invalidate path
-	void InvalidatePath(const CServer& server, const CServerPath& path, const wxString& subdir = _T(""));
+	static void InvalidatePath(const CServer& server, const CServerPath& path, const wxString& subdir = _T(""));
 
 	static void Clear();
 
@@ -45,7 +47,7 @@ protected:
 	typedef tCache::iterator tCacheIterator;
 	typedef tCache::const_iterator tCacheConstIterator;
 
-	CServerPath Lookup(const tServerCache &serverCache, const CServerPath& source, const wxString subdir) const;
+	static CServerPath Lookup(const tServerCache &serverCache, const CServerPath& source, const wxString subdir);
 
 	static int m_hits;
 	static int m_misses;

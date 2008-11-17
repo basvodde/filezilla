@@ -1275,7 +1275,11 @@ int CFtpControlSocket::ListSubcommandResult(int prevResult)
 			}
 		}
 		if (pData->path.IsEmpty())
+		{
 			pData->path = m_CurrentPath;
+			wxASSERT(pData->subDir == _T(""));
+			wxASSERT(!pData->path.IsEmpty());
+		}
 
 		if (!pData->refresh)
 		{
@@ -1286,12 +1290,9 @@ int CFtpControlSocket::ListSubcommandResult(int prevResult)
 
 			int hasUnsureEntries;
 			bool is_outdated = false;
-			bool found = cache.DoesExist(*m_pCurrentServer, m_CurrentPath, _T(""), hasUnsureEntries, is_outdated);
+			bool found = cache.DoesExist(*m_pCurrentServer, m_CurrentPath, hasUnsureEntries, is_outdated);
 			if (found)
 			{
-				if (!pData->path.IsEmpty() && pData->subDir != _T(""))
-					cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
-
 				// We're done if listing is recent and has no outdated entries
 				if (!is_outdated && !hasUnsureEntries)
 				{
@@ -1393,7 +1394,7 @@ int CFtpControlSocket::ListSubcommandResult(int prevResult)
 				return res;
 
 			CDirectoryCache cache;
-			cache.Store(listing, *m_pCurrentServer, pData->path, pData->subDir);
+			cache.Store(listing, *m_pCurrentServer);
 
 			m_pEngine->SendDirectoryListingNotification(m_CurrentPath, !pData->pNextOpData, true, false);
 
@@ -1442,7 +1443,7 @@ int CFtpControlSocket::ListSubcommandResult(int prevResult)
 					return res;
 
 				CDirectoryCache cache;
-				cache.Store(pData->directoryListing, *m_pCurrentServer, pData->path, pData->subDir);
+				cache.Store(pData->directoryListing, *m_pCurrentServer);
 
 				m_pEngine->SendDirectoryListingNotification(m_CurrentPath, !pData->pNextOpData, true, false);
 
@@ -1466,7 +1467,7 @@ int CFtpControlSocket::ListSubcommandResult(int prevResult)
 							return res;
 
 						CDirectoryCache cache;
-						cache.Store(pData->directoryListing, *m_pCurrentServer, pData->path, pData->subDir);
+						cache.Store(pData->directoryListing, *m_pCurrentServer);
 
 						m_pEngine->SendDirectoryListingNotification(m_CurrentPath, !pData->pNextOpData, true, false);
 
@@ -1519,7 +1520,8 @@ int CFtpControlSocket::ListSend()
 		CDirectoryListing listing;
 		CDirectoryCache cache;
 		bool is_outdated = false;
-		bool found = cache.Lookup(listing, *m_pCurrentServer, pData->path, pData->subDir, true, is_outdated);
+		wxASSERT(pData->subDir == _T("")); // Did do ChangeDir before trying to lock
+		bool found = cache.Lookup(listing, *m_pCurrentServer, pData->path, true, is_outdated);
 		if (found && !is_outdated && !listing.m_hasUnsureEntries &&
 			listing.m_firstListTime > pData->m_time_before_locking)
 		{
@@ -1614,7 +1616,7 @@ int CFtpControlSocket::ListParseResponse()
 		CServerCapabilities::SetCapability(*m_pCurrentServer, timezone_offset, no);
 
 	CDirectoryCache cache;
-	cache.Store(pData->directoryListing, *m_pCurrentServer, pData->path, pData->subDir);
+	cache.Store(pData->directoryListing, *m_pCurrentServer);
 
 	m_pEngine->SendDirectoryListingNotification(m_CurrentPath, !pData->pNextOpData, true, false);
 
@@ -1826,8 +1828,7 @@ int CFtpControlSocket::ChangeDir(CServerPath path /*=CServerPath()*/, wxString s
 		if (subDir != _T(""))
 		{
 			// Check if the target is in cache already
-			CPathCache cache;
-			target = cache.Lookup(*m_pCurrentServer, path, subDir);
+			target = CPathCache::Lookup(*m_pCurrentServer, path, subDir);
 			if (!target.IsEmpty())
 			{
 				if (m_CurrentPath == target)
@@ -1840,7 +1841,7 @@ int CFtpControlSocket::ChangeDir(CServerPath path /*=CServerPath()*/, wxString s
 			else
 			{
 				// Target unknown, check for the parent's target
-				target = cache.Lookup(*m_pCurrentServer, path, _T(""));
+				target = CPathCache::Lookup(*m_pCurrentServer, path, _T(""));
 				if (m_CurrentPath == path || (!target.IsEmpty() && target == m_CurrentPath))
 				{
 					target.Clear();
@@ -1852,8 +1853,7 @@ int CFtpControlSocket::ChangeDir(CServerPath path /*=CServerPath()*/, wxString s
 		}
 		else
 		{
-			CPathCache cache;
-			target = cache.Lookup(*m_pCurrentServer, path, _T(""));
+			target = CPathCache::Lookup(*m_pCurrentServer, path, _T(""));
 			if (m_CurrentPath == path || (!target.IsEmpty() && target == m_CurrentPath))
 				return FZ_REPLY_OK;
 			state = cwd_cwd;
@@ -1944,10 +1944,7 @@ int CFtpControlSocket::ChangeDirParseResponse()
 			m_CurrentPath = pData->path;
 
 			if (pData->target.IsEmpty())
-			{
-				CPathCache cache;
-				cache.Store(*m_pCurrentServer, m_CurrentPath, pData->path);
-			}
+				CPathCache::Store(*m_pCurrentServer, m_CurrentPath, pData->path);
 
 			if (pData->subDir == _T(""))
 			{
@@ -1961,8 +1958,7 @@ int CFtpControlSocket::ChangeDirParseResponse()
 		{
 			if (pData->target.IsEmpty())
 			{
-				CPathCache cache;
-				cache.Store(*m_pCurrentServer, m_CurrentPath, pData->path);
+				CPathCache::Store(*m_pCurrentServer, m_CurrentPath, pData->path);
 			}
 			if (pData->subDir == _T(""))
 			{
@@ -2017,8 +2013,7 @@ int CFtpControlSocket::ChangeDirParseResponse()
 
 					if (pData->target.IsEmpty())
 					{
-						CPathCache cache;
-						cache.Store(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
+						CPathCache::Store(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
 					}
 
 					ResetOperation(FZ_REPLY_OK);
@@ -2034,8 +2029,7 @@ int CFtpControlSocket::ChangeDirParseResponse()
 			{
 				if (pData->target.IsEmpty())
 				{
-					CPathCache cache;
-					cache.Store(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
+					CPathCache::Store(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
 				}
 
 				ResetOperation(FZ_REPLY_OK);
@@ -3078,6 +3072,8 @@ int CFtpControlSocket::RemoveDirSubcommandResult(int prevResult)
 
 	if (prevResult != FZ_REPLY_OK)
 		pData->omitPath = false;
+	else
+		pData->path = m_CurrentPath;
 
 	return SendNextCommand();
 }
@@ -3098,8 +3094,7 @@ int CFtpControlSocket::RemoveDirSend()
 	CDirectoryCache cache;
 	cache.InvalidateFile(*m_pCurrentServer, pData->path, pData->subDir);
 
-	CPathCache pathCache;
-	CServerPath path(pathCache.Lookup(*m_pCurrentServer, pData->path, pData->subDir));
+	CServerPath path(CPathCache::Lookup(*m_pCurrentServer, pData->path, pData->subDir));
 	if (path.IsEmpty())
 	{
 		path = pData->path;
@@ -3107,7 +3102,7 @@ int CFtpControlSocket::RemoveDirSend()
 	}
 	m_pEngine->InvalidateCurrentWorkingDirs(path);
 
-	pathCache.InvalidatePath(*m_pCurrentServer, pData->path, pData->subDir);
+	CPathCache::InvalidatePath(*m_pCurrentServer, pData->path, pData->subDir);
 
 	if (pData->omitPath)
 	{
@@ -3142,7 +3137,7 @@ int CFtpControlSocket::RemoveDirParseResponse()
 	}
 
 	CDirectoryCache cache;
-	cache.RemoveDir(*m_pCurrentServer, pData->path, pData->subDir);
+	cache.RemoveDir(*m_pCurrentServer, pData->path, pData->subDir, CPathCache::Lookup(*m_pCurrentServer, pData->path, pData->subDir));
 	m_pEngine->SendDirectoryListingNotification(pData->path, false, true, false);
 
 	return ResetOperation(FZ_REPLY_OK);
@@ -3486,25 +3481,19 @@ int CFtpControlSocket::RenameSend()
 	case rename_rnto:
 		{
 			CDirectoryCache cache;
-			bool wasDir = false;
-			cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile(), &wasDir);
+			cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile());
 			cache.InvalidateFile(*m_pCurrentServer, pData->m_cmd.GetToPath(), pData->m_cmd.GetToFile());
 
-			CPathCache pathCache;
-
-			if (wasDir)
+			CServerPath path(CPathCache::Lookup(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile()));
+			if (path.IsEmpty())
 			{
-				CServerPath path(pathCache.Lookup(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile()));
-				if (path.IsEmpty())
-				{
-					path = pData->m_cmd.GetFromPath();
-					path.AddSegment(pData->m_cmd.GetFromFile());
-				}
-				m_pEngine->InvalidateCurrentWorkingDirs(path);
+				path = pData->m_cmd.GetFromPath();
+				path.AddSegment(pData->m_cmd.GetFromFile());
 			}
+			m_pEngine->InvalidateCurrentWorkingDirs(path);
 
-			pathCache.InvalidatePath(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile());
-			pathCache.InvalidatePath(*m_pCurrentServer, pData->m_cmd.GetToPath(), pData->m_cmd.GetToFile());
+			CPathCache::InvalidatePath(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile());
+			CPathCache::InvalidatePath(*m_pCurrentServer, pData->m_cmd.GetToPath(), pData->m_cmd.GetToFile());
 
 			res = Send(_T("RNTO ") + pData->m_cmd.GetToPath().FormatFilename(pData->m_cmd.GetToFile(), !pData->m_useAbsolute && pData->m_cmd.GetFromPath() == pData->m_cmd.GetToPath()));
 			break;

@@ -976,7 +976,7 @@ int CSftpControlSocket::ListParseResponse(bool successful, const wxString& reply
 			return res;
 
 		CDirectoryCache cache;
-		cache.Store(pData->directoryListing, *m_pCurrentServer, pData->path, pData->subDir);
+		cache.Store(pData->directoryListing, *m_pCurrentServer);
 
 		m_pEngine->SendDirectoryListingNotification(m_CurrentPath, !pData->pNextOpData, true, false);
 
@@ -1039,7 +1039,7 @@ int CSftpControlSocket::ListParseResponse(bool successful, const wxString& reply
 		}
 
 		CDirectoryCache cache;
-		cache.Store(pData->directoryListing, *m_pCurrentServer, pData->path, pData->subDir);
+		cache.Store(pData->directoryListing, *m_pCurrentServer);
 
 		m_pEngine->SendDirectoryListingNotification(m_CurrentPath, !pData->pNextOpData, true, false);
 
@@ -1159,12 +1159,9 @@ int CSftpControlSocket::ListSubcommandResult(int prevResult)
 
 		int hasUnsureEntries;
 		bool is_outdated = false;
-		bool found = cache.DoesExist(*m_pCurrentServer, m_CurrentPath, _T(""), hasUnsureEntries, is_outdated);
+		bool found = cache.DoesExist(*m_pCurrentServer, m_CurrentPath, hasUnsureEntries, is_outdated);
 		if (found)
 		{
-			if (!pData->path.IsEmpty() && pData->subDir != _T(""))
-				cache.AddParent(*m_pCurrentServer, m_CurrentPath, pData->path, pData->subDir);
-
 			// We're done if listins is recent and has no outdated entries
 			if (!is_outdated && !hasUnsureEntries)
 			{
@@ -2300,19 +2297,22 @@ int CSftpControlSocket::RemoveDir(const CServerPath& path /*=CServerPath()*/, co
 	pData->path = path;
 	pData->subDir = subDir;
 
-	CServerPath fullPath = pData->path;
-
-	if (!fullPath.AddSegment(subDir))
+	CServerPath fullPath = CPathCache::Lookup(*m_pCurrentServer, pData->path, pData->subDir);
+	if (fullPath.IsEmpty())
 	{
-		LogMessage(::Error, _("Path cannot be constructed for directory %s and subdir %s"), path.GetPath().c_str(), subDir.c_str());
-		return FZ_REPLY_ERROR;
+		CServerPath fullPath = pData->path;
+
+		if (!fullPath.AddSegment(subDir))
+		{
+			LogMessage(::Error, _("Path cannot be constructed for directory %s and subdir %s"), path.GetPath().c_str(), subDir.c_str());
+			return FZ_REPLY_ERROR;
+		}
 	}
 
 	CDirectoryCache cache;
 	cache.InvalidateFile(*m_pCurrentServer, path, subDir);
 
-	CPathCache pathCache;
-	pathCache.InvalidatePath(*m_pCurrentServer, pData->path, pData->subDir);
+	CPathCache::InvalidatePath(*m_pCurrentServer, pData->path, pData->subDir);
 
 	m_pEngine->InvalidateCurrentWorkingDirs(fullPath);
 	if (!Send(_T("rmdir ") + WildcardEscape(QuoteFilename(fullPath.GetPath())),
@@ -2348,7 +2348,7 @@ int CSftpControlSocket::RemoveDirParseResponse(bool successful, const wxString& 
 	}
 
 	CDirectoryCache cache;
-	cache.RemoveDir(*m_pCurrentServer, pData->path, pData->subDir);
+	cache.RemoveDir(*m_pCurrentServer, pData->path, pData->subDir, CPathCache::Lookup(*m_pCurrentServer, pData->path, pData->subDir));
 	m_pEngine->SendDirectoryListingNotification(pData->path, false, true, false);
 
 	return ResetOperation(FZ_REPLY_OK);
@@ -2592,14 +2592,13 @@ int CSftpControlSocket::RenameSend()
 			wxString fromQuoted = QuoteFilename(pData->m_cmd.GetFromPath().FormatFilename(pData->m_cmd.GetFromFile(), !pData->m_useAbsolute));
 			wxString toQuoted = QuoteFilename(pData->m_cmd.GetToPath().FormatFilename(pData->m_cmd.GetToFile(), !pData->m_useAbsolute && pData->m_cmd.GetFromPath() == pData->m_cmd.GetToPath()));
 
-			CPathCache pathCache;
-			pathCache.InvalidatePath(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile());
-			pathCache.InvalidatePath(*m_pCurrentServer, pData->m_cmd.GetToPath(), pData->m_cmd.GetToFile());
+			CPathCache::InvalidatePath(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile());
+			CPathCache::InvalidatePath(*m_pCurrentServer, pData->m_cmd.GetToPath(), pData->m_cmd.GetToFile());
 
 			if (wasDir)
 			{
 				// Need to invalidate current working directories
-				CServerPath path = pathCache.Lookup(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile());
+				CServerPath path = CPathCache::Lookup(*m_pCurrentServer, pData->m_cmd.GetFromPath(), pData->m_cmd.GetFromFile());
 				if (path.IsEmpty())
 				{
 					path = pData->m_cmd.GetFromPath();

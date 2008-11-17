@@ -29,20 +29,18 @@ public:
 	CDirectoryCache();
 	~CDirectoryCache();
 
-	void Store(const CDirectoryListing &listing, const CServer &server, CServerPath parentPath = CServerPath(), wxString subDir = _T(""));
+	void Store(const CDirectoryListing &listing, const CServer &server);
 	bool GetChangeTime(CTimeEx& time, const CServer &server, const CServerPath &path) const;
 	bool Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, bool allowUnsureEntries, bool& is_outdated);
-	bool Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, wxString subDir, bool allowUnsureEntries, bool& is_outdated);
-	bool DoesExist(const CServer &server, const CServerPath &path, wxString subDir, int &hasUnsureEntries, bool &is_outdated);
+	bool DoesExist(const CServer &server, const CServerPath &path, int &hasUnsureEntries, bool &is_outdated);
 	bool LookupFile(CDirentry &entry, const CServer &server, const CServerPath &path, const wxString& file, bool &dirDidExist, bool &matchedCase);
 	bool InvalidateFile(const CServer &server, const CServerPath &path, const wxString& filename, bool *wasDir = 0);
 	bool UpdateFile(const CServer &server, const CServerPath &path, const wxString& filename, bool mayCreate, enum Filetype type = file, wxLongLong size = -1);
 	bool RemoveFile(const CServer &server, const CServerPath &path, const wxString& filename);
 	void InvalidateServer(const CServer& server);
-	void RemoveDir(const CServer& server, const CServerPath& path, const wxString& filename);
+	void RemoveDir(const CServer& server, const CServerPath& path, const wxString& filename, const CServerPath& target);
 	void Rename(const CServer& server, const CServerPath& pathFrom, const wxString& fileFrom, const CServerPath& pathTo, const wxString& fileTo);
-	void AddParent(const CServer& server, const CServerPath& path, const CServerPath& parentPath, const wxString subDir);
-
+	
 protected:
 
 	class CCacheEntry
@@ -54,12 +52,6 @@ protected:
 		CDirectoryListing listing;
 		wxDateTime createTime;
 		CTimeEx modificationTime;
-		typedef struct
-		{
-			CServerPath path;
-			wxString subDir;
-		} t_parent;
-		std::list<t_parent> parents;
 
 		CCacheEntry& operator=(const CCacheEntry &a);
 	};
@@ -75,12 +67,10 @@ protected:
 	CServerEntry* GetServerEntry(const CServer& server);
 	const CServerEntry* GetServerEntry(const CServer& server) const;
 
-	typedef std::list<CCacheEntry::t_parent>::iterator tParentsIter;
-	typedef std::list<CCacheEntry::t_parent>::const_iterator tParentsConstIter;
 	typedef std::list<CCacheEntry>::iterator tCacheIter;
 	typedef std::list<CCacheEntry>::const_iterator tCacheConstIter;
 
-	bool Lookup(tCacheIter &cacheIter, const CServer &server, const CServerPath &path, wxString subDir, bool allowUnsureEntries, bool& is_outdated);
+	bool Lookup(tCacheIter &cacheIter, const CServer &server, const CServerPath &path, bool allowUnsureEntries, bool& is_outdated);
 
 	static std::list<CServerEntry *> m_ServerList;
 

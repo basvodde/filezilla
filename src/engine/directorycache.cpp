@@ -21,11 +21,10 @@ CDirectoryCache::~CDirectoryCache()
 		delete *iter;
 }
 
-void CDirectoryCache::Store(const CDirectoryListing &listing, const CServer &server, CServerPath parentPath /*=CServerPath()*/, wxString subDir /*=_T("")*/)
+void CDirectoryCache::Store(const CDirectoryListing &listing, const CServer &server)
 {
 	CServerEntry* pServerEntry = CreateServerEntry(server);
 	wxASSERT(pServerEntry);
-	wxASSERT(!parentPath.IsEmpty());
 
 	// First check for existing entry in cache and update if it neccessary
 	for (tCacheIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); iter++)
@@ -39,23 +38,6 @@ void CDirectoryCache::Store(const CDirectoryListing &listing, const CServer &ser
 
 		entry.listing = listing;
 
-		if (!parentPath.IsEmpty() && subDir != _T(""))
-		{
-			// Search for parents
-			for (tParentsIter parentsIter = entry.parents.begin(); parentsIter != entry.parents.end(); parentsIter++)
-			{
-				const CCacheEntry::t_parent &parent = *parentsIter;
-				if (parent.path == parentPath && parent.subDir == subDir)
-					return;
-			}
-
-			// Store parent
-			CCacheEntry::t_parent parent;
-			parent.path = parentPath;
-			parent.subDir = subDir;
-			entry.parents.push_front(parent);
-		}
-
 		return;
 	}
 
@@ -65,27 +47,13 @@ void CDirectoryCache::Store(const CDirectoryListing &listing, const CServer &ser
 	entry.createTime = entry.modificationTime.GetTime();
 	entry.listing = listing;
 
-	if (!parentPath.IsEmpty() && subDir != _T(""))
-	{
-		// Store parent
-		CCacheEntry::t_parent parent;
-		parent.path = parentPath;
-		parent.subDir = subDir;
-		entry.parents.push_front(parent);
-	}
-
 	pServerEntry->cacheList.push_front(entry);
 }
 
 bool CDirectoryCache::Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, bool allowUnsureEntries, bool& is_outdated)
 {
-	return Lookup(listing, server, path, _T(""), allowUnsureEntries, is_outdated);
-}
-
-bool CDirectoryCache::Lookup(CDirectoryListing &listing, const CServer &server, const CServerPath &path, wxString subDir, bool allowUnsureEntries, bool& is_outdated)
-{
 	tCacheIter iter;
-	if (Lookup(iter, server, path, subDir, allowUnsureEntries, is_outdated))
+	if (Lookup(iter, server, path, allowUnsureEntries, is_outdated))
 	{
 		listing = iter->listing;
 		return true;
@@ -94,134 +62,46 @@ bool CDirectoryCache::Lookup(CDirectoryListing &listing, const CServer &server, 
 	return false;
 }
 
-bool CDirectoryCache::Lookup(tCacheIter &cacheIter, const CServer &server, const CServerPath &path, wxString subDir, bool allowUnsureEntries, bool& is_outdated)
+bool CDirectoryCache::Lookup(tCacheIter &cacheIter, const CServer &server, const CServerPath &path, bool allowUnsureEntries, bool& is_outdated)
 {
 	CServerEntry* const pServerEntry = GetServerEntry(server);
 	if (!pServerEntry)
 		return false;
 
-	if (subDir != _T(".."))
+	for (tCacheIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); iter++)
 	{
-		for (tCacheIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); iter++)
+		const CCacheEntry &entry = *iter;
+
+		if (entry.listing.path == path)
 		{
-			const CCacheEntry &entry = *iter;
+			if (!allowUnsureEntries && entry.listing.m_hasUnsureEntries)
+				return false;
 
-			if (subDir == _T(""))
-			{
-				if (entry.listing.path == path)
-				{
-					if (!allowUnsureEntries && entry.listing.m_hasUnsureEntries)
-						return false;
-
-					cacheIter = iter;
-					is_outdated = (wxDateTime::Now() - entry.createTime).GetSeconds() > CACHE_TIMEOUT;
-					return true;
-				}
-			}
-			else
-			{
-				for (tParentsConstIter parentsIter = entry.parents.begin(); parentsIter != entry.parents.end(); parentsIter++)
-				{
-					const CCacheEntry::t_parent &parent = *parentsIter;
-					if (parent.path != path || parent.subDir != subDir)
-						continue;
-
-					if (!allowUnsureEntries && entry.listing.m_hasUnsureEntries)
-						return false;
-
-					cacheIter = iter;
-					is_outdated = (wxDateTime::Now() - entry.createTime).GetSeconds() > CACHE_TIMEOUT;
-					return true;
-				}
-			}
+			cacheIter = iter;
+			is_outdated = (wxDateTime::Now() - entry.createTime).GetSeconds() > CACHE_TIMEOUT;
+			return true;
 		}
 	}
-	else
-	{
-		// Search own entry
-		tCacheIter iter;
-		for (iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); iter++)
-		{
-			const CCacheEntry &entry = *iter;
 
-			tParentsConstIter parentsIter;
-			for (parentsIter = entry.parents.begin(); parentsIter != entry.parents.end(); parentsIter++)
-			{
-				if (parentsIter->subDir == _T("..") && parentsIter->path == path)
-					break;
-			}
-			if (parentsIter != entry.parents.end())
-				break;
-		}
-		if (iter == pServerEntry->cacheList.end())
-			return false;
-
-		bool res = Lookup(cacheIter, server, iter->listing.path, _T(""), allowUnsureEntries, is_outdated);
-		if (res)
-			is_outdated = (wxDateTime::Now() - iter->createTime).GetSeconds() > CACHE_TIMEOUT;
-		return res;
-	}
 	return false;
 }
 
-bool CDirectoryCache::DoesExist(const CServer &server, const CServerPath &path, wxString subDir, int &hasUnsureEntries, bool &is_outdated)
+bool CDirectoryCache::DoesExist(const CServer &server, const CServerPath &path, int &hasUnsureEntries, bool &is_outdated)
 {
 	const CServerEntry* const pServerEntry = GetServerEntry(server);
 	if (!pServerEntry)
 		return false;
 
-	if (subDir != _T(".."))
+	for (tCacheConstIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); iter++)
 	{
-		for (tCacheConstIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); iter++)
+		const CCacheEntry &entry = *iter;
+
+		if (entry.listing.path == path)
 		{
-			const CCacheEntry &entry = *iter;
-
-			if (subDir == _T(""))
-			{
-				if (entry.listing.path == path)
-				{
-					hasUnsureEntries = entry.listing.m_hasUnsureEntries;
-					is_outdated = (wxDateTime::Now() - entry.createTime).GetSeconds() > CACHE_TIMEOUT;
-					return true;
-				}
-			}
-			else
-			{
-				for (tParentsConstIter parentsIter = entry.parents.begin(); parentsIter != entry.parents.end(); parentsIter++)
-				{
-					const CCacheEntry::t_parent &parent = *parentsIter;
-					if (parent.path != path || parent.subDir != subDir)
-						continue;
-
-					hasUnsureEntries = entry.listing.m_hasUnsureEntries;
-					is_outdated = (wxDateTime::Now() - entry.createTime).GetSeconds() > CACHE_TIMEOUT;
-					return true;
-				}
-			}
+			hasUnsureEntries = entry.listing.m_hasUnsureEntries;
+			is_outdated = (wxDateTime::Now() - entry.createTime).GetSeconds() > CACHE_TIMEOUT;
+			return true;
 		}
-	}
-	else
-	{
-		// Search own entry
-		tCacheConstIter iter;
-		for (iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); iter++)
-		{
-			const CCacheEntry &entry = *iter;
-
-			tParentsConstIter parentsIter;
-			for (parentsIter = entry.parents.begin(); parentsIter != entry.parents.end(); parentsIter++)
-			{
-				if (parentsIter->subDir == _T("..") && parentsIter->path == path)
-					break;
-			}
-			if (parentsIter != entry.parents.end())
-				break;
-		}
-		if (iter == pServerEntry->cacheList.end())
-			return false;
-
-		bool res = DoesExist(server, iter->listing.path, _T(""), hasUnsureEntries, is_outdated);
-		return res;
 	}
 	return false;
 }
@@ -273,7 +153,6 @@ CDirectoryCache::CCacheEntry& CDirectoryCache::CCacheEntry::operator=(const CDir
 	listing = a.listing;
 	createTime = a.createTime;
 	modificationTime = a.modificationTime;
-	parents = a.parents;
 
 	return *this;
 }
@@ -283,7 +162,6 @@ CDirectoryCache::CCacheEntry::CCacheEntry(const CDirectoryCache::CCacheEntry &en
 	listing = entry.listing;
 	createTime = entry.createTime;
 	modificationTime = entry.modificationTime;
-	parents = entry.parents;
 }
 
 bool CDirectoryCache::InvalidateFile(const CServer &server, const CServerPath &path, const wxString& filename, bool *wasDir /*=false*/)
@@ -472,7 +350,7 @@ bool CDirectoryCache::GetChangeTime(CTimeEx& time, const CServer &server, const 
 	return false;
 }
 
-void CDirectoryCache::RemoveDir(const CServer& server, const CServerPath& path, const wxString& filename)
+void CDirectoryCache::RemoveDir(const CServer& server, const CServerPath& path, const wxString& filename, const CServerPath& target)
 {
 	// TODO: This is not 100% foolproof and may not work properly
 	// Perhaps just throw away the complete cache?
@@ -493,16 +371,6 @@ void CDirectoryCache::RemoveDir(const CServer& server, const CServerPath& path, 
 		if (!absolutePath.IsEmpty() && (entry.listing.path == absolutePath || absolutePath.IsParentOf(entry.listing.path, true)))
 			continue;
 
-		tParentsIter parentsIter;
-		for (parentsIter = entry.parents.begin(); parentsIter != entry.parents.end(); parentsIter++)
-		{
-			const CCacheEntry::t_parent &parent = *parentsIter;
-			if (parent.path == path && parent.subDir == filename)
-				break;
-		}
-		if (parentsIter != entry.parents.end())
-			continue;
-
 		newList.push_back(*iter);
 	}
 
@@ -515,7 +383,7 @@ void CDirectoryCache::Rename(const CServer& server, const CServerPath& pathFrom,
 {
 	tCacheIter iter;
 	bool is_outdated = false;
-	bool found = Lookup(iter, server, pathFrom, _T(""), true, is_outdated);
+	bool found = Lookup(iter, server, pathFrom, true, is_outdated);
 	if (found)
 	{
 		CDirectoryListing& listing = iter->listing;
@@ -532,8 +400,8 @@ void CDirectoryCache::Rename(const CServer& server, const CServerPath& pathFrom,
 			{
 				if (listing[i].dir)
 				{
-					RemoveDir(server, pathFrom, fileFrom);
-					RemoveDir(server, pathFrom, fileTo);
+					RemoveDir(server, pathFrom, fileFrom, CServerPath());
+					RemoveDir(server, pathFrom, fileTo, CServerPath());
 					UpdateFile(server, pathFrom, fileTo, true, dir);
 				}
 				else
@@ -558,7 +426,7 @@ void CDirectoryCache::Rename(const CServer& server, const CServerPath& pathFrom,
 			{
 				if (listing[i].dir)
 				{
-					RemoveDir(server, pathFrom, fileFrom);
+					RemoveDir(server, pathFrom, fileFrom, CServerPath());
 					UpdateFile(server, pathTo, fileTo, true, dir);
 				}
 				else
@@ -573,35 +441,6 @@ void CDirectoryCache::Rename(const CServer& server, const CServerPath& pathFrom,
 
 	// We know nothing, be on the safe side abd invalidate everything.
 	InvalidateServer(server);
-}
-
-void CDirectoryCache::AddParent(const CServer& server, const CServerPath& path, const CServerPath& parentPath, const wxString subDir)
-{
-	CServerEntry* pServerEntry = GetServerEntry(server);
-	if (!pServerEntry)
-		return;
-
-	for (tCacheIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); iter++)
-	{
-		CCacheEntry &entry = *iter;
-
-		if (entry.listing.path != path)
-			continue;
-
-		// Search for parents
-		for (tParentsIter parentsIter = entry.parents.begin(); parentsIter != entry.parents.end(); parentsIter++)
-		{
-			const CCacheEntry::t_parent &parent = *parentsIter;
-			if (parent.path == parentPath && parent.subDir == subDir)
-				return;
-		}
-
-		// Store parent
-		CCacheEntry::t_parent parent;
-		parent.path = parentPath;
-		parent.subDir = subDir;
-		entry.parents.push_front(parent);
-	}
 }
 
 CDirectoryCache::CServerEntry* CDirectoryCache::CreateServerEntry(const CServer& server)
