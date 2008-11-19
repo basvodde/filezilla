@@ -1902,7 +1902,9 @@ bool CDirectoryListingParser::ParseOther(CLine *pLine, CDirentry &entry)
 				return false;
 
 			entry.name = token.GetString();
-			if (!skippedCount && entry.name.Right(5).MakeUpper() == _T("<DIR>"))
+			wxString type = entry.name.Right(5);
+			MakeLowerAscii(type);
+			if (!skippedCount && type == _T("<dir>"))
 			{
 				entry.dir = true;
 				entry.name = entry.name.Left(entry.name.Length() - 5);
