@@ -1097,11 +1097,8 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 		// Check month name
 		while (strMonth.Right(1) == _T(",") || strMonth.Right(1) == _T("."))
 			strMonth.RemoveLast();
-		strMonth.MakeLower();
-		std::map<wxString, int>::iterator iter = m_MonthNamesMap.find(strMonth);
-		if (iter == m_MonthNamesMap.end())
+		if (!GetMonthFromName(strMonth, month))
 			return false;
-		month = iter->second;
 	}
 
 	// Get time/year field
@@ -1233,11 +1230,8 @@ bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry, bo
 
 		// Check month name
 		wxString dateMonth = token.GetString().Mid(0, pos);
-		dateMonth.MakeLower();
-		std::map<wxString, int>::iterator iter = m_MonthNamesMap.find(dateMonth);
-		if (iter == m_MonthNamesMap.end())
+		if (!GetMonthFromName(dateMonth, month))
 			return false;
-		month = iter->second;
 		gotMonth = true;
 		gotMonthName = true;
 	}
@@ -1322,11 +1316,8 @@ bool CDirectoryListingParser::ParseShortDate(CToken &token, CDirentry &entry, bo
 		// Month field in yyyy-mm-dd or dd-mm-yyyy
 		// Check month name
 		wxString dateMonth = token.GetString().Mid(pos + 1, pos2 - pos - 1);
-		dateMonth.MakeLower();
-		std::map<wxString, int>::iterator iter = m_MonthNamesMap.find(dateMonth);
-		if (iter == m_MonthNamesMap.end())
+		if (!GetMonthFromName(dateMonth, month))
 			return false;
-		month = iter->second;
 		gotMonth = true;
 	}
 	else
@@ -1877,9 +1868,8 @@ bool CDirectoryListingParser::ParseOther(CLine *pLine, CDirentry &entry)
 
 		// Get date
 		wxString dateMonth = token.GetString();
-		dateMonth.MakeLower();
-		std::map<wxString, int>::const_iterator iter = m_MonthNamesMap.find(dateMonth);
-		if (iter == m_MonthNamesMap.end())
+		int month = 0;
+		if (!GetMonthFromName(dateMonth, month))
 		{
 			// OS/2 or nortel.VxWorks
 			entry.dir = false;
@@ -1922,8 +1912,6 @@ bool CDirectoryListingParser::ParseOther(CLine *pLine, CDirentry &entry)
 		}
 		else
 		{
-			int month = iter->second;
-
 			// Get day
 			if (!pLine->GetToken(++index, token))
 				return false;
@@ -2606,7 +2594,8 @@ bool CDirectoryListingParser::ParseAsMlsd(CLine *pLine, CDirentry &entry)
 		if (pos < 1 || (pos + 2) >= delim)
 			return false;
 
-		wxString factname = facts.Left(pos).Lower();
+		wxString factname = facts.Left(pos);
+		MakeLowerAscii(factname);
 		wxString value = facts.Mid(pos + 1, delim - pos - 1);
 		if (factname == _T("type"))
 		{
@@ -2638,7 +2627,7 @@ bool CDirectoryListingParser::ParseAsMlsd(CLine *pLine, CDirentry &entry)
 
 			if (*time)
 			{
-				if (!dateTime.ParseFormat(time, _T("%H%M"), dateTime))
+				if (!dateTime.ParseFormat(time, _T("%H%M%S"), dateTime))
 					return false;
 				entry.hasTime = true;
 			}
@@ -2890,5 +2879,22 @@ bool CDirectoryListingParser::ParseAsHPNonstop(CLine *pLine, CDirentry &entry)
 	entry.dir = false;
 	entry.link = false;
 		
+	return true;
+}
+
+bool CDirectoryListingParser::GetMonthFromName(const wxString& name, int &month)
+{
+	std::map<wxString, int>::iterator iter = m_MonthNamesMap.find(name.Lower());
+	if (iter == m_MonthNamesMap.end())
+	{
+		wxString lower(name);
+		MakeLowerAscii(lower);
+		iter = m_MonthNamesMap.find(lower);
+		if (iter == m_MonthNamesMap.end())
+			return false;
+	}
+	
+	month = iter->second;
+	
 	return true;
 }

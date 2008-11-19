@@ -10,4 +10,13 @@ bool IsIpAddress(const wxString& address);
 
 int GetRandomNumber(int low, int high);
 
+// Under some locales (e.g. Turkish), there is a different
+// relationship between the letters a-z and A-Z.
+// In Turkish for example there are different types of i 
+// (dotted and dotless), with i lowercase dotted and I
+// uppercase dotless.
+// If needed, use this function to transform the case manually
+// and locale-independently
+void MakeLowerAscii(wxString& str);
+
 #endif //__MISC_H__

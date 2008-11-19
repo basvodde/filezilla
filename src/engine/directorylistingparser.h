@@ -89,6 +89,8 @@ protected:
 	// Parse file sizes given like this: 123.4M
 	bool ParseComplexFileSize(CToken& token, wxLongLong& size, int blocksize = -1);
 
+	bool GetMonthFromName(const wxString& name, int &month);
+
 	CControlSocket* m_pControlSocket;
 
 	static std::map<wxString, int> m_MonthNamesMap;

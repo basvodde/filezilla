@@ -11,25 +11,6 @@ CThemeProvider::CThemeProvider()
 	m_themePath = GetThemePath();
 }
 
-// The ART_* IDs are always given in uppercase ASCII,
-// all filenames used by FileZilla for the resources
-// are lowercase.
-// Under some locales (e.g. Turkish), there is a different
-// relationship between the letters a-z and A-Z.
-// In Turkish for example there are different types of i 
-// (dotted and dotless), with i lowercase dotted and I
-// uppercase dotless.
-// Just transform the case manually and locale-independently
-static void MakeLowerAscii(wxString& str)
-{
-	for (size_t i = 0; i < str.Len(); i++)
-	{
-		wxChar& c = str[i];
-		if (c >= 'A' && c <= 'Z')
-			c += 32;
-	}
-}
-
 wxBitmap CThemeProvider::CreateBitmap(const wxArtID& id, const wxArtClient& client, const wxSize& size)
 {
 	if (id.Left(4) != _T("ART_"))
@@ -58,6 +39,11 @@ wxBitmap CThemeProvider::CreateBitmap(const wxArtID& id, const wxArtClient& clie
 	dirs.push_back(resourceDir + _T("16x16/"));
 
 	wxString name = id.Mid(4);
+
+	// The ART_* IDs are always given in uppercase ASCII,
+	// all filenames used by FileZilla for the resources
+	// are lowercase ASCII. Locale-independent transformation
+	// needed e.g. if using Turkish locale.
 	MakeLowerAscii(name);
 
 	wxLogNull logNull;

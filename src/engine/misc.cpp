@@ -363,3 +363,13 @@ int GetRandomNumber(int low, int high)
 		return (int)((r % (range + 1)) + low);
 	}
 }
+
+void MakeLowerAscii(wxString& str)
+{
+	for (size_t i = 0; i < str.Len(); i++)
+	{
+		wxChar& c = str[i];
+		if (c >= 'A' && c <= 'Z')
+			c += 32;
+	}
+}
