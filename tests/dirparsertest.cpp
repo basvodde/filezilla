@@ -1464,6 +1464,26 @@ void CDirectoryListingParserTest::InitEntries()
 			DEFAULT
 		});
 
+	utc = wxDateTime(5, wxDateTime::Nov, 2008, 16, 52, 15);
+	utc.MakeFromTimezone(wxDateTime::UTC);
+	m_entries.push_back((t_entry){
+			"Type=file;mOdIfY=20081105165215;size=1234; 72-MLSD-file",
+			{
+				_T("72-MLSD-file"),
+				1234,
+				_T(""),
+				_T(""),
+				false,
+				false,
+				_T(""),
+				true,
+				true,
+				utc,
+				false
+			},
+			DEFAULT
+		});
+
 /*
 	wxString name;
 	wxLongLong size;

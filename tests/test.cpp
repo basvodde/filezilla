@@ -3,9 +3,12 @@
 #include <string>
 #include <cppunit/extensions/TestFactoryRegistry.h>
 #include <cppunit/ui/text/TestRunner.h>
+#include <locale.h>
 	
 int main(int argc, char* argv[])
 {
+	setlocale(LC_ALL, "");
+
 	if (!wxInitialize())
 	{
 		std::cout << "Failed to initialize wxWidgets" << std::endl;
