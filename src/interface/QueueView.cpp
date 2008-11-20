@@ -264,7 +264,7 @@ public:
 
 		m_processing_entries = false;
 
-		if (m_threadWaiting)
+		if (m_threadWaiting && m_entryList.empty())
 		{
 			m_threadWaiting = false;
 			m_condition.Signal();
