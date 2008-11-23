@@ -2376,7 +2376,7 @@ void CMainFrame::RememberSplitterPositions()
 	wxString posString;
 
 	// top_pos
-	posString += wxString::Format(_T("%d "), m_pTopSplitter->IsSplit() ? m_pTopSplitter->GetSashPosition() : m_lastLogViewSplitterPos);
+		posString += wxString::Format(_T("%d "), m_pTopSplitter->IsSplit() ? m_pTopSplitter->GetSashPosition() : m_lastLogViewSplitterPos);
 
 	// bottom_height
 	int x, y;
@@ -2404,7 +2404,9 @@ void CMainFrame::RememberSplitterPositions()
 	posString += wxString::Format(_T("%d "), m_lastRemoteTreeSplitterPos);
 
 	// queuelog splitter
-	posString += wxString::Format(_T("%f"), m_lastQueueLogSplitterPos);
+	// Note that we cannot use %f, it is locale-dependent
+	// m_lastQueueLogSplitterPos is a value between 0 and 1
+	posString += wxString::Format(_T("%d"), (int)(m_lastQueueLogSplitterPos * 1000000000));
 
 	COptions::Get()->SetOption(OPTION_MAINWINDOW_SPLITTER_POSITION, posString);
 }
@@ -2421,9 +2423,8 @@ void CMainFrame::RestoreSplitterPositions()
 	if (count < 6)
 		return;
 
-	const int num_ints = 6;
-	long * aPosValues = new long[num_ints];
-	for (int i = 0; i < num_ints; i++)
+	long * aPosValues = new long[count];
+	for (int i = 0; i < count; i++)
 	{
 		wxString token = tokens.GetNextToken();
 		if (!token.ToLong(aPosValues + i))
@@ -2481,15 +2482,10 @@ void CMainFrame::RestoreSplitterPositions()
 
 	if (count >= 7)
 	{
-		wxString token = tokens.GetNextToken();
-		double d;
-		if (token.ToDouble(&d))
-		{
-			m_lastQueueLogSplitterPos = d;
-			wxSize size = m_pQueueLogSplitter->GetClientSize();
-			if (m_pQueueLogSplitter->IsSplit())
-				m_pQueueLogSplitter->SetSashPosition((int)(size.GetWidth() * d));
-		}
+		m_lastQueueLogSplitterPos = (double)aPosValues[6] / 1000000000;
+		wxSize size = m_pQueueLogSplitter->GetClientSize();
+		if (m_pQueueLogSplitter->IsSplit())
+			m_pQueueLogSplitter->SetSashPosition((int)(size.GetWidth() * m_lastQueueLogSplitterPos));
 	}
 	delete [] aPosValues;
 }
