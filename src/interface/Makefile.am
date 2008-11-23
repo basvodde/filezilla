@@ -77,6 +77,7 @@ filezilla_SOURCES = aboutdialog.cpp \
 		settingsdialog.cpp \
 		sftp_crypt_info_dlg.cpp \
 		sitemanager.cpp \
+		splitter.cpp \
 		state.cpp \
 		statusbar.cpp \
 		statuslinectrl.cpp \
@@ -166,6 +167,7 @@ noinst_HEADERS = aboutdialog.h \
 		 settingsdialog.h \
 		 sftp_crypt_info_dlg.h \
 		 sitemanager.h \
+		 splitter.h \
 		 state.h \
 		 statuslinectrl.h \
 		 statusbar.h \

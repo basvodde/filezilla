@@ -23,6 +23,7 @@ class CComparisonManager;
 class CWindowStateManager;
 class CStatusBar;
 class CMainFrameStateEventHandler;
+class CSplitterWindowEx;
 
 class CMainFrame : public wxFrame
 {
@@ -45,7 +46,7 @@ public:
 
 	// Window size and position as well as pane sizes
 	void RememberSplitterPositions();
-	void RestoreSplitterPositions();
+	bool RestoreSplitterPositions();
 
 	void CheckChangedSettings();
 
@@ -68,24 +69,19 @@ protected:
 	void InitToolbarState();
 	void InitMenubarState();
 
-	// If resizing the window, make sure the individual splitter windows don't get too small
-	void ApplySplitterConstraints();
-
 	void FocusNextEnabled(std::list<wxWindow*>& windowOrder, std::list<wxWindow*>::iterator iter, bool skipFirst, bool forward);
-
-	void LayoutSplittersOnSize();
 
 	CStatusBar* m_pStatusBar;
 	wxMenuBar* m_pMenuBar;
 	wxToolBar* m_pToolBar;
 	CQuickconnectBar* m_pQuickconnectBar;
 
-	wxSplitterWindow* m_pTopSplitter; // If log position is 0, splits message log from rest of panes
-	wxSplitterWindow* m_pBottomSplitter; // Top contains view splitter, buttom queue (or queuelog splitter if in position 1)
-	wxSplitterWindow* m_pViewSplitter; // Contains local and remote splitters
-	wxSplitterWindow* m_pLocalSplitter;
-	wxSplitterWindow* m_pRemoteSplitter;
-	wxSplitterWindow* m_pQueueLogSplitter;
+	CSplitterWindowEx* m_pTopSplitter; // If log position is 0, splits message log from rest of panes
+	CSplitterWindowEx* m_pBottomSplitter; // Top contains view splitter, buttom queue (or queuelog splitter if in position 1)
+	CSplitterWindowEx* m_pViewSplitter; // Contains local and remote splitters
+	CSplitterWindowEx* m_pLocalSplitter;
+	CSplitterWindowEx* m_pRemoteSplitter;
+	CSplitterWindowEx* m_pQueueLogSplitter;
 
 	CStatusView* m_pStatusView;
 	CQueueView* m_pQueueView;
@@ -120,17 +116,16 @@ protected:
 	virtual WXLRESULT MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam);
 #endif
 
+	void HandleResize();
+
 	// Event handlers
 	DECLARE_EVENT_TABLE()
 	void OnSize(wxSizeEvent& event);
-	void OnViewSplitterPosChanged(wxSplitterEvent& event);
 	void OnMenuHandler(wxCommandEvent& event);
 	void OnMenuOpenHandler(wxMenuEvent& event);
 	void OnEngineEvent(wxEvent& event);
 	void OnDisconnect(wxCommandEvent& event);
 	void OnCancel(wxCommandEvent& event);
-	void OnSplitterSashPosChanging(wxSplitterEvent& event);
-	void OnSplitterSashPosChanged(wxSplitterEvent& event);
 	void OnClose(wxCloseEvent& event);
 	void OnReconnect(wxCommandEvent& event);
 	void OnRefresh(wxCommandEvent& event);
@@ -155,16 +150,8 @@ protected:
 	void OnActivate(wxActivateEvent& event);
 	void OnToolbarComparison(wxCommandEvent& event);
 	void OnToolbarComparisonDropdown(wxCommandEvent& event);
-#ifdef __WXMSW__
-	void OnSizePost(wxCommandEvent& event);
-#endif
 	void OnDropdownComparisonMode(wxCommandEvent& event);
 
-#ifdef __WXMSW__
-	bool m_pendingPostSizing;
-#endif
-
-	float m_ViewSplitterSashPos;
 	bool m_bInitDone;
 	bool m_bQuit;
 	wxEventType m_closeEvent;
@@ -173,13 +160,6 @@ protected:
 	CAsyncRequestQueue* m_pAsyncRequestQueue;
 	CState* m_pState;
 	CMainFrameStateEventHandler* m_pStateEventHandler;
-
-	// Variables to remember the splitter position on unsplit
-	int m_lastLogViewSplitterPos;
-	int m_lastLocalTreeSplitterPos;
-	int m_lastRemoteTreeSplitterPos;
-	int m_lastBottomSplitterPos;
-	double m_lastQueueLogSplitterPos;;
 
 	CWindowStateManager* m_pWindowStateManager;
 

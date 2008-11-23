@@ -97,7 +97,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Local filelist colwidths", string, _T("") },
 	{ "Remote filelist colwidths", string, _T("") },
 	{ "Window position and size", string, _T("") },
-	{ "Splitter positions", string, _T("") },
+	{ "Splitter positions (v2)", string, _T("") },
 	{ "Local filelist sortorder", string, _T("") },
 	{ "Remote filelist sortorder", string, _T("") },
 	{ "Time Format", string, _T("") },

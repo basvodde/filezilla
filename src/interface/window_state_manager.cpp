@@ -104,6 +104,9 @@ bool CWindowStateManager::Restore(unsigned int optionId)
 		// doesn't fully set the height properly at least under wxMSW
 		m_pWindow->SetClientSize(client_width, client_height);
 
+#ifdef __WXMSW__
+		m_pWindow->Show();
+#endif
 		m_pWindow->Maximize();
 	}
 	else
