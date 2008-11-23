@@ -79,11 +79,13 @@ protected:
 	wxMenuBar* m_pMenuBar;
 	wxToolBar* m_pToolBar;
 	CQuickconnectBar* m_pQuickconnectBar;
-	wxSplitterWindow* m_pTopSplitter;
-	wxSplitterWindow* m_pBottomSplitter;
-	wxSplitterWindow* m_pViewSplitter;
+
+	wxSplitterWindow* m_pTopSplitter; // If log position is 0, splits message log from rest of panes
+	wxSplitterWindow* m_pBottomSplitter; // Top contains view splitter, buttom queue (or queuelog splitter if in position 1)
+	wxSplitterWindow* m_pViewSplitter; // Contains local and remote splitters
 	wxSplitterWindow* m_pLocalSplitter;
 	wxSplitterWindow* m_pRemoteSplitter;
+	wxSplitterWindow* m_pQueueLogSplitter;
 
 	CStatusView* m_pStatusView;
 	CQueueView* m_pQueueView;
@@ -176,7 +178,8 @@ protected:
 	int m_lastLogViewSplitterPos;
 	int m_lastLocalTreeSplitterPos;
 	int m_lastRemoteTreeSplitterPos;
-	int m_lastQueueSplitterPos;
+	int m_lastBottomSplitterPos;
+	double m_lastQueueLogSplitterPos;;
 
 	CWindowStateManager* m_pWindowStateManager;
 

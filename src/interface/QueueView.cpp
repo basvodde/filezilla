@@ -264,7 +264,7 @@ public:
 
 		m_processing_entries = false;
 
-		if (m_threadWaiting && m_entryList.empty())
+		if (m_threadWaiting && (!m_dirsToCheck.empty() || m_entryList.empty()))
 		{
 			m_threadWaiting = false;
 			m_condition.Signal();
@@ -607,6 +607,8 @@ void CQueueView::ProcessNotification(t_EngineData* pEngineData, CNotification* p
 	case nId_logmsg:
 		m_pMainFrame->GetStatusView()->AddToLog(reinterpret_cast<CLogmsgNotification *>(pNotification));
 		delete pNotification;
+		if (COptions::Get()->GetOptionVal(OPTION_MESSAGELOG_POSITION) == 2)
+			m_pQueue->Highlight(3);
 		break;
 	case nId_operation:
 		ProcessReply(pEngineData, reinterpret_cast<COperationNotification*>(pNotification));
