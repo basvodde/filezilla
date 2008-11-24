@@ -19,6 +19,8 @@ public:
 	void SetRelativeSashPosition(double relative_sash_position);
 	double GetRelativeSashPosition() const { return m_relative_sash_position; }
 
+	void Initialize(wxWindow *window);
+
 	bool SplitHorizontally(wxWindow* window1, wxWindow* window2, int sashPosition = 0);
 	bool SplitVertically(wxWindow* window1, wxWindow* window2, int sashPosition = 0);
 
@@ -39,7 +41,6 @@ protected:
 	int m_soft_min_pane_size;
 
 	int m_lastSashPosition;
-	int m_lastSashPosition_size;
 };
 
 #endif //__SPLITTER_H__

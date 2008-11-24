@@ -1579,13 +1579,11 @@ void CMainFrame::OnToggleLogView(wxCommandEvent& event)
 		else if (m_pStatusView->IsShown())
 		{
 			m_pStatusView->Hide();
-			wxRect rect = m_pBottomSplitter->GetClientSize();
 			m_pBottomSplitter->Unsplit(m_pQueueLogSplitter);
 			shown = false;
 		}
 		else if (!m_pQueueLogSplitter->IsShown())
 		{
-			wxRect rect = m_pBottomSplitter->GetClientSize();
 			m_pQueueLogSplitter->Initialize(m_pStatusView);
 			m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueueLogSplitter);
 			shown = true;
@@ -1593,7 +1591,6 @@ void CMainFrame::OnToggleLogView(wxCommandEvent& event)
 		else
 		{
 			m_pQueueLogSplitter->SplitVertically(m_pQueuePane, m_pStatusView);
-			wxSize size = m_pQueueLogSplitter->GetClientSize();
 			shown = true;
 		}
 	}
@@ -1729,13 +1726,11 @@ void CMainFrame::OnToggleQueueView(wxCommandEvent& event)
 		else if (m_pQueuePane->IsShown())
 		{
 			m_pQueuePane->Hide();
-			wxRect rect = m_pBottomSplitter->GetClientSize();
 			m_pBottomSplitter->Unsplit(m_pQueueLogSplitter);
 			shown = false;
 		}
 		else if (!m_pQueueLogSplitter->IsShown())
 		{
-			wxRect rect = m_pBottomSplitter->GetClientSize();
 			m_pQueueLogSplitter->Initialize(m_pQueuePane);
 			m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueueLogSplitter);
 			shown = true;
