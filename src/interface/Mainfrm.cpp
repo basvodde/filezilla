@@ -48,11 +48,6 @@
 
 #define TRANSFERSTATUS_TIMER_ID wxID_HIGHEST + 3
 
-#ifdef __WXMSW__
-DECLARE_EVENT_TYPE(fzEVT_ONSIZE_POST, -1)
-DEFINE_EVENT_TYPE(fzEVT_ONSIZE_POST)
-#endif
-
 BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_SIZE(CMainFrame::OnSize)
 	EVT_MENU(wxID_ANY, CMainFrame::OnMenuHandler)
@@ -1603,16 +1598,7 @@ void CMainFrame::OnToggleLogView(wxCommandEvent& event)
 		}
 		else
 		{
-			// Sometimes m_pQueueView resizes instead of m_bViewSplitter, save original value
-			wxRect rect = m_pBottomSplitter->GetClientSize();
-			int queueSplitterPos = rect.GetHeight() - m_pBottomSplitter->GetSashPosition();
 			m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter);
-
-			// Restore previous queue size
-			rect = m_pBottomSplitter->GetClientSize();
-			if (queueSplitterPos != (rect.GetHeight() - m_pBottomSplitter->GetSashPosition()))
-				m_pBottomSplitter->SetSashPosition(rect.GetHeight() - queueSplitterPos);
-
 			shown = true;
 		}
 	}

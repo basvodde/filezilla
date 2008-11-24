@@ -190,6 +190,8 @@ void CSplitterWindowEx::SetSashPosition(int sash_position)
 
 	if (!sash_position)
 		sash_position = size / 2;
+	if (sash_position < 0 && m_sashGravity == 1.0)
+		sash_position = size + sash_position - GetSashSize();
 
 	wxSplitterWindow::SetSashPosition(sash_position);
 
@@ -272,7 +274,21 @@ bool CSplitterWindowEx::SplitVertically(wxWindow* window1, wxWindow* window2, in
 int CSplitterWindowEx::GetSashPosition() const
 {
 	if (m_windowTwo || m_lastSashPosition == -1)
-		return wxSplitterWindow::GetSashPosition();
+	{
+		int sashPosition = wxSplitterWindow::GetSashPosition();
+
+		if (m_sashGravity == 1.0)
+		{
+			int w, h;
+			GetClientSize(&w, &h);
+
+			int size = m_splitMode == wxSPLIT_VERTICAL ? w : h;
+
+			sashPosition = sashPosition + GetSashSize() - size;
+		}
+
+		return sashPosition;
+	}
 
 	return m_lastSashPosition;
 }
