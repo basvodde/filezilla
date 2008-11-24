@@ -547,11 +547,24 @@ bool CLocalFileSystem::GetNextFile(wxString& name, bool &isLink, bool &is_dir, w
 		strcpy(m_file_part, entry->d_name);
 		enum local_fileType type = GetFileInfo(m_raw_path, isLink, size, modificationTime, mode);
 
-#ifndef _DIRENT_HAVE_D_TYPE
-		// Solaris doesn't have d_type
-		if (m_dirs_only && type != dir)
-			continue;
+		if (type == unknown) // Happens for example in case of permission denied
+		{
+#ifdef _DIRENT_HAVE_D_TYPE
+			type = entry->d_type == DT_DIR ? dir : file;
+#else
+			type = file;
 #endif
+			isLink = 0;
+			if (size)
+				*size = -1;
+			if (modificationTime)
+				*modificationTime = wxDateTime();
+			if (mode)
+				*mode = 0;
+		}
+		if (m_dirs_only && type != dir)
+			continue;	
+
 		is_dir = type == dir;
 		
 		name = wxString(entry->d_name, *wxConvFileName);
