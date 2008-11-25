@@ -170,7 +170,7 @@ void CSplitterWindowEx::SetRelativeSashPosition(double relative_sash_position)
 
 	int size = m_splitMode == wxSPLIT_VERTICAL ? w : h;
 
-	wxSplitterWindow::SetSashPosition((int)(w * relative_sash_position));
+	wxSplitterWindow::SetSashPosition((int)(size * relative_sash_position));
 
 	m_relative_sash_position = relative_sash_position;
 }

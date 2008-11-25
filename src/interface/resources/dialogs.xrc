@@ -1883,6 +1883,37 @@
         </object>
         <flag>wxGROW</flag>
       </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Message log position</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxHORIZONTAL</orient>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Position of the message log:</label>
+                </object>
+                <flag>wxRIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                <border>5</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxChoice" name="ID_MESSAGELOGPOS">
+                  <content>
+                    <item>Above the file lists</item>
+                    <item>Next to the transfer queue</item>
+                    <item>As tab in the transfer queue pane</item>
+                  </content>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxGROW</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
     </object>
   </object>
   <object class="wxPanel" name="ID_SETTINGS_CONNECTION">

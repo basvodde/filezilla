@@ -332,7 +332,10 @@ CMainFrame::CMainFrame()
 		if (COptions::Get()->GetOptionVal(OPTION_SHOW_QUEUE))
 			m_pQueueLogSplitter->Initialize(m_pQueuePane);
 		else
+		{
+			m_pQueuePane->Hide();
 			m_pQueueLogSplitter->Hide();
+		}
 		if (COptions::Get()->GetOptionVal(OPTION_SHOW_MESSAGELOG))
 			m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter);
 		else
@@ -421,17 +424,20 @@ CMainFrame::CMainFrame()
 
 	if (!RestoreSplitterPositions())
 	{
-		m_pTopSplitter->SetSashPosition(100);
+		m_pTopSplitter->SetSashPosition(97);
 
 		m_pViewSplitter->SetSashPosition(0);
 
 		wxSize size = m_pBottomSplitter->GetClientSize();
-		int h = size.GetHeight() - 150;
+		int h = size.GetHeight() - 135;
 		if (h < 50)
 			h = 50;
 		m_pBottomSplitter->SetSashPosition(h);
 
 		m_pQueueLogSplitter->SetSashPosition(0);
+
+		m_pLocalSplitter->SetRelativeSashPosition(0.4);
+		m_pRemoteSplitter->SetRelativeSashPosition(0.4);
 	}
 
 	wxString localDir = COptions::Get()->GetOption(OPTION_LASTLOCALDIR);
@@ -1790,13 +1796,93 @@ void CMainFrame::OnCheckForUpdates(wxCommandEvent& event)
 }
 #endif //FZ_MANUALUPDATECHECK
 
-void CMainFrame::UpdateLayout(int layout /*=-1*/, int swap /*=-1*/)
+void CMainFrame::UpdateLayout(int layout /*=-1*/, int swap /*=-1*/, int messagelog_position /*=-1*/)
 {
 	if (layout == -1)
 		layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
 	if (swap == -1)
 		swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
 
+	bool final;
+	if (messagelog_position == -1)
+	{
+		final = true;
+		messagelog_position = COptions::Get()->GetOptionVal(OPTION_MESSAGELOG_POSITION);
+	}
+	else
+		final = false;
+
+	// First handle changes in message log position as it can make size of the other panes change
+	{
+		bool shown = m_pStatusView->IsShown();
+		wxWindow* parent = m_pStatusView->GetParent();
+	
+		bool changed;
+		if (parent == m_pTopSplitter && messagelog_position != 0)
+		{
+			if (shown)
+				m_pTopSplitter->Unsplit(m_pStatusView);
+			changed = true;
+		}
+		else if (parent == m_pQueueLogSplitter && messagelog_position != 1)
+		{
+			if (shown)
+			{
+				if (m_pQueueLogSplitter->IsSplit())
+					m_pQueueLogSplitter->Unsplit(m_pStatusView);
+				else
+					m_pBottomSplitter->Unsplit(m_pQueueLogSplitter);
+			}
+			changed = true;
+		}
+		else if (parent != m_pTopSplitter && parent != m_pQueueLogSplitter && messagelog_position != 2)
+		{
+			m_pQueuePane->RemovePage(3);
+			changed = true;
+			shown = true;
+		}
+		else
+			changed = false;
+
+		if (changed)
+		{
+			switch (messagelog_position)
+			{
+			default:
+				m_pStatusView->Reparent(m_pTopSplitter);
+				if (shown)
+					m_pTopSplitter->SplitHorizontally(m_pStatusView, m_pBottomSplitter);
+				break;
+			case 1:
+				m_pStatusView->Reparent(m_pQueueLogSplitter);
+				if (shown)
+				{
+					if (m_pQueueLogSplitter->IsShown())
+						m_pQueueLogSplitter->SplitVertically(m_pQueuePane, m_pStatusView);
+					else
+					{
+						m_pQueueLogSplitter->Initialize(m_pStatusView);
+						m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueueLogSplitter);
+					}
+				}
+				break;
+			case 2:
+				m_pQueuePane->AddPage(m_pStatusView, _("Message log"));
+				break;
+			}
+		}
+
+		bool has_messagelog_button = m_pToolBar && m_pToolBar->FindById(XRCID("ID_TOOLBAR_LOGVIEW"));
+		if (final && 
+			((has_messagelog_button && messagelog_position == 2) ||
+			 (!has_messagelog_button && messagelog_position != 2)))
+		{
+			CreateMenus();
+			CreateToolBar();
+		}
+	}
+
+	// Now the other panes
 	int mode;
 	if (!layout || layout == 2 || layout == 3)
 		mode = wxSPLIT_VERTICAL;
@@ -2322,10 +2408,10 @@ void CMainFrame::InitMenubarState()
 		return;
 	m_pMenuBar->Check(XRCID("ID_VIEW_QUICKCONNECT"), m_pQuickconnectBar != 0);
 	if (COptions::Get()->GetOptionVal(OPTION_MESSAGELOG_POSITION) != 2)
-		m_pMenuBar->Check(XRCID("ID_VIEW_MESSAGELOG"), m_pTopSplitter && m_pTopSplitter->IsSplit());
+		m_pMenuBar->Check(XRCID("ID_VIEW_MESSAGELOG"), m_pStatusView && m_pStatusView->IsShown());
 	m_pMenuBar->Check(XRCID("ID_VIEW_LOCALTREE"), m_pLocalSplitter && m_pLocalSplitter->IsSplit());
 	m_pMenuBar->Check(XRCID("ID_VIEW_REMOTETREE"), m_pRemoteSplitter && m_pRemoteSplitter->IsSplit());
-	m_pMenuBar->Check(XRCID("ID_VIEW_QUEUE"), m_pBottomSplitter && m_pBottomSplitter->IsSplit());
+	m_pMenuBar->Check(XRCID("ID_VIEW_QUEUE"), m_pQueuePane && m_pQueuePane->IsShown());
 	m_pMenuBar->Check(XRCID("ID_MENU_VIEW_FILELISTSTATUSBAR"), COptions::Get()->GetOptionVal(OPTION_FILELIST_STATUSBAR) != 0);
 }
 

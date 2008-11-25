@@ -42,7 +42,7 @@ public:
 	CQueueView* GetQueue() { return m_pQueueView; }
 	CQuickconnectBar* GetQuickconnectBar() { return m_pQuickconnectBar; }
 
-	void UpdateLayout(int layout = -1, int swap = -1);
+	void UpdateLayout(int layout = -1, int swap = -1, int messagelog_position = -1);
 
 	// Window size and position as well as pane sizes
 	void RememberSplitterPositions();

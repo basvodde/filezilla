@@ -8,6 +8,7 @@
 BEGIN_EVENT_TABLE(COptionsPageInterface, COptionsPage)
 EVT_CHECKBOX(XRCID("ID_FILEPANESWAP"), COptionsPageInterface::OnLayoutChange)
 EVT_CHOICE(XRCID("ID_FILEPANELAYOUT"), COptionsPageInterface::OnLayoutChange)
+EVT_CHOICE(XRCID("ID_MESSAGELOGPOS"), COptionsPageInterface::OnLayoutChange)
 END_EVENT_TABLE()
 
 bool COptionsPageInterface::LoadPage()
@@ -18,7 +19,9 @@ bool COptionsPageInterface::LoadPage()
 	SetChoice(XRCID("ID_FILEPANELAYOUT"), m_pOptions->GetOptionVal(OPTION_FILEPANE_LAYOUT), failure);
 	SetChoice(XRCID("ID_SORTMODE"), m_pOptions->GetOptionVal(OPTION_FILELIST_DIRSORT), failure);
 
-	SetTextFromOption(XRCID("ID_COMPARISON_THRESHOLD"), OPTION_COMPARISON_THRESHOLD, failure); 
+	SetTextFromOption(XRCID("ID_COMPARISON_THRESHOLD"), OPTION_COMPARISON_THRESHOLD, failure);
+
+	SetChoice(XRCID("ID_MESSAGELOGPOS"), m_pOptions->GetOptionVal(OPTION_MESSAGELOG_POSITION), failure);
 
 	return !failure;
 }
@@ -30,6 +33,8 @@ bool COptionsPageInterface::SavePage()
 	m_pOptions->SetOption(OPTION_FILELIST_DIRSORT, GetChoice(XRCID("ID_SORTMODE")));
 
 	SetOptionFromText(XRCID("ID_COMPARISON_THRESHOLD"), OPTION_COMPARISON_THRESHOLD); 
+
+	m_pOptions->SetOption(OPTION_MESSAGELOG_POSITION, GetChoice(XRCID("ID_MESSAGELOGPOS")));
 
 	return true;
 }
@@ -49,5 +54,5 @@ void COptionsPageInterface::OnLayoutChange(wxCommandEvent& event)
 	int layout = GetChoice(XRCID("ID_FILEPANELAYOUT"));
 	int swap = GetCheck(XRCID("ID_FILEPANESWAP")) ? 1 : 0;
 
-	m_pOwner->m_pMainFrame->UpdateLayout(layout, swap);
+	m_pOwner->m_pMainFrame->UpdateLayout(layout, swap, GetChoice(XRCID("ID_MESSAGELOGPOS")));
 }

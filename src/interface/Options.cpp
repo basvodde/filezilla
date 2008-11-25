@@ -474,6 +474,10 @@ int COptions::Validate(unsigned int nID, int value)
 		if (value < 0 || value > 3)
 			value = 0;
 		break;
+	case OPTION_MESSAGELOG_POSITION:
+		if (value < 0 || value > 2)
+			value = 0;
+		break;
 	}
 	return value;
 }
