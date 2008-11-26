@@ -1625,9 +1625,6 @@ void CMainFrame::OnToggleLocalTreeView(wxCommandEvent& event)
 
 	if (m_pLocalSplitter->IsSplit())
 	{
-		const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
-		const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
-
 		m_pLocalListViewPanel->SetHeader(m_pLocalTreeViewPanel->DetachHeader());
 		m_pLocalSplitter->Unsplit(m_pLocalTreeViewPanel);
 	}
@@ -1666,9 +1663,6 @@ void CMainFrame::OnToggleRemoteTreeView(wxCommandEvent& event)
 
 	if (m_pRemoteSplitter->IsSplit())
 	{
-		const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
-		const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
-
 		m_pRemoteListViewPanel->SetHeader(m_pRemoteTreeViewPanel->DetachHeader());
 		m_pRemoteSplitter->Unsplit(m_pRemoteTreeViewPanel);
 	}
