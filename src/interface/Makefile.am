@@ -204,6 +204,10 @@ endif
 
 filezilla_DEPENDENCIES = ../engine/libengine.a
 
+if MINGW
+filezilla_DEPENDENCIES += resources/filezilla.o
+endif
+
 if HAVE_LIBTINYXML
 else
 filezilla_DEPENDENCIES += $(TINYXML_LIBS)

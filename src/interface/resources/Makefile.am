@@ -17,7 +17,7 @@ dist_resources48_DATA = 48x48/filezilla.png
 if USE_RESOURCEFILE
 nodist_noinst_DATA = filezilla.o
 
-filezilla.o: $(srcdir)/filezilla.rc
+filezilla.o: $(srcdir)/filezilla.rc $(srcdir)/windows_manifest.xml version.rc
 	@if [ -f $@~ ]; then rm $@~; fi
 	@WINDRES@ --include-dir=. --include-dir=$(srcdir) $(WINDRESFLAGS) $(srcdir)/filezilla.rc -D HAS_VERSIONRC $@~ || rm $@~
 	@if [ -f $@ ]; then rm $@; fi
@@ -27,7 +27,7 @@ endif
 
 dist_noinst_DATA = filezilla.rc FileZilla.ico \
 		FileZilla.icns MacInfo.plist.in \
-		version.rc.in
+		version.rc.in windows_manifest.xml
 
 if MACAPPBUNDLE
 mac-copy-resources: $(dist_resources_DATA)
