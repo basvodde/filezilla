@@ -22,7 +22,7 @@ libfzsftp_win_a_SOURCES = winpgntc.c \
 
 noinst_HEADERS = winstuff.h rcstuff.h
 
-dist_noinst_DATA = psftp.rc version.rc2 pscp.ico
+dist_noinst_DATA = psftp.rc version.rc2 pscp.ico windows_manifest.xml
 
 CLEANFILES = pscp.o
 
@@ -30,7 +30,7 @@ if USE_RESOURCEFILE
 
 nodist_noinst_DATA = psftp.o
 
-psftp.o: $(srcdir)/psftp.rc
+psftp.o: $(srcdir)/psftp.rc $(srcdir)/windows_manifest.xml
 	@if [ -f $@~ ]; then rm $@~; fi
 	@WINDRES@ --include-dir=$(srcdir) $(WINDRESFLAGS) $(srcdir)/psftp.rc $@~
 	@if [ -f $@ ]; then rm $@; fi

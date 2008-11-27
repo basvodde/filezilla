@@ -74,7 +74,7 @@ if SFTP_MINGW
   fzsftp_LDADD += windows/libfzsftp_win.a windows/libfzputtycommon_win.a $(RESOURCEFILE)
 
   fzputtygen_CPPFLAGS = $(AM_CPPFLAGS) -D_WINDOWS
-  fzputtygen_LDADD = windows/libfzputtycommon_win.a libfzputtycommon.a
+  fzputtygen_LDADD = windows/libfzputtycommon_win.a libfzputtycommon.a $(RESOURCEFILE)
 endif
 
 if MACAPPBUNDLE
