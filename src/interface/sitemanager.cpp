@@ -2281,7 +2281,7 @@ void CSiteManager::OnExportSelected(wxCommandEvent& event)
 	wxString error;
 	if (!xml.Save(&error))
 	{
-		wxString msg = wxString::Format(_("Could not write \"%s\", the selected sites coud not be exported: %s"), fn.GetFullPath().c_str(), error.c_str());
+		wxString msg = wxString::Format(_("Could not write \"%s\", the selected sites could not be exported: %s"), fn.GetFullPath().c_str(), error.c_str());
 		wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
 	}
 }
