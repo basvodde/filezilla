@@ -237,6 +237,8 @@ protected:
 	// On failure, the engine was not waiting for a lock.
 	enum locking_reason ObtainLockFromEvent();
 
+	bool IsWaitingForLock();
+
 #ifdef __VISUALC__
 	// Retarded compiler does not like my code
 	public:

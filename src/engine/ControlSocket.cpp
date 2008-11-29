@@ -612,6 +612,9 @@ void CControlSocket::OnTimer(wxTimerEvent& event)
 	if (m_pCurOpData && m_pCurOpData->waitForAsyncRequest)
 		return;
 
+	if (IsWaitingForLock())
+		return;
+
 	if (m_stopWatch.Time() > (timeout * 1000))
 	{
 		LogMessage(::Error, _("Connection timed out"));
@@ -825,6 +828,15 @@ void CControlSocket::OnObtainLock(wxCommandEvent& event)
 	SendNextCommand();
 
 	UnlockCache();
+}
+
+bool CControlSocket::IsWaitingForLock()
+{
+	std::list<t_lockInfo>::iterator own = GetLockStatus();
+	if (own == m_lockInfoList.end())
+		return false;
+
+	return own->waiting == true;
 }
 
 void CControlSocket::InvalidateCurrentWorkingDir(const CServerPath& path)
