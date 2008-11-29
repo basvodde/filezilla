@@ -136,7 +136,7 @@ bool wxAuiNotebookEx::SetPageText(size_t page_idx, const wxString& text)
 
 void wxAuiNotebookEx::Highlight(size_t page, bool highlight /*=true*/)
 {
-	if (GetSelection() == page)
+	if (GetSelection() == (int)page)
 		return;
 
 	wxASSERT(page < m_tabs.GetPageCount());

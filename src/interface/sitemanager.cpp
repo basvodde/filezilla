@@ -2276,7 +2276,7 @@ void CSiteManager::OnExportSelected(wxCommandEvent& event)
 	TiXmlElement* exportRoot = xml.CreateEmpty();
 
 	TiXmlElement* pServers = exportRoot->InsertEndChild(TiXmlElement("Servers"))->ToElement();
-	bool res = SaveChild(pServers, m_contextMenuItem);
+	SaveChild(pServers, m_contextMenuItem);
 
 	wxString error;
 	if (!xml.Save(&error))
