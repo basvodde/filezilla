@@ -86,37 +86,40 @@ DECLARE_COMMAND(CDisconnectCommand, cmd_disconnect)
 DECLARE_COMMAND(CCancelCommand, cmd_cancel)
 };
 
+#define LIST_FLAG_REFRESH 1
+#define LIST_FLAG_AVOID 2
+#define LIST_FLAG_FALLBACK_CURRENT 4
+#define LIST_FLAG_LINK 8
 DECLARE_COMMAND(CListCommand, cmd_list)
     // Without a given directory, the current directory will be listed.
     // Directories can either be given as absolute path or as
     // pair of an absolute path and the very last path segments.
-	// Set refresh to true to get a directory listing even if a cache
+	
+	// Set LIST_FLAG_REFRESH to get a directory listing even if a cache
 	// lookup can be made after finding out true remote directory.
 	//
-	// If fallback_to_current is set and CWD fails, list whatever
+	// Set LIST_FLAG_AVOID to get a directory listing only if cache lookup
+	// fails or contains unsure entries, otherwise don't send listing.
+	//
+	// If LIST_FLAG_FALLBACK_CURRENT is set and CWD fails, list whatever
 	// directory we are currently in. Useful for initial reconnect to the
 	// server when we don't know if remote directory still exists
-	CListCommand(bool refresh = false);
-	CListCommand(CServerPath path, wxString subDir = _T(""), bool refresh = false, bool fallback_to_current = false);
+	//
+	// LIST_FLAG_LINK is used for symlink discovery. There's unfortunately
+	// no sane way to distinguish between symlinks to files and symlinks to
+	// directories.
+	CListCommand(int flags = 0);
+	CListCommand(CServerPath path, wxString subDir = _T(""), int flags = 0);
 	
 	CServerPath GetPath() const;
 	wxString GetSubDir() const;
 
-	bool Refresh() const;
-	bool FallbackToCurrent() const { return m_fallback_to_current; }
-
-	// Used for symlink discovery. There's unfortunately no sane
-	// way to distinguish between symlinks to files and symlinks to
-	// directories.
-	void SetIsLink(bool link) { m_link = link; }
-	bool IsLink() const { return m_link; }
+	int GetFlags() const { return m_flags; }
 
 protected:
 	CServerPath m_path;
 	wxString m_subDir;
-	bool m_refresh;
-	bool m_fallback_to_current;
-	bool m_link;
+	int m_flags;
 };
 
 DECLARE_COMMAND(CFileTransferCommand, cmd_transfer)

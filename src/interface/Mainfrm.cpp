@@ -744,7 +744,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		COptions::Get()->SetOption(OPTION_VIEW_HIDDEN_FILES, showHidden ? 1 : 0);
 		CServerPath path = m_pState->GetRemotePath();
 		if (!path.IsEmpty() && m_pState->m_pCommandQueue)
-			m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(path, _T(""), true));
+			m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(path, _T(""), LIST_FLAG_REFRESH));
 	}
 	else if (event.GetId() == XRCID("ID_EXPORT"))
 	{
@@ -1358,7 +1358,7 @@ void CMainFrame::OnRefresh(wxCommandEvent &event)
 		return;
 
 	if (m_pState->m_pCommandQueue && m_pState->IsRemoteConnected() && m_pState->IsRemoteIdle())
-		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_pState->GetRemotePath(), _T(""), true));
+		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_pState->GetRemotePath(), _T(""), LIST_FLAG_REFRESH));
 
 	m_pState->RefreshLocal();
 }

@@ -104,11 +104,6 @@ public:
 	// This includes queued folders which are yet to be processed
 	void SetDefaultFileExistsAction(enum CFileExistsNotification::OverwriteAction action, const enum TransferDirection direction);
 
-	// Tries to refresh the current remote directory listing
-	// if there's an idle engine connected to the current server of
-	// the primary connection.
-	void TryRefreshListings();
-
 	void UpdateItemSize(CFileItem* pItem, wxLongLong size);
 
 	void RemoveAll();
@@ -169,6 +164,14 @@ protected:
 #endif
 
 	void ProcessNotification(t_EngineData* pEngineData, CNotification* pNotification);
+
+	// Tries to refresh the current remote directory listing
+	// if there's an idle engine connected to the current server of
+	// the primary connection.
+	void TryRefreshListings();
+	CServer m_last_refresh_server;
+	CServerPath m_last_refresh_path;
+	CTimeEx m_last_refresh_listing_time;
 
 	// Called from Process Reply.
 	// After a disconnect, check if there's another idle engine that

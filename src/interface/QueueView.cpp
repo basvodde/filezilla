@@ -1540,6 +1540,8 @@ void CQueueView::CheckQueueState()
 		}
 		*/
 
+		TryRefreshListings();
+
 		m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_QUEUEPROCESSING);
 
 		if (!m_quit)
@@ -2451,8 +2453,6 @@ t_EngineData* CQueueView::GetIdleEngine(const CServer* pServer /*=0*/)
 
 void CQueueView::TryRefreshListings()
 {
-	// TODO: This function is currently unused
-
 	if (m_quit)
 		return;
 
@@ -2462,25 +2462,32 @@ void CQueueView::TryRefreshListings()
 		return;
 
 	const CDirectoryListing* const pListing = pState->GetRemoteDir();
-	if (!pListing || !pListing->m_hasUnsureEntries)
+	if (!pListing)
 		return;
 
-	// See if there's an engine with is already listing
+	// See if there's an engine that is already listing
 	for (unsigned int i = 1; i < m_engineData.size(); i++)
 	{
-		if (!m_engineData[i]->active)
+		if (!m_engineData[i]->active || m_engineData[i]->state != t_EngineData::list)
 			continue;
 
-		if (m_engineData[i]->pItem)
-			continue;
-
-		if (m_engineData[i]->pEngine->IsConnected() && m_engineData[i]->lastServer == *pServer)
+		if (m_engineData[i]->lastServer == *pServer)
 		{
 			// This engine is already listing a directory on the current server
 			return;
 		}
 	}
 
+	if (m_last_refresh_server == *pServer && m_last_refresh_path == pListing->path &&
+		m_last_refresh_listing_time == pListing->m_firstListTime)
+	{
+		// Do not try to refresh same directory multiple times
+		return;
+	}
+	m_last_refresh_server = *pServer;
+	m_last_refresh_path = pListing->path;
+	m_last_refresh_listing_time = pListing->m_firstListTime;
+	
 	t_EngineData* pEngineData = GetIdleEngine(pServer);
 	if (!pEngineData)
 		return;
@@ -2488,7 +2495,7 @@ void CQueueView::TryRefreshListings()
 	if (!pEngineData->pEngine->IsConnected() || pEngineData->lastServer != *pServer)
 		return;
 
-	CListCommand command(pListing->path);
+	CListCommand command(pListing->path, _T(""), LIST_FLAG_AVOID);
 	int res = pEngineData->pEngine->Command(command);
 	if (res != FZ_REPLY_WOULDBLOCK)
 		return;

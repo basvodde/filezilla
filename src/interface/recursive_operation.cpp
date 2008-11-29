@@ -110,9 +110,7 @@ bool CRecursiveOperation::NextOperation()
 			continue;
 		}
 
-		CListCommand* cmd = new CListCommand(dirToVisit.parent, dirToVisit.subdir);
-		if (dirToVisit.link)
-			cmd->SetIsLink(true);
+		CListCommand* cmd = new CListCommand(dirToVisit.parent, dirToVisit.subdir, dirToVisit.link ? LIST_FLAG_LINK : 0);
 		m_pState->m_pCommandQueue->ProcessCommand(cmd);
 		return true;
 	}

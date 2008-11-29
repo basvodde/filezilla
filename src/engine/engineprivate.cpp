@@ -336,11 +336,15 @@ int CFileZillaEnginePrivate::List(const CListCommand &command)
 	if (command.GetPath().IsEmpty() && command.GetSubDir() != _T(""))
 		return FZ_REPLY_SYNTAXERROR;
 
-	if (command.IsLink() && command.GetSubDir() == _T(""))
+	if (command.GetFlags() & LIST_FLAG_LINK && command.GetSubDir() == _T(""))
 		return FZ_REPLY_SYNTAXERROR;
 
-	bool refresh = command.Refresh();
-	if (!command.Refresh() && !command.GetPath().IsEmpty())
+	bool refresh = (command.GetFlags() & LIST_FLAG_REFRESH) != 0;
+	bool avoid = (command.GetFlags() & LIST_FLAG_AVOID) != 0;
+	if (refresh && avoid)
+		return FZ_REPLY_SYNTAXERROR;
+
+	if (!refresh && !command.GetPath().IsEmpty())
 	{
 		const CServer* pServer = m_pControlSocket->GetCurrentServer();
 		if (pServer)
@@ -358,10 +362,13 @@ int CFileZillaEnginePrivate::List(const CListCommand &command)
 						refresh = true;
 					else
 					{
-						m_lastListDir = pListing->path;
-						m_lastListTime = wxDateTime::Now();
-						CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing->path);
-						AddNotification(pNotification);
+						if (!avoid)
+						{
+							m_lastListDir = pListing->path;
+							m_lastListTime = wxDateTime::Now();
+							CDirectoryListingNotification *pNotification = new CDirectoryListingNotification(pListing->path);
+							AddNotification(pNotification);
+						}
 						delete pListing;
 						return FZ_REPLY_OK;
 					}
@@ -376,7 +383,7 @@ int CFileZillaEnginePrivate::List(const CListCommand &command)
 		return FZ_REPLY_BUSY;
 
 	m_pCurrentCommand = command.Clone();
-	return m_pControlSocket->List(command.GetPath(), command.GetSubDir(), refresh, command.FallbackToCurrent(), command.IsLink());
+	return m_pControlSocket->List(command.GetPath(), command.GetSubDir(), command.GetFlags());
 }
 
 int CFileZillaEnginePrivate::FileTransfer(const CFileTransferCommand &command)

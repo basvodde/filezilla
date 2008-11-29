@@ -899,7 +899,7 @@ enum listStates
 	list_mtime
 };
 
-int CSftpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/, bool refresh /*=false*/, bool fallback_to_current /*=false*/, bool link_discovery /*=false*/)
+int CSftpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDir /*=_T("")*/, int flags /*=0*/)
 {
 	LogMessage(Status, _("Retrieving directory listing..."));
 
@@ -925,10 +925,10 @@ int CSftpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDi
 		path.SetType(m_pCurrentServer->GetType());
 	pData->path = path;
 	pData->subDir = subDir;
-	pData->refresh = refresh;
-	pData->fallback_to_current = fallback_to_current;
+	pData->refresh = (flags & LIST_FLAG_REFRESH) != 0;
+	pData->fallback_to_current = (flags & LIST_FLAG_FALLBACK_CURRENT) != 0;
 
-	int res = ChangeDir(path, subDir, link_discovery);
+	int res = ChangeDir(path, subDir, (flags & LIST_FLAG_LINK) != 0);
 	if (res != FZ_REPLY_OK)
 		return res;
 
@@ -1671,7 +1671,7 @@ int CSftpControlSocket::FileTransferSubcommandResult(int prevResult)
 			}
 			if (pData->opState == filetransfer_waitlist)
 			{
-				int res = List(CServerPath(), _T(""), true);
+				int res = List(CServerPath(), _T(""), LIST_FLAG_REFRESH);
 				if (res != FZ_REPLY_OK)
 					return res;
 				ResetOperation(FZ_REPLY_INTERNALERROR);

@@ -1113,7 +1113,7 @@ void CRemoteListView::OnItemActivated(wxListEvent &event)
 		{
 			if (IsComparing())
 				ExitComparisonMode();
-			CListCommand* cmd = new CListCommand(m_pDirectoryListing->path, name);
+			CListCommand* cmd = new CListCommand(m_pDirectoryListing->path, name, entry.link ? LIST_FLAG_LINK : 0);
 			if (entry.link)
 			{
 				delete m_pLinkResolveState;
@@ -1122,7 +1122,6 @@ void CRemoteListView::OnItemActivated(wxListEvent &event)
 				m_pLinkResolveState->link = name;
 				m_pLinkResolveState->local_path = m_pState->GetLocalDir();
 				m_pLinkResolveState->server = *pServer;
-				cmd->SetIsLink(true);
 			}
 			m_pState->m_pCommandQueue->ProcessCommand(cmd);
 		}
