@@ -69,7 +69,7 @@ public:
 		if (type > 2)
 			return _T("");
 
-		if (m_str[type] != _T(""))
+		if (!m_str[type].IsEmpty())
 			return m_str[type];
 
 		if (!type)
@@ -317,6 +317,9 @@ public:
 			m_len = wxStrlen(p);
 
 		m_parsePos = 0;
+
+		m_Tokens.reserve(10);
+		m_LineEndTokens.reserve(10);
 	}
 
 	~CLine()
@@ -1716,19 +1719,19 @@ bool CDirectoryListingParser::ParseAsVms(CLine *pLine, CDirentry &entry)
 		const int len = token.GetLength();
 		if (len > 2 && token[0] == '(' && token[len - 1] == ')')
 		{
-			if (entry.permissions != _T(""))
+			if (!entry.permissions.IsEmpty())
 				entry.permissions += _T(" ");
 			entry.permissions += token.GetString().Mid(1, len - 2);
 		}
 		else if (len > 2 && token[0] == '[' && token[len - 1] == ']')
 		{
-			if (entry.ownerGroup != _T(""))
+			if (!entry.ownerGroup.IsEmpty())
 				entry.ownerGroup += _T(" ");
 			entry.ownerGroup += token.GetString().Mid(1, len - 2);
 		}
 		else
 		{
-			if (entry.permissions != _T(""))
+			if (!entry.permissions.IsEmpty())
 				entry.permissions += _T(" ");
 			entry.ownerGroup += token.GetString();
 		}
@@ -2124,10 +2127,10 @@ CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
 		else
 		{
 			wxString str(res, wxConvUTF8);
-			if (str == _T(""))
+			if (str.IsEmpty())
 			{
 				str = wxString(res, wxConvLocal);
-				if (str == _T(""))
+				if (str.IsEmpty())
 					str = wxString(res, wxConvISO8859_1);
 			}
 			buffer = new wxChar[str.Len() + 1];
@@ -2575,7 +2578,7 @@ bool CDirectoryListingParser::ParseAsMlsd(CLine *pLine, CDirentry &entry)
 		return false;
 
 	wxString facts = token.GetString();
-	if (facts == _T(""))
+	if (facts.IsEmpty())
 		return false;
 
 	entry.dir = false;
@@ -2586,7 +2589,7 @@ bool CDirectoryListingParser::ParseAsMlsd(CLine *pLine, CDirentry &entry)
 	entry.ownerGroup = _T("");
 	entry.permissions = _T("");
 
-	while (facts != _T(""))
+	while (!facts.IsEmpty())
 	{
 		int delim = facts.Find(';');
 		if (delim < 3)

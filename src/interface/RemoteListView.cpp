@@ -973,9 +973,9 @@ public:
 
 		CGenericFileData &type1 = m_fileData[a];
 		CGenericFileData &type2 = m_fileData[b];
-		if (type1.fileType == _T(""))
+		if (type1.fileType.IsEmpty())
 			type1.fileType = m_pRemoteListView->GetType(data1.name, data1.dir);
-		if (type2.fileType == _T(""))
+		if (type2.fileType.IsEmpty())
 			type2.fileType = m_pRemoteListView->GetType(data2.name, data2.dir);
 
 		CMP(CmpStringNoCase, type1.fileType, type2.fileType);
