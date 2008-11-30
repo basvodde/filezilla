@@ -47,6 +47,7 @@ public:
 	// Window size and position as well as pane sizes
 	void RememberSplitterPositions();
 	bool RestoreSplitterPositions();
+	void SetDefaultSplitterPositions();
 
 	void CheckChangedSettings();
 

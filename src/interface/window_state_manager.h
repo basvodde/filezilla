@@ -15,6 +15,13 @@ public:
 
 	static wxRect GetScreenDimensions();
 
+#ifdef __WXGTK__
+	// Set nonzero if Restore maximized the window.
+	// Reason is that under wxGTK, maximization request may take some time.
+	// It is actually done asynchronously by the window manager.
+	unsigned int m_maximize_requested;
+#endif
+
 protected:
 	wxTopLevelWindow* m_pWindow;
 

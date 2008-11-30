@@ -423,22 +423,7 @@ CMainFrame::CMainFrame()
 	HandleResize();
 
 	if (!RestoreSplitterPositions())
-	{
-		m_pTopSplitter->SetSashPosition(97);
-
-		m_pViewSplitter->SetSashPosition(0);
-
-		wxSize size = m_pBottomSplitter->GetClientSize();
-		int h = size.GetHeight() - 135;
-		if (h < 50)
-			h = 50;
-		m_pBottomSplitter->SetSashPosition(h);
-
-		m_pQueueLogSplitter->SetSashPosition(0);
-
-		m_pLocalSplitter->SetRelativeSashPosition(0.4);
-		m_pRemoteSplitter->SetRelativeSashPosition(0.4);
-	}
+		SetDefaultSplitterPositions();
 
 	wxString localDir = COptions::Get()->GetOption(OPTION_LASTLOCALDIR);
 	if (!m_pState->SetLocalDir(localDir))
@@ -526,6 +511,13 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 
 	if (!m_pBottomSplitter)
 		return;
+
+	if (m_pWindowStateManager && m_pWindowStateManager->m_maximize_requested && IsMaximized())
+	{
+		m_pWindowStateManager->m_maximize_requested = 0;
+		if (!RestoreSplitterPositions())
+			SetDefaultSplitterPositions();
+	}
 
 	HandleResize();
 }
@@ -2247,6 +2239,24 @@ bool CMainFrame::RestoreSplitterPositions()
 	delete [] aPosValues;
 
 	return true;
+}
+
+void CMainFrame::SetDefaultSplitterPositions()
+{
+	m_pTopSplitter->SetSashPosition(97);
+
+	m_pViewSplitter->SetSashPosition(0);
+
+	wxSize size = m_pBottomSplitter->GetClientSize();
+	int h = size.GetHeight() - 135;
+	if (h < 50)
+		h = 50;
+	m_pBottomSplitter->SetSashPosition(h);
+
+	m_pQueueLogSplitter->SetSashPosition(0);
+
+	m_pLocalSplitter->SetRelativeSashPosition(0.4);
+	m_pRemoteSplitter->SetRelativeSashPosition(0.4);
 }
 
 void CMainFrame::OnActivate(wxActivateEvent& event)
