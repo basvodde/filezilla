@@ -451,12 +451,13 @@ template<class CFileData> wxString CFileListCtrl<CFileData>::GetType(wxString na
 	if (dir)
 		return _("Directory");
 
-	wxFileName fn(name);
-	wxString ext = fn.GetExt();
-	if (ext == _T(""))
+	int pos = name.Find('.', true);
+	if (pos < 1 || !name[pos + 1]) // Starts or ends with dot
 		return _("File");
+	wxString ext = name.Mid(pos + 1);
+	wxString lower_ext = ext.Lower();
 
-	std::map<wxString, wxString>::iterator typeIter = m_fileTypeMap.find(ext);
+	std::map<wxString, wxString>::iterator typeIter = m_fileTypeMap.find(lower_ext);
 	if (typeIter != m_fileTypeMap.end())
 		return typeIter->second;
 
@@ -482,7 +483,7 @@ template<class CFileData> wxString CFileListCtrl<CFileData>::GetType(wxString na
 	desc = ext;
 	desc += _T("-");
 	desc += _("file");
-	m_fileTypeMap[ext.MakeLower()] = desc;
+	m_fileTypeMap[lower_ext] = desc;
 	return desc;
 #endif
 }
