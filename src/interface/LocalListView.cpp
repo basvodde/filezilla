@@ -378,7 +378,7 @@ regular_dir:
 		bool wasLink;
 		while (local_filesystem.GetNextFile(data.name, wasLink, data.dir, &data.size, &data.lastModified, &data.attributes))
 		{
-			if (data.name == _T(""))
+			if (data.name.IsEmpty())
 			{
 				wxGetApp().DisplayEncodingWarning();
 				continue;
@@ -1085,9 +1085,9 @@ public:
 		CLocalFileData &data1 = m_fileData[a];
 		CLocalFileData &data2 = m_fileData[b];
 
-		if (data1.fileType == _T(""))
+		if (data1.fileType.IsEmpty())
 			data1.fileType = m_pListView->GetType(data1.name, data1.dir, m_pListView->m_dir);
-		if (data2.fileType == _T(""))
+		if (data2.fileType.IsEmpty())
 			data2.fileType = m_pListView->GetType(data2.name, data2.dir, m_pListView->m_dir);
 
 		CMP(CmpDir, data1, data2);
@@ -2109,7 +2109,7 @@ wxString CLocalListView::GetItemText(int item, unsigned int column)
 		if (data->flags == fill)
 			return _T("");
 
-		if (data->fileType == _T(""))
+		if (data->fileType.IsEmpty())
 			data->fileType = GetType(data->name, data->dir, m_dir);
 
 		return data->fileType;

@@ -64,6 +64,7 @@ protected:
 	void SetDirectoryListing(const CDirectoryListing *pDirectoryListing, bool modified = false);
 	bool UpdateDirectoryListing(const CDirectoryListing *pDirectoryListing);
 	void UpdateDirectoryListing_Removed(const CDirectoryListing *pDirectoryListing);
+	void UpdateDirectoryListing_Added(const CDirectoryListing *pDirectoryListing);
 
 #ifdef __WXDEBUG__
 	void ValidateIndexMapping();

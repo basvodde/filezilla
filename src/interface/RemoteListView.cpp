@@ -428,6 +428,91 @@ bool CRemoteListView::IsItemValid(unsigned int item) const
 	return true;
 }
 
+void CRemoteListView::UpdateDirectoryListing_Added(const CDirectoryListing *pDirectoryListing)
+{
+	const unsigned int to_add = pDirectoryListing->GetCount() - m_pDirectoryListing->GetCount();
+	m_pDirectoryListing = pDirectoryListing;
+
+	m_indexMapping[0] = pDirectoryListing->GetCount();
+
+	std::list<unsigned int> added;
+
+	CFilterManager filter;
+	const wxString path = m_pDirectoryListing->path.GetPath();
+
+	CGenericFileData last = m_fileData.back();
+	m_fileData.pop_back();
+
+	for (unsigned int i = pDirectoryListing->GetCount() - to_add; i < pDirectoryListing->GetCount(); i++)
+	{
+		const CDirentry& entry = (*pDirectoryListing)[i];
+		CGenericFileData data;
+		data.flags = normal;
+		data.icon = entry.dir ? m_dirIcon : -2;
+		m_fileData.push_back(data);
+
+		if (filter.FilenameFiltered(entry.name, path, entry.dir, entry.size, false, 0))
+			continue;
+
+		if (m_pFilelistStatusBar)
+		{
+			if (entry.dir)
+				m_pFilelistStatusBar->AddDirectory();
+			else
+				m_pFilelistStatusBar->AddFile(entry.size);
+		}
+
+		// Find correct position in index mapping
+		std::vector<unsigned int>::iterator start = m_indexMapping.begin();
+		if (m_hasParent)
+			start++;
+		CFileListCtrl<CGenericFileData>::CSortComparisonObject compare = GetSortComparisonObject();
+		std::vector<unsigned int>::iterator insertPos = std::lower_bound(start, m_indexMapping.end(), i, compare);
+		compare.Destroy();
+
+		const int item = insertPos - m_indexMapping.begin();
+		m_indexMapping.insert(insertPos, i);
+
+		for (std::list<unsigned int>::iterator iter = added.begin(); iter != added.end(); iter++)
+		{
+			unsigned int &pos = *iter;
+			if (pos >= (unsigned int)item)
+				pos++;
+		}
+		added.push_back(item);
+	}
+
+	m_fileData.push_back(last);
+
+	std::list<bool> selected;
+	unsigned int start;
+	added.push_back(m_indexMapping.size());
+	start = added.front();
+
+	SetItemCount(m_indexMapping.size());
+
+	for (unsigned int i = start; i < m_indexMapping.size(); i++)
+	{
+		if (i == added.front())
+		{
+			selected.push_front(false);
+			added.pop_front();
+		}
+		bool is_selected = GetItemState(i, wxLIST_STATE_SELECTED) != 0;
+		selected.push_back(is_selected);
+
+		bool should_selected = selected.front();
+		selected.pop_front();
+		if (is_selected != should_selected)
+			SetSelection(i, should_selected);
+	}
+
+	if (m_pFilelistStatusBar)
+		m_pFilelistStatusBar->SetHidden(m_pDirectoryListing->GetCount() + 1 - m_indexMapping.size());
+
+	wxASSERT(m_indexMapping.size() == pDirectoryListing->GetCount() + 1);
+}
+
 void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pDirectoryListing)
 {
 	const unsigned int removed = m_pDirectoryListing->GetCount() - pDirectoryListing->GetCount();
@@ -567,7 +652,7 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 	if (m_pFilelistStatusBar)
 		m_pFilelistStatusBar->SetHidden(m_pDirectoryListing->GetCount() + 1 - m_indexMapping.size());
 
-	SetItemCount(m_indexMapping.size());
+	SaveSetItemCount(m_indexMapping.size());
 }
 
 bool CRemoteListView::UpdateDirectoryListing(const CDirectoryListing *pDirectoryListing)
@@ -606,8 +691,10 @@ bool CRemoteListView::UpdateDirectoryListing(const CDirectoryListing *pDirectory
 
 	if (unsure & (CDirectoryListing::unsure_dir_added | CDirectoryListing::unsure_file_added))
 	{
-		// Todo: Would be nice to handle this too
-		return false;
+		if (unsure & (CDirectoryListing::unsure_dir_removed | CDirectoryListing::unsure_file_removed))
+			return false; // Cannot handle both at the same time unfortunately
+		UpdateDirectoryListing_Added(pDirectoryListing);
+		return true;
 	}
 
 	wxASSERT(pDirectoryListing->GetCount() < m_pDirectoryListing->GetCount());
@@ -2705,7 +2792,7 @@ wxString CRemoteListView::GetItemText(int item, unsigned int column)
 	else if (column == 2)
 	{
 		CGenericFileData& data = m_fileData[index];
-		if (data.fileType == _T(""))
+		if (data.fileType.IsEmpty())
 		{
 			const CDirentry& entry = (*m_pDirectoryListing)[index];
 			if (m_pDirectoryListing->path.GetType() == VMS)
