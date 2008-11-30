@@ -462,7 +462,18 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 		removedItems.push_back(j++);
 	}
 	for (; j < m_pDirectoryListing->GetCount(); j++)
+	{
 		removedItems.push_back(j);
+
+		if (m_pFilelistStatusBar)
+		{
+			const CDirentry& oldEntry = (*m_pDirectoryListing)[j];
+			if (oldEntry.dir)
+				m_pFilelistStatusBar->RemoveDirectory();
+			else
+				m_pFilelistStatusBar->RemoveFile(oldEntry.size);
+		}
+	}
 
 	wxASSERT(removedItems.size() == removed);
 
