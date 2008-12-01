@@ -15,7 +15,9 @@ CWindowStateManager::CWindowStateManager(wxTopLevelWindow* pWindow)
 	m_pWindow->Connect(wxID_ANY, wxEVT_SIZE, wxSizeEventHandler(CWindowStateManager::OnSize), 0, this);
 	m_pWindow->Connect(wxID_ANY, wxEVT_MOVE, wxMoveEventHandler(CWindowStateManager::OnMove), 0, this);
 
+#ifdef __WXGTK__
 	m_maximize_requested = 0;
+#endif
 }
 
 CWindowStateManager::~CWindowStateManager()
@@ -133,8 +135,10 @@ bool CWindowStateManager::Restore(unsigned int optionId)
 
 void CWindowStateManager::OnSize(wxSizeEvent& event)
 {
+#ifdef __WXGTK__
 	if (m_maximize_requested)
 		m_maximize_requested--;
+#endif
 	if (!m_pWindow->IsIconized())
 	{
 		m_lastMaximized = m_pWindow->IsMaximized();
