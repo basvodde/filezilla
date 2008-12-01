@@ -2283,6 +2283,11 @@ void CMainFrame::OnToolbarComparison(wxCommandEvent& event)
 	if (m_pComparisonManager && m_pComparisonManager->IsComparing())
 	{
 		m_pComparisonManager->ExitComparisonMode();
+
+		// Used only on MSW and if using a slightly patched wxWidgets. No other way
+		// to veto a toggle otherwise using events.
+		if (event.IsChecked())
+			event.SetInt(-1);
 		return;
 	}
 
@@ -2302,6 +2307,8 @@ void CMainFrame::OnToolbarComparison(wxCommandEvent& event)
 			if (!dlg.Run())
 			{
 				m_pComparisonManager->UpdateToolState();
+				if (event.IsChecked())
+					event.SetInt(-1);
 				return;
 			}
 
@@ -2313,7 +2320,11 @@ void CMainFrame::OnToolbarComparison(wxCommandEvent& event)
 		m_pRemoteSplitter->SetSashPosition(pos);
 	}
 
-	m_pComparisonManager->CompareListings();
+	if (!m_pComparisonManager->CompareListings())
+	{
+		if (event.IsChecked())
+			event.SetInt(-1);
+	}
 }
 
 void CMainFrame::OnToolbarComparisonDropdown(wxCommandEvent& event)

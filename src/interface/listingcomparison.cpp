@@ -202,7 +202,7 @@ bool CComparisonManager::CompareListings()
 	m_pRight->FinishComparison();
 	m_pLeft->FinishComparison();
 
-	return false;
+	return true;
 }
 
 int CComparisonManager::CompareFiles(const int dirSortMode, const wxString& local, const wxString& remote, bool localDir, bool remoteDir)
