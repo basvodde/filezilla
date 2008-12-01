@@ -512,6 +512,8 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 	if (!m_pBottomSplitter)
 		return;
 
+	HandleResize();
+
 #ifdef __WXGTK__
 	if (m_pWindowStateManager && m_pWindowStateManager->m_maximize_requested && IsMaximized())
 	{
@@ -520,8 +522,6 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 			SetDefaultSplitterPositions();
 	}
 #endif
-
-	HandleResize();
 }
 
 bool CMainFrame::CreateMenus()
