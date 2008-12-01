@@ -512,12 +512,14 @@ void CMainFrame::OnSize(wxSizeEvent &event)
 	if (!m_pBottomSplitter)
 		return;
 
+#ifdef __WXGTK__
 	if (m_pWindowStateManager && m_pWindowStateManager->m_maximize_requested && IsMaximized())
 	{
 		m_pWindowStateManager->m_maximize_requested = 0;
 		if (!RestoreSplitterPositions())
 			SetDefaultSplitterPositions();
 	}
+#endif
 
 	HandleResize();
 }
