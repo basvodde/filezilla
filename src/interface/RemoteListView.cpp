@@ -517,7 +517,10 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 {
 	const unsigned int removed = m_pDirectoryListing->GetCount() - pDirectoryListing->GetCount();
 	if (!removed)
+	{
+		m_pDirectoryListing = pDirectoryListing;
 		return;
+	}
 	wxASSERT(!IsComparing());
 
 	std::list<unsigned int> removedItems;
