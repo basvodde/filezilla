@@ -537,29 +537,10 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 			continue;
 		}
 
-		if (m_pFilelistStatusBar)
-		{
-			if (oldEntry.dir)
-				m_pFilelistStatusBar->RemoveDirectory();
-			else
-				m_pFilelistStatusBar->RemoveFile(oldEntry.size);
-		}
-
 		removedItems.push_back(j++);
 	}
 	for (; j < m_pDirectoryListing->GetCount(); j++)
-	{
 		removedItems.push_back(j);
-
-		if (m_pFilelistStatusBar)
-		{
-			const CDirentry& oldEntry = (*m_pDirectoryListing)[j];
-			if (oldEntry.dir)
-				m_pFilelistStatusBar->RemoveDirectory();
-			else
-				m_pFilelistStatusBar->RemoveFile(oldEntry.size);
-		}
-	}
 
 	wxASSERT(removedItems.size() == removed);
 
@@ -597,12 +578,20 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 		bool isSelected = GetItemState(i, wxLIST_STATE_SELECTED) != 0;
 		
 		// Update statusbar info
-		if (isSelected && removed && m_pFilelistStatusBar)
+		if (removed && m_pFilelistStatusBar)
 		{
-			if ((*m_pDirectoryListing)[index].dir)
-				m_pFilelistStatusBar->UnselectDirectory();
+			const CDirentry& oldEntry = (*m_pDirectoryListing)[index];
+			if (isSelected)
+			{
+				if (oldEntry.dir)
+					m_pFilelistStatusBar->UnselectDirectory();
+				else
+					m_pFilelistStatusBar->UnselectFile(oldEntry.size);
+			}
+			if (oldEntry.dir)
+				m_pFilelistStatusBar->RemoveDirectory();
 			else
-				m_pFilelistStatusBar->UnselectFile((*m_pDirectoryListing)[index].size);
+				m_pFilelistStatusBar->RemoveFile(oldEntry.size);
 		}
 
 		// Update index
