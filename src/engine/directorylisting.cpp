@@ -203,6 +203,8 @@ int CDirectoryListing::FindFile_CmpCase(const wxString& name) const
 		return iter->second;
 
 	unsigned int i = m_searchmap_case->size();
+	if (i == m_entryCount)
+		return -1;
 
 	std::multimap<wxString, unsigned int>& searchmap_case = m_searchmap_case.Get();
 
@@ -237,6 +239,8 @@ int CDirectoryListing::FindFile_CmpNoCase(wxString name) const
 		return iter->second;
 
 	unsigned int i = m_searchmap_nocase->size();
+	if (i == m_entryCount)
+		return -1;
 
 	std::multimap<wxString, unsigned int>& searchmap_nocase = m_searchmap_nocase.Get();
 
