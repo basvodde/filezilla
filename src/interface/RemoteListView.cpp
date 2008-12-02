@@ -516,7 +516,8 @@ void CRemoteListView::UpdateDirectoryListing_Added(const CDirectoryListing *pDir
 void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pDirectoryListing)
 {
 	const unsigned int removed = m_pDirectoryListing->GetCount() - pDirectoryListing->GetCount();
-	wxASSERT(removed);
+	if (!removed)
+		return;
 	wxASSERT(!IsComparing());
 
 	std::list<unsigned int> removedItems;
@@ -697,7 +698,7 @@ bool CRemoteListView::UpdateDirectoryListing(const CDirectoryListing *pDirectory
 		return true;
 	}
 
-	wxASSERT(pDirectoryListing->GetCount() < m_pDirectoryListing->GetCount());
+	wxASSERT(pDirectoryListing->GetCount() <= m_pDirectoryListing->GetCount());
 	UpdateDirectoryListing_Removed(pDirectoryListing);
 	return true;
 }
