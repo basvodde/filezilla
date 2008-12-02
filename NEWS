@@ -10,6 +10,14 @@ Legend:
     *nix: Unix (e.g BSD) and Unix-like systems (e.g. Linux)
     OS X: Apple Mac OS X
 
+3.1.6 (2008-12-02)
+
++ Automatically refresh remote directory listing if queue finishes successfully
+- Speed up refresh of remote directory listing if adding files during uploads
+- Connections no longer time out waiting on a directory listing getting retrieved by a different connection
+- Number of files were not updated if deleting remote files
+- MSW: Update manifest so that the evil filesystem virtualization stays disabled under Vista
+
 3.1.6-rc1 (2008-11-26)
 
 + Configurable location of message log pane
