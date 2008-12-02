@@ -901,19 +901,24 @@ void CQueueView::ProcessReply(t_EngineData* pEngineData, COperationNotification*
 	if ((replyCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)
 	{
 		enum ResetReason reason;
-		if (pEngineData->pItem && pEngineData->pItem->m_remove)
-			reason = remove;
-		else
+		if (pEngineData->pItem)
 		{
-			if (pEngineData->pItem->GetType() == QueueItemType_File && ((CFileItem*)pEngineData->pItem)->m_madeProgress)
+			if (pEngineData->pItem->m_remove)
+				reason = remove;
+			else
 			{
-				CFileItem* pItem = (CFileItem*)pEngineData->pItem;
-				pItem->m_madeProgress = false;
-				pItem->m_autoResume = true;
+				if (pEngineData->pItem->GetType() == QueueItemType_File && ((CFileItem*)pEngineData->pItem)->m_madeProgress)
+				{
+					CFileItem* pItem = (CFileItem*)pEngineData->pItem;
+					pItem->m_madeProgress = false;
+					pItem->m_autoResume = true;
+				}
+				reason = reset;
 			}
-			reason = reset;
+			pEngineData->pItem->m_statusMessage = _("Interrupted by user");
 		}
-		pEngineData->pItem->m_statusMessage = _("Interrupted by user");
+		else
+			reason = reset;
 		ResetEngine(*pEngineData, reason);
 		return;
 	}
@@ -931,7 +936,12 @@ void CQueueView::ProcessReply(t_EngineData* pEngineData, COperationNotification*
 			pEngineData->state = t_EngineData::none;
 		break;
 	case t_EngineData::connect:
-		if (replyCode == FZ_REPLY_OK)
+		if (!pEngineData->pItem)
+		{
+			ResetEngine(*pEngineData, reset);
+			return;
+		}
+		else if (replyCode == FZ_REPLY_OK)
 		{
 			if (pEngineData->pItem->GetType() == QueueItemType_File)
 				pEngineData->state = t_EngineData::transfer;
@@ -968,6 +978,11 @@ void CQueueView::ProcessReply(t_EngineData* pEngineData, COperationNotification*
 		}
 		break;
 	case t_EngineData::transfer:
+		if (!pEngineData->pItem)
+		{
+			ResetEngine(*pEngineData, reset);
+			return;
+		}
 		if (replyCode == FZ_REPLY_OK)
 		{
 			ResetEngine(*pEngineData, success);
@@ -1085,6 +1100,14 @@ void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
 
 	if (data.pItem)
 	{
+		CServerItem* pServerItem = (CServerItem*)data.pItem->GetTopLevelItem();
+		if (pServerItem)
+		{
+			wxASSERT(pServerItem->m_activeCount > 0);
+			if (pServerItem->m_activeCount > 0)
+				pServerItem->m_activeCount--;
+		}
+
 		if (data.pItem->GetType() == QueueItemType_File)
 		{
 			wxASSERT(data.pStatusLineCtrl);
@@ -1196,11 +1219,10 @@ void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
 		else
 			RemoveItem(data.pItem, true);
 		data.pItem = 0;
-
-		wxASSERT(m_activeCount > 0);
-		if (m_activeCount > 0)
-			m_activeCount--;
 	}
+	wxASSERT(m_activeCount > 0);
+	if (m_activeCount > 0)
+		m_activeCount--;
 	data.active = false;
 
 	if (data.state == t_EngineData::waitprimary)
@@ -1211,13 +1233,6 @@ void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
 	}
 
 	data.state = t_EngineData::none;
-	CServerItem* item = GetServerItem(data.lastServer);
-	if (item)
-	{
-		wxASSERT(item->m_activeCount > 0);
-		if (item->m_activeCount > 0)
-			item->m_activeCount--;
-	}
 
 	AdvanceQueue();
 
@@ -2502,6 +2517,7 @@ void CQueueView::TryRefreshListings()
 
 	pEngineData->active = true;
 	pEngineData->state = t_EngineData::list;
+	m_activeCount++;
 }
 
 void CQueueView::OnAskPassword(wxCommandEvent& event)
