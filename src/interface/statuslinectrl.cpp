@@ -19,7 +19,7 @@ int CStatusLineCtrl::m_fieldOffsets[4];
 wxCoord CStatusLineCtrl::m_textHeight;
 bool CStatusLineCtrl::m_initialized = false;
 
-#define PROGRESSBAR_WIDTH 100
+#define PROGRESSBAR_WIDTH 102
 
 CStatusLineCtrl::CStatusLineCtrl(CQueueView* pParent, const t_EngineData* const pEngineData, const wxRect& initialPosition)
 	: m_pEngineData(pEngineData)
@@ -272,8 +272,8 @@ void CStatusLineCtrl::DrawProgressBar(wxDC& dc, int x, int y, int height)
 		return;
 
 	int barSplit = wxLongLong(m_pStatus->currentOffset * (PROGRESSBAR_WIDTH - 2) / m_pStatus->totalSize).GetLo();
-	if (barSplit > PROGRESSBAR_WIDTH)
-		barSplit = PROGRESSBAR_WIDTH;
+	if (barSplit > (PROGRESSBAR_WIDTH - 2))
+		barSplit = PROGRESSBAR_WIDTH - 2;
 
 	// Draw right part
 	dc.SetPen(*wxTRANSPARENT_PEN);
