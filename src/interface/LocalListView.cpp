@@ -1367,7 +1367,7 @@ void CLocalListView::OnMenuRename(wxCommandEvent& event)
 	EditLabel(item);
 }
 
-void CLocalListView::OnChar(wxKeyEvent& event)
+void CLocalListView::OnKeyDown(wxKeyEvent& event)
 {
 	const int code = event.GetKeyCode();
 	if (code == WXK_DELETE)
@@ -1408,27 +1408,6 @@ void CLocalListView::OnChar(wxKeyEvent& event)
 	}
 	else
 		event.Skip();
-}
-
-void CLocalListView::OnKeyDown(wxKeyEvent& event)
-{
-	const int code = event.GetKeyCode();
-	const int mods = event.GetModifiers();
-	if (code == 'A' && (mods == wxMOD_CMD || mods == (wxMOD_CONTROL | wxMOD_META)))
-	{
-		for (unsigned int i = m_hasParent ? 1 : 0; i < m_indexMapping.size(); i++)
-		{
-			const CLocalFileData *data = GetData(i);
-			if (data && data->flags != fill)
-				SetSelection(i, true);
-			else
-				SetSelection(i, false);
-		}
-		if (m_pFilelistStatusBar)
-			m_pFilelistStatusBar->SelectAll();
-	}
-	else
-		OnChar(event);
 }
 
 void CLocalListView::OnBeginLabelEdit(wxListEvent& event)

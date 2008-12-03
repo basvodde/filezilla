@@ -29,6 +29,7 @@ EVT_COMMAND(wxID_ANY, fz_EVT_FILELIST_FOCUSCHANGE, CFileListCtrl<CFileData>::OnP
 EVT_LEFT_DOWN(CFileListCtrl<CFileData>::OnLeftDown)
 EVT_COMMAND(wxID_ANY, fz_EVT_DEFERRED_MOUSEEVENT, CFileListCtrl<CFileData>::OnProcessMouseEvent)
 #endif
+EVT_KEY_DOWN(CFileListCtrl<CFileData>::OnKeyDown)
 END_EVENT_TABLE()
 
 #ifdef __WXMSW__
@@ -874,4 +875,25 @@ template<class CFileData> void CFileListCtrl<CFileData>::ClearSelection()
 	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
 	if (item != -1)
 		SetItemState(item, 0, wxLIST_STATE_FOCUSED);
+}
+
+template<class CFileData> void CFileListCtrl<CFileData>::OnKeyDown(wxKeyEvent& event)
+{
+	const int code = event.GetKeyCode();
+	const int mods = event.GetModifiers();
+	if (code == 'A' && (mods == wxMOD_CMD || mods == (wxMOD_CONTROL | wxMOD_META)))
+	{
+		for (unsigned int i = m_hasParent ? 1 : 0; i < m_indexMapping.size(); i++)
+		{
+			const CFileData& data = m_fileData[m_indexMapping[i]];
+			if (data.flags != fill)
+				SetSelection(i, true);
+			else
+				SetSelection(i, false);
+		}
+		if (m_pFilelistStatusBar)
+			m_pFilelistStatusBar->SelectAll();
+	}
+	else
+		event.Skip();
 }

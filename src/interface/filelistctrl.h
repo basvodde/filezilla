@@ -153,6 +153,7 @@ private:
 	void OnLeftDown(wxMouseEvent& event);
 	void OnProcessMouseEvent(wxCommandEvent& event);
 #endif
+	void OnKeyDown(wxKeyEvent& event);
 };
 
 #ifdef FILELISTCTRL_INCLUDE_TEMPLATE_DEFINITION

@@ -326,7 +326,6 @@ BEGIN_EVENT_TABLE(CRemoteListView, CFileListCtrl<CGenericFileData>)
 	EVT_MENU(XRCID("ID_DELETE"), CRemoteListView::OnMenuDelete)
 	EVT_MENU(XRCID("ID_RENAME"), CRemoteListView::OnMenuRename)
 	EVT_MENU(XRCID("ID_CHMOD"), CRemoteListView::OnMenuChmod)
-	EVT_CHAR(CRemoteListView::OnChar)
 	EVT_KEY_DOWN(CRemoteListView::OnKeyDown)
 	EVT_LIST_BEGIN_LABEL_EDIT(wxID_ANY, CRemoteListView::OnBeginLabelEdit)
 	EVT_LIST_END_LABEL_EDIT(wxID_ANY, CRemoteListView::OnEndLabelEdit)
@@ -1572,7 +1571,7 @@ void CRemoteListView::OnMenuRename(wxCommandEvent& event)
 	EditLabel(item);
 }
 
-void CRemoteListView::OnChar(wxKeyEvent& event)
+void CRemoteListView::OnKeyDown(wxKeyEvent& event)
 {
 	int code = event.GetKeyCode();
 	if (code == WXK_DELETE)
@@ -1613,27 +1612,6 @@ void CRemoteListView::OnChar(wxKeyEvent& event)
 	}
 	else
 		event.Skip();
-}
-
-void CRemoteListView::OnKeyDown(wxKeyEvent& event)
-{
-	const int code = event.GetKeyCode();
-	const int mods = event.GetModifiers();
-	if (code == 'A' && (mods == wxMOD_CMD || mods == (wxMOD_CONTROL | wxMOD_META)))
-	{
-		for (unsigned int i = 1; i < m_indexMapping.size(); i++)
-		{
-			int index = GetItemIndex(i);
-			if (index != -1 && m_fileData[index].flags != fill)
-				SetSelection(i, true);
-			else
-				SetSelection(i, false);
-		}
-		if (m_pFilelistStatusBar)
-			m_pFilelistStatusBar->SelectAll();
-	}
-	else
-		OnChar(event);
 }
 
 void CRemoteListView::OnBeginLabelEdit(wxListEvent& event)
