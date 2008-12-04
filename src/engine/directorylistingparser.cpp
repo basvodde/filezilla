@@ -578,6 +578,16 @@ CDirectoryListingParser::CDirectoryListingParser(CControlSocket* pControlSocket,
 		//Slovenian month names
 		m_MonthNamesMap[_T("avg")] = 8;
 
+		//Icelandic
+#if wxUSE_UNICODE
+		m_MonthNamesMap[_T("ma\x00ed")] = 5;
+		m_MonthNamesMap[_T("j\x00fan")] = 6;
+		m_MonthNamesMap[_T("j\x00fal")] = 7;
+		m_MonthNamesMap[_T("\x00e1g")] = 8;
+		m_MonthNamesMap[_T("n\x00f3v")] = 11;
+#endif
+		m_MonthNamesMap[_T("des")] = 12;
+
 		//There are more languages and thus month
 		//names, but as long as nobody reports a
 		//problem, I won't add them, there are way
