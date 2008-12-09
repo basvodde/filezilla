@@ -252,6 +252,7 @@ wxDBusConnection::~wxDBusConnection()
 	if (m_thread != NULL)
 	{
 		m_thread->SetExit();
+		m_thread->Wakeup();
 		m_thread->Wait();
 		delete m_thread;
 	}
