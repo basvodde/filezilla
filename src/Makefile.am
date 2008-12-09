@@ -7,7 +7,11 @@ else
   MAYBE_TINYXML = tinyxml
 endif
 
-SUBDIRS = include engine $(MAYBE_TINYXML) interface putty $(MAYBE_FZSHELLEXT) .
+if HAVE_DBUS
+  MAYBE_DBUS = dbus
+endif
+
+SUBDIRS = include engine $(MAYBE_TINYXML) $(MAYBE_DBUS) interface putty $(MAYBE_FZSHELLEXT) .
 
 
 

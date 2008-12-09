@@ -367,6 +367,44 @@ if ! test "$localesonly" = "yes"; then
 
   AC_SUBST(TINYXML_LIBS)
 
+  # Libdbus
+  # -------
+
+  AC_ARG_WITH(dbus, AC_HELP_STRING([--with-dbus], [Enable D-Bus support through libdbus. Used for GNOME Session manager D-Bus API. Default: auto]),
+    [
+    ],
+    [
+      with_dbus="auto"
+    ])
+
+  if test "$with_dbus" = "auto"; then
+    if echo $WX_CPPFLAGS | grep __WXMAC__; then
+      with_dbus="no"
+    elif echo $WX_CPPFLAGS | grep __WXMSW__; then
+      with_dbus="no"
+    else
+      with_dbus="yes"
+    fi
+  elif test "$with_dbus" = "yes"; then
+    if echo "$WX_CPPFLAGS" | grep __WXMAC__; then
+      AC_MSG_ERROR([D-Bus support is not needed or available on your platform])
+    elif echo "$WX_CPPFLAGS" | grep __WXMSW__; then
+      AC_MSG_ERROR([D-Bus support is not needed or available on your platform])
+    fi
+  else
+    with_dbus="no"
+  fi
+
+  if test "$with_dbus" != "no"; then
+    PKG_CHECK_MODULES(LIBDBUS, dbus-1, [with_dbus="yes"], [with_dbus="no"])
+    if test "$with_dbus" = "yes"; then
+      AC_DEFINE(WITH_LIBDBUS, [1], [Set to 1 to if libdbus is available])
+    fi
+  fi
+
+  AC_MSG_CHECKING([D-Bus support])
+  AC_MSG_RESULT([$with_dbus])
+
 fi
 
 # Everything translation related
@@ -451,8 +489,10 @@ AM_CONDITIONAL(USE_BINRELOC, test "$use_binreloc" = "yes")
 AM_CONDITIONAL(ENABLE_PRECOMP, test "x$use_precomp" = "xyes")
 AM_CONDITIONAL(HAS_CPPUNIT, [test "$has_cppunit" = "yes"])
 AM_CONDITIONAL(HAVE_LIBTINYXML, [test "x$with_tinyxml" = "xsystem"])
+AM_CONDITIONAL(HAVE_DBUS, [test "x$with_dbus" = "xyes"])
 
 AC_CONFIG_FILES(Makefile src/Makefile src/engine/Makefile src/tinyxml/Makefile
+src/dbus/Makefile
 src/interface/Makefile src/interface/resources/Makefile src/include/Makefile
 locales/Makefile src/interface/resources/16x16/Makefile
 src/interface/resources/32x32/Makefile data/Makefile

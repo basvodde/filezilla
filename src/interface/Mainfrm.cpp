@@ -63,6 +63,9 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_MENU(XRCID("ID_REFRESH"), CMainFrame::OnRefresh)
 	EVT_TOOL(XRCID("ID_TOOLBAR_SITEMANAGER"), CMainFrame::OnSiteManager)
 	EVT_CLOSE(CMainFrame::OnClose)
+#ifdef WITH_LIBDBUS
+	EVT_END_SESSION(CMainFrame::OnClose)
+#endif
 	EVT_TIMER(wxID_ANY, CMainFrame::OnTimer)
 	EVT_TOOL(XRCID("ID_TOOLBAR_PROCESSQUEUE"), CMainFrame::OnProcessQueue)
 	EVT_TOOL(XRCID("ID_TOOLBAR_LOGVIEW"), CMainFrame::OnToggleLogView)
@@ -1208,7 +1211,6 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 
 		if (!event.CanVeto())
 		{
-
 			// We need to close all other top level windows on the stack before closing the main frame.
 			// In other words, all open dialogs need to be closed.
 			static int prev_size = 0;

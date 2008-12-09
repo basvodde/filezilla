@@ -38,6 +38,9 @@
 #ifdef __WXMSW__
 #include <wx/socket.h>
 #endif
+#ifdef WITH_LIBDBUS
+#include <../dbus/session_manager.h>
+#endif
 
 #if defined(__WXMAC__) || defined(__UNIX__)
 #include <wx/stdpaths.h>
@@ -287,6 +290,10 @@ FileZilla will timeout on big transfers.\
 
 	wxUpdateUIEvent::SetMode(wxUPDATE_UI_PROCESS_SPECIFIED);
 
+#ifdef WITH_LIBDBUS
+	CSessionManager::Init();
+#endif
+
 	// Load the text wrapping engine
 	m_pWrapEngine = new CWrapEngine();
 	m_pWrapEngine->LoadCache();
@@ -303,6 +310,10 @@ FileZilla will timeout on big transfers.\
 int CFileZillaApp::OnExit()
 {
 	COptions::Get()->SaveIfNeeded();
+
+#ifdef WITH_LIBDBUS
+	CSessionManager::Uninit();
+#endif
 #ifdef __WXMSW__
 	wxSocketBase::Shutdown();
 #endif

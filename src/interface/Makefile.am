@@ -187,6 +187,8 @@ if USE_RESOURCEFILE
 RESOURCEFILE = resources/filezilla.o
 endif
 
+filezilla_DEPENDENCIES = ../engine/libengine.a
+
 filezilla_CPPFLAGS = $(WX_CPPFLAGS)
 filezilla_CXXFLAGS = $(WX_CXXFLAGS_ONLY)
 filezilla_CFLAGS = $(WX_CFLAGS_ONLY)
@@ -194,6 +196,12 @@ filezilla_CFLAGS = $(WX_CFLAGS_ONLY)
 filezilla_LDFLAGS = ../engine/libengine.a
 filezilla_LDFLAGS += $(TINYXML_LIBS)
 filezilla_LDFLAGS += $(LIBGNUTLS_LIBS)
+
+if HAVE_DBUS
+filezilla_DEPENDENCIES += ../dbus/libfzdbus.a
+filezilla_LDFLAGS += ../dbus/libfzdbus.a $(LIBDBUS_LIBS)
+endif
+
 filezilla_LDFLAGS += $(WX_LIBS)
 filezilla_LDFLAGS += $(RESOURCEFILE)
 filezilla_LDFLAGS += $(IDN_LIB)
@@ -201,8 +209,6 @@ filezilla_LDFLAGS += $(IDN_LIB)
 if MINGW
 filezilla_LDFLAGS += -lole32 -luuid -lnetapi32
 endif
-
-filezilla_DEPENDENCIES = ../engine/libengine.a
 
 if MINGW
 filezilla_DEPENDENCIES += resources/filezilla.o
