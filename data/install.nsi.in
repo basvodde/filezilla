@@ -9,6 +9,7 @@
   !define top_srcdir @top_srcdir@
   !define srcdir @srcdir@
   !define VERSION @PACKAGE_VERSION@
+  !addplugindir @srcdir@
 
 ;--------------------------------
 ;General
@@ -25,7 +26,7 @@
   ;Get installation folder from registry if available
   InstallDirRegKey HKLM "Software\FileZilla Client" ""
 
-  RequestExecutionLevel highest
+  RequestExecutionLevel user
 
 ;--------------------------------
 ; Libtool executable target path
@@ -266,6 +267,16 @@ Function .onInit
 installonoldwindows:
   ${EndUnless}
   
+  UAC_unicode::RunElevated
+  StrCmp 1223 $0 UAC_ElevationAborted ; UAC dialog aborted by user?
+  StrCmp 0 $0 0 UAC_Err ; Error?
+  StrCmp 1 $1 0 UAC_Success ;Are we the real deal or just the wrapper?
+  Quit
+UAC_Err:
+  MessageBox mb_iconstop "Could not elevate process (errorcode $0), continuing with normal user privileges." /SD IDOK
+UAC_ElevationAborted:
+UAC_Success:
+
   Call GetUserInfo
 
   ; Initialize $ALL_USERS with default value
@@ -649,9 +660,17 @@ Function PageInstfilesShow
 
 FunctionEnd
 
+Function .OnInstFailed
+
+  UAC_unicode::Unload
+
+FunctionEnd
+
 Function .onInstSuccess
 
   ${MementoSectionSave}
+
+  UAC_unicode::Unload
 
 FunctionEnd
 

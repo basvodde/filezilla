@@ -1,4 +1,9 @@
-dist_noinst_DATA = install.nsi.in makezip.sh.in mingwm10.dll uninstall.ico
+dist_noinst_DATA = install.nsi.in \
+		makezip.sh.in \
+		mingwm10.dll \
+		uac_unicode.dll \
+		uac_unicode.dll.txt \
+		uninstall.ico
 
 if MAKENSISSCRIPT
 
