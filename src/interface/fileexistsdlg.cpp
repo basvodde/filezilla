@@ -1,8 +1,8 @@
 #include "FileZilla.h"
 #include "fileexistsdlg.h"
+#include "options.h"
 
 #include <wx/display.h>
-#include <wx/string.h>
 
 BEGIN_EVENT_TABLE(CFileExistsDlg, wxDialogEx)
 EVT_BUTTON(XRCID("wxID_OK"), CFileExistsDlg::OnOK)
@@ -31,6 +31,9 @@ bool CFileExistsDlg::Create(wxWindow* parent)
 	return true;
 }
 
+// Defined in LocalListView.cpp
+wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix, int format, bool thousands_separator, int num_decimal_places);
+
 void CFileExistsDlg::CreateControls()
 {
 	wxXmlResource::Get()->LoadDialog(this, GetParent(), _T("ID_FILEEXISTSDLG"));
@@ -51,6 +54,20 @@ void CFileExistsDlg::CreateControls()
 	localFile.Replace(_T("&"), _T("&&"));
 	remoteFile.Replace(_T("&"), _T("&&"));
 
+	const bool thousands_separator = COptions::Get()->GetOptionVal(OPTION_SIZE_USETHOUSANDSEP) != 0;
+
+	wxString localSize;
+	if (m_pNotification->localSize != -1)
+		localSize = FormatSize(m_pNotification->localSize, false, 0, thousands_separator, 0) + _T(" ") + _("bytes");
+	else
+		localSize = _("Size unknown");
+
+	wxString remoteSize;
+	if (m_pNotification->remoteSize != -1)
+		remoteSize = FormatSize(m_pNotification->remoteSize, false, 0, thousands_separator, 0) + _T(" ") + _("bytes");
+	else
+		remoteSize = _("Size unknown");
+
 	if (m_pNotification->download)
 	{
 		wxStaticText *pStatText;
@@ -61,12 +78,7 @@ void CFileExistsDlg::CreateControls()
 
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE1_SIZE")));
 		if (pStatText)
-		{
-			if (m_pNotification->localSize != -1)
-				pStatText->SetLabel(m_pNotification->localSize.ToString() + _T(" ") + _("bytes"));
-			else
-				pStatText->SetLabel(_("Size unknown"));
-		}
+			pStatText->SetLabel(localSize);
 
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE1_TIME")));
 		if (pStatText)
@@ -85,12 +97,7 @@ void CFileExistsDlg::CreateControls()
 
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE2_SIZE")));
 		if (pStatText)
-		{
-			if (m_pNotification->remoteSize != -1)
-				pStatText->SetLabel(m_pNotification->remoteSize.ToString() + _T(" ") + _("bytes"));
-			else
-				pStatText->SetLabel(_("Size unknown"));
-		}
+			pStatText->SetLabel(remoteSize);
 
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE2_TIME")));
 		if (pStatText)
@@ -117,12 +124,7 @@ void CFileExistsDlg::CreateControls()
 
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE1_SIZE")));
 		if (pStatText)
-		{
-			if (m_pNotification->remoteSize != -1)
-				pStatText->SetLabel(m_pNotification->remoteSize.ToString() + _T(" ") + _("bytes"));
-			else
-				pStatText->SetLabel(_("Size unknown"));
-		}
+			pStatText->SetLabel(remoteSize);
 
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE1_TIME")));
 		if (pStatText)
@@ -141,12 +143,7 @@ void CFileExistsDlg::CreateControls()
 
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE2_SIZE")));
 		if (pStatText)
-		{
-			if (m_pNotification->localSize != -1)
-				pStatText->SetLabel(m_pNotification->localSize.ToString() + _T(" ") + _("bytes"));
-			else
-				pStatText->SetLabel(_("Size unknown"));
-		}
+			pStatText->SetLabel(localSize);
 
 		pStatText = reinterpret_cast<wxStaticText *>(FindWindow(XRCID("ID_FILE2_TIME")));
 		if (pStatText)
