@@ -98,7 +98,13 @@ void DBusThread::rebuild_fd_array()
 	list<DBusWatch *>::iterator it;
 	int i = 0;
 	for (it = bus_watches.begin(); it != bus_watches.end(); it++, i++) {
+
+		// Versions older than 1.2 do not have dbus_watch_get_unix_fd yet
+#if HAVE_LIBDBUS >= 2
 		fd_array[i].fd = dbus_watch_get_unix_fd(* it);
+#else
+		fd_array[i].fd = dbus_watch_get_fd(* it);
+#endif
 		fd_array[i].events = 0;
 		if (dbus_watch_get_enabled(* it)) {
 			int flags = dbus_watch_get_flags(* it);

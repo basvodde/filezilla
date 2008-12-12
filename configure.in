@@ -396,10 +396,14 @@ if ! test "$localesonly" = "yes"; then
   fi
 
   if test "$with_dbus" != "no"; then
-    PKG_CHECK_MODULES(LIBDBUS, dbus-1, [with_dbus="yes"], [with_dbus="no"])
-    if test "$with_dbus" = "yes"; then
-      AC_DEFINE(WITH_LIBDBUS, [1], [Set to 1 to if libdbus is available])
-    fi
+    PKG_CHECK_MODULES(LIBDBUS, dbus-1 >= 1.2, [with_dbus_v="2"],
+      [
+        PKG_CHECK_MODULES(LIBDBUS, dbus-1, [with_dbus_v="1"],
+          [
+			AC_MSG_ERROR([libdbus not found. Install libdbus or configure with --without-dbus])
+          ])
+      ])
+    AC_DEFINE_UNQUOTED(WITH_LIBDBUS, [$with_dbus_v], [Set to 2 to if libdbus >= 1.2 is available, set to 1 if an older version is available.])
   fi
 
   AC_MSG_CHECKING([D-Bus support])

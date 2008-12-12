@@ -1,6 +1,6 @@
 #include "FileZilla.h"
 #include "fileexistsdlg.h"
-#include "options.h"
+#include "Options.h"
 
 #include <wx/display.h>
 
