@@ -51,13 +51,13 @@ public:
     wxDBusConnectionEvent(wxEventType commandType = wxEVT_NULL,
       int id = 0, DBusMessage * message = NULL): wxNotifyEvent(commandType, id)
 		{m_message = message; };
-   
+
 	wxDBusConnectionEvent(const wxDBusConnectionEvent &event): wxNotifyEvent(event)
 		{m_message = event.m_message;};
 
     virtual wxEvent *Clone() const
 		{return new wxDBusConnectionEvent(*this);};
-	
+
 	DBusMessage * GetMessage()
 		{ return m_message; };
 

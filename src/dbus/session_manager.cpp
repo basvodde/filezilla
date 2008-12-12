@@ -127,7 +127,11 @@ void CSessionManagerImpl::OnSignal(wxDBusConnectionEvent& event)
 {
 	std::auto_ptr<wxDBusMessage> msg(wxDBusMessage::ExtractFromEvent(&event));
 	if (m_state == error || m_state == unregister)
+	{
+		if (m_debug)
+			printf("wxD-Bus: OnSignal during bad state: %d\n", m_state);
 		return;
+	}
 
 	if (msg->GetType() == DBUS_MESSAGE_TYPE_ERROR)
 	{

@@ -22,20 +22,18 @@ DEALINGS IN THE SOFTWARE.
 
 ****************************************************************************/
 
-
-using namespace std;
 #include "wxdbusconnection.h"
+#include "config.h"
 #include <poll.h>
 #include <list>
 
+// Define WITH_LIBDBUS to 1 (e.g. from configure) if you are using
+// libdbus < 1.2 that does not have dbus_watch_get_unix_fd yet.
+#ifndef WITH_LIBDBUS
+#define WITH_LIBDBUS 2
+#endif
 
-typedef list<DBusWatch *> WatchesList;
-
-static dbus_bool_t add_watch(DBusWatch *watch, void *data);
-
-static void remove_watch(DBusWatch *watch, void *data);
-
-static void toggle_watch(DBusWatch *watch, void *data);
+typedef std::list<DBusWatch *> WatchesList;
 
 class DBusThread : public wxThread
 {
@@ -43,26 +41,36 @@ public:
 	DBusThread(wxThreadKind kind, wxDBusConnection * parent, int ID, DBusConnection * connection) ;
 	virtual ~DBusThread();
 	virtual ExitCode Entry();
-	inline WatchesList * GetWatchesList() { return &bus_watches; }
-	void rebuild_fd_array();
-	inline void EnterCriticalSection() { m_mutex.Lock(); }
-	inline void LeaveCriticalSection() { m_mutex.Unlock(); }
 	inline void SetExit() { m_exit = true; }
 	inline int GetID() { return m_ID; }
 	
 	void Wakeup();
 
-	int m_wakeup_pipe[2];
-	wxMutex m_mutex;
-	wxCondition m_condition;
-	int m_waiting;
+	inline void EnterCriticalSection() { m_critical_section.Enter(); }
+	inline void LeaveCriticalSection() { m_critical_section.Leave(); }
+
 private:
+	inline WatchesList * GetWatchesList() { return &bus_watches; }
+	bool CalledFromThread() const { return !pthread_equal(m_parent_id, pthread_self()); }
+
+	int m_wakeup_pipe[2];
+	wxCriticalSection m_critical_section;
+	bool m_thread_holds_lock;
+	
 	int m_ID;
 	DBusConnection * m_connection;
 	wxDBusConnection * m_parent;
 	bool m_exit;
-	list<DBusWatch *> bus_watches;
-	struct pollfd * fd_array;
+	std::list<DBusWatch *> bus_watches;
+
+	pthread_t m_parent_id;
+
+	static dbus_bool_t add_watch(DBusWatch *watch, void *data);
+	static void remove_watch(DBusWatch *watch, void *data);
+	static void toggle_watch(DBusWatch *watch, void *data);
+	dbus_bool_t add_watch(DBusWatch *watch);
+	void remove_watch(DBusWatch *watch);
+	void toggle_watch(DBusWatch *watch);
 };
 
 void DBusThread::Wakeup()
@@ -71,162 +79,165 @@ void DBusThread::Wakeup()
 	write(m_wakeup_pipe[1], &tmp, 1);
 }
 
-DBusThread::DBusThread(wxThreadKind kind, wxDBusConnection * parent, int ID, DBusConnection * connection): wxThread(kind),
-	m_mutex(), m_condition(m_mutex)
+DBusThread::DBusThread(wxThreadKind kind, wxDBusConnection * parent, int ID, DBusConnection * connection): wxThread(kind)
 {
 	m_ID = ID;
 	m_connection = connection;
 	m_parent = parent;
 	m_exit = false;
-	fd_array = NULL;
-	m_waiting = 0;
+	m_thread_holds_lock = false;
 
 	pipe(m_wakeup_pipe);
+	fcntl(m_wakeup_pipe[0], F_SETFL, O_NONBLOCK);
+
+	m_parent_id = pthread_self();
+
+	dbus_connection_set_watch_functions(m_connection, add_watch, remove_watch, toggle_watch, (void *)this, NULL);
 }
 
 DBusThread::~DBusThread()
 {
 	close(m_wakeup_pipe[0]);
 	close(m_wakeup_pipe[1]);
-	delete [] fd_array;
-}
-
-void DBusThread::rebuild_fd_array()
-{
-	delete [] fd_array;
-	fd_array = new pollfd[bus_watches.size() + 1];
-	list<DBusWatch *>::iterator it;
-	int i = 0;
-	for (it = bus_watches.begin(); it != bus_watches.end(); it++, i++) {
-
-		// Versions older than 1.2 do not have dbus_watch_get_unix_fd yet
-#if HAVE_LIBDBUS >= 2
-		fd_array[i].fd = dbus_watch_get_unix_fd(* it);
-#else
-		fd_array[i].fd = dbus_watch_get_fd(* it);
-#endif
-		fd_array[i].events = 0;
-		if (dbus_watch_get_enabled(* it)) {
-			int flags = dbus_watch_get_flags(* it);
-			fd_array[i].events = POLLHUP | POLLERR;
-			if (flags & DBUS_WATCH_READABLE)
-				fd_array[i].events |= POLLIN;
-			if (flags & DBUS_WATCH_WRITABLE)
-				fd_array[i].events |= POLLOUT;
-		}
-		fd_array[i].revents = 0;
-	}
-	fd_array[i].fd = m_wakeup_pipe[0];
-	fd_array[i].events = POLLIN;
 }
 
 wxThread::ExitCode DBusThread::Entry()
 {
-	dbus_connection_set_watch_functions(m_connection, add_watch, remove_watch, toggle_watch, (void *) this, NULL);
 	while (!m_exit)	{
-		EnterCriticalSection();
-		int res;
-		if ((res = poll(fd_array, bus_watches.size() + 1, -1)) > 0) 
-		{
-			list<DBusWatch *>::iterator it = bus_watches.begin();
-			for (unsigned int i = 0; i < bus_watches.size(); i++, it++) {
-				if (fd_array[i].revents) {
-					int flags = 0;
-					if (fd_array[i].revents & POLLIN)
-						flags |= DBUS_WATCH_READABLE;
-					if (fd_array[i].revents & POLLOUT)
-						flags |= DBUS_WATCH_WRITABLE;
-					if (fd_array[i].revents & POLLERR)
-						flags |= DBUS_WATCH_ERROR;
-					if (fd_array[i].revents & POLLHUP)
-						flags |= DBUS_WATCH_HANGUP;
-					dbus_watch_handle(* it, flags);
-				}
-			}
-			if (fd_array[bus_watches.size()].revents & POLLIN)
-			{
-				char tmp;
-				read(m_wakeup_pipe[0], &tmp, 1);
-				if (m_waiting == 1)
-				{
-					m_waiting = 2;
-					m_condition.Wait();
-				}
-			}
-		}
 
-		if (dbus_connection_get_dispatch_status(m_connection) == DBUS_DISPATCH_DATA_REMAINS) 
+		EnterCriticalSection();
+
+		while (dbus_connection_get_dispatch_status(m_connection) == DBUS_DISPATCH_DATA_REMAINS) 
 			dbus_connection_dispatch(m_connection);
 
-		// Update flags
-		list<DBusWatch *>::iterator it = bus_watches.begin();
-		for (unsigned int i = 0; i < bus_watches.size(); i++, it++) {
-			if (fd_array[i].revents) {
-				int flags = dbus_watch_get_flags(* it);
-				fd_array[i].events = POLLHUP | POLLERR;
+		// Prepare list of file descriptors to pull
+		struct pollfd *fd_array = new struct pollfd[bus_watches.size() + 1];
+		
+		fd_array[0].fd = m_wakeup_pipe[0];
+		fd_array[0].events = POLLIN;
+
+		unsigned int nfds = 1;
+		for (std::list<DBusWatch *>::iterator it = bus_watches.begin(); it != bus_watches.end(); it++) {
+			if (dbus_watch_get_enabled(*it))
+			{
+#if WITH_LIBDBUS >= 2
+				fd_array[nfds].fd = dbus_watch_get_unix_fd(*it);
+#else
+				fd_array[nfds].fd = dbus_watch_get_fd(*it);
+#endif
+				int flags = dbus_watch_get_flags(*it);
+				fd_array[nfds].events = POLLHUP | POLLERR;
 				if (flags & DBUS_WATCH_READABLE)
-					fd_array[i].events |= POLLIN;
+					fd_array[nfds].events |= POLLIN;
 				if (flags & DBUS_WATCH_WRITABLE)
-					fd_array[i].events |= POLLOUT;
+					fd_array[nfds].events |= POLLOUT;
+				nfds++;				
 			}
 		}
 		LeaveCriticalSection();
+
+		int res;
+		if ((res = poll(fd_array, nfds, -1)) > 0) {
+
+			EnterCriticalSection();
+			m_thread_holds_lock = true;
+
+			char tmp;
+			if (read(m_wakeup_pipe[0], &tmp, 1) == 1) {
+				m_thread_holds_lock = false;
+				LeaveCriticalSection();
+				delete [] fd_array;
+				continue;
+			}
+
+			for (std::list<DBusWatch *>::iterator it = bus_watches.begin(); it != bus_watches.end(); it++) {
+				if (!dbus_watch_get_enabled(*it))
+					continue;
+#if WITH_LIBDBUS >= 2
+				int fd = dbus_watch_get_unix_fd(*it);
+#else
+				int fd = dbus_watch_get_fd(*it);
+#endif
+				unsigned int i;
+				for (i = 1; i < nfds; i++) {
+					if (fd_array[i].fd == fd && fd_array[i].revents) {
+						int flags = 0;
+						if (fd_array[i].revents & POLLIN)
+							flags |= DBUS_WATCH_READABLE;
+						if (fd_array[i].revents & POLLOUT)
+							flags |= DBUS_WATCH_WRITABLE;
+						if (fd_array[i].revents & POLLERR)
+							flags |= DBUS_WATCH_ERROR;
+						if (fd_array[i].revents & POLLHUP)
+							flags |= DBUS_WATCH_HANGUP;
+						dbus_watch_handle(*it, flags);
+						break;
+					}
+				}
+
+				// Only handle a single watch in each poll iteration, bus_watches could change inside dbus_watch_handle
+				if (i != nfds)
+					break;
+			}
+			m_thread_holds_lock = false;
+			LeaveCriticalSection();
+		}
+
+		delete [] fd_array;
 	}
 
 	return 0;
 }
 
-dbus_bool_t add_watch(DBusWatch *watch, void *data)
+dbus_bool_t DBusThread::add_watch(DBusWatch *watch, void *data)
 {
 	DBusThread * thread = (DBusThread *) data;
 
-	thread->m_waiting = 1;
-	char tmp = 0;
-	write(thread->m_wakeup_pipe[1], &tmp, 0);
-	thread->EnterCriticalSection();
-	thread->GetWatchesList()->push_front(watch);
-	thread->rebuild_fd_array();
+	if (!thread->CalledFromThread()) {
+		char tmp = 0;
+		write(thread->m_wakeup_pipe[1], &tmp, 0);
+		thread->EnterCriticalSection();
+	}
+	else if (!thread->m_thread_holds_lock)
+		thread->EnterCriticalSection();
 
-	if (thread->m_waiting == 2)
-		thread->m_condition.Signal();
-	thread->m_waiting = 0;
-	thread->LeaveCriticalSection();
+	WatchesList &watches = *thread->GetWatchesList();
+	watches.push_back(watch);
+
+	if (!thread->CalledFromThread())
+		thread->LeaveCriticalSection();
+	else if (!thread->m_thread_holds_lock)
+		thread->LeaveCriticalSection();
+
 	return true;
 }
 
-void remove_watch(DBusWatch *watch, void *data)
+void DBusThread::remove_watch(DBusWatch *watch, void *data)
 {
 	DBusThread * thread = (DBusThread *) data;
 
-	thread->m_waiting = 1;
-	char tmp = 0;
-	write(thread->m_wakeup_pipe[1], &tmp, 0);
-	thread->EnterCriticalSection();
+	if (!thread->CalledFromThread()) {
+		char tmp = 0;
+		write(thread->m_wakeup_pipe[1], &tmp, 0);
+		thread->EnterCriticalSection();
+	}
+	else if (!thread->m_thread_holds_lock)
+		thread->EnterCriticalSection();
 
-	thread->GetWatchesList()->remove(watch);
-	thread->rebuild_fd_array();
+	WatchesList *watches = thread->GetWatchesList();
+	watches->remove(watch);
 
-	if (thread->m_waiting == 2)
-		thread->m_condition.Signal();
-	thread->m_waiting = 0;
-	thread->LeaveCriticalSection();
+	if (!thread->CalledFromThread())
+		thread->LeaveCriticalSection();
+	else if (!thread->m_thread_holds_lock)
+		thread->LeaveCriticalSection();
 }
 
-void toggle_watch(DBusWatch *watch, void *data)
+void DBusThread::toggle_watch(DBusWatch *watch, void *data)
 {
 	DBusThread * thread = (DBusThread *) data;
 
-	thread->m_waiting = 1;
-	char tmp = 0;
-	write(thread->m_wakeup_pipe[1], &tmp, 0);
-	thread->EnterCriticalSection();
-
-	thread->rebuild_fd_array();
-
-	if (thread->m_waiting == 2)
-		thread->m_condition.Signal();
-	thread->m_waiting = 0;
-	thread->LeaveCriticalSection();
+	thread->Wakeup();
 }
 
 DBusHandlerResult handle_message(DBusConnection *connection, DBusMessage *message, void *user_data);
@@ -262,8 +273,9 @@ wxDBusConnection::~wxDBusConnection()
 		m_thread->Wait();
 		delete m_thread;
 	}
-	if (m_connection != NULL)
+	if (m_connection != NULL) {
 		dbus_connection_unref(m_connection);
+	}
 	delete m_error;
 }
 
@@ -291,7 +303,10 @@ bool wxDBusConnection::SendWithReply(DBusMessage *message, int timeout_milliseco
 DBusMessage * wxDBusConnection::SendWithReplyAndBlock(DBusMessage *message, int timeout_milliseconds)
 {
 	m_error->Reset();
+	m_thread->EnterCriticalSection();
+	// We need to block the mainloop or bad things will happen
 	DBusMessage * result = dbus_connection_send_with_reply_and_block(m_connection, message, timeout_milliseconds, &(m_error->GetError()));
+	m_thread->LeaveCriticalSection();
 	m_thread->Wakeup();
 	return result;
 }
