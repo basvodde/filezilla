@@ -1,6 +1,8 @@
 #include "FileZilla.h"
 #include "logging_private.h"
 
+#include <errno.h>
+
 bool CLogging::m_logfile_initialized = false;
 #ifdef __WXMSW__
 HANDLE CLogging::m_log_fd = INVALID_HANDLE_VALUE;
@@ -312,18 +314,70 @@ void CLogging::LogToFile(MessageType nMessageType, const wxString& msg) const
 		if (m_max_size)
 		{
 			struct stat buf;
-			if (fstat(m_log_fd, &buf) ||buf.st_size > m_max_size)
+			int rc = fstat(m_log_fd, &buf);
+			while (!rc && buf.st_size > 10000)//m_max_size)
 			{
-				// Todo. Proper locking is needed
+				struct flock lock = {0};
+				lock.l_type = F_WRLCK;
+				lock.l_whence = SEEK_SET;
+				lock.l_start = 0;
+				lock.l_len = 1;
+
+				int rc;
+
+				// Retry through signals
+				while ((rc = fcntl(m_log_fd, F_SETLKW, &lock)) == -1 && errno == EINTR);
+
+				// Ignore any other failures
+				int fd = open(m_file.fn_str(), O_WRONLY | O_APPEND | O_CREAT, 0644);
+				if (fd == -1)
+				{
+					wxString error = wxSysErrorMsg();
+
+					close(m_log_fd);
+					m_log_fd = -1;
+
+					LogMessage(Error, error);
+					return;
+				}
+				struct stat buf2;
+				rc = fstat(fd, &buf2);
+
+				// Different files
+				if (!rc && buf.st_ino != buf2.st_ino)
+				{
+					close(m_log_fd); // Releases the lock
+					m_log_fd = fd;
+					buf = buf2;
+					continue;
+				}
+
+				// The file is indeed the log file and we are holding a lock on it.
+
+				// Rename it
+				rc = rename(m_file.fn_str(), (m_file + _T(".1")).fn_str());
+				close(m_log_fd);
+				close(fd);
+
+				// Get the new file
+				m_log_fd = open(m_file.fn_str(), O_WRONLY | O_APPEND | O_CREAT, 0644);
+				if (m_log_fd == -1)
+				{
+					LogMessage(Error, wxSysErrorMsg());
+					return;
+				}
+
+				if (!rc) // Rename didn't fail
+					rc = fstat(m_log_fd, &buf);
 			}
 		}
-		DWORD len = (DWORD)strlen((const char*)utf8);
+		size_t len = strlen((const char*)utf8);
 		size_t written = write(m_log_fd, (const char*)utf8, len);
 		if (written != len)
 		{
-			LogMessage(Error, _("Could not write to log file: %s"), wxSysErrorMsg());
 			close(m_log_fd);
 			m_log_fd = -1;
+			LogMessage(Error, _("Could not write to log file: %s"), wxSysErrorMsg());
 		}
 #endif
 	}
