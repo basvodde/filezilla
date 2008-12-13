@@ -66,6 +66,9 @@ CFileZillaEnginePrivate::CFileZillaEnginePrivate()
 	m_engineList.push_back(this);
 	m_retryCount = 0;
 
+	static int id = 0;
+	m_engine_id = id++;
+
 	m_pLogging = new CLogging(this);
 }
 

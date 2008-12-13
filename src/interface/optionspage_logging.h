@@ -8,6 +8,13 @@ public:
 	virtual bool LoadPage();
 	virtual bool SavePage();
 	virtual bool Validate();
+
+protected:
+	void SetCtrlState();
+
+	DECLARE_EVENT_TABLE()
+	void OnBrowse(wxCommandEvent& event);
+	void OnCheck(wxCommandEvent& event);
 };
 
 #endif //__OPTIONSPAGE_LOGGING_H__

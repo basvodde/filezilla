@@ -2431,15 +2431,99 @@
       <label>Logging</label>
       <orient>wxVERTICAL</orient>
       <object class="sizeritem">
-        <object class="wxBoxSizer">
-          <orient>wxVERTICAL</orient>
+        <object class="wxFlexGridSizer">
           <object class="sizeritem">
             <object class="wxCheckBox" name="ID_TIMESTAMPS">
               <label>&amp;Show timestamps in message log</label>
             </object>
           </object>
+          <object class="sizeritem">
+            <object class="wxCheckBox" name="ID_LOGFILE">
+              <label>&amp;Log to file</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>1</cols>
+              <vgap>5</vgap>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Filename:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <cols>3</cols>
+                  <hgap>5</hgap>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_FILENAME"/>
+                    <flag>wxALIGN_CENTRE_VERTICAL|wxGROW</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxButton" name="ID_BROWSE">
+                      <label>&amp;Browse...</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <growablecols>1</growablecols>
+                </object>
+                <flag>wxGROW</flag>
+                <minsize>400,0</minsize>
+              </object>
+              <growablecols>0</growablecols>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_DOLIMIT">
+                  <label>Limit size of logfile</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <cols>3</cols>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Limit:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_LIMIT">
+                      <size>60,-1</size>
+                    </object>
+                    <flag></flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>MiB</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <hgap>5</hgap>
+                </object>
+                <flag>wxLEFT</flag>
+                <border>18</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>If the size of the logfile reaches the limit, it gets renamed by adding &quot;.1&quot;  to the end of the filename (possibly overwriting older logfiles) and a new file gets created.</label>
+                </object>
+                <flag>wxLEFT</flag>
+                <border>18</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Changing logfile settings requires restart of FileZilla.</label>
+                </object>
+              </object>
+            </object>
+            <flag>wxLEFT|wxGROW</flag>
+            <border>18</border>
+          </object>
+          <cols>1</cols>
+          <vgap>5</vgap>
+          <growablecols>0</growablecols>
         </object>
-        <flag>wxALL</flag>
+        <flag>wxALL|wxGROW</flag>
         <border>5</border>
       </object>
     </object>

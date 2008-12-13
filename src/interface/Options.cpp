@@ -63,6 +63,8 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Proxy port", number, _T("0") },
 	{ "Proxy user", string, _T("") },
 	{ "Proxy password", string, _T("") },
+	{ "Logging file", string, _T("") },
+	{ "Logging filesize limit", number, _T("10") },
 
 	// Interface settings
 	{ "Number of Transfers", number, _T("2") },

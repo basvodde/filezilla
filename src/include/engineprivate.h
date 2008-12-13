@@ -44,6 +44,8 @@ public:
 	// directory.
 	void InvalidateCurrentWorkingDirs(const CServerPath& path);
 
+	int GetEngineId() const {return m_engine_id; }
+
 protected:
 	CFileZillaEnginePrivate();
 	virtual ~CFileZillaEnginePrivate();
@@ -69,6 +71,7 @@ protected:
 
 	wxEvtHandler *m_pEventHandler;
 
+	int m_engine_id;
 	static std::list<CFileZillaEnginePrivate*> m_engineList;
 
 	// Indicicates if data has been received/sent and whether to send any notifications
