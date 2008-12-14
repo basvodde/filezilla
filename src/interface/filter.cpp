@@ -22,6 +22,7 @@ EVT_BUTTON(XRCID("wxID_APPLY"), CFilterDialog::OnApply)
 EVT_BUTTON(XRCID("ID_EDIT"), CFilterDialog::OnEdit)
 EVT_CHECKLISTBOX(wxID_ANY, CFilterDialog::OnFilterSelect)
 EVT_BUTTON(XRCID("ID_SAVESET"), CFilterDialog::OnSaveAs)
+EVT_BUTTON(XRCID("ID_RENAMESET"), CFilterDialog::OnRename)
 EVT_BUTTON(XRCID("ID_DELETESET"), CFilterDialog::OnDeleteSet)
 EVT_CHOICE(XRCID("ID_SETS"), CFilterDialog::OnSetSelect)
 
@@ -119,6 +120,7 @@ bool CFilterDialog::Create(CMainFrame* parent)
 	for (unsigned int i = 1; i < m_filterSets.size(); i++)
 		pChoice->Append(m_filterSets[i].name);
 	pChoice->SetSelection(m_currentFilterSet);
+	SetCtrlState();
 
 	GetSizer()->Fit(this);
 
@@ -325,6 +327,14 @@ void CFilterDialog::OnSaveAs(wxCommandEvent& event)
 		return;
 	}
 	wxChoice* pChoice = XRCCTRL(*this, "ID_SETS", wxChoice);
+
+	CFilterSet set;
+	int old_pos = pChoice->GetSelection();
+	if (old_pos > 0)
+		set = m_filterSets[old_pos];
+	else
+		set = m_filterSets[0];
+
 	int pos = pChoice->FindString(name);
 	if (pos != wxNOT_FOUND)
 	{
@@ -335,16 +345,85 @@ void CFilterDialog::OnSaveAs(wxCommandEvent& event)
 	if (pos == wxNOT_FOUND)
 	{
 		pos = m_filterSets.size();
-		m_filterSets.push_back(m_filterSets[0]);
+		m_filterSets.push_back(set);
 		pChoice->Append(name);
 	}
 	else
-		m_filterSets[pos] = m_filterSets[0];
+		m_filterSets[pos] = set;
 
 	m_filterSets[pos].name = name;
 
 	pChoice->SetSelection(pos);
 	m_currentFilterSet = pos;
+
+	SetCtrlState();
+
+	GetSizer()->Fit(this);
+}
+
+void CFilterDialog::OnRename(wxCommandEvent& event)
+{
+	wxChoice* pChoice = XRCCTRL(*this, "ID_SETS", wxChoice);
+	int old_pos = pChoice->GetSelection();
+	if (old_pos == -1)
+		return;
+
+	if (!old_pos)
+	{
+		wxMessageBox(_("This filter set cannot be renamed."));
+		return;
+	}
+
+	CInputDialog dlg;
+
+	wxString msg = wxString::Format(_("Please enter a new name for the filter set \"%s\""), pChoice->GetStringSelection());
+
+	dlg.Create(this, _("Enter new name for filterset"), msg);
+	if (dlg.ShowModal() != wxID_OK)
+		return;
+
+	wxString name = dlg.GetValue();
+
+	if (name == pChoice->GetStringSelection())
+	{
+		// Nothing changed
+		return;
+	}
+
+	if (name == _T(""))
+	{
+		wxMessageBox(_("No name for the filterset given."), _("Cannot save filterset"), wxICON_INFORMATION);
+		return;
+	}
+
+	int pos = pChoice->FindString(name);
+	if (pos != wxNOT_FOUND)
+	{
+		if (wxMessageBox(_("Given filterset name already exists, overwrite filter set?"), _("Filter set already exists"), wxICON_QUESTION | wxYES_NO) != wxYES)
+			return;
+	}
+
+	// Remove old entry
+	pChoice->Delete(old_pos);
+	CFilterSet set = m_filterSets[old_pos];
+	m_filterSets.erase(m_filterSets.begin() + old_pos);
+
+	pos = pChoice->FindString(name);
+	if (pos == wxNOT_FOUND)
+	{
+		pos = m_filterSets.size();
+		m_filterSets.push_back(set);
+		pChoice->Append(name);
+	}
+	else
+		m_filterSets[pos] = set;
+
+	m_filterSets[pos].name = name;
+
+	pChoice->SetSelection(pos);
+	m_currentFilterSet = pos;
+
+	GetSizer()->Fit(this);
 }
 
 void CFilterDialog::OnDeleteSet(wxCommandEvent& event)
@@ -368,12 +447,15 @@ void CFilterDialog::OnDeleteSet(wxCommandEvent& event)
 
 	pChoice->SetSelection(0);
 	m_currentFilterSet = 0;
+
+	SetCtrlState();
 }
 
 void CFilterDialog::OnSetSelect(wxCommandEvent& event)
 {
 	m_currentFilterSet = event.GetSelection();
 	DisplayFilters();
+	SetCtrlState();
 }
 
 void CFilterDialog::OnChangeAll(wxCommandEvent& event)
@@ -430,6 +512,15 @@ void CFilterDialog::OnApply(wxCommandEvent& event)
 	SaveFilters();
 
 	m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_APPLYFILTER);
+}
+
+void CFilterDialog::SetCtrlState()
+{
+	wxChoice* pChoice = XRCCTRL(*this, "ID_SETS", wxChoice);
+
+	int sel = pChoice->GetSelection();
+	XRCCTRL(*this, "ID_RENAMESET", wxButton)->Enable(sel > 0);
+	XRCCTRL(*this, "ID_DELETESET", wxButton)->Enable(sel > 0);
 }
 
 CFilterManager::CFilterManager()

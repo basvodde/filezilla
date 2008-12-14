@@ -107,6 +107,8 @@ protected:
 
 	void DisplayFilters();
 
+	void SetCtrlState();
+
 	DECLARE_EVENT_TABLE();
 	void OnOK(wxCommandEvent& event);
 	void OnCancel(wxCommandEvent& event);
@@ -116,6 +118,7 @@ protected:
 	void OnMouseEvent(wxMouseEvent& event);
 	void OnKeyEvent(wxKeyEvent& event);
 	void OnSaveAs(wxCommandEvent& event);
+	void OnRename(wxCommandEvent& event);
 	void OnDeleteSet(wxCommandEvent& event);
 	void OnSetSelect(wxCommandEvent& event);
 
