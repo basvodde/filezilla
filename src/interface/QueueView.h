@@ -36,9 +36,10 @@ enum ActionAfterState
 	ActionAfterState_Disconnect,
 	ActionAfterState_RunCommand,
 	ActionAfterState_ShowMessage,
-	ActionAfterState_PlaySound,
+	ActionAfterState_PlaySound
 // On Windows, wx can reboot or shutdown the system as well.
 #ifdef __WXMSW__
+	,
 	ActionAfterState_Reboot,
 	ActionAfterState_Shutdown
 #endif

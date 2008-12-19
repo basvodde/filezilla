@@ -14,7 +14,7 @@ public:
 	{
 		noconn,
 		handshake,
-		conn,
+		conn
 	};
 
 	enum ProxyType

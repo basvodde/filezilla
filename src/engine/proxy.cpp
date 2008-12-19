@@ -11,7 +11,7 @@ enum handshake_state
 	socks5_auth,
 	socks5_request,
 	socks5_request_addrtype,
-	socks5_request_address,
+	socks5_request_address
 };
 
 CProxySocket::CProxySocket(CSocketEventHandler* pEvtHandler, CSocket* pSocket, CControlSocket* pOwner)
