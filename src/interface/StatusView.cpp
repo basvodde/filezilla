@@ -205,6 +205,7 @@ void CStatusView::AddToLog(enum MessageType messagetype, const wxString& message
 
 	prefix += m_attributeCache[messagetype].prefix;
 
+#if wxUSE_UNICODE
 	if (m_rtl)
 	{
 		// Unicode control characters that control reading direction
@@ -225,6 +226,7 @@ void CStatusView::AddToLog(enum MessageType messagetype, const wxString& message
 			lineLength += 2;
 		}
 	}
+#endif
 
 	m_lineLengths.push_back(lineLength);
 
