@@ -21,6 +21,7 @@
   #include <sys/socket.h>
   #include <netdb.h>
   #include <fcntl.h>
+  #include <arpa/inet.h>
   #include <netinet/in.h>
   #include <netinet/tcp.h>
   #if !defined(MSG_NOSIGNAL) && !defined(SO_NOSIGPIPE)
