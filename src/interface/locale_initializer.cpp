@@ -91,7 +91,13 @@ bool CInitializer::SetLocaleReal(const std::string& locale)
 #ifdef __WXDEBUG__
 	printf("setlocale %s successful\n", locale.c_str());
 #endif
+#ifdef HAVE_SETENV
 	setenv("LC_ALL", locale.c_str(), 1);
+#else
+	std::string str("LC_ALL=");
+	str += locale;
+	putenv(str.c_ctr());
+#endif
 	return true;
 }
 
