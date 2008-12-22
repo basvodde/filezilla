@@ -16,7 +16,7 @@ class CQuickconnectBar;
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 class CUpdateWizard;
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
-class CSiteManagerItemData;
+class CSiteManagerItemData_Site;
 class CQueue;
 class CViewHeader;
 class CComparisonManager;
@@ -65,7 +65,7 @@ protected:
 	bool CreateQuickconnectBar();
 	bool CreateToolBar();
 	void SetProgress(const CTransferStatus* pStatus);
-	void ConnectToSite(CSiteManagerItemData* const pData);
+	void ConnectToSite(CSiteManagerItemData_Site* const pData);
 	void OpenSiteManager(const CServer* pServer = 0);
 	void InitToolbarState();
 	void InitMenubarState();

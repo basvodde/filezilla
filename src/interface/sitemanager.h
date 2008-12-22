@@ -4,19 +4,37 @@
 class CSiteManagerItemData : public wxTreeItemData
 {
 public:
-	CSiteManagerItemData(CServer server = CServer())
+	enum type
 	{
-		m_server = server;
+		SITE,
+		BOOKMARK
+	};
+
+	CSiteManagerItemData(enum type item_type)
+		: m_type(item_type)
+	{
 	}
 
 	virtual ~CSiteManagerItemData()
 	{
 	}
 
-	CServer m_server;
-	wxString m_comments;
 	wxString m_localDir;
 	CServerPath m_remoteDir;
+
+	enum type m_type;
+};
+
+class CSiteManagerItemData_Site : public CSiteManagerItemData
+{
+public:
+	CSiteManagerItemData_Site(const CServer& server = CServer())
+		: CSiteManagerItemData(SITE), m_server(server)
+	{
+	}
+
+	CServer m_server;
+	wxString m_comments;
 };
 
 #include "dialogex.h"
@@ -40,14 +58,14 @@ public:
 	// Creation. If pServer is set, it will cause a new item to be created.
 	bool Create(wxWindow* parent, const CServer* pServer = 0);
 
-	bool GetServer(CSiteManagerItemData& data);
+	bool GetServer(CSiteManagerItemData_Site& data);
 
 	static wxMenu* GetSitesMenu();
 	static void ClearIdMap();
 
 	// This function also clears the Id map
-	static CSiteManagerItemData* GetSiteById(int id);
-	static CSiteManagerItemData* GetSiteByPath(wxString sitePath);
+	static CSiteManagerItemData_Site* GetSiteById(int id);
+	static CSiteManagerItemData_Site* GetSiteByPath(wxString sitePath);
 
 	static bool UnescapeSitePath(wxString path, std::list<wxString>& result);
 
@@ -56,7 +74,9 @@ protected:
 	void CreateControls(wxWindow* parent);
 
 	bool Verify();
-	bool UpdateServer();
+	bool UpdateItem();
+	bool UpdateServer(CSiteManagerItemData_Site &server, const wxString& name);
+	bool UpdateBookmark(CSiteManagerItemData &bookmark, const CServer& server);
 	bool Load();
 	static bool Load(TiXmlElement *pElement, CSiteManagerXmlHandler* pHandler);
 	bool Save(TiXmlElement *pElement = 0, wxTreeItemId treeId = wxTreeItemId());
@@ -65,39 +85,45 @@ protected:
 	bool LoadDefaultSites();
 
 	// The map maps event id's to sites
-	static wxMenu* GetSitesMenu_Predefied(std::map<int, CSiteManagerItemData*> &idMap);
+	static wxMenu* GetSitesMenu_Predefied(std::map<int, CSiteManagerItemData_Site*> &idMap);
 
 	bool IsPredefinedItem(wxTreeItemId item);
 
-	static CSiteManagerItemData* ReadServerElement(TiXmlElement *pElement);
+	static CSiteManagerItemData_Site* ReadServerElement(TiXmlElement *pElement);
+
+	wxString FindFirstFreeName(const wxTreeItemId &parent, const wxString& name);
 
 	void AddNewSite(wxTreeItemId parent, const CServer& server);
 	void CopyAddServer(const CServer& server);
 
+	void AddNewBookmark(wxTreeItemId parent);
+
 	void RememberLastSelected();
 
-	virtual void OnOK(wxCommandEvent& event);
-	virtual void OnCancel(wxCommandEvent& event);
-	virtual void OnConnect(wxCommandEvent& event);
-	virtual void OnNewSite(wxCommandEvent& event);
-	virtual void OnNewFolder(wxCommandEvent& event);
-	virtual void OnRename(wxCommandEvent& event);
-	virtual void OnDelete(wxCommandEvent& event);
-	virtual void OnBeginLabelEdit(wxTreeEvent& event);
-	virtual void OnEndLabelEdit(wxTreeEvent& event);
-	virtual void OnSelChanging(wxTreeEvent& event);
-	virtual void OnSelChanged(wxTreeEvent& event);
-	virtual void OnLogontypeSelChanged(wxCommandEvent& event);
-	virtual void OnRemoteDirBrowse(wxCommandEvent& event);
-	virtual void OnItemActivated(wxTreeEvent& event);
-	virtual void OnLimitMultipleConnectionsChanged(wxCommandEvent& event);
-	virtual void OnCharsetChange(wxCommandEvent& event);
-	virtual void OnProtocolSelChanged(wxCommandEvent& event);
-	virtual void OnBeginDrag(wxTreeEvent& event);
-	virtual void OnChar(wxKeyEvent& event);
+	void OnOK(wxCommandEvent& event);
+	void OnCancel(wxCommandEvent& event);
+	void OnConnect(wxCommandEvent& event);
+	void OnNewSite(wxCommandEvent& event);
+	void OnNewFolder(wxCommandEvent& event);
+	void OnRename(wxCommandEvent& event);
+	void OnDelete(wxCommandEvent& event);
+	void OnBeginLabelEdit(wxTreeEvent& event);
+	void OnEndLabelEdit(wxTreeEvent& event);
+	void OnSelChanging(wxTreeEvent& event);
+	void OnSelChanged(wxTreeEvent& event);
+	void OnLogontypeSelChanged(wxCommandEvent& event);
+	void OnRemoteDirBrowse(wxCommandEvent& event);
+	void OnItemActivated(wxTreeEvent& event);
+	void OnLimitMultipleConnectionsChanged(wxCommandEvent& event);
+	void OnCharsetChange(wxCommandEvent& event);
+	void OnProtocolSelChanged(wxCommandEvent& event);
+	void OnBeginDrag(wxTreeEvent& event);
+	void OnChar(wxKeyEvent& event);
 	void OnCopySite(wxCommandEvent& event);
 	void OnContextMenu(wxTreeEvent& event);
 	void OnExportSelected(wxCommandEvent& event);
+	void OnNewBookmark(wxCommandEvent& event);
+	void OnBookmarkBrowse(wxCommandEvent& event);
 
 	CInterProcessMutex* m_pSiteManagerMutex;
 
@@ -111,9 +137,12 @@ protected:
 	bool MoveItems(wxTreeItemId source, wxTreeItemId target, bool copy);
 
 	// Initialized by GetSitesMenu
-	static std::map<int, CSiteManagerItemData*> m_idMap;
+	static std::map<int, CSiteManagerItemData_Site*> m_idMap;
 
 	CWindowStateManager* m_pWindowStateManager;
+
+	wxNotebook *m_pNotebook_Site;
+	wxNotebook *m_pNotebook_Bookmark;
 };
 
 #endif //__SITEMANAGER_H__

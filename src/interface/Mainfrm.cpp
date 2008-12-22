@@ -878,7 +878,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	}
 	else
 	{
-		CSiteManagerItemData* pData = CSiteManager::GetSiteById(event.GetId());
+		CSiteManagerItemData_Site* pData = CSiteManager::GetSiteById(event.GetId());
 
 		if (!pData)
 		{
@@ -1452,7 +1452,7 @@ void CMainFrame::OpenSiteManager(const CServer* pServer /*=0*/)
 	int res = dlg.ShowModal();
 	if (res == wxID_YES)
 	{
-		CSiteManagerItemData data;
+		CSiteManagerItemData_Site data;
 		if (!dlg.GetServer(data))
 			return;
 
@@ -1991,7 +1991,7 @@ void CMainFrame::OnSitemanagerDropdown(wxCommandEvent& event)
 	ShowDropdownMenu(pMenu, m_pToolBar, event);
 }
 
-void CMainFrame::ConnectToSite(CSiteManagerItemData* const pData)
+void CMainFrame::ConnectToSite(CSiteManagerItemData_Site* const pData)
 {
 	wxASSERT(pData);
 
@@ -2463,7 +2463,7 @@ void CMainFrame::ProcessCommandLine()
 	}
 	else if ((site = pCommandLine->GetOption(CCommandLine::site)) != _T(""))
 	{
-		CSiteManagerItemData* pData = CSiteManager::GetSiteByPath(site);
+		CSiteManagerItemData_Site* pData = CSiteManager::GetSiteByPath(site);
 
 		if (pData)
 		{
