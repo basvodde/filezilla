@@ -223,6 +223,9 @@ CMainFrame::CMainFrame()
 			CFilterManager::ToggleFilters();
 	}
 
+	m_last_bookmark_path = COptions::Get()->GetOption(OPTION_LAST_CONNECTED_SITE);
+	CSiteManager::GetBookmarks(m_last_bookmark_path, m_bookmarks);
+
 	CreateMenus();
 	CreateToolBar();
 	if (COptions::Get()->GetOptionVal(OPTION_SHOW_QUICKCONNECT))
@@ -480,10 +483,6 @@ CMainFrame::CMainFrame()
 	InitToolbarState();
 
 	CAutoAsciiFiles::SettingsChanged();
-
-	m_last_bookmark_path = COptions::Get()->GetOption(OPTION_LAST_CONNECTED_SITE);
-	CSiteManager::GetBookmarks(m_last_bookmark_path, m_bookmarks);
-	UpdateBookmarkMenu();
 }
 
 CMainFrame::~CMainFrame()
@@ -612,6 +611,8 @@ bool CMainFrame::CreateMenus()
 		else
 			m_pMenuBar->Check(XRCID("ID_COMPARE_DATE"), true);
 	}
+
+	UpdateBookmarkMenu();
 
 	InitMenubarState();
 	UpdateMenubarState();
@@ -892,6 +893,38 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	}
 	else
 	{
+		std::map<int, wxString>::const_iterator iter = m_bookmark_menu_id_map.find(event.GetId());
+		if (iter != m_bookmark_menu_id_map.end())
+		{
+			// We hit a bookmark
+			if (m_last_bookmark_path.empty())
+				return;
+
+			wxString name = iter->second;
+			name.Replace(_T("\\"), _T("\\\\"));
+			name.Replace(_T("/"), _T("\\/"));
+			name = m_last_bookmark_path + _T("/") + name;
+
+			CSiteManagerItemData_Site *pData = CSiteManager::GetSiteByPath(name);
+			if (!pData)
+				return;
+
+			if (!pData->m_remoteDir.IsEmpty() && m_pState->IsRemoteIdle())
+			{
+				const CServer* pServer = m_pState->GetServer();
+				if (!pServer || *pServer != pData->m_server)
+					m_pState->Connect(pData->m_server, true, pData->m_remoteDir);
+				else
+					m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(pData->m_remoteDir));
+			}
+			if (!pData->m_localDir.empty())
+				m_pState->SetLocalDir(pData->m_localDir);
+
+			delete pData;
+
+			return;
+		}
+
 		wxString path;
 		CSiteManagerItemData_Site* pData = CSiteManager::GetSiteById(event.GetId(), path);
 

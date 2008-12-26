@@ -2428,7 +2428,7 @@ public:
 			if (first == name)
 			{
 				m_lastSelection.pop_front();
-				if (m_lastSelection.empty())
+				if (m_lastSelection.size() <= 1)
 				{
 					m_theItemData = data;
 					data = 0;
@@ -2448,7 +2448,20 @@ public:
 	virtual bool AddBookmark(const wxString& name, CSiteManagerItemData* data)
 	{
 		if (m_theItemData)
-			m_bookmarks.push_back(name);
+		{
+			if (m_lastSelection.size())
+			{
+				const wxString& first = m_lastSelection.front();
+				if (first == name)
+				{
+					m_lastSelection.pop_front();
+					m_theItemData->m_localDir = data->m_localDir;
+					m_theItemData->m_remoteDir = data->m_remoteDir;
+				}
+			}
+			else
+				m_bookmarks.push_back(name);
+		}
 
 		delete data;
 		return true;
@@ -2458,6 +2471,15 @@ public:
 	{
 		if (m_wrong_sel_depth)
 			m_wrong_sel_depth--;
+		else if (m_theItemData)
+		{
+			if (m_lastSelection.size()) // Bookmark not found
+			{
+				delete m_theItemData;
+				m_theItemData = 0;
+				return false;
+			}
+		}
 
 		return m_theItemData == 0;
 	}
