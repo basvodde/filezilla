@@ -525,7 +525,8 @@ void CManualTransfer::OnSelectSite(wxCommandEvent& event)
 
 void CManualTransfer::OnSelectedSite(wxCommandEvent& event)
 {
-	CSiteManagerItemData_Site* pData = CSiteManager::GetSiteById(event.GetId());
+	wxString path;
+	CSiteManagerItemData_Site* pData = CSiteManager::GetSiteById(event.GetId(), path);
 	if (!pData)
 		return;
 

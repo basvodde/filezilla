@@ -59,12 +59,14 @@ public:
 	bool Create(wxWindow* parent, const CServer* pServer = 0);
 
 	bool GetServer(CSiteManagerItemData_Site& data);
+	wxString GetSitePath();
+	static bool GetBookmarks(wxString sitePath, std::list<wxString> &bookmarks);
 
 	static wxMenu* GetSitesMenu();
 	static void ClearIdMap();
 
 	// This function also clears the Id map
-	static CSiteManagerItemData_Site* GetSiteById(int id);
+	static CSiteManagerItemData_Site* GetSiteById(int id, wxString &path);
 	static CSiteManagerItemData_Site* GetSiteByPath(wxString sitePath);
 
 	static bool UnescapeSitePath(wxString path, std::list<wxString>& result);
@@ -83,9 +85,6 @@ protected:
 	bool SaveChild(TiXmlElement *pElement, wxTreeItemId child);
 	void SetCtrlState();
 	bool LoadDefaultSites();
-
-	// The map maps event id's to sites
-	static wxMenu* GetSitesMenu_Predefied(std::map<int, CSiteManagerItemData_Site*> &idMap);
 
 	bool IsPredefinedItem(wxTreeItemId item);
 
@@ -137,7 +136,17 @@ protected:
 	bool MoveItems(wxTreeItemId source, wxTreeItemId target, bool copy);
 
 	// Initialized by GetSitesMenu
-	static std::map<int, CSiteManagerItemData_Site*> m_idMap;
+public:
+	struct _menu_data
+	{
+		wxString path;
+		CSiteManagerItemData_Site* data;
+	};
+protected:
+	static std::map<int, struct _menu_data> m_idMap;
+
+	// The map maps event id's to sites
+	static wxMenu* GetSitesMenu_Predefied(std::map<int, struct _menu_data> &idMap);
 
 	CWindowStateManager* m_pWindowStateManager;
 

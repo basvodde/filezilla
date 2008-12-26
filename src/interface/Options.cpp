@@ -126,7 +126,8 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Filter toggle state", number, _T("0") },
 	{ "Size decimal places", number, _T("0") },
 	{ "Show quickconnect bar", number, _T("1") },
-	{ "Messagelog position", number, _T("0") }
+	{ "Messagelog position", number, _T("0") },
+	{ "Last connected site", string, _T("") }
 };
 
 struct t_default_option

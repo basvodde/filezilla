@@ -60,17 +60,26 @@ public:
 
 	void ProcessCommandLine();
 
+	void ClearBookmarks();
+
 protected:
 	bool CreateMenus();
 	bool CreateQuickconnectBar();
 	bool CreateToolBar();
 	void SetProgress(const CTransferStatus* pStatus);
-	void ConnectToSite(CSiteManagerItemData_Site* const pData);
+	bool ConnectToSite(CSiteManagerItemData_Site* const pData);
 	void OpenSiteManager(const CServer* pServer = 0);
 	void InitToolbarState();
 	void InitMenubarState();
 
 	void FocusNextEnabled(std::list<wxWindow*>& windowOrder, std::list<wxWindow*>::iterator iter, bool skipFirst, bool forward);
+
+	void UpdateBookmarkMenu();
+
+	std::list<int> m_bookmark_menu_ids;
+	std::map<int, wxString> m_bookmark_menu_id_map;
+	wxString m_last_bookmark_path;
+	std::list<wxString> m_bookmarks;
 
 	CStatusBar* m_pStatusBar;
 	wxMenuBar* m_pMenuBar;

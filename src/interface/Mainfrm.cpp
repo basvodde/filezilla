@@ -129,6 +129,16 @@ protected:
 				pMenuBar->Check(XRCID("ID_MENU_TRANSFER_PROCESSQUEUE"), check);
 			return;
 		}
+		if (notification == STATECHANGE_SERVER)
+		{
+			const CServer* pServer = m_pState->GetServer();
+
+			if (pServer && pServer->GetName() == _T(""))
+			{
+				// Can only happen through quickconnect bar
+				m_pMainFrame->ClearBookmarks();
+			}
+		}
 
 		m_pMainFrame->UpdateMenubarState();
 		m_pMainFrame->UpdateToolbarState();
@@ -470,6 +480,10 @@ CMainFrame::CMainFrame()
 	InitToolbarState();
 
 	CAutoAsciiFiles::SettingsChanged();
+
+	m_last_bookmark_path = COptions::Get()->GetOption(OPTION_LAST_CONNECTED_SITE);
+	CSiteManager::GetBookmarks(m_last_bookmark_path, m_bookmarks);
+	UpdateBookmarkMenu();
 }
 
 CMainFrame::~CMainFrame()
@@ -878,7 +892,8 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	}
 	else
 	{
-		CSiteManagerItemData_Site* pData = CSiteManager::GetSiteById(event.GetId());
+		wxString path;
+		CSiteManagerItemData_Site* pData = CSiteManager::GetSiteById(event.GetId(), path);
 
 		if (!pData)
 		{
@@ -887,6 +902,11 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		}
 
 		ConnectToSite(pData);
+		m_last_bookmark_path = path;
+		m_bookmarks.clear();
+		CSiteManager::GetBookmarks(m_last_bookmark_path, m_bookmarks);
+		UpdateBookmarkMenu();
+
 		delete pData;
 	}
 }
@@ -1322,6 +1342,8 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 	bool filters_toggled = CFilterManager::HasActiveFilters(true) && !CFilterManager::HasActiveFilters(false);
 	COptions::Get()->SetOption(OPTION_FILTERTOGGLESTATE, filters_toggled ? 1 : 0);
 
+	COptions::Get()->SetOption(OPTION_LAST_CONNECTED_SITE, m_last_bookmark_path);
+
 	Destroy();
 }
 
@@ -1456,8 +1478,14 @@ void CMainFrame::OpenSiteManager(const CServer* pServer /*=0*/)
 		if (!dlg.GetServer(data))
 			return;
 
-		ConnectToSite(&data);
+		if (ConnectToSite(&data))
+		{
+			m_last_bookmark_path = dlg.GetSitePath();
+		}
 	}
+	m_bookmarks.clear();
+	dlg.GetBookmarks(m_last_bookmark_path, m_bookmarks);
+	UpdateBookmarkMenu();
 }
 
 void CMainFrame::OnSiteManager(wxCommandEvent& event)
@@ -1991,7 +2019,7 @@ void CMainFrame::OnSitemanagerDropdown(wxCommandEvent& event)
 	ShowDropdownMenu(pMenu, m_pToolBar, event);
 }
 
-void CMainFrame::ConnectToSite(CSiteManagerItemData_Site* const pData)
+bool CMainFrame::ConnectToSite(CSiteManagerItemData_Site* const pData)
 {
 	wxASSERT(pData);
 
@@ -1999,13 +2027,16 @@ void CMainFrame::ConnectToSite(CSiteManagerItemData_Site* const pData)
 		(pData->m_server.GetLogonType() == INTERACTIVE && pData->m_server.GetUser() == _T("")))
 	{
 		if (!CLoginManager::Get().GetPassword(pData->m_server, false, pData->m_server.GetName()))
-			return;
+			return false;
 	}
 
-	m_pState->Connect(pData->m_server, true, pData->m_remoteDir);
+	if (!m_pState->Connect(pData->m_server, true, pData->m_remoteDir))
+		return false;
 
 	if (pData->m_localDir != _T(""))
 		m_pState->SetLocalDir(pData->m_localDir);
+
+	return true;
 }
 
 void CMainFrame::CheckChangedSettings()
@@ -2467,7 +2498,13 @@ void CMainFrame::ProcessCommandLine()
 
 		if (pData)
 		{
-			ConnectToSite(pData);
+            if (ConnectToSite(pData))
+			{
+				m_last_bookmark_path = site;
+				m_bookmarks.clear();
+				CSiteManager::GetBookmarks(m_last_bookmark_path, m_bookmarks);
+				UpdateBookmarkMenu();
+			}
 			delete pData;
 		}
 	}
@@ -2543,3 +2580,59 @@ WXLRESULT CMainFrame::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lPara
 	return wxFrame::MSWWindowProc(nMsg, wParam, lParam);
 }
 #endif
+
+void CMainFrame::UpdateBookmarkMenu()
+{
+	if (!m_pMenuBar)
+		return;
+
+	wxMenu* pMenu;
+	if (!m_pMenuBar->FindItem(XRCID("ID_BOOKMARK_ADD"), &pMenu))
+		return;
+
+	// Delete old bookmarks
+	for (std::map<int, wxString>::const_iterator iter = m_bookmark_menu_id_map.begin(); iter != m_bookmark_menu_id_map.end(); iter++)
+	{
+		pMenu->Delete(iter->first);
+	}
+
+	// Delete the separator
+	if (pMenu->GetMenuItemCount() > 2)
+	{
+		wxMenuItem* pSeparator = pMenu->FindItemByPosition(2);
+		if (pSeparator)
+			pMenu->Delete(pSeparator);
+	}
+
+	// Insert bookmarks
+	if (!m_bookmarks.empty())
+		pMenu->AppendSeparator();
+
+	m_bookmark_menu_id_map.clear();
+
+	std::list<int>::iterator ids = m_bookmark_menu_ids.begin();
+	for (std::list<wxString>::const_iterator iter = m_bookmarks.begin(); iter != m_bookmarks.end(); iter++)
+	{
+		int id;
+		if (ids == m_bookmark_menu_ids.end())
+		{
+			id = wxNewId();
+			m_bookmark_menu_ids.push_back(id);
+		}
+		else
+		{
+			id = *ids;
+			ids++;
+		}
+		pMenu->Append(id, *iter);
+
+		m_bookmark_menu_id_map[id] = *iter;
+	}
+}
+
+void CMainFrame::ClearBookmarks()
+{
+	m_last_bookmark_path.clear();
+	m_bookmarks.clear();
+	UpdateBookmarkMenu();
+}
