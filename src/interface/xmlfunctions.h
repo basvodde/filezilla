@@ -79,9 +79,11 @@ void AddTextElementRaw(TiXmlElement* node, const char* value);
 
 // Get string from named child element
 wxString GetTextElement(TiXmlElement* node, const char* name);
+wxString GetTextElement_Trimmed(TiXmlElement* node, const char* name);
 
 // Get string from current element
 wxString GetTextElement(TiXmlElement* node);
+wxString GetTextElement_Trimmed(TiXmlElement* node);
 
 // Get (64-bit) integer from named element
 int GetTextElementInt(TiXmlElement* node, const char* name, int defValue = 0);

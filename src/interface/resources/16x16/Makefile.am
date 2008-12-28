@@ -3,6 +3,7 @@ resourcesdir = $(pkgdatadir)/resources/16x16
 dist_resources_DATA = ascii.png \
 		auto.png \
 		binary.png \
+		bookmark.png \
 		cancel.png \
 		compare.png \
 		disconnect.png download.png downloadadd.png \

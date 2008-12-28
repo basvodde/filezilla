@@ -62,6 +62,9 @@ public:
 	wxString GetSitePath();
 	static bool GetBookmarks(wxString sitePath, std::list<wxString> &bookmarks);
 
+	static wxString AddServer(CServer server);
+	static bool AddBookmark(wxString sitePath, const wxString& name, const wxString &local_dir, const CServerPath &remote_dir);
+
 	static wxMenu* GetSitesMenu();
 	static void ClearIdMap();
 
@@ -134,6 +137,8 @@ protected:
 	wxTreeItemId m_contextMenuItem;
 
 	bool MoveItems(wxTreeItemId source, wxTreeItemId target, bool copy);
+
+	static TiXmlElement* GetElementByPath(TiXmlElement* pNode, std::list<wxString> &segments);
 
 	// Initialized by GetSitesMenu
 public:

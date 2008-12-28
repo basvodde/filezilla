@@ -41,6 +41,7 @@
 #include "manual_transfer.h"
 #include "auto_ascii_files.h"
 #include "splitter.h"
+#include "bookmarks_dialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -890,6 +891,39 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		}
 		CManualTransfer dlg(m_pQueueView);
 		dlg.Show(this, m_pState);
+	}
+	else if (event.GetId() == XRCID("ID_BOOKMARK_ADD"))
+	{
+		CServer server;
+		const CServer* pServer = m_pState ? m_pState->GetServer() : 0;
+
+		if (!pServer && !m_last_bookmark_path.empty())
+		{
+			// Get server from site manager
+			CSiteManagerItemData_Site* data = CSiteManager::GetSiteByPath(m_last_bookmark_path);
+			if (data)
+			{
+				server = data->m_server;
+				pServer = &server;
+				delete data;
+			}
+			else
+			{
+				m_last_bookmark_path.clear();
+				m_bookmarks.clear();
+				UpdateBookmarkMenu();
+			}
+		}
+
+		// m_last_bookmark_path can get modified if it's empty now
+		CNewBookmarkDialog dlg(this, m_last_bookmark_path, pServer);
+
+		if (dlg.ShowModal() == wxID_OK)
+		{
+			m_bookmarks.clear();
+			CSiteManager::GetBookmarks(m_last_bookmark_path, m_bookmarks);
+			UpdateBookmarkMenu();
+		}
 	}
 	else
 	{

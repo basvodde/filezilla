@@ -241,6 +241,15 @@ void AddTextElementRaw(TiXmlElement* node, const char* value)
     node->InsertEndChild(TiXmlText(value));
 }
 
+wxString GetTextElement_Trimmed(TiXmlElement* node, const char* name)
+{
+	wxString t = GetTextElement(node, name);
+	t.Trim(true);
+	t.Trim(false);
+
+	return t;
+}
+
 wxString GetTextElement(TiXmlElement* node, const char* name)
 {
 	wxASSERT(node);
@@ -254,6 +263,15 @@ wxString GetTextElement(TiXmlElement* node, const char* name)
 		return _T("");
 
 	return ConvLocal(textNode->Value());
+}
+
+wxString GetTextElement_Trimmed(TiXmlElement* node)
+{
+	wxString t = GetTextElement(node);
+	t.Trim(true);
+	t.Trim(false);
+
+	return t;
 }
 
 wxString GetTextElement(TiXmlElement* node)
@@ -573,7 +591,10 @@ bool GetServer(TiXmlElement *node, CServer& server)
 	}
 
 	server.SetBypassProxy(GetTextElementInt(node, "BypassProxy", false) == 1);
-	server.SetName(GetTextElement(node, "Name"));
+	server.SetName(GetTextElement_Trimmed(node, "Name"));
+
+	if (server.GetName().empty())
+		server.SetName(GetTextElement_Trimmed(node));
 
 	return true;
 }

@@ -13,6 +13,7 @@ filezilla_SOURCES = aboutdialog.cpp \
 		asyncrequestqueue.cpp \
 		aui_notebook_ex.cpp \
 		auto_ascii_files.cpp \
+		bookmarks_dialog.cpp \
 		buildinfo.cpp \
 		chmoddialog.cpp \
 		clearprivatedata.cpp \
@@ -101,6 +102,7 @@ noinst_HEADERS = aboutdialog.h \
 		 asyncrequestqueue.h \
 		 aui_notebook_ex.h \
 		 auto_ascii_files.h \
+		 bookmarks_dialog.h \
 		 buildinfo.h \
 		 chmoddialog.h \
 		 clearprivatedata.h \
