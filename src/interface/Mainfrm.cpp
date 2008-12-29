@@ -918,7 +918,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		// m_last_bookmark_path can get modified if it's empty now
 		CNewBookmarkDialog dlg(this, m_last_bookmark_path, pServer);
 
-		if (dlg.ShowModal() == wxID_OK)
+		if (dlg.ShowModal(m_pState->GetLocalDir(), m_pState->GetRemotePath()) == wxID_OK)
 		{
 			m_bookmarks.clear();
 			CSiteManager::GetBookmarks(m_last_bookmark_path, m_bookmarks);

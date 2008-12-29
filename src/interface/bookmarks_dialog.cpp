@@ -4,6 +4,7 @@
 
 BEGIN_EVENT_TABLE(CNewBookmarkDialog, wxDialogEx)
 EVT_BUTTON(XRCID("wxID_OK"), CNewBookmarkDialog::OnOK)
+EVT_BUTTON(XRCID("ID_BROWSE"), CNewBookmarkDialog::OnBrowse)
 END_EVENT_TABLE()
 
 CNewBookmarkDialog::CNewBookmarkDialog(wxWindow* parent, wxString& site_path, const CServer* server)
@@ -11,11 +12,15 @@ CNewBookmarkDialog::CNewBookmarkDialog(wxWindow* parent, wxString& site_path, co
 {
 }
 
-int CNewBookmarkDialog::ShowModal()
+int CNewBookmarkDialog::ShowModal(const wxString &local_path, const CServerPath &remote_path)
 {
 	if (!Load(m_parent, _T("ID_NEWBOOKMARK")))
 		return wxID_CANCEL;
 
+	XRCCTRL(*this, "ID_LOCALPATH", wxTextCtrl)->ChangeValue(local_path);
+	if (!remote_path.IsEmpty())
+		XRCCTRL(*this, "ID_REMOTEPATH", wxTextCtrl)->ChangeValue(remote_path.GetPath());
+	
 	if (!m_server)
 		XRCCTRL(*this, "ID_TYPE_SITE", wxRadioButton)->Enable(false);
 
@@ -83,5 +88,16 @@ void CNewBookmarkDialog::OnOK(wxCommandEvent& event)
 		CSiteManager::AddBookmark(m_site_path, name, local_path, remote_path);
 
 		EndModal(wxID_OK);
+	}
+}
+
+void CNewBookmarkDialog::OnBrowse(wxCommandEvent& event)
+{
+	wxTextCtrl *pText = XRCCTRL(*this, "ID_LOCALPATH", wxTextCtrl);
+
+	wxDirDialog dlg(this, _("Choose the local directory"), pText->GetValue(), wxDD_NEW_DIR_BUTTON);
+	if (dlg.ShowModal() == wxID_OK)
+	{
+		pText->ChangeValue(dlg.GetPath());
 	}
 }
