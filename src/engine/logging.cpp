@@ -242,7 +242,7 @@ void CLogging::LogToFile(MessageType nMessageType, const wxString& msg) const
 #endif
 		now.Format(_T("%Y-%m-%d %H:%M:%S")).c_str(), m_pid, m_pEngine->GetEngineId(), m_prefixes[nMessageType].c_str(), msg.c_str()));
 
-	wxWX2MBbuf utf8 = out.mb_str(wxConvUTF8);
+	const wxWX2MBbuf utf8 = out.mb_str(wxConvUTF8);
 	if (utf8)
 	{
 #ifdef __WXMSW__
