@@ -2835,7 +2835,7 @@ bool CSiteManager::AddBookmark(wxString sitePath, const wxString& name, const wx
 
 		if (name == old_name)
 		{
-			wxMessageBox(_("Name of bookmark already exists."), _("New bookmark"));
+			wxMessageBox(_("Name of bookmark already exists."), _("New bookmark"), wxICON_EXCLAMATION);
 			return false;
 		}
 	}

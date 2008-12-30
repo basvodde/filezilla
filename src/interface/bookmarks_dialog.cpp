@@ -1,6 +1,8 @@
 #include "FileZilla.h"
 #include "bookmarks_dialog.h"
 #include "sitemanager.h"
+#include "ipcmutex.h"
+#include "xmlfunctions.h"
 
 BEGIN_EVENT_TABLE(CNewBookmarkDialog, wxDialogEx)
 EVT_BUTTON(XRCID("wxID_OK"), CNewBookmarkDialog::OnOK)
@@ -102,6 +104,13 @@ void CNewBookmarkDialog::OnOK(wxCommandEvent& event)
 
 		EndModal(wxID_OK);
 	}
+	else
+	{
+		if (!CBookmarksDialog::AddBookmark(name, local_path, remote_path))
+			return;
+
+		EndModal(wxID_OK);
+	}
 }
 
 void CNewBookmarkDialog::OnBrowse(wxCommandEvent& event)
@@ -132,6 +141,49 @@ CBookmarksDialog::CBookmarksDialog(wxWindow* parent, wxString& site_path, const 
 {
 }
 
+void CBookmarksDialog::LoadGlobalBookmarks()
+{
+	CInterProcessMutex mutex(MUTEX_GLOBALBOOKMARKS);
+
+	CXmlFile file;
+	TiXmlElement* pDocument = file.Load(_T("bookmarks"));
+
+	if (!pDocument)
+	{
+		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager will not be saved."), file.GetFileName().GetFullPath().c_str());
+		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
+
+		return;
+	}
+
+	for (TiXmlElement *pBookmark = pDocument->FirstChildElement("Bookmark"); pBookmark; pBookmark = pBookmark->NextSiblingElement("Bookmark"))
+	{
+		wxString name;
+		wxString local_dir;
+		wxString remote_dir_raw;
+		CServerPath remote_dir;
+
+		name = GetTextElement(pBookmark, "Name");
+		if (name.empty())
+			continue;
+
+		local_dir = GetTextElement(pBookmark, "LocalDir");
+		remote_dir_raw = GetTextElement(pBookmark, "RemoteDir");
+		if (!remote_dir_raw.empty())
+		{
+			if (!remote_dir.SetSafePath(remote_dir_raw))
+				continue;
+		}
+		if (local_dir.empty() && remote_dir.IsEmpty())
+			continue;
+
+		CBookmarkItemData *data = new CBookmarkItemData(local_dir, remote_dir);
+		m_pTree->AppendItem(m_bookmarks_global, name, 1, 1, data);
+	}
+
+	m_pTree->SortChildren(m_bookmarks_global);
+}
+
 void CBookmarksDialog::LoadSiteSpecificBookmarks()
 {
 	if (m_site_path.empty())
@@ -157,7 +209,6 @@ void CBookmarksDialog::LoadSiteSpecificBookmarks()
 		delete data;
 	}
 
-	m_pTree->Expand(m_bookmarks_site);
 	m_pTree->SortChildren(m_bookmarks_site);
 }
 
@@ -179,13 +230,13 @@ int CBookmarksDialog::ShowModal(const wxString &local_path, const CServerPath &r
 
 	wxTreeItemId root = m_pTree->AddRoot(_T(""));
 	m_bookmarks_global = m_pTree->AppendItem(root, _("Global bookmarks"), 0, 0);
+	LoadGlobalBookmarks();
 	m_pTree->Expand(m_bookmarks_global);
 	if (m_server)
 	{
 		m_bookmarks_site = m_pTree->AppendItem(root, _("Site-specific bookmarks"), 0, 0);
-		m_pTree->Expand(m_bookmarks_site);
-
 		LoadSiteSpecificBookmarks();
+		m_pTree->Expand(m_bookmarks_site);
 	}
 
 	wxNotebook *pBook = XRCCTRL(*this, "ID_NOTEBOOK", wxNotebook);
@@ -207,27 +258,77 @@ int CBookmarksDialog::ShowModal(const wxString &local_path, const CServerPath &r
 	return wxDialogEx::ShowModal();
 }
 
+void CBookmarksDialog::SaveGlobalBookmarks()
+{
+	CInterProcessMutex mutex(MUTEX_GLOBALBOOKMARKS);
+
+	CXmlFile file;
+	TiXmlElement* pDocument = file.Load(_T("bookmarks"));
+
+	if (!pDocument)
+	{
+		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager will not be saved."), file.GetFileName().GetFullPath().c_str());
+		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
+
+		return;
+	}
+
+	TiXmlElement *pBookmark = pDocument->FirstChildElement("Bookmark");
+	while (pBookmark)
+	{
+		pDocument->RemoveChild(pBookmark);
+		pBookmark = pDocument->FirstChildElement("Bookmark");
+	}
+
+	wxTreeItemIdValue cookie;
+	for (wxTreeItemId child = m_pTree->GetFirstChild(m_bookmarks_global, cookie); child.IsOk(); child = m_pTree->GetNextChild(m_bookmarks_global, cookie))
+	{
+		CBookmarkItemData *data = (CBookmarkItemData *)m_pTree->GetItemData(child);
+		wxASSERT(data);
+
+		TiXmlElement *pBookmark = pDocument->InsertEndChild(TiXmlElement("Bookmark"))->ToElement();
+		AddTextElement(pBookmark, "Name", m_pTree->GetItemText(child));
+		if (!data->m_local_dir.empty())
+			AddTextElement(pBookmark, "LocalDir", data->m_local_dir);
+		if (!data->m_remote_dir.IsEmpty())
+			AddTextElement(pBookmark, "RemoteDir", data->m_remote_dir.GetSafePath());
+	}
+
+	wxString error;
+	if (!file.Save(&error))
+	{
+		wxString msg = wxString::Format(_("Could not write \"%s\", the selected sites could not be exported: %s"), file.GetFileName().GetFullPath().c_str(), error.c_str());
+		wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
+	}
+}
+
+void CBookmarksDialog::SaveSiteSpecificBookmarks()
+{
+	if (m_site_path.empty())
+		return;
+
+	if (!CSiteManager::ClearBookmarks(m_site_path))
+			return;
+
+	wxTreeItemIdValue cookie;
+	for (wxTreeItemId child = m_pTree->GetFirstChild(m_bookmarks_site, cookie); child.IsOk(); child = m_pTree->GetNextChild(m_bookmarks_site, cookie))
+	{
+		CBookmarkItemData *data = (CBookmarkItemData *)m_pTree->GetItemData(child);
+		wxASSERT(data);
+
+		if (!CSiteManager::AddBookmark(m_site_path, m_pTree->GetItemText(child), data->m_local_dir, data->m_remote_dir))
+			return;
+	}
+}
+
 void CBookmarksDialog::OnOK(wxCommandEvent& event)
 {
 	if (!Verify())
 		return;
 	UpdateBookmark();
 
-	if (!m_site_path.empty())
-	{
-		if (!CSiteManager::ClearBookmarks(m_site_path))
-			return;
-
-		wxTreeItemIdValue cookie;
-		for (wxTreeItemId child = m_pTree->GetFirstChild(m_bookmarks_site, cookie); child.IsOk(); child = m_pTree->GetNextChild(m_bookmarks_site, cookie))
-		{
-			CBookmarkItemData *data = (CBookmarkItemData *)m_pTree->GetItemData(child);
-			wxASSERT(data);
-
-			if (!CSiteManager::AddBookmark(m_site_path, m_pTree->GetItemText(child), data->m_local_dir, data->m_remote_dir))
-				return;
-		}
-	}
+	SaveGlobalBookmarks();
+	SaveSiteSpecificBookmarks();
 
 	EndModal(wxID_OK);
 }
@@ -564,4 +665,133 @@ void CBookmarksDialog::OnEndLabelEdit(wxTreeEvent& event)
 	}
 
 	m_pTree->SortChildren(parent);
+}
+
+bool CBookmarksDialog::GetBookmarks(std::list<wxString> &bookmarks)
+{
+	CInterProcessMutex mutex(MUTEX_GLOBALBOOKMARKS);
+
+	CXmlFile file;
+	TiXmlElement* pDocument = file.Load(_T("bookmarks"));
+
+	if (!pDocument)
+	{
+		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager will not be saved."), file.GetFileName().GetFullPath().c_str());
+		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
+
+		return false;
+	}
+
+	for (TiXmlElement *pBookmark = pDocument->FirstChildElement("Bookmark"); pBookmark; pBookmark = pBookmark->NextSiblingElement("Bookmark"))
+	{
+		wxString name;
+		wxString local_dir;
+		wxString remote_dir_raw;
+		CServerPath remote_dir;
+
+		name = GetTextElement(pBookmark, "Name");
+		if (name.empty())
+			continue;
+
+		local_dir = GetTextElement(pBookmark, "LocalDir");
+		remote_dir_raw = GetTextElement(pBookmark, "RemoteDir");
+		if (!remote_dir_raw.empty())
+		{
+			if (!remote_dir.SetSafePath(remote_dir_raw))
+				continue;
+		}
+		if (local_dir.empty() && remote_dir.IsEmpty())
+			continue;
+
+		bookmarks.push_back(name);
+	}
+
+	return true;
+}
+
+bool CBookmarksDialog::GetBookmark(const wxString &name, wxString &local_dir, CServerPath &remote_dir)
+{
+	CInterProcessMutex mutex(MUTEX_GLOBALBOOKMARKS);
+
+	CXmlFile file;
+	TiXmlElement* pDocument = file.Load(_T("bookmarks"));
+
+	if (!pDocument)
+	{
+		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager will not be saved."), file.GetFileName().GetFullPath().c_str());
+		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
+
+		return false;
+	}
+
+	for (TiXmlElement *pBookmark = pDocument->FirstChildElement("Bookmark"); pBookmark; pBookmark = pBookmark->NextSiblingElement("Bookmark"))
+	{
+		wxString remote_dir_raw;
+	
+		if (name != GetTextElement(pBookmark, "Name"))
+			continue;
+
+		local_dir = GetTextElement(pBookmark, "LocalDir");
+		remote_dir_raw = GetTextElement(pBookmark, "RemoteDir");
+		if (!remote_dir_raw.empty())
+		{
+			if (!remote_dir.SetSafePath(remote_dir_raw))
+				return false;
+		}
+		if (local_dir.empty() && remote_dir_raw.empty())
+			return false;
+
+		return true;
+	}
+
+	return false;
+}
+
+
+bool CBookmarksDialog::AddBookmark(const wxString &name, const wxString &local_dir, const CServerPath &remote_dir)
+{
+	if (local_dir.empty() && remote_dir.IsEmpty())
+		return false;
+
+	CInterProcessMutex mutex(MUTEX_GLOBALBOOKMARKS);
+
+	CXmlFile file;
+	TiXmlElement* pDocument = file.Load(_T("bookmarks"));
+
+	if (!pDocument)
+	{
+		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager will not be saved."), file.GetFileName().GetFullPath().c_str());
+		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
+
+		return false;
+	}
+
+	TiXmlElement *pBookmark;
+	for (pBookmark = pDocument->FirstChildElement("Bookmark"); pBookmark; pBookmark = pBookmark->NextSiblingElement("Bookmark"))
+	{
+		wxString remote_dir_raw;
+	
+		if (!name.CmpNoCase(GetTextElement(pBookmark, "Name")))
+		{
+			wxMessageBox(_("Name of bookmark already exists."), _("New bookmark"), wxICON_EXCLAMATION);
+			return false;
+		}
+	}
+
+	pBookmark = pDocument->InsertEndChild(TiXmlElement("Bookmark"))->ToElement();
+	AddTextElement(pBookmark, "Name", name);
+	if (!local_dir.empty())
+		AddTextElement(pBookmark, "LocalDir", local_dir);
+	if (!remote_dir.IsEmpty())
+		AddTextElement(pBookmark, "RemoteDir", remote_dir.GetSafePath());
+
+	wxString error;
+	if (!file.Save(&error))
+	{
+		wxString msg = wxString::Format(_("Could not write \"%s\", the selected sites could not be exported: %s"), file.GetFileName().GetFullPath().c_str(), error.c_str());
+		wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
+		return false;
+	}
+
+	return true;
 }

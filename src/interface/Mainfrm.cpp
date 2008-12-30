@@ -941,10 +941,10 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	}
 	else
 	{
-		std::map<int, wxString>::const_iterator iter = m_bookmark_menu_id_map.find(event.GetId());
-		if (iter != m_bookmark_menu_id_map.end())
+		std::map<int, wxString>::const_iterator iter = m_bookmark_menu_id_map_site.find(event.GetId());
+		if (iter != m_bookmark_menu_id_map_site.end())
 		{
-			// We hit a bookmark
+			// We hit a site-specific bookmark
 			if (m_last_bookmark_path.empty())
 				return;
 
@@ -971,6 +971,33 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 			delete pData;
 
 			return;
+		}
+
+		std::map<int, wxString>::const_iterator iter2 = m_bookmark_menu_id_map_global.find(event.GetId());
+		if (iter2 != m_bookmark_menu_id_map_global.end())
+		{
+			// We hit a global bookmark
+			wxString local_dir;
+			CServerPath remote_dir;
+			if (!CBookmarksDialog::GetBookmark(iter2->second, local_dir, remote_dir))
+				return;
+
+			if (!remote_dir.IsEmpty() && m_pState->IsRemoteIdle())
+			{
+				const CServer* pServer = m_pState->GetServer();
+				if (pServer)
+				{
+					CServerPath current_remote_path = m_pState->GetRemotePath();
+					if (!current_remote_path.IsEmpty() && current_remote_path.GetType() != remote_dir.GetType())
+					{
+						wxMessageBox(_("Selected global bookmark and current server use a different server type.\nUse site-specific bookmarks for this server."), _("Bookmark"), wxICON_EXCLAMATION, this);
+						return;
+					}
+					m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(remote_dir));
+				}
+			}
+			if (!local_dir.empty())
+				m_pState->SetLocalDir(local_dir);
 		}
 
 		wxString path;
@@ -2672,26 +2699,56 @@ void CMainFrame::UpdateBookmarkMenu()
 		return;
 
 	// Delete old bookmarks
-	for (std::map<int, wxString>::const_iterator iter = m_bookmark_menu_id_map.begin(); iter != m_bookmark_menu_id_map.end(); iter++)
+	for (std::map<int, wxString>::const_iterator iter = m_bookmark_menu_id_map_global.begin(); iter != m_bookmark_menu_id_map_global.end(); iter++)
+	{
+		pMenu->Delete(iter->first);
+	}
+	for (std::map<int, wxString>::const_iterator iter = m_bookmark_menu_id_map_site.begin(); iter != m_bookmark_menu_id_map_site.end(); iter++)
 	{
 		pMenu->Delete(iter->first);
 	}
 
-	// Delete the separator
-	if (pMenu->GetMenuItemCount() > 2)
+	// Delete the separators
+	while (pMenu->GetMenuItemCount() > 2)
 	{
 		wxMenuItem* pSeparator = pMenu->FindItemByPosition(2);
 		if (pSeparator)
 			pMenu->Delete(pSeparator);
 	}
 
-	// Insert bookmarks
+	std::list<int>::iterator ids = m_bookmark_menu_ids.begin();
+
+	// Insert global bookmarks
+	std::list<wxString> global_bookmarks;
+	if (CBookmarksDialog::GetBookmarks(global_bookmarks) && !global_bookmarks.empty())
+	{
+		pMenu->AppendSeparator();
+
+		for (std::list<wxString>::const_iterator iter = global_bookmarks.begin(); iter != global_bookmarks.end(); iter++)
+		{
+			int id;
+			if (ids == m_bookmark_menu_ids.end())
+			{
+				id = wxNewId();
+				m_bookmark_menu_ids.push_back(id);
+			}
+			else
+			{
+				id = *ids;
+				ids++;
+			}
+			pMenu->Append(id, *iter);
+
+			m_bookmark_menu_id_map_global[id] = *iter;
+		}
+	}
+
+	// Insert site-specific bookmarks
 	if (!m_bookmarks.empty())
 		pMenu->AppendSeparator();
 
-	m_bookmark_menu_id_map.clear();
+	m_bookmark_menu_id_map_site.clear();
 
-	std::list<int>::iterator ids = m_bookmark_menu_ids.begin();
 	for (std::list<wxString>::const_iterator iter = m_bookmarks.begin(); iter != m_bookmarks.end(); iter++)
 	{
 		int id;
@@ -2707,7 +2764,7 @@ void CMainFrame::UpdateBookmarkMenu()
 		}
 		pMenu->Append(id, *iter);
 
-		m_bookmark_menu_id_map[id] = *iter;
+		m_bookmark_menu_id_map_site[id] = *iter;
 	}
 }
 

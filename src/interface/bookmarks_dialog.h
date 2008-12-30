@@ -29,12 +29,20 @@ public:
 
 	virtual int ShowModal(const wxString &local_path, const CServerPath &remote_path);
 
+	static bool GetBookmarks(std::list<wxString> &bookmarks);
+	static bool GetBookmark(const wxString& name, wxString &local_dir, CServerPath &remote_dir);
+	static bool AddBookmark(const wxString& name, const wxString &local_dir, const CServerPath &remote_dir);
+
 protected:
 	bool Verify();
 	void UpdateBookmark();
 	void DisplayBookmark();
 
+	void LoadGlobalBookmarks();
 	void LoadSiteSpecificBookmarks();
+
+	void SaveSiteSpecificBookmarks();
+	void SaveGlobalBookmarks();
 
 	wxWindow* m_parent;
 	wxString &m_site_path;
