@@ -448,17 +448,30 @@ wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix, int format, b
 		if (!thousands_separator)
 			return size.ToString();
 
+		static wxString sep;
+		static bool separator_initialized = false;
+		if (!separator_initialized)
+		{
+			separator_initialized = true;
 #ifdef __WXMSW__
-		wxChar sep[5];
-		int count = ::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_STHOUSAND, sep, 5);
-		if (!count)
-			return size.ToString();
+			wxChar tmp[5];
+			int count = ::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_STHOUSAND, tmp, 5);
+			if (count)
+				sep = tmp;
 #else
-		char* chr = nl_langinfo(THOUSEP);
-		if (!chr || !*chr)
-			return size.ToString();
-		wxChar sep = chr[0];
+			char* chr = nl_langinfo(THOUSEP);
+			if (chr && *chr)
+			{
+#if wxUSE_UNICODE
+				sep = wxString(chr, wxConvLibc);
+#else
+				sep = chr;
 #endif
+			}
+#endif
+		}
+		if (sep.empty())
+			return size.ToString();
 
 		wxString tmp = size.ToString();
 		const int len = tmp.Len();
@@ -574,19 +587,25 @@ wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix, int format, b
 	{
 #ifdef __WXMSW__
 		wxChar sep[5];
-		int count = ::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SDECIMAL , sep, 5);
+		int count = ::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SDECIMAL, sep, 5);
 		if (!count)
 		{
 			sep[0] = '.';
 			sep[1] = 0;
 		}
 #else
-		wxChar sep;
+		wxString sep;
 		char* chr = nl_langinfo(RADIXCHAR);
 		if (!chr || !*chr)
-			sep = 0;
+			sep = _T(".");
 		else
-			sep = chr[0];
+		{
+#if wxUSE_UNICODE
+			sep = wxString(chr, wxConvLibc);
+#else
+			sep = chr;
+#endif
+		}
 #endif
 
 		result += sep;

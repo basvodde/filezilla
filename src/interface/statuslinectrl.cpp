@@ -82,17 +82,30 @@ wxString FormatBytes(const wxLongLong& size)
 	if (!COptions::Get()->GetOptionVal(OPTION_SIZE_USETHOUSANDSEP))
 		return size.ToString();
 
+	static wxString sep;
+	static bool separator_initialized = false;
+	if (!separator_initialized)
+	{
+		separator_initialized = true;
 #ifdef __WXMSW__
-	wxChar sep[5];
-	int count = ::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_STHOUSAND, sep, 5);
-	if (!count)
-		return size.ToString();
+		wxChar tmp[5];
+		int count = ::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_STHOUSAND, tmp, 5);
+		if (count)
+			sep = tmp;
 #else
-	char* chr = nl_langinfo(THOUSEP);
-	if (!chr || !*chr)
-		return size.ToString();
-	wxChar sep = chr[0];
+		char* chr = nl_langinfo(THOUSEP);
+		if (chr && *chr)
+		{
+#if wxUSE_UNICODE
+			sep = wxString(chr, wxConvLibc);
+#else
+			sep = chr;
 #endif
+		}
+#endif
+	}
+	if (sep.empty())
+		return size.ToString();
 
 	wxString tmp = size.ToString();
 	const int len = tmp.Len();
