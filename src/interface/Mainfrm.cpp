@@ -892,7 +892,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		CManualTransfer dlg(m_pQueueView);
 		dlg.Show(this, m_pState);
 	}
-	else if (event.GetId() == XRCID("ID_BOOKMARK_ADD"))
+	else if (event.GetId() == XRCID("ID_BOOKMARK_ADD") || event.GetId() == XRCID("ID_BOOKMARK_MANAGE"))
 	{
 		CServer server;
 		const CServer* pServer = m_pState ? m_pState->GetServer() : 0;
@@ -916,13 +916,27 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		}
 
 		// m_last_bookmark_path can get modified if it's empty now
-		CNewBookmarkDialog dlg(this, m_last_bookmark_path, pServer);
-
-		if (dlg.ShowModal(m_pState->GetLocalDir(), m_pState->GetRemotePath()) == wxID_OK)
+		if (event.GetId() == XRCID("ID_BOOKMARK_ADD"))
 		{
-			m_bookmarks.clear();
-			CSiteManager::GetBookmarks(m_last_bookmark_path, m_bookmarks);
-			UpdateBookmarkMenu();
+			CNewBookmarkDialog dlg(this, m_last_bookmark_path, pServer);
+
+			if (dlg.ShowModal(m_pState->GetLocalDir(), m_pState->GetRemotePath()) == wxID_OK)
+			{
+				m_bookmarks.clear();
+				CSiteManager::GetBookmarks(m_last_bookmark_path, m_bookmarks);
+				UpdateBookmarkMenu();
+			}	
+		}
+		else
+		{
+			CBookmarksDialog dlg(this, m_last_bookmark_path, pServer);
+
+			if (dlg.ShowModal(m_pState->GetLocalDir(), m_pState->GetRemotePath()) == wxID_OK)
+			{
+				m_bookmarks.clear();
+				CSiteManager::GetBookmarks(m_last_bookmark_path, m_bookmarks);
+				UpdateBookmarkMenu();
+			}	
 		}
 	}
 	else

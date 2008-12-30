@@ -64,6 +64,7 @@ public:
 
 	static wxString AddServer(CServer server);
 	static bool AddBookmark(wxString sitePath, const wxString& name, const wxString &local_dir, const CServerPath &remote_dir);
+	static bool ClearBookmarks(wxString sitePath);
 
 	static wxMenu* GetSitesMenu();
 	static void ClearIdMap();

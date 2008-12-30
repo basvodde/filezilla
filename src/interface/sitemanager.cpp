@@ -215,8 +215,7 @@ public:
 		}
 
 		wxTreeCtrl *pTree = XRCCTRL(*m_pSiteManager, "ID_SITETREE", wxTreeCtrl);
-		CSiteManagerItemData* data = reinterpret_cast<CSiteManagerItemData* >(pTree->GetItemData(hit));
-		CSiteManagerItemData *pData = (CSiteManagerItemData *)pTree->GetItemData(hit);
+		CSiteManagerItemData *pData = reinterpret_cast<CSiteManagerItemData *>(pTree->GetItemData(hit));
 		CSiteManagerItemData *pSourceData = (CSiteManagerItemData *)pTree->GetItemData(m_pSiteManager->m_dropSource);
 		if (pData)
 		{
@@ -2472,10 +2471,8 @@ CSiteManagerItemData_Site* CSiteManager::GetSiteByPath(wxString sitePath)
 		if (remoteDir)
 			remotePath.SetSafePath(ConvLocal(remoteDir->Value()));
 
-		if (!localPath.empty())
-			data->m_localDir = localPath;
-		if (!remotePath.IsEmpty())
-			data->m_remoteDir = remotePath;
+		data->m_localDir = localPath;
+		data->m_remoteDir = remotePath;
 	}
 
 	return data;
@@ -2606,10 +2603,7 @@ bool CSiteManager::GetBookmarks(wxString sitePath, std::list<wxString> &bookmark
 
 	TiXmlElement* pChild = GetElementByPath(pElement, segments);
 	if (!pChild || strcmp(pChild->Value(), "Server"))
-	{
-		wxMessageBox(_("Site does not exist."), _("Invalid site path"));
 		return 0;
-	}
 
 	// Bookmarks
 	for (TiXmlElement* pBookmark = pChild->FirstChildElement("Bookmark"); pBookmark; pBookmark = pBookmark->NextSiblingElement("Bookmark"))
@@ -2852,6 +2846,65 @@ bool CSiteManager::AddBookmark(wxString sitePath, const wxString& name, const wx
 		AddTextElement(pBookmark, "LocalDir", local_dir);
 	if (!remote_dir.IsEmpty())
 		AddTextElement(pBookmark, "RemoteDir", remote_dir.GetSafePath());
+
+	wxString error;
+	if (!file.Save(&error))
+	{
+		wxString msg = wxString::Format(_("Could not write \"%s\", the selected sites could not be exported: %s"), file.GetFileName().GetFullPath().c_str(), error.c_str());
+		wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
+	}
+
+	return true;
+}
+
+bool CSiteManager::ClearBookmarks(wxString sitePath)
+{
+	if (sitePath[0] != '0')
+		return false;
+
+	sitePath = sitePath.Mid(1);
+
+	// We have to synchronize access to sitemanager.xml so that multiple processed don't write
+	// to the same file or one is reading while the other one writes.
+	CInterProcessMutex mutex(MUTEX_SITEMANAGER);
+
+	CXmlFile file;
+	TiXmlElement* pDocument = 0;
+
+	pDocument = file.Load(_T("sitemanager"));
+
+	if (!pDocument)
+	{
+		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager will not be saved."), file.GetFileName().GetFullPath().c_str());
+		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
+
+		return false;
+	}
+
+	TiXmlElement* pElement = pDocument->FirstChildElement("Servers");
+	if (!pElement)
+		return false;
+
+	std::list<wxString> segments;
+	if (!CSiteManager::UnescapeSitePath(sitePath, segments))
+	{
+		wxMessageBox(_("Site path is malformed."), _("Invalid site path"));
+		return 0;
+	}
+
+	TiXmlElement* pChild = GetElementByPath(pElement, segments);
+	if (!pChild || strcmp(pChild->Value(), "Server"))
+	{
+		wxMessageBox(_("Site does not exist."), _("Invalid site path"));
+		return 0;
+	}
+
+	TiXmlElement *pBookmark = pChild->FirstChildElement("Bookmark");
+	while (pBookmark)
+	{
+		pChild->RemoveChild(pBookmark);
+		pBookmark = pChild->FirstChildElement("Bookmark");
+	}
 
 	wxString error;
 	if (!file.Save(&error))
