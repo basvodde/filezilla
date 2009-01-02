@@ -207,7 +207,7 @@ void CLogging::InitLogFile() const
 	m_prefixes[Error] = _("Error:");
 	m_prefixes[Command] = _("Command:");
 	m_prefixes[Response] = _("Response:");
-	m_prefixes[Debug_Warning] = _("Trace");
+	m_prefixes[Debug_Warning] = _("Trace:");
 	m_prefixes[Debug_Info] = m_prefixes[Debug_Warning];
 	m_prefixes[Debug_Verbose] = m_prefixes[Debug_Warning];
 	m_prefixes[Debug_Debug] = m_prefixes[Debug_Warning];
