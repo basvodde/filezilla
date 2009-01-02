@@ -778,6 +778,9 @@ bool CDirectoryListingParser::ParseLine(CLine *pLine, const enum ServerType serv
 		res = ParseAsIBM_MVS_PDS2(pLine, entry);
 		if (res)
 			goto done;
+		res = ParseAsIBM_MVS_Tape(pLine, entry);
+		if (res)
+			goto done;
 	}
 	res = ParseAsUnix(pLine, entry, false); // 'ls -l' but without the date/time
 	if (res)
@@ -2481,6 +2484,41 @@ bool CDirectoryListingParser::ParseAsIBM_MVS_PDS2(CLine *pLine, CDirentry &entry
 			if (token[j] < 'A' || token[j] > 'Z')
 				return false;
 	}
+
+	return true;
+}
+
+bool CDirectoryListingParser::ParseAsIBM_MVS_Tape(CLine *pLine, CDirentry &entry)
+{
+	int index = 0;
+	CToken token;
+
+	// volume
+	if (!pLine->GetToken(index++, token))
+		return false;
+
+	// unit
+	if (!pLine->GetToken(index++, token))
+		return false;
+
+	if (token.GetString().CmpNoCase(_T("Tape")))
+		return false;
+
+	// dsname
+	if (!pLine->GetToken(index++, token))
+		return false;
+
+	entry.name = token.GetString();
+	entry.dir = false;
+	entry.link = false;
+	entry.ownerGroup = _T("");
+	entry.permissions = _T("");
+	entry.size = -1;
+	entry.hasDate = false;
+	entry.hasTime = false;
+
+	if (pLine->GetToken(index++, token))
+		return false;
 
 	return true;
 }
