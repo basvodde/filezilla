@@ -279,7 +279,7 @@ struct sftp_packet *sftp_recv(void)
     unsigned char uc;
 
     if (!sftp_recvdata(x, 4)) {
-	fxp_internal_error("sftp_recvdata failed, could not reveive packet length");
+	fxp_internal_error("sftp_recvdata failed, could not receive packet length");
 	return NULL;
     }
 
