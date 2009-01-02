@@ -1185,6 +1185,7 @@ void CSiteManager::OnDelete(wxCommandEvent& event)
 		pTree->Collapse(parent);
 
 	pTree->Delete(item);
+	pTree->SelectItem(parent);
 }
 
 void CSiteManager::OnSelChanging(wxTreeEvent& event)

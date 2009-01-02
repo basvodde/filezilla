@@ -563,6 +563,7 @@ void CBookmarksDialog::OnDelete(wxCommandEvent& event)
 	wxTreeItemId parent = m_pTree->GetItemParent(item);
 
 	m_pTree->Delete(item);
+	m_pTree->SelectItem(parent);
 }
 
 void CBookmarksDialog::OnCopy(wxCommandEvent& event)
