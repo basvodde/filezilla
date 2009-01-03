@@ -479,6 +479,7 @@ struct config_tag {
     char ttymodes[768];		       /* MODE\tVvalue\0MODE\tA\0\0 */
     char environmt[1024];	       /* VAR\tvalue\0VAR\tvalue\0\0 */
     char username[100];
+    int username_from_env;
     char localusername[100];
     int rfc_environ;
     int passive_telnet;
@@ -579,6 +580,7 @@ struct config_tag {
     int x11_forward;
     char x11_display[128];
     int x11_auth;
+    Filename xauthfile;
     /* port forwarding */
     int lport_acceptall; /* accept conns from hosts other than localhost */
     int rport_acceptall; /* same for remote forwarded ports (SSH-2 only) */
@@ -798,6 +800,7 @@ void random_destroy_seed(void);
  */
 Backend *backend_from_name(const char *name);
 Backend *backend_from_proto(int proto);
+int get_remote_username(Config *cfg, char *user, size_t len);
 char *save_settings(char *section, Config * cfg);
 void save_open_settings(void *sesskey, Config *cfg);
 void load_settings(char *section, Config * cfg);
@@ -879,8 +882,9 @@ struct logblank_t {
     int type;
 };
 void log_packet(void *logctx, int direction, int type,
-		char *texttype, void *data, int len,
-		int n_blanks, const struct logblank_t *blanks);
+		char *texttype, const void *data, int len,
+		int n_blanks, const struct logblank_t *blanks,
+		const unsigned long *sequence);
 
 /*
  * Exports from testback.c

@@ -12,7 +12,9 @@
 #include "putty.h"
 #include "tree234.h"
 #include "ssh.h"
+#ifndef NO_GSSAPI
 #include "sshgss.h"
+#endif
 
 #ifndef FALSE
 #define FALSE 0
@@ -492,6 +494,16 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
  *
  *  - OUR_V2_BIGWIN is the window size we advertise for the only
  *    channel in a simple connection.  It must be <= INT_MAX.
+ *
+ *  - OUR_V2_MAXPKT is the official "maximum packet size" we send
+ *    to the remote side. This actually has nothing to do with the
+ *    size of the _packet_, but is instead a limit on the amount
+ *    of data we're willing to receive in a single SSH2 channel
+ *    data message.
+ *
+ *  - OUR_V2_PACKETLIMIT is actually the maximum size of SSH
+ *    _packet_ we're prepared to cope with.  It must be a multiple
+ *    of the cipher block size, and must be at least 35000.
  */
 
 #define SSH1_BUFFER_LIMIT 32768
@@ -499,6 +511,7 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 #define OUR_V2_WINSIZE 16384
 #define OUR_V2_BIGWIN 0x7fffffff
 #define OUR_V2_MAXPKT 0x4000UL
+#define OUR_V2_PACKETLIMIT 0x9000UL
 
 /* Maximum length of passwords/passphrases (arbitrary) */
 #define SSH_MAX_PASSWORD_LEN 100
@@ -825,6 +838,8 @@ struct ssh_tag {
     Pkt_ACtx pkt_actx;
 
     void *x11auth;
+
+    struct X11Display *x11disp;
 
     int version;
     int conn_throttle_count;
@@ -1386,7 +1401,7 @@ static struct Packet *ssh1_rdpkt(Ssh ssh, unsigned char **data, int *datalen)
 		   PKT_INCOMING, st->pktin->type,
 		   ssh1_pkt_type(st->pktin->type),
 		   st->pktin->body, st->pktin->length,
-		   nblanks, &blank);
+		   nblanks, &blank, NULL);
     }
 
     crFinish(st->pktin);
@@ -1408,90 +1423,162 @@ static struct Packet *ssh2_rdpkt(Ssh ssh, unsigned char **data, int *datalen)
 	st->cipherblk = 8;
     if (st->cipherblk < 8)
 	st->cipherblk = 8;
+    st->maclen = ssh->scmac ? ssh->scmac->len : 0;
 
-    st->pktin->data = snewn(st->cipherblk + APIEXTRA, unsigned char);
+    if (ssh->sccipher && (ssh->sccipher->flags & SSH_CIPHER_IS_CBC) &&
+	ssh->scmac) {
+	/*
+	 * When dealing with a CBC-mode cipher, we want to avoid the
+	 * possibility of an attacker's tweaking the ciphertext stream
+	 * so as to cause us to feed the same block to the block
+	 * cipher more than once and thus leak information
+	 * (VU#958563).  The way we do this is not to take any
+	 * decisions on the basis of anything we've decrypted until
+	 * we've verified it with a MAC.  That includes the packet
+	 * length, so we just read data and check the MAC repeatedly,
+	 * and when the MAC passes, see if the length we've got is
+	 * plausible.
+	 */
 
-    /*
-     * Acquire and decrypt the first block of the packet. This will
-     * contain the length and padding details.
-     */
-    for (st->i = st->len = 0; st->i < st->cipherblk; st->i++) {
-	while ((*datalen) == 0)
-	    crReturn(NULL);
-	st->pktin->data[st->i] = *(*data)++;
-	(*datalen)--;
+	/* May as well allocate the whole lot now. */
+	st->pktin->data = snewn(OUR_V2_PACKETLIMIT + st->maclen + APIEXTRA,
+				unsigned char);
+
+	/* Read an amount corresponding to the MAC. */
+	for (st->i = 0; st->i < st->maclen; st->i++) {
+	    while ((*datalen) == 0)
+		crReturn(NULL);
+	    st->pktin->data[st->i] = *(*data)++;
+	    (*datalen)--;
+	}
+
+	st->packetlen = 0;
+	{
+	    unsigned char seq[4];
+	    ssh->scmac->start(ssh->sc_mac_ctx);
+	    PUT_32BIT(seq, st->incoming_sequence);
+	    ssh->scmac->bytes(ssh->sc_mac_ctx, seq, 4);
+	}
+
+	for (;;) { /* Once around this loop per cipher block. */
+	    /* Read another cipher-block's worth, and tack it onto the end. */
+	    for (st->i = 0; st->i < st->cipherblk; st->i++) {
+		while ((*datalen) == 0)
+		    crReturn(NULL);
+		st->pktin->data[st->packetlen+st->maclen+st->i] = *(*data)++;
+		(*datalen)--;
+	    }
+	    /* Decrypt one more block (a little further back in the stream). */
+	    ssh->sccipher->decrypt(ssh->sc_cipher_ctx,
+				   st->pktin->data + st->packetlen,
+				   st->cipherblk);
+	    /* Feed that block to the MAC. */
+	    ssh->scmac->bytes(ssh->sc_mac_ctx,
+			      st->pktin->data + st->packetlen, st->cipherblk);
+	    st->packetlen += st->cipherblk;
+	    /* See if that gives us a valid packet. */
+	    if (ssh->scmac->verresult(ssh->sc_mac_ctx,
+				      st->pktin->data + st->packetlen) &&
+		(st->len = GET_32BIT(st->pktin->data)) + 4 == st->packetlen)
+		    break;
+	    if (st->packetlen >= OUR_V2_PACKETLIMIT) {
+		bombout(("No valid incoming packet found"));
+		ssh_free_packet(st->pktin);
+		crStop(NULL);
+	    }	    
+	}
+	st->pktin->maxlen = st->packetlen + st->maclen;
+	st->pktin->data = sresize(st->pktin->data,
+				  st->pktin->maxlen + APIEXTRA,
+				  unsigned char);
+    } else {
+	st->pktin->data = snewn(st->cipherblk + APIEXTRA, unsigned char);
+
+	/*
+	 * Acquire and decrypt the first block of the packet. This will
+	 * contain the length and padding details.
+	 */
+	for (st->i = st->len = 0; st->i < st->cipherblk; st->i++) {
+	    while ((*datalen) == 0)
+		crReturn(NULL);
+	    st->pktin->data[st->i] = *(*data)++;
+	    (*datalen)--;
+	}
+
+	if (ssh->sccipher)
+	    ssh->sccipher->decrypt(ssh->sc_cipher_ctx,
+				   st->pktin->data, st->cipherblk);
+
+	/*
+	 * Now get the length figure.
+	 */
+	st->len = GET_32BIT(st->pktin->data);
+
+	/*
+	 * _Completely_ silly lengths should be stomped on before they
+	 * do us any more damage.
+	 */
+	if (st->len < 0 || st->len > OUR_V2_PACKETLIMIT ||
+	    (st->len + 4) % st->cipherblk != 0) {
+	    bombout(("Incoming packet was garbled on decryption"));
+	    ssh_free_packet(st->pktin);
+	    crStop(NULL);
+	}
+
+	/*
+	 * So now we can work out the total packet length.
+	 */
+	st->packetlen = st->len + 4;
+
+	/*
+	 * Allocate memory for the rest of the packet.
+	 */
+	st->pktin->maxlen = st->packetlen + st->maclen;
+	st->pktin->data = sresize(st->pktin->data,
+				  st->pktin->maxlen + APIEXTRA,
+				  unsigned char);
+
+	/*
+	 * Read and decrypt the remainder of the packet.
+	 */
+	for (st->i = st->cipherblk; st->i < st->packetlen + st->maclen;
+	     st->i++) {
+	    while ((*datalen) == 0)
+		crReturn(NULL);
+	    st->pktin->data[st->i] = *(*data)++;
+	    (*datalen)--;
+	}
+	/* Decrypt everything _except_ the MAC. */
+	if (ssh->sccipher)
+	    ssh->sccipher->decrypt(ssh->sc_cipher_ctx,
+				   st->pktin->data + st->cipherblk,
+				   st->packetlen - st->cipherblk);
+
+	/*
+	 * Check the MAC.
+	 */
+	if (ssh->scmac
+	    && !ssh->scmac->verify(ssh->sc_mac_ctx, st->pktin->data,
+				   st->len + 4, st->incoming_sequence)) {
+	    bombout(("Incorrect MAC received on packet"));
+	    ssh_free_packet(st->pktin);
+	    crStop(NULL);
+	}
     }
-
-    if (ssh->sccipher)
-	ssh->sccipher->decrypt(ssh->sc_cipher_ctx,
-			       st->pktin->data, st->cipherblk);
-
-    /*
-     * Now get the length and padding figures.
-     */
-    st->len = GET_32BIT(st->pktin->data);
+    /* Get and sanity-check the amount of random padding. */
     st->pad = st->pktin->data[4];
-
-    /*
-     * _Completely_ silly lengths should be stomped on before they
-     * do us any more damage.
-     */
-    if (st->len < 0 || st->len > 35000 || st->pad < 4 ||
-	st->len - st->pad < 1 || (st->len + 4) % st->cipherblk != 0) {
-	bombout(("Incoming packet was garbled on decryption"));
+    if (st->pad < 4 || st->len - st->pad < 1) {
+	bombout(("Invalid padding length on received packet"));
 	ssh_free_packet(st->pktin);
 	crStop(NULL);
     }
-
     /*
      * This enables us to deduce the payload length.
      */
     st->payload = st->len - st->pad - 1;
 
     st->pktin->length = st->payload + 5;
-
-    /*
-     * So now we can work out the total packet length.
-     */
-    st->packetlen = st->len + 4;
-    st->maclen = ssh->scmac ? ssh->scmac->len : 0;
-
-    /*
-     * Allocate memory for the rest of the packet.
-     */
-    st->pktin->maxlen = st->packetlen + st->maclen;
-    st->pktin->data = sresize(st->pktin->data,
-			      st->pktin->maxlen + APIEXTRA,
-			      unsigned char);
-
-    /*
-     * Read and decrypt the remainder of the packet.
-     */
-    for (st->i = st->cipherblk; st->i < st->packetlen + st->maclen;
-	 st->i++) {
-	while ((*datalen) == 0)
-	    crReturn(NULL);
-	st->pktin->data[st->i] = *(*data)++;
-	(*datalen)--;
-    }
-    /* Decrypt everything _except_ the MAC. */
-    if (ssh->sccipher)
-	ssh->sccipher->decrypt(ssh->sc_cipher_ctx,
-			       st->pktin->data + st->cipherblk,
-			       st->packetlen - st->cipherblk);
-
     st->pktin->encrypted_len = st->packetlen;
-
-    /*
-     * Check the MAC.
-     */
-    if (ssh->scmac
-	&& !ssh->scmac->verify(ssh->sc_mac_ctx, st->pktin->data, st->len + 4,
-			       st->incoming_sequence)) {
-	bombout(("Incorrect MAC received on packet"));
-	ssh_free_packet(st->pktin);
-	crStop(NULL);
-    }
 
     st->pktin->sequence = st->incoming_sequence++;
 
@@ -1546,7 +1633,7 @@ static struct Packet *ssh2_rdpkt(Ssh ssh, unsigned char **data, int *datalen)
 		   ssh2_pkt_type(ssh->pkt_kctx, ssh->pkt_actx,
 				 st->pktin->type),
 		   st->pktin->data+6, st->pktin->length-6,
-		   nblanks, &blank);
+		   nblanks, &blank, &st->pktin->sequence);
     }
 
     crFinish(st->pktin);
@@ -1571,7 +1658,7 @@ static int s_wrpkt_prepare(Ssh ssh, struct Packet *pkt, int *offset_p)
 	log_packet(ssh->logctx, PKT_OUTGOING, pkt->data[12],
 		   ssh1_pkt_type(pkt->data[12]),
 		   pkt->body, pkt->length - (pkt->body - pkt->data),
-		   pkt->nblanks, pkt->blanks);
+		   pkt->nblanks, pkt->blanks, NULL);
     sfree(pkt->blanks); pkt->blanks = NULL;
     pkt->nblanks = 0;
 
@@ -1611,7 +1698,8 @@ static int s_wrpkt_prepare(Ssh ssh, struct Packet *pkt, int *offset_p)
 static int s_write(Ssh ssh, void *data, int len)
 {
     if (ssh->logctx)
-	log_packet(ssh->logctx, PKT_OUTGOING, -1, NULL, data, len, 0, NULL);
+	log_packet(ssh->logctx, PKT_OUTGOING, -1, NULL, data, len,
+		   0, NULL, NULL);
     return sk_write(ssh->s, (char *)data, len);
 }
 
@@ -1894,7 +1982,7 @@ static int ssh2_pkt_construct(Ssh ssh, struct Packet *pkt)
 	log_packet(ssh->logctx, PKT_OUTGOING, pkt->data[5],
 		   ssh2_pkt_type(ssh->pkt_kctx, ssh->pkt_actx, pkt->data[5]),
 		   pkt->body, pkt->length - (pkt->body - pkt->data),
-		   pkt->nblanks, pkt->blanks);
+		   pkt->nblanks, pkt->blanks, &ssh->v2_outgoing_sequence);
     sfree(pkt->blanks); pkt->blanks = NULL;
     pkt->nblanks = 0;
 
@@ -2763,7 +2851,7 @@ static void ssh_gotdata(Ssh ssh, unsigned char *data, int datalen)
     /* Log raw data, if we're in that mode. */
     if (ssh->logctx)
 	log_packet(ssh->logctx, PKT_INCOMING, -1, NULL, data, datalen,
-		   0, NULL);
+		   0, NULL, NULL);
 
     crBegin(ssh->ssh_gotdata_crstate);
 
@@ -3462,7 +3550,8 @@ static int do_ssh1_login(Ssh ssh, unsigned char *in, int inlen,
     /*flush(stdout); *//* FIXME eh? */
     /* FZ: yeah ;) */
     {
-	if (!*ssh->cfg.username) {
+	if (!get_remote_username(&ssh->cfg, s->username,
+				 sizeof(s->username))) {
 	    int ret; /* need not be kept over crReturn */
 	    s->cur_prompt = new_prompts(ssh->frontend);
 	    s->cur_prompt->to_server = TRUE;
@@ -3487,9 +3576,6 @@ static int do_ssh1_login(Ssh ssh, unsigned char *in, int inlen,
 	    memcpy(s->username, s->cur_prompt->prompts[0]->result,
 		   lenof(s->username));
 	    free_prompts(s->cur_prompt);
-	} else {
-	    strncpy(s->username, ssh->cfg.username, sizeof(s->username));
-	    s->username[sizeof(s->username)-1] = '\0';
 	}
 
 	send_packet(ssh, SSH1_CMSG_USER, PKT_STR, s->username, PKT_END);
@@ -4787,8 +4873,8 @@ static void ssh1_smsg_x11_open(Ssh ssh, struct Packet *pktin)
 	c = snew(struct ssh_channel);
 	c->ssh = ssh;
 
-	if (x11_init(&c->u.x11.s, ssh->cfg.x11_display, c,
-		     ssh->x11auth, NULL, -1, &ssh->cfg) != NULL) {
+	if (x11_init(&c->u.x11.s, ssh->x11disp, c,
+		     NULL, -1, &ssh->cfg) != NULL) {
 	    logevent("Opening X11 forward connection failed");
 	    sfree(c);
 	    send_packet(ssh, SSH1_MSG_CHANNEL_OPEN_FAILURE,
@@ -5123,11 +5209,9 @@ static void do_ssh1_connection(Ssh ssh, unsigned char *in, int inlen,
     }
 
     if (ssh->cfg.x11_forward) {
-	char proto[20], data[64];
 	logevent("Requesting X11 forwarding");
-	ssh->x11auth = x11_invent_auth(proto, sizeof(proto),
-				       data, sizeof(data), ssh->cfg.x11_auth);
-        x11_get_real_auth(ssh->x11auth, ssh->cfg.x11_display);
+	ssh->x11disp = x11_setup_display(ssh->cfg.x11_display,
+					 ssh->cfg.x11_auth, &ssh->cfg);
 	/*
 	 * Note that while we blank the X authentication data here, we don't
 	 * take any special action to blank the start of an X11 channel,
@@ -5137,14 +5221,19 @@ static void do_ssh1_connection(Ssh ssh, unsigned char *in, int inlen,
 	 */
 	if (ssh->v1_local_protoflags & SSH1_PROTOFLAG_SCREEN_NUMBER) {
 	    send_packet(ssh, SSH1_CMSG_X11_REQUEST_FORWARDING,
-			PKT_STR, proto,
-			PKTT_PASSWORD, PKT_STR, data, PKTT_OTHER,
-			PKT_INT, x11_get_screen_number(ssh->cfg.x11_display),
+			PKT_STR, ssh->x11disp->remoteauthprotoname,
+			PKTT_PASSWORD,
+			PKT_STR, ssh->x11disp->remoteauthdatastring,
+			PKTT_OTHER,
+			PKT_INT, ssh->x11disp->screennum,
 			PKT_END);
 	} else {
 	    send_packet(ssh, SSH1_CMSG_X11_REQUEST_FORWARDING,
-			PKT_STR, proto,
-			PKTT_PASSWORD, PKT_STR, data, PKTT_OTHER, PKT_END);
+			PKT_STR, ssh->x11disp->remoteauthprotoname,
+			PKTT_PASSWORD,
+			PKT_STR, ssh->x11disp->remoteauthdatastring,
+			PKTT_OTHER,
+			PKT_END);
 	}
 	do {
 	    crReturnV;
@@ -7157,9 +7246,8 @@ static void ssh2_msg_channel_open(Ssh ssh, struct Packet *pktin)
 
 	if (!ssh->X11_fwd_enabled)
 	    error = "X11 forwarding is not enabled";
-	else if (x11_init(&c->u.x11.s, ssh->cfg.x11_display, c,
-			  ssh->x11auth, addrstr, peerport,
-			  &ssh->cfg) != NULL) {
+	else if (x11_init(&c->u.x11.s, ssh->x11disp, c,
+			  addrstr, peerport, &ssh->cfg) != NULL) {
 	    error = "Unable to open an X11 connection";
 	} else {
 	    logevent("Opening X11 forward connection succeeded");
@@ -7289,8 +7377,10 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 	int done_service_req;
 	int gotit, need_pw, can_pubkey, can_passwd, can_keyb_inter;
 	int tried_pubkey_config, done_agent;
+#ifndef NO_GSSAPI
 	int can_gssapi;
 	int tried_gssapi;
+#endif
 	int kbd_inter_refused;
 	int we_are_in;
 	prompts_t *cur_prompt;
@@ -7314,11 +7404,13 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 	int try_send;
 	int num_env, env_left, env_ok;
 	struct Packet *pktout;
+#ifndef NO_GSSAPI
 	Ssh_gss_ctx gss_ctx;
 	Ssh_gss_buf gss_buf;
 	Ssh_gss_buf gss_rcvtok, gss_sndtok;
 	Ssh_gss_name gss_srv_name;
 	Ssh_gss_stat gss_stat;
+#endif
 
 	Loaded_keyfile_list* loaded_keyfile_list;
     };
@@ -7328,7 +7420,9 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 
     s->done_service_req = FALSE;
     s->we_are_in = FALSE;
+#ifndef NO_GSSAPI
     s->tried_gssapi = FALSE;
+#endif
 
     if (!ssh->cfg.ssh_no_userauth) {
 	/*
@@ -7516,7 +7610,8 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 	     * with change_username turned off we don't try to get
 	     * it again.
 	     */
-	} else if (!*ssh->cfg.username) {
+	} else if (!get_remote_username(&ssh->cfg, s->username,
+					sizeof(s->username))) {
 	    int ret; /* need not be kept over crReturn */
 	    s->cur_prompt = new_prompts(ssh->frontend);
 	    s->cur_prompt->to_server = TRUE;
@@ -7544,8 +7639,6 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 	    free_prompts(s->cur_prompt);
 	} else {
 	    char *stuff;
-	    strncpy(s->username, ssh->cfg.username, sizeof(s->username));
-	    s->username[sizeof(s->username)-1] = '\0';
 	    if ((flags & FLAG_VERBOSE) || (flags & FLAG_INTERACTIVE)) {
 		stuff = dupprintf("Using username \"%s\".\r\n", s->username);
 		c_write_str(ssh, stuff);
@@ -8161,7 +8254,8 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 
 		/* GSSAPI Authentication */
 
-		int micoffset;
+		int micoffset, len;
+		char *data;
 		Ssh_gss_buf mic;
 		s->type = AUTH_TYPE_GSSAPI;
 		s->tried_gssapi = TRUE;
@@ -8181,13 +8275,14 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 		ssh2_pkt_adduint32(s->pktout,1);
 
 		/* length of OID + 2 */
-		ssh2_pkt_adduint32(s->pktout, s->gss_buf.len + 2);
+		ssh2_pkt_adduint32(s->pktout, s->gss_buf.length + 2);
 		ssh2_pkt_addbyte(s->pktout, SSH2_GSS_OIDTYPE);
 
 		/* length of OID */
-		ssh2_pkt_addbyte(s->pktout, (unsigned char) s->gss_buf.len);
+		ssh2_pkt_addbyte(s->pktout, (unsigned char) s->gss_buf.length);
 
-		ssh_pkt_adddata(s->pktout, s->gss_buf.data, s->gss_buf.len);
+		ssh_pkt_adddata(s->pktout, s->gss_buf.value,
+				s->gss_buf.length);
 		ssh2_pkt_send(ssh, s->pktout);
 		crWaitUntilV(pktin);
 		if (pktin->type != SSH2_MSG_USERAUTH_GSSAPI_RESPONSE) {
@@ -8197,11 +8292,14 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 
 		/* check returned packet ... */
 
-		ssh_pkt_getstring(pktin,&s->gss_rcvtok.data,&s->gss_rcvtok.len);
-		if (s->gss_rcvtok.len != s->gss_buf.len + 2 ||
-		    s->gss_rcvtok.data[0] != SSH2_GSS_OIDTYPE ||
-		    s->gss_rcvtok.data[1] != s->gss_buf.len ||
-		    memcmp(s->gss_rcvtok.data+2,s->gss_buf.data,s->gss_buf.len) ) {
+		ssh_pkt_getstring(pktin, &data, &len);
+		s->gss_rcvtok.value = data;
+		s->gss_rcvtok.length = len;
+		if (s->gss_rcvtok.length != s->gss_buf.length + 2 ||
+		    ((char *)s->gss_rcvtok.value)[0] != SSH2_GSS_OIDTYPE ||
+		    ((char *)s->gss_rcvtok.value)[1] != s->gss_buf.length ||
+		    memcmp((char *)s->gss_rcvtok.value + 2,
+			   s->gss_buf.value,s->gss_buf.length) ) {
 		    logevent("GSSAPI authentication - wrong response from server");
 		    continue;
 		}
@@ -8227,8 +8325,8 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 		}
 
 		/* initial tokens are empty */
-		s->gss_rcvtok.len = s->gss_sndtok.len = 0;
-		s->gss_rcvtok.data = s->gss_sndtok.data = NULL;
+		SSH_GSS_CLEAR_BUF(&s->gss_rcvtok);
+		SSH_GSS_CLEAR_BUF(&s->gss_sndtok);
 
 		/* now enter the loop */
 		do {
@@ -8243,8 +8341,8 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 			logevent("GSSAPI authentication initialisation failed");
 
 			if (ssh_gss_display_status(s->gss_ctx,&s->gss_buf) == SSH_GSS_OK) {
-			    logevent(s->gss_buf.data);
-			    sfree(s->gss_buf.data);
+			    logevent(s->gss_buf.value);
+			    sfree(s->gss_buf.value);
 			}
 
 			break;
@@ -8254,10 +8352,10 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 		    /* Client and server now exchange tokens until GSSAPI
 		     * no longer says CONTINUE_NEEDED */
 
-		    if (s->gss_sndtok.len != 0) {
+		    if (s->gss_sndtok.length != 0) {
 			s->pktout = ssh2_pkt_init(SSH2_MSG_USERAUTH_GSSAPI_TOKEN);
 			ssh_pkt_addstring_start(s->pktout);
-			ssh_pkt_addstring_data(s->pktout,s->gss_sndtok.data,s->gss_sndtok.len);
+			ssh_pkt_addstring_data(s->pktout,s->gss_sndtok.value,s->gss_sndtok.length);
 			ssh2_pkt_send(ssh, s->pktout);
 			ssh_gss_free_tok(&s->gss_sndtok);
 		    }
@@ -8269,7 +8367,9 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 			    s->gss_stat = SSH_GSS_FAILURE;
 			    break;
 			}
-			ssh_pkt_getstring(pktin,&s->gss_rcvtok.data,&s->gss_rcvtok.len);
+			ssh_pkt_getstring(pktin, &data, &len);
+			s->gss_rcvtok.value = data;
+			s->gss_rcvtok.length = len;
 		    }
 		} while (s-> gss_stat == SSH_GSS_S_CONTINUE_NEEDED);
 
@@ -8291,13 +8391,13 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 		ssh_pkt_addstring(s->pktout, "ssh-connection");
 		ssh_pkt_addstring(s->pktout, "gssapi-with-mic");
 
-		s->gss_buf.data = (char *)s->pktout->data + micoffset;
-		s->gss_buf.len = s->pktout->length - micoffset;
+		s->gss_buf.value = (char *)s->pktout->data + micoffset;
+		s->gss_buf.length = s->pktout->length - micoffset;
 
 		ssh_gss_get_mic(s->gss_ctx, &s->gss_buf, &mic);
 		s->pktout = ssh2_pkt_init(SSH2_MSG_USERAUTH_GSSAPI_MIC);
 		ssh_pkt_addstring_start(s->pktout);
-		ssh_pkt_addstring_data(s->pktout, mic.data, mic.len);
+		ssh_pkt_addstring_data(s->pktout, mic.value, mic.length);
 		ssh2_pkt_send(ssh, s->pktout);
 		ssh_gss_free_mic(&mic);
 
@@ -8838,17 +8938,15 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
      * Potentially enable X11 forwarding.
      */
     if (ssh->mainchan && !ssh->ncmode && ssh->cfg.x11_forward) {
-	char proto[20], data[64];
 	logevent("Requesting X11 forwarding");
-	ssh->x11auth = x11_invent_auth(proto, sizeof(proto),
-				       data, sizeof(data), ssh->cfg.x11_auth);
-        x11_get_real_auth(ssh->x11auth, ssh->cfg.x11_display);
+	ssh->x11disp = x11_setup_display(ssh->cfg.x11_display,
+					 ssh->cfg.x11_auth, &ssh->cfg);
 	s->pktout = ssh2_pkt_init(SSH2_MSG_CHANNEL_REQUEST);
 	ssh2_pkt_adduint32(s->pktout, ssh->mainchan->remoteid);
 	ssh2_pkt_addstring(s->pktout, "x11-req");
 	ssh2_pkt_addbool(s->pktout, 1);	       /* want reply */
 	ssh2_pkt_addbool(s->pktout, 0);	       /* many connections */
-	ssh2_pkt_addstring(s->pktout, proto);
+	ssh2_pkt_addstring(s->pktout, ssh->x11disp->remoteauthprotoname);
 	/*
 	 * Note that while we blank the X authentication data here, we don't
 	 * take any special action to blank the start of an X11 channel,
@@ -8857,9 +8955,9 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 	 * cookie into the log.
 	 */
 	dont_log_password(ssh, s->pktout, PKTLOG_BLANK);
-	ssh2_pkt_addstring(s->pktout, data);
+	ssh2_pkt_addstring(s->pktout, ssh->x11disp->remoteauthdatastring);
 	end_log_omission(ssh, s->pktout);
-	ssh2_pkt_adduint32(s->pktout, x11_get_screen_number(ssh->cfg.x11_display));
+	ssh2_pkt_adduint32(s->pktout, ssh->x11disp->screennum);
 	ssh2_pkt_send(ssh, s->pktout);
 
 	crWaitUntilV(pktin);
@@ -9350,7 +9448,7 @@ static const char *ssh_init(void *frontend_handle, void **backend_handle,
     ssh->fallback_cmd = 0;
     ssh->pkt_kctx = SSH2_PKTCTX_NOKEX;
     ssh->pkt_actx = SSH2_PKTCTX_NOAUTH;
-    ssh->x11auth = NULL;
+    ssh->x11disp = NULL;
     ssh->v1_compressing = FALSE;
     ssh->v2_outgoing_sequence = 0;
     ssh->ssh1_rdpkt_crstate = 0;
@@ -9488,8 +9586,8 @@ static void ssh_free(void *handle)
 	ssh->rportfwds = NULL;
     }
     sfree(ssh->deferred_send_data);
-    if (ssh->x11auth)
-	x11_free_auth(ssh->x11auth);
+    if (ssh->x11disp)
+	x11_free_display(ssh->x11disp);
     sfree(ssh->do_ssh_init_state);
     sfree(ssh->do_ssh1_login_state);
     sfree(ssh->do_ssh2_transport_state);

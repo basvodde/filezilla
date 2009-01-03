@@ -43,7 +43,6 @@ noinst_HEADERS = fzprintf.h \
 		 fzsftp.h \
 		 int64.h misc.h network.h proxy.h psftp.h putty.h \
 		 puttymem.h puttyps.h sftp.h ssh.h \
-		 sshgss.h \
 		 storage.h tree234.h
 
 if USE_RESOURCEFILE
