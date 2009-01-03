@@ -514,10 +514,16 @@ int CSftpControlSocket::ConnectSend()
 			wxString user = m_pEngine->GetOptions()->GetOption(OPTION_PROXY_USER);
 			if (user != _T(""))
 				cmd += _T(" \"") + user + _T("\"");
+
+			wxString show = cmd;
+
 			wxString pass = m_pEngine->GetOptions()->GetOption(OPTION_PROXY_PASS);
 			if (pass != _T(""))
+			{
 				cmd += _T(" \"") + pass + _T("\"");
-			res = Send(cmd);
+				show += _T(" \"") + wxString('*', pass.Len()) + _T("\"");
+			}
+			res = Send(cmd, show);
 		}
 		break;
 	case connect_keys:
@@ -742,7 +748,7 @@ bool CSftpControlSocket::Send(wxString cmd, const wxString& show /*=_T("")*/)
 {
 	SetWait(true);
 
-	if (show != _T(""))
+	if (!show.empty())
 		LogMessageRaw(Command, show);
 	else
 		LogMessageRaw(Command, cmd);
