@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-30 19:54+0100\n"
-"PO-Revision-Date: 2008-12-14 14:22+0800\n"
+"POT-Creation-Date: 2009-01-03 16:23+0100\n"
+"PO-Revision-Date: 2009-01-01 19:30+0800\n"
 "Last-Translator: Kene Lin <kenelin@gmail.com>\n"
 "Language-Team: milo <milo.tw@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -96,8 +96,8 @@ msgstr "%s與 %s. 總共大小: %s"
 msgid "%s and %s. Total size: At least %s"
 msgstr "%s與 %s. 總共大小: 至少 %s"
 
-#: ../../locales/../src/interface/LocalListView.cpp:485
-#: ../../locales/../src/interface/LocalListView.cpp:502
+#: ../../locales/../src/interface/LocalListView.cpp:480
+#: ../../locales/../src/interface/LocalListView.cpp:497
 #, c-format
 msgid "%s byte"
 msgid_plural "%s bytes"
@@ -189,7 +189,7 @@ msgstr "主動模式(&A)"
 
 #: resources.h:669
 msgid "&Add bookmark..."
-msgstr ""
+msgstr "新增書籤(&A)..."
 
 #: resources.h:681 resources.h:695
 msgid "&Add files to queue"
@@ -249,7 +249,7 @@ msgstr "使用 SI 式符號的二進制字首. (即 1 KB = 1024 bytes) (&B)"
 
 #: resources.h:668
 msgid "&Bookmarks"
-msgstr ""
+msgstr "書籤(&B)"
 
 #: resources.h:113 resources.h:242 resources.h:260 resources.h:573
 #: resources.h:610 resources.h:615
@@ -362,9 +362,8 @@ msgid "&Edit"
 msgstr "編輯(&E)"
 
 #: resources.h:360
-#, fuzzy
 msgid "&Edit filter rules..."
-msgstr "編輯篩選器(&E)..."
+msgstr "編輯篩選規則(&E)..."
 
 #: resources.h:643 resources.h:751
 msgid "&Enable"
@@ -402,9 +401,14 @@ msgstr "回復為主動模式(&F)"
 msgid "&File"
 msgstr "檔案(&F)"
 
-#: resources.h:704 resources.h:748
+#: resources.h:748
 msgid "&File Attributes..."
 msgstr "檔案屬性(&F)..."
+
+#: resources.h:704
+#, fuzzy
+msgid "&File permissions..."
+msgstr "擁有人權限"
 
 #: resources.h:572
 msgid "&File:"
@@ -432,7 +436,7 @@ msgstr "取得協助(&G)..."
 
 #: resources.h:604
 msgid "&Global bookmark"
-msgstr ""
+msgstr "全域書籤(&G)"
 
 #: resources.h:561
 msgid "&HTTP/1.1 using CONNECT method"
@@ -486,15 +490,9 @@ msgstr "限制同時連線數(&L)"
 msgid "&Local directory tree"
 msgstr "本地樹狀目錄(&L)"
 
-#: resources.h:609
-#, fuzzy
+#: resources.h:609 resources.h:614
 msgid "&Local directory:"
-msgstr "本地樹狀目錄(&L)"
-
-#: resources.h:614
-#, fuzzy
-msgid "&Local path:"
-msgstr "本地站台:"
+msgstr "本地目錄(&L):"
 
 #: resources.h:240
 msgid "&Log to file"
@@ -509,9 +507,8 @@ msgid "&Low"
 msgstr "低(&L)"
 
 #: resources.h:670
-#, fuzzy
 msgid "&Manage bookmarks..."
-msgstr "站台管理員(&S)..."
+msgstr "管理書籤(&M)..."
 
 #: resources.h:660
 msgid "&Manual transfer..."
@@ -530,13 +527,12 @@ msgid "&Message log"
 msgstr "訊息記錄(&M)"
 
 #: resources.h:607
-#, fuzzy
 msgid "&Name:"
-msgstr "名稱:"
+msgstr "名稱(&N):"
 
 #: resources.h:637
 msgid "&Network configuration wizard..."
-msgstr "網路配置精靈(&N)..."
+msgstr "網路組態精靈(&N)..."
 
 #: resources.h:366
 msgid "&New"
@@ -634,12 +630,11 @@ msgstr "重新整理(&R)"
 msgid "&Remember password for this session"
 msgstr "記住這次連線的密碼(&R)"
 
-#: resources.h:611
-#, fuzzy
+#: resources.h:611 resources.h:616
 msgid "&Remote directory:"
-msgstr "新增目錄(&C)"
+msgstr "遠端目錄(&R):"
 
-#: resources.h:575 resources.h:616
+#: resources.h:575
 msgid "&Remote path:"
 msgstr "遠端路徑(&R):"
 
@@ -661,9 +656,8 @@ msgid "&Rename"
 msgstr "更名(&R)"
 
 #: resources.h:351
-#, fuzzy
 msgid "&Rename..."
-msgstr "更名(&R)"
+msgstr "更名(&R)..."
 
 #: resources.h:506
 msgid "&Reopen local file"
@@ -675,7 +669,7 @@ msgstr "回報錯誤(&R)..."
 
 #: resources.h:811
 msgid "&Restart Wizard"
-msgstr "再次執行配置精靈(&R)"
+msgstr "再次執行組態精靈(&R)"
 
 #: resources.h:84 resources.h:424 resources.h:448
 msgid "&Resume"
@@ -687,7 +681,7 @@ msgstr "執行指令(&E)..."
 
 #: resources.h:187
 msgid "&Run configuration wizard now..."
-msgstr "立即執行配置精靈(&R)..."
+msgstr "立即執行組態精靈(&R)..."
 
 #: resources.h:208
 msgid "&Run update check now..."
@@ -743,7 +737,7 @@ msgstr "站台管理員(&S)..."
 
 #: resources.h:605
 msgid "&Site-specific bookmark"
-msgstr ""
+msgstr "站台書籤(&S)"
 
 #: resources.h:86
 msgid "&Skip"
@@ -941,7 +935,7 @@ msgstr "3 - 詳述"
 msgid "4 - Debug"
 msgstr "4 - 偵錯"
 
-#: ../../locales/../src/engine/directorylistingparser.cpp:1605
+#: ../../locales/../src/engine/directorylistingparser.cpp:1608
 msgid ";1"
 msgstr ";1"
 
@@ -950,12 +944,9 @@ msgid "?"
 msgstr "?"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:98
-#, fuzzy
 msgid ""
 "A bookmark with the entered name already exists. Please enter an unused name."
-msgstr ""
-"檔案 %s 已存在.\n"
-"請輸入新的名稱:"
+msgstr "輸入的書籤名稱已存在. 請輸入未使用的名稱."
 
 #: ../../locales/../src/interface/optionspage_edit.cpp:122
 msgid "A default editor needs to be set."
@@ -979,13 +970,13 @@ msgstr ""
 msgid "A file previously opened has been changed."
 msgstr "先前開啟的檔案已被更動."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2193
+#: ../../locales/../src/interface/LocalListView.cpp:2188
 #, c-format
 msgid ""
 "A file with that name is already being edited. Do you want to reopen '%s'?"
 msgstr "該名稱之檔案已被編輯. 您要重新開啟 '%s' 嗎?"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2189
+#: ../../locales/../src/interface/LocalListView.cpp:2184
 #: ../../locales/../src/interface/RemoteListView.cpp:2496
 msgid "A file with that name is already being transferred."
 msgstr "該名稱之檔案已傳送."
@@ -1073,8 +1064,8 @@ msgstr "在檔案列表的上方"
 #: ../../locales/../src/interface/manual_transfer.cpp:192
 #: ../../locales/../src/interface/manual_transfer.cpp:548
 #: ../../locales/../src/interface/manual_transfer.cpp:549
-#: ../../locales/../src/interface/sitemanager.cpp:1237
-#: ../../locales/../src/interface/sitemanager.cpp:1238
+#: ../../locales/../src/interface/sitemanager.cpp:1243
+#: ../../locales/../src/interface/sitemanager.cpp:1244
 msgid "Account"
 msgstr "帳號"
 
@@ -1191,19 +1182,19 @@ msgid ""
 "recent version."
 msgstr "也可以拜訪 http://filezilla-project.org 下載最近的版本."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2141
+#: ../../locales/../src/interface/sitemanager.cpp:2147
 msgid ""
 "An item with the same name as the dragged item already exists at the target "
 "location."
-msgstr "目標位置已存在與拖曳來源相同名稱的檔案."
+msgstr "目標位置已存在與拖曳來源相同名稱的項目."
 
 #: ../../locales/../src/engine/server.cpp:815
 #: ../../locales/../src/interface/manual_transfer.cpp:157
 #: ../../locales/../src/interface/manual_transfer.cpp:195
 #: ../../locales/../src/interface/manual_transfer.cpp:211
 #: ../../locales/../src/interface/manual_transfer.cpp:547
-#: ../../locales/../src/interface/sitemanager.cpp:1236
-#: ../../locales/../src/interface/sitemanager.cpp:1471
+#: ../../locales/../src/interface/sitemanager.cpp:1242
+#: ../../locales/../src/interface/sitemanager.cpp:1477
 msgid "Anonymous"
 msgstr "匿名"
 
@@ -1266,7 +1257,7 @@ msgstr "此時所有必備的資訊皆已收集完成."
 msgid "Attribute"
 msgstr "檔案屬性"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:621
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:627
 msgid "Authentication failed."
 msgstr "認證失敗."
 
@@ -1311,15 +1302,15 @@ msgstr "黑板"
 #: ../../locales/../src/interface/Mainfrm.cpp:993
 #: ../../locales/../src/interface/sitemanager.cpp:365
 msgid "Bookmark"
-msgstr ""
+msgstr "書籤"
 
 #: resources.h:618
 msgid "Bookmark:"
-msgstr ""
+msgstr "書籤:"
 
 #: resources.h:617
 msgid "Bookmarks"
-msgstr ""
+msgstr "書籤"
 
 #: ../../locales/../src/interface/state.cpp:292
 msgid "Break current connection?"
@@ -1362,16 +1353,16 @@ msgstr "自訂(&U)"
 msgid "C&ustom filetype associations:"
 msgstr "自訂檔案型態關聯(&U):"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1414
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1420
 msgid "CSftpControlSocket::ChangeDirSend()"
 msgstr "CSftpControlSocket::ChangeDirSend()"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1407
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1413
 msgid "CSftpControlSocket::ChangeDirSubcommandResult()"
 msgstr "CSftpControlSocket::ChangeDirSubcommandResult()"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1539
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1212
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1218
 msgid "Calculating timezone offset of server..."
 msgstr "計算伺服器的時區偏移量..."
 
@@ -1460,8 +1451,8 @@ msgstr "無法從資源檔裡載入主選單"
 msgid "Cannot load toolbar from resource file"
 msgstr "無法從資源檔裡載入工具列"
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:661
-#: ../../locales/../src/interface/sitemanager.cpp:1138
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:672
+#: ../../locales/../src/interface/sitemanager.cpp:1143
 msgid "Cannot rename entry"
 msgstr "無法更名欄位"
 
@@ -1482,7 +1473,7 @@ msgstr "無法選取篩選器"
 msgid "Cannot show dialog"
 msgstr "無法顯示對話框"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2189
+#: ../../locales/../src/interface/LocalListView.cpp:2184
 #: ../../locales/../src/interface/RemoteListView.cpp:2496
 msgid "Cannot view / edit selected file"
 msgstr "無法檢視/編輯所選的檔案"
@@ -1555,16 +1546,15 @@ msgstr "正在檢查正確的外部 IP Address"
 msgid "Checking for updates"
 msgstr "正在檢查更新"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1401
+#: ../../locales/../src/interface/sitemanager.cpp:1407
 msgid "Choose the default local directory"
 msgstr "選擇預設的本地目錄"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:120
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:348
-#: ../../locales/../src/interface/sitemanager.cpp:2532
-#, fuzzy
+#: ../../locales/../src/interface/sitemanager.cpp:2538
 msgid "Choose the local directory"
-msgstr "選擇預設的本地目錄"
+msgstr "選擇本地目錄"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:778
 msgid "Chunk data improperly terminated"
@@ -1616,7 +1606,7 @@ msgstr "清除快速連線列"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:568
 msgid "Click on Finish to save your configuration."
-msgstr "按 Finish 來儲存您的配置."
+msgstr "按 Finish 來儲存您的組態."
 
 #: ../../locales/../src/interface/updatewizard.cpp:874
 msgid "Click on next to download the new version."
@@ -1734,7 +1724,7 @@ msgstr "篩選條件是分大小寫的(&A)"
 
 #: resources.h:804
 msgid "Configuration test"
-msgstr "配置測試"
+msgstr "組態測試"
 
 #: resources.h:778
 msgid "Configure passive mode"
@@ -1752,7 +1742,7 @@ msgstr "需要確認"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:564
 msgid "Congratulations, your configuration seems to be working."
-msgstr "恭喜, 您的配置似乎已可正常運作."
+msgstr "恭喜, 您的組態似乎已可正常運作."
 
 #: ../../locales/../src/interface/quickconnectbar.cpp:142
 msgid "Connect bypassing proxy settings"
@@ -1883,14 +1873,14 @@ msgstr "轉換金鑰檔案"
 msgid "Cop&y"
 msgstr "複製(&Y)"
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:599
-#: ../../locales/../src/interface/sitemanager.cpp:1695
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:610
+#: ../../locales/../src/interface/sitemanager.cpp:1701
 #, c-format
 msgid "Copy (%d) of %s"
 msgstr "複製 (%d) - %s"
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:576
-#: ../../locales/../src/interface/sitemanager.cpp:1672
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:587
+#: ../../locales/../src/interface/sitemanager.cpp:1678
 #, c-format
 msgid "Copy of %s"
 msgstr "複製 - %s"
@@ -1901,10 +1891,9 @@ msgid "Could not accept connection: %s"
 msgstr "無法允許連線: %s"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:89
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:500
-#, fuzzy
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:510
 msgid "Could not add connection to Site Manager"
-msgstr "複製目前的連線到站台管理員(&C)..."
+msgstr "無法新增連線到站台管理員"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:127
 msgid "Could not connect to server"
@@ -1915,7 +1904,7 @@ msgstr "無法連線到伺服器"
 msgid "Could not connect to server: %s"
 msgstr "無法連線到伺服器: %s"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:774
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:780
 msgid "Could not convert command to server encoding"
 msgstr "無法轉換指令成伺服器編碼"
 
@@ -1993,18 +1982,18 @@ msgstr ""
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:153
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:270
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:679
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:721
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:763
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:690
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:732
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:774
 #: ../../locales/../src/interface/import.cpp:111
 #: ../../locales/../src/interface/import.cpp:302
 #: ../../locales/../src/interface/sitemanager.cpp:631
-#: ../../locales/../src/interface/sitemanager.cpp:1928
-#: ../../locales/../src/interface/sitemanager.cpp:2417
-#: ../../locales/../src/interface/sitemanager.cpp:2587
-#: ../../locales/../src/interface/sitemanager.cpp:2685
-#: ../../locales/../src/interface/sitemanager.cpp:2802
-#: ../../locales/../src/interface/sitemanager.cpp:2878
+#: ../../locales/../src/interface/sitemanager.cpp:1934
+#: ../../locales/../src/interface/sitemanager.cpp:2423
+#: ../../locales/../src/interface/sitemanager.cpp:2593
+#: ../../locales/../src/interface/sitemanager.cpp:2691
+#: ../../locales/../src/interface/sitemanager.cpp:2808
+#: ../../locales/../src/interface/sitemanager.cpp:2884
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -2041,9 +2030,8 @@ msgid "Could not open log file: %s"
 msgstr "無法開啟記錄檔案: %s"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:66
-#, fuzzy
 msgid "Could not parse remote path."
-msgstr "無法解析伺服器位址:"
+msgstr "無法解析遠端路徑."
 
 #: ../../locales/../src/interface/quickconnectbar.cpp:86
 msgid "Could not parse server address:"
@@ -2054,10 +2042,9 @@ msgstr "無法解析伺服器位址:"
 msgid "Could not read from socket: %s"
 msgstr "無法從 Socket 讀取: %s"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2457
-#, fuzzy
+#: ../../locales/../src/interface/sitemanager.cpp:2463
 msgid "Could not read server item."
-msgstr "無法解析伺服器位址:"
+msgstr "無法讀取伺服器項目."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2608
 #, c-format
@@ -2087,7 +2074,7 @@ msgid "Could not start transfer"
 msgstr "無法啟動傳輸"
 
 #: ../../locales/../src/interface/sitemanager.cpp:802
-#: ../../locales/../src/interface/sitemanager.cpp:2737
+#: ../../locales/../src/interface/sitemanager.cpp:2743
 #, c-format
 msgid ""
 "Could not write \"%s\", any changes to the Site Manager could not be saved: %"
@@ -2109,10 +2096,10 @@ msgstr ""
 "%s"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:300
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:791
-#: ../../locales/../src/interface/sitemanager.cpp:2513
-#: ../../locales/../src/interface/sitemanager.cpp:2853
-#: ../../locales/../src/interface/sitemanager.cpp:2912
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:802
+#: ../../locales/../src/interface/sitemanager.cpp:2519
+#: ../../locales/../src/interface/sitemanager.cpp:2859
+#: ../../locales/../src/interface/sitemanager.cpp:2918
 #, c-format
 msgid "Could not write \"%s\", the selected sites could not be exported: %s"
 msgstr "無法寫入 \"%s\", 所選的站台無法匯出: %s"
@@ -2155,7 +2142,7 @@ msgstr "立即弄當 FileZilla. 只用於檢測例外處理機制"
 msgid "Create a new subdirectory in the current directory"
 msgstr "在現行目錄下建立子新的目錄"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1308
+#: ../../locales/../src/interface/LocalListView.cpp:1303
 #: ../../locales/../src/interface/LocalTreeView.cpp:1313
 #: ../../locales/../src/interface/RemoteListView.cpp:1430
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1257
@@ -2167,7 +2154,7 @@ msgid "Creating directory"
 msgstr "新增目錄中"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3164
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1999
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2005
 #, c-format
 msgid "Creating directory '%s'..."
 msgstr "新增目錄 '%s'..."
@@ -2286,14 +2273,6 @@ msgid ""
 "by the selected servertype."
 msgstr "無法解析預設的遠端路徑. 請確定路徑有效並被所選的伺服器種類支援."
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:396
-#: ../../locales/../src/interface/sitemanager.cpp:1055
-#, fuzzy
-msgid ""
-"Default remote path cannot be parsed. Make sure it is valid and is supported "
-"by the servertype selected on the parent site."
-msgstr "無法解析預設的遠端路徑. 請確定路徑有效並被所選的伺服器種類支援."
-
 #: ../../locales/../src/interface/optionspage_language.cpp:78
 msgid "Default system language"
 msgstr "系統預設語系"
@@ -2319,7 +2298,7 @@ msgstr "登入嘗試失敗之間的延遲必須在 1 到 999 秒之間."
 msgid "Delaying connection due to previously failed connection attempt..."
 msgstr "因先前登入嘗試失敗而暫作延遲中..."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1171
+#: ../../locales/../src/interface/sitemanager.cpp:1176
 msgid "Delete Site Manager entry"
 msgstr "清除站台管理員欄位"
 
@@ -2462,7 +2441,7 @@ msgstr "您真的要刪除所有站台管理員裡的欄位和傳輸佇列?"
 msgid "Do you really want to delete all Site Manager entries?"
 msgstr "您真的要刪除所有站台管理員裡的欄位?"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1173
+#: ../../locales/../src/interface/sitemanager.cpp:1178
 msgid "Do you really want to delete selected entry?"
 msgstr "您真的要刪除所選的欄位?"
 
@@ -2647,9 +2626,8 @@ msgid "Enter name for filterset"
 msgstr "輸入篩選集的名稱"
 
 #: ../../locales/../src/interface/filter.cpp:381
-#, fuzzy
 msgid "Enter new name for filterset"
-msgstr "輸入篩選集的名稱"
+msgstr "輸入篩選集的新名稱"
 
 #: resources.h:136
 msgid "Enter password"
@@ -2703,9 +2681,9 @@ msgstr "匯入錯誤"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:154
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:271
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:680
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:722
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:764
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:691
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:733
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:775
 #: ../../locales/../src/interface/filter.cpp:171
 #: ../../locales/../src/interface/filter.cpp:924
 #: ../../locales/../src/interface/import.cpp:112
@@ -2715,12 +2693,12 @@ msgstr "匯入錯誤"
 #: ../../locales/../src/interface/QueueView.cpp:1835
 #: ../../locales/../src/interface/sitemanager.cpp:632
 #: ../../locales/../src/interface/sitemanager.cpp:777
-#: ../../locales/../src/interface/sitemanager.cpp:1929
-#: ../../locales/../src/interface/sitemanager.cpp:2418
-#: ../../locales/../src/interface/sitemanager.cpp:2588
-#: ../../locales/../src/interface/sitemanager.cpp:2686
-#: ../../locales/../src/interface/sitemanager.cpp:2803
-#: ../../locales/../src/interface/sitemanager.cpp:2879
+#: ../../locales/../src/interface/sitemanager.cpp:1935
+#: ../../locales/../src/interface/sitemanager.cpp:2424
+#: ../../locales/../src/interface/sitemanager.cpp:2594
+#: ../../locales/../src/interface/sitemanager.cpp:2692
+#: ../../locales/../src/interface/sitemanager.cpp:2809
+#: ../../locales/../src/interface/sitemanager.cpp:2885
 #: ../../locales/../src/interface/wrapengine.cpp:925
 msgid "Error loading xml file"
 msgstr "載入 XML 檔案錯誤"
@@ -2731,14 +2709,14 @@ msgid "Error starting program"
 msgstr "啟動程式錯誤"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:301
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:792
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:803
 #: ../../locales/../src/interface/QueueView.cpp:1818
 #: ../../locales/../src/interface/QueueView.cpp:1854
 #: ../../locales/../src/interface/sitemanager.cpp:803
-#: ../../locales/../src/interface/sitemanager.cpp:2514
-#: ../../locales/../src/interface/sitemanager.cpp:2738
-#: ../../locales/../src/interface/sitemanager.cpp:2854
-#: ../../locales/../src/interface/sitemanager.cpp:2913
+#: ../../locales/../src/interface/sitemanager.cpp:2520
+#: ../../locales/../src/interface/sitemanager.cpp:2744
+#: ../../locales/../src/interface/sitemanager.cpp:2860
+#: ../../locales/../src/interface/sitemanager.cpp:2919
 #: ../../locales/../src/interface/wrapengine.cpp:1076
 msgid "Error writing xml file"
 msgstr "寫入 XML 檔案錯誤"
@@ -2790,7 +2768,7 @@ msgid "F&ilter name:"
 msgstr "篩選器名稱(&I):"
 
 #: ../../locales/../src/interface/settingsdialog.cpp:113
-#: ../../locales/../src/interface/sitemanager.cpp:1469
+#: ../../locales/../src/interface/sitemanager.cpp:1475
 msgid "FTP"
 msgstr "FTP"
 
@@ -2824,8 +2802,8 @@ msgstr "FTPES - 透過外顯式 TLS/SSL 的 FTP"
 msgid "FTPS - FTP over implicit TLS/SSL"
 msgstr "FTPS - 透過隱含式 TLS/SSL 的 FTP"
 
-#: ../../locales/../src/interface/LocalListView.cpp:712
-#: ../../locales/../src/interface/LocalListView.cpp:1423
+#: ../../locales/../src/interface/LocalListView.cpp:707
+#: ../../locales/../src/interface/LocalListView.cpp:1418
 #: ../../locales/../src/interface/LocalTreeView.cpp:878
 #: ../../locales/../src/interface/viewheader.cpp:515
 msgid "Failed to change directory"
@@ -2842,7 +2820,7 @@ msgstr "無法變更語系"
 msgid "Failed to check for newer version of FileZilla."
 msgstr "無法檢查新版的 FileZilla."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2141
+#: ../../locales/../src/interface/sitemanager.cpp:2147
 msgid "Failed to copy or move sites"
 msgstr "無法複製或移動站台"
 
@@ -3068,7 +3046,7 @@ msgstr "FileZilla 錯誤"
 msgid ""
 "FileZilla can now test your configuration to ensure everything is configured "
 "properly."
-msgstr "FileZilla 現在可以測試您的配置以確認是否都已配置正確."
+msgstr "FileZilla 現在可以測試您的組態以確認是否都已配置正確."
 
 #: ../../locales/../src/interface/quickconnectbar.cpp:123
 msgid "FileZilla does not support the HTTP protocol"
@@ -3108,7 +3086,7 @@ msgid "Filename &filters..."
 msgstr "檔名篩選器(&F)..."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2962
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2262
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2268
 #, c-format
 msgid "Filename cannot be constructed for directory %s and filename %s"
 msgstr "目錄 %s 下無法建構檔名 %s"
@@ -3125,11 +3103,11 @@ msgstr "檔名未改變"
 msgid "Filename:"
 msgstr "檔案名稱:"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1497
+#: ../../locales/../src/interface/LocalListView.cpp:1492
 msgid "Filenames may not contain any of the following characters: / * ? < > |"
 msgstr "檔名不能包含以下任何字元: / * ? < > |"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1472
+#: ../../locales/../src/interface/LocalListView.cpp:1467
 msgid ""
 "Filenames may not contain any of the following characters: / \\ : * ? \" < > "
 "|"
@@ -3201,13 +3179,13 @@ msgstr "數位指紋:"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:42
 msgid "Firewall and router configuration wizard"
-msgstr "防火牆與路由器配置精靈"
+msgstr "防火牆與路由器組態精靈"
 
 #: resources.h:186
 msgid ""
 "For more detailed information about what these options do, please run the "
 "network configuration wizard."
-msgstr "想知道更多關於這些選項的詳細資訊, 請執行網路配置精靈."
+msgstr "想知道更多關於這些選項的詳細資訊, 請執行網路組態精靈."
 
 #: resources.h:801
 msgid "For reliability you should specify a range of at least 10 ports."
@@ -3256,7 +3234,7 @@ msgstr "指定的篩選集名稱已經存在, 要複寫嗎?"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:232
 msgid "Global bookmarks"
-msgstr ""
+msgstr "全域書籤"
 
 #: resources.h:297
 msgid "Group permissions"
@@ -3354,9 +3332,10 @@ msgid ""
 msgstr "如果回復模式已啟用, 您可以連線到設定有誤, 拒絕選定傳輸模式的伺服器."
 
 #: resources.h:246
+#, fuzzy
 msgid ""
 "If the size of the logfile reaches the limit, it gets renamed by adding \".1"
-"\"  to the end of the filename (possibly overwriting older logfiles) and a "
+"\" to the end of the filename (possibly overwriting older logfiles) and a "
 "new file gets created."
 msgstr ""
 "如果記錄檔案的大小已達上限, 就會在檔名的最後加上 \".1\" (這可能會覆寫舊的記錄"
@@ -3426,7 +3405,7 @@ msgid ""
 "remote router or firewall might be misconfigured. In this case try to toggle "
 "passive mode and contact the server administrator for help."
 msgstr ""
-"若您在某台伺服器上持預遇到錯誤, 此伺服器本身或某台遠端路由器或是防火牆可能配"
+"若您在某台伺服器上一直遇到錯誤, 此伺服器本身或某台遠端路由器或是防火牆可能配"
 "置有誤. 在這情況下請切換為被動模式並請連絡伺服器管理者協助."
 
 #: resources.h:767
@@ -3565,8 +3544,8 @@ msgstr "收到無效的資料"
 msgid "Invalid date"
 msgstr "無效的日期"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1472
-#: ../../locales/../src/interface/LocalListView.cpp:1497
+#: ../../locales/../src/interface/LocalListView.cpp:1467
+#: ../../locales/../src/interface/LocalListView.cpp:1492
 msgid "Invalid filename"
 msgstr "無效的檔名"
 
@@ -3601,17 +3580,17 @@ msgstr ""
 msgid "Invalid response code"
 msgstr "無效的回應碼"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2388
-#: ../../locales/../src/interface/sitemanager.cpp:2408
-#: ../../locales/../src/interface/sitemanager.cpp:2426
-#: ../../locales/../src/interface/sitemanager.cpp:2433
-#: ../../locales/../src/interface/sitemanager.cpp:2440
-#: ../../locales/../src/interface/sitemanager.cpp:2457
-#: ../../locales/../src/interface/sitemanager.cpp:2600
-#: ../../locales/../src/interface/sitemanager.cpp:2815
-#: ../../locales/../src/interface/sitemanager.cpp:2822
-#: ../../locales/../src/interface/sitemanager.cpp:2891
-#: ../../locales/../src/interface/sitemanager.cpp:2898
+#: ../../locales/../src/interface/sitemanager.cpp:2394
+#: ../../locales/../src/interface/sitemanager.cpp:2414
+#: ../../locales/../src/interface/sitemanager.cpp:2432
+#: ../../locales/../src/interface/sitemanager.cpp:2439
+#: ../../locales/../src/interface/sitemanager.cpp:2446
+#: ../../locales/../src/interface/sitemanager.cpp:2463
+#: ../../locales/../src/interface/sitemanager.cpp:2606
+#: ../../locales/../src/interface/sitemanager.cpp:2821
+#: ../../locales/../src/interface/sitemanager.cpp:2828
+#: ../../locales/../src/interface/sitemanager.cpp:2897
+#: ../../locales/../src/interface/sitemanager.cpp:2904
 msgid "Invalid site path"
 msgstr "無效的站台路徑"
 
@@ -3839,7 +3818,7 @@ msgstr "我的文件"
 
 #: ../../locales/../src/interface/sitemanager.cpp:619
 #: ../../locales/../src/interface/sitemanager.cpp:621
-#: ../../locales/../src/interface/sitemanager.cpp:1969
+#: ../../locales/../src/interface/sitemanager.cpp:1975
 msgid "My Sites"
 msgstr "我的站台"
 
@@ -3849,20 +3828,18 @@ msgid "N/a"
 msgstr "N/a"
 
 #: resources.h:606
-#, fuzzy
 msgid "Name"
-msgstr "名稱:"
+msgstr "名稱"
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:661
-#: ../../locales/../src/interface/sitemanager.cpp:1138
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:672
+#: ../../locales/../src/interface/sitemanager.cpp:1143
 msgid "Name already exists"
 msgstr "名稱已存在"
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:776
-#: ../../locales/../src/interface/sitemanager.cpp:2838
-#, fuzzy
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:787
+#: ../../locales/../src/interface/sitemanager.cpp:2844
 msgid "Name of bookmark already exists."
-msgstr "名稱已存在"
+msgstr "書籤名稱已存在"
 
 #: resources.h:140
 msgid "Name:"
@@ -3886,7 +3863,7 @@ msgstr "新增資料夾(&F)"
 
 #: resources.h:96 resources.h:619
 msgid "New Book&mark"
-msgstr ""
+msgstr "新增書籤(&M)"
 
 #: resources.h:602 ../../locales/../src/interface/bookmarks_dialog.cpp:52
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:66
@@ -3894,15 +3871,15 @@ msgstr ""
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:83
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:89
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:98
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:494
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:500
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:506
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:529
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:776
-#: ../../locales/../src/interface/sitemanager.cpp:2296
-#: ../../locales/../src/interface/sitemanager.cpp:2838
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:504
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:510
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:516
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:539
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:787
+#: ../../locales/../src/interface/sitemanager.cpp:2302
+#: ../../locales/../src/interface/sitemanager.cpp:2844
 msgid "New bookmark"
-msgstr ""
+msgstr "新書籤"
 
 #: ../../locales/../src/interface/LocalTreeView.cpp:1316
 #: ../../locales/../src/interface/RemoteListView.cpp:1444
@@ -3918,9 +3895,9 @@ msgstr "新篩選器"
 msgid "New folder"
 msgstr "新資料夾"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2281
-#: ../../locales/../src/interface/sitemanager.cpp:2705
-#: ../../locales/../src/interface/sitemanager.cpp:2719
+#: ../../locales/../src/interface/sitemanager.cpp:2287
+#: ../../locales/../src/interface/sitemanager.cpp:2711
+#: ../../locales/../src/interface/sitemanager.cpp:2725
 msgid "New site"
 msgstr "新站台"
 
@@ -3928,7 +3905,7 @@ msgstr "新站台"
 msgid "Next to the transfer queue"
 msgstr "在傳輸佇列的旁邊"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:827
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:833
 msgid "No"
 msgstr "否"
 
@@ -3971,9 +3948,9 @@ msgstr "佇列裡不再有檔案!"
 msgid "No name for the filterset given."
 msgstr "沒有給定篩選集的名稱."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1935
-#: ../../locales/../src/interface/sitemanager.cpp:1947
-#: ../../locales/../src/interface/sitemanager.cpp:1978
+#: ../../locales/../src/interface/sitemanager.cpp:1941
+#: ../../locales/../src/interface/sitemanager.cpp:1953
+#: ../../locales/../src/interface/sitemanager.cpp:1984
 msgid "No sites available"
 msgstr "沒有可用的站台"
 
@@ -4004,13 +3981,13 @@ msgstr "尚未選取"
 #: ../../locales/../src/interface/manual_transfer.cpp:548
 #: ../../locales/../src/interface/queue.cpp:857
 #: ../../locales/../src/interface/queue.cpp:938
-#: ../../locales/../src/interface/sitemanager.cpp:1237
+#: ../../locales/../src/interface/sitemanager.cpp:1243
 msgid "Normal"
 msgstr "一般"
 
 #: ../../locales/../src/interface/queueview_failed.cpp:367
 msgid "Not all items could be requeued for viewing / editing."
-msgstr "並非所有東西皆可要求檢視/編輯."
+msgstr "並非所有項目皆可要求檢視/編輯."
 
 #: ../../locales/../src/interface/RemoteListView.cpp:2160
 msgid "Not connected to any server"
@@ -4063,7 +4040,7 @@ msgid ""
 "well as the fallback mode if enabled."
 msgstr "在接下來的幾個頁面裡將要設定所選的傳輸模式以及回復模式 (如果有啟用)."
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:837
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:843
 msgid "Once"
 msgstr "一次"
 
@@ -4089,10 +4066,10 @@ msgstr "開啟 FileZilla 設定對話框"
 msgid "Opened as:"
 msgstr "開啟為:"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2180
-#: ../../locales/../src/interface/LocalListView.cpp:2209
-#: ../../locales/../src/interface/LocalListView.cpp:2273
-#: ../../locales/../src/interface/LocalListView.cpp:2280
+#: ../../locales/../src/interface/LocalListView.cpp:2175
+#: ../../locales/../src/interface/LocalListView.cpp:2204
+#: ../../locales/../src/interface/LocalListView.cpp:2268
+#: ../../locales/../src/interface/LocalListView.cpp:2275
 msgid "Opening failed"
 msgstr "開啟失敗"
 
@@ -4199,15 +4176,14 @@ msgid "Path"
 msgstr "檔案路徑"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3049
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2307
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2313
 #, c-format
 msgid "Path cannot be constructed for directory %s and subdir %s"
 msgstr "目錄 %s 下無法建構子目錄路徑 %s"
 
 #: resources.h:608
-#, fuzzy
 msgid "Paths"
-msgstr "檔案路徑"
+msgstr "路徑"
 
 #: ../../locales/../src/interface/edithandler.cpp:1148
 #: ../../locales/../src/interface/edithandler.cpp:1288
@@ -4284,9 +4260,9 @@ msgid "Please enter a new name for the copied filter."
 msgstr "請輸入欲複製篩選器的新名稱."
 
 #: ../../locales/../src/interface/filter.cpp:379
-#, fuzzy, c-format
+#, c-format
 msgid "Please enter a new name for the filter set \"%s\""
-msgstr "請輸入篩選器的新名稱."
+msgstr "請輸入篩選集 \"%s\" 的新名稱"
 
 #: ../../locales/../src/interface/filteredit.cpp:526
 msgid "Please enter a new name for the filter."
@@ -4361,7 +4337,7 @@ msgstr ""
 "請直接輸入 FTP 指令.\n"
 "使用直接的 FTP 指令會清除目錄快取."
 
-#: ../../locales/../src/interface/LocalListView.cpp:1308
+#: ../../locales/../src/interface/LocalListView.cpp:1303
 #: ../../locales/../src/interface/LocalTreeView.cpp:1313
 #: ../../locales/../src/interface/RemoteListView.cpp:1430
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1257
@@ -4390,7 +4366,7 @@ msgstr ""
 msgid ""
 "Please follow the instructions carefully, as wrong configuration will "
 "prevent successful FTP connections."
-msgstr "錯誤的配置會阻礙 FTP 連線成功, 所以請仔細地跟著指令操作."
+msgstr "錯誤的組態會阻礙 FTP 連線成功, 所以請仔細地跟著指令操作."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:613
 msgid ""
@@ -4455,8 +4431,7 @@ msgid ""
 "Please read http://wiki.filezilla-project.org/Date_and_Time_formatting for "
 "details"
 msgstr ""
-"請參閱 http://wiki.filezilla-project.org/Date_and_Time_formatting 以獲得更多"
-"資訊"
+"更多資訊請參閱 http://wiki.filezilla-project.org/Date_and_Time_formatting"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:567
 msgid ""
@@ -4527,8 +4502,8 @@ msgstr "請到 http://filezilla-project.org 下載最近的版本."
 msgid "Position of the message log:"
 msgstr "訊息記錄的位置"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1749
-#: ../../locales/../src/interface/sitemanager.cpp:1968
+#: ../../locales/../src/interface/sitemanager.cpp:1755
+#: ../../locales/../src/interface/sitemanager.cpp:1974
 msgid "Predefined Sites"
 msgstr "預先定義的站台"
 
@@ -4745,6 +4720,30 @@ msgstr "遠端篩選器:"
 msgid "Remote path"
 msgstr "遠端路徑"
 
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:400
+#, c-format
+msgid ""
+"Remote path cannot be parsed. Make sure it is a valid absolute path and is "
+"supported by the current site's servertype (%s)."
+msgstr ""
+"無法解析遠端路徑. 請確定這是有效的絕對路徑, 且被目前站台的伺服器型態 (%s) 支"
+"援."
+
+#: ../../locales/../src/interface/sitemanager.cpp:1057
+#, c-format
+msgid ""
+"Remote path cannot be parsed. Make sure it is a valid absolute path and is "
+"supported by the servertype (%s) selected on the parent site."
+msgstr ""
+"無法解析遠端路徑. 請確定這是有效的絕對路徑, 且被上層站台所選的伺服器型態 (%"
+"s) 支援."
+
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:402
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:406
+#: ../../locales/../src/interface/sitemanager.cpp:1059
+msgid "Remote path cannot be parsed. Make sure it is a valid absolute path."
+msgstr "無法解析遠端路徑. 請確定這是有效的絕對路徑."
+
 #: ../../locales/../src/interface/manual_transfer.cpp:348
 msgid "Remote path could not be parsed."
 msgstr "遠端路徑無法解析."
@@ -4782,7 +4781,7 @@ msgid "Rename selected files and directories"
 msgstr "更改所選的檔案和目錄名稱"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3395
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2509
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2515
 #, c-format
 msgid "Renaming '%s' to '%s'"
 msgstr "'%s' 更名為 '%s'"
@@ -4819,7 +4818,7 @@ msgid ""
 msgstr "如果伺服器使用和客戶端不同的換行格式時, 續傳文字檔案可能會造成問題."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1211
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:904
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:910
 msgid "Retrieving directory listing..."
 msgstr "正在取得目錄列表..."
 
@@ -4919,7 +4918,7 @@ msgid "Select file for exported settings"
 msgstr "選擇用以匯出設定的檔案"
 
 #: ../../locales/../src/interface/export.cpp:32
-#: ../../locales/../src/interface/sitemanager.cpp:2495
+#: ../../locales/../src/interface/sitemanager.cpp:2501
 msgid "Select file for exported sites"
 msgstr "選擇用以匯出站台的檔案"
 
@@ -4975,7 +4974,7 @@ msgstr "選取 %s與 %s. 總共大小: 至少 %s"
 msgid "Selected editor does not exist"
 msgstr "所選的編輯器不存在"
 
-#: resources.h:502 ../../locales/../src/interface/LocalListView.cpp:2193
+#: resources.h:502 ../../locales/../src/interface/LocalListView.cpp:2188
 msgid "Selected file already being edited"
 msgstr "已在編輯所選的檔案."
 
@@ -5009,6 +5008,8 @@ msgid ""
 "Selected global bookmark and current server use a different server type.\n"
 "Use site-specific bookmarks for this server."
 msgstr ""
+"選定的全域書籤與目前伺服器使用的伺服器型態不同.\n"
+"請在此伺服器使用站台書籤."
 
 #: ../../locales/../src/engine/engineprivate.cpp:281
 msgid "Selected port usually in use by a different protocol."
@@ -5071,7 +5072,7 @@ msgid ""
 "Manager"
 msgstr "伺服器可能需要帳號 (Account). 請嘗試用站台管理員指定帳號"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:623
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:629
 msgid ""
 "Server sent an additional login prompt. You need to use the interactive "
 "login type."
@@ -5125,7 +5126,7 @@ msgid "Set &Priority"
 msgstr "設定優先權(&P)"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3547
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2387
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2393
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
 msgstr "修改 '%s' 權限為 '%s'"
@@ -5166,36 +5167,38 @@ msgstr "站台管理員"
 msgid "Site Manager already open"
 msgstr "已開啟站台管理員"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2408
-#: ../../locales/../src/interface/sitemanager.cpp:2426
-#: ../../locales/../src/interface/sitemanager.cpp:2440
-#: ../../locales/../src/interface/sitemanager.cpp:2822
-#: ../../locales/../src/interface/sitemanager.cpp:2898
+#: ../../locales/../src/interface/sitemanager.cpp:2414
+#: ../../locales/../src/interface/sitemanager.cpp:2432
+#: ../../locales/../src/interface/sitemanager.cpp:2446
+#: ../../locales/../src/interface/sitemanager.cpp:2828
+#: ../../locales/../src/interface/sitemanager.cpp:2904
 msgid "Site does not exist."
 msgstr "站台不存在."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2388
+#: ../../locales/../src/interface/sitemanager.cpp:2394
 msgid "Site path has to begin with 0 or 1."
 msgstr "站台路徑必須以 0 或 1 開始."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2433
-#: ../../locales/../src/interface/sitemanager.cpp:2600
-#: ../../locales/../src/interface/sitemanager.cpp:2815
-#: ../../locales/../src/interface/sitemanager.cpp:2891
+#: ../../locales/../src/interface/sitemanager.cpp:2439
+#: ../../locales/../src/interface/sitemanager.cpp:2606
+#: ../../locales/../src/interface/sitemanager.cpp:2821
+#: ../../locales/../src/interface/sitemanager.cpp:2897
 msgid "Site path is malformed."
-msgstr ""
+msgstr "站台路徑的格式有誤."
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:237
 msgid "Site-specific bookmarks"
-msgstr ""
+msgstr "站台書籤"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:83
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:494
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:504
 msgid ""
 "Site-specific bookmarks require the server to be stored in the Site "
 "Manager.\n"
 "Add current connection to the site manager?"
 msgstr ""
+"站台書籤需要將伺服器存進站台管理員.\n"
+"要將目前的連線加進站台管理員?"
 
 #: ../../locales/../src/interface/queue.cpp:1154
 msgid "Size"
@@ -5239,7 +5242,8 @@ msgid ""
 "Some misconfigured remote servers which are behind a router, may reply with "
 "their local IP address."
 msgstr ""
-"一些位於路由器後方而配置錯誤的遠端伺服器也許會回應它們自己的本地 IP Address."
+"一些位於路由器後方且組態配置錯誤的遠端伺服器也許會回應它們自己的本地 IP "
+"Address."
 
 #: resources.h:176
 msgid "Sort directories inline"
@@ -5282,13 +5286,13 @@ msgid "Start with opened Site Manager"
 msgstr "啟動時開啟站台管理員"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2134
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1575
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1581
 #, c-format
 msgid "Starting download of %s"
 msgstr "開始 %s 的下載"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2138
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1579
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1585
 #, c-format
 msgid "Starting upload of %s"
 msgstr "開始 %s 的上傳"
@@ -5438,8 +5442,8 @@ msgstr ""
 msgid "The file '%s' could not be loaded or does not contain a private key."
 msgstr "檔案 '%s' 無法載入或是不包含私鑰."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2180
-#: ../../locales/../src/interface/LocalListView.cpp:2273
+#: ../../locales/../src/interface/LocalListView.cpp:2175
+#: ../../locales/../src/interface/LocalListView.cpp:2268
 #, c-format
 msgid ""
 "The file '%s' could not be opened:\n"
@@ -5448,8 +5452,8 @@ msgstr ""
 "無法開啟檔案 '%s':\n"
 "您的系統裡沒有程式關聯到這個檔案型態."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2209
-#: ../../locales/../src/interface/LocalListView.cpp:2280
+#: ../../locales/../src/interface/LocalListView.cpp:2204
+#: ../../locales/../src/interface/LocalListView.cpp:2275
 #, c-format
 msgid ""
 "The file '%s' could not be opened:\n"
@@ -5642,9 +5646,8 @@ msgid "This filter set cannot be removed."
 msgstr "此篩選集無法移除."
 
 #: ../../locales/../src/interface/filter.cpp:373
-#, fuzzy
 msgid "This filter set cannot be renamed."
-msgstr "此篩選集無法移除."
+msgstr "此篩選集無法更名."
 
 #: resources.h:787
 msgid ""
@@ -5657,7 +5660,7 @@ msgstr ""
 msgid ""
 "This wizard will help you to properly configure any routers and firewalls "
 "you have and tests your configuration."
-msgstr "這個精靈將會幫助您正確地配置您的任何路由器與防火牆並且測試您的組態."
+msgstr "這個精靈將會幫助您正確地配置您的路由器與防火牆並且測試您的組態."
 
 #: resources.h:218
 msgid "Time formatting"
@@ -5673,7 +5676,7 @@ msgid "Timeout"
 msgstr "逾時時間"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1593
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1021
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1027
 #, c-format
 msgid ""
 "Timezone offsets: Server: %d seconds. Local: %d seconds. Difference: %d "
@@ -5743,9 +5746,6 @@ msgid "Too many redirects"
 msgstr "過多的重導"
 
 #: ../../locales/../src/engine/logging.cpp:210
-msgid "Trace"
-msgstr "追蹤"
-
 #: ../../locales/../src/interface/StatusView.cpp:286
 #: ../../locales/../src/interface/StatusView.cpp:349
 msgid "Trace:"
@@ -5798,11 +5798,11 @@ msgstr "將無副檔名的檔案視作文字檔案(&W)"
 msgid "Treat the &following filetypes as ASCII files:"
 msgstr "將以下的檔案類別視作文字檔案(&F):"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:824
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:830
 msgid "Trust changed Hostkey: "
 msgstr "信任已改變的主機金鑰:"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:822
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:828
 msgid "Trust new Hostkey: "
 msgstr "信任新的主機金鑰:"
 
@@ -6164,7 +6164,7 @@ msgstr "錯誤的外部 IP Address"
 msgid "Wrong line endings"
 msgstr "錯誤的換行格式"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:835
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:841
 msgid "Yes"
 msgstr "是"
 
@@ -6215,9 +6215,8 @@ msgid ""
 msgstr "您可能有套會錯誤處理傳輸資料的路由器或防火牆."
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:52
-#, fuzzy
 msgid "You need to enter a name for the bookmark."
-msgstr "您必須輸入記錄檔案的名稱."
+msgstr "您必須輸入書籤的名稱."
 
 #: ../../locales/../src/interface/optionspage_logging.cpp:67
 msgid "You need to enter a name for the log file."
@@ -6233,10 +6232,10 @@ msgid "You need to enter a proxy port in the range from 1 to 65535"
 msgstr "您必須輸入 Proxy 連接埠, 範圍在 1 到 65535 之間"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:73
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:406
-#: ../../locales/../src/interface/sitemanager.cpp:1065
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:416
+#: ../../locales/../src/interface/sitemanager.cpp:1070
 msgid "You need to enter at least one path, empty bookmarks are not supported."
-msgstr ""
+msgstr "您必須輸入最少一個路徑, 不支援空的書籤."
 
 #: ../../locales/../src/interface/manual_transfer.cpp:314
 msgid "You need to specify a local file."
@@ -6302,7 +6301,7 @@ msgstr ""
 "無法啟動 fzputtygen.\n"
 "請確定該執行檔和 FileZilla 主程式存在同一目錄下."
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1500
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1506
 msgid "fzsftp could not be started"
 msgstr "無法啟動 fzsftp"
 
@@ -6373,6 +6372,12 @@ msgstr "全世界都可讀取"
 #: ../../locales/../src/interface/filteredit.cpp:128
 msgid "world writeable"
 msgstr "全世界都可寫入"
+
+#~ msgid "&Local path:"
+#~ msgstr "本地路徑(&L):"
+
+#~ msgid "Trace"
+#~ msgstr "追蹤"
 
 #~ msgid "D&iscard"
 #~ msgstr "忽略(&I)"

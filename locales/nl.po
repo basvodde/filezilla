@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: filezilla_nl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-30 19:54+0100\n"
-"PO-Revision-Date: 2008-12-22 10:35+0100\n"
+"POT-Creation-Date: 2009-01-03 16:23+0100\n"
+"PO-Revision-Date: 2008-12-31 10:27+0100\n"
 "Last-Translator: Tim van der Meij\n"
 "Language-Team:  <en@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -101,8 +101,8 @@ msgstr "%s en %s. Totale grootte: %s"
 msgid "%s and %s. Total size: At least %s"
 msgstr "%s en %s. Totale grootte: minstens %s"
 
-#: ../../locales/../src/interface/LocalListView.cpp:485
-#: ../../locales/../src/interface/LocalListView.cpp:502
+#: ../../locales/../src/interface/LocalListView.cpp:480
+#: ../../locales/../src/interface/LocalListView.cpp:497
 #, c-format
 msgid "%s byte"
 msgid_plural "%s bytes"
@@ -197,7 +197,7 @@ msgstr "&Actief"
 
 #: resources.h:669
 msgid "&Add bookmark..."
-msgstr ""
+msgstr "Favoriet toevoegen..."
 
 #: resources.h:681 resources.h:695
 msgid "&Add files to queue"
@@ -259,7 +259,7 @@ msgstr ""
 
 #: resources.h:668
 msgid "&Bookmarks"
-msgstr ""
+msgstr "Favorieten"
 
 #: resources.h:113 resources.h:242 resources.h:260 resources.h:573
 #: resources.h:610 resources.h:615
@@ -411,9 +411,14 @@ msgstr "&Terugvallen naar actieve modus"
 msgid "&File"
 msgstr "&Bestand"
 
-#: resources.h:704 resources.h:748
+#: resources.h:748
 msgid "&File Attributes..."
 msgstr "&Bestandsattributen"
+
+#: resources.h:704
+#, fuzzy
+msgid "&File permissions..."
+msgstr "Eigenaarsrechten"
 
 #: resources.h:572
 msgid "&File:"
@@ -441,7 +446,7 @@ msgstr "&Hulp verkrijgen..."
 
 #: resources.h:604
 msgid "&Global bookmark"
-msgstr ""
+msgstr "Globale favoriet"
 
 #: resources.h:561
 msgid "&HTTP/1.1 using CONNECT method"
@@ -495,15 +500,9 @@ msgstr "Het aantal gelijktijdige verbindingen &limiteren"
 msgid "&Local directory tree"
 msgstr "&Lokale boomstructuur:"
 
-#: resources.h:609
-#, fuzzy
+#: resources.h:609 resources.h:614
 msgid "&Local directory:"
-msgstr "&Lokale boomstructuur:"
-
-#: resources.h:614
-#, fuzzy
-msgid "&Local path:"
-msgstr "Lokale site:"
+msgstr "Lokale map:"
 
 #: resources.h:240
 msgid "&Log to file"
@@ -518,9 +517,8 @@ msgid "&Low"
 msgstr "&Laag"
 
 #: resources.h:670
-#, fuzzy
 msgid "&Manage bookmarks..."
-msgstr "&Sitebeheer..."
+msgstr "Favorieten beheren..."
 
 #: resources.h:660
 msgid "&Manual transfer..."
@@ -539,7 +537,6 @@ msgid "&Message log"
 msgstr "&Berichtenlogboek"
 
 #: resources.h:607
-#, fuzzy
 msgid "&Name:"
 msgstr "Naam:"
 
@@ -643,12 +640,11 @@ msgstr "&Vernieuwen"
 msgid "&Remember password for this session"
 msgstr "Wachtwoo&rd voor deze sessie onthouden"
 
-#: resources.h:611
-#, fuzzy
+#: resources.h:611 resources.h:616
 msgid "&Remote directory:"
-msgstr "&Map aanmaken"
+msgstr "Externe map:"
 
-#: resources.h:575 resources.h:616
+#: resources.h:575
 msgid "&Remote path:"
 msgstr "Externe pad:"
 
@@ -751,7 +747,7 @@ msgstr "&Sitebeheer..."
 
 #: resources.h:605
 msgid "&Site-specific bookmark"
-msgstr ""
+msgstr "Site-specifieke favoriet"
 
 #: resources.h:86
 msgid "&Skip"
@@ -953,7 +949,7 @@ msgstr "3 - Uitgebreid"
 msgid "4 - Debug"
 msgstr "4 - Debug"
 
-#: ../../locales/../src/engine/directorylistingparser.cpp:1605
+#: ../../locales/../src/engine/directorylistingparser.cpp:1608
 msgid ";1"
 msgstr ";1"
 
@@ -962,12 +958,11 @@ msgid "?"
 msgstr "?"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:98
-#, fuzzy
 msgid ""
 "A bookmark with the entered name already exists. Please enter an unused name."
 msgstr ""
-"Het bestand %s bestaat reeds.\n"
-"Vul een nieuwe bestandsnaam in:"
+"Een favoriet met de ingevoerde naam bestaat reeds. Kies a.u.b. een "
+"ongebruikte naam."
 
 #: ../../locales/../src/interface/optionspage_edit.cpp:122
 msgid "A default editor needs to be set."
@@ -992,13 +987,13 @@ msgstr ""
 msgid "A file previously opened has been changed."
 msgstr "Een eerder geopend bestand is gewijzigd."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2193
+#: ../../locales/../src/interface/LocalListView.cpp:2188
 #, c-format
 msgid ""
 "A file with that name is already being edited. Do you want to reopen '%s'?"
 msgstr "Een bestand met die naam wordt al bewerkt. Wilt u '%s' opnieuw openen?"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2189
+#: ../../locales/../src/interface/LocalListView.cpp:2184
 #: ../../locales/../src/interface/RemoteListView.cpp:2496
 msgid "A file with that name is already being transferred."
 msgstr "Een bestand met die naam wordt al overgezet."
@@ -1092,8 +1087,8 @@ msgstr "Boven de bestandslijsten"
 #: ../../locales/../src/interface/manual_transfer.cpp:192
 #: ../../locales/../src/interface/manual_transfer.cpp:548
 #: ../../locales/../src/interface/manual_transfer.cpp:549
-#: ../../locales/../src/interface/sitemanager.cpp:1237
-#: ../../locales/../src/interface/sitemanager.cpp:1238
+#: ../../locales/../src/interface/sitemanager.cpp:1243
+#: ../../locales/../src/interface/sitemanager.cpp:1244
 msgid "Account"
 msgstr "Account"
 
@@ -1216,7 +1211,7 @@ msgstr ""
 "Als alternatief bezoekt u http://filezilla-project.org om de nieuwste versie "
 "te downloaden."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2141
+#: ../../locales/../src/interface/sitemanager.cpp:2147
 msgid ""
 "An item with the same name as the dragged item already exists at the target "
 "location."
@@ -1229,8 +1224,8 @@ msgstr ""
 #: ../../locales/../src/interface/manual_transfer.cpp:195
 #: ../../locales/../src/interface/manual_transfer.cpp:211
 #: ../../locales/../src/interface/manual_transfer.cpp:547
-#: ../../locales/../src/interface/sitemanager.cpp:1236
-#: ../../locales/../src/interface/sitemanager.cpp:1471
+#: ../../locales/../src/interface/sitemanager.cpp:1242
+#: ../../locales/../src/interface/sitemanager.cpp:1477
 msgid "Anonymous"
 msgstr "Anoniem"
 
@@ -1293,7 +1288,7 @@ msgstr "Momenteel is alle benodigde informatie verzameld."
 msgid "Attribute"
 msgstr "Attribuut"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:621
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:627
 msgid "Authentication failed."
 msgstr "Authenticatie mislukt"
 
@@ -1338,15 +1333,15 @@ msgstr "Schoolbord"
 #: ../../locales/../src/interface/Mainfrm.cpp:993
 #: ../../locales/../src/interface/sitemanager.cpp:365
 msgid "Bookmark"
-msgstr ""
+msgstr "Favoriet"
 
 #: resources.h:618
 msgid "Bookmark:"
-msgstr ""
+msgstr "Favoriet:"
 
 #: resources.h:617
 msgid "Bookmarks"
-msgstr ""
+msgstr "Favorieten"
 
 #: ../../locales/../src/interface/state.cpp:292
 msgid "Break current connection?"
@@ -1390,16 +1385,16 @@ msgstr "Aangepast"
 msgid "C&ustom filetype associations:"
 msgstr "Aangepaste bestandstype-associaties:"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1414
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1420
 msgid "CSftpControlSocket::ChangeDirSend()"
 msgstr "CSftpControlSocket::ChangeDirSend()"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1407
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1413
 msgid "CSftpControlSocket::ChangeDirSubcommandResult()"
 msgstr "CSftpControlSocket::ChangeDirSubcommandResult()"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1539
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1212
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1218
 msgid "Calculating timezone offset of server..."
 msgstr "Tijdzoneverschil van server calculeren..."
 
@@ -1492,8 +1487,8 @@ msgstr "Kan het hoofdmenu niet laden uit bronbestand"
 msgid "Cannot load toolbar from resource file"
 msgstr "Kan de werkbalk niet laden uit bronbestand"
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:661
-#: ../../locales/../src/interface/sitemanager.cpp:1138
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:672
+#: ../../locales/../src/interface/sitemanager.cpp:1143
 msgid "Cannot rename entry"
 msgstr "Kan de vermelding niet hernoemen"
 
@@ -1514,7 +1509,7 @@ msgstr "Kan filter niet selecteren"
 msgid "Cannot show dialog"
 msgstr "Kan het venster niet tonen"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2189
+#: ../../locales/../src/interface/LocalListView.cpp:2184
 #: ../../locales/../src/interface/RemoteListView.cpp:2496
 msgid "Cannot view / edit selected file"
 msgstr "Kan het geselecteerde bestand niet bekijken / bewerken"
@@ -1589,16 +1584,15 @@ msgstr "Controleren voor correct extern IP-adres"
 msgid "Checking for updates"
 msgstr "Zoeken naar updates"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1401
+#: ../../locales/../src/interface/sitemanager.cpp:1407
 msgid "Choose the default local directory"
 msgstr "Kies de standaard lokale map"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:120
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:348
-#: ../../locales/../src/interface/sitemanager.cpp:2532
-#, fuzzy
+#: ../../locales/../src/interface/sitemanager.cpp:2538
 msgid "Choose the local directory"
-msgstr "Kies de standaard lokale map"
+msgstr "Kies de lokale map"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:778
 msgid "Chunk data improperly terminated"
@@ -1917,14 +1911,14 @@ msgstr "Sleutelbestand converteren"
 msgid "Cop&y"
 msgstr "Kopiëren"
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:599
-#: ../../locales/../src/interface/sitemanager.cpp:1695
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:610
+#: ../../locales/../src/interface/sitemanager.cpp:1701
 #, c-format
 msgid "Copy (%d) of %s"
 msgstr "Kopiëren (%d) van %s"
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:576
-#: ../../locales/../src/interface/sitemanager.cpp:1672
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:587
+#: ../../locales/../src/interface/sitemanager.cpp:1678
 #, c-format
 msgid "Copy of %s"
 msgstr "Kopie van %s"
@@ -1935,10 +1929,9 @@ msgid "Could not accept connection: %s"
 msgstr "Kan verbinding niet accepteren: %s"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:89
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:500
-#, fuzzy
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:510
 msgid "Could not add connection to Site Manager"
-msgstr "Huidige verbinding naar Sitebeheer kopiëren..."
+msgstr "Kan verbinding niet toevoegen aan Sitebeheer"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:127
 msgid "Could not connect to server"
@@ -1949,7 +1942,7 @@ msgstr "Kan niet verbinden met server"
 msgid "Could not connect to server: %s"
 msgstr "Kan niet verbinden met server: %s"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:774
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:780
 msgid "Could not convert command to server encoding"
 msgstr "Kan commando niet converteren naar serverencodering"
 
@@ -2033,18 +2026,18 @@ msgstr ""
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:153
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:270
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:679
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:721
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:763
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:690
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:732
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:774
 #: ../../locales/../src/interface/import.cpp:111
 #: ../../locales/../src/interface/import.cpp:302
 #: ../../locales/../src/interface/sitemanager.cpp:631
-#: ../../locales/../src/interface/sitemanager.cpp:1928
-#: ../../locales/../src/interface/sitemanager.cpp:2417
-#: ../../locales/../src/interface/sitemanager.cpp:2587
-#: ../../locales/../src/interface/sitemanager.cpp:2685
-#: ../../locales/../src/interface/sitemanager.cpp:2802
-#: ../../locales/../src/interface/sitemanager.cpp:2878
+#: ../../locales/../src/interface/sitemanager.cpp:1934
+#: ../../locales/../src/interface/sitemanager.cpp:2423
+#: ../../locales/../src/interface/sitemanager.cpp:2593
+#: ../../locales/../src/interface/sitemanager.cpp:2691
+#: ../../locales/../src/interface/sitemanager.cpp:2808
+#: ../../locales/../src/interface/sitemanager.cpp:2884
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -2083,9 +2076,8 @@ msgid "Could not open log file: %s"
 msgstr "Kan logbestand niet openen: %s"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:66
-#, fuzzy
 msgid "Could not parse remote path."
-msgstr "Kan serveradres niet ontleden:"
+msgstr "Kan externe pad niet ontleden."
 
 #: ../../locales/../src/interface/quickconnectbar.cpp:86
 msgid "Could not parse server address:"
@@ -2096,10 +2088,9 @@ msgstr "Kan serveradres niet ontleden:"
 msgid "Could not read from socket: %s"
 msgstr "Kan niet lezen van socket: %s"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2457
-#, fuzzy
+#: ../../locales/../src/interface/sitemanager.cpp:2463
 msgid "Could not read server item."
-msgstr "Kan serveradres niet ontleden:"
+msgstr "Kan serveritem niet lezen."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2608
 #, c-format
@@ -2129,7 +2120,7 @@ msgid "Could not start transfer"
 msgstr "Kan de overdracht niet starten"
 
 #: ../../locales/../src/interface/sitemanager.cpp:802
-#: ../../locales/../src/interface/sitemanager.cpp:2737
+#: ../../locales/../src/interface/sitemanager.cpp:2743
 #, c-format
 msgid ""
 "Could not write \"%s\", any changes to the Site Manager could not be saved: %"
@@ -2153,10 +2144,10 @@ msgstr ""
 "%s"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:300
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:791
-#: ../../locales/../src/interface/sitemanager.cpp:2513
-#: ../../locales/../src/interface/sitemanager.cpp:2853
-#: ../../locales/../src/interface/sitemanager.cpp:2912
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:802
+#: ../../locales/../src/interface/sitemanager.cpp:2519
+#: ../../locales/../src/interface/sitemanager.cpp:2859
+#: ../../locales/../src/interface/sitemanager.cpp:2918
 #, c-format
 msgid "Could not write \"%s\", the selected sites could not be exported: %s"
 msgstr ""
@@ -2203,7 +2194,7 @@ msgstr ""
 msgid "Create a new subdirectory in the current directory"
 msgstr "Nieuwe submap aanmaken in de huidige map"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1308
+#: ../../locales/../src/interface/LocalListView.cpp:1303
 #: ../../locales/../src/interface/LocalTreeView.cpp:1313
 #: ../../locales/../src/interface/RemoteListView.cpp:1430
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1257
@@ -2215,7 +2206,7 @@ msgid "Creating directory"
 msgstr "Map aanmaken"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3164
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1999
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2005
 #, c-format
 msgid "Creating directory '%s'..."
 msgstr "Map '%s' aanmaken..."
@@ -2336,16 +2327,6 @@ msgstr ""
 "Standaard extern pad kan niet ontleed worden. Zorg ervoor dat het bestaat en "
 "ondersteund wordt door het geselecteerde servertype."
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:396
-#: ../../locales/../src/interface/sitemanager.cpp:1055
-#, fuzzy
-msgid ""
-"Default remote path cannot be parsed. Make sure it is valid and is supported "
-"by the servertype selected on the parent site."
-msgstr ""
-"Standaard extern pad kan niet ontleed worden. Zorg ervoor dat het bestaat en "
-"ondersteund wordt door het geselecteerde servertype."
-
 #: ../../locales/../src/interface/optionspage_language.cpp:78
 msgid "Default system language"
 msgstr "Standaard systeemtaal"
@@ -2374,7 +2355,7 @@ msgid "Delaying connection due to previously failed connection attempt..."
 msgstr ""
 "Vertraagt verbinding als gevolg van vorige mislukte verbindingspoging..."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1171
+#: ../../locales/../src/interface/sitemanager.cpp:1176
 msgid "Delete Site Manager entry"
 msgstr "Sitebeheervermeldingen verwijderen"
 
@@ -2522,7 +2503,7 @@ msgstr ""
 msgid "Do you really want to delete all Site Manager entries?"
 msgstr "Wilt u de Sitebeheervermeldingen werkelijk verwijderen?"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1173
+#: ../../locales/../src/interface/sitemanager.cpp:1178
 msgid "Do you really want to delete selected entry?"
 msgstr "Wilt u de geselecteerde vermelding werkelijk verwijderen?"
 
@@ -2773,9 +2754,9 @@ msgstr "Fout bij importeren"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:154
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:271
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:680
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:722
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:764
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:691
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:733
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:775
 #: ../../locales/../src/interface/filter.cpp:171
 #: ../../locales/../src/interface/filter.cpp:924
 #: ../../locales/../src/interface/import.cpp:112
@@ -2785,12 +2766,12 @@ msgstr "Fout bij importeren"
 #: ../../locales/../src/interface/QueueView.cpp:1835
 #: ../../locales/../src/interface/sitemanager.cpp:632
 #: ../../locales/../src/interface/sitemanager.cpp:777
-#: ../../locales/../src/interface/sitemanager.cpp:1929
-#: ../../locales/../src/interface/sitemanager.cpp:2418
-#: ../../locales/../src/interface/sitemanager.cpp:2588
-#: ../../locales/../src/interface/sitemanager.cpp:2686
-#: ../../locales/../src/interface/sitemanager.cpp:2803
-#: ../../locales/../src/interface/sitemanager.cpp:2879
+#: ../../locales/../src/interface/sitemanager.cpp:1935
+#: ../../locales/../src/interface/sitemanager.cpp:2424
+#: ../../locales/../src/interface/sitemanager.cpp:2594
+#: ../../locales/../src/interface/sitemanager.cpp:2692
+#: ../../locales/../src/interface/sitemanager.cpp:2809
+#: ../../locales/../src/interface/sitemanager.cpp:2885
 #: ../../locales/../src/interface/wrapengine.cpp:925
 msgid "Error loading xml file"
 msgstr "Fout bij laden van XML-bestand"
@@ -2801,14 +2782,14 @@ msgid "Error starting program"
 msgstr "Fout bij starten van programma"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:301
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:792
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:803
 #: ../../locales/../src/interface/QueueView.cpp:1818
 #: ../../locales/../src/interface/QueueView.cpp:1854
 #: ../../locales/../src/interface/sitemanager.cpp:803
-#: ../../locales/../src/interface/sitemanager.cpp:2514
-#: ../../locales/../src/interface/sitemanager.cpp:2738
-#: ../../locales/../src/interface/sitemanager.cpp:2854
-#: ../../locales/../src/interface/sitemanager.cpp:2913
+#: ../../locales/../src/interface/sitemanager.cpp:2520
+#: ../../locales/../src/interface/sitemanager.cpp:2744
+#: ../../locales/../src/interface/sitemanager.cpp:2860
+#: ../../locales/../src/interface/sitemanager.cpp:2919
 #: ../../locales/../src/interface/wrapengine.cpp:1076
 msgid "Error writing xml file"
 msgstr "Fout bij schrijven van XML-bestand"
@@ -2861,7 +2842,7 @@ msgid "F&ilter name:"
 msgstr "F&ilternaam:"
 
 #: ../../locales/../src/interface/settingsdialog.cpp:113
-#: ../../locales/../src/interface/sitemanager.cpp:1469
+#: ../../locales/../src/interface/sitemanager.cpp:1475
 msgid "FTP"
 msgstr "FTP"
 
@@ -2897,8 +2878,8 @@ msgstr "FTPES - FTP over expliciet TLS/SSL"
 msgid "FTPS - FTP over implicit TLS/SSL"
 msgstr "FTPS - FTP over impliciet TLS/SSL"
 
-#: ../../locales/../src/interface/LocalListView.cpp:712
-#: ../../locales/../src/interface/LocalListView.cpp:1423
+#: ../../locales/../src/interface/LocalListView.cpp:707
+#: ../../locales/../src/interface/LocalListView.cpp:1418
 #: ../../locales/../src/interface/LocalTreeView.cpp:878
 #: ../../locales/../src/interface/viewheader.cpp:515
 msgid "Failed to change directory"
@@ -2915,7 +2896,7 @@ msgstr "Wijzen van de taal is mislukt"
 msgid "Failed to check for newer version of FileZilla."
 msgstr "Controleren voor een nieuwere versie van FileZilla is mislukt."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2141
+#: ../../locales/../src/interface/sitemanager.cpp:2147
 msgid "Failed to copy or move sites"
 msgstr "Het kopiëren of verplaatsen van sites is mislukt"
 
@@ -3195,7 +3176,7 @@ msgid "Filename &filters..."
 msgstr "Bestandsnaam&filters..."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2962
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2262
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2268
 #, c-format
 msgid "Filename cannot be constructed for directory %s and filename %s"
 msgstr ""
@@ -3213,11 +3194,11 @@ msgstr "Bestandsnaam ongewijzigd"
 msgid "Filename:"
 msgstr "Bestandsnaam:"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1497
+#: ../../locales/../src/interface/LocalListView.cpp:1492
 msgid "Filenames may not contain any of the following characters: / * ? < > |"
 msgstr "Bestandsnamen mogen geen van de volgende tekens bevatten: / * ? < > |"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1472
+#: ../../locales/../src/interface/LocalListView.cpp:1467
 msgid ""
 "Filenames may not contain any of the following characters: / \\ : * ? \" < > "
 "|"
@@ -3351,7 +3332,7 @@ msgstr ""
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:232
 msgid "Global bookmarks"
-msgstr ""
+msgstr "Globale favorieten"
 
 #: resources.h:297
 msgid "Group permissions"
@@ -3461,9 +3442,10 @@ msgstr ""
 "geselecteerde overdrachtsmodus niet accepteren."
 
 #: resources.h:246
+#, fuzzy
 msgid ""
 "If the size of the logfile reaches the limit, it gets renamed by adding \".1"
-"\"  to the end of the filename (possibly overwriting older logfiles) and a "
+"\" to the end of the filename (possibly overwriting older logfiles) and a "
 "new file gets created."
 msgstr ""
 "Indien de grootte van het logbestand de limiet bereikt, wordt deze hernoemd "
@@ -3701,8 +3683,8 @@ msgstr "Ongeldige data ontvangen"
 msgid "Invalid date"
 msgstr "Ongeldige datum"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1472
-#: ../../locales/../src/interface/LocalListView.cpp:1497
+#: ../../locales/../src/interface/LocalListView.cpp:1467
+#: ../../locales/../src/interface/LocalListView.cpp:1492
 msgid "Invalid filename"
 msgstr "Ongeldige bestandsnaam"
 
@@ -3740,17 +3722,17 @@ msgstr ""
 msgid "Invalid response code"
 msgstr "Ongeldige antwoordcode"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2388
-#: ../../locales/../src/interface/sitemanager.cpp:2408
-#: ../../locales/../src/interface/sitemanager.cpp:2426
-#: ../../locales/../src/interface/sitemanager.cpp:2433
-#: ../../locales/../src/interface/sitemanager.cpp:2440
-#: ../../locales/../src/interface/sitemanager.cpp:2457
-#: ../../locales/../src/interface/sitemanager.cpp:2600
-#: ../../locales/../src/interface/sitemanager.cpp:2815
-#: ../../locales/../src/interface/sitemanager.cpp:2822
-#: ../../locales/../src/interface/sitemanager.cpp:2891
-#: ../../locales/../src/interface/sitemanager.cpp:2898
+#: ../../locales/../src/interface/sitemanager.cpp:2394
+#: ../../locales/../src/interface/sitemanager.cpp:2414
+#: ../../locales/../src/interface/sitemanager.cpp:2432
+#: ../../locales/../src/interface/sitemanager.cpp:2439
+#: ../../locales/../src/interface/sitemanager.cpp:2446
+#: ../../locales/../src/interface/sitemanager.cpp:2463
+#: ../../locales/../src/interface/sitemanager.cpp:2606
+#: ../../locales/../src/interface/sitemanager.cpp:2821
+#: ../../locales/../src/interface/sitemanager.cpp:2828
+#: ../../locales/../src/interface/sitemanager.cpp:2897
+#: ../../locales/../src/interface/sitemanager.cpp:2904
 msgid "Invalid site path"
 msgstr "Ongeldig sitepad"
 
@@ -3983,7 +3965,7 @@ msgstr "Mijn documenten"
 
 #: ../../locales/../src/interface/sitemanager.cpp:619
 #: ../../locales/../src/interface/sitemanager.cpp:621
-#: ../../locales/../src/interface/sitemanager.cpp:1969
+#: ../../locales/../src/interface/sitemanager.cpp:1975
 msgid "My Sites"
 msgstr "Mijn sites"
 
@@ -3993,20 +3975,18 @@ msgid "N/a"
 msgstr "Niet beschikbaar"
 
 #: resources.h:606
-#, fuzzy
 msgid "Name"
-msgstr "Naam:"
+msgstr "Naam"
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:661
-#: ../../locales/../src/interface/sitemanager.cpp:1138
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:672
+#: ../../locales/../src/interface/sitemanager.cpp:1143
 msgid "Name already exists"
 msgstr "Naam bestaat reeds"
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:776
-#: ../../locales/../src/interface/sitemanager.cpp:2838
-#, fuzzy
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:787
+#: ../../locales/../src/interface/sitemanager.cpp:2844
 msgid "Name of bookmark already exists."
-msgstr "Naam bestaat reeds"
+msgstr "Favorietennaam bestaat reeds."
 
 #: resources.h:140
 msgid "Name:"
@@ -4030,7 +4010,7 @@ msgstr "Nieuwe map"
 
 #: resources.h:96 resources.h:619
 msgid "New Book&mark"
-msgstr ""
+msgstr "Nieuwe favoriet"
 
 #: resources.h:602 ../../locales/../src/interface/bookmarks_dialog.cpp:52
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:66
@@ -4038,15 +4018,15 @@ msgstr ""
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:83
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:89
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:98
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:494
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:500
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:506
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:529
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:776
-#: ../../locales/../src/interface/sitemanager.cpp:2296
-#: ../../locales/../src/interface/sitemanager.cpp:2838
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:504
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:510
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:516
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:539
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:787
+#: ../../locales/../src/interface/sitemanager.cpp:2302
+#: ../../locales/../src/interface/sitemanager.cpp:2844
 msgid "New bookmark"
-msgstr ""
+msgstr "Nieuwe favoriet"
 
 #: ../../locales/../src/interface/LocalTreeView.cpp:1316
 #: ../../locales/../src/interface/RemoteListView.cpp:1444
@@ -4062,9 +4042,9 @@ msgstr "Nieuwe filter"
 msgid "New folder"
 msgstr "Nieuwe map"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2281
-#: ../../locales/../src/interface/sitemanager.cpp:2705
-#: ../../locales/../src/interface/sitemanager.cpp:2719
+#: ../../locales/../src/interface/sitemanager.cpp:2287
+#: ../../locales/../src/interface/sitemanager.cpp:2711
+#: ../../locales/../src/interface/sitemanager.cpp:2725
 msgid "New site"
 msgstr "Nieuwe site"
 
@@ -4072,7 +4052,7 @@ msgstr "Nieuwe site"
 msgid "Next to the transfer queue"
 msgstr "Naast de overdrachtswachtrij"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:827
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:833
 msgid "No"
 msgstr "Nee"
 
@@ -4115,9 +4095,9 @@ msgstr "Er zijn geen bestanden meer in de wachtrij!"
 msgid "No name for the filterset given."
 msgstr "Er is geen naam ingevoerd voor de filtergroep."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1935
-#: ../../locales/../src/interface/sitemanager.cpp:1947
-#: ../../locales/../src/interface/sitemanager.cpp:1978
+#: ../../locales/../src/interface/sitemanager.cpp:1941
+#: ../../locales/../src/interface/sitemanager.cpp:1953
+#: ../../locales/../src/interface/sitemanager.cpp:1984
 msgid "No sites available"
 msgstr "Geen sites beschikbaar"
 
@@ -4148,7 +4128,7 @@ msgstr "Nog geen geselecteerd"
 #: ../../locales/../src/interface/manual_transfer.cpp:548
 #: ../../locales/../src/interface/queue.cpp:857
 #: ../../locales/../src/interface/queue.cpp:938
-#: ../../locales/../src/interface/sitemanager.cpp:1237
+#: ../../locales/../src/interface/sitemanager.cpp:1243
 msgid "Normal"
 msgstr "Normaal"
 
@@ -4216,7 +4196,7 @@ msgstr ""
 "Op de volgende pagina's worden de overdrachtsmodus geconfigureerd. Indien "
 "ingeschakeld worden ook de fallbackmodus geconfigureerd."
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:837
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:843
 msgid "Once"
 msgstr "Eenmaal"
 
@@ -4244,10 +4224,10 @@ msgstr "Instellingenvenster van FileZilla openen"
 msgid "Opened as:"
 msgstr "Geopend als:"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2180
-#: ../../locales/../src/interface/LocalListView.cpp:2209
-#: ../../locales/../src/interface/LocalListView.cpp:2273
-#: ../../locales/../src/interface/LocalListView.cpp:2280
+#: ../../locales/../src/interface/LocalListView.cpp:2175
+#: ../../locales/../src/interface/LocalListView.cpp:2204
+#: ../../locales/../src/interface/LocalListView.cpp:2268
+#: ../../locales/../src/interface/LocalListView.cpp:2275
 msgid "Opening failed"
 msgstr "Openen is mislukt"
 
@@ -4354,15 +4334,14 @@ msgid "Path"
 msgstr "Pad"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3049
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2307
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2313
 #, c-format
 msgid "Path cannot be constructed for directory %s and subdir %s"
 msgstr "Pad kan niet gemaakt worden voor de map %s en de submap %s"
 
 #: resources.h:608
-#, fuzzy
 msgid "Paths"
-msgstr "Pad"
+msgstr "Paden"
 
 #: ../../locales/../src/interface/edithandler.cpp:1148
 #: ../../locales/../src/interface/edithandler.cpp:1288
@@ -4529,7 +4508,7 @@ msgstr ""
 "Voer een ruw FTP-commando in.\n"
 "Indien u een FTP-commando gebruikt, wordt de cache leeggemaakt."
 
-#: ../../locales/../src/interface/LocalListView.cpp:1308
+#: ../../locales/../src/interface/LocalListView.cpp:1303
 #: ../../locales/../src/interface/LocalTreeView.cpp:1313
 #: ../../locales/../src/interface/RemoteListView.cpp:1430
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1257
@@ -4707,8 +4686,8 @@ msgstr ""
 msgid "Position of the message log:"
 msgstr "Positie van het berichtenlogboek:"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1749
-#: ../../locales/../src/interface/sitemanager.cpp:1968
+#: ../../locales/../src/interface/sitemanager.cpp:1755
+#: ../../locales/../src/interface/sitemanager.cpp:1974
 msgid "Predefined Sites"
 msgstr "Voorgedefinieerde sites"
 
@@ -4930,6 +4909,33 @@ msgstr "Externe filters:"
 msgid "Remote path"
 msgstr "Externe pad"
 
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:400
+#, fuzzy, c-format
+msgid ""
+"Remote path cannot be parsed. Make sure it is a valid absolute path and is "
+"supported by the current site's servertype (%s)."
+msgstr ""
+"Standaard extern pad kan niet ontleed worden. Zorg ervoor dat het bestaat en "
+"ondersteund wordt door het geselecteerde servertype."
+
+#: ../../locales/../src/interface/sitemanager.cpp:1057
+#, fuzzy, c-format
+msgid ""
+"Remote path cannot be parsed. Make sure it is a valid absolute path and is "
+"supported by the servertype (%s) selected on the parent site."
+msgstr ""
+"Standaard externe pad kan niet ontleed worden. Zorg ervoor dat het bestaat "
+"en ondersteund wordt door het servertype van de oudersite."
+
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:402
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:406
+#: ../../locales/../src/interface/sitemanager.cpp:1059
+#, fuzzy
+msgid "Remote path cannot be parsed. Make sure it is a valid absolute path."
+msgstr ""
+"Standaard extern pad kan niet ontleed worden. Zorg ervoor dat het bestaat en "
+"ondersteund wordt door het geselecteerde servertype."
+
 #: ../../locales/../src/interface/manual_transfer.cpp:348
 msgid "Remote path could not be parsed."
 msgstr "Het externe pad kan niet ontleed worden."
@@ -4967,7 +4973,7 @@ msgid "Rename selected files and directories"
 msgstr "Geselecteerde bestanden en mappen hernoemen"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3395
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2509
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2515
 #, c-format
 msgid "Renaming '%s' to '%s'"
 msgstr "Hernoemen van '%s' naar '%s'"
@@ -5006,7 +5012,7 @@ msgstr ""
 "ander regeleindeformaat gebruikt dan de cliënt."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1211
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:904
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:910
 msgid "Retrieving directory listing..."
 msgstr "Mappenlijst ophalen..."
 
@@ -5112,7 +5118,7 @@ msgid "Select file for exported settings"
 msgstr "Selecteer het bestand voor geëxporteerde instellingen"
 
 #: ../../locales/../src/interface/export.cpp:32
-#: ../../locales/../src/interface/sitemanager.cpp:2495
+#: ../../locales/../src/interface/sitemanager.cpp:2501
 msgid "Select file for exported sites"
 msgstr "Selecteer bestand voor geëxporteerde sites"
 
@@ -5171,7 +5177,7 @@ msgstr "%s en %s geselecteerd. Totale grootte: minstens %s"
 msgid "Selected editor does not exist"
 msgstr "De geselecteerde editor bestaat niet"
 
-#: resources.h:502 ../../locales/../src/interface/LocalListView.cpp:2193
+#: resources.h:502 ../../locales/../src/interface/LocalListView.cpp:2188
 msgid "Selected file already being edited"
 msgstr "Het geselecteerde bestand wordt reeds bewerkt"
 
@@ -5206,6 +5212,9 @@ msgid ""
 "Selected global bookmark and current server use a different server type.\n"
 "Use site-specific bookmarks for this server."
 msgstr ""
+"De geselecteerde globale favoriet en de huidige server gebruiken een "
+"verschillend servertype.\n"
+"Gebruik site-specifieke favorieten voor deze server."
 
 #: ../../locales/../src/engine/engineprivate.cpp:281
 msgid "Selected port usually in use by a different protocol."
@@ -5275,7 +5284,7 @@ msgstr ""
 "De server vereist misschien een account. Gelieve een account in te voeren "
 "via Sitebeheer"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:623
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:629
 msgid ""
 "Server sent an additional login prompt. You need to use the interactive "
 "login type."
@@ -5334,7 +5343,7 @@ msgid "Set &Priority"
 msgstr "&Prioriteit instellen"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3547
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2387
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2393
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
 msgstr "Rechten verzetten van '%s' naar '%s'"
@@ -5375,36 +5384,39 @@ msgstr "Sitebeheer"
 msgid "Site Manager already open"
 msgstr "Sitebeheer is reeds geopend"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2408
-#: ../../locales/../src/interface/sitemanager.cpp:2426
-#: ../../locales/../src/interface/sitemanager.cpp:2440
-#: ../../locales/../src/interface/sitemanager.cpp:2822
-#: ../../locales/../src/interface/sitemanager.cpp:2898
+#: ../../locales/../src/interface/sitemanager.cpp:2414
+#: ../../locales/../src/interface/sitemanager.cpp:2432
+#: ../../locales/../src/interface/sitemanager.cpp:2446
+#: ../../locales/../src/interface/sitemanager.cpp:2828
+#: ../../locales/../src/interface/sitemanager.cpp:2904
 msgid "Site does not exist."
 msgstr "Site bestaat niet."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2388
+#: ../../locales/../src/interface/sitemanager.cpp:2394
 msgid "Site path has to begin with 0 or 1."
 msgstr "Sitepad moet beginnen met 0 of 1."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2433
-#: ../../locales/../src/interface/sitemanager.cpp:2600
-#: ../../locales/../src/interface/sitemanager.cpp:2815
-#: ../../locales/../src/interface/sitemanager.cpp:2891
+#: ../../locales/../src/interface/sitemanager.cpp:2439
+#: ../../locales/../src/interface/sitemanager.cpp:2606
+#: ../../locales/../src/interface/sitemanager.cpp:2821
+#: ../../locales/../src/interface/sitemanager.cpp:2897
 msgid "Site path is malformed."
-msgstr ""
+msgstr "Het sitepad is corrupt."
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:237
 msgid "Site-specific bookmarks"
-msgstr ""
+msgstr "Site-specifieke favorieten"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:83
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:494
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:504
 msgid ""
 "Site-specific bookmarks require the server to be stored in the Site "
 "Manager.\n"
 "Add current connection to the site manager?"
 msgstr ""
+"Site-specifieke favorieten vereisen dat de server opgeslagen wordt in "
+"Sitebeheer.\n"
+"Wilt u de huidige verbinding aan Sitebeheer toevoegen?"
 
 #: ../../locales/../src/interface/queue.cpp:1154
 msgid "Size"
@@ -5494,13 +5506,13 @@ msgid "Start with opened Site Manager"
 msgstr "Opstarten met Sitebeheer geopend"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2134
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1575
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1581
 #, c-format
 msgid "Starting download of %s"
 msgstr "Download starten van %s"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2138
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1579
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1585
 #, c-format
 msgid "Starting upload of %s"
 msgstr "Upload starten van %s"
@@ -5653,8 +5665,8 @@ msgstr ""
 msgid "The file '%s' could not be loaded or does not contain a private key."
 msgstr "Het bestand '%s' kan niet geladen worden of bevat geen privésleutel."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2180
-#: ../../locales/../src/interface/LocalListView.cpp:2273
+#: ../../locales/../src/interface/LocalListView.cpp:2175
+#: ../../locales/../src/interface/LocalListView.cpp:2268
 #, c-format
 msgid ""
 "The file '%s' could not be opened:\n"
@@ -5663,8 +5675,8 @@ msgstr ""
 "Het bestand '%s' kon niet geopend worden:\n"
 "Er is geen programma geassocieerd op uw systeem met dit bestandstype."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2209
-#: ../../locales/../src/interface/LocalListView.cpp:2280
+#: ../../locales/../src/interface/LocalListView.cpp:2204
+#: ../../locales/../src/interface/LocalListView.cpp:2275
 #, c-format
 msgid ""
 "The file '%s' could not be opened:\n"
@@ -5916,7 +5928,7 @@ msgid "Timeout"
 msgstr "Timeout"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1593
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1021
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1027
 #, c-format
 msgid ""
 "Timezone offsets: Server: %d seconds. Local: %d seconds. Difference: %d "
@@ -5994,9 +6006,6 @@ msgid "Too many redirects"
 msgstr "Te veel doorwijzingen"
 
 #: ../../locales/../src/engine/logging.cpp:210
-msgid "Trace"
-msgstr "Opsporen"
-
 #: ../../locales/../src/interface/StatusView.cpp:286
 #: ../../locales/../src/interface/StatusView.cpp:349
 msgid "Trace:"
@@ -6049,11 +6058,11 @@ msgstr "Bestanden zonder extensie behandelen als ASCII-bestand"
 msgid "Treat the &following filetypes as ASCII files:"
 msgstr "De vol&gende bestandstypes als ASCII-bestanden behandelen:"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:824
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:830
 msgid "Trust changed Hostkey: "
 msgstr "Vertrouw veranderde hostsleutel:"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:822
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:828
 msgid "Trust new Hostkey: "
 msgstr "Vertrouw nieuwe hostsleutel:"
 
@@ -6433,7 +6442,7 @@ msgstr "Verkeerd extern IP-adres:"
 msgid "Wrong line endings"
 msgstr "Verkeerde regeleindes"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:835
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:841
 msgid "Yes"
 msgstr "Ja"
 
@@ -6493,9 +6502,8 @@ msgstr ""
 "data heeft aangepast."
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:52
-#, fuzzy
 msgid "You need to enter a name for the bookmark."
-msgstr "U dient een naam in te voeren voor het logbestand."
+msgstr "U dient een naam in te voeren voor de favoriet."
 
 #: ../../locales/../src/interface/optionspage_logging.cpp:67
 msgid "You need to enter a name for the log file."
@@ -6511,10 +6519,12 @@ msgid "You need to enter a proxy port in the range from 1 to 65535"
 msgstr "U moet een proxypoort invoeren met een getal tussen 1 en 65535."
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:73
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:406
-#: ../../locales/../src/interface/sitemanager.cpp:1065
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:416
+#: ../../locales/../src/interface/sitemanager.cpp:1070
 msgid "You need to enter at least one path, empty bookmarks are not supported."
 msgstr ""
+"U dient ten minste één pad in te voeren, want u kunt geen lege favoriet "
+"aanmaken."
 
 #: ../../locales/../src/interface/manual_transfer.cpp:314
 msgid "You need to specify a local file."
@@ -6583,7 +6593,7 @@ msgstr ""
 "Zorg ervoor dat dit uitvoerbare bestand in dezelfde map als het uitvoerbare "
 "bestand van FileZilla staat."
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1500
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1506
 msgid "fzsftp could not be started"
 msgstr "fzsftp kon niet gestart worden"
 
@@ -6654,6 +6664,12 @@ msgstr "door iedereen leesbaar"
 #: ../../locales/../src/interface/filteredit.cpp:128
 msgid "world writeable"
 msgstr "door iedereen schrijfbaar"
+
+#~ msgid "&Local path:"
+#~ msgstr "Lokale pad:"
+
+#~ msgid "Trace"
+#~ msgstr "Opsporen"
 
 #~ msgid "D&iscard"
 #~ msgstr "Verwerpen"

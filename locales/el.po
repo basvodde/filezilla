@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla 3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-30 19:54+0100\n"
-"PO-Revision-Date: 2008-12-29 10:16+0200\n"
+"POT-Creation-Date: 2009-01-03 16:23+0100\n"
+"PO-Revision-Date: 2009-01-02 09:05+0200\n"
 "Last-Translator: Stamatis H. Stamatellos <ydatografida@gmail.com>\n"
 "Language-Team: Stamatis H. Stamatellos <ydatografida@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -108,8 +108,8 @@ msgstr "%s και %s. Συνολικό μέγεθος: %s"
 msgid "%s and %s. Total size: At least %s"
 msgstr "%s και %s. Συνολικό μέγεθος: Τουλάχιστον %s"
 
-#: ../../locales/../src/interface/LocalListView.cpp:485
-#: ../../locales/../src/interface/LocalListView.cpp:502
+#: ../../locales/../src/interface/LocalListView.cpp:480
+#: ../../locales/../src/interface/LocalListView.cpp:497
 #, c-format
 msgid "%s byte"
 msgid_plural "%s bytes"
@@ -420,9 +420,14 @@ msgstr "&Επιστροφή πίσω σε ενεργή κατάσταση"
 msgid "&File"
 msgstr "&Αρχείο"
 
-#: resources.h:704 resources.h:748
+#: resources.h:748
 msgid "&File Attributes..."
 msgstr "&Ιδιότητες Αρχείου..."
+
+#: resources.h:704
+#, fuzzy
+msgid "&File permissions..."
+msgstr "Δικαιώματα ιδιοκτήτη"
 
 #: resources.h:572
 msgid "&File:"
@@ -504,13 +509,9 @@ msgstr "&Όριο στον αριθμό των συνεχόμενων συνδέ
 msgid "&Local directory tree"
 msgstr "&Τοπική δομή φακέλων"
 
-#: resources.h:609
+#: resources.h:609 resources.h:614
 msgid "&Local directory:"
 msgstr "&Τοπικός φάκελος:"
-
-#: resources.h:614
-msgid "&Local path:"
-msgstr "&Τοπική διαδρομή:"
 
 #: resources.h:240
 msgid "&Log to file"
@@ -648,11 +649,11 @@ msgstr "&Ανανέωση"
 msgid "&Remember password for this session"
 msgstr "&Να θυμάσαι τον κωδικό αυτής της συνεδρίας"
 
-#: resources.h:611
+#: resources.h:611 resources.h:616
 msgid "&Remote directory:"
 msgstr "&Απομάκρυνση φακέλου:"
 
-#: resources.h:575 resources.h:616
+#: resources.h:575
 msgid "&Remote path:"
 msgstr "&Απομακρυσμένη διαδρομή:"
 
@@ -956,7 +957,7 @@ msgstr "3 - Αναλυτικές"
 msgid "4 - Debug"
 msgstr "4 - Αποσφαλματώσεις"
 
-#: ../../locales/../src/engine/directorylistingparser.cpp:1605
+#: ../../locales/../src/engine/directorylistingparser.cpp:1608
 msgid ";1"
 msgstr ";1"
 
@@ -993,7 +994,7 @@ msgstr ""
 msgid "A file previously opened has been changed."
 msgstr "Το αρχείο που ανοίχτηκε νωρίτερα έχει αλλάξει."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2193
+#: ../../locales/../src/interface/LocalListView.cpp:2188
 #, c-format
 msgid ""
 "A file with that name is already being edited. Do you want to reopen '%s'?"
@@ -1001,7 +1002,7 @@ msgstr ""
 "Ένα αρχείο με αυτό το όνομα επεξεργάζεται ήδη. Να ανοιχθεί ξανά το αρχείο '%"
 "s';"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2189
+#: ../../locales/../src/interface/LocalListView.cpp:2184
 #: ../../locales/../src/interface/RemoteListView.cpp:2496
 msgid "A file with that name is already being transferred."
 msgstr "Ένα αρχείο με αυτό το όνομα έχει ήδη μεταφερθεί."
@@ -1096,8 +1097,8 @@ msgstr "Πιο πάνω από τις λίστες αρχείων"
 #: ../../locales/../src/interface/manual_transfer.cpp:192
 #: ../../locales/../src/interface/manual_transfer.cpp:548
 #: ../../locales/../src/interface/manual_transfer.cpp:549
-#: ../../locales/../src/interface/sitemanager.cpp:1237
-#: ../../locales/../src/interface/sitemanager.cpp:1238
+#: ../../locales/../src/interface/sitemanager.cpp:1243
+#: ../../locales/../src/interface/sitemanager.cpp:1244
 msgid "Account"
 msgstr "Λογαριασμός"
 
@@ -1222,7 +1223,7 @@ msgstr ""
 "Εναλλακτικά, επισκευθείτε την τοποθεσία http://filezilla-project.org για να "
 "κατεβάσετε την πιο πρόσφατη έκδοση."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2141
+#: ../../locales/../src/interface/sitemanager.cpp:2147
 msgid ""
 "An item with the same name as the dragged item already exists at the target "
 "location."
@@ -1233,8 +1234,8 @@ msgstr "Ένα αντικείμενο με το ίδιο όνομα υπάρχε
 #: ../../locales/../src/interface/manual_transfer.cpp:195
 #: ../../locales/../src/interface/manual_transfer.cpp:211
 #: ../../locales/../src/interface/manual_transfer.cpp:547
-#: ../../locales/../src/interface/sitemanager.cpp:1236
-#: ../../locales/../src/interface/sitemanager.cpp:1471
+#: ../../locales/../src/interface/sitemanager.cpp:1242
+#: ../../locales/../src/interface/sitemanager.cpp:1477
 msgid "Anonymous"
 msgstr "Anonymous"
 
@@ -1297,7 +1298,7 @@ msgstr "Σε αυτό το σημείο, όλες οι απαραίτητες π
 msgid "Attribute"
 msgstr "Ιδιότητα"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:621
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:627
 msgid "Authentication failed."
 msgstr "Αποτυχία πιστοποίησης."
 
@@ -1345,14 +1346,12 @@ msgid "Bookmark"
 msgstr "Σελιδοδείκτης"
 
 #: resources.h:618
-#, fuzzy
 msgid "Bookmark:"
-msgstr "Σελιδοδείκτης"
+msgstr "Σελιδοδείκτης:"
 
 #: resources.h:617
-#, fuzzy
 msgid "Bookmarks"
-msgstr "&Σελιδοδείκτες"
+msgstr "Σελιδοδείκτες"
 
 #: ../../locales/../src/interface/state.cpp:292
 msgid "Break current connection?"
@@ -1397,16 +1396,16 @@ msgstr "Π&ροσαρμογή"
 msgid "C&ustom filetype associations:"
 msgstr "Π&ροσαρμοσμένες συσχετίσεις:"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1414
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1420
 msgid "CSftpControlSocket::ChangeDirSend()"
 msgstr "CSftpControlSocket::ChangeDirSend()"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1407
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1413
 msgid "CSftpControlSocket::ChangeDirSubcommandResult()"
 msgstr "CSftpControlSocket::ChangeDirSubcommandResult()"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1539
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1212
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1218
 msgid "Calculating timezone offset of server..."
 msgstr "Υπολογισμός απόκλισης χρονικής ζώνης από τον εξυπηρετητή..."
 
@@ -1501,8 +1500,8 @@ msgstr "Αδυναμία φόρτωσης του κυρίως μενού από 
 msgid "Cannot load toolbar from resource file"
 msgstr "Αδυναμία φόρτωσης γραμμής εργαλείων από το αρχείο resource"
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:661
-#: ../../locales/../src/interface/sitemanager.cpp:1138
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:672
+#: ../../locales/../src/interface/sitemanager.cpp:1143
 msgid "Cannot rename entry"
 msgstr "Δεν μπορεί να μετονομαστεί η είσοδος"
 
@@ -1523,7 +1522,7 @@ msgstr "Αδυναμία επιλογής φίλτρου"
 msgid "Cannot show dialog"
 msgstr "Ο διάλογος δεν μπορεί να εμφανιστεί"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2189
+#: ../../locales/../src/interface/LocalListView.cpp:2184
 #: ../../locales/../src/interface/RemoteListView.cpp:2496
 msgid "Cannot view / edit selected file"
 msgstr "Το επιλεγμένο αρχείο δεν μπορεί να εμφανιστεί / επεξεργαστεί"
@@ -1598,13 +1597,13 @@ msgstr "Έλεγχος για σωστή εξωτερική IP διεύθυνσ�
 msgid "Checking for updates"
 msgstr "Έλεγχος αναβαθμίσεων"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1401
+#: ../../locales/../src/interface/sitemanager.cpp:1407
 msgid "Choose the default local directory"
 msgstr "Επιλέξτε τον προκαθορισμένο τοπικό φάκελο"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:120
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:348
-#: ../../locales/../src/interface/sitemanager.cpp:2532
+#: ../../locales/../src/interface/sitemanager.cpp:2538
 msgid "Choose the local directory"
 msgstr "Επιλέξτε τον τοπικό φάκελο"
 
@@ -1928,14 +1927,14 @@ msgstr "Μετατροπή του αρχείου-κλειδιού"
 msgid "Cop&y"
 msgstr "Αντ&ιγραφή"
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:599
-#: ../../locales/../src/interface/sitemanager.cpp:1695
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:610
+#: ../../locales/../src/interface/sitemanager.cpp:1701
 #, c-format
 msgid "Copy (%d) of %s"
 msgstr "Αντιγραφή (%d) από %s"
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:576
-#: ../../locales/../src/interface/sitemanager.cpp:1672
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:587
+#: ../../locales/../src/interface/sitemanager.cpp:1678
 #, c-format
 msgid "Copy of %s"
 msgstr "Αντιγραφή του %s"
@@ -1946,7 +1945,7 @@ msgid "Could not accept connection: %s"
 msgstr "Αδυνατη η αποδοχή της σύνδεσης: %s"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:89
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:500
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:510
 msgid "Could not add connection to Site Manager"
 msgstr "Αδυναμία εισαγωγής της σύνδεσης στον Διαχειριστή Τοποθεσιών"
 
@@ -1959,7 +1958,7 @@ msgstr "Αδύνατη η σύνδεση στον εξυπηρετητή"
 msgid "Could not connect to server: %s"
 msgstr "Αδύνατη η σύνδεση στον εξυπηρετητή: %s"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:774
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:780
 msgid "Could not convert command to server encoding"
 msgstr "Αδυναμία μετατροπής εντολής στην κωδικοποίηση του εξυπηρετητή"
 
@@ -2044,18 +2043,18 @@ msgstr ""
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:153
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:270
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:679
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:721
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:763
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:690
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:732
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:774
 #: ../../locales/../src/interface/import.cpp:111
 #: ../../locales/../src/interface/import.cpp:302
 #: ../../locales/../src/interface/sitemanager.cpp:631
-#: ../../locales/../src/interface/sitemanager.cpp:1928
-#: ../../locales/../src/interface/sitemanager.cpp:2417
-#: ../../locales/../src/interface/sitemanager.cpp:2587
-#: ../../locales/../src/interface/sitemanager.cpp:2685
-#: ../../locales/../src/interface/sitemanager.cpp:2802
-#: ../../locales/../src/interface/sitemanager.cpp:2878
+#: ../../locales/../src/interface/sitemanager.cpp:1934
+#: ../../locales/../src/interface/sitemanager.cpp:2423
+#: ../../locales/../src/interface/sitemanager.cpp:2593
+#: ../../locales/../src/interface/sitemanager.cpp:2691
+#: ../../locales/../src/interface/sitemanager.cpp:2808
+#: ../../locales/../src/interface/sitemanager.cpp:2884
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -2106,7 +2105,7 @@ msgstr "Αδύνατη η ανάλυση της διεύθυνσης του εξ
 msgid "Could not read from socket: %s"
 msgstr "Αδυναμία ανάγνωσης από την υποδοχή: %s"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2457
+#: ../../locales/../src/interface/sitemanager.cpp:2463
 msgid "Could not read server item."
 msgstr "Αδυναμία ανάγνωσης αντικειμένου εξυπηρετητή."
 
@@ -2138,7 +2137,7 @@ msgid "Could not start transfer"
 msgstr "Αδύνατη η εκκίνηση της μεταφοράς"
 
 #: ../../locales/../src/interface/sitemanager.cpp:802
-#: ../../locales/../src/interface/sitemanager.cpp:2737
+#: ../../locales/../src/interface/sitemanager.cpp:2743
 #, c-format
 msgid ""
 "Could not write \"%s\", any changes to the Site Manager could not be saved: %"
@@ -2163,10 +2162,10 @@ msgstr ""
 "%s"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:300
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:791
-#: ../../locales/../src/interface/sitemanager.cpp:2513
-#: ../../locales/../src/interface/sitemanager.cpp:2853
-#: ../../locales/../src/interface/sitemanager.cpp:2912
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:802
+#: ../../locales/../src/interface/sitemanager.cpp:2519
+#: ../../locales/../src/interface/sitemanager.cpp:2859
+#: ../../locales/../src/interface/sitemanager.cpp:2918
 #, c-format
 msgid "Could not write \"%s\", the selected sites could not be exported: %s"
 msgstr ""
@@ -2213,7 +2212,7 @@ msgstr ""
 msgid "Create a new subdirectory in the current directory"
 msgstr "Δημιουργία υποφακέλου στον τρέχον φάκελο"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1308
+#: ../../locales/../src/interface/LocalListView.cpp:1303
 #: ../../locales/../src/interface/LocalTreeView.cpp:1313
 #: ../../locales/../src/interface/RemoteListView.cpp:1430
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1257
@@ -2225,7 +2224,7 @@ msgid "Creating directory"
 msgstr "Δημιουργία φακέλου"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3164
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1999
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2005
 #, c-format
 msgid "Creating directory '%s'..."
 msgstr "Δημιουργία φακέλου '%s'..."
@@ -2348,16 +2347,6 @@ msgstr ""
 "Βεβαιωθείτε ότι είναι έγκυρη καθώς επίσης και ότι ο επιλεγμένος τύπος "
 "εξυπηρετητή την υποστηρίζει."
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:396
-#: ../../locales/../src/interface/sitemanager.cpp:1055
-msgid ""
-"Default remote path cannot be parsed. Make sure it is valid and is supported "
-"by the servertype selected on the parent site."
-msgstr ""
-"Αδυναμία προσπέλασης της προκαθορισμένης απομακρυσμένης διαδρομής. "
-"Βεβαιωθείτε ότι είναι έγκυρη καθώς επίσης και ότι ο επιλεγμένος τύπος "
-"εξυπηρετητή την υποστηρίζει."
-
 #: ../../locales/../src/interface/optionspage_language.cpp:78
 msgid "Default system language"
 msgstr "Προκαθορισμένη γλώσσα συστήματος"
@@ -2385,7 +2374,7 @@ msgstr ""
 msgid "Delaying connection due to previously failed connection attempt..."
 msgstr "Καθύστερηση σύνδεσης λόγω της προηγούμενης αποτυχημένης προσπάθειας..."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1171
+#: ../../locales/../src/interface/sitemanager.cpp:1176
 msgid "Delete Site Manager entry"
 msgstr "Διαγραφή εγγραφής Διαχειριστή Τοποθεσιών"
 
@@ -2535,7 +2524,7 @@ msgstr ""
 msgid "Do you really want to delete all Site Manager entries?"
 msgstr "Θέλετε να διαγράψετε όλες τις εγγραφές του Διαχειριστή Τοποθεσιών"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1173
+#: ../../locales/../src/interface/sitemanager.cpp:1178
 msgid "Do you really want to delete selected entry?"
 msgstr "Θέλετε πραγματικά να διαγαψετε την επιλεγμένη εγγραφή;"
 
@@ -2783,9 +2772,9 @@ msgstr "Σφάλμα εισαγωγής"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:154
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:271
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:680
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:722
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:764
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:691
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:733
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:775
 #: ../../locales/../src/interface/filter.cpp:171
 #: ../../locales/../src/interface/filter.cpp:924
 #: ../../locales/../src/interface/import.cpp:112
@@ -2795,12 +2784,12 @@ msgstr "Σφάλμα εισαγωγής"
 #: ../../locales/../src/interface/QueueView.cpp:1835
 #: ../../locales/../src/interface/sitemanager.cpp:632
 #: ../../locales/../src/interface/sitemanager.cpp:777
-#: ../../locales/../src/interface/sitemanager.cpp:1929
-#: ../../locales/../src/interface/sitemanager.cpp:2418
-#: ../../locales/../src/interface/sitemanager.cpp:2588
-#: ../../locales/../src/interface/sitemanager.cpp:2686
-#: ../../locales/../src/interface/sitemanager.cpp:2803
-#: ../../locales/../src/interface/sitemanager.cpp:2879
+#: ../../locales/../src/interface/sitemanager.cpp:1935
+#: ../../locales/../src/interface/sitemanager.cpp:2424
+#: ../../locales/../src/interface/sitemanager.cpp:2594
+#: ../../locales/../src/interface/sitemanager.cpp:2692
+#: ../../locales/../src/interface/sitemanager.cpp:2809
+#: ../../locales/../src/interface/sitemanager.cpp:2885
 #: ../../locales/../src/interface/wrapengine.cpp:925
 msgid "Error loading xml file"
 msgstr "Σφάλμα φόρτωσης xml αρχείου"
@@ -2811,14 +2800,14 @@ msgid "Error starting program"
 msgstr "Σφάλμα κατά την εκκίνηση του προγράμματος"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:301
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:792
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:803
 #: ../../locales/../src/interface/QueueView.cpp:1818
 #: ../../locales/../src/interface/QueueView.cpp:1854
 #: ../../locales/../src/interface/sitemanager.cpp:803
-#: ../../locales/../src/interface/sitemanager.cpp:2514
-#: ../../locales/../src/interface/sitemanager.cpp:2738
-#: ../../locales/../src/interface/sitemanager.cpp:2854
-#: ../../locales/../src/interface/sitemanager.cpp:2913
+#: ../../locales/../src/interface/sitemanager.cpp:2520
+#: ../../locales/../src/interface/sitemanager.cpp:2744
+#: ../../locales/../src/interface/sitemanager.cpp:2860
+#: ../../locales/../src/interface/sitemanager.cpp:2919
 #: ../../locales/../src/interface/wrapengine.cpp:1076
 msgid "Error writing xml file"
 msgstr "Σφάλμα εγγραφής xml αρχείου"
@@ -2872,7 +2861,7 @@ msgid "F&ilter name:"
 msgstr "Όνομα φ&ίλτρου:"
 
 #: ../../locales/../src/interface/settingsdialog.cpp:113
-#: ../../locales/../src/interface/sitemanager.cpp:1469
+#: ../../locales/../src/interface/sitemanager.cpp:1475
 msgid "FTP"
 msgstr "FTP"
 
@@ -2908,8 +2897,8 @@ msgstr "FTPES - FTP over explicit TLS/SSL"
 msgid "FTPS - FTP over implicit TLS/SSL"
 msgstr "FTPS - FTP over implicit TLS/SSL"
 
-#: ../../locales/../src/interface/LocalListView.cpp:712
-#: ../../locales/../src/interface/LocalListView.cpp:1423
+#: ../../locales/../src/interface/LocalListView.cpp:707
+#: ../../locales/../src/interface/LocalListView.cpp:1418
 #: ../../locales/../src/interface/LocalTreeView.cpp:878
 #: ../../locales/../src/interface/viewheader.cpp:515
 msgid "Failed to change directory"
@@ -2926,7 +2915,7 @@ msgstr "Αποτυχία στην αλλαγή γλώσσας"
 msgid "Failed to check for newer version of FileZilla."
 msgstr "Αποτυχία ελέγχου νέας έκδοσης του FileZilla."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2141
+#: ../../locales/../src/interface/sitemanager.cpp:2147
 msgid "Failed to copy or move sites"
 msgstr "Αποτυχία αντιγραφής ή  μετακίνησης τοποθεσιών"
 
@@ -3210,7 +3199,7 @@ msgid "Filename &filters..."
 msgstr "Όνομα Αρχείου &φίλτρα..."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2962
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2262
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2268
 #, c-format
 msgid "Filename cannot be constructed for directory %s and filename %s"
 msgstr ""
@@ -3228,13 +3217,13 @@ msgstr "Το όνομα αρχείου δεν αλλάχθηκε"
 msgid "Filename:"
 msgstr "Όνομα Αρχείου:"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1497
+#: ../../locales/../src/interface/LocalListView.cpp:1492
 msgid "Filenames may not contain any of the following characters: / * ? < > |"
 msgstr ""
 "Τα ονόματα των αρχείων δεν μπορούν να περιέχουν κανένα από τους παρακάτω "
 "χαρακτήρες: / * ? < > |"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1472
+#: ../../locales/../src/interface/LocalListView.cpp:1467
 msgid ""
 "Filenames may not contain any of the following characters: / \\ : * ? \" < > "
 "|"
@@ -3366,9 +3355,8 @@ msgid "Given filterset name already exists, overwrite filter set?"
 msgstr "Το εν λόγω όνομα των ορισμάτων φίλτρου υπάρχει ήδη, να αντικατασταθεί;"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:232
-#, fuzzy
 msgid "Global bookmarks"
-msgstr "Καθολικός σελιδοδείκτης"
+msgstr "Καθολικοί σελιδοδείκτες"
 
 #: resources.h:297
 msgid "Group permissions"
@@ -3479,7 +3467,7 @@ msgstr ""
 #: resources.h:246
 msgid ""
 "If the size of the logfile reaches the limit, it gets renamed by adding \".1"
-"\"  to the end of the filename (possibly overwriting older logfiles) and a "
+"\" to the end of the filename (possibly overwriting older logfiles) and a "
 "new file gets created."
 msgstr ""
 "Εάν το μέγεθος του αρχείου συμβάντων φθάσει στο όριο, τότε το αρχείο θα "
@@ -3718,8 +3706,8 @@ msgstr "Λήψη λανθασμένων δεδομένων"
 msgid "Invalid date"
 msgstr "Λάθος ημερομηνία"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1472
-#: ../../locales/../src/interface/LocalListView.cpp:1497
+#: ../../locales/../src/interface/LocalListView.cpp:1467
+#: ../../locales/../src/interface/LocalListView.cpp:1492
 msgid "Invalid filename"
 msgstr "Λάθος όνομα αρχείου"
 
@@ -3757,17 +3745,17 @@ msgstr ""
 msgid "Invalid response code"
 msgstr "Λάθος κωδικός απάντησης"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2388
-#: ../../locales/../src/interface/sitemanager.cpp:2408
-#: ../../locales/../src/interface/sitemanager.cpp:2426
-#: ../../locales/../src/interface/sitemanager.cpp:2433
-#: ../../locales/../src/interface/sitemanager.cpp:2440
-#: ../../locales/../src/interface/sitemanager.cpp:2457
-#: ../../locales/../src/interface/sitemanager.cpp:2600
-#: ../../locales/../src/interface/sitemanager.cpp:2815
-#: ../../locales/../src/interface/sitemanager.cpp:2822
-#: ../../locales/../src/interface/sitemanager.cpp:2891
-#: ../../locales/../src/interface/sitemanager.cpp:2898
+#: ../../locales/../src/interface/sitemanager.cpp:2394
+#: ../../locales/../src/interface/sitemanager.cpp:2414
+#: ../../locales/../src/interface/sitemanager.cpp:2432
+#: ../../locales/../src/interface/sitemanager.cpp:2439
+#: ../../locales/../src/interface/sitemanager.cpp:2446
+#: ../../locales/../src/interface/sitemanager.cpp:2463
+#: ../../locales/../src/interface/sitemanager.cpp:2606
+#: ../../locales/../src/interface/sitemanager.cpp:2821
+#: ../../locales/../src/interface/sitemanager.cpp:2828
+#: ../../locales/../src/interface/sitemanager.cpp:2897
+#: ../../locales/../src/interface/sitemanager.cpp:2904
 msgid "Invalid site path"
 msgstr "Μη έγκυρη διαδρομή"
 
@@ -4006,7 +3994,7 @@ msgstr "Τα Εγγραφά Μου"
 
 #: ../../locales/../src/interface/sitemanager.cpp:619
 #: ../../locales/../src/interface/sitemanager.cpp:621
-#: ../../locales/../src/interface/sitemanager.cpp:1969
+#: ../../locales/../src/interface/sitemanager.cpp:1975
 msgid "My Sites"
 msgstr "Οι Τοποθεσίες μου"
 
@@ -4019,13 +4007,13 @@ msgstr "N/a"
 msgid "Name"
 msgstr "Όνομα"
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:661
-#: ../../locales/../src/interface/sitemanager.cpp:1138
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:672
+#: ../../locales/../src/interface/sitemanager.cpp:1143
 msgid "Name already exists"
 msgstr "To όνομα ήδη υπάρχει"
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:776
-#: ../../locales/../src/interface/sitemanager.cpp:2838
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:787
+#: ../../locales/../src/interface/sitemanager.cpp:2844
 msgid "Name of bookmark already exists."
 msgstr "To εν λόγω όνομα σελιδοδείκτη υπάρχει ήδη."
 
@@ -4059,13 +4047,13 @@ msgstr "Νέος σελιδο&δείκτης"
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:83
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:89
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:98
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:494
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:500
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:506
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:529
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:776
-#: ../../locales/../src/interface/sitemanager.cpp:2296
-#: ../../locales/../src/interface/sitemanager.cpp:2838
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:504
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:510
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:516
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:539
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:787
+#: ../../locales/../src/interface/sitemanager.cpp:2302
+#: ../../locales/../src/interface/sitemanager.cpp:2844
 msgid "New bookmark"
 msgstr "Νέος σελιδοδείκτης"
 
@@ -4083,9 +4071,9 @@ msgstr "Νέο Φίλτρο"
 msgid "New folder"
 msgstr "Νέος Φάκελος"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2281
-#: ../../locales/../src/interface/sitemanager.cpp:2705
-#: ../../locales/../src/interface/sitemanager.cpp:2719
+#: ../../locales/../src/interface/sitemanager.cpp:2287
+#: ../../locales/../src/interface/sitemanager.cpp:2711
+#: ../../locales/../src/interface/sitemanager.cpp:2725
 msgid "New site"
 msgstr "Νέα Τοποθεσία"
 
@@ -4093,7 +4081,7 @@ msgstr "Νέα Τοποθεσία"
 msgid "Next to the transfer queue"
 msgstr "Επόμενο στη σειρά αναμονής μεταφορών"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:827
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:833
 msgid "No"
 msgstr "Όχι"
 
@@ -4137,9 +4125,9 @@ msgstr "Δεν υπάρχουν άλλα αρχεία στη σειρά αναμ
 msgid "No name for the filterset given."
 msgstr "Δεν δόθηκε όνομα για τα ορίσματα φίλτρου."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1935
-#: ../../locales/../src/interface/sitemanager.cpp:1947
-#: ../../locales/../src/interface/sitemanager.cpp:1978
+#: ../../locales/../src/interface/sitemanager.cpp:1941
+#: ../../locales/../src/interface/sitemanager.cpp:1953
+#: ../../locales/../src/interface/sitemanager.cpp:1984
 msgid "No sites available"
 msgstr "Καμία διαθέσιμη τοποθεσία"
 
@@ -4170,7 +4158,7 @@ msgstr "Τίποτε δεν έχει επιλεχθεί ακόμα"
 #: ../../locales/../src/interface/manual_transfer.cpp:548
 #: ../../locales/../src/interface/queue.cpp:857
 #: ../../locales/../src/interface/queue.cpp:938
-#: ../../locales/../src/interface/sitemanager.cpp:1237
+#: ../../locales/../src/interface/sitemanager.cpp:1243
 msgid "Normal"
 msgstr "Κανονική"
 
@@ -4236,7 +4224,7 @@ msgstr ""
 "Στις επόμενες σελίδες, θα ρυθμιστεί η κατάσταση μεταφοράς, καθώς και η "
 "κατάσταση επιστροφής αν είναι ενεργοποιημένη."
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:837
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:843
 msgid "Once"
 msgstr "Μία"
 
@@ -4264,10 +4252,10 @@ msgstr "Ανοίγμα διαλόγου ρυθμίσεων του FileZilla"
 msgid "Opened as:"
 msgstr "Ανοιγμένα ως:"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2180
-#: ../../locales/../src/interface/LocalListView.cpp:2209
-#: ../../locales/../src/interface/LocalListView.cpp:2273
-#: ../../locales/../src/interface/LocalListView.cpp:2280
+#: ../../locales/../src/interface/LocalListView.cpp:2175
+#: ../../locales/../src/interface/LocalListView.cpp:2204
+#: ../../locales/../src/interface/LocalListView.cpp:2268
+#: ../../locales/../src/interface/LocalListView.cpp:2275
 msgid "Opening failed"
 msgstr "Αποτυχία ανοίγματος"
 
@@ -4378,7 +4366,7 @@ msgid "Path"
 msgstr "Διαδρομή"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3049
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2307
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2313
 #, c-format
 msgid "Path cannot be constructed for directory %s and subdir %s"
 msgstr "Αδυναμία δημιουργίας διαδρομής για τον φάκελο %s και τον υποφάκελο %s"
@@ -4564,7 +4552,7 @@ msgstr ""
 "Παρακαλώ, εισάγετε μία ακατέργαστη εντολή FTP.\n"
 "Η χρήση ακατέργαστων εντολών ftp θα καθαρίσουν την προσωρινή μνήμη φακέλων."
 
-#: ../../locales/../src/interface/LocalListView.cpp:1308
+#: ../../locales/../src/interface/LocalListView.cpp:1303
 #: ../../locales/../src/interface/LocalTreeView.cpp:1313
 #: ../../locales/../src/interface/RemoteListView.cpp:1430
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1257
@@ -4751,8 +4739,8 @@ msgstr ""
 msgid "Position of the message log:"
 msgstr "Η Θέση του αρχείου συμβάντων:"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1749
-#: ../../locales/../src/interface/sitemanager.cpp:1968
+#: ../../locales/../src/interface/sitemanager.cpp:1755
+#: ../../locales/../src/interface/sitemanager.cpp:1974
 msgid "Predefined Sites"
 msgstr "Προκαθορισμένες Τοποθεσίες"
 
@@ -4973,6 +4961,34 @@ msgstr "Απομακρυσμένα φίλτρα:"
 msgid "Remote path"
 msgstr "Απομακρυσμένη διαδρομή"
 
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:400
+#, c-format
+msgid ""
+"Remote path cannot be parsed. Make sure it is a valid absolute path and is "
+"supported by the current site's servertype (%s)."
+msgstr ""
+"Αδυναμία προσπέλασης της απομακρυσμένης διαδρομής. Βεβαιωθείτε ότι είναι "
+"έγκυρη, καθώς επίσης και ότι την υποστηρίζει ο τρέχων τύπος εξυπηρετητή (%s) "
+"της τοποθεσίας αυτής."
+
+#: ../../locales/../src/interface/sitemanager.cpp:1057
+#, c-format
+msgid ""
+"Remote path cannot be parsed. Make sure it is a valid absolute path and is "
+"supported by the servertype (%s) selected on the parent site."
+msgstr ""
+"Αδυναμία προσπέλασης της απομακρυσμένης διαδρομής. Βεβαιωθείτε ότι είναι "
+"έγκυρη, καθώς επίσης και ότι υποστηρίζεται από τον επιλεγμένο τύπο "
+"εξυπηρετητή (%s). "
+
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:402
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:406
+#: ../../locales/../src/interface/sitemanager.cpp:1059
+msgid "Remote path cannot be parsed. Make sure it is a valid absolute path."
+msgstr ""
+"Αδυναμία προσπέλασης της απομακρυσμένης διαδρομής. Βεβαιωθείτε ότι είναι "
+"έγκυρη διαδρομή."
+
 #: ../../locales/../src/interface/manual_transfer.cpp:348
 msgid "Remote path could not be parsed."
 msgstr "Η απομακρυσμένη διαδρομή ήταν αδύνατο να αναλυθεί."
@@ -5010,7 +5026,7 @@ msgid "Rename selected files and directories"
 msgstr "Μετονομασία επιλεγμένων αρχείων και φακέλων"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3395
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2509
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2515
 #, c-format
 msgid "Renaming '%s' to '%s'"
 msgstr "Μετονομασία του '%s' σε '%s'"
@@ -5050,7 +5066,7 @@ msgstr ""
 "πελάτη."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1211
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:904
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:910
 msgid "Retrieving directory listing..."
 msgstr "Ανάκτηση λίστας φακέλου..."
 
@@ -5156,7 +5172,7 @@ msgid "Select file for exported settings"
 msgstr "Επιλογή αρχείου για τις εξαγόμενες ρυθμίσεις"
 
 #: ../../locales/../src/interface/export.cpp:32
-#: ../../locales/../src/interface/sitemanager.cpp:2495
+#: ../../locales/../src/interface/sitemanager.cpp:2501
 msgid "Select file for exported sites"
 msgstr "Επιλογή αρχείου για τις εξαγόμενες τοποθεσίες "
 
@@ -5215,7 +5231,7 @@ msgstr "Επιλεγμένα %s και %s. Συνολικό μέγεθος: Το
 msgid "Selected editor does not exist"
 msgstr "Ο επιλεγμένος επεξεργαστής δεν υπάρχει"
 
-#: resources.h:502 ../../locales/../src/interface/LocalListView.cpp:2193
+#: resources.h:502 ../../locales/../src/interface/LocalListView.cpp:2188
 msgid "Selected file already being edited"
 msgstr "Το επιλεγμένο αρχείο ήδη επεξεργάζεται"
 
@@ -5250,6 +5266,9 @@ msgid ""
 "Selected global bookmark and current server use a different server type.\n"
 "Use site-specific bookmarks for this server."
 msgstr ""
+"Επιλεγμένος καθολικός σελιδοδείκτης και ο τρέχων εξυπηρετητής χρησιμοποιούν "
+"διαφορετικό τύπο εξυπηρετητή.\n"
+"Χρησιμοποιήστε ειδικούς σελιδοδείκτες γι΄αυτόν τον εξυπηρετητή."
 
 #: ../../locales/../src/engine/engineprivate.cpp:281
 msgid "Selected port usually in use by a different protocol."
@@ -5320,7 +5339,7 @@ msgstr ""
 "Ο εξυπηρετητής απαιτεί έναν λογαριασμό. Ορίστε έναν λογαριασμό "
 "χρησιμοποιώντας τον Διαχειριστή Τοποθεσιών"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:623
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:629
 msgid ""
 "Server sent an additional login prompt. You need to use the interactive "
 "login type."
@@ -5379,7 +5398,7 @@ msgid "Set &Priority"
 msgstr "Ορισμός &Προτεραιότητας"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3547
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2387
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2393
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
 msgstr "Ορισμός δικαιωμάτων του '%s' στο '%s'"
@@ -5421,32 +5440,31 @@ msgstr "Διαχειριστής Τοποθεσιών"
 msgid "Site Manager already open"
 msgstr "Ο Διαχειριστής Τοποθεσιών είναι ήδη ανοικτός"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2408
-#: ../../locales/../src/interface/sitemanager.cpp:2426
-#: ../../locales/../src/interface/sitemanager.cpp:2440
-#: ../../locales/../src/interface/sitemanager.cpp:2822
-#: ../../locales/../src/interface/sitemanager.cpp:2898
+#: ../../locales/../src/interface/sitemanager.cpp:2414
+#: ../../locales/../src/interface/sitemanager.cpp:2432
+#: ../../locales/../src/interface/sitemanager.cpp:2446
+#: ../../locales/../src/interface/sitemanager.cpp:2828
+#: ../../locales/../src/interface/sitemanager.cpp:2904
 msgid "Site does not exist."
 msgstr "Η επιλεγμένη τοποθεσία δεν υπάρχει."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2388
+#: ../../locales/../src/interface/sitemanager.cpp:2394
 msgid "Site path has to begin with 0 or 1."
 msgstr "Η διαδρομή τοποθεσίας πρέπει να αρχίζει με 0 ή 1."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2433
-#: ../../locales/../src/interface/sitemanager.cpp:2600
-#: ../../locales/../src/interface/sitemanager.cpp:2815
-#: ../../locales/../src/interface/sitemanager.cpp:2891
+#: ../../locales/../src/interface/sitemanager.cpp:2439
+#: ../../locales/../src/interface/sitemanager.cpp:2606
+#: ../../locales/../src/interface/sitemanager.cpp:2821
+#: ../../locales/../src/interface/sitemanager.cpp:2897
 msgid "Site path is malformed."
 msgstr "Η  διαδρομή τοποθεσίας είναι κακοσχηματισμένη."
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:237
-#, fuzzy
 msgid "Site-specific bookmarks"
-msgstr "&Ειδικός σελιδοδείκτης"
+msgstr "Ειδικοί σελιδοδείκτες"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:83
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:494
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:504
 msgid ""
 "Site-specific bookmarks require the server to be stored in the Site "
 "Manager.\n"
@@ -5545,13 +5563,13 @@ msgid "Start with opened Site Manager"
 msgstr "Εκκίνηση με άνοιγμα του Διαχειριστή Τοποθεσιών"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2134
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1575
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1581
 #, c-format
 msgid "Starting download of %s"
 msgstr "Εκκίνηση λήψης του %s"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2138
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1579
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1585
 #, c-format
 msgid "Starting upload of %s"
 msgstr "Εκκίνηση αποστολής του %s"
@@ -5704,8 +5722,8 @@ msgstr ""
 msgid "The file '%s' could not be loaded or does not contain a private key."
 msgstr "Το αρχείο '%s'  δεν μπορεί να φορτωθεί ή δεν περιέχει ιδιωτικό κλειδί."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2180
-#: ../../locales/../src/interface/LocalListView.cpp:2273
+#: ../../locales/../src/interface/LocalListView.cpp:2175
+#: ../../locales/../src/interface/LocalListView.cpp:2268
 #, c-format
 msgid ""
 "The file '%s' could not be opened:\n"
@@ -5714,8 +5732,8 @@ msgstr ""
 " Το αρχείο '%s'  δεν μπορεί ναανοιχθεί:\n"
 "Κανένα πρόγραμμα δεν έχει συσχετιστεί με αυτόν τον τύπο αρχείου."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2209
-#: ../../locales/../src/interface/LocalListView.cpp:2280
+#: ../../locales/../src/interface/LocalListView.cpp:2204
+#: ../../locales/../src/interface/LocalListView.cpp:2275
 #, c-format
 msgid ""
 "The file '%s' could not be opened:\n"
@@ -5973,7 +5991,7 @@ msgid "Timeout"
 msgstr "Διακοπή"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1593
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1021
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1027
 #, c-format
 msgid ""
 "Timezone offsets: Server: %d seconds. Local: %d seconds. Difference: %d "
@@ -6053,9 +6071,6 @@ msgid "Too many redirects"
 msgstr "Πάρα πολλές αναδρομολογήσεις"
 
 #: ../../locales/../src/engine/logging.cpp:210
-msgid "Trace"
-msgstr "Ίχνος"
-
 #: ../../locales/../src/interface/StatusView.cpp:286
 #: ../../locales/../src/interface/StatusView.cpp:349
 msgid "Trace:"
@@ -6108,11 +6123,11 @@ msgstr "Χειρισμός των αρχείων &χωρίς επέκταση ω
 msgid "Treat the &following filetypes as ASCII files:"
 msgstr "Χειρισμός των &παρακάτω τύπων αρχείων ως ASCII αρχεία:"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:824
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:830
 msgid "Trust changed Hostkey: "
 msgstr "Εμπιστεύσου το αλλαγμένο ΚλειδίΚόμβου:"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:822
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:828
 msgid "Trust new Hostkey: "
 msgstr "Εμπιστεύσου το νέο ΚλειδίΚόμβου:"
 
@@ -6494,7 +6509,7 @@ msgstr "Λάθος εξωτερική IP διεύθυνση"
 msgid "Wrong line endings"
 msgstr "Λάθος τερματισμοί γραμμών"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:835
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:841
 msgid "Yes"
 msgstr "Ναι"
 
@@ -6568,8 +6583,8 @@ msgid "You need to enter a proxy port in the range from 1 to 65535"
 msgstr "Απαιτείται η εισαγωγή θήρας διαμεσολαβητή, με εύρος από 1 έως 65535"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:73
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:406
-#: ../../locales/../src/interface/sitemanager.cpp:1065
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:416
+#: ../../locales/../src/interface/sitemanager.cpp:1070
 msgid "You need to enter at least one path, empty bookmarks are not supported."
 msgstr ""
 "Απαιτείται η εισαγωγή τουλάχιστον μίας διαδρομής, δεν υποστηρίζονται κενοί "
@@ -6642,7 +6657,7 @@ msgstr ""
 "Σιγουρευτείτε ότι το εκτελέσιμο αρχείο συνυπάρχει στον ίδιο φάκελο με το "
 "κύριο εκτελέσιμο αρχείο του FileZilla."
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1500
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1506
 msgid "fzsftp could not be started"
 msgstr "Το fzsftp δεν μπόρεσε να εκκινήσει"
 
@@ -6713,6 +6728,12 @@ msgstr "δημόσια ανάγνωση"
 #: ../../locales/../src/interface/filteredit.cpp:128
 msgid "world writeable"
 msgstr "δημόσια εγγραφή"
+
+#~ msgid "&Local path:"
+#~ msgstr "&Τοπική διαδρομή:"
+
+#~ msgid "Trace"
+#~ msgstr "Ίχνος"
 
 #~ msgid "D&iscard"
 #~ msgstr "Α&πόρριψη"

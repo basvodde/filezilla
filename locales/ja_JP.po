@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla 3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-30 19:54+0100\n"
-"PO-Revision-Date: 2008-12-25 14:05-0800\n"
+"POT-Creation-Date: 2009-01-03 16:23+0100\n"
+"PO-Revision-Date: 2008-12-31 01:23-0800\n"
 "Last-Translator: Yoshitaka FUKUNAGA <yfukunaga at users.sourceforge.net>\n"
 "Language-Team: Kazunari INOUE <inoue at jseek.org>\n"
 "MIME-Version: 1.0\n"
@@ -105,8 +105,8 @@ msgstr "%s と %s. 合計サイズ: %s"
 msgid "%s and %s. Total size: At least %s"
 msgstr "%s と %s. 合計サイズ: 少なくとも %s"
 
-#: ../../locales/../src/interface/LocalListView.cpp:485
-#: ../../locales/../src/interface/LocalListView.cpp:502
+#: ../../locales/../src/interface/LocalListView.cpp:480
+#: ../../locales/../src/interface/LocalListView.cpp:497
 #, c-format
 msgid "%s byte"
 msgid_plural "%s bytes"
@@ -200,7 +200,7 @@ msgstr "アクティブ(&A)"
 
 #: resources.h:669
 msgid "&Add bookmark..."
-msgstr ""
+msgstr "ブックマークに追加(&A)..."
 
 #: resources.h:681 resources.h:695
 msgid "&Add files to queue"
@@ -228,7 +228,7 @@ msgstr "常に標準のエディタを利用する(&A)"
 
 #: resources.h:87
 msgid "&Always use this action"
-msgstr "常にこのアクションを利用する(&A)"
+msgstr "常にこの動作を利用する(&A)"
 
 #: resources.h:419 resources.h:443
 msgid "&Ask for action"
@@ -236,7 +236,7 @@ msgstr "動作を尋ねる(&A)"
 
 #: resources.h:389
 msgid "&Ask your operating system for the external IP address"
-msgstr "オペレーティングシステムに外部IPアドレスを尋ねる (&A)"
+msgstr "オペレーティングシステムに外部IPアドレスを尋ねる(&A)"
 
 #: resources.h:154 resources.h:656
 msgid "&Auto"
@@ -256,16 +256,16 @@ msgstr "バイナリ(&B)"
 
 #: resources.h:227
 msgid "&Binary prefixes using SI symbols. (e.g. 1 KB = 1024 bytes)"
-msgstr "SI単位に 2の乗数を使用します (例: 1 KB = 1024 バイト ) (&B)"
+msgstr "SI 2進 接頭辞 (例: 1 KB = 1024 Bytes)(&B)"
 
 #: resources.h:668
 msgid "&Bookmarks"
-msgstr ""
+msgstr "ブックマーク(&B)"
 
 #: resources.h:113 resources.h:242 resources.h:260 resources.h:573
 #: resources.h:610 resources.h:615
 msgid "&Browse..."
-msgstr "ブラウズ...(&B)"
+msgstr "参照...(&B)"
 
 #: resources.h:65
 msgid "&Burst tolerance:"
@@ -329,7 +329,7 @@ msgstr "ファイル存在時の標準動作..."
 
 #: resources.h:191
 msgid "&Delay between failed login attempts:"
-msgstr "ログイン失敗時の待ち時間 (&D):"
+msgstr "ログイン失敗時の待ち時間(&D):"
 
 #: resources.h:98 resources.h:352 resources.h:367 resources.h:621
 #: resources.h:689 resources.h:760
@@ -342,7 +342,7 @@ msgstr "ディレクトリ比較(&c)"
 
 #: resources.h:507
 msgid "&Discard local file then download and edit file anew"
-msgstr "ローカルのファイルを破棄, 新しいファイルをダウンロードして編集 (&D)"
+msgstr "ローカルのファイルを破棄, 新しいファイルをダウンロードして編集(&D)"
 
 #: resources.h:664
 msgid "&Disconnect"
@@ -354,7 +354,7 @@ msgstr "サーバから切断(&D)"
 
 #: resources.h:225
 msgid "&Display size in bytes"
-msgstr "ファイルサイズを バイト で表示 (&D)"
+msgstr "ファイルサイズを バイト で表示(&D)"
 
 #: ../../locales/../src/interface/conditionaldialog.cpp:25
 msgid "&Don't show this dialog again."
@@ -362,7 +362,7 @@ msgstr "このダイアログを今後表示しない"
 
 #: resources.h:394
 msgid "&Don't use external IP address on local connections."
-msgstr "ローカル接続に外部IPアドレスを使用しない. (&D)"
+msgstr "ローカル接続に外部IPアドレスを使用しない.(&D)"
 
 #: resources.h:693 resources.h:738
 msgid "&Download"
@@ -412,9 +412,14 @@ msgstr "アクティブモードに戻る(&F)"
 msgid "&File"
 msgstr "ファイル(&F)"
 
-#: resources.h:704 resources.h:748
+#: resources.h:748
 msgid "&File Attributes..."
 msgstr "ファイル属性...(&F)"
+
+#: resources.h:704
+#, fuzzy
+msgid "&File permissions..."
+msgstr "オーナのパーミッション"
 
 #: resources.h:572
 msgid "&File:"
@@ -438,15 +443,15 @@ msgstr "以下のURLから外部IPアドレスを取得(&G):"
 
 #: resources.h:675
 msgid "&Getting help..."
-msgstr "ヘルプを得る... [英文サイト] (&G)"
+msgstr "ヘルプを得る... [英文サイト](&G)"
 
 #: resources.h:604
 msgid "&Global bookmark"
-msgstr ""
+msgstr "グローバル ブックマーク(&G)"
 
 #: resources.h:561
 msgid "&HTTP/1.1 using CONNECT method"
-msgstr "HTTP/1.1 CONNECT メソッドを使用 (&H)"
+msgstr "HTTP/1.1 CONNECT メソッドを使用(&H)"
 
 #: resources.h:672
 msgid "&Help"
@@ -466,7 +471,7 @@ msgstr "ホスト(&H):"
 
 #: resources.h:226
 msgid "&IEC binary prefixes (e.g. 1 KiB = 1024 bytes)"
-msgstr "IECの2の乗数 (例: 1 KiB = 1024 bytes) (&I)"
+msgstr "IEC 接頭辞 (例: 1 KiB = 1024 bytes)(&I)"
 
 #: resources.h:214
 msgid "&ISO 8601 (example: 2007-09-15)"
@@ -494,17 +499,11 @@ msgstr "同時接続の数を制限(&L)"
 
 #: resources.h:649
 msgid "&Local directory tree"
-msgstr "ローカル ディレクトリツリー (&L)"
+msgstr "ローカル ディレクトリツリー(&L)"
 
-#: resources.h:609
-#, fuzzy
+#: resources.h:609 resources.h:614
 msgid "&Local directory:"
-msgstr "ローカル ディレクトリツリー (&L)"
-
-#: resources.h:614
-#, fuzzy
-msgid "&Local path:"
-msgstr "ローカルサイト:"
+msgstr "ローカル ディレクトリ(&L):"
 
 #: resources.h:240
 msgid "&Log to file"
@@ -519,9 +518,8 @@ msgid "&Low"
 msgstr "低い(&L)"
 
 #: resources.h:670
-#, fuzzy
 msgid "&Manage bookmarks..."
-msgstr "サイトマネージャ...(&S)"
+msgstr "ブックマークの管理(&M)"
 
 #: resources.h:660
 msgid "&Manual transfer..."
@@ -537,12 +535,11 @@ msgstr "最大再試行回数(&M):"
 
 #: resources.h:648
 msgid "&Message log"
-msgstr "メッセージ ログ (&M)"
+msgstr "メッセージ ログ(&M)"
 
 #: resources.h:607
-#, fuzzy
 msgid "&Name:"
-msgstr "名前:"
+msgstr "名前(&N):"
 
 #: resources.h:637
 msgid "&Network configuration wizard..."
@@ -558,7 +555,7 @@ msgstr "新しいサイト(&N)"
 
 #: ../../locales/../src/interface/updatewizard.cpp:835
 msgid "&New version available!"
-msgstr "新バージョンがあります! (&N)"
+msgstr "新バージョンがあります!(&N)"
 
 #: resources.h:501
 msgid "&No"
@@ -566,7 +563,7 @@ msgstr "いいえ(&N)"
 
 #: resources.h:272 resources.h:560
 msgid "&None"
-msgstr "なし (&N)"
+msgstr "なし(&N)"
 
 #: resources.h:713
 msgid "&Normal"
@@ -586,11 +583,11 @@ msgstr "了解(&O)"
 
 #: resources.h:275
 msgid "&OPEN"
-msgstr "OPEN コマンド (&O)"
+msgstr "OPEN コマンド(&O)"
 
 #: resources.h:683
 msgid "&Open"
-msgstr "開く (&O)"
+msgstr "開く(&O)"
 
 #: resources.h:80 resources.h:420 resources.h:444
 msgid "&Overwrite"
@@ -638,18 +635,17 @@ msgstr "再接続(&R)"
 
 #: resources.h:640
 msgid "&Refresh"
-msgstr "更新 (&R)"
+msgstr "更新(&R)"
 
 #: resources.h:146
 msgid "&Remember password for this session"
 msgstr "このセッションのパスワードを記録する(&R)"
 
-#: resources.h:611
-#, fuzzy
+#: resources.h:611 resources.h:616
 msgid "&Remote directory:"
-msgstr "ディレクトリを作る(&C)"
+msgstr "リモート ディレクトリ(&R):"
 
-#: resources.h:575 resources.h:616
+#: resources.h:575
 msgid "&Remote path:"
 msgstr "リモートパス(&R):"
 
@@ -676,11 +672,11 @@ msgstr "名前の変更(&R)..."
 
 #: resources.h:506
 msgid "&Reopen local file"
-msgstr "ローカルファイルを再オープン (&R)"
+msgstr "ローカルファイルを再オープン(&R)"
 
 #: resources.h:676
 msgid "&Report a bug..."
-msgstr "バグを報告... [英文サイト] (&R)"
+msgstr "バグを報告... [英文サイト](&R)"
 
 #: resources.h:811
 msgid "&Restart Wizard"
@@ -688,7 +684,7 @@ msgstr "ウィザードを再起動(&F)"
 
 #: resources.h:84 resources.h:424 resources.h:448
 msgid "&Resume"
-msgstr "リジューム (続きから転送) (&R)"
+msgstr "リジューム (続きから転送)(&R)"
 
 #: resources.h:719
 msgid "&Run command..."
@@ -704,11 +700,11 @@ msgstr "今すぐアップデートチェックを実行する..."
 
 #: resources.h:274
 msgid "&SITE"
-msgstr "SITE コマンド (&S)"
+msgstr "SITE コマンド(&S)"
 
 #: resources.h:562
 msgid "&SOCKS 5"
-msgstr "SOCKS 5 (&S)"
+msgstr "SOCKS 5(&S)"
 
 #: resources.h:350
 msgid "&Save as..."
@@ -744,7 +740,7 @@ msgstr "メッセージを表示(&S)"
 
 #: resources.h:239
 msgid "&Show timestamps in message log"
-msgstr "メッセージログのタイムスタンプを見せる(&S)"
+msgstr "メッセージログのタイムスタンプを表示(&S)"
 
 #: resources.h:626
 msgid "&Site Manager..."
@@ -752,11 +748,11 @@ msgstr "サイトマネージャ...(&S)"
 
 #: resources.h:605
 msgid "&Site-specific bookmark"
-msgstr ""
+msgstr "サイト別 ブックマーク(&S)"
 
 #: resources.h:86
 msgid "&Skip"
-msgstr "スキップ (転送しない) (&S)"
+msgstr "スキップ (転送しない)(&S)"
 
 #: resources.h:171
 msgid "&Swap local and remote panes"
@@ -780,11 +776,11 @@ msgstr "転送モード(&T):"
 
 #: resources.h:651
 msgid "&Transfer queue"
-msgstr "転送キュー (&T)"
+msgstr "転送キュー(&T)"
 
 #: resources.h:163
 msgid "&Treat dotfiles as ASCII files"
-msgstr "ドットファイルをアスキーファイルとして扱う (&T)"
+msgstr "ドットファイルをアスキーファイルとして扱う(&T)"
 
 #: resources.h:513
 msgid "&Unedit"
@@ -800,7 +796,7 @@ msgstr "アップロード(&U)"
 
 #: resources.h:390
 msgid "&Use the following IP address:"
-msgstr "以下のIPアドレスを使う (&U):"
+msgstr "以下のIPアドレスを使う(&U):"
 
 #: resources.h:47
 msgid "&Use the server's external IP address instead"
@@ -821,11 +817,11 @@ msgstr "ユーザ名(&U):"
 #: ../../locales/../src/interface/updatewizard.cpp:831
 #, c-format
 msgid "&Version %s"
-msgstr "バージョン %s (&V)"
+msgstr "バージョン %s(&V)"
 
 #: resources.h:639
 msgid "&View"
-msgstr "表示 (&V)"
+msgstr "表示(&V)"
 
 #: resources.h:697
 msgid "&View / Edit"
@@ -952,7 +948,7 @@ msgstr "3 - 詳細"
 msgid "4 - Debug"
 msgstr "4 - デバッグ"
 
-#: ../../locales/../src/engine/directorylistingparser.cpp:1605
+#: ../../locales/../src/engine/directorylistingparser.cpp:1608
 msgid ";1"
 msgstr ";1"
 
@@ -961,12 +957,9 @@ msgid "?"
 msgstr "?"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:98
-#, fuzzy
 msgid ""
 "A bookmark with the entered name already exists. Please enter an unused name."
-msgstr ""
-"ファイル %s はすでに存在しています.\n"
-"新しい名前を入力してください:"
+msgstr "同じ名前のブックマークが既に存在します. 違う名前を入力してください."
 
 #: ../../locales/../src/interface/optionspage_edit.cpp:122
 msgid "A default editor needs to be set."
@@ -992,13 +985,13 @@ msgstr ""
 msgid "A file previously opened has been changed."
 msgstr "以前開かれたファイルは変更されています."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2193
+#: ../../locales/../src/interface/LocalListView.cpp:2188
 #, c-format
 msgid ""
 "A file with that name is already being edited. Do you want to reopen '%s'?"
 msgstr "その名前のファイルはすでに編集中です. '%s' を開き直しますか?"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2189
+#: ../../locales/../src/interface/LocalListView.cpp:2184
 #: ../../locales/../src/interface/RemoteListView.cpp:2496
 msgid "A file with that name is already being transferred."
 msgstr "その名前のファイルはすでに転送されています."
@@ -1081,7 +1074,7 @@ msgstr "FileZillaについて"
 
 #: resources.h:182
 msgid "Above the file lists"
-msgstr "以下のファイルリスト"
+msgstr "ファイルリストの上"
 
 #: ../../locales/../src/engine/server.cpp:794
 #: ../../locales/../src/engine/server.cpp:813
@@ -1090,8 +1083,8 @@ msgstr "以下のファイルリスト"
 #: ../../locales/../src/interface/manual_transfer.cpp:192
 #: ../../locales/../src/interface/manual_transfer.cpp:548
 #: ../../locales/../src/interface/manual_transfer.cpp:549
-#: ../../locales/../src/interface/sitemanager.cpp:1237
-#: ../../locales/../src/interface/sitemanager.cpp:1238
+#: ../../locales/../src/interface/sitemanager.cpp:1243
+#: ../../locales/../src/interface/sitemanager.cpp:1244
 msgid "Account"
 msgstr "アカウント"
 
@@ -1183,7 +1176,7 @@ msgstr "すべてのポート範囲は1024から65535の間でなければなら
 
 #: resources.h:521
 msgid "Allow &fall back to other transfer mode on failure"
-msgstr "失敗時に他の転送モードへのフォールバックを認める (&F)"
+msgstr "失敗時に他の転送モードへのフォールバックを認める(&F)"
 
 #: resources.h:775
 msgid "Allow fallback to other transfer mode on failure"
@@ -1213,7 +1206,7 @@ msgstr ""
 "選択的に最新バージョンをダウンロードするには http://filezilla-project.org を"
 "訪問して下さい."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2141
+#: ../../locales/../src/interface/sitemanager.cpp:2147
 msgid ""
 "An item with the same name as the dragged item already exists at the target "
 "location."
@@ -1225,8 +1218,8 @@ msgstr ""
 #: ../../locales/../src/interface/manual_transfer.cpp:195
 #: ../../locales/../src/interface/manual_transfer.cpp:211
 #: ../../locales/../src/interface/manual_transfer.cpp:547
-#: ../../locales/../src/interface/sitemanager.cpp:1236
-#: ../../locales/../src/interface/sitemanager.cpp:1471
+#: ../../locales/../src/interface/sitemanager.cpp:1242
+#: ../../locales/../src/interface/sitemanager.cpp:1477
 msgid "Anonymous"
 msgstr "匿名"
 
@@ -1257,7 +1250,7 @@ msgstr "アーカイブ"
 
 #: resources.h:184
 msgid "As tab in the transfer queue pane"
-msgstr "転送キューをタブ表示にする"
+msgstr "転送キューのタブとして表示"
 
 #: ../../locales/../src/engine/server.cpp:790
 #: ../../locales/../src/engine/server.cpp:809
@@ -1289,7 +1282,7 @@ msgstr "いまのところ, すべての必要情報は集まっています."
 msgid "Attribute"
 msgstr "属性"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:621
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:627
 msgid "Authentication failed."
 msgstr "認証に失敗しました."
 
@@ -1334,15 +1327,15 @@ msgstr "黒板"
 #: ../../locales/../src/interface/Mainfrm.cpp:993
 #: ../../locales/../src/interface/sitemanager.cpp:365
 msgid "Bookmark"
-msgstr ""
+msgstr "ブックマーク"
 
 #: resources.h:618
 msgid "Bookmark:"
-msgstr ""
+msgstr "ブックマーク:"
 
 #: resources.h:617
 msgid "Bookmarks"
-msgstr ""
+msgstr "ブックマーク"
 
 #: ../../locales/../src/interface/state.cpp:292
 msgid "Break current connection?"
@@ -1368,7 +1361,7 @@ msgstr ""
 
 #: resources.h:662
 msgid "C&ancel current operation"
-msgstr "現在の操作を中止 (&C)"
+msgstr "現在の操作を中止(&C)"
 
 #: resources.h:401
 msgid "C&heck for nightly builds of FileZilla"
@@ -1386,16 +1379,16 @@ msgstr "カスタム(&u)"
 msgid "C&ustom filetype associations:"
 msgstr "カスタムファイルタイプの関連付け(&u):"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1414
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1420
 msgid "CSftpControlSocket::ChangeDirSend()"
 msgstr "CSftpControlSocket::ChangeDirSend()"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1407
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1413
 msgid "CSftpControlSocket::ChangeDirSubcommandResult()"
 msgstr "CSftpControlSocket::ChangeDirSubcommandResult()"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1539
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1212
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1218
 msgid "Calculating timezone offset of server..."
 msgstr "サーバのタイムゾーン オフセットを計算しています..."
 
@@ -1489,8 +1482,8 @@ msgstr "リソースファイルからツールバーをロードできません
 msgid "Cannot load toolbar from resource file"
 msgstr "リソースファイルからツールバーをロードできません"
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:661
-#: ../../locales/../src/interface/sitemanager.cpp:1138
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:672
+#: ../../locales/../src/interface/sitemanager.cpp:1143
 msgid "Cannot rename entry"
 msgstr "エントリの名前を変えることができません"
 
@@ -1511,7 +1504,7 @@ msgstr "フィルタを選択できません"
 msgid "Cannot show dialog"
 msgstr "ダイアログを表示できません"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2189
+#: ../../locales/../src/interface/LocalListView.cpp:2184
 #: ../../locales/../src/interface/RemoteListView.cpp:2496
 msgid "Cannot view / edit selected file"
 msgstr "選択されたファイルは表示/編集できません"
@@ -1584,16 +1577,15 @@ msgstr "正しい外部IPアドレスを調べています."
 msgid "Checking for updates"
 msgstr "アップデートをチェックしています."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1401
+#: ../../locales/../src/interface/sitemanager.cpp:1407
 msgid "Choose the default local directory"
 msgstr "標準のローカルディレクトリを選択"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:120
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:348
-#: ../../locales/../src/interface/sitemanager.cpp:2532
-#, fuzzy
+#: ../../locales/../src/interface/sitemanager.cpp:2538
 msgid "Choose the local directory"
-msgstr "標準のローカルディレクトリを選択"
+msgstr "ローカルディレクトリを選択"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:778
 msgid "Chunk data improperly terminated"
@@ -1719,15 +1711,15 @@ msgstr "ルータまたはファイヤウォールによって通信を失いま
 
 #: resources.h:645 resources.h:753
 msgid "Compare &modification time"
-msgstr "タイムスタンプで比較する (&M)"
+msgstr "タイムスタンプで比較する(&M)"
 
 #: resources.h:644 resources.h:752
 msgid "Compare file&size"
-msgstr "ファイルサイズで比較する (&S)"
+msgstr "ファイルサイズで比較する(&S)"
 
 #: resources.h:179
 msgid "Comparison &threshold (in minutes):"
-msgstr "(分ごとの)比較閾値 (&T):"
+msgstr "(分ごとの)比較閾値(&T):"
 
 #: ../../locales/../src/interface/optionspage_interface.cpp:47
 msgid "Comparison threshold needs to be between 0 and 1440 minutes."
@@ -1759,7 +1751,7 @@ msgstr "同時転送"
 
 #: resources.h:377
 msgid "Conditions are c&ase sensitive"
-msgstr "大文字と小文字を区別する (&A)"
+msgstr "大文字と小文字を区別する(&A)"
 
 #: resources.h:804
 msgid "Configuration test"
@@ -1912,14 +1904,14 @@ msgstr "鍵ファイルの変換"
 msgid "Cop&y"
 msgstr "コピー(&y)"
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:599
-#: ../../locales/../src/interface/sitemanager.cpp:1695
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:610
+#: ../../locales/../src/interface/sitemanager.cpp:1701
 #, c-format
 msgid "Copy (%d) of %s"
 msgstr "複製 (%d) 元の %s"
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:576
-#: ../../locales/../src/interface/sitemanager.cpp:1672
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:587
+#: ../../locales/../src/interface/sitemanager.cpp:1678
 #, c-format
 msgid "Copy of %s"
 msgstr "%s の複製"
@@ -1930,10 +1922,9 @@ msgid "Could not accept connection: %s"
 msgstr "接続を受け付けることができません: %s"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:89
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:500
-#, fuzzy
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:510
 msgid "Could not add connection to Site Manager"
-msgstr "現在の接続をサイトマネージャにコピー(&C)"
+msgstr "サイトマネージャに追加できません"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:127
 msgid "Could not connect to server"
@@ -1944,7 +1935,7 @@ msgstr "サーバに接続することができませんでした"
 msgid "Could not connect to server: %s"
 msgstr "サーバに接続することができませんでした: %s"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:774
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:780
 msgid "Could not convert command to server encoding"
 msgstr "コマンドをサーバエンコーディングに変換できません"
 
@@ -2029,18 +2020,18 @@ msgstr ""
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:153
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:270
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:679
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:721
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:763
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:690
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:732
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:774
 #: ../../locales/../src/interface/import.cpp:111
 #: ../../locales/../src/interface/import.cpp:302
 #: ../../locales/../src/interface/sitemanager.cpp:631
-#: ../../locales/../src/interface/sitemanager.cpp:1928
-#: ../../locales/../src/interface/sitemanager.cpp:2417
-#: ../../locales/../src/interface/sitemanager.cpp:2587
-#: ../../locales/../src/interface/sitemanager.cpp:2685
-#: ../../locales/../src/interface/sitemanager.cpp:2802
-#: ../../locales/../src/interface/sitemanager.cpp:2878
+#: ../../locales/../src/interface/sitemanager.cpp:1934
+#: ../../locales/../src/interface/sitemanager.cpp:2423
+#: ../../locales/../src/interface/sitemanager.cpp:2593
+#: ../../locales/../src/interface/sitemanager.cpp:2691
+#: ../../locales/../src/interface/sitemanager.cpp:2808
+#: ../../locales/../src/interface/sitemanager.cpp:2884
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -2079,9 +2070,8 @@ msgid "Could not open log file: %s"
 msgstr "ログファイルを開けません: %s"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:66
-#, fuzzy
 msgid "Could not parse remote path."
-msgstr "サーバアドレスを解釈できませんでした:"
+msgstr "リモートパスを解釈できませんでした."
 
 #: ../../locales/../src/interface/quickconnectbar.cpp:86
 msgid "Could not parse server address:"
@@ -2092,10 +2082,9 @@ msgstr "サーバアドレスを解釈できませんでした:"
 msgid "Could not read from socket: %s"
 msgstr "ソケットからの読み込みができませんでした:  %s"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2457
-#, fuzzy
+#: ../../locales/../src/interface/sitemanager.cpp:2463
 msgid "Could not read server item."
-msgstr "サーバアドレスを解釈できませんでした:"
+msgstr "サーバ アイテムを読み込むことができませんでした."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2608
 #, c-format
@@ -2125,7 +2114,7 @@ msgid "Could not start transfer"
 msgstr "転送を始めることができません"
 
 #: ../../locales/../src/interface/sitemanager.cpp:802
-#: ../../locales/../src/interface/sitemanager.cpp:2737
+#: ../../locales/../src/interface/sitemanager.cpp:2743
 #, c-format
 msgid ""
 "Could not write \"%s\", any changes to the Site Manager could not be saved: %"
@@ -2148,10 +2137,10 @@ msgstr ""
 "%s"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:300
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:791
-#: ../../locales/../src/interface/sitemanager.cpp:2513
-#: ../../locales/../src/interface/sitemanager.cpp:2853
-#: ../../locales/../src/interface/sitemanager.cpp:2912
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:802
+#: ../../locales/../src/interface/sitemanager.cpp:2519
+#: ../../locales/../src/interface/sitemanager.cpp:2859
+#: ../../locales/../src/interface/sitemanager.cpp:2918
 #, c-format
 msgid "Could not write \"%s\", the selected sites could not be exported: %s"
 msgstr ""
@@ -2195,7 +2184,7 @@ msgstr "例外ハンドラをデバックするためだけにFileZillaは即座
 msgid "Create a new subdirectory in the current directory"
 msgstr "現在のディレクトリに新しいサブディレクトリを作成する"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1308
+#: ../../locales/../src/interface/LocalListView.cpp:1303
 #: ../../locales/../src/interface/LocalTreeView.cpp:1313
 #: ../../locales/../src/interface/RemoteListView.cpp:1430
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1257
@@ -2207,7 +2196,7 @@ msgid "Creating directory"
 msgstr "ディレクトリを作成しています"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3164
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1999
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2005
 #, c-format
 msgid "Creating directory '%s'..."
 msgstr "ディレクトリ '%s' を作成..."
@@ -2246,7 +2235,7 @@ msgstr "データタイプ(&A)"
 
 #: resources.h:228
 msgid "D&ecimal prefixes using SI symbols (e.g. 1 KB = 1000 bytes)"
-msgstr "SI単位に10の乗数を使います. (例: 1 KB = 1000 バイト) (&E)"
+msgstr "SI 接頭辞 (例: 1 KB = 1000 Bytes)(&E)"
 
 #: resources.h:120
 msgid "D&efault"
@@ -2328,16 +2317,6 @@ msgstr ""
 "デフォルトリモートパスが解釈できませんでした. 入力されたものが正しいか, サー"
 "バ種類が正しく選択されているかを確認してください."
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:396
-#: ../../locales/../src/interface/sitemanager.cpp:1055
-#, fuzzy
-msgid ""
-"Default remote path cannot be parsed. Make sure it is valid and is supported "
-"by the servertype selected on the parent site."
-msgstr ""
-"デフォルトリモートパスが解釈できませんでした. 入力されたものが正しいか, サー"
-"バ種類が正しく選択されているかを確認してください."
-
 #: ../../locales/../src/interface/optionspage_language.cpp:78
 msgid "Default system language"
 msgstr "システムのデフォルト言語"
@@ -2363,7 +2342,7 @@ msgstr "接続再試行失敗している間の遅れは1から999秒の間に�
 msgid "Delaying connection due to previously failed connection attempt..."
 msgstr "以前の接続試行失敗にしたがって接続を遅らせています..."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1171
+#: ../../locales/../src/interface/sitemanager.cpp:1176
 msgid "Delete Site Manager entry"
 msgstr "サイトマネージャ エントリを削除"
 
@@ -2506,7 +2485,7 @@ msgstr "本当にサイトマネージャ エントリと転送キューの削�
 msgid "Do you really want to delete all Site Manager entries?"
 msgstr "本当にすべてのサイトマネージャ エントリを削除してもいいですか?"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1173
+#: ../../locales/../src/interface/sitemanager.cpp:1178
 msgid "Do you really want to delete selected entry?"
 msgstr "本当に選択されたエントリを削除してもいいですか?"
 
@@ -2521,7 +2500,7 @@ msgstr "本当に' %s 'をサーバに送りますか?"
 
 #: resources.h:793
 msgid "Don't use external IP address on &local connections."
-msgstr "ローカル接続に外部IPアドレスを使いません. (&l)"
+msgstr "ローカル接続に外部IPアドレスを使いません.(&l)"
 
 #: resources.h:164
 msgid "Dotfiles are filenames starting with a dot, e.g. .htaccess"
@@ -2749,9 +2728,9 @@ msgstr "取り込みエラー"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:154
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:271
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:680
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:722
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:764
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:691
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:733
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:775
 #: ../../locales/../src/interface/filter.cpp:171
 #: ../../locales/../src/interface/filter.cpp:924
 #: ../../locales/../src/interface/import.cpp:112
@@ -2761,12 +2740,12 @@ msgstr "取り込みエラー"
 #: ../../locales/../src/interface/QueueView.cpp:1835
 #: ../../locales/../src/interface/sitemanager.cpp:632
 #: ../../locales/../src/interface/sitemanager.cpp:777
-#: ../../locales/../src/interface/sitemanager.cpp:1929
-#: ../../locales/../src/interface/sitemanager.cpp:2418
-#: ../../locales/../src/interface/sitemanager.cpp:2588
-#: ../../locales/../src/interface/sitemanager.cpp:2686
-#: ../../locales/../src/interface/sitemanager.cpp:2803
-#: ../../locales/../src/interface/sitemanager.cpp:2879
+#: ../../locales/../src/interface/sitemanager.cpp:1935
+#: ../../locales/../src/interface/sitemanager.cpp:2424
+#: ../../locales/../src/interface/sitemanager.cpp:2594
+#: ../../locales/../src/interface/sitemanager.cpp:2692
+#: ../../locales/../src/interface/sitemanager.cpp:2809
+#: ../../locales/../src/interface/sitemanager.cpp:2885
 #: ../../locales/../src/interface/wrapengine.cpp:925
 msgid "Error loading xml file"
 msgstr "xmlファイルの読み込みエラー"
@@ -2777,14 +2756,14 @@ msgid "Error starting program"
 msgstr "プログラム起動エラー"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:301
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:792
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:803
 #: ../../locales/../src/interface/QueueView.cpp:1818
 #: ../../locales/../src/interface/QueueView.cpp:1854
 #: ../../locales/../src/interface/sitemanager.cpp:803
-#: ../../locales/../src/interface/sitemanager.cpp:2514
-#: ../../locales/../src/interface/sitemanager.cpp:2738
-#: ../../locales/../src/interface/sitemanager.cpp:2854
-#: ../../locales/../src/interface/sitemanager.cpp:2913
+#: ../../locales/../src/interface/sitemanager.cpp:2520
+#: ../../locales/../src/interface/sitemanager.cpp:2744
+#: ../../locales/../src/interface/sitemanager.cpp:2860
+#: ../../locales/../src/interface/sitemanager.cpp:2919
 #: ../../locales/../src/interface/wrapengine.cpp:1076
 msgid "Error writing xml file"
 msgstr "xmlファイルの書き込みエラー"
@@ -2838,7 +2817,7 @@ msgid "F&ilter name:"
 msgstr "フィルタ名(&i):"
 
 #: ../../locales/../src/interface/settingsdialog.cpp:113
-#: ../../locales/../src/interface/sitemanager.cpp:1469
+#: ../../locales/../src/interface/sitemanager.cpp:1475
 msgid "FTP"
 msgstr "FTP"
 
@@ -2874,8 +2853,8 @@ msgstr "FTPES - 明示的なTLS/SSL上のFTP"
 msgid "FTPS - FTP over implicit TLS/SSL"
 msgstr "FTPS - 暗黙のTLS/SSL上のFTP"
 
-#: ../../locales/../src/interface/LocalListView.cpp:712
-#: ../../locales/../src/interface/LocalListView.cpp:1423
+#: ../../locales/../src/interface/LocalListView.cpp:707
+#: ../../locales/../src/interface/LocalListView.cpp:1418
 #: ../../locales/../src/interface/LocalTreeView.cpp:878
 #: ../../locales/../src/interface/viewheader.cpp:515
 msgid "Failed to change directory"
@@ -2892,7 +2871,7 @@ msgstr "言語変更に失敗しました"
 msgid "Failed to check for newer version of FileZilla."
 msgstr "FileZillaの新しいバージョンのチェックに失敗しました."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2141
+#: ../../locales/../src/interface/sitemanager.cpp:2147
 msgid "Failed to copy or move sites"
 msgstr "サイトのコピーまたは移動に失敗しました"
 
@@ -3163,7 +3142,7 @@ msgid "Filename &filters..."
 msgstr "ファイル名フィルタ(&f)..."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2962
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2262
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2268
 #, c-format
 msgid "Filename cannot be constructed for directory %s and filename %s"
 msgstr ""
@@ -3181,11 +3160,11 @@ msgstr "ファイル名は変更されませんでした"
 msgid "Filename:"
 msgstr "ファイル名:"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1497
+#: ../../locales/../src/interface/LocalListView.cpp:1492
 msgid "Filenames may not contain any of the following characters: / * ? < > |"
 msgstr "ファイル名に次の文字は使えません: / * ? < > |"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1472
+#: ../../locales/../src/interface/LocalListView.cpp:1467
 msgid ""
 "Filenames may not contain any of the following characters: / \\ : * ? \" < > "
 "|"
@@ -3216,7 +3195,7 @@ msgstr "ファイルタイプ関連付け"
 
 #: resources.h:371
 msgid "Filter &out all files that:"
-msgstr "これらのファイルを除外する: (&O)"
+msgstr "これらのファイルを除外する:(&O)"
 
 #: resources.h:378
 msgid "Filter applies to:"
@@ -3316,7 +3295,7 @@ msgstr ""
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:232
 msgid "Global bookmarks"
-msgstr ""
+msgstr "グローバル ブックマーク"
 
 #: resources.h:297
 msgid "Group permissions"
@@ -3421,9 +3400,10 @@ msgstr ""
 "の間違ったサーバに接続することができるでしょう."
 
 #: resources.h:246
+#, fuzzy
 msgid ""
 "If the size of the logfile reaches the limit, it gets renamed by adding \".1"
-"\"  to the end of the filename (possibly overwriting older logfiles) and a "
+"\" to the end of the filename (possibly overwriting older logfiles) and a "
 "new file gets created."
 msgstr ""
 "もしもログファイルのサイズが制限値に達したら, 末尾に \".1\" を追加したファイ"
@@ -3651,8 +3631,8 @@ msgstr "不適切なデータを受信しました."
 msgid "Invalid date"
 msgstr "不適切な日付"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1472
-#: ../../locales/../src/interface/LocalListView.cpp:1497
+#: ../../locales/../src/interface/LocalListView.cpp:1467
+#: ../../locales/../src/interface/LocalListView.cpp:1492
 msgid "Invalid filename"
 msgstr "ファイル名が適切ではありません"
 
@@ -3689,17 +3669,17 @@ msgstr ""
 msgid "Invalid response code"
 msgstr "不適切な応答コード"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2388
-#: ../../locales/../src/interface/sitemanager.cpp:2408
-#: ../../locales/../src/interface/sitemanager.cpp:2426
-#: ../../locales/../src/interface/sitemanager.cpp:2433
-#: ../../locales/../src/interface/sitemanager.cpp:2440
-#: ../../locales/../src/interface/sitemanager.cpp:2457
-#: ../../locales/../src/interface/sitemanager.cpp:2600
-#: ../../locales/../src/interface/sitemanager.cpp:2815
-#: ../../locales/../src/interface/sitemanager.cpp:2822
-#: ../../locales/../src/interface/sitemanager.cpp:2891
-#: ../../locales/../src/interface/sitemanager.cpp:2898
+#: ../../locales/../src/interface/sitemanager.cpp:2394
+#: ../../locales/../src/interface/sitemanager.cpp:2414
+#: ../../locales/../src/interface/sitemanager.cpp:2432
+#: ../../locales/../src/interface/sitemanager.cpp:2439
+#: ../../locales/../src/interface/sitemanager.cpp:2446
+#: ../../locales/../src/interface/sitemanager.cpp:2463
+#: ../../locales/../src/interface/sitemanager.cpp:2606
+#: ../../locales/../src/interface/sitemanager.cpp:2821
+#: ../../locales/../src/interface/sitemanager.cpp:2828
+#: ../../locales/../src/interface/sitemanager.cpp:2897
+#: ../../locales/../src/interface/sitemanager.cpp:2904
 msgid "Invalid site path"
 msgstr "不正なサイトパス"
 
@@ -3713,7 +3693,7 @@ msgstr "適切ではないユーザ名が与えられました."
 
 #: resources.h:175
 msgid "Keep directories on top"
-msgstr "ディレクトリを常に先頭に"
+msgstr "ディレクトリは常に先頭"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:752
 msgid ""
@@ -3931,7 +3911,7 @@ msgstr "マイ ドキュメント"
 
 #: ../../locales/../src/interface/sitemanager.cpp:619
 #: ../../locales/../src/interface/sitemanager.cpp:621
-#: ../../locales/../src/interface/sitemanager.cpp:1969
+#: ../../locales/../src/interface/sitemanager.cpp:1975
 msgid "My Sites"
 msgstr "自分のサイト"
 
@@ -3941,20 +3921,18 @@ msgid "N/a"
 msgstr "何もありません"
 
 #: resources.h:606
-#, fuzzy
 msgid "Name"
-msgstr "名前:"
+msgstr "名前"
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:661
-#: ../../locales/../src/interface/sitemanager.cpp:1138
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:672
+#: ../../locales/../src/interface/sitemanager.cpp:1143
 msgid "Name already exists"
 msgstr "名前はすでに存在しています"
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:776
-#: ../../locales/../src/interface/sitemanager.cpp:2838
-#, fuzzy
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:787
+#: ../../locales/../src/interface/sitemanager.cpp:2844
 msgid "Name of bookmark already exists."
-msgstr "名前はすでに存在しています"
+msgstr "その名前のブックマークはすでに存在しています."
 
 #: resources.h:140
 msgid "Name:"
@@ -3978,7 +3956,7 @@ msgstr "新しいフォルダ(&F)"
 
 #: resources.h:96 resources.h:619
 msgid "New Book&mark"
-msgstr ""
+msgstr "新しいブックマーク(&M)"
 
 #: resources.h:602 ../../locales/../src/interface/bookmarks_dialog.cpp:52
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:66
@@ -3986,15 +3964,15 @@ msgstr ""
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:83
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:89
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:98
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:494
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:500
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:506
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:529
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:776
-#: ../../locales/../src/interface/sitemanager.cpp:2296
-#: ../../locales/../src/interface/sitemanager.cpp:2838
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:504
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:510
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:516
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:539
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:787
+#: ../../locales/../src/interface/sitemanager.cpp:2302
+#: ../../locales/../src/interface/sitemanager.cpp:2844
 msgid "New bookmark"
-msgstr ""
+msgstr "新しいブックマーク"
 
 #: ../../locales/../src/interface/LocalTreeView.cpp:1316
 #: ../../locales/../src/interface/RemoteListView.cpp:1444
@@ -4010,17 +3988,17 @@ msgstr "新しいフィルタ"
 msgid "New folder"
 msgstr "新規フォルダ"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2281
-#: ../../locales/../src/interface/sitemanager.cpp:2705
-#: ../../locales/../src/interface/sitemanager.cpp:2719
+#: ../../locales/../src/interface/sitemanager.cpp:2287
+#: ../../locales/../src/interface/sitemanager.cpp:2711
+#: ../../locales/../src/interface/sitemanager.cpp:2725
 msgid "New site"
 msgstr "新規サイト"
 
 #: resources.h:183
 msgid "Next to the transfer queue"
-msgstr "次の転送キューへ"
+msgstr "転送キューの隣"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:827
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:833
 msgid "No"
 msgstr "いいえ"
 
@@ -4063,9 +4041,9 @@ msgstr "キューにファイルはありません！"
 msgid "No name for the filterset given."
 msgstr "フィルタセットの名前がありません."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1935
-#: ../../locales/../src/interface/sitemanager.cpp:1947
-#: ../../locales/../src/interface/sitemanager.cpp:1978
+#: ../../locales/../src/interface/sitemanager.cpp:1941
+#: ../../locales/../src/interface/sitemanager.cpp:1953
+#: ../../locales/../src/interface/sitemanager.cpp:1984
 msgid "No sites available"
 msgstr "利用可能なサイトがありません"
 
@@ -4096,7 +4074,7 @@ msgstr "何も選択されていません"
 #: ../../locales/../src/interface/manual_transfer.cpp:548
 #: ../../locales/../src/interface/queue.cpp:857
 #: ../../locales/../src/interface/queue.cpp:938
-#: ../../locales/../src/interface/sitemanager.cpp:1237
+#: ../../locales/../src/interface/sitemanager.cpp:1243
 msgid "Normal"
 msgstr "通常"
 
@@ -4128,7 +4106,7 @@ msgstr "注意: 一般プロキシ使用時は強制的にパッシブモードF
 
 #: resources.h:230
 msgid "Number of decimal places:"
-msgstr "整数の桁区切り:"
+msgstr "小数点以下の表示桁数:"
 
 #: ../../locales/../src/interface/optionspage_connection.cpp:34
 msgid "Number of retries has to be between 0 and 99."
@@ -4159,7 +4137,7 @@ msgstr ""
 "有効になっている場合, 次のページで選択された転送モードはフォールバックモード"
 "として設定されます."
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:837
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:843
 msgid "Once"
 msgstr "一度だけ"
 
@@ -4185,10 +4163,10 @@ msgstr "FileZillaの設定ダイアログを開く"
 msgid "Opened as:"
 msgstr "開かれています:"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2180
-#: ../../locales/../src/interface/LocalListView.cpp:2209
-#: ../../locales/../src/interface/LocalListView.cpp:2273
-#: ../../locales/../src/interface/LocalListView.cpp:2280
+#: ../../locales/../src/interface/LocalListView.cpp:2175
+#: ../../locales/../src/interface/LocalListView.cpp:2204
+#: ../../locales/../src/interface/LocalListView.cpp:2268
+#: ../../locales/../src/interface/LocalListView.cpp:2275
 msgid "Opening failed"
 msgstr "ファイルが開けません"
 
@@ -4297,14 +4275,13 @@ msgid "Path"
 msgstr "パス"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3049
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2307
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2313
 #, c-format
 msgid "Path cannot be constructed for directory %s and subdir %s"
 msgstr ""
 "パス名には、ディレクトリ %s と サブディレクトリ %s を含めることはできません"
 
 #: resources.h:608
-#, fuzzy
 msgid "Paths"
 msgstr "パス"
 
@@ -4472,7 +4449,7 @@ msgstr ""
 "生のFTPコマンドを入力してください.\n"
 "生のftpコマンドを使うことによりディレクトリのキャッシュを消せるでしょう."
 
-#: ../../locales/../src/interface/LocalListView.cpp:1308
+#: ../../locales/../src/interface/LocalListView.cpp:1303
 #: ../../locales/../src/interface/LocalTreeView.cpp:1313
 #: ../../locales/../src/interface/RemoteListView.cpp:1430
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1257
@@ -4649,8 +4626,8 @@ msgstr ""
 msgid "Position of the message log:"
 msgstr "メッセージログの位置:"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1749
-#: ../../locales/../src/interface/sitemanager.cpp:1968
+#: ../../locales/../src/interface/sitemanager.cpp:1755
+#: ../../locales/../src/interface/sitemanager.cpp:1974
 msgid "Predefined Sites"
 msgstr "所定のサイト"
 
@@ -4668,7 +4645,7 @@ msgstr "プライマリ接続とデータ接続証明は一致しません."
 
 #: resources.h:174
 msgid "Prioritize directories (default)"
-msgstr "ディレクトリを先頭に （標準）"
+msgstr "ディレクトリを優先（標準）"
 
 #: ../../locales/../src/interface/queue.cpp:1155
 msgid "Priority"
@@ -4692,7 +4669,7 @@ msgstr "キューを処理する(&Q)"
 
 #: resources.h:564
 msgid "Proxy &port:"
-msgstr "プロキシ ポート (&P):"
+msgstr "プロキシ ポート(&P):"
 
 #: resources.h:285 resources.h:565
 msgid "Proxy &user:"
@@ -4774,7 +4751,7 @@ msgstr "システムを再起動(&e)"
 
 #: resources.h:650
 msgid "R&emote directory tree"
-msgstr "リモート ディレクトリツリー (&E)"
+msgstr "リモート ディレクトリツリー(&E)"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:690
 msgid "Raw FTP command"
@@ -4848,7 +4825,7 @@ msgstr "不適切なアドレスへの出力先変更"
 
 #: resources.h:829 resources.h:830
 msgid "Refresh the file and folder lists"
-msgstr "ファイルとフォルダの一覧を一新する"
+msgstr "ファイルとフォルダの一覧を更新する"
 
 #: ../../locales/../src/interface/edithandler.cpp:1132
 msgid "Remote"
@@ -4869,6 +4846,33 @@ msgstr "リモートフィルタ:"
 #: ../../locales/../src/interface/edithandler.cpp:1123
 msgid "Remote path"
 msgstr "リモート パス"
+
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:400
+#, fuzzy, c-format
+msgid ""
+"Remote path cannot be parsed. Make sure it is a valid absolute path and is "
+"supported by the current site's servertype (%s)."
+msgstr ""
+"デフォルトリモートパスが解釈できませんでした. 入力されたものが正しいか, サー"
+"バ種類が正しく選択されているかを確認してください."
+
+#: ../../locales/../src/interface/sitemanager.cpp:1057
+#, fuzzy, c-format
+msgid ""
+"Remote path cannot be parsed. Make sure it is a valid absolute path and is "
+"supported by the servertype (%s) selected on the parent site."
+msgstr ""
+"標準のリモートパスを解釈できませんでした. パスおよびサーバタイプが正しく設定"
+"されていることを確認してください."
+
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:402
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:406
+#: ../../locales/../src/interface/sitemanager.cpp:1059
+#, fuzzy
+msgid "Remote path cannot be parsed. Make sure it is a valid absolute path."
+msgstr ""
+"デフォルトリモートパスが解釈できませんでした. 入力されたものが正しいか, サー"
+"バ種類が正しく選択されているかを確認してください."
 
 #: ../../locales/../src/interface/manual_transfer.cpp:348
 msgid "Remote path could not be parsed."
@@ -4907,14 +4911,14 @@ msgid "Rename selected files and directories"
 msgstr "選択されたファイルとディレクトリの名前を変更"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3395
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2509
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2515
 #, c-format
 msgid "Renaming '%s' to '%s'"
 msgstr " '%s' の名前を '%s' に変更しています"
 
 #: resources.h:434 resources.h:457
 msgid "Res&ume"
-msgstr "リジューム (続きから転送) (&u)"
+msgstr "リジューム (続きから転送)(&u)"
 
 #: resources.h:733 resources.h:736
 msgid "Reset and requeue selected files"
@@ -4946,7 +4950,7 @@ msgstr ""
 "使っている場合に問題が発生する可能性があります."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1211
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:904
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:910
 msgid "Retrieving directory listing..."
 msgstr "ディレクトリ一覧を読み出しています..."
 
@@ -4966,7 +4970,7 @@ msgstr "システムのシャットダウン(&h)"
 
 #: resources.h:426 resources.h:450
 msgid "S&kip"
-msgstr "スキップ (転送しない) (&k)"
+msgstr "スキップ (転送しない)(&k)"
 
 #: ../../locales/../src/interface/settingsdialog.cpp:117
 msgid "SFTP"
@@ -5007,8 +5011,7 @@ msgstr "テーマの選択"
 #: resources.h:441
 msgid ""
 "Select default action to perform if target file of a transfer already exists."
-msgstr ""
-"転送対象のファイルがすでに存在するとき行うべき標準動作を選択して下さい."
+msgstr "転送対象のファイルがすでに存在していた時の動作を選択してください."
 
 #: ../../locales/../src/interface/optionspage_edit.cpp:163
 msgid "Select default editor"
@@ -5019,8 +5022,8 @@ msgid ""
 "Select default file exists action if the target file already exists. This "
 "selection is valid only for the current session."
 msgstr ""
-"対象がすでに存在している時の標準となるファイル存在時の動作を選んでください. "
-"この選択は現在のセッションにおいてのみ適切です."
+"転送対象のファイルがすでに存在していた時の動作を選択してください. この選択は"
+"現在のセッションにおいてのみ有効です."
 
 #: ../../locales/../src/interface/defaultfileexistsdlg.cpp:16
 msgid ""
@@ -5051,7 +5054,7 @@ msgid "Select file for exported settings"
 msgstr "書き出した設定ファイルを選択して下さい"
 
 #: ../../locales/../src/interface/export.cpp:32
-#: ../../locales/../src/interface/sitemanager.cpp:2495
+#: ../../locales/../src/interface/sitemanager.cpp:2501
 msgid "Select file for exported sites"
 msgstr "エクスポートされたサイトのファイルを選択"
 
@@ -5107,7 +5110,7 @@ msgstr "%s と %s を選択. 合計サイズ: 少なくとも %s"
 msgid "Selected editor does not exist"
 msgstr "選択されたエディタは存在しません"
 
-#: resources.h:502 ../../locales/../src/interface/LocalListView.cpp:2193
+#: resources.h:502 ../../locales/../src/interface/LocalListView.cpp:2188
 msgid "Selected file already being edited"
 msgstr "選択されたファイルはすでに編集中です"
 
@@ -5142,6 +5145,9 @@ msgid ""
 "Selected global bookmark and current server use a different server type.\n"
 "Use site-specific bookmarks for this server."
 msgstr ""
+"選択されたグローバルブックマークと現在のサーバは異なるサーバ種類を使用してい"
+"ます.\n"
+"このサーバでは サイト別 ブックマーク を使用してください."
 
 #: ../../locales/../src/engine/engineprivate.cpp:281
 msgid "Selected port usually in use by a different protocol."
@@ -5149,7 +5155,7 @@ msgstr "選択されたポートは通常違うプロトコルによって利用
 
 #: resources.h:524
 msgid "Send FTP &keep-alive commands"
-msgstr "FTPのキープアライブコマンドを送る (&K)"
+msgstr "FTPのキープアライブコマンドを送る(&K)"
 
 #: resources.h:666
 msgid "Send custom command to the server otherwise not available"
@@ -5210,7 +5216,7 @@ msgstr ""
 "サーバにはアカウントが必要なのかもしれません. サイトマネージャを使ってアカウ"
 "ントを指定して下さい."
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:623
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:629
 msgid ""
 "Server sent an additional login prompt. You need to use the interactive "
 "login type."
@@ -5269,7 +5275,7 @@ msgid "Set &Priority"
 msgstr "優先度の設定(&P)"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3547
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2387
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2393
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
 msgstr "'%s'のパーミッションを'%s'に設定"
@@ -5284,7 +5290,7 @@ msgstr "設定"
 
 #: resources.h:258
 msgid "Show &raw directory listing"
-msgstr "そのままのディレクトリ一覧を見せる (&R)"
+msgstr "そのままのディレクトリ一覧を表示(&R)"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:2442
 msgid "Show both directory trees and continue comparing?"
@@ -5310,36 +5316,39 @@ msgstr "サイトマネージャ"
 msgid "Site Manager already open"
 msgstr "サイトマネージャはすでに開いています"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2408
-#: ../../locales/../src/interface/sitemanager.cpp:2426
-#: ../../locales/../src/interface/sitemanager.cpp:2440
-#: ../../locales/../src/interface/sitemanager.cpp:2822
-#: ../../locales/../src/interface/sitemanager.cpp:2898
+#: ../../locales/../src/interface/sitemanager.cpp:2414
+#: ../../locales/../src/interface/sitemanager.cpp:2432
+#: ../../locales/../src/interface/sitemanager.cpp:2446
+#: ../../locales/../src/interface/sitemanager.cpp:2828
+#: ../../locales/../src/interface/sitemanager.cpp:2904
 msgid "Site does not exist."
 msgstr "サイトは存在しません."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2388
+#: ../../locales/../src/interface/sitemanager.cpp:2394
 msgid "Site path has to begin with 0 or 1."
 msgstr "サイトパスは 0 か 1 で始まっている必要があります."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2433
-#: ../../locales/../src/interface/sitemanager.cpp:2600
-#: ../../locales/../src/interface/sitemanager.cpp:2815
-#: ../../locales/../src/interface/sitemanager.cpp:2891
+#: ../../locales/../src/interface/sitemanager.cpp:2439
+#: ../../locales/../src/interface/sitemanager.cpp:2606
+#: ../../locales/../src/interface/sitemanager.cpp:2821
+#: ../../locales/../src/interface/sitemanager.cpp:2897
 msgid "Site path is malformed."
-msgstr ""
+msgstr "サイトパスが不正です."
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:237
 msgid "Site-specific bookmarks"
-msgstr ""
+msgstr "サイト別 ブックマーク"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:83
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:494
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:504
 msgid ""
 "Site-specific bookmarks require the server to be stored in the Site "
 "Manager.\n"
 "Add current connection to the site manager?"
 msgstr ""
+"サイト別 ブックマーク を利用するには、サーバが サイトマネージャ に登録されて"
+"いる必要があります.\n"
+"現在の接続を サイトマネージャ に追加しますか？"
 
 #: ../../locales/../src/interface/queue.cpp:1154
 msgid "Size"
@@ -5356,7 +5365,7 @@ msgstr "サイズ不明"
 
 #: resources.h:436 resources.h:459
 msgid "Sk&ip"
-msgstr "スキップ (転送しない) (&i)"
+msgstr "スキップ (転送しない)(&i)"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:1198
 #: ../../locales/../src/engine/ControlSocket.cpp:1217
@@ -5388,7 +5397,7 @@ msgstr ""
 
 #: resources.h:176
 msgid "Sort directories inline"
-msgstr "ディレクトリの中もソートする"
+msgstr "ディレクトリも含めてソートする"
 
 #: ../../locales/../src/interface/filelistctrl.cpp:376
 msgid "Sort order cannot be changed if comparing directories."
@@ -5396,7 +5405,7 @@ msgstr "ディレクトリ比較中はソート順を変更することができ
 
 #: resources.h:173
 msgid "Sorting &mode:"
-msgstr "並べ換え方法 (&M):"
+msgstr "並べ換え方法(&M):"
 
 #: ../../locales/../src/interface/RemoteTreeView.cpp:97
 msgid "Source and path of the drop operation are identical"
@@ -5427,13 +5436,13 @@ msgid "Start with opened Site Manager"
 msgstr "サイトマネージャを開いた状態で起動"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2134
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1575
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1581
 #, c-format
 msgid "Starting download of %s"
 msgstr "%sのダウンロードを始めています"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2138
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1579
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1585
 #, c-format
 msgid "Starting upload of %s"
 msgstr "%sのアップロードを始めています"
@@ -5585,8 +5594,8 @@ msgstr ""
 msgid "The file '%s' could not be loaded or does not contain a private key."
 msgstr "ファイル '%s' を開けないか, 正しい秘密鍵ではありません."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2180
-#: ../../locales/../src/interface/LocalListView.cpp:2273
+#: ../../locales/../src/interface/LocalListView.cpp:2175
+#: ../../locales/../src/interface/LocalListView.cpp:2268
 #, c-format
 msgid ""
 "The file '%s' could not be opened:\n"
@@ -5595,8 +5604,8 @@ msgstr ""
 "ファイル '%s' を開けませんでした:\n"
 "あなたのシステムではこのファイルタイプにプログラムが関連付けられていません."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2209
-#: ../../locales/../src/interface/LocalListView.cpp:2280
+#: ../../locales/../src/interface/LocalListView.cpp:2204
+#: ../../locales/../src/interface/LocalListView.cpp:2275
 #, c-format
 msgid ""
 "The file '%s' could not be opened:\n"
@@ -5835,7 +5844,7 @@ msgstr "時刻書式"
 
 #: resources.h:57
 msgid "Time&out in seconds:"
-msgstr "タイムアウト時間 (&o) :"
+msgstr "タイムアウト時間(&o) :"
 
 #: resources.h:56 ../../locales/../src/interface/QueueView.cpp:963
 #: ../../locales/../src/interface/QueueView.cpp:1007
@@ -5843,7 +5852,7 @@ msgid "Timeout"
 msgstr "タイムアウト"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1593
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1021
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1027
 #, c-format
 msgid ""
 "Timezone offsets: Server: %d seconds. Local: %d seconds. Difference: %d "
@@ -5918,9 +5927,6 @@ msgid "Too many redirects"
 msgstr "リダイレクトが多すぎる"
 
 #: ../../locales/../src/engine/logging.cpp:210
-msgid "Trace"
-msgstr "トレース"
-
 #: ../../locales/../src/interface/StatusView.cpp:286
 #: ../../locales/../src/interface/StatusView.cpp:349
 msgid "Trace:"
@@ -5932,7 +5938,7 @@ msgstr "転送方向(&D)"
 
 #: resources.h:655
 msgid "Transfer &type"
-msgstr "転送モード (&T)"
+msgstr "転送モード(&T)"
 
 #: resources.h:518
 msgid "Transfer Mode"
@@ -5967,17 +5973,17 @@ msgstr "転送"
 
 #: resources.h:162
 msgid "Treat files &without extension as ASCII file"
-msgstr "拡張子無しのファイルをアスキーファイルとして扱う (&w)"
+msgstr "拡張子無しのファイルをアスキーファイルとして扱う(&w)"
 
 #: resources.h:158
 msgid "Treat the &following filetypes as ASCII files:"
 msgstr "以下の拡張子のファイルをアスキーファイルとして扱う(&f)"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:824
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:830
 msgid "Trust changed Hostkey: "
 msgstr "変更されたホスト鍵を信用する:"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:822
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:828
 msgid "Trust new Hostkey: "
 msgstr "新しいホスト鍵を信用する:"
 
@@ -6216,9 +6222,7 @@ msgstr "プロキシ %s を使います"
 #: resources.h:132
 msgid ""
 "Using the wrong charset can result in filenames not displaying properly."
-msgstr ""
-"間違った文字セットを使っていれば結果としてファイル名におけるプロパティの表示"
-"はできません."
+msgstr "間違った文字セットを設定するとファイル名が正しく表示されません."
 
 #: resources.h:396
 msgid "Using this wizard you can check for available updates to FileZilla."
@@ -6352,7 +6356,7 @@ msgstr "間違った外部IPアドレス"
 msgid "Wrong line endings"
 msgstr "間違った改行"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:835
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:841
 msgid "Yes"
 msgstr "はい"
 
@@ -6408,9 +6412,8 @@ msgstr ""
 "転送データを誤って変更したルータもしくはファイアウォールがあるようです."
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:52
-#, fuzzy
 msgid "You need to enter a name for the bookmark."
-msgstr "ログファイルの名前を入力する必要があります."
+msgstr "ブックマークの名前を入力する必要があります."
 
 #: ../../locales/../src/interface/optionspage_logging.cpp:67
 msgid "You need to enter a name for the log file."
@@ -6426,10 +6429,12 @@ msgid "You need to enter a proxy port in the range from 1 to 65535"
 msgstr "プロキシポートには 1 から 65535 までの値を入力する必要があります"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:73
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:406
-#: ../../locales/../src/interface/sitemanager.cpp:1065
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:416
+#: ../../locales/../src/interface/sitemanager.cpp:1070
 msgid "You need to enter at least one path, empty bookmarks are not supported."
 msgstr ""
+"少なくとも一つのパスを入力する必要があります. 空のブックマークはサポートされ"
+"ていません."
 
 #: ../../locales/../src/interface/manual_transfer.cpp:314
 msgid "You need to specify a local file."
@@ -6498,7 +6503,7 @@ msgstr ""
 "この実行ファイルが FileZilla の実行ファイルと同じディレクトリにあることを確認"
 "してください."
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1500
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1506
 msgid "fzsftp could not be started"
 msgstr "fzsftp を起動できませんでした"
 
@@ -6570,8 +6575,14 @@ msgstr "誰でも読み取り可能"
 msgid "world writeable"
 msgstr "誰でも書き込み可能"
 
+#~ msgid "&Local path:"
+#~ msgstr "ローカル パス(&L):"
+
+#~ msgid "Trace"
+#~ msgstr "トレース"
+
 #~ msgid "&Finish editing"
-#~ msgstr "編集を終了 (&F)"
+#~ msgstr "編集を終了(&F)"
 
 #~ msgid "D&iscard"
 #~ msgstr "破棄する(&i)"
