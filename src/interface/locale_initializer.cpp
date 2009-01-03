@@ -96,7 +96,7 @@ bool CInitializer::SetLocaleReal(const std::string& locale)
 #else
 	std::string str("LC_ALL=");
 	str += locale;
-	putenv(str.c_ctr());
+	putenv(str.c_str());
 #endif
 	return true;
 }
