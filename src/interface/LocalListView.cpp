@@ -445,9 +445,6 @@ wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix, int format, b
 {
 	if (!format)
 	{
-		if (!thousands_separator)
-			return size.ToString();
-
 		static wxString sep;
 		static bool separator_initialized = false;
 		if (!separator_initialized)
@@ -470,12 +467,10 @@ wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix, int format, b
 			}
 #endif
 		}
-		if (sep.empty())
-			return size.ToString();
 
 		wxString tmp = size.ToString();
 		const int len = tmp.Len();
-		if (len <= 3)
+		if (len <= 3 || !thousands_separator || sep.empty())
 		{
 			if (!add_bytes_suffix)
 				return tmp;
