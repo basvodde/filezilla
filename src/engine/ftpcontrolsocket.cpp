@@ -668,6 +668,7 @@ bool CFtpControlSocket::GetLoginSequence(const CServer& server)
 			token.Replace(_T("%w"), proxyPass);
 			token.Replace(_T("%h"), host);
 			token.Replace(_T("%u"), user);
+			token.Replace(_T("%a"), account);
 			// Pass will be replaced before sending to cope with interactve login
 
 			if (!password)
