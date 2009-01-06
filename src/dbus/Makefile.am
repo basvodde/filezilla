@@ -12,6 +12,7 @@ libfzdbus_a_SOURCES = \
 		wxdbusmessage.cpp \
 		session_manager.cpp
 
-noinst_HEADERS = wxdbusconnection.h \
+noinst_HEADERS = session_manager.h \
+		wxdbusconnection.h \
 		wxdbusmessage.h
 
