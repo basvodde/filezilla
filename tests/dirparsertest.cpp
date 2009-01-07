@@ -1484,6 +1484,28 @@ void CDirectoryListingParserTest::InitEntries()
 			DEFAULT
 		});
 
+	// Yet another MVS format.
+	// Follows the below structure but with all but the first two and the last field empty.
+	// Furthermore, Unit is "Tape"
+	// Volume Unit    Referred Ext Used Recfm Lrecl BlkSz Dsorg Dsname
+	m_entries.push_back((t_entry) {
+			"V43525 Tape                                             73-MSV-TAPE.FILE",
+			{
+				_T("73-MSV-TAPE.FILE"),
+				-1,
+				_T(""),
+				_T(""),
+				false,
+				false,
+				_T(""),
+				false,
+				false,
+				wxDateTime(),
+				false
+			},
+			MVS
+		});
+
 /*
 	wxString name;
 	wxLongLong size;
