@@ -1,7 +1,7 @@
 # This file is distributed under the same license as the PACKAGE package.
 # Milen A. Radev <milen@radev.net>, 2005
-# Asen Genov, 07.2008
-# Стоян Димитров <stoyanster от gмаил>, Last updated: 16.12.2008
+# Асен Генов, 07.2008
+# Стоян Димитров <stoyanster от гмаил>, Last updated: 06.01.2009
 # #TODO
 # #could not -> от "неуспешно" да стане "невъзможно"
 # #cannot -> от "грешка" да стане "не може"
@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-30 19:54+0100\n"
+"POT-Creation-Date: 2009-01-07 17:36+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Stoyan Dimtirov\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
@@ -109,8 +109,8 @@ msgstr "%s и %s. Обща дължина: %s"
 msgid "%s and %s. Total size: At least %s"
 msgstr "%s и %s. Обща дължина: най-малко %s"
 
-#: ../../locales/../src/interface/LocalListView.cpp:485
-#: ../../locales/../src/interface/LocalListView.cpp:502
+#: ../../locales/../src/interface/LocalListView.cpp:480
+#: ../../locales/../src/interface/LocalListView.cpp:497
 #, c-format
 msgid "%s byte"
 msgid_plural "%s bytes"
@@ -204,7 +204,7 @@ msgstr "&Активен"
 
 #: resources.h:669
 msgid "&Add bookmark..."
-msgstr ""
+msgstr "&Добавяне на отметка"
 
 #: resources.h:681 resources.h:695
 msgid "&Add files to queue"
@@ -264,7 +264,7 @@ msgstr "&Двоичен суфикс по SI (пример 1 KB = 1024 bytes)"
 
 #: resources.h:668
 msgid "&Bookmarks"
-msgstr ""
+msgstr "&Отметки"
 
 #: resources.h:113 resources.h:242 resources.h:260 resources.h:573
 #: resources.h:610 resources.h:615
@@ -416,9 +416,13 @@ msgstr "&Отстъпване до активен режим"
 msgid "&File"
 msgstr "&Файл"
 
-#: resources.h:704 resources.h:748
+#: resources.h:748
 msgid "&File Attributes..."
 msgstr "&Атрибути..."
+
+#: resources.h:704
+msgid "&File permissions..."
+msgstr "Права на &файл"
 
 #: resources.h:572
 msgid "&File:"
@@ -446,7 +450,7 @@ msgstr "&Получаване помощ"
 
 #: resources.h:604
 msgid "&Global bookmark"
-msgstr ""
+msgstr "&Глобална отметка"
 
 #: resources.h:561
 msgid "&HTTP/1.1 using CONNECT method"
@@ -500,15 +504,9 @@ msgstr "Ограничаване броя &едновременни връзки
 msgid "&Local directory tree"
 msgstr "&Местни папки"
 
-#: resources.h:609
-#, fuzzy
+#: resources.h:609 resources.h:614
 msgid "&Local directory:"
-msgstr "&Местни папки"
-
-#: resources.h:614
-#, fuzzy
-msgid "&Local path:"
-msgstr "Местни:"
+msgstr "&Местна папка:"
 
 #: resources.h:240
 msgid "&Log to file"
@@ -523,9 +521,8 @@ msgid "&Low"
 msgstr "&Нисък"
 
 #: resources.h:670
-#, fuzzy
 msgid "&Manage bookmarks..."
-msgstr "М&анипулатор връзки"
+msgstr "М&анипулатор отметки"
 
 #: resources.h:660
 msgid "&Manual transfer..."
@@ -544,9 +541,8 @@ msgid "&Message log"
 msgstr "&Дневник"
 
 #: resources.h:607
-#, fuzzy
 msgid "&Name:"
-msgstr "Име:"
+msgstr "&Наименование:"
 
 #: resources.h:637
 msgid "&Network configuration wizard..."
@@ -648,12 +644,11 @@ msgstr "&Опресняване"
 msgid "&Remember password for this session"
 msgstr "&Запомняне на паролата за текущата сесия"
 
-#: resources.h:611
-#, fuzzy
+#: resources.h:611 resources.h:616
 msgid "&Remote directory:"
-msgstr "&Нова папка"
+msgstr "&Отдалечена папка:"
 
-#: resources.h:575 resources.h:616
+#: resources.h:575
 msgid "&Remote path:"
 msgstr "О&тдалечен път:"
 
@@ -756,7 +751,7 @@ msgstr "М&анипулатор връзки"
 
 #: resources.h:605
 msgid "&Site-specific bookmark"
-msgstr ""
+msgstr "Отметка към &връзка"
 
 #: resources.h:86
 msgid "&Skip"
@@ -957,7 +952,7 @@ msgstr "3 - Подробна"
 msgid "4 - Debug"
 msgstr "4 - Трасираща"
 
-#: ../../locales/../src/engine/directorylistingparser.cpp:1605
+#: ../../locales/../src/engine/directorylistingparser.cpp:1608
 msgid ";1"
 msgstr ";1"
 
@@ -966,12 +961,9 @@ msgid "?"
 msgstr "?"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:98
-#, fuzzy
 msgid ""
 "A bookmark with the entered name already exists. Please enter an unused name."
-msgstr ""
-"Файл с име %s вече съществува.\n"
-"Моля, въведете ново име:"
+msgstr "Отметка с въведеното име вече съществува. Моля, въведете ново име."
 
 #: ../../locales/../src/interface/optionspage_edit.cpp:122
 msgid "A default editor needs to be set."
@@ -996,14 +988,14 @@ msgstr ""
 msgid "A file previously opened has been changed."
 msgstr "Вече отварян файл е бил променен."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2193
+#: ../../locales/../src/interface/LocalListView.cpp:2188
 #, c-format
 msgid ""
 "A file with that name is already being edited. Do you want to reopen '%s'?"
 msgstr ""
 "Файл с това име се редактира в момента. Искате ли да отворите отново \"%s\"?"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2189
+#: ../../locales/../src/interface/LocalListView.cpp:2184
 #: ../../locales/../src/interface/RemoteListView.cpp:2496
 msgid "A file with that name is already being transferred."
 msgstr "Файл със същото име вече е бил прехвърлен."
@@ -1097,8 +1089,8 @@ msgstr "Над панела с файлове и папки"
 #: ../../locales/../src/interface/manual_transfer.cpp:192
 #: ../../locales/../src/interface/manual_transfer.cpp:548
 #: ../../locales/../src/interface/manual_transfer.cpp:549
-#: ../../locales/../src/interface/sitemanager.cpp:1237
-#: ../../locales/../src/interface/sitemanager.cpp:1238
+#: ../../locales/../src/interface/sitemanager.cpp:1243
+#: ../../locales/../src/interface/sitemanager.cpp:1244
 msgid "Account"
 msgstr "Регистрация"
 
@@ -1221,7 +1213,7 @@ msgstr ""
 "Или посетете http://filezilla-project.org/, за да изтеглите най-новата "
 "версия."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2141
+#: ../../locales/../src/interface/sitemanager.cpp:2147
 msgid ""
 "An item with the same name as the dragged item already exists at the target "
 "location."
@@ -1232,8 +1224,8 @@ msgstr "Елемент със същото име като влачения ве
 #: ../../locales/../src/interface/manual_transfer.cpp:195
 #: ../../locales/../src/interface/manual_transfer.cpp:211
 #: ../../locales/../src/interface/manual_transfer.cpp:547
-#: ../../locales/../src/interface/sitemanager.cpp:1236
-#: ../../locales/../src/interface/sitemanager.cpp:1471
+#: ../../locales/../src/interface/sitemanager.cpp:1242
+#: ../../locales/../src/interface/sitemanager.cpp:1477
 msgid "Anonymous"
 msgstr "Анонимно"
 
@@ -1296,7 +1288,7 @@ msgstr "Всичката необходима информация е събра
 msgid "Attribute"
 msgstr "Атрибут"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:621
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:627
 msgid "Authentication failed."
 msgstr "Неуспешно удостоверяване."
 
@@ -1341,15 +1333,15 @@ msgstr "Черна дъска"
 #: ../../locales/../src/interface/Mainfrm.cpp:993
 #: ../../locales/../src/interface/sitemanager.cpp:365
 msgid "Bookmark"
-msgstr ""
+msgstr "Отметка"
 
 #: resources.h:618
 msgid "Bookmark:"
-msgstr ""
+msgstr "Отметка:"
 
 #: resources.h:617
 msgid "Bookmarks"
-msgstr ""
+msgstr "Отметки"
 
 #: ../../locales/../src/interface/state.cpp:292
 msgid "Break current connection?"
@@ -1393,16 +1385,16 @@ msgstr "По&требителски"
 msgid "C&ustom filetype associations:"
 msgstr "&Потребителски файлови асоциации:"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1414
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1420
 msgid "CSftpControlSocket::ChangeDirSend()"
 msgstr "CSftpControlSocket::ChangeDirSend()"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1407
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1413
 msgid "CSftpControlSocket::ChangeDirSubcommandResult()"
 msgstr "CSftpControlSocket::ChangeDirSubcommandResult()"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1539
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1212
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1540
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1218
 msgid "Calculating timezone offset of server..."
 msgstr "Изчисляване часовата разлика със сървъра..."
 
@@ -1496,8 +1488,8 @@ msgstr "Грешка при зареждане на главното меню о
 msgid "Cannot load toolbar from resource file"
 msgstr "Грешка при зареждане на лента с инструменти от ресурсен файл"
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:661
-#: ../../locales/../src/interface/sitemanager.cpp:1138
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:672
+#: ../../locales/../src/interface/sitemanager.cpp:1143
 msgid "Cannot rename entry"
 msgstr "Грешка при преименуване на запис"
 
@@ -1518,7 +1510,7 @@ msgstr "Неуспешен избор на филтър"
 msgid "Cannot show dialog"
 msgstr "Невъзможно показване на диалог"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2189
+#: ../../locales/../src/interface/LocalListView.cpp:2184
 #: ../../locales/../src/interface/RemoteListView.cpp:2496
 msgid "Cannot view / edit selected file"
 msgstr "Невъзможност за преглед/редакция на избрания файл"
@@ -1592,16 +1584,15 @@ msgstr "Проверка за правилен външен IP адрес"
 msgid "Checking for updates"
 msgstr "Проверяване за актуализации"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1401
+#: ../../locales/../src/interface/sitemanager.cpp:1407
 msgid "Choose the default local directory"
 msgstr "Избор на местна папка по подразбиране"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:120
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:348
-#: ../../locales/../src/interface/sitemanager.cpp:2532
-#, fuzzy
+#: ../../locales/../src/interface/sitemanager.cpp:2538
 msgid "Choose the local directory"
-msgstr "Избор на местна папка по подразбиране"
+msgstr "Избор на местна папка"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:778
 msgid "Chunk data improperly terminated"
@@ -1799,7 +1790,7 @@ msgstr "Свързване прескачайки прокси настройк�
 msgid "Connect to specified Site Manager site"
 msgstr "Свързване към определена връзка от Манипулатор връзки"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:937
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:938
 msgid "Connected"
 msgstr "Връзката осъществена"
 
@@ -1920,14 +1911,14 @@ msgstr "Превъщане на файл-ключ"
 msgid "Cop&y"
 msgstr "&Копиране"
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:599
-#: ../../locales/../src/interface/sitemanager.cpp:1695
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:610
+#: ../../locales/../src/interface/sitemanager.cpp:1701
 #, c-format
 msgid "Copy (%d) of %s"
 msgstr "Копиране (%d) на %s"
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:576
-#: ../../locales/../src/interface/sitemanager.cpp:1672
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:587
+#: ../../locales/../src/interface/sitemanager.cpp:1678
 #, c-format
 msgid "Copy of %s"
 msgstr "Копиране на %s"
@@ -1938,10 +1929,9 @@ msgid "Could not accept connection: %s"
 msgstr "Неуспешно приемане на връзка: %s"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:89
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:500
-#, fuzzy
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:510
 msgid "Could not add connection to Site Manager"
-msgstr "&Запис текуща връзка"
+msgstr "Невъзможно добавянето на връзката към Манипулатор връзки"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:127
 msgid "Could not connect to server"
@@ -1952,7 +1942,7 @@ msgstr "Неуспешно свързване със сървър"
 msgid "Could not connect to server: %s"
 msgstr "Неуспешно свързване със сървър: %s"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:774
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:780
 msgid "Could not convert command to server encoding"
 msgstr "Неуспешно преобразуване на командата към кодировката на сървъра"
 
@@ -1972,7 +1962,7 @@ msgstr ""
 "Или разширението на обвивката не е инсталирано правилно, или не сте пуснали "
 "файловете в прозорец на Explorer."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4115
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4116
 msgid "Could not establish connection to server"
 msgstr "Неуспешно свързване със сървър"
 
@@ -1989,7 +1979,7 @@ msgstr ""
 "командния ред \"--datadir <път>\" или чрез установяване на променливата от "
 "средата FZ_DATADIR."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:710
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:711
 msgid "Could not generate custom login sequence."
 msgstr "Невъзможно съставянето на специална входна последователност."
 
@@ -2039,18 +2029,18 @@ msgstr ""
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:153
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:270
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:679
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:721
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:763
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:690
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:732
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:774
 #: ../../locales/../src/interface/import.cpp:111
 #: ../../locales/../src/interface/import.cpp:302
 #: ../../locales/../src/interface/sitemanager.cpp:631
-#: ../../locales/../src/interface/sitemanager.cpp:1928
-#: ../../locales/../src/interface/sitemanager.cpp:2417
-#: ../../locales/../src/interface/sitemanager.cpp:2587
-#: ../../locales/../src/interface/sitemanager.cpp:2685
-#: ../../locales/../src/interface/sitemanager.cpp:2802
-#: ../../locales/../src/interface/sitemanager.cpp:2878
+#: ../../locales/../src/interface/sitemanager.cpp:1934
+#: ../../locales/../src/interface/sitemanager.cpp:2423
+#: ../../locales/../src/interface/sitemanager.cpp:2593
+#: ../../locales/../src/interface/sitemanager.cpp:2691
+#: ../../locales/../src/interface/sitemanager.cpp:2808
+#: ../../locales/../src/interface/sitemanager.cpp:2884
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -2088,9 +2078,8 @@ msgid "Could not open log file: %s"
 msgstr "Невъзможно отварянето на файл-дневник: %s"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:66
-#, fuzzy
 msgid "Could not parse remote path."
-msgstr "Неуспешно разпознат адрес на сървър:"
+msgstr "Неуспешно разпознат отдалечен път."
 
 #: ../../locales/../src/interface/quickconnectbar.cpp:86
 msgid "Could not parse server address:"
@@ -2101,17 +2090,16 @@ msgstr "Неуспешно разпознат адрес на сървър:"
 msgid "Could not read from socket: %s"
 msgstr "Неуспешно прочитане на сокет: %s"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2457
-#, fuzzy
+#: ../../locales/../src/interface/sitemanager.cpp:2463
 msgid "Could not read server item."
-msgstr "Неуспешно разпознат адрес на сървър:"
+msgstr "Невъзможно прочитане на елемент от отговора на сървъра."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2608
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2609
 #, c-format
 msgid "Could not seek to offset %s within file"
 msgstr "Неуспешно придвижване до отместване %s във файл"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2539
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2540
 msgid "Could not seek to the end of the file"
 msgstr "Неуспешно придвижване в края на файла"
 
@@ -2119,7 +2107,7 @@ msgstr "Неуспешно придвижване в края на файла"
 msgid "Could not send command to fzputtygen."
 msgstr "Неуспешна команда към fzputtygen."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2628
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2629
 msgid "Could not spawn IO thread"
 msgstr "Неуспешно стартирането на входно-изходна нишка"
 
@@ -2134,7 +2122,7 @@ msgid "Could not start transfer"
 msgstr "Неуспешно започване на прехвърляне"
 
 #: ../../locales/../src/interface/sitemanager.cpp:802
-#: ../../locales/../src/interface/sitemanager.cpp:2737
+#: ../../locales/../src/interface/sitemanager.cpp:2743
 #, c-format
 msgid ""
 "Could not write \"%s\", any changes to the Site Manager could not be saved: %"
@@ -2158,10 +2146,10 @@ msgstr ""
 "%s"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:300
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:791
-#: ../../locales/../src/interface/sitemanager.cpp:2513
-#: ../../locales/../src/interface/sitemanager.cpp:2853
-#: ../../locales/../src/interface/sitemanager.cpp:2912
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:802
+#: ../../locales/../src/interface/sitemanager.cpp:2519
+#: ../../locales/../src/interface/sitemanager.cpp:2859
+#: ../../locales/../src/interface/sitemanager.cpp:2918
 #, c-format
 msgid "Could not write \"%s\", the selected sites could not be exported: %s"
 msgstr ""
@@ -2208,7 +2196,7 @@ msgstr ""
 msgid "Create a new subdirectory in the current directory"
 msgstr "Създаване нова подпапка в текущата папка"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1308
+#: ../../locales/../src/interface/LocalListView.cpp:1303
 #: ../../locales/../src/interface/LocalTreeView.cpp:1313
 #: ../../locales/../src/interface/RemoteListView.cpp:1430
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1257
@@ -2219,8 +2207,8 @@ msgstr "Нова папка"
 msgid "Creating directory"
 msgstr "Създаване на нова папка"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3164
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1999
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3165
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2005
 #, c-format
 msgid "Creating directory '%s'..."
 msgstr "Създаване на нова папка \"%s\"..."
@@ -2341,16 +2329,6 @@ msgstr ""
 "Отдалеченият път не може да бъде разпознат. Уверете се, че е валиден и "
 "поддържан от избрания тип сървър."
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:396
-#: ../../locales/../src/interface/sitemanager.cpp:1055
-#, fuzzy
-msgid ""
-"Default remote path cannot be parsed. Make sure it is valid and is supported "
-"by the servertype selected on the parent site."
-msgstr ""
-"Отдалеченият път не може да бъде разпознат. Уверете се, че е валиден и "
-"поддържан от избрания тип сървър."
-
 #: ../../locales/../src/interface/optionspage_language.cpp:78
 msgid "Default system language"
 msgstr "Системен език по подразбиране"
@@ -2378,7 +2356,7 @@ msgstr ""
 msgid "Delaying connection due to previously failed connection attempt..."
 msgstr "Забавяне на свързването поради предишни провалени опити за връзка..."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1171
+#: ../../locales/../src/interface/sitemanager.cpp:1176
 msgid "Delete Site Manager entry"
 msgstr "Изтриване"
 
@@ -2523,7 +2501,7 @@ msgstr "Наистина ли желаете да заличите Манипу�
 msgid "Do you really want to delete all Site Manager entries?"
 msgstr "Наистина ли желаете да заличите Манипулатор връзки?"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1173
+#: ../../locales/../src/interface/sitemanager.cpp:1178
 msgid "Do you really want to delete selected entry?"
 msgstr "Наистина ли желаете да изтриете този запис?"
 
@@ -2769,9 +2747,9 @@ msgstr "Неуспешен импорт"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:154
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:271
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:680
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:722
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:764
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:691
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:733
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:775
 #: ../../locales/../src/interface/filter.cpp:171
 #: ../../locales/../src/interface/filter.cpp:924
 #: ../../locales/../src/interface/import.cpp:112
@@ -2781,12 +2759,12 @@ msgstr "Неуспешен импорт"
 #: ../../locales/../src/interface/QueueView.cpp:1835
 #: ../../locales/../src/interface/sitemanager.cpp:632
 #: ../../locales/../src/interface/sitemanager.cpp:777
-#: ../../locales/../src/interface/sitemanager.cpp:1929
-#: ../../locales/../src/interface/sitemanager.cpp:2418
-#: ../../locales/../src/interface/sitemanager.cpp:2588
-#: ../../locales/../src/interface/sitemanager.cpp:2686
-#: ../../locales/../src/interface/sitemanager.cpp:2803
-#: ../../locales/../src/interface/sitemanager.cpp:2879
+#: ../../locales/../src/interface/sitemanager.cpp:1935
+#: ../../locales/../src/interface/sitemanager.cpp:2424
+#: ../../locales/../src/interface/sitemanager.cpp:2594
+#: ../../locales/../src/interface/sitemanager.cpp:2692
+#: ../../locales/../src/interface/sitemanager.cpp:2809
+#: ../../locales/../src/interface/sitemanager.cpp:2885
 #: ../../locales/../src/interface/wrapengine.cpp:925
 msgid "Error loading xml file"
 msgstr "Грешка при зареждане на XML файл"
@@ -2797,14 +2775,14 @@ msgid "Error starting program"
 msgstr "Неуспешно стартиране на програмата"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:301
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:792
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:803
 #: ../../locales/../src/interface/QueueView.cpp:1818
 #: ../../locales/../src/interface/QueueView.cpp:1854
 #: ../../locales/../src/interface/sitemanager.cpp:803
-#: ../../locales/../src/interface/sitemanager.cpp:2514
-#: ../../locales/../src/interface/sitemanager.cpp:2738
-#: ../../locales/../src/interface/sitemanager.cpp:2854
-#: ../../locales/../src/interface/sitemanager.cpp:2913
+#: ../../locales/../src/interface/sitemanager.cpp:2520
+#: ../../locales/../src/interface/sitemanager.cpp:2744
+#: ../../locales/../src/interface/sitemanager.cpp:2860
+#: ../../locales/../src/interface/sitemanager.cpp:2919
 #: ../../locales/../src/interface/wrapengine.cpp:1076
 msgid "Error writing xml file"
 msgstr "Грешка при запис на XML файл"
@@ -2858,7 +2836,7 @@ msgid "F&ilter name:"
 msgstr "&Име на филтър:"
 
 #: ../../locales/../src/interface/settingsdialog.cpp:113
-#: ../../locales/../src/interface/sitemanager.cpp:1469
+#: ../../locales/../src/interface/sitemanager.cpp:1475
 msgid "FTP"
 msgstr "FTP"
 
@@ -2894,8 +2872,8 @@ msgstr "FTPES - FTP върху явен TLS/SSL"
 msgid "FTPS - FTP over implicit TLS/SSL"
 msgstr "FTPES - FTP върху скрит TLS/SSL"
 
-#: ../../locales/../src/interface/LocalListView.cpp:712
-#: ../../locales/../src/interface/LocalListView.cpp:1423
+#: ../../locales/../src/interface/LocalListView.cpp:707
+#: ../../locales/../src/interface/LocalListView.cpp:1418
 #: ../../locales/../src/interface/LocalTreeView.cpp:878
 #: ../../locales/../src/interface/viewheader.cpp:515
 msgid "Failed to change directory"
@@ -2912,7 +2890,7 @@ msgstr "Неуспешна смяна език"
 msgid "Failed to check for newer version of FileZilla."
 msgstr "Неуспешна проверка за по-нова версия на FileZilla."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2141
+#: ../../locales/../src/interface/sitemanager.cpp:2147
 msgid "Failed to copy or move sites"
 msgstr "Неуспешно копиране или местене"
 
@@ -2924,8 +2902,8 @@ msgstr "Неуспешно създаване на резервно копие �
 msgid "Failed to create listen socket, aborting"
 msgstr "Неуспешно създаване на сокет за слушане, прекратяване"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4091
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4095
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4092
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4096
 msgid "Failed to create listening socket for active mode transfer"
 msgstr "Неуспешно създаване сокет за слушане в активен режим"
 
@@ -2956,7 +2934,7 @@ msgid "Failed to initialize FTP engine"
 msgstr "Неуспешна инициализация на FTP машината"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:410
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:779
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:780
 msgid "Failed to initialize TLS."
 msgstr "Неуспешна инициализация на TLS."
 
@@ -2969,17 +2947,17 @@ msgstr "Неуспешно заредени панели. Невалидни р�
 msgid "Failed to load private key: %s"
 msgstr "Неуспешно зареждане частен ключ: %s"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2528
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2529
 #, c-format
 msgid "Failed to open \"%s\" for appending / writing"
 msgstr "Неуспешно отваряне \"%s\" за добавяне / запис"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2592
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2593
 #, c-format
 msgid "Failed to open \"%s\" for reading"
 msgstr "Неуспешно отваряне \"%s\" за четене"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2571
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2572
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:332
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:391
 #, c-format
@@ -2998,11 +2976,11 @@ msgstr "Неуспешно разлистване папка"
 msgid "Failed to retrieve external ip address, aborting"
 msgstr "Неуспешно получаване външния IP адрес, прекратяване"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3789
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3790
 msgid "Failed to retrieve external ip address, using local address"
 msgstr "Неуспешно получаване външния IP адрес, използва се вътрешния адрес"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3811
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3812
 msgid "Failed to retrieve local ip address."
 msgstr "Неуспешно получаване вътрешния IP адрес."
 
@@ -3191,8 +3169,8 @@ msgstr "Име"
 msgid "Filename &filters..."
 msgstr "&Филтри"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2962
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2262
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2963
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2268
 #, c-format
 msgid "Filename cannot be constructed for directory %s and filename %s"
 msgstr "Файлово име не може да бъде съставено от папката %s и файловото име %s"
@@ -3209,11 +3187,11 @@ msgstr "Непроменено име на файл"
 msgid "Filename:"
 msgstr "Файлово име:"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1497
+#: ../../locales/../src/interface/LocalListView.cpp:1492
 msgid "Filenames may not contain any of the following characters: / * ? < > |"
 msgstr "Файловите имена не могат да съдържат следните знаци: / * ? < > |"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1472
+#: ../../locales/../src/interface/LocalListView.cpp:1467
 msgid ""
 "Filenames may not contain any of the following characters: / \\ : * ? \" < > "
 "|"
@@ -3345,7 +3323,7 @@ msgstr "Вече съществува набор филтри с това име
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:232
 msgid "Global bookmarks"
-msgstr ""
+msgstr "Глобални отметки"
 
 #: resources.h:297
 msgid "Group permissions"
@@ -3455,11 +3433,11 @@ msgstr ""
 #: resources.h:246
 msgid ""
 "If the size of the logfile reaches the limit, it gets renamed by adding \".1"
-"\"  to the end of the filename (possibly overwriting older logfiles) and a "
+"\" to the end of the filename (possibly overwriting older logfiles) and a "
 "new file gets created."
 msgstr ""
 "Ако размерът на файла-дневник достигне лимита, то той ще бъде преименуван "
-"като бъде добавено \".1\" в края на името (вероятно празаписвайки стар файл) "
+"като бъде добавено \".1\" в края на името, вероятно празаписвайки стар файл, "
 "и нов файл бива създаден."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:620
@@ -3637,7 +3615,7 @@ msgstr ""
 msgid "Incorrect password"
 msgstr "Грешна парола"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:769
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:770
 msgid "Initializing TLS..."
 msgstr "Инициализация на TLS..."
 
@@ -3690,8 +3668,8 @@ msgstr "Получени са невалидни данни"
 msgid "Invalid date"
 msgstr "Невалидна дата"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1472
-#: ../../locales/../src/interface/LocalListView.cpp:1497
+#: ../../locales/../src/interface/LocalListView.cpp:1467
+#: ../../locales/../src/interface/LocalListView.cpp:1492
 msgid "Invalid filename"
 msgstr "Невалидно име на файл"
 
@@ -3728,17 +3706,17 @@ msgstr ""
 msgid "Invalid response code"
 msgstr "Невалиден код на отговор"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2388
-#: ../../locales/../src/interface/sitemanager.cpp:2408
-#: ../../locales/../src/interface/sitemanager.cpp:2426
-#: ../../locales/../src/interface/sitemanager.cpp:2433
-#: ../../locales/../src/interface/sitemanager.cpp:2440
-#: ../../locales/../src/interface/sitemanager.cpp:2457
-#: ../../locales/../src/interface/sitemanager.cpp:2600
-#: ../../locales/../src/interface/sitemanager.cpp:2815
-#: ../../locales/../src/interface/sitemanager.cpp:2822
-#: ../../locales/../src/interface/sitemanager.cpp:2891
-#: ../../locales/../src/interface/sitemanager.cpp:2898
+#: ../../locales/../src/interface/sitemanager.cpp:2394
+#: ../../locales/../src/interface/sitemanager.cpp:2414
+#: ../../locales/../src/interface/sitemanager.cpp:2432
+#: ../../locales/../src/interface/sitemanager.cpp:2439
+#: ../../locales/../src/interface/sitemanager.cpp:2446
+#: ../../locales/../src/interface/sitemanager.cpp:2463
+#: ../../locales/../src/interface/sitemanager.cpp:2606
+#: ../../locales/../src/interface/sitemanager.cpp:2821
+#: ../../locales/../src/interface/sitemanager.cpp:2828
+#: ../../locales/../src/interface/sitemanager.cpp:2897
+#: ../../locales/../src/interface/sitemanager.cpp:2904
 msgid "Invalid site path"
 msgstr "Грешен път до връзка"
 
@@ -3861,7 +3839,7 @@ msgstr "Населено място:"
 msgid "Logging"
 msgstr "Дневник"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:822
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:823
 msgid ""
 "Login data contains non-ASCII characters and server might not be UTF-8 "
 "aware. Cannot fall back to local charset since using proxy."
@@ -3870,7 +3848,7 @@ msgstr ""
 "разбира UTF-8. Невъзможност за отстъпване до местния знаков набор, поради "
 "използването на прокси."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:829
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:830
 msgid ""
 "Login data contains non-ASCII characters and server might not be UTF-8 "
 "aware. Trying local charset."
@@ -3878,7 +3856,7 @@ msgstr ""
 "Данните за удостоверяване съдържат не-ASCII знаци, а сървъра може да не "
 "разбира UTF-8. Проба с местния знаков набор."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:858
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:859
 msgid "Login sequence fully executed yet not logged in. Aborting."
 msgstr ""
 "Входната последователност е изцяло изпълнена, но пак няма удостоверение. "
@@ -3972,7 +3950,7 @@ msgstr "Моите документи"
 
 #: ../../locales/../src/interface/sitemanager.cpp:619
 #: ../../locales/../src/interface/sitemanager.cpp:621
-#: ../../locales/../src/interface/sitemanager.cpp:1969
+#: ../../locales/../src/interface/sitemanager.cpp:1975
 msgid "My Sites"
 msgstr "Моите връзки"
 
@@ -3982,20 +3960,18 @@ msgid "N/a"
 msgstr "Няма"
 
 #: resources.h:606
-#, fuzzy
 msgid "Name"
-msgstr "Име:"
+msgstr "Наименование"
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:661
-#: ../../locales/../src/interface/sitemanager.cpp:1138
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:672
+#: ../../locales/../src/interface/sitemanager.cpp:1143
 msgid "Name already exists"
 msgstr "Името вече съществува"
 
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:776
-#: ../../locales/../src/interface/sitemanager.cpp:2838
-#, fuzzy
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:787
+#: ../../locales/../src/interface/sitemanager.cpp:2844
 msgid "Name of bookmark already exists."
-msgstr "Името вече съществува"
+msgstr "Името вече съществува."
 
 #: resources.h:140
 msgid "Name:"
@@ -4019,7 +3995,7 @@ msgstr "Нова &папка"
 
 #: resources.h:96 resources.h:619
 msgid "New Book&mark"
-msgstr ""
+msgstr "Нова отметка"
 
 #: resources.h:602 ../../locales/../src/interface/bookmarks_dialog.cpp:52
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:66
@@ -4027,15 +4003,15 @@ msgstr ""
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:83
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:89
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:98
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:494
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:500
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:506
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:529
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:776
-#: ../../locales/../src/interface/sitemanager.cpp:2296
-#: ../../locales/../src/interface/sitemanager.cpp:2838
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:504
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:510
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:516
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:539
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:787
+#: ../../locales/../src/interface/sitemanager.cpp:2302
+#: ../../locales/../src/interface/sitemanager.cpp:2844
 msgid "New bookmark"
-msgstr ""
+msgstr "Нова отметка"
 
 #: ../../locales/../src/interface/LocalTreeView.cpp:1316
 #: ../../locales/../src/interface/RemoteListView.cpp:1444
@@ -4051,9 +4027,9 @@ msgstr "Нов филтър"
 msgid "New folder"
 msgstr "Нова папка"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2281
-#: ../../locales/../src/interface/sitemanager.cpp:2705
-#: ../../locales/../src/interface/sitemanager.cpp:2719
+#: ../../locales/../src/interface/sitemanager.cpp:2287
+#: ../../locales/../src/interface/sitemanager.cpp:2711
+#: ../../locales/../src/interface/sitemanager.cpp:2725
 msgid "New site"
 msgstr "Нова връзка"
 
@@ -4061,7 +4037,7 @@ msgstr "Нова връзка"
 msgid "Next to the transfer queue"
 msgstr "До опашката"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:827
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:833
 msgid "No"
 msgstr "Не"
 
@@ -4073,7 +4049,7 @@ msgstr "Не е избрана категория за експорт"
 msgid "No command given, aborting."
 msgstr "Няма указана комаднда, прекратяване."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3756
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3757
 msgid "No external IP address set, trying default."
 msgstr "Няма въведен външен IP адрес, проба с адрес по подразбиране."
 
@@ -4104,9 +4080,9 @@ msgstr "Няма файлове в опашката"
 msgid "No name for the filterset given."
 msgstr "Въведете име за набора филтри."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1935
-#: ../../locales/../src/interface/sitemanager.cpp:1947
-#: ../../locales/../src/interface/sitemanager.cpp:1978
+#: ../../locales/../src/interface/sitemanager.cpp:1941
+#: ../../locales/../src/interface/sitemanager.cpp:1953
+#: ../../locales/../src/interface/sitemanager.cpp:1984
 msgid "No sites available"
 msgstr "Няма налични връзки"
 
@@ -4137,7 +4113,7 @@ msgstr "Няма избрани"
 #: ../../locales/../src/interface/manual_transfer.cpp:548
 #: ../../locales/../src/interface/queue.cpp:857
 #: ../../locales/../src/interface/queue.cpp:938
-#: ../../locales/../src/interface/sitemanager.cpp:1237
+#: ../../locales/../src/interface/sitemanager.cpp:1243
 msgid "Normal"
 msgstr "Нормално"
 
@@ -4200,7 +4176,7 @@ msgstr ""
 "На следващите страници ще бъдат настройвани избраните режими на прехвърляне, "
 "както и режима за отстъпване, ако е включен."
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:837
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:843
 msgid "Once"
 msgstr "Веднъж"
 
@@ -4228,10 +4204,10 @@ msgstr "Отваряне на диалога с настройките на File
 msgid "Opened as:"
 msgstr "Отворен като:"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2180
-#: ../../locales/../src/interface/LocalListView.cpp:2209
-#: ../../locales/../src/interface/LocalListView.cpp:2273
-#: ../../locales/../src/interface/LocalListView.cpp:2280
+#: ../../locales/../src/interface/LocalListView.cpp:2175
+#: ../../locales/../src/interface/LocalListView.cpp:2204
+#: ../../locales/../src/interface/LocalListView.cpp:2268
+#: ../../locales/../src/interface/LocalListView.cpp:2275
 msgid "Opening failed"
 msgstr "Неуспешно отваряне"
 
@@ -4338,18 +4314,17 @@ msgstr "Необходима парола"
 
 #: ../../locales/../src/interface/filteredit.cpp:131
 msgid "Path"
-msgstr "Път"
+msgstr "Пътека"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3049
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2307
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3050
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2313
 #, c-format
 msgid "Path cannot be constructed for directory %s and subdir %s"
 msgstr "Път име не може да бъде съставено от папката %s и подпапката %s"
 
 #: resources.h:608
-#, fuzzy
 msgid "Paths"
-msgstr "Път"
+msgstr "Пътища"
 
 #: ../../locales/../src/interface/edithandler.cpp:1148
 #: ../../locales/../src/interface/edithandler.cpp:1288
@@ -4518,7 +4493,7 @@ msgstr ""
 "Моля, въведете директна FTP команда.\n"
 "Използването на директни FTP команди ще изчисти кеш-паметта за папки."
 
-#: ../../locales/../src/interface/LocalListView.cpp:1308
+#: ../../locales/../src/interface/LocalListView.cpp:1303
 #: ../../locales/../src/interface/LocalTreeView.cpp:1313
 #: ../../locales/../src/interface/RemoteListView.cpp:1430
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1257
@@ -4697,8 +4672,8 @@ msgstr ""
 msgid "Position of the message log:"
 msgstr "&Местоположение на дневника:"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1749
-#: ../../locales/../src/interface/sitemanager.cpp:1968
+#: ../../locales/../src/interface/sitemanager.cpp:1755
+#: ../../locales/../src/interface/sitemanager.cpp:1974
 msgid "Predefined Sites"
 msgstr "Предварително определени връзки"
 
@@ -4771,7 +4746,7 @@ msgid "Proxy request failed: Unknown address type in CONNECT reply"
 msgstr ""
 "Запитване на прокси неуспешно: Неизвестен вид на адрес в CONNECT отговор"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4240
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4241
 msgid "Proxy set but proxy host or port invalid"
 msgstr "Има определено прокси, но хоста или порта са невалидни"
 
@@ -4917,6 +4892,33 @@ msgstr "Отдалечени филтри:"
 msgid "Remote path"
 msgstr "Отдалечен път"
 
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:400
+#, c-format
+msgid ""
+"Remote path cannot be parsed. Make sure it is a valid absolute path and is "
+"supported by the current site's servertype (%s)."
+msgstr ""
+"Отдалеченият път не може да бъде разпознат. Уверете се, че е валиден "
+"абсолютен път и поддържан от избрания тип сървър (%s)."
+
+#: ../../locales/../src/interface/sitemanager.cpp:1057
+#, c-format
+msgid ""
+"Remote path cannot be parsed. Make sure it is a valid absolute path and is "
+"supported by the servertype (%s) selected on the parent site."
+msgstr ""
+"Отдалеченият път не може да бъде разпознат. Уверете се, че е валиден "
+"абсолютен път и поддържан от избрания тип сървър (%s) избран от майчината "
+"връзка."
+
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:402
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:406
+#: ../../locales/../src/interface/sitemanager.cpp:1059
+msgid "Remote path cannot be parsed. Make sure it is a valid absolute path."
+msgstr ""
+"Отдалеченият път не може да бъде разпознат. Уверете се, че е валиден "
+"абсолятен път."
+
 #: ../../locales/../src/interface/manual_transfer.cpp:348
 msgid "Remote path could not be parsed."
 msgstr "Отдалеченият път не може да бъде разпознат."
@@ -4953,8 +4955,8 @@ msgstr "Преименуване избраната папка"
 msgid "Rename selected files and directories"
 msgstr "Преименуване избраните файлове и папки"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3395
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2509
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3396
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2515
 #, c-format
 msgid "Renaming '%s' to '%s'"
 msgstr "Преименуване от \"%s\" на \"%s\""
@@ -4992,12 +4994,12 @@ msgstr ""
 "Подновяването на ASCII файлове може да предизвика проблеми ако сървъра и "
 "клиента използват различни знаци за край на ред."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1211
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:904
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1212
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:910
 msgid "Retrieving directory listing..."
 msgstr "Разлистване папка..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3774
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3775
 #: ../../locales/../src/interface/netconfwizard.cpp:703
 #, c-format
 msgid "Retrieving external IP address from %s"
@@ -5099,7 +5101,7 @@ msgid "Select file for exported settings"
 msgstr "Изберете файл за експортираните настройки"
 
 #: ../../locales/../src/interface/export.cpp:32
-#: ../../locales/../src/interface/sitemanager.cpp:2495
+#: ../../locales/../src/interface/sitemanager.cpp:2501
 msgid "Select file for exported sites"
 msgstr "Изберете файл за експортиране на връзките"
 
@@ -5160,7 +5162,7 @@ msgstr "Избрани %s и %s. Обща дължина: най-малко %s"
 msgid "Selected editor does not exist"
 msgstr "Избраният редактор не съществува"
 
-#: resources.h:502 ../../locales/../src/interface/LocalListView.cpp:2193
+#: resources.h:502 ../../locales/../src/interface/LocalListView.cpp:2188
 msgid "Selected file already being edited"
 msgstr "Избраният файл се редактира"
 
@@ -5195,6 +5197,9 @@ msgid ""
 "Selected global bookmark and current server use a different server type.\n"
 "Use site-specific bookmarks for this server."
 msgstr ""
+"Избраната глоблна отметка и текущо свързаната връзка използват различни "
+"типове сървър.\n"
+"Използвайте отметка към връзка за този сървър."
 
 #: ../../locales/../src/engine/engineprivate.cpp:281
 msgid "Selected port usually in use by a different protocol."
@@ -5210,7 +5215,7 @@ msgstr ""
 "Изпращане на специална команда към сървъра, която не е достъпна по друг "
 "начин."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4322
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4323
 msgid "Sending keep-alive command"
 msgstr "Изпраща на keep-alive команда"
 
@@ -5226,12 +5231,12 @@ msgstr "Отдалечен / Местен файл"
 msgid "Server did not properly shut down TLS connection"
 msgstr "Сървърът неправилно прекъсна TLS връзка"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4173
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4174
 #, c-format
 msgid "Server does not support resume of files > %d GB."
 msgstr "Сървърът не поддържа подновяване на файлове по-дълги от %d GB."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4169
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4170
 #, c-format
 msgid ""
 "Server does not support resume of files > %d GB. End transfer since file "
@@ -5240,15 +5245,15 @@ msgstr ""
 "Сървърът не поддържа подновяване на файлове по-дълги от %d GB. Край на "
 "прехвърлянето - дължината на файловете съвпада."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2457
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2458
 msgid "Server does not support resume of files > 2GB."
 msgstr "Сървърът не поддържа подновяване на файлове по-дълги от 2 GB."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2452
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2453
 msgid "Server does not support resume of files > 4GB."
 msgstr "Сървърът не поддържа подновяване на файлове по-дълги от 4 GB."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4184
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4185
 #, c-format
 msgid ""
 "Server may not support resume of files > %d GB. End transfer since file "
@@ -5257,14 +5262,14 @@ msgstr ""
 "Сървърът вероятно не поддържа подновяване на файлове по-дълги от %d GB. Край "
 "на прехвърлянето - дължината на файловете съвпада."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:860
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:861
 msgid ""
 "Server might require an account. Try specifying an account using the Site "
 "Manager"
 msgstr ""
 "Сървърът изисква регистрация. Моля, укажете своята в Манипулатор връзки"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:623
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:629
 msgid ""
 "Server sent an additional login prompt. You need to use the interactive "
 "login type."
@@ -5284,13 +5289,13 @@ msgstr ""
 msgid "Server sent invalid reply."
 msgstr "Сървърът изпрати невалиден отговор."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3722
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3723
 msgid "Server sent passive reply with unroutable address. Passive mode failed."
 msgstr ""
 "Сървърът изпрати пасивен отговор с немаршрутируем адрес. Пасивният режим се "
 "провали."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3716
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3717
 msgid ""
 "Server sent passive reply with unroutable address. Using server address "
 "instead."
@@ -5322,8 +5327,8 @@ msgstr "Сесийна информация"
 msgid "Set &Priority"
 msgstr "Установяване на &приоритет"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3547
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2387
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3548
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2393
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
 msgstr "Установяване на правата от \"%s\" на \"%s\""
@@ -5365,36 +5370,39 @@ msgstr "Манипулатор връзки"
 msgid "Site Manager already open"
 msgstr "Манипулатор връзки е вече отворен"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2408
-#: ../../locales/../src/interface/sitemanager.cpp:2426
-#: ../../locales/../src/interface/sitemanager.cpp:2440
-#: ../../locales/../src/interface/sitemanager.cpp:2822
-#: ../../locales/../src/interface/sitemanager.cpp:2898
+#: ../../locales/../src/interface/sitemanager.cpp:2414
+#: ../../locales/../src/interface/sitemanager.cpp:2432
+#: ../../locales/../src/interface/sitemanager.cpp:2446
+#: ../../locales/../src/interface/sitemanager.cpp:2828
+#: ../../locales/../src/interface/sitemanager.cpp:2904
 msgid "Site does not exist."
 msgstr "Страницата не съществува."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2388
+#: ../../locales/../src/interface/sitemanager.cpp:2394
 msgid "Site path has to begin with 0 or 1."
 msgstr "Пътят до връзка трябва да започва с 0 или 1."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2433
-#: ../../locales/../src/interface/sitemanager.cpp:2600
-#: ../../locales/../src/interface/sitemanager.cpp:2815
-#: ../../locales/../src/interface/sitemanager.cpp:2891
+#: ../../locales/../src/interface/sitemanager.cpp:2439
+#: ../../locales/../src/interface/sitemanager.cpp:2606
+#: ../../locales/../src/interface/sitemanager.cpp:2821
+#: ../../locales/../src/interface/sitemanager.cpp:2897
 msgid "Site path is malformed."
-msgstr ""
+msgstr "Пътят на връзката е повреден."
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:237
 msgid "Site-specific bookmarks"
-msgstr ""
+msgstr "Отметки към връзка"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:83
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:494
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:504
 msgid ""
 "Site-specific bookmarks require the server to be stored in the Site "
 "Manager.\n"
 "Add current connection to the site manager?"
 msgstr ""
+"Отметките към връзка изискват бръзката да бъде записана в Манипулатор "
+"връзки.\n"
+"Искате ли текущата бръзка да бъде запазена?"
 
 #: ../../locales/../src/interface/queue.cpp:1154
 msgid "Size"
@@ -5481,14 +5489,14 @@ msgstr "Започване на &прехвърлянето веднага"
 msgid "Start with opened Site Manager"
 msgstr "Старт с отворен Манипулатор връзки"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2134
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1575
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2135
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1581
 #, c-format
 msgid "Starting download of %s"
 msgstr "Начало изтегляне %s"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2138
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1579
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2139
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1585
 #, c-format
 msgid "Starting upload of %s"
 msgstr "Начало на качване на %s"
@@ -5580,7 +5588,7 @@ msgstr "Целевият файл съществува, желаете ли да
 msgid "Test results"
 msgstr "Резултат"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4190
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4191
 msgid "Testing resume capabilities of server"
 msgstr "Проверка на способността на сървъра за подновяване на прехвърляния."
 
@@ -5641,8 +5649,8 @@ msgstr ""
 msgid "The file '%s' could not be loaded or does not contain a private key."
 msgstr "Файлът \"%s\" не може да бъде зареден или не съдържа частен ключ."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2180
-#: ../../locales/../src/interface/LocalListView.cpp:2273
+#: ../../locales/../src/interface/LocalListView.cpp:2175
+#: ../../locales/../src/interface/LocalListView.cpp:2268
 #, c-format
 msgid ""
 "The file '%s' could not be opened:\n"
@@ -5651,8 +5659,8 @@ msgstr ""
 "Файлът \"%s\" не може да бъде отворен:\n"
 "С този файлов тип няма свързана програма."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2209
-#: ../../locales/../src/interface/LocalListView.cpp:2280
+#: ../../locales/../src/interface/LocalListView.cpp:2204
+#: ../../locales/../src/interface/LocalListView.cpp:2275
 #, c-format
 msgid ""
 "The file '%s' could not be opened:\n"
@@ -5898,8 +5906,8 @@ msgstr "Изчакване в &секунди:"
 msgid "Timeout"
 msgstr "Време за изчакване"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1593
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1021
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1594
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1027
 #, c-format
 msgid ""
 "Timezone offsets: Server: %d seconds. Local: %d seconds. Difference: %d "
@@ -5975,9 +5983,6 @@ msgid "Too many redirects"
 msgstr "Твърде много препращания"
 
 #: ../../locales/../src/engine/logging.cpp:210
-msgid "Trace"
-msgstr "Трасиране"
-
 #: ../../locales/../src/interface/StatusView.cpp:286
 #: ../../locales/../src/interface/StatusView.cpp:349
 msgid "Trace:"
@@ -6030,11 +6035,11 @@ msgstr "Файлове &без разширения са ASCII"
 msgid "Treat the &following filetypes as ASCII files:"
 msgstr "Файлове &със следните разширения са ASCII:"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:824
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:830
 msgid "Trust changed Hostkey: "
 msgstr "Доверяване на променения ключ на хоста:"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:822
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:828
 msgid "Trust new Hostkey: "
 msgstr "Доверяване на новия ключ на хоста:"
 
@@ -6096,7 +6101,7 @@ msgstr "Поделение:"
 msgid "Unknown"
 msgstr "неизвестен"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:716
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:717
 msgid "Unknown FTP proxy type, cannot generate login sequence."
 msgstr ""
 "Непознат тип FTP прокси, невъзможно създаване на входна последователност."
@@ -6268,7 +6273,7 @@ msgstr "Потребител:"
 msgid "Username cannot be a series of spaces"
 msgstr "Потребителското име не трябва да е последователност от шпации"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4245
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4246
 #, c-format
 msgid "Using proxy %s"
 msgstr "Използване прокси %s"
@@ -6306,7 +6311,7 @@ msgstr "Проверяване на сертификат..."
 msgid "Very high"
 msgstr "Много висока"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1341
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1342
 msgid "View hidden option set, but unsupported by server"
 msgstr "Показването на скрити файлове е включено, но не се поддържа от сървъра"
 
@@ -6412,7 +6417,7 @@ msgstr "Грешен външен IP адрес"
 msgid "Wrong line endings"
 msgstr "Грешни символи за край на ред"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:835
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:841
 msgid "Yes"
 msgstr "Да"
 
@@ -6470,9 +6475,8 @@ msgstr ""
 "прехвърляните данни."
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:52
-#, fuzzy
 msgid "You need to enter a name for the bookmark."
-msgstr "Моля, въведете име на файла-дневник."
+msgstr "Моля, въведете име на отметката."
 
 #: ../../locales/../src/interface/optionspage_logging.cpp:67
 msgid "You need to enter a name for the log file."
@@ -6488,10 +6492,10 @@ msgid "You need to enter a proxy port in the range from 1 to 65535"
 msgstr "Трябва да въведете прокси порт в обхвата от 1 до 65535"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:73
-#: ../../locales/../src/interface/bookmarks_dialog.cpp:406
-#: ../../locales/../src/interface/sitemanager.cpp:1065
+#: ../../locales/../src/interface/bookmarks_dialog.cpp:416
+#: ../../locales/../src/interface/sitemanager.cpp:1070
 msgid "You need to enter at least one path, empty bookmarks are not supported."
-msgstr ""
+msgstr "Трябва да въведете поне една пътека, бразни отметки не се поддържат."
 
 #: ../../locales/../src/interface/manual_transfer.cpp:314
 msgid "You need to specify a local file."
@@ -6559,7 +6563,7 @@ msgstr ""
 "fzputtygen не може да бъде стартиран.\n"
 "Уверете се, че той е в същата папка, където е и изпълнимия файл на FileZilla."
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1500
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1506
 msgid "fzsftp could not be started"
 msgstr "Неуспешно стартиране на fzsftp"
 
@@ -6630,3 +6634,6 @@ msgstr "четене от всички"
 #: ../../locales/../src/interface/filteredit.cpp:128
 msgid "world writeable"
 msgstr "писане от всички"
+
+#~ msgid "Trace"
+#~ msgstr "Трасиране"

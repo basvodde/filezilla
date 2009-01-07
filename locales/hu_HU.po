@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla 3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-03 16:23+0100\n"
-"PO-Revision-Date: 2008-03-24 02:31+0100\n"
+"POT-Creation-Date: 2009-01-07 17:36+0100\n"
+"PO-Revision-Date: 2009-01-04 00:05+0100\n"
 "Last-Translator: Bata György <bagyurek@freestart.hu>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: Hungarian\n"
 "X-Poedit-Country: HUNGARY\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:58
 #: ../../locales/../src/interface/statuslinectrl.cpp:155
@@ -35,33 +35,33 @@ msgstr ""
 #: ../../locales/../src/interface/filelist_statusbar.cpp:53
 #: ../../locales/../src/interface/filelist_statusbar.cpp:64
 #: ../../locales/../src/interface/filelist_statusbar.cpp:76
-#, fuzzy, c-format
+#, c-format
 msgid "%d directory"
 msgid_plural "%d directories"
-msgstr[0] "Új mappa"
-msgstr[1] "Új mappa"
+msgstr[0] "%d mappa"
+msgstr[1] "%d mappa"
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:52
 #: ../../locales/../src/interface/filelist_statusbar.cpp:75
-#, fuzzy, c-format
+#, c-format
 msgid "%d file"
 msgid_plural "%d files"
-msgstr[0] "fájl"
-msgstr[1] "fájl"
+msgstr[0] "%d fájl"
+msgstr[1] "%d fájl"
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:71
 #, c-format
 msgid "%d file. Total size: %s"
 msgid_plural "%d files. Total size: %s"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d fájl. Fájl mérete: %s"
+msgstr[1] "%d fájl. Fájlok mérete: %s"
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:69
 #, c-format
 msgid "%d file. Total size: At least %s"
 msgid_plural "%d files. Total size: At least %s"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d fájl. Fájl mérete: Legalább %s"
+msgstr[1] "%d fájl. Fájlok mérete: Legalább %s"
 
 #: ../../locales/../src/interface/QueueView.cpp:2302
 #, c-format
@@ -95,16 +95,16 @@ msgstr "%s - Proxy felhasználónév"
 #: ../../locales/../src/interface/filelist_statusbar.cpp:81
 #, c-format
 msgid "%s and %s. Total size: %s"
-msgstr ""
+msgstr "%s és %s. Fájlok mérete: %s"
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:79
 #, c-format
 msgid "%s and %s. Total size: At least %s"
-msgstr ""
+msgstr "%s és %s. Fájlok mérete: Legalább %s"
 
 #: ../../locales/../src/interface/LocalListView.cpp:480
 #: ../../locales/../src/interface/LocalListView.cpp:497
-#, fuzzy, c-format
+#, c-format
 msgid "%s byte"
 msgid_plural "%s bytes"
 msgstr[0] "%s byte"
@@ -201,7 +201,7 @@ msgstr "Aktív"
 
 #: resources.h:669
 msgid "&Add bookmark..."
-msgstr "Könyvtárjelző hozzáadása..."
+msgstr "Kedvenc könyvtár hozzáadása..."
 
 #: resources.h:681 resources.h:695
 msgid "&Add files to queue"
@@ -420,9 +420,8 @@ msgid "&File Attributes..."
 msgstr "Attribútumok..."
 
 #: resources.h:704
-#, fuzzy
 msgid "&File permissions..."
-msgstr "Tulajdonos engedélyei"
+msgstr "Engedélyek..."
 
 #: resources.h:572
 msgid "&File:"
@@ -450,7 +449,7 @@ msgstr "Online súgó..."
 
 #: resources.h:604
 msgid "&Global bookmark"
-msgstr "Globális"
+msgstr "Globális kedvenc mappa"
 
 #: resources.h:561
 msgid "&HTTP/1.1 using CONNECT method"
@@ -522,7 +521,7 @@ msgstr "Alacsony"
 
 #: resources.h:670
 msgid "&Manage bookmarks..."
-msgstr "Könyvtárjelzők szerkesztése..."
+msgstr "Kedvenc könyvtárak szerkesztése..."
 
 #: resources.h:660
 msgid "&Manual transfer..."
@@ -751,7 +750,7 @@ msgstr "Kedvenc Helyek..."
 
 #: resources.h:605
 msgid "&Site-specific bookmark"
-msgstr "Állomás specifikus"
+msgstr "Állomáshoz rendelt kedvenc mappa"
 
 #: resources.h:86
 msgid "&Skip"
@@ -866,8 +865,8 @@ msgstr ""
 #, c-format
 msgid "(%d object filtered)"
 msgid_plural "(%d objects filtered)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "(%d objektum ki van szűrve)"
+msgstr[1] "(%d objektum ki van szűrve)"
 
 #: resources.h:53 resources.h:55
 msgid "(0 for no limit)"
@@ -966,7 +965,7 @@ msgstr "?"
 msgid ""
 "A bookmark with the entered name already exists. Please enter an unused name."
 msgstr ""
-"Egy könyvtárjelző már létezik ezen a néven. Kérem adjon meg egy új nevet."
+"Egy kedvenc könyvtár már létezik ezen a néven. Kérem adjon meg egy új nevet."
 
 #: ../../locales/../src/interface/optionspage_edit.cpp:122
 msgid "A default editor needs to be set."
@@ -1340,7 +1339,7 @@ msgstr "Blackboard"
 #: ../../locales/../src/interface/Mainfrm.cpp:993
 #: ../../locales/../src/interface/sitemanager.cpp:365
 msgid "Bookmark"
-msgstr "Mappakedvenc"
+msgstr "Kedvenc mappa"
 
 #: resources.h:618
 msgid "Bookmark:"
@@ -1348,7 +1347,7 @@ msgstr "Kedvenc mappák:"
 
 #: resources.h:617
 msgid "Bookmarks"
-msgstr "Könyvtárjelzők"
+msgstr "Kedvenc mappák"
 
 #: ../../locales/../src/interface/state.cpp:292
 msgid "Break current connection?"
@@ -1400,7 +1399,7 @@ msgstr "CSftpControlSocket::ChangeDirSend()"
 msgid "CSftpControlSocket::ChangeDirSubcommandResult()"
 msgstr "CSftpControlSocket::ChangeDirSubcommandResult()"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1539
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1540
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1218
 msgid "Calculating timezone offset of server..."
 msgstr "A kiszolgáló időzónája eltolódásának számítása..."
@@ -1800,7 +1799,7 @@ msgstr "Csatlakozás a proxybeállítások kihagyásával"
 msgid "Connect to specified Site Manager site"
 msgstr "Csatlakozás megadott kedvenc állomáshoz"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:937
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:938
 msgid "Connected"
 msgstr "A csatlakozás sikerült"
 
@@ -1973,7 +1972,7 @@ msgstr ""
 "A keretprogramba való beépülés nincsen megfelelően telepítve, vagy a "
 "fájlokat nem egy Intéző ablakba húzta bele."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4115
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4116
 msgid "Could not establish connection to server"
 msgstr "Nem létesíthető kapcsolat a kiszolgálóhoz"
 
@@ -1988,7 +1987,7 @@ msgstr ""
 "A FileZilla adatkönyvtárát beállíthatja a '--datadir <elérési út>' "
 "parancssori kapcsolóval, vagy az FZ_DATADIR környezeti változó beállításával."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:710
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:711
 msgid "Could not generate custom login sequence."
 msgstr "Nem sikerült az egyéni bejelentkezési parancssorozat létrehozása."
 
@@ -2105,12 +2104,12 @@ msgstr "A szoftvercsatornából történő olvasás nem sikerült: %s"
 msgid "Could not read server item."
 msgstr "Az állomás bejegyzés nem olvasható."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2608
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2609
 #, c-format
 msgid "Could not seek to offset %s within file"
 msgstr "A fájlon belüli %s eltolás pozícionálása nem sikerült"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2539
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2540
 msgid "Could not seek to the end of the file"
 msgstr "A fájl végének pozícionálása nem sikerült"
 
@@ -2118,7 +2117,7 @@ msgstr "A fájl végének pozícionálása nem sikerült"
 msgid "Could not send command to fzputtygen."
 msgstr "Nem sikerült a parancs küldése az fzputtygen alkalmazásnak."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2628
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2629
 msgid "Could not spawn IO thread"
 msgstr "Az IO szál elágaztatása nem sikerült"
 
@@ -2223,7 +2222,7 @@ msgstr "Könyvtár létrehozása"
 msgid "Creating directory"
 msgstr "Mappa létrehozása"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3164
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3165
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2005
 #, c-format
 msgid "Creating directory '%s'..."
@@ -2928,8 +2927,8 @@ msgstr "Az xml fájl biztonsági másolata nem hozható létre."
 msgid "Failed to create listen socket, aborting"
 msgstr "A figyelő szoftvercsatorna létrehozása nem sikerült, megszakítás"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4091
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4095
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4092
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4096
 msgid "Failed to create listening socket for active mode transfer"
 msgstr ""
 "A figyelő szoftvercsatorna létrehozása nem sikerült az aktív módú átvitelhez"
@@ -2963,7 +2962,7 @@ msgid "Failed to initialize FTP engine"
 msgstr "Nem sikerült az FTP programmotor inicializálása"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:410
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:779
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:780
 msgid "Failed to initialize TLS."
 msgstr "A TLS inicializálása nem sikerült."
 
@@ -2976,17 +2975,17 @@ msgstr "A panelek betöltése nem sikerült. Érvénytelen erőforrás fájlok?"
 msgid "Failed to load private key: %s"
 msgstr "A titkos kulcs betöltése nem sikerült: %s"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2528
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2529
 #, c-format
 msgid "Failed to open \"%s\" for appending / writing"
 msgstr "A következőt nem sikerült hozzáfűzésre / írásra megnyitni: \"%s\""
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2592
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2593
 #, c-format
 msgid "Failed to open \"%s\" for reading"
 msgstr "A következőt nem sikerült olvasásra megnyitni: \"%s\""
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2571
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2572
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:332
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:391
 #, c-format
@@ -3005,11 +3004,11 @@ msgstr "A könyvtár lista lekérdezése nem sikerült"
 msgid "Failed to retrieve external ip address, aborting"
 msgstr "A külső IP cím lekérdezése nem sikerült, megszakítás."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3789
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3790
 msgid "Failed to retrieve external ip address, using local address"
 msgstr "A külső IP cím lekérdezése nem sikerült, a helyi IP cím használata"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3811
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3812
 msgid "Failed to retrieve local ip address."
 msgstr "A helyi IP cím lekérdezése nem sikerült."
 
@@ -3201,7 +3200,7 @@ msgstr "Fájlnév"
 msgid "Filename &filters..."
 msgstr "Könyvtár listázás szűrése..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2962
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2963
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2268
 #, c-format
 msgid "Filename cannot be constructed for directory %s and filename %s"
@@ -3359,7 +3358,7 @@ msgstr ""
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:232
 msgid "Global bookmarks"
-msgstr "Globális"
+msgstr "Globális kedvenc mappák"
 
 #: resources.h:297
 msgid "Group permissions"
@@ -3657,7 +3656,7 @@ msgstr ""
 msgid "Incorrect password"
 msgstr "Helytelen jelszó"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:769
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:770
 msgid "Initializing TLS..."
 msgstr "TLS inicializálása..."
 
@@ -3885,7 +3884,7 @@ msgstr "Helység:"
 msgid "Logging"
 msgstr "Naplózás"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:822
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:823
 msgid ""
 "Login data contains non-ASCII characters and server might not be UTF-8 "
 "aware. Cannot fall back to local charset since using proxy."
@@ -3894,7 +3893,7 @@ msgstr ""
 "kiszolgáló esetleg nem támogatja az UTF-8-at. A proxy használata miatt a "
 "helyi karakterkészletre váltás nem alkalmazható."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:829
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:830
 msgid ""
 "Login data contains non-ASCII characters and server might not be UTF-8 "
 "aware. Trying local charset."
@@ -3903,7 +3902,7 @@ msgstr ""
 "kiszolgáló esetleg nem támogatja az UTF-8-at. Helyi karakterkészlet "
 "használata."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:858
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:859
 msgid "Login sequence fully executed yet not logged in. Aborting."
 msgstr ""
 "A bejelentkezési parancssorozat lefuttatódott, de a bejelentkezés nem "
@@ -4021,7 +4020,7 @@ msgstr "A megadott név már létezik."
 #: ../../locales/../src/interface/sitemanager.cpp:2844
 msgid "Name of bookmark already exists."
 msgstr ""
-"Egy könyvtárjelző már létezik ezen a néven. Kérem adjon meg egy új nevet."
+"Egy kedvenc könyvtár már létezik ezen a néven. Kérem adjon meg egy új nevet."
 
 #: resources.h:140
 msgid "Name:"
@@ -4061,7 +4060,7 @@ msgstr "Új mappakedvenc"
 #: ../../locales/../src/interface/sitemanager.cpp:2302
 #: ../../locales/../src/interface/sitemanager.cpp:2844
 msgid "New bookmark"
-msgstr "Új mappakedvenc"
+msgstr "Új kedvenc mappa"
 
 #: ../../locales/../src/interface/LocalTreeView.cpp:1316
 #: ../../locales/../src/interface/RemoteListView.cpp:1444
@@ -4099,7 +4098,7 @@ msgstr "Nem jelölt ki egyetlen kategóriát sem az exportálásra."
 msgid "No command given, aborting."
 msgstr "Nem adott meg parancsot. Megszakítás."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3756
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3757
 msgid "No external IP address set, trying default."
 msgstr "Nincs külső IP cím beállítva, az alapértelmezett használata."
 
@@ -4368,7 +4367,7 @@ msgstr "Jelszó szükséges"
 msgid "Path"
 msgstr "Elérési út"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3049
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3050
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2313
 #, c-format
 msgid "Path cannot be constructed for directory %s and subdir %s"
@@ -4808,7 +4807,7 @@ msgstr "A proxykérés nem sikerült: %s"
 msgid "Proxy request failed: Unknown address type in CONNECT reply"
 msgstr "A proxykérés nem sikerült: Ismeretlen címtípus a CONNECT válaszban"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4240
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4241
 msgid "Proxy set but proxy host or port invalid"
 msgstr "A proxy beállítva, de a proxy címe vagy portja érvénytelen"
 
@@ -4960,9 +4959,9 @@ msgid ""
 "Remote path cannot be parsed. Make sure it is a valid absolute path and is "
 "supported by the current site's servertype (%s)."
 msgstr ""
-"A távoli mappa elérési útja nem elemezhető. Ellenőrizze, hogy érvényes "
-"abszolút elérési utat adott meg, és azt a jelenlegi állomás típusa (%s) "
-"támogatja."
+"A távoli mappa elérési útja nem elemezhető.\n"
+"Ellenőrizze, hogy érvényes abszolút elérési utat adott meg, és azt a "
+"jelenlegi állomás típusa (%s) támogatja."
 
 #: ../../locales/../src/interface/sitemanager.cpp:1057
 #, c-format
@@ -4970,9 +4969,9 @@ msgid ""
 "Remote path cannot be parsed. Make sure it is a valid absolute path and is "
 "supported by the servertype (%s) selected on the parent site."
 msgstr ""
-"A távoli mappa elérési útja nem elemezhető. Ellenőrizze, hogy érvényes "
-"abszolút elérési utat adott meg, és azt a hozzárendelt állomás típusa (%s) "
-"támogatja."
+"A távoli mappa elérési útja nem elemezhető.\n"
+"Ellenőrizze, hogy érvényes abszolút elérési utat adott meg, és azt a "
+"hozzárendelt állomás típusa (%s) támogatja."
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:402
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:406
@@ -5018,7 +5017,7 @@ msgstr "Kijelölt mappa átnevezése"
 msgid "Rename selected files and directories"
 msgstr "Kijelölt mappák és fájlok átnevezése"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3395
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3396
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2515
 #, c-format
 msgid "Renaming '%s' to '%s'"
@@ -5057,12 +5056,12 @@ msgstr ""
 "Az ASCII fájlok átviteli folytatása problémákat okozhat, amennyiben a "
 "kiszolgáló más sorvégződés formátumot használ, mint a kliens."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1211
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1212
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:910
 msgid "Retrieving directory listing..."
 msgstr "Könyvtár lista lekérdezése..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3774
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3775
 #: ../../locales/../src/interface/netconfwizard.cpp:703
 #, c-format
 msgid "Retrieving external IP address from %s"
@@ -5190,35 +5189,35 @@ msgid "Select the private data you would like to delete."
 msgstr "Válassza ki a törölni kívánt személyes adatokat."
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:41
-#, fuzzy, c-format
+#, c-format
 msgid "Selected %d directory."
 msgid_plural "Selected %d directories."
-msgstr[0] "Kijelölt mappa törlése"
-msgstr[1] "Kijelölt mappa törlése"
+msgstr[0] "%d mappa kijelölve."
+msgstr[1] "%d mappa kijelölve."
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:48
-#, fuzzy, c-format
+#, c-format
 msgid "Selected %d file. Total size: %s"
 msgid_plural "Selected %d files. Total size: %s"
-msgstr[0] "A kijelölt fájl nem található."
-msgstr[1] "A kijelölt fájl nem található."
+msgstr[0] "%d fájl kijelölve. Kijelölt fájl mérete: %s"
+msgstr[1] "%d fájl kijelölve. Kijelölt fájlok mérete: %s"
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:46
-#, fuzzy, c-format
+#, c-format
 msgid "Selected %d file. Total size: At least %s"
 msgid_plural "Selected %d files. Total size: At least %s"
-msgstr[0] "A kijelölt fájl nem található."
-msgstr[1] "A kijelölt fájl nem található."
+msgstr[0] "%d fájl kijelölve. Kijelölt fájl mérete: Legalább %s"
+msgstr[1] "%d fájl kijelölve. Kijelölt fájlok mérete: Legalább %s"
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:58
 #, c-format
 msgid "Selected %s and %s. Total size: %s"
-msgstr ""
+msgstr "%s és %s kijelölve. Kijelölt fájlok mérete: %s"
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:56
 #, c-format
 msgid "Selected %s and %s. Total size: At least %s"
-msgstr ""
+msgstr "%s és %s kijelölve. Kijelölt fájlok mérete: Legalább %s"
 
 #: ../../locales/../src/interface/optionspage_edit.cpp:183
 msgid "Selected editor does not exist"
@@ -5259,9 +5258,9 @@ msgid ""
 "Selected global bookmark and current server use a different server type.\n"
 "Use site-specific bookmarks for this server."
 msgstr ""
-"A használni kívánt könyvtárjelző és a jelenleg csatlakozott kiszolgáló "
+"A használni kívánt kedvenc könyvtár és a jelenleg csatlakozott kiszolgáló "
 "különböző típusúak.\n"
-"Használjon állomás specifikus könyvtárjelzőt ehhez a szerverhez."
+"Használjon állomáshoz rendelt mappát ehhez a szerverhez."
 
 #: ../../locales/../src/engine/engineprivate.cpp:281
 msgid "Selected port usually in use by a different protocol."
@@ -5275,7 +5274,7 @@ msgstr "FTP ébrentartási parancsok küldése"
 msgid "Send custom command to the server otherwise not available"
 msgstr "Egyéni FTP parancsok küldése a kiszolgálóra"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4322
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4323
 msgid "Sending keep-alive command"
 msgstr "Ébrentartási parancs küldése"
 
@@ -5291,14 +5290,14 @@ msgstr "Kiszolgáló / Helyi fájlnév"
 msgid "Server did not properly shut down TLS connection"
 msgstr "A kiszolgáló a TLS kapcsolatot nem megfelelően zárta le."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4173
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4174
 #, c-format
 msgid "Server does not support resume of files > %d GB."
 msgstr ""
 "A kiszolgáló nem támogatja a(z) %d GB-nál nagyobb méretű fájlok átviteli "
 "folytatását."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4169
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4170
 #, c-format
 msgid ""
 "Server does not support resume of files > %d GB. End transfer since file "
@@ -5307,19 +5306,19 @@ msgstr ""
 "A kiszolgáló nem támogatja a(z) %d GB-nál nagyobb méretű fájlok átviteli "
 "folytatását. Az átvitel befejezése, a fájlok méretei megegyeznek."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2457
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2458
 msgid "Server does not support resume of files > 2GB."
 msgstr ""
 "A kiszolgáló nem támogatja a 2 GB-nál nagyobb méretű fájlok átviteli "
 "folytatását."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2452
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2453
 msgid "Server does not support resume of files > 4GB."
 msgstr ""
 "A kiszolgáló nem támogatja a 4 GB-nál nagyobb méretű fájlok átviteli "
 "folytatását."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4184
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4185
 #, c-format
 msgid ""
 "Server may not support resume of files > %d GB. End transfer since file "
@@ -5328,7 +5327,7 @@ msgstr ""
 "A kiszolgáló esetleg nem támogatja a(z) %d GB-nál nagyobb méretű fájlok "
 "átviteli folytatását. Az átvitel befejezése, a fájlok méretei megegyeznek."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:860
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:861
 msgid ""
 "Server might require an account. Try specifying an account using the Site "
 "Manager"
@@ -5356,13 +5355,13 @@ msgstr ""
 msgid "Server sent invalid reply."
 msgstr "A kiszolgáló érvénytelen választ küldött."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3722
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3723
 msgid "Server sent passive reply with unroutable address. Passive mode failed."
 msgstr ""
 "A kiszolgáló nem lekérdezhető című passzív választ küldött. A passzív mód "
 "használata nem sikerült."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3716
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3717
 msgid ""
 "Server sent passive reply with unroutable address. Using server address "
 "instead."
@@ -5394,7 +5393,7 @@ msgstr "Adatkapcsolat részletek"
 msgid "Set &Priority"
 msgstr "Prioritás beállítása"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3547
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3548
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2393
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
@@ -5459,7 +5458,7 @@ msgstr "A parancssoros állomás specifikáció nem megfelelő."
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:237
 msgid "Site-specific bookmarks"
-msgstr "Állomás specifikus"
+msgstr "Állomáshoz rendelt kedvenc mappák"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:83
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:504
@@ -5468,7 +5467,7 @@ msgid ""
 "Manager.\n"
 "Add current connection to the site manager?"
 msgstr ""
-"Az állomás specifikus könyvtárjelzők használatához az állomásnak a Kedvenc "
+"Az állomáshoz rendelt kedvenc könyvtár használatához az állomásnak a Kedvenc "
 "Helyek között szerepelnie kell.\n"
 "Kívánja hozzáadni a jelenlegi kapcsolatot a Kedvenc Helyek közé?"
 
@@ -5559,13 +5558,13 @@ msgstr "Az átvitel megkezdése azonnal"
 msgid "Start with opened Site Manager"
 msgstr "Indítás a Kedvenc Helyek megnyitásával"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2134
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2135
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1581
 #, c-format
 msgid "Starting download of %s"
 msgstr "Letöltés indítása: %s"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2138
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2139
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1585
 #, c-format
 msgid "Starting upload of %s"
@@ -5658,7 +5657,7 @@ msgstr "A célfájl már létezik, biztosan folytatni szeretné?"
 msgid "Test results"
 msgstr "Teszt eredmények"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4190
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4191
 msgid "Testing resume capabilities of server"
 msgstr "A kiszolgáló átviteli felfüggesztés/folytatás képességeinek tesztelése"
 
@@ -5984,7 +5983,7 @@ msgstr "Időtúllépés beállítása másodpercben:"
 msgid "Timeout"
 msgstr "Időtúllépés"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1593
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1594
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1027
 #, c-format
 msgid ""
@@ -6181,7 +6180,7 @@ msgstr "Egység:"
 msgid "Unknown"
 msgstr "Ismeretlen"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:716
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:717
 msgid "Unknown FTP proxy type, cannot generate login sequence."
 msgstr ""
 "A proxy típusa ismeretlen, a bejelentkezési parancssorozat létrehozása nem "
@@ -6355,7 +6354,7 @@ msgstr "Felhasználónév:"
 msgid "Username cannot be a series of spaces"
 msgstr "A felhasználónév nem állhat csupa szóközből."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4245
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4246
 #, c-format
 msgid "Using proxy %s"
 msgstr "A következő proxy használata: %s"
@@ -6391,7 +6390,7 @@ msgstr "Tanúsítvány ellenőrzése..."
 msgid "Very high"
 msgstr "Nagyon magas"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1341
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1342
 msgid "View hidden option set, but unsupported by server"
 msgstr ""
 "A rejtett fájlok megjelenítése opció be van kapcsolva, azonban a kiszolgáló "
@@ -6559,7 +6558,7 @@ msgstr ""
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:52
 msgid "You need to enter a name for the bookmark."
-msgstr "Meg kell adnia egy nevet a könyvtárjelzőhöz."
+msgstr "Meg kell adnia egy nevet a kedvenc könyvtárhoz."
 
 #: ../../locales/../src/interface/optionspage_logging.cpp:67
 msgid "You need to enter a name for the log file."
@@ -6579,8 +6578,8 @@ msgstr "A proxy porthoz 1 és 65535 közötti értéket adjon meg."
 #: ../../locales/../src/interface/sitemanager.cpp:1070
 msgid "You need to enter at least one path, empty bookmarks are not supported."
 msgstr ""
-"Adja meg legalább az egyik elérési utat, az üres könyvtárjelző nem "
-"támogatott."
+"Adja meg legalább az egyik elérési utat, mindkét kedvenc könyvtár nem lehet "
+"üres."
 
 #: ../../locales/../src/interface/manual_transfer.cpp:314
 msgid "You need to specify a local file."
