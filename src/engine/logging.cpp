@@ -267,7 +267,7 @@ void CLogging::LogToFile(MessageType nMessageType, const wxString& msg) const
 					CloseHandle(hMutex);
 
 					m_log_fd = INVALID_HANDLE_VALUE;
-					LogMessage(Error, _("Could not open log file: %s"), error);
+					LogMessage(Error, _("Could not open log file: %s"), error.c_str());
 					return;
 				}
 
@@ -298,7 +298,7 @@ void CLogging::LogToFile(MessageType nMessageType, const wxString& msg) const
 				CloseHandle(hMutex);
 
 				if (error != _T(""))
-					LogMessage(Error, _("Could not open log file: %s"), error);
+					LogMessage(Error, _("Could not open log file: %s"), error.c_str());
 			}
 		}
 		DWORD len = (DWORD)strlen((const char*)utf8);
