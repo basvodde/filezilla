@@ -23,20 +23,21 @@ public:
 		close
 	};
 
-	CSocketEvent(CSocketEventHandler* pSocketEventHandler, CSocketEventSource* pSource, enum EventType type, wxString data);
+	CSocketEvent(CSocketEventHandler* pSocketEventHandler, CSocketEventSource* pSource, enum EventType type, const wxChar* data);
 	CSocketEvent(CSocketEventHandler* pSocketEventHandler, CSocketEventSource* pSource, enum EventType type, int error = 0);
+	~CSocketEvent();
 
 	CSocketEventSource* GetSocketEventSource() const { return m_pSource; }
 	enum EventType GetType() const { return m_type; }
 	CSocketEventHandler* GetSocketEventHandler() const { return m_pSocketEventHandler; }
 
-	const wxString& GetData() const { return m_data; };
+	wxString GetData() const;
 	int GetError() const { return m_error; }
 
 protected:
 	CSocketEventSource* m_pSource;
 	const enum EventType m_type;
-	wxString m_data;
+	wxChar *m_data;
 	int m_error;
 	CSocketEventHandler* m_pSocketEventHandler;
 
