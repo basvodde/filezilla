@@ -56,6 +56,7 @@ filezilla_SOURCES = aboutdialog.cpp \
 		optionspage_debug.cpp \
 		optionspage_edit.cpp \
 		optionspage_fileexists.cpp \
+		optionspage_filelists.cpp \
 		optionspage_filetype.cpp \
 		optionspage_ftpproxy.cpp \
 		optionspage_interface.cpp \
@@ -146,6 +147,7 @@ noinst_HEADERS = aboutdialog.h \
 		 optionspage_debug.h \
 		 optionspage_edit.h \
 		 optionspage_fileexists.h \
+		 optionspage_filelists.h \
 		 optionspage_filetype.h \
 		 optionspage_ftpproxy.h \
 		 optionspage_interface.h \

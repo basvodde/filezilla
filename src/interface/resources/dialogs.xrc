@@ -1820,75 +1820,6 @@
       </object>
       <object class="sizeritem">
         <object class="wxStaticBoxSizer">
-          <label>Filelists</label>
-          <orient>wxVERTICAL</orient>
-          <object class="sizeritem">
-            <object class="wxFlexGridSizer">
-              <cols>2</cols>
-              <object class="sizeritem">
-                <object class="wxStaticText">
-                  <label>Sorting &amp;mode:</label>
-                </object>
-                <flag>wxALIGN_CENTRE_VERTICAL</flag>
-              </object>
-              <object class="sizeritem">
-                <object class="wxChoice" name="ID_SORTMODE">
-                  <content>
-                    <item>Prioritize directories (default)</item>
-                    <item>Keep directories on top</item>
-                    <item>Sort directories inline</item>
-                  </content>
-                </object>
-                <flag>wxALIGN_CENTRE_VERTICAL</flag>
-              </object>
-              <hgap>5</hgap>
-            </object>
-            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
-            <border>4</border>
-          </object>
-        </object>
-        <flag>wxGROW</flag>
-      </object>
-      <object class="sizeritem">
-        <object class="wxStaticBoxSizer">
-          <label>Directory comparison</label>
-          <orient>wxVERTICAL</orient>
-          <object class="sizeritem">
-            <object class="wxFlexGridSizer">
-              <cols>1</cols>
-              <object class="sizeritem">
-                <object class="wxStaticText">
-                  <label>If using timestamp based comparison, consider two files equal if their timestamp difference does not exceed this threshold.</label>
-                </object>
-              </object>
-              <object class="sizeritem">
-                <object class="wxFlexGridSizer">
-                  <object class="sizeritem">
-                    <object class="wxStaticText">
-                      <label>Comparison &amp;threshold (in minutes):</label>
-                    </object>
-                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
-                  </object>
-                  <cols>2</cols>
-                  <object class="sizeritem">
-                    <object class="wxTextCtrl" name="ID_COMPARISON_THRESHOLD">
-                      <size>40,-1</size>
-                    </object>
-                    <flag>wxALIGN_CENTRE_HORIZONTAL</flag>
-                  </object>
-                  <hgap>5</hgap>
-                </object>
-              </object>
-              <vgap>5</vgap>
-            </object>
-            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
-            <border>4</border>
-          </object>
-        </object>
-        <flag>wxGROW</flag>
-      </object>
-      <object class="sizeritem">
-        <object class="wxStaticBoxSizer">
           <label>Message log position</label>
           <orient>wxVERTICAL</orient>
           <object class="sizeritem">
@@ -6117,6 +6048,130 @@
           </object>
         </object>
         <flag>wxALL|wxALIGN_CENTRE_HORIZONTAL</flag>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_FILELISTS">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Sorting</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>2</cols>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Sorting &amp;mode:</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxChoice" name="ID_SORTMODE">
+                  <content>
+                    <item>Prioritize directories (default)</item>
+                    <item>Keep directories on top</item>
+                    <item>Sort directories inline</item>
+                  </content>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <hgap>5</hgap>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Directory comparison</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>1</cols>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>If using timestamp based comparison, consider two files equal if their timestamp difference does not exceed this threshold.</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Comparison &amp;threshold (in minutes):</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <cols>2</cols>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_COMPARISON_THRESHOLD">
+                      <size>40,-1</size>
+                    </object>
+                    <flag>wxALIGN_CENTRE_HORIZONTAL</flag>
+                  </object>
+                  <hgap>5</hgap>
+                </object>
+              </object>
+              <vgap>5</vgap>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Double-click action</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>2</cols>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>&amp;Double-click action on files:</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxChoice" name="ID_DOUBLECLICK_FILE">
+                  <content>
+                    <item>Transfer</item>
+                    <item>Add to queue</item>
+                    <item>View / Edit</item>
+                    <item>None</item>
+                  </content>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>D&amp;ouble-click action on directories:</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <vgap>5</vgap>
+              <hgap>5</hgap>
+              <object class="sizeritem">
+                <object class="wxChoice" name="ID_DOUBLECLICK_DIRECTORY">
+                  <content>
+                    <item>Enter directory</item>
+                    <item>Transfer</item>
+                    <item>Add to queue</item>
+                    <item>None</item>
+                  </content>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
       </object>
     </object>
   </object>

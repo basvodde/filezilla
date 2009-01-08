@@ -127,7 +127,9 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Size decimal places", number, _T("0") },
 	{ "Show quickconnect bar", number, _T("1") },
 	{ "Messagelog position", number, _T("0") },
-	{ "Last connected site", string, _T("") }
+	{ "Last connected site", string, _T("") },
+	{ "File doubleclock action", number, _T("0") },
+	{ "Dir doubleclock action", number, _T("0") }
 };
 
 struct t_default_option
@@ -479,6 +481,11 @@ int COptions::Validate(unsigned int nID, int value)
 		break;
 	case OPTION_MESSAGELOG_POSITION:
 		if (value < 0 || value > 2)
+			value = 0;
+		break;
+	case OPTION_DOUBLECLICK_ACTION_FILE:
+	case OPTION_DOUBLECLICK_ACTION_DIRECTORY:
+		if (value < 0 || value > 3)
 			value = 0;
 		break;
 	}
