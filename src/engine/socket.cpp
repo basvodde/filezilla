@@ -269,14 +269,35 @@ bool CSocketEventDispatcher::ProcessEvent(wxEvent& event)
 	return true;
 }
 
-CSocketEvent::CSocketEvent(CSocketEventHandler* pSocketEventHandler, CSocketEventSource* pSource, enum EventType type, wxString data)
-	: m_pSource(pSource), m_type(type), m_data(data), m_error(0), m_pSocketEventHandler(pSocketEventHandler)
+CSocketEvent::CSocketEvent(CSocketEventHandler* pSocketEventHandler, CSocketEventSource* pSource, enum EventType type, const wxChar* data)
+	: m_pSource(pSource), m_type(type), m_error(0), m_pSocketEventHandler(pSocketEventHandler)
 {
+	if (data)
+	{
+		m_data = new wxChar[wxStrlen(data) + 1];
+		wxStrcpy(m_data, data);
+	}
+	else
+		m_data = 0;
 }
 
 CSocketEvent::CSocketEvent(CSocketEventHandler* pSocketEventHandler, CSocketEventSource* pSource, enum EventType type, int error /*=0*/)
 	: m_pSource(pSource), m_type(type), m_error(error), m_pSocketEventHandler(pSocketEventHandler)
 {
+	m_data = 0;
+}
+
+CSocketEvent::~CSocketEvent()
+{
+	delete [] m_data;
+}
+
+wxString CSocketEvent::GetData() const
+{
+	if (!m_data)
+		return wxEmptyString;
+
+	return m_data;
 }
 
 CSocketEventHandler::~CSocketEventHandler()
