@@ -97,6 +97,7 @@ protected:
 	void OnBeginDrag(wxListEvent& event);
 	void OnMenuOpen(wxCommandEvent& event);
 	void OnMenuEdit(wxCommandEvent& event);
+	void OnMenuEnter(wxCommandEvent& event);
 };
 
 #endif

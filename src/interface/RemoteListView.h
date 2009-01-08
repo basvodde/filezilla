@@ -113,6 +113,7 @@ protected:
 	void OnSize(wxSizeEvent& event);
 	void OnBeginDrag(wxListEvent& event);
 	void OnMenuEdit(wxCommandEvent& event);
+	void OnMenuEnter(wxCommandEvent& event);
 };
 
 #endif

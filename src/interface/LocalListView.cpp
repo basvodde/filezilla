@@ -245,6 +245,7 @@ BEGIN_EVENT_TABLE(CLocalListView, CFileListCtrl<CLocalFileData>)
 	EVT_LIST_BEGIN_DRAG(wxID_ANY, CLocalListView::OnBeginDrag)
 	EVT_MENU(XRCID("ID_OPEN"), CLocalListView::OnMenuOpen)
 	EVT_MENU(XRCID("ID_EDIT"), CLocalListView::OnMenuEdit)
+	EVT_MENU(XRCID("ID_ENTER"), CLocalListView::OnMenuEnter)
 END_EVENT_TABLE()
 
 CLocalListView::CLocalListView(wxWindow* pParent, CState *pState, CQueueView *pQueue)
@@ -697,23 +698,56 @@ void CLocalListView::OnItemActivated(wxListEvent &event)
 
 	if (data->dir)
 	{
-		if (IsComparing())
-			ExitComparisonMode();
-
-		wxString error;
-		if (!m_pState->SetLocalDir(data->name, &error))
+		const int action = COptions::Get()->GetOptionVal(OPTION_DOUBLECLICK_ACTION_DIRECTORY);
+		if (action == 3)
 		{
-			if (error != _T(""))
-				wxMessageBox(error, _("Failed to change directory"), wxICON_INFORMATION);
-			else
-				wxBell();
+			// No action
+			wxBell();
+			return;
 		}
+
+		if (!action || data->name == _T(".."))
+		{
+			// Enter action
+
+			if (IsComparing())
+				ExitComparisonMode();
+
+			wxString error;
+			if (!m_pState->SetLocalDir(data->name, &error))
+			{
+				if (error != _T(""))
+					wxMessageBox(error, _("Failed to change directory"), wxICON_INFORMATION);
+				else
+					wxBell();
+			}
+			return;
+		}
+
+		wxCommandEvent evt(0, action == 1 ? XRCID("ID_UPLOAD") : XRCID("ID_ADDTOQUEUE"));
+		OnMenuUpload(evt);
 		return;
 	}
 
 	if (data->flags == fill)
 	{
 		wxBell();
+		return;
+	}
+
+	const int action = COptions::Get()->GetOptionVal(OPTION_DOUBLECLICK_ACTION_FILE);
+	if (action == 3)
+	{
+		// No action
+		wxBell();
+		return;
+	}
+
+	if (action == 2)
+	{
+		// View / Edit action
+		wxCommandEvent evt;
+		OnMenuEdit(evt);
 		return;
 	}
 
@@ -733,8 +767,48 @@ void CLocalListView::OnItemActivated(wxListEvent &event)
 
 	wxFileName fn(m_dir, data->name);
 
-	m_pQueue->QueueFile(false, false, fn.GetFullPath(), data->name, path, *pServer, data->size);
+	const bool queue_only = action == 1;
+
+	m_pQueue->QueueFile(queue_only, false, fn.GetFullPath(), data->name, path, *pServer, data->size);
 	m_pQueue->QueueFile_Finish(true);
+}
+
+void CLocalListView::OnMenuEnter(wxCommandEvent &event)
+{
+	int count = 0;
+	bool back = false;
+
+	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	if (item == -1)
+	{
+		wxBell();
+		return;
+	}
+
+	if (GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1)
+	{
+		wxBell();
+		return;
+	}
+
+	CLocalFileData *data = GetData(item);
+	if (!data || !data->dir)
+	{
+		wxBell();
+		return;
+	}
+
+	if (IsComparing())
+		ExitComparisonMode();
+
+	wxString error;
+	if (!m_pState->SetLocalDir(data->name, &error))
+	{
+		if (error != _T(""))
+			wxMessageBox(error, _("Failed to change directory"), wxICON_INFORMATION);
+		else
+			wxBell();
+	}
 }
 
 #ifdef __WXMSW__
@@ -1211,6 +1285,7 @@ void CLocalListView::OnContextMenu(wxContextMenuEvent& event)
 	}
 	if (!count || fillCount == count)
 	{
+		pMenu->Remove(XRCID("ID_ENTER"));
 		pMenu->Enable(XRCID("ID_UPLOAD"), false);
 		pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
 		pMenu->Enable(XRCID("ID_DELETE"), false);
@@ -1219,12 +1294,19 @@ void CLocalListView::OnContextMenu(wxContextMenuEvent& event)
 	}
 	else if (count > 1)
 	{
+		pMenu->Remove(XRCID("ID_ENTER"));
 		pMenu->Enable(XRCID("ID_RENAME"), false);
 		pMenu->Enable(XRCID("ID_OPEN"), false);
 		pMenu->Enable(XRCID("ID_EDIT"), false);
 	}
-	else if (selectedDir)
-		pMenu->Enable(XRCID("ID_EDIT"), false);
+	else
+	{
+		// Exactly one item selected
+		if (selectedDir)
+			pMenu->Enable(XRCID("ID_EDIT"), false);
+		else
+			pMenu->Remove(XRCID("ID_ENTER"));
+	}
 	if (fillCount)
 		pMenu->Enable(XRCID("ID_OPEN"), false);
 
@@ -2122,14 +2204,14 @@ void CLocalListView::OnMenuEdit(wxCommandEvent& event)
 	const CServer* const pServer = m_pState->GetServer();
 	if (!pServer)
 	{
-		wxBell();
+		wxMessageBox(_("Cannot edit file, not connected to any server."), _("Editing failed"), wxICON_EXCLAMATION);
 		return;
 	}
 
 	const CServerPath& path = m_pState->GetRemotePath();
 	if (path.IsEmpty())
 	{
-		wxBell();
+		wxMessageBox(_("Cannot edit file, remote path unknown."), _("Editing failed"), wxICON_EXCLAMATION);
 		return;
 	}
 
