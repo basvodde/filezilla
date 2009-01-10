@@ -384,7 +384,7 @@ bool CWrapEngine::WrapText(wxWindow* parent, int id, unsigned long maxLength)
 	#define plvl { for (int i = 0; i < level; i++) printf(" "); }
 #endif
 
-bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
+int CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 {
 	// This function auto-wraps static texts.
 	
@@ -398,8 +398,10 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 #if WRAPDEBUG >= 3
 		plvl printf("Leave: max <= 0\n");
 #endif
-		return false;
+		return wrap_failed;
 	}
+
+	int result = 0;
 
 	for (unsigned int i = 0; i < sizer->GetChildren().GetCount(); i++)
 	{
@@ -445,10 +447,11 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 #if WRAPDEBUG >= 3
 					plvl printf("Leave: WrapText failed\n");
 #endif				
-					return false;
+					return wrap_failed;
 				}
 				text->SetLabel(str);
 
+				result |= wrap_didwrap;
 				continue;
 			}
 
@@ -467,12 +470,14 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 					wxNotebookPage* page = book->GetPage(i);
 					wxRect pageRect = page->GetRect();
 					int pageMax = max - rect.GetLeft() - pageRect.GetLeft() - rborder - rect.GetWidth() + maxPageWidth;
-					if (!WrapRecursive(wnd, page->GetSizer(), pageMax))
+
+					result |= WrapRecursive(wnd, page->GetSizer(), pageMax);
+					if (result & wrap_failed)
 					{
 #if WRAPDEBUG >= 3
 						plvl printf("Leave: WrapRecursive on notebook page failed\n");
 #endif
-						return false;
+						return result;
 					}
 				}
 				continue;
@@ -494,16 +499,16 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 #if WRAPDEBUG >= 3
 			level++;
 #endif
-			bool res = WrapRecursive(0, subSizer, max - rborder - subBorder);
+			result |= WrapRecursive(0, subSizer, max - rborder - subBorder);
 #if WRAPDEBUG >= 3
 			level--;
 #endif
-			if (!res)
+			if (result & wrap_failed)
 			{
 #if WRAPDEBUG >= 3
 				plvl printf("Leave: WrapRecursive on sizer failed\n");
 #endif
-				return false;
+				return result;
 			}
 		}
 	}
@@ -513,14 +518,39 @@ bool CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 #endif
 
 
-	return true;
+	return result;
 }
 
 bool CWrapEngine::WrapRecursive(wxWindow* wnd, double ratio, const char* name /*=""*/, wxSize canvas /*=wxSize()*/, wxSize minRequestedSize /*wxSize()*/)
 {
 	std::vector<wxWindow*> windows;
 	windows.push_back(wnd);
-	return WrapRecursive(windows, ratio, name, canvas, minRequestedSize);
+	return (WrapRecursive(windows, ratio, name, canvas, minRequestedSize) & wrap_failed) == 0;
+}
+
+void CWrapEngine::UnwrapRecursive_Wrapped(const std::list<int> &wrapped, std::vector<wxWindow*> &windows, bool remove_fitting /*=false*/)
+{
+	unsigned int i = 0;
+	for (std::list<int>::const_iterator iter = wrapped.begin();
+		iter != wrapped.end();
+		iter++)
+	{
+		if (!(*iter & wrap_didwrap))
+		{
+			if (!(*iter) && remove_fitting)
+			{
+				// Page didn't need to be wrapped with current wrap offset,
+				// remove it since desired with will only be larger in further wrappings.
+				windows.erase(windows.begin() + i);
+			}
+			continue;
+		}
+
+		UnwrapRecursive(windows[i], windows[i]->GetSizer());
+		windows[i]->GetSizer()->Layout();
+
+		i++;
+	}
 }
 
 bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, const char* name /*=""*/, wxSize canvas /*=wxSize()*/, wxSize minRequestedSize /*wxSize()*/)
@@ -593,6 +623,7 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 
 	while (true)
 	{
+		std::list<int> didwrap;
 
 		wxSize size = minRequestedSize;
 		for (std::vector<wxWindow*>::iterator iter = windows.begin(); iter != windows.end(); iter++)
@@ -603,9 +634,13 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 #else
 			const int offset = 0;
 #endif
-			WrapRecursive(*iter, pSizer, desiredWidth - offset);
-			pSizer->Layout();
+			int res = WrapRecursive(*iter, pSizer, desiredWidth - offset);
+			didwrap.push_back(res);
+			if (res & wrap_didwrap)
+				pSizer->Layout();
 			size.IncTo(pSizer->GetMinSize());
+			if (res & wrap_failed)
+				break;
 		}
 
 #if WRAPDEBUG > 0
@@ -614,16 +649,15 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 		if (size.GetWidth() > desiredWidth)
 		{
 			// Wrapping failed
+
+			UnwrapRecursive_Wrapped(didwrap, windows, true);
+
 			min = desiredWidth;
 			if (max - min < 5)
 				break;
+
 			desiredWidth = (min + max) / 2;
 
-			for (std::vector<wxWindow*>::iterator iter = windows.begin(); iter != windows.end(); iter++)
-			{
-				UnwrapRecursive(*iter, (*iter)->GetSizer());
-				(*iter)->GetSizer()->Layout();
-			}
 			continue;
 		}
 		actualWidth = size.GetWidth();
@@ -635,6 +669,8 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 
 		if (newRatio < ratio)
 		{
+			UnwrapRecursive_Wrapped(didwrap, windows, true);
+
 			if (ratio - newRatio < bestRatioDiff)
 			{
 				bestRatioDiff = ratio - newRatio;
@@ -648,6 +684,7 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 		}
 		else if (newRatio > ratio)
 		{
+			UnwrapRecursive_Wrapped(didwrap, windows);
 			if (newRatio - ratio < bestRatioDiff)
 			{
 				bestRatioDiff = newRatio - ratio;
@@ -660,6 +697,8 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 		}
 		else
 		{
+			UnwrapRecursive_Wrapped(didwrap, windows);
+
 			bestRatioDiff = ratio - newRatio;
 			bestWidth = actualWidth;
 			break;
@@ -669,25 +708,23 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 			break;
 		desiredWidth = (min + max) / 2;
 
-		for (std::vector<wxWindow*>::iterator iter = windows.begin(); iter != windows.end(); iter++)
-		{
-			UnwrapRecursive(*iter, (*iter)->GetSizer());
-			(*iter)->GetSizer()->Layout();
-		}
-
 		currentRatio = newRatio;
 	}
 	for (std::vector<wxWindow*>::iterator iter = windows.begin(); iter != windows.end(); iter++)
 	{
-		wxSizer* pSizer = (*iter)->GetSizer();
-		UnwrapRecursive(*iter, pSizer);
-		pSizer->Layout();
+		wxSizer *pSizer = (*iter)->GetSizer();
 
-		WrapRecursive(*iter, pSizer, bestWidth);
-		pSizer->Layout();
-		pSizer->Fit(*iter);
+		int res = WrapRecursive(*iter, pSizer, bestWidth);
+
+		if (res & wrap_didwrap)
+		{
+			pSizer->Layout();
+			pSizer->Fit(*iter);
+		}
+#ifdef __WXDEBUG__
 		size = pSizer->GetMinSize();
 		wxASSERT(size.x <= bestWidth);
+#endif
 	}
 
 	SetWidthToCache(name, bestWidth);
@@ -1094,7 +1131,7 @@ void CWrapEngine::ClearCache()
 
 void CWrapEngine::CheckLanguage()
 {
-	#if wxUSE_UNICODE
+#if wxUSE_UNICODE
 	// Just don't bother with wrapping on anything other than UCS-2
 	// FIXME: Use charset conversion routines to convert into UCS-2 and back into
 	//        local charset if not using unicode.
