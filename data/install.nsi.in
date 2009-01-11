@@ -110,7 +110,8 @@
   !define MUI_PAGE_CUSTOMFUNCTION_LEAVE PostInstPage
   !insertmacro MUI_PAGE_INSTFILES
 
-  !define MUI_FINISHPAGE_RUN "$INSTDIR/filezilla.exe"
+  !define MUI_FINISHPAGE_RUN
+  !define MUI_FINISHPAGE_RUN_FUNCTION CustomFinishRun
   !define MUI_FINISHPAGE_RUN_TEXT "&Start FileZilla now"
   !insertmacro MUI_PAGE_FINISH
   
@@ -824,6 +825,12 @@ Function PostInstPage
 
   StrCmp $R0 0 +2
   SetAutoClose false
+
+FunctionEnd
+
+Function CustomFinishRun
+
+  UAC_unicode::Exec '' '"$INSTDIR/filezilla.exe"' '' ''
 
 FunctionEnd
 
