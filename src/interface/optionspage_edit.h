@@ -11,8 +11,11 @@ public:
 
 protected:
 
+	void SetCtrlState();
+
 	DECLARE_EVENT_TABLE();
 	void OnBrowseEditor(wxCommandEvent& event);
+	void OnRadioButton(wxCommandEvent& event);
 };
 
 #endif //__OPTIONSPAGE_EDIT_H__

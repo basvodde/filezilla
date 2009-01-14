@@ -2592,9 +2592,17 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 	const CServer server = *m_pState->GetServer();
 
 	bool dangerous = false;
-	if (!pEditHandler->CanOpen(CEditHandler::remote, entry.name, dangerous))
+	bool program_exists = false;
+	wxString cmd = pEditHandler->CanOpen(CEditHandler::remote, entry.name, dangerous, program_exists);
+	if (cmd.empty())
 	{
 		wxMessageBox(_("Selected file cannot be opened.\nNo default editor has been set or filetype association is missing or incorrect."), _("Cannot edit file"), wxICON_STOP);
+		return;
+	}
+	if (!program_exists)
+	{
+		wxString msg = wxString::Format(_("The file '%s' cannot be opened:\nThe associated program (%s) could not be found.\nPlease check your filetype associations."), entry.name.c_str(), cmd.c_str());
+		wxMessageBox(msg, _("Cannot edit file"), wxICON_EXCLAMATION);
 		return;
 	}
 	if (dangerous)

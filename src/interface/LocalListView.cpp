@@ -2252,10 +2252,27 @@ void CLocalListView::OnMenuEdit(wxCommandEvent& event)
 	wxFileName fn(m_dir, data->name);
 
 	bool dangerous = false;
-	if (!pEditHandler->CanOpen(CEditHandler::local, fn.GetFullPath(), dangerous) || dangerous)
+	bool program_exists = false;
+	wxString cmd = pEditHandler->CanOpen(CEditHandler::local, fn.GetFullPath(), dangerous, program_exists);
+	if (cmd.empty())
 	{
 		wxMessageBox(wxString::Format(_("The file '%s' could not be opened:\nNo program has been associated on your system with this file type."), fn.GetFullPath().c_str()), _("Opening failed"), wxICON_EXCLAMATION);
 		return;
+	}
+	if (!program_exists)
+	{
+		wxString msg = wxString::Format(_("The file '%s' cannot be opened:\nThe associated program (%s) could not be found.\nPlease check your filetype associations."), fn.GetFullPath().c_str(), cmd.c_str());
+		wxMessageBox(msg, _("Cannot edit file"), wxICON_EXCLAMATION);
+		return;
+	}
+	if (dangerous)
+	{
+		int res = wxMessageBox(_("The selected file would be executed directly.\nThis can be dangerous and damage your system.\nDo you really want to continue?"), _("Dangerous filetype"), wxICON_EXCLAMATION | wxYES_NO);
+		if (res != wxYES)
+		{
+			wxBell();
+			return;
+		}
 	}
 
 	CEditHandler::fileState state = pEditHandler->GetFileState(fn.GetFullPath());
@@ -2338,19 +2355,26 @@ void CLocalListView::OnMenuOpen(wxCommandEvent& event)
 
 	wxFileName fn(m_dir, data->name);
 
-	wxString cmd = pEditHandler->GetSystemOpenCommand(fn.GetFullPath());
+	bool program_exists = false;
+	wxString cmd = pEditHandler->GetSystemOpenCommand(fn.GetFullPath(), program_exists);
 	if (cmd == _T(""))
 	{
 		int pos = data->name.Find('.') == -1;
 		if (pos == -1 || (pos == 0 && data->name.Mid(1).Find('.') == -1))
-			cmd = pEditHandler->GetOpenCommand(fn.GetFullPath());
+			cmd = pEditHandler->GetOpenCommand(fn.GetFullPath(), program_exists);
 	}
 	if (cmd == _T(""))
 	{
 		wxMessageBox(wxString::Format(_("The file '%s' could not be opened:\nNo program has been associated on your system with this file type."), fn.GetFullPath().c_str()), _("Opening failed"), wxICON_EXCLAMATION);
 		return;
 	}
-
+	if (!program_exists)
+	{
+		wxString msg = wxString::Format(_("The file '%s' cannot be opened:\nThe associated program (%s) could not be found.\nPlease check your filetype associations."), fn.GetFullPath().c_str(), cmd.c_str());
+		wxMessageBox(msg, _("Cannot edit file"), wxICON_EXCLAMATION);
+		return;
+	}
+	
 	if (wxExecute(cmd))
 		return;
 

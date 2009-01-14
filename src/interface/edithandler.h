@@ -72,7 +72,7 @@ public:
 	 * The dangerous argument will be set to true on some filetypes,
 	 * e.g. executables.
 	 */
-	bool CanOpen(enum fileType type, const wxString& fileName, bool &dangerous);
+	wxString CanOpen(enum fileType type, const wxString& fileName, bool &dangerous, bool& program_exists);
 	bool StartEditing(const wxString& file);
 	bool StartEditing(const wxString& file, const CServerPath& remotePath, const CServer& server);
 	
@@ -91,8 +91,10 @@ public:
 	bool UploadFile(const wxString& file, bool unedit);
 	bool UploadFile(const wxString& file, const CServerPath& remotePath, const CServer& server, bool unedit);
 
-	wxString GetOpenCommand(const wxString& file);
-	wxString GetSystemOpenCommand(const wxString& file);
+	// Returns command to open the file. If association is set but
+	// program does not exist, program_exists is set to false.
+	wxString GetOpenCommand(const wxString& file, bool& program_exists);
+	wxString GetSystemOpenCommand(const wxString& file, bool &program_exists);
 
 protected:
 	CEditHandler();
@@ -104,7 +106,7 @@ protected:
 
 	bool StartEditing(enum fileType type, t_fileData &data);
 
-	wxString GetCustomOpenCommand(const wxString& file);
+	wxString GetCustomOpenCommand(const wxString& file, bool& program_exists);
 
 	void SetTimerState();
 

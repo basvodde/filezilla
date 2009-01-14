@@ -2546,8 +2546,24 @@
           <cols>1</cols>
           <vgap>5</vgap>
           <object class="sizeritem">
-            <object class="wxStaticText" name="">
+            <object class="wxStaticText">
               <label>&amp;Default editor:</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxRadioButton" name="ID_DEFAULT_NONE">
+              <label>Do &amp;not use default editor</label>
+              <style>wxRB_GROUP</style>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxRadioButton" name="ID_DEFAULT_TEXT">
+              <label>&amp;Use system's default editor for text files</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxRadioButton" name="ID_DEFAULT_CUSTOM">
+              <label>Use &amp;custom editor:</label>
             </object>
           </object>
           <object class="sizeritem">
@@ -2566,17 +2582,21 @@
                 <flag>wxALIGN_CENTRE_VERTICAL</flag>
               </object>
             </object>
-            <flag>wxGROW</flag>
+            <flag>wxGROW|wxLEFT</flag>
+            <border>17</border>
           </object>
           <object class="sizeritem">
             <object class="wxStaticText">
               <label>Command and its arguments should be properly quoted.</label>
             </object>
+            <flag>wxLEFT</flag>
+            <border>17</border>
           </object>
           <growablecols>0</growablecols>
           <object class="sizeritem">
             <object class="wxRadioButton" name="ID_USEASSOCIATIONS">
               <label>U&amp;se filetype associations if available</label>
+              <style>wxRB_GROUP</style>
             </object>
           </object>
           <object class="sizeritem">
@@ -2614,12 +2634,7 @@
                   </object>
                   <object class="sizeritem">
                     <object class="wxStaticText">
-                      <label>Example:</label>
-                    </object>
-                  </object>
-                  <object class="sizeritem">
-                    <object class="wxStaticText">
-                      <label>png &quot;c:\program files\viewer\viewer.exe&quot; -open</label>
+                      <label>Example: png &quot;c:\program files\viewer\viewer.exe&quot; -open</label>
                     </object>
                   </object>
                   <cols>1</cols>
@@ -2635,7 +2650,7 @@
             <option>1</option>
             <flag>wxGROW</flag>
           </object>
-          <growablerows>5</growablerows>
+          <growablerows>8</growablerows>
         </object>
         <option>1</option>
         <flag>wxALL|wxGROW</flag>
@@ -6174,5 +6189,94 @@
         <flag>wxGROW</flag>
       </object>
     </object>
+  </object>
+  <object class="wxDialog" name="ID_EDIT_NOPROGRAM">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxFlexGridSizer">
+          <cols>1</cols>
+          <vgap>5</vgap>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>No program has been associated to edit files with the extension %s.</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>Select how these files should be opened.</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxRadioButton" name="ID_USE_EDITOR">
+              <label>Use default editor for text files</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>The default editor for text files is %s</label>
+            </object>
+            <flag>wxLEFT</flag>
+            <border>17</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxRadioButton" name="ID_USE_CUSTOM">
+              <label>Use custom program</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>2</cols>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="ID_CUSTOM"/>
+                <flag>wxGROW|wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxButton" name="ID_BROWSE">
+                  <label>Browse...</label>
+                </object>
+                <flag></flag>
+              </object>
+              <hgap>5</hgap>
+              <growablecols>0</growablecols>
+            </object>
+            <flag>wxLEFT|wxGROW</flag>
+            <border>17</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxCheckBox" name="ID_ALWAYS">
+              <label>Always use selection for all unassociated files</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticLine"/>
+            <flag>wxGROW</flag>
+          </object>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxHORIZONTAL</orient>
+              <object class="sizeritem">
+                <object class="wxButton" name="wxID_OK">
+                  <label>OK</label>
+                  <default>1</default>
+                </object>
+                <flag>wxRIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                <border>5</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxButton" name="wxID_CANCEL">
+                  <label>Cancel</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+            </object>
+            <flag>wxALIGN_RIGHT</flag>
+          </object>
+        </object>
+        <flag>wxALL</flag>
+        <border>5</border>
+      </object>
+    </object>
+    <title>No program associated with filetype</title>
   </object>
 </resource>

@@ -596,8 +596,9 @@ bool CEditHandler::StartEditing(enum CEditHandler::fileType type, t_fileData& da
 		return false;
 	data.modificationTime = fn.GetModificationTime();
 
-	wxString cmd = GetOpenCommand(fn.GetFullPath());
-	if (cmd == _T(""))
+	bool program_exists = false;
+	wxString cmd = GetOpenCommand(fn.GetFullPath(), program_exists);
+	if (cmd.empty() || !program_exists)
 		return false;
 
 	if (!wxExecute(cmd))
@@ -859,13 +860,13 @@ void CEditHandler::SetTimerState()
 		m_timer.Start(15000);
 }
 
-bool CEditHandler::CanOpen(enum CEditHandler::fileType type, const wxString& fileName, bool &dangerous)
+wxString CEditHandler::CanOpen(enum CEditHandler::fileType type, const wxString& fileName, bool &dangerous, bool &program_exists)
 {
 	wxASSERT(type != none);
 
-	wxString command = GetOpenCommand(fileName);
-	if (command == _T(""))
-		return false;
+	wxString command = GetOpenCommand(fileName, program_exists);
+	if (command.empty() || !program_exists)
+		return command;
 
 	wxFileName fn;
 	if (type == remote)
@@ -881,27 +882,43 @@ bool CEditHandler::CanOpen(enum CEditHandler::fileType type, const wxString& fil
 	else
 		dangerous = false;
 
-	return true;
+	return command;
 }
 
-wxString CEditHandler::GetOpenCommand(const wxString& file)
+wxString CEditHandler::GetOpenCommand(const wxString& file, bool& program_exists)
 {
 	if (!COptions::Get()->GetOptionVal(OPTION_EDIT_ALWAYSDEFAULT))
 	{
-		const wxString command = GetCustomOpenCommand(file);
+		const wxString command = GetCustomOpenCommand(file, program_exists);
 		if (command != _T(""))
 			return command;
 
 		if (COptions::Get()->GetOptionVal(OPTION_EDIT_INHERITASSOCIATIONS))
 		{
-			const wxString command = GetSystemOpenCommand(file);
+			const wxString command = GetSystemOpenCommand(file, program_exists);
 			if (command != _T(""))
 				return command;
 		}
 	}
 
 	wxString command = COptions::Get()->GetOption(OPTION_EDIT_DEFAULTEDITOR);
-	if (command == _T(""))
+	if (command[0] == '0')
+		return _T(""); // None set
+	else if (command[0] == '1')
+	{
+		// Text editor
+		const wxString random = _T("5AC2EE515D18406aB77C2C60F1F88952.txt"); // Chosen by fair dice roll. Guaranteed to be random.
+		wxString command = GetSystemOpenCommand(random, program_exists);
+		if (command.empty() || !program_exists)
+			return command;
+
+		command.Replace(random, file);
+		return command;
+	}
+	else if (command[0] == '2')
+		command = command.Mid(1);
+
+	if (command.empty())
 		return _T("");
 
 	wxString args;
@@ -910,12 +927,16 @@ wxString CEditHandler::GetOpenCommand(const wxString& file)
 		return _T("");
 
 	if (!ProgramExists(editor))
-		return _T("");
+	{
+		program_exists = false;
+		return editor;
+	}
 
+	program_exists = true;
 	return command + _T(" \"") + file + _T("\"");
 }
 
-wxString CEditHandler::GetSystemOpenCommand(const wxString& file)
+wxString CEditHandler::GetSystemOpenCommand(const wxString& file, bool &program_exists)
 {
 	wxFileName fn(file);
 
@@ -935,10 +956,22 @@ wxString CEditHandler::GetSystemOpenCommand(const wxString& file)
 	}
 	delete pType;
 
+	if (cmd.empty())
+		return wxEmptyString;
+
+	wxString args;
+	wxString editor = cmd;
+	if (UnquoteCommand(editor, args) && !ProgramExists(editor))
+	{
+		program_exists = false;
+		return editor;
+	}
+
+	program_exists = true;
 	return cmd;
 }
 
-wxString CEditHandler::GetCustomOpenCommand(const wxString& file)
+wxString CEditHandler::GetCustomOpenCommand(const wxString& file, bool& program_exists)
 {
 	wxFileName fn(file);
 
@@ -974,8 +1007,12 @@ wxString CEditHandler::GetCustomOpenCommand(const wxString& file)
 			return _T("");
 
 		if (!ProgramExists(prog))
-			return _T("");
-
+		{
+			program_exists = false;
+			return prog;
+		}
+		
+		program_exists = true;
 		return command + _T(" \"") + fn.GetFullPath() + _T("\"");
 	}
 

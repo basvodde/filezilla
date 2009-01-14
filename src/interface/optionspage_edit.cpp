@@ -7,16 +7,30 @@
 
 BEGIN_EVENT_TABLE(COptionsPageEdit, COptionsPage)
 EVT_BUTTON(XRCID("ID_BROWSE"), COptionsPageEdit::OnBrowseEditor)
+EVT_RADIOBUTTON(wxID_ANY, COptionsPageEdit::OnRadioButton)
 END_EVENT_TABLE()
 
 bool COptionsPageEdit::LoadPage()
 {
 	bool failure = false;
 
-	SetTextFromOption(XRCID("ID_EDITOR"), OPTION_EDIT_DEFAULTEDITOR, failure);
+	COptions* pOptions = COptions::Get();
+
+	wxString editor = pOptions->GetOption(OPTION_EDIT_DEFAULTEDITOR);
+	if (editor.empty() || editor[0] == '0')
+		SetRCheck(XRCID("ID_DEFAULT_NONE"), true, failure);
+	else if (editor[0] == '1')
+		SetRCheck(XRCID("ID_DEFAULT_TEXT"), true, failure);
+	else
+	{
+		if (editor[0] == '2')
+			editor = editor.Mid(1);
+
+		SetRCheck(XRCID("ID_DEFAULT_CUSTOM"), true, failure);
+		SetText(XRCID("ID_EDITOR"), editor, failure);
+	}
 	SetTextFromOption(XRCID("ID_ASSOCIATIONS"), OPTION_EDIT_CUSTOMASSOCIATIONS, failure);
 
-	COptions* pOptions = COptions::Get();
 	SetCheck(XRCID("ID_INHERIT"), pOptions->GetOptionVal(OPTION_EDIT_INHERITASSOCIATIONS) != 0, failure);
 
 	if (pOptions->GetOptionVal(OPTION_EDIT_ALWAYSDEFAULT))
@@ -24,16 +38,23 @@ bool COptionsPageEdit::LoadPage()
 	else
 		SetRCheck(XRCID("ID_USEASSOCIATIONS"), true, failure);
 
+	if (!failure)
+		SetCtrlState();
+
 	return !failure;
 }
 
 bool COptionsPageEdit::SavePage()
 {
-	SetOptionFromText(XRCID("ID_EDITOR"), OPTION_EDIT_DEFAULTEDITOR);
-	SetOptionFromText(XRCID("ID_ASSOCIATIONS"), OPTION_EDIT_CUSTOMASSOCIATIONS);
-	
 	COptions* pOptions = COptions::Get();
 
+	if (GetRCheck(XRCID("ID_DEFAULT_CUSTOM")))
+		pOptions->SetOption(OPTION_EDIT_DEFAULTEDITOR, _T("2") + GetText(XRCID("ID_EDITOR")));
+	else 
+		pOptions->SetOption(OPTION_EDIT_DEFAULTEDITOR, GetRCheck(XRCID("ID_DEFAULT_TEXT")) ? _T("1") : _T("0"));
+
+	SetOptionFromText(XRCID("ID_ASSOCIATIONS"), OPTION_EDIT_CUSTOMASSOCIATIONS);
+	
 	pOptions->SetOption(OPTION_EDIT_INHERITASSOCIATIONS, GetCheck(XRCID("ID_INHERIT")) ? 1 : 0);
 	if (GetRCheck(XRCID("ID_USEDEFAULT")))
 		pOptions->SetOption(OPTION_EDIT_ALWAYSDEFAULT, 1);
@@ -100,26 +121,37 @@ bool COptionsPageEdit::Validate()
 {
 	bool failure = false;
 
-	wxString editor = GetText(XRCID("ID_EDITOR"));
-	editor.Trim(true);
-	editor.Trim(false);
-	SetText(XRCID("EDITOR"), editor, failure);
-
-	if (editor != _T(""))
+	const bool custom = GetRCheck(XRCID("ID_DEFAULT_CUSTOM"));
+	wxString editor;
+	if (custom)
 	{
-		wxString args;
-		if (!UnquoteCommand(editor, args))
-			return DisplayError(_T("ID_EDITOR"), _("Default editor not properly quoted."));
-		
-		if (editor == _T(""))
-			return DisplayError(_T("ID_EDITOR"), _("Empty quoted string."));
+		editor = GetText(XRCID("ID_EDITOR"));
+		editor.Trim(true);
+		editor.Trim(false);
+		SetText(XRCID("EDITOR"), editor, failure);
 
-		if (!ProgramExists(editor))
-			return DisplayError(_T("ID_EDITOR"), _("The file selected as default editor does not exist."));
+		if (editor != _T(""))
+		{
+			wxString args;
+			if (!UnquoteCommand(editor, args))
+				return DisplayError(_T("ID_EDITOR"), _("Default editor not properly quoted."));
+
+			if (editor == _T(""))
+				return DisplayError(_T("ID_EDITOR"), _("Empty quoted string."));
+
+			if (!ProgramExists(editor))
+				return DisplayError(_T("ID_EDITOR"), _("The file selected as default editor does not exist."));
+		}
 	}
 
-	if (GetRCheck(XRCID("ID_USEDEFAULT")) && editor == _T(""))
-		return DisplayError(_T("ID_EDITOR"), _("A default editor needs to be set."));
+	if (GetRCheck(XRCID("ID_USEDEFAULT")))
+	{
+		if (GetRCheck(XRCID("ID_DEFAULT_NONE")) ||
+			(custom && editor.empty()))
+		{
+			return DisplayError(_T("ID_EDITOR"), _("A default editor needs to be set."));
+		}
+	}
 
 	wxString associations = GetText(XRCID("ID_ASSOCIATIONS")) + _T("\n");
 	associations.Replace(_T("\r"), _T(""));
@@ -189,4 +221,19 @@ void COptionsPageEdit::OnBrowseEditor(wxCommandEvent& event)
 
 	bool tmp;
 	SetText(XRCID("ID_EDITOR"), editor, tmp);
+}
+
+void COptionsPageEdit::SetCtrlState()
+{
+	bool custom = GetRCheck(XRCID("ID_DEFAULT_CUSTOM"));
+
+	XRCCTRL(*this, "ID_EDITOR", wxTextCtrl)->Enable(custom);
+	XRCCTRL(*this, "ID_BROWSE", wxButton)->Enable(custom);
+
+	XRCCTRL(*this, "ID_USEDEFAULT", wxRadioButton)->Enable(!GetRCheck(XRCID("ID_DEFAULT_NONE")) || GetRCheck(XRCID("ID_USEDEFAULT")));
+}
+
+void COptionsPageEdit::OnRadioButton(wxCommandEvent& event)
+{
+	SetCtrlState();
 }
