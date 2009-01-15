@@ -1285,7 +1285,7 @@ void CLocalListView::OnContextMenu(wxContextMenuEvent& event)
 	}
 	if (!count || fillCount == count)
 	{
-		pMenu->Remove(XRCID("ID_ENTER"));
+		pMenu->Delete(XRCID("ID_ENTER"));
 		pMenu->Enable(XRCID("ID_UPLOAD"), false);
 		pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
 		pMenu->Enable(XRCID("ID_DELETE"), false);
@@ -1294,7 +1294,7 @@ void CLocalListView::OnContextMenu(wxContextMenuEvent& event)
 	}
 	else if (count > 1)
 	{
-		pMenu->Remove(XRCID("ID_ENTER"));
+		pMenu->Delete(XRCID("ID_ENTER"));
 		pMenu->Enable(XRCID("ID_RENAME"), false);
 		pMenu->Enable(XRCID("ID_OPEN"), false);
 		pMenu->Enable(XRCID("ID_EDIT"), false);
@@ -1305,7 +1305,7 @@ void CLocalListView::OnContextMenu(wxContextMenuEvent& event)
 		if (selectedDir)
 			pMenu->Enable(XRCID("ID_EDIT"), false);
 		else
-			pMenu->Remove(XRCID("ID_ENTER"));
+			pMenu->Delete(XRCID("ID_ENTER"));
 	}
 	if (fillCount)
 		pMenu->Enable(XRCID("ID_OPEN"), false);
@@ -2256,8 +2256,15 @@ void CLocalListView::OnMenuEdit(wxCommandEvent& event)
 	wxString cmd = pEditHandler->CanOpen(CEditHandler::local, fn.GetFullPath(), dangerous, program_exists);
 	if (cmd.empty())
 	{
-		wxMessageBox(wxString::Format(_("The file '%s' could not be opened:\nNo program has been associated on your system with this file type."), fn.GetFullPath().c_str()), _("Opening failed"), wxICON_EXCLAMATION);
-		return;
+		CNewAssociationDialog dlg(this);
+		if (!dlg.Show(fn.GetFullName()))
+			return;
+		cmd = pEditHandler->CanOpen(CEditHandler::local, fn.GetFullPath(), dangerous, program_exists);
+		if (cmd.empty())
+		{
+			wxMessageBox(wxString::Format(_("The file '%s' could not be opened:\nNo program has been associated on your system with this file type."), fn.GetFullPath().c_str()), _("Opening failed"), wxICON_EXCLAMATION);
+			return;
+		}
 	}
 	if (!program_exists)
 	{

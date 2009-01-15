@@ -1456,3 +1456,177 @@ CEditHandler::t_fileData* CEditHandlerStatusDialog::GetDataFromItem(int item, CE
 
 	return pData;
 }
+
+//----------
+
+BEGIN_EVENT_TABLE(CNewAssociationDialog, wxDialogEx)
+EVT_RADIOBUTTON(wxID_ANY, CNewAssociationDialog::OnRadioButton)
+EVT_BUTTON(wxID_OK, CNewAssociationDialog::OnOK)
+EVT_BUTTON(XRCID("ID_BROWSE"), CNewAssociationDialog::OnBrowseEditor)
+END_EVENT_TABLE()
+
+CNewAssociationDialog::CNewAssociationDialog(wxWindow *parent)
+	: m_pParent(parent)
+{
+}
+
+bool CNewAssociationDialog::Show(const wxString &file)
+{
+	if (!Load(m_pParent, _T("ID_EDIT_NOPROGRAM")))
+		return true;
+
+	int pos = file.Find('.', true);
+	if (pos < 1 || pos + 1 == file.Len())
+	{
+		// No extension or dotfile
+		return true;
+	}
+	m_ext = file.Mid(pos + 1);	
+
+	wxStaticText *pDesc = XRCCTRL(*this, "ID_DESC", wxStaticText);
+	pDesc->SetLabel(wxString::Format(pDesc->GetLabel(), m_ext.c_str()));
+
+	bool program_exists = false;
+	wxString cmd = CEditHandler::Get()->GetSystemOpenCommand(_T("foo.txt"), program_exists);
+	if (!program_exists)
+		cmd.clear();
+	if (!cmd.empty())
+	{
+		wxString args;
+		if (!UnquoteCommand(cmd, args))
+			cmd.clear();
+	}
+
+	pDesc = XRCCTRL(*this, "ID_EDITOR_DESC", wxStaticText);
+	if (cmd.empty())
+	{
+		XRCCTRL(*this, "ID_USE_CUSTOM", wxRadioButton)->SetValue(true);
+		XRCCTRL(*this, "ID_USE_EDITOR", wxRadioButton)->Enable(false);
+		pDesc->Hide();
+	}
+	else
+	{
+		XRCCTRL(*this, "ID_EDITOR_DESC_NONE", wxStaticText)->Hide();
+		pDesc->SetLabel(wxString::Format(pDesc->GetLabel(), cmd.c_str()));
+	}
+
+	SetCtrlState();
+
+	GetSizer()->Fit(this);
+
+	if (ShowModal() != wxID_OK)
+		return false;
+
+	return true;
+}
+
+void CNewAssociationDialog::SetCtrlState()
+{
+	const bool custom = XRCCTRL(*this, "ID_USE_CUSTOM", wxRadioButton)->GetValue();
+
+	XRCCTRL(*this, "ID_CUSTOM", wxTextCtrl)->Enable(custom);
+	XRCCTRL(*this, "ID_BROWSE", wxButton)->Enable(custom);
+}
+
+void CNewAssociationDialog::OnRadioButton(wxCommandEvent& event)
+{
+	SetCtrlState();
+}
+
+void CNewAssociationDialog::OnOK(wxCommandEvent& event)
+{
+	const bool custom = XRCCTRL(*this, "ID_USE_CUSTOM", wxRadioButton)->GetValue();
+	const bool always = XRCCTRL(*this, "ID_ALWAYS", wxCheckBox)->GetValue();
+
+	if (custom)
+	{
+		wxString cmd = XRCCTRL(*this, "ID_CUSTOM", wxTextCtrl)->GetValue();
+		wxString editor = cmd;
+		wxString args;
+		if (!UnquoteCommand(editor, args) || editor.empty())
+		{
+			wxMessageBox(_("You need to enter a properly quoted command."), _("Cannot set file association"), wxICON_EXCLAMATION);
+			return;
+		}
+		if (!ProgramExists(editor))
+		{
+			wxMessageBox(_("Selected editor does not exist."), _("Cannot set file association"), wxICON_EXCLAMATION, this);
+			return;
+		}
+
+		if (always)
+			COptions::Get()->SetOption(OPTION_EDIT_DEFAULTEDITOR, _T("2") + cmd);
+		else
+		{
+			wxString associations = COptions::Get()->GetOption(OPTION_EDIT_CUSTOMASSOCIATIONS);
+			if (associations.Last() != '\n')
+				associations += '\n';
+			associations += m_ext + _T(" ") + cmd;
+			COptions::Get()->SetOption(OPTION_EDIT_CUSTOMASSOCIATIONS, associations);
+		}
+	}
+	else
+	{
+		if (always)
+			COptions::Get()->SetOption(OPTION_EDIT_DEFAULTEDITOR, _T("1"));
+		else
+		{
+			bool program_exists = false;
+			wxString cmd = CEditHandler::Get()->GetSystemOpenCommand(_T("foo.txt"), program_exists);
+			if (!program_exists)
+				cmd.clear();
+			if (!cmd.empty())
+			{
+				wxString args;
+				if (!UnquoteCommand(cmd, args))
+					cmd.clear();
+			}
+			if (cmd.empty())
+			{
+				wxMessageBox(_("The default editor for text files could not be found."), _("Cannot set file association"), wxICON_EXCLAMATION, this);
+				return;
+			}
+			if (cmd.Find(' ') != -1)
+				cmd = _T("\"") + cmd + _T("\"");
+			wxString associations = COptions::Get()->GetOption(OPTION_EDIT_CUSTOMASSOCIATIONS);
+			if (!associations.empty() && associations.Last() != '\n')
+				associations += '\n';
+			associations += m_ext + _T(" ") + cmd;
+			COptions::Get()->SetOption(OPTION_EDIT_CUSTOMASSOCIATIONS, associations);
+		}
+	}
+
+	EndModal(wxID_OK);
+}
+
+void CNewAssociationDialog::OnBrowseEditor(wxCommandEvent& event)
+{
+	wxFileDialog dlg(this, _("Select default editor"), _T(""), _T(""),
+#ifdef __WXMSW__
+		_T("Executable file (*.exe)|*.exe"),
+#elif __WXMAC__
+		_T("Applications (*.app)|*.app"),
+#else
+		wxFileSelectorDefaultWildcardStr,
+#endif
+		wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+
+	if (dlg.ShowModal() != wxID_OK)
+		return;
+
+	wxString editor = dlg.GetPath();
+	if (editor == _T(""))
+		return;
+
+	if (!ProgramExists(editor))
+	{
+		XRCCTRL(*this, "ID_EDITOR", wxWindow)->SetFocus();
+		wxMessageBox(_("Selected editor does not exist."), _("File not found"), wxICON_EXCLAMATION, this);
+		return;
+	}
+
+	if (editor.Find(' ') != -1)
+		editor = _T("\"") + editor + _T("\"");
+
+	XRCCTRL(*this, "ID_CUSTOM", wxTextCtrl)->ChangeValue(editor);
+}

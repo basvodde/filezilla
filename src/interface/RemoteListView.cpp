@@ -1350,7 +1350,7 @@ void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
 
 	if (!m_pState->IsRemoteConnected() || !m_pState->IsRemoteIdle())
 	{
-		pMenu->Remove(XRCID("ID_ENTER"));
+		pMenu->Delete(XRCID("ID_ENTER"));
 		pMenu->Enable(XRCID("ID_DOWNLOAD"), false);
 		pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
 		pMenu->Enable(XRCID("ID_MKDIR"), false);
@@ -1370,7 +1370,7 @@ void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
 	}
 	else if (GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) == -1)
 	{
-		pMenu->Remove(XRCID("ID_ENTER"));
+		pMenu->Delete(XRCID("ID_ENTER"));
 		pMenu->Enable(XRCID("ID_DOWNLOAD"), false);
 		pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
 		pMenu->Enable(XRCID("ID_DELETE"), false);
@@ -1400,7 +1400,7 @@ void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
 		}
 		if (!count || fillCount == count)
 		{
-			pMenu->Remove(XRCID("ID_ENTER"));
+			pMenu->Delete(XRCID("ID_ENTER"));
 			pMenu->Enable(XRCID("ID_DOWNLOAD"), false);
 			pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
 			pMenu->Enable(XRCID("ID_DELETE"), false);
@@ -1413,10 +1413,10 @@ void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
 			if (selectedDir)
 				pMenu->Enable(XRCID("ID_EDIT"), false);
 			else
-				pMenu->Remove(XRCID("ID_ENTER"));
+				pMenu->Delete(XRCID("ID_ENTER"));
 			if (count > 1)
 			{
-				pMenu->Remove(XRCID("ID_ENTER"));
+				pMenu->Delete(XRCID("ID_ENTER"));
 				pMenu->Enable(XRCID("ID_RENAME"), false);
 			}
 
@@ -2596,8 +2596,15 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 	wxString cmd = pEditHandler->CanOpen(CEditHandler::remote, entry.name, dangerous, program_exists);
 	if (cmd.empty())
 	{
-		wxMessageBox(_("Selected file cannot be opened.\nNo default editor has been set or filetype association is missing or incorrect."), _("Cannot edit file"), wxICON_STOP);
-		return;
+		CNewAssociationDialog dlg(this);
+		if (!dlg.Show(entry.name))
+			return;
+		cmd = pEditHandler->CanOpen(CEditHandler::remote, entry.name, dangerous, program_exists);
+		if (cmd.empty())
+		{
+			wxMessageBox(wxString::Format(_("The file '%s' could not be opened:\nNo program has been associated on your system with this file type."), entry.name.c_str()), _("Opening failed"), wxICON_EXCLAMATION);
+			return;
+		}
 	}
 	if (!program_exists)
 	{

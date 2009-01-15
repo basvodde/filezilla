@@ -165,4 +165,22 @@ protected:
 	void OnEdit(wxCommandEvent& event);
 };
 
+class CNewAssociationDialog : protected wxDialogEx
+{
+public:
+	CNewAssociationDialog(wxWindow* parent);
+
+	bool Show(const wxString& file);
+
+protected:
+	void SetCtrlState();
+	wxWindow* m_pParent;
+	wxString m_ext;
+
+	DECLARE_EVENT_TABLE();
+	void OnRadioButton(wxCommandEvent& event);
+	void OnOK(wxCommandEvent& event);
+	void OnBrowseEditor(wxCommandEvent& event);
+};
+
 #endif //__EDITHANDLER_H__
