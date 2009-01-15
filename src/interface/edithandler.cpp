@@ -959,15 +959,30 @@ wxString CEditHandler::GetSystemOpenCommand(const wxString& file, bool &program_
 	if (cmd.empty())
 		return wxEmptyString;
 
+	program_exists = false;
+
 	wxString args;
 	wxString editor = cmd;
-	if (UnquoteCommand(editor, args) && !ProgramExists(editor))
-	{
-		program_exists = false;
-		return editor;
-	}
+	if (!UnquoteCommand(editor, args) || editor.empty())
+		return cmd;
 
-	program_exists = true;
+#ifdef __WXGTK__
+	if (editor[0] != '/')
+	{
+		// Need to search for program in $PATH
+		wxString path;
+		if (!wxGetEnv(_T("PATH"), &path))
+			return cmd;
+
+		wxString full_editor;
+		if (!wxFindFileInPath(&full_editor, path, editor))
+			return cmd;
+
+		editor = full_editor;
+	}
+#endif
+	if (ProgramExists(editor))
+		program_exists = true;
 	return cmd;
 }
 
@@ -1476,7 +1491,7 @@ bool CNewAssociationDialog::Show(const wxString &file)
 		return true;
 
 	int pos = file.Find('.', true);
-	if (pos < 1 || pos + 1 == file.Len())
+	if (pos < 1 || pos + 1 == (int)file.Len())
 	{
 		// No extension or dotfile
 		return true;
@@ -1496,6 +1511,23 @@ bool CNewAssociationDialog::Show(const wxString &file)
 		if (!UnquoteCommand(cmd, args))
 			cmd.clear();
 	}
+#ifdef __WXGTK__
+	if (!cmd.empty() && cmd[0] != '/')
+	{
+		// Need to search for program in $PATH
+		wxString path;
+		if (!wxGetEnv(_T("PATH"), &path))
+			cmd.clear();
+		else
+		{
+			wxString full_editor;
+			if (!wxFindFileInPath(&full_editor, path, cmd))
+				cmd.clear();
+			else
+			cmd = full_editor;
+		}
+	}
+#endif
 
 	pDesc = XRCCTRL(*this, "ID_EDITOR_DESC", wxStaticText);
 	if (cmd.empty())
