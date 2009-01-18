@@ -11,10 +11,12 @@ public:
 
 	virtual bool OnDisplayedFirstTime();
 
+	struct _locale_info { wxString name; wxString code; };
+
 protected:
 	DECLARE_EVENT_TABLE();
 
-	std::map<wxString, wxString> m_localeMap; // Maps language codes to language names
+	std::vector<_locale_info> m_locale;
 };
 
 #endif //__OPTIONSPAGE_LANGUAGE_H__

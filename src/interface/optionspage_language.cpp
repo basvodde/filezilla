@@ -4,6 +4,7 @@
 #include "optionspage.h"
 #include "optionspage_language.h"
 #include "filezillaapp.h"
+#include <algorithm>
 
 BEGIN_EVENT_TABLE(COptionsPageLanguage, COptionsPage)
 END_EVENT_TABLE();
@@ -23,16 +24,10 @@ bool COptionsPageLanguage::SavePage()
 	if (pListBox->GetSelection() == wxNOT_FOUND)
 		return true;
 
-	const wxString& selection = pListBox->GetStringSelection();
+	const int selection = pListBox->GetSelection();
 	wxString code;
-	std::map<wxString, wxString>::const_iterator iter;
-	for (iter = m_localeMap.begin(); iter != m_localeMap.end(); iter++)
-	{
-		if (iter->second == selection)
-			break;
-	}
-	if (iter != m_localeMap.end())
-		code = iter->first;
+	if (selection > 0)
+		code = m_locale[selection - 1].code;
 
 #ifdef __WXGTK__
 	m_pOptions->SetOption(OPTION_LANGUAGE, code);
@@ -65,6 +60,11 @@ bool COptionsPageLanguage::Validate()
 	return true;
 }
 
+static bool compareLangAsc(const struct COptionsPageLanguage::_locale_info &lang1, const struct COptionsPageLanguage::_locale_info &lang2)
+{
+	return lang1.name.wxString::Cmp(lang2.name) <= 0;
+}
+
 bool COptionsPageLanguage::OnDisplayedFirstTime()
 {
 	wxListBox* pListBox = XRCCTRL(*this, "ID_LANGUAGES", wxListBox);
@@ -80,10 +80,9 @@ bool COptionsPageLanguage::OnDisplayedFirstTime()
 	if (currentLanguage == _T(""))
 		pListBox->SetSelection(n);
 
-	n = pListBox->Append(_T("English"));
-	if (currentLanguage == _T("en"))
-		pListBox->SetSelection(n);
-	m_localeMap[_T("en")] = _T("English");
+	m_locale.push_back(_locale_info());
+	m_locale.back().code = _T("en");
+	m_locale.back().name = _T("English");
 
 	wxString localesDir = wxGetApp().GetLocalesDir();
 	if (localesDir == _T("") || !wxDir::Exists(localesDir))
@@ -108,10 +107,18 @@ bool COptionsPageLanguage::OnDisplayedFirstTime()
 		else
 			name = locale;
 
-		m_localeMap[locale] = name;
+		m_locale.push_back(_locale_info());
+		m_locale.back().code = locale;
+		m_locale.back().name = name;
+	}
 
-		int n = pListBox->Append(name);
-		if (locale == currentLanguage)
+	std::sort(m_locale.begin(), m_locale.end(), compareLangAsc);
+
+	std::vector<struct _locale_info>::const_iterator iter;
+	for (iter = m_locale.begin(); iter != m_locale.end(); iter++)
+	{
+		n = pListBox->Append(iter->name + _T(" (") + iter->code + _T(")"));
+		if (iter->code == currentLanguage)
 			pListBox->SetSelection(n);
 	}
 	pListBox->GetContainingSizer()->Layout();
