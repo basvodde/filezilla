@@ -7,6 +7,7 @@ noinst_HEADERS = compatibility.h \
 		 engineprivate.h externalipresolver.h FileZilla.h \
 		 FileZillaEngine.h \
 		 local_filesys.h \
+		 local_path.h \
 		 logging.h misc.h notification.h optionsbase.h \
 		 refcount.h \
 		 server.h \
