@@ -47,6 +47,7 @@ void CServerPathTest::testGetPath()
 	const CServerPath unix3(_T("/foo/bar"));
 	CPPUNIT_ASSERT(unix3.GetPath() == _T("/foo/bar"));
 
+
 	const CServerPath vms1(_T("FOO:[BAR]"));
 	CPPUNIT_ASSERT(vms1.GetPath() == _T("FOO:[BAR]"));
 
@@ -59,6 +60,7 @@ void CServerPathTest::testGetPath()
 	const CServerPath vms4(_T("FOO:[BAR^.TEST.SOMETHING]"));
 	CPPUNIT_ASSERT(vms4.GetPath() == _T("FOO:[BAR^.TEST.SOMETHING]"));
 
+
 	const CServerPath dos1(_T("C:\\"));
 	CPPUNIT_ASSERT(dos1.GetPath() == _T("C:\\"));
 
@@ -67,6 +69,13 @@ void CServerPathTest::testGetPath()
 
 	const CServerPath dos3(_T("md:\\"), DOS);
 	CPPUNIT_ASSERT(dos3.GetPath() == _T("md:\\"));
+
+	const CServerPath dos4(_T("C:"), DOS);
+	CPPUNIT_ASSERT(dos4.GetPath() == _T("C:\\"));
+
+	const CServerPath dos5(_T("C:\\FOO\\"));
+	CPPUNIT_ASSERT(dos5.GetPath() == _T("C:\\FOO"));
+
 
 	const CServerPath mvs1(_T("'FOO'"), MVS);
 	CPPUNIT_ASSERT(mvs1.GetPath() == _T("'FOO'"));
