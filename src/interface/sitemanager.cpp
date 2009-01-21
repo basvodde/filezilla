@@ -2290,6 +2290,11 @@ void CSiteManager::AddNewSite(wxTreeItemId parent, const CServer& server)
 	pTree->SortChildren(parent);
 	pTree->EnsureVisible(newItem);
 	pTree->SelectItem(newItem);
+#ifdef __WXMAC__
+	// Need to trigger dirty processing of generic tree control.
+	// Else edit control will be hidden behind item
+	pTree->OnInternalIdle();
+#endif
 	pTree->EditLabel(newItem);
 }
 
