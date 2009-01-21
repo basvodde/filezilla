@@ -109,12 +109,10 @@ bool CLocalPath::SetPath(const wxString& path)
 		m_path.clear();
 		return false;
 	}
-	m_path = _T("/");
-	segments.push_back(in);
 
-	wxChar* buf = m_path.GetWriteBuf(path.Len() + 2);
-	*buf++ = '/';
-	wxChar* out = buf;
+	wxChar* out = m_path.GetWriteBuf(path.Len() + 2);
+	*out++ = '/';
+	m_segments.push_back(out);
 #endif
 
 	enum _last
