@@ -56,6 +56,16 @@ void CLocalPathTest::testSetPath()
 	CPPUNIT_ASSERT(CLocalPath(_T("\\\\foo\\bar\\")).GetPath() == _T("\\\\foo\\bar\\"));
 	CPPUNIT_ASSERT(CLocalPath(_T("\\\\foo\\bar\\.\\..")).GetPath() == _T("\\\\foo\\"));
 #else
+	CPPUNIT_ASSERT(CLocalPath(_T("/")).GetPath() == _T("/"));
+	CPPUNIT_ASSERT(CLocalPath(_T("/foo")).GetPath() == _T("/foo/"));
+	CPPUNIT_ASSERT(CLocalPath(_T("//foo//")).GetPath() == _T("/foo/"));
+	CPPUNIT_ASSERT(CLocalPath(_T("/foo/../foo")).GetPath() == _T("/foo/"));
+	CPPUNIT_ASSERT(CLocalPath(_T("/foo/..")).GetPath() == _T("/"));
+	CPPUNIT_ASSERT(CLocalPath(_T("/..")).GetPath() == _T("/"));
+	CPPUNIT_ASSERT(CLocalPath(_T("/foo/.")).GetPath() == _T("/foo/"));
+	CPPUNIT_ASSERT(CLocalPath(_T("/foo/./")).GetPath() == _T("/foo/"));
+	CPPUNIT_ASSERT(CLocalPath(_T("/foo/bar/")).GetPath() == _T("/foo/bar/"));
+	CPPUNIT_ASSERT(CLocalPath(_T("/foo/bar/./..")).GetPath() == _T("/foo/"));
 #endif
 }
 
