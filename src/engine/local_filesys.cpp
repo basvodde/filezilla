@@ -503,7 +503,8 @@ bool CLocalFileSystem::GetNextFile(wxString& name, bool &isLink, bool &is_dir, w
 		else
 		{
 			is_dir = false;
-			*size = wxLongLong(m_find_data.nFileSizeHigh, m_find_data.nFileSizeLow);
+			if (size)
+				*size = wxLongLong(m_find_data.nFileSizeHigh, m_find_data.nFileSizeLow);
 		}
 
 		m_found = FindNextFile(m_hFind, &m_find_data) != 0;
