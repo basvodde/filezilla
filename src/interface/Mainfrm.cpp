@@ -920,7 +920,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		{
 			CNewBookmarkDialog dlg(this, m_last_bookmark_path, pServer);
 
-			if (dlg.ShowModal(m_pState->GetLocalDir(), m_pState->GetRemotePath()) == wxID_OK)
+			if (dlg.ShowModal(m_pState->GetLocalDir().GetPath(), m_pState->GetRemotePath()) == wxID_OK)
 			{
 				m_bookmarks.clear();
 				CSiteManager::GetBookmarks(m_last_bookmark_path, m_bookmarks);
@@ -931,7 +931,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		{
 			CBookmarksDialog dlg(this, m_last_bookmark_path, pServer);
 
-			if (dlg.ShowModal(m_pState->GetLocalDir(), m_pState->GetRemotePath()) == wxID_OK)
+			if (dlg.ShowModal(m_pState->GetLocalDir().GetPath(), m_pState->GetRemotePath()) == wxID_OK)
 			{
 				m_bookmarks.clear();
 				CSiteManager::GetBookmarks(m_last_bookmark_path, m_bookmarks);

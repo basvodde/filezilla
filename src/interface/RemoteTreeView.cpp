@@ -843,9 +843,19 @@ void CRemoteTreeView::OnBeginDrag(wxTreeEvent& event)
 	}
 #endif
 
+	CDragDropManager* pDragDropManager = CDragDropManager::Init();
+	pDragDropManager->pDragSource = this;
+	pDragDropManager->server = *pServer;
+	pDragDropManager->remoteParent = parent;
+
 	wxDropSource source(this);
 	source.SetData(object);
-	if (source.DoDragDrop() != wxDragCopy)
+
+	int res = source.DoDragDrop();
+
+	pDragDropManager->Release();
+
+	if (res != wxDragCopy)
 	{
 #if FZ3_USESHELLEXT
 		delete ext;
@@ -930,8 +940,7 @@ void CRemoteTreeView::OnContextMenu(wxTreeEvent& event)
 	else if (!path.HasParent())
 		pMenu->Enable(XRCID("ID_RENAME"), false);
 
-	const wxString& localDir = m_pState->GetLocalDir();
-	if (!m_pState->LocalDirIsWriteable(localDir))
+	if (!m_pState->GetLocalDir().IsWriteable())
 	{
 		pMenu->Enable(XRCID("ID_DOWNLOAD"), false);
 		pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
@@ -1054,8 +1063,8 @@ void CRemoteTreeView::OnMenuChmod(wxCommandEvent& event)
 
 void CRemoteTreeView::OnMenuDownload(wxCommandEvent& event)
 {
-	const wxString& localDir = m_pState->GetLocalDir();
-	if (!m_pState->LocalDirIsWriteable(localDir))
+	CLocalPath localDir = m_pState->GetLocalDir();
+	if (!localDir.IsWriteable())
 	{
 		wxBell();
 		return;
@@ -1075,13 +1084,10 @@ void CRemoteTreeView::OnMenuDownload(wxCommandEvent& event)
 
 	const wxString& name = GetItemText(m_contextMenuItem);
 
-	wxFileName fn = wxFileName(localDir, _T(""));
-	
-	if (hasParent)
-		fn.AppendDir(name);	
+	localDir.AddSegment(name);
 
 	CRecursiveOperation* pRecursiveOperation = m_pState->GetRecursiveOperationHandler();
-	pRecursiveOperation->AddDirectoryToVisit(path, _T(""), fn.GetFullPath());
+	pRecursiveOperation->AddDirectoryToVisit(path, _T(""), localDir.GetPath());
 
 	CServerPath currentPath;
 	const wxTreeItemId selected = GetSelection();

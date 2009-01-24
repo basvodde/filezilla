@@ -7,9 +7,9 @@ const wxChar CLocalPath::path_separator = '\\';
 const wxChar CLocalPath::path_separator = '/';
 #endif
 
-CLocalPath::CLocalPath(const wxString& path)
+CLocalPath::CLocalPath(const wxString& path, wxString* file /*=0*/)
 {
-	SetPath(path);
+	SetPath(path, file);
 }
 
 CLocalPath::CLocalPath(const CLocalPath &path)
@@ -17,7 +17,7 @@ CLocalPath::CLocalPath(const CLocalPath &path)
 {
 }
 
-bool CLocalPath::SetPath(const wxString& path)
+bool CLocalPath::SetPath(const wxString& path, wxString* file /*=0*/)
 {
 	// This function ensures that the path is in canonical form on success.
 
@@ -35,6 +35,8 @@ bool CLocalPath::SetPath(const wxString& path)
 	if (path == _T("\\"))
 	{
 		m_path = _T("\\");
+		if (file)
+			file->clear();
 		return true;
 	}
 
@@ -186,7 +188,16 @@ bool CLocalPath::SetPath(const wxString& path)
 		out = segments.back();
 	}
 	else if (last == segment)
-		*out++ = path_separator;
+	{
+		if (file)
+		{
+			*out = 0;
+			out = segments.back();
+			*file = out;
+		}
+		else
+			*out++ = path_separator;
+	}
 
 	*out = 0;
 
@@ -255,13 +266,17 @@ bool CLocalPath::HasLogicalParent() const
 	return HasParent();
 }
 
-CLocalPath CLocalPath::GetParent() const
+CLocalPath CLocalPath::GetParent(wxString* last_segment /*=0*/) const
 {
 	CLocalPath parent;
 
 #ifdef __WXMSW__
 	if (m_path.Len() == 3 && m_path[0] != '\\') // Drive root
+	{
+		if (last_segment)
+			last_segment->clear();
 		return CLocalPath(_T("\\"));
+	}
 
 	// C:\f\ has parent
 	// C:\ does not
@@ -274,13 +289,20 @@ CLocalPath CLocalPath::GetParent() const
 	for (int i = (int)m_path.Len() - 2; i >= min; i--)
 	{
 		if (m_path[i] == path_separator)
+		{
+			if (last_segment)
+			{
+				*last_segment = m_path.Mid(i + 1);
+				last_segment->RemoveLast();
+			}
 			return CLocalPath(m_path.Left(i + 1));
+		}
 	}
 
 	return CLocalPath();
 }
 
-bool CLocalPath::MakeParent()
+bool CLocalPath::MakeParent(wxString* last_segment /*=0*/)
 {
 #ifdef __WXMSW__
 	if (m_path.Len() == 3 && m_path[0] != '\\') // Drive root
@@ -301,6 +323,11 @@ bool CLocalPath::MakeParent()
 	{
 		if (m_path[i] == path_separator)
 		{
+			if (last_segment)
+			{
+				*last_segment = m_path.Mid(i + 1);
+				last_segment->RemoveLast();
+			}
 			m_path = m_path.Left(i + 1);
 			return true;
 		}
@@ -319,4 +346,153 @@ void CLocalPath::AddSegment(const wxString& segment)
 
 	m_path += segment;
 	m_path += path_separator;
+}
+
+bool CLocalPath::ChangePath(const wxString& path)
+{
+	if (path.empty())
+		return false;
+#ifdef __WXMSW__
+	if (path == _T("\\") || path == _T("/"))
+	{
+		m_path = _T("\\");
+		return true;
+	}
+
+	if (path[0] == '\\' && path[1] == '\\')
+	{
+		// Absolute UNC
+		return SetPath(path);
+	}
+	if (path[0] && path[1] == ':')
+	{
+		// Absolute path
+		return SetPath(path);
+	}
+
+	// Relative path
+	if (m_path.empty())
+		return false;
+
+	return SetPath(m_path + path);
+#else
+	if (path[0] == path_separator)
+	{
+		// Absolute path
+		return SetPath(path);
+	}
+	else
+	{
+		// Relative path
+
+		if (m_path.empty())
+			return false;
+
+		return SetPath(m_path + path);
+	}
+#endif
+}
+
+bool CLocalPath::Exists(wxString *error /*=0*/) const
+{
+	wxASSERT(!m_path.empty());
+	if (m_path.empty())
+		return false;
+
+#ifdef __WXMSW__
+	if (m_path == _T("\\"))
+	{
+		// List of drives always exists
+		return true;
+	}
+
+	if (m_path[0] == '\\')
+	{
+		// UNC path
+
+		// \\x\y\
+		//      ^ earliest possible position of backslash indicating complete share
+		size_t pos;
+		for (pos = 5; pos < m_path.Len(); pos++)
+			if (m_path[pos] == '\\')
+				break;
+		if (pos >= m_path.Len())
+		{
+			// Partial UNC path
+			return true;
+		}
+	}
+
+	wxString path = m_path;
+	if (path.Len() > 3)
+		path.RemoveLast();
+	DWORD ret = ::GetFileAttributes(path);
+	if (ret == INVALID_FILE_ATTRIBUTES)
+	{
+		if (!error)
+			return false;
+
+		error->Printf(_("'%s' does not exist or cannot be accessed."), path.c_str());
+
+		if (m_path[0] == '\\')
+			return false;
+
+		// Check for removable drive, display a more specific error message in that case
+		if (::GetLastError() != ERROR_NOT_READY)
+			return false;
+		int type = GetDriveType(m_path.Left(3));
+		if (type == DRIVE_REMOVABLE || type == DRIVE_CDROM)
+			error->Printf(_("Cannot access '%s', no media inserted or drive not ready."), path.c_str());
+		return false;
+	}
+	else if (!(ret & FILE_ATTRIBUTE_DIRECTORY))
+	{
+		if (error)
+			error->Printf(_("'%s' is not a directory."), path.c_str());
+		return false;
+	}
+
+	return true;
+#else
+	wxString path = m_path;
+	if (path.Len() > 1)
+		path.RemoveLast();
+
+	const wxCharBuffer s = path.fn_str();
+
+	struct stat buf;
+	int result = stat(s, &buf);
+
+	if (!result)
+	{
+		if (S_ISDIR(buf.st_mode))
+			return true;
+
+		if (*error)
+			error->Printf(_("'%s' is not a directory."), path.c_str());
+
+		return false;
+	}
+	else if (result == ENOTDIR)
+	{
+		if (error)
+			error->Printf(_("'%s' is not a directory."), path.c_str());
+		return false;
+	}
+	else
+	{
+		error->Printf(_("'%s' does not exist or cannot be accessed."), path.c_str());
+		return false;
+	}
+#endif
+}
+
+bool CLocalPath::operator==(const CLocalPath& op) const
+{
+	return m_path == op.m_path;
+}
+
+bool CLocalPath::operator!=(const CLocalPath& op) const
+{
+	return m_path != op.m_path;
 }

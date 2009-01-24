@@ -1,6 +1,8 @@
 #ifndef __STATE_H__
 #define __STATE_H__
 
+#include "local_path.h"
+
 enum t_statechange_notifications
 {
 	STATECHANGE_NONE, // Used to unregister all notifications
@@ -42,18 +44,11 @@ public:
 	bool CreateEngine();
 	void DestroyEngine();
 
-	wxString GetLocalDir() const;
-	static wxString Canonicalize(wxString oldDir, wxString newDir, wxString *error = 0);
-	bool SetLocalDir(wxString dir, wxString *error = 0);
+	CLocalPath GetLocalDir() const;
+	bool SetLocalDir(const wxString& dir, wxString *error = 0);
 
 	// Returns a file:// URL
 	static wxString GetAsURL(const wxString& dir);
-
-	// These functions only operate on the path syntax, they don't
-	// check the actual filesystem properties.
-	// Passed directory should be in canonical form.
-	static bool LocalDirHasParent(const wxString& dir);
-	static bool LocalDirIsWriteable(const wxString& dir);
 
 	bool Connect(const CServer& server, bool askBreak, const CServerPath& path = CServerPath());
 
@@ -92,7 +87,7 @@ public:
 protected:
 	void SetServer(const CServer* server);
 
-	wxString m_localDir;
+	CLocalPath m_localDir;
 	const CDirectoryListing *m_pDirectoryListing;
 
 	CServer* m_pServer;

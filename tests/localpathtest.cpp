@@ -10,6 +10,7 @@ class CLocalPathTest : public CppUnit::TestFixture
 {
 	CPPUNIT_TEST_SUITE(CLocalPathTest);
 	CPPUNIT_TEST(testSetPath);
+	CPPUNIT_TEST(testChangePath);
 	CPPUNIT_TEST(testHasParent);
 #ifdef __WXMSW__
 	CPPUNIT_TEST(testHasLogicalParent);
@@ -21,6 +22,7 @@ public:
 	void tearDown() {}
 
 	void testSetPath();
+	void testChangePath();
 	void testHasParent();
 #ifdef __WXMSW__
 	void testHasLogicalParent();
@@ -66,6 +68,30 @@ void CLocalPathTest::testSetPath()
 	CPPUNIT_ASSERT(CLocalPath(_T("/foo/./")).GetPath() == _T("/foo/"));
 	CPPUNIT_ASSERT(CLocalPath(_T("/foo/bar/")).GetPath() == _T("/foo/bar/"));
 	CPPUNIT_ASSERT(CLocalPath(_T("/foo/bar/./..")).GetPath() == _T("/foo/"));
+#endif
+}
+
+void CLocalPathTest::testChangePath()
+{
+#ifdef __WXMSW__
+	CLocalPath p1(_T("C:\\"));
+	CPPUNIT_ASSERT(p1.ChangePath(_T("\\")) && p1.GetPath() == _T("\\"));
+	CPPUNIT_ASSERT(p1.ChangePath(_T("C:")) && p1.GetPath() == _T("C:\\"));
+	CPPUNIT_ASSERT(p1.ChangePath(_T("C:\\.")) && p1.GetPath() == _T("C:\\"));
+	CPPUNIT_ASSERT(p1.ChangePath(_T("C:\\..")) && p1.GetPath() == _T("C:\\"));
+	CPPUNIT_ASSERT(p1.ChangePath(_T("foo")) && p1.GetPath() == _T("C:\\foo\\"));
+	CPPUNIT_ASSERT(p1.ChangePath(_T("..")) && p1.GetPath() == _T("C:\\"));
+	CPPUNIT_ASSERT(p1.ChangePath(_T("..")) && p1.GetPath() == _T("C:\\"));
+	CPPUNIT_ASSERT(p1.ChangePath(_T("C:\\foo")) && p1.GetPath() == _T("C:\\foo\\"));
+	CPPUNIT_ASSERT(p1.ChangePath(_T(".")) && p1.GetPath() == _T("C:\\foo\\"));
+	CPPUNIT_ASSERT(p1.ChangePath(_T("..\\bar")) && p1.GetPath() == _T("C:\\bar\\"));
+
+	CLocalPath p2;
+	CPPUNIT_ASSERT(p2.ChangePath(_T("\\\\foo")) && p2.GetPath() == _T("\\\\foo\\"));
+	CPPUNIT_ASSERT(p2.ChangePath(_T(".")) && p2.GetPath() == _T("\\\\foo\\"));
+	CPPUNIT_ASSERT(p2.ChangePath(_T("..")) && p2.GetPath() == _T("\\\\foo\\"));
+	CPPUNIT_ASSERT(p2.ChangePath(_T("..\\bar\\.\\baz\\..")) && p2.GetPath() == _T("\\\\foo\\bar\\"));
+#else
 #endif
 }
 

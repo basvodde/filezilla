@@ -69,9 +69,7 @@ void CManualTransfer::Show(wxWindow* pParent, CState* pState)
 		DisplayServer();
 	}
 
-	wxString localPath = m_pState->GetLocalDir();
-	if (localPath.Last() != CLocalFileSystem::path_separator)
-		localPath += CLocalFileSystem::path_separator;
+	wxString localPath = m_pState->GetLocalDir().GetPath();
 	XRCCTRL(*this, "ID_LOCALFILE", wxTextCtrl)->ChangeValue(localPath);
 
 	XRCCTRL(*this, "ID_REMOTEPATH", wxTextCtrl)->ChangeValue(m_pState->GetRemotePath().GetPath());

@@ -488,7 +488,7 @@ void CLocalViewHeader::OnSelectionChanged(wxCommandEvent& event)
 
 	if (!wxDir::Exists(dir))
 	{
-		const wxString& current = m_pState->GetLocalDir();
+		const wxString& current = m_pState->GetLocalDir().GetPath();
 		int item = m_pComboBox->FindString(current, true);
 		if (item != wxNOT_FOUND)
 			m_pComboBox->SetSelection(item);
@@ -515,7 +515,7 @@ void CLocalViewHeader::OnTextEnter(wxCommandEvent& event)
 			wxMessageBox(error, _("Failed to change directory"), wxICON_INFORMATION);
 		else
 			wxBell();
-		m_pComboBox->SetValue(m_pState->GetLocalDir());
+		m_pComboBox->SetValue(m_pState->GetLocalDir().GetPath());
 	}
 }
 
@@ -527,7 +527,7 @@ void CLocalViewHeader::OnStateChange(enum t_statechange_notifications notificati
 	m_autoCompletionText = _T("");
 #endif
 
-	wxString dir = m_pState->GetLocalDir();
+	wxString dir = m_pState->GetLocalDir().GetPath();
 	AddRecentDirectory(dir);
 }
 

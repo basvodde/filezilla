@@ -90,16 +90,14 @@ public:
 				return wxDragNone;
 			}
 
-			const wxString& target = pState->GetLocalDir();
-#ifdef __WXMSW__
-			if (target == _T("\\"))
+			const CLocalPath& target = pState->GetLocalDir();
+			if (!target.IsWriteable())
 			{
 				wxBell();
 				return wxDragNone;
 			}
-#endif
 
-			if (!pState->DownloadDroppedFiles(m_pRemoteDataObject, target, true))
+			if (!pState->DownloadDroppedFiles(m_pRemoteDataObject, target.GetPath(), true))
 				return wxDragNone;
 		}
 
@@ -118,6 +116,15 @@ public:
 			def == wxDragCancel)
 		{
 			return def;
+		}
+
+		CDragDropManager* pDragDropManager = CDragDropManager::Get();
+		if (pDragDropManager && !pDragDropManager->remoteParent.IsEmpty())
+		{
+			// Drag from remote to queue, check if local path is writeable
+			CState* const pState = m_pQueueView->m_pMainFrame->GetState();
+			if (!pState->GetLocalDir().IsWriteable())
+				return wxDragNone;			
 		}
 
 		def = wxDragCopy;

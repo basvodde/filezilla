@@ -79,24 +79,21 @@ public:
 				subdir = data->name;
 		}
 
-		wxString dir;
+		CLocalPath dir = m_pLocalListView->m_pState->GetLocalDir();
 		if (subdir != _T(""))
 		{
-			dir = CState::Canonicalize(m_pLocalListView->m_dir, subdir);
-			if (dir == _T(""))
+			if (!dir.ChangePath(subdir))
 				return wxDragError;
 		}
-		else
-			dir = m_pLocalListView->m_dir;
 
-		if (!CState::LocalDirIsWriteable(dir))
+		if (!dir.IsWriteable())
 			return wxDragError;
 
 		if (!GetData())
 			return wxDragError;
 
 		if (m_pDataObject->GetReceivedFormat() == m_pFileDataObject->GetFormat())
-			m_pLocalListView->m_pState->HandleDroppedFiles(m_pFileDataObject, dir, def == wxDragCopy);
+			m_pLocalListView->m_pState->HandleDroppedFiles(m_pFileDataObject, dir.GetPath(), def == wxDragCopy);
 		else
 		{
 			if (m_pRemoteDataObject->GetProcessId() != (int)wxGetProcessId())
@@ -111,7 +108,7 @@ public:
 				return wxDragNone;
 			}
 
-			if (!m_pLocalListView->m_pState->DownloadDroppedFiles(m_pRemoteDataObject, dir))
+			if (!m_pLocalListView->m_pState->DownloadDroppedFiles(m_pRemoteDataObject, dir.GetPath()))
 				return wxDragNone;
 		}
 
@@ -191,21 +188,21 @@ public:
 
 		const wxString& subdir = DisplayDropHighlight(wxPoint(x, y));
 
+		CLocalPath dir = m_pLocalListView->m_pState->GetLocalDir();
 		if (subdir == _T(""))
 		{
 			const CDragDropManager* pDragDropManager = CDragDropManager::Get();
 			if (pDragDropManager && pDragDropManager->localParent == m_pLocalListView->m_dir)
 				return wxDragNone;
-
-			if (!CState::LocalDirIsWriteable(m_pLocalListView->m_dir))
-				return wxDragNone;
 		}
 		else
 		{
-			wxString dir = CState::Canonicalize(m_pLocalListView->m_dir, subdir);
-			if (dir == _T("") || !CState::LocalDirIsWriteable(dir))
+			if (!dir.ChangePath(subdir))
 				return wxDragNone;
 		}
+
+		if (!dir.IsWriteable())
+			return wxDragNone;
 
 		if (def == wxDragLink)
 			def = wxDragCopy;
@@ -319,7 +316,7 @@ bool CLocalListView::DisplayDir(wxString dirname)
 	m_fileData.clear();
 	m_indexMapping.clear();
 
-	m_hasParent = CState::LocalDirHasParent(dirname);
+	m_hasParent = CLocalPath(dirname).HasLogicalParent();
 
 	if (m_hasParent)
 	{
@@ -1508,7 +1505,7 @@ void CLocalListView::OnKeyDown(wxKeyEvent& event)
 
 void CLocalListView::OnBeginLabelEdit(wxListEvent& event)
 {
-	if (!m_pState->LocalDirIsWriteable(m_dir))
+	if (!m_pState->GetLocalDir().IsWriteable())
 	{
 		event.Veto();
 		return;
@@ -1611,7 +1608,7 @@ void CLocalListView::OnEndLabelEdit(wxListEvent& event)
 		return;
 	}
 
-	if (!m_pState->LocalDirIsWriteable(m_dir))
+	if (!m_pState->GetLocalDir().IsWriteable())
 	{
 		event.Veto();
 		return;
@@ -1821,7 +1818,7 @@ void CLocalListView::ReselectItems(const std::list<wxString>& selectedNames, wxS
 void CLocalListView::OnStateChange(enum t_statechange_notifications notification, const wxString& data)
 {
 	if (notification == STATECHANGE_LOCAL_DIR)
-		DisplayDir(m_pState->GetLocalDir());
+		DisplayDir(m_pState->GetLocalDir().GetPath());
 	else if (notification == STATECHANGE_APPLYFILTER)
 		ApplyCurrentFilter();
 	else
@@ -2355,8 +2352,14 @@ void CLocalListView::OnMenuOpen(wxCommandEvent& event)
 
 	if (data->dir)
 	{
-		wxString dir = CState::Canonicalize(m_dir, data->name);
-		wxLaunchDefaultBrowser(CState::GetAsURL(dir));
+		CLocalPath path(m_dir);
+		if (!path.ChangePath(data->name))
+		{
+			wxBell();
+			return;
+		}
+
+		wxLaunchDefaultBrowser(CState::GetAsURL(path.GetPath()));
 		return;
 	}
 

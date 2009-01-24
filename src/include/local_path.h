@@ -14,16 +14,17 @@ public:
 
 	// Creates path. If the path is not syntactically
 	// correct, empty() will return true.
-	// Path will not be canonicalized
-	CLocalPath(const wxString& path);
-	bool SetPath(const wxString& path);
+	// If file is given and path not terminated by a separator,
+	// the filename portion is returned in file.
+	CLocalPath(const wxString& path, wxString* file = 0);
+	bool SetPath(const wxString& path, wxString* file = 0);
 
 	wxString GetPath() const { return m_path; }
 
 	bool empty() const;
 	void clear();
 	
-	// On success, resulting path will be in canonical form.
+	// On failure the path s undefined
 	bool ChangePath(const wxString& path);
 
 	// Do not call with separators in the segment
@@ -34,10 +35,10 @@ public:
 	bool HasParent() const;
 	bool HasLogicalParent() const;
 
-	CLocalPath GetParent() const;
+	CLocalPath GetParent(wxString* last_segment = 0) const;
 
 	// If it fails, the path is undefined
-	bool MakeParent();
+	bool MakeParent(wxString* last_segment = 0);
 
 	/* Calling GetLastSegment() only returns non-empty string if
 	 * HasParent() returns true
@@ -53,7 +54,13 @@ public:
 	 */
 	bool IsWriteable() const;
 
+	// Checks if the directory exists.
+	bool Exists(wxString *error = 0) const;
+
 	static const wxChar path_separator;
+
+	bool operator==(const CLocalPath& op) const;
+	bool operator!=(const CLocalPath& op) const;
 protected:
 
 	wxString m_path;

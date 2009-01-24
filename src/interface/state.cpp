@@ -42,99 +42,23 @@ CState::~CState()
 	delete m_pRecursiveOperation;
 }
 
-wxString CState::GetLocalDir() const
+CLocalPath CState::GetLocalDir() const
 {
 	return m_localDir;
 }
 
-wxString CState::Canonicalize(wxString oldDir, wxString newDir, wxString *error /*=0*/)
+bool CState::SetLocalDir(const wxString& dir, wxString *error /*=0*/)
 {
-#ifdef __WXMSW__
-	if (newDir == _T("\\") || newDir == _T("/") || newDir == _T(""))
-		return _T("\\");
-
-	// "Go up one level" is a little bit difficult under Windows due to
-	// things like "My Computer" and "Desktop"
-	if (newDir == _T(".."))
-	{
-		newDir = oldDir;
-		if (newDir != _T("\\"))
-		{
-			newDir.RemoveLast();
-			int pos = newDir.Find('\\', true);
-			if (pos == -1)
-				return _T("\\");
-			else
-				newDir = newDir.Left(pos + 1);
-		}
-	}
-	else
-#endif
-	{
-		wxFileName dir(newDir, _T(""));
-		{
-			wxLogNull noLog;
-			if (!dir.MakeAbsolute(oldDir))
-				return _T("");
-		}
-		newDir = dir.GetFullPath();
-		if (newDir.Right(1) != wxFileName::GetPathSeparator())
-			newDir += wxFileName::GetPathSeparator();
-	}
-
-	// Check for partial UNC paths
-	if (newDir.Left(2) == _T("\\\\"))
-	{
-		int pos = newDir.Mid(2).Find('\\');
-		if (pos == -1 || pos + 3 == (int)newDir.Len())
-		{
-			// Partial UNC path, no share given
-			return newDir;
-		}
-
-		pos = newDir.Mid(pos + 3).Find('\\');
-		if (pos == -1)
-		{
-			// Partial UNC path, no full share yet, skip further processing
-			return _T("");
-		}
-	}
-
-	if (!wxDir::Exists(newDir))
-	{
-		if (!error)
-			return _T("");
-
-		*error = wxString::Format(_("'%s' does not exist or cannot be accessed."), newDir.c_str());
-
-#ifdef __WXMSW__
-		if (newDir[0] == '\\')
-			return _T("");
-
-		// Check for removable drive, display a more specific error message in that case
-		if (::GetLastError() != ERROR_NOT_READY)
-			return _T("");
-		int type = GetDriveType(newDir.Left(3));
-		if (type == DRIVE_REMOVABLE || type == DRIVE_CDROM)
-
-			*error = wxString::Format(_("Cannot access '%s', no media inserted or drive not ready."), newDir.c_str());
-#endif
-
-		return _T("");
-	}
-
-	return newDir;
-}
-
-bool CState::SetLocalDir(wxString dir, wxString *error /*=0*/)
-{
-	dir = Canonicalize(m_localDir, dir, error);
-	if (dir == _T(""))
+	CLocalPath p(m_localDir);
+	if (!p.ChangePath(dir))
 		return false;
 
-	m_localDir = dir;
+	if (!p.Exists(error))
+		return false;
 
-	COptions::Get()->SetOption(OPTION_LASTLOCALDIR, dir);
+	m_localDir = p.GetPath();
+
+	COptions::Get()->SetOption(OPTION_LASTLOCALDIR, m_localDir.GetPath());
 
 	NotifyHandlers(STATECHANGE_LOCAL_DIR);
 
@@ -213,33 +137,22 @@ void CState::RefreshLocal()
 
 void CState::RefreshLocalFile(wxString file)
 {
-	wxFileName fn(file);
-	if (!fn.IsOk())
-		return;
-	if (!fn.IsAbsolute())
-		return;
-
-	wxString path = fn.GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
-	if (path == _T(""))
+	wxString file_name;
+	CLocalPath path(file, &file_name);
+	if (path.empty())
 		return;
 
-	if (path == m_localDir)
+	if (file_name.empty())
 	{
-		file = fn.GetFullName();
-		if (file == _T(""))
+		if (!path.HasParent())
 			return;
+		path.MakeParent(&file_name);
+		wxASSERT(!file_name.empty());
 	}
-	else if (path.Left(m_localDir.Len()) == m_localDir)
-	{
-		path = path.Mid(m_localDir.Len());
-		int pos = path.Find(wxFileName::GetPathSeparator());
-		if (pos < 1)
-			return;
+	if (path != m_localDir)
+		return;
 
-		file = path.Left(pos);
-	}
-
-	NotifyHandlers(STATECHANGE_LOCAL_REFRESH_FILE, file);
+	NotifyHandlers(STATECHANGE_LOCAL_REFRESH_FILE, file_name);
 }
 
 void CState::SetServer(const CServer* server)
@@ -631,42 +544,6 @@ bool CState::IsRemoteIdle() const
 		return true;
 
 	return m_pCommandQueue->Idle();
-}
-
-bool CState::LocalDirHasParent(const wxString& dir)
-{
-#ifdef __WXMSW__
-	if (dir.Left(2) == _T("\\\\"))
-	{
-		int pos = dir.Mid(2).Find('\\');
-		if (pos == -1 || pos + 3 == (int)dir.Len())
-			return false;
-	}
-	if (dir == _T("\\") || dir == _T("//"))
-		return false;
-#endif
-
-	if (dir == _T("/"))
-		return false;
-
-	return true;
-}
-
-bool CState::LocalDirIsWriteable(const wxString& dir)
-{
-#ifdef __WXMSW__
-	if (dir == _T("\\") || dir == _T("//"))
-		return false;
-
-	if (dir.Left(2) == _T("\\\\"))
-	{
-		int pos = dir.Mid(2).Find('\\');
-		if (pos == -1 || pos + 3 == (int)dir.Len())
-			return false;
-	}
-#endif
-
-	return true;
 }
 
 wxString CState::GetAsURL(const wxString& dir)

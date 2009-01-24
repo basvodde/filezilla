@@ -83,8 +83,8 @@ public:
 		if (!hit)
 			return wxDragNone;
 
-		wxString dir = GetDirFromItem(hit);
-		if (dir == _T("") || !CState::LocalDirIsWriteable(dir))
+		const wxString dir = GetDirFromItem(hit);
+		if (dir == _T("") || !CLocalPath(dir).IsWriteable())
 			return wxDragNone;
 
 		if (!GetData())
@@ -125,8 +125,8 @@ public:
 		if (!hit)
 			return false;
 
-		wxString dir = GetDirFromItem(hit);
-		if (dir == _T("") || !CState::LocalDirIsWriteable(dir))
+		const wxString dir = GetDirFromItem(hit);
+		if (dir == _T("") || !CLocalPath(dir).IsWriteable())
 			return false;
 
 		return true;
@@ -898,7 +898,7 @@ int CLocalTreeView::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId
 void CLocalTreeView::OnStateChange(enum t_statechange_notifications notification, const wxString& data)
 {
 	if (notification == STATECHANGE_LOCAL_DIR)
-		SetDir(m_pState->GetLocalDir());
+		SetDir(m_pState->GetLocalDir().GetPath());
 	else
 	{
 		wxASSERT(notification == STATECHANGE_APPLYFILTER);
@@ -1243,14 +1243,11 @@ void CLocalTreeView::OnContextMenu(wxTreeEvent& event)
 	if (!pMenu)
 		return;
 
-	const wxString& path = GetDirFromItem(m_contextMenuItem);
+	const CLocalPath path(GetDirFromItem(m_contextMenuItem));
 
-	bool hasParent = m_pState->LocalDirHasParent(path);
-	const bool writeable = m_pState->LocalDirIsWriteable(path);
-#ifdef __WXMSW__
-	if (path.Len() == 3 && path.Mid(1) == _T(":\\"))
-		hasParent = false;
-#endif
+	const bool hasParent = path.HasParent();
+	const bool writeable = path.IsWriteable();
+
 	const bool remoteConnected = m_pState->IsRemoteConnected() && !m_pState->GetRemotePath().IsEmpty();
 
 	pMenu->Enable(XRCID("ID_UPLOAD"), hasParent && remoteConnected);
@@ -1270,13 +1267,8 @@ void CLocalTreeView::OnMenuUpload(wxCommandEvent& event)
 
 	wxString path = GetDirFromItem(m_contextMenuItem);
 
-	if (!m_pState->LocalDirHasParent(path))
+	if (!CLocalPath(path).HasParent())
 		return;
-
-#ifdef __WXMSW__
-	if (path.Len() == 3 && path.Mid(1) == _T(":\\"))
-		return;
-#endif
 
 	if (!m_pState->IsRemoteConnected())
 		return;
@@ -1303,7 +1295,7 @@ void CLocalTreeView::OnMenuMkdir(wxCommandEvent& event)
 	if (path.Last() != wxFileName::GetPathSeparator())
 		path += wxFileName::GetPathSeparator();
 
-	if (!m_pState->LocalDirIsWriteable(path))
+	if (!CLocalPath(path).IsWriteable())
 	{
 		wxBell();
 		return;
@@ -1353,16 +1345,8 @@ void CLocalTreeView::OnMenuRename(wxCommandEvent& event)
 	}
 #endif
 
-	wxString path = GetDirFromItem(m_contextMenuItem);
-
-#ifdef __WXMSW__
-	if (path.Len() == 3 && path.Mid(1) == _T(":\\"))
-	{
-		wxBell();
-		return;
-	}
-#endif
-	if (!m_pState->LocalDirHasParent(path) || !m_pState->LocalDirIsWriteable(path))
+	CLocalPath path(GetDirFromItem(m_contextMenuItem));
+	if (!path.HasParent() || !path.IsWriteable())
 	{
 		wxBell();
 		return;
@@ -1378,13 +1362,9 @@ void CLocalTreeView::OnMenuDelete(wxCommandEvent& event)
 
 	wxString path = GetDirFromItem(m_contextMenuItem);
 
-	if (!m_pState->LocalDirHasParent(path) || !m_pState->LocalDirIsWriteable(path))
+	CLocalPath local_path(path);
+	if (!local_path.HasParent() || !local_path.IsWriteable())
 		return;
-
-#ifdef __WXMSW__
-	if (path.Len() == 3 && path.Mid(1) == _T(":\\"))
-		return;
-#endif
 
 	if (!CLocalFileSystem::RecursiveDelete(path, this))
 		wxGetApp().DisplayEncodingWarning();
@@ -1427,17 +1407,9 @@ void CLocalTreeView::OnBeginLabelEdit(wxTreeEvent& event)
 	}
 #endif
 
-	wxString path = GetDirFromItem(item);
+	CLocalPath path(GetDirFromItem(item));
 
-#ifdef __WXMSW__
-	if (path.Len() == 3 && path.Mid(1) == _T(":\\"))
-	{
-		wxBell();
-		event.Veto();
-		return;
-	}
-#endif
-	if (!m_pState->LocalDirHasParent(path) || !m_pState->LocalDirIsWriteable(path))
+	if (!path.HasParent() || !path.IsWriteable())
 	{
 		wxBell();
 		event.Veto();
@@ -1469,15 +1441,8 @@ void CLocalTreeView::OnEndLabelEdit(wxTreeEvent& event)
 
 	wxString path = GetDirFromItem(item);
 
-#ifdef __WXMSW__
-	if (path.Len() == 3 && path.Mid(1) == _T(":\\"))
-	{
-		wxBell();
-		event.Veto();
-		return;
-	}
-#endif
-	if (!m_pState->LocalDirHasParent(path) || !m_pState->LocalDirIsWriteable(path))
+	CLocalPath local_path(path);
+	if (!local_path.HasParent() || !local_path.IsWriteable())
 	{
 		wxBell();
 		event.Veto();

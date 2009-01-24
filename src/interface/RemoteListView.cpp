@@ -1221,7 +1221,7 @@ void CRemoteListView::OnItemActivated(wxListEvent &event)
 					m_pLinkResolveState = new t_linkResolveState;
 					m_pLinkResolveState->remote_path = m_pDirectoryListing->path;
 					m_pLinkResolveState->link = name;
-					m_pLinkResolveState->local_path = m_pState->GetLocalDir();
+					m_pLinkResolveState->local_path = m_pState->GetLocalDir().GetPath();
 					m_pLinkResolveState->server = *pServer;
 				}
 				m_pState->m_pCommandQueue->ProcessCommand(cmd);
@@ -1250,11 +1250,16 @@ void CRemoteListView::OnItemActivated(wxListEvent &event)
 				return;
 			}
 
-			wxFileName fn = wxFileName(m_pState->GetLocalDir(), name);
-
 			const bool queue_only = action == 1;
 
-			m_pQueue->QueueFile(queue_only, true, fn.GetFullPath(), name, m_pDirectoryListing->path, *pServer, entry.size);
+			const CLocalPath local_path = m_pState->GetLocalDir();
+			if (!local_path.IsWriteable())
+			{
+				wxBell();
+				return;
+			}
+
+			m_pQueue->QueueFile(queue_only, true, local_path.GetPath() + name, name, m_pDirectoryListing->path, *pServer, entry.size);
 			m_pQueue->QueueFile_Finish(true);
 		}
 	}
@@ -1322,7 +1327,7 @@ void CRemoteListView::OnMenuEnter(wxCommandEvent &event)
 			m_pLinkResolveState = new t_linkResolveState;
 			m_pLinkResolveState->remote_path = m_pDirectoryListing->path;
 			m_pLinkResolveState->link = name;
-			m_pLinkResolveState->local_path = m_pState->GetLocalDir();
+			m_pLinkResolveState->local_path = m_pState->GetLocalDir().GetPath();
 			m_pLinkResolveState->server = *pServer;
 		}
 		m_pState->m_pCommandQueue->ProcessCommand(cmd);
@@ -1420,8 +1425,7 @@ void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
 				pMenu->Enable(XRCID("ID_RENAME"), false);
 			}
 
-			const wxString& localDir = m_pState->GetLocalDir();
-			if (!m_pState->LocalDirIsWriteable(localDir))
+			if (!m_pState->GetLocalDir().IsWriteable())
 			{
 				pMenu->Enable(XRCID("ID_DOWNLOAD"), false);
 				pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
@@ -1438,8 +1442,8 @@ void CRemoteListView::OnMenuDownload(wxCommandEvent& event)
 	// Make sure selection is valid
 	bool idle = m_pState->IsRemoteIdle();
 
-	const wxString& localDir = m_pState->GetLocalDir();
-	if (!m_pState->LocalDirIsWriteable(localDir))
+	const CLocalPath localDir = m_pState->GetLocalDir();
+	if (!localDir.IsWriteable())
 	{
 		wxBell();
 		return;
@@ -1470,7 +1474,7 @@ void CRemoteListView::OnMenuDownload(wxCommandEvent& event)
 		}
 	}
 
-	TransferSelectedFiles(localDir, event.GetId() == XRCID("ID_ADDTOQUEUE"));
+	TransferSelectedFiles(localDir.GetPath(), event.GetId() == XRCID("ID_ADDTOQUEUE"));
 }
 
 void CRemoteListView::TransferSelectedFiles(const wxString& localDir, bool queueOnly)
@@ -1480,7 +1484,7 @@ void CRemoteListView::TransferSelectedFiles(const wxString& localDir, bool queue
 	CRecursiveOperation* pRecursiveOperation = m_pState->GetRecursiveOperationHandler();
 	wxASSERT(pRecursiveOperation);
 
-	wxASSERT(m_pState->LocalDirIsWriteable(localDir));
+	wxASSERT(CLocalPath(localDir).IsWriteable());
 
 	const CServer* pServer = m_pState->GetServer();
 	if (!pServer)
