@@ -19,7 +19,7 @@ public:
 	CRemoteListView(wxWindow* pParent, CState* pState, CQueueView* pQueue);
 	virtual ~CRemoteListView();
 
-	bool DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, wxString path, bool queueOnly);
+	bool DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, const CLocalPath& path, bool queueOnly);
 
 	void InitDateFormat();
 
@@ -73,7 +73,7 @@ protected:
 	const CDirectoryListing *m_pDirectoryListing;
 
 	// Caller is responsible to check selection is valid!
-	void TransferSelectedFiles(const wxString& localDir, bool queueOnly);
+	void TransferSelectedFiles(const CLocalPath& local_parent, bool queueOnly);
 
 	// Cache icon for directories, no need to calculate it multiple times
 	int m_dirIcon;

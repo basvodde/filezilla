@@ -9,6 +9,7 @@
 #include "RemoteListView.h"
 #include "recursive_operation.h"
 #include "statusbar.h"
+#include "local_filesys.h"
 
 CState::CState(CMainFrame* pMainFrame)
 {
@@ -355,9 +356,9 @@ void CState::UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const C
 		else if (wxDir::Exists(files[i]))
 		{
 			wxString dir = files[i];
-			if (dir.Last() == wxFileName::GetPathSeparator() && dir.Len() > 1)
+			if (dir.Last() == CLocalPath::path_separator && dir.Len() > 1)
 				dir.RemoveLast();
-			int pos = dir.Find(wxFileName::GetPathSeparator(), true);
+			int pos = dir.Find(CLocalPath::path_separator, true);
 			if (pos != -1 && pos != (int)dir.Len() - 1)
 			{
 				wxString lastSegment = dir.Mid(pos + 1);
@@ -369,11 +370,8 @@ void CState::UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const C
 	}
 }
 
-void CState::HandleDroppedFiles(const wxFileDataObject* pFileDataObject, wxString path, bool copy)
+void CState::HandleDroppedFiles(const wxFileDataObject* pFileDataObject, const CLocalPath& path, bool copy)
 {
-	if (path.Last() != wxFileName::GetPathSeparator())
-		path += wxFileName::GetPathSeparator();
-
 	const wxArrayString &files = pFileDataObject->GetFilenames();
 	if (!files.Count())
 		return;
@@ -384,6 +382,8 @@ void CState::HandleDroppedFiles(const wxFileDataObject* pFileDataObject, wxStrin
 	for (unsigned int i = 0; i < files.Count(); i++)
 		len += files[i].Len() + 1;
 
+	// SHFILEOPSTRUCT's pTo and pFrom accept null-terminated lists
+	// of null-terminated filenames.
 	wxChar* from = new wxChar[len];
 	wxChar* p = from;
 	for (unsigned int i = 0; i < files.Count(); i++)
@@ -391,11 +391,11 @@ void CState::HandleDroppedFiles(const wxFileDataObject* pFileDataObject, wxStrin
 		wxStrcpy(p, files[i]);
 		p += files[i].Len() + 1;
 	}
-	*p = 0;
+	*p = 0; // End of list
 
-	wxChar* to = new wxChar[path.Len() + 2];
-	wxStrcpy(to, path);
-	to[path.Len() + 1] = 0;
+	wxChar* to = new wxChar[path.GetPath().Len() + 2];
+	wxStrcpy(to, path.GetPath());
+	to[path.GetPath().Len() + 1] = 0; // End of list
 
 	SHFILEOPSTRUCT op = {0};
 	op.pFrom = from;
@@ -412,26 +412,26 @@ void CState::HandleDroppedFiles(const wxFileDataObject* pFileDataObject, wxStrin
 		const wxString& file = files[i];
 		if (wxFile::Exists(file))
 		{
-			int pos = file.Find(wxFileName::GetPathSeparator(), true);
+			int pos = file.Find(CLocalPath::path_separator, true);
 			if (pos == -1 || pos == (int)file.Len() - 1)
 				continue;
 			const wxString& name = file.Mid(pos + 1);
 			if (copy)
-				wxCopyFile(file, path + name);
+				wxCopyFile(file, path.GetPath() + name);
 			else
-				wxRenameFile(file, path + name);
+				wxRenameFile(file, path.GetPath() + name);
 		}
 		else if (wxDir::Exists(file))
 		{
 			if (copy)
-				RecursiveCopy(file, path);
+				RecursiveCopy(file, path.GetPath());
 			else
 			{
-				int pos = file.Find(wxFileName::GetPathSeparator(), true);
+				int pos = file.Find(CLocalPath::path_separator, true);
 				if (pos == -1 || pos == (int)file.Len() - 1)
 					continue;
 				const wxString& name = file.Mid(pos + 1);
-				wxRenameFile(file, path + name);
+				wxRenameFile(file, path.GetPath() + name);
 			}
 		}
 	}
@@ -440,66 +440,65 @@ void CState::HandleDroppedFiles(const wxFileDataObject* pFileDataObject, wxStrin
 	RefreshLocal();
 }
 
-bool CState::RecursiveCopy(wxString source, wxString target)
+bool CState::RecursiveCopy(CLocalPath source, const CLocalPath& target)
 {
-	if (source == _T(""))
+	if (source.empty() || target.empty())
 		return false;
 
-	if (target == _T(""))
+	if (source == target)
 		return false;
 
-	if (target.Last() != wxFileName::GetPathSeparator())
-		target += wxFileName::GetPathSeparator();
-
-	if (source.Last() == wxFileName::GetPathSeparator())
-		source.RemoveLast();
-
-	if (source + wxFileName::GetPathSeparator() == target)
+	if (source.IsParentOf(target))
 		return false;
 
-	if (target.Len() > source.Len() && source == target.Left(source.Len()) && target[source.Len()] == wxFileName::GetPathSeparator())
+	if (!source.HasParent())
 		return false;
 
-	int pos = source.Find(wxFileName::GetPathSeparator(), true);
-	if (pos == -1 || pos == (int)source.Len() - 1)
+	wxString last_segment;
+	if (!source.MakeParent(&last_segment))
 		return false;
 
 	std::list<wxString> dirsToVisit;
-	dirsToVisit.push_back(source.Mid(pos + 1) + wxFileName::GetPathSeparator());
-	source = source.Left(pos + 1);
+	dirsToVisit.push_back(last_segment + CLocalPath::path_separator);
 
 	// Process any subdirs which still have to be visited
 	while (!dirsToVisit.empty())
 	{
 		wxString dirname = dirsToVisit.front();
 		dirsToVisit.pop_front();
-		wxMkdir(target + dirname);
-		wxDir dir;
-		if (!dir.Open(source + dirname))
+		wxMkdir(target.GetPath() + dirname);
+
+		CLocalFileSystem fs;
+		if (!fs.BeginFindFiles(source.GetPath() + dirname, false))
 			continue;
 
+		bool is_dir, is_link;
 		wxString file;
-		for (bool found = dir.GetFirst(&file); found; found = dir.GetNext(&file))
+		while (fs.GetNextFile(file, is_link, is_dir, 0, 0, 0))
 		{
 			if (file == _T(""))
 			{
 				wxGetApp().DisplayEncodingWarning();
 				continue;
 			}
-			if (wxFileName::DirExists(source + dirname + file))
+
+			if (is_dir)
 			{
-				const wxString subDir = dirname + file + wxFileName::GetPathSeparator();
+				if (is_link)
+					continue;
+
+				const wxString subDir = dirname + file + CLocalPath::path_separator;
 				dirsToVisit.push_back(subDir);
 			}
 			else
-				wxCopyFile(source + dirname + file, target + dirname + file);
+				wxCopyFile(source.GetPath() + dirname + file, target.GetPath() + dirname + file);
 		}
 	}
 
 	return true;
 }
 
-bool CState::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, wxString path, bool queueOnly /*=false*/)
+bool CState::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, const CLocalPath& path, bool queueOnly /*=false*/)
 {
 	bool hasDirs = false;
 	bool hasFiles = false;
@@ -519,7 +518,7 @@ bool CState::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, wx
 	}
 
 	if (hasFiles)
-		m_pMainFrame->GetQueue()->QueueFiles(queueOnly, path, *pRemoteDataObject);
+		m_pMainFrame->GetQueue()->QueueFiles(queueOnly, path.GetPath(), *pRemoteDataObject);
 
 	if (!hasDirs)
 		return true;

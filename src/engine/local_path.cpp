@@ -496,3 +496,17 @@ bool CLocalPath::operator!=(const CLocalPath& op) const
 {
 	return m_path != op.m_path;
 }
+
+bool CLocalPath::IsParentOf(const CLocalPath &path) const
+{
+	if (empty() || path.empty())
+		return false;
+
+	if (path.m_path.Len() < m_path.Len())
+		return false;
+
+	if (m_path != path.m_path.Left(m_path.Len()))
+		return false;
+
+	return true;
+}

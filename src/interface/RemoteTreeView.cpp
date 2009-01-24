@@ -880,8 +880,8 @@ void CRemoteTreeView::OnBeginDrag(wxTreeEvent& event)
 				return;
 			}
 
-			wxString target = ext->GetTarget();
-			if (target == _T(""))
+			CLocalPath target(ext->GetTarget());
+			if (target.empty())
 			{
 				delete ext;
 				ext = 0;

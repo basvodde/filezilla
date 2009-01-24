@@ -69,10 +69,10 @@ public:
 
 	void UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const wxString& subdir, bool queueOnly);
 	void UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const CServerPath& path, bool queueOnly);
-	void HandleDroppedFiles(const wxFileDataObject* pFileDataObject, wxString path, bool copy);
-	bool DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, wxString path, bool queueOnly = false);
+	void HandleDroppedFiles(const wxFileDataObject* pFileDataObject, const CLocalPath& path, bool copy);
+	bool DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, const CLocalPath& path, bool queueOnly = false);
 
-	static bool RecursiveCopy(wxString source, wxString target);
+	static bool RecursiveCopy(CLocalPath source, const CLocalPath& targte);
 
 	bool IsRemoteConnected() const;
 	bool IsRemoteIdle() const;

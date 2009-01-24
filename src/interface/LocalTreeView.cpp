@@ -83,8 +83,8 @@ public:
 		if (!hit)
 			return wxDragNone;
 
-		const wxString dir = GetDirFromItem(hit);
-		if (dir == _T("") || !CLocalPath(dir).IsWriteable())
+		const CLocalPath path(GetDirFromItem(hit));
+		if (path.empty() || !path.IsWriteable())
 			return wxDragNone;
 
 		if (!GetData())
@@ -95,7 +95,7 @@ public:
 			pDragDropManager->pDropTarget = m_pLocalTreeView;
 
 		if (m_pDataObject->GetReceivedFormat() == m_pFileDataObject->GetFormat())
-			m_pLocalTreeView->m_pState->HandleDroppedFiles(m_pFileDataObject, dir, def == wxDragCopy);
+			m_pLocalTreeView->m_pState->HandleDroppedFiles(m_pFileDataObject, path, def == wxDragCopy);
 		else
 		{
 			if (m_pRemoteDataObject->GetProcessId() != (int)wxGetProcessId())
@@ -110,7 +110,7 @@ public:
 				return wxDragNone;
 			}
 
-			if (!m_pLocalTreeView->m_pState->DownloadDroppedFiles(m_pRemoteDataObject, dir))
+			if (!m_pLocalTreeView->m_pState->DownloadDroppedFiles(m_pRemoteDataObject, path))
 				return wxDragNone;
 		}
 

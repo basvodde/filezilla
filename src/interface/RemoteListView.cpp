@@ -1474,17 +1474,17 @@ void CRemoteListView::OnMenuDownload(wxCommandEvent& event)
 		}
 	}
 
-	TransferSelectedFiles(localDir.GetPath(), event.GetId() == XRCID("ID_ADDTOQUEUE"));
+	TransferSelectedFiles(localDir, event.GetId() == XRCID("ID_ADDTOQUEUE"));
 }
 
-void CRemoteListView::TransferSelectedFiles(const wxString& localDir, bool queueOnly)
+void CRemoteListView::TransferSelectedFiles(const CLocalPath& local_parent, bool queueOnly)
 {
 	bool idle = m_pState->IsRemoteIdle();
 
 	CRecursiveOperation* pRecursiveOperation = m_pState->GetRecursiveOperationHandler();
 	wxASSERT(pRecursiveOperation);
 
-	wxASSERT(CLocalPath(localDir).IsWriteable());
+	wxASSERT(local_parent.IsWriteable());
 
 	const CServer* pServer = m_pState->GetServer();
 	if (!pServer)
@@ -1515,20 +1515,18 @@ void CRemoteListView::TransferSelectedFiles(const wxString& localDir, bool queue
 		{
 			if (!idle)
 				continue;
-			wxFileName fn = wxFileName(localDir, _T(""));
-			fn.AppendDir(name);
+			CLocalPath local_path(local_parent);
+			local_path.AddSegment(name);
 			CServerPath remotePath = m_pDirectoryListing->path;
 			if (remotePath.AddSegment(name))
 			{
-				//m_pQueue->QueueFolder(event.GetId() == XRCID("ID_ADDTOQUEUE"), true, fn.GetFullPath(), remotePath, *pServer);
-				pRecursiveOperation->AddDirectoryToVisit(m_pDirectoryListing->path, name, fn.GetFullPath(), entry.link);
+				pRecursiveOperation->AddDirectoryToVisit(m_pDirectoryListing->path, name, local_path.GetPath(), entry.link);
 				startRecursive = true;
 			}
 		}
 		else
 		{
-			wxFileName fn = wxFileName(localDir, name);
-			m_pQueue->QueueFile(queueOnly, true, fn.GetFullPath(), name, m_pDirectoryListing->path, *pServer, entry.size);
+			m_pQueue->QueueFile(queueOnly, true, local_parent.GetPath() + name, name, m_pDirectoryListing->path, *pServer, entry.size);
 			added = true;
 		}
 	}
@@ -2477,8 +2475,8 @@ void CRemoteListView::OnBeginDrag(wxListEvent& event)
 				}
 			}
 
-			wxString target = ext->GetTarget();
-			if (target == _T(""))
+			CLocalPath target(ext->GetTarget());
+			if (target.empty())
 			{
 				delete ext;
 				ext = 0;
@@ -2498,10 +2496,12 @@ void CRemoteListView::OnBeginDrag(wxListEvent& event)
 #endif
 }
 
-bool CRemoteListView::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, wxString path, bool queueOnly)
+bool CRemoteListView::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, const CLocalPath& path, bool queueOnly)
 {
 	if (!m_pState->IsRemoteIdle())
 		return false;
+
+	wxASSERT(!path.empty());
 
 	CRecursiveOperation* pRecursiveOperation = m_pState->GetRecursiveOperationHandler();
 	wxASSERT(pRecursiveOperation);
@@ -2512,7 +2512,7 @@ bool CRemoteListView::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataO
 		if (!iter->dir)
 			continue;
 
-		pRecursiveOperation->AddDirectoryToVisit(pRemoteDataObject->GetServerPath(), iter->name, path + iter->name, iter->link);
+		pRecursiveOperation->AddDirectoryToVisit(pRemoteDataObject->GetServerPath(), iter->name, path.GetPath() + iter->name, iter->link);
 	}
 
 	if (IsComparing())

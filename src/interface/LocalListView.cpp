@@ -93,7 +93,7 @@ public:
 			return wxDragError;
 
 		if (m_pDataObject->GetReceivedFormat() == m_pFileDataObject->GetFormat())
-			m_pLocalListView->m_pState->HandleDroppedFiles(m_pFileDataObject, dir.GetPath(), def == wxDragCopy);
+			m_pLocalListView->m_pState->HandleDroppedFiles(m_pFileDataObject, dir, def == wxDragCopy);
 		else
 		{
 			if (m_pRemoteDataObject->GetProcessId() != (int)wxGetProcessId())
@@ -108,7 +108,7 @@ public:
 				return wxDragNone;
 			}
 
-			if (!m_pLocalListView->m_pState->DownloadDroppedFiles(m_pRemoteDataObject, dir.GetPath()))
+			if (!m_pLocalListView->m_pState->DownloadDroppedFiles(m_pRemoteDataObject, dir))
 				return wxDragNone;
 		}
 

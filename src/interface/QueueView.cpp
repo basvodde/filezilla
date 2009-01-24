@@ -97,7 +97,7 @@ public:
 				return wxDragNone;
 			}
 
-			if (!pState->DownloadDroppedFiles(m_pRemoteDataObject, target.GetPath(), true))
+			if (!pState->DownloadDroppedFiles(m_pRemoteDataObject, target, true))
 				return wxDragNone;
 		}
 
