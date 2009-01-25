@@ -112,6 +112,7 @@ public:
 		pState->RegisterHandler(this, STATECHANGE_REMOTE_IDLE);
 		pState->RegisterHandler(this, STATECHANGE_SERVER);
 		pState->RegisterHandler(this, STATECHANGE_QUEUEPROCESSING);
+		pState->RegisterHandler(this, STATECHANGE_SYNC_BROWSE);
 	}
 
 protected:
@@ -757,7 +758,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		COptions::Get()->SetOption(OPTION_VIEW_HIDDEN_FILES, showHidden ? 1 : 0);
 		CServerPath path = m_pState->GetRemotePath();
 		if (!path.IsEmpty() && m_pState->m_pCommandQueue)
-			m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(path, _T(""), LIST_FLAG_REFRESH));
+			m_pState->ChangeRemoteDir(path, _T(""), LIST_FLAG_REFRESH);
 	}
 	else if (event.GetId() == XRCID("ID_EXPORT"))
 	{
@@ -963,7 +964,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 				if (!pServer || *pServer != pData->m_server)
 					m_pState->Connect(pData->m_server, true, pData->m_remoteDir);
 				else
-					m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(pData->m_remoteDir));
+					m_pState->ChangeRemoteDir(pData->m_remoteDir);
 			}
 			if (!pData->m_localDir.empty())
 				m_pState->SetLocalDir(pData->m_localDir);
@@ -993,7 +994,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 						wxMessageBox(_("Selected global bookmark and current server use a different server type.\nUse site-specific bookmarks for this server."), _("Bookmark"), wxICON_EXCLAMATION, this);
 						return;
 					}
-					m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(remote_dir));
+					m_pState->ChangeRemoteDir(remote_dir);
 				}
 			}
 			if (!local_dir.empty())
@@ -1484,7 +1485,7 @@ void CMainFrame::OnRefresh(wxCommandEvent &event)
 		return;
 
 	if (m_pState->m_pCommandQueue && m_pState->IsRemoteConnected() && m_pState->IsRemoteIdle())
-		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_pState->GetRemotePath(), _T(""), LIST_FLAG_REFRESH));
+		m_pState->ChangeRemoteDir(m_pState->GetRemotePath(), _T(""), LIST_FLAG_REFRESH);
 
 	m_pState->RefreshLocal();
 }

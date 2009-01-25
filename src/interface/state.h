@@ -22,6 +22,7 @@ enum t_statechange_notifications
 	STATECHANGE_SERVER,
 
 	STATECHANGE_QUEUEPROCESSING,
+	STATECHANGE_SYNC_BROWSE,
 
 	STATECHANGE_MAX
 };
@@ -52,6 +53,7 @@ public:
 
 	bool Connect(const CServer& server, bool askBreak, const CServerPath& path = CServerPath());
 
+	bool ChangeRemoteDir(const CServerPath& path, const wxString& subdir = _T(""), int flags = 0);
 	bool SetRemoteDir(const CDirectoryListing *m_pDirectoryListing, bool modified = false);
 	const CDirectoryListing *GetRemoteDir() const;
 	const CServerPath GetRemotePath() const;
@@ -83,6 +85,9 @@ public:
 
 	bool SuccessfulConnect() const { return m_successful_connect; }
 	void SetSuccessfulConnect() { m_successful_connect = true; }
+
+	void ListingFailed(int error);
+	void LinkIsNotDir(const CServerPath& path, const wxString& subdir);
 
 protected:
 	void SetServer(const CServer* server);

@@ -161,6 +161,8 @@ public:
 				new CRenameCommand(m_pRemoteDataObject->GetServerPath(), info.name, target, info.name)
 				);
 		}
+
+		// Refresh remote listing
 		m_pRemoteListView->m_pState->m_pCommandQueue->ProcessCommand(
 			new CListCommand()
 			);
@@ -1214,7 +1216,6 @@ void CRemoteListView::OnItemActivated(wxListEvent &event)
 			{
 				if (IsComparing())
 					ExitComparisonMode();
-				CListCommand* cmd = new CListCommand(m_pDirectoryListing->path, name, entry.link ? LIST_FLAG_LINK : 0);
 				if (entry.link)
 				{
 					delete m_pLinkResolveState;
@@ -1224,7 +1225,7 @@ void CRemoteListView::OnItemActivated(wxListEvent &event)
 					m_pLinkResolveState->local_path = m_pState->GetLocalDir().GetPath();
 					m_pLinkResolveState->server = *pServer;
 				}
-				m_pState->m_pCommandQueue->ProcessCommand(cmd);
+				m_pState->ChangeRemoteDir(m_pDirectoryListing->path, name, entry.link ? LIST_FLAG_LINK : 0);
 			}
 			else
 			{
@@ -1268,7 +1269,7 @@ void CRemoteListView::OnItemActivated(wxListEvent &event)
 		if (IsComparing())
 			ExitComparisonMode();
 
-		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path, _T("..")));
+		m_pState->ChangeRemoteDir(m_pDirectoryListing->path, _T(".."));
 	}
 }
 
@@ -1320,7 +1321,6 @@ void CRemoteListView::OnMenuEnter(wxCommandEvent &event)
 
 		if (IsComparing())
 			ExitComparisonMode();
-		CListCommand* cmd = new CListCommand(m_pDirectoryListing->path, name, entry.link ? LIST_FLAG_LINK : 0);
 		if (entry.link)
 		{
 			delete m_pLinkResolveState;
@@ -1330,14 +1330,14 @@ void CRemoteListView::OnMenuEnter(wxCommandEvent &event)
 			m_pLinkResolveState->local_path = m_pState->GetLocalDir().GetPath();
 			m_pLinkResolveState->server = *pServer;
 		}
-		m_pState->m_pCommandQueue->ProcessCommand(cmd);
+		m_pState->ChangeRemoteDir(m_pDirectoryListing->path, name, entry.link ? LIST_FLAG_LINK : 0);
 	}
 	else
 	{
 		if (IsComparing())
 			ExitComparisonMode();
 
-		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path, _T("..")));
+		m_pState->ChangeRemoteDir(m_pDirectoryListing->path, _T(".."));
 	}
 }
 
@@ -1731,7 +1731,7 @@ void CRemoteListView::OnKeyDown(wxKeyEvent& event)
 		if (IsComparing())
 			ExitComparisonMode();
 
-		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path, _T("..")));
+		m_pState->ChangeRemoteDir(m_pDirectoryListing->path, _T(".."));
 	}
 	else
 		event.Skip();
@@ -2001,12 +2001,12 @@ void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 		// Refresh listing. This gets done implicitely by the recursive operation, so
 		// only it if not recursing.
 		if (pRecursiveOperation->GetOperationMode() != CRecursiveOperation::recursive_chmod)
-			m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path));
+			m_pState->ChangeRemoteDir(m_pDirectoryListing->path);
 	}
 	else
 	{
 		pChmodDlg->Destroy();
-		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(m_pDirectoryListing->path));
+		m_pState->ChangeRemoteDir(m_pDirectoryListing->path);
 	}
 
 }

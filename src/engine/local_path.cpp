@@ -1,5 +1,8 @@
 #include "FileZilla.h"
 #include "local_path.h"
+#ifndef __WXMSW__
+#include <errno.h>
+#endif
 
 #ifdef __WXMSW__
 const wxChar CLocalPath::path_separator = '\\';

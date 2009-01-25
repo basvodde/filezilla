@@ -209,7 +209,7 @@ bool CState::Connect(const CServer& server, bool askBreak, const CServerPath& pa
 	}
 
 	m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
-	m_pCommandQueue->ProcessCommand(new CListCommand(path, _T(""),LIST_FLAG_FALLBACK_CURRENT));
+	m_pCommandQueue->ProcessCommand(new CListCommand(path, _T(""), LIST_FLAG_FALLBACK_CURRENT));
 
 	COptions::Get()->SetLastServer(server);
 	COptions::Get()->SetOption(OPTION_LASTSERVERPATH, path.GetSafePath());
@@ -601,4 +601,27 @@ wxString CState::GetAsURL(const wxString& dir)
 #endif
 
 	return _T("file://") + encoded;
+}
+
+void CState::ListingFailed(int error)
+{
+	// Let the recursive operation handler know if a LIST command failed,
+	// so that it may issue the next command in recursive operations.
+	m_pRecursiveOperation->ListingFailed(error);
+}
+
+void CState::LinkIsNotDir(const CServerPath& path, const wxString& subdir)
+{
+	if (m_pRecursiveOperation->GetOperationMode() != CRecursiveOperation::recursive_none)
+		m_pRecursiveOperation->LinkIsNotDir();
+	else
+		m_pMainFrame->GetRemoteListView()->LinkIsNotDir(path, subdir);
+}
+
+bool CState::ChangeRemoteDir(const CServerPath& path, const wxString& subdir /*=_T("")*/, int flags /*=0*/)
+{
+	CListCommand *pCommand = new CListCommand(path, subdir, flags);
+	m_pCommandQueue->ProcessCommand(pCommand);
+
+	return true;
 }

@@ -758,7 +758,7 @@ void CRemoteTreeView::OnSelectionChanged(wxTreeEvent& event)
 	if (path.IsEmpty())
 		return;
 
-	m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(path));
+	m_pState->ChangeRemoteDir(path);
 }
 
 void CRemoteTreeView::OnItemActivated(wxTreeEvent& event)
@@ -1056,7 +1056,7 @@ void CRemoteTreeView::OnMenuChmod(wxCommandEvent& event)
 		if (selected)
 		{
 			CServerPath currentPath = GetPathFromItem(selected);
-			m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(currentPath));
+			m_pState->ChangeRemoteDir(currentPath);
 		}
 	}
 }
@@ -1213,7 +1213,7 @@ void CRemoteTreeView::OnEndLabelEdit(wxTreeEvent& event)
 	}
 
 	m_pState->m_pCommandQueue->ProcessCommand(new CRenameCommand(parent, oldName, parent, newName));
-	m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(parent));
+	m_pState->ChangeRemoteDir(parent);
 
 	CServerPath currentPath;
 	const wxTreeItemId selected = GetSelection();
@@ -1241,10 +1241,10 @@ void CRemoteTreeView::OnEndLabelEdit(wxTreeEvent& event)
 		currentPath.AddSegment(newName);
 		for (std::list<wxString>::const_iterator iter = subdirs.begin(); iter != subdirs.end(); iter++)
 			currentPath.AddSegment(*iter);
-		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(currentPath));
+		m_pState->ChangeRemoteDir(currentPath);
 	}
 	else if (currentPath != parent)
-		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(currentPath));
+		m_pState->ChangeRemoteDir(currentPath);
 }
 
 void CRemoteTreeView::OnMkdir(wxCommandEvent& event)
@@ -1295,7 +1295,7 @@ void CRemoteTreeView::OnMkdir(wxCommandEvent& event)
 	if (newPath.HasParent())
 	{
 		listed = newPath.GetParent();
-		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(listed));
+		m_pState->ChangeRemoteDir(listed);
 	}
 
 	CServerPath currentPath;
@@ -1303,7 +1303,7 @@ void CRemoteTreeView::OnMkdir(wxCommandEvent& event)
 	if (selected)
 		currentPath = GetPathFromItem(selected);
 	if (!currentPath.IsEmpty() && currentPath != listed)
-		m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(currentPath));
+		m_pState->ChangeRemoteDir(currentPath);
 }
 
 bool CRemoteTreeView::ListExpand(wxTreeItemId item)

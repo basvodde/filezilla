@@ -583,7 +583,7 @@ void CRemoteViewHeader::OnTextEnter(wxCommandEvent& event)
 		return;
 	}
 
-	m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(path));
+	m_pState->ChangeRemoteDir(path);
 }
 
 void CRemoteViewHeader::OnSelectionChanged(wxCommandEvent& event)
@@ -605,5 +605,5 @@ void CRemoteViewHeader::OnSelectionChanged(wxCommandEvent& event)
 		return;
 	}
 
-	m_pState->m_pCommandQueue->ProcessCommand(new CListCommand(path));
+	m_pState->ChangeRemoteDir(path);
 }

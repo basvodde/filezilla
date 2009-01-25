@@ -117,11 +117,7 @@ void CCommandQueue::ProcessNextCommand()
 			wxBell();
 			
 			if (pCommand->GetId() == cmd_list)
-			{
-				// Let the recursive operation handler know if a LIST command failed,
-				// so that it may issue the next command in recursive operations.
-				m_pMainFrame->GetState()->GetRecursiveOperationHandler()->ListingFailed(res);
-			}
+				m_pMainFrame->GetState()->ListingFailed(res);
 
 			m_CommandList.pop_front();
 			delete pCommand;
@@ -218,17 +214,10 @@ void CCommandQueue::Finish(COperationNotification *pNotification)
 			CListCommand* pListCommand = (CListCommand*)pCommand;
 			wxASSERT(pListCommand->GetFlags() & LIST_FLAG_LINK);
 
-			if (m_pMainFrame->GetState()->GetRecursiveOperationHandler()->GetOperationMode() != CRecursiveOperation::recursive_none)
-				m_pMainFrame->GetState()->GetRecursiveOperationHandler()->LinkIsNotDir();
-			else
-				m_pMainFrame->GetRemoteListView()->LinkIsNotDir(pListCommand->GetPath(), pListCommand->GetSubDir());
+			m_pMainFrame->GetState()->LinkIsNotDir(pListCommand->GetPath(), pListCommand->GetSubDir());
 		}
 		else
-		{
-			// Let the recursive operation handler know if a LIST command failed,
-			// so that it may issue the next command in recursive operations.
-			m_pMainFrame->GetState()->GetRecursiveOperationHandler()->ListingFailed(pNotification->nReplyCode);
-		}
+			m_pMainFrame->GetState()->ListingFailed(pNotification->nReplyCode);
 		m_CommandList.pop_front();
 	}
 	else if (pCommand->GetId() == cmd_connect && pNotification->nReplyCode != FZ_REPLY_OK)
