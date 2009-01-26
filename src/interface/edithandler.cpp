@@ -936,6 +936,26 @@ wxString CEditHandler::GetOpenCommand(const wxString& file, bool& program_exists
 	return command + _T(" \"") + file + _T("\"");
 }
 
+#ifdef __WXGTK__
+static bool PathExpand(wxString& cmd)
+{
+	if (cmd[0] == '/')
+		return true;
+
+	// Need to search for program in $PATH
+	wxString path;
+	if (!wxGetEnv(_T("PATH"), &path))
+		return false;
+
+	wxString full_cmd;
+	if (!wxFindFileInPath(&full_cmd, path, cmd))
+		return false;
+
+	cmd = full_cmd;
+	return true;
+}
+#endif
+
 wxString CEditHandler::GetSystemOpenCommand(const wxString& file, bool &program_exists)
 {
 	wxFileName fn(file);
@@ -967,19 +987,8 @@ wxString CEditHandler::GetSystemOpenCommand(const wxString& file, bool &program_
 		return cmd;
 
 #ifdef __WXGTK__
-	if (editor[0] != '/')
-	{
-		// Need to search for program in $PATH
-		wxString path;
-		if (!wxGetEnv(_T("PATH"), &path))
-			return cmd;
-
-		wxString full_editor;
-		if (!wxFindFileInPath(&full_editor, path, editor))
-			return cmd;
-
-		editor = full_editor;
-	}
+	if (!PathExpand(editor))
+		return cmd;
 #endif
 	if (ProgramExists(editor))
 		program_exists = true;
@@ -1512,21 +1521,8 @@ bool CNewAssociationDialog::Show(const wxString &file)
 			cmd.clear();
 	}
 #ifdef __WXGTK__
-	if (!cmd.empty() && cmd[0] != '/')
-	{
-		// Need to search for program in $PATH
-		wxString path;
-		if (!wxGetEnv(_T("PATH"), &path))
-			cmd.clear();
-		else
-		{
-			wxString full_editor;
-			if (!wxFindFileInPath(&full_editor, path, cmd))
-				cmd.clear();
-			else
-			cmd = full_editor;
-		}
-	}
+	if (!PathExpand(cmd))
+		cmd.clear();
 #endif
 
 	pDesc = XRCCTRL(*this, "ID_EDITOR_DESC", wxStaticText);
@@ -1613,7 +1609,11 @@ void CNewAssociationDialog::OnOK(wxCommandEvent& event)
 				if (!UnquoteCommand(cmd, args))
 					cmd.clear();
 			}
-			if (cmd.empty())
+			if (cmd.empty()
+#ifdef __WXGTK__
+				|| !PathExpand(cmd)
+#endif
+				)
 			{
 				wxMessageBox(_("The default editor for text files could not be found."), _("Cannot set file association"), wxICON_EXCLAMATION, this);
 				return;
