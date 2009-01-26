@@ -45,9 +45,9 @@ CConditionalDialog::CConditionalDialog(wxWindow* parent, enum DialogType type, e
 		
 		wxButton* pYes = new wxButton(this, wxID_YES);
 		pYes->SetDefault();
-		pGrid->Add(pYes);
+		pGrid->Add(pYes, 0, wxGROW);
 
-		pGrid->Add(new wxButton(this, wxID_NO));
+		pGrid->Add(new wxButton(this, wxID_NO), 0, wxGROW);
 		
 		SetEscapeId(wxID_NO);
 	}
