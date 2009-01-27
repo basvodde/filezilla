@@ -30,16 +30,15 @@ void CImportDialog::Show()
 		return;
 	}
 
-	TiXmlDocument xmlDocument;
-	xmlDocument.SetCondenseWhiteSpace(false);
-	if (!xmlDocument.LoadFile(dlg.GetPath().mb_str()))
+	TiXmlDocument *xmlDocument = LoadXmlDocument(dlg.GetPath());
+	if (!xmlDocument)
 	{
 		wxMessageBox(_("Cannot load file, not a valid XML file."), _("Error importing"), wxICON_ERROR, m_parent);
 		return;
 	}
 
-	TiXmlElement* fz3Root = xmlDocument.FirstChildElement("FileZilla3");
-	TiXmlElement* fz2Root = xmlDocument.FirstChildElement("FileZilla");
+	TiXmlElement* fz3Root = xmlDocument->FirstChildElement("FileZilla3");
+	TiXmlElement* fz2Root = xmlDocument->FirstChildElement("FileZilla");
 
 	if (fz3Root)
 	{
@@ -59,7 +58,10 @@ void CImportDialog::Show()
 			Fit();
 
 			if (ShowModal() != wxID_OK)
+			{
+				delete xmlDocument;
 				return;
+			}
 
 			if (queue && XRCCTRL(*this, "ID_QUEUE", wxCheckBox)->IsChecked())
 			{
@@ -79,6 +81,7 @@ void CImportDialog::Show()
 			
 			wxMessageBox(_("The selected categories have been imported."), _("Import successful"), wxOK, this);
 
+			delete xmlDocument;
 			return;
 		}
 	}
@@ -93,9 +96,12 @@ void CImportDialog::Show()
 			if (res == wxYES)
 				ImportLegacySites(fz2Root->FirstChildElement("Sites"));
 
+			delete xmlDocument;
 			return;
 		}
 	}
+
+	delete xmlDocument;
 
 	wxMessageBox(_("File does not contain any importable data."), _("Error importing"), wxICON_ERROR, m_parent);
 }

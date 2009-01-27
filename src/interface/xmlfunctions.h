@@ -93,13 +93,15 @@ bool GetTextElementBool(TiXmlElement* node, const char* name, bool defValue = fa
 
 // Opens the specified XML file if it exists or creates a new one otherwise.
 // Returns 0 on error.
-TiXmlElement* GetXmlFile(wxFileName file);
+TiXmlElement* GetXmlFile(wxFileName file, bool create = true);
 
 // Save the XML document to the given file
-bool SaveXmlFile(const wxFileName& file, TiXmlNode* node, wxString* error = 0);
+bool SaveXmlFile(const wxFileName& file, TiXmlNode* node, wxString* error = 0, bool move = false);
 
 // Functions to save and retrieve CServer objects to the XML file
 void SetServer(TiXmlElement *node, const CServer& server);
 bool GetServer(TiXmlElement *node, CServer& server);
+
+TiXmlDocument* LoadXmlDocument(const wxString& file);
 
 #endif //__XMLFUNCTIONS_H__

@@ -128,7 +128,7 @@ std::list<wxBitmap*> CThemeProvider::GetAllImages(const wxString& theme, const w
 bool CThemeProvider::GetThemeData(const wxString& themePath, wxString& name, wxString& author, wxString& email)
 {
 	wxFileName fn(wxGetApp().GetResourceDir() + themePath, _T("theme.xml"));
-	TiXmlElement* pDocument = GetXmlFile(fn.GetFullPath());
+	TiXmlElement* pDocument = GetXmlFile(fn.GetFullPath(), false);
 	if (!pDocument)
 		return false;
 
@@ -149,7 +149,7 @@ std::list<wxString> CThemeProvider::GetThemeSizes(const wxString& themePath)
 	std::list<wxString> sizes;
 
 	wxFileName fn(wxGetApp().GetResourceDir() + themePath, _T("theme.xml"));
-	TiXmlElement* pDocument = GetXmlFile(fn.GetFullPath());
+	TiXmlElement* pDocument = GetXmlFile(fn.GetFullPath(), false);
 	if (!pDocument)
 		return sizes;
 
@@ -204,7 +204,7 @@ wxIconBundle CThemeProvider::GetIconBundle(const wxArtID& id, const wxArtClient&
 bool CThemeProvider::ThemeHasSize(const wxString& themePath, const wxString& size)
 {
 	wxFileName fn(wxGetApp().GetResourceDir() + themePath, _T("theme.xml"));
-	TiXmlElement* pDocument = GetXmlFile(fn.GetFullPath());
+	TiXmlElement* pDocument = GetXmlFile(fn.GetFullPath(), false);
 	if (!pDocument)
 		return false;
 

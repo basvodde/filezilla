@@ -1855,9 +1855,10 @@ void CQueueView::LoadQueue()
 
 	pDocument->RemoveChild(pQueue);
 
-	if (!pDocument->GetDocument()->SaveFile(file.GetFullPath().mb_str()))
+	wxString error;
+	if (!SaveXmlFile(file.GetFullPath(), pDocument, &error))
 	{
-		wxString msg = wxString::Format(_("Could not write \"%s\", the queue could not be saved."), file.GetFullPath().c_str());
+		wxString msg = wxString::Format(_("Could not write \"%s\", the queue could not be saved.\n%s"), file.GetFullPath().c_str(), error.c_str());
 		wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
 	}
 

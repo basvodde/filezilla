@@ -2,6 +2,7 @@
 #include "xmlfunctions.h"
 #include "filezillaapp.h"
 #include "Options.h"
+#include <wx/ffile.h>
 
 CXmlFile::CXmlFile(const wxString& fileName)
 {
@@ -388,21 +389,34 @@ bool GetTextElementBool(TiXmlElement* node, const char* name, bool defValue /*=f
 	}
 }
 
+TiXmlDocument* LoadXmlDocument(const wxString& file)
+{
+	wxFFile f(file, _T("rb"));
+	if (!f.IsOpened())
+		return 0;
+
+	TiXmlDocument* pXmlDocument = new TiXmlDocument();
+	pXmlDocument->SetCondenseWhiteSpace(false);
+	if (!pXmlDocument->LoadFile(f.fp()))
+	{
+		delete pXmlDocument;
+		return 0;
+	}
+	return pXmlDocument;
+}
+
 // Opens the specified XML file if it exists or creates a new one otherwise.
 // Returns 0 on error.
-TiXmlElement* GetXmlFile(wxFileName file)
+TiXmlElement* GetXmlFile(wxFileName file, bool create /*=true*/)
 {
 	if (wxFileExists(file.GetFullPath()) && file.GetSize() > 0)
 	{
 		// File does exist, open it
 
-		TiXmlDocument* pXmlDocument = new TiXmlDocument();
-		pXmlDocument->SetCondenseWhiteSpace(false);
-		if (!pXmlDocument->LoadFile(file.GetFullPath().mb_str()))
-		{
-			delete pXmlDocument;
+		TiXmlDocument* pXmlDocument = LoadXmlDocument(file.GetFullPath());
+		if (!pXmlDocument)
 			return 0;
-		}
+
 		if (!pXmlDocument->FirstChildElement("FileZilla3"))
 		{
 			delete pXmlDocument;
@@ -420,15 +434,18 @@ TiXmlElement* GetXmlFile(wxFileName file)
 	}
 	else
 	{
-		// File does not exist, create new XML document
-
+		// File does not exist
+		if (!create)
+			return 0;
+		
+		// create new XML document
 		TiXmlDocument* pXmlDocument = new TiXmlDocument();
 		pXmlDocument->SetCondenseWhiteSpace(false);
 		pXmlDocument->InsertEndChild(TiXmlDeclaration("1.0", "UTF-8", "yes"));
 
 		pXmlDocument->InsertEndChild(TiXmlElement("FileZilla3"));
 
-		if (!pXmlDocument->SaveFile(file.GetFullPath().mb_str()))
+		if (!SaveXmlFile(file, pXmlDocument, 0))
 		{
 			delete pXmlDocument;
 			return 0;
@@ -438,7 +455,7 @@ TiXmlElement* GetXmlFile(wxFileName file)
 	}
 }
 
-bool SaveXmlFile(const wxFileName& file, TiXmlNode* node, wxString* error /*=0*/)
+bool SaveXmlFile(const wxFileName& file, TiXmlNode* node, wxString* error /*=0*/, bool move /*=false*/)
 {
 	if (!node)
 		return true;
@@ -451,7 +468,12 @@ bool SaveXmlFile(const wxFileName& file, TiXmlNode* node, wxString* error /*=0*/
 	if (wxFileExists(fullPath))
 	{
 		exists = true;
-		if (!wxCopyFile(fullPath, fullPath + _T("~")))
+		bool res;
+		if (!move)
+			res = wxCopyFile(fullPath, fullPath + _T("~"));
+		else
+			res = wxRenameFile(fullPath, fullPath + _T("~"));
+		if (!res)
 		{
 			const wxString msg = _("Failed to create backup copy of xml file");
 			if (error)
@@ -462,7 +484,8 @@ bool SaveXmlFile(const wxFileName& file, TiXmlNode* node, wxString* error /*=0*/
 		}
 	}
 
-	if (!pDocument->SaveFile(fullPath.mb_str()))
+	wxFFile f(fullPath, _T("w"));
+	if (!f.IsOpened() || !pDocument->SaveFile(f.fp()))
 	{
 		wxRemoveFile(fullPath);
 		if (exists)

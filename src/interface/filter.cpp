@@ -913,7 +913,10 @@ void CFilterManager::LoadFilters()
 		{
 			TiXmlElement* pDocument = GetXmlFile(defaults);
 			if (pDocument)
+			{
 				SaveXmlFile(file, pDocument);
+				delete pDocument->GetDocument();
+			}
 		}
 	}
 
