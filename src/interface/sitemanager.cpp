@@ -2591,6 +2591,7 @@ bool CSiteManager::GetBookmarks(wxString sitePath, std::list<wxString> &bookmark
 		const wxString& defaultsDir = wxGetApp().GetDefaultsDir();
 		if (defaultsDir == _T(""))
 			return false;
+		pDocument = file.Load(wxFileName(defaultsDir, _T("fzdefaults.xml")));
 	}
 
 	if (!pDocument)
