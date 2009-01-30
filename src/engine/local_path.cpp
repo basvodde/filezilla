@@ -513,3 +513,43 @@ bool CLocalPath::IsParentOf(const CLocalPath &path) const
 
 	return true;
 }
+
+bool CLocalPath::IsSubdirOf(const CLocalPath &path) const
+{
+	if (empty() || path.empty())
+		return false;
+
+	if (path.m_path.Len() > m_path.Len())
+		return false;
+
+	if (path.m_path != m_path.Left(path.m_path.Len()))
+		return false;
+
+	return true;
+}
+
+wxString CLocalPath::GetLastSegment() const
+{
+	wxASSERT(HasParent());
+
+#ifdef __WXMSW__
+	// C:\f\ has parent
+	// C:\ does not
+	// \\x\y\ shortest UNC
+	//   ^ min
+	const int min = 2;
+#else
+	const int min = 0;
+#endif
+	for (int i = (int)m_path.Len() - 2; i >= min; i--)
+	{
+		if (m_path[i] == path_separator)
+		{
+			wxString last = m_path.Mid(i + 1);
+			last.RemoveLast();
+			return last;
+		}
+	}
+
+	return _T("");
+}

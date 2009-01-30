@@ -89,6 +89,9 @@ public:
 	void ListingFailed(int error);
 	void LinkIsNotDir(const CServerPath& path, const wxString& subdir);
 
+	bool SetSyncBrowse(bool enable);
+	bool GetSyncBrowse() const { return !m_sync_browse.local_root.empty(); }
+
 protected:
 	void SetServer(const CServer* server);
 
@@ -103,6 +106,16 @@ protected:
 	CRecursiveOperation* m_pRecursiveOperation;
 
 	std::list<CStateEventHandler*> m_handlers[STATECHANGE_MAX];
+
+	CLocalPath GetSynchronizedDirectory(CServerPath remote_path);
+	CServerPath GetSynchronizedDirectory(CLocalPath local_path);
+
+	struct _sync_browse
+	{
+		CLocalPath local_root;
+		CServerPath remote_root;
+		bool is_changing;
+	} m_sync_browse;
 };
 
 class CStateEventHandler

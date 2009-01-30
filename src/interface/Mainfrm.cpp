@@ -99,6 +99,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 #endif
 	EVT_MENU(XRCID("ID_COMPARE_SIZE"), CMainFrame::OnDropdownComparisonMode)
 	EVT_MENU(XRCID("ID_COMPARE_DATE"), CMainFrame::OnDropdownComparisonMode)
+	EVT_TOOL(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), CMainFrame::OnSyncBrowse)
 END_EVENT_TABLE()
 
 class CMainFrameStateEventHandler : public CStateEventHandler
@@ -140,6 +141,14 @@ protected:
 				// Can only happen through quickconnect bar
 				m_pMainFrame->ClearBookmarks();
 			}
+		}
+		if (notification == STATECHANGE_SYNC_BROWSE)
+		{
+			if (m_pMainFrame->GetToolBar())
+				m_pMainFrame->GetToolBar()->ToggleTool(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), m_pState->GetSyncBrowse());
+			if (m_pMainFrame->GetMenuBar())
+				m_pMainFrame->GetMenuBar()->Enable(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), m_pState->GetSyncBrowse());
+			return;
 		}
 
 		m_pMainFrame->UpdateMenubarState();
@@ -958,6 +967,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 			if (!pData)
 				return;
 
+			m_pState->SetSyncBrowse(false);
 			if (!pData->m_remoteDir.IsEmpty() && m_pState->IsRemoteIdle())
 			{
 				const CServer* pServer = m_pState->GetServer();
@@ -983,6 +993,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 			if (!CBookmarksDialog::GetBookmark(iter2->second, local_dir, remote_dir))
 				return;
 
+			m_pState->SetSyncBrowse(false);
 			if (!remote_dir.IsEmpty() && m_pState->IsRemoteIdle())
 			{
 				const CServer* pServer = m_pState->GetServer();
@@ -2537,7 +2548,8 @@ void CMainFrame::UpdateToolbarState()
 
 	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_DISCONNECT"), pServer && idle);
 	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_CANCEL"), pServer && !idle);
-	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_COMPARISON"), pServer && m_pState->IsRemoteConnected());
+	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_COMPARISON"), pServer != 0);
+	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), pServer != 0);
 
 	bool canReconnect;
 	if (pServer || !idle)
@@ -2576,7 +2588,8 @@ void CMainFrame::UpdateMenubarState()
 	m_pMenuBar->Enable(XRCID("ID_CANCEL"), pServer && !idle);
 	m_pMenuBar->Enable(XRCID("ID_MENU_SERVER_CMD"), pServer && idle);
 	m_pMenuBar->Enable(XRCID("ID_MENU_FILE_COPYSITEMANAGER"), pServer != 0);
-	m_pMenuBar->Enable(XRCID("ID_TOOLBAR_COMPARISON"), pServer && m_pState->IsRemoteConnected());
+	m_pMenuBar->Enable(XRCID("ID_TOOLBAR_COMPARISON"), pServer != 0);
+	m_pMenuBar->Enable(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), pServer != 0);
 
 	bool canReconnect;
 	if (pServer || !idle)
@@ -2774,4 +2787,15 @@ void CMainFrame::ClearBookmarks()
 	m_last_bookmark_path.clear();
 	m_bookmarks.clear();
 	UpdateBookmarkMenu();
+}
+
+void CMainFrame::OnSyncBrowse(wxCommandEvent& event)
+{
+	if (!m_pState)
+		return;
+
+	m_pState->SetSyncBrowse(!m_pState->GetSyncBrowse());
+
+	if (m_pToolBar)
+		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), m_pState->GetSyncBrowse());
 }

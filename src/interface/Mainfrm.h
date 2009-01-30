@@ -162,6 +162,7 @@ protected:
 	void OnToolbarComparison(wxCommandEvent& event);
 	void OnToolbarComparisonDropdown(wxCommandEvent& event);
 	void OnDropdownComparisonMode(wxCommandEvent& event);
+	void OnSyncBrowse(wxCommandEvent& event);
 
 	bool m_bInitDone;
 	bool m_bQuit;
