@@ -147,7 +147,7 @@ protected:
 			if (m_pMainFrame->GetToolBar())
 				m_pMainFrame->GetToolBar()->ToggleTool(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), m_pState->GetSyncBrowse());
 			if (m_pMainFrame->GetMenuBar())
-				m_pMainFrame->GetMenuBar()->Enable(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), m_pState->GetSyncBrowse());
+				m_pMainFrame->GetMenuBar()->Check(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), m_pState->GetSyncBrowse());
 			return;
 		}
 
