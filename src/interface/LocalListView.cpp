@@ -772,9 +772,6 @@ void CLocalListView::OnItemActivated(wxListEvent &event)
 
 void CLocalListView::OnMenuEnter(wxCommandEvent &event)
 {
-	int count = 0;
-	bool back = false;
-
 	int item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	if (item == -1)
 	{

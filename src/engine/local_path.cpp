@@ -413,7 +413,7 @@ bool CLocalPath::Exists(wxString *error /*=0*/) const
 	{
 		// UNC path
 
-		// \\x\y\
+		// \\x\y\ shortest complete share
 		//      ^ earliest possible position of backslash indicating complete share
 		size_t pos;
 		for (pos = 5; pos < m_path.Len(); pos++)

@@ -1080,8 +1080,6 @@ void CRemoteTreeView::OnMenuDownload(wxCommandEvent& event)
 	if (path.IsEmpty())
 		return;
 
-	const bool hasParent = path.HasParent();
-
 	const wxString& name = GetItemText(m_contextMenuItem);
 
 	localDir.AddSegment(name);
