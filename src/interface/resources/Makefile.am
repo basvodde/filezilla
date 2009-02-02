@@ -1,4 +1,4 @@
-SUBDIRS = 16x16 32x32 cyril blukis lone opencrystal
+SUBDIRS = 16x16 32x32 cyril blukis lone minimal opencrystal
 
 CLEANFILES = filezilla.o
 

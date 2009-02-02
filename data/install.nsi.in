@@ -760,10 +760,11 @@ SectionEnd
 
 ${MementoSection} "Icon sets" SecIconSets
 
-  !insertmacro iNSTALLICONSET cyril
-  !insertmacro iNSTALLICONSET blukis
-  !insertmacro iNSTALLICONSET lone
-  !insertmacro iNSTALLICONSET opencrystal
+  !insertmacro INSTALLICONSET cyril
+  !insertmacro INSTALLICONSET blukis
+  !insertmacro INSTALLICONSET lone
+  !insertmacro INSTALLICONSET minimal
+  !insertmacro INSTALLICONSET opencrystal
 
 ${MementoSectionEnd}
 
@@ -1047,6 +1048,7 @@ Section "Uninstall"
   !insertmacro UNINSTALLICONSET cyril
   !insertmacro UNINSTALLICONSET blukis
   !insertmacro UNINSTALLICONSET lone
+  !insertmacro UNINSTALLICONSET minimal
   !insertmacro UNINSTALLICONSET opencrystal
 
 !if "@FILEZILLA_LINGUAS@" != ""
