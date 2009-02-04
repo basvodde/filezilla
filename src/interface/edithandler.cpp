@@ -999,9 +999,14 @@ wxString CEditHandler::GetCustomOpenCommand(const wxString& file, bool& program_
 {
 	wxFileName fn(file);
 
-	const wxString& ext = fn.GetExt();
+	wxString ext = fn.GetExt();
 	if (ext == _T(""))
-		return _T("");
+	{
+		if (fn.GetFullName()[0] == '.')
+			ext = _T(".");
+		else
+			ext = _T("/");
+	}
 
 	wxString associations = COptions::Get()->GetOption(OPTION_EDIT_CUSTOMASSOCIATIONS) + _T("\n");
 	associations.Replace(_T("\r"), _T(""));
@@ -1500,12 +1505,12 @@ bool CNewAssociationDialog::Show(const wxString &file)
 		return true;
 
 	int pos = file.Find('.', true);
-	if (pos < 1 || pos + 1 == (int)file.Len())
-	{
-		// No extension or dotfile
-		return true;
-	}
-	m_ext = file.Mid(pos + 1);	
+	if (!pos)
+		m_ext = _T(".");
+	else if (pos != -1)
+		m_ext = file.Mid(pos + 1);	
+	else
+		m_ext.clear();
 
 	wxStaticText *pDesc = XRCCTRL(*this, "ID_DESC", wxStaticText);
 	pDesc->SetLabel(wxString::Format(pDesc->GetLabel(), m_ext.c_str()));
@@ -1589,6 +1594,8 @@ void CNewAssociationDialog::OnOK(wxCommandEvent& event)
 			wxString associations = COptions::Get()->GetOption(OPTION_EDIT_CUSTOMASSOCIATIONS);
 			if (associations.Last() != '\n')
 				associations += '\n';
+			if (m_ext.empty())
+				m_ext = _T("/");
 			associations += m_ext + _T(" ") + cmd;
 			COptions::Get()->SetOption(OPTION_EDIT_CUSTOMASSOCIATIONS, associations);
 		}
@@ -1623,6 +1630,8 @@ void CNewAssociationDialog::OnOK(wxCommandEvent& event)
 			wxString associations = COptions::Get()->GetOption(OPTION_EDIT_CUSTOMASSOCIATIONS);
 			if (!associations.empty() && associations.Last() != '\n')
 				associations += '\n';
+			if (m_ext.empty())
+				m_ext = _T("/");
 			associations += m_ext + _T(" ") + cmd;
 			COptions::Get()->SetOption(OPTION_EDIT_CUSTOMASSOCIATIONS, associations);
 		}
