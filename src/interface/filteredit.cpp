@@ -153,12 +153,6 @@ bool CFilterEditDialog::Create(wxWindow* parent, const std::vector<CFilter>& fil
 	if (!m_pListCtrl)
 		return false;
 	pSizerItem->SetWindow(m_pListCtrl);
-#ifdef __WXMSW__
-	// I have no idea why this is needed. Without the control doesn't respect the dialog border
-	pSizerItem->SetBorder(wxSystemSettings::GetMetric(wxSYS_EDGE_X) * 2 + 4);
-	pSizerItem->CalcMin();
-	pSizerItem->SetFlag(pSizerItem->GetFlag() | wxRIGHT);
-#endif
 	wnd->Destroy();
 	CalcMinListWidth();
 
@@ -173,6 +167,8 @@ bool CFilterEditDialog::Create(wxWindow* parent, const std::vector<CFilter>& fil
 	m_filterSets = filterSets;
 	for (std::vector<CFilter>::const_iterator iter = filters.begin(); iter != filters.end(); iter++)
 		m_pFilterListCtrl->Append(iter->name);
+	Layout();
+	Fit();
 
 	SetCtrlState(false);
 
@@ -761,8 +757,6 @@ void CFilterEditDialog::CalcMinListWidth()
 	wxSize minSize = m_pListCtrl->GetMinSize();
 	minSize.IncTo(wxSize(requiredWidth, -1));
 	m_pListCtrl->SetMinSize(minSize);
-	Layout();
-	Fit();
 }
 
 t_filterType CFilterEditDialog::GetTypeFromTypeSelection(int selection)
