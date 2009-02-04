@@ -27,6 +27,9 @@ protected:
 	DECLARE_EVENT_TABLE()
 	void OnPaint(wxPaintEvent& event);
 	void OnTimer(wxTimerEvent& event);
+#ifdef __WXMSW__
+	void OnEraseBackground(wxEraseEvent& event);
+#endif
 };
 
 #endif //__LED_H__

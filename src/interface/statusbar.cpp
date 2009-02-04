@@ -210,11 +210,44 @@ void wxStatusBarEx::SetStatusText(const wxString& text, int number /*=0*/)
 }
 #endif
 
-class CEncryptionIndicator : public wxStaticBitmap
+#ifdef __WXMSW__
+class wxStaticBitmapEx : public wxStaticBitmap
+{
+public:
+	wxStaticBitmapEx(wxWindow* parent, int id, const wxBitmap& bmp)
+		: wxStaticBitmap(parent, id, bmp)
+	{
+	};
+
+protected:
+	DECLARE_EVENT_TABLE();
+
+	// Make sure it is truly transparent, i.e. also works with
+	// themed status bars.
+	void OnErase(wxEraseEvent& event)
+	{
+	}
+
+	void OnPaint(wxPaintEvent& event)
+	{
+		wxPaintDC dc(this);
+		dc.DrawBitmap(GetBitmap(), 0, 0, true);
+	}
+};
+
+BEGIN_EVENT_TABLE(wxStaticBitmapEx, wxStaticBitmap)
+EVT_ERASE_BACKGROUND(wxStaticBitmapEx::OnErase)
+EVT_PAINT(wxStaticBitmapEx::OnPaint)
+END_EVENT_TABLE()
+#else
+#define wxStaticBitmapEx wxStaticBitmap
+#endif
+
+class CEncryptionIndicator : public wxStaticBitmapEx
 {
 public:
 	CEncryptionIndicator(CStatusBar* pStatusBar, const wxBitmap& bmp)
-		: wxStaticBitmap(pStatusBar, wxID_ANY, bmp)
+		: wxStaticBitmapEx(pStatusBar, wxID_ANY, bmp)
 	{
 		m_pStatusBar = pStatusBar;
 	}
@@ -229,7 +262,7 @@ protected:
 	}
 };
 
-BEGIN_EVENT_TABLE(CEncryptionIndicator, wxStaticBitmap)
+BEGIN_EVENT_TABLE(CEncryptionIndicator, wxStaticBitmapEx)
 EVT_LEFT_UP(CEncryptionIndicator::OnMouseUp)
 END_EVENT_TABLE()
 
@@ -358,7 +391,7 @@ void CStatusBar::DisplayDataType(const CServer* const pServer)
 		wxBitmap bmp = wxArtProvider::GetBitmap(name, wxART_OTHER, wxSize(16, 16));
 		if (!m_pDataTypeIndicator)
 		{
-			m_pDataTypeIndicator = new wxStaticBitmap(this, wxID_ANY, bmp);
+			m_pDataTypeIndicator = new wxStaticBitmapEx(this, wxID_ANY, bmp);
 			AddChild(-4, m_pDataTypeIndicator, 22);
 
 			if (m_pEncryptionIndicator)

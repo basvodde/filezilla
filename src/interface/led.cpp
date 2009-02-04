@@ -12,6 +12,9 @@
 BEGIN_EVENT_TABLE(CLed, wxWindow)
 	EVT_PAINT(CLed::OnPaint)
 	EVT_TIMER(TIMER_ID, CLed::OnTimer)
+#ifdef __WXMSW__
+	EVT_ERASE_BACKGROUND(CLed::OnEraseBackground)
+#endif
 END_EVENT_TABLE()
 
 #define LED_OFF 1
@@ -55,9 +58,6 @@ void CLed::OnPaint(wxPaintEvent& event)
 	if (!m_loaded)
 		return;
 
-#ifdef __WXMSW__
-	dc.Clear();
-#endif
 	dc.DrawBitmap(m_leds[m_ledState], 0, 0, true);
 }
 
@@ -66,7 +66,7 @@ void CLed::Set()
 	if (m_ledState != LED_ON)
 	{
 		m_ledState = LED_ON;
-		Refresh(false);
+		Refresh();
 	}
 }
 
@@ -75,7 +75,7 @@ void CLed::Unset()
 	if (m_ledState != LED_OFF)
 	{
 		m_ledState = LED_OFF;
-		Refresh(false);
+		Refresh();
 	}
 }
 
@@ -113,3 +113,9 @@ void CLed::Ping()
 	Set();
 	m_timer.Start(100);
 }
+
+#ifdef __WXMSW__
+void CLed::OnEraseBackground(wxEraseEvent& event)
+{
+}
+#endif
