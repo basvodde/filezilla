@@ -243,7 +243,7 @@ void CManualTransfer::OnLocalBrowse(wxCommandEvent& event)
 	else
 	{
 		flags = wxFD_OPEN | wxFD_FILE_MUST_EXIST;
-		title = _T("Select file to upload");
+		title = _("Select file to upload");
 	}
 
 	wxFileDialog dlg(this, title, _T(""), _T(""), _T("*.*"), flags);
