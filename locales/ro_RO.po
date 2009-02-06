@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Filezilla\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-31 15:48+0100\n"
-"PO-Revision-Date: 2009-01-12 22:54+0200\n"
+"POT-Creation-Date: 2009-02-06 21:15+0100\n"
+"PO-Revision-Date: 2009-02-01 09:44+0200\n"
 "Last-Translator: Alexandru Bogdan Munteanu <muntealb@gmail.com>\n"
 "Language-Team: MunteAlb, Laurențiu Anisie <muntealb@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -233,7 +233,7 @@ msgstr "&Utilizează mereu editorul implicit"
 
 #: resources.h:645
 msgid "&Always use selection for all unassociated files"
-msgstr ""
+msgstr "Folosește mereu selecția pentru toate fișierele neasociate"
 
 #: resources.h:87
 msgid "&Always use this action"
@@ -808,14 +808,12 @@ msgid "&Upload"
 msgstr "&Încarcă"
 
 #: resources.h:643
-#, fuzzy
 msgid "&Use custom program"
-msgstr "Folosește set de &caractere personalizat"
+msgstr "Folosește program personali&zat"
 
 #: resources.h:253
-#, fuzzy
 msgid "&Use system's default editor for text files"
-msgstr "Fișierul selectat ca editor implicit nu există."
+msgstr "Folosește editor&ul implicit din sistem pentru fișierele text"
 
 #: resources.h:384
 msgid "&Use the following IP address:"
@@ -867,9 +865,9 @@ msgstr "'%s' nu există sau nu poate fi accesat."
 #: ../../locales/../src/engine/local_path.cpp:454
 #: ../../locales/../src/engine/local_path.cpp:475
 #: ../../locales/../src/engine/local_path.cpp:482
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' is not a directory."
-msgstr "Introduceți Dosarul"
+msgstr "'%s' nu e un dosar."
 
 #: ../../locales/../src/interface/manual_transfer.cpp:429
 #: ../../locales/../src/interface/sitemanager.cpp:938
@@ -1076,6 +1074,9 @@ msgid ""
 "A remote operation is in progress and synchronized browsing is enabled.\n"
 "Disable synchronized browsing and continue changing the local directory?"
 msgstr ""
+"O operațiune distantă este în curs, iar explorarea sincronizată e activată.\n"
+"Dezactivați explorarea sincronizată și continuați cu schimbarea dosarului "
+"local? "
 
 #: resources.h:155 resources.h:682
 msgid "A&SCII"
@@ -1271,7 +1272,7 @@ msgstr "Anonim"
 #: ../../locales/../src/interface/state.cpp:739
 msgid ""
 "Another remote operation is already progress, cannot change directory now"
-msgstr ""
+msgstr "O altă operațiune distantă e deja în curs, nu pot schimba dosarul acum"
 
 #: resources.h:367
 msgid "Any of the following"
@@ -1320,7 +1321,7 @@ msgstr "Cere sistemului de operare adresa IP externă"
 msgid "Associated program not found:"
 msgstr "Programul asociat nu a fost găsit:"
 
-#: ../../locales/../src/interface/filteredit.cpp:701
+#: ../../locales/../src/interface/filteredit.cpp:703
 msgid "At least one filter condition is incomplete"
 msgstr "Cel puțin o condiție din filtru este incompletă"
 
@@ -1360,8 +1361,8 @@ msgstr "Mărimi Disponibile"
 msgid "B&ypass proxy"
 msgstr "Șu&ntează proxyul [bypass]"
 
-#: ../../locales/../src/interface/edithandler.cpp:1212
-#: ../../locales/../src/interface/edithandler.cpp:1240
+#: ../../locales/../src/interface/edithandler.cpp:1217
+#: ../../locales/../src/interface/edithandler.cpp:1245
 msgid "Being edited"
 msgstr "Este editat"
 
@@ -1494,7 +1495,7 @@ msgstr ""
 msgid "Cannot compare directories, not connected to a server."
 msgstr "Nu pot compara dosarele, nu sînt conectat la un server."
 
-#: ../../locales/../src/interface/filteredit.cpp:474
+#: ../../locales/../src/interface/filteredit.cpp:476
 msgid "Cannot create new filter"
 msgstr "Nu pot crea un filtru nou"
 
@@ -1560,14 +1561,13 @@ msgstr "Nu pot salva setul de filtre"
 msgid "Cannot select filter"
 msgstr "Nu pot selecta filtrul"
 
-#: ../../locales/../src/interface/edithandler.cpp:1576
 #: ../../locales/../src/interface/edithandler.cpp:1581
-#: ../../locales/../src/interface/edithandler.cpp:1618
-#, fuzzy
+#: ../../locales/../src/interface/edithandler.cpp:1586
+#: ../../locales/../src/interface/edithandler.cpp:1625
 msgid "Cannot set file association"
-msgstr "Asocieri personalizate ale tip&urilor de fișiere:"
+msgstr "Nu pot seta asocierea de fișiere"
 
-#: ../../locales/../src/interface/edithandler.cpp:1171
+#: ../../locales/../src/interface/edithandler.cpp:1176
 msgid "Cannot show dialog"
 msgstr "Nu pot afișa dialogul"
 
@@ -1580,7 +1580,7 @@ msgstr "Nu pot vedea / edita fișierul selectat"
 msgid "Categories"
 msgstr "Categorii"
 
-#: ../../locales/../src/interface/statusbar.cpp:442
+#: ../../locales/../src/interface/statusbar.cpp:475
 msgid "Certificate and session data are not available yet."
 msgstr "Certificatul și datele sesiunii nu sînt încă disponibile."
 
@@ -2044,9 +2044,8 @@ msgid "Could not generate custom login sequence."
 msgstr "Nu pot genera secvența personalizată de logare."
 
 #: ../../locales/../src/interface/state.cpp:723
-#, fuzzy
 msgid "Could not get full remote path."
-msgstr "Nu pot parsa calea distantă."
+msgstr "Nu pot obține calea distantă completă."
 
 #: ../../locales/../src/interface/optionspage_connection_sftp.cpp:150
 #: ../../locales/../src/interface/optionspage_connection_sftp.cpp:167
@@ -2141,6 +2140,9 @@ msgid ""
 "s'.\n"
 "Disable synchronized browsing and continue changing the remote directory?"
 msgstr ""
+"Nu pot obține dosarul local corespunzător celui distant '%s'.\n"
+"Dezactivați explorarea sincronizată și continuați cu schimbarea dosarului "
+"distant?"
 
 #: ../../locales/../src/interface/state.cpp:184
 #, c-format
@@ -2149,6 +2151,8 @@ msgid ""
 "s'.\n"
 "Synchronized browsing has been disabled."
 msgstr ""
+"Nu pot obține dosarul local corespunzător celui distant '%s'.\n"
+"Explorarea sincronizată a fost dezactivată."
 
 #: ../../locales/../src/interface/state.cpp:94
 #, c-format
@@ -2157,6 +2161,8 @@ msgid ""
 "s'.\n"
 "Synchronized browsing has been disabled."
 msgstr ""
+"Nu pot obține dosarul distant corespunzător celui local '%s'.\n"
+"Explorarea sincronizată a fost dezactivată."
 
 #: ../../locales/../src/engine/logging.cpp:202
 #: ../../locales/../src/engine/logging.cpp:270
@@ -2305,16 +2311,19 @@ msgid ""
 "Current remote directory (%s) is not below the synchronization root (%s).\n"
 "Synchronized browsing has been disabled."
 msgstr ""
+"Dosarul distant curent '%s' nu e dedesubtul dosarului-rădăcină de "
+"sincronizare (%s).\n"
+"Explorarea sincronizată a fost dezactivată."
 
-#: ../../locales/../src/interface/statusbar.cpp:345
+#: ../../locales/../src/interface/statusbar.cpp:378
 msgid "Current transfer type is set to ASCII."
 msgstr "Tipul curent de transfer este setat la format ASCII."
 
-#: ../../locales/../src/interface/statusbar.cpp:355
+#: ../../locales/../src/interface/statusbar.cpp:388
 msgid "Current transfer type is set to automatic detection."
 msgstr "Tipul curent de transfer este setat la format detectat automat."
 
-#: ../../locales/../src/interface/statusbar.cpp:350
+#: ../../locales/../src/interface/statusbar.cpp:383
 msgid "Current transfer type is set to binary."
 msgstr "Tipul curent de transfer este setat la format binar."
 
@@ -2534,6 +2543,8 @@ msgstr "De&zactivează Tot"
 msgid ""
 "Disable synchronized browsing and continue changing the remote directory?"
 msgstr ""
+"Dezactivați explorarea sincronizată și continuați cu schimbarea dosarului "
+"distant?"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:763
 msgid ""
@@ -2578,9 +2589,8 @@ msgid "Display about dialog"
 msgstr "Afișează fereastra cu informații despre soft"
 
 #: resources.h:252
-#, fuzzy
 msgid "Do &not use default editor"
-msgstr "&Utilizează mereu editorul implicit"
+msgstr "&Nu folosi editorul implicit"
 
 #: resources.h:753
 msgid "Do &nothing"
@@ -2654,7 +2664,7 @@ msgstr "Descarcă Dosarul Selectat"
 msgid "Download selected files and directories"
 msgstr "Descarcă fișierele și dosarele selectate"
 
-#: ../../locales/../src/interface/edithandler.cpp:1197
+#: ../../locales/../src/interface/edithandler.cpp:1202
 msgid "Downloading"
 msgstr "Descarc"
 
@@ -2690,9 +2700,9 @@ msgstr ""
 "Operațiunea de Tragere-și-Depunere între servere diferite nu a fost încă "
 "implementată."
 
-#: ../../locales/../src/interface/filteredit.cpp:480
-#: ../../locales/../src/interface/filteredit.cpp:547
-#: ../../locales/../src/interface/filteredit.cpp:588
+#: ../../locales/../src/interface/filteredit.cpp:482
+#: ../../locales/../src/interface/filteredit.cpp:549
+#: ../../locales/../src/interface/filteredit.cpp:590
 msgid "Duplicate filter name"
 msgstr "Nume de filtru duplicat"
 
@@ -2716,7 +2726,7 @@ msgstr "&Ieși"
 msgid "E-Mail:"
 msgstr "E-Mail:"
 
-#: ../../locales/../src/interface/filteredit.cpp:686
+#: ../../locales/../src/interface/filteredit.cpp:688
 msgid "Each filter needs at least one condition."
 msgstr "Fiecare filtru necesită cel puțin o condiție."
 
@@ -2759,13 +2769,13 @@ msgstr "Dosar gol."
 msgid "Empty file extension."
 msgstr "Fișier fără extensie."
 
-#: ../../locales/../src/interface/filteredit.cpp:538
-#: ../../locales/../src/interface/filteredit.cpp:582
+#: ../../locales/../src/interface/filteredit.cpp:540
+#: ../../locales/../src/interface/filteredit.cpp:584
 msgid "Empty filter names are not allowed."
 msgstr "Filtrele fără nume nu sînt permise."
 
-#: ../../locales/../src/interface/filteredit.cpp:538
-#: ../../locales/../src/interface/filteredit.cpp:582
+#: ../../locales/../src/interface/filteredit.cpp:540
+#: ../../locales/../src/interface/filteredit.cpp:584
 msgid "Empty name"
 msgstr "Nume vid"
 
@@ -2809,9 +2819,9 @@ msgstr "Comandă Personalizată"
 msgid "Enter directory"
 msgstr "Introduceți Dosarul"
 
-#: ../../locales/../src/interface/filteredit.cpp:467
-#: ../../locales/../src/interface/filteredit.cpp:526
-#: ../../locales/../src/interface/filteredit.cpp:575
+#: ../../locales/../src/interface/filteredit.cpp:469
+#: ../../locales/../src/interface/filteredit.cpp:528
+#: ../../locales/../src/interface/filteredit.cpp:577
 msgid "Enter filter name"
 msgstr "Introduceți Numele Filtrului"
 
@@ -2927,9 +2937,8 @@ msgid "Error:"
 msgstr "Eroare:"
 
 #: resources.h:263
-#, fuzzy
 msgid "Example: png \"c:\\program files\\viewer\\viewer.exe\" -open"
-msgstr "png \"c:\\program files\\viewer\\viewer.exe\" -open"
+msgstr "Exemplu: png \"c:\\program files\\viewer\\viewer.exe\" -open"
 
 #: resources.h:223
 msgid "Examples"
@@ -3233,7 +3242,7 @@ msgstr "Fișierul a fost schimbat"
 msgid "File lists"
 msgstr "Liste de Fișiere"
 
-#: ../../locales/../src/interface/edithandler.cpp:1656
+#: ../../locales/../src/interface/edithandler.cpp:1665
 #: ../../locales/../src/interface/FileZilla.cpp:768
 #: ../../locales/../src/interface/FileZilla.cpp:862
 #: ../../locales/../src/interface/optionspage_edit.cpp:215
@@ -3292,7 +3301,7 @@ msgstr ""
 msgid "Filelist status &bars"
 msgstr "&Bara de Stare a Listei de Fișiere"
 
-#: ../../locales/../src/interface/edithandler.cpp:1182
+#: ../../locales/../src/interface/edithandler.cpp:1187
 #: ../../locales/../src/interface/filteredit.cpp:101
 #: ../../locales/../src/interface/LocalListView.cpp:260
 #: ../../locales/../src/interface/optionspage_connection_sftp.cpp:39
@@ -3368,7 +3377,7 @@ msgstr "Exclude t&oate fișierele care se potrivesc cu:"
 msgid "Filter applies to:"
 msgstr "Filtrul se aplică la:"
 
-#: ../../locales/../src/interface/filteredit.cpp:732
+#: ../../locales/../src/interface/filteredit.cpp:734
 msgid "Filter name already exists"
 msgstr "Numele filtrului există deja"
 
@@ -3381,11 +3390,11 @@ msgstr "Setul de filtre există deja"
 msgid "Filter the directory listings"
 msgstr "Filtrează lista de dosare"
 
-#: ../../locales/../src/interface/filteredit.cpp:686
-#: ../../locales/../src/interface/filteredit.cpp:701
-#: ../../locales/../src/interface/filteredit.cpp:712
-#: ../../locales/../src/interface/filteredit.cpp:723
-#: ../../locales/../src/interface/filteredit.cpp:732
+#: ../../locales/../src/interface/filteredit.cpp:688
+#: ../../locales/../src/interface/filteredit.cpp:703
+#: ../../locales/../src/interface/filteredit.cpp:714
+#: ../../locales/../src/interface/filteredit.cpp:725
+#: ../../locales/../src/interface/filteredit.cpp:734
 msgid "Filter validation failed"
 msgstr "Validarea filtrului a eșuat"
 
@@ -3861,7 +3870,7 @@ msgstr "Cod de răspuns invalid"
 msgid "Invalid site path"
 msgstr "Cale distantă invalidă"
 
-#: ../../locales/../src/interface/filteredit.cpp:712
+#: ../../locales/../src/interface/filteredit.cpp:714
 msgid "Invalid size in condition"
 msgstr "Mărime invalidă în condiție"
 
@@ -3946,8 +3955,8 @@ msgstr "Listă:"
 msgid "Lo&west available port:"
 msgstr "Port&ul minim disponibil:"
 
-#: ../../locales/../src/interface/edithandler.cpp:1230
-#: ../../locales/../src/interface/edithandler.cpp:1476
+#: ../../locales/../src/interface/edithandler.cpp:1235
+#: ../../locales/../src/interface/edithandler.cpp:1481
 msgid "Local"
 msgstr "Local"
 
@@ -4117,7 +4126,7 @@ msgstr "Numele semnului de carte există deja."
 msgid "Name:"
 msgstr "Nume:"
 
-#: ../../locales/../src/interface/filteredit.cpp:723
+#: ../../locales/../src/interface/filteredit.cpp:725
 msgid "Need to enter filter name"
 msgstr "Trebuie să introduceți numele filtrului"
 
@@ -4159,7 +4168,7 @@ msgstr "Semn de Carte Nou"
 msgid "New directory"
 msgstr "Dosar Nou"
 
-#: ../../locales/../src/interface/filteredit.cpp:462
+#: ../../locales/../src/interface/filteredit.cpp:464
 msgid "New filter"
 msgstr "Filtru Nou"
 
@@ -4194,11 +4203,11 @@ msgid "No external IP address set, trying default."
 msgstr ""
 "N-a fost specificată nici o adresă IP externă, o încerc pe cea implicită."
 
-#: ../../locales/../src/interface/edithandler.cpp:1171
+#: ../../locales/../src/interface/edithandler.cpp:1176
 msgid "No files are currently being edited."
 msgstr "Momentan nu este editat nici un fișier."
 
-#: ../../locales/../src/interface/filteredit.cpp:474
+#: ../../locales/../src/interface/filteredit.cpp:476
 msgid "No filter name given"
 msgstr "N-a fost specificat nici un nume de filtru"
 
@@ -4223,12 +4232,14 @@ msgstr "Setului de filtre nu i-a fost dat un nume."
 
 #: resources.h:648
 msgid "No program associated with filetype"
-msgstr ""
+msgstr "Nu există un program asociat cu tipul de fișier"
 
 #: resources.h:638
 #, c-format
 msgid "No program has been associated to edit files with the extension '%s'."
 msgstr ""
+"Nu a fost asociat nici un program pentru editarea fișierelor cu extensia '%"
+"s'."
 
 #: ../../locales/../src/interface/sitemanager.cpp:1941
 #: ../../locales/../src/interface/sitemanager.cpp:1953
@@ -4477,10 +4488,10 @@ msgstr "Calea nu poate fi construită pentru dosarul %s și subdosarul %s"
 msgid "Paths"
 msgstr "Căi"
 
-#: ../../locales/../src/interface/edithandler.cpp:1209
-#: ../../locales/../src/interface/edithandler.cpp:1349
-#: ../../locales/../src/interface/edithandler.cpp:1448
-#: ../../locales/../src/interface/edithandler.cpp:1461
+#: ../../locales/../src/interface/edithandler.cpp:1214
+#: ../../locales/../src/interface/edithandler.cpp:1354
+#: ../../locales/../src/interface/edithandler.cpp:1453
+#: ../../locales/../src/interface/edithandler.cpp:1466
 msgid "Pending removal"
 msgstr "Înlăturare în curs"
 
@@ -4550,11 +4561,11 @@ msgid "Please enter a download speedlimit greater or equal to 0 KB/s."
 msgstr ""
 "Specificați o viteză maximă de descărcare egală sau mai mare de 0 KB/s."
 
-#: ../../locales/../src/interface/filteredit.cpp:467
+#: ../../locales/../src/interface/filteredit.cpp:469
 msgid "Please enter a name for the new filter."
 msgstr "Introduceți un nume pentru filtrul nou."
 
-#: ../../locales/../src/interface/filteredit.cpp:575
+#: ../../locales/../src/interface/filteredit.cpp:577
 msgid "Please enter a new name for the copied filter."
 msgstr "Introduceți un nume pentru filtrul copiat."
 
@@ -4563,7 +4574,7 @@ msgstr "Introduceți un nume pentru filtrul copiat."
 msgid "Please enter a new name for the filter set \"%s\""
 msgstr "Introduceți un nume nou pentru setul de filtre \"%s\""
 
-#: ../../locales/../src/interface/filteredit.cpp:526
+#: ../../locales/../src/interface/filteredit.cpp:528
 msgid "Please enter a new name for the filter."
 msgstr "Introduceți un nume pentru filtru."
 
@@ -4919,24 +4930,24 @@ msgstr "Permisiuni Publice"
 msgid "Queue has been fully processed"
 msgstr "Coada a fost procesată complet"
 
-#: ../../locales/../src/interface/statusbar.cpp:309
+#: ../../locales/../src/interface/statusbar.cpp:342
 #, c-format
 msgid "Queue: %s%d %c"
 msgstr "Coadă: %s%d %c"
 
-#: ../../locales/../src/interface/statusbar.cpp:382
+#: ../../locales/../src/interface/statusbar.cpp:415
 #, c-format
 msgid "Queue: %s%d MiB"
 msgstr "Coadă: %s%d MiB"
 
-#: ../../locales/../src/interface/statusbar.cpp:302
-#: ../../locales/../src/interface/statusbar.cpp:383
+#: ../../locales/../src/interface/statusbar.cpp:335
+#: ../../locales/../src/interface/statusbar.cpp:416
 #, c-format
 msgid "Queue: %s%d bytes"
 msgstr "Coadă: %s%d baiți"
 
-#: ../../locales/../src/interface/statusbar.cpp:276
-#: ../../locales/../src/interface/statusbar.cpp:381
+#: ../../locales/../src/interface/statusbar.cpp:309
+#: ../../locales/../src/interface/statusbar.cpp:414
 msgid "Queue: empty"
 msgstr "Coadă: goală"
 
@@ -5025,7 +5036,7 @@ msgstr "Redirecționare la o adresa invalidă"
 msgid "Refresh the file and folder lists"
 msgstr "Împrospătează listele de fișiere și dosare"
 
-#: ../../locales/../src/interface/edithandler.cpp:1193
+#: ../../locales/../src/interface/edithandler.cpp:1198
 msgid "Remote"
 msgstr "Distant"
 
@@ -5041,7 +5052,7 @@ msgstr "Fișier Distant"
 msgid "Remote filters:"
 msgstr "Filtre Distante:"
 
-#: ../../locales/../src/interface/edithandler.cpp:1184
+#: ../../locales/../src/interface/edithandler.cpp:1189
 msgid "Remote path"
 msgstr "Calea Distantă"
 
@@ -5170,7 +5181,7 @@ msgstr "Sa&ri"
 
 #: resources.h:670
 msgid "S&ynchronized browsing"
-msgstr ""
+msgstr "Explorare Sincroni&zată"
 
 #: ../../locales/../src/interface/settingsdialog.cpp:119
 msgid "SFTP"
@@ -5188,7 +5199,7 @@ msgstr "Scanez după fișiere de adăugat la coadă"
 msgid "Scanning for files to upload"
 msgstr "Scanez după fișiere de încărcat"
 
-#: ../../locales/../src/interface/statusbar.cpp:442
+#: ../../locales/../src/interface/statusbar.cpp:475
 msgid "Security information"
 msgstr "Informații de Securitate"
 
@@ -5215,7 +5226,7 @@ msgstr ""
 "Selectați acțiunea implicită de efectuat dacă fișierul țintă al unui "
 "transfer există deja."
 
-#: ../../locales/../src/interface/edithandler.cpp:1636
+#: ../../locales/../src/interface/edithandler.cpp:1645
 #: ../../locales/../src/interface/optionspage_edit.cpp:195
 msgid "Select default editor"
 msgstr "Selectați editorul implicit"
@@ -5265,14 +5276,19 @@ msgstr "Selectați fișierul pentru siturile exportate"
 msgid "Select file to import settings from"
 msgstr "Selectați fișierul din care să se importe setările"
 
+#: ../../locales/../src/interface/manual_transfer.cpp:246
+#, fuzzy
+msgid "Select file to upload"
+msgstr "Scanez după fișiere de încărcat"
+
 #: ../../locales/../src/interface/optionspage_connection_sftp.cpp:301
 msgid "Select filename for converted keyfile"
 msgstr "Selectați fișierului pentru cheia convertită"
 
 #: resources.h:639
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Select how these files should be opened."
-msgstr "Fișierul selectat este deja deschis."
+msgstr "Selectați modul în care să fie deschise aceste fișiere."
 
 #: ../../locales/../src/interface/manual_transfer.cpp:241
 msgid "Select target filename"
@@ -5320,12 +5336,11 @@ msgstr "%s și %s selectate (mărime totală: %s)"
 msgid "Selected %s and %s. Total size: At least %s"
 msgstr "%s și %s selectate (mărime totală: cel puțin %s)"
 
-#: ../../locales/../src/interface/edithandler.cpp:1581
-#: ../../locales/../src/interface/edithandler.cpp:1656
+#: ../../locales/../src/interface/edithandler.cpp:1586
+#: ../../locales/../src/interface/edithandler.cpp:1665
 #: ../../locales/../src/interface/optionspage_edit.cpp:215
-#, fuzzy
 msgid "Selected editor does not exist."
-msgstr "Editorul selectat nu există"
+msgstr "Editorul selectat nu există."
 
 #: resources.h:496 ../../locales/../src/interface/LocalListView.cpp:2288
 msgid "Selected file already being edited"
@@ -5662,7 +5677,7 @@ msgstr "Pornesc încărcarea lui %s"
 msgid "State:"
 msgstr "Stare:"
 
-#: ../../locales/../src/interface/edithandler.cpp:1185
+#: ../../locales/../src/interface/edithandler.cpp:1190
 #: ../../locales/../src/interface/QueueView.cpp:464
 msgid "Status"
 msgstr "Stare"
@@ -5714,15 +5729,15 @@ msgstr "Rezumatul rezultatelor testului:"
 #: ../../locales/../src/interface/state.cpp:751
 #: ../../locales/../src/interface/state.cpp:758
 msgid "Synchronized browsing"
-msgstr ""
+msgstr "Explorare sincronizată"
 
 #: ../../locales/../src/interface/state.cpp:194
 msgid "Synchronized browsing has been disabled."
-msgstr ""
+msgstr "Explorarea sincronizată a fost dezactivată."
 
 #: resources.h:873
 msgid "Synchronized browsing."
-msgstr ""
+msgstr "Explorare sincronizată."
 
 #: ../../locales/../src/interface/quickconnectbar.cpp:89
 #: ../../locales/../src/interface/quickconnectbar.cpp:123
@@ -5794,7 +5809,7 @@ msgstr ""
 msgid "The address you entered was: %s"
 msgstr "Adresa introdusă de dv. a fost: %s"
 
-#: ../../locales/../src/interface/statusbar.cpp:411
+#: ../../locales/../src/interface/statusbar.cpp:444
 msgid "The connection is encrypted. Click icon for details."
 msgstr "Conexiunea este criptată. Clicați pe iconiță pentru detalii."
 
@@ -5802,19 +5817,19 @@ msgstr "Conexiunea este criptată. Clicați pe iconiță pentru detalii."
 msgid "The custom login sequence cannot be empty."
 msgstr "Secvența personalizată de logare nu poate fi goală."
 
-#: resources.h:642 ../../locales/../src/interface/edithandler.cpp:1618
-#, fuzzy, no-c-format
+#: resources.h:642 ../../locales/../src/interface/edithandler.cpp:1625
+#, no-c-format
 msgid "The default editor for text files could not be found."
-msgstr "E necesară setarea editorului implicit."
+msgstr "Editorul implicit pentru fișierele text nu a putut fi găsit."
 
 #: resources.h:641
-#, fuzzy, c-format
+#, c-format
 msgid "The default editor for text files is '%s'."
-msgstr "E necesară setarea editorului implicit."
+msgstr "Editorul implicit pentru fișierele text e '%s'."
 
-#: ../../locales/../src/interface/filteredit.cpp:480
-#: ../../locales/../src/interface/filteredit.cpp:547
-#: ../../locales/../src/interface/filteredit.cpp:588
+#: ../../locales/../src/interface/filteredit.cpp:482
+#: ../../locales/../src/interface/filteredit.cpp:549
+#: ../../locales/../src/interface/filteredit.cpp:590
 msgid "The entered filter name already exists."
 msgstr "Numele introdus al filtrului există deja."
 
@@ -5842,6 +5857,9 @@ msgid ""
 "The associated program (%s) could not be found.\n"
 "Please check your filetype associations."
 msgstr ""
+"Fișierul '%s' nu poate fi deschis:\n"
+"Programul asociat (%s) nu poate fi găsit.\n"
+"Verificați asocierile tipurilor de fișiere."
 
 #: ../../locales/../src/interface/optionspage_connection_sftp.cpp:219
 #, c-format
@@ -5952,6 +5970,9 @@ msgid ""
 "The local directory '%s' is not below the synchronization root (%s).\n"
 "Disable synchronized browsing and continue changing the local directory?"
 msgstr ""
+"Dosarul local '%s' nu e dedesubtul dosarului-rădăcină de sincronizare (%s).\n"
+"Dezactivați explorarea sincronizată și continuați cu schimbarea dosarului "
+"local? "
 
 #: ../../locales/../src/interface/optionspage_connection_active.cpp:77
 msgid ""
@@ -5983,6 +6004,10 @@ msgid ""
 "The remote directory '%s' is not below the synchronization root (%s).\n"
 "Disable synchronized browsing and continue changing the remote directory?"
 msgstr ""
+"Dosarul distant '%s' nu e dedesubtul dosarului-rădăcină de sincronizare (%"
+"s).\n"
+"Dezactivați explorarea sincronizată și continuați cu schimbarea dosarului "
+"distant?"
 
 #: ../../locales/../src/interface/import.cpp:82
 msgid "The selected categories have been imported."
@@ -6185,6 +6210,9 @@ msgid ""
 "If enabled, navigating the local directory hierarchy will also change the "
 "directory on the server accordingly and vice versa."
 msgstr ""
+"Comută explorarea [browsing] sincronizată.\n"
+"Dacă e activată, navigarea în arborele de dosare local va duce la o navigare "
+"identică în arborele de dosare de pe server și viceversa."
 
 #: resources.h:860 resources.h:861
 msgid "Toggles processing of the transfer queue"
@@ -6291,7 +6319,7 @@ msgstr "Aveți încredere în acest certificat și continuați cu conectarea?"
 msgid "Trust this host and carry on connecting?"
 msgstr "Aveți încredere în această gazdă și continuați conectarea?"
 
-#: resources.h:597 ../../locales/../src/interface/edithandler.cpp:1183
+#: resources.h:597 ../../locales/../src/interface/edithandler.cpp:1188
 msgid "Type"
 msgstr "Tip"
 
@@ -6332,8 +6360,8 @@ msgstr "Cod de eroare %d nealocat"
 msgid "Unit:"
 msgstr "Unitate:"
 
-#: ../../locales/../src/interface/edithandler.cpp:1215
-#: ../../locales/../src/interface/edithandler.cpp:1243
+#: ../../locales/../src/interface/edithandler.cpp:1220
+#: ../../locales/../src/interface/edithandler.cpp:1248
 msgid "Unknown"
 msgstr "Necunoscut"
 
@@ -6402,7 +6430,7 @@ msgstr "Vrăjitor de Actualizare"
 msgid "Upload"
 msgstr "Încarcă"
 
-#: ../../locales/../src/interface/edithandler.cpp:1206
+#: ../../locales/../src/interface/edithandler.cpp:1211
 msgid "Upload failed"
 msgstr "Încărcarea a eșuat"
 
@@ -6422,19 +6450,19 @@ msgstr "Încarc din nou acest fișier pe server?"
 msgid "Upload this file to the server?"
 msgstr "Încarc acest fișier pe server?"
 
-#: ../../locales/../src/interface/edithandler.cpp:1200
-#: ../../locales/../src/interface/edithandler.cpp:1234
-#: ../../locales/../src/interface/edithandler.cpp:1396
+#: ../../locales/../src/interface/edithandler.cpp:1205
+#: ../../locales/../src/interface/edithandler.cpp:1239
+#: ../../locales/../src/interface/edithandler.cpp:1401
 msgid "Uploading"
 msgstr "Î&ncarc"
 
-#: ../../locales/../src/interface/edithandler.cpp:1203
-#: ../../locales/../src/interface/edithandler.cpp:1398
+#: ../../locales/../src/interface/edithandler.cpp:1208
+#: ../../locales/../src/interface/edithandler.cpp:1403
 msgid "Uploading and pending removal"
 msgstr "Încarc și aștept înlăturarea"
 
-#: ../../locales/../src/interface/edithandler.cpp:1237
-#: ../../locales/../src/interface/edithandler.cpp:1400
+#: ../../locales/../src/interface/edithandler.cpp:1242
+#: ../../locales/../src/interface/edithandler.cpp:1405
 msgid "Uploading and unediting"
 msgstr "Încarc și dezeditez"
 
@@ -6447,18 +6475,16 @@ msgid "Use &custom charset"
 msgstr "Folosește set de &caractere personalizat"
 
 #: resources.h:254
-#, fuzzy
 msgid "Use &custom editor:"
-msgstr "Folosește set de &caractere personalizat"
+msgstr "Folosește editor persona&lizat:"
 
 #: resources.h:412
 msgid "Use &default"
 msgstr "Folosește implici&tul"
 
 #: resources.h:640
-#, fuzzy
 msgid "Use &default editor for text files"
-msgstr "E necesară setarea editorului implicit."
+msgstr "Folosește e&ditorul implicit pentru fișierele text"
 
 #: resources.h:128
 msgid "Use UTF-8 if the server supports it, else use local charset."
@@ -6738,10 +6764,9 @@ msgstr "Trebuie să introduceți un nume pentru semnul de carte."
 msgid "You need to enter a name for the log file."
 msgstr "Introduceți un nume pentru fișierul jurnal."
 
-#: ../../locales/../src/interface/edithandler.cpp:1576
-#, fuzzy
+#: ../../locales/../src/interface/edithandler.cpp:1581
 msgid "You need to enter a properly quoted command."
-msgstr "Trebuie să introduceți o adresă proxy."
+msgstr "Trebuie să introduceți o comandă citată [quoted] corespunzător."
 
 #: ../../locales/../src/interface/optionspage_ftpproxy.cpp:82
 #: ../../locales/../src/interface/optionspage_proxy.cpp:70

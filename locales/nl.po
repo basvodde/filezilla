@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: filezilla_nl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-31 15:48+0100\n"
-"PO-Revision-Date: 2009-01-25 12:45+0100\n"
+"POT-Creation-Date: 2009-02-06 21:15+0100\n"
+"PO-Revision-Date: 2009-02-03 19:24+0100\n"
 "Last-Translator: Tim van der Meij\n"
 "Language-Team:  <en@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1068,6 +1068,10 @@ msgid ""
 "A remote operation is in progress and synchronized browsing is enabled.\n"
 "Disable synchronized browsing and continue changing the local directory?"
 msgstr ""
+"Een externe operatie is in voortgang en gesynchroniseerd bladeren is "
+"ingeschakeld.\n"
+"Gesynchroniseerd bladeren uitschakelen en doorgaan met het wijzigen van de "
+"lokale map?"
 
 #: resources.h:155 resources.h:682
 msgid "A&SCII"
@@ -1266,6 +1270,8 @@ msgstr "Anoniem"
 msgid ""
 "Another remote operation is already progress, cannot change directory now"
 msgstr ""
+"Een andere externe operatie is reeds in voortgang, kan de map nu niet "
+"wijzigen"
 
 #: resources.h:367
 msgid "Any of the following"
@@ -1314,7 +1320,7 @@ msgstr "Vraag uw besturingssysteem naar het externe IP-adres"
 msgid "Associated program not found:"
 msgstr "Geassocieerde programma is niet gevonden:"
 
-#: ../../locales/../src/interface/filteredit.cpp:701
+#: ../../locales/../src/interface/filteredit.cpp:703
 msgid "At least one filter condition is incomplete"
 msgstr "Minstens een filtervoorwaarde is onvolledig"
 
@@ -1354,8 +1360,8 @@ msgstr "Beschikbare groottes"
 msgid "B&ypass proxy"
 msgstr "Proxy niet gebruiken"
 
-#: ../../locales/../src/interface/edithandler.cpp:1212
-#: ../../locales/../src/interface/edithandler.cpp:1240
+#: ../../locales/../src/interface/edithandler.cpp:1217
+#: ../../locales/../src/interface/edithandler.cpp:1245
 msgid "Being edited"
 msgstr "Wordt aangepast"
 
@@ -1488,7 +1494,7 @@ msgstr ""
 msgid "Cannot compare directories, not connected to a server."
 msgstr "Kan mappen niet vergelijken, niet verbonden met een server."
 
-#: ../../locales/../src/interface/filteredit.cpp:474
+#: ../../locales/../src/interface/filteredit.cpp:476
 msgid "Cannot create new filter"
 msgstr "Kan geen nieuwe filter aanmaken"
 
@@ -1554,13 +1560,13 @@ msgstr "Kan filtergroep niet opslaan"
 msgid "Cannot select filter"
 msgstr "Kan filter niet selecteren"
 
-#: ../../locales/../src/interface/edithandler.cpp:1576
 #: ../../locales/../src/interface/edithandler.cpp:1581
-#: ../../locales/../src/interface/edithandler.cpp:1618
+#: ../../locales/../src/interface/edithandler.cpp:1586
+#: ../../locales/../src/interface/edithandler.cpp:1625
 msgid "Cannot set file association"
 msgstr "Kan bestandsassociatie niet toepassen"
 
-#: ../../locales/../src/interface/edithandler.cpp:1171
+#: ../../locales/../src/interface/edithandler.cpp:1176
 msgid "Cannot show dialog"
 msgstr "Kan het venster niet tonen"
 
@@ -1573,7 +1579,7 @@ msgstr "Kan het geselecteerde bestand niet bekijken / bewerken"
 msgid "Categories"
 msgstr "Categorieën"
 
-#: ../../locales/../src/interface/statusbar.cpp:442
+#: ../../locales/../src/interface/statusbar.cpp:475
 msgid "Certificate and session data are not available yet."
 msgstr "Certificaat- en sessiegegevens zijn nog niet beschikbaar."
 
@@ -2038,9 +2044,8 @@ msgid "Could not generate custom login sequence."
 msgstr "Kan geen aangepaste inlogvolgorde genereren."
 
 #: ../../locales/../src/interface/state.cpp:723
-#, fuzzy
 msgid "Could not get full remote path."
-msgstr "Kan externe pad niet ontleden."
+msgstr "Kan externe pad niet volledig verkrijgen."
 
 #: ../../locales/../src/interface/optionspage_connection_sftp.cpp:150
 #: ../../locales/../src/interface/optionspage_connection_sftp.cpp:167
@@ -2135,6 +2140,9 @@ msgid ""
 "s'.\n"
 "Disable synchronized browsing and continue changing the remote directory?"
 msgstr ""
+"Kan geen corresponderende lokale map verkrijgen voor de externe map '%s'.\n"
+"Gesynchroniseerd bladeren uitschakelen en doorgaan met het wijzigen van de "
+"externe map?"
 
 #: ../../locales/../src/interface/state.cpp:184
 #, c-format
@@ -2143,6 +2151,8 @@ msgid ""
 "s'.\n"
 "Synchronized browsing has been disabled."
 msgstr ""
+"Kan geen corresponderende lokale map verkrijgen voor de externe map '%s'.\n"
+"Gesynchroniseerd bladeren is uitgeschakeld."
 
 #: ../../locales/../src/interface/state.cpp:94
 #, c-format
@@ -2151,6 +2161,8 @@ msgid ""
 "s'.\n"
 "Synchronized browsing has been disabled."
 msgstr ""
+"Kan geen corresponderende externe map verkrijgen voor de lokale map '%s'.\n"
+"Gesynchroniseerd bladeren is uitgeschakeld."
 
 #: ../../locales/../src/engine/logging.cpp:202
 #: ../../locales/../src/engine/logging.cpp:270
@@ -2301,16 +2313,19 @@ msgid ""
 "Current remote directory (%s) is not below the synchronization root (%s).\n"
 "Synchronized browsing has been disabled."
 msgstr ""
+"De huidige externe map (%s) bevindt zich niet onder de synchronisatieroot (%"
+"s).\n"
+"Gesynchroniseerd bladeren is uitgeschakeld."
 
-#: ../../locales/../src/interface/statusbar.cpp:345
+#: ../../locales/../src/interface/statusbar.cpp:378
 msgid "Current transfer type is set to ASCII."
 msgstr "Huidige overdrachtstype is ingesteld op ASCII."
 
-#: ../../locales/../src/interface/statusbar.cpp:355
+#: ../../locales/../src/interface/statusbar.cpp:388
 msgid "Current transfer type is set to automatic detection."
 msgstr "Huidige overdrachtstype is ingesteld op automatische detectie."
 
-#: ../../locales/../src/interface/statusbar.cpp:350
+#: ../../locales/../src/interface/statusbar.cpp:383
 msgid "Current transfer type is set to binary."
 msgstr "Huidige overdrachtstype is ingesteld op binair."
 
@@ -2528,6 +2543,8 @@ msgstr "Alles uitschakelen"
 msgid ""
 "Disable synchronized browsing and continue changing the remote directory?"
 msgstr ""
+"Gesynchroniseerd bladeren uitschakelen en doorgaan met het wijzigen van de "
+"externe map?"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:763
 msgid ""
@@ -2647,7 +2664,7 @@ msgstr "Geselecteerde map downloaden"
 msgid "Download selected files and directories"
 msgstr "Geselecteerde bestanden en mappen downloaden"
 
-#: ../../locales/../src/interface/edithandler.cpp:1197
+#: ../../locales/../src/interface/edithandler.cpp:1202
 msgid "Downloading"
 msgstr "Downloaden"
 
@@ -2683,9 +2700,9 @@ msgstr ""
 "Slepen en neerzetten tussen verschillende servers is op dit moment nog niet "
 "mogelijk."
 
-#: ../../locales/../src/interface/filteredit.cpp:480
-#: ../../locales/../src/interface/filteredit.cpp:547
-#: ../../locales/../src/interface/filteredit.cpp:588
+#: ../../locales/../src/interface/filteredit.cpp:482
+#: ../../locales/../src/interface/filteredit.cpp:549
+#: ../../locales/../src/interface/filteredit.cpp:590
 msgid "Duplicate filter name"
 msgstr "Dubbele filternaam"
 
@@ -2709,7 +2726,7 @@ msgstr "&Afsluiten"
 msgid "E-Mail:"
 msgstr "E-mail:"
 
-#: ../../locales/../src/interface/filteredit.cpp:686
+#: ../../locales/../src/interface/filteredit.cpp:688
 msgid "Each filter needs at least one condition."
 msgstr "Elke filter vereist minstens één voorwaarde."
 
@@ -2753,13 +2770,13 @@ msgstr "Lege map."
 msgid "Empty file extension."
 msgstr "Lege bestandsextensie."
 
-#: ../../locales/../src/interface/filteredit.cpp:538
-#: ../../locales/../src/interface/filteredit.cpp:582
+#: ../../locales/../src/interface/filteredit.cpp:540
+#: ../../locales/../src/interface/filteredit.cpp:584
 msgid "Empty filter names are not allowed."
 msgstr "Lege filternamen zijn niet toegestaan."
 
-#: ../../locales/../src/interface/filteredit.cpp:538
-#: ../../locales/../src/interface/filteredit.cpp:582
+#: ../../locales/../src/interface/filteredit.cpp:540
+#: ../../locales/../src/interface/filteredit.cpp:584
 msgid "Empty name"
 msgstr "Lege naam"
 
@@ -2803,9 +2820,9 @@ msgstr "Voer een aangepaste opdracht in"
 msgid "Enter directory"
 msgstr "Map invoeren"
 
-#: ../../locales/../src/interface/filteredit.cpp:467
-#: ../../locales/../src/interface/filteredit.cpp:526
-#: ../../locales/../src/interface/filteredit.cpp:575
+#: ../../locales/../src/interface/filteredit.cpp:469
+#: ../../locales/../src/interface/filteredit.cpp:528
+#: ../../locales/../src/interface/filteredit.cpp:577
 msgid "Enter filter name"
 msgstr "Voer een filternaam in"
 
@@ -3229,7 +3246,7 @@ msgstr "Bestand is gewijzigd"
 msgid "File lists"
 msgstr "Bestandslijsten"
 
-#: ../../locales/../src/interface/edithandler.cpp:1656
+#: ../../locales/../src/interface/edithandler.cpp:1665
 #: ../../locales/../src/interface/FileZilla.cpp:768
 #: ../../locales/../src/interface/FileZilla.cpp:862
 #: ../../locales/../src/interface/optionspage_edit.cpp:215
@@ -3287,7 +3304,7 @@ msgstr ""
 msgid "Filelist status &bars"
 msgstr "Balken voor bestandslijststatus"
 
-#: ../../locales/../src/interface/edithandler.cpp:1182
+#: ../../locales/../src/interface/edithandler.cpp:1187
 #: ../../locales/../src/interface/filteredit.cpp:101
 #: ../../locales/../src/interface/LocalListView.cpp:260
 #: ../../locales/../src/interface/optionspage_connection_sftp.cpp:39
@@ -3360,7 +3377,7 @@ msgstr "Filter &alle bestanden die:"
 msgid "Filter applies to:"
 msgstr "Filter toepassen op:"
 
-#: ../../locales/../src/interface/filteredit.cpp:732
+#: ../../locales/../src/interface/filteredit.cpp:734
 msgid "Filter name already exists"
 msgstr "Filternaam bestaat reeds"
 
@@ -3373,11 +3390,11 @@ msgstr "Filtergroep bestaat reeds"
 msgid "Filter the directory listings"
 msgstr "Mappenlijst filteren"
 
-#: ../../locales/../src/interface/filteredit.cpp:686
-#: ../../locales/../src/interface/filteredit.cpp:701
-#: ../../locales/../src/interface/filteredit.cpp:712
-#: ../../locales/../src/interface/filteredit.cpp:723
-#: ../../locales/../src/interface/filteredit.cpp:732
+#: ../../locales/../src/interface/filteredit.cpp:688
+#: ../../locales/../src/interface/filteredit.cpp:703
+#: ../../locales/../src/interface/filteredit.cpp:714
+#: ../../locales/../src/interface/filteredit.cpp:725
+#: ../../locales/../src/interface/filteredit.cpp:734
 msgid "Filter validation failed"
 msgstr "Filtervalidatie mislukt"
 
@@ -3859,7 +3876,7 @@ msgstr "Ongeldige antwoordcode"
 msgid "Invalid site path"
 msgstr "Ongeldig sitepad"
 
-#: ../../locales/../src/interface/filteredit.cpp:712
+#: ../../locales/../src/interface/filteredit.cpp:714
 msgid "Invalid size in condition"
 msgstr "Ongeldige grootte in voorwaarde"
 
@@ -3945,8 +3962,8 @@ msgstr "Lijst: "
 msgid "Lo&west available port:"
 msgstr "&Laagst mogelijke poort:"
 
-#: ../../locales/../src/interface/edithandler.cpp:1230
-#: ../../locales/../src/interface/edithandler.cpp:1476
+#: ../../locales/../src/interface/edithandler.cpp:1235
+#: ../../locales/../src/interface/edithandler.cpp:1481
 msgid "Local"
 msgstr "Lokaal"
 
@@ -4115,7 +4132,7 @@ msgstr "Favorietennaam bestaat reeds."
 msgid "Name:"
 msgstr "Naam:"
 
-#: ../../locales/../src/interface/filteredit.cpp:723
+#: ../../locales/../src/interface/filteredit.cpp:725
 msgid "Need to enter filter name"
 msgstr "Filternaam moet ingevoerd worden"
 
@@ -4157,7 +4174,7 @@ msgstr "Nieuwe favoriet"
 msgid "New directory"
 msgstr "Nieuwe map"
 
-#: ../../locales/../src/interface/filteredit.cpp:462
+#: ../../locales/../src/interface/filteredit.cpp:464
 msgid "New filter"
 msgstr "Nieuwe filter"
 
@@ -4191,11 +4208,11 @@ msgstr "Geen opdracht gegeven, breekt af."
 msgid "No external IP address set, trying default."
 msgstr "Geen extern IP-adres ingesteld, probeert standaard."
 
-#: ../../locales/../src/interface/edithandler.cpp:1171
+#: ../../locales/../src/interface/edithandler.cpp:1176
 msgid "No files are currently being edited."
 msgstr "Er worden momenteel geen bestanden bewerkt."
 
-#: ../../locales/../src/interface/filteredit.cpp:474
+#: ../../locales/../src/interface/filteredit.cpp:476
 msgid "No filter name given"
 msgstr "Geen filternaam ingevoerd"
 
@@ -4479,10 +4496,10 @@ msgstr "Pad kan niet gemaakt worden voor de map %s en de submap %s"
 msgid "Paths"
 msgstr "Paden"
 
-#: ../../locales/../src/interface/edithandler.cpp:1209
-#: ../../locales/../src/interface/edithandler.cpp:1349
-#: ../../locales/../src/interface/edithandler.cpp:1448
-#: ../../locales/../src/interface/edithandler.cpp:1461
+#: ../../locales/../src/interface/edithandler.cpp:1214
+#: ../../locales/../src/interface/edithandler.cpp:1354
+#: ../../locales/../src/interface/edithandler.cpp:1453
+#: ../../locales/../src/interface/edithandler.cpp:1466
 msgid "Pending removal"
 msgstr "Wachten op verwijdering"
 
@@ -4551,11 +4568,11 @@ msgid "Please enter a download speedlimit greater or equal to 0 KB/s."
 msgstr ""
 "Voer een snelheidslimiet in voor downloads, groter of gelijk aan 0 KB/s."
 
-#: ../../locales/../src/interface/filteredit.cpp:467
+#: ../../locales/../src/interface/filteredit.cpp:469
 msgid "Please enter a name for the new filter."
 msgstr "Voer een naam in voor de nieuwe filter."
 
-#: ../../locales/../src/interface/filteredit.cpp:575
+#: ../../locales/../src/interface/filteredit.cpp:577
 msgid "Please enter a new name for the copied filter."
 msgstr "Voer een nieuwe naam in voor deze gekopieerde filtergroep."
 
@@ -4564,7 +4581,7 @@ msgstr "Voer een nieuwe naam in voor deze gekopieerde filtergroep."
 msgid "Please enter a new name for the filter set \"%s\""
 msgstr "Voer a.u.b. een nieuwe naam in voor de filterset \"%s\""
 
-#: ../../locales/../src/interface/filteredit.cpp:526
+#: ../../locales/../src/interface/filteredit.cpp:528
 msgid "Please enter a new name for the filter."
 msgstr "Voer een nieuwe naam in voor de filter."
 
@@ -4917,24 +4934,24 @@ msgstr "Publieke rechten"
 msgid "Queue has been fully processed"
 msgstr "De wachtrij is volledig verwerkt"
 
-#: ../../locales/../src/interface/statusbar.cpp:309
+#: ../../locales/../src/interface/statusbar.cpp:342
 #, c-format
 msgid "Queue: %s%d %c"
 msgstr "Wachtrij: %s%d %c "
 
-#: ../../locales/../src/interface/statusbar.cpp:382
+#: ../../locales/../src/interface/statusbar.cpp:415
 #, c-format
 msgid "Queue: %s%d MiB"
 msgstr "Wachtrij: %s%d MiB"
 
-#: ../../locales/../src/interface/statusbar.cpp:302
-#: ../../locales/../src/interface/statusbar.cpp:383
+#: ../../locales/../src/interface/statusbar.cpp:335
+#: ../../locales/../src/interface/statusbar.cpp:416
 #, c-format
 msgid "Queue: %s%d bytes"
 msgstr "Wachtrij: %s%d bytes"
 
-#: ../../locales/../src/interface/statusbar.cpp:276
-#: ../../locales/../src/interface/statusbar.cpp:381
+#: ../../locales/../src/interface/statusbar.cpp:309
+#: ../../locales/../src/interface/statusbar.cpp:414
 msgid "Queue: empty"
 msgstr "Wachtrij: leeg"
 
@@ -5025,7 +5042,7 @@ msgstr "Doorverwijzing naar ongeldig adres"
 msgid "Refresh the file and folder lists"
 msgstr "Bestanden- en mappenlijst verversen"
 
-#: ../../locales/../src/interface/edithandler.cpp:1193
+#: ../../locales/../src/interface/edithandler.cpp:1198
 msgid "Remote"
 msgstr "Extern"
 
@@ -5041,7 +5058,7 @@ msgstr "Extern bestand"
 msgid "Remote filters:"
 msgstr "Externe filters:"
 
-#: ../../locales/../src/interface/edithandler.cpp:1184
+#: ../../locales/../src/interface/edithandler.cpp:1189
 msgid "Remote path"
 msgstr "Externe pad"
 
@@ -5169,9 +5186,8 @@ msgid "S&kip"
 msgstr "Over&slaan"
 
 #: resources.h:670
-#, fuzzy
 msgid "S&ynchronized browsing"
-msgstr "Gesynchoniseerd bladeren."
+msgstr "Gesynchoniseerd bladeren"
 
 #: ../../locales/../src/interface/settingsdialog.cpp:119
 msgid "SFTP"
@@ -5189,7 +5205,7 @@ msgstr "Zoeken naar bestanden om toe te voegen aan de wachtrij"
 msgid "Scanning for files to upload"
 msgstr "Zoeken naar bestanden om te uploaden"
 
-#: ../../locales/../src/interface/statusbar.cpp:442
+#: ../../locales/../src/interface/statusbar.cpp:475
 msgid "Security information"
 msgstr "Beveiligingsinformatie"
 
@@ -5216,7 +5232,7 @@ msgstr ""
 "Selecteer een standaardactie voor als het bestand van een overdracht al "
 "bestaat."
 
-#: ../../locales/../src/interface/edithandler.cpp:1636
+#: ../../locales/../src/interface/edithandler.cpp:1645
 #: ../../locales/../src/interface/optionspage_edit.cpp:195
 msgid "Select default editor"
 msgstr "Selecteer een standaardeditor"
@@ -5265,6 +5281,11 @@ msgstr "Selecteer bestand voor geëxporteerde sites"
 #: ../../locales/../src/interface/import.cpp:16
 msgid "Select file to import settings from"
 msgstr "Selecteer het bestand waaruit instellingen geïmporteerd kunnen worden"
+
+#: ../../locales/../src/interface/manual_transfer.cpp:246
+#, fuzzy
+msgid "Select file to upload"
+msgstr "Zoeken naar bestanden om te uploaden"
 
 #: ../../locales/../src/interface/optionspage_connection_sftp.cpp:301
 msgid "Select filename for converted keyfile"
@@ -5318,8 +5339,8 @@ msgstr "%s en %s geselecteerd. Totale grootte: %s"
 msgid "Selected %s and %s. Total size: At least %s"
 msgstr "%s en %s geselecteerd. Totale grootte: minstens %s"
 
-#: ../../locales/../src/interface/edithandler.cpp:1581
-#: ../../locales/../src/interface/edithandler.cpp:1656
+#: ../../locales/../src/interface/edithandler.cpp:1586
+#: ../../locales/../src/interface/edithandler.cpp:1665
 #: ../../locales/../src/interface/optionspage_edit.cpp:215
 msgid "Selected editor does not exist."
 msgstr "De geselecteerde editor bestaat niet."
@@ -5662,7 +5683,7 @@ msgstr "Upload starten van %s"
 msgid "State:"
 msgstr "Staat:"
 
-#: ../../locales/../src/interface/edithandler.cpp:1185
+#: ../../locales/../src/interface/edithandler.cpp:1190
 #: ../../locales/../src/interface/QueueView.cpp:464
 msgid "Status"
 msgstr "Status"
@@ -5713,14 +5734,12 @@ msgstr "Samenvatting van testresultaten:"
 #: ../../locales/../src/interface/state.cpp:740
 #: ../../locales/../src/interface/state.cpp:751
 #: ../../locales/../src/interface/state.cpp:758
-#, fuzzy
 msgid "Synchronized browsing"
-msgstr "Gesynchoniseerd bladeren."
+msgstr "Gesynchoniseerd bladeren"
 
 #: ../../locales/../src/interface/state.cpp:194
-#, fuzzy
 msgid "Synchronized browsing has been disabled."
-msgstr "Gesynchoniseerd bladeren."
+msgstr "Gesynchoniseerd bladeren is uitgeschakeld."
 
 #: resources.h:873
 msgid "Synchronized browsing."
@@ -5797,7 +5816,7 @@ msgstr ""
 msgid "The address you entered was: %s"
 msgstr "De ingevoerde adres was: %s"
 
-#: ../../locales/../src/interface/statusbar.cpp:411
+#: ../../locales/../src/interface/statusbar.cpp:444
 msgid "The connection is encrypted. Click icon for details."
 msgstr "De verbinding is beveiligd. Klik op het icoon voor details."
 
@@ -5805,7 +5824,7 @@ msgstr "De verbinding is beveiligd. Klik op het icoon voor details."
 msgid "The custom login sequence cannot be empty."
 msgstr "De aangepaste inlogvolgorde kan niet leeg zijn."
 
-#: resources.h:642 ../../locales/../src/interface/edithandler.cpp:1618
+#: resources.h:642 ../../locales/../src/interface/edithandler.cpp:1625
 #, no-c-format
 msgid "The default editor for text files could not be found."
 msgstr "De standaard editor voor tekstbestanden kan niet gevonden worden."
@@ -5815,9 +5834,9 @@ msgstr "De standaard editor voor tekstbestanden kan niet gevonden worden."
 msgid "The default editor for text files is '%s'."
 msgstr "De standaard editor voor tekstbestanden is '%s'."
 
-#: ../../locales/../src/interface/filteredit.cpp:480
-#: ../../locales/../src/interface/filteredit.cpp:547
-#: ../../locales/../src/interface/filteredit.cpp:588
+#: ../../locales/../src/interface/filteredit.cpp:482
+#: ../../locales/../src/interface/filteredit.cpp:549
+#: ../../locales/../src/interface/filteredit.cpp:590
 msgid "The entered filter name already exists."
 msgstr "De ingevoerde filternaam bestaat reeds."
 
@@ -5958,6 +5977,9 @@ msgid ""
 "The local directory '%s' is not below the synchronization root (%s).\n"
 "Disable synchronized browsing and continue changing the local directory?"
 msgstr ""
+"De lokale map '%s' bevindt zich niet onder de synchronisatieroot (%s).\n"
+"Gesynchroniseerd bladeren uitschakelen en doorgaan met het wijzigen van de "
+"lokale map?"
 
 #: ../../locales/../src/interface/optionspage_connection_active.cpp:77
 msgid ""
@@ -5989,6 +6011,9 @@ msgid ""
 "The remote directory '%s' is not below the synchronization root (%s).\n"
 "Disable synchronized browsing and continue changing the remote directory?"
 msgstr ""
+"De externe map '%s' bevindt zich niet onder de synchronisatieroot (%s).\n"
+"Gesynchroniseerd bladeren uitschakelen en doorgaan met het wijzigen van de "
+"externe map?"
 
 #: ../../locales/../src/interface/import.cpp:82
 msgid "The selected categories have been imported."
@@ -6297,7 +6322,7 @@ msgstr "Wilt u dit certificaat vertrouwen en doorgaan met verbinden?"
 msgid "Trust this host and carry on connecting?"
 msgstr "Deze host vertrouwen en verdergaan met verbinden?"
 
-#: resources.h:597 ../../locales/../src/interface/edithandler.cpp:1183
+#: resources.h:597 ../../locales/../src/interface/edithandler.cpp:1188
 msgid "Type"
 msgstr "Type"
 
@@ -6338,8 +6363,8 @@ msgstr "Niet-toegewezen foutcode %d"
 msgid "Unit:"
 msgstr "Deel:"
 
-#: ../../locales/../src/interface/edithandler.cpp:1215
-#: ../../locales/../src/interface/edithandler.cpp:1243
+#: ../../locales/../src/interface/edithandler.cpp:1220
+#: ../../locales/../src/interface/edithandler.cpp:1248
 msgid "Unknown"
 msgstr "Onbekend"
 
@@ -6408,7 +6433,7 @@ msgstr "Updatewizard"
 msgid "Upload"
 msgstr "Uploaden"
 
-#: ../../locales/../src/interface/edithandler.cpp:1206
+#: ../../locales/../src/interface/edithandler.cpp:1211
 msgid "Upload failed"
 msgstr "Upload mislukt"
 
@@ -6428,19 +6453,19 @@ msgstr "Wilt u dit bestand heruploaden naar de server?"
 msgid "Upload this file to the server?"
 msgstr "Wilt u dit bestand uploaden naar de server?"
 
-#: ../../locales/../src/interface/edithandler.cpp:1200
-#: ../../locales/../src/interface/edithandler.cpp:1234
-#: ../../locales/../src/interface/edithandler.cpp:1396
+#: ../../locales/../src/interface/edithandler.cpp:1205
+#: ../../locales/../src/interface/edithandler.cpp:1239
+#: ../../locales/../src/interface/edithandler.cpp:1401
 msgid "Uploading"
 msgstr "Uploaden"
 
-#: ../../locales/../src/interface/edithandler.cpp:1203
-#: ../../locales/../src/interface/edithandler.cpp:1398
+#: ../../locales/../src/interface/edithandler.cpp:1208
+#: ../../locales/../src/interface/edithandler.cpp:1403
 msgid "Uploading and pending removal"
 msgstr "Uploaden en wachten op verwijdering"
 
-#: ../../locales/../src/interface/edithandler.cpp:1237
-#: ../../locales/../src/interface/edithandler.cpp:1400
+#: ../../locales/../src/interface/edithandler.cpp:1242
+#: ../../locales/../src/interface/edithandler.cpp:1405
 msgid "Uploading and unediting"
 msgstr "Uploaden en niet bewerken"
 
@@ -6740,7 +6765,7 @@ msgstr "U dient een naam in te voeren voor de favoriet."
 msgid "You need to enter a name for the log file."
 msgstr "U dient een naam in te voeren voor het logbestand."
 
-#: ../../locales/../src/interface/edithandler.cpp:1576
+#: ../../locales/../src/interface/edithandler.cpp:1581
 msgid "You need to enter a properly quoted command."
 msgstr "U dient een correct commando in te voeren met aanhalingstekens."
 

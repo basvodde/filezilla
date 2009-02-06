@@ -6,10 +6,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Русский перевод\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-31 15:48+0100\n"
-"PO-Revision-Date: 2009-01-22 15:41+0200\n"
-"Last-Translator: Sergey <sergey.lyalyuk@gmail.com>\n"
-"Language-Team: Sergey <sergey.lyalyuk@gmail.com>\n"
+"POT-Creation-Date: 2009-02-06 21:15+0100\n"
+"PO-Revision-Date: 2009-02-06 20:53+0300\n"
+"Last-Translator: Koptev Oleg <koptev.oleg@gmail.com>\n"
+"Language-Team: Koptev Oleg <koptev.oleg@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
 "10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Poedit-Language: Russian\n"
-"X-Poedit-Country: UKRAINE\n"
+"X-Poedit-Country: RUSSIA\n"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:58
 #: ../../locales/../src/interface/statuslinectrl.cpp:155
@@ -867,9 +867,9 @@ msgstr "'%s' не существует либо недоступен"
 #: ../../locales/../src/engine/local_path.cpp:454
 #: ../../locales/../src/engine/local_path.cpp:475
 #: ../../locales/../src/engine/local_path.cpp:482
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' is not a directory."
-msgstr "Войти в каталог"
+msgstr "'%s' не каталог"
 
 #: ../../locales/../src/interface/manual_transfer.cpp:429
 #: ../../locales/../src/interface/sitemanager.cpp:938
@@ -1074,6 +1074,9 @@ msgid ""
 "A remote operation is in progress and synchronized browsing is enabled.\n"
 "Disable synchronized browsing and continue changing the local directory?"
 msgstr ""
+"Выполняется удалённая операция, и включен синхронизированный просмотр.\n"
+"Выключить синхронизированный просмотр и продолжить изменение локального "
+"каталога?"
 
 #: resources.h:155 resources.h:682
 msgid "A&SCII"
@@ -1266,7 +1269,7 @@ msgstr "Анонимный"
 #: ../../locales/../src/interface/state.cpp:739
 msgid ""
 "Another remote operation is already progress, cannot change directory now"
-msgstr ""
+msgstr "Выполняется другая операция, не могу сменить каталог"
 
 #: resources.h:367
 msgid "Any of the following"
@@ -1315,7 +1318,7 @@ msgstr "Запросить внешний IP-адрес в операционн�
 msgid "Associated program not found:"
 msgstr "Не найдена ассоциированная программа:"
 
-#: ../../locales/../src/interface/filteredit.cpp:701
+#: ../../locales/../src/interface/filteredit.cpp:703
 msgid "At least one filter condition is incomplete"
 msgstr "Как минимум один фильтр незавершен"
 
@@ -1355,8 +1358,8 @@ msgstr "Доступные размеры"
 msgid "B&ypass proxy"
 msgstr "&Обход прокси"
 
-#: ../../locales/../src/interface/edithandler.cpp:1212
-#: ../../locales/../src/interface/edithandler.cpp:1240
+#: ../../locales/../src/interface/edithandler.cpp:1217
+#: ../../locales/../src/interface/edithandler.cpp:1245
 msgid "Being edited"
 msgstr "Редактируется"
 
@@ -1489,7 +1492,7 @@ msgstr ""
 msgid "Cannot compare directories, not connected to a server."
 msgstr "Невозможно сравнить каталоги: нет подключения к серверу."
 
-#: ../../locales/../src/interface/filteredit.cpp:474
+#: ../../locales/../src/interface/filteredit.cpp:476
 msgid "Cannot create new filter"
 msgstr "Невозможно создать новый фильтр"
 
@@ -1555,13 +1558,13 @@ msgstr "Невозможно сохранить фильтры"
 msgid "Cannot select filter"
 msgstr "Невозможно выбрать фильтр"
 
-#: ../../locales/../src/interface/edithandler.cpp:1576
 #: ../../locales/../src/interface/edithandler.cpp:1581
-#: ../../locales/../src/interface/edithandler.cpp:1618
+#: ../../locales/../src/interface/edithandler.cpp:1586
+#: ../../locales/../src/interface/edithandler.cpp:1625
 msgid "Cannot set file association"
 msgstr "Невозможно ассоциировать файл"
 
-#: ../../locales/../src/interface/edithandler.cpp:1171
+#: ../../locales/../src/interface/edithandler.cpp:1176
 msgid "Cannot show dialog"
 msgstr "Невозможно отобразить диалогое окно"
 
@@ -1574,7 +1577,7 @@ msgstr "Невозможно открыть / изменить выбранны�
 msgid "Categories"
 msgstr "Категории"
 
-#: ../../locales/../src/interface/statusbar.cpp:442
+#: ../../locales/../src/interface/statusbar.cpp:475
 msgid "Certificate and session data are not available yet."
 msgstr "Сертификаты и информация по сесси еще не доступны."
 
@@ -2036,9 +2039,8 @@ msgid "Could not generate custom login sequence."
 msgstr "Невозможно сгенерировать произвольный логин."
 
 #: ../../locales/../src/interface/state.cpp:723
-#, fuzzy
 msgid "Could not get full remote path."
-msgstr "Невозможно разобрать удаленный путь."
+msgstr "Не могу получить полный путь."
 
 #: ../../locales/../src/interface/optionspage_connection_sftp.cpp:150
 #: ../../locales/../src/interface/optionspage_connection_sftp.cpp:167
@@ -2133,6 +2135,9 @@ msgid ""
 "s'.\n"
 "Disable synchronized browsing and continue changing the remote directory?"
 msgstr ""
+"Нет доступа к локальному каталогу, соответствующему удалённому '%s'.\n"
+"Выключить синхронизированный просмотр и продолжить изменение удалённого "
+"каталога?"
 
 #: ../../locales/../src/interface/state.cpp:184
 #, c-format
@@ -2141,6 +2146,8 @@ msgid ""
 "s'.\n"
 "Synchronized browsing has been disabled."
 msgstr ""
+"Нет доступа к локальному каталогу, соответствующему удалённому '%s'.\n"
+"Синхронизированный просмотр был отключен."
 
 #: ../../locales/../src/interface/state.cpp:94
 #, c-format
@@ -2149,6 +2156,8 @@ msgid ""
 "s'.\n"
 "Synchronized browsing has been disabled."
 msgstr ""
+"Нет доступа к удалённому каталогу, соответствующему локальному '%s'.\n"
+"Синхронизированный просмотр был отключен."
 
 #: ../../locales/../src/engine/logging.cpp:202
 #: ../../locales/../src/engine/logging.cpp:270
@@ -2295,16 +2304,19 @@ msgid ""
 "Current remote directory (%s) is not below the synchronization root (%s).\n"
 "Synchronized browsing has been disabled."
 msgstr ""
+"Текущий удалённый каталог '%s' находится выше корневой папки синхронизации (%"
+"s).\n"
+"Синхронизированный просмотр был выключен."
 
-#: ../../locales/../src/interface/statusbar.cpp:345
+#: ../../locales/../src/interface/statusbar.cpp:378
 msgid "Current transfer type is set to ASCII."
 msgstr "Выбран ASCII тип передачи."
 
-#: ../../locales/../src/interface/statusbar.cpp:355
+#: ../../locales/../src/interface/statusbar.cpp:388
 msgid "Current transfer type is set to automatic detection."
 msgstr "Выбрано автоопределение типа передачи."
 
-#: ../../locales/../src/interface/statusbar.cpp:350
+#: ../../locales/../src/interface/statusbar.cpp:383
 msgid "Current transfer type is set to binary."
 msgstr "Выбран бинарный тип передачи."
 
@@ -2518,6 +2530,8 @@ msgstr "Запр&етить все"
 msgid ""
 "Disable synchronized browsing and continue changing the remote directory?"
 msgstr ""
+"Выключить синхронизированный просмотр и продолжить изменение удалённого "
+"каталога?"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:763
 msgid ""
@@ -2635,7 +2649,7 @@ msgstr "Скачать выбранный каталог"
 msgid "Download selected files and directories"
 msgstr "Скачать выбранные файлы и каталоги"
 
-#: ../../locales/../src/interface/edithandler.cpp:1197
+#: ../../locales/../src/interface/edithandler.cpp:1202
 msgid "Downloading"
 msgstr "Скачиваю"
 
@@ -2667,9 +2681,9 @@ msgstr "Drag&drop между запущенными копиями FileZilla е�
 msgid "Drag&drop between different servers has not been implemented yet."
 msgstr "Drag&drop между различными серверами еще не был произведен."
 
-#: ../../locales/../src/interface/filteredit.cpp:480
-#: ../../locales/../src/interface/filteredit.cpp:547
-#: ../../locales/../src/interface/filteredit.cpp:588
+#: ../../locales/../src/interface/filteredit.cpp:482
+#: ../../locales/../src/interface/filteredit.cpp:549
+#: ../../locales/../src/interface/filteredit.cpp:590
 msgid "Duplicate filter name"
 msgstr "Дублировать имя фильтра"
 
@@ -2693,7 +2707,7 @@ msgstr "В&ыход"
 msgid "E-Mail:"
 msgstr "E-Mail:"
 
-#: ../../locales/../src/interface/filteredit.cpp:686
+#: ../../locales/../src/interface/filteredit.cpp:688
 msgid "Each filter needs at least one condition."
 msgstr "Каждый фильтр должен содержать не менее одного условия."
 
@@ -2736,13 +2750,13 @@ msgstr "Пустой каталог"
 msgid "Empty file extension."
 msgstr "Пустое расширение файла."
 
-#: ../../locales/../src/interface/filteredit.cpp:538
-#: ../../locales/../src/interface/filteredit.cpp:582
+#: ../../locales/../src/interface/filteredit.cpp:540
+#: ../../locales/../src/interface/filteredit.cpp:584
 msgid "Empty filter names are not allowed."
 msgstr "Заполните имя фильтра!"
 
-#: ../../locales/../src/interface/filteredit.cpp:538
-#: ../../locales/../src/interface/filteredit.cpp:582
+#: ../../locales/../src/interface/filteredit.cpp:540
+#: ../../locales/../src/interface/filteredit.cpp:584
 msgid "Empty name"
 msgstr "Пустое имя"
 
@@ -2786,9 +2800,9 @@ msgstr "Введите произвольную команду"
 msgid "Enter directory"
 msgstr "Войти в каталог"
 
-#: ../../locales/../src/interface/filteredit.cpp:467
-#: ../../locales/../src/interface/filteredit.cpp:526
-#: ../../locales/../src/interface/filteredit.cpp:575
+#: ../../locales/../src/interface/filteredit.cpp:469
+#: ../../locales/../src/interface/filteredit.cpp:528
+#: ../../locales/../src/interface/filteredit.cpp:577
 msgid "Enter filter name"
 msgstr "Введите имя фильтра"
 
@@ -3204,7 +3218,7 @@ msgstr "Файл изменен"
 msgid "File lists"
 msgstr "Списки файлов"
 
-#: ../../locales/../src/interface/edithandler.cpp:1656
+#: ../../locales/../src/interface/edithandler.cpp:1665
 #: ../../locales/../src/interface/FileZilla.cpp:768
 #: ../../locales/../src/interface/FileZilla.cpp:862
 #: ../../locales/../src/interface/optionspage_edit.cpp:215
@@ -3261,7 +3275,7 @@ msgstr "Необходимо перезапустить FileZilla для сме�
 msgid "Filelist status &bars"
 msgstr "Строка &состояния"
 
-#: ../../locales/../src/interface/edithandler.cpp:1182
+#: ../../locales/../src/interface/edithandler.cpp:1187
 #: ../../locales/../src/interface/filteredit.cpp:101
 #: ../../locales/../src/interface/LocalListView.cpp:260
 #: ../../locales/../src/interface/optionspage_connection_sftp.cpp:39
@@ -3332,7 +3346,7 @@ msgstr "Фильтровать &файлы:"
 msgid "Filter applies to:"
 msgstr "Применить фильтр к:"
 
-#: ../../locales/../src/interface/filteredit.cpp:732
+#: ../../locales/../src/interface/filteredit.cpp:734
 msgid "Filter name already exists"
 msgstr "Название фильтра уже существует!"
 
@@ -3345,11 +3359,11 @@ msgstr "Набор фильтров существует!"
 msgid "Filter the directory listings"
 msgstr "Фильтр списка каталогов"
 
-#: ../../locales/../src/interface/filteredit.cpp:686
-#: ../../locales/../src/interface/filteredit.cpp:701
-#: ../../locales/../src/interface/filteredit.cpp:712
-#: ../../locales/../src/interface/filteredit.cpp:723
-#: ../../locales/../src/interface/filteredit.cpp:732
+#: ../../locales/../src/interface/filteredit.cpp:688
+#: ../../locales/../src/interface/filteredit.cpp:703
+#: ../../locales/../src/interface/filteredit.cpp:714
+#: ../../locales/../src/interface/filteredit.cpp:725
+#: ../../locales/../src/interface/filteredit.cpp:734
 msgid "Filter validation failed"
 msgstr "Не удалось проверить фильтр"
 
@@ -3808,7 +3822,7 @@ msgstr "Нверный код ответа"
 msgid "Invalid site path"
 msgstr "Неправильнй путь к хосту"
 
-#: ../../locales/../src/interface/filteredit.cpp:712
+#: ../../locales/../src/interface/filteredit.cpp:714
 msgid "Invalid size in condition"
 msgstr "Неверный размер"
 
@@ -3894,8 +3908,8 @@ msgstr "Список:"
 msgid "Lo&west available port:"
 msgstr "Наименьший порт:"
 
-#: ../../locales/../src/interface/edithandler.cpp:1230
-#: ../../locales/../src/interface/edithandler.cpp:1476
+#: ../../locales/../src/interface/edithandler.cpp:1235
+#: ../../locales/../src/interface/edithandler.cpp:1481
 msgid "Local"
 msgstr "Локальный"
 
@@ -4062,7 +4076,7 @@ msgstr "Закладка с таким именем уже существует.
 msgid "Name:"
 msgstr "Имя:"
 
-#: ../../locales/../src/interface/filteredit.cpp:723
+#: ../../locales/../src/interface/filteredit.cpp:725
 msgid "Need to enter filter name"
 msgstr "Нужно ввести имя фильтра"
 
@@ -4104,7 +4118,7 @@ msgstr "Новая закладка"
 msgid "New directory"
 msgstr "Новый каталог"
 
-#: ../../locales/../src/interface/filteredit.cpp:462
+#: ../../locales/../src/interface/filteredit.cpp:464
 msgid "New filter"
 msgstr "Новый фильтр"
 
@@ -4138,11 +4152,11 @@ msgstr "Не указана команда. Отбой."
 msgid "No external IP address set, trying default."
 msgstr "Нет внешнего IP, использую IP по умолчанию."
 
-#: ../../locales/../src/interface/edithandler.cpp:1171
+#: ../../locales/../src/interface/edithandler.cpp:1176
 msgid "No files are currently being edited."
 msgstr "Ни один файл сейчас не редактируется."
 
-#: ../../locales/../src/interface/filteredit.cpp:474
+#: ../../locales/../src/interface/filteredit.cpp:476
 msgid "No filter name given"
 msgstr "Не указано имя фильтра"
 
@@ -4425,10 +4439,10 @@ msgstr "Неаозможно задать путь для каталога %s и
 msgid "Paths"
 msgstr "Пути"
 
-#: ../../locales/../src/interface/edithandler.cpp:1209
-#: ../../locales/../src/interface/edithandler.cpp:1349
-#: ../../locales/../src/interface/edithandler.cpp:1448
-#: ../../locales/../src/interface/edithandler.cpp:1461
+#: ../../locales/../src/interface/edithandler.cpp:1214
+#: ../../locales/../src/interface/edithandler.cpp:1354
+#: ../../locales/../src/interface/edithandler.cpp:1453
+#: ../../locales/../src/interface/edithandler.cpp:1466
 msgid "Pending removal"
 msgstr "Ожидаю удаления"
 
@@ -4498,11 +4512,11 @@ msgstr ""
 "Пожалуйста, введите ограничение скорости скачивания (больше или равно 0 КБ/"
 "сек)"
 
-#: ../../locales/../src/interface/filteredit.cpp:467
+#: ../../locales/../src/interface/filteredit.cpp:469
 msgid "Please enter a name for the new filter."
 msgstr "Введите название нового фильтра."
 
-#: ../../locales/../src/interface/filteredit.cpp:575
+#: ../../locales/../src/interface/filteredit.cpp:577
 msgid "Please enter a new name for the copied filter."
 msgstr "Введите название для копии фильтра."
 
@@ -4511,7 +4525,7 @@ msgstr "Введите название для копии фильтра."
 msgid "Please enter a new name for the filter set \"%s\""
 msgstr "Введите новое название набора фильтров \"%s\""
 
-#: ../../locales/../src/interface/filteredit.cpp:526
+#: ../../locales/../src/interface/filteredit.cpp:528
 msgid "Please enter a new name for the filter."
 msgstr "Введите новое название фильтра."
 
@@ -4853,24 +4867,24 @@ msgstr "Публичные права"
 msgid "Queue has been fully processed"
 msgstr "Задание полностью завершено"
 
-#: ../../locales/../src/interface/statusbar.cpp:309
+#: ../../locales/../src/interface/statusbar.cpp:342
 #, c-format
 msgid "Queue: %s%d %c"
 msgstr "Задание: %s%d %c"
 
-#: ../../locales/../src/interface/statusbar.cpp:382
+#: ../../locales/../src/interface/statusbar.cpp:415
 #, c-format
 msgid "Queue: %s%d MiB"
 msgstr "Задание: %s%d МБ"
 
-#: ../../locales/../src/interface/statusbar.cpp:302
-#: ../../locales/../src/interface/statusbar.cpp:383
+#: ../../locales/../src/interface/statusbar.cpp:335
+#: ../../locales/../src/interface/statusbar.cpp:416
 #, c-format
 msgid "Queue: %s%d bytes"
 msgstr "Задание: %s%d байт"
 
-#: ../../locales/../src/interface/statusbar.cpp:276
-#: ../../locales/../src/interface/statusbar.cpp:381
+#: ../../locales/../src/interface/statusbar.cpp:309
+#: ../../locales/../src/interface/statusbar.cpp:414
 msgid "Queue: empty"
 msgstr "Задание: пусто"
 
@@ -4959,7 +4973,7 @@ msgstr "Перенапрвление на неправильный адрес"
 msgid "Refresh the file and folder lists"
 msgstr "Обновить список файлов и каталогов"
 
-#: ../../locales/../src/interface/edithandler.cpp:1193
+#: ../../locales/../src/interface/edithandler.cpp:1198
 msgid "Remote"
 msgstr "Удаленный"
 
@@ -4975,7 +4989,7 @@ msgstr "Файл на сервере"
 msgid "Remote filters:"
 msgstr "Удаленные фильтры:"
 
-#: ../../locales/../src/interface/edithandler.cpp:1184
+#: ../../locales/../src/interface/edithandler.cpp:1189
 msgid "Remote path"
 msgstr "Удаленный путь"
 
@@ -5105,9 +5119,8 @@ msgid "S&kip"
 msgstr "П&ропустить"
 
 #: resources.h:670
-#, fuzzy
 msgid "S&ynchronized browsing"
-msgstr "Синхронизированный просмотр."
+msgstr "С&инхронизированный просмотр."
 
 #: ../../locales/../src/interface/settingsdialog.cpp:119
 msgid "SFTP"
@@ -5125,7 +5138,7 @@ msgstr "Поиск файлов для добавления в задание"
 msgid "Scanning for files to upload"
 msgstr "Поиск файлов для загрузки на сервер"
 
-#: ../../locales/../src/interface/statusbar.cpp:442
+#: ../../locales/../src/interface/statusbar.cpp:475
 msgid "Security information"
 msgstr "Информация о безопасности"
 
@@ -5150,7 +5163,7 @@ msgid ""
 "Select default action to perform if target file of a transfer already exists."
 msgstr "Выберите действие по умолчанию, если объект существует"
 
-#: ../../locales/../src/interface/edithandler.cpp:1636
+#: ../../locales/../src/interface/edithandler.cpp:1645
 #: ../../locales/../src/interface/optionspage_edit.cpp:195
 msgid "Select default editor"
 msgstr "Выберите редактор по умолчанию"
@@ -5199,6 +5212,10 @@ msgstr "Выберите файл для экспорта сайтов"
 #: ../../locales/../src/interface/import.cpp:16
 msgid "Select file to import settings from"
 msgstr "Выберите файл, из которого будут импортироваться настройки"
+
+#: ../../locales/../src/interface/manual_transfer.cpp:246
+msgid "Select file to upload"
+msgstr "Выбор файла для загрузки на сервер"
 
 #: ../../locales/../src/interface/optionspage_connection_sftp.cpp:301
 msgid "Select filename for converted keyfile"
@@ -5255,8 +5272,8 @@ msgstr "Выбраны %s and %s. Размер: %s"
 msgid "Selected %s and %s. Total size: At least %s"
 msgstr "Выбраны %s and %s. Размер: не менее %s"
 
-#: ../../locales/../src/interface/edithandler.cpp:1581
-#: ../../locales/../src/interface/edithandler.cpp:1656
+#: ../../locales/../src/interface/edithandler.cpp:1586
+#: ../../locales/../src/interface/edithandler.cpp:1665
 #: ../../locales/../src/interface/optionspage_edit.cpp:215
 msgid "Selected editor does not exist."
 msgstr "Выбранный редактор не существует."
@@ -5594,7 +5611,7 @@ msgstr "Начинаю закачивать %s"
 msgid "State:"
 msgstr "Страна:"
 
-#: ../../locales/../src/interface/edithandler.cpp:1185
+#: ../../locales/../src/interface/edithandler.cpp:1190
 #: ../../locales/../src/interface/QueueView.cpp:464
 msgid "Status"
 msgstr "Состояние"
@@ -5645,14 +5662,12 @@ msgstr "Результаты теста:"
 #: ../../locales/../src/interface/state.cpp:740
 #: ../../locales/../src/interface/state.cpp:751
 #: ../../locales/../src/interface/state.cpp:758
-#, fuzzy
 msgid "Synchronized browsing"
 msgstr "Синхронизированный просмотр."
 
 #: ../../locales/../src/interface/state.cpp:194
-#, fuzzy
 msgid "Synchronized browsing has been disabled."
-msgstr "Синхронизированный просмотр."
+msgstr "Синхронизированный просмотр был отключен."
 
 #: resources.h:873
 msgid "Synchronized browsing."
@@ -5728,7 +5743,7 @@ msgstr ""
 msgid "The address you entered was: %s"
 msgstr "Вы ввели адрес: %s"
 
-#: ../../locales/../src/interface/statusbar.cpp:411
+#: ../../locales/../src/interface/statusbar.cpp:444
 msgid "The connection is encrypted. Click icon for details."
 msgstr "Соединение зашифровано. Нажмите значок для получения доп. сведений."
 
@@ -5736,7 +5751,7 @@ msgstr "Соединение зашифровано. Нажмите значок
 msgid "The custom login sequence cannot be empty."
 msgstr "Пользовательский режим логина не может быть пустым."
 
-#: resources.h:642 ../../locales/../src/interface/edithandler.cpp:1618
+#: resources.h:642 ../../locales/../src/interface/edithandler.cpp:1625
 #, no-c-format
 msgid "The default editor for text files could not be found."
 msgstr "Редактор текстовых файлов по умолчанию не найден."
@@ -5746,9 +5761,9 @@ msgstr "Редактор текстовых файлов по умолчанию
 msgid "The default editor for text files is '%s'."
 msgstr "Редактор текстовых файлов по умолчанию - '%s'."
 
-#: ../../locales/../src/interface/filteredit.cpp:480
-#: ../../locales/../src/interface/filteredit.cpp:547
-#: ../../locales/../src/interface/filteredit.cpp:588
+#: ../../locales/../src/interface/filteredit.cpp:482
+#: ../../locales/../src/interface/filteredit.cpp:549
+#: ../../locales/../src/interface/filteredit.cpp:590
 msgid "The entered filter name already exists."
 msgstr "Фильтр с таким именем уже существует."
 
@@ -5888,6 +5903,9 @@ msgid ""
 "The local directory '%s' is not below the synchronization root (%s).\n"
 "Disable synchronized browsing and continue changing the local directory?"
 msgstr ""
+"Локальный каталог '%s' находится выше корневой папки синхронизации (%s).\n"
+"Выключить синхронизированный просмотр и продолжить изменение удалённого "
+"каталога?"
 
 #: ../../locales/../src/interface/optionspage_connection_active.cpp:77
 msgid ""
@@ -5917,6 +5935,9 @@ msgid ""
 "The remote directory '%s' is not below the synchronization root (%s).\n"
 "Disable synchronized browsing and continue changing the remote directory?"
 msgstr ""
+"Удалённый каталог '%s' находится выше корневой папки синхронизации (%s).\n"
+"Выключить синхронизированный просмотр и продолжить изменение удалённого "
+"каталога?"
 
 #: ../../locales/../src/interface/import.cpp:82
 msgid "The selected categories have been imported."
@@ -6215,7 +6236,7 @@ msgstr "Принять сертификат и продолжить соедин
 msgid "Trust this host and carry on connecting?"
 msgstr "Доверить этому хосту и продолжить соединение?"
 
-#: resources.h:597 ../../locales/../src/interface/edithandler.cpp:1183
+#: resources.h:597 ../../locales/../src/interface/edithandler.cpp:1188
 msgid "Type"
 msgstr "Тип"
 
@@ -6256,8 +6277,8 @@ msgstr "Неопределенный код ошибки %d"
 msgid "Unit:"
 msgstr "Объект:"
 
-#: ../../locales/../src/interface/edithandler.cpp:1215
-#: ../../locales/../src/interface/edithandler.cpp:1243
+#: ../../locales/../src/interface/edithandler.cpp:1220
+#: ../../locales/../src/interface/edithandler.cpp:1248
 msgid "Unknown"
 msgstr "Неизвестен"
 
@@ -6328,7 +6349,7 @@ msgstr "Мастер обновления"
 msgid "Upload"
 msgstr "Закачать"
 
-#: ../../locales/../src/interface/edithandler.cpp:1206
+#: ../../locales/../src/interface/edithandler.cpp:1211
 msgid "Upload failed"
 msgstr "Загрузка не удалась"
 
@@ -6348,19 +6369,19 @@ msgstr "Загрузить файл обратно на сервер?"
 msgid "Upload this file to the server?"
 msgstr "Загрузить файл на сервер?"
 
-#: ../../locales/../src/interface/edithandler.cpp:1200
-#: ../../locales/../src/interface/edithandler.cpp:1234
-#: ../../locales/../src/interface/edithandler.cpp:1396
+#: ../../locales/../src/interface/edithandler.cpp:1205
+#: ../../locales/../src/interface/edithandler.cpp:1239
+#: ../../locales/../src/interface/edithandler.cpp:1401
 msgid "Uploading"
 msgstr "Загрузка"
 
-#: ../../locales/../src/interface/edithandler.cpp:1203
-#: ../../locales/../src/interface/edithandler.cpp:1398
+#: ../../locales/../src/interface/edithandler.cpp:1208
+#: ../../locales/../src/interface/edithandler.cpp:1403
 msgid "Uploading and pending removal"
 msgstr "Загрузка и ожидание удаления"
 
-#: ../../locales/../src/interface/edithandler.cpp:1237
-#: ../../locales/../src/interface/edithandler.cpp:1400
+#: ../../locales/../src/interface/edithandler.cpp:1242
+#: ../../locales/../src/interface/edithandler.cpp:1405
 msgid "Uploading and unediting"
 msgstr "Загрузка без изменений"
 
@@ -6652,7 +6673,7 @@ msgstr "Введите имя закладки."
 msgid "You need to enter a name for the log file."
 msgstr "Введите название лог-файла."
 
-#: ../../locales/../src/interface/edithandler.cpp:1576
+#: ../../locales/../src/interface/edithandler.cpp:1581
 msgid "You need to enter a properly quoted command."
 msgstr "Необходимо ввести правильно сформулированную команду."
 
