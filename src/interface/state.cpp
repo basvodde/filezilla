@@ -736,7 +736,7 @@ bool CState::ChangeRemoteDir(const CServerPath& path, const wxString& subdir /*=
 		}
 		else if (!IsRemoteIdle())
 		{
-			wxString msg(_("Another remote operation is already progress, cannot change directory now"));
+			wxString msg(_("Another remote operation is already progress, cannot change directory now."));
 			wxMessageBox(msg, _("Synchronized browsing"), wxICON_EXCLAMATION);
 			return false;
 		}
