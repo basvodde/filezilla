@@ -358,7 +358,7 @@ CRemoteListView::CRemoteListView(wxWindow* pParent, CState *pState, CQueueView* 
 	AddColumn(_("Filetype"), wxLIST_FORMAT_LEFT, widths[2]);
 	AddColumn(_("Last modified"), wxLIST_FORMAT_LEFT, widths[3]);
 	AddColumn(_("Permissions"), wxLIST_FORMAT_LEFT, widths[4]);
-	AddColumn(_("Owner / Group"), wxLIST_FORMAT_LEFT, widths[5]);
+	AddColumn(_("Owner/Group"), wxLIST_FORMAT_LEFT, widths[5]);
 	LoadColumnSettings(OPTION_REMOTEFILELIST_COLUMN_WIDTHS, OPTION_REMOTEFILELIST_COLUMN_SHOWN, OPTION_REMOTEFILELIST_COLUMN_ORDER);
 
 	InitSort(OPTION_REMOTEFILELIST_SORTORDER);
@@ -2633,7 +2633,7 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 	case CEditHandler::upload:
 	case CEditHandler::upload_and_remove:
 	case CEditHandler::upload_and_remove_failed:
-		wxMessageBox(_("A file with that name is already being transferred."), _("Cannot view / edit selected file"), wxICON_EXCLAMATION);
+		wxMessageBox(_("A file with that name is already being transferred."), _("Cannot view/edit selected file"), wxICON_EXCLAMATION);
 		return;
 	case CEditHandler::removing:
 		if (!pEditHandler)

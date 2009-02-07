@@ -364,7 +364,7 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 		m_pQueue->SetSelection(0);
 
 	if (failedToRequeueAll)
-		wxMessageBox(_("Not all items could be requeued for viewing / editing."));
+		wxMessageBox(_("Not all items could be requeued for viewing/editing."));
 }
 
 void CQueueViewFailed::OnChar(wxKeyEvent& event)

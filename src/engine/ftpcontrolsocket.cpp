@@ -2526,7 +2526,7 @@ int CFtpControlSocket::FileTransferSend()
 					if (!pFile->Open(pData->localFile, wxFile::write_append))
 					{
 						delete pFile;
-						LogMessage(::Error, _("Failed to open \"%s\" for appending / writing"), pData->localFile.c_str());
+						LogMessage(::Error, _("Failed to open \"%s\" for appending/writing"), pData->localFile.c_str());
 						ResetOperation(FZ_REPLY_ERROR);
 						return FZ_REPLY_ERROR;
 					}

@@ -1148,7 +1148,7 @@ void CQueueViewBase::CreateColumns(const wxString& lastColumnName)
 {
 	const unsigned long widths[6] = { 180, 60, 180, 80, 60, 150 };
 
-	AddColumn(_("Server / Local file"), wxLIST_FORMAT_LEFT, widths[0]);
+	AddColumn(_("Server/Local file"), wxLIST_FORMAT_LEFT, widths[0]);
 	AddColumn(_("Direction"), wxLIST_FORMAT_CENTER, widths[1]);
 	AddColumn(_("Remote file"), wxLIST_FORMAT_LEFT, widths[2]);
 	AddColumn(_("Size"), wxLIST_FORMAT_RIGHT, widths[3]);

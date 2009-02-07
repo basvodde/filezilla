@@ -2281,7 +2281,7 @@ void CLocalListView::OnMenuEdit(wxCommandEvent& event)
 	{
 	case CEditHandler::upload:
 	case CEditHandler::upload_and_remove:
-		wxMessageBox(_("A file with that name is already being transferred."), _("Cannot view / edit selected file"), wxICON_EXCLAMATION);
+		wxMessageBox(_("A file with that name is already being transferred."), _("Cannot view/edit selected file"), wxICON_EXCLAMATION);
 		return;
 	case CEditHandler::edit:
 		{
