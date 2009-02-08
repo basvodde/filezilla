@@ -31,10 +31,13 @@ public:
 	CSiteManagerItemData_Site(const CServer& server = CServer())
 		: CSiteManagerItemData(SITE), m_server(server)
 	{
+		is_connected_item = false;
 	}
 
 	CServer m_server;
 	wxString m_comments;
+
+	bool is_connected_item;
 };
 
 #include "dialogex.h"
@@ -56,7 +59,7 @@ public:
 	virtual ~CSiteManager();
 
 	// Creation. If pServer is set, it will cause a new item to be created.
-	bool Create(wxWindow* parent, const CServer* pServer = 0);
+	bool Create(wxWindow* parent, const wxString& connected_site_path, const CServer* pServer = 0);
 
 	bool GetServer(CSiteManagerItemData_Site& data);
 	wxString GetSitePath();
@@ -74,6 +77,8 @@ public:
 	static CSiteManagerItemData_Site* GetSiteByPath(wxString sitePath);
 
 	static bool UnescapeSitePath(wxString path, std::list<wxString>& result);
+
+	wxString GetChangedBookmarkPath(const CServer* pServer);
 
 protected:
 	// Creates the controls and sizers
@@ -96,12 +101,16 @@ protected:
 
 	wxString FindFirstFreeName(const wxTreeItemId &parent, const wxString& name);
 
-	void AddNewSite(wxTreeItemId parent, const CServer& server);
+	void AddNewSite(wxTreeItemId parent, const CServer& server, bool connected = false);
 	void CopyAddServer(const CServer& server);
 
 	void AddNewBookmark(wxTreeItemId parent);
 
 	void RememberLastSelected();
+
+	wxString GetSitePath(wxTreeItemId item);
+
+	void MarkConnectedSite(wxString connected_site_path);
 
 	void OnOK(wxCommandEvent& event);
 	void OnCancel(wxCommandEvent& event);
@@ -158,6 +167,11 @@ protected:
 
 	wxNotebook *m_pNotebook_Site;
 	wxNotebook *m_pNotebook_Bookmark;
+
+	wxString m_changed_bookmark_path;
+	CServer m_changed_bookmark_server;
+
+	bool m_is_deleting;
 };
 
 #endif //__SITEMANAGER_H__

@@ -289,6 +289,8 @@ CSiteManager::CSiteManager()
 
 	m_pNotebook_Site = 0;
 	m_pNotebook_Bookmark = 0;
+
+	m_is_deleting = false;
 }
 
 CSiteManager::~CSiteManager()
@@ -302,7 +304,7 @@ CSiteManager::~CSiteManager()
 	}
 }
 
-bool CSiteManager::Create(wxWindow* parent, const CServer* pServer /*=0*/)
+bool CSiteManager::Create(wxWindow* parent, const wxString& connected_site_path, const CServer* pServer /*=0*/)
 {
 	m_pSiteManagerMutex = new CInterProcessMutex(MUTEX_SITEMANAGERGLOBAL, false);
 	if (!m_pSiteManagerMutex->TryLock())
@@ -391,8 +393,56 @@ bool CSiteManager::Create(wxWindow* parent, const CServer* pServer /*=0*/)
 
 	if (pServer)
 		CopyAddServer(*pServer);
+	else
+		MarkConnectedSite(connected_site_path);
 
 	return true;
+}
+
+void CSiteManager::MarkConnectedSite(wxString connected_site_path)
+{
+	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
+	if (!pTree)
+		return;
+
+	if (connected_site_path.Left(1) == _T("1"))
+	{
+		m_changed_bookmark_path = connected_site_path;
+		return;
+	}
+
+	if (connected_site_path.Left(1) != _T("0"))
+		return;
+
+	std::list<wxString> segments;
+	if (!UnescapeSitePath(connected_site_path.Mid(1), segments))
+		return;
+
+	wxTreeItemId current = m_ownSites;
+	while (!segments.empty())
+	{
+		wxTreeItemIdValue c;
+		wxTreeItemId child = pTree->GetFirstChild(current, c);
+		while (child)
+		{
+			if (pTree->GetItemText(child) == segments.front())
+				break;
+
+			child = pTree->GetNextChild(current, c);
+		}
+		if (!child)
+			return;
+
+		segments.pop_front();
+		current = child;
+	}
+
+	CSiteManagerItemData* data = reinterpret_cast<CSiteManagerItemData* >(pTree->GetItemData(current));
+	if (!data || data->m_type != CSiteManagerItemData::SITE)
+		return;
+
+	CSiteManagerItemData_Site *site_data = reinterpret_cast<CSiteManagerItemData_Site* >(data);
+	site_data->is_connected_item = true;
 }
 
 void CSiteManager::CreateControls(wxWindow* parent)
@@ -858,6 +908,12 @@ bool CSiteManager::SaveChild(TiXmlElement *pElement, wxTreeItemId child)
 		pNode->InsertEndChild(TiXmlText(utf8));
 
 		Save(pNode, child);
+
+		if (site_data->is_connected_item)
+		{
+			m_changed_bookmark_path = GetSitePath(child);
+			m_changed_bookmark_server = site_data->m_server;
+		}
 	}
 	else
 	{
@@ -1184,12 +1240,19 @@ void CSiteManager::OnDelete(wxCommandEvent& event)
 	if (pTree->GetChildrenCount(parent) == 1)
 		pTree->Collapse(parent);
 
+	m_is_deleting = true;
+
 	pTree->Delete(item);
 	pTree->SelectItem(parent);
+
+	m_is_deleting = false;
 }
 
 void CSiteManager::OnSelChanging(wxTreeEvent& event)
 {
+	if (m_is_deleting)
+		return;
+
 	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
 	if (!pTree)
 		return;
@@ -1705,6 +1768,7 @@ void CSiteManager::OnCopySite(wxCommandEvent& event)
 	if (data->m_type == CSiteManagerItemData::SITE)
 	{
 		CSiteManagerItemData_Site* newData = new CSiteManagerItemData_Site(*(CSiteManagerItemData_Site *)data);
+		newData->is_connected_item = false;
 		newItem = pTree->AppendItem(parent, newName, 2, 2, newData);
 
 		wxTreeItemIdValue cookie;
@@ -2180,6 +2244,7 @@ bool CSiteManager::MoveItems(wxTreeItemId source, wxTreeItemId target, bool copy
 		else if (data->m_type == CSiteManagerItemData::SITE)
 		{
 			CSiteManagerItemData_Site* newData = new CSiteManagerItemData_Site(*(CSiteManagerItemData_Site *)data);
+			newData->is_connected_item = false;
 			pTree->SetItemData(newItem, newData);
 		}
 		else
@@ -2241,7 +2306,7 @@ void CSiteManager::CopyAddServer(const CServer& server)
 	if (!Verify())
 		return;
 
-	AddNewSite(m_ownSites, server);
+	AddNewSite(m_ownSites, server, true);
 }
 
 wxString CSiteManager::FindFirstFreeName(const wxTreeItemId &parent, const wxString& name)
@@ -2278,7 +2343,7 @@ wxString CSiteManager::FindFirstFreeName(const wxTreeItemId &parent, const wxStr
 	return newName;
 }
 
-void CSiteManager::AddNewSite(wxTreeItemId parent, const CServer& server)
+void CSiteManager::AddNewSite(wxTreeItemId parent, const CServer& server, bool connected /*=false*/)
 {
 	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
 	if (!pTree)
@@ -2286,7 +2351,11 @@ void CSiteManager::AddNewSite(wxTreeItemId parent, const CServer& server)
 
 	wxString name = FindFirstFreeName(parent, _("New site"));
 
-	wxTreeItemId newItem = pTree->AppendItem(parent, name, 2, 2, new CSiteManagerItemData_Site(server));
+	CSiteManagerItemData_Site* pData = new CSiteManagerItemData_Site(server);
+	if (connected)
+		pData->is_connected_item = true;
+
+	wxTreeItemId newItem = pTree->AppendItem(parent, name, 2, 2, pData);
 	pTree->SortChildren(parent);
 	pTree->EnsureVisible(newItem);
 	pTree->SelectItem(newItem);
@@ -2644,15 +2713,10 @@ bool CSiteManager::GetBookmarks(wxString sitePath, std::list<wxString> &bookmark
 	return true;
 }
 
-wxString CSiteManager::GetSitePath()
+wxString CSiteManager::GetSitePath(wxTreeItemId item)
 {
-	
 	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
 	if (!pTree)
-		return _T("");
-
-	wxTreeItemId item = pTree->GetSelection();
-	if (!item.IsOk())
 		return _T("");
 
 	CSiteManagerItemData* pData = reinterpret_cast<CSiteManagerItemData* >(pTree->GetItemData(item));
@@ -2681,6 +2745,19 @@ wxString CSiteManager::GetSitePath()
 	}
 
 	return _T("0/") + path;
+}
+
+wxString CSiteManager::GetSitePath()
+{
+	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
+	if (!pTree)
+		return _T("");
+
+	wxTreeItemId item = pTree->GetSelection();
+	if (!item.IsOk())
+		return _T("");
+
+	return GetSitePath(item);
 }
 
 wxString CSiteManager::AddServer(CServer server)
@@ -2926,4 +3003,12 @@ bool CSiteManager::ClearBookmarks(wxString sitePath)
 	}
 
 	return true;
+}
+
+wxString CSiteManager::GetChangedBookmarkPath(const CServer* pServer)
+{
+	if (pServer && m_changed_bookmark_server != *pServer)
+		return wxEmptyString;
+	
+	return m_changed_bookmark_path;
 }

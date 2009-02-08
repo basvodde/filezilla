@@ -1588,7 +1588,8 @@ void CMainFrame::SetProgress(const CTransferStatus *pStatus)
 void CMainFrame::OpenSiteManager(const CServer* pServer /*=0*/)
 {
 	CSiteManager dlg;
-	if (!dlg.Create(this, pServer))
+
+	if (!dlg.Create(this, m_last_bookmark_path, pServer))
 		return;
 
 	int res = dlg.ShowModal();
@@ -1603,6 +1604,9 @@ void CMainFrame::OpenSiteManager(const CServer* pServer /*=0*/)
 			m_last_bookmark_path = dlg.GetSitePath();
 		}
 	}
+	else if (res == wxID_OK)
+		m_last_bookmark_path = dlg.GetChangedBookmarkPath(m_pState->GetServer());
+
 	m_bookmarks.clear();
 	dlg.GetBookmarks(m_last_bookmark_path, m_bookmarks);
 	UpdateBookmarkMenu();
