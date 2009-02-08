@@ -471,7 +471,7 @@ bool CLocalPath::Exists(wxString *error /*=0*/) const
 		if (S_ISDIR(buf.st_mode))
 			return true;
 
-		if (*error)
+		if (error)
 			error->Printf(_("'%s' is not a directory."), path.c_str());
 
 		return false;
@@ -484,7 +484,8 @@ bool CLocalPath::Exists(wxString *error /*=0*/) const
 	}
 	else
 	{
-		error->Printf(_("'%s' does not exist or cannot be accessed."), path.c_str());
+		if (error)
+			error->Printf(_("'%s' does not exist or cannot be accessed."), path.c_str());
 		return false;
 	}
 #endif
