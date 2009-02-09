@@ -981,8 +981,21 @@ wxString CEditHandler::GetSystemOpenCommand(const wxString& file, bool &program_
 
 	program_exists = false;
 
+	wxString editor;
+	if (cmd.Left(7) == _T("WX_DDE#"))
+	{
+		// See wxWidget's wxExecute in src/msw/utilsexc.cpp
+		// WX_DDE#<command>#DDE_SERVER#DDE_TOPIC#DDE_COMMAND
+		editor = cmd.Mid(7);
+		int pos = editor.Find('#');
+		if (pos < 1)
+			return cmd;
+		editor = editor.Left(pos);
+	}
+	else
+		editor = cmd;
+
 	wxString args;
-	wxString editor = cmd;
 	if (!UnquoteCommand(editor, args) || editor.empty())
 		return cmd;
 
