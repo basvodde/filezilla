@@ -2,7 +2,9 @@
 #include "logging_private.h"
 #include "ControlSocket.h"
 #include <idna.h>
+extern "C" {
 #include <idn-free.h>
+}
 #include "directorycache.h"
 #include "servercapabilities.h"
 #include "local_filesys.h"
