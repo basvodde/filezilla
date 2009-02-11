@@ -2,6 +2,7 @@
 #include "logging_private.h"
 #include "ControlSocket.h"
 #include <idna.h>
+#include <idn-free.h>
 #include "directorycache.h"
 #include "servercapabilities.h"
 #include "local_filesys.h"
@@ -181,6 +182,7 @@ int CControlSocket::ResetOperation(int nErrorCode)
 
 int CControlSocket::DoClose(int nErrorCode /*=FZ_REPLY_DISCONNECTED*/)
 {
+	LogMessage(Debug_Debug, _T("CControlSocket::DoClose(%d)"), nErrorCode);
 	if (m_closed)
 	{
 		wxASSERT(!m_pCurOpData);
@@ -219,7 +221,7 @@ wxString CControlSocket::ConvertDomainName(wxString domain)
 	delete [] utf8;
 
 	wxString result = wxConvCurrent->cMB2WX(output);
-	free(output);
+	idn_free(output);
 	return result;
 }
 
@@ -769,8 +771,19 @@ void CControlSocket::UnlockCache()
 	m_lockInfoList.erase(iter);
 
 	// Find other instance waiting for the lock
+	if (!m_pCurrentServer)
+	{
+		LogMessage(Debug_Warning, _T("UnlockCache called with !m_pCurrentServer"));
+		return;
+	}
 	for (std::list<t_lockInfo>::const_iterator iter = m_lockInfoList.begin(); iter != m_lockInfoList.end(); iter++)
 	{
+		if (!iter->pControlSocket->m_pCurrentServer)
+		{
+			LogMessage(Debug_Warning, _T("UnlockCache found other instance with !m_pCurrentServer"));
+			continue;
+		}
+
 		if (*m_pCurrentServer != *iter->pControlSocket->m_pCurrentServer)
 			continue;
 

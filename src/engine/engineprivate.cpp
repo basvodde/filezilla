@@ -171,6 +171,8 @@ void CFileZillaEnginePrivate::AddNotification(CNotification *pNotification)
 
 int CFileZillaEnginePrivate::ResetOperation(int nErrorCode)
 {
+	m_pLogging->LogMessage(Debug_Debug, _("CFileZillaEnginePrivate::ResetOperation(%d)"), nErrorCode);
+					
 	if (nErrorCode & FZ_REPLY_DISCONNECTED)
 		m_lastListDir.Clear();
 
