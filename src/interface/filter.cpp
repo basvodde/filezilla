@@ -164,10 +164,11 @@ void CFilterDialog::SaveFilters()
 	CInterProcessMutex mutex(MUTEX_FILTERS);
 
 	wxFileName file(wxGetApp().GetSettingsDir(), _T("filters.xml"));
-	TiXmlElement* pDocument = GetXmlFile(file);
+	CXmlFile xml(file);
+	TiXmlElement* pDocument = xml.Load();
 	if (!pDocument)
 	{
-		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager could not be saved."), file.GetFullPath().c_str());
+		wxString msg = xml.GetError() + _T("\n\n") + _("Any changes made to the filters could not be saved.");
 		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
 
 		return;
@@ -231,9 +232,8 @@ void CFilterDialog::SaveFilters()
 		}
 	}
 
-	SaveXmlFile(file, pDocument);
-	delete pDocument->GetDocument();
-
+	xml.Save();
+	
 	m_filters_disabled = false;
 }
 
@@ -920,10 +920,11 @@ void CFilterManager::LoadFilters()
 		}
 	}
 
-	TiXmlElement* pDocument = GetXmlFile(file);
+	CXmlFile xml(file);
+	TiXmlElement* pDocument = xml.Load();
 	if (!pDocument)
 	{
-		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager could not be saved."), file.GetFullPath().c_str());
+		wxString msg = xml.GetError() + _T("\n\n") + _("Any changes made to the filters will not be saved.");
 		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
 
 		return;
@@ -932,10 +933,7 @@ void CFilterManager::LoadFilters()
 	TiXmlElement *pFilters = pDocument->FirstChildElement("Filters");
 
 	if (!pFilters)
-	{
-		delete pDocument->GetDocument();
 		return;
-	}
 
 	TiXmlElement *pFilter = pFilters->FirstChildElement("Filter");
 	while (pFilter)
@@ -1017,10 +1015,7 @@ void CFilterManager::LoadFilters()
 
 	TiXmlElement* pSets = pDocument->FirstChildElement("Sets");
 	if (!pSets)
-	{
-		delete pDocument->GetDocument();
 		return;
-	}
 
 	for (TiXmlElement* pSet = pSets->FirstChildElement("Set"); pSet; pSet = pSet->NextSiblingElement("Set"))
 	{
@@ -1054,8 +1049,6 @@ void CFilterManager::LoadFilters()
 		if (value < m_globalFilterSets.size())
 			m_globalCurrentFilterSet = value;
 	}
-
-	delete pDocument->GetDocument();
 }
 
 void CFilterManager::ToggleFilters()

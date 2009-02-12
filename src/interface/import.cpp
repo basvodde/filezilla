@@ -30,9 +30,12 @@ void CImportDialog::Show()
 		return;
 	}
 
-	TiXmlDocument *xmlDocument = LoadXmlDocument(dlg.GetPath());
-	if (!xmlDocument)
+	TiXmlDocument* xmlDocument = new TiXmlDocument();
+	xmlDocument->SetCondenseWhiteSpace(false);
+
+	if (!LoadXmlDocument(xmlDocument, dlg.GetPath()))
 	{
+		delete xmlDocument;
 		wxMessageBox(_("Cannot load file, not a valid XML file."), _("Error importing"), wxICON_ERROR, m_parent);
 		return;
 	}

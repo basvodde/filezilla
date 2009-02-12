@@ -1807,10 +1807,11 @@ void CQueueView::SaveQueue()
 	CInterProcessMutex mutex(MUTEX_QUEUE);
 
 	wxFileName file(wxGetApp().GetSettingsDir(), _T("queue.xml"));
-	TiXmlElement* pDocument = GetXmlFile(file);
+	CXmlFile xml(file);
+	TiXmlElement* pDocument = xml.Load();
 	if (!pDocument)
 	{
-		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nThe queue will not be saved."), file.GetFullPath().c_str());
+		wxString msg = xml.GetError() + _T("\n\n") + _("The queue will not be saved.");
 		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
 
 		return;
@@ -1819,13 +1820,11 @@ void CQueueView::SaveQueue()
 	WriteToFile(pDocument);
 
 	wxString error;
-	if (!SaveXmlFile(file.GetFullPath(), pDocument, &error))
+	if (!xml.Save(&error))
 	{
 		wxString msg = wxString::Format(_("Could not write \"%s\", the queue could not be saved.\n%s"), file.GetFullPath().c_str(), error.c_str());
 		wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
 	}
-
-	delete pDocument->GetDocument();
 }
 
 void CQueueView::LoadQueue()
@@ -1835,10 +1834,11 @@ void CQueueView::LoadQueue()
 	CInterProcessMutex mutex(MUTEX_QUEUE);
 
 	wxFileName file(wxGetApp().GetSettingsDir(), _T("queue.xml"));
-	TiXmlElement* pDocument = GetXmlFile(file);
+	CXmlFile xml(file);
+	TiXmlElement* pDocument = xml.Load();
 	if (!pDocument)
 	{
-		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nThe queue will not be saved."), file.GetFullPath().c_str());
+		wxString msg = xml.GetError() + _T("\n\n") + _("The queue will not be saved.");
 		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
 
 		return;
@@ -1846,23 +1846,18 @@ void CQueueView::LoadQueue()
 
 	TiXmlElement* pQueue = pDocument->FirstChildElement("Queue");
 	if (!pQueue)
-	{
-		delete pDocument->GetDocument();
 		return;
-	}
 
 	ImportQueue(pQueue, false);
 
 	pDocument->RemoveChild(pQueue);
 
 	wxString error;
-	if (!SaveXmlFile(file.GetFullPath(), pDocument, &error))
+	if (!xml.Save(&error))
 	{
 		wxString msg = wxString::Format(_("Could not write \"%s\", the queue could not be saved.\n%s"), file.GetFullPath().c_str(), error.c_str());
 		wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
 	}
-
-	delete pDocument->GetDocument();
 }
 
 void CQueueView::ImportQueue(TiXmlElement* pElement, bool updateSelections)

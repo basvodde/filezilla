@@ -678,7 +678,7 @@ bool CSiteManager::Load()
 	TiXmlElement* pDocument = file.Load();
 	if (!pDocument)
 	{
-		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager will not be saved."), file.GetFileName().GetFullPath().c_str());
+		wxString msg = file.GetError() + _T("\n") + _("Any changes made in the Site Manager will not be saved unless you repair the file.");
 		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
 
 		return false;
@@ -820,10 +820,12 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 		CInterProcessMutex mutex(MUTEX_SITEMANAGER);
 
 		wxFileName file(wxGetApp().GetSettingsDir(), _T("sitemanager.xml"));
-		TiXmlElement* pDocument = GetXmlFile(file);
+		CXmlFile xml(file);
+
+		TiXmlElement* pDocument = xml.Load();
 		if (!pDocument)
 		{
-			wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager could not be saved."), file.GetFullPath().c_str());
+			wxString msg = xml.GetError() + _T("\n") + _("Any changes made in the Site Manager could not be saved.");
 			wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
 
 			return false;
@@ -838,22 +840,17 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 		pElement = pDocument->InsertEndChild(TiXmlElement("Servers"))->ToElement();
 
 		if (!pElement)
-		{
-			delete pDocument->GetDocument();
-
 			return true;
-		}
 
 		bool res = Save(pElement, m_ownSites);
 
 		wxString error;
-		if (!SaveXmlFile(file, pDocument, &error))
+		if (!xml.Save(&error))
 		{
 			wxString msg = wxString::Format(_("Could not write \"%s\", any changes to the Site Manager could not be saved: %s"), file.GetFullPath().c_str(), error.c_str());
 			wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
 		}
 
-		delete pDocument->GetDocument();
 		return res;
 	}
 
@@ -1995,8 +1992,7 @@ wxMenu* CSiteManager::GetSitesMenu()
 	TiXmlElement* pDocument = file.Load();
 	if (!pDocument)
 	{
-		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager will not be saved."), file.GetFileName().GetFullPath().c_str());
-		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
+		wxMessageBox(file.GetError(), _("Error loading xml file"), wxICON_ERROR);
 
 		if (!predefinedSites)
 			return predefinedSites;
@@ -2494,8 +2490,7 @@ CSiteManagerItemData_Site* CSiteManager::GetSiteByPath(wxString sitePath)
 
 	if (!pDocument)
 	{
-		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager will not be saved."), file.GetFileName().GetFullPath().c_str());
-		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
+		wxMessageBox(file.GetError(), _("Error loading xml file"), wxICON_ERROR);
 
 		return 0;
 	}
@@ -2665,8 +2660,7 @@ bool CSiteManager::GetBookmarks(wxString sitePath, std::list<wxString> &bookmark
 
 	if (!pDocument)
 	{
-		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager will not be saved."), file.GetFileName().GetFullPath().c_str());
-		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
+		wxMessageBox(file.GetError(), _("Error loading xml file"), wxICON_ERROR);
 
 		return false;
 	}
@@ -2771,7 +2765,7 @@ wxString CSiteManager::AddServer(CServer server)
 
 	if (!pDocument)
 	{
-		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager will not be saved."), file.GetFileName().GetFullPath().c_str());
+		wxString msg = file.GetError() + _T("\n") + _("The server could not be added.");
 		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
 
 		return _T("");
@@ -2888,7 +2882,7 @@ bool CSiteManager::AddBookmark(wxString sitePath, const wxString& name, const wx
 
 	if (!pDocument)
 	{
-		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager will not be saved."), file.GetFileName().GetFullPath().c_str());
+		wxString msg = file.GetError() + _T("\n") + _("The bookmark could not be added.");
 		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
 
 		return false;
@@ -2964,7 +2958,7 @@ bool CSiteManager::ClearBookmarks(wxString sitePath)
 
 	if (!pDocument)
 	{
-		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager will not be saved."), file.GetFileName().GetFullPath().c_str());
+		wxString msg = file.GetError() + _T("\n") + _("The bookmarks could not be cleared.");
 		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
 
 		return false;

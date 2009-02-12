@@ -954,12 +954,12 @@ bool CWrapEngine::LoadCache()
 	CInterProcessMutex mutex(MUTEX_LAYOUT);
 
 	wxFileName file(wxGetApp().GetSettingsDir(), _T("layout.xml"));
-	TiXmlElement* pDocument = GetXmlFile(file);
+	CXmlFile xml(file);
+	TiXmlElement* pDocument = xml.Load();
 
 	if (!pDocument)
 	{
-		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed."), file.GetFullPath().c_str());
-		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
+		wxMessageBox(xml.GetError(), _("Error loading xml file"), wxICON_ERROR);
 
 		return false;
 	}
@@ -1107,13 +1107,12 @@ bool CWrapEngine::LoadCache()
 	}
 
 	wxString error;
-	if (!SaveXmlFile(file, pDocument, &error))
+	if (!xml.Save(&error))
 	{
 		wxString msg = wxString::Format(_("Could not write \"%s\": %s"), file.GetFullPath().c_str(), error.c_str());
 		wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
 	}
 
-	delete pDocument->GetDocument();
 
 	return true;
 }

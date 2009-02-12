@@ -166,7 +166,7 @@ COptions::COptions()
 	m_pXmlFile = new CXmlFile(_T("filezilla"));
 	if (!m_pXmlFile->Load())
 	{
-		wxString msg = wxString::Format(_("Could not load \"%s\", make sure the file is valid.\nFor this session, default settings will be used and any changes to the settings are not persistent."), m_pXmlFile->GetFileName().GetFullPath().c_str());
+		wxString msg = m_pXmlFile->GetError() + _T("\n\n") + _("For this session the default settings will be used. Any changes to the settings will not be saved.");
 		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
 		delete m_pXmlFile;
 		m_pXmlFile = 0;

@@ -150,8 +150,7 @@ void CBookmarksDialog::LoadGlobalBookmarks()
 
 	if (!pDocument)
 	{
-		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager will not be saved."), file.GetFileName().GetFullPath().c_str());
-		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
+		wxMessageBox(file.GetError(), _("Error loading xml file"), wxICON_ERROR);
 
 		return;
 	}
@@ -267,7 +266,7 @@ void CBookmarksDialog::SaveGlobalBookmarks()
 
 	if (!pDocument)
 	{
-		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager will not be saved."), file.GetFileName().GetFullPath().c_str());
+		wxString msg = file.GetError() + _T("\n\n") + _("The global bookmarks could not be saved.");
 		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
 
 		return;
@@ -297,7 +296,7 @@ void CBookmarksDialog::SaveGlobalBookmarks()
 	wxString error;
 	if (!file.Save(&error))
 	{
-		wxString msg = wxString::Format(_("Could not write \"%s\", the selected sites could not be exported: %s"), file.GetFileName().GetFullPath().c_str(), error.c_str());
+		wxString msg = wxString::Format(_("Could not write \"%s\", the global bookmarks could no be saved: %s"), file.GetFileName().GetFullPath().c_str(), error.c_str());
 		wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
 	}
 }
@@ -687,8 +686,7 @@ bool CBookmarksDialog::GetBookmarks(std::list<wxString> &bookmarks)
 
 	if (!pDocument)
 	{
-		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager will not be saved."), file.GetFileName().GetFullPath().c_str());
-		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
+		wxMessageBox(file.GetError(), _("Error loading xml file"), wxICON_ERROR);
 
 		return false;
 	}
@@ -729,8 +727,7 @@ bool CBookmarksDialog::GetBookmark(const wxString &name, wxString &local_dir, CS
 
 	if (!pDocument)
 	{
-		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager will not be saved."), file.GetFileName().GetFullPath().c_str());
-		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
+		wxMessageBox(file.GetError(), _("Error loading xml file"), wxICON_ERROR);
 
 		return false;
 	}
@@ -771,7 +768,7 @@ bool CBookmarksDialog::AddBookmark(const wxString &name, const wxString &local_d
 
 	if (!pDocument)
 	{
-		wxString msg = wxString::Format(_("Could not load \"%s\", please make sure the file is valid and can be accessed.\nAny changes made in the Site Manager will not be saved."), file.GetFileName().GetFullPath().c_str());
+		wxString msg = file.GetError() + _T("\n\n") + _("The bookmark could not be added.");
 		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
 
 		return false;
@@ -799,7 +796,7 @@ bool CBookmarksDialog::AddBookmark(const wxString &name, const wxString &local_d
 	wxString error;
 	if (!file.Save(&error))
 	{
-		wxString msg = wxString::Format(_("Could not write \"%s\", the selected sites could not be exported: %s"), file.GetFileName().GetFullPath().c_str(), error.c_str());
+		wxString msg = wxString::Format(_("Could not write \"%s\", the bookmark could not be added: %s"), file.GetFileName().GetFullPath().c_str(), error.c_str());
 		wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
 		return false;
 	}
