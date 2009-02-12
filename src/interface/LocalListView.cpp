@@ -605,8 +605,16 @@ wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix, int format, b
 		result += places;
 	}
 	result += ' ';
+
+	static wxChar byte_unit = 0;
+	if (!byte_unit)
+	{
+		wxString t = _("B <Unit symbol for bytes. Only translate first letter>");
+		byte_unit = t[0];
+	}
+
 	if (!p)
-		return result + _T("B");
+		return result + byte_unit;
 
 	// We stop at Exa. If someone has files bigger than that, he can afford to
 	// make a donation to have this changed ;)
@@ -615,7 +623,8 @@ wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix, int format, b
 	result += prefix[p];
 	if (format == 1)
 		result += 'i';
-	result += 'B';
+
+	result += byte_unit;
 
 	return result;
 }

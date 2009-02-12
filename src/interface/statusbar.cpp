@@ -342,9 +342,15 @@ void CStatusBar::DisplayQueueSize(wxLongLong totalSize, bool hasUnknown)
 		queueSize.Printf(_("Queue: %s%d %c"), hasUnknown ? _T(">") : _T(""), totalSize.GetLo(), prefix[p]);
 
 		if (m_sizeFormat == 1)
-			queueSize += _T("iB");
-		else
-			queueSize += _T("B");
+			queueSize += 'i';
+		
+		static wxChar byte_unit = 0;
+		if (!byte_unit)
+		{
+			wxString t = _("B <Unit symbol for bytes. Only translate first letter>");
+			byte_unit = t[0];
+		}
+		queueSize += byte_unit;
 	}
 	SetStatusText(queueSize, FIELD_QUEUESIZE);
 }
