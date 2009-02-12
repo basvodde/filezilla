@@ -400,14 +400,14 @@ void CNetConfWizard::ParseResponse(const char* line)
 	if (len < 3)
 	{
 		m_testResult = servererror;
-		PrintMessage(_("Server sent invalid reply."), 1);
+		PrintMessage(_("Server sent unexpected reply."), 1);
 		CloseSocket();
 		return;
 	}
 	if (line[3] && line[3] != ' ')
 	{
 		m_testResult = servererror;
-		PrintMessage(_("Server sent invalid reply."), 1);
+		PrintMessage(_("Server sent unexpected reply."), 1);
 		CloseSocket();
 		return;
 	}
@@ -446,7 +446,7 @@ void CNetConfWizard::ParseResponse(const char* line)
 		else
 		{
 			m_testResult = servererror;
-			PrintMessage(_("Server sent invalid reply."), 1);
+			PrintMessage(_("Server sent unexpected reply."), 1);
 			CloseSocket();
 			return;
 		}
@@ -455,7 +455,7 @@ void CNetConfWizard::ParseResponse(const char* line)
 		if (line[0] != '2')
 		{
 			m_testResult = servererror;
-			PrintMessage(_("Server sent invalid reply."), 1);
+			PrintMessage(_("Server sent unexpected reply."), 1);
 			CloseSocket();
 			return;
 		}
@@ -467,7 +467,7 @@ void CNetConfWizard::ParseResponse(const char* line)
 				if (*p < '0' || *p > '9')
 				{
 					m_testResult = servererror;
-					PrintMessage(_("Server sent invalid reply."), 1);
+					PrintMessage(_("Server sent unexpected reply."), 1);
 					CloseSocket();
 					return;
 				}
@@ -491,14 +491,14 @@ void CNetConfWizard::ParseResponse(const char* line)
 		}
 
 		m_testResult = servererror;
-		PrintMessage(_("Server sent invalid reply."), 1);
+		PrintMessage(_("Server sent unexpected reply."), 1);
 		CloseSocket();
 		return;
 	case 6:
 		if (line[0] != '2' && line[0] != '3')
 		{
 			m_testResult = servererror;
-			PrintMessage(_("Server sent invalid reply."), 1);
+			PrintMessage(_("Server sent unexpected reply."), 1);
 			CloseSocket();
 			return;
 		}
@@ -507,7 +507,7 @@ void CNetConfWizard::ParseResponse(const char* line)
 			if (gotListReply)
 			{
 				m_testResult = servererror;
-				PrintMessage(_("Server sent invalid reply."), 1);
+				PrintMessage(_("Server sent unexpected reply."), 1);
 				CloseSocket();
 			}
 			gotListReply = true;
@@ -518,7 +518,7 @@ void CNetConfWizard::ParseResponse(const char* line)
 		if (line[0] != '2' && line[0] != '3')
 		{
 			m_testResult = servererror;
-			PrintMessage(_("Server sent invalid reply."), 1);
+			PrintMessage(_("Server sent unexpected reply."), 1);
 			CloseSocket();
 			return;
 		}
@@ -551,6 +551,7 @@ void CNetConfWizard::CloseSocket()
 	{
 		text[0] = _("Connection with the test server failed.");
 		text[1] = _("Please check on http://filezilla-project.org/probe.php that the server is running and carefully check your settings again.");
+		text[2] = _("If the problem persists, some router and/or firewall keeps blocking FileZilla.");
 	}
 	else
 	{
@@ -558,7 +559,9 @@ void CNetConfWizard::CloseSocket()
 		{
 		case unknown:
 			text[0] = _("Connection with server got closed prematurely.");
-			text[1] = _("Please ensure you have a stable internet connection and check on http://filezilla-project.org/probe.php that the server is running.");
+			text[1] = _("Please ensure you have a stable internet connection and carefully check your settings again.");
+			text[2] = _("If the problem persists, some router and/or firewall keeps interrupting the connection.");
+			text[3] = _("See also: http://wiki.filezilla-project.org/Network_Configuration");
 			break;
 		case successful:
 			text[0] = _("Congratulations, your configuration seems to be working.");
@@ -568,9 +571,10 @@ void CNetConfWizard::CloseSocket()
 			text[4] = _("Click on Finish to save your configuration.");
 			break;
 		case servererror:
-			text[0] = _("The server sent an unrecognized reply.");
-			text[1] = _("Please make sure you are running the latest version of FileZilla. Visit http://filezilla-project.org for details.");
-			text[2] = _("Submit a bug report if this problem persists even with the latest version of FileZilla.");
+			text[0] = _("The server sent an unexpected or unrecognized reply.");
+			text[1] = _("This means that some router and/or firewall is still interfering with FileZilla.");
+			text[2] = _("Re-run the wizard and carefully check your settings and configure all routers and firewalls accordingly.");
+			text[3] = _("See also: http://wiki.filezilla-project.org/Network_Configuration");
 			break;
 		case tainted:
 			text[0] = _("Active mode FTP test failed. FileZilla knows the correct external IP address, but your router or firewall has misleadingly modified the sent address.");
