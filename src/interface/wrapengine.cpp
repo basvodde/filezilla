@@ -841,6 +841,8 @@ int CWrapEngine::GetWidthFromCache(const char* name)
 	}
 
 	wxString language = wxGetApp().GetCurrentLanguageCode();
+	if (language.empty())
+		language = _T("default");
 
 	TiXmlElement* pLanguage = FindElementWithAttribute(pElement, "Language", "id", language.mb_str());
 	if (!pLanguage)
@@ -886,6 +888,8 @@ void CWrapEngine::SetWidthToCache(const char* name, int width)
 	}
 
 	wxString language = wxGetApp().GetCurrentLanguageCode();
+	if (language.empty())
+		language = _T("default");
 
 	TiXmlElement* pLanguage = FindElementWithAttribute(pElement, "Language", "id", language.mb_str());
 	if (!pLanguage)
