@@ -1358,10 +1358,10 @@ void CControlSocket::CreateLocalDir(const wxString &local_file)
 		if (!res && GetLastError() != ERROR_ALREADY_EXISTS)
 			break;
 #else
-		const wxCharBuffer s = path.fn_str();
+		const wxCharBuffer s = local_path.GetPath().fn_str();
 
 		int res = mkdir(s, 0777);
-		if (res && errno != EEXISTS)
+		if (res && errno != EEXIST)
 			break;
 #endif
 		last_successful = local_path;
