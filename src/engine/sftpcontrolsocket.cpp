@@ -1777,12 +1777,8 @@ int CSftpControlSocket::FileTransferSend()
 			cmd = _T("re");
 		if (pData->download)
 		{
-			// Create local directory
 			if (!pData->resume)
-			{
-				wxFileName fn(pData->localFile);
-				wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
-			}
+				CreateLocalDir(pData->localFile);
 
 			InitTransferStatus(pData->remoteFileSize, pData->resume ? pData->localFileSize : 0, false);
 			cmd += _T("get ");

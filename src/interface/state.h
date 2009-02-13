@@ -62,6 +62,7 @@ public:
 
 	void RefreshLocal();
 	void RefreshLocalFile(wxString file);
+	void LocalDirCreated(const CLocalPath& path);
 
 	void RegisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification);
 	void UnregisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification);

@@ -2562,9 +2562,7 @@ int CFtpControlSocket::FileTransferSend()
 				}
 				else
 				{
-					// Create local directory
-					wxFileName fn(pData->localFile);
-					wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
+					CreateLocalDir(pData->localFile);
 
 					if (!pFile->Open(pData->localFile, wxFile::write))
 					{

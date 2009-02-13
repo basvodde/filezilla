@@ -323,9 +323,7 @@ int CHttpControlSocket::FileTransfer(const wxString localFile, const CServerPath
 
 		pData->pFile = new wxFile();
 
-		// Create local directory
-		wxFileName fn(pData->localFile);
-		wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
+		CreateLocalDir(pData->localFile);
 
 		if (!pData->pFile->Open(pData->localFile, wxFile::write))
 		{
@@ -382,9 +380,7 @@ int CHttpControlSocket::FileTransferSend()
 		pData->opState = filetransfer_transfer;
 		pData->pFile = new wxFile();
 
-		// Create local directory
-		wxFileName fn(pData->localFile);
-		wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
+		CreateLocalDir(pData->localFile);
 
 		if (!pData->pFile->Open(pData->localFile, wxFile::write))
 		{

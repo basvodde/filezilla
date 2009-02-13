@@ -21,6 +21,8 @@
 // requests have to be answered. Once proessed, call 
 // CFileZillaEngine::SetAsyncRequestReply to continue the current operation.
 
+#include "local_path.h"
+
 extern const wxEventType fzEVT_NOTIFICATION;
 #define EVT_FZ_NOTIFICATION(id, fn) \
     DECLARE_EVENT_TABLE_ENTRY( \
@@ -38,15 +40,16 @@ public:
 
 enum NotificationId
 {
-	nId_logmsg,			// notification about new messages for the message log
-	nId_operation,		// operation reply codes
-	nId_connection,		// connection information: connects, disconnects, timeouts etc..
-	nId_transferstatus,	// transfer information: bytes transferes, transfer speed and such
-	nId_listing,		// directory listings
-	nId_asyncrequest,	// asynchronous request
-	nId_active,			// sent if data gets either received or sent
-	nId_data,			// for memory downloads, indicates that new data is available.
-	nId_sftp_encryption	// information about key exchange, encryption algorithms and so on for SFTP
+	nId_logmsg,				// notification about new messages for the message log
+	nId_operation,			// operation reply codes
+	nId_connection,			// connection information: connects, disconnects, timeouts etc..
+	nId_transferstatus,		// transfer information: bytes transferes, transfer speed and such
+	nId_listing,			// directory listings
+	nId_asyncrequest,		// asynchronous request
+	nId_active,				// sent if data gets either received or sent
+	nId_data,				// for memory downloads, indicates that new data is available.
+	nId_sftp_encryption,	// information about key exchange, encryption algorithms and so on for SFTP
+	nId_local_dir_created	// local directory has been created
 };
 
 // Async request IDs
@@ -352,6 +355,14 @@ public:
 	wxString cipherServerToClient;
 	wxString macClientToServer;
 	wxString macServerToClient;
+};
+
+class CLocalDirCreatedNotification : public CNotification
+{
+public:
+	virtual enum NotificationId GetID() const { return nId_local_dir_created; }
+
+	CLocalPath dir;
 };
 
 #endif

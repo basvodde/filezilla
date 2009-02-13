@@ -189,6 +189,8 @@ protected:
 
 	int CheckOverwriteFile();
 
+	void CreateLocalDir(const wxString &local_file);
+
 	bool ParsePwdReply(wxString reply, bool unquoted = false, const CServerPath& defaultPath = CServerPath());
 
 	COpData *m_pCurOpData;

@@ -238,10 +238,31 @@ void CState::RefreshLocalFile(wxString file)
 		path.MakeParent(&file_name);
 		wxASSERT(!file_name.empty());
 	}
+
 	if (path != m_localDir)
 		return;
 
 	NotifyHandlers(STATECHANGE_LOCAL_REFRESH_FILE, file_name);
+}
+
+void CState::LocalDirCreated(const CLocalPath& path)
+{
+	if (!path.IsSubdirOf(m_localDir))
+		return;
+
+	wxString next_segment = path.GetPath().Mid(m_localDir.GetPath().Len());
+	int pos = next_segment.Find(CLocalPath::path_separator);
+	if (pos <= 0)
+	{
+		// Shouldn't ever come true
+		return;
+	}
+
+	// Current local path is /foo/
+	// Called with /foo/bar/baz/
+	// -> Refresh /foo/bar/
+	next_segment = next_segment.Left(pos);
+	NotifyHandlers(STATECHANGE_LOCAL_REFRESH_FILE, next_segment);
 }
 
 void CState::SetServer(const CServer* server)

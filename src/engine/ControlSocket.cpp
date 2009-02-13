@@ -8,6 +8,7 @@ extern "C" {
 #include "directorycache.h"
 #include "servercapabilities.h"
 #include "local_filesys.h"
+#include "local_path.h"
 #include <errno.h>
 #include "proxy.h"
 
@@ -1328,4 +1329,49 @@ bool CControlSocket::SetFileExistsAction(CFileExistsNotification *pFileExistsNot
 	}
 
 	return true;
+}
+
+void CControlSocket::CreateLocalDir(const wxString &local_file)
+{
+	wxString file;
+	CLocalPath local_path(local_file, &file);
+	if (local_path.empty() || !local_path.HasParent())
+		return;
+
+	// Only go back as far as needed. On comparison, wxWidgets'
+	// wxFileName::Mkdir always starts at the root.
+	std::list<wxString> segments;
+	while (!local_path.Exists() && local_path.HasParent())
+	{
+		wxString segment;
+		local_path.MakeParent(&segment);
+		segments.push_back(segment);
+	}
+
+	CLocalPath last_successful;
+	for (std::list<wxString>::const_iterator iter = segments.begin(); iter != segments.end(); iter++)
+	{
+		local_path.AddSegment(*iter);
+
+#ifdef __WXMSW__
+		BOOL res = CreateDirectory(local_path.GetPath(), 0);
+		if (!res && GetLastError() != ERROR_ALREADY_EXISTS)
+			break;
+#else
+		const wxCharBuffer s = path.fn_str();
+
+		int res = mkdir(s, 0777);
+		if (res && errno != EEXISTS)
+			break;
+#endif
+		last_successful = local_path;
+	}
+
+	if (last_successful.empty())
+		return;
+
+	// Send out notification
+	CLocalDirCreatedNotification *n = new CLocalDirCreatedNotification;
+	n->dir = last_successful;
+	m_pEngine->AddNotification(n);
 }

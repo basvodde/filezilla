@@ -1160,6 +1160,14 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 				delete pNotification;
 			}
 			break;
+		case nId_local_dir_created:
+			if (m_pState)
+			{
+				CLocalDirCreatedNotification *pLocalDirCreatedNotification = reinterpret_cast<CLocalDirCreatedNotification *>(pNotification);
+				m_pState->LocalDirCreated(pLocalDirCreatedNotification->dir);
+			}
+			delete pNotification;
+			break;
 		default:
 			delete pNotification;
 			break;

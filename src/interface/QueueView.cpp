@@ -681,6 +681,16 @@ void CQueueView::ProcessNotification(t_EngineData* pEngineData, CNotification* p
 		}
 		delete pNotification;
 		break;
+	case nId_local_dir_created:
+		if (m_pMainFrame)
+		{
+			CLocalDirCreatedNotification *pLocalDirCreatedNotification = reinterpret_cast<CLocalDirCreatedNotification *>(pNotification);
+			CState* pState = m_pMainFrame->GetState();
+			if (pState)
+				pState->LocalDirCreated(pLocalDirCreatedNotification->dir);
+		}
+		delete pNotification;
+		break;
 	default:
 		delete pNotification;
 		break;
