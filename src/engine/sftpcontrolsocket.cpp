@@ -1410,14 +1410,14 @@ int CSftpControlSocket::ChangeDirParseResponse(bool successful, const wxString& 
 
 int CSftpControlSocket::ChangeDirSubcommandResult(int WXUNUSED(prevResult))
 {
-	LogMessage(Debug_Verbose, _("CSftpControlSocket::ChangeDirSubcommandResult()"));
+	LogMessage(Debug_Verbose, _T("CSftpControlSocket::ChangeDirSubcommandResult()"));
 
 	return SendNextCommand();
 }
 
 int CSftpControlSocket::ChangeDirSend()
 {
-	LogMessage(Debug_Verbose, _("CSftpControlSocket::ChangeDirSend()"));
+	LogMessage(Debug_Verbose, _T("CSftpControlSocket::ChangeDirSend()"));
 
 	if (!m_pCurOpData)
 	{
