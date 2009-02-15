@@ -945,6 +945,7 @@ bool CRealControlSocket::Send(const char *buffer, int len)
 				DoClose();
 				return false;
 			}
+			written = 0;
 		}
 
 		if (written)
