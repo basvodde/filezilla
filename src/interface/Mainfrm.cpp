@@ -972,7 +972,10 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 			{
 				const CServer* pServer = m_pState->GetServer();
 				if (!pServer || *pServer != pData->m_server)
-					m_pState->Connect(pData->m_server, true, pData->m_remoteDir);
+				{
+					ConnectToSite(pData);
+					pData->m_localDir.clear(); // So not to set again below
+				}
 				else
 					m_pState->ChangeRemoteDir(pData->m_remoteDir);
 			}
