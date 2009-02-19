@@ -1080,8 +1080,10 @@ bool CSiteManager::Verify()
 		const wxString remotePathRaw = XRCCTRL(*this, "ID_REMOTEDIR", wxTextCtrl)->GetValue();
 		if (remotePathRaw != _T(""))
 		{
+			const wxString serverType = XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->GetStringSelection();
+
 			CServerPath remotePath;
-			remotePath.SetType(server.GetType());
+			remotePath.SetType(CServer::GetServerTypeFromName(serverType));
 			if (!remotePath.SetPath(remotePathRaw))
 			{
 				XRCCTRL(*this, "ID_REMOTEDIR", wxTextCtrl)->SetFocus();
