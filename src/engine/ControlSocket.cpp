@@ -1346,7 +1346,7 @@ void CControlSocket::CreateLocalDir(const wxString &local_file)
 	{
 		wxString segment;
 		local_path.MakeParent(&segment);
-		segments.push_back(segment);
+		segments.push_front(segment);
 	}
 
 	CLocalPath last_successful;
