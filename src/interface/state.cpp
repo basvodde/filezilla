@@ -59,6 +59,15 @@ bool CState::SetLocalDir(const wxString& dir, wxString *error /*=0*/)
 	}
 
 	CLocalPath p(m_localDir);
+#ifdef __WXMSW__
+	if (dir == _T("..") && !p.HasParent() && p.HasLogicalParent())
+	{
+		// Parent of C:\ is drive list
+		if (!p.MakeParent())
+			return false;
+	}
+	else
+#endif
 	if (!p.ChangePath(dir))
 		return false;
 
