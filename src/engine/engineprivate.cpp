@@ -274,6 +274,17 @@ int CFileZillaEnginePrivate::Connect(const CConnectCommand &command)
 		return FZ_REPLY_BUSY;
 
 	m_retryCount = 0;
+
+	if (m_pControlSocket)
+	{
+		// Need to delete before setting m_pCurrentCommand.
+		// The destructor can call CFileZillaEnginePrivate::ResetOperation
+		// which would delete m_pCurrentCommand
+		delete m_pControlSocket;
+		m_pControlSocket = 0;
+		m_nControlSocketError = 0;
+	}
+
 	m_pCurrentCommand = command.Clone();
 
 	if (command.GetServer().GetPort() != CServer::GetDefaultPort(command.GetServer().GetProtocol()))
@@ -615,17 +626,17 @@ void CFileZillaEnginePrivate::OnTimer(wxTimerEvent& event)
 	wxASSERT(!GetRemainingReconnectDelay(pConnectCommand->GetServer()));
 #endif
 
-	ContinueConnect();
-}
-
-int CFileZillaEnginePrivate::ContinueConnect()
-{
 	if (m_pControlSocket)
 	{
 		delete m_pControlSocket;
 		m_pControlSocket = 0;
 	}
 
+	ContinueConnect();
+}
+
+int CFileZillaEnginePrivate::ContinueConnect()
+{
 	const CConnectCommand *pConnectCommand = (CConnectCommand *)m_pCurrentCommand;
 	const CServer& server = pConnectCommand->GetServer();
 	unsigned int delay = GetRemainingReconnectDelay(server);
