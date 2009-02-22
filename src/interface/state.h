@@ -90,7 +90,7 @@ public:
 	void ListingFailed(int error);
 	void LinkIsNotDir(const CServerPath& path, const wxString& subdir);
 
-	bool SetSyncBrowse(bool enable);
+	bool SetSyncBrowse(bool enable, const CServerPath& assumed_remote_root = CServerPath());
 	bool GetSyncBrowse() const { return !m_sync_browse.local_root.empty(); }
 
 protected:

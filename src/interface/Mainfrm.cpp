@@ -980,7 +980,15 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 					m_pState->ChangeRemoteDir(pData->m_remoteDir);
 			}
 			if (!pData->m_localDir.empty())
-				m_pState->SetLocalDir(pData->m_localDir);
+			{
+				bool set = m_pState->SetLocalDir(pData->m_localDir);
+
+				if (set && pData->m_sync)
+				{
+					wxASSERT(!pData->m_remoteDir.IsEmpty());
+					m_pState->SetSyncBrowse(true, pData->m_remoteDir);
+				}
+			}
 
 			delete pData;
 
@@ -993,7 +1001,8 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 			// We hit a global bookmark
 			wxString local_dir;
 			CServerPath remote_dir;
-			if (!CBookmarksDialog::GetBookmark(iter2->second, local_dir, remote_dir))
+			bool sync;
+			if (!CBookmarksDialog::GetBookmark(iter2->second, local_dir, remote_dir, sync))
 				return;
 
 			m_pState->SetSyncBrowse(false);
@@ -1012,7 +1021,15 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 				}
 			}
 			if (!local_dir.empty())
-				m_pState->SetLocalDir(local_dir);
+			{
+				bool set = m_pState->SetLocalDir(local_dir);
+
+				if (set && sync)
+				{
+					wxASSERT(!remote_dir.IsEmpty());
+					m_pState->SetSyncBrowse(true, remote_dir);
+				}
+			}
 		}
 
 		wxString path;
@@ -2169,7 +2186,16 @@ bool CMainFrame::ConnectToSite(CSiteManagerItemData_Site* const pData)
 		return false;
 
 	if (pData->m_localDir != _T(""))
-		m_pState->SetLocalDir(pData->m_localDir);
+	{
+		bool set = m_pState->SetLocalDir(pData->m_localDir);
+
+		if (set && pData->m_sync)
+		{
+			wxASSERT(!pData->m_remoteDir.IsEmpty());
+
+			m_pState->SetSyncBrowse(true, pData->m_remoteDir);
+		}
+	}
 
 	return true;
 }

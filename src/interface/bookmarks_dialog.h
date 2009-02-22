@@ -30,8 +30,8 @@ public:
 	virtual int ShowModal(const wxString &local_path, const CServerPath &remote_path);
 
 	static bool GetBookmarks(std::list<wxString> &bookmarks);
-	static bool GetBookmark(const wxString& name, wxString &local_dir, CServerPath &remote_dir);
-	static bool AddBookmark(const wxString& name, const wxString &local_dir, const CServerPath &remote_dir);
+	static bool GetBookmark(const wxString& name, wxString &local_dir, CServerPath &remote_dir, bool &sync);
+	static bool AddBookmark(const wxString& name, const wxString &local_dir, const CServerPath &remote_dir, bool sync);
 
 protected:
 	bool Verify();

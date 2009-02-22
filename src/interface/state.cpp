@@ -800,13 +800,14 @@ bool CState::ChangeRemoteDir(const CServerPath& path, const wxString& subdir /*=
 	return true;
 }
 
-bool CState::SetSyncBrowse(bool enable)
+bool CState::SetSyncBrowse(bool enable, const CServerPath& assumed_remote_root /*=CServerPath()*/)
 {
 	if (enable != m_sync_browse.local_root.empty())
 		return enable;
 
 	if (!enable)
 	{
+		wxASSERT(assumed_remote_root.IsEmpty());
 		m_sync_browse.local_root.clear();
 		m_sync_browse.remote_root.Clear();
 		m_sync_browse.is_changing = false;
@@ -815,12 +816,19 @@ bool CState::SetSyncBrowse(bool enable)
 		return false;
 	}
 
-	if (!m_pDirectoryListing)
+	if (!m_pDirectoryListing && assumed_remote_root.IsEmpty())
 		return false;
 
 	m_sync_browse.is_changing = false;
 	m_sync_browse.local_root = m_localDir;
-	m_sync_browse.remote_root = m_pDirectoryListing->path;
+
+	if (assumed_remote_root.IsEmpty())
+		m_sync_browse.remote_root = m_pDirectoryListing->path;
+	else
+	{
+		m_sync_browse.remote_root = assumed_remote_root;
+		m_sync_browse.is_changing = true;
+	}
 
 	while (m_sync_browse.local_root.HasParent() && m_sync_browse.remote_root.HasParent() &&
 		m_sync_browse.local_root.GetLastSegment() == m_sync_browse.remote_root.GetLastSegment())

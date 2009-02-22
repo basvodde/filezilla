@@ -753,7 +753,7 @@ bool CSiteManager::Load(TiXmlElement *pElement, CSiteManagerXmlHandler* pHandler
 
 					TiXmlText* localDir = handle.FirstChildElement("LocalDir").FirstChild().Text();
 					if (localDir)
-						data->m_localDir = ConvLocal(localDir->Value());
+						data->m_localDir = GetTextElement(pBookmark, "LocalDir");
 
 					TiXmlText* remoteDir = handle.FirstChildElement("RemoteDir").FirstChild().Text();
 					if (remoteDir)
@@ -764,6 +764,9 @@ bool CSiteManager::Load(TiXmlElement *pElement, CSiteManagerXmlHandler* pHandler
 						delete data;
 						continue;
 					}
+
+					if (!data->m_localDir.empty() && !data->m_remoteDir.IsEmpty())
+						data->m_sync = GetTextElementBool(pBookmark, "SyncBrowsing", false);
 
 					pHandler->AddBookmark(name, data);
 				}
@@ -923,6 +926,8 @@ bool CSiteManager::SaveChild(TiXmlElement *pElement, wxTreeItemId child)
 		
 		// Save remote dir
 		AddTextElement(pNode, "RemoteDir", data->m_remoteDir.GetSafePath());
+
+		AddTextElementRaw(pNode, "SyncBrowsing", data->m_sync ? "1" : "0");
 	}
 	
 	delete [] utf8;
@@ -1124,6 +1129,16 @@ bool CSiteManager::Verify()
 			XRCCTRL(*this, "ID_BOOKMARK_LOCALDIR", wxTextCtrl)->SetFocus();
 			wxMessageBox(_("You need to enter at least one path, empty bookmarks are not supported."));
 			return false;
+		}
+
+		if (XRCCTRL(*this, "ID_BOOKMARK_SYNC", wxCheckBox)->GetValue())
+		{
+			if (remotePathRaw.empty() || localPath.empty())
+			{
+				XRCCTRL(*this, "ID_BOOKMARK_SYNC", wxCheckBox)->SetFocus();
+				wxMessageBox(_("You need to enter both a local and a remote path to enable synchronized browsing for this bookmark."));
+				return false;
+			}
 		}
 	}
 
@@ -1341,6 +1356,7 @@ bool CSiteManager::UpdateBookmark(CSiteManagerItemData &bookmark, const CServer&
 	bookmark.m_remoteDir = CServerPath();
 	bookmark.m_remoteDir.SetType(server.GetType());
 	bookmark.m_remoteDir.SetPath(XRCCTRL(*this, "ID_BOOKMARK_REMOTEDIR", wxTextCtrl)->GetValue());
+	bookmark.m_sync = XRCCTRL(*this, "ID_BOOKMARK_SYNC", wxCheckBox)->GetValue();
 
 	return true;
 }
@@ -1684,6 +1700,9 @@ void CSiteManager::SetCtrlState()
 		XRCCTRL(*this, "ID_BOOKMARK_LOCALDIR", wxWindow)->Enable(!predefined);
 		XRCCTRL(*this, "ID_BOOKMARK_REMOTEDIR", wxTextCtrl)->SetValue(data->m_remoteDir.GetPath());
 		XRCCTRL(*this, "ID_BOOKMARK_REMOTEDIR", wxWindow)->Enable(!predefined);
+
+		XRCCTRL(*this, "ID_BOOKMARK_SYNC", wxCheckBox)->Enable(true);
+		XRCCTRL(*this, "ID_BOOKMARK_SYNC", wxCheckBox)->SetValue(data->m_sync);
 	}
 #ifdef __WXGTK__
 	if (pFocus && !pFocus->IsEnabled())
@@ -2547,6 +2566,10 @@ CSiteManagerItemData_Site* CSiteManager::GetSiteByPath(wxString sitePath)
 		TiXmlText* remoteDir = handle.FirstChildElement("RemoteDir").FirstChild().Text();
 		if (remoteDir)
 			remotePath.SetSafePath(ConvLocal(remoteDir->Value()));
+		if (!localPath.empty() && !remotePath.IsEmpty())
+		{
+			data->m_sync = GetTextElementBool(pBookmark, "SyncBrowsing", false);
+		}
 
 		data->m_localDir = localPath;
 		data->m_remoteDir = remotePath;
@@ -2863,7 +2886,7 @@ TiXmlElement* CSiteManager::GetElementByPath(TiXmlElement* pNode, std::list<wxSt
 	return pNode;
 }
 
-bool CSiteManager::AddBookmark(wxString sitePath, const wxString& name, const wxString &local_dir, const CServerPath &remote_dir)
+bool CSiteManager::AddBookmark(wxString sitePath, const wxString& name, const wxString &local_dir, const CServerPath &remote_dir, bool sync)
 {
 	if (local_dir.empty() && remote_dir.IsEmpty())
 		return false;
@@ -2931,6 +2954,8 @@ bool CSiteManager::AddBookmark(wxString sitePath, const wxString& name, const wx
 		AddTextElement(pBookmark, "LocalDir", local_dir);
 	if (!remote_dir.IsEmpty())
 		AddTextElement(pBookmark, "RemoteDir", remote_dir.GetSafePath());
+	if (sync)
+		AddTextElementRaw(pBookmark, "SyncBrowsing", "1");
 
 	wxString error;
 	if (!file.Save(&error))
