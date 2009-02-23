@@ -71,17 +71,18 @@ bool UnquoteCommand(wxString& command, wxString& arguments)
 	if (command == _T(""))
 		return true;
 
-	bool inQuotes = false;
+	wxChar inQuotes = 0;
 	wxString file;
 	for (unsigned int i = 0; i < command.Len(); i++)
 	{
-		if (command[i] == '"')
+		const wxChar& c = command[i];
+		if (c == '"' || c == '\'')
 		{
 			if (!inQuotes)
-				inQuotes = true;
-			else if (command[i + 1] == '"')
+				inQuotes = c;
+			else if (command[i + 1] == c)
 			{
-				file += '"';
+				file += c;
 				i++;
 			}
 			else
