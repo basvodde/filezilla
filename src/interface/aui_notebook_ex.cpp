@@ -5,6 +5,12 @@
 
 wxColor wxAuiStepColour(const wxColor& c, int ialpha);
 
+#ifdef __WXMSW__
+#define TABCOLOUR wxSYS_COLOUR_3DFACE
+#else
+#define TABCOLOUR wxSYS_COLOUR_WINDOWFRAME
+#endif
+
 // Special DC to filter some calls.
 // We can (mis)use wxMirrorDC since it already
 // forwards all calls to another DC.
@@ -32,7 +38,7 @@ public:
 		{
 			m_rectangle_called++;
 
-			wxColour c = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWFRAME);
+			wxColour c = wxSystemSettings::GetColour(TABCOLOUR);
 			if (c.Red() + c.Green() + c.Blue() >= 384)
 				m_original_dc->DrawRectangle(x, y, width, height);
 			else
@@ -49,7 +55,7 @@ public:
 		}
 		else
 		{
-			wxColour c = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWFRAME);
+			wxColour c = wxSystemSettings::GetColour(TABCOLOUR);
 			if (c.Red() + c.Green() + c.Blue() < 384)
 				m_original_dc->SetBrush(wxBrush(wxAuiStepColour(c, 70)));
 			m_original_dc->DrawRectangle(x, y, width, height);
@@ -97,7 +103,7 @@ public:
 		}
 		else if (m_type == 2)
 		{
-			wxColour c = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWFRAME);
+			wxColour c = wxSystemSettings::GetColour(TABCOLOUR);
 			if (c.Red() + c.Green() + c.Blue() >= 384)
 				m_original_dc->GradientFillLinear(rect, initialColour, destColour, nDirection);
 			else
@@ -166,7 +172,7 @@ public:
                          int* x_extent)
 	{
 #ifndef __WXMAC__
-		m_base_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWFRAME);
+		m_base_colour = wxSystemSettings::GetColour(TABCOLOUR);
 #endif
 		if (!pane.active)
 		{
