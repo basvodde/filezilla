@@ -700,7 +700,8 @@ bool CRemoteListView::UpdateDirectoryListing(const CDirectoryListing *pDirectory
 void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryListing, bool modified /*=false*/)
 {
 #ifdef __WXMSW__
-	EndEditLabel(true);
+	if (GetEditControl())
+		ListView_CancelEditLabel((HWND)GetHandle());
 #endif
 
 	bool reset = false;

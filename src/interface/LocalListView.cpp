@@ -286,6 +286,11 @@ CLocalListView::~CLocalListView()
 
 bool CLocalListView::DisplayDir(wxString dirname)
 {
+#ifdef __WXMSW__
+	if (GetEditControl())
+		ListView_CancelEditLabel((HWND)GetHandle());
+#endif
+
 	wxString focused;
 	std::list<wxString> selectedNames;
 	if (m_dir != dirname)
