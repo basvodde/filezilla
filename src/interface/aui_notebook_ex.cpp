@@ -20,11 +20,30 @@ wxColor wxAuiStepColour(const wxColor& c, int ialpha);
 class CFilterDC : public wxMirrorDC
 {
 public:
-	CFilterDC(wxDC& dc, int type)
-		: wxMirrorDC(dc, false), m_original_dc(&dc), m_type(type)
+	CFilterDC(wxDC& dc, int type, bool odd_tab_height)
+		: wxMirrorDC(dc, false), m_original_dc(&dc), m_type(type), m_odd_tab_height(odd_tab_height)
 	{
 		m_gradient_called = 0;
 		m_rectangle_called = 0;
+	}
+
+	virtual void DoDrawLine(wxCoord x1, wxCoord y1, wxCoord x2, wxCoord y2)
+	{
+		if (m_type != 1)
+		{
+			m_original_dc->DrawLine(x1, y1, x2, y2);
+			return;
+		}
+
+		wxColour c = wxSystemSettings::GetColour(TABCOLOUR);
+		if (c.Red() + c.Green() + c.Blue() >= 384)
+			m_original_dc->DrawLine(x1, y1, x2, y2);
+		else
+		{
+			// Draw dark line instead of bright line
+			m_original_dc->SetPen(wxPen(c));
+			m_original_dc->DrawLine(x1, y1, x2, y2);
+		}
 	}
 
 	virtual void DoDrawRectangle(wxCoord x, wxCoord y, wxCoord width, wxCoord height)
@@ -57,7 +76,7 @@ public:
 		{
 			wxColour c = wxSystemSettings::GetColour(TABCOLOUR);
 			if (c.Red() + c.Green() + c.Blue() < 384)
-				m_original_dc->SetBrush(wxBrush(wxAuiStepColour(c, 70)));
+				m_original_dc->SetBrush(wxBrush(wxAuiStepColour(c, 100)));
 			m_original_dc->DrawRectangle(x, y, width, height);
 		}
 	}
@@ -89,16 +108,42 @@ public:
 			}
 
 			// Dark theme
+			wxRect r = rect;
+			r.x--;
+			r.width++;
+
+			wxRect r2 = r;
+			r2.x--;
+			r2.width += 2;
 			if (m_gradient_called == 1)
 			{
+				// Lighter inner border
+				m_original_dc->SetBrush(wxBrush(wxAuiStepColour(destColour, 105)));
+				m_original_dc->SetPen(wxPen(wxAuiStepColour(destColour, 105)));
+				m_original_dc->DrawRectangle(r2);
+
 				wxColour new_init = wxAuiStepColour(destColour, 95);
 				wxColour new_dest = wxAuiStepColour(destColour, 65);
-				m_original_dc->GradientFillLinear(rect, new_init, new_dest, nDirection);
+				m_original_dc->GradientFillLinear(r, new_init, new_dest, nDirection);
 			}
 			else
 			{
+				// Correct for rounding error in AUI code
+				if (!m_odd_tab_height)
+					r.height -= 1;
+				else
+					r2.height += 1;
+
+				// Lighter inner border
+				m_original_dc->SetBrush(wxBrush(wxAuiStepColour(destColour, 105)));
+				m_original_dc->SetPen(wxPen(wxAuiStepColour(destColour, 105)));
+				m_original_dc->DrawRectangle(r2);
+
 				wxColour new_dest = wxAuiStepColour(destColour, 65);
-				m_original_dc->GradientFillLinear(rect, new_dest, new_dest, nDirection);
+				m_original_dc->GradientFillLinear(r, new_dest, new_dest, nDirection);
+				m_original_dc->SetPen(wxPen(destColour));
+				m_original_dc->DrawPoint(r.x, r.y + r.height - 1);
+				m_original_dc->DrawPoint(r.x + r.width - 1, r.y + r.height - 1);
 			}
 		}
 		else if (m_type == 2)
@@ -120,6 +165,7 @@ protected:
 	int m_rectangle_called;
 	wxDC *m_original_dc;
 	const int m_type;
+	bool m_odd_tab_height;
 };
 
 class wxAuiTabArtEx : public wxAuiDefaultTabArt
@@ -193,13 +239,13 @@ public:
 				m_normal_font = m_original_normal_font;
 		}
 
-		CFilterDC filter_dc(dc, pane.active ? 1 : 0);
+		CFilterDC filter_dc(dc, pane.active ? 1 : 0, m_tab_ctrl_height % 2);
 		wxAuiDefaultTabArt::DrawTab(*((wxDC*)&filter_dc), wnd, pane, in_rect, close_button_state, out_tab_rect, out_button_rect, x_extent);
 	}
 
 	virtual void DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 	{
-		CFilterDC filter_dc(dc, 2);
+		CFilterDC filter_dc(dc, 2, m_tab_ctrl_height % 2);
 		wxAuiDefaultTabArt::DrawBackground(*((wxDC*)&filter_dc), wnd, rect);
 	}
 protected:
