@@ -804,6 +804,9 @@ CSiteManagerItemData_Site* CSiteManager::ReadServerElement(TiXmlElement *pElemen
 	if (remoteDir)
 		data->m_remoteDir.SetSafePath(ConvLocal(remoteDir->Value()));
 
+	if (!data->m_localDir.empty() && !data->m_remoteDir.IsEmpty())
+		data->m_sync = GetTextElementBool(pElement, "SyncBrowsing", false);
+
 	return data;
 }
 
@@ -904,6 +907,8 @@ bool CSiteManager::SaveChild(TiXmlElement *pElement, wxTreeItemId child)
 		
 		// Save remote dir
 		AddTextElement(pNode, "RemoteDir", data->m_remoteDir.GetSafePath());
+
+		AddTextElementRaw(pNode, "SyncBrowsing", data->m_sync ? "1" : "0");
 
 		pNode->InsertEndChild(TiXmlText(utf8));
 
@@ -1093,6 +1098,17 @@ bool CSiteManager::Verify()
 			{
 				XRCCTRL(*this, "ID_REMOTEDIR", wxTextCtrl)->SetFocus();
 				wxMessageBox(_("Default remote path cannot be parsed. Make sure it is valid and is supported by the selected servertype."));
+				return false;
+			}
+		}
+
+		const wxString localPath = XRCCTRL(*this, "ID_LOCALDIR", wxTextCtrl)->GetValue();
+		if (XRCCTRL(*this, "ID_SYNC", wxCheckBox)->GetValue())
+		{
+			if (remotePathRaw.empty() || localPath.empty())
+			{
+				XRCCTRL(*this, "ID_SYNC", wxCheckBox)->SetFocus();
+				wxMessageBox(_("You need to enter both a local and a remote path to enable synchronized browsing for this site."));
 				return false;
 			}
 		}
@@ -1397,6 +1413,8 @@ bool CSiteManager::UpdateServer(CSiteManagerItemData_Site &server, const wxStrin
 	server.m_remoteDir = CServerPath();
 	server.m_remoteDir.SetType(server.m_server.GetType());
 	server.m_remoteDir.SetPath(XRCCTRL(*this, "ID_REMOTEDIR", wxTextCtrl)->GetValue());
+	server.m_sync = XRCCTRL(*this, "ID_SYNC", wxCheckBox)->GetValue();
+
 	int hours, minutes;
 	hours = XRCCTRL(*this, "ID_TIMEZONE_HOURS", wxSpinCtrl)->GetValue();
 	minutes = XRCCTRL(*this, "ID_TIMEZONE_MINUTES", wxSpinCtrl)->GetValue();
@@ -1461,6 +1479,10 @@ bool CSiteManager::GetServer(CSiteManagerItemData_Site& data)
 			data.m_localDir = pData->m_localDir;
 		if (!pData->m_remoteDir.IsEmpty())
 			data.m_remoteDir = pData->m_remoteDir;
+		if (!data.m_localDir.empty() && !data.m_remoteDir.IsEmpty())
+			data.m_sync = true;
+		else
+			data.m_sync = false;
 	}
 	else
 		data = *(CSiteManagerItemData_Site *)pData;
@@ -1561,6 +1583,7 @@ void CSiteManager::SetCtrlState()
 		XRCCTRL(*this, "ID_SERVERTYPE", wxChoice)->SetSelection(0);
 		XRCCTRL(*this, "ID_LOCALDIR", wxTextCtrl)->SetValue(_T(""));
 		XRCCTRL(*this, "ID_REMOTEDIR", wxTextCtrl)->SetValue(_T(""));
+		XRCCTRL(*this, "ID_SYNC", wxCheckBox)->SetValue(false);
 		XRCCTRL(*this, "ID_TIMEZONE_HOURS", wxSpinCtrl)->SetValue(0);
 		XRCCTRL(*this, "ID_TIMEZONE_MINUTES", wxSpinCtrl)->SetValue(0);
 
@@ -1629,6 +1652,8 @@ void CSiteManager::SetCtrlState()
 		XRCCTRL(*this, "ID_LOCALDIR", wxWindow)->Enable(!predefined);
 		XRCCTRL(*this, "ID_REMOTEDIR", wxTextCtrl)->SetValue(site_data->m_remoteDir.GetPath());
 		XRCCTRL(*this, "ID_REMOTEDIR", wxWindow)->Enable(!predefined);
+		XRCCTRL(*this, "ID_SYNC", wxCheckBox)->Enable(!predefined);
+		XRCCTRL(*this, "ID_SYNC", wxCheckBox)->SetValue(site_data->m_sync);
 		XRCCTRL(*this, "ID_TIMEZONE_HOURS", wxSpinCtrl)->SetValue(site_data->m_server.GetTimezoneOffset() / 60);
 		XRCCTRL(*this, "ID_TIMEZONE_HOURS", wxWindow)->Enable(!predefined);
 		XRCCTRL(*this, "ID_TIMEZONE_MINUTES", wxSpinCtrl)->SetValue(site_data->m_server.GetTimezoneOffset() % 60);
@@ -2570,6 +2595,8 @@ CSiteManagerItemData_Site* CSiteManager::GetSiteByPath(wxString sitePath)
 		{
 			data->m_sync = GetTextElementBool(pBookmark, "SyncBrowsing", false);
 		}
+		else
+			data->m_sync = false;
 
 		data->m_localDir = localPath;
 		data->m_remoteDir = remotePath;
