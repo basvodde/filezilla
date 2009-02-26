@@ -69,7 +69,7 @@ void CRecentServerList::SetMostRecentServer(const CServer& server)
 	bool relocated = false;
 	for (std::list<CServer>::iterator iter = m_mostRecentServers.begin(); iter != m_mostRecentServers.end(); iter++)
 	{
-		if (*iter == server)
+		if (iter->EqualsNoPass(server))
 		{
 			m_mostRecentServers.erase(iter);
 			m_mostRecentServers.push_front(server);

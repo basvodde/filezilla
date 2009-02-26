@@ -425,6 +425,44 @@ bool CServer::operator!=(const CServer &op) const
 	return !(*this == op);
 }
 
+bool CServer::EqualsNoPass(const CServer &op) const
+{
+	if (m_protocol != op.m_protocol)
+		return false;
+	else if (m_type != op.m_type)
+		return false;
+	else if (m_host != op.m_host)
+		return false;
+	else if (m_port != op.m_port)
+		return false;
+	else if (m_logonType != op.m_logonType)
+		return false;
+	else if (m_logonType != ANONYMOUS)
+	{
+		if (m_user != op.m_user)
+			return false;
+	}
+	if (m_timezoneOffset != op.m_timezoneOffset)
+		return false;
+	else if (m_pasvMode != op.m_pasvMode)
+		return false;
+	else if (m_encodingType != op.m_encodingType)
+		return false;
+	else if (m_encodingType == ENCODING_CUSTOM)
+	{
+		if (m_customEncoding != op.m_customEncoding)
+			return false;
+	}
+	if (m_postLoginCommands != op.m_postLoginCommands)
+		return false;
+	if (m_bypassProxy != op.m_bypassProxy)
+		return false;
+
+	// Do not compare number of allowed multiple connections
+
+	return true;
+}
+
 CServer::CServer(enum ServerProtocol protocol, enum ServerType type, wxString host, unsigned int port, wxString user, wxString pass /*=_T("")*/, wxString account /*=_T("")*/)
 {
 	Initialize();
