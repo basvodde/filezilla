@@ -80,6 +80,7 @@ public:
 			m_original_dc->DrawRectangle(x, y, width, height);
 		}
 	}
+
 	virtual void DoGradientFillLinear(const wxRect& rect, const wxColour& initialColour, const wxColour& destColour, wxDirection nDirection = wxEAST)
 	{
 		m_gradient_called++;
@@ -160,6 +161,9 @@ public:
 		}
 	}
 
+#ifdef __WXGTK__
+	virtual GdkWindow* GetGDKWindow() const { return m_original_dc->GetGDKWindow(); }
+#endif
 protected:
 	int m_gradient_called;
 	int m_rectangle_called;
