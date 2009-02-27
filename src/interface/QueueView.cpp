@@ -656,9 +656,9 @@ void CQueueView::ProcessNotification(t_EngineData* pEngineData, CNotification* p
 		{
 			CActiveNotification *pActiveNotification = reinterpret_cast<CActiveNotification *>(pNotification);
 			if (pActiveNotification->IsRecv())
-				m_pMainFrame->UpdateRecvLed();
+				m_pMainFrame->UpdateRecvLed(pEngineData->pEngine);
 			else
-				m_pMainFrame->UpdateSendLed();
+				m_pMainFrame->UpdateSendLed(pEngineData->pEngine);
 			delete pNotification;
 		}
 		break;

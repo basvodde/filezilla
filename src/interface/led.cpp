@@ -1,7 +1,6 @@
 #include "FileZilla.h"
 #include "led.h"
 #include "filezillaapp.h"
-#include "state.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -20,11 +19,9 @@ END_EVENT_TABLE()
 #define LED_OFF 1
 #define LED_ON 0
 
-CLed::CLed(wxWindow *parent, unsigned int index, CState* pState)
+CLed::CLed(wxWindow *parent, unsigned int index)
 	: wxWindow(parent, -1, wxDefaultPosition, wxSize(11, 11))
 {
-	m_pState = pState;
-
 	if (index == 1)
 		m_index = 1;
 	else
@@ -90,13 +87,15 @@ void CLed::OnTimer(wxTimerEvent& event)
 	if (!m_timer.IsRunning())
 		return;
 
-	if (!m_pState->m_pEngine)
+	std::list<CFileZillaEngine *> old;
+	m_pinging_engines.swap(old);
+	for (std::list<CFileZillaEngine *>::const_iterator iter = old.begin(); iter != old.end(); iter++)
 	{
-		m_timer.Stop();
-		return;
+		if ((*iter)->IsActive(m_index == 1))
+			m_pinging_engines.push_back(*iter);
 	}
 
-	if (!m_pState->m_pEngine->IsActive(m_index == 0))
+	if (m_pinging_engines.empty())
 	{
 		Unset();
 		m_timer.Stop();
@@ -105,11 +104,23 @@ void CLed::OnTimer(wxTimerEvent& event)
 	return;
 }
 
-void CLed::Ping()
+void CLed::Ping(CFileZillaEngine* pEngine)
 {
-	if (m_timer.IsRunning())
+	if (!m_loaded)
 		return;
 
+	std::list<CFileZillaEngine*>::const_iterator iter;
+	for (iter = m_pinging_engines.begin(); iter != m_pinging_engines.end(); iter++)
+	{
+		if (*iter == pEngine)
+			break;
+	}
+	if (iter == m_pinging_engines.end())
+		m_pinging_engines.push_back(pEngine);
+
+	if (m_timer.IsRunning())
+		return;
+	
 	Set();
 	m_timer.Start(100);
 }
@@ -119,3 +130,9 @@ void CLed::OnEraseBackground(wxEraseEvent& event)
 {
 }
 #endif
+
+void CLed::Stop()
+{
+	m_loaded = false;
+	m_timer.Stop();
+}

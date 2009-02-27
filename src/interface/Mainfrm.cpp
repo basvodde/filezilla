@@ -211,8 +211,8 @@ CMainFrame::CMainFrame()
 	m_pStatusBar = new CStatusBar(this);
 	if (m_pStatusBar)
 	{
-		m_pRecvLed = new CLed(m_pStatusBar, 1, m_pState);
-		m_pSendLed = new CLed(m_pStatusBar, 0, m_pState);
+		m_pRecvLed = new CLed(m_pStatusBar, 1);
+		m_pSendLed = new CLed(m_pStatusBar, 0);
 
 		m_pStatusBar->AddChild(-1, m_pRecvLed, 2);
 		m_pStatusBar->AddChild(-1, m_pSendLed, 16);
@@ -1152,9 +1152,9 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 			{
 				CActiveNotification *pActiveNotification = reinterpret_cast<CActiveNotification *>(pNotification);
 				if (pActiveNotification->IsRecv())
-					UpdateRecvLed();
+					UpdateRecvLed(m_pState->m_pEngine);
 				else
-					UpdateSendLed();
+					UpdateSendLed(m_pState->m_pEngine);
 				delete pNotification;
 			}
 			break;
@@ -1445,8 +1445,16 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 	Show(false);
 
 	// Getting deleted by wxWidgets
-	m_pSendLed = 0;
-	m_pRecvLed = 0;
+	if (m_pSendLed)
+	{
+		m_pSendLed = 0;
+		m_pSendLed->Stop();
+	}
+	if (m_pRecvLed)
+	{
+		m_pRecvLed = 0;
+		m_pRecvLed->Stop();
+	}
 	m_pStatusBar = 0;
 	m_pMenuBar = 0;
 	m_pToolBar = 0;
@@ -1645,16 +1653,16 @@ void CMainFrame::OnSiteManager(wxCommandEvent& event)
 	OpenSiteManager();
 }
 
-void CMainFrame::UpdateSendLed()
+void CMainFrame::UpdateSendLed(CFileZillaEngine* pEngine)
 {
 	if (m_pSendLed)
-		m_pSendLed->Ping();
+		m_pSendLed->Ping(pEngine);
 }
 
-void CMainFrame::UpdateRecvLed()
+void CMainFrame::UpdateRecvLed(CFileZillaEngine* pEngine)
 {
 	if (m_pRecvLed)
-		m_pRecvLed->Ping();
+		m_pRecvLed->Ping(pEngine);
 }
 
 void CMainFrame::AddToRequestQueue(CFileZillaEngine *pEngine, CAsyncRequestNotification *pNotification)

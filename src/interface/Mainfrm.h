@@ -31,8 +31,8 @@ public:
 	CMainFrame();
 	virtual ~CMainFrame();
 
-	void UpdateSendLed();
-	void UpdateRecvLed();
+	void UpdateSendLed(CFileZillaEngine* pEngine);
+	void UpdateRecvLed(CFileZillaEngine* pEngine);
 
 	void AddToRequestQueue(CFileZillaEngine* pEngine, CAsyncRequestNotification* pNotification);
 	CState* GetState() { return m_pState; }

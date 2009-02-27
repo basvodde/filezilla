@@ -1,14 +1,16 @@
 #ifndef __LED_H__
 #define __LED_H__
 
-class CState;
+class CFileZillaEngine;
 class CLed : public wxWindow
 {
 public:
-	CLed(wxWindow *parent, unsigned int index, CState* pState);
-	~CLed();
+	CLed(wxWindow *parent, unsigned int index);
+	virtual ~CLed();
 
-	void Ping();
+	void Ping(CFileZillaEngine *pEngine);
+
+	void Stop();
 
 protected:
 	void Set();
@@ -17,7 +19,7 @@ protected:
 	int m_index;
 	int m_ledState;
 
-	CState* m_pState;
+	std::list<CFileZillaEngine *> m_pinging_engines;
 
 	wxBitmap m_leds[2];
 	bool m_loaded;
