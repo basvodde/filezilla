@@ -278,5 +278,7 @@ bool COptionsPageThemes::OnDisplayedFirstTime()
 	if (!DisplayTheme(theme))
 		failure = true;
 
+	pTheme->GetContainingSizer()->Layout();
+
 	return !failure;
 }

@@ -86,7 +86,10 @@ bool COptionsPageLanguage::OnDisplayedFirstTime()
 
 	wxString localesDir = wxGetApp().GetLocalesDir();
 	if (localesDir == _T("") || !wxDir::Exists(localesDir))
+	{
+		pListBox->GetContainingSizer()->Layout();
 		return true;
+	}
 
 	wxDir dir(localesDir);
 	wxString locale;
