@@ -103,8 +103,8 @@ enum RequestId CInteractiveLoginNotification::GetRequestID() const
 	return reqId_interactiveLogin;
 }
 
-CActiveNotification::CActiveNotification(bool recv)
-	: m_recv(recv)
+CActiveNotification::CActiveNotification(int direction)
+	: m_direction(direction)
 {
 }
 
@@ -115,11 +115,6 @@ CActiveNotification::~CActiveNotification()
 enum NotificationId CActiveNotification::GetID() const
 {
 	return nId_active;
-}
-
-bool CActiveNotification::IsRecv() const
-{
-	return m_recv;
 }
 
 CTransferStatusNotification::CTransferStatusNotification(CTransferStatus *pStatus)

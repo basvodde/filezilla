@@ -8,9 +8,9 @@ public:
 	CLed(wxWindow *parent, unsigned int index);
 	virtual ~CLed();
 
-	void Ping(CFileZillaEngine *pEngine);
+	void Ping();
 
-	void Stop();
+	void SetEngine(CFileZillaEngine* pEngine);
 
 protected:
 	void Set();
@@ -19,7 +19,7 @@ protected:
 	int m_index;
 	int m_ledState;
 
-	std::list<CFileZillaEngine *> m_pinging_engines;
+	CFileZillaEngine* m_pEngine;
 
 	wxBitmap m_leds[2];
 	bool m_loaded;

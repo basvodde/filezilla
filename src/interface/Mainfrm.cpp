@@ -211,18 +211,18 @@ CMainFrame::CMainFrame()
 	m_pStatusBar = new CStatusBar(this);
 	if (m_pStatusBar)
 	{
-		m_pRecvLed = new CLed(m_pStatusBar, 1);
-		m_pSendLed = new CLed(m_pStatusBar, 0);
+		m_pActivityLed[0] = new CLed(m_pStatusBar, 0);
+		m_pActivityLed[1] = new CLed(m_pStatusBar, 1);
 
-		m_pStatusBar->AddChild(-1, m_pRecvLed, 2);
-		m_pStatusBar->AddChild(-1, m_pSendLed, 16);
+		m_pStatusBar->AddChild(-1, m_pActivityLed[1], 2);
+		m_pStatusBar->AddChild(-1, m_pActivityLed[0], 16);
 
 		SetStatusBar(m_pStatusBar);
 	}
 	else
 	{
-		m_pRecvLed = 0;
-		m_pSendLed = 0;
+		m_pActivityLed[0] = 0;
+		m_pActivityLed[1] = 0;
 	}
 
 	m_transferStatusTimer.SetOwner(this, TRANSFERSTATUS_TIMER_ID);
@@ -247,6 +247,12 @@ CMainFrame::CMainFrame()
 	if (!m_pState->CreateEngine())
 	{
 		wxMessageBox(_("Failed to initialize FTP engine"));
+	}
+
+	if (m_pActivityLed[0])
+	{
+		m_pActivityLed[0]->SetEngine(m_pState->m_pEngine);
+		m_pActivityLed[1]->SetEngine(m_pState->m_pEngine);
 	}
 
 #ifdef __WXMSW__
@@ -1151,10 +1157,7 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 		case nId_active:
 			{
 				CActiveNotification *pActiveNotification = reinterpret_cast<CActiveNotification *>(pNotification);
-				if (pActiveNotification->IsRecv())
-					UpdateRecvLed(m_pState->m_pEngine);
-				else
-					UpdateSendLed(m_pState->m_pEngine);
+				UpdateActivityLed(pActiveNotification->GetDirection());
 				delete pNotification;
 			}
 			break;
@@ -1445,15 +1448,13 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 	Show(false);
 
 	// Getting deleted by wxWidgets
-	if (m_pSendLed)
+	for (int i = 0; i < 2; i++)
 	{
-		m_pSendLed = 0;
-		m_pSendLed->Stop();
-	}
-	if (m_pRecvLed)
-	{
-		m_pRecvLed = 0;
-		m_pRecvLed->Stop();
+		if (!m_pActivityLed[i])
+			continue;
+
+		m_pActivityLed[i]->SetEngine(0);
+		m_pActivityLed[i] = 0;
 	}
 	m_pStatusBar = 0;
 	m_pMenuBar = 0;
@@ -1653,16 +1654,10 @@ void CMainFrame::OnSiteManager(wxCommandEvent& event)
 	OpenSiteManager();
 }
 
-void CMainFrame::UpdateSendLed(CFileZillaEngine* pEngine)
+void CMainFrame::UpdateActivityLed(int direction)
 {
-	if (m_pSendLed)
-		m_pSendLed->Ping(pEngine);
-}
-
-void CMainFrame::UpdateRecvLed(CFileZillaEngine* pEngine)
-{
-	if (m_pRecvLed)
-		m_pRecvLed->Ping(pEngine);
+	if (m_pActivityLed[direction])
+		m_pActivityLed[direction]->Ping();
 }
 
 void CMainFrame::AddToRequestQueue(CFileZillaEngine *pEngine, CAsyncRequestNotification *pNotification)

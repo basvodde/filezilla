@@ -197,12 +197,12 @@ protected:
 class CActiveNotification : public CNotification
 {
 public:
-	CActiveNotification(bool recv);
+	CActiveNotification(int direction);
 	virtual ~CActiveNotification();
 	virtual enum NotificationId GetID() const;
-	bool IsRecv() const;
+	int GetDirection() const { return m_direction; }
 protected:
-	const bool m_recv;
+	const int m_direction;
 };
 
 class CTransferStatus

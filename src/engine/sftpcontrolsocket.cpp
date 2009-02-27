@@ -678,10 +678,10 @@ void CSftpControlSocket::OnSftpEvent(wxCommandEvent& event)
 			}
 			break;
 		case sftpRecv:
-			SetActive(true);
+			SetActive(CFileZillaEngine::recv);
 			break;
 		case sftpSend:
-			SetActive(false);
+			SetActive(CFileZillaEngine::send);
 			break;
 		case sftpUsedQuotaRecv:
 			OnQuotaRequest(CRateLimiter::inbound);

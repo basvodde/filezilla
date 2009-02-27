@@ -215,7 +215,7 @@ int CHttpControlSocket::DoReceive()
 			return 0;
 		}
 
-		m_pEngine->SetActive(true);
+		m_pEngine->SetActive(CFileZillaEngine::recv);
 
 		if (!m_pCurOpData || m_pCurOpData->opId == cmd_connect)
 		{

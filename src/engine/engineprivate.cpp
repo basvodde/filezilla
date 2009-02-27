@@ -29,8 +29,7 @@ typedef void (wxEvtHandler::*fzEngineEventFunction)(wxFzEngineEvent&);
     ),
 
 std::list<CFileZillaEnginePrivate*> CFileZillaEnginePrivate::m_engineList;
-int CFileZillaEnginePrivate::m_activeStatusSend = 0;
-int CFileZillaEnginePrivate::m_activeStatusRecv = 0;
+int CFileZillaEnginePrivate::m_activeStatus[2] = {0, 0};
 std::list<CFileZillaEnginePrivate::t_failedLogins> CFileZillaEnginePrivate::m_failedLogins;
 
 DEFINE_EVENT_TYPE(fzEVT_ENGINE_NOTIFICATION);
@@ -235,23 +234,14 @@ int CFileZillaEnginePrivate::ResetOperation(int nErrorCode)
 	return nErrorCode;
 }
 
-void CFileZillaEnginePrivate::SetActive(bool recv)
+void CFileZillaEnginePrivate::SetActive(int direction)
 {
 	if (m_pControlSocket)
 		m_pControlSocket->SetAlive();
 
-	if (recv)
-	{
-		if (!m_activeStatusRecv)
-			AddNotification(new CActiveNotification(true));
-		m_activeStatusRecv = 2;
-	}
-	else
-	{
-		if (!m_activeStatusSend)
-			AddNotification(new CActiveNotification(false));
-		m_activeStatusSend = 2;
-	}
+	if (!m_activeStatus[direction])
+		AddNotification(new CActiveNotification(direction));
+	m_activeStatus[direction] = 2;
 }
 
 unsigned int CFileZillaEnginePrivate::GetNextAsyncRequestNumber()

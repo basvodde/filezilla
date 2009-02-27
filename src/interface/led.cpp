@@ -33,6 +33,8 @@ CLed::CLed(wxWindow *parent, unsigned int index)
 
 	m_loaded = false;
 
+	m_pEngine = 0;
+
 	wxImage image;
 	if (!image.LoadFile(wxGetApp().GetResourceDir() + _T("leds.png"), wxBITMAP_TYPE_PNG))
 		return;
@@ -87,15 +89,7 @@ void CLed::OnTimer(wxTimerEvent& event)
 	if (!m_timer.IsRunning())
 		return;
 
-	std::list<CFileZillaEngine *> old;
-	m_pinging_engines.swap(old);
-	for (std::list<CFileZillaEngine *>::const_iterator iter = old.begin(); iter != old.end(); iter++)
-	{
-		if ((*iter)->IsActive(m_index == 1))
-			m_pinging_engines.push_back(*iter);
-	}
-
-	if (m_pinging_engines.empty())
+	if (!m_pEngine || !m_pEngine->IsActive((enum CFileZillaEngine::_direction)m_index))
 	{
 		Unset();
 		m_timer.Stop();
@@ -104,19 +98,10 @@ void CLed::OnTimer(wxTimerEvent& event)
 	return;
 }
 
-void CLed::Ping(CFileZillaEngine* pEngine)
+void CLed::Ping()
 {
 	if (!m_loaded)
 		return;
-
-	std::list<CFileZillaEngine*>::const_iterator iter;
-	for (iter = m_pinging_engines.begin(); iter != m_pinging_engines.end(); iter++)
-	{
-		if (*iter == pEngine)
-			break;
-	}
-	if (iter == m_pinging_engines.end())
-		m_pinging_engines.push_back(pEngine);
 
 	if (m_timer.IsRunning())
 		return;
@@ -131,8 +116,7 @@ void CLed::OnEraseBackground(wxEraseEvent& event)
 }
 #endif
 
-void CLed::Stop()
+void CLed::SetEngine(CFileZillaEngine *pEngine)
 {
-	m_loaded = false;
-	m_timer.Stop();
+	m_pEngine = pEngine;
 }

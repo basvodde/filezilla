@@ -163,34 +163,15 @@ bool CFileZillaEngine::IsPendingAsyncRequestReply(const CAsyncRequestNotificatio
 	return pNotification->requestNumber == m_asyncRequestCounter;
 }
 
-bool CFileZillaEngine::IsActive(bool recv)
+bool CFileZillaEngine::IsActive(enum CFileZillaEngine::_direction direction)
 {
-	if (recv)
+	if (m_activeStatus[direction] == 2)
 	{
-		if (m_activeStatusRecv == 2)
-		{
-			m_activeStatusRecv = 1;
-			return true;
-		}
-		else
-		{
-			m_activeStatusRecv = 0;
-			return false;
-		}
+		m_activeStatus[direction] = 1;
+		return true;
 	}
-	else
-	{
-		if (m_activeStatusSend == 2)
-		{
-			m_activeStatusSend = 1;
-			return true;
-		}
-		else
-		{
-			m_activeStatusSend = 0;
-			return false;
-		}
-	}
+
+	m_activeStatus[direction] = 0;
 	return false;
 }
 

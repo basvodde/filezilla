@@ -949,7 +949,7 @@ bool CRealControlSocket::Send(const char *buffer, int len)
 		}
 
 		if (written)
-			m_pEngine->SetActive(false);
+			m_pEngine->SetActive(CFileZillaEngine::send);
 
 		if (written < len)
 		{
@@ -1049,7 +1049,7 @@ void CRealControlSocket::OnSend()
 		if (written)
 		{
 			SetAlive();
-			m_pEngine->SetActive(false);
+			m_pEngine->SetActive(CFileZillaEngine::send);
 		}
 
 		if (written == m_nSendBufferLen)

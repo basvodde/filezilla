@@ -15,7 +15,7 @@ class CFileZillaEnginePrivate : public wxEvtHandler
 {
 public:
 	int ResetOperation(int nErrorCode);	
-	void SetActive(bool recv);
+	void SetActive(int direction);
 
 	// Add new pending notification
 	void AddNotification(CNotification *pNotification);
@@ -75,9 +75,8 @@ protected:
 	static std::list<CFileZillaEnginePrivate*> m_engineList;
 
 	// Indicicates if data has been received/sent and whether to send any notifications
-	static int m_activeStatusSend;
-	static int m_activeStatusRecv;
-
+	static int m_activeStatus[2];
+	
 	// Remember last path used in a dirlisting.
 	CServerPath m_lastListDir;
 	CTimeEx m_lastListTime;

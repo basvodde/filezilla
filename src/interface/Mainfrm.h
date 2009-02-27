@@ -31,8 +31,7 @@ public:
 	CMainFrame();
 	virtual ~CMainFrame();
 
-	void UpdateSendLed(CFileZillaEngine* pEngine);
-	void UpdateRecvLed(CFileZillaEngine* pEngine);
+	void UpdateActivityLed(int direction);
 
 	void AddToRequestQueue(CFileZillaEngine* pEngine, CAsyncRequestNotification* pNotification);
 	CState* GetState() { return m_pState; }
@@ -106,8 +105,7 @@ protected:
 	CRemoteListView* m_pRemoteListView;
 	CViewHeader* m_pLocalViewHeader;
 	CViewHeader* m_pRemoteViewHeader;
-	CLed* m_pRecvLed;
-	CLed* m_pSendLed;
+	CLed* m_pActivityLed[2];
 	wxTimer m_transferStatusTimer;
 	CThemeProvider* m_pThemeProvider;
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK

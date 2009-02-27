@@ -259,7 +259,7 @@ void CFtpControlSocket::OnReceive()
 			return;
 		}
 
-		m_pEngine->SetActive(true);
+		m_pEngine->SetActive(CFileZillaEngine::recv);
 
 		char* start = m_receiveBuffer;
 		m_bufferLen += read;

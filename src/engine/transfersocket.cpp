@@ -297,7 +297,7 @@ void CTransferSocket::OnReceive()
 			if (numread > 0)
 			{
 				m_pDirectoryListingParser->AddData(pBuffer, numread);
-				m_pEngine->SetActive(true);
+				m_pEngine->SetActive(CFileZillaEngine::recv);
 				if (!m_madeProgress)
 				{
 					m_madeProgress = 2;
@@ -336,7 +336,7 @@ void CTransferSocket::OnReceive()
 
 			if (numread > 0)
 			{
-				m_pEngine->SetActive(true);
+				m_pEngine->SetActive(CFileZillaEngine::recv);
 				if (!m_madeProgress)
 				{
 					m_madeProgress = 2;
@@ -433,7 +433,7 @@ void CTransferSocket::OnSend()
 		if (written <= 0)
 			break;
 
-		m_pEngine->SetActive(false);
+		m_pEngine->SetActive(CFileZillaEngine::send);
 		if (m_madeProgress == 1)
 		{
 			m_pControlSocket->LogMessage(::Debug_Debug, _T("Made progress in CTransferSocket::OnSend()"));
