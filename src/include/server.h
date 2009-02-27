@@ -94,6 +94,7 @@ public:
 	bool operator==(const CServer &op) const;
 	bool operator<(const CServer &op) const;
 	bool operator!=(const CServer &op) const;
+	bool EqualsNoPass(const CServer &op) const;
 
 	bool SetTimezoneOffset(int minutes);	
 	void SetPasvMode(enum PasvMode pasvMode);
