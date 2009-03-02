@@ -314,6 +314,7 @@ protected:
 	void OnChar(wxKeyEvent& event);
 	void OnEndColumnDrag(wxListEvent& event);
 	void OnTimer(wxTimerEvent& event);
+	void OnKeyDown(wxKeyEvent& event);
 };
 
 class CQueueView;

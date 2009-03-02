@@ -718,6 +718,7 @@ EVT_NAVIGATION_KEY(CQueueViewBase::OnNavigationKey)
 EVT_CHAR(CQueueViewBase::OnChar)
 EVT_LIST_COL_END_DRAG(wxID_ANY, CQueueViewBase::OnEndColumnDrag)
 EVT_TIMER(wxID_ANY, CQueueViewBase::OnTimer)
+EVT_KEY_DOWN(CQueueViewBase::OnKeyDown)
 END_EVENT_TABLE()
 
 CQueueViewBase::CQueueViewBase(CQueue* parent, int index, const wxString& title)
@@ -1411,6 +1412,19 @@ void CQueueViewBase::OnTimer(wxTimerEvent& event)
 
 	if (m_fileCountChanged || m_folderScanCountChanged)
 		DisplayNumberQueuedFiles();
+}
+
+void CQueueViewBase::OnKeyDown(wxKeyEvent& event)
+{
+	const int code = event.GetKeyCode();
+	const int mods = event.GetModifiers();
+	if (code == 'A' && (mods == wxMOD_CMD || mods == (wxMOD_CONTROL | wxMOD_META)))
+	{
+		for (unsigned int i = 0; i < GetItemCount(); i++)
+			SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+	}
+	else
+		event.Skip();
 }
 
 // ------
