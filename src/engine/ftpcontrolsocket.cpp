@@ -1406,6 +1406,10 @@ int CFtpControlSocket::ListSubcommandResult(int prevResult)
 		{
 			if (pData->tranferCommandSent && IsMisleadingListResponse())
 			{
+				CDirectoryListing listing;
+				listing.path = m_CurrentPath;
+				listing.m_firstListTime = CTimeEx::Now();
+
 				if (pData->viewHiddenCheck)
 				{
 					if (pData->viewHidden)
@@ -1416,6 +1420,7 @@ int CFtpControlSocket::ListSubcommandResult(int prevResult)
 							// Not supported
 							LogMessage(Debug_Info, _T("Server does not seem to support LIST -a"));
 							CServerCapabilities::SetCapability(*m_pCurrentServer, list_hidden_support, no);
+							listing = pData->directoryListing;
 						}
 						else
 						{
@@ -1426,7 +1431,6 @@ int CFtpControlSocket::ListSubcommandResult(int prevResult)
 					else
 					{
 						// Reset status
-						pData->directoryListing.m_firstListTime = CTimeEx::Now();
 						pData->transferEndReason = successful;
 						pData->tranferCommandSent = false;
 						delete m_pTransferSocket;
@@ -1436,16 +1440,17 @@ int CFtpControlSocket::ListSubcommandResult(int prevResult)
 
 						// Repeat with LIST -a
 						pData->viewHidden = true;
+						pData->directoryListing = listing;
 						return Transfer(_T("LIST -a"), pData);
 					}
 				}
 
-				int res = ListCheckTimezoneDetection(pData->directoryListing);
+				int res = ListCheckTimezoneDetection(listing);
 				if (res != FZ_REPLY_OK)
 					return res;
 
 				CDirectoryCache cache;
-				cache.Store(pData->directoryListing, *m_pCurrentServer);
+				cache.Store(listing, *m_pCurrentServer);
 
 				m_pEngine->SendDirectoryListingNotification(m_CurrentPath, !pData->pNextOpData, true, false);
 
