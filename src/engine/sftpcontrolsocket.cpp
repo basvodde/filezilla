@@ -932,7 +932,7 @@ int CSftpControlSocket::List(CServerPath path /*=CServerPath()*/, wxString subDi
 	pData->path = path;
 	pData->subDir = subDir;
 	pData->refresh = (flags & LIST_FLAG_REFRESH) != 0;
-	pData->fallback_to_current = (flags & LIST_FLAG_FALLBACK_CURRENT) != 0;
+	pData->fallback_to_current = !path.IsEmpty() && (flags & LIST_FLAG_FALLBACK_CURRENT) != 0;
 
 	int res = ChangeDir(path, subDir, (flags & LIST_FLAG_LINK) != 0);
 	if (res != FZ_REPLY_OK)
