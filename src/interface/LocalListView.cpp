@@ -721,9 +721,6 @@ void CLocalListView::OnItemActivated(wxListEvent &event)
 		{
 			// Enter action
 
-			if (IsComparing())
-				ExitComparisonMode();
-
 			wxString error;
 			if (!m_pState->SetLocalDir(data->name, &error))
 			{
@@ -805,9 +802,6 @@ void CLocalListView::OnMenuEnter(wxCommandEvent &event)
 		wxBell();
 		return;
 	}
-
-	if (IsComparing())
-		ExitComparisonMode();
 
 	wxString error;
 	if (!m_pState->SetLocalDir(data->name, &error))
@@ -1497,9 +1491,6 @@ void CLocalListView::OnKeyDown(wxKeyEvent& event)
 			wxBell();
 			return;
 		}
-
-		if (IsComparing())
-			ExitComparisonMode();
 
 		wxString error;
 		if (!m_pState->SetLocalDir(_T(".."), &error))

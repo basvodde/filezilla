@@ -25,6 +25,7 @@ CState::CState(CMainFrame* pMainFrame)
 	m_pRecursiveOperation = new CRecursiveOperation(this);
 
 	m_sync_browse.is_changing = false;
+	m_sync_browse.compare = false;
 }
 
 CState::~CState()
@@ -107,6 +108,7 @@ bool CState::SetLocalDir(const wxString& dir, wxString *error /*=0*/)
 			}
 
 			m_sync_browse.is_changing = true;
+			m_sync_browse.compare = m_pMainFrame->GetComparisonManager()->IsComparing();
 			CListCommand *pCommand = new CListCommand(remote_path);
 			m_pCommandQueue->ProcessCommand(pCommand);
 
@@ -210,6 +212,9 @@ bool CState::SetRemoteDir(const CDirectoryListing *pDirectoryListing, bool modif
 			COptions::Get()->SetOption(OPTION_LASTLOCALDIR, m_localDir.GetPath());
 
 			NotifyHandlers(STATECHANGE_LOCAL_DIR);
+
+			if (m_sync_browse.compare)
+				m_pMainFrame->GetComparisonManager()->CompareListings();
 		}
 	}
 	return true;
@@ -790,7 +795,10 @@ bool CState::ChangeRemoteDir(const CServerPath& path, const wxString& subdir /*=
 				SetSyncBrowse(false);
 			}
 			else
+			{
 				m_sync_browse.is_changing = true;
+				m_sync_browse.compare = m_pMainFrame->GetRemoteListView()->IsComparing();
+			}
 		}
 	}
 
@@ -828,6 +836,7 @@ bool CState::SetSyncBrowse(bool enable, const CServerPath& assumed_remote_root /
 	{
 		m_sync_browse.remote_root = assumed_remote_root;
 		m_sync_browse.is_changing = true;
+		m_sync_browse.compare = false;
 	}
 
 	while (m_sync_browse.local_root.HasParent() && m_sync_browse.remote_root.HasParent() &&

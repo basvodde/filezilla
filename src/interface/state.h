@@ -116,6 +116,7 @@ protected:
 		CLocalPath local_root;
 		CServerPath remote_root;
 		bool is_changing;
+		bool compare;
 	} m_sync_browse;
 };
 

@@ -1215,8 +1215,6 @@ void CRemoteListView::OnItemActivated(wxListEvent &event)
 
 			if (!action)
 			{
-				if (IsComparing())
-					ExitComparisonMode();
 				if (entry.link)
 				{
 					delete m_pLinkResolveState;
@@ -1267,9 +1265,6 @@ void CRemoteListView::OnItemActivated(wxListEvent &event)
 	}
 	else
 	{
-		if (IsComparing())
-			ExitComparisonMode();
-
 		m_pState->ChangeRemoteDir(m_pDirectoryListing->path, _T(".."));
 	}
 }
@@ -1320,8 +1315,6 @@ void CRemoteListView::OnMenuEnter(wxCommandEvent &event)
 			return;
 		}
 
-		if (IsComparing())
-			ExitComparisonMode();
 		if (entry.link)
 		{
 			delete m_pLinkResolveState;
@@ -1335,9 +1328,6 @@ void CRemoteListView::OnMenuEnter(wxCommandEvent &event)
 	}
 	else
 	{
-		if (IsComparing())
-			ExitComparisonMode();
-
 		m_pState->ChangeRemoteDir(m_pDirectoryListing->path, _T(".."));
 	}
 }
@@ -1728,9 +1718,6 @@ void CRemoteListView::OnKeyDown(wxKeyEvent& event)
 			wxBell();
 			return;
 		}
-
-		if (IsComparing())
-			ExitComparisonMode();
 
 		m_pState->ChangeRemoteDir(m_pDirectoryListing->path, _T(".."));
 	}

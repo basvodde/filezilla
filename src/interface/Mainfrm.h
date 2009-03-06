@@ -61,6 +61,8 @@ public:
 
 	void ClearBookmarks();
 
+	CComparisonManager* GetComparisonManager() { return m_pComparisonManager; }
+
 protected:
 	bool CreateMenus();
 	bool CreateQuickconnectBar();
