@@ -1533,7 +1533,7 @@ int select_result(WPARAM wParam, LPARAM lParam)
 	    } else {
 		if (ret)
 		{
-		    RecvNotification(s);
+		    fznotify(sftpRecv);
 		    open &= plug_receive(s->plug, 0, buf, ret);
 		}
 		else
