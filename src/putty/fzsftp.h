@@ -11,7 +11,7 @@ char* read_input_line(int force, int* error);
 #endif
 
 #ifdef _WINDOWS
-#include <Windows.h>
+#include <windows.h>
 typedef FILETIME _fztimer;
 #else
 typedef struct
