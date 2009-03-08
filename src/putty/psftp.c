@@ -227,6 +227,8 @@ int sftp_get_file(char *fname, char *outfname, int recurse, int restart)
     uint64 offset;
     WFile *file;
     int ret, shown_err = FALSE;
+    _fztimer timer;
+    int winterval;
 
     /*
      * In recursive mode, see if we're dealing with a directory.
@@ -448,6 +450,9 @@ int sftp_get_file(char *fname, char *outfname, int recurse, int restart)
 
     fzprintf(sftpStatus, "remote:%s => local:%s", fname, outfname);
 
+    fz_timer_init(&timer);
+    winterval = 0;
+
     /*
      * FIXME: we can use FXP_FSTAT here to get the file size, and
      * thus put up a progress bar.
@@ -483,17 +488,21 @@ int sftp_get_file(char *fname, char *outfname, int recurse, int restart)
 		    xfer_set_error(xfer);
 		    break;
 		}
-		else
-		    fzprintf(sftpWrite, "%d", wlen);
 		wpos += wlen;
 	    }
 	    if (wpos < len) {	       /* we had an error */
 		ret = 0;
 		xfer_set_error(xfer);
 	    }
-
+	    winterval += wpos;
 	    sfree(vbuf);
 	}
+
+    if (fz_timer_check(&timer)) {
+	    fzprintf(sftpWrite, "%d", winterval);
+	    winterval = 0;
+	}
+
     }
 
     xfer_cleanup(xfer);

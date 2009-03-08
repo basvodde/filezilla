@@ -32,7 +32,11 @@ struct sftp_message
 {
 	sftpEventTypes type;
 	wxString text;
-	sftpRequestTypes reqType;
+	union
+	{
+		sftpRequestTypes reqType;
+		int value;
+	};
 };
 
 DECLARE_EVENT_TYPE(fzEVT_SFTP, -1)
@@ -91,6 +95,42 @@ protected:
 		wxCommandEvent evt(fzEVT_SFTP, wxID_ANY);
 		if (sendEvent)
 			wxPostEvent(m_pOwner, evt);
+	}
+
+	int ReadNumber(wxInputStream* pInputStream, bool &error)
+	{
+		int number = 0;
+
+		while(!pInputStream->Eof())
+		{
+			char c;
+			pInputStream->Read(&c, 1);
+			if (pInputStream->LastRead() != 1)
+			{
+				if (pInputStream->Eof())
+					m_pOwner->LogMessage(Debug_Warning, _T("Unexpected EOF."));
+				else
+					m_pOwner->LogMessage(Debug_Warning, _T("Uknown input stream error"));
+				error = true;
+				return 0;
+			}
+
+			if (c == '\n')
+				break;
+			else if (c >= '0' && c <= '9')
+			{
+				number *= 10;
+				number += c - '0';
+			}
+		}
+		if (pInputStream->Eof())
+		{
+			m_pOwner->LogMessage(Debug_Warning, _T("Unexpected EOF."));
+			error = true;
+			return 0;
+		}
+
+		return number;
 	}
 
 	wxString ReadLine(wxInputStream* pInputStream, bool &error)
@@ -234,13 +274,16 @@ protected:
 				{
 					sftp_message* message = new sftp_message;
 					message->type = (sftpEventTypes)eventType;
-					message->text = ReadLine(pInputStream, error);
-					if (pInputStream->LastRead() <= 0 || message->text == _T(""))
+					message->value = ReadNumber(pInputStream, error);
+					if (error)
 					{
 						delete message;
 						goto loopexit;
 					}
-					SendMessage(message);
+					if (!message->value)
+						delete message;
+					else
+						SendMessage(message);
 				}
 				break;
 			default:
@@ -653,9 +696,6 @@ void CSftpControlSocket::OnSftpEvent(wxCommandEvent& event)
 		case sftpRead:
 		case sftpWrite:
 			{
-				long number = 0;
-				message->text.ToLong(&number);
-				
 				if (m_pTransferStatus && !m_pTransferStatus->madeProgress)
 				{
 					if (m_pCurOpData && m_pCurOpData->opId == cmd_transfer)
@@ -663,7 +703,7 @@ void CSftpControlSocket::OnSftpEvent(wxCommandEvent& event)
 						CSftpFileTransferOpData *pData = static_cast<CSftpFileTransferOpData *>(m_pCurOpData);
 						if (pData->download)
 						{
-							if (number > 0)
+							if (message->value > 0)
 								SetTransferStatusMadeProgress();
 						}
 						else
@@ -674,7 +714,7 @@ void CSftpControlSocket::OnSftpEvent(wxCommandEvent& event)
 					}
 				}
 
-				UpdateTransferStatus(number);
+				UpdateTransferStatus(message->value);
 			}
 			break;
 		case sftpRecv:
