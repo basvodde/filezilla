@@ -153,6 +153,8 @@ bool CFilterEditDialog::Create(wxWindow* parent, const std::vector<CFilter>& fil
 	if (!m_pListCtrl)
 		return false;
 	pSizerItem->SetWindow(m_pListCtrl);
+	m_pListCtrl->SetContainingSizer(wnd->GetContainingSizer());
+	wnd->SetContainingSizer(0);
 	wnd->Destroy();
 	CalcMinListWidth();
 
