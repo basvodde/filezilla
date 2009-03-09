@@ -34,6 +34,8 @@ protected:
 
 	bool ListExpand(wxTreeItemId item);
 
+	void ApplyFilters();
+
 	CQueueView* m_pQueue;
 	const CDirectoryListing* m_pDirectoryListing;
 

@@ -265,6 +265,8 @@ void CRemoteTreeView::OnStateChange(enum t_statechange_notifications notificatio
 		SetDirectoryListing(m_pState->GetRemoteDir(), false);
 	else if (notification == STATECHANGE_REMOTE_DIR_MODIFIED)
 		SetDirectoryListing(m_pState->GetRemoteDir(), true);
+	else if (notification == STATECHANGE_APPLYFILTER)
+		ApplyFilters();
 }
 
 void CRemoteTreeView::SetDirectoryListing(const CDirectoryListing* pListing, bool modified)
@@ -488,6 +490,9 @@ bool CRemoteTreeView::HasSubdirs(const CDirectoryListing& listing, const CFilter
 {
 	if (!listing.m_hasDirs)
 		return false;
+
+	if (!filter.HasActiveFilters())
+		return true;
 
 	const wxString path = listing.path.GetPath();
 	for (unsigned int i = 0; i < listing.GetCount(); i++)
@@ -1337,4 +1342,80 @@ void CRemoteTreeView::OnChar(wxKeyEvent& event)
 		OnMenuDelete(cmdEvt);
 	else
 		event.Skip();
+}
+
+void CRemoteTreeView::ApplyFilters()
+{
+	struct _parents
+	{
+		wxTreeItemId item;
+		CServerPath path;
+	};
+
+	std::list<struct _parents> parents;
+
+	const wxTreeItemId root = GetRootItem();
+	wxTreeItemIdValue cookie;
+	for (wxTreeItemId child = GetFirstChild(root, cookie); child; child = GetNextSibling(child))
+	{
+		CServerPath path = GetPathFromItem(child);
+		if (path.IsEmpty())
+			continue;
+
+		struct _parents dir;
+		dir.item = child;
+		dir.path = path;
+		parents.push_back(dir);
+	}
+	
+	CFilterManager filter;
+	while (!parents.empty())
+	{
+		struct _parents parent = parents.back();
+		parents.pop_back();
+
+		CDirectoryListing listing;
+		if (m_pState->m_pEngine->CacheLookup(parent.path, listing) == FZ_REPLY_OK)
+			RefreshItem(parent.item, listing, false);
+		else if (filter.HasActiveFilters())
+		{
+			for (wxTreeItemId child = GetFirstChild(parent.item, cookie); child; child = GetNextSibling(child))
+			{
+				CServerPath path = GetPathFromItem(child);
+				if (path.IsEmpty())
+					continue;
+
+				if (filter.FilenameFiltered(GetItemText(child), path.GetPath(), true, -1, false, 0))
+				{
+					wxTreeItemId sel = GetSelection();
+					while (sel && sel != child)
+						sel = GetItemParent(sel);
+					if (!sel)
+					{
+						Delete(child);
+						continue;
+					}
+				}
+				
+				struct _parents dir;
+				dir.item = child;
+				dir.path = path;
+				parents.push_back(dir);
+			}
+
+			// The stuff below has already been done above in this one case
+			continue;
+		}
+		for (wxTreeItemId child = GetFirstChild(parent.item, cookie); child; child = GetNextSibling(child))
+		{
+			CServerPath path = GetPathFromItem(child);
+			if (path.IsEmpty())
+				continue;
+
+			struct _parents dir;
+			dir.item = child;
+			dir.path = path;
+			parents.push_back(dir);
+		}
+	}
 }
