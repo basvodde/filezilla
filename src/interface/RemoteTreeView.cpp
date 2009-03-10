@@ -1344,14 +1344,14 @@ void CRemoteTreeView::OnChar(wxKeyEvent& event)
 		event.Skip();
 }
 
+struct _parents
+{
+	wxTreeItemId item;
+	CServerPath path;
+};
+
 void CRemoteTreeView::ApplyFilters()
 {
-	struct _parents
-	{
-		wxTreeItemId item;
-		CServerPath path;
-	};
-
 	std::list<struct _parents> parents;
 
 	const wxTreeItemId root = GetRootItem();
