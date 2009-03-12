@@ -1584,7 +1584,7 @@ int CFtpControlSocket::ListParseResponse()
 		const wxChar *res = date.ParseFormat(m_Response.Mid(4), _T("%Y%m%d%H%M"));
 		if (res && date.IsValid())
 		{
-			wxASSERT(pData->directoryListing[pData->mdtm_index].hasTime);
+			wxASSERT(pData->directoryListing[pData->mdtm_index].hasTimestamp != CDirentry::timestamp_none);
 			wxDateTime listTime = pData->directoryListing[pData->mdtm_index].time;
 			listTime -= wxTimeSpan(0, m_pCurrentServer->GetTimezoneOffset(), 0);
 

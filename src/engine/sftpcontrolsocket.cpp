@@ -1052,7 +1052,7 @@ int CSftpControlSocket::ListParseResponse(bool successful, const wxString& reply
 				if (date.IsValid())
 				{
 					date.MakeTimezone(wxDateTime::GMT0);
-					wxASSERT(pData->directoryListing[pData->mtime_index].hasTime);
+					wxASSERT(pData->directoryListing[pData->mtime_index].hasTimestamp != CDirentry::timestamp_none);
 					wxDateTime listTime = pData->directoryListing[pData->mtime_index].time;
 					listTime -= wxTimeSpan(0, m_pCurrentServer->GetTimezoneOffset(), 0);
 
