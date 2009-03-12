@@ -14,8 +14,14 @@ public:
 	bool link;
 	wxString target; // Set to linktarget it link is true
 
-	bool hasDate;
-	bool hasTime;
+	enum _timestamp
+	{
+		timestamp_none,
+		timestamp_date,
+		timestamp_time,
+		timestamp_seconds
+	} hasTimestamp;
+
 	wxDateTime time;
 
 	bool unsure; // May be true on cached items if any changes were made to the file

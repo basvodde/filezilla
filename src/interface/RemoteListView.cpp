@@ -956,16 +956,16 @@ public:
 
 	inline int CmpTime(const CDirentry &data1, const CDirentry &data2) const
 	{
-		if (!data1.hasDate)
+		if (data1.hasTimestamp == CDirentry::timestamp_none)
 		{
-			if (data2.hasDate)
+			if (data2.hasTimestamp != CDirentry::timestamp_none)
 				return -1;
 			else
 				return 0;
 		}
 		else
 		{
-			if (!data2.hasDate)
+			if (!data2.hasTimestamp == CDirentry::timestamp_none)
 				return 1;
 
 			if (data1.time < data2.time)
@@ -2776,10 +2776,10 @@ bool CRemoteListView::GetNextFile(wxString& name, bool& dir, wxLongLong& size, w
 	name = entry.name;
 	dir = entry.dir;
 	size = entry.size;
-	if (entry.hasDate)
+	if (entry.hasTimestamp != CDirentry::timestamp_none)
 	{
 		date = entry.time;
-		hasTime = entry.hasTime;
+		hasTime = entry.hasTimestamp >= CDirentry::timestamp_time;
 	}
 	else
 	{
@@ -2905,10 +2905,10 @@ wxString CRemoteListView::GetItemText(int item, unsigned int column)
 	else if (column == 3)
 	{
 		const CDirentry& entry = (*m_pDirectoryListing)[index];
-		if (!entry.hasDate)
+		if (entry.hasTimestamp == CDirentry::timestamp_none)
 			return _T("");
 
-		if (entry.hasTime)
+		if (entry.hasTimestamp >= CDirentry::timestamp_time)
 			return entry.time.Format(m_timeFormat);
 		else
 			return entry.time.Format(m_dateFormat);

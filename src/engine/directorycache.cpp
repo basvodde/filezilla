@@ -241,8 +241,7 @@ bool CDirectoryCache::UpdateFile(const CServer &server, const CServerPath &path,
 			entry.listing.SetCount(count + 1);
 			CDirentry& direntry = entry.listing[count];
 			direntry.name = filename;
-			direntry.hasDate = false;
-			direntry.hasTime = false;
+			direntry.hasTimestamp = CDirentry::timestamp_none;
 			direntry.size = size;
 			direntry.dir = (type == dir);
 			direntry.link = 0;

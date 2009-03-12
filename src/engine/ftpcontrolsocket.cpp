@@ -1603,7 +1603,7 @@ int CFtpControlSocket::ListParseResponse()
 			for (int i = 0; i < count; i++)
 			{
 				CDirentry& entry = pData->directoryListing[i];
-				if (!entry.hasTime)
+				if (entry.hasTimestamp < CDirentry::timestamp_time)
 					continue;
 
 				entry.time += span;
@@ -1646,7 +1646,7 @@ int CFtpControlSocket::ListCheckTimezoneDetection(CDirectoryListing& listing)
 			const int count = listing.GetCount();
 			for (int i = 0; i < count; i++)
 			{
-				if (!listing[i].dir && listing[i].hasTime)
+				if (!listing[i].dir && listing[i].hasTimestamp >= CDirentry::timestamp_time)
 				{
 					pData->opState = list_mdtm;
 					pData->directoryListing = listing;
@@ -2321,11 +2321,11 @@ int CFtpControlSocket::FileTransferSubcommandResult(int prevResult)
 					if (matchedCase)
 					{
 						pData->remoteFileSize = entry.size.GetLo() + ((wxFileOffset)entry.size.GetHi() << 32);
-						if (entry.hasDate)
+						if (entry.hasTimestamp != CDirentry::timestamp_none)
 							pData->fileTime = entry.time;
 
 						if (pData->download &&
-							(!entry.hasDate || !entry.hasTime) &&
+							entry.hasTimestamp < CDirentry::timestamp_time &&
 							m_pEngine->GetOptions()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS) &&
 							CServerCapabilities::GetCapability(*m_pCurrentServer, mdtm_command) == yes)
 						{
@@ -2386,11 +2386,11 @@ int CFtpControlSocket::FileTransferSubcommandResult(int prevResult)
 				if (matchedCase && !entry.unsure)
 				{
 					pData->remoteFileSize = entry.size.GetLo() + ((wxFileOffset)entry.size.GetHi() << 32);
-					if (entry.hasDate)
+					if (entry.hasTimestamp != CDirentry::timestamp_none)
 						pData->fileTime = entry.time;
 
 					if (pData->download &&
-						(!entry.hasDate || !entry.hasTime) &&
+						entry.hasTimestamp < CDirentry::timestamp_time &&
 						m_pEngine->GetOptions()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS) &&
 						CServerCapabilities::GetCapability(*m_pCurrentServer, mdtm_command) == yes)
 					{

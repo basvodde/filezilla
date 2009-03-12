@@ -446,7 +446,7 @@ int CControlSocket::CheckOverwriteFile()
 	{
 		if (!pData->fileTime.IsValid())
 		{
-			if (entry.hasDate)
+			if (entry.hasTimestamp != CDirentry::timestamp_none)
 			{
 				pNotification->remoteTime = entry.time;
 				pData->fileTime = entry.time;

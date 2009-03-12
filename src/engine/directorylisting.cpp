@@ -49,13 +49,13 @@ CDirectoryListing& CDirectoryListing::operator=(const CDirectoryListing &a)
 
 wxString CDirentry::dump() const
 {
-	wxString str = wxString::Format(_T("name=%s\nsize=%s\npermissions=%s\nownerGroup=%s\ndir=%d\nlink=%d\ntarget=%s\nhasDate=%d\nhasTime=%d\nunsure=%d\n"),
+	wxString str = wxString::Format(_T("name=%s\nsize=%s\npermissions=%s\nownerGroup=%s\ndir=%d\nlink=%d\ntarget=%s\nhasTimestamp=%d\nunsure=%d\n"),
 				name.c_str(), size.ToString().c_str(), permissions.c_str(), ownerGroup.c_str(), dir, link,
-				target.c_str(), hasDate, hasTime, unsure);
+				target.c_str(), hasTimestamp, unsure);
 
-	if (hasDate)
+	if (hasTimestamp != timestamp_none)
 		str += _T("date=") + time.FormatISODate() + _T("\n");
-	if (hasTime)
+	if (hasTimestamp >= timestamp_time)
 		str += _T("time=") + time.FormatISOTime() + _T("\n");
 	str += wxString::Format(_T("unsure=%d\n"), unsure);
 	return str;
@@ -84,13 +84,10 @@ bool CDirentry::operator==(const CDirentry &op) const
 	if (target != op.target)
 		return false;
 
-	if (hasDate != op.hasDate)
+	if (hasTimestamp != op.hasTimestamp)
 		return false;
 
-	if (hasTime != op.hasTime)
-		return false;
-
-	if (hasDate)
+	if (hasTimestamp != timestamp_none)
 	{
 		if (time != op.time)
 			return false;

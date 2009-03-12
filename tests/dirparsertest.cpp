@@ -80,8 +80,7 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				false,
 				_T(""),
-				true,
-				false,
+				CDirentry::timestamp_date,
 				wxDateTime(8, wxDateTime::Apr, 1994),
 				false
 			},
@@ -99,8 +98,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(29, wxDateTime::Mar, calcYear(3, 29), 3, 26),
 				false
 			},
@@ -118,8 +116,7 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				false,
 				_T(""),
-				true,
-				false,
+				CDirentry::timestamp_date,
 				wxDateTime(8, wxDateTime::Apr, 1994),
 				false
 			},
@@ -137,8 +134,7 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				true,
 				_T("usr/bin"),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(25, wxDateTime::Jan, calcYear(1, 25), 0, 17),
 				false
 			},
@@ -158,8 +154,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				false,
+				CDirentry::timestamp_date,
 				wxDateTime(26, wxDateTime::Sep, 2000),
 				false
 			},
@@ -176,8 +171,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(26, wxDateTime::Sep, calcYear(9, 26), 13, 45),
 				false
 			},
@@ -194,8 +188,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(7, wxDateTime::Jun, 2005, 21, 22),
 				false
 			},
@@ -214,8 +207,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(5, wxDateTime::Oct, calcYear(10, 5), 21, 22),
 				false
 			},
@@ -235,8 +227,7 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(16, wxDateTime::Jan, calcYear(1, 16), 18, 53),
 				false
 			},
@@ -253,8 +244,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(20, wxDateTime::Oct, calcYear(10, 20), 15, 27),
 				false
 			},
@@ -278,8 +268,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				false,
+				CDirentry::timestamp_date,
 				wxDateTime(22, wxDateTime::Nov, 1995),
 				false
 			},
@@ -296,8 +285,7 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				false,
 				_T(""),
-				true,
-				false,
+				CDirentry::timestamp_date,
 				wxDateTime(10, wxDateTime::May, 1996),
 				false
 			},
@@ -315,8 +303,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(29, wxDateTime::Jan, calcYear(1, 29), 3, 26),
 				false
 			},
@@ -340,8 +327,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_seconds,
 				utc,
 				false
 			},
@@ -360,8 +346,7 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_seconds,
 				utc,
 				false
 			},
@@ -381,8 +366,7 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(27, wxDateTime::Apr, 2000, 12, 9),
 				false
 			},
@@ -400,8 +384,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(6, wxDateTime::Apr, 2000, 15, 47),
 				false
 			},
@@ -418,8 +401,7 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(2, wxDateTime::Sep, 2002, 18, 48),
 				false
 			},
@@ -436,8 +418,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(2, wxDateTime::Sep, 2002, 19, 6),
 				false
 			},
@@ -457,8 +438,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_seconds,
 				utc,
 				false
 			},
@@ -478,8 +458,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(4, wxDateTime::Apr, 2000, 21, 6),
 				false
 			},
@@ -496,8 +475,7 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(12, wxDateTime::Dec, 2002, 2, 13),
 				false
 			},
@@ -516,8 +494,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(8, wxDateTime::Oct, 2002, 9, 47),
 				false
 			},
@@ -538,8 +515,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(23, wxDateTime::Apr, 2003, 10, 57),
 				false
 			},
@@ -556,8 +532,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(14, wxDateTime::Jul, 1999, 12, 37),
 				false
 			},
@@ -575,8 +550,7 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(11, wxDateTime::Feb, 2003, 16, 15),
 				false
 			},
@@ -594,8 +568,7 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(5, wxDateTime::Oct, 2000, 23, 38),
 				false
 			},
@@ -615,8 +588,7 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(26, wxDateTime::Jul, calcYear(7, 26), 20, 10),
 				false
 			},
@@ -633,8 +605,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				false,
+				CDirentry::timestamp_date,
 				wxDateTime(2, wxDateTime::Oct, 2003),
 				false
 			},
@@ -651,8 +622,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(12, wxDateTime::Oct, 1999, 17, 12),
 				false
 			},
@@ -669,8 +639,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(24, wxDateTime::Apr, 2003, 17, 12),
 				false
 			},
@@ -690,8 +659,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				false,
+				CDirentry::timestamp_date,
 				wxDateTime(18, wxDateTime::Apr, 2003),
 				false
 			},
@@ -710,8 +678,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				false,
+				CDirentry::timestamp_date,
 				wxDateTime(20, wxDateTime::Mar, 2003),
 				false
 			},
@@ -728,8 +695,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(17, wxDateTime::Aug, calcYear(8, 17), 8, 52),
 				false
 			},
@@ -746,8 +712,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				false,
+				CDirentry::timestamp_date,
 				wxDateTime(15, wxDateTime::Jul, 2004),
 				false
 			},
@@ -767,8 +732,7 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(19, wxDateTime::Nov, 2001, 21, 41),
 				false
 			},
@@ -786,8 +750,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_seconds,
 				wxDateTime(2, wxDateTime::Jul, 2003, 10, 30, 13),
 				false
 			},
@@ -805,8 +768,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				false,
+				CDirentry::timestamp_date,
 				wxDateTime(7, wxDateTime::Jan, 2000),
 				false
 			},
@@ -824,8 +786,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				false,
+				CDirentry::timestamp_date,
 				wxDateTime(15, wxDateTime::Jul, 2002),
 				false
 			},
@@ -842,8 +803,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_seconds,
 				wxDateTime(24, wxDateTime::Apr, 2003, 8, 16, 15),
 				false
 			},
@@ -860,8 +820,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_seconds,
 				wxDateTime(2, wxDateTime::Jul, 2003, 10, 30, 8),
 				false
 			},
@@ -879,8 +838,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(2, wxDateTime::Aug, 2006, 13, 5),
 				false
 			},
@@ -897,8 +855,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_seconds,
 				wxDateTime(17, wxDateTime::Jun, 1994, 17, 25, 37),
 				false
 			},
@@ -919,8 +876,7 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_seconds,
 				wxDateTime(23, wxDateTime::Feb, 2000, 15, 9, 55),
 				false
 			},
@@ -937,8 +893,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_seconds,
 				wxDateTime(23, wxDateTime::Feb, 2000, 15, 9, 55),
 				false
 			},
@@ -956,8 +911,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(12, wxDateTime::Feb, calcYear(2, 12), 17, 20),
 				false
 			},
@@ -975,8 +929,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				false,
+				CDirentry::timestamp_date,
 				wxDateTime(1, wxDateTime::Jun, 1999),
 				false
 			},
@@ -994,8 +947,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_seconds,
 				wxDateTime(3, wxDateTime::Jun, 2004, 10, 20, 3),
 				false
 			},
@@ -1013,8 +965,7 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_seconds,
 				wxDateTime(28, wxDateTime::Feb, 1998, 5, 23, 30),
 				false
 			},
@@ -1032,8 +983,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(13, wxDateTime::Jan, calcYear(1, 13), 7, 42),
 				false
 			},
@@ -1052,8 +1002,7 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				false,
 				_T(""),
-				true,
-				false,
+				CDirentry::timestamp_date,
 				wxDateTime(29, wxDateTime::Mar, 2007),
 				false
 			},
@@ -1071,8 +1020,7 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				false,
 				_T(""),
-				true,
-				false,
+				CDirentry::timestamp_date,
 				wxDateTime(1, wxDateTime::Oct, 2004),
 				false
 			},
@@ -1089,8 +1037,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				false,
+				CDirentry::timestamp_date,
 				wxDateTime(11, wxDateTime::Nov, 2005),
 				false
 			},
@@ -1108,8 +1055,7 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				false,
 				_T(""),
-				true,
-				false,
+				CDirentry::timestamp_date,
 				wxDateTime(6, wxDateTime::Jan, 2005),
 				false
 			},
@@ -1127,8 +1073,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_seconds,
 				wxDateTime(18, wxDateTime::Sep, 2006, 14, 21, 26),
 				false
 			},
@@ -1146,9 +1091,8 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
-				wxDateTime(23, wxDateTime::Sep, 2005, 14, 57, 07),
+				CDirentry::timestamp_seconds,
+				wxDateTime(23, wxDateTime::Sep, 2005, 14, 57, 7),
 				false
 			},
 			DEFAULT
@@ -1165,8 +1109,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_seconds,
 				wxDateTime(6, wxDateTime::Apr, 2007, 14, 21, 18),
 				false
 			},
@@ -1184,8 +1127,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_seconds,
 				wxDateTime(6, wxDateTime::Apr, 2007, 14, 21, 18),
 				false
 			},
@@ -1203,8 +1145,7 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(30, wxDateTime::Jan, calcYear(1, 30), 12, 40),
 				false
 			},
@@ -1230,8 +1171,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				false,
+				CDirentry::timestamp_date,
 				wxDateTime(21, wxDateTime::May, 2003),
 				false
 		},
@@ -1248,8 +1188,7 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				false,
 				_T(""),
-				true,
-				false,
+				CDirentry::timestamp_date,
 				wxDateTime(04, wxDateTime::Mar, 2004),
 				false
 		},
@@ -1266,8 +1205,7 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				false,
 				_T(""),
-				false,
-				false,
+				CDirentry::timestamp_none,
 				wxDateTime(),
 				false
 		},
@@ -1284,8 +1222,7 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				false,
 				_T(""),
-				true,
-				false,
+				CDirentry::timestamp_date,
 				wxDateTime(6, wxDateTime::Jun, 2005),
 				false
 		},
@@ -1302,8 +1239,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				false,
-				false,
+				CDirentry::timestamp_none,
 				wxDateTime(),
 				false
 		},
@@ -1327,8 +1263,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				false,
-				false,
+				CDirentry::timestamp_none,
 				wxDateTime(),
 				false
 		},
@@ -1346,8 +1281,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_time,
 				wxDateTime(22, wxDateTime::Jun, 2004, 16, 32),
 				false
 		},
@@ -1365,8 +1299,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				false,
-				false,
+				CDirentry::timestamp_none,
 				wxDateTime(),
 				false
 		},
@@ -1383,8 +1316,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				false,
-				false,
+				CDirentry::timestamp_none,
 				wxDateTime(),
 				false
 			},
@@ -1402,8 +1334,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				false,
-				false,
+				CDirentry::timestamp_none,
 				wxDateTime(),
 				false
 			},
@@ -1438,8 +1369,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_seconds,
 				wxDateTime(4, wxDateTime::Oct, 2005, 15, 28, 42),
 				false
 			},
@@ -1456,8 +1386,7 @@ void CDirectoryListingParserTest::InitEntries()
 				true,
 				false,
 				_T(""),
-				false,
-				false,
+				CDirentry::timestamp_none,
 				wxDateTime(),
 				false
 			},
@@ -1476,8 +1405,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				true,
-				true,
+				CDirentry::timestamp_seconds,
 				utc,
 				false
 			},
@@ -1498,8 +1426,7 @@ void CDirectoryListingParserTest::InitEntries()
 				false,
 				false,
 				_T(""),
-				false,
-				false,
+				CDirentry::timestamp_none,
 				wxDateTime(),
 				false
 			},
