@@ -898,6 +898,17 @@ int CFileZillaApp::ProcessCommandLine()
 #endif
 			return 0;
 		}
+
+		if (m_pCommandLine->HasSwitch(CCommandLine::version))
+		{
+			wxString out = wxString::Format(_T("FileZilla %s"), CBuildInfo::GetVersion().c_str());
+			if (!CBuildInfo::GetBuildType().empty())
+				out += _T(" ") + CBuildInfo::GetBuildType() + _T(" build");
+			out += _T(", compiled on ") + CBuildInfo::GetBuildDateString();
+
+			printf("%s\n", (const char*)out.mb_str());
+			return 0;
+		}
 	}
 
 	return res;

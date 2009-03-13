@@ -9,7 +9,8 @@ public:
 	enum t_switches
 	{
 		sitemanager,
-		close
+		close,
+		version
 	};
 
 	enum t_option
