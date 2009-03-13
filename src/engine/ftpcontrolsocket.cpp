@@ -1594,8 +1594,6 @@ int CFtpControlSocket::ListParseResponse()
 				// Round offset to full minutes
 				if (serveroffset < 0)
 					serveroffset -= 59;
-				else
-					serveroffset += 59;
 				serveroffset -= serveroffset % 60;
 			}
 
