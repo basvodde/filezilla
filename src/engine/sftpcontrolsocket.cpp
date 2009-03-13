@@ -1057,6 +1057,15 @@ int CSftpControlSocket::ListParseResponse(bool successful, const wxString& reply
 					listTime -= wxTimeSpan(0, m_pCurrentServer->GetTimezoneOffset(), 0);
 
 					int serveroffset = (date - listTime).GetSeconds().GetLo();
+					if (pData->directoryListing[pData->mtime_index].hasTimestamp != CDirentry::timestamp_seconds)
+					{
+						// Round offset to full minutes
+						if (serveroffset < 0)
+							serveroffset -= 59;
+						else
+							serveroffset += 59;
+						serveroffset -= serveroffset % 60;
+					}
 
 					wxDateTime now = wxDateTime::Now();
 					wxDateTime now_utc = now.ToTimezone(wxDateTime::GMT0);
