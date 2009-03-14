@@ -21,11 +21,13 @@
       <object class="separator"/>
       <object class="wxMenuItem" name="ID_MENU_FILE_EDITED">
         <label>S&amp;how files currently being edited...</label>
+        <accel>CTRL+E</accel>
       </object>
       <object class="separator"/>
       <object class="wxMenuItem" name="wxID_EXIT">
         <label>E&amp;xit</label>
         <help>Close FileZilla</help>
+        <accel>CTRL+Q</accel>
       </object>
     </object>
     <object class="wxMenu">
@@ -46,16 +48,19 @@
       <label>&amp;View</label>
       <object class="wxMenuItem" name="ID_REFRESH">
         <label>&amp;Refresh</label>
+        <accel>F5</accel>
       </object>
       <object class="separator"/>
       <object class="wxMenuItem" name="ID_MENU_VIEW_FILTERS">
         <label>Filename &amp;filters...</label>
+        <accel>CTRL+I</accel>
       </object>
       <object class="wxMenu" name="">
         <label>&amp;Directory comparison</label>
         <object class="wxMenuItem" name="ID_TOOLBAR_COMPARISON">
           <label>&amp;Enable</label>
           <checkable>1</checkable>
+          <accel>CTRL+O</accel>
         </object>
         <object class="separator"/>
         <object class="wxMenuItem" name="ID_COMPARE_SIZE">
@@ -70,6 +75,7 @@
       <object class="wxMenuItem" name="ID_TOOLBAR_SYNCHRONIZED_BROWSING">
         <label>S&amp;ynchronized browsing</label>
         <checkable>1</checkable>
+        <accel>CTRL+Y</accel>
       </object>
       <object class="wxMenuItem" name="ID_MENU_VIEW_FILELISTSTATUSBAR">
         <label>Filelist status &amp;bars</label>
@@ -102,6 +108,7 @@
       <object class="wxMenuItem" name="ID_MENU_TRANSFER_PROCESSQUEUE">
         <label>Process &amp;Queue</label>
         <checkable>1</checkable>
+        <accel>CTRL+P</accel>
       </object>
       <object class="separator"/>
       <object class="wxMenuItem" name="ID_MENU_TRANSFER_FILEEXISTS">
@@ -125,10 +132,12 @@
       <object class="wxMenuItem" name="ID_MENU_TRANSFER_PRESERVETIMES">
         <label>&amp;Preserve timestamps of transferred files</label>
         <checkable>1</checkable>
+        <accel>CTRL+T</accel>
       </object>
       <object class="separator"/>
       <object class="wxMenuItem" name="ID_MENU_TRANSFER_MANUAL">
         <label>&amp;Manual transfer...</label>
+        <accel>CTRL+M</accel>
       </object>
     </object>
     <object class="wxMenu" name="ID_MENU_SERVER">
@@ -159,9 +168,11 @@
       <label>&amp;Bookmarks</label>
       <object class="wxMenuItem" name="ID_BOOKMARK_ADD">
         <label>&amp;Add bookmark...</label>
+        <accel>CTRL+B</accel>
       </object>
       <object class="wxMenuItem" name="ID_BOOKMARK_MANAGE">
         <label>&amp;Manage bookmarks...</label>
+        <accel>CTRL+SHIFT+B</accel>
       </object>
     </object>
     <object class="wxMenu">

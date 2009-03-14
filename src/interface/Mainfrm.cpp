@@ -463,8 +463,9 @@ CMainFrame::CMainFrame()
 		m_pState->SetLocalDir(_T("/"));
 
 	wxAcceleratorEntry entries[1];
-	entries[0].Set(wxACCEL_NORMAL, WXK_F5, XRCID("ID_TOOLBAR_REFRESH"));
-	wxAcceleratorTable accel(1, entries);
+	entries[0].Set(wxACCEL_CMD | wxACCEL_SHIFT, 'I', XRCID("ID_MENU_VIEW_FILTERS"));
+
+	wxAcceleratorTable accel(sizeof(entries) / sizeof(wxAcceleratorEntry), entries);
 	SetAcceleratorTable(accel);
 
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
@@ -1941,6 +1942,12 @@ void CMainFrame::OnMenuHelpAbout(wxCommandEvent& event)
 
 void CMainFrame::OnFilter(wxCommandEvent& event)
 {
+	if (wxGetKeyState(WXK_SHIFT))
+	{
+		OnFilterRightclicked(event);
+		return;
+	}
+
 	CFilterDialog dlg;
 	if (m_pToolBar)
 		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), dlg.HasActiveFilters());
