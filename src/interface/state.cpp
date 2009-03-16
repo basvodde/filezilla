@@ -108,7 +108,7 @@ bool CState::SetLocalDir(const wxString& dir, wxString *error /*=0*/)
 			}
 
 			m_sync_browse.is_changing = true;
-			m_sync_browse.compare = m_pMainFrame->GetComparisonManager()->IsComparing();
+			m_sync_browse.compare = m_pMainFrame->GetComparisonManager() && m_pMainFrame->GetComparisonManager()->IsComparing();
 			CListCommand *pCommand = new CListCommand(remote_path);
 			m_pCommandQueue->ProcessCommand(pCommand);
 
