@@ -1420,7 +1420,7 @@ void CQueueViewBase::OnKeyDown(wxKeyEvent& event)
 	const int mods = event.GetModifiers();
 	if (code == 'A' && (mods == wxMOD_CMD || mods == (wxMOD_CONTROL | wxMOD_META)))
 	{
-		for (unsigned int i = 0; i < GetItemCount(); i++)
+		for (unsigned int i = 0; i < (unsigned int)GetItemCount(); i++)
 			SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 	}
 	else

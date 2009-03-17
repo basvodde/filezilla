@@ -48,6 +48,8 @@ protected:
 	const wxChar* m_noWrapChars;
 
 	wxFont m_font;
+
+	static bool m_use_cache;
 };
 
 #endif //__WRAPENGINE_H__

@@ -1809,6 +1809,10 @@ int CQueueView::QueueFiles(const std::list<CFolderProcessingEntry*> &entryList, 
 
 void CQueueView::SaveQueue()
 {
+	// Kiosk mode doesn't save queue
+	if (COptions::Get()->GetDefaultVal(DEFAULT_KIOSKMODE) == 2)
+		return;
+
 	// We have to synchronize access to queue.xml so that multiple processed don't write
 	// to the same file or one is reading while the other one writes.
 	CInterProcessMutex mutex(MUTEX_QUEUE);
@@ -1858,6 +1862,9 @@ void CQueueView::LoadQueue()
 	ImportQueue(pQueue, false);
 
 	pDocument->RemoveChild(pQueue);
+
+	if (COptions::Get()->GetDefaultVal(DEFAULT_KIOSKMODE) == 2)
+		return;
 
 	wxString error;
 	if (!xml.Save(&error))

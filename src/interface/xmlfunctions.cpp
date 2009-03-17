@@ -498,9 +498,15 @@ bool SaveXmlFile(const wxFileName& file, TiXmlNode* node, wxString* error /*=0*/
 		exists = true;
 		bool res;
 		if (!move)
+		{
+			wxLogNull null;
 			res = wxCopyFile(fullPath, fullPath + _T("~"));
+		}
 		else
+		{
+			wxLogNull null;
 			res = wxRenameFile(fullPath, fullPath + _T("~"));
+		}
 		if (!res)
 		{
 			const wxString msg = _("Failed to create backup copy of xml file");
@@ -517,7 +523,10 @@ bool SaveXmlFile(const wxFileName& file, TiXmlNode* node, wxString* error /*=0*/
 	{
 		wxRemoveFile(fullPath);
 		if (exists)
+		{
+			wxLogNull null;
 			wxRenameFile(fullPath + _T("~"), fullPath);
+		}
 		const wxString msg = _("Failed to write xml file");
 		if (error)
 			*error = msg;

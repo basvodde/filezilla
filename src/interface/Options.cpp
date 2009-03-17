@@ -543,6 +543,9 @@ void COptions::SetServer(wxString path, const CServer& server)
 
 	::SetServer(element, server);
 
+	if (GetDefaultVal(DEFAULT_KIOSKMODE) == 2)
+		return;
+	
 	CInterProcessMutex mutex(MUTEX_OPTIONS);
 	m_pXmlFile->Save();
 }
@@ -709,6 +712,9 @@ void COptions::OnTimer(wxTimerEvent& event)
 
 void COptions::Save()
 {
+	if (GetDefaultVal(DEFAULT_KIOSKMODE) == 2)
+		return;
+
 	if (!m_pXmlFile)
 		return;
 

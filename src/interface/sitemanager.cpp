@@ -853,6 +853,8 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 		wxString error;
 		if (!xml.Save(&error))
 		{
+			if (COptions::Get()->GetDefaultVal(DEFAULT_KIOSKMODE) == 2)
+				return res;
 			wxString msg = wxString::Format(_("Could not write \"%s\", any changes to the Site Manager could not be saved: %s"), file.GetFullPath().c_str(), error.c_str());
 			wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
 		}
@@ -2869,6 +2871,9 @@ wxString CSiteManager::AddServer(CServer server)
 	wxString error;
 	if (!file.Save(&error))
 	{
+		if (COptions::Get()->GetDefaultVal(DEFAULT_KIOSKMODE) == 2)
+			return _T("");
+
 		wxString msg = wxString::Format(_("Could not write \"%s\", any changes to the Site Manager could not be saved: %s"), file.GetFileName().GetFullPath().c_str(), error.c_str());
 		wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
 		return _T("");
@@ -2987,6 +2992,9 @@ bool CSiteManager::AddBookmark(wxString sitePath, const wxString& name, const wx
 	wxString error;
 	if (!file.Save(&error))
 	{
+		if (COptions::Get()->GetDefaultVal(DEFAULT_KIOSKMODE) == 2)
+			return true;
+
 		wxString msg = wxString::Format(_("Could not write \"%s\", the selected sites could not be exported: %s"), file.GetFileName().GetFullPath().c_str(), error.c_str());
 		wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
 	}
@@ -3046,6 +3054,9 @@ bool CSiteManager::ClearBookmarks(wxString sitePath)
 	wxString error;
 	if (!file.Save(&error))
 	{
+		if (COptions::Get()->GetDefaultVal(DEFAULT_KIOSKMODE) == 2)
+			return true;
+
 		wxString msg = wxString::Format(_("Could not write \"%s\", the selected sites could not be exported: %s"), file.GetFileName().GetFullPath().c_str(), error.c_str());
 		wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
 	}

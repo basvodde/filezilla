@@ -5,6 +5,9 @@
 #include "ipcmutex.h"
 #include "xmlfunctions.h"
 #include "buildinfo.h"
+#include "Options.h"
+
+bool CWrapEngine::m_use_cache = true;
 
 #define WRAPDEBUG 0
 #if wxUSE_UNICODE
@@ -820,6 +823,9 @@ bool CWrapEngine::UnwrapRecursive(wxWindow* wnd, wxSizer* sizer)
 
 int CWrapEngine::GetWidthFromCache(const char* name)
 {
+	if (!m_use_cache)
+		return 0;
+
 	if (!name || !*name)
 		return 0;
 
@@ -867,6 +873,9 @@ int CWrapEngine::GetWidthFromCache(const char* name)
 
 void CWrapEngine::SetWidthToCache(const char* name, int width)
 {
+	if (!m_use_cache)
+		return;
+
 	if (!name || !*name)
 		return;
 
@@ -963,6 +972,7 @@ bool CWrapEngine::LoadCache()
 
 	if (!pDocument)
 	{
+		m_use_cache = false;
 		wxMessageBox(xml.GetError(), _("Error loading xml file"), wxICON_ERROR);
 
 		return false;
@@ -1110,9 +1120,17 @@ bool CWrapEngine::LoadCache()
 			languageElement->RemoveChild(dialog);
 	}
 
+	if (COptions::Get()->GetDefaultVal(DEFAULT_KIOSKMODE) == 2)
+	{
+		m_use_cache = cacheValid;
+		return true;
+	}
+
 	wxString error;
 	if (!xml.Save(&error))
 	{
+		m_use_cache = false;
+
 		wxString msg = wxString::Format(_("Could not write \"%s\": %s"), file.GetFullPath().c_str(), error.c_str());
 		wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
 	}
