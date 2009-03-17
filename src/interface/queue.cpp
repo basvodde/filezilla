@@ -1393,12 +1393,14 @@ void CQueueViewBase::OnEndColumnDrag(wxListEvent& event)
 {
 	for (unsigned int i = 0; i < m_pQueue->GetPageCount(); i++)
 	{
-		CQueueViewBase* page = (CQueueViewBase*)m_pQueue->GetPage(i);
-		if (!page || page == this)
+		wxWindow *page = m_pQueue->GetPage(i);
+
+		wxListCtrl* queue_page = wxDynamicCast(page, wxListCtrl);
+		if (!queue_page || queue_page == this)
 			continue;
 
-		for (int col = 0; col < wxMin(GetColumnCount(), page->GetColumnCount()); col++)
-			page->SetColumnWidth(col, GetColumnWidth(col));
+		for (int col = 0; col < wxMin(GetColumnCount(), queue_page->GetColumnCount()); col++)
+			queue_page->SetColumnWidth(col, GetColumnWidth(col));
 	}
 }
 
