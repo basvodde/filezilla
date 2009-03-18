@@ -965,7 +965,7 @@ public:
 		}
 		else
 		{
-			if (!data2.hasTimestamp == CDirentry::timestamp_none)
+			if (data2.hasTimestamp == CDirentry::timestamp_none)
 				return 1;
 
 			if (data1.time < data2.time)
