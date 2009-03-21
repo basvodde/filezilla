@@ -250,10 +250,13 @@ wxString CThemeProvider::GetThemePath()
 {
 	const wxString& resourceDir = wxGetApp().GetResourceDir();
 	wxString themePath = resourceDir + COptions::Get()->GetOption(OPTION_THEME);
-	if (!wxFile::Exists(themePath + _T("theme.xml")))
-	{
-	    themePath = resourceDir;
-		wxASSERT(wxFile::Exists(themePath + _T("theme.xml")));
-	}
-	return themePath;
+	if (wxFile::Exists(themePath + _T("theme.xml")))
+		return themePath;
+
+    themePath = resourceDir + _T("opencrystal/");
+	if (wxFile::Exists(themePath + _T("theme.xml")))
+		return themePath;
+
+	wxASSERT(wxFile::Exists(resourceDir + _T("theme.xml")));
+	return resourceDir;
 }

@@ -72,7 +72,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Auto Ascii files", string, _T("am|asp|bat|c|cfm|cgi|conf|cpp|css|dhtml|diz|h|hpp|htm|html|in|inc|js|jsp|m4|mak|nfo|nsi|pas|patch|php|phtml|pl|po|py|qmail|sh|shtml|sql|svg|tcl|tpl|txt|vbs|xhtml|xml|xrc") },
 	{ "Auto Ascii no extension", number, _T("1") },
 	{ "Auto Ascii dotfiles", number, _T("1") },
-	{ "Theme", string, _T("") },
+	{ "Theme", string, _T("opencrystal/") },
 	{ "Language Code", string, _T("") },
 	{ "Last Server Path", string, _T("") },
 	{ "Concurrent download limit", number, _T("0") },
