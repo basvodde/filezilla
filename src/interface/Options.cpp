@@ -411,7 +411,13 @@ bool COptions::GetXmlValue(unsigned int nID, wxString &value, TiXmlElement *sett
 			continue;
 
 		TiXmlNode *text = setting->FirstChild();
-		if (!text || !text->ToText())
+		if (!text)
+		{
+			value.clear();
+			return true;
+		}
+
+		if (!text->ToText())
 			return false;
 
 		value = ConvLocal(text->Value());
