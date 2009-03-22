@@ -936,11 +936,21 @@ wxString CEditHandler::GetOpenCommand(const wxString& file, bool& program_exists
 	return command + _T(" \"") + file + _T("\"");
 }
 
-#ifdef __WXGTK__
+
 static bool PathExpand(wxString& cmd)
 {
+	cmd = _T("notepad");
+#ifndef __WXMSW__
 	if (cmd[0] == '/')
 		return true;
+#else
+	if (cmd[0] == '\\')
+		// UNC or root of current working dir, whatever that is
+		return true;
+	if (cmd.Len() > 2 && cmd[1] == ':')
+		// Absolute path
+		return true;
+#endif
 
 	// Need to search for program in $PATH
 	wxString path;
@@ -948,13 +958,21 @@ static bool PathExpand(wxString& cmd)
 		return false;
 
 	wxString full_cmd;
-	if (!wxFindFileInPath(&full_cmd, path, cmd))
+	bool found = wxFindFileInPath(&full_cmd, path, cmd);
+#ifdef __WXMSW__
+	if (!found && cmd.Right(4).Lower() != _T(".exe"))
+	{
+		cmd += _T(".exe");
+		found = wxFindFileInPath(&full_cmd, path, cmd);
+	}
+#endif
+
+	if (!found)
 		return false;
 
 	cmd = full_cmd;
 	return true;
 }
-#endif
 
 wxString CEditHandler::GetSystemOpenCommand(const wxString& file, bool &program_exists)
 {
@@ -999,10 +1017,9 @@ wxString CEditHandler::GetSystemOpenCommand(const wxString& file, bool &program_
 	if (!UnquoteCommand(editor, args) || editor.empty())
 		return cmd;
 
-#ifdef __WXGTK__
 	if (!PathExpand(editor))
 		return cmd;
-#endif
+
 	if (ProgramExists(editor))
 		program_exists = true;
 	return cmd;
@@ -1538,10 +1555,9 @@ bool CNewAssociationDialog::Show(const wxString &file)
 		if (!UnquoteCommand(cmd, args))
 			cmd.clear();
 	}
-#ifdef __WXGTK__
+
 	if (!PathExpand(cmd))
 		cmd.clear();
-#endif
 
 	pDesc = XRCCTRL(*this, "ID_EDITOR_DESC", wxStaticText);
 	if (cmd.empty())
