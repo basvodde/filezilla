@@ -80,6 +80,8 @@ bool UnquoteCommand(wxString& command, wxString& arguments)
 		{
 			if (!inQuotes)
 				inQuotes = c;
+			else if (c != inQuotes)
+				file += c;
 			else if (command[i + 1] == c)
 			{
 				file += c;
