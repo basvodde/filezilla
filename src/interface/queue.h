@@ -172,7 +172,8 @@ public:
 	enum CFileExistsNotification::OverwriteAction m_defaultFileExistsAction;
 
 	bool m_madeProgress;
-	bool m_autoResume;
+
+	enum CFileExistsNotification::OverwriteAction m_onetime_action;
 
 protected:
 	enum QueuePriority m_priority;

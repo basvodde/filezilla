@@ -268,7 +268,7 @@ CFileItem::CFileItem(CServerItem* parent, bool queued, bool download, const wxSt
 	m_defaultFileExistsAction = CFileExistsNotification::unknown;
 	m_edit = CEditHandler::none;
 	m_madeProgress = false;
-	m_autoResume = false;
+	m_onetime_action = CFileExistsNotification::unknown;
 }
 
 CFileItem::~CFileItem()

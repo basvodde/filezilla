@@ -513,6 +513,8 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 		else
 			fileItem->m_transferSettings.binary = !CAutoAsciiFiles::TransferLocalAsAscii(localFile, remotePath.GetType());
 		fileItem->m_edit = edit;
+		if (edit != CEditHandler::none)
+			fileItem->m_onetime_action = CFileExistsNotification::overwrite;
 	}
 
 	InsertItem(pServerItem, fileItem);
@@ -631,18 +633,30 @@ void CQueueView::ProcessNotification(t_EngineData* pEngineData, CNotification* p
 		{
 		case reqId_fileexists:
 			{
-				CFileExistsNotification *pFileExistsNotification = reinterpret_cast<CFileExistsNotification *>(pNotification);
-				if (pFileExistsNotification->canResume &&
-					pEngineData->pItem->GetType() == QueueItemType_File &&
-					((CFileItem*)pEngineData->pItem)->m_autoResume &&
-					((CFileItem*)pEngineData->pItem)->m_transferSettings.binary)
+				CFileExistsNotification* pFileExistsNotification = (CFileExistsNotification *)pNotification;
+				pFileExistsNotification->overwriteAction = pEngineData->pItem->m_defaultFileExistsAction;
+
+				if (pEngineData->pItem->GetType() == QueueItemType_File)
 				{
-					pFileExistsNotification->overwriteAction = CFileExistsNotification::resume;
-				}
-				else
-				{
-					// Set default file exists action
-					pFileExistsNotification->overwriteAction = pEngineData->pItem->m_defaultFileExistsAction;
+					CFileItem* pFileItem = (CFileItem*)pEngineData->pItem;
+
+					switch (pFileItem->m_onetime_action)
+					{
+					case CFileExistsNotification::resume:
+						if (pFileExistsNotification->canResume &&
+							pFileItem->m_transferSettings.binary)
+						{
+							pFileExistsNotification->overwriteAction = CFileExistsNotification::resume;
+						}
+						break;
+					case CFileExistsNotification::overwrite:
+						pFileExistsNotification->overwriteAction = CFileExistsNotification::overwrite;
+						break;
+					default:
+						// Others are unused
+						break;
+					}
+					pFileItem->m_onetime_action = CFileExistsNotification::unknown;
 				}
 			}
 			break;
@@ -925,7 +939,7 @@ void CQueueView::ProcessReply(t_EngineData* pEngineData, COperationNotification*
 				{
 					CFileItem* pItem = (CFileItem*)pEngineData->pItem;
 					pItem->m_madeProgress = false;
-					pItem->m_autoResume = true;
+					pItem->m_onetime_action = CFileExistsNotification::resume;
 				}
 				reason = reset;
 			}
@@ -1011,7 +1025,7 @@ void CQueueView::ProcessReply(t_EngineData* pEngineData, COperationNotification*
 			// Don't increase error count if there has been progress
 			CFileItem* pItem = (CFileItem*)pEngineData->pItem;
 			pItem->m_madeProgress = false;
-			pItem->m_autoResume = true;
+			pItem->m_onetime_action = CFileExistsNotification::resume;
 		}
 		else
 		{
@@ -1163,7 +1177,7 @@ void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
 
 			if (reason == failure)
 			{
-				pFileItem->m_autoResume = false;
+				pFileItem->m_onetime_action = CFileExistsNotification::unknown;
 				pFileItem->m_madeProgress = false;
 			}
 		}
