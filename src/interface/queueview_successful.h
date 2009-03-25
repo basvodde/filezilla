@@ -16,6 +16,7 @@ protected:
 
 	DECLARE_EVENT_TABLE();
 	void OnContextMenu(wxContextMenuEvent& event);
+	void OnMenuAutoClear(wxCommandEvent& event);
 };
 
 #endif //__QUEUEVIEW_SUCCESSFUL_H__

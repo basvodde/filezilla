@@ -5,6 +5,7 @@
 
 BEGIN_EVENT_TABLE(CQueueViewSuccessful, CQueueViewFailed)
 EVT_CONTEXT_MENU(CQueueViewSuccessful::OnContextMenu)
+EVT_MENU(XRCID("ID_AUTOCLEAR"), CQueueViewSuccessful::OnMenuAutoClear)
 END_EVENT_TABLE()
 
 CQueueViewSuccessful::CQueueViewSuccessful(CQueue* parent, int index)
@@ -34,12 +35,11 @@ void CQueueViewSuccessful::OnContextMenu(wxContextMenuEvent& event)
 
 	PopupMenu(pMenu);
 
-	bool autoClear = pMenu->IsChecked(XRCID("ID_AUTOCLEAR"));
-	if (autoClear != m_autoClear)
-	{
-		m_autoClear = autoClear;
-		COptions::Get()->SetOption(OPTION_QUEUE_SUCCESSFUL_AUTOCLEAR, autoClear ? 1 : 0);
-	}
-
 	delete pMenu;
+}
+
+void CQueueViewSuccessful::OnMenuAutoClear(wxCommandEvent& event)
+{
+	m_autoClear = !m_autoClear;
+	COptions::Get()->SetOption(OPTION_QUEUE_SUCCESSFUL_AUTOCLEAR, m_autoClear ? true : false);
 }
