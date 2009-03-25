@@ -73,7 +73,8 @@ public:
 	void SetCertificate(CCertificateNotification* pCertificate);
 	void SetSftpEncryptionInfo(const CSftpEncryptionNotification* pEncryptionInfo);
 
-	void OnHandleClick(wxWindow* wnd);
+	void OnHandleLeftClick(wxWindow* wnd);
+	void OnHandleRightClick(wxWindow* wnd);
 
 protected:
 	void MeasureQueueSizeWidth();

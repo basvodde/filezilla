@@ -199,12 +199,12 @@
   <object class="wxMenu" name="ID_MENU_LOCALFILELIST">
     <object class="wxMenuItem" name="ID_UPLOAD">
       <label>&amp;Upload</label>
-      <bitmap stock_id="ART_UPLOAD"></bitmap>
+      <bitmap stock_id="ART_UPLOAD"/>
       <help>Upload selected files and directories</help>
     </object>
     <object class="wxMenuItem" name="ID_ADDTOQUEUE">
       <label>&amp;Add files to queue</label>
-      <bitmap stock_id="ART_UPLOADADD"></bitmap>
+      <bitmap stock_id="ART_UPLOADADD"/>
       <help>Add selected files and folders to the transfer queue</help>
     </object>
     <object class="wxMenuItem" name="ID_ENTER">
@@ -238,12 +238,12 @@
   <object class="wxMenu" name="ID_MENU_REMOTEFILELIST">
     <object class="wxMenuItem" name="ID_DOWNLOAD">
       <label>&amp;Download</label>
-      <bitmap stock_id="ART_DOWNLOAD"></bitmap>
+      <bitmap stock_id="ART_DOWNLOAD"/>
       <help>Download selected files and directories</help>
     </object>
     <object class="wxMenuItem" name="ID_ADDTOQUEUE">
       <label>&amp;Add files to queue</label>
-      <bitmap stock_id="ART_DOWNLOADADD"></bitmap>
+      <bitmap stock_id="ART_DOWNLOADADD"/>
       <help>Add selected files and folders to the transfer queue</help>
     </object>
     <object class="wxMenuItem" name="ID_ENTER">
@@ -401,12 +401,12 @@
   <object class="wxMenu" name="ID_MENU_REMOTETREE">
     <object class="wxMenuItem" name="ID_DOWNLOAD">
       <label>&amp;Download</label>
-      <bitmap stock_id="ART_DOWNLOAD"></bitmap>
+      <bitmap stock_id="ART_DOWNLOAD"/>
       <help>Download selected directory</help>
     </object>
     <object class="wxMenuItem" name="ID_ADDTOQUEUE">
       <label>&amp;Add to queue</label>
-      <bitmap stock_id="ART_DOWNLOADADD"></bitmap>
+      <bitmap stock_id="ART_DOWNLOADADD"/>
       <help>Add selected directory to the transfer queue</help>
     </object>
     <object class="separator"/>
@@ -447,12 +447,12 @@
   <object class="wxMenu" name="ID_MENU_LOCALTREE">
     <object class="wxMenuItem" name="ID_UPLOAD">
       <label>&amp;Upload</label>
-      <bitmap stock_id="ART_UPLOAD"></bitmap>
+      <bitmap stock_id="ART_UPLOAD"/>
       <help>Upload selected directory</help>
     </object>
     <object class="wxMenuItem" name="ID_ADDTOQUEUE">
       <label>&amp;Add to queue</label>
-      <bitmap stock_id="ART_UPLOADADD"></bitmap>
+      <bitmap stock_id="ART_UPLOADADD"/>
       <help>Add selected directory to the transfer queue</help>
     </object>
     <object class="separator"/>
@@ -473,6 +473,20 @@
   <object class="wxMenu" name="ID_MENU_SITEMANAGER">
     <object class="wxMenuItem" name="ID_EXPORT">
       <label>&amp;Export...</label>
+    </object>
+  </object>
+  <object class="wxMenu" name="ID_MENU_TRANSFER_TYPE_CONTEXT">
+    <object class="wxMenuItem" name="ID_MENU_TRANSFER_TYPE_AUTO">
+      <label>&amp;Auto</label>
+      <radio>1</radio>
+    </object>
+    <object class="wxMenuItem" name="ID_MENU_TRANSFER_TYPE_ASCII">
+      <label>A&amp;SCII</label>
+      <radio>1</radio>
+    </object>
+    <object class="wxMenuItem" name="ID_MENU_TRANSFER_TYPE_BINARY">
+      <label>&amp;Binary</label>
+      <radio>1</radio>
     </object>
   </object>
 </resource>

@@ -243,10 +243,10 @@ END_EVENT_TABLE()
 #define wxStaticBitmapEx wxStaticBitmap
 #endif
 
-class CEncryptionIndicator : public wxStaticBitmapEx
+class CIndicator : public wxStaticBitmapEx
 {
 public:
-	CEncryptionIndicator(CStatusBar* pStatusBar, const wxBitmap& bmp)
+	CIndicator(CStatusBar* pStatusBar, const wxBitmap& bmp)
 		: wxStaticBitmapEx(pStatusBar, wxID_ANY, bmp)
 	{
 		m_pStatusBar = pStatusBar;
@@ -256,14 +256,19 @@ protected:
 	CStatusBar* m_pStatusBar;
 
 	DECLARE_EVENT_TABLE()
-	void OnMouseUp(wxMouseEvent& event)
+	void OnLeftMouseUp(wxMouseEvent& event)
 	{
-		m_pStatusBar->OnHandleClick(this);
+		m_pStatusBar->OnHandleLeftClick(this);
+	}
+	void OnRightMouseUp(wxMouseEvent& event)
+	{
+		m_pStatusBar->OnHandleRightClick(this);
 	}
 };
 
-BEGIN_EVENT_TABLE(CEncryptionIndicator, wxStaticBitmapEx)
-EVT_LEFT_UP(CEncryptionIndicator::OnMouseUp)
+BEGIN_EVENT_TABLE(CIndicator, wxStaticBitmapEx)
+EVT_LEFT_UP(CIndicator::OnLeftMouseUp)
+EVT_RIGHT_UP(CIndicator::OnRightMouseUp)
 END_EVENT_TABLE()
 
 CStatusBar::CStatusBar(wxTopLevelWindow* pParent)
@@ -377,7 +382,7 @@ void CStatusBar::DisplayDataType(const CServer* const pServer)
 		wxString name;
 		wxString desc;
 
-		int type = COptions::Get()->GetOptionVal(OPTION_ASCIIBINARY);
+		const int type = COptions::Get()->GetOptionVal(OPTION_ASCIIBINARY);
 		if (type == 1)
 		{
 			name = _T("ART_ASCII");
@@ -397,7 +402,7 @@ void CStatusBar::DisplayDataType(const CServer* const pServer)
 		wxBitmap bmp = wxArtProvider::GetBitmap(name, wxART_OTHER, wxSize(16, 16));
 		if (!m_pDataTypeIndicator)
 		{
-			m_pDataTypeIndicator = new wxStaticBitmapEx(this, wxID_ANY, bmp);
+			m_pDataTypeIndicator = new CIndicator(this, bmp);
 			AddChild(-4, m_pDataTypeIndicator, 22);
 
 			if (m_pEncryptionIndicator)
@@ -444,7 +449,7 @@ void CStatusBar::DisplayEncrypted(const CServer* const pServer)
 		if (m_pEncryptionIndicator)
 			return;
 		wxBitmap bmp = wxArtProvider::GetBitmap(_T("ART_LOCK"), wxART_OTHER, wxSize(16, 16));
-		m_pEncryptionIndicator = new CEncryptionIndicator(this, bmp);
+		m_pEncryptionIndicator = new CIndicator(this, bmp);
 		AddChild(-4, m_pEncryptionIndicator, m_pDataTypeIndicator ? 2 : 22);
 
 		m_pEncryptionIndicator->SetToolTip(_("The connection is encrypted. Click icon for details."));
@@ -462,7 +467,7 @@ void CStatusBar::UpdateSizeFormat()
 	DisplayQueueSize(m_size, m_hasUnknownFiles);
 }
 
-void CStatusBar::OnHandleClick(wxWindow* pWnd)
+void CStatusBar::OnHandleLeftClick(wxWindow* pWnd)
 {
 	if (pWnd != m_pEncryptionIndicator)
 		return;
@@ -479,6 +484,33 @@ void CStatusBar::OnHandleClick(wxWindow* pWnd)
 	}
 	else
 		wxMessageBox(_("Certificate and session data are not available yet."), _("Security information"));
+}
+
+void CStatusBar::OnHandleRightClick(wxWindow* pWnd)
+{
+	if (pWnd != m_pDataTypeIndicator)
+		return;
+
+	wxMenu* pMenu = wxXmlResource::Get()->LoadMenu(_T("ID_MENU_TRANSFER_TYPE_CONTEXT"));
+	if (!pMenu)
+		return;
+	
+	const int type = COptions::Get()->GetOptionVal(OPTION_ASCIIBINARY);
+	switch (type)
+	{
+	case 1:
+		pMenu->Check(XRCID("ID_MENU_TRANSFER_TYPE_ASCII"), true);
+		break;
+	case 2:
+		pMenu->Check(XRCID("ID_MENU_TRANSFER_TYPE_BINARY"), true);
+		break;
+	default:
+		pMenu->Check(XRCID("ID_MENU_TRANSFER_TYPE_AUTO"), true);
+		break;
+	}
+
+	PopupMenu(pMenu);
+	delete pMenu;
 }
 
 void CStatusBar::SetCertificate(CCertificateNotification* pCertificate)
