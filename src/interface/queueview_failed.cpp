@@ -46,14 +46,14 @@ void CQueueViewFailed::OnRemoveAll(wxCommandEvent& event)
 {
 #ifndef __WXMSW__
 	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
-	if (!GetSelectedItemCount())
-		return;
+	if (GetSelectedItemCount())
 #endif
-
-	// First, clear all selections
-	int item;
-	while ((item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
-		SetItemState(item, 0, wxLIST_STATE_SELECTED);
+	{
+		// First, clear all selections
+		int item;
+		while ((item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
+			SetItemState(item, 0, wxLIST_STATE_SELECTED);
+	}
 
 	CEditHandler* pEditHandler = CEditHandler::Get();
 	if (pEditHandler)
