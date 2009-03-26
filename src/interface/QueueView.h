@@ -230,6 +230,8 @@ protected:
 
 	virtual void OnPostScroll();
 
+	wxTimer m_folderscan_item_refresh_timer;
+
 	DECLARE_EVENT_TABLE();
 	void OnEngineEvent(wxEvent &event);
 	void OnFolderThreadComplete(wxCommandEvent& event);

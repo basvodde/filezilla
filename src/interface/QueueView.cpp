@@ -306,7 +306,7 @@ protected:
 				m_condition.Wait();
 			}
 		}
-		else if (m_entryList.size() < 10)
+		else if (m_entryList.size() < 20)
 			send = false;
 		else
 			send = true;
@@ -476,6 +476,8 @@ CQueueView::CQueueView(CQueue* parent, int index, CMainFrame* pMainFrame, CAsync
 	SettingsChanged();
 
 	SetDropTarget(new CQueueViewDropTarget(this));
+
+	m_folderscan_item_refresh_timer.SetOwner(this);
 }
 
 CQueueView::~CQueueView()
@@ -524,6 +526,9 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 
 void CQueueView::QueueFile_Finish(const bool start)
 {
+	bool need_refresh = false;
+	if (m_insertionStart <= GetTopItem() + GetCountPerPage() + 1)
+		need_refresh = true;
 	CommitChanges();
 
 	if (!m_activeMode && start)
@@ -540,7 +545,9 @@ void CQueueView::QueueFile_Finish(const bool start)
 	}
 
 	UpdateStatusLinePositions();
-	RefreshListOnly(false);
+
+	if (need_refresh)
+		RefreshListOnly(false);
 }
 
 bool CQueueView::QueueFiles(const bool queueOnly, const wxString& localPath, const CRemoteDataObject& dataObject)
@@ -1733,6 +1740,8 @@ void CQueueView::OnFolderThreadComplete(wxCommandEvent& event)
 	if (!m_pFolderProcessingThread)
 		return;
 
+	m_folderscan_item_refresh_timer.Stop();
+
 	wxASSERT(!m_queuedFolders[1].empty());
 	CFolderScanItem* pItem = m_queuedFolders[1].front();
 	if (pItem->m_dir_is_empty)
@@ -2330,8 +2339,9 @@ void CQueueView::OnFolderThreadFiles(wxCommandEvent& event)
 	m_pFolderProcessingThread->CheckFinished();
 
 	pItem->m_count += added;
-	pItem->m_statusMessage = wxString::Format(_("%d files added to queue"), pItem->GetCount());
-	RefreshItem(pItem);
+
+	if (!m_folderscan_item_refresh_timer.IsRunning())
+		m_folderscan_item_refresh_timer.Start(200, true);
 }
 
 void CQueueView::SetDefaultFileExistsAction(enum CFileExistsNotification::OverwriteAction action, const enum TransferDirection direction)
@@ -2701,6 +2711,17 @@ void CQueueView::OnTimer(wxTimerEvent& event)
 		return;
 	}
 #endif
+
+	if (id == m_folderscan_item_refresh_timer.GetId())
+	{
+		if (m_queuedFolders[1].empty())
+			return;
+
+		CFolderScanItem* pItem = m_queuedFolders[1].front();
+		pItem->m_statusMessage = wxString::Format(_("%d files added to queue"), pItem->GetCount());
+		RefreshItem(pItem);
+		return;
+	}
 
 	for (unsigned int i = 1; i < m_engineData.size(); i++)
 	{
