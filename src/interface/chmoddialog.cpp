@@ -261,16 +261,18 @@ wxString CChmodDialog::GetPermissions(const char* previousPermissions)
 	{
 		// Use default of  (0...0)755
 		if (numeric[numeric.Length() - 1] == 'x')
-			numeric[numeric.Length() - 1] = 5;
+			numeric[numeric.Length() - 1] = '5';
 		if (numeric[numeric.Length() - 2] == 'x')
-			numeric[numeric.Length() - 2] = 5;
+			numeric[numeric.Length() - 2] = '5';
 		if (numeric[numeric.Length() - 3] == 'x')
-			numeric[numeric.Length() - 3] = 7;
+			numeric[numeric.Length() - 3] = '7';
 		numeric.Replace(_T("x"), _T("0"));
 		return numeric;
 	}
 
-	const char defaultPerms[9] = { 2, 2, 2, 1, 0, 1, 1, 0, 1 };
+	// 2 set, 1 unset, 0 keep
+
+	const char defaultPerms[9] = { 2, 2, 2, 2, 1, 2, 2, 1, 2 };
 	char perms[9];
 	memcpy(perms, m_permissions, 9);
 
