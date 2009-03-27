@@ -80,6 +80,9 @@ public:
 	bool m_failed;
 	bool m_hasDirs;
 
+	bool m_has_perms;
+	bool m_has_usergroup;
+
 	CTimeEx m_firstListTime;
 
 	void Assign(const std::list<CDirentry> &entries);

@@ -6,6 +6,8 @@ CDirectoryListing::CDirectoryListing()
 	m_hasUnsureEntries = 0;
 	m_failed = false;
 	m_hasDirs = false;
+	m_has_perms = false;
+	m_has_usergroup = false;
 }
 
 CDirectoryListing::CDirectoryListing(const CDirectoryListing& listing)
@@ -21,6 +23,10 @@ CDirectoryListing::CDirectoryListing(const CDirectoryListing& listing)
 	m_firstListTime = listing.m_firstListTime;
 
 	m_hasDirs = listing.m_hasDirs;
+
+	m_has_perms = listing.m_has_perms;
+	m_has_usergroup = listing.m_has_usergroup;
+
 }
 
 CDirectoryListing& CDirectoryListing::operator=(const CDirectoryListing &a)
@@ -43,6 +49,9 @@ CDirectoryListing& CDirectoryListing::operator=(const CDirectoryListing &a)
 
 	m_searchmap_case = a.m_searchmap_case;
 	m_searchmap_nocase = a.m_searchmap_nocase;
+
+	m_has_perms = a.m_has_perms;
+	m_has_usergroup = a.m_has_usergroup;
 
 	return *this;
 }
@@ -146,11 +155,17 @@ void CDirectoryListing::Assign(const std::list<CDirentry> &entries)
 	own_entries.reserve(m_entryCount);
 	
 	m_hasDirs = false;
+	m_has_perms = false;
+	m_has_usergroup = false;
 	
 	for (std::list<CDirentry>::const_iterator iter = entries.begin(); iter != entries.end(); iter++)
 	{
 		if (iter->dir)
 			m_hasDirs = true;
+		if (!iter->permissions.empty())
+			m_has_usergroup = true;
+		if (!iter->ownerGroup.empty())
+			m_has_perms = true;
 		own_entries.push_back(CRefcountObject<CDirentry>(*iter));
 	}
 
