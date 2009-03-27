@@ -740,9 +740,11 @@ bool CDirectoryListingParser::ParseLine(CLine *pLine, const enum ServerType serv
 	res = ParseAsDos(pLine, entry);
 	if (res)
 		goto done;
-	res = ParseAsMlsd(pLine, entry);
-	if (res)
+	int ires = ParseAsMlsd(pLine, entry);
+	if (ires == 1)
 		goto done;
+	else if (ires == 2)
+		goto skip;
 	res = ParseAsEplf(pLine, entry);
 	if (res)
 		goto done;
@@ -839,6 +841,11 @@ done:
 
 	entry.unsure = false;
 	m_entryList.push_back(entry);
+
+skip:
+	m_maybeMultilineVms = false;
+	m_fileList.clear();
+	m_fileListOnly = false;
 
 	return true;
 }
@@ -2591,7 +2598,7 @@ bool CDirectoryListingParser::ParseComplexFileSize(CToken& token, wxLongLong& si
 	return true;
 }
 
-bool CDirectoryListingParser::ParseAsMlsd(CLine *pLine, CDirentry &entry)
+int CDirectoryListingParser::ParseAsMlsd(CLine *pLine, CDirentry &entry)
 {
 	// MLSD format as described here: http://www.ietf.org/internet-drafts/draft-ietf-ftpext-mlst-16.txt
 
@@ -2600,11 +2607,11 @@ bool CDirectoryListingParser::ParseAsMlsd(CLine *pLine, CDirentry &entry)
 	CToken token;
 
 	if (!pLine->GetToken(0, token))
-		return false;
+		return 0;
 
 	wxString facts = token.GetString();
 	if (facts.IsEmpty())
-		return false;
+		return 0;
 
 	entry.dir = false;
 	entry.link = false;
@@ -2613,25 +2620,28 @@ bool CDirectoryListingParser::ParseAsMlsd(CLine *pLine, CDirentry &entry)
 	entry.ownerGroup = _T("");
 	entry.permissions = _T("");
 
+	wxString owner, group, uid, gid;
+
 	while (!facts.IsEmpty())
 	{
 		int delim = facts.Find(';');
 		if (delim < 3)
-			return false;
+			return 0;
 
 		int pos = facts.Find('=');
-		if (pos < 1 || (pos + 2) >= delim)
-			return false;
+		if (pos < 1 || (pos + 2) > delim)
+			return 0;
 
 		wxString factname = facts.Left(pos);
 		MakeLowerAscii(factname);
 		wxString value = facts.Mid(pos + 1, delim - pos - 1);
 		if (factname == _T("type"))
 		{
-			if (!value.CmpNoCase(_T("dir")) ||
-				!value.CmpNoCase(_T("cdir")) ||
-				!value.CmpNoCase(_T("pdir")))
+			if (!value.CmpNoCase(_T("dir")))
 				entry.dir = true;
+			else if (!value.CmpNoCase(_T("cdir")) ||
+					 !value.CmpNoCase(_T("pdir")))
+				return 2;
 		}
 		else if (factname == _T("size"))
 		{
@@ -2640,7 +2650,7 @@ bool CDirectoryListingParser::ParseAsMlsd(CLine *pLine, CDirentry &entry)
 			for (unsigned int i = 0; i < value.Len(); i++)
 			{
 				if (value[i] < '0' || value[i] > '9')
-					return false;
+					return 0;
 				entry.size *= 10;
 				entry.size += value[i] - '0';
 			}
@@ -2652,12 +2662,12 @@ bool CDirectoryListingParser::ParseAsMlsd(CLine *pLine, CDirentry &entry)
 			const wxChar* time = dateTime.ParseFormat(value, _T("%Y%m%d"));
 
 			if (!time)
-				return false;
+				return 0;
 
 			if (*time)
 			{
 				if (!dateTime.ParseFormat(time, _T("%H%M%S"), dateTime))
-					return false;
+					return 0;
 				entry.hasTimestamp = CDirentry::timestamp_seconds;
 			}
 			else
@@ -2666,17 +2676,48 @@ bool CDirectoryListingParser::ParseAsMlsd(CLine *pLine, CDirentry &entry)
 			entry.time = dateTime.FromTimezone(wxDateTime::GMT0);
 		}
 		else if (factname == _T("perm"))
-			entry.permissions = value;
+		{
+			if (!entry.permissions.empty())
+				entry.permissions = value + _T(" (") + entry.permissions + _T(")");
+			else
+				entry.permissions = value;
+		}
+		else if (factname == _T("unix.mode"))
+		{
+			if (!entry.permissions.empty())
+				entry.permissions = entry.permissions + _T(" (") + value + _T(")");
+			else
+				entry.permissions = value;
+		}
+		else if (factname == _T("unix.owner") || factname == _T("unix.user"))
+			owner = value;
+		else if (factname == _T("unix.group"))
+			group = value;
+		else if (factname == _T("unix.uid"))
+			uid = value;
+		else if (factname == _T("unix.gid"))
+			gid = value;
 
 		facts = facts.Mid(delim + 1);
 	}
 
+	// The order of the facts is undefined, so assemble ownerGroup in correct
+	// order
+	if (!owner.empty())
+		entry.ownerGroup += owner;
+	else if (!uid.empty())
+		entry.ownerGroup += uid;
+	if (!group.empty())
+		entry.ownerGroup += _T(" ") + group;
+	else if (!gid.empty())
+		entry.ownerGroup += _T(" ") + gid;
+
 	if (!pLine->GetToken(1, token, true))
-		return false;
+		return 0;
 
 	entry.name = token.GetString();
 
-	return true;
+	return 1;
 }
 
 bool CDirectoryListingParser::ParseAsOS9(CLine *pLine, CDirentry &entry)

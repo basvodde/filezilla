@@ -71,7 +71,7 @@ protected:
 	bool ParseAsIBM_MVS_PDS2(CLine *pLine, CDirentry &entry);
 	bool ParseAsIBM_MVS_Migrated(CLine *pLine, CDirentry &entry);
 	bool ParseAsIBM_MVS_Tape(CLine *pLine, CDirentry &entry);
-	bool ParseAsMlsd(CLine *pLine, CDirentry &entry);
+	int ParseAsMlsd(CLine *pLine, CDirentry &entry);
 	bool ParseAsOS9(CLine *pLine, CDirentry &entry);
 	
 	// Only call this if servertype set to ZVM since it conflicts
