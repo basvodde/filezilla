@@ -312,10 +312,44 @@ void CChmodDialog::OnRecurseChanged(wxCommandEvent& event)
 	pApplyDirs->Enable(pRecurse->GetValue());
 }
 
-bool CChmodDialog::ConvertPermissions(const wxString rwx, char* permissions)
+bool CChmodDialog::ConvertPermissions(wxString rwx, char* permissions)
 {
 	if (!permissions)
 		return false;
+
+	int pos = rwx.Find('(');
+	if (pos != -1 && rwx.Last() == ')')
+	{
+		// MLSD permissions:
+		//   foo (0644)
+		rwx.RemoveLast();
+		rwx = rwx.Mid(pos + 1);
+	}
+
+	if (rwx.Len() < 3)
+		return false;
+	int i;
+	for (i = 0; i < rwx.Len(); i++)
+		if (rwx[i] < '0' || rwx[i] > '9')
+			break;
+	if (i == rwx.Len())
+	{
+		// Mode, e.g. 0723
+		for (i = 0; i < 3; i++)
+		{
+			int m = rwx[rwx.Len() - 3 + i] - '0';
+
+			for (int j = 0; j < 3; j++)
+			{
+				if (m & (4 >> j))
+					permissions[i * 3 + j] = 2;
+				else
+					permissions[i * 3 + j] = 1;
+			}
+		}
+
+		return true;
+	}
 
 	const unsigned char permchars[3] = {'r', 'w', 'x'};
 

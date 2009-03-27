@@ -22,7 +22,9 @@ public:
 	// 9 characters.
 	// Example:
 	//   drwxr--r-- gets converted into 222211211
-	bool ConvertPermissions(const wxString rwx, char* permissions);
+	//   0644 gets converted into 221211211
+	//   foo (0273) gets converted into 121222122
+	bool ConvertPermissions(wxString rwx, char* permissions);
 
 protected:
 
