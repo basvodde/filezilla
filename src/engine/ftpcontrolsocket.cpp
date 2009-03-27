@@ -35,8 +35,9 @@
 #define LOGON_OPTSUTF8	8
 #define LOGON_PBSZ		9
 #define LOGON_PROT		10
-#define LOGON_CUSTOMCOMMANDS 11
-#define LOGON_DONE		12
+#define LOGON_OPTSMLST	11
+#define LOGON_CUSTOMCOMMANDS 12
+#define LOGON_DONE		13
 
 #ifdef __WXMSW__
 
@@ -327,7 +328,12 @@ void CFtpControlSocket::ParseLine(wxString line)
 			else if (up == _T(" MLSD") || up.Left(6) == _T(" MLSD "))
 				CServerCapabilities::SetCapability(*m_pCurrentServer, mlsd_command, yes);
 			else if (up == _T(" MLST") || up.Left(6) == _T(" MLST "))
-				CServerCapabilities::SetCapability(*m_pCurrentServer, mlsd_command, yes);
+			{
+				CServerCapabilities::SetCapability(*m_pCurrentServer, mlsd_command, yes, line.Mid(6));
+
+				// MSLT/MLSD specs require use of UTC
+				CServerCapabilities::SetCapability(*m_pCurrentServer, timezone_offset, no);
+			}
 			else if (up == _T(" MODE Z") || up.Left(6) == _T(" MODE Z "))
 				CServerCapabilities::SetCapability(*m_pCurrentServer, mode_z_support, yes);
 			else if (up == _T(" MFMT") || up.Left(6) == _T(" MFMT "))
@@ -989,6 +995,79 @@ int CFtpControlSocket::LogonParseResponse()
 			if (CServerCapabilities::GetCapability(*GetCurrentServer(), utf8_command) == yes)
 				break;
 		}
+		else if (pData->opState == LOGON_OPTSMLST)
+		{
+			wxString facts;
+			if (CServerCapabilities::GetCapability(*GetCurrentServer(), mlsd_command, &facts) != yes)
+				continue;
+			capabilities cap = CServerCapabilities::GetCapability(*GetCurrentServer(), opst_mlst_command);
+			if (cap == unknown)
+			{
+				MakeLowerAscii(facts);
+
+				bool had_unset = false;
+				wxString opts_facts;
+
+				// Create a list of all facts understood by both FZ and the server.
+				// Check if there's any supported fact not enabled by default, should that
+				// be the case we need to send OPTS MLST
+				while (!facts.IsEmpty())
+				{
+					int delim = facts.Find(';');
+					if (delim == -1)
+						break;
+						
+					if (!delim)
+					{
+						facts = facts.Mid(1);
+						continue;
+					}
+
+					bool enabled;
+					wxString fact;
+
+					if (facts[delim - 1] == '*')
+					{
+						if (delim == 1)
+						{
+							facts = facts.Mid(delim + 1);
+							continue;
+						}
+						enabled = true;
+						fact = facts.Left(delim - 1);
+					}
+					else
+						fact = facts.Left(delim);
+					facts = facts.Mid(delim + 1);
+
+					if (fact == _T("type") ||
+						fact == _T("size") ||
+						fact == _T("modify") ||
+						fact == _T("perm") ||
+						fact == _T("unix.mode") ||
+						fact == _T("unix.owner") ||
+						fact == _T("unix.user") ||
+						fact == _T("unix.group") ||
+						fact == _T("unix.uid") ||
+						fact == _T("unix.gid") ||
+						fact == _T("x.hidden"))
+					{
+						had_unset |= !enabled;
+						opts_facts += fact + _T(";");
+					}
+				}
+
+				if (had_unset)
+				{
+					CServerCapabilities::SetCapability(*GetCurrentServer(), opst_mlst_command, yes, opts_facts);
+					break;
+				}
+				else
+					CServerCapabilities::SetCapability(*GetCurrentServer(), opst_mlst_command, no);
+			}
+			else if (cap == yes)
+				break;
+		}
 		else
 			break;
 	}
@@ -1113,6 +1192,13 @@ int CFtpControlSocket::LogonSend()
 			return FZ_REPLY_ERROR;
 		}
 		res = Send(m_pCurrentServer->GetPostLoginCommands()[pData->customCommandIndex]);
+	case LOGON_OPTSMLST:
+		{
+			wxString args;
+			CServerCapabilities::GetCapability(*GetCurrentServer(), opst_mlst_command, &args);
+			res = Send(_T("OPTS MLST " + args));
+		}
+		break;
 	default:
 		return FZ_REPLY_ERROR;
 	}
@@ -1325,11 +1411,9 @@ int CFtpControlSocket::ListSubcommandResult(int prevResult)
 		InitTransferStatus(-1, 0, true);
 
 		pData->opState = list_waittransfer;
-#if 0 // Disabled for now
 		if (CServerCapabilities::GetCapability(*m_pCurrentServer, mlsd_command) == yes)
 			return Transfer(_T("MLSD"), pData);
 		else
-#endif
 		{
 			if (m_pEngine->GetOptions()->GetOptionVal(OPTION_VIEW_HIDDEN_FILES))
 			{
@@ -1581,7 +1665,7 @@ int CFtpControlSocket::ListParseResponse()
 		m_Response.Left(4) == _T("213 ") && m_Response.Length() > 16)
 	{
 		wxDateTime date;
-		const wxChar *res = date.ParseFormat(m_Response.Mid(4), _T("%Y%m%d%H%M"));
+		const wxChar *res = date.ParseFormat(m_Response.Mid(4), _T("%Y%m%d%H%M%S"));
 		if (res && date.IsValid())
 		{
 			wxASSERT(pData->directoryListing[pData->mdtm_index].hasTimestamp != CDirentry::timestamp_none);

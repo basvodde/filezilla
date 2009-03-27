@@ -19,6 +19,7 @@ enum capabilityNames
 	clnt_command, // set to 'yes' if CLNT should be sent
 	utf8_command, // set to yes if OPTS UTF8 ON should be sent
 	mlsd_command,
+	opst_mlst_command, // Arguments for OPTS MLST command
 	mfmt_command,
 	pret_command,
 	mdtm_command,
