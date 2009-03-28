@@ -832,12 +832,14 @@ done:
 			entry.name = entry.name.Left(pos);
 	}
 
-	int offset = m_server.GetTimezoneOffset();
-	if (offset && entry.hasTimestamp >= CDirentry::timestamp_time)
 	{
-		// Apply timezone offset
-		wxTimeSpan span(0, offset, 0, 0);
-		entry.time.Add(span);
+		int offset = m_server.GetTimezoneOffset();
+		if (offset && entry.hasTimestamp >= CDirentry::timestamp_time)
+		{
+			// Apply timezone offset
+			wxTimeSpan span(0, offset, 0, 0);
+			entry.time.Add(span);
+		}
 	}
 
 	entry.unsure = false;
