@@ -720,6 +720,7 @@ bool CDirectoryListingParser::ParseLine(CLine *pLine, const enum ServerType serv
 {
 	CDirentry entry;
 	bool res;
+	int ires;
 
 	if (serverType == ZVM)
 	{
@@ -740,7 +741,7 @@ bool CDirectoryListingParser::ParseLine(CLine *pLine, const enum ServerType serv
 	res = ParseAsDos(pLine, entry);
 	if (res)
 		goto done;
-	int ires = ParseAsMlsd(pLine, entry);
+	ires = ParseAsMlsd(pLine, entry);
 	if (ires == 1)
 		goto done;
 	else if (ires == 2)
