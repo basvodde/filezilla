@@ -327,9 +327,12 @@ int wxListCtrlEx::FindItemWithPrefix(const wxString& searchPrefix, int start)
 void wxListCtrlEx::SaveSetItemCount(long count)
 {
 #ifndef __WXMSW__
-	int focused = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
-	if (focused >= count)
-		SetItemState(focused, 0, wxLIST_STATE_FOCUSED);
+	if (count < GetItemCount())
+	{
+		int focused = GetNextItem(count - 1, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
+		if (focused != -1)
+			SetItemState(focused, 0, wxLIST_STATE_FOCUSED);
+	}
 #endif //__WXMSW__
 	SetItemCount(count);
 }

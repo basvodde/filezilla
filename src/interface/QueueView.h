@@ -232,6 +232,9 @@ protected:
 
 	wxTimer m_folderscan_item_refresh_timer;
 
+	int GetLineHeight();
+	int m_line_height;
+
 	DECLARE_EVENT_TABLE();
 	void OnEngineEvent(wxEvent &event);
 	void OnFolderThreadComplete(wxCommandEvent& event);

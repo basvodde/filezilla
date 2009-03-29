@@ -478,6 +478,8 @@ CQueueView::CQueueView(CQueue* parent, int index, CMainFrame* pMainFrame, CAsync
 	SetDropTarget(new CQueueViewDropTarget(this));
 
 	m_folderscan_item_refresh_timer.SetOwner(this);
+
+	m_line_height = -1;
 }
 
 CQueueView::~CQueueView()
@@ -894,11 +896,9 @@ bool CQueueView::TryStartNextTransfer()
 		int lineIndex = GetItemIndex(bestMatch.fileItem);
 		UpdateSelections_ItemAdded(lineIndex + 1);
 
-		wxRect rect;
-		GetItemRect(lineIndex + 1, rect);
-#ifndef __WXMSW__
-		rect.y -= GetMainWindow()->GetPosition().y;
-#endif
+		wxRect rect = GetClientRect();
+		rect.y = GetLineHeight() * (lineIndex + 1 - GetTopItem());
+		rect.SetHeight(GetLineHeight());
 		m_allowBackgroundErase = false;
 		if (!pEngineData->pStatusLineCtrl)
 			pEngineData->pStatusLineCtrl = new CStatusLineCtrl(this, pEngineData, rect);
@@ -1621,10 +1621,6 @@ void CQueueView::UpdateStatusLinePositions()
 	m_lastTopItem = GetTopItem();
 	int bottomItem = m_lastTopItem + GetCountPerPage();
 
-#ifndef __WXMSW__
-	int header_offset = GetMainWindow()->GetPosition().y;
-#endif
-
 	for (std::list<CStatusLineCtrl*>::iterator iter = m_statusLineList.begin(); iter != m_statusLineList.end(); iter++)
 	{
 		CStatusLineCtrl *pCtrl = *iter;
@@ -1635,15 +1631,10 @@ void CQueueView::UpdateStatusLinePositions()
 			continue;
 		}
 
-		wxRect rect;
-		if (!GetItemRect(index, rect))
-		{
-			pCtrl->Show(false);
-			continue;
-		}
-#ifndef __WXMSW__
-		rect.y -= header_offset;
-#endif
+		wxRect rect = GetClientRect();
+		rect.y = GetLineHeight() * (index - m_lastTopItem);
+		rect.SetHeight(GetLineHeight());
+
 		m_allowBackgroundErase = bottomItem + 1 >= m_itemCount;
 		pCtrl->SetSize(rect);
 		m_allowBackgroundErase = false;
@@ -3105,4 +3096,21 @@ void CQueueView::OnChar(wxKeyEvent& event)
 	}
 	else
 		event.Skip();
+}
+
+int CQueueView::GetLineHeight()
+{
+	if (m_line_height != -1)
+		return m_line_height;
+
+	if (!GetItemCount())
+		return 20;
+
+	wxRect rect;
+	if (!GetItemRect(0, rect))
+		return 20;
+
+	m_line_height = rect.GetHeight();
+
+	return m_line_height;
 }

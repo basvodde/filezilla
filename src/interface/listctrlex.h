@@ -18,6 +18,8 @@ public:
 
 	void EnablePrefixSearch(bool enable) { m_prefixSearch_enabled = enable; }
 
+	// Reducing item count does not reset the focused item
+ 	// if using the generic list control. Work around it.
 	void SaveSetItemCount(long count);
 
 	void ShowColumnEditor();
