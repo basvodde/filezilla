@@ -251,15 +251,12 @@ int CQueueItem::GetItemIndex() const
 
 CFileItem::CFileItem(CServerItem* parent, bool queued, bool download, const wxString& localFile,
 					 const wxString& remoteFile, const CServerPath& remotePath, wxLongLong size)
+	: m_localFile(localFile), m_remoteFile(remoteFile), m_remotePath(remotePath), m_size(size)
 {
 	m_parent = parent;
 	m_priority = priority_normal;
 
 	m_download = download;
-	m_localFile = localFile;
-	m_remoteFile = remoteFile;
-	m_remotePath = remotePath;
-	m_size = size;
 	m_queued = queued;
 	m_active = false;
 	m_errorCount = 0;

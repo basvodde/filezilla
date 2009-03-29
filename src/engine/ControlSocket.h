@@ -35,7 +35,7 @@ public:
 class CFileTransferOpData : public COpData
 {
 public:
-	CFileTransferOpData();
+	CFileTransferOpData(const wxString& local_file, const wxString& remote_file, const CServerPath& remote_path);
 	virtual ~CFileTransferOpData();
 	// Transfer data
 	wxString localFile, remoteFile;

@@ -459,8 +459,9 @@ int CControlSocket::CheckOverwriteFile()
 	return FZ_REPLY_WOULDBLOCK;
 }
 
-CFileTransferOpData::CFileTransferOpData() :
+CFileTransferOpData::CFileTransferOpData(const wxString& local_file, const wxString& remote_file, const CServerPath& remote_path) :
 	COpData(cmd_transfer),
+ 	localFile(local_file), remoteFile(remote_file), remotePath(remote_path),
 	localFileSize(-1), remoteFileSize(-1),
 	tryAbsolutePath(false), resume(false), transferInitiated(false)
 {

@@ -91,9 +91,9 @@ DECLARE_COMMAND(CCancelCommand, cmd_cancel)
 #define LIST_FLAG_FALLBACK_CURRENT 4
 #define LIST_FLAG_LINK 8
 DECLARE_COMMAND(CListCommand, cmd_list)
-    // Without a given directory, the current directory will be listed.
-    // Directories can either be given as absolute path or as
-    // pair of an absolute path and the very last path segments.
+	// Without a given directory, the current directory will be listed.
+	// Directories can either be given as absolute path or as
+	// pair of an absolute path and the very last path segments.
 	
 	// Set LIST_FLAG_REFRESH to get a directory listing even if a cache
 	// lookup can be made after finding out true remote directory.

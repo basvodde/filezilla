@@ -13,7 +13,8 @@
 class CSftpFileTransferOpData : public CFileTransferOpData
 {
 public:
-	CSftpFileTransferOpData()
+	CSftpFileTransferOpData(const wxString& local_file, const wxString& remote_file, const CServerPath& remote_path)
+		: CFileTransferOpData(local_file, remote_file, remote_path)
 	{
 	}
 };
@@ -1637,12 +1638,9 @@ int CSftpControlSocket::FileTransfer(const wxString localFile, const CServerPath
 		delete m_pCurOpData;
 	}
 
-	CSftpFileTransferOpData *pData = new CSftpFileTransferOpData;
+	CSftpFileTransferOpData *pData = new CSftpFileTransferOpData(localFile, remoteFile, remotePath);
 	m_pCurOpData = pData;
 
-	pData->localFile = localFile;
-	pData->remotePath = remotePath;
-	pData->remoteFile = remoteFile;
 	pData->download = download;
 	pData->transferSettings = transferSettings;
 

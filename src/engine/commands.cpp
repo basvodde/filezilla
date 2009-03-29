@@ -1,8 +1,8 @@
 #include "FileZilla.h"
 
 CConnectCommand::CConnectCommand(const CServer &server, bool retry_connecting /*=true*/)
+	: m_Server(server)
 {
-	m_Server = server;
 	m_retry_connecting = retry_connecting;
 }
 
@@ -17,10 +17,8 @@ CListCommand::CListCommand(int flags /*=0*/)
 }
 
 CListCommand::CListCommand(CServerPath path, wxString subDir /*=_T("")*/, int flags /*=0*/)
-	: m_flags(flags)
+	: m_path(path), m_subDir(subDir), m_flags(flags)
 {
-	m_path = path;
-	m_subDir = subDir;
 }
 
 CServerPath CListCommand::GetPath() const
@@ -36,10 +34,8 @@ wxString CListCommand::GetSubDir() const
 CFileTransferCommand::CFileTransferCommand(const wxString &localFile, const CServerPath& remotePath,
 										   const wxString &remoteFile, bool download,
 										   const CFileTransferCommand::t_transferSettings& transferSettings)
+	: m_localFile(localFile), m_remotePath(remotePath), m_remoteFile(remoteFile)
 {
-	m_localFile = localFile;
-	m_remotePath = remotePath;
-	m_remoteFile = remoteFile;
 	m_download = download;
 	m_transferSettings = transferSettings;
 }
@@ -80,14 +76,13 @@ CDeleteCommand::CDeleteCommand(const CServerPath& path, const std::list<wxString
 }
 
 CRemoveDirCommand::CRemoveDirCommand(const CServerPath& path, const wxString& subDir)
+	: m_path(path), m_subDir(subDir)
 {
-	m_path = path;
-	m_subDir = subDir;
 }
 
 CMkdirCommand::CMkdirCommand(const CServerPath& path)
+	: m_path(path)
 {
-	m_path = path;
 }
 
 CRenameCommand::CRenameCommand(const CServerPath& fromPath, const wxString& fromFile,
