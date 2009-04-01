@@ -308,7 +308,7 @@ protected:
 class CLine
 {
 public:
-	CLine(wxChar* p, int len = -1)
+	CLine(wxChar* p, int len = -1, int trailing_whitespace = 0)
 	{
 		m_pLine = p;
 		if (len != -1)
@@ -320,6 +320,7 @@ public:
 
 		m_Tokens.reserve(10);
 		m_LineEndTokens.reserve(10);
+		m_trailing_whitespace = trailing_whitespace;
 	}
 
 	~CLine()
@@ -333,7 +334,7 @@ public:
 			delete *iter;
 	}
 
-	bool GetToken(unsigned int n, CToken &token, bool toEnd = false)
+	bool GetToken(unsigned int n, CToken &token, bool toEnd = false, bool include_whitespace = false)
 	{
 		if (!toEnd)
 		{
@@ -380,6 +381,17 @@ public:
 		}
 		else
 		{
+			if (include_whitespace)
+			{
+				CToken ref;
+				if (!GetToken(n, ref))
+					return false;
+				const wxChar* p = ref.GetToken();
+
+				token = CToken(p, m_len - (p - m_pLine));
+				return true;
+			}
+
 			if (m_LineEndTokens.size() > n)
 			{
 				token = *(m_LineEndTokens[n]);
@@ -394,7 +406,7 @@ public:
 			{
 				const CToken *refToken = m_Tokens[i];
 				const wxChar* p = refToken->GetToken();
-				CToken *pToken = new CToken(p, m_len - (p - m_pLine));
+				CToken *pToken = new CToken(p, m_len - (p - m_pLine) - m_trailing_whitespace);
 				m_LineEndTokens.push_back(pToken);
 			}
 			token = *(m_LineEndTokens[n]);
@@ -410,7 +422,7 @@ public:
 		p[m_len] = ' ';
 		memcpy(p + m_len + 1, pLine->m_pLine, pLine->m_len * sizeof(wxChar));
 
-		return new CLine(p, m_len + pLine->m_len + 1);
+		return new CLine(p, m_len + pLine->m_len + 1, pLine->m_trailing_whitespace);
 	}
 
 protected:
@@ -418,6 +430,7 @@ protected:
 	std::vector<CToken *> m_LineEndTokens;
 	int m_parsePos;
 	int m_len;
+	int m_trailing_whitespace;
 	wxChar* m_pLine;
 };
 
@@ -2053,13 +2066,11 @@ CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
 		int currentOffset = m_currentOffset;
 		while ((iter->p[currentOffset] != '\n') && (iter->p[currentOffset] != '\r'))
 		{
-			if (iter->p[currentOffset] != ' ' && iter->p[currentOffset] != '\t')
-			{
-				reslen += emptylen + 1;
-				emptylen = 0;
-			}
-			else
+			if (iter->p[currentOffset] == ' ' || iter->p[currentOffset] == '\t')
 				emptylen++;
+			else
+				emptylen = 0;
+			reslen++;
 
 			currentOffset++;
 			if (currentOffset >= len)
@@ -2077,7 +2088,7 @@ CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
 		}
 		m_currentOffset = currentOffset;
 
-		// Reslen is now the length of the line, excluding any terminating whitespace
+		// Reslen is now the length of the line, including any terminating whitespace
 		char *res = new char[reslen + 1];
 		res[reslen] = 0;
 
@@ -2098,19 +2109,13 @@ CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
 			delete [] i->p;
 			i++;
 		}
-		// Delete all extra whitespace
-		while (i != iter)
-		{
-			delete [] i->p;
-			i++;
-		}
 
 		// Copy last chunk
 		if (iter != m_DataList.end() && reslen)
 		{
 			int copylen = m_currentOffset-startpos;
-			if (copylen>reslen)
-				copylen=reslen;
+			if (copylen > reslen)
+				copylen = reslen;
 			memcpy(&res[respos], &iter->p[startpos], copylen);
 			if (reslen >= iter->len)
 			{
@@ -2149,7 +2154,7 @@ CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
 			continue;
 		}
 
-		return new CLine(buffer);
+		return new CLine(buffer, -1, emptylen);
 	}
 
 	return 0;
@@ -2715,7 +2720,7 @@ int CDirectoryListingParser::ParseAsMlsd(CLine *pLine, CDirentry &entry)
 	else if (!gid.empty())
 		entry.ownerGroup += _T(" ") + gid;
 
-	if (!pLine->GetToken(1, token, true))
+	if (!pLine->GetToken(1, token, true, true))
 		return 0;
 
 	entry.name = token.GetString();
