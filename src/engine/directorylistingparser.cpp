@@ -383,10 +383,21 @@ public:
 		{
 			if (include_whitespace)
 			{
-				CToken ref;
-				if (!GetToken(n, ref))
-					return false;
-				const wxChar* p = ref.GetToken();
+				const wxChar* p;
+				if (!n)
+				{
+					CToken ref;
+					if (!GetToken(n, ref))
+						return false;
+					p = ref.GetToken() + ref.GetLength() + 1;
+				}
+				else
+				{
+					CToken ref;
+					if (!GetToken(n - 1, ref))
+						return false;
+					p = ref.GetToken() + ref.GetLength() + 1;
+				}
 
 				token = CToken(p, m_len - (p - m_pLine));
 				return true;

@@ -1433,6 +1433,40 @@ void CDirectoryListingParserTest::InitEntries()
 			MVS
 		});
 
+	m_entries.push_back((t_entry){
+			"Type=file; 74-MLSD-whitespace trailing\t ",
+			{
+				_T("74-MLSD-whitespace trailing\t "),
+				-1,
+				_T(""),
+				_T(""),
+				false,
+				false,
+				_T(""),
+				CDirentry::timestamp_none,
+				wxDateTime(),
+				false
+			},
+			DEFAULT
+		});
+
+		m_entries.push_back((t_entry){
+			"Type=file; \t 75-MLSD-whitespace leading",
+			{
+				_T("\t 75-MLSD-whitespace leading"),
+				-1,
+				_T(""),
+				_T(""),
+				false,
+				false,
+				_T(""),
+				CDirentry::timestamp_none,
+				wxDateTime(),
+				false
+			},
+			DEFAULT
+		});
+
 /*
 	wxString name;
 	wxLongLong size;
