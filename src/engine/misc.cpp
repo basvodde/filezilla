@@ -8,6 +8,7 @@
 #ifndef __WXMSW__
 #include <sys/socket.h>
 #endif
+#include <gnutls/gnutls.h>
 
 bool VerifySetDate(wxDateTime& date, int year, wxDateTime::Month month, int day, int hour /*=0*/, int minute /*=0*/, int second /*=0*/)
 {
@@ -372,4 +373,18 @@ void MakeLowerAscii(wxString& str)
 		if (c >= 'A' && c <= 'Z')
 			c += 32;
 	}
+}
+
+wxString GetDependencyVersion(enum _dependency dependency)
+{
+	if (dependency == dependency_gnutls)
+	{
+		const char* v = gnutls_check_version(0);
+		if (!v || !*v)
+			return _T("unknown");
+	
+		return wxString(v, wxConvLibc);	
+	}
+
+	return _T("No such dependency");
 }

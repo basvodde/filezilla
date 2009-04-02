@@ -19,4 +19,11 @@ int GetRandomNumber(int low, int high);
 // and locale-independently
 void MakeLowerAscii(wxString& str);
 
+enum _dependency
+{
+	dependency_gnutls
+};
+
+wxString GetDependencyVersion(enum _dependency dependency);
+
 #endif //__MISC_H__

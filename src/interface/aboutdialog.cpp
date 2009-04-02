@@ -82,6 +82,14 @@ bool CAboutDialog::Create(wxWindow* parent)
 		pCompilerFlags->SetLabel(compilerFlags);
 	}
 
+	wxStaticText* pVer_wx = XRCCTRL(*this, "ID_VER_WX", wxStaticText);
+	if (pVer_wx)
+		pVer_wx->SetLabel(wxVERSION_NUM_DOT_STRING_T);
+
+	wxStaticText* pVer_gnutls = XRCCTRL(*this, "ID_VER_GNUTLS", wxStaticText);
+	if (pVer_gnutls)
+		pVer_gnutls->SetLabel(GetDependencyVersion(dependency_gnutls));
+
 	GetSizer()->Fit(this);
 	GetSizer()->SetSizeHints(this);
 
