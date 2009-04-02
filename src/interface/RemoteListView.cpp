@@ -1379,7 +1379,7 @@ void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
 		int count = 0;
 		int fillCount = 0;
 		bool selectedDir = false;
-		int item = -1;;
+		int item = -1;
 		while ((item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
 		{
 			int index = GetItemIndex(item);
@@ -1412,7 +1412,8 @@ void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
 				pMenu->Delete(XRCID("ID_ENTER"));
 			if (count > 1)
 			{
-				pMenu->Delete(XRCID("ID_ENTER"));
+				if (selectedDir)
+					pMenu->Delete(XRCID("ID_ENTER"));
 				pMenu->Enable(XRCID("ID_RENAME"), false);
 			}
 
@@ -2539,31 +2540,29 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 		return;
 	}
 
-	long item = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-	if (item < 1)
+	long item = -1;
+	
+	std::list<CDirentry> selected_item_list;
+	while ((item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
 	{
-		wxBell();
-		return;
-	}
+		if (!item)
+		{
+			wxBell();
+			return;
+		}
 
-	if (GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1)
-	{
-		wxBell();
-		return;
-	}
+		int index = GetItemIndex(item);
+		if (index == -1 || m_fileData[index].flags == fill)
+			continue;
 
-	int index = GetItemIndex(item);
-	if (index == -1 || m_fileData[index].flags == fill)
-	{
-		wxBell();
-		return;
-	}
+		const CDirentry& entry = (*m_pDirectoryListing)[index];
+		if (entry.dir)
+		{
+			wxBell();
+			return;
+		}
 
-	const CDirentry entry = (*m_pDirectoryListing)[index];
-	if (entry.dir)
-	{
-		wxBell();
-		return;
+		selected_item_list.push_back(entry);
 	}
 
 	CEditHandler* pEditHandler = CEditHandler::Get();
@@ -2572,6 +2571,7 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 		wxBell();
 		return;
 	}
+
 
 	const wxString& localDir = pEditHandler->GetLocalDirectory();
 	if (localDir == _T(""))
@@ -2583,97 +2583,119 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 	const CServerPath path = m_pDirectoryListing->path;
 	const CServer server = *m_pState->GetServer();
 
-	bool dangerous = false;
-	bool program_exists = false;
-	wxString cmd = pEditHandler->CanOpen(CEditHandler::remote, entry.name, dangerous, program_exists);
-	if (cmd.empty())
+	if (selected_item_list.empty())
 	{
-		CNewAssociationDialog dlg(this);
-		if (!dlg.Show(entry.name))
-			return;
-		cmd = pEditHandler->CanOpen(CEditHandler::remote, entry.name, dangerous, program_exists);
-		if (cmd.empty())
-		{
-			wxMessageBox(wxString::Format(_("The file '%s' could not be opened:\nNo program has been associated on your system with this file type."), entry.name.c_str()), _("Opening failed"), wxICON_EXCLAMATION);
-			return;
-		}
-	}
-	if (!program_exists)
-	{
-		wxString msg = wxString::Format(_("The file '%s' cannot be opened:\nThe associated program (%s) could not be found.\nPlease check your filetype associations."), entry.name.c_str(), cmd.c_str());
-		wxMessageBox(msg, _("Cannot edit file"), wxICON_EXCLAMATION);
-		return;
-	}
-	if (dangerous)
-	{
-		int res = wxMessageBox(_("The selected file would be executed directly.\nThis can be dangerous and damage your system.\nDo you really want to continue?"), _("Dangerous filetype"), wxICON_EXCLAMATION | wxYES_NO);
-		if (res != wxYES)
-		{
-			wxBell();
-			return;
-		}
-	}
-
-	CEditHandler::fileState state = pEditHandler->GetFileState(entry.name, path, server);
-	switch (state)
-	{
-	case CEditHandler::download:
-	case CEditHandler::upload:
-	case CEditHandler::upload_and_remove:
-	case CEditHandler::upload_and_remove_failed:
-		wxMessageBox(_("A file with that name is already being transferred."), _("Cannot view/edit selected file"), wxICON_EXCLAMATION);
-		return;
-	case CEditHandler::removing:
-		if (!pEditHandler)
-		{
-			wxMessageBox(_("A file with that name is still being edited. Please close it and try again."), _("Selected file already opened."), wxICON_EXCLAMATION);
-			return;
-		}
-		break;
-	case CEditHandler::edit:
-		{
-			wxDialogEx dlg;
-			if (!dlg.Load(this, _T("ID_EDITEXISTING")))
-			{
-				wxBell();
-				return;
-			}
-			dlg.SetLabel(XRCID("ID_FILENAME"), entry.name);
-			if (dlg.ShowModal() != wxID_OK)
-			{
-				wxBell();
-				return;
-			}
-
-			if (XRCCTRL(dlg, "ID_REOPEN", wxRadioButton)->GetValue())
-			{
-				pEditHandler->StartEditing(entry.name, path, server);
-				return;
-			}
-			else
-			{
-				if (!pEditHandler->Remove(entry.name, path, server))
-				{
-					wxMessageBox(_("The selected file is still opened in some other program, please close it."), _("Selected file still being edited"), wxICON_EXCLAMATION);
-					return;
-				}
-			}
-		}
-		break;
-	default:
-		break;
-	}
-
-	wxString file = entry.name;
-	if (!pEditHandler->AddFile(CEditHandler::remote, file, path, server))
-	{
-		wxFAIL;
 		wxBell();
 		return;
 	}
 
-	m_pQueue->QueueFile(false, true, file, entry.name, path, server, entry.size, CEditHandler::remote);
-	m_pQueue->QueueFile_Finish(true);
+	if (selected_item_list.size() > 10)
+	{
+
+		CConditionalDialog dlg(this, CConditionalDialog::many_selected_for_edit, CConditionalDialog::yesno);
+		dlg.SetTitle(_("Confirmation needed"));
+		dlg.AddText(_("You have selected more than 10 files for editing, do you really want to continue?"));
+
+		if (!dlg.Run())
+			return;
+	}
+
+	for (std::list<CDirentry>::const_iterator iter = selected_item_list.begin(); iter != selected_item_list.end(); iter++)
+	{
+		const CDirentry& entry = *iter;
+
+		bool dangerous = false;
+		bool program_exists = false;
+		wxString cmd = pEditHandler->CanOpen(CEditHandler::remote, entry.name, dangerous, program_exists);
+		if (cmd.empty())
+		{
+			CNewAssociationDialog dlg(this);
+			if (!dlg.Show(entry.name))
+				continue;
+			cmd = pEditHandler->CanOpen(CEditHandler::remote, entry.name, dangerous, program_exists);
+			if (cmd.empty())
+			{
+				wxMessageBox(wxString::Format(_("The file '%s' could not be opened:\nNo program has been associated on your system with this file type."), entry.name.c_str()), _("Opening failed"), wxICON_EXCLAMATION);
+				continue;
+			}
+		}
+		if (!program_exists)
+		{
+			wxString msg = wxString::Format(_("The file '%s' cannot be opened:\nThe associated program (%s) could not be found.\nPlease check your filetype associations."), entry.name.c_str(), cmd.c_str());
+			wxMessageBox(msg, _("Cannot edit file"), wxICON_EXCLAMATION);
+			continue;
+		}
+		if (dangerous)
+		{
+			int res = wxMessageBox(_("The selected file would be executed directly.\nThis can be dangerous and damage your system.\nDo you really want to continue?"), _("Dangerous filetype"), wxICON_EXCLAMATION | wxYES_NO);
+			if (res != wxYES)
+			{
+				wxBell();
+				continue;
+			}
+		}
+
+		CEditHandler::fileState state = pEditHandler->GetFileState(entry.name, path, server);
+		switch (state)
+		{
+		case CEditHandler::download:
+		case CEditHandler::upload:
+		case CEditHandler::upload_and_remove:
+		case CEditHandler::upload_and_remove_failed:
+			wxMessageBox(_("A file with that name is already being transferred."), _("Cannot view/edit selected file"), wxICON_EXCLAMATION);
+			continue;
+		case CEditHandler::removing:
+			if (!pEditHandler)
+			{
+				wxMessageBox(_("A file with that name is still being edited. Please close it and try again."), _("Selected file already opened."), wxICON_EXCLAMATION);
+				continue;
+			}
+			break;
+		case CEditHandler::edit:
+			{
+				wxDialogEx dlg;
+				if (!dlg.Load(this, _T("ID_EDITEXISTING")))
+				{
+					wxBell();
+					continue;
+				}
+				dlg.SetLabel(XRCID("ID_FILENAME"), entry.name);
+				if (dlg.ShowModal() != wxID_OK)
+				{
+					wxBell();
+					continue;
+				}
+
+				if (XRCCTRL(dlg, "ID_REOPEN", wxRadioButton)->GetValue())
+				{
+					pEditHandler->StartEditing(entry.name, path, server);
+					continue;
+				}
+				else
+				{
+					if (!pEditHandler->Remove(entry.name, path, server))
+					{
+						wxMessageBox(_("The selected file is still opened in some other program, please close it."), _("Selected file still being edited"), wxICON_EXCLAMATION);
+						continue;
+					}
+				}
+			}
+			break;
+		default:
+			break;
+		}
+
+		wxString file = entry.name;
+		if (!pEditHandler->AddFile(CEditHandler::remote, file, path, server))
+		{
+			wxFAIL;
+			wxBell();
+			continue;
+		}
+
+		m_pQueue->QueueFile(false, true, file, entry.name, path, server, entry.size, CEditHandler::remote);
+		m_pQueue->QueueFile_Finish(true);
+	}
 }
 
 #ifdef __WXDEBUG__

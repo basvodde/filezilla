@@ -19,7 +19,8 @@ public:
 		confirmexit_edit, // Confirm closing FileZilla while files are still being edited
 		confirm_preserve_timestamps,
 		compare_treeviewmismatch,
-		compare_changesorting
+		compare_changesorting,
+		many_selected_for_edit
 	};
 
 	CConditionalDialog(wxWindow* parent, enum DialogType type, enum Modes mode, bool checked = false);
