@@ -9,24 +9,31 @@ CQueueItem::CQueueItem()
 	m_visibleOffspring = 0;
 	m_parent = 0;
 	m_maxCachedIndex = -1;
+
+	m_removed_at_front = 0;
 }
 
 CQueueItem::~CQueueItem()
 {
 	std::vector<CQueueItem*>::iterator iter;
-	for (iter = m_children.begin(); iter != m_children.end(); iter++)
+	for (iter = m_children.begin() + m_removed_at_front; iter != m_children.end(); iter++)
 		delete *iter;
 }
 
 void CQueueItem::SetPriority(enum QueuePriority priority)
 {
 	std::vector<CQueueItem*>::iterator iter;
-	for (iter = m_children.begin(); iter != m_children.end(); iter++)
+	for (iter = m_children.begin() + m_removed_at_front; iter != m_children.end(); iter++)
 		(*iter)->SetPriority(priority);
 }
 
 void CQueueItem::AddChild(CQueueItem* item)
 {
+	if (m_removed_at_front)
+	{
+		m_children.erase(m_children.begin(), m_children.begin() + m_removed_at_front);
+		m_removed_at_front = 0;
+	}
 	item->m_indent = m_indent + _T("  ");
 	m_children.push_back(item);
 
@@ -46,17 +53,17 @@ CQueueItem* CQueueItem::GetChild(unsigned int item, bool recursive /*=true*/)
 	std::vector<CQueueItem*>::iterator iter;
 	if (!recursive)
 	{
-		if (item >= m_children.size())
+		if (item + m_removed_at_front >= m_children.size())
 			return 0;
 		iter = m_children.begin();
-		iter += item;
+		iter += item + m_removed_at_front;
 		return *iter;
 	}
 
 	if ((int)item <= m_maxCachedIndex)
 	{
 		// Index is cached
-		iter = m_children.begin();
+		iter = m_children.begin() + m_removed_at_front;
 		iter += m_lookupCache[item].child;
 		item -= m_lookupCache[item].index;
 		if (!item)
@@ -67,7 +74,7 @@ CQueueItem* CQueueItem::GetChild(unsigned int item, bool recursive /*=true*/)
 
 	int index;
 	int child;
-	iter = m_children.begin();
+	iter = m_children.begin() + m_removed_at_front;
 	if (m_maxCachedIndex == -1)
 	{
 		child = 0;
@@ -111,7 +118,7 @@ CQueueItem* CQueueItem::GetChild(unsigned int item, bool recursive /*=true*/)
 unsigned int CQueueItem::GetChildrenCount(bool recursive)
 {
 	if (!recursive)
-		return m_children.size();
+		return m_children.size() - m_removed_at_front;
 
 	return m_visibleOffspring;
 }
@@ -121,7 +128,7 @@ bool CQueueItem::RemoveChild(CQueueItem* pItem, bool destroy /*=true*/)
 	int oldVisibleOffspring = m_visibleOffspring;
 	std::vector<CQueueItem*>::iterator iter;
 	bool deleted = false;
-	for (iter = m_children.begin(); iter != m_children.end(); iter++)
+	for (iter = m_children.begin() + m_removed_at_front; iter != m_children.end(); iter++)
 	{
 		if (*iter == pItem)
 		{
@@ -129,7 +136,17 @@ bool CQueueItem::RemoveChild(CQueueItem* pItem, bool destroy /*=true*/)
 			m_visibleOffspring -= pItem->m_visibleOffspring;
 			if (destroy)
 				delete pItem;
-			m_children.erase(iter);
+
+			if (iter - m_children.begin() - m_removed_at_front <= 10)
+			{
+				m_removed_at_front++;
+				unsigned int end = iter - m_children.begin();
+				int c = 0;
+				for (unsigned int i = end; i >= m_removed_at_front; i--, c++)
+					m_children[i] = m_children[i - 1];
+			}
+			else
+				m_children.erase(iter);
 
 			deleted = true;
 			break;
@@ -139,17 +156,27 @@ bool CQueueItem::RemoveChild(CQueueItem* pItem, bool destroy /*=true*/)
 		if ((*iter)->RemoveChild(pItem, destroy))
 		{
 			m_visibleOffspring -= visibleOffspring - (*iter)->m_visibleOffspring;
-			if (!(*iter)->m_children.size())
+			if (!((*iter)->m_children.size() - (*iter)->m_removed_at_front))
 			{
 				m_visibleOffspring -= 1;
 				delete *iter;
-				m_children.erase(iter);
+
+				if (iter - m_children.begin() - m_removed_at_front <= 10)
+				{
+					m_removed_at_front++;
+					unsigned int end = iter - m_children.begin();
+					for (unsigned int i = end; i >= m_removed_at_front; i--)
+						m_children[i] = m_children[i - 1];
+				}
+				else
+					m_children.erase(iter);
 			}
 
 			deleted = true;
 			break;
 		}
 	}
+
 	if (!deleted)
 		return false;
 
@@ -173,7 +200,7 @@ bool CQueueItem::TryRemoveAll()
 	std::vector<CQueueItem*>::iterator iter;
 	std::vector<CQueueItem*> keepChildren;
 	m_visibleOffspring = 0;
-	for (iter = m_children.begin(); iter != m_children.end(); iter++)
+	for (iter = m_children.begin() + m_removed_at_front; iter != m_children.end(); iter++)
 	{
 		CQueueItem* pItem = *iter;
 		if (pItem->TryRemoveAll())
@@ -187,6 +214,7 @@ bool CQueueItem::TryRemoveAll()
 	}
 	m_children = keepChildren;
 	m_maxCachedIndex = -1;
+	m_removed_at_front = 0;
 
 	CQueueItem* parent = GetParent();
 	while (parent)
@@ -238,7 +266,7 @@ int CQueueItem::GetItemIndex() const
 		return 0;
 
 	int index = 1;
-	for (std::vector<CQueueItem*>::const_iterator iter = pParent->m_children.begin(); iter != pParent->m_children.end(); iter++)
+	for (std::vector<CQueueItem*>::const_iterator iter = pParent->m_children.begin() + pParent->m_removed_at_front; iter != pParent->m_children.end(); iter++)
 	{
 		if (*iter == this)
 			break;
@@ -300,7 +328,7 @@ void CFileItem::SetActive(const bool active)
 	}
 	else if (!active && m_active)
 	{
-		CQueueItem* pItem = m_children.front();
+		CQueueItem* pItem = GetChild(0, false);
 		RemoveChild(pItem);
 	}
 	m_active = active;
@@ -425,7 +453,7 @@ void CServerItem::RemoveFileItemFromList(CFileItem* pItem)
 
 void CServerItem::SetDefaultFileExistsAction(enum CFileExistsNotification::OverwriteAction action, const enum TransferDirection direction)
 {
-	for (std::vector<CQueueItem*>::iterator iter = m_children.begin(); iter != m_children.end(); iter++)
+	for (std::vector<CQueueItem*>::iterator iter = m_children.begin() + m_removed_at_front; iter != m_children.end(); iter++)
 	{
 		CQueueItem *pItem = *iter;
 		if (pItem->GetType() == QueueItemType_File)
@@ -558,7 +586,7 @@ void CServerItem::SaveItem(TiXmlElement* pElement) const
 	TiXmlElement server("Server");
 	SetServer(&server, m_server);
 
-	for (std::vector<CQueueItem*>::const_iterator iter = m_children.begin(); iter != m_children.end(); iter++)
+	for (std::vector<CQueueItem*>::const_iterator iter = m_children.begin() + m_removed_at_front; iter != m_children.end(); iter++)
 		(*iter)->SaveItem(&server);
 
 	pElement->InsertEndChild(server);
@@ -584,7 +612,7 @@ wxLongLong CServerItem::GetTotalSize(int& filesWithUnknownSize, int& queuedFiles
 		}
 	}
 
-	for (std::vector<CQueueItem*>::const_iterator iter = m_children.begin(); iter != m_children.end(); iter++)
+	for (std::vector<CQueueItem*>::const_iterator iter = m_children.begin() + m_removed_at_front; iter != m_children.end(); iter++)
 	{
 		if ((*iter)->GetType() == QueueItemType_File ||
 			(*iter)->GetType() == QueueItemType_Folder)
@@ -602,7 +630,7 @@ bool CServerItem::TryRemoveAll()
 	std::vector<CQueueItem*>::iterator iter;
 	std::vector<CQueueItem*> keepChildren;
 	m_visibleOffspring = 0;
-	for (iter = m_children.begin(); iter != m_children.end(); iter++)
+	for (iter = m_children.begin() + m_removed_at_front; iter != m_children.end(); iter++)
 	{
 		CQueueItem* pItem = *iter;
 		if (pItem->TryRemoveAll())
@@ -622,6 +650,7 @@ bool CServerItem::TryRemoveAll()
 		}
 	}
 	m_children = keepChildren;
+	m_removed_at_front = 0;
 
 	CQueueItem* parent = GetParent();
 	while (parent)
@@ -640,6 +669,7 @@ void CServerItem::DetachChildren()
 	m_children.clear();
 	m_visibleOffspring = 0;
 	m_maxCachedIndex = -1;
+	m_removed_at_front = 0;
 
 	for (int i = 0; i < 2; i++)
 		for (int j = 0; j < PRIORITY_COUNT; j++)
@@ -649,7 +679,7 @@ void CServerItem::DetachChildren()
 void CServerItem::SetPriority(enum QueuePriority priority)
 {
 	std::vector<CQueueItem*>::iterator iter;
-	for (iter = m_children.begin(); iter != m_children.end(); iter++)
+	for (iter = m_children.begin() + m_removed_at_front; iter != m_children.end(); iter++)
 	{
 		if ((*iter)->GetType() == QueueItemType_File)
 			((CFileItem*)(*iter))->SetPriorityRaw(priority);

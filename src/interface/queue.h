@@ -61,7 +61,6 @@ protected:
 
 	CQueueItem* m_parent;
 
-	std::vector<CQueueItem*> m_children;
 	int m_visibleOffspring; // Visible offspring over all sublevels
 	wxString m_indent;
 
@@ -75,6 +74,14 @@ protected:
 	std::vector<t_cacheItem> m_lookupCache;
 
 	friend class CServerItem;
+
+private:
+	std::vector<CQueueItem*> m_children;
+
+	// Number of items removed at front of list
+	// Increased instead of calling slow m_children.erase(0),
+	// resetted on insert.
+	int m_removed_at_front;
 };
 
 class CFileItem;
