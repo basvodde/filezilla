@@ -480,6 +480,9 @@ CQueueView::CQueueView(CQueue* parent, int index, CMainFrame* pMainFrame, CAsync
 	m_folderscan_item_refresh_timer.SetOwner(this);
 
 	m_line_height = -1;
+#ifdef __WXMSW__
+	m_header_height = -1;
+#endif
 }
 
 CQueueView::~CQueueView()
@@ -898,6 +901,9 @@ bool CQueueView::TryStartNextTransfer()
 
 		wxRect rect = GetClientRect();
 		rect.y = GetLineHeight() * (lineIndex + 1 - GetTopItem());
+#ifdef __WXMSW__
+		rect.y += m_header_height;
+#endif
 		rect.SetHeight(GetLineHeight());
 		m_allowBackgroundErase = false;
 		if (!pEngineData->pStatusLineCtrl)
@@ -1633,6 +1639,9 @@ void CQueueView::UpdateStatusLinePositions()
 
 		wxRect rect = GetClientRect();
 		rect.y = GetLineHeight() * (index - m_lastTopItem);
+#ifdef __WXMSW__
+		rect.y += m_header_height;
+#endif
 		rect.SetHeight(GetLineHeight());
 
 		m_allowBackgroundErase = bottomItem + 1 >= m_itemCount;
@@ -3111,6 +3120,10 @@ int CQueueView::GetLineHeight()
 		return 20;
 
 	m_line_height = rect.GetHeight();
+
+#ifdef __WXMSW__
+	m_header_height = rect.y;
+#endif
 
 	return m_line_height;
 }

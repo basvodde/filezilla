@@ -142,7 +142,7 @@ bool CQueueItem::RemoveChild(CQueueItem* pItem, bool destroy /*=true*/)
 				m_removed_at_front++;
 				unsigned int end = iter - m_children.begin();
 				int c = 0;
-				for (unsigned int i = end; i >= m_removed_at_front; i--, c++)
+				for (int i = end; i >= m_removed_at_front; i--, c++)
 					m_children[i] = m_children[i - 1];
 			}
 			else
@@ -165,7 +165,7 @@ bool CQueueItem::RemoveChild(CQueueItem* pItem, bool destroy /*=true*/)
 				{
 					m_removed_at_front++;
 					unsigned int end = iter - m_children.begin();
-					for (unsigned int i = end; i >= m_removed_at_front; i--)
+					for (int i = end; i >= m_removed_at_front; i--)
 						m_children[i] = m_children[i - 1];
 				}
 				else

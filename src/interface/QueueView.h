@@ -234,6 +234,9 @@ protected:
 
 	int GetLineHeight();
 	int m_line_height;
+#ifdef __WXMSW__
+	int m_header_height;
+#endif
 
 	DECLARE_EVENT_TABLE();
 	void OnEngineEvent(wxEvent &event);
