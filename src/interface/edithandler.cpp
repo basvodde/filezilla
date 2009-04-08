@@ -939,7 +939,6 @@ wxString CEditHandler::GetOpenCommand(const wxString& file, bool& program_exists
 
 static bool PathExpand(wxString& cmd)
 {
-	cmd = _T("notepad");
 #ifndef __WXMSW__
 	if (cmd[0] == '/')
 		return true;
