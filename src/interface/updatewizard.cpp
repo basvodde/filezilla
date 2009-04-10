@@ -273,8 +273,11 @@ void CUpdateWizard::OnPageChanged(wxWizardEvent& event)
 
 	m_currentPage = 2;
 
-	XRCCTRL(*this, "ID_DOWNLOADTEXT", wxStaticText)->SetLabel(wxString::Format(_("Downloading %s"), wxString(_T("http://") + m_urlServer + m_urlFile).c_str()));
-	
+	wxStaticText *pText = XRCCTRL(*this, "ID_DOWNLOADTEXT", wxStaticText);
+	wxString text = wxString::Format(_("Downloading %s"), wxString(_T("http://") + m_urlServer + m_urlFile).c_str());
+	text.Replace(_T("&"), _T("&&"));
+	pText->SetLabel(text);
+
 	m_inTransfer = false;
 
 	int res = m_pEngine->Command(CConnectCommand(CServer(HTTP, DEFAULT, m_urlServer, 80)));
@@ -353,7 +356,11 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 					if (!m_currentPage)
 					{
 						wxStaticText *pText = XRCCTRL(*this, "ID_CHECKINGTEXTPROGRESS", wxStaticText);
-						pText->SetLabel(pLogMsg->msg);
+						wxString text = pLogMsg->msg;
+						text.Replace(_T("&"), _T("&&"));
+						WrapText(pText, text, m_pages[0]->GetClientSize().x);
+						pText->SetLabel(text);
+
 						m_pages[0]->GetSizer()->Layout();
 						wxGauge* pProgress = XRCCTRL(*this, "ID_CHECKINGPROGRESS", wxGauge);
 						int value = pProgress->GetValue();
@@ -365,7 +372,12 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 					}
 					else if (m_currentPage == 2)
 					{
-						XRCCTRL(*this, "ID_DOWNLOADPROGRESSTEXT", wxStaticText)->SetLabel(pLogMsg->msg);
+						wxStaticText *pText = XRCCTRL(*this, "ID_DOWNLOADPROGRESSTEXT", wxStaticText);
+						
+						wxString text = pLogMsg->msg;
+						text.Replace(_T("&"), _T("&&"));
+						WrapText(pText, text, m_pages[2]->GetClientSize().x);
+						pText->SetLabel(text);
 						m_pages[2]->GetSizer()->Layout();
 					}
 				}

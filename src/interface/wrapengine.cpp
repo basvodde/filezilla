@@ -226,100 +226,48 @@ bool CWrapEngine::WrapText(wxWindow* parent, wxString& text, unsigned long maxLe
 	int wrapAfter = -1;
 	int start = 0;
 	unsigned int lineLength = 0;
+
+	bool url = false;
 	for (int i = 0; i <= strLen; i++)
 	{
+		if ((text[i] == ':' && text[i + 1] == '/' && text[i + 2] == '/') || // absolute
+			(text[i] == '/' && (!i || text[i - 1] == ' '))) // relative
+			url = true;
 		if (text[i] != ' ' && text[i] != 0)
+		{
+			// If url, wrap on slashes and ampersands, but not first slash of something://
+			if (!url ||
+				 ((text[i] != '/' || text[i + 1] == '/') && (text[i] != '&' || text[i + 1] == '&') && text[i] != '?'))
 			continue;
+		}
 
 		wxString segment;
 		if (wrapAfter == -1)
 		{
-			segment = text.Mid(start, i - start);
+			if (text[i] == '/' || text[i] == '?' || text[i] == '&')
+				segment = text.Mid(start, i - start + 1);
+			else
+				segment = text.Mid(start, i - start);
 			wrapAfter = i;
 		}
 		else
-			segment = text.Mid(wrapAfter + 1, i - wrapAfter - 1);
+		{
+			if (text[i] == '/' || text[i] == '?' || text[i] == '&')
+				segment = text.Mid(wrapAfter + 1, i - wrapAfter);
+			else
+				segment = text.Mid(wrapAfter + 1, i - wrapAfter - 1);
+		}
 
 		segment = wxStripMenuCodes(segment);
 		parent->GetTextExtent(segment, &width, &height, 0, 0, &m_font);
-
-		if ((unsigned int)width > maxLength)
-		{
-			// Something quite long. Perhaps it's a URL we can wrap at slashes?
-
-			while (segment != _T(""))
-			{
-				// Find longest possible subsegment
-				// which can be appended to current line, if there is a current line
-				unsigned int j;
-				int best = -1;
-
-				for (j = 1; j < segment.Len() - 1; j++)
-				{
-					if (segment[j] == '/' && segment[j + 1] != '/')
-					{
-						wxString left = segment.Left(j + 1);
-						int lwidth;
-						parent->GetTextExtent(left, &lwidth, &height, 0, 0, &m_font);
-						if ((unsigned)lwidth <= maxLength)
-						{
-							if (lineLength && lineLength + spaceWidth + lwidth > maxLength)
-							{
-								if (best == -1)
-								{
-									best = j;
-									width = lwidth;
-								}
-
-								break;
-							}
-
-							best = j;
-							width = lwidth;
-						}
-						else
-							break;
-					}
-				}
-				if (best == -1)
-				{
-					// No suitable slash found
-					return false;
-				}
-
-				if (wrappedText != _T(""))
-					wrappedText += _T("\n");
-
-				if (lineLength)
-					wrappedText += text.Mid(start, wrapAfter - start);
-
-				if (lineLength && lineLength + spaceWidth + width > maxLength)
-					wrappedText += _T("\n");
-				else
-					wrappedText += _T(" ");
-				lineLength = 0;
-
-				wrappedText += segment.Left(best + 1);
-				segment = segment.Mid(best + 1);
-
-				parent->GetTextExtent(wrappedText, &width, &height, 0, 0, &m_font);
-				parent->GetTextExtent(segment, &width, &height);
-				if ((unsigned)width <= maxLength)
-				{
-					break;
-				}
-			}
-
-			start = i - segment.Len();
-			wrapAfter = i;
-			lineLength = 0;
-		}
 
 		if (lineLength + spaceWidth + width > maxLength)
 		{
 			if (wrappedText != _T(""))
 				wrappedText += _T("\n");
 			wrappedText += text.Mid(start, wrapAfter - start);
+			if (text[wrapAfter] != ' ' && text[wrapAfter] != '\0')
+				wrappedText += text[wrapAfter];
 			if (width + spaceWidth >= (int)maxLength)
 			{
 				if (wrappedText != _T(""))
@@ -342,7 +290,7 @@ bool CWrapEngine::WrapText(wxWindow* parent, wxString& text, unsigned long maxLe
 			if (wrappedText != _T(""))
 				wrappedText += _T("\n");
 			wrappedText += text.Mid(start, i - start);
-			if (text[i] != ' ')
+			if (text[i] != ' ' && text[i] != '\0')
 				wrappedText += text[i];
 			start = i + 1;
 			wrapAfter = -1;
@@ -355,6 +303,9 @@ bool CWrapEngine::WrapText(wxWindow* parent, wxString& text, unsigned long maxLe
 			lineLength += width;
 			wrapAfter = i;
 		}
+
+		if (text[i] == ' ')
+			url = false;
 	}
 	if (start < strLen)
 	{
