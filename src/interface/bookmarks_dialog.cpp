@@ -437,6 +437,13 @@ bool CBookmarksDialog::Verify()
 		return false;
 	}
 
+	bool sync = XRCCTRL(*this, "ID_BOOKMARK_SYNC", wxCheckBox)->GetValue();
+	if (sync && (localPath.empty() || remotePathRaw.empty()))
+	{
+		wxMessageBox(_("You need to enter both a local and a remote path to enable synchronized browsing for this bookmark."), _("New bookmark"), wxICON_EXCLAMATION, this);
+		return false;
+	}
+
 	return true;
 }
 
@@ -465,6 +472,8 @@ void CBookmarksDialog::UpdateBookmark()
 	}
 
 	data->m_local_dir = XRCCTRL(*this, "ID_BOOKMARK_LOCALDIR", wxTextCtrl)->GetValue();
+
+	data->m_sync = XRCCTRL(*this, "ID_BOOKMARK_SYNC", wxCheckBox)->GetValue();
 }
 
 void CBookmarksDialog::DisplayBookmark()
@@ -500,6 +509,8 @@ void CBookmarksDialog::DisplayBookmark()
 
 	XRCCTRL(*this, "ID_BOOKMARK_REMOTEDIR", wxTextCtrl)->ChangeValue(data->m_remote_dir.GetPath());
 	XRCCTRL(*this, "ID_BOOKMARK_LOCALDIR", wxTextCtrl)->ChangeValue(data->m_local_dir);
+
+	XRCCTRL(*this, "ID_BOOKMARK_SYNC", wxCheckBox)->SetValue(data->m_sync);
 }
 
 void CBookmarksDialog::OnNewBookmark(wxCommandEvent& event)
