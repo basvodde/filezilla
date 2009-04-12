@@ -2870,6 +2870,8 @@ void CMainFrame::OnIconize(wxIconizeEvent& event)
 {
 	if (!event.Iconized())
 	{
+		if (m_taskBarIcon)
+			m_taskBarIcon->RemoveIcon();
 		Show(true);
 
 		if (m_pAsyncRequestQueue)
@@ -2886,9 +2888,7 @@ void CMainFrame::OnIconize(wxIconizeEvent& event)
 		m_taskBarIcon = new wxTaskBarIcon();
 
 	if (!m_taskBarIcon->IsIconInstalled())
-#ifdef __WXMSW__
-		m_taskBarIcon->SetIcon(wxICON(appicon), GetTitle());
-#endif
+		m_taskBarIcon->SetIcon(CThemeProvider::GetIcon(_T("ART_FILEZILLA")), GetTitle());
 
 	m_taskBarIcon->Connect(wxEVT_TASKBAR_LEFT_DCLICK, wxTaskBarIconEventHandler(CMainFrame::OnTaskBarClick), 0, this);
 	m_taskBarIcon->Connect(wxEVT_TASKBAR_LEFT_UP, wxTaskBarIconEventHandler(CMainFrame::OnTaskBarClick), 0, this);

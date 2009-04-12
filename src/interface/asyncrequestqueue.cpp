@@ -425,6 +425,8 @@ bool CAsyncRequestQueue::CheckWindowState()
 #ifndef __WXMAC__
 	if (m_pMainFrame->IsIconized())
 	{
+		m_pMainFrame->Show();
+		m_pMainFrame->Iconize(true);
 		m_pMainFrame->RequestUserAttention();
 		return false;
 	}
