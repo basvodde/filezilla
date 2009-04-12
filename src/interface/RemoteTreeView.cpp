@@ -273,8 +273,6 @@ void CRemoteTreeView::SetDirectoryListing(const CDirectoryListing* pListing, boo
 {
 	m_busy = true;
 
-	m_pDirectoryListing = pListing;
-
 	if (!pListing)
 	{
 		m_ExpandAfterList = wxTreeItemId();

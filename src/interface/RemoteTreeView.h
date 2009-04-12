@@ -37,7 +37,6 @@ protected:
 	void ApplyFilters();
 
 	CQueueView* m_pQueue;
-	const CDirectoryListing* m_pDirectoryListing;
 
 	void CreateImageList();
 	wxBitmap CreateIcon(int index, const wxString& overlay = _T(""));
