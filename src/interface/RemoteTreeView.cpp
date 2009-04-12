@@ -7,6 +7,7 @@
 #include "recursive_operation.h"
 #include "inputdialog.h"
 #include "dragdropmanager.h"
+#include <wx/clipbrd.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -227,6 +228,7 @@ EVT_TREE_BEGIN_LABEL_EDIT(wxID_ANY, CRemoteTreeView::OnBeginLabelEdit)
 EVT_TREE_END_LABEL_EDIT(wxID_ANY, CRemoteTreeView::OnEndLabelEdit)
 EVT_MENU(XRCID("ID_MKDIR"), CRemoteTreeView::OnMkdir)
 EVT_CHAR(CRemoteTreeView::OnChar)
+EVT_MENU(XRCID("ID_GETURL"), CRemoteTreeView::OnMenuGeturl)
 END_EVENT_TABLE()
 
 CRemoteTreeView::CRemoteTreeView(wxWindow* parent, wxWindowID id, CState* pState, CQueueView* pQueue)
@@ -929,7 +931,7 @@ void CRemoteTreeView::OnContextMenu(wxTreeEvent& event)
 	if (!pMenu)
 		return;
 
-	const CServerPath& path = GetPathFromItem(m_contextMenuItem);
+	const CServerPath& path = m_contextMenuItem ? GetPathFromItem(m_contextMenuItem) : CServerPath();
 	if (!m_pState->IsRemoteIdle() || path.IsEmpty())
 	{
 		pMenu->Enable(XRCID("ID_DOWNLOAD"), false);
@@ -939,6 +941,7 @@ void CRemoteTreeView::OnContextMenu(wxTreeEvent& event)
 		pMenu->Enable(XRCID("ID_CHMOD"), false);
 		pMenu->Enable(XRCID("ID_MKDIR"), false);
 		pMenu->Enable(XRCID("ID_RENAME"), false);
+		pMenu->Enable(XRCID("ID_GETURL"), false);
 	}
 	else if (!path.HasParent())
 		pMenu->Enable(XRCID("ID_RENAME"), false);
@@ -1416,4 +1419,40 @@ void CRemoteTreeView::ApplyFilters()
 			parents.push_back(dir);
 		}
 	}
+}
+
+void CRemoteTreeView::OnMenuGeturl(wxCommandEvent& event)
+{
+	if (!m_contextMenuItem)
+		return;
+
+	const CServerPath& path = GetPathFromItem(m_contextMenuItem);
+	if (path.IsEmpty())
+	{
+		wxBell();
+		return;
+	}
+
+	const CServer *pServer = m_pState->GetServer();
+	if (!pServer)
+	{
+		wxBell();
+		return;
+	}
+
+	if (!wxTheClipboard->Open())
+	{
+		wxMessageBox(_("Could not open clipboard"), _("Could not copy URLs"), wxICON_EXCLAMATION);
+		return;
+	}
+
+	wxString url = pServer->FormatServer(true);
+	url += path.GetPath();
+
+	// Poor mans URLencode
+	url.Replace(_T(" "), _T("%20"));
+
+	wxTheClipboard->SetData(new wxURLDataObject(url));
+
+	wxTheClipboard->Close();
 }

@@ -15,6 +15,7 @@
 #include "recursive_operation.h"
 #include "edithandler.h"
 #include "dragdropmanager.h"
+#include <wx/clipbrd.h>
 
 #ifdef __WXMSW__
 #include "shellapi.h"
@@ -335,6 +336,7 @@ BEGIN_EVENT_TABLE(CRemoteListView, CFileListCtrl<CGenericFileData>)
 	EVT_LIST_BEGIN_DRAG(wxID_ANY, CRemoteListView::OnBeginDrag)
 	EVT_MENU(XRCID("ID_EDIT"), CRemoteListView::OnMenuEdit)
 	EVT_MENU(XRCID("ID_ENTER"), CRemoteListView::OnMenuEnter)
+	EVT_MENU(XRCID("ID_GETURL"), CRemoteListView::OnMenuGeturl)
 END_EVENT_TABLE()
 
 CRemoteListView::CRemoteListView(wxWindow* pParent, CState *pState, CQueueView* pQueue)
@@ -1354,6 +1356,7 @@ void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
 		pMenu->Enable(XRCID("ID_RENAME"), false);
 		pMenu->Enable(XRCID("ID_CHMOD"), false);
 		pMenu->Enable(XRCID("ID_EDIT"), false);
+		pMenu->Enable(XRCID("ID_GETURL"), false);
 	}
 	else if ((GetItemCount() && GetItemState(0, wxLIST_STATE_SELECTED)))
 	{
@@ -1363,6 +1366,7 @@ void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
 		pMenu->Enable(XRCID("ID_RENAME"), false);
 		pMenu->Enable(XRCID("ID_CHMOD"), false);
 		pMenu->Enable(XRCID("ID_EDIT"), false);
+		pMenu->Enable(XRCID("ID_GETURL"), false);
 	}
 	else if (GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) == -1)
 	{
@@ -1373,6 +1377,7 @@ void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
 		pMenu->Enable(XRCID("ID_RENAME"), false);
 		pMenu->Enable(XRCID("ID_CHMOD"), false);
 		pMenu->Enable(XRCID("ID_EDIT"), false);
+		pMenu->Enable(XRCID("ID_GETURL"), false);
 	}
 	else
 	{
@@ -1403,6 +1408,7 @@ void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
 			pMenu->Enable(XRCID("ID_RENAME"), false);
 			pMenu->Enable(XRCID("ID_CHMOD"), false);
 			pMenu->Enable(XRCID("ID_EDIT"), false);
+			pMenu->Enable(XRCID("ID_GETURL"), false);
 		}
 		else
 		{
@@ -3008,4 +3014,79 @@ void CRemoteListView::LinkIsNotDir(const CServerPath& path, const wxString& link
 
 	delete m_pLinkResolveState;
 	m_pLinkResolveState = 0;
+}
+
+void CRemoteListView::OnMenuGeturl(wxCommandEvent& event)
+{
+	if (!m_pDirectoryListing)
+		return;
+
+	const CServer* pServer = m_pState->GetServer();
+	if (!pServer)
+		return;
+
+	long item = -1;
+	
+	std::list<CDirentry> selected_item_list;
+	while ((item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
+	{
+		if (!item)
+		{
+			wxBell();
+			return;
+		}
+
+		int index = GetItemIndex(item);
+		if (index == -1 || m_fileData[index].flags == fill)
+			continue;
+
+		const CDirentry& entry = (*m_pDirectoryListing)[index];
+
+		selected_item_list.push_back(entry);
+	}
+	if (selected_item_list.empty())
+	{
+		wxBell();
+		return;
+	}
+
+	if (!wxTheClipboard->Open())
+	{
+		wxMessageBox(_("Could not open clipboard"), _("Could not copy URLs"), wxICON_EXCLAMATION);
+		return;
+	}
+
+	const CServerPath& path = m_pDirectoryListing->path;
+	const wxString server = pServer->FormatServer(true);
+	if (selected_item_list.size() == 1)
+	{
+		wxString url = server;
+		url += path.FormatFilename(selected_item_list.front().name, false);
+
+		// Poor mans URLencode
+		url.Replace(_T(" "), _T("%20"));
+
+		wxTheClipboard->SetData(new wxURLDataObject(url));
+	}
+	else
+	{
+		wxString urls;
+		for (std::list<CDirentry>::const_iterator iter = selected_item_list.begin(); iter != selected_item_list.end(); iter++)
+		{
+			urls += server;
+			urls += path.FormatFilename(iter->name, false);
+#ifdef __WXMSW__
+			urls += _T("\r\n");
+#else
+			urls += _T("\n");
+#endif
+		}
+
+		// Poor mans URLencode
+		urls.Replace(_T(" "), _T("%20"));
+
+		wxTheClipboard->SetData(new wxTextDataObject(urls));
+	}
+
+	wxTheClipboard->Close();
 }

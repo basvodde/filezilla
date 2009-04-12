@@ -114,6 +114,7 @@ protected:
 	void OnBeginDrag(wxListEvent& event);
 	void OnMenuEdit(wxCommandEvent& event);
 	void OnMenuEnter(wxCommandEvent& event);
+	void OnMenuGeturl(wxCommandEvent& event);
 };
 
 #endif

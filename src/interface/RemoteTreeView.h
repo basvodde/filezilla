@@ -67,6 +67,7 @@ protected:
 	void OnEndLabelEdit(wxTreeEvent& event);
 	void OnMkdir(wxCommandEvent& event);
 	void OnChar(wxKeyEvent& event);
+	void OnMenuGeturl(wxCommandEvent& event);
 
 	wxTreeItemId m_contextMenuItem;
 };

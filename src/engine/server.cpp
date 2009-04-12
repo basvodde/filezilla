@@ -608,7 +608,7 @@ wxString CServer::FormatHost(bool always_omit_port /*=false*/) const
 	return host;
 }
 
-wxString CServer::FormatServer() const
+wxString CServer::FormatServer(const bool always_include_prefix /*=false*/) const
 {
 	wxString server = FormatHost();
 
@@ -622,10 +622,13 @@ wxString CServer::FormatServer() const
 			wxString prefix = GetPrefixFromProtocol(m_protocol);
 			if (prefix != _T(""))
 				server = prefix + _T("://") + server;
+			else if (always_include_prefix)
+				server = prefix + _T("://") + server;
 		}
 		break;
 	case FTP:
-		if (GetProtocolFromPort(m_port) != FTP && GetProtocolFromPort(m_port) != UNKNOWN)
+		if (always_include_prefix ||
+			(GetProtocolFromPort(m_port) != FTP && GetProtocolFromPort(m_port) != UNKNOWN))
 			server = _T("ftp://") + server;
 		break;
 	}

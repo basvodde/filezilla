@@ -101,7 +101,7 @@ public:
 	void MaximumMultipleConnections(int maximum);
 
 	wxString FormatHost(bool always_omit_port = false) const;
-	wxString FormatServer() const;
+	wxString FormatServer(const bool always_include_prefix = false) const;
 
 	bool SetEncodingType(enum CharsetEncoding type, const wxString& encoding = _T(""));
 	bool SetCustomEncoding(const wxString& encoding);
