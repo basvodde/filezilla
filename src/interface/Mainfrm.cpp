@@ -2871,6 +2871,10 @@ void CMainFrame::OnIconize(wxIconizeEvent& event)
 	if (!event.Iconized())
 	{
 		Show(true);
+
+		if (m_pAsyncRequestQueue)
+			m_pAsyncRequestQueue->TriggerProcessing();
+
 		return;
 	}
 
@@ -2900,6 +2904,9 @@ void CMainFrame::OnTaskBarClick(wxTaskBarIconEvent& event)
 
 	Show(true);
 	Iconize(false);
+
+	if (m_pAsyncRequestQueue)
+		m_pAsyncRequestQueue->TriggerProcessing();
 }
 
 #endif

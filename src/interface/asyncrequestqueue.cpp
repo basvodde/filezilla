@@ -20,6 +20,7 @@ CAsyncRequestQueue::CAsyncRequestQueue(CMainFrame *pMainFrame)
 	m_pMainFrame = pMainFrame;
 	m_pQueueView = 0;
 	m_pVerifyCertDlg = new CVerifyCertDialog;
+	m_inside_request = false;
 }
 
 CAsyncRequestQueue::~CAsyncRequestQueue()
@@ -111,10 +112,10 @@ bool CAsyncRequestQueue::AddRequest(CFileZillaEngine *pEngine, CAsyncRequestNoti
 	return true;
 }
 
-void CAsyncRequestQueue::ProcessNextRequest()
+bool CAsyncRequestQueue::ProcessNextRequest()
 {
 	if (m_requestList.empty())
-		return;
+		return true;
 
 	t_queueEntry &entry = m_requestList.front();
 
@@ -122,9 +123,9 @@ void CAsyncRequestQueue::ProcessNextRequest()
 	{
 		delete entry.pNotification;
 		m_requestList.pop_front();
-		return;
+		return true;
 	}
-		
+
 	if (entry.pNotification->GetRequestID() == reqId_fileexists)
 	{
 		CFileExistsNotification *pNotification = reinterpret_cast<CFileExistsNotification *>(entry.pNotification);
@@ -144,6 +145,9 @@ void CAsyncRequestQueue::ProcessNextRequest()
 
 		if (action == CFileExistsNotification::ask)
 		{
+			if (!CheckWindowState())
+				return false;
+
 			CFileExistsDlg dlg(pNotification);
 			dlg.Create(m_pMainFrame);
 			int res = dlg.ShowModal();
@@ -212,6 +216,9 @@ void CAsyncRequestQueue::ProcessNextRequest()
 		{
 		case CFileExistsNotification::rename:
 			{
+				if (!CheckWindowState())
+					return false;
+
 				wxString msg;
 				wxString defaultName;
 				if (pNotification->download)
@@ -273,14 +280,27 @@ void CAsyncRequestQueue::ProcessNextRequest()
 	{
 		CInteractiveLoginNotification* pNotification = reinterpret_cast<CInteractiveLoginNotification*>(entry.pNotification);
 
-		if (CLoginManager::Get().GetPassword(pNotification->server, false, _T(""), pNotification->GetChallenge()))
+		if (CLoginManager::Get().GetPassword(pNotification->server, true, _T(""), pNotification->GetChallenge()))
 			pNotification->passwordSet = true;
+		else
+		{
+			// Retry with prompt
+
+			if (!CheckWindowState())
+				return false;
+
+			if (CLoginManager::Get().GetPassword(pNotification->server, false, _T(""), pNotification->GetChallenge()))
+				pNotification->passwordSet = true;
+		}
 
 		entry.pEngine->SetAsyncRequestReply(pNotification);
 		delete pNotification;
 	}
 	else if (entry.pNotification->GetRequestID() == reqId_hostkey || entry.pNotification->GetRequestID() == reqId_hostkeyChanged)
 	{
+		if (!CheckWindowState())
+			return false;
+
 		CHostKeyNotification *pNotification = reinterpret_cast<CHostKeyNotification *>(entry.pNotification);
 
 		wxDialogEx* pDlg = new wxDialogEx;
@@ -310,6 +330,9 @@ void CAsyncRequestQueue::ProcessNextRequest()
 	}
 	else if (entry.pNotification->GetRequestID() == reqId_certificate)
 	{
+		if (!CheckWindowState())
+			return false;
+
 		CCertificateNotification* pNotification = reinterpret_cast<CCertificateNotification *>(entry.pNotification);
 
 		m_pVerifyCertDlg->ShowVerificationDialog(pNotification);
@@ -325,6 +348,8 @@ void CAsyncRequestQueue::ProcessNextRequest()
 
 	RecheckDefaults();
 	m_requestList.pop_front();
+
+	return true;
 }
 
 void CAsyncRequestQueue::ClearPending(const CFileZillaEngine *pEngine)
@@ -372,11 +397,47 @@ void CAsyncRequestQueue::SetQueue(CQueueView *pQueue)
 
 void CAsyncRequestQueue::OnProcessQueue(wxCommandEvent &event)
 {
-	ProcessNextRequest();
+	if (m_inside_request)
+		return;
 
-	if (!m_requestList.empty())
+	m_inside_request = true;
+	bool success = ProcessNextRequest();
+	m_inside_request = false;
+
+	if (success && !m_requestList.empty())
 	{
 		wxCommandEvent evt(fzEVT_PROCESSASYNCREQUESTQUEUE);
 		wxPostEvent(this, evt);
 	}
+}
+
+void CAsyncRequestQueue::TriggerProcessing()
+{
+	if (m_inside_request)
+		return;
+
+	wxCommandEvent evt(fzEVT_PROCESSASYNCREQUESTQUEUE);
+	wxPostEvent(this, evt);
+}
+
+bool CAsyncRequestQueue::CheckWindowState()
+{
+#ifndef __WXMAC__
+	if (m_pMainFrame->IsIconized())
+	{
+		m_pMainFrame->RequestUserAttention();
+		return false;
+	}
+
+	wxWindow* pFocus = m_pMainFrame->FindFocus();
+	while (pFocus && pFocus != m_pMainFrame)
+		pFocus = pFocus->GetParent();
+	if (!pFocus)
+	{
+		m_pMainFrame->RequestUserAttention();
+		return false;
+	}
+#endif
+
+	return true;
 }
