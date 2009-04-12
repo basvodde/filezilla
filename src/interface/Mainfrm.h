@@ -1,6 +1,10 @@
 #ifndef __MAINFRM_H__
 #define __MAINFRM_H__
 
+#ifndef __WXMAC__
+#include <wx/taskbar.h>
+#endif
+
 class CStatusView;
 class CQueueView;
 class CLocalTreeView;
@@ -163,6 +167,10 @@ protected:
 	void OnToolbarComparisonDropdown(wxCommandEvent& event);
 	void OnDropdownComparisonMode(wxCommandEvent& event);
 	void OnSyncBrowse(wxCommandEvent& event);
+#ifndef __WXMAC__
+	void OnIconize(wxIconizeEvent& event);
+	void OnTaskBarClick(wxTaskBarIconEvent& event);
+#endif
 
 	bool m_bInitDone;
 	bool m_bQuit;
@@ -176,6 +184,10 @@ protected:
 	CWindowStateManager* m_pWindowStateManager;
 
 	CQueue* m_pQueuePane;
+
+#ifndef __WXMAC__
+	wxTaskBarIcon* m_taskBarIcon;
+#endif
 };
 
 #endif

@@ -42,6 +42,9 @@
 #include "auto_ascii_files.h"
 #include "splitter.h"
 #include "bookmarks_dialog.h"
+#ifndef __WXMAC__
+#include <wx/taskbar.h>
+#endif
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -100,6 +103,9 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_MENU(XRCID("ID_COMPARE_SIZE"), CMainFrame::OnDropdownComparisonMode)
 	EVT_MENU(XRCID("ID_COMPARE_DATE"), CMainFrame::OnDropdownComparisonMode)
 	EVT_TOOL(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), CMainFrame::OnSyncBrowse)
+#ifndef __WXMAC__
+	EVT_ICONIZE(CMainFrame::OnIconize)
+#endif
 END_EVENT_TABLE()
 
 class CMainFrameStateEventHandler : public CStateEventHandler
@@ -168,6 +174,10 @@ CMainFrame::CMainFrame()
 
 	Create(NULL, -1, _T("FileZilla"), wxDefaultPosition, initial_size);
 	SetSizeHints(250, 250);
+
+#ifndef __WXMAC__
+	m_taskBarIcon = 0;
+#endif
 
 #ifdef __WXMSW__
 	// In order for the --close commandline argument to work,
@@ -520,6 +530,10 @@ CMainFrame::~CMainFrame()
 		// edit handler should clean them on next startup
 		pEditHandler->Release();
 	}
+
+#ifndef __WXMAC__
+	delete m_taskBarIcon;
+#endif
 }
 
 void CMainFrame::HandleResize()
@@ -2850,3 +2864,42 @@ void CMainFrame::OnSyncBrowse(wxCommandEvent& event)
 	if (m_pToolBar)
 		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), m_pState->GetSyncBrowse());
 }
+
+#ifndef __WXMAC__
+void CMainFrame::OnIconize(wxIconizeEvent& event)
+{
+	if (!event.Iconized())
+	{
+		Show(true);
+		return;
+	}
+
+
+	if (!COptions::Get()->GetOptionVal(OPTION_MINIMIZE_TRAY))
+		return;
+
+	if (!m_taskBarIcon)
+		m_taskBarIcon = new wxTaskBarIcon();
+
+	if (!m_taskBarIcon->IsIconInstalled())
+#ifdef __WXMSW__
+		m_taskBarIcon->SetIcon(wxICON(appicon), GetTitle());
+#endif
+
+	m_taskBarIcon->Connect(wxEVT_TASKBAR_LEFT_DCLICK, wxTaskBarIconEventHandler(CMainFrame::OnTaskBarClick), 0, this);
+	m_taskBarIcon->Connect(wxEVT_TASKBAR_LEFT_UP, wxTaskBarIconEventHandler(CMainFrame::OnTaskBarClick), 0, this);
+	m_taskBarIcon->Connect(wxEVT_TASKBAR_RIGHT_UP, wxTaskBarIconEventHandler(CMainFrame::OnTaskBarClick), 0, this);
+
+	Show(false);
+}
+
+void CMainFrame::OnTaskBarClick(wxTaskBarIconEvent& event)
+{
+	if (m_taskBarIcon)
+		m_taskBarIcon->RemoveIcon();
+
+	Show(true);
+	Iconize(false);
+}
+
+#endif

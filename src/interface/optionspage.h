@@ -19,6 +19,7 @@ public:
 	virtual bool Validate() { return true; }
 
 	void SetCheck(int id, bool checked, bool& failure);
+	void SetCheckFromOption(int control_id, int option_id, bool& failure);
 	void SetRCheck(int id, bool checked, bool& failure);
 	void SetTextFromOption(int ctrlId, int optionId, bool& failure);
 	void SetStaticText(int id, const wxString& text, bool& failure);
@@ -34,6 +35,7 @@ public:
 	int GetChoice(int id);
 
 	void SetOptionFromText(int ctrlId, int optionId);
+	void SetOptionFromCheck(int control_id, int option_id);
 
 	void ReloadSettings();
 

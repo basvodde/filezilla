@@ -129,7 +129,8 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Messagelog position", number, _T("0") },
 	{ "Last connected site", string, _T("") },
 	{ "File doubleclock action", number, _T("0") },
-	{ "Dir doubleclock action", number, _T("0") }
+	{ "Dir doubleclock action", number, _T("0") },
+	{ "Minimize to tray", number, _T("0") }
 };
 
 struct t_default_option

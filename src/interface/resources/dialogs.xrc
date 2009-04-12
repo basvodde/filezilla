@@ -1828,14 +1828,12 @@
       </object>
       <object class="sizeritem">
         <object class="wxStaticBoxSizer">
-          <label>Message log position</label>
-          <orient>wxVERTICAL</orient>
           <object class="sizeritem">
             <object class="wxBoxSizer">
               <orient>wxHORIZONTAL</orient>
               <object class="sizeritem">
                 <object class="wxStaticText">
-                  <label>Position of the message log:</label>
+                  <label>&amp;Position of the message log:</label>
                 </object>
                 <flag>wxRIGHT|wxALIGN_CENTRE_VERTICAL</flag>
                 <border>5</border>
@@ -1854,8 +1852,18 @@
             <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxGROW</flag>
             <border>4</border>
           </object>
+          <label>Message log position</label>
+          <orient>wxVERTICAL</orient>
         </object>
-        <flag>wxGROW</flag>
+        <flag>wxGROW|wxTOP</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem" platform="win|unix">
+        <object class="wxCheckBox" name="ID_MINIMIZE_TRAY">
+          <label>&amp;Minimize to tray</label>
+        </object>
+        <flag>wxTOP</flag>
+        <border>5</border>
       </object>
     </object>
   </object>
@@ -3233,12 +3241,6 @@
               <object class="sizeritem">
                 <object class="wxStaticText" name="ID_VER_GNUTLS"/>
               </object>
-              
-              
-              
-              
-              
-              
               <vgap>3</vgap>
               <hgap>5</hgap>
             </object>

@@ -42,12 +42,22 @@ void COptionsPage::SetCheck(int id, bool checked, bool& failure)
 	pCheckBox->SetValue(checked);
 }
 
+void COptionsPage::SetCheckFromOption(int control_id, int option_id, bool& failure)
+{
+	SetCheck(control_id, m_pOptions->GetOptionVal(option_id) != 0, failure);
+}
+
 bool COptionsPage::GetCheck(int id)
 {
 	wxCheckBox* pCheckBox = wxDynamicCast(FindWindow(id), wxCheckBox);
 	wxASSERT(pCheckBox);
 
 	return pCheckBox->GetValue();
+}
+
+void COptionsPage::SetOptionFromCheck(int control_id, int option_id)
+{
+	m_pOptions->SetOption(option_id, GetCheck(control_id) ? 1 : 0);
 }
 
 void COptionsPage::SetTextFromOption(int ctrlId, int optionId, bool& failure)
