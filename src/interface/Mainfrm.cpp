@@ -2898,7 +2898,7 @@ void CMainFrame::OnIconize(wxIconizeEvent& event)
 	else
 		installed = true;
 
-	if (!installed)
+	if (installed)
 		Show(false);
 }
 
