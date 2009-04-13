@@ -2,9 +2,11 @@
 #include "aboutdialog.h"
 #include "buildinfo.h"
 #include <wx/hyperlink.h>
+#include <wx/clipbrd.h>
 
 BEGIN_EVENT_TABLE(CAboutDialog, wxDialogEx)
 EVT_BUTTON(XRCID("wxID_OK"), CAboutDialog::OnOK)
+EVT_BUTTON(XRCID("ID_COPY"), CAboutDialog::OnCopy)
 END_EVENT_TABLE();
 
 bool CAboutDialog::Create(wxWindow* parent)
@@ -101,3 +103,47 @@ void CAboutDialog::OnOK(wxCommandEvent& event)
 	EndModal(wxID_OK);
 }
 
+void CAboutDialog::OnCopy(wxCommandEvent& event)
+{
+	wxString text = _T("FileZilla Client\n");
+	text += _T("----------------\n\n");
+
+	text += _T("Version:          ") + CBuildInfo::GetVersion();
+	if (CBuildInfo::GetBuildType() == _T("nightly"))
+		text += _T("-nightly");
+	text += '\n';
+
+	text += _T("\nBuild information:\n");
+	
+	wxString host = CBuildInfo::GetHostname();
+	if (!host.empty())
+		text += _T("  Compiled for:   ") + host + _T("\n");
+
+	wxString build = CBuildInfo::GetBuildSystem();
+	if (!build.empty())
+		text += _T("  Compiled on:    ") + host + _T("\n");
+
+	text += _T("  Build date:     ") + CBuildInfo::GetBuildDateString() + _T("\n");
+
+	text += _T("  Compiled with:  ") + CBuildInfo::GetCompiler() + _T("\n");
+
+	wxString compilerFlags = CBuildInfo::GetCompilerFlags();
+	if (!compilerFlags.empty())
+		text += _T("Compiler flags: ") + compilerFlags + _T("\n");
+
+	text += _T("\nDependencies:\n  wxWidgets:      ") + wxString(wxVERSION_NUM_DOT_STRING_T) + _T("\n");
+	text += _T("  GnuTLS:         ") + GetDependencyVersion(dependency_gnutls) + _T("\n");
+
+#ifdef __WXMSW__
+	text.Replace(_T("\n"), _T("\r\n"));
+#endif
+
+	if (!wxTheClipboard->Open())
+	{
+		wxMessageBox(_("Could not open clipboard"), _("Could not copy data"), wxICON_EXCLAMATION);
+		return;
+	}
+
+	wxTheClipboard->SetData(new wxTextDataObject(text));
+	wxTheClipboard->Close();
+}

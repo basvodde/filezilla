@@ -3122,7 +3122,7 @@
               </object>
               <object class="sizeritem">
                 <object class="wxStaticText" name="ID_COPYRIGHT">
-                  <label>&lt;Copyright 2004-2008&gt;</label>
+                  <label>&lt;Copyright 2004-2009&gt;</label>
                 </object>
                 <flag>wxTOP|wxBOTTOM</flag>
                 <border>5</border>
@@ -3253,12 +3253,27 @@
         <flag>wxALL|wxGROW</flag>
         <border>5</border>
       </object>
+      
       <object class="sizeritem">
-        <object class="wxButton" name="wxID_OK">
-          <label>OK</label>
-          <default>1</default>
+        <object class="wxBoxSizer">
+          <object class="sizeritem">
+            <object class="wxButton" name="ID_COPY">
+              <label>&amp;Copy to clipboard</label>
+            </object>
+          </object>
+          <object class="spacer">
+            <size>5,-1</size>
+            <option>1</option>
+          </object>
+          <object class="sizeritem">
+            <object class="wxButton" name="wxID_OK">
+              <label>OK</label>
+              <default>1</default>
+            </object>
+          </object>
+          <orient>wxHORIZONTAL</orient>
         </object>
-        <flag>wxALL|wxALIGN_CENTRE_HORIZONTAL</flag>
+        <flag>wxALL|wxGROW</flag>
         <border>5</border>
       </object>
     </object>
