@@ -1858,11 +1858,25 @@
         <flag>wxGROW|wxTOP</flag>
         <border>5</border>
       </object>
-      <object class="sizeritem" platform="win|unix">
-        <object class="wxCheckBox" name="ID_MINIMIZE_TRAY">
-          <label>&amp;Minimize to tray</label>
+      
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Behaviour</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxVERTICAL</orient>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_MINIMIZE_TRAY">
+                  <label>&amp;Minimize to tray</label>
+                </object>
+              </object>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
         </object>
-        <flag>wxTOP</flag>
+        <flag>wxGROW|wxTOP</flag>
         <border>5</border>
       </object>
     </object>
@@ -3253,7 +3267,6 @@
         <flag>wxALL|wxGROW</flag>
         <border>5</border>
       </object>
-      
       <object class="sizeritem">
         <object class="wxBoxSizer">
           <object class="sizeritem">
