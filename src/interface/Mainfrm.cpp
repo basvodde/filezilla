@@ -539,6 +539,9 @@ CMainFrame::~CMainFrame()
 void CMainFrame::HandleResize()
 {
 	wxSize clientSize = GetClientSize();
+	if (clientSize.y <= 0) // Can happen if restoring from tray on XP if using ugly XP themes
+		return;
+
 	if (m_pQuickconnectBar)
 		m_pQuickconnectBar->SetSize(0, 0, clientSize.GetWidth(), -1, wxSIZE_USE_EXISTING);
 	if (m_pTopSplitter)
