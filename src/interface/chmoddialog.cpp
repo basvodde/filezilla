@@ -328,7 +328,7 @@ bool CChmodDialog::ConvertPermissions(wxString rwx, char* permissions)
 
 	if (rwx.Len() < 3)
 		return false;
-	int i;
+	size_t i;
 	for (i = 0; i < rwx.Len(); i++)
 		if (rwx[i] < '0' || rwx[i] > '9')
 			break;
