@@ -2587,7 +2587,6 @@ void CQueueView::OnAskPassword(wxCommandEvent& event)
 			continue;
 		}
 
-		static std::list<void*> AskPasswordBusyList;
 		if (CLoginManager::Get().GetPassword(pEngineData->lastServer, false))
 		{
 			pEngineData->state = t_EngineData::connect;
