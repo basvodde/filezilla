@@ -238,6 +238,8 @@ protected:
 	int m_header_height;
 #endif
 
+	wxTimer m_resize_timer;
+
 	DECLARE_EVENT_TABLE();
 	void OnEngineEvent(wxEvent &event);
 	void OnFolderThreadComplete(wxCommandEvent& event);
@@ -260,6 +262,8 @@ protected:
 
 	void OnActionAfter(wxCommandEvent& event);
 	void OnActionAfterTimerTick();
+
+	void OnSize(wxSizeEvent& event);
 };
 
 #endif

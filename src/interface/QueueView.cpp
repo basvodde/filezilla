@@ -189,6 +189,7 @@ EVT_MENU(XRCID("ID_PRIORITY_LOWEST"), CQueueView::OnSetPriority)
 
 EVT_COMMAND(wxID_ANY, fzEVT_GRANTEXCLUSIVEENGINEACCESS, CQueueView::OnExclusiveEngineRequestGranted)
 
+EVT_SIZE(CQueueView::OnSize)
 END_EVENT_TABLE()
 
 class CFolderProcessingThread : public wxThread
@@ -483,6 +484,8 @@ CQueueView::CQueueView(CQueue* parent, int index, CMainFrame* pMainFrame, CAsync
 #ifdef __WXMSW__
 	m_header_height = -1;
 #endif
+
+	m_resize_timer.SetOwner(this);
 }
 
 CQueueView::~CQueueView()
@@ -495,6 +498,8 @@ CQueueView::~CQueueView()
 	}
 
 	DeleteEngines();
+
+	m_resize_timer.Stop();
 }
 
 bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxString& localFile,
@@ -1563,6 +1568,8 @@ bool CQueueView::Quit()
 	}
 
 	SaveColumnSettings(OPTION_QUEUE_COLUMN_WIDTHS, -1, -1);
+
+	m_resize_timer.Stop();
 
 	return true;
 }
@@ -2711,6 +2718,12 @@ void CQueueView::OnTimer(wxTimerEvent& event)
 	}
 #endif
 
+	if (id == m_resize_timer.GetId())
+	{
+		UpdateStatusLinePositions();
+		return;
+	}
+
 	if (id == m_folderscan_item_refresh_timer.GetId())
 	{
 		if (m_queuedFolders[1].empty())
@@ -3125,4 +3138,10 @@ int CQueueView::GetLineHeight()
 #endif
 
 	return m_line_height;
+}
+
+void CQueueView::OnSize(wxSizeEvent& event)
+{
+	if (!m_resize_timer.IsRunning())
+		m_resize_timer.Start(250);
 }
