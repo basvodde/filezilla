@@ -2497,6 +2497,9 @@ void CMainFrame::OnActivate(wxActivateEvent& event)
 				true
 #endif
 			);
+
+	if (m_pAsyncRequestQueue)
+		m_pAsyncRequestQueue->TriggerProcessing();
 }
 
 void CMainFrame::OnToolbarComparison(wxCommandEvent& event)

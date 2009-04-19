@@ -435,10 +435,7 @@ bool CAsyncRequestQueue::CheckWindowState()
 	while (pFocus && pFocus != m_pMainFrame)
 		pFocus = pFocus->GetParent();
 	if (!pFocus)
-	{
 		m_pMainFrame->RequestUserAttention();
-		return false;
-	}
 #endif
 
 	return true;
