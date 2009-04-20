@@ -1368,9 +1368,9 @@ void CEditHandlerStatusDialog::OnUnedit(wxCommandEvent& event)
 		
 		if (type == CEditHandler::local)
 		{
+			pEditHandler->Remove(pData->file);
 			delete pData;
 			pListCtrl->DeleteItem(i);
-			pEditHandler->Remove(pData->file);
 		}
 		else
 		{
@@ -1507,7 +1507,12 @@ CEditHandler::t_fileData* CEditHandlerStatusDialog::GetDataFromItem(int item, CE
 	CEditHandler::t_fileData* pData = (CEditHandler::t_fileData*)pListCtrl->GetItemData(item);
 	wxASSERT(pData);
 
-	if (pListCtrl->GetItemText(item) == _("Local"))
+	wxListItem info;
+	info.SetMask(wxLIST_MASK_TEXT);
+	info.SetId(item);
+	info.SetColumn(1);
+	pListCtrl->GetItem(info);
+	if (info.GetText() == _("Local"))
 		type = CEditHandler::local;
 	else
 		type = CEditHandler::remote;
