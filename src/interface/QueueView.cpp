@@ -3144,4 +3144,6 @@ void CQueueView::OnSize(wxSizeEvent& event)
 {
 	if (!m_resize_timer.IsRunning())
 		m_resize_timer.Start(250);
+
+	event.Skip();
 }
