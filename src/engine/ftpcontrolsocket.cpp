@@ -1193,6 +1193,7 @@ int CFtpControlSocket::LogonSend()
 			return FZ_REPLY_ERROR;
 		}
 		res = Send(m_pCurrentServer->GetPostLoginCommands()[pData->customCommandIndex]);
+		break;
 	case LOGON_OPTSMLST:
 		{
 			wxString args;
