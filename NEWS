@@ -10,6 +10,15 @@ Legend:
     *nix: Unix (e.g BSD) and Unix-like systems (e.g. Linux)
     OS X: Apple Mac OS X
 
+3.2.4 (2009-04-21)
+
+- Fix crash on SFTP download resume caused by uninitialized variable in PuTTY code
+- Properly refresh remote directory after chmod if synchronized browsing is enabled
+- Fix unediting locale files in file editing dialog
+- Fix regression with custom post-login commands on servers supporting MLSD
+- Trigger refresh of transfer progress bars after resizing queue
+- Several small fixes to minimize to tray functionality
+
 3.2.4-rc1 (2009-04-14)
 
 + Always use MLSD to retrieve directory listings on servers supporting it
