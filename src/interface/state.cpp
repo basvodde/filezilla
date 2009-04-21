@@ -745,7 +745,7 @@ void CState::LinkIsNotDir(const CServerPath& path, const wxString& subdir)
 		m_pMainFrame->GetRemoteListView()->LinkIsNotDir(path, subdir);
 }
 
-bool CState::ChangeRemoteDir(const CServerPath& path, const wxString& subdir /*=_T("")*/, int flags /*=0*/)
+bool CState::ChangeRemoteDir(const CServerPath& path, const wxString& subdir /*=_T("")*/, int flags /*=0*/, bool ignore_busy /*=false*/)
 {
 	if (!m_pServer || !m_pCommandQueue)
 		return false;
@@ -769,7 +769,7 @@ bool CState::ChangeRemoteDir(const CServerPath& path, const wxString& subdir /*=
 				return false;
 			SetSyncBrowse(false);
 		}
-		else if (!IsRemoteIdle())
+		else if (!IsRemoteIdle() && !ignore_busy)
 		{
 			wxString msg(_("Another remote operation is already in progress, cannot change directory now."));
 			wxMessageBox(msg, _("Synchronized browsing"), wxICON_EXCLAMATION);

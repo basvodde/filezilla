@@ -2001,7 +2001,7 @@ void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 	else
 	{
 		pChmodDlg->Destroy();
-		m_pState->ChangeRemoteDir(m_pDirectoryListing->path);
+		m_pState->ChangeRemoteDir(m_pDirectoryListing->path, _T(""), 0, true);
 	}
 
 }

@@ -53,7 +53,7 @@ public:
 
 	bool Connect(const CServer& server, bool askBreak, const CServerPath& path = CServerPath());
 
-	bool ChangeRemoteDir(const CServerPath& path, const wxString& subdir = _T(""), int flags = 0);
+	bool ChangeRemoteDir(const CServerPath& path, const wxString& subdir = _T(""), int flags = 0, bool ignore_busy = false);
 	bool SetRemoteDir(const CDirectoryListing *m_pDirectoryListing, bool modified = false);
 	const CDirectoryListing *GetRemoteDir() const;
 	const CServerPath GetRemotePath() const;
