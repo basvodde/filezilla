@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Filezilla 3 Turkish PO\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-04-14 19:15+0200\n"
-"PO-Revision-Date: 2009-04-09 11:59+0200\n"
+"POT-Creation-Date: 2009-04-21 20:45+0200\n"
+"PO-Revision-Date: 2009-04-16 15:04+0200\n"
 "Last-Translator: Kaya Zeren <kaya.zeren@zeron.net>\n"
 "Language-Team: Zeron <kaya.zeren@zeron.net>\n"
 "MIME-Version: 1.0\n"
@@ -64,7 +64,7 @@ msgid "%d file. Total size: At least %s"
 msgid_plural "%d files. Total size: At least %s"
 msgstr[0] "%d dosya. Toplam boyut: En az %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:2721
+#: ../../locales/../src/interface/QueueView.cpp:2733
 #, c-format
 msgid "%d files added to queue"
 msgstr "%d dosya aktarım kuyruğuna eklendi"
@@ -543,7 +543,7 @@ msgstr "&İleti günlüğü"
 
 #: resources.h:179
 msgid "&Minimize to tray"
-msgstr ""
+msgstr "&Sistem tepsisine küçült"
 
 #: resources.h:608
 msgid "&Name:"
@@ -618,9 +618,8 @@ msgid "&Port:"
 msgstr "&Port:"
 
 #: resources.h:173
-#, fuzzy
 msgid "&Position of the message log:"
-msgstr "İleti günlüğünün konumu:"
+msgstr "İleti &günlüğünün konumu:"
 
 #: resources.h:693
 msgid "&Preserve timestamps of transferred files"
@@ -1380,7 +1379,7 @@ msgstr "Proxy sunucuyu atla"
 
 #: resources.h:178
 msgid "Behaviour"
-msgstr ""
+msgstr "Davranış"
 
 #: ../../locales/../src/interface/edithandler.cpp:1246
 #: ../../locales/../src/interface/edithandler.cpp:1274
@@ -1444,9 +1443,8 @@ msgid "C&lear all"
 msgstr "H&epsini temizle"
 
 #: resources.h:742 resources.h:788
-#, fuzzy
 msgid "C&opy URL(s) to clipboard"
-msgstr "&Panoya kopyala"
+msgstr "Web adresini &panoya kopyala"
 
 #: resources.h:210
 msgid "C&ustom"
@@ -1456,7 +1454,7 @@ msgstr "İsteğe &Bağlı"
 msgid "C&ustom filetype associations:"
 msgstr "Ö&zel dosya türü ilişkileri:"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1630
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1631
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1266
 msgid "Calculating timezone offset of server..."
 msgstr "Sunucunun zaman dilimi kayması hesaplanıyor..."
@@ -1577,9 +1575,9 @@ msgstr "Filtre seti kaydedilemiyor"
 msgid "Cannot select filter"
 msgstr "Filtre seçilemiyor"
 
-#: ../../locales/../src/interface/edithandler.cpp:1609
 #: ../../locales/../src/interface/edithandler.cpp:1614
-#: ../../locales/../src/interface/edithandler.cpp:1653
+#: ../../locales/../src/interface/edithandler.cpp:1619
+#: ../../locales/../src/interface/edithandler.cpp:1658
 msgid "Cannot set file association"
 msgstr "Dosya ilişkisi ayarlanamıyor"
 
@@ -1875,7 +1873,7 @@ msgstr "Site Yöneticisinde belirtilen siteye bağlan"
 msgid "Connected"
 msgstr "Bağlandı"
 
-#: ../../locales/../src/interface/QueueView.cpp:1356
+#: ../../locales/../src/interface/QueueView.cpp:1361
 msgid "Connecting"
 msgstr "Bağlanıyor"
 
@@ -1911,7 +1909,7 @@ msgstr "Sunucuya bağlanıyor"
 msgid "Connection"
 msgstr "Bağlantı"
 
-#: ../../locales/../src/interface/QueueView.cpp:1008
+#: ../../locales/../src/interface/QueueView.cpp:1013
 msgid "Connection attempt failed"
 msgstr "Bağlantı denemesi başarısız"
 
@@ -2006,7 +2004,7 @@ msgstr "%s kopyası"
 
 #: resources.h:743 resources.h:789
 msgid "Copy the URLs of the selected items to clipboard."
-msgstr ""
+msgstr "Seçili ögelerin web adreslerini panoya kopyala."
 
 #: ../../locales/../src/engine/transfersocket.cpp:216
 #, c-format
@@ -2038,14 +2036,12 @@ msgstr "Özel anahtar dönüştürülemedi"
 
 #: ../../locales/../src/interface/RemoteListView.cpp:3055
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1445
-#, fuzzy
 msgid "Could not copy URLs"
-msgstr "Sunucuyla bağlantı kurulamıyor"
+msgstr "Web adresleri kopyalanamadı"
 
 #: ../../locales/../src/interface/aboutdialog.cpp:143
-#, fuzzy
 msgid "Could not copy data"
-msgstr "IO işlemi başlatılamamakta:"
+msgstr "Veri kopyalanamadı"
 
 #: ../../locales/../src/interface/RemoteListView.cpp:2478
 #: ../../locales/../src/interface/RemoteTreeView.cpp:893
@@ -2058,7 +2054,7 @@ msgstr ""
 "Ya kabuk eklentileri yüklü değil ya da dosyaları bir Gezgin penceresine "
 "sürüklemediniz."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4208
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4209
 msgid "Could not establish connection to server"
 msgstr "Sunucu ile bağlantı kurulamadı"
 
@@ -2143,9 +2139,8 @@ msgstr ""
 #: ../../locales/../src/interface/aboutdialog.cpp:143
 #: ../../locales/../src/interface/RemoteListView.cpp:3055
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1445
-#, fuzzy
 msgid "Could not open clipboard"
-msgstr "&Panoya kopyala"
+msgstr "Pano açılamadı"
 
 #: ../../locales/../src/engine/logging.cpp:202
 #: ../../locales/../src/engine/logging.cpp:270
@@ -2171,12 +2166,12 @@ msgstr "Soketten okuyamadı: %s"
 msgid "Could not read server item."
 msgstr "Sunucu nesnesi okunamıyor."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2701
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2702
 #, c-format
 msgid "Could not seek to offset %s within file"
 msgstr "Dosya içinde %s satırına ulaşılamıyor"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2634
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2635
 msgid "Could not seek to the end of the file"
 msgstr "Dosyanın sonuna erişilemiyor"
 
@@ -2184,7 +2179,7 @@ msgstr "Dosyanın sonuna erişilemiyor"
 msgid "Could not send command to fzputtygen."
 msgstr "fzputtygen e komut gönderilemedi."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2721
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2722
 msgid "Could not spawn IO thread"
 msgstr "IO işlemi başlatılamamakta:"
 
@@ -2193,8 +2188,8 @@ msgstr "IO işlemi başlatılamamakta:"
 msgid "Could not start proxy handshake: %s"
 msgstr "Proxy is iletişim kurulamadı: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1059
 #: ../../locales/../src/interface/QueueView.cpp:1064
+#: ../../locales/../src/interface/QueueView.cpp:1069
 msgid "Could not start transfer"
 msgstr "Aktarım işlemi başlatılamadı"
 
@@ -2218,8 +2213,8 @@ msgstr "\"%s\" yazılamıyor, yer imi kaydedilemedi: %s"
 msgid "Could not write \"%s\", the global bookmarks could no be saved: %s"
 msgstr "\"%s\" yazılamıyor, küresel yer imleri kaydedilemedi: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1859
-#: ../../locales/../src/interface/QueueView.cpp:1895
+#: ../../locales/../src/interface/QueueView.cpp:1866
+#: ../../locales/../src/interface/QueueView.cpp:1902
 #, c-format
 msgid ""
 "Could not write \"%s\", the queue could not be saved.\n"
@@ -2246,7 +2241,7 @@ msgstr "\"%s\" yazılamıyor: %s"
 msgid "Could not write keyfile: %s"
 msgstr "%s anahtar dosyasına yazılamadı"
 
-#: ../../locales/../src/interface/QueueView.cpp:1053
+#: ../../locales/../src/interface/QueueView.cpp:1058
 msgid "Could not write to local file"
 msgstr "Yerel dosyaya yazılamıyor"
 
@@ -2283,11 +2278,11 @@ msgstr "Geçerli dizinde yeni bir alt dizin oluştur"
 msgid "Create directory"
 msgstr "Dizin oluştur"
 
-#: ../../locales/../src/interface/QueueView.cpp:1429
+#: ../../locales/../src/interface/QueueView.cpp:1434
 msgid "Creating directory"
 msgstr "Dizin oluşturuluyor"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3257
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3258
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2046
 #, c-format
 msgid "Creating directory '%s'..."
@@ -2488,7 +2483,7 @@ msgstr "Dizin"
 
 #: resources.h:633 resources.h:792 resources.h:887
 #: ../../locales/../src/interface/filelistctrl.cpp:375
-#: ../../locales/../src/interface/Mainfrm.cpp:2519
+#: ../../locales/../src/interface/Mainfrm.cpp:2522
 msgid "Directory comparison"
 msgstr "Dizin karşılaştırma"
 
@@ -2546,8 +2541,8 @@ msgstr "Sunucu ile bağlantıyı kes"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:251
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:851
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:853
-#: ../../locales/../src/interface/QueueView.cpp:1006
-#: ../../locales/../src/interface/QueueView.cpp:1050
+#: ../../locales/../src/interface/QueueView.cpp:1011
+#: ../../locales/../src/interface/QueueView.cpp:1055
 msgid "Disconnected from server"
 msgstr "Sunucu ile bağlantı kesildi"
 
@@ -2557,7 +2552,7 @@ msgstr "Sunucu ile bağlantı kesildi"
 msgid "Disconnected from server: %s"
 msgstr "Sunucu ile bağlantı kesildi: %s "
 
-#: ../../locales/../src/interface/QueueView.cpp:1331
+#: ../../locales/../src/interface/QueueView.cpp:1336
 #: ../../locales/../src/interface/statuslinectrl.cpp:208
 msgid "Disconnecting from previous server"
 msgstr "Önceki sunucu ile bağlantı kesiliyor"
@@ -2728,7 +2723,7 @@ msgstr "Düzenleme yapılamadı"
 msgid "Email:"
 msgstr "Eposta:"
 
-#: ../../locales/../src/interface/QueueView.cpp:2119
+#: ../../locales/../src/interface/QueueView.cpp:2126
 msgid "Empty command"
 msgstr "Boş komut"
 
@@ -2786,7 +2781,7 @@ msgstr "Karşılaştırmayı bitir ve sıralama düzenini değiştir?"
 msgid "Enter &custom command..."
 msgstr "Özel &komut yaz..."
 
-#: ../../locales/../src/interface/QueueView.cpp:2108
+#: ../../locales/../src/interface/QueueView.cpp:2115
 msgid "Enter command"
 msgstr "Komut yaz..."
 
@@ -2877,8 +2872,8 @@ msgstr "Alırken hata"
 #: ../../locales/../src/interface/import.cpp:121
 #: ../../locales/../src/interface/import.cpp:312
 #: ../../locales/../src/interface/Options.cpp:171
-#: ../../locales/../src/interface/QueueView.cpp:1849
-#: ../../locales/../src/interface/QueueView.cpp:1876
+#: ../../locales/../src/interface/QueueView.cpp:1856
+#: ../../locales/../src/interface/QueueView.cpp:1883
 #: ../../locales/../src/interface/sitemanager.cpp:682
 #: ../../locales/../src/interface/sitemanager.cpp:835
 #: ../../locales/../src/interface/sitemanager.cpp:2043
@@ -2898,8 +2893,8 @@ msgstr "Programın başlatılmasında hata"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:321
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:841
-#: ../../locales/../src/interface/QueueView.cpp:1860
-#: ../../locales/../src/interface/QueueView.cpp:1896
+#: ../../locales/../src/interface/QueueView.cpp:1867
+#: ../../locales/../src/interface/QueueView.cpp:1903
 #: ../../locales/../src/interface/sitemanager.cpp:859
 #: ../../locales/../src/interface/sitemanager.cpp:2643
 #: ../../locales/../src/interface/sitemanager.cpp:2878
@@ -3025,8 +3020,8 @@ msgstr "Xml dosyasının yedeği alınamadı"
 msgid "Failed to create listen socket, aborting"
 msgstr "Dinleme soketi oluşturulamadı, iptal ediliyor"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4184
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4188
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4185
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4189
 msgid "Failed to create listening socket for active mode transfer"
 msgstr "Aktif mod aktarımı için dinleme soketi oluşturulamadı"
 
@@ -3068,17 +3063,17 @@ msgstr "Paneller yüklenemedi, hatalı kaynak dosyalar?"
 msgid "Failed to load private key: %s"
 msgstr "Kişisel anahtar yükleme başarısız: %s"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2623
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2624
 #, c-format
 msgid "Failed to open \"%s\" for appending/writing"
 msgstr "\"%s\" ekleme/yazma için açılamıyor"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2685
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2686
 #, c-format
 msgid "Failed to open \"%s\" for reading"
 msgstr "\"%s\" okuma için açılamıyor"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2664
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2665
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:327
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:384
 #, c-format
@@ -3097,11 +3092,11 @@ msgstr "Dizin listesi alınamadı"
 msgid "Failed to retrieve external ip address, aborting"
 msgstr "Dış IP adresi alımı başarısız, iptal ediliyor"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3882
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3883
 msgid "Failed to retrieve external ip address, using local address"
 msgstr "Dış IP adresi okunamadı, yerel IP deneniyor"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3904
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3905
 msgid "Failed to retrieve local ip address."
 msgstr "Yerel IP adresi okunamadı."
 
@@ -3217,7 +3212,7 @@ msgstr "Dosya değiştirildi"
 msgid "File lists"
 msgstr "Dosya listeleri"
 
-#: ../../locales/../src/interface/edithandler.cpp:1693
+#: ../../locales/../src/interface/edithandler.cpp:1698
 #: ../../locales/../src/interface/FileZilla.cpp:768
 #: ../../locales/../src/interface/FileZilla.cpp:862
 #: ../../locales/../src/interface/optionspage_edit.cpp:218
@@ -3287,7 +3282,7 @@ msgstr "Dosya Adı"
 msgid "Filename &filters..."
 msgstr "&Dosya adı süzgeçleri..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3055
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3056
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2309
 #, c-format
 msgid "Filename cannot be constructed for directory %s and filename %s"
@@ -3755,7 +3750,7 @@ msgstr ""
 "sorar ve verilen porttan bağlantı kurulur. Bunun için pek bir ayar "
 "yapılmasına gerek yoktur."
 
-#: ../../locales/../src/interface/QueueView.cpp:1002
+#: ../../locales/../src/interface/QueueView.cpp:1007
 msgid "Incorrect password"
 msgstr "Yanlış parola"
 
@@ -3774,8 +3769,8 @@ msgid "Interface"
 msgstr "Arayüz"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:165
-#: ../../locales/../src/interface/QueueView.cpp:959
-#: ../../locales/../src/interface/QueueView.cpp:1492
+#: ../../locales/../src/interface/QueueView.cpp:964
+#: ../../locales/../src/interface/QueueView.cpp:1497
 msgid "Interrupted by user"
 msgstr "Kullanıcı tarafından durduruldu"
 
@@ -3955,7 +3950,7 @@ msgid "Lo&west available port:"
 msgstr "E&n küçük port:"
 
 #: ../../locales/../src/interface/edithandler.cpp:1264
-#: ../../locales/../src/interface/edithandler.cpp:1510
+#: ../../locales/../src/interface/edithandler.cpp:1515
 msgid "Local"
 msgstr "Yerel"
 
@@ -4204,11 +4199,11 @@ msgstr "Hayır"
 msgid "No category to export selected"
 msgstr "Vermek içi seçili bir kategori yok"
 
-#: ../../locales/../src/interface/QueueView.cpp:2119
+#: ../../locales/../src/interface/QueueView.cpp:2126
 msgid "No command given, aborting."
 msgstr "Komut verilmedi, yarıda kesiliyor."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3849
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3850
 msgid "No external IP address set, trying default."
 msgstr "Dış IP adresi belirtilmemiş, varsayılan deneniyor."
 
@@ -4230,7 +4225,7 @@ msgstr "Sunucu belirtilmemiş. Lütfen sunucuyu yazın."
 msgid "No images available"
 msgstr "Hiç resim yok"
 
-#: ../../locales/../src/interface/QueueView.cpp:2898
+#: ../../locales/../src/interface/QueueView.cpp:2910
 msgid "No more files in the queue!"
 msgstr "Kuyrukta dosya yok!"
 
@@ -4455,7 +4450,7 @@ msgstr "Pa&sif (önerilen)"
 msgid "Package"
 msgstr "Paket"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2711
+#: ../../locales/../src/interface/Mainfrm.cpp:2714
 msgid "Parameter not a valid URL"
 msgstr "Parametre geçerli bir URL değil"
 
@@ -4485,7 +4480,7 @@ msgstr "Parola gerekli"
 msgid "Path"
 msgstr "Yol"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3142
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3143
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2354
 #, c-format
 msgid "Path cannot be constructed for directory %s and subdir %s"
@@ -4609,7 +4604,7 @@ msgstr "Lütfen aynı anda 1 ile 10 arasında kaç aktarım yapılacağını yaz
 msgid "Please enter a password for this server:"
 msgstr "Lütfen bu sunucu için parolayı yazın:"
 
-#: ../../locales/../src/interface/QueueView.cpp:2108
+#: ../../locales/../src/interface/QueueView.cpp:2115
 msgid ""
 "Please enter a path and executable to run.\n"
 "E.g. c:\\somePath\\file.exe under MS Windows or /somePath/file under Unix.\n"
@@ -4904,7 +4899,7 @@ msgstr "Proxy isteği başarısız oldu: %s"
 msgid "Proxy request failed: Unknown address type in CONNECT reply"
 msgstr "Proxy isteği başarısız: CONNECT yanıtında bilinmeyen adres tipi"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4333
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4334
 msgid "Proxy set but proxy host or port invalid"
 msgstr "Proxy ayarlandı ama proxy sunucusu veya port geçersiz"
 
@@ -4920,7 +4915,7 @@ msgstr "Genel anahtar algoritması:"
 msgid "Public permissions"
 msgstr "Genel izinler"
 
-#: ../../locales/../src/interface/QueueView.cpp:2953
+#: ../../locales/../src/interface/QueueView.cpp:2965
 msgid "Queue has been fully processed"
 msgstr "Kuyruk tamamen işlendi"
 
@@ -4945,7 +4940,7 @@ msgstr "Aktarım Kuyruğu: %s%d bayt"
 msgid "Queue: empty"
 msgstr "Aktarım Kuyruğu: boş"
 
-#: ../../locales/../src/interface/QueueView.cpp:438
+#: ../../locales/../src/interface/QueueView.cpp:439
 msgid "Queued files"
 msgstr "Kuyruktakiler"
 
@@ -4999,7 +4994,7 @@ msgstr "Seçili dosya ve/veya dizinleri gerçekten silmek istiyor musunuz?"
 msgid "Reason"
 msgstr "Neden:"
 
-#: ../../locales/../src/interface/QueueView.cpp:2961
+#: ../../locales/../src/interface/QueueView.cpp:2973
 msgid "Reboot now"
 msgstr "Yeniden başlat"
 
@@ -5117,7 +5112,7 @@ msgstr "Seçilen dizini yeniden adlandır"
 msgid "Rename selected files and directories"
 msgstr "Seçilen dosya ve dizinleri yeniden adlandır"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3488
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3489
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2556
 #, c-format
 msgid "Renaming '%s' to '%s'"
@@ -5156,12 +5151,12 @@ msgstr ""
 "Eğer sunucu istemciden farklı bir satır sonu karakteri kullanıyorsa ASCII "
 "dosyalarını devam ettirmek sorunlara yol açabilir."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1299
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1300
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:951
 msgid "Retrieving directory listing..."
 msgstr "Dizin listesi alınıyor..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3867
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3868
 #: ../../locales/../src/interface/netconfwizard.cpp:707
 #, c-format
 msgid "Retrieving external IP address from %s"
@@ -5191,11 +5186,11 @@ msgstr "SFTP"
 msgid "Save settings?"
 msgstr "Ayarları kaydet?"
 
-#: ../../locales/../src/interface/QueueView.cpp:1726
+#: ../../locales/../src/interface/QueueView.cpp:1733
 msgid "Scanning for files to add to queue"
 msgstr "Aktarım Kuyruğuna eklenecek dosyalar taranıyor"
 
-#: ../../locales/../src/interface/QueueView.cpp:1728
+#: ../../locales/../src/interface/QueueView.cpp:1735
 msgid "Scanning for files to upload"
 msgstr "Karşıya yüklenecek dosyalar taranıyor"
 
@@ -5231,7 +5226,7 @@ msgid ""
 "Select default action to perform if target file of a transfer already exists."
 msgstr "Varsayılan 'Hedef Dosya Var' veya 'Aktarım Var' eylemini seçin."
 
-#: ../../locales/../src/interface/edithandler.cpp:1673
+#: ../../locales/../src/interface/edithandler.cpp:1678
 #: ../../locales/../src/interface/optionspage_edit.cpp:198
 msgid "Select default editor"
 msgstr "Varsayılan düzenleyiciyi seç"
@@ -5333,8 +5328,8 @@ msgstr "Seçili %s ve %s. Toplam boyut: %s"
 msgid "Selected %s and %s. Total size: At least %s"
 msgstr "Seçili %s ve %s. Toplam boyut: En az %s"
 
-#: ../../locales/../src/interface/edithandler.cpp:1614
-#: ../../locales/../src/interface/edithandler.cpp:1693
+#: ../../locales/../src/interface/edithandler.cpp:1619
+#: ../../locales/../src/interface/edithandler.cpp:1698
 #: ../../locales/../src/interface/optionspage_edit.cpp:218
 msgid "Selected editor does not exist."
 msgstr "Seçili düzenleyici bulunamadı."
@@ -5380,7 +5375,7 @@ msgstr "FTP &canlı-kal komutları gönder"
 msgid "Send custom command to the server otherwise not available"
 msgstr "Sunucuya özel komut gönderin yoksa bir şey yapılamıyor"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4415
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4416
 msgid "Sending keep-alive command"
 msgstr "Canlı-kal komutu gönderiliyor"
 
@@ -5392,12 +5387,12 @@ msgstr "Seri No:"
 msgid "Server did not properly shut down TLS connection"
 msgstr "Sunucu TLS bağlantısını düzgün bir şekilde kapatmadı"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4266
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4267
 #, c-format
 msgid "Server does not support resume of files > %d GB."
 msgstr "Sunucu %d GB'tan büyük dosyaların devam edebilmesini desteklemiyor."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4262
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4263
 #, c-format
 msgid ""
 "Server does not support resume of files > %d GB. End transfer since file "
@@ -5406,15 +5401,15 @@ msgstr ""
 "Sunucu %d GB'tan büyük dosyaların devam edebilmesini desteklemiyor. Aktarımı "
 "dosya boyut eşleşmesi ile bitir."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2552
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2553
 msgid "Server does not support resume of files > 2GB."
 msgstr "Sunucu 2GB'tan büyük dosyaların devam edebilmesini desteklemiyor."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2547
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2548
 msgid "Server does not support resume of files > 4GB."
 msgstr "Sunucu 4GB'tan büyük dosyaların devam edebilmesini desteklemiyor."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4277
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4278
 #, c-format
 msgid ""
 "Server may not support resume of files > %d GB. End transfer since file "
@@ -5438,13 +5433,13 @@ msgid ""
 msgstr ""
 "Sunucu ek giriş soruları soruyor. Etkileşimli giriş tipini kullanmalısınız."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3815
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3816
 msgid "Server sent passive reply with unroutable address. Passive mode failed."
 msgstr ""
 "Sunucu yöneltilemeyen bir adresle pasif bir yanıt verdi. Pasif mod "
 "kullanılamadı."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3809
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3810
 msgid ""
 "Server sent passive reply with unroutable address. Using server address "
 "instead."
@@ -5492,7 +5487,7 @@ msgstr "Oturum detayları"
 msgid "Set &Priority"
 msgstr "Öncelik &Belirle"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3640
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3641
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2434
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
@@ -5510,7 +5505,7 @@ msgstr "Ayarlar"
 msgid "Show &raw directory listing"
 msgstr "Ham dizi&n listesini göster"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2522
+#: ../../locales/../src/interface/Mainfrm.cpp:2525
 msgid "Show both directory trees and continue comparing?"
 msgstr "Her iki dizin ağacını göster ve karşılaştırmaya devam et?"
 
@@ -5518,7 +5513,7 @@ msgstr "Her iki dizin ağacını göster ve karşılaştırmaya devam et?"
 msgid "Shows this help dialog"
 msgstr "Bu yardım penceresini görüntüler"
 
-#: ../../locales/../src/interface/QueueView.cpp:2963
+#: ../../locales/../src/interface/QueueView.cpp:2975
 msgid "Shutdown now"
 msgstr "Şimdi kapat"
 
@@ -5657,13 +5652,13 @@ msgstr "Aktarıma &hemen başla"
 msgid "Start with opened Site Manager"
 msgstr "Açılmış Site Yöneticisi ile başla"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2232
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2233
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1629
 #, c-format
 msgid "Starting download of %s"
 msgstr "%s indirilmesine başlanıyor"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2236
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2237
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1633
 #, c-format
 msgid "Starting upload of %s"
@@ -5674,7 +5669,7 @@ msgid "State:"
 msgstr "Durum:"
 
 #: ../../locales/../src/interface/edithandler.cpp:1219
-#: ../../locales/../src/interface/QueueView.cpp:464
+#: ../../locales/../src/interface/QueueView.cpp:465
 msgid "Status"
 msgstr "Durum"
 
@@ -5731,7 +5726,7 @@ msgstr "Sözdizimi hatası"
 #: ../../locales/../src/interface/cmdline.cpp:60
 #: ../../locales/../src/interface/cmdline.cpp:66
 #: ../../locales/../src/interface/cmdline.cpp:72
-#: ../../locales/../src/interface/Mainfrm.cpp:2713
+#: ../../locales/../src/interface/Mainfrm.cpp:2716
 msgid "Syntax error in command line"
 msgstr "Komut satırında sözdizimi hatası"
 
@@ -5767,7 +5762,7 @@ msgstr "Hedef dosya adı zaten var, devam edilsin mi?"
 msgid "Test results"
 msgstr "Sınama sonuçları"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4283
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4284
 msgid "Testing resume capabilities of server"
 msgstr "Sunucunun devam edebilme yeteneği sınanıyor."
 
@@ -5816,7 +5811,7 @@ msgstr "Bu bağlantı şifrelenmiş. Detaylar için simgeye tıklayın."
 msgid "The custom login sequence cannot be empty."
 msgstr "Özel giriş sıralaması boş olamaz."
 
-#: resources.h:651 ../../locales/../src/interface/edithandler.cpp:1653
+#: resources.h:651 ../../locales/../src/interface/edithandler.cpp:1658
 #, no-c-format
 msgid "The default editor for text files could not be found."
 msgstr "Text dosyaları için varsayılan düzenleyici bulunamadı."
@@ -6001,8 +5996,8 @@ msgid ""
 "install this version."
 msgstr "Güncel sürüm indirildi. Yüklemek için \"Yükle\" tuşuna basınız."
 
-#: ../../locales/../src/interface/QueueView.cpp:1848
-#: ../../locales/../src/interface/QueueView.cpp:1875
+#: ../../locales/../src/interface/QueueView.cpp:1855
+#: ../../locales/../src/interface/QueueView.cpp:1882
 msgid "The queue will not be saved."
 msgstr "Kuyruk kaydedilemedi."
 
@@ -6097,11 +6092,11 @@ msgstr ""
 "Ayarlar alındı. Bütün ayarların etkin olabilmesi için FileZilla'yı yeniden "
 "başlatmalısınız. "
 
-#: ../../locales/../src/interface/QueueView.cpp:2951
+#: ../../locales/../src/interface/QueueView.cpp:2963
 msgid "The system will soon reboot unless you click cancel."
 msgstr "İptal'e basmazsanız sistem yeniden başlatılacak."
 
-#: ../../locales/../src/interface/QueueView.cpp:2949
+#: ../../locales/../src/interface/QueueView.cpp:2961
 msgid "The system will soon shutdown unless you click cancel."
 msgstr "İptal'e basmazsanız sistem birazdan kapanacak"
 
@@ -6162,12 +6157,12 @@ msgstr "Zaman biçimi"
 msgid "Time&out in seconds:"
 msgstr "Zaman aşımı (sn):"
 
-#: resources.h:56 ../../locales/../src/interface/QueueView.cpp:1004
-#: ../../locales/../src/interface/QueueView.cpp:1048
+#: resources.h:56 ../../locales/../src/interface/QueueView.cpp:1009
+#: ../../locales/../src/interface/QueueView.cpp:1053
 msgid "Timeout"
 msgstr "Zaman aşımı"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1691
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1692
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1075
 #, c-format
 msgid ""
@@ -6180,12 +6175,12 @@ msgstr ""
 msgid "Title:"
 msgstr "Başlık:"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2520
+#: ../../locales/../src/interface/Mainfrm.cpp:2523
 msgid "To compare directories, both file lists have to be aligned."
 msgstr ""
 "Dizinleri karşılaştırmak için her iki dosya listesi de hizalanmış olmalı."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2521
+#: ../../locales/../src/interface/Mainfrm.cpp:2524
 msgid "To do this, the directory trees need to be both shown or both hidden."
 msgstr ""
 "Bunu yapabilmek için dizin ağaçlarının ikisi de görünmeli veya gizlenmeli. "
@@ -6293,7 +6288,7 @@ msgstr "Aktarım ayarları"
 msgid "Transferred data got tainted."
 msgstr "Aktarılan veri bozuldu."
 
-#: ../../locales/../src/interface/QueueView.cpp:1393
+#: ../../locales/../src/interface/QueueView.cpp:1398
 #: ../../locales/../src/interface/statuslinectrl.cpp:217
 msgid "Transferring"
 msgstr "Aktarılıyor"
@@ -6572,7 +6567,7 @@ msgstr "Kullanıcı:"
 msgid "Username cannot be a series of spaces"
 msgstr "Kullanıcı adı bir dizi boşluk olamaz"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4338
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4339
 #, c-format
 msgid "Using proxy %s"
 msgstr "Proxy %s kullanılıyor"
@@ -6609,7 +6604,7 @@ msgstr "Sertifika onaylanıyor..."
 msgid "Very high"
 msgstr "Çok yüksek"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1427
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1428
 msgid "View hidden option set, but unsupported by server"
 msgstr "Gizli dosyaları göster seçili, ama sunucu desteklemiyor"
 
@@ -6625,15 +6620,15 @@ msgstr "Gösterilecek sütunlar"
 msgid "W&rite"
 msgstr "Y&az"
 
-#: ../../locales/../src/interface/QueueView.cpp:1685
+#: ../../locales/../src/interface/QueueView.cpp:1692
 msgid "Waiting"
 msgstr "Bekliyor"
 
-#: ../../locales/../src/interface/QueueView.cpp:1322
+#: ../../locales/../src/interface/QueueView.cpp:1327
 msgid "Waiting for browsing connection"
 msgstr "Tarama bağlantısı için bekliyor"
 
-#: ../../locales/../src/interface/QueueView.cpp:1343
+#: ../../locales/../src/interface/QueueView.cpp:1348
 msgid "Waiting for password"
 msgstr "Parola yazmanız bekleniyor"
 
@@ -6799,7 +6794,7 @@ msgstr "Yer imi için bir ad yazmalısınız"
 msgid "You need to enter a name for the log file."
 msgstr "Günlük dosyası için bir ad yazmalısınız."
 
-#: ../../locales/../src/interface/edithandler.cpp:1609
+#: ../../locales/../src/interface/edithandler.cpp:1614
 msgid "You need to enter a properly quoted command."
 msgstr "Uygun şekilde düzenlenmiş bir komut yazmalısınız."
 
