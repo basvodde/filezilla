@@ -2648,7 +2648,7 @@ int CDirectoryListingParser::ParseAsMlsd(CLine *pLine, CDirentry &entry)
 			return 0;
 
 		int pos = facts.Find('=');
-		if (pos < 1 || (pos + 2) > delim)
+		if (pos < 1 || pos > delim)
 			return 0;
 
 		wxString factname = facts.Left(pos);
@@ -2696,10 +2696,13 @@ int CDirectoryListingParser::ParseAsMlsd(CLine *pLine, CDirentry &entry)
 		}
 		else if (factname == _T("perm"))
 		{
-			if (!entry.permissions.empty())
-				entry.permissions = value + _T(" (") + entry.permissions + _T(")");
-			else
-				entry.permissions = value;
+			if (!value.empty())
+			{
+				if (!entry.permissions.empty())
+					entry.permissions = value + _T(" (") + entry.permissions + _T(")");
+				else
+					entry.permissions = value;
+			}
 		}
 		else if (factname == _T("unix.mode"))
 		{

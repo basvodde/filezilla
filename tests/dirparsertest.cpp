@@ -1467,6 +1467,25 @@ void CDirectoryListingParserTest::InitEntries()
 			DEFAULT
 		});
 
+		utc = wxDateTime(26, wxDateTime::Apr, 2008, 13, 55, 01);
+		utc.MakeFromTimezone(wxDateTime::UTC);
+		m_entries.push_back((t_entry){
+			"modify=20080426135501;perm=;size=65718921;type=file;unique=802U1066013B;UNIX.group=1179;UNIX.mode=00;UNIX.owner=1179; 75 MLSD with empty permissions",
+			{
+				_T("75 MLSD with empty permissions"),
+				65718921,
+				_T("00"),
+				_T("1179 1179"),
+				false,
+				false,
+				_T(""),
+				CDirentry::timestamp_seconds,
+				utc,
+				false
+			},
+			DEFAULT
+		});	
+
 /*
 	wxString name;
 	wxLongLong size;
