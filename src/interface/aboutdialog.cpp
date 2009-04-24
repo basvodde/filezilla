@@ -121,7 +121,7 @@ void CAboutDialog::OnCopy(wxCommandEvent& event)
 
 	wxString build = CBuildInfo::GetBuildSystem();
 	if (!build.empty())
-		text += _T("  Compiled on:    ") + host + _T("\n");
+		text += _T("  Compiled on:    ") + build + _T("\n");
 
 	text += _T("  Build date:     ") + CBuildInfo::GetBuildDateString() + _T("\n");
 
