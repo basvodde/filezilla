@@ -2852,6 +2852,8 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 				else
 				{
 					pData->remoteFile = pFileExistsNotification->newName;
+					pData->remoteFileSize = -1;
+					pData->fileTime = wxDateTime();
 
 					CDirectoryCache cache;
 
@@ -2861,19 +2863,37 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 					if (!cache.LookupFile(entry, *m_pCurrentServer, pData->tryAbsolutePath ? pData->remotePath : m_CurrentPath, pData->remoteFile, dir_did_exist, matched_case) ||
 						!matched_case)
 					{
-						pData->opState = filetransfer_size;
+						if (m_pEngine->GetOptions()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS) &&
+							CServerCapabilities::GetCapability(*m_pCurrentServer, mdtm_command) == yes)
+						{
+							pData->opState = filetransfer_mdtm;
+						}
 					}
 					else // found and matched case
 					{
-						wxLongLong size = entry.size;
-						pData->remoteFileSize = size.GetLo() + ((wxFileOffset)size.GetHi() << 32);
+						if (matched_case)
+						{
+							pData->remoteFileSize = entry.size.GetLo() + ((wxFileOffset)entry.size.GetHi() << 32);
+							if (entry.hasTimestamp != CDirentry::timestamp_none)
+								pData->fileTime = entry.time;
 
-						if (CheckOverwriteFile() != FZ_REPLY_OK)
-							break;
+							if (pData->download &&
+								entry.hasTimestamp < CDirentry::timestamp_time &&
+								m_pEngine->GetOptions()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS) &&
+								CServerCapabilities::GetCapability(*m_pCurrentServer, mdtm_command) == yes)
+							{
+								pData->opState = filetransfer_mdtm;
+							}
+							else
+							{
+								if (CheckOverwriteFile() != FZ_REPLY_OK)
+									break;
+							}
+						}
+						else
+							pData->opState = filetransfer_size;
 					}
-
 					SendNextCommand();
-
 				}
 				break;
 			default:

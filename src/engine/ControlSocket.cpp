@@ -1304,9 +1304,16 @@ bool CControlSocket::SetFileExistsAction(CFileExistsNotification *pFileExistsNot
 			{
 				wxLongLong size = entry.size;
 				pData->remoteFileSize = size.GetLo() + ((wxFileOffset)size.GetHi() << 32);
+				if (entry.hasTimestamp != CDirentry::timestamp_none)
+					pData->fileTime = entry.time;
 
 				if (CheckOverwriteFile() != FZ_REPLY_OK)
 					break;
+			}
+			else
+			{
+				pData->fileTime = wxDateTime();
+				pData->remoteFileSize = -1;
 			}
 
 			SendNextCommand();
