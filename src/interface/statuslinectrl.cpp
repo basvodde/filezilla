@@ -7,11 +7,9 @@
 #include <langinfo.h>
 #endif
 
-#define TRANSFERSTATUS_TIMER_ID (wxID_HIGHEST + 1)
-
 BEGIN_EVENT_TABLE(CStatusLineCtrl, wxWindow)
 EVT_PAINT(CStatusLineCtrl::OnPaint)
-EVT_TIMER(TRANSFERSTATUS_TIMER_ID, CStatusLineCtrl::OnTimer)
+EVT_TIMER(wxID_ANY, CStatusLineCtrl::OnTimer)
 EVT_ERASE_BACKGROUND(CStatusLineCtrl::OnEraseBackground)
 END_EVENT_TABLE()
 
@@ -37,7 +35,7 @@ CStatusLineCtrl::CStatusLineCtrl(CQueueView* pParent, const t_EngineData* const 
 	SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 	SetBackgroundColour(pParent->GetBackgroundColour());
 
-	m_transferStatusTimer.SetOwner(this, TRANSFERSTATUS_TIMER_ID);
+	m_transferStatusTimer.SetOwner(this);
 
 	m_pParent = pParent;
 	m_pStatus = 0;

@@ -6,11 +6,9 @@
 #define new DEBUG_NEW
 #endif
 
-#define TIMER_ID (wxID_HIGHEST + 1)
-
 BEGIN_EVENT_TABLE(CLed, wxWindow)
 	EVT_PAINT(CLed::OnPaint)
-	EVT_TIMER(TIMER_ID, CLed::OnTimer)
+	EVT_TIMER(wxID_ANY, CLed::OnTimer)
 #ifdef __WXMSW__
 	EVT_ERASE_BACKGROUND(CLed::OnEraseBackground)
 #endif
@@ -29,7 +27,7 @@ CLed::CLed(wxWindow *parent, unsigned int index)
 
 	m_ledState = LED_OFF;
 
-	m_timer.SetOwner(this, TIMER_ID);
+	m_timer.SetOwner(this);
 
 	m_loaded = false;
 
@@ -80,14 +78,14 @@ void CLed::Unset()
 
 void CLed::OnTimer(wxTimerEvent& event)
 {
-	if (event.GetId() != TIMER_ID)
+	if (!m_timer.IsRunning())
+		return;
+
+	if (event.GetId() != m_timer.GetId())
 	{
 		event.Skip();
 		return;
 	}
-
-	if (!m_timer.IsRunning())
-		return;
 
 	if (!m_pEngine || !m_pEngine->IsActive((enum CFileZillaEngine::_direction)m_index))
 	{

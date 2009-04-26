@@ -50,8 +50,6 @@
 #define new DEBUG_NEW
 #endif
 
-#define TRANSFERSTATUS_TIMER_ID wxID_HIGHEST + 3
-
 BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_SIZE(CMainFrame::OnSize)
 	EVT_MENU(wxID_ANY, CMainFrame::OnMenuHandler)
@@ -235,7 +233,7 @@ CMainFrame::CMainFrame()
 		m_pActivityLed[1] = 0;
 	}
 
-	m_transferStatusTimer.SetOwner(this, TRANSFERSTATUS_TIMER_ID);
+	m_transferStatusTimer.SetOwner(this);
 	m_closeEventTimer.SetOwner(this);
 
 	if (CFilterManager::HasActiveFilters(true))
@@ -1558,7 +1556,7 @@ void CMainFrame::OnRefresh(wxCommandEvent &event)
 
 void CMainFrame::OnTimer(wxTimerEvent& event)
 {
-	if (event.GetId() == TRANSFERSTATUS_TIMER_ID && m_transferStatusTimer.IsRunning())
+	if (m_transferStatusTimer.IsRunning() && event.GetId() == m_transferStatusTimer.GetId())
 	{
 		if (!m_pState->m_pEngine)
 		{
