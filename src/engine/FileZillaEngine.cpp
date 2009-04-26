@@ -147,7 +147,8 @@ bool CFileZillaEngine::SetAsyncRequestReply(CAsyncRequestNotification *pNotifica
 		return false;
 
 	m_pControlSocket->SetAlive();
-	m_pControlSocket->SetAsyncRequestReply(pNotification);
+	if (!m_pControlSocket->SetAsyncRequestReply(pNotification))
+		return false;
 
 	return true;
 }

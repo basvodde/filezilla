@@ -120,6 +120,8 @@ public:
 
 	void ProcessNotification(CNotification* pNotification);
 
+	void RenameFileInTransfer(CFileZillaEngine *pEngine, const wxString& newName, bool local);
+
 protected:
 
 	void AdvanceQueue(bool refresh = true);

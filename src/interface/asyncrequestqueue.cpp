@@ -260,6 +260,14 @@ bool CAsyncRequestQueue::ProcessNextRequest()
 						{
 							pNotification->overwriteAction = CFileExistsNotification::rename;
 							pNotification->newName = dlg.GetValue();
+
+							// If request got processed successfully, notify queue about filename change
+							if (entry.pEngine->SetAsyncRequestReply(entry.pNotification) && m_pQueueView)
+								m_pQueueView->RenameFileInTransfer(entry.pEngine, dlg.GetValue(), pNotification->download);
+							delete pNotification;
+
+							// Jump near end of function
+							goto ProcessNextRequest_done;
 						}
 					}
 					else
@@ -346,6 +354,7 @@ bool CAsyncRequestQueue::ProcessNextRequest()
 		delete entry.pNotification;
 	}
 
+ProcessNextRequest_done:
 	RecheckDefaults();
 	m_requestList.pop_front();
 

@@ -3147,3 +3147,34 @@ void CQueueView::OnSize(wxSizeEvent& event)
 
 	event.Skip();
 }
+
+void CQueueView::RenameFileInTransfer(CFileZillaEngine *pEngine, const wxString& newName, bool local)
+{
+	std::vector<t_EngineData*>::iterator iter;
+	for (iter = m_engineData.begin(); iter != m_engineData.end(); iter++)
+	{
+		if ((*iter)->pEngine == pEngine)
+			break;
+	}
+	if (iter == m_engineData.end())
+		return;
+
+	t_EngineData* const pEngineData = *iter;
+	if (!pEngineData->pItem)
+		return;
+	
+	if (pEngineData->pItem->GetType() != QueueItemType_File)
+		return;
+
+	CFileItem* pFile = (CFileItem*)pEngineData->pItem;
+	if (local)
+	{
+		wxFileName fn(pFile->GetLocalFile());
+		fn.SetFullName(newName);
+		pFile->SetLocalFile(fn.GetFullPath());
+	}
+	else
+		pFile->SetRemoteFile(newName);
+
+	RefreshItem(pFile);
+}

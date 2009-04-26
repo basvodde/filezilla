@@ -365,9 +365,16 @@ bool CFileItem::TryRemoveAll()
 	return false;
 }
 
-void CFileItem::SetLocalFile(const wxString file)
+void CFileItem::SetLocalFile(const wxString &file)
 {
+	wxASSERT(!file.empty());
 	m_localFile = file;
+}
+
+void CFileItem::SetRemoteFile(const wxString &file)
+{
+	wxASSERT(!file.empty());
+	m_remoteFile = file;
 }
 
 CFolderItem::CFolderItem(CServerItem* parent, bool queued, const wxString& localFile)
