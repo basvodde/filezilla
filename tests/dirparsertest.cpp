@@ -1470,9 +1470,9 @@ void CDirectoryListingParserTest::InitEntries()
 		utc = wxDateTime(26, wxDateTime::Apr, 2008, 13, 55, 01);
 		utc.MakeFromTimezone(wxDateTime::UTC);
 		m_entries.push_back((t_entry){
-			"modify=20080426135501;perm=;size=65718921;type=file;unique=802U1066013B;UNIX.group=1179;UNIX.mode=00;UNIX.owner=1179; 75 MLSD with empty permissions",
+			"modify=20080426135501;perm=;size=65718921;type=file;unique=802U1066013B;UNIX.group=1179;UNIX.mode=00;UNIX.owner=1179; 75 MLSD file with empty permissions",
 			{
-				_T("75 MLSD with empty permissions"),
+				_T("75 MLSD file with empty permissions"),
 				65718921,
 				_T("00"),
 				_T("1179 1179"),
@@ -1486,6 +1486,22 @@ void CDirectoryListingParserTest::InitEntries()
 			DEFAULT
 		});	
 
+		m_entries.push_back((t_entry){
+			"type=OS.unix=slink:/foo; 76 MLSD symlink",
+			{
+				_T("76 MLSD symlink"),
+				-1,
+				_T(""),
+				_T(""),
+				true,
+				true,
+				_T("/foo"),
+				CDirentry::timestamp_none,
+				wxDateTime(),
+				false
+			},
+			DEFAULT
+		});	
 /*
 	wxString name;
 	wxLongLong size;
