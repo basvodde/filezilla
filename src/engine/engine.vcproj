@@ -1,279 +1,420 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.10"
+	Version="9,00"
 	Name="engine"
 	ProjectGUID="{AAD2642D-D07A-4415-BB32-D678D89D546F}"
 	RootNamespace="engine"
-	Keyword="Win32Proj">
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
 	<Platforms>
 		<Platform
-			Name="Win32"/>
+			Name="Win32"
+		/>
 	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="Debug"
 			IntermediateDirectory="Debug"
 			ConfigurationType="4"
-			CharacterSet="2">
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../include/"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;ENGINE"
-				MinimalRebuild="TRUE"
+				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				BufferSecurityCheck="TRUE"
-				UsePrecompiledHeader="2"
+				BufferSecurityCheck="true"
+				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="FileZilla.h"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="4"/>
+				Detect64BitPortabilityProblems="false"
+				DebugInformationFormat="4"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../lib/engine_debug.lib"/>
+				OutputFile="../lib/engine_debug.lib"
+			/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="Release"
 			IntermediateDirectory="Release"
 			ConfigurationType="4"
-			CharacterSet="2">
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="0"
-				OmitFramePointers="TRUE"
+				OmitFramePointers="true"
 				AdditionalIncludeDirectories="../include/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
-				StringPooling="TRUE"
+				StringPooling="true"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="0"/>
+				Detect64BitPortabilityProblems="false"
+				DebugInformationFormat="0"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../lib/engine.lib"/>
+				OutputFile="../lib/engine.lib"
+			/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Debug Unicode|Win32"
 			OutputDirectory="$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
-			CharacterSet="1">
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../include/"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;ENGINE"
-				MinimalRebuild="TRUE"
+				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				BufferSecurityCheck="TRUE"
-				UsePrecompiledHeader="2"
+				BufferSecurityCheck="true"
+				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="FileZilla.h"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="4"/>
+				Detect64BitPortabilityProblems="false"
+				DebugInformationFormat="4"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../lib/engine_unicode_debug.lib"/>
+				OutputFile="../lib/engine_unicode_debug.lib"
+			/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Release Unicode|Win32"
 			OutputDirectory="$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
-			CharacterSet="1">
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="0"
-				OmitFramePointers="TRUE"
+				OmitFramePointers="true"
 				AdditionalIncludeDirectories="../include/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
-				StringPooling="TRUE"
+				StringPooling="true"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="0"/>
+				Detect64BitPortabilityProblems="false"
+				DebugInformationFormat="0"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../lib/engine_unicode.lib"/>
+				OutputFile="../lib/engine_unicode.lib"
+			/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Universal|Win32"
 			OutputDirectory="$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
-			CharacterSet="2">
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../include/"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;ENGINE"
-				MinimalRebuild="TRUE"
+				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
-				BufferSecurityCheck="TRUE"
-				UsePrecompiledHeader="2"
+				BufferSecurityCheck="true"
+				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="FileZilla.h"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="4"/>
+				Detect64BitPortabilityProblems="false"
+				DebugInformationFormat="4"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../lib/engine_debug.lib"/>
+				OutputFile="../lib/engine_debug.lib"
+			/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Debug Universal|Win32"
 			OutputDirectory="$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
-			CharacterSet="2">
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../include/"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;ENGINE"
-				MinimalRebuild="TRUE"
+				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
-				BufferSecurityCheck="TRUE"
-				UsePrecompiledHeader="2"
+				BufferSecurityCheck="true"
+				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="FileZilla.h"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="4"/>
+				Detect64BitPortabilityProblems="false"
+				DebugInformationFormat="4"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../lib/engine_debug.lib"/>
+				OutputFile="../lib/engine_debug.lib"
+			/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 	</Configurations>
 	<References>
@@ -282,210 +423,273 @@
 		<Filter
 			Name="Quelldateien"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
+			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
+			>
 			<File
-				RelativePath=".\backend.cpp">
+				RelativePath=".\backend.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\commands.cpp">
+				RelativePath=".\commands.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\ControlSocket.cpp">
+				RelativePath=".\ControlSocket.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\directorycache.cpp">
+				RelativePath=".\directorycache.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\directorylisting.cpp">
+				RelativePath=".\directorylisting.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\directorylistingparser.cpp">
+				RelativePath=".\directorylistingparser.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\engineprivate.cpp">
+				RelativePath=".\engineprivate.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\externalipresolver.cpp">
+				RelativePath=".\externalipresolver.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\FileZillaEngine.cpp">
+				RelativePath=".\FileZillaEngine.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\ftpcontrolsocket.cpp">
+				RelativePath=".\ftpcontrolsocket.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\httpcontrolsocket.cpp">
+				RelativePath=".\httpcontrolsocket.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\iothread.cpp">
+				RelativePath=".\iothread.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\local_filesys.cpp">
+				RelativePath=".\local_filesys.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\local_path.cpp">
+				RelativePath=".\local_path.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\logging.cpp">
+				RelativePath=".\logging.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\misc.cpp">
+				RelativePath=".\misc.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\notification.cpp">
+				RelativePath=".\notification.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\pathcache.cpp">
+				RelativePath=".\pathcache.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\proxy.cpp">
+				RelativePath=".\proxy.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\ratelimiter.cpp">
+				RelativePath=".\ratelimiter.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\server.cpp">
+				RelativePath=".\server.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\servercapabilities.cpp">
+				RelativePath=".\servercapabilities.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\serverpath.cpp">
+				RelativePath=".\serverpath.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\sftpcontrolsocket.cpp">
+				RelativePath=".\sftpcontrolsocket.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\socket.cpp">
+				RelativePath=".\socket.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\threadex.cpp">
+				RelativePath=".\threadex.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\timeex.cpp">
+				RelativePath=".\timeex.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\tlssocket.cpp">
+				RelativePath=".\tlssocket.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\transfersocket.cpp">
+				RelativePath=".\transfersocket.cpp"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="Headerdateien"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+			>
 			<File
-				RelativePath=".\backend.h">
+				RelativePath=".\backend.h"
+				>
 			</File>
 			<File
-				RelativePath="..\include\commands.h">
+				RelativePath="..\include\commands.h"
+				>
 			</File>
 			<File
-				RelativePath="..\include\config.h">
+				RelativePath="..\include\config.h"
+				>
 			</File>
 			<File
-				RelativePath=".\ControlSocket.h">
+				RelativePath=".\ControlSocket.h"
+				>
 			</File>
 			<File
-				RelativePath=".\directorycache.h">
+				RelativePath=".\directorycache.h"
+				>
 			</File>
 			<File
-				RelativePath="..\include\directorylisting.h">
+				RelativePath="..\include\directorylisting.h"
+				>
 			</File>
 			<File
-				RelativePath=".\directorylistingparser.h">
+				RelativePath=".\directorylistingparser.h"
+				>
 			</File>
 			<File
-				RelativePath=".\engine_private.h">
+				RelativePath=".\engine_private.h"
+				>
 			</File>
 			<File
-				RelativePath="..\include\engineprivate.h">
+				RelativePath="..\include\engineprivate.h"
+				>
 			</File>
 			<File
-				RelativePath="..\include\externalipresolver.h">
+				RelativePath="..\include\externalipresolver.h"
+				>
 			</File>
 			<File
-				RelativePath="..\include\FileZilla.h">
+				RelativePath="..\include\FileZilla.h"
+				>
 			</File>
 			<File
-				RelativePath="..\include\FileZillaEngine.h">
+				RelativePath="..\include\FileZillaEngine.h"
+				>
 			</File>
 			<File
-				RelativePath=".\FtpControlSocket.h">
+				RelativePath=".\FtpControlSocket.h"
+				>
 			</File>
 			<File
-				RelativePath=".\httpcontrolsocket.h">
+				RelativePath=".\httpcontrolsocket.h"
+				>
 			</File>
 			<File
-				RelativePath=".\iothread.h">
+				RelativePath=".\iothread.h"
+				>
 			</File>
 			<File
-				RelativePath="..\include\local_filesys.h">
+				RelativePath="..\include\local_filesys.h"
+				>
 			</File>
 			<File
-				RelativePath="..\include\local_path.h">
+				RelativePath="..\include\local_path.h"
+				>
 			</File>
 			<File
-				RelativePath="..\include\logging.h">
+				RelativePath="..\include\logging.h"
+				>
 			</File>
 			<File
-				RelativePath=".\logging_private.h">
+				RelativePath=".\logging_private.h"
+				>
 			</File>
 			<File
-				RelativePath="..\include\misc.h">
+				RelativePath="..\include\misc.h"
+				>
 			</File>
 			<File
-				RelativePath="..\include\notification.h">
+				RelativePath="..\include\notification.h"
+				>
 			</File>
 			<File
-				RelativePath="..\include\optionsbase.h">
+				RelativePath="..\include\optionsbase.h"
+				>
 			</File>
 			<File
-				RelativePath=".\pathcache.h">
+				RelativePath=".\pathcache.h"
+				>
 			</File>
 			<File
-				RelativePath=".\proxy.h">
+				RelativePath=".\proxy.h"
+				>
 			</File>
 			<File
-				RelativePath=".\ratelimiter.h">
+				RelativePath=".\ratelimiter.h"
+				>
 			</File>
 			<File
-				RelativePath="..\include\Server.h">
+				RelativePath="..\include\Server.h"
+				>
 			</File>
 			<File
-				RelativePath=".\servercapabilities.h">
+				RelativePath=".\servercapabilities.h"
+				>
 			</File>
 			<File
-				RelativePath="..\include\serverpath.h">
+				RelativePath="..\include\serverpath.h"
+				>
 			</File>
 			<File
-				RelativePath=".\sftpcontrolsocket.h">
+				RelativePath=".\sftpcontrolsocket.h"
+				>
 			</File>
 			<File
-				RelativePath="..\include\socket.h">
+				RelativePath="..\include\socket.h"
+				>
 			</File>
 			<File
-				RelativePath="..\include\threadex.h">
+				RelativePath="..\include\threadex.h"
+				>
 			</File>
 			<File
-				RelativePath="..\include\timeex.h">
+				RelativePath="..\include\timeex.h"
+				>
 			</File>
 			<File
-				RelativePath=".\tlssocket.h">
+				RelativePath=".\tlssocket.h"
+				>
 			</File>
 			<File
-				RelativePath=".\transfersocket.h">
+				RelativePath=".\transfersocket.h"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="Ressourcendateien"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
-			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
+			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
+			>
 		</Filter>
-		<File
-			RelativePath=".\ReadMe.txt">
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

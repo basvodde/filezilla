@@ -103,16 +103,16 @@ protected:
 	// Everything related to the retry code
 	// ------------------------------------
 
-	void RegisterFailedLoginAttempt(const CServer& server);
+	void RegisterFailedLoginAttempt(const CServer& server, bool critical);
 
 	// Get the amount of time to wait till next reconnection attempt in milliseconds
 	unsigned int GetRemainingReconnectDelay(const CServer& server);
 
 	struct t_failedLogins
 	{
-		wxString host;
-		unsigned int port;
+		CServer server;
 		wxDateTime time;
+		bool critical;
 	};
 	static std::list<t_failedLogins> m_failedLogins;
 	int m_retryCount;

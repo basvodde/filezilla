@@ -185,7 +185,7 @@ int CFileZillaEnginePrivate::ResetOperation(int nErrorCode)
 
 		if (m_pCurrentCommand->GetId() == cmd_connect)
 		{
-			if (!(nErrorCode & ~(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED | FZ_REPLY_TIMEOUT)) && 
+			if (!(nErrorCode & ~(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED | FZ_REPLY_TIMEOUT | FZ_REPLY_CRITICALERROR | FZ_REPLY_PASSWORDFAILED)) && 
 				nErrorCode & (FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED) &&
 				m_retryCount < m_pOptions->GetOptionVal(OPTION_RECONNECTCOUNT))
 			{
@@ -193,7 +193,7 @@ int CFileZillaEnginePrivate::ResetOperation(int nErrorCode)
 
 				const CConnectCommand *pConnectCommand = (CConnectCommand *)m_pCurrentCommand;
 
-				RegisterFailedLoginAttempt(pConnectCommand->GetServer());
+				RegisterFailedLoginAttempt(pConnectCommand->GetServer(), (nErrorCode & FZ_REPLY_CRITICALERROR) == FZ_REPLY_CRITICALERROR);
 
 				if (pConnectCommand->RetryConnecting())
 				{
@@ -550,14 +550,14 @@ void CFileZillaEnginePrivate::SendDirectoryListingNotification(const CServerPath
 	}
 }
 
-void CFileZillaEnginePrivate::RegisterFailedLoginAttempt(const CServer& server)
+void CFileZillaEnginePrivate::RegisterFailedLoginAttempt(const CServer& server, bool critical)
 {
 	std::list<t_failedLogins>::iterator iter = m_failedLogins.begin();
 	while (iter != m_failedLogins.end())
 	{
 		const wxTimeSpan span = wxDateTime::UNow() - iter->time;
 		if (span.GetSeconds() >= m_pOptions->GetOptionVal(OPTION_RECONNECTDELAY) ||
-			(iter->host == server.GetHost() && iter->port == server.GetPort()))
+			iter->server == server || (!critical && (iter->server.GetHost() == server.GetHost() && iter->server.GetPort() == server.GetPort())))
 		{
 			std::list<t_failedLogins>::iterator prev = iter;
 			iter++;
@@ -568,8 +568,7 @@ void CFileZillaEnginePrivate::RegisterFailedLoginAttempt(const CServer& server)
 	}
 
 	t_failedLogins failure;
-	failure.host = server.GetHost();
-	failure.port = server.GetPort();
+	failure.server = server;
 	failure.time = wxDateTime::UNow();
 	m_failedLogins.push_back(failure);
 }
@@ -587,10 +586,10 @@ unsigned int CFileZillaEnginePrivate::GetRemainingReconnectDelay(const CServer& 
 			iter++;
 			m_failedLogins.erase(prev);
 		}
-		else if (iter->host == server.GetHost() && iter->port == server.GetPort())
-		{
+		else if (!iter->critical && iter->server.GetHost() == server.GetHost() && iter->server.GetPort() == server.GetPort())
 			return delay * 1000 - span.GetMilliseconds().GetLo();
-		}
+		else if (iter->server == server)
+			return delay * 1000 - span.GetMilliseconds().GetLo();
 		else
 			iter++;
 	}
