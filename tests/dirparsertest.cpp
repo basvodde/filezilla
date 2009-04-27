@@ -1502,6 +1502,25 @@ void CDirectoryListingParserTest::InitEntries()
 			},
 			DEFAULT
 		});	
+
+		// Old ietf draft for MLST earlier than mlst-07 has no trailing semicolon after facts
+		m_entries.push_back((t_entry){
+			"type=file 77 MLSD file no trailing semicolon after facts < mlst-07",
+			{
+				_T("77 MLSD file no trailing semicolon after facts < mlst-07"),
+				-1,
+				_T(""),
+				_T(""),
+				false,
+				false,
+				_T(""),
+				CDirentry::timestamp_none,
+				wxDateTime(),
+				false
+			},
+			DEFAULT
+		});
+
 /*
 	wxString name;
 	wxLongLong size;

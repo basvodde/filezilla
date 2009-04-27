@@ -2645,7 +2645,12 @@ int CDirectoryListingParser::ParseAsMlsd(CLine *pLine, CDirentry &entry)
 	{
 		int delim = facts.Find(';');
 		if (delim < 3)
-			return 0;
+		{
+			if (delim != -1)
+				return 0;
+			else
+				delim = facts.Len();
+		}
 
 		int pos = facts.Find('=');
 		if (pos < 1 || pos > delim)
