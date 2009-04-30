@@ -243,7 +243,7 @@ void CChmodDialog::OnNumericChanged(wxCommandEvent& event)
 	}
 }
 
-wxString CChmodDialog::GetPermissions(const char* previousPermissions)
+wxString CChmodDialog::GetPermissions(const char* previousPermissions, bool dir)
 {
 	// Construct a new permission string
 
@@ -259,13 +259,14 @@ wxString CChmodDialog::GetPermissions(const char* previousPermissions)
 	}
 	if (!previousPermissions)
 	{
-		// Use default of  (0...0)755
+		// Use default of  (0...0)755 for dirs and
+		// 644 for files
 		if (numeric[numeric.Length() - 1] == 'x')
-			numeric[numeric.Length() - 1] = '5';
+			numeric[numeric.Length() - 1] = dir ? '5' : '4';
 		if (numeric[numeric.Length() - 2] == 'x')
-			numeric[numeric.Length() - 2] = '5';
+			numeric[numeric.Length() - 2] = dir ? '5' : '4';
 		if (numeric[numeric.Length() - 3] == 'x')
-			numeric[numeric.Length() - 3] = '7';
+			numeric[numeric.Length() - 3] = dir ? '7' : '6';
 		numeric.Replace(_T("x"), _T("0"));
 		return numeric;
 	}

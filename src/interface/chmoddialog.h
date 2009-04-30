@@ -12,7 +12,7 @@ public:
 	bool Create(wxWindow* parent, int fileCount, int dirCount, 
 				const wxString& name, const char permissions[9]);
 
-	wxString GetPermissions(const char* previousPermissions);
+	wxString GetPermissions(const char* previousPermissions, bool dir);
 
 	bool Recursive() const ;
 	int GetApplyType() const { return m_applyType; }

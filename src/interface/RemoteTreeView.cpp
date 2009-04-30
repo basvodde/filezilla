@@ -1028,7 +1028,7 @@ void CRemoteTreeView::OnMenuChmod(wxCommandEvent& event)
 		// Change directory permissions
 		if (!applyType || applyType == 2)
 		{
-			wxString newPerms = pChmodDlg->GetPermissions(permissions);
+			wxString newPerms = pChmodDlg->GetPermissions(permissions, true);
 
 			m_pState->m_pCommandQueue->ProcessCommand(new CChmodCommand(path.GetParent(), name, newPerms));
 		}

@@ -269,7 +269,7 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 			{
 				char permissions[9];
 				bool res = m_pChmodDlg->ConvertPermissions(entry.permissions, permissions);
-				wxString newPerms = m_pChmodDlg->GetPermissions(res ? permissions : 0);
+				wxString newPerms = m_pChmodDlg->GetPermissions(res ? permissions : 0, entry.dir);
 				m_pState->m_pCommandQueue->ProcessCommand(new CChmodCommand(pDirectoryListing->path, entry.name, newPerms));
 			}
 		}

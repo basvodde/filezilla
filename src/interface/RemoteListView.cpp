@@ -1976,7 +1976,7 @@ void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 		{
 			char permissions[9];
 			bool res = pChmodDlg->ConvertPermissions(entry.permissions, permissions);
-			wxString newPerms = pChmodDlg->GetPermissions(res ? permissions : 0);
+			wxString newPerms = pChmodDlg->GetPermissions(res ? permissions : 0, entry.dir);
 
 			m_pState->m_pCommandQueue->ProcessCommand(new CChmodCommand(m_pDirectoryListing->path, entry.name, newPerms));
 		}
