@@ -131,7 +131,7 @@ void CAboutDialog::OnCopy(wxCommandEvent& event)
 	if (!compilerFlags.empty())
 		text += _T("  Compiler flags: ") + compilerFlags + _T("\n");
 
-	text += _T("\nDependencies:\n  wxWidgets:      ") + wxString(wxVERSION_NUM_DOT_STRING_T) + _T("\n");
+	text += _T("\nLinked against:\n  wxWidgets:      ") + wxString(wxVERSION_NUM_DOT_STRING_T) + _T("\n");
 	text += _T("  GnuTLS:         ") + GetDependencyVersion(dependency_gnutls) + _T("\n");
 
 #ifdef __WXMSW__
