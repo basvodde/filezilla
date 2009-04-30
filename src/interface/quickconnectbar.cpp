@@ -120,7 +120,8 @@ void CQuickconnectBar::OnQuickconnect(wxCommandEvent& event)
 
 	if (protocol == HTTP)
 	{
-		wxMessageBox(_("FileZilla does not support the HTTP protocol"), _("Syntax error"), wxICON_EXCLAMATION);
+		wxString error = _("Invalid protocol specified. Valid protocols are:\nftp:// for normal FTP,\nsftp:// for SSH file transfer protocol,\nftps:// for FTP over SSL (implicit) and\nftpes:// for FTP over SSL (explicit).");
+		wxMessageBox(error, _("Syntax error"), wxICON_EXCLAMATION);
 		return;
 	}
 
