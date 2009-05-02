@@ -2663,11 +2663,12 @@ int CDirectoryListingParser::ParseAsMlsd(CLine *pLine, CDirentry &entry)
 		{
 			if (!value.CmpNoCase(_T("dir")))
 				entry.dir = true;
-			else if (!value.Left(14).CmpNoCase(_T("OS.unix=slink:")))
+			else if (!value.Left(13).CmpNoCase(_T("OS.unix=slink")))
 			{
 				entry.dir = true;
 				entry.link = true;
-				entry.target = value.Mid(14);
+				if (value[13] == ':' && value[14] != 0)
+					entry.target = value.Mid(14);
 			}
 			else if (!value.CmpNoCase(_T("cdir")) ||
 					 !value.CmpNoCase(_T("pdir")))

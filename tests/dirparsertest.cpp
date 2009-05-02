@@ -1521,6 +1521,23 @@ void CDirectoryListingParserTest::InitEntries()
 			DEFAULT
 		});
 
+		m_entries.push_back((t_entry){
+			"type=OS.unix=slink; 77 MLSD symlink notarget",
+			{
+				_T("77 MLSD symlink notarget"),
+				-1,
+				_T(""),
+				_T(""),
+				true,
+				true,
+				_T(""),
+				CDirentry::timestamp_none,
+				wxDateTime(),
+				false
+			},
+			DEFAULT
+		});	
+
 /*
 	wxString name;
 	wxLongLong size;
