@@ -88,6 +88,7 @@ filezilla_SOURCES = aboutdialog.cpp \
 		themeprovider.cpp \
 		updatewizard.cpp \
 		verifycertdialog.cpp \
+		verifyhostkeydialog.cpp \
 		view.cpp \
 		viewheader.cpp \
 		window_state_manager.cpp \
@@ -180,6 +181,7 @@ noinst_HEADERS = aboutdialog.h \
 		 themeprovider.h \
 		 updatewizard.h \
 		 verifycertdialog.h \
+		 verifyhostkeydialog.h \
 		 view.h \
 		 viewheader.h \
 		 window_state_manager.h \

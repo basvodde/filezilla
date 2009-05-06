@@ -6,6 +6,7 @@
 #include "Options.h"
 #include "queue.h"
 #include "verifycertdialog.h"
+#include "verifyhostkeydialog.h"
 #include "loginmanager.h"
 
 DECLARE_EVENT_TYPE(fzEVT_PROCESSASYNCREQUESTQUEUE, -1)
@@ -64,6 +65,22 @@ bool CAsyncRequestQueue::ProcessDefaults(CFileZillaEngine *pEngine, CAsyncReques
 
 			pFileExistsNotification->overwriteAction = action;
 			
+			pEngine->SetAsyncRequestReply(pNotification);
+			delete pNotification;
+
+			return true;
+		}
+	case reqId_hostkey:
+	case reqId_hostkeyChanged:
+		{
+			CHostKeyNotification *pHostKeyNotification = reinterpret_cast<CHostKeyNotification *>(pNotification);
+
+			if (!CVerifyHostkeyDialog::IsTrusted(pHostKeyNotification))
+				break;
+			
+			pHostKeyNotification->m_trust = true;
+			pHostKeyNotification->m_alwaysTrust = false;
+
 			pEngine->SetAsyncRequestReply(pNotification);
 			delete pNotification;
 
@@ -311,27 +328,13 @@ bool CAsyncRequestQueue::ProcessNextRequest()
 
 		CHostKeyNotification *pNotification = reinterpret_cast<CHostKeyNotification *>(entry.pNotification);
 
-		wxDialogEx* pDlg = new wxDialogEx;
-		if (pNotification->GetRequestID() == reqId_hostkey)
-			pDlg->Load(m_pMainFrame, _T("ID_HOSTKEY"));
-		else
-			pDlg->Load(m_pMainFrame, _T("ID_HOSTKEYCHANGED"));
-
-		pDlg->WrapText(pDlg, XRCID("ID_DESC"), 400);
-
-		pDlg->SetLabel(XRCID("ID_HOST"), wxString::Format(_T("%s:%d"), pNotification->GetHost().c_str(), pNotification->GetPort()));
-		pDlg->SetLabel(XRCID("ID_FINGERPRINT"), pNotification->GetFingerprint());
-
-		pDlg->GetSizer()->Fit(pDlg);
-		pDlg->GetSizer()->SetSizeHints(pDlg);
-
-		int res = pDlg->ShowModal();
-
-		if (res == wxID_OK)
+		if (CVerifyHostkeyDialog::IsTrusted(pNotification))
 		{
 			pNotification->m_trust = true;
-			pNotification->m_alwaysTrust = XRCCTRL(*pDlg, "ID_ALWAYS", wxCheckBox)->GetValue();
+			pNotification->m_alwaysTrust = false;
 		}
+		else
+			CVerifyHostkeyDialog::ShowVerificationDialog(m_pMainFrame, pNotification);
 
 		entry.pEngine->SetAsyncRequestReply(pNotification);
 		delete pNotification;
