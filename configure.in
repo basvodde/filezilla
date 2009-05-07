@@ -319,10 +319,13 @@ if ! test "$localesonly" = "yes"; then
   # GnuTLS
   # ------
 
-  AM_PATH_LIBGNUTLS(2.0.4,, AC_MSG_ERROR([[
+  PKG_CHECK_MODULES(LIBGNUTLS, gnutls >= 2.0.4,, [ 
+							   
+    AM_PATH_LIBGNUTLS(2.0.4,, AC_MSG_ERROR([[
 ***
 *** libgnutls 2.0.4 or greater was not found. You may want to get it from
 *** ftp://ftp.gnutls.org/pub/gnutls/]]))
+    ])
 
   AC_SUBST(LIBGNUTLS_LIBS)
   AC_SUBST(LIBGNUTLS_CFLAGS)
