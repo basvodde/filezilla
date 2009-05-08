@@ -850,7 +850,7 @@ int CFtpControlSocket::LogonParseResponse()
 
 			int error = FZ_REPLY_DISCONNECTED;
 			if (cmd.type == pass && code == 5)
-				error |= FZ_REPLY_PASSWORDFAILED;
+				error |= FZ_REPLY_CRITICALERROR | FZ_REPLY_PASSWORDFAILED;
 			DoClose(error);
 			return FZ_REPLY_ERROR;
 		}

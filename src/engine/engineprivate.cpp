@@ -186,23 +186,24 @@ int CFileZillaEnginePrivate::ResetOperation(int nErrorCode)
 		if (m_pCurrentCommand->GetId() == cmd_connect)
 		{
 			if (!(nErrorCode & ~(FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED | FZ_REPLY_TIMEOUT | FZ_REPLY_CRITICALERROR | FZ_REPLY_PASSWORDFAILED)) && 
-				nErrorCode & (FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED) &&
-				m_retryCount < m_pOptions->GetOptionVal(OPTION_RECONNECTCOUNT))
+				nErrorCode & (FZ_REPLY_ERROR | FZ_REPLY_DISCONNECTED))				
 			{
-				m_retryCount++;
-
 				const CConnectCommand *pConnectCommand = (CConnectCommand *)m_pCurrentCommand;
 
 				RegisterFailedLoginAttempt(pConnectCommand->GetServer(), (nErrorCode & FZ_REPLY_CRITICALERROR) == FZ_REPLY_CRITICALERROR);
 
-				if (pConnectCommand->RetryConnecting())
+				if ((nErrorCode & FZ_REPLY_CRITICALERROR) != FZ_REPLY_CRITICALERROR)
 				{
-					unsigned int delay = GetRemainingReconnectDelay(pConnectCommand->GetServer());
-					if (!delay)
-						delay = 1;
-					m_pLogging->LogMessage(Status, _("Waiting to retry..."));
-					m_retryTimer.Start(delay, true);
-					return FZ_REPLY_WOULDBLOCK;
+					m_retryCount++;
+					if (m_retryCount < m_pOptions->GetOptionVal(OPTION_RECONNECTCOUNT) && pConnectCommand->RetryConnecting())
+					{
+						unsigned int delay = GetRemainingReconnectDelay(pConnectCommand->GetServer());
+						if (!delay)
+							delay = 1;
+						m_pLogging->LogMessage(Status, _("Waiting to retry..."));
+						m_retryTimer.Start(delay, true);
+						return FZ_REPLY_WOULDBLOCK;
+					}
 				}
 			}
 		}
@@ -627,7 +628,7 @@ int CFileZillaEnginePrivate::ContinueConnect()
 	unsigned int delay = GetRemainingReconnectDelay(server);
 	if (delay)
 	{
-		m_pLogging->LogMessage(Status, _("Delaying connection due to previously failed connection attempt..."));
+		m_pLogging->LogMessage(Status, wxPLURAL("Delaying connection for %d second due to previously failed connection attempt...", "Delaying connection for %d seconds due to previously failed connection attempt...", (delay + 999) / 1000), (delay + 999) / 1000);
 		m_retryTimer.Start(delay, true);
 		return FZ_REPLY_WOULDBLOCK;
 	}
