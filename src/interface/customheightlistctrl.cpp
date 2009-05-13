@@ -77,6 +77,7 @@ void wxCustomHeightListCtrl::OnDraw(wxDC& dc)
 
 void wxCustomHeightListCtrl::OnMouseEvent(wxMouseEvent& event)
 {
+	bool changed = false;
 	if (event.ButtonDown())
 	{
 		wxPoint pos = event.GetPosition();
@@ -86,6 +87,7 @@ void wxCustomHeightListCtrl::OnMouseEvent(wxMouseEvent& event)
 		{
 			m_focusedLine = -1;
 			m_selectedLines.clear();
+			changed = true;
 		}
 		else
 		{
@@ -97,7 +99,10 @@ void wxCustomHeightListCtrl::OnMouseEvent(wxMouseEvent& event)
 					for (int i = line; i <= m_focusedLine; i++)
 					{
 						if (m_selectedLines.find(i) == m_selectedLines.end())
+						{
+							changed = true;
 							m_selectedLines.insert(i);
+						}
 					}
 				}
 				else
@@ -105,7 +110,10 @@ void wxCustomHeightListCtrl::OnMouseEvent(wxMouseEvent& event)
 					for (int i = line; i >= m_focusedLine; i--)
 					{
 						if (m_selectedLines.find(i) == m_selectedLines.end())
+						{
+							changed = true;
 							m_selectedLines.insert(i);
+						}
 					}
 				}
 			}
@@ -115,11 +123,13 @@ void wxCustomHeightListCtrl::OnMouseEvent(wxMouseEvent& event)
 					m_selectedLines.insert(line);
 				else
 					m_selectedLines.erase(line);
+				changed = true;
 			}
 			else
 			{
 				m_selectedLines.clear();
 				m_selectedLines.insert(line);
+				changed = true;
 			}
 
 			m_focusedLine = line;				
@@ -129,6 +139,12 @@ void wxCustomHeightListCtrl::OnMouseEvent(wxMouseEvent& event)
 	}
 
 	event.Skip();
+
+	if (changed)
+	{
+		wxCommandEvent evt(wxEVT_COMMAND_LISTBOX_SELECTED, GetId());
+		ProcessEvent(evt);
+	}
 }
 
 void wxCustomHeightListCtrl::ClearSelection()
