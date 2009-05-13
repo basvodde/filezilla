@@ -2,23 +2,10 @@
 #define __FILTEREDIT_H__
 
 #include "filter.h"
-#include "dialogex.h"
-
-class CFilterControls
-{
-public:
-	CFilterControls();
-	
-	void Reset();
-
-	wxChoice* pType;
-	wxChoice* pCondition;
-	wxTextCtrl* pValue;
-	wxChoice* pSet;
-};
+#include "filter_conditions_dialog.h"
 
 class wxCustomHeightListCtrl;
-class CFilterEditDialog : public wxDialogEx
+class CFilterEditDialog : public CFilterConditionsDialog
 {
 public:
 	CFilterEditDialog() {}
@@ -36,9 +23,6 @@ protected:
 	DECLARE_EVENT_TABLE();
 	void OnOK(wxCommandEvent& event);
 	void OnCancel(wxCommandEvent& event);
-	void OnMore(wxCommandEvent& event);
-	void OnRemove(wxCommandEvent& event);
-	void OnFilterTypeChange(wxCommandEvent& event);
 	void OnNew(wxCommandEvent& event);
 	void OnDelete(wxCommandEvent& event);
 	void OnRename(wxCommandEvent& event);
@@ -47,29 +31,11 @@ protected:
 		
 	void ShowFilter(const CFilter& filter);
 	void SaveFilter(CFilter& filter);
-	void MakeControls(const CFilterCondition& condition, int i = -1);
-	void DestroyControls();
-	void UpdateCount();
-
-	void CalcMinListWidth();
 
 	void SetCtrlState(bool enabled);
 
-	enum t_filterType GetTypeFromTypeSelection(int selection);
-#ifndef __WXMSW__
-	bool m_hasAttributes;
-#else
-	bool m_hasPermissions;
-#endif
-
-	wxCustomHeightListCtrl* m_pListCtrl;
-	int m_choiceBoxHeight;
-
 	wxListBox* m_pFilterListCtrl;
 	int m_currentSelection;
-
-	CFilter m_currentFilter;
-	std::vector<CFilterControls> m_filterControls;
 
 	std::vector<CFilter> m_filters;
 	std::vector<CFilterSet> m_filterSets;
