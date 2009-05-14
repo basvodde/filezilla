@@ -39,32 +39,6 @@
 #define LOGON_CUSTOMCOMMANDS 12
 #define LOGON_DONE		13
 
-#ifdef __WXMSW__
-
-// Define values for SIO_KEEPALIVE_VALS
-
-#ifndef IOC_VENDOR
-#define IOC_VENDOR 0x18000000
-#endif
-
-#ifndef _WSAIOW
-#define _WSAIOW(x, y)	(IOC_IN|(x)|(y))
-#endif
-
-#ifndef SIO_KEEPALIVE_VALS
-#define SIO_KEEPALIVE_VALS _WSAIOW(IOC_VENDOR, 4)
-
-struct tcp_keepalive
-{
-	u_long  onoff;
-	u_long  keepalivetime;
-	u_long  keepaliveinterval;
-};
-
-#endif
-
-#endif //__WXMSW__
-
 BEGIN_EVENT_TABLE(CFtpControlSocket, CRealControlSocket)
 EVT_FZ_EXTERNALIPRESOLVE(wxID_ANY, CFtpControlSocket::OnExternalIPAddress)
 EVT_TIMER(wxID_ANY, CFtpControlSocket::OnIdleTimer)
