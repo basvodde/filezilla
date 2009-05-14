@@ -180,7 +180,7 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 	if (selectedItems.empty())
 		return;
 
-	CQueueViewBase* pQueueView = m_pQueue->GetQueueView();
+	CQueueView* pQueueView = m_pQueue->GetQueueView();
 
 	while (!selectedItems.empty())
 	{
@@ -356,6 +356,9 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 
 	pQueueView->CommitChanges();
 
+	if (pQueueView->IsActive())
+		pQueueView->AdvanceQueue(false);
+	
 	DisplayNumberQueuedFiles();
 	SaveSetItemCount(m_itemCount);
 	RefreshListOnly();
