@@ -432,7 +432,7 @@ bool CRemoteListView::IsItemValid(unsigned int item) const
 	return true;
 }
 
-void CRemoteListView::UpdateDirectoryListing_Added(const CDirectoryListing *pDirectoryListing)
+void CRemoteListView::UpdateDirectoryListing_Added(const CSharedPointer<const CDirectoryListing> &pDirectoryListing)
 {
 	const unsigned int to_add = pDirectoryListing->GetCount() - m_pDirectoryListing->GetCount();
 	m_pDirectoryListing = pDirectoryListing;
@@ -517,7 +517,7 @@ void CRemoteListView::UpdateDirectoryListing_Added(const CDirectoryListing *pDir
 	wxASSERT(m_indexMapping.size() == pDirectoryListing->GetCount() + 1);
 }
 
-void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pDirectoryListing)
+void CRemoteListView::UpdateDirectoryListing_Removed(const CSharedPointer<const CDirectoryListing> &pDirectoryListing)
 {
 	const unsigned int removed = m_pDirectoryListing->GetCount() - pDirectoryListing->GetCount();
 	if (!removed)
@@ -652,7 +652,7 @@ void CRemoteListView::UpdateDirectoryListing_Removed(const CDirectoryListing *pD
 	SaveSetItemCount(m_indexMapping.size());
 }
 
-bool CRemoteListView::UpdateDirectoryListing(const CDirectoryListing *pDirectoryListing)
+bool CRemoteListView::UpdateDirectoryListing(const CSharedPointer<const CDirectoryListing> &pDirectoryListing)
 {
 	wxASSERT(!IsComparing());
 
@@ -699,7 +699,7 @@ bool CRemoteListView::UpdateDirectoryListing(const CDirectoryListing *pDirectory
 	return true;
 }
 
-void CRemoteListView::SetDirectoryListing(const CDirectoryListing *pDirectoryListing, bool modified /*=false*/)
+void CRemoteListView::SetDirectoryListing(const CSharedPointer<const CDirectoryListing> &pDirectoryListing, bool modified /*=false*/)
 {
 #ifdef __WXMSW__
 	if (GetEditControl())
@@ -2952,35 +2952,36 @@ CFileListCtrl<CGenericFileData>::CSortComparisonObject CRemoteListView::GetSortC
 {
 	CRemoteListViewSort::DirSortMode dirSortMode = GetDirSortMode();
 
+	const CDirectoryListing* pDirectoryListing = m_pDirectoryListing.Value();
 	if (!m_sortDirection)
 	{
 		if (m_sortColumn == 1)
-			return CFileListCtrl<CGenericFileData>::CSortComparisonObject(new CRemoteListViewSortSize(m_pDirectoryListing, m_fileData, dirSortMode, this));
+			return CFileListCtrl<CGenericFileData>::CSortComparisonObject(new CRemoteListViewSortSize(pDirectoryListing, m_fileData, dirSortMode, this));
 		else if (m_sortColumn == 2)
-			return CFileListCtrl<CGenericFileData>::CSortComparisonObject(new CRemoteListViewSortType(m_pDirectoryListing, m_fileData, dirSortMode, this));
+			return CFileListCtrl<CGenericFileData>::CSortComparisonObject(new CRemoteListViewSortType(pDirectoryListing, m_fileData, dirSortMode, this));
 		else if (m_sortColumn == 3)
-			return CFileListCtrl<CGenericFileData>::CSortComparisonObject(new CRemoteListViewSortTime(m_pDirectoryListing, m_fileData, dirSortMode, this));
+			return CFileListCtrl<CGenericFileData>::CSortComparisonObject(new CRemoteListViewSortTime(pDirectoryListing, m_fileData, dirSortMode, this));
 		else if (m_sortColumn == 4)
-			return CFileListCtrl<CGenericFileData>::CSortComparisonObject(new CRemoteListViewSortPermissions(m_pDirectoryListing, m_fileData, dirSortMode, this));
+			return CFileListCtrl<CGenericFileData>::CSortComparisonObject(new CRemoteListViewSortPermissions(pDirectoryListing, m_fileData, dirSortMode, this));
 		else if (m_sortColumn == 5)
-			return CFileListCtrl<CGenericFileData>::CSortComparisonObject(new CRemoteListViewSortOwnerGroup(m_pDirectoryListing, m_fileData, dirSortMode, this));
+			return CFileListCtrl<CGenericFileData>::CSortComparisonObject(new CRemoteListViewSortOwnerGroup(pDirectoryListing, m_fileData, dirSortMode, this));
 		else
-			return CFileListCtrl<CGenericFileData>::CSortComparisonObject(new CRemoteListViewSortName(m_pDirectoryListing, m_fileData, dirSortMode, this));
+			return CFileListCtrl<CGenericFileData>::CSortComparisonObject(new CRemoteListViewSortName(pDirectoryListing, m_fileData, dirSortMode, this));
 	}
 	else
 	{
 		if (m_sortColumn == 1)
-			return CFileListCtrl<CGenericFileData>::CSortComparisonObject(new CRemoteListViewSortSize_Reverse(m_pDirectoryListing, m_fileData, dirSortMode, this));
+			return CFileListCtrl<CGenericFileData>::CSortComparisonObject(new CRemoteListViewSortSize_Reverse(pDirectoryListing, m_fileData, dirSortMode, this));
 		else if (m_sortColumn == 2)
-			return CFileListCtrl<CGenericFileData>::CSortComparisonObject(new CRemoteListViewSortType_Reverse(m_pDirectoryListing, m_fileData, dirSortMode, this));
+			return CFileListCtrl<CGenericFileData>::CSortComparisonObject(new CRemoteListViewSortType_Reverse(pDirectoryListing, m_fileData, dirSortMode, this));
 		else if (m_sortColumn == 3)
-			return CFileListCtrl<CGenericFileData>::CSortComparisonObject(new CRemoteListViewSortTime_Reverse(m_pDirectoryListing, m_fileData, dirSortMode, this));
+			return CFileListCtrl<CGenericFileData>::CSortComparisonObject(new CRemoteListViewSortTime_Reverse(pDirectoryListing, m_fileData, dirSortMode, this));
 		else if (m_sortColumn == 4)
-			return CFileListCtrl<CGenericFileData>::CSortComparisonObject(new CRemoteListViewSortPermissions_Reverse(m_pDirectoryListing, m_fileData, dirSortMode, this));
+			return CFileListCtrl<CGenericFileData>::CSortComparisonObject(new CRemoteListViewSortPermissions_Reverse(pDirectoryListing, m_fileData, dirSortMode, this));
 		else if (m_sortColumn == 5)
-			return CFileListCtrl<CGenericFileData>::CSortComparisonObject(new CRemoteListViewSortOwnerGroup_Reverse(m_pDirectoryListing, m_fileData, dirSortMode, this));
+			return CFileListCtrl<CGenericFileData>::CSortComparisonObject(new CRemoteListViewSortOwnerGroup_Reverse(pDirectoryListing, m_fileData, dirSortMode, this));
 		else
-			return CFileListCtrl<CGenericFileData>::CSortComparisonObject(new CRemoteListViewSortName_Reverse(m_pDirectoryListing, m_fileData, dirSortMode, this));
+			return CFileListCtrl<CGenericFileData>::CSortComparisonObject(new CRemoteListViewSortName_Reverse(pDirectoryListing, m_fileData, dirSortMode, this));
 	}
 }
 

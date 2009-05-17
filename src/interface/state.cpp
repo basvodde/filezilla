@@ -30,7 +30,6 @@ CState::CState(CMainFrame* pMainFrame)
 
 CState::~CState()
 {
-	delete m_pDirectoryListing;
 	delete m_pServer;
 
 	delete m_pCommandQueue;
@@ -135,10 +134,8 @@ bool CState::SetRemoteDir(const CDirectoryListing *pDirectoryListing, bool modif
 
 		if (m_pDirectoryListing)
 		{
-			const CDirectoryListing* pOldListing = m_pDirectoryListing;
 			m_pDirectoryListing = 0;
 			NotifyHandlers(STATECHANGE_REMOTE_DIR);
-			delete pOldListing;
 		}
 		return true;
 	}
@@ -165,15 +162,12 @@ bool CState::SetRemoteDir(const CDirectoryListing *pDirectoryListing, bool modif
 		return true;
 	}
 
-	const CDirectoryListing *pOldListing = m_pDirectoryListing;
 	m_pDirectoryListing = pDirectoryListing;
 
 	if (!modified)
 		NotifyHandlers(STATECHANGE_REMOTE_DIR);
 	else
 		NotifyHandlers(STATECHANGE_REMOTE_DIR_MODIFIED);
-
-	delete pOldListing;
 
 	if (m_sync_browse.is_changing)
 	{
@@ -220,7 +214,7 @@ bool CState::SetRemoteDir(const CDirectoryListing *pDirectoryListing, bool modif
 	return true;
 }
 
-const CDirectoryListing *CState::GetRemoteDir() const
+CSharedPointer<const CDirectoryListing> CState::GetRemoteDir() const
 {
 	return m_pDirectoryListing;
 }

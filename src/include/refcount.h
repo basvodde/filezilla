@@ -1,8 +1,40 @@
 #ifndef __REFCOUNT_H__
 #define __REFCOUNT_H__
 
-// Trivial template class to refcount objects with COW semantics.
+// Simple shared pointer. Takes ownership of passed regular pointers
+template<class T> class CSharedPointer
+{
+public:
+	CSharedPointer();
+	CSharedPointer(const CSharedPointer<T>& v);
+	CSharedPointer(T *v);
+	~CSharedPointer();
 
+	void clear();
+
+	T& operator*() const;
+	T* operator->() const;
+
+	T* Value() const {return m_ptr; } // Promise to NEVER EVER call delete on the returned value
+
+	bool operator==(const CSharedPointer<T>& cmp) const { return m_ptr == cmp.m_ptr; }
+	inline bool operator!=(const CSharedPointer<T>& cmp) const { m_ptr != cmp.m_ptr; }
+	bool operator<(const CSharedPointer<T>& cmp) const { return m_ptr < cmp.m_ptr; }
+
+	// Magic for CSharedPointer foo(bar); if (foo) ...
+	// aka safe bool idiom
+	typedef void (CSharedPointer::*bool_type)() const;
+    void uncomparable() const {}
+	operator bool_type() const { return m_ptr ? &CSharedPointer::uncomparable : 0; }
+
+	CSharedPointer<T>& operator=(const CSharedPointer<T>& v);
+	CSharedPointer<T>& operator=(T *v);
+protected:
+	int* m_refcount;
+	T* m_ptr;
+};
+
+// Trivial template class to refcount objects with COW semantics.
 template<class T> class CRefcountObject
 {
 public:
@@ -59,6 +91,104 @@ protected:
 	int* m_refcount;
 	T* m_ptr;
 };
+
+template<class T> CSharedPointer<T>::CSharedPointer()
+{
+	m_ptr = 0;
+	m_refcount = 0;
+}
+
+template<class T> CSharedPointer<T>::CSharedPointer(const CSharedPointer<T>& v)
+{
+	m_ptr = v.m_ptr;
+	m_refcount = v.m_refcount;
+	if (m_refcount)
+		(*m_refcount)++;
+}
+
+template<class T> CSharedPointer<T>::CSharedPointer(T* v)
+{
+	if (v)
+	{
+		m_ptr = v;
+		m_refcount = new int(1);
+	}
+	else
+	{
+		m_ptr = 0;
+		m_refcount = 0;
+	}
+}
+
+template<class T> CSharedPointer<T>::~CSharedPointer()
+{
+	if (m_refcount && (*m_refcount)-- == 1)
+	{
+		delete m_refcount;
+		delete m_ptr;
+	}
+}
+
+template<class T> void CSharedPointer<T>::clear()
+{
+	if (m_refcount && (*m_refcount)-- == 1)
+	{
+		delete m_refcount;
+		delete m_ptr;
+	}
+	m_refcount = 0;
+	m_ptr = 0;
+}
+
+template<class T> T& CSharedPointer<T>::operator*() const
+{
+	return *m_ptr;
+}
+
+template<class T> T* CSharedPointer<T>::operator->() const
+{
+	return m_ptr;
+}
+
+template<class T> CSharedPointer<T>& CSharedPointer<T>::operator=(const CSharedPointer<T>& v)
+{
+	if (this == &v)
+		return *this;
+
+	if (m_refcount && (*m_refcount)-- == 1)
+	{
+		delete m_refcount;
+		delete m_ptr;
+	}
+	m_ptr = v.m_ptr;
+	m_refcount = v.m_refcount;
+	if (m_refcount)
+		(*m_refcount)++;
+
+	return *this;
+}
+
+template<class T> CSharedPointer<T>& CSharedPointer<T>::operator=(T* v)
+{
+	if (m_refcount && (*m_refcount)-- == 1)
+	{
+		delete m_refcount;
+		delete m_ptr;
+	}
+
+	if (v)
+	{
+		m_ptr = v;
+		m_refcount = new int(1);
+	}
+	else
+	{
+		m_ptr = 0;
+		m_refcount = 0;
+	}
+
+	return *this;
+}
 
 template<class T> bool CRefcountObject<T>::operator==(const CRefcountObject<T>& cmp) const
 {

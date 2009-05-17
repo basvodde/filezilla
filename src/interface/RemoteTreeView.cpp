@@ -271,7 +271,7 @@ void CRemoteTreeView::OnStateChange(enum t_statechange_notifications notificatio
 		ApplyFilters();
 }
 
-void CRemoteTreeView::SetDirectoryListing(const CDirectoryListing* pListing, bool modified)
+void CRemoteTreeView::SetDirectoryListing(const CSharedPointer<const CDirectoryListing> &pListing, bool modified)
 {
 	m_busy = true;
 

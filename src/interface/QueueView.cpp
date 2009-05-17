@@ -2524,7 +2524,7 @@ void CQueueView::TryRefreshListings()
 	if (!pServer)
 		return;
 
-	const CDirectoryListing* const pListing = pState->GetRemoteDir();
+	const CDirectoryListing* const pListing = pState->GetRemoteDir().Value();
 	if (!pListing)
 		return;
 

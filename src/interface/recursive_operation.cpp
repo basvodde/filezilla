@@ -37,7 +37,7 @@ void CRecursiveOperation::OnStateChange(enum t_statechange_notifications notific
 {
 	wxASSERT(m_pState);
 	wxASSERT(notification == STATECHANGE_REMOTE_DIR);
-	ProcessDirectoryListing(m_pState->GetRemoteDir());
+	ProcessDirectoryListing(m_pState->GetRemoteDir().Value());
 }
 
 void CRecursiveOperation::StartRecursiveOperation(enum OperationMode mode, const CServerPath& startDir, bool allowParent /*=false*/, const CServerPath& finalDir /*=CServerPath()*/)

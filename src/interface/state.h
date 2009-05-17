@@ -55,7 +55,7 @@ public:
 
 	bool ChangeRemoteDir(const CServerPath& path, const wxString& subdir = _T(""), int flags = 0, bool ignore_busy = false);
 	bool SetRemoteDir(const CDirectoryListing *m_pDirectoryListing, bool modified = false);
-	const CDirectoryListing *GetRemoteDir() const;
+	CSharedPointer<const CDirectoryListing> GetRemoteDir() const;
 	const CServerPath GetRemotePath() const;
 
 	const CServer* GetServer() const;
@@ -97,7 +97,7 @@ protected:
 	void SetServer(const CServer* server);
 
 	CLocalPath m_localDir;
-	const CDirectoryListing *m_pDirectoryListing;
+	CSharedPointer<const CDirectoryListing> m_pDirectoryListing;
 
 	CServer* m_pServer;
 	bool m_successful_connect;
