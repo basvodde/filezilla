@@ -38,8 +38,10 @@ CState::~CState()
 	// Unregister all handlers
 	for (int i = 0; i < STATECHANGE_MAX; i++)
 	{
-		for (std::list<CStateEventHandler*>::iterator iter = m_handlers[i].begin(); iter != m_handlers[i].end(); iter++)
-			(*iter)->m_pState = 0;
+		for (std::list<t_handler>::iterator iter = m_handlers[i].begin(); iter != m_handlers[i].end(); iter++)
+		{
+			iter->pHandler->m_pState = 0;
+		}
 	}
 
 	delete m_pRecursiveOperation;
@@ -362,20 +364,24 @@ void CState::DestroyEngine()
 	m_pEngine = 0;
 }
 
-void CState::RegisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification)
+void CState::RegisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification, bool blockable /*=true*/)
 {
 	wxASSERT(pHandler);
 	wxASSERT(notification != STATECHANGE_MAX && notification != STATECHANGE_NONE);
 
-	std::list<CStateEventHandler*> &handlers = m_handlers[notification];
-	std::list<CStateEventHandler*>::const_iterator iter;
+	std::list<t_handler> &handlers = m_handlers[notification];
+	std::list<t_handler>::const_iterator iter;
 	for (iter = handlers.begin(); iter != handlers.end(); iter++)
 	{
-		if (*iter == pHandler)
+		if (iter->pHandler == pHandler)
 			return;
 	}
 
-	handlers.push_back(pHandler);
+	t_handler handler;
+	handler.pHandler = pHandler;
+	handler.blockable = blockable;
+	handler.blocked = false;
+	handlers.push_back(handler);
 }
 
 void CState::UnregisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification)
@@ -387,10 +393,10 @@ void CState::UnregisterHandler(CStateEventHandler* pHandler, enum t_statechange_
 	{
 		for (int i = 0; i < STATECHANGE_MAX; i++)
 		{
-			std::list<CStateEventHandler*> &handlers = m_handlers[i];
-			for (std::list<CStateEventHandler*>::iterator iter = handlers.begin(); iter != handlers.end(); iter++)
+			std::list<t_handler> &handlers = m_handlers[i];
+			for (std::list<t_handler>::iterator iter = handlers.begin(); iter != handlers.end(); iter++)
 			{
-				if (*iter == pHandler)
+				if (iter->pHandler == pHandler)
 				{
 					handlers.erase(iter);
 					break;
@@ -400,10 +406,10 @@ void CState::UnregisterHandler(CStateEventHandler* pHandler, enum t_statechange_
 	}
 	else
 	{
-		std::list<CStateEventHandler*> &handlers = m_handlers[notification];
-		for (std::list<CStateEventHandler*>::iterator iter = handlers.begin(); iter != handlers.end(); iter++)
+		std::list<t_handler> &handlers = m_handlers[notification];
+		for (std::list<t_handler>::iterator iter = handlers.begin(); iter != handlers.end(); iter++)
 		{
-			if (*iter == pHandler)
+			if (iter->pHandler == pHandler)
 			{
 				handlers.erase(iter);
 				return;
@@ -412,14 +418,69 @@ void CState::UnregisterHandler(CStateEventHandler* pHandler, enum t_statechange_
 	}
 }
 
+void CState::BlockHandlers(enum t_statechange_notifications notification)
+{
+	wxASSERT(notification != STATECHANGE_MAX);
+
+	if (notification == STATECHANGE_NONE)
+	{
+		for (int i = 0; i < STATECHANGE_MAX; i++)
+		{
+			std::list<t_handler> &handlers = m_handlers[i];
+			for (std::list<t_handler>::iterator iter = handlers.begin(); iter != handlers.end(); iter++)
+			{
+				if (!iter->blockable)
+					continue;
+
+				iter->blocked = true;
+			}
+		}
+	}
+	else
+	{
+		std::list<t_handler> &handlers = m_handlers[notification];
+		for (std::list<t_handler>::iterator iter = handlers.begin(); iter != handlers.end(); iter++)
+		{
+			if (!iter->blockable)
+					continue;
+
+			iter->blocked = true;
+		}
+	}
+}
+
+void CState::UnblockHandlers(enum t_statechange_notifications notification)
+{
+	wxASSERT(notification != STATECHANGE_MAX);
+
+	if (notification == STATECHANGE_NONE)
+	{
+		for (int i = 0; i < STATECHANGE_MAX; i++)
+		{
+			std::list<t_handler> &handlers = m_handlers[i];
+			for (std::list<t_handler>::iterator iter = handlers.begin(); iter != handlers.end(); iter++)
+				iter->blocked = false;
+		}
+	}
+	else
+	{
+		std::list<t_handler> &handlers = m_handlers[notification];
+		for (std::list<t_handler>::iterator iter = handlers.begin(); iter != handlers.end(); iter++)
+			iter->blocked = false;
+	}
+}
+
 void CState::NotifyHandlers(enum t_statechange_notifications notification, const wxString& data /*=_T("")*/)
 {
 	wxASSERT(notification != STATECHANGE_NONE && notification != STATECHANGE_MAX);
 
-	const std::list<CStateEventHandler*> &handlers = m_handlers[notification];
-	for (std::list<CStateEventHandler*>::const_iterator iter = handlers.begin(); iter != handlers.end(); iter++)
+	const std::list<t_handler> &handlers = m_handlers[notification];
+	for (std::list<t_handler>::const_iterator iter = handlers.begin(); iter != handlers.end(); iter++)
 	{
-		(*iter)->OnStateChange(notification, data);
+		if (iter->blocked)
+			continue;
+
+		iter->pHandler->OnStateChange(notification, data);
 	}
 }
 

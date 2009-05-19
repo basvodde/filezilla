@@ -64,8 +64,11 @@ public:
 	void RefreshLocalFile(wxString file);
 	void LocalDirCreated(const CLocalPath& path);
 
-	void RegisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification);
+	void RegisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification, bool blockable = true);
 	void UnregisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification);
+
+	void BlockHandlers(enum t_statechange_notifications notification);
+	void UnblockHandlers(enum t_statechange_notifications notification);
 
 	CFileZillaEngine* m_pEngine;
 	CCommandQueue* m_pCommandQueue;
@@ -106,7 +109,13 @@ protected:
 
 	CRecursiveOperation* m_pRecursiveOperation;
 
-	std::list<CStateEventHandler*> m_handlers[STATECHANGE_MAX];
+	struct t_handler
+	{
+		CStateEventHandler* pHandler;
+		bool blockable;
+		bool blocked;
+	};
+	std::list<t_handler> m_handlers[STATECHANGE_MAX];
 
 	CLocalPath GetSynchronizedDirectory(CServerPath remote_path);
 	CServerPath GetSynchronizedDirectory(CLocalPath local_path);
