@@ -3,6 +3,7 @@
 
 #include "state.h"
 #include <set>
+#include "filter.h"
 
 class CChmodDialog;
 class CQueueView;
@@ -19,10 +20,11 @@ public:
 		recursive_download,
 		recursive_addtoqueue,
 		recursive_delete,
-		recursive_chmod
+		recursive_chmod,
+		recursive_list
 	};
 
-	void StartRecursiveOperation(enum OperationMode mode, const CServerPath& startDir, bool allowParent = false, const CServerPath& finalDir = CServerPath());
+	void StartRecursiveOperation(enum OperationMode mode, const CServerPath& startDir, const std::list<CFilter> &filters, bool allowParent = false, const CServerPath& finalDir = CServerPath());
 	void StopRecursiveOperation();
 
 	void AddDirectoryToVisit(const CServerPath& path, const wxString& subdir, const wxString& localDir = _T(""), bool is_link = false);
@@ -78,6 +80,8 @@ protected:
 	CChmodDialog* m_pChmodDlg;
 
 	CQueueView* m_pQueue;
+
+	std::list<CFilter> m_filters;
 };
 
 #endif //__RECURSIVE_OPERATION_H__

@@ -36,33 +36,8 @@ CFilterCondition::CFilterCondition()
 {
 	type = name;
 	condition = 0;
-	pRegEx = 0;
 	matchCase = true;
 	value = 0;
-}
-
-CFilterCondition::~CFilterCondition()
-{
-	delete pRegEx;
-}
-
-CFilterCondition::CFilterCondition(const CFilterCondition& cond)
-{
-	pRegEx = 0;
-	*this = cond;
-}
-
-CFilterCondition& CFilterCondition::operator=(const CFilterCondition& cond)
-{
-	type = cond.type;
-	condition = cond.condition;
-	strValue = cond.strValue;
-	value = cond.value;
-	matchCase = cond.matchCase;
-	delete pRegEx;
-	pRegEx = 0;
-
-	return *this;
 }
 
 CFilter::CFilter()
@@ -595,13 +570,13 @@ bool CFilterManager::FilenameFiltered(const wxString& name, const wxString& path
 		if (local)
 		{
 			if (set.local[i])
-				if (FilenameFilteredByFilter(name, path, dir, size, i, attributes))
+				if (FilenameFilteredByFilter(m_globalFilters[i], name, path, dir, size, attributes))
 					return true;
 		}
 		else
 		{
 			if (set.remote[i])
-				if (FilenameFilteredByFilter(name, path, dir, size, i, attributes))
+				if (FilenameFilteredByFilter(m_globalFilters[i], name, path, dir, size, attributes))
 					return true;
 		}
 	}
@@ -609,11 +584,19 @@ bool CFilterManager::FilenameFiltered(const wxString& name, const wxString& path
 	return false;
 }
 
-bool CFilterManager::FilenameFilteredByFilter(const wxString& name, const wxString& path, bool dir, wxLongLong size, unsigned int filterIndex, int attributes) const
+bool CFilterManager::FilenameFiltered(const std::list<CFilter> &filters, const wxString& name, const wxString& path, bool dir, wxLongLong size, bool local, int attributes) const
 {
-	wxRegEx regex;
-	const CFilter& filter = m_globalFilters[filterIndex];
+	for (std::list<CFilter>::const_iterator iter = filters.begin(); iter != filters.end(); iter++)
+	{
+		if (FilenameFilteredByFilter(*iter, name, path, dir, size, attributes))
+			return true;
+	}
 
+	return false;
+}
+
+bool CFilterManager::FilenameFilteredByFilter(const CFilter& filter, const wxString& name, const wxString& path, bool dir, wxLongLong size, int attributes) const
+{
 	if (dir && !filter.filterDirs)
 		return false;
 	else if (!dir && !filter.filterFiles)
@@ -886,11 +869,10 @@ bool CFilterManager::CompileRegexes()
 		for (std::vector<CFilterCondition>::iterator iter = filter.filters.begin(); iter != filter.filters.end(); iter++)
 		{
 			CFilterCondition& condition = *iter;
-			delete condition.pRegEx;
 			if ((condition.type == name || condition.type == path) && condition.condition == 4)
 				condition.pRegEx = new wxRegEx(condition.strValue);
 			else
-				condition.pRegEx = 0;
+				condition.pRegEx.clear();
 		}
 	}
 	return true;
@@ -1061,4 +1043,31 @@ void CFilterManager::ToggleFilters()
 
 	if (HasActiveFilters(true))
 		m_filters_disabled = true;
+}
+
+std::list<CFilter> CFilterManager::GetActiveFilters(bool local)
+{
+	std::list<CFilter> filters;
+
+	if (m_filters_disabled)
+		return filters;
+
+	const CFilterSet& set = m_globalFilterSets[m_globalCurrentFilterSet];
+
+	// Check active filters
+	for (unsigned int i = 0; i < m_globalFilters.size(); i++)
+	{
+		if (local)
+		{
+			if (set.local[i])
+				filters.push_back(m_globalFilters[i]);
+		}
+		else
+		{
+			if (set.remote[i])
+				filters.push_back(m_globalFilters[i]);
+		}
+	}
+
+	return filters;
 }

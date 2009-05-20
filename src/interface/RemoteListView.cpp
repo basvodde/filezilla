@@ -1535,7 +1535,8 @@ void CRemoteListView::TransferSelectedFiles(const CLocalPath& local_parent, bool
 	{
 		if (IsComparing())
 			ExitComparisonMode();
-		pRecursiveOperation->StartRecursiveOperation(queueOnly ? CRecursiveOperation::recursive_addtoqueue : CRecursiveOperation::recursive_download, m_pDirectoryListing->path);
+		CFilterManager filter;
+		pRecursiveOperation->StartRecursiveOperation(queueOnly ? CRecursiveOperation::recursive_addtoqueue : CRecursiveOperation::recursive_download, m_pDirectoryListing->path, filter.GetActiveFilters(false));
 	}
 }
 
@@ -1657,7 +1658,8 @@ void CRemoteListView::OnMenuDelete(wxCommandEvent& event)
 	{
 		if (IsComparing())
 			ExitComparisonMode();
-		pRecursiveOperation->StartRecursiveOperation(CRecursiveOperation::recursive_delete, m_pDirectoryListing->path);
+		CFilterManager filter;
+		pRecursiveOperation->StartRecursiveOperation(CRecursiveOperation::recursive_delete, m_pDirectoryListing->path, filter.GetActiveFilters(false));
 	}
 }
 
@@ -1991,7 +1993,8 @@ void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 			ExitComparisonMode();
 
 		pRecursiveOperation->SetChmodDialog(pChmodDlg);
-		pRecursiveOperation->StartRecursiveOperation(CRecursiveOperation::recursive_chmod, m_pDirectoryListing->path);
+		CFilterManager filter;
+		pRecursiveOperation->StartRecursiveOperation(CRecursiveOperation::recursive_chmod, m_pDirectoryListing->path, filter.GetActiveFilters(false));
 
 		// Refresh listing. This gets done implicitely by the recursive operation, so
 		// only it if not recursing.
@@ -2513,7 +2516,8 @@ bool CRemoteListView::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataO
 	if (IsComparing())
 		ExitComparisonMode();
 
-	pRecursiveOperation->StartRecursiveOperation(queueOnly ? CRecursiveOperation::recursive_addtoqueue : CRecursiveOperation::recursive_download, pRemoteDataObject->GetServerPath());
+	CFilterManager filter;
+	pRecursiveOperation->StartRecursiveOperation(queueOnly ? CRecursiveOperation::recursive_addtoqueue : CRecursiveOperation::recursive_download, pRemoteDataObject->GetServerPath(), filter.GetActiveFilters(false));
 
 	return true;
 }

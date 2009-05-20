@@ -18,7 +18,7 @@ CRecursiveOperation::CRecursiveOperation(CState* pState)
 	: CStateEventHandler(pState),
 	  m_operationMode(recursive_none), m_pState(pState)
 {
-	pState->RegisterHandler(this, STATECHANGE_REMOTE_DIR);
+	pState->RegisterHandler(this, STATECHANGE_REMOTE_DIR, false);
 
 	m_pChmodDlg = 0;
 	m_pQueue = 0;
@@ -40,7 +40,7 @@ void CRecursiveOperation::OnStateChange(enum t_statechange_notifications notific
 	ProcessDirectoryListing(m_pState->GetRemoteDir().Value());
 }
 
-void CRecursiveOperation::StartRecursiveOperation(enum OperationMode mode, const CServerPath& startDir, bool allowParent /*=false*/, const CServerPath& finalDir /*=CServerPath()*/)
+void CRecursiveOperation::StartRecursiveOperation(enum OperationMode mode, const CServerPath& startDir, const std::list<CFilter>& filters, bool allowParent /*=false*/, const CServerPath& finalDir /*=CServerPath()*/)
 {
 	wxCHECK_RET(m_operationMode == recursive_none, _T("StartRecursiveOperation called with m_operationMode != recursive_none"));
 	wxCHECK_RET(m_pState->IsRemoteConnected(), _T("StartRecursiveOperation while disconnected"));
@@ -69,6 +69,8 @@ void CRecursiveOperation::StartRecursiveOperation(enum OperationMode mode, const
 		m_finalDir = finalDir;
 
 	m_allowParent = allowParent;
+
+	m_filters = filters;
 
 	NextOperation();
 }
@@ -220,7 +222,7 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 			if (entry.name != dir.restrict)
 				continue;
 		}
-		else if (filter.FilenameFiltered(entry.name, path, entry.dir, entry.size, false, 0))
+		else if (filter.FilenameFiltered(m_filters, entry.name, path, entry.dir, entry.size, false, 0))
 			continue;
 
 		if (entry.dir && (!entry.link || m_operationMode != recursive_delete))

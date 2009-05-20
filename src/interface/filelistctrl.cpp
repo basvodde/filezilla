@@ -75,7 +75,7 @@ template<class CFileData> LRESULT CALLBACK CFileListCtrl<CFileData>::WindowProc(
 		if (pFileListCtrl->m_insideSetSelection)
 			return 0;
 
-		// A range of items go (de)selected
+		// A range of items got (de)selected
 		fzNMLVODSTATECHANGE* pNmOdStateChange = (fzNMLVODSTATECHANGE*)lParam;
 
 		if (!pFileListCtrl->m_pFilelistStatusBar)

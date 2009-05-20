@@ -1053,7 +1053,8 @@ void CRemoteTreeView::OnMenuChmod(wxCommandEvent& event)
 		const wxTreeItemId selected = GetSelection();
 		if (selected)
 			currentPath = GetPathFromItem(selected);
-		pRecursiveOperation->StartRecursiveOperation(CRecursiveOperation::recursive_chmod, hasParent ? path.GetParent() : path, !cached, currentPath);
+		CFilterManager filter;
+		pRecursiveOperation->StartRecursiveOperation(CRecursiveOperation::recursive_chmod, hasParent ? path.GetParent() : path, filter.GetActiveFilters(false), !cached, currentPath);
 	}
 	else
 	{
@@ -1099,7 +1100,8 @@ void CRemoteTreeView::OnMenuDownload(wxCommandEvent& event)
 		currentPath = GetPathFromItem(selected);
 
 	const bool addOnly = event.GetId() == XRCID("ID_ADDTOQUEUE");
-	pRecursiveOperation->StartRecursiveOperation(addOnly ? CRecursiveOperation::recursive_addtoqueue : CRecursiveOperation::recursive_download, path, true, currentPath);
+	CFilterManager filter;
+	pRecursiveOperation->StartRecursiveOperation(addOnly ? CRecursiveOperation::recursive_addtoqueue : CRecursiveOperation::recursive_download, path, filter.GetActiveFilters(false), true, currentPath);
 }
 
 void CRemoteTreeView::OnMenuDelete(wxCommandEvent& event)
@@ -1141,7 +1143,8 @@ void CRemoteTreeView::OnMenuDelete(wxCommandEvent& event)
 	if (!currentPath.IsEmpty() && (path == currentPath || path.IsParentOf(currentPath, false)))
 		currentPath = startDir;
 
-	pRecursiveOperation->StartRecursiveOperation(CRecursiveOperation::recursive_delete, startDir, !hasParent, currentPath);
+	CFilterManager filter;
+	pRecursiveOperation->StartRecursiveOperation(CRecursiveOperation::recursive_delete, startDir, filter.GetActiveFilters(false), !hasParent, currentPath);
 }
 
 void CRemoteTreeView::OnMenuRename(wxCommandEvent& event)
