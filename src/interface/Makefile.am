@@ -30,7 +30,9 @@ filezilla_SOURCES = aboutdialog.cpp \
 		fileexistsdlg.cpp \
 		filelistctrl.cpp \
 		filelist_statusbar.cpp \
-		FileZilla.cpp filter.cpp \
+		FileZilla.cpp \
+		filter.cpp \
+		filter_conditions_dialog.cpp \
 		filteredit.cpp \
 		import.cpp \
 		inputdialog.cpp \
@@ -123,6 +125,7 @@ noinst_HEADERS = aboutdialog.h \
 		 filelist_statusbar.h \
 		 filezillaapp.h \
 		 filter.h \
+		 filter_conditions_dialog.h \
 		 filteredit.h \
 		 import.h \
 		 inputdialog.h \
