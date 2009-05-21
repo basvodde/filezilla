@@ -52,14 +52,10 @@ bool CFilterConditionsDialog::CreateListControl(bool has_foreign_type)
 
 	m_has_foreign_type = has_foreign_type;
 
-	wxSizerItem* pSizerItem = GetSizer()->GetItem(wnd, true);
 	m_pListCtrl = new wxCustomHeightListCtrl(this, wxID_ANY, wxDefaultPosition, wnd->GetSize(), wxVSCROLL|wxSUNKEN_BORDER);
 	if (!m_pListCtrl)
 		return false;
-	pSizerItem->SetWindow(m_pListCtrl);
-	m_pListCtrl->SetContainingSizer(wnd->GetContainingSizer());
-	wnd->SetContainingSizer(0);
-	wnd->Destroy();
+	ReplaceControl(wnd, m_pListCtrl);
 	CalcMinListWidth();
 
 	if (filterTypes.IsEmpty())

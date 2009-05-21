@@ -69,3 +69,17 @@ int wxDialogEx::ShowModal()
 #endif
 	return wxDialog::ShowModal();
 }
+
+bool wxDialogEx::ReplaceControl(wxWindow* old, wxWindow* wnd)
+{
+	wxSizerItem* pSizerItem = GetSizer()->GetItem(old, true);
+	if (!pSizerItem)
+		return false;
+
+	pSizerItem->SetWindow(wnd);
+	wnd->SetContainingSizer(old->GetContainingSizer());
+	old->SetContainingSizer(0);
+	old->Destroy();
+
+	return true;
+}
