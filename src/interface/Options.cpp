@@ -130,7 +130,10 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Last connected site", string, _T("") },
 	{ "File doubleclock action", number, _T("0") },
 	{ "Dir doubleclock action", number, _T("0") },
-	{ "Minimize to tray", number, _T("0") }
+	{ "Minimize to tray", number, _T("0") },
+	{ "Search column widths", string, _T("") },
+	{ "Search column shown", string, _T("") },
+	{ "Search column order", string, _T("") }
 };
 
 struct t_default_option

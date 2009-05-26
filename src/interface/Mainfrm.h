@@ -170,6 +170,7 @@ protected:
 #ifndef __WXMAC__
 	void OnIconize(wxIconizeEvent& event);
 	void OnTaskBarClick(wxTaskBarIconEvent& event);
+	void OnSearch(wxCommandEvent& event);
 #endif
 
 	bool m_bInitDone;

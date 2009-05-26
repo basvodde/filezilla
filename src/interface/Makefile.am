@@ -78,6 +78,7 @@ filezilla_SOURCES = aboutdialog.cpp \
 		recursive_operation.cpp \
 		RemoteListView.cpp \
 		RemoteTreeView.cpp \
+		search.cpp \
 		settingsdialog.cpp \
 		sftp_crypt_info_dlg.cpp \
 		sitemanager.cpp \
@@ -172,6 +173,7 @@ noinst_HEADERS = aboutdialog.h \
 		 recursive_operation.h \
 		 RemoteListView.h \
 		 RemoteTreeView.h \
+		 search.h \
 		 settingsdialog.h \
 		 sftp_crypt_info_dlg.h \
 		 sitemanager.h \

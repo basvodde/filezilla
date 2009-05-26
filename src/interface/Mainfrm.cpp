@@ -45,6 +45,7 @@
 #ifndef __WXMAC__
 #include <wx/taskbar.h>
 #endif
+#include "search.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -104,6 +105,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 #ifndef __WXMAC__
 	EVT_ICONIZE(CMainFrame::OnIconize)
 #endif
+	EVT_TOOL(XRCID("ID_TOOLBAR_FIND"), CMainFrame::OnSearch)
 END_EVENT_TABLE()
 
 class CMainFrameStateEventHandler : public CStateEventHandler
@@ -2919,3 +2921,12 @@ void CMainFrame::OnTaskBarClick(wxTaskBarIconEvent& event)
 }
 
 #endif
+
+void CMainFrame::OnSearch(wxCommandEvent& event)
+{
+	CSearchDialog dlg(this, m_pState);
+	if (!dlg.Load())
+		return;
+
+	dlg.Run();
+}

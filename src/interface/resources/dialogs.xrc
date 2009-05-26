@@ -1858,7 +1858,6 @@
         <flag>wxGROW|wxTOP</flag>
         <border>5</border>
       </object>
-      
       <object class="sizeritem">
         <object class="wxStaticBoxSizer">
           <label>Behaviour</label>
@@ -6372,5 +6371,135 @@
       </object>
     </object>
     <title>No program associated with filetype</title>
+  </object>
+  <object class="wxDialog" name="ID_SEARCH">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <object class="sizeritem">
+                <object class="wxBoxSizer">
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Search directory:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL|wxRIGHT</flag>
+                    <border>5</border>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl"/>
+                    <option>1</option>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <orient>wxHORIZONTAL</orient>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <orient>wxVERTICAL</orient>
+            </object>
+            <option>1</option>
+          </object>
+          <object class="sizeritem">
+            <object class="wxGridSizer">
+              <object class="sizeritem">
+                <object class="wxButton" name="ID_START">
+                  <label>&amp;Start</label>
+                  <default>1</default>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxButton" name="ID_STOP">
+                  <label>S&amp;top</label>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxButton" name="ID_CLEAR">
+                  <label>&amp;Clear results</label>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <cols>1</cols>
+              <vgap>5</vgap>
+            </object>
+            <flag>wxLEFT</flag>
+            <border>5</border>
+          </object>
+          <orient>wxHORIZONTAL</orient>
+        </object>
+        <flag>wxALL|wxGROW</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Search conditions:</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxScrolledWindow" name="ID_CONDITIONS">
+                  <size>-1,200</size>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <orient>wxVERTICAL</orient>
+            </object>
+            <option>1</option>
+          </object>
+          <object class="sizeritem">
+            <object class="wxGridSizer">
+              <object class="sizeritem">
+                <object class="wxButton" name="ID_MORE">
+                  <label>Add &amp;more</label>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxButton" name="ID_REMOVE">
+                  <label>Remove &amp;selected</label>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <cols>1</cols>
+              <rows>2</rows>
+              <vgap>5</vgap>
+            </object>
+            <flag>wxTOP|wxBOTTOM|wxALIGN_CENTRE_VERTICAL</flag>
+            <border>5</border>
+          </object>
+          <orient>wxHORIZONTAL</orient>
+        </object>
+        <flag>wxALL|wxGROW</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticLine"/>
+        <flag>wxALL|wxGROW</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticText">
+          <label>Results:</label>
+        </object>
+        <flag>wxLEFT|wxRIGHT</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxListCtrl" name="ID_RESULTS">
+          <style>wxLC_REPORT</style>
+        </object>
+        <option>1</option>
+        <flag>wxALL|wxGROW</flag>
+        <border>5</border>
+      </object>
+    </object>
+    <title>Remote file search</title>
+    <style>wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER</style>
   </object>
 </resource>
