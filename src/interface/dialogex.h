@@ -13,7 +13,7 @@ public:
 
 	virtual int ShowModal();
 
-	bool wxDialogEx::ReplaceControl(wxWindow* old, wxWindow* wnd);
+	bool ReplaceControl(wxWindow* old, wxWindow* wnd);
 
 protected:
 
