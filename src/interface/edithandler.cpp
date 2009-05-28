@@ -33,16 +33,12 @@ void CChangedFileDialog::OnNo(wxCommandEvent& event)
 
 //-------------
 
-#ifdef __WXMAC__
 DECLARE_EVENT_TYPE(fzEDIT_CHANGEDFILE, -1)
 DEFINE_EVENT_TYPE(fzEDIT_CHANGEDFILE)
-#endif
 
 BEGIN_EVENT_TABLE(CEditHandler, wxEvtHandler)
 EVT_TIMER(wxID_ANY, CEditHandler::OnTimerEvent)
-#ifdef __WXMAC__
 EVT_COMMAND(wxID_ANY, fzEDIT_CHANGEDFILE, CEditHandler::OnChangedFileEvent)
-#endif
 END_EVENT_TABLE()
 
 CEditHandler* CEditHandler::m_pEditHandler = 0;
@@ -607,24 +603,18 @@ bool CEditHandler::StartEditing(enum CEditHandler::fileType type, t_fileData& da
 	return true;
 }
 
-void CEditHandler::CheckForModifications(
-#ifdef __WXMAC__
-		bool emitEvent /*=false*/
-#endif
-	)
+void CEditHandler::CheckForModifications(bool emitEvent)
 {
 	static bool insideCheckForModifications = false;
 	if (insideCheckForModifications)
 		return;
 
-#ifdef __WXMAC__
 	if (emitEvent)
 	{
 		wxCommandEvent evt(fzEDIT_CHANGEDFILE);
 		AddPendingEvent(evt);
 		return;
 	}
-#endif
 
 	insideCheckForModifications = true;
 
@@ -1077,12 +1067,10 @@ wxString CEditHandler::GetCustomOpenCommand(const wxString& file, bool& program_
 	return _T("");
 }
 
-#ifdef __WXMAC__
 void CEditHandler::OnChangedFileEvent(wxCommandEvent& event)
 {
 	CheckForModifications();
 }
-#endif
 
 wxString CEditHandler::GetTemporaryFile(wxString name)
 {

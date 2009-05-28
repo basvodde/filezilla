@@ -2492,11 +2492,7 @@ void CMainFrame::OnActivate(wxActivateEvent& event)
 
 	CEditHandler* pEditHandler = CEditHandler::Get();
 	if (pEditHandler)
-		pEditHandler->CheckForModifications(
-#ifdef __WXMAC__
-				true
-#endif
-			);
+		pEditHandler->CheckForModifications(true);
 
 	if (m_pAsyncRequestQueue)
 		m_pAsyncRequestQueue->TriggerProcessing();

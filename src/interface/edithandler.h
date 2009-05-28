@@ -56,11 +56,7 @@ public:
 	void FinishTransfer(bool successful, const wxString& fileName);
 	void FinishTransfer(bool successful, const wxString& fileName, const CServerPath& remotePath, const CServer& server);
 
-	void CheckForModifications(
-#ifdef __WXMAC__
-			bool emitEvent = false
-#endif
-		);
+	void CheckForModifications(bool emitEvent = false);
 
 	void SetQueue(CQueueView* pQueue) { m_pQueue = pQueue; }
 
@@ -122,7 +118,7 @@ protected:
 	CQueueView* m_pQueue;
 
 	wxTimer m_timer;
-
+	
 	void RemoveTemporaryFiles(const wxString& temp);
 
 	wxString GetTemporaryFile(wxString name);
@@ -139,9 +135,7 @@ protected:
 
 	DECLARE_EVENT_TABLE()
 	void OnTimerEvent(wxTimerEvent& event);
-#ifdef __WXMAC__
 	void OnChangedFileEvent(wxCommandEvent& event);
-#endif
 };
 
 class CEditHandlerStatusDialog : protected wxDialogEx
