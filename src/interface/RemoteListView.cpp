@@ -1864,7 +1864,6 @@ void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 	wxString name;
 
 	char permissions[9] = {0};
-	const unsigned char permchars[3] = {'r', 'w', 'x'};
 
 	long item = -1;
 	while (true)
@@ -1890,21 +1889,16 @@ void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
 			fileCount++;
 		name = entry.name;
 
-		if (entry.permissions.Length() == 10)
+		char file_perms[9];
+		if (CChmodDialog::ConvertPermissions(entry.permissions, file_perms))
 		{
 			for (int i = 0; i < 9; i++)
 			{
-				bool set = entry.permissions[i + 1] == permchars[i % 3];
-				if (!permissions[i] || permissions[i] == (set ? 2 : 1))
-					permissions[i] = set ? 2 : 1;
+				if (!permissions[i] || permissions[i] == file_perms[i])
+					permissions[i] = file_perms[i];
 				else
 					permissions[i] = -1;
 			}
-			if (entry.permissions[6] == 's')
-				permissions[5] = 2;
-			if (entry.permissions[9] == 't')
-				permissions[8] = 2;
-
 		}
 	}
 	if (!dirCount && !fileCount)

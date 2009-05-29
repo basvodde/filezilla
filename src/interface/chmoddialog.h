@@ -24,7 +24,7 @@ public:
 	//   drwxr--r-- gets converted into 222211211
 	//   0644 gets converted into 221211211
 	//   foo (0273) gets converted into 121222122
-	bool ConvertPermissions(wxString rwx, char* permissions);
+	static bool ConvertPermissions(wxString rwx, char* permissions);
 
 protected:
 
