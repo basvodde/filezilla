@@ -5,6 +5,8 @@
 #include "filelistctrl.h"
 #include "recursive_operation.h"
 #include "commandqueue.h"
+#include "Options.h"
+#include "window_state_manager.h"
 
 class CSearchFileData : public CGenericFileData
 {
@@ -204,6 +206,16 @@ CSearchDialog::CSearchDialog(wxWindow* parent, CState* pState)
 	: CStateEventHandler(pState)
 {
 	m_parent = parent;
+	m_pWindowStateManager = 0;
+}
+
+CSearchDialog::~CSearchDialog()
+{
+	if (m_pWindowStateManager)
+	{
+		m_pWindowStateManager->Remember(OPTION_SEARCH_SIZE);
+		delete m_pWindowStateManager;
+	}
 }
 
 bool CSearchDialog::Load()
@@ -224,6 +236,9 @@ bool CSearchDialog::Load()
 		XRCCTRL(*this, "ID_PATH", wxTextCtrl)->ChangeValue(path.GetPath());
 
 	SetCtrlState();
+
+	m_pWindowStateManager = new CWindowStateManager(this);
+	m_pWindowStateManager->Restore(OPTION_SEARCH_SIZE, wxSize(700, 300));
 
 	return true;
 }

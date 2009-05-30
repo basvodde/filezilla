@@ -45,16 +45,11 @@ void CWindowStateManager::Remember(unsigned int optionId)
 	COptions::Get()->SetOption(optionId, posString);
 }
 
-bool CWindowStateManager::Restore(unsigned int optionId)
+bool CWindowStateManager::ReadDefaults(const unsigned int optionId, bool& maximized, wxPoint& position, wxSize& size)
 {
 	if (wxGetKeyState(WXK_SHIFT) && wxGetKeyState(WXK_ALT) && wxGetKeyState(WXK_CONTROL))
-	{
-		m_pWindow->CenterOnScreen(wxBOTH);
 		return false;
-	}
-
-	wxRect screen_size = GetScreenDimensions();
-
+	
 	// Fields:
 	// - maximized (1 or 0)
 	// - x position
@@ -65,48 +60,59 @@ bool CWindowStateManager::Restore(unsigned int optionId)
 	wxStringTokenizer tokens(layout, _T(" "));
 	int count = tokens.CountTokens();
 	if (count != 5)
-	{
-		m_pWindow->CenterOnScreen(wxBOTH);
 		return false;
-	}
-	
+
 	long values[5];
 	for (int i = 0; i < count; i++)
 	{
 		wxString token = tokens.GetNextToken();
 		if (!token.ToLong(values + i))
-		{
-			m_pWindow->CenterOnScreen(wxBOTH);
 			return false;
-		}
 	}
+	if (values[3] <= 0 || values[4] <= 0)
+		return false;
+
+	const wxRect screen_size = GetScreenDimensions();
 
 	// Make sure position is (somewhat) sane
-	int pos_x = wxMin(screen_size.GetRight() - 30, values[1]);
-	int pos_y = wxMin(screen_size.GetBottom() - 30, values[2]);
-	int client_width = values[3];
-	int client_height = values[4];
+	position.x = wxMin(screen_size.GetRight() - 30, values[1]);
+	position.y = wxMin(screen_size.GetBottom() - 30, values[2]);
+	size.x = values[3];
+	size.y = values[4];
 
-	if (pos_x + client_width - 30 < screen_size.GetLeft())
-		pos_x = screen_size.GetLeft();
-	if (pos_y + client_height - 30 < screen_size.GetTop())
-		pos_y = screen_size.GetTop();
+	if (position.x + size.x - 30 < screen_size.GetLeft())
+		position.x = screen_size.GetLeft();
+	if (position.y + size.y - 30 < screen_size.GetTop())
+		position.y = screen_size.GetTop();
 
-	if (values[0])
+	maximized = values[0] != 0;
+
+	return true;
+}
+
+bool CWindowStateManager::Restore(const unsigned int optionId, const wxSize& default_size /*=wxSize(-1, -1)*/)
+{
+	wxPoint position(-1, -1);
+	wxSize size = default_size;
+	bool maximized = false;
+
+	bool read = ReadDefaults(optionId, maximized, position, size);
+
+	if (maximized)
 	{
 		// We need to move so it appears on the proper display on multi-monitor systems
-		m_pWindow->Move(pos_x, pos_y);
+		m_pWindow->Move(position.x, position.y);
 
 		// We need to call SetClientSize here too. Since window isn't yet shown here, Maximize
 		// doesn't actually resize the window till it is shown
 
 		// The slight off-size is needed to ensure the client sizes gets changed at least once.
 		// Otherwise all the splitters would have default size still.
-		m_pWindow->SetClientSize(client_width + 1, client_height);
+		m_pWindow->SetClientSize(size.x + 1, size.y);
 
 		// A 2nd call is neccessary, for some reason the first call
 		// doesn't fully set the height properly at least under wxMSW
-		m_pWindow->SetClientSize(client_width, client_height);
+		m_pWindow->SetClientSize(size.x, size.y);
 
 #ifdef __WXMSW__
 		m_pWindow->Show();
@@ -119,15 +125,22 @@ bool CWindowStateManager::Restore(unsigned int optionId)
 	}
 	else
 	{
-		m_pWindow->Move(pos_x, pos_y);
+		if (read)
+			m_pWindow->Move(position.x, position.y);
 
-		// The slight off-size is needed to ensure the client sizes gets changed at least once.
-		// Otherwise all the splitters would have default size still.
-		m_pWindow->SetClientSize(client_width + 1, client_height);
+		if (size.IsFullySpecified())
+		{
+			// The slight off-size is needed to ensure the client sizes gets changed at least once.
+			// Otherwise all the splitters would have default size still.
+			m_pWindow->SetClientSize(size.x + 1, size.x);
 
-		// A 2nd call is neccessary, for some reason the first call
-		// doesn't fully set the height properly at least under wxMSW
-		m_pWindow->SetClientSize(client_width, client_height);
+			// A 2nd call is neccessary, for some reason the first call
+			// doesn't fully set the height properly at least under wxMSW
+			m_pWindow->SetClientSize(size.x, size.y);
+		}
+
+		if (!read)
+			m_pWindow->CentreOnScreen();
 	}
 
 	return true;

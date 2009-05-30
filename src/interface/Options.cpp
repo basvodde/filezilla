@@ -133,7 +133,8 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Minimize to tray", number, _T("0") },
 	{ "Search column widths", string, _T("") },
 	{ "Search column shown", string, _T("") },
-	{ "Search column order", string, _T("") }
+	{ "Search column order", string, _T("") },
+	{ "Search window size", string, _T("") }
 };
 
 struct t_default_option

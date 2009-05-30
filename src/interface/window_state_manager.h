@@ -10,7 +10,7 @@ public:
 	CWindowStateManager(wxTopLevelWindow* pWindow);
 	virtual ~CWindowStateManager();
 
-	bool Restore(unsigned int optionId);
+	bool Restore(const unsigned int optionId, const wxSize& default_size = wxSize(-1, -1));
 	void Remember(unsigned int optionId);
 
 	static wxRect GetScreenDimensions();
@@ -23,6 +23,8 @@ public:
 #endif
 
 protected:
+	bool ReadDefaults(const unsigned int optionId, bool& maximized, wxPoint& position, wxSize& size);
+
 	wxTopLevelWindow* m_pWindow;
 
 	bool m_lastMaximized;

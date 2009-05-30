@@ -4,13 +4,14 @@
 #include "filter_conditions_dialog.h"
 #include "state.h"
 
+class CWindowStateManager;
 class CSearchDialogFileList;
 class CSearchDialog : protected CFilterConditionsDialog, public CStateEventHandler
 {
 	friend class CSearchDialogFileList;
 public:
 	CSearchDialog(wxWindow* parent, CState* pState);
-	virtual ~CSearchDialog() {}
+	virtual ~CSearchDialog();
 
 	bool Load();
 	void Run();
@@ -24,6 +25,8 @@ protected:
 	CSearchDialogFileList *m_results;
 
 	virtual void OnStateChange(enum t_statechange_notifications notification, const wxString& data);
+
+	CWindowStateManager* m_pWindowStateManager;
 
 	DECLARE_EVENT_TABLE()
 	void OnSearch(wxCommandEvent& event);
