@@ -52,6 +52,8 @@ public:
 		: CFileListCtrl<CSearchFileData>(pParent, pState, pQueue),
 		CSystemImageList(16), m_searchDialog(pParent)
 	{
+		m_hasParent = false;
+
 		SetImageList(GetSystemImageList(), wxIMAGE_LIST_SMALL);
 
 		m_dirIcon = GetIconIndex(dir);
@@ -215,6 +217,10 @@ bool CSearchDialog::Load()
 	m_results = new CSearchDialogFileList(this, m_pState, 0);
 	ReplaceControl(XRCCTRL(*this, "ID_RESULTS", wxWindow), m_results);
 
+	const CServerPath path = m_pState->GetRemotePath();
+	if (!path.IsEmpty())
+		XRCCTRL(*this, "ID_PATH", wxTextCtrl)->ChangeValue(path.GetPath());
+
 	return true;
 }
 
@@ -266,7 +272,20 @@ void CSearchDialog::ProcessDirectoryListing()
 
 void CSearchDialog::OnSearch(wxCommandEvent& event)
 {
-	CServerPath path(_T("/"));
+	CServerPath path;
+
+	const CServer* pServer = m_pState->GetServer();
+	if (!pServer)
+	{
+		wxMessageBox(_("Connection to server lost."), _("Remote file search"), wxICON_EXCLAMATION);
+		return;
+	}
+	path.SetType(pServer->GetType());
+	if (!path.SetPath(XRCCTRL(*this, "ID_PATH", wxTextCtrl)->GetValue()) || path.IsEmpty())
+	{
+		wxMessageBox(_("Need to enter valid remote path"), _("Remote file search"), wxICON_EXCLAMATION);
+		return;
+	}
 
 	std::list<CFilter> filters;
 
