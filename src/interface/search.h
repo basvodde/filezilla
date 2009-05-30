@@ -18,6 +18,8 @@ public:
 protected:
 	void ProcessDirectoryListing();
 
+	void SetCtrlState();
+
 	wxWindow* m_parent;
 	CSearchDialogFileList *m_results;
 
@@ -25,6 +27,7 @@ protected:
 
 	DECLARE_EVENT_TABLE()
 	void OnSearch(wxCommandEvent& event);
+	void OnStop(wxCommandEvent& event);
 };
 
 #endif //__SEARCH_H__

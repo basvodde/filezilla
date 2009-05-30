@@ -4,6 +4,7 @@
 #include "search.h"
 #include "filelistctrl.h"
 #include "recursive_operation.h"
+#include "commandqueue.h"
 
 class CSearchFileData : public CGenericFileData
 {
@@ -196,6 +197,7 @@ private:
 
 BEGIN_EVENT_TABLE(CSearchDialog, CFilterConditionsDialog)
 EVT_BUTTON(XRCID("ID_START"), CSearchDialog::OnSearch)
+EVT_BUTTON(XRCID("ID_STOP"), CSearchDialog::OnStop)
 END_EVENT_TABLE()
 
 CSearchDialog::CSearchDialog(wxWindow* parent, CState* pState)
@@ -221,27 +223,42 @@ bool CSearchDialog::Load()
 	if (!path.IsEmpty())
 		XRCCTRL(*this, "ID_PATH", wxTextCtrl)->ChangeValue(path.GetPath());
 
+	SetCtrlState();
+
 	return true;
 }
 
 void CSearchDialog::Run()
 {
+	const CServerPath original_dir = m_pState->GetRemotePath();
+
 	m_pState->BlockHandlers(STATECHANGE_REMOTE_DIR);
 	m_pState->BlockHandlers(STATECHANGE_REMOTE_DIR_MODIFIED);
 	m_pState->RegisterHandler(this, STATECHANGE_REMOTE_DIR);
+	m_pState->RegisterHandler(this, STATECHANGE_REMOTE_IDLE);
 
 	ShowModal();
 
+	m_pState->UnregisterHandler(this, STATECHANGE_REMOTE_IDLE);
 	m_pState->UnregisterHandler(this, STATECHANGE_REMOTE_DIR);
 	m_pState->UnblockHandlers(STATECHANGE_REMOTE_DIR);
 	m_pState->UnblockHandlers(STATECHANGE_REMOTE_DIR_MODIFIED);
+
+	if (!m_pState->m_pCommandQueue->Idle())
+	{
+		m_pState->m_pCommandQueue->Cancel();
+		m_pState->GetRecursiveOperationHandler()->StopRecursiveOperation();
+	}
+	if (!original_dir.IsEmpty())
+		m_pState->ChangeRemoteDir(original_dir);
 }
 
 void CSearchDialog::OnStateChange(enum t_statechange_notifications notification, const wxString& data)
 {
-	wxASSERT(notification == STATECHANGE_REMOTE_DIR);
-
-	ProcessDirectoryListing();
+	if (notification == STATECHANGE_REMOTE_DIR)
+		ProcessDirectoryListing();
+	else if (notification == STATECHANGE_REMOTE_IDLE)
+		SetCtrlState();
 }
 
 void CSearchDialog::ProcessDirectoryListing()
@@ -291,4 +308,20 @@ void CSearchDialog::OnSearch(wxCommandEvent& event)
 
 	m_pState->GetRecursiveOperationHandler()->AddDirectoryToVisitRestricted(path, _T(""), true);
 	m_pState->GetRecursiveOperationHandler()->StartRecursiveOperation(CRecursiveOperation::recursive_list, path, filters, true);
+}
+
+void CSearchDialog::OnStop(wxCommandEvent& event)
+{
+	if (!m_pState->m_pCommandQueue->Idle())
+	{
+		m_pState->m_pCommandQueue->Cancel();
+		m_pState->GetRecursiveOperationHandler()->StopRecursiveOperation();
+	}
+}
+
+void CSearchDialog::SetCtrlState()
+{
+	bool idle = m_pState->m_pCommandQueue->Idle();
+	XRCCTRL(*this, "ID_START", wxButton)->Enable(idle);
+	XRCCTRL(*this, "ID_STOP", wxButton)->Enable(!idle);
 }
