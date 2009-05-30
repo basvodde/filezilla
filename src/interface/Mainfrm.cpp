@@ -2617,6 +2617,7 @@ void CMainFrame::UpdateToolbarState()
 	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_CANCEL"), pServer && !idle);
 	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_COMPARISON"), pServer != 0);
 	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), pServer != 0);
+	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_FIND"), pServer && idle);
 
 	bool canReconnect;
 	if (pServer || !idle)
