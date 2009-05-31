@@ -18,7 +18,7 @@ public:
 	T* Value() const {return m_ptr; } // Promise to NEVER EVER call delete on the returned value
 
 	bool operator==(const CSharedPointer<T>& cmp) const { return m_ptr == cmp.m_ptr; }
-	inline bool operator!=(const CSharedPointer<T>& cmp) const { m_ptr != cmp.m_ptr; }
+	inline bool operator!=(const CSharedPointer<T>& cmp) const { return m_ptr != cmp.m_ptr; }
 	bool operator<(const CSharedPointer<T>& cmp) const { return m_ptr < cmp.m_ptr; }
 
 	// Magic for CSharedPointer foo(bar); if (foo) ...
