@@ -112,8 +112,11 @@ bool CComparisonManager::CompareListings()
 
 	const int dirSortMode = COptions::Get()->GetOptionVal(OPTION_FILELIST_DIRSORT);
 
+	const bool hide_identical = COptions::Get()->GetOptionVal(OPTION_COMPARE_HIDEIDENTICAL) != 0;
+
 	bool gotLocal = m_pLeft->GetNextFile(localFile, localDir, localSize, localDate, localHasTime);
 	bool gotRemote = m_pRight->GetNextFile(remoteFile, remoteDir, remoteSize, remoteDate, remoteHasTime);
+
 	while (gotLocal && gotRemote)
 	{
 		int cmp = CompareFiles(dirSortMode, localFile, remoteFile, localDir, remoteDir);
@@ -122,16 +125,23 @@ bool CComparisonManager::CompareListings()
 			if (!mode)
 			{
 				const CComparableListing::t_fileEntryFlags flag = (localDir || localSize == remoteSize) ? CComparableListing::normal : CComparableListing::different;
-				m_pLeft->CompareAddFile(flag);
-				m_pRight->CompareAddFile(flag);
+
+				if (!hide_identical || flag != CComparableListing::normal || localFile == _T(".."))
+				{
+					m_pLeft->CompareAddFile(flag);
+					m_pRight->CompareAddFile(flag);
+				}
 			}
 			else
 			{
 				if (!localDate.IsValid() || !remoteDate.IsValid())
 				{
-					const CComparableListing::t_fileEntryFlags flag = CComparableListing::normal;
-					m_pLeft->CompareAddFile(flag);
-					m_pRight->CompareAddFile(flag);
+					if (!hide_identical || localDate.IsValid() || remoteDate.IsValid() || localFile == _T(".."))
+					{
+						const CComparableListing::t_fileEntryFlags flag = CComparableListing::normal;
+						m_pLeft->CompareAddFile(flag);
+						m_pRight->CompareAddFile(flag);
+					}
 				}
 				else
 				{
@@ -164,8 +174,12 @@ bool CComparisonManager::CompareListings()
 						localFlag = CComparableListing::newer;
 						remoteFlag = CComparableListing::normal;
 					}
-					m_pLeft->CompareAddFile(localFlag);
-					m_pRight->CompareAddFile(remoteFlag);
+
+					if (!hide_identical || localFlag != CComparableListing::normal || remoteFlag != CComparableListing::normal || localFile == _T(".."))
+					{
+						m_pLeft->CompareAddFile(localFlag);
+						m_pRight->CompareAddFile(remoteFlag);
+					}
 				}
 			}
 			gotLocal = m_pLeft->GetNextFile(localFile, localDir, localSize, localDate, localHasTime);

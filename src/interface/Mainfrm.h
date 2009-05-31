@@ -166,6 +166,7 @@ protected:
 	void OnToolbarComparison(wxCommandEvent& event);
 	void OnToolbarComparisonDropdown(wxCommandEvent& event);
 	void OnDropdownComparisonMode(wxCommandEvent& event);
+	void OnDropdownComparisonHide(wxCommandEvent& event);
 	void OnSyncBrowse(wxCommandEvent& event);
 #ifndef __WXMAC__
 	void OnIconize(wxIconizeEvent& event);

@@ -101,6 +101,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 #endif
 	EVT_MENU(XRCID("ID_COMPARE_SIZE"), CMainFrame::OnDropdownComparisonMode)
 	EVT_MENU(XRCID("ID_COMPARE_DATE"), CMainFrame::OnDropdownComparisonMode)
+	EVT_MENU(XRCID("ID_COMPARE_HIDEIDENTICAL"), CMainFrame::OnDropdownComparisonHide)
 	EVT_TOOL(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), CMainFrame::OnSyncBrowse)
 #ifndef __WXMAC__
 	EVT_ICONIZE(CMainFrame::OnIconize)
@@ -635,17 +636,6 @@ bool CMainFrame::CreateMenus()
 	if (m_pUpdateWizard)
 		m_pUpdateWizard->DisplayUpdateAvailability(false, true);
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
-
-	if (m_pMenuBar)
-	{
-		m_pMenuBar->FindItem(XRCID("ID_MENU_SERVER_VIEWHIDDEN"), 0)->Check(COptions::Get()->GetOptionVal(OPTION_VIEW_HIDDEN_FILES) ? true : false);
-
-		int mode = COptions::Get()->GetOptionVal(OPTION_COMPARISONMODE);
-		if (mode != 1)
-			m_pMenuBar->Check(XRCID("ID_COMPARE_SIZE"), true);
-		else
-			m_pMenuBar->Check(XRCID("ID_COMPARE_DATE"), true);
-	}
 
 	UpdateBookmarkMenu();
 
@@ -2550,6 +2540,8 @@ void CMainFrame::OnToolbarComparisonDropdown(wxCommandEvent& event)
 	else
 		pMenu->FindItem(XRCID("ID_COMPARE_DATE"))->Check();
 
+	pMenu->Check(XRCID("ID_COMPARE_HIDEIDENTICAL"), COptions::Get()->GetOptionVal(OPTION_COMPARE_HIDEIDENTICAL) != 0);
+
 	ShowDropdownMenu(pMenu, m_pToolBar, event);
 }
 
@@ -2588,6 +2580,22 @@ void CMainFrame::OnDropdownComparisonMode(wxCommandEvent& event)
 			m_pMenuBar->Check(XRCID("ID_COMPARE_SIZE"), true);
 		else
 			m_pMenuBar->Check(XRCID("ID_COMPARE_DATE"), true);
+	}
+
+	if (old_mode != new_mode && m_pComparisonManager && m_pComparisonManager->IsComparing())
+		m_pComparisonManager->CompareListings();
+}
+
+void CMainFrame::OnDropdownComparisonHide(wxCommandEvent& event)
+{
+	bool old_mode = COptions::Get()->GetOptionVal(OPTION_COMPARE_HIDEIDENTICAL) != 0;
+	bool new_mode = event.IsChecked();
+
+	COptions::Get()->SetOption(OPTION_COMPARE_HIDEIDENTICAL, new_mode ? 1 : 0);
+
+	if (m_pMenuBar)
+	{
+		m_pMenuBar->Check(XRCID("ID_COMPARE_HIDEIDENTICAL"), new_mode);
 	}
 
 	if (old_mode != new_mode && m_pComparisonManager && m_pComparisonManager->IsComparing())
@@ -2634,6 +2642,17 @@ void CMainFrame::InitMenubarState()
 {
 	if (!m_pMenuBar)
 		return;
+
+	m_pMenuBar->Check(XRCID("ID_MENU_SERVER_VIEWHIDDEN"), COptions::Get()->GetOptionVal(OPTION_VIEW_HIDDEN_FILES) ? true : false);
+
+	int mode = COptions::Get()->GetOptionVal(OPTION_COMPARISONMODE);
+	if (mode != 1)
+		m_pMenuBar->Check(XRCID("ID_COMPARE_SIZE"), true);
+	else
+		m_pMenuBar->Check(XRCID("ID_COMPARE_DATE"), true);
+
+	m_pMenuBar->Check(XRCID("ID_COMPARE_HIDEIDENTICAL"), COptions::Get()->GetOptionVal(OPTION_COMPARE_HIDEIDENTICAL) != 0);
+
 	m_pMenuBar->Check(XRCID("ID_VIEW_QUICKCONNECT"), m_pQuickconnectBar != 0);
 	if (COptions::Get()->GetOptionVal(OPTION_MESSAGELOG_POSITION) != 2)
 		m_pMenuBar->Check(XRCID("ID_VIEW_MESSAGELOG"), m_pStatusView && m_pStatusView->IsShown());
