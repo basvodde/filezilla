@@ -6,13 +6,18 @@
 
 enum t_filterType
 {
-	name,
-	size,
-	attributes,
-	permissions,
-	path,
-
-	filterType_size
+	filter_name = 0x01,
+	filter_size = 0x02,
+	filter_attributes = 0x04,
+	filter_permissions = 0x08,
+	filter_path = 0x10,
+#ifdef __WXMSW__
+	filter_meta = filter_attributes,
+	filter_foreign = filter_permissions,
+#else
+	filter_meta = filter_permissions,
+	filter_foreign = filter_attributes
+#endif
 };
 
 class CFilterCondition
@@ -50,6 +55,7 @@ public:
 	std::vector<CFilterCondition> filters;
 
 	bool HasConditionOfType(enum t_filterType type) const;
+	bool IsLocalFilter() const;
 };
 
 class CFilterSet

@@ -23,8 +23,9 @@ class CFilterConditionsDialog : public wxDialogEx
 public:
 	CFilterConditionsDialog();
 
+	// has_foreign_type for attributes on MSW, permissions on *nix
 	// has_foreign_type for attributes on *nix, permissions on MSW
-	bool CreateListControl(bool has_foreign_type);
+	bool CreateListControl(int conditions);
 
 	void EditFilter(const CFilter& filter);
 	CFilter GetFilter();
@@ -51,6 +52,9 @@ private:
 	std::vector<CFilterControls> m_filterControls;
 
 	CFilter m_currentFilter;
+
+	wxArrayString filterTypes;
+	std::vector<t_filterType> filter_type_map;
 
 	DECLARE_EVENT_TABLE();
 	void OnMore(wxCommandEvent& event);

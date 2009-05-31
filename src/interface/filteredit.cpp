@@ -24,7 +24,7 @@ void CFilterEditDialog::OnOK(wxCommandEvent& event)
 	}
 	for (unsigned int i = 0; i < m_filters.size(); i++)
 	{
-		if (!m_filters[i].HasConditionOfType(permissions) && !m_filters[i].HasConditionOfType(attributes))
+		if (!m_filters[i].HasConditionOfType(filter_permissions) && !m_filters[i].HasConditionOfType(filter_attributes))
 			continue;
 
 		for (unsigned int j = 0; j < m_filterSets.size(); j++)
@@ -42,32 +42,23 @@ void CFilterEditDialog::OnCancel(wxCommandEvent& event)
 bool CFilterEditDialog::Create(wxWindow* parent, const std::vector<CFilter>& filters, const std::vector<CFilterSet>& filterSets)
 {
 	bool has_foreign_type = false;
-#ifndef __WXMSW__
 	for (std::vector<CFilter>::const_iterator iter = filters.begin(); iter != filters.end(); iter++)
 	{
 		const CFilter& filter = *iter;
-		if (!filter.HasConditionOfType(attributes))
+		if (!filter.HasConditionOfType(filter_foreign))
 			continue;
 
 		has_foreign_type = true;
 		break;
 	}
-#else
-	for (std::vector<CFilter>::const_iterator iter = filters.begin(); iter != filters.end(); iter++)
-	{
-		const CFilter& filter = *iter;
-		if (!filter.HasConditionOfType(permissions))
-			continue;
-
-		has_foreign_type = true;
-		break;
-	}
-#endif
 
 	if (!Load(parent, _T("ID_EDITFILTER")))
 		return false;
 
-	if (!CreateListControl(has_foreign_type))
+	int conditions = filter_name | filter_size | filter_path | filter_meta;
+	if (has_foreign_type)
+		conditions |= filter_foreign;
+	if (!CreateListControl(conditions))
 		return false;
 	
 	m_pFilterListCtrl = XRCCTRL(*this, "ID_FILTERS", wxListBox);

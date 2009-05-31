@@ -2,7 +2,6 @@
 #include "filter_conditions_dialog.h"
 #include "customheightlistctrl.h"
 
-static wxArrayString filterTypes;
 static wxArrayString stringConditionTypes;
 static wxArrayString sizeConditionTypes;
 static wxArrayString attributeConditionTypes;
@@ -44,13 +43,11 @@ CFilterConditionsDialog::CFilterConditionsDialog()
 	m_has_foreign_type = false;
 }
 
-bool CFilterConditionsDialog::CreateListControl(bool has_foreign_type)
+bool CFilterConditionsDialog::CreateListControl(int conditions /*=common*/)
 {
 	wxScrolledWindow* wnd = XRCCTRL(*this, "ID_CONDITIONS", wxScrolledWindow);
 	if (!wnd)
 		return false;
-
-	m_has_foreign_type = has_foreign_type;
 
 	m_pListCtrl = new wxCustomHeightListCtrl(this, wxID_ANY, wxDefaultPosition, wnd->GetSize(), wxVSCROLL|wxSUNKEN_BORDER);
 	if (!m_pListCtrl)
@@ -58,42 +55,8 @@ bool CFilterConditionsDialog::CreateListControl(bool has_foreign_type)
 	ReplaceControl(wnd, m_pListCtrl);
 	CalcMinListWidth();
 
-	if (filterTypes.IsEmpty())
+	if (stringConditionTypes.IsEmpty())
 	{
-		filterTypes.Add(_("Filename"));
-		filterTypes.Add(_("Filesize"));
-#ifndef __WXMSW__
-		if (m_has_foreign_type)
-#endif
-		{
-			filterTypes.Add(_("Attribute"));
-			attributeConditionTypes.Add(_("Archive"));
-			attributeConditionTypes.Add(_("Compressed"));
-			attributeConditionTypes.Add(_("Encrypted"));
-			attributeConditionTypes.Add(_("Hidden"));
-			attributeConditionTypes.Add(_("Read-only"));
-			attributeConditionTypes.Add(_("System"));
-		}
-#ifdef __WXMSW__
-		if (m_has_foreign_type)
-#endif
-		{
-			filterTypes.Add(_("Permission"));
-			permissionConditionTypes.Add(_("owner readable"));
-			permissionConditionTypes.Add(_("owner writeable"));
-			permissionConditionTypes.Add(_("owner executable"));
-			permissionConditionTypes.Add(_("group readable"));
-			permissionConditionTypes.Add(_("group writeable"));
-			permissionConditionTypes.Add(_("group executable"));
-			permissionConditionTypes.Add(_("world readable"));
-			permissionConditionTypes.Add(_("world writeable"));
-			permissionConditionTypes.Add(_("world executable"));
-		}
-		filterTypes.Add(_("Path"));
-
-		attributeSetTypes.Add(_("is set"));
-		attributeSetTypes.Add(_("is unset"));
-
 		stringConditionTypes.Add(_("contains"));
 		stringConditionTypes.Add(_("is equal to"));
 		stringConditionTypes.Add(_("begins with"));
@@ -103,6 +66,52 @@ bool CFilterConditionsDialog::CreateListControl(bool has_foreign_type)
 		sizeConditionTypes.Add(_("greater than"));
 		sizeConditionTypes.Add(_("equals"));
 		sizeConditionTypes.Add(_("less than"));
+
+		attributeSetTypes.Add(_("is set"));
+		attributeSetTypes.Add(_("is unset"));
+
+		attributeConditionTypes.Add(_("Archive"));
+		attributeConditionTypes.Add(_("Compressed"));
+		attributeConditionTypes.Add(_("Encrypted"));
+		attributeConditionTypes.Add(_("Hidden"));
+		attributeConditionTypes.Add(_("Read-only"));
+		attributeConditionTypes.Add(_("System"));
+
+		permissionConditionTypes.Add(_("owner readable"));
+		permissionConditionTypes.Add(_("owner writeable"));
+		permissionConditionTypes.Add(_("owner executable"));
+		permissionConditionTypes.Add(_("group readable"));
+		permissionConditionTypes.Add(_("group writeable"));
+		permissionConditionTypes.Add(_("group executable"));
+		permissionConditionTypes.Add(_("world readable"));
+		permissionConditionTypes.Add(_("world writeable"));
+		permissionConditionTypes.Add(_("world executable"));
+	}
+
+	if (conditions & filter_name)
+	{
+		filterTypes.Add(_("Filename"));
+		filter_type_map.push_back(filter_name);
+	}
+	if (conditions & filter_size)
+	{
+		filterTypes.Add(_("Filesize"));
+		filter_type_map.push_back(filter_size);
+	}
+	if (conditions & filter_attributes)
+	{
+		filterTypes.Add(_("Attribute"));
+		filter_type_map.push_back(filter_attributes);
+	}
+	if (conditions & filter_permissions)
+	{
+		filterTypes.Add(_("Permission"));
+		filter_type_map.push_back(filter_permissions);
+	}
+	if (conditions & filter_path)
+	{
+		filterTypes.Add(_("Path"));
+		filter_type_map.push_back(filter_path);
 	}
 
 	SetFilterCtrlState(true);
@@ -133,36 +142,21 @@ void CFilterConditionsDialog::CalcMinListWidth()
 
 t_filterType CFilterConditionsDialog::GetTypeFromTypeSelection(int selection)
 {
-	if (!m_has_foreign_type)
-	{
-#ifdef __WXMSW__
-		if (selection >= permissions)
-			selection++;
-#else
-		if (selection >= attributes)
-			selection++;
-#endif
-	}
+	if (selection < 0 || selection > (int)filter_type_map.size())
+		selection = 0;
 
-	return (enum t_filterType)selection;
+	return filter_type_map[selection];
 }
 
 void CFilterConditionsDialog::SetSelectionFromType(wxChoice* pChoice, t_filterType type)
 {
-	int selection = type;
-
-	if (!m_has_foreign_type)
+	for (unsigned int i = 0; i < filter_type_map.size(); i++)
 	{
-#ifdef __WXMSW__
-		if (selection >= permissions)
-			selection--;
-#else
-		if (selection >= attributes)
-			selection--;
-#endif
+		if (filter_type_map[i] == type)
+			pChoice->SetSelection(i);
 	}
 
-	pChoice->SetSelection(selection);
+	return pChoice->SetSelection(0);
 }
 
 void CFilterConditionsDialog::OnMore(wxCommandEvent& event)
@@ -245,7 +239,7 @@ void CFilterConditionsDialog::OnFilterTypeChange(wxCommandEvent& event)
 		return;
 	filter.type = type;
 
-	if (filter.type == size && filter.condition > 3)
+	if (filter.type == filter_size && filter.condition > 3)
 		filter.condition = 0;
 
 	MakeControls(filter, item);
@@ -285,17 +279,17 @@ void CFilterConditionsDialog::MakeControls(const CFilterCondition& condition, in
 	controls.pCondition = new wxChoice();
 	switch (condition.type)
 	{
-	case name:
-	case path:
+	case filter_name:
+	case filter_path:
 		controls.pCondition->Create(m_pListCtrl, wxID_ANY, wxPoint(20 + typeRect.GetWidth(), posy), wxDefaultSize, stringConditionTypes);
 		break;
-	case (enum t_filterType)::size:
+	case filter_size:
 		controls.pCondition->Create(m_pListCtrl, wxID_ANY, wxPoint(20 + typeRect.GetWidth(), posy), wxDefaultSize, sizeConditionTypes);
 		break;
-	case attributes:
+	case filter_attributes:
 		controls.pCondition->Create(m_pListCtrl, wxID_ANY, wxPoint(20 + typeRect.GetWidth(), posy), wxDefaultSize, attributeConditionTypes);
 		break;
-	case permissions:
+	case filter_permissions:
 		controls.pCondition->Create(m_pListCtrl, wxID_ANY, wxPoint(20 + typeRect.GetWidth(), posy), wxDefaultSize, permissionConditionTypes);
 		break;
 	default:
@@ -306,7 +300,7 @@ void CFilterConditionsDialog::MakeControls(const CFilterCondition& condition, in
 	wxRect conditionsRect = controls.pCondition->GetSize();
 
 	posx = 30 + typeRect.GetWidth() + conditionsRect.GetWidth();
-	if (condition.type == name || condition.type == (enum t_filterType)::size || condition.type == path)
+	if (condition.type == filter_name || condition.type == filter_size || condition.type == filter_path)
 	{		
 		controls.pValue = new wxTextCtrl();
 		controls.pValue->Create(m_pListCtrl, wxID_ANY, _T(""), wxPoint(posx, posy), wxSize(size.GetWidth() - posx - 10, -1));
@@ -387,13 +381,13 @@ CFilter CFilterConditionsDialog::GetFilter()
 
 		switch (condition.type)
 		{
-		case name:
-		case path:
+		case filter_name:
+		case filter_path:
 			if (controls.pValue->GetValue() == _T(""))
 				continue;
 			condition.strValue = controls.pValue->GetValue();
 			break;
-		case size:
+		case filter_size:
 			{
 				if (controls.pValue->GetValue() == _T(""))
 					continue;
@@ -403,8 +397,8 @@ CFilter CFilterConditionsDialog::GetFilter()
 				condition.value = tmp;
 			}
 			break;
-		case attributes:
-		case permissions:
+		case filter_attributes:
+		case filter_permissions:
 			if (controls.pSet->GetSelection())
 			{
 				condition.strValue = _T("0");
@@ -463,7 +457,7 @@ bool CFilterConditionsDialog::ValidateFilter(wxString& error, bool allow_empty /
 		const CFilterControls& controls = m_filterControls[i];
 		enum t_filterType type = GetTypeFromTypeSelection(controls.pType->GetSelection());
 
-		if ((type == name || type == path) && controls.pValue->GetValue() == _T(""))
+		if ((type == filter_name || type == filter_path) && controls.pValue->GetValue() == _T(""))
 		{
 			if (allow_empty)
 				continue;
@@ -474,7 +468,7 @@ bool CFilterConditionsDialog::ValidateFilter(wxString& error, bool allow_empty /
 			SetFilterCtrlState(false);
 			return false;
 		}
-		else if (type == (enum t_filterType)::size)
+		else if (type == filter_size)
 		{
 			const wxString v = controls.pValue->GetValue();
 			if (v == _T("") && allow_empty)

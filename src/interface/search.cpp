@@ -223,7 +223,7 @@ bool CSearchDialog::Load()
 	if (!wxDialogEx::Load(m_parent, _T("ID_SEARCH")))
 		return false;
 
-	if (!CreateListControl(false))
+	if (!CreateListControl(filter_name | filter_size | filter_path))
 		return false;
 
 	EditFilter(CFilter());

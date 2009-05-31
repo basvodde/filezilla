@@ -34,7 +34,7 @@ END_EVENT_TABLE();
 
 CFilterCondition::CFilterCondition()
 {
-	type = name;
+	type = filter_name;
 	condition = 0;
 	matchCase = true;
 	value = 0;
@@ -63,6 +63,11 @@ bool CFilter::HasConditionOfType(enum t_filterType type) const
 	}
 
 	return false;
+}
+
+bool CFilter::IsLocalFilter() const
+{
+	 return HasConditionOfType(filter_attributes) || HasConditionOfType(filter_permissions);
 }
 
 CFilterDialog::CFilterDialog()
@@ -175,6 +180,28 @@ void CFilterDialog::SaveFilters()
 			const CFilterCondition& condition = *conditionIter;
 			TiXmlElement* pCondition = pConditions->InsertEndChild(TiXmlElement("Condition"))->ToElement();
 
+			int type;
+			switch (condition.type)
+			{
+			case filter_name:
+				type = 0;
+				break;
+			case filter_size:
+				type = 1;
+				break;
+			case filter_attributes:
+				type = 2;
+				break;
+			case filter_permissions:
+				type = 3;
+				break;
+			case filter_path:
+				type = 4;
+				break;
+			default:
+				wxFAIL_MSG(_T("Unhandled filter type"));
+				break;
+			}
 			AddTextElement(pCondition, "Type", condition.type);
 			AddTextElement(pCondition, "Condition", condition.condition);
 			AddTextElement(pCondition, "Value", condition.strValue);
@@ -224,7 +251,7 @@ void CFilterDialog::DisplayFilters()
 	{
 		const CFilter& filter = m_filters[i];
 
-		const bool localOnly = filter.HasConditionOfType(attributes) || filter.HasConditionOfType(permissions);
+		const bool localOnly = filter.IsLocalFilter();
 
 		pLocalFilters->Append(filter.name);
 		pRemoteFilters->Append(filter.name);
@@ -254,7 +281,7 @@ void CFilterDialog::OnFilterSelect(wxCommandEvent& event)
 	int item = event.GetSelection();
 
 	const CFilter& filter = m_filters[item];
-	const bool localOnly = filter.HasConditionOfType(attributes) || filter.HasConditionOfType(permissions);
+	const bool localOnly = filter.IsLocalFilter();
 	if (localOnly && event.GetEventObject() != pLocal)
 	{
 		pRemote->Check(item, false);
@@ -465,7 +492,7 @@ void CFilterDialog::OnChangeAll(wxCommandEvent& event)
 
 	for (size_t i = 0; i < pListBox->GetCount(); i++)
 	{
-		if (!local && (m_filters[i].HasConditionOfType(attributes) || m_filters[i].HasConditionOfType(permissions)))
+		if (!local && (m_filters[i].IsLocalFilter()))
 		{
 			pListBox->Check(i, false);
 			(*pValues)[i] = false;
@@ -609,7 +636,7 @@ bool CFilterManager::FilenameFilteredByFilter(const CFilter& filter, const wxStr
 
 		switch (condition.type)
 		{
-		case (enum t_filterType)::name:
+		case filter_name:
 			switch (condition.condition)
 			{
 			case 0:
@@ -672,7 +699,7 @@ bool CFilterManager::FilenameFilteredByFilter(const CFilter& filter, const wxStr
 					match = true;
 			}
 			break;
-		case (enum t_filterType)::path:
+		case filter_path:
 			switch (condition.condition)
 			{
 			case 0:
@@ -735,7 +762,7 @@ bool CFilterManager::FilenameFilteredByFilter(const CFilter& filter, const wxStr
 					match = true;
 			}
 			break;
-		case (enum t_filterType)::size:
+		case filter_size:
 			if (size == -1)
 				continue;
 			switch (condition.condition)
@@ -754,7 +781,7 @@ bool CFilterManager::FilenameFilteredByFilter(const CFilter& filter, const wxStr
 				break;
 			}
 			break;
-		case (enum t_filterType)::attributes:
+		case filter_attributes:
 #ifndef __WXMSW__
 			continue;
 #else
@@ -791,7 +818,7 @@ bool CFilterManager::FilenameFilteredByFilter(const CFilter& filter, const wxStr
 			}
 #endif //__WXMSW__
 			break;
-		case permissions:
+		case filter_permissions:
 #ifdef __WXMSW__
 			continue;
 #else
@@ -869,7 +896,7 @@ bool CFilterManager::CompileRegexes()
 		for (std::vector<CFilterCondition>::iterator iter = filter.filters.begin(); iter != filter.filters.end(); iter++)
 		{
 			CFilterCondition& condition = *iter;
-			if ((condition.type == name || condition.type == path) && condition.condition == 4)
+			if ((condition.type == filter_name || condition.type == filter_path) && condition.condition == 4)
 				condition.pRegEx = new wxRegEx(condition.strValue);
 			else
 				condition.pRegEx.clear();
@@ -952,12 +979,27 @@ void CFilterManager::LoadFilters()
 		{
 			CFilterCondition condition;
 			int type = GetTextElementInt(pCondition, "Type", 0);
-			if (type < 0 || type >= filterType_size)
+			switch (type)
 			{
+			case 0:
+				condition.type = filter_name;
+				break;
+			case 1:
+				condition.type = filter_size;
+				break;
+			case 2:
+				condition.type = filter_attributes;
+				break;
+			case 3:
+				condition.type = filter_permissions;
+				break;
+			case 4:
+				condition.type = filter_path;
+				break;
+			default:
 				pCondition = pCondition->NextSiblingElement("Condition");
 				continue;
 			}
-			condition.type = (enum t_filterType)type;
 			condition.condition = GetTextElementInt(pCondition, "Condition", 0);
 			condition.strValue = GetTextElement(pCondition, "Value");
 			condition.matchCase = filter.matchCase;
@@ -968,13 +1010,13 @@ void CFilterManager::LoadFilters()
 			}
 
 			// TODO: 64bit filesize
-			if (condition.type == size)
+			if (condition.type == filter_size)
 			{
 				unsigned long tmp;
 				condition.strValue.ToULong(&tmp);
 				condition.value = tmp;
 			}
-			else if (condition.type == attributes || condition.type == permissions)
+			else if (condition.type == filter_attributes || condition.type == filter_permissions)
 			{
 				if (condition.strValue == _T("0"))
 					condition.value = 0;
