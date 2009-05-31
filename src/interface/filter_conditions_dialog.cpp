@@ -245,6 +245,9 @@ void CFilterConditionsDialog::OnFilterTypeChange(wxCommandEvent& event)
 		return;
 	filter.type = type;
 
+	if (filter.type == size && filter.condition > 3)
+		filter.condition = 0;
+
 	MakeControls(filter, item);
 }
 
@@ -386,10 +389,14 @@ CFilter CFilterConditionsDialog::GetFilter()
 		{
 		case name:
 		case path:
+			if (controls.pValue->GetValue() == _T(""))
+				continue;
 			condition.strValue = controls.pValue->GetValue();
 			break;
 		case size:
 			{
+				if (controls.pValue->GetValue() == _T(""))
+					continue;
 				condition.strValue = controls.pValue->GetValue();
 				unsigned long tmp;
 				condition.strValue.ToULong(&tmp);
@@ -437,11 +444,14 @@ void CFilterConditionsDialog::SetFilterCtrlState(bool disable)
 	XRCCTRL(*this, "ID_REMOVE", wxButton)->Enable(!disable && !m_pListCtrl->GetSelection().empty());
 }
 
-bool CFilterConditionsDialog::ValidateFilter(wxString& error)
+bool CFilterConditionsDialog::ValidateFilter(wxString& error, bool allow_empty /*=false*/)
 {
 	const unsigned int size = m_currentFilter.filters.size();
 	if (!size)
 	{
+		if (allow_empty)
+			return true;
+
 		error = _("Each filter needs at least one condition.");
 		return false;
 	}
@@ -452,21 +462,31 @@ bool CFilterConditionsDialog::ValidateFilter(wxString& error)
 	{
 		const CFilterControls& controls = m_filterControls[i];
 		enum t_filterType type = GetTypeFromTypeSelection(controls.pType->GetSelection());
+
 		if ((type == name || type == path) && controls.pValue->GetValue() == _T(""))
 		{
+			if (allow_empty)
+				continue;
+
 			m_pListCtrl->SelectLine(i);
 			controls.pValue->SetFocus();
 			error = _("At least one filter condition is incomplete");
+			SetFilterCtrlState(false);
 			return false;
 		}
 		else if (type == (enum t_filterType)::size)
 		{
+			const wxString v = controls.pValue->GetValue();
+			if (v == _T("") && allow_empty)
+				continue;
+
 			long number;
-			if (!controls.pValue->GetValue().ToLong(&number) || number < 0)
+			if (!v.ToLong(&number) || number < 0)
 			{
 				m_pListCtrl->SelectLine(i);
 				controls.pValue->SetFocus();
 				error = _("Invalid size in condition");
+				SetFilterCtrlState(false);
 				return false;
 			}
 		}

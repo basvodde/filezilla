@@ -28,6 +28,8 @@ protected:
 
 	CWindowStateManager* m_pWindowStateManager;
 
+	CFilter m_search_filter;
+
 	DECLARE_EVENT_TABLE()
 	void OnSearch(wxCommandEvent& event);
 	void OnStop(wxCommandEvent& event);

@@ -29,7 +29,7 @@ public:
 	void EditFilter(const CFilter& filter);
 	CFilter GetFilter();
 	void ClearFilter(bool disable);
-	bool ValidateFilter(wxString& error);
+	bool ValidateFilter(wxString& error, bool allow_empty = false);
 
 private:
 	void CalcMinListWidth();

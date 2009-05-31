@@ -304,6 +304,12 @@ void CSearchDialog::ProcessDirectoryListing()
 
 void CSearchDialog::OnSearch(wxCommandEvent& event)
 {
+	if (!m_pState->m_pCommandQueue->Idle())
+	{
+		wxBell();
+		return;
+	}
+
 	CServerPath path;
 
 	const CServer* pServer = m_pState->GetServer();
@@ -319,8 +325,23 @@ void CSearchDialog::OnSearch(wxCommandEvent& event)
 		return;
 	}
 
+	// Prepare filter
+	wxString error;
+	if (!ValidateFilter(error, true))
+	{
+		wxMessageBox(wxString::Format(_("Invalid filter: %s"), error.c_str()), _("Remote file search"), wxICON_EXCLAMATION);
+		return;
+	}
+	m_search_filter = GetFilter();
 	std::list<CFilter> filters;
+	filters.push_back(m_search_filter);
 
+	// Delete old results
+	m_results->m_indexMapping.clear();
+	m_results->m_fileData.clear();
+	m_results->SetItemCount(0);
+
+	// Start
 	m_pState->GetRecursiveOperationHandler()->AddDirectoryToVisitRestricted(path, _T(""), true);
 	m_pState->GetRecursiveOperationHandler()->StartRecursiveOperation(CRecursiveOperation::recursive_list, path, filters, true);
 }
