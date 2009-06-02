@@ -622,7 +622,7 @@ bool CFilterManager::FilenameFiltered(const std::list<CFilter> &filters, const w
 	return false;
 }
 
-bool CFilterManager::FilenameFilteredByFilter(const CFilter& filter, const wxString& name, const wxString& path, bool dir, wxLongLong size, int attributes) const
+bool CFilterManager::FilenameFilteredByFilter(const CFilter& filter, const wxString& name, const wxString& path, bool dir, wxLongLong size, int attributes)
 {
 	if (dir && !filter.filterDirs)
 		return false;

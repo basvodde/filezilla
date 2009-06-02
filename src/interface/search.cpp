@@ -63,7 +63,7 @@ public:
 
 		InitDateFormat();
 
-		const unsigned long widths[7] = { 80, 90, 75, 80, 100, 80, 80 };
+		const unsigned long widths[7] = { 130, 130, 75, 80, 100, 80, 80 };
 
 		AddColumn(_("Filename"), wxLIST_FORMAT_LEFT, widths[0]);
 		AddColumn(_("Path"), wxLIST_FORMAT_LEFT, widths[1]);
@@ -238,7 +238,7 @@ bool CSearchDialog::Load()
 	SetCtrlState();
 
 	m_pWindowStateManager = new CWindowStateManager(this);
-	m_pWindowStateManager->Restore(OPTION_SEARCH_SIZE, wxSize(700, 300));
+	m_pWindowStateManager->Restore(OPTION_SEARCH_SIZE, wxSize(700, 450));
 
 	return true;
 }
@@ -284,9 +284,13 @@ void CSearchDialog::ProcessDirectoryListing()
 		return;
 
 	int old_count = m_results->m_fileData.size();
+	bool added = 0;
 	for (unsigned int i = 0; i < listing->GetCount(); i++)
 	{
 		const CDirentry& entry = (*listing)[i];
+
+		if (m_search_filter.filters.size() && !CFilterManager::FilenameFilteredByFilter(m_search_filter, entry.name, listing->path.GetPath(), entry.dir, entry.size, 0))
+			continue;
 
 		CSearchFileData data;
 		data.flags = CComparableListing::normal;
@@ -294,10 +298,10 @@ void CSearchDialog::ProcessDirectoryListing()
 		data.path = listing->path;
 		data.icon = entry.dir ? m_results->m_dirIcon : -2;
 		m_results->m_fileData.push_back(data);
-		m_results->m_indexMapping.push_back(old_count + i);
+		m_results->m_indexMapping.push_back(old_count + added++);
 	}
 
-	m_results->SetItemCount(old_count + listing->GetCount());
+	m_results->SetItemCount(old_count + added);
 
 	m_results->SortList(-1, -1, false);
 }
@@ -333,8 +337,6 @@ void CSearchDialog::OnSearch(wxCommandEvent& event)
 		return;
 	}
 	m_search_filter = GetFilter();
-	std::list<CFilter> filters;
-	filters.push_back(m_search_filter);
 
 	// Delete old results
 	m_results->m_indexMapping.clear();
@@ -343,6 +345,7 @@ void CSearchDialog::OnSearch(wxCommandEvent& event)
 
 	// Start
 	m_pState->GetRecursiveOperationHandler()->AddDirectoryToVisitRestricted(path, _T(""), true);
+	std::list<CFilter> filters; // Empty, recurse into everything
 	m_pState->GetRecursiveOperationHandler()->StartRecursiveOperation(CRecursiveOperation::recursive_list, path, filters, true);
 }
 

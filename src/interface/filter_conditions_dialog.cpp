@@ -363,6 +363,10 @@ void CFilterConditionsDialog::EditFilter(const CFilter& filter)
 
 	UpdateConditionsClientSize();
 
+	XRCCTRL(*this, "ID_MATCHALL", wxRadioButton)->SetValue(filter.matchType == CFilter::all);
+	XRCCTRL(*this, "ID_MATCHANY", wxRadioButton)->SetValue(filter.matchType == CFilter::any);
+	XRCCTRL(*this, "ID_MATCHNONE", wxRadioButton)->SetValue(filter.matchType == CFilter::none);
+
 	SetFilterCtrlState(false);
 }
 
@@ -420,6 +424,13 @@ CFilter CFilterConditionsDialog::GetFilter()
 		filter.filters.push_back(condition);
 	}
 	
+	if (XRCCTRL(*this, "ID_MATCHANY", wxRadioButton)->GetValue())
+		filter.matchType = CFilter::any;
+	else if (XRCCTRL(*this, "ID_MATCHNONE", wxRadioButton)->GetValue())
+		filter.matchType = CFilter::none;
+	else
+		filter.matchType = CFilter::all;
+
 	return filter;
 }
 
@@ -436,6 +447,10 @@ void CFilterConditionsDialog::SetFilterCtrlState(bool disable)
 	m_pListCtrl->Enable(!disable);
 	XRCCTRL(*this, "ID_MORE", wxButton)->Enable(!disable);
 	XRCCTRL(*this, "ID_REMOVE", wxButton)->Enable(!disable && !m_pListCtrl->GetSelection().empty());
+
+	XRCCTRL(*this, "ID_MATCHALL", wxRadioButton)->Enable(!disable);
+	XRCCTRL(*this, "ID_MATCHANY", wxRadioButton)->Enable(!disable);
+	XRCCTRL(*this, "ID_MATCHNONE", wxRadioButton)->Enable(!disable);
 }
 
 bool CFilterConditionsDialog::ValidateFilter(wxString& error, bool allow_empty /*=false*/)

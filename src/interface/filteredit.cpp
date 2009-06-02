@@ -81,12 +81,6 @@ bool CFilterEditDialog::Create(wxWindow* parent, const std::vector<CFilter>& fil
 void CFilterEditDialog::SaveFilter(CFilter& filter)
 {
 	filter = GetFilter();
-	if (XRCCTRL(*this, "ID_MATCHANY", wxRadioButton)->GetValue())
-		filter.matchType = CFilter::any;
-	else if (XRCCTRL(*this, "ID_MATCHNONE", wxRadioButton)->GetValue())
-		filter.matchType = CFilter::none;
-	else
-		filter.matchType = CFilter::all;
 
 	filter.matchCase = XRCCTRL(*this, "ID_CASE", wxCheckBox)->GetValue();
 
@@ -289,10 +283,6 @@ void CFilterEditDialog::OnFilterSelect(wxCommandEvent& event)
 	CFilter filter = m_filters[item];
 	EditFilter(filter);
 
-	XRCCTRL(*this, "ID_MATCHALL", wxRadioButton)->SetValue(filter.matchType == CFilter::all);
-	XRCCTRL(*this, "ID_MATCHANY", wxRadioButton)->SetValue(filter.matchType == CFilter::any);
-	XRCCTRL(*this, "ID_MATCHNONE", wxRadioButton)->SetValue(filter.matchType == CFilter::none);
-
 	XRCCTRL(*this, "ID_CASE", wxCheckBox)->SetValue(filter.matchCase);
 
 	XRCCTRL(*this, "ID_FILES", wxCheckBox)->SetValue(filter.filterFiles);
@@ -303,9 +293,6 @@ void CFilterEditDialog::OnFilterSelect(wxCommandEvent& event)
 
 void CFilterEditDialog::SetCtrlState(bool enabled)
 {
-	XRCCTRL(*this, "ID_MATCHALL", wxRadioButton)->Enable(enabled);
-	XRCCTRL(*this, "ID_MATCHANY", wxRadioButton)->Enable(enabled);
-	XRCCTRL(*this, "ID_MATCHNONE", wxRadioButton)->Enable(enabled);
 	XRCCTRL(*this, "ID_FILES", wxCheckBox)->Enable(enabled);
 	XRCCTRL(*this, "ID_DIRS", wxCheckBox)->Enable(enabled);
 }
