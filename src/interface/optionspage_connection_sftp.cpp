@@ -103,6 +103,9 @@ bool COptionsPageConnectionSFTP::LoadProcess()
 #ifdef __WXMSW__
 		executable += _T(".exe");
 #endif
+		// Restore quotes
+		if (executable[0] == '"')
+			executable += '"';
 	}
 
 	m_pProcess = new wxProcess(this);
