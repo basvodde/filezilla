@@ -870,16 +870,28 @@ void CLocalListView::DisplayDrives()
 		data.flags = normal;
 		data.name = path;
 
-		// Get the label of the drive
-		wxChar* pVolumeName = new wxChar[501];
-		int oldErrorMode = SetErrorMode(SEM_FAILCRITICALERRORS);
-		BOOL res = GetVolumeInformation(pDrive, pVolumeName, 500, 0, 0, 0, 0, 0);
-		SetErrorMode(oldErrorMode);
-		if (res && pVolumeName[0])
-			data.label = data.name + _T(" (") + pVolumeName + _T(")");
+		// Check if it is a network share
+		wxChar share_name[512];
+		DWORD dwSize = 511;
+		if (!WNetGetConnection(path, share_name, &dwSize))
+		{
+			data.label = data.name + _T(" (");
+			data.label += share_name;
+			data.label += _T(")");
+		}
 		else
-			data.label = data.name;
-		delete [] pVolumeName;
+		{
+			// Get the label of the drive
+			wxChar* pVolumeName = new wxChar[501];
+			int oldErrorMode = SetErrorMode(SEM_FAILCRITICALERRORS);
+			BOOL res = GetVolumeInformation(pDrive, pVolumeName, 500, 0, 0, 0, 0, 0);
+			SetErrorMode(oldErrorMode);
+			if (res && pVolumeName[0])
+				data.label = data.name + _T(" (") + pVolumeName + _T(")");
+			else
+				data.label = data.name;
+			delete [] pVolumeName;
+		}
 
 		data.dir = true;
 		data.icon = -2;

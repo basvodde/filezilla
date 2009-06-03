@@ -1184,6 +1184,21 @@ bool CVolumeDescriptionEnumeratorThread::GetDrives()
 			continue;
 		}
 
+		// Check if it is a network share
+		wxChar *share_name = new wxChar[512];
+		DWORD dwSize = 511;
+		if (!WNetGetConnection(pVolume, share_name, &dwSize))
+		{
+			t_VolumeInfoInternal volumeInfo;
+			volumeInfo.pVolume = pVolume;
+			volumeInfo.pVolumeName = share_name;
+			m_volumeInfo.push_back(volumeInfo);
+			pDrive += len + 1;
+			continue;
+		}
+		else
+			delete [] share_name;
+		
 		// Get the label of the drive
 		wxChar* pVolumeName = new wxChar[501];
 		int oldErrorMode = SetErrorMode(SEM_FAILCRITICALERRORS);

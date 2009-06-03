@@ -218,7 +218,7 @@ filezilla_LDFLAGS += $(RESOURCEFILE)
 filezilla_LDFLAGS += $(IDN_LIB)
 
 if MINGW
-filezilla_LDFLAGS += -lole32 -luuid -lnetapi32
+filezilla_LDFLAGS += -lole32 -luuid -lnetapi32 -lmpr
 endif
 
 if MINGW
