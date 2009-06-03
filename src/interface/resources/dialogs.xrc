@@ -6446,7 +6446,7 @@
         </object>
       </object>
       <object class="sizeritem">
-        <object class="wxBoxSizer">
+        <object class="wxFlexGridSizer">
           <object class="sizeritem">
             <object class="wxScrolledWindow" name="ID_CONDITIONS">
               <size>-1,120</size>
@@ -6472,10 +6472,16 @@
               <vgap>5</vgap>
               <hgap>5</hgap>
             </object>
-            <flag>wxTOP|wxBOTTOM|wxALIGN_CENTRE_HORIZONTAL</flag>
-            <border>5</border>
+            <flag>wxALIGN_CENTRE_HORIZONTAL</flag>
           </object>
-          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxCheckBox" name="ID_CASE">
+              <label>Conditions are c&amp;ase sensitive</label>
+            </object>
+          </object>
+          <cols>1</cols>
+          <vgap>5</vgap>
+          <growablecols>0</growablecols>
         </object>
         <flag>wxALL|wxGROW</flag>
         <border>5</border>

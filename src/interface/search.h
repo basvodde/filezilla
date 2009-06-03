@@ -3,6 +3,7 @@
 
 #include "filter_conditions_dialog.h"
 #include "state.h"
+#include <set>
 
 class CWindowStateManager;
 class CSearchDialogFileList;
@@ -33,6 +34,8 @@ protected:
 	DECLARE_EVENT_TABLE()
 	void OnSearch(wxCommandEvent& event);
 	void OnStop(wxCommandEvent& event);
+
+	std::set<CServerPath> m_visited;
 };
 
 #endif //__SEARCH_H__
