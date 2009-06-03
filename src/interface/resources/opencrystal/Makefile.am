@@ -16,6 +16,7 @@ dist_resources16_DATA = 16x16/ascii.png \
 		16x16/downloadadd.png \
 		16x16/file.png \
 		16x16/filter.png \
+		16x16/find.png \
 		16x16/folder.png \
 		16x16/folderback.png \
 		16x16/folderclosed.png \
@@ -48,6 +49,7 @@ dist_resources32_DATA = 32x32/ascii.png \
 		32x32/downloadadd.png \
 		32x32/file.png \
 		32x32/filter.png \
+		32x32/find.png \
 		32x32/folder.png \
 		32x32/folderback.png \
 		32x32/folderclosed.png \
@@ -79,6 +81,7 @@ dist_resources48_DATA = 48x48/ascii.png \
 		48x48/downloadadd.png \
 		48x48/file.png \
 		48x48/filter.png \
+		48x48/find.png \
 		48x48/folder.png \
 		48x48/folderback.png \
 		48x48/folderclosed.png \
