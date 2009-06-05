@@ -15,6 +15,7 @@ dist_resources16_DATA = 16x16/ascii.png \
 		16x16/downloadadd.png \
 		16x16/file.png \
 		16x16/filter.png \
+		16x16/find.png \
 		16x16/folder.png \
 		16x16/folderback.png \
 		16x16/folderclosed.png \
