@@ -34,6 +34,7 @@ protected:
 	DECLARE_EVENT_TABLE()
 	void OnSearch(wxCommandEvent& event);
 	void OnStop(wxCommandEvent& event);
+	void OnContextMenu(wxContextMenuEvent& event);
 
 	std::set<CServerPath> m_visited;
 };

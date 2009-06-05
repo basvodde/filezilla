@@ -6510,4 +6510,104 @@
     <title>Remote file search</title>
     <style>wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER</style>
   </object>
+  <object class="wxDialog" name="ID_SEARCH_DOWNLOAD">
+    <title>Download search results</title>
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxFlexGridSizer">
+          <object class="sizeritem">
+            <object class="wxStaticText" name="ID_DESC">
+              <label>&lt;&lt;Download some files and directories&gt;</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>&amp;Download to:</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="ID_LOCALPATH"/>
+                <option>1</option>
+                <flag>wxALIGN_CENTRE_VERTICAL|wxRIGHT</flag>
+                <border>5</border>
+              </object>
+              <orient>wxHORIZONTAL</orient>
+              <object class="sizeritem">
+                <object class="wxButton" name="ID_BROWSE">
+                  <label>&amp;Browse...</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+            </object>
+            <flag>wxGROW</flag>
+          </object>
+          <object class="spacer"/>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>Remote path handling:</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxRadioButton" name="ID_PATHS_KEEP">
+              <label>&amp;Keep remote path structure relative to search root</label>
+              <style>wxRB_GROUP</style>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxRadioButton" name="ID_PATHS_FLATTEN">
+              <label>&amp;Flatten remote paths, download directly into target dirctory</label>
+            </object>
+          </object>
+          <object class="spacer"/>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>Queueing:</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxRadioButton" name="ID_QUEUE_START">
+              <label>&amp;Start transfer immediately</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxRadioButton" name="ID_QUEUE_ADD">
+              <label>Add files to &amp;queue only</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticLine"/>
+            <flag>wxGROW</flag>
+          </object>
+          <object class="sizeritem">
+            <object class="wxGridSizer">
+              <object class="sizeritem">
+                <object class="wxButton" name="wxID_OK">
+                  <label>OK</label>
+                  <default>1</default>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxButton" name="wxID_CANCEL">
+                  <label>Cancel</label>
+                </object>
+              </object>
+              <cols>2</cols>
+              <rows>1</rows>
+              <hgap>5</hgap>
+            </object>
+            <flag>wxALIGN_CENTRE_HORIZONTAL</flag>
+          </object>
+          <cols>1</cols>
+          <rows>2</rows>
+          <vgap>5</vgap>
+          <hgap>5</hgap>
+        </object>
+        <flag>wxALL</flag>
+        <border>5</border>
+      </object>
+    </object>
+  </object>
 </resource>

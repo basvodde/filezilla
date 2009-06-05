@@ -528,6 +528,7 @@ void CSearchDialogFileList::InitDateFormat()
 BEGIN_EVENT_TABLE(CSearchDialog, CFilterConditionsDialog)
 EVT_BUTTON(XRCID("ID_START"), CSearchDialog::OnSearch)
 EVT_BUTTON(XRCID("ID_STOP"), CSearchDialog::OnStop)
+EVT_CONTEXT_MENU(CSearchDialog::OnContextMenu)
 END_EVENT_TABLE()
 
 CSearchDialog::CSearchDialog(wxWindow* parent, CState* pState)
@@ -699,4 +700,20 @@ void CSearchDialog::SetCtrlState()
 	bool idle = m_pState->m_pCommandQueue->Idle();
 	XRCCTRL(*this, "ID_START", wxButton)->Enable(idle);
 	XRCCTRL(*this, "ID_STOP", wxButton)->Enable(!idle);
+}
+
+void CSearchDialog::OnContextMenu(wxContextMenuEvent& event)
+{
+	if (event.GetEventObject() != m_results)
+	{
+		event.Skip();
+		return;
+	}
+
+	wxMenu* pMenu = wxXmlResource::Get()->LoadMenu(_T("ID_MENU_SEARCH"));
+	if (!pMenu)
+		return;
+
+	PopupMenu(pMenu);
+	delete pMenu;
 }
