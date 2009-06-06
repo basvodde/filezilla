@@ -531,6 +531,7 @@ EVT_BUTTON(XRCID("ID_START"), CSearchDialog::OnSearch)
 EVT_BUTTON(XRCID("ID_STOP"), CSearchDialog::OnStop)
 EVT_CONTEXT_MENU(CSearchDialog::OnContextMenu)
 EVT_MENU(XRCID("ID_MENU_SEARCH_DOWNLOAD"), CSearchDialog::OnDownload)
+EVT_MENU(XRCID("ID_MENU_SEARCH_DELETE"), CSearchDialog::OnDelete)
 END_EVENT_TABLE()
 
 CSearchDialog::CSearchDialog(wxWindow* parent, CState* pState, CQueueView* pQueue)
@@ -560,6 +561,11 @@ bool CSearchDialog::Load()
 		return false;
 
 	CFilter filter;
+	CFilterCondition cond;
+	cond.condition = 0;
+	cond.type = filter_name;
+	filter.filters.push_back(cond);
+	Layout();
 	EditFilter(filter);
 	XRCCTRL(*this, "ID_CASE", wxCheckBox)->SetValue(filter.matchCase);
 
@@ -604,6 +610,12 @@ void CSearchDialog::Run()
 		if (!m_original_dir.IsEmpty())
 			m_pState->ChangeRemoteDir(m_original_dir);
 	}
+	else
+	{
+		if (m_pState->IsRemoteIdle() && !m_original_dir.IsEmpty())
+			m_pState->ChangeRemoteDir(m_original_dir);
+	}
+
 }
 
 void CSearchDialog::OnStateChange(enum t_statechange_notifications notification, const wxString& data)
@@ -746,10 +758,23 @@ void CSearchDialog::OnContextMenu(wxContextMenuEvent& event)
 class CSearchDownloadDialog : public wxDialogEx
 {
 public:
-	bool Run(wxWindow* parent, const wxString& m_local_dir)
+	bool Run(wxWindow* parent, const wxString& m_local_dir, int count_files, int count_dirs)
 	{
 		if (!Load(parent, _T("ID_SEARCH_DOWNLOAD")))
 			return false;
+
+		wxString desc;
+		if (!count_dirs)
+			desc.Printf(wxPLURAL("Selected %d file for transfer.", "Selected %d files for transfer.", count_files), count_files);
+		else if (!count_files)
+			desc.Printf(wxPLURAL("Selected %d directory with its contents for transfer.", "Selected %d directories with their contents for transfer.", count_dirs), count_dirs);
+		else
+		{
+			wxString files = wxString::Format(wxPLURAL("%d file", "%d files", count_files), count_files);
+			wxString dirs = wxString::Format(wxPLURAL("%d directory with its contents", "%d directories with their contents", count_dirs), count_dirs);
+			desc.Printf(_("Selected %s and %s for transfer."), files.c_str(), dirs.c_str());
+		}
+		XRCCTRL(*this, "ID_DESC", wxStaticText)->SetLabel(desc);
 
 		XRCCTRL(*this, "ID_LOCALPATH", wxTextCtrl)->ChangeValue(m_local_dir);
 
@@ -800,15 +825,8 @@ void CSearchDownloadDialog::OnOK(wxCommandEvent& event)
 	EndDialog(wxID_OK);
 }
 
-void CSearchDialog::OnDownload(wxCommandEvent& event)
+void CSearchDialog::ProcessSelection(std::list<int> &selected_files, std::list<CServerPath> &selected_dirs)
 {
-	if (!m_pState->IsRemoteIdle())
-		return;
-
-	// Find all selected files and directories
-	std::list<CServerPath> selected_dirs;
-	std::list<int> selected_files;
-
 	int sel = -1;
 	while ((sel = m_results->GetNextItem(sel, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
 	{
@@ -886,6 +904,20 @@ void CSearchDialog::OnDownload(wxCommandEvent& event)
 	// At this point selected_dirs contains uncomparable
 	// paths and selected_files contains only files not
 	// covered by any of those directories.
+}
+
+void CSearchDialog::OnDownload(wxCommandEvent& event)
+{
+	if (!m_pState->IsRemoteIdle())
+		return;
+
+	// Find all selected files and directories
+	std::list<CServerPath> selected_dirs;
+	std::list<int> selected_files;
+	ProcessSelection(selected_files, selected_dirs);
+
+	if (selected_files.empty() && selected_dirs.empty())
+		return;
 
 	if (selected_dirs.size() > 1)
 	{
@@ -894,7 +926,7 @@ void CSearchDialog::OnDownload(wxCommandEvent& event)
 	}
 
 	CSearchDownloadDialog dlg;
-	if (!dlg.Run(this, m_pState->GetLocalDir().GetPath()))
+	if (!dlg.Run(this, m_pState->GetLocalDir().GetPath(), selected_files.size(), selected_dirs.size()))
 		return;
 
 	wxTextCtrl *pText = XRCCTRL(dlg, "ID_LOCALPATH", wxTextCtrl);
@@ -955,5 +987,63 @@ void CSearchDialog::OnDownload(wxCommandEvent& event)
 		m_pState->GetRecursiveOperationHandler()->AddDirectoryToVisit(*iter, _T(""), target_path.GetPath(), false);
 		std::list<CFilter> filters; // Empty, recurse into everything
 		m_pState->GetRecursiveOperationHandler()->StartRecursiveOperation(mode, *iter, filters, true, m_original_dir);
+	}
+}
+
+void CSearchDialog::OnDelete(wxCommandEvent& event)
+{
+	if (!m_pState->IsRemoteIdle())
+		return;
+
+	// Find all selected files and directories
+	std::list<CServerPath> selected_dirs;
+	std::list<int> selected_files;
+	ProcessSelection(selected_files, selected_dirs);
+
+	if (selected_files.empty() && selected_dirs.empty())
+		return;
+
+	if (selected_dirs.size() > 1)
+	{
+		wxMessageBox(_("Deleting multiple unrelated directories is not yet supported"), _("Deleting search results"), wxICON_EXCLAMATION);
+		return;
+	}
+
+	wxString question;
+	if (selected_dirs.empty())
+		question.Printf(wxPLURAL("Really delete %d file?", "Really delete %d files?", selected_files.size()), selected_files.size());
+	else if (selected_files.empty())
+		question.Printf(wxPLURAL("Really delete %d directory with its contents?", "Really delete %d directories with their contents?", selected_dirs.size()), selected_dirs.size());
+	else
+	{
+		wxString files = wxString::Format(wxPLURAL("%d file", "%d files", selected_files.size()), selected_files.size());
+		wxString dirs = wxString::Format(wxPLURAL("%d directory with its contents", "%d directories with their contents", selected_dirs.size()), selected_dirs.size());
+		question.Printf(_("Really delete %s and %s?"), files.c_str(), dirs.c_str());
+	}
+
+	if (wxMessageBox(question, _("Deleting search results"), wxICON_QUESTION | wxYES_NO) != wxYES)
+		return;
+
+	for (std::list<int>::const_iterator iter = selected_files.begin(); iter != selected_files.end(); iter++)
+	{
+		const CDirentry& entry = m_results->m_fileData[*iter].entry;
+		std::list<wxString> files_to_delete;
+		files_to_delete.push_back(entry.name);
+		m_pState->m_pCommandQueue->ProcessCommand(new CDeleteCommand(m_results->m_fileData[*iter].path, files_to_delete));
+	}
+
+	for (std::list<CServerPath>::const_iterator iter = selected_dirs.begin(); iter != selected_dirs.end(); iter++)
+	{
+		CServerPath path = *iter;
+		if (!path.HasParent())
+			m_pState->GetRecursiveOperationHandler()->AddDirectoryToVisit(path, _T(""));
+		else
+		{
+			m_pState->GetRecursiveOperationHandler()->AddDirectoryToVisit(path.GetParent(), path.GetLastSegment());
+			path = path.GetParent();
+		}
+
+		std::list<CFilter> filters; // Empty, recurse into everything
+		m_pState->GetRecursiveOperationHandler()->StartRecursiveOperation(CRecursiveOperation::recursive_delete, path, filters, !path.HasParent(), m_original_dir);
 	}
 }

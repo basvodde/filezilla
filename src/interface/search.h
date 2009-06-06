@@ -37,11 +37,14 @@ protected:
 
 	CServerPath m_original_dir;
 
+	void ProcessSelection(std::list<int> &selected_files, std::list<CServerPath> &selected_dirs);
+
 	DECLARE_EVENT_TABLE()
 	void OnSearch(wxCommandEvent& event);
 	void OnStop(wxCommandEvent& event);
 	void OnContextMenu(wxContextMenuEvent& event);
 	void OnDownload(wxCommandEvent& event);
+	void OnDelete(wxCommandEvent& event);
 
 	std::set<CServerPath> m_visited;
 
