@@ -1012,7 +1012,10 @@ int CFtpControlSocket::LogonParseResponse()
 						fact = facts.Left(delim - 1);
 					}
 					else
+					{
+						enabled = false;
 						fact = facts.Left(delim);
+					}
 					facts = facts.Mid(delim + 1);
 
 					if (fact == _T("type") ||
