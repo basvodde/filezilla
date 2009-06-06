@@ -361,7 +361,7 @@ extern wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix = false
 extern wxString StripVMSRevision(const wxString& name);
 
 CSearchDialogFileList::CSearchDialogFileList(CSearchDialog* pParent, CState* pState, CQueueView* pQueue)
-	: CFileListCtrl<CSearchFileData>(pParent, pState, pQueue),
+	: CFileListCtrl<CSearchFileData>(pParent, pState, pQueue, true),
 	CSystemImageList(16), m_searchDialog(pParent)
 {
 	m_hasParent = false;

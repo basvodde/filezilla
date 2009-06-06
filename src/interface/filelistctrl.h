@@ -38,7 +38,7 @@ public:
 template<class CFileData> class CFileListCtrl : public wxListCtrlEx, public CComparableListing
 {
 public:
-	CFileListCtrl(wxWindow* pParent, CState *pState, CQueueView *pQueue);
+	CFileListCtrl(wxWindow* pParent, CState *pState, CQueueView *pQueue, bool border = false);
 	virtual ~CFileListCtrl();
 
 	class CSortComparisonObject : public std::binary_function<int,int,bool>
