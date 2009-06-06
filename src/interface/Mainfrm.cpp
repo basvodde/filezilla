@@ -2940,7 +2940,7 @@ void CMainFrame::OnTaskBarClick(wxTaskBarIconEvent& event)
 
 void CMainFrame::OnSearch(wxCommandEvent& event)
 {
-	CSearchDialog dlg(this, m_pState);
+	CSearchDialog dlg(this, m_pState, m_pQueueView);
 	if (!dlg.Load())
 		return;
 

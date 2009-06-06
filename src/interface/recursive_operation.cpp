@@ -49,7 +49,7 @@ void CRecursiveOperation::StartRecursiveOperation(enum OperationMode mode, const
 	if (mode == recursive_chmod && !m_pChmodDlg)
 		return;
 
-	if ((mode == recursive_download || mode == recursive_addtoqueue) && !m_pQueue)
+	if ((mode == recursive_download || mode == recursive_addtoqueue || recursive_download_flatten || mode == recursive_addtoqueue_flatten) && !m_pQueue)
 		return;
 
 	if (m_dirsToVisit.empty())
@@ -232,7 +232,12 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 				CNewDir dirToVisit;
 				dirToVisit.parent = pDirectoryListing->path;
 				dirToVisit.subdir = entry.name;
-				dirToVisit.localDir = dir.localDir + entry.name + CLocalFileSystem::path_separator;
+				dirToVisit.localDir = dir.localDir;
+				
+				if (m_operationMode != recursive_addtoqueue_flatten && m_operationMode != recursive_download_flatten)
+				{
+					dirToVisit.localDir += entry.name + CLocalFileSystem::path_separator;
+				}
 				if (entry.link)
 				{
 					dirToVisit.link = true;
@@ -247,6 +252,8 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 			{
 			case recursive_addtoqueue:
 			case recursive_download:
+			case recursive_addtoqueue_flatten:
+			case recursive_download_flatten:
 				{
 					m_pQueue->QueueFile(m_operationMode == recursive_addtoqueue, true,
 						dir.localDir + entry.name,
@@ -277,7 +284,7 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 		}
 	}
 	if (added)
-		m_pQueue->QueueFile_Finish(m_operationMode != recursive_addtoqueue);
+		m_pQueue->QueueFile_Finish(m_operationMode != recursive_addtoqueue && m_operationMode != recursive_addtoqueue_flatten);
 
 	if (m_operationMode == recursive_delete && !filesToDelete.empty())
 		m_pState->m_pCommandQueue->ProcessCommand(new CDeleteCommand(pDirectoryListing->path, filesToDelete));
@@ -338,7 +345,7 @@ void CRecursiveOperation::SetQueue(CQueueView* pQueue)
 
 bool CRecursiveOperation::ChangeOperationMode(enum OperationMode mode)
 {
-	if (mode != recursive_addtoqueue && m_operationMode != recursive_download)
+	if (mode != recursive_addtoqueue && m_operationMode != recursive_download && mode != recursive_addtoqueue_flatten && m_operationMode != recursive_download_flatten)
 		return false;
 
 	m_operationMode = mode;
@@ -366,9 +373,18 @@ void CRecursiveOperation::LinkIsNotDir()
 	}
 
 	wxString local_file = dir.localDir;
-	if (local_file.Last() == CLocalFileSystem::path_separator)
-		local_file.RemoveLast();
-	m_pQueue->QueueFile(m_operationMode == recursive_addtoqueue, true, local_file, dir.subdir, dir.parent, *pServer, -1);
+	if (m_operationMode == recursive_addtoqueue_flatten || m_operationMode == recursive_download_flatten)
+	{
+		if (local_file.Last() != CLocalFileSystem::path_separator)
+			local_file += CLocalFileSystem::path_separator;
+		local_file += dir.subdir;
+	}
+	else
+	{
+		if (local_file.Last() == CLocalFileSystem::path_separator)
+			local_file.RemoveLast();
+	}
+	m_pQueue->QueueFile(m_operationMode == recursive_addtoqueue || m_operationMode == recursive_addtoqueue_flatten, true, local_file, dir.subdir, dir.parent, *pServer, -1);
 	m_pQueue->QueueFile_Finish(m_operationMode != recursive_addtoqueue);
 
 	NextOperation();

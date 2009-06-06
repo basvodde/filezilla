@@ -1477,8 +1477,13 @@ bool CQueueView::SetActive(bool active /*=true*/)
 		if (pState)
 		{
 			CRecursiveOperation* pRecursiveOperation = pState->GetRecursiveOperationHandler();
-			if (pRecursiveOperation && pRecursiveOperation->GetOperationMode() == CRecursiveOperation::recursive_download)
-				pRecursiveOperation->ChangeOperationMode(CRecursiveOperation::recursive_addtoqueue);
+			if (pRecursiveOperation)
+			{
+				if (pRecursiveOperation->GetOperationMode() == CRecursiveOperation::recursive_download)
+					pRecursiveOperation->ChangeOperationMode(CRecursiveOperation::recursive_addtoqueue);
+				if (pRecursiveOperation->GetOperationMode() == CRecursiveOperation::recursive_download_flatten)
+					pRecursiveOperation->ChangeOperationMode(CRecursiveOperation::recursive_addtoqueue_flatten);
+			}
 		}
 
 		UpdateStatusLinePositions();

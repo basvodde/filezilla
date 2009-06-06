@@ -19,6 +19,8 @@ public:
 		recursive_none,
 		recursive_download,
 		recursive_addtoqueue,
+		recursive_download_flatten,
+		recursive_addtoqueue_flatten,
 		recursive_delete,
 		recursive_chmod,
 		recursive_list
