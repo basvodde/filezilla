@@ -10,6 +10,21 @@ Legend:
     *nix: Unix (e.g BSD) and Unix-like systems (e.g. Linux)
     OS X: Apple Mac OS X
 
+3.2.5-rc1 (2009-06-06)
+
++ Remote file search
++ Add option to hide identical files to directory comparison
++ Remember SSH host keys for session duration if not trusting permanently
++ MSW: Display full UNC path on drive-mapped network shared
+- Use pkg-config to detect GnuTLS if pkg-config is available
+- Fix to auto-reconnect logic
+- Allow targetless OS.unix=slink facts in MLSD listings
+- Start additional transfers if possible after readding files to queue during queue processing
+- Fix name of SSH_AUTH_SOCK variable on SFTP page in settings dialog
+- Properly qoute path to fzputtygen
+- MSW: Fix problems if re-activating FileZilla window by clicking inside it if there is a changed edited file
+- Fix problem with permissions parsing for nonstandard chmod dialog
+
 3.2.4.1 (2009-04-27)
 
 - Allow empty fact values in MLSD listings as allowed by the specifications
