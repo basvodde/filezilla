@@ -2,9 +2,9 @@
 #define __LOCAL_PATH_H__
 
 // This class encapsulates local paths.
-// On Windows it uses the C:\foo\bar syntax and also supports
+// On Windows it uses the C:\foo\bar\ syntax and also supports
 // UNC paths.
-// On all other systems it uses /foo/bar/baz
+// On all other systems it uses /foo/bar/baz/
 
 class CLocalPath
 {
@@ -19,6 +19,7 @@ public:
 	CLocalPath(const wxString& path, wxString* file = 0);
 	bool SetPath(const wxString& path, wxString* file = 0);
 
+	// Always terminated by a separator
 	wxString GetPath() const { return m_path; }
 
 	bool empty() const;
