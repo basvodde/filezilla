@@ -6422,8 +6422,6 @@
       </object>
       <object class="sizeritem">
         <object class="wxFlexGridSizer">
-          <cols>3</cols>
-          <hgap>5</hgap>
           <object class="sizeritem">
             <object class="wxRadioButton" name="ID_MATCHALL">
               <label>Match all of the following</label>
@@ -6443,7 +6441,11 @@
               <value>0</value>
             </object>
           </object>
+          <cols>3</cols>
+          <hgap>5</hgap>
         </object>
+        <flag>wxLEFT|wxRIGHT</flag>
+        <border>5</border>
       </object>
       <object class="sizeritem">
         <object class="wxFlexGridSizer">
@@ -6559,7 +6561,7 @@
           </object>
           <object class="sizeritem">
             <object class="wxRadioButton" name="ID_PATHS_FLATTEN">
-              <label>&amp;Flatten remote paths, download directly into target dirctory</label>
+              <label>&amp;Flatten remote paths, download all contained files directly into target directory</label>
             </object>
           </object>
           <object class="spacer"/>
