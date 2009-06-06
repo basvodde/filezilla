@@ -153,10 +153,13 @@ void CFilterConditionsDialog::SetSelectionFromType(wxChoice* pChoice, t_filterTy
 	for (unsigned int i = 0; i < filter_type_map.size(); i++)
 	{
 		if (filter_type_map[i] == type)
+		{
 			pChoice->SetSelection(i);
+			return;
+		}
 	}
 
-	return pChoice->SetSelection(0);
+	 pChoice->SetSelection(0);
 }
 
 void CFilterConditionsDialog::OnMore(wxCommandEvent& event)

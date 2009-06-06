@@ -202,7 +202,7 @@ void CFilterDialog::SaveFilters()
 				wxFAIL_MSG(_T("Unhandled filter type"));
 				break;
 			}
-			AddTextElement(pCondition, "Type", condition.type);
+			AddTextElement(pCondition, "Type", type);
 			AddTextElement(pCondition, "Condition", condition.condition);
 			AddTextElement(pCondition, "Value", condition.strValue);
 		}
