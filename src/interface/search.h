@@ -36,6 +36,7 @@ protected:
 	bool m_searching;
 
 	CServerPath m_original_dir;
+	CLocalPath m_local_target;
 
 	void ProcessSelection(std::list<int> &selected_files, std::list<CServerPath> &selected_dirs);
 

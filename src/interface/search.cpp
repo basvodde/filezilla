@@ -587,6 +587,7 @@ bool CSearchDialog::Load()
 void CSearchDialog::Run()
 {
 	m_original_dir = m_pState->GetRemotePath();
+	m_local_target = m_pState->GetLocalDir();
 
 	m_pState->BlockHandlers(STATECHANGE_REMOTE_DIR);
 	m_pState->BlockHandlers(STATECHANGE_REMOTE_DIR_MODIFIED);
@@ -926,7 +927,7 @@ void CSearchDialog::OnDownload(wxCommandEvent& event)
 	}
 
 	CSearchDownloadDialog dlg;
-	if (!dlg.Run(this, m_pState->GetLocalDir().GetPath(), selected_files.size(), selected_dirs.size()))
+	if (!dlg.Run(this, m_local_target.GetPath(), selected_files.size(), selected_dirs.size()))
 		return;
 
 	wxTextCtrl *pText = XRCCTRL(dlg, "ID_LOCALPATH", wxTextCtrl);
@@ -937,6 +938,7 @@ void CSearchDialog::OnDownload(wxCommandEvent& event)
 		wxBell();
 		return;
 	}
+	m_local_target = path;
 
 	const CServer* pServer = m_pState->GetServer();
 	if (!pServer)
