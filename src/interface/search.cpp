@@ -560,15 +560,6 @@ bool CSearchDialog::Load()
 	if (!CreateListControl(filter_name | filter_size | filter_path))
 		return false;
 
-	CFilter filter;
-	CFilterCondition cond;
-	cond.condition = 0;
-	cond.type = filter_name;
-	filter.filters.push_back(cond);
-	Layout();
-	EditFilter(filter);
-	XRCCTRL(*this, "ID_CASE", wxCheckBox)->SetValue(filter.matchCase);
-
 	m_results = new CSearchDialogFileList(this, m_pState, 0);
 	ReplaceControl(XRCCTRL(*this, "ID_RESULTS", wxWindow), m_results);
 
@@ -580,6 +571,14 @@ bool CSearchDialog::Load()
 
 	m_pWindowStateManager = new CWindowStateManager(this);
 	m_pWindowStateManager->Restore(OPTION_SEARCH_SIZE, wxSize(750, 500));
+
+	CFilter filter;
+	CFilterCondition cond;
+	cond.condition = 0;
+	cond.type = filter_name;
+	filter.filters.push_back(cond);
+	EditFilter(filter);
+	XRCCTRL(*this, "ID_CASE", wxCheckBox)->SetValue(filter.matchCase);
 
 	return true;
 }
