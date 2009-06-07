@@ -572,6 +572,7 @@ bool CSearchDialog::Load()
 	m_pWindowStateManager = new CWindowStateManager(this);
 	m_pWindowStateManager->Restore(OPTION_SEARCH_SIZE, wxSize(750, 500));
 
+	Layout();
 	CFilter filter;
 	CFilterCondition cond;
 	cond.condition = 0;
