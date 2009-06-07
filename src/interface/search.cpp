@@ -696,13 +696,13 @@ void CSearchDialog::OnSearch(wxCommandEvent& event)
 	wxString error;
 	if (!ValidateFilter(error, true))
 	{
-		wxMessageBox(wxString::Format(_("Invalid filter: %s"), error.c_str()), _("Remote file search"), wxICON_EXCLAMATION);
+		wxMessageBox(wxString::Format(_("Invalid search conditions: %s"), error.c_str()), _("Remote file search"), wxICON_EXCLAMATION);
 		return;
 	}
 	m_search_filter = GetFilter();
 	if (!CFilterManager::CompileRegexes(m_search_filter))
 	{
-		wxMessageBox(_("Invalid regular expression in filter."), _("Remote file search"), wxICON_EXCLAMATION);
+		wxMessageBox(_("Invalid regular expression in search conditions."), _("Remote file search"), wxICON_EXCLAMATION);
 		return;
 	}
 	m_search_filter.matchCase = XRCCTRL(*this, "ID_CASE", wxCheckBox)->GetValue();
@@ -1012,7 +1012,7 @@ void CSearchDialog::OnDelete(wxCommandEvent& event)
 
 	if (selected_dirs.size() > 1)
 	{
-		wxMessageBox(_("Deleting multiple unrelated directories is not yet supported"), _("Deleting search results"), wxICON_EXCLAMATION);
+		wxMessageBox(_("Deleting multiple unrelated directories is not yet supported"), _("Deleting directories"), wxICON_EXCLAMATION);
 		return;
 	}
 
@@ -1028,7 +1028,7 @@ void CSearchDialog::OnDelete(wxCommandEvent& event)
 		question.Printf(_("Really delete %s and %s?"), files.c_str(), dirs.c_str());
 	}
 
-	if (wxMessageBox(question, _("Deleting search results"), wxICON_QUESTION | wxYES_NO) != wxYES)
+	if (wxMessageBox(question, _("Confirm deletion"), wxICON_QUESTION | wxYES_NO) != wxYES)
 		return;
 
 	for (std::list<int>::const_iterator iter = selected_files.begin(); iter != selected_files.end(); iter++)
