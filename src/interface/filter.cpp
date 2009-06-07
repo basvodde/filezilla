@@ -888,20 +888,31 @@ bool CFilterManager::FilenameFilteredByFilter(const CFilter& filter, const wxStr
 	return false;
 }
 
+bool CFilterManager::CompileRegexes(CFilter& filter)
+{
+	for (std::vector<CFilterCondition>::iterator iter = filter.filters.begin(); iter != filter.filters.end(); iter++)
+	{
+		CFilterCondition& condition = *iter;
+		if ((condition.type == filter_name || condition.type == filter_path) && condition.condition == 4)
+		{
+			condition.pRegEx = new wxRegEx(condition.strValue);
+			if (!condition.pRegEx->IsValid())
+			{
+				condition.pRegEx.clear();
+				return false;
+			}
+		}
+		else
+			condition.pRegEx.clear();
+	}
+
+	return true;
+}
+
 bool CFilterManager::CompileRegexes()
 {
 	for (unsigned int i = 0; i < m_globalFilters.size(); i++)
-	{
-		CFilter& filter = m_globalFilters[i];
-		for (std::vector<CFilterCondition>::iterator iter = filter.filters.begin(); iter != filter.filters.end(); iter++)
-		{
-			CFilterCondition& condition = *iter;
-			if ((condition.type == filter_name || condition.type == filter_path) && condition.condition == 4)
-				condition.pRegEx = new wxRegEx(condition.strValue);
-			else
-				condition.pRegEx.clear();
-		}
-	}
+		CompileRegexes(m_globalFilters[i]);
 	return true;
 }
 

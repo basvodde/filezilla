@@ -699,6 +699,11 @@ void CSearchDialog::OnSearch(wxCommandEvent& event)
 		return;
 	}
 	m_search_filter = GetFilter();
+	if (!CFilterManager::CompileRegexes(m_search_filter))
+	{
+		wxMessageBox(_("Invalid regular expression in filter."), _("Remote file search"), wxICON_EXCLAMATION);
+		return;
+	}
 	m_search_filter.matchCase = XRCCTRL(*this, "ID_CASE", wxCheckBox)->GetValue();
 
 	// Delete old results

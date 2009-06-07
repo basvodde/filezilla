@@ -83,6 +83,8 @@ public:
 
 	std::list<CFilter> GetActiveFilters(bool local);
 
+	static bool CompileRegexes(CFilter& filter);
+
 protected:
 	static bool CompileRegexes();
 
