@@ -107,6 +107,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_ICONIZE(CMainFrame::OnIconize)
 #endif
 	EVT_TOOL(XRCID("ID_TOOLBAR_FIND"), CMainFrame::OnSearch)
+	EVT_MENU(XRCID("ID_MENU_SERVER_SEARCH"), CMainFrame::OnSearch)
 END_EVENT_TABLE()
 
 class CMainFrameStateEventHandler : public CStateEventHandler
@@ -2677,6 +2678,7 @@ void CMainFrame::UpdateMenubarState()
 	m_pMenuBar->Enable(XRCID("ID_MENU_FILE_COPYSITEMANAGER"), pServer != 0);
 	m_pMenuBar->Enable(XRCID("ID_TOOLBAR_COMPARISON"), pServer != 0);
 	m_pMenuBar->Enable(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), pServer != 0);
+	m_pMenuBar->Enable(XRCID("ID_MENU_SERVER_SEARCH"), pServer && idle);
 
 	bool canReconnect;
 	if (pServer || !idle)
