@@ -1599,6 +1599,9 @@ void CRemoteListView::OnMenuDelete(wxCommandEvent& event)
 		return;
 	}
 
+	int count_dirs = 0;
+	int count_files = 0;
+
 	long item = -1;
 	while (true)
 	{
@@ -1611,9 +1614,33 @@ void CRemoteListView::OnMenuDelete(wxCommandEvent& event)
 			wxBell();
 			return;
 		}
+
+		int index = GetItemIndex(item);
+		if (index == -1)
+			continue;
+		if (m_fileData[index].flags == fill)
+			continue;
+
+		const CDirentry& entry = (*m_pDirectoryListing)[index];
+		if (entry.dir)
+			count_dirs++;
+		else
+			count_files++;
 	}
 
-	if (wxMessageBox(_("Really delete all selected files and/or directories?"), _("Confirmation needed"), wxICON_QUESTION | wxYES_NO, this) != wxYES)
+	wxString question;
+	if (!count_dirs)
+		question.Printf(wxPLURAL("Really delete %d file?", "Really delete %d files?", count_files), count_files);
+	else if (!count_files)
+		question.Printf(wxPLURAL("Really delete %d directory with its contents?", "Really delete %d directories with their contents?", count_dirs), count_dirs);
+	else
+	{
+		wxString files = wxString::Format(wxPLURAL("%d file", "%d files", count_files), count_files);
+		wxString dirs = wxString::Format(wxPLURAL("%d directory with its contents", "%d directories with their contents", count_dirs), count_dirs);
+		question.Printf(_("Really delete %s and %s?"), files.c_str(), dirs.c_str());
+	}
+
+	if (wxMessageBox(question, _("Confirmation needed"), wxICON_QUESTION | wxYES_NO, this) != wxYES)
 		return;
 
 	CRecursiveOperation* pRecursiveOperation = m_pState->GetRecursiveOperationHandler();
