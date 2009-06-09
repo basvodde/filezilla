@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla 3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-06-08 01:13+0200\n"
-"PO-Revision-Date: 2009-06-07 17:34+0200\n"
+"POT-Creation-Date: 2009-06-08 23:28+0200\n"
+"PO-Revision-Date: 2009-06-08 11:18+0200\n"
 "Last-Translator: Stamatis H. Stamatellos <ydatografida@gmail.com>\n"
 "Language-Team: Stamatis H. Stamatellos <ydatografida@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -47,6 +47,7 @@ msgid_plural "%d directories"
 msgstr[0] "%d φάκελος"
 msgstr[1] "%d φάκελοι"
 
+#: ../../locales/../src/interface/RemoteListView.cpp:1639
 #: ../../locales/../src/interface/search.cpp:780
 #: ../../locales/../src/interface/search.cpp:1027
 #, c-format
@@ -57,6 +58,7 @@ msgstr[1] "οι φάκελοι %d καθώς και τα περιεχόμενα 
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:52
 #: ../../locales/../src/interface/filelist_statusbar.cpp:75
+#: ../../locales/../src/interface/RemoteListView.cpp:1638
 #: ../../locales/../src/interface/search.cpp:779
 #: ../../locales/../src/interface/search.cpp:1026
 #, c-format
@@ -770,9 +772,8 @@ msgid "&Search"
 msgstr "&Αναζήτηση"
 
 #: resources.h:724
-#, fuzzy
 msgid "&Search remote files..."
-msgstr "Αναζήτηση αρχείων που:"
+msgstr "&Αναζήτηση απομακρυσμένων αρχείων..."
 
 #: resources.h:197
 msgid "&Select language:"
@@ -1080,11 +1081,11 @@ msgstr ""
 "s';"
 
 #: ../../locales/../src/interface/LocalListView.cpp:2313
-#: ../../locales/../src/interface/RemoteListView.cpp:2649
+#: ../../locales/../src/interface/RemoteListView.cpp:2676
 msgid "A file with that name is already being transferred."
 msgstr "Ένα αρχείο με αυτό το όνομα έχει ήδη μεταφερθεί."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2654
+#: ../../locales/../src/interface/RemoteListView.cpp:2681
 msgid ""
 "A file with that name is still being edited. Please close it and try again."
 msgstr ""
@@ -1586,7 +1587,7 @@ msgstr ""
 "Αδυναμία σύγκρισης φακέλων, λόγω ενεργοποίησης διαφορετικών φίλτρων στους "
 "τοπικούς και στους απομακρυσμένους φακέλους."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2749
+#: ../../locales/../src/interface/RemoteListView.cpp:2776
 msgid "Cannot compare directories, not connected to a server."
 msgstr ""
 "Αδύνατη η σύγκριση των φακέλων,  δεν υπάρχει σύνδεση με τον εξυπηρετητή."
@@ -1597,8 +1598,8 @@ msgstr "Αδυναμία δημιουργίας νέου φίλτρου"
 
 #: ../../locales/../src/interface/LocalListView.cpp:2295
 #: ../../locales/../src/interface/LocalListView.cpp:2426
-#: ../../locales/../src/interface/RemoteListView.cpp:2583
-#: ../../locales/../src/interface/RemoteListView.cpp:2629
+#: ../../locales/../src/interface/RemoteListView.cpp:2610
+#: ../../locales/../src/interface/RemoteListView.cpp:2656
 msgid "Cannot edit file"
 msgstr "Αδύνατη η επεξεργασία του αρχείου"
 
@@ -1645,7 +1646,7 @@ msgstr "Αδυναμία φόρτωσης γραμμής εργαλείων απ
 msgid "Cannot rename entry"
 msgstr "Δε μπορεί να μετονομαστεί η είσοδος"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1825
+#: ../../locales/../src/interface/RemoteListView.cpp:1852
 msgid "Cannot rename file"
 msgstr "Το αρχείο δε μπορεί να μετονομαστεί"
 
@@ -1669,7 +1670,7 @@ msgid "Cannot show dialog"
 msgstr "Ο διάλογος δε μπορεί να εμφανιστεί"
 
 #: ../../locales/../src/interface/LocalListView.cpp:2313
-#: ../../locales/../src/interface/RemoteListView.cpp:2649
+#: ../../locales/../src/interface/RemoteListView.cpp:2676
 msgid "Cannot view/edit selected file"
 msgstr "Το επιλεγμένο αρχείο δε μπορεί να προβληθεί/επεξεργαστεί"
 
@@ -1934,15 +1935,14 @@ msgid "Configure port range"
 msgstr "Ρύθμιση εύρους θυρών"
 
 #: ../../locales/../src/interface/search.cpp:1031
-#, fuzzy
 msgid "Confirm deletion"
-msgstr "Χρειάζεται επιβεβαίωση"
+msgstr "Επιβεβαίωση διαγραφής"
 
 #: ../../locales/../src/engine/local_filesys.cpp:129
 #: ../../locales/../src/interface/LocalListView.cpp:2266
 #: ../../locales/../src/interface/LocalListView.cpp:2386
-#: ../../locales/../src/interface/RemoteListView.cpp:1616
-#: ../../locales/../src/interface/RemoteListView.cpp:2600
+#: ../../locales/../src/interface/RemoteListView.cpp:1643
+#: ../../locales/../src/interface/RemoteListView.cpp:2627
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1119
 msgid "Confirmation needed"
 msgstr "Χρειάζεται επιβεβαίωση"
@@ -2129,7 +2129,7 @@ msgstr "Αδυναμία μετατροπής εντολής στην κωδικ
 msgid "Could not convert private key"
 msgstr "Αδυναμία μετατροπής ιδιωτικού κλειδιού"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:3054
+#: ../../locales/../src/interface/RemoteListView.cpp:3081
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1448
 msgid "Could not copy URLs"
 msgstr "Αδυναμία αντιγραφής των URLs"
@@ -2138,7 +2138,7 @@ msgstr "Αδυναμία αντιγραφής των URLs"
 msgid "Could not copy data"
 msgstr "Αδυναμία αντιγραφής δεδομένων"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2475
+#: ../../locales/../src/interface/RemoteListView.cpp:2502
 #: ../../locales/../src/interface/RemoteTreeView.cpp:893
 msgid ""
 "Could not determine the target of the Drag&Drop operation.\n"
@@ -2178,7 +2178,7 @@ msgstr "Αδυναμία εύρεσης της πλήρους απομακρυσ
 msgid "Could not get reply from fzputtygen."
 msgstr "Αδυναμία λήψης του κατάλληλου τύπου από το fzputtygen."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2583
+#: ../../locales/../src/interface/RemoteListView.cpp:2610
 msgid "Could not get temporary directory to download file into."
 msgstr "Δε βρέθηκε ο προσωρινός φάκελος για να αποθηκευτεί εκεί το αρχείο."
 
@@ -2237,7 +2237,7 @@ msgstr ""
 "Ο συγχρονισμός περιήγησης έχει απενεργοποιηθεί."
 
 #: ../../locales/../src/interface/aboutdialog.cpp:143
-#: ../../locales/../src/interface/RemoteListView.cpp:3054
+#: ../../locales/../src/interface/RemoteListView.cpp:3081
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1448
 msgid "Could not open clipboard"
 msgstr "Αδυναμία ανοίγματος του προχείρου"
@@ -2459,7 +2459,7 @@ msgid "DOS-like with virtual paths"
 msgstr "Σαν DOS με εικονικές διαδρομές"
 
 #: ../../locales/../src/interface/LocalListView.cpp:2300
-#: ../../locales/../src/interface/RemoteListView.cpp:2634
+#: ../../locales/../src/interface/RemoteListView.cpp:2661
 msgid "Dangerous filetype"
 msgstr "Επικίνδυνος τύπος αρχείου"
 
@@ -2575,9 +2575,8 @@ msgid "Delete selected files and directories"
 msgstr "Διαγραφή επιλεγμένων αρχείων και φακέλων"
 
 #: ../../locales/../src/interface/search.cpp:1015
-#, fuzzy
 msgid "Deleting directories"
-msgstr "Δημιουργία φακέλου"
+msgstr "Διαγραφή φακέλων"
 
 #: ../../locales/../src/interface/search.cpp:1015
 msgid "Deleting multiple unrelated directories is not yet supported"
@@ -2630,7 +2629,7 @@ msgstr ""
 msgid "Directory listing aborted by user"
 msgstr "Λίστα φακέλου ακυρώθηκε από τον χρήστη"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2277
+#: ../../locales/../src/interface/RemoteListView.cpp:2304
 msgid "Directory listing failed"
 msgstr "Λίστα φακέλου απέτυχε"
 
@@ -2877,7 +2876,7 @@ msgstr "Κενή εντολή"
 msgid "Empty command."
 msgstr "Κενή εντολή."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2279
+#: ../../locales/../src/interface/RemoteListView.cpp:2306
 msgid "Empty directory listing"
 msgstr "Άδειασμα λίστας φακέλου"
 
@@ -3354,7 +3353,7 @@ msgstr "Το αρχείο δεν περιέχει δεδομένα για εισ
 msgid "File editing"
 msgstr "Επεξεργασία αρχείου"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1840
+#: ../../locales/../src/interface/RemoteListView.cpp:1867
 msgid "File exists"
 msgstr "Το αρχείο υπάρχει"
 
@@ -3449,7 +3448,7 @@ msgid "Filename cannot be constructed for directory %s and filename %s"
 msgstr ""
 "Δε μπορεί να κατασκευαστεί όνομα αρχείου για τον φάκελο %s  και το αρχείο %s"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1825
+#: ../../locales/../src/interface/RemoteListView.cpp:1852
 msgid "Filename invalid"
 msgstr "Λανθασμένο όνομα αρχείου"
 
@@ -4021,18 +4020,17 @@ msgstr ""
 "πιστοποίηση (SSL explicit)."
 
 #: ../../locales/../src/interface/search.cpp:705
-#, fuzzy
 msgid "Invalid regular expression in search conditions."
-msgstr "Μη έγκυρη έκφραση στο φίλτρο."
+msgstr "Μη έγκυρη έκφραση στις  συνθήκες αναζήτησης."
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:567
 msgid "Invalid response code"
 msgstr "Μη έγκυρος κωδικός απάντησης"
 
 #: ../../locales/../src/interface/search.cpp:699
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid search conditions: %s"
-msgstr "Μη έγκυρο μέγεθος στην συνθήκη"
+msgstr "Μη έγκυρες συνθήκες αναζήτησης: %s"
 
 #: ../../locales/../src/interface/sitemanager.cpp:2512
 #: ../../locales/../src/interface/sitemanager.cpp:2532
@@ -4489,7 +4487,7 @@ msgstr ""
 "Δε μπορούν όλα τα στοιχεία να μπουν στη λίστα αναμονής για να προβληθούν/"
 "επεξεργασθούν."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2275
+#: ../../locales/../src/interface/RemoteListView.cpp:2302
 msgid "Not connected to any server"
 msgstr "Δε συνδέθηκε με κανέναν εξυπηρετητή"
 
@@ -4577,7 +4575,7 @@ msgstr "Ανοιγμένα ως:"
 #: ../../locales/../src/interface/LocalListView.cpp:2333
 #: ../../locales/../src/interface/LocalListView.cpp:2420
 #: ../../locales/../src/interface/LocalListView.cpp:2433
-#: ../../locales/../src/interface/RemoteListView.cpp:2622
+#: ../../locales/../src/interface/RemoteListView.cpp:2649
 msgid "Opening failed"
 msgstr "Αποτυχία ανοίγματος"
 
@@ -5222,6 +5220,7 @@ msgstr "Μόνο-Ανάγνωση"
 msgid "Really cancel current operation?"
 msgstr "Ακύρωση τρέχουσας λειτουργίας;"
 
+#: ../../locales/../src/interface/RemoteListView.cpp:1635
 #: ../../locales/../src/interface/search.cpp:1023
 #, c-format
 msgid "Really delete %d directory with its contents?"
@@ -5229,6 +5228,7 @@ msgid_plural "Really delete %d directories with their contents?"
 msgstr[0] "Να διαγραφεί ο φάκελος %d, καθώς και τα περιεχόμενα του;"
 msgstr[1] "Να διαγραφούν οι φάκελοι %d, καθώς και τα περιεχόμενα τους;"
 
+#: ../../locales/../src/interface/RemoteListView.cpp:1633
 #: ../../locales/../src/interface/search.cpp:1021
 #, c-format
 msgid "Really delete %d file?"
@@ -5236,13 +5236,13 @@ msgid_plural "Really delete %d files?"
 msgstr[0] "Να διαγραφεί το αρχείο %d; "
 msgstr[1] "Να διαγραφούν τα αρχεία %d;"
 
+#: ../../locales/../src/interface/RemoteListView.cpp:1640
 #: ../../locales/../src/interface/search.cpp:1028
 #, c-format
 msgid "Really delete %s and %s?"
 msgstr "Να διαγραφεί το %s και το %s;"
 
 #: ../../locales/../src/engine/local_filesys.cpp:129
-#: ../../locales/../src/interface/RemoteListView.cpp:1616
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1119
 msgid "Really delete all selected files and/or directories?"
 msgstr "Διαγραφή όλων το επιλεγμένων αρχείων και/ή φακέλων;"
@@ -5490,9 +5490,8 @@ msgid "Search for files that:"
 msgstr "Αναζήτηση αρχείων που:"
 
 #: resources.h:725
-#, fuzzy
 msgid "Search server for files"
-msgstr "Αναζήτηση αρχείων που:"
+msgstr "Αναζήτηση αρχείων στον εξυπηρετητή"
 
 #: ../../locales/../src/interface/statusbar.cpp:486
 msgid "Security information"
@@ -5666,7 +5665,7 @@ msgstr "Ο επιλεγμένος επεξεργαστής δεν υπάρχει
 msgid "Selected file already being edited"
 msgstr "Το επιλεγμένο αρχείο ήδη επεξεργάζεται"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2654
+#: ../../locales/../src/interface/RemoteListView.cpp:2681
 msgid "Selected file already opened."
 msgstr "Το επιλεγμένο αρχείο είναι ήδη ανοιχτό."
 
@@ -5674,7 +5673,7 @@ msgstr "Το επιλεγμένο αρχείο είναι ήδη ανοιχτό.
 msgid "Selected file is already loaded"
 msgstr "Το επιλεγμένο αρχείο έχει ήδη φορτωθεί"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2682
+#: ../../locales/../src/interface/RemoteListView.cpp:2709
 msgid "Selected file still being edited"
 msgstr "Το επιλεγμένο αρχείο ακόμα επεξεργάζεται"
 
@@ -6088,7 +6087,7 @@ msgstr "Το αρχείο υπάρχει ήδη"
 msgid "Target file:"
 msgstr "Απομακρυσμένο αρχείο:"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1840
+#: ../../locales/../src/interface/RemoteListView.cpp:1867
 msgid "Target filename already exists, really continue?"
 msgstr "Το όνομα του αρχείου υπάρχει ήδη, θέλετε να συνεχίσετε;"
 
@@ -6178,7 +6177,7 @@ msgstr ""
 
 #: ../../locales/../src/interface/LocalListView.cpp:2294
 #: ../../locales/../src/interface/LocalListView.cpp:2425
-#: ../../locales/../src/interface/RemoteListView.cpp:2628
+#: ../../locales/../src/interface/RemoteListView.cpp:2655
 #, c-format
 msgid ""
 "The file '%s' cannot be opened:\n"
@@ -6201,7 +6200,7 @@ msgstr "Το αρχείο '%s' δε μπορεί να φορτωθεί."
 
 #: ../../locales/../src/interface/LocalListView.cpp:2288
 #: ../../locales/../src/interface/LocalListView.cpp:2420
-#: ../../locales/../src/interface/RemoteListView.cpp:2622
+#: ../../locales/../src/interface/RemoteListView.cpp:2649
 #, c-format
 msgid ""
 "The file '%s' could not be opened:\n"
@@ -6366,7 +6365,7 @@ msgstr ""
 msgid "The selected file is already being edited:"
 msgstr "Το επιλεγμένο αρχείο ήδη επεξεργάζεται:"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2682
+#: ../../locales/../src/interface/RemoteListView.cpp:2709
 msgid ""
 "The selected file is still opened in some other program, please close it."
 msgstr ""
@@ -6374,7 +6373,7 @@ msgstr ""
 "κλείστε το."
 
 #: ../../locales/../src/interface/LocalListView.cpp:2300
-#: ../../locales/../src/interface/RemoteListView.cpp:2634
+#: ../../locales/../src/interface/RemoteListView.cpp:2661
 msgid ""
 "The selected file would be executed directly.\n"
 "This can be dangerous and damage your system.\n"
@@ -7108,7 +7107,7 @@ msgid "You did not enter a new name for the file. Overwrite the file instead?"
 msgstr "Δε δώσατε νέο όνομα στο αρχείο. Αντικατάσταση του αρχείου;"
 
 #: ../../locales/../src/interface/LocalListView.cpp:2267
-#: ../../locales/../src/interface/RemoteListView.cpp:2601
+#: ../../locales/../src/interface/RemoteListView.cpp:2628
 msgid ""
 "You have selected more than 10 files for editing, do you really want to "
 "continue?"
