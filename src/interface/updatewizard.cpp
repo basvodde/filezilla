@@ -48,8 +48,8 @@ CUpdateWizard::CUpdateWizard(wxWindow* pParent)
 	m_urlFile += osVersion;
 #endif
 
-	m_statusTimer.SetOwner(this, 0);
-	m_autoCheckTimer.SetOwner(this, 1);
+	m_statusTimer.SetOwner(this);
+	m_autoCheckTimer.SetOwner(this);
 
 	m_autoUpdateCheckRunning = false;
 
@@ -642,7 +642,7 @@ void CUpdateWizard::ParseData()
 
 void CUpdateWizard::OnTimer(wxTimerEvent& event)
 {
-	if (!event.GetId())
+	if (event.GetId() == m_statusTimer.GetId())
 	{
 		bool changed;
 		CTransferStatus status;
