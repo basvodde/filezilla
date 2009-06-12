@@ -68,8 +68,18 @@ protected:
 		wxString restrict;
 
 		bool second_try;
-		bool link;
+
+		// 0 = not a link
+		// 1 = link, added by class during the operation
+		// 2 = link, added by user of class
+		int link;
+
+		// Symlink target might be outside actual start dir. Yet
+		// sometimes user wants to download symlink target contents
+		CServerPath start_dir;
 	};
+
+	bool BelowRecursionRoot(const CServerPath& path, CNewDir &dir);
 
 	CServerPath m_startDir;
 	CServerPath m_finalDir;

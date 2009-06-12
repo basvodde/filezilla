@@ -10,7 +10,7 @@ CRecursiveOperation::CNewDir::CNewDir()
 {
 	recurse = true;
 	second_try = false;
-	link = false;
+	link = 0;
 	doVisit = true;
 }
 
@@ -84,7 +84,7 @@ void CRecursiveOperation::AddDirectoryToVisit(const CServerPath& path, const wxS
 		dirToVisit.localDir += CLocalFileSystem::path_separator;
 	dirToVisit.parent = path;
 	dirToVisit.subdir = subdir;
-	dirToVisit.link = is_link;
+	dirToVisit.link = is_link ? 2 : 0;
 	m_dirsToVisit.push_back(dirToVisit);
 }
 
@@ -122,6 +122,33 @@ bool CRecursiveOperation::NextOperation()
 	return false;
 }
 
+bool CRecursiveOperation::BelowRecursionRoot(const CServerPath& path, CNewDir &dir)
+{
+	if (!dir.start_dir.IsEmpty())
+	{
+		if (path.IsSubdirOf(dir.start_dir, false))
+			return true;
+		else
+			return false;
+	}
+
+	if (path.IsSubdirOf(m_startDir, false))
+		return true;
+
+	// In some cases (chmod from tree for example) it is neccessary to list the
+	// parent first
+	if (path == m_startDir && m_allowParent)
+		return true;
+
+	if (dir.link == 2)
+	{
+		dir.start_dir = path;
+		return true;
+	}
+
+	return false;
+}
+
 void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDirectoryListing)
 {
 	if (!pDirectoryListing)
@@ -151,15 +178,10 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 	CNewDir dir = m_dirsToVisit.front();
 	m_dirsToVisit.pop_front();
 
-	if (!pDirectoryListing->path.IsSubdirOf(m_startDir, false))
+	if (!BelowRecursionRoot(pDirectoryListing->path, dir))
 	{
-		// In some cases (chmod from tree for example) it is neccessary to list the
-		// parent first
-		if (pDirectoryListing->path != m_startDir || !m_allowParent)
-		{
-			NextOperation();
-			return;
-		}
+		NextOperation();
+		return;
 	}
 
 	if (m_operationMode == recursive_delete && dir.doVisit && dir.subdir != _T(""))
@@ -233,6 +255,7 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 				dirToVisit.parent = pDirectoryListing->path;
 				dirToVisit.subdir = entry.name;
 				dirToVisit.localDir = dir.localDir;
+				dirToVisit.start_dir = dir.start_dir;
 				
 				if (m_operationMode != recursive_addtoqueue_flatten && m_operationMode != recursive_download_flatten)
 				{
@@ -240,7 +263,7 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 				}
 				if (entry.link)
 				{
-					dirToVisit.link = true;
+					dirToVisit.link = 1;
 					dirToVisit.recurse = false;
 				}
 				m_dirsToVisit.push_front(dirToVisit);
