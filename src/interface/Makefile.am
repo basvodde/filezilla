@@ -94,6 +94,7 @@ filezilla_SOURCES = aboutdialog.cpp \
 		verifyhostkeydialog.cpp \
 		view.cpp \
 		viewheader.cpp \
+		volume_enumerator.cpp \
 		window_state_manager.cpp \
 		wrapengine.cpp \
 		xh_toolb_ex.cpp \
@@ -189,6 +190,7 @@ noinst_HEADERS = aboutdialog.h \
 		 verifyhostkeydialog.h \
 		 view.h \
 		 viewheader.h \
+		 volume_enumerator.h \
 		 window_state_manager.h \
 		 wrapengine.h \
 		 xh_toolb_ex.h \

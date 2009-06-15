@@ -6,6 +6,9 @@
 
 class CQueueView;
 class CLocalListViewDropTarget;
+#ifdef __WXMSW__
+class CVolumeDescriptionEnumeratorThread;
+#endif
 
 class CLocalFileData : public CGenericFileData
 {
@@ -98,6 +101,10 @@ protected:
 	void OnMenuOpen(wxCommandEvent& event);
 	void OnMenuEdit(wxCommandEvent& event);
 	void OnMenuEnter(wxCommandEvent& event);
+#ifdef __WXMSW__
+	void OnVolumesEnumerated(wxCommandEvent& event);
+	CVolumeDescriptionEnumeratorThread* m_pVolumeEnumeratorThread;
+#endif
 };
 
 #endif

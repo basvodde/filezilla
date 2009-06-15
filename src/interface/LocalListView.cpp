@@ -13,6 +13,7 @@
 #ifdef __WXMSW__
 #include "lm.h"
 #include <wx/msw/registry.h>
+#include "volume_enumerator.h"
 #else
 #include <langinfo.h>
 #endif
@@ -243,6 +244,10 @@ BEGIN_EVENT_TABLE(CLocalListView, CFileListCtrl<CLocalFileData>)
 	EVT_MENU(XRCID("ID_OPEN"), CLocalListView::OnMenuOpen)
 	EVT_MENU(XRCID("ID_EDIT"), CLocalListView::OnMenuEdit)
 	EVT_MENU(XRCID("ID_ENTER"), CLocalListView::OnMenuEnter)
+#ifdef __WXMSW__
+	EVT_COMMAND(-1, fzEVT_VOLUMESENUMERATED, CLocalListView::OnVolumesEnumerated)
+	EVT_COMMAND(-1, fzEVT_VOLUMEENUMERATED, CLocalListView::OnVolumesEnumerated)
+#endif
 END_EVENT_TABLE()
 
 CLocalListView::CLocalListView(wxWindow* pParent, CState *pState, CQueueView *pQueue)
@@ -268,6 +273,8 @@ CLocalListView::CLocalListView(wxWindow* pParent, CState *pState, CQueueView *pQ
 	SetImageList(GetSystemImageList(), wxIMAGE_LIST_SMALL);
 
 #ifdef __WXMSW__
+	m_pVolumeEnumeratorThread = 0;
+
 	InitHeaderImageList();
 #endif
 
@@ -282,6 +289,10 @@ CLocalListView::~CLocalListView()
 {
 	wxString str = wxString::Format(_T("%d %d"), m_sortDirection, m_sortColumn);
 	COptions::Get()->SetOption(OPTION_LOCALFILELIST_SORTORDER, str);
+
+#ifdef __WXMSW__
+	delete m_pVolumeEnumeratorThread;
+#endif
 }
 
 bool CLocalListView::DisplayDir(wxString dirname)
@@ -841,7 +852,7 @@ void CLocalListView::DisplayDrives()
 
 	int count = m_fileData.size();
 	int drive_count = 0;
-	while(*pDrive)
+	while (*pDrive)
 	{
 		// Check if drive should be hidden by default
 		if (pDrive[0] != 0 && pDrive[1] == ':')
@@ -869,30 +880,7 @@ void CLocalListView::DisplayDrives()
 		CLocalFileData data;
 		data.flags = normal;
 		data.name = path;
-
-		// Check if it is a network share
-		wxChar share_name[512];
-		DWORD dwSize = 511;
-		if (!WNetGetConnection(path, share_name, &dwSize))
-		{
-			data.label = data.name + _T(" (");
-			data.label += share_name;
-			data.label += _T(")");
-		}
-		else
-		{
-			// Get the label of the drive
-			wxChar* pVolumeName = new wxChar[501];
-			int oldErrorMode = SetErrorMode(SEM_FAILCRITICALERRORS);
-			BOOL res = GetVolumeInformation(pDrive, pVolumeName, 500, 0, 0, 0, 0, 0);
-			SetErrorMode(oldErrorMode);
-			if (res && pVolumeName[0])
-				data.label = data.name + _T(" (") + pVolumeName + _T(")");
-			else
-				data.label = data.name;
-			delete [] pVolumeName;
-		}
-
+		data.label = data.name;
 		data.dir = true;
 		data.icon = -2;
 		data.size = -1;
@@ -908,6 +896,16 @@ void CLocalListView::DisplayDrives()
 
 	if (m_pFilelistStatusBar)
 		m_pFilelistStatusBar->SetDirectoryContents(0, drive_count, 0, false, 0);
+
+	if (!m_pVolumeEnumeratorThread)
+	{
+		m_pVolumeEnumeratorThread = new CVolumeDescriptionEnumeratorThread(this);
+		if (m_pVolumeEnumeratorThread->Failed())
+		{
+			delete m_pVolumeEnumeratorThread;
+			m_pVolumeEnumeratorThread = 0;
+		}
+	}
 }
 
 void CLocalListView::DisplayShares(wxString computer)
@@ -2443,3 +2441,44 @@ wxLongLong CLocalListView::ItemGetSize(int index) const
 {
 	return m_fileData[index].size;
 }
+
+#ifdef __WXMSW__
+
+void CLocalListView::OnVolumesEnumerated(wxCommandEvent& event)
+{
+	if (!m_pVolumeEnumeratorThread)
+		return;
+
+	std::list<CVolumeDescriptionEnumeratorThread::t_VolumeInfo> volumeInfo;
+	volumeInfo = m_pVolumeEnumeratorThread->GetVolumes();
+
+	if (event.GetEventType() == fzEVT_VOLUMESENUMERATED)
+	{
+		delete m_pVolumeEnumeratorThread;
+		m_pVolumeEnumeratorThread = 0;
+	}
+
+	if (m_dir != _T("\\"))
+		return;
+
+	for (std::list<CVolumeDescriptionEnumeratorThread::t_VolumeInfo>::const_iterator iter = volumeInfo.begin(); iter != volumeInfo.end(); iter++)
+	{
+		wxString drive = iter->volume;
+
+		unsigned int item, index;
+		for (item = 1; item < m_indexMapping.size(); item++)
+		{
+			index = m_indexMapping[item];
+			if (m_fileData[index].name == drive || m_fileData[index].name.Left(drive.Len() + 1) == drive + _T(" "))
+				break;
+		}
+		if (item == m_indexMapping.size())
+			continue;
+
+		m_fileData[index].label = drive + _T(" (") + iter->volumeName + _T(")");
+		
+		RefreshItem(item);
+	}
+}
+
+#endif
