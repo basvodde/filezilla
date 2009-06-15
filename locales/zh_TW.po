@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-06-08 01:13+0200\n"
-"PO-Revision-Date: 2009-06-07 21:56+0800\n"
+"POT-Creation-Date: 2009-06-15 17:12+0200\n"
+"PO-Revision-Date: 2009-06-09 23:46+0800\n"
 "Last-Translator: Kene Lin <kenelin@gmail.com>\n"
 "Language-Team: milo <milo.tw@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -38,6 +38,7 @@ msgid "%d directory"
 msgid_plural "%d directories"
 msgstr[0] "%d 個目錄"
 
+#: ../../locales/../src/interface/RemoteListView.cpp:1639
 #: ../../locales/../src/interface/search.cpp:780
 #: ../../locales/../src/interface/search.cpp:1027
 #, c-format
@@ -47,6 +48,7 @@ msgstr[0] "%d 目錄與其內容"
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:52
 #: ../../locales/../src/interface/filelist_statusbar.cpp:75
+#: ../../locales/../src/interface/RemoteListView.cpp:1638
 #: ../../locales/../src/interface/search.cpp:779
 #: ../../locales/../src/interface/search.cpp:1026
 #, c-format
@@ -105,8 +107,8 @@ msgstr "%s與 %s. 總共大小: %s"
 msgid "%s and %s. Total size: At least %s"
 msgstr "%s與 %s. 總共大小: 至少 %s"
 
-#: ../../locales/../src/interface/LocalListView.cpp:483
-#: ../../locales/../src/interface/LocalListView.cpp:500
+#: ../../locales/../src/interface/LocalListView.cpp:494
+#: ../../locales/../src/interface/LocalListView.cpp:511
 #, c-format
 msgid "%s byte"
 msgid_plural "%s bytes"
@@ -750,9 +752,8 @@ msgid "&Search"
 msgstr "搜尋(&S)"
 
 #: resources.h:724
-#, fuzzy
 msgid "&Search remote files..."
-msgstr "搜尋檔案關於:"
+msgstr "搜尋遠端檔案(&S)..."
 
 #: resources.h:197
 msgid "&Select language:"
@@ -1045,18 +1046,18 @@ msgstr ""
 msgid "A file previously opened has been changed."
 msgstr "先前開啟的檔案已被更動."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2317
+#: ../../locales/../src/interface/LocalListView.cpp:2315
 #, c-format
 msgid ""
 "A file with that name is already being edited. Do you want to reopen '%s'?"
 msgstr "該名稱之檔案已被編輯. 您要重新開啟 '%s' 嗎?"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2313
-#: ../../locales/../src/interface/RemoteListView.cpp:2649
+#: ../../locales/../src/interface/LocalListView.cpp:2311
+#: ../../locales/../src/interface/RemoteListView.cpp:2676
 msgid "A file with that name is already being transferred."
 msgstr "該名稱之檔案已傳送."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2654
+#: ../../locales/../src/interface/RemoteListView.cpp:2681
 msgid ""
 "A file with that name is still being edited. Please close it and try again."
 msgstr "該名稱之檔案依舊在編輯. 請關閉再試試看."
@@ -1395,7 +1396,7 @@ msgstr "自動更新檢查"
 msgid "Available sizes"
 msgstr "可用大小"
 
-#: ../../locales/../src/interface/LocalListView.cpp:617
+#: ../../locales/../src/interface/LocalListView.cpp:628
 #: ../../locales/../src/interface/statusbar.cpp:355
 msgid "B <Unit symbol for bytes. Only translate first letter>"
 msgstr "B <Bytes 的單位符號. 只翻譯第一個字母>"
@@ -1531,7 +1532,7 @@ msgid ""
 "directories are enabled"
 msgstr "無法比對目錄, 本地與遠端目錄啟用不同的篩選器"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2749
+#: ../../locales/../src/interface/RemoteListView.cpp:2776
 msgid "Cannot compare directories, not connected to a server."
 msgstr "無法比對目錄, 未連線到伺服器."
 
@@ -1539,18 +1540,18 @@ msgstr "無法比對目錄, 未連線到伺服器."
 msgid "Cannot create new filter"
 msgstr "無法建立新的篩選器"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2295
-#: ../../locales/../src/interface/LocalListView.cpp:2426
-#: ../../locales/../src/interface/RemoteListView.cpp:2583
-#: ../../locales/../src/interface/RemoteListView.cpp:2629
+#: ../../locales/../src/interface/LocalListView.cpp:2293
+#: ../../locales/../src/interface/LocalListView.cpp:2424
+#: ../../locales/../src/interface/RemoteListView.cpp:2610
+#: ../../locales/../src/interface/RemoteListView.cpp:2656
 msgid "Cannot edit file"
 msgstr "無法編輯檔案"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2215
+#: ../../locales/../src/interface/LocalListView.cpp:2213
 msgid "Cannot edit file, not connected to any server."
 msgstr "無法編輯檔案, 未連線到任何伺服器."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2223
+#: ../../locales/../src/interface/LocalListView.cpp:2221
 msgid "Cannot edit file, remote path unknown."
 msgstr "無法編輯檔案, 未知的遠端路徑."
 
@@ -1586,7 +1587,7 @@ msgstr "無法從資源檔裡載入工具列"
 msgid "Cannot rename entry"
 msgstr "無法更名欄位"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1825
+#: ../../locales/../src/interface/RemoteListView.cpp:1852
 msgid "Cannot rename file"
 msgstr "無法更名檔案"
 
@@ -1609,8 +1610,8 @@ msgstr "無法設定檔案型態關聯"
 msgid "Cannot show dialog"
 msgstr "無法顯示對話框"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2313
-#: ../../locales/../src/interface/RemoteListView.cpp:2649
+#: ../../locales/../src/interface/LocalListView.cpp:2311
+#: ../../locales/../src/interface/RemoteListView.cpp:2676
 msgid "Cannot view/edit selected file"
 msgstr "無法檢視/編輯所選的檔案"
 
@@ -1871,15 +1872,14 @@ msgid "Configure port range"
 msgstr "配置連接埠範圍"
 
 #: ../../locales/../src/interface/search.cpp:1031
-#, fuzzy
 msgid "Confirm deletion"
-msgstr "需要確認"
+msgstr "確認刪除"
 
 #: ../../locales/../src/engine/local_filesys.cpp:129
-#: ../../locales/../src/interface/LocalListView.cpp:2266
-#: ../../locales/../src/interface/LocalListView.cpp:2386
-#: ../../locales/../src/interface/RemoteListView.cpp:1616
-#: ../../locales/../src/interface/RemoteListView.cpp:2600
+#: ../../locales/../src/interface/LocalListView.cpp:2264
+#: ../../locales/../src/interface/LocalListView.cpp:2384
+#: ../../locales/../src/interface/RemoteListView.cpp:1643
+#: ../../locales/../src/interface/RemoteListView.cpp:2627
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1119
 msgid "Confirmation needed"
 msgstr "需要確認"
@@ -2065,7 +2065,7 @@ msgstr "無法轉換指令成伺服器編碼"
 msgid "Could not convert private key"
 msgstr "無法轉換私鑰"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:3054
+#: ../../locales/../src/interface/RemoteListView.cpp:3081
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1448
 msgid "Could not copy URLs"
 msgstr "無法複製網址"
@@ -2074,7 +2074,7 @@ msgstr "無法複製網址"
 msgid "Could not copy data"
 msgstr "無法複製資料"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2475
+#: ../../locales/../src/interface/RemoteListView.cpp:2502
 #: ../../locales/../src/interface/RemoteTreeView.cpp:893
 msgid ""
 "Could not determine the target of the Drag&Drop operation.\n"
@@ -2112,7 +2112,7 @@ msgstr "無法取得完整的遠端路徑."
 msgid "Could not get reply from fzputtygen."
 msgstr "無法從 fzputtygen 取得回應."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2583
+#: ../../locales/../src/interface/RemoteListView.cpp:2610
 msgid "Could not get temporary directory to download file into."
 msgstr "無法取得放置下載檔案用的暫存目錄."
 
@@ -2166,7 +2166,7 @@ msgstr ""
 "同步瀏覽已停用."
 
 #: ../../locales/../src/interface/aboutdialog.cpp:143
-#: ../../locales/../src/interface/RemoteListView.cpp:3054
+#: ../../locales/../src/interface/RemoteListView.cpp:3081
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1448
 msgid "Could not open clipboard"
 msgstr "無法開啟剪貼簿"
@@ -2295,8 +2295,8 @@ msgstr "立即弄當 FileZilla. 只用於檢測例外處理機制"
 msgid "Create a new subdirectory in the current directory"
 msgstr "在現行目錄下建立子新的目錄"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1397
-#: ../../locales/../src/interface/LocalTreeView.cpp:1320
+#: ../../locales/../src/interface/LocalListView.cpp:1395
+#: ../../locales/../src/interface/LocalTreeView.cpp:1158
 #: ../../locales/../src/interface/RemoteListView.cpp:1552
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1270
 msgid "Create directory"
@@ -2377,8 +2377,8 @@ msgstr "對目錄的雙擊動作(&O):"
 msgid "DOS-like with virtual paths"
 msgstr "DOS 類型包含虛擬路徑"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2300
-#: ../../locales/../src/interface/RemoteListView.cpp:2634
+#: ../../locales/../src/interface/LocalListView.cpp:2298
+#: ../../locales/../src/interface/RemoteListView.cpp:2661
 msgid "Dangerous filetype"
 msgstr "可能會造成危險的檔案型態"
 
@@ -2484,15 +2484,14 @@ msgid "Delete selected files and directories"
 msgstr "刪除所選的檔案與目錄"
 
 #: ../../locales/../src/interface/search.cpp:1015
-#, fuzzy
 msgid "Deleting directories"
-msgstr "新增目錄中"
+msgstr "刪除目錄中"
 
 #: ../../locales/../src/interface/search.cpp:1015
 msgid "Deleting multiple unrelated directories is not yet supported"
 msgstr "尚未支援刪除多個不相關的目錄"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1020
+#: ../../locales/../src/interface/LocalTreeView.cpp:1022
 msgid "Desktop"
 msgstr "桌面"
 
@@ -2536,7 +2535,7 @@ msgstr "包含記錄檔案的目錄不存在或是檔案名稱無效."
 msgid "Directory listing aborted by user"
 msgstr "使用者中止目錄列表"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2277
+#: ../../locales/../src/interface/RemoteListView.cpp:2304
 msgid "Directory listing failed"
 msgstr "目錄列表失敗"
 
@@ -2696,8 +2695,8 @@ msgstr "下載搜尋結果"
 msgid "Downloads"
 msgstr "下載"
 
-#: ../../locales/../src/interface/LocalListView.cpp:101
-#: ../../locales/../src/interface/LocalTreeView.cpp:103
+#: ../../locales/../src/interface/LocalListView.cpp:102
+#: ../../locales/../src/interface/LocalTreeView.cpp:104
 #: ../../locales/../src/interface/QueueView.cpp:78
 #: ../../locales/../src/interface/RemoteListView.cpp:99
 #: ../../locales/../src/interface/RemoteTreeView.cpp:85
@@ -2706,8 +2705,8 @@ msgid ""
 "yet."
 msgstr "尚未實作在不同 FileZilla 程式實體間的拖曳功能."
 
-#: ../../locales/../src/interface/LocalListView.cpp:107
-#: ../../locales/../src/interface/LocalTreeView.cpp:109
+#: ../../locales/../src/interface/LocalListView.cpp:108
+#: ../../locales/../src/interface/LocalTreeView.cpp:110
 #: ../../locales/../src/interface/QueueView.cpp:89
 #: ../../locales/../src/interface/RemoteListView.cpp:105
 #: ../../locales/../src/interface/RemoteTreeView.cpp:91
@@ -2753,8 +2752,8 @@ msgid ""
 "Edit the file with the configured editor and upload changes to the server."
 msgstr "使用配置好的編輯器編輯檔案並上傳變更回伺服器."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2215
-#: ../../locales/../src/interface/LocalListView.cpp:2223
+#: ../../locales/../src/interface/LocalListView.cpp:2213
+#: ../../locales/../src/interface/LocalListView.cpp:2221
 msgid "Editing failed"
 msgstr "編輯失敗"
 
@@ -2770,7 +2769,7 @@ msgstr "空的指令"
 msgid "Empty command."
 msgstr "空的指令."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2279
+#: ../../locales/../src/interface/RemoteListView.cpp:2306
 msgid "Empty directory listing"
 msgstr "空目錄列表"
 
@@ -3023,10 +3022,10 @@ msgstr "FTPES - 透過外顯式 TLS/SSL 的 FTP"
 msgid "FTPS - FTP over implicit TLS/SSL"
 msgstr "FTPS - 透過隱含式 TLS/SSL 的 FTP"
 
-#: ../../locales/../src/interface/LocalListView.cpp:728
-#: ../../locales/../src/interface/LocalListView.cpp:810
-#: ../../locales/../src/interface/LocalListView.cpp:1509
-#: ../../locales/../src/interface/LocalTreeView.cpp:878
+#: ../../locales/../src/interface/LocalListView.cpp:739
+#: ../../locales/../src/interface/LocalListView.cpp:821
+#: ../../locales/../src/interface/LocalListView.cpp:1507
+#: ../../locales/../src/interface/LocalTreeView.cpp:880
 #: ../../locales/../src/interface/viewheader.cpp:515
 msgid "Failed to change directory"
 msgstr "無法變更目錄"
@@ -3063,11 +3062,11 @@ msgstr "無法以主動傳輸模式建立 socket"
 msgid "Failed to download the latest version of FileZilla."
 msgstr "無法下載最新版的 FileZilla."
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:647
+#: ../../locales/../src/interface/LocalTreeView.cpp:649
 msgid "Failed to get 'My Documents' path"
 msgstr "無法取得 '我的文件' 路徑"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:633
+#: ../../locales/../src/interface/LocalTreeView.cpp:635
 msgid "Failed to get desktop path"
 msgstr "無法取得桌面路徑"
 
@@ -3225,7 +3224,7 @@ msgstr "檔案不包含任何可匯入的資料."
 msgid "File editing"
 msgstr "檔案編輯"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1840
+#: ../../locales/../src/interface/RemoteListView.cpp:1867
 msgid "File exists"
 msgstr "檔案存在"
 
@@ -3298,7 +3297,7 @@ msgstr "檔案列表狀態列(&B)"
 
 #: ../../locales/../src/interface/edithandler.cpp:1204
 #: ../../locales/../src/interface/filter_conditions_dialog.cpp:93
-#: ../../locales/../src/interface/LocalListView.cpp:260
+#: ../../locales/../src/interface/LocalListView.cpp:265
 #: ../../locales/../src/interface/optionspage_connection_sftp.cpp:39
 #: ../../locales/../src/interface/RemoteListView.cpp:358
 #: ../../locales/../src/interface/search.cpp:382
@@ -3315,7 +3314,7 @@ msgstr "檔名篩選器(&F)..."
 msgid "Filename cannot be constructed for directory %s and filename %s"
 msgstr "目錄 %s 下無法建構檔名 %s"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1825
+#: ../../locales/../src/interface/RemoteListView.cpp:1852
 msgid "Filename invalid"
 msgstr "檔名無效"
 
@@ -3327,11 +3326,11 @@ msgstr "檔名未改變"
 msgid "Filename:"
 msgstr "檔案名稱:"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1583
+#: ../../locales/../src/interface/LocalListView.cpp:1581
 msgid "Filenames may not contain any of the following characters: / * ? < > |"
 msgstr "檔名不能包含以下任何字元: / * ? < > |"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1558
+#: ../../locales/../src/interface/LocalListView.cpp:1556
 msgid ""
 "Filenames may not contain any of the following characters: / \\ : * ? \" < > "
 "|"
@@ -3342,7 +3341,7 @@ msgid "Files currently being edited"
 msgstr "檔案正在編輯"
 
 #: ../../locales/../src/interface/filter_conditions_dialog.cpp:98
-#: ../../locales/../src/interface/LocalListView.cpp:261
+#: ../../locales/../src/interface/LocalListView.cpp:266
 #: ../../locales/../src/interface/RemoteListView.cpp:359
 #: ../../locales/../src/interface/search.cpp:384
 msgid "Filesize"
@@ -3352,7 +3351,7 @@ msgstr "檔案大小"
 msgid "Filesize format"
 msgstr "檔案大小格式"
 
-#: ../../locales/../src/interface/LocalListView.cpp:262
+#: ../../locales/../src/interface/LocalListView.cpp:267
 #: ../../locales/../src/interface/RemoteListView.cpp:360
 #: ../../locales/../src/interface/search.cpp:385
 msgid "Filetype"
@@ -3789,8 +3788,8 @@ msgstr "收到無效的資料"
 msgid "Invalid date"
 msgstr "無效的日期"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1558
-#: ../../locales/../src/interface/LocalListView.cpp:1583
+#: ../../locales/../src/interface/LocalListView.cpp:1556
+#: ../../locales/../src/interface/LocalListView.cpp:1581
 msgid "Invalid filename"
 msgstr "無效的檔名"
 
@@ -3823,18 +3822,17 @@ msgstr ""
 "ftpes:// 給(明示)跨 SSL 的 FTP 用."
 
 #: ../../locales/../src/interface/search.cpp:705
-#, fuzzy
 msgid "Invalid regular expression in search conditions."
-msgstr "無效的檔案篩選大小"
+msgstr "搜尋條件裡無效的正規表示法"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:567
 msgid "Invalid response code"
 msgstr "無效的回應碼"
 
 #: ../../locales/../src/interface/search.cpp:699
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid search conditions: %s"
-msgstr "無效的檔案篩選大小"
+msgstr "無效的搜尋條件: %s"
 
 #: ../../locales/../src/interface/sitemanager.cpp:2512
 #: ../../locales/../src/interface/sitemanager.cpp:2532
@@ -3888,7 +3886,7 @@ msgstr "語系"
 msgid "Language changed"
 msgstr "語系已變更"
 
-#: ../../locales/../src/interface/LocalListView.cpp:263
+#: ../../locales/../src/interface/LocalListView.cpp:268
 #: ../../locales/../src/interface/RemoteListView.cpp:361
 #: ../../locales/../src/interface/search.cpp:386
 msgid "Last modified"
@@ -4077,11 +4075,11 @@ msgstr "下移(&D)"
 msgid "Move &up"
 msgstr "上移(&U)"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1039
+#: ../../locales/../src/interface/LocalTreeView.cpp:1041
 msgid "My Computer"
 msgstr "我的電腦"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1029
+#: ../../locales/../src/interface/LocalTreeView.cpp:1031
 msgid "My Documents"
 msgstr "我的文件"
 
@@ -4156,7 +4154,7 @@ msgstr "新增書籤(&M)"
 msgid "New bookmark"
 msgstr "新書籤"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1323
+#: ../../locales/../src/interface/LocalTreeView.cpp:1161
 #: ../../locales/../src/interface/RemoteListView.cpp:1566
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1284
 msgid "New directory"
@@ -4274,7 +4272,7 @@ msgstr "一般"
 msgid "Not all items could be requeued for viewing/editing."
 msgstr "並非所有項目皆可要求檢視/編輯."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2275
+#: ../../locales/../src/interface/RemoteListView.cpp:2302
 msgid "Not connected to any server"
 msgstr "未連線到任何伺服器"
 
@@ -4351,11 +4349,11 @@ msgstr "開啟 FileZilla 設定對話框"
 msgid "Opened as:"
 msgstr "開啟為:"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2288
-#: ../../locales/../src/interface/LocalListView.cpp:2333
-#: ../../locales/../src/interface/LocalListView.cpp:2420
-#: ../../locales/../src/interface/LocalListView.cpp:2433
-#: ../../locales/../src/interface/RemoteListView.cpp:2622
+#: ../../locales/../src/interface/LocalListView.cpp:2286
+#: ../../locales/../src/interface/LocalListView.cpp:2331
+#: ../../locales/../src/interface/LocalListView.cpp:2418
+#: ../../locales/../src/interface/LocalListView.cpp:2431
+#: ../../locales/../src/interface/RemoteListView.cpp:2649
 msgid "Opening failed"
 msgstr "開啟失敗"
 
@@ -4625,8 +4623,8 @@ msgstr ""
 "請直接輸入 FTP 指令.\n"
 "使用直接的 FTP 指令會清除目錄快取."
 
-#: ../../locales/../src/interface/LocalListView.cpp:1397
-#: ../../locales/../src/interface/LocalTreeView.cpp:1320
+#: ../../locales/../src/interface/LocalListView.cpp:1395
+#: ../../locales/../src/interface/LocalTreeView.cpp:1158
 #: ../../locales/../src/interface/RemoteListView.cpp:1552
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1270
 msgid "Please enter the name of the directory which should be created:"
@@ -4942,25 +4940,27 @@ msgstr "唯讀"
 msgid "Really cancel current operation?"
 msgstr "真的要取消當前的操作?"
 
+#: ../../locales/../src/interface/RemoteListView.cpp:1635
 #: ../../locales/../src/interface/search.cpp:1023
 #, c-format
 msgid "Really delete %d directory with its contents?"
 msgid_plural "Really delete %d directories with their contents?"
 msgstr[0] "真的要刪除 %d 個目錄與其內容嗎?"
 
+#: ../../locales/../src/interface/RemoteListView.cpp:1633
 #: ../../locales/../src/interface/search.cpp:1021
 #, c-format
 msgid "Really delete %d file?"
 msgid_plural "Really delete %d files?"
 msgstr[0] "真的要刪除 %d 個檔案嗎?"
 
+#: ../../locales/../src/interface/RemoteListView.cpp:1640
 #: ../../locales/../src/interface/search.cpp:1028
 #, c-format
 msgid "Really delete %s and %s?"
 msgstr "真的要刪除 %s 與 %s 嗎?"
 
 #: ../../locales/../src/engine/local_filesys.cpp:129
-#: ../../locales/../src/interface/RemoteListView.cpp:1616
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1119
 msgid "Really delete all selected files and/or directories?"
 msgstr "真的要刪除所有選擇的檔案/目錄?"
@@ -5199,9 +5199,8 @@ msgid "Search for files that:"
 msgstr "搜尋檔案關於:"
 
 #: resources.h:725
-#, fuzzy
 msgid "Search server for files"
-msgstr "搜尋檔案關於:"
+msgstr "搜尋伺服器的檔案"
 
 #: ../../locales/../src/interface/statusbar.cpp:486
 msgid "Security information"
@@ -5359,11 +5358,11 @@ msgstr "選取 %s與 %s. 總共大小: 至少 %s"
 msgid "Selected editor does not exist."
 msgstr "所選的編輯器不存在."
 
-#: resources.h:503 ../../locales/../src/interface/LocalListView.cpp:2317
+#: resources.h:503 ../../locales/../src/interface/LocalListView.cpp:2315
 msgid "Selected file already being edited"
 msgstr "已在編輯所選的檔案."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2654
+#: ../../locales/../src/interface/RemoteListView.cpp:2681
 msgid "Selected file already opened."
 msgstr "已開啟所選的檔案."
 
@@ -5371,7 +5370,7 @@ msgstr "已開啟所選的檔案."
 msgid "Selected file is already loaded"
 msgstr "已載入所選的檔案"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2682
+#: ../../locales/../src/interface/RemoteListView.cpp:2709
 msgid "Selected file still being edited"
 msgstr "所選的檔案已被編輯."
 
@@ -5767,7 +5766,7 @@ msgstr "目標檔案已經存在"
 msgid "Target file:"
 msgstr "目的檔案:"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1840
+#: ../../locales/../src/interface/RemoteListView.cpp:1867
 msgid "Target filename already exists, really continue?"
 msgstr "目標檔名已經存在, 確定要繼續?"
 
@@ -5854,9 +5853,9 @@ msgstr ""
 "檔案 %s 已存在.\n"
 "請輸入新的名稱:"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2294
-#: ../../locales/../src/interface/LocalListView.cpp:2425
-#: ../../locales/../src/interface/RemoteListView.cpp:2628
+#: ../../locales/../src/interface/LocalListView.cpp:2292
+#: ../../locales/../src/interface/LocalListView.cpp:2423
+#: ../../locales/../src/interface/RemoteListView.cpp:2655
 #, c-format
 msgid ""
 "The file '%s' cannot be opened:\n"
@@ -5877,9 +5876,9 @@ msgstr "檔案 '%s' 無法載入或是不包含私鑰."
 msgid "The file '%s' could not be loaded."
 msgstr "無法載入檔案 '%s'."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2288
-#: ../../locales/../src/interface/LocalListView.cpp:2420
-#: ../../locales/../src/interface/RemoteListView.cpp:2622
+#: ../../locales/../src/interface/LocalListView.cpp:2286
+#: ../../locales/../src/interface/LocalListView.cpp:2418
+#: ../../locales/../src/interface/RemoteListView.cpp:2649
 #, c-format
 msgid ""
 "The file '%s' could not be opened:\n"
@@ -5888,8 +5887,8 @@ msgstr ""
 "無法開啟檔案 '%s':\n"
 "您的系統裡沒有程式關聯到這個檔案型態."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2333
-#: ../../locales/../src/interface/LocalListView.cpp:2433
+#: ../../locales/../src/interface/LocalListView.cpp:2331
+#: ../../locales/../src/interface/LocalListView.cpp:2431
 #, c-format
 msgid ""
 "The file '%s' could not be opened:\n"
@@ -6027,13 +6026,13 @@ msgstr "選定的檔案可匯入以下分類目錄:"
 msgid "The selected file is already being edited:"
 msgstr "已在編輯所選的檔案:"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2682
+#: ../../locales/../src/interface/RemoteListView.cpp:2709
 msgid ""
 "The selected file is still opened in some other program, please close it."
 msgstr "所選的檔案仍舊被其它程式開啟, 請關閉它."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2300
-#: ../../locales/../src/interface/RemoteListView.cpp:2634
+#: ../../locales/../src/interface/LocalListView.cpp:2298
+#: ../../locales/../src/interface/RemoteListView.cpp:2661
 msgid ""
 "The selected file would be executed directly.\n"
 "This can be dangerous and damage your system.\n"
@@ -6702,14 +6701,14 @@ msgstr "您不能從 FileZilla 自己的設定目錄下匯入設定."
 msgid "You did not enter a new name for the file. Overwrite the file instead?"
 msgstr "您未為這個檔案輸入新的檔名. 是想要覆蓋這個檔案嗎?"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2267
-#: ../../locales/../src/interface/RemoteListView.cpp:2601
+#: ../../locales/../src/interface/LocalListView.cpp:2265
+#: ../../locales/../src/interface/RemoteListView.cpp:2628
 msgid ""
 "You have selected more than 10 files for editing, do you really want to "
 "continue?"
 msgstr "您已選擇要編輯十個以上的檔案, 是否真要繼續?"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2387
+#: ../../locales/../src/interface/LocalListView.cpp:2385
 msgid ""
 "You have selected more than 10 files or directories to open, do you really "
 "want to continue?"
