@@ -10,12 +10,18 @@ Legend:
     *nix: Unix (e.g BSD) and Unix-like systems (e.g. Linux)
     OS X: Apple Mac OS X
 
+3.2.5 (2009-06-15)
+
+- Fix adding remote directory symlinks to queue not working
+- Fix "Timer creation failed" message boxes on update download dialog. Actual update download was not affected, only display of the progress bar.
+- MSW: Use deferred volume label gathering on local file list as well
+
 3.2.5-rc1 (2009-06-06)
 
 + Remote file search
 + Add option to hide identical files to directory comparison
 + Remember SSH host keys for session duration if not trusting permanently
-+ MSW: Display full UNC path on drive-mapped network shared
++ MSW: Display full UNC path on drive-mapped network shares
 - Use pkg-config to detect GnuTLS if pkg-config is available
 - Fix to auto-reconnect logic
 - Allow targetless OS.unix=slink facts in MLSD listings
