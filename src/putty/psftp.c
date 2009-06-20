@@ -741,6 +741,9 @@ int sftp_put_file(char *fname, char *outfname, int recurse, int restart)
 	}
     }
 
+    if (err)
+	ret = 0;
+
     xfer_cleanup(xfer);
 
     sftp_register(req = fxp_close_send(fh));
