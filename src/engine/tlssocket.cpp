@@ -828,7 +828,7 @@ int CTlsSocket::VerifyCertificate()
 	}
 
 	unsigned int cert_list_size;
-	const gnutls_datum_t* const cert_list = gnutls_certificate_get_peers(m_session, &cert_list_size);
+	const gnutls_datum_t* cert_list = gnutls_certificate_get_peers(m_session, &cert_list_size);
 	if (!cert_list || !cert_list_size)
 	{
 		m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_certificate_get_peers returned no certificates"));
@@ -853,124 +853,133 @@ int CTlsSocket::VerifyCertificate()
 		return FZ_REPLY_OK;
 	}
 
-	gnutls_x509_crt_t cert;
-	if (gnutls_x509_crt_init(&cert))
+	std::vector<CCertificate> certificates;
+	for (unsigned int i = 0; i < cert_list_size; i++)
 	{
-		m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_x509_crt_init failed"));
-		Failure(0, ECONNABORTED);
-		return FZ_REPLY_ERROR;
-	}
-
-	if (gnutls_x509_crt_import(cert, cert_list, GNUTLS_X509_FMT_DER))
-	{
-		m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_x509_crt_import failed"));
-		Failure(0, ECONNABORTED);
-		gnutls_x509_crt_deinit(cert);
-		return FZ_REPLY_ERROR;
-	}
-
-	wxDateTime expirationTime = gnutls_x509_crt_get_expiration_time(cert);
-	wxDateTime activationTime = gnutls_x509_crt_get_activation_time(cert);
-
-	// Get the serial number of the certificate
-	unsigned char buffer[40];
-	size_t size = sizeof(buffer);
-	int res = gnutls_x509_crt_get_serial(cert, buffer, &size);
-
-	wxString serial = bin2hex(buffer, size);
-
-	unsigned int bits;
-	int algo = gnutls_x509_crt_get_pk_algorithm(cert, &bits);
-
-	wxString algoName;
-	const char* pAlgo = gnutls_pk_algorithm_get_name((gnutls_pk_algorithm_t)algo);
-	if (pAlgo)
-		algoName = wxString(pAlgo, wxConvUTF8);
-
-	//int version = gnutls_x509_crt_get_version(cert);
-
-	wxString subject, issuer;
-
-	size = 0;
-	res = gnutls_x509_crt_get_dn(cert, 0, &size);
-	if (size)
-	{
-		char* dn = new char[size + 1];
-		dn[size] = 0;
-		if (!(res = gnutls_x509_crt_get_dn(cert, dn, &size)))
+		gnutls_x509_crt_t cert;
+		if (gnutls_x509_crt_init(&cert))
 		{
+			m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_x509_crt_init failed"));
+			Failure(0, ECONNABORTED);
+			return FZ_REPLY_ERROR;
+		}
+
+		if (gnutls_x509_crt_import(cert, cert_list, GNUTLS_X509_FMT_DER))
+		{
+			m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_x509_crt_import failed"));
+			Failure(0, ECONNABORTED);
+			gnutls_x509_crt_deinit(cert);
+			return FZ_REPLY_ERROR;
+		}
+
+		wxDateTime expirationTime = gnutls_x509_crt_get_expiration_time(cert);
+		wxDateTime activationTime = gnutls_x509_crt_get_activation_time(cert);
+
+		// Get the serial number of the certificate
+		unsigned char buffer[40];
+		size_t size = sizeof(buffer);
+		int res = gnutls_x509_crt_get_serial(cert, buffer, &size);
+
+		wxString serial = bin2hex(buffer, size);
+
+		unsigned int bits;
+		int algo = gnutls_x509_crt_get_pk_algorithm(cert, &bits);
+
+		wxString algoName;
+		const char* pAlgo = gnutls_pk_algorithm_get_name((gnutls_pk_algorithm_t)algo);
+		if (pAlgo)
+			algoName = wxString(pAlgo, wxConvUTF8);
+
+		//int version = gnutls_x509_crt_get_version(cert);
+
+		wxString subject, issuer;
+
+		size = 0;
+		res = gnutls_x509_crt_get_dn(cert, 0, &size);
+		if (size)
+		{
+			char* dn = new char[size + 1];
 			dn[size] = 0;
-			subject = wxString(dn, wxConvUTF8);
+			if (!(res = gnutls_x509_crt_get_dn(cert, dn, &size)))
+			{
+				dn[size] = 0;
+				subject = wxString(dn, wxConvUTF8);
+			}
+			else
+				LogError(res);
+			delete [] dn;
 		}
 		else
 			LogError(res);
-		delete [] dn;
-	}
-	else
-		LogError(res);
-	if (subject == _T(""))
-	{
-		m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_x509_get_dn failed"));
-		Failure(0, ECONNABORTED);
-		gnutls_x509_crt_deinit(cert);
-		return FZ_REPLY_ERROR;
-	}
-
-	size = 0;
-	res = gnutls_x509_crt_get_issuer_dn(cert, 0, &size);
-	if (size)
-	{
-		char* dn = new char[size + 1];
-		dn[size] = 0;
-		if (!(res = gnutls_x509_crt_get_issuer_dn(cert, dn, &size)))
+		if (subject == _T(""))
 		{
+			m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_x509_get_dn failed"));
+			Failure(0, ECONNABORTED);
+			gnutls_x509_crt_deinit(cert);
+			return FZ_REPLY_ERROR;
+		}
+
+		size = 0;
+		res = gnutls_x509_crt_get_issuer_dn(cert, 0, &size);
+		if (size)
+		{
+			char* dn = new char[++size + 1];
 			dn[size] = 0;
-			issuer = wxString(dn, wxConvUTF8);
+			if (!(res = gnutls_x509_crt_get_issuer_dn(cert, dn, &size)))
+			{
+				dn[size] = 0;
+				issuer = wxString(dn, wxConvUTF8);
+			}
+			else
+				LogError(res);
+			delete [] dn;
 		}
 		else
 			LogError(res);
-		delete [] dn;
-	}
-	else
-		LogError(res);
-	if (issuer == _T(""))
-	{
-		m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_x509_get_issuer_dn failed"));
-		Failure(0, ECONNABORTED);
-		gnutls_x509_crt_deinit(cert);
-		return FZ_REPLY_ERROR;
-	}
+		if (issuer == _T(""))
+		{
+			m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_x509_get_issuer_dn failed"));
+			Failure(0, ECONNABORTED);
+			gnutls_x509_crt_deinit(cert);
+			return FZ_REPLY_ERROR;
+		}
 
-	wxString fingerprint_md5;
-	wxString fingerprint_sha1;
+		wxString fingerprint_md5;
+		wxString fingerprint_sha1;
 
-	unsigned char digest[100];
-	size = sizeof(digest) - 1;
-	if (!gnutls_x509_crt_get_fingerprint(cert, GNUTLS_DIG_MD5, digest, &size))
-	{
-		digest[size] = 0;
-		fingerprint_md5 = bin2hex(digest, size);
-	}
-	size = sizeof(digest) - 1;
-	if (!gnutls_x509_crt_get_fingerprint(cert, GNUTLS_DIG_SHA1, digest, &size))
-	{
-		digest[size] = 0;
-		fingerprint_sha1 = bin2hex(digest, size);
+		unsigned char digest[100];
+		size = sizeof(digest) - 1;
+		if (!gnutls_x509_crt_get_fingerprint(cert, GNUTLS_DIG_MD5, digest, &size))
+		{
+			digest[size] = 0;
+			fingerprint_md5 = bin2hex(digest, size);
+		}
+		size = sizeof(digest) - 1;
+		if (!gnutls_x509_crt_get_fingerprint(cert, GNUTLS_DIG_SHA1, digest, &size))
+		{
+			digest[size] = 0;
+			fingerprint_sha1 = bin2hex(digest, size);
+		}
+
+		certificates.push_back(CCertificate(
+			cert_list->data, cert_list->size,
+			activationTime, expirationTime,
+			serial,
+			algoName, bits,
+			fingerprint_md5,
+			fingerprint_sha1,
+			subject,
+			issuer));
+
+		cert_list++;
 	}
 
 	CCertificateNotification *pNotification = new CCertificateNotification(
 		m_pOwner->GetCurrentServer()->GetHost(),
 		m_pOwner->GetCurrentServer()->GetPort(),
-		cert_list->data, cert_list->size,
-		activationTime, expirationTime,
-		serial,
-		algoName, bits,
-		fingerprint_md5,
-		fingerprint_sha1,
-		subject,
-		issuer,
 		GetCipherName(),
-		GetMacName());
+		GetMacName(),
+		certificates);
 
 	m_pOwner->SendAsyncRequest(pNotification);
 

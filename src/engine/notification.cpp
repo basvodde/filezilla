@@ -184,7 +184,7 @@ char* CDataNotification::Detach(int& len)
 	return pData;
 }
 
-CCertificateNotification::CCertificateNotification(const wxString& host, unsigned int port,
+CCertificate::CCertificate(
 		const unsigned char* rawData, unsigned int len,
 		wxDateTime activationTime, wxDateTime expirationTime,
 		const wxString& serial,
@@ -192,13 +192,8 @@ CCertificateNotification::CCertificateNotification(const wxString& host, unsigne
 		const wxString& fingerprint_md5,
 		const wxString& fingerprint_sha1,
 		const wxString& subject,
-		const wxString& issuer,
-		const wxString& sessionCipher,
-		const wxString& sessionMac)
+		const wxString& issuer)
 {
-	m_host = host;
-	m_port = port;
-
 	wxASSERT(len);
 	if (len)
 	{
@@ -221,64 +216,48 @@ CCertificateNotification::CCertificateNotification(const wxString& host, unsigne
 
 	m_subject = subject;
 	m_issuer = issuer;
-
-	m_sessionCipher = sessionCipher;
-	m_sessionMac = sessionMac;
-
-	m_trusted = false;
 }
 
-CCertificateNotification::~CCertificateNotification()
+CCertificate::CCertificate(const CCertificate &op)
 {
-	delete [] m_rawData;
-}
-
-CCertificateNotification::CCertificateNotification(const CCertificateNotification& ref)
-{
-	m_host = ref.m_host;
-	m_port = ref.m_port;
-
-	if (ref.m_rawData)
+	if (op.m_rawData)
 	{
-		wxASSERT(ref.m_len);
-		if (ref.m_len)
+		wxASSERT(op.m_len);
+		if (op.m_len)
 		{
-			m_rawData = new unsigned char[ref.m_len];
-			memcpy(m_rawData, ref.m_rawData, ref.m_len);
+			m_rawData = new unsigned char[op.m_len];
+			memcpy(m_rawData, op.m_rawData, op.m_len);
 		}
 		else
 			m_rawData = 0;
 	}
 	else
 		m_rawData = 0;
-	m_len = ref.m_len;
+	m_len = op.m_len;
 
-	m_activationTime = ref.m_activationTime;
-	m_expirationTime = ref.m_expirationTime;
+	m_activationTime = op.m_activationTime;
+	m_expirationTime = op.m_expirationTime;
 
-	m_serial = ref.m_serial;
-	m_pkalgoname = ref.m_pkalgoname;
-	m_pkalgobits = ref.m_pkalgobits;
+	m_serial = op.m_serial;
+	m_pkalgoname = op.m_pkalgoname;
+	m_pkalgobits = op.m_pkalgobits;
 
-	m_fingerprint_md5 = ref.m_fingerprint_md5;
-	m_fingerprint_sha1 = ref.m_fingerprint_sha1;
+	m_fingerprint_md5 = op.m_fingerprint_md5;
+	m_fingerprint_sha1 = op.m_fingerprint_sha1;
 
-	m_subject = ref.m_subject;
-	m_issuer = ref.m_issuer;
-
-	m_sessionCipher = ref.m_sessionCipher;
-	m_sessionMac = ref.m_sessionMac;
-
-	m_trusted = ref.m_trusted;
+	m_subject = op.m_subject;
+	m_issuer = op.m_issuer;
 }
 
-CCertificateNotification& CCertificateNotification::operator=(const CCertificateNotification &op)
+CCertificate::~CCertificate()
+{
+	delete [] m_rawData;
+}
+
+CCertificate& CCertificate::operator=(const CCertificate &op)
 {
 	if (&op == this)
 		return *this;
-
-	m_host = op.m_host;
-	m_port = op.m_port;
 
 	delete [] m_rawData;
 	if (op.m_rawData)
@@ -309,10 +288,25 @@ CCertificateNotification& CCertificateNotification::operator=(const CCertificate
 	m_subject = op.m_subject;
 	m_issuer = op.m_issuer;
 
-	m_sessionCipher = op.m_sessionCipher;
-	m_sessionMac = op.m_sessionMac;
-
-	m_trusted = op.m_trusted;
-
 	return *this;
+}
+
+CCertificateNotification::CCertificateNotification(const wxString& host, unsigned int port,
+		const wxString& sessionCipher,
+		const wxString& sessionMac,
+		const std::vector<CCertificate> &certificates)
+{
+	m_host = host;
+	m_port = port;
+
+	m_sessionCipher = sessionCipher;
+	m_sessionMac = sessionMac;
+
+	m_certificates = certificates;
+
+	m_trusted = false;
+}
+
+CCertificateNotification::~CCertificateNotification()
+{
 }

@@ -277,11 +277,10 @@ protected:
 	unsigned int m_len;
 };
 
-class CCertificateNotification : public CAsyncRequestNotification
+class CCertificate
 {
 public:
-	CCertificateNotification(const CCertificateNotification& ref);
-	CCertificateNotification(const wxString& host, unsigned int port,
+	CCertificate(
 		const unsigned char* rawData, unsigned int len,
 		wxDateTime activationTime, wxDateTime expirationTime,
 		const wxString& serial,
@@ -289,14 +288,9 @@ public:
 		const wxString& fingerprint_md5,
 		const wxString& fingerprint_sha1,
 		const wxString& subject,
-		const wxString& issuer,
-		const wxString& sessionCipher,
-		const wxString& sessionMac);
-	virtual ~CCertificateNotification();
-	virtual enum RequestId GetRequestID() const { return reqId_certificate; }
-
-	const wxString& GetHost() const { return m_host; }
-	unsigned int GetPort() const { return m_port; }
+		const wxString& issuer);
+	CCertificate(const CCertificate& op);
+	virtual ~CCertificate();
 
 	const unsigned char* GetRawData(unsigned int& len) const { len = m_len; return m_rawData; }
 	wxDateTime GetActivationTime() const { return m_activationTime; }
@@ -312,17 +306,9 @@ public:
 	const wxString& GetSubject() const { return m_subject; }
 	const wxString& GetIssuer() const { return m_issuer; }
 
-	const wxString& GetSessionCipher() const { return m_sessionCipher; }
-	const wxString& GetSessionMac() const { return m_sessionMac; }
+	CCertificate& operator=(const CCertificate &op);
 
-	bool m_trusted;
-
-	CCertificateNotification& operator=(const CCertificateNotification &op);
-
-protected:
-	wxString m_host;
-	unsigned int m_port;
-
+private:
 	wxDateTime m_activationTime;
 	wxDateTime m_expirationTime;
 
@@ -338,9 +324,36 @@ protected:
 
 	wxString m_subject;
 	wxString m_issuer;
+};
+
+class CCertificateNotification : public CAsyncRequestNotification
+{
+public:
+	CCertificateNotification(const wxString& host, unsigned int port,
+		const wxString& sessionCipher,
+		const wxString& sessionMac,
+		const std::vector<CCertificate> &certificates);
+	virtual ~CCertificateNotification();
+	virtual enum RequestId GetRequestID() const { return reqId_certificate; }
+
+	const wxString& GetHost() const { return m_host; }
+	unsigned int GetPort() const { return m_port; }
+
+	const wxString& GetSessionCipher() const { return m_sessionCipher; }
+	const wxString& GetSessionMac() const { return m_sessionMac; }
+
+	bool m_trusted;
+
+	const std::vector<CCertificate> GetCertificates() const { return m_certificates; }
+
+protected:
+	wxString m_host;
+	unsigned int m_port;
 
 	wxString m_sessionCipher;
 	wxString m_sessionMac;
+
+	std::vector<CCertificate> m_certificates;
 };
 
 class CSftpEncryptionNotification : public CNotification

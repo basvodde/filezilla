@@ -3,7 +3,8 @@
 
 #include "xmlfunctions.h"
 
-class CVerifyCertDialog
+class wxDialogEx;
+class CVerifyCertDialog : protected wxEvtHandler
 {
 public:
 	virtual ~CVerifyCertDialog();
@@ -14,8 +15,12 @@ public:
 protected:
 	bool IsTrusted(const unsigned char* data, unsigned int len, bool permanentOnly);
 
+	bool DisplayCert(wxDialogEx* pDlg, const CCertificate& cert);
+
 	void ParseDN(wxDialog* pDlg, const wxString& dn, wxSizer* pSizer);
-	void ParseDN_by_prefix(wxDialog* pDlg, std::list<wxString>& tokens, wxString prefix, const wxString& name, wxSizer* pSizer);
+	void ParseDN_by_prefix(wxDialog* pDlg, std::list<wxString>& tokens, wxString prefix, const wxString& name, wxSizer* pSizer, bool decode = false);
+	
+	wxString DecodeValue(const wxString& value);
 
 	wxString ConvertHexToString(const unsigned char* data, unsigned int len);
 	unsigned char* ConvertStringToHex(const wxString& str, unsigned int &len);
@@ -33,6 +38,13 @@ protected:
 	std::list<t_certData> m_sessionTrustedCerts;
 
 	CXmlFile m_xmlFile;
+
+	std::vector<CCertificate> m_certificates;
+	wxDialogEx* m_pDlg;
+	wxSizer* m_pSubjectSizer;
+	wxSizer* m_pIssuerSizer;
+
+	void OnCertificateChoice(wxCommandEvent& event);
 };
 
 #endif //__VERIFYCERTDIALOG_H__
