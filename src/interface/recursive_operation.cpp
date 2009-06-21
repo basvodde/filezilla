@@ -395,6 +395,18 @@ void CRecursiveOperation::LinkIsNotDir()
 		return;
 	}
 
+	if (m_operationMode == recursive_delete)
+	{
+		if (!dir.subdir.empty())
+		{
+			std::list<wxString> files;
+			files.push_back(dir.subdir);
+			m_pState->m_pCommandQueue->ProcessCommand(new CDeleteCommand(dir.parent, files));
+		}
+		NextOperation();
+		return;
+	}
+
 	wxString local_file = dir.localDir;
 	if (m_operationMode == recursive_addtoqueue_flatten || m_operationMode == recursive_download_flatten)
 	{

@@ -1601,6 +1601,7 @@ void CRemoteListView::OnMenuDelete(wxCommandEvent& event)
 
 	int count_dirs = 0;
 	int count_files = 0;
+	bool selected_link = false;
 
 	long item = -1;
 	while (true)
@@ -1623,7 +1624,11 @@ void CRemoteListView::OnMenuDelete(wxCommandEvent& event)
 
 		const CDirentry& entry = (*m_pDirectoryListing)[index];
 		if (entry.dir)
+		{
 			count_dirs++;
+			if (entry.link)
+				selected_link = true;
+		}
 		else
 			count_files++;
 	}
@@ -1642,6 +1647,21 @@ void CRemoteListView::OnMenuDelete(wxCommandEvent& event)
 
 	if (wxMessageBox(question, _("Confirmation needed"), wxICON_QUESTION | wxYES_NO, this) != wxYES)
 		return;
+
+	bool follow_symlink = false;
+	if (selected_link)
+	{
+		wxDialogEx dlg;
+		if (!dlg.Load(this, _T("ID_DELETE_SYMLINK")))
+		{
+			wxBell();
+			return;
+		}
+		if (dlg.ShowModal() != wxID_OK)
+			return;
+
+		follow_symlink = XRCCTRL(dlg, "ID_RECURSE", wxRadioButton)->GetValue();
+	}
 
 	CRecursiveOperation* pRecursiveOperation = m_pState->GetRecursiveOperationHandler();
 	wxASSERT(pRecursiveOperation);
@@ -1665,12 +1685,12 @@ void CRemoteListView::OnMenuDelete(wxCommandEvent& event)
 		const CDirentry& entry = (*m_pDirectoryListing)[index];
 		const wxString& name = entry.name;
 
-		if (entry.dir)
+		if (entry.dir && (follow_symlink || !entry.link))
 		{
 			CServerPath remotePath = m_pDirectoryListing->path;
 			if (remotePath.AddSegment(name))
 			{
-				pRecursiveOperation->AddDirectoryToVisit(m_pDirectoryListing->path, name);
+				pRecursiveOperation->AddDirectoryToVisit(m_pDirectoryListing->path, name, _T(""), true);
 				startRecursive = true;
 			}
 		}
