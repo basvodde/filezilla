@@ -473,32 +473,31 @@ int sftp_get_file(char *fname, char *outfname, int recurse, int restart)
 		fzprintf(sftpError, "error while reading: %s", fxp_error());
 		shown_err = TRUE;
 	    }
-            ret = 0;
 	}
 
 	while (xfer_download_data(xfer, &vbuf, &len)) {
 	    unsigned char *buf = (unsigned char *)vbuf;
 
 	    wpos = 0;
-	    while (wpos < len) {
+	    while (file && wpos < len) {
 		wlen = write_to_file(file, buf + wpos, len - wpos);
 		if (wlen <= 0) {
-		    fzprintf(sftpError, "error while writing local file");
-		    ret = 0;
-		    xfer_set_error(xfer);
+		    fzprintf(shown_err ? sftpStatus : sftpError, "error while writing local file");
+		    shown_err = TRUE;
+		    close_wfile(file);
+		    file = 0;
 		    break;
 		}
 		wpos += wlen;
 	    }
 	    if (wpos < len) {	       /* we had an error */
-		ret = 0;
 		xfer_set_error(xfer);
 	    }
 	    winterval += wpos;
 	    sfree(vbuf);
 	}
 
-    if (fz_timer_check(&timer)) {
+	if (fz_timer_check(&timer)) {
 	    fzprintf(sftpWrite, "%d", winterval);
 	    winterval = 0;
 	}
@@ -507,12 +506,16 @@ int sftp_get_file(char *fname, char *outfname, int recurse, int restart)
 
     xfer_cleanup(xfer);
 
-    close_wfile(file);
+    if (file)
+	close_wfile(file);
 
     sftp_register(req = fxp_close_send(fh));
     rreq = sftp_find_request(pktin = sftp_recv());
     compare_req_rreq(req, rreq);
     fxp_close_recv(pktin, rreq);
+
+    if (shown_err)
+	ret = 0;
 
     return ret;
 }
