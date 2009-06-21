@@ -691,7 +691,7 @@ bool CState::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, co
 
 	if (hasDirs)
 	{
-		if (!m_pEngine->IsConnected() || m_pEngine->IsBusy() || !m_pCommandQueue->Idle())
+		if (!IsRemoteConnected() || !IsRemoteIdle())
 			return false;
 	}
 
