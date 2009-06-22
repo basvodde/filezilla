@@ -59,6 +59,7 @@ filezilla_SOURCES = aboutdialog.cpp \
 		settings/optionspage_dateformatting.cpp \
 		settings/optionspage_debug.cpp \
 		settings/optionspage_edit.cpp \
+		settings/optionspage_edit_associations.cpp \
 		settings/optionspage_fileexists.cpp \
 		settings/optionspage_filelists.cpp \
 		settings/optionspage_filetype.cpp \
@@ -154,6 +155,7 @@ noinst_HEADERS = aboutdialog.h \
 		 settings/optionspage_dateformatting.h \
 		 settings/optionspage_debug.h \
 		 settings/optionspage_edit.h \
+		 settings/optionspage_edit_associations.h \
 		 settings/optionspage_fileexists.h \
 		 settings/optionspage_filelists.h \
 		 settings/optionspage_filetype.h \
