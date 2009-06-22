@@ -20,6 +20,7 @@
 #include "optionspage_dateformatting.h"
 #include "optionspage_sizeformatting.h"
 #include "optionspage_edit.h"
+#include "optionspage_edit_associations.h"
 #include "optionspage_proxy.h"
 #include "optionspage_filelists.h"
 #include "../filezillaapp.h"
@@ -45,6 +46,7 @@ enum pagenames
 	page_filelists,
 	page_language,
 	page_edit,
+	page_edit_associations,
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	page_updatecheck,
 #endif
@@ -128,6 +130,7 @@ bool CSettingsDialog::LoadPages()
 	ADD_PAGE(_("File lists"), COptionsPageFilelists, page_interface);
 	ADD_PAGE(_("Language"), COptionsPageLanguage, page_none);
 	ADD_PAGE(_("File editing"), COptionsPageEdit, page_none);
+	ADD_PAGE(_("Filetype associations"), COptionsPageEditAssociations, page_edit);
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	if (!COptions::Get()->GetDefaultVal(DEFAULT_DISABLEUPDATECHECK))
 	{

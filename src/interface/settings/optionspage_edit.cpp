@@ -29,14 +29,13 @@ bool COptionsPageEdit::LoadPage()
 		SetRCheck(XRCID("ID_DEFAULT_CUSTOM"), true, failure);
 		SetText(XRCID("ID_EDITOR"), editor, failure);
 	}
-	SetTextFromOption(XRCID("ID_ASSOCIATIONS"), OPTION_EDIT_CUSTOMASSOCIATIONS, failure);
-
-	SetCheck(XRCID("ID_INHERIT"), pOptions->GetOptionVal(OPTION_EDIT_INHERITASSOCIATIONS) != 0, failure);
 
 	if (pOptions->GetOptionVal(OPTION_EDIT_ALWAYSDEFAULT))
 		SetRCheck(XRCID("ID_USEDEFAULT"), true, failure);
 	else
 		SetRCheck(XRCID("ID_USEASSOCIATIONS"), true, failure);
+
+	SetCheckFromOption(XRCID("ID_EDIT_TRACK_LOCAL"), OPTION_EDIT_TRACK_LOCAL, failure);
 
 	if (!failure)
 		SetCtrlState();
@@ -53,13 +52,12 @@ bool COptionsPageEdit::SavePage()
 	else 
 		pOptions->SetOption(OPTION_EDIT_DEFAULTEDITOR, GetRCheck(XRCID("ID_DEFAULT_TEXT")) ? _T("1") : _T("0"));
 
-	SetOptionFromText(XRCID("ID_ASSOCIATIONS"), OPTION_EDIT_CUSTOMASSOCIATIONS);
-	
-	pOptions->SetOption(OPTION_EDIT_INHERITASSOCIATIONS, GetCheck(XRCID("ID_INHERIT")) ? 1 : 0);
 	if (GetRCheck(XRCID("ID_USEDEFAULT")))
 		pOptions->SetOption(OPTION_EDIT_ALWAYSDEFAULT, 1);
 	else
 		pOptions->SetOption(OPTION_EDIT_ALWAYSDEFAULT, 0);
+
+	SetOptionFromCheck(XRCID("ID_EDIT_TRACK_LOCAL"), OPTION_EDIT_TRACK_LOCAL);
 		
 	return true;
 }
@@ -154,40 +152,6 @@ bool COptionsPageEdit::Validate()
 		{
 			return DisplayError(_T("ID_EDITOR"), _("A default editor needs to be set."));
 		}
-	}
-
-	wxString associations = GetText(XRCID("ID_ASSOCIATIONS")) + _T("\n");
-	associations.Replace(_T("\r"), _T(""));
-	int pos;
-	while ((pos = associations.Find('\n')) != -1)
-	{
-		wxString assoc = associations.Left(pos);
-		associations = associations.Mid(pos + 1);
-
-		if (assoc == _T(""))
-			continue;
-
-		wxString command;
-		if (!UnquoteCommand(assoc, command))
-			return DisplayError(_T("ID_ASSOCIATIONS"), _("Improperly quoted association."));
-
-		if (assoc == _T(""))
-			return DisplayError(_T("ID_ASSOCIATIONS"), _("Empty file extension."));
-
-		wxString args;
-		if (!UnquoteCommand(command, args))
-			return DisplayError(_T("ID_ASSOCIATIONS"), _("Improperly quoted association."));
-		
-		if (command == _T(""))
-			return DisplayError(_T("ID_ASSOCIATIONS"), _("Empty command."));
-
-		if (!ProgramExists(command))
-		{
-			wxString error = _("Associated program not found:");
-			error += '\n';
-			error += command;
-			return DisplayError(_T("ID_ASSOCIATIONS"), error);
-		}		
 	}
 
 	return true;

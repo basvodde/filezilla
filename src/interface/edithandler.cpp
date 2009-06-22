@@ -298,6 +298,9 @@ bool CEditHandler::AddFile(enum CEditHandler::fileType type, wxString& fileName,
 	data.remotePath = remotePath;
 	data.server = server;
 
+	if (type == local && !COptions::Get()->GetOptionVal(OPTION_EDIT_TRACK_LOCAL))
+		return StartEditing(local, data);
+
 	if (type == remote || StartEditing(type, data))
 		m_fileDataList[type].push_back(data);
 

@@ -136,7 +136,8 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Search column order", string, _T("") },
 	{ "Search window size", string, _T("") },
 	{ "Comparison hide identical", number, _T("0") },
-	{ "Search sort order", string, _T("") }
+	{ "Search sort order", string, _T("") },
+	{ "Edit track local", number, _T("1") }
 };
 
 struct t_default_option

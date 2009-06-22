@@ -1142,7 +1142,6 @@
       </object>
     </object>
   </object>
-  
   <object class="wxPanel" name="ID_SETTINGS_THEMES">
     <object class="wxBoxSizer">
       <orient>wxVERTICAL</orient>
@@ -1611,8 +1610,6 @@
       <orient>wxVERTICAL</orient>
       <object class="sizeritem">
         <object class="wxFlexGridSizer">
-          <cols>1</cols>
-          <vgap>5</vgap>
           <object class="sizeritem">
             <object class="wxStaticText">
               <label>&amp;Default editor:</label>
@@ -1660,7 +1657,11 @@
             <flag>wxLEFT</flag>
             <border>17</border>
           </object>
-          <growablecols>0</growablecols>
+          <object class="sizeritem">
+            <object class="wxStaticLine"/>
+            <flag>wxTOP|wxBOTTOM|wxGROW</flag>
+            <border>5</border>
+          </object>
           <object class="sizeritem">
             <object class="wxRadioButton" name="ID_USEASSOCIATIONS">
               <label>U&amp;se filetype associations if available</label>
@@ -1673,52 +1674,71 @@
             </object>
           </object>
           <object class="sizeritem">
-            <object class="wxStaticBoxSizer">
-              <label>Filetype associations</label>
-              <orient>wxVERTICAL</orient>
+            <object class="wxStaticLine"/>
+            <flag>wxTOP|wxBOTTOM|wxGROW</flag>
+            <border>5</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxCheckBox" name="ID_EDIT_TRACK_LOCAL">
+              <label>&amp;Watch locally edited files and prompt to upload modifications</label>
+            </object>
+          </object>
+          <cols>1</cols>
+          <vgap>5</vgap>
+          <growablecols>0</growablecols>
+          <growablerows></growablerows>
+        </object>
+        <option>1</option>
+        <flag>wxALL|wxGROW</flag>
+        <border>5</border>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_EDIT_ASSOCIATIONS">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
               <object class="sizeritem">
-                <object class="wxFlexGridSizer">
-                  <object class="sizeritem">
-                    <object class="wxCheckBox" name="ID_INHERIT">
-                      <label>&amp;Inherit system's filetype associations</label>
-                    </object>
-                  </object>
-                  <object class="sizeritem">
-                    <object class="wxStaticText">
-                      <label>C&amp;ustom filetype associations:</label>
-                    </object>
-                  </object>
-                  <object class="sizeritem">
-                    <object class="wxTextCtrl" name="ID_ASSOCIATIONS">
-                      <style>wxTE_MULTILINE</style>
-                    </object>
-                    <option>1</option>
-                    <flag>wxGROW</flag>
-                  </object>
-                  <object class="sizeritem">
-                    <object class="wxStaticText">
-                      <label>Format: Extension followed by properly quoted command and arguments.</label>
-                    </object>
-                  </object>
-                  <object class="sizeritem">
-                    <object class="wxStaticText">
-                      <label>Example: png &quot;c:\program files\viewer\viewer.exe&quot; -open</label>
-                    </object>
-                  </object>
-                  <cols>1</cols>
-                  <vgap>5</vgap>
-                  <growablerows>2</growablerows>
-                  <growablecols>0</growablecols>
+                <object class="wxCheckBox" name="ID_INHERIT">
+                  <label>&amp;Inherit system's filetype associations</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>C&amp;ustom filetype associations:</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="ID_ASSOCIATIONS">
+                  <style>wxTE_MULTILINE</style>
                 </object>
                 <option>1</option>
-                <flag>wxALL|wxGROW</flag>
-                <border>5</border>
+                <flag>wxGROW</flag>
               </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Format: Extension followed by properly quoted command and arguments.</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Example: png &quot;c:\program files\viewer\viewer.exe&quot; -open</label>
+                </object>
+              </object>
+              <cols>1</cols>
+              <vgap>5</vgap>
+              <growablerows>2</growablerows>
+              <growablecols>0</growablecols>
             </object>
             <option>1</option>
-            <flag>wxGROW</flag>
+            <flag>wxALL|wxGROW</flag>
+            <border>5</border>
           </object>
-          <growablerows>8</growablerows>
+          <label>Filetype associations</label>
+          <orient>wxVERTICAL</orient>
         </object>
         <option>1</option>
         <flag>wxALL|wxGROW</flag>

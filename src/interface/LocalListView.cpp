@@ -1267,7 +1267,7 @@ void CLocalListView::OnContextMenu(wxContextMenuEvent& event)
 	const bool connected = m_pState->IsRemoteConnected();
 	if (!connected)
 	{
-		pMenu->Enable(XRCID("ID_EDIT"), false);
+		pMenu->Enable(XRCID("ID_EDIT"), COptions::Get()->GetOptionVal(OPTION_EDIT_TRACK_LOCAL) == 0);
 		pMenu->Enable(XRCID("ID_UPLOAD"), false);
 		pMenu->Enable(XRCID("ID_ADDTOQUEUE"), false);
 	}
@@ -1312,9 +1312,7 @@ void CLocalListView::OnContextMenu(wxContextMenuEvent& event)
 	else
 	{
 		// Exactly one item selected
-		if (selectedDir)
-			pMenu->Enable(XRCID("ID_EDIT"), false);
-		else
+		if (!selectedDir)
 			pMenu->Delete(XRCID("ID_ENTER"));
 	}
 	if (selectedDir)
@@ -2208,18 +2206,27 @@ wxString CLocalListView::GetItemText(int item, unsigned int column)
 
 void CLocalListView::OnMenuEdit(wxCommandEvent& event)
 {
+	CServer server;
+	CServerPath path;
+
 	if (!m_pState->GetServer())
 	{
-		wxMessageBox(_("Cannot edit file, not connected to any server."), _("Editing failed"), wxICON_EXCLAMATION);
-		return;
+		if (COptions::Get()->GetOptionVal(OPTION_EDIT_TRACK_LOCAL))
+		{
+			wxMessageBox(_("Cannot edit file, not connected to any server."), _("Editing failed"), wxICON_EXCLAMATION);
+			return;
+		}
 	}
-	const CServer server = *m_pState->GetServer();
-
-	const CServerPath path = m_pState->GetRemotePath();
-	if (path.IsEmpty())
+	else
 	{
-		wxMessageBox(_("Cannot edit file, remote path unknown."), _("Editing failed"), wxICON_EXCLAMATION);
-		return;
+		server = *m_pState->GetServer();
+
+		path = m_pState->GetRemotePath();
+		if (path.IsEmpty())
+		{
+			wxMessageBox(_("Cannot edit file, remote path unknown."), _("Editing failed"), wxICON_EXCLAMATION);
+			return;
+		}
 	}
 
 	std::list<CLocalFileData> selected_item_list;
