@@ -1,10 +1,10 @@
 #include "FileZilla.h"
-#include "Options.h"
+#include "../Options.h"
 #include "settingsdialog.h"
 #include "optionspage.h"
 #include "optionspage_connection_sftp.h"
-#include "filezillaapp.h"
-#include "inputdialog.h"
+#include "../filezillaapp.h"
+#include "../inputdialog.h"
 #include <wx/tokenzr.h>
 
 BEGIN_EVENT_TABLE(COptionsPageConnectionSFTP, COptionsPage)

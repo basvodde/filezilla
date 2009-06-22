@@ -1,6 +1,6 @@
 #include "FileZilla.h"
 #include "settingsdialog.h"
-#include "Options.h"
+#include "../Options.h"
 #include "optionspage.h"
 #include "optionspage_connection.h"
 #include "optionspage_connection_ftp.h"
@@ -22,8 +22,8 @@
 #include "optionspage_edit.h"
 #include "optionspage_proxy.h"
 #include "optionspage_filelists.h"
-#include "filezillaapp.h"
-#include "Mainfrm.h"
+#include "../filezillaapp.h"
+#include "../Mainfrm.h"
 
 enum pagenames
 {

@@ -1,5 +1,5 @@
 #include "FileZilla.h"
-#include "Options.h"
+#include "../Options.h"
 #include "settingsdialog.h"
 #include "optionspage.h"
 #include "optionspage_connection_active.h"

@@ -1,9 +1,9 @@
 #include "FileZilla.h"
-#include "Options.h"
+#include "../Options.h"
 #include "settingsdialog.h"
 #include "optionspage.h"
 #include "optionspage_themes.h"
-#include "themeprovider.h"
+#include "../themeprovider.h"
 
 BEGIN_EVENT_TABLE(COptionsPageThemes, COptionsPage)
 EVT_CHOICE(XRCID("ID_THEME"), COptionsPageThemes::OnThemeChange)

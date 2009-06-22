@@ -1,9 +1,9 @@
 #include "FileZilla.h"
-#include "Options.h"
+#include "../Options.h"
 #include "settingsdialog.h"
 #include "optionspage.h"
 #include "optionspage_connection.h"
-#include "netconfwizard.h"
+#include "../netconfwizard.h"
 
 BEGIN_EVENT_TABLE(COptionsPageConnection, COptionsPage)
 EVT_BUTTON(XRCID("ID_RUNWIZARD"), COptionsPageConnection::OnWizard)

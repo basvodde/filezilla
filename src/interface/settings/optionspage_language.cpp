@@ -1,9 +1,9 @@
 #include "FileZilla.h"
-#include "Options.h"
+#include "../Options.h"
 #include "settingsdialog.h"
 #include "optionspage.h"
 #include "optionspage_language.h"
-#include "filezillaapp.h"
+#include "../filezillaapp.h"
 #include <algorithm>
 
 BEGIN_EVENT_TABLE(COptionsPageLanguage, COptionsPage)

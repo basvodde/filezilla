@@ -6,6 +6,8 @@ INCLUDES = -I$(srcdir)/../include
 # this is the program that gets installed.  it's name is used for all
 # of the other Makefile.am variables
 
+AUTOMAKE_OPTIONS = subdir-objects
+
 bin_PROGRAMS = filezilla
 
 # the application source, library search path, and link libraries
@@ -48,27 +50,27 @@ filezilla_SOURCES = aboutdialog.cpp \
 		manual_transfer.cpp \
 		netconfwizard.cpp \
 		Options.cpp \
-		optionspage.cpp \
-		optionspage_connection.cpp \
-		optionspage_connection_active.cpp \
-		optionspage_connection_ftp.cpp \
-		optionspage_connection_passive.cpp \
-		optionspage_connection_sftp.cpp \
-		optionspage_dateformatting.cpp \
-		optionspage_debug.cpp \
-		optionspage_edit.cpp \
-		optionspage_fileexists.cpp \
-		optionspage_filelists.cpp \
-		optionspage_filetype.cpp \
-		optionspage_ftpproxy.cpp \
-		optionspage_interface.cpp \
-		optionspage_language.cpp \
-		optionspage_logging.cpp \
-		optionspage_proxy.cpp \
-		optionspage_sizeformatting.cpp \
-		optionspage_themes.cpp \
-		optionspage_transfer.cpp \
-		optionspage_updatecheck.cpp \
+		settings/optionspage.cpp \
+		settings/optionspage_connection.cpp \
+		settings/optionspage_connection_active.cpp \
+		settings/optionspage_connection_ftp.cpp \
+		settings/optionspage_connection_passive.cpp \
+		settings/optionspage_connection_sftp.cpp \
+		settings/optionspage_dateformatting.cpp \
+		settings/optionspage_debug.cpp \
+		settings/optionspage_edit.cpp \
+		settings/optionspage_fileexists.cpp \
+		settings/optionspage_filelists.cpp \
+		settings/optionspage_filetype.cpp \
+		settings/optionspage_ftpproxy.cpp \
+		settings/optionspage_interface.cpp \
+		settings/optionspage_language.cpp \
+		settings/optionspage_logging.cpp \
+		settings/optionspage_proxy.cpp \
+		settings/optionspage_sizeformatting.cpp \
+		settings/optionspage_themes.cpp \
+		settings/optionspage_transfer.cpp \
+		settings/optionspage_updatecheck.cpp \
 		queue.cpp \
 		QueueView.cpp \
 		queueview_failed.cpp \
@@ -79,7 +81,7 @@ filezilla_SOURCES = aboutdialog.cpp \
 		RemoteListView.cpp \
 		RemoteTreeView.cpp \
 		search.cpp \
-		settingsdialog.cpp \
+		settings/settingsdialog.cpp \
 		sftp_crypt_info_dlg.cpp \
 		sitemanager.cpp \
 		splitter.cpp \
@@ -143,27 +145,27 @@ noinst_HEADERS = aboutdialog.h \
 		 manual_transfer.h \
 		 netconfwizard.h \
 		 Options.h \
-		 optionspage.h \
-		 optionspage_connection.h \
-		 optionspage_connection_active.h \
-		 optionspage_connection_ftp.h \
-		 optionspage_connection_passive.h \
-		 optionspage_connection_sftp.h \
-		 optionspage_dateformatting.h \
-		 optionspage_debug.h \
-		 optionspage_edit.h \
-		 optionspage_fileexists.h \
-		 optionspage_filelists.h \
-		 optionspage_filetype.h \
-		 optionspage_ftpproxy.h \
-		 optionspage_interface.h \
-		 optionspage_language.h \
-		 optionspage_logging.h \
-		 optionspage_proxy.h \
-		 optionspage_sizeformatting.h \
-		 optionspage_themes.h \
-		 optionspage_transfer.h \
-		 optionspage_updatecheck.h \
+		 settings/optionspage.h \
+		 settings/optionspage_connection.h \
+		 settings/optionspage_connection_active.h \
+		 settings/optionspage_connection_ftp.h \
+		 settings/optionspage_connection_passive.h \
+		 settings/optionspage_connection_sftp.h \
+		 settings/optionspage_dateformatting.h \
+		 settings/optionspage_debug.h \
+		 settings/optionspage_edit.h \
+		 settings/optionspage_fileexists.h \
+		 settings/optionspage_filelists.h \
+		 settings/optionspage_filetype.h \
+		 settings/optionspage_ftpproxy.h \
+		 settings/optionspage_interface.h \
+		 settings/optionspage_language.h \
+		 settings/optionspage_logging.h \
+		 settings/optionspage_proxy.h \
+		 settings/optionspage_sizeformatting.h \
+		 settings/optionspage_themes.h \
+		 settings/optionspage_transfer.h \
+		 settings/optionspage_updatecheck.h \
 		 prefix.h \
 		 queue.h \
 		 QueueView.h \
@@ -175,7 +177,7 @@ noinst_HEADERS = aboutdialog.h \
 		 RemoteListView.h \
 		 RemoteTreeView.h \
 		 search.h \
-		 settingsdialog.h \
+		 settings/settingsdialog.h \
 		 sftp_crypt_info_dlg.h \
 		 sitemanager.h \
 		 splitter.h \

@@ -1,99 +1,153 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.10"
+	Version="9,00"
 	Name="FileZilla"
 	ProjectGUID="{760BA430-BB7F-44AB-9542-F8705CAFF92B}"
-	SccProjectName=""
-	SccLocalPath="">
+	RootNamespace="FileZilla"
+	TargetFrameworkVersion="131072"
+	>
 	<Platforms>
 		<Platform
-			Name="Win32"/>
+			Name="Win32"
+		/>
 	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory=".\Release"
 			IntermediateDirectory=".\Release"
 			ConfigurationType="1"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName=".\Release/FileZilla.tlb"
+				HeaderFileName=""
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="0"
-				EnableIntrinsicFunctions="TRUE"
-				OmitFramePointers="TRUE"
-				OptimizeForWindowsApplication="TRUE"
+				EnableIntrinsicFunctions="true"
+				OmitFramePointers="true"
 				AdditionalIncludeDirectories="../include/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
-				StringPooling="TRUE"
+				StringPooling="true"
 				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="TRUE"
-				UsePrecompiledHeader="2"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="FileZilla.h"
 				PrecompiledHeaderFile=".\Release/FileZilla.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="0"/>
+				SuppressStartupBanner="true"
+				DebugInformationFormat="0"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="1031"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="libidn.a wsock32.lib odbc32.lib odbccp32.lib comctl32.lib ..\lib\engine.lib"
 				OutputFile="../bin/FileZilla.exe"
 				LinkIncremental="1"
-				SuppressStartupBanner="TRUE"
-				GenerateDebugInformation="TRUE"
+				SuppressStartupBanner="true"
+				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Release/FileZilla.pdb"
-				GenerateMapFile="TRUE"
+				GenerateMapFile="true"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				OptimizeForWindows98="1"
-				TargetMachine="1"/>
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="1"
+			/>
 			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName=".\Release/FileZilla.tlb"
-				HeaderFileName=""/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCManifestTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="1031"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCAppVerifierTool"
+			/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory=".\Debug"
 			IntermediateDirectory=".\Debug"
 			ConfigurationType="1"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName=".\Debug/FileZilla.tlb"
+				HeaderFileName=""
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
@@ -101,67 +155,97 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;__WXDEBUG__;__WXMSW__"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				BufferSecurityCheck="TRUE"
-				EnableFunctionLevelLinking="TRUE"
-				UsePrecompiledHeader="2"
+				BufferSecurityCheck="true"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="FileZilla.h"
 				PrecompiledHeaderFile=".\Debug/FileZilla.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"/>
+				SuppressStartupBanner="true"
+				DebugInformationFormat="4"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="1031"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="libgnutls-13.lib libidn.a odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib ..\lib\engine_debug.lib Netapi32.lib"
 				OutputFile="../bin/FileZilla_dbg.exe"
 				LinkIncremental="2"
-				SuppressStartupBanner="TRUE"
-				GenerateDebugInformation="TRUE"
+				SuppressStartupBanner="true"
+				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/FileZilla_dbg.pdb"
-				GenerateMapFile="TRUE"
+				GenerateMapFile="true"
 				SubSystem="2"
-				TargetMachine="1"/>
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="1"
+			/>
 			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName=".\Debug/FileZilla.tlb"
-				HeaderFileName=""/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCManifestTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
-				Culture="1031"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCAppVerifierTool"
+			/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Debug Unicode|Win32"
 			OutputDirectory="$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="1">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="1"
+			ExcludeBuckets="5;6;8;15;16;18"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName=".\Debug/FileZilla.tlb"
+				HeaderFileName=""
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
@@ -169,143 +253,198 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;PACKAGE_VERSION=\&quot;3.0.11.1\&quot;;USED_HOST=\&quot;i586-pc-mingw32msvc\&quot;"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				BufferSecurityCheck="TRUE"
-				EnableFunctionLevelLinking="TRUE"
-				UsePrecompiledHeader="2"
+				BufferSecurityCheck="true"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="FileZilla.h"
 				PrecompiledHeaderFile=".\Debug Unicode/FileZilla.pch"
 				AssemblerListingLocation=".\Debug Unicode/"
 				ObjectFile=".\Debug Unicode/"
 				ProgramDataBaseFileName=".\Debug Unicode/"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"/>
+				SuppressStartupBanner="true"
+				DebugInformationFormat="4"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="libgnutls-26.lib libidn.a odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib ..\lib\engine_unicode_debug.lib Netapi32.lib Winmm.lib Ws2_32.lib"
-				OutputFile="..\bin\FileZilla_unicode_dbg.exe"
-				LinkIncremental="2"
-				SuppressStartupBanner="TRUE"
-				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\Debug Unicode/FileZilla_dbg.pdb"
-				GenerateMapFile="TRUE"
-				SubSystem="2"
-				OptimizeReferences="1"
-				TargetMachine="1"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName=".\Debug/FileZilla.tlb"
-				HeaderFileName=""/>
-			<Tool
-				Name="VCPostBuildEventTool"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG"
-				Culture="1031"/>
+				Culture="1031"
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
+				Name="VCLinkerTool"
+				AdditionalDependencies="libgnutls-26.lib libidn.lib odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib ..\lib\engine_unicode_debug.lib Netapi32.lib Winmm.lib Ws2_32.lib mpr.lib"
+				OutputFile="..\bin\FileZilla_unicode_dbg.exe"
+				LinkIncremental="2"
+				SuppressStartupBanner="true"
+				GenerateDebugInformation="true"
+				ProgramDatabaseFile=".\Debug Unicode/FileZilla_dbg.pdb"
+				GenerateMapFile="true"
+				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="1"
+			/>
 			<Tool
-				Name="VCWebDeploymentTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
+				Name="VCManifestTool"
+			/>
 			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Release Unicode|Win32"
 			OutputDirectory="$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="1">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName=".\Release/FileZilla.tlb"
+				HeaderFileName=""
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="0"
-				EnableIntrinsicFunctions="TRUE"
-				OmitFramePointers="TRUE"
-				OptimizeForWindowsApplication="TRUE"
+				EnableIntrinsicFunctions="true"
+				OmitFramePointers="true"
 				AdditionalIncludeDirectories="../include/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;PACKAGE_VERSION=\&quot;3.0.1\&quot;;USED_HOST=\&quot;i586-pc-mingw32msvc\&quot;"
-				StringPooling="TRUE"
+				StringPooling="true"
 				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="TRUE"
-				UsePrecompiledHeader="2"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="FileZilla.h"
 				PrecompiledHeaderFile=".\Release/FileZilla.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="0"/>
+				SuppressStartupBanner="true"
+				DebugInformationFormat="0"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="1031"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libgnutls-26.lib libidn.a wsock32.lib odbc32.lib odbccp32.lib comctl32.lib ..\lib\engine_unicode.lib Netapi32.lib Winmm.lib  Ws2_32.lib"
+				AdditionalDependencies="libgnutls-26.lib libidn.lib wsock32.lib odbc32.lib odbccp32.lib comctl32.lib ..\lib\engine_unicode.lib Netapi32.lib Winmm.lib Ws2_32.lib"
 				OutputFile="../bin/FileZilla_unicode.exe"
 				LinkIncremental="1"
-				SuppressStartupBanner="TRUE"
-				GenerateDebugInformation="TRUE"
+				SuppressStartupBanner="true"
+				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Release/FileZilla.pdb"
-				GenerateMapFile="TRUE"
+				GenerateMapFile="true"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				OptimizeForWindows98="1"
-				TargetMachine="1"/>
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="1"
+			/>
 			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName=".\Release/FileZilla.tlb"
-				HeaderFileName=""/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCManifestTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="1031"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCAppVerifierTool"
+			/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Universal|Win32"
 			OutputDirectory="$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName=".\Debug/FileZilla.tlb"
+				HeaderFileName=""
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
@@ -313,67 +452,96 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;__WXDEBUG__;__WXMSW__"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
-				BufferSecurityCheck="TRUE"
-				EnableFunctionLevelLinking="TRUE"
-				UsePrecompiledHeader="2"
+				BufferSecurityCheck="true"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="FileZilla.h"
 				PrecompiledHeaderFile=".\Debug/FileZilla.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"/>
+				SuppressStartupBanner="true"
+				DebugInformationFormat="4"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="1031"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="libidn.a odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib ..\lib\engine_debug.lib"
 				OutputFile="../bin/FileZilla_dbg.exe"
 				LinkIncremental="2"
-				SuppressStartupBanner="TRUE"
-				GenerateDebugInformation="TRUE"
+				SuppressStartupBanner="true"
+				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/FileZilla_dbg.pdb"
-				GenerateMapFile="TRUE"
+				GenerateMapFile="true"
 				SubSystem="2"
-				TargetMachine="1"/>
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="1"
+			/>
 			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName=".\Debug/FileZilla.tlb"
-				HeaderFileName=""/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCManifestTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
-				Culture="1031"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCAppVerifierTool"
+			/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Debug Universal|Win32"
 			OutputDirectory="$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName=".\Debug/FileZilla.tlb"
+				HeaderFileName=""
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
@@ -381,58 +549,64 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;__WXDEBUG__;__WXMSW__"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
-				BufferSecurityCheck="TRUE"
-				EnableFunctionLevelLinking="TRUE"
-				UsePrecompiledHeader="2"
+				BufferSecurityCheck="true"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="FileZilla.h"
 				PrecompiledHeaderFile=".\Debug/FileZilla.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"/>
+				SuppressStartupBanner="true"
+				DebugInformationFormat="4"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="1031"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="libidn.a odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib ..\lib\engine_debug.lib"
 				OutputFile="../bin/FileZilla_dbg.exe"
 				LinkIncremental="2"
-				SuppressStartupBanner="TRUE"
-				GenerateDebugInformation="TRUE"
+				SuppressStartupBanner="true"
+				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/FileZilla_dbg.pdb"
-				GenerateMapFile="TRUE"
+				GenerateMapFile="true"
 				SubSystem="2"
-				TargetMachine="1"/>
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="1"
+			/>
 			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName=".\Debug/FileZilla.tlb"
-				HeaderFileName=""/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCManifestTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
-				Culture="1031"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCAppVerifierTool"
+			/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 	</Configurations>
 	<References>
@@ -440,613 +614,847 @@
 	<Files>
 		<Filter
 			Name="Quellcodedateien"
-			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+			>
 			<File
-				RelativePath=".\aboutdialog.cpp">
+				RelativePath=".\aboutdialog.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\asyncrequestqueue.cpp">
+				RelativePath=".\asyncrequestqueue.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\aui_notebook_ex.cpp">
+				RelativePath=".\aui_notebook_ex.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\auto_ascii_files.cpp">
+				RelativePath=".\auto_ascii_files.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\auto_ascii_files.h">
+				RelativePath=".\auto_ascii_files.h"
+				>
 			</File>
 			<File
-				RelativePath=".\bookmarks_dialog.cpp">
+				RelativePath=".\bookmarks_dialog.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\buildinfo.cpp">
+				RelativePath=".\buildinfo.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\chmoddialog.cpp">
+				RelativePath=".\chmoddialog.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\clearprivatedata.cpp">
+				RelativePath=".\clearprivatedata.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\cmdline.cpp">
+				RelativePath=".\cmdline.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\commandqueue.cpp">
+				RelativePath=".\commandqueue.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\conditionaldialog.cpp">
+				RelativePath=".\conditionaldialog.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\customheightlistctrl.cpp">
+				RelativePath=".\customheightlistctrl.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\defaultfileexistsdlg.cpp">
+				RelativePath=".\defaultfileexistsdlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\dialogex.cpp">
+				RelativePath=".\dialogex.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\dndobjects.cpp">
+				RelativePath=".\dndobjects.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\dragdropmanager.cpp">
+				RelativePath=".\dragdropmanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\edithandler.cpp">
+				RelativePath=".\edithandler.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\export.cpp">
+				RelativePath=".\export.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\fileexistsdlg.cpp">
+				RelativePath=".\fileexistsdlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\filelist_statusbar.cpp">
+				RelativePath=".\filelist_statusbar.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\filelistctrl.cpp">
+				RelativePath=".\filelistctrl.cpp"
+				>
 			</File>
 			<File
-				RelativePath="FileZilla.cpp">
+				RelativePath="FileZilla.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\filter.cpp">
+				RelativePath=".\filter.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\filteredit.cpp">
+				RelativePath=".\filter_conditions_dialog.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\import.cpp">
+				RelativePath=".\filteredit.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\inputdialog.cpp">
+				RelativePath=".\import.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\ipcmutex.cpp">
+				RelativePath=".\inputdialog.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\led.cpp">
+				RelativePath=".\ipcmutex.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\listctrlex.cpp">
+				RelativePath=".\led.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\listingcomparison.cpp">
+				RelativePath=".\listctrlex.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\LocalListView.cpp">
+				RelativePath=".\listingcomparison.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\LocalTreeView.cpp">
+				RelativePath=".\LocalListView.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\loginmanager.cpp">
+				RelativePath=".\LocalTreeView.cpp"
+				>
 			</File>
 			<File
-				RelativePath="Mainfrm.cpp">
+				RelativePath=".\loginmanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\manual_transfer.cpp">
+				RelativePath="Mainfrm.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\netconfwizard.cpp">
+				RelativePath=".\manual_transfer.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\Options.cpp">
+				RelativePath=".\netconfwizard.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage.cpp">
+				RelativePath=".\Options.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_connection.cpp">
+				RelativePath=".\settings\optionspage.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_connection_active.cpp">
+				RelativePath=".\settings\optionspage_connection.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_connection_ftp.cpp">
+				RelativePath=".\settings\optionspage_connection_active.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_connection_passive.cpp">
+				RelativePath=".\settings\optionspage_connection_ftp.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_connection_sftp.cpp">
+				RelativePath=".\settings\optionspage_connection_passive.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_dateformatting.cpp">
+				RelativePath=".\settings\optionspage_connection_sftp.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_debug.cpp">
+				RelativePath=".\settings\optionspage_dateformatting.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_edit.cpp">
+				RelativePath=".\settings\optionspage_debug.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_fileexists.cpp">
+				RelativePath=".\settings\optionspage_edit.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_filelists.cpp">
+				RelativePath=".\settings\optionspage_fileexists.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_filetype.cpp">
+				RelativePath=".\settings\optionspage_filelists.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_ftpproxy.cpp">
+				RelativePath=".\settings\optionspage_filetype.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_interface.cpp">
+				RelativePath=".\settings\optionspage_ftpproxy.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_language.cpp">
+				RelativePath=".\settings\optionspage_interface.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_logging.cpp">
+				RelativePath=".\settings\optionspage_language.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_proxy.cpp">
+				RelativePath=".\settings\optionspage_logging.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_sizeformatting.cpp">
+				RelativePath=".\settings\optionspage_proxy.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_themes.cpp">
+				RelativePath=".\settings\optionspage_sizeformatting.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_transfer.cpp">
+				RelativePath=".\settings\optionspage_themes.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_updatecheck.cpp">
+				RelativePath=".\settings\optionspage_transfer.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\queue.cpp">
+				RelativePath=".\settings\optionspage_updatecheck.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\QueueView.cpp">
+				RelativePath=".\queue.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\queueview_failed.cpp">
+				RelativePath=".\QueueView.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\queueview_successful.cpp">
+				RelativePath=".\queueview_failed.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\quickconnectbar.cpp">
+				RelativePath=".\queueview_successful.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\recentserverlist.cpp">
+				RelativePath=".\quickconnectbar.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\recursive_operation.cpp">
+				RelativePath=".\recentserverlist.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\RemoteListView.cpp">
+				RelativePath=".\recursive_operation.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\RemoteTreeView.cpp">
+				RelativePath=".\RemoteListView.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\settingsdialog.cpp">
+				RelativePath=".\RemoteTreeView.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\sftp_crypt_info_dlg.cpp">
+				RelativePath=".\search.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\sitemanager.cpp">
+				RelativePath=".\settings\settingsdialog.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\splitter.cpp">
+				RelativePath=".\sftp_crypt_info_dlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\state.cpp">
+				RelativePath=".\sitemanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\statusbar.cpp">
+				RelativePath=".\splitter.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\statuslinectrl.cpp">
+				RelativePath=".\state.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\StatusView.cpp">
+				RelativePath=".\statusbar.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\systemimagelist.cpp">
+				RelativePath=".\statuslinectrl.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\themeprovider.cpp">
+				RelativePath=".\StatusView.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\tinyxml\tinystr.cpp">
+				RelativePath=".\systemimagelist.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\tinyxml\tinyxml.cpp">
+				RelativePath=".\themeprovider.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\tinyxml\tinyxmlerror.cpp">
+				RelativePath="..\tinyxml\tinystr.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\tinyxml\tinyxmlparser.cpp">
+				RelativePath="..\tinyxml\tinyxml.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\updatewizard.cpp">
+				RelativePath="..\tinyxml\tinyxmlerror.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\verifycertdialog.cpp">
+				RelativePath="..\tinyxml\tinyxmlparser.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\view.cpp">
+				RelativePath=".\updatewizard.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\viewheader.cpp">
+				RelativePath=".\verifycertdialog.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\window_state_manager.cpp">
+				RelativePath=".\verifyhostkeydialog.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\wrapengine.cpp">
+				RelativePath=".\view.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\xh_toolb_ex.cpp">
+				RelativePath=".\viewheader.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\xmlfunctions.cpp">
+				RelativePath=".\volume_enumerator.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\window_state_manager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\wrapengine.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\xh_toolb_ex.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\xmlfunctions.cpp"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="Header-Dateien"
-			Filter="h;hpp;hxx;hm;inl">
+			Filter="h;hpp;hxx;hm;inl"
+			>
 			<File
-				RelativePath=".\aboutdialog.h">
+				RelativePath=".\aboutdialog.h"
+				>
 			</File>
 			<File
-				RelativePath=".\asyncrequestqueue.h">
+				RelativePath=".\asyncrequestqueue.h"
+				>
 			</File>
 			<File
-				RelativePath=".\aui_notebook_ex.h">
+				RelativePath=".\aui_notebook_ex.h"
+				>
 			</File>
 			<File
-				RelativePath=".\bookmarks_dialog.h">
+				RelativePath=".\bookmarks_dialog.h"
+				>
 			</File>
 			<File
-				RelativePath=".\buildinfo.h">
+				RelativePath=".\buildinfo.h"
+				>
 			</File>
 			<File
-				RelativePath=".\chmoddialog.h">
+				RelativePath=".\chmoddialog.h"
+				>
 			</File>
 			<File
-				RelativePath=".\clearprivatedata.h">
+				RelativePath=".\clearprivatedata.h"
+				>
 			</File>
 			<File
-				RelativePath=".\cmdline.h">
+				RelativePath=".\cmdline.h"
+				>
 			</File>
 			<File
-				RelativePath=".\commandqueue.h">
+				RelativePath=".\commandqueue.h"
+				>
 			</File>
 			<File
-				RelativePath=".\conditionaldialog.h">
+				RelativePath=".\conditionaldialog.h"
+				>
 			</File>
 			<File
-				RelativePath=".\customheightlistctrl.h">
+				RelativePath=".\customheightlistctrl.h"
+				>
 			</File>
 			<File
-				RelativePath=".\defaultfileexistsdlg.h">
+				RelativePath=".\defaultfileexistsdlg.h"
+				>
 			</File>
 			<File
-				RelativePath=".\dialogex.h">
+				RelativePath=".\dialogex.h"
+				>
 			</File>
 			<File
-				RelativePath=".\dndobjects.h">
+				RelativePath=".\dndobjects.h"
+				>
 			</File>
 			<File
-				RelativePath=".\dragdropmanager.h">
+				RelativePath=".\dragdropmanager.h"
+				>
 			</File>
 			<File
-				RelativePath=".\edithandler.h">
+				RelativePath=".\edithandler.h"
+				>
 			</File>
 			<File
-				RelativePath=".\export.h">
+				RelativePath=".\export.h"
+				>
 			</File>
 			<File
-				RelativePath=".\fileexistsdlg.h">
+				RelativePath=".\fileexistsdlg.h"
+				>
 			</File>
 			<File
-				RelativePath=".\filelist_statusbar.h">
+				RelativePath=".\filelist_statusbar.h"
+				>
 			</File>
 			<File
-				RelativePath=".\filelistctrl.h">
+				RelativePath=".\filelistctrl.h"
+				>
 			</File>
 			<File
-				RelativePath=".\filezillaapp.h">
+				RelativePath=".\filezillaapp.h"
+				>
 			</File>
 			<File
-				RelativePath=".\filter.h">
+				RelativePath=".\filter.h"
+				>
 			</File>
 			<File
-				RelativePath=".\filteredit.h">
+				RelativePath=".\filter_conditions_dialog.h"
+				>
 			</File>
 			<File
-				RelativePath=".\import.h">
+				RelativePath=".\filteredit.h"
+				>
 			</File>
 			<File
-				RelativePath=".\inputdialog.h">
+				RelativePath=".\import.h"
+				>
 			</File>
 			<File
-				RelativePath=".\ipcmutex.h">
+				RelativePath=".\inputdialog.h"
+				>
 			</File>
 			<File
-				RelativePath=".\led.h">
+				RelativePath=".\ipcmutex.h"
+				>
 			</File>
 			<File
-				RelativePath=".\listctrlex.h">
+				RelativePath=".\led.h"
+				>
 			</File>
 			<File
-				RelativePath=".\listingcomparison.h">
+				RelativePath=".\listctrlex.h"
+				>
 			</File>
 			<File
-				RelativePath=".\LocalListView.h">
+				RelativePath=".\listingcomparison.h"
+				>
 			</File>
 			<File
-				RelativePath=".\LocalTreeView.h">
+				RelativePath=".\LocalListView.h"
+				>
 			</File>
 			<File
-				RelativePath=".\loginmanager.h">
+				RelativePath=".\LocalTreeView.h"
+				>
 			</File>
 			<File
-				RelativePath="Mainfrm.h">
+				RelativePath=".\loginmanager.h"
+				>
 			</File>
 			<File
-				RelativePath=".\manual_transfer.h">
+				RelativePath="Mainfrm.h"
+				>
 			</File>
 			<File
-				RelativePath=".\netconfwizard.h">
+				RelativePath=".\manual_transfer.h"
+				>
 			</File>
 			<File
-				RelativePath=".\Options.h">
+				RelativePath=".\netconfwizard.h"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage.h">
+				RelativePath=".\Options.h"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_connection.h">
+				RelativePath=".\settings\optionspage.h"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_connection_active.h">
+				RelativePath=".\settings\optionspage_connection.h"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_connection_ftp.h">
+				RelativePath=".\settings\optionspage_connection_active.h"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_connection_passive.h">
+				RelativePath=".\settings\optionspage_connection_ftp.h"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_connection_sftp.h">
+				RelativePath=".\settings\optionspage_connection_passive.h"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_dateformatting.h">
+				RelativePath=".\settings\optionspage_connection_sftp.h"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_debug.h">
+				RelativePath=".\settings\optionspage_dateformatting.h"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_edit.h">
+				RelativePath=".\settings\optionspage_debug.h"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_fileexists.h">
+				RelativePath=".\settings\optionspage_edit.h"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_filelists.h">
+				RelativePath=".\settings\optionspage_fileexists.h"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_filetype.h">
+				RelativePath=".\settings\optionspage_filelists.h"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_ftpproxy.h">
+				RelativePath=".\settings\optionspage_filetype.h"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_interface.h">
+				RelativePath=".\settings\optionspage_ftpproxy.h"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_language.h">
+				RelativePath=".\settings\optionspage_interface.h"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_logging.h">
+				RelativePath=".\settings\optionspage_language.h"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_proxy.h">
+				RelativePath=".\settings\optionspage_logging.h"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_sizeformatting.h">
+				RelativePath=".\settings\optionspage_proxy.h"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_themes.h">
+				RelativePath=".\settings\optionspage_sizeformatting.h"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_transfer.h">
+				RelativePath=".\settings\optionspage_themes.h"
+				>
 			</File>
 			<File
-				RelativePath=".\optionspage_updatecheck.h">
+				RelativePath=".\settings\optionspage_transfer.h"
+				>
 			</File>
 			<File
-				RelativePath=".\queue.h">
+				RelativePath=".\settings\optionspage_updatecheck.h"
+				>
 			</File>
 			<File
-				RelativePath=".\QueueView.h">
+				RelativePath=".\queue.h"
+				>
 			</File>
 			<File
-				RelativePath=".\queueview_failed.h">
+				RelativePath=".\QueueView.h"
+				>
 			</File>
 			<File
-				RelativePath=".\queueview_successful.h">
+				RelativePath=".\queueview_failed.h"
+				>
 			</File>
 			<File
-				RelativePath=".\quickconnectbar.h">
+				RelativePath=".\queueview_successful.h"
+				>
 			</File>
 			<File
-				RelativePath=".\recentserverlist.h">
+				RelativePath=".\quickconnectbar.h"
+				>
 			</File>
 			<File
-				RelativePath=".\recursive_operation.h">
+				RelativePath=".\recentserverlist.h"
+				>
 			</File>
 			<File
-				RelativePath=".\RemoteListView.h">
+				RelativePath=".\recursive_operation.h"
+				>
 			</File>
 			<File
-				RelativePath=".\RemoteTreeView.h">
+				RelativePath=".\RemoteListView.h"
+				>
 			</File>
 			<File
-				RelativePath=".\resources\resource.h">
+				RelativePath=".\RemoteTreeView.h"
+				>
 			</File>
 			<File
-				RelativePath=".\settingsdialog.h">
+				RelativePath=".\resources\resource.h"
+				>
 			</File>
 			<File
-				RelativePath=".\sftp_crypt_info_dlg.h">
+				RelativePath=".\search.h"
+				>
 			</File>
 			<File
-				RelativePath=".\sitemanager.h">
+				RelativePath=".\settings\settingsdialog.h"
+				>
 			</File>
 			<File
-				RelativePath=".\splitter.h">
+				RelativePath=".\sftp_crypt_info_dlg.h"
+				>
 			</File>
 			<File
-				RelativePath=".\state.h">
+				RelativePath=".\sitemanager.h"
+				>
 			</File>
 			<File
-				RelativePath=".\statusbar.h">
+				RelativePath=".\splitter.h"
+				>
 			</File>
 			<File
-				RelativePath=".\statuslinectrl.h">
+				RelativePath=".\state.h"
+				>
 			</File>
 			<File
-				RelativePath=".\StatusView.h">
+				RelativePath=".\statusbar.h"
+				>
 			</File>
 			<File
-				RelativePath=".\systemimagelist.h">
+				RelativePath=".\statuslinectrl.h"
+				>
 			</File>
 			<File
-				RelativePath=".\themeprovider.h">
+				RelativePath=".\StatusView.h"
+				>
 			</File>
 			<File
-				RelativePath=".\updatewizard.h">
+				RelativePath=".\systemimagelist.h"
+				>
 			</File>
 			<File
-				RelativePath=".\verifycertdialog.h">
+				RelativePath=".\taskbariconex.h"
+				>
 			</File>
 			<File
-				RelativePath=".\view.h">
+				RelativePath=".\themeprovider.h"
+				>
 			</File>
 			<File
-				RelativePath=".\viewheader.h">
+				RelativePath=".\updatewizard.h"
+				>
 			</File>
 			<File
-				RelativePath=".\window_state_manager.h">
+				RelativePath=".\verifycertdialog.h"
+				>
 			</File>
 			<File
-				RelativePath=".\wrapengine.h">
+				RelativePath=".\verifyhostkeydialog.h"
+				>
 			</File>
 			<File
-				RelativePath=".\xmlfunctions.h">
+				RelativePath=".\view.h"
+				>
+			</File>
+			<File
+				RelativePath=".\viewheader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\volume_enumerator.h"
+				>
+			</File>
+			<File
+				RelativePath=".\window_state_manager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\wrapengine.h"
+				>
+			</File>
+			<File
+				RelativePath=".\xmlfunctions.h"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="Ressourcendateien"
-			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+			>
 			<File
-				RelativePath=".\resources\wx\msw\blank.cur">
+				RelativePath=".\resources\wx\msw\blank.cur"
+				>
 			</File>
 			<File
-				RelativePath=".\resources\wx\msw\bullseye.cur">
+				RelativePath=".\resources\wx\msw\bullseye.cur"
+				>
 			</File>
 			<File
-				RelativePath=".\resources\wx\msw\cdrom.ico">
+				RelativePath=".\resources\wx\msw\cdrom.ico"
+				>
 			</File>
 			<File
-				RelativePath=".\resources\wx\msw\colours.bmp">
+				RelativePath=".\resources\wx\msw\colours.bmp"
+				>
 			</File>
 			<File
-				RelativePath=".\resources\wx\msw\computer.ico">
+				RelativePath=".\resources\wx\msw\computer.ico"
+				>
 			</File>
 			<File
-				RelativePath=".\resources\wx\msw\cross.cur">
+				RelativePath=".\resources\wx\msw\cross.cur"
+				>
 			</File>
 			<File
-				RelativePath=".\resources\wx\msw\csquery.bmp">
+				RelativePath=".\resources\wx\msw\csquery.bmp"
+				>
 			</File>
 			<File
-				RelativePath=".\resources\wx\msw\drive.ico">
+				RelativePath=".\resources\wx\msw\drive.ico"
+				>
 			</File>
 			<File
-				RelativePath=".\resources\wx\msw\file1.ico">
+				RelativePath=".\resources\wx\msw\file1.ico"
+				>
 			</File>
 			<File
-				RelativePath=".\resources\FileZilla.ico">
+				RelativePath=".\resources\FileZilla.ico"
+				>
 			</File>
 			<File
-				RelativePath=".\resources\filezilla.rc">
+				RelativePath=".\resources\filezilla.rc"
+				>
 			</File>
 			<File
-				RelativePath=".\resources\wx\msw\floppy.ico">
+				RelativePath=".\resources\wx\msw\floppy.ico"
+				>
 			</File>
 			<File
-				RelativePath=".\resources\wx\msw\folder1.ico">
+				RelativePath=".\resources\wx\msw\folder1.ico"
+				>
 			</File>
 			<File
-				RelativePath=".\resources\wx\msw\folder2.ico">
+				RelativePath=".\resources\wx\msw\folder2.ico"
+				>
 			</File>
 			<File
-				RelativePath=".\resources\wx\msw\hand.cur">
+				RelativePath=".\resources\wx\msw\hand.cur"
+				>
 			</File>
 			<File
-				RelativePath=".\resources\wx\msw\magnif1.cur">
+				RelativePath=".\resources\wx\msw\magnif1.cur"
+				>
 			</File>
 			<File
-				RelativePath=".\resources\wx\msw\pbrush.cur">
+				RelativePath=".\resources\wx\msw\pbrush.cur"
+				>
 			</File>
 			<File
-				RelativePath=".\resources\wx\msw\pencil.cur">
+				RelativePath=".\resources\wx\msw\pencil.cur"
+				>
 			</File>
 			<File
-				RelativePath=".\resources\wx\msw\pntleft.cur">
+				RelativePath=".\resources\wx\msw\pntleft.cur"
+				>
 			</File>
 			<File
-				RelativePath=".\resources\wx\msw\pntright.cur">
+				RelativePath=".\resources\wx\msw\pntright.cur"
+				>
 			</File>
 			<File
-				RelativePath=".\resources\wx\msw\removble.ico">
+				RelativePath=".\resources\wx\msw\removble.ico"
+				>
 			</File>
 			<File
-				RelativePath=".\resources\wx\msw\rightarr.cur">
+				RelativePath=".\resources\wx\msw\rightarr.cur"
+				>
 			</File>
 			<File
-				RelativePath=".\resources\wx\msw\roller.cur">
+				RelativePath=".\resources\wx\msw\roller.cur"
+				>
 			</File>
 			<File
-				RelativePath=".\resources\wx\msw\std.ico">
+				RelativePath=".\resources\wx\msw\std.ico"
+				>
 			</File>
 		</Filter>
-		<File
-			RelativePath=".\resources\wx\msw\wx.manifest">
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

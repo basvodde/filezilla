@@ -1,7 +1,7 @@
 #ifndef __SETTINGSDIALOG_H__
 #define __SETTINGSDIALOG_H__
 
-#include "dialogex.h"
+#include "../dialogex.h"
 
 class COptions;
 class COptionsPage;

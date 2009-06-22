@@ -2,11 +2,11 @@
 
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 
-#include "Options.h"
+#include "../Options.h"
 #include "settingsdialog.h"
 #include "optionspage.h"
 #include "optionspage_updatecheck.h"
-#include "updatewizard.h"
+#include "../updatewizard.h"
 
 BEGIN_EVENT_TABLE(COptionsPageUpdateCheck, COptionsPage)
 EVT_BUTTON(XRCID("ID_RUNUPDATECHECK"), COptionsPageUpdateCheck::OnRunUpdateCheck)

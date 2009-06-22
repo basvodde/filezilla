@@ -1,9 +1,9 @@
 #include "FileZilla.h"
-#include "Options.h"
+#include "../Options.h"
 #include "settingsdialog.h"
 #include "optionspage.h"
 #include "optionspage_filelists.h"
-#include "Mainfrm.h"
+#include "../Mainfrm.h"
 
 bool COptionsPageFilelists::LoadPage()
 {

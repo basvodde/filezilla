@@ -12,7 +12,7 @@
 #include "asyncrequestqueue.h"
 #include "led.h"
 #include "sitemanager.h"
-#include "settingsdialog.h"
+#include "settings/settingsdialog.h"
 #include "themeprovider.h"
 #include "filezillaapp.h"
 #include "view.h"

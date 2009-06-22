@@ -1,9 +1,9 @@
 #include "FileZilla.h"
-#include "Options.h"
+#include "../Options.h"
 #include "settingsdialog.h"
 #include "optionspage.h"
 #include "optionspage_interface.h"
-#include "Mainfrm.h"
+#include "../Mainfrm.h"
 
 BEGIN_EVENT_TABLE(COptionsPageInterface, COptionsPage)
 EVT_CHECKBOX(XRCID("ID_FILEPANESWAP"), COptionsPageInterface::OnLayoutChange)
