@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: id_ID\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-06-06 19:47+0200\n"
-"PO-Revision-Date: 2009-05-28 01:26+0700\n"
+"POT-Creation-Date: 2009-06-22 18:20+0200\n"
+"PO-Revision-Date: 2009-06-19 08:07+0700\n"
 "Last-Translator: Willy Sudiarto Raharjo <willysr@gmail.com>\n"
 "Language-Team: Bahasa Indonesia <willysr@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -23,7 +23,7 @@ msgstr "%H:%M:%S terlewati"
 msgid "%H:%M:%S left"
 msgstr "%H:%M:%S lagi"
 
-#: resources.h:278
+#: resources.h:737
 #, no-c-format
 msgid ""
 "%a - Account (Lines containing this will be omitted if not using Account "
@@ -40,17 +40,19 @@ msgid "%d directory"
 msgid_plural "%d directories"
 msgstr[0] "%d direktori"
 
-#: ../../locales/../src/interface/search.cpp:774
-#: ../../locales/../src/interface/search.cpp:1021
+#: ../../locales/../src/interface/RemoteListView.cpp:1644
+#: ../../locales/../src/interface/search.cpp:780
+#: ../../locales/../src/interface/search.cpp:1027
 #, c-format
 msgid "%d directory with its contents"
 msgid_plural "%d directories with their contents"
-msgstr[0] ""
+msgstr[0] "Direktori %d dengan isinya"
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:52
 #: ../../locales/../src/interface/filelist_statusbar.cpp:75
-#: ../../locales/../src/interface/search.cpp:773
-#: ../../locales/../src/interface/search.cpp:1020
+#: ../../locales/../src/interface/RemoteListView.cpp:1643
+#: ../../locales/../src/interface/search.cpp:779
+#: ../../locales/../src/interface/search.cpp:1026
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
@@ -73,26 +75,26 @@ msgstr[0] "%d berkas. Ukuran total: Paling tidak %s"
 msgid "%d files added to queue"
 msgstr "%d berkas telah dimasukkan ke antrian"
 
-#: resources.h:275
+#: resources.h:734
 msgid "%h - Host"
 msgstr "%h - Host"
 
-#: resources.h:277
+#: resources.h:736
 #, no-c-format
 msgid "%p - Password"
 msgstr "%p - Kata sandi"
 
-#: ../../locales/../src/interface/verifycertdialog.cpp:52
+#: ../../locales/../src/interface/verifycertdialog.cpp:38
 #, c-format
 msgid "%s - Certificate expired!"
 msgstr "%s - Sertifikat kadaluarsa!"
 
-#: ../../locales/../src/interface/verifycertdialog.cpp:36
+#: ../../locales/../src/interface/verifycertdialog.cpp:22
 #, c-format
 msgid "%s - Not yet valid!"
 msgstr "%s - Belum juga valid!"
 
-#: resources.h:279
+#: resources.h:738
 #, no-c-format
 msgid "%s - Proxy user"
 msgstr "%s - Pengguna proxy"
@@ -107,8 +109,8 @@ msgstr "%s dan %s. Ukuran total: %s"
 msgid "%s and %s. Total size: At least %s"
 msgstr "%s dan %s. Ukuran total: Paling tidak %s"
 
-#: ../../locales/../src/interface/LocalListView.cpp:483
-#: ../../locales/../src/interface/LocalListView.cpp:500
+#: ../../locales/../src/interface/LocalListView.cpp:494
+#: ../../locales/../src/interface/LocalListView.cpp:511
 #, c-format
 msgid "%s byte"
 msgid_plural "%s bytes"
@@ -174,192 +176,197 @@ msgstr ""
 "PATH Anda.\n"
 "- Tentukan path lengkap pada %s pada variabel lingkungan FZ_FZSFTP."
 
-#: ../../locales/../src/interface/verifycertdialog.cpp:69
+#: ../../locales/../src/interface/verifycertdialog.cpp:55
 #, c-format
 msgid "%s with %d bits"
 msgstr "%s dengan %d bit"
 
-#: resources.h:276
+#: resources.h:735
 #, no-c-format
 msgid "%u - Username"
 msgstr "%u - Nama pengguna"
 
-#: resources.h:280
+#: resources.h:739
 #, no-c-format
 msgid "%w - Proxy password"
 msgstr "%w - Kata sandi proxy"
 
-#: resources.h:736
+#: resources.h:532
 msgid "&About..."
 msgstr "&Tentang..."
 
-#: resources.h:107 resources.h:592
+#: resources.h:84 resources.h:396
 msgid "&Account:"
 msgstr "&Akun:"
 
-#: resources.h:122 resources.h:521 resources.h:847
+#: resources.h:99 resources.h:643 resources.h:703
 msgid "&Active"
 msgstr "&Aktif"
 
-#: resources.h:728
+#: resources.h:524
 msgid "&Add bookmark..."
 msgstr "&Tambah penanda..."
 
-#: resources.h:740 resources.h:756
+#: resources.h:536 resources.h:552
 msgid "&Add files to queue"
 msgstr "&Tambahkan berkas ke antrian"
 
-#: resources.h:530
+#: resources.h:747
 msgid "&Add keyfile..."
 msgstr "&Tambah berkas kunci..."
 
-#: resources.h:805 resources.h:824
+#: resources.h:601 resources.h:620
 msgid "&Add to queue"
 msgstr "&Tambahkan ke antrian"
 
-#: resources.h:22
+#: resources.h:23
 msgid "&Always trust certificate in future sessions."
 msgstr "&Selalu percaya sertifikat pada sesi di masa mendatang."
 
-#: resources.h:334
+#: resources.h:176
 msgid "&Always trust this host, add this key to the cache"
 msgstr "&Selalu percaya pada host ini, tambahkan kunci ini pada cache"
 
-#: resources.h:261
+#: resources.h:869
 msgid "&Always use default editor"
 msgstr "&Selalu gunakan editor default ini"
 
-#: resources.h:654
+#: resources.h:439
 msgid "&Always use selection for unassociated files"
 msgstr "&Selalu gunakan pilihan untuk semua berkas yang tidak diasosiasikan"
 
-#: resources.h:87
+#: resources.h:64
 msgid "&Always use this action"
 msgstr "&Selalu gunakan aksi ini"
 
-#: resources.h:420 resources.h:444
+#: resources.h:249 resources.h:273
 msgid "&Ask for action"
 msgstr "&Tanya aksi"
 
-#: resources.h:390
+#: resources.h:715
 msgid "&Ask your operating system for the external IP address"
 msgstr "&Tanya sistem operasi Anda untuk alamat IP eksternal"
 
-#: resources.h:155 resources.h:715 resources.h:833
+#: resources.h:509 resources.h:629 resources.h:782
 msgid "&Auto"
 msgstr "&Otomatis"
 
-#: resources.h:128
+#: resources.h:105
 msgid "&Autodetect"
 msgstr "&Deteksi otomatis"
 
-#: resources.h:802
+#: resources.h:598
 msgid "&Automatically remove successful transfers"
 msgstr "&Hapus transfer yang berhasil secara otomatis"
 
-#: resources.h:157 resources.h:717 resources.h:835
+#: resources.h:511 resources.h:631 resources.h:784
 msgid "&Binary"
 msgstr "&Biner"
 
-#: resources.h:222
+#: resources.h:829
 msgid "&Binary prefixes using SI symbols. (e.g. 1 KB = 1024 bytes)"
 msgstr "&Awalan biner menggunakan simbol SI. (cth. 1 KB = 1024 byte)"
 
-#: resources.h:727
+#: resources.h:523
 msgid "&Bookmarks"
 msgstr "&Penanda"
 
-#: resources.h:113 resources.h:237 resources.h:258 resources.h:574
-#: resources.h:611 resources.h:617 resources.h:653 resources.h:673
+#: resources.h:90 resources.h:378 resources.h:415 resources.h:421
+#: resources.h:438 resources.h:458 resources.h:866 resources.h:888
 msgid "&Browse..."
 msgstr "&Jelajah..."
 
-#: resources.h:65
+#: resources.h:777
 msgid "&Burst tolerance:"
 msgstr "&Toleransi burst:"
 
-#: resources.h:149 resources.h:153 resources.h:287 resources.h:348
+#: resources.h:126 resources.h:129 resources.h:190 resources.h:691
 msgid "&Cancel"
 msgstr "&Batal"
 
-#: resources.h:401
+#: resources.h:230
 msgid "&Check for beta versions of FileZilla"
 msgstr "&Periksa versi beta FileZilla"
 
-#: resources.h:693
+#: resources.h:487
 msgid "&Clear private data..."
 msgstr "&Hapus data privat..."
 
-#: resources.h:782
+#: resources.h:578
 msgid "&Close FileZilla"
 msgstr "&Tutup FileZilla"
 
-#: resources.h:134
+#: resources.h:111
 msgid "&Connect"
 msgstr "&Menghubungkan"
 
-#: resources.h:370
+#: resources.h:212
 msgid "&Copy"
 msgstr "&Salin"
 
-#: resources.h:685
+#: resources.h:479
 msgid "&Copy current connection to Site Manager..."
 msgstr "&Salin koneksi saat ini ke Manajemen Situs..."
 
-#: resources.h:324 resources.h:791
+#: resources.h:166 resources.h:587
 msgid "&Copy to clipboard"
 msgstr "&Salin ke clipboard"
 
-#: resources.h:794
+#: resources.h:590
 msgid "&Crash"
 msgstr "&Rusak"
 
-#: resources.h:748 resources.h:761 resources.h:807 resources.h:826
+#: resources.h:544 resources.h:557 resources.h:603 resources.h:622
 msgid "&Create directory"
 msgstr "&Buat direktori"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:623
+#: ../../locales/../src/interface/Mainfrm.cpp:624
 msgid "&Debug"
 msgstr "&Debug"
 
-#: resources.h:245
+#: resources.h:896
 msgid "&Debug information in message log:"
 msgstr "&Informasi debug pada pesan log:"
 
-#: resources.h:254
+#: resources.h:862
 msgid "&Default editor:"
 msgstr "Editor &default:"
 
-#: resources.h:713 resources.h:774
+#: resources.h:507 resources.h:570
 msgid "&Default file exists action..."
 msgstr "&Aksi default jika berkas sudah ada..."
 
-#: resources.h:186
+#: resources.h:698
 msgid "&Delay between failed login attempts:"
 msgstr "&Keterlambatan diantara percobaan login yang gagal:"
 
-#: resources.h:98 resources.h:353 resources.h:368 resources.h:624
-#: resources.h:750 resources.h:828
+#: resources.h:75 resources.h:195 resources.h:210 resources.h:428
+#: resources.h:546 resources.h:624
 msgid "&Delete"
 msgstr "&Hapus"
 
-#: resources.h:699
+#: resources.h:471
+#, fuzzy
+msgid "&Delete symlink"
+msgstr "&Hapus"
+
+#: resources.h:493
 msgid "&Directory comparison"
 msgstr "Perbandingan &direktori"
 
-#: resources.h:508
+#: resources.h:337
 msgid "&Discard local file then download and edit file anew"
 msgstr "&Buang berkas lokal lalu download dan edit berkas baru"
 
-#: resources.h:723
+#: resources.h:517
 msgid "&Disconnect"
 msgstr "&Putuskan hubungan"
 
-#: resources.h:783
+#: resources.h:579
 msgid "&Disconnect from server"
 msgstr "&Terputus dari server"
 
-#: resources.h:220
+#: resources.h:827
 msgid "&Display size in bytes"
 msgstr "&Tampilkan ukuran dalam byte"
 
@@ -367,228 +374,227 @@ msgstr "&Tampilkan ukuran dalam byte"
 msgid "&Don't show this dialog again."
 msgstr "&Jangan tampilkan dialog ini lagi."
 
-#: resources.h:395
+#: resources.h:720
 msgid "&Don't use external IP address on local connections."
 msgstr "&Jangan gunakan alamat IP eksternal pada koneksi lokal."
 
-#: resources.h:637
+#: resources.h:849
 msgid "&Double-click action on files:"
 msgstr "Aksi klik &ganda untuk berkas:"
 
-#: resources.h:754 resources.h:803
+#: resources.h:550 resources.h:599
 msgid "&Download"
 msgstr "&Download"
 
-#: resources.h:672
-#, fuzzy
+#: resources.h:457
 msgid "&Download to:"
-msgstr "&Download"
+msgstr "&Download ke:"
 
-#: resources.h:836
-#, fuzzy
+#: resources.h:632
 msgid "&Download..."
-msgstr "&Download"
+msgstr "&Download..."
 
-#: resources.h:691 resources.h:746
+#: resources.h:485 resources.h:542
 msgid "&Edit"
 msgstr "&Edit"
 
-#: resources.h:361
+#: resources.h:203
 msgid "&Edit filter rules..."
 msgstr "&Edit aturan filter..."
 
-#: resources.h:700 resources.h:818
+#: resources.h:494 resources.h:614
 msgid "&Enable"
 msgstr "&Aktifkan"
 
-#: resources.h:200
+#: resources.h:877
 msgid "&Enable automatic update check"
 msgstr "&Aktifkan pemeriksaan update otomatis"
 
-#: resources.h:132
+#: resources.h:109
 msgid "&Encoding:"
 msgstr "&Enkoding:"
 
-#: resources.h:790
+#: resources.h:586
 msgid "&Enter custom command..."
 msgstr "&Masukkan perintah sendiri..."
 
-#: resources.h:293
+#: resources.h:135
 msgid "&Execute"
 msgstr "&Eksekusi"
 
-#: resources.h:475
+#: resources.h:304
 msgid "&Export Site Manager entries"
 msgstr "&Ekspor daftar manajemen situs"
 
-#: resources.h:686 resources.h:832
+#: resources.h:480 resources.h:628
 msgid "&Export..."
 msgstr "&Ekspor..."
 
-#: resources.h:48
+#: resources.h:725
 msgid "&Fall back to active mode"
 msgstr "&Kembali ke mode aktif"
 
-#: resources.h:682
+#: resources.h:476
 msgid "&File"
 msgstr "&Berkas"
 
-#: resources.h:815
+#: resources.h:611
 msgid "&File Attributes..."
 msgstr "&Atribut berkas..."
 
-#: resources.h:769
+#: resources.h:565
 msgid "&File permissions..."
 msgstr "Hak akses &berkas..."
 
-#: resources.h:573
+#: resources.h:377
 msgid "&File:"
 msgstr "&Berkas:"
 
-#: resources.h:350
+#: resources.h:192
 msgid "&Filter sets:"
 msgstr "&Sekumpulan filter:"
 
-#: resources.h:366
+#: resources.h:208
 msgid "&Filters:"
 msgstr "&Filters"
 
-#: resources.h:500
+#: resources.h:329
 msgid "&Finish editing and delete local file"
 msgstr "&Selesaikan pengeditan dan hapus berkas lokal"
 
-#: resources.h:676
+#: resources.h:461
 msgid ""
 "&Flatten remote paths, download all contained files directly into target "
 "directory"
 msgstr ""
+"&Path remote lebih ramping, download semua berkas yang ada langsung pada "
+"direktori target"
 
-#: resources.h:393
+#: resources.h:718
 msgid "&Get external IP address from the following URL:"
 msgstr "&Dapatkan alamat IP eksternal dari URL berikut:"
 
-#: resources.h:734
+#: resources.h:530
 msgid "&Getting help..."
 msgstr "&Mendapatkan bantuan..."
 
-#: resources.h:605
+#: resources.h:409
 msgid "&Global bookmark"
 msgstr "Penanda &global"
 
-#: resources.h:562
+#: resources.h:754
 msgid "&HTTP/1.1 using CONNECT method"
 msgstr "&HTTP/1/1 menggunakan metode CONNECT"
 
-#: resources.h:731
+#: resources.h:527
 msgid "&Help"
 msgstr "&Bantuan"
 
-#: resources.h:703 resources.h:821
-#, fuzzy
+#: resources.h:497 resources.h:617
 msgid "&Hide identical files"
-msgstr "%Buka kembali berkas lokal"
+msgstr "%Sembunyikan berkas yang kembar"
 
-#: resources.h:776
+#: resources.h:572
 msgid "&Highest"
 msgstr "&Tertinggi"
 
-#: resources.h:388
+#: resources.h:713
 msgid "&Highest available port:"
 msgstr "&Port tertinggi yand ada:"
 
-#: resources.h:101 resources.h:586 resources.h:885
+#: resources.h:78 resources.h:390 resources.h:681
 msgid "&Host:"
 msgstr "&Mesin:"
 
-#: resources.h:221
+#: resources.h:828
 msgid "&IEC binary prefixes (e.g. 1 KiB = 1024 bytes)"
 msgstr "&Prefix biner IEC (cth. 1 KiB = 1024 byte)"
 
-#: resources.h:209
+#: resources.h:816
 msgid "&ISO 8601 (example: 2007-09-15)"
 msgstr "ISO 8601 (contoh: 2007-09-15)"
 
-#: resources.h:687
+#: resources.h:481
 msgid "&Import..."
 msgstr "&Import..."
 
-#: resources.h:263
+#: resources.h:871
 msgid "&Inherit system's filetype associations"
 msgstr "&Turunkan asosiasi jenis berkas sistem"
 
-#: resources.h:675
+#: resources.h:460
 msgid "&Keep remote path structure relative to search root"
-msgstr ""
+msgstr "&Pertahankan struktur path remote relatif pada root pencarian"
 
-#: resources.h:167
+#: resources.h:794
 msgid "&Layout of file and directory panes:"
 msgstr "&Layout dari berkas dan direktori:"
 
-#: resources.h:385
+#: resources.h:710
 msgid "&Limit local ports used by FileZilla"
 msgstr "&Batasi port lokal yang digunakan FileZilla"
 
-#: resources.h:124
+#: resources.h:101
 msgid "&Limit number of simultaneous connections"
 msgstr "&Batasi jumlah koneksi simultan"
 
-#: resources.h:708
+#: resources.h:502
 msgid "&Local directory tree"
 msgstr "Pohon direktori &lokal"
 
-#: resources.h:610 resources.h:616
+#: resources.h:414 resources.h:420
 msgid "&Local directory:"
 msgstr "Direktori &lokal:"
 
-#: resources.h:235
+#: resources.h:886
 msgid "&Log to file"
 msgstr "&Catat log ke berkas"
 
-#: resources.h:104 resources.h:589
+#: resources.h:81 resources.h:393
 msgid "&Logontype:"
 msgstr "&TipeLogon:"
 
-#: resources.h:779
+#: resources.h:575
 msgid "&Low"
 msgstr "&Rendah"
 
-#: resources.h:729
+#: resources.h:525
 msgid "&Manage bookmarks..."
 msgstr "&Kelola penanda..."
 
-#: resources.h:719
+#: resources.h:513
 msgid "&Manual transfer..."
 msgstr "Transfer &manual..."
 
-#: resources.h:125
+#: resources.h:102
 msgid "&Maximum number of connections:"
 msgstr "&Jumlah maksimum koneksi:"
 
-#: resources.h:184
+#: resources.h:696
 msgid "&Maximum number of retries:"
 msgstr "&Jumlah maksimum percobaan:"
 
-#: resources.h:707
+#: resources.h:501
 msgid "&Message log"
 msgstr "Log &pesan"
 
-#: resources.h:179
+#: resources.h:806
 msgid "&Minimize to tray"
 msgstr "&Minimalkan ke tray"
 
-#: resources.h:608
+#: resources.h:412
 msgid "&Name:"
 msgstr "&Nama:"
 
-#: resources.h:692
+#: resources.h:486
 msgid "&Network configuration wizard..."
 msgstr "&Panduan konfigurasi jaringan..."
 
-#: resources.h:367
+#: resources.h:209
 msgid "&New"
 msgstr "&Baru"
 
-#: resources.h:94
+#: resources.h:71
 msgid "&New Site"
 msgstr "&Situs Baru"
 
@@ -596,218 +602,220 @@ msgstr "&Situs Baru"
 msgid "&New version available!"
 msgstr "&Versi baru tersedia!"
 
-#: resources.h:502
+#: resources.h:331
 msgid "&No"
 msgstr "&Tidak"
 
-#: resources.h:269 resources.h:561
+#: resources.h:728 resources.h:753
 msgid "&None"
 msgstr "%Tidak ada"
 
-#: resources.h:778
+#: resources.h:574
 msgid "&Normal"
 msgstr "&Normal"
 
-#: resources.h:201
+#: resources.h:878
 msgid "&Number of days between update checks:"
 msgstr "&Jumlah hari diantara pemeriksaan update:"
 
-#: resources.h:302
+#: resources.h:144
 msgid "&Numeric value:"
 msgstr "&Nilai numerik:"
 
-#: resources.h:135 resources.h:148 resources.h:626
+#: resources.h:112 resources.h:125 resources.h:430
 msgid "&OK"
 msgstr "&OK"
 
-#: resources.h:272
+#: resources.h:731
 msgid "&OPEN"
 msgstr "%BUKA"
 
-#: resources.h:744
+#: resources.h:540
 msgid "&Open"
 msgstr "&Buka"
 
-#: resources.h:80 resources.h:421 resources.h:445
+#: resources.h:57 resources.h:250 resources.h:274
 msgid "&Overwrite"
 msgstr "&Timpa"
 
-#: resources.h:123
+#: resources.h:100
 msgid "&Passive"
 msgstr "&Pasif"
 
-#: resources.h:146
+#: resources.h:123
 msgid "&Password:"
 msgstr "&KataKunci:"
 
-#: resources.h:786
+#: resources.h:582
 msgid "&Play sound"
 msgstr "&Mainkan suara"
 
-#: resources.h:102 resources.h:587 resources.h:889
+#: resources.h:79 resources.h:391 resources.h:685
 msgid "&Port:"
 msgstr "&Port:"
 
-#: resources.h:173
+#: resources.h:800
 msgid "&Position of the message log:"
 msgstr "&Posisi dari pesan log:"
 
-#: resources.h:718
+#: resources.h:512
 msgid "&Preserve timestamps of transferred files"
 msgstr "&Pertahankan waktu pada berkas yang ditransfer"
 
-#: resources.h:484
+#: resources.h:313
 msgid "&Queue"
 msgstr "&Antrian"
 
-#: resources.h:891
+#: resources.h:687
 msgid "&Quickconnect"
 msgstr "&KoneksiCepat"
 
-#: resources.h:706
+#: resources.h:500
 msgid "&Quickconnect bar"
 msgstr "Batang &koneksi cepat"
 
-#: resources.h:291
+#: resources.h:133
 msgid "&Read"
 msgstr "&Baca"
 
-#: resources.h:722
+#: resources.h:516
 msgid "&Reconnect"
 msgstr "&Hubungkan ulang"
 
-#: resources.h:697
+#: resources.h:491
 msgid "&Refresh"
 msgstr "&Perbarui"
 
-#: resources.h:147
+#: resources.h:124
 msgid "&Remember password for this session"
 msgstr "&Ingat Kata kunci untuk sesi ini"
 
-#: resources.h:612 resources.h:618
+#: resources.h:416 resources.h:422
 msgid "&Remote directory:"
 msgstr "&Direktori remote:"
 
-#: resources.h:576
+#: resources.h:380
 msgid "&Remote path:"
 msgstr "Path &remote:"
 
-#: resources.h:161
+#: resources.h:788
 msgid "&Remove"
 msgstr "&Hapus"
 
-#: resources.h:531
+#: resources.h:748
 msgid "&Remove key"
 msgstr "&Hapus kunci"
 
-#: resources.h:666 resources.h:773
+#: resources.h:451 resources.h:569
 msgid "&Remove selected"
 msgstr "&Hapus yang dipilih"
 
-#: resources.h:97 resources.h:369 resources.h:623 resources.h:752
-#: resources.h:765 resources.h:811 resources.h:830
+#: resources.h:74 resources.h:211 resources.h:427 resources.h:548
+#: resources.h:561 resources.h:607 resources.h:626
 msgid "&Rename"
 msgstr "&Ganti nama"
 
-#: resources.h:352
+#: resources.h:194
 msgid "&Rename..."
 msgstr "&Ganti nama..."
 
-#: resources.h:507
+#: resources.h:336
 msgid "&Reopen local file"
 msgstr "%Buka kembali berkas lokal"
 
-#: resources.h:735
+#: resources.h:531
 msgid "&Report a bug..."
 msgstr "&Laporkan kesalahan..."
 
-#: resources.h:884
+#: resources.h:680
 msgid "&Restart Wizard"
 msgstr "&Ulang kembali Panduan"
 
-#: resources.h:84 resources.h:425 resources.h:449
+#: resources.h:61 resources.h:254 resources.h:278
 msgid "&Resume"
 msgstr "&Teruskan"
 
-#: resources.h:784
+#: resources.h:580
 msgid "&Run command..."
 msgstr "&Jalankan perintah..."
 
-#: resources.h:182
+#: resources.h:694
 msgid "&Run configuration wizard now..."
 msgstr "&Jalankan panduan konfigurasi sekarang..."
 
-#: resources.h:203
+#: resources.h:880
 msgid "&Run update check now..."
 msgstr "&Jalankan pemeriksaan update sekarang..."
 
-#: resources.h:271
+#: resources.h:730
 msgid "&SITE"
 msgstr "%SITUS"
 
-#: resources.h:563
+#: resources.h:755
 msgid "&SOCKS 5"
 msgstr "&SOCKS 5"
 
-#: resources.h:351
+#: resources.h:193
 msgid "&Save as..."
 msgstr "&Simpan sebagai..."
 
-#: resources.h:659
-#, fuzzy
+#: resources.h:444
 msgid "&Search"
-msgstr "&Mulai"
+msgstr "&Pencarian"
 
-#: resources.h:197
+#: resources.h:518
+msgid "&Search remote files..."
+msgstr "&Mencari berkas remote..."
+
+#: resources.h:860
 msgid "&Select language:"
 msgstr "&Pilih bahasa:"
 
-#: resources.h:554
+#: resources.h:368
 msgid "&Select the columns that should be displayed:"
 msgstr "&Pilih kolom yang harus ditampilkan:"
 
-#: resources.h:578 resources.h:720
+#: resources.h:382 resources.h:514
 msgid "&Server"
 msgstr "&Server"
 
-#: resources.h:483
+#: resources.h:312
 msgid "&Settings"
 msgstr "&Pengaturan"
 
-#: resources.h:694
+#: resources.h:488
 msgid "&Settings..."
 msgstr "&Pengaturan..."
 
-#: resources.h:244
+#: resources.h:895
 msgid "&Show debug menu"
 msgstr "&Tampilkan menu debug"
 
-#: resources.h:785
+#: resources.h:581
 msgid "&Show message"
 msgstr "&Tampilkan pesan"
 
-#: resources.h:234
+#: resources.h:885
 msgid "&Show timestamps in message log"
 msgstr "&Tampilkan timestamp pada pesan log"
 
-#: resources.h:683
+#: resources.h:477
 msgid "&Site Manager..."
 msgstr "&Manajemen Situs..."
 
-#: resources.h:606
+#: resources.h:410
 msgid "&Site-specific bookmark"
 msgstr "Penanda &situs khusus"
 
-#: resources.h:86
+#: resources.h:63
 msgid "&Skip"
 msgstr "&Lewati"
 
-#: resources.h:678
-#, fuzzy
+#: resources.h:463
 msgid "&Start transfer immediately"
-msgstr "Mulai transfer &secepatnya"
+msgstr "&Mulai transfer secepatnya"
 
-#: resources.h:172
+#: resources.h:799
 msgid "&Swap local and remote panes"
 msgstr "&Tukar jendela lokal dan remote"
 
@@ -815,63 +823,63 @@ msgstr "&Tukar jendela lokal dan remote"
 msgid "&Test"
 msgstr "&Tes"
 
-#: resources.h:190
+#: resources.h:808
 msgid "&Theme:"
 msgstr "&Tema:"
 
-#: resources.h:711
+#: resources.h:505
 msgid "&Transfer"
 msgstr "&Transfer"
 
-#: resources.h:120
+#: resources.h:97
 msgid "&Transfer mode:"
 msgstr "Mode &transfer"
 
-#: resources.h:710
+#: resources.h:504
 msgid "&Transfer queue"
 msgstr "Antrian &transfer"
 
-#: resources.h:164
+#: resources.h:791
 msgid "&Treat dotfiles as ASCII files"
 msgstr "&Anggap berkas bertitik sebagai berkas ASCII"
 
-#: resources.h:514
+#: resources.h:343
 msgid "&Unedit"
 msgstr "&Batalkan Edit"
 
-#: resources.h:346
+#: resources.h:188
 msgid "&Update cached key for this host"
 msgstr "&Update kunci yang di-cache untuk mesin ini"
 
-#: resources.h:738 resources.h:822
+#: resources.h:534 resources.h:618
 msgid "&Upload"
 msgstr "&Upload"
 
-#: resources.h:652
+#: resources.h:437
 msgid "&Use custom program"
 msgstr "&Gunakan program kustomisasi"
 
-#: resources.h:256
+#: resources.h:864
 msgid "&Use system's default editor for text files"
 msgstr "Gunakan editor default sistem untuk berkas teks"
 
-#: resources.h:391
+#: resources.h:716
 msgid "&Use the following IP address:"
 msgstr "&Gunakan alamat IP berikut:"
 
-#: resources.h:47
+#: resources.h:724
 msgid "&Use the server's external IP address instead"
 msgstr "&Gunakan alamat IP eksternal server"
 
-#: resources.h:224
+#: resources.h:831
 msgid "&Use thousands separator"
 msgstr "&Gunakan pemisah ribuan"
 
-#: resources.h:105 resources.h:145 resources.h:590
+#: resources.h:82 resources.h:122 resources.h:394
 msgid "&User:"
 msgstr "&Pengguna:"
 
-#: resources.h:887
+#: resources.h:683
 msgid "&Username:"
 msgstr "&Nama pengguna:"
 
@@ -880,19 +888,23 @@ msgstr "&Nama pengguna:"
 msgid "&Version %s"
 msgstr "&Versi %s"
 
-#: resources.h:696
+#: resources.h:490
 msgid "&View"
 msgstr "&Lihat"
 
-#: resources.h:760
+#: resources.h:556
 msgid "&View/Edit"
 msgstr "&Lihat/Edit"
 
-#: resources.h:292
+#: resources.h:870
+msgid "&Watch locally edited files and prompt to upload modifications"
+msgstr ""
+
+#: resources.h:134
 msgid "&Write"
 msgstr "&Tulis"
 
-#: resources.h:501
+#: resources.h:330
 msgid "&Yes"
 msgstr "&Ya"
 
@@ -914,7 +926,7 @@ msgstr "'%s' bukan direktori."
 msgid "'Account' logontype not supported by selected protocol"
 msgstr "Jenis login 'Akun' tidak didukung oleh protokol yang dipilih"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:716
+#: ../../locales/../src/interface/Mainfrm.cpp:717
 msgid ""
 "'quote' is usually a local command used by commandline clients to send the "
 "arguments following 'quote' to the server. You might want to enter the raw "
@@ -931,39 +943,39 @@ msgid "(%d object filtered)"
 msgid_plural "(%d objects filtered)"
 msgstr[0] "(%d objek terfilter)"
 
-#: resources.h:53 resources.h:55
+#: resources.h:765 resources.h:767
 msgid "(0 for no limit)"
 msgstr "(0 untuk tanpa batas)"
 
-#: resources.h:185
+#: resources.h:697
 msgid "(0-99)"
 msgstr "(0-99)"
 
-#: resources.h:187
+#: resources.h:699
 msgid "(0-999 seconds)"
 msgstr "(0-999 detik)"
 
-#: resources.h:51
+#: resources.h:763
 msgid "(1-10)"
 msgstr "(1-10)"
 
-#: resources.h:58
+#: resources.h:770
 msgid "(5-9999, 0 to disable)"
 msgstr "(5-9999, 0 untuk menonaktifkan)"
 
-#: resources.h:202
+#: resources.h:879
 msgid "(At least 7 days)"
 msgstr "(Paling tidak 7 hari)"
 
-#: resources.h:217
+#: resources.h:824
 msgid "(example: %H:%M)"
 msgstr "(contoh: %H:%M)"
 
-#: resources.h:211
+#: resources.h:818
 msgid "(example: %Y-%m-%d)"
 msgstr "(contoh: %Y-%m-%d)"
 
-#: resources.h:62 resources.h:64
+#: resources.h:774 resources.h:776
 msgid "(in KB/s)"
 msgstr "(dalam KB/s)"
 
@@ -975,7 +987,7 @@ msgstr ", %H:%M:%S lagi"
 msgid ", --:--:-- left"
 msgstr ", --:--:-- Lagi"
 
-#: resources.h:872
+#: resources.h:668
 msgid "-"
 msgstr "-"
 
@@ -996,23 +1008,23 @@ msgstr "-s dan -c tidak bisa ada pada waktu yang bersamaan."
 msgid "-s cannot be used together with an FTP URL."
 msgstr "-s tidak bisa digunakan bersama dengan FTP URL"
 
-#: resources.h:246
+#: resources.h:897
 msgid "0 - None"
 msgstr "0 - Tidak ada"
 
-#: resources.h:247
+#: resources.h:898
 msgid "1 - Warning"
 msgstr "1 - Peringatan"
 
-#: resources.h:248
+#: resources.h:899
 msgid "2 - Info"
 msgstr "2 - Informasi"
 
-#: resources.h:249
+#: resources.h:900
 msgid "3 - Verbose"
 msgstr "3 - Detail"
 
-#: resources.h:250
+#: resources.h:901
 msgid "4 - Debug"
 msgstr "4 - Debug"
 
@@ -1020,7 +1032,7 @@ msgstr "4 - Debug"
 msgid ";1"
 msgstr ";1"
 
-#: resources.h:730
+#: resources.h:526
 msgid "?"
 msgstr "?"
 
@@ -1031,7 +1043,7 @@ msgstr ""
 "Penanda dengan nama yang dimasukkan sudah ada. Harap masukkan nama yang "
 "belum terpakai."
 
-#: ../../locales/../src/interface/optionspage_edit.cpp:155
+#: ../../locales/../src/interface/settings/optionspage_edit.cpp:153
 msgid "A default editor needs to be set."
 msgstr "Editor default harus ditentukan."
 
@@ -1040,7 +1052,7 @@ msgstr "Editor default harus ditentukan."
 msgid "A directory cannot be dragged into one if its subdirectories."
 msgstr "Sebuah direktori tidak bisa digeser pada salah satu sub direktorinya."
 
-#: resources.h:844
+#: resources.h:640
 msgid ""
 "A few servers don't allow passive mode or are misconfigured. In such cases "
 "you would have to use active mode. In active mode, FileZilla opens a port "
@@ -1051,11 +1063,11 @@ msgstr ""
 "FileZilla membuka sebuah port dan meminta server untuk terhubung ke port "
 "tersebut."
 
-#: resources.h:489
+#: resources.h:318
 msgid "A file previously opened has been changed."
 msgstr "Sebuah berkas yang sebelumnya dibuka sudah berubah."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2317
+#: ../../locales/../src/interface/LocalListView.cpp:2322
 #, c-format
 msgid ""
 "A file with that name is already being edited. Do you want to reopen '%s'?"
@@ -1063,12 +1075,12 @@ msgstr ""
 "Berkas dengan nama tersebut sudah diedit sebelumnya. Apakah Anda hendak "
 "membuka kembali '%s'?"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2313
-#: ../../locales/../src/interface/RemoteListView.cpp:2649
+#: ../../locales/../src/interface/LocalListView.cpp:2318
+#: ../../locales/../src/interface/RemoteListView.cpp:2696
 msgid "A file with that name is already being transferred."
 msgstr "Berkas dengan nama tersebut sudah ditransfer."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2654
+#: ../../locales/../src/interface/RemoteListView.cpp:2701
 msgid ""
 "A file with that name is still being edited. Please close it and try again."
 msgstr ""
@@ -1089,11 +1101,11 @@ msgstr ""
 "daftar.\n"
 "Tidak ada pesan lain yang akan ditampilkan pada sesi ini."
 
-#: resources.h:403
+#: resources.h:232
 msgid "A newer version of FileZilla is available:"
 msgstr "Versi baru dari FileZilla sudah tersedia:"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:775
+#: ../../locales/../src/interface/Mainfrm.cpp:776
 msgid ""
 "A proper server always shows all files, but some broken servers hide files "
 "from the user. Use this option to force the server to show all files."
@@ -1102,7 +1114,7 @@ msgstr ""
 "yang salah menyembunyikan berkas dari pengguna. Gunakan opsi ini untuk "
 "memaksa server menampilkan semua berkas."
 
-#: resources.h:526
+#: resources.h:708
 msgid ""
 "A proper server does not require this. Contact the server administrator if "
 "you need this."
@@ -1120,15 +1132,15 @@ msgstr ""
 "Nonaktifkan penjelajahan tersinkronisasi dan lanjutkan mengganti direktori "
 "lokal?"
 
-#: resources.h:156 resources.h:716 resources.h:834
+#: resources.h:510 resources.h:630 resources.h:783
 msgid "A&SCII"
 msgstr "A&SCII"
 
-#: resources.h:160
+#: resources.h:787
 msgid "A&dd"
 msgstr "T&ambah"
 
-#: resources.h:462
+#: resources.h:291
 msgid "A&llow resume of ASCII files"
 msgstr "&Ijinkan melanjutkan berkas-berkas ASCII"
 
@@ -1140,23 +1152,23 @@ msgstr "G&unakan hanya untuk download"
 msgid "A&pply only to uploads"
 msgstr "G&unakan hanya untuk upload"
 
-#: resources.h:305
+#: resources.h:147
 msgid "A&pply to all files and directories"
 msgstr "&Terapkan pada semua berkas dan direktori"
 
-#: resources.h:430 resources.h:453
+#: resources.h:259 resources.h:282
 msgid "A&sk for action"
 msgstr "&Tanya aksi"
 
-#: resources.h:597
+#: resources.h:401
 msgid "ASCII"
 msgstr "ASCII"
 
-#: resources.h:310
+#: resources.h:152
 msgid "About FileZilla"
 msgstr "Tentang FileZilla"
 
-#: resources.h:174
+#: resources.h:801
 msgid "Above the file lists"
 msgstr "Diatas daftar berkas"
 
@@ -1172,23 +1184,23 @@ msgstr "Diatas daftar berkas"
 msgid "Account"
 msgstr "Akun"
 
-#: resources.h:781
+#: resources.h:577
 msgid "Action after queue &completion"
 msgstr "Aksi setelah antrian &selesai"
 
-#: resources.h:513
+#: resources.h:342
 msgid "Action on selected file:"
 msgstr "Aksi pada berkas yang terpilih:"
 
-#: resources.h:506
+#: resources.h:335
 msgid "Action to perform:"
 msgstr "Aksi yang harus dilakukan:"
 
-#: resources.h:79
+#: resources.h:56
 msgid "Action:"
 msgstr "Aksi:"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:116
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:118
 msgid "Active mode"
 msgstr "Mode aktif"
 
@@ -1218,28 +1230,27 @@ msgstr ""
 "Pengujian mode aktif FTP gagal. FileZilla tahu alamat IP eksternal yang "
 "benar, tetapi router atau firewall Anda telah memodifikasi alamat pengiriman."
 
-#: resources.h:396
+#: resources.h:721
 msgid "Active mode IP"
 msgstr "IP mode aktif"
 
-#: resources.h:376 resources.h:665
+#: resources.h:218 resources.h:450
 msgid "Add &more"
 msgstr "&Tambah lagi"
 
-#: resources.h:679
-#, fuzzy
+#: resources.h:464
 msgid "Add files to &queue only"
-msgstr "&Tambahkan berkas ke antrian"
+msgstr "Tambahkan berkas ke hanya ke &antrian"
 
-#: resources.h:806 resources.h:825
+#: resources.h:602 resources.h:621
 msgid "Add selected directory to the transfer queue"
 msgstr "Masukkan direktori yang dipilih pada antrian transfer"
 
-#: resources.h:741 resources.h:757
+#: resources.h:537 resources.h:553
 msgid "Add selected files and folders to the transfer queue"
 msgstr "Masukkan berkas dan direktori yang dipilih pada antrian transfer"
 
-#: resources.h:639 resources.h:645
+#: resources.h:851 resources.h:857
 msgid "Add to queue"
 msgstr "Tambahkan ke antrian"
 
@@ -1247,35 +1258,35 @@ msgstr "Tambahkan ke antrian"
 msgid "Address type not supported"
 msgstr "Jenis alamat tidak didukung"
 
-#: resources.h:116
+#: resources.h:93
 msgid "Adjust server timezone offset:"
 msgstr "Sesuaikan offset zone waktu server:"
 
-#: resources.h:109
+#: resources.h:86
 msgid "Advanced"
 msgstr "Tingkat lanjut"
 
-#: resources.h:400
+#: resources.h:229
 msgid "Advanced options:"
 msgstr "Opsi tingkat lanjut:"
 
-#: resources.h:536
+#: resources.h:350
 msgid "Algorithm:"
 msgstr "Algoritma:"
 
-#: resources.h:873
+#: resources.h:669
 msgid "All ports in the given range have to be between 1024 and 65535."
 msgstr "Semua port pada jarak yang diberikan harus diantara 1024 dan 65535."
 
-#: resources.h:522
+#: resources.h:704
 msgid "Allow &fall back to other transfer mode on failure"
 msgstr "Ijinkan &kembali pada mode transfer lain jika gagal"
 
-#: resources.h:848
+#: resources.h:644
 msgid "Allow fallback to other transfer mode on failure"
 msgstr "Ijinkan kembali pada mode transfer lain jika gagal"
 
-#: resources.h:532
+#: resources.h:749
 msgid ""
 "Alternatively you can use the Pageant tool from PuTTY to manage your keys, "
 "FileZilla does recognize Pageant."
@@ -1283,14 +1294,13 @@ msgstr ""
 "Alternatif lain, Anda bisa menggunakan aplikasi Pageant dari PuTTY untuk "
 "mengelola kunci Anda, FileZilla bisa mengenali Pageant."
 
-#: resources.h:533
-#, fuzzy
+#: resources.h:750
 msgid ""
 "Alternatively you can use your system's SSH agent. To do so, make sure the "
 "SSH_AUTH_SOCK environment variable is set."
 msgstr ""
 "Alternatif lain, Anda bisa menggunakan agent SSH sistem Anda. Untuk "
-"melakukannya, pastikan variabel lingkungan SSH&AUTH&SOCK sudah diset."
+"melakukannya, pastikan variabel lingkungan SSH_AUTH_SOCK sudah diset."
 
 #: ../../locales/../src/interface/updatewizard.cpp:887
 msgid ""
@@ -1341,27 +1351,27 @@ msgstr ""
 msgid "Any changes made to the filters could not be saved."
 msgstr "Semua perubahan pada Manajemen Situs tidak dapat disimpan."
 
-#: ../../locales/../src/interface/filter.cpp:936
+#: ../../locales/../src/interface/filter.cpp:947
 msgid "Any changes made to the filters will not be saved."
 msgstr "Semua perubahan pada filter tidak akan disimpan."
 
-#: resources.h:374 resources.h:663
+#: resources.h:216 resources.h:448
 msgid "Any of the following"
 msgstr "Satu dari berikut"
 
-#: resources.h:307
+#: resources.h:149
 msgid "App&ly to directories only"
 msgstr "&Terapkan pada direktori saja"
 
-#: resources.h:364
+#: resources.h:206
 msgid "Apply"
 msgstr "Terapkan"
 
-#: resources.h:88
+#: resources.h:65
 msgid "Apply to &current queue only"
 msgstr "Terapkan pada &antrian saat ini saja"
 
-#: resources.h:306
+#: resources.h:148
 msgid "Apply to &files only"
 msgstr "Terapkan pada &berkas saja"
 
@@ -1370,7 +1380,7 @@ msgstr "Terapkan pada &berkas saja"
 msgid "Archive"
 msgstr "Arsip"
 
-#: resources.h:176
+#: resources.h:803
 msgid "As tab in the transfer queue pane"
 msgstr "Sebagai tab dalam tampilan antrian transfer"
 
@@ -1380,23 +1390,23 @@ msgstr "Sebagai tab dalam tampilan antrian transfer"
 msgid "Ask for password"
 msgstr "Tanya Kata kunci"
 
-#: resources.h:869
+#: resources.h:665
 msgid "Ask operating system for a port."
 msgstr "Tanya sistem operasi untuk sebuah port."
 
-#: resources.h:859
+#: resources.h:655
 msgid "Ask your operating system for the external IP address"
 msgstr "Tanya sistem operasi Anda untuk alamat IP eksternal"
 
-#: ../../locales/../src/interface/optionspage_edit.cpp:186
+#: ../../locales/../src/interface/settings/optionspage_edit_associations.cpp:64
 msgid "Associated program not found:"
 msgstr "Program yang sesuai tidak ditemukan:"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:482
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:485
 msgid "At least one filter condition is incomplete"
 msgstr "Paling tidak satu kondisi filter tidak lengkap"
 
-#: resources.h:878
+#: resources.h:674
 msgid "At this point, all required information has been gathered."
 msgstr "Pada titik ini, semua informasi yang diperlukan sudah didapatkan."
 
@@ -1408,63 +1418,63 @@ msgstr "Atribut"
 msgid "Authentication failed."
 msgstr "Authentikasi gagal."
 
-#: resources.h:191
+#: resources.h:809
 msgid "Author:"
 msgstr "Pembuat:"
 
-#: resources.h:594
+#: resources.h:398
 msgid "Auto"
 msgstr "Otomatis"
 
-#: resources.h:158
+#: resources.h:785
 msgid "Automatic file type classification"
 msgstr "Klasifikasi jenis berkas secara otomatis"
 
-#: resources.h:199
+#: resources.h:876
 msgid "Automatic update check"
 msgstr "Pemeriksaan update otomatis"
 
-#: resources.h:195
+#: resources.h:813
 msgid "Available sizes"
 msgstr "Ukuran yang tersedia"
 
-#: ../../locales/../src/interface/LocalListView.cpp:617
+#: ../../locales/../src/interface/LocalListView.cpp:628
 #: ../../locales/../src/interface/statusbar.cpp:355
 msgid "B <Unit symbol for bytes. Only translate first letter>"
 msgstr "B <Simbol unit untuk byte. Hanya menterjemahkan huruf pertama>"
 
-#: resources.h:111
+#: resources.h:88
 msgid "B&ypass proxy"
 msgstr "%Lewat proxy"
 
-#: resources.h:178
+#: resources.h:805
 msgid "Behaviour"
 msgstr "Perilaku"
 
-#: ../../locales/../src/interface/edithandler.cpp:1234
-#: ../../locales/../src/interface/edithandler.cpp:1262
+#: ../../locales/../src/interface/edithandler.cpp:1237
+#: ../../locales/../src/interface/edithandler.cpp:1265
 msgid "Being edited"
 msgstr "Sedang diedit"
 
-#: resources.h:598
+#: resources.h:402
 msgid "Binary"
 msgstr "Biner"
 
-#: resources.h:171
+#: resources.h:798
 msgid "Blackboard"
 msgstr "Blackboard"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:264
-#: ../../locales/../src/interface/Mainfrm.cpp:1031
+#: ../../locales/../src/interface/Mainfrm.cpp:1032
 #: ../../locales/../src/interface/sitemanager.cpp:367
 msgid "Bookmark"
 msgstr "Penanda"
 
-#: resources.h:621
+#: resources.h:425
 msgid "Bookmark:"
 msgstr "Penanda:"
 
-#: resources.h:620
+#: resources.h:424
 msgid "Bookmarks"
 msgstr "Penanda"
 
@@ -1472,15 +1482,19 @@ msgstr "Penanda"
 msgid "Break current connection?"
 msgstr "Hentikan koneksi saat ini?"
 
-#: resources.h:318
+#: resources.h:160
 msgid "Build date:"
 msgstr "Tanggal pembuatan:"
 
-#: resources.h:315
+#: resources.h:157
 msgid "Build information"
 msgstr "Informasi pembuatan"
 
-#: resources.h:386
+#: ../../locales/../src/interface/verifycertdialog.cpp:162
+msgid "Business category:"
+msgstr ""
+
+#: resources.h:711
 msgid ""
 "By default uses any available local port to establish transfers in active "
 "mode. If you want to limit FileZilla to use only a small range of ports, "
@@ -1491,31 +1505,31 @@ msgstr ""
 "untuk hanya menggunakan port tertentu, harap masukan batasan port dibawah "
 "ini."
 
-#: resources.h:721
+#: resources.h:515
 msgid "C&ancel current operation"
 msgstr "B&atalkan operasi saat ini"
 
-#: resources.h:402
+#: resources.h:231
 msgid "C&heck for nightly builds of FileZilla"
 msgstr "&Periksa untuk pembuatan harian dari FileZilla"
 
-#: resources.h:792
+#: resources.h:588
 msgid "C&lear all"
 msgstr "B&ersihkan semua"
 
-#: resources.h:767 resources.h:813
+#: resources.h:563 resources.h:609
 msgid "C&opy URL(s) to clipboard"
 msgstr "&Salin URL ke clipboard"
 
-#: resources.h:210
+#: resources.h:817
 msgid "C&ustom"
 msgstr "&Kustomisasi"
 
-#: resources.h:264
+#: resources.h:872
 msgid "C&ustom filetype associations:"
 msgstr "Klasifikasi jenis berkas kustomisasi:"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1605
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1608
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1266
 msgid "Calculating timezone offset of server..."
 msgstr "Menkalkulasi offset zona waktu server..."
@@ -1535,19 +1549,19 @@ msgstr "Tidak dapat menulis data ke berkas"
 msgid "Can't write data to file: %s"
 msgstr "Tidak dapat menulis data ke berkas: %s"
 
-#: resources.h:24 resources.h:91 resources.h:136 resources.h:309
-#: resources.h:336 resources.h:363 resources.h:383 resources.h:441
-#: resources.h:472 resources.h:479 resources.h:487 resources.h:510
-#: resources.h:558 resources.h:601 resources.h:615 resources.h:627
-#: resources.h:656 resources.h:681
+#: resources.h:25 resources.h:68 resources.h:113 resources.h:151
+#: resources.h:178 resources.h:205 resources.h:225 resources.h:270
+#: resources.h:301 resources.h:308 resources.h:316 resources.h:339
+#: resources.h:372 resources.h:405 resources.h:419 resources.h:431
+#: resources.h:441 resources.h:466 resources.h:475
 msgid "Cancel"
 msgstr "Batal"
 
-#: resources.h:906
+#: resources.h:919
 msgid "Cancel current operation"
 msgstr "Batalkan operasi saat ini"
 
-#: resources.h:907
+#: resources.h:920
 msgid "Cancels the current operation"
 msgstr "Batalkan operasi saat ini"
 
@@ -1558,7 +1572,7 @@ msgstr ""
 "Tidak bisa mengakses '%s', tidak ada media yang dimasukkan atau drive tidak "
 "siap"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:688
+#: ../../locales/../src/interface/Mainfrm.cpp:689
 msgid "Cannot add server to Site Manager"
 msgstr "Tidak bisa menambahkan server pada Manajemen Situs"
 
@@ -1570,7 +1584,7 @@ msgstr ""
 "Tidak dapat membandingkan direktori, filter yang berbeda untuk direktori "
 "lokal dan remote diaktifkan"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2749
+#: ../../locales/../src/interface/RemoteListView.cpp:2796
 msgid "Cannot compare directories, not connected to a server."
 msgstr "Tidak dapat membandingkan direktori, tidak terhubung ke server."
 
@@ -1578,18 +1592,18 @@ msgstr "Tidak dapat membandingkan direktori, tidak terhubung ke server."
 msgid "Cannot create new filter"
 msgstr "Tidak dapat membuat filter baru"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2295
-#: ../../locales/../src/interface/LocalListView.cpp:2426
-#: ../../locales/../src/interface/RemoteListView.cpp:2583
-#: ../../locales/../src/interface/RemoteListView.cpp:2629
+#: ../../locales/../src/interface/LocalListView.cpp:2300
+#: ../../locales/../src/interface/LocalListView.cpp:2431
+#: ../../locales/../src/interface/RemoteListView.cpp:2630
+#: ../../locales/../src/interface/RemoteListView.cpp:2676
 msgid "Cannot edit file"
 msgstr "Tidak dapat mengedit berkas"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2215
+#: ../../locales/../src/interface/LocalListView.cpp:2216
 msgid "Cannot edit file, not connected to any server."
 msgstr "Tidak dapat mengedit berkas, tidak terhubung ke server."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2223
+#: ../../locales/../src/interface/LocalListView.cpp:2227
 msgid "Cannot edit file, remote path unknown."
 msgstr "Tidak bisa mengedit berkas, path remote tidak diketahui."
 
@@ -1610,15 +1624,15 @@ msgstr "Tidak dapat membuka papan Koneksi cepat dari berkas sumber"
 msgid "Cannot load file, not a valid XML file."
 msgstr "Tidak bisa memuat berkas, bukan berkas XML yang valid."
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:389
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:389
 msgid "Cannot load keyfile"
 msgstr "Tidak dapat memuat berkas kunci"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:589
+#: ../../locales/../src/interface/Mainfrm.cpp:590
 msgid "Cannot load main menu from resource file"
 msgstr "Tidak dapat membuka menu utama dari berkas sumber"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1259
+#: ../../locales/../src/interface/Mainfrm.cpp:1260
 msgid "Cannot load toolbar from resource file"
 msgstr "Tidak dapat membuka toolbar dari berkas sumber"
 
@@ -1627,7 +1641,7 @@ msgstr "Tidak dapat membuka toolbar dari berkas sumber"
 msgid "Cannot rename entry"
 msgstr "Tidak dapat mengganti nama daftar"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1825
+#: ../../locales/../src/interface/RemoteListView.cpp:1872
 msgid "Cannot rename file"
 msgstr "Tidak dapat mengganti nama berkas"
 
@@ -1640,22 +1654,22 @@ msgstr "Tidak dapat menyimpat kumpulan filter"
 msgid "Cannot select filter"
 msgstr "Tidak dapat memilih filter"
 
-#: ../../locales/../src/interface/edithandler.cpp:1602
-#: ../../locales/../src/interface/edithandler.cpp:1607
-#: ../../locales/../src/interface/edithandler.cpp:1646
+#: ../../locales/../src/interface/edithandler.cpp:1605
+#: ../../locales/../src/interface/edithandler.cpp:1610
+#: ../../locales/../src/interface/edithandler.cpp:1649
 msgid "Cannot set file association"
 msgstr "Tidak dapat menentukan asosiasi berkas"
 
-#: ../../locales/../src/interface/edithandler.cpp:1193
+#: ../../locales/../src/interface/edithandler.cpp:1196
 msgid "Cannot show dialog"
 msgstr "Tidak bisa menampilkan dialog"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2313
-#: ../../locales/../src/interface/RemoteListView.cpp:2649
+#: ../../locales/../src/interface/LocalListView.cpp:2318
+#: ../../locales/../src/interface/RemoteListView.cpp:2696
 msgid "Cannot view/edit selected file"
 msgstr "Tidak bisa melihat/edit berkas yang dipilih"
 
-#: resources.h:466
+#: resources.h:295
 msgid "Categories"
 msgstr "Kategori"
 
@@ -1663,27 +1677,32 @@ msgstr "Kategori"
 msgid "Certificate and session data are not available yet."
 msgstr "Data sertifikat dan sesi tidak tersedia."
 
-#: resources.h:25
+#: resources.h:26
 msgid "Certificate details"
 msgstr "Detail sertifikat"
 
-#: resources.h:14 resources.h:37
+#: resources.h:3
+#, fuzzy
+msgid "Certificate in chain:"
+msgstr "Detail sertifikat"
+
+#: resources.h:13 resources.h:38
 msgid "Certificate issuer"
 msgstr "Pembuat sertifikat"
 
-#: resources.h:144
+#: resources.h:121
 msgid "Challenge:"
 msgstr "Tantangan:"
 
-#: resources.h:288
+#: resources.h:130
 msgid "Change file attributes"
 msgstr "Ganti atribut berkas"
 
-#: resources.h:770 resources.h:816
+#: resources.h:566 resources.h:612
 msgid "Change the file permissions."
 msgstr "Ganti hak akses berkas."
 
-#: resources.h:242
+#: resources.h:893
 msgid "Changing logfile settings requires restart of FileZilla."
 msgstr "Mengganti pengaturan berkas log membutuhkan akses ulang FileZilla."
 
@@ -1691,19 +1710,19 @@ msgstr "Mengganti pengaturan berkas log membutuhkan akses ulang FileZilla."
 msgid "Character encoding issue"
 msgstr "Masalah enkoding karakter"
 
-#: resources.h:126
+#: resources.h:103
 msgid "Charset"
 msgstr "Charset"
 
-#: resources.h:204
+#: resources.h:881
 msgid "Check for &beta versions and release candidates"
 msgstr "Periksa versi &beta dan release candidate"
 
-#: resources.h:732
+#: resources.h:528
 msgid "Check for &updates..."
 msgstr "Periksa &update..."
 
-#: resources.h:733
+#: resources.h:529
 msgid "Check for newer versions of FileZilla"
 msgstr "Periksa versi baru dari FileZilla"
 
@@ -1711,7 +1730,7 @@ msgstr "Periksa versi baru dari FileZilla"
 msgid "Check for updates"
 msgstr "Periksa untuk update"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1974
+#: ../../locales/../src/interface/Mainfrm.cpp:1975
 msgid "Check for updates failed"
 msgstr "Pemeriksaan update gagal"
 
@@ -1719,7 +1738,7 @@ msgstr "Pemeriksaan update gagal"
 msgid "Checking for correct external IP address"
 msgstr "Memeriksa alamat IP eksternal yang benar"
 
-#: resources.h:398
+#: resources.h:227
 msgid "Checking for updates"
 msgstr "Memeriksa update"
 
@@ -1737,31 +1756,31 @@ msgstr "Pilih direktori lokal"
 msgid "Chunk data improperly terminated"
 msgstr "Potongan data terhapus secara tidak benar"
 
-#: resources.h:17 resources.h:40
+#: resources.h:18 resources.h:41
 msgid "Cipher:"
 msgstr "Cipher:"
 
-#: resources.h:168
+#: resources.h:795
 msgid "Classic"
 msgstr "Klasik"
 
-#: resources.h:469
+#: resources.h:298
 msgid "Clear &Site Manager entries"
 msgstr "Hapus daftar &Manajemen Situs"
 
-#: resources.h:793
+#: resources.h:589
 msgid "Clear &layout cache"
 msgstr "Hapus cache &layout"
 
-#: resources.h:467
+#: resources.h:296
 msgid "Clear &quickconnect history"
 msgstr "Hapus sejarah &koneksi cepat"
 
-#: resources.h:468
+#: resources.h:297
 msgid "Clear &reconnect information"
 msgstr "Hapus informasi &koneksi ulang"
 
-#: resources.h:470
+#: resources.h:299
 msgid "Clear &transfer queue"
 msgstr "Hapus antrian &transfer"
 
@@ -1769,7 +1788,7 @@ msgstr "Hapus antrian &transfer"
 msgid "Clear history"
 msgstr "Hapus sejarah"
 
-#: resources.h:464 ../../locales/../src/interface/clearprivatedata.cpp:34
+#: resources.h:293 ../../locales/../src/interface/clearprivatedata.cpp:34
 #: ../../locales/../src/interface/clearprivatedata.cpp:40
 #: ../../locales/../src/interface/clearprivatedata.cpp:46
 #: ../../locales/../src/interface/clearprivatedata.cpp:69
@@ -1789,16 +1808,16 @@ msgstr "Klik pada Selesai untuk menyimpan konfigurasi Anda."
 msgid "Click on next to download the new version."
 msgstr "Klik pada selanjutnya untuk mendownload versi baru."
 
-#: resources.h:545
+#: resources.h:359
 msgid "Client to server MAC:"
 msgstr "Klien ke server MAC:"
 
-#: resources.h:543
+#: resources.h:357
 msgid "Client to server cipher:"
 msgstr "Cipher klien ke server:"
 
-#: resources.h:690 ../../locales/../src/interface/Mainfrm.cpp:1349
-#: ../../locales/../src/interface/Mainfrm.cpp:1372
+#: resources.h:484 ../../locales/../src/interface/Mainfrm.cpp:1350
+#: ../../locales/../src/interface/Mainfrm.cpp:1373
 msgid "Close FileZilla"
 msgstr "Tutup FileZilla"
 
@@ -1806,7 +1825,7 @@ msgstr "Tutup FileZilla"
 msgid "Close all running instances of FileZilla"
 msgstr "Tutup semua FileZilla yang sedang berjalan"
 
-#: resources.h:108
+#: resources.h:85
 msgid "Co&mments:"
 msgstr "Ko&mentar:"
 
@@ -1814,17 +1833,17 @@ msgstr "Ko&mentar:"
 msgid "Column properties"
 msgstr "Properti kolom"
 
-#: resources.h:552
+#: resources.h:366
 msgid "Column setup"
 msgstr "Setup kolom"
 
-#: resources.h:259
+#: resources.h:867
 msgid "Command and its arguments should be properly quoted."
 msgstr "Perintah dan argumennya harus diberi tanda kutip dengan benar."
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:139
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:153
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:170
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:139
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:153
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:170
 msgid "Command failed"
 msgstr "Perintah gagal"
 
@@ -1842,11 +1861,11 @@ msgstr "Perintah tidak didukung oleh protokol ini"
 msgid "Command:"
 msgstr "Perintah:"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:40
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:40
 msgid "Comment"
 msgstr "Komentar"
 
-#: ../../locales/../src/interface/verifycertdialog.cpp:131
+#: ../../locales/../src/interface/verifycertdialog.cpp:160
 msgid "Common name:"
 msgstr "Nama umum:"
 
@@ -1855,35 +1874,35 @@ msgstr "Nama umum:"
 msgid "Communication tainted by router or firewall"
 msgstr "Komunikasi diputus oleh router atau firewall"
 
-#: resources.h:702 resources.h:820
+#: resources.h:496 resources.h:616
 msgid "Compare &modification time"
 msgstr "Bandingkan waktu &modifikasi"
 
-#: resources.h:701 resources.h:819
+#: resources.h:495 resources.h:615
 msgid "Compare file&size"
 msgstr "Bandingkan &ukuran berkas"
 
-#: resources.h:635
+#: resources.h:847
 msgid "Comparison &threshold (in minutes):"
 msgstr "Batasan &perbandingan (dalam menit):"
 
-#: ../../locales/../src/interface/optionspage_filelists.cpp:39
+#: ../../locales/../src/interface/settings/optionspage_filelists.cpp:39
 msgid "Comparison threshold needs to be between 0 and 1440 minutes."
 msgstr "Jumlah percobaan harus diantara 0 dan 1440 menit."
 
-#: resources.h:316
+#: resources.h:158
 msgid "Compiled for:"
 msgstr "Dikompilasi untuk:"
 
-#: resources.h:317
+#: resources.h:159
 msgid "Compiled on:"
 msgstr "Dikompilasi pada:"
 
-#: resources.h:319
+#: resources.h:161
 msgid "Compiled with:"
 msgstr "Dikompilasi dengan:"
 
-#: resources.h:320
+#: resources.h:162
 msgid "Compiler flags:"
 msgstr "Opsi kompiler:"
 
@@ -1891,31 +1910,35 @@ msgstr "Opsi kompiler:"
 msgid "Compressed"
 msgstr "Terkompresi"
 
-#: resources.h:49
+#: resources.h:761
 msgid "Concurrent transfers"
 msgstr "Transfer konkurensi"
 
-#: resources.h:378 resources.h:667
+#: resources.h:220 resources.h:452
 msgid "Conditions are c&ase sensitive"
 msgstr "Kondisi bersifat &case sensitive"
 
-#: resources.h:877
+#: resources.h:673
 msgid "Configuration test"
 msgstr "Pengujian konfigurasi"
 
-#: resources.h:851
+#: resources.h:647
 msgid "Configure passive mode"
 msgstr "Konfigurasi mode pasif"
 
-#: resources.h:867
+#: resources.h:663
 msgid "Configure port range"
 msgstr "Konfigurasi batasan port"
 
+#: ../../locales/../src/interface/search.cpp:1031
+msgid "Confirm deletion"
+msgstr "Konfirmasi penghapusan"
+
 #: ../../locales/../src/engine/local_filesys.cpp:129
-#: ../../locales/../src/interface/LocalListView.cpp:2266
-#: ../../locales/../src/interface/LocalListView.cpp:2386
-#: ../../locales/../src/interface/RemoteListView.cpp:1616
-#: ../../locales/../src/interface/RemoteListView.cpp:2600
+#: ../../locales/../src/interface/LocalListView.cpp:2271
+#: ../../locales/../src/interface/LocalListView.cpp:2391
+#: ../../locales/../src/interface/RemoteListView.cpp:1648
+#: ../../locales/../src/interface/RemoteListView.cpp:2647
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1119
 msgid "Confirmation needed"
 msgstr "Dibutuhkan konfirmasi"
@@ -1968,7 +1991,7 @@ msgstr "Menghubungkan ke %s:%d..."
 msgid "Connecting to server"
 msgstr "Menghubungkan ke server"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:114
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:116
 msgid "Connection"
 msgstr "Koneksi"
 
@@ -2033,10 +2056,9 @@ msgstr "Koneksi time out"
 msgid "Connection timed out."
 msgstr "Koneksi time out."
 
-#: ../../locales/../src/interface/search.cpp:682
-#, fuzzy
+#: ../../locales/../src/interface/search.cpp:683
 msgid "Connection to server lost."
-msgstr "Menghubungkan ke server"
+msgstr "Koneksi ke server putus."
 
 #: ../../locales/../src/engine/proxy.cpp:188
 msgid "Connection with proxy established, performing handshake..."
@@ -2050,11 +2072,11 @@ msgstr "Koneksi dengan server tertutup secara prematur."
 msgid "Connection with the test server failed."
 msgstr "Koneksi dengan server pengujian gagal"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:273
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:273
 msgid "Convert keyfile"
 msgstr "Konversi berkas kunci"
 
-#: resources.h:99 resources.h:625
+#: resources.h:76 resources.h:429
 msgid "Cop&y"
 msgstr "Sal&in"
 
@@ -2070,7 +2092,7 @@ msgstr "Salin (%d) dari %s"
 msgid "Copy of %s"
 msgstr "Salinan dari %s"
 
-#: resources.h:768 resources.h:814
+#: resources.h:564 resources.h:610
 msgid "Copy the URLs of the selected items to clipboard."
 msgstr "Salin URL dari item yang dipilih pada clipboard."
 
@@ -2097,12 +2119,12 @@ msgstr "Tidak dapat terhubung ke server: %s"
 msgid "Could not convert command to server encoding"
 msgstr "Tidak dapat mengkonversi perintah ke enkoding server"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:315
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:325
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:315
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:325
 msgid "Could not convert private key"
 msgstr "Tidak dapat mengkonversi kunci privat"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:3054
+#: ../../locales/../src/interface/RemoteListView.cpp:3101
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1448
 msgid "Could not copy URLs"
 msgstr "Tidak dapat menyalin URL"
@@ -2111,7 +2133,7 @@ msgstr "Tidak dapat menyalin URL"
 msgid "Could not copy data"
 msgstr "Tidak dapat menyalin data"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2475
+#: ../../locales/../src/interface/RemoteListView.cpp:2522
 #: ../../locales/../src/interface/RemoteTreeView.cpp:893
 msgid ""
 "Could not determine the target of the Drag&Drop operation.\n"
@@ -2122,7 +2144,7 @@ msgstr ""
 "Entah ekstensi shell tidak terinstal dengan benar atau Anda tidak meletakkan "
 "berkas pada jendela Explorer."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4203
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4206
 msgid "Could not establish connection to server"
 msgstr "Tidak dapat menjalin hubungan dengan server"
 
@@ -2146,12 +2168,12 @@ msgstr "Tidak dapat menghasilkan urutan login."
 msgid "Could not get full remote path."
 msgstr "Tidak dapat memperoleh path remote lengkap"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:153
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:170
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:153
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:170
 msgid "Could not get reply from fzputtygen."
 msgstr "Tidak dapat mendapatkan jawaban dari fzputtygen."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2583
+#: ../../locales/../src/interface/RemoteListView.cpp:2630
 msgid "Could not get temporary directory to download file into."
 msgstr "Tidak bisa mendapatkan direktori sementara untuk mendownload berkas"
 
@@ -2166,11 +2188,11 @@ msgstr ""
 "Tidak dapat membuka \"%s\", pastikan berkas valid dan dapat diakses.\n"
 "Semua perubahan di Manajemen Situs tidak akan disimpan."
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:223
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:223
 msgid "Could not load keyfile"
 msgstr "Tidak dapat memuat berkas kunci"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:300
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:300
 msgid "Could not load private key"
 msgstr "Tidak bisa memuat kunci privat"
 
@@ -2207,7 +2229,7 @@ msgstr ""
 "Penjelajahan tersinkronisasi telah dinonaktifkan."
 
 #: ../../locales/../src/interface/aboutdialog.cpp:143
-#: ../../locales/../src/interface/RemoteListView.cpp:3054
+#: ../../locales/../src/interface/RemoteListView.cpp:3101
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1448
 msgid "Could not open clipboard"
 msgstr "Tidak dapat membuka clipboard"
@@ -2236,20 +2258,20 @@ msgstr "Tidak bisa menulis dari socket: %s"
 msgid "Could not read server item."
 msgstr "Tidak dapat membaca item server"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2676
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2679
 #, c-format
 msgid "Could not seek to offset %s within file"
 msgstr "Tidak dapat mencari ke offset %s dari berkas"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2609
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2612
 msgid "Could not seek to the end of the file"
 msgstr "Tidak dapat mencari hingga ke akhir berkas"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:139
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:139
 msgid "Could not send command to fzputtygen."
 msgstr "Tidak dapat mengirimkan perintah ke fzputtygen."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2696
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2699
 msgid "Could not spawn IO thread"
 msgstr "Tidak dapat mengulang thread IO"
 
@@ -2306,7 +2328,7 @@ msgstr ""
 msgid "Could not write \"%s\": %s"
 msgstr "Tidak bisa menulis \"%s\": %s"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:325
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:325
 #, c-format
 msgid "Could not write keyfile: %s"
 msgstr "Tidak bisa menulis berkas kunci: %s"
@@ -2327,20 +2349,20 @@ msgstr "Tidak bisa menulis ke berkas log: %s"
 msgid "Could not write to socket: %s"
 msgstr "Tidak bisa menulis ke socket: %s"
 
-#: ../../locales/../src/interface/verifycertdialog.cpp:135
+#: ../../locales/../src/interface/verifycertdialog.cpp:165
 msgid "Country:"
 msgstr "Negara:"
 
-#: resources.h:795
+#: resources.h:591
 msgid "Crashes FileZilla instantly. Only used to debug the exception handler"
 msgstr "FileZilla rusak seketika. Hanya gunakan untuk melakukan debug"
 
-#: resources.h:749 resources.h:762 resources.h:808 resources.h:827
+#: resources.h:545 resources.h:558 resources.h:604 resources.h:623
 msgid "Create a new subdirectory in the current directory"
 msgstr "Membuat sub direkori baru di direktori saat ini"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1397
-#: ../../locales/../src/interface/LocalTreeView.cpp:1320
+#: ../../locales/../src/interface/LocalListView.cpp:1393
+#: ../../locales/../src/interface/LocalTreeView.cpp:1158
 #: ../../locales/../src/interface/RemoteListView.cpp:1552
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1270
 msgid "Create directory"
@@ -2350,7 +2372,7 @@ msgstr "Membuat direktori"
 msgid "Creating directory"
 msgstr "Membuat direktori"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3252
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3255
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2046
 #, c-format
 msgid "Creating directory '%s'..."
@@ -2381,7 +2403,7 @@ msgstr "Jenis transfer saat ini ditentukan ke pendeteksian otomatis."
 msgid "Current transfer type is set to binary."
 msgstr "Jenis transfer saat ini ditentukan ke biner."
 
-#: resources.h:216 resources.h:273
+#: resources.h:732 resources.h:823
 msgid "Cus&tom"
 msgstr "Kus&tomisasi"
 
@@ -2389,31 +2411,31 @@ msgstr "Kus&tomisasi"
 msgid "Custom filter set"
 msgstr "Sekumpulan filter kustomisasi"
 
-#: resources.h:584 resources.h:585
+#: resources.h:388 resources.h:389
 msgid "Custom server"
 msgstr "Server kustomisasi"
 
-#: resources.h:593
+#: resources.h:397
 msgid "D&ata type"
 msgstr "Tipe d&ata"
 
-#: resources.h:223
+#: resources.h:830
 msgid "D&ecimal prefixes using SI symbols (e.g. 1 KB = 1000 bytes)"
 msgstr "Prefix d&esimal menggunakan simbol SI (cth. 1 KB = 1000 byte)"
 
-#: resources.h:121
+#: resources.h:98
 msgid "D&efault"
 msgstr "D&efault"
 
-#: resources.h:763 resources.h:809 resources.h:837
+#: resources.h:559 resources.h:605 resources.h:633
 msgid "D&elete"
 msgstr "H&apus"
 
-#: resources.h:356
+#: resources.h:198
 msgid "D&isable all"
 msgstr "&Nonaktifkan semua"
 
-#: resources.h:642
+#: resources.h:854
 msgid "D&ouble-click action on directories:"
 msgstr "A&ksi klik ganda pada direktori:"
 
@@ -2421,12 +2443,12 @@ msgstr "A&ksi klik ganda pada direktori:"
 msgid "DOS-like with virtual paths"
 msgstr "Seperi DOS dengan path virtual"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2300
-#: ../../locales/../src/interface/RemoteListView.cpp:2634
+#: ../../locales/../src/interface/LocalListView.cpp:2305
+#: ../../locales/../src/interface/RemoteListView.cpp:2681
 msgid "Dangerous filetype"
 msgstr "Jenis berkas berbahaya"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:41
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:41
 msgid "Data"
 msgstr "Data"
 
@@ -2435,11 +2457,11 @@ msgstr "Data"
 msgid "Data socket closed too early."
 msgstr "Soket data tertutup terlalu cepat"
 
-#: resources.h:207
+#: resources.h:814
 msgid "Date formatting"
 msgstr "Pemformatan tanggal"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:126
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:128
 msgid "Date/time format"
 msgstr "Format tanggal/waktu"
 
@@ -2450,15 +2472,15 @@ msgstr "Format tanggal/waktu"
 msgid "Date/time unknown"
 msgstr "Tanggal/waktu tidak diketahui"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:138
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:141
 msgid "Debug"
 msgstr "Debug"
 
-#: resources.h:243
+#: resources.h:894
 msgid "Debugging settings"
 msgstr "Pengaturan debug"
 
-#: resources.h:112
+#: resources.h:89
 msgid "Default &local directory:"
 msgstr "Direktori &lokal default:"
 
@@ -2466,15 +2488,15 @@ msgstr "Direktori &lokal default:"
 msgid "Default (Autodetect)"
 msgstr "Default (Deteksi Otomatis)"
 
-#: ../../locales/../src/interface/optionspage_edit.cpp:140
+#: ../../locales/../src/interface/settings/optionspage_edit.cpp:138
 msgid "Default editor not properly quoted."
 msgstr "Editor default tidak diberi tanda kutip dengan benar."
 
-#: resources.h:416
+#: resources.h:245
 msgid "Default file exists action"
 msgstr "Aksi berkas sudah ada default"
 
-#: resources.h:114
+#: resources.h:91
 msgid "Default r&emote directory:"
 msgstr "Direktori r&emote default:"
 
@@ -2486,23 +2508,23 @@ msgstr ""
 "Path remote default tidak bisa diproses. Pastikan sudah valid dan didukung "
 "oleh jenis server yang dipilih."
 
-#: ../../locales/../src/interface/optionspage_language.cpp:78
+#: ../../locales/../src/interface/settings/optionspage_language.cpp:78
 msgid "Default system language"
 msgstr "Bahasa sistem default"
 
-#: resources.h:845
+#: resources.h:641
 msgid "Default transfer mode:"
 msgstr "Mode transfer default:"
 
-#: resources.h:154
+#: resources.h:781
 msgid "Default transfer type:"
 msgstr "Jenis transfer default:"
 
-#: resources.h:394 resources.h:864
+#: resources.h:660 resources.h:719
 msgid "Default: http://ip.filezilla-project.org/ip.php"
 msgstr "Default: http://ip.filezilla-project.org/ip.php"
 
-#: ../../locales/../src/interface/optionspage_connection.cpp:40
+#: ../../locales/../src/interface/settings/optionspage_connection.cpp:40
 msgid ""
 "Delay between failed connection attempts has to be between 1 and 999 seconds."
 msgstr ""
@@ -2525,37 +2547,39 @@ msgstr[0] ""
 msgid "Delete Site Manager entry"
 msgstr "Hapus daftar Manajemen Situs"
 
-#: resources.h:810 resources.h:829
+#: resources.h:606 resources.h:625
 msgid "Delete selected directory"
 msgstr "Hapus direktori yang dipilih"
 
-#: resources.h:751 resources.h:764
+#: resources.h:547 resources.h:560
 msgid "Delete selected files and directories"
 msgstr "Hapus berkas-berkas dan direktori yang dipilih"
 
-#: ../../locales/../src/interface/search.cpp:1009
+#: ../../locales/../src/interface/search.cpp:1015
+msgid "Deleting directories"
+msgstr "Menghapus direktori"
+
+#: ../../locales/../src/interface/search.cpp:1015
 msgid "Deleting multiple unrelated directories is not yet supported"
+msgstr "Penghapusan banyak direktori yang tidak berelasi belum didukung"
+
+#: resources.h:467
+msgid "Deleting symbolic link"
 msgstr ""
 
-#: ../../locales/../src/interface/search.cpp:1009
-#: ../../locales/../src/interface/search.cpp:1025
-#, fuzzy
-msgid "Deleting search results"
-msgstr "&Hapus hasil pengujian"
-
-#: ../../locales/../src/interface/LocalTreeView.cpp:1020
+#: ../../locales/../src/interface/LocalTreeView.cpp:1022
 msgid "Desktop"
 msgstr "Desktop"
 
-#: resources.h:3 resources.h:26 resources.h:328
+#: resources.h:4 resources.h:27 resources.h:170
 msgid "Details"
 msgstr "Detail"
 
-#: resources.h:340
+#: resources.h:182
 msgid "Details for new key:"
 msgstr "Detail untuk kunci baru:"
 
-#: resources.h:381
+#: resources.h:223
 msgid "Dire&ctories"
 msgstr "Dire&ktori"
 
@@ -2567,9 +2591,9 @@ msgstr "Arah"
 msgid "Directory"
 msgstr "Direktori"
 
-#: resources.h:633 resources.h:817 resources.h:915
+#: resources.h:613 resources.h:845 resources.h:928
 #: ../../locales/../src/interface/filelistctrl.cpp:375
-#: ../../locales/../src/interface/Mainfrm.cpp:2508
+#: ../../locales/../src/interface/Mainfrm.cpp:2509
 msgid "Directory comparison"
 msgstr "Perbandingan direktori"
 
@@ -2579,7 +2603,7 @@ msgstr "Perbandingan direktori"
 msgid "Directory comparison failed"
 msgstr "Perbandingan direktori gagal"
 
-#: ../../locales/../src/interface/optionspage_logging.cpp:71
+#: ../../locales/../src/interface/settings/optionspage_logging.cpp:71
 msgid "Directory containing the logfile does not exist or filename is invalid."
 msgstr "Direktori berisi berkas log tidak ada atau nama berkas tidak valid."
 
@@ -2587,11 +2611,11 @@ msgstr "Direktori berisi berkas log tidak ada atau nama berkas tidak valid."
 msgid "Directory listing aborted by user"
 msgstr "Pendataan direktori dibatalkan oleh pengguna"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2277
+#: ../../locales/../src/interface/RemoteListView.cpp:2324
 msgid "Directory listing failed"
 msgstr "Pendataan direktori gagal"
 
-#: resources.h:349
+#: resources.h:191
 msgid "Directory listing filters"
 msgstr "Filter pendataan direktori"
 
@@ -2599,7 +2623,7 @@ msgstr "Filter pendataan direktori"
 msgid "Directory listing successful"
 msgstr "Pendataan direktori berhasil"
 
-#: resources.h:359
+#: resources.h:201
 msgid "Disa&ble all"
 msgstr "&Nonaktifkan semua"
 
@@ -2610,7 +2634,7 @@ msgstr ""
 "Nonaktifkan penjelajahan tersinkronisasi dan lanjutkan mengganti direktori "
 "remote?"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:777
+#: ../../locales/../src/interface/Mainfrm.cpp:778
 msgid ""
 "Disable this option again if you will not be able to see the correct "
 "directory contents anymore."
@@ -2618,7 +2642,7 @@ msgstr ""
 "Nonaktifkan opsi ini kembali jika Anda tidak bisa melihat isi direktori "
 "dengan benar."
 
-#: resources.h:908
+#: resources.h:921
 msgid "Disconnect from server"
 msgstr "Putuskan hubungan dari server"
 
@@ -2644,23 +2668,23 @@ msgstr "Telah terputus dari server: %s"
 msgid "Disconnecting from previous server"
 msgstr "Memutuskan dari server sebelumnya"
 
-#: resources.h:909
+#: resources.h:922
 msgid "Disconnects from the currently visible server"
 msgstr "Memutuskan dari server yang terlihat sekarang"
 
-#: resources.h:737
+#: resources.h:533
 msgid "Display about dialog"
 msgstr "Tampilkan dialog \"tentang\""
 
-#: resources.h:255
+#: resources.h:863
 msgid "Do &not use default editor"
 msgstr "&Jangan gunakan editor default ini"
 
-#: resources.h:789
+#: resources.h:585
 msgid "Do &nothing"
 msgstr "Tidak &lakukan apa-apa"
 
-#: ../../locales/../src/interface/optionspage_updatecheck.cpp:60
+#: ../../locales/../src/interface/settings/optionspage_updatecheck.cpp:60
 #: ../../locales/../src/interface/updatewizard.cpp:156
 msgid ""
 "Do you really want to check for beta versions?\n"
@@ -2669,8 +2693,8 @@ msgstr ""
 "Apakah Anda hendak menguji versi beta?\n"
 "Kecuali Anda hendak menguji fitur baru, selalu gunakan versi stabil."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1352
-#: ../../locales/../src/interface/Mainfrm.cpp:1376
+#: ../../locales/../src/interface/Mainfrm.cpp:1353
+#: ../../locales/../src/interface/Mainfrm.cpp:1377
 msgid "Do you really want to close FileZilla?"
 msgstr "Apakah Anda hendak menutup FileZilla?"
 
@@ -2693,48 +2717,47 @@ msgstr "Apakah Anda hendak menghapus daftar yang terpilih?"
 msgid "Do you really want to delete the transfer queue?"
 msgstr "Apakah Anda hendak menghapus antrian transfer?"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:717
+#: ../../locales/../src/interface/Mainfrm.cpp:718
 #, c-format
 msgid "Do you really want to send '%s' to the server?"
 msgstr "Apakah Anda hendak mengirimkan '%s' pada server?"
 
-#: resources.h:866
+#: resources.h:662
 msgid "Don't use external IP address on &local connections."
 msgstr "Jangan gunakan alamat IP eksternal pada koneksi &lokal."
 
-#: resources.h:165
+#: resources.h:792
 msgid "Dotfiles are filenames starting with a dot, e.g. .htaccess"
 msgstr ""
 "Berkas bertitik adalah nama berkas yang dimulai dengan titik, misalnya ."
 "htaccess"
 
-#: resources.h:636
+#: resources.h:848
 msgid "Double-click action"
 msgstr "Aksi klik ganda"
 
-#: resources.h:570
+#: resources.h:374
 msgid "Download"
 msgstr "Download"
 
-#: resources.h:61
+#: resources.h:773
 msgid "Download &limit:"
 msgstr "&Batasan download:"
 
-#: resources.h:670 ../../locales/../src/interface/search.cpp:815
-#: ../../locales/../src/interface/search.cpp:821
-#, fuzzy
+#: resources.h:455 ../../locales/../src/interface/search.cpp:821
+#: ../../locales/../src/interface/search.cpp:827
 msgid "Download search results"
-msgstr "&Hapus hasil pengujian"
+msgstr "Download hasil pencarian"
 
-#: resources.h:804
+#: resources.h:600
 msgid "Download selected directory"
 msgstr "Download direktori yang dipilih"
 
-#: resources.h:755
+#: resources.h:551
 msgid "Download selected files and directories"
 msgstr "Download berkas-berkas dan direktori yang dipilih"
 
-#: ../../locales/../src/interface/edithandler.cpp:1219
+#: ../../locales/../src/interface/edithandler.cpp:1222
 msgid "Downloading"
 msgstr "Mendownload"
 
@@ -2744,21 +2767,20 @@ msgstr "Mendownload"
 msgid "Downloading %s"
 msgstr "Mendownload %s"
 
-#: ../../locales/../src/interface/search.cpp:924
+#: ../../locales/../src/interface/search.cpp:930
 msgid "Downloading multiple unrelated directories is not yet supported"
-msgstr ""
+msgstr "Mendownload banyak direktori yang tidak berhubungan belum didukung"
 
-#: ../../locales/../src/interface/search.cpp:924
-#, fuzzy
+#: ../../locales/../src/interface/search.cpp:930
 msgid "Downloading search results"
-msgstr "Mendownload %s"
+msgstr "Mendownload hasil pencarian"
 
-#: resources.h:418 resources.h:443
+#: resources.h:247 resources.h:272
 msgid "Downloads"
 msgstr "Download"
 
-#: ../../locales/../src/interface/LocalListView.cpp:101
-#: ../../locales/../src/interface/LocalTreeView.cpp:103
+#: ../../locales/../src/interface/LocalListView.cpp:102
+#: ../../locales/../src/interface/LocalTreeView.cpp:104
 #: ../../locales/../src/interface/QueueView.cpp:78
 #: ../../locales/../src/interface/RemoteListView.cpp:99
 #: ../../locales/../src/interface/RemoteTreeView.cpp:85
@@ -2767,8 +2789,8 @@ msgid ""
 "yet."
 msgstr "Drag&drop antar FileZilla yang berbeda belum diimplementasikan."
 
-#: ../../locales/../src/interface/LocalListView.cpp:107
-#: ../../locales/../src/interface/LocalTreeView.cpp:109
+#: ../../locales/../src/interface/LocalListView.cpp:108
+#: ../../locales/../src/interface/LocalTreeView.cpp:110
 #: ../../locales/../src/interface/QueueView.cpp:89
 #: ../../locales/../src/interface/RemoteListView.cpp:105
 #: ../../locales/../src/interface/RemoteTreeView.cpp:91
@@ -2781,47 +2803,47 @@ msgstr "Drag&drop antara server yang berbeda belum diimplementasikan."
 msgid "Duplicate filter name"
 msgstr "Nama filter duplikat"
 
-#: resources.h:355
+#: resources.h:197
 msgid "E&nable all"
 msgstr "&Aktifkan semua"
 
-#: resources.h:742 resources.h:758
+#: resources.h:538 resources.h:554
 msgid "E&nter directory"
 msgstr "&Masukkan direktori"
 
-#: resources.h:297
+#: resources.h:139
 msgid "E&xecute"
 msgstr "E&ksekusi"
 
-#: resources.h:689
+#: resources.h:483
 msgid "E&xit"
 msgstr "Ke&luar"
 
-#: ../../locales/../src/interface/verifycertdialog.cpp:139
+#: ../../locales/../src/interface/verifycertdialog.cpp:170
 msgid "E-Mail:"
 msgstr "E-Mail:"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:464
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:467
 msgid "Each filter needs at least one condition."
 msgstr "Setiap filter perlu paling tidak satu kondisi."
 
-#: resources.h:365
+#: resources.h:207
 msgid "Edit filters"
 msgstr "Edit filter"
 
-#: resources.h:747
+#: resources.h:543
 msgid ""
 "Edit the file with the configured editor and upload changes to the server."
 msgstr ""
 "Edit berkas dengan editor yang telah dikonfigurasi dan upload perubahan pada "
 "server."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2215
-#: ../../locales/../src/interface/LocalListView.cpp:2223
+#: ../../locales/../src/interface/LocalListView.cpp:2216
+#: ../../locales/../src/interface/LocalListView.cpp:2227
 msgid "Editing failed"
 msgstr "Pengeditan gagal"
 
-#: resources.h:193
+#: resources.h:811
 msgid "Email:"
 msgstr "Email:"
 
@@ -2829,11 +2851,11 @@ msgstr "Email:"
 msgid "Empty command"
 msgstr "Masukkan perintah sendiri"
 
-#: ../../locales/../src/interface/optionspage_edit.cpp:182
+#: ../../locales/../src/interface/settings/optionspage_edit_associations.cpp:60
 msgid "Empty command."
 msgstr "Perintah kosong."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2279
+#: ../../locales/../src/interface/RemoteListView.cpp:2326
 msgid "Empty directory listing"
 msgstr "Daftar direktori kosong"
 
@@ -2841,7 +2863,7 @@ msgstr "Daftar direktori kosong"
 msgid "Empty directory."
 msgstr "Direktori kosong."
 
-#: ../../locales/../src/interface/optionspage_edit.cpp:175
+#: ../../locales/../src/interface/settings/optionspage_edit_associations.cpp:53
 msgid "Empty file extension."
 msgstr "Ekstensi berkas kosong"
 
@@ -2855,11 +2877,11 @@ msgstr "Nama filter kosong tidak diijinkan."
 msgid "Empty name"
 msgstr "Nama kosong"
 
-#: ../../locales/../src/interface/optionspage_edit.cpp:143
+#: ../../locales/../src/interface/settings/optionspage_edit.cpp:141
 msgid "Empty quoted string."
 msgstr "String tanda kutip kosong."
 
-#: resources.h:358
+#: resources.h:200
 msgid "En&able all"
 msgstr "Ak&tifkan semua"
 
@@ -2867,11 +2889,11 @@ msgstr "Ak&tifkan semua"
 msgid "Encrypted"
 msgstr "Terenkripsi"
 
-#: resources.h:542
+#: resources.h:356
 msgid "Encryption"
 msgstr "Enkripsi"
 
-#: resources.h:534
+#: resources.h:348
 msgid "Encryption details"
 msgstr "Detail enkripsi"
 
@@ -2879,7 +2901,7 @@ msgstr "Detail enkripsi"
 msgid "End comparison and change sorting order?"
 msgstr "Akhiri perbandingan dan ganti urutan pengurutan?"
 
-#: resources.h:724
+#: resources.h:520
 msgid "Enter &custom command..."
 msgstr "Masukkan &perintah sendiri..."
 
@@ -2887,11 +2909,11 @@ msgstr "Masukkan &perintah sendiri..."
 msgid "Enter command"
 msgstr "Masukkan perintah"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:699
+#: ../../locales/../src/interface/Mainfrm.cpp:700
 msgid "Enter custom command"
 msgstr "Masukkan perintah sendiri"
 
-#: resources.h:643
+#: resources.h:855
 msgid "Enter directory"
 msgstr "Masukkan direktori"
 
@@ -2909,15 +2931,15 @@ msgstr "Masukkan nama untuk kelompok filter"
 msgid "Enter new name for filterset"
 msgstr "Masukkan nama baru untuk kelompok filter"
 
-#: resources.h:137
+#: resources.h:114
 msgid "Enter password"
 msgstr "Masukkan Kata kunci"
 
-#: resources.h:743 resources.h:759
+#: resources.h:539 resources.h:555
 msgid "Enter selected directory"
 msgstr "Masukkan direktori yang terpilih"
 
-#: resources.h:886
+#: resources.h:682
 msgid ""
 "Enter the address of the server.\n"
 "To specify the server protocol, prepend the host with the protocol "
@@ -2932,7 +2954,7 @@ msgstr ""
 "Anda juga dapat memasukkan URL lengkap dalam bentuk protokol://pengguna:"
 "katasandi@host:port disini, nilai di field lainnya akan ditimpa."
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:279
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:279
 #, c-format
 msgid ""
 "Enter the password for the file '%s'.\n"
@@ -2941,7 +2963,7 @@ msgstr ""
 "Masukkan kata sandi untuk berkas '%s'.\n"
 "Harap dicatat bahwa berkas yang dikonversi akan tanpa proteksi kata sandi."
 
-#: resources.h:890
+#: resources.h:686
 msgid ""
 "Enter the port on which the server listens.\n"
 "The default for FTP is 21, the default for SFTP is 22."
@@ -2969,10 +2991,10 @@ msgstr "Kesalahan dalam mengimpor"
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:762
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:811
 #: ../../locales/../src/interface/filter.cpp:152
-#: ../../locales/../src/interface/filter.cpp:937
+#: ../../locales/../src/interface/filter.cpp:948
 #: ../../locales/../src/interface/import.cpp:121
 #: ../../locales/../src/interface/import.cpp:312
-#: ../../locales/../src/interface/Options.cpp:177
+#: ../../locales/../src/interface/Options.cpp:178
 #: ../../locales/../src/interface/QueueView.cpp:1861
 #: ../../locales/../src/interface/QueueView.cpp:1888
 #: ../../locales/../src/interface/sitemanager.cpp:682
@@ -2987,8 +3009,8 @@ msgstr "Kesalahan dalam mengimpor"
 msgid "Error loading xml file"
 msgstr "Kesalahan memuat berkas xml"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:97
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:119
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:97
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:119
 msgid "Error starting program"
 msgstr "Kesalahan menjalankan program"
 
@@ -3011,15 +3033,15 @@ msgstr "Kesalahan menulis berkas xml"
 msgid "Error:"
 msgstr "Kesalahan:"
 
-#: resources.h:266
+#: resources.h:874
 msgid "Example: png \"c:\\program files\\viewer\\viewer.exe\" -open"
 msgstr "Contoh: png \"c:\\program files\\viewer\\viewer.exe\" -open"
 
-#: resources.h:226
+#: resources.h:833
 msgid "Examples"
 msgstr "Contoh"
 
-#: resources.h:301
+#: resources.h:143
 msgid "Exe&cute"
 msgstr "Jal&ankan"
 
@@ -3027,31 +3049,31 @@ msgstr "Jal&ankan"
 msgid "Executable"
 msgstr "&Dapat dieksekusi"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1974
+#: ../../locales/../src/interface/Mainfrm.cpp:1975
 msgid "Executable contains no version info, cannot check for updates."
 msgstr "Aplikasi tidak berisi informasi versi, tidak bisa memeriksa update."
 
-#: resources.h:169
+#: resources.h:796
 msgid "Explorer"
 msgstr "Penjelajah"
 
-#: resources.h:477
+#: resources.h:306
 msgid "Export &Queue"
 msgstr "Ekspor &Antrian "
 
-#: resources.h:476
+#: resources.h:305
 msgid "Export &Settings"
 msgstr "&Pengaturan Ekspor"
 
-#: resources.h:473
+#: resources.h:302
 msgid "Export settings"
 msgstr "Pengaturan ekspor"
 
-#: resources.h:371
+#: resources.h:213
 msgid "F&ilter name:"
 msgstr "Nama F&ilter"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:115
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:117
 #: ../../locales/../src/interface/sitemanager.cpp:1577
 msgid "FTP"
 msgstr "FTP"
@@ -3060,11 +3082,12 @@ msgstr "FTP"
 msgid "FTP Engine not initialized, can't connect"
 msgstr "Mesin FTP tidak bisa diinisialisasi, tidak terhubung"
 
-#: resources.h:524
+#: resources.h:706
 msgid "FTP Keep-alive"
 msgstr "FTP Keep-alive"
 
-#: resources.h:267 ../../locales/../src/interface/settingsdialog.cpp:118
+#: resources.h:726
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:120
 msgid "FTP Proxy"
 msgstr "Proxy FTP"
 
@@ -3072,7 +3095,7 @@ msgstr "Proxy FTP"
 msgid "FTP URL"
 msgstr "FTP URL"
 
-#: resources.h:842
+#: resources.h:638
 msgid ""
 "FTP uses secondary connections for data transfers. These additional "
 "connections can be established in two ways."
@@ -3088,10 +3111,10 @@ msgstr "FTPES - FTP diatas TLS/SSL eksplisit"
 msgid "FTPS - FTP over implicit TLS/SSL"
 msgstr "TFTPS - FTP diatas TLS/SSL implisit"
 
-#: ../../locales/../src/interface/LocalListView.cpp:728
-#: ../../locales/../src/interface/LocalListView.cpp:810
-#: ../../locales/../src/interface/LocalListView.cpp:1509
-#: ../../locales/../src/interface/LocalTreeView.cpp:878
+#: ../../locales/../src/interface/LocalListView.cpp:739
+#: ../../locales/../src/interface/LocalListView.cpp:821
+#: ../../locales/../src/interface/LocalListView.cpp:1505
+#: ../../locales/../src/interface/LocalTreeView.cpp:880
 #: ../../locales/../src/interface/viewheader.cpp:515
 msgid "Failed to change directory"
 msgstr "Gagal mengganti direktori"
@@ -3099,7 +3122,7 @@ msgstr "Gagal mengganti direktori"
 #: ../../locales/../src/interface/FileZilla.cpp:224
 #: ../../locales/../src/interface/FileZilla.cpp:232
 #: ../../locales/../src/interface/FileZilla.cpp:234
-#: ../../locales/../src/interface/optionspage_language.cpp:53
+#: ../../locales/../src/interface/settings/optionspage_language.cpp:53
 msgid "Failed to change language"
 msgstr "Gagal mengganti bahasa"
 
@@ -3119,8 +3142,8 @@ msgstr "Gagal membuat salinan backup dari berkas xml"
 msgid "Failed to create listen socket, aborting"
 msgstr "Gagal membuat soket, membatalkan"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4179
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4183
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4182
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4186
 msgid "Failed to create listening socket for active mode transfer"
 msgstr "Gagal membuat soket untuk mengirim mode transfer aktif"
 
@@ -3128,11 +3151,11 @@ msgstr "Gagal membuat soket untuk mengirim mode transfer aktif"
 msgid "Failed to download the latest version of FileZilla."
 msgstr "Gagal mendownload versi terbaru dari FileZilla."
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:647
+#: ../../locales/../src/interface/LocalTreeView.cpp:649
 msgid "Failed to get 'My Documents' path"
 msgstr "Gagal untuk mendapatkan path 'Dokumenku'"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:633
+#: ../../locales/../src/interface/LocalTreeView.cpp:635
 msgid "Failed to get desktop path"
 msgstr "Gagal mengambil path desktop"
 
@@ -3146,7 +3169,7 @@ msgid "Failed to get peer address of data connection, connection closed."
 msgstr ""
 "Gagal untuk mendapatkan alamat peer dari koneksi data, koneksi terputus."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:260
+#: ../../locales/../src/interface/Mainfrm.cpp:261
 msgid "Failed to initialize FTP engine"
 msgstr "Gagal untuk menginisialisasi mesin FTP"
 
@@ -3155,26 +3178,26 @@ msgstr "Gagal untuk menginisialisasi mesin FTP"
 msgid "Failed to initialize TLS."
 msgstr "Gagal untuk menginisialisasi TLS."
 
-#: ../../locales/../src/interface/settingsdialog.cpp:169
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:172
 msgid "Failed to load panels, invalid resource files?"
 msgstr "Gagal memuat panel, berkas resource tidak valid?"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:299
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:299
 #, c-format
 msgid "Failed to load private key: %s"
 msgstr "Gagal memuat kunci privat: %s"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2598
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2601
 #, c-format
 msgid "Failed to open \"%s\" for appending/writing"
 msgstr "Gagal membuka \"%s\" untuk menambah/menulis"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2660
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2663
 #, c-format
 msgid "Failed to open \"%s\" for reading"
 msgstr "Gagal membuka \"%s\" untuk dibaca"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2639
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2642
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:327
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:384
 #, c-format
@@ -3193,11 +3216,11 @@ msgstr "Gagal mengambil daftar direktori"
 msgid "Failed to retrieve external ip address, aborting"
 msgstr "Gagal mengambil alamat ip eksternal, membatalkan"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3877
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3880
 msgid "Failed to retrieve external ip address, using local address"
 msgstr "Gagal mengambil alamat ip eksternal, menggunakan alamat lokal"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3899
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3902
 msgid "Failed to retrieve local ip address."
 msgstr "Gagal mengambil alamat ip lokal."
 
@@ -3232,7 +3255,7 @@ msgid "Failed to set language to %s (%s), using default system language."
 msgstr "Gagal menentukan bahasa ke %s (%s), menggunakan bahasa sistem default"
 
 #: ../../locales/../src/interface/FileZilla.cpp:234
-#: ../../locales/../src/interface/optionspage_language.cpp:53
+#: ../../locales/../src/interface/settings/optionspage_language.cpp:53
 #, c-format
 msgid "Failed to set language to %s, using default system language"
 msgstr "Gagal menentukan bahasa ke %s, menggunakan bahasa sistem default"
@@ -3247,7 +3270,7 @@ msgstr "Gagal menentukan bahasa ke %s, gunakan bahasa sistem default (%s, %s)."
 msgid "Failed to set language to %s, using default system language."
 msgstr "Gagal menentukan bahasa ke %s, menggunakan bahasa sistem default."
 
-#: ../../locales/../src/interface/optionspage.cpp:205
+#: ../../locales/../src/interface/settings/optionspage.cpp:205
 msgid "Failed to validate settings"
 msgstr "Gagal memvalidasi pengaturan"
 
@@ -3264,15 +3287,15 @@ msgstr "Gagal menulis berkas xml"
 msgid "Failed transfers"
 msgstr "Pengiriman yang gagal"
 
-#: resources.h:857
+#: resources.h:653
 msgid "Fall back to active mode"
 msgstr "Kembali ke mode aktif"
 
-#: resources.h:577
+#: resources.h:381
 msgid "Fil&e:"
 msgstr "B&erkas:"
 
-#: resources.h:380
+#: resources.h:222
 msgid "Fil&es"
 msgstr "B&erkas"
 
@@ -3282,7 +3305,7 @@ msgstr "B&erkas"
 msgid "File"
 msgstr "Berkas"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:122
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:124
 msgid "File Types"
 msgstr "Jenis Berkas"
 
@@ -3290,34 +3313,34 @@ msgstr "Jenis Berkas"
 msgid "File does not contain any importable data."
 msgstr "Berkas tidak mengandung data yang dapat diimpor."
 
-#: ../../locales/../src/interface/settingsdialog.cpp:130
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:132
 msgid "File editing"
 msgstr "Pengeditan berkas"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1840
+#: ../../locales/../src/interface/RemoteListView.cpp:1887
 msgid "File exists"
 msgstr "Berkas ada"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:123
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:125
 msgid "File exists action"
 msgstr "Aksi jika berkas ada"
 
-#: resources.h:488
+#: resources.h:317
 msgid "File has changed"
 msgstr "Berkas sudah berubah"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:128
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:130
 msgid "File lists"
 msgstr "Daftar berkas"
 
-#: ../../locales/../src/interface/edithandler.cpp:1686
+#: ../../locales/../src/interface/edithandler.cpp:1689
 #: ../../locales/../src/interface/FileZilla.cpp:768
 #: ../../locales/../src/interface/FileZilla.cpp:862
-#: ../../locales/../src/interface/optionspage_edit.cpp:218
+#: ../../locales/../src/interface/settings/optionspage_edit.cpp:182
 msgid "File not found"
 msgstr "Berkas tidak ditemukan"
 
-#: resources.h:919
+#: resources.h:932
 msgid "File search"
 msgstr "Pencarian berkas"
 
@@ -3325,15 +3348,15 @@ msgstr "Pencarian berkas"
 msgid "File transfer successful"
 msgstr "Transfer berkas berhasil"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1351
+#: ../../locales/../src/interface/Mainfrm.cpp:1352
 msgid "File transfers still in progress."
 msgstr "Transfer berkas sedang dalam proses."
 
-#: resources.h:595
+#: resources.h:399
 msgid "File would transfer with ASCII data type."
 msgstr "Berkas akan ditransfer dengan tipe data ASCII"
 
-#: resources.h:596
+#: resources.h:400
 msgid "File would transfer with binary data type."
 msgstr "Berkas akan ditransfer dengan tipe data biner"
 
@@ -3342,7 +3365,7 @@ msgstr "Berkas akan ditransfer dengan tipe data biner"
 msgid "FileZilla Error"
 msgstr "FileZilla Bermasalah"
 
-#: resources.h:879
+#: resources.h:675
 msgid ""
 "FileZilla can now test your configuration to ensure everything is configured "
 "properly."
@@ -3359,34 +3382,34 @@ msgstr ""
 "FileZilla berjalan pada mode kiosk.\n"
 "Jenis login 'Normal' dan 'Account' tidak lagi tersedia pada mode ini."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1735
+#: ../../locales/../src/interface/Mainfrm.cpp:1736
 msgid "FileZilla needs to be restarted for the language change to take effect."
 msgstr "FileZilla harus dijalankan ulang agar perubahan bahasa berjalan."
 
-#: resources.h:705
+#: resources.h:499
 msgid "Filelist status &bars"
 msgstr "&Status bar daftar berkas"
 
-#: ../../locales/../src/interface/edithandler.cpp:1204
+#: ../../locales/../src/interface/edithandler.cpp:1207
 #: ../../locales/../src/interface/filter_conditions_dialog.cpp:93
-#: ../../locales/../src/interface/LocalListView.cpp:260
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:39
+#: ../../locales/../src/interface/LocalListView.cpp:265
 #: ../../locales/../src/interface/RemoteListView.cpp:358
 #: ../../locales/../src/interface/search.cpp:382
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:39
 msgid "Filename"
 msgstr "Nama berkas"
 
-#: resources.h:698
+#: resources.h:492
 msgid "Filename &filters..."
 msgstr "&Filter nama berkas..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3050
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3053
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2309
 #, c-format
 msgid "Filename cannot be constructed for directory %s and filename %s"
 msgstr "Nama berkas tidak bisa dibuat untuk direktori %s dan nama berkas %s"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1825
+#: ../../locales/../src/interface/RemoteListView.cpp:1872
 msgid "Filename invalid"
 msgstr "Nama berkas tidak valid"
 
@@ -3394,51 +3417,52 @@ msgstr "Nama berkas tidak valid"
 msgid "Filename unchanged"
 msgstr "Nama berkas tidak berubah"
 
-#: resources.h:236 resources.h:490
+#: resources.h:319 resources.h:887
 msgid "Filename:"
 msgstr "Nama berkas:"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1583
+#: ../../locales/../src/interface/LocalListView.cpp:1579
 msgid "Filenames may not contain any of the following characters: / * ? < > |"
 msgstr "Nama berkas tidak boleh menggunakan karakter berikut: / * ? < > |"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1558
+#: ../../locales/../src/interface/LocalListView.cpp:1554
 msgid ""
 "Filenames may not contain any of the following characters: / \\ : * ? \" < > "
 "|"
 msgstr ""
 "Nama berkas tidak boleh menggunakan karakter berikut: / \\ : * ? \" < > |"
 
-#: resources.h:511
+#: resources.h:340
 msgid "Files currently being edited"
 msgstr "Berkas saat ini sedang diedit"
 
 #: ../../locales/../src/interface/filter_conditions_dialog.cpp:98
-#: ../../locales/../src/interface/LocalListView.cpp:261
+#: ../../locales/../src/interface/LocalListView.cpp:266
 #: ../../locales/../src/interface/RemoteListView.cpp:359
 #: ../../locales/../src/interface/search.cpp:384
 msgid "Filesize"
 msgstr "Ukuran berkas"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:127
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:129
 msgid "Filesize format"
 msgstr "Format ukuran berkas"
 
-#: ../../locales/../src/interface/LocalListView.cpp:262
+#: ../../locales/../src/interface/LocalListView.cpp:267
 #: ../../locales/../src/interface/RemoteListView.cpp:360
 #: ../../locales/../src/interface/search.cpp:385
 msgid "Filetype"
 msgstr "Jenis berkas"
 
-#: resources.h:262
+#: resources.h:875
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:133
 msgid "Filetype associations"
 msgstr "Asosiasi jenis berkas"
 
-#: resources.h:372
+#: resources.h:214
 msgid "Filter &out all files that:"
 msgstr "Filter &out semua berkas yang:"
 
-#: resources.h:379
+#: resources.h:221
 msgid "Filter applies to:"
 msgstr "Filter diterapkan pada:"
 
@@ -3451,7 +3475,7 @@ msgstr "Nama filter sudah ada"
 msgid "Filter set already exists"
 msgstr "Kumpulan filter sudah ada"
 
-#: resources.h:912
+#: resources.h:925
 msgid "Filter the directory listings"
 msgstr "Filter daftar direktori"
 
@@ -3461,15 +3485,15 @@ msgstr "Filter daftar direktori"
 msgid "Filter validation failed"
 msgstr "Validasi filter gagal"
 
-#: resources.h:10 resources.h:33
+#: resources.h:9 resources.h:34
 msgid "Fingerprint (MD5):"
 msgstr "Sidik jari (MD5):"
 
-#: resources.h:11 resources.h:34
+#: resources.h:10 resources.h:35
 msgid "Fingerprint (SHA-1):"
 msgstr "Sidik jari (SHA-1):"
 
-#: resources.h:331 resources.h:343
+#: resources.h:173 resources.h:185
 msgid "Fingerprint:"
 msgstr "Sidik jari:"
 
@@ -3477,7 +3501,12 @@ msgstr "Sidik jari:"
 msgid "Firewall and router configuration wizard"
 msgstr "Panduan konfigurasi firewall dan router"
 
-#: resources.h:181
+#: resources.h:472
+#, fuzzy
+msgid "Follow symlink, delete target directory contents"
+msgstr "Yakin menghapus %d direktori dengan isinya?"
+
+#: resources.h:693
 msgid ""
 "For more detailed information about what these options do, please run the "
 "network configuration wizard."
@@ -3485,11 +3514,11 @@ msgstr ""
 "Untuk informasi lebih detail tentang opsi-opsi ini, harap jalankan panduan "
 "konfigurasi jaringan."
 
-#: resources.h:874
+#: resources.h:670
 msgid "For reliability you should specify a range of at least 10 ports."
 msgstr "Untuk reliabilitas, Anda harus menentukan paling tidak 10 port."
 
-#: ../../locales/../src/interface/Options.cpp:176
+#: ../../locales/../src/interface/Options.cpp:177
 msgid ""
 "For this session the default settings will be used. Any changes to the "
 "settings will not be saved."
@@ -3497,29 +3526,29 @@ msgstr ""
 "Untuk sesi ini, pengaturan default akan digunakan. Semua perubahan pada "
 "aturan tidak akan disimpan."
 
-#: resources.h:130
+#: resources.h:107
 msgid "Force &UTF-8"
 msgstr "Paksa &UTF-8"
 
-#: resources.h:726
+#: resources.h:522
 msgid "Force showing &hidden files"
 msgstr "Paksa menampilkan berkas &tersembunyi"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:772
+#: ../../locales/../src/interface/Mainfrm.cpp:773
 msgid "Force showing hidden files"
 msgstr "Paksa menampilkan berkas tersembunyi"
 
-#: resources.h:274
+#: resources.h:733
 msgid "Format specifications:"
 msgstr "Klasifikasi format:"
 
-#: resources.h:265
+#: resources.h:873
 msgid "Format: Extension followed by properly quoted command and arguments."
 msgstr ""
 "Format: Ekstensi diikuti dengan perintah dan argumen yang diberi tanda kutip "
 "dengan benar."
 
-#: resources.h:100
+#: resources.h:77
 msgid "General"
 msgstr "Umum"
 
@@ -3527,11 +3556,12 @@ msgstr "Umum"
 msgid "General SOCKS server failure"
 msgstr "Kegagalan server SOCKS umum"
 
-#: resources.h:559 ../../locales/../src/interface/settingsdialog.cpp:120
+#: resources.h:751
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:122
 msgid "Generic proxy"
 msgstr "Proxy generik"
 
-#: resources.h:863
+#: resources.h:659
 msgid "Get external IP address from the following URL:"
 msgstr "Dapatkan alamat IP eksternal dari URL berikut:"
 
@@ -3544,19 +3574,19 @@ msgstr "Karena nama filter sudah ada, timpa kumpulan filter yang ada?"
 msgid "Global bookmarks"
 msgstr "Penanda global"
 
-#: resources.h:322
+#: resources.h:164
 msgid "GnuTLS:"
 msgstr "GnuTLS:"
 
-#: resources.h:294
+#: resources.h:136
 msgid "Group permissions"
 msgstr "Hak akses grup"
 
-#: resources.h:777
+#: resources.h:573
 msgid "H&igh"
 msgstr "T&inggi"
 
-#: resources.h:538
+#: resources.h:352
 msgid "Hash:"
 msgstr "Hash:"
 
@@ -3564,7 +3594,7 @@ msgstr "Hash:"
 msgid "Hidden"
 msgstr "Tersembunyi"
 
-#: resources.h:67 ../../locales/../src/interface/queue.cpp:894
+#: resources.h:779 ../../locales/../src/interface/queue.cpp:894
 #: ../../locales/../src/interface/queue.cpp:975
 msgid "High"
 msgstr "Tinggi"
@@ -3574,26 +3604,26 @@ msgstr "Tinggi"
 msgid "Highest"
 msgstr "Tertinggi"
 
-#: ../../locales/../src/interface/optionspage_connection_active.cpp:74
+#: ../../locales/../src/interface/settings/optionspage_connection_active.cpp:74
 msgid "Highest available port has to be a number between 1024 and 65535."
 msgstr "Port tertinggi yang tersedia harus angka antara 1024 dan 65535."
 
-#: resources.h:360
+#: resources.h:202
 msgid ""
 "Hold the shift key to toggle the filter state on both sides simultaneously."
 msgstr ""
 "Tahan kunci shift untuk mengganti kondisi filter pada kedua sisi secara "
 "simultan."
 
-#: resources.h:313
+#: resources.h:155
 msgid "Homepage:"
 msgstr "Situs:"
 
-#: resources.h:540
+#: resources.h:354
 msgid "Host key fingerprint:"
 msgstr "Sidik jari kunci host:"
 
-#: resources.h:337
+#: resources.h:179
 msgid "Host key mismatch"
 msgstr "Kunci mesin tidak cocok"
 
@@ -3605,20 +3635,20 @@ msgstr "Host dimulai dengan '[' tetapi tidak ada kurung penutup."
 msgid "Host unreachable"
 msgstr "Host tidak dapat dicapai"
 
-#: resources.h:4 resources.h:27 resources.h:142 resources.h:329
-#: resources.h:341
+#: resources.h:16 resources.h:28 resources.h:119 resources.h:171
+#: resources.h:183
 msgid "Host:"
 msgstr "Mesin:"
 
-#: resources.h:117
+#: resources.h:94
 msgid "Hours,"
 msgstr "Jam,"
 
-#: resources.h:215
+#: resources.h:822
 msgid "I&SO 8601 (example: 15:47)"
 msgstr "I&SO 8601 (contoh: 15:47)"
 
-#: resources.h:59
+#: resources.h:771
 msgid ""
 "If no data can be sent or received during this time, the connection will be "
 "closed and FileZilla will try to reconnect."
@@ -3626,13 +3656,13 @@ msgstr ""
 "Jika tidak ada data yang bisa dikirimkan atau diterima pada waktu ini, "
 "koneksi akan ditutup dan FileZilla akan mencoba menghubungkan ulang."
 
-#: resources.h:252
+#: resources.h:903
 msgid "If reporting bugs, please provide logs with \"Verbose\" logging level."
 msgstr ""
 "Jika melaporkan kesalahan, harap sediakan log dengan level pencatatan "
 "\"Detail\"."
 
-#: resources.h:854
+#: resources.h:650
 msgid ""
 "If the automatic test at the end of this wizard succeeds, but you cannot "
 "transfer files to a particular server, the server might be misconfigured and "
@@ -3644,7 +3674,7 @@ msgstr ""
 "konfigurasi dan Anda harus mencoba mode aktif. Anda bisa menentukan mode "
 "transfer dengan basis per server pada Manajemen Situs."
 
-#: resources.h:849
+#: resources.h:645
 msgid ""
 "If the fallback option is enabled, you will be able to connect to "
 "misconfigured servers which reject the selected transfer mode."
@@ -3668,7 +3698,7 @@ msgstr ""
 "Jika masalah ini tetap muncul, beberapa router dan/atau firewall akan "
 "menginterupsi koneksi."
 
-#: resources.h:241
+#: resources.h:892
 msgid ""
 "If the size of the logfile reaches the limit, it gets renamed by adding \".1"
 "\" to the end of the filename (possibly overwriting older logfiles) and a "
@@ -3677,6 +3707,12 @@ msgstr ""
 "Jika ukuran dari berkas log mencapai batas, akan diganti namanya dengan "
 "menambahkan \".1\" pada akhir nama berkas (kemungkinan menimpa berkas log "
 "lama) dan berkas baru akan dibuat."
+
+#: resources.h:469
+msgid ""
+"If the symlink points to a directory, FileZilla can either delete the "
+"symbolic link or remove the contents of the linked directory."
+msgstr ""
 
 #: ../../locales/../src/interface/netconfwizard.cpp:624
 msgid ""
@@ -3690,7 +3726,7 @@ msgstr ""
 msgid "If this problem stays, please contact your router manufacturer."
 msgstr "Jika masalah ini tetap ada, harap hubungi pembuat router Anda."
 
-#: resources.h:439 resources.h:461
+#: resources.h:268 resources.h:290
 msgid ""
 "If using 'overwrite if newer', your system time has to be synchronized with "
 "the server. If the time differs (e.g. different timezone), specify a "
@@ -3700,7 +3736,7 @@ msgstr ""
 "disinkronkan dengan server. Jika waktu berbeda (misalnya zona waktu "
 "berbeda), tentukan offset zona waktu pada manajemen situs."
 
-#: resources.h:634
+#: resources.h:846
 msgid ""
 "If using timestamp based comparison, consider two files equal if their "
 "timestamp difference does not exceed this threshold."
@@ -3709,11 +3745,11 @@ msgstr ""
 "sama jika perbedaan timestamp diantara keduanya tidak melebihi batas "
 "threshold ini."
 
-#: resources.h:198
+#: resources.h:861
 msgid "If you change the language, you should restart FileZilla."
 msgstr "Jika Anda mengganti bahasa, FileZilla harus dijalankan ulang."
 
-#: resources.h:880
+#: resources.h:676
 msgid ""
 "If you click on test, FileZilla will connect to probe.filezilla-project.org "
 "and will perform some simple tests."
@@ -3721,11 +3757,11 @@ msgstr ""
 "Jika Anda klik pada pengujian, FileZilla akan terhubung ke probe.filezilla-"
 "project.org dan melakukan pengujian sederhana."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1375
+#: ../../locales/../src/interface/Mainfrm.cpp:1376
 msgid "If you close FileZilla, your changes will be lost."
 msgstr "Jika Anda menutup FileZilla, perubahan Anda akan hilang."
 
-#: resources.h:162
+#: resources.h:789
 msgid ""
 "If you enter the wrong filetypes, those files may get corrupted when "
 "transferred."
@@ -3733,12 +3769,12 @@ msgstr ""
 "Jika Anda salah memasukkan jenis berkas, berkas tersebut mungkin akan rusak "
 "ketika ditransfer"
 
-#: resources.h:881
+#: resources.h:677
 msgid "If you get any errors, your configuration is not correct."
 msgstr ""
 "Jika Anda mendapatkan sembarang kesalahan, konfigurasi Anda tidak benar."
 
-#: resources.h:523
+#: resources.h:705
 msgid ""
 "If you have problems to retrieve directory listings or to transfer files, "
 "try to change the default transfer mode."
@@ -3756,7 +3792,7 @@ msgstr ""
 "atau router remote atau firewall mungkin salah konfigurasi. Pada kasus ini, "
 "coba ganti mode pasif dan hubungi administrator server untuk bantuan."
 
-#: resources.h:840
+#: resources.h:636
 msgid ""
 "If you successfully complete the wizard and the final test succeeds, any "
 "firewalls and routers you have should be configured properly."
@@ -3765,7 +3801,7 @@ msgstr ""
 "sembarang firewall dan router yang Anda miliki seharusnya terkonfigurasi "
 "dengan baik."
 
-#: resources.h:876
+#: resources.h:672
 msgid ""
 "If you use a firewall, make sure FileZilla is allowed to accept connection "
 "on all given ports."
@@ -3773,7 +3809,7 @@ msgstr ""
 "Jika Anda menggunakan sebuah firewall, pastikan FileZilla diijinkan menerima "
 "koneksi dari semua port yang diberikan."
 
-#: resources.h:875
+#: resources.h:671
 msgid ""
 "If you use a router, make sure all these ports are forwarded to the machine "
 "you're running FileZilla on."
@@ -3793,7 +3829,7 @@ msgstr ""
 msgid "Import data from older version"
 msgstr "Mengimpor data dari versi lama"
 
-#: resources.h:480
+#: resources.h:309
 msgid "Import settings"
 msgstr "Impor pengaturan"
 
@@ -3802,12 +3838,12 @@ msgstr "Impor pengaturan"
 msgid "Import successful"
 msgstr "Impor berhasil"
 
-#: ../../locales/../src/interface/optionspage_edit.cpp:172
-#: ../../locales/../src/interface/optionspage_edit.cpp:179
+#: ../../locales/../src/interface/settings/optionspage_edit_associations.cpp:50
+#: ../../locales/../src/interface/settings/optionspage_edit_associations.cpp:57
 msgid "Improperly quoted association."
 msgstr "Pemberian tanda kutip pada asosiasi salah"
 
-#: resources.h:868
+#: resources.h:664
 msgid ""
 "In active mode, FileZilla has to listen on a port for data transfers. You "
 "have to specify which ports FileZilla will use."
@@ -3815,7 +3851,7 @@ msgstr ""
 "Pada mode aktif, FileZilla harus mendengarkan sebuah port untuk transfer "
 "data. Anda harus menentukan port yang akan digunakan FileZilla."
 
-#: resources.h:870
+#: resources.h:666
 msgid ""
 "In case you have a router, you will have to forward all available ports, as "
 "FileZilla has no influence on the ports your system chooses."
@@ -3823,7 +3859,7 @@ msgstr ""
 "Jika Anda memiliki router, Anda harus mengirimkan semua port yang tersedia, "
 "karena FileZilla tidak punya hubungan pada port yang dipilih sistem Anda."
 
-#: resources.h:415
+#: resources.h:244
 msgid ""
 "In case you prefer automatic updates, you can enable automatic update checks "
 "in the settings dialog."
@@ -3831,14 +3867,14 @@ msgstr ""
 "Jika Anda memilih update otomatis, Anda bisa mengaktifkan pengujian update "
 "otomatis pada dialog pengaturan."
 
-#: resources.h:389 resources.h:858
+#: resources.h:654 resources.h:714
 msgid ""
 "In order to use active mode, FileZilla needs to know your external IP "
 "address."
 msgstr ""
 "Untuk menggunakan mode aktif, FileZilla harus tahu alamat IP eksternal Anda."
 
-#: resources.h:843
+#: resources.h:639
 msgid ""
 "In passive mode, which is recommended for most users, FileZilla asks the "
 "server for a port and connects to the given port. Not much configuration has "
@@ -3862,7 +3898,7 @@ msgstr "Menginisialisasi TLS..."
 msgid "Interactive"
 msgstr "Interaktif"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:124
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:126
 msgid "Interface"
 msgstr "Antarmuka"
 
@@ -3899,19 +3935,14 @@ msgstr "Ukuran potongan berkas tidak valid"
 msgid "Invalid data received"
 msgstr "Data yang diterima tidak valid"
 
-#: ../../locales/../src/interface/verifycertdialog.cpp:45
-#: ../../locales/../src/interface/verifycertdialog.cpp:61
+#: ../../locales/../src/interface/verifycertdialog.cpp:31
+#: ../../locales/../src/interface/verifycertdialog.cpp:47
 msgid "Invalid date"
 msgstr "Tanggal tidak valid"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1558
-#: ../../locales/../src/interface/LocalListView.cpp:1583
+#: ../../locales/../src/interface/LocalListView.cpp:1554
+#: ../../locales/../src/interface/LocalListView.cpp:1579
 msgid "Invalid filename"
-msgstr "Nama berkas tidak valid"
-
-#: ../../locales/../src/interface/search.cpp:698
-#, fuzzy, c-format
-msgid "Invalid filter: %s"
 msgstr "Nama berkas tidak valid"
 
 #: ../../locales/../src/engine/server.cpp:142
@@ -3944,9 +3975,18 @@ msgstr ""
 "ftps:// untuk FTP diatas SSL (implicit) dan \n"
 "ftpes:// untuk FTP diatas SSL (explicit)."
 
+#: ../../locales/../src/interface/search.cpp:705
+msgid "Invalid regular expression in search conditions."
+msgstr "Regular expression pada kondisi pencarian tidak valid."
+
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:567
 msgid "Invalid response code"
 msgstr "Kode respon tidak valid"
+
+#: ../../locales/../src/interface/search.cpp:699
+#, c-format
+msgid "Invalid search conditions: %s"
+msgstr "Kondisi pencarian tidak valid: %s"
 
 #: ../../locales/../src/interface/sitemanager.cpp:2512
 #: ../../locales/../src/interface/sitemanager.cpp:2532
@@ -3962,7 +4002,7 @@ msgstr "Kode respon tidak valid"
 msgid "Invalid site path"
 msgstr "Path site tidak valid"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:497
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:500
 msgid "Invalid size in condition"
 msgstr "Ukuran tidak valid"
 
@@ -3970,11 +4010,23 @@ msgstr "Ukuran tidak valid"
 msgid "Invalid username given."
 msgstr "Nama Pengguna tidak valid."
 
-#: resources.h:631
+#: ../../locales/../src/interface/verifycertdialog.cpp:171
+msgid "Jurisdiction country:"
+msgstr ""
+
+#: ../../locales/../src/interface/verifycertdialog.cpp:173
+msgid "Jurisdiction locality:"
+msgstr ""
+
+#: ../../locales/../src/interface/verifycertdialog.cpp:172
+msgid "Jurisdiction state or province:"
+msgstr ""
+
+#: resources.h:843
 msgid "Keep directories on top"
 msgstr "Pertahankan direktori diatas"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:776
+#: ../../locales/../src/interface/Mainfrm.cpp:777
 msgid ""
 "Keep in mind that not all servers support this feature and may return "
 "incorrect listings if this option is enabled. Although FileZilla performs "
@@ -3985,49 +4037,50 @@ msgstr ""
 "pengujian untuk melihat apakah server mendukung fitur ini, pengujian bisa "
 "gagal."
 
-#: resources.h:535
+#: resources.h:349
 msgid "Key exchange"
 msgstr "Pertukaran kunci"
 
-#: resources.h:780
+#: resources.h:576
 msgid "L&owest"
 msgstr "Ter&endah"
 
-#: resources.h:196 ../../locales/../src/interface/settingsdialog.cpp:129
+#: resources.h:859
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:131
 msgid "Language"
 msgstr "Bahasa"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1735
+#: ../../locales/../src/interface/Mainfrm.cpp:1736
 msgid "Language changed"
 msgstr "Bahasa sudah berubah"
 
-#: ../../locales/../src/interface/LocalListView.cpp:263
+#: ../../locales/../src/interface/LocalListView.cpp:268
 #: ../../locales/../src/interface/RemoteListView.cpp:361
 #: ../../locales/../src/interface/search.cpp:386
 msgid "Last modified"
 msgstr "Terakhir dimodifikasi"
 
-#: resources.h:166
+#: resources.h:793
 msgid "Layout"
 msgstr "Layout"
 
-#: resources.h:52
+#: resources.h:764
 msgid "Limit for concurrent &downloads:"
 msgstr "Batas untuk &download konkuren:"
 
-#: resources.h:54
+#: resources.h:766
 msgid "Limit for concurrent &uploads:"
 msgstr "Batas untuk &upload konkuren:"
 
-#: resources.h:384
+#: resources.h:709
 msgid "Limit local ports"
 msgstr "Batas port lokal"
 
-#: resources.h:238
+#: resources.h:889
 msgid "Limit size of logfile"
 msgstr "Batas ukuran untuk berkas log"
 
-#: resources.h:239
+#: resources.h:890
 msgid "Limit:"
 msgstr "Batas:"
 
@@ -4035,7 +4088,7 @@ msgstr "Batas:"
 msgid "Line length exceeded"
 msgstr "Ukuran baris kelebihan"
 
-#: resources.h:323
+#: resources.h:165
 msgid "Linked against"
 msgstr "Dihubungkan dengan"
 
@@ -4049,16 +4102,16 @@ msgstr "Soket ditutup"
 msgid "Listing:"
 msgstr "Daftar:"
 
-#: resources.h:387
+#: resources.h:712
 msgid "Lo&west available port:"
 msgstr "Port ter&endah yang tersedia:"
 
-#: ../../locales/../src/interface/edithandler.cpp:1252
-#: ../../locales/../src/interface/edithandler.cpp:1503
+#: ../../locales/../src/interface/edithandler.cpp:1255
+#: ../../locales/../src/interface/edithandler.cpp:1506
 msgid "Local"
 msgstr "Lokal:"
 
-#: resources.h:572
+#: resources.h:376
 msgid "Local file"
 msgstr "Berkas lokal"
 
@@ -4070,7 +4123,7 @@ msgstr "Berkas lokal tidak ada."
 msgid "Local file is a directory instead of a regular file."
 msgstr "Berkas lokal adalah direktori dan bukan berkas biasa"
 
-#: resources.h:354
+#: resources.h:196
 msgid "Local filters:"
 msgstr "Filter lokal:"
 
@@ -4078,15 +4131,16 @@ msgstr "Filter lokal:"
 msgid "Local site:"
 msgstr "Situs lokal:"
 
-#: ../../locales/../src/interface/verifycertdialog.cpp:137
+#: ../../locales/../src/interface/verifycertdialog.cpp:167
 msgid "Locality:"
 msgstr "Lokalitas:"
 
-#: ../../locales/../src/interface/optionspage_logging.cpp:97
+#: ../../locales/../src/interface/settings/optionspage_logging.cpp:97
 msgid "Log file"
 msgstr "Berkas log"
 
-#: resources.h:233 ../../locales/../src/interface/settingsdialog.cpp:137
+#: resources.h:884
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:140
 msgid "Logging"
 msgstr "Melakukan pencatatan"
 
@@ -4120,11 +4174,11 @@ msgstr "Rendah"
 msgid "Lowest"
 msgstr "Terendah"
 
-#: ../../locales/../src/interface/optionspage_connection_active.cpp:68
+#: ../../locales/../src/interface/settings/optionspage_connection_active.cpp:68
 msgid "Lowest available port has to be a number between 1024 and 65535."
 msgstr "Port terendah yang tersedia harus angka antara 1024 dan 65535."
 
-#: resources.h:19 resources.h:42
+#: resources.h:20 resources.h:43
 msgid "MAC:"
 msgstr "MAC:"
 
@@ -4150,7 +4204,7 @@ msgstr "Header rusak: %s"
 msgid "Malformed reply, server not sending proper line endings"
 msgstr "Balasan rusak, server tidak mengirimkan akhir baris yang benar"
 
-#: resources.h:602 ../../locales/../src/interface/manual_transfer.cpp:305
+#: resources.h:406 ../../locales/../src/interface/manual_transfer.cpp:305
 #: ../../locales/../src/interface/manual_transfer.cpp:312
 #: ../../locales/../src/interface/manual_transfer.cpp:319
 #: ../../locales/../src/interface/manual_transfer.cpp:324
@@ -4160,44 +4214,44 @@ msgstr "Balasan rusak, server tidak mengirimkan akhir baris yang benar"
 msgid "Manual transfer"
 msgstr "Transfer manual"
 
-#: resources.h:373 resources.h:662
+#: resources.h:215 resources.h:447
 msgid "Match all of the following"
 msgstr "Cocokkan semua dari pilihan berikut"
 
-#: resources.h:50
+#: resources.h:762
 msgid "Maximum simultaneous &transfers:"
 msgstr "Jumlah maksimum &transfer secara simultan:"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:373
-#: ../../locales/../src/interface/Mainfrm.cpp:2057
+#: ../../locales/../src/interface/Mainfrm.cpp:374
+#: ../../locales/../src/interface/Mainfrm.cpp:2058
 msgid "Message log"
 msgstr "Pesan log"
 
-#: resources.h:177
+#: resources.h:804
 msgid "Message log position"
 msgstr "Posisi pesan log"
 
-#: resources.h:240
+#: resources.h:891
 msgid "MiB"
 msgstr "MiB"
 
-#: resources.h:118
+#: resources.h:95
 msgid "Minutes"
 msgstr "Menit"
 
-#: resources.h:556
+#: resources.h:370
 msgid "Move &down"
 msgstr "Ke &bawah"
 
-#: resources.h:555
+#: resources.h:369
 msgid "Move &up"
 msgstr "Ke &atas"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1039
+#: ../../locales/../src/interface/LocalTreeView.cpp:1041
 msgid "My Computer"
 msgstr "Komputerku"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1029
+#: ../../locales/../src/interface/LocalTreeView.cpp:1031
 msgid "My Documents"
 msgstr "Dokumenku"
 
@@ -4207,12 +4261,12 @@ msgstr "Dokumenku"
 msgid "My Sites"
 msgstr "Situsku"
 
-#: ../../locales/../src/interface/optionspage_themes.cpp:173
-#: ../../locales/../src/interface/optionspage_themes.cpp:175
+#: ../../locales/../src/interface/settings/optionspage_themes.cpp:173
+#: ../../locales/../src/interface/settings/optionspage_themes.cpp:175
 msgid "N/a"
 msgstr "N/a"
 
-#: resources.h:607
+#: resources.h:411
 msgid "Name"
 msgstr "Nama"
 
@@ -4226,7 +4280,7 @@ msgstr "Nama sudah ada"
 msgid "Name of bookmark already exists."
 msgstr "Nama penanda sudah ada."
 
-#: resources.h:141
+#: resources.h:118
 msgid "Name:"
 msgstr "Nama:"
 
@@ -4234,10 +4288,9 @@ msgstr "Nama:"
 msgid "Need to enter filter name"
 msgstr "Harus memasukkan nama filter"
 
-#: ../../locales/../src/interface/search.cpp:688
-#, fuzzy
+#: ../../locales/../src/interface/search.cpp:689
 msgid "Need to enter valid remote path"
-msgstr "Harus memasukkan nama filter"
+msgstr "Harus memasukkan nama path remote yang valid"
 
 #: ../../locales/../src/interface/sitemanager.cpp:1046
 msgid "Need to specify a character encoding"
@@ -4247,15 +4300,15 @@ msgstr "Harus menentukan enkoding karakter"
 msgid "Network unreachable"
 msgstr "Jaringan tidak dapat dicapai"
 
-#: resources.h:95
+#: resources.h:72
 msgid "New &Folder"
 msgstr "Direktori &Baru"
 
-#: resources.h:96 resources.h:622
+#: resources.h:73 resources.h:426
 msgid "New Book&mark"
 msgstr "Pe&nanda Baru"
 
-#: resources.h:603 ../../locales/../src/interface/bookmarks_dialog.cpp:52
+#: resources.h:407 ../../locales/../src/interface/bookmarks_dialog.cpp:52
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:66
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:73
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:80
@@ -4273,7 +4326,7 @@ msgstr "Pe&nanda Baru"
 msgid "New bookmark"
 msgstr "Penanda baru"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1323
+#: ../../locales/../src/interface/LocalTreeView.cpp:1161
 #: ../../locales/../src/interface/RemoteListView.cpp:1566
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1284
 msgid "New directory"
@@ -4293,7 +4346,7 @@ msgstr "Direktori baru"
 msgid "New site"
 msgstr "Situs baru"
 
-#: resources.h:175
+#: resources.h:802
 msgid "Next to the transfer queue"
 msgstr "Disebelah antrian transfer"
 
@@ -4309,12 +4362,12 @@ msgstr "Tidak ada kategori yang akan diekspor"
 msgid "No command given, aborting."
 msgstr "Tidak ada perintah yang diberikan, membatalkan."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3844
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3847
 msgid "No external IP address set, trying default."
 msgstr ""
 "Tidak ada alamat IP eksternal yang ditentukan, mencoba menggunakan default."
 
-#: ../../locales/../src/interface/edithandler.cpp:1193
+#: ../../locales/../src/interface/edithandler.cpp:1196
 msgid "No files are currently being edited."
 msgstr "Tidak ada berkas yang sedang diedit."
 
@@ -4328,7 +4381,7 @@ msgstr "Tidak ada nama filter yang diberikan"
 msgid "No host given, please enter a host."
 msgstr "Tidak ada mesin yang diberikan, harap masukkan sebuah mesin."
 
-#: ../../locales/../src/interface/optionspage_themes.cpp:98
+#: ../../locales/../src/interface/settings/optionspage_themes.cpp:98
 msgid "No images available"
 msgstr "Tidak ada gambar yang tersedia"
 
@@ -4341,11 +4394,11 @@ msgstr "Tidak ada lagi berkas pada antrian!"
 msgid "No name for the filterset given."
 msgstr "Tidak ada nama untuk kelompok filter yang diberikan."
 
-#: resources.h:657
+#: resources.h:442
 msgid "No program associated with filetype"
 msgstr "Tidak ada program yang diasosiasikan dengan tipe berkas"
 
-#: resources.h:647
+#: resources.h:432
 #, c-format
 msgid "No program has been associated to edit files with the extension '%s'."
 msgstr ""
@@ -4366,20 +4419,20 @@ msgstr "Tidak ada metode SOCKS5 auth yang didukung"
 msgid "No username given."
 msgstr "Tidak ada nama pengguna yang diberikan."
 
-#: resources.h:641 resources.h:646
-#: ../../locales/../src/interface/verifycertdialog.cpp:67
+#: resources.h:853 resources.h:858
+#: ../../locales/../src/interface/verifycertdialog.cpp:53
 msgid "None"
 msgstr "Tidak ada"
 
-#: resources.h:375 resources.h:664
+#: resources.h:217 resources.h:449
 msgid "None of the following"
 msgstr "Tidak ada pada berikut ini"
 
-#: resources.h:582
+#: resources.h:386
 msgid "None selected yet"
 msgstr "Tidak ada yang terpilih"
 
-#: resources.h:66 ../../locales/../src/engine/server.cpp:829
+#: resources.h:778 ../../locales/../src/engine/server.cpp:829
 #: ../../locales/../src/engine/server.cpp:848
 #: ../../locales/../src/interface/manual_transfer.cpp:156
 #: ../../locales/../src/interface/manual_transfer.cpp:181
@@ -4394,53 +4447,53 @@ msgstr "Normal"
 msgid "Not all items could be requeued for viewing/editing."
 msgstr "Tidak semua barang bisa di antrikan ulang untuk dilihat/diedit."
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2275
+#: ../../locales/../src/interface/RemoteListView.cpp:2322
 msgid "Not connected to any server"
 msgstr "Tidak terhubung pada sembarang server"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:688
+#: ../../locales/../src/interface/Mainfrm.cpp:689
 msgid "Not connected to any server."
 msgstr "Tidak terhubung pada sembarang server."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:774
+#: ../../locales/../src/interface/Mainfrm.cpp:775
 msgid "Note that this feature is only supported using the FTP protocol."
 msgstr "Perhatikan bahwa fitur ini hanya didukung menggunakan protokol FTP."
 
-#: resources.h:284
+#: resources.h:743
 msgid "Note: This only works with plain, unencrypted FTP connections."
 msgstr "Catatan: Ini hanya bekerja dengan koneksi FTP tak terenkripsi."
 
-#: resources.h:568
+#: resources.h:760
 msgid "Note: Using a generic proxy forces passive mode on FTP connections."
 msgstr ""
 "Catatan: Menggunakan proxy generik memaksa mode pasif pada koneksi FTP."
 
-#: resources.h:225
+#: resources.h:832
 msgid "Number of decimal places:"
 msgstr "Jumlah bilangan desimal:"
 
-#: ../../locales/../src/interface/optionspage_connection.cpp:34
+#: ../../locales/../src/interface/settings/optionspage_connection.cpp:34
 msgid "Number of retries has to be between 0 and 99."
 msgstr "Jumlah percobaan harus diantara 0 dan 99."
 
-#: resources.h:517
+#: resources.h:346
 msgid "O&pen file"
 msgstr "&Buka berkas"
 
-#: resources.h:431 resources.h:454
+#: resources.h:260 resources.h:283
 msgid "O&verwrite"
 msgstr "&Timpa"
 
-#: resources.h:23 resources.h:44 resources.h:90 resources.h:152
-#: resources.h:286 resources.h:308 resources.h:325 resources.h:335
-#: resources.h:347 resources.h:362 resources.h:382 resources.h:440
-#: resources.h:471 resources.h:478 resources.h:486 resources.h:509
-#: resources.h:518 resources.h:551 resources.h:557 resources.h:600
-#: resources.h:614 resources.h:655 resources.h:680
+#: resources.h:24 resources.h:45 resources.h:67 resources.h:128
+#: resources.h:150 resources.h:167 resources.h:177 resources.h:189
+#: resources.h:204 resources.h:224 resources.h:269 resources.h:300
+#: resources.h:307 resources.h:315 resources.h:338 resources.h:347
+#: resources.h:365 resources.h:371 resources.h:404 resources.h:418
+#: resources.h:440 resources.h:465 resources.h:474 resources.h:690
 msgid "OK"
 msgstr "OK"
 
-#: resources.h:850
+#: resources.h:646
 msgid ""
 "On the following pages, the selected transfer mode will be configured, as "
 "well as the fallback mode if enabled."
@@ -4452,7 +4505,7 @@ msgstr ""
 msgid "Once"
 msgstr "Satu kali"
 
-#: resources.h:206
+#: resources.h:883
 msgid ""
 "Only the versions of FileZilla and the operating system you are using will "
 "be submitted to the server."
@@ -4460,35 +4513,35 @@ msgstr ""
 "Hanya versi FileZilla dan sistem operasi yang Anda gunakan yang akan "
 "dikirimkan ke server."
 
-#: resources.h:892 resources.h:893
+#: resources.h:905 resources.h:906
 msgid "Open the Site Manager"
 msgstr "Buka Manajemen Situs"
 
-#: resources.h:745
+#: resources.h:541
 msgid "Open the file."
 msgstr "Buka berkas."
 
-#: resources.h:695
+#: resources.h:489
 msgid "Open the settings dialog of FileZilla"
 msgstr "Buka dialog pengaturan FileZilla"
 
-#: resources.h:492
+#: resources.h:321
 msgid "Opened as:"
 msgstr "Dibuka sebagai:"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2288
-#: ../../locales/../src/interface/LocalListView.cpp:2333
-#: ../../locales/../src/interface/LocalListView.cpp:2420
-#: ../../locales/../src/interface/LocalListView.cpp:2433
-#: ../../locales/../src/interface/RemoteListView.cpp:2622
+#: ../../locales/../src/interface/LocalListView.cpp:2293
+#: ../../locales/../src/interface/LocalListView.cpp:2338
+#: ../../locales/../src/interface/LocalListView.cpp:2425
+#: ../../locales/../src/interface/LocalListView.cpp:2438
+#: ../../locales/../src/interface/RemoteListView.cpp:2669
 msgid "Opening failed"
 msgstr "Pembukaan berkas gagal"
 
-#: resources.h:684
+#: resources.h:478
 msgid "Opens the Site Manager"
 msgstr "Buka Manajemen Situs"
 
-#: resources.h:913
+#: resources.h:926
 msgid ""
 "Opens the directory listing filter dialog. Right-click to toggle filters."
 msgstr ""
@@ -4499,41 +4552,41 @@ msgstr ""
 msgid "Operating system problem detected"
 msgstr "Masalah sistem operasi terdeteksi"
 
-#: ../../locales/../src/interface/verifycertdialog.cpp:132
+#: ../../locales/../src/interface/verifycertdialog.cpp:161
 msgid "Organization:"
 msgstr "Organisasi:"
 
-#: ../../locales/../src/interface/verifycertdialog.cpp:147
+#: ../../locales/../src/interface/verifycertdialog.cpp:181
 msgid "Other:"
 msgstr "Lainnya:"
 
-#: resources.h:422 resources.h:446
+#: resources.h:251 resources.h:275
 msgid "Ov&erwrite if source newer"
 msgstr "Timpa &jika sumber lebih baru"
 
-#: resources.h:432 resources.h:455
+#: resources.h:261 resources.h:284
 msgid "Over&write if source newer"
 msgstr "Timpa j&ika sumber lebih baru"
 
-#: resources.h:180
+#: resources.h:692
 msgid "Overview"
 msgstr "Gambaran"
 
-#: resources.h:81
+#: resources.h:58
 msgid "Overwrite &if source newer"
 msgstr "Timpa &jika sumber lebih baru"
 
-#: resources.h:82 resources.h:423 resources.h:433 resources.h:447
-#: resources.h:456
+#: resources.h:59 resources.h:252 resources.h:262 resources.h:276
+#: resources.h:285
 msgid "Overwrite if different size"
 msgstr "Timpa jika ukuran berbeda"
 
-#: resources.h:83 resources.h:424 resources.h:434 resources.h:448
-#: resources.h:457
+#: resources.h:60 resources.h:253 resources.h:263 resources.h:277
+#: resources.h:286
 msgid "Overwrite if different size or source newer"
 msgstr "Timpa jika ukuran berbeda atau sumber lebih baru"
 
-#: resources.h:290
+#: resources.h:132
 msgid "Owner permissions"
 msgstr "Hak akses pemilik"
 
@@ -4542,7 +4595,7 @@ msgstr "Hak akses pemilik"
 msgid "Owner/Group"
 msgstr "Pemilik/Grup"
 
-#: resources.h:281 resources.h:564
+#: resources.h:740 resources.h:756
 #, no-c-format
 msgid "P&roxy host:"
 msgstr "Host p&roxy:"
@@ -4551,7 +4604,7 @@ msgstr "Host p&roxy:"
 msgid "PORT command tainted by router or firewall."
 msgstr "Perintah PORT diabaikan oleh router atau firewall."
 
-#: resources.h:520
+#: resources.h:702
 msgid "Pa&ssive (recommended)"
 msgstr "Pa&sif (disarankan)"
 
@@ -4559,19 +4612,20 @@ msgstr "Pa&sif (disarankan)"
 msgid "Package"
 msgstr "Paket"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2730
+#: ../../locales/../src/interface/Mainfrm.cpp:2732
 msgid "Parameter not a valid URL"
 msgstr "Parameter bukan URL yang valid"
 
-#: resources.h:106 resources.h:591 resources.h:888
+#: resources.h:83 resources.h:395 resources.h:684
 msgid "Pass&word:"
 msgstr "Kata &kunci:"
 
-#: resources.h:846
+#: resources.h:642
 msgid "Passive (recommended)"
 msgstr "Pasif (disarankan)"
 
-#: resources.h:45 ../../locales/../src/interface/settingsdialog.cpp:117
+#: resources.h:722
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:119
 msgid "Passive mode"
 msgstr "Mode pasif"
 
@@ -4581,7 +4635,7 @@ msgstr "Mode pasif"
 msgid "Passive mode has been set as default transfer mode."
 msgstr "Mode pasif telah ditentukan sebagai mode transfer default."
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:281
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:281
 msgid "Password required"
 msgstr "Kata sandi diperlukan"
 
@@ -4590,20 +4644,20 @@ msgstr "Kata sandi diperlukan"
 msgid "Path"
 msgstr "Path"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3137
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3140
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2354
 #, c-format
 msgid "Path cannot be constructed for directory %s and subdir %s"
 msgstr "Path tidak bisa dibuat untuk direktori %s dan sub direktori %s"
 
-#: resources.h:609
+#: resources.h:413
 msgid "Paths"
 msgstr "Path"
 
-#: ../../locales/../src/interface/edithandler.cpp:1231
-#: ../../locales/../src/interface/edithandler.cpp:1371
-#: ../../locales/../src/interface/edithandler.cpp:1470
-#: ../../locales/../src/interface/edithandler.cpp:1483
+#: ../../locales/../src/interface/edithandler.cpp:1234
+#: ../../locales/../src/interface/edithandler.cpp:1374
+#: ../../locales/../src/interface/edithandler.cpp:1473
+#: ../../locales/../src/interface/edithandler.cpp:1486
 msgid "Pending removal"
 msgstr "Penghapusan tertunda"
 
@@ -4616,7 +4670,12 @@ msgstr "Hak akses"
 msgid "Permissions"
 msgstr "Hak akses"
 
-#: resources.h:412
+#: resources.h:470
+#, fuzzy
+msgid "Plase select an action:"
+msgstr "&Selalu gunakan aksi ini"
+
+#: resources.h:241
 msgid ""
 "Please check http://filezilla-project.org for the most recent version of "
 "FileZilla."
@@ -4640,7 +4699,7 @@ msgstr ""
 "kunjungi http://filezilla-project.org untuk mendownload kode sumber dari "
 "FileZilla."
 
-#: resources.h:852
+#: resources.h:648
 msgid ""
 "Please configure any firewalls and routers so that FileZilla can establish "
 "outgoing connection to arbitrary ports."
@@ -4662,15 +4721,15 @@ msgstr ""
 "Pastikan Anda memiliki koneksi Internet yang stabil dan periksa pengaturan "
 "Anda kembali."
 
-#: ../../locales/../src/interface/optionspage_dateformatting.cpp:70
+#: ../../locales/../src/interface/settings/optionspage_dateformatting.cpp:70
 msgid "Please enter a custom date format."
 msgstr "Harap masukkan format tanggal kustomisasi."
 
-#: ../../locales/../src/interface/optionspage_dateformatting.cpp:73
+#: ../../locales/../src/interface/settings/optionspage_dateformatting.cpp:73
 msgid "Please enter a custom time format."
 msgstr "Harap masukkan format waktu kustomisasi."
 
-#: ../../locales/../src/interface/optionspage_transfer.cpp:68
+#: ../../locales/../src/interface/settings/optionspage_transfer.cpp:68
 msgid "Please enter a download speedlimit greater or equal to 0 KB/s."
 msgstr ""
 "Harap masukkan batas kecepatan download lebih besar atau sama dengan 0 KB/s."
@@ -4692,24 +4751,24 @@ msgstr "Harap masukkan nama baru untuk kelompok filter \"%s\""
 msgid "Please enter a new name for the filter."
 msgstr "Harap masukkan nama baru untuk filter."
 
-#: ../../locales/../src/interface/optionspage_transfer.cpp:56
+#: ../../locales/../src/interface/settings/optionspage_transfer.cpp:56
 msgid ""
 "Please enter a number between 0 and 10 for the number of concurrent "
 "downloads."
 msgstr "Harap masukkan angka antara 0 dan 10 untuk jumlah download konkuren."
 
-#: ../../locales/../src/interface/optionspage_transfer.cpp:60
+#: ../../locales/../src/interface/settings/optionspage_transfer.cpp:60
 msgid ""
 "Please enter a number between 0 and 10 for the number of concurrent uploads."
 msgstr "Harap masukkan angka antara 0 dan 10 untuk jumlah upload konkuren."
 
-#: ../../locales/../src/interface/optionspage_transfer.cpp:52
+#: ../../locales/../src/interface/settings/optionspage_transfer.cpp:52
 msgid ""
 "Please enter a number between 1 and 10 for the number of concurrent "
 "transfers."
 msgstr "Harap masukkan angka antara 1 dan 10 untuk jumlah transfer konkuren."
 
-#: resources.h:138
+#: resources.h:115
 msgid "Please enter a password for this server:"
 msgstr "Harap masukkan kata sandi untuk server ini:"
 
@@ -4723,7 +4782,7 @@ msgstr ""
 "Misalnya c:\\path\\file.exe pada MS Windows atau /path/file pada Unix.\n"
 "Anda juga bisa menentukan argumen program secara opsional."
 
-#: ../../locales/../src/interface/optionspage_transfer.cpp:64
+#: ../../locales/../src/interface/settings/optionspage_transfer.cpp:64
 msgid ""
 "Please enter a timeout between 5 and 9999 seconds or 0 to disable timeouts."
 msgstr ""
@@ -4734,7 +4793,7 @@ msgstr ""
 msgid "Please enter a unique name for this filter set"
 msgstr "Harap masukkan nama unik untuk kumpulan filter ini"
 
-#: resources.h:139
+#: resources.h:116
 msgid "Please enter a username for this server:"
 msgstr "Harap masukkan nama pengguna untuk server ini:"
 
@@ -4746,16 +4805,16 @@ msgstr "Harap masukkan jarak port yang valid"
 msgid "Please enter an URL where to get your external address from"
 msgstr "Harap masukkan URL untuk mendapatkan alamat eksternal Anda"
 
-#: ../../locales/../src/interface/optionspage_updatecheck.cpp:40
+#: ../../locales/../src/interface/settings/optionspage_updatecheck.cpp:40
 msgid "Please enter an update interval of at least 7 days"
 msgstr "Harap masukkan waktu interval paling tidak 7 hari"
 
-#: ../../locales/../src/interface/optionspage_transfer.cpp:72
+#: ../../locales/../src/interface/settings/optionspage_transfer.cpp:72
 msgid "Please enter an upload speedlimit greater or equal to 0 KB/s."
 msgstr ""
 "Harap masukkan batas kecepatan upload lebih besar atau sama dengan 0 KB/s"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:699
+#: ../../locales/../src/interface/Mainfrm.cpp:700
 msgid ""
 "Please enter raw FTP command.\n"
 "Using raw ftp commands will clear the directory cache."
@@ -4763,14 +4822,14 @@ msgstr ""
 "Harap masukkan perintah FTP.\n"
 "Menggunakan perintah ftp akan menghapus cache direktori."
 
-#: ../../locales/../src/interface/LocalListView.cpp:1397
-#: ../../locales/../src/interface/LocalTreeView.cpp:1320
+#: ../../locales/../src/interface/LocalListView.cpp:1393
+#: ../../locales/../src/interface/LocalTreeView.cpp:1158
 #: ../../locales/../src/interface/RemoteListView.cpp:1552
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1270
 msgid "Please enter the name of the directory which should be created:"
 msgstr "Masukkan nama direktori yang akan dibuat:"
 
-#: resources.h:140
+#: resources.h:117
 msgid "Please enter username and password for this server:"
 msgstr "Harap masukkan nama pengguna dan kata sandi untuk server ini:"
 
@@ -4789,7 +4848,7 @@ msgstr ""
 "Jika Anda memiliki alamat dinamis atau tidak tahu alamat eksternal, gunakan "
 "opsi resolver eksternal."
 
-#: resources.h:839
+#: resources.h:635
 msgid ""
 "Please follow the instructions carefully, as wrong configuration will "
 "prevent successful FTP connections."
@@ -4821,7 +4880,7 @@ msgstr ""
 "meneruskan port secara manual. Jangan jalankan router Anda pada 'mode DMZ' "
 "atau 'mode game'."
 
-#: resources.h:853
+#: resources.h:649
 msgid ""
 "Please note that FileZilla has no influence on the port the server chooses. "
 "So the server might choose a port which your firewall thinks is only used by "
@@ -4833,7 +4892,7 @@ msgstr ""
 "dianggap digunakan oleh trojan atau malware. Hal ini bisa menimbulkan false "
 "alarm yang bisa Anda abaikan."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:828
+#: ../../locales/../src/interface/Mainfrm.cpp:829
 msgid ""
 "Please note that preserving timestamps on uploads on FTP, FTPS and FTPES "
 "servers only works if they support the MFMT command."
@@ -4841,7 +4900,7 @@ msgstr ""
 "Harap perhatikan bahwa mempertahankan waktu timestamp pada upload hanya "
 "berlaku pada server FTP, FTPS, dan FTPES yang mendukung perintah MFMT."
 
-#: resources.h:188
+#: resources.h:700
 msgid ""
 "Please note that some servers might ban you if you try to reconnect too "
 "often or in too short intervals."
@@ -4849,7 +4908,7 @@ msgstr ""
 "Harap perhatikan bahwa beberapa server bisa memblokir Anda jika Anda terlalu "
 "banyak melakukan hubungan ulang pada interval yang singkat."
 
-#: resources.h:212 resources.h:218
+#: resources.h:819 resources.h:825
 #, no-c-format
 msgid ""
 "Please read http://wiki.filezilla-project.org/Date_and_Time_formatting for "
@@ -4868,11 +4927,11 @@ msgstr ""
 "atau Anda mengalami masalah dengan server padahal sebelumnya bekerja dengan "
 "baik."
 
-#: resources.h:485
+#: resources.h:314
 msgid "Please select the categories you would like to import."
 msgstr "Harap memilih kategori yang hendak Anda import."
 
-#: resources.h:841
+#: resources.h:637
 msgid "Please select the default transfer mode you would like to use."
 msgstr "Harap pilih mode transfer default yang hendak Anda gunakan."
 
@@ -4913,7 +4972,7 @@ msgstr ""
 "pada 'mode DMZ' atau 'mode game'. Hal-hal seperti inspeksi protokol atau "
 "'perbaikan' pada protokol tertentu harus dinonaktifkan"
 
-#: resources.h:414
+#: resources.h:243
 msgid ""
 "Please visit http://filezilla-project.org for more information about "
 "FileZilla."
@@ -4929,16 +4988,20 @@ msgid ""
 msgstr ""
 "Harap kunjungi http://filezilla-project.org untuk mendownload versi terbaru."
 
+#: ../../locales/../src/interface/verifycertdialog.cpp:168
+msgid "Postal code:"
+msgstr ""
+
 #: ../../locales/../src/interface/sitemanager.cpp:1864
 #: ../../locales/../src/interface/sitemanager.cpp:2082
 msgid "Predefined Sites"
 msgstr "Situs Terdefinisi"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:827
+#: ../../locales/../src/interface/Mainfrm.cpp:828
 msgid "Preserving file timestamps"
 msgstr "Mempertahankan berkas waktu"
 
-#: ../../locales/../src/interface/optionspage_themes.cpp:220
+#: ../../locales/../src/interface/settings/optionspage_themes.cpp:220
 msgid "Preview:"
 msgstr "Preview:"
 
@@ -4950,7 +5013,7 @@ msgstr "Sertifikat koneksi utama dan koneksi data tidak sesuai."
 msgid "Print version information to stdout and exit"
 msgstr "Cetak informasi versi pada stdout dan selesai"
 
-#: resources.h:630
+#: resources.h:842
 msgid "Prioritize directories (default)"
 msgstr "Direktori prioritas (default)"
 
@@ -4958,27 +5021,27 @@ msgstr "Direktori prioritas (default)"
 msgid "Priority"
 msgstr "Prioritas"
 
-#: resources.h:205
+#: resources.h:882
 msgid "Privacy policy:"
 msgstr "Aturan privasi:"
 
-#: resources.h:529
+#: resources.h:746
 msgid "Private &keys:"
 msgstr "&Kunci privat:"
 
-#: resources.h:283 resources.h:567
+#: resources.h:742 resources.h:759
 msgid "Pro&xy password:"
 msgstr "Katasandi pro&xy:"
 
-#: resources.h:712 resources.h:771
+#: resources.h:506 resources.h:567
 msgid "Process &Queue"
 msgstr "Proses &Antrian"
 
-#: resources.h:565
+#: resources.h:757
 msgid "Proxy &port:"
 msgstr "&Port proxy:"
 
-#: resources.h:282 resources.h:566
+#: resources.h:741 resources.h:758
 msgid "Proxy &user:"
 msgstr "&Pengguna proxy:"
 
@@ -5006,19 +5069,19 @@ msgstr "Request proxy gagal: %s"
 msgid "Proxy request failed: Unknown address type in CONNECT reply"
 msgstr "Request proxy gagal: Jenis alamat tidak diketahui pada balasan CONNECT"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4328
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4331
 msgid "Proxy set but proxy host or port invalid"
 msgstr "Proxy ditentukan tetapi host atau port proxy tidak valid"
 
-#: resources.h:527
+#: resources.h:744
 msgid "Public Key Authentication"
 msgstr "Authentikasi Kunci Publik"
 
-#: resources.h:9 resources.h:32
+#: resources.h:8 resources.h:33
 msgid "Public key algorithm:"
 msgstr "Algoritma kunci publik:"
 
-#: resources.h:298
+#: resources.h:140
 msgid "Public permissions"
 msgstr "Hak akses publik"
 
@@ -5051,28 +5114,27 @@ msgstr "Antrian: kosong"
 msgid "Queued files"
 msgstr "Berkas antrian"
 
-#: resources.h:677
-#, fuzzy
+#: resources.h:462
 msgid "Queueing:"
-msgstr "&Antrian"
+msgstr "Mengantri:"
 
-#: resources.h:787
+#: resources.h:583
 msgid "R&eboot system"
 msgstr "R&eboot sistem"
 
-#: resources.h:709
+#: resources.h:503
 msgid "R&emote directory tree"
 msgstr "Pohon direktori R&emote"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:714
+#: ../../locales/../src/interface/Mainfrm.cpp:715
 msgid "Raw FTP command"
 msgstr "Perintah Raw FTP"
 
-#: resources.h:295
+#: resources.h:137
 msgid "Re&ad"
 msgstr "Ba&ca"
 
-#: resources.h:85 resources.h:426 resources.h:450
+#: resources.h:62 resources.h:255 resources.h:279
 msgid "Re&name"
 msgstr "Ganti &nama"
 
@@ -5084,7 +5146,7 @@ msgstr ""
 "Jalankan ulang panduan dan periksa pengaturan Anda dan konfigurasikan semua "
 "router dan firewall dengan benar."
 
-#: resources.h:299
+#: resources.h:141
 msgid "Rea&d"
 msgstr "Bac&a"
 
@@ -5092,29 +5154,31 @@ msgstr "Bac&a"
 msgid "Read-only"
 msgstr "Hanya-baca"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1306
+#: ../../locales/../src/interface/Mainfrm.cpp:1307
 msgid "Really cancel current operation?"
 msgstr "Yakin batalkan operasi yang sedang berjalan?"
 
-#: ../../locales/../src/interface/search.cpp:1017
+#: ../../locales/../src/interface/RemoteListView.cpp:1640
+#: ../../locales/../src/interface/search.cpp:1023
 #, c-format
 msgid "Really delete %d directory with its contents?"
 msgid_plural "Really delete %d directories with their contents?"
-msgstr[0] ""
+msgstr[0] "Yakin menghapus %d direktori dengan isinya?"
 
-#: ../../locales/../src/interface/search.cpp:1015
+#: ../../locales/../src/interface/RemoteListView.cpp:1638
+#: ../../locales/../src/interface/search.cpp:1021
 #, c-format
 msgid "Really delete %d file?"
 msgid_plural "Really delete %d files?"
-msgstr[0] ""
+msgstr[0] "Yakin menghapus %d berkas?"
 
-#: ../../locales/../src/interface/search.cpp:1022
+#: ../../locales/../src/interface/RemoteListView.cpp:1645
+#: ../../locales/../src/interface/search.cpp:1028
 #, c-format
 msgid "Really delete %s and %s?"
-msgstr ""
+msgstr "Yakin menghapus %s dan %s?"
 
 #: ../../locales/../src/engine/local_filesys.cpp:129
-#: ../../locales/../src/interface/RemoteListView.cpp:1616
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1119
 msgid "Really delete all selected files and/or directories?"
 msgstr "Yakin menghapus semua berkas dan/atau direktori yang dipilih?"
@@ -5127,7 +5191,7 @@ msgstr "Alasan"
 msgid "Reboot now"
 msgstr "Reboot sistem sekarang"
 
-#: resources.h:304
+#: resources.h:146
 msgid "Rec&urse into subdirectories"
 msgstr "Mas&uk jauh kedalam sub direktori"
 
@@ -5145,11 +5209,11 @@ msgstr ""
 "Informasi koneksi ulang tidak bisa dihapus selama terhubung ke server.\n"
 "Jika Anda melanjutkan, koneksi Anda akan terputus."
 
-#: resources.h:183
+#: resources.h:695
 msgid "Reconnection settings"
 msgstr "Pengaturan koneksi ulang"
 
-#: resources.h:910 resources.h:911
+#: resources.h:923 resources.h:924
 msgid "Reconnects to the last used server"
 msgstr "Sambung lagi ke server yang terakhir digunakan"
 
@@ -5157,11 +5221,11 @@ msgstr "Sambung lagi ke server yang terakhir digunakan"
 msgid "Redirection to invalid address"
 msgstr "Pengalihan ke alamat yang tidak valid"
 
-#: resources.h:902 resources.h:903
+#: resources.h:915 resources.h:916
 msgid "Refresh the file and folder lists"
 msgstr "Perbarui daftar berkas dan direktori"
 
-#: ../../locales/../src/interface/edithandler.cpp:1215
+#: ../../locales/../src/interface/edithandler.cpp:1218
 msgid "Remote"
 msgstr "Remote"
 
@@ -5169,21 +5233,22 @@ msgstr "Remote"
 msgid "Remote certificate not trusted."
 msgstr "Sertifikat remote tidak dipercaya."
 
-#: resources.h:575 ../../locales/../src/interface/queue.cpp:1188
+#: resources.h:379 ../../locales/../src/interface/queue.cpp:1188
 msgid "Remote file"
 msgstr "Berkas remote"
 
-#: resources.h:669 ../../locales/../src/interface/search.cpp:682
-#: ../../locales/../src/interface/search.cpp:688
-#: ../../locales/../src/interface/search.cpp:698
+#: resources.h:454 ../../locales/../src/interface/search.cpp:683
+#: ../../locales/../src/interface/search.cpp:689
+#: ../../locales/../src/interface/search.cpp:699
+#: ../../locales/../src/interface/search.cpp:705
 msgid "Remote file search"
 msgstr "Pencarian berkas remote"
 
-#: resources.h:357
+#: resources.h:199
 msgid "Remote filters:"
 msgstr "Filter remote:"
 
-#: ../../locales/../src/interface/edithandler.cpp:1206
+#: ../../locales/../src/interface/edithandler.cpp:1209
 msgid "Remote path"
 msgstr "Path Remote"
 
@@ -5215,12 +5280,11 @@ msgstr "Path remote tidak bisa diproses. Pastikan sudah path absolut valid."
 msgid "Remote path could not be parsed."
 msgstr "Path remote tidak bisa diproses."
 
-#: resources.h:674
-#, fuzzy
+#: resources.h:459
 msgid "Remote path handling:"
-msgstr "Path remote:"
+msgstr "Penanganan path remote:"
 
-#: resources.h:496
+#: resources.h:325
 msgid "Remote path:"
 msgstr "Path remote:"
 
@@ -5228,15 +5292,15 @@ msgstr "Path remote:"
 msgid "Remote site:"
 msgstr "Situs remote:"
 
-#: resources.h:796 resources.h:799
+#: resources.h:592 resources.h:595
 msgid "Remove &all"
 msgstr "Hapus &semua"
 
-#: resources.h:377 resources.h:797 resources.h:800
+#: resources.h:219 resources.h:593 resources.h:596
 msgid "Remove &selected"
 msgstr "Hapus &yang terpilih"
 
-#: resources.h:436 resources.h:459
+#: resources.h:265 resources.h:288
 msgid "Rena&me"
 msgstr "&Ganti nama"
 
@@ -5244,25 +5308,25 @@ msgstr "&Ganti nama"
 msgid "Rename file"
 msgstr "Ganti nama berkas"
 
-#: resources.h:812 resources.h:831
+#: resources.h:608 resources.h:627
 msgid "Rename selected directory"
 msgstr "Ganti nama direktori yang terpilih"
 
-#: resources.h:753 resources.h:766
+#: resources.h:549 resources.h:562
 msgid "Rename selected files and directories"
 msgstr "Ganti nama berkas dan direktori yang terpilih"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3483
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3486
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2556
 #, c-format
 msgid "Renaming '%s' to '%s'"
 msgstr "Mengganti nama '%s' menjadi '%s'"
 
-#: resources.h:435 resources.h:458
+#: resources.h:264 resources.h:287
 msgid "Res&ume"
 msgstr "&Lanjutkan"
 
-#: resources.h:798 resources.h:801
+#: resources.h:594 resources.h:597
 msgid "Reset and requeue selected files"
 msgstr "Ulangi dan antri ulang berkas yang terpilih"
 
@@ -5283,11 +5347,11 @@ msgstr "Me-resolve nama mesin"
 msgid "Response:"
 msgstr "Respon:"
 
-#: resources.h:668
+#: resources.h:453
 msgid "Results:"
 msgstr "Hasil:"
 
-#: resources.h:463
+#: resources.h:292
 msgid ""
 "Resuming ASCII files can cause problems if server uses a different line "
 "ending format than the client."
@@ -5295,38 +5359,38 @@ msgstr ""
 "Melanjutkan berkas ASCII dapat menimbulkan masalah jika server menggunakan "
 "format akhir baris yang berbeda dengan klien."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1274
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1277
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:951
 msgid "Retrieving directory listing..."
 msgstr "Mengambil daftar direktori..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3862
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3865
 #: ../../locales/../src/interface/netconfwizard.cpp:707
 #, c-format
 msgid "Retrieving external IP address from %s"
 msgstr "Menerima alamat IP eksternal dari %s"
 
-#: resources.h:688
+#: resources.h:482
 msgid "S&how files currently being edited..."
 msgstr "&Tampilkan berkas yang sedang diedit..."
 
-#: resources.h:788
+#: resources.h:584
 msgid "S&hutdown system"
 msgstr "&Mematikan sistem"
 
-#: resources.h:427 resources.h:451
+#: resources.h:256 resources.h:280
 msgid "S&kip"
 msgstr "&Lewati"
 
-#: resources.h:661
+#: resources.h:446
 msgid "S&top"
 msgstr "&Berhenti"
 
-#: resources.h:704
+#: resources.h:498
 msgid "S&ynchronized browsing"
 msgstr "Penjelajahan t&ersinkronisasi"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:119
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:121
 msgid "SFTP"
 msgstr "SFTP"
 
@@ -5342,18 +5406,21 @@ msgstr "Membaca berkas untuk di masukkan ke antrian"
 msgid "Scanning for files to upload"
 msgstr "Membaca file yang akan di-upload"
 
-#: resources.h:658
+#: resources.h:443
 msgid "Search directory:"
 msgstr "Direktori pencarian:"
 
-#: resources.h:918
+#: resources.h:931
 msgid "Search for files recursively."
 msgstr "Mencari berkas secara rekursif."
 
-#: resources.h:660
-#, fuzzy
+#: resources.h:445
 msgid "Search for files that:"
-msgstr "Mencari berkas secara rekursif."
+msgstr "Mencari berkas yang:"
+
+#: resources.h:519
+msgid "Search server for files"
+msgstr "Mencari berkas pada server"
 
 #: ../../locales/../src/interface/statusbar.cpp:486
 msgid "Security information"
@@ -5364,29 +5431,29 @@ msgstr "Informasi keamanan"
 msgid "See also: http://wiki.filezilla-project.org/Network_Configuration"
 msgstr "Lihat juga: http://wiki.filezilla-project.org/Network_Configuration"
 
-#: resources.h:583
+#: resources.h:387
 msgid "Sele&ct server"
 msgstr "Pil&ih server"
 
-#: resources.h:151
+#: resources.h:689
 msgid "Select &page:"
 msgstr "Pilih &halaman:"
 
-#: resources.h:93
+#: resources.h:70
 msgid "Select Entry:"
 msgstr "Pilih Entri:"
 
-#: resources.h:189
+#: resources.h:807
 msgid "Select Theme"
 msgstr "Pilih Tema"
 
-#: resources.h:442
+#: resources.h:271
 msgid ""
 "Select default action to perform if target file of a transfer already exists."
 msgstr "Pilih aksi default yang akan dilakukan jika berkas tujuan sudah ada."
 
-#: ../../locales/../src/interface/edithandler.cpp:1666
-#: ../../locales/../src/interface/optionspage_edit.cpp:198
+#: ../../locales/../src/interface/edithandler.cpp:1669
+#: ../../locales/../src/interface/settings/optionspage_edit.cpp:162
 msgid "Select default editor"
 msgstr "Pilih editor default"
 
@@ -5410,7 +5477,7 @@ msgstr ""
 msgid "Select download location for package"
 msgstr "Pilih lokasi download untuk paket"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:360
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:360
 msgid "Select file containing private key"
 msgstr "Pilih berkas yang berisi kunci privat"
 
@@ -5439,37 +5506,36 @@ msgstr "Pilih pengaturan lokasi berkas yang akan diimpor"
 msgid "Select file to upload"
 msgstr "Pilih berkas yang akan di-upload"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:304
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:304
 msgid "Select filename for converted keyfile"
 msgstr "Pilih nama berkas untuk berkas kunci yang akan dikonversi"
 
-#: resources.h:648
+#: resources.h:433
 #, no-c-format
 msgid "Select how these files should be opened."
 msgstr "Pilih bagaimana berkas ini harus dibuka"
 
-#: ../../locales/../src/interface/search.cpp:803
-#, fuzzy
+#: ../../locales/../src/interface/search.cpp:809
 msgid "Select target download directory"
-msgstr "Direktori yang dipilih %d."
+msgstr "Pilih direktori target download"
 
 #: ../../locales/../src/interface/manual_transfer.cpp:241
 msgid "Select target filename"
 msgstr "Pilih nama berkas target"
 
-#: resources.h:474
+#: resources.h:303
 msgid "Select the categories to export:"
 msgstr "Pilih kategori yang akan diekspor:"
 
-#: resources.h:465
+#: resources.h:294
 msgid "Select the private data you would like to delete."
 msgstr "Pilih data privat yang hendak Anda hapus."
 
-#: ../../locales/../src/interface/search.cpp:770
-#, fuzzy, c-format
+#: ../../locales/../src/interface/search.cpp:776
+#, c-format
 msgid "Selected %d directory with its contents for transfer."
 msgid_plural "Selected %d directories with their contents for transfer."
-msgstr[0] "Masukkan direktori yang dipilih pada antrian transfer"
+msgstr[0] "Direktori %d dengan kontentnya yang dipilih untuk ditransfer."
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:41
 #, c-format
@@ -5477,11 +5543,11 @@ msgid "Selected %d directory."
 msgid_plural "Selected %d directories."
 msgstr[0] "Direktori yang dipilih %d."
 
-#: ../../locales/../src/interface/search.cpp:768
-#, fuzzy, c-format
+#: ../../locales/../src/interface/search.cpp:774
+#, c-format
 msgid "Selected %d file for transfer."
 msgid_plural "Selected %d files for transfer."
-msgstr[0] "Berkas yang dipilih %d. Ukuran total: %s"
+msgstr[0] "Berkas yang dipilih %d untuk ditransfer."
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:48
 #, c-format
@@ -5495,10 +5561,10 @@ msgid "Selected %d file. Total size: At least %s"
 msgid_plural "Selected %d files. Total size: At least %s"
 msgstr[0] "Berkas yang dipilih %d. Ukuran total: Paling tidak %s"
 
-#: ../../locales/../src/interface/search.cpp:775
-#, fuzzy, c-format
+#: ../../locales/../src/interface/search.cpp:781
+#, c-format
 msgid "Selected %s and %s for transfer."
-msgstr "Terpilih %s dan %s. Ukuran total: %s"
+msgstr "Terpilih %s dan %s untuk ditransfer."
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:58
 #, c-format
@@ -5510,25 +5576,25 @@ msgstr "Terpilih %s dan %s. Ukuran total: %s"
 msgid "Selected %s and %s. Total size: At least %s"
 msgstr "Terpilih %s dan %s. Ukuran total: Paling tidak %s"
 
-#: ../../locales/../src/interface/edithandler.cpp:1607
-#: ../../locales/../src/interface/edithandler.cpp:1686
-#: ../../locales/../src/interface/optionspage_edit.cpp:218
+#: ../../locales/../src/interface/edithandler.cpp:1610
+#: ../../locales/../src/interface/edithandler.cpp:1689
+#: ../../locales/../src/interface/settings/optionspage_edit.cpp:182
 msgid "Selected editor does not exist."
 msgstr "Editor yang dipilih tidak ada."
 
-#: resources.h:503 ../../locales/../src/interface/LocalListView.cpp:2317
+#: resources.h:332 ../../locales/../src/interface/LocalListView.cpp:2322
 msgid "Selected file already being edited"
 msgstr "Berkas yang dipilih sudah diedit"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2654
+#: ../../locales/../src/interface/RemoteListView.cpp:2701
 msgid "Selected file already opened."
 msgstr "Berkas yang dipilih sudah terbuka."
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:389
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:389
 msgid "Selected file is already loaded"
 msgstr "Berkas yang dipilih sudah dimuat"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2682
+#: ../../locales/../src/interface/RemoteListView.cpp:2729
 msgid "Selected file still being edited"
 msgstr "Berkas yang dipilih masih diedit"
 
@@ -5536,7 +5602,7 @@ msgstr "Berkas yang dipilih masih diedit"
 msgid "Selected filter only works for local files."
 msgstr "Filter yang dipilih hanya bekerja untuk berkas lokal."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1031
+#: ../../locales/../src/interface/Mainfrm.cpp:1032
 msgid ""
 "Selected global bookmark and current server use a different server type.\n"
 "Use site-specific bookmarks for this server."
@@ -5549,19 +5615,19 @@ msgstr ""
 msgid "Selected port usually in use by a different protocol."
 msgstr "Port yang dipilih biasanya digunakan oleh protokol lain."
 
-#: resources.h:525
+#: resources.h:707
 msgid "Send FTP &keep-alive commands"
 msgstr "Kirim perintah FTP &keep-alive"
 
-#: resources.h:725
+#: resources.h:521
 msgid "Send custom command to the server otherwise not available"
 msgstr "Kirim perintah tertentu ke server jika tidak tersedia"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4410
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4413
 msgid "Sending keep-alive command"
 msgstr "Mengirimkan perintah keep-alive"
 
-#: resources.h:8 resources.h:31
+#: resources.h:7 resources.h:32
 msgid "Serial number:"
 msgstr "Nomor seri:"
 
@@ -5569,12 +5635,12 @@ msgstr "Nomor seri:"
 msgid "Server did not properly shut down TLS connection"
 msgstr "Server tidak memutuskan koneksi TLS dengan benar"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4261
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4264
 #, c-format
 msgid "Server does not support resume of files > %d GB."
 msgstr "Server tidak mendukung proses kelanjutan dari berkas > %d GB."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4257
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4260
 #, c-format
 msgid ""
 "Server does not support resume of files > %d GB. End transfer since file "
@@ -5583,15 +5649,15 @@ msgstr ""
 "Server tidak mendukung proses kelanjutan dari berkas > %d GB. Mengakhiri "
 "transfer karena ukuran berkas sesuai."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2527
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2530
 msgid "Server does not support resume of files > 2GB."
 msgstr "Server tidak mendukung proses kelanjutan dari berkas > 2 GB."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2522
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2525
 msgid "Server does not support resume of files > 4GB."
 msgstr "Server tidak mendukung proses kelanjutan dari berkas > 4 GB."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4272
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4275
 #, c-format
 msgid ""
 "Server may not support resume of files > %d GB. End transfer since file "
@@ -5616,13 +5682,13 @@ msgstr ""
 "Server mengirimkan prompt login tambahan. Anda harus menggunakan jenis login "
 "interaktif."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3810
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3813
 msgid "Server sent passive reply with unroutable address. Passive mode failed."
 msgstr ""
 "Server mengirimkan balasan pasif dengan alamat yang tidak ada rutenya. Mode "
 "pasif gagal."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3804
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3807
 msgid ""
 "Server sent passive reply with unroutable address. Using server address "
 "instead."
@@ -5642,15 +5708,15 @@ msgstr ""
 msgid "Server sent unexpected reply."
 msgstr "Server mengirimkan balasan yang tidak diharapkan."
 
-#: resources.h:549
+#: resources.h:363
 msgid "Server to client MAC:"
 msgstr "Server ke MAC klien:"
 
-#: resources.h:547
+#: resources.h:361
 msgid "Server to client cipher:"
 msgstr "Server ke cipher klien:"
 
-#: resources.h:103 resources.h:110 resources.h:588
+#: resources.h:80 resources.h:87 resources.h:392
 msgid "Server&type:"
 msgstr "Jenis &Server:"
 
@@ -5658,19 +5724,19 @@ msgstr "Jenis &Server:"
 msgid "Server/Local file"
 msgstr "Berkas server/lokal"
 
-#: resources.h:494 resources.h:581
+#: resources.h:323 resources.h:385
 msgid "Server:"
 msgstr "Server:"
 
-#: resources.h:16 resources.h:39
+#: resources.h:15 resources.h:40
 msgid "Session details"
 msgstr "Detail sesi"
 
-#: resources.h:775
+#: resources.h:571
 msgid "Set &Priority"
 msgstr "Tentukan &Prioritas"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3635
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3638
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2434
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
@@ -5680,15 +5746,15 @@ msgstr "Menentukan hak akses dari '%s' menjadi '%s'"
 msgid "SetSocketBufferSize called without socket"
 msgstr "SetSocketBufferSize dipanggil tanpa soket"
 
-#: resources.h:150
+#: resources.h:688
 msgid "Settings"
 msgstr "Pengaturan"
 
-#: resources.h:253
+#: resources.h:904
 msgid "Show &raw directory listing"
 msgstr "Tampilkan &daftar direktori"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2511
+#: ../../locales/../src/interface/Mainfrm.cpp:2512
 msgid "Show both directory trees and continue comparing?"
 msgstr ""
 "Tampilkan struktur pohon dari dua direktori dan melanjutkan perbandingan?"
@@ -5701,11 +5767,11 @@ msgstr "Tampilkan dialog bantuan ini"
 msgid "Shutdown now"
 msgstr "Mematikan sistem sekarang"
 
-#: resources.h:482
+#: resources.h:311
 msgid "Site &Manager entries"
 msgstr "Daftar &Manajemen Situs"
 
-#: resources.h:92
+#: resources.h:69
 msgid "Site Manager"
 msgstr "Manajemen Situs"
 
@@ -5751,7 +5817,7 @@ msgstr ""
 msgid "Size"
 msgstr "Ukuran"
 
-#: resources.h:219
+#: resources.h:826
 msgid "Size formatting"
 msgstr "Pemformatan ukuran"
 
@@ -5760,7 +5826,7 @@ msgstr "Pemformatan ukuran"
 msgid "Size unknown"
 msgstr "Ukuran tidak diketahui"
 
-#: resources.h:437 resources.h:460
+#: resources.h:266 resources.h:289
 msgid "Sk&ip"
 msgstr "&Lewati"
 
@@ -5780,11 +5846,11 @@ msgstr "Lewati download %s"
 msgid "Skipping upload of %s"
 msgstr "Lewati upload %s"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1374
+#: ../../locales/../src/interface/Mainfrm.cpp:1375
 msgid "Some files are still being edited or need to be uploaded."
 msgstr "Beberapa berkas masih diedit atau harus diupload."
 
-#: resources.h:46 resources.h:855
+#: resources.h:651 resources.h:723
 msgid ""
 "Some misconfigured remote servers which are behind a router, may reply with "
 "their local IP address."
@@ -5792,7 +5858,7 @@ msgstr ""
 "Beberapa server remote yang salah konfigurasi yang berada dibelakang router, "
 "mungkin membalas dengan alamat IP lokal mereka."
 
-#: resources.h:632
+#: resources.h:844
 msgid "Sort directories inline"
 msgstr "Urutkan direktori secara inline"
 
@@ -5800,11 +5866,11 @@ msgstr "Urutkan direktori secara inline"
 msgid "Sort order cannot be changed if comparing directories."
 msgstr "Urutan pengurutan tidak bisa diganti jika membandingkan direktori."
 
-#: resources.h:628
+#: resources.h:840
 msgid "Sorting"
 msgstr "Pengurutan"
 
-#: resources.h:629
+#: resources.h:841
 msgid "Sorting &mode:"
 msgstr "&Mode pengurutan:"
 
@@ -5812,7 +5878,7 @@ msgstr "&Mode pengurutan:"
 msgid "Source and path of the drop operation are identical"
 msgstr "Sumber dan path dari operasi drop sama"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:315
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:315
 msgid "Source and target file may not be the same"
 msgstr "Berkas sumber dan target tidak boleh sama"
 
@@ -5820,15 +5886,15 @@ msgstr "Berkas sumber dan target tidak boleh sama"
 msgid "Source and target of the drop operation are identical"
 msgstr "Sumber dan target dari operasi drop sama"
 
-#: resources.h:71
+#: resources.h:48
 msgid "Source file:"
 msgstr "Berkas sumber:"
 
-#: resources.h:60
+#: resources.h:772
 msgid "Speed limits"
 msgstr "Batas kecepatan"
 
-#: resources.h:599
+#: resources.h:403
 msgid "Start transfer &immediately"
 msgstr "Mulai transfer &secepatnya"
 
@@ -5836,23 +5902,23 @@ msgstr "Mulai transfer &secepatnya"
 msgid "Start with opened Site Manager"
 msgstr "Mulai dengan Manajemen Situs yang terbuka"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2207
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2210
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1629
 #, c-format
 msgid "Starting download of %s"
 msgstr "Mulai mendownload %s"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2211
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2214
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1633
 #, c-format
 msgid "Starting upload of %s"
 msgstr "Mulai upload %s"
 
-#: ../../locales/../src/interface/verifycertdialog.cpp:136
-msgid "State:"
-msgstr "Kondisi:"
+#: ../../locales/../src/interface/verifycertdialog.cpp:166
+msgid "State or province:"
+msgstr ""
 
-#: ../../locales/../src/interface/edithandler.cpp:1207
+#: ../../locales/../src/interface/edithandler.cpp:1210
 #: ../../locales/../src/interface/QueueView.cpp:465
 msgid "Status"
 msgstr "Status"
@@ -5863,15 +5929,15 @@ msgstr "Status"
 msgid "Status:"
 msgstr "Status:"
 
-#: resources.h:772
+#: resources.h:568
 msgid "Stop and remove &all"
 msgstr "Stop dan hapus &semua"
 
-#: ../../locales/../src/interface/verifycertdialog.cpp:138
+#: ../../locales/../src/interface/verifycertdialog.cpp:169
 msgid "Street:"
 msgstr "Jalan:"
 
-#: resources.h:12 resources.h:35
+#: resources.h:11 resources.h:36
 msgid "Subject of certificate"
 msgstr "Subyek sertifikat"
 
@@ -5879,11 +5945,17 @@ msgstr "Subyek sertifikat"
 msgid "Successful transfers"
 msgstr "Transfer berhasil"
 
-#: resources.h:883
+#: resources.h:679
 msgid "Summary of test results:"
 msgstr "Ringkasan dari hasil pengujian:"
 
-#: resources.h:917 ../../locales/../src/interface/state.cpp:59
+#: resources.h:473
+msgid ""
+"Symlinks to files are not affected by this choice, such symlinks are always "
+"deleted."
+msgstr ""
+
+#: resources.h:930 ../../locales/../src/interface/state.cpp:59
 #: ../../locales/../src/interface/state.cpp:88
 #: ../../locales/../src/interface/state.cpp:95
 #: ../../locales/../src/interface/state.cpp:107
@@ -5910,7 +5982,7 @@ msgstr "Kesalahan sintaks"
 #: ../../locales/../src/interface/cmdline.cpp:60
 #: ../../locales/../src/interface/cmdline.cpp:66
 #: ../../locales/../src/interface/cmdline.cpp:72
-#: ../../locales/../src/interface/Mainfrm.cpp:2732
+#: ../../locales/../src/interface/Mainfrm.cpp:2734
 msgid "Syntax error in command line"
 msgstr "Kesalahan sintaks pada perintah baris"
 
@@ -5930,23 +6002,23 @@ msgstr "Koneksi TLS/SSL terjalin."
 msgid "TTL expired"
 msgstr "TLS kadaluarsa"
 
-#: resources.h:69
+#: resources.h:46
 msgid "Target file already exists"
 msgstr "Berkas tujuan telah ada"
 
-#: resources.h:75
+#: resources.h:52
 msgid "Target file:"
 msgstr "Berkas target:"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1840
+#: ../../locales/../src/interface/RemoteListView.cpp:1887
 msgid "Target filename already exists, really continue?"
 msgstr "Berkas tujuan telah ada, yakin melanjutkan?"
 
-#: resources.h:882
+#: resources.h:678
 msgid "Test results"
 msgstr "Hasil pengujian"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4278
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4281
 msgid "Testing resume capabilities of server"
 msgstr "Menguji kemampuan melanjutkan dari server"
 
@@ -5991,16 +6063,16 @@ msgstr "Penanda tidak bisa dibersihkan."
 msgid "The connection is encrypted. Click icon for details."
 msgstr "Koneksi terenkripsi. Klik ikon untuk lebih detail."
 
-#: ../../locales/../src/interface/optionspage_ftpproxy.cpp:89
+#: ../../locales/../src/interface/settings/optionspage_ftpproxy.cpp:89
 msgid "The custom login sequence cannot be empty."
 msgstr "Urutan login kustom tidak boleh kosong."
 
-#: resources.h:651 ../../locales/../src/interface/edithandler.cpp:1646
+#: resources.h:436 ../../locales/../src/interface/edithandler.cpp:1649
 #, no-c-format
 msgid "The default editor for text files could not be found."
 msgstr "Editor default untuk berkas teks tidak ditemukan."
 
-#: resources.h:650
+#: resources.h:435
 #, c-format
 msgid "The default editor for text files is '%s'."
 msgstr "Editor default untuk berkas teks adalah '%s'."
@@ -6011,7 +6083,7 @@ msgstr "Editor default untuk berkas teks adalah '%s'."
 msgid "The entered filter name already exists."
 msgstr "Nama filter yang dimasukkan sudah ada."
 
-#: ../../locales/../src/interface/optionspage_filetype.cpp:160
+#: ../../locales/../src/interface/settings/optionspage_filetype.cpp:160
 #, c-format
 msgid "The extension '%s' does already exist in the list"
 msgstr "Ektensi '%s' sudah ada ada pada daftar"
@@ -6026,9 +6098,9 @@ msgstr ""
 "Berkas %s telah ada.\n"
 "Masukkan nama baru:"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2294
-#: ../../locales/../src/interface/LocalListView.cpp:2425
-#: ../../locales/../src/interface/RemoteListView.cpp:2628
+#: ../../locales/../src/interface/LocalListView.cpp:2299
+#: ../../locales/../src/interface/LocalListView.cpp:2430
+#: ../../locales/../src/interface/RemoteListView.cpp:2675
 #, c-format
 msgid ""
 "The file '%s' cannot be opened:\n"
@@ -6039,7 +6111,7 @@ msgstr ""
 "Program yang diasosiasikan (%s) tidak ditemukan.\n"
 "Harap periksa asosiasi tipe berkas Anda."
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:222
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:222
 #, c-format
 msgid "The file '%s' could not be loaded or does not contain a private key."
 msgstr "Berkas '%s' tidak bisa dimuat atau tidak mengandung kunci privat."
@@ -6049,9 +6121,9 @@ msgstr "Berkas '%s' tidak bisa dimuat atau tidak mengandung kunci privat."
 msgid "The file '%s' could not be loaded."
 msgstr "Berkas '%s' tidak bisa dimuat."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2288
-#: ../../locales/../src/interface/LocalListView.cpp:2420
-#: ../../locales/../src/interface/RemoteListView.cpp:2622
+#: ../../locales/../src/interface/LocalListView.cpp:2293
+#: ../../locales/../src/interface/LocalListView.cpp:2425
+#: ../../locales/../src/interface/RemoteListView.cpp:2669
 #, c-format
 msgid ""
 "The file '%s' could not be opened:\n"
@@ -6060,8 +6132,8 @@ msgstr ""
 "Berkas '%s' tidak bisa dibuka:\n"
 "Tidak ada program yang diasosiasikan pada sistem Anda dengan berkas ini."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2333
-#: ../../locales/../src/interface/LocalListView.cpp:2433
+#: ../../locales/../src/interface/LocalListView.cpp:2338
+#: ../../locales/../src/interface/LocalListView.cpp:2438
 #, c-format
 msgid ""
 "The file '%s' could not be opened:\n"
@@ -6070,7 +6142,7 @@ msgstr ""
 "Berkas '%s' tidak bisa dibuka:\n"
 "Perintah yang diasosiasikan gagal"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:268
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:268
 #, c-format
 msgid ""
 "The file '%s' is not in a format supported by FileZilla.\n"
@@ -6084,7 +6156,7 @@ msgstr ""
 "Apakah Anda hendak mengkonversinya menjadi format yang didukung dan tanpa "
 "proteksi?"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:266
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:266
 #, c-format
 msgid ""
 "The file '%s' is not in a format supported by FileZilla.\n"
@@ -6093,7 +6165,7 @@ msgstr ""
 "Berkas '%s' tidak dalam format yang didukung oleh FileZilla.\n"
 "Apakah Anda hendak mengkonversinya pada format yang didukung?"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:271
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:271
 #, c-format
 msgid ""
 "The file '%s' is password protected. Password protected keyfiles are not "
@@ -6104,7 +6176,7 @@ msgstr ""
 "belum didukung oleh FileZilla.\n"
 "Apakah Anda hendak mengkonversinya menjadi berkas tanpa proteksi?"
 
-#: ../../locales/../src/interface/optionspage_edit.cpp:146
+#: ../../locales/../src/interface/settings/optionspage_edit.cpp:144
 msgid "The file selected as default editor does not exist."
 msgstr "File yang dipilih sebagai editor default tidak ada."
 
@@ -6130,7 +6202,7 @@ msgstr "Kolom nama berkas tidak bisa disembunyikan atau dipindahkan."
 msgid "The filename column cannot be hidden."
 msgstr "Kolom nama berkas tidak bisa disembunyikan."
 
-#: resources.h:512
+#: resources.h:341
 msgid "The following files are currently being edited:"
 msgstr "Berkas-berkas berikut ini sedang diedit:"
 
@@ -6138,7 +6210,7 @@ msgstr "Berkas-berkas berikut ini sedang diedit:"
 msgid "The global bookmarks could not be saved."
 msgstr "Penanda global tidak bisa disimpan."
 
-#: resources.h:251
+#: resources.h:902
 msgid ""
 "The higher the debug level, the more information will be displayed in the "
 "message log. Displaying debug information has a negative impact on "
@@ -6147,7 +6219,7 @@ msgstr ""
 "Semakin tinggi level debug, lebih banyak informasi yang akan ditampilkan "
 "pada log. Menampilkan informasi debug memiliki dampak negatif pada performa."
 
-#: ../../locales/../src/interface/optionspage_logging.cpp:78
+#: ../../locales/../src/interface/settings/optionspage_logging.cpp:78
 msgid "The limit needs to be between 1 and 2000 MiB"
 msgstr "Batas harus diantara 1 dan 2000 MiB"
 
@@ -6161,7 +6233,7 @@ msgstr ""
 "Nonaktifkan penjelajahan tersinkronisasi dan lanjutkan mengganti direktori "
 "lokal?"
 
-#: ../../locales/../src/interface/optionspage_connection_active.cpp:77
+#: ../../locales/../src/interface/settings/optionspage_connection_active.cpp:77
 msgid ""
 "The lowest available port has to be less or equal than the highest available "
 "port."
@@ -6204,23 +6276,23 @@ msgstr ""
 msgid "The selected categories have been imported."
 msgstr "Kategori yang dipilih sudah berhasil diimpor"
 
-#: resources.h:481
+#: resources.h:310
 msgid ""
 "The selected file contains importable data for the following categories:"
 msgstr ""
 "Berkas yang terpilih berisi data yang dapat diimpor untuk kategori berikut:"
 
-#: resources.h:504
+#: resources.h:333
 msgid "The selected file is already being edited:"
 msgstr "Berkas yang dipilih sedang diedit:"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2682
+#: ../../locales/../src/interface/RemoteListView.cpp:2729
 msgid ""
 "The selected file is still opened in some other program, please close it."
 msgstr "Berkas yang dipilih masih dibuka oleh program lain, harap ditutup."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2300
-#: ../../locales/../src/interface/RemoteListView.cpp:2634
+#: ../../locales/../src/interface/LocalListView.cpp:2305
+#: ../../locales/../src/interface/RemoteListView.cpp:2681
 msgid ""
 "The selected file would be executed directly.\n"
 "This can be dangerous and damage your system.\n"
@@ -6238,7 +6310,7 @@ msgstr "Server tidak bisa ditambahkan."
 msgid "The server sent an unexpected or unrecognized reply."
 msgstr "Server mengirimkan balasan yang tidak diharapkan atau tidak dikenali."
 
-#: resources.h:127
+#: resources.h:104
 msgid "The server uses following charset encoding for filenames:"
 msgstr "Server menggunakan enkoding charset berikut untuk nama berkas:"
 
@@ -6250,7 +6322,7 @@ msgstr ""
 "Sertifikat server tidak diketahui. Harap periksa sertifikat untuk memastikan "
 "server dapat dipercayai."
 
-#: resources.h:339
+#: resources.h:181
 msgid ""
 "The server's host key does not match the key that has been cached. This "
 "means that either the administrator has changed the host key, or you are "
@@ -6263,7 +6335,7 @@ msgstr ""
 "terhubung pada komputer lain yang mencoba menjadi server.\n"
 "Jika perubahan kunci tidak diharapkan, harap hubungi administrator server."
 
-#: resources.h:327
+#: resources.h:169
 msgid ""
 "The server's host key is unknown. You have no guarantee that the server is "
 "the computer you think it is."
@@ -6287,7 +6359,7 @@ msgstr "Sistem akan segera reboot kecuali Anda menekan batal."
 msgid "The system will soon shutdown unless you click cancel."
 msgstr "Sistem akan segera mati kecuali Anda menekan batal."
 
-#: resources.h:70
+#: resources.h:47
 msgid ""
 "The target file already exists.\n"
 "Please choose an action."
@@ -6299,7 +6371,7 @@ msgstr ""
 msgid "The test did not succeed. Do you really want to save the settings?"
 msgstr "Pengujian tidak sukses. Apakah Anda hendak menyimpan perubahan?"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:125
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:127
 msgid "Themes"
 msgstr "Tema"
 
@@ -6318,7 +6390,7 @@ msgid ""
 msgstr ""
 "Ini berarti beberapa router dan/atau firewall masih menganggu FileZilla."
 
-#: resources.h:860
+#: resources.h:656
 msgid ""
 "This only works if you are not behind a router, else your system would just "
 "return your internal address."
@@ -6326,7 +6398,7 @@ msgstr ""
 "Ini hanya bekerja jika Anda tidak berada dibelakang router, atau sistem Anda "
 "hanya akan mengembalikan alamat internal Anda."
 
-#: resources.h:838
+#: resources.h:634
 msgid ""
 "This wizard will help you to properly configure any routers and firewalls "
 "you have and tests your configuration."
@@ -6334,20 +6406,20 @@ msgstr ""
 "Panduan ini akan membantu mengkonfigurasi router dan firewall yang Anda "
 "miliki dan menguji konfigurasi Anda."
 
-#: resources.h:213
+#: resources.h:820
 msgid "Time formatting"
 msgstr "Pemformatan waktu"
 
-#: resources.h:57
+#: resources.h:769
 msgid "Time&out in seconds:"
 msgstr "Time&out dalam detik:"
 
-#: resources.h:56 ../../locales/../src/interface/QueueView.cpp:1009
+#: resources.h:768 ../../locales/../src/interface/QueueView.cpp:1009
 #: ../../locales/../src/interface/QueueView.cpp:1053
 msgid "Timeout"
 msgstr "Timeout"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1666
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1669
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1075
 #, c-format
 msgid ""
@@ -6356,21 +6428,21 @@ msgid ""
 msgstr ""
 "Offset zona waktu: Server: %d detik. Lokal: %d detik. Perbedaan: %d detik."
 
-#: ../../locales/../src/interface/verifycertdialog.cpp:134
+#: ../../locales/../src/interface/verifycertdialog.cpp:164
 msgid "Title:"
 msgstr "Judul:"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2509
+#: ../../locales/../src/interface/Mainfrm.cpp:2510
 msgid "To compare directories, both file lists have to be aligned."
 msgstr "Untuk membandingkan direktori, kedua daftar berkas harus sejajar."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2510
+#: ../../locales/../src/interface/Mainfrm.cpp:2511
 msgid "To do this, the directory trees need to be both shown or both hidden."
 msgstr ""
 "Untuk melakukannya, struktur pohon direktori harus menampilkan berkas "
 "tersembunyi dan tidak"
 
-#: resources.h:528
+#: resources.h:745
 msgid ""
 "To support public key authentication, FileZilla needs to know the private "
 "keys to use."
@@ -6378,7 +6450,7 @@ msgstr ""
 "Untuk mendukung authentikasi kunci publik, FileZilla harus tahu kunci privat "
 "yang hendak digunakan."
 
-#: resources.h:914
+#: resources.h:927
 msgid ""
 "Toggle directory comparison. Right-click to change comparison mode.\n"
 "\n"
@@ -6396,7 +6468,7 @@ msgstr ""
 "lain\n"
 "Merah: Ukuran file berbeda"
 
-#: resources.h:916
+#: resources.h:929
 msgid ""
 "Toggle synchronized browsing.\n"
 "If enabled, navigating the local directory hierarchy will also change the "
@@ -6406,23 +6478,23 @@ msgstr ""
 "Jika aktif, menjelajahi hirarki direktori lokal juga mengganti direktori "
 "pada server dan sebaliknya."
 
-#: resources.h:904 resources.h:905
+#: resources.h:917 resources.h:918
 msgid "Toggles processing of the transfer queue"
 msgstr "Mengganti pemrosesan antrian pengiriman"
 
-#: resources.h:896 resources.h:897
+#: resources.h:909 resources.h:910
 msgid "Toggles the display of the local directory tree"
 msgstr "Mengganti tampilan pohon directori lokal"
 
-#: resources.h:894 resources.h:895
+#: resources.h:907 resources.h:908
 msgid "Toggles the display of the message log"
 msgstr "Mengganti tampilan pesan log"
 
-#: resources.h:898 resources.h:899
+#: resources.h:911 resources.h:912
 msgid "Toggles the display of the remote directory tree"
 msgstr "Mengganti tampilan pohon direktori remote"
 
-#: resources.h:900 resources.h:901
+#: resources.h:913 resources.h:914
 msgid "Toggles the display of the transfer queue"
 msgstr "Mengganti tampilan antrian pengiriman"
 
@@ -6440,19 +6512,19 @@ msgstr "Terlalu banyak pengalihan"
 msgid "Trace:"
 msgstr "Jejak:"
 
-#: resources.h:638 resources.h:644
+#: resources.h:850 resources.h:856
 msgid "Transfer"
 msgstr "Transfer"
 
-#: resources.h:569
+#: resources.h:373
 msgid "Transfer &direction"
 msgstr "&Arah transfer"
 
-#: resources.h:714
+#: resources.h:508
 msgid "Transfer &type"
 msgstr "&Mode Transfer"
 
-#: resources.h:519
+#: resources.h:701
 msgid "Transfer Mode"
 msgstr "Mode Transfer"
 
@@ -6466,7 +6538,7 @@ msgstr "Transfer dibatalkan oleh pengguna"
 msgid "Transfer connection interrupted: %s"
 msgstr "Percobaan koneksi diinterupsi: %s"
 
-#: resources.h:119
+#: resources.h:96
 msgid "Transfer settings"
 msgstr "Pengaturan transfer"
 
@@ -6479,15 +6551,15 @@ msgstr "Data transfer rusak."
 msgid "Transferring"
 msgstr "Mentransfer"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:121
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:123
 msgid "Transfers"
 msgstr "Transfer"
 
-#: resources.h:163
+#: resources.h:790
 msgid "Treat files &without extension as ASCII file"
 msgstr "Anggap berkas &tanpa ekstensi sebagai berkas ASCII"
 
-#: resources.h:159
+#: resources.h:786
 msgid "Treat the &following filetypes as ASCII files:"
 msgstr "Anggap jenis berkas &berikut sebagai berkas ASCII:"
 
@@ -6499,47 +6571,47 @@ msgstr "Percayai kunci mesin yang berubah: "
 msgid "Trust new Hostkey: "
 msgstr "Percayai kunci mesin baru: "
 
-#: resources.h:345
+#: resources.h:187
 msgid "Trust the new key and carry on connecting?"
 msgstr "Percayai kunci baru dan lanjutkan dengan menghubungkan diri?"
 
-#: resources.h:21
+#: resources.h:22
 msgid "Trust this certificate and carry on connecting?"
 msgstr "Percayai sertifikat ini dan lanjutkan dengan menghubungkan diri?"
 
-#: resources.h:333
+#: resources.h:175
 msgid "Trust this host and carry on connecting?"
 msgstr "Percayai mesin ini dan lanjutkan dengan koneksi?"
 
-#: resources.h:604 ../../locales/../src/interface/edithandler.cpp:1205
+#: resources.h:408 ../../locales/../src/interface/edithandler.cpp:1208
 msgid "Type"
 msgstr "Jenis"
 
-#: resources.h:268
+#: resources.h:727
 msgid "Type of FTP Proxy:"
 msgstr "Jenis Proxy FTP:"
 
-#: resources.h:560
+#: resources.h:752
 msgid "Type of generic proxy:"
 msgstr "Jenis proxy generik:"
 
-#: resources.h:515
+#: resources.h:344
 msgid "U&pload"
 msgstr "U&pload"
 
-#: resources.h:63
+#: resources.h:775
 msgid "U&pload limit:"
 msgstr "Batasn U&pload:"
 
-#: resources.h:260
+#: resources.h:868
 msgid "U&se filetype associations if available"
 msgstr "Gunakan asosiasi jenis berkas jika tersedia"
 
-#: resources.h:214
+#: resources.h:821
 msgid "U&se system defaults"
 msgstr "&Gunakan default sistem"
 
-#: resources.h:270
+#: resources.h:729
 msgid "USER@&HOST"
 msgstr "PENGGUNA@HOST"
 
@@ -6548,12 +6620,12 @@ msgstr "PENGGUNA@HOST"
 msgid "Unassigned error code %d"
 msgstr "Kode kesalahan yang belum ditentukan %d"
 
-#: ../../locales/../src/interface/verifycertdialog.cpp:133
+#: ../../locales/../src/interface/verifycertdialog.cpp:163
 msgid "Unit:"
 msgstr "Unit:"
 
-#: ../../locales/../src/interface/edithandler.cpp:1237
-#: ../../locales/../src/interface/edithandler.cpp:1265
+#: ../../locales/../src/interface/edithandler.cpp:1240
+#: ../../locales/../src/interface/edithandler.cpp:1268
 msgid "Unknown"
 msgstr "Tidak diketahui"
 
@@ -6578,7 +6650,7 @@ msgstr ""
 "Kesalahan tidak diketahui saat membuka berkas. Pastikan berkas dapat diakses "
 "dan merupakan dokumen XML well-formed."
 
-#: resources.h:326
+#: resources.h:168
 msgid "Unknown host key"
 msgstr "Kunci mesin tidak diketahui"
 
@@ -6619,125 +6691,125 @@ msgstr ""
 msgid "Unsupported redirect"
 msgstr "Pengalihan tidak didukung"
 
-#: resources.h:516
+#: resources.h:345
 msgid "Up&load and unedit"
 msgstr "Up&load dan batalkan pengeditan"
 
-#: ../../locales/../src/interface/settingsdialog.cpp:134
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:137
 msgid "Update Check"
 msgstr "Pengujian Update"
 
-#: ../../locales/../src/interface/optionspage_updatecheck.cpp:60
+#: ../../locales/../src/interface/settings/optionspage_updatecheck.cpp:60
 #: ../../locales/../src/interface/updatewizard.cpp:156
 #: ../../locales/../src/interface/updatewizard.cpp:169
 msgid "Update wizard"
 msgstr "Panduan update"
 
-#: resources.h:571
+#: resources.h:375
 msgid "Upload"
 msgstr "Upload"
 
-#: ../../locales/../src/interface/edithandler.cpp:1228
+#: ../../locales/../src/interface/edithandler.cpp:1231
 msgid "Upload failed"
 msgstr "Upload gagal"
 
-#: resources.h:823
+#: resources.h:619
 msgid "Upload selected directory"
 msgstr "Upload direktori yang dipilih"
 
-#: resources.h:739
+#: resources.h:535
 msgid "Upload selected files and directories"
 msgstr "Upload berkas dan direktori yang dipilih"
 
-#: resources.h:499
+#: resources.h:328
 msgid "Upload this file back to the server?"
 msgstr "Upload berkas ini kembali ke server?"
 
-#: resources.h:498
+#: resources.h:327
 msgid "Upload this file to the server?"
 msgstr "Upload berkas ini kembali ke server?"
 
-#: ../../locales/../src/interface/edithandler.cpp:1222
-#: ../../locales/../src/interface/edithandler.cpp:1256
-#: ../../locales/../src/interface/edithandler.cpp:1418
+#: ../../locales/../src/interface/edithandler.cpp:1225
+#: ../../locales/../src/interface/edithandler.cpp:1259
+#: ../../locales/../src/interface/edithandler.cpp:1421
 msgid "Uploading"
 msgstr "Mengupload"
 
-#: ../../locales/../src/interface/edithandler.cpp:1225
-#: ../../locales/../src/interface/edithandler.cpp:1420
+#: ../../locales/../src/interface/edithandler.cpp:1228
+#: ../../locales/../src/interface/edithandler.cpp:1423
 msgid "Uploading and pending removal"
 msgstr "Mengupload dan penghapusan tertunda"
 
-#: ../../locales/../src/interface/edithandler.cpp:1259
-#: ../../locales/../src/interface/edithandler.cpp:1422
+#: ../../locales/../src/interface/edithandler.cpp:1262
+#: ../../locales/../src/interface/edithandler.cpp:1425
 msgid "Uploading and unediting"
 msgstr "Mengupload dan batalkan pengeditan"
 
-#: resources.h:428 resources.h:452
+#: resources.h:257 resources.h:281
 msgid "Uploads"
 msgstr "Upload"
 
-#: resources.h:131
+#: resources.h:108
 msgid "Use &custom charset"
 msgstr "Gunakan charset &kustomisasi"
 
-#: resources.h:257
+#: resources.h:865
 msgid "Use &custom editor:"
 msgstr "Gunakan editor &kustomisasi:"
 
-#: resources.h:419
+#: resources.h:248
 msgid "Use &default"
 msgstr "Gunakan &default"
 
-#: resources.h:649
+#: resources.h:434
 msgid "Use &default editor for text files"
 msgstr "Gunakan editor default untuk berkas teks"
 
-#: resources.h:115 resources.h:613 resources.h:619
+#: resources.h:92 resources.h:417 resources.h:423
 msgid "Use &synchronized browsing"
 msgstr "Gunakan penjelajahan %tersinkronisasi"
 
-#: resources.h:129
+#: resources.h:106
 msgid "Use UTF-8 if the server supports it, else use local charset."
 msgstr ""
 "Gunakan UTF-8 jika server mendukung, selain itu menggunakan charset lokal."
 
-#: resources.h:429
+#: resources.h:258
 msgid "Use d&efault"
 msgstr "Gunakan e&efault"
 
-#: resources.h:579
+#: resources.h:383
 msgid "Use server currently connected to"
 msgstr "Gunakan server yang saat ini terhubung"
 
-#: resources.h:580
+#: resources.h:384
 msgid "Use server from site manager"
 msgstr "Gunakan server dari manajemen situs"
 
-#: resources.h:208
+#: resources.h:815
 msgid "Use system &defaults"
 msgstr "Gunakan &default sistem"
 
-#: resources.h:861
+#: resources.h:657
 msgid "Use the following IP address:"
 msgstr "Gunakan alamat IP berikut:"
 
-#: resources.h:871
+#: resources.h:667
 msgid "Use the following port range:"
 msgstr "Gunakan batas port berikut:"
 
-#: resources.h:856
+#: resources.h:652
 msgid "Use the server's external IP address instead"
 msgstr "Gunakan alamat eksternal server"
 
-#: resources.h:392 resources.h:862
+#: resources.h:658 resources.h:717
 msgid ""
 "Use this if you're behind a router and have a static external IP address."
 msgstr ""
 "Gunakan ini jika Anda berada dibelakang router dan memiliki alamat IP "
 "eksternal statis."
 
-#: resources.h:865
+#: resources.h:661
 msgid ""
 "Use this option if you have a dynamic IP address. FileZilla will contact the "
 "above server once each session as soon as you use active mode for the first "
@@ -6748,7 +6820,7 @@ msgstr ""
 "mode aktif untuk pertama kalinya. Hanya versi FileZilla yang Anda gunakan "
 "yang dikirim ke server."
 
-#: resources.h:143
+#: resources.h:120
 msgid "User:"
 msgstr "Pengguna:"
 
@@ -6757,29 +6829,29 @@ msgstr "Pengguna:"
 msgid "Username cannot be a series of spaces"
 msgstr "Pengguna tidak bisa merupakan kumpulan spasi"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4333
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4336
 #, c-format
 msgid "Using proxy %s"
 msgstr "Menggunakan proxy %s"
 
-#: resources.h:133
+#: resources.h:110
 msgid ""
 "Using the wrong charset can result in filenames not displaying properly."
 msgstr ""
 "Menggunakan charset yang salah bisa berdampak pada nama berkas tidak "
 "ditampilkan dengan benar."
 
-#: resources.h:397
+#: resources.h:226
 msgid "Using this wizard you can check for available updates to FileZilla."
 msgstr ""
 "Dengan menggunakan panduan ini, Anda bisa menguji ketersediaan update "
 "FileZilla."
 
-#: resources.h:6 resources.h:29
+#: resources.h:5 resources.h:30
 msgid "Valid from:"
 msgstr "Valid dari:"
 
-#: resources.h:7 resources.h:30
+#: resources.h:6 resources.h:31
 msgid "Valid to:"
 msgstr "Valid hingga:"
 
@@ -6787,27 +6859,27 @@ msgstr "Valid hingga:"
 msgid "Verbose log messages from wxWidgets"
 msgstr "Pesan log detail dari wxWidgets"
 
-#: ../../locales/../src/engine/tlssocket.cpp:977
+#: ../../locales/../src/engine/tlssocket.cpp:986
 msgid "Verifying certificate..."
 msgstr "Memverifikasi sertifikat..."
 
-#: resources.h:68
+#: resources.h:780
 msgid "Very high"
 msgstr "Sangat tinggi"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1402
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1405
 msgid "View hidden option set, but unsupported by server"
 msgstr "Opsi sudah ditentukan, tetapi tidak didukung oleh server"
 
-#: resources.h:640
+#: resources.h:852
 msgid "View/Edit"
 msgstr "Lihat/Edit"
 
-#: resources.h:553
+#: resources.h:367
 msgid "Visible columns"
 msgstr "Kolom yang tampak"
 
-#: resources.h:296
+#: resources.h:138
 msgid "W&rite"
 msgstr "T&ulis"
 
@@ -6880,19 +6952,19 @@ msgstr ""
 "\n"
 "Apakah Anda yakin untuk menguji build harian?"
 
-#: resources.h:338
+#: resources.h:180
 msgid "Warning: Potential security breach!"
 msgstr "Peringatan: Kemungkinan masalah keamanan!"
 
-#: resources.h:407
+#: resources.h:236
 msgid "What's new:"
 msgstr "Apa yang baru:"
 
-#: resources.h:170
+#: resources.h:797
 msgid "Widescreen"
 msgstr "Layar lebar"
 
-#: resources.h:300
+#: resources.h:142
 msgid "Wr&ite"
 msgstr "Tu&lis"
 
@@ -6909,7 +6981,7 @@ msgstr "Akhir baris salah"
 msgid "Yes"
 msgstr "Ya"
 
-#: resources.h:413
+#: resources.h:242
 msgid ""
 "You are already using the most recent version of FileZilla. Please check "
 "again in future."
@@ -6917,7 +6989,7 @@ msgstr ""
 "Anda sudah menggunakan versi terbaru FileZilla. Harap periksa kembali di "
 "masa depan."
 
-#: resources.h:303
+#: resources.h:145
 msgid ""
 "You can use an x at any position to keep the permission the original files "
 "have."
@@ -6934,8 +7006,12 @@ msgstr ""
 msgid "You did not enter a new name for the file. Overwrite the file instead?"
 msgstr "Anda tidak memasukkan nama baru untuk berkas ini. Timpa berkas ini?"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2267
-#: ../../locales/../src/interface/RemoteListView.cpp:2601
+#: resources.h:468
+msgid "You have selected at least one symbolic link."
+msgstr ""
+
+#: ../../locales/../src/interface/LocalListView.cpp:2272
+#: ../../locales/../src/interface/RemoteListView.cpp:2648
 msgid ""
 "You have selected more than 10 files for editing, do you really want to "
 "continue?"
@@ -6943,7 +7019,7 @@ msgstr ""
 "Anda telah memilih lebih dari 10 berkas untuk pengeditan, apakah Anda hendak "
 "melanjutkan?"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2387
+#: ../../locales/../src/interface/LocalListView.cpp:2392
 msgid ""
 "You have selected more than 10 files or directories to open, do you really "
 "want to continue?"
@@ -6956,20 +7032,18 @@ msgstr ""
 msgid "You have to enter a hostname."
 msgstr "Anda harus memasukkan nama mesin"
 
-#: ../../locales/../src/interface/search.cpp:815
-#, fuzzy
+#: ../../locales/../src/interface/search.cpp:821
 msgid "You have to enter a local directory."
-msgstr "Anda harus memasukkan alamat IP valid."
+msgstr "Anda harus memasukkan direktori lokal."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:149
-#: ../../locales/../src/interface/optionspage_connection_active.cpp:90
+#: ../../locales/../src/interface/settings/optionspage_connection_active.cpp:90
 msgid "You have to enter a valid IP address."
 msgstr "Anda harus memasukkan alamat IP valid."
 
-#: ../../locales/../src/interface/search.cpp:821
-#, fuzzy
+#: ../../locales/../src/interface/search.cpp:827
 msgid "You have to enter a writable local directory."
-msgstr "Anda harus memasukkan alamat IP valid."
+msgstr "Anda harus memasukkan direktori lokal yang dapat ditulisi."
 
 #: ../../locales/../src/interface/manual_transfer.cpp:506
 #: ../../locales/../src/interface/sitemanager.cpp:1088
@@ -6993,20 +7067,20 @@ msgstr ""
 msgid "You need to enter a name for the bookmark."
 msgstr "Anda harus memasukan sebuah nama untuk penanda."
 
-#: ../../locales/../src/interface/optionspage_logging.cpp:67
+#: ../../locales/../src/interface/settings/optionspage_logging.cpp:67
 msgid "You need to enter a name for the log file."
 msgstr "Anda harus memasukan sebuah nama untuk berkas log."
 
-#: ../../locales/../src/interface/edithandler.cpp:1602
+#: ../../locales/../src/interface/edithandler.cpp:1605
 msgid "You need to enter a properly quoted command."
 msgstr "Anda harus memasukkan perintah yang dikutip dengan benar."
 
-#: ../../locales/../src/interface/optionspage_ftpproxy.cpp:82
-#: ../../locales/../src/interface/optionspage_proxy.cpp:70
+#: ../../locales/../src/interface/settings/optionspage_ftpproxy.cpp:82
+#: ../../locales/../src/interface/settings/optionspage_proxy.cpp:70
 msgid "You need to enter a proxy host."
 msgstr "Anda harus memasukkan host proxy."
 
-#: ../../locales/../src/interface/optionspage_proxy.cpp:75
+#: ../../locales/../src/interface/settings/optionspage_proxy.cpp:75
 msgid "You need to enter a proxy port in the range from 1 to 65535"
 msgstr "Anda harus memasukkan port proxy antara 1 hingga 65535"
 
@@ -7091,8 +7165,8 @@ msgstr "berkas"
 msgid "fz3temp-lockfile"
 msgstr "fz3temp-lockfile"
 
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:97
-#: ../../locales/../src/interface/optionspage_connection_sftp.cpp:119
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:97
+#: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:119
 msgid ""
 "fzputtygen could not be started.\n"
 "Please make sure this executable exists in the same directory as the main "
@@ -7170,12 +7244,9 @@ msgstr "dapat dibaca oleh semua"
 msgid "world writeable"
 msgstr "dapat ditulisi oleh semua"
 
-#: resources.h:321
+#: resources.h:163
 msgid "wxWidgets:"
 msgstr "wxWidgets:"
 
-#~ msgid "Search conditions:"
-#~ msgstr "Kondisi pencarian:"
-
-#~ msgid "FileZilla does not support the HTTP protocol"
-#~ msgstr "FileZilla tidak mendukung protokol HTTP"
+#~ msgid "State:"
+#~ msgstr "Kondisi:"
