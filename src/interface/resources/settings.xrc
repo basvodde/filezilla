@@ -1,0 +1,1985 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resource version="2.3.0.1" xmlns="http://www.wxwindows.org/wxxrc">
+  <object class="wxDialog" name="ID_SETTINGS">
+    <title>Settings</title>
+    <centered>1</centered>
+    <object class="wxBoxSizer">
+      <orient>wxHORIZONTAL</orient>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>Select &amp;page:</label>
+            </object>
+            <flag>wxBOTTOM</flag>
+            <border>5</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxTreeCtrl" name="ID_TREE">
+              <style>wxTR_HAS_BUTTONS|wxTR_LINES_AT_ROOT|wxTR_HIDE_ROOT|wxSUNKEN_BORDER</style>
+            </object>
+            <option>1</option>
+          </object>
+          <object class="sizeritem">
+            <object class="wxButton" name="wxID_OK">
+              <default>1</default>
+              <label>OK</label>
+            </object>
+            <flag>wxTOP|wxBOTTOM|wxGROW</flag>
+            <border>5</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxButton" name="wxID_CANCEL">
+              <label>&amp;Cancel</label>
+            </object>
+            <flag>wxBOTTOM|wxGROW</flag>
+            <border>2</border>
+          </object>
+        </object>
+        <flag>wxALL|wxGROW</flag>
+        <border>7</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxPanel" name="ID_PAGEPANEL"/>
+            <option>1</option>
+            <flag>wxGROW</flag>
+          </object>
+        </object>
+        <option>1</option>
+        <flag>wxTOP|wxBOTTOM|wxRIGHT|wxGROW</flag>
+        <border>7</border>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_CONNECTION">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Overview</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>1</cols>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>For more detailed information about what these options do, please run the network configuration wizard.</label>
+                </object>
+              </object>
+              <vgap>3</vgap>
+              <object class="sizeritem">
+                <object class="wxButton" name="ID_RUNWIZARD">
+                  <label>&amp;Run configuration wizard now...</label>
+                </object>
+              </object>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Reconnection settings</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>3</cols>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>&amp;Maximum number of retries:</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="ID_RETRIES">
+                  <size>50,-1</size>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>(0-99)</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>&amp;Delay between failed login attempts:</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="ID_RETRYDELAY">
+                  <size>50,-1</size>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>(0-999 seconds)</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <vgap>5</vgap>
+              <hgap>5</hgap>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>Please note that some servers might ban you if you try to reconnect too often or in too short intervals.</label>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_CONNECTION_FTP">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Transfer Mode</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_PASSIVE">
+                  <label>Pa&amp;ssive (recommended)</label>
+                  <style>wxRB_GROUP</style>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_ACTIVE">
+                  <label>&amp;Active</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_FALLBACK">
+                  <label>Allow &amp;fall back to other transfer mode on failure</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>If you have problems to retrieve directory listings or to transfer files, try to change the default transfer mode.</label>
+                </object>
+              </object>
+              <cols>1</cols>
+              <vgap>5</vgap>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>FTP Keep-alive</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxGridSizer">
+              <cols>1</cols>
+              <vgap>5</vgap>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_USEKEEPALIVE">
+                  <label>Send FTP &amp;keep-alive commands</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="">
+                  <label>A proper server does not require this. Contact the server administrator if you need this.</label>
+                </object>
+                <flag>wxALIGN_TOP</flag>
+              </object>
+            </object>
+            <flag>wxALL</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <option>1</option>
+        <flag>wxGROW</flag>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_CONNECTION_ACTIVE">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Limit local ports</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxCheckBox" name="ID_LIMITPORTS">
+              <label>&amp;Limit local ports used by FileZilla</label>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxHORIZONTAL</orient>
+              <object class="spacer">
+                <size>18,0</size>
+              </object>
+              <object class="sizeritem">
+                <object class="wxBoxSizer">
+                  <orient>wxVERTICAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>By default uses any available local port to establish transfers in active mode. If you want to limit FileZilla to use only a small range of ports, please enter the port range below.</label>
+                    </object>
+                    <flag>wxBOTTOM</flag>
+                    <border>5</border>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxFlexGridSizer">
+                      <cols>2</cols>
+                      <rows>2</rows>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>Lo&amp;west available port:</label>
+                        </object>
+                        <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxTextCtrl" name="ID_LOWESTPORT">
+                          <size>50,-1</size>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>&amp;Highest available port:</label>
+                        </object>
+                        <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxTextCtrl" name="ID_HIGHESTPORT">
+                          <size>50,-1</size>
+                        </object>
+                      </object>
+                      <vgap>5</vgap>
+                      <hgap>5</hgap>
+                    </object>
+                  </object>
+                </object>
+              </object>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>In order to use active mode, FileZilla needs to know your external IP address.</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_ACTIVEMODE1">
+                  <label>&amp;Ask your operating system for the external IP address</label>
+                  <style>wxRB_GROUP</style>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_ACTIVEMODE2">
+                  <label>&amp;Use the following IP address:</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxBoxSizer">
+                  <orient>wxVERTICAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_ACTIVEIP"/>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Use this if you're behind a router and have a static external IP address.</label>
+                    </object>
+                  </object>
+                </object>
+                <flag>wxLEFT</flag>
+                <border>17</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_ACTIVEMODE3">
+                  <label>&amp;Get external IP address from the following URL:</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxBoxSizer">
+                  <orient>wxVERTICAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_ACTIVERESOLVER"/>
+                    <flag>wxBOTTOM|wxGROW</flag>
+                    <border>3</border>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Default: http://ip.filezilla-project.org/ip.php</label>
+                    </object>
+                  </object>
+                </object>
+                <flag>wxLEFT</flag>
+                <border>17</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_NOEXTERNALONLOCAL">
+                  <label>&amp;Don't use external IP address on local connections.</label>
+                </object>
+              </object>
+              <cols>1</cols>
+              <vgap>3</vgap>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+          <label>Active mode IP</label>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_CONNECTION_PASSIVE">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Passive mode</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Some misconfigured remote servers which are behind a router, may reply with their local IP address.</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_PASSIVE_FALLBACK1">
+                  <label>&amp;Use the server's external IP address instead</label>
+                  <style>wxRB_GROUP</style>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_PASSIVE_FALLBACK2">
+                  <label>&amp;Fall back to active mode</label>
+                </object>
+              </object>
+              <cols>1</cols>
+              <vgap>3</vgap>
+              <rows>2</rows>
+            </object>
+            <flag>wxLEFT|wxRIGHT|wxBOTTOM</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_CONNECTION_FTP_PROXY">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>FTP Proxy</label>
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>1</cols>
+              <vgap>5</vgap>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Type of FTP Proxy:</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_PROXYTYPE_NONE">
+                  <label>&amp;None</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_PROXYTYPE_USER">
+                  <label>USER@&amp;HOST</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_PROXYTYPE_SITE">
+                  <label>&amp;SITE</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_PROXYTYPE_OPEN">
+                  <label>&amp;OPEN</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_PROXYTYPE_CUSTOM">
+                  <label>Cus&amp;tom</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxBoxSizer">
+                  <orient>wxVERTICAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_LOGINSEQUENCE">
+                      <style>wxTE_MULTILINE</style>
+                    </object>
+                    <option>1</option>
+                    <flag>wxGROW</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Format specifications:</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxBoxSizer">
+                      <orient>wxHORIZONTAL</orient>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>%h - Host</label>
+                        </object>
+                      </object>
+                      <object class="spacer">
+                        <size>20,0</size>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>%u - Username</label>
+                        </object>
+                      </object>
+                      <object class="spacer">
+                        <size>20,0</size>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>%p - Password</label>
+                        </object>
+                      </object>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>%a - Account (Lines containing this will be omitted if not using Account logontype)</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxBoxSizer">
+                      <orient>wxHORIZONTAL</orient>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>%s - Proxy user</label>
+                        </object>
+                      </object>
+                      <object class="spacer">
+                        <size>20,0</size>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>%w - Proxy password</label>
+                        </object>
+                      </object>
+                    </object>
+                  </object>
+                </object>
+                <option>1</option>
+                <flag>wxLEFT|wxGROW</flag>
+                <border>17</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <cols>5</cols>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>P&amp;roxy host:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_PROXY_HOST"/>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="spacer">
+                    <size>10,0</size>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Proxy &amp;user:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_PROXY_USER"/>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Pro&amp;xy password:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_PROXY_PASS">
+                      <style>wxTE_PASSWORD</style>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <vgap>5</vgap>
+                  <hgap>5</hgap>
+                </object>
+              </object>
+              <growablecols>0</growablecols>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Note: This only works with plain, unencrypted FTP connections.</label>
+                </object>
+              </object>
+              <growablerows>6</growablerows>
+            </object>
+            <option>1</option>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxGROW</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <option>1</option>
+        <flag>wxGROW</flag>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_CONNECTION_SFTP">
+    <object class="wxFlexGridSizer">
+      <cols>2</cols>
+      <vgap/>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Public Key Authentication</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>1</cols>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="">
+                  <label>To support public key authentication, FileZilla needs to know the private keys to use.</label>
+                </object>
+              </object>
+              <object class="spacer"/>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="">
+                  <label>Private &amp;keys:</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxListCtrl" name="ID_KEYS">
+                  <style>wxLC_REPORT</style>
+                </object>
+                <option>1</option>
+                <flag>wxGROW</flag>
+              </object>
+              <vgap>5</vgap>
+              <growablecols>0</growablecols>
+              <object class="sizeritem">
+                <object class="wxGridSizer">
+                  <object class="sizeritem">
+                    <object class="wxButton" name="ID_ADDKEY">
+                      <label>&amp;Add keyfile...</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxButton" name="ID_REMOVEKEY">
+                      <label>&amp;Remove key</label>
+                    </object>
+                  </object>
+                  <cols>2</cols>
+                  <hgap>5</hgap>
+                </object>
+                <flag>wxALIGN_CENTRE_HORIZONTAL</flag>
+              </object>
+              <object class="sizeritem" platform="win">
+                <object class="wxStaticText">
+                  <label>Alternatively you can use the Pageant tool from PuTTY to manage your keys, FileZilla does recognize Pageant.</label>
+                </object>
+              </object>
+              <object class="sizeritem" platform="mac|unix">
+                <object class="wxStaticText">
+                  <label>Alternatively you can use your system's SSH agent. To do so, make sure the SSH__AUTH__SOCK environment variable is set.</label>
+                </object>
+              </object>
+              <growablerows>3</growablerows>
+            </object>
+            <option>1</option>
+            <flag>wxALL|wxGROW</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <option>1</option>
+        <flag>wxGROW</flag>
+      </object>
+      <growablecols>0</growablecols>
+      <growablerows>0</growablerows>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_CONNECTION_PROXY">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Generic proxy</label>
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>1</cols>
+              <vgap>5</vgap>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Type of generic proxy:</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_PROXYTYPE_NONE">
+                  <label>&amp;None</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_PROXYTYPE_HTTP">
+                  <label>&amp;HTTP/1.1 using CONNECT method</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_PROXYTYPE_SOCKS5">
+                  <label>&amp;SOCKS 5</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <cols>2</cols>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>P&amp;roxy host:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_PROXY_HOST"/>
+                    <flag>wxALIGN_CENTRE_VERTICAL|wxGROW</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Proxy &amp;port:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_PROXY_PORT">
+                      <size>50,-1</size>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Proxy &amp;user:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_PROXY_USER"/>
+                    <flag>wxALIGN_CENTRE_VERTICAL|wxGROW</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Pro&amp;xy password:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_PROXY_PASS">
+                      <style>wxTE_PASSWORD</style>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL|wxGROW</flag>
+                  </object>
+                  <vgap>5</vgap>
+                  <hgap>5</hgap>
+                  <growablecols>1</growablecols>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <growablecols>0</growablecols>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Note: Using a generic proxy forces passive mode on FTP connections.</label>
+                </object>
+              </object>
+            </object>
+            <option>1</option>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxGROW</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <option>1</option>
+        <flag>wxGROW</flag>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_TRANSFER">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Concurrent transfers</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>3</cols>
+              <vgap>4</vgap>
+              <hgap>4</hgap>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Maximum simultaneous &amp;transfers:</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="ID_NUMTRANSFERS">
+                  <size>40,-1</size>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>(1-10)</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Limit for concurrent &amp;downloads:</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="ID_NUMDOWNLOADS">
+                  <size>40,-1</size>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>(0 for no limit)</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Limit for concurrent &amp;uploads:</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="ID_NUMUPLOADS">
+                  <size>40,-1</size>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>(0 for no limit)</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Timeout</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>1</cols>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <cols>3</cols>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Time&amp;out in seconds:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_TIMEOUT">
+                      <size>40,-1</size>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <hgap>4</hgap>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>(5-9999, 0 to disable)</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>If no data can be sent or received during this time, the connection will be closed and FileZilla will try to reconnect.</label>
+                </object>
+              </object>
+              <vgap>4</vgap>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Speed limits</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <vgap>5</vgap>
+              <hgap>5</hgap>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Download &amp;limit:</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="ID_DOWNLOADLIMIT">
+                  <size>60,-1</size>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>(in KB/s)</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>U&amp;pload limit:</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="ID_UPLOADLIMIT">
+                  <size>60,-1</size>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>(in KB/s)</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>&amp;Burst tolerance:</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxChoice" name="ID_BURSTTOLERANCE">
+                  <content>
+                    <item>Normal</item>
+                    <item>High</item>
+                    <item>Very high</item>
+                  </content>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label/>
+                </object>
+              </object>
+              <cols>3</cols>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_FILETYPE">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Default transfer type:</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxRadioButton" name="ID_TYPE_AUTO">
+              <label>&amp;Auto</label>
+              <style>wxRB_GROUP</style>
+            </object>
+            <flag>wxALL</flag>
+            <border>4</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxRadioButton" name="ID_TYPE_ASCII">
+              <label>A&amp;SCII</label>
+            </object>
+            <flag>wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxRadioButton" name="ID_TYPE_BINARY">
+              <label>&amp;Binary</label>
+            </object>
+            <flag>wxALL</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <flag>wxBOTTOM|wxGROW</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Automatic file type classification</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>1</cols>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Treat the &amp;following filetypes as ASCII files:</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxBoxSizer">
+                  <orient>wxHORIZONTAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxListCtrl" name="ID_EXTENSIONS">
+                      <style>wxLC_SORT_ASCENDING|wxLC_REPORT|wxLC_NO_HEADER</style>
+                    </object>
+                    <flag>wxGROW</flag>
+                    <minsize>100,150</minsize>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxBoxSizer">
+                      <orient>wxVERTICAL</orient>
+                      <object class="sizeritem">
+                        <object class="wxTextCtrl" name="ID_EXTENSION">
+                          <size>90,-1</size>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxButton" name="ID_ADD">
+                          <label>A&amp;dd</label>
+                        </object>
+                        <flag>wxTOP|wxBOTTOM|wxGROW</flag>
+                        <border>5</border>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxButton" name="ID_REMOVE">
+                          <label>&amp;Remove</label>
+                        </object>
+                        <flag>wxGROW</flag>
+                      </object>
+                    </object>
+                    <flag>wxLEFT|wxRIGHT</flag>
+                    <border>5</border>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>If you enter the wrong filetypes, those files may get corrupted when transferred.</label>
+                    </object>
+                  </object>
+                </object>
+                <option>1</option>
+              </object>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_ASCIIWITHOUT">
+                  <label>Treat files &amp;without extension as ASCII file</label>
+                  <checked>1</checked>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_ASCIIDOTFILE">
+                  <label>&amp;Treat dotfiles as ASCII files</label>
+                  <checked>1</checked>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Dotfiles are filenames starting with a dot, e.g. .htaccess</label>
+                </object>
+              </object>
+              <vgap>4</vgap>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <option>1</option>
+        <flag>wxTOP|wxGROW</flag>
+        <border>5</border>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_INTERFACE">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Layout</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>&amp;Layout of file and directory panes:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxChoice" name="ID_FILEPANELAYOUT">
+                      <content>
+                        <item>Classic</item>
+                        <item>Explorer</item>
+                        <item>Widescreen</item>
+                        <item>Blackboard</item>
+                      </content>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <cols>2</cols>
+                  <hgap>5</hgap>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_FILEPANESWAP">
+                  <label>&amp;Swap local and remote panes</label>
+                </object>
+              </object>
+              <cols>1</cols>
+              <vgap>5</vgap>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxHORIZONTAL</orient>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>&amp;Position of the message log:</label>
+                </object>
+                <flag>wxRIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                <border>5</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxChoice" name="ID_MESSAGELOGPOS">
+                  <content>
+                    <item>Above the file lists</item>
+                    <item>Next to the transfer queue</item>
+                    <item>As tab in the transfer queue pane</item>
+                  </content>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxGROW</flag>
+            <border>4</border>
+          </object>
+          <label>Message log position</label>
+          <orient>wxVERTICAL</orient>
+        </object>
+        <flag>wxGROW|wxTOP</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Behaviour</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxVERTICAL</orient>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_MINIMIZE_TRAY">
+                  <label>&amp;Minimize to tray</label>
+                </object>
+              </object>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <flag>wxGROW|wxTOP</flag>
+        <border>5</border>
+      </object>
+    </object>
+  </object>
+  
+  <object class="wxPanel" name="ID_SETTINGS_THEMES">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Select Theme</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>2</cols>
+              <rows>2</rows>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>&amp;Theme:</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxChoice" name="ID_THEME">
+                  <content/>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Author:</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="ID_AUTHOR">
+                  <label>&lt;Author&gt;</label>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="">
+                  <label>Email:</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="ID_EMAIL">
+                  <label>&lt;Email&gt;</label>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <vgap>5</vgap>
+              <hgap>5</hgap>
+            </object>
+            <flag>wxALL|wxGROW</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Available sizes</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxNotebook" name="ID_PREVIEW"/>
+            <option>1</option>
+            <flag>wxALL|wxGROW</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <option>1</option>
+        <flag>wxGROW</flag>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_DATEFORMATTING">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Date formatting</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_DATEFORMAT_DEFAULT">
+                  <label>Use system &amp;defaults</label>
+                  <style>wxRB_GROUP</style>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_DATEFORMAT_ISO">
+                  <label>&amp;ISO 8601 (example: 2007-09-15)</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_DATEFORMAT_CUSTOM">
+                  <label>C&amp;ustom</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_CUSTOM_DATEFORMAT"/>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <cols>2</cols>
+                  <hgap>5</hgap>
+                  <object class="sizeritem">
+                    <object class="wxStaticText" name="ID_CUSTOM_DATEFORMAT_EXAMPLE">
+                      <label>(example: %Y-%m-%d)</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                </object>
+                <flag>wxLEFT</flag>
+                <border>17</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Please read http://wiki.filezilla-project.org/Date__and__Time__formatting for details</label>
+                </object>
+                <flag>wxLEFT</flag>
+                <border>17</border>
+              </object>
+              <cols>1</cols>
+              <vgap>5</vgap>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Time formatting</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_TIMEFORMAT_DEFAULT">
+                  <label>U&amp;se system defaults</label>
+                  <style>wxRB_GROUP</style>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_TIMEFORMAT_ISO">
+                  <label>I&amp;SO 8601 (example: 15:47)</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_TIMEFORMAT_CUSTOM">
+                  <label>Cus&amp;tom</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_CUSTOM_TIMEFORMAT"/>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <cols>2</cols>
+                  <hgap>5</hgap>
+                  <object class="sizeritem">
+                    <object class="wxStaticText" name="ID_CUSTOM_TIMEFORMAT_EXAMPLE">
+                      <label>(example: %H:%M)</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                </object>
+                <flag>wxLEFT</flag>
+                <border>17</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Please read http://wiki.filezilla-project.org/Date__and__Time__formatting for details</label>
+                </object>
+                <flag>wxLEFT</flag>
+                <border>17</border>
+              </object>
+              <cols>1</cols>
+              <vgap>5</vgap>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_SIZEFORMATTING">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Size formatting</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_SIZEFORMAT_BYTES">
+                  <label>&amp;Display size in bytes</label>
+                  <style>wxRB_GROUP</style>
+                </object>
+              </object>
+              <cols>1</cols>
+              <vgap>5</vgap>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_SIZEFORMAT_IEC">
+                  <label>&amp;IEC binary prefixes (e.g. 1 KiB = 1024 bytes)</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_SIZEFORMAT_SI_BINARY">
+                  <label>&amp;Binary prefixes using SI symbols. (e.g. 1 KB = 1024 bytes)</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxRadioButton" name="ID_SIZEFORMAT_SI_DECIMAL">
+                  <label>D&amp;ecimal prefixes using SI symbols (e.g. 1 KB = 1000 bytes)</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_SIZEFORMAT_SEPARATE_THOUTHANDS">
+                  <label>&amp;Use thousands separator</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Number of decimal places:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxSpinCtrl" name="ID_SIZEFORMAT_DECIMALPLACES">
+                      <min>0</min>
+                      <max>3</max>
+                      <size>50,-1</size>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <cols>2</cols>
+                  <hgap>5</hgap>
+                </object>
+              </object>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Examples</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>1</cols>
+              <vgap>3</vgap>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="ID_EXAMPLE1">
+                  <label>&lt;example&gt;</label>
+                </object>
+                <flag>wxALIGN_RIGHT</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="ID_EXAMPLE2">
+                  <label>&lt;example&gt;</label>
+                </object>
+                <flag>wxALIGN_RIGHT</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="ID_EXAMPLE3">
+                  <label>&lt;example&gt;</label>
+                </object>
+                <flag>wxALIGN_RIGHT</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="ID_EXAMPLE4">
+                  <label>&lt;example&gt;</label>
+                </object>
+                <flag>wxALIGN_RIGHT</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="ID_EXAMPLE5">
+                  <label>&lt;example&gt;</label>
+                </object>
+                <flag>wxALIGN_RIGHT</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="ID_EXAMPLE6">
+                  <label>&lt;example&gt;</label>
+                </object>
+                <flag>wxALIGN_RIGHT</flag>
+              </object>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_FILELISTS">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Sorting</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>2</cols>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Sorting &amp;mode:</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxChoice" name="ID_SORTMODE">
+                  <content>
+                    <item>Prioritize directories (default)</item>
+                    <item>Keep directories on top</item>
+                    <item>Sort directories inline</item>
+                  </content>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <hgap>5</hgap>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Directory comparison</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>1</cols>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>If using timestamp based comparison, consider two files equal if their timestamp difference does not exceed this threshold.</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Comparison &amp;threshold (in minutes):</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <cols>2</cols>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_COMPARISON_THRESHOLD">
+                      <size>40,-1</size>
+                    </object>
+                    <flag>wxALIGN_CENTRE_HORIZONTAL</flag>
+                  </object>
+                  <hgap>5</hgap>
+                </object>
+              </object>
+              <vgap>5</vgap>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Double-click action</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>2</cols>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>&amp;Double-click action on files:</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxChoice" name="ID_DOUBLECLICK_FILE">
+                  <content>
+                    <item>Transfer</item>
+                    <item>Add to queue</item>
+                    <item>View/Edit</item>
+                    <item>None</item>
+                  </content>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>D&amp;ouble-click action on directories:</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <vgap>5</vgap>
+              <hgap>5</hgap>
+              <object class="sizeritem">
+                <object class="wxChoice" name="ID_DOUBLECLICK_DIRECTORY">
+                  <content>
+                    <item>Enter directory</item>
+                    <item>Transfer</item>
+                    <item>Add to queue</item>
+                    <item>None</item>
+                  </content>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_LANGUAGE">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Language</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>&amp;Select language:</label>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxListBox" name="ID_LANGUAGES">
+              <content/>
+              <style>wxLB_SINGLE|wxLB_NEEDED_SB</style>
+            </object>
+            <option>1</option>
+            <flag>wxLEFT|wxRIGHT</flag>
+            <border>5</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>If you change the language, you should restart FileZilla.</label>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <option>1</option>
+        <flag>wxGROW</flag>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_EDIT">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxFlexGridSizer">
+          <cols>1</cols>
+          <vgap>5</vgap>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>&amp;Default editor:</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxRadioButton" name="ID_DEFAULT_NONE">
+              <label>Do &amp;not use default editor</label>
+              <style>wxRB_GROUP</style>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxRadioButton" name="ID_DEFAULT_TEXT">
+              <label>&amp;Use system's default editor for text files</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxRadioButton" name="ID_DEFAULT_CUSTOM">
+              <label>Use &amp;custom editor:</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxHORIZONTAL</orient>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="ID_EDITOR"/>
+                <option>1</option>
+                <flag>wxRIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                <border>5</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxButton" name="ID_BROWSE">
+                  <label>&amp;Browse...</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+            </object>
+            <flag>wxGROW|wxLEFT</flag>
+            <border>17</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>Command and its arguments should be properly quoted.</label>
+            </object>
+            <flag>wxLEFT</flag>
+            <border>17</border>
+          </object>
+          <growablecols>0</growablecols>
+          <object class="sizeritem">
+            <object class="wxRadioButton" name="ID_USEASSOCIATIONS">
+              <label>U&amp;se filetype associations if available</label>
+              <style>wxRB_GROUP</style>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxRadioButton" name="ID_USEDEFAULT">
+              <label>&amp;Always use default editor</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticBoxSizer">
+              <label>Filetype associations</label>
+              <orient>wxVERTICAL</orient>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <object class="sizeritem">
+                    <object class="wxCheckBox" name="ID_INHERIT">
+                      <label>&amp;Inherit system's filetype associations</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>C&amp;ustom filetype associations:</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_ASSOCIATIONS">
+                      <style>wxTE_MULTILINE</style>
+                    </object>
+                    <option>1</option>
+                    <flag>wxGROW</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Format: Extension followed by properly quoted command and arguments.</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Example: png &quot;c:\program files\viewer\viewer.exe&quot; -open</label>
+                    </object>
+                  </object>
+                  <cols>1</cols>
+                  <vgap>5</vgap>
+                  <growablerows>2</growablerows>
+                  <growablecols>0</growablecols>
+                </object>
+                <option>1</option>
+                <flag>wxALL|wxGROW</flag>
+                <border>5</border>
+              </object>
+            </object>
+            <option>1</option>
+            <flag>wxGROW</flag>
+          </object>
+          <growablerows>8</growablerows>
+        </object>
+        <option>1</option>
+        <flag>wxALL|wxGROW</flag>
+        <border>5</border>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_UPDATECHECK">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Automatic update check</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_UPDATECHECK">
+                  <label>&amp;Enable automatic update check</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxBoxSizer">
+                  <orient>wxHORIZONTAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>&amp;Number of days between update checks:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_DAYS">
+                      <size>30,-1</size>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL|wxLEFT|wxRIGHT</flag>
+                    <border>5</border>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>(At least 7 days)</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                </object>
+              </object>
+              <object class="spacer">
+                <size>0,10</size>
+              </object>
+              <object class="sizeritem">
+                <object class="wxButton" name="ID_RUNUPDATECHECK">
+                  <label>&amp;Run update check now...</label>
+                </object>
+              </object>
+              <cols>1</cols>
+              <vgap>3</vgap>
+              <object class="spacer">
+                <size>0,10</size>
+              </object>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_CHECKBETA">
+                  <label>Check for &amp;beta versions and release candidates</label>
+                </object>
+              </object>
+              <object class="spacer">
+                <size>0,10</size>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Privacy policy:</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Only the versions of FileZilla and the operating system you are using will be submitted to the server.</label>
+                </object>
+              </object>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <option>1</option>
+        <flag>wxGROW</flag>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_LOGGING">
+    <object class="wxStaticBoxSizer">
+      <label>Logging</label>
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxFlexGridSizer">
+          <object class="sizeritem">
+            <object class="wxCheckBox" name="ID_TIMESTAMPS">
+              <label>&amp;Show timestamps in message log</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxCheckBox" name="ID_LOGFILE">
+              <label>&amp;Log to file</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>1</cols>
+              <vgap>5</vgap>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Filename:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <cols>3</cols>
+                  <hgap>5</hgap>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_FILENAME"/>
+                    <flag>wxALIGN_CENTRE_VERTICAL|wxGROW</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxButton" name="ID_BROWSE">
+                      <label>&amp;Browse...</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <growablecols>1</growablecols>
+                </object>
+                <flag>wxGROW</flag>
+                <minsize>400,0</minsize>
+              </object>
+              <growablecols>0</growablecols>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_DOLIMIT">
+                  <label>Limit size of logfile</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <cols>3</cols>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Limit:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_LIMIT">
+                      <size>60,-1</size>
+                    </object>
+                    <flag/>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>MiB</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <hgap>5</hgap>
+                </object>
+                <flag>wxLEFT</flag>
+                <border>18</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>If the size of the logfile reaches the limit, it gets renamed by adding &quot;.1&quot; to the end of the filename (possibly overwriting older logfiles) and a new file gets created.</label>
+                </object>
+                <flag>wxLEFT</flag>
+                <border>18</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Changing logfile settings requires restart of FileZilla.</label>
+                </object>
+              </object>
+            </object>
+            <flag>wxLEFT|wxGROW</flag>
+            <border>18</border>
+          </object>
+          <cols>1</cols>
+          <vgap>5</vgap>
+          <growablecols>0</growablecols>
+        </object>
+        <flag>wxALL|wxGROW</flag>
+        <border>5</border>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="ID_SETTINGS_DEBUG">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Debugging settings</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxVERTICAL</orient>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_DEBUGMENU">
+                  <label>&amp;Show debug menu</label>
+                </object>
+              </object>
+              <object class="spacer">
+                <size>0,10</size>
+              </object>
+              <object class="sizeritem">
+                <object class="wxBoxSizer">
+                  <orient>wxHORIZONTAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>&amp;Debug information in message log:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="spacer">
+                    <size>5,0</size>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxChoice" name="ID_DEBUGLEVEL">
+                      <content>
+                        <item>0 - None</item>
+                        <item>1 - Warning</item>
+                        <item>2 - Info</item>
+                        <item>3 - Verbose</item>
+                        <item>4 - Debug</item>
+                      </content>
+                    </object>
+                    <flag>wxALIGN_CENTRE_HORIZONTAL</flag>
+                  </object>
+                </object>
+              </object>
+              <object class="spacer">
+                <size>0,5</size>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>The higher the debug level, the more information will be displayed in the message log. Displaying debug information has a negative impact on performance.</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>If reporting bugs, please provide logs with &quot;Verbose&quot; logging level.</label>
+                </object>
+              </object>
+              <object class="spacer">
+                <size>0,5</size>
+              </object>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_RAWLISTING">
+                  <label>Show &amp;raw directory listing</label>
+                </object>
+              </object>
+            </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+        </object>
+        <option>1</option>
+        <flag>wxGROW</flag>
+      </object>
+    </object>
+  </object>
+</resource>
