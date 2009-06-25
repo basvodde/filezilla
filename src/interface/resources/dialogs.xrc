@@ -268,22 +268,28 @@
           <object class="sizeritem">
             <object class="wxFlexGridSizer">
               <object class="sizeritem">
+                <object class="wxBoxSizer">
+                  <orient>wxHORIZONTAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxStaticText" name="ID_CHAIN_DESC">
+                      <label>Certificate in chain:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL|wxRIGHT</flag>
+                    <border>5</border>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxChoice" name="ID_CHAIN"/>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                </object>
+              </object>
+              <object class="sizeritem">
                 <object class="wxStaticBoxSizer">
                   <label>Details</label>
                   <orient>wxVERTICAL</orient>
                   <object class="sizeritem">
                     <object class="wxFlexGridSizer">
                       <cols>2</cols>
-                      <object class="sizeritem">
-                        <object class="wxStaticText">
-                          <label>Host:</label>
-                        </object>
-                      </object>
-                      <object class="sizeritem">
-                        <object class="wxStaticText" name="ID_HOST">
-                          <label>&lt;Host:port&gt;</label>
-                        </object>
-                      </object>
                       <object class="sizeritem">
                         <object class="wxStaticText">
                           <label>Valid from:</label>
@@ -413,6 +419,16 @@
                       <cols>2</cols>
                       <vgap>3</vgap>
                       <hgap>3</hgap>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>Host:</label>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText" name="ID_HOST">
+                          <label>&lt;Host:port&gt;</label>
+                        </object>
+                      </object>
                       <object class="sizeritem">
                         <object class="wxStaticText">
                           <label>Cipher:</label>
