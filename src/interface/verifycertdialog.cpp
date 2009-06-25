@@ -241,7 +241,8 @@ bool CVerifyCertDialog::IsTrusted(CCertificateNotification* pNotification)
 	wxASSERT(pNotification);
 
 	unsigned int len;
-	const unsigned char* data = pNotification->GetCertificates()[0].GetRawData(len);
+	CCertificate cert =  pNotification->GetCertificates()[0];
+	const unsigned char* data = cert.GetRawData(len);
 
 	return IsTrusted(data, len, false);
 }
@@ -401,7 +402,7 @@ void CVerifyCertDialog::LoadTrustedCerts(bool close /*=true*/)
 
 void CVerifyCertDialog::SetPermanentlyTrusted(const CCertificateNotification* const pNotification)
 {
-	const CCertificate &certificate = pNotification->GetCertificates()[0];
+	const CCertificate certificate = pNotification->GetCertificates()[0];
 	unsigned int len;
 	const unsigned char* const data = certificate.GetRawData(len);
 
