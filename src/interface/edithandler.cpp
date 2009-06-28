@@ -636,7 +636,13 @@ checkmodifications_remote:
 			goto checkmodifications_remote;
 		}
 
-		wxDateTime mtime = fn.GetModificationTime();
+		wxDateTime mtime;
+
+		{
+			wxLogNull log; // If GetModificationTime fails wx spams error messages
+			mtime = fn.GetModificationTime();
+		}
+
 		if (!mtime.IsValid())
 			continue;
 
@@ -697,7 +703,13 @@ checkmodifications_local:
 			goto checkmodifications_local;
 		}
 
-		wxDateTime mtime = fn.GetModificationTime();
+		wxDateTime mtime;
+
+		{
+			wxLogNull log; // If GetModificationTime fails wx spams error messages
+			mtime = fn.GetModificationTime();
+		}
+
 		if (!mtime.IsValid())
 			continue;
 
