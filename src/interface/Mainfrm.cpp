@@ -2827,6 +2827,8 @@ void CMainFrame::UpdateBookmarkMenu()
 	{
 		pMenu->AppendSeparator();
 
+		m_bookmark_menu_id_map_global.clear();
+
 		for (std::list<wxString>::const_iterator iter = global_bookmarks.begin(); iter != global_bookmarks.end(); iter++)
 		{
 			int id;
