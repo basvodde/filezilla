@@ -2964,6 +2964,7 @@ bool CSiteManager::AddBookmark(wxString sitePath, const wxString& name, const wx
 	}
 
 	// Bookmarks
+	TiXmlElement *pInsertBefore = 0;
 	TiXmlElement* pBookmark;
 	for (pBookmark = pChild->FirstChildElement("Bookmark"); pBookmark; pBookmark = pBookmark->NextSiblingElement("Bookmark"))
 	{
@@ -2978,9 +2979,14 @@ bool CSiteManager::AddBookmark(wxString sitePath, const wxString& name, const wx
 			wxMessageBox(_("Name of bookmark already exists."), _("New bookmark"), wxICON_EXCLAMATION);
 			return false;
 		}
+		if (name < old_name && !pInsertBefore)
+			pInsertBefore = pBookmark;
 	}
 
-	pBookmark = pChild->InsertEndChild(TiXmlElement("Bookmark"))->ToElement();
+	if (pInsertBefore)
+		pBookmark = pChild->InsertBeforeChild(pInsertBefore, TiXmlElement("Bookmark"))->ToElement();
+	else
+		pBookmark = pChild->InsertEndChild(TiXmlElement("Bookmark"))->ToElement();
 	AddTextElement(pBookmark, "Name", name);
 	if (!local_dir.empty())
 		AddTextElement(pBookmark, "LocalDir", local_dir);

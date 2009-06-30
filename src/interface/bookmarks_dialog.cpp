@@ -813,19 +813,27 @@ bool CBookmarksDialog::AddBookmark(const wxString &name, const wxString &local_d
 		return false;
 	}
 
+	TiXmlElement *pInsertBefore = 0;
 	TiXmlElement *pBookmark;
 	for (pBookmark = pDocument->FirstChildElement("Bookmark"); pBookmark; pBookmark = pBookmark->NextSiblingElement("Bookmark"))
 	{
 		wxString remote_dir_raw;
+
+		wxString old_name = GetTextElement(pBookmark, "Name");
 	
-		if (!name.CmpNoCase(GetTextElement(pBookmark, "Name")))
+		if (!name.CmpNoCase(old_name))
 		{
 			wxMessageBox(_("Name of bookmark already exists."), _("New bookmark"), wxICON_EXCLAMATION);
 			return false;
 		}
+		if (name < old_name && !pInsertBefore)
+			pInsertBefore = pBookmark;
 	}
 
-	pBookmark = pDocument->InsertEndChild(TiXmlElement("Bookmark"))->ToElement();
+	if (pInsertBefore)
+		pBookmark = pDocument->InsertBeforeChild(pInsertBefore, TiXmlElement("Bookmark"))->ToElement();
+	else
+		pBookmark = pDocument->InsertEndChild(TiXmlElement("Bookmark"))->ToElement();
 	AddTextElement(pBookmark, "Name", name);
 	if (!local_dir.empty())
 		AddTextElement(pBookmark, "LocalDir", local_dir);
