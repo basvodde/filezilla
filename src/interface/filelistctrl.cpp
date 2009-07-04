@@ -891,6 +891,8 @@ template<class CFileData> void CFileListCtrl<CFileData>::OnKeyDown(wxKeyEvent& e
 			else
 				SetSelection(i, false);
 		}
+		if (m_hasParent)
+			SetSelection(0, false);
 		if (m_pFilelistStatusBar)
 			m_pFilelistStatusBar->SelectAll();
 	}
