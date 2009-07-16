@@ -15,11 +15,29 @@ AC_CACHE_SAVE
 AC_ARG_ENABLE(locales, AC_HELP_STRING([--enable-locales], [Build message catalogs]), \
 		[locales="$enableval"], [locales="yes"])
 
+# Todo: Investigate using sub-configure scripts
 AC_ARG_ENABLE(localesonly, AC_HELP_STRING([--enable-localesonly], [Just build locales]), \
 		[localesonly="$enableval"], [localesonly="no"])
 
+AC_ARG_ENABLE(shellextonly, AC_HELP_STRING([--enable-shellextonly], [Just build Explorer shell extension (MSW specific flag)]), \
+		[shellextonly="$enableval"], [shellextonly="no"])
+
 if test "$locales" != "yes" -a "$localesonly" = "yes"; then
-  AC_MSG_ERROR([invalid flags: --disable-locales cannot be used together with --locales-only])
+  AC_MSG_ERROR([invalid flags: --disable-locales cannot be used together with --enable-localesonly])
+fi
+
+if test "$localesonly" = "yes" -a "$shellextonly" = "yes"; then
+  AC_MSG_ERROR([inalid flags: --enable-localesonly cannot be used together with --enable-shellextonly])
+fi
+
+if test "$localesonly" = "yes" -o "$shellextonly" = "yes"; then
+  buildmain = "no"
+else
+  buildmain = "yes"
+fi
+
+if "$shellextonly" = "yes"; then
+  locales = "no"
 fi
 
 if ! test "$localesonly" = "yes"; then
@@ -64,6 +82,9 @@ if ! test "$localesonly" = "yes"; then
   if ! test -z "$buildtype"; then
     AC_DEFINE_UNQUOTED(BUILDTYPE, ["$buildtype"], [Buildtype, indicates official builds and nightly builds])
   fi
+fi
+
+if test "$buildmain" = "yes"; then
 
   # Detect wxWidgets
   # ----------------
@@ -110,6 +131,9 @@ if ! test "$localesonly" = "yes"; then
   AC_CHECK_FUNCS([getaddrinfo ptsname setresuid strsignal updwtmpx])
   AC_CHECK_FUNCS([gettimeofday ftime])
   AC_CHECK_FUNCS([in6addr_loopback in6addr_any])
+fi
+
+if test "$buildmain" = "yes" -o "$shellextonly" = "yes"; then
 
   # Check for windres on MinGW builds
   # ---------------------------------
@@ -187,6 +211,10 @@ if ! test "$localesonly" = "yes"; then
   AC_SUBST(PACKAGE_VERSION_MINOR)
   AC_SUBST(PACKAGE_VERSION_MICRO)
   AC_SUBST(PACKAGE_VERSION_NANO)
+
+fi
+
+if test "$buildmain" = "yes"; then
 
   # Mac OS X specific checks
   # ------------------------
@@ -470,14 +498,13 @@ if test "$locales" = "yes"; then
 
   AC_MSG_RESULT([$FILEZILLA_LINGUAS])
 
-fi
-
-AC_PATH_PROG([WXRC], [wxrc --version])
-if test "x$WXRC" = "x"; then
-  AC_MSG_ERROR([
-    wxrc could not be found. This program gets build together with wxWidgets.
-    Please make sure wxrc is within your path.
-  ])
+  AC_PATH_PROG([WXRC], [wxrc --version])
+  if test "x$WXRC" = "x"; then
+    AC_MSG_ERROR([
+      wxrc could not be found. This program gets build together with wxWidgets.
+      Please make sure wxrc is within your path.
+    ])
+  fi
 fi
 
 AC_SUBST(FILEZILLA_LINGUAS)
