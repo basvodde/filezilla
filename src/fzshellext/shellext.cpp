@@ -157,9 +157,11 @@ void Debug(const char* Message)
 		SYSTEMTIME Time;
 		GetSystemTime(&Time);
 
-		fprintf(GLogHandle, "[%2d/%2d/%4d %2d:%02d:%02d.%03d][%04x] %s\n",
-			Time.wDay, Time.wMonth, Time.wYear, Time.wHour, Time.wMinute,
-			Time.wSecond, Time.wMilliseconds, (unsigned int)GetCurrentThreadId(), Message);
+		fprintf(GLogHandle, "[%4d-%02d-%02d %2d:%02d:%02d.%03d][%04x:%04x] %s\n",
+			Time.wYear, Time.wMonth, Time.wDay, Time.wHour, Time.wMinute,
+			Time.wSecond, Time.wMilliseconds,
+			(unsigned int)GetCurrentProcessId(), (unsigned int)GetCurrentThreadId(),
+			Message);
 	}
 	catch(...)
 	{
@@ -244,13 +246,14 @@ DllMain(HINSTANCE HInstance, DWORD Reason, LPVOID Reserved)
 	{
 		GInstance = HInstance;
 
+		if (!GLogMutex)
+			GLogMutex = CreateMutex(NULL, false, _T("FileZilla3DragDropExtLogMutex"));
+
 		if (GRefThisDll != 0)
 		{
 			DEBUG_MSG("DllMain return: settings already loaded");
 			return 1;
 		}
-
-		GLogMutex = CreateMutex(NULL, false, _T("FileZilla3DragDropExtLogMutex"));
 
 		for (int Root = 0; Root <= 1; Root++)
 		{
@@ -286,8 +289,14 @@ DllMain(HINSTANCE HInstance, DWORD Reason, LPVOID Reserved)
 				RegCloseKey(Key);
 			}
 		}
-		DEBUG_MSG("DllMain loaded settings");
-		DEBUG_MSG(GEnabled ? "DllMain enabled" : "DllMain disabled");
+		if (GEnabled)
+		{
+			DEBUG_MSG("DllMain loaded settings, extension is enabled");
+		}
+		else
+		{
+			DEBUG_MSG("DllMain loaded settings, extension is disabled");
+		}
 		LogVersion(HInstance);
 
 		DEBUG_MSG("DllMain leave");
@@ -754,7 +763,7 @@ STDMETHODIMP CShellExt::Initialize(LPCITEMIDLIST IDFolder,
 }
 
 //---------------------------------------------------------------------------
-STDMETHODIMP_(UINT) CShellExt::CopyCallback(HWND Hwnd, UINT Func, UINT Flags,
+STDMETHODIMP_(UINT) CShellExt::CopyCallback(HWND Hwnd, UINT wFunc, UINT Flags,
 											LPCTSTR SrcFile, DWORD SrcAttribs, LPCTSTR DestFile, DWORD DestAttribs)
 {
 	UINT Result = IDYES;
@@ -765,13 +774,21 @@ STDMETHODIMP_(UINT) CShellExt::CopyCallback(HWND Hwnd, UINT Func, UINT Flags,
 		return Result;
 	}
 
-	if (Func != FO_COPY && Func != FO_MOVE)
+	if (wFunc != FO_COPY && wFunc != FO_MOVE)
 	{
-		DEBUG_MSG("CShellExt::CopyCallback return: NOT copy nor move");
+		char buffer[100];
+		sprintf(buffer, "CShellExt::CopyCallback return: wFunc is %u, NOT FO_COPY nor FO_MOVE", (unsigned int)wFunc);
+		DEBUG_MSG(buffer);
 		return Result;
 	}
+	else if (wFunc == FO_COPY)
+	{
+		DEBUG_MSG("CShellExt::CopyCallback: wFunc is FO_COPY");
+	}
 	else
-		DEBUG_MSG("CShellExt::CopyCallback: copy or move");
+	{
+		DEBUG_MSG("CShellExt::CopyCallback: wFunc is FO_MOVE");
+	}
 
 	unsigned long Ticks = GetTickCount();
 	if ((Ticks - FLastTicks) < 100 && FLastTicks <= Ticks)
