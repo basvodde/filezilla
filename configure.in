@@ -31,13 +31,13 @@ if test "$localesonly" = "yes" -a "$shellextonly" = "yes"; then
 fi
 
 if test "$localesonly" = "yes" -o "$shellextonly" = "yes"; then
-  buildmain = "no"
+  buildmain="no"
 else
-  buildmain = "yes"
+  buildmain="yes"
 fi
 
 if "$shellextonly" = "yes"; then
-  locales = "no"
+  locales="no"
 fi
 
 if ! test "$localesonly" = "yes"; then
