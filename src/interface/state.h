@@ -35,6 +35,37 @@ class CStateEventHandler;
 class CRemoteDataObject;
 class CRecursiveOperation;
 
+class CState;
+class CContextManager
+{
+	friend class CState;
+public:
+	// If current_only is set, only notifications from the current (at the time
+	// of notification emission) context is dispatched to the handler.
+	void RegisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification, bool current_only, bool blockable);
+	void UnregisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification);
+
+	CState* CreateState();
+
+	CState* GetCurrentContext();
+	const std::vector<CState*>* GetAllStates() { return &m_contexts; }
+
+	static CContextManager* Get();
+protected:
+	std::vector<CState*> m_contexts;
+	int m_current_context;
+
+	struct t_handler
+	{
+		CStateEventHandler* pHandler;
+		bool blockable;
+		bool current_only;
+	};
+	std::list<t_handler> m_handlers[STATECHANGE_MAX];
+
+	void NotifyHandlers(CState* pState, enum t_statechange_notifications notification, const wxString& data, bool blocked);
+};
+
 class CState
 {
 	friend class CCommandQueue;
@@ -113,9 +144,9 @@ protected:
 	{
 		CStateEventHandler* pHandler;
 		bool blockable;
-		bool blocked;
 	};
 	std::list<t_handler> m_handlers[STATECHANGE_MAX];
+	bool m_blocked[STATECHANGE_MAX];
 
 	CLocalPath GetSynchronizedDirectory(CServerPath remote_path);
 	CServerPath GetSynchronizedDirectory(CLocalPath local_path);
@@ -137,7 +168,7 @@ public:
 
 	CState* m_pState;
 
-	virtual void OnStateChange(enum t_statechange_notifications notification, const wxString& data) = 0;
+	virtual void OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data) = 0;
 };
 
 #endif

@@ -1823,7 +1823,7 @@ void CLocalListView::ReselectItems(const std::list<wxString>& selectedNames, wxS
 	}
 }
 
-void CLocalListView::OnStateChange(enum t_statechange_notifications notification, const wxString& data)
+void CLocalListView::OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data)
 {
 	if (notification == STATECHANGE_LOCAL_DIR)
 		DisplayDir(m_pState->GetLocalDir().GetPath());

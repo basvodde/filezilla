@@ -619,13 +619,13 @@ void CSearchDialog::Run()
 
 }
 
-void CSearchDialog::OnStateChange(enum t_statechange_notifications notification, const wxString& data)
+void CSearchDialog::OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data)
 {
 	if (notification == STATECHANGE_REMOTE_DIR)
 		ProcessDirectoryListing();
 	else if (notification == STATECHANGE_REMOTE_IDLE)
 	{
-		if (m_pState->IsRemoteIdle())
+		if (pState->IsRemoteIdle())
 			m_searching = false;
 		SetCtrlState();
 	}

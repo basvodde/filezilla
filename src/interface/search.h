@@ -27,7 +27,7 @@ protected:
 	CSearchDialogFileList *m_results;
 	CQueueView* m_pQueue;
 
-	virtual void OnStateChange(enum t_statechange_notifications notification, const wxString& data);
+	virtual void OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data);
 
 	CWindowStateManager* m_pWindowStateManager;
 

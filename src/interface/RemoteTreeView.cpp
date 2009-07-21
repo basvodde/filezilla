@@ -261,12 +261,12 @@ CRemoteTreeView::~CRemoteTreeView()
 	delete m_pImageList;
 }
 
-void CRemoteTreeView::OnStateChange(enum t_statechange_notifications notification, const wxString& data)
+void CRemoteTreeView::OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data)
 {
 	if (notification == STATECHANGE_REMOTE_DIR)
-		SetDirectoryListing(m_pState->GetRemoteDir(), false);
+		SetDirectoryListing(pState->GetRemoteDir(), false);
 	else if (notification == STATECHANGE_REMOTE_DIR_MODIFIED)
-		SetDirectoryListing(m_pState->GetRemoteDir(), true);
+		SetDirectoryListing(pState->GetRemoteDir(), true);
 	else if (notification == STATECHANGE_APPLYFILTER)
 		ApplyFilters();
 }

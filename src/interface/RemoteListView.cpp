@@ -2299,13 +2299,13 @@ void CRemoteListView::RepositionInfoText()
 
 }
 
-void CRemoteListView::OnStateChange(enum t_statechange_notifications notification, const wxString& data)
+void CRemoteListView::OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data)
 {
-	wxASSERT(m_pState);
+	wxASSERT(pState);
 	if (notification == STATECHANGE_REMOTE_DIR)
-		SetDirectoryListing(m_pState->GetRemoteDir(), false);
+		SetDirectoryListing(pState->GetRemoteDir(), false);
 	else if (notification == STATECHANGE_REMOTE_DIR_MODIFIED)
-		SetDirectoryListing(m_pState->GetRemoteDir(), true);
+		SetDirectoryListing(pState->GetRemoteDir(), true);
 	else
 	{
 		wxASSERT(notification == STATECHANGE_APPLYFILTER);
@@ -2533,34 +2533,6 @@ void CRemoteListView::OnBeginDrag(wxListEvent& event)
 		ext = 0;
 	}
 #endif
-}
-
-bool CRemoteListView::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, const CLocalPath& path, bool queueOnly)
-{
-	if (!m_pState->IsRemoteIdle())
-		return false;
-
-	wxASSERT(!path.empty());
-
-	CRecursiveOperation* pRecursiveOperation = m_pState->GetRecursiveOperationHandler();
-	wxASSERT(pRecursiveOperation);
-
-	const std::list<CRemoteDataObject::t_fileInfo>& files = pRemoteDataObject->GetFiles();
-	for (std::list<CRemoteDataObject::t_fileInfo>::const_iterator iter = files.begin(); iter != files.end(); iter++)
-	{
-		if (!iter->dir)
-			continue;
-
-		pRecursiveOperation->AddDirectoryToVisit(pRemoteDataObject->GetServerPath(), iter->name, path.GetPath() + iter->name, iter->link);
-	}
-
-	if (IsComparing())
-		ExitComparisonMode();
-
-	CFilterManager filter;
-	pRecursiveOperation->StartRecursiveOperation(queueOnly ? CRecursiveOperation::recursive_addtoqueue : CRecursiveOperation::recursive_download, pRemoteDataObject->GetServerPath(), filter.GetActiveFilters(false));
-
-	return true;
 }
 
 void CRemoteListView::InitDateFormat()

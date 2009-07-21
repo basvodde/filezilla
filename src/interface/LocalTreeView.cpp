@@ -897,7 +897,7 @@ int CLocalTreeView::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId
 #endif
 }
 
-void CLocalTreeView::OnStateChange(enum t_statechange_notifications notification, const wxString& data)
+void CLocalTreeView::OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data)
 {
 	if (notification == STATECHANGE_LOCAL_DIR)
 		SetDir(m_pState->GetLocalDir().GetPath());

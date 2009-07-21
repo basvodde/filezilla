@@ -33,11 +33,11 @@ CRecursiveOperation::~CRecursiveOperation()
 	}
 }
 
-void CRecursiveOperation::OnStateChange(enum t_statechange_notifications notification, const wxString& data)
+void CRecursiveOperation::OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data)
 {
-	wxASSERT(m_pState);
+	wxASSERT(pState);
 	wxASSERT(notification == STATECHANGE_REMOTE_DIR);
-	ProcessDirectoryListing(m_pState->GetRemoteDir().Value());
+	ProcessDirectoryListing(pState->GetRemoteDir().Value());
 }
 
 void CRecursiveOperation::StartRecursiveOperation(enum OperationMode mode, const CServerPath& startDir, const std::list<CFilter>& filters, bool allowParent /*=false*/, const CServerPath& finalDir /*=CServerPath()*/)

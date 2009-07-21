@@ -125,7 +125,7 @@ public:
 	}
 
 protected:
-	virtual void OnStateChange(enum t_statechange_notifications notification, const wxString& data)
+	virtual void OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data)
 	{
 		if (notification == STATECHANGE_QUEUEPROCESSING)
 		{
@@ -149,6 +149,16 @@ protected:
 				// Can only happen through quickconnect bar
 				m_pMainFrame->ClearBookmarks();
 			}
+
+			CStatusBar* const pStatusBar = m_pMainFrame->GetStatusBar();
+			if (pStatusBar)
+			{
+				pStatusBar->DisplayDataType(pServer);
+				pStatusBar->DisplayEncrypted(pServer);
+			}
+
+			if (!pServer)
+				m_pMainFrame->SetTitle(_T("FileZilla"));
 		}
 		if (notification == STATECHANGE_SYNC_BROWSE)
 		{

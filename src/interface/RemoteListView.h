@@ -19,8 +19,6 @@ public:
 	CRemoteListView(wxWindow* pParent, CState* pState, CQueueView* pQueue);
 	virtual ~CRemoteListView();
 
-	bool DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, const CLocalPath& path, bool queueOnly);
-
 	void InitDateFormat();
 
 	virtual bool CanStartComparison(wxString* pError);
@@ -59,7 +57,7 @@ protected:
 
 	virtual CSortComparisonObject GetSortComparisonObject();
 
-	virtual void OnStateChange(enum t_statechange_notifications notification, const wxString& data);
+	virtual void OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data);
 	void ApplyCurrentFilter();
 	void SetDirectoryListing(const CSharedPointer<const CDirectoryListing> &pDirectoryListing, bool modified = false);
 	bool UpdateDirectoryListing(const CSharedPointer<const CDirectoryListing> &pDirectoryListing);

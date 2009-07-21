@@ -519,7 +519,7 @@ void CLocalViewHeader::OnTextEnter(wxCommandEvent& event)
 	}
 }
 
-void CLocalViewHeader::OnStateChange(enum t_statechange_notifications notification, const wxString& data)
+void CLocalViewHeader::OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data)
 {
 	wxASSERT(notification == STATECHANGE_LOCAL_DIR);
 
@@ -527,7 +527,7 @@ void CLocalViewHeader::OnStateChange(enum t_statechange_notifications notificati
 	m_autoCompletionText = _T("");
 #endif
 
-	wxString dir = m_pState->GetLocalDir().GetPath();
+	wxString dir = pState->GetLocalDir().GetPath();
 	AddRecentDirectory(dir);
 }
 
@@ -543,11 +543,11 @@ CRemoteViewHeader::CRemoteViewHeader(wxWindow* pParent, CState* pState)
 	m_pComboBox->Disable();
 }
 
-void CRemoteViewHeader::OnStateChange(enum t_statechange_notifications notification, const wxString& data)
+void CRemoteViewHeader::OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data)
 {
 	wxASSERT(notification == STATECHANGE_REMOTE_DIR);
 
-	m_path = m_pState->GetRemotePath();
+	m_path = pState->GetRemotePath();
 	if (m_path.IsEmpty())
 	{
 		m_pComboBox->SetValue(_T(""));
@@ -555,7 +555,7 @@ void CRemoteViewHeader::OnStateChange(enum t_statechange_notifications notificat
 	}
 	else
 	{
-		const CServer* const pServer = m_pState->GetServer();
+		const CServer* const pServer = pState->GetServer();
 		if (pServer && *pServer != m_lastServer)
 		{
 			m_pComboBox->Clear();

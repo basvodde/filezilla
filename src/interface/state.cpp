@@ -6,13 +6,36 @@
 #include "Mainfrm.h"
 #include "queue.h"
 #include "filezillaapp.h"
-#include "RemoteListView.h"
 #include "recursive_operation.h"
 #include "statusbar.h"
 #include "local_filesys.h"
+#include "listingcomparison.h"
+#include "RemoteListView.h"
+
+CContextManager the_context_manager;
+
+CContextManager* CContextManager::Get()
+{
+	return &the_context_manager;
+}
+
+CState* CContextManager::CreateState()
+{
+	CState* pState = new CState(0);
+
+	m_contexts.push_back(pState);
+
+	return pState;
+}
+
+void CContextManager::NotifyHandlers(CState* pState, t_statechange_notifications notification, const wxString& data, bool blocked)
+{
+}
 
 CState::CState(CMainFrame* pMainFrame)
 {
+	memset(m_blocked, 0, sizeof(m_blocked));
+
 	m_pMainFrame = pMainFrame;
 
 	m_pDirectoryListing = 0;
@@ -291,22 +314,6 @@ void CState::SetServer(const CServer* server)
 
 	m_successful_connect = false;
 
-	CStatusBar* const pStatusBar = m_pMainFrame->GetStatusBar();
-	if (pStatusBar)
-	{
-		pStatusBar->DisplayDataType(server);
-		pStatusBar->DisplayEncrypted(server);
-	}
-
-	if (server)
-		m_pServer = new CServer(*server);
-	else
-	{
-		if (m_pServer)
-			m_pMainFrame->SetTitle(_T("FileZilla"));
-		m_pServer = 0;
-	}
-
 	NotifyHandlers(STATECHANGE_SERVER);
 }
 
@@ -380,7 +387,6 @@ void CState::RegisterHandler(CStateEventHandler* pHandler, enum t_statechange_no
 	t_handler handler;
 	handler.pHandler = pHandler;
 	handler.blockable = blockable;
-	handler.blocked = false;
 	handlers.push_back(handler);
 }
 
@@ -425,28 +431,10 @@ void CState::BlockHandlers(enum t_statechange_notifications notification)
 	if (notification == STATECHANGE_NONE)
 	{
 		for (int i = 0; i < STATECHANGE_MAX; i++)
-		{
-			std::list<t_handler> &handlers = m_handlers[i];
-			for (std::list<t_handler>::iterator iter = handlers.begin(); iter != handlers.end(); iter++)
-			{
-				if (!iter->blockable)
-					continue;
-
-				iter->blocked = true;
-			}
-		}
+			m_blocked[i] = true;
 	}
 	else
-	{
-		std::list<t_handler> &handlers = m_handlers[notification];
-		for (std::list<t_handler>::iterator iter = handlers.begin(); iter != handlers.end(); iter++)
-		{
-			if (!iter->blockable)
-					continue;
-
-			iter->blocked = true;
-		}
-	}
+		m_blocked[notification] = true;
 }
 
 void CState::UnblockHandlers(enum t_statechange_notifications notification)
@@ -456,18 +444,11 @@ void CState::UnblockHandlers(enum t_statechange_notifications notification)
 	if (notification == STATECHANGE_NONE)
 	{
 		for (int i = 0; i < STATECHANGE_MAX; i++)
-		{
-			std::list<t_handler> &handlers = m_handlers[i];
-			for (std::list<t_handler>::iterator iter = handlers.begin(); iter != handlers.end(); iter++)
-				iter->blocked = false;
-		}
+			m_blocked[i] = false;
 	}
 	else
-	{
-		std::list<t_handler> &handlers = m_handlers[notification];
-		for (std::list<t_handler>::iterator iter = handlers.begin(); iter != handlers.end(); iter++)
-			iter->blocked = false;
-	}
+		m_blocked[notification] = false;
+
 }
 
 void CState::NotifyHandlers(enum t_statechange_notifications notification, const wxString& data /*=_T("")*/)
@@ -477,11 +458,13 @@ void CState::NotifyHandlers(enum t_statechange_notifications notification, const
 	const std::list<t_handler> &handlers = m_handlers[notification];
 	for (std::list<t_handler>::const_iterator iter = handlers.begin(); iter != handlers.end(); iter++)
 	{
-		if (iter->blocked)
+		if (m_blocked[notification] && iter->blockable)
 			continue;
 
-		iter->pHandler->OnStateChange(notification, data);
+		iter->pHandler->OnStateChange(this, notification, data);
 	}
+
+	CContextManager::Get()->NotifyHandlers(this, notification, data, m_blocked[notification]);
 }
 
 CStateEventHandler::CStateEventHandler(CState* pState)
@@ -701,7 +684,21 @@ bool CState::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, co
 	if (!hasDirs)
 		return true;
 
-	return m_pMainFrame->GetRemoteListView()->DownloadDroppedFiles(pRemoteDataObject, path, queueOnly);
+	for (std::list<CRemoteDataObject::t_fileInfo>::const_iterator iter = files.begin(); iter != files.end(); iter++)
+	{
+		if (!iter->dir)
+			continue;
+
+		m_pRecursiveOperation->AddDirectoryToVisit(pRemoteDataObject->GetServerPath(), iter->name, path.GetPath() + iter->name, iter->link);
+	}
+
+	if (m_pMainFrame->GetComparisonManager()->IsComparing())
+		m_pMainFrame->GetComparisonManager()->ExitComparisonMode();
+
+	CFilterManager filter;
+	m_pRecursiveOperation->StartRecursiveOperation(queueOnly ? CRecursiveOperation::recursive_addtoqueue : CRecursiveOperation::recursive_download, pRemoteDataObject->GetServerPath(), filter.GetActiveFilters(false));
+
+	return true;
 }
 
 bool CState::IsRemoteConnected() const
@@ -852,7 +849,7 @@ bool CState::ChangeRemoteDir(const CServerPath& path, const wxString& subdir /*=
 			else
 			{
 				m_sync_browse.is_changing = true;
-				m_sync_browse.compare = m_pMainFrame->GetRemoteListView()->IsComparing();
+				m_sync_browse.compare = m_pMainFrame->GetComparisonManager()->IsComparing();
 			}
 		}
 	}
