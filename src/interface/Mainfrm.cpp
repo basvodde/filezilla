@@ -122,6 +122,7 @@ public:
 		pState->RegisterHandler(this, STATECHANGE_SERVER);
 		pState->RegisterHandler(this, STATECHANGE_QUEUEPROCESSING);
 		pState->RegisterHandler(this, STATECHANGE_SYNC_BROWSE);
+		pState->RegisterHandler(this, STATECHANGE_COMPARISON);
 	}
 
 protected:
@@ -140,7 +141,7 @@ protected:
 				pMenuBar->Check(XRCID("ID_MENU_TRANSFER_PROCESSQUEUE"), check);
 			return;
 		}
-		if (notification == STATECHANGE_SERVER)
+		else if (notification == STATECHANGE_SERVER)
 		{
 			const CServer* pServer = m_pState->GetServer();
 
@@ -159,13 +160,26 @@ protected:
 
 			if (!pServer)
 				m_pMainFrame->SetTitle(_T("FileZilla"));
+			// Don't return here, need to update toolbar state
 		}
-		if (notification == STATECHANGE_SYNC_BROWSE)
+		else if (notification == STATECHANGE_SYNC_BROWSE)
 		{
 			if (m_pMainFrame->GetToolBar())
 				m_pMainFrame->GetToolBar()->ToggleTool(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), m_pState->GetSyncBrowse());
 			if (m_pMainFrame->GetMenuBar())
 				m_pMainFrame->GetMenuBar()->Check(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), m_pState->GetSyncBrowse());
+			return;
+		}
+		else if (notification == STATECHANGE_COMPARISON)
+		{
+			bool is_comparing = pState->GetComparisonManager()->IsComparing();
+			wxToolBar* pToolBar = m_pMainFrame->GetToolBar();
+			if (pToolBar)
+				pToolBar->ToggleTool(XRCID("ID_TOOLBAR_COMPARISON"), is_comparing);
+
+			wxMenuBar* pMenuBar = m_pMainFrame->GetMenuBar();
+			if (pMenuBar)
+				pMenuBar->Check(XRCID("ID_TOOLBAR_COMPARISON"), is_comparing);
 			return;
 		}
 
@@ -517,12 +531,12 @@ CMainFrame::CMainFrame()
 
 	CEditHandler::Create()->SetQueue(m_pQueueView);
 
-	m_pComparisonManager = 0;
-
 	InitMenubarState();
 	InitToolbarState();
 
 	CAutoAsciiFiles::SettingsChanged();
+
+	m_pState->GetComparisonManager()->SetListings(m_pLocalListView, m_pRemoteListView);
 }
 
 CMainFrame::~CMainFrame()
@@ -533,7 +547,6 @@ CMainFrame::~CMainFrame()
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	delete m_pUpdateWizard;
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
-	delete m_pComparisonManager;
 
 	CEditHandler* pEditHandler = CEditHandler::Get();
 	if (pEditHandler)
@@ -2501,14 +2514,12 @@ void CMainFrame::OnActivate(wxActivateEvent& event)
 
 void CMainFrame::OnToolbarComparison(wxCommandEvent& event)
 {
-	if (m_pComparisonManager && m_pComparisonManager->IsComparing())
+	CComparisonManager* pComparisonManager = m_pState->GetComparisonManager();
+	if (pComparisonManager->IsComparing())
 	{
-		m_pComparisonManager->ExitComparisonMode();
+		pComparisonManager->ExitComparisonMode();
 		return;
 	}
-
-	if (!m_pComparisonManager)
-		m_pComparisonManager = new CComparisonManager(this, m_pLocalListView, m_pRemoteListView);
 
 	if (!COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT))
 	{
@@ -2522,7 +2533,8 @@ void CMainFrame::OnToolbarComparison(wxCommandEvent& event)
 			dlg.AddText(_("Show both directory trees and continue comparing?"));
 			if (!dlg.Run())
 			{
-				m_pComparisonManager->UpdateToolState();
+				// Needed to restore non-toggle state of button
+				m_pState->NotifyHandlers(STATECHANGE_COMPARISON);
 				return;
 			}
 
@@ -2534,7 +2546,7 @@ void CMainFrame::OnToolbarComparison(wxCommandEvent& event)
 		m_pRemoteSplitter->SetSashPosition(pos);
 	}
 
-	m_pComparisonManager->CompareListings();
+	pComparisonManager->CompareListings();
 }
 
 void CMainFrame::OnToolbarComparisonDropdown(wxCommandEvent& event)
@@ -2543,7 +2555,8 @@ void CMainFrame::OnToolbarComparisonDropdown(wxCommandEvent& event)
 	if (!pMenu)
 		return;
 
-	pMenu->FindItem(XRCID("ID_TOOLBAR_COMPARISON"))->Check(m_pComparisonManager && m_pComparisonManager->IsComparing());
+	CComparisonManager* pComparisonManager = m_pState->GetComparisonManager();
+	pMenu->FindItem(XRCID("ID_TOOLBAR_COMPARISON"))->Check(pComparisonManager->IsComparing());
 
 	const int mode = COptions::Get()->GetOptionVal(OPTION_COMPARISONMODE);
 	if (mode == 0)
@@ -2593,8 +2606,9 @@ void CMainFrame::OnDropdownComparisonMode(wxCommandEvent& event)
 			m_pMenuBar->Check(XRCID("ID_COMPARE_DATE"), true);
 	}
 
-	if (old_mode != new_mode && m_pComparisonManager && m_pComparisonManager->IsComparing())
-		m_pComparisonManager->CompareListings();
+	CComparisonManager* pComparisonManager = m_pState->GetComparisonManager();
+	if (old_mode != new_mode && pComparisonManager && pComparisonManager->IsComparing())
+		pComparisonManager->CompareListings();
 }
 
 void CMainFrame::OnDropdownComparisonHide(wxCommandEvent& event)
@@ -2609,8 +2623,9 @@ void CMainFrame::OnDropdownComparisonHide(wxCommandEvent& event)
 		m_pMenuBar->Check(XRCID("ID_COMPARE_HIDEIDENTICAL"), new_mode);
 	}
 
-	if (old_mode != new_mode && m_pComparisonManager && m_pComparisonManager->IsComparing())
-		m_pComparisonManager->CompareListings();
+	CComparisonManager* pComparisonManager = m_pState->GetComparisonManager();
+	if (old_mode != new_mode && pComparisonManager && pComparisonManager->IsComparing())
+		pComparisonManager->CompareListings();
 }
 
 void CMainFrame::InitToolbarState()

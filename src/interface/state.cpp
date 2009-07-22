@@ -44,6 +44,7 @@ CState::CState(CMainFrame* pMainFrame)
 
 	m_pEngine = 0;
 	m_pCommandQueue = 0;
+	m_pComparisonManager = new CComparisonManager(this);
 
 	m_pRecursiveOperation = new CRecursiveOperation(this);
 
@@ -55,6 +56,7 @@ CState::~CState()
 {
 	delete m_pServer;
 
+	delete m_pComparisonManager;
 	delete m_pCommandQueue;
 	delete m_pEngine;
 
@@ -132,7 +134,7 @@ bool CState::SetLocalDir(const wxString& dir, wxString *error /*=0*/)
 			}
 
 			m_sync_browse.is_changing = true;
-			m_sync_browse.compare = m_pMainFrame->GetComparisonManager() && m_pMainFrame->GetComparisonManager()->IsComparing();
+			m_sync_browse.compare = m_pComparisonManager->IsComparing();
 			CListCommand *pCommand = new CListCommand(remote_path);
 			m_pCommandQueue->ProcessCommand(pCommand);
 
@@ -233,7 +235,7 @@ bool CState::SetRemoteDir(const CDirectoryListing *pDirectoryListing, bool modif
 			NotifyHandlers(STATECHANGE_LOCAL_DIR);
 
 			if (m_sync_browse.compare)
-				m_pMainFrame->GetComparisonManager()->CompareListings();
+				m_pComparisonManager->CompareListings();
 		}
 	}
 	return true;
@@ -311,6 +313,10 @@ void CState::SetServer(const CServer* server)
 		SetRemoteDir(0);
 		delete m_pServer;
 	}
+	if (server)
+		m_pServer = new CServer(*server);
+	else
+		m_pServer = 0;
 
 	m_successful_connect = false;
 
@@ -692,8 +698,8 @@ bool CState::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, co
 		m_pRecursiveOperation->AddDirectoryToVisit(pRemoteDataObject->GetServerPath(), iter->name, path.GetPath() + iter->name, iter->link);
 	}
 
-	if (m_pMainFrame->GetComparisonManager()->IsComparing())
-		m_pMainFrame->GetComparisonManager()->ExitComparisonMode();
+	if (m_pComparisonManager->IsComparing())
+		m_pComparisonManager->ExitComparisonMode();
 
 	CFilterManager filter;
 	m_pRecursiveOperation->StartRecursiveOperation(queueOnly ? CRecursiveOperation::recursive_addtoqueue : CRecursiveOperation::recursive_download, pRemoteDataObject->GetServerPath(), filter.GetActiveFilters(false));
@@ -849,7 +855,7 @@ bool CState::ChangeRemoteDir(const CServerPath& path, const wxString& subdir /*=
 			else
 			{
 				m_sync_browse.is_changing = true;
-				m_sync_browse.compare = m_pMainFrame->GetComparisonManager()->IsComparing();
+				m_sync_browse.compare = m_pComparisonManager->IsComparing();
 			}
 		}
 	}

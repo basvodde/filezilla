@@ -23,6 +23,7 @@ enum t_statechange_notifications
 
 	STATECHANGE_QUEUEPROCESSING,
 	STATECHANGE_SYNC_BROWSE,
+	STATECHANGE_COMPARISON,
 
 	STATECHANGE_MAX
 };
@@ -34,6 +35,7 @@ class CMainFrame;
 class CStateEventHandler;
 class CRemoteDataObject;
 class CRecursiveOperation;
+class CComparisonManager;
 
 class CState;
 class CContextManager
@@ -103,6 +105,7 @@ public:
 
 	CFileZillaEngine* m_pEngine;
 	CCommandQueue* m_pCommandQueue;
+	CComparisonManager* GetComparisonManager() { return m_pComparisonManager; }
 
 	void UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const wxString& subdir, bool queueOnly);
 	void UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const CServerPath& path, bool queueOnly);
@@ -139,6 +142,8 @@ protected:
 	CMainFrame* m_pMainFrame;
 
 	CRecursiveOperation* m_pRecursiveOperation;
+
+	CComparisonManager* m_pComparisonManager;
 
 	struct t_handler
 	{

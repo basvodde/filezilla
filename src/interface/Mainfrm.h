@@ -23,7 +23,6 @@ class CUpdateWizard;
 class CSiteManagerItemData_Site;
 class CQueue;
 class CViewHeader;
-class CComparisonManager;
 class CWindowStateManager;
 class CStatusBar;
 class CMainFrameStateEventHandler;
@@ -64,9 +63,7 @@ public:
 	void ProcessCommandLine();
 
 	void ClearBookmarks();
-
-	CComparisonManager* GetComparisonManager() { return m_pComparisonManager; }
-
+	
 protected:
 	bool CreateMenus();
 	bool CreateQuickconnectBar();
@@ -117,7 +114,6 @@ protected:
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	CUpdateWizard* m_pUpdateWizard;
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
-	CComparisonManager* m_pComparisonManager;
 
 	void ShowLocalTree();
 	void ShowRemoteTree();

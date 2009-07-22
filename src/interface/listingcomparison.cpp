@@ -2,7 +2,7 @@
 #include "listingcomparison.h"
 #include "filter.h"
 #include "Options.h"
-#include "Mainfrm.h"
+#include "state.h"
 
 CComparableListing::CComparableListing(wxWindow* pParent)
 {
@@ -70,7 +70,7 @@ bool CComparisonManager::CompareListings()
 	CFilterManager filters;
 	if (filters.HasActiveFilters() && !filters.HasSameLocalAndRemoteFilters())
 	{
-		UpdateToolState();
+		m_pState->NotifyHandlers(STATECHANGE_COMPARISON);
 		wxMessageBox(_("Cannot compare directories, different filters for local and remote directories are enabled"), _("Directory comparison failed"), wxICON_EXCLAMATION);
 		return false;
 	}
@@ -78,13 +78,13 @@ bool CComparisonManager::CompareListings()
 	wxString error;
 	if (!m_pLeft->CanStartComparison(&error))
 	{
-		UpdateToolState();
+		m_pState->NotifyHandlers(STATECHANGE_COMPARISON);
 		wxMessageBox(error, _("Directory comparison failed"), wxICON_EXCLAMATION);
 		return false;
 	}
 	if (!m_pRight->CanStartComparison(&error))
 	{
-		UpdateToolState();
+		m_pState->NotifyHandlers(STATECHANGE_COMPARISON);
 		wxMessageBox(error, _("Directory comparison failed"), wxICON_EXCLAMATION);
 		return false;
 	}
@@ -97,7 +97,7 @@ bool CComparisonManager::CompareListings()
 
 	m_isComparing = true;
 
-	UpdateToolState();
+	m_pState->NotifyHandlers(STATECHANGE_COMPARISON);
 
 	m_pLeft->StartComparison();
 	m_pRight->StartComparison();
@@ -246,10 +246,27 @@ int CComparisonManager::CompareFiles(const int dirSortMode, const wxString& loca
 	return 0;
 }
 
-CComparisonManager::CComparisonManager(CMainFrame* pMainFrame, CComparableListing* pLeft, CComparableListing* pRight)
-	: m_pMainFrame(pMainFrame), m_pLeft(pLeft), m_pRight(pRight)
+CComparisonManager::CComparisonManager(CState* pState)
+	: m_pState(pState), m_pLeft(0), m_pRight(0)
 {
 	m_isComparing = false;
+}
+
+void CComparisonManager::SetListings(CComparableListing* pLeft, CComparableListing* pRight)
+{
+	wxASSERT((pLeft && pRight) || (!pLeft && !pRight));
+
+	if (IsComparing())
+		ExitComparisonMode();
+
+	if (m_pLeft)
+		m_pLeft->SetOther(0);
+	if (m_pRight)
+		m_pRight->SetOther(0);
+
+	m_pLeft = pLeft;
+	m_pRight = pRight;
+
 	m_pLeft->SetOther(m_pRight);
 	m_pRight->SetOther(m_pLeft);
 }
@@ -265,16 +282,5 @@ void CComparisonManager::ExitComparisonMode()
 	if (m_pRight)
 		m_pRight->OnExitComparisonMode();
 
-	UpdateToolState();
-}
-
-void CComparisonManager::UpdateToolState()
-{
-	wxToolBar* pToolBar = m_pMainFrame->GetToolBar();
-	if (pToolBar)
-		pToolBar->ToggleTool(XRCID("ID_TOOLBAR_COMPARISON"), m_isComparing);	
-
-	wxMenuBar* pMenuBar = m_pMainFrame->GetMenuBar();
-	if (pMenuBar)
-		pMenuBar->Check(XRCID("ID_TOOLBAR_COMPARISON"), m_isComparing);
+	m_pState->NotifyHandlers(STATECHANGE_COMPARISON);
 }

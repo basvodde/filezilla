@@ -45,23 +45,23 @@ private:
 	CComparisonManager* m_pComparisonManager;
 };
 
-class CMainFrame;
+class CState;
 class CComparisonManager
 {
 public:
-	CComparisonManager(CMainFrame* pMainFrame, CComparableListing* pLeft, CComparableListing* pRight);
+	CComparisonManager(CState* pState);
 
 	bool CompareListings();
 	bool IsComparing() const { return m_isComparing; }
 
 	void ExitComparisonMode();
 
-	void UpdateToolState();
+	void SetListings(CComparableListing* pLeft, CComparableListing* pRight);
 
 protected:
 	int CompareFiles(const int dirSortMode, const wxString& local, const wxString& remote, bool localDir, bool remoteDir);
 
-	CMainFrame* m_pMainFrame;
+	CState* m_pState;
 
 	// Left/right, first/second, a/b, doesn't matter
 	CComparableListing* m_pLeft;
