@@ -126,7 +126,7 @@ public:
 	}
 
 protected:
-	virtual void OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data)
+	virtual void OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data, const void* data2)
 	{
 		if (notification == STATECHANGE_QUEUEPROCESSING)
 		{

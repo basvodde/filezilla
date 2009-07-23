@@ -57,7 +57,7 @@ protected:
 
 	virtual CSortComparisonObject GetSortComparisonObject();
 
-	virtual void OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data);
+	virtual void OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data, const void* data2);
 	void ApplyCurrentFilter();
 	void SetDirectoryListing(const CSharedPointer<const CDirectoryListing> &pDirectoryListing, bool modified = false);
 	bool UpdateDirectoryListing(const CSharedPointer<const CDirectoryListing> &pDirectoryListing);

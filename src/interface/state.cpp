@@ -10,7 +10,6 @@
 #include "statusbar.h"
 #include "local_filesys.h"
 #include "listingcomparison.h"
-#include "RemoteListView.h"
 
 CContextManager the_context_manager;
 
@@ -28,7 +27,7 @@ CState* CContextManager::CreateState()
 	return pState;
 }
 
-void CContextManager::NotifyHandlers(CState* pState, t_statechange_notifications notification, const wxString& data, bool blocked)
+void CContextManager::NotifyHandlers(CState* pState, t_statechange_notifications notification, const wxString& data, const void* data2, bool blocked)
 {
 }
 
@@ -457,7 +456,7 @@ void CState::UnblockHandlers(enum t_statechange_notifications notification)
 
 }
 
-void CState::NotifyHandlers(enum t_statechange_notifications notification, const wxString& data /*=_T("")*/)
+void CState::NotifyHandlers(enum t_statechange_notifications notification, const wxString& data /*=_T("")*/, const void* data2 /*=0*/)
 {
 	wxASSERT(notification != STATECHANGE_NONE && notification != STATECHANGE_MAX);
 
@@ -467,10 +466,10 @@ void CState::NotifyHandlers(enum t_statechange_notifications notification, const
 		if (m_blocked[notification] && iter->blockable)
 			continue;
 
-		iter->pHandler->OnStateChange(this, notification, data);
+		iter->pHandler->OnStateChange(this, notification, data, data2);
 	}
 
-	CContextManager::Get()->NotifyHandlers(this, notification, data, m_blocked[notification]);
+	CContextManager::Get()->NotifyHandlers(this, notification, data, data2, m_blocked[notification]);
 }
 
 CStateEventHandler::CStateEventHandler(CState* pState)
@@ -797,10 +796,7 @@ void CState::LinkIsNotDir(const CServerPath& path, const wxString& subdir)
 {
 	m_sync_browse.is_changing = false;
 
-	if (m_pRecursiveOperation->GetOperationMode() != CRecursiveOperation::recursive_none)
-		m_pRecursiveOperation->LinkIsNotDir();
-	else
-		m_pMainFrame->GetRemoteListView()->LinkIsNotDir(path, subdir);
+	NotifyHandlers(STATECHANGE_REMOTE_LINKNOTDIR, subdir, &path);
 }
 
 bool CState::ChangeRemoteDir(const CServerPath& path, const wxString& subdir /*=_T("")*/, int flags /*=0*/, bool ignore_busy /*=false*/)

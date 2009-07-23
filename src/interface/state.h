@@ -11,6 +11,7 @@ enum t_statechange_notifications
 	STATECHANGE_REMOTE_DIR_MODIFIED,
 	STATECHANGE_REMOTE_RECV,
 	STATECHANGE_REMOTE_SEND,
+	STATECHANGE_REMOTE_LINKNOTDIR,
 	STATECHANGE_LOCAL_DIR,
 
 	// data contains name (excluding path) of file to refresh
@@ -65,7 +66,7 @@ protected:
 	};
 	std::list<t_handler> m_handlers[STATECHANGE_MAX];
 
-	void NotifyHandlers(CState* pState, enum t_statechange_notifications notification, const wxString& data, bool blocked);
+	void NotifyHandlers(CState* pState, enum t_statechange_notifications notification, const wxString& data, const void* data2, bool blocked);
 };
 
 class CState
@@ -119,7 +120,7 @@ public:
 
 	CRecursiveOperation* GetRecursiveOperationHandler() { return m_pRecursiveOperation; }
 
-	void NotifyHandlers(enum t_statechange_notifications notification, const wxString& data = _T(""));
+	void NotifyHandlers(enum t_statechange_notifications notification, const wxString& data = _T(""), const void* data2 = 0);
 
 	bool SuccessfulConnect() const { return m_successful_connect; }
 	void SetSuccessfulConnect() { m_successful_connect = true; }
@@ -173,7 +174,7 @@ public:
 
 	CState* m_pState;
 
-	virtual void OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data) = 0;
+	virtual void OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data, const void* data2) = 0;
 };
 
 #endif

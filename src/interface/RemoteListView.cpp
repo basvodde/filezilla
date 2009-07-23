@@ -347,6 +347,7 @@ CRemoteListView::CRemoteListView(wxWindow* pParent, CState *pState, CQueueView* 
 	pState->RegisterHandler(this, STATECHANGE_REMOTE_DIR);
 	pState->RegisterHandler(this, STATECHANGE_REMOTE_DIR_MODIFIED);
 	pState->RegisterHandler(this, STATECHANGE_APPLYFILTER);
+	pState->RegisterHandler(this, STATECHANGE_REMOTE_LINKNOTDIR);
 
 	m_dropTarget = -1;
 
@@ -2299,13 +2300,18 @@ void CRemoteListView::RepositionInfoText()
 
 }
 
-void CRemoteListView::OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data)
+void CRemoteListView::OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data, const void* data2)
 {
 	wxASSERT(pState);
 	if (notification == STATECHANGE_REMOTE_DIR)
 		SetDirectoryListing(pState->GetRemoteDir(), false);
 	else if (notification == STATECHANGE_REMOTE_DIR_MODIFIED)
 		SetDirectoryListing(pState->GetRemoteDir(), true);
+	else if (notification == STATECHANGE_REMOTE_LINKNOTDIR)
+	{
+		wxASSERT(data2);
+		LinkIsNotDir(*(CServerPath*)data2, data);
+	}
 	else
 	{
 		wxASSERT(notification == STATECHANGE_APPLYFILTER);

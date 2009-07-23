@@ -619,7 +619,7 @@ void CSearchDialog::Run()
 
 }
 
-void CSearchDialog::OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data)
+void CSearchDialog::OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data, const void* data2)
 {
 	if (notification == STATECHANGE_REMOTE_DIR)
 		ProcessDirectoryListing();
