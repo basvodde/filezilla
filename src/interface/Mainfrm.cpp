@@ -2751,12 +2751,26 @@ void CMainFrame::ProcessCommandLine()
 		wxString error;
 
 		CServer server;
+
+		wxString logontype = pCommandLine->GetOption(CCommandLine::logontype);
+		if (logontype == _T("ask"))
+			server.SetLogonType(ASK);
+		else if (logontype == _T("interactive"))
+			server.SetLogonType(INTERACTIVE);
+
 		CServerPath path;
 		if (!server.ParseUrl(param, 0, _T(""), _T(""), error, path))
 		{
 			wxString str = _("Parameter not a valid URL");
 			str += _T("\n") + error;
 			wxMessageBox(error, _("Syntax error in command line"));
+		}
+
+		if (server.GetLogonType() == ASK ||
+			(server.GetLogonType() == INTERACTIVE && server.GetUser() == _T("")))
+		{
+			if (!CLoginManager::Get().GetPassword(server, false))
+				return;
 		}
 
 		m_pState->Connect(server, true, path);

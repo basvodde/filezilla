@@ -6,7 +6,7 @@ CLoginManager CLoginManager::m_theLoginManager;
 
 bool CLoginManager::GetPassword(CServer &server, bool silent, wxString name /*=_T("")*/, wxString challenge /*=_T("")*/)
 {
-	wxASSERT(!silent || server.GetLogonType() == ASK);
+	wxASSERT(!silent || server.GetLogonType() == ASK || server.GetLogonType() == INTERACTIVE);
 	wxASSERT(challenge == _T("") || server.GetLogonType() == INTERACTIVE);
 
 	if (server.GetLogonType() == ASK)
