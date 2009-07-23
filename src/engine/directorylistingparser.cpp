@@ -11,8 +11,7 @@ std::map<wxString, int> CDirectoryListingParser::m_MonthNamesMap;
 //#define LISTDEBUG_MVS
 //#define LISTDEBUG
 #ifdef LISTDEBUG
-static char data[][110]={
-	
+static char data[][150]={
 	"" // Has to be terminated with empty string
 };
 
@@ -759,17 +758,17 @@ bool CDirectoryListingParser::ParseLine(CLine *pLine, const enum ServerType serv
 			goto done;
 	}
 
+	ires = ParseAsMlsd(pLine, entry);
+	if (ires == 1)
+		goto done;
+	else if (ires == 2)
+		goto skip;
 	res = ParseAsUnix(pLine, entry, true); // Common 'ls -l'
 	if (res)
 		goto done;
 	res = ParseAsDos(pLine, entry);
 	if (res)
 		goto done;
-	ires = ParseAsMlsd(pLine, entry);
-	if (ires == 1)
-		goto done;
-	else if (ires == 2)
-		goto skip;
 	res = ParseAsEplf(pLine, entry);
 	if (res)
 		goto done;

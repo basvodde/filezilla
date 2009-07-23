@@ -1536,7 +1536,26 @@ void CDirectoryListingParserTest::InitEntries()
 				false
 			},
 			DEFAULT
-		});	
+		});
+
+		utc = wxDateTime(22, wxDateTime::Jul, 2009, 9, 25, 10);
+		utc.MakeFromTimezone(wxDateTime::UTC);
+		m_entries.push_back((t_entry){
+			"size=1365694195;type=file;modify=20090722092510;\tadsl TV 2009-07-22 08-25-10 78 mlsd file that can get parsed as unix.file",
+			{
+				_T("adsl TV 2009-07-22 08-25-10 78 mlsd file that can get parsed as unix.file"),
+				1365694195,
+				_T(""),
+				_T(""),
+				false,
+				false,
+				_T(""),
+				CDirentry::timestamp_seconds,
+				utc,
+				false
+			},
+			DEFAULT
+		});
 
 /*
 	wxString name;
