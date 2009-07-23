@@ -1337,31 +1337,41 @@ wxString CSocket::GetErrorDescription(int error)
 
 int CSocket::Close()
 {
-	if (m_fd != -1)
+	int fd;
+	if (m_pSocketThread)
 	{
-		int fd = m_fd;
-		if (m_pSocketThread)
-		{
-			m_pSocketThread->m_sync.Lock();
-			m_fd = -1;
-			if (!m_pSocketThread->m_threadwait)
-				m_pSocketThread->WakeupThread(true);
-		}
-		else
-			m_fd = -1;
-			
+		m_pSocketThread->m_sync.Lock();
+		fd = m_fd;
+		m_fd = -1;
+		delete [] m_pSocketThread->m_pHost;
+		m_pSocketThread->m_pHost = 0;
+		delete [] m_pSocketThread->m_pPort;
+		m_pSocketThread->m_pPort = 0;
+		if (!m_pSocketThread->m_threadwait)
+			m_pSocketThread->WakeupThread(true);
+	}
+	else
+	{
+		fd = m_fd;
+		m_fd = -1;
+	}
+
+	if (fd != -1)
+	{
 #ifdef __WXMSW__
 		closesocket(fd);
 #else
 		close(fd);
 #endif
-		if (m_pSocketThread)
-			m_pSocketThread->m_sync.Unlock();
-
-		if (m_pEvtHandler)
-			CSocketEventDispatcher::Get().RemovePending(m_pEvtHandler);
 	}
+
 	m_state = none;
+
+	if (m_pSocketThread)
+		m_pSocketThread->m_sync.Unlock();
+
+	if (m_pEvtHandler)
+		CSocketEventDispatcher::Get().RemovePending(m_pEvtHandler);
 
 	return 0;
 }
