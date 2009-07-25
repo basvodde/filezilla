@@ -137,7 +137,8 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Search window size", string, _T("") },
 	{ "Comparison hide identical", number, _T("0") },
 	{ "Search sort order", string, _T("") },
-	{ "Edit track local", number, _T("1") }
+	{ "Edit track local", number, _T("1") },
+	{ "Prevent idle sleep", number, _T("1") }
 };
 
 struct t_default_option

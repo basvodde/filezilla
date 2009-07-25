@@ -24,6 +24,12 @@ bool COptionsPageInterface::LoadPage()
 	SetCheckFromOption(XRCID("ID_MINIMIZE_TRAY"), OPTION_MINIMIZE_TRAY, failure);
 #endif
 
+	SetCheckFromOption(XRCID("ID_PREVENT_IDLESLEEP"), OPTION_PREVENT_IDLESLEEP, failure);
+
+#if defined(__WXGTK__) && !defined(WITH_LIBDBUS)
+	XRCCTRL(*this, "ID_PREVENT_IDLESLEEP", wxCheckBox)->Hide();
+#endif
+
 	return !failure;
 }
 
@@ -37,6 +43,8 @@ bool COptionsPageInterface::SavePage()
 #ifndef __WXMAC__
 	SetOptionFromCheck(XRCID("ID_MINIMIZE_TRAY"), OPTION_MINIMIZE_TRAY);
 #endif
+
+	SetOptionFromCheck(XRCID("ID_PREVENT_IDLESLEEP"), OPTION_PREVENT_IDLESLEEP);
 
 	return true;
 }

@@ -1125,13 +1125,19 @@
           <label>Behaviour</label>
           <orient>wxVERTICAL</orient>
           <object class="sizeritem">
-            <object class="wxBoxSizer">
-              <orient>wxVERTICAL</orient>
+            <object class="wxFlexGridSizer">
               <object class="sizeritem">
                 <object class="wxCheckBox" name="ID_MINIMIZE_TRAY">
                   <label>&amp;Minimize to tray</label>
                 </object>
               </object>
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_PREVENT_IDLESLEEP">
+                  <label>P&amp;revent system from entering idle sleep during transfers and other operations</label>
+                </object>
+              </object>
+              <cols>1</cols>
+              <vgap>5</vgap>
             </object>
             <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
             <border>4</border>
@@ -1686,7 +1692,7 @@
           <cols>1</cols>
           <vgap>5</vgap>
           <growablecols>0</growablecols>
-          <growablerows></growablerows>
+          <growablerows/>
         </object>
         <option>1</option>
         <flag>wxALL|wxGROW</flag>

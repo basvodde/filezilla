@@ -71,6 +71,10 @@ void CPowerManagement::DoSetBusy()
 {
 	if (m_busy)
 		return;
+
+	if (!COptions::Get()->GetOptionVal(OPTION_PREVENT_IDLESLEEP))
+		return;
+
 	m_busy = true;
 
 #ifdef __WXMSW__
