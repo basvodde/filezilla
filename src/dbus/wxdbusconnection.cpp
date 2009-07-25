@@ -294,8 +294,10 @@ bool wxDBusConnection::Send(DBusMessage *message, dbus_uint32_t *serial)
 bool wxDBusConnection::SendWithReply(DBusMessage *message, int timeout_milliseconds)
 {
 	DBusPendingCall * pcall = NULL;
+	m_thread->EnterCriticalSection();
 	bool result = (bool) dbus_connection_send_with_reply(m_connection, message, &pcall, timeout_milliseconds);
 	dbus_pending_call_set_notify(pcall, response_notify, (void *) this, NULL);
+	m_thread->LeaveCriticalSection();
 	m_thread->Wakeup();
 	return result;
 }
