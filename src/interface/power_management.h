@@ -7,6 +7,10 @@
 #include "state.h"
 
 class CMainFrame;
+#ifdef WITH_LIBDBUS
+class CPowerManagementInhibitor;
+#endif
+
 class CPowerManagement : protected CStateEventHandler
 {
 public:
@@ -15,7 +19,7 @@ public:
 
 protected:
 	CPowerManagement(CMainFrame* pMainFrame);
-	virtual ~CPowerManagement() {}
+	virtual ~CPowerManagement();
 	
 	static CPowerManagement* m_pPowerManagement;
 
@@ -27,6 +31,10 @@ protected:
 	bool m_busy;
 	
 	CMainFrame* m_pMainFrame;
+
+#ifdef WITH_LIBDBUS
+	CPowerManagementInhibitor *m_inhibitor;
+#endif
 };
 
 #endif //__POWER_MANAGEMENT_H__

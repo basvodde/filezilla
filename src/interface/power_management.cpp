@@ -3,6 +3,7 @@
 #include "Mainfrm.h"
 #include "Options.h"
 #include "queue.h"
+#include "../dbus/power_management_inhibitor.h"
 
 CPowerManagement* CPowerManagement::m_pPowerManagement = 0;
 
@@ -27,6 +28,17 @@ CPowerManagement::CPowerManagement(CMainFrame* pMainFrame)
 	CContextManager::Get()->RegisterHandler(this, STATECHANGE_REMOTE_IDLE, false, false);
 
 	m_busy = false;
+
+#ifdef WITH_LIBDBUS
+	m_inhibitor = new CPowerManagementInhibitor();
+#endif
+}
+
+CPowerManagement::~CPowerManagement()
+{
+#ifdef WITH_LIBDBUS
+	delete m_inhibitor;
+#endif
 }
 
 void CPowerManagement::OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data, const void* data2)
@@ -58,6 +70,8 @@ void CPowerManagement::DoSetBusy()
 
 #ifdef __WXMSW__
 	SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED);
+#elif defined(WITH_LIBDBUS)
+	m_inhibitor->RequestBusy();
 #endif
 }
 
@@ -69,5 +83,7 @@ void CPowerManagement::DoSetIdle()
 
 #ifdef __WXMSW__
 	SetThreadExecutionState(ES_CONTINUOUS);
+#elif defined(WITH_LIBDBUS)
+	m_inhibitor->RequestIdle();
 #endif
 }
