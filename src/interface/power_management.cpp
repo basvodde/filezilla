@@ -57,7 +57,7 @@ void CPowerManagement::DoSetBusy()
 	m_busy = true;
 
 #ifdef __WXMSW__
-	SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEm_REQUIRED);
+	SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED);
 #endif
 }
 
