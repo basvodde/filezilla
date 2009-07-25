@@ -48,7 +48,8 @@ public:
 	void RegisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification, bool current_only, bool blockable);
 	void UnregisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification);
 
-	CState* CreateState();
+	CState* CreateState(CMainFrame* pMainFrame);
+	void DestroyState(CState* pState);
 
 	CState* GetCurrentContext();
 	const std::vector<CState*>* GetAllStates() { return &m_contexts; }

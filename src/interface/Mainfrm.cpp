@@ -198,6 +198,10 @@ CMainFrame::CMainFrame()
 	initial_size.x = wxMin(900, screen_size.GetWidth() - 10);
 	initial_size.y = wxMin(750, screen_size.GetHeight() - 50);
 
+	// Needed because on MSW we can get WM_DEVICECHANGE prior to creation of
+	// m_pLocalTreeView
+	m_pLocalTreeView = 0;
+
 	Create(NULL, -1, _T("FileZilla"), wxDefaultPosition, initial_size);
 	SetSizeHints(250, 250);
 
@@ -241,7 +245,7 @@ CMainFrame::CMainFrame()
 	m_pStatusView = 0;
 
 	m_pThemeProvider = new CThemeProvider();
-	m_pState = new CState(this);
+	m_pState = CContextManager::Get()->CreateState(this);
 	m_pStateEventHandler = new CMainFrameStateEventHandler(m_pState, this);
 
 	m_pStatusBar = new CStatusBar(this);
@@ -542,7 +546,8 @@ CMainFrame::CMainFrame()
 CMainFrame::~CMainFrame()
 {
 	delete m_pStateEventHandler;
-	delete m_pState;
+	CContextManager::Get()->DestroyState(m_pState);
+	m_pState = 0;
 	delete m_pAsyncRequestQueue;
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	delete m_pUpdateWizard;

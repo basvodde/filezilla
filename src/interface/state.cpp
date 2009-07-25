@@ -18,17 +18,105 @@ CContextManager* CContextManager::Get()
 	return &the_context_manager;
 }
 
-CState* CContextManager::CreateState()
+CState* CContextManager::CreateState(CMainFrame* pMainFrame)
 {
-	CState* pState = new CState(0);
+	wxASSERT(pMainFrame);
+
+	CState* pState = new CState(pMainFrame);
 
 	m_contexts.push_back(pState);
 
 	return pState;
 }
 
+void CContextManager::DestroyState(CState* pState)
+{
+	for (unsigned int i = 0; i < m_contexts.size(); i++)
+	{
+		if (m_contexts[i] != pState)
+			continue;
+
+		m_contexts.erase(m_contexts.begin() + i);
+		if (i > m_current_context)
+			m_current_context--;
+		else if (i == m_current_context)
+		{
+			m_current_context--;
+			// TODO context change
+		}
+
+		break;
+	}
+
+	delete pState;
+}
+
+void CContextManager::RegisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification, bool current_only, bool blockable)
+{
+	wxASSERT(pHandler);
+	wxASSERT(notification != STATECHANGE_MAX && notification != STATECHANGE_NONE);
+
+	std::list<t_handler> &handlers = m_handlers[notification];
+	std::list<t_handler>::const_iterator iter;
+	for (iter = handlers.begin(); iter != handlers.end(); iter++)
+	{
+		if (iter->pHandler == pHandler)
+			return;
+	}
+
+	t_handler handler;
+	handler.pHandler = pHandler;
+	handler.blockable = blockable;
+	handler.current_only = current_only;
+	handlers.push_back(handler);
+}
+
+void CContextManager::UnregisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification)
+{
+	wxASSERT(pHandler);
+	wxASSERT(notification != STATECHANGE_MAX);
+
+	if (notification == STATECHANGE_NONE)
+	{
+		for (int i = 0; i < STATECHANGE_MAX; i++)
+		{
+			std::list<t_handler> &handlers = m_handlers[i];
+			for (std::list<t_handler>::iterator iter = handlers.begin(); iter != handlers.end(); iter++)
+			{
+				if (iter->pHandler == pHandler)
+				{
+					handlers.erase(iter);
+					break;
+				}
+			}
+		}
+	}
+	else
+	{
+		std::list<t_handler> &handlers = m_handlers[notification];
+		for (std::list<t_handler>::iterator iter = handlers.begin(); iter != handlers.end(); iter++)
+		{
+			if (iter->pHandler == pHandler)
+			{
+				handlers.erase(iter);
+				return;
+			}
+		}
+	}
+}
+
 void CContextManager::NotifyHandlers(CState* pState, t_statechange_notifications notification, const wxString& data, const void* data2, bool blocked)
 {
+	wxASSERT(notification != STATECHANGE_NONE && notification != STATECHANGE_MAX);
+
+	const std::list<t_handler> &handlers = m_handlers[notification];
+	for (std::list<t_handler>::const_iterator iter = handlers.begin(); iter != handlers.end(); iter++)
+	{
+		if (blocked && iter->blockable)
+			continue;
+
+		iter->pHandler->OnStateChange(pState, notification, data, data2);
+	}
 }
 
 CState::CState(CMainFrame* pMainFrame)
@@ -379,6 +467,7 @@ void CState::DestroyEngine()
 void CState::RegisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification, bool blockable /*=true*/)
 {
 	wxASSERT(pHandler);
+	wxASSERT(pHandler->m_pState == this);
 	wxASSERT(notification != STATECHANGE_MAX && notification != STATECHANGE_NONE);
 
 	std::list<t_handler> &handlers = m_handlers[notification];
@@ -474,8 +563,6 @@ void CState::NotifyHandlers(enum t_statechange_notifications notification, const
 
 CStateEventHandler::CStateEventHandler(CState* pState)
 {
-	wxASSERT(pState);
-
 	if (!pState)
 		return;
 
@@ -484,9 +571,11 @@ CStateEventHandler::CStateEventHandler(CState* pState)
 
 CStateEventHandler::~CStateEventHandler()
 {
-	if (!m_pState)
-		return;
-	m_pState->UnregisterHandler(this, STATECHANGE_NONE);
+	CContextManager::Get()->UnregisterHandler(this, STATECHANGE_NONE);
+
+	const std::vector<CState*> *states = CContextManager::Get()->GetAllStates();
+	for (std::vector<CState*>::const_iterator iter = states->begin(); iter != states->end(); iter++)
+		(*iter)->UnregisterHandler(this, STATECHANGE_NONE);
 }
 
 void CState::UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const wxString& subdir, bool queueOnly)
