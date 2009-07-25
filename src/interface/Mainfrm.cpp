@@ -46,6 +46,7 @@
 #include <wx/taskbar.h>
 #endif
 #include "search.h"
+#include "power_management.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -247,6 +248,8 @@ CMainFrame::CMainFrame()
 	m_pThemeProvider = new CThemeProvider();
 	m_pState = CContextManager::Get()->CreateState(this);
 	m_pStateEventHandler = new CMainFrameStateEventHandler(m_pState, this);
+
+	CPowerManagement::Create(this);
 
 	m_pStatusBar = new CStatusBar(this);
 	if (m_pStatusBar)
@@ -545,6 +548,8 @@ CMainFrame::CMainFrame()
 
 CMainFrame::~CMainFrame()
 {
+	CPowerManagement::Destroy();
+
 	delete m_pStateEventHandler;
 	CContextManager::Get()->DestroyState(m_pState);
 	m_pState = 0;

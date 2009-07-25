@@ -50,6 +50,17 @@ filezilla_SOURCES = aboutdialog.cpp \
 		manual_transfer.cpp \
 		netconfwizard.cpp \
 		Options.cpp \
+		power_management.cpp \
+		queue.cpp \
+		QueueView.cpp \
+		queueview_failed.cpp \
+		queueview_successful.cpp \
+		quickconnectbar.cpp \
+		recentserverlist.cpp \
+		recursive_operation.cpp \
+		RemoteListView.cpp \
+		RemoteTreeView.cpp \
+		search.cpp \
 		settings/optionspage.cpp \
 		settings/optionspage_connection.cpp \
 		settings/optionspage_connection_active.cpp \
@@ -72,16 +83,6 @@ filezilla_SOURCES = aboutdialog.cpp \
 		settings/optionspage_themes.cpp \
 		settings/optionspage_transfer.cpp \
 		settings/optionspage_updatecheck.cpp \
-		queue.cpp \
-		QueueView.cpp \
-		queueview_failed.cpp \
-		queueview_successful.cpp \
-		quickconnectbar.cpp \
-		recentserverlist.cpp \
-		recursive_operation.cpp \
-		RemoteListView.cpp \
-		RemoteTreeView.cpp \
-		search.cpp \
 		settings/settingsdialog.cpp \
 		sftp_crypt_info_dlg.cpp \
 		sitemanager.cpp \
@@ -146,6 +147,18 @@ noinst_HEADERS = aboutdialog.h \
 		 manual_transfer.h \
 		 netconfwizard.h \
 		 Options.h \
+		 power_management.h \
+		 prefix.h \
+		 queue.h \
+		 QueueView.h \
+		 queueview_failed.h \
+		 queueview_successful.h \
+		 quickconnectbar.h \
+		 recentserverlist.h \
+		 recursive_operation.h \
+		 RemoteListView.h \
+		 RemoteTreeView.h \
+		 search.h \
 		 settings/optionspage.h \
 		 settings/optionspage_connection.h \
 		 settings/optionspage_connection_active.h \
@@ -168,17 +181,6 @@ noinst_HEADERS = aboutdialog.h \
 		 settings/optionspage_themes.h \
 		 settings/optionspage_transfer.h \
 		 settings/optionspage_updatecheck.h \
-		 prefix.h \
-		 queue.h \
-		 QueueView.h \
-		 queueview_failed.h \
-		 queueview_successful.h \
-		 quickconnectbar.h \
-		 recentserverlist.h \
-		 recursive_operation.h \
-		 RemoteListView.h \
-		 RemoteTreeView.h \
-		 search.h \
 		 settings/settingsdialog.h \
 		 sftp_crypt_info_dlg.h \
 		 sitemanager.h \
