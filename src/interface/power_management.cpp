@@ -3,7 +3,12 @@
 #include "Mainfrm.h"
 #include "Options.h"
 #include "queue.h"
+#ifdef WITH_LIBDBUS
 #include "../dbus/power_management_inhibitor.h"
+#endif
+#ifdef __WXMAC__
+#include <IOKit/pwr_mgt/IOPMLib.h>
+#endif
 
 CPowerManagement* CPowerManagement::m_pPowerManagement = 0;
 
@@ -72,6 +77,10 @@ void CPowerManagement::DoSetBusy()
 	SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED);
 #elif defined(WITH_LIBDBUS)
 	m_inhibitor->RequestBusy();
+#elif defined(__WXMAC__)
+	IOReturn success = IOPMAssertionCreate(kIOPMAssertionTypeNoIdleSleep, kIOPMAssertionLevelOn, &m_assertionID);
+	if (success != kIOReturnSuccess)
+		m_busy = false;
 #endif
 }
 
@@ -85,5 +94,7 @@ void CPowerManagement::DoSetIdle()
 	SetThreadExecutionState(ES_CONTINUOUS);
 #elif defined(WITH_LIBDBUS)
 	m_inhibitor->RequestIdle();
+#elif defined(__WXMAC__)
+	IOPMAssertionRelease(m_assertionID);
 #endif
 }

@@ -5,6 +5,9 @@
 // while FileZilla is busy
 
 #include "state.h"
+#ifdef __WXMAC__
+#include <IOKit/pwr_mgt/IOPMLib.h>
+#endif
 
 class CMainFrame;
 #ifdef WITH_LIBDBUS
@@ -34,6 +37,8 @@ protected:
 
 #ifdef WITH_LIBDBUS
 	CPowerManagementInhibitor *m_inhibitor;
+#elif defined(__WXMAC__)
+	IOPMAssertionID m_assertionID;
 #endif
 };
 
