@@ -1931,6 +1931,7 @@ void CQueueView::ImportQueue(TiXmlElement* pElement, bool updateSelections)
 				unsigned int errorCount = GetTextElementInt(pFile, "ErrorCount");
 				unsigned int priority = GetTextElementInt(pFile, "Priority", priority_normal);
 				bool binary = GetTextElementInt(pFile, "TransferMode", 1) != 0;
+				int overwrite_action = GetTextElementInt(pFile, "OverwriteAction", CFileExistsNotification::unknown);
 
 				CServerPath remotePath;
 				if (localFile != _T("") && remoteFile != _T("") && remotePath.SetSafePath(safeRemotePath) &&
@@ -1941,6 +1942,9 @@ void CQueueView::ImportQueue(TiXmlElement* pElement, bool updateSelections)
 					fileItem->SetPriorityRaw((enum QueuePriority)priority);
 					fileItem->m_errorCount = errorCount;
 					InsertItem(pServerItem, fileItem);
+
+					if (overwrite_action > 0 && overwrite_action < CFileExistsNotification::ACTION_COUNT)
+						fileItem->m_defaultFileExistsAction = (CFileExistsNotification::OverwriteAction)overwrite_action;
 				}
 			}
 			for (TiXmlElement* pFolder = pServer->FirstChildElement("Folder"); pFolder; pFolder = pFolder->NextSiblingElement("Folder"))
