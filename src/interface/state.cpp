@@ -37,7 +37,7 @@ void CContextManager::DestroyState(CState* pState)
 			continue;
 
 		m_contexts.erase(m_contexts.begin() + i);
-		if (i > m_current_context)
+		if ((int)i < m_current_context)
 			m_current_context--;
 		else if (i == m_current_context)
 		{
