@@ -24,11 +24,43 @@ public:
 	// Magic for CSharedPointer foo(bar); if (foo) ...
 	// aka safe bool idiom
 	typedef void (CSharedPointer::*bool_type)() const;
-    void uncomparable() const {}
+	void uncomparable() const {}
 	operator bool_type() const { return m_ptr ? &CSharedPointer::uncomparable : 0; }
 
 	CSharedPointer<T>& operator=(const CSharedPointer<T>& v);
 	CSharedPointer<T>& operator=(T *v);
+protected:
+	int* m_refcount;
+	T* m_ptr;
+};
+
+template<class T> class CSharedPointerArray
+{
+public:
+	CSharedPointerArray();
+	CSharedPointerArray(const CSharedPointerArray<T>& v);
+	CSharedPointerArray(T *v);
+	~CSharedPointerArray();
+
+	void clear();
+
+	T& operator*() const;
+	T* operator->() const;
+
+	T* Value() const {return m_ptr; } // Promise to NEVER EVER call delete on the returned value
+
+	bool operator==(const CSharedPointerArray<T>& cmp) const { return m_ptr == cmp.m_ptr; }
+	inline bool operator!=(const CSharedPointerArray<T>& cmp) const { return m_ptr != cmp.m_ptr; }
+	bool operator<(const CSharedPointerArray<T>& cmp) const { return m_ptr < cmp.m_ptr; }
+
+	// Magic for CSharedPointerArray foo(bar); if (foo) ...
+	// aka safe bool idiom
+	typedef void (CSharedPointerArray::*bool_type)() const;
+	void uncomparable() const {}
+	operator bool_type() const { return m_ptr ? &CSharedPointerArray::uncomparable : 0; }
+
+	CSharedPointerArray<T>& operator=(const CSharedPointerArray<T>& v);
+	CSharedPointerArray<T>& operator=(T *v);
 protected:
 	int* m_refcount;
 	T* m_ptr;
@@ -174,6 +206,104 @@ template<class T> CSharedPointer<T>& CSharedPointer<T>::operator=(T* v)
 	{
 		delete m_refcount;
 		delete m_ptr;
+	}
+
+	if (v)
+	{
+		m_ptr = v;
+		m_refcount = new int(1);
+	}
+	else
+	{
+		m_ptr = 0;
+		m_refcount = 0;
+	}
+
+	return *this;
+}
+
+template<class T> CSharedPointerArray<T>::CSharedPointerArray()
+{
+	m_ptr = 0;
+	m_refcount = 0;
+}
+
+template<class T> CSharedPointerArray<T>::CSharedPointerArray(const CSharedPointerArray<T>& v)
+{
+	m_ptr = v.m_ptr;
+	m_refcount = v.m_refcount;
+	if (m_refcount)
+		(*m_refcount)++;
+}
+
+template<class T> CSharedPointerArray<T>::CSharedPointerArray(T* v)
+{
+	if (v)
+	{
+		m_ptr = v;
+		m_refcount = new int(1);
+	}
+	else
+	{
+		m_ptr = 0;
+		m_refcount = 0;
+	}
+}
+
+template<class T> CSharedPointerArray<T>::~CSharedPointerArray()
+{
+	if (m_refcount && (*m_refcount)-- == 1)
+	{
+		delete m_refcount;
+		delete [] m_ptr;
+	}
+}
+
+template<class T> void CSharedPointerArray<T>::clear()
+{
+	if (m_refcount && (*m_refcount)-- == 1)
+	{
+		delete m_refcount;
+		delete [] m_ptr;
+	}
+	m_refcount = 0;
+	m_ptr = 0;
+}
+
+template<class T> T& CSharedPointerArray<T>::operator*() const
+{
+	return *m_ptr;
+}
+
+template<class T> T* CSharedPointerArray<T>::operator->() const
+{
+	return m_ptr;
+}
+
+template<class T> CSharedPointerArray<T>& CSharedPointerArray<T>::operator=(const CSharedPointerArray<T>& v)
+{
+	if (this == &v)
+		return *this;
+
+	if (m_refcount && (*m_refcount)-- == 1)
+	{
+		delete m_refcount;
+		delete [] m_ptr;
+	}
+	m_ptr = v.m_ptr;
+	m_refcount = v.m_refcount;
+	if (m_refcount)
+		(*m_refcount)++;
+
+	return *this;
+}
+
+template<class T> CSharedPointerArray<T>& CSharedPointerArray<T>::operator=(T* v)
+{
+	if (m_refcount && (*m_refcount)-- == 1)
+	{
+		delete m_refcount;
+		delete [] m_ptr;
 	}
 
 	if (v)

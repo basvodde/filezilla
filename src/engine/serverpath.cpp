@@ -261,27 +261,56 @@ wxString CServerPath::GetSafePath() const
 	return safepath;
 }
 
-bool CServerPath::SetSafePath(wxString path)
+bool CServerPath::SetSafePath(const wxString& path)
 {
 	CServerPathData& data = m_data.Get();
 	m_bEmpty = true;
-	data.m_prefix = _T("");
+	data.m_prefix.clear();
 	data.m_segments.clear();
 
-	int pos = path.Find(' ');
-	if (pos < 1)
-		return false;
+	// Optimized for speed, avoid expensive wxString functions
+	// Before the optimization this function was responsible for
+	// most CPU cycles used during loading of transfer queues
+	// from file
+	const int len = (int)path.Len();
+	wxChar* begin = new wxChar[len + 1];
+	CSharedPointerArray<wxChar> tmp(begin);
+	memcpy(begin, (const wxChar*)path, (len + 1) * sizeof(wxChar));
+	wxChar* p = begin;
 
-	long type;
-	if (!path.Left(pos).ToLong(&type))
-		return false;
-	m_type = (ServerType)type;
-	path = path.Mid(pos + 1);
-
-	pos = path.Find(' ');
-	if (pos == -1)
+	int type = 0;
+	do
 	{
-		if (path != _T("0"))
+		if (*p < '0' || *p > '9')
+			return false;
+		type *= 10;
+		type += *p - '0';
+
+		if (type >= SERVERTYPE_MAX)
+			return false;
+		p++;
+	} while (*p != ' ');
+
+	m_type = (ServerType)type;
+	p++;
+
+	int prefix_len = 0;
+	do
+	{
+		if (*p < '0' || *p > '9')
+			return false;
+		prefix_len *= 10;
+		prefix_len += *p - '0';
+
+		if (prefix_len > 32767) // Should be sane enough
+			return false;
+		p++;
+	}
+	while (*p && *p != ' ');
+
+	if (!*p)
+	{
+		if (prefix_len != 0)
 			return false;
 		else
 		{
@@ -290,41 +319,45 @@ bool CServerPath::SetSafePath(wxString path)
 			return true;
 		}
 	}
-	if (pos < 1)
-		return false;
 
-	unsigned long len;
-	if (!path.Left(pos).ToULong(&len))
-		return false;
-	path = path.Mid(pos + 1);
-	if (path.Length() < len)
-		return false;
+	p++;
 
-	if (len)
+	if (len - (p - begin) < prefix_len)
+		return false;
+	if (prefix_len)
 	{
-		data.m_prefix = path.Left(len);
-		path = path.Mid(len + 1);
+		*(p + prefix_len) = 0;
+		data.m_prefix = p;
+
+		p += prefix_len + 1;
 	}
-
-	while (path != _T(""))
+	
+	while (len > (p - begin))
 	{
-		pos = path.Find(' ');
-		if (pos == -1)
-			return false;
-		if (!pos)
+		int segment_len = 0;
+		do
 		{
-			path = path.Mid(1);
-			continue;
+			if (*p < '0' || *p > '9')
+				return false;
+			segment_len *= 10;
+			segment_len += *p - '0';
+
+			if (segment_len > 32767) // Should be sane enough
+				return false;
+			p++;
 		}
+		while (*p != ' ');
 
-		if (!path.Left(pos).ToULong(&len) || !len)
+		if (!segment_len)
 			return false;
-		path = path.Mid(pos + 1);
-		if (path.Length() < len)
-			return false;
+		p++;
 
-		data.m_segments.push_back(path.Left(len));
-		path = path.Mid(len + 1);
+		if (len - (p - begin) < segment_len)
+			return false;
+		*(p + segment_len) = 0;
+		data.m_segments.push_back(p);
+
+		p += segment_len + 1;
 	}
 
 	m_bEmpty = false;
