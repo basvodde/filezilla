@@ -339,21 +339,19 @@ void CFileItem::SaveItem(TiXmlElement* pElement) const
 	if (m_edit != CEditHandler::none)
 		return;
 
-	TiXmlElement file("File");
+	TiXmlElement *file = pElement->LinkEndChild(new TiXmlElement("File"))->ToElement();
 
-	AddTextElement(&file, "LocalFile", m_localFile);
-	AddTextElement(&file, "RemoteFile", m_remoteFile);
-	AddTextElement(&file, "RemotePath", m_remotePath.GetSafePath());
-	AddTextElementRaw(&file, "Download", m_download ? "1" : "0");
+	AddTextElement(file, "LocalFile", m_localFile);
+	AddTextElement(file, "RemoteFile", m_remoteFile);
+	AddTextElement(file, "RemotePath", m_remotePath.GetSafePath());
+	AddTextElementRaw(file, "Download", m_download ? "1" : "0");
 	if (m_size != -1)
-		AddTextElement(&file, "Size", m_size.ToString());
+		AddTextElement(file, "Size", m_size.ToString());
 	if (m_errorCount)
-		AddTextElement(&file, "ErrorCount", m_errorCount);
+		AddTextElement(file, "ErrorCount", m_errorCount);
 	if (m_priority != priority_normal)
-		AddTextElement(&file, "Priority", m_priority);
-	AddTextElementRaw(&file, "TransferMode", m_transferSettings.binary ? "1" : "0");
-
-	pElement->InsertEndChild(file);
+		AddTextElement(file, "Priority", m_priority);
+	AddTextElementRaw(file, "TransferMode", m_transferSettings.binary ? "1" : "0");
 }
 
 bool CFileItem::TryRemoveAll()
@@ -590,13 +588,13 @@ void CServerItem::QueueImmediateFile(CFileItem* pItem)
 
 void CServerItem::SaveItem(TiXmlElement* pElement) const
 {
-	TiXmlElement server("Server");
-	SetServer(&server, m_server);
+	TiXmlElement *server = new TiXmlElement("Server");
+	SetServer(server, m_server);
 
 	for (std::vector<CQueueItem*>::const_iterator iter = m_children.begin() + m_removed_at_front; iter != m_children.end(); iter++)
-		(*iter)->SaveItem(&server);
+		(*iter)->SaveItem(server);
 
-	pElement->InsertEndChild(server);
+	pElement->LinkEndChild(server);
 }
 
 wxLongLong CServerItem::GetTotalSize(int& filesWithUnknownSize, int& queuedFiles, int& folderScanCount) const
