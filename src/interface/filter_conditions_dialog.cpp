@@ -43,6 +43,7 @@ CFilterConditionsDialog::CFilterConditionsDialog()
 	m_choiceBoxHeight = 0;
 	m_pListCtrl = 0;
 	m_has_foreign_type = false;
+	m_pAdd = 0;
 }
 
 bool CFilterConditionsDialog::CreateListControl(int conditions /*=common*/)
@@ -401,8 +402,15 @@ void CFilterConditionsDialog::EditFilter(const CFilter& filter)
 		MakeControls(cond);
 	}
 
-	wxRect client_size = m_pListCtrl->GetClientSize();
-	m_pAdd = new wxButton(m_pListCtrl, wxID_ANY, _T("+"), wxPoint(client_size.GetWidth() - 5 - m_choiceBoxHeight, (m_choiceBoxHeight + 6) * m_filterControls.size() + 3), wxSize(m_choiceBoxHeight, m_choiceBoxHeight));
+	// Get correct coordinates
+	wxSize client_size = m_pListCtrl->GetClientSize();
+	wxPoint pos;
+	m_pListCtrl->CalcScrolledPosition(client_size.GetWidth() - 5 - m_choiceBoxHeight, (m_choiceBoxHeight + 6) * m_filterControls.size() + 3, &pos.x, &pos.y);
+
+	if (!m_pAdd)
+		m_pAdd = new wxButton(m_pListCtrl, wxID_ANY, _T("+"), pos, wxSize(m_choiceBoxHeight, m_choiceBoxHeight));
+	else
+		m_pAdd->SetPosition(pos);
 
 	UpdateConditionsClientSize();
 
