@@ -3,6 +3,7 @@
 
 #include "dialogex.h"
 #include "filter.h"
+#include <set>
 
 class CFilterControls
 {
@@ -15,6 +16,7 @@ public:
 	wxChoice* pCondition;
 	wxTextCtrl* pValue;
 	wxChoice* pSet;
+	wxButton* pRemove;
 };
 
 class wxCustomHeightListCtrl;
@@ -56,9 +58,14 @@ private:
 	wxArrayString filterTypes;
 	std::vector<t_filterType> filter_type_map;
 
+	wxButton* m_pAdd;
+
+	void OnMore();
+	void OnRemove(int item);
+	void OnRemove(const std::set<int> &selected);
+
 	DECLARE_EVENT_TABLE();
-	void OnMore(wxCommandEvent& event);
-	void OnRemove(wxCommandEvent& event);
+	void OnButton(wxCommandEvent& event);
 	void OnFilterTypeChange(wxCommandEvent& event);
 	void OnConditionSelectionChange(wxCommandEvent& event);
 };

@@ -14,6 +14,7 @@ CFilterControls::CFilterControls()
 	pCondition = 0;
 	pValue = 0;
 	pSet = 0;
+	pRemove = 0;
 }
 
 void CFilterControls::Reset()
@@ -22,16 +23,17 @@ void CFilterControls::Reset()
 	delete pCondition;
 	delete pValue;
 	delete pSet;
+	delete pRemove;
 
 	pType = 0;
 	pCondition = 0;
 	pValue = 0;
 	pSet = 0;
+	pRemove = 0;
 }
 
 BEGIN_EVENT_TABLE(CFilterConditionsDialog, wxDialogEx)
-EVT_BUTTON(XRCID("ID_MORE"), CFilterConditionsDialog::OnMore)
-EVT_BUTTON(XRCID("ID_REMOVE"), CFilterConditionsDialog::OnRemove)
+EVT_BUTTON(wxID_ANY, CFilterConditionsDialog::OnButton)
 EVT_CHOICE(wxID_ANY, CFilterConditionsDialog::OnFilterTypeChange)
 EVT_LISTBOX(wxID_ANY, CFilterConditionsDialog::OnConditionSelectionChange)
 END_EVENT_TABLE()
@@ -162,8 +164,12 @@ void CFilterConditionsDialog::SetSelectionFromType(wxChoice* pChoice, t_filterTy
 	 pChoice->SetSelection(0);
 }
 
-void CFilterConditionsDialog::OnMore(wxCommandEvent& event)
+void CFilterConditionsDialog::OnMore()
 {
+	wxPoint pos = m_pAdd->GetPosition();
+	pos.y += m_choiceBoxHeight + 6;
+	m_pAdd->SetPosition(pos);
+
 	CFilterCondition cond;
 	m_currentFilter.filters.push_back(cond);
 
@@ -171,10 +177,17 @@ void CFilterConditionsDialog::OnMore(wxCommandEvent& event)
 	UpdateConditionsClientSize();
 }
 
-void CFilterConditionsDialog::OnRemove(wxCommandEvent& event)
+void CFilterConditionsDialog::OnRemove(int item)
 {
-	std::set<int> selected = m_pListCtrl->GetSelection();
+	std::set<int> selected;
+	selected.insert(item);
+	OnRemove(selected);
+	if (!m_filterControls.size())
+		OnMore();
+}
 
+void CFilterConditionsDialog::OnRemove(const std::set<int> &selected)
+{
 	std::vector<CFilterControls> filterControls = m_filterControls;
 	m_filterControls.clear();
 
@@ -182,7 +195,7 @@ void CFilterConditionsDialog::OnRemove(wxCommandEvent& event)
 	m_currentFilter.filters.clear();
 
 	int deleted = 0;
-	for (unsigned int i = 0; i < filterControls.size(); i++)
+	for (unsigned int i = 0; i < (int)filterControls.size(); i++)
 	{
 		CFilterControls& controls = filterControls[i];
 		if (selected.find(i) == selected.end())
@@ -214,6 +227,10 @@ void CFilterConditionsDialog::OnRemove(wxCommandEvent& event)
 				controls.pSet->SetPosition(pos);
 			}
 
+			pos = controls.pRemove->GetPosition();
+			pos.y -= deleted * (m_choiceBoxHeight + 6);
+			controls.pRemove->SetPosition(pos);
+
 			controls.pType->SetId(i - deleted);
 		}
 		else
@@ -222,6 +239,10 @@ void CFilterConditionsDialog::OnRemove(wxCommandEvent& event)
 			deleted++;
 		}
 	}
+
+	wxPoint pos = m_pAdd->GetPosition();
+	pos.y -= deleted * (m_choiceBoxHeight + 6);
+	m_pAdd->SetPosition(pos);
 
 	m_pListCtrl->ClearSelection();
 	UpdateConditionsClientSize();
@@ -250,7 +271,7 @@ void CFilterConditionsDialog::OnFilterTypeChange(wxCommandEvent& event)
 
 void CFilterConditionsDialog::MakeControls(const CFilterCondition& condition, int i /*=-1*/)
 {
-	wxRect size = m_pListCtrl->GetClientSize();
+	wxRect client_size = m_pListCtrl->GetClientSize();
 
 	if (i == -1)
 	{
@@ -303,18 +324,21 @@ void CFilterConditionsDialog::MakeControls(const CFilterCondition& condition, in
 	wxRect conditionsRect = controls.pCondition->GetSize();
 
 	posx = 30 + typeRect.GetWidth() + conditionsRect.GetWidth();
+	const int maxwidth = client_size.GetWidth() - posx - 10 - m_choiceBoxHeight;
 	if (condition.type == filter_name || condition.type == filter_size || condition.type == filter_path)
 	{		
 		controls.pValue = new wxTextCtrl();
-		controls.pValue->Create(m_pListCtrl, wxID_ANY, _T(""), wxPoint(posx, posy), wxSize(size.GetWidth() - posx - 10, -1));
+		controls.pValue->Create(m_pListCtrl, wxID_ANY, _T(""), wxPoint(posx, posy), wxSize(maxwidth, -1));
 		controls.pValue->SetValue(condition.strValue);
 	}
 	else
 	{
 		controls.pSet = new wxChoice();
-		controls.pSet->Create(m_pListCtrl, wxID_ANY, wxPoint(posx, posy), wxSize(size.GetWidth() - posx - 10, -1), attributeSetTypes);
+		controls.pSet->Create(m_pListCtrl, wxID_ANY, wxPoint(posx, posy), wxSize(maxwidth, -1), attributeSetTypes);
 		controls.pSet->Select(condition.strValue != _T("0") ? 0 : 1);
 	}
+
+	controls.pRemove = new wxButton(m_pListCtrl, wxID_ANY, _T("-"), wxPoint(posx + maxwidth + 5, posy), wxSize(m_choiceBoxHeight, m_choiceBoxHeight));
 }
 
 void CFilterConditionsDialog::DestroyControls()
@@ -330,7 +354,7 @@ void CFilterConditionsDialog::DestroyControls()
 void CFilterConditionsDialog::UpdateConditionsClientSize()
 {
 	wxSize oldSize = m_pListCtrl->GetClientSize();
-	m_pListCtrl->SetLineCount(m_filterControls.size());
+	m_pListCtrl->SetLineCount(m_filterControls.size() + 1);
 	wxSize newSize = m_pListCtrl->GetClientSize();
 
 	if (oldSize.GetWidth() != newSize.GetWidth())
@@ -347,7 +371,16 @@ void CFilterConditionsDialog::UpdateConditionsClientSize()
 			wxSize size = controls.pValue->GetSize();
 			size.SetWidth(size.GetWidth() + deltaX);
 			controls.pValue->SetSize(size);
+
+			wxPoint pos = controls.pRemove->GetPosition();
+			pos.x += deltaX;
+			controls.pRemove->SetPosition(pos);
 		}
+
+		// Move add button
+		wxPoint pos = m_pAdd->GetPosition();
+		pos.x += deltaX;
+		m_pAdd->SetPosition(pos);
 	}
 }
 
@@ -357,12 +390,19 @@ void CFilterConditionsDialog::EditFilter(const CFilter& filter)
 
 	// Create new controls
 	m_currentFilter = filter;
+
+	if (m_currentFilter.filters.size() == -1)
+		m_currentFilter.filters.push_back(CFilterCondition());
+
 	for (unsigned int i = 0; i < filter.filters.size(); i++)
 	{
 		const CFilterCondition& cond = filter.filters[i];
 
 		MakeControls(cond);
 	}
+
+	wxRect client_size = m_pListCtrl->GetClientSize();
+	m_pAdd = new wxButton(m_pListCtrl, wxID_ANY, _T("+"), wxPoint(client_size.GetWidth() - 5 - m_choiceBoxHeight, (m_choiceBoxHeight + 6) * m_filterControls.size() + 3), wxSize(m_choiceBoxHeight, m_choiceBoxHeight));
 
 	UpdateConditionsClientSize();
 
@@ -448,8 +488,6 @@ void CFilterConditionsDialog::ClearFilter(bool disable)
 void CFilterConditionsDialog::SetFilterCtrlState(bool disable)
 {
 	m_pListCtrl->Enable(!disable);
-	XRCCTRL(*this, "ID_MORE", wxButton)->Enable(!disable);
-	XRCCTRL(*this, "ID_REMOVE", wxButton)->Enable(!disable && !m_pListCtrl->GetSelection().empty());
 
 	XRCCTRL(*this, "ID_MATCHALL", wxRadioButton)->Enable(!disable);
 	XRCCTRL(*this, "ID_MATCHANY", wxRadioButton)->Enable(!disable);
@@ -513,4 +551,23 @@ void CFilterConditionsDialog::OnConditionSelectionChange(wxCommandEvent& event)
 		return;
 
 	SetFilterCtrlState(false);
+}
+
+void CFilterConditionsDialog::OnButton(wxCommandEvent& event)
+{
+	if (event.GetId() == m_pAdd->GetId())
+	{
+		OnMore();
+		return;
+	}
+
+	for (int i = 0; i < (int)m_filterControls.size(); i++)
+	{
+		if (m_filterControls[i].pRemove->GetId() == event.GetId())
+		{
+			OnRemove(i);
+			return;
+		}
+	}
+	event.Skip();
 }

@@ -591,8 +591,8 @@ void CSearchDialog::Run()
 
 	m_pState->BlockHandlers(STATECHANGE_REMOTE_DIR);
 	m_pState->BlockHandlers(STATECHANGE_REMOTE_DIR_MODIFIED);
-	m_pState->RegisterHandler(this, STATECHANGE_REMOTE_DIR);
-	m_pState->RegisterHandler(this, STATECHANGE_REMOTE_IDLE);
+	m_pState->RegisterHandler(this, STATECHANGE_REMOTE_DIR, false);
+	m_pState->RegisterHandler(this, STATECHANGE_REMOTE_IDLE, false);
 
 	ShowModal();
 
