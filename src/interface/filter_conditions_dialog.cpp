@@ -194,16 +194,15 @@ void CFilterConditionsDialog::OnRemove(int item)
 
 void CFilterConditionsDialog::OnRemove(const std::set<int> &selected)
 {
+	int delta_y = 0;
+
+	m_pListCtrl->SetLineCount(m_filterControls.size() - selected.size() + 1);
+
 	std::vector<CFilterControls> filterControls = m_filterControls;
 	m_filterControls.clear();
 
 	std::vector<CFilterCondition> filters = m_currentFilter.filters;
 	m_currentFilter.filters.clear();
-	int deleted = 0;
-
-	int delta_y = deleted * (m_choiceBoxHeight + 6);
-
-	m_pListCtrl->SetLineCount(filterControls.size() - selected.size() + 1);
 
 	for (unsigned int i = 0; i < filterControls.size(); i++)
 	{
@@ -240,8 +239,6 @@ void CFilterConditionsDialog::OnRemove(const std::set<int> &selected)
 			pos = controls.pRemove->GetPosition();
 			pos.y -= delta_y;
 			controls.pRemove->SetPosition(pos);
-
-			controls.pType->SetId(i - deleted);
 		}
 		else
 		{
@@ -262,8 +259,13 @@ void CFilterConditionsDialog::OnRemove(const std::set<int> &selected)
 
 void CFilterConditionsDialog::OnFilterTypeChange(wxCommandEvent& event)
 {
-	int item = event.GetId();
-	if (item < 0 || item >= (int)m_filterControls.size())
+	int item;
+	for (item = 0; item < (int)m_filterControls.size(); item++)
+	{
+		if (!m_filterControls[item].pType || m_filterControls[item].pType->GetId() != event.GetId())
+			continue;
+	}
+	if (item == m_filterControls.size())
 		return;
 
 	CFilterCondition& filter = m_currentFilter.filters[item];
@@ -303,7 +305,7 @@ void CFilterConditionsDialog::MakeControls(const CFilterCondition& condition, in
 	if (!controls.pType)
 	{
 		controls.pType = new wxChoice();
-		controls.pType->Create(m_pListCtrl, i, pos, wxDefaultSize, filterTypes);
+		controls.pType->Create(m_pListCtrl, wxID_ANY, pos, wxDefaultSize, filterTypes);
 	}
 	else
 		controls.pType->SetPosition(pos);
