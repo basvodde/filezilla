@@ -179,6 +179,7 @@ void CFilterConditionsDialog::OnMore()
 	m_currentFilter.filters.push_back(cond);
 
 	MakeControls(cond);
+	m_pListCtrl->SetLineCount(m_filterControls.size() + 1);
 	UpdateConditionsClientSize();
 }
 
@@ -198,9 +199,13 @@ void CFilterConditionsDialog::OnRemove(const std::set<int> &selected)
 
 	std::vector<CFilterCondition> filters = m_currentFilter.filters;
 	m_currentFilter.filters.clear();
-
 	int deleted = 0;
-	for (unsigned int i = 0; i < (int)filterControls.size(); i++)
+
+	int delta_y = deleted * (m_choiceBoxHeight + 6);
+
+	m_pListCtrl->SetLineCount(filterControls.size() - selected.size() + 1);
+
+	for (unsigned int i = 0; i < filterControls.size(); i++)
 	{
 		CFilterControls& controls = filterControls[i];
 		if (selected.find(i) == selected.end())
@@ -212,28 +217,28 @@ void CFilterConditionsDialog::OnRemove(const std::set<int> &selected)
 			wxPoint pos;
 
 			pos = controls.pType->GetPosition();
-			pos.y -= deleted * (m_choiceBoxHeight + 6);
+			pos.y -= delta_y;
 			controls.pType->SetPosition(pos);
 
 			pos = controls.pCondition->GetPosition();
-			pos.y -= deleted * (m_choiceBoxHeight + 6);
+			pos.y -= delta_y;
 			controls.pCondition->SetPosition(pos);
 
 			if (controls.pValue)
 			{
 				pos = controls.pValue->GetPosition();
-				pos.y -= deleted * (m_choiceBoxHeight + 6);
+				pos.y -= delta_y;
 				controls.pValue->SetPosition(pos);
 			}
 			if (controls.pSet)
 			{
 				pos = controls.pSet->GetPosition();
-				pos.y -= deleted * (m_choiceBoxHeight + 6);
+				pos.y -= delta_y;
 				controls.pSet->SetPosition(pos);
 			}
 
 			pos = controls.pRemove->GetPosition();
-			pos.y -= deleted * (m_choiceBoxHeight + 6);
+			pos.y -= delta_y;
 			controls.pRemove->SetPosition(pos);
 
 			controls.pType->SetId(i - deleted);
@@ -241,12 +246,12 @@ void CFilterConditionsDialog::OnRemove(const std::set<int> &selected)
 		else
 		{
 			controls.Reset();
-			deleted++;
+			delta_y += m_choiceBoxHeight + 6;
 		}
 	}
 
 	wxPoint pos = m_pAdd->GetPosition();
-	pos.y -= deleted * (m_choiceBoxHeight + 6);
+	pos.y -= delta_y;
 	m_pAdd->SetPosition(pos);
 
 	m_pListCtrl->ClearSelection();
@@ -362,6 +367,9 @@ void CFilterConditionsDialog::MakeControls(const CFilterCondition& condition, in
 			controls.pValue->SetSize(size);
 		}
 		controls.pValue->SetValue(condition.strValue);
+
+		// Need to explicitely set min size, otherwise initial size becomes min size
+		controls.pValue->SetMinSize(wxSize(20,-1));
 	}
 	else
 	{
@@ -381,6 +389,9 @@ void CFilterConditionsDialog::MakeControls(const CFilterCondition& condition, in
 			controls.pSet->SetSize(size);
 		}
 		controls.pSet->Select(condition.strValue != _T("0") ? 0 : 1);
+
+		// Need to explicitely set min size, otherwise initial size becomes min size
+		controls.pValue->SetMinSize(wxSize(20,-1));
 	}
 
 	pos = wxPoint(posx + maxwidth + 5, posy);
@@ -402,14 +413,12 @@ void CFilterConditionsDialog::DestroyControls()
 
 void CFilterConditionsDialog::UpdateConditionsClientSize()
 {
-	m_pListCtrl->SetLineCount(m_filterControls.size() + 1);
 	wxSize newSize = m_pListCtrl->GetClientSize();
 
 	if (m_lastListSize.GetWidth() == newSize.GetWidth())
 		return;
 
 	int deltaX = newSize.GetWidth() - m_lastListSize.GetWidth();
-
 	m_lastListSize = newSize;
 
 	// Resize text fields
@@ -422,6 +431,7 @@ void CFilterConditionsDialog::UpdateConditionsClientSize()
 		wxSize size = controls.pValue->GetSize();
 		size.SetWidth(size.GetWidth() + deltaX);
 		controls.pValue->SetSize(size);
+		wxSize set_size = controls.pValue->GetSize();
 
 		wxPoint pos = controls.pRemove->GetPosition();
 		pos.x += deltaX;
@@ -464,6 +474,7 @@ void CFilterConditionsDialog::EditFilter(const CFilter& filter)
 	else
 		m_pAdd->SetPosition(pos);
 
+	m_pListCtrl->SetLineCount(m_filterControls.size() + 1);
 	UpdateConditionsClientSize();
 
 	XRCCTRL(*this, "ID_MATCHALL", wxRadioButton)->SetValue(filter.matchType == CFilter::all);
