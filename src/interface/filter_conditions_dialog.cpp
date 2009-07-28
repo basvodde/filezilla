@@ -119,6 +119,8 @@ bool CFilterConditionsDialog::CreateListControl(int conditions /*=common*/)
 
 	SetFilterCtrlState(true);
 
+	m_pListCtrl->Connect(wxEVT_SIZE, wxSizeEventHandler(CFilterConditionsDialog::OnListSize), 0, this);
+
 	return true;
 }
 
@@ -136,11 +138,13 @@ void CFilterConditionsDialog::CalcMinListWidth()
 
 	requiredWidth += m_pListCtrl->GetWindowBorderSize().x;
 	requiredWidth += 40;
-	requiredWidth += 100;
+	requiredWidth += 120;
 
 	wxSize minSize = m_pListCtrl->GetMinSize();
 	minSize.IncTo(wxSize(requiredWidth, -1));
 	m_pListCtrl->SetMinSize(minSize);
+
+	m_lastListSize = m_pListCtrl->GetClientSize();
 }
 
 t_filterType CFilterConditionsDialog::GetTypeFromTypeSelection(int selection)
@@ -354,31 +358,35 @@ void CFilterConditionsDialog::DestroyControls()
 
 void CFilterConditionsDialog::UpdateConditionsClientSize()
 {
-	wxSize oldSize = m_pListCtrl->GetClientSize();
 	m_pListCtrl->SetLineCount(m_filterControls.size() + 1);
 	wxSize newSize = m_pListCtrl->GetClientSize();
 
-	if (oldSize.GetWidth() != newSize.GetWidth())
+	if (m_lastListSize.GetWidth() == newSize.GetWidth())
+		return;
+
+	int deltaX = newSize.GetWidth() - m_lastListSize.GetWidth();
+
+	m_lastListSize = newSize;
+
+	// Resize text fields
+	for (unsigned int i = 0; i < m_filterControls.size(); i++)
 	{
-		int deltaX = newSize.GetWidth() - oldSize.GetWidth();
+		CFilterControls& controls = m_filterControls[i];
+		if (!controls.pValue)
+			continue;
 
-		// Resize text fields
-		for (unsigned int i = 0; i < m_filterControls.size(); i++)
-		{
-			CFilterControls& controls = m_filterControls[i];
-			if (!controls.pValue)
-				continue;
+		wxSize size = controls.pValue->GetSize();
+		size.SetWidth(size.GetWidth() + deltaX);
+		controls.pValue->SetSize(size);
 
-			wxSize size = controls.pValue->GetSize();
-			size.SetWidth(size.GetWidth() + deltaX);
-			controls.pValue->SetSize(size);
+		wxPoint pos = controls.pRemove->GetPosition();
+		pos.x += deltaX;
+		controls.pRemove->SetPosition(pos);
+	}
 
-			wxPoint pos = controls.pRemove->GetPosition();
-			pos.x += deltaX;
-			controls.pRemove->SetPosition(pos);
-		}
-
-		// Move add button
+	// Move add button
+	if (m_pAdd)
+	{
 		wxPoint pos = m_pAdd->GetPosition();
 		pos.x += deltaX;
 		m_pAdd->SetPosition(pos);
@@ -577,5 +585,11 @@ void CFilterConditionsDialog::OnButton(wxCommandEvent& event)
 			return;
 		}
 	}
+	event.Skip();
+}
+
+void CFilterConditionsDialog::OnListSize(wxSizeEvent& event)
+{
+	UpdateConditionsClientSize();
 	event.Skip();
 }

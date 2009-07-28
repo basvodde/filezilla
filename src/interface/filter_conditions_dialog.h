@@ -49,6 +49,7 @@ private:
 	bool m_has_foreign_type;
 
 	wxCustomHeightListCtrl* m_pListCtrl;
+	wxSize m_lastListSize;
 	int m_choiceBoxHeight;
 
 	std::vector<CFilterControls> m_filterControls;
@@ -63,6 +64,8 @@ private:
 	void OnMore();
 	void OnRemove(int item);
 	void OnRemove(const std::set<int> &selected);
+
+	void OnListSize(wxSizeEvent& event);
 
 	DECLARE_EVENT_TABLE();
 	void OnButton(wxCommandEvent& event);
