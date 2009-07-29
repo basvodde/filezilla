@@ -2312,46 +2312,38 @@
                 </object>
               </object>
               <object class="sizeritem">
-                <object class="wxStaticText">
-                  <label>Filter &amp;out all files that:</label>
-                </object>
-                <flag>wxTOP</flag>
-                <border>5</border>
-              </object>
-              <object class="sizeritem">
                 <object class="wxFlexGridSizer">
-                  <cols>3</cols>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>&amp;Filter conditions:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxChoice" name="ID_MATCHTYPE">
+                      <content>
+                        <item>Match all of the following</item>
+                        <item>Match any of the following</item>
+                        <item>Match none of the following</item>
+                      </content>
+                      <selection>0</selection>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <cols>2</cols>
+                  <rows>1</rows>
                   <hgap>5</hgap>
-                  <object class="sizeritem">
-                    <object class="wxRadioButton" name="ID_MATCHALL">
-                      <label>Match all of the following</label>
-                      <value>1</value>
-                      <style>wxRB_GROUP</style>
-                    </object>
-                  </object>
-                  <object class="sizeritem">
-                    <object class="wxRadioButton" name="ID_MATCHANY">
-                      <label>Any of the following</label>
-                      <value>0</value>
-                    </object>
-                  </object>
-                  <object class="sizeritem">
-                    <object class="wxRadioButton" name="ID_MATCHNONE">
-                      <label>None of the following</label>
-                      <value>0</value>
-                    </object>
-                  </object>
                 </object>
-                <flag>wxALL</flag>
+                <flag>wxTOP|wxBOTTOM</flag>
                 <border>5</border>
               </object>
+              
               <object class="sizeritem">
                 <object class="wxScrolledWindow" name="ID_CONDITIONS">
                   <size>-1,200</size>
                 </object>
                 <flag>wxGROW</flag>
               </object>
-              
               <object class="sizeritem">
                 <object class="wxCheckBox" name="ID_CASE">
                   <label>Conditions are c&amp;ase sensitive</label>
@@ -4414,7 +4406,7 @@
             <object class="wxBoxSizer">
               <object class="sizeritem">
                 <object class="wxStaticText">
-                  <label>Search directory:</label>
+                  <label>Search &amp;directory:</label>
                 </object>
                 <flag>wxALIGN_CENTRE_VERTICAL|wxRIGHT</flag>
                 <border>5</border>
@@ -4434,12 +4426,8 @@
               <default>1</default>
             </object>
           </object>
-          <object class="sizeritem">
-            <object class="wxStaticText">
-              <label>Search for files that:</label>
-            </object>
-            <flag>wxALIGN_BOTTOM</flag>
-          </object>
+          
+          <object class="spacer"/>
           <object class="sizeritem">
             <object class="wxButton" name="ID_STOP">
               <label>S&amp;top</label>
@@ -4456,39 +4444,37 @@
       <object class="sizeritem">
         <object class="wxFlexGridSizer">
           <object class="sizeritem">
-            <object class="wxRadioButton" name="ID_MATCHALL">
-              <label>Match all of the following</label>
-              <value>1</value>
-              <style>wxRB_GROUP</style>
+            <object class="wxStaticText">
+              <label>Search &amp;conditions:</label>
             </object>
+            <flag>wxALIGN_CENTRE_VERTICAL</flag>
           </object>
           <object class="sizeritem">
-            <object class="wxRadioButton" name="ID_MATCHANY">
-              <label>Any of the following</label>
-              <value>0</value>
+            <object class="wxChoice" name="ID_MATCHTYPE">
+              <content>
+                <item>Match all of the following</item>
+                <item>Match any of the following</item>
+                <item>Match none of the following</item>
+              </content>
+              <selection>0</selection>
             </object>
+            <flag>wxALIGN_CENTRE_VERTICAL</flag>
           </object>
-          <object class="sizeritem">
-            <object class="wxRadioButton" name="ID_MATCHNONE">
-              <label>None of the following</label>
-              <value>0</value>
-            </object>
-          </object>
-          <cols>3</cols>
+          <cols>2</cols>
+          <rows>1</rows>
           <hgap>5</hgap>
         </object>
-        <flag>wxLEFT|wxRIGHT</flag>
+        <flag>wxLEFT|wxRIGHT|wxTOP</flag>
         <border>5</border>
       </object>
       <object class="sizeritem">
         <object class="wxFlexGridSizer">
           <object class="sizeritem">
             <object class="wxScrolledWindow" name="ID_CONDITIONS">
-              <size>-1,120</size>
+              <size>350,120</size>
             </object>
             <flag>wxGROW</flag>
           </object>
-          
           <object class="sizeritem">
             <object class="wxCheckBox" name="ID_CASE">
               <label>Conditions are c&amp;ase sensitive</label>
