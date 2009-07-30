@@ -2322,9 +2322,9 @@
                   <object class="sizeritem">
                     <object class="wxChoice" name="ID_MATCHTYPE">
                       <content>
-                        <item>Match all of the following</item>
-                        <item>Match any of the following</item>
-                        <item>Match none of the following</item>
+                        <item>Filter out items matching all of the following</item>
+                        <item>Filter out items matching any of the following</item>
+                        <item>Filter out items matching none of the following</item>
                       </content>
                       <selection>0</selection>
                     </object>
@@ -2337,10 +2337,9 @@
                 <flag>wxTOP|wxBOTTOM</flag>
                 <border>5</border>
               </object>
-              
               <object class="sizeritem">
                 <object class="wxScrolledWindow" name="ID_CONDITIONS">
-                  <size>-1,200</size>
+                  <size>350,200</size>
                 </object>
                 <flag>wxGROW</flag>
               </object>
@@ -4426,7 +4425,6 @@
               <default>1</default>
             </object>
           </object>
-          
           <object class="spacer"/>
           <object class="sizeritem">
             <object class="wxButton" name="ID_STOP">
