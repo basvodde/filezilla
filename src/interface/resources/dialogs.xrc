@@ -2238,12 +2238,10 @@
     </object>
   </object>
   <object class="wxDialog" name="ID_EDITFILTER">
-    <title>Edit filters</title>
     <object class="wxBoxSizer">
       <orient>wxVERTICAL</orient>
       <object class="sizeritem">
         <object class="wxBoxSizer">
-          <orient>wxHORIZONTAL</orient>
           <object class="sizeritem">
             <object class="wxBoxSizer">
               <object class="sizeritem">
@@ -2294,7 +2292,6 @@
           </object>
           <object class="sizeritem">
             <object class="wxBoxSizer">
-              <orient>wxVERTICAL</orient>
               <object class="sizeritem">
                 <object class="wxFlexGridSizer">
                   <object class="sizeritem">
@@ -2341,6 +2338,7 @@
                 <object class="wxScrolledWindow" name="ID_CONDITIONS">
                   <size>350,200</size>
                 </object>
+                <option>1</option>
                 <flag>wxGROW</flag>
               </object>
               <object class="sizeritem">
@@ -2374,12 +2372,16 @@
                 <flag>wxTOP</flag>
                 <border>5</border>
               </object>
+              <orient>wxVERTICAL</orient>
             </object>
-            <flag>wxLEFT</flag>
+            <option>1</option>
+            <flag>wxLEFT|wxGROW</flag>
             <border>10</border>
           </object>
+          <orient>wxHORIZONTAL</orient>
         </object>
-        <flag>wxALL</flag>
+        <option>1</option>
+        <flag>wxALL|wxGROW</flag>
         <border>5</border>
       </object>
       <object class="sizeritem">
@@ -2404,6 +2406,8 @@
         <border>5</border>
       </object>
     </object>
+    <title>Edit filters</title>
+    <style>wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER</style>
   </object>
   <object class="wxPanel" name="ID_CHECKFORUPDATE1">
     <object class="wxBoxSizer">

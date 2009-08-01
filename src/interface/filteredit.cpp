@@ -1,6 +1,8 @@
 #include "FileZilla.h"
 #include "filteredit.h"
 #include "customheightlistctrl.h"
+#include "window_state_manager.h"
+#include "Options.h"
 
 BEGIN_EVENT_TABLE(CFilterEditDialog, CFilterConditionsDialog)
 EVT_BUTTON(XRCID("wxID_OK"), CFilterEditDialog::OnOK)
@@ -11,6 +13,20 @@ EVT_BUTTON(XRCID("ID_RENAME"), CFilterEditDialog::OnRename)
 EVT_BUTTON(XRCID("ID_COPY"), CFilterEditDialog::OnCopy)
 EVT_LISTBOX(XRCID("ID_FILTERS"), CFilterEditDialog::OnFilterSelect)
 END_EVENT_TABLE();
+
+CFilterEditDialog::CFilterEditDialog()
+{
+	m_pWindowStateManager = 0;
+}
+
+CFilterEditDialog::~CFilterEditDialog()
+{
+	if (m_pWindowStateManager)
+	{
+		m_pWindowStateManager->Remember(OPTION_FILTEREDIT_SIZE);
+		delete m_pWindowStateManager;
+	}
+}
 
 void CFilterEditDialog::OnOK(wxCommandEvent& event)
 {
@@ -70,8 +86,11 @@ bool CFilterEditDialog::Create(wxWindow* parent, const std::vector<CFilter>& fil
 	m_filterSets = filterSets;
 	for (std::vector<CFilter>::const_iterator iter = filters.begin(); iter != filters.end(); iter++)
 		m_pFilterListCtrl->Append(iter->name);
+
+	m_pWindowStateManager = new CWindowStateManager(this);
+	m_pWindowStateManager->Restore(OPTION_FILTEREDIT_SIZE, wxSize(750, 500));
+
 	Layout();
-	Fit();
 
 	SetCtrlState(false);
 

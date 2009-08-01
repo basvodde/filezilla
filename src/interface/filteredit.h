@@ -5,11 +5,12 @@
 #include "filter_conditions_dialog.h"
 
 class wxCustomHeightListCtrl;
+class CWindowStateManager;
 class CFilterEditDialog : public CFilterConditionsDialog
 {
 public:
-	CFilterEditDialog() {}
-	virtual ~CFilterEditDialog() { }
+	CFilterEditDialog();
+	virtual ~CFilterEditDialog();
 
 	bool Create(wxWindow* parent, const std::vector<CFilter>& filters, const std::vector<CFilterSet>& filterSets);
 
@@ -39,6 +40,8 @@ protected:
 
 	std::vector<CFilter> m_filters;
 	std::vector<CFilterSet> m_filterSets;
+
+	CWindowStateManager* m_pWindowStateManager;
 };
 
 #endif //__FILTEREDIT_H__
