@@ -20,7 +20,7 @@ nodist_noinst_DATA = filezilla.o
 
 filezilla.o: $(srcdir)/filezilla.rc $(srcdir)/windows_manifest.xml version.rc
 	@if [ -f $@~ ]; then rm $@~; fi
-	@WINDRES@ --include-dir=. --include-dir=$(srcdir) $(WINDRESFLAGS) $(srcdir)/filezilla.rc -D HAS_VERSIONRC $@~ || rm $@~
+	@WINDRES@ --include-dir=. --include-dir=$(srcdir) $(WINDRESFLAGS) $(srcdir)/filezilla.rc -D GNU_WINDRES -D HAS_VERSIONRC $@~ || rm $@~
 	@if [ -f $@ ]; then rm $@; fi
 	mv $@~ $@
 endif
