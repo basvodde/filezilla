@@ -45,6 +45,7 @@ CFilterConditionsDialog::CFilterConditionsDialog()
 	m_pListCtrl = 0;
 	m_has_foreign_type = false;
 	m_pAdd = 0;
+	m_button_size = wxSize(-1, -1);
 }
 
 bool CFilterConditionsDialog::CreateListControl(int conditions /*=common*/)
@@ -350,8 +351,22 @@ void CFilterConditionsDialog::MakeControls(const CFilterCondition& condition, in
 	controls.pCondition->Select(condition.condition);
 	wxRect conditionsRect = controls.pCondition->GetSize();
 
+	if (!controls.pRemove)
+	{
+		controls.pRemove = new wxButton(m_pListCtrl, wxID_ANY, _T("-"), wxPoint(client_size.GetWidth() - 5 - m_button_size.x, posy), m_button_size, wxBU_EXACTFIT);
+		if (m_button_size.x <= 0)
+		{
+			m_button_size.x = wxMax(m_choiceBoxHeight, controls.pRemove->GetSize().x);
+			m_button_size.y = m_choiceBoxHeight;
+			controls.pRemove->SetSize(m_button_size);
+			controls.pRemove->SetPosition(wxPoint(client_size.GetWidth() - 5 - m_button_size.x, posy));
+		}
+	}
+	else
+		controls.pRemove->SetPosition(wxPoint(client_size.GetWidth() - 5 - m_button_size.x, posy));
+
 	posx = 30 + typeRect.GetWidth() + conditionsRect.GetWidth();
-	const int maxwidth = client_size.GetWidth() - posx - 10 - m_choiceBoxHeight;
+	const int maxwidth = client_size.GetWidth() - posx - 10 - m_button_size.x;
 	if (condition.type == filter_name || condition.type == filter_size || condition.type == filter_path)
 	{
 		delete controls.pSet;
@@ -397,12 +412,6 @@ void CFilterConditionsDialog::MakeControls(const CFilterCondition& condition, in
 		// Need to explicitely set min size, otherwise initial size becomes min size
 		controls.pValue->SetMinSize(wxSize(20,-1));
 	}
-
-	pos = wxPoint(posx + maxwidth + 5, posy);
-	if (!controls.pRemove)
-		controls.pRemove = new wxButton(m_pListCtrl, wxID_ANY, _T("-"), pos, wxSize(m_choiceBoxHeight, m_choiceBoxHeight));
-	else
-		controls.pRemove->SetPosition(pos);
 }
 
 void CFilterConditionsDialog::DestroyControls()
@@ -471,10 +480,10 @@ void CFilterConditionsDialog::EditFilter(const CFilter& filter)
 	// Get correct coordinates
 	wxSize client_size = m_pListCtrl->GetClientSize();
 	wxPoint pos;
-	m_pListCtrl->CalcScrolledPosition(client_size.GetWidth() - 5 - m_choiceBoxHeight, (m_choiceBoxHeight + 6) * m_filterControls.size() + 3, &pos.x, &pos.y);
+	m_pListCtrl->CalcScrolledPosition(client_size.GetWidth() - 5 - m_button_size.x, (m_choiceBoxHeight + 6) * m_filterControls.size() + 3, &pos.x, &pos.y);
 
 	if (!m_pAdd)
-		m_pAdd = new wxButton(m_pListCtrl, wxID_ANY, _T("+"), pos, wxSize(m_choiceBoxHeight, m_choiceBoxHeight));
+		m_pAdd = new wxButton(m_pListCtrl, wxID_ANY, _T("+"), pos, m_button_size);
 	else
 		m_pAdd->SetPosition(pos);
 

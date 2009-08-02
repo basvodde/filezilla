@@ -60,6 +60,7 @@ private:
 	std::vector<t_filterType> filter_type_map;
 
 	wxButton* m_pAdd;
+	wxSize m_button_size;
 
 	void OnMore();
 	void OnRemove(int item);
