@@ -71,6 +71,7 @@ private:
 	void OnButton(wxCommandEvent& event);
 	void OnFilterTypeChange(wxCommandEvent& event);
 	void OnConditionSelectionChange(wxCommandEvent& event);
+	void OnNavigationKeyEvent(wxNavigationKeyEvent& event);
 };
 
 #endif //__FILTER_CONDITIONS_DIALOG_H__

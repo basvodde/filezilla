@@ -18,6 +18,8 @@ public:
 	std::set<int> GetSelection() const;
 	void SelectLine(int line);
 
+	void AllowSelection(bool allow_selection);
+
 protected:
 	virtual void OnDraw(wxDC& dc);
 
@@ -29,6 +31,8 @@ protected:
 
 	std::set<int> m_selectedLines;
 	int m_focusedLine;
+
+	bool m_allow_selection;
 };
 
 #endif //__CUSTOMHIGHTLISTCTRL_H__

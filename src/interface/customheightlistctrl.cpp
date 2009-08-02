@@ -13,6 +13,8 @@ wxCustomHeightListCtrl::wxCustomHeightListCtrl(wxWindow* parent, wxWindowID id /
 	m_focusedLine = -1;
 
 	SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+
+	m_allow_selection = true;
 }
 
 void wxCustomHeightListCtrl::SetLineHeight(int height)
@@ -106,7 +108,7 @@ void wxCustomHeightListCtrl::OnDraw(wxDC& dc)
 void wxCustomHeightListCtrl::OnMouseEvent(wxMouseEvent& event)
 {
 	bool changed = false;
-	if (event.ButtonDown())
+	if (event.ButtonDown() && m_allow_selection)
 	{
 		wxPoint pos = event.GetPosition();
 		int x, y;
@@ -196,4 +198,11 @@ void wxCustomHeightListCtrl::SelectLine(int line)
 		m_selectedLines.insert(line);
 
 	Refresh();
+}
+
+void wxCustomHeightListCtrl::AllowSelection(bool allow_selection)
+{
+	m_allow_selection = allow_selection;
+	if (!allow_selection)
+		ClearSelection();
 }

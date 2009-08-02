@@ -36,6 +36,7 @@ BEGIN_EVENT_TABLE(CFilterConditionsDialog, wxDialogEx)
 EVT_BUTTON(wxID_ANY, CFilterConditionsDialog::OnButton)
 EVT_CHOICE(wxID_ANY, CFilterConditionsDialog::OnFilterTypeChange)
 EVT_LISTBOX(wxID_ANY, CFilterConditionsDialog::OnConditionSelectionChange)
+EVT_NAVIGATION_KEY(CFilterConditionsDialog::OnNavigationKeyEvent)
 END_EVENT_TABLE()
 
 CFilterConditionsDialog::CFilterConditionsDialog()
@@ -55,6 +56,7 @@ bool CFilterConditionsDialog::CreateListControl(int conditions /*=common*/)
 	m_pListCtrl = new wxCustomHeightListCtrl(this, wxID_ANY, wxDefaultPosition, wnd->GetSize(), wxVSCROLL|wxSUNKEN_BORDER);
 	if (!m_pListCtrl)
 		return false;
+	m_pListCtrl->AllowSelection(false);
 	ReplaceControl(wnd, m_pListCtrl);
 	CalcMinListWidth();
 
@@ -651,4 +653,92 @@ void CFilterConditionsDialog::OnListSize(wxSizeEvent& event)
 {
 	UpdateConditionsClientSize();
 	event.Skip();
+}
+
+void CFilterConditionsDialog::OnNavigationKeyEvent(wxNavigationKeyEvent& event)
+{
+	wxWindow* source = FindFocus();
+	if (!source)
+	{
+		event.Skip();
+		return;
+	}
+
+	wxWindow* target = 0;
+
+	if (event.GetDirection())
+	{
+		for (int i = 0; i < (int)m_filterControls.size(); i++)
+		{
+			if (m_filterControls[i].pType == source)
+			{
+				target = m_filterControls[i].pCondition;
+				break;
+			}
+			if (m_filterControls[i].pCondition == source)
+			{
+				target = m_filterControls[i].pValue;
+				if (!target)
+					m_filterControls[i].pSet;
+				break;
+			}
+			if (m_filterControls[i].pSet == source || m_filterControls[i].pValue == source)
+			{
+				target = m_filterControls[i].pRemove;
+				break;
+			}
+			if (m_filterControls[i].pRemove == source)
+			{
+				int j = i + 1;
+				if (j == m_filterControls.size())
+					target = m_pAdd;
+				else
+					target = m_filterControls[j].pType;
+				break;
+			}
+		}
+	}
+	else
+	{
+		if (source == m_pAdd)
+		{
+			if (m_filterControls.size())
+				target = m_filterControls[m_filterControls.size() - 1].pRemove;
+		}
+		else
+		{
+
+			for (int i = 0; i < (int)m_filterControls.size(); i++)
+			{
+				if (m_filterControls[i].pType == source)
+				{
+					if (i > 0)
+						target = m_filterControls[i - 1].pRemove;
+					break;
+				}
+				if (m_filterControls[i].pCondition == source)
+				{
+					target = m_filterControls[i].pType;
+					break;
+				}
+				if (m_filterControls[i].pSet == source || m_filterControls[i].pValue == source)
+				{
+					target = m_filterControls[i].pCondition;
+					break;
+				}
+				if (m_filterControls[i].pRemove == source)
+				{
+					target = m_filterControls[i].pValue;
+					if (!target)
+						m_filterControls[i].pSet;
+					break;
+				}
+			}
+		}
+	}
+
+	if (target)
+		target->SetFocus();
+	else
+		event.Skip();
 }
