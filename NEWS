@@ -10,6 +10,23 @@ Legend:
     *nix: Unix (e.g BSD) and Unix-like systems (e.g. Linux)
     OS X: Apple Mac OS X
 
+3.2.7-rc1 (2009-08-02)
+
++ Add option to prevent system idle sleep during transfers or other operations
++ Add -l option to commandline to specify logon type for passed URLs
++ Improve layout of search and filter edit dialogs
++ Implement keyboard navigation in search and filter edit dialogs
++ Add status bar to search dialog
++ Remember file exists action for individual queue items
++ Faster queue loading and saving
+- MSW: Fix memory leak in shell extension
+- Fix possible race in socket code leading to infinite loop
+- Resolve parsing conflict between MLSD and Unix-style listings
+- Fix deleting symlinks on SFTP connections
+- Deselect ".." on Ctrl+A in addition to selecting all other items
+- Changing data type on implicit FTP over TLS connections no longer prints an error message
+- *nix: Fix missing thread synchronization in D-Bus bindings
+
 3.2.6.1 (2009-07-01)
 
 - Fix FTP over TLS regressions in provided binaries due to two bugs in GnuTLS causing transfer failures
