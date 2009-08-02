@@ -63,6 +63,7 @@ public:
 	};
 
 	void SetFilelistStatusBar(CFilelistStatusBar* pFilelistStatusBar) { m_pFilelistStatusBar = pFilelistStatusBar; }
+	CFilelistStatusBar* GetFilelistStatusBar() { return m_pFilelistStatusBar; }
 
 	void ClearSelection();
 

@@ -557,11 +557,19 @@ bool CSearchDialog::Load()
 	if (!wxDialogEx::Load(m_parent, _T("ID_SEARCH")))
 		return false;
 
+	/* XRCed complains if adding a status bar to a dialog, so do it here instead */
+	CFilelistStatusBar* pStatusBar = new CFilelistStatusBar(this);
+	pStatusBar->SetEmptyString(_("No search results"));
+
+	GetSizer()->Add(pStatusBar, 0, wxGROW);
+
 	if (!CreateListControl(filter_name | filter_size | filter_path))
 		return false;
 
 	m_results = new CSearchDialogFileList(this, m_pState, 0);
 	ReplaceControl(XRCCTRL(*this, "ID_RESULTS", wxWindow), m_results);
+
+	m_results->SetFilelistStatusBar(pStatusBar);
 
 	const CServerPath path = m_pState->GetRemotePath();
 	if (!path.IsEmpty())
@@ -644,6 +652,10 @@ void CSearchDialog::ProcessDirectoryListing()
 	
 	int old_count = m_results->m_fileData.size();
 	int added = 0;
+
+	m_results->m_fileData.reserve(m_results->m_fileData.size() + listing->GetCount());
+	m_results->m_indexMapping.reserve(m_results->m_indexMapping.size() + listing->GetCount());
+
 	for (unsigned int i = 0; i < listing->GetCount(); i++)
 	{
 		const CDirentry& entry = (*listing)[i];
@@ -658,6 +670,11 @@ void CSearchDialog::ProcessDirectoryListing()
 		data.icon = entry.dir ? m_results->m_dirIcon : -2;
 		m_results->m_fileData.push_back(data);
 		m_results->m_indexMapping.push_back(old_count + added++);
+
+		if (entry.dir)
+			m_results->GetFilelistStatusBar()->AddDirectory();
+		else
+			m_results->GetFilelistStatusBar()->AddFile(entry.size);
 	}
 
 	m_results->SetItemCount(old_count + added);
@@ -708,11 +725,14 @@ void CSearchDialog::OnSearch(wxCommandEvent& event)
 	m_search_filter.matchCase = XRCCTRL(*this, "ID_CASE", wxCheckBox)->GetValue();
 
 	// Delete old results
+	m_results->ClearSelection();
 	m_results->m_indexMapping.clear();
 	m_results->m_fileData.clear();
 	m_results->SetItemCount(0);
 	m_visited.clear();
 	m_results->RefreshListOnly(true);
+
+	m_results->GetFilelistStatusBar()->Clear();
 
 	// Start
 	m_searching = true;

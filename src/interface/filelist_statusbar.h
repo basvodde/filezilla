@@ -7,6 +7,7 @@ public:
 	CFilelistStatusBar(wxWindow* pParent);
 
 	void SetDirectoryContents(int count_files, int count_dirs, const wxLongLong &total_size, int unknown_size, int hidden);
+	void Clear();
 	void SetHidden(int hidden);
 	void TriggerUpdateText();
 	void UpdateText();
@@ -23,6 +24,7 @@ public:
 	void SelectDirectory();
 	void UnselectDirectory();
 
+	void SetEmptyString(const wxString& empty);
 protected:
 
 	int m_count_files;
@@ -37,6 +39,8 @@ protected:
 	int m_unknown_selected_size; // Set to true if there are files with unknown size
 
 	wxTimer m_updateTimer;
+
+	wxString m_empty_string;
 
 	DECLARE_EVENT_TABLE()
 	void OnTimer(wxTimerEvent& event);

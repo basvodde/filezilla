@@ -21,6 +21,8 @@ CFilelistStatusBar::CFilelistStatusBar(wxWindow* pParent)
 
 	m_updateTimer.SetOwner(this);
 
+	m_empty_string = _("Empty directory.");
+
 	UpdateText();
 
 #ifdef __WXMSW__
@@ -88,7 +90,7 @@ void CFilelistStatusBar::UpdateText()
 	}
 	else
 	{
-		text = _("Empty directory.");
+		text = m_empty_string;
 		if (m_hidden)
 		{
 			text += ' ';
@@ -106,6 +108,22 @@ void CFilelistStatusBar::SetDirectoryContents(int count_files, int count_dirs, c
 	m_total_size = total_size;
 	m_unknown_size = unknown_size;
 	m_hidden = hidden;
+
+	m_count_selected_files = 0;
+	m_count_selected_dirs = 0;
+	m_total_selected_size = 0;
+	m_unknown_selected_size = 0;
+
+	TriggerUpdateText();
+}
+
+void CFilelistStatusBar::Clear()
+{
+	m_count_files = 0;
+	m_count_dirs = 0;
+	m_total_size = 0;
+	m_unknown_size = 0;
+	m_hidden = 0;
 
 	m_count_selected_files = 0;
 	m_count_selected_dirs = 0;
@@ -213,5 +231,11 @@ void CFilelistStatusBar::RemoveDirectory()
 void CFilelistStatusBar::SetHidden(int hidden)
 {
 	m_hidden = hidden;
+	TriggerUpdateText();
+}
+
+void CFilelistStatusBar::SetEmptyString(const wxString& empty)
+{
+	m_empty_string = empty;
 	TriggerUpdateText();
 }
