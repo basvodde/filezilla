@@ -268,7 +268,7 @@ void CFilterConditionsDialog::OnFilterTypeChange(wxCommandEvent& event)
 		if (!m_filterControls[item].pType || m_filterControls[item].pType->GetId() != event.GetId())
 			continue;
 	}
-	if (item == m_filterControls.size())
+	if (item == (int)m_filterControls.size())
 		return;
 
 	CFilterCondition& filter = m_currentFilter.filters[item];
@@ -467,7 +467,7 @@ void CFilterConditionsDialog::EditFilter(const CFilter& filter)
 	// Create new controls
 	m_currentFilter = filter;
 
-	if (m_currentFilter.filters.size() == -1)
+	if (!m_currentFilter.filters.size())
 		m_currentFilter.filters.push_back(CFilterCondition());
 
 	for (unsigned int i = 0; i < filter.filters.size(); i++)
@@ -699,7 +699,7 @@ void CFilterConditionsDialog::OnNavigationKeyEvent(wxNavigationKeyEvent& event)
 			if (m_filterControls[i].pRemove == source)
 			{
 				int j = i + 1;
-				if (j == m_filterControls.size())
+				if (j == (int)m_filterControls.size())
 					target = m_pAdd;
 				else
 					target = m_filterControls[j].pType;
