@@ -21,125 +21,127 @@ struct t_Option
 	char name[30];
 	enum Type type;
 	wxString defaultValue; // Default values are stored as string even for numerical options
+	bool internal; // internal items won't get written to settings file nor loaded from there
 };
 
 static const t_Option options[OPTIONS_NUM] =
 {
 	// Engine settings
-	{ "Use Pasv mode", number, _T("1") },
-	{ "Limit local ports", number, _T("0") },
-	{ "Limit ports low", number, _T("6000") },
-	{ "Limit ports high", number, _T("7000") },
-	{ "External IP mode", number, _T("0") },
-	{ "External IP", string, _T("") },
-	{ "External address resolver", string, _T("http://ip.filezilla-project.org/ip.php") },
-	{ "Last resolved IP", string, _T("") },
-	{ "No external ip on local conn", number, _T("1") },
-	{ "Pasv reply fallback mode", number, _T("0") },
-	{ "Timeout", number, _T("20") },
-	{ "Logging Debug Level", number, _T("0") },
-	{ "Logging Raw Listing", number, _T("0") },
-	{ "fzsftp executable", string, _T("") },
-	{ "Allow transfermode fallback", number, _T("1") },
-	{ "Reconnect count", number, _T("2") },
-	{ "Reconnect delay", number, _T("5") },
-	{ "Speedlimit inbound", number, _T("0") },
-	{ "Speedlimit outbound", number, _T("0") },
-	{ "Speedlimit burst tolerance", number, _T("0") },
-	{ "View hidden files", number, _T("0") },
-	{ "Preserve timestamps", number, _T("0") },
-	{ "Socket recv buffer size", number, _T("131072") }, // Make it large enough by default
+	{ "Use Pasv mode", number, _T("1"), false },
+	{ "Limit local ports", number, _T("0"), false },
+	{ "Limit ports low", number, _T("6000"), false },
+	{ "Limit ports high", number, _T("7000"), false },
+	{ "External IP mode", number, _T("0"), false },
+	{ "External IP", string, _T(""), false },
+	{ "External address resolver", string, _T("http://ip.filezilla-project.org/ip.php"), false },
+	{ "Last resolved IP", string, _T(""), false },
+	{ "No external ip on local conn", number, _T("1"), false },
+	{ "Pasv reply fallback mode", number, _T("0"), false },
+	{ "Timeout", number, _T("20"), false },
+	{ "Logging Debug Level", number, _T("0"), false },
+	{ "Logging Raw Listing", number, _T("0"), false },
+	{ "fzsftp executable", string, _T(""), false },
+	{ "Allow transfermode fallback", number, _T("1"), false },
+	{ "Reconnect count", number, _T("2"), false },
+	{ "Reconnect delay", number, _T("5"), false },
+	{ "Speedlimit inbound", number, _T("0"), false },
+	{ "Speedlimit outbound", number, _T("0"), false },
+	{ "Speedlimit burst tolerance", number, _T("0"), false },
+	{ "View hidden files", number, _T("0"), false },
+	{ "Preserve timestamps", number, _T("0"), false },
+	{ "Socket recv buffer size", number, _T("131072"), false }, // Make it large enough by default
 														 // to enable a large TCP window scale
-	{ "Socket send buffer size", number, _T("131072") },
-	{ "FTP Keep-alive commands", number, _T("0") },
-	{ "FTP Proxy type", number, _T("0") },
-	{ "FTP Proxy host", string, _T("") },
-	{ "FTP Proxy user", string, _T("") },
-	{ "FTP Proxy password", string, _T("") },
-	{ "FTP Proxy login sequence", string, _T("") },
-	{ "SFTP keyfiles", string, _T("") },
-	{ "Proxy type", number, _T("0") },
-	{ "Proxy host", string, _T("") },
-	{ "Proxy port", number, _T("0") },
-	{ "Proxy user", string, _T("") },
-	{ "Proxy password", string, _T("") },
-	{ "Logging file", string, _T("") },
-	{ "Logging filesize limit", number, _T("10") },
+	{ "Socket send buffer size", number, _T("131072"), false },
+	{ "FTP Keep-alive commands", number, _T("0"), false },
+	{ "FTP Proxy type", number, _T("0"), false },
+	{ "FTP Proxy host", string, _T(""), false },
+	{ "FTP Proxy user", string, _T(""), false },
+	{ "FTP Proxy password", string, _T(""), false },
+	{ "FTP Proxy login sequence", string, _T(""), false },
+	{ "SFTP keyfiles", string, _T(""), false },
+	{ "Proxy type", number, _T("0"), false },
+	{ "Proxy host", string, _T(""), false },
+	{ "Proxy port", number, _T("0"), false },
+	{ "Proxy user", string, _T(""), false },
+	{ "Proxy password", string, _T(""), false },
+	{ "Logging file", string, _T(""), false },
+	{ "Logging filesize limit", number, _T("10"), false },
+	{ "Trusted root certificate", string, _T(""), true },
 
 	// Interface settings
-	{ "Number of Transfers", number, _T("2") },
-	{ "Ascii Binary mode", number, _T("0") },
-	{ "Auto Ascii files", string, _T("am|asp|bat|c|cfm|cgi|conf|cpp|css|dhtml|diz|h|hpp|htm|html|in|inc|js|jsp|m4|mak|md5|nfo|nsi|pas|patch|php|phtml|pl|po|py|qmail|sh|shtml|sql|svg|tcl|tpl|txt|vbs|xhtml|xml|xrc") },
-	{ "Auto Ascii no extension", number, _T("1") },
-	{ "Auto Ascii dotfiles", number, _T("1") },
-	{ "Theme", string, _T("opencrystal/") },
-	{ "Language Code", string, _T("") },
-	{ "Last Server Path", string, _T("") },
-	{ "Concurrent download limit", number, _T("0") },
-	{ "Concurrent upload limit", number, _T("0") },
-	{ "Update Check", number, _T("1") },
-	{ "Update Check Interval", number, _T("7") },
-	{ "Last automatic update check", string, _T("") },
-	{ "Update Check New Version", string, _T("") },
-	{ "Update Check Check Beta", number, _T("0") },
-	{ "Show debug menu", number, _T("0") },
-	{ "File exists action download", number, _T("0") },
-	{ "File exists action upload", number, _T("0") },
-	{ "Allow ascii resume", number, _T("0") },
-	{ "Greeting version", string, _T("") },
-	{ "Onetime Dialogs", string, _T("") },
-	{ "Show Tree Local", number, _T("1") },
-	{ "Show Tree Remote", number, _T("1") },
-	{ "File Pane Layout", number, _T("0") },
-	{ "File Pane Swap", number, _T("0") },
-	{ "Last local directory", string, _T("") },
-	{ "Filelist directory sort", number, _T("0") },
-	{ "Queue successful autoclear", number, _T("0") },
-	{ "Queue column widths", string, _T("") },
-	{ "Local filelist colwidths", string, _T("") },
-	{ "Remote filelist colwidths", string, _T("") },
-	{ "Window position and size", string, _T("") },
-	{ "Splitter positions (v2)", string, _T("") },
-	{ "Local filelist sortorder", string, _T("") },
-	{ "Remote filelist sortorder", string, _T("") },
-	{ "Time Format", string, _T("") },
-	{ "Date Format", string, _T("") },
-	{ "Show message log", number, _T("1") },
-	{ "Show queue", number, _T("1") },
-	{ "Size format", number, _T("0") },
-	{ "Size thousands separator", number, _T("1") },
-	{ "Default editor", string, _T("") },
-	{ "Always use default editor", number, _T("0") },
-	{ "Inherit system associations", number, _T("1") },
-	{ "Custom file associations", string, _T("") },
-	{ "Comparison mode", number, _T("1") },
-	{ "Comparison threshold", number, _T("1") },
-	{ "Site Manager position", string, _T("") },
-	{ "Theme icon size", string, _T("") },
-	{ "Timestamp in message log", number, _T("0") },
-	{ "Sitemanager last selected", string, _T("") },
-	{ "Local filelist shown columns", string, _T("") },
-	{ "Remote filelist shown columns", string, _T("") },
-	{ "Local filelist column order", string, _T("") },
-	{ "Remote filelist column order", string, _T("") },
-	{ "Filelist status bar", number, _T("1") },
-	{ "Filter toggle state", number, _T("0") },
-	{ "Size decimal places", number, _T("0") },
-	{ "Show quickconnect bar", number, _T("1") },
-	{ "Messagelog position", number, _T("0") },
-	{ "Last connected site", string, _T("") },
-	{ "File doubleclock action", number, _T("0") },
-	{ "Dir doubleclock action", number, _T("0") },
-	{ "Minimize to tray", number, _T("0") },
-	{ "Search column widths", string, _T("") },
-	{ "Search column shown", string, _T("") },
-	{ "Search column order", string, _T("") },
-	{ "Search window size", string, _T("") },
-	{ "Comparison hide identical", number, _T("0") },
-	{ "Search sort order", string, _T("") },
-	{ "Edit track local", number, _T("1") },
-	{ "Prevent idle sleep", number, _T("1") },
-	{ "Filteredit window size", string, _T("") }
+	{ "Number of Transfers", number, _T("2"), false },
+	{ "Ascii Binary mode", number, _T("0"), false },
+	{ "Auto Ascii files", string, _T("am|asp|bat|c|cfm|cgi|conf|cpp|css|dhtml|diz|h|hpp|htm|html|in|inc|js|jsp|m4|mak|md5|nfo|nsi|pas|patch|php|phtml|pl|po|py|qmail|sh|shtml|sql|svg|tcl|tpl|txt|vbs|xhtml|xml|xrc"), false },
+	{ "Auto Ascii no extension", number, _T("1"), false },
+	{ "Auto Ascii dotfiles", number, _T("1"), false },
+	{ "Theme", string, _T("opencrystal/"), false },
+	{ "Language Code", string, _T(""), false },
+	{ "Last Server Path", string, _T(""), false },
+	{ "Concurrent download limit", number, _T("0"), false },
+	{ "Concurrent upload limit", number, _T("0"), false },
+	{ "Update Check", number, _T("1"), false },
+	{ "Update Check Interval", number, _T("7"), false },
+	{ "Last automatic update check", string, _T(""), false },
+	{ "Update Check New Version", string, _T(""), false },
+	{ "Update Check Check Beta", number, _T("0"), false },
+	{ "Show debug menu", number, _T("0"), false },
+	{ "File exists action download", number, _T("0"), false },
+	{ "File exists action upload", number, _T("0"), false },
+	{ "Allow ascii resume", number, _T("0"), false },
+	{ "Greeting version", string, _T(""), false },
+	{ "Onetime Dialogs", string, _T(""), false },
+	{ "Show Tree Local", number, _T("1"), false },
+	{ "Show Tree Remote", number, _T("1"), false },
+	{ "File Pane Layout", number, _T("0"), false },
+	{ "File Pane Swap", number, _T("0"), false },
+	{ "Last local directory", string, _T(""), false },
+	{ "Filelist directory sort", number, _T("0"), false },
+	{ "Queue successful autoclear", number, _T("0"), false },
+	{ "Queue column widths", string, _T(""), false },
+	{ "Local filelist colwidths", string, _T(""), false },
+	{ "Remote filelist colwidths", string, _T(""), false },
+	{ "Window position and size", string, _T(""), false },
+	{ "Splitter positions (v2)", string, _T(""), false },
+	{ "Local filelist sortorder", string, _T(""), false },
+	{ "Remote filelist sortorder", string, _T(""), false },
+	{ "Time Format", string, _T(""), false },
+	{ "Date Format", string, _T(""), false },
+	{ "Show message log", number, _T("1"), false },
+	{ "Show queue", number, _T("1"), false },
+	{ "Size format", number, _T("0"), false },
+	{ "Size thousands separator", number, _T("1"), false },
+	{ "Default editor", string, _T(""), false },
+	{ "Always use default editor", number, _T("0"), false },
+	{ "Inherit system associations", number, _T("1"), false },
+	{ "Custom file associations", string, _T(""), false },
+	{ "Comparison mode", number, _T("1"), false },
+	{ "Comparison threshold", number, _T("1"), false },
+	{ "Site Manager position", string, _T(""), false },
+	{ "Theme icon size", string, _T(""), false },
+	{ "Timestamp in message log", number, _T("0"), false },
+	{ "Sitemanager last selected", string, _T(""), false },
+	{ "Local filelist shown columns", string, _T(""), false },
+	{ "Remote filelist shown columns", string, _T(""), false },
+	{ "Local filelist column order", string, _T(""), false },
+	{ "Remote filelist column order", string, _T(""), false },
+	{ "Filelist status bar", number, _T("1"), false },
+	{ "Filter toggle state", number, _T("0"), false },
+	{ "Size decimal places", number, _T("0"), false },
+	{ "Show quickconnect bar", number, _T("1"), false },
+	{ "Messagelog position", number, _T("0"), false },
+	{ "Last connected site", string, _T(""), false },
+	{ "File doubleclock action", number, _T("0"), false },
+	{ "Dir doubleclock action", number, _T("0"), false },
+	{ "Minimize to tray", number, _T("0"), false },
+	{ "Search column widths", string, _T(""), false },
+	{ "Search column shown", string, _T(""), false },
+	{ "Search column order", string, _T(""), false },
+	{ "Search window size", string, _T(""), false },
+	{ "Comparison hide identical", number, _T("0"), false },
+	{ "Search sort order", string, _T(""), false },
+	{ "Edit track local", number, _T("1"), false },
+	{ "Prevent idle sleep", number, _T("1"), false },
+	{ "Filteredit window size", string, _T(""), false }
 };
 
 struct t_default_option
@@ -206,7 +208,7 @@ int COptions::GetOptionVal(unsigned int nID)
 
 	wxString value;
 	long numValue = 0;
-	if (!GetXmlValue(nID, value))
+	if (options[nID].internal || !GetXmlValue(nID, value))
 		options[nID].defaultValue.ToLong(&numValue);
 	else
 	{
@@ -232,7 +234,7 @@ wxString COptions::GetOption(unsigned int nID)
 		return m_optionsCache[nID].strValue;
 
 	wxString value;
-	if (!GetXmlValue(nID, value))
+	if (options[nID].internal || !GetXmlValue(nID, value))
 		value = options[nID].defaultValue;
 	else
 		Validate(nID, value);
@@ -256,7 +258,7 @@ bool COptions::SetOption(unsigned int nID, int value)
 	m_optionsCache[nID].cached = true;
 	m_optionsCache[nID].numValue = value;
 
-	if (m_pXmlFile)
+	if (m_pXmlFile && !options[nID].internal)
 	{
 		SetXmlValue(nID, wxString::Format(_T("%d"), value));
 
@@ -286,7 +288,7 @@ bool COptions::SetOption(unsigned int nID, wxString value)
 	m_optionsCache[nID].cached = true;
 	m_optionsCache[nID].strValue = value;
 
-	if (m_pXmlFile)
+	if (m_pXmlFile && !options[nID].internal)
 	{
 		SetXmlValue(nID, value);
 
@@ -655,6 +657,8 @@ void COptions::Import(TiXmlElement* pElement)
 {
 	for (int i = 0; i < OPTIONS_NUM; i++)
 	{
+		if (options[i].internal)
+			continue;
 		wxString value;
 		if (!GetXmlValue(i, value, pElement))
 			continue;
