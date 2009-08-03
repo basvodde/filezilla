@@ -12,6 +12,12 @@
 #include <wx/dynlib.h> // Used by GetDownloadDir
 #endif //__WXMSW__
 
+// This is ugly but does the job
+#define SHA512_STANDALONE
+typedef unsigned int uint32;
+#include "../putty/int64.h"
+#include "../putty/sshsh512.c"
+
 #define MAXCHECKPROGRESS 14 // Maximum value of progress bar
 
 BEGIN_EVENT_TABLE(CUpdateWizard, wxWizard)
@@ -21,6 +27,7 @@ EVT_WIZARD_PAGE_CHANGED(wxID_ANY, CUpdateWizard::OnPageChanged)
 EVT_FZ_NOTIFICATION(wxID_ANY, CUpdateWizard::OnEngineEvent)
 EVT_TIMER(wxID_ANY, CUpdateWizard::OnTimer)
 EVT_WIZARD_FINISHED(wxID_ANY, CUpdateWizard::OnFinish)
+EVT_WIZARD_CANCEL(wxID_ANY, CUpdateWizard::OnCancel)
 END_EVENT_TABLE()
 
 static wxChar s_update_cert[] = _T("-----BEGIN CERTIFICATE-----\n\
@@ -314,7 +321,29 @@ void CUpdateWizard::OnPageChanging(wxWizardEvent& event)
 			m_skipPageChanging = false;
 			return;
 		}
-		m_localFile = dialog.GetPath();
+
+		{
+			wxLogNull log;
+			wxRemoveFile(dialog.GetPath());
+		}
+		
+		if (wxFileName::FileExists(dialog.GetPath()))
+		{
+			wxMessageBox(_("Error, local file exists but cannot be removed"));
+			event.Veto();
+			m_skipPageChanging = false;
+			return;
+		}
+
+		const wxString file = dialog.GetPath() + _T(".tmp");
+		m_localFile = file;
+
+		int i = 1;
+		while (wxFileName::FileExists(m_localFile))
+		{
+			i++;
+			m_localFile = file + wxString::Format(_T("%d"), i);
+		}
 	}
 	
 	m_skipPageChanging = false;
@@ -371,6 +400,12 @@ void CUpdateWizard::FailedTransfer()
 
 	if (!m_loaded)
 		return;
+
+	if (m_localFile != _T(""))
+	{
+		wxLogNull log;
+		wxRemoveFile(m_localFile);
+	}
 
 	if (!m_currentPage)
 		XRCCTRL(*this, "ID_FAILURE", wxStaticText)->SetLabel(_("Failed to check for newer version of FileZilla."));
@@ -488,6 +523,14 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 				}
 				else if (m_currentPage == 2)
 				{
+					if (!VerifyChecksum())
+						break;
+
+					int pos = m_localFile.Find('.', true);
+					wxASSERT(pos > 0);
+					wxRenameFile(m_localFile, m_localFile.Left(pos));
+					m_localFile = m_localFile.Left(pos);
+
 					wxStaticText* pText = XRCCTRL(*this, "ID_DOWNLOADCOMPLETE", wxStaticText);
 					wxASSERT(pText);
 
@@ -1021,6 +1064,117 @@ void CUpdateWizard::PrepareUpdateCheckPage()
 	wxStaticText *pText = XRCCTRL(*this, "ID_CHECKINGTEXTPROGRESS", wxStaticText);
 	pText->Show();
 	pText->SetLabel(_("Resolving hostname"));
+}
+
+bool CUpdateWizard::VerifyChecksum()
+{
+	if (m_localFile == _T("") || m_update_checksum == _T(""))
+		return true;
+
+	if (m_update_checksum.Left(7).CmpNoCase(_T("sha512 ")))
+	{
+		// Unknown hash algorithm? Fail
+		FailedChecksum();
+		return false;
+	}
+	m_update_checksum = m_update_checksum.Mid(7);
+	SHA512_State state;
+	SHA512_Init(&state);
+
+	wxFile f;
+	{
+		wxLogNull null;
+		if (!f.Open(m_localFile))
+		{
+			FailedChecksum();
+			return false;
+		}
+	}
+	char buffer[65536];
+	size_t read;
+	while ((read = f.Read(buffer, sizeof(buffer))) > 0)
+	{
+		SHA512_Bytes(&state, buffer, read);
+	}
+	if (read < 0)
+	{
+		FailedChecksum();
+		return false;
+	}
+	f.Close();
+
+	unsigned char raw_digest[64];
+	SHA512_Final(&state, raw_digest);
+
+	wxString digest;
+
+	for (unsigned int i = 0; i < sizeof(raw_digest); i++)
+	{
+		unsigned char l = raw_digest[i] >> 4;
+		unsigned char r = raw_digest[i] & 0x0F;
+
+		if (l > 9)
+			digest += 'a' + l - 10;
+		else
+			digest += '0' + l;
+
+		if (r > 9)
+			digest += 'a' + r - 10;
+		else
+			digest += '0' + r;
+	}
+
+	if (m_update_checksum.CmpNoCase(digest))
+	{
+		FailedChecksum();
+		return false;
+	}
+
+	return true;
+}
+
+void CUpdateWizard::FailedChecksum()
+{
+	m_inTransfer = false;
+
+	if (m_localFile == _T(""))
+		return;
+	else
+	{
+		wxLogNull log;
+		wxRemoveFile(m_localFile);
+	}
+
+	wxString label = _("Checksum mismatch of downloaded file.");
+	XRCCTRL(*this, "ID_FAILURE", wxStaticText)->SetLabel(label);
+
+	XRCCTRL(*this, "ID_MISMATCH1", wxStaticText)->Show();
+	XRCCTRL(*this, "ID_MISMATCH2", wxStaticText)->Show();
+	XRCCTRL(*this, "ID_MISMATCH3", wxStaticText)->Show();
+	XRCCTRL(*this, "ID_MISMATCH4", wxStaticText)->Show();
+	
+	((wxWizardPageSimple*)GetCurrentPage())->SetNext(m_pages[3]);
+	m_pages[3]->SetPrev((wxWizardPageSimple*)GetCurrentPage());	
+
+	m_skipPageChanging = true;
+	ShowPage(m_pages[3]);
+	m_currentPage = 3;
+	m_skipPageChanging = false;
+
+	wxButton* pNext = wxDynamicCast(FindWindow(wxID_FORWARD), wxButton);
+	pNext->Enable();
+	wxButton* pPrev = wxDynamicCast(FindWindow(wxID_BACKWARD), wxButton);
+	pPrev->Disable();
+
+	RewrapPage(3);
+}
+
+void CUpdateWizard::OnCancel(wxWizardEvent& event)
+{
+	delete m_pEngine;
+	m_pEngine = 0;
+	if (m_localFile != _T(""))
+		wxRemoveFile(m_localFile);
 }
 
 #endif //FZ_MANUALUPDATECHECK

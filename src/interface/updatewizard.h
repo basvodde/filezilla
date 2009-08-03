@@ -44,6 +44,9 @@ protected:
 
 	wxString GetDownloadDir();
 
+	bool VerifyChecksum();
+	void FailedChecksum();
+
 	DECLARE_EVENT_TABLE()
 	void OnCheck(wxCommandEvent& event);
 	void OnPageChanging(wxWizardEvent& event);
@@ -51,6 +54,7 @@ protected:
 	void OnFinish(wxWizardEvent& event);
 	void OnEngineEvent(wxEvent& event);
 	void OnTimer(wxTimerEvent& event);
+	void OnCancel(wxWizardEvent& event);
 
 	bool m_inTransfer;
 	bool m_skipPageChanging;
