@@ -12,7 +12,7 @@
 #include <wx/dynlib.h> // Used by GetDownloadDir
 #endif //__WXMSW__
 
-#define MAXCHECKPROGRESS 10 // Maximum value of progress bar
+#define MAXCHECKPROGRESS 14 // Maximum value of progress bar
 
 BEGIN_EVENT_TABLE(CUpdateWizard, wxWizard)
 EVT_CHECKBOX(wxID_ANY, CUpdateWizard::OnCheck)
@@ -23,12 +23,77 @@ EVT_TIMER(wxID_ANY, CUpdateWizard::OnTimer)
 EVT_WIZARD_FINISHED(wxID_ANY, CUpdateWizard::OnFinish)
 END_EVENT_TABLE()
 
+static wxChar s_update_cert[] = _T("-----BEGIN CERTIFICATE-----\n\
+MIIFsTCCA5ugAwIBAgIESnXLbzALBgkqhkiG9w0BAQ0wSTELMAkGA1UEBhMCREUx\n\
+GjAYBgNVBAoTEUZpbGVaaWxsYSBQcm9qZWN0MR4wHAYDVQQDExVmaWxlemlsbGEt\n\
+cHJvamVjdC5vcmcwHhcNMDkwODAyMTcyMjU2WhcNMzEwNjI4MTcyMjU4WjBJMQsw\n\
+CQYDVQQGEwJERTEaMBgGA1UEChMRRmlsZVppbGxhIFByb2plY3QxHjAcBgNVBAMT\n\
+FWZpbGV6aWxsYS1wcm9qZWN0Lm9yZzCCAh8wCwYJKoZIhvcNAQEBA4ICDgAwggIJ\n\
+AoICAJqWXy7YzVP5pOk8VB9bd/ROC9SVbAxJiFHh0I0/JmyW+jSfzFCYWr1DKGVv\n\
+Oui+qiUsaSgjWTh/UusnVu4Q4Lb00k7INRF6MFcGFkGNmOZPk4Qt0uuWMtsxiFek\n\
+9QMPWSYs+bxk+M0u0rNOdAblsIzeV16yhfUQDtrJxPWbRpuLgp9/4/oNbixet7YM\n\
+pvwlns2o1KXcsNcBcXraux5QmnD4oJVYbTY2qxdMVyreA7dxd40c55F6FvA+L36L\n\
+Nv54VwRFSqY12KBG4I9Up+c9OQ9HMN0zm0FhYtYeKWzdMIRk06EKAxO7MUIcip3q\n\
+7v9eROPnKM8Zh4dzkWnCleirW8EKFEm+4+A8pDqirMooiQqkkMesaJDV361UCoVo\n\
+fRhqfK+Prx0BaJK/5ZHN4tmgU5Tmq+z2m7aIKwOImj6VF3somVvmh0G/othnU2MH\n\
+GB7qFrIUMZc5VhrAwmmSA2Z/w4+0ToiR+IrdGmDKz3cVany3EZAzWRJUARaId9FH\n\
+v/ymA1xcFAKmfxsjGNlNpXd7b8UElS8+ccKL9m207k++IIjc0jUPgrM70rU3cv5M\n\
+Kevp971eHLhpWa9vrjbz/urDzBg3Dm8XEN09qwmABfIEnhm6f7oz2bYXjz73ImYj\n\
+rZsogz+Jsx3NWhHFUD42iA4ZnxHIEgchD/TAihpbdrEhgmdvAgMBAAGjgacwgaQw\n\
+EgYDVR0TAQH/BAgwBgEB/wIBAjAmBgNVHREEHzAdgRthZG1pbkBmaWxlemlsbGEt\n\
+cHJvamVjdC5vcmcwDwYDVR0PAQH/BAUDAwcGADAdBgNVHQ4EFgQUd4w2verFjXAn\n\
+CrNLor39nFtemNswNgYDVR0fBC8wLTAroCmgJ4YlaHR0cHM6Ly9jcmwuZmlsZXpp\n\
+bGxhLXByb2plY3Qub3JnL2NybDALBgkqhkiG9w0BAQ0DggIBAF3fmV/Bs4amV78d\n\
+uhe5PkW7yTO6iCfKJVDB22kXPvL0rzZn4SkIZNoac8Xl5vOoRd6k+06i3aJ78w+W\n\
+9Z0HK1jUdjW7taYo4bU58nAp3Li+JwjE/lUBNqSKSescPjdZW0KzIIZls91W30yt\n\
+tGq85oWAuyVprHPlr2uWLg1q4eUdF6ZAz4cZ0+9divoMuk1HiWxi1Y/1fqPRzUFf\n\
+UGK0K36iPPz2ktzT7qJYXRfC5QDoX7tCuoDcO5nccVjDypRKxy45O5Ucm/fywiQW\n\
+NQfz/yQAmarQSCfDjNcHD1rdJ0lx9VWP6xi+Z8PGSlR9eDuMaqPVAE1DLHwMMTTZ\n\
+93PbfP2nvgbElgEki28LUalyVuzvrKcu/rL1LnCJA4jStgE/xjDofpYwgtG4ZSnE\n\
+KgNy48eStvNZbGhwn2YvrxyKmw58WSQG9ArOCHoLcWnpedSZuTrPTLfgNUx7DNbo\n\
+qJU36tgxiO0XLRRSetl7jkSIO6U1okVH0/tvstrXEWp4XwdlmoZf92VVBrkg3San\n\
+fA5hBaI2gpQwtpyOJzwLzsd43n4b1YcPiyzhifJGcqRCBZA1uArNsH5iG6z/qHXp\n\
+KjuMxZu8aM8W2gp8Yg8QZfh5St/nut6hnXb5A8Qr+Ixp97t34t264TBRQD6MuZc3\n\
+PqQuF7sJR6POArUVYkRD/2LIWsB7\n\
+-----END CERTIFICATE-----\n\
+");
+
+
+class CUpdateWizardOptions : public COptionsBase
+{
+public:
+	virtual int GetOptionVal(unsigned int nID)
+	{
+		return COptions::Get()->GetOptionVal(nID);
+	}
+
+	virtual wxString GetOption(unsigned int nID)
+	{
+		if (nID == OPTION_INTERNAL_ROOTCERT)
+			return s_update_cert;
+
+		return COptions::Get()->GetOption(nID);
+	}
+
+	virtual bool SetOption(unsigned int nID, int value)
+	{
+		return COptions::Get()->SetOption(nID, value);
+	}
+
+	virtual bool SetOption(unsigned int nID, wxString value)
+	{
+		return COptions::Get()->SetOption(nID, value);
+	}
+};
+
 CUpdateWizard::CUpdateWizard(wxWindow* pParent)
 	: m_parent(pParent)
 {
 	m_pEngine = new CFileZillaEngine;
 
-	m_pEngine->Init(this, COptions::Get());
+	m_update_options = new CUpdateWizardOptions();
+
+	m_pEngine->Init(this, m_update_options);
 
 	m_inTransfer = false;
 	m_skipPageChanging = false;
@@ -40,6 +105,7 @@ CUpdateWizard::CUpdateWizard(wxWindow* pParent)
 
 	wxString version(PACKAGE_VERSION, wxConvLocal);
 	version.Replace(_T(" "), _T("%20"));
+	m_urlProtocol = HTTPS;
 	m_urlServer = _T("update.filezilla-project.org");
 	m_urlFile = wxString::Format(_T("/updatecheck.php?platform=%s&version=%s"), host.c_str(), version.c_str());
 #if defined(__WXMSW__) || defined(__WXMAC__)
@@ -61,6 +127,7 @@ CUpdateWizard::CUpdateWizard(wxWindow* pParent)
 CUpdateWizard::~CUpdateWizard()
 {
 	delete m_pEngine;
+	delete m_update_options;
 }
 
 bool CUpdateWizard::Load()
@@ -274,13 +341,13 @@ void CUpdateWizard::OnPageChanged(wxWizardEvent& event)
 	m_currentPage = 2;
 
 	wxStaticText *pText = XRCCTRL(*this, "ID_DOWNLOADTEXT", wxStaticText);
-	wxString text = wxString::Format(_("Downloading %s"), wxString(_T("http://") + m_urlServer + m_urlFile).c_str());
+	wxString text = wxString::Format(_("Downloading %s"), (CServer::GetPrefixFromProtocol(m_urlProtocol) + _T("://") + m_urlServer + m_urlFile).c_str());
 	text.Replace(_T("&"), _T("&&"));
 	pText->SetLabel(text);
 
 	m_inTransfer = false;
 
-	int res = m_pEngine->Command(CConnectCommand(CServer(HTTP, DEFAULT, m_urlServer, 80)));
+	int res = m_pEngine->Command(CConnectCommand(CServer(m_urlProtocol, DEFAULT, m_urlServer, (m_urlProtocol == HTTPS) ? 443 : 80)));
 	if (res == FZ_REPLY_OK)
 	{
 		XRCCTRL(*this, "ID_DOWNLOADPROGRESSTEXT", wxStaticText)->SetLabel(_("Connecting to server"));
@@ -511,6 +578,7 @@ void CUpdateWizard::ParseData()
 	wxString newVersion;
 	wxULongLong newVersionNumber = 0;
 	wxString newUrl;
+	wxString newChecksum;
 
 	while (m_data != _T(""))
 	{
@@ -556,12 +624,18 @@ void CUpdateWizard::ParseData()
 		line = line.Mid(pos + 1);
 
 		// Extract URL
-		pos = line.Find(' ');
-		if (pos != -1)
-			continue;
 		wxString url = line;
 		if (url == _T("none"))
 			url = _T("");
+
+		pos = url.Find(' ');
+		if (pos < 1)
+			newChecksum.clear();
+		else
+		{
+			newChecksum = url.Mid(pos + 1);
+			url = url.Left(pos);
+		}
 
 		if (type == _T("nightly"))
 		{
@@ -626,7 +700,7 @@ void CUpdateWizard::ParseData()
 	}
 	else
 	{
-		PrepareUpdateAvailablePage(newVersion, newUrl);
+		PrepareUpdateAvailablePage(newVersion, newUrl, newChecksum);
 
 		m_skipPageChanging = true;
 		ShowPage(m_pages[1]);
@@ -794,7 +868,7 @@ void CUpdateWizard::StartUpdateCheck()
 	if (COptions::Get()->GetOptionVal(OPTION_UPDATECHECK_CHECKBETA) != 0)
 		m_urlFile += _T("&beta=1");
 
-	int res = m_pEngine->Command(CConnectCommand(CServer(HTTP, DEFAULT, m_urlServer, 80)));
+	int res = m_pEngine->Command(CConnectCommand(CServer(m_urlProtocol, DEFAULT, m_urlServer, (m_urlProtocol == HTTPS) ? 443 : 80)));
 	if (res == FZ_REPLY_OK)
 	{
 		if (m_loaded)
@@ -854,7 +928,7 @@ void CUpdateWizard::DisplayUpdateAvailability(bool showDialog, bool forceMenu /*
 	}
 }
 
-void CUpdateWizard::PrepareUpdateAvailablePage(const wxString &newVersion, wxString newUrl)
+void CUpdateWizard::PrepareUpdateAvailablePage(const wxString &newVersion, wxString newUrl, const wxString& newChecksum)
 {
 	XRCCTRL(*this, "ID_VERSION", wxStaticText)->SetLabel(newVersion);
 
@@ -887,8 +961,10 @@ void CUpdateWizard::PrepareUpdateAvailablePage(const wxString &newVersion, wxStr
 			XRCCTRL(*this, "ID_UPDATEDESC2", wxStaticText)->SetLabel(_("Alternatively, visit http://filezilla-project.org to download the most recent version."));
 			XRCCTRL(*this, "ID_UPDATEDESC2", wxStaticText)->Show();
 
+			m_urlProtocol = HTTP;
 			m_urlServer = newUrl.Left(pos);
 			m_urlFile = newUrl.Mid(pos);
+			m_update_checksum = newChecksum;
 		}
 		if (m_news == _T(""))
 		{

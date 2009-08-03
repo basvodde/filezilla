@@ -644,6 +644,7 @@ int CFileZillaEnginePrivate::ContinueConnect()
 		m_pControlSocket = new CSftpControlSocket(this);
 		break;
 	case HTTP:
+	case HTTPS:
 		m_pControlSocket = new CHttpControlSocket(this);
 		break;
 	default:

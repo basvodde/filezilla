@@ -2,6 +2,7 @@
 #define __HTTPCONTROLSOCKET_H__
 
 class CHttpOpData;
+class CTlsSocket;
 class CHttpControlSocket : public CRealControlSocket
 {
 public:
@@ -23,7 +24,7 @@ protected:
 	virtual int FileTransferParseResponse(char* p, unsigned int len);
 	virtual int FileTransferSubcommandResult(int prevResult);
 
-	int InternalConnect(wxString host, unsigned short port);
+	int InternalConnect(wxString host, unsigned short port, bool tls);
 	int DoInternalConnect();
 
 	virtual void OnConnect();
@@ -45,6 +46,8 @@ protected:
 	static const unsigned int m_recvBufferLen = 4096;
 
 	CHttpOpData* m_pHttpOpData;
+
+	CTlsSocket* m_pTlsSocket;
 };
 
 #endif //__HTTPCONTROLSOCKET_H__

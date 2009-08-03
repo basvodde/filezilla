@@ -2,6 +2,7 @@
 #include "ControlSocket.h"
 #include "httpcontrolsocket.h"
 #include <errno.h>
+#include "tlssocket.h"
 
 #define FZ_REPLY_REDIRECTED FZ_REPLY_ALREADYCONNECTED
 
@@ -21,6 +22,7 @@ public:
 
 	wxString host;
 	unsigned int port;
+	bool tls;
 };
 
 class CHttpOpData
@@ -91,6 +93,7 @@ CHttpControlSocket::CHttpControlSocket(CFileZillaEnginePrivate *pEngine)
 	: CRealControlSocket(pEngine)
 {
 	m_pRecvBuffer = 0;
+	m_pTlsSocket = 0;
 }
 
 CHttpControlSocket::~CHttpControlSocket()
@@ -175,6 +178,18 @@ bool CHttpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotifi
 			}
 		}
 		break;
+	case reqId_certificate:
+		{
+			if (!m_pTlsSocket || m_pTlsSocket->GetState() != CTlsSocket::verifycert)
+			{
+				LogMessage(__TFILE__, __LINE__, this, Debug_Info, _T("No or invalid operation in progress, ignoring request reply %d"), pNotification->GetRequestID());
+				return false;
+			}
+
+			CCertificateNotification* pCertificateNotification = reinterpret_cast<CCertificateNotification *>(pNotification);
+			m_pTlsSocket->TrustCurrentCert(true);//xxxpCertificateNotification->m_trusted);
+		}
+		break;
 	default:
 		LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Unknown request %d"), pNotification->GetRequestID());
 		ResetOperation(FZ_REPLY_INTERNALERROR);
@@ -205,7 +220,7 @@ int CHttpControlSocket::DoReceive()
 
 		unsigned int len = m_recvBufferLen - m_recvBufferPos;
 		int error;
-		int read = m_pSocket->Read(m_pRecvBuffer + m_recvBufferPos, len, error);
+		int read = m_pBackend->Read(m_pRecvBuffer + m_recvBufferPos, len, error);
 		if (read == -1)
 		{
 			if (error != EAGAIN)
@@ -272,8 +287,52 @@ int CHttpControlSocket::DoReceive()
 
 void CHttpControlSocket::OnConnect()
 {
-	LogMessage(Status, _("Connection established, sending HTTP request"));
-	ResetOperation(FZ_REPLY_OK);
+	wxASSERT(GetCurrentCommandId() == cmd_connect);
+
+	CHttpConnectOpData *pData = static_cast<CHttpConnectOpData *>(m_pCurOpData);
+	
+	if (pData->tls)
+	{
+		if (!m_pTlsSocket)
+		{
+			LogMessage(Status, _("Connection established, initializing TLS..."));
+
+			delete m_pBackend;
+			m_pTlsSocket = new CTlsSocket(this, m_pSocket, this);
+			m_pBackend = m_pTlsSocket;
+
+			if (!m_pTlsSocket->Init())
+			{
+				LogMessage(::Error, _("Failed to initialize TLS."));
+				DoClose();
+				return;
+			}
+
+			const wxString trusted_rootcert = m_pEngine->GetOptions()->GetOption(OPTION_INTERNAL_ROOTCERT);
+			if (trusted_rootcert != _T("") && !m_pTlsSocket->AddTrustedRootCertificate(trusted_rootcert))
+			{
+				LogMessage(::Error, _("Failed to parse trusted root cert."));
+				DoClose();
+				return;
+			}
+
+			int res = m_pTlsSocket->Handshake();
+			if (res == FZ_REPLY_ERROR)
+				DoClose();
+		}
+		else
+		{
+			LogMessage(Status, _("TLS/SSL connection established, sending HTTP request"));
+			ResetOperation(FZ_REPLY_OK);
+		}
+
+		return;
+	}
+	else
+	{
+		LogMessage(Status, _("Connection established, sending HTTP request"));
+		ResetOperation(FZ_REPLY_OK);
+	}
 }
 
 enum filetransferStates
@@ -332,7 +391,7 @@ int CHttpControlSocket::FileTransfer(const wxString localFile, const CServerPath
 	else
 		pData->opState = filetransfer_transfer;
 
-	int res = InternalConnect(m_pCurrentServer->GetHost(), m_pCurrentServer->GetPort());
+	int res = InternalConnect(m_pCurrentServer->GetHost(), m_pCurrentServer->GetPort(), m_pCurrentServer->GetProtocol() == HTTPS);
 	if (res != FZ_REPLY_OK)
 		return res;
 
@@ -386,7 +445,7 @@ int CHttpControlSocket::FileTransferSend()
 			return FZ_REPLY_ERROR;
 		}
 
-		int res = InternalConnect(m_pCurrentServer->GetHost(), m_pCurrentServer->GetPort());
+		int res = InternalConnect(m_pCurrentServer->GetHost(), m_pCurrentServer->GetPort(), m_pCurrentServer->GetProtocol() == HTTPS);
 		if (res != FZ_REPLY_OK)
 			return res;
 	}
@@ -395,7 +454,10 @@ int CHttpControlSocket::FileTransferSend()
 	wxString hostWithPort;
 	if (pData->m_newLocation == _T(""))
 	{
-		location = _T("http://") + m_pCurrentServer->FormatHost() + pData->remotePath.FormatFilename(pData->remoteFile).c_str();
+		if (m_pCurrentServer->GetProtocol() == HTTPS)
+			location = _T("http://") + m_pCurrentServer->FormatHost() + pData->remotePath.FormatFilename(pData->remoteFile).c_str();
+		else
+			location = _T("http://") + m_pCurrentServer->FormatHost() + pData->remotePath.FormatFilename(pData->remoteFile).c_str();
 		hostWithPort = wxString::Format(_T("%s:%d"), m_pCurrentServer->FormatHost(true).c_str(), m_pCurrentServer->GetPort());
 	}
 	else
@@ -416,7 +478,7 @@ int CHttpControlSocket::FileTransferSend()
 	return FZ_REPLY_WOULDBLOCK;
 }
 
-int CHttpControlSocket::InternalConnect(wxString host, unsigned short port)
+int CHttpControlSocket::InternalConnect(wxString host, unsigned short port, bool tls)
 {
 	LogMessage(Debug_Verbose, _T("CHttpControlSocket::InternalConnect()"));
 
@@ -424,6 +486,7 @@ int CHttpControlSocket::InternalConnect(wxString host, unsigned short port)
 	pData->pNextOpData = m_pCurOpData;
 	m_pCurOpData = pData;
 	pData->port = port;
+	pData->tls = tls;
 
 	if (!IsIpAddress(host))
 		LogMessage(Status, _("Resolving address of %s"), host.c_str());
@@ -606,11 +669,18 @@ int CHttpControlSocket::ParseHeader(CHttpOpData* pData)
 					ResetHttpData(pData);
 
 					wxString host;
+					enum ServerProtocol protocol;
 					int pos;
 					if ((pos = pData->m_newLocation.Find(_T("://"))) != -1)
+					{
+						protocol = CServer::GetProtocolFromPrefix(pData->m_newLocation.Left(pos));
 						host = pData->m_newLocation.Mid(pos + 3);
+					}
 					else
+					{
+						protocol = HTTP;
 						host = pData->m_newLocation;
+					}
 
 					if ((pos = host.Find(_T("/"))) != -1)
 						host = host.Left(pos);
@@ -620,11 +690,21 @@ int CHttpControlSocket::ParseHeader(CHttpOpData* pData)
 					{
 						wxString strport = host.Mid(pos + 1);
 						if (!strport.ToULong(&port) || port < 1 || port > 65535)
-							port = 80;
+						{
+							if (protocol == HTTPS)
+								port = 443;
+							else
+								port = 80;
+						}
 						host = host.Left(pos);
 					}
 					else
-						port = 80;
+					{
+						if (protocol == HTTPS)
+							port = 443;
+						else
+							port = 80;
+					}
 
 					if (host == _T(""))
 					{
@@ -638,7 +718,7 @@ int CHttpControlSocket::ParseHeader(CHttpOpData* pData)
 					// International domain names
 					host = ConvertDomainName(host);
 
-					int res = InternalConnect(host, port);
+					int res = InternalConnect(host, port, protocol == HTTPS);
 					if (res == FZ_REPLY_WOULDBLOCK)
 						res |= FZ_REPLY_REDIRECTED;
 					return res;

@@ -6,6 +6,7 @@
 #include <wx/wizard.h>
 #include "wrapengine.h"
 
+class COptionsBase;
 class CUpdateWizard : public wxWizard, protected CWrapEngine
 {
 public:
@@ -22,7 +23,7 @@ protected:
 	void FailedTransfer();
 	void ParseData();
 
-	void PrepareUpdateAvailablePage(const wxString &newVersion, wxString newUrl);
+	void PrepareUpdateAvailablePage(const wxString &newVersion, wxString newUrl, const wxString& newChecksum);
 
 	void RewrapPage(int page);
 
@@ -56,9 +57,11 @@ protected:
 
 	int m_currentPage;
 
+	enum ServerProtocol m_urlProtocol;
 	wxString m_urlServer;
 	wxString m_urlFile;
 	wxString m_localFile;
+	wxString m_update_checksum;
 
 	wxTimer m_statusTimer;
 
@@ -77,6 +80,8 @@ protected:
 	bool m_autoUpdateCheckRunning;
 	bool m_updateShown;
 	bool m_start_check;
+
+	COptionsBase* m_update_options;
 };
 
 #endif //FZ_MANUALUPDATECHECK

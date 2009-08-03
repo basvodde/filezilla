@@ -3,12 +3,15 @@
 
 enum ServerProtocol
 {
+	// Never change any existing values or user's saved sites will become
+	// corrupted.
 	UNKNOWN = -1,
 	FTP,
 	SFTP,
 	HTTP,
 	FTPS, // Implicit SSL
-	FTPES // Explicit SSL
+	FTPES, // Explicit SSL
+	HTTPS
 };
 
 enum ServerType

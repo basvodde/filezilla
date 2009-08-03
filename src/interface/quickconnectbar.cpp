@@ -118,7 +118,7 @@ void CQuickconnectBar::OnQuickconnect(wxCommandEvent& event)
 	m_pUser->SetValue(server.GetUser());
 	m_pPass->SetValue(server.GetPass());
 
-	if (protocol == HTTP)
+	if (protocol == HTTP || protocol == HTTPS)
 	{
 		wxString error = _("Invalid protocol specified. Valid protocols are:\nftp:// for normal FTP,\nsftp:// for SSH file transfer protocol,\nftps:// for FTP over SSL (implicit) and\nftpes:// for FTP over SSL (explicit).");
 		wxMessageBox(error, _("Syntax error"), wxICON_EXCLAMATION);
