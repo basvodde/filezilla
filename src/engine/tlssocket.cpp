@@ -40,6 +40,8 @@ CTlsSocket::CTlsSocket(CSocketEventHandler* pEvtHandler, CSocket* pSocket, CCont
 	m_shutdown_requested = false;
 
 	m_socket_eof = false;
+
+	m_require_root_trust = false;
 }
 
 CTlsSocket::~CTlsSocket()
@@ -139,6 +141,8 @@ void CTlsSocket::Uninit()
 
 	delete [] m_implicitTrustedCert.data;
 	m_implicitTrustedCert.data = 0;
+
+	m_require_root_trust = false;
 }
 
 void CTlsSocket::LogError(int code)
@@ -814,7 +818,7 @@ int CTlsSocket::VerifyCertificate()
 {
 	if (m_tlsState != handshake)
 	{
-		m_pOwner->LogMessage(Debug_Warning, _T("VerifyCertificate called at wrong time"));
+		m_pOwner->LogMessage(::Debug_Warning, _T("VerifyCertificate called at wrong time"));
 		return FZ_REPLY_ERROR;
 	}
 
@@ -822,7 +826,36 @@ int CTlsSocket::VerifyCertificate()
 
 	if (gnutls_certificate_type_get(m_session) != GNUTLS_CRT_X509)
 	{
-		m_pOwner->LogMessage(::Debug_Warning, _T("Unsupported certificate type"));
+		m_pOwner->LogMessage(::Error, _("Unsupported certificate type"));
+		Failure(0, ECONNABORTED);
+		return FZ_REPLY_ERROR;
+	}
+
+	unsigned int status = 0;
+	if (gnutls_certificate_verify_peers2(m_session, &status) < 0)
+	{
+		m_pOwner->LogMessage(::Error, _("Failed to verify peer certificate"));
+		Failure(0, ECONNABORTED);
+		return FZ_REPLY_ERROR;
+	}
+
+	if (status & GNUTLS_CERT_REVOKED)
+	{
+		m_pOwner->LogMessage(::Error, _("Beware! Certificate has been revoked"));
+		Failure(0, ECONNABORTED);
+		return FZ_REPLY_ERROR;
+	}
+
+	if (status & GNUTLS_CERT_SIGNER_NOT_CA)
+	{
+		m_pOwner->LogMessage(::Error, _("Incomplete chain, top certificate is not self-signed certificate authority certificate"));
+		Failure(0, ECONNABORTED);
+		return FZ_REPLY_ERROR;
+	}
+
+	if (m_require_root_trust && status & GNUTLS_CERT_SIGNER_NOT_FOUND)
+	{
+		m_pOwner->LogMessage(::Error, _("Root certificate is not trusted"));
 		Failure(0, ECONNABORTED);
 		return FZ_REPLY_ERROR;
 	}
@@ -831,7 +864,7 @@ int CTlsSocket::VerifyCertificate()
 	const gnutls_datum_t* cert_list = gnutls_certificate_get_peers(m_session, &cert_list_size);
 	if (!cert_list || !cert_list_size)
 	{
-		m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_certificate_get_peers returned no certificates"));
+		m_pOwner->LogMessage(::Error, _("gnutls_certificate_get_peers returned no certificates"));
 		Failure(0, ECONNABORTED);
 		return FZ_REPLY_ERROR;
 	}
@@ -859,14 +892,14 @@ int CTlsSocket::VerifyCertificate()
 		gnutls_x509_crt_t cert;
 		if (gnutls_x509_crt_init(&cert))
 		{
-			m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_x509_crt_init failed"));
+			m_pOwner->LogMessage(::Error, _("Coult not initialize structure for peer certificates, gnutls_x509_crt_init failed"));
 			Failure(0, ECONNABORTED);
 			return FZ_REPLY_ERROR;
 		}
 
 		if (gnutls_x509_crt_import(cert, cert_list, GNUTLS_X509_FMT_DER))
 		{
-			m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_x509_crt_import failed"));
+			m_pOwner->LogMessage(::Error, _("Could not import peer certificates, gnutls_x509_crt_import failed"));
 			Failure(0, ECONNABORTED);
 			gnutls_x509_crt_deinit(cert);
 			return FZ_REPLY_ERROR;
@@ -913,7 +946,7 @@ int CTlsSocket::VerifyCertificate()
 			LogError(res);
 		if (subject == _T(""))
 		{
-			m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_x509_get_dn failed"));
+			m_pOwner->LogMessage(::Error, _("Could not get distinguished name of certificate subject, gnutls_x509_get_dn failed"));
 			Failure(0, ECONNABORTED);
 			gnutls_x509_crt_deinit(cert);
 			return FZ_REPLY_ERROR;
@@ -938,7 +971,7 @@ int CTlsSocket::VerifyCertificate()
 			LogError(res);
 		if (issuer == _T(""))
 		{
-			m_pOwner->LogMessage(::Debug_Warning, _T("gnutls_x509_get_issuer_dn failed"));
+			m_pOwner->LogMessage(::Error, _("Could not get distinguished name of certificate issuer, gnutls_x509_get_issuer_dn failed"));
 			Failure(0, ECONNABORTED);
 			gnutls_x509_crt_deinit(cert);
 			return FZ_REPLY_ERROR;
@@ -1008,4 +1041,23 @@ wxString CTlsSocket::GetMacName()
 		return wxString(mac, wxConvUTF8);
 	else
 		return _T("unknown");
+}
+
+bool CTlsSocket::AddTrustedRootCertificate(const wxString& cert)
+{
+	if (!m_initialized)
+		return false;
+
+	if (cert == _T(""))
+		return false;
+
+	m_require_root_trust = true;
+
+	const wxWX2MBbuf str = cert.mb_str();
+
+	gnutls_datum_t datum;
+	datum.data = (unsigned char*)(const char*)str;
+	datum.size = strlen(str);
+
+	return gnutls_certificate_set_x509_trust_mem(m_certCredentials, &datum, GNUTLS_X509_FMT_PEM) > 0;
 }
