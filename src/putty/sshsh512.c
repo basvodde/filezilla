@@ -30,9 +30,9 @@ typedef struct {
 #define shrB(r,x,y) ( r.lo = x.hi >> ((y)-32), r.hi = 0 )
 #define shrL(r,x,y) ( r.lo = (x.lo >> (y)) | (x.hi << (32-(y))), \
 		      r.hi = x.hi >> (y) )
-#define and(r,x,y) ( r.lo = x.lo & y.lo, r.hi = x.hi & y.hi )
-#define xor(r,x,y) ( r.lo = x.lo ^ y.lo, r.hi = x.hi ^ y.hi )
-#define not(r,x) ( r.lo = ~x.lo, r.hi = ~x.hi )
+#define putty_and(r,x,y) ( r.lo = x.lo & y.lo, r.hi = x.hi & y.hi )
+#define putty_xor(r,x,y) ( r.lo = x.lo ^ y.lo, r.hi = x.hi ^ y.hi )
+#define putty_not(r,x) ( r.lo = ~x.lo, r.hi = ~x.hi )
 #define INIT(h,l) { h, l }
 #define BUILD(r,h,l) ( r.hi = h, r.lo = l )
 #define EXTRACT(h,l,r) ( h = r.hi, l = r.lo )
@@ -42,17 +42,17 @@ typedef struct {
  * message digest.
  */
 
-#define Ch(r,t,x,y,z) ( not(t,x), and(r,t,z), and(t,x,y), xor(r,r,t) )
-#define Maj(r,t,x,y,z) ( and(r,x,y), and(t,x,z), xor(r,r,t), \
-			 and(t,y,z), xor(r,r,t) )
-#define bigsigma0(r,t,x) ( rorL(r,x,28), rorB(t,x,34), xor(r,r,t), \
-			   rorB(t,x,39), xor(r,r,t) )
-#define bigsigma1(r,t,x) ( rorL(r,x,14), rorL(t,x,18), xor(r,r,t), \
-			   rorB(t,x,41), xor(r,r,t) )
-#define smallsigma0(r,t,x) ( rorL(r,x,1), rorL(t,x,8), xor(r,r,t), \
-			     shrL(t,x,7), xor(r,r,t) )
-#define smallsigma1(r,t,x) ( rorL(r,x,19), rorB(t,x,61), xor(r,r,t), \
-			     shrL(t,x,6), xor(r,r,t) )
+#define Ch(r,t,x,y,z) ( putty_not(t,x), putty_and(r,t,z), putty_and(t,x,y), putty_xor(r,r,t) )
+#define Maj(r,t,x,y,z) ( putty_and(r,x,y), putty_and(t,x,z), putty_xor(r,r,t), \
+			 putty_and(t,y,z), putty_xor(r,r,t) )
+#define bigsigma0(r,t,x) ( rorL(r,x,28), rorB(t,x,34), putty_xor(r,r,t), \
+			   rorB(t,x,39), putty_xor(r,r,t) )
+#define bigsigma1(r,t,x) ( rorL(r,x,14), rorL(t,x,18), putty_xor(r,r,t), \
+			   rorB(t,x,41), putty_xor(r,r,t) )
+#define smallsigma0(r,t,x) ( rorL(r,x,1), rorL(t,x,8), putty_xor(r,r,t), \
+			     shrL(t,x,7), putty_xor(r,r,t) )
+#define smallsigma1(r,t,x) ( rorL(r,x,19), rorB(t,x,61), putty_xor(r,r,t), \
+			     shrL(t,x,6), putty_xor(r,r,t) )
 
 static void SHA512_Core_Init(SHA512_State *s) {
     static const uint64 iv[] = {
