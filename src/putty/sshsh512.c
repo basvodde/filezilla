@@ -4,7 +4,16 @@
  *   http://csrc.nist.gov/cryptval/shs.html
  */
 
+#ifdef SHA512_STANDALONE
+typedef struct {
+    uint64 h[8];
+    unsigned char block[128];
+    int blkused;
+    uint32 len[4];
+} SHA512_State;
+#else
 #include "ssh.h"
+#endif
 
 #define BLKSIZE 128
 
