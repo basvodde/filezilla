@@ -455,7 +455,7 @@ int CHttpControlSocket::FileTransferSend()
 	if (pData->m_newLocation == _T(""))
 	{
 		if (m_pCurrentServer->GetProtocol() == HTTPS)
-			location = _T("http://") + m_pCurrentServer->FormatHost() + pData->remotePath.FormatFilename(pData->remoteFile).c_str();
+			location = _T("https://") + m_pCurrentServer->FormatHost() + pData->remotePath.FormatFilename(pData->remoteFile).c_str();
 		else
 			location = _T("http://") + m_pCurrentServer->FormatHost() + pData->remotePath.FormatFilename(pData->remoteFile).c_str();
 		hostWithPort = wxString::Format(_T("%s:%d"), m_pCurrentServer->FormatHost(true).c_str(), m_pCurrentServer->GetPort());
