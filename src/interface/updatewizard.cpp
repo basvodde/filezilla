@@ -615,6 +615,11 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 				{
 					reinterpret_cast<CFileExistsNotification *>(pData)->overwriteAction = CFileExistsNotification::overwrite;
 				}
+				else if (pData->GetRequestID() == reqId_certificate)
+				{
+					CCertificateNotification* pCertNotification = (CCertificateNotification*)pData;
+					pCertNotification->m_trusted = true;
+				}
 				m_pEngine->SetAsyncRequestReply(pData);
 			}
 			break;

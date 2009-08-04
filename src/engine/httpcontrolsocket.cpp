@@ -187,7 +187,7 @@ bool CHttpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotifi
 			}
 
 			CCertificateNotification* pCertificateNotification = reinterpret_cast<CCertificateNotification *>(pNotification);
-			m_pTlsSocket->TrustCurrentCert(true);//xxxpCertificateNotification->m_trusted);
+			m_pTlsSocket->TrustCurrentCert(pCertificateNotification->m_trusted);
 		}
 		break;
 	default:
