@@ -18,7 +18,7 @@ typedef unsigned int uint32;
 #include "../putty/int64.h"
 #include "../putty/sshsh512.c"
 
-#define MAXCHECKPROGRESS 14 // Maximum value of progress bar
+#define MAXCHECKPROGRESS 11 // Maximum value of progress bar
 
 BEGIN_EVENT_TABLE(CUpdateWizard, wxWizard)
 EVT_CHECKBOX(wxID_ANY, CUpdateWizard::OnCheck)
@@ -424,6 +424,8 @@ void CUpdateWizard::FailedTransfer()
 	pNext->Enable();
 	wxButton* pPrev = wxDynamicCast(FindWindow(wxID_BACKWARD), wxButton);
 	pPrev->Disable();
+
+	XRCCTRL(*this, "ID_LOG", wxTextCtrl)->ChangeValue(m_update_log);
 }
 
 void CUpdateWizard::OnEngineEvent(wxEvent& event)
@@ -483,6 +485,27 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 						m_pages[2]->GetSizer()->Layout();
 					}
 				}
+
+				wxString label;
+				switch (pLogMsg->msgType)
+				{
+				case Error:
+					label = _("Error:");
+					break;
+				case Status:
+					label = _("Status:");
+					break;
+				case Command:
+					label = _("Command:");
+					break;
+				case Response:
+					label = _("Response:");
+					break;
+				default:
+					break;
+				}
+				if (label != _T(""))
+					m_update_log += label + _T(" ") + pLogMsg->msg + _T("\n");
 			}
 			break;
 		case nId_operation:
@@ -1165,6 +1188,8 @@ void CUpdateWizard::FailedChecksum()
 	pNext->Enable();
 	wxButton* pPrev = wxDynamicCast(FindWindow(wxID_BACKWARD), wxButton);
 	pPrev->Disable();
+
+	XRCCTRL(*this, "ID_LOG", wxTextCtrl)->ChangeValue(m_update_log);
 
 	RewrapPage(3);
 }

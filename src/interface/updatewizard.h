@@ -67,6 +67,8 @@ protected:
 	wxString m_localFile;
 	wxString m_update_checksum;
 
+	wxString m_update_log;
+
 	wxTimer m_statusTimer;
 
 	bool m_loaded;
