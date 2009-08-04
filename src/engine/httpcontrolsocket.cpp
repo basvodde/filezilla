@@ -507,7 +507,6 @@ int CHttpControlSocket::DoInternalConnect()
 	}
 
 	CHttpConnectOpData *pData = static_cast<CHttpConnectOpData *>(m_pCurOpData);
-	LogMessage(Status, _("Connecting to %s:%d..."), pData->host.c_str(), pData->port);
 
 	if (m_pBackend)
 		delete m_pBackend;
@@ -927,10 +926,13 @@ int CHttpControlSocket::ResetOperation(int nErrorCode)
 
 	if (!m_pCurOpData || !m_pCurOpData->pNextOpData)
 	{
-		if (nErrorCode == FZ_REPLY_OK)
-			LogMessage(Status, _("Disconnected from server"));
-		else
-			LogMessage(::Error, _("Disconnected from server"));
+		if (m_pBackend)
+		{
+			if (nErrorCode == FZ_REPLY_OK)
+				LogMessage(Status, _("Disconnected from server"));
+			else
+				LogMessage(::Error, _("Disconnected from server"));
+		}
 		ResetSocket();
 		m_pHttpOpData = 0;
 	}
@@ -1049,4 +1051,10 @@ int CHttpControlSocket::ParseSubcommandResult(int prevResult)
 	}
 
 	return FZ_REPLY_ERROR;
+}
+
+int CHttpControlSocket::Disconnect()
+{
+	DoClose();
+	return FZ_REPLY_OK;
 }

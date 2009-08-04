@@ -32,6 +32,8 @@ protected:
 	virtual void OnReceive();
 	int DoReceive();
 
+	virtual int Disconnect();
+
 	virtual int ResetOperation(int nErrorCode);
 	
 	virtual void ResetHttpData(CHttpOpData* pData);
