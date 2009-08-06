@@ -892,7 +892,7 @@ int CTlsSocket::VerifyCertificate()
 		gnutls_x509_crt_t cert;
 		if (gnutls_x509_crt_init(&cert))
 		{
-			m_pOwner->LogMessage(::Error, _("Coult not initialize structure for peer certificates, gnutls_x509_crt_init failed"));
+			m_pOwner->LogMessage(::Error, _("Could not initialize structure for peer certificates, gnutls_x509_crt_init failed"));
 			Failure(0, ECONNABORTED);
 			return FZ_REPLY_ERROR;
 		}
