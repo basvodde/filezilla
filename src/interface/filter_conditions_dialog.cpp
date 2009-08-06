@@ -304,7 +304,7 @@ void CFilterConditionsDialog::MakeControls(const CFilterCondition& condition, in
 	m_pListCtrl->CalcScrolledPosition(posx, posy, &x, &y);
 	posy = y;
 
-	wxPoint pos = wxPoint(10, posy);
+	wxPoint pos = wxPoint(5, posy);
 	if (!controls.pType)
 	{
 		controls.pType = new wxChoice();
@@ -322,7 +322,7 @@ void CFilterConditionsDialog::MakeControls(const CFilterCondition& condition, in
 		m_pListCtrl->SetLineHeight(m_choiceBoxHeight + 6);
 	}
 
-	pos = wxPoint(20 + typeRect.GetWidth(), posy);
+	pos = wxPoint(10 + typeRect.GetWidth(), posy);
 	if (!controls.pCondition)
 	{
 		controls.pCondition = new wxChoice();
@@ -365,7 +365,7 @@ void CFilterConditionsDialog::MakeControls(const CFilterCondition& condition, in
 	else
 		controls.pRemove->SetPosition(wxPoint(client_size.GetWidth() - 5 - m_button_size.x, posy));
 
-	posx = 30 + typeRect.GetWidth() + conditionsRect.GetWidth();
+	posx = 15 + typeRect.GetWidth() + conditionsRect.GetWidth();
 	const int maxwidth = client_size.GetWidth() - posx - 10 - m_button_size.x;
 	if (condition.type == filter_name || condition.type == filter_size || condition.type == filter_path)
 	{
@@ -388,7 +388,7 @@ void CFilterConditionsDialog::MakeControls(const CFilterCondition& condition, in
 		controls.pValue->SetValue(condition.strValue);
 
 		// Need to explicitely set min size, otherwise initial size becomes min size
-		controls.pValue->SetMinSize(wxSize(20,-1));
+		controls.pValue->SetMinSize(wxSize(20, -1));
 	}
 	else
 	{
@@ -410,7 +410,7 @@ void CFilterConditionsDialog::MakeControls(const CFilterCondition& condition, in
 		controls.pSet->Select(condition.strValue != _T("0") ? 0 : 1);
 
 		// Need to explicitely set min size, otherwise initial size becomes min size
-		controls.pValue->SetMinSize(wxSize(20,-1));
+		controls.pValue->SetMinSize(wxSize(20, -1));
 	}
 }
 
